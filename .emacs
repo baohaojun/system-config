@@ -1,0 +1,1094 @@
+;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
+(setq cygwin-mount-cygwin-bin-directory "d:/cygwin/bin")
+(setenv "PATH" "c:/Python25;F:/bin/win32;C:/TeXLive2007/dviout;C:/gs/gs8.54/bin;c:/gnuserv;d:/cygwin/bin;c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86;c:/Program Files/RSA Security/RSA SecurID Software Token/;c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/;c:/WINDOWS;c:/WINDOWS/System32/Wbem;c:/WINDOWS/system32;c:/java/jdk1.6/bin;c:/ntutils;c:/scripts;d:/tools/emacswin/bin;d:/tools/mplayer/MPlayer-1.0rc2;d:/profiles/bhj/bin;d:/cygwin/sbin;d:/cygwin/usr/X11R6/bin;d:/local/bin;d:/cygwin/usr/sbin")
+(setq load-path
+      (cons (expand-file-name "~/.emacs.d/lisp") load-path))
+
+(if (eq emacs-major-version 23)
+    ;; (progn 
+;;       (set-language-environment "chinese-gb18030")
+;;       (set-frame-font "Monaco-10")
+;;       (set-fontset-font (frame-parameter nil 'font)
+;;                         'han (font-spec :family "Microsoft Yahei" :size 16))
+;;       (set-fontset-font (frame-parameter nil 'font)
+;;                         'symbol (font-spec :family "Microsoft Yahei" :size 16))
+;;       (set-fontset-font (frame-parameter nil 'font)
+;;                         'cjk-misc (font-spec :family "Microsoft Yahei" :size 16))
+;;       (set-fontset-font (frame-parameter nil 'font)
+;;                         'bopomofo (font-spec :family "Microsoft Yahei" :size 16)))
+    nil
+  (setq load-path
+	(cons (expand-file-name "d:/local/share/emacs/site-lisp") load-path))
+  (setq load-path
+	(cons (expand-file-name "d:/local/share/emacs/site-lisp/emms") load-path)))
+
+
+
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'han (font-spec :family "Microsoft Yahei" :size 16))
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'symbol (font-spec :family "Microsoft Yahei" :size 16))
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'cjk-misc (font-spec :family "Microsoft Yahei" :size 16))
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'bopomofo (font-spec :family "Microsoft Yahei" :size 16))
+
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'han (font-spec :family "Simsun-18030" :size 16))
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'symbol (font-spec :family "Simsun-18030" :size 16))
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'cjk-misc (font-spec :family "Simsun-18030" :size 16))
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'bopomofo (font-spec :family "Simsun-18030" :size 16))
+
+(add-to-list 'load-path "~/.emacs.d/weblogger")
+(add-to-list 'load-path "c:/gnuserv")
+
+
+(require 'emms-setup)
+(require 'w3m-load)
+(require 'cygwin-mount)
+(require 'w32-symlinks)
+(require 'gnuserv)
+(require 'tramp)
+(require 'weblogger)
+(require 'session)
+(require 'ibuffer)
+(require 'browse-kill-ring)
+(require 'ido)
+(require 'thumbs)
+(require 'emacs-wiki)
+(require 'keydef)
+(if (eq emacs-major-version 23)
+    nil
+  (require 'un-define))
+(require 'grep-buffers)
+(require 'htmlize)
+(require 'htmlize-hack)
+
+(require 'muse-mode)     ; load authoring mode
+
+(require 'muse-html)     ; load publishing styles I use
+
+(require 'muse-project)
+
+(setq muse-project-alist
+      '(("Website" ("~/Pages" :default "index")
+         (:base "html" :path "~/public_html"))))
+
+;; This buffer is for notes you don't want to save, and for Lisp evaluation.
+;; If you want to create a file, visit that file with C-x C-f,
+;; then enter the text in that file's own buffer.
+
+;; Load CEDET
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (load-file "d:/tools/emacswin/site-lisp/cedet-1.0pre4/common/cedet.el") ;;
+;; (semantic-load-enable-excessive-code-helpers)                           ;;
+;; (require 'ecb)                                                          ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(emms-standard)
+(emms-default-players)
+
+(setq-default abbrev-mode t)                                                                   
+(read-abbrev-file "~/.abbrev_defs")                                                            
+(setq save-abbrevs t)   
+
+
+
+(if (eq emacs-major-version 23)
+    nil
+  (setq bdf-directory-list
+	'("d:/local/intlfonts/Asian" "d:/local/intlfonts/Chinese" "d:/local/intlfonts/Chinese-X"
+	  "d:/local/intlfonts/Ethiopic" "d:/local/intlfonts/European" "d:/local/intlfonts/Japanese"
+	  "d:/local/intlfonts/Japanese-X" "d:/local/intlfonts/Korean-X" "d:/local/intlfonts/Misc/"))
+  (setq w32-bdf-filename-alist
+	(w32-find-bdf-fonts bdf-directory-list))
+  (create-fontset-from-fontset-spec
+   "-*-fixed-medium-r-normal-*-16-*-*-*-c-*-fontset-bdf,
+ latin-jisx0201:-*-*-medium-r-normal-*-16-*-*-*-c-*-jisx0201*-*,
+ thai-tis620:-misc-fixed-medium-r-normal--16-160-72-72-m-80-tis620.2529-1,
+ japanese-jisx0208:-Misc-Fixed-Medium-R-Normal--16-150-75-75-C-160-JISX0208.1990-0,
+ lao:-misc-fixed-medium-r-normal--16-160-72-72-m-80-MuleLao-1,
+ tibetan-1-column:-TibMdXA-fixed-medium-r-normal--16-160-72-72-m-80-MuleTibetan-1,
+ ethiopic:-Admas-Ethiomx16f-Medium-R-Normal--16-150-100-100-M-160-Ethiopic-Unicode,
+ tibetan:-TibMdXA-fixed-medium-r-normal--16-160-72-72-m-160-MuleTibetan-0")
+  (setq font-encoding-alist
+	(append '(("MuleTibetan-0" (tibetan . 0))
+		  ("GB2312"        (chinese-gb2312 . 0))
+		  ("JISX0208"      (japanese-jisx0208 . 0))
+		  ("JISX0212"      (japanese-jisx0212 . 0))
+		  ("VISCII"        (vietnamese-viscii-lower . 0))
+		  ("KSC5601"       (korean-ksc5601 . 0))
+		  ("MuleArabic-0"  (arabic-digit . 0))
+		  ("MuleArabic-1"  (arabic-1-column . 0))
+		  ("MuleArabic-2"  (arabic-2-column . 0))) font-encoding-alist))
+  (set-default-font "fontset-bdf"))
+
+(put 'cygwin-mount-name-hook-function 'safe-magic t)
+(global-set-key[(f2)](lambda()(interactive)(call-process "d:/cygwin/bin/bash" nil nil nil "ehelp" (current-word))))
+(global-set-key[(f3)](lambda()(interactive)(call-process "d:/cygwin/bin/bash" nil nil nil "ehelph2" (current-word))))
+
+
+
+(setq Info-directory-list '("d:/tools/emacswin/info/" "d:/local/info" "d:/cygwin/usr/info" "d:/cygwin/usr/share/info"))
+
+(setq null-device "/dev/null")
+
+
+
+(grep-compute-defaults)
+(defun grep-default-command ()
+  "Compute the default grep command for C-u M-x grep to offer."
+  (let ((tag-default (shell-quote-argument (grep-tag-default)))
+	;; This a regexp to match single shell arguments.
+	;; Could someone please add comments explaining it?
+	(sh-arg-re "\\(\\(?:\"\\(?:[^\"]\\|\\\\\"\\)+\"\\|'[^']+'\\|[^\"' \t\n]\\)+\\)")
+	(grep-default (or (car grep-history) grep-command)))
+    ;; In the default command, find the arg that specifies the pattern.
+    (when (or (string-match
+	       (concat "[^ ]+\\s +\\(?:-[^ ]+\\s +\\)*"
+		       sh-arg-re "\\(\\s +\\(\\S +\\)\\)?")
+	       grep-default)
+	      ;; If the string is not yet complete.
+	      (string-match "\\(\\)\\'" grep-default))
+      ;; Maybe we will replace the pattern with the default tag.
+      ;; But first, maybe replace the file name pattern.
+      
+      ;; Now replace the pattern with the default tag.
+      (replace-match tag-default t t grep-default 1))))
+
+            
+(cygwin-mount-activate)
+
+
+;;;; You need this if you decide to use gnuclient
+
+(setq gnuserv-frame (selected-frame))
+
+
+
+
+
+(register-input-method
+ "chinese-wubi86" "Chinese-CNS" 'quail-use-package
+ "WuBi" "WuBi"
+ "quail/wubi86")
+
+(load "auctex.el" nil t t)
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+(load "preview-latex.el" nil t t)
+
+; set unicode data file location. (used by what-cursor-position)
+(let ((x "~/.emacs.d/UnicodeData.txt"))
+  (when (file-exists-p x)
+    (setq describe-char-unicodedata-file x)))
+
+
+(setq weblogger-entry-mode-hook '(flyspell-mode))
+
+(defcustom bhj-grep-regexp "^\\(?:\\s *\\)\\(?:.*/\\)*\\([^/]+?\\):\\([0-9]+?\\):\\(?:.+?\\)$"
+  "the regexp for bhj grep")
+(make-variable-buffer-local 'bhj-grep-regexp)
+(defun bhj-grep-this-line ()
+  (interactive)
+  (save-excursion
+    (setq bhj-grep-buffer-name (current-buffer))
+    (beginning-of-line)
+    (and (re-search-forward bhj-grep-regexp  nil t)
+
+         (let ((buffer-of-match (match-string 1))
+               (current-line (buffer-substring (line-beginning-position) (line-end-position)))
+               (line-of-match (string-to-number (match-string 2))))
+           (setq bhj-grep-point (point-marker))
+           (unwind-protect
+               (if (bufferp (get-buffer buffer-of-match))
+                   (progn (switch-to-buffer buffer-of-match)
+                          (goto-line line-of-match)
+                          (message current-line))
+                 (locate buffer-of-match))
+             ())))))
+
+(defun bhj-grep-next-line ()
+  (interactive)
+  (set-buffer bhj-grep-buffer-name)
+  (goto-char bhj-grep-point)
+  (forward-line)
+  (beginning-of-line)
+  (and (re-search-forward bhj-grep-regexp nil t)
+
+       (let ((buffer-of-match (match-string 1))
+             (current-line (buffer-substring (line-beginning-position) (line-end-position)))
+             (line-of-match (string-to-number (match-string 2))))
+         (setq bhj-grep-point (point-marker))
+         (unwind-protect
+             (if (bufferp (get-buffer buffer-of-match))
+                 (progn (goto-char bhj-grep-point)
+                        (switch-to-buffer buffer-of-match)
+                        (goto-line line-of-match)
+                        (message current-line))
+               (locate buffer-of-match))
+
+           ()))))
+
+(defun bhj-grep-prev-line ()
+  (interactive)
+  (set-buffer bhj-grep-buffer-name)
+  (goto-char bhj-grep-point)
+  (beginning-of-line)
+  (and (re-search-backward bhj-grep-regexp nil t)
+       
+       (let ((buffer-of-match (match-string 1))
+             (current-line (buffer-substring (line-beginning-position) (line-end-position)))
+             (line-of-match (string-to-number (match-string 2))))
+         ;;(message "matching buffer %s, line-of-match %d" buffer-of-match line-of-match)
+         (setq bhj-grep-point (point-marker))
+         (unwind-protect
+             (if (bufferp (get-buffer buffer-of-match))
+                 (progn (goto-char bhj-grep-point)
+                        (switch-to-buffer buffer-of-match)
+                        (goto-line line-of-match)
+                        (message current-line))
+               (locate buffer-of-match))
+           ()))))
+
+(defun bhj-reread-file ()
+  (interactive)
+  (find-file buffer-file-truename))
+
+(global-set-key [?\M-g ?t] 'bhj-grep-this-line)
+(global-set-key [?\M-g ?f] 'bhj-grep-next-line)
+(global-set-key [?\M-g ?b] 'bhj-grep-prev-line)
+
+
+
+
+(global-set-key [(meta ?/)] 'hippie-expand)
+
+
+
+(defun bhj-c-beginning-of-defun ()
+  (interactive)
+  (progn
+    (push-mark)
+    (c-beginning-of-defun)))
+
+(defun bhj-c-end-of-defun ()
+  (interactive)
+  (progn
+    (push-mark)
+    (c-end-of-defun)))
+
+(defun linux-c-mode ()
+  "C mode with adjusted defaults for use with the Linux kernel."
+  (interactive)
+  (c-mode) 
+  (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
+  (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
+  (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
+  (c-set-style "K&R")
+  (setq c-basic-offset 4))
+
+(defun linux-c++-mode ()
+  "C mode with adjusted defaults for use with the Linux kernel."
+  (interactive)
+  (c++-mode) 
+  (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
+  (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
+  (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
+  (c-set-style "K&R")
+  (setq c-basic-offset 4))
+
+(setq auto-mode-alist (cons '(".*\\.[ch]$" . linux-c-mode)
+                            auto-mode-alist))
+(setq auto-mode-alist (cons '(".*\\.cpp$" . linux-c++-mode)
+                            auto-mode-alist))
+
+(when window-system
+
+  (setq frame-title-format "emacs@%b")
+  (auto-image-file-mode)
+  (put 'set-goal-column 'disabled nil)
+  (put 'downcase-region 'disabled nil)
+  (put 'LaTeX-hide-environment 'disabled nil)
+
+
+
+
+
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
+  
+
+  (global-set-key [(control c)(k)] 'browse-kill-ring)
+  (browse-kill-ring-default-keybindings)
+
+  ;;ido.el
+
+  (ido-mode t)
+
+  ;; enable visual feedback on selections
+  (setq-default transient-mark-mode t)
+
+  ;;popup the manual page, try:)
+  (global-set-key[(f3)](lambda()(interactive)(woman (current-word))))
+  (global-set-key[(f4)](lambda()(interactive)(menu-bar-mode)))
+  (global-set-key[(f5)](lambda()(interactive)(ecb-minor-mode)))
+
+
+  ;; thumb
+
+
+  ;; emacs wiki
+
+
+
+
+  (setq emacs-wiki-publishing-directory "/var/www/home/a22242/WiKi")
+  (setq emacs-wiki-directories '("~/WiKi"))
+  (setq emacs-wiki-meta-charset "gbk")
+
+  (setq emacs-wiki-style-sheet
+        "<link rel=\"stylesheet\" type=\"text/css\" href=\"../main.css\">"
+        emacs-wiki-footer-date-format "%Y-%m-%d %H:%M:%S %Z"
+        )
+
+  (setq emacs-wiki-inline-relative-to 'emacs-wiki-publishing-directory)
+
+  
+
+  (setq emacs-wiki-projects
+        `(("default" . ((emacs-wiki-directories . ("~/WiKi"))))
+          ("work" . ((fill-column . 65)
+                     (emacs-wiki-publishing-directory . "/var/www/home/a22242/WorkWiKi")
+                     (emacs-wiki-directories . ("~/WorkWiKi/"))))))
+
+  (autoload 'dictionary-search "dictionary"
+    "Ask for a word and search it in all dictionaries" t)
+  (autoload 'dictionary-match-words "dictionary"
+    "Ask for a word and search all matching words in the dictionaries" t)
+  (autoload 'dictionary-lookup-definition "dictionary"
+    "Unconditionally lookup the word at point." t)
+  (autoload 'dictionary "dictionary"
+    "Create a new dictionary buffer" t)
+  (autoload 'dictionary-mouse-popup-matching-words "dictionary"
+    "Display entries matching the word at the cursor" t)
+  (autoload 'dictionary-popup-matching-words "dictionary"
+    "Display entries matching the word at the point" t)
+  (autoload 'dictionary-tooltip-mode "dictionary"
+    "Display tooltips for the current word" t)
+  (autoload 'global-dictionary-tooltip-mode "dictionary"
+    "Enable/disable dictionary-tooltip-mode for all buffers" t)
+
+
+  (global-set-key [(control c)(d)] 'dictionary-lookup-definition)
+  (global-set-key [(control c)(s)] 'dictionary-search)
+  (global-set-key [(control c)(m)] 'dictionary-match-words)
+
+
+  (setq dictionary-tooltip-dictionary "wn")
+
+  (put 'narrow-to-region 'disabled nil)
+
+  (global-set-key ";" 'tmp_en_ch)
+          
+  (defun do_en_when_ch (arg)
+    "input method is active, but we want it out temporarily"
+    (interactive "senter to input: \n")
+    (insert arg))
+
+  (defun tmp_en_ch ()
+    "tell if input method is active, get out of it for a while"
+    (interactive)
+    (if (equal nil current-input-method)
+        (insert ";")
+      (call-interactively 'do_en_when_ch)))
+
+  (if (eq emacs-major-version 23)
+      (progn
+	(prefer-coding-system 'chinese-gb18030-unix))
+    (prefer-coding-system 'gb2312)
+    (set-default-coding-systems 'gb2312))
+
+
+  (defun weekrep ()
+    (interactive)
+    (call-process "wr" nil t nil "-6"))
+
+  (put 'upcase-region 'disabled nil)
+
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1))
+
+
+(fset 'grep-buffers-symbol-at-point 'current-word)
+(global-set-key [(control meta o)]
+                (lambda()(interactive)
+                  (let 
+                      ((regexp (current-word))) 
+                    (progn     
+                      (setq regexp 
+                            (read-string (format "List lines matching regexp [%s]: " regexp) nil nil regexp))
+                      (occur regexp)))))
+
+(global-set-key [(control meta shift g)]
+                (lambda()(interactive)
+                  (let 
+                      ((search-string (current-word))) 
+                    (progn     
+                      (setq search-string
+                            (read-string (format "search google with [%s]: " search-string) nil nil search-string))
+                      (call-process "d:/cygwin/bin/bash" nil nil nil "googleemacs.sh" search-string)
+                      ))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (defadvice grep                     ;;
+;;   (around bhj-local-grep activate)  ;;
+;;   "Get rid of tramp advise."        ;;
+;;   (ad-deactivate-regexp "tramp")    ;;
+;;   (unwind-protect                   ;;
+;;       ad-do-it                      ;;
+;;     (ad-activate-regexp "tramp")))  ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                
+(defun bhj-next-error ()
+  (interactive)
+  (next-error)
+  (delete-other-windows)
+  (with-current-buffer next-error-last-buffer
+    (message "%s" (buffer-substring (line-beginning-position) (line-end-position)))))
+
+(defun bhj-previous-error ()
+  (interactive)
+  (previous-error)
+  (delete-other-windows)
+  (with-current-buffer next-error-last-buffer
+    (message "%s" (buffer-substring (line-beginning-position) (line-end-position)))))
+
+(global-set-key [(meta n)] 'bhj-next-error)
+(global-set-key [(meta p)] 'bhj-previous-error)
+
+
+
+(keydef "C-S-g" (progn (setq grep-buffers-buffer-name "*grep-buffers*")(grep-buffers)))
+(keydef "C-S-M" (gnus-group-browse-foreign-server "nnml:"))
+
+(defun bhj-clt-insert-file-name ()
+  (interactive)
+  (insert (car args)))
+
+(defcustom bhj-clt-branch "dbg_zch68_a22242_ringtone-hx11i"
+  "the cleartool branch to use for mkbranch")
+
+(defun bhj-clt-insert-branch ()
+  (interactive)
+  (insert bhj-clt-branch))
+
+(defun bhj-insert-cygwin-default-directory ()
+  (interactive)
+  (insert "\"")
+  (call-process "cygpath" nil t nil "-u" default-directory) ; insert the current directory, and also a NL
+  (backward-delete-char 1) ; delete the NL
+  (insert "\""))
+
+(define-key minibuffer-local-shell-command-map [(control meta f)] 'bhj-clt-insert-file-name)
+(define-key minibuffer-local-shell-command-map [(control meta b )] 'bhj-clt-insert-branch)
+(define-key minibuffer-local-shell-command-map [(control meta d )] 'bhj-insert-cygwin-default-directory)
+
+(fset 'bhj-clt-co-mkbranch
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217761 99 108 116 101 110 118 32 126 47 98 105 110 47 99 108 116 45 99 111 45 109 107 98 114 97 110 99 104 32 134217730 32 134217734 return] 0 "%d")) arg) (call-interactively 'bhj-reread-file)))
+
+(fset 'bhj-python
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217761 112 121 116 111 110 backspace backspace 104 111 110 32 134217734 return] 0 "%d")) arg)))
+
+
+(defcustom bhj-grep-default-directory "/pscp:a22242@10.194.131.91:/"
+  "the default directory in which to run grep")
+(keydef "C-M-g" (progn
+                  (let ((current-prefix-arg 4)
+                        (default-directory (eval bhj-grep-default-directory))
+                        (grep-use-null-device nil))
+                    (call-interactively 'grep))))
+
+
+;;(keydef "C-x 1" (progn 
+;;                  (ecb-deactivate)
+;;                  (delete-other-windows)))
+
+(setq hippie-expand-try-functions-list 
+      '(try-expand-dabbrev
+        try-expand-dabbrev-visible
+        try-expand-dabbrev-all-buffers
+        try-expand-dabbrev-from-kill
+        try-complete-file-name-partially
+        try-complete-file-name
+        try-expand-all-abbrevs
+        try-expand-list
+        try-expand-line
+        try-complete-lisp-symbol-partially
+        try-complete-lisp-symbol))
+
+
+(setq tramp-backup-directory-alist backup-directory-alist)
+
+(put 'scroll-left 'disabled nil)
+
+(fset 'bhj-bhjd
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("\"" 0 "%d")) arg)))
+(fset 'bhj-preview-markdown
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 49 67108896 3 2 134217848 98 104 106 45 109 105 109 101 tab return 3 return 80 24 111 67108911 24 111] 0 "%d")) arg)))
+
+
+
+(fset 'bhj-w3m-next-page
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 S-tab return] 0 "%d")) arg)))
+(fset 'bhj-w3m-prev-page
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab return] 0 "%d")) arg)))
+
+;this is for the book learning python.
+(fset 'bhj-w3m-prev-page
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 14 5 S-tab S-tab return] 0 "%d")) arg))) 
+
+;this is for python documents in /usr/share/doc/python/..
+(fset 'bhj-w3m-next-page
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab tab tab return] 0 "%d")) arg)))
+
+(fset 'bhj-w3m-prev-page
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab return] 0 "%d")) arg)))
+
+;this is for effective c++ and more effective c++
+(fset 'bhj-w3m-next-page
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 134217790 S-tab return] 0 "%d")) arg)))
+
+(fset 'bhj-w3m-prev-page
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217790 S-tab S-tab return] 0 "%d")) arg)))
+
+;HOME [prev] [next]
+(fset 'bhj-w3m-prev-page
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab return] 0 "%d")) arg)))
+(fset 'bhj-w3m-next-page
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab tab return] 0 "%d")) arg)))
+
+
+
+
+(fset 'bhj-shell-interrupt
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([17 3 return] 0 "%d")) arg)))
+
+(fset 'bhj-shell-stop
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([17 26 return] 0 "%d")) arg)))
+
+(fset 'bhj-shell-eof
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([17 4 return] 0 "%d")) arg)))
+
+(fset 'bhj-isearch-yank
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("\371" 0 "%d")) arg)))
+
+(fset 'bhj-grep-find-file
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 98 120 120 120 return 121 24 104 23 24 98 42 103 114 101 112 return 24 104 134217847 24 98 120 120 120 return 25 134217788 19 34 47 13 2 67108896 19 58 47 134217847 24 104 21 134217852 103 114 101 112 32 58 46 42 58 return 134217790 134217788 24 104 21 134217852 103 114 101 112 32 45 118 32 103 114 101 112 32 45 105 return 134217790 134217788 24 104 21 134217852 115 101 100 32 M-backspace 112 101 114 108 32 45 110 112 101 32 39 115 47 58 46 42 47 47 39 return 25 134217849 67108911 67108911 24 104 201326629 94 return 40 102 105 110 100 45 102 105 108 101 32 34 25 return 33 1 11 backspace 24 104 21 201326629 36 return 34 41 return 24 104 21 201326629 36 return 34 41 return 24 104 201326629 return 33] 0 "%d")) arg)))
+
+
+(defun bhj-isearch-from-bod ()
+  (interactive)
+  (let ((word (current-word)))
+    (push-mark)
+    (with-temp-buffer
+      (insert word)
+      (kill-ring-save (point-min) (point-max)))
+    (c-beginning-of-defun)
+    (call-interactively 'bhj-isearch-yank)))
+
+(global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
+
+(defun bhj-lqqm-pic-collect ()
+  (interactive)
+  (shell-command-on-region (point-min) (point-max) "emacs-lqqm-collect.sh"))
+
+(defun bhj-lqqm-pic-view ()
+  (interactive)
+  (shell-command "emacs-lqqm-view.sh"))
+
+(defun bhj-w3m-scroll-up-or-next-url ()
+  (interactive)
+  (if (pos-visible-in-window-p (point-max))
+      (call-interactively 'bhj-w3m-next-page)
+    (call-interactively 'w3m-scroll-up-or-next-url)))
+
+(defun bhj-w3m-scroll-down-or-previous-url ()
+  (interactive)
+  (if (pos-visible-in-window-p (point-min))
+      (call-interactively 'bhj-w3m-prev-page)
+    (call-interactively 'w3m-scroll-down-or-previous-url)))
+
+
+
+(add-hook 'w3m-mode-hook 
+          (lambda () 
+            (local-set-key [(control shift n)] 'bhj-w3m-next-page)
+            (local-set-key [(control shift p)] 'bhj-w3m-prev-page)
+            (local-set-key [(\ )] 'bhj-w3m-scroll-up-or-next-url)
+            (local-set-key [(backspace)] 'bhj-w3m-scroll-down-or-previous-url)
+            (local-set-key [(left)] 'backward-char)
+            (local-set-key [(right)] 'forward-char)
+            (local-set-key [(down)] 'next-line)
+            (local-set-key [(up)] 'previous-line)
+            (local-set-key [(n)] 'next-line)
+            (local-set-key [(p)] 'previous-line)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (add-hook 'gnus-article-mode-hook                    ;;
+;;           (lambda ()                                 ;;
+;;             (make-local-variable 'w3m-fill-column))) ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-hook 'gnus-summary-mode-hook
+          (lambda ()
+            (make-local-variable 'w3m-fill-column)))
+
+
+(add-hook 'term-mode-hook
+          (lambda ()
+            (local-set-key [(control shift c)] 'bhj-lqqm-pic-collect)
+            (local-set-key [(control shift v)] 'bhj-lqqm-pic-view)))
+
+(defun bhj-insert-mailaddr ()
+  (interactive)
+  (let ((default-directory "~/.mail.addr/"))
+    (call-interactively 'ido-insert-file)
+    (end-of-line)))
+
+(add-hook 'message-mode-hook
+          (lambda ()
+            (local-set-key [(control x) (t)] 'bhj-insert-mailaddr)
+            (local-set-key [(control x) (c)] 'bhj-insert-mailaddr)))
+
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(Info-additional-directory-list (quote ("d:/tools/emacswin/info/" "d:/local/share/info")))
+ '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
+ '(bhj-clt-branch "dbg_zch68_a22242_soundmgr")
+ '(bhj-grep-default-directory (quote default-directory))
+ '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
+ '(case-fold-search t)
+ '(default-input-method "chinese-wubi86")
+ '(delete-old-versions t)
+ '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
+ '(dictem-server "localhost")
+ '(dictionary-server "bhj3")
+ '(ecb-compile-window-height nil)
+ '(ecb-layout-name "left10")
+ '(ecb-layout-window-sizes (quote (("top1" (0.25842696629213485 . 0.32075471698113206) (0.21910112359550563 . 0.32075471698113206) (0.5337078651685393 . 0.32075471698113206)))))
+ '(ecb-new-ecb-frame nil)
+ '(ecb-options-version "2.32")
+ '(ecb-ping-program "false")
+ '(ecb-tar-setup (quote ("d:/cygwin/bin/tar.exe" . cygwin)))
+ '(ecb-tip-of-the-day nil)
+ '(ecb-tree-buffer-style (quote image))
+ '(ecb-wget-setup (quote ("d:/cygwin/bin/wget.exe" . cygwin)))
+ '(ecomplete-database-file-coding-system (quote gb18030))
+ '(emms-player-mplayer-command-name "mplayer.exe")
+ '(emms-player-mplayer-parameters (quote ("-slave" "-quiet" "-really-quiet" "-vo" "null")))
+ '(exec-path (quote ("c:/Python25" "F:/bin/win32" "C:/TeXLive2007/dviout" "C:/gs/gs8.54/bin" "c:/gnuserv" "d:/cygwin/bin" "c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86" "c:/Program Files/RSA Security/RSA SecurID Software Token/" "c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/" "c:/WINDOWS" "c:/WINDOWS/System32/Wbem" "c:/WINDOWS/system32" "c:/java/jdk1.6/bin" "c:/ntutils" "c:/scripts" "d:/tools/emacswin/bin" "d:/tools/mplayer/MPlayer-1.0rc2" "d:/profiles/bhj/bin" "d:/cygwin/sbin" "d:/cygwin/usr/X11R6/bin" "d:/local/bin" "d:/cygwin/usr/sbin")))
+ '(gdb-find-source-frame t)
+ '(gdb-same-frame t)
+ '(gdb-show-main t)
+ '(global-font-lock-mode t nil (font-lock))
+ '(grep-use-null-device (quote auto-detect))
+ '(htmlize-output-type (quote font))
+ '(ido-enable-regexp t)
+ '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
+ '(indent-tabs-mode nil)
+ '(ispell-program-name "aspell")
+ '(keyboard-coding-system (quote cp936))
+ '(locate-command "locateEmacs.exe")
+ '(message-mail-alias-type (quote ecomplete))
+ '(muse-html-charset-default "chinese-gb18030")
+ '(muse-html-style-sheet "<style type=\"text/css\">
+BODY {
+	padding : 0.7in;
+	font-size : medium;
+	font-family : Luxi Serif, Luxi Serif, Serif, Tahoma, helvetica, serif, \"??\";
+	background : white;
+	border-style: solid;
+	border-width: 20pt;
+	border-color: midnightblue;
+	padding: 0.7in;
+}
+
+body.framed {
+              padding: 10pt;
+              border-style:none;
+              }
+
+body.ascii{
+            background-color : Black;
+            }
+
+P{
+   text-indent : 2em;
+   }
+
+p.banner {
+           text-align : center;
+           }
+
+P.mmix{
+        text-indent : 0;
+        font-size : medium;
+        }
+
+P.tip{
+       color: blue;
+       }
+
+OL{
+    list-style-type: decimal;
+    padding-bottom : 8px;
+    text-indent : 0;
+    font-size : medium;
+    /*background: gray;*/
+    }
+
+OL.arabic {
+            list-style-type: decimal;
+            }
+OL.cjk {
+         list-style-type: cjk-ideographic;
+         }
+
+OL.roman{
+          list-style-type: lower-roman;
+          }
+
+
+H2 {
+     font-size: 20pt;
+     color: navy;
+     text-align : left;
+     }
+
+A{
+   color: MidnightBlue;
+   text-decoration: none;
+   }
+
+A:Hover {
+          text-decoration: none;
+          background-color: bisque;
+          caption-side : left;
+          }
+
+HR {
+     color: #2E8B57;
+     height: 1pt;
+     }
+
+UL {
+     list-style-type : circle;
+     }
+
+div{
+     border : 1pt;
+     border-color : white;
+     border-style : solid;
+     padding: 10pt;
+     }
+
+IMG{
+     border : 0;
+     margin : 4pt 4pt 4pt;
+     }
+
+img.formula {
+              border : thin;
+              border-color: blue;
+              border-style : solid;
+              }
+
+
+pre {
+      border: #777777 1px solid;
+      padding: 0.5em;
+      margin-left: 1em;
+      margin-right: 2em;
+      white-space: pre;
+      background-color: snow;
+      color: #006400 ;
+      font-family : Luxi Mono, Luxi Sans, Monospace, sans-serif, \2010\2079\2010\2102\2010\2100\2010\2122;    
+      font-size: 90%;
+      }
+
+
+pre.syntax {
+             background: lightblue;
+             }
+
+pre.error {
+            background-color: pink;
+            }
+
+pre.url {
+          background: bisque;
+          }
+
+pre.verse { 
+            background: pink;}
+em {
+     color: red;
+     text-decoration:none;
+     font-style:normal;
+     }
+
+em.phrase {
+            color: blue;
+            text-decoration:none;
+            font-style:normal;
+            }
+
+h1 {
+	ont-size:  28px;
+	border-top: solid black 1px;
+	border-bottom: solid black 1px;
+	padding: 0.1em;
+	padding-top: 0.2em;
+	padding-left: 0.3em;
+	padding-bottom: 0.3em;
+     background: ;
+	background-color: #A64DFF;
+	color: #0A246A;
+     }
+
+h1.home{
+         color: #102C4A;
+         font-size: 34px;
+         }
+
+h2 { 
+     color:#666;
+     font-size: 18px;
+     border-top: solid black 1px;
+     border-bottom: solid black 1px;
+     padding: 0.1em;
+     padding-top: 0.2em;
+     padding-left: 0.3em;
+     padding-bottom: 0.3em;
+     background: LightGray;
+     }
+
+h3 { 
+     color:#666;
+     font-size: 16px;
+     border-left: solid black 1px;
+     border-bottom: solid black 1px;
+     padding: 0.1em;
+     padding-top: 0.2em;
+     padding-left: 0.3em;
+     padding-bottom: 0.3em;
+     }
+
+h4 { 
+     color:#666;
+     font-size: 14px;
+     padding: 2px;
+     margin-top: 5px;
+     }
+
+H5 {
+     color: red;
+     text-align: left;
+     font-size: small;
+     font-size: 12px;
+     }
+
+
+LI {
+     margin-top: 3ex;
+     }
+
+LI.explained {
+               }
+
+p.adage{ 
+         background: lightyellow; 
+         border: green; 
+         border-style: solid;
+         }
+
+p.script {
+           font-size: small;
+           text-align:right;
+           }
+
+
+div.tl{ 
+        position: fixed;
+        width: 7%;
+        top: .4cm;
+        right: 0;
+        left: .4cm;
+        bottom: auto;
+        margin:0;
+        padding: 5px;
+        font-size:  28px;
+        color:#666;
+        border-bottom: 5px solid #000;
+        margin: 0px;
+        margin-bottom: 8px;
+        }
+
+    </style>")
+ '(nnmail-expiry-wait (quote never))
+ '(normal-erase-is-backspace nil)
+ '(preview-gs-command "c:/gs/gs8.54/bin/gswin32c.exe")
+ '(require-final-newline t)
+ '(safe-local-variable-values (quote ((TeX-master . t) (indent-tab-mode . t))))
+ '(save-place t nil (saveplace))
+ '(senator-minor-mode-hook (quote (ignore)))
+ '(session-initialize (quote (de-saveplace session places keys menus)) nil (session))
+ '(shell-file-name "/bin/bash")
+ '(show-paren-mode t nil (paren))
+ '(show-paren-style (quote parenthesis))
+ '(text-mode-hook (quote (text-mode-hook-identify)))
+ '(tooltip-mode nil)
+ '(tooltip-use-echo-area t)
+ '(tramp-syntax (quote ftp))
+ '(tramp-verbose 0)
+ '(transient-mark-mode t)
+ '(user-full-name "Bao Haojun")
+ '(user-mail-address "a22242@motorola.com")
+ '(w32-symlinks-handle-shortcuts t)
+ '(w32-use-w32-font-dialog nil)
+ '(w3m-charset-coding-system-alist (quote ((x-sjis . shift_jis) (x-shift_jis . shift_jis) (x-shift-jis . shift_jis) (x-euc-jp . euc-japan) (shift-jis . shift_jis) (x-unknown . undecided) (unknown . undecided) (windows-874 . tis-620) (iso-2022-jp-3 . iso-2022-7bit-ss2) (us_ascii . raw-text) (gb2312 . gb18030))))
+ '(w3m-default-display-inline-images t)
+ '(w3m-dirlist-cgi-program "~/bin/w3m-dirlist.exe")
+ '(w3m-toggle-inline-images-permanently nil)
+ '(weblogger-config-alist (quote (("yo2.cn" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")) ("bhj3" ("user" . "admin") ("server-url" . "http://bhj3/blog/xmlrpc.php") ("weblog" . "1")) ("default" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")))))
+ '(woman-file-compression-regexp "\\.\\(g?z\\|bz2\\)\\(.lnk\\)?\\'")
+ '(woman-manpath (quote ("d:/cygwin/usr/man" "d:/cygwin/usr/share/man" "d:/local/man")))
+ '(woman-use-own-frame nil))
+
+
+
+
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )
+
+(set-keyboard-coding-system 'chinese-gb18030)
+(set-selection-coding-system 'chinese-gb18030)
+
+(gnuserv-start)
+
+(defun bhj-mimedown ()
+  (interactive)
+  (if (not mark-active)
+      (message "mark not active\n")
+    (save-excursion
+      (let* ((start (min (point) (mark)))
+             (end (max (point) (mark)))
+             (orig-txt (buffer-substring-no-properties start end)))
+        (shell-command-on-region start end "markdown" nil t)
+        (insert "<#multipart type=alternative>\n")
+        (insert orig-txt)
+        (insert "<#part type=text/html>\n<html>\n<head>\n<title> HTML version of email</title>\n</head>\n<body>")
+        (exchange-point-and-mark)
+        (insert "\n</body>\n</html>\n<#/multipart>\n")))))
+
+;;(add-hook 'message-send-hook 'bhj-mimedown)
+
+
+(defun message-display-abbrev (&optional choose)
+  "Display the next possible abbrev for the text before point."
+  (interactive (list t))
+  (when (and (memq (char-after (point-at-bol)) '(?C ?T ?\t ? ))
+	     (message-point-in-header-p)
+	     (save-excursion
+	       (beginning-of-line)
+	       (while (and (memq (char-after) '(?\t ? ))
+			   (zerop (forward-line -1))))
+	       (looking-at "To:\\|Cc:")))
+    (let* ((end (point))
+	   (start (save-excursion
+		    (and (re-search-backward "\\(,\\s +\\|^To: \\|^Cc: \\|^\t\\)" nil t)
+			 (+ (point) (length (match-string 1))))))
+	   (word (when start (buffer-substring start end)))
+	   (match (when (and word
+			     (not (zerop (length word))))
+		    (ecomplete-display-matches 'mail word choose))))
+      (when (and choose match)
+	(delete-region start end)
+	(insert match)))))
+
+
+(mapc
+ '(lambda (cmd-host-pair)
+    (let ((cmd (car cmd-host-pair)) (x (cdr cmd-host-pair)))
+      (eval
+       `(defun ,(intern (format "%s-%s" cmd x)) ()
+        (interactive)
+        (let ((bhj-buffer ,(format "*bhj-%s-%s*" cmd x))
+              (bhj-buffer-term ,(format "bhj-%s-%s" cmd x))
+              (default-directory "d:/profiles/bhj/"))
+          (if (get-buffer-process (get-buffer bhj-buffer))
+              (switch-to-buffer bhj-buffer)
+            (progn
+              (if (bufferp (get-buffer bhj-buffer))
+                (kill-buffer (get-buffer bhj-buffer)))
+              (setenv "LOGIN_HOST_PORT" ,(format "bhj@%s:22" x))
+              (ansi-term ,(format "%s" cmd) bhj-buffer-term)
+              (local-set-key [(meta x)] 'execute-extended-command)
+              (local-set-key [(control c) (escape)] 'term-send-raw)
+              (local-set-key [(f1)] 'bhj-term-fn-key)
+              (local-set-key [(f2)] 'bhj-term-fn-key)
+              (local-set-key [(f3)] 'bhj-term-fn-key)
+              (local-set-key [(control c) (control j)] 'bhj-modify-term-map)
+              (local-set-key [(control c) (control k)] 'bhj-modify-term-map)
+              (local-set-key [(escape)] 'bhj-modify-term-map))))))))
+ '((slin . bhj3) 
+   (slin . md1)
+   (slin . haoxue)
+   (slin . bhj1)
+   (slin . md2)
+   (slin . md3)
+   (slin . bhj)
+   (.mlj.ep . bhj1\#23)
+   (.mlj.ep . bhj1\#2323)))
+
+(defun bhj-term-fn-key ()
+  (interactive)
+  (case last-input-char
+    ('f1
+     (term-send-raw-string "\033[11~"))
+    ('f2
+     (term-send-raw-string "\033[12~"))
+    ('f3
+     (term-send-raw-string "\033[13~"))))
+
+(defun bhj-term-control_ ()
+  (interactive)
+  (term-send-raw-string "\C-_"))
+
+(defun bhj-modify-term-map ()
+  (interactive)
+  (if (term-in-char-mode)
+      (progn
+        (term-line-mode)
+        (local-set-key [(control c) (control c)] 'bhj-modify-term-map)
+        (local-set-key [(control c) (control j)] 'bhj-modify-term-map)
+        (local-set-key [(control c) (control k)] 'bhj-modify-term-map)
+        (local-set-key [(escape)] 'bhj-modify-term-map))
+    (progn
+      (term-char-mode)
+      (local-set-key [(control c) (escape)] 'term-send-raw)
+      (local-set-key [(control c) (control j)] 'bhj-modify-term-map)
+      (local-set-key [(control c) (control k)] 'bhj-modify-term-map)
+      (local-set-key [(control /)] 'bhj-term-control_)
+      (local-set-key [(escape)] 'bhj-modify-term-map))))
