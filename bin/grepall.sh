@@ -1,1 +1,1 @@
-../work_bin/grepall.sh
+/home/bhj/work_bin/grepall.sh

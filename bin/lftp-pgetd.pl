@@ -1,1 +1,1 @@
-/home/a22242/work_bin/lftp-pgetd.pl
+/home/bhj/work_bin/lftp-pgetd.pl

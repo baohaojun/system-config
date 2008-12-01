@@ -1,1 +1,1 @@
-/home/a22242/work_bin/build_cookie.sh
+/home/bhj/work_bin/build_cookie.sh

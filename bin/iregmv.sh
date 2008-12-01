@@ -1,1 +1,1 @@
-/home/a22242/work_bin/iregmv.sh
+/home/bhj/work_bin/iregmv.sh

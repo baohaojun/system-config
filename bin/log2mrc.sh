@@ -1,1 +1,1 @@
-/home/a22242/work_bin/log2mrc.sh
+/home/bhj/work_bin/log2mrc.sh

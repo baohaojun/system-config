@@ -1,1 +1,1 @@
-/home/a22242/work_bin/evercom.sh
+/home/bhj/work_bin/evercom.sh

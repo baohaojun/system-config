@@ -1,1 +1,1 @@
-/home/a22242/work_bin/mkrootfs.sh
+/home/bhj/work_bin/mkrootfs.sh

@@ -1,1 +1,1 @@
-/home/a22242/work_bin/mlj.sh
+/home/bhj/work_bin/mlj.sh

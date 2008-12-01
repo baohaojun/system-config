@@ -1,1 +1,1 @@
-/home/a22242/work_bin/find_mv.sh
+/home/bhj/work_bin/find_mv.sh

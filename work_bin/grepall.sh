@@ -1,7 +1,7 @@
 #!/bin/sh 
 
 
-
+pwd
 export PATH=~/bin:/bin:/usr/X11R6/bin:"$PATH"
 
 function Usage()
@@ -19,32 +19,48 @@ function Usage()
 function Build_FindOrPrune_list()  #build the find or prune list, $1 is either "find" or "prune", $2 is the argument following -find/-prune
 {
     eval list="$2"
+    eval unset $1_keys
     for x in "${list[@]}"; do 
         case ${x} in
             :l*) #list of suffixes in ~/etc/grepall/${x:2}
                 for y in $(cat ~/etc/grepall/${x:2}); do 
                     eval $1_options=\(\"\$\{$1_options\[\@\]\}\" -o -iname \"\*\".\"\$y\"\)
+                    eval $1_keys='("${'$1_keys'[@]}"' '"*.$y")'
                 done
                 ;;
             :L*) #list of filenames in ~/etc/grepall/${x:2}
                 for y in $(cat ~/etc/grepall/${x:2}); do 
                     eval $1_options=\(\"\$\{$1_options\[\@\]\}\" -o -iname \"\$y\"\)
+                    eval $1_keys='("${'$1_keys'[@]}"' '"$y")'
                 done
                 ;;
             :f*) #this is a filename
                 eval $1_options=\(\"\$\{$1_options\[\@\]\}\" -o -iname \"\$\{x\:2\}\"\)
+                eval $1_keys='("${'$1_keys'[@]}" "${x:2}")'
                 ;;
             :s*) #this is a suffix
                 eval $1_options=\(\"\$\{$1_options\[\@\]\}\" -o -iname \"\*\".\"\$\{x\:2\}\"\)
+                eval $1_keys='("${'$1_keys'[@]}" "*"."${x:2}")'
                 ;;
             .*) #this is also a suffix
                 eval $1_options=\(\"\$\{$1_options\[\@\]\}\" -o -iname \"\*\"\"\$\{x\}\"\)
+                eval $1_keys='("${'$1_keys'[@]}" "*""${x}")'
                 ;;
             *'*'*) #this should be a filename glob
                 eval $1_options=\(\"\$\{$1_options\[\@\]\}\" -o -iname \"\$\{x\}\"\)
+                eval $1_keys='("${'$1_keys'[@]}" "${x}")'
                 ;;
         esac
     done
+
+    if [[ $debug = true ]]
+    then
+        echo find_options is "${find_options[@]}"
+        echo find_keys is "${find_keys[@]}"
+        echo prune_options is "${prune_options[@]}"
+        echo prune_keys is "${prune_keys[@]}"
+    fi
+    
 }
 
 unset grep_search_word
@@ -59,17 +75,17 @@ declare -a prune_options
 debug=true
 
 find_pre_prunes=(
--path "*/CVS" -o -path "*/.svn" 
--o -path "*/autom4te.cache" 
--o -path "*/{arch}" 
--o -path "*/.hg" 
--o -path "*/_darcs" 
--o -path "*/.git" 
--o -path "*/.bzr" 
--o -path "*~*" 
--o -path "*#" 
--o -path "*/TAGS" 
--o -path "*/semantic.cache" )
+    -path "*/CVS" -o -path "*/.svn" 
+    -o -path "*/autom4te.cache" 
+    -o -path "*/{arch}" 
+    -o -path "*/.hg" 
+    -o -path "*/_darcs" 
+    -o -path "*/.git" 
+    -o -path "*/.bzr" 
+    -o -path "*~*" 
+    -o -path "*#" 
+    -o -path "*/TAGS" 
+    -o -path "*/semantic.cache" )
 
 find_options=(-name "*")
 
@@ -79,18 +95,19 @@ grep_search_where=(/dev/null)
 
 while true; do 
     case "$1" in
-    
-        -e)
-            grep_regexp="$1"
-            shift
-            grep_search_word="$1"
-            shift
-            ;;
+        
+	-e)
+	    grep_regexp="$1"
+	    shift
+	    grep_search_word="$1"
+	    shift
+	    ;;
 
         -prune)
+            prune_options=()
             shift
             Build_FindOrPrune_list prune "$1"
-        
+            
             shift
             ;;
 
@@ -115,7 +132,7 @@ while true; do
             esac
             shift
             ;;
-   
+        
         -clear)
             unset grep_search_where
             shift
@@ -140,14 +157,14 @@ while true; do
             ;;
 
 
-        -help) 
-            Usage
-            ;;
+	-help) 
+	    Usage
+	    ;;
 
-        -redo)
-            grep_redo=true
-            shift
-            ;;
+	-redo)
+	    grep_redo=true
+	    shift
+	    ;;
         
         -nocache|-noc)
             grep_nocache=true
@@ -158,43 +175,43 @@ while true; do
             shift
             ;;
 
-        --)
-            shift
-            if [[ $# = 0 ]]
-                then 
-                break;
-            fi
-            
-            if [[ -z "$grep_search_word" ]]
-                then grep_search_word="$1"
-                shift
-            fi
+	--)
+	    shift
+	    if [[ $# = 0 ]]
+	    then 
+		break;
+	    fi
+	    
+	    if [[ -z "$grep_search_word" ]]
+	    then grep_search_word="$1"
+		shift
+	    fi
 
-            while ! [[ $# = 0 ]]; do 
-                grep_search_where=("${grep_search_where[@]}" "$1")
-                shift
-            done
+	    while ! [[ $# = 0 ]]; do 
+		grep_search_where=("${grep_search_where[@]}" "$1")
+		shift
+	    done
 
-            ;;
-        -*)
-            grep_search_options="$grep_search_options $1"
-            shift
-            ;;
+	    ;;
+	-*)
+	    grep_search_options="$grep_search_options $1"
+	    shift
+	    ;;
 
-        ?*)
-            if [[ -z "$grep_search_word" ]]
-                then 
-                grep_search_word="$1"
-                shift
-            else
-                grep_search_where=("${grep_search_where[@]}" "$1")
-                shift
-            fi
-            ;;
+	?*)
+	    if [[ -z "$grep_search_word" ]]
+	    then 
+		grep_search_word="$1"
+		shift
+	    else
+		grep_search_where=("${grep_search_where[@]}" "$1")
+		shift
+	    fi
+	    ;;
 
-        *)
-            break
-            ;;
+	*)
+	    break
+	    ;;
     esac
 done
 
@@ -211,34 +228,34 @@ for each_where in "${grep_search_where[@]}"; do
     first_char_dir=`echo "$each_where"|cut -b 1`
     
     if [[ $first_char_dir == / ]]; 
-        then
-        dir=`readlink -f "$each_where"`
+    then
+	dir=`readlink -f "$each_where"`
     else 
-        dir=`readlink -f "$each_where"`;
+	dir=`readlink -f "$each_where"`;
     fi
     
     if [[ -z "$dir" ]]; 
-        then dir="$each_where"
+    then dir="$each_where"
     fi
     
     
     cache=~/tmp/grepall/"$dir"
     mkdir -p "$cache"
-    cache_find="$cache"/"`gcachesum P.\"${prune_options[@]}\"F.\"${find_options[@]}\" `".find
-    cache="$cache"/"`gcachesum P.\"${prune_options[@]}\"F.\"${find_options[@]}\"G.$grep_search_options \"$grep_search_word\"`".grep
+    cache_find="$cache"/"`gcachesum P.\"${prune_keys[@]}\"F.\"${find_keys[@]}\" `".find
+    cache="$cache"/"`gcachesum P.\"${prune_keys[@]}\"F.\"${find_keys[@]}\"G.$grep_search_options \"$grep_search_word\"`".grep
 
     if [[ $grep_redo = true ]]
-        then 
-        rm "$cache" "$cache_find" >/dev/null 2>&1
+    then 
+	rm "$cache" "$cache_find" >/dev/null 2>&1
     fi
     
     if [[ "$cache_find" -nt "$cache" ]]; 
-        then
+    then
         rm "$cache" >/dev/null 2>&1
     fi
 
     if [[ $grep_nocache = true ]]
-        then
+    then
         rm "$cache" >/dev/null 2>&1
     fi
     
@@ -258,22 +275,22 @@ for each_where in "${grep_search_where[@]}"; do
 
 
     if [[ -f "$cache" ]]; 
-        then
+    then
         echo 1>&2 cache is "$cache" and it exist\! 
-        cat "$cache"|perl -npe 's".*#.+#:\d+:.*""s'|sed -e '/^$/d';
+	cat "$cache"|perl -npe 's".*#.+#:\d+:.*""s'|sed -e '/^$/d';
     else
         echo 1>&2 cache is "$cache" and it is missing\!
         touch "$cache" || cache=/dev/null
         if [[ -f "$dir" ]]
-            then
+        then
             [[ "$dir" == /dev/null ]] || \
-            echo "$dir"|xargs -d \\n grep -H -n $grep_search_options $grep_regexp "$grep_search_word"|tee "$cache"
-            else
+                echo "$dir"|xargs -d \\n grep -H -n $grep_search_options $grep_regexp "$grep_search_word"|tee "$cache"
+        else
             if ! [[ -f "$cache_find" ]]; then
-
+                
                 find "$dir" \( "${find_pre_prunes[@]}" "${prune_options[@]}" \) -prune -o -type f  \( "${find_options[@]}" \) -print 2>/dev/null >"$cache_find"
             fi
-
+            
             cat "$cache_find" | xargs -d \\n 2>/dev/null grep -H -n $grep_search_options $grep_regexp "$grep_search_word" | sed -e '/^$\|^Binary/d' | tee "$cache"
         fi
     fi

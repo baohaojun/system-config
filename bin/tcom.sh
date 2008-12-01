@@ -1,1 +1,1 @@
-/home/a22242/work_bin/tcom.sh
+/home/bhj/work_bin/tcom.sh
