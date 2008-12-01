@@ -1,0 +1,18 @@
+#!/bin/bash
+
+export pattern_dir="$1"
+function find_diff() {
+
+    if  diff "$1" "$pattern_dir"/"`basename \"$1\"`" >/dev/null;
+        then 
+        echo "$1" 
+        echo '=' "$pattern_dir"/"`basename \"$1\"`" 
+        echo
+    else 
+            echo "$1";
+            echo '!=' "$pattern_dir"/"`basename \"$1\"`";
+            echo
+    fi
+}
+
+find_diff "$2"

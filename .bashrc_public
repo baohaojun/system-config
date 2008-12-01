@@ -1,0 +1,11 @@
+if [[ $TERM == emacs ]]; then
+    export PROMPT_COMMAND="history -a; echo; echo '{' `whoami`@`hostname` \$PWD '}'"
+    export PS1='$'
+    
+else
+    export PROMPT_COMMAND="history -a"
+    export PS1='\n[01;34m{ [01;31m'`whoami`'[01;34m@[01;33m'`hostname`'[01;34m [01;32m'\$PWD'[01;34m }[0m\n$'
+fi
+
+alias wpwd='cygpath -alw `pwd`; pwd|sed -e "s!/!.!g"; echo'
+alias perl='/bin/perl'

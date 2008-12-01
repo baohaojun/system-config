@@ -1,0 +1,10 @@
+#!/bin/bash
+
+export PATH=/c/WINDOWS/system32:/c/WINDOWS:/bin/:/usr/local/bin:.
+unset  TEXMFCNF   TEXMFTEMP  TEXMFVAR PERL5LIB TLROOT
+
+if [[ $# == 0 ]]; then
+bash --rcfile /dev/null
+else
+"$@"
+fi

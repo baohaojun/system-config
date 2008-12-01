@@ -1,0 +1,47 @@
+_ping() {
+        local HOST_LIST
+
+        COMPREPLY=()
+        cur=${COMP_WORDS[COMP_CWORD]}
+
+        # I'm going to ignore IPv6 hosts for now, hence the '::'
+        HOST_LIST="$( echo $( grep -Ev '^$|^#|::' /etc/hosts ) )"
+
+        COMPREPLY=( $( compgen -W "$HOST_LIST" -- "$cur" ) )
+        return 0
+}
+complete -F _ping ping
+complete -F _ping fping
+complete -F _ping telnet
+complete -F _ping ssh
+complete -F _ping slin
+
+
+_mail() {
+    COMPREPLY=()
+    cur=${COMP_WORDS[COMP_CWORD]}
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    if [[ $prev == '-a' ]]
+    then
+        return 0
+    fi
+    
+    cd ~/.mail.addr
+
+    
+
+    
+
+    local IFS=$'\n'
+
+
+    COMPREPLY=( $( compgen -A file -- $cur ) )
+    cd - >/dev/null
+
+
+    return 0
+}
+
+complete -F _mail -o default -o filenames mail
+complete -F _mail -o default -o filenames motds.sh

@@ -1,0 +1,9 @@
+#!/bin/bash
+for x in "$@"; do
+    if echo "$x" |grep '^\+'; then
+    LINE="$x"
+    else
+    x="`readlink -f \"$x\"`"
+    (~/emacs/bin/emacsclient.exe -n $LINE "`cygpath.exe -alw \"$x\"`"&)
+    fi
+done

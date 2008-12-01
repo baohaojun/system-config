@@ -1,0 +1,4 @@
+#!/bin/bash
+export PATH=/usr/bin:/bin:"$PATH"
+findexec -p dexplore -c hh -F 1
+echo "$@" | nc -w 1 localhost 3837

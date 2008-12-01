@@ -1,0 +1,14 @@
+#! /bin/bash
+# pst2pdf
+# PSTricks 2 PDF converter :
+# Usage: "pst2pdf" produces PDF files for all files of the form *-fig*.tex
+#         "pst2pdf <FILE>" only considers FILE-fig.tex
+# It removes intermediary files at the end.
+
+FILE=$1
+
+  fig=`basename  $FILE .tex`
+  latex $fig
+  dvips -E -o $fig.eps $fig
+  epstopdf $fig.eps 
+#  rm $fig.eps $fig.dvi $fig.log $fig.aux

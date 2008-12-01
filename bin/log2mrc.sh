@@ -1,0 +1,1 @@
+/home/a22242/work_bin/log2mrc.sh

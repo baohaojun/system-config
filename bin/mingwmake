@@ -1,0 +1,9 @@
+#!/bin/bash
+
+export PATH=/c/mingw/bin:"$PATH"
+if [[ $# == 0 ]]; then
+bash
+else
+"$@"
+fi
+

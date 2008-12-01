@@ -1,0 +1,3 @@
+#!/bin/bash
+echo  lftp -c \"pget -n 15 \'"$1"\' -o `echo "$1"|perl -npe 's!.*/!!;s!\?.*!!'`\"|sh
+

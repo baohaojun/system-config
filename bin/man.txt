@@ -1,0 +1,13 @@
+Debugger entered--entering a function:
+* 
+
+(start-process "c:\\cygwin\\bin\\man" (generate-new-buffer " *Man perl* ") "d:/tools/emacswin/emacs-22.1/bin/cmdproxy.exe" "-c" "c:\\cygwin\\bin\\man  perl 2>NUL | sed  -e '/^[-][-]*$/d' -e '/[789]/s///g' -e '/Reformatting page.  Wait/d' -e '/Reformatting entry.  Wait/d' -e '/^[ 	]*Hewlett-Packard[ 	]Company[ 	]*-[ 	][0-9]*[ 	]-/d' -e '/^[ 	]*Hewlett-Packard[ 	]*-[ 	][0-9]*[ 	]-.*$/d' -e '/^[ 	][ 	]*-[ 	][0-9]*[ 	]-[ 	]*Formatted:.*[0-9]$/d' -e '/^[ 	]*Page[ 	][0-9]*.*(printed[ 	][0-9\\/]*)$/d' -e '/^Printed[ 	][0-9].*[0-9]$/d' -e '/^[ 	]*X[ 	]Version[ 	]1[01].*Release[ 	][0-9]/d' -e '/^[A-Za-z].*Last[ 	]change:/d' -e '/^Sun[ 	]Release[ 	][0-9].*[0-9]$/d' -e '/[ 	]*Copyright [0-9]* UNIX System Laboratories, Inc.$/d' -e '/^[ 	]*Rev\\..*Page [0-9][0-9]*$/d' | c:\\cygwin\\bin\\awk '\{print $1\}'")
+
+(start-process "c:\\cygwin\\bin\\man" (generate-new-buffer " *Man perl* ") "d:/tools/emacswin/emacs-22.1/bin/cmdproxy.exe" "-c" "echo shit")
+* Man-getpage-in-background("perl")
+* man("perl")
+  (let ((debug-on-next-call t)) (man "perl"))
+  eval((let ((debug-on-next-call t)) (man "perl")))
+  eval-last-sexp-1(nil)
+  eval-last-sexp(nil)
+  call-interactively(eval-last-sexp)

@@ -1,0 +1,114 @@
+#! /usr/bin/expect -f
+
+set timeout 60
+set zimage [lindex $argv 0]
+set rootfs [lindex $argv 1]
+set hostip [lindex $argv 2]
+set execmoreargs [ lindex $argv 3]
+
+spawn minicom
+expect abort {
+    send "\003"
+}
+
+expect RedBoot {
+    send "fconfig\n"
+}
+
+expect "Run script at boot" {
+    send "\n"
+}
+
+expect "with empty line" {
+    expect ">>" {
+	send "load -v -r -m tftp -h 10.193.53.23 -b 0x100000 $zimage\n"
+    }
+    expect -re "load.*>>" {
+	#send "exec -c \"initcall_debug noinitrd console=ttyS0,115200 init=/linuxrc root=/dev/nfs rw mem=54M bpmem=8M nfsroot=$rootfs ip=$hostip video=mxcfb:sharp mt9v111 boot_mem_type=nor $execmoreargs\"\n"
+	send "exec -c \"noinitrd console=ttyS0,115200 root=/dev/nfs rw mem=54M nfsroot=$rootfs ip=$hostip boot_mem_type=nor init=/linuxrc privateram=mbm:16,sim:128,ams:128 $execmoreargs video=mxcfb:sanyo\"\n"
+	#send "exec -b 0x100000 -l 0x200000 -c \"noinitrd console=ttyS0,115200 root=/dev/nfs rw mem=54M nfsroot=$rootfs init=/linuxrc ip=$hostip boot_mem_type=nor $execmoreargs privateram=mbm:16,sim:128,ams:128\"\n"
+    }
+
+    expect -re "exec.*>>|script timeout" {
+	if ([string equal $expect_out(0,string) "script timeout"]) {
+	    send "\010 1\n"
+	} else {
+	    send "\n"
+	    expect "script timeout" {
+		#send_user "\nscript timeout\n"
+		send "\010 1\n"
+	    }
+	}
+    }
+}
+
+expect "network configuration" {
+    #send_user "\n network configuration\n"
+    send "\n"
+}
+
+expect "Gateway" {
+    #send_user "\nGateway\n"
+    send "\n"
+}
+
+expect "Local IP" {
+    #send_user "\n Local IP\n"
+    send "\n"
+}
+
+expect "mask" {
+    send "\n"
+}
+
+expect "server IP" {
+    send "\n"
+}
+
+expect "Board spec" {
+    send "\n"
+}
+
+expect "Console baud" {
+    send "\n"
+}
+
+expect "MAC" {
+    send "\n"
+}
+
+expect "port" {
+    send "\n"
+}
+
+expect "message" {
+    #send_user "\n message\n"
+    send "\n"
+}
+
+expect "Network debug" {
+    #send_user "\n Network debug\n"
+    send "\n"
+}
+
+expect "Update RedBoot non-volatile" {
+    send "y\n"
+}
+
+
+expect RedBoot {
+    send "load -v -r -m tftp -h 10.193.53.23 -b 0x100000 $zimage\n"
+}
+
+expect assumed {
+#	send "exec -c \"initcall_debug noinitrd console=ttyS0,115200 init=/linuxrc root=/dev/nfs rw mem=54M bpmem=8M nfsroot=$rootfs ip=$hostip video=mxcfb:sharp mt9v111 boot_mem_type=nor $execmoreargs\"\n"
+    send "exec -c \"noinitrd console=ttyS0,115200 root=/dev/nfs rw mem=54M nfsroot=$rootfs ip=$hostip boot_mem_type=nor init=/linuxrc privateram=mbm:16,sim:128,ams:128 $execmoreargs video=mxcfb:sanyo\"\n"
+    #send "exec -b 0x100000 -l 0x200000 -c \"noinitrd console=ttyS0,115200 root=/dev/nfs rw mem=54M nfsroot=$rootfs init=/linuxrc ip=$hostip boot_mem_type=nor $execmoreargs privateram=mbm:16,sim:128,ams:128\"\n"
+}
+
+expect bash {
+    send "\001x\n"
+}
+stty echo
+interact
+

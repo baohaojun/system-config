@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "$@"
+tkdiff "$6" "$7"

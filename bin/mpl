@@ -1,0 +1,3 @@
+#!/bin/bash
+export PATH="$PATH":/d/tools/mplayer
+/d/tools/mplayer/mplayer.exe "$@"

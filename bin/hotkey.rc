@@ -1,0 +1,63 @@
+# ------------------------------
+# bbkeys.rc - bblean 1.16
+
+# Windows:
+KeyToGrab(ESCAPE),          WithModifier(LWin),      WithAction(MaximizeWindow)
+KeyToGrab(F1),          WithModifier(LWin),      WithAction(MaximizeWindow)
+KeyToGrab(F2),          WithModifier(LWin),      WithAction(MaximizeVertical)
+KeyToGrab(F1),          WithModifier(LCtrl),     WithAction(MaximizeHorizontal)
+KeyToGrab(Y),           WithModifier(LWin),      WithAction(RestoreWindow)
+KeyToGrab(Z),           WithModifier(LWin),      WithAction(MinimizeWindow)
+KeyToGrab(Q),           WithModifier(LAlt+LWin+LCtrl),      WithAction(Quit)
+
+KeyToGrab(R),           WithModifier(LWin),      WithAction(Run)
+
+# Extern commands:
+KeyToGrab(1),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -1)
+KeyToGrab(1),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +1)
+KeyToGrab(2),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -2)
+KeyToGrab(2),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +2)
+KeyToGrab(3),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -3)
+KeyToGrab(3),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +3)
+KeyToGrab(4),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -4)
+KeyToGrab(4),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +4)
+KeyToGrab(5),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -5)
+KeyToGrab(5),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +5)
+KeyToGrab(6),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -6)
+KeyToGrab(6),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +6)
+KeyToGrab(7),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -7)
+KeyToGrab(7),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +7)
+KeyToGrab(8),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -8)
+KeyToGrab(8),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +8)
+KeyToGrab(9),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -9)
+KeyToGrab(9),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +9)
+KeyToGrab(0),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -0)
+KeyToGrab(0),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +0)
+
+KeyToGrab(E),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs -fe run bash -c fetchmail.sh -fe -F 1 emacs.sh)
+KeyToGrab(M),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(email.sh)
+KeyToGrab(X),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs -fe run bash -c eterm-bhj.sh -fe -F 1 emacs.sh)
+KeyToGrab(P),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p powerpnt.exe -F 1 ppt)
+KeyToGrab(P),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c putty -F 1 putty bash -c """myscr first""")
+KeyToGrab(E),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p excel.exe -F 1 excel)
+KeyToGrab(W),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p winword.exe -F 1 word)
+KeyToGrab(W),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p explorer.exe -c wclass -F 1 "%HOMEDRIVE%%HOMEPATH%\My Documents")
+KeyToGrab(Q),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p dexplore -F 1)
+KeyToGrab(T),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(screen-exchange.sh)
+KeyToGrab(B),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p bash.exe bash --rcfile ~/.bashrc-min -i)
+KeyToGrab(N),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p firefox -F 1 firefox)
+KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c acrobat -F 1 acroread)
+KeyToGrab(C),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -C)
+KeyToGrab(V),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p devenv.exe -F 1 vc.lnk)
+KeyToGrab(K),           WithModifier(LWin),      WithAction(ExecCommand), DoThis("%HOMEDRIVE%%HOMEPATH%\doc\work.txt")
+
+
+KeyToGrab(PLUS),        WithModifier(LWin),      WithAction(ExecCommand), DoThis(frontop.exe top)
+KeyToGrab(MINUS),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(frontop.exe bot)
+KeyToGrab(Delete),      WithModifier(LWin),      WithAction(ExecCommand), DoThis(taskmgr)
+KeyToGrab(Pause),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(control.exe sysdm.cpl)
+KeyToGrab(D),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(showdesk.scf)
+KeyToGrab(L),           WithModifier(LWin),      WithAction(LockWorkStation)
+KeyToGrab(S),           WithModifier(LWin),      WithAction(ifinds)
+KeyToGrab(O),           WithModifier(LWin),      WithAction(ifindo)
+

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+export PATH=/c/msys/1.0/local/bin:/c/mingw/bin:/c/msys/1.0/bin:/d/tools/emacswin/bin:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/scripts:/c/ntutils:/c/Program\ Files/RSA\ Security/RSA\ SecurID\ Software\ Token/:/c/Program\ Files/Rational/ClearCase/bin:/c/Program\ Files/Rational/common:/d/Profiles/zch07g_cc_albd/bin:/c/cygwin/usr/X11R6/bin:/c/cygwin/bin
+
+if [[ "$1" == gtk ]]; then
+    export PATH=/d/tools/gtk+/gtk+-bundle-2.12.9/bin/:"$PATH"
+    shift
+fi
+
+if [[ $# == 0 ]]; then
+bash --rcfile /dev/null
+else
+"$@"
+fi

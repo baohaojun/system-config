@@ -1,0 +1,22 @@
+#!/bin/sh -x
+DIR=/usr/local/share/info/
+if ! [[ -z "$1" ]]; then
+    DIR="$1"
+fi
+rm -f "$DIR"/dir "$DIR"/dir.info
+for d in "$DIR"; do
+    for f in $d/*; do
+	case "$f" in
+	    *\**)
+		;;
+	    */dir|*/dir.info*)
+		;;
+	    *-[0123456789]*)
+		;;
+	    *)
+		install-info $f "$DIR"/dir ||
+		install-info --entry="* $$f ($f): $$f" $$f "$DIR"/dir
+		;;
+	esac
+    done
+done

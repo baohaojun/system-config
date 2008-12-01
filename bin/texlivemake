@@ -1,0 +1,10 @@
+#!/bin/bash
+export PATH=/c/TeXLive2007/dviout:/c/gs/gs8.54/bin:/c/TeXLive2007/bin/win32:/c/TeXLive2007/dviout:/c/gs/gs8.54/bin:"$PATH"
+export GS_LIB='C:\gs\gs8.54\lib;C:\gs\fonts'
+export PERL5LIB='c:\texlive2007\perltl\lib;c:\texlive2007\perltl\site\lib'
+
+if [[ $# == 0 ]]; then
+bash --rcfile /dev/null
+else
+"$@"
+fi

@@ -1,0 +1,10 @@
+#!/bin/bash 
+#source ~/.bash_profile
+#. /etc/bash_completion
+session_name="$1"
+
+screen -wipe
+if  screen -list|grep $session_name 
+	then exec screen -h 100000 -x -r $session_name -t $session_name 
+	else exec screen -h 100000 -S $session_name -t $session_name 
+fi

@@ -1,0 +1,4 @@
+all:
+	cd "/c/Program Files/Microsoft SDK/Samples/winui/TSFcase" && psdkmake nmake
+	cd "/c/Program Files/Microsoft SDK/Samples/winui/TSFcase/WIN2000_RETAIL" && vcmake mt /manifest Case.dll.manifest /outputresource:Case.dll\;#2
+	cd "/c/Program Files/Microsoft SDK/Samples/winui/TSFcase/WIN2000_RETAIL" && regsvr32 Case.dll

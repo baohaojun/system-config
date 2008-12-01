@@ -1,0 +1,49 @@
+[WFClient]
+Version=2
+TcpBrowserAddress= 145.2.130.17
+TcpBrowserAddress= 145.2.130.18
+TcpBrowserAddress= 145.2.130.19
+PersistentCachePath=D:\Profiles\edh014\Application Data\ICAClient\Cache
+
+
+[ApplicationServers]
+ClearQuest=
+[ClearQuest]
+LocTcpBrowserAddress=fl08trm07.comm.mot.com
+LocTcpBrowserAddress=fl08trm08.comm.mot.com
+LocTcpBrowserAddress=fl08trm09.comm.mot.com
+TransportDriver=TCP/IP
+BrowserProtocol=UDP
+DesiredHRES=4294967295
+DesiredVRES=4294967295
+ScreenPercent=0
+DoNotUseDefaultCSL=On
+Description=ClearQuest
+Address=ClearQuest
+IconPath=C:\Program Files\Citrix\ICA Client\pn.exe
+IconIndex=1
+ConnectType=1
+MaximumCompression=Off
+Compress=On
+PersistentCacheEnabled=Off
+MouseTimer=0
+KeyboardTimer=0
+AudioBandwidthLimit=1
+UseDefaultSound=On
+DefaultSoundType=1
+UseDefaultEncryption=On
+EncryptionLevel=1
+UseDefaultWinColor=Off
+UseDefaultWinSize=Off
+DesiredWinType=8
+TWIMode=On
+ZLKeyboardMode=0
+ZLMouseMode=2
+SavePNPassword=On
+UseLocalUserAndPassword=Off
+UseAlternateAddress=0
+ICASOCKSProtocolVersion=0
+ICASOCKSProxyPortNumber=0
+ICASOCKSTimeout=0
+InitialProgram=#ClearQuest
+DesiredColor=2

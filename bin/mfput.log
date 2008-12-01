@@ -1,0 +1,41 @@
+This is METAFONT, Version 2.71828 (Web2c 7.5.2) (base=mf 2005.9.21)  21 SEP 2005 21:01
+(d:/TeXLive/texmf/web2c/cp8bit.tcx)
+**\relax
+
+*showvariable incr,z
+incr=macro:<suffix>->begingroup(SUFFIX2):=(SUFFIX2)+1;(SUFFIX2)endgroup
+z@#=macro:->begingroup(x(SUFFIX2),y(SUFFIX2))endgroup
+*;
+
+*;
+
+*;
+
+*;asldfj;
+>> asldfj
+! Isolated expression.
+<to be read again> 
+                   ;
+<*> ;asldfj;
+            
+? 
+
+*;
+
+*;
+
+*quit
+
+*
+(Please type a command or say `end')
+*end
+>> quit
+! Isolated expression.
+<to be read again> 
+                   ;
+end->...ound2designsize);mode_output_specials_;fi;
+                                                  primitive_end_
+<*> end
+       
+? 
+

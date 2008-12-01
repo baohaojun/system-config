@@ -1,0 +1,31 @@
+#!/bin/bash
+export APPVER='5.0'
+export Basemake='C:\Program Files\Microsoft SDK\Include\BKOffice.Mak'
+export Bkoffice='C:\Program Files\Microsoft SDK\'
+export CPU='i386'
+export DevEnvDir='C:\Program Files\Microsoft Visual Studio 8\Common7\IDE'
+export FrameworkDir='C:\WINDOWS\Microsoft.NET\Framework'
+export FrameworkSDKDir='C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0'
+export FrameworkVersion='v2.0.50727'
+export INCLUDE='C:\Program Files\Microsoft SDK\Include;C:\Program Files\Microsoft Visual Studio 8\VC\ATLMFC\INCLUDE;C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE;C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include;C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\include;'
+export INETSDK='C:\Program Files\Microsoft SDK'
+export LIB='C:\Program Files\Microsoft SDK\Lib;C:\Program Files\Microsoft Visual Studio 8\VC\ATLMFC\LIB;C:\Program Files\Microsoft Visual Studio 8\VC\LIB;C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\lib;C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\lib;'
+export LIBPATH='C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727;C:\Program Files\Microsoft Visual Studio 8\VC\ATLMFC\LIB'
+export MSSdk='C:\Program Files\Microsoft SDK'
+export Mstools='C:\Program Files\Microsoft SDK'
+export NODEBUG='1'
+export PATH='/c/Program Files/Microsoft SDK/Bin:/c/Program Files/Microsoft SDK/Bin/WinNT:/c/Program Files/Microsoft Visual Studio 8/Common7/IDE:/c/Program Files/Microsoft Visual Studio 8/VC/BIN:/c/Program Files/Microsoft Visual Studio 8/Common7/Tools:/c/Program Files/Microsoft Visual Studio 8/Common7/Tools/bin:/c/Program Files/Microsoft Visual Studio 8/VC/PlatformSDK/bin:/c/Program Files/Microsoft Visual Studio 8/SDK/v2.0/bin:/c/WINDOWS/Microsoft.NET/Framework/v2.0.50727:/c/Program Files/Microsoft Visual Studio 8/VC/VCPackages:/c/gnuserv:/d/tools/emacswin/bin:/d/local/bin:/c/cygwin/bin:/c/cygwin/usr/X11R6/bin:/d/profiles/zch07g_cc_albd/bin:/c/gnuserv:/d/tools/emacswin/bin:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/scripts:/c/ntutils:/c/Program Files/RSA Security/RSA SecurID Software Token/:/c/Program Files/Rational/ClearCase/bin:/c/Program Files/Rational/common:/d/profiles/zch07g_cc_albd/bin:/c/cygwin/usr/X11R6/bin:/c/cygwin/bin:/c/cygwin/bin:/d/profiles/zch07g_cc_albd/bin:/c/cygwin/usr/sbin:/c/cygwin/sbin'
+export TARGETOS='WINNT'
+export VCINSTALLDIR='C:\Program Files\Microsoft Visual Studio 8\VC'
+export VSINSTALLDIR='C:\Program Files\Microsoft Visual Studio 8'
+
+
+
+
+if [[ $# == 0 ]]; then
+bash --rcfile /dev/null
+else
+"$@"
+fi
+
+#vcbuild /nologo /wrnfile:d:\\vc.wrn "$@"

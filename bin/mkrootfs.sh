@@ -1,0 +1,1 @@
+/home/a22242/work_bin/mkrootfs.sh

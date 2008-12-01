@@ -1,0 +1,34 @@
+shopt -s histappend
+shopt -s cdspell
+
+export HISTCONTROL="ignoredups"
+export HISTIGNORE="[   ]*:&:bg:fg:exit"
+export PROMPT_COMMAND="history -a"
+
+alias ls='ls -hF --color=tty --show-control-chars'                 # classify files in colour
+alias dir='ls --color=auto --format=vertical --show-control-chars'
+alias vdir='ls --color=auto --format=long --show-control-chars'
+alias ll='ls -l --show-control-chars'                              # long list
+alias la='ls -A --show-control-chars'                              # all but . and ..
+alias l='ls -CFl --show-control-chars --block-size=1'                              #
+alias cd='cd -P'
+
+export CDPATH=.:~
+alias vi=vim
+export EDITOR=vim
+export HISTSIZE=2000
+export HISTFILESIZE=100000
+
+export VC_BUILD_CONFIG=release
+export SHELL=/bin/bash
+. ~/.bashrc-path
+. ~/.bashrc_public
+. ~/.bash_netcompletion
+. /c/ssh-agent.log
+alias of=cygstart
+alias ps='ps aux -W'
+alias reboot=~/bin/reboot
+alias dict='dict -v 2>/dev/null'
+alias mm=mplayer
+alias tlm=texlivemake
+
