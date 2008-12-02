@@ -1,1 +1,158 @@
-/home/bhj/work_bin/mirror.xp
+#!/bin/expect --
+
+set timeout 60
+
+set host 192.168.16.2
+set login_port 23
+set trans_port 22242
+
+if {$argc == 0 } {
+    send_user {Usage: mirror.xp [-h host] [-d remote_dir] files...}
+    send_user "\n"
+    exit
+}
+
+lappend get_list
+lappend put_list
+lappend true_get_list
+set dir /mnt/msc_int0/
+
+while {[llength $argv]} {
+    switch -- [lindex $argv 0] {
+        "-h" {
+            set host [lindex $argv 1]
+            set argv [lrange $argv 2 end]
+        }
+        "-g" {
+            lappend get_list [lindex $argv 1]
+            set argv [lrange $argv 2 end]
+        }
+        
+        "-d" {
+            set dir [lindex $argv 1]
+            set argv [lrange $argv 2 end]
+        }
+
+        "-p" {
+            set login_port [lindex $argv 1]
+            set argv [lrange $argv 2 end]
+            set trans_port [expr 22242+23-$login_port]
+        }
+
+        default {
+            lappend put_list [lindex $argv 0]
+            set argv [lrange $argv 1 end]
+        }
+    }
+}
+
+
+spawn telnet $host $login_port
+expect -re "login:|authenticity|assword:" {
+    if ([string eq "$expect_out(0,string)" "authenticity"]) {
+	send "yes\n"
+
+    } elseif ([string eq "$expect_out(0,string)" "login:"]) {
+        send "root\n"
+        
+    }
+}
+
+
+
+expect -re "#" {
+    send "\003\n"
+    send "mkdir -p $dir\n"
+    send "export PS1=#\n"
+    send "cd $dir\n"
+}
+
+expect -re "#" {
+
+    foreach get $get_list {
+        if {[string match *\\** $get]} {
+            send_user "string contains a *\n"
+            set base_get [lindex [split $get /] end]
+            send "for x in $base_get; do echo \$x; done\n"
+            expect -re "for x\[^\n\]*\n" {}
+            expect -re "(\[^#\]*)#" {
+                send_user "hello split [string map {\r\n / \n /} $expect_out(1,string)]\n"
+                lappend true_get_list [join [split [string map {"\r\n" / "\n" /} $expect_out(1,string)] /] ]
+            }
+
+            while {0} {
+                expect {
+                    -re "^(\[^\n\r# \]+)\[\r\n\]*" {
+                        lappend true_get_list $expect_out(1,string)
+                    }
+                    -re "#" {break;}
+
+                }
+            }
+        } else {
+            lappend true_get_list $get
+        }
+    }
+    
+
+    foreach get [join $true_get_list] {
+        
+        while {
+               [ catch {
+                   expect "#" {
+                       send "busybox nc -l -p $trans_port <$get\n"
+                   }
+                   expect -re "busybox nc.*\n" {
+                       send_user "I'm getting $get\n"
+                       catch {
+                           exec usleep 1000000
+                       } {
+                       }
+                       exec /bin/nc -w 1 $host $trans_port  >$get
+                   }
+               } get_error ] != 0
+           } {
+            send_user "get $get error: $get_error\n"
+            send_user "get $get again\n"
+            send "\003\n"
+        }
+    }
+
+
+    foreach put $put_list {
+        set base_put [lindex [split $put /] end]
+
+        while { 
+               [ catch {
+                   expect "#" {
+                       send "rm $base_put 2>/dev/null; busybox nc -l -p $trans_port >$base_put\n"
+                   }
+                   expect -re nc.*\n {
+                       send_user "I'm sending $put\n"
+                       catch {
+                           exec usleep 1500000
+                           send_user "sleep wait complete, start sending\n"
+                       } {
+                       }
+                       exec /bin/nc -w 1 $host $trans_port <$put
+                       send "chmod +x $base_put\n"
+                   } 
+               } string ] !=0 
+           } {
+            send_user "send $put failed: $string\n"
+            send_user "send $put again\n"
+            send "\003\n"
+        }
+    }
+}
+
+send "sync\n"
+send "exit\n"
+
+expect eof {
+    exit
+}
+
+## Local Variables: **
+## mode: tcl **
+## End: **

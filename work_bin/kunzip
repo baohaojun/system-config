@@ -1,6 +1,0 @@
-#!/bin/bash
-
-DIR=`echo ~/knowledge/unarchived/"$1"|perl -npe 'chomp; s/[^\/a-zA-Z0-9.]/-/g'`
-mkdir $DIR -p
-
-unzip -d $DIR "$@"

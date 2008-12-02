@@ -1,1 +1,43 @@
-/home/bhj/work_bin/curl-pget
+#!/bin/bash
+
+TERMS=`getopt -o s:n: -- "$@"`
+eval set -- "$TERMS"
+
+while true; do
+    case "$1" in 
+	-n)
+	    THREADS="$2"
+	    shift;shift;
+	    ;;
+	-s)
+	    SIZE="$2"
+	    shift;shift;
+	    ;;
+	--) 
+	    shift 
+	    break
+	    ;;
+	*)
+	    echo "Internal error!"
+	    exit 1;
+	    ;;
+    esac
+done
+
+FILE=`echo "$@"|sed -e 's/.*\///; s/\?.*//'`
+
+for ((x=0; x<$THREADS; x++)) 
+    do 
+    ((y = $SIZE/$THREADS * $x)); 
+    ((z = $SIZE/$THREADS * ($x+1) -1));  
+    touch $FILE.part$x; 
+    temp_file_size=`stat -c %s\ %n $FILE.part$x|awk '{print $1}'`
+
+    if ((temp_file_size <= z-y)); 
+	then
+	((y = y+temp_file_size)); 
+	(curl "$@" -r $y-$z >> $FILE.part$x &); 
+    fi
+
+done
+

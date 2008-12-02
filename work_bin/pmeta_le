@@ -1,9 +1,0 @@
-#! /usr/bin/perl
-
-for (@ARGV) {
-	chop if (substr($_, -1) eq '.');
-
-
-	system("perl -e 'print $_'|iconv -f UTF-16LE -t utf8");
-#	system("echo '$_'");
-}
