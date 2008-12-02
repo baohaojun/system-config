@@ -1,8 +1,15 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
-(setq cygwin-mount-cygwin-bin-directory "d:/cygwin/bin")
-(setenv "PATH" "c:/Python25;F:/bin/win32;C:/TeXLive2007/dviout;C:/gs/gs8.54/bin;c:/gnuserv;d:/cygwin/bin;c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86;c:/Program Files/RSA Security/RSA SecurID Software Token/;c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/;c:/WINDOWS;c:/WINDOWS/System32/Wbem;c:/WINDOWS/system32;c:/java/jdk1.6/bin;c:/ntutils;c:/scripts;d:/tools/emacswin/bin;d:/tools/mplayer/MPlayer-1.0rc2;d:/profiles/bhj/bin;d:/cygwin/sbin;d:/cygwin/usr/X11R6/bin;d:/local/bin;d:/cygwin/usr/sbin")
+
+(if (file-exists-p "c:/cygwin/bin/bash.exe")
+    (setq cygwin-drive "c:")
+  (setq cygwin-drive "d:"))
+
+(setq cygwin-mount-cygwin-bin-directory (concat cygwin-drive "/cygwin/bin"))
+
+
+(setenv "PATH" (concat "c:/Python25;F:/bin/win32;C:/TeXLive2007/dviout;C:/gs/gs8.54/bin;c:/gnuserv;" (concat cygwin-drive "/cygwin/bin;") "c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86;c:/Program Files/RSA Security/RSA SecurID Software Token/;c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/;c:/WINDOWS;c:/WINDOWS/System32/Wbem;c:/WINDOWS/system32;c:/java/jdk1.6/bin;c:/ntutils;c:/scripts;d:/tools/emacswin/bin;d:/tools/mplayer/MPlayer-1.0rc2;c:/Documents and Settings/bhj/bin;" (concat cygwin-drive "/cygwin/sbin;") (concat cygwin-drive "/cygwin/usr/X11R6/bin;") "d:/local/bin;" (concat cygwin-drive "/cygwin/usr/sbin")))
 (setq load-path
-      (cons (expand-file-name "~/.emacs.d/lisp") load-path))
+      (cons (expand-file-name "~/.emacs_d/lisp") load-path))
 
 (if (eq emacs-major-version 23)
     ;; (progn 
@@ -42,7 +49,7 @@
 ;; (set-fontset-font (frame-parameter nil 'font)
 ;;                   'bopomofo (font-spec :family "Simsun-18030" :size 16))
 
-(add-to-list 'load-path "~/.emacs.d/weblogger")
+(add-to-list 'load-path "~/.emacs_d/weblogger")
 (add-to-list 'load-path "c:/gnuserv")
 
 
@@ -127,16 +134,10 @@
   (set-default-font "fontset-bdf"))
 
 (put 'cygwin-mount-name-hook-function 'safe-magic t)
-(global-set-key[(f2)](lambda()(interactive)(call-process "d:/cygwin/bin/bash" nil nil nil "ehelp" (current-word))))
-(global-set-key[(f3)](lambda()(interactive)(call-process "d:/cygwin/bin/bash" nil nil nil "ehelph2" (current-word))))
-
-
-
-(setq Info-directory-list '("d:/tools/emacswin/info/" "d:/local/info" "d:/cygwin/usr/info" "d:/cygwin/usr/share/info"))
+(global-set-key[(f2)](lambda()(interactive)(call-process "bash" nil nil nil "ehelp" (current-word))))
+(global-set-key[(f3)](lambda()(interactive)(call-process "bash" nil nil nil "ehelph2" (current-word))))
 
 (setq null-device "/dev/null")
-
-
 
 (grep-compute-defaults)
 (defun grep-default-command ()
@@ -183,7 +184,7 @@
 (load "preview-latex.el" nil t t)
 
 ; set unicode data file location. (used by what-cursor-position)
-(let ((x "~/.emacs.d/UnicodeData.txt"))
+(let ((x "~/.emacs_d/UnicodeData.txt"))
   (when (file-exists-p x)
     (setq describe-char-unicodedata-file x)))
 
@@ -290,7 +291,9 @@
   (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
   (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "K&R")
-  (setq c-basic-offset 4))
+  (setq tab-width 8)
+  (setq indent-tabs-mode t)
+  (setq c-basic-offset 8))
 
 (defun linux-c++-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
@@ -300,11 +303,15 @@
   (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
   (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "K&R")
-  (setq c-basic-offset 4))
+  (setq tab-width 8)
+  (setq indent-tabs-mode t)
+  (setq c-basic-offset 8))
 
-(setq auto-mode-alist (cons '(".*\\.[ch]$" . linux-c-mode)
+(setq auto-mode-alist (cons '(".*\\.[c]$" . linux-c-mode)
                             auto-mode-alist))
 (setq auto-mode-alist (cons '(".*\\.cpp$" . linux-c++-mode)
+                            auto-mode-alist))
+(setq auto-mode-alist (cons '(".*\\.h$" . linux-c++-mode)
                             auto-mode-alist))
 
 (when window-system
@@ -408,7 +415,8 @@
 
   (if (eq emacs-major-version 23)
       (progn
-	(prefer-coding-system 'chinese-gb18030-unix))
+	(prefer-coding-system 'chinese-gb18030-unix)
+        (set-default-coding-systems 'chinese-gb18030-unix))
     (prefer-coding-system 'gb2312)
     (set-default-coding-systems 'gb2312))
 
@@ -441,7 +449,7 @@
                     (progn     
                       (setq search-string
                             (read-string (format "search google with [%s]: " search-string) nil nil search-string))
-                      (call-process "d:/cygwin/bin/bash" nil nil nil "googleemacs.sh" search-string)
+                      (call-process "bash" nil nil nil "googleemacs.sh" search-string)
                       ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -480,6 +488,26 @@
   (interactive)
   (insert (car args)))
 
+(defun bhj-insert-pwd ()
+  (interactive)
+  (insert "\"")
+  (call-process "cygpath" nil t nil "-u" default-directory)
+  (backward-delete-char 1)
+  (insert "\""))
+
+;; (defun bhj-refactor-replace ()
+;;   (interactive)
+;;   (let ((first-call t))
+;;     (while t
+;;       (next-error)
+;;       (beginning-of-line)
+;;       (if first-call
+;;           (progn 
+;;             (call-interactively 'query-replace-regexp)
+;;             (setq first-call nil))
+;;         (call-interactively 'replace-regexp)))))
+      
+
 (defcustom bhj-clt-branch "dbg_zch68_a22242_ringtone-hx11i"
   "the cleartool branch to use for mkbranch")
 
@@ -487,17 +515,10 @@
   (interactive)
   (insert bhj-clt-branch))
 
-(defun bhj-insert-cygwin-default-directory ()
-  (interactive)
-  (insert "\"")
-  (call-process "cygpath" nil t nil "-u" default-directory) ; insert the current directory, and also a NL
-  (backward-delete-char 1) ; delete the NL
-  (insert "\""))
 
 (define-key minibuffer-local-shell-command-map [(control meta f)] 'bhj-clt-insert-file-name)
 (define-key minibuffer-local-shell-command-map [(control meta b )] 'bhj-clt-insert-branch)
-(define-key minibuffer-local-shell-command-map [(control meta d )] 'bhj-insert-cygwin-default-directory)
-
+(define-key minibuffer-local-shell-command-map [(control meta d )] 'bhj-insert-pwd)
 (fset 'bhj-clt-co-mkbranch
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217761 99 108 116 101 110 118 32 126 47 98 105 110 47 99 108 116 45 99 111 45 109 107 98 114 97 110 99 104 32 134217730 32 134217734 return] 0 "%d")) arg) (call-interactively 'bhj-reread-file)))
 
@@ -566,30 +587,17 @@
 (fset 'bhj-w3m-prev-page
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217790 S-tab S-tab return] 0 "%d")) arg)))
 
-;HOME [prev] [next]
+;this is for prog win mfc [prev] [next]
 (fset 'bhj-w3m-prev-page
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab return] 0 "%d")) arg)))
+
 (fset 'bhj-w3m-next-page
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab tab return] 0 "%d")) arg)))
 
 
 
-
-(fset 'bhj-shell-interrupt
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([17 3 return] 0 "%d")) arg)))
-
-(fset 'bhj-shell-stop
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([17 26 return] 0 "%d")) arg)))
-
-(fset 'bhj-shell-eof
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([17 4 return] 0 "%d")) arg)))
-
 (fset 'bhj-isearch-yank
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("\371" 0 "%d")) arg)))
-
-(fset 'bhj-grep-find-file
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 98 120 120 120 return 121 24 104 23 24 98 42 103 114 101 112 return 24 104 134217847 24 98 120 120 120 return 25 134217788 19 34 47 13 2 67108896 19 58 47 134217847 24 104 21 134217852 103 114 101 112 32 58 46 42 58 return 134217790 134217788 24 104 21 134217852 103 114 101 112 32 45 118 32 103 114 101 112 32 45 105 return 134217790 134217788 24 104 21 134217852 115 101 100 32 M-backspace 112 101 114 108 32 45 110 112 101 32 39 115 47 58 46 42 47 47 39 return 25 134217849 67108911 67108911 24 104 201326629 94 return 40 102 105 110 100 45 102 105 108 101 32 34 25 return 33 1 11 backspace 24 104 21 201326629 36 return 34 41 return 24 104 21 201326629 36 return 34 41 return 24 104 201326629 return 33] 0 "%d")) arg)))
-
 
 (defun bhj-isearch-from-bod ()
   (interactive)
@@ -636,7 +644,10 @@
             (local-set-key [(down)] 'next-line)
             (local-set-key [(up)] 'previous-line)
             (local-set-key [(n)] 'next-line)
-            (local-set-key [(p)] 'previous-line)))
+            (local-set-key [(p)] 'previous-line)
+            (setq w3m-fill-column 100)
+            (text-scale-increase 2)
+            ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (add-hook 'gnus-article-mode-hook                    ;;
@@ -653,23 +664,46 @@
             (local-set-key [(control shift c)] 'bhj-lqqm-pic-collect)
             (local-set-key [(control shift v)] 'bhj-lqqm-pic-view)))
 
-(defun bhj-insert-mailaddr ()
-  (interactive)
-  (let ((default-directory "~/.mail.addr/"))
-    (call-interactively 'ido-insert-file)
-    (end-of-line)))
+;; (defun bhj-insert-mailaddr ()
+;;   (interactive)
+;;   (let ((default-directory "~/.mail.addr/"))
+;;     (call-interactively 'ido-insert-file)
+;;     (end-of-line)))
 
-(add-hook 'message-mode-hook
-          (lambda ()
-            (local-set-key [(control x) (t)] 'bhj-insert-mailaddr)
-            (local-set-key [(control x) (c)] 'bhj-insert-mailaddr)))
+;; (add-hook 'message-mode-hook
+;;           (lambda ()
+;;             (local-set-key [(control x) (t)] 'bhj-insert-mailaddr)
+;;             (local-set-key [(control x) (c)] 'bhj-insert-mailaddr)))
+(setq exec-path 
+      (append 
+       '("c:/Python25" 
+         "F:/bin/win32" 
+         "C:/TeXLive2007/dviout" 
+         "C:/gs/gs8.54/bin" 
+         "c:/gnuserv") 
+       (mapcar
+        (lambda (item) (concat cygwin-drive item)) 
+        '("/cygwin/bin" "/cygwin/sbin" "/cygwin/usr/X11R6/bin" "/cygwin/usr/sbin")) 
+       '("c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86" 
+         "c:/Program Files/RSA Security/RSA SecurID Software Token/" 
+         "c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/" 
+         "c:/WINDOWS" 
+         "c:/WINDOWS/System32/Wbem" 
+         "c:/WINDOWS/system32" 
+         "c:/java/jdk1.6/bin" 
+         "c:/ntutils" 
+         "c:/scripts" 
+         "d:/tools/emacswin/bin" 
+         "d:/tools/mplayer/MPlayer-1.0rc2" 
+         "c:/Documents and Settings/bhj/bin"  
+         "d:/local/bin")))
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(Info-additional-directory-list (quote ("d:/tools/emacswin/info/" "d:/local/share/info")))
+ '(Info-additional-directory-list (quote ("d:/tools/emacswin/info/" "d:/local/share/info" (concat cygwin-drive "/cygwin/usr/share/info"))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bhj-clt-branch "dbg_zch68_a22242_soundmgr")
  '(bhj-grep-default-directory (quote default-directory))
@@ -686,14 +720,12 @@
  '(ecb-new-ecb-frame nil)
  '(ecb-options-version "2.32")
  '(ecb-ping-program "false")
- '(ecb-tar-setup (quote ("d:/cygwin/bin/tar.exe" . cygwin)))
  '(ecb-tip-of-the-day nil)
  '(ecb-tree-buffer-style (quote image))
- '(ecb-wget-setup (quote ("d:/cygwin/bin/wget.exe" . cygwin)))
  '(ecomplete-database-file-coding-system (quote gb18030))
  '(emms-player-mplayer-command-name "mplayer.exe")
  '(emms-player-mplayer-parameters (quote ("-slave" "-quiet" "-really-quiet" "-vo" "null")))
- '(exec-path (quote ("c:/Python25" "F:/bin/win32" "C:/TeXLive2007/dviout" "C:/gs/gs8.54/bin" "c:/gnuserv" "d:/cygwin/bin" "c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86" "c:/Program Files/RSA Security/RSA SecurID Software Token/" "c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/" "c:/WINDOWS" "c:/WINDOWS/System32/Wbem" "c:/WINDOWS/system32" "c:/java/jdk1.6/bin" "c:/ntutils" "c:/scripts" "d:/tools/emacswin/bin" "d:/tools/mplayer/MPlayer-1.0rc2" "d:/profiles/bhj/bin" "d:/cygwin/sbin" "d:/cygwin/usr/X11R6/bin" "d:/local/bin" "d:/cygwin/usr/sbin")))
+
  '(gdb-find-source-frame t)
  '(gdb-same-frame t)
  '(gdb-show-main t)
@@ -706,7 +738,9 @@
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))
  '(locate-command "locateEmacs.exe")
+ '(mail-sources (quote ((file :path (concat cygwin-drive "/cygwin/var/spool/mail/bhj")))))
  '(message-mail-alias-type (quote ecomplete))
+ '(mm-text-html-renderer (quote w3m))
  '(muse-html-charset-default "chinese-gb18030")
  '(muse-html-style-sheet "<style type=\"text/css\">
 BODY {
@@ -819,7 +853,7 @@ pre {
       white-space: pre;
       background-color: snow;
       color: #006400 ;
-      font-family : Luxi Mono, Luxi Sans, Monospace, sans-serif, \2010\2079\2010\2102\2010\2100\2010\2122;    
+      font-family : Luxi Mono, Luxi Sans, Monospace, sans-serif;
       font-size: 90%;
       }
 
@@ -953,6 +987,7 @@ div.tl{
  '(shell-file-name "/bin/bash")
  '(show-paren-mode t nil (paren))
  '(show-paren-style (quote parenthesis))
+ '(smtpmail-auth-credentials (quote (("smtp.bizmail.yahoo.com" 465 "haojun.bao@borqs.com" "TingWoAiNi!"))))
  '(text-mode-hook (quote (text-mode-hook-identify)))
  '(tooltip-mode nil)
  '(tooltip-use-echo-area t)
@@ -963,13 +998,14 @@ div.tl{
  '(user-mail-address "a22242@motorola.com")
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
+ '(w3m-bookmark-file "c:/Documents and Settings/bhj/.w3m_bookmark.html")
  '(w3m-charset-coding-system-alist (quote ((x-sjis . shift_jis) (x-shift_jis . shift_jis) (x-shift-jis . shift_jis) (x-euc-jp . euc-japan) (shift-jis . shift_jis) (x-unknown . undecided) (unknown . undecided) (windows-874 . tis-620) (iso-2022-jp-3 . iso-2022-7bit-ss2) (us_ascii . raw-text) (gb2312 . gb18030))))
  '(w3m-default-display-inline-images t)
  '(w3m-dirlist-cgi-program "~/bin/w3m-dirlist.exe")
  '(w3m-toggle-inline-images-permanently nil)
  '(weblogger-config-alist (quote (("yo2.cn" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")) ("bhj3" ("user" . "admin") ("server-url" . "http://bhj3/blog/xmlrpc.php") ("weblog" . "1")) ("default" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")))))
  '(woman-file-compression-regexp "\\.\\(g?z\\|bz2\\)\\(.lnk\\)?\\'")
- '(woman-manpath (quote ("d:/cygwin/usr/man" "d:/cygwin/usr/share/man" "d:/local/man")))
+ '(woman-manpath (quote ((concat cygwin-drive "/cygwin/usr/man") (concat cygwin-drive "/cygwin/usr/share/man") "d:/local/man")))
  '(woman-use-own-frame nil))
 
 
@@ -1036,7 +1072,7 @@ div.tl{
         (interactive)
         (let ((bhj-buffer ,(format "*bhj-%s-%s*" cmd x))
               (bhj-buffer-term ,(format "bhj-%s-%s" cmd x))
-              (default-directory "d:/profiles/bhj/"))
+              (default-directory "c:/Documents and Settings/bhj/"))
           (if (get-buffer-process (get-buffer bhj-buffer))
               (switch-to-buffer bhj-buffer)
             (progn

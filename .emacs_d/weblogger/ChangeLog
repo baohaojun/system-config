@@ -1,0 +1,105 @@
+2007-12-27  Mark A. Hershberger  <mah@everybody.org>
+
+	* Add changes from Wickersheimer Jeremy <jwickers@gmail.com> to
+	support categories, etc.
+
+	* xml-rpc.el (xml-rpc-value-datep): New function to determine if a
+	string is an ISO date.
+	(xml-rpc-value-to-xml-list): Add support for vector inputs.  Add
+	support for strings that are really dates.
+
+	* weblogger.el (weblogger-category-list)
+	(weblogger-category-ring): New variables to support categories.
+	(weblogger-save-entry): No longer publish by default.
+	(weblogger-publish-entry): New function to publish entry.
+	(weblogger-api-list-categories)
+	(weblogger-api-blogger-list-categories)
+	(weblogger-api-meta-list-categories): New functions to support
+	categories.
+	(weblogger-response-to-struct): Add categories.
+	(weblogger-struct-to-request): Add categories.
+	(weblogger-fetch-entries): Initialize categories variables.
+	(weblogger-determine-capabilities): Add categories test.
+	(weblogger-entry-buffer-to-struct): Add support for categories vector.
+
+2007-11-23  Mark A. Hershberger  <mah@everybody.org>
+
+	* xml-rpc.el (xml-rpc-value-structp, xml-rpc-value-to-xml-list):
+	Apply patch from Vitaly Mayatskikh <vmayatsk@redhat.com> to add
+	support for more complex struct types.
+
+2007-03-23  Mark A. Hershberger  <mah@everybody.org>
+
+	* xml-rpc.el: Add xml-rpc patch from trac-wiki-mode
+	(http://www.meadowy.org/~gotoh/projects/trac-wiki/) to add support
+	for plain (non-encoded) Unicode strings.
+
+2006-03-06  Mark A. Hershberger  <mah@everybody.org>
+
+	* ChangeLog, weblogger.el, xml-rpc.el: Update with my changes.
+
+2006-03-06  Mark A. Hershberger  <mah@everybody.org>
+
+	* weblogger.el: Fix up comments on setting up.
+
+	* xml-rpc.el (xml-rpc-request-process-buffer): Make regex less
+	picky to avoid some problems with CVS Emacs.
+
+2005-11-11  Mark A. Hershberger  <mah@everybody.org>
+
+	* xml-rpc.el (xml-rpc-xml-list-to-value): Take away dependency on
+	rfc2047.el.
+	(xml-rpc-base64-decode-unicode): New variable.
+
+2005-10-16  Mark A. Hershberger  <mah@everybody.org>
+
+	* weblogger.el: Update copyright.
+	(weblogger-blogger-firstline-title): New boolean customizable.
+	Allows the user to put seamlessly put titles in the first line of
+	posts.  Defaults to false.
+	(weblogger-start-edit-entry-hook): New hook to run.  Default
+	action is to delete ^M characters.
+	(weblogger-start-entry): Allow new entries to be editted.
+	ring-index shouldn’t be nil.  Also, no need to erase-buffer since
+	that is done in weblogger-edit-entry.
+	(weblogger-entry-setup-headers): Pass entry in with flag for
+	setting the body-line.  Substantial rewrite to simplify the code
+	and reduce the number of temp variables.
+	(weblogger-save-entry): Update headers after creating a new entry.
+	(weblogger-api-blogger-get-content): New function.  Get content
+	— adding “<title>” if necessary.
+	(weblogger-api-blogger-send-edits): Remove references to globals.
+	(weblogger-api-new-entry): Add entry-id of newly-posted entry to
+	ring-ref data.
+	(weblogger-api-blogger-new-entry, weblogger-api-meta-new-entry):
+	Simplify.  Move duplicated functionality to weblogger-api-new-entry.
+	(weblogger-edit-entry): Add hook runner.
+	(weblogger-response-to-struct): Convert entries with title as
+	first line to the struct we want.
+
+	* xml-rpc.el: Update copyright.
+	(xml-rpc-response-errorp): make safe.
+
+2005-10-11  Mark A. Hershberger  <mah@everybody.org>
+
+	* xml-rpc.el (xml-rpc-xml-list-to-value): Handle dateTime.iso8601.
+	(xml-rpc-request-process-buffer): Handle <methodResponse> without
+	XML PI.
+
+	* weblogger.el (weblogger-no-capabilities): Update capability list.
+	(weblogger-entry-setup-headers): Add keyword/category handing
+	attempt using patch from http://blogs.openaether.org/?p=126.
+	(weblogger-entry-buffer-to-struct): s/category/categories/;
+
+2005-05-26  Mark A. Hershberger  <mah@everybody.org>
+
+	* xml-rpc.el (xml-rpc-xml-list-to-value): Use version of
+	rfc2047-decode that is in emacs21.
+
+	* weblogger.el: More wishful thinking in the comments re:
+	livejournal support.
+	(weblogger-entry-setup-headers): Go to end of headers before
+	inserting the message seperator.
+	(weblogger-response-to-struct): Use assoc-ignore-case so we get
+	proper matches.
+
