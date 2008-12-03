@@ -710,7 +710,7 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(Info-additional-directory-list (quote ("d:/tools/emacswin/info/" "d:/local/share/info" (concat cygwin-drive "/cygwin/usr/share/info"))))
+ '(Info-additional-directory-list (list "d:/tools/emacswin/info/" "d:/local/share/info" (concat cygwin-drive "/cygwin/usr/share/info")))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bhj-clt-branch "dbg_zch68_a22242_soundmgr")
  '(bhj-grep-default-directory (quote default-directory))
