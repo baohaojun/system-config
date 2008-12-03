@@ -461,6 +461,13 @@
 ;;       ad-do-it                      ;;
 ;;     (ad-activate-regexp "tramp")))  ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(standard-display-ascii ?\221 "\`")
+(standard-display-ascii ?\222 "\'")
+(standard-display-ascii ?\223 "\"")
+(standard-display-ascii ?\224 "\"")
+(standard-display-ascii ?\227 "\-")
+(standard-display-ascii ?\225 "\*")
                                 
 (defun bhj-next-error ()
   (interactive)

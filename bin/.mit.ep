@@ -1,1 +1,55 @@
-/home/a22242/work_bin/.mit.ep
+#! /usr/bin/expect -f
+
+set timeout 60
+
+set host [lindex $argv 0]
+spawn telnet $host
+expect {
+    login: {
+	send "root\n"
+	expect "#" {
+	    send "exec /bin/bash\n"
+	    send "mkdir -p /net/bjsc09/sambamm/MM_Subsystem/test_case/EZX_test_case; rm -rf /home/media; ln -sf /net/bjsc09/sambamm/MM_Subsystem/test_case/EZX_test_case /home/media; mount 10.193.53.25:/home/a22242/project/media /net/bjsc09/sambamm/MM_Subsystem/test_case/EZX_test_case -o rsize=4096,wsize=4096,nolock\n"
+	    send "mkdir -p /home/ftp/pub; ln -s /home/media /home/ftp/pub\n"
+	    send "# cd /phx/bin/; ./jam -repeat -url http://10.193.53.23:8080/test/getNextApp -vm ./runAgent.sh\n"
+	    send "#(for (( x=0; x<100; x++ )); do echo playback_open -f /home/mme_test/ok.mp4; echo playback_close; echo mem_usage; done)>pipe\n"
+	    send "#cd /home/mme_test; ./engtest -l 5000 -p 0 >/dev/null 2>&1\n"
+	    send "#cd /home/mme_test; gdbserver :3000 ./bin/engtest -l 5000 -p 0 \n"
+	    send "#/etc/init.d/ros2linuxload.sh restart; /etc/init.d/audio_manager.sh restart; /etc/init.d/mme_managerload.sh restart; ps|grep mme_manager\n"
+	    send "#(for (( x=0; x<100; x++ )); do if (( x%2 )); then echo playback_forward -v %d.3 -f 0; else echo playback_rewind -v %d.3 -f 2; fi; echo playback_getattr curr; echo sleep 1; done; echo open_rc pipe; )\n"
+	    send "export HISTFILE=/home/.bash_history\n"
+	    send "export HISTIGNORE=\'&:#:bind\'\n"
+	    send "exec bash\n"
+	    send "bind '\"\\e\[1\~\": beginning-of-line'\n"
+            send "bind '\"\\e\[4\~\": end-of-line'\n"
+	    send "bind '\"\\e\[3\~\": delete-char'\n"
+	    send "bind '\"\\eOc\": forward-word'\n"
+	    send "bind '\"\\eOd\": backward-word'\n"
+	    send "bind 'set completion-ignore-case on'\n"
+	    send "alias l=\"ls -l\"\n"
+	    send "alias cd=\"cd -P\"\n"
+	    send "cd /home/mme_test\n"
+	    send "export PATH=\$PATH:/home/mme_test/bin\n"
+	    send "export HELIX_LIBS=/phx/lib/helixlibs/\n"
+	    send "export HOME=/home/mme_test\n"
+	    send "export PS1=\'\\n\[ \\u@\\h \\w \]\\n\\\$\'\n"
+	}
+	stty echo
+	interact
+    } incorrect {
+	send_user "invalid password or account\n"
+	exit
+    } timeout {
+	send_user "connection to $host timed out\n"
+	exit
+    } eof {
+	send_user \
+	    "connection to host failed: $expect_out(buffer)"
+	exit
+    } 
+}
+
+
+## Local Variables: **
+## mode: tcl **
+## End: **

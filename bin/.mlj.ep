@@ -1,1 +1,189 @@
-/home/a22242/work_bin/.mlj.ep
+#! /usr/bin/expect -f
+
+set timeout 60
+
+set login_host_port a22242@bhj1#23
+
+set login a22242
+set host bhj1
+
+set port 23
+
+set trans_port 22242
+
+if {[string length [array get env "LOGIN_HOST_PORT"] ] >0} {
+    set login_host_port $env(LOGIN_HOST_PORT)
+}
+
+if {[llength $argv]} {
+    set login_host_port [lindex $argv 0]
+    set argv [lrange $argv 1 end]
+}
+
+if {[string match "*@*" $login_host_port]} {
+    set login $login_host_port
+    regsub "@.*" $login "" login
+    regsub ".*@" $login_host_port "" login_host_port
+}
+
+if {[string match "*:*" $login_host_port]} {
+    regsub ":.*" $login_host_port "" login_host_port
+}
+
+send_user "login_host_port is $login_host_port"
+
+if {[string match "*#*" $login_host_port]} {
+    regsub ".*#" $login_host_port "" port
+    regsub "#.*" $login_host_port "" host
+    set trans_port [expr 22242+23-$port]
+}
+
+while {1} {
+    catch {
+        spawn telnet $host $port
+        expect {
+            login: { 
+                send "root\n"
+                send "stty cols 178 rows 50\n"
+                send ". /etc/initservices/services/ezxenv.sh\n"
+                send "alias l=\"ls -l\"\n"
+                send "alias ls=\"ls -F\"\n"
+                send "alias cd=\"cd -P\"\n"
+                send "export PATH=/mnt/msc_int0:\"\$PATH\"\n"
+                send "export HOME=/mnt/msc_int0/\n"
+                send "cd\n"
+                send "PS1=\'\\n\[ \\u@\\h \\w \]\\n\\\$\'\n"
+                send "export LD_LIBRARY_PATH=/mnt/msc_int0:\$LD_LIBRARY_PATH\n"
+                send "export HELIX_LIBS=/mnt/msc_int0/helix\n"
+            }
+        }
+        stty echo
+
+        interact {
+            -reset -re "\033OP|\033\\\[11~|\033\\\[\\\[A" {
+                exec kill -STOP [pid]
+            }
+            -re "\0330P|\033\\\[13~" {
+                send "export PSsave=\"\$PS1\";export PS1=#\n"
+                send_user "Please input the file name you want to put on host: "
+                gets stdin get_list
+                send_user "get_list is $get_list"
+                set true_get_list [list]
+                foreach get $get_list {
+                    if {[string match *\\** $get]} {
+                        send_user "string contains a *\n"
+                        set base_get [lindex [split $get /] end]
+                        send "for x in $base_get; do echo \$x; done\n"
+                        expect -re "for x\[^\n\]*\n" {}
+                        expect -re "(\[^#\]*)#" {
+                            send_user "hello split [string map {\r\n / \n /} $expect_out(1,string)]\n"
+                            lappend true_get_list [join [split [string map {"\r\n" / "\n" /} $expect_out(1,string)] /] ]
+                        }
+
+                        while {0} {
+                            expect {
+                                -re "^(\[^\n\r# \]+)\[\r\n\]*" {
+                                    lappend true_get_list $expect_out(1,string)
+                                }
+                                -re "#" {break;}
+
+                            }
+                        }
+                    } else {
+                        lappend true_get_list $get
+                    }
+                }
+                
+                send "\003\n"
+                foreach get [join $true_get_list] {
+                    
+                    while {
+                           [ catch {
+                               expect "#" {
+                                   send "busybox nc -l -p $trans_port <$get\n"
+                               }
+                               expect -re "busybox nc.*\n" {
+                                   send_user "I'm getting $get\n"
+                                   exec /bin/nc -w 1 $host $trans_port  >$get
+                               }
+                           } get_error ] != 0
+                       } {
+                        send_user "get $get error: $get_error\n"
+                        send_user "get $get again\n"
+                        send "\003\n"
+                        break;
+                    }
+                }
+                send "export PS1=\"\$PSsave\"\n"
+            }
+            -re "\033OP|\033\\\[12~" {
+                send "\003\nclear\n"
+                send "mount /dev/loop/0 /mnt/msc_int0/ -o remount\n"
+                send "cd /mnt/msc_int0/\n"
+                send "ls -dl .bashrc\n"
+                expect {
+                    "No such file" {
+                        send "cat >.bashrc\n"
+                        send "bind '\"\\e\[1\~\": beginning-of-line'\n"
+                        send "bind '\"\\e\[4\~\": end-of-line'\n"
+                        send "bind '\"\\e\[3\~\": delete-char'\n"
+                        send "bind '\"\\eOc\": forward-word'\n"
+                        send "bind '\"\\eOd\": backward-word'\n"
+                        send "bind '\"\\eO1;5C\": forward-word'\n"
+                        send "bind '\"\\eO1;5D\": backward-word'\n"
+                        send "bind 'set completion-ignore-case on'\n"
+                        send "bind '\"\\C-l\": clear-screen'\n"    
+
+                        send "alias l=\"ls -l\"\n"
+                        send "alias ls=\"ls -F\"\n"
+                        send "alias cd=\"cd -P\"\n"
+
+                        send ". /etc/initservices/services/ezxenv.sh\n"
+                        send "export LD_LIBRARY_PATH=/mnt/msc_int0/:/mnt/msc_int0:\$LD_LIBRARY_PATH\n"
+                        send "export HELIX_LIBS=/mnt/msc_int0/helix\n"
+                        send "mkdir -p /mnt/msc_int0/helix&\n"
+                        send "alias gsttest=/usr/SYSqtapp/mmapi/gsttest\n"
+                        send "export PROMPT_COMMAND='history -a'\n"
+                        send "export HISTSIZE=2000\n"
+                        send " ln -sf `pwd`/libezx_mpsdk_ringtone.so /mnt/msc_int0/libezx_mpsdk_ringtone.so.1&\n"
+                        send " ln -sf `pwd`/libezx_mpsdk_ringtone.so /mnt/msc_int0/libezx_mpsdk_ringtone.so.1.0&\n"
+                        send " ln -sf `pwd`/libezx_mpsdk_ringtone.so /mnt/msc_int0/libezx_mpsdk_ringtone.so.1.0.0&\n"
+
+                        send " ln -s /mnt/host/home/a22242/project/EZX_test_case/audio ~&\n"
+                        send "function vrtest() \{\n"
+                        send "if \[\[ \$\{1:0:1\} == / \]\]; then\n"
+                        send "/usr/SYSqtapp/mmapi/gsttest  --url tone://\"\$1\"\nelse\n"
+                        send "/usr/SYSqtapp/mmapi/gsttest  --url tone://`pwd`/\"\$1\"\nfi\n"
+                        send "\}\n"
+                        send "function hhtest() \{\n"
+                        send "if \[\[ \$\{1:0:1\} == / \]\]; then\n"
+                        send "/usr/bin/htest file://\"\$1\"\nelse\n"
+                        send "/usr/bin/htest file://`pwd`/\"\$1\"\nfi\n"
+                        send "\}\n"
+                        send "alias rtest='vrtest >/dev/null'\n"
+                        send "/mnt/host/usr/bin/tty\n"
+                        send "export PS1=\'\\n\[ \\u@\\h \\w \]\\n\\\$\'\n"
+                        send "\004"
+
+                    } "1 root" {
+                    }
+                }
+                send "if ! test -f ./bash; then cp /mnt/host/bin/bash . ; fi;\n"
+                send "export HOME=/mnt/msc_int0/\n"
+
+                send "export HISTFILE=/mnt/msc_int0/.bash_history\n"
+                send "touch \$HISTFILE\n"
+                send "export HISTIGNORE=\'&:#:bind\'\n"
+                send "chmod +x ./bash\n"
+                send "exec ./bash\n"
+
+            }
+
+        }
+    }
+    sleep 1
+}
+
+# Local Variables: **
+# mode: tcl **
+# End: **

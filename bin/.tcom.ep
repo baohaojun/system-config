@@ -1,1 +1,65 @@
-/home/a22242/work_bin/.tcom.ep
+#! /usr/bin/expect -f
+
+set timeout 60
+
+spawn telnet [lindex $argv 0]
+expect {
+    login: { 
+	send "root\n"
+    }
+}
+stty echo
+
+interact {
+    -re "\033OP|\033\\\[11~" {
+	send "\003\nclear\n"
+        send "/mmc/mmca1/mme_test/bin/net.sh\n"
+	send "exec /bin/bash\n"
+	send "# cd /phx/bin/; ./jam -repeat -url http://10.193.53.23:8080/test/getNextApp -vm ./runAgent.sh\n"
+	send "#(for (( x=0; x<100; x++ )); do echo playback_open -f /home/mme_test/ok.mp4; echo playback_close; echo mem_usage; done)>pipe\n"
+	send "#cd /home/mme_test; ./engtest -l 5000 -p 0 >/dev/null 2>&1\n"
+	send "#cd /home/mme_test; gdbserver :3000 ./bin/engtest -l 5000 -p 0 \n"
+	send "#/etc/init.d/ros2linuxload.sh restart; /etc/init.d/audio_manager.sh restart; /etc/init.d/mme_managerload.sh restart; ps|grep mme_manager\n"
+	send "#(for (( x=0; x<100; x++ )); do if (( x%2 )); then echo playback_forward -v %d.3 -f 0; else echo playback_rewind -v %d.3 -f 2; fi; echo playback_getattr curr; echo sleep 1; done; echo open_rc pipe; )\n"
+	send "export HISTFILE=/home/.bash_history\n"
+	send "export HISTIGNORE=\'&:#:bind\'\n"
+	send "exec bash\n"
+	send "bind '\"\\e\[1\~\": beginning-of-line'\n"
+	send "bind '\"\\e\[4\~\": end-of-line'\n"
+	send "bind '\"\\e\[3\~\": delete-char'\n"
+	send "bind '\"\\eOc\": forward-word'\n"
+	send "bind '\"\\eOd\": backward-word'\n"
+        send "bind '\"\\eO1;5C\": forward-word'\n"
+        send "bind '\"\\eO1;5D\": backward-word'\n"
+
+	send "bind 'set completion-ignore-case on'\n"
+	send "bind '\"\\C-l\": clear-screen'\n"    
+	send "alias l=\"ls -l\"\n"
+	send "alias ls=\"ls -F\"\n"
+	send "alias cd=\"cd -P\"\n"
+	send {if ! [[ -d /home/mme_test ]]; then ln -sf /mmc/mmca1/mme_test /home/; fi}
+        send "\n"
+	send "cd /home/mme_test\n"
+	send "export PATH=\$PATH:/home/mme_test/bin\n"
+	send "export HELIX_LIBS=/phx/lib/helixlibs/\n"
+	send "export HOME=/home/mme_test\n"
+        send "export MALLOC_TRACE=/home/mme_test/mtrace.log\n"
+	send "export PS1=\'\\n\[ \\u@\\h \\w \]\\n\\\$\'\n"
+        send "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/home/mme_test/lib\n"
+        send "export TAGIT='-t 1'\n"
+        send "ulimit -c unlimited\n"
+        send "rm /home/mme_test\n"
+        send "ln -s /home/a22242/test/mme_test /home\n"
+        send "cd\n"
+	send "\#killall mme_manager; gdbserver :3000 /home/a22242/root/phx/sbin/mme_manager\n"
+	send "\#killall audio_manager_daemon; /home/a22242/root/phx/sbin/audio_manager_daemon >/dev/null 2>&1 &\n"
+	send "\#rm /home/logger/logs/*; killall mme_manager; /home/a22242/root/phx/sbin/mme_manager\n"
+
+    } -re "\033OQ|\033\\\[12~" {
+        send "rm /home/mme_test\n"
+        send "ln -s /home/a22242/test/mme_test /home\n"
+    } \033OR {
+
+    }
+
+}
