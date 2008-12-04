@@ -40,24 +40,19 @@ if {[string match "*#*" $login_host_port]} {
 
 while {1} {
     catch {
-        spawn telnet $host $port
-        expect {
-            login: { 
+        spawn telnet phone
+        expect -re "login:|authenticity|assword:|#" {
+            if ([string eq "$expect_out(0,string)" "authenticity"]) {
+                send "yes\n"
+
+            } elseif ([string eq "$expect_out(0,string)" "login:"]) {
                 send "root\n"
-                send "stty cols 178 rows 50\n"
-                send ". /etc/initservices/services/ezxenv.sh\n"
+            } elseif ([string eq "$expect_out(0,string)" "#"]) {
+                send "ash\n"
                 send "alias l=\"ls -l\"\n"
-                send "alias ls=\"ls -F\"\n"
                 send "alias cd=\"cd -P\"\n"
-                send "export PATH=/mnt/msc_int0:\"\$PATH\"\n"
-                send "export HOME=/mnt/msc_int0/\n"
-                send "cd\n"
-                send "PS1=\'\\n\[ \\u@\\h \\w \]\\n\\\$\'\n"
-                send "export LD_LIBRARY_PATH=/mnt/msc_int0:\$LD_LIBRARY_PATH\n"
-                send "export HELIX_LIBS=/mnt/msc_int0/helix\n"
             }
         }
-        stty echo
 
         interact {
             -reset -re "\033OP|\033\\\[11~|\033\\\[\\\[A" {

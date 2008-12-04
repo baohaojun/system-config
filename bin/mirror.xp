@@ -48,13 +48,14 @@ while {[llength $argv]} {
 
 
 spawn telnet $host $login_port
-expect -re "login:|authenticity|assword:" {
+expect -re "login:|authenticity|assword:|#" {
     if ([string eq "$expect_out(0,string)" "authenticity"]) {
 	send "yes\n"
 
     } elseif ([string eq "$expect_out(0,string)" "login:"]) {
         send "root\n"
-        
+    } elseif ([string eq "$expect_out(0,string)" "#"]) {
+        send "ash\n"
     }
 }
 
@@ -100,9 +101,9 @@ expect -re "#" {
         while {
                [ catch {
                    expect "#" {
-                       send "busybox nc -l -p $trans_port <$get\n"
+                       send "nc -l -p $trans_port <$get\n"
                    }
-                   expect -re "busybox nc.*\n" {
+                   expect -re "nc.*\n" {
                        send_user "I'm getting $get\n"
                        catch {
                            exec usleep 1000000
@@ -125,7 +126,7 @@ expect -re "#" {
         while { 
                [ catch {
                    expect "#" {
-                       send "rm $base_put 2>/dev/null; busybox nc -l -p $trans_port >$base_put\n"
+                       send "rm $base_put 2>/dev/null; nc -l -p $trans_port >$base_put\n"
                    }
                    expect -re nc.*\n {
                        send_user "I'm sending $put\n"
