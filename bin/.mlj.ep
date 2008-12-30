@@ -95,9 +95,9 @@ while {1} {
                     while {
                            [ catch {
                                expect "#" {
-                                   send "busybox nc -l -p $trans_port <$get\n"
+                                   send "nc -l -p $trans_port <$get\n"
                                }
-                               expect -re "busybox nc.*\n" {
+                               expect -re "nc.*\n" {
                                    send_user "I'm getting $get\n"
                                    exec /bin/nc -w 1 $host $trans_port  >$get
                                }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PATH=/c/WINDOWS/system32:/c/WINDOWS:.
+export PATH=.:/c/WINDOWS/system32:/c/WINDOWS:.
 unset  TEXMFCNF   TEXMFTEMP  TEXMFVAR PERL5LIB TLROOT
 
 if [[ $# == 0 ]]; then

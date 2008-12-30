@@ -109,7 +109,7 @@ expect -re "#" {
                            exec usleep 1000000
                        } {
                        }
-                       exec /bin/nc -w 1 $host $trans_port  >$get
+                       exec /bin/nc -w 1 $host $trans_port  >$get </dev/null
                    }
                } get_error ] != 0
            } {

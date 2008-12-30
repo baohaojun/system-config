@@ -1,3 +1,3 @@
 #!/bin/bash
 cd ~/bin/
-/usr/bin/run ./FuzzyClock.exe&
+cygstart --hide ./FuzzyClock.exe
