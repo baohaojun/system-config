@@ -1,4 +1,4 @@
 #!/bin/bash
 export PATH=/usr/bin:/bin:"$PATH"
-findexec -p dexplore -F 1 -t visual
+~/bin/findexec -p dexplore -F 1 -t visual
 echo "$@" | nc -w 1 localhost 3836

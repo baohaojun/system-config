@@ -144,8 +144,8 @@
   (set-default-font "fontset-bdf"))
 
 (put 'cygwin-mount-name-hook-function 'safe-magic t)
-(global-set-key[(f2)](lambda()(interactive)(call-process "bash" nil nil nil "ehelp" (current-word))))
-(global-set-key[(f3)](lambda()(interactive)(call-process "bash" nil nil nil "ehelph2" (current-word))))
+(global-set-key[(f2)](lambda()(interactive)(call-process "bash" nil nil nil "~/bin/ehelp" (current-word))))
+(global-set-key[(f3)](lambda()(interactive)(call-process "bash" nil nil nil "~/bin/ehelph2" (current-word))))
 
 (setq null-device "/dev/null")
 
@@ -478,6 +478,7 @@
 (standard-display-ascii ?\224 "\"")
 (standard-display-ascii ?\227 "\-")
 (standard-display-ascii ?\225 "\*")
+
                                 
 (defun bhj-next-error ()
   (interactive)
