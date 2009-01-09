@@ -171,7 +171,7 @@ alias pdfnup='cygexec pdfnup'
 alias svngdiff='svn diff --diff-cmd svntkdiff'
 
 function llocate() {
-    locateEmacs.sh "$@"|sed -e 's/^.://'
+    locateEmacs.sh "$@"|sed -e 's/^.:/"/; s/$/"/'
 }
 alias locate=llocate
 

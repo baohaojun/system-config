@@ -7,7 +7,7 @@
 (setq cygwin-mount-cygwin-bin-directory (concat cygwin-drive "/cygwin/bin"))
 
 
-(setenv "PATH" (concat "c:/Python25;F:/bin/win32;C:/TeXLive2007/dviout;C:/gs/gs8.54/bin;c:/gnuserv;" (concat cygwin-drive "/cygwin/bin;") "c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86;c:/Program Files/RSA Security/RSA SecurID Software Token/;c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/;c:/WINDOWS;c:/WINDOWS/System32/Wbem;c:/WINDOWS/system32;c:/java/jdk1.6/bin;c:/ntutils;c:/scripts;d:/tools/emacswin/bin;d:/tools/mplayer/MPlayer-1.0rc2;c:/Documents and Settings/bhj/bin;" (concat cygwin-drive "/cygwin/sbin;") (concat cygwin-drive "/cygwin/usr/X11R6/bin;") "d:/local/bin;" (concat cygwin-drive "/cygwin/usr/sbin")))
+(setenv "PATH" (concat (concat (getenv "HOME") "\\bin\\emacs-graphics;") "c:/Python25;F:/bin/win32;C:/TeXLive2007/dviout;C:/gs/gs8.54/bin;c:/gnuserv;" (concat cygwin-drive "/cygwin/bin;") "c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86;c:/Program Files/RSA Security/RSA SecurID Software Token/;c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/;c:/WINDOWS;c:/WINDOWS/System32/Wbem;c:/WINDOWS/system32;c:/java/jdk1.6/bin;c:/ntutils;c:/scripts;d:/tools/emacswin/bin;d:/tools/mplayer/MPlayer-1.0rc2;c:/Documents and Settings/bhj/bin;" (concat cygwin-drive "/cygwin/sbin;") (concat cygwin-drive "/cygwin/usr/X11R6/bin;") "d:/local/bin;" (concat cygwin-drive "/cygwin/usr/sbin")))
 (setq load-path
       (cons (expand-file-name "~/.emacs_d/lisp") load-path))
 
