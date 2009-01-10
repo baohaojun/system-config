@@ -1,5 +1,6 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
+(let ((default-directory "d:/tools/emacs-site-lisp/")) (load-file "d:/tools/emacs-site-lisp/subdirs.el"))
 (if (file-exists-p "c:/cygwin/bin/bash.exe")
     (setq cygwin-drive "c:")
   (setq cygwin-drive "d:"))
@@ -10,6 +11,8 @@
 (setenv "PATH" (concat (concat (getenv "HOME") "\\bin\\emacs-graphics;") "c:/Python25;F:/bin/win32;C:/TeXLive2007/dviout;C:/gs/gs8.54/bin;c:/gnuserv;" (concat cygwin-drive "/cygwin/bin;") "c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86;c:/Program Files/RSA Security/RSA SecurID Software Token/;c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/;c:/WINDOWS;c:/WINDOWS/System32/Wbem;c:/WINDOWS/system32;c:/java/jdk1.6/bin;c:/ntutils;c:/scripts;d:/tools/emacswin/bin;d:/tools/mplayer/MPlayer-1.0rc2;c:/Documents and Settings/bhj/bin;" (concat cygwin-drive "/cygwin/sbin;") (concat cygwin-drive "/cygwin/usr/X11R6/bin;") "d:/local/bin;" (concat cygwin-drive "/cygwin/usr/sbin")))
 (setq load-path
       (cons (expand-file-name "~/.emacs_d/lisp") load-path))
+(setq load-path
+      (cons "d:/tools/emacs-site-lisp/" load-path))
 
 (if (eq emacs-major-version 23)
     ;; (progn 
@@ -30,15 +33,15 @@
 	(cons (expand-file-name "d:/local/share/emacs/site-lisp/emms") load-path)))
 
 
-(set-frame-font "Microsoft Yahei-10")
-(set-fontset-font (frame-parameter nil 'font)
-                  'han (font-spec :family "Microsoft Yahei" :size 13))
-(set-fontset-font (frame-parameter nil 'font)
-                  'symbol (font-spec :family "Microsoft Yahei" :size 13))
-(set-fontset-font (frame-parameter nil 'font)
-                  'cjk-misc (font-spec :family "Microsoft Yahei" :size 13))
-(set-fontset-font (frame-parameter nil 'font)
-                  'bopomofo (font-spec :family "Microsoft Yahei" :size 13))
+;; (set-frame-font "Microsoft Yahei-10")
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'han (font-spec :family "Microsoft Yahei" :size 13))
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'symbol (font-spec :family "Microsoft Yahei" :size 13))
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'cjk-misc (font-spec :family "Microsoft Yahei" :size 13))
+;; (set-fontset-font (frame-parameter nil 'font)
+;;                   'bopomofo (font-spec :family "Microsoft Yahei" :size 13))
 
 (set-frame-font "Monaco-10")
 (set-fontset-font (frame-parameter nil 'font)
