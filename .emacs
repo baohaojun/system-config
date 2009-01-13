@@ -509,7 +509,14 @@
   (interactive)
   (insert (car args)))
 
-(defun bhj-insert-pwd ()
+(defun bhj-insert-pwdw ()
+  (interactive)
+  (insert "'")
+  (call-process "cygpath" nil t nil "-alw" default-directory)
+  (backward-delete-char 1)
+  (insert "'"))
+
+(defun bhj-insert-pwdu ()
   (interactive)
   (insert "'")
   (call-process "cygpath" nil t nil "-u" default-directory)
@@ -539,7 +546,7 @@
 
 (define-key minibuffer-local-shell-command-map [(control meta f)] 'bhj-clt-insert-file-name)
 (define-key minibuffer-local-shell-command-map [(control meta b )] 'bhj-clt-insert-branch)
-(define-key minibuffer-local-shell-command-map [(control meta d )] 'bhj-insert-pwd)
+(define-key minibuffer-local-shell-command-map [(control meta d )] 'bhj-insert-pwdu)
 (fset 'bhj-clt-co-mkbranch
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217761 99 108 116 101 110 118 32 126 47 98 105 110 47 99 108 116 45 99 111 45 109 107 98 114 97 110 99 104 32 134217730 32 134217734 return] 0 "%d")) arg) (call-interactively 'bhj-reread-file)))
 
@@ -1149,3 +1156,5 @@ div.tl{
       (local-set-key [(control c) (control k)] 'bhj-modify-term-map)
       (local-set-key [(control /)] 'bhj-term-control_)
       (local-set-key [(escape)] 'bhj-modify-term-map))))
+
+(w32-register-hot-key [A-tab])
