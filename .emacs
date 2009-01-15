@@ -354,8 +354,8 @@
 
   ;;popup the manual page, try:)
   (global-set-key[(f3)](lambda()(interactive)(woman (current-word))))
-  (global-set-key[(f4)](lambda()(interactive)(menu-bar-mode)))
-  (global-set-key[(f5)](lambda()(interactive)(ecb-minor-mode)))
+  ;(global-set-key[(f4)](lambda()(interactive)(menu-bar-mode)))
+  ;(global-set-key[(f5)](lambda()(interactive)(ecb-minor-mode)))
 
 
   ;; thumb
@@ -1157,4 +1157,4 @@ div.tl{
       (local-set-key [(control /)] 'bhj-term-control_)
       (local-set-key [(escape)] 'bhj-modify-term-map))))
 
-(w32-register-hot-key [A-tab])
+;(w32-register-hot-key [A-tab])

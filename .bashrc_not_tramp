@@ -170,6 +170,25 @@ if [[ -f ~/.bashrc_edit ]]; then . ~/.bashrc_edit; fi
 alias bsub='cd /vobs/linuxjava/platform; rm nohup.out; nohup  /apps/zch68vendor/bin/bsub -I -q zch68-lj'
 alias cbsub='/apps/zch68vendor/bin/bsub -I -q zch68-lj'
 alias armg++='/vobs/jem/cee4_lsp/mobilinux/devkit/arm/v6_vfp_le/bin/arm_v6_vfp_le-g++'
+function lcd()
+{
+    if [[ -z "$1" ]]; then
+        echo Usage: lcd softlink
+        return
+    fi
+
+    linkTarget=`ls -l "$1"|sed -e 's/.*-> //'`
+    if [[ ${linkTarget:0:1} == / ]]; then
+        true #nothing to do
+    else
+        linkTarget="`dirname \"$1\"`"/"$linkTarget"
+    fi
+    if [[ -d "$linkTarget" ]]; then
+        cd "$linkTarget"
+    else
+        cd "`dirname \"$linkTarget\"`"
+    fi
+}
 
 
 ##Local Variables: ***
