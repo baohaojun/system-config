@@ -67,6 +67,7 @@
 
 
 (require 'emms-setup)
+(require 'csharp-mode.el)
 (require 'w3m-load)
 (require 'cygwin-mount)
 (require 'w32-symlinks)
@@ -753,7 +754,6 @@
  '(ecomplete-database-file-coding-system (quote gb18030))
  '(emms-player-mplayer-command-name "mplayer.exe")
  '(emms-player-mplayer-parameters (quote ("-slave" "-quiet" "-really-quiet" "-vo" "null")))
-
  '(gdb-find-source-frame t)
  '(gdb-same-frame t)
  '(gdb-show-main t)
@@ -1008,7 +1008,7 @@ div.tl{
  '(normal-erase-is-backspace nil)
  '(preview-gs-command "c:/gs/gs8.54/bin/gswin32c.exe")
  '(require-final-newline t)
- '(safe-local-variable-values (quote ((TeX-master . t) (indent-tab-mode . t))))
+ '(safe-local-variable-values (quote ((c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
  '(save-place t nil (saveplace))
  '(senator-minor-mode-hook (quote (ignore)))
  '(session-initialize (quote (de-saveplace session places keys menus)) nil (session))

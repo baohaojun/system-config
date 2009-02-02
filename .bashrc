@@ -203,3 +203,22 @@ function cmd() {
         echo cmd: no such file or directory "$1"
     fi
 }
+function lcd()
+{
+    if [[ -z "$1" ]]; then
+        echo Usage: lcd softlink
+        return
+    fi
+
+    linkTarget=`ls -l "$1"|sed -e 's/.*-> //'`
+    if [[ ${linkTarget:0:1} == / ]]; then
+        true #nothing to do
+    else
+        linkTarget="`dirname \"$1\"`"/"$linkTarget"
+    fi
+    if [[ -d "$linkTarget" ]]; then
+        cd "$linkTarget"
+    else
+        cd "`dirname \"$linkTarget\"`"
+    fi
+}

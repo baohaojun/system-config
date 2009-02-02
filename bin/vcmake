@@ -15,7 +15,7 @@ export DevEnvDir="c:/Program Files/Microsoft Visual Studio 8c:ommon7/IDE"
 
 export INCLUDE="c:/Program Files/Microsoft Visual Studio 8/VC/ATLMFC/INCLUDE;c:/Program Files/Microsoft Visual Studio 8/VC/INCLUDE;c:/Program Files/Microsoft Visual Studio 8/VC/PlatformSDK/include;c:/Program Files/Microsoft Visual Studio 8/SDK/v2.0/include;d:/Profiles/zch07g_cc_albd/include"
 
-export LIB="c:/Program Files/Microsoft Visual Studio 8/VC/ATLMFC/LIB;c:/Program Files/Microsoft Visual Studio 8/VC/LIB;c:/Program Files/Microsoft Visual Studio 8/VC/PlatformSDK/lib;c:/Program Files/Microsoft Visual Studio 8/SDK/v2.0/lib;\"$LIB\""
+export LIB="c:/Program Files/Microsoft Visual Studio 8/VC/ATLMFC/LIB;c:/Program Files/Microsoft Visual Studio 8/VC/LIB;c:/Program Files/Microsoft Visual Studio 8/VC/PlatformSDK/lib;c:/Program Files/Microsoft Visual Studio 8/SDK/v2.0/lib;""$LIB"
 export LIBPATH="c:/WINDOWS/Microsoft.NET/Framework/v2.0.50727;c:/Program Files/Microsoft Visual Studio 8/VC/ATLMFC/LIB"
 
 if [[ $# == 0 ]]; then
