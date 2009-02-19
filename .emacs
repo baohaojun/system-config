@@ -67,7 +67,11 @@
 
 
 (require 'emms-setup)
-(require 'csharp-mode.el)
+;(require 'csharp-mode.el)
+(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+(setq auto-mode-alist
+      (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
+
 (require 'w3m-load)
 (require 'cygwin-mount)
 (require 'w32-symlinks)
@@ -913,7 +917,7 @@ em.phrase {
             }
 
 h1 {
-	ont-size:  28px;
+	font-size:  28px;
 	border-top: solid black 1px;
 	border-bottom: solid black 1px;
 	padding: 0.1em;

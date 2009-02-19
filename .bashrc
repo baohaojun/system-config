@@ -213,6 +213,8 @@ function lcd()
     linkTarget=`ls -l "$1"|sed -e 's/.*-> //'`
     if [[ ${linkTarget:0:1} == / ]]; then
         true #nothing to do
+    elif [[ ${linkTarget:1:1} == ':' ]]; then #this is a windows pathname (`:' is a special char)
+        true
     else
         linkTarget="`dirname \"$1\"`"/"$linkTarget"
     fi
