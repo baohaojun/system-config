@@ -8,7 +8,7 @@
 (setq cygwin-mount-cygwin-bin-directory (concat cygwin-drive "/cygwin/bin"))
 
 
-(setenv "PATH" (concat (concat (getenv "HOME") "\\bin\\emacs-graphics;") "c:/Python25;F:/bin/win32;C:/TeXLive2007/dviout;C:/gs/gs8.54/bin;c:/gnuserv;" (concat cygwin-drive "/cygwin/bin;") "c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86;c:/Program Files/RSA Security/RSA SecurID Software Token/;c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/;c:/WINDOWS;c:/WINDOWS/System32/Wbem;c:/WINDOWS/system32;c:/java/jdk1.6/bin;c:/ntutils;c:/scripts;d:/tools/emacswin/bin;d:/tools/mplayer/MPlayer-1.0rc2;c:/Documents and Settings/bhj/bin;" (concat cygwin-drive "/cygwin/sbin;") (concat cygwin-drive "/cygwin/usr/X11R6/bin;") "d:/local/bin;" (concat cygwin-drive "/cygwin/usr/sbin")))
+(setenv "PATH" (concat (concat (getenv "HOME") "\\bin\\emacs-graphics;") "c:/Python25;F:/bin/win32;C:/TeXLive2007/dviout;C:/gs/gs8.54/bin;c:/gnuserv;" (concat cygwin-drive "/cygwin/bin;") "c:/Program Files/Microsoft DirectX SDK (March 2008)/Utilities/Bin/x86;c:/Program Files/RSA Security/RSA SecurID Software Token/;c:/Program Files/Visual Studio 2005 SDK/2007.02/VisualStudioIntegration/Tools/Sandcastle/ProductionTools/;c:/WINDOWS;c:/WINDOWS/System32/Wbem;c:/WINDOWS/system32;c:/java/jdk1.6/bin;c:/ntutils;c:/scripts;d:/tools/emacswin/bin;d:/tools/mplayer/MPlayer-1.0rc2;" (concat (getenv "HOME") "\\bin;") (concat cygwin-drive "/cygwin/sbin;") (concat cygwin-drive "/cygwin/usr/X11R6/bin;") "d:/local/bin;" (concat cygwin-drive "/cygwin/usr/sbin")))
 (setq load-path
       (cons (expand-file-name "~/.emacs_d/lisp") load-path))
 (setq load-path
@@ -769,7 +769,7 @@
  '(indent-tabs-mode nil)
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))
- '(locate-command "locateEmacs.exe")
+ '(locate-command "~/bin/locateEmacs.exe")
  '(mail-sources (quote ((file :path (concat cygwin-drive "/cygwin/var/spool/mail/bhj")))))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
@@ -1037,7 +1037,7 @@ div.tl{
  '(w3m-toggle-inline-images-permanently nil)
  '(weblogger-config-alist (quote (("yo2.cn" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")) ("bhj3" ("user" . "admin") ("server-url" . "http://bhj3/blog/xmlrpc.php") ("weblog" . "1")) ("default" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")))))
  '(woman-file-compression-regexp "\\.\\(g?z\\|bz2\\)\\(.lnk\\)?\\'")
- '(woman-manpath (quote ((concat cygwin-drive "/cygwin/usr/man") (concat cygwin-drive "/cygwin/usr/share/man") "d:/local/man")))
+ '(woman-manpath (quote ("/usr/man" "/usr/share/man" "d:/local/man")))
  '(woman-use-own-frame nil))
 
 

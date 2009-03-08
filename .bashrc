@@ -203,6 +203,7 @@ function cmd() {
         echo cmd: no such file or directory "$1"
     fi
 }
+alias mplayer="'/c/Program Files/MPlayer for Windows/MPlayer.exe'"
 function lcd()
 {
     if [[ -z "$1" ]]; then
