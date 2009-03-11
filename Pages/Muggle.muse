@@ -1,0 +1,36 @@
+This document is a simple how-to for =Muggle=, the tool for updating an .mff file
+
+** Where to get the program
+
+You can receive this program from =svn://192.168.1.250/tools/branches/borqs/pkgkits/muggle/windows=, you should run =gupdate_mff.exe=, it will give you a GUI, if you prefer it over the CLI =update_mff.exe=.
+
+** How to use the program
+
+1. Choose input file
+
+2. Choose output file
+    [[../public_html/muggle/0042.png]]
+
+If you don't enter one of them here, you will get an error:
+
+[[../public_html/muggle/0046.png]]
+
+3. Choose product type
+    
+    [[../public_html/muggle/0043.png]]
+
+If you don't choose, there's an error when you try to Execute:
+
+[[../public_html/muggle/0045.png]]
+
+4. Choose component image files
+
+    [[../public_html/muggle/0044.png]]
+
+Note that you can get a tool tip over the Edit control. And you can choose more than one type of file, but at least one is required. Or else, there will be an error:
+
+[[../public_html/muggle/0047.png]]
+
+5. Finally, press the Execute button:
+
+[[../public_html/muggle/0048.png]]

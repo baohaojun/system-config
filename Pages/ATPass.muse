@@ -1,0 +1,80 @@
+#title AtPassThrou Usage Manual
+#author Bao Haojun <haojun.bao@borqs.com>
+
+<literal><span style="font-size: 28px">Table of Contents</span></literal>
+<contents>
+
+** System Requirements
+*** Hardware
+1. Windows XP.
+2. OMS phone.
+*** Software 
+1. OMS release, any version released after 2009/02/10 should be supported by this tool, if it's not, please report a bug.
+
+2. Alchemy, any version should be OK.
+
+3. com0com, this is an open source virtual serial port software, you can get it from [[http://nchc.dl.sourceforge.net/sourceforge/com0com/com0com-2.2.0.0-i386-fre.zip][it's homepage]] or [[\\toolserver\ttt_internal_share\Tool_Release\ATPass][here]] (borqs internal share folder). Install it, then you should see 'CNCA0' and 'CNCB0' added to your system serial ports. 
+
+
+** Install ATPass on PC
+
+ATPass can be fetched at [[\\toolserver\ttt_internal_share\Tool_Release\ATPass][here]] (borqs internal share folder, same as above). Install the lastest version.
+
+
+** Use Alchemy to start ATPassSrv on phone
+
+After you connect the phone to the Windows XP, start up Alchemy. You should see =Connection OK!= and a blue circle indicating that Alchemy is connected to the phone.
+
+Type =opcode 0x9f= in the command edit, and press =Enter=.
+
+Please refer to the following screenshot. In the end, this functionality will be added to ATPass, but currently, we must use Alchemy to do this.
+
+[[../public_html/atpass/Borqs_Alchemy_V1.0.30006.png]]
+
+The expected result should be ="Normal"=, as in the following screenshot.
+
+[[../public_html/atpass/alchemy_normal.png]]
+
+
+** Start ATPass on PC
+
+It can be start from the following location.
+
+[[../public_html/atpass/0031.png]]
+
+After it is started, you can configure which serial port you want to use, and the serial port setting. Note that you must choose a virtual port emulated by com0com, not a real one!
+
+After that, you can press the start button.
+
+[[../public_html/atpass/AT_Passthrough0005.png]]
+
+** Stop ATPass
+ATPass can get stopped for several reasons after you click start button.
+
+1. It will automatically stop if it can't connect to the phone.
+2. It can't open the serial port (For e.g., the port you specified is already opened by another program like Hyper-terminal).
+3. The connection to the phone is broken (For e.g., you unplugged the USB cable).
+4. After it is connected, the =Stop= button will be enabled, and you clicked it.
+5. You exited the ATPass program.
+
+** Exit ATPass
+Clicking the =X= button on ATPass dialog will not exit it. Instead, it will minimize to the system tray. You must click the system tray icon with your right mouse button to exit it.
+
+
+
+** Use HyperTerminal to verify ATPass is working
+
+
+[[../public_html/atpass/0032.png]]
+
+Configure it, Note that you must use =CNCB0= if you are using =CNCA0= in ATPass, because these are a pair of =Virtual Serial Ports=. (You can verify this. Just start two HyperTerminals, one opened with =CNCA0=, the other with =CNCB0=, and they should be able to communicate with each other).
+
+[[../public_html/atpass/0064.png]]
+
+
+Now, type =at= or =AT= in =CNCB0=, and you will see an OK.
+
+[[../public_html/atpass/0036.png]]
+
+
+
