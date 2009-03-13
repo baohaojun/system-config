@@ -1,0 +1,12 @@
+#!/bin/bash
+mkdir /c/tmp -p
+config='chk x86 WXP'
+if [[ "$1" == '-c' ]]; then
+    shift
+    config="$1"
+    shift
+fi
+echo 'call C:\WinDDK\6001.18002\bin\setenv.bat C:\WinDDK\6001.18002\' "$config">/c/tmp/$$.bat
+echo '%*' >> /c/tmp/$$.bat
+'cmd.exe' /c "c:/tmp/$$.bat" "$@"
+rm /c/tmp/$$.bat
