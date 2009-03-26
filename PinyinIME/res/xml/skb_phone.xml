@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<keyboard
+  skb_template="@xml/skb_template1"
+  width="25%p"
+  height="25%p"
+  key_type="0"
+  repeat="false"
+  balloon="false">
+
+  <row>
+    <key icon="@drawable/num1" code="8">
+      <toggle_state state_id="@string/toggle_phone_sym" label="("/>
+    </key>
+    <key icon="@drawable/num2" code="9">
+      <toggle_state state_id="@string/toggle_phone_sym" label="/"/>
+    </key>
+    <key icon="@drawable/num3" code="10">
+      <toggle_state state_id="@string/toggle_phone_sym" label=")"/>
+    </key>
+    <key label="-"/>
+  </row>
+
+  <row>
+    <key icon="@drawable/num4" code="11">
+      <toggle_state state_id="@string/toggle_phone_sym" label="N"/>
+    </key>
+    <key icon="@drawable/num5" code="12">
+      <toggle_state state_id="@string/toggle_phone_sym" label="暂 停" code="44"/>
+    </key>
+    <key icon="@drawable/num6" code="13">
+      <toggle_state state_id="@string/toggle_phone_sym" label=","/>
+    </key>
+    <key label="."/>
+  </row>
+
+  <row>
+    <key icon="@drawable/num7" code="14">
+      <toggle_state state_id="@string/toggle_phone_sym" label="*"
+        icon="@drawable/numstar"/>
+    </key>
+    <key icon="@drawable/num8" code="15">
+      <toggle_state state_id="@string/toggle_phone_sym" label="等 待" code="51"/>
+    </key>
+    <key icon="@drawable/num9" code="16">
+      <toggle_state state_id="@string/toggle_phone_sym" label=","
+        icon="@drawable/numpound"/>
+    </key>
+    <key code="67" key_type="1" repeat="true"/>
+  </row>
+
+  <row>
+    <key icon="@drawable/numalt" code="-4" repeat="true">
+      <toggle_state state_id="@string/toggle_phone_sym" label="123" code="-4"/>
+    </key>
+    <key icon="@drawable/num0" code="7">
+      <toggle_state state_id="@string/toggle_phone_sym" label="+"/>
+    </key>
+    <key code="62"/>
+    <key id="2"/>
+  </row>
+</keyboard>

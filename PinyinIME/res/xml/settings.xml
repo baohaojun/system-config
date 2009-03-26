@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/setting">
+
+    <CheckBoxPreference
+      android:key="@string/setting_sound_key"
+      android:title="@string/setting_sound_key_title"
+      android:persistent="true"
+      android:summaryOn="@string/setting_enabled"
+      android:summaryOff="@string/setting_disabled"/>
+
+    <CheckBoxPreference
+      android:key="@string/setting_vibrate_key"
+      android:title="@string/setting_vibrate_title"
+      android:persistent="false"
+      android:summaryOn="@string/setting_enabled"
+      android:summaryOff="@string/setting_disabled"/>
+
+    <CheckBoxPreference 
+      android:key="@string/setting_prediction_key" 
+      android:title="@string/setting_prediction_title"
+      android:persistent="true"
+      android:summaryOn="@string/setting_enabled"
+      android:summaryOff="@string/setting_disabled"/>
+    
+    <!-- Remove following entry to unbundle Google functionality -->
+    <PreferenceScreen
+      android:title="@string/setting_others"
+      android:summary="@string/setting_others_summary"
+      android:key="@string/setting_advanced_key">
+      <intent android:action="com.android.inputmethod.pinyingoogleservice.SETTINGS" />
+    </PreferenceScreen>
+
+	<Preference
+      android:key="@string/setting_switch_key"
+      style="?android:preferenceInformationStyle"
+      android:title="@string/setting_switch_title"
+      android:persistent="false"
+      android:summary="@string/setting_switch_shift_space_title"/>
+     
+</PreferenceScreen>

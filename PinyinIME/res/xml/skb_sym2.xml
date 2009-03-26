@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2009 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<keyboard
+  skb_template="@xml/skb_template1"
+  skb_cache_flag="true"
+  width="10%p"
+  height="25%p"
+  key_type="0"
+  repeat="false"
+  balloon="true">
+
+  <row>
+    <keys splitter="|" labels="~|±|×|÷|•|°|&lt;|&gt;|{|}"/>
+  </row>
+
+  <row>
+    <keys splitter="|" labels="©|£|€|^|®"/>
+    <key label="℃">
+      <toggle_state state_id="@string/toggle_en_sym2" label="℉"/>
+    </key>
+    <keys splitter="|" labels="_|="/>
+    <key label="【">
+      <toggle_state state_id="@string/toggle_en_sym2" label="["/>
+    </key>
+    <key label="】">
+      <toggle_state state_id="@string/toggle_en_sym2" label="]"/>
+    </key>
+  </row>
+
+  <row width="10.205%p">
+    <key code="-5" width="14.286%p" key_type="3" label="ALT"/>
+    <key label="™"/>
+    <key label="‘">
+      <toggle_state state_id="@string/toggle_en_sym2" label="‘"/>
+    </key>
+    <key label="’">
+      <toggle_state state_id="@string/toggle_en_sym2" label="’"/>
+    </key>
+    <keys splitter=" " labels="+ | \\ √"/>
+    <key id="3"/>
+  </row>
+
+  <row width="14.696%p" key_type="1">
+    <key code="-2" label="中 符" width="20%p" repeat="true">
+      <toggle_state state_id="@string/toggle_en_sym2" label="英 符" code="-2"/>
+    </key>
+    <key code="-3" key_type="3" label="\?123"/>
+    <key code="62" key_type="5" width="30.608%p"/>
+    <key label="……" key_type="0">
+      <toggle_state state_id="@string/toggle_en_sym2" label="…"/>
+    </key>
+    <key id="1"/>
+  </row>
+</keyboard>
+
