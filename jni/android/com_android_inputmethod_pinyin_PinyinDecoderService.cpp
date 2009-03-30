@@ -51,10 +51,15 @@ JNIEXPORT jboolean JNICALL nativeImOpenDecoder(JNIEnv* env, jclass jclazz,
   jbyte *fsd = (*env).GetByteArrayElements(fn_sys_dict, 0);
   jbyte *fud = (*env).GetByteArrayElements(fn_usr_dict, 0);
 
-  if (im_open_decoder((const char*)fsd, (const char*)fud))
-    return JNI_TRUE;
+  jboolean jret = JNI_FALSE;
 
-  return JNI_FALSE;
+  if (im_open_decoder((const char*)fsd, (const char*)fud))
+    jret = JNI_TRUE;
+
+  (*env).ReleaseByteArrayElements(fn_sys_dict, fsd, 0);
+  (*env).ReleaseByteArrayElements(fn_usr_dict, fud, 0);
+
+  return jret;
 }
 
 JNIEXPORT jboolean JNICALL nativeImOpenDecoderFd(JNIEnv* env, jclass jclazz,
@@ -65,14 +70,17 @@ JNIEXPORT jboolean JNICALL nativeImOpenDecoderFd(JNIEnv* env, jclass jclazz,
   jint fd = env->GetIntField(fd_sys_dict, gFileDescriptorOffsets.mDescriptor);
   jbyte *fud = (*env).GetByteArrayElements(fn_usr_dict, 0);
 
+  jboolean jret = JNI_FALSE;
+
   int newfd = dup(fd);
-  if (im_open_decoder_fd(newfd, startoffset, length, (const char*)fud)) {
-    close(newfd);
-    return JNI_TRUE;
-  }
+  if (im_open_decoder_fd(newfd, startoffset, length, (const char*)fud))
+    jret = JNI_TRUE;
 
   close(newfd);
-  return JNI_FALSE;
+
+  (*env).ReleaseByteArrayElements(fn_usr_dict, fud, 0);
+
+  return jret;
 }
 
 JNIEXPORT void JNICALL nativeImSetMaxLens(JNIEnv* env, jclass jclazz,
@@ -92,10 +100,14 @@ JNIEXPORT jint JNICALL nativeImSearch(JNIEnv* env, jclass jclazz,
                                       jbyteArray pybuf, jint pylen) {
   jbyte *array_body = (*env).GetByteArrayElements(pybuf, 0);
 
-  if (NULL == array_body)
-    return 0;
+  jint jret = 0;
+  if (NULL != array_body) {
+    jret = im_search((const char*)array_body, pylen);
+  }
 
-  return im_search((const char*)array_body, pylen);
+  (*env).ReleaseByteArrayElements(pybuf, array_body, 0);
+
+  return jret;
 }
 
 JNIEXPORT jint JNICALL nativeImDelSearch(JNIEnv* env, jclass jclazz, jint pos,
@@ -157,6 +169,9 @@ JNIEXPORT jintArray JNICALL nativeImGetSplStart(JNIEnv* env, jclass jclazz) {
   arr_body[0] = len; // element 0 is used to store the length of buffer.
   for (size_t i = 0; i <= len; i++)
     arr_body[i + 1] = spl_start[i];
+
+  (*env).ReleaseIntArrayElements(arr, arr_body, 0);
+
   return arr;
 }
 
@@ -213,6 +228,8 @@ JNIEXPORT jint JNICALL nativeImGetPredictsNum(JNIEnv *env, jclass clazz,
 
   predict_len = im_get_predicts(fixed_buf, predict_buf);
 
+  (*env).ReleaseStringChars(fixed_str, fixed_ptr);
+
   return predict_len;
 }
 
@@ -232,9 +249,14 @@ JNIEXPORT jstring JNICALL nativeImGetPredictItem(JNIEnv *env, jclass clazz,
 JNIEXPORT jboolean JNICALL nativeSyncBegin(JNIEnv *env, jclass clazz,
                                            jbyteArray dict_file) {
   jbyte *file_name = (*env).GetByteArrayElements(dict_file, 0);
+
+  jboolean jret = JNI_FALSE;
   if (true == sync_worker.begin((const char *)file_name))
-    return JNI_TRUE;
-  return JNI_FALSE;
+    jret = JNI_TRUE;
+
+  (*env).ReleaseByteArrayElements(dict_file, file_name, 0);
+
+  return jret;
 }
 
 JNIEXPORT jboolean JNICALL nativeSyncFinish(JNIEnv *env, jclass clazz) {
