@@ -1,4 +1,4 @@
-`;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
+;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
 (let ((default-directory "d:/tools/emacs-site-lisp/")) (load-file "d:/tools/emacs-site-lisp/subdirs.el"))
 (if (file-exists-p "c:/cygwin/bin/bash.exe")
