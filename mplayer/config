@@ -1,0 +1,8 @@
+# Write your default config options here!
+subfont-text-scale=3
+vf=expand=0:-80:0:0
+subfont-encoding=unicode
+subcp=gbk
+
+
+
