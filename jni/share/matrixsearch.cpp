@@ -139,7 +139,7 @@ bool MatrixSearch::init(const char *fn_sys_dict, const char *fn_usr_dict) {
     user_dict_->set_total_lemma_count_of_others(NGram::kSysDictTotalFreq);
   }
 
-  reset_search(0, true, true, true);
+  reset_search0();
 
   inited_ = true;
   return true;
@@ -163,7 +163,7 @@ bool MatrixSearch::init_fd(int sys_fd, long start_offset, long length,
     user_dict_->set_total_lemma_count_of_others(NGram::kSysDictTotalFreq);
   }
 
-  reset_search(0, true, true, true);
+  reset_search0();
 
   inited_ = true;
   return true;
@@ -198,16 +198,13 @@ bool MatrixSearch::get_xi_an_switch() {
 bool MatrixSearch::reset_search() {
   if (!inited_)
     return false;
-  return reset_search(0, true, true, true);
+  return reset_search0();
 }
 
-bool MatrixSearch::reset_search(size_t ch_pos, bool clear_fixed_this_step,
-                                bool clear_dmi_this_step,
-                                bool clear_mtrx_this_step) {
-  if (!inited_ || ch_pos > pys_decoded_len_ || ch_pos >= kMaxRowNum)
-    return false;
+bool MatrixSearch::reset_search0() {
+    if (!inited_)
+        return false;
 
-  if (0 == ch_pos) {
     pys_decoded_len_ = 0;
     mtrx_nd_pool_used_ = 0;
     dmi_pool_used_ = 0;
@@ -238,6 +235,18 @@ bool MatrixSearch::reset_search(size_t ch_pos, bool clear_fixed_this_step,
     dict_trie_->reset_milestones(0, 0);
     if (NULL != user_dict_)
       user_dict_->reset_milestones(0, 0);
+
+    return true;
+}
+
+bool MatrixSearch::reset_search(size_t ch_pos, bool clear_fixed_this_step,
+                                bool clear_dmi_this_step,
+                                bool clear_mtrx_this_step) {
+  if (!inited_ || ch_pos > pys_decoded_len_ || ch_pos >= kMaxRowNum)
+    return false;
+
+  if (0 == ch_pos) {
+    reset_search0();
   } else {
     // Prepare mile stones of this step to clear.
     MileStoneHandle *dict_handles_to_clear = NULL;
@@ -281,7 +290,10 @@ bool MatrixSearch::reset_search(size_t ch_pos, bool clear_fixed_this_step,
     }
 
     // Modify fixed_hzs_
-    if (fixed_hzs_ > 0 && kLemmaIdComposing != lma_id_[0]) {
+    if (fixed_hzs_ > 0 &&
+        ((kLemmaIdComposing != lma_id_[0]) ||
+         (kLemmaIdComposing == lma_id_[0] &&
+          spl_start_[c_phrase_.length] <= ch_pos))) {
       size_t fixed_ch_pos = ch_pos;
       if (clear_fixed_this_step)
         fixed_ch_pos = fixed_ch_pos > 0 ? fixed_ch_pos - 1 : 0;
@@ -350,8 +362,47 @@ bool MatrixSearch::reset_search(size_t ch_pos, bool clear_fixed_this_step,
       for (uint16 re_pos = fixed_ch_pos; re_pos < ch_pos; re_pos++) {
         add_char(pys_[re_pos]);
       }
-    } else if (kLemmaIdComposing == lma_id_[0]) {
-      // Do nothing for the composing phrase.
+    } else if (fixed_hzs_ > 0 && kLemmaIdComposing == lma_id_[0]) {
+      for (uint16 subpos = 0; subpos < c_phrase_.sublma_num; subpos++) {
+        uint16 splpos_begin = c_phrase_.sublma_start[subpos];
+        uint16 splpos_end = c_phrase_.sublma_start[subpos + 1];
+        for (uint16 splpos = splpos_begin; splpos < splpos_end; splpos++) {
+          // If ch_pos is in this spelling
+          uint16 spl_start = c_phrase_.spl_start[splpos];
+          uint16 spl_end = c_phrase_.spl_start[splpos + 1];
+          if (ch_pos >= spl_start && ch_pos < spl_end) {
+            // Clear everything after this position
+            c_phrase_.chn_str[splpos] = static_cast<char16>('\0');
+            c_phrase_.sublma_start[subpos + 1] = splpos;
+            c_phrase_.sublma_num = subpos + 1;
+            c_phrase_.length = splpos;
+
+            if (splpos == splpos_begin) {
+              c_phrase_.sublma_num = subpos;
+            }
+          }
+        }
+      }
+
+      // Extend the composing phrase.
+      reset_search0();
+      dmi_c_phrase_ = true;
+      uint16 c_py_pos = 0;
+      while (c_py_pos < spl_start_[c_phrase_.length]) {
+        bool b_ac_tmp = add_char(pys_[c_py_pos]);
+        assert(b_ac_tmp);
+        c_py_pos++;
+      }
+      dmi_c_phrase_ = false;
+
+      lma_id_num_ = 1;
+      fixed_lmas_ = 1;
+      fixed_lmas_no1_[0] = 0;  // A composing string is always modified.
+      fixed_hzs_ = c_phrase_.length;
+      lma_start_[1] = fixed_hzs_;
+      lma_id_[0] = kLemmaIdComposing;
+      matrix_[spl_start_[fixed_hzs_]].mtrx_nd_fixed = mtrx_nd_pool_ +
+          matrix_[spl_start_[fixed_hzs_]].mtrx_nd_pos;
     }
   }
 
@@ -431,9 +482,23 @@ size_t MatrixSearch::delsearch(size_t pos, bool is_pos_in_splid,
   if (!inited_)
     return 0;
 
+  size_t reset_pos = pos;
+
   // Out of range for both Pinyin mode and Spelling id mode.
   if (pys_decoded_len_ <= pos) {
     del_in_pys(pos, 1);
+
+    reset_pos = pys_decoded_len_;
+    // Decode the string after the un-decoded position
+    while ('\0' != pys_[reset_pos]) {
+      if (!add_char(pys_[reset_pos])) {
+        pys_decoded_len_ = reset_pos;
+        break;
+      }
+      reset_pos++;
+    }
+    get_spl_start_id();
+    prepare_candidates();
     return pys_decoded_len_;
   }
 
@@ -444,9 +509,7 @@ size_t MatrixSearch::delsearch(size_t pos, bool is_pos_in_splid,
   // Begin to handle two modes respectively.
   // Pinyin mode by default
   size_t c_py_len = 0;  // The length of composing phrase's Pinyin
-  size_t reset_pos = pos;
   size_t del_py_len = 1;
-  size_t stop_pos = pys_decoded_len_;
   if (!is_pos_in_splid) {
     // Pinyin mode is only allowed to delete beyond the fixed lemmas.
     if (fixed_lmas_ > 0 && pos < spl_start_[lma_start_[fixed_lmas_]])
@@ -490,7 +553,7 @@ size_t MatrixSearch::delsearch(size_t pos, bool is_pos_in_splid,
     // The composing phrase is valid, reset all search space,
     // and begin a new search which will only extend the composing
     // phrase.
-    reset_search(0, true, true, true);
+    reset_search0();
 
     dmi_c_phrase_ = true;
     // Extend the composing phrase.
@@ -517,8 +580,7 @@ size_t MatrixSearch::delsearch(size_t pos, bool is_pos_in_splid,
   }
 
   // Decode the string after the delete position.
-  stop_pos -= del_py_len;
-  while (reset_pos < stop_pos) {
+  while ('\0' != pys_[reset_pos]) {
     if (!add_char(pys_[reset_pos])) {
       pys_decoded_len_ = reset_pos;
       break;
@@ -528,7 +590,7 @@ size_t MatrixSearch::delsearch(size_t pos, bool is_pos_in_splid,
 
   get_spl_start_id();
   prepare_candidates();
-  return c_py_len;
+  return pys_decoded_len_;
 }
 
 size_t MatrixSearch::get_candidate_num() {
@@ -1591,7 +1653,8 @@ char16* MatrixSearch::get_candidate0(char16 *cand_str, size_t max_len,
 
     char16 str[kMaxLemmaSize + 1];
     uint16 str_len = get_lemma_str(idxs[id_num], str, kMaxLemmaSize + 1);
-    if (str_len > 0 && max_len - ret_pos > str_len) {
+    if (str_len > 0 && ((!only_unfixed && max_len - ret_pos > str_len) ||
+        (only_unfixed && max_len - ret_pos + fixed_hzs_ > str_len))) {
       if (!only_unfixed)
         utf16_strncpy(cand_str + ret_pos, str, str_len);
       else if (ret_pos >= fixed_hzs_)

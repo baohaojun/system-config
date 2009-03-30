@@ -235,17 +235,7 @@ public class PinyinIME extends InputMethodService {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        int count = event.getRepeatCount();
-        if (0 == count) {
-            if (processKey(event, false)) return true;
-        } else {
-            boolean processed = false;
-            while (count > 0) {
-                processed |= processKey(event, true);
-                count--;
-            }
-            if (processed) return true;
-        }
+        if (processKey(event, 0 != event.getRepeatCount())) return true;
         return super.onKeyDown(keyCode, event);
     }
 
@@ -265,7 +255,7 @@ public class PinyinIME extends InputMethodService {
             if (!realAction) return true;
 
             updateIcon(mInputModeSwitcher.switchLanguageWithHkb());
-            resetToIdleState(true);
+            resetToIdleState(false);
 
             int allMetaState = KeyEvent.META_ALT_ON | KeyEvent.META_ALT_LEFT_ON
                     | KeyEvent.META_ALT_RIGHT_ON | KeyEvent.META_SHIFT_ON
@@ -462,6 +452,27 @@ public class PinyinIME extends InputMethodService {
 
     private boolean processStateInput(int keyChar, int keyCode, KeyEvent event,
             boolean realAction) {
+        // If ALT key is pressed, input alternative key. But if the
+        // alternative key is quote key, it will be used for input a splitter
+        // in Pinyin string.
+        if (event.isAltPressed()) {
+            if ('\'' != event.getUnicodeChar(event.getMetaState())) {
+                if (realAction) {
+                    char fullwidth_char = KeyMapDream.getChineseLabel(keyCode);
+                    if (0 != fullwidth_char) {
+                        commitResultText(mDecInfo
+                                .getCurrentFullSent(mCandidatesContainer
+                                        .getActiveCandiatePos()) +
+                                        String.valueOf(fullwidth_char));
+                        resetToIdleState(false);
+                    }
+                }
+                return true;
+            } else {
+                keyChar = '\'';
+            }
+        }
+
         if (keyChar >= 'a' && keyChar <= 'z' || keyChar == '\''
                 && !mDecInfo.charBeforeCursorIsSeparator()
                 || keyCode == KeyEvent.KEYCODE_DEL) {
@@ -513,13 +524,13 @@ public class PinyinIME extends InputMethodService {
             if (!realAction) return true;
             if (mInputModeSwitcher.isEnterNoramlState()) {
                 commitResultText(mDecInfo.getOrigianlSplStr().toString());
-                resetToIdleState(true);
+                resetToIdleState(false);
             } else {
                 commitResultText(mDecInfo
                         .getCurrentFullSent(mCandidatesContainer
                                 .getActiveCandiatePos()));
                 sendKeyChar('\n');
-                resetToIdleState(true);
+                resetToIdleState(false);
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER
@@ -529,7 +540,7 @@ public class PinyinIME extends InputMethodService {
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (!realAction) return true;
-            resetToIdleState(true);
+            resetToIdleState(false);
             requestHideSelf(0);
             return true;
         }
@@ -539,6 +550,18 @@ public class PinyinIME extends InputMethodService {
     private boolean processStatePredict(int keyChar, int keyCode,
             KeyEvent event, boolean realAction) {
         if (!realAction) return true;
+
+        // If ALT key is pressed, input alternative key.
+        if (event.isAltPressed()) {
+            char fullwidth_char = KeyMapDream.getChineseLabel(keyCode);
+            if (0 != fullwidth_char) {
+                commitResultText(mDecInfo.getCandidate(mCandidatesContainer
+                                .getActiveCandiatePos()) +
+                                String.valueOf(fullwidth_char));
+                resetToIdleState(false);
+            }
+            return true;
+        }
 
         // In this status, when user presses keys in [a..z], the status will
         // change to input state.
@@ -569,7 +592,7 @@ public class PinyinIME extends InputMethodService {
         } else if (keyCode == KeyEvent.KEYCODE_BACK) {
             resetToIdleState(false);
             requestHideSelf(0);
-        } else if (keyCode >= KeyEvent.KEYCODE_1 
+        } else if (keyCode >= KeyEvent.KEYCODE_1
                 && keyCode <= KeyEvent.KEYCODE_9) {
             int activePos = keyCode - KeyEvent.KEYCODE_1;
             int currentPage = mCandidatesContainer.getCurrentPage();
@@ -595,6 +618,32 @@ public class PinyinIME extends InputMethodService {
             KeyEvent event, boolean realAction) {
         if (!realAction) return true;
 
+        ComposingView.ComposingStatus cmpsvStatus =
+                mComposingView.getComposingStatus();
+
+        // If ALT key is pressed, input alternative key. But if the
+        // alternative key is quote key, it will be used for input a splitter
+        // in Pinyin string.
+        if (event.isAltPressed()) {
+            if ('\'' != event.getUnicodeChar(event.getMetaState())) {
+                char fullwidth_char = KeyMapDream.getChineseLabel(keyCode);
+                if (0 != fullwidth_char) {
+                    String retStr;
+                    if (ComposingView.ComposingStatus.SHOW_STRING_LOWERCASE ==
+                            cmpsvStatus) {
+                        retStr = mDecInfo.getOrigianlSplStr().toString();
+                    } else {
+                        retStr = mDecInfo.getComposingStr();
+                    }
+                    commitResultText(retStr + String.valueOf(fullwidth_char));
+                    resetToIdleState(false);
+                }
+                return true;
+            } else {
+                keyChar = '\'';
+            }
+        }
+
         if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
             if (!mDecInfo.selectionFinished()) {
                 changeToStateInput(true);
@@ -606,9 +655,6 @@ public class PinyinIME extends InputMethodService {
                 .isEnterNoramlState())
                 || keyCode == KeyEvent.KEYCODE_DPAD_CENTER
                 || keyCode == KeyEvent.KEYCODE_SPACE) {
-            ComposingView.ComposingStatus cmpsvStatus = mComposingView
-                    .getComposingStatus();
-
             if (ComposingView.ComposingStatus.SHOW_STRING_LOWERCASE == cmpsvStatus) {
                 String str = mDecInfo.getOrigianlSplStr().toString();
                 if (!tryInputRawUnicode(str)) {
@@ -734,7 +780,7 @@ public class PinyinIME extends InputMethodService {
 
     private void commitResultText(String resultText) {
         InputConnection ic = getCurrentInputConnection();
-        if (null != ic) ic.commitText(resultText, resultText.length());
+        if (null != ic) ic.commitText(resultText, 1);
         if (null != mComposingView) {
             mComposingView.setVisibility(View.INVISIBLE);
             mComposingView.invalidate();
@@ -929,7 +975,7 @@ public class PinyinIME extends InputMethodService {
 
         if (sKey.isUserDefKey()) {
             updateIcon(mInputModeSwitcher.switchModeForUserKey(keyCode));
-            resetToIdleState(true);
+            resetToIdleState(false);
             mSkbContainer.updateInputMode();
         } else {
             if (sKey.isKeyCodeKey()) {
@@ -968,7 +1014,7 @@ public class PinyinIME extends InputMethodService {
             // back to the previous soft keyboard automatically.
             if (!mSkbContainer.isCurrentSkbSticky()) {
                 updateIcon(mInputModeSwitcher.requestBackToPreviousSkb());
-                resetToIdleState(true);
+                resetToIdleState(false);
                 mSkbContainer.updateInputMode();
             }
         }
@@ -1689,9 +1735,13 @@ public class PinyinIME extends InputMethodService {
         }
 
         public String getCurrentFullSent(int activeCandPos) {
-            String retStr = mFullSent.substring(0, mFixedLen);
-            retStr += mCandidatesList.get(activeCandPos);
-            return retStr;
+            try {
+                String retStr = mFullSent.substring(0, mFixedLen);
+                retStr += mCandidatesList.get(activeCandPos);
+                return retStr;
+            } catch (Exception e) {
+                return "";
+            }
         }
 
         public void resetCandidates() {
@@ -1818,6 +1868,9 @@ public class PinyinIME extends InputMethodService {
                 }
             } catch (RemoteException e) {
                 Log.w(TAG, "PinyinDecoderService died", e);
+            } catch (Exception e) {
+                mTotalChoicesNum = 0;
+                mComposingStr = "";
             }
             // Prepare page 0.
             if (!mFinishSelection) {

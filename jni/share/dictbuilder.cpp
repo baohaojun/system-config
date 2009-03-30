@@ -491,7 +491,6 @@ size_t DictBuilder::read_raw_dict(const char* fn_raw,
       i--;
       continue;
     }
-    //    printf("i: %d\n", i);
   }
 
   delete [] valid_hzs;
@@ -579,7 +578,6 @@ bool DictBuilder::build_dict(const char *fn_raw,
 
   get_top_lemmas();
 
-  // printf("Now begin construct tree\n");
 #ifdef ___DO_STATISTICS___
   stat_init();
 #endif
@@ -775,8 +773,6 @@ bool DictBuilder::construct_subset(void* parent, LemmaEntry* lemma_arr,
   if (level >= kMaxLemmaSize || item_end <= item_start)
     return false;
 
-  // printf("++ enter recursive\n");
-
   // 1. Scan for how many sons
   size_t parent_son_num = 0;
   // LemmaNode *son_1st = NULL;
@@ -853,8 +849,6 @@ bool DictBuilder::construct_subset(void* parent, LemmaEntry* lemma_arr,
   lma_last_start = lemma_arr_ + item_start;
   spl_idx_node = lma_last_start->spl_idx_arr[level];
 
-  //  printf("++ spl_idx_node: %d\n", spl_idx_node);
-
   size_t homo_num = 0;
   if (lma_last_start->spl_idx_arr[level + 1] == 0)
     homo_num = 1;
@@ -888,8 +882,6 @@ bool DictBuilder::construct_subset(void* parent, LemmaEntry* lemma_arr,
         homo_idx_num_gt1_ += homo_num;
       }
 
-      // printf("++ homo_num: %d\n++ lmaids: ", homo_num);
-
       if (homo_num > 0) {
         LemmaIdType* idx_buf = homo_idx_buf_ + homo_idx_num_eq1_ +
               homo_idx_num_gt1_ - homo_num;
@@ -903,10 +895,8 @@ bool DictBuilder::construct_subset(void* parent, LemmaEntry* lemma_arr,
 
         for (size_t homo_pos = 0; homo_pos < homo_num; homo_pos++) {
           idx_buf[homo_pos] = lemma_arr_[item_start_next + homo_pos].idx_by_hz;
-          // printf("[%d] %d ", item_start_next + homo_pos,  idx_buf[homo_pos]);
         }
 
-        // printf("\n");
 #ifdef ___DO_STATISTICS___
         if (homo_num > max_homobuf_len_[level])
           max_homobuf_len_[level] = homo_num;

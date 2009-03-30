@@ -543,9 +543,6 @@ public class InputModeSwitcher {
                 english = true;
             } else if (v == EditorInfo.TYPE_TEXT_VARIATION_SHORT_MESSAGE) {
                 mShortMessageField = true;
-            } else if ((editorInfo.imeOptions &
-                    EditorInfo.IME_MASK_ACTION) == EditorInfo.IME_ACTION_SEARCH) {
-                newInputMode = MODE_HKB_CHINESE;
             }
             break;
         default:
@@ -594,13 +591,10 @@ public class InputModeSwitcher {
                     || v == EditorInfo.TYPE_TEXT_VARIATION_URI) {
                 // If the application request English mode, we switch to it.
                 newInputMode = MODE_SKB_ENGLISH_LOWER;
-            } else if (v == EditorInfo.TYPE_TEXT_VARIATION_SHORT_MESSAGE) {
-                newInputMode = MODE_SKB_CHINESE;
-                mShortMessageField = true;
-            } else if ((editorInfo.imeOptions &
-                    EditorInfo.IME_MASK_ACTION) == EditorInfo.IME_ACTION_SEARCH) {
-                newInputMode = MODE_SKB_CHINESE;
             } else {
+                if (v == EditorInfo.TYPE_TEXT_VARIATION_SHORT_MESSAGE) {
+                    mShortMessageField = true;
+                }
                 // If the application do not request English mode, we will
                 // try to keep the previous mode.
                 int skbLayout = (mInputMode & MASK_SKB_LAYOUT);
@@ -615,7 +609,17 @@ public class InputModeSwitcher {
             }
             break;
         default:
-            newInputMode = MODE_SKB_CHINESE;
+            // Try to keep the previous mode.
+            int skbLayout = (mInputMode & MASK_SKB_LAYOUT);
+            newInputMode = mInputMode;
+            if (0 == skbLayout) {
+                if ((mInputMode & MASK_LANGUAGE) == MASK_LANGUAGE_CN) {
+                    newInputMode = MODE_SKB_CHINESE;
+                } else {
+                    newInputMode = MODE_SKB_ENGLISH_LOWER;
+                }
+            }
+            break;
         }
 
         mEditorInfo = editorInfo;
@@ -708,7 +712,7 @@ public class InputModeSwitcher {
         mInputMode = newInputMode;
 
         int skbLayout = (mInputMode & MASK_SKB_LAYOUT);
-        if (MASK_SKB_LAYOUT_QWERTY == skbLayout) {
+        if (MASK_SKB_LAYOUT_QWERTY == skbLayout || 0 == skbLayout) {
             mRecentLauageInputMode = mInputMode;
         }
 
