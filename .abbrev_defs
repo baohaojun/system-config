@@ -37,6 +37,8 @@
 
 (define-abbrev-table 'diff-mode-abbrev-table '(    ))
 
+(define-abbrev-table 'docTeX-mode-abbrev-table '(    ))
+
 (define-abbrev-table 'emacs-wiki-mode-abbrev-table '(    ))
 
 (define-abbrev-table 'fundamental-mode-abbrev-table '(    ))
@@ -93,17 +95,21 @@
 
 (define-abbrev-table 'outline-mode-abbrev-table '(    ))
 
+(define-abbrev-table 'perl-mode-abbrev-table '(    ))
+
 (define-abbrev-table 'pike-mode-abbrev-table '(    ))
 
 (define-abbrev-table 'python-mode-abbrev-table '(    ("false" "False" nil 2)
+    ("ifmain" "if __name__ == '__main__':
+   " nil 1)
     ("pqimport" "from PyQt4.QtCore import *
 from PyQt4.QtGui import * 
 import sys
 import os, traceback, thread
 import pickle
-" nil 3)
-    ("signal" "SIGNAL" nil 1)
-    ("slef" "self" nil 0)
+" nil 4)
+    ("signal" "SIGNAL" nil 3)
+    ("slef" "self" nil 4)
     ("true" "True" nil 2)
     ))
 
@@ -118,7 +124,7 @@ import pickle
 (define-abbrev-table 'special-mode-abbrev-table '(    ))
 
 (define-abbrev-table 'text-mode-abbrev-table '(    ("toolsg" "Tide Yin ‘£¨‘Òü‘ÌÎ‘£© <tide.yin@borqs.com>
-Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yumin'\" <yumin.liang@borqs.com>, 'Ren Mingqi ‘ÈÎ‘Ã÷‘ç÷' <mingqi.ren@borqs.com>, \"'yu.wang'\" <yu.wang@borqs.com>" nil 1)
+Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yumin'\" <yumin.liang@borqs.com>, 'Ren Mingqi ‘ÈÎ‘Ã÷‘ç÷' <mingqi.ren@borqs.com>, \"'yu.wang'\" <yu.wang@borqs.com>" nil 3)
     ))
 
 (define-abbrev-table 'thumbs-mode-abbrev-table '(    ))

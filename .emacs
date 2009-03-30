@@ -1,4 +1,4 @@
-;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
+`;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
 (let ((default-directory "d:/tools/emacs-site-lisp/")) (load-file "d:/tools/emacs-site-lisp/subdirs.el"))
 (if (file-exists-p "c:/cygwin/bin/bash.exe")
@@ -13,25 +13,6 @@
 (setq load-path
       (cons "d:/tools/emacs-site-lisp/" load-path))
 
-(if (eq emacs-major-version 23)
-    ;; (progn 
-;;       (set-language-environment "chinese-gb18030")
-;;       (set-frame-font "Microsoft Yahei-13")
-;;       (set-fontset-font (frame-parameter nil 'font)
-;;                         'han (font-spec :family "Microsoft Yahei" :size 16))
-;;       (set-fontset-font (frame-parameter nil 'font)
-;;                         'symbol (font-spec :family "Microsoft Yahei" :size 16))
-;;       (set-fontset-font (frame-parameter nil 'font)
-;;                         'cjk-misc (font-spec :family "Microsoft Yahei" :size 16))
-;;       (set-fontset-font (frame-parameter nil 'font)
-;;                         'bopomofo (font-spec :family "Microsoft Yahei" :size 16)))
-    nil
-  (setq load-path
-	(cons (expand-file-name "d:/local/share/emacs/site-lisp") load-path))
-  (setq load-path
-	(cons (expand-file-name "d:/local/share/emacs/site-lisp/emms") load-path)))
-
-
 ;; (set-frame-font "Microsoft Yahei-10")
 ;; (set-fontset-font (frame-parameter nil 'font)
 ;;                   'han (font-spec :family "Microsoft Yahei" :size 13))
@@ -43,6 +24,10 @@
 ;;                   'bopomofo (font-spec :family "Microsoft Yahei" :size 13))
 
 (set-frame-font "Monaco-10")
+(set-face-font 'italic "-*-Courier New-normal-i-*-*-13-*-*-*-c-*-iso8859-1")
+(set-face-font 'bold-italic "-*-Courier New-bold-i-*-*-13-*-*-*-c-*-iso8859-1")
+
+
 (set-fontset-font (frame-parameter nil 'font)
                   'han (font-spec :family "Simsun" :size 13))
 (set-fontset-font (frame-parameter nil 'font)
@@ -84,9 +69,6 @@
 (require 'thumbs)
 (require 'emacs-wiki)
 (require 'keydef)
-(if (eq emacs-major-version 23)
-    nil
-  (require 'un-define))
 (require 'grep-buffers)
 (require 'htmlize)
 (require 'htmlize-hack)
@@ -95,22 +77,15 @@
 
 (require 'muse-html)     ; load publishing styles I use
 
+(require 'muse-latex)
+
 (require 'muse-project)
 
 (setq muse-project-alist
       '(("Website" ("~/Pages" :default "index")
-         (:base "html" :path "~/public_html"))))
-
-;; This buffer is for notes you don't want to save, and for Lisp evaluation.
-;; If you want to create a file, visit that file with C-x C-f,
-;; then enter the text in that file's own buffer.
-
-;; Load CEDET
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (load-file "d:/tools/emacswin/site-lisp/cedet-1.0pre4/common/cedet.el") ;;
-;; (semantic-load-enable-excessive-code-helpers)                           ;;
-;; (require 'ecb)                                                          ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+         (:base "html" :path "~/public_html")
+         (:base "latex" :path "~/public_latex")
+         (:base "pdf" :path "~/public_pdf"))))
 
 (emms-standard)
 (emms-default-players)
@@ -120,35 +95,6 @@
 (setq save-abbrevs t)   
 
 
-
-(if (eq emacs-major-version 23)
-    nil
-  (setq bdf-directory-list
-	'("d:/local/intlfonts/Asian" "d:/local/intlfonts/Chinese" "d:/local/intlfonts/Chinese-X"
-	  "d:/local/intlfonts/Ethiopic" "d:/local/intlfonts/European" "d:/local/intlfonts/Japanese"
-	  "d:/local/intlfonts/Japanese-X" "d:/local/intlfonts/Korean-X" "d:/local/intlfonts/Misc/"))
-  (setq w32-bdf-filename-alist
-	(w32-find-bdf-fonts bdf-directory-list))
-  (create-fontset-from-fontset-spec
-   "-*-fixed-medium-r-normal-*-16-*-*-*-c-*-fontset-bdf,
- latin-jisx0201:-*-*-medium-r-normal-*-16-*-*-*-c-*-jisx0201*-*,
- thai-tis620:-misc-fixed-medium-r-normal--16-160-72-72-m-80-tis620.2529-1,
- japanese-jisx0208:-Misc-Fixed-Medium-R-Normal--16-150-75-75-C-160-JISX0208.1990-0,
- lao:-misc-fixed-medium-r-normal--16-160-72-72-m-80-MuleLao-1,
- tibetan-1-column:-TibMdXA-fixed-medium-r-normal--16-160-72-72-m-80-MuleTibetan-1,
- ethiopic:-Admas-Ethiomx16f-Medium-R-Normal--16-150-100-100-M-160-Ethiopic-Unicode,
- tibetan:-TibMdXA-fixed-medium-r-normal--16-160-72-72-m-160-MuleTibetan-0")
-  (setq font-encoding-alist
-	(append '(("MuleTibetan-0" (tibetan . 0))
-		  ("GB2312"        (chinese-gb2312 . 0))
-		  ("JISX0208"      (japanese-jisx0208 . 0))
-		  ("JISX0212"      (japanese-jisx0212 . 0))
-		  ("VISCII"        (vietnamese-viscii-lower . 0))
-		  ("KSC5601"       (korean-ksc5601 . 0))
-		  ("MuleArabic-0"  (arabic-digit . 0))
-		  ("MuleArabic-1"  (arabic-1-column . 0))
-		  ("MuleArabic-2"  (arabic-2-column . 0))) font-encoding-alist))
-  (set-default-font "fontset-bdf"))
 
 (put 'cygwin-mount-name-hook-function 'safe-magic t)
 (global-set-key[(f2)](lambda()(interactive)(call-process "bash" nil nil nil "~/bin/ehelp" (current-word))))
@@ -430,13 +376,8 @@
         (insert ";")
       (call-interactively 'do_en_when_ch)))
 
-  (if (eq emacs-major-version 23)
-      (progn
-	(prefer-coding-system 'chinese-gb18030-unix)
-        (set-default-coding-systems 'chinese-gb18030-unix))
-    (prefer-coding-system 'gb2312)
-    (set-default-coding-systems 'gb2312))
-
+  (prefer-coding-system 'chinese-gb18030-unix)
+  (set-default-coding-systems 'chinese-gb18030-unix)
 
   (defun weekrep ()
     (interactive)
@@ -469,16 +410,6 @@
                       (call-process "bash" nil nil nil "googleemacs.sh" search-string)
                       ))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (defadvice grep                     ;;
-;;   (around bhj-local-grep activate)  ;;
-;;   "Get rid of tramp advise."        ;;
-;;   (ad-deactivate-regexp "tramp")    ;;
-;;   (unwind-protect                   ;;
-;;       ad-do-it                      ;;
-;;     (ad-activate-regexp "tramp")))  ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (standard-display-ascii ?\221 "\`")
 (standard-display-ascii ?\222 "\'")
 (standard-display-ascii ?\223 "\"")
@@ -486,7 +417,6 @@
 (standard-display-ascii ?\227 "\-")
 (standard-display-ascii ?\225 "\*")
 
-                                
 (defun bhj-next-error ()
   (interactive)
   (next-error)
@@ -527,19 +457,6 @@
   (backward-delete-char 1)
   (insert "'"))
 
-;; (defun bhj-refactor-replace ()
-;;   (interactive)
-;;   (let ((first-call t))
-;;     (while t
-;;       (next-error)
-;;       (beginning-of-line)
-;;       (if first-call
-;;           (progn 
-;;             (call-interactively 'query-replace-regexp)
-;;             (setq first-call nil))
-;;         (call-interactively 'replace-regexp)))))
-      
-
 (defcustom bhj-clt-branch "dbg_zch68_a22242_ringtone-hx11i"
   "the cleartool branch to use for mkbranch")
 
@@ -554,8 +471,6 @@
 (fset 'bhj-clt-co-mkbranch
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217761 99 108 116 101 110 118 32 126 47 98 105 110 47 99 108 116 45 99 111 45 109 107 98 114 97 110 99 104 32 134217730 32 134217734 return] 0 "%d")) arg) (call-interactively 'bhj-reread-file)))
 
-(fset 'bhj-python
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217761 112 121 116 111 110 backspace backspace 104 111 110 32 134217734 return] 0 "%d")) arg)))
 
 
 (defcustom bhj-grep-default-directory "/pscp:a22242@10.194.131.91:/"
@@ -566,10 +481,6 @@
                         (grep-use-null-device nil))
                     (call-interactively 'grep))))
 
-
-;;(keydef "C-x 1" (progn 
-;;                  (ecb-deactivate)
-;;                  (delete-other-windows)))
 
 (setq hippie-expand-try-functions-list 
       '(try-expand-dabbrev
@@ -594,40 +505,6 @@
 (fset 'bhj-preview-markdown
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 49 67108896 3 2 134217848 98 104 106 45 109 105 109 101 tab return 3 return 80 24 111 67108911 24 111] 0 "%d")) arg)))
 
-
-
-(fset 'bhj-w3m-next-page
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 S-tab return] 0 "%d")) arg)))
-(fset 'bhj-w3m-prev-page
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab return] 0 "%d")) arg)))
-
-;this is for the book learning python.
-(fset 'bhj-w3m-prev-page
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 14 5 S-tab S-tab return] 0 "%d")) arg))) 
-
-;this is for python documents in /usr/share/doc/python/..
-(fset 'bhj-w3m-next-page
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab tab tab return] 0 "%d")) arg)))
-
-(fset 'bhj-w3m-prev-page
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab return] 0 "%d")) arg)))
-
-;this is for effective c++ and more effective c++
-(fset 'bhj-w3m-next-page
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 134217790 S-tab return] 0 "%d")) arg)))
-
-(fset 'bhj-w3m-prev-page
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217790 S-tab S-tab return] 0 "%d")) arg)))
-
-;this is for prog win mfc [prev] [next]
-(fset 'bhj-w3m-prev-page
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab return] 0 "%d")) arg)))
-
-(fset 'bhj-w3m-next-page
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217788 tab tab return] 0 "%d")) arg)))
-
-
-
 (fset 'bhj-isearch-yank
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("\371" 0 "%d")) arg)))
 
@@ -651,26 +528,8 @@
   (interactive)
   (shell-command "emacs-lqqm-view.sh"))
 
-(defun bhj-w3m-scroll-up-or-next-url ()
-  (interactive)
-  (if (pos-visible-in-window-p (point-max))
-      (call-interactively 'bhj-w3m-next-page)
-    (call-interactively 'w3m-scroll-up-or-next-url)))
-
-(defun bhj-w3m-scroll-down-or-previous-url ()
-  (interactive)
-  (if (pos-visible-in-window-p (point-min))
-      (call-interactively 'bhj-w3m-prev-page)
-    (call-interactively 'w3m-scroll-down-or-previous-url)))
-
-
-
 (add-hook 'w3m-mode-hook 
           (lambda () 
-            (local-set-key [(control shift n)] 'bhj-w3m-next-page)
-            (local-set-key [(control shift p)] 'bhj-w3m-prev-page)
-            (local-set-key [(\ )] 'bhj-w3m-scroll-up-or-next-url)
-            (local-set-key [(backspace)] 'bhj-w3m-scroll-down-or-previous-url)
             (local-set-key [(left)] 'backward-char)
             (local-set-key [(right)] 'forward-char)
             (local-set-key [(down)] 'next-line)
@@ -695,18 +554,6 @@
           (lambda ()
             (local-set-key [(control shift c)] 'bhj-lqqm-pic-collect)
             (local-set-key [(control shift v)] 'bhj-lqqm-pic-view)))
-
-;; (defun bhj-insert-mailaddr ()
-;;   (interactive)
-;;   (let ((default-directory "~/.mail.addr/"))
-;;     (call-interactively 'ido-insert-file)
-;;     (end-of-line)))
-
-;; (add-hook 'message-mode-hook
-;;           (lambda ()
-;;             (local-set-key [(control x) (t)] 'bhj-insert-mailaddr)
-;;             (local-set-key [(control x) (c)] 'bhj-insert-mailaddr)))
-
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -755,7 +602,7 @@
 BODY {
 	padding : 0.7in;
 	font-size : medium;
-	font-family : Luxi Serif, Luxi Serif, Serif, Tahoma, helvetica, serif, \"??\";
+	font-family : Luxi Serif, Luxi Serif, Serif, Tahoma, helvetica, serif;
 	background : white;
 	border-style: solid;
 	border-width: 20pt;
@@ -985,6 +832,62 @@ div.tl{
         }
 
     </style>")
+ '(muse-latex-header "\\documentclass{article}
+
+\\usepackage[english]{babel}
+\\usepackage{ucs}
+\\usepackage[utf8x]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage{hyperref}
+\\usepackage{float}
+\\usepackage[pdftex]{graphicx}
+
+\\def\\museincludegraphics{%
+  \\begingroup
+  \\catcode`\\|=0
+  \\catcode`\\\\=12
+  \\catcode`\\#=12
+  \\includegraphics[width=0.75\\textwidth]
+}
+
+\\begin{document}
+
+\\title{<lisp>(muse-publish-escape-specials-in-string
+  (muse-publishing-directive \"title\") 'document)</lisp>}
+\\author{<lisp>(muse-publishing-directive \"author\")</lisp>}
+\\date{<lisp>(muse-publishing-directive \"date\")</lisp>}
+
+\\maketitle
+
+<lisp>(and muse-publish-generate-contents
+           (not muse-latex-permit-contents-tag)
+           \"\\\\tableofcontents
+\\\\newpage\")</lisp>
+
+")
+ '(muse-latex-markup-strings (quote ((image-with-desc . "\\begin{figure}[H]
+\\centering\\museincludegraphics{%s.%s}|endgroup
+\\caption{%s}
+\\end{figure}") (image . "\\begin{figure}[H]
+\\centering\\museincludegraphics{%s.%s}|endgroup
+\\end{figure}") (image-link . "%% %s
+\\museincludegraphics{%s.%s}|endgroup") (anchor-ref . "\\ref{%s}") (url . "\\url{%s}") (url-and-desc . "\\href{%s}{%s}\\footnote{%1%}") (link . "\\href{%s}{%s}\\footnote{%1%}") (link-and-anchor . "\\href{%1%}{%3%}\\footnote{%1%}") (email-addr . "\\verb|%s|") (anchor . "\\label{%s}") (emdash . "---") (comment-begin . "% ") (rule . "\\vspace{.5cm}\\hrule\\vspace{.5cm}") (no-break-space . "~") (line-break . "\\\\") (enddots . "\\ldots{}") (dots . "\\dots{}") (part . "\\part{") (part-end . "}") (chapter . "\\chapter{") (chapter-end . "}") (section . "\\section{") (section-end . "}") (subsection . "\\subsection{") (subsection-end . "}") (subsubsection . "\\subsubsection{") (subsubsection-end . "}") (section-other . "\\paragraph{") (section-other-end . "}") (footnote . "\\footnote{") (footnote-end . "}") (footnotetext . "\\footnotetext[%d]{") (begin-underline . "\\underline{") (end-underline . "}") (begin-literal . "\\texttt{") (end-literal . "}") (begin-emph . "\\emph{") (end-emph . "}") (begin-more-emph . "\\textbf{") (end-more-emph . "}") (begin-most-emph . "\\textbf{\\emph{") (end-most-emph . "}}") (begin-verse . "\\begin{verse}
+") (end-verse-line . " \\\\") (verse-space . "~~~~") (end-verse . "
+\\end{verse}") (begin-example . "\\begin{quote}
+\\begin{verbatim}") (end-example . "\\end{verbatim}
+\\end{quote}") (begin-center . "\\begin{center}
+") (end-center . "
+\\end{center}") (begin-quote . "\\begin{quote}
+") (end-quote . "
+\\end{quote}") (begin-cite . "\\cite{") (begin-cite-author . "\\citet{") (begin-cite-year . "\\citet{") (end-cite . "}") (begin-uli . "\\begin{itemize}
+") (end-uli . "
+\\end{itemize}") (begin-uli-item . "\\item ") (begin-oli . "\\begin{enumerate}
+") (end-oli . "
+\\end{enumerate}") (begin-oli-item . "\\item ") (begin-dl . "\\begin{description}
+") (end-dl . "
+\\end{description}") (begin-ddt . "\\item[") (end-ddt . "] \\mbox{}
+"))))
+ '(muse-publish-date-format "%m/%e/%Y")
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
  '(preview-gs-command "c:/gs/gs8.54/bin/gswin32c.exe")

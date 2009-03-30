@@ -114,7 +114,7 @@ export HISTFILESIZE=100000
 alias clt='EDITOR="d:\tools\emacswin\emacs-22.1\bin\emacsclient.exe" cleartool'
 alias emacsclient='~/emacs/bin/emacsclient.exe -n'
 export VC_BUILD_CONFIG=release
-export SHELL=/bin/bash
+
 . ~/.bashrc-path
 alias of=cygstart
 alias ps='ps aux -W'
@@ -225,3 +225,4 @@ function lcd()
         cd "`dirname \"$linkTarget\"`"
     fi
 }
+export HOME=/q

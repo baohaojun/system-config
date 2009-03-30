@@ -10,5 +10,5 @@ fi
 
 if findexec.exe -F 1 -p emacs.exe
     then efindfile.sh "$FILE" 
-    else ~/bin/emacs.bat "$FILE"
+    else ~/bin/emacs.sh "$FILE"
 fi

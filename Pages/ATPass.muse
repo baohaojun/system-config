@@ -1,8 +1,9 @@
 #title Borqs PassThrough Usage Manual
 #author Bao Haojun <haojun.bao@borqs.com>
 
-<literal><span style="font-size: 28px">Table of Contents</span></literal>
 <contents>
+
+* Introduction
 
 ** Purpose
 
@@ -10,65 +11,154 @@ This software will provide support serial port testing ability for AT commands, 
 
 ** Change Log
 
-1. Alchemy is not needed anymore (on 2009/03/11). It has been integrated.
+ 1. Alchemy is not needed anymore (on 2009/03/11). It has been integrated.
 
-2. AT/GPS/Bluethooth all supported with a single program.
+ 2. AT/GPS/Bluethooth all supported with a single program. 
 
-** System requirement
+** System Requirement
 
 *** Hardware
-1. Windows XP.
 
-2. OMS phone.
+ 1. Windows XP.
+
+ 2. OMS phone.
+
 *** Software 
-1. OMS release, any version released after 2009/03/18 should be supported by this tool, if it's not, please report a bug.
 
-2. com0com, this is an open source virtual serial port software, you can get it from [[http://nchc.dl.sourceforge.net/sourceforge/com0com/com0com-2.2.0.0-i386-fre.zip][it's homepage]] or [[\\toolserver\ttt_internal_share\Tool_Release\ATPass][here]] (borqs internal share folder). Install it, then you should see 'CNCA0' and 'CNCB0' added to your system serial ports. 
+ 1. OMS release, any version released after 2009/03/18 should be
+    supported by this tool, if it's not, please report a bug.
 
-
-** Install Borqs PassThrough on PC
-
-The software can be fetched at [[\\toolserver\ttt_internal_share\Tool_Release\ATPass][here]] (borqs internal share folder, same as above). Install the lastest version.
-
-** Start Borqs Pass Through on PC
-
-It can be start from the Desktop, with the shortcut named =Borqs Pass Through=, or, it can be started from =Start Menu->All Programs->Borqs->PassThrough->PassThrough=.
-
-After it is started, you can configure which serial port you want to use, and the serial port setting. Note that you must choose a virtual port emulated by com0com, not a real one!
-
-After that, you can press the =AT Pass= or =GPS Pass= or =BT Pass= button.
-
-[[../public_html/atpass/AT_Passthrough0005.png]]
-
-Please kindly note that the above screenshot is taken from version 1.0, with the current version, you will not see the =Start= button, instead, you will see 3 buttons for =AT Commands=, =gps=, =bluetooth=, respectively.
-
-** Stop Borqs Pass Through
-Borqs Pass Through can get stopped for several reasons after you click start button.
-
-1. It will automatically stop if it can't connect to the phone.
-2. It can't open the serial port (For e.g., the port you specified is already opened by another program like Hyper-terminal).
-3. The connection to the phone is broken (For e.g., you unplugged the USB cable).
-4. After it is connected, the =Stop= button will be enabled, and you clicked it.
-5. You exited the Borqs Pass Through program.
-
-** Exit Borqs Pass Through
-Clicking the =X= button on Borqs Pass Through dialog will not exit it. Instead, it will minimize to the system tray. You must click the system tray icon with your right mouse button to exit it.
+ 2. com0com, this is an open source virtual serial port software, you
+    can get it from [[http://nchc.dl.sourceforge.net/sourceforge/com0com/com0com-2.2.0.0-i386-fre.zip][its homepage]] or [[\\toolserver\ttt_internal_share\Tool_Release\ATPass][here]] (borqs internal share
+    folder). Install it, then you should see 'CNCA0' and 'CNCB0' added
+    to your system serial ports.
 
 
+** Install Borqs PassThrough
 
-** Use HyperTerminal to verify Borqs Pass Through is working
+The software can be fetched at [[svn://192.168.1.250/tools/branches/borqs/pkgkits/atpass][svn repository]] or [[\\toolserver\ttt_internal_share\Tool_Release\ATPass][here]] (borqs internal share folder, same
+as above). Install the lastest version.
+
+** Start =Borqs Pass Through=
+
+First of all, make sure the phone is already connected to the PC via
+USBnet.
+
+=Borqs Pass Through= can be started from the Desktop, with the shortcut
+named =Borqs Pass Through=; alternatively, you can start it from =Start
+Menu -> All Programs -> Borqs -> PassThrough -> PassThrough=.
+
+[[Q:\public_html\atpass\0085.png][Start Menu]]
 
 
-[[../public_html/atpass/0032.png]]
+* Usage
 
-Configure it, Note that you must use =CNCB0= if you are using =CNCA0= in Borqs Pass Through, because these are a pair of =Virtual Serial Ports=. (You can verify this. Just start two HyperTerminals, one opened with =CNCA0=, the other with =CNCB0=, and they should be able to communicate with each other).
+** Main Window
 
-[[../public_html/atpass/0064.png]]
+[[Q:\public_html\atpass\Passthrough_-_Unknown0009.png][Main window]]
+
+After it is started, you can configure which serial port you want to
+use, and the serial port setting. Note that you must choose a virtual
+port emulated by com0com, not a physical one!
+
+After that, you can click the =AT Pass= if you want to test AT commands,
+or =GPS Pass= if you need to test GPS, or =BT Pass= to test Blue
+tooth. The first time you click one of them, the others will be
+disabled immediately. If you want to test GPS after you tested AT, for
+e.g., you must exit and restart the program. This simply means that
+you can not test more than one feature at one time.
+
+    Note that the =BT Pass= is disabled for now. This is because the code to
+    start =btpass= client program on the phone will hang. It will be enabled
+    when this bug is fixed.
+
+You can also click the =close= button, which will not exit the program,
+instead, it will minimize to the system tray.
+
+When everything is ok, all the _Pass_ buttons will be disable and the
+=Stop= button will be enabled. You can click the =Stop= button to stop
+pass through.
+
+** System tray icon, menu and messages
+Alternatively, you can issue the commands from the menu. Click the
+system tray icon with the right mouse button. Some of the menu items
+are the same as the buttons on the main window.
+
+The other items will allow you:
+ - =Show log= to open the log in notepad.
+ - =Configure= to show the main window if it is hidden (so you can
+   *Configure* it).
+ - =Exit= to exit the program.
+
+You can also toggle show/hide the main window by double clicking the
+systray icon.
+
+[[Q:\public_html\atpass\0092.jpg][Systray menu]]
 
 
-Now, type =at= or =AT= in =CNCB0=, and you will see an OK.
 
-[[../public_html/atpass/0036.png]]
+Initially, the systray icon will be **disconnected**, if you started O.K.,
+the icon will change to **connected**, and then when the connection is
+broken, it will change to **waiting** (this is because it is a TCP
+server).
+
+[[q:\src\engtool\atPassThru-generic\disconnected.png][disconnected]]
+
+[[q:\src\engtool\atPassThru-generic\connected.png][connected]]
+
+[[q:\src\engtool\atPassThru-generic\connecting.png][waiting]]
+
+
+
+When something goes wrong, a simple message will be shown from the
+system tray.
+
+[[Q:\public_html\atpass\0090.jpg][Message and Icon]]
+
+[[Q:\public_html\atpass\0096.jpg][Another Message]]
+
+* Trouble Shooting
+
+** Report bug
+
+When something goes wrong, the log and the message box can give you a
+hint. To report a bug to [[mailto:haojun.bao@borqs.com][me]], please attatch the log file.
+
+Or, if you want to do a little trouble shooting yourself, please refer
+to the following sections.
+
+** =Borqs Pass Through= can't be started
+
+=Borqs Pass Through= start can fail for several reason after you click
+the =AT Pass= etc. buttons.
+
+
+ - =Borqs Pass Through= need the TCP port 1500 on your PC. So if this
+   port is already binded by another server program on your PC, =Borqs
+   Pass Through= will fail to start.
+ - The serial port you configured can't be opened. Like the above,
+   this can happen when another program is already using the port.
+
+** =Borqs Pass Through= Disconnected
+
+=Borqs Pass Through= can get disconnected after it is connected by the phone.
+ - The connection to the phone is broken (For e.g., you unplugged the USB cable).
+ - You clicked the =Stop= button.
+
+* AT specific problem
+
+** Sending =Ctrl-Z= to the phone has no effect
+
+There is a little difference with the AT standard, you must send an
+`\r' or `\n' character after the =Ctrl-Z=.
+
+
+
+
+
+
+
+
 
 
 

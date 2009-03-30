@@ -1,11 +1,11 @@
 #!/bin/bash
-export PATH=/f/bin/win32:/c/TeXLive2007/dviout:/c/gs/gs8.54/bin:/c/TeXLive2007/bin/win32:/c/TeXLive2007/dviout:/c/gs/gs8.54/bin:/c/latex2html/bin:"$PATH"
+export PATH=~/bin:/h/bin/win32:/c/TeXLive2007/dviout:/c/gs/gs8.54/bin:/c/TeXLive2007/bin/win32:/c/TeXLive2007/dviout:/c/gs/gs8.54/bin:/c/latex2html/bin:"$PATH"
 
 export GS_LIB='C:\gs\gs8.54\lib;C:\gs\fonts'
-export PERL5LIB='f:\perltl\lib;f:\perltl\lib\File\Spec;f:\perltl\site\lib'
-export TEXMFCNF='d:\profiles\bhj\.texmf-var\web2c'
+export PERL5LIB='h:\perltl\lib;h:\perltl\lib\File\Spec;h:\perltl\site\lib'
+export TEXMFCNF='q:\.texmf-var\web2c'
 export TEXMFTEMP='C:\TeXLive2007\temp'
-export TEXMFVAR='d:\profiles\bhj\.texmf-var'
+export TEXMFVAR='q:\.texmf-var'
 export TLroot='C:\TeXLive2007'
 
 if [[ $# == 0 ]]; then

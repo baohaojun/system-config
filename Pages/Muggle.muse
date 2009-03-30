@@ -4,6 +4,10 @@ This document is a simple how-to for =Muggle=, the tool for updating an .mff fil
 
 You can receive this program from =svn://192.168.1.250/tools/branches/borqs/pkgkits/muggle/windows=, you should run =gupdate_mff.exe=, it will give you a GUI, if you prefer it over the CLI =update_mff.exe=.
 
+hello world || hello again
+hello baohaojun | hello baohaojun
+Hello and hello ||| hello and again
+
 ** How to use the program
 
 1. Choose input file

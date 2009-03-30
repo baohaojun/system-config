@@ -1,5 +1,5 @@
 #!/bin/bash 
-#source ~/.bash_profile
+source ~/.bash_profile
 #. /etc/bash_completion
 session_name="$1"
 
