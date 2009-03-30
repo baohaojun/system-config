@@ -250,6 +250,9 @@ class MatrixSearch {
 
   void free_resource();
 
+  // Reset the search space totally.
+  bool reset_search0();
+
   // Reset the search space from ch_pos step. For example, if the original
   // input Pinyin is "an", reset_search(1) will reset the search space to the
   // result of "a". If the given position is out of range, return false.

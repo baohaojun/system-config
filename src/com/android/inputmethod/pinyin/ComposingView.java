@@ -264,6 +264,7 @@ public class ComposingView extends View {
             mPaint.setColor(mStrColorIdle);
             int oriPos = activeCmpsLen;
             if (cursorPos > activeCmpsLen) {
+                if (cursorPos > cmpsStr.length()) cursorPos = cmpsStr.length();
                 canvas.drawText(cmpsStr, oriPos, cursorPos, x, y, mPaint);
                 x += mPaint.measureText(cmpsStr, oriPos, cursorPos);
 
