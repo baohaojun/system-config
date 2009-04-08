@@ -226,3 +226,6 @@ function lcd()
     fi
 }
 export HOME=/q
+
+export PYTHON_INCLUDE='c:\python25\include'
+export PYTHON_LIB='c:\python25\libs\python25.lib'

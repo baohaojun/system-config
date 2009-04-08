@@ -590,6 +590,7 @@
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
+ '(ido-save-directory-list-file "/home/bhj/.ido.last")
  '(indent-tabs-mode nil)
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))
@@ -600,14 +601,9 @@
  '(muse-html-charset-default "chinese-gb18030")
  '(muse-html-style-sheet "<style type=\"text/css\">
 BODY {
-	padding : 0.7in;
-	font-size : medium;
-	font-family : Luxi Serif, Luxi Serif, Serif, Tahoma, helvetica, serif;
+	font-size : 10pt;
+	font-family : Luxi Serif, Serif, Tahoma, helvetica, serif;
 	background : white;
-	border-style: solid;
-	border-width: 20pt;
-	border-color: midnightblue;
-	padding: 0.7in;
 }
 
 body.framed {
@@ -629,7 +625,6 @@ p.banner {
 
 P.mmix{
         text-indent : 0;
-        font-size : medium;
         }
 
 P.tip{
@@ -640,7 +635,6 @@ OL{
     list-style-type: decimal;
     padding-bottom : 8px;
     text-indent : 0;
-    font-size : medium;
     /*background: gray;*/
     }
 
@@ -657,7 +651,6 @@ OL.roman{
 
 
 H2 {
-     font-size: 20pt;
      color: navy;
      text-align : left;
      }
@@ -741,26 +734,20 @@ em.phrase {
             }
 
 h1 {
-	font-size:  28px;
 	border-top: solid black 1px;
 	border-bottom: solid black 1px;
 	padding: 0.1em;
 	padding-top: 0.2em;
 	padding-left: 0.3em;
 	padding-bottom: 0.3em;
-     background: ;
-	background-color: #A64DFF;
-	color: #0A246A;
      }
 
 h1.home{
          color: #102C4A;
-         font-size: 34px;
          }
 
 h2 { 
      color:#666;
-     font-size: 18px;
      border-top: solid black 1px;
      border-bottom: solid black 1px;
      padding: 0.1em;
@@ -772,7 +759,6 @@ h2 {
 
 h3 { 
      color:#666;
-     font-size: 16px;
      border-left: solid black 1px;
      border-bottom: solid black 1px;
      padding: 0.1em;
@@ -783,7 +769,6 @@ h3 {
 
 h4 { 
      color:#666;
-     font-size: 14px;
      padding: 2px;
      margin-top: 5px;
      }
@@ -791,8 +776,6 @@ h4 {
 H5 {
      color: red;
      text-align: left;
-     font-size: small;
-     font-size: 12px;
      }
 
 
@@ -1041,4 +1024,5 @@ div.tl{
       (local-set-key [(control /)] 'bhj-term-control_)
       (local-set-key [(escape)] 'bhj-modify-term-map))))
 
+(require 'xcscope)
 ;(w32-register-hot-key [A-tab])

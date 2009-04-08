@@ -7,13 +7,15 @@
 
 ** Purpose
 
-This software will provide support serial port testing ability for AT commands, GPS and bluethooth.
+This software will provide support serial port testing ability for AT commands, GPS and bluethooth. On version 3.0.1, it also supports CP flash for SpreadTrum TD phone.
 
 ** Change Log
 
  1. Alchemy is not needed anymore (on 2009/03/11). It has been integrated.
 
  2. AT/GPS/Bluethooth all supported with a single program. 
+ 
+ 3. CP flashing pass through for SpreadTrum TD phone is supported.
 
 ** System Requirement
 
@@ -48,14 +50,14 @@ USBnet.
 named =Borqs Pass Through=; alternatively, you can start it from =Start
 Menu -> All Programs -> Borqs -> PassThrough -> PassThrough=.
 
-[[Q:\public_html\atpass\0085.png][Start Menu]]
+[[atpass/0085.png][Start Menu]]
 
 
 * Usage
 
 ** Main Window
 
-[[Q:\public_html\atpass\Passthrough_-_Unknown0009.png][Main window]]
+[[atpass/Passthrough_-_Unknown0009.png][Main window]]
 
 After it is started, you can configure which serial port you want to
 use, and the serial port setting. Note that you must choose a virtual
@@ -93,7 +95,7 @@ The other items will allow you:
 You can also toggle show/hide the main window by double clicking the
 systray icon.
 
-[[Q:\public_html\atpass\0092.jpg][Systray menu]]
+[[atpass/0092.jpg][Systray menu]]
 
 
 
@@ -113,9 +115,9 @@ server).
 When something goes wrong, a simple message will be shown from the
 system tray.
 
-[[Q:\public_html\atpass\0090.jpg][Message and Icon]]
+[[atpass/0090.jpg][Message and Icon]]
 
-[[Q:\public_html\atpass\0096.jpg][Another Message]]
+[[atpass/0096.jpg][Another Message]]
 
 * Trouble Shooting
 
@@ -145,20 +147,20 @@ the =AT Pass= etc. buttons.
  - The connection to the phone is broken (For e.g., you unplugged the USB cable).
  - You clicked the =Stop= button.
 
-* AT specific problem
+* AT specific issues
 
 ** Sending =Ctrl-Z= to the phone has no effect
 
 There is a little difference with the AT standard, you must send an
 `\r' or `\n' character after the =Ctrl-Z=.
 
+* TD CP specific issues
 
+** Another button
+There is another button on the main dialog window now, named "TDCP Pass", you just click this button, and wait a few seconds, then the systray icon will change to =connected=, then you can start the SpreadTrum dLoaderR program. 
 
+[[Q:\public_html\atpass\Passthrough_-_CP_Flash-20090408141317.png]]
 
+** com0com config
 
-
-
-
-
-
-
+By default, com0com will get you a pair of COMM ports named =CNCAn= and =CNCBn=, but SpreadTrum dLoaderR will not take this kind of name, you must change the names to the =COM20/COM21=, for example.
