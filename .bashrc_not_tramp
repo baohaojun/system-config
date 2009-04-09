@@ -80,7 +80,7 @@ umask 000
             export HAS_CLEARCASE=false
         fi
 	export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mview[01;31m:[01;34m$PS1SetView[0m)\n\$'
-export SHELL=/bin/bash
+
 export EDITOR=edit.sh
 alias itool='/vob/ilj_release/devkit/pck/itool'
 export XMODIFIERS=@im=SCIM

@@ -20,7 +20,6 @@ export HISTSIZE=2000
 export HISTFILESIZE=100000
 
 export VC_BUILD_CONFIG=release
-export SHELL=/bin/bash
 . ~/.bashrc-path
 . ~/.bashrc_public
 . ~/.bash_netcompletion
