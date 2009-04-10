@@ -582,7 +582,7 @@
  '(ecomplete-database-file-coding-system (quote gb18030))
  '(emms-player-mplayer-command-name "mplayer.exe")
  '(emms-player-mplayer-parameters (quote ("-slave" "-quiet" "-really-quiet" "-vo" "null")))
- '(font-lock-maximum-decoration 3)
+ '(font-lock-maximum-decoration 2)
  '(gdb-find-source-frame t)
  '(gdb-same-frame t)
  '(gdb-show-main t)
