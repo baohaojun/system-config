@@ -47,7 +47,7 @@
 ;;                   'bopomofo (font-spec :family "Simsun" :size 13))
 
 (add-to-list 'load-path "~/.emacs_d/weblogger")
-(add-to-list 'load-path "c:/gnuserv")
+(add-to-list 'load-path "~/bin/gnuserv")
 
 
 (require 'emms-setup)
