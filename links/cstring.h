@@ -1,0 +1,1 @@
+.vc6/MFC/Include/AFX.H
