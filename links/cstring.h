@@ -1,1 +1,1 @@
-.vc6/MFC/Include/AFX.H
+../.vc6/MFC/Include/AFX.H
