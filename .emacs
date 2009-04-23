@@ -1,6 +1,9 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
-(while (eq system-type 'windows-nt)
+(setq load-path
+      (cons (expand-file-name "~/.emacs_d/lisp") load-path))
+
+(when (eq system-type 'windows-nt)
   (let ((default-directory "d:/tools/emacs-site-lisp/")) (load-file "d:/tools/emacs-site-lisp/subdirs.el"))
   (if (file-exists-p "c:/cygwin/bin/bash.exe")
       (setq cygwin-drive "c:")
@@ -14,11 +17,6 @@
   (cygwin-mount-activate)
   (require 'w32-symlinks))
 
-
-      
-
-(setq load-path
-      (cons (expand-file-name "~/.emacs_d/lisp") load-path))
 
 ;; (set-frame-font "Microsoft Yahei-10")
 ;; (set-fontset-font (frame-parameter nil 'font)
