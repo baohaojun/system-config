@@ -13,6 +13,10 @@
 	(cons "d:/tools/emacs-site-lisp/" load-path))
   (add-to-list 'load-path "~/bin/gnuserv")
   (require 'cygwin-mount)
+  (defalias 'nsi-point 'py-point) 
+  (autoload 'nsi-mode "nsi-mode" "nsi editing mode." t)
+  (add-to-list 'auto-mode-alist '("\\.nsi$" . nsi-mode))
+
   (put 'cygwin-mount-name-hook-function 'safe-magic t)
   (cygwin-mount-activate)
   (require 'w32-symlinks))
