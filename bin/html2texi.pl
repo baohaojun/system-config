@@ -1,7 +1,8 @@
-#! ~/bin/cygperl.exe
+#! /q/bin/cygperl.exe
 # html2texi.pl -- Convert HTML documentation to Texinfo format
-# Michael Ernst <mernst@cs.washington.edu>
-# Time-stamp: <1999-01-12 21:34:27 mernst>
+# Michael Ernst <mernst@csail.mit.edu>
+# http://pag.csail.mit.edu/~mernst/software/html2texi.pl
+# Time-stamp: <2005-03-01 06:52:50 mernst>
 
 # This program converts HTML documentation trees into Texinfo format.
 # Given the name of a main (or contents) HTML file, it processes that file,
@@ -10,6 +11,8 @@
 # For instance:
 #   html2texi.pl api/index.html
 # produces file "api.texi".
+# After producing the .texi file, before processing it with makeinfo or TeX
+# you should update the menus and nodes; in Emacs, do "C-u C-c C-u C-a".
 
 # Texinfo format can be easily converted to Info format (for browsing in
 # Emacs or the standalone Info browser), to a printed manual, or to HTML.
@@ -22,55 +25,41 @@
 # convenient features missing from Web browsers, such as easy index lookup
 # and mouse-free browsing.
 
+# Installation:
+# * html2texi.pl requires the use of "checkargs.pm".  You can find it at
+#   http://pag.csail.mit.edu/~mernst/software/#checkargs; alternately, you can
+#   elmiminate the dependence by replacing calls to check_args* by @_ (which
+#   is always the last argument to those functions).
+# * This program requires HTML::TreeBuilder.  You can install this by doing
+#     perl -MCPAN -e shell
+#     install HTML::TreeBuilder
+#   Alternately, get libwww-perl from http://www.linpro.no/lwp/ and
+#   HTML::TreeBuilder from
+#   http://www.perl.com/CPAN/modules/by-module/HTML/HTML-Tree-3.18.tar.gz
+#   (HTML-Tree itself requires HTML-Parser and HTML-Tagset, available from
+#   the same directory.)
+
 # Limitations:
-# html2texi.pl is currently tuned to latex2html output (and it corrects
-# several latex2html bugs), but should be extensible to arbitrary HTML
-# documents.  It will be most useful for HTML with a hierarchical structure
-# and an index, and it recognizes those features as created by latex2html
-# (and possibly by some other tools).  The HTML tree to be traversed must
-# be on local disk, rather than being accessed via HTTP.
-# This script requires the use of "checkargs.pm".  To eliminate that
-# dependence, replace calls to check_args* by @_ (which is always the last
-# argument to those functions).
-# Also see the "to do" section, below.
+# * html2texi.pl is currently tuned to latex2html output (and it corrects
+#   several latex2html bugs), but should be extensible to arbitrary HTML
+#   documents.  It will be most useful for HTML with a hierarchical structure
+#   and an index, and it recognizes those features as created by latex2html
+#   (and possibly by some other tools).  The HTML tree to be traversed must
+#   be on local disk, rather than being accessed via HTTP.
+# * Malformed HTML can cause this program to abort, so you should check your
+#   HTML files to make sure they are legal.
+# * Also see the "to do" section, below.
 # Comments, suggestions, bug fixes, and enhancements are welcome.
 
-# Troubleshooting:
-# Malformed HTML can cause this program to abort, so
-# you should check your HTML files to make sure they are legal.
+
+# To make the Python documentation, see python-info-Makefile at
+# http://pag.csail.mit.edu/~mernst/software/#python-info;
+# prebuilt Python Info files are also available there.
 
 
-###
-### Typical usage for the Python documentation:
-###
-
-# (Actually, most of this is in a Makefile instead.)
-# The resulting Info format Python documentation is currently available at
-# ftp://ftp.cs.washington.edu/homes/mernst/python-info.tar.gz
-
-# Fix up HTML problems, eg <DT><DL COMPACT><DD> should be <DT><DL COMPACT><DD>.
-
-# html2texi.pl /homes/fish/mernst/tmp/python-doc/html/api/index.html
-# html2texi.pl /homes/fish/mernst/tmp/python-doc/html/ext/index.html
-# html2texi.pl /homes/fish/mernst/tmp/python-doc/html/lib/index.html
-# html2texi.pl /homes/fish/mernst/tmp/python-doc/html/mac/index.html
-# html2texi.pl /homes/fish/mernst/tmp/python-doc/html/ref/index.html
-# html2texi.pl /homes/fish/mernst/tmp/python-doc/html/tut/index.html
-
-# Edit the generated .texi files:
-#   * change @setfilename to prefix "python-"
-#   * fix up any sectioning, such as for Abstract
-#   * make Texinfo menus
-#   * perhaps remove the @detailmenu ... @end detailmenu
-# In Emacs, to do all this:
-#   (progn (goto-char (point-min)) (replace-regexp "\\(@setfilename \\)\\([-a-z]*\\)$" "\\1python-\\2.info") (replace-string "@node Front Matter\n@chapter Abstract\n" "@node Abstract\n@section Abstract\n") (progn (mark-whole-buffer) (texinfo-master-menu 'update-all-nodes)) (save-buffer))
-
-# makeinfo api.texi
-# makeinfo ext.texi
-# makeinfo lib.texi
-# makeinfo mac.texi
-# makeinfo ref.texi
-# makeinfo tut.texi
+# Thanks to the following for patches to the code:
+#  "Richard Y. Kim" <ryk@coho.net>
+#  "Aaron S. Hawley" <Aaron.Hawley@uvm.edu>
 
 
 ###
@@ -86,11 +75,11 @@
 
 # Source and destination languages
 # --------------------------------
-# 
+#
 # The goal is Info files; I create Texinfo, so I don't have to worry about
 # the finer details of Info file creation.  (I'm not even sure of its exact
 # format.)
-# 
+#
 # Why not start from LaTeX rather than HTML?
 # I could hack latex2html itself to produce Texinfo instead, or fix up
 # partparse.py (which already translates LaTeX to Teinfo).
@@ -107,18 +96,19 @@
 
 # Parsing
 # -------
-# 
+#
 # I don't want to view the text as a linear stream; I'd rather parse the
 # whole thing and then do pattern matching over the parsed representation (to
 # find idioms such as indices, lists of child nodes, etc.).
 #  * Perl provides HTML::TreeBuilder, which does just what I want.
 #     * libwww-perl: http://www.linpro.no/lwp/
-#     * TreeBuilder: HTML-Tree-0.51.tar.gz
+#     * TreeBuilder: HTML-Tree-0.53.tar.gz or HTML-Tree-0.53.tar.gz (in CPAN)
 #  * Python Parsers, Formatters, and Writers don't really provide the right
-#    interface (and the version in Grail doesn't correspond to another
-#    distributed version, so I'm confused about which to be using).  I could
-#    write something in Python that creates a parse tree, but why bother?
-
+#    interface (and the version of those packages in Grail doesn't
+#    correspond to another distributed version of tose packages, so I'm
+#    confused about which to be using).  I could write something in Python
+#    that creates a parse tree, but why bother?
+ 
 # Other implementation language issues:
 #  * Python lacks variable declarations, reasonable scoping, and static
 #    checking tools.  I've written some of the latter for myself that make
@@ -130,6 +120,7 @@
 ### To do
 ###
 
+# Internal HREF anchors (cross-references).
 # Section names:
 #   Fix the problem with multiple sections in a single file (eg, Abstract in
 #     Front Matter section).
@@ -137,7 +128,7 @@
 # Index:
 #   Perhaps double-check that every tag mentioned in the index is found
 #     in the text.
-# Python:  email to docs@python.org, to get their feedback.
+# Python:
 #   Compare to existing lib/ Info manual
 #   Write the hooks into info-look; replace pyliblookup1-1.tar.gz.
 #   Postpass to remove extra quotation marks around typography already in
@@ -158,22 +149,35 @@
 # man HTML::Parser
 # man HTML::Element
 
-# require HTML::ParserWComment;
-require HTML::Parser;
-require HTML::TreeBuilder;
-require HTML::Element;
+# "Richard Y. Kim" <ryk@coho.net> says that "require" fails but "use" works.
+# # require HTML::ParserWComment;
+# require HTML::Parser;
+# require HTML::TreeBuilder;
+# require HTML::Element;
+use HTML::TreeBuilder;
+use HTML::Element;
 
 use File::Basename;
 
 use strict;
-# use Carp;
+# use Carp;	# For debugging; also change "die" to "croak" or "confess"
+
 
 use checkargs;
+
+# Forward declaration required by Perl 5.6
+sub html_to_texi ( $ );
+sub table_columns ( $ );
 
 
 ###########################################################################
 ### Variables
 ###
+
+# Determines whether to produce output about HTML that cannot be converted
+# to Texinfo.
+my $missing_feature_warning = 0;
+# $missing_feature_warning = 1;	# for debugging
 
 my @section_stack = ();		# elements are chapter/section/subsec nodetitles (I think)
 my $current_ref_tdf;		# for the file currently being processed;
@@ -184,7 +188,8 @@ my %footnotes;
 # First element should not be used.
 my @sectionmarker = ("manual", "chapter", "section", "subsection", "subsubsection");
 
-my %inline_markup = ("b" => "strong",
+my %inline_markup = ("acronym" => "acronym",
+		     "b" => "strong",
 		     "code" => "code",
 		     "i" => "emph",
 		     "kbd" => "kbd",
@@ -298,7 +303,7 @@ sub process_child_links ( $ )
   # $he->dump();
   if (scalar(@current_contents_list) != 0)
     { die "current_contents_list nonempty: @current_contents_list"; }
-  $he->traverse(\&increment_current_contents_list, 'ignore text');
+  $he->traverse(\&increment_current_contents_list, 'ignore text nodes');
 
   # Normalize the depths; for instance, convert 1,3,5 into 0,1,2.
   my %depths = ();
@@ -445,7 +450,7 @@ sub process_index_file ( $$ )
   # $he->dump();
 
   $this_indexing_command = $indexing_command;
-  $he->traverse(\&process_if_index_dl_compact, 'ignore text');
+  $he->traverse(\&process_if_index_dl_compact, 'ignore text nodes');
   undef $this_indexing_command;
   # print "process_index_file done\n";
 }
@@ -544,10 +549,23 @@ sub process_index_lone_dt ( $ )
       my ($aname, $ahref, @acontent) = anchor_info($a);
       # unused $aname
       if (scalar(@acontent) != 1)
-	{ die "Expected just one content of <A> in <DT>: @acontent"; }
+	{ if ((scalar(@acontent) == 3)
+	      && ($acontent[1] eq " ")
+	      && (ref $acontent[2])
+	      && ($acontent[2]->tag eq "em"))
+	    { # do nothing; this is OK.
+	      # This is a special case for "<tt>_winreg<tt> <em>(Windows)</em>"
+	    }
+	  else
+	    { $a->dump;
+	      die "Expected just one content of <A> in <DT>: @acontent"; }
+	}
       if (ref $acontent[0])
-	{ $acontent[0]->dump;
-	  die "Expected string content of <A> in <DT>: $acontent[0]"; }
+        { if (($acontent[0]->tag eq "code") || ($acontent[0]->tag eq "tt"))
+	    { @acontent = @{$acontent[0]->content}; }
+	  else
+	    { $acontent[0]->dump;
+	      die "Expected string content of <A> in <DT>: $acontent[0]"; } }
       if (!defined($acontent))
 	{ $acontent = $index_prefix . $acontent[0];
 	  $acontent_suffix = $acontent[0]; }
@@ -615,7 +633,8 @@ sub process_index_dt_and_dd ( $$ )
 
 sub process_section_file ( $$$ )
 { my ($file, $depth, $nodetitle) = check_args(3, @_);
-  my $he = file_to_tree(($file =~ /^\//) ? $file : $html_directory . $file);
+
+  my $he = file_to_tree(($file =~ /\//) ? $file : $html_directory . $file);
 
   # print STDERR "process_section_file: $file $depth $nodetitle\n";
 
@@ -636,10 +655,10 @@ sub process_section_file ( $$$ )
   push @section_stack, $nodetitle;
   # print STDERR "new section_stack: ", join(", ", @section_stack), "\n";
 
-  $he->traverse(\&process_if_child_links, 'ignore text');
+  $he->traverse(\&process_if_child_links, 'ignore text nodes');
   %footnotes = ();
   # $he->dump;
-  $he->traverse(\&process_if_footnotes, 'ignore text');
+  $he->traverse(\&process_if_footnotes, 'ignore text nodes');
 
   # $he->dump;
 
@@ -654,7 +673,7 @@ sub process_section_file ( $$$ )
   if (exists $file_index_entries_broken{$file})
     { @this_index_entries_broken = @{$file_index_entries_broken{$file}}; }
   else
-    { # print STDERR "Warning: no index entries for file $file\n";
+    { # print STDERR "Warning: no broken index entries for file $file\n";
       @this_index_entries_broken = (); }
 
 
@@ -747,8 +766,12 @@ sub do_deferred_index_entries ()
 my $table_columns;		# undefined if not in a table
 my $table_first_column;		# boolean
 
-sub output_body ( $$$ )
-{ my ($he, $startflag) = (check_args(3, @_))[0,1]; #  ignore depth argument
+sub output_body ( $$$;$$ )
+{
+  # The traverse() from HTML::Element 1.54 calls this with 5 arguments;
+  # the last two are the parent element and the index of this in its parent.
+  # We will ignore the depth, parent, and index_in_parent arguments.
+  my ($he, $startflag) = (check_args_range(3, 5, @_))[0,1];
 
   if (!ref $he)
     { my $space_index = index($he, " ");
@@ -798,8 +821,11 @@ sub output_body ( $$$ )
       else
 	{ if ($startflag)
 	    { # cross-references are not active Info links, but no text is lost
-	      print STDERR "Can't deal with internal HREF anchors yet:\n";
-	      $he->dump; }
+	      if ($missing_feature_warning) {
+		print STDERR "Can't deal with internal HREF anchors yet:\n";
+		$he->dump;
+	      }
+	    }
 	}
     }
   elsif ($tag eq "br")
@@ -810,10 +836,11 @@ sub output_body ( $$$ )
     { if (has_single_content_string($he)
 	  && ($ {$he->content}[0] =~ /^ *$/))
 	{ return 0; }
-      if ($startflag)
-	{ print TEXI "\n\@center\n"; }
-      else
-	{ print TEXI "\n\@end center\n"; }
+      ## There is no "center" environment; it only affects the current line
+      # if ($startflag)
+      #   { print TEXI "\n\@center\n"; }
+      # else
+      #   { print TEXI "\n\@end center\n"; }
     }
   elsif ($tag eq "div")
     { my $align = $he->attr('align');
@@ -885,6 +912,7 @@ sub output_body ( $$$ )
 	    { $secname .= html_to_texi($elt); } }
       if ($secname eq "")
 	{ die "No section name in <$tag>"; }
+      # print STDERR "section_stack for <$tag>$secname</$tag>: ", join(", ", @section_stack), "\n";
       if (scalar(@section_stack) == 1)
 	{ if ($section_stack[-1] ne "Top")
 	    { die "Not top? $section_stack[-1]"; }
@@ -918,9 +946,9 @@ sub output_body ( $$$ )
 	  do_deferred_index_entries(); } }
   elsif ($tag eq "ol")
     { if ($startflag)
-	{ print TEXI "\n\@enumerate \@bullet\n"; }
+	{ print TEXI "\n\@itemize \@bullet\n"; }
       else
-	{ print TEXI "\n\@end enumerate\n"; } }
+	{ print TEXI "\n\@end itemize\n"; } }
   elsif ($tag eq "p")
     { if ($startflag)
 	{ print TEXI "\n\n"; }
@@ -972,11 +1000,14 @@ sub output_body ( $$$ )
 	{ print TEXI "\n\@itemize \@bullet\n"; }
       else
 	{ print TEXI "\n\@end itemize\n"; } }
-  else
-    { # I used to have a newline before "output_body" here.
+  else {
+    if ($missing_feature_warning) {
+      # I used to have a newline before "output_body" here.
       print STDERR "output_body: ignoring <$tag> tag\n";
       $he->dump;
-      return 0; }
+      return 0;
+    }
+  }
 
   return 1;
 }
@@ -992,14 +1023,19 @@ sub print_pre ( $ )
 }
 
 sub table_columns ( $ )
-{ my ($table) = check_args(1, @_);
+{
+  my ($table) = check_args(1, @_);
   my $result = 0;
-  for my $row (@{$table->content})
-    { if ($row->tag ne "tr")
-	{ $table->dump;
-	  $row->dump;
-	  die "Expected <TR> as table row."; }
-      $result = max($result, scalar(@{$row->content})); }
+  for my $row (@{$table->content}) {
+    if (($row->tag eq "thead") || ($row->tag eq "tbody") || ($row->tag eq "p")) {
+      $result = max($result, table_columns($row));
+    } elsif ($row->tag ne "tr") {
+      $table->dump;
+      $row->dump;
+      die "Expected <TR> as table row.";
+    }
+    $result = max($result, scalar(@{$row->content}));
+  }
   return $result;
 }
 
@@ -1182,8 +1218,8 @@ sub collect_texts ( $;$ )
   return @collected_texts;
 }
 
-sub collect_if_text ( $$$ )
-{ my $he = (check_args(3, @_))[0]; #  ignore depth and startflag arguments
+sub collect_if_text ( $$$;$$ )
+{ my $he = (check_args_range(3, 5, @_))[0]; #  ignore depth, startflag, etc. arguments
   if ($done_collecting)
     { return 0; }
   if (!defined $he)
@@ -1204,10 +1240,14 @@ sub collect_if_text ( $$$ )
 
 sub cleanup_parse_tree ( $ )
 { my ($he) = check_args(1, @_);
-  $he->traverse(\&delete_if_navigation, 'ignore text');
-  $he->traverse(\&delete_extra_spaces, 'ignore text');
-  $he->traverse(\&merge_dl, 'ignore text');
-  $he->traverse(\&reorder_dt_and_dl, 'ignore text');
+  # print "Before nav delete:\n";
+  # $he->dump;
+  $he->traverse(\&delete_if_navigation, 'ignore text nodes');
+  # print "After nav delete:\n";
+  # $he->dump;
+  $he->traverse(\&delete_extra_spaces, 'ignore text nodes');
+  $he->traverse(\&merge_dl, 'ignore text nodes');
+  $he->traverse(\&reorder_dt_and_dl, 'ignore text nodes');
   return $he;
 }
 
@@ -1257,6 +1297,8 @@ sub delete_extra_spaces ( $$$ )
 sub delete_child_spaces ( $ )
 { my ($he) = check_args(1, @_);
   my $ref_content = $he->content();
+  if (! defined $ref_content)
+    { return; }
   for (my $i = 0; $i<scalar(@{$ref_content}); $i++)
     { if ($ {$ref_content}[$i] =~ /^ *$/)
 	{ splice(@{$ref_content}, $i, 1);
@@ -1501,8 +1543,8 @@ sub test ( $$ )
 
   # General testing
   if (($action eq "view") || ($action eq ""))
-    { # # $file = "/homes/gws/mernst/www/links.html";
-      # # $file = "/homes/gws/mernst/www/index.html";
+    { # # $file = "$HOME/www/links.html";
+      # # $file = "$HOME/www/index.html";
       # # $file = "/homes/fish/mernst/java/gud/doc/manual.html";
       # # $file = "/projects/cecil/cecil/doc/manuals/stdlib-man/stdlib/stdlib.html";
       # # $file = "/homes/fish/mernst/tmp/python-doc/html/index.html";
@@ -1515,12 +1557,12 @@ sub test ( $$ )
 
       # print STDERR $tree->tag(), "\n";
       # print STDERR @{$tree->content()}, "\n";
-      # 
+      #
       # for (@{ $tree->extract_links(qw(a img)) }) {
       #   my ($link, $linkelem) = @$_;
       #   print STDERR "$link ", $linkelem->as_HTML;
       #   }
-      # 
+      #
       # print STDERR @{$tree->extract_links()}, "\n";
 
       # my @top_level_elts = @{$tree->content()};
@@ -1642,6 +1684,7 @@ sub process_contents_file ( $ )
 
   my $texi_file = "$info_file.texi";
   open(TEXI, ">$texi_file");
+  binmode TEXI, ":utf8";
 
   print TEXI "\\input texinfo   \@c -*-texinfo-*-\n";
   print TEXI "\@c %**start of header\n";
@@ -1653,13 +1696,13 @@ sub process_contents_file ( $ )
   #      for the Info file.  The segment must be enclosed between `@ifinfo'
   #      and `@end ifinfo' commands so that the formatters place it only in
   #      the Info file.
-  # 
+  #
   # The summary description and copyright segment does not appear in the
   # printed document.
-  # 
+  #
   #      @ifinfo
   #      This is a short example of a complete Texinfo file.
-  #      
+  #
   #      Copyright @copyright{} 1990 Free Software Foundation, Inc.
   #      @end ifinfo
 
@@ -1670,14 +1713,14 @@ sub process_contents_file ( $ )
   #      must be enclosed between `@titlepage' and `@end titlepage'
   #      commands.  The title and copyright page appear only in the printed
   #      manual.
-  # 
+  #
   # The titlepage segment does not appear in the Info file.
-  # 
+  #
   #      @titlepage
   #      @sp 10
   #      @comment The title is printed in a large font.
   #      @center @titlefont{Sample Title}
-  #      
+  #
   #      @c The following two commands start the copyright page.
   #      @page
   #      @vskip 0pt plus 1filll
@@ -1689,14 +1732,14 @@ sub process_contents_file ( $ )
   #      The "Master Menu" contains a complete menu of all the nodes in the
   #      whole Info file.  It appears only in the Info file, in the `Top'
   #      node.
-  # 
+  #
   # The `Top' node contains the master menu for the Info file.  Since a
   # printed manual uses a table of contents rather than a menu, the master
   # menu appears only in the Info file.
-  # 
+  #
   #      @node    Top,       First Chapter, ,         (dir)
   #      @comment node-name, next,          previous, up
-  # 
+  #
   #      @menu
   #      * First Chapter::    The first chapter is the
   #                           only chapter in this sample.

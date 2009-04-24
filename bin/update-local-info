@@ -14,8 +14,10 @@ for d in "$DIR"; do
 	    *-[0123456789]*)
 		;;
 	    *)
-		install-info $f "$DIR"/dir ||
-		install-info --entry="* $$f ($f): $$f" $$f "$DIR"/dir
+		install-info $f "$DIR"/dir 2>~/install-info.log
+                if grep 'no info dir entry' ~/install-info.log; then
+		    install-info --menuentry "`basename \"$f\"|sed -e 's/.info.gz//'`" "$f" "$DIR"/dir
+                fi
 		;;
 	esac
     done
