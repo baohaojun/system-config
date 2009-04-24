@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<title>Introduction to NSIS</title>
+<meta name="generator" content="Halibut version 1.0 (NSIS Custom Build) xhtml-backend" />
+<link rel="stylesheet" href="style.css" type='text/css' />
+</head>
+
+<body>
+<p>Previous | <a href='Contents.html'>Contents</a> | <a href='Chapter2.html'>Next</a></p>
+<ul>
+<li><a class="btitle" href="Chapter1.html#"><b>Chapter 1: </b>Introduction to NSIS</a></li>
+<ul>
+<li><a href="Chapter1.html#1.1">About NSIS</a></li>
+<li><a href="Chapter1.html#1.2">Main Features</a></li>
+<li><a href="Chapter1.html#1.3">Feature List</a></li>
+</ul>
+</ul>
+<a name="1"></a><h1>Chapter 1: Introduction to NSIS</h1>
+<a name="1.1"></a><h2>1.1 About NSIS</h2>
+
+<p>An installer is the first experience of a user with your application. Slow or unsuccessful software installations are the most irritating computer problems. A quick and user friendly installer is therefore an essential part of your software product.</p>
+
+<p>NSIS (Nullsoft Scriptable Install System) is a tool that allows programmers to create such installers for Windows. It is released under an open source license and is <a href="AppendixI.html#I">completely free for any use</a>.</p>
+
+<p>NSIS creates installers that are capable of installing, uninstalling, setting system settings, extracting files, etc. Because it's based on script files, you can fully control every part of your installers. The script language supports variables, functions, string manipulation, just like a normal programming language - but designed for the creation of installers. Even with all these features, NSIS is still the smallest installer system available. With the default options, it has an overhead of only 34 KB.</p>
+<a name="1.2"></a><h2>1.2 Main Features</h2>
+
+<p><b>Small overhead size</b></p>
+
+<p>NSIS is created to be small, fast and efficient. While other installers often add hundreds of kilobytes or several megabytes to your installer data, a full featured NSIS installer has an overhead of only 34 KB.</p>
+
+<p><b>Compatible with all major Windows versions</b></p>
+
+<p>You can create a single installer that is compatible with Windows 95, Windows 98, Windows ME, Windows NT, Windows 2000, Windows XP, Windows Server 2003 and Windows Vista.</p>
+
+<p><b>Unique compression methods</b></p>
+
+<p>You can choose between three different integrated compression method (ZLib, BZip2, LZMA). The new LZMA compression gives better results than any other common compression method. You don't have to use large self-extracting archive modules or other applications. The compression support is included in the 34 KB overhead.</p>
+
+<p><b>Script based</b></p>
+
+<p>Unlike other systems that can only generate installers based on a list of files and registry keys, NSIS has a powerful scripting language. This script language is designed for installers and has commands that help you to perform many installation tasks. You can easily add custom logic and handle different upgrades, version checks and more. On the <a href="http://nsis.sourceforge.net/wiki/">NSIS Wiki</a> you can find a lot more.</p>
+
+<p><b>Multiple languages in one installer</b></p>
+
+<p>One installer can support multiple interface languages. More than 40 translations are already included, but you can also create your own language files. RTL (right-to-left) languages such as Arabic and Hebrew are fully supported.</p>
+
+<p><b>Many features and checks for the target system</b></p>
+
+<p>The script language provides commands you can use on the target system. From simple features like folder creation and registry editing to text/binary file modification, modification of environment variables and system reboots. Using provided plug-ins you can even use Windows API.</p>
+
+<p><b>Custom dialogs and interfaces</b></p>
+
+<p>You can create custom wizard pages to get user input or integrate configuration options. NSIS includes a classic and modern wizard interface, but it is even possible to create your own custom interface.</p>
+
+<p><b>Plug-in system</b></p>
+
+<p>NSIS can be extended with plug-ins that can communicate with the installer. They can be written in C, C++, Delphi or another language and can be used to perform installation tasks or extend the installer interface. You can use the plug-in with a single line of script code. Plug-ins can also be compressed like other installation data and will only be included when you are using the provided features.</p>
+
+<p><b>Support for web installation, file patching</b></p>
+
+<p>The NSIS distribution includes a set of plug-ins that allow you to download files from the internet, make internet connections, patch existing files and more.</p>
+
+<p><b>Project integration, different releases and automatic builds</b></p>
+
+<p>The NSIS compiler features a powerful preprocessor. This allows you to easily integrate multiple projects into a single installer or automatically generate installer builds. You can also generate different releases such as lite and full version.</p>
+
+<p><b>Easy and human readable file formats</b></p>
+
+<p>The NSIS script format and the format used for interface dialogs are easy, documented and humanly readable, so you can edit your files with your favorite editor. This also makes automatic script generation possible.</p>
+<a name="1.3"></a><h2>1.3 Feature List</h2>
+<ul>
+<li>Generates self contained executable installers</li><li>Support for ZLIB, BZIP2 and LZMA data compression (files can be compressed individually or together)</li><li>Uninstall support (installer can generate an uninstaller)</li><li>Customizable user interface (dialogs, fonts, backgrounds, icons, text, checkmarks, images etc.)</li><li>Classic and Modern wizard interface</li><li>Fully multilingual, support for multiple languages in one installer. More than 40 translations are available, but you can also create your own</li><li>Page system: You can add standard wizard pages or custom pages</li><li>User selection of installation components, tree for component selection</li><li>Multiple install configurations (usually Minimal, Typical, Full), and custom configuration</li><li>Installer self-verification using a CRC32 checksum</li><li>Small overhead over compressed data size (34 KB with default options)</li><li>Ability to display a license agreement in text or RTF format</li><li>Ability to detect destination directory from the registry</li><li>Easy to use plug-in system (lots of plug-ins for creation of custom dialogs, internet connections, HTTP downloading, file patching, Win32 API calls etc. are included)</li><li>Installers can be as large as 2GB</li><li>Optional silent mode for automated installations</li><li>A preprocessor with support for defined symbols, macro's, conditional compilation, standard predefines</li><li>A lovely coding experience with elements of PHP and assembly (includes user variables, a stack, real flow control, etc.)</li><li>Installers have their own VMs that let you write code that can support:</li></ul>
+
+<p><ul></p>
+<ul>
+<li>File extraction (with configurable overwrite parameters)</li><li>File/directory copying, renaming, deletion, searching</li><li>Plug-in DLL calling</li><li>DLL/ActiveX control registration/deregistration</li><li>Executable execution (shell execute and wait options)</li><li>Shortcut creation</li><li>Registry key reading/setting/enumerating/deleting</li><li>INI file reading/writing</li><li>Generic text file reading/writing</li><li>Powerful string and integer manipulation</li><li>Window finding based on class name or title</li><li>User interface manipulation (font/text setting)</li><li>Window message sending</li><li>User interaction with message boxes or custom pages</li><li>Branching, comparisons, etc.</li><li>Error checking</li><li>Reboot support, including delete or rename on reboot</li><li>Installer behaviour commands (such as show/hide/wait/etc)</li><li>User functions in script</li><li>Callback functions for user actions</li></ul>
+
+<p></ul></p>
+<ul>
+<li>Completely free for any use. See <a href="AppendixI.html#I">license</a>.</li><li>More</li></ul>
+<p>Previous | <a href='Contents.html'>Contents</a> | <a href='Chapter2.html'>Next</a></p>
+
+<hr />
+
+<address>
+</address>
+<a href="http://sourceforge.net"><img border=0 src="http://sourceforge.net/sflogo.php?group_id=22049&amp;type=1" alt="SourceForge Logo" /></a></body>
+
+</html>

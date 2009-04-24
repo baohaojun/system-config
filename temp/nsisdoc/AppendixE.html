@@ -1,0 +1,2552 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<title>Useful Headers</title>
+<meta name="generator" content="Halibut version 1.0 (NSIS Custom Build) xhtml-backend" />
+<link rel="stylesheet" href="style.css" type='text/css' />
+</head>
+
+<body>
+<p><a href='AppendixD.html'>Previous</a> | <a href='Contents.html'>Contents</a> | <a href='AppendixF.html'>Next</a></p>
+<ul>
+<li><a class="btitle" href="AppendixE.html#E"><b>Appendix E: </b>Useful Headers</a></li>
+<ul>
+<li><a href="AppendixE.html#E.1">File Functions Header</a></li>
+<ul>
+<li><a href="AppendixE.html#E.1.1">Introduction</a></li>
+<li><a href="AppendixE.html#E.1.2">Locate</a></li>
+<li><a href="AppendixE.html#E.1.3">GetSize</a></li>
+<li><a href="AppendixE.html#E.1.4">DriveSpace</a></li>
+<li><a href="AppendixE.html#E.1.5">GetDrives</a></li>
+<li><a href="AppendixE.html#E.1.6">GetTime</a></li>
+<li><a href="AppendixE.html#E.1.7">GetFileAttributes</a></li>
+<li><a href="AppendixE.html#E.1.8">GetFileVersion</a></li>
+<li><a href="AppendixE.html#E.1.9">GetExeName</a></li>
+<li><a href="AppendixE.html#E.1.10">GetExePath</a></li>
+<li><a href="AppendixE.html#E.1.11">GetParameters</a></li>
+<li><a href="AppendixE.html#E.1.12">GetOptions</a></li>
+<li><a href="AppendixE.html#E.1.13">GetOptionsS</a></li>
+<li><a href="AppendixE.html#E.1.14">GetRoot</a></li>
+<li><a href="AppendixE.html#E.1.15">GetParent</a></li>
+<li><a href="AppendixE.html#E.1.16">GetFileName</a></li>
+<li><a href="AppendixE.html#E.1.17">GetBaseName</a></li>
+<li><a href="AppendixE.html#E.1.18">GetFileExt</a></li>
+<li><a href="AppendixE.html#E.1.19">BannerTrimPath</a></li>
+<li><a href="AppendixE.html#E.1.20">DirState</a></li>
+<li><a href="AppendixE.html#E.1.21">RefreshShellIcons</a></li>
+</ul>
+<li><a href="AppendixE.html#E.2">Text Functions Header</a></li>
+<ul>
+<li><a href="AppendixE.html#E.2.1">Introduction</a></li>
+<li><a href="AppendixE.html#E.2.2">LineFind</a></li>
+<li><a href="AppendixE.html#E.2.3">LineRead</a></li>
+<li><a href="AppendixE.html#E.2.4">FileReadFromEnd</a></li>
+<li><a href="AppendixE.html#E.2.5">LineSum</a></li>
+<li><a href="AppendixE.html#E.2.6">FileJoin</a></li>
+<li><a href="AppendixE.html#E.2.7">TextCompare</a></li>
+<li><a href="AppendixE.html#E.2.8">TextCompareS</a></li>
+<li><a href="AppendixE.html#E.2.9">ConfigRead</a></li>
+<li><a href="AppendixE.html#E.2.10">ConfigReadS</a></li>
+<li><a href="AppendixE.html#E.2.11">ConfigWrite</a></li>
+<li><a href="AppendixE.html#E.2.12">ConfigWriteS</a></li>
+<li><a href="AppendixE.html#E.2.13">FileRecode</a></li>
+<li><a href="AppendixE.html#E.2.14">TrimNewLines</a></li>
+</ul>
+<li><a href="AppendixE.html#E.3">Word Functions Header</a></li>
+<ul>
+<li><a href="AppendixE.html#E.3.1">Introduction</a></li>
+<li><a href="AppendixE.html#E.3.2">WordFind</a></li>
+<li><a href="AppendixE.html#E.3.3">WordFindS</a></li>
+<li><a href="AppendixE.html#E.3.4">WordFind2X</a></li>
+<li><a href="AppendixE.html#E.3.5">WordFind2XS</a></li>
+<li><a href="AppendixE.html#E.3.6">WordFind3X</a></li>
+<li><a href="AppendixE.html#E.3.7">WordFind3XS</a></li>
+<li><a href="AppendixE.html#E.3.8">WordReplace</a></li>
+<li><a href="AppendixE.html#E.3.9">WordReplaceS</a></li>
+<li><a href="AppendixE.html#E.3.10">WordAdd</a></li>
+<li><a href="AppendixE.html#E.3.11">WordAddS</a></li>
+<li><a href="AppendixE.html#E.3.12">WordInsert</a></li>
+<li><a href="AppendixE.html#E.3.13">WordInsertS</a></li>
+<li><a href="AppendixE.html#E.3.14">StrFilter</a></li>
+<li><a href="AppendixE.html#E.3.15">StrFilterS</a></li>
+<li><a href="AppendixE.html#E.3.16">VersionCompare</a></li>
+<li><a href="AppendixE.html#E.3.17">VersionConvert</a></li>
+</ul>
+</ul>
+</ul>
+<a name="E"></a><h1>Appendix E: Useful Headers</h1>
+<a name="E.1"></a><h2>E.1 File Functions Header</h2>
+<a name="E.1.1"></a><h3>E.1.1 Introduction</h3>
+
+<p>Include header:</p>
+<pre>!include &quot;FileFunc.nsh&quot;
+</pre>
+
+<p>Call functions:</p>
+<pre>Section Install
+     ${GetFileExt} &quot;C:\My Downloads\Index.html&quot; $R0
+     ; $R0=&quot;html&quot;
+SectionEnd
+</pre>
+<pre>Section un.Install
+     ${GetParent} &quot;C:\My Downloads\Index.html&quot; $R0
+     ; $R0=&quot;C:\My Downloads&quot;
+SectionEnd
+</pre>
+<a name="E.1.2"></a><h3>E.1.2 Locate</h3>
+<ul>
+<li>Find files, directories and empty directories with mask and size options.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${Locate} &quot;[Path]&quot; &quot;[Options]&quot; &quot;Function&quot;
+</pre>
+<pre>&quot;[Path]&quot;      ; Disk or Directory
+              ;
+&quot;[Options]&quot;   ; /L=[FD|F|D|DE|FDE]
+              ;     /L=FD    - Locate Files and Directories (default)
+              ;     /L=F     - Locate Files only
+              ;     /L=D     - Locate Directories only
+              ;     /L=DE    - Locate Empty Directories only
+              ;     /L=FDE   - Locate Files and Empty Directories
+              ; /M=[mask]
+              ;     /M=*.*         - Locate all (default)
+              ;     /M=*.doc       - Locate Work.doc, 1.doc ...
+              ;     /M=Pho*        - Locate PHOTOS, phone.txt ...
+              ;     /M=win???.exe  - Locate winamp.exe, winver.exe ...
+              ;     /M=winamp.exe  - Locate winamp.exe only
+              ; /S=No:No[B|K|M|G]
+              ;     /S=      - Don't locate file size (faster) (default)
+              ;     /S=0:0B  - Locate only files of 0 Bytes exactly
+              ;     /S=5:9K  - Locate only files of 5 to 9 Kilobytes
+              ;     /S=:10M  - Locate only files of 10 Megabyte or less
+              ;     /S=1G    - Locate only files of 1 Gigabyte or more
+              ; /G=[1|0]
+              ;     /G=1     - Locate with subdirectories (default)
+              ;     /G=0     - Locate without subdirectories
+              ; /B=[0|1]
+              ;     /B=0     - Banner isn't used (default)
+              ;     /B=1     - Banner is used. Callback when function
+              ;                start to search in new directory
+&quot;Function&quot;    ; Callback function when found
+
+Function &quot;Function&quot;
+&#0009;; $R9    &quot;path\name&quot;
+&#0009;; $R8    &quot;path&quot;
+&#0009;; $R7    &quot;name&quot;
+&#0009;; $R6    &quot;size&quot;  ($R6=&quot;&quot; if directory, $R6=&quot;0&quot; if file with /S=)
+
+&#0009;; $R0-$R5  are not used (save data in them).
+&#0009;; ...
+
+&#0009;Push $var    ; If $var=&quot;StopLocate&quot; Then exit from function
+FunctionEnd
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if disk or directory isn't exist <br>- Error flag if syntax error <br>- See also <a href="http://nsis.sourceforge.net/Locate_plugin">Locate plugin</a></p>
+
+<p><b>Example (Find one file):</b></p>
+<pre>Section
+&#0009;${Locate} &quot;C:\ftp&quot; &quot;/L=F /M=RPC DCOM.rar /S=1K&quot; &quot;Example1&quot;
+&#0009;; 'RPC DCOM.rar' file in 'C:\ftp' with size 1 Kb or more
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +2
+&#0009;MessageBox MB_OK &quot;$$R0=$R0&quot;
+SectionEnd
+
+Function Example1
+&#0009;StrCpy $R0 $R9
+&#0009;; $R0=&quot;C:\ftp\files\RPC DCOM.rar&quot;
+
+&#0009;MessageBox MB_YESNO '$R0$\n$\nFind next?' IDYES +2
+&#0009;StrCpy $0 StopLocate
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Write results to a text file):</b></p>
+<pre>Section
+&#0009;GetTempFileName $R0
+&#0009;FileOpen $R1 $R0 w
+&#0009;${Locate} &quot;C:\ftp&quot; &quot;/S=:2M /G=0&quot; &quot;Example2&quot;
+&#0009;; folders and all files with size 2 Mb or less
+&#0009;; don't scan subdirectories
+&#0009;FileClose $R1
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +2
+&#0009;Exec '&quot;notepad.exe&quot; &quot;$R0&quot;'
+SectionEnd
+
+Function Example2
+&#0009;StrCmp $R6 '' 0 +3
+&#0009;FileWrite $R1 &quot;Directory=$R9$\r$\n&quot;
+&#0009;goto +2
+&#0009;FileWrite $R1 &quot;File=$R9  Size=$R6 Mb$\r$\n&quot;
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Write results to an INI file):</b></p>
+<pre>Section
+&#0009;GetTempFileName $R0
+&#0009;${Locate} &quot;C:\ftp&quot; &quot;/L=F /S=0K&quot; &quot;Example3&quot;
+&#0009;; all files in 'C:\ftp' with size detect in Kb
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +2
+&#0009;Exec '&quot;notepad.exe&quot; &quot;$R0&quot;'
+SectionEnd
+
+Function Example3
+&#0009;WriteINIStr $R0 &quot;$R8&quot; &quot;$R7&quot; &quot;$R6 Kb&quot;
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Delete empty directories):</b></p>
+<pre>Section
+&#0009;StrCpy $R2 0
+&#0009;StrCpy $R3 0
+
+&#0009;loop:
+&#0009;StrCpy $R1 0
+&#0009;${Locate} &quot;C:\ftp&quot; &quot;/L=DE&quot; &quot;Example4&quot;
+&#0009;IntOp $R3 $R3 + 1
+&#0009;IntOp $R2 $R2 + $R1
+&#0009;StrCmp $R0 StopLocate +2
+&#0009;StrCmp $R1 0 0 loop
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK 'error' IDOK +2
+&#0009;MessageBox MB_OK '$R2 directories were removed$\n$R3 loops'
+SectionEnd
+
+Function Example4
+&#0009;MessageBox MB_YESNOCANCEL 'Delete empty &quot;$R9&quot;?' IDNO end IDCANCEL cancel
+&#0009;RMDir $R9
+&#0009;IntOp $R1 $R1 + 1
+&#0009;goto end
+
+&#0009;cancel:
+&#0009;StrCpy $R0 StopLocate
+
+&#0009;end:
+&#0009;Push $R0
+FunctionEnd
+</pre>
+
+<p><b>Example (Move all files into one folder):</b></p>
+<pre>Section
+&#0009;StrCpy $R0 &quot;C:\ftp&quot;   ;Directory move from
+&#0009;StrCpy $R1 &quot;C:\ftp2&quot;  ;Directory move into
+
+&#0009;StrCpy $R2 0
+&#0009;StrCpy $R3 0
+&#0009;${Locate} &quot;$R0&quot; &quot;/L=F&quot; &quot;Example5&quot;
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK 'error' IDOK +4
+&#0009;StrCmp $R3 0 0 +2
+&#0009;MessageBox MB_OK '$R2 files were moved' IDOK +2
+&#0009;MessageBox MB_OK '$R2 files were moved$\n$R3 files were NOT moved'
+SectionEnd
+
+Function Example5
+&#0009;StrCmp $R8 $R1 +6
+&#0009;IfFileExists '$R1\$R7' +4
+&#0009;Rename $R9 '$R1\$R7'
+&#0009;IntOp $R2 $R2 + 1
+&#0009;goto +2
+&#0009;IntOp $R3 $R3 + 1
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Copy files with log):</b></p>
+<pre>Section
+&#0009;StrCpy $R0 &quot;C:\ftp&quot;   ;Directory copy from
+&#0009;StrCpy $R1 &quot;C:\ftp2&quot;  ;Directory copy into
+&#0009;StrLen $R2 $R0
+
+&#0009;GetTempFileName $0
+&#0009;FileOpen $R3 $0 w
+&#0009;${Locate} &quot;$R0&quot; &quot;/L=FDE&quot; &quot;Example6&quot;
+&#0009;FileClose $R3
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK 'error'
+
+&#0009;Exec '&quot;notepad.exe&quot; &quot;$0&quot;'     ;view log
+SectionEnd
+
+Function Example6
+&#0009;StrCpy $1 $R8 '' $R2
+
+&#0009;StrCmp $R6 '' 0 +3
+&#0009;CreateDirectory '$R1$1\$R7'
+&#0009;goto end
+&#0009;CreateDirectory '$R1$1'
+&#0009;CopyFiles /SILENT $R9 '$R1$1'
+
+&#0009;IfFileExists '$R1$1\$R7' 0 +3
+&#0009;FileWrite $R3 &quot;-old:$R9  -new:$R1$1\$R7  -success$\r$\n&quot;
+&#0009;goto +2
+&#0009;FileWrite $R3 &quot;-old:$R9  -new:$R1$1\$R7  -failed$\r$\n&quot;
+
+&#0009;end:
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Recreate directory structure):</b></p>
+<pre>Section
+&#0009;StrCpy $R0 &quot;C:\ftp&quot;     ;Directory structure from
+&#0009;StrCpy $R1 &quot;C:\ftp2&quot;    ;Directory structure into
+&#0009;StrLen $R2 $R0
+
+&#0009;${Locate} &quot;$R0&quot; &quot;/L=D&quot; &quot;Example7&quot;
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK 'error'
+SectionEnd
+
+Function Example7
+&#0009;StrCpy $1 $R9 '' $R2
+&#0009;CreateDirectory '$R1$1'
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Locate with banner - <a href="http://nsis.sourceforge.net/Nxs_plug-in">NxS plugin</a> required):</b></p>
+<pre>Section
+&#0009;nxs::Show /NOUNLOAD `$(^Name) Setup` /top `Setup searching something$\r$\nPlease wait... If you can..` /h 1 /can 1 /end
+&#0009;${Locate} &quot;C:\WINDOWS&quot; &quot;/L=F /M=*.inf /B=1&quot; &quot;Example8&quot;
+&#0009;nxs::Destroy
+SectionEnd
+
+Function Example8
+&#0009;StrCmp $R0 $R8 abortcheck
+&#0009;StrCpy $R0 $R8
+&#0009;nxs::Update /NOUNLOAD /sub &quot;$R8&quot; /pos 78 /end
+
+&#0009;abortcheck:
+&#0009;nxs::HasUserAborted /NOUNLOAD
+&#0009;Pop $0
+&#0009;StrCmp $0 1 0 +2
+&#0009;StrCpy $0 StopLocate
+
+&#0009;StrCmp $R9 '' end
+&#0009;;...
+
+&#0009;end:
+&#0009;Push $0
+FunctionEnd
+</pre>
+<a name="E.1.3"></a><h3>E.1.3 GetSize</h3>
+<ul>
+<li>Find the size of a file, files mask or directory.</li><li>Find the sum of the files, directories and subdirectories.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetSize} &quot;[Path]&quot; &quot;[Options]&quot; $var1 $var2 $var3
+</pre>
+<pre>&quot;[Path]&quot;      ; Disk or Directory
+              ;
+&quot;[Options]&quot;   ; /M=[mask]
+              ;     /M=*.*         - Find all (default)
+              ;     /M=*.doc       - Find Work.doc, 1.doc ...
+              ;     /M=Pho*        - Find PHOTOS, phone.txt ...
+              ;     /M=win???.exe  - Find winamp.exe, winver.exe ...
+              ;     /M=winamp.exe  - Find winamp.exe only
+              ; /S=No:No[B|K|M|G]
+              ;     /S=      - Don't find file size (faster) (default)
+              ;     /S=0:0B  - Find only files of 0 Bytes exactly
+              ;     /S=5:9K  - Find only files of 5 to 9 Kilobytes
+              ;     /S=:10M  - Find only files of 10 Megabyte or less
+              ;     /S=1G    - Find only files of 1 Gigabyte or more
+              ; /G=[1|0]
+              ;     /G=1     - Find with subdirectories (default)
+              ;     /G=0     - Find without subdirectories
+              ;
+$var1         ; Result1: Size
+$var2         ; Result2: Sum of files
+$var3         ; Result3: Sum of directories
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if disk or directory isn't exist <br>- Error flag if syntax error <br>- See also <a href="http://nsis.sourceforge.net/Locate_plugin">Locate plugin</a></p>
+
+<p><b>Example (1):</b></p>
+<pre>Section
+&#0009;; Find file size &quot;C:\WINDOWS\Explorer.exe&quot; in kilobytes
+
+&#0009;${GetSize} &quot;C:\WINDOWS&quot; &quot;/M=Explorer.exe /S=0K /G=0&quot; $0 $1 $2
+&#0009;; $0=&quot;220&quot; Kb
+&#0009;; $1=&quot;1&quot;   files
+&#0009;; $2=&quot;&quot;    directories
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (2):</b></p>
+<pre>Section
+&#0009;; Find folder size &quot;C:\Installs\Reanimator\Drivers&quot; in megabytes
+
+&#0009;${GetSize} &quot;C:\Installs\Reanimator\Drivers&quot; &quot;/S=0M&quot; $0 $1 $2
+&#0009;; $0=&quot;132&quot; Mb
+&#0009;; $1=&quot;555&quot; files
+&#0009;; $2=&quot;55&quot;  directories
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (3):</b></p>
+<pre>Section
+&#0009;; Find sum of files and folders &quot;C:\WINDOWS&quot; (no subfolders)
+
+&#0009;${GetSize} &quot;C:\WINDOWS&quot; &quot;/G=0&quot; $0 $1 $2
+&#0009;; $0=&quot;&quot;    size
+&#0009;; $1=&quot;253&quot; files
+&#0009;; $2=&quot;46&quot;  directories
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot;
+SectionEnd
+</pre>
+<a name="E.1.4"></a><h3>E.1.4 DriveSpace</h3>
+<ul>
+<li>Get total, occupied or free space of the drive.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${DriveSpace} &quot;[Drive]&quot; &quot;[Options]&quot; $var
+</pre>
+<pre>&quot;[Drive]&quot;     ; Disk to check
+              ;     
+&quot;[Options]&quot;   ; /D=[T|O|F]
+              ;     /D=T  - Total space (default)
+              ;     /D=O  - Occupied space
+              ;     /D=F  - Free space
+              ; /S=[B|K|M|G]
+              ;     /S=B  - size in Bytes (default)
+              ;     /S=K  - size in Kilobytes
+              ;     /S=M  - size in Megabytes
+              ;     /S=G  - size in Gigabytes
+              ;
+$var          ; Result: Size
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if disk isn't exist or not ready <br>- Error flag if syntax error</p>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${DriveSpace} &quot;C:\&quot; &quot;/D=F /S=M&quot; $R0
+&#0009;; $R0=&quot;2530&quot;   megabytes free on drive C:
+SectionEnd
+</pre>
+<a name="E.1.5"></a><h3>E.1.5 GetDrives</h3>
+<ul>
+<li>Find all available drives in the system.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetDrives} &quot;[Option]&quot; &quot;Function&quot;
+</pre>
+<pre>&quot;[Option]&quot;      ; [FDD+HDD+CDROM+NET+RAM]
+                ;   FDD    Floppy Disk Drives
+                ;   HDD    Hard Disk Drives 
+                ;   CDROM  CD-ROM Drives
+                ;   NET    Network Drives
+                ;   RAM    RAM Disk Drives
+                ;
+                ; [ALL]
+                ;   Find all drives by letter (default)
+                ;
+&quot;Function&quot;      ; Callback function when found
+
+Function &quot;Function&quot;
+&#0009;; $9    &quot;drive letter&quot;  (a:\ c:\ ...)
+&#0009;; $8    &quot;drive type&quot;    (FDD HDD ...)
+
+&#0009;; $R0-$R9  are not used (save data in them).
+&#0009;; ...
+
+&#0009;Push $var    ; If $var=&quot;StopGetDrives&quot; Then exit from function
+FunctionEnd
+</pre>
+
+<p><b>Example1:</b></p>
+<pre>Section
+&#0009;${GetDrives} &quot;FDD+CDROM&quot; &quot;Example1&quot;
+SectionEnd
+
+Function Example1
+&#0009;MessageBox MB_OK &quot;$9  ($8 Drive)&quot;
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example2:</b></p>
+<pre>Section
+&#0009;${GetDrives} &quot;ALL&quot; &quot;Example2&quot;
+SectionEnd
+
+Function Example2
+&#0009;MessageBox MB_OK &quot;$9  ($8 Drive)&quot;
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example3 (Get type of drive):</b></p>
+<pre>Section
+&#0009;StrCpy $R0 &quot;D:\&quot;      ;Drive letter
+&#0009;StrCpy $R1 &quot;invalid&quot;
+
+&#0009;${GetDrives} &quot;ALL&quot; &quot;Example3&quot;
+
+&#0009;MessageBox MB_OK &quot;Type of drive $R0 is $R1&quot;
+SectionEnd
+
+Function Example3
+&#0009;StrCmp $9 $R0 0 +3
+&#0009;StrCpy $R1 $8
+&#0009;StrCpy $0 StopGetDrives
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+<a name="E.1.6"></a><h3>E.1.6 GetTime</h3>
+<ul>
+<li>Get local or system time.</li><li>Get file time (access, creation and modification).</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetTime} &quot;[File]&quot; &quot;[Option]&quot; $var1 $var2 $var3 $var4 $var5 $var6 $var7
+</pre>
+<pre>&quot;[File]&quot;        ; Ignored if &quot;L&quot; or &quot;LS&quot;
+                ;
+&quot;[Option]&quot;      ; [Options]
+                ;   L   Local time
+                ;   A   last Access file time
+                ;   C   Creation file time
+                ;   M   Modification file time
+                ;   LS  System time (UTC)
+                ;   AS  last Access file time (UTC)
+                ;   CS  Creation file time (UTC)
+                ;   MS  Modification file time (UTC)
+                ;
+$var1           ; Result1: day
+$var2           ; Result2: month
+$var3           ; Result3: year
+$var4           ; Result4: day of week name
+$var5           ; Result5: hour
+$var6           ; Result6: minute
+$var7           ; Result7: seconds
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if file isn't exist <br>- Error flag if syntax error <br>- See also <a href="http://nsis.sourceforge.net/Time_plugin">Time plugin</a></p>
+
+<p><b>Example (Get local time):</b></p>
+<pre>Section
+&#0009;${GetTime} &quot;&quot; &quot;L&quot; $0 $1 $2 $3 $4 $5 $6
+&#0009;; $0=&quot;01&quot;      day
+&#0009;; $1=&quot;04&quot;      month
+&#0009;; $2=&quot;2005&quot;    year
+&#0009;; $3=&quot;Friday&quot;  day of week name
+&#0009;; $4=&quot;16&quot;      hour
+&#0009;; $5=&quot;05&quot;      minute
+&#0009;; $6=&quot;50&quot;      seconds
+
+&#0009;MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6'
+SectionEnd
+</pre>
+
+<p><b>Example (Get file time):</b></p>
+<pre>Section
+&#0009;${GetTime} &quot;$WINDIR\Explorer.exe&quot; &quot;C&quot; $0 $1 $2 $3 $4 $5 $6
+&#0009;; $0=&quot;12&quot;       day
+&#0009;; $1=&quot;10&quot;       month
+&#0009;; $2=&quot;2004&quot;     year
+&#0009;; $3=&quot;Tuesday&quot;  day of week name
+&#0009;; $4=&quot;2&quot;        hour
+&#0009;; $5=&quot;32&quot;       minute
+&#0009;; $6=&quot;03&quot;       seconds
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +2
+&#0009;MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6'
+SectionEnd
+</pre>
+
+<p><b>Example (Get system time):</b></p>
+<pre>Section
+&#0009;${GetTime} &quot;&quot; &quot;LS&quot; $0 $1 $2 $3 $4 $5 $6
+&#0009;; $0=&quot;01&quot;      day
+&#0009;; $1=&quot;04&quot;      month
+&#0009;; $2=&quot;2005&quot;    year
+&#0009;; $3=&quot;Friday&quot;  day of week name
+&#0009;; $4=&quot;11&quot;      hour
+&#0009;; $5=&quot;05&quot;      minute
+&#0009;; $6=&quot;50&quot;      seconds
+
+&#0009;MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6'
+SectionEnd
+</pre>
+
+<p><b>Example (Convert time to 12-hour format AM/PM):</b></p>
+<pre>Section
+&#0009;${GetTime} &quot;&quot; &quot;L&quot; $0 $1 $2 $3 $4 $5 $6
+
+&#0009;StrCmp $4 0 0 +3
+&#0009;StrCpy $4 12
+&#0009;goto +3
+&#0009;StrCmp $4 12 +5
+&#0009;IntCmp $4 12 0 0 +3
+&#0009;StrCpy $7 AM
+&#0009;goto +3
+&#0009;IntOp $4 $4 - 12
+&#0009;StrCpy $7 PM
+
+&#0009;MessageBox MB_OK 'Date=$0/$1/$2 ($3)$\nTime=$4:$5:$6 $7'
+SectionEnd
+</pre>
+<a name="E.1.7"></a><h3>E.1.7 GetFileAttributes</h3>
+<ul>
+<li>Get attributes of file or directory.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetFileAttributes} &quot;[File]&quot; &quot;[Attributes]&quot; $var
+</pre>
+<pre>&quot;[File]&quot;          ; File or directory
+                  ;
+&quot;[Attributes]&quot;    ; &quot;ALL&quot;  (default)
+                  ;  -all attributes of file combined with &quot;|&quot; to output
+                  ;
+                  ; &quot;READONLY|HIDDEN|SYSTEM|DIRECTORY|ARCHIVE|
+                  ; DEVICE|NORMAL|TEMPORARY|SPARSE_FILE|REPARSE_POINT|
+                  ; COMPRESSED|OFFLINE|NOT_CONTENT_INDEXED|ENCRYPTED&quot;
+                  ;  -file must have specified attributes
+                  ;
+$var              ; Result:
+                  ;    $var=attr1|attr2|... (if used &quot;ALL&quot;)
+                  ;    $var=1   file has specified attributes
+                  ;    $var=0   file has no specified attributes
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if file doesn't exist</p>
+
+<p><b>Example1:</b></p>
+<pre>Section
+&#0009;${GetFileAttributes} &quot;C:\MSDOS.SYS&quot; &quot;ALL&quot; $R0
+&#0009;; $R0=READONLY|HIDDEN|SYSTEM|ARCHIVE
+SectionEnd
+</pre>
+
+<p><b>Example2:</b></p>
+<pre>Section
+&#0009;${GetFileAttributes} &quot;C:\MSDOS.SYS&quot; &quot;SYSTEM|HIDDEN&quot; $R0
+&#0009;; $R0=1
+SectionEnd
+</pre>
+
+<p><b>Example3:</b></p>
+<pre>Section
+&#0009;${GetFileAttributes} &quot;C:\MSDOS.SYS&quot; &quot;NORMAL&quot; $R0
+&#0009;; $R0=0
+SectionEnd
+</pre>
+<a name="E.1.8"></a><h3>E.1.8 GetFileVersion</h3>
+<ul>
+<li>Get version information from executable file.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetFileVersion} &quot;[Executable]&quot; $var
+</pre>
+<pre>&quot;[Executable]&quot;      ; Executable file (*.exe *.dll ...)
+$var                ; Result: Version number
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if file doesn't exist <br>- Error flag if file doesn't contain version information</p>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${GetFileVersion} &quot;C:\ftp\program.exe&quot; $R0
+&#0009;; $R0=&quot;1.1.0.12&quot;
+SectionEnd
+</pre>
+<a name="E.1.9"></a><h3>E.1.9 GetExeName</h3>
+<ul>
+<li>Get installer filename (with valid case for Windows 98/Me).</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetExeName} $var
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${GetExeName} $R0
+&#0009;; $R0=&quot;C:\ftp\program.exe&quot;
+SectionEnd
+</pre>
+<a name="E.1.10"></a><h3>E.1.10 GetExePath</h3>
+<ul>
+<li>Get installer pathname ($EXEDIR with valid case for Windows 98/Me).</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetExePath} $var
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${GetExePath} $R0
+&#0009;; $R0=&quot;C:\ftp&quot;
+SectionEnd
+</pre>
+<a name="E.1.11"></a><h3>E.1.11 GetParameters</h3>
+<ul>
+<li>Get command line parameters.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetParameters} $var
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${GetParameters} $R0
+&#0009;; $R0=&quot;[parameters]&quot;
+SectionEnd
+</pre>
+<a name="E.1.12"></a><h3>E.1.12 GetOptions</h3>
+<ul>
+<li>Get options from command line parameters.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetOptions} &quot;[Parameters]&quot; &quot;[Option]&quot; $var
+</pre>
+<pre>&quot;[Parameters]&quot;     ; command line parameters
+                   ;
+&quot;[Option]&quot;         ; option name
+                   ;
+$var               ; Result: option string
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if option not found <br>- First option symbol it is delimiter</p>
+
+<p><b>Example1:</b></p>
+<pre>Section
+&#0009;${GetOptions} &quot;/S /T&quot; &quot;/T&quot;  $R0
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Not found&quot; IDOK +2
+&#0009;MessageBox MB_OK &quot;Found&quot;
+SectionEnd
+</pre>
+
+<p><b>Example2:</b></p>
+<pre>Section
+&#0009;${GetOptions} &quot;-INSTDIR=C:\Program Files\Common Files -SILENT=yes&quot; &quot;-INSTDIR=&quot;  $R0
+&#0009;;$R0=C:\Program Files\Common Files
+SectionEnd
+</pre>
+
+<p><b>Example3:</b></p>
+<pre>Section
+&#0009;${GetOptions} '/SILENT=yes /INSTDIR=&quot;C:/Program Files/Common Files&quot; /ADMIN=password' &quot;/INSTDIR=&quot;  $R0
+&#0009;;$R0=C:/Program Files/Common Files
+SectionEnd
+</pre>
+
+<p><b>Example4:</b></p>
+<pre>Section
+&#0009;${GetOptions} `-SILENT=yes -INSTDIR='&quot;C:/Program Files/Common Files&quot;' -ADMIN=password` &quot;-INSTDIR=&quot;  $R0
+&#0009;;$R0=&quot;C:/Program Files/Common Files&quot;
+SectionEnd
+</pre>
+<a name="E.1.13"></a><h3>E.1.13 GetOptionsS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.1.12">GetOptions</a>, but case sensitive.</li></ul>
+<a name="E.1.14"></a><h3>E.1.14 GetRoot</h3>
+<ul>
+<li>Get root directory.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetRoot} &quot;[FullPath]&quot; $var
+</pre>
+
+<p><b>Example1:</b></p>
+<pre>Section
+&#0009;${GetRoot} &quot;C:\Program Files\NSIS&quot; $R0
+&#0009;; $R0=&quot;C:&quot;
+SectionEnd
+</pre>
+
+<p><b>Example2:</b></p>
+<pre>Section
+&#0009;${GetRoot} &quot;\\SuperPimp\NSIS\Source\exehead\Ui.c&quot; $R0
+&#0009;; $R0=&quot;\\SuperPimp\NSIS&quot;
+SectionEnd
+</pre>
+<a name="E.1.15"></a><h3>E.1.15 GetParent</h3>
+<ul>
+<li>Get parent directory.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetParent} &quot;[PathString]&quot; $var
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${GetParent} &quot;C:\Program Files\Winamp\uninstwa.exe&quot; $R0
+&#0009;; $R0=&quot;C:\Program Files\Winamp&quot;
+SectionEnd
+</pre>
+<a name="E.1.16"></a><h3>E.1.16 GetFileName</h3>
+<ul>
+<li>Get last part from directory path.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetFileName} &quot;[PathString]&quot; $var
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${GetFileName} &quot;C:\Program Files\Winamp\uninstwa.exe&quot; $R0
+&#0009;; $R0=&quot;uninstwa.exe&quot;
+SectionEnd
+</pre>
+<a name="E.1.17"></a><h3>E.1.17 GetBaseName</h3>
+<ul>
+<li>Get file name without extension.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetBaseName} &quot;[FileString]&quot; $var
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${GetBaseName} &quot;C:\ftp\program.exe&quot; $R0
+&#0009;; $R0=&quot;program&quot;
+SectionEnd
+</pre>
+<a name="E.1.18"></a><h3>E.1.18 GetFileExt</h3>
+<ul>
+<li>Get extension of file.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${GetFileExt} &quot;[FileString]&quot; $var
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${GetFileExt} &quot;C:\ftp\program.exe&quot; $R0
+&#0009;; $R0=&quot;exe&quot;
+SectionEnd
+</pre>
+<a name="E.1.19"></a><h3>E.1.19 BannerTrimPath</h3>
+<ul>
+<li>Trim string path for banner.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${BannerTrimPath} &quot;[PathString]&quot; &quot;[Option]&quot; $var
+</pre>
+<pre>&quot;[PathString]&quot;    ;
+                  ;
+&quot;[Option]&quot;        ; [Length][A|B|C|D]
+                  ;
+                  ; Length  -Maximum string length
+                  ;   A     -Trim center path (default)
+                  ;           (C:\root\...\third path) 
+                  ;           If A mode not possible Then will be used B mode
+                  ;   B     -Trim right path
+                  ;           (C:\root\second path\...)
+                  ;           If B mode not possible Then will be used C mode
+                  ;   C     -Trim right string
+                  ;           (C:\root\second path\third p...)
+                  ;   D     -Trim right string + filename
+                  ;           (C:\root\second p...\third path)
+                  ;           If D mode not possible Then will be used C mode
+                  ;
+$var              ; Result:  Trimmed path
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${BannerTrimPath} &quot;C:\Server\Documents\Terminal\license.htm&quot; &quot;35A&quot; $R0
+&#0009;;$R0=C:\Server\...\Terminal\license.htm
+SectionEnd
+</pre>
+
+<p><b>Example (Banner plugin):</b></p>
+<pre>!include &quot;WinMessages.nsh&quot;
+!include &quot;FileFunc.nsh&quot;
+
+Section
+&#0009;Banner::show &quot;Starting...&quot;
+&#0009;Banner::getWindow
+&#0009;Pop $R1
+&#0009;${Locate} &quot;$WINDIR&quot; &quot;/L=F /M=*.* /B=1&quot; &quot;LocateCallback&quot;
+&#0009;Banner::destroy
+SectionEnd
+
+Function LocateCallback
+&#0009;StrCmp $R0 $R8 code
+&#0009;StrCpy $R0 $R8
+&#0009;${BannerTrimPath} &quot;$R8&quot; &quot;38B&quot; $R8
+&#0009;GetDlgItem $1 $R1 1030
+&#0009;SendMessage $1 ${WM_SETTEXT} 0 &quot;STR:$R8&quot;
+
+&#0009;code:
+&#0009;StrCmp $R9 '' end
+&#0009;;...
+
+&#0009;end:
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (<a href="http://nsis.sourceforge.net/Nxs_plug-in">NxS plugin</a>):</b></p>
+<pre>!include &quot;FileFunc.nsh&quot;
+
+Section
+&#0009;nxs::Show /NOUNLOAD `$(^Name) Setup`\
+&#0009;  /top `Setup searching something$\nPlease wait$\nIf you can...`\
+&#0009;  /h 1 /can 1 /end
+&#0009;${Locate} &quot;$WINDIR&quot; &quot;/L=F /M=*.* /B=1&quot; &quot;LocateCallback&quot;
+&#0009;nxs::Destroy
+SectionEnd
+
+Function LocateCallback
+&#0009;StrCmp $R0 $R8 abortcheck
+&#0009;StrCpy $R0 $R8
+&#0009;${BannerTrimPath} &quot;$R8&quot; &quot;55A&quot; $R8
+&#0009;nxs::Update /NOUNLOAD /sub &quot;$R8&quot; /pos 78 /end
+
+&#0009;abortcheck:
+&#0009;nxs::HasUserAborted /NOUNLOAD
+&#0009;Pop $0
+&#0009;StrCmp $0 1 0 +2
+&#0009;StrCpy $0 StopLocate
+
+&#0009;StrCmp $R9 '' end
+&#0009;;...
+
+&#0009;end:
+&#0009;Push $0
+FunctionEnd
+</pre>
+<a name="E.1.20"></a><h3>E.1.20 DirState</h3>
+<ul>
+<li>Check directory full, empty or not exist.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${DirState} &quot;[path]&quot; $var
+</pre>
+<pre>&quot;[path]&quot;      ; Directory
+$var          ; Result:
+              ;    $var=0  (empty)
+              ;    $var=1  (full)
+              ;    $var=-1 (directory not found)
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${DirState} &quot;$TEMP&quot; $R0
+&#0009;; $R0=&quot;1&quot;  directory is full
+SectionEnd
+</pre>
+<a name="E.1.21"></a><h3>E.1.21 RefreshShellIcons</h3>
+<ul>
+<li>After changing file associations, you can call this function to refresh the shell immediately.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${RefreshShellIcons}
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;WriteRegStr HKCR &quot;Winamp.File\DefaultIcon&quot; &quot;&quot; &quot;$PROGRAMFILES\Winamp\WINAMP.EXE,2&quot;
+
+&#0009;${RefreshShellIcons}
+SectionEnd
+</pre>
+<a name="E.2"></a><h2>E.2 Text Functions Header</h2>
+<a name="E.2.1"></a><h3>E.2.1 Introduction</h3>
+
+<p>Include header:</p>
+<pre>!include &quot;TextFunc.nsh&quot;
+</pre>
+
+<p>Call functions:</p>
+<pre>Section Install
+&#0009;${LineRead} &quot;C:\a.log&quot; &quot;-1&quot; $R0
+&#0009;; $R0=&quot;Last line$\r$\n&quot;
+SectionEnd
+</pre>
+<pre>Section un.Install
+&#0009;${TrimNewLines} &quot;Last line$\r$\n&quot; $R0
+&#0009;; $R0=&quot;Last line&quot;
+SectionEnd
+</pre>
+<a name="E.2.2"></a><h3>E.2.2 LineFind</h3>
+<ul>
+<li>Find specified lines in text file, and edit or view these lines in callback function.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${LineFind} &quot;[File1]&quot; &quot;[File2|/NUL]&quot; &quot;[LineNumbers]&quot; &quot;Function&quot;
+</pre>
+<pre>&quot;[File1]&quot;         ; Input text file
+                  ;
+&quot;[File2|/NUL]&quot;    ; [File2]
+                  ;   Output text file
+                  ;   If empty then File2=File1
+                  ; [/NUL]
+                  ;   No output text file (only read File1)
+                  ;
+&quot;[LineNumbers]&quot;   ; [No|-No|No:No|{No}|{-No}|{No:No}]
+                  ;   1:-1     all lines to change (default)
+                  ;   2        second line from start
+                  ;   -3       third line from end
+                  ;   5:9      range of lines from 5 to 9
+                  ;   {2}      only second line from start to output
+                  ;   {-3}     only third line from end to output
+                  ;   {5:9}    only range of lines from 5 to 9 to output
+                  ;
+&quot;Function&quot;        ; Callback function for specified lines
+
+Function &quot;Function&quot;
+&#0009;; $R9       current line
+&#0009;; $R8       current line number
+&#0009;; $R7       current line negative number
+&#0009;; $R6       current range of lines
+&#0009;; $R5       handle of a file opened to read
+&#0009;; $R4       handle of a file opened to write ($R4=&quot;&quot; if &quot;/NUL&quot;)
+
+&#0009;; you can use any string functions
+&#0009;; $R0-$R3  are not used (save data in them).
+&#0009;; ...
+
+&#0009;Push $var      ; If $var=&quot;StopLineFind&quot;  Then exit from function
+&#0009;               ; If $var=&quot;SkipWrite&quot;     Then skip current line (ignored if &quot;/NUL&quot;)
+FunctionEnd
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if input file doesn't exist <br>- Error flag if output file path doesn't exist <br>- Ranges must be specified on growth (2 4:5 9:-8 -5:-4 -2:-1) <br>- Output file will not be updated if no changes made.</p>
+
+<p><b>Example1 (delete first two symbols):</b></p>
+<pre>Section
+&#0009;${LineFind} &quot;C:\a.log&quot; &quot;C:\a-edited.log&quot; &quot;3:-1&quot; &quot;Example1&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot;
+SectionEnd
+
+Function Example1
+&#0009;${TrimNewLines} '$R9' $R9
+&#0009;StrCpy $R9 $R9 '' 2
+&#0009;StrCpy $R9 '$R9$\r$\n'
+&#0009;;start from 3 line and delete first two symbols
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example2 (show changed lines):</b></p>
+<pre>Section
+&#0009;${LineFind} &quot;C:\a.log&quot; &quot;a.log&quot; &quot;{5:12 15 -6:-5 -1}&quot; &quot;Example2&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot;
+SectionEnd
+
+Function Example2
+&#0009;${TrimNewLines} '$R9' $R9
+&#0009;StrCpy $R9 &quot;$R9   ~Changed line ($R8)~$\r$\n&quot;
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example3 (delete lines):</b></p>
+<pre>Section
+&#0009;${LineFind} &quot;C:\a.log&quot; &quot;\logs\a.log&quot; &quot;2:3 10:-5 -3:-2&quot; &quot;Example3&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot;
+SectionEnd
+
+Function Example3
+&#0009;StrCpy $0 SkipWrite
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example4 (insert lines):</b></p>
+<pre>Section
+&#0009;${LineFind} &quot;C:\a.log&quot; &quot;&quot; &quot;10&quot; &quot;Example4
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot;
+SectionEnd
+
+Function Example4
+&#0009;FileWrite $R4 &quot;---First Line---$\r$\n&quot;
+&#0009;FileWrite $R4 &quot;---Second Line ...---$\r$\n&quot;
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example5 (replace in file with count of changes - &quot;WordFunc.nsh&quot; required):</b></p>
+<pre>!include &quot;WordFunc.nsh&quot;
+
+Section
+&#0009;StrCpy $R0 0
+&#0009;${LineFind} &quot;C:\a.log&quot; &quot;C:\logs\a.log&quot; &quot;1:-1&quot; &quot;Example5&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +2
+&#0009;MessageBox MB_OK &quot;Changed lines=$R0&quot;
+SectionEnd
+
+Function Example5
+&#0009;StrCpy $1 $R9
+
+&#0009;${WordReplace} '$R9' ' ' '_' '+*' $R9
+
+&#0009;StrCmp $1 $R9 +2
+&#0009;IntOp $R0 $R0 + 1
+&#0009;;$R0   count of changed lines
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example6 (line string to cut or delete):</b></p>
+<pre>Section
+&#0009;${LineFind} &quot;\a.log&quot; &quot;C:\logs\a.log&quot; &quot;&quot; &quot;Example6&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +2
+&#0009;MessageBox MB_OK &quot;Processed lines=$R1:$R2&quot;
+SectionEnd
+
+Function Example6
+&#0009;;(Cut lines from a line to another line (also including that line))
+&#0009;StrCmp $R0 finish stop
+&#0009;StrCmp $R0 start finish
+&#0009;StrCmp $R9 'Start Line$\r$\n' 0 skip
+&#0009;StrCpy $R0 start
+&#0009;StrCpy $R1 $R8
+&#0009;goto code
+&#0009;finish:
+&#0009;StrCmp $R9 'Finish Line$\r$\n' 0 code
+&#0009;StrCpy $R0 finish
+&#0009;StrCpy $R2 $R8
+&#0009;goto code
+&#0009;skip:
+&#0009;StrCpy $0 SkipWrite
+&#0009;goto output
+&#0009;stop:
+&#0009;StrCpy $0 StopLineFind
+&#0009;goto output
+
+&#0009;;;(Delete lines from a line to another line (also including that line))
+&#0009;; StrCmp $R0 finish code
+&#0009;; StrCmp $R0 start finish
+&#0009;; StrCmp $R9 'Start Line$\r$\n' 0 code
+&#0009;; StrCpy $R0 start
+&#0009;; StrCpy $R1 $R8
+&#0009;; goto skip
+&#0009;; finish:
+&#0009;; StrCmp $R9 'Finish Line$\r$\n' 0 skip
+&#0009;; StrCpy $R0 finish
+&#0009;; StrCpy $R2 $R8
+&#0009;; skip:
+&#0009;; StrCpy $0 SkipWrite
+&#0009;; goto output
+
+&#0009;code:
+&#0009;;...
+
+&#0009;output:
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example7 (read lines):</b></p>
+<pre>Section
+&#0009;${LineFind} &quot;C:\a.log&quot; &quot;/NUL&quot; &quot;1:-1&quot; &quot;Example7&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot;
+SectionEnd
+
+Function Example7
+&#0009;MessageBox MB_OKCANCEL '$$R9  &quot;Line&quot;=[$R9]$\n$$R8     &quot;#&quot; =[$R8]' IDOK +2
+&#0009;StrCpy $0 StopLineFind
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+<a name="E.2.3"></a><h3>E.2.3 LineRead</h3>
+<ul>
+<li>Get line in file specified with number.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${LineRead} &quot;[File]&quot; &quot;[LineNumber]&quot; $var
+</pre>
+<pre>&quot;[File]&quot;         ; Input text file
+                 ;
+&quot;[LineNumber]&quot;   ; [No|-No]
+                 ;   3    line number from start
+                 ;   -5   line number from end
+                 ;
+$var             ; Result: Line
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if input file doesn't exist <br>- Error flag if line number not found</p>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${LineRead} &quot;C:\a.log&quot; &quot;-1&quot; $R0
+&#0009;; $R0=&quot;Last line$\r$\n&quot;
+SectionEnd
+</pre>
+<a name="E.2.4"></a><h3>E.2.4 FileReadFromEnd</h3>
+<ul>
+<li>Read text file from end line by line.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${FileReadFromEnd} &quot;[File]&quot; &quot;Function&quot;
+</pre>
+<pre>&quot;[File]&quot;      ; Input text file
+&quot;Function&quot;    ; Callback function
+
+Function &quot;Function&quot;
+&#0009;; $9       current line
+&#0009;; $8       current line number
+&#0009;; $7       current line negative number
+
+&#0009;; $R0-$R9  are not used (save data in them).
+&#0009;; ...
+
+&#0009;Push $var      ; If $var=&quot;StopFileReadFromEnd&quot;  Then exit from function
+FunctionEnd
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if input file doesn't exist</p>
+
+<p><b>Example1:</b></p>
+<pre>Section
+&#0009;${FileReadFromEnd} &quot;C:\a.log&quot; &quot;Example1&quot;
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot;
+SectionEnd
+
+Function Example1
+&#0009;MessageBox MB_OKCANCEL '&quot;Line&quot;=[$9]$\n   &quot;#&quot;=[$8]$\n  &quot;-#&quot;=[$7]' IDOK +2
+&#0009;StrCpy $0 StopFileReadFromEnd
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example2 (Reverse text file):</b></p>
+<pre>Section
+&#0009;GetTempFileName $R0
+&#0009;FileOpen $R1 $R0 w
+&#0009;${FileReadFromEnd} &quot;C:\a.log&quot; &quot;Example2&quot;
+&#0009;FileClose $R1
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +2
+&#0009;Exec '&quot;notepad.exe&quot; &quot;$R0&quot;'
+SectionEnd
+
+Function Example2
+&#0009;StrCmp $7 -1 0 +5
+&#0009;StrCpy $1 $9 1 -1
+&#0009;StrCmp $1 '$\n' +3
+&#0009;StrCmp $1 '$\r' +2
+&#0009;StrCpy $9 '$9$\r$\n'
+
+&#0009;FileWrite $R1 &quot;$9&quot;
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+<a name="E.2.5"></a><h3>E.2.5 LineSum</h3>
+<ul>
+<li>Get sum of lines in text file.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${LineSum} &quot;[File]&quot; $var
+</pre>
+<pre>&quot;[File]&quot;      ; Input file
+$var          ; Result: Sum of lines
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if input file doesn't exist</p>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${LineSum} &quot;C:\a.log&quot; $R0
+&#0009;; $R0=&quot;54&quot;
+SectionEnd
+</pre>
+<a name="E.2.6"></a><h3>E.2.6 FileJoin</h3>
+<ul>
+<li>Join two files in one (File1 + File2 = File3).</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${FileJoin} &quot;[File1]&quot; &quot;[File2]&quot; &quot;[File3]&quot;
+</pre>
+<pre>&quot;[File1]&quot;     ; Input File1
+&quot;[File2]&quot;     ; Input File2
+&quot;[File3]&quot;     ; Output File3
+              ;  If [File3]=&quot;&quot; Then add [File2] to [File1]
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if input files don't exist <br>- Error flag if output file path doesn't exist</p>
+
+<p><b>Example1 (Join: a.log + b.log = Z.log):</b></p>
+<pre>Section
+&#0009;${FileJoin} &quot;C:\a.log&quot; &quot;C:\logs\b.log&quot; &quot;C:\Z.log&quot;
+SectionEnd
+</pre>
+
+<p><b>Example2 (Add: a.log + b.log = a.log):</b></p>
+<pre>Section
+&#0009;${FileJoin} &quot;C:\a.log&quot; &quot;C:\logs\b.log&quot; &quot;C:\a.log&quot;
+SectionEnd
+</pre>
+<a name="E.2.7"></a><h3>E.2.7 TextCompare</h3>
+<ul>
+<li>Compare two text files.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${TextCompare} &quot;[File1]&quot; &quot;[File2]&quot; &quot;[Option]&quot; &quot;Function&quot;
+</pre>
+<pre>&quot;[File1]&quot;     ; File1      Compare these lines
+&quot;[File2]&quot;     ; File2      Compare with these lines
+&quot;[Options]&quot;   ; (line-by-line):
+              ; FastDiff   Compare line N (File1) with line N (File2)
+              ;            Call function if Different lines found
+              ; FastEqual  Compare line N (File1) with line N (File2)
+              ;            Call function if Equal lines found
+              ; (line number independent):
+              ; SlowDiff   Compare line N (File1) with all lines (File2)
+              ;            Call function if line N (File1) Different
+              ; SlowEqual  Compare line N (File1) with all lines (File2)
+              ;            Call function if line N (File1) Equal
+&quot;Function&quot;    ; Callback function
+
+Function &quot;Function&quot;
+&#0009;; $9    &quot;Line File1&quot;
+&#0009;; $8    &quot;Line number&quot;
+&#0009;; $7    &quot;Line File2&quot;  (empty if SlowDiff)
+&#0009;; $6    &quot;Line number&quot; (empty if SlowDiff)
+
+&#0009;; $R0-$R9  are not used (save data in them).
+&#0009;; ...
+
+&#0009;Push $var    ; If $var=&quot;StopTextCompare&quot;  Then exit from function
+FunctionEnd
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if File1 or File2 doesn't exist <br>- Error flag if syntax error</p>
+
+<p><b>Example (Different or Equal):</b></p>
+<pre>Section
+&#0009;StrCpy $R0 ''
+&#0009;${TextCompare} &quot;C:\1.txt&quot; &quot;C:\2.txt&quot; &quot;FastDiff&quot; &quot;Example1&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +4
+
+&#0009;StrCmp $R0 NotEqual 0 +2
+&#0009;MessageBox MB_OK &quot;Files differ&quot; IDOK +2
+&#0009;MessageBox MB_OK &quot;Files identical&quot;
+SectionEnd
+
+Function Example1
+&#0009;StrCpy $R0 NotEqual
+&#0009;StrCpy $0 StopTextCompare
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Compare line-by-line - Different):</b></p>
+<pre>Section
+&#0009;StrCpy $R0 'Text1.txt'
+&#0009;StrCpy $R1 'Text2.txt'
+
+&#0009;GetTempFileName $R2
+&#0009;FileOpen $R3 $R2 w
+&#0009;FileWrite $R3 &quot;$R0 | $R1$\r$\n&quot;
+&#0009;${TextCompare} &quot;$R0&quot; &quot;$R1&quot; &quot;FastDiff&quot; &quot;Example2&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +2
+
+&#0009;Exec &quot;notepad.exe $R2&quot;
+FunctionEnd
+
+Function Example2
+&#0009;FileWrite $R3 '$8=$9'
+&#0009;FileWrite $R3 '$6=$7$\r$\n'
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Compare line-by-line - Equal):</b></p>
+<pre>Section
+&#0009;StrCpy $R0 'Text1.txt'
+&#0009;StrCpy $R1 'Text2.txt'
+
+&#0009;GetTempFileName $R2
+&#0009;FileOpen $R3 $R2 w
+&#0009;FileWrite $R3 &quot;$R0 | $R1$\r$\n&quot;
+&#0009;${TextCompare} &quot;$R0&quot; &quot;$R1&quot; &quot;FastEqual&quot; &quot;Example3&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +2
+
+&#0009;Exec &quot;notepad.exe $R2&quot;
+FunctionEnd
+
+Function Example3
+&#0009;FileWrite $R3 '$8|$6=$9'
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Compare all lines - Different):</b></p>
+<pre>Section
+&#0009;StrCpy $R0 'Text1.txt'
+&#0009;StrCpy $R1 'Text2.txt'
+
+&#0009;GetTempFileName $R2
+&#0009;FileOpen $R3 $R2 w
+&#0009;FileWrite $R3 &quot;$R0 | $R1$\r$\n&quot;
+&#0009;${TextCompare} &quot;$R0&quot; &quot;$R1&quot; &quot;SlowDiff&quot; &quot;Example4&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK end
+
+&#0009;FileWrite $R3 &quot;$\r$\n$R1 | $R0$\r$\n&quot;
+&#0009;${TextCompare} &quot;$R1&quot; &quot;$R0&quot; &quot;SlowDiff&quot; &quot;Example4&quot;
+&#0009;FileClose $R3
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK end
+
+&#0009;Exec &quot;notepad.exe $R2&quot;
+
+&#0009;end:
+FunctionEnd
+
+Function Example4
+&#0009;FileWrite $R3 '$8=$9'
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Compare all lines - Equal):</b></p>
+<pre>Section
+&#0009;StrCpy $R0 'Text1.txt'
+&#0009;StrCpy $R1 'Text2.txt'
+
+&#0009;GetTempFileName $R2
+&#0009;FileOpen $R3 $R2 w
+&#0009;FileWrite $R3 &quot;$R0 | $R1$\r$\n&quot;
+&#0009;${TextCompare} &quot;$R0&quot; &quot;$R1&quot; &quot;SlowEqual&quot; &quot;Example5&quot;
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot; IDOK +2
+
+&#0009;Exec &quot;notepad.exe $R2&quot;
+FunctionEnd
+
+Function Example5
+&#0009;FileWrite $R3 '$8|$6=$9'
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+
+<p><b>Example (Show variables):</b></p>
+<pre>Section
+&#0009;${TextCompare} &quot;C:\1.txt&quot; &quot;C:\2.txt&quot; &quot;FastDiff&quot; &quot;Example6&quot;
+
+&#0009;IfErrors 0 +2
+&#0009;MessageBox MB_OK &quot;Error&quot;
+SectionEnd
+
+Function Example6
+&#0009;MessageBox MB_OKCANCEL '$$9    &quot;Line File1&quot; =[$9]$\n$$8    &quot;Line #&quot;      =[$8]$\n$$7    &quot;Line File2&quot; =[$7]$\n$$6    &quot;Line #&quot;      =[$6]' IDOK +2
+&#0009;StrCpy $0 StopTextCompare
+
+&#0009;Push $0
+FunctionEnd
+</pre>
+<a name="E.2.8"></a><h3>E.2.8 TextCompareS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.2.7">TextCompare</a>, but case sensitive.</li></ul>
+<a name="E.2.9"></a><h3>E.2.9 ConfigRead</h3>
+<ul>
+<li>Read value from entry name in config file.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${ConfigRead} &quot;[File]&quot; &quot;[Entry]&quot; $var
+</pre>
+<pre>&quot;[File]&quot;      ; config file
+              ;
+&quot;[Entry]&quot;     ; entry name
+              ;
+$var          ; Result:  Value
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if entry not found <br>- Error flag if file doesn't exist</p>
+
+<p><b>Example1:</b></p>
+<pre>Section
+&#0009;${ConfigRead} &quot;C:\AUTOEXEC.BAT&quot; &quot;SET winbootdir=&quot; $R0
+&#0009;;$R0=C:\WINDOWS
+SectionEnd
+</pre>
+
+<p><b>Example2:</b></p>
+<pre>Section
+&#0009;${ConfigRead} &quot;C:\apache\conf\httpd.conf&quot; &quot;Timeout &quot; $R0
+&#0009;;$R0=30
+SectionEnd
+</pre>
+<a name="E.2.10"></a><h3>E.2.10 ConfigReadS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.2.9">ConfigRead</a>, but case sensitive.</li></ul>
+<a name="E.2.11"></a><h3>E.2.11 ConfigWrite</h3>
+<ul>
+<li>Write value from entry name in config file.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${ConfigWrite} &quot;[File]&quot; &quot;[Entry]&quot; &quot;[Value]&quot; $var
+</pre>
+<pre>&quot;[File]&quot;      ; config file
+              ;
+&quot;[Entry]&quot;     ; entry name
+              ;
+&quot;[Value]&quot;     ; value name
+              ;  if &quot;&quot; then delete Entry
+              ;
+$var          ; Result:
+              ;    $var=CHANGED  Value is written
+              ;    $var=DELETED  Entry is deleted
+              ;    $var=ADDED    Entry and Value are added
+              ;    $var=SAME     Entry and Value already exist
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if file doesn't exist <br>- Error flag if file can't be opened</p>
+
+<p><b>Example1:</b></p>
+<pre>Section
+&#0009;${ConfigWrite} &quot;C:\AUTOEXEC.BAT&quot; &quot;SET winbootdir=&quot; &quot;D:\WINDOWS&quot; $R0
+&#0009;;$R0=CHANGED
+SectionEnd
+</pre>
+
+<p><b>Example2:</b></p>
+<pre>Section
+&#0009;${ConfigWrite} &quot;C:\apache\conf\httpd.conf&quot; &quot;Timeout &quot; &quot;30&quot; $R0
+&#0009;;$R0=SAME
+SectionEnd
+</pre>
+
+<p><b>Example3:</b></p>
+<pre>Section
+&#0009;${ConfigWrite} &quot;C:\apache\conf\httpd.conf&quot; &quot;Timeout &quot; &quot;&quot; $R0
+&#0009;;$R0=DELETED
+SectionEnd
+</pre>
+<a name="E.2.12"></a><h3>E.2.12 ConfigWriteS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.2.11">ConfigWrite</a>, but case sensitive.</li></ul>
+<a name="E.2.13"></a><h3>E.2.13 FileRecode</h3>
+<ul>
+<li>Recode text file from DOS to Windows format and vice-versa.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${FileRecode} &quot;[File]&quot; &quot;[Format]&quot;
+</pre>
+<pre>&quot;[File]&quot;        ;
+                ;
+&quot;[Format]&quot;      ; OemToChar   -from DOS to Windows
+                ; CharToOem   -from Windows to DOS
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if file doesn't exist <br>- Error flag if syntax error</p>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${FileRecode} &quot;C:\SCANDISK.LOG&quot; &quot;CharToOem&quot;
+SectionEnd
+</pre>
+<a name="E.2.14"></a><h3>E.2.14 TrimNewLines</h3>
+<ul>
+<li>Trim newlines in a string.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${TrimNewLines} &quot;[string]&quot; $var
+</pre>
+<pre>&quot;[string]&quot;    ; Input string
+$var          ; Result: String without '$\r' and '$\n' at the end
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${TrimNewLines} &quot;Text line$\r$\n&quot; $R0
+&#0009;; $R0=&quot;Text line&quot;
+SectionEnd
+</pre>
+<a name="E.3"></a><h2>E.3 Word Functions Header</h2>
+<a name="E.3.1"></a><h3>E.3.1 Introduction</h3>
+
+<p>Include header:</p>
+<pre>!include &quot;WordFunc.nsh&quot;
+</pre>
+
+<p>Call functions:</p>
+<pre>Section Install
+&#0009;${WordFind} &quot;A--H---S&quot; &quot;-&quot; &quot;+2&quot; $R0
+&#0009;; $R0=&quot;H&quot;
+SectionEnd
+</pre>
+<pre>Section un.Install
+&#0009;${WordReplace} &quot;A--H---S&quot; &quot;-&quot; &quot;x&quot; &quot;+3*&quot; $R0
+&#0009;; $R0=&quot;A--HxS&quot;
+SectionEnd
+</pre>
+<a name="E.3.2"></a><h3>E.3.2 WordFind</h3>
+<ul>
+<li>Multi-features string function.</li></ul>
+<pre>Strings:
+&quot;[word+1][delimiter][word+2][delimiter][word+3]...&quot;
+&quot;[delimiter][word+1][delimiter][word+2][delimiter]...&quot;
+&quot;[delimiter][delimiter][word+1][delimiter][delimiter][delimiter]...&quot;
+&quot;...[word-3][delimiter][word-2][delimiter][word-1]&quot;
+&quot;...[delimiter][word-2][delimiter][word-1][delimiter]&quot;
+&quot;...[delimiter][delimiter][word-1][delimiter][delimiter][delimiter]&quot;
+</pre>
+
+<p><b>Syntax: </b></p>
+<pre>${WordFind} &quot;[string]&quot; &quot;[delimiter]&quot; &quot;[E][options]&quot; $var
+</pre>
+<pre>&quot;[string]&quot;         ;[string]
+                   ;  input string
+&quot;[delimiter]&quot;      ;[delimiter]
+                   ;  one or several symbols
+&quot;[E][options]&quot;     ;[options]
+                   ;  +number   : word number from start
+                   ;  -number   : word number from end
+                   ;  +number}  : delimiter number from start
+                   ;              all space after this
+                   ;              delimiter to output
+                   ;  +number{  : delimiter number from start
+                   ;              all space before this
+                   ;              delimiter to output
+                   ;  +number}} : word number from start
+                   ;              all space after this word
+                   ;              to output
+                   ;  +number{{ : word number from start
+                   ;              all space before this word
+                   ;              to output
+                   ;  +number{} : word number from start
+                   ;              all space before and after
+                   ;              this word (word exclude)
+                   ;  +number*} : word number from start
+                   ;              all space after this
+                   ;              word to output with word
+                   ;  +number{* : word number from start
+                   ;              all space before this
+                   ;              word to output with word
+                   ;  #         : sum of words to output
+                   ;  *         : sum of delimiters to output
+                   ;  /word     : number of word to output
+                   ;
+                   ;[E]
+                   ;  with errorlevel output
+                   ;  IfErrors:
+                   ;     $var=1  delimiter not found
+                   ;     $var=2  no such word number
+                   ;     $var=3  syntax error (Use: +1,-1},#,*,/word,...)
+                   ;[]
+                   ;  no errorlevel output (default)
+                   ;  If some errors found then (result=input string)
+                   ;
+$var               ;output (result)
+</pre>
+
+<p><b>Note:</b> <br>- Accepted numbers 1,01,001,...</p>
+
+<p><b>Example (Find word by number):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\Program Files C:\WINDOWS&quot; &quot; C:\&quot; &quot;-02&quot; $R0
+&#0009;; $R0=&quot;Program Files&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (Delimiter exclude):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot;sys&quot; &quot;-2}&quot; $R0
+&#0009;; $R0=&quot; C:\logo.sys C:\WINDOWS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (Sum of words):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot; C:\&quot; &quot;#&quot; $R0
+&#0009;; $R0=&quot;3&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (Sum of delimiters):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot;sys&quot; &quot;*&quot; $R0
+&#0009;; $R0=&quot;2&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (Find word number):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\Program Files C:\WINDOWS&quot; &quot; &quot; &quot;/Files&quot; $R0
+&#0009;; $R0=&quot;3&quot;
+SectionEnd
+</pre>
+
+<p><b>Example ( }} ):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot; &quot; &quot;+2}}&quot; $R0
+&#0009;; $R0=&quot; C:\WINDOWS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example ( {} ):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot; &quot; &quot;+2{}&quot; $R0
+&#0009;; $R0=&quot;C:\io.sys C:\WINDOWS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example ( *} ):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot; &quot; &quot;+2*}&quot; $R0
+&#0009;; $R0=&quot;C:\logo.sys C:\WINDOWS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (Get parent directory):</b></p>
+<pre>Section
+&#0009;StrCpy $R0 &quot;C:\Program Files\NSIS\NSIS.chm&quot;
+;&#0009;           &quot;C:\Program Files\NSIS\Include\&quot;
+;&#0009;           &quot;C:\\Program Files\\NSIS\\NSIS.chm&quot;
+
+&#0009;${WordFind} &quot;$R0&quot; &quot;\&quot; &quot;-2{*&quot; $R0
+&#0009;; $R0=&quot;C:\Program Files\NSIS&quot;
+&#0009;;     &quot;C:\\Program Files\\NSIS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (Coordinates):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot;:\lo&quot; &quot;E+1{&quot; $R0
+&#0009;; $R0=&quot;C:\io.sys C&quot;
+&#0009;IfErrors end
+
+&#0009;StrLen $0 $R0             ; $0 = Start position of word (11)
+&#0009;StrLen $1 ':\lo'          ; $1 = Word length (4)
+&#0009;; StrCpy $R0 $R1 $1 $0    ; $R0 = :\lo
+
+&#0009;end:
+SectionEnd
+</pre>
+
+<p><b>Example (With errorlevel output):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;[string]&quot; &quot;[delimiter]&quot; &quot;E[options]&quot; $R0
+
+&#0009;IfErrors 0 end
+&#0009;StrCmp $R0 1 0 +2       ; errorlevel 1?
+&#0009;MessageBox MB_OK 'delimiter not found' IDOK end
+&#0009;StrCmp $R0 2 0 +2       ; errorlevel 2?
+&#0009;MessageBox MB_OK 'no such word number' IDOK end
+&#0009;StrCmp $R0 3 0 +2       ; errorlevel 3?
+&#0009;MessageBox MB_OK 'syntax error'
+
+&#0009;end:
+SectionEnd
+</pre>
+
+<p><b>Example (Without errorlevel output):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\logo.sys&quot; &quot;_&quot; &quot;+1&quot; $R0
+
+&#0009;; $R0=&quot;C:\io.sys C:\logo.sys&quot; (error: delimiter &quot;_&quot; not found)
+SectionEnd
+</pre>
+
+<p><b>Example (If found):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\logo.sys&quot; &quot;:\lo&quot; &quot;E+1{&quot; $R0
+
+&#0009;IfErrors notfound found
+&#0009;found:
+&#0009;MessageBox MB_OK 'Found' IDOK end
+&#0009;notfound:
+&#0009;MessageBox MB_OK 'Not found'
+
+&#0009;end:
+SectionEnd
+</pre>
+
+<p><b>Example (If found 2):</b></p>
+<pre>Section
+&#0009;${WordFind} &quot;C:\io.sys C:\logo.sys&quot; &quot;:\lo&quot; &quot;+1{&quot; $R0
+
+&#0009;StrCmp $R0 &quot;C:\io.sys C:\logo.sys&quot; notfound found        ; error?
+&#0009;found:
+&#0009;MessageBox MB_OK 'Found' IDOK end
+&#0009;notfound:
+&#0009;MessageBox MB_OK 'Not found'
+
+&#0009;end:
+SectionEnd
+</pre>
+
+<p><b>Example (To accept one word in string if delimiter not found):</b></p>
+<pre>Section
+&#0009;StrCpy $0 'OneWord'
+&#0009;StrCpy $1 1
+
+&#0009;loop:
+&#0009;${WordFind} &quot;$0&quot; &quot; &quot; &quot;E+$1&quot; $R0
+&#0009;IfErrors 0 code
+&#0009;StrCmp $1$R0 11 0 error
+&#0009;StrCpy $R0 $0
+&#0009;goto end
+
+&#0009;code:
+&#0009;; ...
+&#0009;IntOp $1 $1 + 1
+&#0009;goto loop
+
+&#0009;error:
+&#0009;StrCpy $1 ''
+&#0009;StrCpy $R0 ''
+
+&#0009;end:
+&#0009;; $R0=&quot;OneWord&quot;
+SectionEnd
+</pre>
+<a name="E.3.3"></a><h3>E.3.3 WordFindS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.3.2">WordFind</a>, but case sensitive.</li></ul>
+<a name="E.3.4"></a><h3>E.3.4 WordFind2X</h3>
+<ul>
+<li>Find word between two delimiters.</li></ul>
+<pre>Strings:
+&quot;[delimiter1][word+1][delimiter2][delimiter1][word+2][delimiter2]...&quot;
+&quot;[text][delimiter1][text][delimiter1][word+1][delimiter2][text]...&quot;
+&quot;...[delimiter1][word-2][delimiter2][delimiter1][word-1][delimiter2]&quot;
+&quot;...[text][delimiter1][text][delimiter1][word-1][delimiter2][text]&quot;
+</pre>
+
+<p><b>Syntax:</b></p>
+<pre>${WordFind2X} &quot;[string]&quot; &quot;[delimiter1]&quot; &quot;[delimiter2]&quot; &quot;[E][options]&quot; $var
+</pre>
+<pre>&quot;[string]&quot;         ;[string]
+                   ;  input string
+&quot;[delimiter1]&quot;     ;[delimiter1]
+                   ;  first delimiter
+&quot;[delimiter2]&quot;     ;[delimiter2]
+                   ;  second delimiter
+&quot;[E][options]&quot;     ;[options]
+                   ;  +number   : word number from start
+                   ;  -number   : word number from end
+                   ;  +number}} : word number from start all space
+                   ;              after this word to output
+                   ;  +number{{ : word number from end all space
+                   ;              before this word to output
+                   ;  +number{} : word number from start
+                   ;              all space before and after
+                   ;              this word (word exclude)
+                   ;  +number*} : word number from start
+                   ;              all space after this
+                   ;              word to output with word
+                   ;  +number{* : word number from start
+                   ;              all space before this
+                   ;              word to output with word
+                   ;  #         : sum of words to output
+                   ;  /word     : number of word to output
+                   ;
+                   ;[E]
+                   ;  with errorlevel output
+                   ;  IfErrors:
+                   ;     $var=1  no words found
+                   ;     $var=2  no such word number
+                   ;     $var=3  syntax error (Use: +1,-1,#)
+                   ;[]
+                   ;  no errorlevel output (default)
+                   ;  If some errors found then (result=input string)
+                   ;
+$var               ;output (result)
+</pre>
+
+<p><b>Example (1):</b></p>
+<pre>Section
+&#0009;${WordFind2X} &quot;[C:\io.sys];[C:\logo.sys];[C:\WINDOWS]&quot; &quot;[C:\&quot; &quot;];&quot; &quot;+2&quot; $R0
+&#0009;; $R0=&quot;logo.sys&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (2):</b></p>
+<pre>Section
+&#0009;${WordFind2X} &quot;C:\WINDOWS C:\io.sys C:\logo.sys&quot; &quot;\&quot; &quot;.&quot; &quot;-1&quot; $R0
+&#0009;; $R0=&quot;logo&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (3):</b></p>
+<pre>Section
+&#0009;${WordFind2X} &quot;C:\WINDOWS C:\io.sys C:\logo.sys&quot; &quot;\&quot; &quot;.&quot; &quot;-1{{&quot; $R0
+&#0009;; $R0=&quot;C:\WINDOWS C:\io.sys C:&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (4):</b></p>
+<pre>Section
+&#0009;${WordFind2X} &quot;C:\WINDOWS C:\io.sys C:\logo.sys&quot; &quot;\&quot; &quot;.&quot; &quot;-1{}&quot; $R0
+&#0009;; $R0=&quot;C:\WINDOWS C:\io.sys C:sys&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (5):</b></p>
+<pre>Section
+&#0009;${WordFind2X} &quot;C:\WINDOWS C:\io.sys C:\logo.sys&quot; &quot;\&quot; &quot;.&quot; &quot;-1{*&quot; $R0
+&#0009;; $R0=&quot;C:\WINDOWS C:\io.sys C:\logo.&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (6):</b></p>
+<pre>Section
+&#0009;${WordFind2X} &quot;C:\WINDOWS C:\io.sys C:\logo.sys&quot; &quot;\&quot; &quot;.&quot; &quot;/logo&quot; $R0
+&#0009;; $R0=&quot;2&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (With errorlevel output):</b></p>
+<pre>Section
+&#0009;${WordFind2X} &quot;[io.sys];[C:\logo.sys]&quot; &quot;\&quot; &quot;];&quot; &quot;E+1&quot; $R0
+&#0009;; $R0=&quot;1&quot; (&quot;\...];&quot; not found)
+
+&#0009;IfErrors 0 noerrors
+&#0009;MessageBox MB_OK 'Errorlevel=$R0' IDOK end
+
+&#0009;noerrors:
+&#0009;MessageBox MB_OK 'No errors'
+
+&#0009;end:
+SectionEnd
+</pre>
+<a name="E.3.5"></a><h3>E.3.5 WordFind2XS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.3.4">WordFind2X</a>, but case sensitive.</li></ul>
+<a name="E.3.6"></a><h3>E.3.6 WordFind3X</h3>
+<ul>
+<li>Find a word that contains a string, between two delimiters.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${WordFind3X} &quot;[string]&quot; &quot;[delimiter1]&quot; &quot;[center]&quot; &quot;[delimiter2]&quot; &quot;[E][options]&quot; $var
+</pre>
+<pre>&quot;[string]&quot;         ;[string]
+                   ;  input string
+&quot;[delimiter1]&quot;     ;[delimiter1]
+                   ;  first delimiter
+&quot;[center]&quot;         ;[center]
+                   ;  center string
+&quot;[delimiter2]&quot;     ;[delimiter2]
+                   ;  second delimiter
+&quot;[E][options]&quot;     ;[options]
+                   ;  +number   : word number from start
+                   ;  -number   : word number from end
+                   ;  +number}} : word number from start all space
+                   ;              after this word to output
+                   ;  +number{{ : word number from end all space
+                   ;              before this word to output
+                   ;  +number{} : word number from start
+                   ;              all space before and after
+                   ;              this word (word exclude)
+                   ;  +number*} : word number from start
+                   ;              all space after this
+                   ;              word to output with word
+                   ;  +number{* : word number from start
+                   ;              all space before this
+                   ;              word to output with word
+                   ;  #         : sum of words to output
+                   ;  /word     : number of word to output
+                   ;
+                   ;[E]
+                   ;  with errorlevel output
+                   ;  IfErrors:
+                   ;     $var=1  no words found
+                   ;     $var=2  no such word number
+                   ;     $var=3  syntax error (Use: +1,-1,#)
+                   ;[]
+                   ;  no errorlevel output (default)
+                   ;  If some errors found then (result=input string)
+                   ;
+$var               ;output (result)
+</pre>
+
+<p><b>Example (1):</b></p>
+<pre>Section
+&#0009;${WordFind3X} &quot;[1.AAB];[2.BAA];[3.BBB];&quot; &quot;[&quot; &quot;AA&quot; &quot;];&quot; &quot;+1&quot; $R0
+&#0009;; $R0=&quot;1.AAB&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (2):</b></p>
+<pre>Section
+&#0009;${WordFind3X} &quot;[1.AAB];[2.BAA];[3.BBB];&quot; &quot;[&quot; &quot;AA&quot; &quot;];&quot; &quot;-1&quot; $R0
+&#0009;; $R0=&quot;2.BAA&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (3):</b></p>
+<pre>Section
+&#0009;${WordFind3X} &quot;[1.AAB];[2.BAA];[3.BBB];&quot; &quot;[&quot; &quot;AA&quot; &quot;];&quot; &quot;-1{{&quot; $R0
+&#0009;; $R0=&quot;[1.AAB];&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (4):</b></p>
+<pre>Section
+&#0009;${WordFind3X} &quot;[1.AAB];[2.BAA];[3.BBB];&quot; &quot;[&quot; &quot;AA&quot; &quot;];&quot; &quot;-1{}&quot; $R0
+&#0009;; $R0=&quot;[1.AAB];[3.BBB];&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (5):</b></p>
+<pre>Section
+&#0009;${WordFind3X} &quot;[1.AAB];[2.BAA];[3.BBB];&quot; &quot;[&quot; &quot;AA&quot; &quot;];&quot; &quot;-1{*&quot; $R0
+&#0009;; $R0=&quot;[1.AAB];[2.BAA];&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (6):</b></p>
+<pre>Section
+&#0009;${WordFind3X} &quot;[1.AAB];[2.BAA];[3.BBB];&quot; &quot;[&quot; &quot;AA&quot; &quot;];&quot; &quot;/2.BAA&quot; $R0
+&#0009;; $R0=&quot;2&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (With errorlevel output):</b></p>
+<pre>Section
+&#0009;${WordFind3X} &quot;[1.AAB];[2.BAA];[3.BBB];&quot; &quot;[&quot; &quot;XX&quot; &quot;];&quot; &quot;E+1&quot; $R0
+&#0009;; $R0=&quot;1&quot; (&quot;[...XX...];&quot; not found)
+
+&#0009;IfErrors 0 noerrors
+&#0009;MessageBox MB_OK 'Errorlevel=$R0' IDOK end
+
+&#0009;noerrors:
+&#0009;MessageBox MB_OK 'No errors'
+
+&#0009;end:
+SectionEnd
+</pre>
+<a name="E.3.7"></a><h3>E.3.7 WordFind3XS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.3.6">WordFind3X</a>, but case sensitive.</li></ul>
+<a name="E.3.8"></a><h3>E.3.8 WordReplace</h3>
+<ul>
+<li>Replace or delete word from string.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${WordReplace} &quot;[string]&quot; &quot;[word1]&quot; &quot;[word2]&quot; &quot;[E][options]&quot; $var
+</pre>
+<pre>&quot;[string]&quot;         ;[string]
+                   ;  input string
+&quot;[word1]&quot;          ;[word1]
+                   ;  word to replace or delete
+&quot;[word2]&quot;          ;[word2]
+                   ;  replace with (if empty delete)
+&quot;[E][options]&quot;     ;[options]
+                   ;  +number  : word number from start
+                   ;  -number  : word number from end
+                   ;  +number* : word number from start multiple-replace
+                   ;  -number* : word number from end multiple-replace
+                   ;  +        : replace all results
+                   ;  +*       : multiple-replace all results
+                   ;  {        : if exists replace all delimiters
+                   ;               from left edge
+                   ;  }        : if exists replace all delimiters
+                   ;               from right edge
+                   ;  {}       : if exists replace all delimiters
+                   ;               from edges
+                   ;  {*       : if exists multiple-replace all
+                   ;               delimiters from left edge
+                   ;  }*       : if exists multiple-replace all
+                   ;               delimiters from right edge
+                   ;  {}*      : if exists multiple-replace all
+                   ;               delimiters from edges
+                   ;
+                   ;[E]
+                   ;  with errorlevel output
+                   ;  IfErrors:
+                   ;     $var=1  word to replace not found
+                   ;     $var=2  no such word number
+                   ;     $var=3  syntax error (Use: +1,-1,+1*,-1*,+,+*,{},{}*)
+                   ;[]
+                   ;  no errorlevel output (default)
+                   ;  If some errors found then (result=input string)
+                   ;
+$var               ;output (result)
+</pre>
+
+<p><b>Example (replace):</b></p>
+<pre>Section
+&#0009;${WordReplace} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot;SYS&quot; &quot;bmp&quot; &quot;+2&quot; $R0
+&#0009;; $R0=&quot;C:\io.sys C:\logo.bmp C:\WINDOWS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (delete):</b></p>
+<pre>Section
+&#0009;${WordReplace} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot;SYS&quot; &quot;&quot; &quot;+&quot; $R0
+&#0009;; $R0=&quot;C:\io. C:\logo. C:\WINDOWS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (multiple-replace 1):</b></p>
+<pre>Section
+&#0009;${WordReplace} &quot;C:\io.sys      C:\logo.sys   C:\WINDOWS&quot; &quot; &quot; &quot; &quot; &quot;+1*&quot; $R0
+&#0009;; +1* or +2* or +3* or +4* or +5* or +6*
+&#0009;; $R0=&quot;C:\io.sys C:\logo.sys   C:\WINDOWS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (multiple-replace 2):</b></p>
+<pre>Section
+&#0009;${WordReplace} &quot;C:\io.sys C:\logo.sysSYSsys C:\WINDOWS&quot; &quot;sys&quot; &quot;bmp&quot; &quot;+*&quot; $R0
+&#0009;; $R0=&quot;C:\io.bmp C:\logo.bmp C:\WINDOWS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (multiple-replace 3):</b></p>
+<pre>Section
+&#0009;${WordReplace} &quot;sysSYSsysC:\io.sys C:\logo.sys C:\WINDOWSsysSYSsys&quot; &quot;sys&quot; &quot;|&quot; &quot;{}*&quot; $R0
+&#0009;; $R0=&quot;|C:\io.sys C:\logo.sys C:\WINDOWS|&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (With errorlevel output):</b></p>
+<pre>Section
+&#0009;${WordReplace} &quot;C:\io.sys C:\logo.sys&quot; &quot;sys&quot; &quot;bmp&quot; &quot;E+3&quot; $R0
+&#0009;; $R0=&quot;2&quot; (no such word number &quot;+3&quot;)
+
+&#0009;IfErrors 0 noerrors
+&#0009;MessageBox MB_OK 'Errorlevel=$R0' IDOK end
+
+&#0009;noerrors:
+&#0009;MessageBox MB_OK 'No errors'
+
+&#0009;end:
+SectionEnd
+</pre>
+<a name="E.3.9"></a><h3>E.3.9 WordReplaceS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.3.8">WordReplace</a>, but case sensitive.</li></ul>
+<a name="E.3.10"></a><h3>E.3.10 WordAdd</h3>
+<ul>
+<li>Add words to string1 from string2 if not exist or delete words if exist.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${WordAdd} &quot;[string1]&quot; &quot;[delimiter]&quot; &quot;[E][options]&quot; $var
+</pre>
+<pre>&quot;[string1]&quot;          ;[string1]
+                     ;  string for addition or removing
+&quot;[delimiter]&quot;        ;[delimiter]
+                     ;  one or several symbols
+&quot;[E][options]&quot;       ;[options]
+                     ;  +string2 : words to add
+                     ;  -string2 : words to delete
+                     ;
+                     ;[E]
+                     ;  with errorlevel output
+                     ;  IfErrors:
+                     ;     $var=1  delimiter is empty
+                     ;     $var=3  syntax error (use: +text,-text)
+                     ;[]
+                     ;  no errorlevel output (default)
+                     ;  If some errors found then (result=input string)
+                     ;
+$var                 ;output (result)
+</pre>
+
+<p><b>Example (add):</b></p>
+<pre>Section
+&#0009;${WordAdd} &quot;C:\io.sys C:\WINDOWS&quot; &quot; &quot; &quot;+C:\WINDOWS C:\config.sys&quot; $R0
+&#0009;; $R0=&quot;C:\io.sys C:\WINDOWS C:\config.sys&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (delete):</b></p>
+<pre>Section
+&#0009;${WordAdd} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot; &quot; &quot;-C:\WINDOWS C:\config.sys C:\IO.SYS&quot; $R0
+&#0009;; $R0=&quot;C:\logo.sys&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (add to one):</b></p>
+<pre>Section
+&#0009;${WordAdd} &quot;C:\io.sys&quot; &quot; &quot; &quot;+C:\WINDOWS C:\config.sys C:\IO.SYS&quot; $R0
+&#0009;; $R0=&quot;C:\io.sys C:\WINDOWS C:\config.sys&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (delete one):</b></p>
+<pre>Section
+&#0009;${WordAdd} &quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot; &quot; &quot; &quot;-C:\WINDOWS&quot; $R0
+&#0009;; $R0=&quot;C:\io.sys C:\logo.sys&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (No new words found):</b></p>
+<pre>Section
+&#0009;${WordAdd} &quot;C:\io.sys C:\logo.sys&quot; &quot; &quot; &quot;+C:\logo.sys&quot; $R0
+&#0009;StrCmp $R0 &quot;C:\io.sys C:\logo.sys&quot; 0 +2
+&#0009;MessageBox MB_OK &quot;No new words found to add&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (No words deleted):</b></p>
+<pre>Section
+&#0009;${WordAdd} &quot;C:\io.sys C:\logo.sys&quot; &quot; &quot; &quot;-C:\config.sys&quot; $R0
+&#0009;StrCmp $R0 &quot;C:\io.sys C:\logo.sys&quot; 0 +2
+&#0009;MessageBox MB_OK &quot;No words found to delete&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (With errorlevel output):</b></p>
+<pre>Section
+&#0009;${WordAdd} &quot;C:\io.sys C:\logo.sys&quot; &quot;&quot; &quot;E-C:\logo.sys&quot; $R0
+&#0009;; $R0=&quot;1&quot; (delimiter is empty &quot;&quot;)
+
+&#0009;IfErrors 0 noerrors
+&#0009;MessageBox MB_OK 'Errorlevel=$R0' IDOK end
+
+&#0009;noerrors:
+&#0009;MessageBox MB_OK 'No errors'
+
+&#0009;end:
+SectionEnd
+</pre>
+<a name="E.3.11"></a><h3>E.3.11 WordAddS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.3.10">WordAdd</a>, but case sensitive.</li></ul>
+<a name="E.3.12"></a><h3>E.3.12 WordInsert</h3>
+<ul>
+<li>Insert word in string.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${WordInsert} &quot;[string]&quot; &quot;[delimiter]&quot; &quot;[word]&quot; &quot;[E][options]&quot; $var
+</pre>
+<pre>&quot;[string]&quot;          ;[string]
+                    ;  input string
+&quot;[delimiter]&quot;       ;[delimiter]
+                    ;  one or several symbols
+&quot;[word]&quot;            ;[word]
+                    ;  word to insert
+&quot;[E][options]&quot;      ;[options]
+                    ;  +number  : word number from start
+                    ;  -number  : word number from end
+                    ;
+                    ;[E]
+                    ;  with errorlevel output
+                    ;  IfErrors:
+                    ;     $var=1  delimiter is empty
+                    ;     $var=2  wrong word number
+                    ;     $var=3  syntax error (Use: +1,-1)
+                    ;[]
+                    ;  no errorlevel output (default)
+                    ;  If some errors found then (result=input string)
+                    ;
+$var                ;output (result)
+</pre>
+
+<p><b>Example (1):</b></p>
+<pre>Section
+&#0009;${WordInsert} &quot;C:\io.sys C:\WINDOWS&quot; &quot; &quot; &quot;C:\logo.sys&quot; &quot;-2&quot; $R0
+&#0009;; $R0=&quot;C:\io.sys C:\logo.sys C:\WINDOWS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (2):</b></p>
+<pre>Section
+&#0009;${WordInsert} &quot;C:\io.sys&quot; &quot; &quot; &quot;C:\WINDOWS&quot; &quot;+2&quot; $R0
+&#0009;; $R0=&quot;C:\io.sys C:\WINDOWS&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (3):</b></p>
+<pre>Section
+&#0009;${WordInsert} &quot;&quot; &quot; &quot; &quot;C:\WINDOWS&quot; &quot;+1&quot; $R0
+&#0009;; $R0=&quot;C:\WINDOWS &quot;
+SectionEnd
+</pre>
+
+<p><b>Example (With errorlevel output):</b></p>
+<pre>Section
+&#0009;${WordInsert} &quot;C:\io.sys C:\logo.sys&quot; &quot; &quot; &quot;C:\logo.sys&quot; &quot;E+4&quot; $R0
+&#0009;; $R0=&quot;2&quot; (wrong word number &quot;+4&quot;)
+
+&#0009;IfErrors 0 noerrors
+&#0009;MessageBox MB_OK 'Errorlevel=$R0' IDOK end
+
+&#0009;noerrors:
+&#0009;MessageBox MB_OK 'No errors'
+
+&#0009;end:
+SectionEnd
+</pre>
+<a name="E.3.13"></a><h3>E.3.13 WordInsertS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.3.12">WordInsert</a>, but case sensitive.</li></ul>
+<a name="E.3.14"></a><h3>E.3.14 StrFilter</h3>
+<ul>
+<li>Convert string to uppercase or lowercase.</li><li>Set symbol filter.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${StrFilter} &quot;[string]&quot; &quot;[options]&quot; &quot;[symbols1]&quot; &quot;[symbols2]&quot; $var
+</pre>
+<pre>&quot;[string]&quot;       ;[string]
+                 ;  input string
+                 ;
+&quot;[options]&quot;      ;[+|-][1|2|3|12|23|31][eng|rus]
+                 ;  +   : convert string to uppercase
+                 ;  -   : convert string to lowercase
+                 ;  1   : only Digits
+                 ;  2   : only Letters
+                 ;  3   : only Special
+                 ;  12  : only Digits  + Letters
+                 ;  23  : only Letters + Special
+                 ;  31  : only Special + Digits
+                 ;  eng : English symbols (default)
+                 ;  rus : Russian symbols
+                 ;
+&quot;[symbols1]&quot;     ;[symbols1]
+                 ;  symbols include (not changeable)
+                 ;
+&quot;[symbols2]&quot;     ;[symbols2]
+                 ;  symbols exclude
+                 ;
+$var             ;output (result)
+</pre>
+
+<p><b>Note:</b> <br>- Error flag if syntax error <br>- Same symbol to include &amp; to exclude = to exclude</p>
+
+<p><b>Example (UpperCase):</b></p>
+<pre>Section
+&#0009;${StrFilter} &quot;123abc 456DEF 7890|%#&quot; &quot;+&quot; &quot;&quot; &quot;&quot; $R0
+&#0009;; $R0=&quot;123ABC 456DEF 7890|%#&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (LowerCase):</b></p>
+<pre>Section
+&#0009;${StrFilter} &quot;123abc 456DEF 7890|%#&quot; &quot;-&quot; &quot;ef&quot; &quot;&quot; $R0
+&#0009;; $R0=&quot;123abc 456dEF 7890|%#&quot;
+SectionEnd
+</pre>
+
+<p><b>Example (Filter1):</b></p>
+<pre>Section
+&#0009;${StrFilter} &quot;123abc 456DEF 7890|%#&quot; &quot;2&quot; &quot;|%&quot; &quot;&quot; $R0
+&#0009;; $R0=&quot;abcDEF|%&quot;       ;only Letters + |%
+SectionEnd
+</pre>
+
+<p><b>Example (Filter2):</b></p>
+<pre>Section
+&#0009;${StrFilter} &quot;123abc 456DEF 7890|%#&quot; &quot;13&quot; &quot;af&quot; &quot;4590&quot; $R0
+&#0009;; $R0=&quot;123a 6F 78|%#&quot;  ;only Digits + Special + af - 4590
+SectionEnd
+</pre>
+
+<p><b>Example (Filter3):</b></p>
+<pre>Section
+&#0009;${StrFilter} &quot;123abc 456DEF 7890|%#&quot; &quot;+12&quot; &quot;b&quot; &quot;def&quot; $R0
+&#0009;; $R0=&quot;123AbC4567890&quot;  ;only Digits + Letters + b - def
+SectionEnd
+</pre>
+
+<p><b>Example (Filter4):</b></p>
+<pre>Section
+&#0009;${StrFilter} &quot;123abc&#0192;&#0193;&#0194; 456DEF&#0227;&#0228;&#0229; 7890|%#&quot; &quot;+12rus&quot; &quot;&#0228;&quot; &quot;&#0227;&#0229;&quot; $R0
+&#0009;; $R0=&quot;123&#0192;&#0193;&#0194;456&#0228;7890&quot;  ;only Digits + Letters + &#0228; - &#0227;&#0229;
+SectionEnd
+</pre>
+
+<p><b>Example (English + Russian Letters):</b></p>
+<pre>Section
+&#0009;${StrFilter} &quot;123abc&#0192;&#0193;&#0194; 456DEF&#0227;&#0228;&#0229; 7890|%#&quot; &quot;2rus&quot; &quot;&quot; &quot;&quot; $R0
+&#0009;; $R0=&quot;&#0192;&#0193;&#0194;&#0227;&#0228;&#0229;&quot;        ;only Russian Letters
+&#0009;${StrFilter} &quot;123abc&#0192;&#0193;&#0194; 456DEF&#0227;&#0228;&#0229; 7890|%#&quot; &quot;2&quot; &quot;$R0&quot; &quot;&quot; $R0
+&#0009;; $R0=&quot;abc&#0192;&#0193;&#0194;DEF&#0227;&#0228;&#0229;&quot;  ;only English + Russian Letters
+SectionEnd
+</pre>
+
+<p><b>Example (Word Capitalize):</b></p>
+<pre>Section
+&#0009;Push &quot;_01-PERPETUOUS_DREAMER__-__THE_SOUND_OF_GOODBYE_(ORIG._MIX).MP3_&quot;
+&#0009;Call Capitalize
+&#0009;Pop $R0
+&#0009;; $R0=&quot;_01-Perpetuous_Dreamer__-__The_Sound_Of_Goodbye_(Orig._Mix).mp3_&quot;
+
+&#0009;${WordReplace} &quot;$R0&quot; &quot;_&quot; &quot; &quot; &quot;+*&quot; $R0
+&#0009;; $R0=&quot; 01-Perpetuous Dreamer - The Sound Of Goodbye (Orig. Mix).mp3 &quot;
+
+&#0009;${WordReplace} &quot;$R0&quot; &quot; &quot; &quot;&quot; &quot;{}&quot; $R0
+&#0009;; $R0=&quot;01-Perpetuous Dreamer - The Sound Of Goodbye (Orig. Mix).mp3&quot;
+SectionEnd
+
+Function Capitalize
+&#0009;Exch $R0
+&#0009;Push $0
+&#0009;Push $1
+&#0009;Push $2
+
+&#0009;${StrFilter} '$R0' '-eng' '' '' $R0
+&#0009;${StrFilter} '$R0' '-rus' '' '' $R0
+
+&#0009;StrCpy $0 0
+
+&#0009;loop:
+&#0009;IntOp $0 $0 + 1
+&#0009;StrCpy $1 $R0 1 $0
+&#0009;StrCmp $1 '' end
+&#0009;StrCmp $1 ' ' +5
+&#0009;StrCmp $1 '_' +4
+&#0009;StrCmp $1 '-' +3
+&#0009;StrCmp $1 '(' +2
+&#0009;StrCmp $1 '[' 0 loop
+&#0009;IntOp $0 $0 + 1
+&#0009;StrCpy $1 $R0 1 $0
+&#0009;StrCmp $1 '' end
+
+&#0009;${StrFilter} '$1' '+eng' '' '' $1
+&#0009;${StrFilter} '$1' '+rus' '' '' $1
+
+&#0009;StrCpy $2 $R0 $0
+&#0009;IntOp $0 $0 + 1
+&#0009;StrCpy $R0 $R0 '' $0
+&#0009;IntOp $0 $0 - 2
+&#0009;StrCpy $R0 '$2$1$R0'
+&#0009;goto loop
+
+&#0009;end:
+&#0009;Pop $2
+&#0009;Pop $1
+&#0009;Pop $0
+&#0009;Exch $R0
+FunctionEnd
+</pre>
+<a name="E.3.15"></a><h3>E.3.15 StrFilterS</h3>
+<ul>
+<li>Same as <a href="AppendixE.html#E.3.14">StrFilter</a>, but case sensitive.</li></ul>
+<a name="E.3.16"></a><h3>E.3.16 VersionCompare</h3>
+<ul>
+<li>Compare version numbers.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${VersionCompare} &quot;[Version1]&quot; &quot;[Version2]&quot; $var
+</pre>
+<pre>&quot;[Version1]&quot;        ; First version
+&quot;[Version2]&quot;        ; Second version
+$var                ; Result:
+                    ;    $var=0  Versions are equal
+                    ;    $var=1  Version1 is newer
+                    ;    $var=2  Version2 is newer
+</pre>
+
+<p><b>Example:</b></p>
+<pre>Section
+&#0009;${VersionCompare} &quot;1.1.1.9&quot; &quot;1.1.1.01&quot; $R0
+&#0009;; $R0=&quot;1&quot;
+SectionEnd
+</pre>
+<a name="E.3.17"></a><h3>E.3.17 VersionConvert</h3>
+<ul>
+<li>Convert version in the numerical format which can be compared.</li></ul>
+
+<p><b>Syntax:</b></p>
+<pre>${VersionConvert} &quot;[Version]&quot; &quot;[CharList]&quot; $var
+</pre>
+<pre>&quot;[Version]&quot;         ; Version
+                    ;
+&quot;[CharList]&quot;        ; List of characters, which will be replaced by numbers
+                    ; &quot;abcdefghijklmnopqrstuvwxyz&quot; (default)
+                    ;
+$var                ; Result: converted version
+</pre>
+
+<p><b>Note:</b> <br>- Converted letters are separated with dot <br>- If character is non-digit and not in list then it will be converted to dot</p>
+
+<p><b>Example1:</b></p>
+<pre>Section
+&#0009;${VersionConvert} &quot;9.0a&quot; &quot;&quot; $R0
+&#0009;; $R0=&quot;9.0.01&quot;
+
+&#0009;${VersionConvert} &quot;9.0c&quot; &quot;&quot; $R1
+&#0009;; $R1=&quot;9.0.03&quot;
+
+&#0009;${VersionCompare} &quot;$R0&quot; &quot;$R1&quot; $R2
+&#0009;; $R2=&quot;2&quot;   version2 is newer
+SectionEnd
+</pre>
+
+<p><b>Example2:</b></p>
+<pre>Section
+&#0009;${VersionConvert} &quot;0.15c-9m&quot; &quot;&quot; $R0
+&#0009;; $R0=&quot;0.15.03.9.13&quot;
+
+&#0009;${VersionConvert} &quot;0.15c-1n&quot; &quot;&quot; $R1
+&#0009;; $R1=&quot;0.15.03.1.14&quot;
+
+&#0009;${VersionCompare} &quot;$R0&quot; &quot;$R1&quot; $R2
+&#0009;; $R2=&quot;1&quot;   version1 is newer
+SectionEnd
+</pre>
+
+<p><b>Example3:</b></p>
+<pre>Section
+&#0009;${VersionConvert} &quot;0.15c+&quot; &quot;abcdefghijklmnopqrstuvwxyz+&quot; $R0
+&#0009;; $R0=&quot;0.15.0327&quot;
+
+&#0009;${VersionConvert} &quot;0.15c&quot; &quot;abcdefghijklmnopqrstuvwxyz+&quot; $R1
+&#0009;; $R1=&quot;0.15.03&quot;
+
+&#0009;${VersionCompare} &quot;$R0&quot; &quot;$R1&quot; $R2
+&#0009;; $R2=&quot;1&quot;   version1 is newer
+SectionEnd
+</pre>
+<p><a href='AppendixD.html'>Previous</a> | <a href='Contents.html'>Contents</a> | <a href='AppendixF.html'>Next</a></p>
+
+<hr />
+
+<address>
+</address>
+<a href="http://sourceforge.net"><img border=0 src="http://sourceforge.net/sflogo.php?group_id=22049&amp;type=1" alt="SourceForge Logo" /></a></body>
+
+</html>

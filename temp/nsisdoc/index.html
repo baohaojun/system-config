@@ -1,0 +1,553 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<title>NSIS Users Manual</title>
+<meta name="generator" content="Halibut version 1.0 (NSIS Custom Build) xhtml-backend" />
+<link rel="stylesheet" href="style.css" type='text/css' />
+</head>
+
+<body>
+<a name="title"></a><h1>NSIS Users Manual</h1>
+<p>NSIS is a free scriptable win32 installer/uninstaller system that doesn't suck and isn't huge.</p>
+<p>Check <a href="http://nsis.sourceforge.net/">http://nsis.sf.net</a> for news, information, support, examples, tutorials and more.</p>
+<p>Quick links:<br><a href="http://nsis.sourceforge.net/support/faq/">FAQ</a> - A list of frequently asked questions<br><a href="http://nsis.sourceforge.net/wiki/">NSIS Wiki</a> - Examples, functions, tutorials, plug-ins, software and more<br><a href="http://forums.winamp.com/forumdisplay.php?forumid=65">Forum</a> - Post questions or discuss NSIS features</p>
+<p>Copyright (C) 1999-2009 Contributors</p>
+<ul>
+<li><a class="btitle" href="Chapter1.html#"><b>Chapter 1: </b>Introduction to NSIS</a></li>
+<ul>
+<li><a href="Chapter1.html#1.1">About NSIS</a></li>
+<li><a href="Chapter1.html#1.2">Main Features</a></li>
+<li><a href="Chapter1.html#1.3">Feature List</a></li>
+</ul>
+<li><a class="btitle" href="Chapter2.html#"><b>Chapter 2: </b>Tutorial: The Basics</a></li>
+<ul>
+<li><a href="Chapter2.html#2.1">Introduction</a></li>
+<li><a href="Chapter2.html#2.2">Script Files</a></li>
+<li><a href="Chapter2.html#2.3">Scripting structure</a></li>
+<ul>
+<li><a href="Chapter2.html#2.3.1">Installer Attributes</a></li>
+<li><a href="Chapter2.html#2.3.2">Pages</a></li>
+<li><a href="Chapter2.html#2.3.3">Sections</a></li>
+<li><a href="Chapter2.html#2.3.4">Functions</a></li>
+<li><a href="Chapter2.html#2.3.5">Working with Scripts</a></li>
+<li><a href="Chapter2.html#2.3.6">Script Execution</a></li>
+<li><a href="Chapter2.html#2.3.7">Compiler Commands</a></li>
+</ul>
+<li><a href="Chapter2.html#2.4">Compiler</a></li>
+<li><a href="Chapter2.html#2.5">Modern UI</a></li>
+<li><a href="Chapter2.html#2.6">Plug-ins</a></li>
+<li><a href="Chapter2.html#2.7">More</a></li>
+</ul>
+<li><a class="btitle" href="Chapter3.html#"><b>Chapter 3: </b>Command Line Usage</a></li>
+<ul>
+<li><a href="Chapter3.html#3.1">MakeNSIS Usage</a></li>
+<ul>
+<li><a href="Chapter3.html#3.1.1">Options</a></li>
+<li><a href="Chapter3.html#3.1.2">Notes</a></li>
+<li><a href="Chapter3.html#3.1.3">Environment variables</a></li>
+<li><a href="Chapter3.html#3.1.4">Examples</a></li>
+</ul>
+<li><a href="Chapter3.html#3.2">Installer Usage</a></li>
+<ul>
+<li><a href="Chapter3.html#3.2.1">Common Options</a></li>
+<li><a href="Chapter3.html#3.2.2">Uninstaller Specific Options</a></li>
+<li><a href="Chapter3.html#3.2.3">Examples</a></li>
+</ul>
+</ul>
+<li><a class="btitle" href="Chapter4.html#"><b>Chapter 4: </b>Scripting Reference</a></li>
+<ul>
+<li><a href="Chapter4.html#4.1">Script File Format</a></li>
+<li><a href="Chapter4.html#4.2">Variables</a></li>
+<ul>
+<li><a href="Chapter4.html#4.2.1">User Variables</a></li>
+<li><a href="Chapter4.html#4.2.2">Other Writable Variables</a></li>
+<li><a href="Chapter4.html#4.2.3">Constants</a></li>
+<li><a href="Chapter4.html#4.2.4">Constants Used in Strings</a></li>
+</ul>
+<li><a href="Chapter4.html#4.3">Labels</a></li>
+<li><a href="Chapter4.html#4.4">Relative Jumps</a></li>
+<li><a href="Chapter4.html#4.5">Pages</a></li>
+<ul>
+<li><a href="Chapter4.html#4.5.1">Ordering</a></li>
+<li><a href="Chapter4.html#4.5.2">Page Options</a></li>
+<li><a href="Chapter4.html#4.5.3">Callbacks</a></li>
+<li><a href="Chapter4.html#4.5.4">Page</a></li>
+<li><a href="Chapter4.html#4.5.5">UninstPage</a></li>
+<li><a href="Chapter4.html#4.5.6">PageEx</a></li>
+<li><a href="Chapter4.html#4.5.7">PageExEnd</a></li>
+<li><a href="Chapter4.html#4.5.8">PageCallbacks</a></li>
+</ul>
+<li><a href="Chapter4.html#4.6">Sections</a></li>
+<ul>
+<li><a href="Chapter4.html#4.6.1">Section Commands</a></li>
+<li><a href="Chapter4.html#4.6.2">Uninstall Section</a></li>
+</ul>
+<li><a href="Chapter4.html#4.7">Functions</a></li>
+<ul>
+<li><a href="Chapter4.html#4.7.1">Function Commands</a></li>
+<li><a href="Chapter4.html#4.7.2">Callback Functions</a></li>
+</ul>
+<li><a href="Chapter4.html#4.8">Installer Attributes</a></li>
+<ul>
+<li><a href="Chapter4.html#4.8.1">General Attributes</a></li>
+<li><a href="Chapter4.html#4.8.2">Compiler Flags</a></li>
+<li><a href="Chapter4.html#4.8.3">Version Information</a></li>
+</ul>
+<li><a href="Chapter4.html#4.9">Instructions</a></li>
+<ul>
+<li><a href="Chapter4.html#4.9.1">Basic Instructions</a></li>
+<li><a href="Chapter4.html#4.9.2">Registry, INI, File Instructions</a></li>
+<li><a href="Chapter4.html#4.9.3">General Purpose Instructions</a></li>
+<li><a href="Chapter4.html#4.9.4">Flow Control Instructions</a></li>
+<li><a href="Chapter4.html#4.9.5">File Instructions</a></li>
+<li><a href="Chapter4.html#4.9.6">Uninstaller Instructions</a></li>
+<li><a href="Chapter4.html#4.9.7">Miscellaneous Instructions</a></li>
+<li><a href="Chapter4.html#4.9.8">String Manipulation Instructions</a></li>
+<li><a href="Chapter4.html#4.9.9">Stack Support</a></li>
+<li><a href="Chapter4.html#4.9.10">Integer Support</a></li>
+<li><a href="Chapter4.html#4.9.11">Reboot Instructions</a></li>
+<li><a href="Chapter4.html#4.9.12">Install Logging Instructions</a></li>
+<li><a href="Chapter4.html#4.9.13">Section Management</a></li>
+<li><a href="Chapter4.html#4.9.14">User Interface Instructions</a></li>
+<li><a href="Chapter4.html#4.9.15">Multiple Languages Instructions</a></li>
+</ul>
+<li><a href="Chapter4.html#4.10">Multiple Languages</a></li>
+<ul>
+<li><a href="Chapter4.html#4.10.1">Language Selection</a></li>
+<li><a href="Chapter4.html#4.10.2">LangDLL Plug-in</a></li>
+<li><a href="Chapter4.html#4.10.3">RTL Languages</a></li>
+</ul>
+<li><a href="Chapter4.html#4.11">Plug-in DLLs</a></li>
+<ul>
+<li><a href="Chapter4.html#4.11.1">Using Plug-in Commands</a></li>
+<li><a href="Chapter4.html#4.11.2">Calling plug-ins manually</a></li>
+</ul>
+<li><a href="Chapter4.html#4.12">Silent Installers/Uninstallers</a></li>
+</ul>
+<li><a class="btitle" href="Chapter5.html#"><b>Chapter 5: </b>Compile Time Commands</a></li>
+<ul>
+<li><a href="Chapter5.html#5.1">Compiler Utility Commands</a></li>
+<ul>
+<li><a href="Chapter5.html#5.1.1">!include</a></li>
+<li><a href="Chapter5.html#5.1.2">!addincludedir</a></li>
+<li><a href="Chapter5.html#5.1.3">!addplugindir</a></li>
+<li><a href="Chapter5.html#5.1.4">!appendfile</a></li>
+<li><a href="Chapter5.html#5.1.5">!cd</a></li>
+<li><a href="Chapter5.html#5.1.6">!delfile</a></li>
+<li><a href="Chapter5.html#5.1.7">!echo</a></li>
+<li><a href="Chapter5.html#5.1.8">!error</a></li>
+<li><a href="Chapter5.html#5.1.9">!execute</a></li>
+<li><a href="Chapter5.html#5.1.10">!packhdr</a></li>
+<li><a href="Chapter5.html#5.1.11">!system</a></li>
+<li><a href="Chapter5.html#5.1.12">!tempfile</a></li>
+<li><a href="Chapter5.html#5.1.13">!warning</a></li>
+<li><a href="Chapter5.html#5.1.14">!verbose</a></li>
+</ul>
+<li><a href="Chapter5.html#5.2">Predefines</a></li>
+<ul>
+<li><a href="Chapter5.html#5.2.1">${__FILE__}</a></li>
+<li><a href="Chapter5.html#5.2.2">${__LINE__}</a></li>
+<li><a href="Chapter5.html#5.2.3">${__DATE__}</a></li>
+<li><a href="Chapter5.html#5.2.4">${__TIME__}</a></li>
+<li><a href="Chapter5.html#5.2.5">${__TIMESTAMP__}</a></li>
+<li><a href="Chapter5.html#5.2.6">Scope Predefines</a></li>
+</ul>
+<li><a href="Chapter5.html#5.3">Read environment variables</a></li>
+<ul>
+<li><a href="Chapter5.html#5.3.1">$%envVarName%</a></li>
+</ul>
+<li><a href="Chapter5.html#5.4">Conditional Compilation</a></li>
+<ul>
+<li><a href="Chapter5.html#5.4.1">!define</a></li>
+<li><a href="Chapter5.html#5.4.2">!undef</a></li>
+<li><a href="Chapter5.html#5.4.3">!ifdef</a></li>
+<li><a href="Chapter5.html#5.4.4">!ifndef</a></li>
+<li><a href="Chapter5.html#5.4.5">!if</a></li>
+<li><a href="Chapter5.html#5.4.6">!ifmacrodef</a></li>
+<li><a href="Chapter5.html#5.4.7">!ifmacrondef</a></li>
+<li><a href="Chapter5.html#5.4.8">!else</a></li>
+<li><a href="Chapter5.html#5.4.9">!endif</a></li>
+<li><a href="Chapter5.html#5.4.10">!insertmacro</a></li>
+<li><a href="Chapter5.html#5.4.11">!macro</a></li>
+<li><a href="Chapter5.html#5.4.12">!macroend</a></li>
+<li><a href="Chapter5.html#5.4.13">!searchparse</a></li>
+<li><a href="Chapter5.html#5.4.14">!searchreplace</a></li>
+</ul>
+</ul>
+<li><a class="btitle" href="AppendixA.html#A"><b>Appendix A: </b>Modern User Interface</a></li>
+<li><a class="btitle" href="AppendixB.html#B"><b>Appendix B: </b>DLL/TLB Library Setup</a></li>
+<ul>
+<li><a href="AppendixB.html#B.1">Introduction</a></li>
+<li><a href="AppendixB.html#B.2">Library Installation</a></li>
+<ul>
+<li><a href="AppendixB.html#B.2.1">Introduction</a></li>
+<li><a href="AppendixB.html#B.2.2">Parameters</a></li>
+<li><a href="AppendixB.html#B.2.3">Options</a></li>
+<li><a href="AppendixB.html#B.2.4">Notes</a></li>
+<li><a href="AppendixB.html#B.2.5">Example</a></li>
+</ul>
+<li><a href="AppendixB.html#B.3">Library Uninstallation</a></li>
+<ul>
+<li><a href="AppendixB.html#B.3.1">Introduction</a></li>
+<li><a href="AppendixB.html#B.3.2">Parameters</a></li>
+<li><a href="AppendixB.html#B.3.3">Options</a></li>
+<li><a href="AppendixB.html#B.3.4">Example</a></li>
+</ul>
+<li><a href="AppendixB.html#B.4">Visual Basic 6 Run-Time Files</a></li>
+</ul>
+<li><a class="btitle" href="AppendixC.html#C"><b>Appendix C: </b>Useful Scripts</a></li>
+<ul>
+<li><a href="AppendixC.html#C.1">Get Internet Explorer version</a></li>
+<li><a href="AppendixC.html#C.2">Is .NET Framework installed?</a></li>
+<li><a href="AppendixC.html#C.3">Is Macromedia Flash Player installed?</a></li>
+<li><a href="AppendixC.html#C.4">Connect to the Internet</a></li>
+<li><a href="AppendixC.html#C.5">Get Installer Filename</a></li>
+<li><a href="AppendixC.html#C.6">Prevent Multiple Instances</a></li>
+<li><a href="AppendixC.html#C.7">More</a></li>
+</ul>
+<li><a class="btitle" href="AppendixD.html#D"><b>Appendix D: </b>Useful Information</a></li>
+<ul>
+<li><a href="AppendixD.html#D.1">Error Levels</a></li>
+<li><a href="AppendixD.html#D.2">Add uninstall information to Add/Remove Programs</a></li>
+<li><a href="AppendixD.html#D.3">Calling an external DLL using the System.dll plug-in</a></li>
+<li><a href="AppendixD.html#D.4">Dump Content of Log Window to File</a></li>
+<li><a href="AppendixD.html#D.5">How to Read REG_MULTI_SZ Values</a></li>
+</ul>
+<li><a class="btitle" href="AppendixE.html#E"><b>Appendix E: </b>Useful Headers</a></li>
+<ul>
+<li><a href="AppendixE.html#E.1">File Functions Header</a></li>
+<ul>
+<li><a href="AppendixE.html#E.1.1">Introduction</a></li>
+<li><a href="AppendixE.html#E.1.2">Locate</a></li>
+<li><a href="AppendixE.html#E.1.3">GetSize</a></li>
+<li><a href="AppendixE.html#E.1.4">DriveSpace</a></li>
+<li><a href="AppendixE.html#E.1.5">GetDrives</a></li>
+<li><a href="AppendixE.html#E.1.6">GetTime</a></li>
+<li><a href="AppendixE.html#E.1.7">GetFileAttributes</a></li>
+<li><a href="AppendixE.html#E.1.8">GetFileVersion</a></li>
+<li><a href="AppendixE.html#E.1.9">GetExeName</a></li>
+<li><a href="AppendixE.html#E.1.10">GetExePath</a></li>
+<li><a href="AppendixE.html#E.1.11">GetParameters</a></li>
+<li><a href="AppendixE.html#E.1.12">GetOptions</a></li>
+<li><a href="AppendixE.html#E.1.13">GetOptionsS</a></li>
+<li><a href="AppendixE.html#E.1.14">GetRoot</a></li>
+<li><a href="AppendixE.html#E.1.15">GetParent</a></li>
+<li><a href="AppendixE.html#E.1.16">GetFileName</a></li>
+<li><a href="AppendixE.html#E.1.17">GetBaseName</a></li>
+<li><a href="AppendixE.html#E.1.18">GetFileExt</a></li>
+<li><a href="AppendixE.html#E.1.19">BannerTrimPath</a></li>
+<li><a href="AppendixE.html#E.1.20">DirState</a></li>
+<li><a href="AppendixE.html#E.1.21">RefreshShellIcons</a></li>
+</ul>
+<li><a href="AppendixE.html#E.2">Text Functions Header</a></li>
+<ul>
+<li><a href="AppendixE.html#E.2.1">Introduction</a></li>
+<li><a href="AppendixE.html#E.2.2">LineFind</a></li>
+<li><a href="AppendixE.html#E.2.3">LineRead</a></li>
+<li><a href="AppendixE.html#E.2.4">FileReadFromEnd</a></li>
+<li><a href="AppendixE.html#E.2.5">LineSum</a></li>
+<li><a href="AppendixE.html#E.2.6">FileJoin</a></li>
+<li><a href="AppendixE.html#E.2.7">TextCompare</a></li>
+<li><a href="AppendixE.html#E.2.8">TextCompareS</a></li>
+<li><a href="AppendixE.html#E.2.9">ConfigRead</a></li>
+<li><a href="AppendixE.html#E.2.10">ConfigReadS</a></li>
+<li><a href="AppendixE.html#E.2.11">ConfigWrite</a></li>
+<li><a href="AppendixE.html#E.2.12">ConfigWriteS</a></li>
+<li><a href="AppendixE.html#E.2.13">FileRecode</a></li>
+<li><a href="AppendixE.html#E.2.14">TrimNewLines</a></li>
+</ul>
+<li><a href="AppendixE.html#E.3">Word Functions Header</a></li>
+<ul>
+<li><a href="AppendixE.html#E.3.1">Introduction</a></li>
+<li><a href="AppendixE.html#E.3.2">WordFind</a></li>
+<li><a href="AppendixE.html#E.3.3">WordFindS</a></li>
+<li><a href="AppendixE.html#E.3.4">WordFind2X</a></li>
+<li><a href="AppendixE.html#E.3.5">WordFind2XS</a></li>
+<li><a href="AppendixE.html#E.3.6">WordFind3X</a></li>
+<li><a href="AppendixE.html#E.3.7">WordFind3XS</a></li>
+<li><a href="AppendixE.html#E.3.8">WordReplace</a></li>
+<li><a href="AppendixE.html#E.3.9">WordReplaceS</a></li>
+<li><a href="AppendixE.html#E.3.10">WordAdd</a></li>
+<li><a href="AppendixE.html#E.3.11">WordAddS</a></li>
+<li><a href="AppendixE.html#E.3.12">WordInsert</a></li>
+<li><a href="AppendixE.html#E.3.13">WordInsertS</a></li>
+<li><a href="AppendixE.html#E.3.14">StrFilter</a></li>
+<li><a href="AppendixE.html#E.3.15">StrFilterS</a></li>
+<li><a href="AppendixE.html#E.3.16">VersionCompare</a></li>
+<li><a href="AppendixE.html#E.3.17">VersionConvert</a></li>
+</ul>
+</ul>
+<li><a class="btitle" href="AppendixF.html#F"><b>Appendix F: </b>Changelog and Release Notes</a></li>
+<ul>
+<li><a href="AppendixF.html#F.1">2.44</a></li>
+<ul>
+<li><a href="AppendixF.html#F.1.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.2">2.43</a></li>
+<ul>
+<li><a href="AppendixF.html#F.2.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.2.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.3">2.42</a></li>
+<ul>
+<li><a href="AppendixF.html#F.3.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.3.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.4">2.41</a></li>
+<ul>
+<li><a href="AppendixF.html#F.4.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.5">2.40</a></li>
+<ul>
+<li><a href="AppendixF.html#F.5.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.6">2.39</a></li>
+<ul>
+<li><a href="AppendixF.html#F.6.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.7">2.38</a></li>
+<ul>
+<li><a href="AppendixF.html#F.7.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.8">2.37</a></li>
+<ul>
+<li><a href="AppendixF.html#F.8.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.9">2.36</a></li>
+<ul>
+<li><a href="AppendixF.html#F.9.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.9.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.10">2.35</a></li>
+<ul>
+<li><a href="AppendixF.html#F.10.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.11">2.34</a></li>
+<ul>
+<li><a href="AppendixF.html#F.11.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.11.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.12">2.33</a></li>
+<ul>
+<li><a href="AppendixF.html#F.12.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.12.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.13">2.32</a></li>
+<ul>
+<li><a href="AppendixF.html#F.13.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.13.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.14">2.31</a></li>
+<ul>
+<li><a href="AppendixF.html#F.14.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.14.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.15">2.30</a></li>
+<ul>
+<li><a href="AppendixF.html#F.15.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.15.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.16">2.29</a></li>
+<ul>
+<li><a href="AppendixF.html#F.16.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.16.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.17">2.28</a></li>
+<ul>
+<li><a href="AppendixF.html#F.17.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.18">2.27</a></li>
+<ul>
+<li><a href="AppendixF.html#F.18.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.18.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.19">2.26</a></li>
+<ul>
+<li><a href="AppendixF.html#F.19.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.19.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.20">2.25</a></li>
+<ul>
+<li><a href="AppendixF.html#F.20.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.21">2.24</a></li>
+<ul>
+<li><a href="AppendixF.html#F.21.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.22">2.23</a></li>
+<ul>
+<li><a href="AppendixF.html#F.22.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.23">2.22</a></li>
+<ul>
+<li><a href="AppendixF.html#F.23.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.23.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.24">2.21</a></li>
+<ul>
+<li><a href="AppendixF.html#F.24.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.25">2.20</a></li>
+<ul>
+<li><a href="AppendixF.html#F.25.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.26">2.19</a></li>
+<ul>
+<li><a href="AppendixF.html#F.26.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.27">2.18</a></li>
+<ul>
+<li><a href="AppendixF.html#F.27.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.28">2.17</a></li>
+<ul>
+<li><a href="AppendixF.html#F.28.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.29">2.16</a></li>
+<ul>
+<li><a href="AppendixF.html#F.29.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.29.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.30">2.15</a></li>
+<ul>
+<li><a href="AppendixF.html#F.30.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.31">2.14</a></li>
+<ul>
+<li><a href="AppendixF.html#F.31.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.31.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.32">2.13</a></li>
+<ul>
+<li><a href="AppendixF.html#F.32.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.32.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.33">2.12</a></li>
+<ul>
+<li><a href="AppendixF.html#F.33.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.34">2.11</a></li>
+<ul>
+<li><a href="AppendixF.html#F.34.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.34.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.35">2.10</a></li>
+<ul>
+<li><a href="AppendixF.html#F.35.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.36">2.09</a></li>
+<ul>
+<li><a href="AppendixF.html#F.36.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.37">2.08</a></li>
+<ul>
+<li><a href="AppendixF.html#F.37.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.37.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.38">2.07</a></li>
+<ul>
+<li><a href="AppendixF.html#F.38.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.38.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.39">2.06</a></li>
+<ul>
+<li><a href="AppendixF.html#F.39.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.40">2.05</a></li>
+<ul>
+<li><a href="AppendixF.html#F.40.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.40.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.41">2.04</a></li>
+<ul>
+<li><a href="AppendixF.html#F.41.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.42">2.03</a></li>
+<ul>
+<li><a href="AppendixF.html#F.42.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.42.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.43">2.02</a></li>
+<ul>
+<li><a href="AppendixF.html#F.43.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.44">2.01</a></li>
+<ul>
+<li><a href="AppendixF.html#F.44.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.44.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.45">2.0</a></li>
+<ul>
+<li><a href="AppendixF.html#F.45.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.45.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.46">2.0 Release Candidate 4</a></li>
+<ul>
+<li><a href="AppendixF.html#F.46.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.47">2.0 Release Candidate 3</a></li>
+<ul>
+<li><a href="AppendixF.html#F.47.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.48">2.0 Release Candidate 2</a></li>
+<ul>
+<li><a href="AppendixF.html#F.48.1">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.49">2.0 Release Candidate 1</a></li>
+<ul>
+<li><a href="AppendixF.html#F.49.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.49.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.50">2.0 Beta 4</a></li>
+<ul>
+<li><a href="AppendixF.html#F.50.1">Release Notes</a></li>
+<li><a href="AppendixF.html#F.50.2">Changelog</a></li>
+</ul>
+<li><a href="AppendixF.html#F.51">2.0 Beta 3</a></li>
+<li><a href="AppendixF.html#F.52">2.0 Beta 2</a></li>
+<li><a href="AppendixF.html#F.53">2.0 Beta 1</a></li>
+<li><a href="AppendixF.html#F.54">2.0 Beta 0</a></li>
+<li><a href="AppendixF.html#F.55">2.0 Alpha 7</a></li>
+<li><a href="AppendixF.html#F.56">2.0 Alpha 6</a></li>
+<li><a href="AppendixF.html#F.57">2.0 Alpha 5</a></li>
+<li><a href="AppendixF.html#F.58">2.0 Alpha 4</a></li>
+<li><a href="AppendixF.html#F.59">2.0 Alpha 3</a></li>
+<li><a href="AppendixF.html#F.60">2.0 Alpha 2</a></li>
+<li><a href="AppendixF.html#F.61">2.0 Alpha 1</a></li>
+<li><a href="AppendixF.html#F.62">2.0 Alpha 0</a></li>
+<li><a href="AppendixF.html#F.63">Older Versions</a></li>
+</ul>
+<li><a class="btitle" href="AppendixG.html#G"><b>Appendix G: </b>Building NSIS</a></li>
+<ul>
+<li><a href="AppendixG.html#G.1">Building in General</a></li>
+<li><a href="AppendixG.html#G.2">Building on Windows</a></li>
+<li><a href="AppendixG.html#G.3">Building on POSIX</a></li>
+<li><a href="AppendixG.html#G.4">Nightly Builds</a></li>
+</ul>
+<li><a class="btitle" href="AppendixH.html#H"><b>Appendix H: </b>Credits</a></li>
+<ul>
+<li><a href="AppendixH.html#H.1">Programmers</a></li>
+<li><a href="AppendixH.html#H.2">Designers</a></li>
+<li><a href="AppendixH.html#H.3">Translators</a></li>
+<li><a href="AppendixH.html#H.4">Writers</a></li>
+</ul>
+<li><a class="btitle" href="AppendixI.html#I"><b>Appendix I: </b>License</a></li>
+<ul>
+<li><a href="AppendixI.html#I.1">Copyright</a></li>
+<li><a href="AppendixI.html#I.2">Applicable licenses</a></li>
+<li><a href="AppendixI.html#I.3">zlib/libpng license</a></li>
+<li><a href="AppendixI.html#I.4">bzip2 license</a></li>
+<li><a href="AppendixI.html#I.5">Common Public License version 1.0</a></li>
+<li><a href="AppendixI.html#I.6">Special exception for LZMA compression module</a></li>
+</ul>
+</ul>
+
+<hr />
+
+<address>
+</address>
+<a href="http://sourceforge.net"><img border=0 src="http://sourceforge.net/sflogo.php?group_id=22049&amp;type=1" alt="SourceForge Logo" /></a></body>
+
+</html>

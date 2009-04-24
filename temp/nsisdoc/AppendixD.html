@@ -1,0 +1,346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<title>Useful Information</title>
+<meta name="generator" content="Halibut version 1.0 (NSIS Custom Build) xhtml-backend" />
+<link rel="stylesheet" href="style.css" type='text/css' />
+</head>
+
+<body>
+<p><a href='AppendixC.html'>Previous</a> | <a href='Contents.html'>Contents</a> | <a href='AppendixE.html'>Next</a></p>
+<ul>
+<li><a class="btitle" href="AppendixD.html#D"><b>Appendix D: </b>Useful Information</a></li>
+<ul>
+<li><a href="AppendixD.html#D.1">Error Levels</a></li>
+<li><a href="AppendixD.html#D.2">Add uninstall information to Add/Remove Programs</a></li>
+<li><a href="AppendixD.html#D.3">Calling an external DLL using the System.dll plug-in</a></li>
+<li><a href="AppendixD.html#D.4">Dump Content of Log Window to File</a></li>
+<li><a href="AppendixD.html#D.5">How to Read REG_MULTI_SZ Values</a></li>
+</ul>
+</ul>
+<a name="D"></a><h1>Appendix D: Useful Information</h1>
+<a name="D.1"></a><h2>D.1 Error Levels</h2>
+
+<p>Like other applications, installers made by NSIS return error levels as a result of their execution. Checking the error level can be useful if you call an NSIS installer from another application or installer.</p>
+<ul>
+<li>0 - Normal execution (no error)</li><li>1 - Installation aborted by user (cancel button)</li><li>2 - Installation aborted by script</li></ul>
+
+<p>As of NSIS 2.01, you can set the error level to other values using <a href="Chapter4.html#4.9.7.5">SetErrorLevel</a>.</p>
+
+<p>Note that uninstallers copy themselves to the temporary directory and execute from there so the original uninstaller can be deleted. This means the error level the uninstaller sets is not available to the executing process, unless it simulates this copy process and executes the copied uninstaller. To simulate this process, use:</p>
+<pre>CopyFiles $INSTDIR\uninstaller.exe $TEMP
+ExecWait '&quot;$TEMP\uninstaller.exe&quot; _?=$INSTDIR' $0
+DetailPrint &quot;uninstaller set error level $0&quot;
+</pre>
+
+<p>If you don't do this, you'll only be able to know if the uninstaller failed copying itself to the temporary directory.</p>
+<a name="D.2"></a><h2>D.2 Add uninstall information to Add/Remove Programs</h2>
+
+<p>Create a key with your product name under <b>HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall</b> to add entries to the &quot;Add/Remove Programs&quot; section in the Control Panel. For Windows NT (NT4/2000/XP), it's also possible to create the key in the HKCU hive, so it will only appear for the current user. There are several values you can write to key to give information about your application and the uninstaller. Write a value using the WriteRegStr command (for strings) or WriteRegDWORD command (for DWORD values). Example:</p>
+<pre>WriteRegStr HKLM &quot;Software\Microsoft\Windows\CurrentVersion\Uninstall\Product&quot; &quot;DisplayName&quot; &quot;Application Name&quot;
+</pre>
+
+<p><b>Required values</b></p>
+
+<p><em>DisplayName</em> (string) - Name of the application <br> <em>UninstallString</em> (string) - Path and filename of the uninstaller. You should <b>always</b> quote the path to make sure spaces in the path will not disrupt Windows to find the uninstaller.</p>
+
+<p><b>Optional values</b></p>
+
+<p>Some of the following values will not be used by older Windows versions.</p>
+
+<p><em>InstallLocation</em> (string) - Installation directory ($INSTDIR) <br> <em>DisplayIcon</em> (string) - Path, filename and index of the icon that will be displayed next to your application name</p>
+
+<p><em>Publisher</em> (string) - (Company) name of the publisher</p>
+
+<p><em>ModifyPath</em> (string) - Path and filename of the application modify program <br> <em>InstallSource</em> (string) - Location where the application was installed from</p>
+
+<p><em>ProductID</em> (string) - Product ID of the application <br> <em>RegOwner</em> (string) - Registered owner of the application <br> <em>RegCompany</em> (string) - Registered company of the application</p>
+
+<p><em>HelpLink</em> (string) - Link to the support website <br> <em>HelpTelephone</em> (string) - Telephone number for support</p>
+
+<p><em>URLUpdateInfo</em> (string) - Link to the website for application updates <br> <em>URLInfoAbout</em> (string) - Link to the application home page</p>
+
+<p><em>DisplayVersion</em> (string) - Displayed version of the application <br> <em>VersionMajor</em> (DWORD) - Major version number of the application <br> <em>VersionMinor</em> (DWORD) - Minor version number of the application</p>
+
+<p><em>NoModify</em> (DWORD) - 1 if uninstaller has no option to modify the installed application <br> <em>NoRepair</em> (DWORD) - 1 if the uninstaller has no option to repair the installation</p>
+
+<p>If both NoModify and NoRepair are set to 1, the button displays &quot;Remove&quot; instead of &quot;Modify/Remove&quot;.</p>
+<a name="D.3"></a><h2>D.3 Calling an external DLL using the System.dll plug-in</h2>
+
+<p><b>Please note that the Call, Get and Debug functions cannot be compiled with GCC, so download the Windows version of NSIS and extract the System.dll plugin or write your own plugin that calls the functions you need.</b></p>
+
+<p>Some install processes are required to call functions contained inside third party DLLs. A prime example of this is when installing a Palm(TM) conduit.</p>
+
+<p><b>Some background about System.dll</b> <br> The System.dll plug-in (by Brainsucker) enables calling of external DLLs by providing the 'Call' function. There are a number of other functions provided by System.dll, but they will not be covered here. For more details about the other functions, lock the doors, take the phone off the hook, screw your head on *real* tight and head on over to the <a href="../Docs/System/System.html">System readme</a>.</p>
+
+<p><u>Data Types</u> <br> System.dll recognises the following data types:</p>
+<ul>
+<li>v - void (generally for return)</li><li>i - int (includes char, byte, short, handles, pointers and so on)</li><li>l - long &amp; large integer (known as int64)</li><li>t - text, string (LPCSTR, pointer to first character)</li><li>b - boolean (needs/returns 'true':'false') - by the fact this type is senseless -&gt; usual integer can be used ('0':'1')</li><li>k - callback. See Callback section in system.html.</li><li>* - pointer specifier -&gt; the proc needs the pointer to type, affects next char (parameter) [ex: '*i' - pointer to int]</li></ul>
+
+<p><u>Mapping System.dll variables to NSIS script variables</u> <br> There's not much point in being able to call an external function if you can't get any data back. System.dll maps function variables to NSIS script variables in the following way:</p>
+
+<p>NSIS $0..$9 become System.dll r0..r9 NSIS $R0..$R9 become System.dll r10..r19</p>
+
+<p>Each parameter is specified by type, input and output. To skip input or output use a dot. Examples:</p>
+
+<p>String (pointer to a characters array), input is 'happy calling':</p>
+<pre>t 'happy calling'
+</pre>
+
+<p>String (pointer to a characters array), input is taken from $5 and changes to the array made by the call are saved into $R8:</p>
+<pre>t r5R8
+</pre>
+
+<p>Pointer to an integer, value taken from $1 and put into $2:</p>
+<pre>*i r1r2
+</pre>
+
+<p>Pointer to a 64-bit integer, output pushed on stack, no input:</p>
+<pre>*l .s
+</pre>
+
+<p>Using System.dll::Call To call a function in a third party DLL, the Call function is used like this:</p>
+<pre>System::Call 'YourDllName::YourDllFunction(i, *i, t) i(r0, .r1, r2) .r3'
+</pre>
+
+<p>The '(r0, .r1, r2) .r3' section at the end are the parameters that are passed between your DLL and your NSIS script. As can be seen in this parameters list type and input/output can be seperated. Each block of &quot;(parms list) return value&quot; overrides and/or adds to the last one. In this case, the first block specifies the types and the second specifies input and output.</p>
+
+<p><b>Before starting to code the NSIS script</b> <br> Before you start to code any NSIS code, you need to know the full prototype of the function you are going to call. For the purposes of this example, we will use the 'CmGetHotSyncExecPath' function from the Palm 'CondMgr.dll'. This function is used to return the full path of 'HotSync.exe'.</p>
+
+<p><u>Function Definition</u> <br></p>
+
+<p>int CmGetHotSyncExecPath(TCHAR *pPath, int *piSize);</p>
+
+<p>where</p>
+<ul>
+<li>pPath is a pointer to a character buffer. Upon return, this is the path &amp; file name of the installed HotSync manager.</li><li>piSize is a pointer to an integer that specifies the size (in TCHAR's), of the buffer referenced by the pPath parameter.</li></ul>
+
+<p>return values:</p>
+<ul>
+<li>0: No error</li><li>-1: A non-specific error occurred</li><li>ERR_REGISTRY_ACCESS(-1006):Unable to access the Palm configuration entries</li><li>ERR_BUFFER_TOO_SMALL(-1010): The buffer is too small to hold the requested information</li><li>ERR_INVALID_POINTER(-1013):The specified pointer is not a valid pointer</li></ul>
+
+<p>Also, if the buffer is too small the value in *int is the size (in TCHARs) that the buffer should be.</p>
+
+<p>This function definition maps to the following System.dll definition:</p>
+
+<p>CmGetHotSyncExecPath(t, *i) i</p>
+
+<p>i.e. It takes a text variable, a pointer to int, and returns an int value.</p>
+
+<p><u>Using the external dll function</u> <br> Now that we've sorted out what the function does, and how it maps to the System.dll format, we can use the function in a NSIS script.</p>
+
+<p>First, you have to change the output directory to that where the DLL you want to use is. It may also work if the DLL is on the system path, but this hasn't been tested.</p>
+
+<p>The following code fragment will install 'condmgr.dll' to a temporary directory, execute the CmGetHotSyncExecPath function and display returned data. Save this script</p>
+<pre>; **** snip ****
+Function loadDll
+
+  SetOutPath $TEMP\eInspect             ; create temp directory
+  File bin\CondMgr.dll                  ; copy dll there
+  StrCpy $1 ${NSIS_MAX_STRLEN}          ; assign memory to $0
+  System::Call 'CondMgr::CmGetHotSyncExecPath(t, *i) i(.r0, r1r1).r2'
+  DetailPrint 'Path: &quot;$0&quot;'
+  DetailPrint &quot;Path length: $1&quot;
+  DetailPrint &quot;Return value: $2&quot;
+
+FunctionEnd
+; **** snip ****
+</pre>
+
+<p>and this function produces the following output in the 'details' page:</p>
+
+<p>Output folder: c:\windows\TEMP\eInspect <br> Extract: CondMgr.dll <br> Path: &quot;C:\Dave\palm\Hotsync.exe&quot; <br> Path length: 24 <br> Return value: 0</p>
+
+<p>Written by <a href="http://nsis.sourceforge.net/archive/profile.php?userid=78">djc</a></p>
+
+<p><u>Acknowledgements &amp; Thanks</u> <br> Lots of thanks go to <b>kichik</b> and <b>Sunjammer</b> for spending a lot of time assisting in solving this problem. Also to <b>brainsucker</b> for creating the System.dll plug-in in the first place. Good Luck!</p>
+<a name="D.4"></a><h2>D.4 Dump Content of Log Window to File</h2>
+
+<p>This function will dump the log of the installer (installer details) to a file of your choice. I created this function for Afrow_UK who requested a way to dump the log to a file in <a href="http://forums.winamp.com/showthread.php?s=&threadid=125431">this forum thread</a>.</p>
+
+<p>To use it, push a file name and call it. It will dump the log to the file specified. For example:</p>
+<pre>GetTempFileName $0
+Push $0
+Call DumpLog
+</pre>
+
+<p>Here is the function:</p>
+<pre>!define LVM_GETITEMCOUNT 0x1004
+!define LVM_GETITEMTEXT 0x102D
+
+Function DumpLog
+  Exch $5
+  Push $0
+  Push $1
+  Push $2
+  Push $3
+  Push $4
+  Push $6
+
+  FindWindow $0 &quot;#32770&quot; &quot;&quot; $HWNDPARENT
+  GetDlgItem $0 $0 1016
+  StrCmp $0 0 error
+  FileOpen $5 $5 &quot;w&quot;
+  StrCmp $5 0 error
+    SendMessage $0 ${LVM_GETITEMCOUNT} 0 0 $6
+    System::Alloc ${NSIS_MAX_STRLEN}
+    Pop $3
+    StrCpy $2 0
+    System::Call &quot;*(i, i, i, i, i, i, i, i, i) i \
+      (0, 0, 0, 0, 0, r3, ${NSIS_MAX_STRLEN}) .r1&quot;
+    loop: StrCmp $2 $6 done
+      System::Call &quot;User32::SendMessageA(i, i, i, i) i \
+        ($0, ${LVM_GETITEMTEXT}, $2, r1)&quot;
+      System::Call &quot;*$3(&amp;t${NSIS_MAX_STRLEN} .r4)&quot;
+      FileWrite $5 &quot;$4$\r$\n&quot;
+      IntOp $2 $2 + 1
+      Goto loop
+    done:
+      FileClose $5
+      System::Free $1
+      System::Free $3
+      Goto exit
+  error:
+    MessageBox MB_OK error
+  exit:
+    Pop $6
+    Pop $4
+    Pop $3
+    Pop $2
+    Pop $1
+    Pop $0
+    Exch $5
+FunctionEnd
+</pre>
+
+<p>written by KiCHiK</p>
+<a name="D.5"></a><h2>D.5 How to Read REG_MULTI_SZ Values</h2>
+
+<p>I wrote this script to help rpetges in <a href="http://forums.winamp.com/showthread.php?s=&threadid=131154">this forum thread</a>. It reads a registry value of the type REG_MULTI_SZ and prints it out. Don't forget to edit where it says &quot;Edit this!&quot; when you test this script. The values must point to a REG_MULTI_SZ value or the example will spit out an error.</p>
+<pre>OutFile &quot;REG_MULTI_SZ Reader.exe&quot;
+
+Name &quot;REG_MULTI_SZ Reader&quot;
+
+ShowInstDetails show
+
+!define HKEY_CLASSES_ROOT        0x80000000
+!define HKEY_CURRENT_USER        0x80000001
+!define HKEY_LOCAL_MACHINE       0x80000002
+!define HKEY_USERS               0x80000003
+!define HKEY_PERFORMANCE_DATA    0x80000004
+!define HKEY_PERFORMANCE_TEXT    0x80000050
+!define HKEY_PERFORMANCE_NLSTEXT 0x80000060
+!define HKEY_CURRENT_CONFIG      0x80000005
+!define HKEY_DYN_DATA            0x80000006
+
+!define KEY_QUERY_VALUE          0x0001
+!define KEY_ENUMERATE_SUB_KEYS   0x0008
+
+!define REG_NONE                 0
+!define REG_SZ                   1
+!define REG_EXPAND_SZ            2
+!define REG_BINARY               3
+!define REG_DWORD                4
+!define REG_DWORD_LITTLE_ENDIAN  4
+!define REG_DWORD_BIG_ENDIAN     5
+!define REG_LINK                 6
+!define REG_MULTI_SZ             7
+
+!define RegOpenKeyEx     &quot;Advapi32::RegOpenKeyExA(i, t, i, i, *i) i&quot;
+!define RegQueryValueEx  &quot;Advapi32::RegQueryValueExA(i, t, i, *i, i, *i) i&quot;
+!define RegCloseKey      &quot;Advapi32::RegCloseKeyA(i) i&quot;
+
+####### Edit this!
+
+!define ROOT_KEY         ${HKEY_CURRENT_USER}
+!define SUB_KEY          &quot;Software\Joe Software&quot;
+!define VALUE            &quot;Strings&quot;
+
+####### Stop editing
+
+Section &quot;Read&quot;
+  StrCpy $0 &quot;&quot;
+  StrCpy $1 &quot;&quot;
+  StrCpy $2 &quot;&quot;
+  StrCpy $3 &quot;&quot;
+  System::Call &quot;${RegOpenKeyEx}(${ROOT_KEY}, '${SUB_KEY}', \
+    0, ${KEY_QUERY_VALUE}|${KEY_ENUMERATE_SUB_KEYS}, .r0) .r3&quot;
+ 
+  StrCmp $3 0 goon
+    MessageBox MB_OK|MB_ICONSTOP &quot;Can't open registry key! ($3)&quot;
+    Goto done
+goon:
+
+  System::Call &quot;${RegQueryValueEx}(r0, '${VALUE}', 0, .r1, 0, .r2) .r3&quot;
+ 
+  StrCmp $3 0 read
+    MessageBox MB_OK|MB_ICONSTOP &quot;Can't query registry value size! ($3)&quot;
+    Goto done
+ 
+read:
+ 
+  StrCmp $1 ${REG_MULTI_SZ} multisz
+    MessageBox MB_OK|MB_ICONSTOP &quot;Registry value no REG_MULTI_SZ! ($3)&quot;
+    Goto done
+ 
+multisz:
+ 
+  StrCmp $2 0 0 multiszalloc
+    MessageBox MB_OK|MB_ICONSTOP &quot;Registry value empty! ($3)&quot;
+    Goto done
+ 
+multiszalloc:
+
+  System::Alloc $2
+  Pop $1
+ 
+  StrCmp $1 0 0 multiszget
+    MessageBox MB_OK|MB_ICONSTOP &quot;Can't allocate enough memory! ($3)&quot;
+    Goto done
+ 
+multiszget:
+ 
+  System::Call &quot;${RegQueryValueEx}(r0, '${VALUE}', 0, n, r1, r2) .r3&quot;
+ 
+  StrCmp $3 0 multiszprocess
+    MessageBox MB_OK|MB_ICONSTOP &quot;Can't query registry value data! ($3)&quot;
+    Goto done
+ 
+multiszprocess:
+ 
+  StrCpy $4 $1
+ 
+  loop:
+ 
+    System::Call &quot;*$4(&amp;t${NSIS_MAX_STRLEN} .r3)&quot;
+    StrCmp $3 &quot;&quot; done
+    DetailPrint $3
+    StrLen $5 $3
+    IntOp $4 $4 + $5
+    IntOp $4 $4 + 1
+    Goto loop
+ 
+done:
+ 
+  System::Free $1
+ 
+  StrCmp $0 0 noClose
+    System::Call &quot;${RegCloseKey}(r0)&quot;
+ 
+noClose:
+
+SectionEnd
+</pre>
+
+<p>written by KiCHiK</p>
+<p><a href='AppendixC.html'>Previous</a> | <a href='Contents.html'>Contents</a> | <a href='AppendixE.html'>Next</a></p>
+
+<hr />
+
+<address>
+</address>
+<a href="http://sourceforge.net"><img border=0 src="http://sourceforge.net/sflogo.php?group_id=22049&amp;type=1" alt="SourceForge Logo" /></a></body>
+
+</html>

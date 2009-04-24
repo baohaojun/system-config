@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<title>DLL/TLB Library Setup</title>
+<meta name="generator" content="Halibut version 1.0 (NSIS Custom Build) xhtml-backend" />
+<link rel="stylesheet" href="style.css" type='text/css' />
+</head>
+
+<body>
+<p><a href='AppendixA.html'>Previous</a> | <a href='Contents.html'>Contents</a> | <a href='AppendixC.html'>Next</a></p>
+<ul>
+<li><a class="btitle" href="AppendixB.html#B"><b>Appendix B: </b>DLL/TLB Library Setup</a></li>
+<ul>
+<li><a href="AppendixB.html#B.1">Introduction</a></li>
+<li><a href="AppendixB.html#B.2">Library Installation</a></li>
+<ul>
+<li><a href="AppendixB.html#B.2.1">Introduction</a></li>
+<li><a href="AppendixB.html#B.2.2">Parameters</a></li>
+<li><a href="AppendixB.html#B.2.3">Options</a></li>
+<li><a href="AppendixB.html#B.2.4">Notes</a></li>
+<li><a href="AppendixB.html#B.2.5">Example</a></li>
+</ul>
+<li><a href="AppendixB.html#B.3">Library Uninstallation</a></li>
+<ul>
+<li><a href="AppendixB.html#B.3.1">Introduction</a></li>
+<li><a href="AppendixB.html#B.3.2">Parameters</a></li>
+<li><a href="AppendixB.html#B.3.3">Options</a></li>
+<li><a href="AppendixB.html#B.3.4">Example</a></li>
+</ul>
+<li><a href="AppendixB.html#B.4">Visual Basic 6 Run-Time Files</a></li>
+</ul>
+</ul>
+<a name="B"></a><h1>Appendix B: DLL/TLB Library Setup</h1>
+<a name="B.1"></a><h2>B.1 Introduction</h2>
+
+<p>The Library header file can be used to setup dynamic link libraries (DLL) and type libraries (TLB). If necessary, the following actions will be performed:</p>
+<ul>
+<li>File copying</li><li>File copying on reboot</li><li>Version checks</li><li>Registration and unregistration</li><li>Registration and unregistration on reboot</li><li>Shared DLL counting</li><li>Windows File Protection checks</li></ul>
+
+<p>The macros are stored in the header file Library.nsh, which should be included in scripts using this system:</p>
+<pre>!include Library.nsh
+</pre>
+
+<p>Note that the library macros are limited on non-Windows platforms. DLL version information is required when compiling on non-Windows platforms.</p>
+<a name="B.2"></a><h2>B.2 Library Installation</h2>
+<a name="B.2.1"></a><h3>B.2.1 Introduction</h3>
+
+<p>The InstallLib macro allows you to install a library. It sets the error flag if something went wrong during library setup.</p>
+
+<p>To ask the user for a reboot, if required, use the Modern UI with a Finish page or use <a href="Chapter4.html#4.9.4.11">IfRebootFlag</a> and make your own page or message box.</p>
+<a name="B.2.2"></a><h3>B.2.2 Parameters</h3>
+<pre>libtype shared install localfile destfile tempbasedir
+</pre>
+
+<p><b>libtype</b></p>
+
+<p>The type of the library</p>
+
+<p>DLL - Dynamic link library (DLL)<br> REGDLL - DLL that has to be registered<br> REGEXE - EXE COM server that has to be registered using /regserver<br> TLB - Type library or DLL that contains a type library<br> REGDLLTLB - DLL that has to be registered and contains a type library<br></p>
+
+<p><b>shared</b></p>
+
+<p>Specify whether the library is shared with other applications</p>
+
+<p>NOTSHARED - The library is not shared<br> $VARNAME - Variable that is empty when the application is installed for the first time, which is when the shared library count will be increased.<br></p>
+
+<p><b>install</b></p>
+
+<p>Specify the installation method</p>
+
+<p>REBOOT_PROTECTED</p>
+<ul>
+<li>Upgrade the library on reboot when in use (required for system files).</li><li>Upgrade the library if the file is not protected by Windows File Protection.</li></ul>
+
+<p>NOREBOOT_PROTECTED</p>
+<ul>
+<li>Warns the user when the library is in use. The user will have to close applications using the library.</li><li>Upgrade the library if the file is not protected by Windows File Protection.</li></ul>
+
+<p>REBOOT_NOTPROTECTED</p>
+<ul>
+<li>Upgrade the library on reboot when in use (required for system files).</li><li>Upgrade the library without checking for Windows File Protection.</li></ul>
+
+<p>NOREBOOT_NOTPROTECTED</p>
+<ul>
+<li>Warns the user when the library is in use. The user will have to close applications using the library.</li><li>Upgrade the library without checking for Windows File Protection.</li></ul>
+
+<p><b>localfile</b></p>
+
+<p>Location of the library on the compiler system</p>
+
+<p><b>destfile</b></p>
+
+<p>Location to store the library on the user's system</p>
+
+<p><b>tempbasedir</b></p>
+
+<p>Directory on the user's system to store a temporary file when the system has to be rebooted.</p>
+
+<p>For Windows 9x/ME support, this directory should be on the same volume as the destination file (destfile). The Windows temp directory could be located on any volume, so you cannot use this directory.</p>
+<a name="B.2.3"></a><h3>B.2.3 Options</h3>
+
+<p><a href="Chapter5.html#5.4.1">Define</a> any of the following before inserting the InstallLib macro to modify its behavior as specified.</p>
+<a name="B.2.3.1"></a><h4>B.2.3.1 LIBRARY_X64</h4>
+<ul>
+<li>Installs a DLL built for Windows x64.</li><li><b>Warning:</b> this resets file system redirection.</li></ul>
+<a name="B.2.3.2"></a><h4>B.2.3.2 LIBRARY_SHELL_EXTENSION</h4>
+<ul>
+<li>Define this before inserting InstallLib macro to call SHChangeNotify with SHCNE_ASSOCCHANGED after registration.</li><li>Use this to refresh the shell when installing a shell extension or when changing file associations.</li></ul>
+<a name="B.2.3.3"></a><h4>B.2.3.3 LIBRARY_COM</h4>
+<ul>
+<li>Define this before inserting InstallLib macro to call CoFreeUnusedLibraries after registration.</li><li>Use this for unloading all unnecessary libraries from memory when installing COM libraries.</li></ul>
+<a name="B.2.3.4"></a><h4>B.2.3.4 LIBRARY_IGNORE_VERSION</h4>
+<ul>
+<li>Define this before inserting InstallLib macro to ignore version information in the file and always install it, even if it already exists.</li><li>Use this when an older or specific version is required.</li><li>Not recommended for DLLs installed to $SYSDIR.</li></ul>
+<a name="B.2.4"></a><h3>B.2.4 Notes</h3>
+<ul>
+<li>If you want to support Windows 9x/ME, you can only use short filenames (8.3).</li><li><b>Warning:</b> when deploying DLLs, always use redistributable files. Never copy files from your system directory.</li></ul>
+<a name="B.2.5"></a><h3>B.2.5 Example</h3>
+<a name="B.2.5.1"></a><h4>B.2.5.1 Unshared DLL</h4>
+<pre> !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED dllname.dll $SYSDIR\dllname.dll $SYSDIR
+</pre>
+<a name="B.2.5.2"></a><h4>B.2.5.2 Shared DLL</h4>
+<pre> ;Add code here that sets $ALREADY_INSTALLED to a non-zero value if the application is
+ ;already installed. For example:
+
+ IfFileExists &quot;$INSTDIR\MyApp.exe&quot; 0 new_installation ;Replace MyApp.exe with your application filename
+   StrCpy $ALREADY_INSTALLED 1
+ new_installation:
+
+ !insertmacro InstallLib REGDLL $ALREADY_INSTALLED REBOOT_NOTPROTECTED dllname.dll $SYSDIR\dllname.dll $SYSDIR
+</pre>
+<a name="B.3"></a><h2>B.3 Library Uninstallation</h2>
+<a name="B.3.1"></a><h3>B.3.1 Introduction</h3>
+
+<p>The UnInstallLib macro allows you to uninstall a library. It sets the error flag if something went wrong during library removal.</p>
+<a name="B.3.2"></a><h3>B.3.2 Parameters</h3>
+<pre>libtype shared uninstall file
+</pre>
+
+<p><b>libtype</b></p>
+
+<p>The type of the library</p>
+
+<p>DLL - Dynamic link library (DLL)<br> REGDLL - DLL that has to be unregistered<br> REGEXE - EXE COM server that has to be unregistered using /unregserver<br> TLB - Type library or DLL that contains a type library<br> REGDLLTLB - DLL that has to be unregistered and contains a type library<br></p>
+
+<p><b>shared</b></p>
+
+<p>Specify whether the library is shared with other applications</p>
+
+<p>NOTSHARED - The library is not shared<br> SHARED - The library is shared and should be removed if the shared library count indicates that the file is not in use anymore..<br></p>
+
+<p><b>uninstall</b></p>
+
+<p>Specify the uninstallation method</p>
+
+<p>NOREMOVE</p>
+<ul>
+<li>The library should not be removed. You should use this option for common or important system files such as the Visual Basic/C++/MFC runtimes.</li></ul>
+
+<p>REBOOT_PROTECTED</p>
+<ul>
+<li>Remove the library on reboot when in use (required for system files).</li><li>Remove the library if the file is not protected by Windows File Protection.</li></ul>
+
+<p>NOREBOOT_PROTECTED</p>
+<ul>
+<li>Warns the user when the library is in use. The user will have to close applications using the library.</li><li>Remove the library if the file is not protected by Windows File Protection.</li></ul>
+
+<p>REBOOT_NOTPROTECTED</p>
+<ul>
+<li>Remove the library on reboot when in use (required for system files).</li><li>Remove the library without checking for Windows File Protection.</li></ul>
+
+<p>NOREBOOT_NOTPROTECTED</p>
+<ul>
+<li>Warns the user when the library is in use. The user will have to close applications using the library.</li><li>Remove the library without checking for Windows File Protection.</li></ul>
+
+<p><b>file</b></p>
+
+<p>Location of the library</p>
+<a name="B.3.3"></a><h3>B.3.3 Options</h3>
+
+<p><a href="Chapter5.html#5.4.1">Define</a> any of the following before inserting the UnInstallLib macro to modify its behavior as specified.</p>
+<a name="B.3.3.1"></a><h4>B.3.3.1 LIBRARY_X64</h4>
+<ul>
+<li>Uninstalls a DLL built for Windows x64.</li><li><b>Warning:</b> this resets <a href="Chapter4.html#4.9.7.6">RegSetView</a> and file system redirection.</li></ul>
+<a name="B.3.3.2"></a><h4>B.3.3.2 LIBRARY_SHELL_EXTENSION</h4>
+<ul>
+<li>Define this before inserting UninstallLib macro to call SHChangeNotify with SHCNE_ASSOCCHANGED after unregistration. Use this to refresh the shell when uninstalling a shell extension or when changing file associations.</li></ul>
+<a name="B.3.3.3"></a><h4>B.3.3.3 LIBRARY_COM</h4>
+<ul>
+<li>Define this before inserting UninstallLib macro to call CoFreeUnusedLibraries after unregistration. Use this for unloading all unnecessary libraries from memory when uninstalling COM libraries.</li></ul>
+<a name="B.3.4"></a><h3>B.3.4 Example</h3>
+<pre> !insertmacro UnInstallLib REGDLL SHARED REBOOT_NOTPROTECTED $SYSDIR\dllname.dll
+</pre>
+<a name="B.4"></a><h2>B.4 Visual Basic 6 Run-Time Files</h2>
+
+<p>A new VB6RunTime.nsh header file is available for the setup of the VB6 run-time files. To obtain the latest run-time files, download <a href="http://nsis.sourceforge.net/vb6runtime.zip">vb6runtime.zip</a> and extract this file.</p>
+<pre> !include VB6RunTime.nsh
+
+ Var AlreadyInstalled
+
+ Section &quot;-Install VB6 run-time files&quot;
+
+   ;Add code here that sets $AlreadyInstalled to a non-zero value if the application is already installed. For example:
+   IfFileExists &quot;$INSTDIR\MyApp.exe&quot; 0 new_installation ;Replace MyApp.exe with your application filename
+     StrCpy $AlreadyInstalled 1
+   new_installation:
+
+   !insertmacro VB6RunTimeInstall C:\vb6runtimes $AlreadyInstalled ;Replace C:\vb6runtimes with the location of the files
+
+ SectionEnd
+
+ Section &quot;-un.Uninstall VB6 run-time files&quot;
+
+   !insertmacro VB6RunTimeUnInstall
+
+ SectionEnd
+</pre>
+
+<p>Remarks:</p>
+<ul>
+<li>You may have to install additional files for such Visual Basic application to work, such as OCX files for user interface controls.</li><li>Installation of the run-time files requires Administrator or Power User privileges. Use the Multi-User header file to verify whether these privileges are available.</li><li>Add a Modern UI finish page or another check (see <a href="Chapter4.html#4.9.4.11">IfRebootFlag</a>) to allow the user to restart the computer when necessary.</li></ul>
+<p><a href='AppendixA.html'>Previous</a> | <a href='Contents.html'>Contents</a> | <a href='AppendixC.html'>Next</a></p>
+
+<hr />
+
+<address>
+</address>
+<a href="http://sourceforge.net"><img border=0 src="http://sourceforge.net/sflogo.php?group_id=22049&amp;type=1" alt="SourceForge Logo" /></a></body>
+
+</html>

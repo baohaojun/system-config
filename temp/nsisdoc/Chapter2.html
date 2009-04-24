@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<title>Tutorial: The Basics</title>
+<meta name="generator" content="Halibut version 1.0 (NSIS Custom Build) xhtml-backend" />
+<link rel="stylesheet" href="style.css" type='text/css' />
+</head>
+
+<body>
+<p><a href='Chapter1.html'>Previous</a> | <a href='Contents.html'>Contents</a> | <a href='Chapter3.html'>Next</a></p>
+<ul>
+<li><a class="btitle" href="Chapter2.html#"><b>Chapter 2: </b>Tutorial: The Basics</a></li>
+<ul>
+<li><a href="Chapter2.html#2.1">Introduction</a></li>
+<li><a href="Chapter2.html#2.2">Script Files</a></li>
+<li><a href="Chapter2.html#2.3">Scripting structure</a></li>
+<ul>
+<li><a href="Chapter2.html#2.3.1">Installer Attributes</a></li>
+<li><a href="Chapter2.html#2.3.2">Pages</a></li>
+<li><a href="Chapter2.html#2.3.3">Sections</a></li>
+<li><a href="Chapter2.html#2.3.4">Functions</a></li>
+<li><a href="Chapter2.html#2.3.5">Working with Scripts</a></li>
+<li><a href="Chapter2.html#2.3.6">Script Execution</a></li>
+<li><a href="Chapter2.html#2.3.7">Compiler Commands</a></li>
+</ul>
+<li><a href="Chapter2.html#2.4">Compiler</a></li>
+<li><a href="Chapter2.html#2.5">Modern UI</a></li>
+<li><a href="Chapter2.html#2.6">Plug-ins</a></li>
+<li><a href="Chapter2.html#2.7">More</a></li>
+</ul>
+</ul>
+<a name="2"></a><h1>Chapter 2: Tutorial: The Basics</h1>
+<a name="2.1"></a><h2>2.1 Introduction</h2>
+
+<p>Most software packages you download or buy come with an installer. The installer copies and/or updates files, writes registry keys, writes configuration, creates shortcuts, etc. All of this is done automatically for the user. All the user needs to do is supply some information and the installer will do the rest. The user goes through a wizard, makes the appropriate choices and waits until the installer finishes. After the installer has finished the user is left only with the simple task of starting the program. The user doesn't have to worry about things he might have forgotten because all of the necessary steps were done by the installer.</p>
+
+<p>NSIS is a tool for developers to create such installers. NSIS allows you to create everything from basic installers that just copy files to very complex installers that handle a lot of advanced tasks such as writing registry keys, settings environment variables, downloading the latest files from the internet, customizing the configuration file and more. NSIS is very flexible and its scripting language is easy to learn.</p>
+
+<p>NSIS compiles all of the files and the installation script into one executable file, so your application will be easy to distribute. NSIS adds only about 34KB of code of its own (for the default configuration) to the data. NSIS boasts the smallest overhead available while still providing a lot of options thanks to its powerful scripting language and support of external plug-ins.</p>
+<a name="2.2"></a><h2>2.2 Script Files</h2>
+
+<p>To create a NSIS installer, you first have to write a NSIS script. A NSIS script is just a regular text file with a special syntax. You can edit scripts with every text editor. It's recommended you use a text editor that shows line numbers because NSIS uses line numbers to indicate where errors lie, and to warn you about where errors might lie. An editor that supports syntax highlighting is also recommended. You can download editors made especially for NSIS and files for syntax highlighting at the <a href="http://nsis.sf.net/">NSIS Wiki</a>.</p>
+
+<p>In a NSIS script every line is treated as a command. If your command is too long for one line you can use a back-slash - '\' - at the end of the line. The compiler will treat the new line as an addition to the previous line and will not expect a new command. For example:</p>
+<pre>Messagebox MB_OK|MB_ICONINFORMATION \
+&quot;This is a sample that shows how to use line breaks for larger commands in NSIS scripts&quot;
+</pre>
+
+<p>If you want to use a double-quote in a string you can either use $\" to escape the quote or quote the string with a different type of quote such as ` or '.</p>
+
+<p>For more details about the script format, see <a href="Chapter4.html#4.1">Script File Format</a>.</p>
+
+<p>The default extension for a script file is .nsi. Header files have the .nsh extension. Header files can help you arrange your script by dividing it to more than one block of code, you can also put functions or macros in header files and include the header files in multiple installers. This makes updating easier and it also makes your scripts easier to read. To include a header file in your script use <a href="Chapter5.html#5.1.1">!include</a>. Header files that reside in the Include directory under your NSIS directory can be included just by their name. For example:</p>
+<pre>!include Sections.nsh
+</pre>
+<a name="2.3"></a><h2>2.3 Scripting structure</h2>
+
+<p>A NSIS script can contain Installer Attributes and Sections/Functions. You can also use Compiler Commands for compile-time operations. Required is the <a href="Chapter4.html#4.8.1.31">OutFile</a> instruction, which tells NSIS where to write the installer, and one section.</p>
+<a name="2.3.1"></a><h3>2.3.1 Installer Attributes</h3>
+
+<p>Installer Attributes determine the behavior and the look and feel of your installer. With these attributes you can change texts that will be shown during the installation, the number of installation types etc. Most of these commands can only be set and are not changeable during runtime.</p>
+
+<p>Other basic instructions are <a href="Chapter4.html#4.8.1.30">Name</a> and <a href="Chapter4.html#4.8.1.21">InstallDir</a>.</p>
+
+<p>For more information about installer attributes, have a look at <a href="Chapter4.html#4.8">Installer Attributes</a>.</p>
+<a name="2.3.2"></a><h3>2.3.2 Pages</h3>
+
+<p>A non-silent installer has a set of wizard pages to let the user configure the installer. You can set which pages to display using the <a href="Chapter4.html#4.5.4">Page</a> command (or <a href="Chapter4.html#4.5.6">PageEx</a> for more advanced settings). A typical set of pages looks like this:</p>
+<pre>Page license
+Page components
+Page directory
+Page instfiles
+UninstPage uninstConfirm
+UninstPage instfiles
+</pre>
+
+<p>For the installer, this typical set of pages will display a license agreement, allow selection of components to install, allow selection of an installation directory, and finally install the selected components in the instfiles page. For the uninstaller, it will display a confirmation page, and uninstall in the instfiles page.</p>
+<a name="2.3.3"></a><h3>2.3.3 Sections</h3>
+
+<p>In a common installer there are several things the user can install. For example in the NSIS distribution installer you can choose to install the source code, additional plug-ins, examples and more. Each of these components has its own piece of code. If the user selects to install this component, then the installer will execute that code. In the script, that code is defined in sections. Each section corresponds to one component in the components page. The section's name is the displayed component name, and the section code will be executed if that component is selected. It is possible to build your installer with only one section, but if you want to use the components page and let the user choose what to install, you'll have to use more than one section.</p>
+
+<p>Uninstallers can also have multiple sections. Uninstaller section names are prefixed with 'un.'. For example:</p>
+<pre>Section &quot;Installer Section&quot;
+SectionEnd
+
+Section &quot;un.Uninstaller Section&quot;
+SectionEnd
+</pre>
+
+<p>The instructions that can be used in sections are very different from the installer attributes instructions, they are executed at runtime on the user's computer. Those instructions can extract files, read from and write to the registry, INI files or normal files, create directories, create shortcuts and a lot more. You can find out more in <a href="Chapter4.html#4.9">Instructions</a>.</p>
+
+<p>The most basic instructions are <a href="Chapter4.html#4.9.1.9">SetOutPath</a> which tells the installer where to extract files and <a href="Chapter4.html#4.9.1.5">File</a> which extracts files.</p>
+
+<p>Example:</p>
+<pre>Section &quot;My Program&quot;
+  SetOutPath $INSTDIR
+  File &quot;My Program.exe&quot;
+  File &quot;Readme.txt&quot;
+SectionEnd
+</pre>
+
+<p>For more information about sections see <a href="Chapter4.html#4.6">Sections</a>.</p>
+<a name="2.3.4"></a><h3>2.3.4 Functions</h3>
+
+<p>Functions can contain script code, just like sections. The difference between sections and functions is the way they are called. There are two types of functions, user functions and callback functions.</p>
+
+<p>User functions are called by the user from within sections or other functions using the <a href="Chapter4.html#4.9.4.2">Call</a> instruction. User functions will not execute unless you call them. After the code of the function will be executed the installer will continue executing the instructions that came after the Call instruction, unless you have aborted the installation inside the function. User functions are very useful if you have a set of instructions that need to be executed at several locations in the installers. If you put the code into a function you can save the copying time and you can maintain the code more easily.</p>
+
+<p>Callback functions are called by the installer upon certain defined events such as when the installer starts. Callbacks are optional. If for example you want to welcome the user to your installer you will define a function called .onInit. The NSIS compiler will recognize this function as a callback function by the name and will call it when the installer starts.</p>
+<pre>Function .onInit
+  MessageBox MB_YESNO &quot;This will install My Program. Do you wish to continue?&quot; IDYES gogogo
+    Abort
+  gogogo:
+FunctionEnd
+</pre>
+
+<p><a href="Chapter4.html#4.9.4.1">Abort</a> has a special meaning in callback functions. Each callback function has its own meaning for it, have a look at <a href="Chapter4.html#4.7.2">Callback Functions</a> for more information. In the above example Abort tells the installer to stop initializing the installer and quit immediately.</p>
+
+<p>For more information about functions see <a href="Chapter4.html#4.7">Functions</a>.</p>
+<a name="2.3.5"></a><h3>2.3.5 Working with Scripts</h3>
+<a name="2.3.5.1"></a><h4>2.3.5.1 Logical Code Structures</h4>
+
+<p>Conditionally executing code, or executing code in a loop can be done using <a href="Chapter4.html#4.9.4.19">StrCmp</a>, <a href="Chapter4.html#4.9.4.13">IntCmp</a>, <a href="Chapter4.html#4.9.4.9">IfErrors</a>, <a href="Chapter4.html#4.9.4.7">Goto</a> and more. However, there's a much easier way do this. The LogicLib provides some very simple macros that allow easy construction of complex logical structures. Its syntax, explained in <a href="../Include/LogicLib.nsh">LogicLib.nsh</a>, is similar to other programming languages and can prove to be simpler for beginners and advanced users alike.</p>
+
+<p>For example, checking a value of a variable without the LogicLib can be done as followed.</p>
+<pre>StrCmp $0 'some value' 0 +3
+  MessageBox MB_OK '$$0 is some value'
+  Goto done
+StrCmp $0 'some other value' 0 +3
+  MessageBox MB_OK '$$0 is some other value'
+  Goto done
+# else
+  MessageBox MB_OK '$$0 is &quot;$0&quot;'
+done:
+</pre>
+
+<p>However, with the LogicLib, the code gets is much more readable and easy to understand, as can be seen in the following example.</p>
+<pre>${If} $0 == 'some value'
+  MessageBox MB_OK '$$0 is some value'
+${ElseIf} $0 == 'some other value'
+  MessageBox MB_OK '$$0 is some other value'
+${Else}
+  MessageBox MB_OK '$$0 is &quot;$0&quot;'
+${EndIf}
+</pre>
+
+<p>The same can also be done using a switch, as shown in the following example.</p>
+<pre>${Switch} $0
+  ${Case} 'some value'
+    MessageBox MB_OK '$$0 is some value'
+    ${Break}
+  ${Case} 'some other value'
+    MessageBox MB_OK '$$0 is some other value'
+    ${Break}
+  ${Default}
+    MessageBox MB_OK '$$0 is &quot;$0&quot;'
+    ${Break}
+${EndSwitch}
+</pre>
+
+<p>Multiple conditions are also supported. The following example will notify the user, if both $0 and $1 are empty.</p>
+<pre>${If} $0 == ''
+${AndIf} $1 == ''
+  MessageBox MB_OK|MB_ICONSTOP 'both are empty!'
+${EndIf}
+</pre>
+
+<p>The LogicLib removes the need for labels and relative jumps, thus prevents label name conflicts, and removes the need to manually adjust relative jump offsets every time the script is changed.</p>
+
+<p>It also simplifies looping, by supporting the common while, do and for loops. All of the following examples count to five using the LogicLib.</p>
+<pre>StrCpy $R1 0
+${While} $R1 &lt; 5
+  IntOp $R1 $R1 + 1
+  DetailPrint $R1
+${EndWhile}
+</pre>
+<pre>${For} $R1 1 5
+  DetailPrint $R1
+${Next}
+</pre>
+<pre>StrCpy $R1 0
+${Do}
+  IntOp $R1 $R1 + 1
+  DetailPrint $R1
+${LoopUntil} $R1 &gt;= 5
+</pre>
+
+<p>To use the LogicLib, the following line needs to put at the top of the script.</p>
+<pre>!include LogicLib.nsh
+</pre>
+
+<p>More examples can be found in <a href="../Examples/LogicLib.nsi">LogicLib.nsi</a>.</p>
+<a name="2.3.5.2"></a><h4>2.3.5.2 Variables</h4>
+
+<p>You can declare your own variables ($VARNAME) with the <a href="Chapter4.html#4.2.1.1">Var</a> command. Variables are global and can be used in any Section or Function.</p>
+
+<p>Declaring and using a user variable:</p>
+<pre>Var BLA ;Declare the variable
+
+Section bla
+
+  StrCpy $BLA &quot;123&quot; ;Now you can use the variable $BLA
+
+SectionEnd
+</pre>
+
+<p>In addition there is a Stack, which can also be used for temporary storage. To access the stack use the commands <a href="Chapter4.html#4.9.9.3">Push</a> and <a href="Chapter4.html#4.9.9.2">Pop</a>. Push adds a value to the stack, Pop removes one and sets the variable.</p>
+
+<p>For shared code, there are <a href="Chapter4.html#4.2.2">20 registers available</a> (like $0 and $R0). These static variables don't have to be declared and you won't get any name conflicts. If you want to use these variables in shared code, store the original values on the stack and restore the original values afterwards.</p>
+
+<p>After calling the function, the variables contain the same value as before. Note the order when using multiple variables (last-in first-out):</p>
+<pre>Function bla
+
+  Push $R0
+  Push $R1
+
+    ...code...
+
+  Pop $R1
+  Pop $R0
+
+FunctionEnd
+</pre>
+<a name="2.3.5.3"></a><h4>2.3.5.3 Debugging Scripts</h4>
+
+<p>The more you work with NSIS the more complex the scripts will become. This will increase the potential of mistakes, especially when dealing with lots of variables. There are a few possibilities to help you debugging the code. To display the contents of variables you should use <a href="Chapter4.html#4.9.4.15">MessageBoxes</a> or <a href="Chapter4.html#4.9.14.3">DetailPrint</a>. To get a brief overview about all variables you should use the plug-in <a href="http://nsis.sourceforge.net/DumpState">DumpState</a>. By default all actions of the Installer are printed out in the Log Window. You can access the log if you right-click in the Log Window and select &quot;Copy Details To Clipboard&quot;. There is also a way to write it directly to a file, see <a href="AppendixD.html#D.4">here</a>.</p>
+<a name="2.3.6"></a><h3>2.3.6 Script Execution</h3>
+
+<p>When a user runs an installer or an uninstaller, pages are displayed in the order they were defined in the script. When the instfiles page is reached, sections, corresponding to the selected components, are executed in the order they were defined in the script. If the components page is not displayed, all sections are executed, assuming they were not unselected or somehow disabled by the script.</p>
+
+<p>Beside code in sections, there's also code in callback functions. If defined, they might be executed before the sections code. For example, the <a href="Chapter4.html#4.7.2.1.2">.onInit</a> callback function is executed before anything else in the script. There are also <a href="Chapter4.html#4.5.3">page callback functions</a> which are executed at certain points of the page display process.</p>
+<a name="2.3.7"></a><h3>2.3.7 Compiler Commands</h3>
+
+<p>Compiler commands will be executed on compile time on your computer. They can be used for conditional compilation, to include header files, to execute applications, to change the working directory and more. The most common usage is defines. Defines are compile time constants. You can define your product's version number and use it in your script. For example:</p>
+<pre>!define VERSION &quot;1.0.3&quot;
+Name &quot;My Program ${VERSION}&quot;
+OutFile &quot;My Program Installer - ${VERSION}.exe&quot;
+</pre>
+
+<p>For more information about defines see <a href="Chapter5.html#5.4">Conditional Compilation</a>.</p>
+
+<p>Another common use is macros. Macros are used to insert code on compile time, depending on defines and using the values of the defines. The macro's commands are inserted at compile time. This allows you to write a general code only once and use it a lot of times but with a few changes. For example:</p>
+<pre>!macro MyFunc UN
+Function ${UN}MyFunc
+  Call ${UN}DoRegStuff
+  ReadRegStr $0 HKLM Software\MyProgram key
+  DetailPrint $0
+FunctionEnd
+!macroend
+
+!insertmacro MyFunc &quot;&quot;
+!insertmacro MyFunc &quot;un.&quot;
+</pre>
+
+<p>This macro helps you avoid writing the same code for both the installer and the uninstaller. The two !insertmacros insert two functions, one for the installer called MyFunc and one for the uninstaller called un.MyFunc and both do exactly the same thing.</p>
+
+<p>For more information see <a href="Chapter5.html#5">Compile Time Commands</a>.</p>
+<a name="2.4"></a><h2>2.4 Compiler</h2>
+
+<p>The second thing you need to do in order to create your installer after you have created your script is to compile your script. MakeNSIS.exe is the NSIS compiler. It reads your script, parses it and creates an installer for you.</p>
+
+<p>To compile you have to right-click your .nsi file and select Compile NSIS Script. This will cause MakeNSISW, the NSIS Compiler Interface, to launch and call MakeNSIS to compile your script. MakeNSISW will get the output of MakeNSIS and present it to you in a window where you can see it, copy it, test the installer, browse for it and more. Using makensis.exe from the command prompt is also possible.</p>
+
+<p>The compiler will check your script and give you warnings or an error. If an error occurs (i.e. 2 parameters required but only 1 given) the compiler will abort and a short error message including the line number will be displayed. For non-critical errors the compiler will give a warning (i.e. two DirText commands in one script). If your script has no errors the compiler will output an installer for you to distribute.</p>
+
+<p>NSIS supports different compression methods, as explained <a href="Chapter4.html#4.8.2.4">here</a>. ZLIB is the default compression method, which is fast and uses only a little bit of memory. LZMA is a good method for the creation of small installers for internet distribution. BZIP2 usually compresses better than ZLIB but not as good as LZMA, it is useful if you need lower memory usage or fast script compilation.</p>
+
+<p>It it also possible to compile Windows installer on Linux, BSD or Mac OS X servers. See <a href="AppendixG.html#G">Building NSIS</a> for details.</p>
+<a name="2.5"></a><h2>2.5 Modern UI</h2>
+
+<p>A popular user interface for NSIS is the Modern User Interface. It has an interface like the wizards of recent Windows versions. The Modern UI is not only a customized resource file, it has a lots of new interface elements. It features a white header to describe the current step, a description area on the component page, a welcome page, a finish page that allows the user to run the application or reboot the system and more.</p>
+
+<p>For more information, check the <a href="../Docs/Modern UI 2/Readme.html">Modern UI 2 Readme</a> and the <a href="../Examples/Modern UI">Modern UI Examples</a>.</p>
+<a name="2.6"></a><h2>2.6 Plug-ins</h2>
+
+<p>NSIS support plug-ins that can be called from the script. Plug-ins are DLL files written in C, C++, Delphi or another programming language and therefore provide a more powerful code base to NSIS.</p>
+
+<p>A plug-in call looks like this:</p>
+<pre>DLLName::FunctionName &quot;parameter number 1&quot; &quot;parameter number 2&quot; &quot;parameter number 3&quot;
+</pre>
+
+<p>Every plug-in's function has its own requirements when it comes to parameters, some will require none, some will accept as many parameters as you want to send. Examples:</p>
+<pre>nsExec::ExecToLog '&quot;${NSISDIR}\makensis.exe&quot; /CMDHELP'
+InstallOptions::dialog &quot;$PLUGINSDIR\test.ini&quot;
+NSISdl::download http://download.nullsoft.com/winamp/client/winamp291_lite.exe $R0
+</pre>
+
+<p>The plug-ins that NSIS knows of are listed at the top of the output of the compiler. NSIS searches for plug-ins in the <a href="../Plugins/">Plugins folder</a> under your NSIS directory and lists all of their available functions. You can use <a href="Chapter5.html#5.1.3">!addplugindir</a> to tell NSIS to search in other directories too.</p>
+
+<p>The NSIS distribution already included many plug-ins. <a href="../Docs/InstallOptions/Readme.html">InstallOptions</a> is a popular plug-in that allows you to create custom pages, in combination with the NSIS Page commands (See <a href="Chapter4.html#4.5">Pages</a>). The <a href="../Docs/StartMenu/Readme.txt">Startmenu plug-in</a> provides a page that allows the user to choose a Start Menu folder. There are a lot of plug-ins for different purposes, have a look at the <a href="../Docs/">Docs folder</a> for help files and examples. You can find additional plug-ins on-line: <a href="http://nsis.sf.net/">NSIS Wiki</a>.</p>
+
+<p>You can also create a plug-in yourself. C/C++ and Delphi header files are already available, see the <a href="../Examples/Plugin/">example plugin</a> for how to do this. Source code of included plug-ins can also be found in the source code package.</p>
+<a name="2.7"></a><h2>2.7 More</h2>
+
+<p>This tutorial has described the basic NSIS features, to learn more about everything NSIS can do, take some time to read this manual.</p>
+<p><a href='Chapter1.html'>Previous</a> | <a href='Contents.html'>Contents</a> | <a href='Chapter3.html'>Next</a></p>
+
+<hr />
+
+<address>
+</address>
+<a href="http://sourceforge.net"><img border=0 src="http://sourceforge.net/sflogo.php?group_id=22049&amp;type=1" alt="SourceForge Logo" /></a></body>
+
+</html>

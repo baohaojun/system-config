@@ -1,0 +1,2819 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<title>Scripting Reference</title>
+<meta name="generator" content="Halibut version 1.0 (NSIS Custom Build) xhtml-backend" />
+<link rel="stylesheet" href="style.css" type='text/css' />
+</head>
+
+<body>
+<p><a href='Chapter3.html'>Previous</a> | <a href='Contents.html'>Contents</a> | <a href='Chapter5.html'>Next</a></p>
+<ul>
+<li><a class="btitle" href="Chapter4.html#"><b>Chapter 4: </b>Scripting Reference</a></li>
+<ul>
+<li><a href="Chapter4.html#4.1">Script File Format</a></li>
+<li><a href="Chapter4.html#4.2">Variables</a></li>
+<ul>
+<li><a href="Chapter4.html#4.2.1">User Variables</a></li>
+<li><a href="Chapter4.html#4.2.2">Other Writable Variables</a></li>
+<li><a href="Chapter4.html#4.2.3">Constants</a></li>
+<li><a href="Chapter4.html#4.2.4">Constants Used in Strings</a></li>
+</ul>
+<li><a href="Chapter4.html#4.3">Labels</a></li>
+<li><a href="Chapter4.html#4.4">Relative Jumps</a></li>
+<li><a href="Chapter4.html#4.5">Pages</a></li>
+<ul>
+<li><a href="Chapter4.html#4.5.1">Ordering</a></li>
+<li><a href="Chapter4.html#4.5.2">Page Options</a></li>
+<li><a href="Chapter4.html#4.5.3">Callbacks</a></li>
+<li><a href="Chapter4.html#4.5.4">Page</a></li>
+<li><a href="Chapter4.html#4.5.5">UninstPage</a></li>
+<li><a href="Chapter4.html#4.5.6">PageEx</a></li>
+<li><a href="Chapter4.html#4.5.7">PageExEnd</a></li>
+<li><a href="Chapter4.html#4.5.8">PageCallbacks</a></li>
+</ul>
+<li><a href="Chapter4.html#4.6">Sections</a></li>
+<ul>
+<li><a href="Chapter4.html#4.6.1">Section Commands</a></li>
+<li><a href="Chapter4.html#4.6.2">Uninstall Section</a></li>
+</ul>
+<li><a href="Chapter4.html#4.7">Functions</a></li>
+<ul>
+<li><a href="Chapter4.html#4.7.1">Function Commands</a></li>
+<li><a href="Chapter4.html#4.7.2">Callback Functions</a></li>
+</ul>
+<li><a href="Chapter4.html#4.8">Installer Attributes</a></li>
+<ul>
+<li><a href="Chapter4.html#4.8.1">General Attributes</a></li>
+<li><a href="Chapter4.html#4.8.2">Compiler Flags</a></li>
+<li><a href="Chapter4.html#4.8.3">Version Information</a></li>
+</ul>
+<li><a href="Chapter4.html#4.9">Instructions</a></li>
+<ul>
+<li><a href="Chapter4.html#4.9.1">Basic Instructions</a></li>
+<li><a href="Chapter4.html#4.9.2">Registry, INI, File Instructions</a></li>
+<li><a href="Chapter4.html#4.9.3">General Purpose Instructions</a></li>
+<li><a href="Chapter4.html#4.9.4">Flow Control Instructions</a></li>
+<li><a href="Chapter4.html#4.9.5">File Instructions</a></li>
+<li><a href="Chapter4.html#4.9.6">Uninstaller Instructions</a></li>
+<li><a href="Chapter4.html#4.9.7">Miscellaneous Instructions</a></li>
+<li><a href="Chapter4.html#4.9.8">String Manipulation Instructions</a></li>
+<li><a href="Chapter4.html#4.9.9">Stack Support</a></li>
+<li><a href="Chapter4.html#4.9.10">Integer Support</a></li>
+<li><a href="Chapter4.html#4.9.11">Reboot Instructions</a></li>
+<li><a href="Chapter4.html#4.9.12">Install Logging Instructions</a></li>
+<li><a href="Chapter4.html#4.9.13">Section Management</a></li>
+<li><a href="Chapter4.html#4.9.14">User Interface Instructions</a></li>
+<li><a href="Chapter4.html#4.9.15">Multiple Languages Instructions</a></li>
+</ul>
+<li><a href="Chapter4.html#4.10">Multiple Languages</a></li>
+<ul>
+<li><a href="Chapter4.html#4.10.1">Language Selection</a></li>
+<li><a href="Chapter4.html#4.10.2">LangDLL Plug-in</a></li>
+<li><a href="Chapter4.html#4.10.3">RTL Languages</a></li>
+</ul>
+<li><a href="Chapter4.html#4.11">Plug-in DLLs</a></li>
+<ul>
+<li><a href="Chapter4.html#4.11.1">Using Plug-in Commands</a></li>
+<li><a href="Chapter4.html#4.11.2">Calling plug-ins manually</a></li>
+</ul>
+<li><a href="Chapter4.html#4.12">Silent Installers/Uninstallers</a></li>
+</ul>
+</ul>
+<a name="4"></a><h1>Chapter 4: Scripting Reference</h1>
+<a name="4.1"></a><h2>4.1 Script File Format</h2>
+
+<p>A NSIS Script File (.nsi) is just a text file with script code.</p>
+
+<p><b>Commands</b></p>
+
+<p>Commands lines are in the format 'command [parameters]'</p>
+<pre>File &quot;myfile&quot;
+</pre>
+
+<p><b>Comments</b></p>
+
+<p>Lines beginning with ; or # are comments. You can put comments after commands. You can also use C-style comments to comment one or more lines.</p>
+<pre>; Comment
+# Comment
+
+# Comment \
+    Another comment line (see `Long commands` section below)
+
+/*
+Comment
+Comment
+*/
+
+Name /* comment */ mysetup
+
+File &quot;myfile&quot; ; Comment
+</pre>
+
+<p>If you want a parameter to start with ; or # put it in quotes.</p>
+
+<p><b>Plug-ins</b></p>
+
+<p>To call a plug-in, use 'plugin::command [parameters]'. For more info see <a href="Chapter4.html#4.11">Plug-in DLLs</a>.</p>
+<pre>nsExec::Exec &quot;myfile&quot;
+</pre>
+
+<p><b>Numbers</b></p>
+
+<p>For parameters that are treated as numbers, use decimal (the number) or hexadecimal (with 0x prepended to it, i.e. 0x12345AB), or octal (numbers beginning with a 0 and no x).</p>
+
+<p>Colors should be set in hexadecimal RGB format, like HTML but without the #.</p>
+<pre>IntCmp 1 0x1 lbl_equal
+
+SetCtlColors $HWND CCCCCC
+</pre>
+
+<p><b>Strings</b></p>
+
+<p>To represent strings that have spaces, use quotes:</p>
+<pre>MessageBox MB_OK &quot;Hi there!&quot;
+</pre>
+
+<p>Quotes only have the property of containing a parameter if they begin the parameter. They can be either single quotes, double quotes, or the backward single quote.</p>
+
+<p>You can escape quotes using $\:</p>
+<pre>MessageBox MB_OK &quot;I'll be happy&quot; ; this one puts a ' inside a string
+MessageBox MB_OK 'And he said to me &quot;Hi there!&quot;' ; this one puts a &quot; inside a string
+MessageBox MB_OK `And he said to me &quot;I'll be happy!&quot;` ; this one puts both ' and &quot;s inside a string
+MessageBox MB_OK &quot;$\&quot;A quote from a wise man$\&quot; said the wise man&quot; ; this one shows escaping of quotes
+</pre>
+
+<p>It is also possible to put newlines, tabs etc. in a string using $\r, $\n, $\t etc. <a href="Chapter4.html#4.2.4">More information...</a></p>
+
+<p><b>Variables</b></p>
+
+<p>Variables start with $. User variables should be declared.</p>
+<pre>Var MYVAR
+
+StrCpy $MYVAR &quot;myvalue&quot;
+</pre>
+
+<p><a href="Chapter4.html#4.2">More information...</a></p>
+
+<p><b>Long commands</b></p>
+
+<p>To extend a command over multiple lines, use a backslash (\) at the end of the line. The next line will effectively be concatenated to the end of it. For example:</p>
+<pre>CreateShortCut &quot;$SMPROGRAMS\NSIS\ZIP2EXE project workspace.lnk&quot; \
+    &quot;$INSTDIR\source\zip2exe\zip2exe.dsw&quot;
+
+MessageBox MB_YESNO|MB_ICONQUESTION \
+    &quot;Do you want to remove all files in the folder? \
+    (If you have anything you created that you want \
+     to keep, click No)&quot; \
+    IDNO NoRemoveLabel
+</pre>
+
+<p>Line extension for long commands works for comments as well. It can be a bit confusing, so it should be avoided.</p>
+<pre># A comment \
+    still a comment here...
+</pre>
+
+<p><b>Configuration file</b></p>
+
+<p>If a file named &quot;nsisconf.nsh&quot; in the config directory exists, it will be included by default before any scripts (unless the /NOCONFIG command line parameter is used). The config directory on Windows is the same directory as makensis.exe is in. On other platforms this is set at install time and defaults to $PREFIX/etc/. You can alter this at runtime, see <a href="Chapter3.html#3.1.3">section 3.1.3</a> for more information.</p>
+<a name="4.2"></a><h2>4.2 Variables</h2>
+
+<p>All variables are global and can be used in Sections or Functions. Note that, by default, variables are limited to 1024 characters. To extend this limit, <a href="AppendixG.html#G">build NSIS</a> with a bigger value of the NSIS_MAX_STRLEN build setting or use the <a href="http://nsis.sourceforge.net/download/specialbuilds/">special build</a>.</p>
+<a name="4.2.1"></a><h3>4.2.1 User Variables</h3>
+
+<p><em>$VARNAME</em></p>
+
+<p>User variables can be declared with the <a href="Chapter4.html#4.2.1.1">Var</a> command. You can use these variables to store values, work with string manipulation etc.</p>
+<a name="4.2.1.1"></a><h4>4.2.1.1 Var</h4>
+<pre>[/GLOBAL] var_name
+</pre>
+
+<p>Declare a user variable. Allowed characters for variables names: [a-z][A-Z][0-9] and '_'. All defined variables are global, even if defined in a section or a function. To make this clear, variables defined in a section or a function must use the /GLOBAL flag. The /GLOBAL flag is not required outside of sections and functions.</p>
+<pre>Var example
+
+Function testVar
+  Var /GLOBAL example2
+
+  StrCpy $example &quot;example value&quot;
+  StrCpy $example2 &quot;another example value&quot;
+FunctionEnd
+</pre>
+<a name="4.2.2"></a><h3>4.2.2 Other Writable Variables</h3>
+
+<p><em>$0, $1, $2, $3, $4, $5, $6, $7, $8, $9, $R0, $R1, $R2, $R3, $R4, $R5, $R6, $R7, $R8, $R9</em></p>
+
+<p>Registers. These variables can be used just like user variables, but are usually used in shared functions or macros. You don't have to declare these variables, so you won't get any name conflicts when using them in shared code. When using these variables in shared code, it's recommended that you use the stack to save and restore their original values. These variables can also be used for communication with plug-ins, because they can be read and written by the plug-in DLLs.</p>
+
+<p><em>$INSTDIR</em></p>
+
+<p>The installation directory ($INSTDIR is modifiable using <a href="Chapter4.html#4.9.8.1">StrCpy</a>, <a href="Chapter4.html#4.9.2.12">ReadRegStr</a>, <a href="Chapter4.html#4.9.2.10">ReadINIStr</a>, etc. - This could be used, for example, in the <a href="Chapter4.html#4.7.2.1.2">.onInit</a> function to do a more advanced detection of install location).</p>
+
+<p>Note that in uninstaller code, $INSTDIR contains the directory where the uninstaller lies. It does <b>not</b> necessarily contain the same value it contained in the installer. For example, if you write the uninstaller to $WINDIR and the user doesn't move it, $INSTDIR will be $WINDIR in the uninstaller. If you write the uninstaller to another location, you should keep the installer's $INSTDIR in the registry or an alternative storing facility and read it in the uninstaller.</p>
+
+<p><em>$OUTDIR</em></p>
+
+<p>The current output directory (set implicitly via <a href="Chapter4.html#4.9.1.9">SetOutPath</a> or explicitly via <a href="Chapter4.html#4.9.8.1">StrCpy</a>, <a href="Chapter4.html#4.9.2.12">ReadRegStr</a>, <a href="Chapter4.html#4.9.2.10">ReadINIStr</a>, etc)</p>
+
+<p><em>$CMDLINE</em></p>
+
+<p>The command line of the installer. The format of the command line can be one of the following:</p>
+<ul>
+<li>&quot;full\path to\installer.exe&quot; PARAMETER PARAMETER PARAMETER</li><li>installer.exe PARAMETER PARAMETER PARAMETER</li><li>For parsing out the PARAMETER portion, see <a href="AppendixE.html#E.1.11">GetParameters</a>. If /D= is specified on the command line (to override the install directory) it won't show up in $CMDLINE.</li></ul>
+
+<p><em>$LANGUAGE</em></p>
+
+<p>The identifier of the language that is currently used. For example, English is 1033. You can change this variable in <a href="Chapter4.html#4.7.2.1.2">.onInit</a>.</p>
+<a name="4.2.3"></a><h3>4.2.3 Constants</h3>
+
+<p>Constants can also be used in the <a href="Chapter4.html#4.8.1.21">InstallDir</a> attribute.</p>
+
+<p>Note that some of the new constants will not work on every OS. For example, $CDBURN_AREA will only work on Windows XP and above. If it's used on Windows 98, it'll be empty. Unless mentioned otherwise, a constant should be available on every OS.</p>
+
+<p><em>$PROGRAMFILES</em>, <em>$PROGRAMFILES32</em>, <em>$PROGRAMFILES64</em></p>
+
+<p>The program files directory (usually <code>C:\Program Files</code> but detected at runtime). On Windows x64, $PROGRAMFILES and $PROGRAMFILES32 point to <code>C:\Program Files (x86)</code> while $PROGRAMFILES64 points to <code>C:\Program Files</code>. Use $PROGRAMFILES64 when installing x64 applications.</p>
+
+<p><em>$COMMONFILES</em>, <em>$COMMONFILES32</em>, <em>$COMMONFILES64</em></p>
+
+<p>The common files directory. This is a directory for components that are shared across applications (usually <code>C:\Program Files\Common Files</code> but detected at runtime). On Windows x64, $COMMONFILES and $COMMONFILES32 point to <code>C:\Program Files (x86)\Common Files</code> while $COMMONFILES64 points to <code>C:\Program Files\Common Files</code>. Use $COMMONFILES64 when installing x64 applications.</p>
+
+<p><em>$DESKTOP</em></p>
+
+<p>The Windows desktop directory (usually <code>C:\Windows\Desktop</code> but detected at runtime). The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p><em>$EXEDIR</em></p>
+
+<p>The directory containing the installer executable (technically you can modify this variable, but it is probably not a good idea).</p>
+
+<p><em>$EXEFILE</em></p>
+
+<p>The base name of the installer executable.</p>
+
+<p><em>$EXEPATH</em></p>
+
+<p>The full path of the installer executable.</p>
+
+<p><em>${NSISDIR}</em></p>
+
+<p>A symbol that contains the path where NSIS is installed. Useful if you want to call resources that are in NSIS directory e.g. Icons, UIs etc.</p>
+
+<p>When compiled with support for keeping makensis and the data in the same place (the default on Windows), it is in the same place as makensis, on other platforms it is set at compile time (See the INSTALL file for info). In both instances you can modify it at runtime by setting the NSISDIR environment variable. See <a href="Chapter3.html#3.1.3">section 3.1.3</a> for more info.</p>
+
+<p><em>$WINDIR</em></p>
+
+<p>The Windows directory (usually <code>C:\Windows</code> or <code>C:\WinNT</code> but detected at runtime).</p>
+
+<p><em>$SYSDIR</em></p>
+
+<p>The Windows system directory (usually <code>C:\Windows\System</code> or <code>C:\WinNT\System32</code> but detected at runtime).</p>
+
+<p><em>$TEMP</em></p>
+
+<p>The system temporary directory (usually <code>C:\Windows\Temp</code> but detected at runtime).</p>
+
+<p><em>$STARTMENU</em></p>
+
+<p>The start menu folder (useful in adding start menu items using <a href="Chapter4.html#4.9.3.4">CreateShortCut</a>). The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p><em>$SMPROGRAMS</em></p>
+
+<p>The start menu programs folder (use this whenever you want $STARTMENU\Programs). The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p><em>$SMSTARTUP</em></p>
+
+<p>The start menu programs / startup folder. The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p><em>$QUICKLAUNCH</em></p>
+
+<p>The quick launch folder for IE4 active desktop and above. If quick launch is not available, simply returns the same as $TEMP.</p>
+
+<p><em>$DOCUMENTS</em></p>
+
+<p>The documents directory. A typical path for the current user is <code>C:\Documents and Settings\Foo\My Documents</code>. The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p>This constant is not available on Windows 95 with Internet Explorer 4 not installed.</p>
+
+<p><em>$SENDTO</em></p>
+
+<p>The directory that contains Send To menu shortcut items.</p>
+
+<p><em>$RECENT</em></p>
+
+<p>The directory that contains shortcuts to the user's recently used documents.</p>
+
+<p><em>$FAVORITES</em></p>
+
+<p>The directory that contains shortcuts to the user's favorite websites, documents, etc. The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p>This constant is not available on Windows 95 with Internet Explorer 4 not installed.</p>
+
+<p><em>$MUSIC</em></p>
+
+<p>The user's music files directory. The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p>This constant is available on Windows XP, ME and above.</p>
+
+<p><em>$PICTURES</em></p>
+
+<p>The user's picture files directory. The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p>This constant is available on Windows 2000, XP, ME and above.</p>
+
+<p><em>$VIDEOS</em></p>
+
+<p>The user's video files directory. The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p>This constant is available on Windows XP, ME and above.</p>
+
+<p><em>$NETHOOD</em></p>
+
+<p>The directory that contains link objects that may exist in the My Network Places/Network Neighborhood folder.</p>
+
+<p>This constant is not available on Windows 95 with Internet Explorer 4 and Active Desktop not installed.</p>
+
+<p><em>$FONTS</em></p>
+
+<p>The system's fonts directory.</p>
+
+<p><em>$TEMPLATES</em></p>
+
+<p>The document templates directory. The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p><em>$APPDATA</em></p>
+
+<p>The application data directory. Detection of the current user path requires Internet Explorer 4 and above. Detection of the all users path requires Internet Explorer 5 and above. The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p>This constant is not available on Windows 95 with Internet Explorer 4 and Active Desktop not installed.</p>
+
+<p><em>$LOCALAPPDATA</em></p>
+
+<p>The local (nonroaming) application data directory.</p>
+
+<p>This constant is available on Windows 2000 and above.</p>
+
+<p><em>$PRINTHOOD</em></p>
+
+<p>The directory that contains link objects that may exist in the Printers folder.</p>
+
+<p>This constant is not available on Windows 95 and Windows 98.</p>
+
+<p><em>$INTERNET_CACHE</em></p>
+
+<p>Internet Explorer's temporary internet files directory.</p>
+
+<p>This constant is not available on Windows 95 and Windows NT with Internet Explorer 4 and Active Desktop not installed.</p>
+
+<p><em>$COOKIES</em></p>
+
+<p>Internet Explorer's cookies directory.</p>
+
+<p>This constant is not available on Windows 95 and Windows NT with Internet Explorer 4 and Active Desktop not installed.</p>
+
+<p><em>$HISTORY</em></p>
+
+<p>Internet Explorer's history directory.</p>
+
+<p>This constant is not available on Windows 95 and Windows NT with Internet Explorer 4 and Active Desktop not installed.</p>
+
+<p><em>$PROFILE</em></p>
+
+<p>The user's profile directory. A typical path is <code>C:\Documents and Settings\Foo</code>.</p>
+
+<p>This constant is available on Windows 2000 and above.</p>
+
+<p><em>$ADMINTOOLS</em></p>
+
+<p>A directory where administrative tools are kept. The context of this constant (All Users or Current user) depends on the <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> setting. The default is the current user.</p>
+
+<p>This constant is available on Windows 2000, ME and above.</p>
+
+<p><em>$RESOURCES</em></p>
+
+<p>The resources directory that stores themes and other Windows resources (usually <code>C:\Windows\Resources</code> but detected at runtime).</p>
+
+<p>This constant is available on Windows XP and above.</p>
+
+<p><em>$RESOURCES_LOCALIZED</em></p>
+
+<p>The localized resources directory that stores themes and other Windows resources (usually <code>C:\Windows\Resources\1033</code> but detected at runtime).</p>
+
+<p>This constant is available on Windows XP and above.</p>
+
+<p><em>$CDBURN_AREA</em></p>
+
+<p>A directory where files awaiting to be burned to CD are stored.</p>
+
+<p>This constant is available on Windows XP and above.</p>
+
+<p><em>$HWNDPARENT</em></p>
+
+<p>The decimal HWND of the parent window.</p>
+
+<p><em>$PLUGINSDIR</em></p>
+
+<p>The path to a temporary folder created upon the first usage of a plug-in or a call to <a href="Chapter4.html#4.9.7.3">InitPluginsDir</a>. This folder is automatically deleted when the installer exits. This makes this folder the ideal folder to hold INI files for <a href="../Docs/InstallOptions/Readme.html">InstallOptions</a>, bitmaps for the splash plug-in, or any other file that a plug-in needs to work.</p>
+<a name="4.2.4"></a><h3>4.2.4 Constants Used in Strings</h3>
+
+<p><em>$$</em></p>
+
+<p>Use to represent $.</p>
+
+<p><em>$\r</em></p>
+
+<p>Use to represent a carriage return (\r).</p>
+
+<p><em>$\n</em></p>
+
+<p>Use to represent a newline (\n).</p>
+
+<p><em>$\t</em></p>
+
+<p>Use to represent a tab (\t).</p>
+<a name="4.3"></a><h2>4.3 Labels</h2>
+
+<p>Labels are the targets of Goto instructions, or of the various branching instructions (such as <a href="Chapter4.html#4.9.4.9">IfErrors</a>, <a href="Chapter4.html#4.9.4.15">MessageBox</a>, <a href="Chapter4.html#4.9.4.10">IfFileExists</a>, and <a href="Chapter4.html#4.9.4.19">StrCmp</a>). Labels must be within a Section or a Function. Labels are local in scope, meaning they are only accessible from within the Section or Function that they reside in. To declare a label, simply use:</p>
+
+<p><em>MyLabel:</em></p>
+
+<p>Labels cannot begin with a -, +, !, $, or 0-9. When specifying labels for the various instructions that require them, remember that both an empty string (&quot;&quot;) and 0 both represent the next instruction (meaning no Goto will occur). Labels beginning with a period (.) are global, meaning you can jump to them from any function or section (though you cannot jump to an uninstall global label from the installer, and vice versa).</p>
+<a name="4.4"></a><h2>4.4 Relative Jumps</h2>
+
+<p>Unlike labels, relative jumps are, as the name suggests, relative to the place they are called from. You can use relative jumps wherever you can use labels. Relative jumps are marked by numbers. +1 jumps to the next instruction (the default advancement), +2 will skip one instruction and go to the second instruction from the current instruction, -2 will jump two instructions backward, and +10 will skip 9 instructions, jumping to the tenth instruction from the current instruction.</p>
+
+<p>An instruction is every command that is executed at run-time, when the installer is running. <a href="Chapter4.html#4.9.4.15">MessageBox</a>, <a href="Chapter4.html#4.9.4.7">Goto</a>, <a href="Chapter4.html#4.9.3.5">GetDLLVersion</a>, <a href="Chapter4.html#4.9.5.3">FileRead</a>, <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> are all instructions. <a href="Chapter4.html#4.6.1.1">AddSize</a>, <a href="Chapter4.html#4.6.1.2">Section</a>, <a href="Chapter4.html#4.6.1.5">SectionGroup</a>, <a href="Chapter4.html#4.6.1.3">SectionEnd</a>, <a href="Chapter4.html#4.8.2.8">SetOverwrite</a> (and everything under <a href="Chapter4.html#4.8.2">Compiler Flags</a>), <a href="Chapter4.html#4.8.1.30">Name</a>, <a href="Chapter4.html#4.8.1.33">SetFont</a>, <a href="Chapter4.html#4.9.15.2">LangString</a>, are not instructions because they are executed at compile time.</p>
+
+<p>Examples:</p>
+<pre> Goto +2
+   MessageBox MB_OK &quot;You will never ever see this message box&quot;
+ MessageBox MB_OK &quot;The last message was skipped, this one should be shown&quot;
+</pre>
+<pre> Goto +4
+ MessageBox MB_OK &quot;The following message will be skipped&quot;
+ Goto +3
+ MessageBox MB_OK &quot;You will never ever see this message box&quot;
+ Goto -3
+ MessageBox MB_OK &quot;Done&quot;
+</pre>
+
+<p>Note that <a href="Chapter5.html#5.4.10">macro insertion</a> is not considered as one instruction when it comes to relative jumps. The macro is expanded before relative jumps are applied, and so relative jumps can jump into code inside an inserted macro. The following code, for example, will not skip the macro. It will show a message box.</p>
+<pre>!macro relative_jump_test
+  MessageBox MB_OK &quot;first macro line&quot;
+  MessageBox MB_OK &quot;second macro line&quot;
+!macroend
+
+Goto +2
+!insertmacro relative_jump_test
+</pre>
+<a name="4.5"></a><h2>4.5 Pages</h2>
+
+<p>Each (non-silent) NSIS installer has a set of pages. Each page can be a NSIS built-in page or a custom page created by a user's function (with <a href="../Docs/nsDialogs/Readme.html">nsDialogs</a> or <a href="../Docs/InstallOptions/Readme.html">InstallOptions</a> for example).</p>
+
+<p>Using the script you can control the pages' order, appearance, and behavior. You can skip pages, paint them white, force the user to stay in a certain page until a certain condition is met, show a readme page, show custom designed pages for input and more. In this section, you will learn how to control all of the above.</p>
+
+<p>There are two basic commands regarding pages, <a href="Chapter4.html#4.5.4">Page</a> and <a href="Chapter4.html#4.5.5">UninstPage</a>. The first adds a page to the installer, the second adds a page to the uninstaller. On top of those two there is the <a href="Chapter4.html#4.5.6">PageEx</a> command which allows you to add a page to either one and with greater amount of options. <a href="Chapter4.html#4.5.6">PageEx</a> allows you to set options to the specific page you are adding instead of using the default that's set outside of <a href="Chapter4.html#4.5.6">PageEx</a>.</p>
+<a name="4.5.1"></a><h3>4.5.1 Ordering</h3>
+
+<p>The page order is set simply by the order <a href="Chapter4.html#4.5.4">Page</a>, <a href="Chapter4.html#4.5.5">UninstPage</a> and <a href="Chapter4.html#4.5.6">PageEx</a> appear in the script. For example:</p>
+<pre> Page license
+ Page components
+ Page directory
+ Page instfiles
+ UninstPage uninstConfirm
+ UninstPage instfiles
+</pre>
+
+<p>This code will tell NSIS to first show the license page, then the components selection page, then the directory selection page and finally the install log where sections are executed, just like in old installers. The uninstaller will first show the uninstall confirmation page and then the uninstallation log.</p>
+
+<p>You can specify the same page type more than once.</p>
+
+<p>For backwards compatibility with old NSIS scripts, the following installer pages will be added if no installer page commands are used: license (if <a href="Chapter4.html#4.8.1.28">LicenseText</a> and <a href="Chapter4.html#4.8.1.26">LicenseData</a> were specified), components (if <a href="Chapter4.html#4.8.1.11">ComponentText</a> was specified and there is more than one visible section), directory (if <a href="Chapter4.html#4.8.1.14">DirText</a> was specified) and instfiles. When there are no uninstaller page commands, the following uninstaller pages will be added: uninstall confirmation page (if <a href="Chapter4.html#4.8.1.44">UninstallText</a> was specified) and instfiles. This method is deprecated, converting scripts to use page commands is highly recommended because you can use the new standard language strings.</p>
+<a name="4.5.2"></a><h3>4.5.2 Page Options</h3>
+
+<p>Each page has its unique set of data that defines how it will look and act. This section describes what data each type of page uses and how you can set it. <a href="Chapter4.html#4.5.3">Callback functions</a> are described below and are not dealt with in this section.</p>
+
+<p>The list below lists what commands affect the certain page type. Unless mentioned otherwise, these commands can be used both in and out of a <a href="Chapter4.html#4.5.6">PageEx</a> block. If used inside a <a href="Chapter4.html#4.5.6">PageEx</a> block they will only affect the current page being set by <a href="Chapter4.html#4.5.6">PageEx</a>, else they will set the default for every other page.</p>
+
+<p><em>License page</em></p>
+<ul>
+<li><a href="Chapter4.html#4.8.1.28">LicenseText</a></li><li><a href="Chapter4.html#4.8.1.26">LicenseData</a></li><li><a href="Chapter4.html#4.8.1.27">LicenseForceSelection</a></li></ul>
+
+<p><em>Components selection page</em></p>
+<ul>
+<li><a href="Chapter4.html#4.8.1.11">ComponentText</a></li></ul>
+
+<p><em>Directory selection page</em></p>
+<ul>
+<li><a href="Chapter4.html#4.8.1.14">DirText</a></li><li><a href="Chapter4.html#4.8.1.15">DirVar</a> - can only be used in <a href="Chapter4.html#4.5.6">PageEx</a></li><li><a href="Chapter4.html#4.8.1.16">DirVerify</a></li></ul>
+
+<p><em>Un/Installation log page</em></p>
+<ul>
+<li><a href="Chapter4.html#4.8.1.13">DetailsButtonText</a></li><li><a href="Chapter4.html#4.8.1.10">CompletedText</a></li></ul>
+
+<p><em>Uninstall confirmation page</em></p>
+<ul>
+<li><a href="Chapter4.html#4.8.1.15">DirVar</a> - can only be used in <a href="Chapter4.html#4.5.6">PageEx</a></li><li><a href="Chapter4.html#4.8.1.44">UninstallText</a></li></ul>
+
+<p>To set the page caption use <a href="Chapter4.html#4.8.1.7">Caption</a>.</p>
+<a name="4.5.3"></a><h3>4.5.3 Callbacks</h3>
+
+<p>Each built-in page has three callback functions: the pre-function, the show-creation function and the leave-function. The pre-function is called right before the page is created, the show-function is called right after it is created and before it is shown and the leave-function is called right after the user has pressed the next button and before the page is left.</p>
+<ul>
+<li>The pre-function allows you to skip the page using <a href="Chapter4.html#4.9.4.1">Abort</a>.</li><li>The show-function allows you to tweak the page's user interface with <a href="Chapter4.html#4.9.14.2">CreateFont</a>, <a href="Chapter4.html#4.9.14.15">SetCtlColors</a>, <a href="Chapter4.html#4.9.14.10">SendMessage</a> and others.</li><li>The leave-function allows you to force the user to stay on the current page using <a href="Chapter4.html#4.9.4.1">Abort</a>.</li></ul>
+
+<p>A custom page only has two callback functions, one that creates it which is mandatory, and one leave-function that acts just like the leave-function for built-in pages.</p>
+
+<p>Examples:</p>
+<pre> Page license skipLicense &quot;&quot; stayInLicense
+ Page custom customPage &quot;&quot; &quot;: custom page&quot;
+ Page instfiles
+
+ Function skipLicense
+   MessageBox MB_YESNO &quot;Do you want to skip the license page?&quot; IDNO no
+     Abort
+   no:
+ FunctionEnd
+
+ Function stayInLicense
+   MessageBox MB_YESNO &quot;Do you want to stay in the license page?&quot; IDNO no
+     Abort
+   no:
+ FunctionEnd
+
+ Function customPage
+   GetTempFileName $R0
+   File /oname=$R0 customPage.ini
+   InstallOptions::dialog $R0
+   Pop $R1
+   StrCmp $R1 &quot;cancel&quot; done
+   StrCmp $R1 &quot;back&quot; done
+   StrCmp $R1 &quot;success&quot; done
+   error: MessageBox MB_OK|MB_ICONSTOP &quot;InstallOptions error:$\r$\n$R1&quot;
+   done:
+ FunctionEnd
+</pre>
+<a name="4.5.4"></a><h3>4.5.4 Page</h3>
+<pre>custom [creator_function] [leave_function] [caption] [/ENABLECANCEL]
+  OR
+internal_page_type [pre_function] [show_function] [leave_function] [/ENABLECANCEL]
+</pre>
+
+<p>Adds an installer page. See the above sections for more information about built-in versus custom pages and about callback functions.</p>
+
+<p><em>internal_page_type</em> can be:</p>
+<ul>
+<li><em>license</em> - license page</li><li><em>components</em> - components selection page</li><li><em>directory</em> - installation directory selection page</li><li><em>instfiles</em> - installation page where the sections are executed</li><li><em>uninstConfirm</em> - uninstall confirmation page</li></ul>
+
+<p>The last page of the installer has its cancel button disabled to prevent confusion. To enable it anyway, use <em>/ENABLECANCEL</em>.</p>
+<a name="4.5.5"></a><h3>4.5.5 UninstPage</h3>
+<pre>custom [creator_function] [leave_function] [caption] [/ENABLECANCEL]
+  OR
+internal_page_type [pre_function] [show_function] [leave_function] [/ENABLECANCEL]
+</pre>
+
+<p>Adds an uninstaller page. See the above sections for more information about built-in versus custom pages and about callback functions.</p>
+
+<p>See <a href="Chapter4.html#4.5.4">Page</a> for possible values of <em>internal_page_type</em>.</p>
+<a name="4.5.6"></a><h3>4.5.6 PageEx</h3>
+<pre>[un.](custom|uninstConfirm|license|components|directory|instfiles)
+</pre>
+
+<p>Adds an installer page or an uninstaller page if the un. prefix was used. Every PageEx must have a matching <a href="Chapter4.html#4.5.7">PageExEnd</a>. In a PageEx block you can set options that are specific to this page and will not be used for other pages. Options that are not set will revert to what was set outside the PageEx block or the default if nothing was set. To set the sub-caption for a page use <a href="Chapter4.html#4.8.1.7">Caption</a> or <a href="Chapter4.html#4.8.1.39">SubCaption</a> to set the default. To set the callback functions for a page set with PageEx use <a href="Chapter4.html#4.5.8">PageCallbacks</a>. See the above sections for more information about built-in versus custom pages.</p>
+
+<p>Example usage:</p>
+<pre> PageEx license
+   LicenseText &quot;Readme&quot;
+   LicenseData readme.rtf
+ PageExEnd
+
+ PageEx license
+   LicenseData license.txt
+   LicenseForceSelection checkbox
+ PageExEnd
+</pre>
+<a name="4.5.7"></a><h3>4.5.7 PageExEnd</h3>
+
+<p>Ends a <a href="Chapter4.html#4.5.6">PageEx</a> block.</p>
+<a name="4.5.8"></a><h3>4.5.8 PageCallbacks</h3>
+<pre>([creator_function] [leave_function]) | ([pre_function] [show_function] [leave_function])
+</pre>
+
+<p>Sets the callback functions for a page defined using <a href="Chapter4.html#4.5.6">PageEx</a>. Can only be used inside a <a href="Chapter4.html#4.5.6">PageEx</a> block. See the above sections for more information about callback functions.</p>
+<pre>PageEx license
+  PageCallbacks licensePre licenseShow licenseLeave
+PageExEnd
+</pre>
+<a name="4.6"></a><h2>4.6 Sections</h2>
+
+<p>Each NSIS installer contains one or more sections. Each of these sections are created, modified, and ended with the following commands.</p>
+<ul>
+<li>Each section contains zero or more instructions.</li><li>Sections are executed in order by the resulting installer, and if ComponentText is set, the user will have the option of disabling/enabling each visible section.</li><li>If a section's name is 'Uninstall' or is prefixed with 'un.', it's an uninstaller section.</li></ul>
+<a name="4.6.1"></a><h3>4.6.1 Section Commands</h3>
+<a name="4.6.1.1"></a><h4>4.6.1.1 AddSize</h4>
+<pre>size_kb
+</pre>
+
+<p>Tells the installer that the current section needs an additional &quot;size_kb&quot; kilobytes of disk space. Only valid within a section (will have no effect outside of a section or in a function).</p>
+<pre>Section
+AddSize 500
+SectionEnd
+</pre>
+<a name="4.6.1.2"></a><h4>4.6.1.2 Section</h4>
+<pre>[/o] [([!]|[-])section_name] [section_index_output]
+</pre>
+
+<p>Begins and opens a new section. If section_name is empty, omitted, or begins with a -, then it is a hidden section and the user will not have the option of disabling it. If the section name is 'Uninstall' or is prefixed with 'un.', then it is a an uninstaller section. If <em>section_index_output</em> is specified, the parameter will be <a href="Chapter5.html#5.4.1">!defined</a> with the section index (that can be used for <a href="Chapter4.html#4.9.13.3">SectionSetText</a> etc). If the section name begins with a !, the section will be displayed as bold. If the /o switch is specified, the section will be unselected by default.</p>
+<pre>Section &quot;-hidden section&quot;
+SectionEnd
+
+Section # hidden section
+SectionEnd
+
+Section &quot;!bold section&quot;
+SectionEnd
+
+Section /o &quot;optional&quot;
+SectionEnd
+
+Section &quot;install something&quot; SEC_IDX
+SectionEnd
+</pre>
+
+<p>To access the section index, curly brackets must be used and the code must be located below the section in the script.</p>
+<pre>Section test1 sec1_id
+SectionEnd
+
+Section test2 sec2_id
+SectionEnd
+
+Function .onInit
+  SectionGetText ${sec2_id} $0
+  MessageBox MB_OK &quot;name of ${sec2_id}:$\n$0&quot; # will correctly display 'name of 1: test2'
+FunctionEnd
+</pre>
+<pre>Function .onInit
+  SectionGetText ${sec2_id} $0
+  MessageBox MB_OK &quot;name of ${sec2_id}:$\n$0&quot; # will incorrectly display 'name of ${sec2_id}: test1'
+    # plus a warning stating:
+    #   unknown variable/constant &quot;{sec2_id}&quot; detected, ignoring
+FunctionEnd
+
+Section test1 sec1_id
+SectionEnd
+
+Section test2 sec2_id
+SectionEnd
+</pre>
+<a name="4.6.1.3"></a><h4>4.6.1.3 SectionEnd</h4>
+
+<p>This command closes the current open section.</p>
+<a name="4.6.1.4"></a><h4>4.6.1.4 SectionIn</h4>
+<pre>insttype_index [insttype_index] [RO]
+</pre>
+
+<p>This command specifies which install types (see <a href="Chapter4.html#4.8.1.24">InstType</a>) the current section defaults to the enabled state in. Multiple SectionIn commands can be specified (they are combined). If you specify RO as a parameter, then the section will be read-only, meaning the user won't be able to change its state. The first install type defined using <a href="Chapter4.html#4.8.1.24">InstType</a> is indexed 1, the next 2 and so on.</p>
+<pre>InstType &quot;full&quot;
+InstType &quot;minimal&quot;
+
+Section &quot;a section&quot;
+SectionIn 1 2
+SectionEnd
+
+Section &quot;another section&quot;
+SectionIn 1
+SectionEnd
+</pre>
+<a name="4.6.1.5"></a><h4>4.6.1.5 SectionGroup</h4>
+<pre>[/e] section_group_name [index_output]
+</pre>
+
+<p>This command inserts a section group. The section group must be closed with <a href="Chapter4.html#4.6.1.6">SectionGroupEnd</a>, and should contain 1 or more sections. If the section group name begins with a !, its name will be displayed with a bold font. If /e is present, the section group will be expanded by default. If <em>index_output</em> is specified, the parameter will be !defined with the section index (that can be used for <a href="Chapter4.html#4.9.13.3">SectionSetText</a> etc). If the name is prefixed with 'un.' the section group is an uninstaller section group.</p>
+<pre>SectionGroup &quot;some stuff&quot;
+Section &quot;a section&quot;
+SectionEnd
+Section &quot;another section&quot;
+SectionEnd
+SectionGroupEnd
+</pre>
+<a name="4.6.1.6"></a><h4>4.6.1.6 SectionGroupEnd</h4>
+
+<p>Closes a section group opened with <a href="Chapter4.html#4.6.1.5">SectionGroup</a>.</p>
+<a name="4.6.2"></a><h3>4.6.2 Uninstall Section</h3>
+
+<p>A special Section named 'Uninstall' must be created in order to generate an uninstaller. This section should remove all files, registry keys etc etc that were installed by the installer, from the system. Here is an example of a simple uninstall section:</p>
+<pre>Section &quot;Uninstall&quot;
+  Delete $INSTDIR\Uninst.exe ; delete self (see explanation below why this works)
+  Delete $INSTDIR\myApp.exe
+  RMDir $INSTDIR
+  DeleteRegKey HKLM SOFTWARE\myApp
+SectionEnd
+</pre>
+
+<p>The first <a href="Chapter4.html#4.9.1.1">Delete</a> instruction works (deleting the uninstaller), because the uninstaller is transparently copied to the system temporary directory for the uninstall.</p>
+
+<p>Note that in uninstaller code, $INSTDIR contains the directory where the uninstaller lies. It does <b>not</b> necessarily contain the same value it contained in the installer.</p>
+<a name="4.7"></a><h2>4.7 Functions</h2>
+
+<p>Functions are similar to Sections in that they contain zero or more instructions. User functions are not called by the installer directly, instead they are called from Sections using the Call instruction. Callback functions will be called by the installer when a certain event occurs.</p>
+
+<p>Functions must be declared outside of Sections or other Functions.</p>
+<a name="4.7.1"></a><h3>4.7.1 Function Commands</h3>
+<a name="4.7.1.1"></a><h4>4.7.1.1 Function</h4>
+<pre>[function_name]
+</pre>
+
+<p>Begins and opens a new function. Function names beginning with &quot;.&quot; (e.g. &quot;.Whatever&quot;) are generally reserved for callback functions. Function names beginning with &quot;un.&quot; are functions that will be generated in the Uninstaller. Hence, normal install Sections and functions cannot call uninstall functions, and the Uninstall Section and uninstall functions cannot call normal functions.</p>
+<pre>Function func
+  # some commands
+FunctionEnd
+
+Section
+  Call func
+SectionEnd
+</pre>
+<a name="4.7.1.2"></a><h4>4.7.1.2 FunctionEnd</h4>
+
+<p>This command closes the current open function.</p>
+<a name="4.7.2"></a><h3>4.7.2 Callback Functions</h3>
+
+<p>You can create callback functions which have special names, that will be called by the installer at certain points in the install. Below is a list of currently available callbacks:</p>
+<a name="4.7.2.1"></a><h4>4.7.2.1 Install Callbacks</h4>
+<a name="4.7.2.1.1"></a><h5>4.7.2.1.1 .onGUIInit</h5>
+
+<p>This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the user interface.</p>
+
+<p>Example:</p>
+<pre> !include &quot;WinMessages.nsh&quot;
+
+ Function .onGUIInit
+   # 1028 is the id of the branding text control
+   GetDlgItem $R0 $HWNDPARENT 1028
+   CreateFont $R1 &quot;Tahoma&quot; 10 700
+   SendMessage $R0 ${WM_SETFONT} $R1 0
+   # set background color to white and text color to red
+   SetCtlColors $R0 FFFFFF FF0000
+ FunctionEnd
+</pre>
+<a name="4.7.2.1.2"></a><h5>4.7.2.1.2 .onInit</h5>
+
+<p>This callback will be called when the installer is nearly finished initializing. If the '.onInit' function calls <a href="Chapter4.html#4.9.4.1">Abort</a>, the installer will quit instantly.</p>
+
+<p>Here are two examples of how this might be used:</p>
+<pre> Function .onInit
+   MessageBox MB_YESNO &quot;This will install. Continue?&quot; IDYES NoAbort
+     Abort ; causes installer to quit.
+   NoAbort:
+ FunctionEnd
+</pre>
+
+<p>or:</p>
+<pre> Function .onInit
+   ReadINIStr $INSTDIR $WINDIR\wincmd.ini Configuration InstallDir
+   StrCmp $INSTDIR &quot;&quot; 0 NoAbort
+     MessageBox MB_OK &quot;Windows Commander not found. Unable to get install path.&quot;
+     Abort ; causes installer to quit.
+   NoAbort:
+ FunctionEnd
+</pre>
+<a name="4.7.2.1.3"></a><h5>4.7.2.1.3 .onInstFailed</h5>
+
+<p>This callback is called when the user hits the 'cancel' button after the install has failed (if it could not extract a file, or the install script used the <a href="Chapter4.html#4.9.4.1">Abort</a> command).</p>
+
+<p>Example:</p>
+<pre>  Function .onInstFailed
+    MessageBox MB_OK &quot;Better luck next time.&quot;
+  FunctionEnd
+</pre>
+<a name="4.7.2.1.4"></a><h5>4.7.2.1.4 .onInstSuccess</h5>
+
+<p>This callback is called when the install was successful, right before the install window closes (which may be after the user clicks 'Close' if <a href="Chapter4.html#4.8.1.3">AutoCloseWindow</a> or <a href="Chapter4.html#4.9.14.11">SetAutoClose</a> is set to false).</p>
+
+<p>Example:</p>
+<pre>  Function .onInstSuccess
+    MessageBox MB_YESNO &quot;Congrats, it worked. View readme?&quot; IDNO NoReadme
+      Exec notepad.exe ; view readme or whatever, if you want.
+    NoReadme:
+  FunctionEnd
+</pre>
+<a name="4.7.2.1.5"></a><h5>4.7.2.1.5 .onGUIEnd</h5>
+
+<p>This callback is called right after the installer window closes. Use it to free any user interface related plug-ins if needed.</p>
+<a name="4.7.2.1.6"></a><h5>4.7.2.1.6 .onMouseOverSection</h5>
+
+<p>This callback is called whenever the mouse position over the sections tree has changed. This allows you to set a description for each section for example. The section id on which the mouse is over currently is stored, temporarily, in $0.</p>
+
+<p>Example:</p>
+<pre>  Function .onMouseOverSection
+    FindWindow $R0 &quot;#32770&quot; &quot;&quot; $HWNDPARENT
+    GetDlgItem $R0 $R0 1043 ; description item (must be added to the UI)
+
+    StrCmp $0 0 &quot;&quot; +2
+      SendMessage $R0 ${WM_SETTEXT} 0 &quot;STR:first section description&quot;
+
+    StrCmp $0 1 &quot;&quot; +2
+      SendMessage $R0 ${WM_SETTEXT} 0 &quot;STR:second section description&quot;
+  FunctionEnd
+</pre>
+<a name="4.7.2.1.7"></a><h5>4.7.2.1.7 .onRebootFailed</h5>
+
+<p>This callback is called if <a href="Chapter4.html#4.9.11.1">Reboot</a> fails. <a href="Chapter4.html#4.9.6.1">WriteUninstaller</a>, <a href="Chapter4.html#4.11">plug-ins</a>, <a href="Chapter4.html#4.9.1.5">File</a> and <a href="Chapter4.html#4.9.2.14">WriteRegBin</a> should not be used in this callback.</p>
+
+<p>Example:</p>
+<pre> Function .onRebootFailed
+   MessageBox MB_OK|MB_ICONSTOP &quot;Reboot failed. Please reboot manually.&quot; /SD IDOK
+ FunctionEnd
+</pre>
+<a name="4.7.2.1.8"></a><h5>4.7.2.1.8 .onSelChange</h5>
+
+<p>Called when the selection changes on the <a href="Chapter4.html#4.5">component page</a>. Useful for using with <a href="Chapter4.html#4.9.13.1">SectionSetFlags</a> and <a href="Chapter4.html#4.9.13.2">SectionGetFlags</a>.</p>
+
+<p>Selection changes include both section selection and installation type change.</p>
+<a name="4.7.2.1.9"></a><h5>4.7.2.1.9 .onUserAbort</h5>
+
+<p>This callback is called when the user hits the 'cancel' button, and the install hasn't already failed. If this function calls <a href="Chapter4.html#4.9.4.1">Abort</a>, the install will not be aborted.</p>
+
+<p>Example:</p>
+<pre> Function .onUserAbort
+   MessageBox MB_YESNO &quot;Abort install?&quot; IDYES NoCancelAbort
+     Abort ; causes installer to not quit.
+   NoCancelAbort:
+ FunctionEnd
+</pre>
+<a name="4.7.2.1.10"></a><h5>4.7.2.1.10 .onVerifyInstDir</h5>
+
+<p>This callback enables control over whether or not an installation path is valid for your installer. This code will be called every time the user changes the install directory, so it shouldn't do anything crazy with <a href="Chapter4.html#4.9.4.15">MessageBox</a> or the likes. If this function calls <a href="Chapter4.html#4.9.4.1">Abort</a>, the installation path in $INSTDIR is deemed invalid.</p>
+
+<p>Example:</p>
+<pre>  Function .onVerifyInstDir
+    IfFileExists $INSTDIR\Winamp.exe PathGood
+      Abort ; if $INSTDIR is not a winamp directory, don't let us install there
+    PathGood:
+  FunctionEnd
+</pre>
+<a name="4.7.2.2"></a><h4>4.7.2.2 Uninstall Callbacks</h4>
+<a name="4.7.2.2.1"></a><h5>4.7.2.2.1 un.onGUIInit</h5>
+
+<p>This callback will be called just before the first page is loaded and the installer dialog is shown, allowing you to tweak the user interface.</p>
+
+<p>Have a look at <a href="Chapter4.html#4.7.2.1.1">.onGUIInit</a> for an example.</p>
+<a name="4.7.2.2.2"></a><h5>4.7.2.2.2 un.onInit</h5>
+
+<p>This callback will be called when the uninstaller is nearly finished initializing. If the 'un.onInit' function calls Abort, the uninstaller will quit instantly. Note that this function can verify and/or modify $INSTDIR if necessary.</p>
+
+<p>Here are two examples of how this might be used:</p>
+<pre>  Function un.onInit
+    MessageBox MB_YESNO &quot;This will uninstall. Continue?&quot; IDYES NoAbort
+      Abort ; causes uninstaller to quit.
+    NoAbort:
+  FunctionEnd
+</pre>
+
+<p>or:</p>
+<pre>  Function un.onInit
+    IfFileExists $INSTDIR\myfile.exe found
+      Messagebox MB_OK &quot;Uninstall path incorrect&quot;
+      Abort
+    found:
+  FunctionEnd
+</pre>
+<a name="4.7.2.2.3"></a><h5>4.7.2.2.3 un.onUninstFailed</h5>
+
+<p>This callback is called when the user hits the 'cancel' button after the uninstall has failed (if it used the <a href="Chapter4.html#4.9.4.1">Abort command</a> or otherwise failed).</p>
+
+<p>Example:</p>
+<pre>  Function un.onUninstFailed
+    MessageBox MB_OK &quot;Better luck next time.&quot;
+  FunctionEnd
+</pre>
+<a name="4.7.2.2.4"></a><h5>4.7.2.2.4 un.onUninstSuccess</h5>
+
+<p>This callback is called when the uninstall was successful, right before the install window closes (which may be after the user clicks 'Close' if <a href="Chapter4.html#4.9.14.11">SetAutoClose</a> is set to false)..</p>
+
+<p>Example:</p>
+<pre>  Function un.onUninstSuccess
+    MessageBox MB_OK &quot;Congrats, it's gone.&quot;
+  FunctionEnd
+</pre>
+<a name="4.7.2.2.5"></a><h5>4.7.2.2.5 un.onGUIEnd</h5>
+
+<p>This callback is called right after the uninstaller window closes. Use it to free any user interface related plug-ins if needed.</p>
+<a name="4.7.2.2.6"></a><h5>4.7.2.2.6 un.onRebootFailed</h5>
+
+<p>This callback is called if <a href="Chapter4.html#4.9.11.1">Reboot</a> fails. <a href="Chapter4.html#4.9.6.1">WriteUninstaller</a>, <a href="Chapter4.html#4.11">plug-ins</a>, <a href="Chapter4.html#4.9.1.5">File</a> and <a href="Chapter4.html#4.9.2.14">WriteRegBin</a> should not be used in this callback.</p>
+
+<p>Example:</p>
+<pre> Function un.onRebootFailed
+   MessageBox MB_OK|MB_ICONSTOP &quot;Reboot failed. Please reboot manually.&quot; /SD IDOK
+ FunctionEnd
+</pre>
+<a name="4.7.2.2.7"></a><h5>4.7.2.2.7 un.onSelChange</h5>
+
+<p>Called when the selection changes on the <a href="Chapter4.html#4.5">component page</a>. Useful for using with <a href="Chapter4.html#4.9.13.1">SectionSetFlags</a> and <a href="Chapter4.html#4.9.13.2">SectionGetFlags</a>.</p>
+
+<p>Selection changes include both section selection and installation type change.</p>
+<a name="4.7.2.2.8"></a><h5>4.7.2.2.8 un.onUserAbort</h5>
+
+<p>This callback is called when the user hits the 'cancel' button and the uninstall hasn't already failed. If this function calls Abort, the install will not be aborted.</p>
+
+<p>Example:</p>
+<pre>  Function un.onUserAbort
+    MessageBox MB_YESNO &quot;Abort uninstall?&quot; IDYES NoCancelAbort
+      Abort ; causes uninstaller to not quit.
+    NoCancelAbort:
+  FunctionEnd
+</pre>
+<a name="4.8"></a><h2>4.8 Installer Attributes</h2>
+<a name="4.8.1"></a><h3>4.8.1 General Attributes</h3>
+
+<p>The commands below all adjust attributes of the installer. These attributes control how the installer looks and functions, including which pages are present in the installer, as what text is displayed in each part of each page, how the installer is named, what icon the installer uses, the default installation directory, what file it writes out, and more. Note that these attributes can be set anywhere in the file except in a Section or Function.</p>
+
+<p><b><u>Defaults are bold and underlined</u></b></p>
+<a name="4.8.1.1"></a><h4>4.8.1.1 AddBrandingImage</h4>
+<pre>(left|right|top|bottom) (width|height) [padding]
+</pre>
+
+<p>Adds a branding image on the top, bottom, left, or right of the installer. Its size will be set according to the width/height specified, the installer width/height and the installer font. The final size will not always be what you requested; have a look at the output of the command for the actual size. Because this depends on the installer font, you should use SetFont before AddBrandingImage. The default padding value is 2.</p>
+
+<p>AddBrandingImage only adds a placeholder for an image. To set the image itself on runtime, use <a href="Chapter4.html#4.9.14.12">SetBrandingImage</a>.</p>
+<pre>AddBrandingImage left 100
+AddBrandingImage right 50
+AddBrandingImage top 20
+AddBrandingImage bottom 35
+AddBrandingImage left 100 5
+</pre>
+<a name="4.8.1.2"></a><h4>4.8.1.2 AllowRootDirInstall</h4>
+<pre>true|<b>false</b>
+</pre>
+
+<p>Controls whether or not installs are enabled to the root directory of a drive, or directly into a network share. Set to 'true' to change the safe behavior, which prevents users from selecting C:\ or \\Server\Share as an install (and later on, uninstall) directory. For additional directory selection page customizability, see <a href="Chapter4.html#4.7.2.1.10">.onVerifyInstDir</a>.</p>
+<a name="4.8.1.3"></a><h4>4.8.1.3 AutoCloseWindow</h4>
+<pre>true|<b>false</b>
+</pre>
+
+<p>Sets whether or not the install window automatically closes when completed. This is overrideable from a section using <a href="Chapter4.html#4.9.14.11">SetAutoClose</a>.</p>
+<a name="4.8.1.4"></a><h4>4.8.1.4 BGFont</h4>
+<pre>[font_face [height [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]]]
+</pre>
+
+<p>Specifies the font used to show the text on the background gradient. To set the color use <a href="Chapter4.html#4.8.1.5">BGGradient</a>. If no parameters are specified, the default font will be used. The default font is bold and italic Times New Roman.</p>
+<a name="4.8.1.5"></a><h4>4.8.1.5 BGGradient</h4>
+<pre>[<b>off</b>|(topc botc [textcolor|notext])]
+</pre>
+
+<p>Specifies whether or not to use a gradient background window. If 'off', the installer will not show a background window, if no parameters are specified, the default black to blue gradient is used, and otherwise the top_color or bottom_color are used to make a gradient. Top_color and bottom_color are specified using the form RRGGBB (in hexadecimal, as in HTML, only minus the leading '#', since # can be used for comments). 'textcolor' can be specified as well, or 'notext' can be specified to turn the big background text off.</p>
+<a name="4.8.1.6"></a><h4>4.8.1.6 BrandingText</h4>
+<pre>/TRIM(LEFT|RIGHT|CENTER) text
+</pre>
+
+<p>Sets the text that is shown (by default it is 'Nullsoft Install System vX.XX') at the bottom of the install window. Setting this to an empty string (&quot;&quot;) uses the default; to set the string to blank, use &quot; &quot; (a space). If it doesn't matter to you, leave it the default so that everybody can know why the installer didn't suck. heh. Use /TRIMLEFT, /TRIMRIGHT or /TRIMCENTER to trim down the size of the control to the size of the string.</p>
+
+<p>Accepts variables. If variables are used, they must be initialized on <a href="Chapter4.html#4.7.2.1.2">.onInit</a>.</p>
+<a name="4.8.1.7"></a><h4>4.8.1.7 Caption</h4>
+<pre>caption
+</pre>
+
+<p>When used outside a <a href="Chapter4.html#4.5.6">PageEx</a> block: Sets the text for the titlebar of the installer. the By default, it is 'Name Setup', where Name is specified with the <a href="Chapter4.html#4.8.1.30">Name</a> instruction. You can, however, override it with 'MyApp Installer' or whatever. If you specify an empty string (&quot;&quot;), the default will be used (you can however specify &quot; &quot; to achieve a blank string).</p>
+
+<p>When used inside a <a href="Chapter4.html#4.5.6">PageEx</a> block: Sets the subcaption of the current page.</p>
+
+<p>Accepts variables. If variables are used, they must be initialized on <a href="Chapter4.html#4.7.2.1.2">.onInit</a>.</p>
+<a name="4.8.1.8"></a><h4>4.8.1.8 ChangeUI</h4>
+<pre>dialog ui_file.exe
+</pre>
+
+<p>Replaces dialog (<em>IDD_LICENSE</em>, <em>IDD_DIR</em>, <em>IDD_SELCOM</em>, <em>IDD_INST</em>, <em>IDD_INSTFILES</em>, <em>IDD_UNINST</em> or <em>IDD_VERIFY</em>) by a dialog with the same resource ID in ui_file.exe. You can also specify 'all' as the dialog if you wish to replace all 7 of the dialogs at once from the same UI file. For some example UIs look at Contrib\UIs under your NSIS directory.</p>
+<ul>
+<li><em>IDD_LICENSE</em> must contain <em>IDC_EDIT1</em> (RICHEDIT control).</li><li><em>IDD_DIR</em> must contain <em>IDC_DIR</em> (edit box), <em>IDC_BROWSE</em> (button) and <em>IDC_CHECK1</em> (checkbox).</li><li><em>IDD_SELCOM</em> must contain <em>IDC_TREE1</em> (SysTreeView32 control), and <em>IDC_COMBO1</em> (combo box).</li><li><em>IDD_INST</em> must contain <em>IDC_BACK</em> (button), <em>IDC_CHILDRECT</em> (static control the size of all other dialogs), <em>IDC_VERSTR</em> (static), <em>IDOK</em> (button), and <em>IDCANCEL</em> (button). If an image control (static with <em>SS_BITMAP</em> style) will be found in this dialog it will be used as the default for <a href="Chapter4.html#4.9.14.12">SetBrandingImage</a>.</li><li><em>IDD_INSTFILES</em> must contain <em>IDC_LIST1</em> (SysListView32 control), <em>IDC_PROGRESS</em> (msctls_progress32 control), and <em>IDC_SHOWDETAILS</em> (button).</li><li><em>IDD_UNINST</em> must contain <em>IDC_EDIT1</em> (edit box).</li><li><em>IDD_VERIFY</em> must contain <em>IDC_STR</em> (static).</li></ul>
+<pre>ChangeUI all &quot;${NSISDIR}\Contrib\UIs\sdbarker_tiny.exe&quot;
+</pre>
+<a name="4.8.1.9"></a><h4>4.8.1.9 CheckBitmap</h4>
+<pre>bitmap.bmp
+</pre>
+
+<p>Specifies the bitmap with the images used for the checks of the component-selection page treeview.</p>
+
+<p>This bitmap should have a size of 96x16 pixels, no more than 8bpp (256 colors) and contain six 16x16 images for the different states (in order: selection mask, not checked, checked, greyed out, unchecked &amp; read-only, checked &amp; read-only). Use magenta as mask color (this area will be transparent).</p>
+<a name="4.8.1.10"></a><h4>4.8.1.10 CompletedText</h4>
+<pre>text
+</pre>
+
+<p>Replaces the default text (&quot;Completed&quot;) that is printed at the end of the install if parameter is specified. Otherwise, the default is used.</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the message is printed.</p>
+<a name="4.8.1.11"></a><h4>4.8.1.11 ComponentText</h4>
+<pre>[text [subtext] [subtext2]]
+</pre>
+
+<p>Used to change the default text on the component page.</p>
+
+<p>text: Text above the controls, to the right of the installation icon.</p>
+
+<p>subtext: Text next to the installation type selection.</p>
+
+<p>subtext2: Text to the left of the components list and below the installation type.</p>
+
+<p>The default string will be used if a string is empty (&quot;&quot;).</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the components page is created.</p>
+<a name="4.8.1.12"></a><h4>4.8.1.12 CRCCheck</h4>
+<pre><b>on</b>|off|force
+</pre>
+
+<p>Specifies whether or not the installer will perform a CRC on itself before allowing an install. Note that if the user uses /NCRC on the command line when executing the installer, and you didn't specify 'force', the CRC will not occur, and the user will be allowed to install a (potentially) corrupted installer.</p>
+<a name="4.8.1.13"></a><h4>4.8.1.13 DetailsButtonText</h4>
+<pre>show details text
+</pre>
+
+<p>Replaces the default details button text of &quot;Show details&quot;, if parameter is specified (otherwise the default is used).</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the install log (instfiles) page is created.</p>
+<a name="4.8.1.14"></a><h4>4.8.1.14 DirText</h4>
+<pre>[text] [subtext] [browse_button_text] [browse_dlg_text]
+</pre>
+
+<p>Used to change the default text on the directory page.</p>
+
+<p>text: Text above the controls, to the right of the installation icon.</p>
+
+<p>subtext: Text on the directory selection frame.</p>
+
+<p>browse_button_text: Text on the Browse button.</p>
+
+<p>browse_dlg_text: Text on the &quot;Browse For Folder&quot; dialog, appears after clicking on &quot;Browse&quot; button.</p>
+
+<p>The default string will be used if a string is empty (&quot;&quot;).</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the directory page is created.</p>
+<a name="4.8.1.15"></a><h4>4.8.1.15 DirVar</h4>
+<pre>user_var(dir input/output)
+</pre>
+
+<p>Specifies which variable is to be used to contain the directory selected. This variable should contain the default value too. This allows to easily create two different directory pages that will not require you to move values in and out of $INSTDIR. The default variable is $INSTDIR. This can only be used in <a href="Chapter4.html#4.5.6">PageEx</a> and for directory and uninstConfirm pages.</p>
+<pre>Var ANOTHER_DIR
+PageEx directory
+  DirVar $ANOTHER_DIR
+PageExEnd
+
+Section
+  SetOutPath $INSTDIR
+  File &quot;a file.dat&quot;
+  SetOutPath $ANOTHER_DIR
+  File &quot;another file.dat&quot;
+SectionEnd
+</pre>
+<a name="4.8.1.16"></a><h4>4.8.1.16 DirVerify</h4>
+<pre><b>auto</b>|leave
+</pre>
+
+<p>If `DirVerify leave' is used, the Next button will not be disabled if the installation directory is not valid or there is not enough space. A flag that you can read in the leave function using <a href="Chapter4.html#4.9.7.2">GetInstDirError</a> will be set instead.</p>
+<pre>PageEx directory
+  DirVerify leave
+  PageCallbacks &quot;&quot; &quot;&quot; dirLeave
+PageExEnd
+</pre>
+<a name="4.8.1.17"></a><h4>4.8.1.17 FileErrorText</h4>
+<pre>file error text
+</pre>
+
+<p>Replaces the default text that comes up when a file cannot be written to. This string can contain a reference to $0, which is the filename ($0 is temporarily changed to this value). Example: &quot;Can not write to file $\r$\n$0$\r$\ngood luck, bitch.&quot;.</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before <a href="Chapter4.html#4.9.1.5">File</a> is used.</p>
+<a name="4.8.1.18"></a><h4>4.8.1.18 Icon</h4>
+<pre>[path\]icon.ico
+</pre>
+
+<p>Sets the icon of the installer. Every icon in the icon file will be included in the installer. Use <a href="Chapter4.html#4.8.1.42">UninstallIcon</a> to set the uninstaller icon.</p>
+<a name="4.8.1.19"></a><h4>4.8.1.19 InstallButtonText</h4>
+<pre>install button text
+</pre>
+
+<p>If parameter is specified, overrides the default install button text (of &quot;Install&quot;) with the specified text.</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the install button shows.</p>
+<a name="4.8.1.20"></a><h4>4.8.1.20 InstallColors</h4>
+<pre>/windows | (foreground_color background_color)
+</pre>
+
+<p>Sets the colors to use for the install info screen (the default is 00FF00 000000. Use the form RRGGBB (in hexadecimal, as in HTML, only minus the leading '#', since # can be used for comments). Note that if &quot;/windows&quot; is specified as the only parameter, the default windows colors will be used.</p>
+<a name="4.8.1.21"></a><h4>4.8.1.21 InstallDir</h4>
+<pre>definstdir
+</pre>
+
+<p>Sets the default installation directory. See the <a href="Chapter4.html#4.2">variables section</a> for variables that can be used to make this string (especially $PROGRAMFILES). Note that the part of this string following the last \ will be used if the user selects 'browse', and may be appended back on to the string at install time (to disable this, end the directory with a \ (which will require the entire parameter to be enclosed with quotes). If this doesn't make any sense, play around with the browse button a bit.</p>
+<a name="4.8.1.22"></a><h4>4.8.1.22 InstallDirRegKey</h4>
+<pre>root_key subkey key_name
+</pre>
+
+<p>This attribute tells the installer to check a string in the registry, and use it for the install dir if that string is valid. If this attribute is present, it will override the InstallDir attribute if the registry key is valid, otherwise it will fall back to the InstallDir default. When querying the registry, this command will automatically remove any quotes. If the string ends in &quot;.exe&quot;, it will automatically remove the filename component of the string (i.e. if the string is &quot;C:\program files\poop\poop.exe&quot;, it will know to use &quot;C:\program files\poop&quot;). For more advanced install directory configuration, set $INSTDIR in .onInit.</p>
+
+<p>Language strings and variables cannot be used with InstallDirRegKey.</p>
+<pre>InstallDirRegKey HKLM Software\NSIS &quot;&quot;
+InstallDirRegKey HKLM Software\ACME\Thingy InstallLocation
+</pre>
+<a name="4.8.1.23"></a><h4>4.8.1.23 InstProgressFlags</h4>
+<pre>[flag [...]]
+</pre>
+
+<p>Valid values for flag are &quot;smooth&quot; (smooth the progress bar) or &quot;colored&quot; (color the progress bar with the colors set by InstallColors. Examples: &quot;InstProgressFlags&quot; (default old-school windows look), &quot;InstProgressFlags smooth&quot; (new smooth look), &quot;InstProgressFlags smooth colored&quot; (colored smooth look whee). Note: neither &quot;smooth&quot; or &quot;colored&quot; work with <a href="Chapter4.html#4.8.1.46">XPStyle</a> on when the installer runs on Windows XP with a modern theme.</p>
+<a name="4.8.1.24"></a><h4>4.8.1.24 InstType</h4>
+<pre>install_type_name | /NOCUSTOM | /CUSTOMSTRING=str | /COMPONENTSONLYONCUSTOM
+</pre>
+
+<p>Adds an install type to the install type list, or disables the custom install type. There can be as many as 32 types, each one specifying the name of the install type. If the name is prefixed with 'un.' it is an uninstaller install type. The name can contain variables which will be processed at runtime before the components page shows. Another way of changing the InstType name during runtime is the <a href="Chapter4.html#4.9.13.11">InstTypeSetText</a> command. The difference is that with <a href="Chapter4.html#4.9.13.11">InstTypeSetText</a> you are saving your precious user variables. The first type is the default (generally 'Typical'). If the /NOCUSTOM switch is specified, then the &quot;custom&quot; install type is disabled, and the user has to choose one of the pre-defined install types. Alternatively, if the /CUSTOMSTRING switch is specified, the parameter will override the &quot;Custom&quot; install type text. Alternatively, if the /COMPONENTSONLYONCUSTOM flag is specified, the component list will only be shown if the &quot;Custom&quot; install type is selected.</p>
+
+<p>Accepts variables for type names. If variables are used, they must be initialized before the components page is created.</p>
+<a name="4.8.1.25"></a><h4>4.8.1.25 LicenseBkColor</h4>
+<pre>color | <b>/gray</b> | /windows
+</pre>
+
+<p>Sets the background color of the license data. Color is specified using the form RRGGBB (in hexadecimal, as in HTML, only minus the leading '#', since # can be used for comments). Default is '/gray'. You can also use the Windows OS defined color by using '/windows'.</p>
+<a name="4.8.1.26"></a><h4>4.8.1.26 LicenseData</h4>
+<pre>licdata.(txt|rtf)
+</pre>
+
+<p>Specifies a text file or a RTF file to use for the license that the user can read. Omit this to not have a license displayed. Note that the file must be in the evil DOS text format (\r\n, yeah!). To define a multilingual license data use <a href="Chapter4.html#4.9.15.3">LicenseLangString</a>.</p>
+
+<p>If you make your license file a RTF file it is recommended you edit it with WordPad and not MS Word. Using WordPad will result in a much smaller file.</p>
+
+<p>Use <a href="Chapter4.html#4.9.15.3">LicenseLangString</a> to show a different license for every language.</p>
+<a name="4.8.1.27"></a><h4>4.8.1.27 LicenseForceSelection</h4>
+<pre>(checkbox [accept_text] | radiobuttons [accept_text] [decline_text] | <b>off</b>)
+</pre>
+
+<p>Specifies if the displayed license must be accept explicit or not. This can be done either by a checkbox or by radiobuttons. By default the &quot;next button&quot; is disabled and will only be enabled if the checkbox is enabled or the right radio button is selected. If off is specified the &quot;next button&quot; is enabled by default.</p>
+<pre>LicenseForceSelection checkbox
+LicenseForceSelection checkbox &quot;i accept&quot;
+LicenseForceSelection radiobuttons
+LicenseForceSelection radiobuttons &quot;i accept&quot;
+LicenseForceSelection radiobuttons &quot;i accept&quot; &quot;i decline&quot;
+LicenseForceSelection radiobuttons &quot;&quot; &quot;i decline&quot;
+LicenseForceSelection off
+</pre>
+<a name="4.8.1.28"></a><h4>4.8.1.28 LicenseText</h4>
+<pre>[text [button_text]]
+</pre>
+
+<p>Used to change the default text on the license page.</p>
+
+<p>text: Text above the controls, to the right of the installation icon.</p>
+
+<p>button_text: Text on the &quot;I Agree&quot; button.</p>
+
+<p>The default string will be used if a string is empty (&quot;&quot;).</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the license page is created.</p>
+<a name="4.8.1.29"></a><h4>4.8.1.29 MiscButtonText</h4>
+<pre>[back button text [next button text] [cancel button text] [close button text]]
+</pre>
+
+<p>Replaces the default text strings for the four buttons (&lt; Back, Next &gt;, Cancel and Close). If parameters are omitted, the defaults are used.</p>
+
+<p>Accepts variables. If variables are used, they must be initialized in <a href="Chapter4.html#4.7.2.1.2">.onInit</a>.</p>
+<a name="4.8.1.30"></a><h4>4.8.1.30 Name</h4>
+<pre>name [name_doubled_ampersands]
+</pre>
+
+<p>Sets the name of the installer. The name is usually simply the product name such as 'MyApp' or 'CrapSoft MyApp'. If you have one or more ampersands (&amp;) in the name, set the second parameter to the same name, only with doubled ampersands. For example, if your product's name is &quot;Foo &amp; Bar&quot;, use:</p>
+<pre> Name &quot;Foo &amp; Bar&quot; &quot;Foo &amp;&amp; Bar&quot;
+</pre>
+
+<p>If you have ampersands in the name and use a <a href="Chapter4.html#4.9.15.2">LangString</a> for the name, you will have to create another one with doubled ampersands to use as the second parameter.</p>
+
+<p>Accepts variables. If variables are used, they must be initialized in <a href="Chapter4.html#4.7.2.1.2">.onInit</a>.</p>
+<a name="4.8.1.31"></a><h4>4.8.1.31 OutFile</h4>
+<pre>[path\]install.exe
+</pre>
+
+<p>Specifies the output file that the MakeNSIS should write the installer to. This is just the file that MakeNSIS writes, it doesn't affect the contents of the installer.</p>
+<a name="4.8.1.32"></a><h4>4.8.1.32 RequestExecutionLevel</h4>
+<pre><b>none</b>|user|highest|admin
+</pre>
+
+<p>Specifies the requested execution level for Windows Vista. The value is embedded in the installer and uninstaller's XML manifest and tells Vista, and probably future versions of Windows, what privileges level the installer requires. <em>user</em> requests the a normal user's level with no administrative privileges. <em>highest</em> will request the highest execution level available for the current user and will cause Windows to prompt the user to verify privilege escalation. The prompt might request for the user's password. <em>admin</em> requests administrator level and will cause Windows to prompt the user as well. Specifying <em>none</em>, which is also the default, will keep the manifest empty and let Windows decide which execution level is required. Windows Vista automatically identifies NSIS installers and decides administrator privileges are required. Because of this, <em>none</em> and <em>admin</em> have virtually the same effect.</p>
+
+<p>It's recommended, at least by Microsoft, that every application will be marked with the required execution level. Unmarked installers are subject to compatibility mode. Workarounds of this mode include automatically moving any shortcuts created in the user's start menu to all users' start menu. Installers that need not install anything into system folders or write to the local machine registry (HKLM) should specify <em>user</em> execution level.</p>
+
+<p>More information about this topic can be found at MSDN. Keywords include &quot;UAC&quot;, &quot;requested execution level&quot;, &quot;vista manifest&quot; and &quot;vista security&quot;.</p>
+<a name="4.8.1.33"></a><h4>4.8.1.33 SetFont</h4>
+<pre>[/LANG=lang_id] font_face_name font_size
+</pre>
+
+<p>Sets the installer font. Please remember that the font you choose must be present on the user's machine as well. Don't use rare fonts that only you have.</p>
+
+<p>Use the /LANG switch if you wish to set a different font for each language. For example:</p>
+<pre> SetFont /LANG=${LANG_ENGLISH} &quot;English Font&quot; 9
+ SetFont /LANG=${LANG_FRENCH} &quot;French Font&quot; 10
+</pre>
+
+<p>There are two <a href="Chapter4.html#4.9.15.2">LangString</a>s named ^Font and ^FontSize which contain the font and font size for every language.</p>
+<a name="4.8.1.34"></a><h4>4.8.1.34 ShowInstDetails</h4>
+<pre><b>hide</b>|show|nevershow
+</pre>
+
+<p>Sets whether or not the details of the install are shown. Can be 'hide' to hide the details by default, allowing the user to view them, or 'show' to show them by default, or 'nevershow', to prevent the user from ever seeing them. Note that sections can override this using <a href="Chapter4.html#4.9.14.13">SetDetailsView</a>.</p>
+<a name="4.8.1.35"></a><h4>4.8.1.35 ShowUninstDetails</h4>
+<pre><b>hide</b>|show|nevershow
+</pre>
+
+<p>Sets whether or not the details of the uninstall are shown. Can be 'hide' to hide the details by default, allowing the user to view them, or 'show' to show them by default, or 'nevershow', to prevent the user from ever seeing them. Note that sections can override this using <a href="Chapter4.html#4.9.14.13">SetDetailsView</a>.</p>
+<a name="4.8.1.36"></a><h4>4.8.1.36 SilentInstall</h4>
+<pre><b>normal</b>|silent|silentlog
+</pre>
+
+<p>Specifies whether or not the installer should be silent. If it is 'silent' or 'silentlog', all sections that have the SF_SELECTED flag are installed quietly (you can set this flag using <a href="Chapter4.html#4.9.13.1">SectionSetFlags</a>), with no screen output from the installer itself (the script can still display whatever it wants, use <a href="Chapter4.html#4.9.4.15">MessageBox</a>'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the installer with /S (case sensitive) on the command line, it will behave as if SilentInstall 'silent' was used. Note: see also <a href="Chapter4.html#4.9.12.1">LogSet</a>.</p>
+
+<p>See <a href="Chapter4.html#4.12">section 4.12</a> for more information.</p>
+<a name="4.8.1.37"></a><h4>4.8.1.37 SilentUnInstall</h4>
+<pre><b>normal</b>|silent
+</pre>
+
+<p>Specifies whether or not the uninstaller should be silent. If it is 'silent' or 'silentlog', the uninstall section will run quietly, with no screen output from the uninstaller itself (the script can still display whatever it wants, use <a href="Chapter4.html#4.9.4.15">MessageBox</a>'s /SD to specify a default for silent installers). Note that if this is set to 'normal' and the user runs the uninstaller with /S on the command line, it will behave as if SilentUnInstall 'silent' was used. Note: see also <a href="Chapter4.html#4.9.12.1">LogSet</a>.</p>
+
+<p>See <a href="Chapter4.html#4.12">section 4.12</a> for more information.</p>
+<a name="4.8.1.38"></a><h4>4.8.1.38 SpaceTexts</h4>
+<pre>[req text [avail text]]
+</pre>
+
+<p>If parameters are specified, overrides the space required and space available text (&quot;Space required: &quot; and &quot;Space available: &quot; by default). If 'none' is specified as the required text no space texts will be shown.</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the components page is created.</p>
+<a name="4.8.1.39"></a><h4>4.8.1.39 SubCaption</h4>
+<pre>[page_number subcaption]
+</pre>
+
+<p>Overrides the subcaptions for each of the installer pages (0=&quot;: License Agreement&quot;,1=&quot;: Installation Options&quot;,2=&quot;: Installation Directory&quot;, 3=&quot;: Installing Files&quot;, 4=&quot;: Completed&quot;). If you specify an empty string (&quot;&quot;), the default will be used (you can however specify &quot; &quot; to achieve a blank string).</p>
+
+<p>You can also set a subcaption (or override the default) using <a href="Chapter4.html#4.8.1.7">Caption</a> inside a <a href="Chapter4.html#4.5.6">PageEx</a> block.</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the relevant page is created.</p>
+<a name="4.8.1.40"></a><h4>4.8.1.40 UninstallButtonText</h4>
+<pre>text
+</pre>
+
+<p>Changes the text of the button that by default says &quot;Uninstall&quot; in the uninstaller. If no parameter is specified, the default text is used. See also <a href="Chapter4.html#4.9.6.1">WriteUninstaller</a> (replaces UninstallEXEName).</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the uninstall button shows.</p>
+<a name="4.8.1.41"></a><h4>4.8.1.41 UninstallCaption</h4>
+<pre>caption
+</pre>
+
+<p>Sets what the titlebars of the uninstaller will display. By default, it is 'Name Uninstall', where Name is specified with the Name command. You can, however, override it with 'MyApp uninstaller' or whatever. If you specify an empty string (&quot;&quot;), the default will be used (you can however specify &quot; &quot; to achieve a blank string).</p>
+
+<p>Accepts variables. If variables are used, they must be initialized in <a href="Chapter4.html#4.7.2.2.2">un.onInit</a>.</p>
+<a name="4.8.1.42"></a><h4>4.8.1.42 UninstallIcon</h4>
+<pre>[path\]icon.ico
+</pre>
+
+<p>Sets the icon of the uninstaller.</p>
+<a name="4.8.1.43"></a><h4>4.8.1.43 UninstallSubCaption</h4>
+<pre>page_number subcaption
+</pre>
+
+<p>Sets the default subcaptions for the uninstaller pages (0=&quot;: Confirmation&quot;,1=&quot;: Uninstalling Files&quot;,2=&quot;: Completed&quot;). If you specify an empty string (&quot;&quot;), the default will be used (you can however specify &quot; &quot; to achieve a blank string).</p>
+
+<p>You can also set a subcaption (or override the default) using <a href="Chapter4.html#4.8.1.7">Caption</a> inside a <a href="Chapter4.html#4.5.6">PageEx</a> block.</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the relevant page is created.</p>
+<a name="4.8.1.44"></a><h4>4.8.1.44 UninstallText</h4>
+<pre>text [subtext]
+</pre>
+
+<p>Specifies the texts on the uninstaller confirm page.</p>
+
+<p>text: Text above the controls</p>
+
+<p>subtext: Text next to the uninstall location</p>
+
+<p>Accepts variables. If variables are used, they must be initialized before the uninstaller confirm page is created.</p>
+<a name="4.8.1.45"></a><h4>4.8.1.45 WindowIcon</h4>
+<pre><b>on</b>|off
+</pre>
+
+<p>Sets whether or not the installer's icon is being displayed.</p>
+<a name="4.8.1.46"></a><h4>4.8.1.46 XPStyle</h4>
+<pre>on|<b>off</b>
+</pre>
+
+<p>Sets whether or not an XP manifest will be added to the installer. An XP manifest makes the installer controls use the new XP style when running on Windows XP. This affects the uninstaller too.</p>
+<a name="4.8.2"></a><h3>4.8.2 Compiler Flags</h3>
+
+<p>The following commands affect how the compiler generates code and compresses data. Unless otherwise noted, these commands are valid anywhere in the script, and effect every line below where each one is placed (until overridden by another command). They cannot be jumped over using <a href="Chapter4.html#4.9.4">flow control insutrctions</a>.</p>
+
+<p>For example, in the following script, blah.dat will never be overwritten.</p>
+<pre>${If} $0 == 0
+  SetOverwrite on
+${Else}
+  SetOverwrite off
+${EndIf}
+File blah.dat # overwrite is always off here!
+</pre>
+
+<p>Instead, the following should be used.</p>
+<pre>${If} $0 == 0
+  SetOverwrite on
+  File blah.dat
+${Else}
+  SetOverwrite off
+  File blah.dat
+${EndIf}
+</pre>
+<a name="4.8.2.1"></a><h4>4.8.2.1 AllowSkipFiles</h4>
+<pre><b>on</b>|off
+</pre>
+
+<p>This command specifies whether the user should be able to skip a file or not. A user has an option to skip a file if <a href="Chapter4.html#4.8.2.8">SetOverwrite</a> is set to on (default) and the installer fails to open a file for writing when trying to extract a file. If <em>off</em> is used the ignore button which allows the user to skip the file will not show and the user will only have an option to abort the installation (Cancel button) or retry opening the file for writing (Retry button). If <em>on</em> is used the user will have an option to skip the file (error flag will be set - see <a href="Chapter4.html#4.8.2.8">SetOverwrite</a>).</p>
+<a name="4.8.2.2"></a><h4>4.8.2.2 FileBufSize</h4>
+<pre>buffer_size_in_mb
+</pre>
+
+<p>This command sets the size of the compiler's internal file buffers. This command allows you to control the compiler's memory usage by limiting how much of a given file it will load into memory at once. Since the compiler needs both input and output, twice the memory size specified could be used at any given time for file buffers. This command does not limit the compression buffers which could take another couple of MB, neither does it limit the compiler's other internal buffers, but those shouldn't normally top 1MB anyway. Specifying a very small number could decrease performance. Specifying a very large number could exhaust system resources and force the compiler to cancel the compilation process. The default value is 32MB.</p>
+<a name="4.8.2.3"></a><h4>4.8.2.3 SetCompress</h4>
+<pre><b>auto</b>|force|off
+</pre>
+
+<p>This command sets the compress flag which is used by the installer to determine whether or not data should be compressed. Typically the SetCompress flag will affect the commands after it, and the last SetCompress command in the file also determines whether or not the install info section and uninstall data of the installer is compressed. If compressflag is 'auto', then files are compressed if the compressed size is smaller than the uncompressed size. If compressflag is set to 'force', then the compressed version is always used. If compressflag is 'off' then compression is not used (which can be faster).</p>
+
+<p>Note that this option has no effect when solid compression is used.</p>
+<a name="4.8.2.4"></a><h4>4.8.2.4 SetCompressor</h4>
+<pre>[/SOLID] [/FINAL] <b>zlib</b>|bzip2|lzma
+</pre>
+
+<p>This command sets the compression algorithm used to compress files/data in the installer. It can only be used outside of sections and functions and before any data is compressed. Different compression methods can not be used for different files in the same installer. It is recommended to use it on the very top of the script to avoid compilation errors.</p>
+
+<p>Three compression methods are supported: ZLIB, BZIP2 and LZMA.</p>
+
+<p>ZLIB (the default) uses the deflate algorithm, it is a quick and simple method. With the default compression level it uses about 300 KB of memory.</p>
+
+<p>BZIP2 usually gives better compression ratios than ZLIB, but it is a bit slower and uses more memory. With the default compression level it uses about 4 MB of memory.</p>
+
+<p>LZMA is a new compression method that gives very good compression ratios. The decompression speed is high (10-20 MB/s on a 2 GHz CPU), the compression speed is lower. The memory size that will be used for decompression is the dictionary size plus a few KBs, the default is 8 MB.</p>
+
+<p>If <em>/FINAL</em> is used, subsequent calls to SetCompressor will be ignored.</p>
+
+<p>If <em>/SOLID</em> is used, all of the installer data is compressed in one block. This results in greater compression ratios.</p>
+<a name="4.8.2.5"></a><h4>4.8.2.5 SetCompressorDictSize</h4>
+<pre>dict_size_mb
+</pre>
+
+<p>Sets the dictionary size in megabytes (MB) used by the LZMA compressor (default is 8 MB).</p>
+<a name="4.8.2.6"></a><h4>4.8.2.6 SetDatablockOptimize</h4>
+<pre><b>on</b>|off
+</pre>
+
+<p>This command tells the compiler whether or not to do datablock optimizations. Datablock optimizations have the compiler check to see if any data being added to the data block is already in the data block, and if so, it is simply referenced as opposed to added (can save a little bit of size). It is highly recommended to leave this option on.</p>
+<a name="4.8.2.7"></a><h4>4.8.2.7 SetDateSave</h4>
+<pre><b>on</b>|off
+</pre>
+
+<p>This command sets the file date/time saving flag which is used by the File command to determine whether or not to save the last write date and time of the file, so that it can be restored on installation. Valid flags are 'on' and 'off'. 'on' is the default.</p>
+<a name="4.8.2.8"></a><h4>4.8.2.8 SetOverwrite</h4>
+<pre><b>on</b>|off|try|ifnewer|ifdiff|lastused
+</pre>
+
+<p>This command sets the overwrite flag which is used by the <a href="Chapter4.html#4.9.1.5">File</a> command to determine whether or not the file should overwrite any existing files that are present. If overwriteflag is 'on', files are overwritten (this is the default). If overwriteflag is 'off', files that are already present are not overwritten. If overwriteflag is 'try', files are overwritten if possible (meaning that if the file is not able to be written to, it is skipped without any user interaction). If overwriteflag is 'ifnewer', then files are only overwritten if the existing file is older than the new file. If overwriteflag is 'ifdiff', then files are only overwritten if the existing file is older or newer than the new file. Note that when in 'ifnewer' or 'ifdiff' mode, the destination file's date is set, regardless of what SetDateSave is set to.</p>
+<pre>SetOverwrite off
+File program.cfg # config file we don't want to overwrite
+SetOverwrite on
+</pre>
+<a name="4.8.3"></a><h3>4.8.3 Version Information</h3>
+<a name="4.8.3.1"></a><h4>4.8.3.1 VIAddVersionKey</h4>
+<pre> [/LANG=lang_id] keyname value
+</pre>
+
+<p>Adds a field in the Version Tab of the File Properties. This can either be a field provided by the system or a user defined field. The following fields are provided by the System:</p>
+<ul>
+<li>ProductName</li><li>Comments</li><li>CompanyName</li><li>LegalCopyright</li><li>FileDescription</li><li>FileVersion</li><li>ProductVersion</li><li>InternalName</li><li>LegalTrademarks</li><li>OriginalFilename</li><li>PrivateBuild</li><li>SpecialBuild</li></ul>
+
+<p>The name of these fields are translated on the target system, whereas user defined fields remain untranslated.</p>
+<pre>VIAddVersionKey /LANG=${LANG_ENGLISH} &quot;ProductName&quot; &quot;Test Application&quot;
+VIAddVersionKey /LANG=${LANG_ENGLISH} &quot;Comments&quot; &quot;A test comment&quot;
+VIAddVersionKey /LANG=${LANG_ENGLISH} &quot;CompanyName&quot; &quot;Fake company&quot;
+VIAddVersionKey /LANG=${LANG_ENGLISH} &quot;LegalTrademarks&quot; &quot;Test Application is a trademark of Fake company&quot;
+VIAddVersionKey /LANG=${LANG_ENGLISH} &quot;LegalCopyright&quot; &quot;&#0169; Fake company&quot;
+VIAddVersionKey /LANG=${LANG_ENGLISH} &quot;FileDescription&quot; &quot;Test Application&quot;
+VIAddVersionKey /LANG=${LANG_ENGLISH} &quot;FileVersion&quot; &quot;1.2.3&quot;
+</pre>
+<a name="4.8.3.2"></a><h4>4.8.3.2 VIProductVersion</h4>
+<pre>[version_string_X.X.X.X]
+</pre>
+
+<p>Adds the Product Version on top of the Version Tab in the Properties of the file.</p>
+<pre>VIProductVersion &quot;1.2.3.4&quot;
+</pre>
+<a name="4.9"></a><h2>4.9 Instructions</h2>
+<a name="4.9.1"></a><h3>4.9.1 Basic Instructions</h3>
+
+<p>The instructions that NSIS uses for scripting are sort of a cross between PHP and assembly. There are no real high level language constructs, but the instructions themselves are (for the most part) high level, and you have handy string capability (i.e. you don't have to worry about concatenating strings, etc). You essentially have 25 registers (20 general purpose, 5 special purpose), and a stack.</p>
+<a name="4.9.1.1"></a><h4>4.9.1.1 Delete</h4>
+<pre>[/REBOOTOK] file
+</pre>
+
+<p>Delete file (which can be a file or wildcard, but should be specified with a full path) from the target system. If /REBOOTOK is specified and the file cannot be deleted then the file is deleted when the system reboots -- if the file will be deleted on a reboot, the reboot flag will be set. The error flag is set if files are found and cannot be deleted. The error flag is not set from trying to delete a file that does not exist.</p>
+<pre>Delete $INSTDIR\somefile.dat
+</pre>
+<a name="4.9.1.2"></a><h4>4.9.1.2 Exec</h4>
+<pre>command
+</pre>
+
+<p>Execute the specified program and continue immediately. Note that the file specified must exist on the target system, not the compiling system. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched. Note, if the command could have spaces, you should put it in quotes to delimit it from parameters. e.g.: Exec '&quot;$INSTDIR\command.exe&quot; parameters'. If you don't put it in quotes it will <em>not</em> work on Windows 9x with or without parameters.</p>
+<pre>Exec '&quot;$INSTDIR\someprogram.exe&quot;'
+Exec '&quot;$INSTDIR\someprogram.exe&quot; some parameters'
+</pre>
+<a name="4.9.1.3"></a><h4>4.9.1.3 ExecShell</h4>
+<pre>action command [parameters] [SW_SHOWNORMAL | SW_SHOWMAXIMIZED | SW_SHOWMINIMIZED | SW_HIDE]
+</pre>
+
+<p>Execute the specified program using ShellExecute. Note that action is usually &quot;open&quot;, &quot;print&quot;, etc, but can be an empty string to use the default action. Parameters and the show type are optional. $OUTDIR is used for the working directory. The error flag is set if the process could not be launched.</p>
+<pre>ExecShell &quot;open&quot; &quot;http://nsis.sf.net/&quot;
+ExecShell &quot;open&quot; &quot;$INSTDIR\readme.txt&quot;
+ExecShell &quot;print&quot; &quot;$INSTDIR\readme.txt&quot;
+</pre>
+<a name="4.9.1.4"></a><h4>4.9.1.4 ExecWait</h4>
+<pre>command [user_var(exit code)]
+</pre>
+
+<p>Execute the specified program and wait for the executed process to quit. See Exec for more information. If no output variable is specified ExecWait sets the error flag if the program executed returns a nonzero error code, or if there is an error. If an output variable is specified, ExecWait sets the variable with the exit code (and only sets the error flag if an error occurs; if an error occurs the contents of the user variable are undefined). Note, if the command could have spaces, you should put it in quotes to delimit it from parameters. e.g.: ExecWait '&quot;$INSTDIR\command.exe&quot; parameters'. If you don't put it in quotes it will <em>not</em> work on Windows 9x with or without parameters.</p>
+<pre>ExecWait '&quot;$INSTDIR\someprogram.exe&quot;'
+ExecWait '&quot;$INSTDIR\someprogram.exe&quot;' $0
+DetailPrint &quot;some program returned $0&quot;
+</pre>
+<a name="4.9.1.5"></a><h4>4.9.1.5 File</h4>
+<pre>[/nonfatal] [/a] ([/r] [/x file|wildcard [...]] (file|wildcard) [...] | /oname=file.dat infile.dat)
+</pre>
+
+<p>Adds file(s) to be extracted to the current output path ($OUTDIR).</p>
+<ul>
+<li>Note that the output file name is $OUTDIR\filename_portion_of_file.</li><li>Use /oname=X switch to change the output name. X may contain variables and can be a fully qualified path or a relative path in which case it will be appended to $OUTDIR set by <a href="Chapter4.html#4.9.1.9">SetOutPath</a>. When using this switch, only one file can be specified. If the output name contains spaces, quote the entire parameter, including /oname, as shown in the examples below.</li><li>Wildcards are supported.</li><li>If the /r switch is used, matching files and directories are recursively searched for in subdirectories. If just one path segment is specified (e.g. <code>File /r something</code>), the current directory will be recursively searched. If more than one segment is specified (e.g. <code>File /r something\*.*</code>), the last path segment will be used as the matching condition and the rest for the directory to search recursively. If a directory name matches, all of its contents is added recursively. Directory structure is preserved.</li><li>Use the /x switch to exclude files or directories.</li><li>If the /a switch is used, the attributes of the file(s) added will be preserved.</li><li>The File command sets the error flag if overwrite mode is set to 'try' and the file could not be overwritten, or if the overwrite mode is set to 'on' and the file could not be overwritten and the user selects ignore.</li><li>If the /nonfatal switch is used and no files are found, a warning will be issued instead of an error.</li></ul>
+<pre>File something.exe
+File /a something.exe
+File *.exe
+File /r *.dat
+File /r data
+File /oname=temp.dat somefile.ext
+File /oname=$TEMP\temp.dat somefile.ext
+File &quot;/oname=$TEMP\name with spaces.dat&quot; somefile.ext
+File /nonfatal &quot;a file that might not exist&quot;
+File /r /x CVS myproject\*.*
+File /r /x *.res /x *.obj /x *.pch source\*.*
+</pre>
+
+<p><b>Note:</b> when using the <em>/r</em> switch, both matching directories and files will be searched. This is always done with or without the use of wildcards, even if the given path perfectly matches one directory. That means, the following directory structure:</p>
+<pre>&lt;DIR&gt; something
+  file.dat
+  another.dat
+&lt;DIR&gt; dir
+  something
+  &lt;DIR&gt; dir2
+    file2.dat
+&lt;DIR&gt; another
+  &lt;DIR&gt; something
+    readme.txt
+</pre>
+
+<p>with the following <em>File</em> usage:</p>
+<pre>File /r something
+</pre>
+
+<p>will match the directory named <em>something</em> on the root directory, the file named <em>something</em> in the directory named <em>dir</em> and the directory named <em>something</em> in the directory named <em>another</em>. To match only the directory named <em>something</em> on the root directory, use the following:</p>
+<pre>File /r something\*.*
+</pre>
+
+<p>When adding <em>\*.*</em>, it will be used as the matching condition and <em>something</em> will be used as the directory to search. When only <em>something</em> is specified, the current directory will be recursively searched for every and directory named <em>something</em> and <em>another\something</em> will be matched.</p>
+<a name="4.9.1.6"></a><h4>4.9.1.6 Rename</h4>
+<pre>[/REBOOTOK] source_file dest_file
+</pre>
+
+<p>Rename source_file to dest_file. You can use it to move a file from anywhere on the system to anywhere else and you can move a directory to somewhere else on the same drive. The destination file must not exist or the move will fail (unless you are using /REBOOTOK). If /REBOOTOK is specified, and the file cannot be moved (if, for example, the destination exists), then the file is moved when the system reboots. If the file will be moved on a reboot, the reboot flag will be set. The error flag is set if the file cannot be renamed (and /REBOOTOK is not used) or if the source file does not exist.</p>
+
+<p>If no absolute path is specified the current folder will be used. The current folder is the folder set using the last <a href="Chapter4.html#4.9.1.9">SetOutPath</a> instruction. If you have not used <a href="Chapter4.html#4.9.1.9">SetOutPath</a> the current folder is <a href="Chapter4.html#4.2.2">$EXEDIR</a>.</p>
+<pre>Rename $INSTDIR\file.ext $INSTDIR\file.dat
+</pre>
+<a name="4.9.1.7"></a><h4>4.9.1.7 ReserveFile</h4>
+<pre>[/nonfatal] [/r] [/x file|wildcard [...]] file [file...]
+</pre>
+
+<p>Reserves a file in the data block for later use. Files are added to the compressed data block in the order they appear in the script. Functions, however, are not necessarily called in the order they appear in the script. Therefore, if you add a file in a function called early but put the function at the end of the script, all of the files added earlier will have to be decompressed to get to the required file. This process can take a long time if there a lot of files. <a href="Chapter4.html#4.7.2.1.2">.onInit</a> is one such function. It is called at the very beginning, before anything else appears. If you put it at the very end of the script, extract some files in it and have lots of files added before it, the installer might take a very long time to load. This is where this command comes useful, allowing you to speed up the loading process by including the file at the top of the data block instead of letting NSIS seek all the way down to the bottom of the <em>compressed</em> data block.</p>
+
+<p>See <a href="Chapter4.html#4.9.1.5">File</a> for more information about the parameters.</p>
+<a name="4.9.1.8"></a><h4>4.9.1.8 RMDir</h4>
+<pre>[/r] [/REBOOTOK] directory_name
+</pre>
+
+<p>Remove the specified directory (fully qualified path with no wildcards). Without /r, the directory will only be removed if it is completely empty. If /r is specified, the directory will be removed recursively, so all directories and files in the specified directory will be removed. If /REBOOTOK is specified, any file or directory which could not have been removed during the process will be removed on reboot -- if any file or directory will be removed on a reboot, the reboot flag will be set. The error flag is set if any file or directory cannot be removed.</p>
+<pre>RMDir $INSTDIR
+RMDir $INSTDIR\data
+RMDir /r /REBOOTOK $INSTDIR
+RMDir /REBOOTOK $INSTDIR\DLLs
+</pre>
+
+<p>Note that the current working directory can not be deleted. The current working directory is set by <a href="Chapter4.html#4.9.1.9">SetOutPath</a>. For example, the following example will not delete the directory.</p>
+<pre>SetOutPath $TEMP\dir
+RMDir $TEMP\dir
+</pre>
+
+<p>The next example will succeed in deleting the directory.</p>
+<pre>SetOutPath $TEMP\dir
+SetOutPath $TEMP
+RMDir $TEMP\dir
+</pre>
+
+<p><b>Warning:</b> using <em>RMDir /r $INSTDIR</em> in the uninstaller is not safe. Though it is unlikely, the user might select to install to the Program Files folder and so this command will wipe out the entire Program Files folder, including other programs that has nothing to do with the uninstaller. The user can also put other files but the program's files and would expect them to get deleted with the program. Solutions are <a href="http://nsis.sourceforge.net/Uninstall_only_installed_files">available</a> for easily uninstalling only files which were installed by the installer.</p>
+<a name="4.9.1.9"></a><h4>4.9.1.9 SetOutPath</h4>
+<pre>outpath
+</pre>
+
+<p>Sets the output path ($OUTDIR) and creates it (recursively if necessary), if it does not exist. Must be a full pathname, usually is just $INSTDIR (you can specify $INSTDIR if you are lazy with a single &quot;-&quot;).</p>
+<pre>SetOutPath $INSTDIR
+File program.exe
+</pre>
+<a name="4.9.2"></a><h3>4.9.2 Registry, INI, File Instructions</h3>
+
+<p>In all of the below registry instructions use an empty string (just two quotes with nothing between them - &quot;&quot;) as the key name to specify the default key which is shown as (Default) in regedit.exe.</p>
+
+<p>If a full path is not specified for any of the INI handling instructions, the Windows directory will be used.</p>
+<a name="4.9.2.1"></a><h4>4.9.2.1 DeleteINISec</h4>
+<pre>ini_filename section_name
+</pre>
+
+<p>Deletes the entire section [section_name] from ini_filename. If the section could not be removed from the ini file, the error flag is set. It does not set the error flag if the section could not be found.</p>
+<pre>WriteINIStr $TEMP\something.ini section1 something 123
+WriteINIStr $TEMP\something.ini section1 somethingelse 1234
+WriteINIStr $TEMP\something.ini section2 nsis true
+DeleteINISec $TEMP\something.ini section1
+</pre>
+<a name="4.9.2.2"></a><h4>4.9.2.2 DeleteINIStr</h4>
+<pre>ini_filename section_name str_name
+</pre>
+
+<p>Deletes the string str_name from section [section_name] from ini_filename. If the string could not be removed from the ini file, the error flag is set. It does not set the error flag if the string could not be found.</p>
+<pre>WriteINIStr $TEMP\something.ini section1 something 123
+WriteINIStr $TEMP\something.ini section1 somethingelse 1234
+DeleteINIStr $TEMP\something.ini section1 somethingelse
+</pre>
+<a name="4.9.2.3"></a><h4>4.9.2.3 DeleteRegKey</h4>
+<pre>[/ifempty] root_key subkey
+</pre>
+
+<p>Deletes a registry key. If /ifempty is specified, the registry key will only be deleted if it has no subkeys (otherwise, the whole registry tree will be removed). Valid values for root_key are listed under <a href="Chapter4.html#4.9.2.16">WriteRegStr</a>. The error flag is set if the key could not be removed from the registry (or if it didn't exist to begin with).</p>
+<pre>DeleteRegKey HKLM &quot;Software\My Company\My Software&quot;
+DeleteRegKey /ifempty HKLM &quot;Software\A key that might have subkeys&quot;
+</pre>
+<a name="4.9.2.4"></a><h4>4.9.2.4 DeleteRegValue</h4>
+<pre>root_key subkey key_name
+</pre>
+
+<p>Deletes a registry value. Valid values for root_key are listed under WriteRegStr. The error flag is set if the value could not be removed from the registry (or if it didn't exist to begin with).</p>
+<pre>DeleteRegValue HKLM &quot;Software\My Company\My Software&quot; &quot;some value&quot;
+</pre>
+<a name="4.9.2.5"></a><h4>4.9.2.5 EnumRegKey</h4>
+<pre>user_var(output) root_key subkey index
+</pre>
+
+<p>Set user variable $x with the name of the 'index'th registry key in root_key\Subkey. Valid values for root_key are listed under WriteRegStr. Returns an empty string if there are no more keys, and returns an empty string and sets the error flag if there is an error.</p>
+<pre>StrCpy $0 0
+loop:
+  EnumRegKey $1 HKLM Software $0
+  StrCmp $1 &quot;&quot; done
+  IntOp $0 $0 + 1
+  MessageBox MB_YESNO|MB_ICONQUESTION &quot;$1$\n$\nMore?&quot; IDYES loop
+done:
+</pre>
+<a name="4.9.2.6"></a><h4>4.9.2.6 EnumRegValue</h4>
+<pre>user_var(output) root_key subkey index
+</pre>
+
+<p>Set user variable $x with the name of the 'index'th registry value in root_key\Subkey. Valid values for root_key are listed under WriteRegStr. Returns an empty string and sets the error flag if there are no more values or if there is an error.</p>
+<pre>StrCpy $0 0
+loop:
+  ClearErrors
+  EnumRegValue $1 HKLM Software\Microsoft\Windows\CurrentVersion $0
+  IfErrors done
+  IntOp $0 $0 + 1
+  ReadRegStr $2 HKLM Software\Microsoft\Windows\CurrentVersion $1
+  MessageBox MB_YESNO|MB_ICONQUESTION &quot;$1 = $2$\n$\nMore?&quot; IDYES loop
+done:
+</pre>
+<a name="4.9.2.7"></a><h4>4.9.2.7 ExpandEnvStrings</h4>
+<pre>user_var(output) string
+</pre>
+
+<p>Expands environment variables in <em>string</em> into the user variable <em>$x</em>. If an environment variable doesn't exist, it will not be replaced. For example, if you use &quot;%var%&quot; and var doesn't exists, the result will be &quot;%var&quot;. If there is an error, the variable is set to empty, and the error flag is set.</p>
+<pre>ExpandEnvStrings $0 &quot;WINDIR=%WINDIR%$\nTEMP=%TEMP%&quot;
+</pre>
+<a name="4.9.2.8"></a><h4>4.9.2.8 FlushINI</h4>
+<pre>ini_filename
+</pre>
+
+<p>Flushes the INI file's buffers. Windows 9x keeps all changes to the INI file in memory. This command causes the changes to be written to the disk immediately. Use it if you edit the INI manually, delete it, move it or copy it right after you change it with <a href="Chapter4.html#4.9.2.13">WriteINIStr</a>, <a href="Chapter4.html#4.9.2.1">DeleteINISec</a> or <a href="Chapter4.html#4.9.2.2">DeleteINStr</a>.</p>
+<pre>WriteINIStr $TEMP\something.ini test test test
+FlushINI $TEMP\something.ini
+Delete $TEMP\something.ini
+</pre>
+<a name="4.9.2.9"></a><h4>4.9.2.9 ReadEnvStr</h4>
+<pre>user_var(output) name
+</pre>
+
+<p>Reads from the environment string &quot;name&quot; and sets the value into the user variable $x. If there is an error reading the string, the user variable is set to empty, and the error flag is set.</p>
+<pre>ReadEnvStr $0 WINDIR
+ReadEnvStr $1 TEMP
+</pre>
+<a name="4.9.2.10"></a><h4>4.9.2.10 ReadINIStr</h4>
+<pre>user_var(output) ini_filename section_name entry_name
+</pre>
+
+<p>Reads from entry_name in [section_name] of ini_filename and stores the value into user variable $x. The error flag will be set and $x will be assigned to an empty string if the entry is not found.</p>
+<pre>ReadINIStr $0 $INSTDIR\winamp.ini winamp outname
+</pre>
+<a name="4.9.2.11"></a><h4>4.9.2.11 ReadRegDWORD</h4>
+<pre>user_var(output) root_key sub_key name
+</pre>
+
+<p>Reads a 32 bit DWORD from the registry into the user variable $x. Valid values for root_key are listed under WriteRegStr. The error flag will be set and $x will be set to an empty string (&quot;&quot; which is 0) if the DWORD is not present. If the value is present, but is not a DWORD, it will be read as a string and the error flag will be set.</p>
+<pre>ReadRegDWORD $0 HKLM Software\NSIS VersionBuild
+</pre>
+<a name="4.9.2.12"></a><h4>4.9.2.12 ReadRegStr</h4>
+<pre>user_var(output) root_key sub_key name
+</pre>
+
+<p>Reads from the registry into the user variable $x. Valid values for root_key are listed under WriteRegStr. The error flag will be set and $x will be set to an empty string (&quot;&quot;) if the string is not present. If the value is present, but is of type REG_DWORD, it will be read and converted to a string and the error flag will be set.</p>
+<pre>ReadRegStr $0 HKLM Software\NSIS &quot;&quot;
+DetailPrint &quot;NSIS is installed at: $0&quot;
+</pre>
+<a name="4.9.2.13"></a><h4>4.9.2.13 WriteINIStr</h4>
+<pre>ini_filename section_name entry_name value
+</pre>
+
+<p>Writes entry_name=value into [section_name] of ini_filename. The error flag is set if the string could not be written to the ini file.</p>
+<pre>WriteINIStr $TEMP\something.ini section1 something 123
+WriteINIStr $TEMP\something.ini section1 somethingelse 1234
+WriteINIStr $TEMP\something.ini section2 nsis true
+</pre>
+<a name="4.9.2.14"></a><h4>4.9.2.14 WriteRegBin</h4>
+<pre>root_key subkey key_name valuedata
+</pre>
+
+<p>This command writes a block of binary data to the registry. Valid values for root_key are listed under WriteRegStr. Valuedata is in hexadecimal (e.g. DEADBEEF01223211151). The error flag is set if the binary data could not be written to the registry. If the registry key doesn't exist it will be created.</p>
+<pre>WriteRegBin HKLM &quot;Software\My Company\My Software&quot; &quot;Binary Value&quot; DEADBEEF01223211151
+</pre>
+<a name="4.9.2.15"></a><h4>4.9.2.15 WriteRegDWORD</h4>
+<pre>root_key subkey key_name value
+</pre>
+
+<p>This command writes a dword (32 bit integer) to the registry (a user variable can be specified). Valid values for root_key are listed under WriteRegStr. The error flag is set if the dword could not be written to the registry. If the registry key doesn't exist it will be created.</p>
+<pre>WriteRegDWORD HKLM &quot;Software\My Company\My Software&quot; &quot;DWORD Value&quot; 0xDEADBEEF
+</pre>
+<a name="4.9.2.16"></a><h4>4.9.2.16 WriteRegStr</h4>
+<pre>root_key subkey key_name value
+</pre>
+
+<p>Write a string to the registry. See <a href="Chapter4.html#4.9.2.17">WriteRegExpandStr</a> for more details.</p>
+<pre>WriteRegStr HKLM &quot;Software\My Company\My Software&quot; &quot;String Value&quot; &quot;dead beef&quot;
+</pre>
+<a name="4.9.2.17"></a><h4>4.9.2.17 WriteRegExpandStr</h4>
+<pre>root_key subkey key_name value
+</pre>
+
+<p>Write a string to the registry. <em>root_key</em> must be one of:</p>
+<ul>
+<li><em>HKCR</em> or <em>HKEY_CLASSES_ROOT</em></li><li><em>HKLM</em> or <em>HKEY_LOCAL_MACHINE</em></li><li><em>HKCU</em> or <em>HKEY_CURRENT_USER</em></li><li><em>HKU</em> or <em>HKEY_USERS</em></li><li><em>HKCC</em> or <em>HKEY_CURRENT_CONFIG</em></li><li><em>HKDD</em> or <em>HKEY_DYN_DATA</em></li><li><em>HKPD</em> or <em>HKEY_PERFORMANCE_DATA</em></li><li><em>SHCTX</em> or <em>SHELL_CONTEXT</em></li></ul>
+
+<p>If <em>root_key</em> is <em>SHCTX</em> or <em>SHELL_CONTEXT</em>, it will be replaced with <em>HKLM</em> if <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> is set to <em>all</em> and with <em>HKCU</em> if <a href="Chapter4.html#4.9.7.7">SetShellVarContext</a> is set to <em>current</em>.</p>
+
+<p>The error flag is set if the string could not be written to the registry. The type of the string will be REG_SZ for WriteRegStr, or REG_EXPAND_STR for WriteRegExpandStr. If the registry key doesn't exist it will be created.</p>
+<pre>WriteRegExpandStr HKLM &quot;Software\My Company\My Software&quot; &quot;Expand String Value&quot; &quot;%WINDIR%\notepad.exe&quot;
+</pre>
+<a name="4.9.3"></a><h3>4.9.3 General Purpose Instructions</h3>
+<a name="4.9.3.1"></a><h4>4.9.3.1 CallInstDLL</h4>
+<pre>dllfile function_name
+</pre>
+
+<p>Calls a function named <em>function_name</em> inside a NSIS extension DLL, a plug-in. See the <a href="../Examples/Plugin/">example plugin</a> for how to make one. Extension DLLs can access the stack and variables. Note: To automatically extract and call plug-in DLLs, use a plug-in command instead of CallInstDLL.</p>
+<pre>Push &quot;a parameter&quot;
+Push &quot;another parameter&quot;
+CallInstDLL $INSTDIR\somedll.dll somefunction
+</pre>
+
+<p>For easier plug-in handling, use the new <a href="Chapter4.html#4.11">plug-in call syntax</a>.</p>
+<a name="4.9.3.2"></a><h4>4.9.3.2 CopyFiles</h4>
+<pre>[/SILENT] [/FILESONLY] filespec_on_destsys destination_path [size_of_files_in_kb]
+</pre>
+
+<p>Copies files from the source to the destination on the installing system. Useful with $EXEDIR if you want to copy from installation media, or to copy from one place to another on the system. You might see a Windows status window of the copy operation if the operation takes a lot of time (to disable this, use /SILENT). The last parameter can be used to specify the size of the files that will be copied (in kilobytes), so that the installer can approximate the disk space requirements. On error, or if the user cancels the copy (only possible when /SILENT was omitted), the error flag is set. If /FILESONLY is specified, only files are copied.</p>
+
+<p>Fully-qualified path names should always be used with this instruction. Using relative paths will have unpredictable results.</p>
+<pre>CreateDirectory $INSTDIR\backup
+CopyFiles $INSTDIR\*.dat $INSTDIR\backup
+</pre>
+<a name="4.9.3.3"></a><h4>4.9.3.3 CreateDirectory</h4>
+<pre>path_to_create
+</pre>
+
+<p>Creates (recursively if necessary) the specified directory. The error flag is set if the directory couldn't be created.</p>
+
+<p>You should always specify an absolute path.</p>
+<pre>CreateDirectory $INSTDIR\some\directory
+</pre>
+<a name="4.9.3.4"></a><h4>4.9.3.4 CreateShortCut</h4>
+<pre>link.lnk target.file [parameters [icon.file [icon_index_number [start_options [keyboard_shortcut [description]]]]]]
+</pre>
+
+<p>Creates a shortcut 'link.lnk' that links to 'target.file', with optional parameters 'parameters'. The icon used for the shortcut is 'icon.file,icon_index_number'; for default icon settings use empty strings for both icon.file and icon_index_number. start_options should be one of: <em>SW_SHOWNORMAL</em>, <em>SW_SHOWMAXIMIZED</em>, <em>SW_SHOWMINIMIZED</em>, or an empty string. keyboard_shortcut should be in the form of 'flag|c' where flag can be a combination (using |) of: <em>ALT</em>, <em>CONTROL</em>, <em>EXT</em>, or <em>SHIFT</em>. c is the character to use (a-z, A-Z, 0-9, F1-F24, etc). Note that no spaces are allowed in this string. A good example is &quot;ALT|CONTROL|F8&quot;. $OUTDIR is used for the working directory. You can change it by using <a href="Chapter4.html#4.9.1.9">SetOutPath</a> before creating the Shortcut. description should be the description of the shortcut, or comment as it is called under XP. The error flag is set if the shortcut cannot be created (i.e. either of the paths (link or target) does not exist, or some other error).</p>
+<pre>CreateDirectory &quot;$SMPROGRAMS\My Company&quot;
+CreateShortCut &quot;$SMPROGRAMS\My Company\My Program.lnk&quot; &quot;$INSTDIR\My Program.exe&quot; \
+  &quot;some command line parameters&quot; &quot;$INSTDIR\My Program.exe&quot; 2 SW_SHOWNORMAL \
+  ALT|CONTROL|SHIFT|F5 &quot;a description&quot;
+</pre>
+<a name="4.9.3.5"></a><h4>4.9.3.5 GetDLLVersion</h4>
+<pre>filename user_var(high dword output) user_var(low dword output)
+</pre>
+
+<p>Gets the version information from the DLL (or any other executable containing version information) in &quot;filename&quot;. Sets the user output variables with the high and low dwords of version information on success; on failure the outputs are empty and the error flag is set. The following example reads the DLL version and copies a human readable version of it into $0:</p>
+<pre>GetDllVersion &quot;$INSTDIR\MyDLL.dll&quot; $R0 $R1
+IntOp $R2 $R0 / 0x00010000
+IntOp $R3 $R0 &amp; 0x0000FFFF
+IntOp $R4 $R1 / 0x00010000
+IntOp $R5 $R1 &amp; 0x0000FFFF
+StrCpy $0 &quot;$R2.$R3.$R4.$R5&quot;
+</pre>
+<a name="4.9.3.6"></a><h4>4.9.3.6 GetDLLVersionLocal</h4>
+<pre>localfilename user_var(high dword output) user_var(low dword output)
+</pre>
+
+<p>This is similar to GetDLLVersion, only it acts on the system building the installer (it actually compiles into two StrCpy commands). Sets the two output variables with the DLL version information of the DLL on the build system.</p>
+<a name="4.9.3.7"></a><h4>4.9.3.7 GetFileTime</h4>
+<pre>filename user_var(high dword output) user_var(low dword output)
+</pre>
+
+<p>Gets the last write time of &quot;filename&quot;. Sets the user output variables with the high and low dwords of the timestamp on success; on failure the outputs are empty and the error flag is set.</p>
+<a name="4.9.3.8"></a><h4>4.9.3.8 GetFileTimeLocal</h4>
+<pre>localfilename user_var(high dword output) user_var(low dword output)
+</pre>
+
+<p>This is similar to GetFileTime, only it acts on the system building the installer (it actually compiles into two StrCpy commands). Sets the two output variables with the file timestamp of the file on the build system.</p>
+<a name="4.9.3.9"></a><h4>4.9.3.9 GetFullPathName</h4>
+<pre>[/SHORT] user_var(output) path_or_file
+</pre>
+
+<p>Assign to the user variable $x, the full path of the file specified. If the path portion of the parameter is not found, the error flag will be set and $x will be empty. If /SHORT is specified, the path is converted to the short filename form. However, if /SHORT is not specified, the path isn't converted to its long filename form. To get the long filename, call GetLongPathName using the System plug-in. Note that GetLongPathName is only available on Windows 98, Windows 2000 and above.</p>
+<pre>StrCpy $INSTDIR $PROGRAMFILES\NSIS
+SetOutPath $INSTDIR
+GetFullPathName $0 ..
+DetailPrint $0 # will print C:\Program Files
+GetFullPathName /SHORT $0 $INSTDIR
+DetailPrint $0 # will print C:\Progra~1\NSIS
+</pre>
+<pre>StrCpy $0 C:\Progra~1\NSIS
+System::Call 'kernel32::GetLongPathName(t r0, t .r1, i ${NSIS_MAX_STRLEN}) i .r2'
+StrCmp $2 error +2
+StrCpy $0 $1
+DetailPrint $0 # will print C:\Program Files\NSIS, where supported
+</pre>
+<a name="4.9.3.10"></a><h4>4.9.3.10 GetTempFileName</h4>
+<pre>user_var(output) base_dir
+</pre>
+
+<p>Assign to the user variable $x, the name of a temporary file. The file will have been created, so you can then overwrite it with what you please. The name of the temporary file is guaranteed to be unique. If to want the temporary file to be created in another directory than the Windows temp directory, specify a base_dir. Delete the file when done with it.</p>
+<pre>GetTempFileName $0
+File /oname=$0 something.dat
+# do something with something.dat
+Delete $0
+</pre>
+<a name="4.9.3.11"></a><h4>4.9.3.11 SearchPath</h4>
+<pre>user_var(output) filename
+</pre>
+
+<p>Assign to the user variable $x, the full path of the file named by the second parameter. The error flag will be set and $x will be empty if the file cannot be found. Uses SearchPath() to search the system paths for the file.</p>
+<a name="4.9.3.12"></a><h4>4.9.3.12 SetFileAttributes</h4>
+<pre>filename attribute1|attribute2|...
+</pre>
+
+<p>Sets the file attributes of 'filename'. Valid attributes can be combined with | and are:</p>
+<ul>
+<li><em>NORMAL</em> or <em>FILE_ATTRIBUTE_NORMAL</em> (you can use 0 to abbreviate this)</li><li><em>ARCHIVE</em> or <em>FILE_ATTRIBUTE_ARCHIVE</em></li><li><em>HIDDEN</em> or <em>FILE_ATTRIBUTE_HIDDEN</em></li><li><em>OFFLINE</em> or <em>FILE_ATTRIBUTE_OFFLINE</em></li><li><em>READONLY</em> or <em>FILE_ATTRIBUTE_READONLY</em></li><li><em>SYSTEM</em> or <em>FILE_ATTRIBUTE_SYSTEM</em></li><li><em>TEMPORARY</em> or <em>FILE_ATTRIBUTE_TEMPORARY</em></li></ul>
+
+<p>The error flag will be set if the file's attributes cannot be set (i.e. the file doesn't exist, or you don't have the right permissions). You can only set attributes. It's not possible to unset them. If you want to remove an attribute use NORMAL. This way all attributes are erased. This command doesn't support wildcards.</p>
+<a name="4.9.3.13"></a><h4>4.9.3.13 RegDLL</h4>
+<pre>dllfile [entrypoint_name]
+</pre>
+
+<p>Loads the specified DLL and calls DllRegisterServer (or entrypoint_name if specified). The error flag is set if an error occurs (i.e. it can't load the DLL, initialize OLE, find the entry point, or the function returned anything other than ERROR_SUCCESS (=0)).</p>
+
+<p>Use <a href="Chapter4.html#4.9.1.9">SetOutPath</a> to set the current directory for DLLs that depend on other DLLs that are now in the path or in the Windows directory. For example, if foo.dll depends on bar.dll which is located in $INSTDIR use:</p>
+<pre> SetOutPath $INSTDIR
+ RegDLL $INSTDIR\foo.dll
+</pre>
+<a name="4.9.3.14"></a><h4>4.9.3.14 UnRegDLL</h4>
+<pre>dllfile
+</pre>
+
+<p>Loads the specified DLL and calls DllUnregisterServer. The error flag is set if an error occurs (i.e. it can't load the DLL, initialize OLE, find the entry point, or the function returned anything other than ERROR_SUCCESS (=0)).</p>
+<a name="4.9.4"></a><h3>4.9.4 Flow Control Instructions</h3>
+<a name="4.9.4.1"></a><h4>4.9.4.1 Abort</h4>
+<pre>user_message
+</pre>
+
+<p>Cancels the install, stops execution of script, and displays user_message in the status display. Note: you can use this from <a href="Chapter4.html#4.7.2">Callback functions</a> to do special things. <a href="Chapter4.html#4.5">Page callbacks</a> also uses Abort for special purposes.</p>
+<pre>Abort
+Abort &quot;can't install&quot;
+</pre>
+<a name="4.9.4.2"></a><h4>4.9.4.2 Call</h4>
+<pre>function_name | :label_name | user_var(input)
+</pre>
+
+<p>Calls the function named <em>function_name</em>, the label named <em>label_name</em>, or a variable that specifies an address. An address is returned by <a href="Chapter4.html#4.9.4.4">GetCurrentAddress</a>, <a href="Chapter4.html#4.9.4.5">GetFunctionAddress</a> or <a href="Chapter4.html#4.9.4.6">GetLabelAddress</a>. A call returns when it encounters a <a href="Chapter4.html#4.9.4.16">Return</a> instruction. Sections and functions are automatically ended with a <a href="Chapter4.html#4.9.4.16">Return</a> instruction. Uninstall functions cannot be called from installer functions and sections, and vice-versa.</p>
+<pre>Function func
+  Call :label
+  DetailPrint &quot;#1: This will only appear 1 time.&quot;
+label:
+  DetailPrint &quot;#2: This will appear before and after message #1.&quot;
+  Call :.global_label
+FunctionEnd
+
+Section
+  Call func
+  Return
+
+.global_label:
+  DetailPrint &quot;#3: The global label was called&quot;
+SectionEnd
+</pre>
+<a name="4.9.4.3"></a><h4>4.9.4.3 ClearErrors</h4>
+
+<p>Clears the error flag.</p>
+<pre>ClearErrors
+IfErrors 0 +2
+  MessageBox MB_OK &quot;this message box will never show&quot;
+</pre>
+<a name="4.9.4.4"></a><h4>4.9.4.4 GetCurrentAddress</h4>
+<pre>user_var(output)
+</pre>
+
+<p>Gets the address of the current instruction (the GetCurrentAddress) and stores it in the output user variable. This user variable then can be passed to Call or Goto.</p>
+<pre>Function func
+  DetailPrint &quot;function&quot;
+  IntOp $0 $0 + 2
+  Call $0
+  DetailPrint &quot;function end&quot;
+FunctionEnd
+
+Section
+  DetailPrint &quot;section&quot;
+  DetailPrint &quot;section&quot;
+  GetCurrentAddress $0
+  Goto callFunc
+
+  DetailPrint &quot;back to section&quot;
+  Return
+
+callFunc:
+  Call func
+  DetailPrint &quot;section end&quot;
+SectionEnd
+</pre>
+<a name="4.9.4.5"></a><h4>4.9.4.5 GetFunctionAddress</h4>
+<pre>user_var(output) function_name
+</pre>
+
+<p>Gets the address of the function and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that if you Goto an address which is the output of GetFunctionAddress, your function will never be returned to (when the function you Goto'd to returns, you return instantly).</p>
+<pre>Function func
+  DetailPrint &quot;function&quot;
+FunctionEnd
+
+Section
+  GetFunctionAddress $0 func
+  Call $0
+SectionEnd
+</pre>
+<a name="4.9.4.6"></a><h4>4.9.4.6 GetLabelAddress</h4>
+<pre>user_var(output) label
+</pre>
+
+<p>Gets the address of the label and stores it in the output user variable. This user variable then can be passed to Call or Goto. Note that you may only call this with labels accessible from your function, but you can call it from anywhere (which is potentially dangerous). Note that if you Call the output of GetLabelAddress, code will be executed until it Return's (explicitly or implicitly at the end of a function), and then you will be returned to the statement after the Call.</p>
+<pre>label:
+DetailPrint &quot;label&quot;
+GetLabelAddress $0 label
+IntOp $0 $0 + 4
+Goto $0
+DetailPrint &quot;done&quot;
+</pre>
+<a name="4.9.4.7"></a><h4>4.9.4.7 Goto</h4>
+<pre>label_to_jump_to | +offset| -offset| user_var(target)
+</pre>
+
+<p>If label is specified, goto the label 'label_to_jump_to:'.</p>
+
+<p>If +offset or -offset is specified, jump is relative by offset instructions. Goto +1 goes to the next instruction, Goto -1 goes to the previous instruction, etc.</p>
+
+<p>If a user variable is specified, jumps to absolute address (generally you will want to get this value from a function like GetLabelAddress). Compiler flag commands and SectionIn aren't instructions so jumping over them has no effect.</p>
+<pre>Goto label
+Goto +2
+Goto -2
+Goto $0
+</pre>
+<a name="4.9.4.8"></a><h4>4.9.4.8 IfAbort</h4>
+<pre>label_to_goto_if_abort [label_to_goto_if_no_abort]
+</pre>
+
+<p>If abort is called it will &quot;return&quot; true. This can happen if the user chose abort on a file that failed to create (or overwrite) or if the user aborted by hand. This function can only be called from the leave function of the instfiles <a href="Chapter4.html#4.5.4">page</a>.</p>
+<pre>Page instfiles &quot;&quot; &quot;&quot; instfilesLeave
+
+Function instfilesLeave
+  IfAbort 0 +2
+    MessageBox MB_OK &quot;user aborted&quot;
+FunctionEnd
+</pre>
+<a name="4.9.4.9"></a><h4>4.9.4.9 IfErrors</h4>
+<pre>jumpto_iferror [jumpto_ifnoerror]
+</pre>
+
+<p>Checks and clears the error flag, and if it is set, it will goto jumpto_iferror, otherwise it will goto jumpto_ifnoerror. The error flag is set by other instructions when a recoverable error (such as trying to delete a file that is in use) occurs.</p>
+<pre>ClearErrors
+File file.dat
+IfErrors 0 +2
+  Call ErrorHandler
+</pre>
+<a name="4.9.4.10"></a><h4>4.9.4.10 IfFileExists</h4>
+<pre>file_to_check_for jump_if_present [jump_otherwise]
+</pre>
+
+<p>Checks for existence of file(s) file_to_check_for (which can be a wildcard, or a directory), and Gotos jump_if_present if the file exists, otherwise Gotos jump_otherwise. If you want to check to see if a file is a directory, use IfFileExists DIRECTORY\*.*</p>
+<pre>IfFileExists $WINDIR\notepad.exe 0 +2
+  MessageBox MB_OK &quot;notepad is installed&quot;
+</pre>
+<a name="4.9.4.11"></a><h4>4.9.4.11 IfRebootFlag</h4>
+<pre>jump_if_set [jump_if_not_set]
+</pre>
+
+<p>Checks the reboot flag, and jumps to jump_if_set if the reboot flag is set, otherwise jumps to jump_if_not_set. The reboot flag can be set by Delete and Rename, or manually with <a href="Chapter4.html#4.9.11.2">SetRebootFlag</a>.</p>
+<pre>IfRebootFlag 0 noreboot
+  MessageBox MB_YESNO &quot;A reboot is required to finish the installation. Do you wish to reboot now?&quot; IDNO noreboot
+    Reboot
+noreboot:
+</pre>
+<a name="4.9.4.12"></a><h4>4.9.4.12 IfSilent</h4>
+<pre>jump_if_silent [jump_if_not]
+</pre>
+
+<p>Checks the silent flag, and jumps to jump_if_silent if the installer is silent, otherwise jumps to jump_if_not. The silent flag can be set by <a href="Chapter4.html#4.8.1.36">SilentInstall</a>, <a href="Chapter4.html#4.8.1.37">SilentUninstall</a>, <a href="Chapter4.html#4.9.14.16">SetSilent</a> and by the user passing /S on the command line.</p>
+<pre>IfSilent +2
+  ExecWait '&quot;$INSTDIR\nonsilentprogram.exe&quot;'
+</pre>
+<a name="4.9.4.13"></a><h4>4.9.4.13 IntCmp</h4>
+<pre>val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
+</pre>
+
+<p>Compares two integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 &lt; val2, Gotos jump_if_val1_less, otherwise if val1 &gt; val2, Gotos jump_if_val1_more.</p>
+<pre>IntCmp $0 5 is5 lessthan5 morethan5
+is5:
+  DetailPrint &quot;$$0 == 5&quot;
+  Goto done
+lessthan5:
+  DetailPrint &quot;$$0 &lt; 5&quot;
+  Goto done
+morethan5:
+  DetailPrint &quot;$$0 &gt; 5&quot;
+  Goto done
+done:
+</pre>
+<a name="4.9.4.14"></a><h4>4.9.4.14 IntCmpU</h4>
+<pre>val1 val2 jump_if_equal [jump_if_val1_less] [jump_if_val1_more]
+</pre>
+
+<p>Compares two unsigned integers val1 and val2. If val1 and val2 are equal, Gotos jump_if_equal, otherwise if val1 &lt; val2, Gotos jump_if_val1_less, otherwise if val1 &gt; val2, Gotos jump_if_val1_more. Performs the comparison as unsigned integers.</p>
+<a name="4.9.4.15"></a><h4>4.9.4.15 MessageBox</h4>
+<pre>mb_option_list messagebox_text [/SD return] [return_check jumpto] [return_check_2 jumpto_2]
+</pre>
+
+<p>Displays a MessageBox containing the text &quot;messagebox_text&quot;. mb_option_list must be one or more of the following, delimited by |s (e.g. MB_YESNO|MB_ICONSTOP).</p>
+<ul>
+<li><em>MB_OK</em> - Display with an OK button</li><li><em>MB_OKCANCEL</em> - Display with an OK and a cancel button</li><li><em>MB_ABORTRETRYIGNORE</em> - Display with abort, retry, ignore buttons</li><li><em>MB_RETRYCANCEL</em> - Display with retry and cancel buttons</li><li><em>MB_YESNO</em> - Display with yes and no buttons</li><li><em>MB_YESNOCANCEL</em> - Display with yes, no, cancel buttons</li><li><em>MB_ICONEXCLAMATION</em> - Display with exclamation icon</li><li><em>MB_ICONINFORMATION</em> - Display with information icon</li><li><em>MB_ICONQUESTION</em> - Display with question mark icon</li><li><em>MB_ICONSTOP</em> - Display with stop icon</li><li><em>MB_USERICON</em> - Display with installer's icon</li><li><em>MB_TOPMOST</em> - Make messagebox topmost</li><li><em>MB_SETFOREGROUND</em> - Set foreground</li><li><em>MB_RIGHT</em> - Right align text</li><li><em>MB_RTLREADING</em> - RTL reading order</li><li><em>MB_DEFBUTTON1</em> - Button 1 is default</li><li><em>MB_DEFBUTTON2</em> - Button 2 is default</li><li><em>MB_DEFBUTTON3</em> - Button 3 is default</li><li><em>MB_DEFBUTTON4</em> - Button 4 is default</li></ul>
+
+<p>Return_check can be 0 (or empty, or left off), or one of the following:</p>
+<ul>
+<li><em>IDABORT</em> - Abort button</li><li><em>IDCANCEL</em> - Cancel button</li><li><em>IDIGNORE</em> - Ignore button</li><li><em>IDNO</em> - No button</li><li><em>IDOK</em> - OK button</li><li><em>IDRETRY</em> - Retry button</li><li><em>IDYES</em> - Yes button</li></ul>
+
+<p>If the return value of the MessageBox is return_check, the installer will Goto jumpto.</p>
+
+<p>Use the /SD parameter with one of the return_check values above to specify the option that will be used when the installer is silent. See <a href="Chapter4.html#4.12">section 4.12</a> for more information.</p>
+<pre>MessageBox MB_OK &quot;simple message box&quot;
+MessageBox MB_YESNO &quot;is it true?&quot; IDYES true IDNO false
+true:
+  DetailPrint &quot;it's true!&quot;
+  Goto next
+false:
+  DetailPrint &quot;it's false&quot;
+next:
+MessageBox MB_YESNO &quot;is it true? (defaults to yes on silent installations)&quot; /SD IDYES IDNO false2
+  DetailPrint &quot;it's true (or silent)!&quot;
+  Goto next2
+false2:
+  DetailPrint &quot;it's false&quot;
+next2:
+</pre>
+<a name="4.9.4.16"></a><h4>4.9.4.16 Return</h4>
+
+<p>Returns from a function or section.</p>
+<pre>Function func
+  StrCmp $0 &quot;return now&quot; 0 +2
+    Return
+  # do stuff
+FunctionEnd
+
+Section
+  Call func
+  ;&quot;Return&quot; will return here
+SectionEnd
+</pre>
+<a name="4.9.4.17"></a><h4>4.9.4.17 Quit</h4>
+
+<p>Causes the installer to exit as soon as possible. After Quit is called, the installer will exit (no callback functions will get a chance to run).</p>
+<a name="4.9.4.18"></a><h4>4.9.4.18 SetErrors</h4>
+
+<p>Sets the error flag.</p>
+<pre>SetErrors
+IfErrors 0 +2
+  MessageBox MB_OK &quot;this message box will always show&quot;
+</pre>
+<a name="4.9.4.19"></a><h4>4.9.4.19 StrCmp</h4>
+<pre>str1 str2 jump_if_equal [jump_if_not_equal]
+</pre>
+
+<p>Compares (case insensitively) str1 to str2. If str1 and str2 are equal, Gotos jump_if_equal, otherwise Gotos jump_if_not_equal.</p>
+<pre>StrCmp $0 &quot;a string&quot; 0 +3
+  DetailPrint '$$0 == &quot;a string&quot;'
+  Goto +2
+  DetailPrint '$$0 != &quot;a string&quot;'
+</pre>
+<a name="4.9.4.20"></a><h4>4.9.4.20 StrCmpS</h4>
+<pre>str1 str2 jump_if_equal [jump_if_not_equal]
+</pre>
+
+<p>Same as <a href="Chapter4.html#4.9.4.19">StrCmp</a>, but case sensitive.</p>
+<a name="4.9.5"></a><h3>4.9.5 File Instructions</h3>
+<a name="4.9.5.1"></a><h4>4.9.5.1 FileClose</h4>
+<pre>handle
+</pre>
+
+<p>Closes a file handle opened with FileOpen.</p>
+<a name="4.9.5.2"></a><h4>4.9.5.2 FileOpen</h4>
+<pre>user_var(handle output) filename openmode
+</pre>
+
+<p>Opens a file named &quot;filename&quot;, and sets the handle output variable with the handle. The openmode should be one of &quot;r&quot; (read) &quot;w&quot; (write, all contents of file are destroyed) or &quot;a&quot; (append, meaning opened for both read and write, contents preserved). In all open modes, the file pointer is placed at the beginning of the file. If the file cannot be opened, the handle output is set to empty, and the error flag is set.</p>
+
+<p>If no absolute path is specified the current folder will be used. The current folder is the folder set using the last <a href="Chapter4.html#4.9.1.9">SetOutPath</a> instruction. If you have not used <a href="Chapter4.html#4.9.1.9">SetOutPath</a> the current folder is <a href="Chapter4.html#4.2.2">$EXEDIR</a>.</p>
+<pre>FileOpen $0 $INSTDIR\file.dat r
+FileClose $0
+</pre>
+<a name="4.9.5.3"></a><h4>4.9.5.3 FileRead</h4>
+<pre>handle user_var(output) [maxlen]
+</pre>
+
+<p>Reads a string from a file opened with FileOpen. The string is read until either a newline (or carriage return newline pair) occurs, or until a null byte is read, or until maxlen is met (if specified). By default, strings are limited to 1024 characters (a special build with larger NSIS_MAX_STRLEN can be compiled or downloaded). If the end of file is read and no more data is available, the output string will be empty, and the error flag will be set.</p>
+<pre>ClearErrors
+FileOpen $0 $INSTDIR\file.dat r
+IfErrors done
+FileRead $0 $1
+DetailPrint $1
+FileClose $0
+done:
+</pre>
+<a name="4.9.5.4"></a><h4>4.9.5.4 FileReadByte</h4>
+<pre>handle user_var(output)
+</pre>
+
+<p>Reads a byte from a file opened with FileOpen. The byte is stored in the output as an integer (0-255). If the end of file is read and no more data is available, the output will be empty, and the error flag will be set.</p>
+<pre>ClearErrors
+FileOpen $0 $INSTDIR\file.dat r
+IfErrors done
+FileReadByte $0 $1
+FileReadByte $0 $2
+DetailPrint &quot;$1 $2&quot;
+FileClose $0
+done:
+</pre>
+<a name="4.9.5.5"></a><h4>4.9.5.5 FileSeek</h4>
+<pre>handle offset [mode] [user_var(new position)]
+</pre>
+
+<p>Seeks a file opened with FileOpen. If mode is omitted or specified as SET, the file is positioned to &quot;offset&quot;, relative to the beginning of the file. If mode is specified as CUR, then the file is positioned to &quot;offset&quot;, relative to the current file position. If mode is specified as END, then the file is positioned to &quot;offset&quot;, relative to the end of the file. If the final parameter &quot;new position&quot; is specified, the new file position will be stored to that variable.</p>
+<pre>ClearErrors
+FileOpen $0 $INSTDIR\file.dat r
+IfErrors done
+FileSeek $0 -5 END
+FileRead $0 $1
+DetailPrint $1
+FileClose $0
+done:
+</pre>
+<a name="4.9.5.6"></a><h4>4.9.5.6 FileWrite</h4>
+<pre>handle string
+</pre>
+
+<p>Writes a string to a file opened with FileOpen. If an error occurs writing, the error flag will be set.</p>
+<pre>ClearErrors
+FileOpen $0 $INSTDIR\file.dat w
+IfErrors done
+FileWrite $0 &quot;some text&quot;
+FileClose $0
+done:
+</pre>
+<a name="4.9.5.7"></a><h4>4.9.5.7 FileWriteByte</h4>
+<pre>handle string
+</pre>
+
+<p>Writes the integer interpretation of 'string' to a file opened with FileOpen. Of course you can enter the integer value directly. The following code writes a &quot;Carriage Return / Line Feed&quot; - Enter to the file.</p>
+<pre>FileWriteByte file_handle &quot;13&quot;
+FileWriteByte file_handle &quot;10&quot;
+</pre>
+
+<p>If an error occurs while writing, the error flag will be set. Note that the low byte of the integer is used, i.e. writing 256 is the same as writing 0, etc.</p>
+<a name="4.9.5.8"></a><h4>4.9.5.8 FindClose</h4>
+<pre>handle
+</pre>
+
+<p>Closes a search opened with FindFirst.</p>
+<a name="4.9.5.9"></a><h4>4.9.5.9 FindFirst</h4>
+<pre>user_var(handle output) user_var(filename output) filespec
+</pre>
+
+<p>Performs a search for 'filespec', placing the first file found in filename_output (a user variable). It also puts the handle of the search into handle_output (also a user variable). If no files are found, both outputs are set to empty, and the error flag is set. Best used with FindNext and FindClose. Note that the filename output is without path.</p>
+<pre>FindFirst $0 $1 $INSTDIR\*.txt
+loop:
+  StrCmp $1 &quot;&quot; done
+  DetailPrint $1
+  FindNext $0 $1
+  Goto loop
+done:
+FindClose $0
+</pre>
+<a name="4.9.5.10"></a><h4>4.9.5.10 FindNext</h4>
+<pre>handle user_var(filename_output)
+</pre>
+
+<p>Continues a search began with FindFirst. handle should be the handle_output_variable returned by FindFirst. If the search is completed (there are no more files), filename_output is set to empty, and the error flag is set. Note that the filename output is without path.</p>
+<a name="4.9.6"></a><h3>4.9.6 Uninstaller Instructions</h3>
+<a name="4.9.6.1"></a><h4>4.9.6.1 WriteUninstaller</h4>
+<pre>[Path\]exename.exe
+</pre>
+
+<p>Writes the uninstaller to the filename (and optionally path) specified. Only valid from within an install section or function, and requires that you have an uninstall section in your script. See also Uninstall configuration. You can call this one or more times to write out one or more copies of the uninstaller.</p>
+<pre>WriteUninstaller $INSTDIR\uninstaller.exe
+</pre>
+<a name="4.9.7"></a><h3>4.9.7 Miscellaneous Instructions</h3>
+<a name="4.9.7.1"></a><h4>4.9.7.1 GetErrorLevel</h4>
+<pre>user_var(error level output)
+</pre>
+
+<p>Returns the last error level set by <a href="Chapter4.html#4.9.7.5">SetErrorLevel</a> or -1 if it was never used.</p>
+<pre>GetErrorLevel $0
+IntOp $0 $0 + 1
+SetErrorLevel $0
+</pre>
+<a name="4.9.7.2"></a><h4>4.9.7.2 GetInstDirError</h4>
+<pre>user_var(error output)
+</pre>
+
+<p>Use in the leave function of a directory page. Reads the flag set if '<a href="Chapter4.html#4.8.1.16">DirVerify leave</a>' is used. Possible values:</p>
+
+<p>0: No error</p>
+
+<p>1: Invalid installation directory</p>
+
+<p>2: Not enough space on installation drive</p>
+<pre>!include LogicLib.nsh
+PageEx directory
+  DirVerify leave
+  PageCallbacks &quot;&quot; &quot;&quot; dirLeave
+PageExEnd
+
+Function dirLeave
+  GetInstDirError $0
+  ${Switch} $0
+    ${Case} 0
+      MessageBox MB_OK &quot;valid installation directory&quot;
+      ${Break}
+    ${Case} 1
+      MessageBox MB_OK &quot;invalid installation directory!&quot;
+      Abort
+      ${Break}
+    ${Case} 2
+      MessageBox MB_OK &quot;not enough free space!&quot;
+      Abort
+      ${Break}
+  ${EndSwitch}
+FunctionEnd
+</pre>
+<a name="4.9.7.3"></a><h4>4.9.7.3 InitPluginsDir</h4>
+
+<p>Initializes the plug-ins dir (<a href="Chapter4.html#4.2.3">$PLUGINSDIR</a>) if not already initialized.</p>
+<pre>InitPluginsDir
+File /oname=$PLUGINSDIR\image.bmp image.bmp
+</pre>
+<a name="4.9.7.4"></a><h4>4.9.7.4 Nop</h4>
+
+<p>Does nothing.</p>
+<a name="4.9.7.5"></a><h4>4.9.7.5 SetErrorLevel</h4>
+<pre>error_level
+</pre>
+
+<p>Sets the error level of the installer or uninstaller to <em>error_level</em>. See <a href="AppendixD.html#D.1">Error Levels</a> for more information.</p>
+<pre>IfRebootFlag 0 +2
+  SetErrorLevel 4
+</pre>
+<a name="4.9.7.6"></a><h4>4.9.7.6 SetRegView</h4>
+<pre><b>32</b>|64|lastused
+</pre>
+
+<p>Sets the registry view affected by <a href="Chapter4.html#4.9.2">registry commands</a>. On Windows x64 there are two views. One for 32-bit applications and one for x64 applications. By default, 32-bit applications running on x64 systems under WOW64 have access only to the 32-bit view. Using <code>SetRegView 64</code> allows the installer to access keys in the x64 view of the registry.</p>
+
+<p>Affects <a href="Chapter4.html#4.9.2.3">DeleteRegKey</a>, <a href="Chapter4.html#4.9.2.4">DeleteRegValue</a>, <a href="Chapter4.html#4.9.2.5">EnumRegKey</a>, <a href="Chapter4.html#4.9.2.6">EnumRegValue</a>, <a href="Chapter4.html#4.9.2.11">ReadRegDWORD</a>, <a href="Chapter4.html#4.9.2.12">ReadRegStr</a>, <a href="Chapter4.html#4.9.2.14">WriteRegBin</a>, <a href="Chapter4.html#4.9.2.15">WriteRegDWORD</a>, <a href="Chapter4.html#4.9.2.16">WriteRegStr</a> and <a href="Chapter4.html#4.9.2.17">WriteRegExpandStr</a>.</p>
+
+<p>Does not affect <a href="Chapter4.html#4.8.1.22">InstallDirRegKey</a>. Instead, the registry can be read using <a href="Chapter4.html#4.9.2.12">ReadRegStr</a> in <a href="Chapter4.html#4.7.2.1.2">.onInit</a>.</p>
+<pre>SetRegView 32
+ReadRegStr $0 HKLM Software\Microsoft\Windows\CurrentVersion ProgramFilesDir
+DetailPrint $0 # prints C:\Program Files (x86)
+SetRegView 64
+ReadRegStr $0 HKLM Software\Microsoft\Windows\CurrentVersion ProgramFilesDir
+DetailPrint $0 # prints C:\Program Files
+</pre>
+<pre>Function .onInit
+  SetRegView 64
+  ReadRegStr $INSTDIR HKLM Software\NSIS &quot;&quot;
+  SetRegView 32
+FunctionEnd
+</pre>
+<a name="4.9.7.7"></a><h4>4.9.7.7 SetShellVarContext</h4>
+<pre><b>current</b>|all
+</pre>
+
+<p>Sets the context of $SMPROGRAMS and other shell folders. If set to 'current' (the default), the current user's shell folders are used. If set to 'all', the 'all users' shell folder is used. The all users folder may not be supported on all OSes. If the all users folder is not found, the current user folder will be used. Please take into consideration that a &quot;normal user&quot; has no rights to write in the all users area. Only admins have full access rights to the all users area. You can check this by using the UserInfo plug-in. See Contrib\UserInfo\UserInfo.nsi for an example.</p>
+
+<p>Note that, if used in installer code, this will only affect the installer, and if used in uninstaller code, this will only affect the uninstaller. To affect both, it needs to be used in both.</p>
+<pre>SetShellVarContext current
+StrCpy $0 $DESKTOP
+SetShellVarContext all
+StrCpy $1 $DESKTOP
+MessageBox MB_OK $0$\n$1
+</pre>
+<a name="4.9.7.8"></a><h4>4.9.7.8 Sleep</h4>
+<pre>sleeptime_in_ms
+</pre>
+
+<p>Pauses execution in the installer for sleeptime_in_ms milliseconds. sleeptime_in_ms can be a variable, e.g. &quot;$0&quot; or a number, i.e. &quot;666&quot;.</p>
+<pre>DetailPrint &quot;sleeping...&quot;
+Sleep 3000
+DetailPrint &quot;back to work&quot;
+</pre>
+<a name="4.9.8"></a><h3>4.9.8 String Manipulation Instructions</h3>
+<a name="4.9.8.1"></a><h4>4.9.8.1 StrCpy</h4>
+<pre>user_var(destination) str [maxlen] [start_offset]
+</pre>
+
+<p>Sets the user variable $x with str. Note that str can contain other variables, or the user variable being set (concatenating strings this way is possible, etc). If maxlen is specified, the string will be a maximum of maxlen characters (if maxlen is negative, the string will be truncated abs(maxlen) characters from the end). If start_offset is specified, the source is offset by it (if start_offset is negative, it will start abs(start_offset) from the end of the string).</p>
+<pre>StrCpy $0 &quot;a string&quot; # = &quot;a string&quot;
+StrCpy $0 &quot;a string&quot; 3 # = &quot;a s&quot;
+StrCpy $0 &quot;a string&quot; -1 # = &quot;a strin&quot;
+StrCpy $0 &quot;a string&quot; &quot;&quot; 2 # = &quot;string&quot;
+StrCpy $0 &quot;a string&quot; &quot;&quot; -3 # = &quot;ing&quot;
+StrCpy $0 &quot;a string&quot; 3 -4 # = &quot;rin&quot;
+</pre>
+<a name="4.9.8.2"></a><h4>4.9.8.2 StrLen</h4>
+<pre>user_var(length output) str
+</pre>
+
+<p>Sets user variable $x with the length of str.</p>
+<pre>StrLen $0 &quot;123456&quot; # = 6
+</pre>
+<a name="4.9.9"></a><h3>4.9.9 Stack Support</h3>
+<a name="4.9.9.1"></a><h4>4.9.9.1 Exch</h4>
+<pre>[user_var | stack_index]
+</pre>
+
+<p>When no parameter is specified, exchanges the top two elements of the stack. When a parameter is specified and is a user variable, exchanges the top element of the stack with the parameter. When a parameter is specified and is a positive integer, Exch will swap the item on the top of the stack with the item that is specified by the offset from the top of the stack in the parameter. If there are not enough items on the stack to accomplish the exchange, a fatal error will occur (to help you debug your code :).</p>
+<pre>Push 1
+Push 2
+Exch
+Pop $0 # = 1
+</pre>
+<pre>Push 1
+Push 2
+Push 3
+Exch 2
+Pop $0 # = 1
+</pre>
+<pre>StrCpy $0 1
+Push 2
+Exch $0 # = 2
+Pop $1 # = 1
+</pre>
+<a name="4.9.9.2"></a><h4>4.9.9.2 Pop</h4>
+<pre>user_var(out)
+</pre>
+
+<p>Pops a string off of the stack into user variable $x. If the stack is empty, the error flag will be set.</p>
+<pre>Push 1
+Pop $0 # = 1
+</pre>
+<a name="4.9.9.3"></a><h4>4.9.9.3 Push</h4>
+<pre>string
+</pre>
+
+<p>Pushes a string onto the stack. The string can then be Popped off of the stack.</p>
+<pre>Push &quot;a string&quot;
+</pre>
+<a name="4.9.10"></a><h3>4.9.10 Integer Support</h3>
+<a name="4.9.10.1"></a><h4>4.9.10.1 IntFmt</h4>
+<pre>user_var(output) format numberstring
+</pre>
+
+<p>Formats the number in &quot;numberstring&quot; using the format &quot;format&quot;, and sets the output to user variable $x. Example format strings include &quot;%08X&quot; &quot;%u&quot;</p>
+<pre>IntFmt $0 &quot;0x%08X&quot; 195948557
+IntFmt $0 &quot;%c&quot; 0x41
+</pre>
+<a name="4.9.10.2"></a><h4>4.9.10.2 IntOp</h4>
+<pre>user_var(output) value1 OP [value2]
+</pre>
+
+<p>Combines value1 and (depending on OP) value2 into the specified user variable (<code>user_var</code>). OP is defined as one of the following:</p>
+<ul>
+<li><em>+</em> ADDs value1 and value2</li><li><em>-</em> SUBTRACTs value2 from value1</li><li><em>*</em> MULTIPLIEs value1 and value2</li><li><em>/</em> DIVIDEs value1 by value2</li><li><em>%</em> MODULUSs value1 by value2</li><li><em>|</em> BINARY ORs value1 and value2</li><li><em>&amp;</em> BINARY ANDs value1 and value2</li><li><em>^</em> BINARY XORs value1 and value2</li><li><em>&gt;&gt;</em> RIGHT SHIFTs value1 by value2</li><li><em>&lt;&lt;</em> LEFT SHIFTs value1 by value2</li><li><em>~</em> BITWISE NEGATEs value1 (i.e. 7 becomes 4294967288)</li><li><em>!</em> LOGICALLY NEGATEs value1 (i.e. 7 becomes 0)</li><li><em>||</em> LOGICALLY ORs value1 and value2</li><li><em>&amp;&amp;</em> LOGICALLY ANDs value1 and value2</li></ul>
+<pre>IntOp $0 1 + 1
+IntOp $0 $0 + 1
+IntOp $0 $0 &lt;&lt; 2
+IntOp $0 $0 ~
+IntOp $0 $0 &amp; 0xF
+</pre>
+<a name="4.9.11"></a><h3>4.9.11 Reboot Instructions</h3>
+<a name="4.9.11.1"></a><h4>4.9.11.1 Reboot</h4>
+
+<p>Reboots the computer. Be careful with this one. If it fails, <a href="Chapter4.html#4.7.2.1.7">.onRebootFailed</a> is called. In any case, this instruction never returns, just like <a href="Chapter4.html#4.9.4.17">Quit</a>.</p>
+<pre>MessageBox MB_YESNO|MB_ICONQUESTION &quot;Do you wish to reboot the system?&quot; IDNO +2
+  Reboot
+</pre>
+<a name="4.9.11.2"></a><h4>4.9.11.2 SetRebootFlag</h4>
+<pre>true|false
+</pre>
+
+<p>Sets the reboot flag to either true or false. The flag's value can be read using <a href="Chapter4.html#4.9.4.11">IfRebootFlag</a>.</p>
+<pre>SetRebootFlag true
+IfRebootFlag 0 +2
+  MessageBox MB_OK &quot;this message box will always show&quot;
+</pre>
+<a name="4.9.12"></a><h3>4.9.12 Install Logging Instructions</h3>
+<a name="4.9.12.1"></a><h4>4.9.12.1 LogSet</h4>
+<pre>on|<b>off</b>
+</pre>
+
+<p>Sets whether install logging to $INSTDIR\install.log will happen. $INSTDIR must have a value before you call this function or it will not work. Note that the <em>NSIS_CONFIG_LOG</em> build setting must be set (<code>scons NSIS_CONFIG_LOG=yes</code>) on compile time (it is not by default) to support this. See <a href="AppendixG.html#G">Building NSIS</a> for more information about recompiling NSIS.</p>
+<a name="4.9.12.2"></a><h4>4.9.12.2 LogText</h4>
+<pre>text
+</pre>
+
+<p>If installer logging is enabled, inserts text &quot;text&quot; into the log file.</p>
+<pre>IfFileExists $WINDIR\notepad.exe 0 +2
+  LogText &quot;$$WINDIR\notepad.exe exists&quot;
+</pre>
+<a name="4.9.13"></a><h3>4.9.13 Section Management</h3>
+<a name="4.9.13.1"></a><h4>4.9.13.1 SectionSetFlags</h4>
+<pre>section_index section_flags
+</pre>
+
+<p>Sets the section's flags. The flag is a 32 bit integer. The first bit (lowest) represents whether the section is currently selected, the second bit represents whether the section is a section group (don't modify this unless you really know what you are doing), the third bit represents whether the section is a section group end (again, don't modify), the fourth bit represents whether the section is shown in bold or not, the fifth bit represents whether the section is read-only, the sixth bit represents whether the section group is to be automatically expanded, the seventh bit is set for section groups which are partially selected, the eighth bit is internally used for partially selected section group toggling and the ninth bit is used for reflecting section name changes. The error flag will be set if an out of range section is specified.</p>
+
+<p>Each flag has a name, prefixed with `SF_`:</p>
+<pre>!define SF_SELECTED   1
+!define SF_SECGRP     2
+!define SF_SECGRPEND  4
+!define SF_BOLD       8
+!define SF_RO         16
+!define SF_EXPAND     32
+!define SF_PSELECTED  64
+</pre>
+
+<p>For an example of usage please see the <a href="../Examples/one-section.nsi">one-section.nsi</a> example.</p>
+
+<p>For more useful macros and definitions, see Include\Sections.nsh.</p>
+<pre>Section test test_section_id
+SectionEnd
+
+Function .onInit
+  # set section 'test' as selected and read-only
+  IntOp $0 ${SF_SELECTED} | ${SF_RO}
+  SectionSetFlags ${test_section_id} $0
+FunctionEnd
+</pre>
+<a name="4.9.13.2"></a><h4>4.9.13.2 SectionGetFlags</h4>
+<pre>section_index user_var(output)
+</pre>
+
+<p>Retrieves the section's flags. See above for a description of the flag. The error flag will be set if an out of range section is specified.</p>
+<pre>Section test test_section_id
+SectionEnd
+
+Function .onSelChange
+  # keep section 'test' selected
+  SectionGetFlags ${test_section_id} $0
+  IntOp $0 $0 | ${SF_SELECTED}
+  SectionSetFlags ${test_section_id} $0
+FunctionEnd
+</pre>
+<a name="4.9.13.3"></a><h4>4.9.13.3 SectionSetText</h4>
+<pre>section_index section_text
+</pre>
+
+<p>Sets the description for the section section_index. If the text is set to &quot;&quot; then the section will be hidden. The error flag will be set if an out of range section is specified.</p>
+<pre>Section &quot;&quot; test_section_id
+SectionEnd
+
+Function .onInit
+  # change section's name to $WINDIR
+  SectionSetText ${test_section_id} $WINDIR
+FunctionEnd
+</pre>
+<a name="4.9.13.4"></a><h4>4.9.13.4 SectionGetText</h4>
+<pre>section_index user_var(output)
+</pre>
+
+<p>Stores the text description of the section section_index into the output. If the section is hidden, stores an empty string. The error flag will be set if an out of range section is specified.</p>
+<pre>Section test test_section_id
+SectionEnd
+
+Function .onInit
+  # append $WINDIR to section's name
+  SectionGetText ${test_section_id} $0
+  StrCpy $0 &quot;$0 - $WINDIR&quot;
+  SectionSetText ${test_section_id} $0
+FunctionEnd
+</pre>
+<a name="4.9.13.5"></a><h4>4.9.13.5 SectionSetInstTypes</h4>
+<pre>section_index inst_types
+</pre>
+
+<p>Sets the install types the section specified by section_index defaults to the enabled state in. Note that the section index starts with zero. Every bit of inst_types is a flag that tells if the section is in that install type or not. For example, if you have 3 install types and you want the first section to be included in install types 1 and 3, then the command should look like this:</p>
+<pre>SectionSetInstTypes 0 5
+</pre>
+
+<p>because the binary value for 5 is &quot;00000101&quot;. The error flag will be set if the section index specified is out of range.</p>
+<pre>Section test test_section_id
+SectionEnd
+
+Function .onInit
+  # associate section 'test' with installation types 3 and 4
+  SectionSetInstTypes ${test_section_id} 12
+FunctionEnd
+</pre>
+<a name="4.9.13.6"></a><h4>4.9.13.6 SectionGetInstTypes</h4>
+<pre>section_index user_var(output)
+</pre>
+
+<p>Retrieves the install types flags array of a section. See above explanation about SectionSetInstTypes for a description of how to deal with the output. The error flag will be set if the section index specified is out of range.</p>
+<pre>Section test test_section_id
+SectionEnd
+
+Function .onInit
+  # associate section 'test' with installation types 5, on top of its existing associations
+  SectionGetInstTypes ${test_section_id} $0
+  IntOp $0 $0 | 16
+  SectionSetInstTypes ${test_section_id} $0
+FunctionEnd
+</pre>
+<a name="4.9.13.7"></a><h4>4.9.13.7 SectionSetSize</h4>
+<pre>section_index new_size
+</pre>
+
+<p>Sets the Size of the section specified by section_index. Note that the Index starts with Zero. The Value for Size must be entered in KiloByte and supports only whole numbers.</p>
+<pre>Section test test_section_id
+SectionEnd
+
+Function .onInit
+  # set required size of section 'test' to 100 bytes
+  SectionSetSize ${test_section_id} 100
+FunctionEnd
+</pre>
+<a name="4.9.13.8"></a><h4>4.9.13.8 SectionGetSize</h4>
+<pre>section_index user_var
+</pre>
+
+<p>Gets the Size of the section specified by section_index and stores the value in the given User Variable. Note that the Index starts with Zero.</p>
+<pre>Section test test_section_id
+SectionEnd
+
+Function .onInit
+  # increase required size of section 'test' by 100 bytes
+  SectionGetSize ${test_section_id} $0
+  IntOp $0 $0 + 100
+  SectionSetSize ${test_section_id} $0
+FunctionEnd
+</pre>
+<a name="4.9.13.9"></a><h4>4.9.13.9 SetCurInstType</h4>
+<pre>inst_type_idx
+</pre>
+
+<p>Sets the current InstType. inst_type_idx should be between 0 and 31. The Error Flag is <b>not</b> set if an out of range InstType was used.</p>
+<a name="4.9.13.10"></a><h4>4.9.13.10 GetCurInstType</h4>
+<pre>user_var
+</pre>
+
+<p>Get the current InstType and stores it in user_var. If the first install type is selected, 0 will be put in user_var. If the second install type is selected, 1 will be put in user_var, and so on. The value of ${NSIS_MAX_INST_TYPES} (32 by default) means that the custom install type was selected.</p>
+<a name="4.9.13.11"></a><h4>4.9.13.11 InstTypeSetText</h4>
+<pre>inst_type_idx text
+</pre>
+
+<p>Sets the Text of the specified InstType. If the Text is empty than the InstType is removed. By using a previously unused inst_type_idx number you can create new InstTypes. To add/remove Sections to this new InstType see <a href="Chapter4.html#4.9.13.5">SectionSetInstTypes</a>. Unlike <a href="Chapter4.html#4.6.1.4">SectionIn</a> the index is zero based, which means the first install type's index is 0.</p>
+<pre>InstType a
+InstType b
+
+Function .onInit
+  # set first installation type's name to $WINDIR
+  InstTypeSetText 0 $WINDIR
+  # set second installation type's name to $TEMP
+  InstTypeSetText 1 $TEMP
+FunctionEnd
+</pre>
+<a name="4.9.13.12"></a><h4>4.9.13.12 InstTypeGetText</h4>
+<pre>inst_type_idx user_var
+</pre>
+
+<p>Gets the Text of the specified InstType.</p>
+<pre>InstType a
+InstType b
+
+Function .onInit
+  InstTypeGetText 0 $0
+  DetailPrint $0 # prints 'a'
+  InstTypeGetText 1 $0
+  DetailPrint $0 # prints 'b'
+FunctionEnd
+</pre>
+<a name="4.9.14"></a><h3>4.9.14 User Interface Instructions</h3>
+<a name="4.9.14.1"></a><h4>4.9.14.1 BringToFront</h4>
+
+<p>Makes the installer window visible and brings it to the top of the window list. If an application was executed that shows itself in front of the installer, a BringToFront would bring the installer back in focus.</p>
+
+<p>Recent Windows versions restrict the setting of foreground windows. If the user is working with another application during installation, the user may be notified using a different method.</p>
+<a name="4.9.14.2"></a><h4>4.9.14.2 CreateFont</h4>
+<pre>user_var(handle output) face_name [height] [weight] [/ITALIC] [/UNDERLINE] [/STRIKE]
+</pre>
+
+<p>Creates a font and puts its handle into user_var. For more information about the different parameters have a look at <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp">MSDN's page about the Win32 API function CreateFont()</a>.</p>
+
+<p>You can get the current font used by NSIS using the ^Font and ^FontSize <a href="Chapter4.html#4.9.15.2">LangString</a>s.</p>
+<pre>!include WinMessages.nsh
+GetDlgItem $0 $HWNDPARENT 1
+CreateFont $1 &quot;Times New Roman&quot; &quot;7&quot; &quot;700&quot; /UNDERLINE
+SendMessage $0 ${WM_SETFONT} $1 1
+</pre>
+<a name="4.9.14.3"></a><h4>4.9.14.3 DetailPrint</h4>
+<pre>user_message
+</pre>
+
+<p>Adds the string &quot;user_message&quot; to the details view of the installer.</p>
+<pre>DetailPrint &quot;this message will show on the installation window&quot;
+</pre>
+<a name="4.9.14.4"></a><h4>4.9.14.4 EnableWindow</h4>
+<pre>hwnd (1|0)
+</pre>
+
+<p>Enables or disables mouse and keyboard input to the specified window or control. Possible states are 0 (disabled) or 1 (enabled).</p>
+<pre>GetDlgItem $0 $HWNDPARENT 1
+EnableWindow $0 0
+Sleep 1000
+EnableWindow $0 1
+</pre>
+<a name="4.9.14.5"></a><h4>4.9.14.5 FindWindow</h4>
+<pre>user_var(hwnd output) windowclass [windowtitle] [windowparent] [childafter]
+</pre>
+
+<p>Searches for a window. Behaves like the win32 FindWindowEx(). Searches by windowclass (and/or windowtitle if specified). If windowparent or childafter are specified, the search will be restricted as such. If windowclass or windowtitle is specified as &quot;&quot;, they will not be used for the search. If the window is not found, the user variable returned is 0. To accomplish old-style FindWindow behavior, use FindWindow with SendMessage.</p>
+<pre>FindWindow $0 &quot;#32770&quot; &quot;&quot; $HWNDPARENT
+FindWindow $0 &quot;my window class&quot; &quot;my window title&quot;
+</pre>
+<a name="4.9.14.6"></a><h4>4.9.14.6 GetDlgItem</h4>
+<pre>user_var(output) dialog item_id
+</pre>
+
+<p>Retrieves the handle of a control identified by item_id in the specified dialog box dialog. If you want to get the handle of a control on the inner dialog, first use FindWindow user_var(output) &quot;#32770&quot; &quot;&quot; $HWNDPARENT to get the handle of the inner dialog.</p>
+<pre>GetDlgItem $0 $HWNDPARENT 1 # next/install button
+</pre>
+<a name="4.9.14.7"></a><h4>4.9.14.7 HideWindow</h4>
+
+<p>Hides the installer.</p>
+<a name="4.9.14.8"></a><h4>4.9.14.8 IsWindow</h4>
+<pre>HWND jump_if_window [jump_if_not_window]
+</pre>
+
+<p>If HWND is a window, Gotos jump_if_window, otherwise, Gotos jump_if_not_window (if specified).</p>
+<pre>GetDlgItem $0 $HWNDPARENT 1
+IsWindow $0 0 +3
+  MessageBox MB_OK &quot;found a window&quot;
+  Goto +2
+  MessageBox MB_OK &quot;no window&quot;
+</pre>
+<a name="4.9.14.9"></a><h4>4.9.14.9 LockWindow</h4>
+<pre>on|off
+</pre>
+
+<p><em>LockWindow on</em> prevents the main window from redrawing itself upon changes. When <em>LockWindow off</em> is used, all controls that weren't redrawn since <em>LockWindow on</em> will be redrawn. This makes the pages flickering look nicer because now it flickers a group of controls at the same time, instead of one control at a time. The individual control flickering is more noticeable on old computers.</p>
+<a name="4.9.14.10"></a><h4>4.9.14.10 SendMessage</h4>
+<pre>HWND msg wparam lparam [user_var(return value)] [/TIMEOUT=time_in_ms]
+</pre>
+
+<p>Sends a message to HWND. If a user variable $x is specified as the last parameter (or one before the last if you use /TIMEOUT), the return value of SendMessage will be stored to it. Note that when specifying 'msg' you must just use the integer value of the message. If you wish to send strings use &quot;STR:a string&quot; as wParam or lParam where needed.</p>
+<ul>
+<li><em>WM_CLOSE</em> 16</li><li><em>WM_COMMAND</em> 273</li><li><em>WM_USER</em> 1024</li></ul>
+
+<p>Include WinMessages.nsh to have all of Windows messages defined in your script.</p>
+
+<p>To send a string param, put STR: before the parameter, for example: &quot;STR:Some string&quot;.</p>
+
+<p>Use /TIMEOUT=time_in_ms to specify the duration, in milliseconds, of the time-out period.</p>
+<pre>!include WinMessages.nsh
+FindWindow $0 &quot;Winamp v1.x&quot;
+SendMessage $0 ${WM_CLOSE} 0 0
+</pre>
+<a name="4.9.14.11"></a><h4>4.9.14.11 SetAutoClose</h4>
+<pre>true|false
+</pre>
+
+<p>Overrides the default auto window-closing flag (specified for the installer using <a href="Chapter4.html#4.8.1.3">AutoCloseWindow</a>, and false for the uninstaller). Specify 'true' to have the install window immediately disappear after the install has completed, or 'false' to make it require a manual close.</p>
+<a name="4.9.14.12"></a><h4>4.9.14.12 SetBrandingImage</h4>
+<pre>[/IMGID=item_id_in_dialog] [/RESIZETOFIT] path_to_bitmap_file.bmp
+</pre>
+
+<p>Sets the current bitmap file displayed as the branding image. If no IMGID is specified, the first image control found will be used, or the image control created by <a href="Chapter4.html#4.8.1.1">AddBrandingImage</a>. Note that this bitmap must be present on the user's machine. Use File first to put it there. If /RESIZETOFIT is specified the image will be automatically resized (very poorly) to the image control size. If you used <a href="Chapter4.html#4.8.1.1">AddBrandingImage</a> you can get this size, by compiling your script and watching for <a href="Chapter4.html#4.8.1.1">AddBrandingImage</a> output, it will tell you the size. SetBrandingImage will not work when called from .onInit!</p>
+<a name="4.9.14.13"></a><h4>4.9.14.13 SetDetailsView</h4>
+<pre>show|hide
+</pre>
+
+<p>Shows or hides the details, depending on which parameter you pass. Overrides the default details view, which is set via <a href="Chapter4.html#4.8.1.34">ShowInstDetails</a>.</p>
+<a name="4.9.14.14"></a><h4>4.9.14.14 SetDetailsPrint</h4>
+<pre>none|listonly|textonly|both|lastused
+</pre>
+
+<p>Sets mode at which commands print their status. None has commands be quiet, listonly has status text only added to the listbox, textonly has status text only printed to the status bar, and both enables both (the default). For extracting many small files, textonly is recommended (especially on win9x with smooth scrolling enabled).</p>
+<pre>SetDetailsPrint none
+File &quot;secret file.dat&quot;
+SetDetailsPrint both
+</pre>
+<a name="4.9.14.15"></a><h4>4.9.14.15 SetCtlColors</h4>
+<pre>hwnd [/BRANDING] [text_color] [transparent|bg_color]
+</pre>
+
+<p>Sets a background color and the text color for a static control, edit control, button or a dialog. <em>text_color</em> and <em>bg_color</em> don't accept variables. Use <a href="Chapter4.html#4.9.14.6">GetDlgItem</a> to get the handle (HWND) of the control. To make the control transparent specify &quot;transparent&quot; as the background color value. You can also specify /BRANDING with or without text color and background color to make the control completely gray (or any other color you choose). This is used by the branding text control in the MUI.</p>
+<pre>FindWindow $0 &quot;#32770&quot; &quot;&quot; $HWNDPARENT
+GetDlgItem $0 $0 1006
+SetCtlColors $0 0xFF0000 0x00FF00
+</pre>
+
+<p><b>Warning:</b> setting the background color of check boxes to &quot;transparent&quot; may not function properly when using <a href="Chapter4.html#4.8.1.46"><code>XPStlye</code></a><code> on</code>. The background may be completely black, instead of transparent, when using certain Windows themes.</p>
+<a name="4.9.14.16"></a><h4>4.9.14.16 SetSilent</h4>
+<pre>silent | normal
+</pre>
+
+<p>Sets the installer to silent mode or normal mode. See <a href="Chapter4.html#4.8.1.36">SilentInstall</a> for more information about silent installations. Can only be used in <a href="Chapter4.html#4.7.2.1.2">.onInit</a>.</p>
+<a name="4.9.14.17"></a><h4>4.9.14.17 ShowWindow</h4>
+<pre>hwnd show_state
+</pre>
+
+<p>Sets the visibility of a window. Possible show_states are the same as <a href="http://msdn2.microsoft.com/en-us/library/ms633548">Windows ShowWindow</a> function. SW_* constants are defined in <a href="../Include/WinMessages.nsh">Include\WinMessages.nsh</a>.</p>
+<pre>!include WinMessages.nsh
+GetDlgItem $0 $HWNDPARENT 1
+ShowWindow $0 ${SW_HIDE}
+Sleep 1000
+ShowWindow $0 ${SW_SHOW}
+</pre>
+<a name="4.9.15"></a><h3>4.9.15 Multiple Languages Instructions</h3>
+<a name="4.9.15.1"></a><h4>4.9.15.1 LoadLanguageFile</h4>
+<pre>language_file.nlf
+</pre>
+
+<p>Loads a language file for the construction of a language table. All of the language files that come with NSIS are in <a href="../Contrib/Language files">Contrib\Language Files</a></p>
+
+<p>After you have inserted the language file ${LANG_langfile} will be defined as the language id (for example, ${LANG_ENGLISH} will be defined as 1033). Use it with <a href="Chapter4.html#4.9.15.2">LangString</a>, <a href="Chapter4.html#4.9.15.3">LicenseLangString</a>, LangDLL and <a href="Chapter4.html#4.8.3.1">VIAddVersionKey</a>.</p>
+<a name="4.9.15.2"></a><h4>4.9.15.2 LangString</h4>
+<pre>name language_id string
+</pre>
+
+<p>Defines a multilingual string. This means its value may be different (or not, it's up to you) for every language. It allows you to easily make your installer multilingual without the need to add massive switches to the script.</p>
+
+<p>Each language string has a name that identifies it and a value for each language used by the installer. They can be used in any runtime string in the script. To use a language string all you need to add to the string is $(LangString_name_here) where you want the LangString to be inserted.</p>
+
+<p><b>Notes:</b></p>
+<ul>
+<li>Unlike defines that use curly braces - {}, language strings use parenthesis - ().</li><li>If you change the language in the .onInit function, note that language strings in .onInit will still use the detected language based on the user's default Windows language, because the language is initialized after .onInit.</li><li>Always set language strings for every language in your script.</li><li>If you set the language ID to 0 the last used language by LangString or <a href="Chapter4.html#4.9.15.1">LoadLanguageFile</a> will be used.</li></ul>
+
+<p><b>Example of usage:</b></p>
+<pre> LangString message ${LANG_ENGLISH} &quot;English message&quot;
+ LangString message ${LANG_FRENCH} &quot;French message&quot;
+ LangString message ${LANG_KOREAN} &quot;Korean message&quot;
+
+ MessageBox MB_OK &quot;A translated message: $(message)&quot;
+</pre>
+<a name="4.9.15.3"></a><h4>4.9.15.3 LicenseLangString</h4>
+<pre>name language_id license_path
+</pre>
+
+<p>Does the same as <a href="Chapter4.html#4.9.15.2">LangString</a> only it loads the string from a text/RTF file and defines a special LangString that can be used only by <a href="Chapter4.html#4.8.1.26">LicenseData</a>.</p>
+<pre>LicenseLangString license ${LANG_ENGLISH} license-english.txt
+LicenseLangString license ${LANG_FRENCH} license-french.txt
+LicenseLangString license ${LANG_GERMAN} license-german.txt
+</pre>
+<pre>LicenseData $(license)
+</pre>
+<a name="4.10"></a><h2>4.10 Multiple Languages</h2>
+
+<p>As of version 2 NSIS fully supports multiple languages. The interface of one installer can support multiple languages.</p>
+
+<p>Use <a href="Chapter4.html#4.9.15.1">LoadLanguageFile</a> for every language to load the default interface texts and language properties.</p>
+
+<p>The default interface texts can easily be changed using instructions like <a href="Chapter4.html#4.8.1.11">ComponentText</a> etc.</p>
+
+<p>You can also use the contents of the standard language strings in your own strings (for example, $(^Name) contains the installer's name set using the <a href="Chapter4.html#4.8.1.30">Name</a> instruction). The names of all standard language strings are listed as comments just above the strings in the language files. The language files are located in <a href="../Contrib/Language files">Contrib\Language Files</a>.</p>
+
+<p>To create your own language strings, use <a href="Chapter4.html#4.9.15.2">LangString</a>.</p>
+
+<p>For an example of an installer with multiple languages, see <a href="../Examples/languages.nsi">languages.nsi</a>.</p>
+<a name="4.10.1"></a><h3>4.10.1 Language Selection</h3>
+
+<p>When the installer starts up it goes through these steps to select the interface language:</p>
+<ol>
+<li>Get user's default Windows UI language</li><li>Find a perfect match for the language</li><li>If there is no perfect match, find a primary language match</li><li>If there is no match, use the first language defined in the script (make sure your first language is a common one like English)</li><li>If the language variable <a href="Chapter4.html#4.2.3">$LANGUAGE</a> has changed during .onInit, NSIS goes through steps 2 to 4 again.</li></ol>
+<a name="4.10.2"></a><h3>4.10.2 LangDLL Plug-in</h3>
+
+<p>The LangDLL plug-in allows you to give the user an option to choose the language of the installer. Just push the language id (${LANG_langfile}) and its name for every language in your installer, then the number of languages pushed, the caption, and the text that tells the user to select the language, call the plug-in function named LangDialog, pop the returned value into $LANGUAGE and you're good to go. If the user clicks on the cancel button the return value will be &quot;cancel&quot;.</p>
+
+<p>For an example of usage see <a href="../Examples/languages.nsi">languages.nsi</a>.</p>
+<a name="4.10.3"></a><h3>4.10.3 RTL Languages</h3>
+
+<p>RTL languages are languages that are written from right to left (e.g. Arabic and Hebrew). NSIS fully supports RTL languages. In the language file there is a place to specify if the language is RTL or not. To find out at runtime if the current language is RTL or not, check the value of the $(^RTL) language string. It will be 1 if the language is RTL and 0 otherwise. This can be useful when using plug-ins that create dialogs, they usually have RTL settings too.</p>
+<a name="4.11"></a><h2>4.11 Plug-in DLLs</h2>
+
+<p>The abilities of the NSIS scripting language can be extended by utilising functionality provided in a DLL file. Probably the best known example of this is the InstallOptions.dll bundled with every NSIS release.</p>
+
+<p>When the NSIS compiler starts it scans the plug-ins directory for DLLs and makes a list of the plug-ins found and their exported functions. During compilation if a sequence such as fred::flintstone is encountered where the compiler expected to find a language keyword the compiler will look through this list. If a list entry specifies that fred.dll exports function flintstone NSIS will pack the fred.dll file into the created installer binary.</p>
+
+<p>During execution of a plug-in command NSIS will unpack the necessary DLL to a temporary folder ($PLUGINSDIR), push all of the arguments specified (right-to-left order), and then execute the DLL function.</p>
+<a name="4.11.1"></a><h3>4.11.1 Using Plug-in Commands</h3>
+
+<p>A plug-in call looks like this:</p>
+<pre>InstallOptions::dialog &quot;ini_file_location.ini&quot;
+</pre>
+
+<p>All parameters are pushed onto the stack (in this case, the plug-in function only needs one parameter). Some plug-in commands may not need any parameters on the stack, others might require more of them. To use a plug-in command you will need to read the documentation for the plug-in so that you know what parameters its functions require.</p>
+<a name="4.11.2"></a><h3>4.11.2 Calling plug-ins manually</h3>
+
+<p>If you want to call a plug-in that is stored on user's hard drive or somewhere else, use <a href="Chapter4.html#4.9.3.1">CallInstDLL</a>. Almost all plug-ins provide installer functionality, so using plug-in commands is way easier. Using <a href="Chapter4.html#4.9.3.1">CallInstDLL</a> can be useful when you have created plug-ins that should be linked to a certain version of your application and are being copied to the installation folder.</p>
+<a name="4.12"></a><h2>4.12 Silent Installers/Uninstallers</h2>
+
+<p>Silent installers are installers which require no user intervention and have no user interface. The user doesn't see any dialog and isn't asked any questions. This is useful for network administrators who wish to install or uninstall something without user intervention so they can perform the operation quickly over any number of computers. It is also useful for other developers who wish to embed another installer in their own and collect all of the required information on their installer instead of showing two installers.</p>
+
+<p>NSIS installers and uninstallers can be both silent and not silent. When an installer or an uninstaller is silent, not all callback functions are called. <a href="Chapter4.html#4.7.2.1.1">.onGUIInit</a>, <a href="Chapter4.html#4.7.2.1.5">.onGUIEnd</a>, their uninstaller equivalents and any callback related to a specific page or page type will not be called.</p>
+
+<p>There are several methods to make an installer or an uninstaller silent:</p>
+<ol>
+<li><a href="Chapter4.html#4.8.1.36">SilentInstall</a> and <a href="Chapter4.html#4.8.1.37">SilentUninstall</a></li><li><a href="Chapter4.html#4.9.14.16">SetSilent</a></li><li>Passing /S on the command line (case sensitive)</li></ol>
+
+<p>To check if the installer/uninstaller is silent use <a href="Chapter4.html#4.9.4.12">IfSilent</a>.</p>
+
+<p>To make sure your installer will be silent when it needs to, you should check with <a href="Chapter4.html#4.9.4.12">IfSilent</a> before each command that might require user intervention or create a window. The <a href="Chapter4.html#4.9.4.15">MessageBox</a> command, which is the most common culprit in silent installers, has the /SD switch to set a default answer for silent installers. If you want your installer/uninstaller to be able to be completely silent you should use this switch. All internal NSIS message boxes have defaults for silent installers. The <a href="../Examples/silent.nsi">silent.nsi example</a> demonstrates all aspects of this topic.</p>
+
+<p>Since the directory page can not be shown on silent installers, the user has an option to specify the installation directory on the command line (this also works on non-silent installers/uninstallers). To do that, the user uses the /D switch as in the following example:</p>
+<pre>foo.exe /S /D=C:\Program Files\Foo
+</pre>
+
+<p>If your installer/uninstaller requires some more information that can not be gathered when silent, you can allow the user to specify that information on the command line and process it in .onInit. You can use <a href="AppendixE.html#E.1.12">GetOptions</a>.</p>
+<pre>!include FileFunc.nsh
+!insertmacro GetParameters
+!insertmacro GetOptions
+
+Function .onInit
+  ${GetParameters} $R0
+  ClearErrors
+  ${GetOptions} $R0 /USERNAME= $0
+FunctionEnd
+</pre>
+
+<p>The above example will copy the value the user passes on after /USERNAME= into $0. This allows the user to specify the required information on the command line instead of using the interactive user interface. The user can use:</p>
+<pre>foo.exe /S /USERNAME=Bar /D=C:\Program Files\Foo
+</pre>
+
+<p>or:</p>
+<pre>foo.exe /S /USERNAME=string with spaces /D=C:\Program Files\Foo
+</pre>
+
+<p>or:</p>
+<pre>foo.exe /S /USERNAME=&quot;string with spaces&quot; /D=C:\Program Files\Foo
+</pre>
+
+<p>If your installer/uninstaller requires a lot of information and you want it to be able to be silent, you should allow the user to pass on a path to an answers file. This would be much more comfortable than writing all of the information on the command line.</p>
+<p><a href='Chapter3.html'>Previous</a> | <a href='Contents.html'>Contents</a> | <a href='Chapter5.html'>Next</a></p>
+
+<hr />
+
+<address>
+</address>
+<a href="http://sourceforge.net"><img border=0 src="http://sourceforge.net/sflogo.php?group_id=22049&amp;type=1" alt="SourceForge Logo" /></a></body>
+
+</html>
