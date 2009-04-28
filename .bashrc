@@ -229,3 +229,6 @@ export HOME=/q
 
 export PYTHON_INCLUDE='c:\python25\include'
 export PYTHON_LIB='c:\python25\libs\python25.lib'
+
+export ADBHOST=192.168.100.2
+export ADB_HOST=192.168.100.2
