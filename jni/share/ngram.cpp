@@ -218,7 +218,7 @@ void NGram::set_total_freq_none_sys(size_t freq_none_sys) {
   if (0 == total_freq_none_sys_) {
     sys_score_compensation_ = 0;
   } else {
-    double factor = static_cast<double>(total_freq_none_sys_) / (
+    double factor = static_cast<double>(kSysDictTotalFreq) / (
         kSysDictTotalFreq + total_freq_none_sys_);
     sys_score_compensation_ = static_cast<float>(
         log(factor) * kLogValueAmplifier);
