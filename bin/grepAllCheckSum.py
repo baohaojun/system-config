@@ -4,7 +4,7 @@ def grepAllCheckSum(arg):
     charList = []
     for c in arg:
         if c in '*%\\/?><|:\"\n\t':
-            charList.extend(("%%%02x" % ord(c)).split())
+            charList.extend( list("%%%02x" % ord(c)) )
         else:
             charList.append(c)
 
