@@ -32,7 +32,7 @@ def isOlder(file1, file2): #TODO: true if file1 older than file2
 class GrepAllParse:
     def __init__(self):
         self.prunes = []
-        self.finds = []
+        self.finds = ['-o', '-true']
         self.grepOpts = []
         self.pattern = ''
 
