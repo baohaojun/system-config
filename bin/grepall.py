@@ -5,21 +5,23 @@ import sys, os
 from subprocess import *
 
 find_pre_prunes = [
-    '-path', '"*/CVS"', '-o', '-path', '"*/.svn"', 
-    '-o', '-path', '"*/autom4te.cache"', 
-    '-o', '-path', '"*/{arch}"', 
-    '-o', '-path', '"*/.hg"', 
-    '-o', '-path', '"*/_darcs"', 
-    '-o', '-path', '"*/.git"', 
-    '-o', '-path', '"*/.bzr"', 
-    '-o', '-path', '"*~*"', 
-    '-o', '-path', '"*#"', 
-    '-o', '-path', '"*/TAGS"', 
-    '-o', '-path', '"*/semantic.cache"', 
+    '-path', '*/CVS', 
+    '-o', '-path', '*/.svn', 
+    '-o', '-path', '*/autom4te.cache', 
+    '-o', '-path', '*/{arch}', 
+    '-o', '-path', '*/.hg', 
+    '-o', '-path', '*/_darcs', 
+    '-o', '-path', '*/.git', 
+    '-o', '-path', '*/.bzr', 
+    '-o', '-path', '*~*', 
+    '-o', '-path', '*#', 
+    '-o', '-path', '*/TAGS', 
+    '-o', '-path', '*/semantic.cache', 
     '-o', '-iname', '*.o',
     '-o', '-iname', '*.class', 
     '-o', '-iname', '*.obj',
     '-o', '-iname', '*.pyc',
+    '-o', '-path', '*/.ignore'
     ]
 
 
@@ -174,7 +176,7 @@ class GrepAll:
             self.grepFiles = open(self.findCache, 'r').read().split('\n')
             if not self.grepFiles[-1]:
                 del self.grepFiles[-1]
-            self.grepPipe = Popen(self.grepCommand + self.grepFiles, stdout=PIPE, stdin=open("/dev/null", "r"))
+            self.grepPipe = Popen(self.grepCommand + self.grepFiles, stdout=PIPE, stdin=open("/dev/null", "r"), stderr=open('/dev/null', 'w'))
             tmpGCFile = open(self.tmpGrepCache, 'w')
             while True:
                 line = self.grepPipe.stdout.readline()
@@ -277,7 +279,6 @@ class GrepAll:
             self.grepPipe.wait()
             self.grepPipe = None
         os.rename(self.tmpGrepCache, self.grepCache)
-
             
 if __name__ == '__main__':
     def main():
