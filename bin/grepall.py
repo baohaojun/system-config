@@ -1,7 +1,8 @@
 #!/usr/bin/python 
-
+import pdb
 from grepAllCheckSum import *
-import sys, os, subprocess
+import sys, os
+from subprocess import *
 
 find_pre_prunes = [
     '-path', '"*/CVS"', '-o', '-path', '"*/.svn"', 
@@ -33,7 +34,7 @@ class GrepAllParse:
         self.grepOpts = []
         self.pattern = ''
 
-        self.dirs = []
+        self.dirs = set(())
 
         self.parse_args()
 
@@ -55,7 +56,7 @@ class GrepAllParse:
             elif theArg[0:1] == '-':
                 self.grepOpts.append(theArg)
             else:
-                self.dirs.append(os.path.realpath(theArg))
+                self.dirs.add(os.path.realpath(theArg))
 
     def getPrunes(self, arg):
         self.prunes[:] = []
@@ -84,6 +85,17 @@ class GrepAllParse:
             findList.extend(['-o', '-iname', arg])
 
 class GrepAll:
+    """there can be 3 cases about findCache (fc), grepCache (gc):
+    1. no fc, no gc
+    2. has fc, no gc
+    3. has fc, has gc
+    In case 1, we do a complete find
+    In case 2, we do newer than fc find
+    In case 3, we do newer than gc find
+    After the program complete, the fc will contain all and only those possible files at the time"""    
+    NO_FC_NO_GC = 1
+    HAS_FC_NO_GC = 2
+    HAS_FC_HAS_GC = 3
     def __init__(self, dir_, parser):
         self.prunes = parser.prunes
         self.finds = parser.finds
@@ -91,26 +103,33 @@ class GrepAll:
         self.pattern = parser.pattern
 
         self.cacheDir = os.environ['HOME'] + '/.grepall/' + dir_ + '/'
+        call(('mkdir', '-p', self.cacheDir))
         self.workDir_ = dir_
         self.findCache = self.cacheDir + \
             grepAllCheckSum('P' +
                             ''.join(self.prunes[2::3]) + 'F' +
                             ''.join(self.finds[2::3]))
 
-        self.grepCache = self.cacheDir + \
-            grepAllCheckSum('P' + 
-                            ''.join(self.prunes[2::3]) + 'F' +
-                            ''.join(self.finds[2::3]) + 'G' +
-                            ''.join(self.grepOpts[:]) + 
-                            ''.join(self..pattern))
+        self.newerFindCache = self.findCache + '.new'
 
-        self.findCommand = ['find', absDir, '(' ] + find_pre_prunes \
+        self.grepCache = self.cacheDir + \
+            grepAllCheckSum('GP' + 
+                            ''.join(self.prunes[2::3]) + 'F' +
+                            ''.join(self.finds[2::3]) + 
+                            ''.join(self.grepOpts[:]) + 
+                            ''.join(self.pattern))
+        self.tmpGrepCache = self.grepCache + '.new'
+
+        self.findCommand = ['find', dir_, '(' ] + find_pre_prunes \
             + self.prunes + [')', '-prune', '-o', '-type', 'f', '(', '-false' ] \
             + self.finds + [')', '-print']
 
-        self.updateFindCommand = ['find', absDir, '-newer', findCache, '(', '(' ] + find_pre_prunes \
+        self.newerFindCommand = ['find', dir_, '-newer', self.findCache, '(', '(' ] + find_pre_prunes \
             + self.prunes + [')', '-prune', '-o', '-type', 'f', '(', '-false' ] \
             + self.finds + [')', '-print', ')']
+
+        self.newerGrepCommand = self.newerFindCommand[:]
+        self.newerGrepCommand[3] = self.grepCache
 
         self.grepCommand = ['grep', 
                             '-e', 
@@ -119,90 +138,160 @@ class GrepAll:
                             '-n',
                             ] + \
                             self.grepOpts
-         self.findPipe = None
-         self.grepPipe = None
-
+        self.findPipe = None
+        self.grepPipe = None
+        self.reGrepSet = []
+        self.grepFiles = []
+        if not os.path.exists(self.findCache):
+            if not os.path.exists(self.grepCache):
+                self.state = GrepAll.NO_FC_NO_GC
+                print 'no fc, no gc'
+            else:
+                raise RuntimeError, 'no fc, has gc'
+        else:
+            if not os.path.exists(self.grepCache):
+                print 'has fc, no gc'
+                self.state = GrepAll.HAS_FC_NO_GC
+            else:
+                print 'has fc, has gc'
+                self.state = GrepAll.HAS_FC_HAS_GC
+                s = os.stat(self.grepCache)
+                self.grepCacheMtime = s.st_mtime
     def doFind(self):
-        if os.path.exists(self.findCache):
-            self.findPipe = subprocess.Popen(
+        if self.state == GrepAll.NO_FC_NO_GC:
+            self.findPipe = Popen(self.findCommand, stdout=open(self.findCache, 'w'), stdin=open("/dev/null", "r"))
+        elif self.state == GrepAll.HAS_FC_NO_GC:
+            self.findPipe = Popen(self.newerFindCommand, stdout=open(self.newerFindCache, 'w'), stdin=open("/dev/null", "r"))
+        elif self.state == GrepAll.HAS_FC_HAS_GC:
+            self.findPipe = Popen(self.newerGrepCommand, stdout=open(self.newerFindCache, 'w'), stdin=open("/dev/null", "r"))
+        else:
+            raise RuntimeError, 'no fc, has gc'
 
-    def doGrep(self, absDir, findCache, grepCache):
-
-        findList = open(findCache, "r").read().split('\n')
-
-        grepCommand = 
-
-        cacheFile = open(grepCache, "w")
-        cmdPipe = subprocess.Popen(grepCommand + findList, stdout=subprocess.PIPE, stderr=open("/dev/null"))
-        while True:
-            line = cmdPipe.stdout.readline()
-            if not line:
-                break;
-            sys.stdout.write(line)
-            cacheFile.write(line)
-
-        findList = self.waitUpdateFindDone()
-        if findList:
-            cmdPipe = subprocess.Popen(grepCommand + findList, stdout=subprocess.PIPE, stderr=open("/dev/null"))
-        while True:
-            line = cmdPipe.stdout.readline()
-            if not line:
-                break;
-            sys.stdout.write(line)
-            cacheFile.write(line)
-        cacheFile.close()
-
-
-    def catGrep(self, grepCache):
-        #subprocess.call(('cat', grepCache))
-
-        #we will do something more sophisticated
-        for line in open(grepCache, 'r'):
-            fileName = line.split(':', 1)[0]
-            if os.path.exists(fileName) and isOlder(fileName, grepCache):
+    def doGrep(self):
+        if self.state == GrepAll.NO_FC_NO_GC: #we can't do grep when we has no FC
+            pass
+        elif self.state == GrepAll.HAS_FC_NO_GC:
+            self.grepFiles = open(self.findCache, 'r').read().split('\n')
+            if not self.grepFiles[-1]:
+                del self.grepFiles[-1]
+            self.grepPipe = Popen(self.grepCommand + self.grepFiles, stdout=PIPE, stdin=open("/dev/null", "r"))
+            tmpGCFile = open(self.tmpGrepCache, 'w')
+            while True:
+                line = self.grepPipe.stdout.readline()
+                if not line:
+                    break
                 sys.stdout.write(line)
-    
-                    
+                tmpGCFile.write(line)
+            tmpGCFile.close()
+        else: #has GC, has FC
+            lastFileName = ''
+            lastFileState = ''
+            tmpGCFile = open(self.tmpGrepCache, 'w')
+            for line in open(self.grepCache, 'r'):
+                fileName = line.split(':', 1)[0]
+                if fileName == lastFileName:
+                    if lastFileState == 'cat':
+                        sys.stdout.write(line)
+                        tmpGCFile.write(line)
+                    else:
+                        #discard or regrep, no need to do anything
+                        pass
+                else:
+                    lastFileName = fileName
+                    if not os.path.exists(fileName) or self.needReGrep(fileName):
+                        lastFileState = 'pass'
+                        pass
+                    else:
+                        lastFileState = 'cat'
+                        sys.stdout.write(line)
+                        tmpGCFile.write(line)
+            tmpGCFile.close()
+
+    def needReGrep(self, fileName):
+        s = os.stat(fileName)
+        return s.st_mtime > self.grepCacheMtime
+    def waitFind(self):
+        if self.findPipe:
+            self.findPipe.wait()
+            self.findPipe = None
+        else:
+            return
+        if self.state == GrepAll.NO_FC_NO_GC:
+            self.state = GrepAll.HAS_FC_NO_GC
+            self.doGrep()
+            return #no need to update FC
+        elif self.state == GrepAll.HAS_FC_NO_GC:
+            if not self.grepFiles:
+                self.grepFiles = open(self.findCache, "r").read().split('\n')
+            self.grepFiles = set(self.grepFiles)
+
+            self.reGrepSet = open(self.newerFindCache, "r").read().split('\n')
+            for x in self.reGrepSet[:]:
+                if x in self.grepFiles:
+                    self.reGrepSet.remove(x)
+                else:
+                    self.grepFiles.add(x)
+        elif self.state == GrepAll.HAS_FC_HAS_GC:
+            if not self.grepFiles:
+                self.grepFiles = open(self.findCache, "r").read().split('\n')
+            self.grepFiles = set(self.grepFiles)
+            self.reGrepSet = open(self.newerFindCache, "r").read().split('\n')
+            for x in self.reGrepSet[:]:
+                self.grepFiles.add(x)
+
+        #now let's update FC
+        self.grepFiles = list(self.grepFiles)
+        self.grepFiles.sort()
+        findCacheFile = open(self.findCache, "w")
+        for x in self.grepFiles:
+            if x:
+                findCacheFile.write(x)
+                findCacheFile.write('\n')
+                
+        findCacheFile.close()
+        os.remove(self.newerFindCache)
+
+    def waitGrep(self):
+        if self.grepPipe:
+            self.grepPipe.wait()
+            self.grepPipe = None
+
+        if self.reGrepSet:
+            if not self.reGrepSet[-1]:
+                del self.reGrepSet[-1]
+        if self.reGrepSet:
+            print 'need regrep', self.reGrepSet
+            self.grepPipe = Popen(self.grepCommand + self.reGrepSet, stdout=PIPE, stdin=open('/dev/null', 'r'))
+            tmpGCFile = open(self.tmpGrepCache, 'a')
+            while True:
+                line = self.grepPipe.stdout.readline()
+                if not line:
+                    break;
+                sys.stdout.write(line)
+                tmpGCFile.write(line)
+            self.grepPipe.wait()
+            self.grepPipe = None
+        os.rename(self.tmpGrepCache, self.grepCache)
+
+            
 if __name__ == '__main__':
-    parse_args()
-    for d in dirs:
-        findCache = getFindCacheName(d) 
-        print 'findCache is', findCache
+    def main():
+        parser = GrepAllParse()
+        dirGrepDict = {}
+        for x in parser.dirs:
+            dirGrepDict[x] = GrepAll(x, parser)
 
-        if os.path.exists(findCache):
-            updateFind(d, findCache)
-        else:
-            doFind(d, findCache)
+        for x in parser.dirs:
+            dirGrepDict[x].doFind()
 
-         grepCache = getGrepCacheName(d)
-        print 'grepCache is', grepCache
+        for x in parser.dirs:
+            dirGrepDict[x].doGrep()
 
-        if False and os.path.exists(grepCache):
-            catGrep(grepCache)
-        else:
-            doGrep(d, findCache, grepCache)
-        # if fileExist(findCache):
-        #     doNewerFind(findCache)
-        #     uniqLines(findCache) #
-        # else:
-        #     doFind(d)
+        for x in parser.dirs:
+            dirGrepDict[x].waitFind()
 
-        # grepCache = getGrepCacheName(d)
-        # if fileExist(grepCache):
-        #     for srcFile in grepCache:
-        #         if srcFile missing:
-        #             remove the lines belong to srcFile in grepCache
-        #         elif srcFile newer:
-        #             regrep srcFile
-        #         else:
-        #             cat the srcFile grep
+        for x in parser.dirs:
+            dirGrepDict[x].waitGrep()
 
-        #     for srcFile in newerFound:
-        #         if srcFile already regreped:
-        #             pass
-        #         else:
-        #             grep srcFile
-        # else:
-        #     doGrep(d)
+    main()
 
-        
