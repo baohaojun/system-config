@@ -170,11 +170,11 @@ This function does not modify point or mark."
  "WuBi" "WuBi"
  "quail/wubi86")
 
-;(load "auctex.el" nil t t)
+(load "auctex.el" nil t t)
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
-;(load "preview-latex.el" nil t t)
+(load "preview-latex.el" nil t t)
 
 ; set unicode data file location. (used by what-cursor-position)
 (let ((x "~/.emacs_d/UnicodeData.txt"))
