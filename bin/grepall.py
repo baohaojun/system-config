@@ -181,6 +181,7 @@ class GrepAll:
                 if not line:
                     break
                 sys.stdout.write(line)
+                sys.stdout.flush()
                 tmpGCFile.write(line)
             tmpGCFile.close()
         else: #has GC, has FC
@@ -192,6 +193,7 @@ class GrepAll:
                 if fileName == lastFileName:
                     if lastFileState == 'cat':
                         sys.stdout.write(line)
+                        sys.stdout.flush()
                         tmpGCFile.write(line)
                     else:
                         #discard or regrep, no need to do anything
@@ -204,6 +206,7 @@ class GrepAll:
                     else:
                         lastFileState = 'cat'
                         sys.stdout.write(line)
+                        sys.stdout.flush()
                         tmpGCFile.write(line)
             tmpGCFile.close()
 
@@ -216,6 +219,7 @@ class GrepAll:
             self.findPipe = None
         else:
             return
+        print 'wait find done'
         if self.state == GrepAll.NO_FC_NO_GC:
             self.state = GrepAll.HAS_FC_NO_GC
             self.doGrep()
@@ -268,6 +272,7 @@ class GrepAll:
                 if not line:
                     break;
                 sys.stdout.write(line)
+                sys.stdout.flush()
                 tmpGCFile.write(line)
             self.grepPipe.wait()
             self.grepPipe = None
