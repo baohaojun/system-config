@@ -232,3 +232,9 @@ export PYTHON_LIB='c:\python25\libs\python25.lib'
 
 export ADBHOST=192.168.100.2
 export ADB_HOST=192.168.100.2
+if [[ `uname` == CYGWIN_NT-5.1 ]]; 
+then
+    . ~/.bashrc-windows
+else
+    . ~/.bashrc-linux
+fi

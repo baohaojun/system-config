@@ -11,8 +11,10 @@
   (setq cygwin-mount-cygwin-bin-directory (concat cygwin-drive "/cygwin/bin"))
   (setq load-path
 	(cons "d:/tools/emacs-site-lisp/" load-path))
-  (add-to-list 'load-path "~/bin/gnuserv")
+  (add-to-list 'load-path "~/bin/windows/gnuserv")
   (require 'cygwin-mount)
+  (global-set-key[(f2)](lambda()(interactive)(call-process "bash" nil nil nil "~/bin/windows/ehelp" (current-word))))
+  (global-set-key[(f3)](lambda()(interactive)(call-process "bash" nil nil nil "~/bin/windows/ehelph2" (current-word))))
   (defsubst nsi-point (position)
     "Returns the value of point at certain commonly referenced POSITIONs.
 POSITION can be one of the following symbols:
@@ -127,8 +129,7 @@ This function does not modify point or mark."
 
 
 
-(global-set-key[(f2)](lambda()(interactive)(call-process "bash" nil nil nil "~/bin/ehelp" (current-word))))
-(global-set-key[(f3)](lambda()(interactive)(call-process "bash" nil nil nil "~/bin/ehelph2" (current-word))))
+
 
 (setq null-device "/dev/null")
 
