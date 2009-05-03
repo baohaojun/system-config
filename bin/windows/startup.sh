@@ -17,10 +17,10 @@ rm tramp* -rf
 cd ~/doc
 regedit /s ImeNoToggle.reg
 
-cd ~/bin/startup
+cd ~/bin/windows/startup
 
 for x in *; do 
     cygstart "$x"
 done
 
-ln -sf "$HOME2"/bin/startup.sh ~/start\ menu/programs/startup
+ln -sf "$HOME2"/bin/windows/startup.sh ~/start\ menu/programs/startup

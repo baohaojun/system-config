@@ -1,1 +1,1 @@
-/home/bhj/bin/FuzzyClock.sh
+../FuzzyClock.sh

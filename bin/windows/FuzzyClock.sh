@@ -1,3 +1,3 @@
 #!/bin/bash
-cd ~/bin/
+cd ~/bin/windows
 cygstart --hide ./FuzzyClock.exe
