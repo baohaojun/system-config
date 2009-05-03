@@ -1,0 +1,99 @@
+<html lang="en">
+<head>
+<title>pde-load - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="Installation.html#Installation" title="Installation">
+<link rel="next" href="pde.html#pde" title="pde">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="pde-load"></a>
+<a name="pde_002dload"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="pde.html#pde">pde</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Installation.html#Installation">Installation</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">3 Default configuration for PDE</h2>
+
+<p><samp><span class="file">pde-load.el</span></samp> try to provide a default configuration for all
+extension included in PDE. The configuration can be sorted by PDE core
+features and some recommend personal setting. To disable addtional
+features if you don't like, you can set <code>pde-extra-setting</code> to
+nil.
+
+<div class="defun">
+&mdash; User Option: <b>pde-extra-setting</b><var><a name="index-pde_002dextra_002dsetting-2"></a></var><br>
+<blockquote><p>When set to nil, don't load something you don't like
+</p></blockquote></div>
+
+   <p>The minimal enable features after load `pde-load' are:
+     <ul>
+<li>make perl script associate with cperl-mode not perl-mode
+<li>setup new indent style &ldquo;PDE&rdquo;
+<li>turn on abbrev mode
+<li>search document with M-x <samp><span class="command">perldoc</span></samp> or using M-x <samp><span class="command">perldoc-tree</span></samp>
+<li>show imenu with M-x <samp><span class="command">imenu-tree</span></samp>
+<li>auto chmod when saving perl script
+<li>create new file with template
+<li>call perltidy when editing
+<li>start interactive perl shell using M-x <samp><span class="command">inf-perl</span></samp>
+<li>improved perldb using M-x <samp><span class="command">perldb-ui</span></samp>
+<li>smart compile and run command using M-x <samp><span class="command">compile-dwim-compile</span></samp>
+and <samp><span class="command">compile-dwim-run</span></samp>. 
+<li>find perl module in cperl-mode using M-x <samp><span class="command">ffap</span></samp>
+<li>enable show brief info of buildin function under point in minibuffer
+</ul>
+
+   <p>The extra feature including:
+     <ul>
+<li>turn on ido-mode and using ido completion read imenu tag
+<li>automatic update imenu-tree and make tree always visible
+<li>complete read ingore case
+<li>turn on partial-completion-mode, and you can find perl module using
+M-x <samp><span class="command">find-file</span></samp> by add prefix char '&lt;'. 
+<li>multiple compilation buffers
+<li>useful global key bindings
+<li>show perldoc-tree and imenu-tree with tabbar
+<li>set tags-table-list, hippie-expand-try-functions-list,
+comint-completion-addsuffix to make the command handy
+<li>some fixup to cperl-mode
+</ul>
+
+   <p>The configuration is optimized so that most libraries are loaded when
+needed.
+
+   </body></html>
+

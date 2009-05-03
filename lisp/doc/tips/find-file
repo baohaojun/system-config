@@ -1,0 +1,16 @@
+Find file quickly in current project
+
+You can use M-x pde-project-find-file to find the file in current
+project, that means the command will search recursively in the top
+directory. If you project is not two large, this won't take a long
+time to build the full file list. When you add some files, you can
+use C-u M-x pde-project-find-file to update the cache. If you think
+the command is useful, you can bind a global key, I recommend use
+C-x C-p which original binding is `mark-page'. I seldom use that
+command. So add this to you .emacs:
+
+  (global-set-key "\C-x\C-p" 'pde-project-find-file)
+  
+See also `pde-file-list-limit', `pde-file-list-regexp',
+`pde-file-list-predicate-function'.
+                       

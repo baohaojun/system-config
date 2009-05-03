@@ -1,0 +1,107 @@
+<html lang="en">
+<head>
+<title>perlcritic - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="perltidy.html#perltidy" title="perltidy">
+<link rel="next" href="perldb_002dui.html#perldb_002dui" title="perldb-ui">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="perlcritic"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="perldb_002dui.html#perldb_002dui">perldb-ui</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="perltidy.html#perltidy">perltidy</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">22 Calling perlcritic</h2>
+
+<p>&ldquo;perlcritic&rdquo; is a Perl source code analyzer. See
+<samp><span class="command">perldoc perlcritic</span></samp> for detail document of the program. 
+<samp><span class="file">perlcritic.el</span></samp> provide an interface to use &ldquo;perlcritic&rdquo; in
+Emacs. It invoke the program using <samp><span class="command">compile</span></samp>, highlight
+severity and add hyperlink to the error.
+
+<div class="defun">
+&mdash; Command: <b>perlcritic</b><var><a name="index-perlcritic-144"></a></var><br>
+<blockquote><p>Call perlcritic interactive. You can give your argments in the
+minibuffer. Default perform analyzing current visited file. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perlcritic-region</b><var><a name="index-perlcritic_002dregion-145"></a></var><br>
+<blockquote><p>perlcritic is known run a little slow. You can use this command to
+analyze only a part of file. 
+</p></blockquote></div>
+
+   <p>perlcritic provide a lot of options in command line. 
+<samp><span class="file">perlcritic.el</span></samp> only support a few of options. Additional options
+can be input in the minibuffer or write your profile, default is
+<samp><span class="file">.perlcriticrc</span></samp>.
+
+<div class="defun">
+&mdash; User Option: <b>perlcritic-profile</b><var><a name="index-perlcritic_002dprofile-146"></a></var><br>
+<blockquote><p>Specify an alternate .perlcriticrc file. 
+If value is nil, use -noprofile,
+If value is t, use the default profile .perlcriticrc,
+If non-nil, and the profile exists, use the profile. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>perlcritic-severity</b><var><a name="index-perlcritic_002dseverity-147"></a></var><br>
+<blockquote><p>Default severity level is 5 and perlcritic-severity value is nil. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>perlcritic-top</b><var><a name="index-perlcritic_002dtop-148"></a></var><br>
+<blockquote><p>Report only the top N Policy violations in each file. 
+If the -severity option is not explicitly given, the -top option
+implies that the minimum severity level is 1. Users can redefine
+the severity for any Policy in their .perlcriticrc file. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>perlcritic-include</b><var><a name="index-perlcritic_002dinclude-149"></a></var><br>
+<blockquote><p>Directs &ldquo;perlcritic&rdquo; to apply additional Policies
+that match the regex &ldquo;/PATTERN/imx&rdquo;. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>perlcritic-exclude</b><var><a name="index-perlcritic_002dexclude-150"></a></var><br>
+<blockquote><p>Directs &ldquo;perlcritic&rdquo; to not apply any Policy that
+matches the regex &ldquo;/PATTERN/imx&rdquo;. 
+</p></blockquote></div>
+
+   </body></html>
+

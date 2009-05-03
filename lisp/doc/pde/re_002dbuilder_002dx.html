@@ -1,0 +1,68 @@
+<html lang="en">
+<head>
+<title>re-builder-x - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="tempo_002dx.html#tempo_002dx" title="tempo-x">
+<link rel="next" href="compile_002ddwim.html#compile_002ddwim" title="compile-dwim">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="re-builder-x"></a>
+<a name="re_002dbuilder_002dx"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="compile_002ddwim.html#compile_002ddwim">compile-dwim</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="tempo_002dx.html#tempo_002dx">tempo-x</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<h2 class="chapter">12 Regexp building and testing tool</h2>
+
+<p>If you have not use <samp><span class="command">re-builder</span></samp>, please try it. The tool is
+quite simple and useful, you just input regexp in the *RE-Builder*
+buffer, the matched part in the buffer where the command is called will
+be highlighted.
+
+   <p><samp><span class="file">re-builder-x.el</span></samp> extend the regexp syntax to perl or any other
+languages. To enable perl regexp syntax, you have to change the syntax
+to perl first. The command is <samp><span class="command">reb-change-syntax</span></samp>, which is
+bound to C-c TAB.
+
+   <p>In consideration of efficiency, if you make some changes in the buffer,
+the regexp will not apply in the new text unless you send current buffer
+to perl process again. You can do that by using command
+<samp><span class="command">reb-perl-send-buffer</span></samp> which bound to C-c C-a.
+
+   <p>All commands for re-builder are available for perl syntax.
+
+   </body></html>
+

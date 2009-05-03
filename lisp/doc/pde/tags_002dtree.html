@@ -1,0 +1,108 @@
+<html lang="en">
+<head>
+<title>tags-tree - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="imenu_002dtree.html#imenu_002dtree" title="imenu-tree">
+<link rel="next" href="perltidy.html#perltidy" title="perltidy">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="tags-tree"></a>
+<a name="tags_002dtree"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="perltidy.html#perltidy">perltidy</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="imenu_002dtree.html#imenu_002dtree">imenu-tree</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">20 Tree view of TAGS</h2>
+
+<p><samp><span class="file">tags-tree.el</span></samp> read TAGS file and display them using tree-widget.
+
+<div class="defun">
+&mdash; User Option: <b>tags-tree-create-buffer-function</b><var><a name="index-tags_002dtree_002dcreate_002dbuffer_002dfunction-138"></a></var><br>
+<blockquote><p>A function to group tags-tree to various buffer. Default is nil,
+means using only one buffer. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>tags-tree-group-file-function</b><var><a name="index-tags_002dtree_002dgroup_002dfile_002dfunction-139"></a></var><br>
+<blockquote><p>A function to group files. 
+Accept one parameter, a file list in TAGS file. Return a tree like:
+<pre class="verbatim">     
+        ("Root name"
+         ("Group1"
+          ("file1" . "full name of file1"))
+         ("Group2"
+          ("subgroup"
+           ("file2" . "full name of file2"))))
+</pre>
+
+        <p>Default is tags-tree-group-file-by-name, Which group all files
+according to file path. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>tags-tree-group-tags-function</b><var><a name="index-tags_002dtree_002dgroup_002dtags_002dfunction-140"></a></var><br>
+<blockquote><p>A function to group tags. 
+Accept one parameter, a list of tags info, return a tree like:
+<pre class="verbatim">     
+       ((("group1")
+         (("subgroup1")
+          ("tag1" . tag-info))
+         ("tag2" . tag-info))
+        (("group2")
+         ("tag3" . tag-info)))
+</pre>
+
+        <p>Default is tags-tree-group-tags which group by
+<code>tags-tree-group-tags-expression</code> which much like
+<code>imenu-generic-expression</code>. 
+</p></blockquote></div>
+
+   <p>The TAGS file can be update by extern file when in tags-tree.
+     <dl>
+<dt><kbd>G</kbd><dd><a name="index-G-_0028tags_002dtree_002dupdate_002dfile_0029-141"></a><a name="index-tags_002dtree_002dupdate_002dfile-142"></a><samp><span class="command">tags-tree-update-file</span></samp> - update TAGS of current file under
+point or file of tag under point.
+
+   </dl>
+
+<div class="defun">
+&mdash; User Option: <b>tags-tree-tags-update-program</b><var><a name="index-tags_002dtree_002dtags_002dupdate_002dprogram-143"></a></var><br>
+<blockquote><p>Program to update TAGS for a file. Default is <samp><span class="file">myetags</span></samp> which is
+written using perl. 
+</p></blockquote></div>
+
+   </body></html>
+

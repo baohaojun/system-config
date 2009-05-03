@@ -1,0 +1,8 @@
+Here is a list of feature I might implement:
+ - A perl parser as backend for code intelligence. Maybe use semantic
+ as frontend.
+ - More features for perldebugger, including debug evaled code, show
+ array and hash in watch buffer, pretty display for stack and
+ breakpoint, display global variables and functions
+ - Completions in interactive shell
+ 

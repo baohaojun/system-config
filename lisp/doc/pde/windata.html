@@ -1,0 +1,186 @@
+<html lang="en">
+<head>
+<title>windata - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="perlapi.html#perlapi" title="perlapi">
+<link rel="next" href="tree_002dmode.html#tree_002dmode" title="tree-mode">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="windata"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="tree_002dmode.html#tree_002dmode">tree-mode</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="perlapi.html#perlapi">perlapi</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">17 Window configuration to list</h2>
+
+<p>Emacs can save window configuration when it is running. The
+configuration can be persisted between different sessions. 
+<samp><span class="file">windata</span></samp> provide a way to save window configuration.
+
+<div class="defun">
+&mdash; Function: <b>windata-current-winconf</b><var><a name="index-windata_002dcurrent_002dwinconf-99"></a></var><br>
+<blockquote><p>Convert window configurate to a list. The CAR part of the list
+describe how to restore the window, the CDR part of the list determine
+which window is selected. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>windata-restore-winconf</b><var> &amp;optional inside-p<a name="index-windata_002drestore_002dwinconf-100"></a></var><br>
+<blockquote><p>Restore window configuration from `windata-current-winconf'. 
+When INSIDE-P is non-nil, that mean the window configuration
+is restore in current window, that is to say don't delete other
+windows before restore the configuration. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>windata-data-function</b><var><a name="index-windata_002ddata_002dfunction-101"></a></var><br>
+<blockquote><p>A function to extract data for future restore window. Default is save
+the window buffer name. Accept one parameter, the window, and should
+return a lisp object that has print syntax. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>windata-data-restore-function</b><var><a name="index-windata_002ddata_002drestore_002dfunction-102"></a></var><br>
+<blockquote><p>A function to restore window buffer from saved data. Default is set
+window buffer to the buffer with saved name. Accept two parameters,
+the window and a saved lisp object by <code>windata-data-function</code>. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>windata-name-winconf</b><var> name<a name="index-windata_002dname_002dwinconf-103"></a></var><br>
+<blockquote><p>Save window configuration with NAME. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>windata-restore-named-winconf</b><var> name<a name="index-windata_002drestore_002dnamed_002dwinconf-104"></a></var><br>
+<blockquote><p>Restore saved window configuration by NAME. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>windata-display-buffer</b><var> buf frame-p dir size &amp;optional delete-p<a name="index-windata_002ddisplay_002dbuffer-105"></a></var><br>
+<blockquote><p>Display buffer more precisely. 
+FRAME-P is non-nil and not window, the displayed buffer affect
+the whole frame, that is to say, if DIR is right or left, the
+displayed buffer will show on the right or left in the frame. If
+it is nil, the buf will share space with current window.
+
+        <p>DIR can be one of member of (right left top bottom).
+
+        <p>SIZE is the displayed windowed size in width(if DIR is left or
+right) or height(DIR is top or bottom). It can be a decimal which
+will stand for percentage of window(frame) width(heigth)
+
+        <p>DELETE-P is non-nil, the other window will be deleted before
+display the BUF. 
+</p></blockquote></div>
+
+   <p>The behavior of <code>windata-display-buffer</code> is better show as
+following pictures:
+<pre class="lisp">     (setq buf (get-buffer "*Messages*"))
+     (windata-display-buffer buf 'window 'top 0.3 nil)    ; 2
+     (windata-display-buffer buf 'window 'bottom 0.3 nil) ; 3
+     (windata-display-buffer buf 'window 'left 0.3 nil)   ; 4
+     (windata-display-buffer buf 'window 'right 0.3 nil)  ; 5
+     
+     (windata-display-buffer buf 'frame 'top 0.3 nil)     ; 6
+     (windata-display-buffer buf 'frame 'bottom 0.3 nil)  ; 7
+     (windata-display-buffer buf 'frame 'left 0.3 nil)    ; 8
+     (windata-display-buffer buf 'frame 'right 0.3 nil)   ; 9
+     
+     ;; when delete-p is presented, FRAME-P make no sense.
+     (windata-display-buffer buf 'frame 'top 0.3 t)       ; 10
+     (windata-display-buffer buf 'frame 'bottom 0.3 t)    ; 11
+     (windata-display-buffer buf 'frame 'left 0.3 t)      ; 12
+     (windata-display-buffer buf 'frame 'right 0.3 t)     ; 13
+     (windata-display-buffer buf 'window 'top 0.3 t)      ; 10
+     (windata-display-buffer buf 'window 'bottom 0.3 t)   ; 11
+     (windata-display-buffer buf 'window 'left 0.3 t)     ; 12
+     (windata-display-buffer buf 'window 'right 0.3 t)    ; 13
+</pre>
+<pre class="verbatim">
+   +------+-------+    +------+-------+    +------+-------+
+   |      |       |    |      | N     |    |      |       |
+   |      | P     |    |      |-------+    |      | P     |
+   |      |       |    |      | P     |    |      |       |
+   |      |       |    |      |       |    |      +-------+
+   |      |       |    |      |       |    |      | N     |
+   +------+-------+    +------+-------+    +------+-------+
+         (1)                 (2)                 (3)
+   +------+--+----+    +------+----+--+    +--------------+
+   |      |  |    |    |      |    |  |    |      N       |
+   |      |N | P  |    |      | P  |N |    +------+-------+
+   |      |  |    |    |      |    |  |    |      |       |
+   |      |  |    |    |      |    |  |    |      | P     |
+   |      |  |    |    |      |    |  |    |      |       |
+   +------+--+----+    +------+----+--+    +------+-------+
+        (4)                  (5)                 (6)
+   +------+-------+    +---+-----+----+    +----+----+----+
+   |      |       |    |   |     |    |    |    |    |    |
+   |      | P     |    | N |     |    |    |    |    |    |
+   |      |       |    |   |     | P  |    |    | P  | N  |
+   +------+-------+    |   |     |    |    |    |    |    |
+   |      N       |    |   |     |    |    |    |    |    |
+   +--------------+    +---+-----+----+    +----+----+----+
+        (7)                  (8)                 (9)
+   +--------------+    +--------------+    +----+---------+
+   |    N         |    |              |    |    |         |
+   +--------------+    |     P        |    | N  | P       |
+   |    P         |    |              |    |    |         |
+   |              |    +--------------+    |    |         |
+   |              |    |     N        |    |    |         |
+   +--------------+    +--------------+    +----+---------+
+        (10)                 (11)                (12)
+   +----------+---+
+   |          |   |
+   |   P      | N |
+   |          |   |
+   |          |   |
+   |          |   |
+   +----------+---+
+        (13)
+</pre>
+
+   <p>The start window is as picture 1, the selected window is indicated by
+&ldquo;P&rdquo;, and new appear window indicated by &ldquo;N&rdquo;. The simplest
+sitiation is when DELETE-P is non-nil, after calling the function,
+there are only two window left. When FRAME-P is 'window or nil, the
+new window will only take the space from the selected window. When
+FRAME-P is non-nil except 'window, the original window still has
+the same configuration.
+
+   </body></html>
+

@@ -1,0 +1,120 @@
+<html lang="en">
+<head>
+<title>pde-project - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="pde_002dvars.html#pde_002dvars" title="pde-vars">
+<link rel="next" href="pde_002dabbv.html#pde_002dabbv" title="pde-abbv">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="pde-project"></a>
+<a name="pde_002dproject"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="pde_002dabbv.html#pde_002dabbv">pde-abbv</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="pde_002dvars.html#pde_002dvars">pde-vars</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">6 Projects in perl</h2>
+
+<p><samp><span class="file">pde-project.el</span></samp> provide several functions relate to project in perl.
+
+<div class="defun">
+&mdash; Function: <b>pde-detect-project-root</b><var><a name="index-pde_002ddetect_002dproject_002droot-61"></a></var><br>
+<blockquote><p>Detech root directory of current file. The root directory is that has
+Makefile.PL or Build.PL or @INC. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>pde-project-mark-files</b><var><a name="index-pde_002dproject_002dmark_002dfiles-62"></a></var><br>
+<blockquote><p>The directory contain one of these file will consider as project root. 
+Default is (&ldquo;Makefile.PL&rdquo; &ldquo;Build.PL&rdquo;)
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>pde-set-project-root</b><var><a name="index-pde_002dset_002dproject_002droot-63"></a></var><br>
+<blockquote><p>set project root to local variable <code>pde-project-root</code>. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>pde-file-package</b><var><a name="index-pde_002dfile_002dpackage-64"></a></var><br>
+<blockquote><p>Derive the package name of current buffer. The buffer should be a pm
+file. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>pde-directory-all-files</b><var> dir &amp;optional full match predicate limit<a name="index-pde_002ddirectory_002dall_002dfiles-65"></a></var><br>
+<blockquote><p>Recursive read file name in DIR. 
+Like `directory-files', this function can return a list of files in
+the directory and the subdirectories, but often there are too many files
+in the directory, so need a parament to limit the number of files to
+search and a flag to indicate whether all files are read. So instead
+of return a list of files, this function return a cons cell which car
+indicate whether all files read and cdr part is the real file list.
+
+        <p>if FULL is non-nil, return absolute file names, if match is non-nil,
+mention only file names match the regexp MATCH. If PREDICATE is non-nil
+and is a function with one argument, the file name relative to DIR,
+mention only file when PREDICATE function return non-nil value. If LIMIT
+is non-nil, when the files execeed the number will stop. The function is
+search in wide-first manner.
+
+     <div class="defun">
+&mdash; Command: <b>pde-project-find-file</b><var><a name="index-pde_002dproject_002dfind_002dfile-66"></a></var><br>
+<blockquote><p>Find file in the project. 
+This command is will read all file in current project recursively. 
+With prefix argument, to rebuild the cache. 
+I suggest bind this command to C-x C-p, which original command is
+mark-page seldom used by me. 
+</p></blockquote></div>
+
+     <div class="defun">
+&mdash; User Option: <b>pde-file-list-regexp</b><var><a name="index-pde_002dfile_002dlist_002dregexp-67"></a></var><br>
+<blockquote><p>Filenames matching this regexp will not be read when `pde-project-find-file'. 
+</p></blockquote></div>
+
+     <div class="defun">
+&mdash; User Option: <b>pde-file-list-predicate-function</b><var><a name="index-pde_002dfile_002dlist_002dpredicate_002dfunction-68"></a></var><br>
+<blockquote><p>Predicate function to filter file to be read when `pde-project-find-file'
+</p></blockquote></div>
+
+     <div class="defun">
+&mdash; User Option: <b>pde-file-list-limit</b><var><a name="index-pde_002dfile_002dlist_002dlimit-69"></a></var><br>
+<blockquote><p>Maximum number of files for read from project directory recursively. 
+</p></blockquote></div>
+
+        </blockquote></div>
+
+   </body></html>
+

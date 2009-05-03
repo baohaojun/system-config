@@ -1,0 +1,9 @@
+View pod using woman
+
+All pod can be view by `woman', simple call M-x pde-pod-to-manpage.
+In perl-mode, the command is bind to C-c C-v C-m. If you use `pod-mode'
+to view and edit pod file, you can bind the command to C-c C-v.
+
+   (add-hook 'pod-mode-hook
+             (lambda ()
+               (define-key pod-mode-map "\C-c\C-v" 'pde-pod-to-manpage)))

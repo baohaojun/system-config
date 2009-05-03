@@ -1,0 +1,77 @@
+<html lang="en">
+<head>
+<title>Installation - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="Introduction.html#Introduction" title="Introduction">
+<link rel="next" href="pde_002dload.html#pde_002dload" title="pde-load">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="Installation"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="pde_002dload.html#pde_002dload">pde-load</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Introduction.html#Introduction">Introduction</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<h2 class="chapter">2 Installation</h2>
+
+<p>Installing PDE is quit easy. When you download the archive of the PDE
+distribution, uncompress the archive to a folder, for example,
+~/elisp/pde, then put this to your ~/.emacs:
+
+<pre class="lisp">     (add-to-list 'load-path "~/elisp/pde/lisp")
+     (load "pde-load")
+</pre>
+   <p>That is all what you need to do for a typical installation.
+
+   <p>You can also use perl style installation:
+<pre class="verbatim">
+     ./Build.PL
+     ./Build test
+     ./Build
+     ./Build install
+</pre>
+
+   <p>Note that test before build, so perl can test whether have emacs in
+PATH. The default place to install lisp files is
+&ldquo;$ENV{HOME}/.emacs.d/pde&rdquo;. You can use option &mdash;elispdir tell
+perl where to put the lisp files. Note that using this way to install,
+you should put ~/elisp/pde to <code>load-path</code>. So you should add
+following to .emacs:
+
+<pre class="lisp">     (add-to-list 'load-path "~/elisp/pde")
+     (load "pde-load")
+</pre>
+   </body></html>
+

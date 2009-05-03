@@ -1,0 +1,647 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <title>Beginning Perl Programing with Emacs</title>
+    <meta name="generator" content="muse.el">
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8">
+    <link rev="made" href="Ye Wenbin"><link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="css/asciidoc.css" />
+  </head>
+  <body>
+    <h1>Beginning Perl Programing with Emacs</h1>
+    <!-- Page published by Emacs Muse begins here -->
+<div class="contents">
+<dl>
+<dt>
+<a href="#sec1">Opening and Creating Files</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec2">Configuration in .emacs</a>
+</dt>
+<dt>
+<a href="#sec3">Commands</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec4">Editing</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec5">Configuration in .emacs<sup>2</sup></a>
+</dt>
+<dt>
+<a href="#sec6">Commands</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec7">Syntax Checking and Running</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec8">Configuration in .emacs</a>
+</dt>
+<dt>
+<a href="#sec9">Commands</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec10">Code Browsing</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec11">Configuration in .emacs<sup>3</sup></a>
+</dt>
+<dt>
+<a href="#sec12">Commands</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec13">Finding Documents</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec14">Configuration in .emacs</a>
+</dt>
+<dt>
+<a href="#sec15">Commands</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec16">Interactive shell</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec17">Configuration in .emacs</a>
+</dt>
+<dt>
+<a href="#sec18">Commands</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec19">Debugger</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec20">Configuration in .emacs</a>
+</dt>
+<dt>
+<a href="#sec21">Commands</a>
+</dt>
+</dl>
+</dd>
+</dl>
+</div>
+
+
+<p>Emacs customization is a big topic, here let's talk some topics concern
+perl programing, and show what features PDE provides.</p>
+
+<p>NOTE: This document is not for PDE, please see pde.info for how to
+install and use PDE.</p>
+
+<p>Add the configuration following to .emacs as you demand.</p>
+
+<h2><a name="sec1" id="sec1"></a>
+Opening and Creating Files</h2>
+
+<p class="first">Open and create file in emacs use the same command <code>find-file</code>. When the
+file to find is not exists, emacs will create the file automaticly (
+actually, the file is created when you save it). The default file
+completion style is like in shell. But it is not so convenient. Emacs
+privodes a good completion way, <code>ido-mode</code>. When ido-mode turns on, you
+can open file as following:</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/ido-1.png" alt="Ido 1"/>	</div>
+		<p>Ido 1</p>
+	</div>
+
+<p>When input something, the completion becomes:</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/ido-2.png" alt="Ido 2"/>	</div>
+		<p>Ido 2</p>
+	</div>
+
+<p>Ido completion does not require complete from beginning, and you can
+complete with regexp. The completion manner is highly customizable.</p>
+
+<p>Ido not only can be used when read file name, you can use it for
+switching between buffers, or for looking up tags in imenu and so on.</p>
+
+<p>When the file is not found or it is an empty file, you will be
+prompted whether using template:</p>
+
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/newfile.png" alt="New file with template"/>	</div>
+		<p>New file with template</p>
+	</div>
+
+<p>After open the file, you can begin coding.</p>
+
+<h3><a name="sec2" id="sec2"></a>
+Configuration in .emacs</h3>
+
+<pre class="src">
+(ido-mode 1)
+(<span class="keyword">require</span> '<span class="constant">template-simple</span>)
+</pre>
+
+
+<h3><a name="sec3" id="sec3"></a>
+Commands</h3>
+
+<ul>
+<li>C-x C-f    ido-find-file</li>
+<li>C-x C-b    ido-switch-buffer</li>
+</ul>
+
+
+
+<h2><a name="sec4" id="sec4"></a>
+Editing</h2>
+
+<p><code>cperl-mode</code> provides an excellent environment for perl programming. With
+a good style, the indentation is fine. I recommend the setting in PBP.</p>
+
+<p>If you want reindent the code, using M-x <code>indent-region</code> when region is
+selected. I recommend using <code>pde-indent-dwim</code>, it saves you time to
+markup region.</p>
+
+<p>Comment or uncomment code using M-x <code>comment-dwim</code>. When region
+selected, if there are line uncommented, then comment the region,
+otherwise uncomment the region. If no region selected and have
+non-whitspace characters in current line, it will add comment at the
+end of the line. If in empty line or only whitespace in current line,
+it will add new comment. If there is comment already, jump to the
+position where comment starts. With C-u prefix, it can delete comment
+in current line. So with this command, all jobs about comment are
+done.</p>
+
+<p>Most editor provide feature about code-snippet. In emacs, you can use
+abbrev. First you should turn on <code>abbrev-mode</code>. <code>cperl-mode</code> provides some
+useful abbrevs, for example after keywords <code>if</code>, <code>else</code>, <code>elsif</code>, <code>while</code>,
+<code>for</code>, <code>foreach</code>, <code>unless</code> and <code>until</code>. Also for pod items
+=head1<sup><a class="footref" name="fnr.1" href="#fn.1">1</a></sup>, =over, =head2, =pod.</p>
+
+<p>Emacs code completion is not as gaudy as other editors, but it
+provides more ways and high customization for completion. The most
+useful commands for completion are <code>hippie-expand</code> and <code>dabbrev-expand</code>.
+They can do almost all kinds of completion. In my experience, I use
+<code>hippie-expand</code> to complete whole line and <code>dabbrev-expand</code> to complete
+words. Emacs doesn't provide semantic analysis for perl, so there is
+no exists way for code intelligent completion. Although <code>hippie-expand</code>
+provide completion for file name, its priority is too low to reach. So
+you may need addtional command for file name completion when editing.
+I recommend use <code>comint-dynamic-complete</code>.</p>
+
+<h3><a name="sec5" id="sec5"></a>
+Configuration in .emacs<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup></h3>
+
+<pre class="src">
+<span class="comment-delimiter">;; </span><span class="comment">M-SPC not available, window manager take it away
+</span>(global-set-key (kbd <span class="string">"M-'"</span>) 'just-one-space)
+(global-set-key (kbd <span class="string">"C-M-="</span>) 'pde-indent-dwim)
+<span class="comment-delimiter">;; </span><span class="comment">nearest key to dabbrev-expand
+</span>(global-set-key (kbd <span class="string">"M-;"</span>) 'hippie-expand)
+(global-set-key (kbd <span class="string">"C-;"</span>) 'comment-dwim)
+(global-set-key (kbd <span class="string">"C-c f"</span>) 'comint-dynamic-complete)
+
+(setq hippie-expand-try-functions-list
+          '(try-expand-line
+            try-expand-dabbrev
+            try-expand-line-all-buffers
+            try-expand-list
+            try-expand-list-all-buffers
+            try-expand-dabbrev-visible
+            try-expand-dabbrev-all-buffers
+            try-expand-dabbrev-from-kill
+            try-complete-file-name
+            try-complete-file-name-partially
+            try-complete-lisp-symbol
+            try-complete-lisp-symbol-partially
+            try-expand-whole-kill))
+(autoload 'comint-dynamic-complete <span class="string">"comint"</span> <span class="doc">"Complete for file name"</span> t)
+(setq comint-completion-addsuffix '(<span class="string">"/"</span> . <span class="string">""</span>))
+(setq-default indent-tabs-mode nil)
+
+(<span class="keyword">defalias</span> '<span class="function-name">perl-mode</span> 'cperl-mode)
+(<span class="keyword">defun</span> <span class="function-name">pde-perl-mode-hook</span> ()
+  (abbrev-mode t)
+  (add-to-list 'cperl-style-alist
+               '(<span class="string">"PDE"</span>
+                 (cperl-auto-newline                         . t)
+                 (cperl-brace-offset                         . 0)
+                 (cperl-close-paren-offset                   . -4)
+                 (cperl-continued-brace-offset               . 0)
+                 (cperl-continued-statement-offset           . 4)
+                 (cperl-extra-newline-before-brace           . nil)
+                 (cperl-extra-newline-before-brace-multiline . nil)
+                 (cperl-indent-level                         . 4)
+                 (cperl-indent-parens-as-block               . t)
+                 (cperl-label-offset                         . -4)
+                 (cperl-merge-trailing-else                  . t)
+                 (cperl-tab-always-indent                    . t)))
+  (cperl-set-style <span class="string">"PDE"</span>))
+</pre>
+
+
+<h3><a name="sec6" id="sec6"></a>
+Commands</h3>
+
+<ul>
+<li>C-M-\   indent-region</li>
+<li>C-M-=   pde-indent-dwim</li>
+<li>C-;     comment-dwim</li>
+<li>M-/     dabbrev-expand</li>
+<li>M-;     hippie-expand</li>
+<li>C-c f   comint-dynamic-complete</li>
+<li>M-'     just-one-space</li>
+<li>M-\     delete-horizontal-space</li>
+<li>C-M-a   beginning-of-defun</li>
+<li>C-M-e   end-of-defun</li>
+<li>C-M-f   forward-sexp</li>
+<li>C-M-b   backward-sexp</li>
+<li>C-M-u   backward-up-list</li>
+<li>M-{     backward-paragraph</li>
+<li>M-}     forward-paragraph</li>
+<li>M-h     mark-paragraph</li>
+<li>C-M-h   mark-defun</li>
+<li>C-x h   mark-whole-buffer</li>
+</ul>
+
+
+
+<h2><a name="sec7" id="sec7"></a>
+Syntax Checking and Running</h2>
+
+<p class="first">cperl-mode doesn't provide command for syntax checking and running. It
+did put them on menu. Activating them requires mode-compile. But I
+don't like mode-compile, it makes simple problem complicated. I like
+smark-compile+. But customizing and extending smart-compile+ is not
+convenient, so I rewrite the library to compile-dwim. You can use
+<code>compile-dwim-compile</code> for syntax checking and <code>compile-dwim-run</code> to run
+the script.</p>
+
+<p>If you have experience of GUI programming, a problem may raise when
+running several programs at the same time. <code>compile</code> asks you to
+kill previous process before the new one starts. If you think this is
+not convenient, you can set <code>compilation-buffer-name-function</code> to
+<code>pde-compilation-buffer-name</code>.</p>
+
+<p>Emacs provides <code>flymake</code> to do on-the-fly syntax checking. in my humble
+opinion, it is not very useful. But you can turn it on if you want
+emacs seems more like IDE.</p>
+
+<p>For perl novice, it is common forgeting chmod before running perl
+script. The library executable provide a solution for automatic chmod
+when saving file.</p>
+
+<h3><a name="sec8" id="sec8"></a>
+Configuration in .emacs</h3>
+
+<pre class="src">
+(global-set-key (kbd <span class="string">"C-c s"</span>) 'compile-dwim-compile)
+(global-set-key (kbd <span class="string">"C-c r"</span>) 'compile-dwim-run)
+(setq compilation-buffer-name-function 'pde-compilation-buffer-name)
+(autoload 'compile-dwim-run <span class="string">"compile-dwim"</span> <span class="doc">"Build and run"</span> t)
+(autoload 'compile-dwim-compile <span class="string">"compile-dwim"</span> <span class="doc">"Compile or check syntax"</span> t)
+(autoload 'executable-chmod <span class="string">"executable"</span>
+          <span class="doc">"Make sure the file is executable."</span>)
+
+(<span class="keyword">defun</span> <span class="function-name">pde-perl-mode-hook</span> ()
+   <span class="comment-delimiter">;; </span><span class="comment">chmod when saving
+</span>  (<span class="keyword">when</span> (and buffer-file-name
+        (not (string-match <span class="string">"\\.</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">(</span></span><span class="string">pm</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">pod</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">)</span></span><span class="string">$"</span> (buffer-file-name))))
+      (add-hook 'after-save-hook 'executable-chmod nil t))
+  (set (make-local-variable 'compile-dwim-check-tools) nil))
+</pre>
+
+
+<h3><a name="sec9" id="sec9"></a>
+Commands</h3>
+
+<ul>
+<li>C-c s  compile-dwim-compile</li>
+<li>C-c r  compile-dwim-run</li>
+<li>compile</li>
+<li>flymake-mode</li>
+<li>executable-set-magic</li>
+</ul>
+
+
+
+<h2><a name="sec10" id="sec10"></a>
+Code Browsing</h2>
+
+<p class="first">Emacs provides several tools for code browsing. Etags is first choice.
+cperl-mode supports creating TAGS. M-x <code>cperl-etags</code> can create TAGS for
+current file. More commands can be found in the menu &lt;Perl&gt; &lt;Tools&gt;
+&lt;Tags&gt;. There is an additional command &lt;Class Hierarchy from TAGS&gt; (M-x
+<code>cperl-tags-hier-init</code>). A menu will display when invoke it (show as the
+figure). But it may complain for error if you set <code>tags-table-list</code>.
+You can press &quot;++UPDATE++&quot; if you change TAGS files.</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/tags-hier.png" alt="Class Hierarchy from TAGS"/>	</div>
+		<p>Class Hierarchy from TAGS</p>
+	</div>
+
+<p>PDE provides a similar tool <code>tags-tree</code>.</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/tags-tree.png" alt="TAGS Tree"/>	</div>
+		<p>TAGS Tree</p>
+	</div>
+
+<p>In my opinion, it is more efficient to use <code>find-tag</code> than using such
+tool.</p>
+
+<p>If you just want jump in current file, imenu is the best choice. Using
+it with ido-mode will be more convenient:</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/ido-imenu.png" alt="Ido Imenu"/>	</div>
+		<p>Ido Imenu</p>
+	</div>
+
+<p>PDE provides imenu-tree for view imenu tags in tree view.</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/imenu-tree.png" alt="Imenu Tree"/>	</div>
+		<p>Imenu Tree</p>
+	</div>
+
+<p>All this is not done with semantic analysis, so if you want browsing
+standard libraries, you have to create TAGS or open the file directly
+and navigating using imenu.</p>
+
+<p>There are convenient commands to open file. For perl standard
+libraries, I recommend using <code>find-file</code> with help of library <code>complete</code>.
+You can add a prefix char '&lt;' to tell emacs I want complete from
+include paths not current directory. If you turn on ido-mode, you must
+use C-x C-f C-f, the last C-f swith ido-mode to normal find-file. This
+feature is not designed for perl, so the completion is not limit to
+perl module, but the advantage is it doesn't require cache. If you
+need a special command for find perl module, you can use
+<code>perldoc-find-module</code>. A convenient way to open module at point in
+cperl-mode is using <code>ffap</code>. It is a useful command and worth of
+assigning a global key.</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/pcomplete.png" alt="PC include file complete"/>	</div>
+		<p>PC include file complete</p>
+	</div>
+
+<p>Another topic in code navigation is code folding. One of most useful
+text fold extension in Emacs is outline. cperl-mode support
+<code>outline-minor-mode</code>.</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/outline.png" alt="Fold subroutines in outline-minor-mode"/>	</div>
+		<p>Fold subroutines in outline-minor-mode</p>
+	</div>
+
+<p>hideshow is another extension for code folding. The feature of
+hideshow is it base of blocks, so blank lines will be not fold. The
+shortcoming is it does provide commands to jump between folded blocks.
+So I prefer outline-minor-mode.</p>
+
+<h3><a name="sec11" id="sec11"></a>
+Configuration in .emacs<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup></h3>
+
+<pre class="src">
+(global-set-key (kbd <span class="string">"C-c i"</span>) 'imenu)
+(global-set-key (kbd <span class="string">"C-c v"</span>) 'imenu-tree)
+(global-set-key (kbd <span class="string">"C-c j"</span>) 'ffap)
+(setq tags-table-list '(<span class="string">"./TAGS"</span> <span class="string">"../TAGS"</span> <span class="string">"../../TAGS"</span>))
+(autoload 'imenu-tree <span class="string">"imenu-tree"</span> <span class="doc">"Show imenu tree"</span> t)
+(setq imenu-tree-auto-update t)
+(<span class="keyword">eval-after-load</span> <span class="string">"imenu"</span>
+ '(<span class="keyword">defalias</span> '<span class="function-name">imenu--completion-buffer</span> 'pde-ido-imenu-completion))
+(autoload 'tags-tree <span class="string">"tags-tree"</span> <span class="doc">"Show TAGS tree"</span> t)
+<span class="comment-delimiter">;; </span><span class="comment">A wonderful minibuffer completion mode
+</span>(partial-completion-mode 1)
+(setq PC-include-file-path
+      (delete-dups (append PC-include-file-path pde-perl-inc)))
+(setq ffap-url-regexp
+      (concat
+       <span class="string">"\\`</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">(</span></span><span class="string">"</span>
+       <span class="string">"news</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">(</span></span><span class="string">post</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">)</span></span><span class="string">?:</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">mailto:</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">file:"</span> <span class="comment-delimiter">; </span><span class="comment">no host ok
+</span>       <span class="string">"</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">"</span>
+       <span class="string">"</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">(</span></span><span class="string">ftp</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">https?</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">telnet</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">gopher</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">www</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">wais</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">)</span></span><span class="string">://"</span> <span class="comment-delimiter">; </span><span class="comment">needs host
+</span>       <span class="string">"</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">)</span></span><span class="string">[</span><span class="string"><span class="negation-char">^</span></span><span class="string">:]"</span> <span class="comment-delimiter">; </span><span class="comment">fix for perl module, require one more character that not ":"
+</span>       ))
+(add-to-list 'ffap-alist  '(cperl-mode . pde-ffap-locate))
+
+<span class="comment-delimiter">;; </span><span class="comment">Rebinding keys for hideshow
+</span>(<span class="keyword">require</span> '<span class="constant">hideshow</span>)
+(define-key hs-minor-mode-map <span class="string">"\C-c\C-o"</span>
+  (<span class="keyword">let</span> ((map (lookup-key hs-minor-mode-map <span class="string">"\C-c@"</span>)))
+    <span class="comment-delimiter">;; </span><span class="comment">C-h is help to remind me key binding
+</span>    (define-key map <span class="string">"\C-h"</span> 'describe-prefix-bindings)
+    (define-key map <span class="string">"\C-q"</span> 'hs-toggle-hiding)
+    <span class="comment-delimiter">;; </span><span class="comment">compatible with outline
+</span>    (define-key map <span class="string">"\C-c"</span> 'hs-hide-block)
+    (define-key map <span class="string">"\C-e"</span> 'hs-show-block)
+    map))
+</pre>
+
+
+<h3><a name="sec12" id="sec12"></a>
+Commands</h3>
+
+<ul>
+<li>C-c f   ffap</li>
+<li>C-c i   imenu</li>
+<li>C-c v   imenu-tree</li>
+<li>cperl-tags-hier-init</li>
+<li>M-.     find-tag</li>
+<li>M-*     pop-tag-mark</li>
+</ul>
+
+
+
+<h2><a name="sec13" id="sec13"></a>
+Finding Documents</h2>
+
+<p class="first">The unix way to view documents is to man. Emacs using <code>woman</code> (WithOut
+MAN). You can use woman to view pod of module if there is a manpage.
+The problem is no manpages available in Windows and it is too long to
+wait woman cache updated. <code>cperl-pod-to-manpage</code> still uses external man
+program to generate documents, and not so pretty as woman. PDE provide
+a new command <code>pde-pod-to-manpage</code>, it using pod2man to generate manpage
+and using woman to formated. With the same idea, PDE provide <code>perldoc</code>
+to show pod using woman. Although you can invoke <code>perldoc</code> directly, I
+recommend use it with <code>help-dwim</code>. <code>help-dwim</code> integrates several document
+commands to one command, you can use it to search elisp function,
+variable, manpage, perldoc, perlapi and so on. <code>perldoc-tree</code> also
+provide tree view for modules. You can view module pod or open the
+module file here.</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/perldoc-tree.png" alt="Perldoc Tree"/>	</div>
+		<p>Perldoc Tree</p>
+	</div>
+
+<p>Emacs provides eldoc to displays information about a function or
+variable in the text where point is in the echo area. cperl-mode
+provides another implement for this feature. You can turn the feature
+using M-x <code>cperl-lazy-install</code>.</p>
+
+<h3><a name="sec14" id="sec14"></a>
+Configuration in .emacs</h3>
+
+<pre class="src">
+(global-set-key (kbd <span class="string">"C-c h"</span>) 'help-dwim)
+(setq cperl-lazy-help-time 2)
+(<span class="keyword">defun</span> <span class="function-name">pde-perl-mode-hook</span> ()
+   (cperl-lazy-install))
+</pre>
+
+
+<h3><a name="sec15" id="sec15"></a>
+Commands</h3>
+
+<ul>
+<li>C-c h   help-dwim</li>
+<li>pde-pod-to-manpage</li>
+<li>perldoc-tree</li>
+</ul>
+
+
+
+<h2><a name="sec16" id="sec16"></a>
+Interactive shell</h2>
+
+<p class="first">A striking feature of dynamic language is it provides eval function.
+The eval function make it possible to build a huge project like
+building blocks. `perl -de 1' is good candicate for interactive shell.
+But PDE provides another interactive shell for easy customization and
+extending, and echo result of eval.</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/inf-perl.png" alt="Interactive perl shell"/>	</div>
+		<p>Interactive perl shell</p>
+	</div>
+
+<p>You can use <code>inf-perl-send</code> to send current line when editing, or send a
+region with the same command after finish a block. It is convenient to
+prove a piece of code without write, save and run. But I recommend
+write code in file and run it by <code>inf-perl-send</code>.</p>
+
+<p>There is a problem that lexcial variables can't live after eval.
+inf-perl provides remove my declaration at the beginning of line when
+send one line to process. Don't consider this is a bug when using it.</p>
+
+<p>PDE also provides a interactive shell for Gtk2-Perl development.</p>
+
+<h3><a name="sec17" id="sec17"></a>
+Configuration in .emacs</h3>
+
+<pre class="src">
+(autoload 'run-perl <span class="string">"inf-perl"</span> <span class="doc">"Start perl interactive shell"</span> t)
+</pre>
+
+
+<h3><a name="sec18" id="sec18"></a>
+Commands</h3>
+
+<ul>
+<li>run-perl</li>
+<li>inf-perl-send</li>
+<li>inf-perl-send-line</li>
+<li>inf-perl-send-region</li>
+<li>inf-perl-load-file</li>
+</ul>
+
+
+
+<h2><a name="sec19" id="sec19"></a>
+Debugger</h2>
+
+<p class="first">gud of emacs supports perldb, but it is simple and crude compare with
+gdb-ui. PDE provides a similar interface like gdb-ui. But it is known
+not stable. You may have a try.</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/perldb.png" alt="Perl Debugger"/>	</div>
+		<p>Perl Debugger</p>
+	</div>
+
+<p>perl5db provides a convenient command line interface, and maybe it
+more quick to use command than using emacs command. Remember perl5db
+commands is worth if you want to debug perl script. Except n, s, c, b,
+B, w, W, L, p, x these most used commands, these are also convenient:</p>
+
+<ul>
+<li>f  Switch to a loaded file</li>
+<li>l  Jump to line or function</li>
+<li>.  Back to current line</li>
+<li>r  Return from current subroutine</li>
+<li>V  Search for variable</li>
+<li>S  Search for function</li>
+<li>y  List lexcial variables</li>
+</ul>
+
+<h3><a name="sec20" id="sec20"></a>
+Configuration in .emacs</h3>
+
+<pre class="src">
+(autoload 'perldb-ui <span class="string">"perldb-ui"</span> <span class="doc">"perl debugger"</span> t)
+</pre>
+
+
+<h3><a name="sec21" id="sec21"></a>
+Commands</h3>
+
+<ul>
+<li>perldb-ui</li>
+<li>perldb-many-windows</li>
+<li>perldb-restore-windows</li>
+</ul>
+
+<hr>
+<p class="footnote"><a class="footnum" name="fn.1" href="#fnr.1">1.</a> =head1 can't be expanded when at the end of
+buffer. Don't know why.</p>
+
+<p class="footnote"><a class="footnum" name="fn.2" href="#fnr.2">2.</a> <code>pde-perl-mode-hook</code> is also defined in following configuration.
+You may merge them to one function and add to <code>cperl-mode-hook</code>
+by <code>add-hook</code>.</p>
+
+<p class="footnote"><a class="footnum" name="fn.3" href="#fnr.3">3.</a> You can add the definition of functions and variables with prefix
+pde- to .emacs if you don't want PDE installed. They should not
+have dependence to other libraries.</p>
+
+
+
+<!-- Page published by Emacs Muse ends here -->
+  </body>
+</html>

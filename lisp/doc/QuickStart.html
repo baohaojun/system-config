@@ -1,0 +1,610 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <title>使用 Emacs 进行 Perl 编程</title>
+    <meta name="generator" content="muse.el">
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8">
+    <link rev="made" href="Ye Wenbin"><link rel="stylesheet" type="text/css" charset="utf-8" media="all" href="css/asciidoc.css" />
+  </head>
+  <body>
+    <h1>使用 Emacs 进行 Perl 编程</h1>
+    <!-- Page published by Emacs Muse begins here -->
+<div class="contents">
+<dl>
+<dt>
+<a href="#sec1">打开和新建文件</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec2">.emacs 配置</a>
+</dt>
+<dt>
+<a href="#sec3">命令</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec4">编辑代码</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec5">.emacs 配置<sup>2</sup></a>
+</dt>
+<dt>
+<a href="#sec6">命令</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec7">语法检查和运行</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec8">.emacs 配置</a>
+</dt>
+<dt>
+<a href="#sec9">命令</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec10">代码浏览</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec11">.emacs 配置<sup>3</sup></a>
+</dt>
+<dt>
+<a href="#sec12">命令</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec13">查看文档</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec14">.emacs 配置</a>
+</dt>
+<dt>
+<a href="#sec15">命令</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec16">交互命令行</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec17">.emacs 配置</a>
+</dt>
+</dl>
+</dd>
+<dt>
+<a href="#sec18">Debugger</a>
+</dt>
+<dd>
+<dl>
+<dt>
+<a href="#sec19">.emacs 配置</a>
+</dt>
+<dt>
+<a href="#sec20">命令</a>
+</dt>
+</dl>
+</dd>
+</dl>
+</div>
+
+
+<p>Emacs 的配置和使用是一个很大的话题，这里我只介绍和 Perl 编程相关的配置
+和使用，并结合 PDE 来说明它可能提供哪些功能。</p>
+
+<p>注意：本文不是 PDE 的文档，有关 PDE 的安装和使用参见 pde.info。</p>
+
+<p>下面的 .emacs 配置请按个人需要添加到自己的配置中。</p>
+
+<h2><a name="sec1" id="sec1"></a>
+打开和新建文件</h2>
+
+<p class="first">在 emacs 打开和新建文件使用的是一个命令 find-file。如果文件不存在就创
+建一个。默认的提示输入文件名的方式类似 shell 中的补全。事实上，这个补
+全方式不是太好，起码是不直观。emacs 提供一个很好的补全方式──ido-mode。
+这样打开文件时如下图所示：</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/ido-1.png" alt="Ido 1"/>	</div>
+		<p>Ido 1</p>
+	</div>
+
+<p>在输入几个字符后，补全显示如下：</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/ido-2.png" alt="Ido 2"/>	</div>
+		<p>Ido 2</p>
+	</div>
+
+<p>ido 补全不是从列表中字符串开头进行匹配，而是在任意位置。而且还可以使
+用正则表达式进行匹配。匹配的方式是可以自定义的。</p>
+
+<p>ido 不仅可以用于文件名的补全，还可以用于缓冲区列表的补全，imenu 的补
+全等等。</p>
+
+<p>当文件不存在或者是空文件时，会提示是否使用模板创建新文件：</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/newfile.png" alt="New file with template"/>	</div>
+		<p>New file with template</p>
+	</div>
+
+<p>在打开文件后就可以进行编辑了。</p>
+
+<h3><a name="sec2" id="sec2"></a>
+.emacs 配置</h3>
+
+<pre class="src">
+(ido-mode 1)
+(<span class="keyword">require</span> '<span class="constant">template-simple</span>)
+</pre>
+
+
+<h3><a name="sec3" id="sec3"></a>
+命令</h3>
+
+<ul>
+<li>C-x C-f    ido-find-file</li>
+<li>C-x C-b    ido-switch-buffer</li>
+</ul>
+
+
+
+<h2><a name="sec4" id="sec4"></a>
+编辑代码</h2>
+
+<p class="first">cperl-mode 提供了很好的 perl 编辑环境。大多数情况下，在设置好缩进风格
+后，cperl-mode 的缩进方式已经很好了。这里推荐使用 PBP 中的设置。
+如果想重新缩进代码，可以使用 indent-region 命令。推荐使用
+pde-indent-dwim，可以不用选中区域。</p>
+
+<p>代码注释使用 comment-dwim。当选中区域时，如果区域内有未注释的行，则注
+释整个区域，如果区域内都是注释，则取消注释。如果没有选中区域，当前行如
+果有非空白字符则在行尾添加注释，如果为空行或只有空白字符，则直接添加注
+释。如果已经有注释，则跳到注释开始的位置，如果以 C-u 使用命令，则删除
+注释。可见，这个命令几乎把所有有关注释的功能都包括了。</p>
+
+<p>大部分编辑器都提供 snippet 的功能。在 emacs 中称为 abbrev。通常需要打开
+abbrev-mode。cperl-mode 提供一些常用的 abbrev，比如在关键字 if else
+elsif while for foreach unless until，以及 =head1<sup><a class="footref" name="fnr.1" href="#fn.1">1</a></sup>
+=over =head2 =pod 之后都有一些很好的扩展。</p>
+
+<p>emacs 的代码补全可能在用户界面上没有一些编辑器花哨，但是补全功能是一般
+的编辑器所不能比的。最常用的补全命令是 hippie-expand 和 dabbrev-expand。
+这两个命令几乎可以完成所有的补全。一般如果想补全整行，使用
+hippie-expand，而补全单词使用 dabbrev-expand。由于 emacs 不可能提供对某
+种语言进行解析的功能，所以更智能的代码提示功能对于 perl 还没有实现。虽
+然 hippie-expand 包括文件名的补全，但是一般优先级太低，几乎不可能试到补
+全文件名，所以需要使用别的命令。我推荐使用 comint-dynamic-complete，大
+部分情况下是很好用的。</p>
+
+<h3><a name="sec5" id="sec5"></a>
+.emacs 配置<sup><a class="footref" name="fnr.2" href="#fn.2">2</a></sup></h3>
+
+<pre class="src">
+<span class="comment-delimiter">;; </span><span class="comment">M-SPC not available, window manager take it away
+</span>(global-set-key (kbd <span class="string">"M-'"</span>) 'just-one-space)
+(global-set-key (kbd <span class="string">"C-M-="</span>) 'pde-indent-dwim)
+<span class="comment-delimiter">;; </span><span class="comment">nearest key to dabbrev-expand
+</span>(global-set-key (kbd <span class="string">"M-;"</span>) 'hippie-expand)
+(global-set-key (kbd <span class="string">"C-;"</span>) 'comment-dwim)
+(global-set-key (kbd <span class="string">"C-c f"</span>) 'comint-dynamic-complete)
+
+(setq hippie-expand-try-functions-list
+          '(try-expand-line
+            try-expand-dabbrev
+            try-expand-line-all-buffers
+            try-expand-list
+            try-expand-list-all-buffers
+            try-expand-dabbrev-visible
+            try-expand-dabbrev-all-buffers
+            try-expand-dabbrev-from-kill
+            try-complete-file-name
+            try-complete-file-name-partially
+            try-complete-lisp-symbol
+            try-complete-lisp-symbol-partially
+            try-expand-whole-kill))
+(autoload 'comint-dynamic-complete <span class="string">"comint"</span> <span class="doc">"Complete for file name"</span> t)
+(setq comint-completion-addsuffix '(<span class="string">"/"</span> . <span class="string">""</span>))
+(setq-default indent-tabs-mode nil)
+
+(<span class="keyword">defalias</span> '<span class="function-name">perl-mode</span> 'cperl-mode)
+(<span class="keyword">defun</span> <span class="function-name">pde-perl-mode-hook</span> ()
+  (abbrev-mode t)
+  (add-to-list 'cperl-style-alist
+               '(<span class="string">"PDE"</span>
+                 (cperl-auto-newline                         . t)
+                 (cperl-brace-offset                         . 0)
+                 (cperl-close-paren-offset                   . -4)
+                 (cperl-continued-brace-offset               . 0)
+                 (cperl-continued-statement-offset           . 4)
+                 (cperl-extra-newline-before-brace           . nil)
+                 (cperl-extra-newline-before-brace-multiline . nil)
+                 (cperl-indent-level                         . 4)
+                 (cperl-indent-parens-as-block               . t)
+                 (cperl-label-offset                         . -4)
+                 (cperl-merge-trailing-else                  . t)
+                 (cperl-tab-always-indent                    . t)))
+  (cperl-set-style <span class="string">"PDE"</span>))
+</pre>
+
+
+<h3><a name="sec6" id="sec6"></a>
+命令</h3>
+
+<ul>
+<li>C-M-\   indent-region</li>
+<li>C-M-=   pde-indent-dwim</li>
+<li>C-;     comment-dwim</li>
+<li>M-/     dabbrev-expand</li>
+<li>M-;     hippie-expand</li>
+<li>C-c f   comint-dynamic-complete</li>
+<li>M-'     just-one-space</li>
+<li>M-\     delete-horizontal-space</li>
+<li>C-M-a   beginning-of-defun</li>
+<li>C-M-e   end-of-defun</li>
+<li>C-M-f   forward-sexp</li>
+<li>C-M-b   backward-sexp</li>
+<li>C-M-u   backward-up-list</li>
+<li>M-{     backward-paragraph</li>
+<li>M-}     forward-paragraph</li>
+<li>M-h     mark-paragraph</li>
+<li>C-M-h   mark-defun</li>
+<li>C-x h   mark-whole-buffer</li>
+</ul>
+
+
+
+<h2><a name="sec7" id="sec7"></a>
+语法检查和运行</h2>
+
+<p class="first">cperl-mode 没有提供语法检查和运行的命令，菜单上有这个选项，但是没有激
+活，如果想用的话要下载 mode-compile。但是我不喜欢 mode-compile，因为它
+写得太长了，把简单的问题复杂化了，我喜欢用 smart-compile+。由于它的一
+些小缺点，我按 smart-compile 的思路重写了一个 compile-dwim。你可以用
+compile-dwim-compile 和 compile-dwim-run 来进行语法检查和运行。
+它们都是使用 compile 命令来运行程序。当进行 GUI 编程时一个经常遇到的问
+题是要同时运行多个程序，这时候 compile 会提示你是否要先杀死前一个运行
+的程序，这时候会觉得很不方便。如果你也有这个需求的话，可以设置
+compilation-buffer-name-function 为 pde-compilation-buffer-name。
+如果要实时显示语法错误，emacs 提供一个 flymake 这个工具。个人认为这个
+功能有点鸡肋。不过有总比没有强。</p>
+
+<p>对于新手，运行脚本时一个经常遇到的问题是忘了修改文件的可执行权限。
+executable 这个扩展提供一个方法可以自动修改文件的权限。</p>
+
+<h3><a name="sec8" id="sec8"></a>
+.emacs 配置</h3>
+
+<pre class="src">
+(global-set-key (kbd <span class="string">"C-c s"</span>) 'compile-dwim-compile)
+(global-set-key (kbd <span class="string">"C-c r"</span>) 'compile-dwim-run)
+(setq compilation-buffer-name-function 'pde-compilation-buffer-name)
+(autoload 'compile-dwim-run <span class="string">"compile-dwim"</span> <span class="doc">"Build and run"</span> t)
+(autoload 'compile-dwim-compile <span class="string">"compile-dwim"</span> <span class="doc">"Compile or check syntax"</span> t)
+(autoload 'executable-chmod <span class="string">"executable"</span>
+          <span class="doc">"Make sure the file is executable."</span>)
+
+(<span class="keyword">defun</span> <span class="function-name">pde-perl-mode-hook</span> ()
+   <span class="comment-delimiter">;; </span><span class="comment">chmod when saving
+</span>  (<span class="keyword">when</span> (and buffer-file-name
+        (not (string-match <span class="string">"\\.</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">(</span></span><span class="string">pm</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">pod</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">)</span></span><span class="string">$"</span> (buffer-file-name))))
+      (add-hook 'after-save-hook 'executable-chmod nil t))
+  (set (make-local-variable 'compile-dwim-check-tools) nil))
+</pre>
+
+
+<h3><a name="sec9" id="sec9"></a>
+命令</h3>
+
+<ul>
+<li>C-c s  compile-dwim-compile</li>
+<li>C-c r  compile-dwim-run</li>
+<li>compile</li>
+<li>flymake-mode</li>
+<li>executable-set-magic</li>
+</ul>
+
+
+
+<h2><a name="sec10" id="sec10"></a>
+代码浏览</h2>
+
+<p class="first">emacs 提供一些基本的代码浏览的工具和扩展。最常用的代码浏览工具是 etags。
+cperl-mode 提供对创建 TAGS 文件的支持。直接使用 cperl-etags 可以对本文
+件创建 TAGS。菜单中提供更多创建 TAGS 文件的选择。菜单路径是 &lt;Perl&gt;
+&lt;Tools&gt; &lt;Tags&gt;。这里还有一个命令 &lt;Class Hierarchy from TAGS&gt;（M-x
+cperl-tags-hier-init），效果如下图。但是在我这运行时会产生错误。错误的
+原因作者没有考虑到有人会设置 tags-table-list。如果你没有设置这个变量，
+这个命令是可以用的。如果你没有设置这个变量就用吧。在改变 TAGS 文件后，
+要重新产生这个菜单，可以先用 M-x visit-tags-table 后再选择菜单上的
+&quot;++UPDATE++&quot;，否则是无法更新的。</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/tags-hier.png" alt="Class Hierarchy from TAGS"/>	</div>
+		<p>Class Hierarchy from TAGS</p>
+	</div>
+
+
+<p>如果觉得这样的效果不错的话，可以试试 tags-tree，一个用于树形显示 TAGS
+文件的扩展。</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/tags-tree.png" alt="TAGS Tree"/>	</div>
+		<p>TAGS Tree</p>
+	</div>
+
+<p>但是一般来说花哨的功能都不太实用，如果浏览代码时还要一会点鼠标，一会用
+键盘转来转去的话，效率反而更低。还是老老实实用 find-tag 这样的命令比较
+好。</p>
+
+<p>如果仅限于本文件跳转，imenu 应该是最好的选择。效果如下图所示：</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/ido-imenu.png" alt="Ido Imenu"/>	</div>
+		<p>Ido Imenu</p>
+	</div>
+
+<p>如果还要更直观一些，可以试试使用 imenu-tree。</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/imenu-tree.png" alt="Imenu Tree"/>	</div>
+		<p>Imenu Tree</p>
+	</div>
+
+<p>所有这些都不是建立在语义分析基础上的，所以在使用别人的库时，想要查找库
+函数的定义基本上除了创建 TAGS 文件之外，就只能打开这个库文件使用 imenu
+自己查找函数定义了。</p>
+
+<p>这里提供一些快速打开文件的方法。对于库文件，推荐使用 find-file 结合
+complete 提供的方法打开。你需要使用一个 &quot;&lt;&quot; 前缀来告诉 emacs 我想从
+include path 中补全文件而不是当前目录。如果使用 ido-mode，需要使用C-x C-f C-f，最后一
+个 C-f 是转换 ido-mode 成一般的文件补全模式。这不是专门针对打开 perl模
+块的命令，所以补全之类是有一点不足。但是满足大部分情况的要求，不需要额
+外的缓存（也就是始终是最新的），而且可以打开多种文件，比如 c 的库头文件
+之类，所以我很喜欢。如果想专门针对 perl 模块可以使用
+perldoc-find-module 这样的命令。在 cperl-mode 中，如果想打开光标下的模
+块，可以使用 ffap。这也是一个很有用的命令，可以打开几乎所有能想到的
+URL，所以值得做一个全局绑定。</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/pcomplete.png" alt="PC include file complete"/>	</div>
+		<p>PC include file complete</p>
+	</div>
+
+<p>关于代码浏览另一个话题是代码折叠功能。emacs 一个重要的文字折叠扩展
+是 outline。cperl-mode 支持使用 outline-minor-mode 来折叠代码。</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/outline.png" alt="Fold subroutines in outline-minor-mode"/>	</div>
+		<p>Fold subroutines in outline-minor-mode</p>
+	</div>
+
+<p>hideshow 是另一个用于代码折叠的扩展。hideshow 的特色在于它是基于块和注
+释进行折叠，所以不会像 outline 那样把空白会收到折叠区域里。缺点是它只能
+用于折叠，不能你 outline-mode 那样有层次，也没有在折叠块中移动的方法。
+所以可能还是使用 outline-minor-mode 方便一些。</p>
+
+<h3><a name="sec11" id="sec11"></a>
+.emacs 配置<sup><a class="footref" name="fnr.3" href="#fn.3">3</a></sup></h3>
+
+<pre class="src">
+(global-set-key (kbd <span class="string">"C-c i"</span>) 'imenu)
+(global-set-key (kbd <span class="string">"C-c v"</span>) 'imenu-tree)
+(global-set-key (kbd <span class="string">"C-c j"</span>) 'ffap)
+(setq tags-table-list '(<span class="string">"./TAGS"</span> <span class="string">"../TAGS"</span> <span class="string">"../../TAGS"</span>))
+(autoload 'imenu-tree <span class="string">"imenu-tree"</span> <span class="doc">"Show imenu tree"</span> t)
+(setq imenu-tree-auto-update t)
+(<span class="keyword">eval-after-load</span> <span class="string">"imenu"</span>
+ '(<span class="keyword">defalias</span> '<span class="function-name">imenu--completion-buffer</span> 'pde-ido-imenu-completion))
+(autoload 'tags-tree <span class="string">"tags-tree"</span> <span class="doc">"Show TAGS tree"</span> t)
+<span class="comment-delimiter">;; </span><span class="comment">A wonderful minibuffer completion mode
+</span>(partial-completion-mode 1)
+(setq PC-include-file-path
+      (delete-dups (append PC-include-file-path pde-perl-inc)))
+(setq ffap-url-regexp
+      (concat
+       <span class="string">"\\`</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">(</span></span><span class="string">"</span>
+       <span class="string">"news</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">(</span></span><span class="string">post</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">)</span></span><span class="string">?:</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">mailto:</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">file:"</span> <span class="comment-delimiter">; </span><span class="comment">no host ok
+</span>       <span class="string">"</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">"</span>
+       <span class="string">"</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">(</span></span><span class="string">ftp</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">https?</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">telnet</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">gopher</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">www</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">|</span></span><span class="string">wais</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">)</span></span><span class="string">://"</span> <span class="comment-delimiter">; </span><span class="comment">needs host
+</span>       <span class="string">"</span><span class="string"><span class="regexp-grouping-backslash">\\</span></span><span class="string"><span class="regexp-grouping-construct">)</span></span><span class="string">[</span><span class="string"><span class="negation-char">^</span></span><span class="string">:]"</span> <span class="comment-delimiter">; </span><span class="comment">fix for perl module, require one more character that not ":"
+</span>       ))
+(add-to-list 'ffap-alist  '(cperl-mode . pde-ffap-locate))
+
+<span class="comment-delimiter">;; </span><span class="comment">Rebinding keys for hideshow
+</span>(<span class="keyword">require</span> '<span class="constant">hideshow</span>)
+(define-key hs-minor-mode-map <span class="string">"\C-c\C-o"</span>
+  (<span class="keyword">let</span> ((map (lookup-key hs-minor-mode-map <span class="string">"\C-c@"</span>)))
+    <span class="comment-delimiter">;; </span><span class="comment">C-h is help to remind me key binding
+</span>    (define-key map <span class="string">"\C-h"</span> 'describe-prefix-bindings)
+    (define-key map <span class="string">"\C-q"</span> 'hs-toggle-hiding)
+    <span class="comment-delimiter">;; </span><span class="comment">compatible with outline
+</span>    (define-key map <span class="string">"\C-c"</span> 'hs-hide-block)
+    (define-key map <span class="string">"\C-e"</span> 'hs-show-block)
+    map))
+</pre>
+
+
+<h3><a name="sec12" id="sec12"></a>
+命令</h3>
+
+<ul>
+<li>C-c f   ffap</li>
+<li>C-c i   imenu</li>
+<li>C-c v   imenu-tree</li>
+<li>cperl-tags-hier-init</li>
+<li>M-.     find-tag</li>
+<li>M-*     pop-tag-mark</li>
+</ul>
+
+
+
+<h2><a name="sec13" id="sec13"></a>
+查看文档</h2>
+
+<p class="first">在 unix 中查看文档的最方便，最全的方式应该是 man 了。emacs 用 Emacs
+Lisp 实现解析 man 文件，emacs 戏称为 woman (WithOut MAN)。有了 woman 可
+以在 emacs 中很方便的查看文档。直接使用 woman 查看 perl 模块的文档已经
+很好了，问题是 Windows 中没有这样的 manpage，而且 woman 的缓存更新太慢
+了。cperl-pod-to-manpage 调用的外部的 man 来产生格式化的文档，但是没有
+woman 显示的那样好看。所以我提供新的一个命令 pde-pod-to-manpage，使用
+pod2man 产生 manpage 后再用 woman 来格式化，效果应该还是可以。同样的思
+路，我写了 perldoc 这个扩展，先用 perldoc 提取 pod，再用 pod2man 转
+换，woman 格式化。这时说明一下，perldoc 虽然可以单独使用，但是推荐结合
+help-dwim 一起用。help-dwim 实现一种可以把多种文档帮助系统结合在一个命
+令中。你可以用一个命令来查询 Emacs Lisp 中的函数或变量，或者查找
+manpage 中的某个条目，查询 perldoc 或者 perlapi。我推荐使用。perldoc 扩
+展还提供树形显示模块的功能。在这个模式中可以显示模块文档或者直接打开对
+应的文件。</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/perldoc-tree.png" alt="Perldoc Tree"/>	</div>
+		<p>Perldoc Tree</p>
+	</div>
+
+<p>再说说函数参数的提示，emacs 中函数参数提示是由 eldoc 这个扩展实现的。
+但是 cperl-mode 自己也提供内建函数的提示。使用 cperl-lazy-install 启动。
+但是这些函数说明仅限于 cperl-short-docs 提供的这些。</p>
+
+<h3><a name="sec14" id="sec14"></a>
+.emacs 配置</h3>
+
+<pre class="src">
+(global-set-key (kbd <span class="string">"C-c h"</span>) 'help-dwim)
+(setq cperl-lazy-help-time 2)
+(<span class="keyword">defun</span> <span class="function-name">pde-perl-mode-hook</span> ()
+   (cperl-lazy-install))
+</pre>
+
+
+<h3><a name="sec15" id="sec15"></a>
+命令</h3>
+
+<ul>
+<li>C-c h   help-dwim</li>
+<li>pde-pod-to-manpage</li>
+<li>perldoc-tree</li>
+</ul>
+
+
+
+<h2><a name="sec16" id="sec16"></a>
+交互命令行</h2>
+
+<p class="first">动态语言的最强大之处在于它的 eval 功能。正是 eval 函数可以让程序可以像
+堆积木一样慢慢壮大起来。理论上 perl -de 1 就是一个很好的交互命令行程序。
+但是我还是写了一个新的程序，功能上没有前者强大，但是简单，容易扩展，而
+且可以回显运行的结果。</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/inf-perl.png" alt="Interactive perl shell"/>	</div>
+		<p>Interactive perl shell</p>
+	</div>
+
+<p>你可以在边写 perl 代码时，用 inf-perl-send 发送当前行到 shell 中运行，
+也可以在写完一段代码时，用 inf-perl-send 发送选中区域到 shell 中运行。
+如果你只是想验证一小段代码，用这个方式是很方便的，不需要新建文件，保存
+文件，再运行这样折腾。当然还是推荐先写到文件中，需要时一点一点用 send
+命令运行，差不多时再运行整个文件。perl interactive shell 的最大问题是
+my 这样的词法变量无法在 eval 后保持，所以所有变量都需要是全局变量。如
+果是单独一行一行 send，这个命令会先除去行首的 my 限制。如果发送整个区
+域，就没有这样的功能了，使用时遇到这个问题时不要认为这是一个 bug。</p>
+
+<p>目前我写了一个用于 Gtk2 的交互 shell 程序，需要进行 Gtk2-Perl 开发可以
+考虑使用。</p>
+
+<h3><a name="sec17" id="sec17"></a>
+.emacs 配置</h3>
+
+<pre class="src">
+(autoload 'run-perl <span class="string">"inf-perl"</span> <span class="doc">"Start perl interactive shell"</span> t)
+</pre>
+
+
+
+<h2><a name="sec18" id="sec18"></a>
+Debugger</h2>
+
+<p class="first">emacs 的 gud 库提供对 perl5db 的支持，但是和 gdb-ui 还相差很大。我已经
+开发了一个 perldb-ui，想提供类似的界面，目前还不稳定，但是基本功能已经
+实现。开发难度比较大，主要是调试不方便，还有对 perl5db.pl 不太熟悉。如
+果能实现我想要的功能，这个 Debugger 会很有用。</p>
+
+<div class="figure">
+		<div class="photo">
+	<img src="images/perldb.png" alt="Perl Debugger"/>	</div>
+		<p>Perl Debugger</p>
+	</div>
+
+<p>perl5db 提供的命令行界面已经相当简洁，可能比使用 emacs 按键还要快捷。除
+了 n, s, c, b, B, w, W, L, p, x 这些常用的控制和显示命令，这些命令也很
+好用：</p>
+
+<ul>
+<li>f  打开导入的文件</li>
+<li>l  跳到指定行或者函数</li>
+<li>.  跳到当前执行位置</li>
+<li>r  从当前函数返回</li>
+<li>V  查找变量</li>
+<li>S  查找函数</li>
+<li>y  显示所有词法变量</li>
+</ul>
+
+<h3><a name="sec19" id="sec19"></a>
+.emacs 配置</h3>
+
+<pre class="src">
+(autoload 'perldb-ui <span class="string">"perldb-ui"</span> <span class="doc">"perl debugger"</span> t)
+</pre>
+
+
+<h3><a name="sec20" id="sec20"></a>
+命令</h3>
+
+<ul>
+<li>perldb-ui</li>
+<li>perldb-many-windows</li>
+<li>perldb-restore-windows</li>
+</ul>
+
+<hr>
+<p class="footnote"><a class="footnum" name="fn.1" href="#fnr.1">1.</a>  扩展 head1 时，光标不能处于缓冲区末尾。原因不明。</p>
+
+<p class="footnote"><a class="footnum" name="fn.2" href="#fnr.2">2.</a>  pde-perl-mode-hook 在下面的配置中也有出现，如果需要，可以把这几处
+写成一个函数用 add-hook 加到 cperl-mode-hook 中。</p>
+
+<p class="footnote"><a class="footnum" name="fn.3" href="#fnr.3">3.</a>  pde 开头的函数和变量如果想单独使用，请到 pde 开头的 elisp 文件中
+找到对应的定义写到 .emacs 里。</p>
+
+
+
+<!-- Page published by Emacs Muse ends here -->
+  </body>
+</html>

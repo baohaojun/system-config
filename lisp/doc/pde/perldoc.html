@@ -1,0 +1,89 @@
+<html lang="en">
+<head>
+<title>perldoc - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="help_002ddwim.html#help_002ddwim" title="help-dwim">
+<link rel="next" href="perlapi.html#perlapi" title="perlapi">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="perldoc"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="perlapi.html#perlapi">perlapi</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="help_002ddwim.html#help_002ddwim">help-dwim</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">15 Run perldoc using woman</h2>
+
+<p>I like &ldquo;woman&rdquo;(that is WithOut MAN). perldoc.el make it possible to
+view perl document without man. To use it with <code>help-dwim</code>, a
+list of modules is build automatic using a perl script
+<samp><span class="file">perldoc-cache.pl</span></samp>. The cache can be update automaticly. It is
+configured in pde-load. See <a href="pde_002dload.html#pde_002dload">pde-load</a>.
+
+<div class="defun">
+&mdash; Function: <b>perldoc-recache-everyday</b><var> &amp;optional days<a name="index-perldoc_002drecache_002deveryday-93"></a></var><br>
+<blockquote><p>If the cache file is expired DAYS, force caches update. 
+</p></blockquote></div>
+
+   <p>With the <code>perldoc-obarray</code>, a lot of things can be done. 
+<samp><span class="command">perldoc-tree</span></samp> use this obarray to build a tree view.
+
+<div class="defun">
+&mdash; Function: <b>perldoc-read-module</b><var> prompt &amp;optional require-match init<a name="index-perldoc_002dread_002dmodule-94"></a></var><br>
+<blockquote><p>Read a perl module name. 
+When a module name at point, the module become the default input. 
+Don't add ": " in PROMPT. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perldoc-find-module</b><var> &amp;optional module other-window<a name="index-perldoc_002dfind_002dmodule-95"></a></var><br>
+<blockquote><p>Find the file of perl module. With prefix argument open the file in
+other window. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perldoc-find-module-ap</b><var> &amp;optional other-window<a name="index-perldoc_002dfind_002dmodule_002dap-96"></a></var><br>
+<blockquote><p>Find the module under point without prompt. With prefix argument open
+the file in other window. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perldoc-find-module-other-window</b><var><a name="index-perldoc_002dfind_002dmodule_002dother_002dwindow-97"></a></var><br>
+<blockquote><p>Find the module under point in other window without prompt. 
+</p></blockquote></div>
+
+   </body></html>
+

@@ -1,0 +1,206 @@
+2008-07-12  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/perldoc.el (perldoc-module-ap): Fix for ffap
+
+	* lisp/compile-dwim.el (compile-dwim-compile, compile-dwim-run): Fix the modify time check.
+
+2008-05-05  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lib/Emacs/PDE.pm: rename module name from PDE to Emacs::PDE
+
+2008-05-03  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde-project.el (pde-project-find-file): Using uniquified
+	file name instead of full path. Idea comes from find-file-in-project.el
+
+2008-04-30  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde-project.el (pde-file-list-ignore-file): Add ignore file
+	list for pde-project-find-file
+
+2008-04-26  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde-util.el (pde-module-bounds): new function to detect
+	perl module at point.
+
+2008-04-23  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde-project.el (pde-project-find-file): fix bug: use bind
+	default-directory local instead of cd.
+
+2008-04-20  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde-util.el (pde-yaml-dump, pde-yaml-load): Add commands
+	for read or dump YAML data.
+
+2008-04-19  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde-project.el (pde-project-find-file): New command to find
+	file in current project.
+
+2008-04-13  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/compile-dwim.el (compile-dwim-alist): Make win32 happy.
+
+	* lisp/tree-mode.el (tree-mode-button-current-line): fixed it
+
+2008-04-01  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/compile-dwim.el (compile-dwim-calculate-command): Test
+	whether current file name is changed when generate new commands.
+	(compile-dwim-calculate-command): Make compile-dwim recache when
+	change file name
+
+2008-03-19  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/re-builder-x.el (reb-perl-start-process): coding system
+	support
+
+	* lisp/tempo-x.el (tempo-x-insert-form): Barf when variable is not
+	source before
+
+2008-03-18  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/re-builder-x.el: New library for test regexp
+
+	* lisp/perldoc.el (perldoc-read-module, perldoc-module-ap): find
+	not module item, too
+
+2008-03-11  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/inf-perl.el (inf-perl-set-cwd): echo working directory
+
+2008-03-09  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde.el (pde-perl-mode-hook): Fix error message
+
+	* Release PDE-v0.2.6
+
+	* lisp/pde-abbv.el (pde-abbv-no-blank): Make some abbrev expand
+	without insert whitespace.
+
+2008-02-29  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde.el (pde-pod-to-manpage): Fix for search pod from point-min
+
+2008-01-13  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/perldoc.el (perldoc-symbol-type): New function to distinct
+	symbols in obarray. Change relate functions to use this.
+
+	* lisp/pde-util.el (pde-apropos-module): New command
+
+2008-01-06  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde.el (pde-compilation-buffer-name): fix bug: not 1 but 0
+
+	* lisp/tempo-x.el (tempo-x-snippet-clear): fix bug: clear forms
+	when source overlay is deleted
+
+2008-01-01  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/compile-dwim.el and others: change defvar to defcustom
+	definition
+
+	* lisp/doc/pde.texi (perlcritic): Add docuemnt for perlcritic
+
+2007-12-31  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde.el (pde-ffap-locate): make ffap-highlight correct region
+
+	* lisp/perldoc.el (perldoc-module-ap): recache if the thing at
+	point like a module
+
+	* lisp/perlcritic.el: add perlcritic.el
+
+	* lisp/perltidy.el (perltidy-region): check perltidy
+
+	* lisp/pde.el (pde-compilation-buffer-name): Use mode name to
+	create buffer.
+
+2007-12-30  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/pde-util.el (pde-search-cpan): New command
+
+	* lisp/perldoc.el (perldoc): add a parameter for module convert
+
+	* lisp/pde-util.el (pde-list-core-modules): fix for view "open"
+
+	* lisp/perldoc.el (perldoc-module-ap): Handle name like package::sub.
+	(perldoc-locate-module): locate pod also.
+	(perldoc): support for encoding
+
+	* lisp/pde-load.el ("ffap"): let pde-ffap-locate handle everywhere
+
+	* lisp/tree-mode.el (tree-mode-toggle-expand-node): A notify
+	function to toggle expanding tree
+
+	* lisp/pde-abbv.el: Add pde-abbv.el
+
+	* lisp/tempo-x.el: Add tempo-x.el
+
+2007-12-29  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/perldoc.el (perldoc-tree-widget): click on toplevel button
+	toggle expand node.
+
+	* lisp/contrib/tabbar.el: Move tabbar to contrib directory
+
+	* lisp/perldoc.el (perldoc-tree-theme): Add option for
+	perldoc-tree theme
+
+	* Build.PL (ACTION_fakeinstall): add fakeinstall action for elisp file.
+	(ACTION_disthtml): change action html to disthtml, so make will success.
+
+2007-12-28  Ye Wenbin  <wenbinye@gmail.com>
+
+	* Build.PL: use create_makefile_pl to create Makefile.PL. Thanks
+	Michael G Schwern for give the suggestion.
+
+2007-12-27  Ye Wenbin  <wenbinye@gmail.com>
+
+	* lisp/tree-mode.el (tree-mode-toggle-expand): new command
+	available for expand and contract node
+
+	* lisp/pde-load.el (pde-extra-setting): don't use nconc, too
+	dangerous
+
+	* lisp/pde.el (pde-perl-mode-hook): Use
+	executable-make-buffer-file-executable-if-script-p instead of
+	executable-chmod
+
+	* lisp/perldoc.el (perldoc-init): New function to init obarray
+
+	* lib/PDE.pm: Mention other emacs libraries and Perl modules
+
+	* lisp/pde.el (pde-pod-to-manpage): using pde-file-package to
+	detect module name.
+	(pde-tabbar-register): make function autoload so you can use
+	perldoc-tree without enter cperl-mode
+
+	* lisp/template-simple.el (define-template-expander): Easy to
+	define new expand function.
+
+	* lisp/perldoc.el (perldoc-pragam-expand): fix typo
+
+	* lisp/template-simple.el (template-kill-ring-save): A command
+	help write template in string
+	(template-compile): Not handle list of element now
+	(template-expand-function): Default function is
+	template-tempo-expand now.
+
+	* lisp/templates/TEMPLATE.el.tpl: Change file name in case
+	somebody put this to library and become a library TEMPLATE.el.
+
+	* lisp/template-simple.el (template-skeleton-expand)
+	(template-tempo-expand): Fix bugs introduced
+
+	* lisp/pde-util.el (pde-generate-loaddefs): For automatic create
+	pde-loaddefs.el
+
+	* lisp/pde-load.el (pde-extra-setting): Make transient-mark-mode
+	default turn on
+
+2007-12-26  Ye Wenbin  <wenbinye@gmail.com>
+
+	* First Release!

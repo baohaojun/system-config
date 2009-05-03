@@ -1,0 +1,97 @@
+<html lang="en">
+<head>
+<title>compile-dwim - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="re_002dbuilder_002dx.html#re_002dbuilder_002dx" title="re-builder-x">
+<link rel="next" href="help_002ddwim.html#help_002ddwim" title="help-dwim">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="compile-dwim"></a>
+<a name="compile_002ddwim"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="help_002ddwim.html#help_002ddwim">help-dwim</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="re_002dbuilder_002dx.html#re_002dbuilder_002dx">re-builder-x</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">13 Smart compile commands</h2>
+
+<p>cperl-mode recommend using mode-compile, but I don't like
+mode-compile. Instead, smart-compile+.el does a good job. But I found
+it is not easy to customize smart-compile+, because the user variables
+are separated for a language. So I rewrite it to
+compile-dwim(again, I like dwim).
+
+<div class="defun">
+&mdash; User Option: <b>compile-dwim-alist</b><var><a name="index-compile_002ddwim_002dalist-88"></a></var><br>
+<blockquote><p>Settings for certain file type. 
+A list like which has form
+ (TYPE CONDITION COMPILE-COMMAND RUN-COMMAND EXE-FILE).
+
+        <p>TYPE is the language type to distinguish from others.
+
+        <p>CONDITION is a list of predicates constituted by operator &ldquo;or&rdquo;. 
+The predicates can be (name . REGEXP) or (mode . MAJOR-MODE) to test
+the file name match REGEXP or major-mode eq MAJOR-MODE.
+
+        <p>In COMPILE-COMMAND and RUN-COMMAND, these format specifications
+are available:
+<pre class="verbatim">     
+       %i  interpreter name
+       %F  absolute pathname
+       %f  file name without directory
+       %n  file name without extention
+       %e  extention of file name
+</pre>
+
+        <p>The interpreter is the program in the shebang line. If the
+program is valid(test with `executable-find'), then use this program,
+otherwise, use interpreter in `interpreter-mode-alist' according
+to the major mode.
+
+        <p>EXE-FILE control whether should run compile command before actual run
+or should recompile again because EXE-FILE is older than source file. 
+Usually, script language don't need to set EXE-FILE. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>compile-dwim-check-tools</b><var><a name="index-compile_002ddwim_002dcheck_002dtools-89"></a></var><br>
+<blockquote><p>Whether checking makefile or ant or else. Default is turn on. You can
+also change the value locally by <code>make-local-variable</code> in
+mode-hook for certain files. 
+</p></blockquote></div>
+
+   </body></html>
+

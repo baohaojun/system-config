@@ -1,0 +1,85 @@
+<html lang="en">
+<head>
+<title>inf-perl - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="perldb_002dui.html#perldb_002dui" title="perldb-ui">
+<link rel="next" href="Function-Index.html#Function-Index" title="Function Index">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="inf-perl"></a>
+<a name="inf_002dperl"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="Function-Index.html#Function-Index">Function Index</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="perldb_002dui.html#perldb_002dui">perldb-ui</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">24 Interactive perl shell</h2>
+
+<p>An interactive shell is easier to prove some simple idea or check a
+piece of code. Also it is easier to debug or learn certain module
+without write, save, run.
+
+   <p>Actually, a <samp><span class="command">perl -de 1</span></samp> is a good interactive shell. But I'd
+rather use a simple, but easier to customize and extend, shell.
+
+<div class="defun">
+&mdash; User Option: <b>inf-perl-shell-program</b><var><a name="index-inf_002dperl_002dshell_002dprogram-180"></a></var><br>
+<blockquote><p>The location of interactive shell program. Default is <samp><span class="file">psh.pl</span></samp>. 
+You can change it to &ldquo;-de 1&rdquo; if you want it be a debugger or
+<samp><span class="file">gtksh.pl</span></samp> if you want develop with Gtk2-Perl. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>inf-perl-start-file</b><var><a name="index-inf_002dperl_002dstart_002dfile-181"></a></var><br>
+<blockquote><p>The code to load when start up. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>inf-perl-options</b><var><a name="index-inf_002dperl_002doptions-182"></a></var><br>
+<blockquote><p>extra command line options. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>inf-perl-remove-my</b><var><a name="index-inf_002dperl_002dremove_002dmy-183"></a></var><br>
+<blockquote><p>lexcial variable can not live after eval. So when this option turn on,
+when send one line code to process, the my declaration at beginning of
+line will be removed. The variable(s) will become global. 
+</p></blockquote></div>
+
+   <p>For key bindings in cperl-mode, See <a href="pde.html#pde">pde</a>.
+
+   </body></html>
+

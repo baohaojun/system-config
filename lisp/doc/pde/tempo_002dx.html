@@ -1,0 +1,190 @@
+<html lang="en">
+<head>
+<title>tempo-x - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="tabbar_002dx.html#tabbar_002dx" title="tabbar-x">
+<link rel="next" href="re_002dbuilder_002dx.html#re_002dbuilder_002dx" title="re-builder-x">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="tempo-x"></a>
+<a name="tempo_002dx"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="re_002dbuilder_002dx.html#re_002dbuilder_002dx">re-builder-x</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="tabbar_002dx.html#tabbar_002dx">tabbar-x</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">11 Additional elements for tempo</h2>
+
+<p><samp><span class="file">tempo.el</span></samp> is a extensible library for abbrevs. It provide more
+features than <samp><span class="file">skeleton.el</span></samp>, such as move between marks,
+names for prompt, user elements and so on. <samp><span class="file">tempo-x.el</span></samp> provides
+some commands and additional elements that may helpful.
+
+<div class="defun">
+&mdash; Command: <b>tempo-x-space</b><var><a name="index-tempo_002dx_002dspace-84"></a></var><br>
+<blockquote><p>A simple command to enable expand tempo like abbrev. The command
+<code>tempo-space</code> given by the author of <samp><span class="file">tempo.el</span></samp> is not
+compatiable for abbrev-mode. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>tempo-x-rebuild</b><var><a name="index-tempo_002dx_002drebuild-85"></a></var><br>
+<blockquote><p>Reinstall new tempo template for all buffer. If you defined a new
+tempo-template in certain tag-list, you can't use it intermediately. 
+Call the commands to force build connections for all buffer again. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>tempo-x-test-template</b><var><a name="index-tempo_002dx_002dtest_002dtemplate-86"></a></var><br>
+<blockquote><p>A macro to test tempo template before define it. 
+</p></blockquote></div>
+
+   <p>Here is a list of new elements:
+
+     <ul>
+<li>pi
+<li>Pi
+
+     <p>&ldquo;pi&rdquo; and &ldquo;Pi&rdquo; like standard tempo element &ldquo;p&rdquo; except they can
+have a default value and can be completing read.
+
+     <div class="defun">
+&mdash; Function: <b>tempo-x-insert-prompt</b><var> prompt &amp;optional default save-name no-insert<a name="index-tempo_002dx_002dinsert_002dprompt-87"></a></var><br>
+<blockquote><p>The beta version of tempo.el also implement new prompt element, but I
+still an element that can accept default value. 
+PROMPT can be a string or a list. When it is a string, it is like
+standard tempo element <code>p</code>, but you can give a DEFAULT string. 
+If it is a list, the prompt will be the parameters of
+<code>completing-read</code>. But you should give the default value in
+DEFAULT not in PROMPT.
+
+             <p>Here is some example:
+          <pre class="lisp">               (pi "variable: " "foo" var)
+               (pi ("variable: " ("foo" "bar")) "foo" var)
+          </pre>
+             </blockquote></div>
+
+     <li>R
+
+     <p>skeleton has some handy elements to control recursive expanding. &ldquo;R&rdquo;
+is such tempo elements to do this job. The syntax of the element is:
+     <pre class="lisp">          (R before-test-elements
+             (&amp; condition
+                final-form)
+             after-test-elements)
+     </pre>
+     <p>First it insert BEFORE-TEST-ELEMENTS to buffer. then test the
+CONDITION, if the CONDITION is null, eval FINAL-FORM and quit the
+loop. Otherwise insert AFTER-TEST-ELEMENTS and back to start. The
+CONDITION can be a name saved in BEFORE-TEST-ELEMENTS, it will
+automatic clean after test, so you will be prompt again. If you want
+use it after test, backup it by yourself. The CONDITION also can be a
+list, which CAR is a list of names will be used and will be clean
+after test. 
+A special variable <code>recursion-start</code> is available is FINAL-FORM,
+you can use it to clean up recent insertion in BEFORE-TEST-ELEMENTS.
+
+     <p>Here is a example to show how to use it:
+     <pre class="lisp">          (tempo-define-template
+           "sh-if"
+           '("if " (pi "condition: " ("[  ]" . 3)) "; then" &gt; n&gt;
+             p &gt; n&gt;
+             (R "elif " (pi "condition: " ("[  ]" . 3) condition)
+                (&amp; ((condition) (string-match "\\[\\s-*]" condition))
+                   (delete-region recursion-start (point)))
+                "; then" &gt; n&gt;
+                p &gt; n&gt;)
+             "else" &gt; n&gt;
+             p n&gt;
+             "fi" &gt; n&gt;))
+     </pre>
+     <p>Try it by M-x tempo-template-sh-if in sh-mode.
+
+     <li>snippet
+
+     <p>If you want use this only, you can try <code>tempo-snippets.el</code>,
+<code>tempo-x.el</code> borrow most of functions from there to implement a
+new element instead of new template style.
+
+     <p>&ldquo;snippet&rdquo; enable visualize the template field, and can update form when
+editing. The syntax of &ldquo;snippet&rdquo; is:
+     <pre class="lisp">          (snippet (S name &amp;optional display insert)
+                   (F (vars) forms))
+     </pre>
+     <p>&ldquo;S&rdquo; insert a field, the first NAME will be the source and other
+field with the same NAME become mirrors. Change the source will also
+change mirrors. DISPLAY is the text to insert to the field, default is
+the `symbol-name' of NAME. INSERT is non-nil means the DISPLAY is the
+default text, you can make change to the text. Otherwise the text will
+be erase after any changes in front of field.
+
+     <p>&ldquo;F&rdquo; insert an form. The VARS is a list of NAME used in fields. the
+evaled result will insert into the buffer. When any fields in VARS
+changed, the text of form will change too.
+
+     <p>A example will show how to use it easier:
+
+     <pre class="lisp">          (tempo-define-template
+           "perl-open"
+           '((snippet
+              "open("
+              (S FH "my $fh" t) ", \"" (S op "&lt;") "\", "
+              (S file "$file")
+              ") or die \"Can't "
+              (F (op)
+                 (if (string-match "&gt;" op)
+                     "create" "open"))
+              " file "
+              (F (file)
+                 (replace-regexp-in-string "['\"]?\\(.*\\)['\"]" "\\1" file))
+              ": $!\";"
+              n&gt;)))
+     </pre>
+     <p>After expand the template, insert string like:
+<pre class="verbatim">     
+     open([my $fh], "[&lt;]", [$file]) or die "Can't {open} file {$file}: $!";
+</pre>
+
+     <p>the text inside &ldquo;[]&rdquo; indicate as a field, and text inside &ldquo;{}&rdquo;
+indicate as a form, the when text inside the field changes, the
+assicated form will update too. For example if you change open mode
+from &ldquo;&lt;&rdquo; to &ldquo;&gt;&rdquo;, the form &ldquo;open&rdquo; will change to &ldquo;create&rdquo;. If
+change &ldquo;$file&rdquo; to &ldquo;"file"&rdquo; the form will change to &ldquo;file&rdquo; with
+quote removed. 
+</ul>
+
+   </body></html>
+

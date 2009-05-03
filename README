@@ -1,0 +1,24 @@
+Emacs::PDE version 0.01
+================
+
+PDE is a collection of extension and configuration for perl
+programming using Emacs.
+
+
+INSTALLATION
+
+To install PDE, add the following to your ~/.emacs:
+
+     (add-to-list 'load-path "/path/to/pde/")
+     (load "pde-load")
+
+DEPENDENCIES
+
+None.
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2007, Ye Wenbin
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.

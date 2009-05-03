@@ -1,0 +1,229 @@
+<html lang="en">
+<head>
+<title>pde - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="pde_002dload.html#pde_002dload" title="pde-load">
+<link rel="next" href="pde_002dvars.html#pde_002dvars" title="pde-vars">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="pde"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="pde_002dvars.html#pde_002dvars">pde-vars</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="pde_002dload.html#pde_002dload">pde-load</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">4 Integrate other libraries</h2>
+
+<p><samp><span class="file">pde.el</span></samp> try to integrate other libraies to cperl-mode.
+
+   <p>First it rearrange key bindings. Some cperl-mode default key bindings
+are remap to <code>pde-cperl-map</code>, so more key bindings can be add to
+cperl-mode-map.
+
+<div class="defun">
+&mdash; User Option: <b>pde-cperl-prefix</b><var><a name="index-pde_002dcperl_002dprefix-3"></a></var><br>
+<blockquote><p>Prefix key for cperl commands. Default is C-c C-c. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Variable: <b>pde-cperl-map</b><var><a name="index-pde_002dcperl_002dmap-4"></a></var><br>
+<blockquote><p>Keymap for cperl commands
+</p></blockquote></div>
+
+     <dl>
+<dt><kbd>C-e</kbd><dd><a name="index-C_002de-_0028cperl_002dtoggle_002delectric_0029-5"></a><code>cperl-toggle-electric</code> - Toggle the state of parentheses
+doubling in CPerl mode.
+
+     <br><dt><kbd>C-j</kbd><dd><a name="index-C_002dj-_0028cperl_002dlinefeed_0029-6"></a><code>cperl-linefeed</code> - Go to end of line, open a new line and indent
+appropriately.
+
+     <br><dt><kbd>C-n</kbd><dd><a name="index-C_002dn-_0028cperl_002dnarrow_002dto_002dhere_002ddoc_0029-7"></a><code>cperl-narrow-to-here-doc</code> - Narrows editing region to the
+HERE-DOC at pos.
+
+     <br><dt><kbd>C-p</kbd><dd><a name="index-C_002dp-_0028cperl_002dpod_002dspell_0029-8"></a><code>cperl-pod-spell</code> - Spell-check POD documentation.
+
+     <br><dt><kbd>C-t</kbd><dd><a name="index-C_002dt-_0028cperl_002dinvert_002dif_002dunless_0029-9"></a><code>cperl-invert-if-unless</code> - Change `if (A) {B}' into `B if A;' etc
+(or visa versa) if possible.
+
+     <br><dt><kbd>C-v</kbd><dd><a name="index-C_002dv-_0028cperl_002dnext_002dinterpolated_002dREx_0029-10"></a><code>cperl-next-interpolated-REx</code> - Move point to next REx which has
+interpolated parts.
+
+     <br><dt><kbd>C-x</kbd><dd><a name="index-C_002dx-_0028cperl_002dnext_002dinterpolated_002dREx_002d0_0029-11"></a><code>cperl-next-interpolated-REx-0</code> - Move point to next REx which
+has interpolated parts without //o.
+
+     <br><dt><kbd>C-y</kbd><dd><a name="index-C_002dy-_0028cperl_002dnext_002dinterpolated_002dREx_002d1_0029-12"></a><code>cperl-next-interpolated-REx-1</code> - Move point to next REx which
+has interpolated parts without //o.
+
+   </dl>
+
+<div class="defun">
+&mdash; User Option: <b>pde-view-prefix</b><var><a name="index-pde_002dview_002dprefix-13"></a></var><br>
+<blockquote><p>Prefix key for view commands. Default is C-c C-v
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Variable: <b>pde-view-map</b><var><a name="index-pde_002dview_002dmap-14"></a></var><br>
+<blockquote><p>Keymap for view commands. 
+</p></blockquote></div>
+
+     <dl>
+<dt><kbd>C-i</kbd><dd><a name="index-C_002di-_0028pde_002dimenu_002dtree_0029-15"></a><a name="index-pde_002dimenu_002dtree-16"></a><code>pde-imenu-tree</code> - Display tree view of imenu.
+
+     <br><dt><kbd>C-m</kbd><dd><a name="index-C_002dm-_0028pde_002dpod_002dto_002dmanpage_0029-17"></a><a name="index-pde_002dpod_002dto_002dmanpage-18"></a><code>pde-pod-to-manpage</code> - View pod in current buffer using woman.
+
+     <br><dt><kbd>C-p</kbd><dd><a name="index-C_002dp-_0028pde_002dperldoc_002dtree_0029-19"></a><a name="index-pde_002dperldoc_002dtree-20"></a><code>pde-perldoc-tree</code> - Display pod tree.
+
+   </dl>
+
+<div class="defun">
+&mdash; User Option: <b>pde-perltidy-prefix</b><var><a name="index-pde_002dperltidy_002dprefix-21"></a></var><br>
+<blockquote><p>Prefix key for perltidy commands. Default is C-c C-t. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Variable: <b>pde-perltidy-map</b><var><a name="index-pde_002dperltidy_002dmap-22"></a></var><br>
+<blockquote><p>Keymap for perltidy commands. 
+</p></blockquote></div>
+
+     <dl>
+<dt><kbd>C-b</kbd><dd><a name="index-C_002db-_0028perltidy_002dbuffer_0029-23"></a><a name="index-perltidy_002dbuffer-24"></a><code>perltidy-buffer</code> - Call perltidy for whole buffer.
+
+     <br><dt><kbd>C-r</kbd><dd><a name="index-C_002dr-_0028perltidy_002dregion_0029-25"></a><a name="index-perltidy_002dregion-26"></a><code>perltidy-region</code> - Tidy perl code in the region.
+
+     <br><dt><kbd>C-s</kbd><dd><a name="index-C_002ds-_0028perltidy_002dsubroutine_0029-27"></a><a name="index-perltidy_002dsubroutine-28"></a><code>perltidy-subroutine</code> - Call perltidy for subroutine at point.
+
+     <br><dt><kbd>C-t</kbd><dd><a name="index-C_002dt-_0028perltidy_002ddwim_0029-29"></a><a name="index-perltidy_002ddwim-30"></a><code>perltidy-dwim</code> - Perltidy Do What I Mean. 
+If with prefix argument, just show the result of perltidy. 
+You can use C-x C-s to save the tidy result. 
+If region is active call perltidy on the region. If inside
+subroutine, call perltidy on the subroutine, otherwise call
+perltidy for whole buffer.
+
+   </dl>
+
+<div class="defun">
+&mdash; User Option: <b>pde-inf-perl-prefix</b><var><a name="index-pde_002dinf_002dperl_002dprefix-31"></a></var><br>
+<blockquote><p>Prefix key for inf-perl commands. Default is C-c C-e. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Variable: <b>pde-inf-perl-map</b><var><a name="index-pde_002dinf_002dperl_002dmap-32"></a></var><br>
+<blockquote><p>Keymap for inf-perl commands. 
+</p></blockquote></div>
+
+     <dl>
+<dt><kbd>C-e</kbd><dd><a name="index-C_002de-_0028inf_002dperl_002dsend_0029-33"></a><a name="index-inf_002dperl_002dsend-34"></a><code>inf-perl-send</code> - If mark active, send region, otherwise send current line
+
+     <br><dt><kbd>C-j</kbd><dd><a name="index-C_002dj-_0028inf_002dperl_002dsend_002dline_0029-35"></a><a name="index-inf_002dperl_002dsend_002dline-36"></a><code>inf-perl-send-line</code> - Send current line to the perl process.
+
+     <br><dt><kbd>C-l</kbd><dd><a name="index-C_002dl-_0028inf_002dperl_002dload_002dfile_0029-37"></a><a name="index-inf_002dperl_002dload_002dfile-38"></a><code>inf-perl-load-file</code> - Send whole buffer to process
+
+     <br><dt><kbd>C-r</kbd><dd><a name="index-C_002dr-_0028inf_002dperl_002dsend_002dregion_0029-39"></a><a name="index-inf_002dperl_002dsend_002dregion-40"></a><code>inf-perl-send-region</code> - Send region to process.
+
+     <br><dt><kbd>C-s</kbd><dd><a name="index-C_002ds-_0028inf_002dperl_002dset_002dcwd_0029-41"></a><a name="index-inf_002dperl_002dset_002dcwd-42"></a><code>inf-perl-set-cwd</code> - Set working directory of interpreter to
+current default-directory
+
+     <br><dt><kbd>M-r</kbd><dd><a name="index-M_002dr-_0028inf_002dperl_002dsend_002dregion_002dand_002dgo_0029-43"></a><a name="index-inf_002dperl_002dsend_002dregion_002dand_002dgo-44"></a><code>inf-perl-send-region-and-go</code> - Send region and switch to process
+buffer
+
+     <br><dt><kbd>C-y</kbd><dd><a name="index-C_002dy-_0028inf_002dperl_002dswitch_002dto_002dperl_0029-45"></a><a name="index-inf_002dperl_002dswitch_002dto_002dperl-46"></a><code>inf-perl-switch-to-perl</code> - Switch to perl process buffer.
+
+     <br><dt><kbd>C-z</kbd><dd><a name="index-C_002dz-_0028inf_002dperl_002dswitch_002dto_002dend_002dperl_0029-47"></a><a name="index-inf_002dperl_002dswitch_002dto_002dend_002dperl-48"></a><code>inf-perl-switch-to-end-perl</code> - Switch to end of perl process buffer.
+
+   </dl>
+
+   <p>tabbar-mode can make a tabbar for all buffers. I prefer using ido-mode
+to switch between buffers. But here I want add a tabbar for a few
+buffers to group them and make emacs looks like IDE. So that why
+tabbar-x. See <a href="tabbar_002dx.html#tabbar_002dx">tabbar-x</a>.
+
+<div class="defun">
+&mdash; Function: <b>pde-tabbar-register</b><var><a name="index-pde_002dtabbar_002dregister-49"></a></var><br>
+<blockquote><p>Add tabbar and register current buffer to group Perl. 
+</p></blockquote></div>
+
+   <p>ffap is a good command. To use it in cperl-mode to find perl module,
+need some hack.
+
+<div class="defun">
+&mdash; Function: <b>pde-ffap-locate</b><var><a name="index-pde_002dffap_002dlocate-50"></a></var><br>
+<blockquote><p>Return cperl module for ffap. 
+</p></blockquote></div>
+
+   <p>indent-region need to mark a region. Not very convenient. So I
+write a dwim command.
+
+<div class="defun">
+&mdash; Function: <b>pde-indent-dwim</b><var><a name="index-pde_002dindent_002ddwim-51"></a></var><br>
+<blockquote><p>Indent the region between paren. 
+If region selected, indent the region. 
+If character before is a parenthesis(such as "]})&gt;"), indent the
+region between the parentheses. Useful when you finish a subroutine or
+a block. 
+Otherwise indent current subroutine. Selected by <samp><span class="command">beginning-of-defun</span></samp>
+and <samp><span class="command">end-of-defun</span></samp>. 
+</p></blockquote></div>
+
+   <p>Settings after cperl-mode is loaded or only for buffer that major-mode
+is cperl-mode are defined in <code>pde-perl-mode-hook</code>
+
+<div class="defun">
+&mdash; Function: <b>pde-perl-mode-hook</b><var><a name="index-pde_002dperl_002dmode_002dhook-52"></a></var><br>
+<blockquote><p>Hooks to run when enter cperl-mode. It define a new style &ldquo;PDE&rdquo;,
+turn on display information of function on echo area, turn abbrev-mode
+on, activate perldoc, auto chmod when save perl script but not module
+or pod, and bind keys. 
+</p></blockquote></div>
+
+   <p>This key bindings are added:
+
+     <dl>
+<dt><kbd>C-c C-f</kbd><dd><a name="index-C_002dc-C_002df-_0028flymake_002dmode_0029-53"></a><a name="index-flymake_002dmode-54"></a><code>flymake-mode</code> - Minor mode to do on-the-fly syntax checking.
+
+     <br><dt><kbd>C-c C-d</kbd><dd><a name="index-C_002dc-C_002dd-_0028perldb_002dui_0029-55"></a><a name="index-perldb_002dui-56"></a><code>perldb-ui</code> - Debugger with perldb-ui.
+
+     <br><dt><kbd>C-c C-k</kbd><dd><a name="index-C_002dc-C_002dk-_0028perlcritic_0029-57"></a><a name="index-perlcritic-58"></a><code>perlcritic</code> - Call perlcritic with current file
+
+     <br><dt><kbd>C-c C-z</kbd><dd><a name="index-C_002dc-C_002dz-_0028run_002dperl_0029-59"></a><a name="index-run_002dperl-60"></a><code>run-perl</code> - Start or switch to interactive perl shell.
+
+   </dl>
+
+   <p>The old C-c C-h commands are removed, and make
+<samp><span class="command">describe-prefix-bindings</span></samp> work. If you realy need them,
+define them in <code>pde-cperl-map</code>.
+
+   </body></html>
+

@@ -1,0 +1,1914 @@
+<html lang="en">
+<head>
+<title>Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="top" href="#Top">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<h1 class="settitle">Perl Development Environment</h1>
+<div class="contents">
+<h2>Table of Contents</h2>
+<ul>
+<li><a name="toc_Top" href="#Top">PDE</a>
+<li><a name="toc_Introduction" href="#Introduction">1 A introduction to PDE</a>
+<li><a name="toc_Installation" href="#Installation">2 Installation</a>
+<li><a name="toc_pde_002dload" href="#pde_002dload">3 Default configuration for PDE</a>
+<li><a name="toc_pde" href="#pde">4 Integrate other libraries</a>
+<li><a name="toc_pde_002dvars" href="#pde_002dvars">5 Global variables shared</a>
+<li><a name="toc_pde_002dproject" href="#pde_002dproject">6 Projects in perl</a>
+<li><a name="toc_pde_002dabbv" href="#pde_002dabbv">7 Abbrev for perl</a>
+<li><a name="toc_pde_002dutil" href="#pde_002dutil">8 Misc commands</a>
+<li><a name="toc_template_002dsimple" href="#template_002dsimple">9 New file with template</a>
+<li><a name="toc_tabbar_002dx" href="#tabbar_002dx">10 Tabbar for particular buffers</a>
+<li><a name="toc_tempo_002dx" href="#tempo_002dx">11 Additional elements for tempo</a>
+<li><a name="toc_re_002dbuilder_002dx" href="#re_002dbuilder_002dx">12 Regexp building and testing tool</a>
+<li><a name="toc_compile_002ddwim" href="#compile_002ddwim">13 Smart compile commands</a>
+<li><a name="toc_help_002ddwim" href="#help_002ddwim">14 Find documents using help-dwim</a>
+<li><a name="toc_perldoc" href="#perldoc">15 Run perldoc using woman</a>
+<li><a name="toc_perlapi" href="#perlapi">16 Find document in perlapi</a>
+<li><a name="toc_windata" href="#windata">17 Window configuration to list</a>
+<li><a name="toc_tree_002dmode" href="#tree_002dmode">18 More commands on tree-widget</a>
+<li><a name="toc_imenu_002dtree" href="#imenu_002dtree">19 Tree view for imenu</a>
+<li><a name="toc_tags_002dtree" href="#tags_002dtree">20 Tree view of TAGS</a>
+<li><a name="toc_perltidy" href="#perltidy">21 Calling perltidy</a>
+<li><a name="toc_perlcritic" href="#perlcritic">22 Calling perlcritic</a>
+<li><a name="toc_perldb_002dui" href="#perldb_002dui">23 Perl Debugger</a>
+<li><a name="toc_inf_002dperl" href="#inf_002dperl">24 Interactive perl shell</a>
+<li><a name="toc_Function-Index" href="#Function-Index">Function Index</a>
+<li><a name="toc_Variable-Index" href="#Variable-Index">Variable Index</a>
+<li><a name="toc_Keybinding-Index" href="#Keybinding-Index">Keybinding Index</a>
+</li></ul>
+</div>
+
+
+
+<!-- END For printed material -->
+<div class="node">
+<p><hr>
+<a name="Top"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Introduction">Introduction</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#dir">(dir)</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="unnumbered">PDE</h2>
+
+<p>This is manual for PDE version 0.01
+
+   <p>&copy; 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc. 
+<blockquote>
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A
+copy of the license is included in the section entitled "GNU Free
+Documentation License". 
+</blockquote>
+
+<ul class="menu">
+<li><a accesskey="1" href="#Introduction">Introduction</a>:                 A introduction to PDE
+<li><a accesskey="2" href="#Installation">Installation</a>:                 Installation
+<li><a accesskey="3" href="#pde_002dload">pde-load</a>:                     Default configuration for PDE
+<li><a accesskey="4" href="#pde">pde</a>:                          Integrate other libraries
+<li><a accesskey="5" href="#pde_002dvars">pde-vars</a>:                     Global variables shared
+<li><a accesskey="6" href="#pde_002dproject">pde-project</a>:                  Projects in perl
+<li><a accesskey="7" href="#pde_002dabbv">pde-abbv</a>:                     Abbrev for perl
+<li><a accesskey="8" href="#pde_002dutil">pde-util</a>:                     Misc commands
+<li><a accesskey="9" href="#template_002dsimple">template-simple</a>:              New file with template
+<li><a href="#tabbar_002dx">tabbar-x</a>:                     Tabbar for particular buffers
+<li><a href="#tempo_002dx">tempo-x</a>:                      Additional elements for tempo
+<li><a href="#re_002dbuilder_002dx">re-builder-x</a>:                 Regexp building and testing tool
+<li><a href="#compile_002ddwim">compile-dwim</a>:                 Smart compile commands
+<li><a href="#help_002ddwim">help-dwim</a>:                    Find documents using help-dwim
+<li><a href="#perldoc">perldoc</a>:                      Run perldoc using woman
+<li><a href="#perlapi">perlapi</a>:                      Find document in perlapi
+<li><a href="#windata">windata</a>:                      Window configuration to list
+<li><a href="#tree_002dmode">tree-mode</a>:                    More commands on tree-widget
+<li><a href="#imenu_002dtree">imenu-tree</a>:                   Tree view for imenu
+<li><a href="#tags_002dtree">tags-tree</a>:                    Tree view of TAGS
+<li><a href="#perltidy">perltidy</a>:                     Call perltidy
+<li><a href="#perlcritic">perlcritic</a>:                   Calling perlcritic
+<li><a href="#perldb_002dui">perldb-ui</a>:                    Perl Debugger
+<li><a href="#inf_002dperl">inf-perl</a>:                     Interactive perl shell
+
+</li></ul>
+<p>Indices
+</p>
+<ul class="menu">
+<li><a href="#Function-Index">Function Index</a>
+<li><a href="#Variable-Index">Variable Index</a>
+<li><a href="#Keybinding-Index">Keybinding Index</a>
+</ul>
+
+<div class="node">
+<p><hr>
+<a name="Introduction"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Installation">Installation</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="chapter">1 A introduction to PDE</h2>
+
+<p><a name="index-introduction-1"></a>
+PDE is a collection of emacs lisp extensions to facilitate perl
+programming. cperl-mode has provided a excellent environment for
+coding, here PDE provides other common tools, such as creating file
+using template, smart compiling, perldoc, perltidy, debugger, tags
+tree view and so on. PDE also provides an easy configuration for perl
+programing, and a tutorial for novice to start using emacs.
+
+   <p>This manual tries to describe the feature of each emacs lisp file
+provided and to be the guide for those who want to use them.
+
+<div class="node">
+<p><hr>
+<a name="Installation"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#pde_002dload">pde-load</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Introduction">Introduction</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="chapter">2 Installation</h2>
+
+<p>Installing PDE is quit easy. When you download the archive of the PDE
+distribution, uncompress the archive to a folder, for example,
+~/elisp/pde, then put this to your ~/.emacs:
+
+<pre class="lisp">     (add-to-list 'load-path "~/elisp/pde/lisp")
+     (load "pde-load")
+</pre>
+   <p>That is all what you need to do for a typical installation.
+
+   <p>You can also use perl style installation:
+<pre class="verbatim">
+     ./Build.PL
+     ./Build test
+     ./Build
+     ./Build install
+</pre>
+
+   <p>Note that test before build, so perl can test whether have emacs in
+PATH. The default place to install lisp files is
+&ldquo;$ENV{HOME}/.emacs.d/pde&rdquo;. You can use option &mdash;elispdir tell
+perl where to put the lisp files. Note that using this way to install,
+you should put ~/elisp/pde to <code>load-path</code>. So you should add
+following to .emacs:
+
+<pre class="lisp">     (add-to-list 'load-path "~/elisp/pde")
+     (load "pde-load")
+</pre>
+   <div class="node">
+<p><hr>
+<a name="pde-load"></a>
+<a name="pde_002dload"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#pde">pde</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Installation">Installation</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">3 Default configuration for PDE</h2>
+
+<p><samp><span class="file">pde-load.el</span></samp> try to provide a default configuration for all
+extension included in PDE. The configuration can be sorted by PDE core
+features and some recommend personal setting. To disable addtional
+features if you don't like, you can set <code>pde-extra-setting</code> to
+nil.
+
+<div class="defun">
+&mdash; User Option: <b>pde-extra-setting</b><var><a name="index-pde_002dextra_002dsetting-2"></a></var><br>
+<blockquote><p>When set to nil, don't load something you don't like
+</p></blockquote></div>
+
+   <p>The minimal enable features after load `pde-load' are:
+     <ul>
+<li>make perl script associate with cperl-mode not perl-mode
+<li>setup new indent style &ldquo;PDE&rdquo;
+<li>turn on abbrev mode
+<li>search document with M-x <samp><span class="command">perldoc</span></samp> or using M-x <samp><span class="command">perldoc-tree</span></samp>
+<li>show imenu with M-x <samp><span class="command">imenu-tree</span></samp>
+<li>auto chmod when saving perl script
+<li>create new file with template
+<li>call perltidy when editing
+<li>start interactive perl shell using M-x <samp><span class="command">inf-perl</span></samp>
+<li>improved perldb using M-x <samp><span class="command">perldb-ui</span></samp>
+<li>smart compile and run command using M-x <samp><span class="command">compile-dwim-compile</span></samp>
+and <samp><span class="command">compile-dwim-run</span></samp>. 
+<li>find perl module in cperl-mode using M-x <samp><span class="command">ffap</span></samp>
+<li>enable show brief info of buildin function under point in minibuffer
+</ul>
+
+   <p>The extra feature including:
+     <ul>
+<li>turn on ido-mode and using ido completion read imenu tag
+<li>automatic update imenu-tree and make tree always visible
+<li>complete read ingore case
+<li>turn on partial-completion-mode, and you can find perl module using
+M-x <samp><span class="command">find-file</span></samp> by add prefix char '&lt;'. 
+<li>multiple compilation buffers
+<li>useful global key bindings
+<li>show perldoc-tree and imenu-tree with tabbar
+<li>set tags-table-list, hippie-expand-try-functions-list,
+comint-completion-addsuffix to make the command handy
+<li>some fixup to cperl-mode
+</ul>
+
+   <p>The configuration is optimized so that most libraries are loaded when
+needed.
+
+<div class="node">
+<p><hr>
+<a name="pde"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#pde_002dvars">pde-vars</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#pde_002dload">pde-load</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">4 Integrate other libraries</h2>
+
+<p><samp><span class="file">pde.el</span></samp> try to integrate other libraies to cperl-mode.
+
+   <p>First it rearrange key bindings. Some cperl-mode default key bindings
+are remap to <code>pde-cperl-map</code>, so more key bindings can be add to
+cperl-mode-map.
+
+<div class="defun">
+&mdash; User Option: <b>pde-cperl-prefix</b><var><a name="index-pde_002dcperl_002dprefix-3"></a></var><br>
+<blockquote><p>Prefix key for cperl commands. Default is C-c C-c. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Variable: <b>pde-cperl-map</b><var><a name="index-pde_002dcperl_002dmap-4"></a></var><br>
+<blockquote><p>Keymap for cperl commands
+</p></blockquote></div>
+
+     <dl>
+<dt><kbd>C-e</kbd><dd><a name="index-C_002de-_0028cperl_002dtoggle_002delectric_0029-5"></a><code>cperl-toggle-electric</code> - Toggle the state of parentheses
+doubling in CPerl mode.
+
+     <br><dt><kbd>C-j</kbd><dd><a name="index-C_002dj-_0028cperl_002dlinefeed_0029-6"></a><code>cperl-linefeed</code> - Go to end of line, open a new line and indent
+appropriately.
+
+     <br><dt><kbd>C-n</kbd><dd><a name="index-C_002dn-_0028cperl_002dnarrow_002dto_002dhere_002ddoc_0029-7"></a><code>cperl-narrow-to-here-doc</code> - Narrows editing region to the
+HERE-DOC at pos.
+
+     <br><dt><kbd>C-p</kbd><dd><a name="index-C_002dp-_0028cperl_002dpod_002dspell_0029-8"></a><code>cperl-pod-spell</code> - Spell-check POD documentation.
+
+     <br><dt><kbd>C-t</kbd><dd><a name="index-C_002dt-_0028cperl_002dinvert_002dif_002dunless_0029-9"></a><code>cperl-invert-if-unless</code> - Change `if (A) {B}' into `B if A;' etc
+(or visa versa) if possible.
+
+     <br><dt><kbd>C-v</kbd><dd><a name="index-C_002dv-_0028cperl_002dnext_002dinterpolated_002dREx_0029-10"></a><code>cperl-next-interpolated-REx</code> - Move point to next REx which has
+interpolated parts.
+
+     <br><dt><kbd>C-x</kbd><dd><a name="index-C_002dx-_0028cperl_002dnext_002dinterpolated_002dREx_002d0_0029-11"></a><code>cperl-next-interpolated-REx-0</code> - Move point to next REx which
+has interpolated parts without //o.
+
+     <br><dt><kbd>C-y</kbd><dd><a name="index-C_002dy-_0028cperl_002dnext_002dinterpolated_002dREx_002d1_0029-12"></a><code>cperl-next-interpolated-REx-1</code> - Move point to next REx which
+has interpolated parts without //o.
+
+   </dl>
+
+<div class="defun">
+&mdash; User Option: <b>pde-view-prefix</b><var><a name="index-pde_002dview_002dprefix-13"></a></var><br>
+<blockquote><p>Prefix key for view commands. Default is C-c C-v
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Variable: <b>pde-view-map</b><var><a name="index-pde_002dview_002dmap-14"></a></var><br>
+<blockquote><p>Keymap for view commands. 
+</p></blockquote></div>
+
+     <dl>
+<dt><kbd>C-i</kbd><dd><a name="index-C_002di-_0028pde_002dimenu_002dtree_0029-15"></a><a name="index-pde_002dimenu_002dtree-16"></a><code>pde-imenu-tree</code> - Display tree view of imenu.
+
+     <br><dt><kbd>C-m</kbd><dd><a name="index-C_002dm-_0028pde_002dpod_002dto_002dmanpage_0029-17"></a><a name="index-pde_002dpod_002dto_002dmanpage-18"></a><code>pde-pod-to-manpage</code> - View pod in current buffer using woman.
+
+     <br><dt><kbd>C-p</kbd><dd><a name="index-C_002dp-_0028pde_002dperldoc_002dtree_0029-19"></a><a name="index-pde_002dperldoc_002dtree-20"></a><code>pde-perldoc-tree</code> - Display pod tree.
+
+   </dl>
+
+<div class="defun">
+&mdash; User Option: <b>pde-perltidy-prefix</b><var><a name="index-pde_002dperltidy_002dprefix-21"></a></var><br>
+<blockquote><p>Prefix key for perltidy commands. Default is C-c C-t. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Variable: <b>pde-perltidy-map</b><var><a name="index-pde_002dperltidy_002dmap-22"></a></var><br>
+<blockquote><p>Keymap for perltidy commands. 
+</p></blockquote></div>
+
+     <dl>
+<dt><kbd>C-b</kbd><dd><a name="index-C_002db-_0028perltidy_002dbuffer_0029-23"></a><a name="index-perltidy_002dbuffer-24"></a><code>perltidy-buffer</code> - Call perltidy for whole buffer.
+
+     <br><dt><kbd>C-r</kbd><dd><a name="index-C_002dr-_0028perltidy_002dregion_0029-25"></a><a name="index-perltidy_002dregion-26"></a><code>perltidy-region</code> - Tidy perl code in the region.
+
+     <br><dt><kbd>C-s</kbd><dd><a name="index-C_002ds-_0028perltidy_002dsubroutine_0029-27"></a><a name="index-perltidy_002dsubroutine-28"></a><code>perltidy-subroutine</code> - Call perltidy for subroutine at point.
+
+     <br><dt><kbd>C-t</kbd><dd><a name="index-C_002dt-_0028perltidy_002ddwim_0029-29"></a><a name="index-perltidy_002ddwim-30"></a><code>perltidy-dwim</code> - Perltidy Do What I Mean. 
+If with prefix argument, just show the result of perltidy. 
+You can use C-x C-s to save the tidy result. 
+If region is active call perltidy on the region. If inside
+subroutine, call perltidy on the subroutine, otherwise call
+perltidy for whole buffer.
+
+   </dl>
+
+<div class="defun">
+&mdash; User Option: <b>pde-inf-perl-prefix</b><var><a name="index-pde_002dinf_002dperl_002dprefix-31"></a></var><br>
+<blockquote><p>Prefix key for inf-perl commands. Default is C-c C-e. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Variable: <b>pde-inf-perl-map</b><var><a name="index-pde_002dinf_002dperl_002dmap-32"></a></var><br>
+<blockquote><p>Keymap for inf-perl commands. 
+</p></blockquote></div>
+
+     <dl>
+<dt><kbd>C-e</kbd><dd><a name="index-C_002de-_0028inf_002dperl_002dsend_0029-33"></a><a name="index-inf_002dperl_002dsend-34"></a><code>inf-perl-send</code> - If mark active, send region, otherwise send current line
+
+     <br><dt><kbd>C-j</kbd><dd><a name="index-C_002dj-_0028inf_002dperl_002dsend_002dline_0029-35"></a><a name="index-inf_002dperl_002dsend_002dline-36"></a><code>inf-perl-send-line</code> - Send current line to the perl process.
+
+     <br><dt><kbd>C-l</kbd><dd><a name="index-C_002dl-_0028inf_002dperl_002dload_002dfile_0029-37"></a><a name="index-inf_002dperl_002dload_002dfile-38"></a><code>inf-perl-load-file</code> - Send whole buffer to process
+
+     <br><dt><kbd>C-r</kbd><dd><a name="index-C_002dr-_0028inf_002dperl_002dsend_002dregion_0029-39"></a><a name="index-inf_002dperl_002dsend_002dregion-40"></a><code>inf-perl-send-region</code> - Send region to process.
+
+     <br><dt><kbd>C-s</kbd><dd><a name="index-C_002ds-_0028inf_002dperl_002dset_002dcwd_0029-41"></a><a name="index-inf_002dperl_002dset_002dcwd-42"></a><code>inf-perl-set-cwd</code> - Set working directory of interpreter to
+current default-directory
+
+     <br><dt><kbd>M-r</kbd><dd><a name="index-M_002dr-_0028inf_002dperl_002dsend_002dregion_002dand_002dgo_0029-43"></a><a name="index-inf_002dperl_002dsend_002dregion_002dand_002dgo-44"></a><code>inf-perl-send-region-and-go</code> - Send region and switch to process
+buffer
+
+     <br><dt><kbd>C-y</kbd><dd><a name="index-C_002dy-_0028inf_002dperl_002dswitch_002dto_002dperl_0029-45"></a><a name="index-inf_002dperl_002dswitch_002dto_002dperl-46"></a><code>inf-perl-switch-to-perl</code> - Switch to perl process buffer.
+
+     <br><dt><kbd>C-z</kbd><dd><a name="index-C_002dz-_0028inf_002dperl_002dswitch_002dto_002dend_002dperl_0029-47"></a><a name="index-inf_002dperl_002dswitch_002dto_002dend_002dperl-48"></a><code>inf-perl-switch-to-end-perl</code> - Switch to end of perl process buffer.
+
+   </dl>
+
+   <p>tabbar-mode can make a tabbar for all buffers. I prefer using ido-mode
+to switch between buffers. But here I want add a tabbar for a few
+buffers to group them and make emacs looks like IDE. So that why
+tabbar-x. See <a href="#tabbar_002dx">tabbar-x</a>.
+
+<div class="defun">
+&mdash; Function: <b>pde-tabbar-register</b><var><a name="index-pde_002dtabbar_002dregister-49"></a></var><br>
+<blockquote><p>Add tabbar and register current buffer to group Perl. 
+</p></blockquote></div>
+
+   <p>ffap is a good command. To use it in cperl-mode to find perl module,
+need some hack.
+
+<div class="defun">
+&mdash; Function: <b>pde-ffap-locate</b><var><a name="index-pde_002dffap_002dlocate-50"></a></var><br>
+<blockquote><p>Return cperl module for ffap. 
+</p></blockquote></div>
+
+   <p>indent-region need to mark a region. Not very convenient. So I
+write a dwim command.
+
+<div class="defun">
+&mdash; Function: <b>pde-indent-dwim</b><var><a name="index-pde_002dindent_002ddwim-51"></a></var><br>
+<blockquote><p>Indent the region between paren. 
+If region selected, indent the region. 
+If character before is a parenthesis(such as "]})&gt;"), indent the
+region between the parentheses. Useful when you finish a subroutine or
+a block. 
+Otherwise indent current subroutine. Selected by <samp><span class="command">beginning-of-defun</span></samp>
+and <samp><span class="command">end-of-defun</span></samp>. 
+</p></blockquote></div>
+
+   <p>Settings after cperl-mode is loaded or only for buffer that major-mode
+is cperl-mode are defined in <code>pde-perl-mode-hook</code>
+
+<div class="defun">
+&mdash; Function: <b>pde-perl-mode-hook</b><var><a name="index-pde_002dperl_002dmode_002dhook-52"></a></var><br>
+<blockquote><p>Hooks to run when enter cperl-mode. It define a new style &ldquo;PDE&rdquo;,
+turn on display information of function on echo area, turn abbrev-mode
+on, activate perldoc, auto chmod when save perl script but not module
+or pod, and bind keys. 
+</p></blockquote></div>
+
+   <p>This key bindings are added:
+
+     <dl>
+<dt><kbd>C-c C-f</kbd><dd><a name="index-C_002dc-C_002df-_0028flymake_002dmode_0029-53"></a><a name="index-flymake_002dmode-54"></a><code>flymake-mode</code> - Minor mode to do on-the-fly syntax checking.
+
+     <br><dt><kbd>C-c C-d</kbd><dd><a name="index-C_002dc-C_002dd-_0028perldb_002dui_0029-55"></a><a name="index-perldb_002dui-56"></a><code>perldb-ui</code> - Debugger with perldb-ui.
+
+     <br><dt><kbd>C-c C-k</kbd><dd><a name="index-C_002dc-C_002dk-_0028perlcritic_0029-57"></a><a name="index-perlcritic-58"></a><code>perlcritic</code> - Call perlcritic with current file
+
+     <br><dt><kbd>C-c C-z</kbd><dd><a name="index-C_002dc-C_002dz-_0028run_002dperl_0029-59"></a><a name="index-run_002dperl-60"></a><code>run-perl</code> - Start or switch to interactive perl shell.
+
+   </dl>
+
+   <p>The old C-c C-h commands are removed, and make
+<samp><span class="command">describe-prefix-bindings</span></samp> work. If you realy need them,
+define them in <code>pde-cperl-map</code>.
+
+<div class="node">
+<p><hr>
+<a name="pde-vars"></a>
+<a name="pde_002dvars"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#pde_002dproject">pde-project</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#pde">pde</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">5 Global variables shared</h2>
+
+<p><samp><span class="file">pde-vars.el</span></samp> defined some global constant variables. Library related to
+perl can require it without load other PDE libaries, and user can
+define one variable for all libaries that use it.
+
+<div class="node">
+<p><hr>
+<a name="pde-project"></a>
+<a name="pde_002dproject"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#pde_002dabbv">pde-abbv</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#pde_002dvars">pde-vars</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">6 Projects in perl</h2>
+
+<p><samp><span class="file">pde-project.el</span></samp> provide several functions relate to project in perl.
+
+<div class="defun">
+&mdash; Function: <b>pde-detect-project-root</b><var><a name="index-pde_002ddetect_002dproject_002droot-61"></a></var><br>
+<blockquote><p>Detech root directory of current file. The root directory is that has
+Makefile.PL or Build.PL or @INC. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>pde-project-mark-files</b><var><a name="index-pde_002dproject_002dmark_002dfiles-62"></a></var><br>
+<blockquote><p>The directory contain one of these file will consider as project root. 
+Default is (&ldquo;Makefile.PL&rdquo; &ldquo;Build.PL&rdquo;)
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>pde-set-project-root</b><var><a name="index-pde_002dset_002dproject_002droot-63"></a></var><br>
+<blockquote><p>set project root to local variable <code>pde-project-root</code>. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>pde-file-package</b><var><a name="index-pde_002dfile_002dpackage-64"></a></var><br>
+<blockquote><p>Derive the package name of current buffer. The buffer should be a pm
+file. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>pde-directory-all-files</b><var> dir &amp;optional full match predicate limit<a name="index-pde_002ddirectory_002dall_002dfiles-65"></a></var><br>
+<blockquote><p>Recursive read file name in DIR. 
+Like `directory-files', this function can return a list of files in
+the directory and the subdirectories, but often there are too many files
+in the directory, so need a parament to limit the number of files to
+search and a flag to indicate whether all files are read. So instead
+of return a list of files, this function return a cons cell which car
+indicate whether all files read and cdr part is the real file list.
+
+        <p>if FULL is non-nil, return absolute file names, if match is non-nil,
+mention only file names match the regexp MATCH. If PREDICATE is non-nil
+and is a function with one argument, the file name relative to DIR,
+mention only file when PREDICATE function return non-nil value. If LIMIT
+is non-nil, when the files execeed the number will stop. The function is
+search in wide-first manner.
+
+     <div class="defun">
+&mdash; Command: <b>pde-project-find-file</b><var><a name="index-pde_002dproject_002dfind_002dfile-66"></a></var><br>
+<blockquote><p>Find file in the project. 
+This command is will read all file in current project recursively. 
+With prefix argument, to rebuild the cache. 
+I suggest bind this command to C-x C-p, which original command is
+mark-page seldom used by me. 
+</p></blockquote></div>
+
+     <div class="defun">
+&mdash; User Option: <b>pde-file-list-regexp</b><var><a name="index-pde_002dfile_002dlist_002dregexp-67"></a></var><br>
+<blockquote><p>Filenames matching this regexp will not be read when `pde-project-find-file'. 
+</p></blockquote></div>
+
+     <div class="defun">
+&mdash; User Option: <b>pde-file-list-predicate-function</b><var><a name="index-pde_002dfile_002dlist_002dpredicate_002dfunction-68"></a></var><br>
+<blockquote><p>Predicate function to filter file to be read when `pde-project-find-file'
+</p></blockquote></div>
+
+     <div class="defun">
+&mdash; User Option: <b>pde-file-list-limit</b><var><a name="index-pde_002dfile_002dlist_002dlimit-69"></a></var><br>
+<blockquote><p>Maximum number of files for read from project directory recursively. 
+</p></blockquote></div>
+
+        </blockquote></div>
+
+<div class="node">
+<p><hr>
+<a name="pde-abbv"></a>
+<a name="pde_002dabbv"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#pde_002dutil">pde-util</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#pde_002dproject">pde-project</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">7 Abbrev for perl</h2>
+
+<p><samp><span class="file">pde-abbv.el</span></samp> contains a few abbrevs that I think helpful. You
+can send me your abbrev if you think it is handy. I appreciate for
+that.
+
+     <ul>
+<li>newx
+Create subroutine new for Object module. 
+<li>dumpx
+expand for Data::Dumper::Dumper. 
+<li>usetk
+Use Tk
+<li>exportx
+Write Exporter tags
+<li>opend
+expand for build-in function `opendir'. snippet available
+<li>openf
+expand for build-in function `open'. snippet available
+<li>fromto
+expand for Encode::from_to, only snippet available
+<li>usegtk
+Use Gtk2
+<li>useenc
+Use Encode
+<li>usedump
+Use Data::Dumper
+</ul>
+
+<div class="node">
+<p><hr>
+<a name="pde-util"></a>
+<a name="pde_002dutil"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#template_002dsimple">template-simple</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#pde_002dabbv">pde-abbv</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">8 Misc commands</h2>
+
+<p><samp><span class="file">pde-util</span></samp> provides several commands that might be useful.
+
+<div class="defun">
+&mdash; User Option: <b>pde-module-location</b><var><a name="index-pde_002dmodule_002dlocation-70"></a></var><br>
+<blockquote><p>The commands above call perl module PDE::Util to generate the module
+lists. If the module can found in @INC or <code>pde-load-path</code> parent
+directory, set this variable to let perl found the module. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>pde-list-module-shadows</b><var><a name="index-pde_002dlist_002dmodule_002dshadows-71"></a></var><br>
+<blockquote><p>Display a list of modules that shadow other modules. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>pde-list-core-modules</b><var><a name="index-pde_002dlist_002dcore_002dmodules-72"></a></var><br>
+<blockquote><p>Display a list of core modules. Push the text button to show Pod. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>pde-search-cpan</b><var><a name="index-pde_002dsearch_002dcpan-73"></a></var><br>
+<blockquote><p>Search module or other things in <a href="search.cpan.org">search.cpan.org</a>. 
+</p></blockquote></div>
+
+<div class="node">
+<p><hr>
+<a name="template-simple"></a>
+<a name="template_002dsimple"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#tabbar_002dx">tabbar-x</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#pde_002dutil">pde-util</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">9 New file with template</h2>
+
+<p>template.el is exists, why template-simple? First of all, it is
+simple, the there is only one core function <code>template-compile</code>.
+
+<div class="defun">
+&mdash; Function: <b>template-compile</b><var><a name="index-template_002dcompile-74"></a></var><br>
+<blockquote><p>Parse current buffer to parsed template. 
+</p></blockquote></div>
+
+   <p>The parsed template contains a list of strings, symbols or lisp forms. 
+The strings is inserted directly. 
+The symbol can be a predefined value in <code>template-default-alist</code>,
+or can be translate by <code>template-expand-function</code>. The lisp forms
+is handled by <code>template-expand-function</code>.
+
+<div class="defun">
+&mdash; User Option: <b>template-expand-function</b><var><a name="index-template_002dexpand_002dfunction-75"></a></var><br>
+<blockquote><p>Functions to expand parsed template. There are two candicate functions
+available in template-simple: <code>template-skeleton-expand</code> and
+<code>template-tempo-expand</code>. Default function is
+<code>template-tempo-expand</code>, because I think tempo provide more
+fetures and flexibility than skeleton. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>define-template-expander</b><var> name alist &amp;rest body<a name="index-define_002dtemplate_002dexpander-76"></a></var><br>
+<blockquote><p>Define a new type of <code>template-expand-function</code>. NAME is used to
+create a function template-&lt;NAME&gt;-expand. ALIST can be a symbol or a
+form to return a list of symbol table add to <code>template-default-alist</code>. 
+BODY is the code to expand and insert the template. the value of
+variable TEMPLATE is the translated template. The element of parsed
+template is translated by <code>template-expansion</code>
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>template-simple-expand-template</b><var> file<a name="index-template_002dsimple_002dexpand_002dtemplate-77"></a></var><br>
+<blockquote><p>Expand template in file. 
+Parse the template to parsed templates with <code>template-compile</code>. 
+Use <code>template-expand-function</code> to expand the parsed template. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>template-simple-expand</b><var> template<a name="index-template_002dsimple_002dexpand-78"></a></var><br>
+<blockquote><p>Expand string template. 
+template can be a string or a parsed template. If it is string,
+parse the template to parsed templates with <code>template-compile</code>. 
+Use <code>template-expand-function</code> to expand the parsed template. 
+</p></blockquote></div>
+
+   <p>template-simple is designed to compatible to template.el, so the
+default open and close parentheses is &ldquo;(&gt;&gt;&gt;&rdquo; and &ldquo;&lt;&lt;&lt;)&rdquo;. Note that
+global value of <code>template-expand-function</code> is saved in
+<code>template-simple-expand</code>. The same case happened to
+<code>template-parens</code> in <code>template-compile</code>. So If you need
+change them temporary for certain template, you can set
+<code>template-parens</code> and <code>template-expand-function</code> like file
+variable, for example:
+
+<pre class="verbatim">
+   (template-simple-expand
+    ";; -*- template-parens: (\"{\" . \"}\"); template-expand-function: template-tempo-expand -*-
+     (defun {p} ({p})
+       \"{p}\"
+       {p}
+       )")
+</pre>
+
+   <p>This will expand by <code>template-tempo-expand</code> but not default
+expand function. Luckily in most case, template of tempo and skeleton
+can be the same, so you don't have to set
+<code>template-expand-function</code>. If your template uses element that
+only exists in tempo or skeleton, you'd better set it in template to
+make sure the <code>template-simple-expand</code> select the correct one.
+
+   <p>The major purpose of template-simple is used for fill empty file using
+predefined template.
+
+<div class="defun">
+&mdash; User Option: <b>template-directory-list</b><var><a name="index-template_002ddirectory_002dlist-79"></a></var><br>
+<blockquote><p>A list of directories for lookup template files. Default is
+&ldquo;~/.templates/&rdquo; and <code>auto-insert-directory</code>. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>template-derive-template</b><var><a name="index-template_002dderive_002dtemplate-80"></a></var><br>
+<blockquote><p>Find proper template for current file. The template file is a file
+with name &ldquo;TEMPLATE&rdquo; and the same extension of current file under
+<code>template-directory</code>. You can add a suffix &ldquo;.tpl&rdquo; to the
+template file name too, just for compatible with templates provide by
+template.el. If the file didn't have extension, the template file's
+extension is current file name, for example, &ldquo;TEMPLATE.Makefile&rdquo; is
+template file for &ldquo;Makefile&rdquo;. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>template-default-alist</b><var><a name="index-template_002ddefault_002dalist-81"></a></var><br>
+<blockquote><p>Predefined symbol for template file. Symbols to lookup in this table
+is case insensitive. 
+</p></blockquote></div>
+
+   <p>Here is a list of predefined symbol:
+     <ul>
+<li>dir         default directory of current file
+<li>file        basename(without directory) of current file
+<li>file-sans   file name without extension and directory
+<li>file-ext    file extension
+<li>file-upcase upcased file-sans
+<li>date        formated time string using <code>template-date-format</code>
+<li>cdate       formated time string using <code>template-cdate-format</code>
+               with <code>system-time-locale</code> value is &ldquo;C&rdquo;
+<li>iso-date    &ldquo;%Y-%m-%d&rdquo; time string
+<li>vc-date     &ldquo;%Y/%m/%d %T&rdquo; time string with time-zone &ldquo;UTC&rdquo;
+<li>year        &ldquo;%Y&rdquo;
+<li>time        formated time string using <code>template-time-format</code>
+<li>author      user-mail-address
+<li>user-name   user-full-name
+<li>login-name  user-login-name
+<li>host-addr   mail-host-address
+</ul>
+
+   <p>A neat function provided by template.el is the file name in
+the header can automatic update when the file is renamed. 
+template-simple also provide this feature.
+
+<div class="defun">
+&mdash; Function: <b>template-simple-update-header</b><var><a name="index-template_002dsimple_002dupdate_002dheader-82"></a></var><br>
+<blockquote><p>update file header when needed. The file header is a line match
+<code>template-header-regexp</code> at first 3 lines in current file. 
+</p></blockquote></div>
+
+   <p>A typical file header is like:
+<pre class="verbatim">
+   ;;; file-name --- short description
+</pre>
+
+   <p>or
+<pre class="verbatim">
+   /* @(#)file-name   short description
+    */
+</pre>
+
+<div class="node">
+<p><hr>
+<a name="tabbar-x"></a>
+<a name="tabbar_002dx"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#tempo_002dx">tempo-x</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#template_002dsimple">template-simple</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">10 Tabbar for particular buffers</h2>
+
+<p>Sometimes, make tabbar for particular buffers maybe cool. For example,
+I add tabbar for only perl related buffers, *Perldoc*, *PDE Imenu*,
+and I am planning to group perldb-ui buffers as the same way. tabbar-x
+exists for this purpose.
+
+<div class="defun">
+&mdash; Function: <b>tabbar-x-register</b><var> buffer group<a name="index-tabbar_002dx_002dregister-83"></a></var><br>
+<blockquote><p>Register the buffer to the one group. 
+</p></blockquote></div>
+
+<div class="node">
+<p><hr>
+<a name="tempo-x"></a>
+<a name="tempo_002dx"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#re_002dbuilder_002dx">re-builder-x</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#tabbar_002dx">tabbar-x</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">11 Additional elements for tempo</h2>
+
+<p><samp><span class="file">tempo.el</span></samp> is a extensible library for abbrevs. It provide more
+features than <samp><span class="file">skeleton.el</span></samp>, such as move between marks,
+names for prompt, user elements and so on. <samp><span class="file">tempo-x.el</span></samp> provides
+some commands and additional elements that may helpful.
+
+<div class="defun">
+&mdash; Command: <b>tempo-x-space</b><var><a name="index-tempo_002dx_002dspace-84"></a></var><br>
+<blockquote><p>A simple command to enable expand tempo like abbrev. The command
+<code>tempo-space</code> given by the author of <samp><span class="file">tempo.el</span></samp> is not
+compatiable for abbrev-mode. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>tempo-x-rebuild</b><var><a name="index-tempo_002dx_002drebuild-85"></a></var><br>
+<blockquote><p>Reinstall new tempo template for all buffer. If you defined a new
+tempo-template in certain tag-list, you can't use it intermediately. 
+Call the commands to force build connections for all buffer again. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>tempo-x-test-template</b><var><a name="index-tempo_002dx_002dtest_002dtemplate-86"></a></var><br>
+<blockquote><p>A macro to test tempo template before define it. 
+</p></blockquote></div>
+
+   <p>Here is a list of new elements:
+
+     <ul>
+<li>pi
+<li>Pi
+
+     <p>&ldquo;pi&rdquo; and &ldquo;Pi&rdquo; like standard tempo element &ldquo;p&rdquo; except they can
+have a default value and can be completing read.
+
+     <div class="defun">
+&mdash; Function: <b>tempo-x-insert-prompt</b><var> prompt &amp;optional default save-name no-insert<a name="index-tempo_002dx_002dinsert_002dprompt-87"></a></var><br>
+<blockquote><p>The beta version of tempo.el also implement new prompt element, but I
+still an element that can accept default value. 
+PROMPT can be a string or a list. When it is a string, it is like
+standard tempo element <code>p</code>, but you can give a DEFAULT string. 
+If it is a list, the prompt will be the parameters of
+<code>completing-read</code>. But you should give the default value in
+DEFAULT not in PROMPT.
+
+             <p>Here is some example:
+          <pre class="lisp">               (pi "variable: " "foo" var)
+               (pi ("variable: " ("foo" "bar")) "foo" var)
+          </pre>
+             </blockquote></div>
+
+     <li>R
+
+     <p>skeleton has some handy elements to control recursive expanding. &ldquo;R&rdquo;
+is such tempo elements to do this job. The syntax of the element is:
+     <pre class="lisp">          (R before-test-elements
+             (&amp; condition
+                final-form)
+             after-test-elements)
+     </pre>
+     <p>First it insert BEFORE-TEST-ELEMENTS to buffer. then test the
+CONDITION, if the CONDITION is null, eval FINAL-FORM and quit the
+loop. Otherwise insert AFTER-TEST-ELEMENTS and back to start. The
+CONDITION can be a name saved in BEFORE-TEST-ELEMENTS, it will
+automatic clean after test, so you will be prompt again. If you want
+use it after test, backup it by yourself. The CONDITION also can be a
+list, which CAR is a list of names will be used and will be clean
+after test. 
+A special variable <code>recursion-start</code> is available is FINAL-FORM,
+you can use it to clean up recent insertion in BEFORE-TEST-ELEMENTS.
+
+     <p>Here is a example to show how to use it:
+     <pre class="lisp">          (tempo-define-template
+           "sh-if"
+           '("if " (pi "condition: " ("[  ]" . 3)) "; then" &gt; n&gt;
+             p &gt; n&gt;
+             (R "elif " (pi "condition: " ("[  ]" . 3) condition)
+                (&amp; ((condition) (string-match "\\[\\s-*]" condition))
+                   (delete-region recursion-start (point)))
+                "; then" &gt; n&gt;
+                p &gt; n&gt;)
+             "else" &gt; n&gt;
+             p n&gt;
+             "fi" &gt; n&gt;))
+     </pre>
+     <p>Try it by M-x tempo-template-sh-if in sh-mode.
+
+     <li>snippet
+
+     <p>If you want use this only, you can try <code>tempo-snippets.el</code>,
+<code>tempo-x.el</code> borrow most of functions from there to implement a
+new element instead of new template style.
+
+     <p>&ldquo;snippet&rdquo; enable visualize the template field, and can update form when
+editing. The syntax of &ldquo;snippet&rdquo; is:
+     <pre class="lisp">          (snippet (S name &amp;optional display insert)
+                   (F (vars) forms))
+     </pre>
+     <p>&ldquo;S&rdquo; insert a field, the first NAME will be the source and other
+field with the same NAME become mirrors. Change the source will also
+change mirrors. DISPLAY is the text to insert to the field, default is
+the `symbol-name' of NAME. INSERT is non-nil means the DISPLAY is the
+default text, you can make change to the text. Otherwise the text will
+be erase after any changes in front of field.
+
+     <p>&ldquo;F&rdquo; insert an form. The VARS is a list of NAME used in fields. the
+evaled result will insert into the buffer. When any fields in VARS
+changed, the text of form will change too.
+
+     <p>A example will show how to use it easier:
+
+     <pre class="lisp">          (tempo-define-template
+           "perl-open"
+           '((snippet
+              "open("
+              (S FH "my $fh" t) ", \"" (S op "&lt;") "\", "
+              (S file "$file")
+              ") or die \"Can't "
+              (F (op)
+                 (if (string-match "&gt;" op)
+                     "create" "open"))
+              " file "
+              (F (file)
+                 (replace-regexp-in-string "['\"]?\\(.*\\)['\"]" "\\1" file))
+              ": $!\";"
+              n&gt;)))
+     </pre>
+     <p>After expand the template, insert string like:
+<pre class="verbatim">     
+     open([my $fh], "[&lt;]", [$file]) or die "Can't {open} file {$file}: $!";
+</pre>
+
+     <p>the text inside &ldquo;[]&rdquo; indicate as a field, and text inside &ldquo;{}&rdquo;
+indicate as a form, the when text inside the field changes, the
+assicated form will update too. For example if you change open mode
+from &ldquo;&lt;&rdquo; to &ldquo;&gt;&rdquo;, the form &ldquo;open&rdquo; will change to &ldquo;create&rdquo;. If
+change &ldquo;$file&rdquo; to &ldquo;"file"&rdquo; the form will change to &ldquo;file&rdquo; with
+quote removed. 
+</ul>
+
+<div class="node">
+<p><hr>
+<a name="re-builder-x"></a>
+<a name="re_002dbuilder_002dx"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#compile_002ddwim">compile-dwim</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#tempo_002dx">tempo-x</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="chapter">12 Regexp building and testing tool</h2>
+
+<p>If you have not use <samp><span class="command">re-builder</span></samp>, please try it. The tool is
+quite simple and useful, you just input regexp in the *RE-Builder*
+buffer, the matched part in the buffer where the command is called will
+be highlighted.
+
+   <p><samp><span class="file">re-builder-x.el</span></samp> extend the regexp syntax to perl or any other
+languages. To enable perl regexp syntax, you have to change the syntax
+to perl first. The command is <samp><span class="command">reb-change-syntax</span></samp>, which is
+bound to C-c TAB.
+
+   <p>In consideration of efficiency, if you make some changes in the buffer,
+the regexp will not apply in the new text unless you send current buffer
+to perl process again. You can do that by using command
+<samp><span class="command">reb-perl-send-buffer</span></samp> which bound to C-c C-a.
+
+   <p>All commands for re-builder are available for perl syntax.
+
+<div class="node">
+<p><hr>
+<a name="compile-dwim"></a>
+<a name="compile_002ddwim"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#help_002ddwim">help-dwim</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#re_002dbuilder_002dx">re-builder-x</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">13 Smart compile commands</h2>
+
+<p>cperl-mode recommend using mode-compile, but I don't like
+mode-compile. Instead, smart-compile+.el does a good job. But I found
+it is not easy to customize smart-compile+, because the user variables
+are separated for a language. So I rewrite it to
+compile-dwim(again, I like dwim).
+
+<div class="defun">
+&mdash; User Option: <b>compile-dwim-alist</b><var><a name="index-compile_002ddwim_002dalist-88"></a></var><br>
+<blockquote><p>Settings for certain file type. 
+A list like which has form
+ (TYPE CONDITION COMPILE-COMMAND RUN-COMMAND EXE-FILE).
+
+        <p>TYPE is the language type to distinguish from others.
+
+        <p>CONDITION is a list of predicates constituted by operator &ldquo;or&rdquo;. 
+The predicates can be (name . REGEXP) or (mode . MAJOR-MODE) to test
+the file name match REGEXP or major-mode eq MAJOR-MODE.
+
+        <p>In COMPILE-COMMAND and RUN-COMMAND, these format specifications
+are available:
+<pre class="verbatim">     
+       %i  interpreter name
+       %F  absolute pathname
+       %f  file name without directory
+       %n  file name without extention
+       %e  extention of file name
+</pre>
+
+        <p>The interpreter is the program in the shebang line. If the
+program is valid(test with `executable-find'), then use this program,
+otherwise, use interpreter in `interpreter-mode-alist' according
+to the major mode.
+
+        <p>EXE-FILE control whether should run compile command before actual run
+or should recompile again because EXE-FILE is older than source file. 
+Usually, script language don't need to set EXE-FILE. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>compile-dwim-check-tools</b><var><a name="index-compile_002ddwim_002dcheck_002dtools-89"></a></var><br>
+<blockquote><p>Whether checking makefile or ant or else. Default is turn on. You can
+also change the value locally by <code>make-local-variable</code> in
+mode-hook for certain files. 
+</p></blockquote></div>
+
+<div class="node">
+<p><hr>
+<a name="help-dwim"></a>
+<a name="help_002ddwim"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#perldoc">perldoc</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#compile_002ddwim">compile-dwim</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">14 Find documents using help-dwim</h2>
+
+<p>A big obstacle for novice to used to emacs is that there are so many
+keys to remember. I like dwim commands. <samp><span class="file">help-dwim.el</span></samp> provide a single
+command as interface for several kinds of document commands, such as
+<samp><span class="command">describe-function</span></samp>, <samp><span class="command">describe-variable</span></samp>,
+<samp><span class="command">woman</span></samp>. And you can add more if you follow the rules.
+
+   <p>A type of help-dwim commands should provide:
+     <ul>
+<li>a functions or a character sets to find which symbol under point
+<li>an obarray to search whether the symbol belong to this type
+<li>an optional predicate function to filter unwanted symbol
+<li>a handler to show the document of the symbol
+</ul>
+
+<div class="defun">
+&mdash; Function: <b>help-dwim-register</b><var> type activate &amp;optional body<a name="index-help_002ddwim_002dregister-90"></a></var><br>
+<blockquote><p>Register a new type of help command. An new type has a form (TYPE . 
+[FINDER OBARRAY PREDICATE HANDLER]). If ACTIVATE is non-nil, the type
+will add to <code>help-dwim-active-type</code>, and BODY will eval
+intermediately. BODY is the code to eval when the type is activated. 
+If the type is register without activated, the BODY will add to
+<code>help-dwim-autoloads</code>. When you use <code>help-dwim-active-type</code>
+or <code>help-dwim-customize-type</code> add the type, the code will also
+eval then. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>help-dwim-customize-type</b><var><a name="index-help_002ddwim_002dcustomize_002dtype-91"></a></var><br>
+<blockquote><p>Customize which type of help command should activate. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>help-dwim-active-type</b><var> type &amp;optional append<a name="index-help_002ddwim_002dactive_002dtype-92"></a></var><br>
+<blockquote><p>Active a type for current buffer *ONLY*. 
+The TYPE will gain a highest prority unless APPEND is non-nil. 
+</p></blockquote></div>
+
+<div class="node">
+<p><hr>
+<a name="perldoc"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#perlapi">perlapi</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#help_002ddwim">help-dwim</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">15 Run perldoc using woman</h2>
+
+<p>I like &ldquo;woman&rdquo;(that is WithOut MAN). perldoc.el make it possible to
+view perl document without man. To use it with <code>help-dwim</code>, a
+list of modules is build automatic using a perl script
+<samp><span class="file">perldoc-cache.pl</span></samp>. The cache can be update automaticly. It is
+configured in pde-load. See <a href="#pde_002dload">pde-load</a>.
+
+<div class="defun">
+&mdash; Function: <b>perldoc-recache-everyday</b><var> &amp;optional days<a name="index-perldoc_002drecache_002deveryday-93"></a></var><br>
+<blockquote><p>If the cache file is expired DAYS, force caches update. 
+</p></blockquote></div>
+
+   <p>With the <code>perldoc-obarray</code>, a lot of things can be done. 
+<samp><span class="command">perldoc-tree</span></samp> use this obarray to build a tree view.
+
+<div class="defun">
+&mdash; Function: <b>perldoc-read-module</b><var> prompt &amp;optional require-match init<a name="index-perldoc_002dread_002dmodule-94"></a></var><br>
+<blockquote><p>Read a perl module name. 
+When a module name at point, the module become the default input. 
+Don't add ": " in PROMPT. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perldoc-find-module</b><var> &amp;optional module other-window<a name="index-perldoc_002dfind_002dmodule-95"></a></var><br>
+<blockquote><p>Find the file of perl module. With prefix argument open the file in
+other window. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perldoc-find-module-ap</b><var> &amp;optional other-window<a name="index-perldoc_002dfind_002dmodule_002dap-96"></a></var><br>
+<blockquote><p>Find the module under point without prompt. With prefix argument open
+the file in other window. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perldoc-find-module-other-window</b><var><a name="index-perldoc_002dfind_002dmodule_002dother_002dwindow-97"></a></var><br>
+<blockquote><p>Find the module under point in other window without prompt. 
+</p></blockquote></div>
+
+<div class="node">
+<p><hr>
+<a name="perlapi"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#windata">windata</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#perldoc">perldoc</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">16 Find document in perlapi</h2>
+
+<p>This is orignal a demo for help-dwim. Useful if you are writing XS.
+
+<div class="defun">
+&mdash; User Option: <b>perlapi-src-directory</b><var><a name="index-perlapi_002dsrc_002ddirectory-98"></a></var><br>
+<blockquote><p>Directory where the Perl source files can be found. 
+If setted, the definition of the symbol can be found when put the
+button in the document. 
+</p></blockquote></div>
+
+<div class="node">
+<p><hr>
+<a name="windata"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#tree_002dmode">tree-mode</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#perlapi">perlapi</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">17 Window configuration to list</h2>
+
+<p>Emacs can save window configuration when it is running. The
+configuration can be persisted between different sessions. 
+<samp><span class="file">windata</span></samp> provide a way to save window configuration.
+
+<div class="defun">
+&mdash; Function: <b>windata-current-winconf</b><var><a name="index-windata_002dcurrent_002dwinconf-99"></a></var><br>
+<blockquote><p>Convert window configurate to a list. The CAR part of the list
+describe how to restore the window, the CDR part of the list determine
+which window is selected. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>windata-restore-winconf</b><var> &amp;optional inside-p<a name="index-windata_002drestore_002dwinconf-100"></a></var><br>
+<blockquote><p>Restore window configuration from `windata-current-winconf'. 
+When INSIDE-P is non-nil, that mean the window configuration
+is restore in current window, that is to say don't delete other
+windows before restore the configuration. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>windata-data-function</b><var><a name="index-windata_002ddata_002dfunction-101"></a></var><br>
+<blockquote><p>A function to extract data for future restore window. Default is save
+the window buffer name. Accept one parameter, the window, and should
+return a lisp object that has print syntax. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>windata-data-restore-function</b><var><a name="index-windata_002ddata_002drestore_002dfunction-102"></a></var><br>
+<blockquote><p>A function to restore window buffer from saved data. Default is set
+window buffer to the buffer with saved name. Accept two parameters,
+the window and a saved lisp object by <code>windata-data-function</code>. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>windata-name-winconf</b><var> name<a name="index-windata_002dname_002dwinconf-103"></a></var><br>
+<blockquote><p>Save window configuration with NAME. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>windata-restore-named-winconf</b><var> name<a name="index-windata_002drestore_002dnamed_002dwinconf-104"></a></var><br>
+<blockquote><p>Restore saved window configuration by NAME. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>windata-display-buffer</b><var> buf frame-p dir size &amp;optional delete-p<a name="index-windata_002ddisplay_002dbuffer-105"></a></var><br>
+<blockquote><p>Display buffer more precisely. 
+FRAME-P is non-nil and not window, the displayed buffer affect
+the whole frame, that is to say, if DIR is right or left, the
+displayed buffer will show on the right or left in the frame. If
+it is nil, the buf will share space with current window.
+
+        <p>DIR can be one of member of (right left top bottom).
+
+        <p>SIZE is the displayed windowed size in width(if DIR is left or
+right) or height(DIR is top or bottom). It can be a decimal which
+will stand for percentage of window(frame) width(heigth)
+
+        <p>DELETE-P is non-nil, the other window will be deleted before
+display the BUF. 
+</p></blockquote></div>
+
+   <p>The behavior of <code>windata-display-buffer</code> is better show as
+following pictures:
+<pre class="lisp">     (setq buf (get-buffer "*Messages*"))
+     (windata-display-buffer buf 'window 'top 0.3 nil)    ; 2
+     (windata-display-buffer buf 'window 'bottom 0.3 nil) ; 3
+     (windata-display-buffer buf 'window 'left 0.3 nil)   ; 4
+     (windata-display-buffer buf 'window 'right 0.3 nil)  ; 5
+     
+     (windata-display-buffer buf 'frame 'top 0.3 nil)     ; 6
+     (windata-display-buffer buf 'frame 'bottom 0.3 nil)  ; 7
+     (windata-display-buffer buf 'frame 'left 0.3 nil)    ; 8
+     (windata-display-buffer buf 'frame 'right 0.3 nil)   ; 9
+     
+     ;; when delete-p is presented, FRAME-P make no sense.
+     (windata-display-buffer buf 'frame 'top 0.3 t)       ; 10
+     (windata-display-buffer buf 'frame 'bottom 0.3 t)    ; 11
+     (windata-display-buffer buf 'frame 'left 0.3 t)      ; 12
+     (windata-display-buffer buf 'frame 'right 0.3 t)     ; 13
+     (windata-display-buffer buf 'window 'top 0.3 t)      ; 10
+     (windata-display-buffer buf 'window 'bottom 0.3 t)   ; 11
+     (windata-display-buffer buf 'window 'left 0.3 t)     ; 12
+     (windata-display-buffer buf 'window 'right 0.3 t)    ; 13
+</pre>
+<pre class="verbatim">
+   +------+-------+    +------+-------+    +------+-------+
+   |      |       |    |      | N     |    |      |       |
+   |      | P     |    |      |-------+    |      | P     |
+   |      |       |    |      | P     |    |      |       |
+   |      |       |    |      |       |    |      +-------+
+   |      |       |    |      |       |    |      | N     |
+   +------+-------+    +------+-------+    +------+-------+
+         (1)                 (2)                 (3)
+   +------+--+----+    +------+----+--+    +--------------+
+   |      |  |    |    |      |    |  |    |      N       |
+   |      |N | P  |    |      | P  |N |    +------+-------+
+   |      |  |    |    |      |    |  |    |      |       |
+   |      |  |    |    |      |    |  |    |      | P     |
+   |      |  |    |    |      |    |  |    |      |       |
+   +------+--+----+    +------+----+--+    +------+-------+
+        (4)                  (5)                 (6)
+   +------+-------+    +---+-----+----+    +----+----+----+
+   |      |       |    |   |     |    |    |    |    |    |
+   |      | P     |    | N |     |    |    |    |    |    |
+   |      |       |    |   |     | P  |    |    | P  | N  |
+   +------+-------+    |   |     |    |    |    |    |    |
+   |      N       |    |   |     |    |    |    |    |    |
+   +--------------+    +---+-----+----+    +----+----+----+
+        (7)                  (8)                 (9)
+   +--------------+    +--------------+    +----+---------+
+   |    N         |    |              |    |    |         |
+   +--------------+    |     P        |    | N  | P       |
+   |    P         |    |              |    |    |         |
+   |              |    +--------------+    |    |         |
+   |              |    |     N        |    |    |         |
+   +--------------+    +--------------+    +----+---------+
+        (10)                 (11)                (12)
+   +----------+---+
+   |          |   |
+   |   P      | N |
+   |          |   |
+   |          |   |
+   |          |   |
+   +----------+---+
+        (13)
+</pre>
+
+   <p>The start window is as picture 1, the selected window is indicated by
+&ldquo;P&rdquo;, and new appear window indicated by &ldquo;N&rdquo;. The simplest
+sitiation is when DELETE-P is non-nil, after calling the function,
+there are only two window left. When FRAME-P is 'window or nil, the
+new window will only take the space from the selected window. When
+FRAME-P is non-nil except 'window, the original window still has
+the same configuration.
+
+<div class="node">
+<p><hr>
+<a name="tree-mode"></a>
+<a name="tree_002dmode"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#imenu_002dtree">imenu-tree</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#windata">windata</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">18 More commands on tree-widget</h2>
+
+<p><samp><span class="file">tree-mode.el</span></samp> provide more commands to tree-widget.
+
+     <dl>
+<dt><kbd>n</kbd><dd><a name="index-n-_0028tree_002dmode_002dnext_002dnode_0029-106"></a><a name="index-tree_002dmode_002dnext_002dnode-107"></a><code>tree-mode-next-node</code> - Move to next node.
+
+     <br><dt><kbd>p</kbd><dd><a name="index-p-_0028tree_002dmode_002dprevious_002dnode_0029-108"></a><a name="index-tree_002dmode_002dprevious_002dnode-109"></a><code>tree-mode-previous-node</code> - Move to previous node
+
+     <br><dt><kbd>j</kbd><dd><a name="index-j-_0028tree_002dmode_002dnext_002dsib_0029-110"></a><a name="index-tree_002dmode_002dnext_002dsib-111"></a><code>tree-mode-next-sib</code> - Move to next sibling node.
+
+     <br><dt><kbd>k</kbd><dd><a name="index-k-_0028tree_002dmode_002dprevious_002dsib_0029-112"></a><a name="index-tree_002dmode_002dprevious_002dsib-113"></a><code>tree-mode-previous-sib</code> - Move to previous sibling node.
+
+     <br><dt><kbd>u</kbd><dd><a name="index-u-_0028tree_002dmode_002dgoto_002dparent_0029-114"></a><a name="index-tree_002dmode_002dgoto_002dparent-115"></a><code>tree-mode-goto-parent</code> - Move to parent node.
+
+     <br><dt><kbd>r</kbd><dd><a name="index-r-_0028tree_002dmode_002dgoto_002droot_0029-116"></a><a name="index-tree_002dmode_002dgoto_002droot-117"></a><code>tree-mode-goto-root</code> - Move to root node
+
+     <br><dt><kbd>g</kbd><dd><a name="index-g-_0028tree_002dmode_002dreflesh_0029-118"></a><a name="index-tree_002dmode_002dreflesh-119"></a><code>tree-mode-reflesh</code> - Reflesh parent tree. useful restore after
+sort or delete node
+
+     <br><dt><kbd>e</kbd><dd><a name="index-e-_0028tree_002dmode_002dtoggle_002dexpand_0029-120"></a><a name="index-tree_002dmode_002dtoggle_002dexpand-121"></a><code>tree-mode-toggle-expand</code> - Expand or contract tree at point. 
+With prefix argument, expand the tree.
+
+     <br><dt><kbd>E</kbd><dd><a name="index-E-_0028tree_002dmode_002dexpand_002dlevel_0029-122"></a><a name="index-tree_002dmode_002dexpand_002dlevel-123"></a><code>tree-mode-expand-level</code> - Expand tree to LEVEL. With prefix
+argument 0 or negative, will expand all leaves of the tree.
+
+     <br><dt><kbd>s</kbd><dd><a name="index-s-_0028tree_002dmode_002dsort_002dby_002dtag_0029-124"></a><a name="index-tree_002dmode_002dsort_002dby_002dtag-125"></a><code>tree-mode-sort-by-tag</code> - Sort children node by tag.
+
+     <br><dt><kbd>/</kbd><dd><a name="index-g_t_002f-_0028tree_002dmode_002dkeep_002dmatch_0029-126"></a><a name="index-tree_002dmode_002dkeep_002dmatch-127"></a><code>tree-mode-keep-match</code> - Keep node which tag match REGEXP
+
+     <br><dt><kbd>!</kbd><dd><a name="index-g_t_0021-_0028tree_002dmode_002dcollapse_002dother_002dexcept_0029-128"></a><a name="index-tree_002dmode_002dcollapse_002dother_002dexcept-129"></a><code>tree-mode-collapse-other-except</code> - Collapse other trees. If the
+tree at point is contract, expand it.
+
+     <br><dt><kbd>D</kbd><dd><a name="index-D-_0028tree_002dmode_002ddelete_002dtree_0029-130"></a><a name="index-tree_002dmode_002ddelete_002dtree-131"></a><code>tree-mode-delete-tree</code> - Delete a tree from buffer.
+
+   </dl>
+
+   <p>The icon for push-button in tree-widget is limited 4 types: open,
+close, empty and leaf. tree-mode provide a method to settup icon of
+push-button by put an addition attribute :button-icon in tree-widget
+node.
+
+<div class="node">
+<p><hr>
+<a name="imenu-tree"></a>
+<a name="imenu_002dtree"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#tags_002dtree">tags-tree</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#tree_002dmode">tree-mode</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">19 Tree view for imenu</h2>
+
+<p>imenu provide an excellent code navigating method. <samp><span class="file">imenu-tree.el</span></samp> make the
+tags visualized using tree-widget.
+
+<div class="defun">
+&mdash; User Option: <b>imenu-tree-auto-update</b><var><a name="index-imenu_002dtree_002dauto_002dupdate-132"></a></var><br>
+<blockquote><p>If Non-nil, the imenu-tree will update automaticly. Also, if the
+imenu-tree is not visible in the window, it will automaticly scroll to
+make it visible. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>imenu-tree-update-interval</b><var><a name="index-imenu_002dtree_002dupdate_002dinterval-133"></a></var><br>
+<blockquote><p>Seconds between update imenu tree. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>imenu-tree-toggle-auto-update</b><var><a name="index-imenu_002dtree_002dtoggle_002dauto_002dupdate-134"></a></var><br>
+<blockquote><p>Toggle imenu-tree auto update. 
+With prefix argument, turn on auto update. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>imenu-tree-create-buffer-function</b><var><a name="index-imenu_002dtree_002dcreate_002dbuffer_002dfunction-135"></a></var><br>
+<blockquote><p>A function to group imenu-tree to various buffer. Default is nil,
+means using only one buffer. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>imenu-tree-name</b><var><a name="index-imenu_002dtree_002dname-136"></a></var><br>
+<blockquote><p>The name for the root node. Default is the &ldquo;mode-name: buffer-name&rdquo;. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>imenu-tree-windata</b><var><a name="index-imenu_002dtree_002dwindata-137"></a></var><br>
+<blockquote><p>Arguments to set the window buffer display. 
+See <code>windata-display-buffer</code> for setup the arguments. 
+</p></blockquote></div>
+
+<div class="node">
+<p><hr>
+<a name="tags-tree"></a>
+<a name="tags_002dtree"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#perltidy">perltidy</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#imenu_002dtree">imenu-tree</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">20 Tree view of TAGS</h2>
+
+<p><samp><span class="file">tags-tree.el</span></samp> read TAGS file and display them using tree-widget.
+
+<div class="defun">
+&mdash; User Option: <b>tags-tree-create-buffer-function</b><var><a name="index-tags_002dtree_002dcreate_002dbuffer_002dfunction-138"></a></var><br>
+<blockquote><p>A function to group tags-tree to various buffer. Default is nil,
+means using only one buffer. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>tags-tree-group-file-function</b><var><a name="index-tags_002dtree_002dgroup_002dfile_002dfunction-139"></a></var><br>
+<blockquote><p>A function to group files. 
+Accept one parameter, a file list in TAGS file. Return a tree like:
+<pre class="verbatim">     
+        ("Root name"
+         ("Group1"
+          ("file1" . "full name of file1"))
+         ("Group2"
+          ("subgroup"
+           ("file2" . "full name of file2"))))
+</pre>
+
+        <p>Default is tags-tree-group-file-by-name, Which group all files
+according to file path. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>tags-tree-group-tags-function</b><var><a name="index-tags_002dtree_002dgroup_002dtags_002dfunction-140"></a></var><br>
+<blockquote><p>A function to group tags. 
+Accept one parameter, a list of tags info, return a tree like:
+<pre class="verbatim">     
+       ((("group1")
+         (("subgroup1")
+          ("tag1" . tag-info))
+         ("tag2" . tag-info))
+        (("group2")
+         ("tag3" . tag-info)))
+</pre>
+
+        <p>Default is tags-tree-group-tags which group by
+<code>tags-tree-group-tags-expression</code> which much like
+<code>imenu-generic-expression</code>. 
+</p></blockquote></div>
+
+   <p>The TAGS file can be update by extern file when in tags-tree.
+     <dl>
+<dt><kbd>G</kbd><dd><a name="index-G-_0028tags_002dtree_002dupdate_002dfile_0029-141"></a><a name="index-tags_002dtree_002dupdate_002dfile-142"></a><samp><span class="command">tags-tree-update-file</span></samp> - update TAGS of current file under
+point or file of tag under point.
+
+   </dl>
+
+<div class="defun">
+&mdash; User Option: <b>tags-tree-tags-update-program</b><var><a name="index-tags_002dtree_002dtags_002dupdate_002dprogram-143"></a></var><br>
+<blockquote><p>Program to update TAGS for a file. Default is <samp><span class="file">myetags</span></samp> which is
+written using perl. 
+</p></blockquote></div>
+
+<div class="node">
+<p><hr>
+<a name="perltidy"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#perlcritic">perlcritic</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#tags_002dtree">tags-tree</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">21 Calling perltidy</h2>
+
+<p>A collection of commands to call perltidy on buffer or region. 
+See <a href="#pde">pde</a>.
+
+<div class="node">
+<p><hr>
+<a name="perlcritic"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#perldb_002dui">perldb-ui</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#perltidy">perltidy</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">22 Calling perlcritic</h2>
+
+<p>&ldquo;perlcritic&rdquo; is a Perl source code analyzer. See
+<samp><span class="command">perldoc perlcritic</span></samp> for detail document of the program. 
+<samp><span class="file">perlcritic.el</span></samp> provide an interface to use &ldquo;perlcritic&rdquo; in
+Emacs. It invoke the program using <samp><span class="command">compile</span></samp>, highlight
+severity and add hyperlink to the error.
+
+<div class="defun">
+&mdash; Command: <b>perlcritic</b><var><a name="index-perlcritic-144"></a></var><br>
+<blockquote><p>Call perlcritic interactive. You can give your argments in the
+minibuffer. Default perform analyzing current visited file. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perlcritic-region</b><var><a name="index-perlcritic_002dregion-145"></a></var><br>
+<blockquote><p>perlcritic is known run a little slow. You can use this command to
+analyze only a part of file. 
+</p></blockquote></div>
+
+   <p>perlcritic provide a lot of options in command line. 
+<samp><span class="file">perlcritic.el</span></samp> only support a few of options. Additional options
+can be input in the minibuffer or write your profile, default is
+<samp><span class="file">.perlcriticrc</span></samp>.
+
+<div class="defun">
+&mdash; User Option: <b>perlcritic-profile</b><var><a name="index-perlcritic_002dprofile-146"></a></var><br>
+<blockquote><p>Specify an alternate .perlcriticrc file. 
+If value is nil, use -noprofile,
+If value is t, use the default profile .perlcriticrc,
+If non-nil, and the profile exists, use the profile. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>perlcritic-severity</b><var><a name="index-perlcritic_002dseverity-147"></a></var><br>
+<blockquote><p>Default severity level is 5 and perlcritic-severity value is nil. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>perlcritic-top</b><var><a name="index-perlcritic_002dtop-148"></a></var><br>
+<blockquote><p>Report only the top N Policy violations in each file. 
+If the -severity option is not explicitly given, the -top option
+implies that the minimum severity level is 1. Users can redefine
+the severity for any Policy in their .perlcriticrc file. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>perlcritic-include</b><var><a name="index-perlcritic_002dinclude-149"></a></var><br>
+<blockquote><p>Directs &ldquo;perlcritic&rdquo; to apply additional Policies
+that match the regex &ldquo;/PATTERN/imx&rdquo;. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>perlcritic-exclude</b><var><a name="index-perlcritic_002dexclude-150"></a></var><br>
+<blockquote><p>Directs &ldquo;perlcritic&rdquo; to not apply any Policy that
+matches the regex &ldquo;/PATTERN/imx&rdquo;. 
+</p></blockquote></div>
+
+<div class="node">
+<p><hr>
+<a name="perldb-ui"></a>
+<a name="perldb_002dui"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#inf_002dperl">inf-perl</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#perlcritic">perlcritic</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">23 Perl Debugger</h2>
+
+<p>perldb provide the minimal debugger interface in emacs. <samp><span class="file">perldb-ui.el</span></samp> try
+to extend it more like gdb-ui. Not finished yet. But all interface
+will not change too much in future.
+
+   <p>The main idea to communicate with perldb process is using .perldb to
+add a batch of subroutines to call in emacs. With those subroutines,
+it is easier to get information from the process.
+
+<div class="defun">
+&mdash; User Option: <b>perldb-many-windows</b><var><a name="index-perldb_002dmany_002dwindows-151"></a></var><br>
+<blockquote><p>If non-nil, display layout in `perldb-window-configuration'. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>perldb-use-separate-io-buffer</b><var><a name="index-perldb_002duse_002dseparate_002dio_002dbuffer-152"></a></var><br>
+<blockquote><p>Non-nil means display output from the debugged program in a separate buffer. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perldb-many-windows</b><var><a name="index-perldb_002dmany_002dwindows-153"></a></var><br>
+<blockquote><p>Toggle the number of windows in the basic arrangement. 
+With arg, display additional buffers iff arg is positive. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perldb-restore-windows</b><var><a name="index-perldb_002drestore_002dwindows-154"></a></var><br>
+<blockquote><p>Restore the basic arrangement of windows used by perldb-ui. 
+This arrangement depends on the value of `perldb-many-windows'. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>perldb-save-window-configuration</b><var><a name="index-perldb_002dsave_002dwindow_002dconfiguration-155"></a></var><br>
+<blockquote><p>Save current window configuration as default. 
+With prefix argument, just setup for current session. 
+</p></blockquote></div>
+
+   <p>perl5db provides a convenient command line interface. Most case, it is
+more quick using command than calling an emacs command. If you want
+control debugger in source buffer, maybe turn on
+<samp><span class="command">perldb-gud-mode</span></samp> is a good choice.
+
+     <dl>
+<dt><kbd>n</kbd><dd><a name="index-n-_0028gud_002dnext_0029-156"></a><a name="index-gud_002dnext-157"></a><code>gud-next</code> - Step one line (skip functions).
+
+     <br><dt><kbd>SPC</kbd><dd><a name="index-SPC-_0028gud_002dnext_0029-158"></a><a name="index-gud_002dnext-159"></a><code>gud-next</code> - Step one line (skip functions).
+
+     <br><dt><kbd>s</kbd><dd><a name="index-s-_0028gud_002dstep_0029-160"></a><a name="index-gud_002dstep-161"></a><code>gud-step</code> - Step one source line with display.
+
+     <br><dt><kbd>u</kbd><dd><a name="index-u-_0028gud_002duntil_0029-162"></a><a name="index-gud_002duntil-163"></a><code>gud-until</code> - Continue to current line.
+
+     <br><dt><kbd>r</kbd><dd><a name="index-r-_0028gud_002dreturn_0029-164"></a><a name="index-gud_002dreturn-165"></a><code>gud-return</code> - Return from current subroutine.
+
+     <br><dt><kbd>c</kbd><dd><a name="index-c-_0028gud_002dcont_0029-166"></a><a name="index-gud_002dcont-167"></a><code>gud-cont</code> - Continue with display.
+
+     <br><dt><kbd>b</kbd><dd><a name="index-b-_0028gud_002dbreak_0029-168"></a><a name="index-gud_002dbreak-169"></a><code>gud-break</code> - Set breakpoint at current line.
+
+     <br><dt><kbd>d</kbd><dd><a name="index-d-_0028gud_002dremove_0029-170"></a><a name="index-gud_002dremove-171"></a><code>gud-remove</code> - Remove breakpoint at current line
+
+     <br><dt><kbd>p</kbd><dd><a name="index-p-_0028gud_002dprint_0029-172"></a><a name="index-gud_002dprint-173"></a><code>gud-print</code> - Evaluate perl expression at point.
+
+     <br><dt><kbd>x</kbd><dd><a name="index-x-_0028gud_002ddump_0029-174"></a><a name="index-gud_002ddump-175"></a><code>gud-dump</code> - Dumper data
+
+     <br><dt><kbd>l</kbd><dd><a name="index-l-_0028gud_002drefresh_0029-176"></a><a name="index-gud_002drefresh-177"></a><code>gud-refresh</code> - Fix up a possibly garbled display, and redraw the
+arrow.
+
+     <br><dt><kbd>q</kbd><dd><a name="index-q-_0028perldb_002dgud_002dmode_0029-178"></a><a name="index-perldb_002dgud_002dmode-179"></a><code>perldb-gud-mode</code> - quit perldb-gud-mode.
+
+   </dl>
+
+   <p><em>Know Bugs</em>
+
+     <ul>
+<li>You cannot run two or more debugger at the same time. The global
+variables may conflict. 
+<li>Sometimes may not run stable. You may have to restart the debugger. 
+</ul>
+
+<div class="node">
+<p><hr>
+<a name="inf-perl"></a>
+<a name="inf_002dperl"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Function-Index">Function Index</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#perldb_002dui">perldb-ui</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">24 Interactive perl shell</h2>
+
+<p>An interactive shell is easier to prove some simple idea or check a
+piece of code. Also it is easier to debug or learn certain module
+without write, save, run.
+
+   <p>Actually, a <samp><span class="command">perl -de 1</span></samp> is a good interactive shell. But I'd
+rather use a simple, but easier to customize and extend, shell.
+
+<div class="defun">
+&mdash; User Option: <b>inf-perl-shell-program</b><var><a name="index-inf_002dperl_002dshell_002dprogram-180"></a></var><br>
+<blockquote><p>The location of interactive shell program. Default is <samp><span class="file">psh.pl</span></samp>. 
+You can change it to &ldquo;-de 1&rdquo; if you want it be a debugger or
+<samp><span class="file">gtksh.pl</span></samp> if you want develop with Gtk2-Perl. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>inf-perl-start-file</b><var><a name="index-inf_002dperl_002dstart_002dfile-181"></a></var><br>
+<blockquote><p>The code to load when start up. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>inf-perl-options</b><var><a name="index-inf_002dperl_002doptions-182"></a></var><br>
+<blockquote><p>extra command line options. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>inf-perl-remove-my</b><var><a name="index-inf_002dperl_002dremove_002dmy-183"></a></var><br>
+<blockquote><p>lexcial variable can not live after eval. So when this option turn on,
+when send one line code to process, the my declaration at beginning of
+line will be removed. The variable(s) will become global. 
+</p></blockquote></div>
+
+   <p>For key bindings in cperl-mode, See <a href="#pde">pde</a>.
+
+<div class="node">
+<p><hr>
+<a name="Function-Index"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-Index">Variable Index</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#inf_002dperl">inf-perl</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="unnumbered">Function Index</h2>
+
+<ul class="index-fn" compact>
+<li><a href="#index-define_002dtemplate_002dexpander-76"><code>define-template-expander</code></a>: <a href="#template_002dsimple">template-simple</a></li>
+<li><a href="#index-flymake_002dmode-54"><code>flymake-mode</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-gud_002dbreak-169"><code>gud-break</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-gud_002dcont-167"><code>gud-cont</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-gud_002ddump-175"><code>gud-dump</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-gud_002dnext-157"><code>gud-next</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-gud_002dprint-173"><code>gud-print</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-gud_002drefresh-177"><code>gud-refresh</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-gud_002dremove-171"><code>gud-remove</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-gud_002dreturn-165"><code>gud-return</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-gud_002dstep-161"><code>gud-step</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-gud_002duntil-163"><code>gud-until</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-help_002ddwim_002dactive_002dtype-92"><code>help-dwim-active-type</code></a>: <a href="#help_002ddwim">help-dwim</a></li>
+<li><a href="#index-help_002ddwim_002dcustomize_002dtype-91"><code>help-dwim-customize-type</code></a>: <a href="#help_002ddwim">help-dwim</a></li>
+<li><a href="#index-help_002ddwim_002dregister-90"><code>help-dwim-register</code></a>: <a href="#help_002ddwim">help-dwim</a></li>
+<li><a href="#index-imenu_002dtree_002dtoggle_002dauto_002dupdate-134"><code>imenu-tree-toggle-auto-update</code></a>: <a href="#imenu_002dtree">imenu-tree</a></li>
+<li><a href="#index-inf_002dperl_002dload_002dfile-38"><code>inf-perl-load-file</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-inf_002dperl_002dsend-34"><code>inf-perl-send</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-inf_002dperl_002dsend_002dline-36"><code>inf-perl-send-line</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-inf_002dperl_002dsend_002dregion-40"><code>inf-perl-send-region</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-inf_002dperl_002dsend_002dregion_002dand_002dgo-44"><code>inf-perl-send-region-and-go</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-inf_002dperl_002dset_002dcwd-42"><code>inf-perl-set-cwd</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-inf_002dperl_002dswitch_002dto_002dend_002dperl-48"><code>inf-perl-switch-to-end-perl</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-inf_002dperl_002dswitch_002dto_002dperl-46"><code>inf-perl-switch-to-perl</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002ddetect_002dproject_002droot-61"><code>pde-detect-project-root</code></a>: <a href="#pde_002dproject">pde-project</a></li>
+<li><a href="#index-pde_002ddirectory_002dall_002dfiles-65"><code>pde-directory-all-files</code></a>: <a href="#pde_002dproject">pde-project</a></li>
+<li><a href="#index-pde_002dffap_002dlocate-50"><code>pde-ffap-locate</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dfile_002dpackage-64"><code>pde-file-package</code></a>: <a href="#pde_002dproject">pde-project</a></li>
+<li><a href="#index-pde_002dimenu_002dtree-16"><code>pde-imenu-tree</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dindent_002ddwim-51"><code>pde-indent-dwim</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dlist_002dcore_002dmodules-72"><code>pde-list-core-modules</code></a>: <a href="#pde_002dutil">pde-util</a></li>
+<li><a href="#index-pde_002dlist_002dmodule_002dshadows-71"><code>pde-list-module-shadows</code></a>: <a href="#pde_002dutil">pde-util</a></li>
+<li><a href="#index-pde_002dperl_002dmode_002dhook-52"><code>pde-perl-mode-hook</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dperldoc_002dtree-20"><code>pde-perldoc-tree</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dpod_002dto_002dmanpage-18"><code>pde-pod-to-manpage</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dproject_002dfind_002dfile-66"><code>pde-project-find-file</code></a>: <a href="#pde_002dproject">pde-project</a></li>
+<li><a href="#index-pde_002dsearch_002dcpan-73"><code>pde-search-cpan</code></a>: <a href="#pde_002dutil">pde-util</a></li>
+<li><a href="#index-pde_002dset_002dproject_002droot-63"><code>pde-set-project-root</code></a>: <a href="#pde_002dproject">pde-project</a></li>
+<li><a href="#index-pde_002dtabbar_002dregister-49"><code>pde-tabbar-register</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-perlcritic-144"><code>perlcritic</code></a>: <a href="#perlcritic">perlcritic</a></li>
+<li><a href="#index-perlcritic-58"><code>perlcritic</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-perlcritic_002dregion-145"><code>perlcritic-region</code></a>: <a href="#perlcritic">perlcritic</a></li>
+<li><a href="#index-perldb_002dgud_002dmode-179"><code>perldb-gud-mode</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-perldb_002dmany_002dwindows-153"><code>perldb-many-windows</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-perldb_002drestore_002dwindows-154"><code>perldb-restore-windows</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-perldb_002dsave_002dwindow_002dconfiguration-155"><code>perldb-save-window-configuration</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-perldb_002dui-56"><code>perldb-ui</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-perldoc_002dfind_002dmodule-95"><code>perldoc-find-module</code></a>: <a href="#perldoc">perldoc</a></li>
+<li><a href="#index-perldoc_002dfind_002dmodule_002dap-96"><code>perldoc-find-module-ap</code></a>: <a href="#perldoc">perldoc</a></li>
+<li><a href="#index-perldoc_002dfind_002dmodule_002dother_002dwindow-97"><code>perldoc-find-module-other-window</code></a>: <a href="#perldoc">perldoc</a></li>
+<li><a href="#index-perldoc_002dread_002dmodule-94"><code>perldoc-read-module</code></a>: <a href="#perldoc">perldoc</a></li>
+<li><a href="#index-perldoc_002drecache_002deveryday-93"><code>perldoc-recache-everyday</code></a>: <a href="#perldoc">perldoc</a></li>
+<li><a href="#index-perltidy_002dbuffer-24"><code>perltidy-buffer</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-perltidy_002ddwim-30"><code>perltidy-dwim</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-perltidy_002dregion-26"><code>perltidy-region</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-perltidy_002dsubroutine-28"><code>perltidy-subroutine</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-run_002dperl-60"><code>run-perl</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-tabbar_002dx_002dregister-83"><code>tabbar-x-register</code></a>: <a href="#tabbar_002dx">tabbar-x</a></li>
+<li><a href="#index-tags_002dtree_002dupdate_002dfile-142"><code>tags-tree-update-file</code></a>: <a href="#tags_002dtree">tags-tree</a></li>
+<li><a href="#index-template_002dcompile-74"><code>template-compile</code></a>: <a href="#template_002dsimple">template-simple</a></li>
+<li><a href="#index-template_002dderive_002dtemplate-80"><code>template-derive-template</code></a>: <a href="#template_002dsimple">template-simple</a></li>
+<li><a href="#index-template_002dsimple_002dexpand-78"><code>template-simple-expand</code></a>: <a href="#template_002dsimple">template-simple</a></li>
+<li><a href="#index-template_002dsimple_002dexpand_002dtemplate-77"><code>template-simple-expand-template</code></a>: <a href="#template_002dsimple">template-simple</a></li>
+<li><a href="#index-template_002dsimple_002dupdate_002dheader-82"><code>template-simple-update-header</code></a>: <a href="#template_002dsimple">template-simple</a></li>
+<li><a href="#index-tempo_002dx_002dinsert_002dprompt-87"><code>tempo-x-insert-prompt</code></a>: <a href="#tempo_002dx">tempo-x</a></li>
+<li><a href="#index-tempo_002dx_002drebuild-85"><code>tempo-x-rebuild</code></a>: <a href="#tempo_002dx">tempo-x</a></li>
+<li><a href="#index-tempo_002dx_002dspace-84"><code>tempo-x-space</code></a>: <a href="#tempo_002dx">tempo-x</a></li>
+<li><a href="#index-tempo_002dx_002dtest_002dtemplate-86"><code>tempo-x-test-template</code></a>: <a href="#tempo_002dx">tempo-x</a></li>
+<li><a href="#index-tree_002dmode_002dcollapse_002dother_002dexcept-129"><code>tree-mode-collapse-other-except</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002ddelete_002dtree-131"><code>tree-mode-delete-tree</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dexpand_002dlevel-123"><code>tree-mode-expand-level</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dgoto_002dparent-115"><code>tree-mode-goto-parent</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dgoto_002droot-117"><code>tree-mode-goto-root</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dkeep_002dmatch-127"><code>tree-mode-keep-match</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dnext_002dnode-107"><code>tree-mode-next-node</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dnext_002dsib-111"><code>tree-mode-next-sib</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dprevious_002dnode-109"><code>tree-mode-previous-node</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dprevious_002dsib-113"><code>tree-mode-previous-sib</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dreflesh-119"><code>tree-mode-reflesh</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dsort_002dby_002dtag-125"><code>tree-mode-sort-by-tag</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-tree_002dmode_002dtoggle_002dexpand-121"><code>tree-mode-toggle-expand</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-windata_002dcurrent_002dwinconf-99"><code>windata-current-winconf</code></a>: <a href="#windata">windata</a></li>
+<li><a href="#index-windata_002ddisplay_002dbuffer-105"><code>windata-display-buffer</code></a>: <a href="#windata">windata</a></li>
+<li><a href="#index-windata_002dname_002dwinconf-103"><code>windata-name-winconf</code></a>: <a href="#windata">windata</a></li>
+<li><a href="#index-windata_002drestore_002dnamed_002dwinconf-104"><code>windata-restore-named-winconf</code></a>: <a href="#windata">windata</a></li>
+<li><a href="#index-windata_002drestore_002dwinconf-100"><code>windata-restore-winconf</code></a>: <a href="#windata">windata</a></li>
+   </ul><div class="node">
+<p><hr>
+<a name="Variable-Index"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Keybinding-Index">Keybinding Index</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Function-Index">Function Index</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="unnumbered">Variable Index</h2>
+
+
+
+<ul class="index-vr" compact>
+<li><a href="#index-compile_002ddwim_002dalist-88"><code>compile-dwim-alist</code></a>: <a href="#compile_002ddwim">compile-dwim</a></li>
+<li><a href="#index-compile_002ddwim_002dcheck_002dtools-89"><code>compile-dwim-check-tools</code></a>: <a href="#compile_002ddwim">compile-dwim</a></li>
+<li><a href="#index-imenu_002dtree_002dauto_002dupdate-132"><code>imenu-tree-auto-update</code></a>: <a href="#imenu_002dtree">imenu-tree</a></li>
+<li><a href="#index-imenu_002dtree_002dcreate_002dbuffer_002dfunction-135"><code>imenu-tree-create-buffer-function</code></a>: <a href="#imenu_002dtree">imenu-tree</a></li>
+<li><a href="#index-imenu_002dtree_002dname-136"><code>imenu-tree-name</code></a>: <a href="#imenu_002dtree">imenu-tree</a></li>
+<li><a href="#index-imenu_002dtree_002dupdate_002dinterval-133"><code>imenu-tree-update-interval</code></a>: <a href="#imenu_002dtree">imenu-tree</a></li>
+<li><a href="#index-imenu_002dtree_002dwindata-137"><code>imenu-tree-windata</code></a>: <a href="#imenu_002dtree">imenu-tree</a></li>
+<li><a href="#index-inf_002dperl_002doptions-182"><code>inf-perl-options</code></a>: <a href="#inf_002dperl">inf-perl</a></li>
+<li><a href="#index-inf_002dperl_002dremove_002dmy-183"><code>inf-perl-remove-my</code></a>: <a href="#inf_002dperl">inf-perl</a></li>
+<li><a href="#index-inf_002dperl_002dshell_002dprogram-180"><code>inf-perl-shell-program</code></a>: <a href="#inf_002dperl">inf-perl</a></li>
+<li><a href="#index-inf_002dperl_002dstart_002dfile-181"><code>inf-perl-start-file</code></a>: <a href="#inf_002dperl">inf-perl</a></li>
+<li><a href="#index-pde_002dcperl_002dmap-4"><code>pde-cperl-map</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dcperl_002dprefix-3"><code>pde-cperl-prefix</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dextra_002dsetting-2"><code>pde-extra-setting</code></a>: <a href="#pde_002dload">pde-load</a></li>
+<li><a href="#index-pde_002dfile_002dlist_002dlimit-69"><code>pde-file-list-limit</code></a>: <a href="#pde_002dproject">pde-project</a></li>
+<li><a href="#index-pde_002dfile_002dlist_002dpredicate_002dfunction-68"><code>pde-file-list-predicate-function</code></a>: <a href="#pde_002dproject">pde-project</a></li>
+<li><a href="#index-pde_002dfile_002dlist_002dregexp-67"><code>pde-file-list-regexp</code></a>: <a href="#pde_002dproject">pde-project</a></li>
+<li><a href="#index-pde_002dinf_002dperl_002dmap-32"><code>pde-inf-perl-map</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dinf_002dperl_002dprefix-31"><code>pde-inf-perl-prefix</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dmodule_002dlocation-70"><code>pde-module-location</code></a>: <a href="#pde_002dutil">pde-util</a></li>
+<li><a href="#index-pde_002dperltidy_002dmap-22"><code>pde-perltidy-map</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dperltidy_002dprefix-21"><code>pde-perltidy-prefix</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dproject_002dmark_002dfiles-62"><code>pde-project-mark-files</code></a>: <a href="#pde_002dproject">pde-project</a></li>
+<li><a href="#index-pde_002dview_002dmap-14"><code>pde-view-map</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-pde_002dview_002dprefix-13"><code>pde-view-prefix</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-perlapi_002dsrc_002ddirectory-98"><code>perlapi-src-directory</code></a>: <a href="#perlapi">perlapi</a></li>
+<li><a href="#index-perlcritic_002dexclude-150"><code>perlcritic-exclude</code></a>: <a href="#perlcritic">perlcritic</a></li>
+<li><a href="#index-perlcritic_002dinclude-149"><code>perlcritic-include</code></a>: <a href="#perlcritic">perlcritic</a></li>
+<li><a href="#index-perlcritic_002dprofile-146"><code>perlcritic-profile</code></a>: <a href="#perlcritic">perlcritic</a></li>
+<li><a href="#index-perlcritic_002dseverity-147"><code>perlcritic-severity</code></a>: <a href="#perlcritic">perlcritic</a></li>
+<li><a href="#index-perlcritic_002dtop-148"><code>perlcritic-top</code></a>: <a href="#perlcritic">perlcritic</a></li>
+<li><a href="#index-perldb_002dmany_002dwindows-151"><code>perldb-many-windows</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-perldb_002duse_002dseparate_002dio_002dbuffer-152"><code>perldb-use-separate-io-buffer</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-tags_002dtree_002dcreate_002dbuffer_002dfunction-138"><code>tags-tree-create-buffer-function</code></a>: <a href="#tags_002dtree">tags-tree</a></li>
+<li><a href="#index-tags_002dtree_002dgroup_002dfile_002dfunction-139"><code>tags-tree-group-file-function</code></a>: <a href="#tags_002dtree">tags-tree</a></li>
+<li><a href="#index-tags_002dtree_002dgroup_002dtags_002dfunction-140"><code>tags-tree-group-tags-function</code></a>: <a href="#tags_002dtree">tags-tree</a></li>
+<li><a href="#index-tags_002dtree_002dtags_002dupdate_002dprogram-143"><code>tags-tree-tags-update-program</code></a>: <a href="#tags_002dtree">tags-tree</a></li>
+<li><a href="#index-template_002ddefault_002dalist-81"><code>template-default-alist</code></a>: <a href="#template_002dsimple">template-simple</a></li>
+<li><a href="#index-template_002ddirectory_002dlist-79"><code>template-directory-list</code></a>: <a href="#template_002dsimple">template-simple</a></li>
+<li><a href="#index-template_002dexpand_002dfunction-75"><code>template-expand-function</code></a>: <a href="#template_002dsimple">template-simple</a></li>
+<li><a href="#index-windata_002ddata_002dfunction-101"><code>windata-data-function</code></a>: <a href="#windata">windata</a></li>
+<li><a href="#index-windata_002ddata_002drestore_002dfunction-102"><code>windata-data-restore-function</code></a>: <a href="#windata">windata</a></li>
+   </ul><div class="node">
+<p><hr>
+<a name="Keybinding-Index"></a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-Index">Variable Index</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="unnumbered">Keybinding Index</h2>
+
+
+
+<ul class="index-ky" compact>
+<li><a href="#index-g_t_0021-_0028tree_002dmode_002dcollapse_002dother_002dexcept_0029-128"><code>! (tree-mode-collapse-other-except)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-g_t_002f-_0028tree_002dmode_002dkeep_002dmatch_0029-126"><code>/ (tree-mode-keep-match)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-b-_0028gud_002dbreak_0029-168"><code>b (gud-break)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-c-_0028gud_002dcont_0029-166"><code>c (gud-cont)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-C_002db-_0028perltidy_002dbuffer_0029-23"><code>C-b (perltidy-buffer)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dc-C_002dd-_0028perldb_002dui_0029-55"><code>C-c C-d (perldb-ui)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dc-C_002df-_0028flymake_002dmode_0029-53"><code>C-c C-f (flymake-mode)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dc-C_002dk-_0028perlcritic_0029-57"><code>C-c C-k (perlcritic)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dc-C_002dz-_0028run_002dperl_0029-59"><code>C-c C-z (run-perl)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002de-_0028cperl_002dtoggle_002delectric_0029-5"><code>C-e (cperl-toggle-electric)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002de-_0028inf_002dperl_002dsend_0029-33"><code>C-e (inf-perl-send)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002di-_0028pde_002dimenu_002dtree_0029-15"><code>C-i (pde-imenu-tree)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dj-_0028cperl_002dlinefeed_0029-6"><code>C-j (cperl-linefeed)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dj-_0028inf_002dperl_002dsend_002dline_0029-35"><code>C-j (inf-perl-send-line)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dl-_0028inf_002dperl_002dload_002dfile_0029-37"><code>C-l (inf-perl-load-file)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dm-_0028pde_002dpod_002dto_002dmanpage_0029-17"><code>C-m (pde-pod-to-manpage)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dn-_0028cperl_002dnarrow_002dto_002dhere_002ddoc_0029-7"><code>C-n (cperl-narrow-to-here-doc)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dp-_0028cperl_002dpod_002dspell_0029-8"><code>C-p (cperl-pod-spell)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dp-_0028pde_002dperldoc_002dtree_0029-19"><code>C-p (pde-perldoc-tree)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dr-_0028inf_002dperl_002dsend_002dregion_0029-39"><code>C-r (inf-perl-send-region)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dr-_0028perltidy_002dregion_0029-25"><code>C-r (perltidy-region)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002ds-_0028inf_002dperl_002dset_002dcwd_0029-41"><code>C-s (inf-perl-set-cwd)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002ds-_0028perltidy_002dsubroutine_0029-27"><code>C-s (perltidy-subroutine)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dt-_0028cperl_002dinvert_002dif_002dunless_0029-9"><code>C-t (cperl-invert-if-unless)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dt-_0028perltidy_002ddwim_0029-29"><code>C-t (perltidy-dwim)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dv-_0028cperl_002dnext_002dinterpolated_002dREx_0029-10"><code>C-v (cperl-next-interpolated-REx)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dx-_0028cperl_002dnext_002dinterpolated_002dREx_002d0_0029-11"><code>C-x (cperl-next-interpolated-REx-0)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dy-_0028cperl_002dnext_002dinterpolated_002dREx_002d1_0029-12"><code>C-y (cperl-next-interpolated-REx-1)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dy-_0028inf_002dperl_002dswitch_002dto_002dperl_0029-45"><code>C-y (inf-perl-switch-to-perl)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-C_002dz-_0028inf_002dperl_002dswitch_002dto_002dend_002dperl_0029-47"><code>C-z (inf-perl-switch-to-end-perl)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-d-_0028gud_002dremove_0029-170"><code>d (gud-remove)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-D-_0028tree_002dmode_002ddelete_002dtree_0029-130"><code>D (tree-mode-delete-tree)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-E-_0028tree_002dmode_002dexpand_002dlevel_0029-122"><code>E (tree-mode-expand-level)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-e-_0028tree_002dmode_002dtoggle_002dexpand_0029-120"><code>e (tree-mode-toggle-expand)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-G-_0028tags_002dtree_002dupdate_002dfile_0029-141"><code>G (tags-tree-update-file)</code></a>: <a href="#tags_002dtree">tags-tree</a></li>
+<li><a href="#index-g-_0028tree_002dmode_002dreflesh_0029-118"><code>g (tree-mode-reflesh)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-j-_0028tree_002dmode_002dnext_002dsib_0029-110"><code>j (tree-mode-next-sib)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-k-_0028tree_002dmode_002dprevious_002dsib_0029-112"><code>k (tree-mode-previous-sib)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-l-_0028gud_002drefresh_0029-176"><code>l (gud-refresh)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-M_002dr-_0028inf_002dperl_002dsend_002dregion_002dand_002dgo_0029-43"><code>M-r (inf-perl-send-region-and-go)</code></a>: <a href="#pde">pde</a></li>
+<li><a href="#index-n-_0028gud_002dnext_0029-156"><code>n (gud-next)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-n-_0028tree_002dmode_002dnext_002dnode_0029-106"><code>n (tree-mode-next-node)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-p-_0028gud_002dprint_0029-172"><code>p (gud-print)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-p-_0028tree_002dmode_002dprevious_002dnode_0029-108"><code>p (tree-mode-previous-node)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-q-_0028perldb_002dgud_002dmode_0029-178"><code>q (perldb-gud-mode)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-r-_0028gud_002dreturn_0029-164"><code>r (gud-return)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-r-_0028tree_002dmode_002dgoto_002droot_0029-116"><code>r (tree-mode-goto-root)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-s-_0028gud_002dstep_0029-160"><code>s (gud-step)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-s-_0028tree_002dmode_002dsort_002dby_002dtag_0029-124"><code>s (tree-mode-sort-by-tag)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-SPC-_0028gud_002dnext_0029-158"><code>SPC (gud-next)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-u-_0028gud_002duntil_0029-162"><code>u (gud-until)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+<li><a href="#index-u-_0028tree_002dmode_002dgoto_002dparent_0029-114"><code>u (tree-mode-goto-parent)</code></a>: <a href="#tree_002dmode">tree-mode</a></li>
+<li><a href="#index-x-_0028gud_002ddump_0029-174"><code>x (gud-dump)</code></a>: <a href="#perldb_002dui">perldb-ui</a></li>
+   </ul></body></html>
+

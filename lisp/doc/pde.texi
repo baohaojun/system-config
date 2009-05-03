@@ -1,0 +1,1564 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename pde.info
+@settitle Perl Development Environment
+@c %**end of header
+
+@dircategory Emacs
+@direntry
+* PDE: (pde).             Perl Development Environment
+@end direntry
+
+@copying
+This is manual for PDE version 0.01
+
+ @copyright{} 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A
+copy of the license is included in the section entitled "GNU Free
+Documentation License".
+@end quotation
+@end copying
+
+@c For printed material
+@titlepage
+@title Perl Development Environment
+
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+@c END For printed material
+@ifnottex
+@node Top, Introduction, (dir), (dir)
+@comment  node-name,  next,  previous,  up
+@top PDE
+
+@insertcopying
+@end ifnottex
+
+@menu
+* Introduction::                A introduction to PDE
+* Installation::                Installation
+* pde-load::                    Default configuration for PDE
+* pde::                         Integrate other libraries
+* pde-vars::                    Global variables shared
+* pde-project::                 Projects in perl
+* pde-abbv::                    Abbrev for perl
+* pde-util::                    Misc commands
+* template-simple::             New file with template
+* tabbar-x::                    Tabbar for particular buffers
+* tempo-x::                     Additional elements for tempo
+* re-builder-x::                Regexp building and testing tool
+* compile-dwim::                Smart compile commands
+* help-dwim::                   Find documents using help-dwim
+* perldoc::                     Run perldoc using woman
+* perlapi::                     Find document in perlapi
+* windata::                     Window configuration to list
+* tree-mode::                   More commands on tree-widget
+* imenu-tree::                  Tree view for imenu
+* tags-tree::                   Tree view of TAGS
+* perltidy::                    Call perltidy
+* perlcritic::                  Calling perlcritic
+* perldb-ui::                   Perl Debugger
+* inf-perl::                    Interactive perl shell
+
+Indices
+* Function Index::              
+* Variable Index::              
+* Keybinding Index::            
+@end menu
+
+@node Introduction, Installation, Top, Top
+@chapter A introduction to PDE
+@cindex introduction
+
+PDE is a collection of emacs lisp extensions to facilitate perl
+programming. cperl-mode has provided a excellent environment for
+coding, here PDE provides other common tools, such as creating file
+using template, smart compiling, perldoc, perltidy, debugger, tags
+tree view and so on. PDE also provides an easy configuration for perl
+programing, and a tutorial for novice to start using emacs.
+
+This manual tries to describe the feature of each emacs lisp file
+provided and to be the guide for those who want to use them.
+
+@node Installation, pde-load, Introduction, Top
+@chapter Installation
+
+Installing PDE is quit easy. When you download the archive of the PDE
+distribution, uncompress the archive to a folder, for example,
+~/elisp/pde, then put this to your ~/.emacs:
+
+@lisp
+(add-to-list 'load-path "~/elisp/pde/lisp")
+(load "pde-load")
+@end lisp
+
+That is all what you need to do for a typical installation.
+
+You can also use perl style installation:
+@verbatim
+     ./Build.PL
+     ./Build test
+     ./Build
+     ./Build install
+@end verbatim
+
+Note that test before build, so perl can test whether have emacs in
+PATH. The default place to install lisp files is
+``$ENV@{HOME@}/.emacs.d/pde''. You can use option ---elispdir tell
+perl where to put the lisp files. Note that using this way to install,
+you should put ~/elisp/pde to @code{load-path}. So you should add
+following to .emacs:
+
+@lisp
+(add-to-list 'load-path "~/elisp/pde")
+(load "pde-load")
+@end lisp
+
+@node pde-load, pde, Installation, Top
+@comment  node-name,  next,  previous,  up
+@chapter Default configuration for PDE
+
+@file{pde-load.el} try to provide a default configuration for all
+extension included in PDE. The configuration can be sorted by PDE core
+features and some recommend personal setting. To disable addtional
+features if you don't like, you can set @code{pde-extra-setting} to
+nil.
+
+@defopt pde-extra-setting
+When set to nil, don't load something you don't like
+@end defopt
+
+The minimal enable features after load `pde-load' are:
+@itemize
+@item
+make perl script associate with cperl-mode not perl-mode
+@item
+setup new indent style ``PDE''
+@item
+turn on abbrev mode
+@item
+search document with M-x @command{perldoc} or using M-x @command{perldoc-tree}
+@item
+show imenu with M-x @command{imenu-tree}
+@item
+auto chmod when saving perl script
+@item
+create new file with template
+@item
+call perltidy when editing
+@item
+start interactive perl shell using M-x @command{inf-perl}
+@item
+improved perldb using M-x @command{perldb-ui}
+@item
+smart compile and run command using M-x @command{compile-dwim-compile}
+and @command{compile-dwim-run}.
+@item
+find perl module in cperl-mode using M-x @command{ffap}
+@item
+enable show brief info of buildin function under point in minibuffer
+@end itemize
+
+The extra feature including:
+@itemize
+@item
+turn on ido-mode and using ido completion read imenu tag
+@item
+automatic update imenu-tree and make tree always visible
+@item
+complete read ingore case
+@item
+turn on partial-completion-mode, and you can find perl module using
+M-x @command{find-file} by add prefix char '<'.
+@item
+multiple compilation buffers
+@item
+useful global key bindings
+@item
+show perldoc-tree and imenu-tree with tabbar
+@item
+set tags-table-list, hippie-expand-try-functions-list,
+comint-completion-addsuffix to make the command handy
+@item
+some fixup to cperl-mode
+@end itemize
+
+The configuration is optimized so that most libraries are loaded when
+needed.
+
+@node pde, pde-vars, pde-load, Top
+@comment  node-name,  next,  previous,  up
+@chapter Integrate other libraries
+
+@file{pde.el} try to integrate other libraies to cperl-mode.
+
+First it rearrange key bindings. Some cperl-mode default key bindings
+are remap to @code{pde-cperl-map}, so more key bindings can be add to
+cperl-mode-map.
+
+@defopt pde-cperl-prefix
+Prefix key for cperl commands. Default is C-c C-c.
+@end defopt
+
+@defvar pde-cperl-map
+Keymap for cperl commands
+@end defvar
+
+@table @kbd
+@item C-e
+@kindex C-e (cperl-toggle-electric)
+@code{cperl-toggle-electric} - Toggle the state of parentheses
+doubling in CPerl mode.
+
+@item C-j
+@kindex C-j (cperl-linefeed)
+@code{cperl-linefeed} - Go to end of line, open a new line and indent
+appropriately.
+
+@item C-n
+@kindex C-n (cperl-narrow-to-here-doc)
+@code{cperl-narrow-to-here-doc} - Narrows editing region to the
+HERE-DOC at pos.
+
+@item C-p
+@kindex C-p (cperl-pod-spell)
+@code{cperl-pod-spell} - Spell-check POD documentation.
+
+@item C-t
+@kindex C-t (cperl-invert-if-unless)
+@code{cperl-invert-if-unless} - Change `if (A) @{B@}' into `B if A;' etc
+(or visa versa) if possible.
+
+@item C-v
+@kindex C-v (cperl-next-interpolated-REx)
+@code{cperl-next-interpolated-REx} - Move point to next REx which has
+interpolated parts.
+
+@item C-x
+@kindex C-x (cperl-next-interpolated-REx-0)
+@code{cperl-next-interpolated-REx-0} - Move point to next REx which
+has interpolated parts without //o.
+
+@item C-y
+@kindex C-y (cperl-next-interpolated-REx-1)
+@code{cperl-next-interpolated-REx-1} - Move point to next REx which
+has interpolated parts without //o.
+
+@end table
+
+@defopt pde-view-prefix
+Prefix key for view commands. Default is C-c C-v
+@end defopt
+
+@defvar pde-view-map
+Keymap for view commands.
+@end defvar
+
+@table @kbd
+@item C-i
+@kindex C-i (pde-imenu-tree)
+@findex pde-imenu-tree
+@code{pde-imenu-tree} - Display tree view of imenu.
+
+@item C-m
+@kindex C-m (pde-pod-to-manpage)
+@findex pde-pod-to-manpage
+@code{pde-pod-to-manpage} - View pod in current buffer using woman.
+
+@item C-p
+@kindex C-p (pde-perldoc-tree)
+@findex pde-perldoc-tree
+@code{pde-perldoc-tree} - Display pod tree.
+
+@end table
+
+@defopt pde-perltidy-prefix
+Prefix key for perltidy commands. Default is C-c C-t.
+@end defopt
+
+@defvar pde-perltidy-map
+Keymap for perltidy commands.
+@end defvar
+
+@table @kbd
+@item C-b
+@kindex C-b (perltidy-buffer)
+@findex perltidy-buffer
+@code{perltidy-buffer} - Call perltidy for whole buffer.
+
+@item C-r
+@kindex C-r (perltidy-region)
+@findex perltidy-region
+@code{perltidy-region} - Tidy perl code in the region.
+
+@item C-s
+@kindex C-s (perltidy-subroutine)
+@findex perltidy-subroutine
+@code{perltidy-subroutine} - Call perltidy for subroutine at point.
+
+@item C-t
+@kindex C-t (perltidy-dwim)
+@findex perltidy-dwim
+@code{perltidy-dwim} - Perltidy Do What I Mean.
+If with prefix argument, just show the result of perltidy.
+You can use C-x C-s to save the tidy result.
+If region is active call perltidy on the region. If inside
+subroutine, call perltidy on the subroutine, otherwise call
+perltidy for whole buffer.
+
+@end table
+
+@defopt pde-inf-perl-prefix
+Prefix key for inf-perl commands. Default is C-c C-e.
+@end defopt
+
+@defvar pde-inf-perl-map
+Keymap for inf-perl commands.
+@end defvar
+
+@table @kbd
+@item C-e
+@kindex C-e (inf-perl-send)
+@findex inf-perl-send
+@code{inf-perl-send} - If mark active, send region, otherwise send current line
+
+@item C-j
+@kindex C-j (inf-perl-send-line)
+@findex inf-perl-send-line
+@code{inf-perl-send-line} - Send current line to the perl process.
+
+@item C-l
+@kindex C-l (inf-perl-load-file)
+@findex inf-perl-load-file
+@code{inf-perl-load-file} - Send whole buffer to process
+
+@item C-r
+@kindex C-r (inf-perl-send-region)
+@findex inf-perl-send-region
+@code{inf-perl-send-region} - Send region to process.
+
+@item C-s
+@kindex C-s (inf-perl-set-cwd)
+@findex inf-perl-set-cwd
+@code{inf-perl-set-cwd} - Set working directory of interpreter to
+current default-directory
+
+@item M-r
+@kindex M-r (inf-perl-send-region-and-go)
+@findex inf-perl-send-region-and-go
+@code{inf-perl-send-region-and-go} - Send region and switch to process
+buffer
+
+@item C-y
+@kindex C-y (inf-perl-switch-to-perl)
+@findex inf-perl-switch-to-perl
+@code{inf-perl-switch-to-perl} - Switch to perl process buffer.
+
+@item C-z
+@kindex C-z (inf-perl-switch-to-end-perl)
+@findex inf-perl-switch-to-end-perl
+@code{inf-perl-switch-to-end-perl} - Switch to end of perl process buffer.
+
+@end table
+
+tabbar-mode can make a tabbar for all buffers. I prefer using ido-mode
+to switch between buffers. But here I want add a tabbar for a few
+buffers to group them and make emacs looks like IDE. So that why
+tabbar-x. @xref{tabbar-x}.
+
+@defun pde-tabbar-register
+Add tabbar and register current buffer to group Perl.
+@end defun
+
+ffap is a good command. To use it in cperl-mode to find perl module,
+need some hack.
+@defun pde-ffap-locate
+Return cperl module for ffap.
+@end defun
+
+indent-region need to mark a region. Not very convenient. So I
+write a dwim command.
+@defun pde-indent-dwim
+Indent the region between paren.
+If region selected, indent the region.
+If character before is a parenthesis(such as "]@})>"), indent the
+region between the parentheses. Useful when you finish a subroutine or
+a block.
+Otherwise indent current subroutine. Selected by @command{beginning-of-defun}
+and @command{end-of-defun}.
+@end defun
+
+Settings after cperl-mode is loaded or only for buffer that major-mode
+is cperl-mode are defined in @code{pde-perl-mode-hook}
+
+@defun pde-perl-mode-hook
+Hooks to run when enter cperl-mode. It define a new style ``PDE'',
+turn on display information of function on echo area, turn abbrev-mode
+on, activate perldoc, auto chmod when save perl script but not module
+or pod, and bind keys.
+@end defun
+
+This key bindings are added:
+
+@table @kbd
+@item C-c C-f
+@kindex C-c C-f (flymake-mode)
+@findex flymake-mode
+@code{flymake-mode} - Minor mode to do on-the-fly syntax checking.
+
+@item C-c C-d
+@kindex C-c C-d (perldb-ui)
+@findex perldb-ui
+@code{perldb-ui} - Debugger with perldb-ui.
+
+@item C-c C-k
+@kindex C-c C-k (perlcritic)
+@findex perlcritic
+@code{perlcritic} - Call perlcritic with current file
+
+@item C-c C-z
+@kindex C-c C-z (run-perl)
+@findex run-perl
+@code{run-perl} - Start or switch to interactive perl shell.
+
+@end table
+
+The old C-c C-h commands are removed, and make
+@command{describe-prefix-bindings} work. If you realy need them,
+define them in @code{pde-cperl-map}.
+
+@node pde-vars, pde-project, pde, Top
+@comment  node-name,  next,  previous,  up
+@chapter Global variables shared
+
+@file{pde-vars.el} defined some global constant variables. Library related to
+perl can require it without load other PDE libaries, and user can
+define one variable for all libaries that use it.
+
+@node pde-project, pde-abbv, pde-vars, Top
+@comment  node-name,  next,  previous,  up
+@chapter Projects in perl
+
+@file{pde-project.el} provide several functions relate to project in perl.
+
+@defun pde-detect-project-root
+Detech root directory of current file. The root directory is that has
+Makefile.PL or Build.PL or @@INC.
+@end defun
+
+@defopt pde-project-mark-files
+The directory contain one of these file will consider as project root.
+Default is (``Makefile.PL'' ``Build.PL'')
+@end defopt
+
+@defun pde-set-project-root
+set project root to local variable @code{pde-project-root}.
+@end defun
+
+@defun pde-file-package
+Derive the package name of current buffer. The buffer should be a pm
+file.
+@end defun
+
+@defun pde-directory-all-files dir &optional full match predicate limit
+Recursive read file name in DIR.
+Like `directory-files', this function can return a list of files in
+the directory and the subdirectories, but often there are too many files
+in the directory, so need a parament to limit the number of files to
+search and a flag to indicate whether all files are read. So instead
+of return a list of files, this function return a cons cell which car
+indicate whether all files read and cdr part is the real file list.
+
+if FULL is non-nil, return absolute file names, if match is non-nil,
+mention only file names match the regexp MATCH. If PREDICATE is non-nil
+and is a function with one argument, the file name relative to DIR,
+mention only file when PREDICATE function return non-nil value. If LIMIT
+is non-nil, when the files execeed the number will stop. The function is
+search in wide-first manner.
+
+@deffn Command pde-project-find-file 
+Find file in the project.
+This command is will read all file in current project recursively.
+With prefix argument, to rebuild the cache.
+I suggest bind this command to C-x C-p, which original command is 
+mark-page seldom used by me.
+@end deffn
+
+@defopt pde-file-list-regexp
+Filenames matching this regexp will not be read when `pde-project-find-file'.
+@end defopt
+
+@defopt pde-file-list-predicate-function
+Predicate function to filter file to be read when `pde-project-find-file'
+@end defopt
+
+@defopt pde-file-list-limit
+Maximum number of files for read from project directory recursively.
+@end defopt
+
+@end defun
+
+@node pde-abbv, pde-util, pde-project, Top
+@comment  node-name,  next,  previous,  up
+@chapter Abbrev for perl
+@file{pde-abbv.el} contains a few abbrevs that I think helpful. You
+can send me your abbrev if you think it is handy. I appreciate for
+that.
+
+@itemize
+@item newx  
+Create subroutine new for Object module.
+@item dumpx 
+expand for Data::Dumper::Dumper.
+@item usetk 
+Use Tk
+@item exportx 
+Write Exporter tags
+@item opend 
+expand for build-in function `opendir'. snippet available
+@item openf 
+expand for build-in function `open'. snippet available
+@item fromto 
+expand for Encode::from_to, only snippet available
+@item usegtk 
+Use Gtk2
+@item useenc 
+Use Encode
+@item usedump 
+Use Data::Dumper
+@end itemize
+
+@node pde-util, template-simple, pde-abbv, Top
+@comment  node-name,  next,  previous,  up
+@chapter Misc commands
+
+@file{pde-util} provides several commands that might be useful.
+
+@defopt pde-module-location
+The commands above call perl module PDE::Util to generate the module
+lists. If the module can found in @@INC or @code{pde-load-path} parent
+directory, set this variable to let perl found the module.
+@end defopt
+
+@deffn Command pde-list-module-shadows
+Display a list of modules that shadow other modules.
+@end deffn
+
+@deffn Command pde-list-core-modules
+Display a list of core modules. Push the text button to show Pod.
+@end deffn
+
+@deffn Command pde-search-cpan
+Search module or other things in @url{search.cpan.org}.
+@end deffn
+
+@node template-simple, tabbar-x, pde-util, Top
+@comment  node-name,  next,  previous,  up
+@chapter New file with template
+
+template.el is exists, why template-simple? First of all, it is
+simple, the there is only one core function @code{template-compile}.
+
+@defun template-compile
+Parse current buffer to parsed template.
+@end defun
+
+The parsed template contains a list of strings, symbols or lisp forms.
+The strings is inserted directly.
+The symbol can be a predefined value in @code{template-default-alist},
+or can be translate by @code{template-expand-function}. The lisp forms
+is handled by @code{template-expand-function}.
+
+@defopt template-expand-function
+Functions to expand parsed template. There are two candicate functions
+available in template-simple: @code{template-skeleton-expand} and
+@code{template-tempo-expand}. Default function is
+@code{template-tempo-expand}, because I think tempo provide more
+fetures and flexibility than skeleton.
+@end defopt
+
+@defun define-template-expander name alist &rest body
+Define a new type of @code{template-expand-function}. NAME is used to
+create a function template-<NAME>-expand. ALIST can be a symbol or a
+form to return a list of symbol table add to @code{template-default-alist}.
+BODY is the code to expand and insert the template. the value of
+variable TEMPLATE is the translated template. The element of parsed
+template is translated by @code{template-expansion}
+@end defun
+
+@defun template-simple-expand-template file
+Expand template in file.
+Parse the template to parsed templates with @code{template-compile}.
+Use @code{template-expand-function} to expand the parsed template.
+@end defun
+
+@defun template-simple-expand template
+Expand string template.
+template can be a string or a parsed template. If it is string,
+parse the template to parsed templates with @code{template-compile}.
+Use @code{template-expand-function} to expand the parsed template.
+@end defun
+
+template-simple is designed to compatible to template.el, so the
+default open and close parentheses is ``(>>>'' and ``<<<)''. Note that
+global value of @code{template-expand-function} is saved in
+@code{template-simple-expand}. The same case happened to
+@code{template-parens} in @code{template-compile}. So If you need
+change them temporary for certain template, you can set
+@code{template-parens} and @code{template-expand-function} like file
+variable, for example:
+
+@verbatim
+   (template-simple-expand
+    ";; -*- template-parens: (\"{\" . \"}\"); template-expand-function: template-tempo-expand -*-
+     (defun {p} ({p})
+       \"{p}\"
+       {p}
+       )")
+@end verbatim
+
+This will expand by @code{template-tempo-expand} but not default
+expand function. Luckily in most case, template of tempo and skeleton
+can be the same, so you don't have to set
+@code{template-expand-function}. If your template uses element that
+only exists in tempo or skeleton, you'd better set it in template to
+make sure the @code{template-simple-expand} select the correct one.
+
+The major purpose of template-simple is used for fill empty file using
+predefined template.
+
+@defopt template-directory-list
+A list of directories for lookup template files. Default is 
+``~/.templates/'' and @code{auto-insert-directory}.
+@end defopt
+
+@defun template-derive-template
+Find proper template for current file. The template file is a file
+with name ``TEMPLATE'' and the same extension of current file under
+@code{template-directory}. You can add a suffix ``.tpl'' to the
+template file name too, just for compatible with templates provide by
+template.el. If the file didn't have extension, the template file's
+extension is current file name, for example, ``TEMPLATE.Makefile'' is
+template file for ``Makefile''.
+@end defun
+
+@defopt template-default-alist
+Predefined symbol for template file. Symbols to lookup in this table
+is case insensitive.
+@end defopt
+
+Here is a list of predefined symbol:
+@itemize
+@item
+dir         default directory of current file
+@item
+file        basename(without directory) of current file
+@item
+file-sans   file name without extension and directory
+@item
+file-ext    file extension
+@item
+file-upcase upcased file-sans
+@item
+date        formated time string using @code{template-date-format}
+@item
+cdate       formated time string using @code{template-cdate-format}
+               with @code{system-time-locale} value is ``C''
+@item
+iso-date    ``%Y-%m-%d'' time string
+@item
+vc-date     ``%Y/%m/%d %T'' time string with time-zone ``UTC''
+@item
+year        ``%Y''
+@item
+time        formated time string using @code{template-time-format}
+@item
+author      user-mail-address
+@item
+user-name   user-full-name
+@item
+login-name  user-login-name
+@item
+host-addr   mail-host-address
+@end itemize
+
+A neat function provided by template.el is the file name in
+the header can automatic update when the file is renamed.
+template-simple also provide this feature.
+
+@defun template-simple-update-header
+update file header when needed. The file header is a line match
+@code{template-header-regexp} at first 3 lines in current file.
+@end defun
+
+A typical file header is like:
+@verbatim
+   ;;; file-name --- short description
+@end verbatim
+
+or
+@verbatim
+   /* @(#)file-name   short description
+    */
+@end verbatim
+
+@node tabbar-x, tempo-x, template-simple, Top
+@comment  node-name,  next,  previous,  up
+@chapter Tabbar for particular buffers
+
+Sometimes, make tabbar for particular buffers maybe cool. For example,
+I add tabbar for only perl related buffers, *Perldoc*, *PDE Imenu*,
+and I am planning to group perldb-ui buffers as the same way. tabbar-x
+exists for this purpose.
+
+@defun tabbar-x-register buffer group
+Register the buffer to the one group.
+@end defun
+
+@node tempo-x, re-builder-x, tabbar-x, Top
+@comment  node-name,  next,  previous,  up
+@chapter Additional elements for tempo
+
+@file{tempo.el} is a extensible library for abbrevs. It provide more
+features than @file{skeleton.el}, such as move between marks, 
+names for prompt, user elements and so on. @file{tempo-x.el} provides
+some commands and additional elements that may helpful.
+
+@deffn Command tempo-x-space
+A simple command to enable expand tempo like abbrev. The command
+@code{tempo-space} given by the author of @file{tempo.el} is not
+compatiable for abbrev-mode.
+@end deffn
+
+@deffn Command tempo-x-rebuild
+Reinstall new tempo template for all buffer. If you defined a new
+tempo-template in certain tag-list, you can't use it intermediately.
+Call the commands to force build connections for all buffer again.
+@end deffn
+
+@defun tempo-x-test-template
+A macro to test tempo template before define it.
+@end defun
+
+Here is a list of new elements:
+
+@itemize
+@item pi
+@item Pi
+
+``pi'' and ``Pi'' like standard tempo element ``p'' except they can
+have a default value and can be completing read.
+
+@defun tempo-x-insert-prompt prompt &optional default save-name no-insert
+The beta version of tempo.el also implement new prompt element, but I
+still an element that can accept default value.
+PROMPT can be a string or a list. When it is a string, it is like
+standard tempo element @code{p}, but you can give a DEFAULT string.
+If it is a list, the prompt will be the parameters of
+@code{completing-read}. But you should give the default value in
+DEFAULT not in PROMPT.
+
+Here is some example:
+@lisp
+(pi "variable: " "foo" var)
+(pi ("variable: " ("foo" "bar")) "foo" var)
+@end lisp
+@end defun
+
+@item R
+
+skeleton has some handy elements to control recursive expanding. ``R''
+is such tempo elements to do this job. The syntax of the element is:
+@lisp
+(R before-test-elements
+   (& condition
+      final-form)
+   after-test-elements)
+@end lisp
+
+First it insert BEFORE-TEST-ELEMENTS to buffer. then test the
+CONDITION, if the CONDITION is null, eval FINAL-FORM and quit the
+loop. Otherwise insert AFTER-TEST-ELEMENTS and back to start. The
+CONDITION can be a name saved in BEFORE-TEST-ELEMENTS, it will
+automatic clean after test, so you will be prompt again. If you want
+use it after test, backup it by yourself. The CONDITION also can be a
+list, which CAR is a list of names will be used and will be clean
+after test.
+A special variable @code{recursion-start} is available is FINAL-FORM,
+you can use it to clean up recent insertion in BEFORE-TEST-ELEMENTS.
+
+Here is a example to show how to use it:
+@lisp
+(tempo-define-template
+ "sh-if"
+ '("if " (pi "condition: " ("[  ]" . 3)) "; then" > n>
+   p > n>
+   (R "elif " (pi "condition: " ("[  ]" . 3) condition)
+      (& ((condition) (string-match "\\[\\s-*]" condition))
+         (delete-region recursion-start (point)))
+      "; then" > n>
+      p > n>)
+   "else" > n>
+   p n>
+   "fi" > n>))
+@end lisp
+
+Try it by M-x tempo-template-sh-if in sh-mode.
+
+@item snippet
+
+If you want use this only, you can try @code{tempo-snippets.el},
+@code{tempo-x.el} borrow most of functions from there to implement a
+new element instead of new template style.
+
+``snippet'' enable visualize the template field, and can update form when
+editing. The syntax of ``snippet'' is:
+@lisp
+(snippet (S name &optional display insert)
+         (F (vars) forms))
+@end lisp
+
+``S'' insert a field, the first NAME will be the source and other
+field with the same NAME become mirrors. Change the source will also
+change mirrors. DISPLAY is the text to insert to the field, default is
+the `symbol-name' of NAME. INSERT is non-nil means the DISPLAY is the
+default text, you can make change to the text. Otherwise the text will
+be erase after any changes in front of field.
+
+``F'' insert an form. The VARS is a list of NAME used in fields. the
+evaled result will insert into the buffer. When any fields in VARS
+changed, the text of form will change too.
+
+A example will show how to use it easier:
+
+@lisp
+(tempo-define-template
+ "perl-open"
+ '((snippet
+    "open("
+    (S FH "my $fh" t) ", \"" (S op "<") "\", "
+    (S file "$file")
+    ") or die \"Can't "
+    (F (op)
+       (if (string-match ">" op)
+           "create" "open"))
+    " file "
+    (F (file)
+       (replace-regexp-in-string "['\"]?\\(.*\\)['\"]" "\\1" file))
+    ": $!\";"
+    n>)))
+@end lisp
+
+After expand the template, insert string like:
+@verbatim
+open([my $fh], "[<]", [$file]) or die "Can't {open} file {$file}: $!";
+@end verbatim
+
+the text inside ``[]'' indicate as a field, and text inside ``@{@}''
+indicate as a form, the when text inside the field changes, the
+assicated form will update too. For example if you change open mode
+from ``<'' to ``>'', the form ``open'' will change to ``create''. If
+change ``$file'' to ``"file"'' the form will change to ``file'' with
+quote removed.
+@end itemize
+
+@node re-builder-x, compile-dwim, tempo-x, Top
+@chapter Regexp building and testing tool
+
+If you have not use @command{re-builder}, please try it. The tool is
+quite simple and useful, you just input regexp in the *RE-Builder*
+buffer, the matched part in the buffer where the command is called will
+be highlighted.
+
+@file{re-builder-x.el} extend the regexp syntax to perl or any other
+languages. To enable perl regexp syntax, you have to change the syntax
+to perl first. The command is @command{reb-change-syntax}, which is
+bound to C-c TAB.
+
+In consideration of efficiency, if you make some changes in the buffer,
+the regexp will not apply in the new text unless you send current buffer
+to perl process again. You can do that by using command
+@command{reb-perl-send-buffer} which bound to C-c C-a.
+
+All commands for re-builder are available for perl syntax.
+
+@node compile-dwim, help-dwim, re-builder-x, Top
+@comment  node-name,  next,  previous,  up
+@chapter Smart compile commands
+
+cperl-mode recommend using mode-compile, but I don't like
+mode-compile. Instead, smart-compile+.el does a good job. But I found
+it is not easy to customize smart-compile+, because the user variables
+are separated for a language. So I rewrite it to
+compile-dwim(again, I like dwim).
+
+@defopt compile-dwim-alist
+Settings for certain file type.
+A list like which has form
+ (TYPE CONDITION COMPILE-COMMAND RUN-COMMAND EXE-FILE).
+
+TYPE is the language type to distinguish from others.
+
+CONDITION is a list of predicates constituted by operator ``or''.
+The predicates can be (name . REGEXP) or (mode . MAJOR-MODE) to test
+the file name match REGEXP or major-mode eq MAJOR-MODE.
+
+In COMPILE-COMMAND and RUN-COMMAND, these format specifications
+are available:
+@verbatim
+  %i  interpreter name
+  %F  absolute pathname
+  %f  file name without directory
+  %n  file name without extention
+  %e  extention of file name
+@end verbatim
+
+The interpreter is the program in the shebang line. If the
+program is valid(test with `executable-find'), then use this program,
+otherwise, use interpreter in `interpreter-mode-alist' according
+to the major mode.
+
+EXE-FILE control whether should run compile command before actual run
+or should recompile again because EXE-FILE is older than source file.
+Usually, script language don't need to set EXE-FILE.
+@end defopt
+
+@defopt compile-dwim-check-tools
+Whether checking makefile or ant or else. Default is turn on. You can
+also change the value locally by @code{make-local-variable} in
+mode-hook for certain files.
+@end defopt
+
+@node help-dwim, perldoc, compile-dwim, Top
+@comment  node-name,  next,  previous,  up
+@chapter Find documents using help-dwim
+
+A big obstacle for novice to used to emacs is that there are so many
+keys to remember. I like dwim commands. @file{help-dwim.el} provide a single
+command as interface for several kinds of document commands, such as
+@command{describe-function}, @command{describe-variable},
+@command{woman}. And you can add more if you follow the rules.
+
+A type of help-dwim commands should provide:
+@itemize
+@item
+a functions or a character sets to find which symbol under point
+@item
+an obarray to search whether the symbol belong to this type
+@item
+an optional predicate function to filter unwanted symbol
+@item
+a handler to show the document of the symbol
+@end itemize
+
+@defun help-dwim-register type activate &optional body
+Register a new type of help command. An new type has a form (TYPE .
+[FINDER OBARRAY PREDICATE HANDLER]). If ACTIVATE is non-nil, the type
+will add to @code{help-dwim-active-type}, and BODY will eval
+intermediately. BODY is the code to eval when the type is activated.
+If the type is register without activated, the BODY will add to
+@code{help-dwim-autoloads}. When you use @code{help-dwim-active-type}
+or @code{help-dwim-customize-type} add the type, the code will also
+eval then.
+@end defun
+
+@deffn Command help-dwim-customize-type
+Customize which type of help command should activate.
+@end deffn
+
+@defun help-dwim-active-type type &optional append
+Active a type for current buffer *ONLY*.
+The TYPE will gain a highest prority unless APPEND is non-nil.
+@end defun
+
+@node perldoc, perlapi, help-dwim, Top
+@comment  node-name,  next,  previous,  up
+@chapter Run perldoc using woman
+
+I like ``woman''(that is WithOut MAN). perldoc.el make it possible to
+view perl document without man. To use it with @code{help-dwim}, a
+list of modules is build automatic using a perl script
+@file{perldoc-cache.pl}. The cache can be update automaticly. It is
+configured in pde-load. @xref{pde-load}.
+
+@defun perldoc-recache-everyday &optional days
+If the cache file is expired DAYS, force caches update.
+@end defun
+
+With the @code{perldoc-obarray}, a lot of things can be done.
+@command{perldoc-tree} use this obarray to build a tree view.
+
+@defun perldoc-read-module prompt &optional require-match init
+Read a perl module name.
+When a module name at point, the module become the default input.
+Don't add ": " in PROMPT.
+@end defun
+
+@deffn Command perldoc-find-module &optional module other-window
+Find the file of perl module. With prefix argument open the file in
+other window.
+@end deffn
+
+@deffn Command perldoc-find-module-ap &optional other-window
+Find the module under point without prompt. With prefix argument open
+the file in other window.
+@end deffn
+
+@deffn Command perldoc-find-module-other-window
+Find the module under point in other window without prompt.
+@end deffn
+
+@node perlapi, windata, perldoc, Top
+@comment  node-name,  next,  previous,  up
+@chapter Find document in perlapi
+
+This is orignal a demo for help-dwim. Useful if you are writing XS.
+
+@defopt perlapi-src-directory
+Directory where the Perl source files can be found.
+If setted, the definition of the symbol can be found when put the
+button in the document.
+@end defopt
+
+@node windata, tree-mode, perlapi, Top
+@comment  node-name,  next,  previous,  up
+@chapter Window configuration to list
+
+Emacs can save window configuration when it is running. The
+configuration can be persisted between different sessions.
+@file{windata} provide a way to save window configuration.
+
+@defun windata-current-winconf
+Convert window configurate to a list. The CAR part of the list
+describe how to restore the window, the CDR part of the list determine
+which window is selected.
+@end defun
+
+@defun windata-restore-winconf &optional inside-p
+Restore window configuration from `windata-current-winconf'.
+When INSIDE-P is non-nil, that mean the window configuration
+is restore in current window, that is to say don't delete other
+windows before restore the configuration.
+@end defun
+
+@defopt windata-data-function
+A function to extract data for future restore window. Default is save
+the window buffer name. Accept one parameter, the window, and should
+return a lisp object that has print syntax.
+@end defopt
+
+@defopt windata-data-restore-function
+A function to restore window buffer from saved data. Default is set
+window buffer to the buffer with saved name. Accept two parameters,
+the window and a saved lisp object by @code{windata-data-function}.
+@end defopt
+
+@deffn Command windata-name-winconf name
+Save window configuration with NAME.
+@end deffn
+
+@deffn Command windata-restore-named-winconf name
+Restore saved window configuration by NAME.
+@end deffn
+
+@defun windata-display-buffer buf frame-p dir size &optional delete-p
+Display buffer more precisely.
+FRAME-P is non-nil and not window, the displayed buffer affect
+the whole frame, that is to say, if DIR is right or left, the
+displayed buffer will show on the right or left in the frame. If
+it is nil, the buf will share space with current window.
+
+DIR can be one of member of (right left top bottom).
+
+SIZE is the displayed windowed size in width(if DIR is left or
+right) or height(DIR is top or bottom). It can be a decimal which
+will stand for percentage of window(frame) width(heigth)
+
+DELETE-P is non-nil, the other window will be deleted before
+display the BUF.
+@end defun
+
+The behavior of @code{windata-display-buffer} is better show as
+following pictures:
+@lisp
+(setq buf (get-buffer "*Messages*"))
+(windata-display-buffer buf 'window 'top 0.3 nil)    ; 2
+(windata-display-buffer buf 'window 'bottom 0.3 nil) ; 3
+(windata-display-buffer buf 'window 'left 0.3 nil)   ; 4
+(windata-display-buffer buf 'window 'right 0.3 nil)  ; 5
+
+(windata-display-buffer buf 'frame 'top 0.3 nil)     ; 6
+(windata-display-buffer buf 'frame 'bottom 0.3 nil)  ; 7
+(windata-display-buffer buf 'frame 'left 0.3 nil)    ; 8
+(windata-display-buffer buf 'frame 'right 0.3 nil)   ; 9
+
+;; when delete-p is presented, FRAME-P make no sense.
+(windata-display-buffer buf 'frame 'top 0.3 t)       ; 10
+(windata-display-buffer buf 'frame 'bottom 0.3 t)    ; 11
+(windata-display-buffer buf 'frame 'left 0.3 t)      ; 12
+(windata-display-buffer buf 'frame 'right 0.3 t)     ; 13
+(windata-display-buffer buf 'window 'top 0.3 t)      ; 10
+(windata-display-buffer buf 'window 'bottom 0.3 t)   ; 11
+(windata-display-buffer buf 'window 'left 0.3 t)     ; 12
+(windata-display-buffer buf 'window 'right 0.3 t)    ; 13
+@end lisp
+
+@verbatim
+   +------+-------+    +------+-------+    +------+-------+
+   |      |       |    |      | N     |    |      |       |
+   |      | P     |    |      |-------+    |      | P     |
+   |      |       |    |      | P     |    |      |       |
+   |      |       |    |      |       |    |      +-------+
+   |      |       |    |      |       |    |      | N     |
+   +------+-------+    +------+-------+    +------+-------+
+         (1)                 (2)                 (3)
+   +------+--+----+    +------+----+--+    +--------------+
+   |      |  |    |    |      |    |  |    |      N       |
+   |      |N | P  |    |      | P  |N |    +------+-------+
+   |      |  |    |    |      |    |  |    |      |       |
+   |      |  |    |    |      |    |  |    |      | P     |
+   |      |  |    |    |      |    |  |    |      |       |
+   +------+--+----+    +------+----+--+    +------+-------+
+        (4)                  (5)                 (6)
+   +------+-------+    +---+-----+----+    +----+----+----+
+   |      |       |    |   |     |    |    |    |    |    |
+   |      | P     |    | N |     |    |    |    |    |    |
+   |      |       |    |   |     | P  |    |    | P  | N  |
+   +------+-------+    |   |     |    |    |    |    |    |
+   |      N       |    |   |     |    |    |    |    |    |
+   +--------------+    +---+-----+----+    +----+----+----+
+        (7)                  (8)                 (9)
+   +--------------+    +--------------+    +----+---------+
+   |    N         |    |              |    |    |         |
+   +--------------+    |     P        |    | N  | P       |
+   |    P         |    |              |    |    |         |
+   |              |    +--------------+    |    |         |
+   |              |    |     N        |    |    |         |
+   +--------------+    +--------------+    +----+---------+
+        (10)                 (11)                (12)
+   +----------+---+
+   |          |   |
+   |   P      | N |
+   |          |   |
+   |          |   |
+   |          |   |
+   +----------+---+
+        (13)
+@end verbatim
+
+The start window is as picture 1, the selected window is indicated by
+``P'', and new appear window indicated by ``N''. The simplest
+sitiation is when DELETE-P is non-nil, after calling the function,
+there are only two window left. When FRAME-P is 'window or nil, the
+new window will only take the space from the selected window. When
+FRAME-P is non-nil except 'window, the original window still has
+the same configuration.
+
+@node tree-mode, imenu-tree, windata, Top
+@comment  node-name,  next,  previous,  up
+@chapter More commands on tree-widget
+
+@file{tree-mode.el} provide more commands to tree-widget.
+
+@table @kbd
+
+@item n
+@kindex n (tree-mode-next-node)
+@findex tree-mode-next-node
+@code{tree-mode-next-node} - Move to next node.
+
+@item p
+@kindex p (tree-mode-previous-node)
+@findex tree-mode-previous-node
+@code{tree-mode-previous-node} - Move to previous node
+
+@item j
+@kindex j (tree-mode-next-sib)
+@findex tree-mode-next-sib
+@code{tree-mode-next-sib} - Move to next sibling node.
+
+@item k
+@kindex k (tree-mode-previous-sib)
+@findex tree-mode-previous-sib
+@code{tree-mode-previous-sib} - Move to previous sibling node.
+
+@item u
+@kindex u (tree-mode-goto-parent)
+@findex tree-mode-goto-parent
+@code{tree-mode-goto-parent} - Move to parent node.
+
+@item r
+@kindex r (tree-mode-goto-root)
+@findex tree-mode-goto-root
+@code{tree-mode-goto-root} - Move to root node
+
+@item g
+@kindex g (tree-mode-reflesh)
+@findex tree-mode-reflesh
+@code{tree-mode-reflesh} - Reflesh parent tree. useful restore after
+sort or delete node
+
+@item e
+@kindex e (tree-mode-toggle-expand)
+@findex tree-mode-toggle-expand
+@code{tree-mode-toggle-expand} - Expand or contract tree at point.
+With prefix argument, expand the tree.
+
+@item E
+@kindex E (tree-mode-expand-level)
+@findex tree-mode-expand-level
+@code{tree-mode-expand-level} - Expand tree to LEVEL. With prefix
+argument 0 or negative, will expand all leaves of the tree.
+
+@item s
+@kindex s (tree-mode-sort-by-tag)
+@findex tree-mode-sort-by-tag
+@code{tree-mode-sort-by-tag} - Sort children node by tag.
+
+@item /
+@kindex / (tree-mode-keep-match)
+@findex tree-mode-keep-match
+@code{tree-mode-keep-match} - Keep node which tag match REGEXP
+
+@item !
+@kindex ! (tree-mode-collapse-other-except)
+@findex tree-mode-collapse-other-except
+@code{tree-mode-collapse-other-except} - Collapse other trees. If the
+tree at point is contract, expand it.
+
+@item D
+@kindex D (tree-mode-delete-tree)
+@findex tree-mode-delete-tree
+@code{tree-mode-delete-tree} - Delete a tree from buffer.
+
+@end table
+
+The icon for push-button in tree-widget is limited 4 types: open,
+close, empty and leaf. tree-mode provide a method to settup icon of
+push-button by put an addition attribute :button-icon in tree-widget
+node.
+
+@node imenu-tree, tags-tree, tree-mode, Top
+@comment  node-name,  next,  previous,  up
+@chapter Tree view for imenu
+
+imenu provide an excellent code navigating method. @file{imenu-tree.el} make the
+tags visualized using tree-widget.
+
+@defopt imenu-tree-auto-update
+If Non-nil, the imenu-tree will update automaticly. Also, if the
+imenu-tree is not visible in the window, it will automaticly scroll to
+make it visible.
+@end defopt
+
+@defopt imenu-tree-update-interval
+Seconds between update imenu tree.
+@end defopt
+
+@deffn Command imenu-tree-toggle-auto-update
+Toggle imenu-tree auto update.
+With prefix argument, turn on auto update.
+@end deffn
+
+@defopt imenu-tree-create-buffer-function
+A function to group imenu-tree to various buffer. Default is nil,
+means using only one buffer.
+@end defopt
+
+@defopt imenu-tree-name
+The name for the root node. Default is the ``mode-name: buffer-name''.
+@end defopt
+
+@defopt imenu-tree-windata
+Arguments to set the window buffer display.
+See @code{windata-display-buffer} for setup the arguments.
+@end defopt
+
+@node tags-tree, perltidy, imenu-tree, Top
+@comment  node-name,  next,  previous,  up
+@chapter Tree view of TAGS
+
+@file{tags-tree.el} read TAGS file and display them using tree-widget.
+
+@defopt tags-tree-create-buffer-function
+A function to group tags-tree to various buffer. Default is nil,
+means using only one buffer.
+@end defopt
+
+@defopt tags-tree-group-file-function
+A function to group files.
+Accept one parameter, a file list in TAGS file. Return a tree like:
+@verbatim
+   ("Root name"
+    ("Group1"
+     ("file1" . "full name of file1"))
+    ("Group2"
+     ("subgroup"
+      ("file2" . "full name of file2"))))
+@end verbatim
+
+Default is tags-tree-group-file-by-name, Which group all files
+according to file path.
+@end defopt
+
+@defopt tags-tree-group-tags-function
+A function to group tags.
+Accept one parameter, a list of tags info, return a tree like:
+@verbatim
+  ((("group1")
+    (("subgroup1")
+     ("tag1" . tag-info))
+    ("tag2" . tag-info))
+   (("group2")
+    ("tag3" . tag-info)))
+@end verbatim
+
+Default is tags-tree-group-tags which group by
+@code{tags-tree-group-tags-expression} which much like
+@code{imenu-generic-expression}. 
+@end defopt
+
+The TAGS file can be update by extern file when in tags-tree.
+@table @kbd
+@item G
+@kindex G (tags-tree-update-file)
+@findex tags-tree-update-file
+@command{tags-tree-update-file} - update TAGS of current file under
+point or file of tag under point.
+
+@end table
+
+@defopt tags-tree-tags-update-program
+Program to update TAGS for a file. Default is @file{myetags} which is
+written using perl.
+@end defopt
+
+@node perltidy, perlcritic, tags-tree, Top
+@comment  node-name,  next,  previous,  up
+@chapter Calling perltidy 
+
+A collection of commands to call perltidy on buffer or region.
+@xref{pde}.
+
+@node perlcritic, perldb-ui, perltidy, Top
+@comment  node-name,  next,  previous,  up
+@chapter Calling perlcritic
+
+``perlcritic'' is a Perl source code analyzer. See
+@command{perldoc perlcritic} for detail document of the program.
+@file{perlcritic.el} provide an interface to use ``perlcritic'' in
+Emacs. It invoke the program using @command{compile}, highlight
+severity and add hyperlink to the error.
+
+@deffn Command perlcritic
+Call perlcritic interactive. You can give your argments in the
+minibuffer. Default perform analyzing current visited file.
+@end deffn
+
+@deffn Command perlcritic-region
+perlcritic is known run a little slow. You can use this command to
+analyze only a part of file.
+@end deffn
+
+perlcritic provide a lot of options in command line.
+@file{perlcritic.el} only support a few of options. Additional options
+can be input in the minibuffer or write your profile, default is
+@file{.perlcriticrc}.
+
+@defopt perlcritic-profile
+Specify an alternate .perlcriticrc file.
+If value is nil, use -noprofile,
+If value is t, use the default profile .perlcriticrc,
+If non-nil, and the profile exists, use the profile.
+@end defopt
+
+@defopt perlcritic-severity
+Default severity level is 5 and perlcritic-severity value is nil.
+@end defopt
+
+@defopt perlcritic-top
+Report only the top N Policy violations in each file.
+If the -severity option is not explicitly given, the -top option
+implies that the minimum severity level is 1. Users can redefine
+the severity for any Policy in their .perlcriticrc file.
+@end defopt
+
+@defopt perlcritic-include
+Directs ``perlcritic'' to apply additional Policies
+that match the regex ``/PATTERN/imx''.
+@end defopt
+
+@defopt perlcritic-exclude
+Directs ``perlcritic'' to not apply any Policy that
+matches the regex ``/PATTERN/imx''.
+@end defopt
+
+@node perldb-ui, inf-perl, perlcritic, Top
+@comment  node-name,  next,  previous,  up
+@chapter Perl Debugger
+
+perldb provide the minimal debugger interface in emacs. @file{perldb-ui.el} try
+to extend it more like gdb-ui. Not finished yet. But all interface
+will not change too much in future.
+
+The main idea to communicate with perldb process is using .perldb to
+add a batch of subroutines to call in emacs. With those subroutines,
+it is easier to get information from the process.
+
+@defopt perldb-many-windows
+If non-nil, display layout in `perldb-window-configuration'.
+@end defopt
+
+@defopt perldb-use-separate-io-buffer
+Non-nil means display output from the debugged program in a separate buffer.
+@end defopt
+
+@deffn Command perldb-many-windows
+Toggle the number of windows in the basic arrangement.
+With arg, display additional buffers iff arg is positive.
+@end deffn
+
+@deffn Command perldb-restore-windows
+Restore the basic arrangement of windows used by perldb-ui.
+This arrangement depends on the value of `perldb-many-windows'.
+@end deffn
+
+@deffn Command perldb-save-window-configuration
+Save current window configuration as default.
+With prefix argument, just setup for current session.
+@end deffn
+
+perl5db provides a convenient command line interface. Most case, it is
+more quick using command than calling an emacs command. If you want
+control debugger in source buffer, maybe turn on
+@command{perldb-gud-mode} is a good choice.
+
+@table @kbd
+@item n
+@kindex n (gud-next)
+@findex gud-next
+@code{gud-next} - Step one line (skip functions).
+
+@item SPC
+@kindex  SPC (gud-next)
+@findex gud-next
+@code{gud-next} - Step one line (skip functions).
+
+@item s
+@kindex s (gud-step)
+@findex gud-step
+@code{gud-step} - Step one source line with display.
+
+@item u
+@kindex u (gud-until)
+@findex gud-until
+@code{gud-until} - Continue to current line.
+
+@item r
+@kindex r (gud-return)
+@findex gud-return
+@code{gud-return} - Return from current subroutine.
+
+@item c
+@kindex c (gud-cont)
+@findex gud-cont
+@code{gud-cont} - Continue with display.
+
+@item b
+@kindex b (gud-break)
+@findex gud-break
+@code{gud-break} - Set breakpoint at current line.
+
+@item d
+@kindex d (gud-remove)
+@findex gud-remove
+@code{gud-remove} - Remove breakpoint at current line
+
+@item p
+@kindex p (gud-print)
+@findex gud-print
+@code{gud-print} - Evaluate perl expression at point.
+
+@item x
+@kindex x (gud-dump)
+@findex gud-dump
+@code{gud-dump} - Dumper data
+
+@item l
+@kindex l (gud-refresh)
+@findex gud-refresh
+@code{gud-refresh} - Fix up a possibly garbled display, and redraw the
+arrow.
+
+@item q
+@kindex q (perldb-gud-mode)
+@findex perldb-gud-mode
+@code{perldb-gud-mode} - quit perldb-gud-mode.
+
+@end table
+
+@emph{Know Bugs}
+
+@itemize
+@item
+You cannot run two or more debugger at the same time. The global
+variables may conflict.
+@item
+Sometimes may not run stable. You may have to restart the debugger.
+@end itemize
+
+@node inf-perl, Function Index, perldb-ui, Top
+@comment  node-name,  next,  previous,  up
+@chapter Interactive perl shell
+
+An interactive shell is easier to prove some simple idea or check a
+piece of code. Also it is easier to debug or learn certain module
+without write, save, run.
+
+Actually, a @command{perl -de 1} is a good interactive shell. But I'd
+rather use a simple, but easier to customize and extend, shell.
+
+@defopt inf-perl-shell-program
+The location of interactive shell program. Default is @file{psh.pl}.
+You can change it to ``-de 1'' if you want it be a debugger or
+@file{gtksh.pl} if you want develop with Gtk2-Perl.
+@end defopt
+
+@defopt inf-perl-start-file
+The code to load when start up.
+@end defopt
+
+@defopt inf-perl-options
+extra command line options.
+@end defopt
+
+@defopt inf-perl-remove-my
+lexcial variable can not live after eval. So when this option turn on,
+when send one line code to process, the my declaration at beginning of
+line will be removed. The variable(s) will become global.
+@end defopt
+
+For key bindings in cperl-mode, @xref{pde}.
+
+@node Function Index, Variable Index, inf-perl, Top
+@unnumbered Function Index
+@printindex fn
+
+@node Variable Index, Keybinding Index, Function Index, Top
+@unnumbered Variable Index
+@printindex vr
+
+@node Keybinding Index,  , Variable Index, Top
+@unnumbered Keybinding Index
+@printindex ky
+
+@bye

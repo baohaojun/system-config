@@ -1,0 +1,89 @@
+<html lang="en">
+<head>
+<title>help-dwim - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="compile_002ddwim.html#compile_002ddwim" title="compile-dwim">
+<link rel="next" href="perldoc.html#perldoc" title="perldoc">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="help-dwim"></a>
+<a name="help_002ddwim"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="perldoc.html#perldoc">perldoc</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="compile_002ddwim.html#compile_002ddwim">compile-dwim</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">14 Find documents using help-dwim</h2>
+
+<p>A big obstacle for novice to used to emacs is that there are so many
+keys to remember. I like dwim commands. <samp><span class="file">help-dwim.el</span></samp> provide a single
+command as interface for several kinds of document commands, such as
+<samp><span class="command">describe-function</span></samp>, <samp><span class="command">describe-variable</span></samp>,
+<samp><span class="command">woman</span></samp>. And you can add more if you follow the rules.
+
+   <p>A type of help-dwim commands should provide:
+     <ul>
+<li>a functions or a character sets to find which symbol under point
+<li>an obarray to search whether the symbol belong to this type
+<li>an optional predicate function to filter unwanted symbol
+<li>a handler to show the document of the symbol
+</ul>
+
+<div class="defun">
+&mdash; Function: <b>help-dwim-register</b><var> type activate &amp;optional body<a name="index-help_002ddwim_002dregister-90"></a></var><br>
+<blockquote><p>Register a new type of help command. An new type has a form (TYPE . 
+[FINDER OBARRAY PREDICATE HANDLER]). If ACTIVATE is non-nil, the type
+will add to <code>help-dwim-active-type</code>, and BODY will eval
+intermediately. BODY is the code to eval when the type is activated. 
+If the type is register without activated, the BODY will add to
+<code>help-dwim-autoloads</code>. When you use <code>help-dwim-active-type</code>
+or <code>help-dwim-customize-type</code> add the type, the code will also
+eval then. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Command: <b>help-dwim-customize-type</b><var><a name="index-help_002ddwim_002dcustomize_002dtype-91"></a></var><br>
+<blockquote><p>Customize which type of help command should activate. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>help-dwim-active-type</b><var> type &amp;optional append<a name="index-help_002ddwim_002dactive_002dtype-92"></a></var><br>
+<blockquote><p>Active a type for current buffer *ONLY*. 
+The TYPE will gain a highest prority unless APPEND is non-nil. 
+</p></blockquote></div>
+
+   </body></html>
+

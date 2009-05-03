@@ -1,0 +1,192 @@
+<html lang="en">
+<head>
+<title>template-simple - Perl Development Environment</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Perl Development Environment">
+<meta name="generator" content="makeinfo 4.8">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="pde_002dutil.html#pde_002dutil" title="pde-util">
+<link rel="next" href="tabbar_002dx.html#tabbar_002dx" title="tabbar-x">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This is manual for PDE version 0.01
+
+ (C) 2004, 2005, 2006, 2007
+   Free Software Foundation, Inc.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.1 or any later version published by the Free Software
+     Foundation; with no Invariant Sections, no Front-Cover Texts, and
+     no Back-Cover Texts. A copy of the license is included in the
+     section entitled "GNU Free Documentation License".
+   -->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<p>
+<a name="template-simple"></a>
+<a name="template_002dsimple"></a>
+Next:&nbsp;<a rel="next" accesskey="n" href="tabbar_002dx.html#tabbar_002dx">tabbar-x</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="pde_002dutil.html#pde_002dutil">pde-util</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">9 New file with template</h2>
+
+<p>template.el is exists, why template-simple? First of all, it is
+simple, the there is only one core function <code>template-compile</code>.
+
+<div class="defun">
+&mdash; Function: <b>template-compile</b><var><a name="index-template_002dcompile-74"></a></var><br>
+<blockquote><p>Parse current buffer to parsed template. 
+</p></blockquote></div>
+
+   <p>The parsed template contains a list of strings, symbols or lisp forms. 
+The strings is inserted directly. 
+The symbol can be a predefined value in <code>template-default-alist</code>,
+or can be translate by <code>template-expand-function</code>. The lisp forms
+is handled by <code>template-expand-function</code>.
+
+<div class="defun">
+&mdash; User Option: <b>template-expand-function</b><var><a name="index-template_002dexpand_002dfunction-75"></a></var><br>
+<blockquote><p>Functions to expand parsed template. There are two candicate functions
+available in template-simple: <code>template-skeleton-expand</code> and
+<code>template-tempo-expand</code>. Default function is
+<code>template-tempo-expand</code>, because I think tempo provide more
+fetures and flexibility than skeleton. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>define-template-expander</b><var> name alist &amp;rest body<a name="index-define_002dtemplate_002dexpander-76"></a></var><br>
+<blockquote><p>Define a new type of <code>template-expand-function</code>. NAME is used to
+create a function template-&lt;NAME&gt;-expand. ALIST can be a symbol or a
+form to return a list of symbol table add to <code>template-default-alist</code>. 
+BODY is the code to expand and insert the template. the value of
+variable TEMPLATE is the translated template. The element of parsed
+template is translated by <code>template-expansion</code>
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>template-simple-expand-template</b><var> file<a name="index-template_002dsimple_002dexpand_002dtemplate-77"></a></var><br>
+<blockquote><p>Expand template in file. 
+Parse the template to parsed templates with <code>template-compile</code>. 
+Use <code>template-expand-function</code> to expand the parsed template. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>template-simple-expand</b><var> template<a name="index-template_002dsimple_002dexpand-78"></a></var><br>
+<blockquote><p>Expand string template. 
+template can be a string or a parsed template. If it is string,
+parse the template to parsed templates with <code>template-compile</code>. 
+Use <code>template-expand-function</code> to expand the parsed template. 
+</p></blockquote></div>
+
+   <p>template-simple is designed to compatible to template.el, so the
+default open and close parentheses is &ldquo;(&gt;&gt;&gt;&rdquo; and &ldquo;&lt;&lt;&lt;)&rdquo;. Note that
+global value of <code>template-expand-function</code> is saved in
+<code>template-simple-expand</code>. The same case happened to
+<code>template-parens</code> in <code>template-compile</code>. So If you need
+change them temporary for certain template, you can set
+<code>template-parens</code> and <code>template-expand-function</code> like file
+variable, for example:
+
+<pre class="verbatim">
+   (template-simple-expand
+    ";; -*- template-parens: (\"{\" . \"}\"); template-expand-function: template-tempo-expand -*-
+     (defun {p} ({p})
+       \"{p}\"
+       {p}
+       )")
+</pre>
+
+   <p>This will expand by <code>template-tempo-expand</code> but not default
+expand function. Luckily in most case, template of tempo and skeleton
+can be the same, so you don't have to set
+<code>template-expand-function</code>. If your template uses element that
+only exists in tempo or skeleton, you'd better set it in template to
+make sure the <code>template-simple-expand</code> select the correct one.
+
+   <p>The major purpose of template-simple is used for fill empty file using
+predefined template.
+
+<div class="defun">
+&mdash; User Option: <b>template-directory-list</b><var><a name="index-template_002ddirectory_002dlist-79"></a></var><br>
+<blockquote><p>A list of directories for lookup template files. Default is
+&ldquo;~/.templates/&rdquo; and <code>auto-insert-directory</code>. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; Function: <b>template-derive-template</b><var><a name="index-template_002dderive_002dtemplate-80"></a></var><br>
+<blockquote><p>Find proper template for current file. The template file is a file
+with name &ldquo;TEMPLATE&rdquo; and the same extension of current file under
+<code>template-directory</code>. You can add a suffix &ldquo;.tpl&rdquo; to the
+template file name too, just for compatible with templates provide by
+template.el. If the file didn't have extension, the template file's
+extension is current file name, for example, &ldquo;TEMPLATE.Makefile&rdquo; is
+template file for &ldquo;Makefile&rdquo;. 
+</p></blockquote></div>
+
+<div class="defun">
+&mdash; User Option: <b>template-default-alist</b><var><a name="index-template_002ddefault_002dalist-81"></a></var><br>
+<blockquote><p>Predefined symbol for template file. Symbols to lookup in this table
+is case insensitive. 
+</p></blockquote></div>
+
+   <p>Here is a list of predefined symbol:
+     <ul>
+<li>dir         default directory of current file
+<li>file        basename(without directory) of current file
+<li>file-sans   file name without extension and directory
+<li>file-ext    file extension
+<li>file-upcase upcased file-sans
+<li>date        formated time string using <code>template-date-format</code>
+<li>cdate       formated time string using <code>template-cdate-format</code>
+               with <code>system-time-locale</code> value is &ldquo;C&rdquo;
+<li>iso-date    &ldquo;%Y-%m-%d&rdquo; time string
+<li>vc-date     &ldquo;%Y/%m/%d %T&rdquo; time string with time-zone &ldquo;UTC&rdquo;
+<li>year        &ldquo;%Y&rdquo;
+<li>time        formated time string using <code>template-time-format</code>
+<li>author      user-mail-address
+<li>user-name   user-full-name
+<li>login-name  user-login-name
+<li>host-addr   mail-host-address
+</ul>
+
+   <p>A neat function provided by template.el is the file name in
+the header can automatic update when the file is renamed. 
+template-simple also provide this feature.
+
+<div class="defun">
+&mdash; Function: <b>template-simple-update-header</b><var><a name="index-template_002dsimple_002dupdate_002dheader-82"></a></var><br>
+<blockquote><p>update file header when needed. The file header is a line match
+<code>template-header-regexp</code> at first 3 lines in current file. 
+</p></blockquote></div>
+
+   <p>A typical file header is like:
+<pre class="verbatim">
+   ;;; file-name --- short description
+</pre>
+
+   <p>or
+<pre class="verbatim">
+   /* @(#)file-name   short description
+    */
+</pre>
+
+   </body></html>
+
