@@ -16,8 +16,9 @@ done
 rm tramp* -rf
 cd ~/doc
 regedit /s ImeNoToggle.reg
-
+export PATH=~/bin/windows/gnuserv:"$PATH"
 cd ~/bin/windows/startup
+
 
 for x in *; do 
     cygstart "$x"
