@@ -38,6 +38,9 @@ This function does not modify point or mark."
       (prog1
           (point)
         (goto-char here))))
+  (setq locate-command "~/bin/windows/redirect/locateEmacs.exe")
+  (setq w3m-dirlist-cgi-program "~/bin/windows/redirect/w3m-dirlist.exe")
+
   (autoload 'nsi-mode "nsi-mode" "nsi editing mode." t)
   (add-to-list 'auto-mode-alist '("\\.nsi$" . nsi-mode))
 
@@ -625,7 +628,6 @@ This function does not modify point or mark."
  '(indent-tabs-mode nil)
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))
- '(locate-command "~/bin/locateEmacs.exe")
  '(mail-sources (quote ((file :path (concat cygwin-drive "/cygwin/var/spool/mail/bhj")))))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
@@ -927,7 +929,6 @@ div.tl{
  '(w3m-bookmark-file "c:/Documents and Settings/bhj/.w3m_bookmark.html")
  '(w3m-charset-coding-system-alist (quote ((x-sjis . shift_jis) (x-shift_jis . shift_jis) (x-shift-jis . shift_jis) (x-euc-jp . euc-japan) (shift-jis . shift_jis) (x-unknown . undecided) (unknown . undecided) (windows-874 . tis-620) (iso-2022-jp-3 . iso-2022-7bit-ss2) (us_ascii . raw-text) (gb2312 . gb18030))))
  '(w3m-default-display-inline-images t)
- '(w3m-dirlist-cgi-program "~/bin/w3m-dirlist.exe")
  '(w3m-toggle-inline-images-permanently nil)
  '(weblogger-config-alist (quote (("yo2.cn" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")) ("bhj3" ("user" . "admin") ("server-url" . "http://bhj3/blog/xmlrpc.php") ("weblog" . "1")) ("default" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")))))
  '(woman-file-compression-regexp "\\.\\(g?z\\|bz2\\)\\(.lnk\\)?\\'")
