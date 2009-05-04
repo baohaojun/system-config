@@ -1,0 +1,7 @@
+#!/bin/bash
+if ls *.dsw
+then
+    msdev ./*.dsw /make "$@" 
+else 
+    msdev ../*.dsw /make "$@"
+fi
