@@ -1739,8 +1739,7 @@ int UserDict::put_lemmas_no_sync_from_utf16le_string(char16 * lemmas, int len) {
   char16 * p = ptr, * py16 = ptr;
   char16 * hz16 = NULL;
   int py16_len = 0;
-  uint16 * splid = NULL;
-  int splid_size = 0;
+  uint16 splid[kMaxLemmaSize];
   int splid_len = 0;
   int hz16_len = 0;
   char16 * fr16 = NULL;
@@ -1759,16 +1758,12 @@ int UserDict::put_lemmas_no_sync_from_utf16le_string(char16 * lemmas, int len) {
     if (p - ptr == len)
       break;
     py16_len = p - py16;
-    if (splid_size < splid_len) {
-      char16 * tid = (char16*)realloc(splid, splid_len * 2);
-      if (!tid)
-        break;
-      splid = tid;
-      splid_size = splid_len * 2;
+    if (kMaxLemmaSize < splid_len) {
+      break;
     }
     bool is_pre;
     int splidl = spl_parser->splstr16_to_idxs_f(
-        py16, py16_len, splid, NULL, splid_size, is_pre);
+        py16, py16_len, splid, NULL, kMaxLemmaSize, is_pre);
     if (splidl != splid_len)
       break;
     // Phrase
