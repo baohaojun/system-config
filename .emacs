@@ -41,6 +41,42 @@ This function does not modify point or mark."
   (setq locate-command "~/bin/windows/redirect/locateEmacs.exe")
   (setq w3m-dirlist-cgi-program "~/bin/windows/redirect/w3m-dirlist.exe")
 
+  (require 'starttls)
+
+  (defun starttls-negotiate-gnutls (process)
+    "Negotiate TLS on PROCESS opened by `open-starttls-stream'.
+This should typically only be done once.  It typically returns a
+multi-line informational message with information about the
+handshake, or nil on failure."
+    (let (buffer info old-max done-ok done-bad)
+      (if (null (setq buffer (process-buffer process)))
+          ;; XXX How to remove/extract the TLS negotiation junk?
+        (call-process "/bin/kill" nil nil nil
+                      "-ALRM" (format "%d" (process-id process)))
+        (with-current-buffer buffer
+          (save-excursion
+            (setq old-max (goto-char (point-max)))
+            (call-process "/bin/kill" nil nil nil
+                          "-ALRM" (format "%d" (process-id process)))
+            (while (and (processp process)
+                        (eq (process-status process) 'run)
+                        (save-excursion
+                          (goto-char old-max)
+                          (not (or (setq done-ok (re-search-forward
+                                                  starttls-success nil t))
+                                   (setq done-bad (re-search-forward
+                                                   starttls-failure nil t))))))
+              (accept-process-output process 1 100)
+              (sit-for 0.1))
+            (setq info (buffer-substring-no-properties old-max (point-max)))
+            (delete-region old-max (point-max))
+            (if (or (and done-ok (not done-bad))
+                    ;; Prevent mitm that fake success msg after failure msg.
+                    (and done-ok done-bad (< done-ok done-bad)))
+                info
+              (message "STARTTLS negotiation failed: %s" info)
+              nil))))))
+
   (autoload 'nsi-mode "nsi-mode" "nsi editing mode." t)
   (add-to-list 'auto-mode-alist '("\\.nsi$" . nsi-mode))
 
