@@ -126,12 +126,13 @@ class GrepAll:
             + self.prunes + [')', '-prune', '-o', '-type', 'f', '(', '-false' ] \
             + self.finds + [')', '-print']
 
-        self.newerFindCommand = ['find', dir_, '-newer', self.findCache, '(', '(' ] + find_pre_prunes \
-            + self.prunes + [')', '-prune', '-o', '-type', 'f', '(', '-false' ] \
-            + self.finds + [')', '-print', ')']
+        self.newerFindCommand = ['find', dir_, '(' ] + find_pre_prunes \
+            + self.prunes + [')', '-prune', '-o', '-type', 'f', '-newer', self.findCache, '(', '-false' ] \
+            + self.finds + [')', '-print']
 
         self.newerGrepCommand = self.newerFindCommand[:]
-        self.newerGrepCommand[3] = self.grepCache
+        i = self.newerGrepCommand.index(self.findCache)
+        self.newerGrepCommand[i] = self.grepCache
 
         self.grepCommand = ['grep', 
                             '-e', 
