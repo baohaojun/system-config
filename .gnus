@@ -28,24 +28,25 @@
                   (nnfolder-directory "~/Mail/sent-mail/")
                   (nnfolder-get-new-mail nil)))
 
-;; (setq message-send-mail-function 'smtpmail-send-it
-;;       smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-;;       smtpmail-auth-credentials '(("smtp.gmail.com" 587 "baohaojun@gmail.com" nil))
-;;       user-mail-address "baohaojun@gmail.com"
-;;       smtpmail-default-smtp-server "smtp.gmail.com"
-;;       smtpmail-smtp-server "smtp.gmail.com"
-;;       smtpmail-smtp-service 587
-;;       smtpmail-local-domain "borqs.com")
-
-
 (setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-starttls-credentials '(("smtp.bizmail.yahoo.com" 587 nil nil))
-      smtpmail-auth-credentials '(("smtp.bizmail.yahoo.com" 587 "haojun.bao@borqs.com" nil))
-      smtpmail-default-smtp-server "smtp.bizmail.yahoo.com"
-      user-mail-address "haojun.bao@borqs.com"
-      smtpmail-smtp-server "smtp.bizmail.yahoo.com"
+      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+      smtpmail-auth-credentials '(("smtp.gmail.com" 587 "baohaojun@gmail.com" nil))
+      user-mail-address "baohaojun@gmail.com"
+      smtpmail-default-smtp-server "smtp.gmail.com"
+      smtpmail-smtp-server "smtp.gmail.com"
       smtpmail-smtp-service 587
-      smtpmail-local-domain "yahoo.com")
+      mail-default-reply-to "haojun.bao@borqs.com"
+      smtpmail-local-domain "borqs.com")
+
+
+;; (setq message-send-mail-function 'smtpmail-send-it
+;;       smtpmail-starttls-credentials '(("smtp.bizmail.yahoo.com" 587 nil nil))
+;;       smtpmail-auth-credentials '(("smtp.bizmail.yahoo.com" 587 "haojun.bao@borqs.com" nil))
+;;       smtpmail-default-smtp-server "smtp.bizmail.yahoo.com"
+;;       user-mail-address "haojun.bao@borqs.com"
+;;       smtpmail-smtp-server "smtp.bizmail.yahoo.com"
+;;       smtpmail-smtp-service 587
+;;       smtpmail-local-domain "yahoo.com")
 
 (setq gnus-default-charset 'chinese-iso-8bit
       gnus-group-name-charset-group-alist '((".*" . chinese-iso-8bit))

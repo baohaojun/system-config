@@ -55,6 +55,8 @@ class GrepAllParse:
             elif theArg == '-e':
                 self.pattern = argsList[i]
                 i = i + 1
+            elif theArg == '-cd': #clear dirs
+                self.dirs = set(())
             elif theArg[0:1] == '-':
                 self.grepOpts.append(theArg)
             else:
@@ -267,7 +269,6 @@ class GrepAll:
             if not self.reGrepSet[-1]:
                 del self.reGrepSet[-1]
         if self.reGrepSet:
-            print 'need regrep', self.reGrepSet
             self.grepPipe = Popen(self.grepCommand + self.reGrepSet, stdout=PIPE, stdin=open('/dev/null', 'r'))
             tmpGCFile = open(self.tmpGrepCache, 'a')
             while True:
