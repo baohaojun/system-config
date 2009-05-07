@@ -686,3 +686,4 @@ svn switch --relocate file:///d:/svn/engtool file:///d/svn/engtool
 while true; do echo 111 > /sys/android_power/acquire_partial_wake_lock; sleep 2; echo done; done
 
 tcpdump.exe -i 4 -A -XX host smtp.gmail.com
+c:\grldr="Install Ubuntu"
