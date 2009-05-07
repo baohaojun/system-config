@@ -1,0 +1,688 @@
+
+clearmake PRODUCT=keywest TEST_ENGBLD=1 build 
+clearmake PRODUCT=keywest PRODUCT_CONF=x86 TEST_ENGBLD=1 build 
+clearmake PRODUCT=keywest PRODUCT_CONF=x86 TEST_ENGBLD=1 BUILD_DEPS=0 build 
+bsub 'cd /vobs/linuxjava/platform && clearmake PRODUCT=keywest PRODUCT_CONF=x86 TEST_ENGBLD=1 build/mmapi'&
+bsub 'cd /vobs/linuxjava/platform && clearmake PRODUCT=marco P=1 FEAT_TI_OMAP3410=1 PRODUCT_CONF=x86 TEST_ENGBLD=1 build/mediaengine'&
+
+#build x86
+bsub 'cd /vobs/linuxjava/platform && clearmake PRODUCT=marco P=1 FEAT_TI_OMAP3410=1 PRODUCT_CONF=x86 TEST_ENGBLD=1 build/mmapi'&
+
+
+#build arm:
+cbsub 'cd /vobs/linuxjava/platform && clearmake PRODUCT=marco P=1 FEAT_TI_OMAP3410=1 TEST_ENGBLD=1 build/mmapi'&
+
+#build x86
+cbsub 'cd /vobs/linuxjava/platform && clearmake PRODUCT=marco P=1 FEAT_TI_OMAP3410=1 PRODUCT_CONF=x86 TEST_ENGBLD=1 build/mmapi' &
+
+
+cd /vobs/linuxjava/platform && nohup clearmake PRODUCT=marco P=1 FEAT_TI_OMAP3410=1 TEST_ENGBLD=1 build&
+bsub 'cd /vobs/linuxjava/platform && clearmake PRODUCT=marco P=1 FEAT_TI_OMAP3410=1 PRODUCT_CONF=x86 TEST_ENGBLD=1 install.tgz'&
+
+cbsub 'cd /vobs/linuxjava/platform && clearmake "PRODUCT=omap3430ref" "BUILD_DEPS=0" build'
+cbsub 'cd /vobs/linuxjava/platform &&clearmake "PRODUCT=omap3430ref" "FEAT_CONSOLE=serial" "rootfs.img_TRANSFORMS=-prelink_elves" HW_MM_ACCEL_VENDOR_D=0 HW_MM_ACCEL_VENDOR_H=1 HW_MM_PAL_STUB=1 BUILD_DEPS=0 build/mmapi'
+
+
+./make_helix -s arm11 -v false -c tiomap3410
+/apps/zch68vendor/bin/bsub -I -q zch68-lj 'cd /vobs/linuxjava/platform && clearmake PRODUCT=ascension build'
+
+bsub 'cd /vobs/linuxjava/platform && clearmake PRODUCT=marco PRODUCT_CONF=p0a_lp_128ram TEST_ENGBLD=1 LANGID=0015 sbf '
+
+
+clearmake PRODUCT=marco PRODUCT_CONF=x86 TEST_ENGBLD=1 P=1 FEAT_TI_OMAP3410=1 mpsdk_ringtone	
+
+
+cd /vobs/linuxjava/platform 
+clearmake PRODUCT=keywest PRODUCT_CONF=x86 TEST_ENGBLD=1 build 
+# Copy the secure and setup img that was released by the AP Flex Team. 
+clearmake PRODUCT=keywest PRODUCT_CONF=x86 TEST_ENGBLD=1 install.tgz 
+
+
+****************************************************************
+Dong GuiWei's linux workstation will require this line for full build
+element /vobs/ezx_j2me/j2me/jaid/lib/cffc/build/Makefile .../dbg_zch07_a21325_ljfulbld/LATEST
+
+clt rename brtype:dbg_zch07b_a22242_aac-medl-decoder brtype:liboo36050_zch07b_a22242_aacmedlrt
+
+
+****************************************************************
+audio transcode from medl team, 
+cd /vobs/medl/medl/examples/
+
+mplayer.exe Banlieue_13_FRENCH_DVDRip_XViD-TheNewSquad-GGT.avi -sub District.B13.2004.Blu-ray.1080p.DTS.x264-CtrlHD.chs.srt -subcp gbk -subfps 23.976
+
+
+****************************************************************
+mirror.xp ~/.links/code/libezx_mpsdk_ringtone.so.1.0.0
+
+****************************************************************
+rsa secureid token motorola homepage
+https://itshop.mot.com/securid/main.asp
+http://securid.mot.com/
+
+****************************************************************
+Find out why the WM_KILLFOCUS can execute concurrently with other 
+WM_XXX messages.
+
+****************************************************************
+Find out if 2 different foobar() in 2 .o files, and they are linked together, 
+which one will be called? Will linking fail? What if the files are .so/.dll files?
+
+
+****************************************************************
+cppunit
+element * .../libjj66886_zch07_e6586c_testtool/LATEST
+element /vobs/ezx_tools/... /main/LATEST
+
+****************************************************************
+update .mail.addr
+cat /home/a22242/doc/.medl.abook.csv|awk -F, '{print "echo -n "  "\""$3"\"" "\"<"$5">\" >" "\""$3"\""}'|sh -x
+
+
+****************************************************************
+1.    add element /vobs/ezx_helix/... LJMMA_N_05.01.3DI into your config spec
+
+2.    cd /vobs/ezx_helix/helix_atlas
+
+3.    ./make_helix -s arm11 -v false 
+      ./make_helix -s x86 –v true
+
+4.    ./make_helix -s arm11 -v false -t datatype_amr_codec, build amr codec only.(to build other component, please see ribosome/build/bif-cvs/helix/common/build/BIF/helix.bif)
+./make_helix -s x86  -t datatype_common_medlaudiodecoder\ datatype_amr_codec_amr-nb\ mpsdk
+
+
+5.    then, cp the enclosed file into phone /ezxlocal
+
+6.    mkdir /ezxlocal/helix
+
+7.    ./linkdir.sh /usr/helix /ezxlocal/helix
+
+8.    replace your so in /ezxlocal/helix
+
+9.    . /etc/initservices/services/ezxenv.sh
+
+10.export HELIX_LIBS=/ezxlocal/helix
+
+11.cp /usr/SYSqtapp/mmapi/gsttest /ezxlocal
+
+12../gsttest –url
+
+****************************************************************
+element * [http://compass.mot.com/go/187936671] EZXBASE_N_00.48.A4I
+Goto /vobs/ezx_apps/code/codec/test
+****************************************************************
+
+#cat /ezxlocal/medl/medld.conf
+debug=1
+verbose=1
+log=1
+redirect=1
+omxdebug=1
+****************************************************************
+house phone nubers $87955006-106 67731818 
+
+****************************************************************
+change unix passwd on sc10
+
+****************************************************************
+apply unix account on md beijing.
+http://cm.pcs.mot.com/
+
+****************************************************************
+cd /home/a22242/.links/project/EZX_test_case/audio
+mirror.xp 3ga/aac/plus_v1/Annie_v1_mono_12kbps_16000hz_sig1.3ga aac/adts/plus_v2/wind_adts_plus_v2_ps_48kbps_44100hz.aac amr/nb/Laterna_Magica_10.2k_mono_8khz.amr 3ga/amr/nb/wind-amr_12200bps_8000hz.3ga m4a/metainfo/Your_Smile_128kbps_s_44100hz_chn_metainfo.m4a mp3/mp1-3/TAKEMEHOME_80kbps_44khz_m.mp3 ra/ra8lbr/Adiemus_ra8_high_resp_20kbps_s_22050hz.ra wma/WMA_V8/test1_WMA_v8_32kbps_22kHz_2.wma
+
+****************************************************************
+vcmake mt /manifest TextService.dll.manifest /outputresource:TextService.dll\;#2
+
+****************************************************************
+describe-bindings to see the key bindings.
+
+****************************************************************
+sound volume control on windows: sndvol32
+(require 'tramp)
+(require 'cygwin-mount)
+(find-file "/pscp:a22242@10.193.29.93#22222:/home/a22242/nohup.out")
+(find-file "/pscp:a22242@bhj3#22:/home/a22242/helix_atlas/1.txt")
+(find-file "/pscp:a22242@192.168.178.8://home/a22242/helix_atlas/1.txt")
+(gnuserv-find-file "/pscp:a22242@192.168.178.8://home/a22242/helix_atlas/1.txt")
+(find-file-text "/ssh:a22242@bhj1:/home/a22242/.viminfo")
+route add 0.0.0.0 mask 0.0.0.0 192.168.1.1
+/site/bin/create_view a22242_mdlnx1
+/site/bin/create_view coreID_<view_tag> [ -group group-name ]
+
+****************************************************************
+cat /home/a22242/data.txt |perl -e 'while (<>) {chomp; m/(.*) (.*)/; $idx=$1; $word= $2; if ($idx eq $last) {print " \"" . $word . "\""} else {$last=$idx; print "])\n(\"" . $idx . "\" [\"" . $word . "\""}}' >xx.txt, create the quail table for wubi86
+
+
+****************************************************************
+./configure --prefix=/d/tools/emacswin/emacs-22.1/ --with-lispdir=/d/tools/emacswin/emacs-22.1/site-lisp --with-texmf-dir='d:/Profiles/zch07g_cc_albd/.texmf'
+
+****************************************************************
+texhash
+updmap
+
+the above 2 steps are important for making chinese .ttf font for use with latex
+
+1. ttf2tfm simhei.ttf -w shei@Unicode.sfd@
+2. for x in *.enc; do echo $x; done|perl -npe 's/(.*)\.(.*)/$1 <simhei.ttf <$1.$2/' >shei.map
+3. modify ttfonts.map?
+4. cp ~/ttf/simhei.ttf ~/tloc.lnk/fonts/truetype
+5. write c70shei.fd
+6. edit updmap.cfg
+
+
+****************************************************************
+stty sane 
+to reset the terminal
+
+****************************************************************
+语文课上,女老师问;"软"的拼音怎么读?
+
+男生齐喊"日完--软"
+
+老师:"你们男生的发音不标准,请女同学补充回答"
+
+女同学齐声应"日完俺--软" 班长纠正说：是“日五晚-软”... 老师看不下去了,说应该是"日五晚俺-软 
+
+****************************************************************
+registry: current user/control panel/input method, hotkey for switching between chinese and english input methods!
+
+emacs -batch -q -no-site-file  -l ../lisp/emacspeak-load-path.el -eval "(setq byte-compile-dynamic t)" -f batch-byte-compile dtk-voices.el
+emacs -batch -q -f batch-byte-compile *.el
+
+****************************************************************
+todo: find out why hexl-mode doesn't work with tramp.
+cygexec ./configure --with-emacs=/d/tools/emacswin/emacs-22.1/bin/emacs
+
+****************************************************************
+medl issues:
+caused early exit hang: /mnt/host/home/a22242/project/EZX_test_case/audio/3ga/aac/lc/wind_48kbps_m_22050hz.3ga
+/mnt/host/home/a22242/project/EZX_test_case/audio/wma/WMA_V7/test1_WMA_v7_160kbps_44kHz_2.wma
+can't playback /mnt/host/home/a22242/project/EZX_test_case/audio/wma/WMA_V8/test1_WMA_v8_192kbps_44kHz_2.wma 
+weird file /mnt/host/home/a22242/project/EZX_test_case/audio/mp3/mp25-3/TAKEMEHOME_56kbps_8khz_s.mp3
+
+sshfs chenli: mdhome/ -o allow_other
+****************************************************************
+
+
+一小学老师在和学生解释“乳”字的含义：乳即是小的意思，比如乳鸽、乳猪等，要求小明用乳字造句。
+小明：因为现在房价太高了，所以我家只能买得起50平方米的乳房
+老师汗,说:再造一个
+小明: 我年纪太小,连一米宽的乳沟都跳不过去
+老师大汗：说再造一个
+小明：老师我真的想不出来了，我的乳头都快想破了... 
+
+****************************************************************
+
+昨天凌晨0点，在靠近仙居县城的35省道发生了一起交通事故，一头200多斤的野猪在横穿省道的时候和一辆“比亚迪”相撞。野猪死了，车头严重损毁，车主现在还在医院里。
+
+仙居交警大队的民警和仙居当地的媒体记者说，这两年生态好，野猪多起来了，每年都会发生几起猪毁良田的事情。但是，这次事故发生在距离县城仅六七分钟车程的地方，野猪还从没在离县城那么近的地方出没过。
+
+昨天凌晨，仙居人应先生驾着自己的白色“比亚迪”，看看快到县城了心情也轻快起来，车速在每小时100公里左右。
+
+一声巨响……
+
+事后，据交警现场勘测，野猪撞在车身侧面，应先生突遭撞击后就猛打了一把方向盘，然后车子冲向对面车道，飞出去200米，重重撞上了山边岩石。
+
+仙居交警和消防赶到时，应先生还被牢牢地卡在变形的驾驶室里，野猪躺在地上，断了一条腿，身体上裂开了两个大口。
+
+应先生被救出来送到医院时伤势还蛮严重。
+
+昨天早上，仙居交警大队大家都在议论这个事情。在把这个事故材料发上交警内网时，大家还争论了一番——这么个少见的事故标题要好好做一做。
+
+尽管最后上网还是用了个最严谨最常规的标题“野猪下山撞坏汽车”，但是写材料的老王坚持还是他想的标题好——“一方当事‘人’是野猪”。
+
+还有人建议就叫——“一位仙居车主被‘猪咬’”，因为在仙居土话里，被“猪咬”了，意思就是被莫名其妙地弄了一下，形容运气比较差，这个词用在这桩事情上非常贴切。
+
+应先生躺在病床上，昨天病情已经比较稳定了，脸很肿。医生说，主要是多发伤，拍过片子了，颅体骨折，下颚骨骨折，牙齿什么的都有损伤。胸部主要是两肺胸腔挫伤。
+
+陪在旁边的家里人很担心，因为应先生都说不清楚到底是被什么撞了，家人不知道他是确实没看到呢，还是还没完全清醒过来。
+
+当时现场有村民见消防在救人，就欲把野猪拖走，被制止了，因为交警还没勘测完现场呢。
+
+后来，交警把野猪装车上带了回来，昨天下午，分了消防半头，据说晚上大家都有红烧野猪肉吃。 
+****************************************************************
+北京市朝阳区望京东路1号, 100102
+****************************************************************
+ETH0IP=`/sbin/ifconfig eth0 |grep 'inet addr:'|perl -npe 's/.*?:([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}).*/$1/'`
+echo 1 >/proc/sys/net/ipv4/ip_forward;
+/etc/init.d/iptables restart
+/sbin/iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source $ETH0IP
+/sbin/iptables -t nat -A PREROUTING -i eth0    -j DNAT --to-destination 10.194.167.225 -m tcp --dport 2628 -p tcp
+/sbin/iptables -t nat -A PREROUTING -i eth0    -j DNAT --to-destination 192.168.1.42 -m tcp --dport 23 -p tcp
+/sbin/iptables -t nat -A PREROUTING -i eth0 -p tcp -j DNAT --to-destination 192.168.1.2:23 -m tcp --dport 2323
+/sbin/iptables -t nat -A PREROUTING -i eth0    -j DNAT --to-destination 192.168.1.42 -m tcp --dport 22242 -p tcp
+/sbin/iptables -t nat -A PREROUTING -i eth0 -p tcp     -j DNAT --to-destination 192.168.1.2 -m tcp --dport 19942
+****************************************************************
+msysmake ./configure.bat --cflags -Id:/tools/GetGnuWin32/gnuwin32/include/
+
+在某街的小巷那路旁他带着迷惘 疾风吹醒他这雨夜 没有家靠着栏杆
+念往昔一切寄望暴雨中与泪同葬 面对今天种种失意挫败
+问句家你在何方 Oh... 命运玩弄这沧桑的你失意境况逢巨浪
+Oh...命运问谁会关心冰冷黑暗雨中这窄巷(充满失望)
+在某天星光会照亮划破失意及迷惘 愿君要自强抱冀望
+莫再悲也莫颓丧 Oh...命运是用你双手开创冲破苦困迎巨浪
+Oh...命运迈步去冲开黑暗观看壮观的太阳(只需有信心)
+Oh...Lord赶走漆黑的冰冷苦困忧伤 Oh...Lord让痛苦哭泣声停止
+问世间多少飘过往事又有几许会是如意 但愿爱惜身边的友谊
+让爱心每日强壮 Oh...愿望愿望这凄风凄雨不再吹向这海港
+Oh...愿望愿望有千载温暖的爱送走风与浪
+(不需再恐惧)(不需再惊慌) 让爱的欢声柔扬风里我心愿望
+ 
+****************************************************************
+(setq bhj-grep-regexp "at \\(?:.*/\\|\\)\\(.*\\):\\([0-9]+\\)$")
+
+
+// an mp3 packet is ready for decoding?
+#0  HXFileSource::PacketReady (this=0x1010a4b8, status=0, pPacket=0x101323f8) at hxflsrc.cpp:2585
+#1  0x041c2a3b in CRnMp3Fmt::MyCreatePacketObj_hr (this=0x1010c910, status=0, pPacketData=0x1010c98c) at mp3ff.cpp:1420
+#2  0x041c2f5c in CRnMp3Fmt::ReadDone (this=0x1010c910, status=0, pBufferRead=0x10131bc8) at mp3ff.cpp:1804
+#3  0x04755a3a in CSimpleFileObject::ActualAsyncReadDone (this=0x1010bc90, result=0, pBuffer=0x10131bc8) at full/smplfsys.cpp:3390
+#4  0x04753903 in CSimpleFileObject::FinishDoRead (this=0x1010bc90, actual=2048, pBuffer=@0x22c0bc) at full/smplfsys.cpp:2024
+#5  0x04753353 in CSimpleFileObject::DoRead (this=0x1010bc90, rbProgFail=@0x22c0ec) at full/smplfsys.cpp:1716
+#6  0x04752ff0 in CSimpleFileObject::Read (this=0x1010bc90, ulCount=2048) at full/smplfsys.cpp:1264
+#7  0x041c4238 in CRnMp3Fmt::FinishGetPacket (this=0x1010c910) at mp3ff.cpp:2723
+#8  0x041c2501 in CRnMp3Fmt::GetPacket (this=0x1010c910, streamNo=0) at mp3ff.cpp:1093
+#9  0x0208c739 in HXFileSource::FillBuffers (this=0x1010a4b8, ulLoopEntryTime=810205183, ulProcessingTimeAllowance=30) at hxflsrc.cpp:3241
+#10 0x0208a81d in HXFileSource::DoResume (this=0x1010a4b8, ulLoopEntryTime=810205183, ulProcessingTimeAllowance=30) at hxflsrc.cpp:1463
+#11 0x0205299c in HXPlayer::ProcessIdle (this=0x10119ad8, bFromInterruptSafeChain=0) at hxplay.cpp:2297
+#12 0x0205a3ff in HXPlayer::PlayerCallback (pParam=0x10119ad8) at hxplay.cpp:7900
+#13 0x02070f03 in CHXGenericCallback::Func (this=0x1011a718) at hxcbobj.cpp:105
+#14 0x0132ba45 in PQ::dispatch_element (this=0x10104100, pElem=0x1012d4f4) at pq.cpp:465
+#15 0x01322f16 in ClientPQ::execute (this=0x10104100, now={<HXTime> = {<timeval> = {tv_sec = 1216285949, tv_usec = 951125}, <No data fields>}, <No data fields>}) at clientpq.cpp:111
+#16 0x013316b2 in HXScheduler::_Execute (this=0x10103ec0, pScheduler=0x10104100, bImmediatesPending=@0x22c7a0) at hxsched.cpp:413
+#17 0x01313623 in HXScheduler::ExecuteCurrentFunctions (this=0x10103ec0, bAtInterrupt=0) at hxsched.cpp:517
+#18 0x013141bc in HXScheduler::OnTimeSync (this=0x10103ec0, bAtInterrupt=0) at hxsched.cpp:865
+#19 0x012e598c in CHXMediaPlatformScheduler::OnTimeSync (this=0x10103e98, bAtInterrupt=0) at chxmedpltfmsched.cpp:161
+#20 0x012e504e in CHXMediaPlatformKicker::Kick (this=0x10105be0, ulThreadID=269418504, pulSuggestedSleep=0x22c898) at chxmedpltfmkicker.cpp:321
+#21 0x00401739 in DoEvent () at main.cpp:544
+#22 0x00402499 in DoEvents (nTimeDelta=2000) at main.cpp:1250
+#23 0x0040410d in main (argc=2, argv=0x100f24d0) at main.cpp:2083
+
+#0  HXFileSource::PacketReady (this=0x1010c6a8, status=0, pPacket=0x10117558) at hxflsrc.cpp:2585
+#1  0x041c2a3b in CRnMp3Fmt::MyCreatePacketObj_hr (this=0x10118ec8, status=0, pPacketData=0x10118f44) at mp3ff.cpp:1420
+#2  0x041c425f in CRnMp3Fmt::FinishGetPacket (this=0x10118ec8) at mp3ff.cpp:2728
+#3  0x041c2501 in CRnMp3Fmt::GetPacket (this=0x10118ec8, streamNo=0) at mp3ff.cpp:1093
+#4  0x0208c739 in HXFileSource::FillBuffers (this=0x1010c6a8, ulLoopEntryTime=0, ulProcessingTimeAllowance=0) at hxflsrc.cpp:3241
+#5  0x0208b162 in HXFileSource::ReBuffer (this=0x1010c6a8, ulLoopEntryTime=0, ulProcessingTimeAllowance=0) at hxflsrc.cpp:1940
+#6  0x02080710 in HXSource::DoRebuffer (this=0x1010c6a8, ulLoopEntryTime=0, ulProcessingTimeAllowance=0) at hxsrc.cpp:2867
+#7  0x0207eff4 in HXSource::DoRebufferIfNeeded (this=0x1010c6a8) at hxsrc.cpp:2013
+#8  0x0207f157 in HXSource::ReportRebufferStatus (this=0x1010c6a8, uStreamNumber=0, bAudio=1, unNeeded=2 '\002', unAvailable=0 '\0') at hxsrc.cpp:2078
+#9  0x02082b0d in HXStream::ReportAudioRebufferStatus (this=0x10117de0, unNeeded=2 '\002', unAvailable=0 '\0') at hxstrm.cpp:354
+#10 0x0443286f in CRnMp3Ren::OnDryNotification (this=0x10109098, ulCurrentStreamTime=52, ulMinimumDurationRequired=48) at mp3rend.cpp:969
+#11 0x0209a29c in CHXAudioStream::MixIntoBuffer (this=0x10116820, pPlayerBuf=0x10141a80 "", ulBufSize=8800, ulBufTime=@0x203c4f0, bIsMixBufferDirty=@0x203c4f8, bGetCrossFadeData=0) at hxaudstr_new.cpp:1935
+#12 0x02060dd2 in CHXAudioSession::PlayAudio (this=0x101140f0, uNumBlocks=3) at hxaudses.cpp:1286
+#13 0x020640c5 in CHXAudioSession::CheckToPlayMoreAudio (this=0x101140f0) at hxaudses.cpp:3476
+#14 0x02062448 in CHXAudioSession::ActualResume (this=0x101140f0) at hxaudses.cpp:2123
+#15 0x0206239a in CHXAudioSession::Resume (this=0x101140f0, pPlayerToExclude=0x10108f90, bRewindNeeded=0) at hxaudses.cpp:2071
+#16 0x0208fbc7 in CHXAudioPlayer::Resume (this=0x10108f90) at hxaudply.cpp:1421
+#17 0x020547a6 in HXPlayer::CheckForAudioResume (this=0x10108a50, ulSchedulerFlags=@0x203c764) at hxplay.cpp:3348
+#18 0x0205312e in HXPlayer::ProcessIdle (this=0x10108a50, bFromInterruptSafeChain=1) at hxplay.cpp:2542
+#19 0x0205a423 in HXPlayer::PlayerCallbackInterruptSafe (pParam=0x10108a50) at hxplay.cpp:7911
+#20 0x02070f03 in CHXGenericCallback::Func (this=0x10116668) at hxcbobj.cpp:105
+#21 0x0132ba45 in PQ::dispatch_element (this=0x101049a0, pElem=0x10109e04) at pq.cpp:465
+#22 0x01322f16 in ClientPQ::execute (this=0x101049a0, now={<HXTime> = {<timeval> = {tv_sec = 1216286119, tv_usec = 762125}, <No data fields>}, <No data fields>}) at clientpq.cpp:111
+#23 0x013316b2 in HXScheduler::_Execute (this=0x10103ec0, pScheduler=0x101049a0, bImmediatesPending=@0x203cc9c) at hxsched.cpp:413
+#24 0x013135e3 in HXScheduler::ExecuteCurrentFunctions (this=0x10103ec0, bAtInterrupt=1) at hxsched.cpp:495
+#25 0x013141bc in HXScheduler::OnTimeSync (this=0x10103ec0, bAtInterrupt=1) at hxsched.cpp:865
+#26 0x01322525 in ThreadRoutine2 (pArg=0x10106bd8) at casyntim.cpp:232
+
+// the mp3 packet is decoded, it will be written to the audio device
+#0  CMpaDecObj::DecodeFrame_v (this=, pulPCMSize=0x22c4bc) at mpadecobj.cpp:132
+#1  0x04435357 in CPacketParser::DecodeAndRender (this=, bPacketLoss=0) at pktparse.cpp:157
+#2  0x04433a7a in CMpaPacketParser::RenderAll (this=0x10128d08) at mpapktparse.cpp:249
+#3  0x04431fae in CRnMp3Ren::OnPacket (this=, streamOffsetTime=0) at mp3rend.cpp:590
+#4  0x0205793a in HXPlayer::SendPacket (this=, pEvent=0x1012b4b0) at hxplay.cpp:5399
+#5  0x0205707b in HXPlayer::ProcessCurrentEvents (this=, bFromInterruptSafeChain=0) at hxplay.cpp:5162
+#6  0x02052f5b in HXPlayer::ProcessIdle (this=, bFromInterruptSafeChain=0) at hxplay.cpp:2386
+#7  0x0205a3ff in HXPlayer::PlayerCallback (pParam=0x10108ba8) at hxplay.cpp:7724
+#8  0x02070f03 in CHXGenericCallback::Func (this=0x10109990) at hxcbobj.cpp:105
+#9  0x0132ba45 in PQ::dispatch_element (this=, pElem=0x10128834) at pq.cpp:439
+#10 0x01322f16 in ClientPQ::execute (this=, <No data fields>}) at clientpq.cpp:111
+#11 0x013316af in HXScheduler::_Execute (this=, bImmediatesPending=@0x22c7a0) at hxsched.cpp:413
+#12 0x01313623 in HXScheduler::ExecuteCurrentFunctions (this=, bAtInterrupt=0) at hxsched.cpp:506
+#13 0x013141bc in HXScheduler::OnTimeSync (this=, bAtInterrupt=0) at hxsched.cpp:850
+#14 0x012e598c in CHXMediaPlatformScheduler::OnTimeSync (this=, bAtInterrupt=0) at chxmedpltfmsched.cpp:161
+#15 0x012e504e in CHXMediaPlatformKicker::Kick (this=, pulSuggestedSleep=0x22c898) at chxmedpltfmkicker.cpp:321
+#16 0x00401739 in DoEvent () at main.cpp:429
+#17 0x00402499 in DoEvents (nTimeDelta=2000) at main.cpp:833
+#18 0x0040410d in main (argc=, argv=0x100f24d0) at main.cpp:1591
+
+From: "David McAnally" <David.McAnally@motorola.com>
+Subject: Re: a javascript question
+Date: Thu, 10 Jul 2008 11:34:34 -0500
+X-Newsreader: Microsoft Outlook Express 6.00.2900.3138
+
+"John McCoy" <excp01@email.mot.com> wrote in message 
+news:Xns9AD77A76DA0A2excp01emailmotcom@10.17.193.60...
+> Hopeing to draw on the knowledge of those who've got more experience
+> than I with javascript (which should be easy, since mine is small...)
+>
+> In Firefox I can do something like
+>
+> <form name="myform">
+> <input type="text" name="txt">
+> <input type="text" name="txt">
+> <input type="text" name="txt">
+> <input type="text" name="txt">
+> </form>
+>
+> and then refer to them as document.myform.txt[0], document.myform.txt[1]
+> and so forth.
+>
+> This doesn't seem to work in Internet Explorer. (IE 6, to be precise).
+>
+> Am I missing something simple here?  Or does IE not support treating
+> form elements as an array?
+
+The JavaScript engine in IE handles INPUT NAME controls differently than FF. 
+Refer to:
+http://jszen.blogspot.com/2004/07/whats-in-name.html
+http://webbugtrack.blogspot.com/2007/08/bug-152-getelementbyid-returns.html
+http://webbugtrack.blogspot.com/2007/08/bug-411-getelementsbyname-doesnt-work.html
+U
+I highly recommend the prototype.js library to help with coding some 
+JavaScript.
+http://prototypejs.org/
+
+Regards,
+David McAnally 
+
+mplayer.exe Banlieue_13_FRENCH_DVDRip_XViD-TheNewSquad-GGT.avi -sub District.B13.2004.Blu-ray.1080p.DTS.x264-CtrlHD.chs.srt -subcp gbk -subfps 23.976
+find /vobs/jem/hardhat/.build/arm/arm_v6_vfp_le/marco/fs/lib/modules/2.6.10_dev -name "*.ko"
+/vobs/jem/cee4_lsp/mobilinux/devkit/arm/v6_vfp_le/bin g++
+把 DNS 设置为 219.127.89.34 就 ok 了
+
+w3m-fill-column
+(let ((shell-file-name "c:/python25/python.exe")) (call-interactively 'shell))
+
+markdown:
+1. if markdown don't support a html tag, just write the tag 
+2. block level html tags must be separated from surrounding context by blank lines.
+3. markdown style syntax can't be used in these blocks.
+4. span level tags can be used anywhere in markdown paragraph, list iten or header.
+5. markdown syntax is can be used within these span-level tags.
+6. specail characters like &, < and > etc. are handled smartly, for e.g., &copy; will be left alone by markdown, but AT&T will be translated to AT&amp;T
+   also, if you write <span>, markdown will leave it alone, but '4 < 5' will be translated to 4 &lt; 5 
+   however, inside markdown code spans and blocks, angle brackets and ampersands are always encoded automatically. to make it easy to write about HTML code.
+
+7. a paragraph is simply one or more consecutive lines of text, separated by one or more blank lines (before and after:-), it should not be indented. 
+   if you want to have a <br /> at the end of every line, end the line with two or more spaces.
+
+8. headers, there are 2 kinds, Setext and atx
+   
+   This is an H1
+   ==========
+   This is an H2
+   ------------
+   (only 2 levels for this style, H1 and H2)
+
+   # This is H1
+   ## This is H2
+   ###### This is H6 ######
+   (number of '#' at front determines level of header, '#' at the back is optional, any number of it will do)
+
+9. blockquotes:
+   > hello world
+   > how are you
+   > line 3
+
+   or:
+
+   > hello world
+   how are you
+   line 3
+
+   and:
+   > This is the first level of quoting
+   > 
+   > > This is a nested one.
+   > 
+   > back to the first level.
+
+10. blockquotes can contain other markdown elements, like headers, lists and code blocks:
+
+    > ## This is a header.
+    > 
+    > 1.   This is the first list item.
+    > 2.   This is the second list item.
+    > 
+    > Here's some example code:
+    > 
+    >     return shell_exec("echo $input | $markdown_script");
+
+11. you should find out how to make email-style quoting easy in your editor (emacs:-)
+
+12. lists:
+    * red
+    * green 
+    * blue
+
+    =:
+    
+    + red
+    + green 
+    + blue
+
+    =:
+
+    - red
+    - green 
+    - blue
+
+    !=: 
+    
+    1. bird
+    2. mchale
+    3. parish
+
+    =: 
+    
+    3. bird
+    1. mchale
+    8. parish
+
+13. list markers typically start at the left margin, but can indent to up to 3 spaces, (4 and more spaces is used by code blocks?:-)
+14. you can make items with hanging indents to make it look nice:
+    * hello world hello worldhello worldhello worldhello worldhello world
+      hello worldhello worldhello worldhello worldhello worldhello world
+      hello worldhello worldhello worldhello worldhello worldhello worldhello 
+      worldworldworldhello world
+    * another another another another another another another another 
+      another another another another another another another another 
+      another another another another another another another another 
+      
+    but if you are lazy, you don't have to. 
+
+15.
+    * xxx
+    * xxx
+
+    !=
+    * xxx
+
+    * xxx
+    there'll be a <p> added.
+
+16, a list item can contain multiple paragraphs, but the following paragraphs must be indented by more then 4 spaces or a tab. (you can choose to indent every line, or just the first line).
+
+17. to put a block quote within a list item, the > delimiter need to be indented.
+
+18. to put a code block within a list item, the code block need to be indented twice (8 spaces or two tabs).
+
+19. to avoid triggering an ordered list by accident, like this:
+
+    1986. What a great season
+
+    you should write it like this:
+
+    1986\. What a great season
+
+    
+20. Code Blocks
+
+    just indent 4 spaces or more, or a tab.
+    html entity characters are automatically converted.
+    markdown's own syntax is not processed within code blocks, thus it will be good for writing markdown's own syntax.
+
+21. horizontal rules.
+    3 or more hyphens, asterisks, or underscores on a line by themselves. spaces may be added between the hyphens.
+
+22. links
+    inline style: [text](url "title")
+    This is [an example](http://example.com/ "Title") inline link
+    [This link](http://example.net/) has no title attribute.
+
+    reference style: [text][id] (id will need a link definition like the following:)
+
+    [id]: url "title" (this can indent from left margin using up to 3 spaces, except from this, it can appear anywhere in a doc).
+    [id]: url 'title'
+    [id]: url (title) (title is optional with the surrounding quote/parentheses characters)
+    [id]: <url> title
+    [id]: <url>
+          title (title can be on the next line, and extra spaces or tabs can be used for padding.)
+          
+    link definitions won't appear in the final html.      
+
+    id is case insensitive. thus [link text][a] == [link text][A]
+    implicit link name    [text][] == [text][text]
+    you still need to define the link name: [text]: http://text.com/
+
+    e.g.:
+    visit [Daring Fireball][] for more info.
+    [Daring Fireball]: http://daringfireball.net/ 
+
+    This is [an example][id] reference style link.
+
+
+23. emphasis:
+    *xx* **xx** _xx_ __xx__
+    but not: *_xx_* (the same char must be used)
+    
+    can be used in the middle of a word:
+    un*fucking*believable
+    
+    * or _ if surrounded with space/s, then it will be considered as a literal */_
+
+    you can use \ to escape it: \*this is surrounded by literal asterisks\*
+
+24 Code:
+
+   `printf()` is a span of code.
+   
+   to include a backtick within a code span, you can use multiple backticks as the opening and closing delimiters:
+
+   ``There is a literal backtick (`) here.``
+   (I think this is just like block string in python;-)
+
+   one space after the opening multi-backtick and before the ending multi-backtick is ignored, so that though ```xx``` produces
+   <p><code>xx</code></p>, `` `xx` `` produces <p><code>`xx`</code></p>.
+
+25. images, just add a ! before links:
+    ![text](img-url "title")
+    ![text][id]
+    [id]: img-url "title
+
+26. miscellaneous
+
+27. auto links:
+
+    <http://news.sohu.com> produces <p><a href="http://news.sohu.com">http://news.sohu.com</a></p>
+    <a22242@motorola.com> produces <p><a href="&#109;&#97;&#x69;&#108;&#116;&#x6F;:&#97;2&#x32;2&#x34;&#x32;&#64;m&#111;&#x74;&#x6F;&#x72;&#x6F;&#108;&#x61;.&#99;&#111;&#x6D;">&#97;2&#x32;2&#x34;&#x32;&#64;m&#111;&#x74;&#x6F;&#x72;&#x6F;&#108;&#x61;.&#99;&#111;&#x6D;</a></p>
+
+    the above is to fool address-harvesting bots. but it can't fool all of them.
+
+28. backslash escapes
+
+\   backslash
+`   backtick
+*   asterisk
+_   underscore
+{}  curly braces
+[]  square brackets
+()  parentheses
+#   hash mark
++   plus sign
+-   minus sign (hyphen)
+.   dot
+!   exclamation mark
+****************************************************************
+
+howto b204 gimx7XmPGR
+
+****************************************************************
+vmware licensing
+
+VMware Server 2 for Windows 	A2J00-FHDAE-V672N-4K1R1
+VMware Server 2 for Linux 	A848H-FHW2V-U2NAM-4TLCM
+
+****************************************************************
+
+svn rIh4kKbG
+****************************************************************
+
+/data/etc/feature.conf tc_mod
+/data/telephony/diag_bsp.conf extr=2
+/telephony/tel/init.tel atcmd -D yes&
+
+sed -e 's/=.*/=tc_mod/' -i /data/etc/feature.conf
+sed -e 's/^extr=.*/extr=2/' -i /data/telephony/diag_bsp.cfg
+sed -e 's!^./atcmd.*!./atcmdsrv -D yes\&!' -i /opl/telephony/tel/init.tel
+
+****************************************************************
+where can I get acat? cthall?
+\\192.168.1.11\share\Marvell_Release
+
+
+date +%m%d%H%M%Y.%S|xargs.exe adb shell busybox date -s
+
+****************************************************************
+
+very important:
+in developping ifl code, _DEBUG must not be defined, it should be NDEBUG!
+
+****************************************************************
+from distutils.core import setup
+import py2exe
+
+setup(console=['update_mff.py'])
+setup(console=['gupdate_mff.py'], options={"py2exe":{"includes":["sip"]}})
+
+****************************************************************
+how to use command line to download bstd
+
+
+.\ntwtptp.exe -P USB -t MHLV_NTDKB_TIM.bin -f MHLV_NTDKB_h.bin
+./ntwtptp.exe -P USB -t MHLV_NTDKB_TIM.bin -f MHLV_NTDKB_h.bin
+.\WtpDownload.exe -P USB -F dataio_BSTD.mff.fbf
+./WtpDownload.exe -P USB -F dataio_BSTD.mff.fbf
+
+****************************************************************
+ATD10086;
+
+AT+CMGF=0
+AT+CMGS=17
+<"> "
+>"00010005810180f6000007a15028140a8500"
+>"^Z"
+
+
+文本方式发送短信
+AT+CMGF=1
+AT+CMGS="+8613810803956" 
+>hello world
+>"^Z"
+
+AT+CMGS="+8613800138000"
+****************************************************************
+cygwin sshd setup:
+ssh-host-config -y
+
+cstring: afx.h, WINSTR.CPP
+****************************************************************
+svn switch --relocate file:///d:/svn/engtool file:///d/svn/engtool
+
+while true; do echo 111 > /sys/android_power/acquire_partial_wake_lock; sleep 2; echo done; done
+
+tcpdump.exe -i 4 -A -XX host smtp.gmail.com
