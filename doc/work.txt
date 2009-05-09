@@ -687,3 +687,4 @@ while true; do echo 111 > /sys/android_power/acquire_partial_wake_lock; sleep 2;
 
 tcpdump.exe -i 4 -A -XX host smtp.gmail.com
 c:\grldr="Install Ubuntu"
+of python -m pdb mixemu.py
