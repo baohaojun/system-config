@@ -1,4 +1,5 @@
-export PATH="/c/Python25/:/c/Python25/Lib/site-packages/PyQt4/:/q/bin/windows/gnuserv:/q/bin/windows/emacs-graphics:/usr/local/bin:/usr/bin:/c/java/jdk1.6/bin:/usr/X11R6/bin:~/bin:$PATH:/usr/sbin:/sbin"
+export PATH="/c/TeXLive2007/dviout:/h/bin/win32:/c/gs/gs8.54/bin:/c/Perl/bin:/c/Perl/site/bin:/c/Python25/:/c/Python25/Lib/site-packages/PyQt4:/c/Python25/Lib/site-packages/PyQt4/:/q/bin:/q/bin/windows:/q/bin/windows/redirect:/q/bin/windows/emacs-graphics:/q/bin/windows/gnuserv:/c/program files/imagemagick-6.4.9-q16:/usr/X11R6/bin:/usr/bin:/sbin:/usr/local/bin:/usr/sbin:/usr/x11r6/bin:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/system32:/c/Program Files/TortoiseSVN/bin"
+
 function lw () {
          cygpath -alw "$@"
 }

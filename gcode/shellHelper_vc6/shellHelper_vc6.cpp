@@ -28,18 +28,21 @@ int main(int argc, char* argv[])
 		printf("Error: can't find bash anywhere\n");
 		exit(-1);
 	} else {
-		printf("bash is found at `%s'\n", bash_path);
+		fprintf(stderr, "bash is found at `%s'\n", bash_path);
 	}
 
 	new_argv[0] = bash_path;
 	new_argv[1] = "~/bin/windows/shellHelper_vc6.sh";
+	fprintf(stderr, "will run `%s' with args:\n", new_argv[1]);
 
 	int i;
 	for (i=0; i<argc; i++) {
 		new_argv[i+2] = strdup(argv[i]);
-		fprintf(stderr, "new_argv[%d] is %s\n", i+2, new_argv[i+2]);
-		fflush(stderr);
+		fprintf(stderr, "`%s' ", new_argv[i+2]);
 	}        
+
+	fprintf(stderr, "\n");
+	fflush(stderr);
 	new_argv[i+2] = NULL;
 	_execvp(bash_path, new_argv);
 	printf("end of shellHelper_vc6.exe\n");

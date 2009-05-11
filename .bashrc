@@ -145,13 +145,8 @@ function edit_1()
         echo Warning: "$1" is not writable
     fi
     
-    local IFS=$'\n'
+    emacsedit4.exe "$1" >/dev/null 2>&1
 
-    local dir=$( dirname "$1" )
-    local file=$( basename "$1" )
-    cd -P "$dir" >/dev/null 2>&1
-    emacsedit.exe "$file"
-    cd - >/dev/null 2>&1
 }
 
 function edit()
