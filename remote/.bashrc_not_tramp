@@ -1,0 +1,178 @@
+# .bashrc -x
+export PATH=~/bin/`uname`/:~/bin:"$PATH"
+export BUILD_ROOT=/vobs/ezx_helix/helix_atlas/ribosome/build/
+#:/usr/atria/bin:/skiff/local/bin:~/bin:/vob/lj_4g_linux_omap_bsp/thirdparty/ti/host/bin/:~/`uname`/bin
+export QTDIR=/usr/lib/qt-2.3.0
+export QTDIR=/usr/qt-embedded-free-3.0.1
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ht='history'
+alias clt='cleartool'
+alias cls='cleartool ls'
+alias setview='cleartool setview'
+alias la='ls -A'                              # all but . and ..
+
+bind -f ~/.inputrc
+alias platform='cd /vobs/ezx_platform/code'
+alias apps='cd /vobs/ezx_apps/code'
+alias helix='cd /vobs/ezx_helix/helix'
+alias kernel='cd /vobs/ezx_linux/code/linux/linux-2.4.17'
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+export TMOUT=999999999999
+
+export CDPATH=.:~
+
+if [[ -f ~/bash_completion ]]; then
+    export BASH_COMPLETION=~/bash_completion
+    export BASH_COMPLETION_DIR=~/bash_completion.d
+    
+    if [[ $BASH_COMP_INC == true ]]; then
+        case $- in
+            *i*) [[ -f ~/bash_completion ]] && . ~/bash_completion ;;
+        esac
+    fi
+else
+    if [[ $BASH_COMP_INC == true ]]; then
+        case $- in
+            *i*) [[ -f /etc/bash_completion ]] && . /etc/bash_completion ;;
+        esac
+    fi
+fi
+            
+
+
+umask 000
+# .bashrc
+
+# User specific aliases and functions
+
+# Source global definitions
+	#alias startx='exec /usr/bin/X11/startx'
+	alias 'rm=/bin/rm -f'
+	alias 'j1.5=rm /usr/local/lib/jdk; ln -s /usr/local/lib/jdk1.5.0 /usr/local/lib/jdk'
+	alias 'j1.4=rm /usr/local/lib/jdk; ln -s /usr/local/lib/j2sdk1.4.2_06 /usr/local/lib/jdk'
+	alias 'l=ls -l'
+	alias cd='cd -P'
+	alias muttx='mutt -x'
+	alias amule='GTK_IM_MODULE=scim LANG=zh_CN.UTF-8 LC_ALL=zh_CN.UTF-8 amule --only-chuck-norris-would-stop-me&'
+	alias acroread='GTK_IM_MODULE=xim /usr/local/Adobe/Acrobat7.0/bin/acroread'
+#alias apt-get='sudo apt-get'
+	alias mplayer="mplayer -ao alsa"
+	#. ~/.tonka
+	#tonka
+	#unset tonka
+	export CVS_RSH=ssh
+	#. ~/.bash_netcompletion
+
+        export PS1HostName=`hostname`
+        if which cleartool >/dev/null 2>&1; then
+            export PS1SetView=`cleartool pwv -setview -short`
+            export HAS_CLEARCASE=true
+        else
+            unset PS1SetView
+            export HAS_CLEARCASE=false
+        fi
+	export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mview[01;31m:[01;34m$PS1SetView[0m)\n\$'
+export SHELL=/bin/bash
+export EDITOR=edit.sh
+alias itool='/vob/ilj_release/devkit/pck/itool'
+export XMODIFIERS=@im=SCIM
+export GTK_IM_MODULE=scim
+export LD_LIBRARY_PATH=/usr/local/lib
+alias bootstrap='/vob/ilj_release/devkit/scripts/m4/cleanup;/vob/ilj_release/devkit/scripts/m4/bootstrap' 
+#alias sudo='getsudo.ep; sudo'
+alias armenv='DEBUG=debug . ~/arm.sh'
+alias amarmenv='DEBUG= . ~/arm.sh'
+#unalias ls
+alias ls='ls -F'
+alias L='ls --color'
+alias mbash='exec bash -rcfile .bmin'
+#alias ls='ls -B --color=tty'
+alias rrpm='rpm --rcfile=$PROJROOT/apt/etc/.rpmrc'
+#alias apt-get='apt-get --config-file="$PROJROOT"/apt/etc/apt.conf'
+#alias apt-cache='apt-cache --config-file="$PROJROOT"/apt/etc/apt.conf'
+#export PATH=/vob/ilj_release/devkit/eclipse:$PATH
+export PATH=/sbin:/usr/sbin:$PATH
+alias mme_dbg="ddd --gdb --debugger 'gdb-arm ~/rootfs/phx/sbin/mme_manager -d ~/build -d ~/buildring'"
+stty erase 
+alias df='df -t ext3'
+export LANG=C
+export LC_ALL=C
+shopt -s nocaseglob
+export PROMPT_COMMAND="history -a"
+alias cco='cleartool co -nc'
+alias cci='cleartool ci -nc'
+alias cvtree='cleartool lsvtree'
+alias gvtree='cleartool lsvtree -g'
+alias cmerge='cleartool merge'
+alias lsco='cleartool lsco -me -cview -avobs -short 2>/dev/null'
+
+
+export LOCALIP=`echo $SSH_CONNECTION|awk '{print $3}'|sed -e 's/.*://'`
+export LOCALPORT=`echo $SSH_CONNECTION|awk '{print $4}'`
+
+export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
+export DISPLAY=$REMOTEIP:0.0
+
+if true; then
+    export edit_protocol=pscp
+else
+    export edit_protocol=pscp
+fi
+
+export WHOAMI=`whoami`
+
+function of()
+{
+    if ! [[ -r "$1" ]]; then
+        echo Error: "$1" is not readable
+        return 1
+    fi
+
+    if ! [[ -w "$1" ]]; then
+        echo Warning: "$1" is not writable
+    fi
+    
+    local IFS=$'\n'
+    local file=$( readlink -f "$1" )
+    local dir=$( dirname "$file" )
+    file=$( basename "$file")
+    cd "$dir" >/dev/null 2>&1
+
+    ssh guard@$REMOTEIP rsshopen.sh \""/$edit_protocol:$WHOAMI@$LOCALIP#$LOCALPORT:`work_dir_view`/`pwd`/$file"\"
+    cd - >/dev/null 2>&1
+}
+        
+
+
+alias crontab='EDITOR=vim crontab'
+alias vimedcs='EDITOR=vim cleartool edcs'
+alias bdiff=branch_diff
+alias prediff='cleartool diff -pre -g'
+alias ediff='do_diff=false branch_diff'
+alias locate='locate -d ~/.locatedb'
+alias vcd='cd ~/view/$PS1SetView.vws'
+
+if [[ -f ~/bin/`uname`/.bashrc ]]; then . ~/bin/`uname`/.bashrc; fi
+export BASH_COMP_INC=true
+if [[ $TERM == dumb ]]; then
+   unalias ls
+   export PS1='\n( \u@$PS1HostName | \w |view $PS1SetView )\n\$'
+fi     
+if [[ -f ~/.bashrc_edit ]]; then . ~/.bashrc_edit; fi
+alias bsub='cd /vobs/linuxjava/platform; rm nohup.out; nohup  /apps/zch68vendor/bin/bsub -I -q zch68-lj'
+alias cbsub='/apps/zch68vendor/bin/bsub -I -q zch68-lj'
+alias armg++='/vobs/jem/cee4_lsp/mobilinux/devkit/arm/v6_vfp_le/bin/arm_v6_vfp_le-g++'
+shopt -s cdspell
+
+
+##Local Variables: ***
+##mode: sh ***
+##End: ***

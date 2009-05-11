@@ -1,0 +1,39 @@
+#!/bin/bash
+function work_dir_view() 
+{
+    if [[ $HAS_CLEARCASE == true ]]; then
+        if cleartool pwv -short -wdview|grep NONE >/dev/null; then
+            ROOT_PATH=;
+        else
+            ROOT_PATH=/view/`cleartool pwv -short -setview`;
+        fi
+    else
+        ROOT_PATH=;
+    fi
+    echo $ROOT_PATH
+}
+
+function edit()
+{
+    if [[ $WHOAMI == root ]] && [[ -f "$1" ]]; then
+        echo using root to do edit, won\'t check read permission
+    else
+        if ! [[ -r "$1" ]]; then
+            echo Error: "$1" is not readable
+            return 1
+        fi
+        if ! [[ -w "$1" ]]; then
+            echo Warning: "$1" is not writable
+        fi
+    fi    
+    local IFS=$'\n'
+    local file=$( readlink -f "$1" )
+    local dir=$( dirname "$file" )
+    file=$( basename "$file")
+    cd "$dir" >/dev/null 2>&1
+
+    ssh guard@$REMOTEIP rsshedit.sh $wait_for_emacs \""/$edit_protocol:$WHOAMI@$LOCALIP:`work_dir_view`/`pwd`/$file"\"
+    cd - >/dev/null 2>&1
+}
+
+alias sudoedit='WHOAMI=root edit'
