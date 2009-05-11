@@ -61,11 +61,13 @@
 (setq nnmail-split-methods
       '(
         ("mail.sent.mail" "^From:.*haojun.bao")
+        ("mail.sent.mail" "^From:.*baohaojun")
         ("mail.hotmail" "^To:.*baohj_zj@hotmail.com")
         ("mail.yahoo" "^To:.*baohaojun@yahoo.com")
         ("mail.gmail" "^To:.*baohaojun@gmail.com")
-        ("mail.haojun.bao" "^To:.*haojun.bao")
-        ("mail.haojun.bao" "^Cc.*haojun.bao")
+        ("mail.haojun.bao" "^To:.*borqs")
+        ("mail.haojun.bao" "^Cc.*borqs")
+        ("mail.haojun.bao" "^From:.*borqs")
         ("mail.a22242" "^To:.*a22242")
         ("mail.a22242" "^Cc:.*a22242")
         ("mail.samba" "^To:.*samba")

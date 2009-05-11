@@ -670,7 +670,7 @@ AT+CMGS=17
 
 文本方式发送短信
 AT+CMGF=1
-AT+CMGS="+8613810803956" 
+AT+CMGS="+8613693578957"
 >hello world
 >"^Z"
 
