@@ -9,14 +9,12 @@ HOME2="`pwd`"
 subst q: "$HOMEDRIVE"\\"$HOMEPATH"
 export HOME=/q
 
-while ! cd ~/Local\ Settings/Temp; do 
-    echo "cd failed! subst not run yet?"; sleep 1;
-done
+cd ~/Local\ Settings/Temp && rm tramp* -rf
 
-rm tramp* -rf
 cd ~/doc
 regedit /s ImeNoToggle.reg
-export PATH=~/bin/windows/gnuserv:"$PATH"
+. ~/.bashrc-windows
+
 cd ~/bin/windows/startup
 
 
