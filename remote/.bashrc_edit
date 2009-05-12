@@ -32,7 +32,7 @@ function edit()
     file=$( basename "$file")
     cd "$dir" >/dev/null 2>&1
 
-    ssh guard@$REMOTEIP rsshedit.sh $wait_for_emacs \""/$edit_protocol:$WHOAMI@$LOCALIP:`work_dir_view`/`pwd`/$file"\"
+    ssh REMOTEIP /qq/bin/windows/rsshedit.sh $wait_for_emacs \""/$edit_protocol:$WHOAMI@$LOCALIP:`work_dir_view`/`pwd`/$file"\"
     cd - >/dev/null 2>&1
 }
 
