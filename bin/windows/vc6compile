@@ -1,5 +1,5 @@
 #!/bin/bash
-if ls *.dsw
+if ls *.dsw > /dev/null 2>&1
 then
     msdev ./*.dsw /make "$@" 
 else 

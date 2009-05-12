@@ -81,7 +81,7 @@ function dict() {
 }
 . /c/ssh-agent.log >/dev/null
 alias pdfnup='cygexec pdfnup'
-alias svngdiff='svn diff --diff-cmd svntkdiff'
+alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
 
 function llocate() {
     locateEmacs.sh "$@"|sed -e 's/^.:/"/; s/$/"/'
