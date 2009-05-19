@@ -79,7 +79,6 @@ alias mail=~/bin/mail
 function dict() {
     dict.exe -v 2>/dev/null "$@"|iconv -f UTF-8 -t GBK
 }
-. /c/ssh-agent.log >/dev/null
 alias pdfnup='cygexec pdfnup'
 alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
 

@@ -23,7 +23,6 @@ export VC_BUILD_CONFIG=release
 . ~/.bashrc-path
 . ~/.bashrc_public
 . ~/.bash_netcompletion
-. /c/ssh-agent.log
 alias of=cygstart
 alias ps='ps aux -W'
 alias reboot=~/bin/reboot
