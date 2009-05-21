@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if ls *.sln >/dev/null 2>&1; then
+    echo *.sln exist
+    rm build.log
+    vc7 *.sln /build "$2" /project "$1" /out build.log; 
+    cat build.log;
+elif ls ../*.sln >/dev/null 2>&1; then
+    echo ../*.sln exist
+    cd ..
+    rm build.log
+    vc7 *.sln /build "$2" /project "$1" /out build.log
+    cat build.log
+fi
