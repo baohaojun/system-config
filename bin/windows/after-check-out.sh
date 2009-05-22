@@ -8,3 +8,4 @@ ln -f ../gnuserv/*.exe .
 
 cd ~/bin/windows
 ./update-password.sh
+echo 'after check out update success!'
