@@ -9,6 +9,22 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+char *strdup_quote(const char* src)
+{
+	int src_len = strlen(src);
+	char *res = (char *)calloc(src_len*2 + 5, sizeof(char));
+	res[0] = '"';
+	int j = 1;
+	for (int i=0; i<src_len; i++) {
+		res[j++] = src[i];
+		if (src[i] == '"') {
+			res[j++] = src[i];
+		}
+	}
+	res[j] = '"';
+	return res;
+}
+
 int main(int argc, char* argv[])
 {
 	char **new_argv = (char**)calloc(argc+5, sizeof(char *));
@@ -37,7 +53,7 @@ int main(int argc, char* argv[])
 
 	int i;
 	for (i=0; i<argc; i++) {
-		new_argv[i+2] = strdup(argv[i]);
+		new_argv[i+2] = strdup_quote(argv[i]);
 		fprintf(stderr, "`%s' ", new_argv[i+2]);
 	}        
 
