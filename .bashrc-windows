@@ -42,6 +42,12 @@ function SetPath()
     unset SetPath
 }
 
+#Open Containing folder..
+function oc()
+{
+    cygstart explorer.exe /n,/select,\""`cygpath -alw \"$1\"`"\"
+}
+
 if [[ -d /q ]]; then
    export HOME=/q
    SetPath
@@ -52,8 +58,3 @@ else
      return 1
 fi
 
-#Open Containing folder..
-function oc()
-{
-    cygstart explorer.exe /n,/select,\""`cygpath -alw \"$1\"`"\"
-}

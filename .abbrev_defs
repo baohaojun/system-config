@@ -15,6 +15,8 @@
 
 (define-abbrev-table 'c-mode-abbrev-table '(    ))
 
+(define-abbrev-table 'change-log-mode-abbrev-table '(    ))
+
 (define-abbrev-table 'comint-mode-abbrev-table '(    ))
 
 (define-abbrev-table 'completion-list-mode-abbrev-table '(    ))
@@ -124,7 +126,7 @@ import pickle
 (define-abbrev-table 'special-mode-abbrev-table '(    ))
 
 (define-abbrev-table 'text-mode-abbrev-table '(    ("toolsg" "Tide Yin ‘£¨‘Òü‘ÌÎ‘£© <tide.yin@borqs.com>
-Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yumin'\" <yumin.liang@borqs.com>, 'Ren Mingqi ‘ÈÎ‘Ã÷‘ç÷' <mingqi.ren@borqs.com>, \"'yu.wang'\" <yu.wang@borqs.com>" nil 3)
+Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yumin'\" <yumin.liang@borqs.com>, 'Ren Mingqi ‘ÈÎ‘Ã÷‘ç÷' <mingqi.ren@borqs.com>, \"'yu.wang'\" <yu.wang@borqs.com>" nil 5)
     ))
 
 (define-abbrev-table 'thumbs-mode-abbrev-table '(    ))

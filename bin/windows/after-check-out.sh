@@ -12,3 +12,6 @@ echo cat "'/proc/registry/HKEY_LOCAL_MACHINE/SYSTEM/CurrentControlSet/Control/Se
 for x in '\bin' '\bin\windows' '\bin\windows\redirect'; do 
     echo -n "$HOMEDRIVE""$HOMEPATH""$x"\;
 done
+
+cd ~/bin/windows
+./update-pass.sh

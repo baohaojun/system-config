@@ -1,0 +1,18 @@
+# Configuration created Mon Nov 17 09:44:37 2008 by fetchmailconf 1.52 $Revision: 4740 $
+set logfile "/home/bhj/.fetch.log"
+set postmaster "bhj"
+set bouncemail
+set no spambounce
+set properties ""
+set daemon 300
+poll pop.bizmail.yahoo.com with proto POP3
+       user 'haojun.bao@borqs.com' there with password 'XXXX' is 'bhj' here options fetchall ssl
+
+poll pop3.live.com with proto POP3
+     user 'baohj_zj@hotmail.com' there with password 'XXXX' is 'bhj' here options ssl
+
+poll pop.gmail.com with proto POP3
+     user 'baohaojun@gmail.com' there with password 'XXXX' is 'bhj' here options ssl
+
+poll localhost with proto POP3
+     user 'baohaojun@yahoo.com' there with password 'XXXX' is 'bhj' here     

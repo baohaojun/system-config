@@ -1,2 +1,2 @@
-#!/bin/bash -x
-ln -sf "`readlink \"$1\"`" "$1"
+#!/bin/bash
+ln -sf "`/bin/readlink \"$1\"`" "$1"
