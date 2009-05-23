@@ -47,12 +47,12 @@
 
 (define-abbrev-table 'gdb-script-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'global-abbrev-table '(    ("bhjd" "BHJDEBUG((\"\"));" bhj-bhjd 17)
+(define-abbrev-table 'global-abbrev-table '(    ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 19)
     ("cltenv" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" " nil 11)
     ("eclt" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" /usr/atria/bin/cleartool" nil 11)
     ("eld" "EnterLeaveDebug();" nil 30)
     ("incbhj" "#define ENABLE_BHJDEBUG
-#include \"bhjdebug.h\"" nil 20)
+#include \"bhjdebug.h\"" nil 21)
     ))
 
 (define-abbrev-table 'gnus-article-edit-mode-abbrev-table '(    ))
