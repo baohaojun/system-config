@@ -103,7 +103,6 @@ class CMainFrame : public CFrameWindowImpl<CMainFrame>, public CUpdateUI<CMainFr
     HIMAGELIST			m_hImageListSmall; // list
 	HWND				m_hWndListView;  //handle to shellview, which encapsulates listview
 	
-	CIDropTarget*		m_pDropTarget;
 	struct TREEITEMINFO
 	{
 		TREEITEMINFO() {memset(this, 0, sizeof(TREEITEMINFO));}
@@ -153,17 +152,6 @@ public:
 		MESSAGE_HANDLER(WM_CREATE, OnCreate)
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
 		MESSAGE_HANDLER(WM_GETISHELLBROWSER, OnGetIShellBrowser)
-
-		COMMAND_ID_HANDLER(ID_APP_EXIT, OnFileExit)
-		COMMAND_ID_HANDLER(ID_VIEW_TOOLBAR, OnViewToolBar)
-		COMMAND_ID_HANDLER(ID_VIEW_STATUS_BAR, OnViewStatusBar)
-		COMMAND_ID_HANDLER(ID_APP_ABOUT, OnAppAbout)
-
-		NOTIFY_HANDLER(IDC_FILETREE, TVN_GETDISPINFO, OnTreeGetDispInfo)
-		NOTIFY_HANDLER(IDC_FILETREE, TVN_ITEMEXPANDING, OnTreeItemExpanding)
-		NOTIFY_HANDLER(IDC_FILETREE, TVN_DELETEITEM, OnTreeDeleteItem)
-		NOTIFY_HANDLER(IDC_FILETREE, TVN_SELCHANGED, OnTreeItemSelected)
-		NOTIFY_HANDLER(IDC_FILETREE, NM_RCLICK, OnTreeItemRClick)
 
 		CHAIN_MSG_MAP(CUpdateUI<CMainFrame>)
 		CHAIN_MSG_MAP(CFrameWindowImpl<CMainFrame>)

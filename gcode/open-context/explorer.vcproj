@@ -276,6 +276,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\ShellMenu.cpp"
+				>
+			</File>
+			<File
 				RelativePath="stdafx.cpp"
 				>
 				<FileConfiguration
@@ -312,6 +316,10 @@
 			</File>
 			<File
 				RelativePath="resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ShellMenu.h"
 				>
 			</File>
 			<File
