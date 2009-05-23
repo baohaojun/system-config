@@ -1,0 +1,69 @@
+#!/bin/bash
+
+#!/bin/bash
+
+function get_first_project() 
+{
+    get_all_projects "$1"|head -n 1
+}
+
+function get_all_projects()
+{
+    cat "$1"|grep '^Project.*='|awk -F\" '{print $4}'
+}
+
+function msdev()
+{
+    if [[ -z "$2" ]]
+    then
+        project="`get_first_project $1`"
+    elif [[ "$2" == all ]]
+    then
+        project="`get_all_projects $1`"
+    else
+        project="$2"
+    fi
+
+    if [[ -z "$3" ]]
+    then
+        config=release
+    elif [[ "$3" == all ]]
+    then
+        config="release debug"
+    else
+        config="$3"
+    fi
+
+    sln_file="$1"
+    shift #get rid of sln_file
+    shift #get rid of project
+    shift #get rid of config
+
+    local cmd
+    if [[ -z "$1" ]]
+    then
+        cmd=/Build
+    else 
+        cmd="$1"
+        shift #it could be /Clean        
+    fi
+    
+    #the remaining args could be like `/clean'
+    for p in $project; do
+        for c in $config; do
+            echo "compiling project \`$p' with config \`$c' in \`$sln_file'"
+            vc8.com "$sln_file" /Project $p "$cmd" $c "$@"
+        done
+    done    
+}
+
+if ls *.sln > /dev/null 2>&1
+then
+    msdev ./*.sln  "$@" 
+elif ls ../*.sln > /dev/null 2>&1
+then
+    msdev ../*.sln  "$@"
+elif ls ../../*.sln > /dev/null 2>&1
+then
+    msdev ../../*.sln  "$@"
+fi
