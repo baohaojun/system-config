@@ -49,7 +49,7 @@ KeyToGrab(N),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 #KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c acrobat -F 1 acroread)
 KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p alchemy -F 1 alchemy)
 KeyToGrab(C),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -C)
-KeyToGrab(V),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p msdev.exe -F 1 vc.lnk)
+KeyToGrab(V),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p devenv.exe -F 1 vc8.lnk)
 KeyToGrab(K),           WithModifier(LWin),      WithAction(ExecCommand), DoThis("%HOMEDRIVE%%HOMEPATH%\doc\work.txt")
 
 
