@@ -1,0 +1,40 @@
+#!/bin/bash
+
+unset prj_file
+for x in *.sln ../*.sln ../../*.sln ../../../*.sln; do 
+    if [[ -f "$x" ]]; then
+        prj_file="$x"
+        break
+    fi
+done
+
+if [[ -z $prj_file ]]; then
+    for x in *.dsw ../*.dsw ../../*.dsw ../../../*.dsw; do 
+        if [[ -f "$x" ]]; then
+            prj_file="$x"
+            break
+        fi
+    done
+fi
+
+if [[ -z $prj_file ]]; then
+    echo "Error: no project file (*.sln|*.dsw) found anywhere!"
+    exit -1
+fi
+
+cd "`dirname \"$prj_file\"`"
+prj_file="`basename \"$prj_file\"`"
+
+case $prj_file in 
+    *.dsw)
+        vc6compile "$@"
+        ;;
+    *.sln)
+        if grep "Format Version 9.00" $prj_file;
+        then
+            vc8compile "$@"
+        else
+            vc7compile "$@"
+        fi
+        ;;
+esac 
