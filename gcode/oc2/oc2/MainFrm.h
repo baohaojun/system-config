@@ -6,56 +6,54 @@
 
 #include "ChildView.h"
 
-class IShellBrowserImpl : public IShellBrowser, public ICommDlgBrowser
+class IShellBrowserImpl : public IShellBrowser
 {
 	DWORD m_dwRef;
 public:
 	IShellBrowserImpl():m_dwRef(0){}
 
 	STDMETHOD(QueryInterface)(REFIID iid, void **ppvObject)
-	{
-		if(ppvObject == NULL)
-			return E_POINTER;
+		{
+			if(ppvObject == NULL)
+				return E_POINTER;
 
-		*ppvObject = NULL;
+			*ppvObject = NULL;
 
-		if(iid == IID_IUnknown)
-			*ppvObject = (IUnknown*)(IShellBrowser*) this;
-		else if(iid == IID_IOleWindow)
-			*ppvObject = (IOleWindow*) this;			
-		else if(iid == IID_IShellBrowser)
-			*ppvObject = (IShellBrowser*) this;
-		else if(iid == IID_ICommDlgBrowser)
-			*ppvObject = (ICommDlgBrowser*) this;
-		else
-			return E_NOINTERFACE;
-		((IUnknown*)(*ppvObject))->AddRef();
-		return S_OK;
-	}
+			if(iid == IID_IUnknown)
+				*ppvObject = (IUnknown*)(IShellBrowser*) this;
+			else if(iid == IID_IOleWindow)
+				*ppvObject = (IOleWindow*) this;			
+			else if(iid == IID_IShellBrowser)
+				*ppvObject = (IShellBrowser*) this;
+			else
+				return E_NOINTERFACE;
+			((IUnknown*)(*ppvObject))->AddRef();
+			return S_OK;
+		}
 
 	STDMETHOD_(ULONG, AddRef)() { return ++m_dwRef; }
 	STDMETHOD_(ULONG, Release)(){ return --m_dwRef; }  //not heap based	
-    // *** IOleWindow methods ***
-    STDMETHOD(ContextSensitiveHelp)(BOOL fEnterMode){return E_NOTIMPL;}	
+	// *** IOleWindow methods ***
+	STDMETHOD(ContextSensitiveHelp)(BOOL fEnterMode){return E_NOTIMPL;}	
 	// *** ICommDlgBrowser methods ***
-    STDMETHOD(OnDefaultCommand) (THIS_ struct IShellView * ppshv)
-	{	//handle double click and ENTER key if needed
-		return E_NOTIMPL; 
-	}
-    STDMETHOD(OnStateChange) (THIS_ struct IShellView * ppshv,ULONG uChange)
-	{	//handle selection, rename, focus if needed
-		return E_NOTIMPL; 
-	}
-    STDMETHOD(IncludeObject) (THIS_ struct IShellView * ppshv,LPCITEMIDLIST pidl)
-	{	//filter files if needed
-		return S_OK;
-	}
-    // *** IShellBrowser methods *** (same as IOleInPlaceFrame)
-    STDMETHOD(InsertMenusSB) (HMENU hmenuShared, LPOLEMENUGROUPWIDTHS lpMenuWidths) {return E_NOTIMPL;}
-    STDMETHOD(SetMenuSB) (HMENU hmenuShared, HOLEMENU holemenuReserved,HWND hwndActiveObject){return E_NOTIMPL;}
-    STDMETHOD(RemoveMenusSB) (HMENU hmenuShared){return E_NOTIMPL;}
-    STDMETHOD(SetStatusTextSB) (LPCOLESTR lpszStatusText){return E_NOTIMPL;}
-    STDMETHOD(EnableModelessSB) (BOOL fEnable){return E_NOTIMPL;}
+	STDMETHOD(OnDefaultCommand) (THIS_ struct IShellView * ppshv)
+		{	//handle double click and ENTER key if needed
+			return E_NOTIMPL; 
+		}
+	STDMETHOD(OnStateChange) (THIS_ struct IShellView * ppshv,ULONG uChange)
+		{	//handle selection, rename, focus if needed
+			return E_NOTIMPL; 
+		}
+	STDMETHOD(IncludeObject) (THIS_ struct IShellView * ppshv,LPCITEMIDLIST pidl)
+		{	//filter files if needed
+			return S_OK;
+		}
+	// *** IShellBrowser methods *** (same as IOleInPlaceFrame)
+	STDMETHOD(InsertMenusSB) (HMENU hmenuShared, LPOLEMENUGROUPWIDTHS lpMenuWidths) {return E_NOTIMPL;}
+	STDMETHOD(SetMenuSB) (HMENU hmenuShared, HOLEMENU holemenuReserved,HWND hwndActiveObject){return E_NOTIMPL;}
+	STDMETHOD(RemoveMenusSB) (HMENU hmenuShared){return E_NOTIMPL;}
+	STDMETHOD(SetStatusTextSB) (LPCOLESTR lpszStatusText){return E_NOTIMPL;}
+	STDMETHOD(EnableModelessSB) (BOOL fEnable){return E_NOTIMPL;}
 	STDMETHOD(BrowseObject)(LPCITEMIDLIST pidl, UINT wFlags){return E_NOTIMPL; }
 	STDMETHOD(GetViewStateStream)(DWORD grfMode,LPSTREAM  *ppStrm){return E_NOTIMPL;}	
 	STDMETHOD(OnViewWindowActive)(struct IShellView *ppshv){return E_NOTIMPL;}
@@ -98,9 +96,10 @@ public:
  	}
 	STDMETHOD(QueryActiveShellView)(struct IShellView ** ppshv)
 	{
-		m_pShellView->AddRef();
-		*ppshv = m_pShellView;
-		return S_OK; 
+		if (!ppshv) {
+			return E_POINTER;
+		}
+		return E_NOTIMPL;
 	}
 
 	STDMETHOD(GetControlWindow)(UINT id, HWND * lphwnd)
