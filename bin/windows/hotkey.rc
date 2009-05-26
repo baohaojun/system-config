@@ -47,7 +47,7 @@ KeyToGrab(T),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(B),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p bash.exe bash --rcfile ~/.bashrc-min -i)
 KeyToGrab(N),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p firefox -F 1 firefox)
 #KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c acrobat -F 1 acroread)
-KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py alchemy)
+KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py alchemy.exe)
 KeyToGrab(C),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py "")
 KeyToGrab(V),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py devenv.exe vc8)
 KeyToGrab(K),           WithModifier(LWin),      WithAction(ExecCommand), DoThis("%HOMEDRIVE%%HOMEPATH%\doc\work.txt")
