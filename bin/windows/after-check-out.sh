@@ -9,3 +9,4 @@ ln -f ../gnuserv/*.exe .
 cd ~/bin/windows
 ./update-password.sh
 echo 'after check out update success!'
+ln -sf ~/'Application Data/Microsoft/Internet Explorer/Quick Launch' ~/SendTo/
