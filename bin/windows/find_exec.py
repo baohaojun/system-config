@@ -148,15 +148,20 @@ def main():
         sys.exit(-1)
 
     targetExec_ = sys.argv[1].lower()
+    startExec = targetExec_
+    if targetExec_ in execMap:
+        targetExec_ = execMap[targetExec_]
+
+    reobj = re.compile(targetExec_, re.I)
 
     if not targetExec_: #we want to cycle through all window with the same exec_
         cycleSameExecWnds()
     else:
         for x in listWindowInfo:
             thisExec = x['exec'].lower()
-            print os.path.basename(thisExec)
+            thisExec = os.path.basename(thisExec)
 
-            if targetExec_ in thisExec:
+            if reobj.search(thisExec):
                 ActivateWindow(x['hwnd'])
                 break
         else:
@@ -166,7 +171,7 @@ def main():
             elif len(sys.argv) > 2:
                 sys.exit(-1) #nothing to start
             else:
-                os.system('start %s' % targetExec_)
+                os.system('start %s' % startExec)
 
         sys.exit(0) #we have found 
 main()
