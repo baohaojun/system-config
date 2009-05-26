@@ -91,7 +91,11 @@ listWindowInfo = []
 execMap = {'msdev.exe' : 'msdev.exe|devenv.exe',
            'devenv.exe' : 'msdev.exe|devenv.exe',
            'dexplore.exe' : 'hh.exe|dexplore.exe',
-           'hh.exe' : 'dexplore.exe'}
+           'hh.exe' : 'dexplore.exe',
+           'alchemy.exe' : 'acrord32.exe|alchemy.exe|quill.exe',
+           'quill.exe' : 'acrord32.exe|alchemy.exe|quill.exe',
+           'acrord32.exe' : 'acrord32.exe|alchemy.exe|quill.exe',
+           }
 
 def ActivateWindow(hwnd):
     if IsIconic(hwnd):
