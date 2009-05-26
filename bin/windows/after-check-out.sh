@@ -1,4 +1,9 @@
 #!/bin/bash
+mount c: /c
+mount d: /d
+mount e: /e
+mount q: /q
+
 cd ~/bin/windows/
 find . -type l -exec relink.sh '{}' \;
 cd ~/bin/windows/redirect

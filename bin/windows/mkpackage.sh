@@ -1,12 +1,22 @@
 #!/bin/bash
 set -e
 cd ~
-if [[ `svn st -q|wc -c` != 0 ]]; then echo exit; fi
+svn update
+if [[ `svn st -q|wc -c` != 0 ]]; 
+then
+    echo "you need check in everything first!"
+    false;
+fi
+
 svn st -v|grep -v '^\?'|perl -npe 's/.*?baohaojun\s+//' > files.lst
 if grep ' ' files.lst; then 
-    echo Error: you have some files that contains a SPACE..
+    echo "Error: you have some files that contains a SPACE.."
     exit
 fi
+
+#we only take the files, not the directories, becase we don't want to
+#roll whole directories into tar-ball, as there may be non-revision
+#files
 
 for x in `cat files.lst`; do 
     if ! [[ -d $x ]]; then
@@ -16,10 +26,9 @@ done > files2.lst
 
 (
     cat files2.lst; 
-    echo /c/gnuserv/; 
     echo /c/WINDOWS/Fonts/Monaco.ttf;
     echo /d/tools/emacswin;
     echo /d/tools/emacs-site-lisp/
-)|xargs tar czf config.tgz 
+)|xargs tar czf windows-config.tgz
 
 rm files.lst files2.lst
