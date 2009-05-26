@@ -1,5 +1,7 @@
 #!/bin/bash
+set -e
 cd ~
+if [[ `svn st -q|wc -c` != 0 ]]; then echo exit; fi
 svn st -v|grep -v '^\?'|perl -npe 's/.*?baohaojun\s+//' > files.lst
 if grep ' ' files.lst; then 
     echo Error: you have some files that contains a SPACE..
