@@ -50,6 +50,11 @@ function oc()
     cygstart `which explorer.exe` /n,/select,\""`cygpath -alw \"$1\"`"\"
 }
 
+function svn-info-clip()
+{
+    svn info "$1" |grep '^URL:'|grep svn:.* -o|tr -d '\r' > /dev/clipboard
+}
+
 function of()
 {
     if which "$1" >/dev/null 2>&1; then
