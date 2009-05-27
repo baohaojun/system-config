@@ -36,9 +36,11 @@ function SetPath()
 
     unset PATH
     for x in "${paths[@]}"; do
-        export PATH="$PATH":"$x"
+        #cygwin-1.7 will behave weirdly if /h is mounted but the
+        #texlive disk is not inserted
+        [[ -e "$x" ]] && export PATH="$PATH":"$x"
     done
-    
+    PATH="${PATH:1}" #remove the beginning `:'
     unset SetPath
 }
 

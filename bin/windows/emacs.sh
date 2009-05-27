@@ -1,6 +1,7 @@
 #!/bin/bash --login
 rm ~/.ido.last
-. /c/ssh-agent.log >/dev/null
+
+export CYGDIR=`cygpath -alwm /`
 #export http_proxy=http://bhj3:8888
 . ~/.bashrc
 export CDPATH="`cygpath -alpw \"$CDPATH\"`"

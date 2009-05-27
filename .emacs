@@ -5,10 +5,8 @@
 
 (when (eq system-type 'windows-nt)
   (let ((default-directory "d:/tools/emacs-site-lisp/")) (load-file "d:/tools/emacs-site-lisp/subdirs.el"))
-  (if (file-exists-p "c:/cygwin/bin/bash.exe")
-      (setq cygwin-drive "c:")
-    (setq cygwin-drive "d:"))
-  (setq cygwin-mount-cygwin-bin-directory (concat cygwin-drive "/cygwin/bin"))
+  (setq cygwin-dir (getenv "CYGDIR"))
+  (setq cygwin-mount-cygwin-bin-directory (concat cygwin-dir "/bin"))
   (setq load-path
 	(cons "d:/tools/emacs-site-lisp/" load-path))
   (add-to-list 'load-path "~/bin/windows/gnuserv")
@@ -630,7 +628,7 @@ handshake, or nil on failure."
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(Info-additional-directory-list (list "d:/tools/emacswin/info/" "d:/local/share/info" (concat cygwin-drive "/cygwin/usr/share/info")))
+ '(Info-additional-directory-list (list "d:/tools/emacswin/info/" "d:/local/share/info" (concat cygwin-dir "/usr/share/info")))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bhj-clt-branch "dbg_zch68_a22242_soundmgr")
  '(bhj-grep-default-directory (quote default-directory))
@@ -664,7 +662,7 @@ handshake, or nil on failure."
  '(indent-tabs-mode nil)
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))
- '(mail-sources (quote ((file :path (concat cygwin-drive "/cygwin/var/spool/mail/bhj")))))
+ '(mail-sources (quote ((file :path (concat cygwin-dir "/var/spool/mail/bhj")))))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
  '(muse-html-charset-default "chinese-gb18030")

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cd "$HOMEDRIVE/$HOMEPATH"
 
+cd "$HOMEDRIVE/$HOMEPATH"
 #cygrunsrv.exe -I startup -p /c/WINDOWS/system32/subst.exe -a 'q: "c:\documents and settings\bhj"'
 
 HOME2="`pwd`"
@@ -9,11 +9,15 @@ HOME2="`pwd`"
 subst q: "$HOMEDRIVE"\\"$HOMEPATH"
 export HOME=/q
 
-cd ~/Local\ Settings/Temp && rm tramp* -rf
+
 
 cd ~/doc
 regedit /s ImeNoToggle.reg
 . ~/.bashrc-windows
+cd ~/Local\ Settings/Temp && rm tramp* -rf
+
+cygpath -alw `which bash` > /c/.bash-loc
+
 
 cd ~/bin/windows/startup
 
