@@ -47,8 +47,19 @@ function SetPath()
 #Open Containing folder..
 function oc()
 {
-    cygstart explorer.exe /n,/select,\""`cygpath -alw \"$1\"`"\"
+    cygstart `which explorer.exe` /n,/select,\""`cygpath -alw \"$1\"`"\"
 }
+
+function of()
+{
+    if which "$1" >/dev/null 2>&1; then
+        cygstart "`which \"$1\"`"
+    else
+        cygstart "$1"
+    fi
+}
+
+alias ps='ps aux -W'
 
 if [[ -d /q ]]; then
    export HOME=/q

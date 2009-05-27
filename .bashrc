@@ -36,8 +36,7 @@ alias emacsclient='~/emacs/bin/emacsclient.exe -n'
 export VC_BUILD_CONFIG=release
 
 . ~/.bashrc-path
-alias of=cygstart
-alias ps='ps aux -W'
+
 alias reboot=~/bin/reboot
 . ~/.bashrc_public
 case $- in

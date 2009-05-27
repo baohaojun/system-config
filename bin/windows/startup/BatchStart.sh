@@ -1,7 +1,7 @@
 #!/bin/bash
 run fetchmail&
 
-cd ~/Projects/MboxTray/
+cd ~/gcode/MboxTray/
 cygstart --hide /c/python25/python mail.py
 cygstart --hide ~/bin/windows/NetworkTest.exe&
 cd ~/doc

@@ -11,7 +11,8 @@
 
 (define-abbrev-table 'browse-kill-ring-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'c++-mode-abbrev-table '(    ))
+(define-abbrev-table 'c++-mode-abbrev-table '(    ("spfunc" "static int (const CStringArray& args, CString& result, int opcode)" nil 1)
+    ))
 
 (define-abbrev-table 'c-mode-abbrev-table '(    ))
 

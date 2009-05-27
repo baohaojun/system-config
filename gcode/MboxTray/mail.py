@@ -83,7 +83,7 @@ class MainWindow:
     def CheckMailBox (self):
         """"""
         try:
-            mstat = os.stat('c:/cygwin/var/spool/mail/bhj')
+            mstat = os.stat(os.environ['CYGDIR'] + '/var/spool/mail/bhj')
         except:
             print "can't find your mailbox?"
         if mstat[ST_SIZE]==0:

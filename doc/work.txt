@@ -688,3 +688,21 @@ while true; do echo 111 > /sys/android_power/acquire_partial_wake_lock; sleep 2;
 tcpdump.exe -i 4 -A -XX host smtp.gmail.com
 c:\grldr="Install Ubuntu"
 of python -m pdb mixemu.py
+
+****************************************************************
+$diff exim.conf /c/cygwin.old/etc/exim.conf
+46,50d45
+< # Exim is compiled with ipv6 support. However that feature can be disabled
+< # by setting the field below to "true"
+<
+< disable_ipv6 = false
+<
+56c51,52
+< # primary_hostname =
+---
+> primary_hostname = localhost
+> local_interfaces = 127.0.0.1
+379c375
+<   require verify        = sender
+---
+> #require verify        = sender
