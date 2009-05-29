@@ -23,6 +23,7 @@ function SetPath()
         ~/bin/windows/redirect_cyg
         ~/bin/windows/emacs-graphics
         ~/bin/windows/gnuserv
+        ~/bin/windows/lnks
         "/c/program files/imagemagick-6.4.9-q16"
         /usr/X11R6/bin
         /usr/bin
