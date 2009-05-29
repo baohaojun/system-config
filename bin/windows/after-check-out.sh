@@ -9,7 +9,7 @@ find . -type l -exec relink.sh '{}' \;
 cd ~/bin/windows/redirect
 
 ~/bin/windows/redirect.sh
-ln -f ../gnuserv/*.exe . 
+mkdir ~/bin/windows/lnks
 
 cd ~/bin/windows
 ./update-password.sh
