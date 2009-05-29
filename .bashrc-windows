@@ -18,7 +18,8 @@ function SetPath()
         /c/Python25/Lib/site-packages/PyQt4/
         ~/bin
         ~/bin/windows
-        ~/bin/windows/redirect
+        ~/bin/windows/redirect_vc6
+        ~/bin/windows/redirect_cyg
         ~/bin/windows/emacs-graphics
         ~/bin/windows/gnuserv
         "/c/program files/imagemagick-6.4.9-q16"
