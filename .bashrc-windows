@@ -17,13 +17,13 @@ function SetPath()
         /c/Python25/Lib/site-packages/PyQt4
         /c/Python25/Lib/site-packages/PyQt4/
         "/c/Program Files/Java/jdk1.6.0_13/bin/"
+        ~/bin/windows/lnks
         ~/bin
         ~/bin/windows
         ~/bin/windows/redirect_vc6
         ~/bin/windows/redirect_cyg
         ~/bin/windows/emacs-graphics
         ~/bin/windows/gnuserv
-        ~/bin/windows/lnks
         "/c/program files/imagemagick-6.4.9-q16"
         /usr/X11R6/bin
         /usr/bin

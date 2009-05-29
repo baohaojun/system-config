@@ -4,6 +4,6 @@ lnk="`basename \"$1\"`".lnk
 rm "$1"
 cd ~/bin/windows/lnks
 CreateLink "`cygpath -alw \"$src\"`" "$lnk"
-cd - 
+cd - >/dev/null 2>&1
 ln -sf "$src" "$1"
 
