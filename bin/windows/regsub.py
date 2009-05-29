@@ -1,4 +1,4 @@
-#!/q/bin/pycyg.exe -x
+#!/bin/env pycyg
 # -*- coding: gbk -*-
 from win32api import *
 from win32con import *

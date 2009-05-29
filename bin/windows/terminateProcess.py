@@ -1,4 +1,4 @@
-#!/q/bin/pycyg.exe
+#!/bin/env pycyg
 from win32process import *
 from win32con import *
 from win32api import *
