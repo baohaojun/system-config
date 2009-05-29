@@ -6,6 +6,7 @@ mount q: /q
 
 cd ~/bin/windows/
 mkdir ~/bin/windows/lnks
+./download-external.sh
 find . -type l -exec relink.sh '{}' \;
 cd ~/bin/windows/redirect
 
