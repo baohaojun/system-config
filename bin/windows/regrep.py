@@ -36,7 +36,7 @@ def traverseKey(rootKey, rootKeyName):
     ## handle the values according to their value / valueName / type
     
     for (valueName, value, type_) in allValues:
-        ### if value contains a '?', then probably not a Unicode char not encodable by our coding (gbk)
+        ### if value contains a '?', then probably it's a Unicode char not encodable by our coding (gbk)
         if type_ in (REG_SZ, REG_EXPAND_SZ) and '?' in value:
             sys.stderr.write('key %s\nname %s\ntype %s\nvalue %s\n\n' % (rootKeyName, valueName, `type_`, value))
             continue
@@ -62,7 +62,9 @@ def traverseKey(rootKey, rootKeyName):
 
         ### load the new value
         if needReplaceValue or needReplaceName:
-                sys.stdout.write('matched [%s]: "%s"="%s"\n' % (rootKeyName, valueName, value))
+            if not valueName:
+                valueName = '@'
+            sys.stdout.write("matched \n'%s'\n-> '%s'='%s'\n" % (rootKeyName, valueName, value))
 
     #now do the tree walking
     try:

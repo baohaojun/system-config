@@ -68,15 +68,7 @@ def isWindowSwitchable2(hwnd):
             wndInfo['exec'] = getExecFromWnd(hwnd)
             listWindowInfo.append(wndInfo)
 
-
-
-def isTopmost(hwnd):
-    ex_style = GetWindowLong(hwnd, GWL_EXSTYLE)
-    if ex_style&WS_EX_TOPMOST:
-        return True
-    return False
-
-def _MyCallback(hwnd, extra):
+def RecordSwitchable(hwnd, extra):
     try:
         isWindowSwitchable2(hwnd)
         sys.stdout.flush()
@@ -129,12 +121,6 @@ def cycleSameExecWnds():
 
 
 
-def Usage():
-    print 'Usage: find_exec.py match_ start_'
-    print ''
-    print '    Options: match_ the program to match'
-    print '             start_ the program to start if match failed'
-
 def debugWnd():
     for x in listWindowInfo:
         print "%x %x `%s' `%s' `%s'" % (x['hwnd'],
@@ -143,39 +129,31 @@ def debugWnd():
                                         x['class'],
                                         x['exec'])
 
-def main():
-    EnumWindows(_MyCallback, (listWindowInfo,))
+def terminateWindow(argv):
+    global listWindowInfo
+    listWindowInfo = []
+    EnumWindows(RecordSwitchable, (listWindowInfo,))
     #debugWnd()
-    if len(sys.argv) < 2:
-        print "Error: must take at least one arg, the program to match"
-        Usage()
+    if len(argv) != 1:
+        print "Error: argument required"
+        print "Usage: terminateWindow.py exec_name"
         sys.exit(-1)
 
-    targetExec_ = sys.argv[1].lower()
-    startExec = targetExec_
-    if targetExec_ in execMap:
-        targetExec_ = execMap[targetExec_]
+    targetExec_ = argv[0]
 
     reobj = re.compile(targetExec_, re.I)
 
-    if not targetExec_: #we want to cycle through all window with the same exec_
-        cycleSameExecWnds()
-    else:
-        for x in listWindowInfo:
-            thisExec = x['exec'].lower()
-            thisExec = os.path.basename(thisExec)
+    windowFound = False
+    for x in listWindowInfo:
+        thisExec = x['exec'].lower()
+        thisExec = os.path.basename(thisExec)
 
-            if reobj.search(thisExec):
-                ActivateWindow(x['hwnd'])
-                break
-        else:
-            print 'no match'
-            if len(sys.argv) > 2 and sys.argv[2]:
-                os.system('start %s' % sys.argv[2])
-            elif len(sys.argv) > 2:
-                sys.exit(-1) #nothing to start
-            else:
-                os.system('start %s' % startExec)
+        if thisExec == targetExec_:
+            PostMessage(x['hwnd'], WM_SYSCOMMAND, SC_CLOSE, 0)
+            PostMessage(x['owner'], WM_SYSCOMMAND, SC_CLOSE, 0)
+            windowFound = True 
 
-        sys.exit(0) #we have found 
-main()
+    return windowFound
+
+if __name__ == '__main__':
+    terminateWindow(sys.argv[1:])

@@ -2,6 +2,7 @@
 # -*- coding: gbk -*-
 from win32api import *
 from win32con import *
+import terminateWindow
 
 import sys, os, traceback, re, subprocess
 
@@ -42,6 +43,11 @@ regEditKey = RegOpenKeyEx(HKEY_CURRENT_USER,
                        0, 
                        KEY_ALL_ACCESS)
 favoriteKey = RegOpenKeyEx(regEditKey, 'Favorites', 0, KEY_ALL_ACCESS)
+try:
+    while terminateWindow.terminateWindow(['regedit.exe']):
+        pass
+except:
+    traceback.print_exc()
 
 RegSetValueEx(favoriteKey, "from regopen.py", 0, REG_SZ, keyToOpen)
 RegSetValueEx(regEditKey, "LastKey", 0, REG_SZ, keyToOpen)
