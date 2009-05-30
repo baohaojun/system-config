@@ -10,3 +10,4 @@ for x in /c/download/*.zip; do
         unzip -o "$x";
     fi
 done
+chmod a+x ./*
