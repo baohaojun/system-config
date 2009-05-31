@@ -8,10 +8,8 @@ cd ~/bin/windows/
 mkdir ~/bin/windows/lnks
 ./download-external.sh
 find . -type l -exec relink.sh '{}' \;
-cd ~/bin/windows/redirect
 
 ~/bin/windows/redirect.sh
-
 
 cd ~/bin/windows
 ./update-password.sh
