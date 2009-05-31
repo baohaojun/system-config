@@ -61,8 +61,9 @@ function edit_1()
     if ! [[ -w "$1" ]]; then
         echo Warning: "$1" is not writable
     fi
+    local file="`cygpath -alwm \"$1\"`"
     
-    emacsedit.exe "$1" >/dev/null 2>&1
+    (cd ~ && emacsedit.exe "$file" >/dev/null 2>&1)
 
 }
 

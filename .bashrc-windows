@@ -61,12 +61,28 @@ function svn-info-clip()
 function of()
 {
     if which "$1" >/dev/null 2>&1; then
-        cygstart "`which \"$1\"`"
+        if [[ "$1" == of ]]; then
+            local file=`which cygstart`
+        else
+            local file="`which \"$1\"`"
+        fi
+        shift
+        cygstart "$file" "$@"
     else
-        cygstart "$1"
+        cygstart "$@"
     fi
 }
 
+alias or=regopen.py #open registry
+
+function svn-check()
+{
+    svn st --no-ignore|grep '^\?'|grep '\.cpp$\|\.h$\|\.c$' -i
+}
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+alias regrep.py='regrep.py 2>/dev/null'
 alias ps='ps aux -W'
 
 if [[ -d /q ]]; then
