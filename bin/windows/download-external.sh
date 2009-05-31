@@ -7,7 +7,7 @@ wget -c http://download.sysinternals.com/Files/PsTools.zip
 cd ~/bin/windows/lnks
 for x in /c/download/*.zip; do 
     if [[ -f "$x" ]]; then
-        unzip -o "$x";
+        /bin/unzip -o "$x";
     fi
 done
 chmod a+x ./*
