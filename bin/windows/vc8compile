@@ -12,14 +12,20 @@ function get_all_projects()
     cat "$1"|grep '^Project.*='|awk -F\" '{print $4}'
 }
 
+function print_project_dir()
+{
+    awk -F \" '$4 == '$2'{print $6}' < $1
+}
 function msdev()
 {
+    sln_file="$1"
+    sln_dir="`basename \"$1\"`"
     if [[ -z "$2" ]]
     then
-        project="`get_first_project $1`"
+        project="`get_first_project $sln_file`"
     elif [[ "$2" == all ]]
     then
-        project="`get_all_projects $1`"
+        project="`get_all_projects $sln_file`"
     else
         project="$2"
     fi
@@ -34,7 +40,7 @@ function msdev()
         config="$3"
     fi
 
-    sln_file="$1"
+
     shift #get rid of sln_file
     shift #get rid of project
     shift #get rid of config
@@ -50,6 +56,7 @@ function msdev()
     
     #the remaining args could be like `/clean'
     for p in $project; do
+        print_project_dir $sln_file $project #for Emacs, echo make: Entering directory `C:/src/alchemy/JSC-vc8/AlchemyLib'
         for c in $config; do
             echo "compiling project \`$p' with config \`$c' in \`$sln_file'"
             vc8.com "$sln_file" /Project $p "$cmd" $c "$@"

@@ -1,38 +1,40 @@
 #!/bin/bash
 
-unset prj_file
+unset dswSlnFile
 for x in *.sln ../*.sln ../../*.sln ../../../*.sln; do 
     if [[ -f "$x" ]]; then
-        prj_file="$x"
+        dswSlnFile="$x"
         break
     fi
 done
 
-if [[ -z $prj_file ]]; then
+if [[ -z $dswSlnFile ]]; then
     for x in *.dsw ../*.dsw ../../*.dsw ../../../*.dsw; do 
         if [[ -f "$x" ]]; then
-            prj_file="$x"
+            dswSlnFile="$x"
             break
         fi
     done
 fi
 
-if [[ -z $prj_file ]]; then
+if [[ -z $dswSlnFile ]]; then
     echo "Error: no project file (*.sln|*.dsw) found anywhere!"
     exit -1
 fi
 
-cd "`dirname \"$prj_file\"`"
-prj_file="`basename \"$prj_file\"`"
+cd "`dirname \"$dswSlnFile\"`"
+dswSlnFile="`basename \"$dswSlnFile\"`"
 
-case $prj_file in 
+
+
+case $dswSlnFile in 
     *.dsw)
         vc6compile "$@"
         ;;
     *.sln)
-        if grep "Format Version 9.00" $prj_file;
+        if grep "Format Version 9.00" $dswSlnFile;
         then
-            vc8compile "$@"
+            vc8compile.py $dswSlnFile "$@"
         else
             vc7compile "$@"
         fi
