@@ -5,12 +5,21 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#ifndef WIN32
+
+#include <pthread.h>
+#define PATH_SEPW L'/'
+#define PATH_SEP '/'
 #include <windows.h>
-//#include <pthread.h>
+
+#else
+
 #define pthread_self GetCurrentThreadId
 #define pthread_t int
 #define PATH_SEPW L'\\'
 #define PATH_SEP '\\'
+#endif
 
 #define WIDEN2(x) L ## x
 #define WIDEN(x) WIDEN2(x)
