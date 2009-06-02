@@ -5,9 +5,18 @@ function download-all()
 {
     mkdir -p /c/download
     cd /c/download
-    wget -c http://download.sysinternals.com/Files/ProcessMonitor.zip
-    wget -c http://download.sysinternals.com/Files/ProcessExplorer.zip
-    wget -c http://download.sysinternals.com/Files/PsTools.zip
+    file_list=( 
+        http://download.sysinternals.com/Files/ProcessMonitor.zip
+        http://download.sysinternals.com/Files/ProcessExplorer.zip
+        http://download.sysinternals.com/Files/PsTools.zip
+    )
+
+    for x in "${file_list[@]}"; do
+        if ! [[ -f `basename "$x"` ]]; then
+            wget "$x"
+        fi
+    done
+            
 
     cd ~/bin/windows/lnks
     for x in /c/download/*.zip; do 
@@ -15,7 +24,7 @@ function download-all()
             /bin/unzip -o "$x";
         fi
     done
-    mv ./*/* . 
+    mv ./*/* . || true
     chmod a+x ./*
 }
 
@@ -132,7 +141,7 @@ function get-putty()
     fi
 
     cd /c/download/puttycyg-read-only/putty-0.60/
-    perl mkfiles.pl
+    /bin/perl mkfiles.pl
     make -C windows -f Makefile.cyg putty.exe
     make -C windows/cthelper
     size windows/putty.exe windows/cthelper/cthelper.exe

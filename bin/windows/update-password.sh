@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 echo
 read -s -p "Please input your password for .gnus/.fetchmailrc: " PASS
 echo
@@ -8,6 +9,11 @@ echo
 if [[ "$PASS" != "$PASS2" ]]; then
     echo "Your input does not match"
     exit -1
+fi
+
+if [[ -z "$PASS" ]]; then
+    echo "you don't want to change password"
+    exit 0
 fi
 
 /bin/perl -npe 's/XXXX/'"$PASS"'/g' ~/.fetchmailrc-template > ~/.fetchmailrc

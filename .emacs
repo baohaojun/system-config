@@ -663,6 +663,7 @@ handshake, or nil on failure."
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))
  '(mail-sources (quote ((file :path (concat cygwin-dir "/var/spool/mail/bhj")))))
+ '(message-dont-reply-to-names (quote (".*haojun.*")))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
  '(muse-html-charset-default "chinese-gb18030")

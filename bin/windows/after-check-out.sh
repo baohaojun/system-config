@@ -1,7 +1,13 @@
 #!/bin/bash
 set -e
+set -x
+
+function mkdir () 
+{
+    command mkdir -p "$@"
+}
 cd ~/bin/windows/
-mkdir ~/bin/windows/lnks
+mkdir  ~/bin/windows/lnks
 ./download-external.sh
 find . -type l -exec relink.sh '{}' \;
 

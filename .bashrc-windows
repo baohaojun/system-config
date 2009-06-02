@@ -9,7 +9,6 @@ function SetPath()
     local paths
     paths=(
         /c/TeXLive2007/dviout
-        /h/bin/win32
         /c/gs/gs8.54/bin
         /c/Perl/bin
         /c/Perl/site/bin
