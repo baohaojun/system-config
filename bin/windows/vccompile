@@ -29,12 +29,12 @@ dswSlnFile="`basename \"$dswSlnFile\"`"
 
 case $dswSlnFile in 
     *.dsw)
-        vc6compile "$@"
+        vc6compile "$@" || exit
         ;;
     *.sln)
         if grep "Format Version 9.00" $dswSlnFile;
         then
-            vc8compile.py $dswSlnFile "$@"
+            vc8compile.py $dswSlnFile "$@" || exit
         else
             vc7compile "$@"
         fi

@@ -56,7 +56,7 @@ def msdev(slnFile, *options):
 
         for c in cfg:
             #print ('vc8.com', slnFile, '/Project', p, '/Build', c)
-            subprocess.call(('vc8.com', slnFile, '/Project', p, cmd, c) + options)
+            subprocess.check_call(('vc8.com', slnFile, '/Project', p, cmd, c) + options)
         
         print "make: Leaving directory `%s'" % getProjDir(slnFile, p)
         sys.stdout.flush()
