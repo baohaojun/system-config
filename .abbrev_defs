@@ -120,7 +120,13 @@ import pickle
 
 (define-abbrev-table 'sgml-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'sh-mode-abbrev-table '(    ))
+(define-abbrev-table 'sh-mode-abbrev-table '(    ("cdscript" "if [[ ${0:0:1} == / ]]; then
+    cd `dirname $0`;
+else 
+    cd `pwd`/`dirname $0`;
+fi
+" nil 0)
+    ))
 
 (define-abbrev-table 'shell-mode-abbrev-table '(    ))
 

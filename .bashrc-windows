@@ -52,6 +52,18 @@ function oc()
     cygstart `which explorer.exe` /n,/select,\""`cygpath -alw \"$1\"`"\"
 }
 
+function cmd() 
+{
+    if [[ -z "$1" ]]; then
+        of cmd.exe
+    elif [[ -d "$1" ]]; then
+        (cd "$1"; of cmd.exe)
+    elif [[ -d "`dirname \"$1\"`" ]]; then
+        (cd "`dirname \"$1\"`"; of cmd.exe)
+    else 
+        echo cmd: no such file or directory "$1"
+    fi
+}
 function svn-info-clip()
 {
     svn info "$1" |grep '^URL:'|grep svn:.* -o|tr -d '\r' > /dev/clipboard

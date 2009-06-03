@@ -17,7 +17,7 @@ char *strdup_quote(const char* src)
 	int j = 1;
 	for (int i=0; i<src_len; i++) {
 		res[j++] = src[i];
-		if (src[i] == '"') {
+		if (src[i] == '"' || src[i] == '\\') {
 			res[j++] = src[i];
 		}
 	}

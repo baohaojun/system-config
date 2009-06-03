@@ -104,17 +104,7 @@ if [[ $IN_EMACS == true ]]; then
 fi
 export DISPLAY=:0
 export USER=`whoami`
-function cmd() {
-    if [[ -z "$1" ]]; then
-        cygstart cmd.exe
-    elif [[ -d "$1" ]]; then
-        (cd "$1"; cygstart cmd.exe)
-    elif [[ -d "`dirname \"$1\"`" ]]; then
-        (cd "`dirname \"$1\"`"; cygstart cmd.exe)
-    else 
-        echo cmd: no such file or directory "$1"
-    fi
-}
+
 alias mplayer="'/c/Program Files/MPlayer for Windows/MPlayer.exe'"
 function lcd()
 {
