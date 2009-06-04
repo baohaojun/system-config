@@ -64,6 +64,7 @@ function cmd()
         echo cmd: no such file or directory "$1"
     fi
 }
+
 function svn-info-clip()
 {
     svn info "$1" |grep '^URL:'|grep svn:.* -o|tr -d '\r' > /dev/clipboard
@@ -84,34 +85,37 @@ function of()
     fi
 }
 
-alias or=regopen.py #open registry
 
 function svn-check()
 {
     svn st --no-ignore|grep '^\?'|grep '\.cpp$\|\.h$\|\.c$' -i
 }
 
-export PYTHON_INCLUDE='c:\python25\include'
-export PYTHON_LIB='c:\python25\libs\python25.lib'
-
-export ADBHOST=192.168.100.2
-export ADB_HOST=192.168.100.2
-alias mplayer="'/c/Program Files/MPlayer for Windows/MPlayer.exe'"
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-alias regrep.py='regrep.py 2>/dev/null'
-alias ps='ps aux -W'
 
 function dict() 
 {
     dict.exe -v 2>/dev/null "$@"|iconv -f UTF-8 -t GBK
 }
+
 function llocate() {
     locateEmacs.sh "$@"|sed -e 's/^.:/"/; s/$/"/'
 }
+
+export PYTHON_INCLUDE='c:\python25\include'
+export PYTHON_LIB='c:\python25\libs\python25.lib'
+export ADBHOST=192.168.100.2
+export ADB_HOST=192.168.100.2
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+alias or=regopen.py #open registry
+alias mplayer="'/c/Program Files/MPlayer for Windows/MPlayer.exe'"
+alias regrep.py='regrep.py 2>/dev/null'
+alias ps='ps aux -W'
 alias locate=llocate
 alias pdfnup='cygexec pdfnup'
 alias reboot=~/bin/reboot
+
 if [[ -d /q ]]; then
    export HOME=/q
    SetPath
