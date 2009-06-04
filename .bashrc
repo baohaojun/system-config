@@ -31,25 +31,13 @@ alias vi=vim
 export EDITOR=vim
 export HISTSIZE=2000
 export HISTFILESIZE=100000
-alias clt='EDITOR="d:\tools\emacswin\emacs-22.1\bin\emacsclient.exe" cleartool'
-alias emacsclient='~/emacs/bin/emacsclient.exe -n'
-export VC_BUILD_CONFIG=release
 
-. ~/.bashrc-path
-
-alias reboot=~/bin/reboot
 . ~/.bashrc_public
 case $- in
       *i*) [[ -f /etc/bash_completion ]] && . /etc/bash_completion && . ~/.bash_netcompletion ;;
 
   esac
 cd
-alias klocate='locate -d  ~/knowledge/locatedb'
-alias gupdatedb='updatedb --localpaths="/c /d"'
-alias mm=mplayer
-alias emacs=emacs.sh
-
-
 
 function edit_1()
 {
@@ -75,17 +63,7 @@ function edit()
 }
 
 alias mail=~/bin/mail
-
-function dict() {
-    dict.exe -v 2>/dev/null "$@"|iconv -f UTF-8 -t GBK
-}
-alias pdfnup='cygexec pdfnup'
 alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
-
-function llocate() {
-    locateEmacs.sh "$@"|sed -e 's/^.:/"/; s/$/"/'
-}
-alias locate=llocate
 
 if [[ $TERM == eterm-color ]]; then
     export IN_EMACS=true;
@@ -105,7 +83,7 @@ fi
 export DISPLAY=:0
 export USER=`whoami`
 
-alias mplayer="'/c/Program Files/MPlayer for Windows/MPlayer.exe'"
+
 function lcd()
 {
     if [[ -z "$1" ]]; then
@@ -128,8 +106,3 @@ function lcd()
     fi
 }
 
-export PYTHON_INCLUDE='c:\python25\include'
-export PYTHON_LIB='c:\python25\libs\python25.lib'
-
-export ADBHOST=192.168.100.2
-export ADB_HOST=192.168.100.2
