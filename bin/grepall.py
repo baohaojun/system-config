@@ -81,7 +81,7 @@ class GrepAllParse:
         if arg[0:2] == ':f':
             findList.extend(['-o', '-iname', arg[2:]])
         elif arg[0:2] == ':l':
-            for x in open('/q/etc/grepall/'+arg[2:]):
+            for x in open(os.environ['HOME'] + '/etc/grepall/'+arg[2:]):
                 self.customize_find(x, findList, 1)
         elif arg[0:1] == '.': #this is a suffix
             findList.extend(['-o', '-iname', '*' + arg])

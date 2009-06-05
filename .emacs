@@ -4,11 +4,11 @@
       (cons (expand-file-name "~/.emacs_d/lisp") load-path))
 
 (when (eq system-type 'windows-nt)
-  (let ((default-directory "d:/tools/emacs-site-lisp/")) (load-file "d:/tools/emacs-site-lisp/subdirs.el"))
+  (let ((default-directory "~/tools/emacs-site-lisp/")) (load-file "~/tools/emacs-site-lisp/subdirs.el"))
   (setq cygwin-dir (getenv "CYGDIR"))
   (setq cygwin-mount-cygwin-bin-directory (concat cygwin-dir "/bin"))
   (setq load-path
-	(cons "d:/tools/emacs-site-lisp/" load-path))
+	(cons "~/tools/emacs-site-lisp/" load-path))
   (add-to-list 'load-path "~/bin/windows/gnuserv")
   (require 'cygwin-mount)
   (global-set-key[(f2)](lambda()(interactive)(call-process "bash" nil nil nil "~/bin/windows/ehelp" (current-word))))
@@ -628,7 +628,7 @@ handshake, or nil on failure."
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(Info-additional-directory-list (list "d:/tools/emacswin/info/" "d:/local/share/info" (concat cygwin-dir "/usr/share/info")))
+ '(Info-additional-directory-list (list "~/tools/emacswin/info/" "d:/local/share/info" (concat cygwin-dir "/usr/share/info")))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bhj-clt-branch "dbg_zch68_a22242_soundmgr")
  '(bhj-grep-default-directory (quote default-directory))

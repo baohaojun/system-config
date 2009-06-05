@@ -7,5 +7,3 @@ else
     export PS1='\n[01;34m{ [01;31m'`whoami`'[01;34m@[01;33m'`hostname`'[01;34m [01;32m'\$PWD'[01;34m }[0m\n$'
 fi
 
-alias wpwd='cygpath -alw .; pwd|sed -e "s!/!.!g"; echo'
-alias perl='/bin/perl'

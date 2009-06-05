@@ -8,14 +8,14 @@ function SetPath()
 {
     local paths
     paths=(
-        /c/TeXLive2007/dviout
-        /c/gs/gs8.54/bin
-        /c/Perl/bin
-        /c/Perl/site/bin
-        /c/Python25/
-        /c/Python25/Lib/site-packages/PyQt4
-        /c/Python25/Lib/site-packages/PyQt4/
-        "/c/Program Files/Java/jdk1.6.0_13/bin/"
+        /cygdrive/c/TeXLive2007/dviout
+        /cygdrive/c/gs/gs8.54/bin
+        /cygdrive/c/Perl/bin
+        /cygdrive/c/Perl/site/bin
+        /cygdrive/c/Python25/
+        /cygdrive/c/Python25/Lib/site-packages/PyQt4
+        /cygdrive/c/Python25/Lib/site-packages/PyQt4/
+        "/cygdrive/c/Program Files/Java/jdk1.6.0_13/bin/"
         ~/bin/windows/lnks
         ~/bin
         ~/bin/windows
@@ -23,17 +23,17 @@ function SetPath()
         ~/bin/windows/redirect_cyg
         ~/bin/windows/emacs-graphics
         ~/bin/windows/gnuserv
-        "/c/program files/imagemagick-6.4.9-q16"
+        "/cygdrive/c/program files/imagemagick-6.4.9-q16"
         /usr/X11R6/bin
         /usr/bin
         /sbin
         /usr/local/bin
         /usr/sbin
         /usr/x11r6/bin
-        /c/WINDOWS
-        /c/WINDOWS/System32/Wbem
-        /c/WINDOWS/system32
-        "/c/Program Files/TortoiseSVN/bin"
+        /cygdrive/c/WINDOWS
+        /cygdrive/c/WINDOWS/System32/Wbem
+        /cygdrive/c/WINDOWS/system32
+        "/cygdrive/c/Program Files/TortoiseSVN/bin"
     )
 
     unset PATH
@@ -101,28 +101,76 @@ function llocate() {
     locateEmacs.sh "$@"|sed -e 's/^.:/"/; s/$/"/'
 }
 
+function edit_1()
+{
+    if ! [[ -r "$1" ]]; then
+        echo Error: "$1" is not readable
+        return 1
+    fi
+
+    if ! [[ -w "$1" ]]; then
+        echo Warning: "$1" is not writable
+    fi
+    local file="`cygpath -alwm \"$1\"`"
+    
+    (cd ~ && emacsedit.exe "$file" >/dev/null 2>&1)
+
+}
+
+function edit()
+{
+    for x in "$@"; do 
+        edit_1 "$x"
+    done
+}
+
+function lcd()
+{
+    if [[ -z "$1" ]]; then
+        echo Usage: lcd softlink
+        return
+    fi
+
+    linkTarget=`ls -l "$1"|sed -e 's/.*-> //'`
+    if [[ ${linkTarget:0:1} == / ]]; then
+        true #nothing to do
+    elif [[ ${linkTarget:1:1} == ':' ]]; then #this is a windows pathname (`:' is a special char)
+        true
+    else
+        linkTarget="`dirname \"$1\"`"/"$linkTarget"
+    fi
+    if [[ -d "$linkTarget" ]]; then
+        cd "$linkTarget"
+    else
+        cd "`dirname \"$linkTarget\"`"
+    fi
+}
+
 export PYTHON_INCLUDE='c:\python25\include'
 export PYTHON_LIB='c:\python25\libs\python25.lib'
 export ADBHOST=192.168.100.2
 export ADB_HOST=192.168.100.2
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
+export CDPATH=.:~:/cygdrive
 
+alias wpwd='cygpath -alw .; pwd|sed -e "s!/!.!g"; echo'
+alias perl='/bin/perl'
 alias or=regopen.py #open registry
-alias mplayer="'/c/Program Files/MPlayer for Windows/MPlayer.exe'"
+alias mplayer="'/cygdrive/c/Program Files/MPlayer for Windows/MPlayer.exe'"
 alias regrep.py='regrep.py 2>/dev/null'
 alias ps='ps aux -W'
 alias locate=llocate
 alias pdfnup='cygexec pdfnup'
 alias reboot=~/bin/reboot
 
-if [[ -d /q ]]; then
-   export HOME=/q
+if [[ -d /cygdrive/q ]]; then
+   export HOME=/cygdrive/q
    SetPath
    return 0
 else 
-     export HOME=/qq
-     SetPath
-     return 1
+    export HOME="`cygpath -au \"$HOMEDRIVE\"\"$HOMEPATH\"`"
+    SetPath
+    return 1
 fi
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PATH=/d/tools/emacswin/bin/:/bin:/usr/bin:"$PATH"
+export PATH=~/tools/emacswin/bin/:/bin:/usr/bin:"$PATH"
 
 find . \( '-path' '*/CVS' \
     '-o' '-path' '*/.svn' \
