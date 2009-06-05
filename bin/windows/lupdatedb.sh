@@ -5,9 +5,9 @@ mkdir -p "${HOME}"/tmp/locate
 if ! [[ -z "$1" ]]; then
     LOCATE_DIRS="$1"
 else 
-    lupdatedb.sh /c
-    lupdatedb.sh /d
-    lupdatedb.sh /e
+    lupdatedb.sh /cygdrive/c
+    lupdatedb.sh /cygdrive/d
+    lupdatedb.sh /cygdrive/e
 fi
 mkdir -p ~/tmp/locate
 

@@ -1,1 +1,1 @@
-../pageant.sh
+/cygdrive/q/bin/windows/pageant.sh

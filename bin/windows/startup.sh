@@ -7,12 +7,11 @@ cd "$HOMEDRIVE/$HOMEPATH"
 HOME2="`pwd`"
 #psexec -s subst q: 'c:\Documents and Settings\bhj'
 subst q: "$HOMEDRIVE"\\"$HOMEPATH"
-export HOME=/q
+export HOME=/cygdrive/q
 cd ~/doc
 regedit /s ImeNoToggle.reg
 . ~/.bashrc-windows
 
-ln -sf "$HOME2" /qq
 cd ~/Local\ Settings/Temp && rm tramp* -rf
 
 cygpath -alwm `which bash` > /c/.bash-loc

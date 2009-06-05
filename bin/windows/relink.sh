@@ -1,9 +1,10 @@
 #!/bin/bash
-src="`/bin/readlink \"$1\"`"
-lnk="`basename \"$1\"`".lnk
-rm "$1"
-cd ~/bin/windows/lnks
-CreateLink "`cygpath -alw \"$src\"`" "$lnk"
-cd - >/dev/null 2>&1
-ln -sf "$src" "$1"
+src="`/bin/readlink -f \"$1\"`"
+
+if ! [[ -z "$src" ]]; then
+    rm "$1"
+    ln -sf "$src" "$1"
+else
+    echo "$1"' has no valid target!'
+fi
 

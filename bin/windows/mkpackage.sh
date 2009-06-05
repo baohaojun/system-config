@@ -27,8 +27,8 @@ done > files2.lst
 (
     cat files2.lst; 
     echo /c/WINDOWS/Fonts/Monaco.ttf;
-    echo /d/tools/emacswin;
-    echo /d/tools/emacs-site-lisp/
+    echo ~/tools/emacswin;
+    echo ~/tools/emacs-site-lisp/
 )|xargs tar czf windows-config.tgz
 
 rm files.lst files2.lst
