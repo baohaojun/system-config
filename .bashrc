@@ -1,4 +1,4 @@
-
+export PATH=/bin:"$PATH"
 if [[ `uname` == CYGWIN_NT-5.1 ]]; 
 then
     if . ~/.bashrc-windows; then
