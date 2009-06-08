@@ -4,11 +4,6 @@ if [[ -z "$src" ]]; then
     src="`/bin/readlink \"$1\"`"
 fi
 
-if [[ $INPLACE == true ]]; then
-    tgt="$1"
-else
-    tgt=~/bin/windows/lnks/"`basename \"$1\"`"
-fi
 
 function re_match()
 {
@@ -23,7 +18,7 @@ function relink_func()
 {
     if ! [[ -e "$src" ]]; then
         if re_match "$src" "^/./"; then
-            for x in {a..z}; do 
+            for x in {c..z}; do 
                 new_src=/cygdrive/$x/"${src:3}"
                 if [[ -e "$new_src" ]]; then
                     echo "$1" source found at "$new_src"
@@ -34,7 +29,7 @@ function relink_func()
             done
             echo "$1" is not valid
         elif re_match "$src" "^/cygdrive/./"; then
-            for x in {a..z}; do
+            for x in {c..z}; do
                 new_src=/cygdrive/$x/"${src:12}"
                 if [[ -e "$new_src" ]]; then
                     echo "$1" source found at "$new_src"
@@ -51,4 +46,18 @@ function relink_func()
         ln -sf "$src" "$tgt"
     fi
 }
+
+INPLACE=${INPLACE:-true}
+if test $# -eq 0; then
+    INPLACE=false
+    find ~/bin/windows/ -type l -exec relink.sh '{}' \;
+    exit
+elif test $# -ne 1; then
+    echo Error: can take at most 1 argument
+elif test $INPLACE = false; then
+    tgt=~/bin/windows/lnks/"`basename \"$1\"`"
+else
+    tgt="$1"
+fi
+    
 relink_func "$1"
