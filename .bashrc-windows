@@ -169,7 +169,7 @@ if [[ -d /cygdrive/q ]]; then
    SetPath
    return 0
 else 
-    export HOME="`cygpath -au \"$HOMEDRIVE\"\"$HOMEPATH\"`"
+    export HOME="`/bin/cygpath -au \"$HOMEDRIVE\"\"$HOMEPATH\"`"
     SetPath
     return 1
 fi
