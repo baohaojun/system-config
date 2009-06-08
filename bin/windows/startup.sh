@@ -14,7 +14,7 @@ regedit /s ImeNoToggle.reg
 
 cd ~/Local\ Settings/Temp && rm tramp* -rf
 
-cygpath -alwm `which bash` > /c/.bash-loc
+cygpath -alwm `which bash` > /cygdrive/c/.bash-loc
 export CYGDIR=`cygpath -alwm /`
 cd ~/bin/windows/startup
 
