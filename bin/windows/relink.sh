@@ -16,7 +16,7 @@ function re_match()
 
 function relink_func()
 {
-    if ! [[ -e "$src" ]]; then
+    if re_match "$src" "^/a/" || re_match "$src" "^/cygdrive/a/" || ! [[ -e "$src" ]]; then
         if re_match "$src" "^/./"; then
             for x in {c..e}; do 
                 new_src=/cygdrive/$x/"${src:3}"
