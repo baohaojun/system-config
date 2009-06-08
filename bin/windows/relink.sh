@@ -4,7 +4,12 @@ if [[ -z "$src" ]]; then
     src="`/bin/readlink \"$1\"`"
 fi
 
-tgt=~/bin/windows/lnks/"`basename \"$1\"`"
+if [[ $INPLACE == true ]]; then
+    tgt="$1"
+else
+    tgt=~/bin/windows/lnks/"`basename \"$1\"`"
+fi
+
 function re_match()
 {
     if echo "$1" | grep "$2" >/dev/null; then
