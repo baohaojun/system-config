@@ -1,5 +1,5 @@
 (require 'gnus-cite)
-
+(setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
 (setq
  user-full-name "Haojun Bao"
  nnml-directory "~/private/mail/"
@@ -78,6 +78,11 @@
       '((if (message-news-p)
             "nnml:mail.sent.news"
           "nnml:mail.sent.mail")))
+
+(add-to-list 'gnus-secondary-select-methods '(nnimap "gmail"
+                                  (nnimap-address "imap.gmail.com")
+                                  (nnimap-server-port 993)
+                                  (nnimap-stream ssl)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (setq message-send-mail-function 'smtpmail-send-it ;;

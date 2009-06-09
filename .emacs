@@ -654,6 +654,7 @@ handshake, or nil on failure."
  '(gdb-find-source-frame t)
  '(gdb-same-frame t)
  '(gdb-show-main t)
+ '(gnus-ignored-newsgroups "")
  '(grep-use-null-device (quote auto-detect))
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
