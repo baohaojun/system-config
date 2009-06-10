@@ -1,0 +1,1 @@
+/cygdrive/c/Program Files/Microsoft Visual Studio/Common/MSDev98/Bin/MSDEV.EXE

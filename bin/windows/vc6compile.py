@@ -8,16 +8,18 @@ def getAllProjects(slnFile):
     projects = []
     for line in open(slnFile):
         if line.find('Project') == 0:
-            projects.append(line.split('"')[3])
+            projects.append(line.split('"')[1])
 
     return projects
 
 def getProjDir(slnFile, project):
     reobj = re.compile('^Project.*"' + project, re.I)
+    reobj2 = re.compile('^Project: ".*"=(.*) - Package', re.I)
     for line in open(slnFile):
         line = '/'.join(line.split('\\'))
         if reobj.search(line):
-            prjFile = line.split('"')[5]
+            matchObj = reobj2.search(line)
+            prjFile = matchObj.groups()[0]
             slnDir = os.path.dirname(slnFile)
             slnDir = os.path.abspath(slnDir)
             prjDir = os.path.dirname(prjFile)
@@ -43,12 +45,6 @@ def msdev(slnFile, *options):
     else:
         cfg = [cfg]
 
-    cmd = ''.join(options[0:1])
-    options = options[1:]
-
-    if not cmd:
-        cmd = '/Build'
-    
     for p in prj:
 
         print "make: Entering directory `%s'" % getProjDir(slnFile, p)
@@ -56,7 +52,7 @@ def msdev(slnFile, *options):
 
         for c in cfg:
             #print ('vc8.com', slnFile, '/Project', p, '/Build', c)
-            subprocess.check_call(('vc8.com', slnFile, '/Project', p, cmd, c) + options)
+            subprocess.check_call(('vc6.com', slnFile, '/make', "%s - win32 %s" % (p, c)) + options)
         
         print "make: Leaving directory `%s'" % getProjDir(slnFile, p)
         sys.stdout.flush()
