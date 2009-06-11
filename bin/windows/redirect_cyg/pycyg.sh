@@ -13,7 +13,7 @@ pyfile="$1"
  fi
 shift
 pyfile="`cygpath -alw \"$pyfile\"`"
-/c/python25/python "$pyfile" "$@"
+/cygdrive/c/python25/python "$pyfile" "$@"
 if [[ $debug == true ]]
 then
     echo -n Press any key to exit ...

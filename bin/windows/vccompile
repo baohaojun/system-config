@@ -1,21 +1,12 @@
 #!/bin/bash
 
 unset dswSlnFile
-for x in *.sln ../*.sln ../../*.sln ../../../*.sln; do 
+for x in *.sln *.dsw ../*.sln ../*.dsw ../../*.sln ../../*.dsw ../../../*.sln ../../../*.dsw; do 
     if [[ -f "$x" ]]; then
         dswSlnFile="$x"
         break
     fi
 done
-
-if [[ -z $dswSlnFile ]]; then
-    for x in *.dsw ../*.dsw ../../*.dsw ../../../*.dsw; do 
-        if [[ -f "$x" ]]; then
-            dswSlnFile="$x"
-            break
-        fi
-    done
-fi
 
 if [[ -z $dswSlnFile ]]; then
     echo "Error: no project file (*.sln|*.dsw) found anywhere!"
