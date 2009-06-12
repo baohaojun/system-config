@@ -35,6 +35,20 @@ if keyToOpen[0:5] == '/proc': #/proc/registry
             keyToOpen = keyToOpen + keyToOpenSub[0:i] + chr(hexVal)
             keyToOpenSub = keyToOpenSub[i+3:]
         keyToOpen = keyToOpen + keyToOpenSub
+
+regAbrevMap = {'HKLM':'HKEY_LOCAL_MACHINE',
+               'HKCU':'HKEY_CURRENT_USER',
+               'HKCR':'HKEY_CLASSES_ROOT',
+               'HKU':'HKEY_USERS',
+               'HKCC':'HKEY_CURRENT_CONFIG',
+               }
+
+for x in regAbrevMap:
+    print 'key is', keyToOpen[:len(x)], 'x is', x
+    if keyToOpen[:len(x)] == x:
+        keyToOpen = regAbrevMap[x] + keyToOpen[len(x):] 
+        break
+
 keyToOpen = 'My Computer\\'+keyToOpen
 print 'keyToOpen is', keyToOpen
 
