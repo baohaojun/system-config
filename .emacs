@@ -126,7 +126,10 @@ handshake, or nil on failure."
 (setq auto-mode-alist
       (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
 
-(require 'emms-setup)
+;; (require 'emms-setup)
+;; (emms-standard)
+;; (emms-default-players)
+
 (require 'w3m-load)
 (require 'gnuserv)
 (require 'tramp)
@@ -156,8 +159,6 @@ handshake, or nil on failure."
          (:base "latex" :path "~/public_latex")
          (:base "pdf" :path "~/public_pdf"))))
 
-(emms-standard)
-(emms-default-players)
 
 (setq-default abbrev-mode t)                                                                   
 (read-abbrev-file "~/.abbrev_defs")                                                            
@@ -208,11 +209,11 @@ handshake, or nil on failure."
  "WuBi" "WuBi"
  "quail/wubi86")
 
-(load "auctex.el" nil t t)
+;(load "auctex.el" nil t t)
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
-(load "preview-latex.el" nil t t)
+;(load "preview-latex.el" nil t t)
 
 ; set unicode data file location. (used by what-cursor-position)
 (let ((x "~/.emacs_d/UnicodeData.txt"))
@@ -628,7 +629,7 @@ handshake, or nil on failure."
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(Info-additional-directory-list (list "~/tools/emacswin/info/" "d:/local/share/info" (concat cygwin-dir "/usr/share/info")))
+ '(Info-additional-directory-list (list "~/tools/emacswin/info/" "/usr/local/share/info" "/usr/share/info"))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bhj-clt-branch "dbg_zch68_a22242_soundmgr")
  '(bhj-grep-default-directory (quote default-directory))
