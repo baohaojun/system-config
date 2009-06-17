@@ -11,10 +11,11 @@
 #include <pthread.h>
 #define PATH_SEPW L'/'
 #define PATH_SEP '/'
-#include <windows.h>
 
 #else
+#pragma warning (disable:4996) 
 
+#include <windows.h>
 #define pthread_self GetCurrentThreadId
 #define pthread_t int
 #define PATH_SEPW L'\\'
@@ -25,12 +26,7 @@
 #define WIDEN(x) WIDEN2(x)
 #define __WFILE__ WIDEN(__FILE__)
 #define __WFUNCTION__ WIDEN(__FUNCTION__)
-#define BHJ_LOG_FILENAME "c:\\cygwin\\tmp\\screen-exchange"
 
-#define BHJDEBUG_START() do {                   \
-        system("bash -c \"rm /tmp/screen-exchange*\""); \
-    } while (0)
-    
 
 #define BHJDEBUGW(fmt, ...) do {\
         wprintf(L"%s %s() %d: " fmt L"\n", wcsrchr(__WFILE__, PATH_SEPW)?wcsrchr(__WFILE__, PATH_SEPW)+1:__WFILE__, \
@@ -40,19 +36,9 @@
     } while(0)
 
 #define BHJDEBUG(fmt, ...) do {                                         \
-        pthread_t tmp = pthread_self();                                 \
-        char buff[1024] = {0};                                          \
-        sprintf(buff, "%s.%x", BHJ_LOG_FILENAME, tmp);                  \
-        FILE *fp = fopen(buff, "ab");                                   \
-        if (!fp) {                                                      \
-            fp = fopen(buff, "wb");                                     \
-        }                                                               \
-        fprintf(fp, "%s:%d: %s() bhj %x " fmt "\n", strrchr(__FILE__, PATH_SEP)?strrchr(__FILE__, PATH_SEP)+1:__FILE__, \
-                __LINE__, __FUNCTION__, tmp,                            \
-                ##__VA_ARGS__);                                         \
-        fclose(fp);                                                     \
+        pthread_t tid = pthread_self();                                 \
         fprintf(stderr, "%s:%d: %s() bhj %x " fmt "\n", strrchr(__FILE__, PATH_SEP)?strrchr(__FILE__, PATH_SEP)+1:__FILE__, \
-               __LINE__, __FUNCTION__, tmp,                             \
+               __LINE__, __FUNCTION__, tid,                             \
                ##__VA_ARGS__);                                          \
         fflush(stderr);                                                 \
     } while(0)
@@ -73,32 +59,14 @@ public:
         m_file = strdup(strrchr(file, PATH_SEP)?strrchr(file, PATH_SEP)+1:file);
         m_func = strdup(func);
         m_line = line;
-        pthread_t tmp = pthread_self();
-        char buff[1024];
-        sprintf(buff, "%s.%x", BHJ_LOG_FILENAME, tmp);
-        FILE *fp = fopen(buff, "ab");                        
-        if (!fp) {
-            fp = fopen(buff, "wb");
-        }
-
-        fprintf(fp, "%s:%d: bhj %x entering %s\n", m_file, line, tmp, func);
-        fclose(fp);
-        fprintf(stderr, "%s:%d: bhj %x entering %s\n", m_file, line, tmp, func);
+        pthread_t tid = pthread_self();
+        fprintf(stderr, "%s:%d: bhj %x entering %s\n", m_file, line, tid, func);
         fflush(stderr);
     };
     
     ~CEnterLeaveDebug() {
-        pthread_t tmp = pthread_self();
-        char buff[1024];
-        sprintf(buff, "%s.%x", BHJ_LOG_FILENAME, tmp);
-        FILE *fp = fopen(buff, "ab");
-        if (!fp) {
-            fp = fopen(buff, "wb");
-        }
-        fprintf(fp, "%s:%d: bhj %x leaving %s\n", m_file, m_line, tmp, m_func);
-        fclose(fp);
-
-        fprintf(stderr, "%s:%d: bhj %x leaving %s\n", m_file, m_line, tmp, m_func);
+        pthread_t tid = pthread_self();
+        fprintf(stderr, "%s:%d: bhj %x leaving %s\n", m_file, m_line, tid, m_func);
         fflush(stderr);
         free(m_func);
         free(m_file);
