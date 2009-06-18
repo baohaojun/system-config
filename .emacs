@@ -2,6 +2,9 @@
 
 (setq load-path
       (cons (expand-file-name "~/.emacs_d/lisp") load-path))
+(when (eq system-type 'cygwin)
+  (let ((default-directory "~/tools/emacs-site-lisp/")) (load-file "~/tools/emacs-site-lisp/subdirs.el"))
+  (add-to-list 'load-path "~/tools/emacs-site-lisp/"))
 
 (when (eq system-type 'windows-nt)
   (let ((default-directory "~/tools/emacs-site-lisp/")) (load-file "~/tools/emacs-site-lisp/subdirs.el"))
@@ -83,6 +86,7 @@ handshake, or nil on failure."
   (require 'w32-symlinks))
 
 
+
 ;; (set-frame-font "Microsoft Yahei-10")
 ;; (set-fontset-font (frame-parameter nil 'font)
 ;;                   'han (font-spec :family "Microsoft Yahei" :size 13))
@@ -93,7 +97,7 @@ handshake, or nil on failure."
 ;; (set-fontset-font (frame-parameter nil 'font)
 ;;                   'bopomofo (font-spec :family "Microsoft Yahei" :size 13))
 
-(set-frame-font "Monaco-10")
+(set-frame-font "Monaco-13")
 (set-face-font 'italic "-*-Courier New-normal-i-*-*-13-*-*-*-c-*-iso8859-1")
 (set-face-font 'bold-italic "-*-Courier New-bold-i-*-*-13-*-*-*-c-*-iso8859-1")
 

@@ -8,10 +8,6 @@ function SetPath()
 {
     local paths
     paths=(
-        /cygdrive/c/TeXLive2007/dviout
-        /cygdrive/c/gs/gs8.54/bin
-        /cygdrive/c/Perl/bin
-        /cygdrive/c/Perl/site/bin
         /cygdrive/c/Python25/
         /cygdrive/c/Python25/Lib/site-packages/PyQt4
         /cygdrive/c/Python25/Lib/site-packages/PyQt4/

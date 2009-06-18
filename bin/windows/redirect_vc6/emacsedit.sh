@@ -7,5 +7,5 @@ done; echo) >> ~/emacsedit.log
 
 #if the first char of $FILE is /, then, it should be // --- it is a file on a remote shared folder. Local files all begin with d: or c:
 
-findexec.exe -F 1 -p emacs.exe
+findexec.exe -F 1 -c emacs-emacs
 efindfile.sh "$FILE" 

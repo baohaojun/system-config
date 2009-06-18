@@ -7,4 +7,4 @@ export CYGDIR=`cygpath -alwm /`
 export CDPATH="`cygpath -alpw \"$CDPATH\"`"
 unset INFOPATH
 export VC_BUILD_CONFIG=release
-texlivemake ~/tools/emacswin/bin/runemacs "$@" &
+emacs "$@"

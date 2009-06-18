@@ -13,3 +13,4 @@ while true; do
     echo wait for 300 seconds
     sleep 300
 done&
+startxwin.sh&
