@@ -13,7 +13,8 @@ while true; do
     echo wait for 300 seconds
     sleep 300
 done&
-grep -v xterm /usr/bin/startxwin.sh > ~/bin/windows/lnks/myxwin.sh
-echo xhost + >> ~/bin/windows/lnks/myxwin.sh
-chmod +x myxwin.sh
+MYXWINSH=~/bin/windows/lnks/myxwin.sh
+grep -v xterm /usr/bin/startxwin.sh > $MYXWINSH
+echo xhost + >> $MYXWINSH
+chmod +x $MYXWINSH
 myxwin.sh&

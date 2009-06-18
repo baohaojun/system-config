@@ -1,7 +1,7 @@
 #!/bin/bash
 #locate "$@" |perl -npe 's!^!d:!'
 . /c/ssh-agent.log
-findexec.exe -p emacs -F 1
+findexec.exe -c emacs-emacs -F 1
 
 while true; do 
     case "$1" in

@@ -2,20 +2,17 @@
 
 (setq load-path
       (cons (expand-file-name "~/.emacs_d/lisp") load-path))
-(when (eq system-type 'cygwin)
-  (let ((default-directory "~/tools/emacs-site-lisp/")) (load-file "~/tools/emacs-site-lisp/subdirs.el"))
-  (add-to-list 'load-path "~/tools/emacs-site-lisp/"))
 
-(when (eq system-type 'windows-nt)
+(when (or (eq system-type 'windows-nt) (eq system-type 'cygwin))
   (let ((default-directory "~/tools/emacs-site-lisp/")) (load-file "~/tools/emacs-site-lisp/subdirs.el"))
   (setq cygwin-dir (getenv "CYGDIR"))
   (setq cygwin-mount-cygwin-bin-directory (concat cygwin-dir "/bin"))
   (setq load-path
 	(cons "~/tools/emacs-site-lisp/" load-path))
   (add-to-list 'load-path "~/bin/windows/gnuserv")
-  (require 'cygwin-mount)
-  (global-set-key[(f2)](lambda()(interactive)(call-process "bash" nil nil nil "~/bin/windows/ehelp" (current-word))))
-  (global-set-key[(f3)](lambda()(interactive)(call-process "bash" nil nil nil "~/bin/windows/ehelph2" (current-word))))
+
+  (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
+  (global-set-key[(f3)](lambda()(interactive)(call-process "bash" nil nil nil "/q/bin/windows/ehelph2" (current-word))))
   (defsubst nsi-point (position)
     "Returns the value of point at certain commonly referenced POSITIONs.
 POSITION can be one of the following symbols:
@@ -39,9 +36,13 @@ This function does not modify point or mark."
       (prog1
           (point)
         (goto-char here))))
-  (setq locate-command "~/bin/windows/redirect/locateEmacs.exe")
-  (setq w3m-dirlist-cgi-program "~/bin/windows/redirect/w3m-dirlist.exe")
 
+
+  (autoload 'nsi-mode "nsi-mode" "nsi editing mode." t)
+  (add-to-list 'auto-mode-alist '("\\.nsi$" . nsi-mode)))
+
+(when (eq system-type 'windows-nt)
+  (require 'cygwin-mount)
   (require 'starttls)
 
   (defun starttls-negotiate-gnutls (process)
@@ -77,14 +78,9 @@ handshake, or nil on failure."
                 info
               (message "STARTTLS negotiation failed: %s" info)
               nil))))))
-
-  (autoload 'nsi-mode "nsi-mode" "nsi editing mode." t)
-  (add-to-list 'auto-mode-alist '("\\.nsi$" . nsi-mode))
-
   (put 'cygwin-mount-name-hook-function 'safe-magic t)
   (cygwin-mount-activate)
   (require 'w32-symlinks))
-
 
 
 ;; (set-frame-font "Microsoft Yahei-10")
@@ -668,7 +664,6 @@ handshake, or nil on failure."
  '(indent-tabs-mode nil)
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))
- '(mail-sources (quote ((file :path (concat cygwin-dir "/var/spool/mail/bhj")))))
  '(message-dont-reply-to-names (quote (".*haojun.*")))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
