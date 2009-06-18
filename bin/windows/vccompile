@@ -23,11 +23,15 @@ case $dswSlnFile in
         vc6compile.py $dswSlnFile "$@" || exit
         ;;
     *.sln)
-        if grep "Format Version 9.00" $dswSlnFile;
+        if grep -q "Format Version 9.00" $dswSlnFile;
         then
-            vc8compile.py $dswSlnFile "$@" || exit
-        else
-            vc7compile "$@"
+            vccompile.py vc8.com $dswSlnFile "$@" || exit
+        elif grep -q "Format Version 10.00" $dswSlnFile
+        then
+            vccompile.py vc9.com $dswSlnFile "$@" || exit
+        elif grep -q "Format Version 8.00" $dswSlnFile
+        then
+            vccompile.py vc7.com $dswSlnFile "$@" || exit
         fi
         ;;
 esac 

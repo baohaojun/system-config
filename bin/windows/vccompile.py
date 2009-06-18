@@ -24,9 +24,16 @@ def getProjDir(slnFile, project):
             prjDir = os.path.join(slnDir, prjDir)
             return prjDir
 
-def msdev(slnFile, *options):
+def msdev(*options):
+    vcExec = ''.join(options[0:1])
+    options = options[1:]
+
+    slnFile = ''.join(options[0:1])
+    options = options[1:]
+
     prj = ''.join(options[0:1])
     options = options[1:]
+
     if not prj or prj == 'all':
         prj = getAllProjects(slnFile)
     elif re.search('^[0-9]*$', prj):
@@ -55,8 +62,8 @@ def msdev(slnFile, *options):
         sys.stdout.flush()
 
         for c in cfg:
-            print 'vc8.com', slnFile, '/Project', p, '/Build', c, options
-            subprocess.check_call(('vc8.com', slnFile, '/Project', p, cmd, c) + options)
+            print vcExec, slnFile, '/Project', p, '/Build', c, options
+            subprocess.check_call((vcExec, slnFile, '/Project', p, cmd, c) + options)
         
         print "make: Leaving directory `%s'" % getProjDir(slnFile, p)
         sys.stdout.flush()
