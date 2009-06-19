@@ -109,7 +109,7 @@ function edit_1()
     fi
     local file="`cygpath -alwm \"$1\"`"
     
-    (cd ~ && emacsedit.exe "$file" >/dev/null 2>&1)
+    (cd ~ && emacsedit.exe -n "$file" >/dev/null 2>&1)
 
 }
 

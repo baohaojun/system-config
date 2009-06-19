@@ -9,7 +9,6 @@
   (setq cygwin-mount-cygwin-bin-directory (concat cygwin-dir "/bin"))
   (setq load-path
 	(cons "~/tools/emacs-site-lisp/" load-path))
-  (add-to-list 'load-path "~/bin/windows/gnuserv")
 
   (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
   (global-set-key[(f3)](lambda()(interactive)(call-process "bash" nil nil nil "/q/bin/windows/ehelph2" (current-word))))
@@ -93,7 +92,7 @@ handshake, or nil on failure."
 ;; (set-fontset-font (frame-parameter nil 'font)
 ;;                   'bopomofo (font-spec :family "Microsoft Yahei" :size 13))
 
-(set-frame-font "Monaco-13")
+(set-frame-font "Monaco-14")
 (set-face-font 'italic "-*-Courier New-normal-i-*-*-13-*-*-*-c-*-iso8859-1")
 (set-face-font 'bold-italic "-*-Courier New-bold-i-*-*-13-*-*-*-c-*-iso8859-1")
 
@@ -131,7 +130,7 @@ handshake, or nil on failure."
 ;; (emms-default-players)
 
 (require 'w3m-load)
-(require 'gnuserv)
+
 (require 'tramp)
 (require 'weblogger)
 (require 'session)
@@ -197,12 +196,6 @@ handshake, or nil on failure."
 
 
 ;;;; You need this if you decide to use gnuclient
-
-(setq gnuserv-frame (selected-frame))
-
-
-
-
 
 (register-input-method
  "chinese-wubi86" "Chinese-CNS" 'quail-use-package
@@ -387,7 +380,7 @@ handshake, or nil on failure."
 
   (setq emacs-wiki-publishing-directory "/var/www/home/a22242/WiKi")
   (setq emacs-wiki-directories '("~/WiKi"))
-  (setq emacs-wiki-meta-charset "gbk")
+  (setq emacs-wiki-meta-charset "utf-8")
 
   (setq emacs-wiki-style-sheet
         "<link rel=\"stylesheet\" type=\"text/css\" href=\"../main.css\">"
@@ -445,8 +438,8 @@ handshake, or nil on failure."
         (insert ";")
       (call-interactively 'do_en_when_ch)))
 
-  (prefer-coding-system 'chinese-gb18030-unix)
-  (set-default-coding-systems 'chinese-gb18030-unix)
+  (prefer-coding-system 'utf-8-unix)
+  (set-default-coding-systems 'utf-8-unix)
 
   (defun weekrep ()
     (interactive)
@@ -506,7 +499,6 @@ handshake, or nil on failure."
 
 
 (keydef "C-S-g" (progn (setq grep-buffers-buffer-name "*grep-buffers*")(grep-buffers)))
-(keydef "C-S-M" (gnus-group-browse-foreign-server "nnml:"))
 
 (defun bhj-clt-insert-file-name ()
   (interactive)
@@ -639,7 +631,7 @@ handshake, or nil on failure."
  '(delete-old-versions t)
  '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
  '(dictem-server "localhost")
- '(dictionary-server "bhj3")
+ '(dictionary-server "bhj2")
  '(ecb-compile-window-height nil)
  '(ecb-layout-name "left10")
  '(ecb-layout-window-sizes (quote (("top1" (0.25842696629213485 . 0.32075471698113206) (0.21910112359550563 . 0.32075471698113206) (0.5337078651685393 . 0.32075471698113206)))))
@@ -648,7 +640,7 @@ handshake, or nil on failure."
  '(ecb-ping-program "false")
  '(ecb-tip-of-the-day nil)
  '(ecb-tree-buffer-style (quote image))
- '(ecomplete-database-file-coding-system (quote gb18030))
+ '(ecomplete-database-file-coding-system (quote utf-8))
  '(emms-player-mplayer-command-name "mplayer.exe")
  '(emms-player-mplayer-parameters (quote ("-slave" "-quiet" "-really-quiet" "-vo" "null")))
  '(font-lock-maximum-decoration 2)
@@ -667,7 +659,7 @@ handshake, or nil on failure."
  '(message-dont-reply-to-names (quote (".*haojun.*")))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
- '(muse-html-charset-default "chinese-gb18030")
+ '(muse-html-charset-default "utf-8")
  '(muse-html-style-sheet "<style type=\"text/css\">
 BODY {
 	font-size : 10pt;
@@ -979,10 +971,10 @@ div.tl{
   ;; If there is more than one, they won't work right.
  )
 
-(set-keyboard-coding-system 'chinese-gb18030)
-(set-selection-coding-system 'chinese-gb18030)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
 
-(gnuserv-start)
+(server-start)
 
 (defun bhj-mimedown ()
   (interactive)
