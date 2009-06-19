@@ -34,8 +34,7 @@ KeyToGrab(9),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), 
 KeyToGrab(0),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -0)
 KeyToGrab(0),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +0)
 
-KeyToGrab(E),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs -fe run bash -c fetchmail.sh -fe -F 1 emacs.sh)
-KeyToGrab(M),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(email.sh)
+KeyToGrab(E),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs-)
 KeyToGrab(X),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs -fe run bash -c eterm-bhj.sh -fe -F 1 emacs.sh)
 KeyToGrab(P),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p powerpnt.exe -F 1 ppt)
 KeyToGrab(P),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c putty -F 1 putty bash -c """myscr first""")

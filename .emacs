@@ -3,94 +3,12 @@
 (setq load-path
       (cons (expand-file-name "~/.emacs_d/lisp") load-path))
 
-(when (or (eq system-type 'windows-nt) (eq system-type 'cygwin))
+(when  (eq system-type 'cygwin)
   (let ((default-directory "~/tools/emacs-site-lisp/")) (load-file "~/tools/emacs-site-lisp/subdirs.el"))
-  (setq cygwin-dir (getenv "CYGDIR"))
-  (setq cygwin-mount-cygwin-bin-directory (concat cygwin-dir "/bin"))
   (setq load-path
 	(cons "~/tools/emacs-site-lisp/" load-path))
-
   (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
-  (global-set-key[(f3)](lambda()(interactive)(call-process "bash" nil nil nil "/q/bin/windows/ehelph2" (current-word))))
-  (defsubst nsi-point (position)
-    "Returns the value of point at certain commonly referenced POSITIONs.
-POSITION can be one of the following symbols:
-  bol  -- beginning of line    eol  -- end of line           bod  -- beginning of def or class
-  eod  -- end of def or class  bob  -- beginning of buffer   eob  -- end of buffer
-  boi  -- back to indentation  bos  -- beginning of statement
-This function does not modify point or mark."
-    (let ((here (point)))
-      (cond
-       ((eq position 'bol) (beginning-of-line))
-       ((eq position 'eol) (end-of-line))
-       ((eq position 'bod) (nsi-beginning-of-def-or-class))
-       ((eq position 'eod) (nsi-end-of-def-or-class))
-       ;; Kind of funny, I know, but useful for py-up-exception.
-       ((eq position 'bob) (beginning-of-buffer))
-       ((eq position 'eob) (end-of-buffer))
-       ((eq position 'boi) (back-to-indentation))
-       ((eq position 'bos) (nsi-goto-initial-line))
-       (t (error "Unknown buffer position requested: %s" position))
-       )
-      (prog1
-          (point)
-        (goto-char here))))
-
-
-  (autoload 'nsi-mode "nsi-mode" "nsi editing mode." t)
-  (add-to-list 'auto-mode-alist '("\\.nsi$" . nsi-mode)))
-
-(when (eq system-type 'windows-nt)
-  (require 'cygwin-mount)
-  (require 'starttls)
-
-  (defun starttls-negotiate-gnutls (process)
-    "Negotiate TLS on PROCESS opened by `open-starttls-stream'.
-This should typically only be done once.  It typically returns a
-multi-line informational message with information about the
-handshake, or nil on failure."
-    (let (buffer info old-max done-ok done-bad)
-      (if (null (setq buffer (process-buffer process)))
-          ;; XXX How to remove/extract the TLS negotiation junk?
-        (call-process "/bin/kill" nil nil nil
-                      "-ALRM" (format "%d" (process-id process)))
-        (with-current-buffer buffer
-          (save-excursion
-            (setq old-max (goto-char (point-max)))
-            (call-process "/bin/kill" nil nil nil
-                          "-ALRM" (format "%d" (process-id process)))
-            (while (and (processp process)
-                        (eq (process-status process) 'run)
-                        (save-excursion
-                          (goto-char old-max)
-                          (not (or (setq done-ok (re-search-forward
-                                                  starttls-success nil t))
-                                   (setq done-bad (re-search-forward
-                                                   starttls-failure nil t))))))
-              (accept-process-output process 1 100)
-              (sit-for 0.1))
-            (setq info (buffer-substring-no-properties old-max (point-max)))
-            (delete-region old-max (point-max))
-            (if (or (and done-ok (not done-bad))
-                    ;; Prevent mitm that fake success msg after failure msg.
-                    (and done-ok done-bad (< done-ok done-bad)))
-                info
-              (message "STARTTLS negotiation failed: %s" info)
-              nil))))))
-  (put 'cygwin-mount-name-hook-function 'safe-magic t)
-  (cygwin-mount-activate)
-  (require 'w32-symlinks))
-
-
-;; (set-frame-font "Microsoft Yahei-10")
-;; (set-fontset-font (frame-parameter nil 'font)
-;;                   'han (font-spec :family "Microsoft Yahei" :size 13))
-;; (set-fontset-font (frame-parameter nil 'font)
-;;                   'symbol (font-spec :family "Microsoft Yahei" :size 13))
-;; (set-fontset-font (frame-parameter nil 'font)
-;;                   'cjk-misc (font-spec :family "Microsoft Yahei" :size 13))
-;; (set-fontset-font (frame-parameter nil 'font)
-;;                   'bopomofo (font-spec :family "Microsoft Yahei" :size 13))
+)
 
 (set-frame-font "Monaco-14")
 (set-face-font 'italic "-*-Courier New-normal-i-*-*-13-*-*-*-c-*-iso8859-1")
@@ -105,15 +23,6 @@ handshake, or nil on failure."
                   'cjk-misc (font-spec :family "Simsun" :size 13))
 (set-fontset-font (frame-parameter nil 'font)
                   'bopomofo (font-spec :family "Simsun" :size 13))
-
-;; (set-fontset-font (frame-parameter nil 'font)
-;;                   'han (font-spec :family "Simsun" :size 13))
-;; (set-fontset-font (frame-parameter nil 'font)
-;;                   'symbol (font-spec :family "Simsun" :size 13))
-;; (set-fontset-font (frame-parameter nil 'font)
-;;                   'cjk-misc (font-spec :family "Simsun" :size 13))
-;; (set-fontset-font (frame-parameter nil 'font)
-;;                   'bopomofo (font-spec :family "Simsun" :size 13))
 
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 

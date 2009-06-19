@@ -149,6 +149,7 @@ export ADB_HOST=192.168.100.2
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export CDPATH=.:~:/cygdrive
+export DISPLAY=:0
 
 alias wpwd='cygpath -alw .; pwd|sed -e "s!/!.!g"; echo'
 alias perl='/bin/perl'

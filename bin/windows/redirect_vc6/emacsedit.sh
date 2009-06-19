@@ -1,6 +1,6 @@
-#!/bin/bash -x
+#!/bin/bash 
 
-findexec.exe -F 1 -c emacs-emacs
+findexec.exe -F 1 -c emacs-
 
 argv=( "$@" )
 for ((x=0; x<${#argv[@]}; x++)); do 
