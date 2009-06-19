@@ -17,21 +17,24 @@ cd "`dirname \"$dswSlnFile\"`"
 dswSlnFile="`basename \"$dswSlnFile\"`"
 
 
-
+function PathW2U()
+{
+    /bin/perl -ne 'if (m/^(?:[0-9]+\>)?(.*?)(\([0-9]+\).*:.*)/) { print `cygpath -au "$1"|tr -d "\n"`.$2."\n"} else {print $_}'
+}
 case $dswSlnFile in 
     *.dsw)
-        vc6compile.py $dswSlnFile "$@" || exit
+        vc6compile.py $dswSlnFile "$@" 2>&1|PathW2U || exit
         ;;
     *.sln)
         if grep -q "Format Version 9.00" $dswSlnFile;
         then
-            vccompile.py vc8.com $dswSlnFile "$@" || exit
+            vccompile.py vc8.com $dswSlnFile "$@" 2>&1 | PathW2U || exit
         elif grep -q "Format Version 10.00" $dswSlnFile
         then
-            vccompile.py vc9.com $dswSlnFile "$@" || exit
+            vccompile.py vc9.com $dswSlnFile "$@" 2>&1 | PathW2U || exit
         elif grep -q "Format Version 8.00" $dswSlnFile
         then
-            vccompile.py vc7.com $dswSlnFile "$@" || exit
+            vccompile.py vc7.com $dswSlnFile "$@" 2>&1 | PathW2U || exit
         fi
         ;;
 esac 
