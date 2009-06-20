@@ -2,7 +2,7 @@
 rm ~/.ido.last
 
 . ~/.bashrc-windows
-export USER=`whomai`
+export USER=`whoami`
 unset TERM
 unset WINDOW
 findexec -c emacs-
