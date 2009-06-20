@@ -992,4 +992,6 @@ div.tl{
       (local-set-key [(escape)] 'bhj-modify-term-map))))
 
 (require 'xcscope)
+(global-set-key [(control z)] 'keyboard-quit)
+(global-set-key [(control x) (control z)] 'keyboard-quit)
 ;(w32-register-hot-key [A-tab])
