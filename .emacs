@@ -423,7 +423,7 @@
 (defun bhj-insert-pwdu ()
   (interactive)
   (insert "'")
-  (call-process "cygpath" nil t nil "-u" default-directory)
+  (call-process "cygpath" nil t nil "-au" (expand-file-name default-directory))
   (backward-delete-char 1)
   (insert "'"))
 

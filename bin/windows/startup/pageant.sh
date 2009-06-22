@@ -1,1 +1,0 @@
-/cygdrive/q/bin/windows/pageant.sh

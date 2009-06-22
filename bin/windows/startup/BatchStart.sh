@@ -1,12 +1,8 @@
 #!/bin/bash
-run fetchmail&
 
-cd ~/gcode/MboxTray/
-cygstart --hide /cygdrive/c/python25/python mail.py
-cygstart --hide ~/bin/windows/NetworkTest.exe&
+cygstart --hide ~/bin/windows/NetworkTest.exe& #this is ssh2Emacs
 cd ~/doc
 regedit /s ime-noctrlshift-noaltshift.reg
-net start 'vmware host agent'
 helpEmacs.py&
 while true; do 
     ssh bhj2 offlineimap
@@ -14,7 +10,7 @@ while true; do
     sleep 300
 done&
 MYXWINSH=~/bin/windows/lnks/myxwin.sh
-grep -v xterm /usr/bin/startxwin.sh > $MYXWINSH
+grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p' > $MYXWINSH
 echo xhost + >> $MYXWINSH
 chmod +x $MYXWINSH
 myxwin.sh&
