@@ -10,6 +10,8 @@ function download-all()
         http://download.sysinternals.com/Files/ProcessExplorer.zip
         http://download.sysinternals.com/Files/PsTools.zip
         http://the.earth.li/~sgtatham/putty/latest/x86/putty.zip
+        http://www.nirsoft.net/utils/resourcesextract.zip
+        http://www.nirsoft.net/utils/iconsext.zip
     )
 
     for x in "${file_list[@]}"; do
