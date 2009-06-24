@@ -46,7 +46,7 @@
 
 (setq gnus-group-line-format "%m%M%L%5N/%-5R %25G: %D\n"
       gnus-topic-line-format "%i%n %A (%G) %v\n"
-      gnus-summary-line-format ":%U%R%B%s%-60=%-20,20f|%4L |\n")
+      gnus-summary-line-format ":%U%R%B%s%-80=  %-20,20f|%4L |\n")
 
 (setq gnus-visible-headers
       "^\\(From:\\|To:\\|Cc:\\|Subject:\\|Date:\\|Followup-To:\\|X-Newsreader:\\|User-Agent:\\|X-Mailer:\\)")
