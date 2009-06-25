@@ -12,4 +12,4 @@ fi
 mkdir -p ~/tmp/locate
 
 echo updating "$LOCATE_DIRS"
-/bin/updatedb --localpaths="$LOCATE_DIRS" --prunepaths='.+/.svn .+/CVS .+/tmp .+/temp' --output="${HOME}"/tmp/locate/"`gcachesum \"$LOCATE_DIRS\"`" 2>&1|grep Segment
+/bin/updatedb --localpaths="$LOCATE_DIRS" --prunepaths='.+/.svn .+/CVS .+/tmp .+/temp' --output="${HOME}"/tmp/locate/"`gcachesum \"$LOCATE_DIRS\"`" 
