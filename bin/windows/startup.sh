@@ -20,7 +20,7 @@ cd ~/bin/windows/startup
 
 
 for x in *; do 
-    cygstart "$x"
+    "$x"&
 done
 
 ln -sf "$HOME2"/bin/windows/startup.sh ~/start\ menu/programs/startup
