@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+<file alias="no-mail.png">no-mail.png</file>
+<file alias="got-mail.png">got-mail.png</file>
+<file alias="error-mail.png">error-mail.png</file>
+</qresource>
+</RCC>

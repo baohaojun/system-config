@@ -708,7 +708,7 @@ $diff exim.conf /c/cygwin.old/etc/exim.conf
 > #require verify        = sender
 
 from imaplib import *
-x=IMAP4()
+x=IMAP4_SSL()
 x.open('localhost', 143)
 x.login('bhj', '')
 x.list('inbox')

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env pycyg
 # Copyright (c) 2007 Qtrac Ltd. All rights reserved.
 
 import os
