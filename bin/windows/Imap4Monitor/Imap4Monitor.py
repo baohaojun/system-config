@@ -63,7 +63,12 @@ class ConfigDlg (QDialog):
         
         self.exitAction = QAction("Exit", None)
         self.connect(self.exitAction, SIGNAL("triggered()"), self.onExit)
+
+        self.checkAction = QAction("Check again", None)
+        self.connect(self.checkAction, SIGNAL("triggered()"), self.checkMail)
+
         self.trayMenu = QMenu()
+        self.trayMenu.addAction(self.checkAction)
         self.trayMenu.addAction(self.exitAction)
         self.trayIcon.setContextMenu(self.trayMenu)
 
@@ -104,11 +109,17 @@ class ConfigDlg (QDialog):
         try:
             x=IMAP4_SSL(self.host, int(self.port))
             x.login(self.username, self.password)
-            y = x.status(self.mailbox, '(unseen)')
-            if '(UNSEEN 0)' in y[1][0]:
-                self.trayIcon.setIcon(QIcon(":/no-mail.png"))
+            for mb in self.mailbox.split('/'):
+                y = x.status(mb, '(unseen)')
+                print y
+                if y[0] != 'OK':
+                    raise RuntimeError, 'IMAP result not OK'
+                sys.stdout.flush()
+                if '(UNSEEN 0)' not in y[1][0]:
+                    self.trayIcon.setIcon(QIcon(":/got-mail.png"))
+                    break
             else:
-                self.trayIcon.setIcon(QIcon(":/got-mail.png"))
+                self.trayIcon.setIcon(QIcon(":/no-mail.png"))
         except:
             self.trayIcon.setIcon(QIcon(":/error-mail.png"))
         
