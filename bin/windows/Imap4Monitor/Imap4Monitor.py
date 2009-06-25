@@ -100,9 +100,9 @@ class ConfigDlg (QDialog):
                 self.password = authList[5]
                 break
 
-        timer = QTimer(self)
-        self.connect(timer, SIGNAL("timeout()"), self.checkMail)
-        timer.start(300000)
+        self.timer = QTimer(self)
+        self.timer.setSingleShot(True)
+        self.connect(self.timer, SIGNAL("timeout()"), self.checkMail)
         self.checkMail()
 
     def checkMail(self):
@@ -111,16 +111,18 @@ class ConfigDlg (QDialog):
             x.login(self.username, self.password)
             for mb in self.mailbox.split('/'):
                 y = x.status(mb, '(unseen)')
-                print y
                 if y[0] != 'OK':
                     raise RuntimeError, 'IMAP result not OK'
-                sys.stdout.flush()
                 if '(UNSEEN 0)' not in y[1][0]:
                     self.trayIcon.setIcon(QIcon(":/got-mail.png"))
+                    self.timer.start(10000)
                     break
             else:
                 self.trayIcon.setIcon(QIcon(":/no-mail.png"))
+                self.timer.start(300000)
         except:
+            type_, value_ = sys.exc_info()[:2]
+            self.trayIcon.showMessage("Error:", `type_` + ' ' + `value_`, QSystemTrayIcon.Information, 1)
             self.trayIcon.setIcon(QIcon(":/error-mail.png"))
         
 

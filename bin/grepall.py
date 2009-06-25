@@ -106,7 +106,7 @@ class GrepAll:
         self.grepOpts = parser.grepOpts
         self.pattern = parser.pattern
 
-        self.cacheDir = os.environ['HOME'] + '/.grepall/' + dir_ + '/'
+        self.cacheDir = os.environ['HOME'] + '/tmp/.grepall/' + dir_ + '/'
         call(('mkdir', '-p', self.cacheDir))
         self.workDir_ = dir_
         self.findCache = self.cacheDir + \
