@@ -10,19 +10,23 @@
   (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
 )
 
-(set-frame-font "Monaco-14")
-(set-face-font 'italic "-*-Courier New-normal-i-*-*-13-*-*-*-c-*-iso8859-1")
-(set-face-font 'bold-italic "-*-Courier New-bold-i-*-*-13-*-*-*-c-*-iso8859-1")
+(when window-system
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (set-frame-font "Monaco-14")
+  (set-face-font 'italic "-*-Courier New-normal-i-*-*-13-*-*-*-c-*-iso8859-1")
+  (set-face-font 'bold-italic "-*-Courier New-bold-i-*-*-13-*-*-*-c-*-iso8859-1")
 
 
-(set-fontset-font (frame-parameter nil 'font)
-                  'han (font-spec :family "Simsun" :size 13))
-(set-fontset-font (frame-parameter nil 'font)
-                  'symbol (font-spec :family "Simsun" :size 13))
-(set-fontset-font (frame-parameter nil 'font)
-                  'cjk-misc (font-spec :family "Simsun" :size 13))
-(set-fontset-font (frame-parameter nil 'font)
-                  'bopomofo (font-spec :family "Simsun" :size 13))
+  (set-fontset-font (frame-parameter nil 'font)
+		    'han (font-spec :family "Simsun" :size 13))
+  (set-fontset-font (frame-parameter nil 'font)
+		    'symbol (font-spec :family "Simsun" :size 13))
+  (set-fontset-font (frame-parameter nil 'font)
+		    'cjk-misc (font-spec :family "Simsun" :size 13))
+  (set-fontset-font (frame-parameter nil 'font)
+		    'bopomofo (font-spec :family "Simsun" :size 13)))
 
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 
@@ -248,117 +252,111 @@
 (setq auto-mode-alist (cons '(".*\\.h$" . linux-c++-mode)
                             auto-mode-alist))
 
-(when window-system
-
-  (setq frame-title-format "emacs@%b")
-  (auto-image-file-mode)
-  (put 'set-goal-column 'disabled nil)
-  (put 'downcase-region 'disabled nil)
-  (put 'LaTeX-hide-environment 'disabled nil)
+(setq frame-title-format "emacs@%b")
+(auto-image-file-mode)
+(put 'set-goal-column 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'LaTeX-hide-environment 'disabled nil)
 
 
 
 
 
-  (global-set-key (kbd "C-x C-b") 'ibuffer)
-  
-
-  (global-set-key [(control c)(k)] 'browse-kill-ring)
-  (browse-kill-ring-default-keybindings)
-
-  ;;ido.el
-
-  (ido-mode t)
-
-  ;; enable visual feedback on selections
-  (setq-default transient-mark-mode t)
-
-  ;;popup the manual page, try:)
-  (global-set-key[(f3)](lambda()(interactive)(woman (current-word))))
-  ;(global-set-key[(f4)](lambda()(interactive)(menu-bar-mode)))
-  ;(global-set-key[(f5)](lambda()(interactive)(ecb-minor-mode)))
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 
 
-  ;; thumb
+(global-set-key [(control c)(k)] 'browse-kill-ring)
+(browse-kill-ring-default-keybindings)
+
+;;ido.el
+
+(ido-mode t)
+
+;; enable visual feedback on selections
+(setq-default transient-mark-mode t)
+
+;;popup the manual page, try:)
+(global-set-key[(f3)](lambda()(interactive)(woman (current-word))))
+                                        ;(global-set-key[(f4)](lambda()(interactive)(menu-bar-mode)))
+                                        ;(global-set-key[(f5)](lambda()(interactive)(ecb-minor-mode)))
 
 
-  ;; emacs wiki
+;; thumb
+
+
+;; emacs wiki
 
 
 
 
-  (setq emacs-wiki-publishing-directory "/var/www/home/a22242/WiKi")
-  (setq emacs-wiki-directories '("~/WiKi"))
-  (setq emacs-wiki-meta-charset "utf-8")
+(setq emacs-wiki-publishing-directory "/var/www/home/a22242/WiKi")
+(setq emacs-wiki-directories '("~/WiKi"))
+(setq emacs-wiki-meta-charset "utf-8")
 
-  (setq emacs-wiki-style-sheet
-        "<link rel=\"stylesheet\" type=\"text/css\" href=\"../main.css\">"
-        emacs-wiki-footer-date-format "%Y-%m-%d %H:%M:%S %Z"
-        )
+(setq emacs-wiki-style-sheet
+      "<link rel=\"stylesheet\" type=\"text/css\" href=\"../main.css\">"
+      emacs-wiki-footer-date-format "%Y-%m-%d %H:%M:%S %Z"
+      )
 
-  (setq emacs-wiki-inline-relative-to 'emacs-wiki-publishing-directory)
-
-  
-
-  (setq emacs-wiki-projects
-        `(("default" . ((emacs-wiki-directories . ("~/WiKi"))))
-          ("work" . ((fill-column . 65)
-                     (emacs-wiki-publishing-directory . "/var/www/home/a22242/WorkWiKi")
-                     (emacs-wiki-directories . ("~/WorkWiKi/"))))))
-
-  (autoload 'dictionary-search "dictionary"
-    "Ask for a word and search it in all dictionaries" t)
-  (autoload 'dictionary-match-words "dictionary"
-    "Ask for a word and search all matching words in the dictionaries" t)
-  (autoload 'dictionary-lookup-definition "dictionary"
-    "Unconditionally lookup the word at point." t)
-  (autoload 'dictionary "dictionary"
-    "Create a new dictionary buffer" t)
-  (autoload 'dictionary-mouse-popup-matching-words "dictionary"
-    "Display entries matching the word at the cursor" t)
-  (autoload 'dictionary-popup-matching-words "dictionary"
-    "Display entries matching the word at the point" t)
-  (autoload 'dictionary-tooltip-mode "dictionary"
-    "Display tooltips for the current word" t)
-  (autoload 'global-dictionary-tooltip-mode "dictionary"
-    "Enable/disable dictionary-tooltip-mode for all buffers" t)
+(setq emacs-wiki-inline-relative-to 'emacs-wiki-publishing-directory)
 
 
-  (global-set-key [(control c)(d)] 'dictionary-lookup-definition)
-  (global-set-key [(control c)(s)] 'dictionary-search)
-  (global-set-key [(control c)(m)] 'dictionary-match-words)
+
+(setq emacs-wiki-projects
+      `(("default" . ((emacs-wiki-directories . ("~/WiKi"))))
+        ("work" . ((fill-column . 65)
+                   (emacs-wiki-publishing-directory . "/var/www/home/a22242/WorkWiKi")
+                   (emacs-wiki-directories . ("~/WorkWiKi/"))))))
+
+(autoload 'dictionary-search "dictionary"
+  "Ask for a word and search it in all dictionaries" t)
+(autoload 'dictionary-match-words "dictionary"
+  "Ask for a word and search all matching words in the dictionaries" t)
+(autoload 'dictionary-lookup-definition "dictionary"
+  "Unconditionally lookup the word at point." t)
+(autoload 'dictionary "dictionary"
+  "Create a new dictionary buffer" t)
+(autoload 'dictionary-mouse-popup-matching-words "dictionary"
+  "Display entries matching the word at the cursor" t)
+(autoload 'dictionary-popup-matching-words "dictionary"
+  "Display entries matching the word at the point" t)
+(autoload 'dictionary-tooltip-mode "dictionary"
+  "Display tooltips for the current word" t)
+(autoload 'global-dictionary-tooltip-mode "dictionary"
+  "Enable/disable dictionary-tooltip-mode for all buffers" t)
 
 
-  (setq dictionary-tooltip-dictionary "wn")
+(global-set-key [(control c)(d)] 'dictionary-lookup-definition)
+(global-set-key [(control c)(s)] 'dictionary-search)
+(global-set-key [(control c)(m)] 'dictionary-match-words)
 
-  (put 'narrow-to-region 'disabled nil)
 
-  (global-set-key ";" 'tmp_en_ch)
-          
-  (defun do_en_when_ch (arg)
-    "input method is active, but we want it out temporarily"
-    (interactive "senter to input: \n")
-    (insert arg))
+(setq dictionary-tooltip-dictionary "wn")
 
-  (defun tmp_en_ch ()
-    "tell if input method is active, get out of it for a while"
-    (interactive)
-    (if (equal nil current-input-method)
-        (insert ";")
-      (call-interactively 'do_en_when_ch)))
+(put 'narrow-to-region 'disabled nil)
 
-  (prefer-coding-system 'utf-8-unix)
-  (set-default-coding-systems 'utf-8-unix)
+(global-set-key ";" 'tmp_en_ch)
 
-  (defun weekrep ()
-    (interactive)
-    (call-process "wr" nil t nil "-6"))
+(defun do_en_when_ch (arg)
+  "input method is active, but we want it out temporarily"
+  (interactive "senter to input: \n")
+  (insert arg))
 
-  (put 'upcase-region 'disabled nil)
+(defun tmp_en_ch ()
+  "tell if input method is active, get out of it for a while"
+  (interactive)
+  (if (equal nil current-input-method)
+      (insert ";")
+    (call-interactively 'do_en_when_ch)))
 
-  (tool-bar-mode -1)
-  (menu-bar-mode -1)
-  (scroll-bar-mode -1))
+(prefer-coding-system 'utf-8-unix)
+(set-default-coding-systems 'utf-8-unix)
+
+(defun weekrep ()
+  (interactive)
+  (call-process "wr" nil t nil "-6"))
+
+(put 'upcase-region 'disabled nil)
 
 
 (fset 'grep-buffers-symbol-at-point 'current-word)
