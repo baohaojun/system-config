@@ -31,16 +31,9 @@
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 
 
-
-
-;(require 'csharp-mode.el)
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
 (setq auto-mode-alist
       (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
-
-;; (require 'emms-setup)
-;; (emms-standard)
-;; (emms-default-players)
 
 (require 'w3m-load)
 
@@ -55,33 +48,17 @@
 (require 'keydef)
 (require 'grep-buffers)
 (require 'htmlize)
-;(require 'htmlize-hack)
 
 (require 'muse-mode)     ; load authoring mode
-
 (require 'muse-html)     ; load publishing styles I use
-
-(require 'muse-latex)
-
 (require 'muse-project)
-
 (setq muse-project-alist
       '(("Website" ("~/Pages" :default "index")
-         (:base "html" :path "~/public_html")
-         (:base "latex" :path "~/public_latex")
-         (:base "pdf" :path "~/public_pdf"))))
-
+         (:base "html" :path "~/public_html"))))
 
 (setq-default abbrev-mode t)                                                                   
 (read-abbrev-file "~/.abbrev_defs")                                                            
 (setq save-abbrevs t)   
-
-
-
-
-
-
-(setq null-device "/dev/null")
 
 (grep-compute-defaults)
 (defun grep-default-command ()
@@ -115,13 +92,6 @@
  "WuBi" "WuBi"
  "quail/wubi86")
 
-;(load "auctex.el" nil t t)
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-;(load "preview-latex.el" nil t t)
-
-; set unicode data file location. (used by what-cursor-position)
 (let ((x "~/.emacs_d/UnicodeData.txt"))
   (when (file-exists-p x)
     (setq describe-char-unicodedata-file x)))
