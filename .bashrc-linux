@@ -1,0 +1,1 @@
+alias apt-get='ssh -t root@localhost apt-get'
