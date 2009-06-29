@@ -8,6 +8,7 @@
   (setq load-path
 	(cons "~/tools/emacs-site-lisp/" load-path))
   (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
+  (setq locate-command "locateEmacs.sh")
 )
 
 (when window-system
@@ -61,9 +62,39 @@
 (setq save-abbrevs t)   
 
 (grep-compute-defaults)
+
+(defun grep-shell-quote-argument (argument)
+  "Quote ARGUMENT for passing as argument to an inferior shell."
+  (if (or (eq system-type 'ms-dos)
+          (and (eq system-type 'windows-nt) (w32-shell-dos-semantics)))
+      ;; Quote using double quotes, but escape any existing quotes in
+      ;; the argument with backslashes.
+      (let ((result "")
+	    (start 0)
+	    end)
+	(if (or (null (string-match "[^\"]" argument))
+		(< (match-end 0) (length argument)))
+	    (while (string-match "[\"]" argument start)
+	      (setq end (match-beginning 0)
+		    result (concat result (substring argument start end)
+				   "\\" (substring argument end (1+ end)))
+		    start (1+ end))))
+	(concat "\"" result (substring argument start) "\""))
+    (if (equal argument "")
+        "\"\""
+      ;; Quote everything except POSIX filename characters.
+      ;; This should be safe enough even for really weird shells.
+      (let ((result "") (start 0) end)
+        (while (string-match "[^-0-9a-zA-Z_./]" argument start)
+          (setq end (match-beginning 0)
+                result (concat result (substring argument start end)
+                               "\\" (substring argument end (1+ end)))
+                start (1+ end)))
+        (concat "\"" result (substring argument start) "\"")))))
+
 (defun grep-default-command ()
   "Compute the default grep command for C-u M-x grep to offer."
-  (let ((tag-default (shell-quote-argument (grep-tag-default)))
+  (let ((tag-default (grep-shell-quote-argument (grep-tag-default)))
 	;; This a regexp to match single shell arguments.
 	;; Could someone please add comments explaining it?
 	(sh-arg-re "\\(\\(?:\"\\(?:[^\"]\\|\\\\\"\\)+\"\\|'[^']+'\\|[^\"' \t\n]\\)+\\)")
