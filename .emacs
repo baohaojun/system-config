@@ -15,18 +15,18 @@
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
   (set-frame-font "Monaco-14")
-  (set-face-font 'italic "-*-Courier New-normal-i-*-*-13-*-*-*-c-*-iso8859-1")
-  (set-face-font 'bold-italic "-*-Courier New-bold-i-*-*-13-*-*-*-c-*-iso8859-1")
+  (set-face-font 'italic "-*-Courier New-normal-i-*-*-16-*-*-*-c-*-iso8859-1")
+  (set-face-font 'bold-italic "-*-Courier New-bold-i-*-*-16-*-*-*-c-*-iso8859-1")
 
 
   (set-fontset-font (frame-parameter nil 'font)
-		    'han (font-spec :family "Simsun" :size 13))
+		    'han (font-spec :family "Simsun" :size 16))
   (set-fontset-font (frame-parameter nil 'font)
-		    'symbol (font-spec :family "Simsun" :size 13))
+		    'symbol (font-spec :family "Simsun" :size 16))
   (set-fontset-font (frame-parameter nil 'font)
-		    'cjk-misc (font-spec :family "Simsun" :size 13))
+		    'cjk-misc (font-spec :family "Simsun" :size 16))
   (set-fontset-font (frame-parameter nil 'font)
-		    'bopomofo (font-spec :family "Simsun" :size 13)))
+		    'bopomofo (font-spec :family "Simsun" :size 16)))
 
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 
