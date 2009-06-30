@@ -713,3 +713,26 @@ x.open('localhost', 143)
 x.login('bhj', '')
 x.list('inbox')
 x.status('inbox', '(unseen)')
+
+
+From: WenyingWuu(武文穎)
+Sent: Thursday, June 18, 2009 5:59 PM
+To: WayneChen(陳昶宏); Tide Yin （尹涛）
+Cc: TonyLien(連啟祥); SherryCheng(鄭如劭); William Lan; Zhou Jingze; ZHONG Ming
+Subject: RE: Service Tool requirement update
+
+Normally, our service will be categorized to L1/L2 repair center and L1, L2, L3, L4 repair center.
+
+L1: Don’t disassemble phone to repair phone such as re-DL.
+
+L2: Disassemble the phone but not use soldering iron for repair such as repair LCM or FPC.
+
+L3: Disassemble the phone and use soldering iron for repair. It’s for repairing PCBA.
+
+L4: Calibration signal or reset the security setting.
+
+We will suggest that let L1/L2 repair center only can use read function, repair status, sync up, flasher, flash dump, reboot and Master clear function.
+
+L1~L4 repair center can use all functions in service tool.
+
+Vanny
