@@ -8,7 +8,6 @@ HOME2="`pwd`"
 #psexec -s subst q: 'c:\Documents and Settings\bhj'
 subst q: "$HOMEDRIVE"\\"$HOMEPATH"
 export HOME=/cygdrive/q
-exec >/dev/null 2>&1
 cd ~/doc
 regedit /s ImeNoToggle.reg
 . ~/.bashrc-windows
