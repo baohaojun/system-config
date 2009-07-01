@@ -12,6 +12,7 @@ function download-all()
         http://the.earth.li/~sgtatham/putty/latest/x86/putty.zip
         http://www.nirsoft.net/utils/resourcesextract.zip
         http://www.nirsoft.net/utils/iconsext.zip
+        http://www.winterdrache.de/freeware/png2ico/data/png2ico-win-2002-12-08.zip
     )
 
     for x in "${file_list[@]}"; do
