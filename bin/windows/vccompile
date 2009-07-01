@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o pipefail
+set -e
 unset dswSlnFile
 for x in *.sln *.dsw ../*.sln ../*.dsw ../../*.sln ../../*.dsw ../../../*.sln ../../../*.dsw; do 
     if [[ -f "$x" ]]; then
@@ -23,18 +25,18 @@ function PathW2U()
 }
 case $dswSlnFile in 
     *.dsw)
-        vc6compile.py $dswSlnFile "$@" 2>&1|PathW2U || exit
+        vc6compile.py $dswSlnFile "$@" 2>&1|PathW2U 
         ;;
     *.sln)
         if grep -q "Format Version 9.00" $dswSlnFile;
         then
-            vccompile.py vc8.com $dswSlnFile "$@" 2>&1 | PathW2U || exit
+            vccompile.py vc8.com $dswSlnFile "$@" 2>&1 | PathW2U 
         elif grep -q "Format Version 10.00" $dswSlnFile
         then
-            vccompile.py vc9.com $dswSlnFile "$@" 2>&1 | PathW2U || exit
+            vccompile.py vc9.com $dswSlnFile "$@" 2>&1 | PathW2U 
         elif grep -q "Format Version 8.00" $dswSlnFile
         then
-            vccompile.py vc7.com $dswSlnFile "$@" 2>&1 | PathW2U || exit
+            vccompile.py vc7.com $dswSlnFile "$@" 2>&1 | PathW2U 
         fi
         ;;
 esac 

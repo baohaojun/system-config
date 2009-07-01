@@ -865,7 +865,6 @@ div.tl{
  '(w3m-default-display-inline-images t)
  '(w3m-toggle-inline-images-permanently nil)
  '(weblogger-config-alist (quote (("yo2.cn" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")) ("bhj3" ("user" . "admin") ("server-url" . "http://bhj3/blog/xmlrpc.php") ("weblog" . "1")) ("default" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")))))
- '(woman-file-compression-regexp "\\.\\(g?z\\|bz2\\)\\(.lnk\\)?\\'")
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil))
 
