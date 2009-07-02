@@ -44,7 +44,9 @@
 
 (define-abbrev-table 'emacs-wiki-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'fundamental-mode-abbrev-table '(    ))
+(define-abbrev-table 'fundamental-mode-abbrev-table '(    ("xdef" "^#def.*" nil 1)
+    ("xfun" "^[a-zA-Z_].*" nil 0)
+    ))
 
 (define-abbrev-table 'gdb-script-mode-abbrev-table '(    ))
 

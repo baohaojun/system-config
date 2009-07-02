@@ -21,6 +21,7 @@ find_pre_prunes = [
     '-o', '-iname', '*.class', 
     '-o', '-iname', '*.obj',
     '-o', '-iname', '*.pyc',
+    '-o', '-iname', '*.elc',
     '-o', '-path', '*/.ignore'
     ]
 
