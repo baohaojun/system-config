@@ -44,7 +44,7 @@
 
 (define-abbrev-table 'emacs-wiki-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'fundamental-mode-abbrev-table '(    ("xdef" "^#def.*" nil 1)
+(define-abbrev-table 'fundamental-mode-abbrev-table '(    ("xdef" "^#def.*" nil 3)
     ("xfun" "^[a-zA-Z_].*" nil 0)
     ))
 
@@ -134,7 +134,9 @@ fi
 
 (define-abbrev-table 'special-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'text-mode-abbrev-table '(    ("toolsg" "Tide Yin ‘£¨‘Òü‘ÌÎ‘£© <tide.yin@borqs.com>
+(define-abbrev-table 'text-mode-abbrev-table '(    ("fanfan" "Dong Guiwei ‘¶­‘¹ó‘Íþ <guiwei.dong@borqs.com>
+Cc: rui li <rui.li@borqs.com>, \"Gao Shujun ‘¸ß‘Êç‘¾ü\" <shujun.gao@borqs.com>, \"'jianli.zhang'\" <jianli.zhang@borqs.com>" nil 1)
+    ("toolsg" "Tide Yin ‘£¨‘Òü‘ÌÎ‘£© <tide.yin@borqs.com>
 Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yumin'\" <yumin.liang@borqs.com>, 'Ren Mingqi ‘ÈÎ‘Ã÷‘ç÷' <mingqi.ren@borqs.com>, \"'yu.wang'\" <yu.wang@borqs.com>" nil 5)
     ))
 

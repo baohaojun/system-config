@@ -17,9 +17,6 @@ function SetPath()
         ~/bin/windows
         ~/bin/windows/redirect_vc6
         ~/bin/windows/redirect_cyg
-        ~/bin/windows/emacs-graphics
-        ~/bin/windows/gnuserv
-        "/cygdrive/c/program files/imagemagick-6.4.9-q16"
         /usr/X11R6/bin
         /usr/bin
         /sbin

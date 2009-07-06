@@ -115,7 +115,7 @@ class ConfigDlg (QDialog):
                     raise RuntimeError, 'IMAP result not OK'
                 if '(UNSEEN 0)' not in y[1][0]:
                     self.trayIcon.setIcon(QIcon(":/got-mail.png"))
-                    self.timer.start(10000)
+                    self.timer.start(2000)
                     break
             else:
                 self.trayIcon.setIcon(QIcon(":/no-mail.png"))
@@ -124,6 +124,7 @@ class ConfigDlg (QDialog):
             type_, value_ = sys.exc_info()[:2]
             self.trayIcon.showMessage("Error:", `type_` + ' ' + `value_`, QSystemTrayIcon.Information, 1)
             self.trayIcon.setIcon(QIcon(":/error-mail.png"))
+            self.timer.start(300000)
         
 
     
