@@ -427,18 +427,7 @@
             (local-set-key [(up)] 'previous-line)
             (local-set-key [(n)] 'next-line)
             (local-set-key [(p)] 'previous-line)
-            (setq w3m-fill-column 100)
-            (text-scale-increase 2)
             ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (add-hook 'gnus-article-mode-hook                    ;;
-;;           (lambda ()                                 ;;
-;;             (make-local-variable 'w3m-fill-column))) ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-hook 'gnus-summary-mode-hook
-          (lambda ()
-            (make-local-variable 'w3m-fill-column)))
 
 
 (add-hook 'term-mode-hook
@@ -783,9 +772,6 @@ div.tl{
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
  '(w3m-bookmark-file "q:/.w3m_bookmark.html")
- '(w3m-charset-coding-system-alist (quote ((x-sjis . shift_jis) (x-shift_jis . shift_jis) (x-shift-jis . shift_jis) (x-euc-jp . euc-japan) (shift-jis . shift_jis) (x-unknown . undecided) (unknown . undecided) (windows-874 . tis-620) (iso-2022-jp-3 . iso-2022-7bit-ss2) (us_ascii . raw-text) (gb2312 . gb18030))))
- '(w3m-default-display-inline-images t)
- '(w3m-toggle-inline-images-permanently nil)
  '(weblogger-config-alist (quote (("yo2.cn" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")) ("bhj3" ("user" . "admin") ("server-url" . "http://bhj3/blog/xmlrpc.php") ("weblog" . "1")) ("default" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil))
