@@ -17,10 +17,10 @@ function SetPath()
         ~/bin/windows
         ~/bin/windows/redirect_vc6
         ~/bin/windows/redirect_cyg
+        /usr/local/bin
         /usr/X11R6/bin
         /usr/bin
         /sbin
-        /usr/local/bin
         /usr/sbin
         /usr/x11r6/bin
         /cygdrive/c/WINDOWS
