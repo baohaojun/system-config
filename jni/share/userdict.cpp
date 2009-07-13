@@ -1797,9 +1797,6 @@ int UserDict::put_lemmas_no_sync_from_utf16le_string(char16 * lemmas, int len) {
     p++;
   }
 
-  if (splid)
-    free(splid);
-
 #ifdef ___DEBUG_PERF___
   DEBUG_PERF_END;
   LOGD_PERF("put_lemmas_no_sync_from_utf16le_string");
