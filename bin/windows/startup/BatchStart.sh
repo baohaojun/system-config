@@ -19,3 +19,4 @@ MYXWINSH=~/bin/windows/lnks/myxwin.sh
 grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p' > $MYXWINSH
 chmod +x $MYXWINSH
 myxwin.sh&
+net start sshd&

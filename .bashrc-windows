@@ -157,6 +157,8 @@ alias ps='ps aux -W'
 alias locate=llocate
 alias pdfnup='cygexec pdfnup'
 alias reboot=~/bin/reboot
+alias aks="adb kill-server"
+alias ash="adb shell"
 
 if [[ -d /cygdrive/q ]]; then
    export HOME=/cygdrive/q
