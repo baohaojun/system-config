@@ -53,5 +53,5 @@ if [[ $IN_EMACS == true ]]; then
     alias ls='ls --show-control-chars -hF'
     alias slin='TERM=eterm-color slin'
 fi
-export DISPLAY=:0
+export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
