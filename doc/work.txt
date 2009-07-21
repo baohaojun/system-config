@@ -736,3 +736,769 @@ We will suggest that let L1/L2 repair center only can use read function, repair 
 L1~L4 repair center can use all functions in service tool.
 
 Vanny
+
+tideyin
+Motbeijing
+
+****************************************************************
+From: Haojun Bao <baohaojun@gmail.com>
+To: "'HubertChiu(邱志宏)'" <HubertChiu@tp.cmcs.com.tw>, 
+Cc: tideyingmail <tideyin@gmail.com>,  Shiri Dolev <shirid@marvell.com>, Gil Shaket <shaket@marvell.com>, "'NeilLai(賴家偉)'" <NeilLai@tp.cmcs.com.tw>,  "'CosmosYeh(葉博宇)'" <CosmosYeh@fihtdc.com>,  "'WayneChen(陳昶宏)'" <WayneChen@fihtdc.com>,  "yumin.liang@borqs.com" <yumin.liang@borqs.com>,  "'Vincent Ying'" <vincent.ying@borqs.com>,  Gil Hazenschprung <gilha@marvell.com>
+Subject: Re: Reliable data format
+In-Reply-To: <83iqhs9g7r.fsf@gmail.com> (Haojun Bao's message of "Fri, 17 Jul
+	2009 10:49:12 +0800")
+References: <45B10467F0AFC246B28E30094BA9854E7DC0820B7D@IL-MB01.marvell.com>
+	<4a5f1315.16048e0a.4da5.169d@mx.google.com>
+	<45B10467F0AFC246B28E30094BA9854E7DC0820BFE@IL-MB01.marvell.com>
+	<83iqhs9g7r.fsf@gmail.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.0.96 (cygwin)
+X-Draft-From: ("nnimap+bhj2:[Gmail].Sent Mail" 166)
+Date: Fri, 17 Jul 2009 13:02:13 +0800
+Message-ID: <83d47zaomi.fsf@gmail.com>
+--text follows this line--
+
+hi, hubert, I need your help.
+
+We tried hard but can't find a phone here whose RD is correct and of new
+format.
+
+So we need you help dump your phone's RD and send it to me. In case you
+don't know how to dump RD, here's 2 Alchemy command you can use (in that
+order):
+
+        cliCarryOut("read reliable data");
+        cliCarryOut("$> c:/out.rnd $_");
+
+and then you can just send the file c:/out.rnd to me.
+
+Thanks!
+
+Haojun Bao <baohaojun@gmail.com> writes:
+
+> hi, Gil
+>
+> 2 questions
+>
+>> Function Name	AddEntry
+>> Function Name	CreateMrd
+>> Function Name	FragmentMrd
+>> Function Name	CreateMrdFromFolderComponents
+>> Function Name	IsImeiTrusted
+>
+> 1. The above is in your .doc for RDA API, but I can't find any of these
+>    APIs anywhere. 
+>
+>    The version of IFL I install is from "CT Hall 1.0.3.3 RVL8.2 SP6- PL.exe",
+>    and I tried to find one of the above APIs using this command:
+>
+>     find . -iname "*lib"|xargs.exe strings -f |grep frag -i
+>
+>    It showes up nothing.
+>
+>    Please tell me which version of CT-Hall to use.
+>
+> 2. Even if I can find these APIs I can still not accomplish the task of
+>    updating IMEI.
+>
+>    The input is a) an old RDA file whose IMEI we want to replace, and b)
+>    the new IMEI of 15 digits.
+>
+>    The strategy I have in mind:
+>      i) Fragment the old RDA into components with the FragmentMrd API.
+>      ii) Generate new IMEI.bin from the 15 digits of new IMEI
+>      iii) Replace the old IMEI.bin from step i) with the new IMEI.bin
+>      from step ii).
+>      iiii) Create new RDA with the CreateMrdFromFolderComponents API.
+>
+>    The problem is in 2nd and 3rd step. I don't know how can I do step
+>    ii) reliably; what API should I use? And with step iii), I don't how
+>    which file is which, so can't find the old IMEI.bin reliably either.
+>
+> BTW, in your .doc file, "TRUE if file entry was added, otherwise FALSE"
+> is the description for both APIs of AddEntry and FragmentMrd. I think
+> it's a mistake, please clarify.
+>
+> Gil Shaket <shaket@marvell.com> writes:
+>
+>> Hi Tide
+>>
+>> Please find attached instructions on how to use the new RDA API’s .
+>>
+>> Best regards,
+>>
+>> Gil Shaket
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: tideyingmail [mailto:tideyin@gmail.com]
+>> Sent: Thursday, July 16, 2009 2:46 PM
+>> To: Gil Shaket; Shiri Dolev; 'HubertChiu(邱志宏)'; 'NeilLai(賴家偉)'; 'CosmosYeh(葉博宇)'; 'WayneChen(陳昶宏)'; 'haojun.bao'; yumin.liang@borqs.com;
+>> 'Vincent Ying'
+>> Subject: 答复: Reliable data format
+>>
+>> Thanks,
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> 发件人: Gil Shaket [mailto:shaket@marvell.com]
+>> 发送时间: 2009年7月16日 19:07
+>> 收件人: tideyingmail; Shiri Dolev; 'HubertChiu(邱志宏)'; 'NeilLai(賴家偉)'; 'CosmosYeh(葉博宇)'; 'WayneChen(陳昶宏)'; 'haojun.bao'; yumin.liang@borqs.com;
+>> 'Vincent Ying'
+>> 主题: RE: Reliable data format
+>>
+>> Hi Tide
+>>
+>> I will send instructions for this issue later toady.
+>>
+>> Ant way all the new API’s are in the latest IFL package that we released (IFL_PL )
+>>
+>> Best regards,
+>>
+>> Gil Shaket
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: tideyingmail [mailto:tideyin@gmail.com]
+>> Sent: Thursday, July 16, 2009 1:10 PM
+>> To: Shiri Dolev; 'HubertChiu(邱志宏)'; Gil Shaket; 'NeilLai(賴家偉)'; 'CosmosYeh(葉博宇)'; 'WayneChen(陳昶宏)'; 'haojun.bao'; yumin.liang@borqs.com;
+>> 'Vincent Ying'
+>> Subject: 答复: Reliable data format
+>>
+>> Gil , Shiri ,
+>>
+>> We found some useful IFL functions for IMEI & Reliable Data generation can not be found in VL9 . Please help check the ticket .
+>>
+>> ReEd 426905 [VL9] can not find ReliableDataBuilder in IFL sample    Borqs Microsystems (Beijing) Ltd.   Tavor P65  Tide Yin  [Open                ]  Urgent
+>>
+>> Thanks,
+>>
+>> Tide
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> 发件人: Shiri Dolev [mailto:shirid@marvell.com]
+>> 发送时间: 2009年7月15日 17:59
+>> 收件人: HubertChiu(邱志宏); tideyingmail; Gil Shaket; NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); haojun.bao; yumin.liang@borqs.com; Vincent
+>> Ying
+>> 主题: RE: Reliable data format
+>>
+>> Adding Vincent
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: HubertChiu(邱志宏) [mailto:HubertChiu@tp.cmcs.com.tw]
+>> Sent: Wednesday, July 15, 2009 12:56 PM
+>> To: tideyingmail; Gil Shaket; NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); Shiri Dolev; haojun.bao; yumin.liang@borqs.com
+>> Subject: RE: Reliable data format
+>>
+>> Dear Hao Jun and Yumin,
+>>
+>>   When can you update your test result? We need to verify this issue this week. Thank you very much.
+>>
+>> BR,
+>>
+>> Hubert
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: tideyingmail [mailto:tideyin@gmail.com]
+>> Sent: Tuesday, July 14, 2009 4:41 PM
+>> To: 'Gil Shaket'; HubertChiu(邱志宏); NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); 'Shiri Dolev'; 'haojun.bao'; yumin.liang@borqs.com
+>> Subject: 答复: Reliable data format
+>>
+>> Hao Jun , Yumin ,
+>>
+>> Please get new RDA doc at :
+>>
+>> https://www.marvell.com/extranet/dms/documents.do?groupID=4&subGroupID=25677 - PXA93x Sys Def V25 MV-S105772-00 Rev A4.pdf
+>>
+>> & Check if our code can support new RDA format .
+>>
+>> Thanks,
+>>
+>> Tide
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> 发件人: Gil Shaket [mailto:shaket@marvell.com]
+>> 发送时间: 2009年7月14日 15:45
+>> 收件人: Tide Yin （尹涛）; 'HubertChiu(邱志宏)'; 'NeilLai(賴家偉)'; 'CosmosYeh(葉博宇)'; 'WayneChen(陳昶宏)'; Shiri Dolev
+>> 抄送: 'RuiTeng(滕銳)'; 'PaulKwong(鄺甫林)'; 'EricTCPan(潘則中)'; 'RogerHo(何其勳)'; 'Lorrie H.Y. Lu'; Gil Hazenschprung; 'DaveHu(胡志銘)'; 'NeoChang(張陽
+>> 隆)'; 'ChainHsu(徐維謙)'; 'JimmyChen(陳泓儒)'; 'SamChen(陳家賢)'; 'BensonhjChang(張憲仁)'; 'ElmerChien(簡啟晏)'; 'VincentChen(陳勇維)'; 'PatHsu(徐培章)';
+>> 'StefanCHChuang(莊昕翰)'; 'PinyCHWu(吳健豪)'
+>> 主题: RE: Reliable data format
+>>
+>> Hi Tide
+>>
+>> It sounds OK , but did you upgrade your tool to the latest RDA structure form VL9. ?
+>>
+>> From what Hubert (CMCS) said your tool cannot work ok in VL9 SW .
+>>
+>> Best regards,
+>>
+>> Gil Shaket
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: Tide Yin （尹涛） [mailto:tide.yin@borqs.com]
+>> Sent: Tuesday, July 14, 2009 2:42 AM
+>> To: 'HubertChiu(邱志宏)'; Gil Shaket; 'NeilLai(賴家偉)'; 'CosmosYeh(葉博宇)'; 'WayneChen(陳昶宏)'; Shiri Dolev
+>> Cc: 'RuiTeng(滕銳)'; 'PaulKwong(鄺甫林)'; 'EricTCPan(潘則中)'; 'RogerHo(何其勳)'; 'Lorrie H.Y. Lu'; Gil Hazenschprung; 'DaveHu(胡志銘)'; 'NeoChang(張陽隆)
+>> '; 'ChainHsu(徐維謙)'; 'JimmyChen(陳泓儒)'; 'SamChen(陳家賢)'; 'BensonhjChang(張憲仁)'; 'ElmerChien(簡啟晏)'; 'VincentChen(陳勇維)'; 'PatHsu(徐培章)';
+>> 'StefanCHChuang(莊昕翰)'; 'PinyCHWu(吳健豪)'
+>> Subject: 答复: Reliable data format
+>>
+>> We mount Reliable data block as a MTD device . If we want change IMEI , we’ll export the Reliable data block to PC , our PC tool will parser the exported
+>> data & change IMEI at Marvell defined offset .
+>>
+>> Then we write the new Reliable data back the phone’s Reliable data MTD device . The process are protected by borqs security method .
+>>
+>> Thanks,
+>>
+>> Tide
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> 发件人: HubertChiu(邱志宏) [mailto:HubertChiu@tp.cmcs.com.tw]
+>> 发送时间: 2009年7月13日 21:00
+>> 收件人: HubertChiu(邱志宏); Gil Shaket; NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); Shiri Dolev; Tide Yin （尹涛）
+>> 抄送: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Gil Hazenschprung; DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu
+>> (徐維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維); PatHsu(徐培章); StefanCHChuang(莊昕翰);
+>> PinyCHWu(吳健豪)
+>> 主题: RE: Reliable data format
+>>
+>> Dear Tide,
+>>
+>>   Could you share your tool and explain how to program IMEI for Gil?
+>>
+>> BR,
+>>
+>> Hubert
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: HubertChiu(邱志宏)
+>> Sent: Monday, July 13, 2009 8:58 PM
+>> To: 'Gil Shaket'; NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); Shiri Dolev; 'Tide Yin （尹涛）'
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Gil Hazenschprung; DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐
+>> 維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維); PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu
+>> (吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Dear Gil,
+>>
+>>   For our production line, we must program IMEI with Borqs tool. We must program Borqs SW to verify first, if PASS then we programmed IMEI for shipment
+>> purpose. For your correct way, we need to enter kernel mode to program IMEI. It is difficult for us.
+>>
+>> BR,
+>>
+>> Hubert
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: Gil Shaket [mailto:shaket@marvell.com]
+>> Sent: Monday, July 13, 2009 8:51 PM
+>> To: HubertChiu(邱志宏); NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Gil Hazenschprung; DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐
+>> 維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維); PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu
+>> (吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Hi Hubert
+>>
+>> See my comments inside
+>>
+>> I hope it will be more clear now
+>>
+>> Best regards,
+>>
+>> Gil Shaket
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: HubertChiu(邱志宏) [mailto:HubertChiu@tp.cmcs.com.tw]
+>> Sent: Monday, July 13, 2009 3:34 PM
+>> To: Gil Shaket; NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Gil Hazenschprung; DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐
+>> 維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維); PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu
+>> (吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Dear Gil,
+>>
+>>   I have another question is about “Write IMEI”. We do a lot of testing as below. Do you have any idea about this issue for our production line?
+>>
+>> Case 1: Use CT Hall VL8.2 SWDowloader to download calibration reliable data and use CMCS FTM to write IMEI. Borqs SW can read IMEI through CP code.
+>>
+>> [Gil Shaket] when you use the OLD tools new SW can read to OLD RDA and its OK
+>>
+>>    Case 2: Use CT Hall VL9 SWDownloader to download calibration reliable data and use CMCS FTM to write IMEI. Borqs SW can't read IMEI through CP code.
+>>
+>> [Gil Shaket] Your FTM write IMEI function need to be upgraded to the new IMEI structure – already motioned in the mail below
+>>
+>>    Case 3: Use CT Hall VL9 to call saveToRDA to store the reliable data and use CMCS FTM to write IMEI. Borqs SW can't read IMEI through CP code.
+>>
+>> [Gil Shaket]Your FTM write IMEI function need to be upgraded to the new IMEI structure – already motioned in the mail below
+>>
+>>    Case 4: Use CT Hall VL9 to call saveToRDA to store the reliable data and use Borqs SW to write IMEI. Borqs SW tool show reliable data format unknow or
+>> reliable data corrupted message. The Borqs SW tool can't work.
+>>
+>> [Gil Shaket] I am not familiar with Borqs tool but its probably that Borqs tools is not using the correct RDA format as well
+>>
+>>    Case 5: Use IMEI Generator to generate IMEI bin file and use SWDownloader to download IMEI bin file. Borqs SW can read IMEI through CP code, but this
+>> case needs to reboot the device to download IMEI bin file and reliable will be erase. It doesn't work in our production line.
+>>
+>> [Gil Shaket] this is the correct way – you can use the latest IFL DLL that we gave you it can support read and write RDA + the new calibration DLL uses
+>> this functions (in saveToRDA script) in order to store the calibration files and not to delete the IMEI J
+>>
+>> [Gil Shaket] Latest IFL version- https://www.marvell.com/extranet/dms/documents.do?groupID=4&subGroupID=31934
+>>
+>> My Products > Cellular & Handheld Solutions > Cellular Processors > Tools > CT-Hall > Production Line version > CT Hall 1.0.3.3 RVL8.2 SP6- PL             
+>>                                                                                                                                                            
+>> *                                                                                                                                                          
+>>
+>> BR,
+>>
+>> Hubert
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: Gil Shaket [mailto:shaket@marvell.com]
+>> Sent: Monday, July 13, 2009 8:28 PM
+>> To: HubertChiu(邱志宏); NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Gil Hazenschprung; DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐
+>> 維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維); PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu
+>> (吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Hi Hubert
+>>
+>> This is not final version – this is based on VL9.0 .
+>>
+>> The final version will be in WW33 – I hope I will be able to give you earlier – as soon as the work here will be done ( the main issue is the WCDMA
+>> calibration)
+>>
+>> Best regards,
+>>
+>> Gil Shaket
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: HubertChiu(邱志宏) [mailto:HubertChiu@tp.cmcs.com.tw]
+>> Sent: Monday, July 13, 2009 3:25 PM
+>> To: Gil Shaket; NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Gil Hazenschprung; DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐
+>> 維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維); PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu
+>> (吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Dear Gil,
+>>
+>>   Because we need to add our log in this DLL, we hope that we can have a final version to do integration again. Is this a final version or just a latest
+>> version?
+>>
+>> BR,
+>>
+>> Hubert
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: Gil Shaket [mailto:shaket@marvell.com]
+>> Sent: Monday, July 13, 2009 8:14 PM
+>> To: HubertChiu(邱志宏); NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Gil Hazenschprung; DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐
+>> 維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維); PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu
+>> (吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Hi Hubert
+>>
+>> I have uploaded to the extranet the Source package for this calibration DLL.
+>>
+>>       My Products > Cellular & Handheld Solutions > Cellular Processors > Tavor > Tavor P65 (PXA935) > Software >   
+>>       CMCS > Calibration DLL - WW29                                                                                 
+>>
+>> https://www.marvell.com/extranet/dms/documents.do?groupID=4&subGroupID=32074
+>>
+>> Best regards,
+>>
+>> Gil Shaket
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: HubertChiu(邱志宏) [mailto:HubertChiu@tp.cmcs.com.tw]
+>> Sent: Friday, July 10, 2009 12:32 PM
+>> To: Gil Shaket; NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Gil Hazenschprung; DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐
+>> 維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維); PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu
+>> (吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Dear Gill,
+>>
+>>   We need add log code in the Calibrationmain.dll source code. Please provide the CalibrationMain.dll source code. I have another question about the CT
+>> Hall version. Can CT Hall RVL9.1 support Benzina 2G calibration? Thank you very much.
+>>
+>> BR,
+>>
+>> Hubert
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: Gil Shaket [mailto:shaket@marvell.com]
+>> Sent: Tuesday, July 07, 2009 9:17 PM
+>> To: NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); HubertChiu(邱志宏); Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Gil Hazenschprung; DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐
+>> 維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維); PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu
+>> (吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Hi Neil and Hubert
+>>
+>> From what I understand here is that your FTM did not upgrade to the new format of the RDA – VL9.
+>>
+>> Regarding download the IMEI.bin to RDA – yes it will erase all calibration file – you need to read before write.
+>>
+>> Some suggestions –
+>>
+>>  1. Check your FTM SW mechanism on write IMEI – and upgrade to the new format of VL9.
+>>  2. Attached is a new calibration DLL which contains a fix for the saveToRDA script that will not erase the IMEI .
+>>      a. Integrate this DLL - CALIBRATIONMAIN.txt (change the txt to dll) in to the latest IFL version that is available on the Extranet : CT Hall 1.0.3.3
+>>         RVL8.2 SP6- PL
+>>
+>> https://www.marvell.com/extranet/dms/documents.do?groupID=4&subGroupID=31934
+>>
+>> My Products > Cellular & Handheld Solutions > Cellular Processors > Tools > CT-Hall > Production Line version > CT Hall 1.0.3.3 RVL8.2 SP6- PL 
+>>
+>>      b. This will speed up the time in the PL since you don’t need to download the calibration files with SWD.
+>>  2. Develop IMEI generator tools which is based on Marvell Tools – this way you will avoid any compatibly issues if something will be changed in the
+>>     future.
+>>
+>> Another thing - VL9.1 tools set will be available in WW 33 this should be last version with all fixes.
+>>
+>> We plan to delete the SaveToRDA script from the calibration and use a new function from IFL.
+>>
+>> Best regards,
+>>
+>> Gil Shaket
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: NeilLai(賴家偉) [mailto:NeilLai@tp.cmcs.com.tw]
+>> Sent: Tuesday, July 07, 2009 11:45 AM
+>> To: Gil Shaket; CosmosYeh(葉博宇); WayneChen(陳昶宏); HubertChiu(邱志宏); tideyingmail; Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Reuven Herman; kai@firebrandwireless.com; Gil Hazenschprung;
+>> DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維);
+>> PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu(吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Hi Gil,
+>>
+>> We don’t use your tool in our production line. It is too hard to our OP. FTM writes IMEI to mtdblock1 directly and calculates checksum. By our experiment,
+>> I find a way that Borqs OS can read IMEI successfully. But I don’t understand what is the different. I summarize our experiment below.
+>>
+>> Experiment A:
+>>
+>>            Use SWdownloader (VL9) download calibration files. Write IMEI code by CMCS FTM. -> Borqs OS can’t read IMEI. (Attached file “fail.txt” is
+>> mtdblock1 dump information)
+>>
+>> Experiment B:
+>>
+>>            Use IMEI Generator to create IMEI.bin. Use SWdownloader (VL9) download calibration files and IMEI.bin. -> Borqs OS can read IMEI.
+>>
+>> Experiment C:
+>>
+>>            Use IMEI Generator to create IMEI.bin. Use SWdownloader (VL9) download calibration files and IMEI.bin. Write another IMEI code by CMCS FTM. ->
+>> Borqs OS can read IMEI. (Attached file “ok.txt” is mtdblock1 dump information)
+>>
+>> Our previous pilot run doesn’t write IMEI.bin to RDA in VL8.2. After FTM write FTM, Borqs can read IMEI successfully. But in VL9, it seems the RDA header
+>> is different. Do you know the different between A & C?
+>>
+>> By the way, if we only download IMEI.bin to RDA, calibration data will be overwrote.
+>>
+>> Best regards,
+>>
+>> Neil
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: Gil Shaket [mailto:shaket@marvell.com]
+>> Sent: Monday, July 06, 2009 8:08 PM
+>> To: NeilLai(賴家偉); CosmosYeh(葉博宇); WayneChen(陳昶宏); HubertChiu(邱志宏); tideyingmail; Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Reuven Herman; kai@firebrandwireless.com; Gil Hazenschprung;
+>> DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維);
+>> PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu(吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Hi Neil
+>>
+>> I have checked both VL9.1 and VL8.2_SP6 from Borqs they both can read IMEI data correctly from RDA.
+>>
+>> My question to CMCS is how do you create the IMEI.bin file ?
+>>
+>> Do you use our tools (Marvell) ?
+>>
+>> You can find our latest tool for IMEI creating under - C:\Program Files\DSPC\IMEI Generator
+>>
+>> Also all the API’s for generating IMEI is under the IFL so u can use them in the production line.
+>>
+>> Can you explain how did you create so far the IMEI.bin file ? I believe this will help us all understand the root cause for the problem.
+>>
+>> If you wish to create your own tool for
+>>
+>> You can find the latest RDA doc at:
+>>
+>> https://www.marvell.com/extranet/dms/documents.do?groupID=4&subGroupID=25677 - PXA93x Sys Def V25 MV-S105772-00 Rev A4.pdf
+>>
+>> Best regards,
+>>
+>> Gil Shaket
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: NeilLai(賴家偉) [mailto:NeilLai@tp.cmcs.com.tw]
+>> Sent: Monday, July 06, 2009 5:34 AM
+>> To: Gil Shaket; CosmosYeh(葉博宇); WayneChen(陳昶宏); HubertChiu(邱志宏); tideyingmail; Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Reuven Herman; kai@firebrandwireless.com; Gil Hazenschprung;
+>> DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維);
+>> PatHsu(徐培章); StefanCHChuang(莊昕翰); PinyCHWu(吳健豪)
+>> Subject: RE: Reliable data format
+>>
+>> Hi Gil,
+>>
+>> Since you have new RDA format in VL9, it may impact our FTM design. Do you have any document of the new RDA format for our reference?
+>>
+>> Best regards,
+>>
+>> Neil
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: Gil Shaket [mailto:shaket@marvell.com]
+>> Sent: Sunday, July 05, 2009 11:39 PM
+>> To: CosmosYeh(葉博宇); WayneChen(陳昶宏); HubertChiu(邱志宏); NeilLai(賴家偉); tideyingmail; Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Reuven Herman; kai@firebrandwireless.com; Gil Hazenschprung;
+>> DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維);
+>> PatHsu(徐培章)
+>> Subject: RE: Reliable data format
+>>
+>> Hi Cosmos
+>>
+>> The RDA format was changed in VL9.
+>>
+>> I am not sure which OBM version Borqs are using in VL9 – I will check with them tomorrow. ( may be they did not upgrade there OBM version)
+>>
+>> Best Regards
+>>
+>> Gil Shaket
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: CosmosYeh(葉博宇) [mailto:CosmosYeh@fihtdc.com]
+>> Sent: Friday, July 03, 2009 2:21 PM
+>> To: WayneChen(陳昶宏); HubertChiu(邱志宏); Gil Shaket; NeilLai(賴家偉); tideyingmail; Shiri Dolev
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Reuven Herman; kai@firebrandwireless.com; Gil Hazenschprung;
+>> DaveHu(胡志銘); NeoChang(張陽隆); ChainHsu(徐維謙); JimmyChen(陳泓儒); SamChen(陳家賢); BensonhjChang(張憲仁); ElmerChien(簡啟晏); VincentChen(陳勇維);
+>> PatHsu(徐培章)
+>> Subject: RE: Reliable data format
+>>
+>> Hello Gil,
+>>
+>> We need your response on this asap. It is one of the most critical issue for our production right now. Thanks!
+>>
+>> Best regards,
+>>
+>> Cosmos  #512-62043
+>>
+>> From: WayneChen(陳昶宏)
+>> Sent: Friday, July 03, 2009 12:53 AM
+>> To: HubertChiu(邱志宏); HubertChiu(邱志宏); Gil Shaket; NeilLai(賴家偉); tideyingmail; shirid@marvell.com
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Reuven Herman; kai@firebrandwireless.com; Gil Hazenschprung;
+>> DaveHu(胡志銘); CosmosYeh(葉博宇); NeoChang(張陽隆); ChainHsu(徐維謙); JimmyChen(陳泓儒)
+>> Subject: RE: Reliable data format
+>>
+>> Loop Shiri
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: HubertChiu(邱志宏) [mailto:HubertChiu@tp.cmcs.com.tw]
+>> Sent: 2009/7/2 [星期四] 下午 08:16
+>> To: HubertChiu(邱志宏); Gil Shaket; WayneChen(陳昶宏); NeilLai(賴家偉); tideyingmail
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Reuven Herman; kai@firebrandwireless.com; Gil Hazenschprung;
+>> DaveHu(胡志銘); CosmosYeh(葉博宇); NeoChang(張陽隆); ChainHsu(徐維謙); JimmyChen(陳泓儒)
+>> Subject: RE: Reliable data format
+>>
+>> Dear Gil,
+>>
+>>   Do you have any update about Reliable data format? We have verified saving the RDA automatically and found the same issue that Borqs SW can’t decode RDA
+>> data to read IMEI. We have been asked by FBW to fix this issue immediately. Please help us to fix this issue ASAP. Thank you very much.
+>>
+>> BR,
+>>
+>> Hubert
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: HubertChiu(邱志宏)
+>> Sent: Thursday, June 18, 2009 8:51 PM
+>> To: 'Gil Shaket'; WayneChen(陳昶宏); NeilLai(賴家偉); tideyingmail
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Reuven Herman; kai@firebrandwireless.com; Gil Hazenschprung;
+>> DaveHu(胡志銘)
+>> Subject: RE: Reliable data format
+>>
+>> Dear Gil,
+>>
+>>    Because our production line doesn’t phase in saving the RDA automatically, we still keep the old way to use SWDownloader to save RDA. We need to verify
+>> everything is OK before we phase in this new way in our production line.
+>>
+>> The main issue is that we used CT Hall VL9 SW Download to save the RDA, but Borqs SW can’t decode RDA to get the IMEI. After we downgrade the SW Download
+>> to VL8.2, Borqs SW can get IMEI value. We don’t know Borqs SW how to get IMEI value, but it seems SW download was different for saving RDA, and nobody
+>> knows it. We hope that Marvell can sync all versions of SW download tool for this feature, or info us what changed in the new SW downloader.
+>>
+>>   At the same time, we found that calibration action will delete IMEI value. It is fine for production flow, but don’t make sense for repair centers. The
+>> repair center may only re-do calibration, but doesn’t re-write IMEI. Re-Write IMEI case only happens on changing Flash.
+>>
+>>   So I list our requirements as below.
+>>
+>> 1.       RDA must keep original definition format whenever we use SW Downloader or calibration script. It can avoid that Borqs SW can’t get IMEI value
+>> case.
+>>
+>> 2.       IMEI value can’t be changed by saving calibration data.
+>>
+>> BR,
+>>
+>> Hubert
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: Gil Shaket [mailto:shaket@marvell.com]
+>> Sent: Thursday, June 18, 2009 7:31 PM
+>> To: WayneChen(陳昶宏); HubertChiu(邱志宏); NeilLai(賴家偉); tideyingmail
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Reuven Herman; kai@firebrandwireless.com; Gil Hazenschprung
+>> Subject: RE: Reliable data format
+>>
+>> Hi Wayne and Hubert
+>>
+>> When you use the script that save the RDA automatically it will delete all RDA data that was previously burned.
+>>
+>> This script was designed for the calibration data and the IMEI is usually the last station in the production line, so it doesn’t take it in to account.
+>>
+>> We can fix this issue so just send me what are your requirements for this issue.
+>>
+>> Best regards,
+>>
+>> Gil Shaket
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: WayneChen(陳昶宏) [mailto:WayneChen@fihtdc.com]
+>> Sent: Thursday, June 18, 2009 5:51 AM
+>> To: HubertChiu(邱志宏); NeilLai(賴家偉); tideyingmail; Gil Shaket
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); RogerHo(何其勳); Lorrie H.Y. Lu; Reuven Herman; kai@firebrandwireless.com
+>> Subject: RE: Reliable data format
+>>
+>> Copy to William and Reuven.
+>>
+>> Dear Reuven and Gil:
+>>
+>>            I think it is a serious problem for our production; could you help to check this problem as soon as possible?
+>>
+>>            Actually we meet another problem about RF calibration in VL9.x, maybe these problem has the same root cause.
+>>
+>>            Wayne Chen
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: HubertChiu(邱志宏) [mailto:HubertChiu@tp.cmcs.com.tw]
+>> Sent: Wednesday, June 17, 2009 3:17 PM
+>> To: NeilLai(賴家偉); tideyingmail; Gil Shaket
+>> Cc: RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); WayneChen(陳昶宏); RogerHo(何其勳); Lorrie H.Y. Lu
+>> Subject: RE: Reliable data format
+>>
+>> Dear Gil,
+>>
+>>   What is different about SW downloader VL8.2 and VL9? It has impacted our production line for this pilot run. At the same time, we also worry about ACAT
+>> tool also has this problem when we phase in ACAT to write reliable data automatically. We need a clear picture to lock down this issue.
+>>
+>> BR,
+>>
+>> Hubert
+>>
+>> ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+>>
+>> From: NeilLai(賴家偉)
+>> Sent: Wednesday, June 17, 2009 3:01 PM
+>> To: tideyingmail
+>> Cc: HubertChiu(邱志宏); RuiTeng(滕銳); PaulKwong(鄺甫林); EricTCPan(潘則中); WayneChen(陳昶宏); RogerHo(何其勳)
+>> Subject: Reliable data format
+>>
+>> Hi Tide,
+>>
+>> Our pilot run faces a question: Borqs OS can’t read IMEI which we write to BLAZE.
+>>
+>> Our factory use Marvell VL9 CThall Tool (ACAT and SW downloader). I do some experiment. I believe ACAT tool is OK.
+>>
+>> The root cause is SW downloader. I use VL8.2 SW downloader write calibration data and use FTM write IMEI.
+>>
+>> Borqs OS(0605 release for BLAZE) can read IMET correctly.
+>>
+>> But when I use VL9 SW downloader do the same actions, Borqs can’t read IMEI, it reads the empty value (000168…..)
+>>
+>> I try to dump the mtdblock1 form ok and fail phones. I find the header is different. Do you know this phenomenon?
+>>
+>> The two mtdblock1 dump information are below.
+>>
+>> Can read IMEI
+>>
+>> hexdump mtdblock1
+>>
+>> 0000000 cafe cafe 7484 e637 1017 0000 ffff ffff
+>>
+>> 0000010 ffff ffff 0010 cafe 0020 0000 0000 0000
+>>
+>> 0000020 0000 0000 0000 0000 0000 0000 0000 0000
+>>
+>> *
+>>
+>> 0000090 0000 0000 0000 0000 0000 0000 3533 3838
+>>
+>> 00000a0 3039 3230 3030 3435 3233 3130 0a0d 0000
+>>
+>> 00000b0 0000 0000 0000 0000 0000 0000 0020 cafe
+>>
+>> 00000c0 09d8 0000 7061 706c 725f 5f66 6e61 6c61
+>>
+>> 00000d0 7379 7369 6e2e 6d76 0000 0000 0000 0000
+>>
+>> 00000e0 0000 0000 0000 0000 0000 0000 0000 0000
+>>
+>> Can’t read IMEI
+>>
+>> hexdump mtdblock1
+>>
+>> 0000000 cafe cafe 6f45 0a9d 1019 0000 ffff ffff
+>>
+>> 0000010 ffff ffff 0020 cafe 09d8 0000 7061 706c
+>>
+>> 0000020 725f 5f66 6e61 6c61 7379 7369 6e2e 6d76
+>>
+>> 0000030 0000 0000 0000 0000 0000 0000 0000 0000
+>>
+>> *
+>>
+>> 0000090 0000 0000 0000 0000 0000 0000 3533 3838
+>>
+>> 00000a0 3039 3230 3030 3435 3233 3130 0a0d 616e
+>>
+>> 00000b0 796c 6973 4673 6c69 5665 7265 3430 305f
+>>
+>> 00000c0 5f30 7374 0000 0000 4f0d f793 00b0 d044
+>>
+>> 00000d0 20b0 d044 7e20 d062 47e3 0000 1e5c d044
+>>
+>> 00000e0 8140 d062 2f31 2f31 3931 3037 3900 3037
+>>
+>> Best regards,
+>>
+>> Neil
+****************************************************************

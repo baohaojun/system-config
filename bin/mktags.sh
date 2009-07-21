@@ -24,6 +24,7 @@ find . \( '-path' '*/CVS' \
     -o -iname '*.s' \
     -o -iname '*.h' \
     -o -iname '*.c' \
+    -o -iname '*.cc' \
     -o -iname '*.py' \
     -o -iname '*.el' \
     -o -iname '*.pl' \
