@@ -18,7 +18,7 @@ cygpath -alwm `which bash` > /cygdrive/c/.bash-loc
 export CYGDIR=`cygpath -alwm /`
 cd ~/bin/windows/startup
 
-
+rm *.stackdump
 for x in *; do 
     ./"$x"&
 done
