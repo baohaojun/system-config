@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 # We only switch the alternatives that exist for both compilers;
 # gdc, gpc, g77 and gfortran never get switched.

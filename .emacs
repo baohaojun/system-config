@@ -16,8 +16,8 @@
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
   (set-frame-font "Monaco-14")
-  (set-face-font 'italic "-*-Courier New-normal-i-*-*-16-*-*-*-c-*-iso8859-1")
-  (set-face-font 'bold-italic "-*-Courier New-bold-i-*-*-16-*-*-*-c-*-iso8859-1")
+  (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size 16))
+  (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size 16))
 
 
   (set-fontset-font (frame-parameter nil 'font)
