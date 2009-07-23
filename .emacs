@@ -755,7 +755,7 @@ div.tl{
  '(normal-erase-is-backspace nil)
  '(preview-gs-command "c:/gs/gs8.54/bin/gswin32c.exe")
  '(require-final-newline t)
- '(safe-local-variable-values (quote ((sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
+ '(safe-local-variable-values (quote ((py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
  '(save-place t nil (saveplace))
  '(senator-minor-mode-hook (quote (ignore)))
  '(session-initialize (quote (de-saveplace session places keys menus)) nil (session))
@@ -901,4 +901,20 @@ div.tl{
 (global-set-key [(control z)] 'keyboard-quit)
 (global-set-key [(control x) (control z)] 'keyboard-quit)
 (require 'moinmoin-mode)
+
+(defun bhj-jdk-help (jdk-word)
+  "start jdk help"
+  (interactive
+   (progn
+     (let ((default (current-word)))
+       (list (read-string "Search JDK help on: "
+                          default
+                          'jdk-help-history)))))
+
+  ;; Setting process-setup-function makes exit-message-function work
+  (call-process "/bin/bash" nil nil nil "/q/bin/windows/jdkhelp.sh" jdk-word)
+  (w3m-goto-url "file:///cygdrive/d/knowledge/jdk-6u10-docs/1.html"))
+(keydef "C-M-j" 'bhj-jdk-help)
+(keydef (w3m "C-c e") (lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/w3m-external" w3m-current-url)))
+
 ;(w32-register-hot-key [A-tab])

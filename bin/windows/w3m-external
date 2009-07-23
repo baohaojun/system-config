@@ -1,0 +1,8 @@
+#!/bin/bash
+if test "${1:0:4}" = "file"; then
+   #"file://" is 7 chars
+    URL="${1:7}"
+    cygstart "$URL"
+else 
+    cygstart "$1"
+fi
