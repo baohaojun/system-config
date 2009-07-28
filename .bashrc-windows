@@ -37,6 +37,18 @@ function SetPath()
     done
     PATH="${PATH:1}" #remove the beginning `:'
     unset SetPath
+
+    #set up CLASSPATH
+    unset CLASSPATH
+    for x in ~/bin/classpath/*.jar; do 
+        if test -f "$x"; then
+            CLASSPATH="$CLASSPATH":"$x"
+        fi
+    done
+    CLASSPATH="$CLASSPATH":.
+    CLASSPATH="${CLASSPATH:1}"
+    export CLASSPATH="`cygpath -w -p \"$CLASSPATH\"`"
+    
 }
 
 #Open Containing folder..

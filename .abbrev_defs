@@ -94,6 +94,8 @@
 
 (define-abbrev-table 'message-mode-abbrev-table '(    ))
 
+(define-abbrev-table 'moinmoin-mode-abbrev-table '(    ))
+
 (define-abbrev-table 'muse-mode-abbrev-table '(    ))
 
 (define-abbrev-table 'objc-mode-abbrev-table '(    ))
@@ -137,7 +139,7 @@ fi
 (define-abbrev-table 'text-mode-abbrev-table '(    ("fanfan" "Dong Guiwei ‘¶­‘¹ó‘Íþ <guiwei.dong@borqs.com>
 Cc: rui li <rui.li@borqs.com>, \"Gao Shujun ‘¸ß‘Êç‘¾ü\" <shujun.gao@borqs.com>, \"'jianli.zhang'\" <jianli.zhang@borqs.com>" nil 1)
     ("toolsg" "Tide Yin ‘£¨‘Òü‘ÌÎ‘£© <tide.yin@borqs.com>
-Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yumin'\" <yumin.liang@borqs.com>, 'Ren Mingqi ‘ÈÎ‘Ã÷‘ç÷' <mingqi.ren@borqs.com>, \"'yu.wang'\" <yu.wang@borqs.com>" nil 5)
+Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yumin'\" <yumin.liang@borqs.com>, 'Ren Mingqi ‘ÈÎ‘Ã÷‘ç÷' <mingqi.ren@borqs.com>, \"'yu.wang'\" <yu.wang@borqs.com>, \"'ma junguo'\" <junguo.ma@borqs.com>, \"'‘Ð¤‘Æ¼'\" <ping.xiao@borqs.com>" nil 1)
     ))
 
 (define-abbrev-table 'thumbs-mode-abbrev-table '(    ))

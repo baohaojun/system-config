@@ -1,0 +1,142 @@
+-*- mode: auto-fill -*-
+
+Sentences has an implicit tree structure. You generate and recognize
+it by walking this tree. From the root -- the most abstract concept --
+to the leaves -- the vocabulary symbols.
+
+Subtree, phrase, rule of grammer.
+
+v2 lexer slow, though powerful.
+v2 no unit test
+v2 code not clear, no refactoring partly due to no unit test
+v2 LL(k) a bit weak
+v2 new target language require large duplication
+v2 AST informal
+
+v2 some common tasks not easy, such as getting the text matched by a
+specific rule.
+
+v2 lack sematic predicates in v1.
+v2 license made bit corp. afraid to use it.
+
+v3 LL* more powerful, supports more natural grammer
+v3 auto backtracking mode, will disable analysis warnings and figure
+things out by itself at runtime.
+v3 partial parsing result memoization. guarantee linear time
+complexity at the cost of some extra memory.
+
+v3 Jean Bevot's ANTLRWorks GUI GDE (grammer development environment).
+v3 ST engine integration make generating structured text such as
+source code easy.
+v3 formal AST construction rules map input grammer alternatives to
+tree grammer fragments, making actions that manually construct ASTs no
+longer necessary.
+
+v3 Dynamically scoped attributes make remote rules able to talk with each
+other.
+
+v3 better error reporting and recovery.
+v3 easier to retarget. Just define ST to tell ANTLR how to generate
+grammer elements such as rule and token references.
+
+****************************************************************
+
+nature of computer language. nature of language recognizers
+
+****************************************************************
+nested and ordered: tree structure.
+
+statement() calls assignment() calls expression();
+
+syntax diagram, looks like a flowchart.
+
+ambiguous can be removed with precedence
+
+i*j in C is ambigous, it's MULT or pointer variable DECL.
+
+Separating Lexer/Parser benefits:
+
+1. Token can be arbitrarily long, can be grouped into classes (AKA types).
+
+2. Parser sees tokens, and get isolated from the token source
+(file/string). The tokens as a new stream (as opposed to the byte
+stream of token source), can be re-parsed again and again. (C/C++ can
+do this tokenize of header files and then SAVE it).
+
+3. Lexer can filter the input, feeding the parser only tokens the
+parser is interested in. (Whitespace, comments, and other lexical
+structures the parser can ignore).
+
+****************************************************************
+one method for one rule is generated for the recognizer by ANTLR 
+
+recognizing structure involves comparing the input against a series of
+constraints dictated by the structure.
+
+Top-down recognizer: start from the most abstract language level. The
+formal ter for a Top-down is LL. Within this category, the most common
+implementation is called recursive-descent recognizer. The method call
+graph will trace out the parse tree, implicitly. This is why Top-down
+parser don't need to actually build a tree.
+
+Left recursive grammer: 
+     expr: expr '++'
+
+void expr() {
+     expr();
+     match("++");
+}
+
+will not work.
+
+Non LL(k) for any k:
+    decl
+        : modifier* 'int' ID '=' INT ';'
+        | 
+          modifier* 'int' ID ';'
+        ;
+
+    modifier:
+        : 'static'
+        | 'register'
+        ;
+
+Non LL* grammer:
+
+    decl
+        : 'int' declarator '=' INT ';'
+        | 'int' declarator ';'
+        ;
+
+    declarator // "*x" "**x" "***x"
+        : ID
+        | '*' declarator ';'
+        ;
+
+****************************************************************
+antlr memoization v.s. perl /(?>...)/ what's the diff/simi?
+
+****************************************************************
+symbol table and scopes; sematic predicates (turn alternatives
+on/off).
+
+T(i) in C++: 
+     1. function call
+     2. constructor style type cast (as in (T) i)
+     3. variable declaration (as in T i;)
+
+     The 3. will require precedence of rule alternatives, use '=>';
+     this is called "syntactic predicates" (as opposed to "sematic
+     predicates").
+
+     try this code:
+            int main()
+            {
+            	int (i);
+                int (i); //this line will cause compile error in g++
+            	int x = int (i);
+            }
+            
+
+****************************************************************
+tree rewrite rule: use '->'
