@@ -16,6 +16,7 @@ find_pre_prunes = [
     '-o', '-path', '*~*', 
     '-o', '-path', '*#', 
     '-o', '-path', '*/TAGS', 
+    '-o', '-path', '*/tags',
     '-o', '-path', '*/semantic.cache', 
     '-o', '-iname', '*.o',
     '-o', '-iname', '*.class', 
