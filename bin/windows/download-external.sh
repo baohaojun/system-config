@@ -32,7 +32,7 @@ function download-all()
     chmod a+x ./*
 }
 
-download-all
+#download-all
 
 function patch-puttycyg()
 {
