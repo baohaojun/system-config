@@ -8,7 +8,7 @@ function mkdir ()
 }
 cd ~/bin/windows/
 mkdir  ~/bin/windows/lnks
-./download-external.sh
+DOWN=yes ./download-external.sh
 find . -type l -exec relink.sh '{}' \;
 
 ~/bin/windows/redirect.sh

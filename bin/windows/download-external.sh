@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+test "$DOWN" == yes && set -e
 
 function download-all()
 {
@@ -32,7 +32,7 @@ function download-all()
     chmod a+x ./*
 }
 
-#download-all
+test "$DOWN" == yes && download-all
 
 function patch-puttycyg()
 {
@@ -153,4 +153,4 @@ function get-putty()
     cp ./windows/putty.exe ~/bin/windows/lnks
 }
 
-get-putty
+test "$DOWN" == yes && get-putty
