@@ -1502,3 +1502,7 @@ Haojun Bao <baohaojun@gmail.com> writes:
 >>
 >> Neil
 ****************************************************************
+configure symbols in procexp:
+
+C:\Program Files\Debugging Tools for Windows (x86)\dbghelp.dll
+SRV*c:\windows\symbols*http://msdl.microsoft.com/download/symbols
