@@ -1506,3 +1506,6 @@ configure symbols in procexp:
 
 C:\Program Files\Debugging Tools for Windows (x86)\dbghelp.dll
 SRV*c:\windows\symbols*http://msdl.microsoft.com/download/symbols
+
+boot.ini for debug mode
+multi(0)disk(0)rdisk(0)partition(1)\WINDOWS="Microsoft Windows XP Professional Debug" /noexecute=optin /fastdetect /debug
