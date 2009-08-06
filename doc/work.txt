@@ -1502,6 +1502,11 @@ Haojun Bao <baohaojun@gmail.com> writes:
 >>
 >> Neil
 ****************************************************************
+
+ cd /d/tools/cygwin-1.7;  rm setup-1.7.exe; wget http://cygwin.com/setup-1.7.exe; chmod +x setup-1.7.exe; of ./setup-1.7.exe
+
+VVC5-8DFRT4FM
+=======
 configure symbols in procexp:
 
 C:\Program Files\Debugging Tools for Windows (x86)\dbghelp.dll
@@ -1509,3 +1514,4 @@ SRV*c:\windows\symbols*http://msdl.microsoft.com/download/symbols
 
 boot.ini for debug mode
 multi(0)disk(0)rdisk(0)partition(1)\WINDOWS="Microsoft Windows XP Professional Debug" /noexecute=optin /fastdetect /debug
+
