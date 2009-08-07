@@ -17,15 +17,15 @@ then
 fi
 
 cd -P "$BIN_WINDOWS"/../..
-export HOME=`pwd` #Ah! and we know where we are now!
+export HOME2=`pwd` #Ah! and we know where we are now!
 
 #modify /etc/passwd so that this is truly our new home.
-/bin/perl -F: -nae 'if ($ENV{USER} eq $F[0]) {$F[5] = $ENV{HOME}}; print join(q(:), @F)' -i /etc/passwd
+/bin/perl -F: -nae 'if ($ENV{USER} eq $F[0]) {$F[5] = $ENV{HOME2}}; print join(q(:), @F)' -i /etc/passwd
 
 
 #so that I can write /q/ anywhere I want to write "$HOME" in .sh; it'll get worse in .emacs!
-subst /d q: #delete it first FIXME, what if q: is a real drive?
-subst q: $(cygpath -sma "$HOME")
+subst /d q: || true #delete it first FIXME, what if q: is a real drive?
+subst q: $(cygpath -sma "$HOME2")
 export HOME=/cygdrive/q
 
 
@@ -47,7 +47,7 @@ export CYGDIR=`cygpath -alwm /`
 
 #start everything in ~/bin/windows/startup
 cd ~/bin/windows/startup
-rm *.stackdump
+rm *.stackdump -
 for x in *; do 
     ./"$x"&
 done
@@ -55,4 +55,4 @@ done
 #make sure the next time login will run this script again
 cd "$HOMEDRIVE/$HOMEPATH"
 HOME_DRIVE_PATH=`pwd`
-ln -sf ~/bin/windows/startup.sh ./start\ menu/programs/startup/
+ln -sf "$HOME2"/bin/windows/startup.sh ./start\ menu/programs/startup/
