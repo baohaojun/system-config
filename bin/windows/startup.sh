@@ -20,7 +20,7 @@ cd -P "$BIN_WINDOWS"/../..
 export HOME=`pwd` #Ah! and we know where we are now!
 
 #modify /etc/passwd so that this is truly our new home.
-/bin/perl -F: -nae 'if (%ENV{USER} eq $F[0]) {$F[5] = $ENV{HOME}}; print join(q(:), @F)' -i /etc/passwd
+/bin/perl -F: -nae 'if ($ENV{USER} eq $F[0]) {$F[5] = $ENV{HOME}}; print join(q(:), @F)' -i /etc/passwd
 
 
 #so that I can write /q/ anywhere I want to write "$HOME" in .sh; it'll get worse in .emacs!
