@@ -59,3 +59,4 @@ done
 cd "$HOMEDRIVE/$HOMEPATH"
 HOME_DRIVE_PATH=`pwd`
 ln -sf "$HOME2"/bin/windows/startup.sh ./start\ menu/programs/startup/
+
