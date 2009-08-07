@@ -1,10 +1,12 @@
 #!/bin/bash
 
+echo "\$0 is $0"
 #make sure PATH is sane
 export PATH=/bin:$PATH
 
 #find out about where we are
-THIS=$(readlink -f "$0")
+THIS=$(cygpath -au "$0")
+THIS=$(readlink -f "$THIS")
 echo "we are executing $THIS"
 BIN_WINDOWS=$(dirname "$THIS")
 
