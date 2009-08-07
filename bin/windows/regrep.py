@@ -19,10 +19,14 @@ reobj = re.compile(sys.argv[1], re.I)
 
 
 def traverseKey(rootKey, rootKeyName):
-        
-    #replace the values of the rootKey first
 
-    ## get all the values
+#check the keyname:
+    if reobj.search(rootKeyName):
+        sys.stdout.write("'%s'\n\n" % rootKeyName)
+        
+#check the values of the key
+
+    # get all the values
     allValues = []
     try:
         index = 0
@@ -33,10 +37,10 @@ def traverseKey(rootKey, rootKeyName):
     except: #this will always occur when there are no more values in the key
         sys.stdout.flush()
 
-    ## handle the values according to their value / valueName / type
+    # handle the values according to their value / valueName / type
     
     for (valueName, value, type_) in allValues:
-        ### if value contains a '?', then probably it's a Unicode char not encodable by our coding (gbk)
+        # if value contains a '?', then probably it's a Unicode char not encodable by our coding (gbk)
         if type_ in (REG_SZ, REG_EXPAND_SZ) and '?' in value:
             sys.stderr.write('key %s\nname %s\ntype %s\nvalue %s\n\n' % (rootKeyName, valueName, `type_`, value))
             continue
@@ -45,28 +49,28 @@ def traverseKey(rootKey, rootKeyName):
             sys.stderr.write('key %s\nname %s\ntype %s\nvalue %s\n\n' % (rootKeyName, valueName, `type_`, `value`))
             continue
         
-        needReplaceName = False 
-        needReplaceValue = False
+        nameMatches = False 
+        valueMatches = False
 
-        ### if we need sub the name?
+        # if we need sub the name?
         if reobj.search(valueName):
-            needReplaceName = True
+            nameMatches = True
 
-        ### do we need sub the value string?
+        # do we need sub the value string?
         if type_ in (REG_SZ, REG_EXPAND_SZ) and reobj.search(value):
-            needReplaceValue = True
+            valueMatches = True
             
-        ### do we need sub the strings in value?
+        # do we need sub the strings in value?
         if type_ == REG_MULTI_SZ and any([reobj.search(x) for x in value]):
-            needReplaceValue = True 
+            valueMatches = True 
 
-        ### load the new value
-        if needReplaceValue or needReplaceName:
+        # load the new value
+        if valueMatches or nameMatches:
             if not valueName:
                 valueName = '@'
-            sys.stdout.write("matched \n'%s'\n-> '%s'='%s'\n" % (rootKeyName, valueName, value))
+            sys.stdout.write("'%s'\n-> '%s'='%s'\n\n" % (rootKeyName, valueName, value))
 
-    #now do the tree walking
+#now do the tree walking
     try:
         subKeys = RegEnumKeyEx(rootKey) #get all the keys
     except:
