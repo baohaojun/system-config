@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include <windows.h>
 #include <process.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,10 +10,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-char *strdup_quote(const char* src)
+char *strdup_quote(char *res, const char* src)
 {
 	int src_len = strlen(src);
-	char *res = (char *)calloc(src_len*2 + 5, sizeof(char));
+
 	res[0] = '"';
 	int j = 1;
 	for (int i=0; i<src_len; i++) {
@@ -22,12 +23,53 @@ char *strdup_quote(const char* src)
 		}
 	}
 	res[j] = '"';
-	return res;
+	return res+j+1; //always return the next position to write
+}
+
+void chomp(char *line)
+{
+	for (int i=0; line[i]; i++) {
+		if (line[i] == '\r' || line[i] == '\n') {
+			line[i] = 0;
+		}
+	}
+}
+
+int system(char* cmd)
+{
+	STARTUPINFO si = {0};
+	PROCESS_INFORMATION pi = {0};
+
+	si.cb = sizeof(si);
+
+	// Start the child process. 
+	if( !CreateProcess( NULL,   // No module name (use command line). 
+			    cmd, 
+			    NULL,             // Process handle not inheritable. 
+			    NULL,             // Thread handle not inheritable. 
+			    true,            // Set handle inheritance to FALSE. 
+			    0,                // No creation flags. 
+			    NULL,             // Use parent's environment block. 
+			    NULL,             // Use parent's starting directory. 
+			    &si,              // Pointer to STARTUPINFO structure.
+			    &pi )             // Pointer to PROCESS_INFORMATION structure.
+		) 
+	{
+		return -1;
+	}
+
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle( pi.hProcess );
+	CloseHandle( pi.hThread );
+
+	DWORD exitCode = 0;
+	GetExitCodeProcess(pi.hProcess, &exitCode);
+	return exitCode;
+
 }
 
 int main(int argc, char* argv[])
 {
-	char **new_argv = (char**)calloc(argc+5, sizeof(char *));
 
 	char bash_path[1024] = {0};
 
@@ -39,27 +81,31 @@ int main(int argc, char* argv[])
 	}
 
 	fgets(bash_path, 1024, fp);
-	for (int i=0; bash_path[i]; i++) {
-		if (bash_path[i] == '\r' || bash_path[i] == '\n') {
-			bash_path[i] = 0;
-			break;
-		}
-	}
+	chomp(bash_path);
+
+	printf("Bash is found at `%s'\n", bash_path);
 	
-	fprintf(stderr, "Bash is found at `%s'\n", bash_path);
-	new_argv[0] = bash_path;
-	new_argv[1] = "~/bin/windows/shellHelper_vc6.sh";
-	fprintf(stderr, "will run `%s' with args:\n", new_argv[1]);
+	char shellHerlperSh[]= "~/bin/windows/shellHelper_vc6.sh";
+
+	int new_cmd_len = strlen(bash_path) + sizeof(shellHerlperSh) + 20; 
+	for (int i=0; i<argc; i++) {
+		new_cmd_len += strlen(argv[i])*2 +5;
+	}
+
+	char *new_cmd_str = (char *)calloc(new_cmd_len, sizeof(char));
+	
+	char *next_pos = new_cmd_str + sprintf(new_cmd_str, "%s %s ", bash_path, shellHerlperSh);
 
 	for (i=0; i<argc; i++) {
-		new_argv[i+2] = strdup_quote(argv[i]);
-		fprintf(stderr, "`%s' ", new_argv[i+2]);
+		next_pos = strdup_quote(next_pos, argv[i]);
+		if (i<argc-1) {
+			*next_pos++ = ' ';
+		}
 	}        
 
-	fprintf(stderr, "\n");
-	fflush(stderr);
-	new_argv[i+2] = NULL;
-	_execvp(bash_path, new_argv);
-	printf("end of shellHelper_vc6.exe\n");
-	return 0;
+	printf("Will run `%s'\n", new_cmd_str);
+	fflush(stdout);
+
+	return system(new_cmd_str);
+
 }
