@@ -1,27 +1,31 @@
 #!/bin/bash
 
-#remember where old HOME is
+#make sure PATH is sane
 export PATH=/bin:$PATH
 
+#find out about where we are
 THIS=$(readlink -f "$0")
 BIN_WINDOWS=$(dirname "$THIS")
 
 #strlen("/bin/windows") is 12
-
 if test "${BIN_WINDOWS:0-12}" != "/bin/windows"
 then
     echo 'startup.sh is not in ~/bin/windows!'
+    #pause and exit, it's all blowed up!
     cat
     exit
 fi
-    
-cd -P "$BIN_WINDOWS"/../..
 
-HOME2=`pwd`
+cd -P "$BIN_WINDOWS"/../..
+export HOME=`pwd` #Ah! and we know where we are now!
+
+#modify /etc/passwd so that this is truly our new home.
+/bin/perl -F: -nae 'if (%ENV{USER} eq $F[0]) {$F[5] = $ENV{HOME}}; print join(q(:), @F)' -i /etc/passwd
+
 
 #so that I can write /q/ anywhere I want to write "$HOME" in .sh; it'll get worse in .emacs!
-subst /d q:
-subst q: $(cygpath -sma .)
+subst /d q: #delete it first FIXME, what if q: is a real drive?
+subst q: $(cygpath -sma "$HOME")
 export HOME=/cygdrive/q
 
 
@@ -49,4 +53,6 @@ for x in *; do
 done
 
 #make sure the next time login will run this script again
-ln -sf "$HOME2"/bin/windows/startup.sh ~/start\ menu/programs/startup/
+cd "$HOMEDRIVE/$HOMEPATH"
+HOME_DRIVE_PATH=`pwd`
+ln -sf ~/bin/windows/startup.sh ./start\ menu/programs/startup/
