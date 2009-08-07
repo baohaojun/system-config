@@ -12,4 +12,4 @@ fi
 
 cd "$WHERE"
 
-cygstart /bin/bash
+"$CMDNAME"

@@ -32,7 +32,7 @@ case $- in
       *i*) [[ -f /etc/bash_completion ]] && . /etc/bash_completion && . ~/.bash_netcompletion ;;
 
   esac
-cd
+
 
 
 alias mail=~/bin/mail
