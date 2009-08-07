@@ -1,11 +1,27 @@
 #!/bin/bash
 
 #remember where old HOME is
-cd "$HOMEDRIVE/$HOMEPATH"
-HOME2="`pwd`"
+export PATH=/bin:$PATH
+
+THIS=$(readlink -f "$0")
+BIN_WINDOWS=$(dirname "$THIS")
+
+#strlen("/bin/windows") is 12
+
+if test "${BIN_WINDOWS:0-12}" != "/bin/windows"
+then
+    echo 'startup.sh is not in ~/bin/windows!'
+    cat
+    exit
+fi
+    
+cd -P "$BIN_WINDOWS"/../..
+
+HOME2=`pwd`
 
 #so that I can write /q/ anywhere I want to write "$HOME" in .sh; it'll get worse in .emacs!
-subst q: "$HOMEDRIVE"\\"$HOMEPATH"
+subst /d q:
+subst q: $(cygpath -sma .)
 export HOME=/cygdrive/q
 
 
@@ -33,4 +49,4 @@ for x in *; do
 done
 
 #make sure the next time login will run this script again
-ln -sf "$HOME2"/bin/windows/startup.sh ~/start\ menu/programs/startup
+ln -sf "$HOME2"/bin/windows/startup.sh ~/start\ menu/programs/startup/
