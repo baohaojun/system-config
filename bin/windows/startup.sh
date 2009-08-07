@@ -5,6 +5,7 @@ export PATH=/bin:$PATH
 
 #find out about where we are
 THIS=$(readlink -f "$0")
+echo "we are executing $THIS"
 BIN_WINDOWS=$(dirname "$THIS")
 
 #strlen("/bin/windows") is 12
