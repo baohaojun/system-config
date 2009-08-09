@@ -1502,6 +1502,7 @@ Haojun Bao <baohaojun@gmail.com> writes:
 >>
 >> Neil
 ****************************************************************
+acrobat serial number: 1118-1905-0841-9679-7056-1416 1380-1642-4282-5668-8378-3746
 
  cd /d/tools/cygwin-1.7;  rm setup-1.7.exe; wget http://cygwin.com/setup-1.7.exe; chmod +x setup-1.7.exe; of ./setup-1.7.exe
 
