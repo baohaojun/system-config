@@ -622,6 +622,23 @@ VMware Server 2 for Linux 	A848H-FHW2V-U2NAM-4TLCM
 svn rIh4kKbG
 ****************************************************************
 
+You need to edit you project settings as follows:
+
+Select Project > Settings.
+
+Select the tab labeled C/C++ 
+
+Select General from the list labeled Category.
+
+Select Disable (Debug) from list labeled Optimizations.
+
+Select Program Database for Edit and Continue from the list labeled Debug Info.
+
+Select the tab labeled Link.
+
+Check the option labeled Generate Debug Info and click OK.
+
+****************************************************************
 /data/etc/feature.conf tc_mod
 /data/telephony/diag_bsp.conf extr=2
 /telephony/tel/init.tel atcmd -D yes&
