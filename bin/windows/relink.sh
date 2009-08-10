@@ -1,7 +1,7 @@
 #!/bin/bash
-src="`/bin/readlink -f \"$1\"`"
+src=$(/bin/readlink -f "$1")
 if [[ -z "$src" ]]; then
-    src="`/bin/readlink \"$1\"`"
+    src=$(/bin/readlink "$1")
 fi
 
 
@@ -47,7 +47,7 @@ function relink_func()
     fi
 }
 
-INPLACE=${INPLACE:-true}
+INPLACE=${INPLACE:-false}
 if test $# -eq 0; then
     INPLACE=false
     find ~/bin/windows/ -path "*/lnks" -prune -o -type l -exec relink.sh '{}' \;
@@ -55,7 +55,7 @@ if test $# -eq 0; then
 elif test $# -ne 1; then
     echo Error: can take at most 1 argument
 elif test $INPLACE = false; then
-    tgt=~/bin/windows/lnks/"`basename \"$1\"`"
+    tgt=~/bin/windows/lnks/"$(basename "$1")"
 else
     tgt="$1"
 fi
