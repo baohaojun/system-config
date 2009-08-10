@@ -36,6 +36,35 @@ function download-all()
 
 test "$DOWN" == yes && download-all
 
+function emacs-site-lisps()
+{
+    mkdir -p ~/tools/emacs-site-lisp/
+    cd ~/tools/emacs-site-lisp/
+    rm */ -rf
+    file_list=(
+        http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
+        http://cvs.savannah.gnu.org/viewvc/*checkout*/emacsweblogs/weblogger/lisp/xml-rpc.el
+        http://debian.cn99.com/debian/pool/main/e/emacs-goodies-el/emacs-goodies-el_30.3.orig.tar.gz
+        http://mwolson.org/static/dist/muse-latest.tar.gz
+        http://debian.cn99.com/debian/pool/main/w/w3m-el-snapshot/w3m-el-snapshot_1.4.364+0.20090802.orig.tar.gz
+    )
+    for x in "${file_list[@]}"; do
+        if ! [[ -f "$(basename "$x")" ]]; then
+            wget "$x"
+        fi
+    done
+    
+    for x in *.tar.gz *.tgz; do
+        if [[ -f "$x" ]] ;
+        then 
+            tar zxfv "$(basename "$x")"; 
+        fi
+    done    
+}
+
+test "$DOWN" == yes && emacs-site-lisps
+
+
 function patch-puttycyg()
 {
     (cd /c/download/puttycyg-read-only/putty-0.60/ &&

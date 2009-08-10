@@ -36,7 +36,7 @@
 (setq auto-mode-alist
       (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
 
-(require 'w3m-load)
+(require 'w3m)
 
 (require 'tramp)
 (require 'weblogger)
@@ -45,7 +45,6 @@
 (require 'browse-kill-ring)
 (require 'ido)
 (require 'thumbs)
-(require 'emacs-wiki)
 (require 'keydef)
 (require 'grep-buffers)
 (require 'htmlize)
@@ -206,30 +205,6 @@
 
 ;; thumb
 
-
-;; emacs wiki
-
-
-
-
-(setq emacs-wiki-publishing-directory "/var/www/home/a22242/WiKi")
-(setq emacs-wiki-directories '("~/WiKi"))
-(setq emacs-wiki-meta-charset "utf-8")
-
-(setq emacs-wiki-style-sheet
-      "<link rel=\"stylesheet\" type=\"text/css\" href=\"../main.css\">"
-      emacs-wiki-footer-date-format "%Y-%m-%d %H:%M:%S %Z"
-      )
-
-(setq emacs-wiki-inline-relative-to 'emacs-wiki-publishing-directory)
-
-
-
-(setq emacs-wiki-projects
-      `(("default" . ((emacs-wiki-directories . ("~/WiKi"))))
-        ("work" . ((fill-column . 65)
-                   (emacs-wiki-publishing-directory . "/var/www/home/a22242/WorkWiKi")
-                   (emacs-wiki-directories . ("~/WorkWiKi/"))))))
 
 (autoload 'dictionary-search "dictionary"
   "Ask for a word and search it in all dictionaries" t)
@@ -695,61 +670,6 @@ div.tl{
         }
 
     </style>")
- '(muse-latex-header "\\documentclass{article}
-
-\\usepackage[english]{babel}
-\\usepackage{ucs}
-\\usepackage[utf8x]{inputenc}
-\\usepackage[T1]{fontenc}
-\\usepackage{hyperref}
-\\usepackage{float}
-\\usepackage[pdftex]{graphicx}
-
-\\def\\museincludegraphics{%
-  \\begingroup
-  \\catcode`\\|=0
-  \\catcode`\\\\=12
-  \\catcode`\\#=12
-  \\includegraphics[width=0.75\\textwidth]
-}
-
-\\begin{document}
-
-\\title{<lisp>(muse-publish-escape-specials-in-string
-  (muse-publishing-directive \"title\") 'document)</lisp>}
-\\author{<lisp>(muse-publishing-directive \"author\")</lisp>}
-\\date{<lisp>(muse-publishing-directive \"date\")</lisp>}
-
-\\maketitle
-
-<lisp>(and muse-publish-generate-contents
-           (not muse-latex-permit-contents-tag)
-           \"\\\\tableofcontents
-\\\\newpage\")</lisp>
-
-")
- '(muse-latex-markup-strings (quote ((image-with-desc . "\\begin{figure}[H]
-\\centering\\museincludegraphics{%s.%s}|endgroup
-\\caption{%s}
-\\end{figure}") (image . "\\begin{figure}[H]
-\\centering\\museincludegraphics{%s.%s}|endgroup
-\\end{figure}") (image-link . "%% %s
-\\museincludegraphics{%s.%s}|endgroup") (anchor-ref . "\\ref{%s}") (url . "\\url{%s}") (url-and-desc . "\\href{%s}{%s}\\footnote{%1%}") (link . "\\href{%s}{%s}\\footnote{%1%}") (link-and-anchor . "\\href{%1%}{%3%}\\footnote{%1%}") (email-addr . "\\verb|%s|") (anchor . "\\label{%s}") (emdash . "---") (comment-begin . "% ") (rule . "\\vspace{.5cm}\\hrule\\vspace{.5cm}") (no-break-space . "~") (line-break . "\\\\") (enddots . "\\ldots{}") (dots . "\\dots{}") (part . "\\part{") (part-end . "}") (chapter . "\\chapter{") (chapter-end . "}") (section . "\\section{") (section-end . "}") (subsection . "\\subsection{") (subsection-end . "}") (subsubsection . "\\subsubsection{") (subsubsection-end . "}") (section-other . "\\paragraph{") (section-other-end . "}") (footnote . "\\footnote{") (footnote-end . "}") (footnotetext . "\\footnotetext[%d]{") (begin-underline . "\\underline{") (end-underline . "}") (begin-literal . "\\texttt{") (end-literal . "}") (begin-emph . "\\emph{") (end-emph . "}") (begin-more-emph . "\\textbf{") (end-more-emph . "}") (begin-most-emph . "\\textbf{\\emph{") (end-most-emph . "}}") (begin-verse . "\\begin{verse}
-") (end-verse-line . " \\\\") (verse-space . "~~~~") (end-verse . "
-\\end{verse}") (begin-example . "\\begin{quote}
-\\begin{verbatim}") (end-example . "\\end{verbatim}
-\\end{quote}") (begin-center . "\\begin{center}
-") (end-center . "
-\\end{center}") (begin-quote . "\\begin{quote}
-") (end-quote . "
-\\end{quote}") (begin-cite . "\\cite{") (begin-cite-author . "\\citet{") (begin-cite-year . "\\citet{") (end-cite . "}") (begin-uli . "\\begin{itemize}
-") (end-uli . "
-\\end{itemize}") (begin-uli-item . "\\item ") (begin-oli . "\\begin{enumerate}
-") (end-oli . "
-\\end{enumerate}") (begin-oli-item . "\\item ") (begin-dl . "\\begin{description}
-") (end-dl . "
-\\end{description}") (begin-ddt . "\\item[") (end-ddt . "] \\mbox{}
-"))))
  '(muse-publish-date-format "%m/%e/%Y")
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
