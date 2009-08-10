@@ -31,7 +31,7 @@ function download-all()
         fi
     done
     mv ./*/* . || true
-    chmod a+x ./*
+    chmod a+x ./* || true
 }
 
 test "$DOWN" == yes && download-all
@@ -40,7 +40,9 @@ function emacs-site-lisps()
 {
     mkdir -p ~/tools/emacs-site-lisp/
     cd ~/tools/emacs-site-lisp/
-    rm */ -rf
+    rm ./* -rf
+    cp /usr/share/emacs/site-lisp/subdirs.el . 
+
     file_list=(
         http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
         http://cvs.savannah.gnu.org/viewvc/*checkout*/emacsweblogs/weblogger/lisp/xml-rpc.el
@@ -64,6 +66,29 @@ function emacs-site-lisps()
 
 test "$DOWN" == yes && emacs-site-lisps
 
+function manual-download()
+{
+    page_list=(
+        http://www.riverbankcomputing.co.uk/software/pyqt/download
+        http://python.net/crew/mhammond/win32/Downloads.html
+        http://www.python.org/download/
+        http://www.andlinux.org/downloads.php
+        http://www.microsoft.com/whdc/devtools/debugging/default.mspx
+        http://www.gimp.org/windows/
+        http://java.sun.com/javase/downloads/index.jsp
+        http://sourceforge.net/projects/com0com/files/
+        http://nsis.sourceforge.net/Download
+        http://sourceforge.net/projects/py2exe/files/
+        http://sourceforge.net/projects/visemacs/files/
+        http://code.google.com/p/zscreen/downloads/list
+        http://www.avira.com/en/download/
+    )
+    for x in "${page_list[@]}"; do 
+        cygstart "$x";
+    done
+}
+
+test "$DOWN" == yes && manual-download
 
 function patch-puttycyg()
 {
@@ -184,4 +209,4 @@ function get-putty()
     cp ./windows/putty.exe ~/bin/windows/lnks
 }
 
-test "$DOWN" == yes && get-putty
+test "$DOWN" == yes && (gcc-switch.sh 3; get-putty; gcc-switch.sh 4)
