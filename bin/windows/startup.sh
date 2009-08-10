@@ -50,7 +50,7 @@ export CYGDIR=`cygpath -alwm /`
 
 #start everything in ~/bin/windows/startup
 cd ~/bin/windows/startup
-rm *.stackdump -
+rm *.stackdump -f
 for x in *; do 
     ./"$x"&
 done
