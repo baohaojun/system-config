@@ -201,11 +201,11 @@ alias ash="adb shell"
 alias virus='clamscan --database="d:\profiles\All Users\.clamwin\db" --recursive'
 
 if [[ -d /cygdrive/q ]]; then
-   export HOME=/cygdrive/q
+   export HOME=/q
    SetPath
    return 0
 else 
-    export HOME="`/bin/cygpath -au \"$HOMEDRIVE\"\"$HOMEPATH\"`"
+    export HOME=$(/bin/cygpath -au "$HOMEDRIVE$HOMEPATH")
     SetPath
     return 1
 fi
