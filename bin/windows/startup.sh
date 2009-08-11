@@ -58,5 +58,5 @@ done
 #make sure the next time login will run this script again
 cd "$HOMEDRIVE$HOMEPATH"
 HOME_DRIVE_PATH=`pwd`
-ln -sf "$HOME2"/bin/windows/startup.sh ./start\ menu/programs/startup/
+ln -sf "$HOME2"/bin/windows/startup.sh ./Start\ Menu/Programs/Startup/
 
