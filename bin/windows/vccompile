@@ -21,7 +21,24 @@ dswSlnFile="`basename \"$dswSlnFile\"`"
 
 function PathW2U()
 {
-    /bin/perl -ne 'if (m/^(?:[0-9]+\>)?(.*?)(\([0-9]+\).*:.*)/) { print `cygpath -au "$1"|tr -d "\n"`.$2."\n"} else {print $_}'
+#sample output from vc8, c++ files
+#1>.\findexec.cpp(31) : fatal error C1083: Cannot open include file: 'bhjdebug.h': No such file or directory
+
+#sample output from vc9, c# files
+#D:\profiles\Program.cs(15,29): error CS0029: Cannot implicitly convert type 'System.Diagnostics.Process[]' to 'System.Diagnostics.Process'
+
+    /bin/perl -ne '
+                s/^[0-9]+>//;
+                s/\):/) :/g;
+                s/\(([0-9]+),[0-9]+\)/($1)/;
+                s/error CS([0-9]+):/error C$1:/;
+                if (m/(.*?)(\([0-9]+(?:,[0-9]+)?\).*:.*)/) {
+                    print `cygpath -au "$1"|tr -d "\n"`.$2."\n"
+                } else {
+                    print $_
+                }
+'
+
 }
 case $dswSlnFile in 
     *.dsw)

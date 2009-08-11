@@ -29,8 +29,10 @@ ln -sf "$HOME2" /qq
 
 
 #so that I can write /q/ anywhere I want to write "$HOME" in .sh; it'll get worse in .emacs!
-subst /d q: || true #delete it first FIXME, what if q: is a real drive?
-subst q: $(cygpath -sma "$HOME2")
+if test "$HOME2" != /q -a "$HOME2" != /cygdrive/q; then 
+    subst /d q: || true #delete it first FIXME, what if q: is a real drive?
+    subst q: $(cygpath -sma "$HOME2") #if it is already /q, we will have problem here, so we put this in a conditional
+fi
 export HOME=/cygdrive/q
 
 
