@@ -37,4 +37,4 @@ regtool.exe -s set '\HKEY_CLASSES_ROOT\*\shell\emacsedit\command\' 'q:\bin\windo
 regtool.exe -s set '\HKEY_CLASSES_ROOT\*\shell\bashHere\command\' 'q:\bin\windows\redirect_vc6\runHere bash "%1"'
 regtool.exe -s set '\HKEY_CLASSES_ROOT\Directory\shell\EmacsEdit\command\' 'q:\bin\windows\redirect_vc6\emacsedit.exe -n "%1"'
 regtool.exe -s set '\HKEY_CLASSES_ROOT\Directory\shell\bashHere\command\' 'q:\bin\windows\redirect_vc6\runHere bash "%1"'
-
+regtool.exe -i set '\HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel\obcaseinsensitive' 0

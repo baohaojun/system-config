@@ -41,6 +41,7 @@
 (require 'tramp)
 (require 'weblogger)
 (require 'session)
+(add-hook 'after-init-hook 'session-initialize)
 (require 'ibuffer)
 (require 'browse-kill-ring)
 (require 'ido)
