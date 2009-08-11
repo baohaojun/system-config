@@ -15,6 +15,7 @@ function download-all()
         http://www.nirsoft.net/utils/resourcesextract.zip
         http://www.nirsoft.net/utils/iconsext.zip
         http://www.winterdrache.de/freeware/png2ico/data/png2ico-win-2002-12-08.zip
+        http://download.sysinternals.com/Files/Handle.zip
     )
 
     for x in "${file_list[@]}"; do
