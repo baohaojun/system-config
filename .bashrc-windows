@@ -37,7 +37,7 @@ function SetPath()
         /cygdrive/c/Python25/
         /cygdrive/c/Python25/Lib/site-packages/PyQt4
         /cygdrive/c/Python25/Lib/site-packages/PyQt4/
-        "/cygdrive/c/Program Files/Java/jdk1.6.0_13/bin/"
+        /cygdrive/c/PROGRA~1/Java/JDK16~1.0_1/bin #"/cygdrive/c/Program Files/Java/jdk1.6.0_13/bin/"
         ~/bin/windows/lnks
         ~/bin
         ~/bin/windows
@@ -52,7 +52,6 @@ function SetPath()
         /cygdrive/c/WINDOWS
         /cygdrive/c/WINDOWS/System32/Wbem
         /cygdrive/c/WINDOWS/system32
-        "/cygdrive/c/Program Files/TortoiseSVN/bin"
     )
 
     unset PATH

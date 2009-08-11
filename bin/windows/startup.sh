@@ -21,6 +21,8 @@ fi
 
 cd -P "$BIN_WINDOWS"/../..
 export HOME2=`pwd` #Ah! and we know where we are now!
+rm /qq -f
+ln -sf "$HOME2" /qq
 
 #modify /etc/passwd so that this is truly our new home.
 /bin/perl -F: -nae 'if ($ENV{USER} eq $F[0]) {$F[5] = $ENV{HOME2}}; print join(q(:), @F)' -i /etc/passwd

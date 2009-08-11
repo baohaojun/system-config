@@ -1519,6 +1519,14 @@ Haojun Bao <baohaojun@gmail.com> writes:
 >>
 >> Neil
 ****************************************************************
+
+git config --global user.email "cyrus.drive@gmail.com"
+git config --global user.name "Cyrus Drive"
+
+argument list too long: getconf ARG_MAX
+
+http://192.168.1.249/OSS/Ubuntu_Linux/Setup_build_env
+
 acrobat serial number: 1118-1905-0841-9679-7056-1416 1380-1642-4282-5668-8378-3746
 
  cd /d/tools/cygwin-1.7;  rm setup-1.7.exe; wget http://cygwin.com/setup-1.7.exe; chmod +x setup-1.7.exe; of ./setup-1.7.exe
