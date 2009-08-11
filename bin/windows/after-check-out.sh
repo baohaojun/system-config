@@ -23,13 +23,6 @@ cp ~/doc/MONACO.TTF /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windows/fon
 fc-cache
 for x in {c..z}; do test -e /$x || ln -s /cygdrive/$x /; done
 
-FSTAB=/etc/fstab
-if grep '^q:' $FSTAB -iq; 
-then
-    echo 'q: is already mounted case-sensitive'
-else
-    echo 'q: /q some_fs binary 0 0' >> $FSTAB
-fi
     
 
 echo "After check out success!"
