@@ -58,7 +58,6 @@ for x in *; do
 done
 
 #make sure the next time login will run this script again
-cd "$HOMEDRIVE$HOMEPATH"
-HOME_DRIVE_PATH=`pwd`
+cd "$(cygpath -au "$HOMEDRIVE$HOMEPATH")"
 ln -sf "$HOME2"/bin/windows/startup.sh ./Start\ Menu/Programs/Startup/
 

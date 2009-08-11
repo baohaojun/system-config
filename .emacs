@@ -447,7 +447,6 @@
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
- '(ido-save-directory-list-file "/home/bhj/.ido.last")
  '(indent-tabs-mode nil)
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))

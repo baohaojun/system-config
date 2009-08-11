@@ -191,6 +191,7 @@ alias perl='/bin/perl'
 alias or=regopen.py #open registry
 alias mplayer="'/cygdrive/c/Program Files/MPlayer for Windows/MPlayer.exe'"
 alias regrep.py='regrep.py 2>/dev/null'
+alias regsub.py='regsub.py 2>/dev/null'
 alias ps='ps aux -W'
 alias locate=llocate
 alias pdfnup='cygexec pdfnup'
