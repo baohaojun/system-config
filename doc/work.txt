@@ -1523,6 +1523,8 @@ Haojun Bao <baohaojun@gmail.com> writes:
 git config --global user.email "cyrus.drive@gmail.com"
 git config --global user.name "Cyrus Drive"
 
+lftp http://mirrors.kernel.org/sourceware/cygwin
+
 argument list too long: getconf ARG_MAX
 
 http://192.168.1.249/OSS/Ubuntu_Linux/Setup_build_env
