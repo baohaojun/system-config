@@ -11,7 +11,6 @@ function download-all()
         http://download.sysinternals.com/Files/PsTools.zip
         http://download.sysinternals.com/Files/WinObj.zip
         http://download.sysinternals.com/Files/DebugView.zip
-        http://the.earth.li/~sgtatham/putty/latest/x86/putty.zip
         http://www.nirsoft.net/utils/resourcesextract.zip
         http://www.nirsoft.net/utils/iconsext.zip
         http://www.winterdrache.de/freeware/png2ico/data/png2ico-win-2002-12-08.zip
