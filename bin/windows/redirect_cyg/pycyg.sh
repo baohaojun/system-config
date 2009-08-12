@@ -9,10 +9,10 @@ fi
 pyfile="$1"
  if ! [[ ${pyfile:0:1} == / ]];
  then
-     pyfile="`which \"$pyfile\"`"
+     pyfile=`which "$pyfile"`
  fi
 shift
-pyfile="`cygpath -alw \"$pyfile\"`"
+pyfile=`cygpath -alw "$pyfile"`
 /cygdrive/c/python25/python "$pyfile" "$@"
 if [[ $debug == true ]]
 then
