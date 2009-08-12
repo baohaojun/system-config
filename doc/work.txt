@@ -1531,6 +1531,8 @@ http://192.168.1.249/OSS/Ubuntu_Linux/Setup_build_env
 
 acrobat serial number: 1118-1905-0841-9679-7056-1416 1380-1642-4282-5668-8378-3746
 
+android build: CDPATH bash variable is considered harmful
+
  cd /d/tools/cygwin-1.7;  rm setup-1.7.exe; wget http://cygwin.com/setup-1.7.exe; chmod +x setup-1.7.exe; of ./setup-1.7.exe
 
 VVC5-8DFRT4FM
