@@ -11,7 +11,7 @@ alias vdir='ls --color=auto --format=long --show-control-chars'
 alias ll='ls -l --show-control-chars'                              # long list
 alias la='ls -A --show-control-chars'                              # all but . and ..
 alias l='ls -CFl --show-control-chars --block-size=1'                              #
-alias cd='cd -P'
+alias cd='cd -P >/dev/null'
 alias vi=vim
 export EDITOR=vim
 export HISTSIZE=2000
