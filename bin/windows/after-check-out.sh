@@ -25,8 +25,10 @@ fi
 export HOME=/cygdrive/q
 
 . ~/.bashrc-windows
+cd ~/bin/windows/Imap4Monitor/
+~/bin/windows/mkpyqt.py
 
-function mkdir () 
+function mkdir () #so that mkdir won't fail if it is already there.
 {
     command mkdir -p "$@"
 }

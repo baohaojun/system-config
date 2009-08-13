@@ -24,10 +24,10 @@ function vc6env () {
     export LIB=""
     cp "$vc_bat_file" ~/.vc6.bat
     for x in INCLUDE LIB; do
-        export $x="`(cat ~/.vc6.bat; echo echo %$x%)|u2d|cmd.exe|d2u|tail -n 1`"
+        export $x=$( (cat ~/.vc6.bat; echo echo %$x%)|u2d|cmd.exe|d2u|tail -n 1 )
     done
-    local pathw="`(cat ~/.vc6.bat; echo echo %PATH%)|u2d|cmd.exe|d2u|tail -n 1`"
-    export PATH="`cygpath -pu \"$pathw\"`"
+    local pathw=$( (cat ~/.vc6.bat; echo echo %PATH%)|u2d|cmd.exe|d2u|tail -n 1 )
+    export PATH=$(cygpath -pu "$pathw")
 }
 
 function SetPath()

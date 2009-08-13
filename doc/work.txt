@@ -1523,7 +1523,7 @@ Haojun Bao <baohaojun@gmail.com> writes:
 git config --global user.email "baohaojun@gmail.com"
 git config --global user.name "Haojun Bao"
 
-lftp http://mirrors.kernel.org/sourceware/cygwin
+lftp http://mirrors.kernel.org/sourceware/cygwin/release-2
 
 argument list too long: getconf ARG_MAX
 
