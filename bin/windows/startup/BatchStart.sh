@@ -1,9 +1,8 @@
 #!/bin/bash
 
-~/bin/windows/NetworkTest.exe& #this is ssh2Emacs
+#~/bin/windows/NetworkTest.exe& #this is ssh2Emacs
 cd ~/doc
 regedit /s ime-noctrlshift-noaltshift.reg
-helpEmacs.py&
 
 (
     while ! ssh bhj2 echo hello; do true; done; 
