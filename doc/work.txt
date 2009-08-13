@@ -1520,8 +1520,8 @@ Haojun Bao <baohaojun@gmail.com> writes:
 >> Neil
 ****************************************************************
 
-git config --global user.email "cyrus.drive@gmail.com"
-git config --global user.name "Cyrus Drive"
+git config --global user.email "baohaojun@gmail.com"
+git config --global user.name "Haojun Bao"
 
 lftp http://mirrors.kernel.org/sourceware/cygwin
 

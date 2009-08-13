@@ -47,7 +47,7 @@ regedit /s ImeNoToggle.reg
 cygpath -alwm `which bash` > /cygdrive/c/.bash-loc
 
 #start everything in ~/bin/windows/startup/*/
-~/bin/windows/substartup.sh all
+~/bin/windows/substartup.sh ALL
 
 #make sure the next time login will run this script again
 cd "$(cygpath -au "$HOMEDRIVE$HOMEPATH")"
