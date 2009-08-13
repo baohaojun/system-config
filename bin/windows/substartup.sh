@@ -3,8 +3,16 @@
 cd ~/bin/windows/startup
 rm *.stackdump */*.stackdump -f
 
+function Usage()
+{
+    echo 'Usage: substartup.sh folders'
+    echo 'Valid startup folders: cygwin non-cygwin cygstart ALL'
+    exit -1
+
+}
+
 if test $# = 0; then
-    START="cygwin non-cygwin cygstart";
+    Usage
 else
     START="$@"
 fi
@@ -21,9 +29,11 @@ for x in $START; do
                 cygstart "$y"
             done
             ;;
+        ALL)
+            substartup.sh cygwin non-cygwin cygstart
+            ;;
         *)
-            echo 'Error: Unknown startup folder!'
-            false
+            Usage
             ;;
     esac
 done
