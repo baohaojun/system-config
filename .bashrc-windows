@@ -4,32 +4,6 @@ function lw () {
          cygpath -alw "$@"
 }
 
-function vc6env () {
-    local vc_bat_file;
-    for x in {c..z}; do 
-        if test -f  "/cygdrive/$x/Program Files/Microsoft Visual Studio/VC98/Bin/VCVARS32.BAT";
-        then
-            vc_bat_file="/cygdrive/$x/Program Files/Microsoft Visual Studio/VC98/Bin/VCVARS32.BAT";
-            break;
-        fi
-    done
-    if test -z "$vc_bat_file"; 
-    then
-        echo "Error: can't find vc6\!"
-        return
-    else
-        echo "vc is found at $vc_bat_file"
-    fi
-    export INCLUDE=""
-    export LIB=""
-    cp "$vc_bat_file" ~/.vc6.bat
-    for x in INCLUDE LIB; do
-        export $x=$( (cat ~/.vc6.bat; echo echo %$x%)|u2d|cmd.exe|d2u|tail -n 1 )
-    done
-    local pathw=$( (cat ~/.vc6.bat; echo echo %PATH%)|u2d|cmd.exe|d2u|tail -n 1 )
-    export PATH=$(cygpath -pu "$pathw")
-}
-
 function SetPath()
 {
     local paths
@@ -199,6 +173,8 @@ alias reboot=~/bin/reboot
 alias aks="adb kill-server"
 alias ash="adb shell"
 alias virus='clamscan --database="d:\profiles\All Users\.clamwin\db" --recursive'
+alias vcenv6='. ~/bin/windows/vcenv6.sh'
+alias wdkenv='. ~/bin/windows/wdkenv.sh'
 
 if [[ -d /cygdrive/q ]]; then
    export HOME=/q
