@@ -43,21 +43,11 @@ regedit /s ImeNoToggle.reg
 #setup environment?
 . ~/.bashrc-windows
 
-#rm temp files from tramp
-cd ~/Local\ Settings/Temp && rm tramp* -rf
-
 #so that shellHelper_vc6.exe can find where bash is
 cygpath -alwm `which bash` > /cygdrive/c/.bash-loc
 
-#this is useless now?
-export CYGDIR=`cygpath -alwm /`
-
-#start everything in ~/bin/windows/startup
-cd ~/bin/windows/startup
-rm *.stackdump -f
-for x in *; do 
-    ./"$x"&
-done
+#start everything in ~/bin/windows/startup/*/
+~/bin/windows/startup-sub.sh
 
 #make sure the next time login will run this script again
 cd "$(cygpath -au "$HOMEDRIVE$HOMEPATH")"

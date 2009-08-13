@@ -1,4 +1,4 @@
-#!/bin/env pycyg
+#!/bin/env pywstart
 
 import sys, subprocess, stat, os, traceback, functools
 from qrc_resources import *

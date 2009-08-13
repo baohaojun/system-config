@@ -1,4 +1,4 @@
-#!/bin/env pycyg
+#!/bin/env pywstart
 import win32com.client
 from socket import *
 import sys
