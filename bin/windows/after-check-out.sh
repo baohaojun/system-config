@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -x
 
 THIS=$(cygpath -au "$0")
 THIS=$(readlink -f "$THIS")
@@ -17,7 +16,14 @@ then
 fi
 
 cd -P "$BIN_WINDOWS"/../..
-export HOME=`pwd`
+export HOME2=`pwd`
+
+if test "$HOME2" != /q -a "$HOME2" != /cygdrive/q; then 
+    subst /d q: || true #delete it first. FIXME, what if q: is a real drive?
+    subst q: $(cygpath -sma "$HOME2") #if it is already /q, we will have problem here, so we put this in a conditional
+fi
+export HOME=/cygdrive/q
+
 . ~/.bashrc-windows
 
 function mkdir () 
