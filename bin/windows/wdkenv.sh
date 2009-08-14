@@ -19,8 +19,8 @@ EOF
 
     cat ~/wdkenv.bat|u2d|cmd.exe|d2u|grep =|
     grep -v '^!'|grep -vi '^uid=\|^euid=\|^ppid=\|^bash_versinfo=\|^shellopts=\|^BASH\|^GOUPS='|sed -e 's/^/export /g' > ~/.wdk.set
-    
+    #. ~/.wdk.set #this will hang bash :-(
 }
 
 wdkenv_func
-. ~/.wdk.set
+. ~/.wdk.set #must move it here

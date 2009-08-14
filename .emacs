@@ -152,9 +152,9 @@
   (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
   (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "K&R")
-  (setq tab-width 8)
+  (setq tab-width 4)
   (setq indent-tabs-mode t)
-  (setq c-basic-offset 8))
+  (setq c-basic-offset 4))
 
 (defun linux-c++-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
@@ -164,9 +164,9 @@
   (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
   (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "K&R")
-  (setq tab-width 8)
+  (setq tab-width 4)
   (setq indent-tabs-mode t)
-  (setq c-basic-offset 8))
+  (setq c-basic-offset 4))
 
 (setq auto-mode-alist (cons '(".*\\.[c]$" . linux-c-mode)
                             auto-mode-alist))

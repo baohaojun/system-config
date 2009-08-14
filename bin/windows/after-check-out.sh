@@ -26,7 +26,13 @@ export HOME=/cygdrive/q
 
 . ~/.bashrc-windows
 cd ~/bin/windows/Imap4Monitor/
-~/bin/windows/mkpyqt.py
+function report_error()
+{
+    echo "$@"
+    echo "Sleeping 5 seconds to continue..."
+    sleep 5
+}
+~/bin/windows/mkpyqt.py || report_error 'Error: you have not installed python2.5 and pyqt into "C:\python25"!'
 
 function mkdir () #so that mkdir won't fail if it is already there.
 {
@@ -43,7 +49,7 @@ find . -type l -exec relink.sh '{}' \;
 cd ~/bin/windows
 ./update-password.sh
 echo 'after check out update success!'
-ln -sf ~/'Application Data/Microsoft/Internet Explorer/Quick Launch' ~/SendTo/
+ln -sf ~/'Application Data/Microsoft/Internet Explorer/Quick Launch' ~/SendTo/ || report_error "Error: you are not doing it from $HOMEPATH"
 mkdir -p ~/.fonts
 cp ~/doc/monaco-linux.ttf /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windows/fonts/cour.ttf ~/.fonts || true
 fc-cache

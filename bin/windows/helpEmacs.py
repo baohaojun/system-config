@@ -13,7 +13,6 @@ while True:
     sockAskMsdn, addr = sockListening.accept()
     line = sockAskMsdn.recv(1024)
     sockAskMsdn.close()
-    print 'line is', line
     sys.stdout.flush()
     try:
         msdn.DisplayTopicFromF1Keyword(line)
