@@ -16,4 +16,4 @@ while [[ "${LOCATE_DIRS: -1}" == / ]]; do
     LOCATE_DIRS="${LOCATE_DIRS: 0 : ${#LOCATE_DIRS} -1}"
 done
 echo updating "$LOCATE_DIRS"
-/bin/updatedb --localpaths="$LOCATE_DIRS" --prunepaths='.+/.svn .+/CVS .+/tmp .+/temp' --output="${HOME}"/tmp/locate/"`gcachesum \"$LOCATE_DIRS\"`" 
+/bin/updatedb --localpaths="$LOCATE_DIRS" --prunepaths='.+/.svn .+/CVS .+/tmp .+/temp' --output="${HOME}"/tmp/locate/"`grepAllCheckSum.py \"$LOCATE_DIRS\"`" 
