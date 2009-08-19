@@ -16,7 +16,6 @@ alias vi=vim
 export EDITOR=vim
 export HISTSIZE=2000
 export HISTFILESIZE=100000
-export CDPATH=.:~
 if [[ `uname` == CYGWIN_NT-5.1 ]]; 
 then
     if . ~/.bashrc-windows; then
@@ -32,7 +31,6 @@ case $- in
       *i*) [[ -f /etc/bash_completion ]] && . /etc/bash_completion && . ~/.bash_netcompletion ;;
 
   esac
-
 
 
 alias mail=~/bin/mail
