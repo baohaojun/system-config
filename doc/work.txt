@@ -1545,3 +1545,173 @@ SRV*c:\windows\symbols*http://msdl.microsoft.com/download/symbols
 boot.ini for debug mode
 multi(0)disk(0)rdisk(0)partition(1)\WINDOWS="Microsoft Windows XP Professional Debug" /noexecute=optin /fastdetect /debug
 
+From: Dave Korn <dave.korn.cygwin@googlemail.com>
+Subject: Re: perl threads on 2008 R2 64bit = crash ( was: perl 5.10 threads  	on 1.5.25 = instant crash )
+To: cygwin@cygwin.com
+Date: Wed, 15 Jul 2009 21:42:07 +0100
+User-Agent: Thunderbird 2.0.0.17 (Windows/20080914)
+
+Corinna Vinschen wrote:
+> On Jul 15 20:32, Dave Korn wrote:
+>>   Yes.  That's why I said "examine the SEH chain", not "look at the call
+>> stack".  I reckoned that doing so might provide any insight into why the
+>> myfault was not invoked.  For instance, you might see something hooked into
+>> the SEH chain ahead of Cygwin's handler and start to look at what it was and
+>> where it came from; and if not, you would be able to infer that the SEH chain
+>> was not being invoked and start looking at the various SEH security
+>> enhancements in recent windows versions and wondering which one might make it
+>> think it shouldn't call handlers from a non-registered stack-based SEH
+>> registration record.
+> 
+> I'm not opposed to get some help with this stuff...
+
+  I don't have 2k8 to test it on myself, but if you can get this reproducing
+under the debugger, then use a command like
+
+(gdb) list 'verifyable_object_isvalid(void const*, long, void*, void*, void*)'
+
+94        paranoid_printf ("threadcount %d.  unlocked",
+MT_INTERFACE->threadcount);
+95      }
+96
+97      static inline verifyable_object_state
+98      verifyable_object_isvalid (void const *objectptr, long magic, void
+*static_ptr1,
+99                                 void *static_ptr2, void *static_ptr3)
+100     {
+101       myfault efault;
+102       /* Check for NULL pointer specifically since it is a cheap test and
+avoids the
+103          overhead of setting up the fault handler.  */
+(gdb)
+104       if (!objectptr || efault.faulted ())
+105         return INVALID_OBJECT;
+106
+107       verifyable_object **object = (verifyable_object **) objectptr;
+108
+109       if ((static_ptr1 && *object == static_ptr1) ||
+110           (static_ptr2 && *object == static_ptr2) ||
+111           (static_ptr3 && *object == static_ptr3))
+112         return VALID_STATIC_OBJECT;
+113       if ((*object)->magic != magic)
+(gdb)
+
+check which line number the dereference is on, in my case 113, so set a
+breakpoint there
+
+(gdb) b 113 if ((*object) == 0)
+No symbol "object" in current context.
+(gdb)
+
+  Ah, that's bad.  It might work on a DLL compiled with -O0 -g, but here we
+have a problem that the function gets inlined everywhere it's called.  So
+instead I set an unconditional breakpoint there and let it run until I hit it:
+
+(gdb) b 113
+Breakpoint 3 at 0x610d0411: file /gnu/winsup/src/winsup/cygwin/thread.cc, line
+113. (18 locations)
+(gdb) disa 2
+(gdb) c
+Continuing.
+
+  Because that breakpoint is set on every inlined instance of the function,
+you might need to continue it several times, until it hits the particular
+inlined instance in the particular function that is blowing up.  Let us say
+for the sake of argument that it was in pthread_key_create;
+
+Breakpoint 3, pthread_key_create (key=0x43b0a0,
+    destructor=0x408e00 <eh_globals_dtor>)
+    at /gnu/winsup/src/winsup/cygwin/thread.cc:113
+113       if ((*object)->magic != magic)
+
+... so I check the disassembly to see what register was being dereferenced for
+comparison to the magic number:
+
+(gdb) disass $eip $eip+10
+Dump of assembler code from 0x610d7c46 to 0x610d7c50:
+0x610d7c46 <pthread_key_create+214>:    mov    (%esi),%eax
+0x610d7c48 <pthread_key_create+216>:    cmpl   $0xdf0df047,0x4(%eax)
+0x610d7c4f <pthread_key_create+223>:    jne    0x610d7c06 <pthread_key_create+15
+0>
+End of assembler dump.
+(gdb)
+
+... and set a breakpoint using the assembler parameters:
+
+(gdb) b *0x610d7c48 if ($eax == 0)
+Breakpoint 5 at 0x610d7c48: file /gnu/winsup/src/winsup/cygwin/thread.cc, line
+113.
+(gdb) disa 3
+(gdb) c
+Continuing.
+Caught integer 2.
+
+Program exited normally.
+(gdb)
+
+... and then my program exited normally, because it didn't ever try to
+dereference a NULL pointer at that point.  But, if the breakpoint did trip,
+you could then examine the SEH chain.  The SEH chain head lives at [fs:0], so
+look up the base of the $fs selector using "info w32 selector"
+
+(gdb) info w32 selectors
+Undefined info w32 command: "selectors".  Try "help info w32".
+(gdb) info w32 selector
+Selector $cs
+0x01b: base=0x00000000 limit=0xffffffff 32-bit Code (Exec/Read, N.Conf)
+Priviledge level = 3. Page granular.
+Selector $ds
+0x023: base=0x00000000 limit=0xffffffff 32-bit Data (Read/Write, Exp-up)
+Priviledge level = 3. Page granular.
+Selector $es
+0x023: base=0x00000000 limit=0xffffffff 32-bit Data (Read/Write, Exp-up)
+Priviledge level = 3. Page granular.
+Selector $ss
+0x023: base=0x00000000 limit=0xffffffff 32-bit Data (Read/Write, Exp-up)
+Priviledge level = 3. Page granular.
+Selector $fs
+0x038: base=0x7ffde000 limit=0x00000fff 32-bit Data (Read/Write, Exp-up)
+Priviledge level = 3. Byte granular.
+Selector $gs
+0x000: Segment not present
+(gdb)
+
+... get the head pointer:
+
+(gdb) x/xw 0x7ffde000
+0x7ffde000:     0x0022ce68
+
+... on the stack, as you might expect, and walk the chain, first word of each
+record is the 'next' pointer, second is the handler function:
+
+(gdb) x/2xw 0x0022ce68
+0x22ce68:       0x0022ffe0      0x61028770
+(gdb) x 0x61028770
+0x61028770 <_ZN7_cygtls17handle_exceptionsEP17_EXCEPTION_RECORDP15_exception_lis
+tP8_CONTEXTPv>: 0x57e58955
+(gdb) x/2xw 0x0022ffe0
+0x22ffe0:       0xffffffff      0x7c4ff0b4
+(gdb) x 0x7c4ff0b4
+0x7c4ff0b4 <SetProcessPriorityBoost+86>:        0x83ec8b55
+(gdb)
+
+  0xffffffff in the chain pointer means final entry, and 0x7c4ff0b4 is
+somewhere in kernel32.dll, it's presumably the last resort fault handler.  The
+important point was we verified that the cygwin exception handler is first in
+the chain, so we'd expect it to be called by the NULL dereference (set a
+breakpoint there too, just in case something goes wrong shortly after it
+enters) when we step into it.  If there was something else first, we'd know
+where to start looking, if not, we'd have to suspect the OS has decided not to
+call the SEH chain at all for some reason.
+
+    cheers,
+      DaveK
+
+
+
+--
+Problem reports:       http://cygwin.com/problems.html
+FAQ:                   http://cygwin.com/faq/
+Documentation:         http://cygwin.com/docs.html
+Unsubscribe info:      http://cygwin.com/ml/#unsubscribe-simple
+
