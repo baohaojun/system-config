@@ -107,17 +107,26 @@ function llocate() {
 
 function edit_1()
 {
-    if ! [[ -r "$1" ]]; then
-        echo Error: "$1" is not readable
+    local file=$(cygpath -au "$1")
+    local line=${file##*:}
+    file=${file%:*}
+
+    if test "$line" = "$file"
+    then
+        line=
+    fi
+        
+
+    if ! [[ -r "$file" ]]; then
+        echo Error: "$file" is not readable
         return 1
     fi
 
     if ! [[ -w "$1" ]]; then
         echo Warning: "$1" is not writable
     fi
-    local file="`cygpath -alwm \"$1\"`"
     
-    (cd ~ && emacsedit.exe -n "$file" >/dev/null 2>&1)
+    (cd ~ && emacsedit.exe -n +${line:-1} "$file")
 
 }
 
