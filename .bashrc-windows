@@ -139,23 +139,15 @@ function edit()
 
 function lcd()
 {
-    if [[ -z "$1" ]]; then
-        echo Usage: lcd softlink
-        return
+    if ! readlink -f "$1"; then
+        return -1
     fi
 
-    linkTarget=`ls -l "$1"|sed -e 's/.*-> //'`
-    if [[ ${linkTarget:0:1} == / ]]; then
-        true #nothing to do
-    elif [[ ${linkTarget:1:1} == ':' ]]; then #this is a windows pathname (`:' is a special char)
-        true
+    link=$(readlink -f "$1")
+    if [[ -d "$link" ]]; then
+        cd "$link"
     else
-        linkTarget="`dirname \"$1\"`"/"$linkTarget"
-    fi
-    if [[ -d "$linkTarget" ]]; then
-        cd "$linkTarget"
-    else
-        cd "`dirname \"$linkTarget\"`"
+        cd "$(dirname "$link")"
     fi
 }
 
