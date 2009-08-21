@@ -3,8 +3,6 @@ use File::Path;
 use File::Basename;
 
 @site =("http://kambing.ui.ac.id/cygwin", 
-        #"http://mirror.cpsc.ucalgary.ca/mirror/cygwin.com/",
-        "http://mirrors.kernel.org/sourceware/cygwin/",
         "http://mirror.cs.vt.edu/pub/cygwin/cygwin",
     );
 for (@site) {
@@ -31,7 +29,7 @@ while (<$ini_fh>) {
     }
 }
 
-@ini_content = grep /^install:/, @ini_content;
+@ini_content = grep /^install:|^source:/, @ini_content;
 
 sub md5sum($)
 {
@@ -43,9 +41,11 @@ sub md5sum($)
 }
 
 my @paths;
+my %paths;
 my $bytes_to_download = 0;
 foreach (@ini_content) {
     (undef, $path, $size, $md5) = split;
+    next if $paths{$path};
     if (-s $path == $size) {
         if (1 or md5sum($path) eq $md5) {
             next;
@@ -57,12 +57,18 @@ foreach (@ini_content) {
     } else {
         $bytes_to_download += $size - -s $path;
     }
-    print "$path need re-download\n";
+
     unlink $path;
     $cygfiles{$path} = [$size, $md5];
-    push @paths, $path;
+    $paths{$path} = 1;
 }
-print "need to download $bytes_to_download bytes...\n";
+
+@paths = sort keys %paths;
+for (@paths) {
+    print "$_ need redownload\n";
+}
+
+print "\nneed to download $bytes_to_download bytes...\n";
 if (not $ARGV[0]) {
     exit;
 }
