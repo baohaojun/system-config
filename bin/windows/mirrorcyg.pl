@@ -3,14 +3,12 @@ use File::Path;
 use File::Basename;
 
 @site =("http://kambing.ui.ac.id/cygwin", 
-        "http://mirror.cpsc.ucalgary.ca/mirror/cygwin.com/",
-        "http://mirror.celltel.de/cygwin/",
-        "http://ftp.cc.uoc.gr/mirrors/cygwin/",
-        "http://ftp.iij.ad.jp/pub/cygwin/release-2/",
-        "http://cygwin.elite-systems.org/release-2/",
+        #"http://mirror.cpsc.ucalgary.ca/mirror/cygwin.com/",
+        "http://ftp.iij.ad.jp/pub/cygwin/",
         "http://mirrors.kernel.org/sourceware/cygwin/",
         "http://mirror.cs.vt.edu/pub/cygwin/cygwin/",
-        "http://ftp.heanet.ie/pub/cygwin/");
+        "http://mirror.cs.vt.edu/pub/cygwin/cygwin",
+    );
 for (@site) {
     s!/*$!!;
 }
@@ -70,18 +68,17 @@ print "need to download $bytes_to_download bytes...\n";
 if (not $ARGV[0]) {
     exit;
 }
-system("sleep 1");
-$n_sites = $#site;
-my @lftp_handles;
 
-for $i (0 .. $n_sites) {
-    open($lftp_handles[$i], "|lftp -");
-    print STDOUT "lftp handle $i is $lftp_handles[$i]\n";
-}
+$n_sites = $#site;
+
+open(my $handle, "|lftp -");
+
 $i= int(rand ($n_sites + 1.5));
+print "Download from site $site[$i]...\n";
+system("sleep 3");
+
 foreach $path (@paths) {
     mkpath (dirname $path);
-    $i = ($i+1) % ($n_sites+1);
-    my $handle = $lftp_handles[$i];
     print $handle "get -c $site[$i]/$path -o $path\n";
 }
+close $handle;
