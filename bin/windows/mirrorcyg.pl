@@ -4,9 +4,7 @@ use File::Basename;
 
 @site =("http://kambing.ui.ac.id/cygwin", 
         #"http://mirror.cpsc.ucalgary.ca/mirror/cygwin.com/",
-        "http://ftp.iij.ad.jp/pub/cygwin/",
         "http://mirrors.kernel.org/sourceware/cygwin/",
-        "http://mirror.cs.vt.edu/pub/cygwin/cygwin/",
         "http://mirror.cs.vt.edu/pub/cygwin/cygwin",
     );
 for (@site) {
@@ -53,14 +51,14 @@ foreach (@ini_content) {
             next;
         } else {
             print "$path md5sum mismatch!\n";
-            #unlink $path;
+
             $bytes_to_download += $size;
         }
     } else {
         $bytes_to_download += $size - -s $path;
     }
     print "$path need re-download\n";
-
+    unlink $path;
     $cygfiles{$path} = [$size, $md5];
     push @paths, $path;
 }
