@@ -2,7 +2,8 @@
 use File::Path;
 use File::Basename;
 
-@site =("http://kambing.ui.ac.id/cygwin", 
+@site =(
+	"http://kambing.ui.ac.id/cygwin", 
         "http://mirror.cs.vt.edu/pub/cygwin/cygwin",
     );
 for (@site) {
@@ -11,7 +12,7 @@ for (@site) {
 
 $ini = "setup-2.ini";
 
-$dir="/cygdrive/d/tools/cygwin/http%3a%2f%2fkambing.ui.ac.id%2fcygwin%2f";
+$dir="/cygdrive/d/tools/cygwin/repo";
 mkpath $dir;
 chdir $dir or die "can't chdir into $dir";
 
@@ -75,10 +76,10 @@ if (not $ARGV[0]) {
 
 $n_sites = $#site;
 
-open(my $handle, "|lftp -");
+open(my $handle, "|lftp");
 
 $i= int(rand ($n_sites + 1.5));
-print "Download from site $site[$i]...\n";
+print "Download from site $i $site[$i]...\n";
 system("sleep 3");
 
 foreach $path (@paths) {
