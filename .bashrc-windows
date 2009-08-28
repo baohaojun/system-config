@@ -175,6 +175,7 @@ alias ash="adb shell"
 alias virus='clamscan --database="d:\profiles\All Users\.clamwin\db" --recursive'
 alias vcenv6='. ~/bin/windows/vcenv6.sh'
 alias wdkenv='. ~/bin/windows/wdkenv.sh'
+alias repo='PATH=/bin:$PATH repo'
 
 if [[ -d /cygdrive/q ]]; then
    export HOME=/q
