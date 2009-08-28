@@ -54,5 +54,8 @@ mkdir -p ~/.fonts
 cp ~/doc/monaco-linux.ttf /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windows/fonts/cour.ttf ~/.fonts || true
 fc-cache
 for x in {c..z}; do test -e /$x || (rm -f /$x; ln -s /cygdrive/$x /); done
+cd ~/doc
+regedit /s caps_lock_to_control.reg
+regedit /s putty.reg
 
 echo "After check out success!"

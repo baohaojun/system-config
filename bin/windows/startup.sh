@@ -38,7 +38,7 @@ export HOME=/cygdrive/q
 
 #so that C-SPC will not toggle IME, because it's used by emacs set-mark-command
 cd ~/doc
-regedit /s ImeNoToggle.reg
+regedit /s ime-noctrlshift-noaltshift.reg
 regedit /s console-color.reg
 
 #setup environment?
