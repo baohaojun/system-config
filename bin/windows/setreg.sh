@@ -29,6 +29,7 @@ REGS=(
     '\HKEY_CLASSES_ROOT\*\shell\Locate It\command\'
     '\HKEY_CLASSES_ROOT\Directory\shell\EmacsEdit\command\'
     '\HKEY_CLASSES_ROOT\Directory\shell\bashHere\command\'
+    '\HKEY_CLASSES_ROOT\Directory\shell\Locate It\command\'
 )
 
 for x in "${REGS[@]}"; do regCreateSubKeys "$x"; done
@@ -36,7 +37,8 @@ regtool.exe -s set '\HKEY_CLASSES_ROOT\.sh' 'sh_auto_file'
 regtool.exe -s set '\HKEY_CLASSES_ROOT\sh_auto_file\shell\open\command\' "$(qq_cmdout cygpath -alw "$BASH"; echo -n ' --rcfile ~/.bashrc-windows -i "%1" %*')"
 regtool.exe -s set '\HKEY_CLASSES_ROOT\*\shell\emacsedit\command\' 'q:\bin\windows\redirect_vc6\emacsedit.exe -n "%1"'
 regtool.exe -s set '\HKEY_CLASSES_ROOT\*\shell\bashHere\command\' 'q:\bin\windows\redirect_vc6\runHere bash "%1"'
+regtool.exe -s set '\HKEY_CLASSES_ROOT\*\shell\Locate It\command\' 'q:\bin\windows\redirect_vc6\LocateIt "%1"'
 regtool.exe -s set '\HKEY_CLASSES_ROOT\Directory\shell\EmacsEdit\command\' 'q:\bin\windows\redirect_vc6\emacsedit.exe -n "%1"'
 regtool.exe -s set '\HKEY_CLASSES_ROOT\Directory\shell\bashHere\command\' 'q:\bin\windows\redirect_vc6\runHere bash "%1"'
-regtool.exe -s set '\HKEY_CLASSES_ROOT\*\shell\Locate It\command\' 'q:\bin\windows\redirect_vc6\LocateIt "%1"'
+regtool.exe -s set '\HKEY_CLASSES_ROOT\Directory\shell\Locate It\command\' 'q:\bin\windows\redirect_vc6\LocateIt "%1"'
 regtool.exe -i set '\HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel\obcaseinsensitive' 0
