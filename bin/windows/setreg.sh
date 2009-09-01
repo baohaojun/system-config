@@ -22,7 +22,7 @@ function regCreateSubKeys () #create all the levels of subkeys
 }
 
 REGS=(
-    '\HKEY_CLASSES_ROOT\.sh'
+    '\HKEY_CLASSES_ROOT\.sh\'
     '\HKEY_CLASSES_ROOT\sh_auto_file\shell\open\command\'
     '\HKEY_CLASSES_ROOT\*\shell\emacsedit\command\'
     '\HKEY_CLASSES_ROOT\*\shell\bashHere\command\'
@@ -33,7 +33,7 @@ REGS=(
 )
 
 for x in "${REGS[@]}"; do regCreateSubKeys "$x"; done
-regtool.exe -s set '\HKEY_CLASSES_ROOT\.sh' 'sh_auto_file'
+regtool.exe -s set '\HKEY_CLASSES_ROOT\.sh\' 'sh_auto_file'
 regtool.exe -s set '\HKEY_CLASSES_ROOT\sh_auto_file\shell\open\command\' "$(qq_cmdout cygpath -alw "$BASH"; echo -n ' --rcfile ~/.bashrc-windows -i "%1" %*')"
 regtool.exe -s set '\HKEY_CLASSES_ROOT\*\shell\emacsedit\command\' 'q:\bin\windows\redirect_vc6\emacsedit.exe -n "%1"'
 regtool.exe -s set '\HKEY_CLASSES_ROOT\*\shell\bashHere\command\' 'q:\bin\windows\redirect_vc6\runHere bash "%1"'
