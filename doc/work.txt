@@ -1716,3 +1716,22 @@ Documentation:         http://cygwin.com/docs.html
 Unsubscribe info:      http://cygwin.com/ml/#unsubscribe-simple
 
 bhj   ALL=NOPASSWD: ALL
+
+
+--- old/chrome/content/allinonegest/gestimp.js  2009-09-01 17:34:24.078125000 +0800
++++ new/chrome/content/allinonegest/gestimp.js  2009-05-18 09:17:00.000000000 +0800
+@@ -1058,14 +1058,6 @@
+          loadURI(links[i].href);
+          return;
+       }
+-  for (j = 0; j < re.length; ++j)
+-      for (i = 0; i < links.length; ++i)
+-          if (links[i].firstChild && links[i].firstChild.nodeName == "IMG"
+-              && links[i].firstChild.getAttribute("src").search(re[j]) != -1
+-              && links[i].href) {
+-              loadURI(links[i].href);
+-              return;
+-          }
+ }
+
+ function aioSmartBackForward(aRwnd, aCurrDomainEndPoint) { // derived from SHIMODA "Piro" Hiroshi Rewind/Fastforward buttons
