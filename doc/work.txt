@@ -1735,3 +1735,6 @@ bhj   ALL=NOPASSWD: ALL
  }
 
  function aioSmartBackForward(aRwnd, aCurrDomainEndPoint) { // derived from SHIMODA "Piro" Hiroshi Rewind/Fastforward buttons
+
+
+rsync -avz --delete --exclude '#cvs.*' rsync://cygwin.com/src-cvs .
