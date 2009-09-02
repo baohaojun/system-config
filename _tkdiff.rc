@@ -91,7 +91,7 @@ define tagtext {1}
 define textopt {-background white -foreground black -font {{MS Sans Serif} -8} -wrap none}
 
 # Directory for scratch files
-define tmpdir {D:\profiles\bhj\LOCALS~1\Temp}
+define tmpdir {/tmp}
 
 # Use icons instead of labels in the toolbar
 define toolbarIcons {1}
