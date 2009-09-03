@@ -23,11 +23,7 @@ open($ini_fh, $ini);
 my @ini_content;
 while (<$ini_fh>) {
     chomp;
-    if (/^\[prev\]$/ .. /^\s*$/) {
-        next;
-    } else {
-        push @ini_content, $_;
-    }
+    push @ini_content, $_;
 }
 
 @ini_content = grep /^install:|^source:/, @ini_content;
