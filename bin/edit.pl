@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 use Net::OpenSSH; 
-($myname, $myip, $remote_ip, $myfile) = (@ENV{WHOAMI, LOCALIP, REMOTE_IP}, $ARGV[0]);
+($myname, $myip, $remote_ip, $myfile) = (@ENV{WHOAMI, LOCALIP, REMOTEIP}, $ARGV[0]);
 
 $ssh_cmd = "/scp:$myname\@$myip:$myfile";
 $ssh_cmd = Net::OpenSSH->shell_quote($ssh_cmd);
