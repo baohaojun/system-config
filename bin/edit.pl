@@ -13,5 +13,6 @@ EOC
 $ssh_cmd =~ s/\n/;/g;
 $ssh_cmd = Net::OpenSSH->shell_quote($ssh_cmd);
 
-print "ssh $remote_ip emacsedit -n $ssh_cmd\n";
+print "ssh $remote_ip $ssh_cmd\n";
+system("ssh $remote_ip $ssh_cmd");
 
