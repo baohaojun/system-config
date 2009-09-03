@@ -143,15 +143,15 @@ def debugWnd():
                                         x['class'],
                                         x['exec'])
 
-def main():
+def main(*argv):
     EnumWindows(_MyCallback, (listWindowInfo,))
     #debugWnd()
-    if len(sys.argv) < 2:
+    if len(argv) < 2:
         print "Error: must take at least one arg, the program to match"
         Usage()
-        sys.exit(-1)
+        return (-1)
 
-    targetExec_ = sys.argv[1].lower()
+    targetExec_ = argv[1].lower()
     startExec = targetExec_
     if targetExec_ in execMap:
         targetExec_ = execMap[targetExec_]
@@ -170,12 +170,13 @@ def main():
                 break
         else:
             print 'no match'
-            if len(sys.argv) > 2 and sys.argv[2]:
-                os.system('start %s' % sys.argv[2])
-            elif len(sys.argv) > 2:
-                sys.exit(-1) #nothing to start
+            if len(argv) > 2 and argv[2]:
+                os.system('start %s' % argv[2])
+            elif len(argv) > 2:
+                return (-1) #nothing to start
             else:
                 os.system('start %s' % startExec)
 
-        sys.exit(0) #we have found 
-main()
+        return (0) #we have found 
+if __name__ == '__main__':
+    sys.exit(main(*sys.argv))
