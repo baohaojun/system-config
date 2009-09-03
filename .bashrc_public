@@ -25,15 +25,14 @@ else
                 echo Warning: "$1" is not writable
             fi
         fi    
-        local IFS=$'\n'
+
         local file=$( readlink -f "$1" )
-        local dir=$( dirname "$file" )
-        file=$( basename "$file")
-        (
-            cd "$dir" >/dev/null 2>&1
-            ssh $REMOTEIP /qq/bin/windows/rsshedit.sh -n \""/scp:$WHOAMI@$LOCALIP:/`pwd`/$file"\"
-            cd - >/dev/null 2>&1
-        )
+        perl -e 'use Net::OpenSSH; 
+                 ($myname, $myip, $myfile, $remote_ip) = @ARGV;
+                 $ssh_cmd = "emacsclient /scp:$myname@$myip:$myfile";
+                 $ssh_cmd = Net::OpenSSH->shell_quote($ssh_cmd);
+                 system "ssh", $remote_ip,  $ssh_cmd;
+              ' "$WHOAMI" "$LOCALIP" "$file" "$REMOTEIP"
     }
 
     alias sudoedit='WHOAMI=root edit'
