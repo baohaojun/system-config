@@ -31,7 +31,9 @@ else
                  ($myname, $myip, $myfile, $remote_ip) = @ARGV;
                  $ssh_cmd = "/scp:$myname\@$myip:$myfile";
                  $ssh_cmd = Net::OpenSSH->shell_quote($ssh_cmd);
-                 system "ssh $remote_ip emacsedit -n $ssh_cmd";
+                 $ssh_cmd = Net::OpenSSH->shell_quote($ssh_cmd);
+                 print "ssh $remote_ip emacsedit -n $ssh_cmd\n";
+                 system "ssh $remote_ip emacsclient -n $ssh_cmd";
               ' "$WHOAMI" "$LOCALIP" "$file" "$REMOTEIP"
     }
 
