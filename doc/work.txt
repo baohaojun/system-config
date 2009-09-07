@@ -1,3 +1,10 @@
+1. Disable AntiVir's self-protection.
+2. Set the Guard service to manual in services.msc.
+3. Create two batch files on your desktop for stopping and starting Guard, containing the following commands respectively:
+
+net stop AntiVirService
+
+net start AntiVirService
 
 clearmake PRODUCT=keywest TEST_ENGBLD=1 build 
 clearmake PRODUCT=keywest PRODUCT_CONF=x86 TEST_ENGBLD=1 build 
