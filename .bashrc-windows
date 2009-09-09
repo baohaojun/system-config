@@ -152,6 +152,17 @@ function lcd()
     fi
 }
 
+function wpclip()
+{
+    FILE=$1
+    if echo "${FILE##*.}"|grep -i '^lnk$' -q; then #this is a .lnk file
+        FILE=`readshortcut "$FILE"`
+    fi
+    FILE=`cygpath -alw "$FILE"`
+
+    echo -n "$FILE"|putclip    
+}
+
 export EDITOR=emacsedit.sh
 export PYTHON_INCLUDE='c:\python25\include'
 export PYTHON_LIB='c:\python25\libs\python25.lib'

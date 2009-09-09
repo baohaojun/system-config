@@ -1741,6 +1741,8 @@ bhj   ALL=NOPASSWD: ALL
 -          }
  }
 
+at+cimi ask for mobile network ISP id
+
  function aioSmartBackForward(aRwnd, aCurrDomainEndPoint) { // derived from SHIMODA "Piro" Hiroshi Rewind/Fastforward buttons
 
 

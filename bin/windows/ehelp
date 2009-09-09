@@ -1,4 +1,4 @@
 #!/bin/bash
 export PATH=/usr/bin:/bin:"$PATH"
-findexec.exe -p dexplore -F 1 -t visual
+findexec.exe -p dexplore -F 1 -t "document explorer"
 echo "$@" | nc -w 1 localhost 3836
