@@ -23,3 +23,5 @@ grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p' > $MYXWIN
 chmod +x $MYXWINSH
 myxwin.sh&
 net start sshd&
+cd /e/cygwin-cvsroot && rsync -avz rsync://cygwin.com/src-cvs .
+

@@ -108,6 +108,7 @@ function llocate() {
 function edit_1()
 {
     local file=$(cygpath -au "$1")
+    local file=$(readlink -f "$file")
     local line=${file##*:}
     file=${file%:*}
 
