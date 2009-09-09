@@ -1,0 +1,41 @@
+2009 09 09
+
+Q: adb and alchemy sync? alchemy can't connect through adb
+automatically, must do adb "kill-server" and "start-server" manually.
+
+A: adb is of different version, the one started by alchemy is old,
+while the one started on command line is new.
+
+Q: Alchemy can't connect through adb again?
+
+A: He has changed the connection port, this should not be changed
+arbitrarily without expected connection problem.
+
+Q: He asked for another phone for multi-device testing.
+
+A: The additional phone will not solve his problem. He should finish
+the coding first, confidently, then ask for the phone. I think he is
+doing the programming by guessing, which should be strongly
+discouraged.
+
+Here's how to do guessing programming: I guess this will do, so let's
+do it. Or, alternatively, a rookie programmer says to himself, hey, I
+don't know what to do now, so I guess I'll do this. Or, hey, I don't
+know how to do that, so I guess I'll do that like this and this...
+
+Sometimes, a programmer need to fix a problem, a bug. He doesn't know
+what is the root cause, and then he goes about it by changing code
+here and there, in a seemingly random way. He changes something, then
+build/deploy/test, and he sees it's not good, so he changes it back,
+and changes something else, and repeat. This is a complete waste of
+time, and even if he get things done, he owns it to pure luck and even
+probably doesn't understand how and why the things are OK now. But in
+most cases, he will found himself entrapped in a dead end.
+
+So, please, never do things like that. Never ``guess''. You should
+always know what you are doing, what you want to do. You should
+sometimes think very hard to be like that. This way is the only way
+that you can have confidence.
+
+If you don't know what to do or how to do it, think! Don't guess! This
+can't be emphasized enough.
