@@ -1764,4 +1764,15 @@ Liang Hong
 
 list<CString> in vc6 must be typedef-ed to use its iterator!
 
+****************************************************************
+In one of the .cpp file I had
+
+using namespace std;
+
+after the #ifdef _DEBUG
+.........
+......... THIS_FILE
+#endif block.......
+****************************************************************
+
 rsync -avz --delete --exclude '#cvs.*' rsync://cygwin.com/src-cvs .
