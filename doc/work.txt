@@ -1746,4 +1746,22 @@ at+cimi ask for mobile network ISP id
  function aioSmartBackForward(aRwnd, aCurrDomainEndPoint) { // derived from SHIMODA "Piro" Hiroshi Rewind/Fastforward buttons
 
 
+To unlock Network Subset, SIM MEP lock
+
+atCommand AT+CLCK="""PU""",0,"""123456"""
+
+atCommand AT+CLCK="""PS""",0,"""123456"""
+
+To disable Network Subset,SIM MEP lock
+
+atCommand AT+ESLCK="""PU""",3,"""123456"""
+
+atCommand AT+ESLCK="""PS""",3,"""123456"""
+
+Regards,
+
+Liang Hong
+
+list<CString> in vc6 must be typedef-ed to use its iterator!
+
 rsync -avz --delete --exclude '#cvs.*' rsync://cygwin.com/src-cvs .
