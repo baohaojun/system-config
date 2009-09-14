@@ -1776,3 +1776,5 @@ after the #ifdef _DEBUG
 ****************************************************************
 
 rsync -avz --delete --exclude '#cvs.*' rsync://cygwin.com/src-cvs .
+
+AT&T sim card puk passcode: 67437876
