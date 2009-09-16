@@ -1,5 +1,5 @@
 #include <afxwin.h>
-class CMainFrame : public CFrameWnd
+class CMainFrame : public CWnd
 {
 public:
 	CMainFrame();
@@ -48,7 +48,7 @@ CMainFrame::CMainFrame()
 	//        CRect(120, 100, 700, 480), NULL);
 }
 
-BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
+BEGIN_MESSAGE_MAP(CMainFrame, CWnd)
 END_MESSAGE_MAP()
 
 
