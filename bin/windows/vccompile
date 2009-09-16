@@ -16,6 +16,9 @@ my $vc_program;
 my $sln_file;
 my $cwd;
 my $sln_dir;
+my $debug_mode;
+
+$debug_mode = 1 if ($ENV{VCDBG});
 
 main();
 
@@ -121,6 +124,7 @@ sub canonic_files
 
 sub handleVcOutput($)
 {
+    #print "In handle VC output\n" if ($debug_mode);
 
 # #sample output from vc8, c++ files
 # #1>.\findexec.cpp(31) : fatal error C1083: Cannot open include file: 'bhjdebug.h': No such file or directory
@@ -172,14 +176,16 @@ sub handleVcOutput($)
 
 sub getProjDir($)
 {
+
     (my $proj) = (@_);
+    #print "In getProjDir for $proj\n" if ($debug_mode);
     open (SLN_FILE, $sln_file) or die "can't open $sln_file";
     my @proj_dir;
 
     #vc6: Project: "Alchemy"=.\Alchemy\Alchemy.dsp - Package Owner=<4>
     #vc789: Project("{8BC9CEB8-...") = "Alchemy", "Alchemy\Alchemy.vcproj", "{A0D5CB27...
     if ($is_proj_vc6) {
-        @proj_dir = map {m/^Project: "$proj"=(.*?) - /; $_ = $1;} grep {/^Project: "$proj"=/i} <SLN_FILE>;
+        @proj_dir = map {m/^Project: "$proj"=(.*?) - /i; $_ = $1;} grep {/^Project: "$proj"=/i} <SLN_FILE>;
     } else {
         @proj_dir = map {my @fields = split(/"/); $_ = $fields[5];} grep {/^Project\(.*"$proj",/i} <SLN_FILE>;
     }

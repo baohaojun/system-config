@@ -1,0 +1,81 @@
+#title How to use AT in Alchemy
+#author Bao Haojun <haojun.bao@borqs.com>
+
+<contents>
+
+* Key-binding
+
+I have managed to derive the MFC CEdit class to make it support a
+litter Emacs key-binding. If you are familiar with Emacs, this will be
+of little problem for you to understand. Emacs is the greatest editor
+in the world (for me, at least). I hope if you use this AT tool in
+Alchemy, you can get start to like to use Emacs. Try it, you won't
+regret.
+
+For those has not used Emacs before, =C-x= below means pressing the =x=
+key while the =Ctrl= is pressed and kept pressed. It's just like how you
+do Copy/Cut/Paste in Windows applications with
+<code>C-c/C-x/C-v</code>. =M-x= means press =x= while =Alt= is pressed down
+(=M= means =Meta=, which can be said to be the old name of =Alt= on a
+keyboard).
+
+ 1. =C-n= will select the next item in history. 
+
+ 2. =C-p= will select the previous item.
+
+ 3. =C-return= will get the selected history item into the editing area
+    so that you can edit it before run it.
+
+ 4. =C-e= will move the input point to the end of the editing area.
+
+ 5. =C-a= will move input point to the beginning of editing area.
+
+ 6. =C-u= will delete all the characters from beginning of line to the
+    current input point.
+
+ 7. =C-k= will delete from current to the end of line.
+
+ 8. =C-f= will move forward one character (unless it's already at EOL,
+    end-of-line, where we can't forward anymore:-).
+
+ 9. =C-b= move backward one character.
+
+ 10. =C-d= deletes the next character.
+ 
+ 11. =backspace= delete the previous character.
+
+ 12. =M-b= move back one word.
+
+ 13. =M-f= move forward one word.
+
+ 14. =M-d= delete the next word.
+
+ 15. =M-backspace= delete the previous word.
+
+* Run the AT command.
+
+After you finished inputting something, you have 2 options:
+
+ 1. Run the AT command you have inputted unchanged. What you have
+    inputted must be a complete and correct AT command. 
+    
+    To do this, you just press the =return= key. 2 things will happen:
+
+      1. The AT command is run.
+
+      2. The AT command is added into AT history list if it's not
+         already in it.
+
+ 2. Use =C-n=/<code>C-p</code> to select the matching history command
+    and run or edit that command by pressing
+    =return=/<code>C-return</code>, respectively. Here, what you input
+    is not required to be a correct AT command, anything that will
+    match some history command will do.
+
+    For e.g., suppose =AT+CIMI= is in history, and you inputted
+    "CIMI", then you should =C-n= to the =AT+CIMI= and press =return=.
+
+    If you did not select any history command using
+    =C-n=/<code>C-p</code>, then =CIMI= will be run as an AT command,
+    which is of course an error.
+

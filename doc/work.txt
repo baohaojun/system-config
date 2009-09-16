@@ -1776,5 +1776,15 @@ after the #ifdef _DEBUG
 ****************************************************************
 
 rsync -avz --delete --exclude '#cvs.*' rsync://cygwin.com/src-cvs .
+****************************************************************
+to stop beep:
+net stop beep
+sc config beep start= disabled
+****************************************************************
+
+handle en_change both in child control and parent window.
+
+ms-help://MS.VSCC.v90/MS.MSDNQTR.v90.en/dv_vclib/html/53efb0ba-fcda-4fa0-a3c7-14e0b78fb494.htm
+
 
 AT&T sim card puk passcode: 67437876
