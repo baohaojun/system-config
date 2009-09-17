@@ -25,7 +25,15 @@ rm /qq -f
 ln -sf "$HOME2" /qq
 
 #modify /etc/passwd so that this is truly our new home.
-/bin/perl -F: -nae 'if ($ENV{USER} eq $F[0]) {$F[5] = $ENV{HOME2}}; print join(q(:), @F)' -i /etc/passwd
+export OLDHOME=/qhome/$USER;
+mkdir /qhome -p
+touch "$OLDHOME"
+/bin/perl -F: -nae 'if ($ENV{USER} eq $F[0])  {$F[5] = $ENV{OLDHOME}}; print join(q(:), @F)' -i /etc/passwd
+if test "$(stat -c %i $OLDHOME/)" != "$(stat -c %i "$HOME2"/)"; then
+    rm -f "$OLDHOME"
+    ln -sf "$HOME2" "$OLDHOME"
+fi
+unset OLDHOME
 
 
 #so that I can write /q/ anywhere I want to write "$HOME" in .sh; it'll get worse in .emacs!
