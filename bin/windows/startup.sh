@@ -25,6 +25,10 @@ rm /qq -f
 ln -sf "$HOME2" /qq
 
 #modify /etc/passwd so that this is truly our new home.
+if test -z $USER; then
+export USER=`whoami`
+fi
+
 export OLDHOME=/qhome/$USER;
 mkdir /qhome -p
 touch "$OLDHOME"
