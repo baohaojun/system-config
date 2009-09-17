@@ -4,6 +4,8 @@ use File::Basename;
 
 @site =(
 	"http://kambing.ui.ac.id/cygwin", 
+	"http://kambing.ui.ac.id/cygwin", 
+	"http://kambing.ui.ac.id/cygwin", 
         "http://mirror.cs.vt.edu/pub/cygwin/cygwin",
     );
 for (@site) {
@@ -74,7 +76,7 @@ $n_sites = $#site;
 
 open(my $handle, "|lftp");
 
-$i= int(rand ($n_sites + 1.5));
+$i= int(rand ($n_sites + 0.5));
 print "Download from site $i $site[$i]...\n";
 system("sleep 3");
 
