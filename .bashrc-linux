@@ -1,4 +1,12 @@
-alias apt-get='ssh -t root@localhost apt-get'
+function apt-get()
+{
+    if test "$1" = source; then
+        command apt-get "$@";
+    else
+        sudo apt-get "$@"
+    fi
+}
+    
 alias aptitude='ssh -t root@localhost aptitude'
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
