@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "alchemy.h"
 #include "SimpleWnd.h"
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 

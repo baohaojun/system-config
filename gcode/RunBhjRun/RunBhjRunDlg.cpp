@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CRunBhjRunDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_BROWSE, &CRunBhjRunDlg::OnBnClickedBrowse)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -90,4 +91,9 @@ void CRunBhjRunDlg::OnPaint()
 HCURSOR CRunBhjRunDlg::OnQueryDragIcon()
 {
 	return (HCURSOR) m_hIcon;
+}
+
+void CRunBhjRunDlg::OnBnClickedBrowse()
+{
+ 
 }

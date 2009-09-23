@@ -1,10 +1,11 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by RunBhjRun.rc
 //
 #define IDD_RUNBHJRUN_DIALOG            102
 #define IDR_MAINFRAME                   128
 #define IDC_EDIT2                       1001
+#define IDC_CmdEdit                     1001
 #define IDC_BROWSE                      1004
 
 // Next default values for new objects

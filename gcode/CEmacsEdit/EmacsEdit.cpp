@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "alchemy.h"
 #include "EmacsEdit.h"
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
@@ -424,6 +423,11 @@ BOOL CEmacsEdit::OnChange()
 
 	fillListBox(getText());
 	return false;
+}
+
+bool stringContains(const CString& src, const CString& tgt)
+{
+	return src.Find(tgt) >= 0;
 }
 
 void CEmacsEdit::fillListBox(const CString& text)
