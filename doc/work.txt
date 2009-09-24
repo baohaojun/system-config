@@ -1783,6 +1783,8 @@ sc config beep start= disabled
 ****************************************************************
 
 handle en_change both in child control and parent window.
+vc6 include path: 'HKEY_CURRENT_USER\Software\Microsoft\DevStudio\6.0\Build System\Components\Platforms\Win32 (x86)\Directories'
+
 
 ms-help://MS.VSCC.v90/MS.MSDNQTR.v90.en/dv_vclib/html/53efb0ba-fcda-4fa0-a3c7-14e0b78fb494.htm
 
