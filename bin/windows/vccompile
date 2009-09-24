@@ -210,7 +210,7 @@ sub getSlnFile
     }
 
     chomp($sln_file = `readlink -f $dsw_slns[0]`);
-    chomp($sln_dir = `pwd`);
+    chomp($sln_dir = `dirname "$sln_file"`);
 }
 
 sub getAllSubProjs
