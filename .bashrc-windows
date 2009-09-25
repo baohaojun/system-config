@@ -28,7 +28,7 @@ function SetPath()
         /cygdrive/c/WINDOWS/system32
     )
 
-    unset PATH
+    #unset PATH
     for x in "${paths[@]}"; do
         #cygwin-1.7 will behave weirdly if /h is mounted but the
         #texlive disk is not inserted

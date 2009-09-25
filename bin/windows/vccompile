@@ -74,6 +74,8 @@ sub doCompile
             #subprocess.check_call(('vc6.com', slnFile, '/make', "%s - win32 %s" % (p, c)) + options)
             my $vc_out;
             if ($is_proj_vc6) {
+                print "run $vc_program ", basename($sln_file), " /make $p - win32 $c @targets_to_compile\n"
+                    if $debug_mode;
                 open($vc_out, "-|", $vc_program, basename($sln_file), "/make", "$p - win32 $c", @targets_to_compile);
             } else {
                 #subprocess.check_call((vcExec, slnFile, '/Project', p, cmd, c) + options)
@@ -136,6 +138,7 @@ sub handleVcOutput($)
     our %err_file_canonic;
 
     while (<$vc_out>) {
+        next if (m/\(\d+\): Could not find the file/);
         s/^[0-9]+>//;
         s/\):/) :/g;
         s/\(([0-9]+),[0-9]+\)/($1)/;
