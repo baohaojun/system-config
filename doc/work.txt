@@ -1791,5 +1791,8 @@ ms-help://MS.VSCC.v90/MS.MSDNQTR.v90.en/dv_vclib/html/53efb0ba-fcda-4fa0-a3c7-14
 (svn pg svn:ignore . ; svn st|grep '^?'|awk '{print $2}')|svn pset -F - svn:ignore .
 
 VC6 classwizard, will require u2d (line endings must be all in DOS format)!
+
+****************************************************************
+borqs svn repoes: linux/oms/opl/
 AT&T sim card puk passcode: 67437876
 
