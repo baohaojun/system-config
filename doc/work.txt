@@ -1788,5 +1788,8 @@ vc6 include path: 'HKEY_CURRENT_USER\Software\Microsoft\DevStudio\6.0\Build Syst
 
 ms-help://MS.VSCC.v90/MS.MSDNQTR.v90.en/dv_vclib/html/53efb0ba-fcda-4fa0-a3c7-14e0b78fb494.htm
 
+(svn pg svn:ignore . ; svn st|grep '^?'|awk '{print $2}')|svn pset -F - svn:ignore .
 
+VC6 classwizard, will require u2d (line endings must be all in DOS format)!
 AT&T sim card puk passcode: 67437876
+
