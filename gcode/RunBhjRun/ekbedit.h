@@ -23,8 +23,12 @@ typedef enum {
 } specKeyState_t;
 
 class CEkbHistWnd;
-#include <string>
+
 #include <list>
+using std::list;
+
+#include "bhjlib.h"
+using namespace bhj;
 
 class CEkbEdit : public CEdit
 {
@@ -80,11 +84,13 @@ private:
 	CListBox* m_listBox;
 	CEkbHistWnd* m_simpleWnd;
 	UINT m_id;
-	std::list<std::string> m_histList;
+	typedef list<string> lstring_t;
+	lstring_t m_histList;
+
 	CString m_strHistFile;
 	void saveHist();
-	std::string getSelected();
-	void SetWindowText(const std::string& str);
+	cstring getSelected();
+	void SetWindowText(const cstring& str);
 	void SetWindowText(const CString& str);
 	// Generated message map functions
 protected:

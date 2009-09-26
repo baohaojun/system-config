@@ -74,8 +74,7 @@ sub doCompile
             #subprocess.check_call(('vc6.com', slnFile, '/make', "%s - win32 %s" % (p, c)) + options)
             my $vc_out;
             if ($is_proj_vc6) {
-                print "run $vc_program ", basename($sln_file), " /make $p - win32 $c @targets_to_compile\n"
-                    if $debug_mode;
+                print qq("$vc_program" "), basename($sln_file), qq(" /make "$p - win32" "$c"), "@targets_to_compile\n";
                 open($vc_out, "-|", $vc_program, basename($sln_file), "/make", "$p - win32 $c", @targets_to_compile);
             } else {
                 #subprocess.check_call((vcExec, slnFile, '/Project', p, cmd, c) + options)
@@ -134,17 +133,19 @@ sub handleVcOutput($)
 # #sample output from vc9, c# files
 # #D:\profiles\Program.cs(15,29): error CS0029: Cannot implicitly convert type 'System.Diagnostics.Process[]' to 'System.Diagnostics.Process'
 
+# how to handle this line?
+#        D:\bhj\STLport-5.2.1\stlport\stl/_collate.h(39) : see declaration of 'collate'
     (my $vc_out) = @_;
     our %err_file_canonic;
 
     while (<$vc_out>) {
-        next if (m/\(\d+\): Could not find the file/);
-        s/^[0-9]+>//;
-        s/\):/) :/g;
-        s/\(([0-9]+),[0-9]+\)/($1)/;
-        s/error CS([0-9]+):/error C$1:/;
+        next if (m!\(\d+\): Could not find the file!);
+        s!^[0-9]+>!!;
+        s!\):!) :!g;
+        s!\(([0-9]+),[0-9]+\)!($1)!;
+        s!error CS([0-9]+):!error C$1:!;
         #------ Build started: Project: AlibImpl, Configuration: Release Win32 ------
-        if (/^-+Configuration: (.*?) / or /^------ Build started: Project: (.*?), /) {
+        if (m!^-+Configuration: (.*?) ! or m!^------ Build started: Project: (.*?), !) {
             chdir($sln_dir);
             my $proj_dir = getProjDir($1);
             chomp($proj_dir = `cygpath -au "$proj_dir"`);
@@ -153,23 +154,23 @@ sub handleVcOutput($)
             die "found more than 1 proj_dir" if (scalar @proj_dir != 1);
             chdir $proj_dir[0];
         }
-        if (m/(.*?)(\([0-9]+(?:,[0-9]+)?\).*:.*)/) {
+        if (m/^(\s*)(.*?)(\([0-9]+(?:,[0-9]+)?\).*:.*)/) {
             
-            chomp(my $key = `cygpath -au "$1"`);
+            chomp(my $key = `cygpath -au "$2"`);
             $key = uc($key);
             my $err_file;
             if ($err_file_canonic{$key}) {
                 $err_file = $err_file_canonic{$key};
             } else {
-                chomp($err_file = `cygpath -au "$1"`);
+                chomp($err_file = `cygpath -au "$2"`);
                 my @err_file = canonic_files(basename($err_file), dirname($err_file));
-                die "File `$1' doesn't exist!" if (scalar @err_file != 1);
+                die "File `$2' doesn't exist!" if (scalar @err_file != 1);
                 
                 $err_file = $err_file[0];
                 $err_file_canonic{$key} = $err_file;
             }            
 
-            print $err_file, $2, "\n";
+            print $1, $err_file, $3, "\n";
         } else {
             print $_;
         }

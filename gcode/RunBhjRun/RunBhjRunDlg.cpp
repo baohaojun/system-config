@@ -106,5 +106,5 @@ void CRunBhjRunDlg::OnOK()
 {
 	// TODO: Add extra validation here
 	
-	CDialog::OnOK();
+	//CDialog::OnOK();
 }

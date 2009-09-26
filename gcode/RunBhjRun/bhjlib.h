@@ -6,8 +6,10 @@
 #include <list>
 #include <string>
 
+class CString;
 namespace bhj {
-	using namespace std;
+	using std::list;
+	using std::string;
 
 
 	class cstring : public string {
@@ -19,8 +21,11 @@ namespace bhj {
 	};
 
 
-	list<cstring> split(const cstring& regex, const cstring& src);
+	list<string> split(const cstring& regex, const cstring& src);
 	cstring remove_pattern(const cstring& src, const cstring& pat);
+	bool fields_match(const cstring& src, const cstring& fstr);
+	typedef list<string> lstring_t;
+	bool string_contains(const cstring& src, const cstring& tgt);
 };
 
 #endif

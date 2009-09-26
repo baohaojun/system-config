@@ -1,13 +1,15 @@
 #include "bhjlib.h"
+#include "stdafx.h"
 #include <boost/regex.hpp>
 
 #define open_namespace(n) namespace n {
 #define close_namespace(n) }
 
 open_namespace(bhj)
-using namespace std;
 using namespace boost;
-list<string> split(const string& regex, const string& src)
+using std::list;
+using std::string;
+list<string> split(const cstring& regex, const cstring& src)
 {
 	list<string> ls;
 
@@ -19,10 +21,11 @@ list<string> split(const string& regex, const string& src)
 		ls.push_back(*i++);
 	}
 
+	
 	return ls;
 }
 
-string remove_pattern(const string& src, const string& pat)
+cstring remove_pattern(const cstring& src, const cstring& pat)
 {
 	return regex_replace(src, regex(pat), "", match_default | format_perl);
 }
@@ -43,5 +46,21 @@ cstring::operator CString()
 		CStr += *i;
 	}
 	return CStr;
+}
+
+bool fields_match(const cstring& src, const cstring& fstr)
+{
+	lstring_t tokens = split("\\s+", fstr);
+	for (lstring_t::iterator i = tokens.begin(); i != tokens.end(); i++) {
+		if (!string_contains(src, *i)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool string_contains(const cstring& src, const cstring& tgt)
+{
+	return src.find(tgt) != std::string::npos;
 }
 close_namespace(bhj)

@@ -25,7 +25,7 @@ using namespace boost;
 #include "bhjdebug.h" 
 
 using namespace bhj;
-using namespace std;
+using std::list;
 
 
 #ifdef _DEBUG
@@ -153,7 +153,7 @@ void CEkbEdit::getTextFromSelectedItem()
 	}	
 }
 
-void CEkbEdit::SetWindowText(const string& str)
+void CEkbEdit::SetWindowText(const cstring& str)
 {
 	CWnd::SetWindowText(str.c_str());
 }
@@ -325,7 +325,7 @@ void CEkbEdit::forwardKillWord()
 	Clear();
 }
 
-string CEkbEdit::getSelected()
+cstring CEkbEdit::getSelected()
 {
 	if (!m_listBox) {
 		return "";
@@ -445,7 +445,7 @@ void CEkbEdit::saveHist()
 
 	m_histList.sort();
 	m_histList.unique();
-	for (list<string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+	for (lstring_t::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
 		fprintf(fp, "%s\n", i->c_str());
 	}
 	fclose(fp);
@@ -483,10 +483,10 @@ void CEkbEdit::fillListBox(const CString& text)
 	m_histList.sort();
 	m_histList.unique();
 
-	list<string> tokens = split("\\s+", 
-	for (list<string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
-		if (text.IsEmpty() || regex_search(*i, regex((const char*)text))) {
-			m_listBox->AddString(i->c_str());
+	
+	for (lstring_t::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+		if (fields_match(*i, text)) {
+			m_listBox->AddString(CString(cstring(*i)));
 		}
 	}
 
@@ -518,7 +518,7 @@ int CEkbEdit::setHistFile(const CString& strFileName)
 	char buff[2048];
 	m_histList.clear();
 	while (fgets(buff, 2048, fp)) { //the '\n' is in the buff!
-		string str = buff;
+		cstring str = buff;
 		str = regex_replace(str, regex("\r|\n"), "", match_default|format_perl);
 		m_histList.push_back(str);
 	}
@@ -612,7 +612,7 @@ CEkbHistWnd::CEkbHistWnd(CEdit* master)
 	 m_listBox = new CListBox();
 	 GetClientRect(&rect);
 	 rect.DeflateRect(1, 1);
-	 m_listBox->Create(WS_VSCROLL|LBS_NOTIFY|LBS_SORT|LBS_MULTIPLESEL|LBS_NOINTEGRALHEIGHT, rect, this, 0);
+	 m_listBox->Create(WS_VSCROLL|LBS_NOTIFY|LBS_MULTIPLESEL|LBS_NOINTEGRALHEIGHT, rect, this, 0);
 	 m_listBox->ShowWindow(SW_SHOWNA);
 	 m_listBox->UpdateWindow();
 
