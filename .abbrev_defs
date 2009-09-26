@@ -11,9 +11,11 @@
 
 (define-abbrev-table 'browse-kill-ring-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'c++-mode-abbrev-table '(    ("gse" "int start, end;
+(define-abbrev-table 'c++-mode-abbrev-table '(    ("cs" "cstring" nil 3)
+    ("gse" "int start, end;
 	GetSel(start, end);
 " nil 1)
+    ("mfcs" "CString" nil 1)
     ("spfunc" "static int (const CStringArray& args, CString& result, int opcode)" nil 1)
     ))
 
@@ -58,7 +60,7 @@
     ("eclt" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" /usr/atria/bin/cleartool" nil 11)
     ("eld" "EnterLeaveDebug();" nil 30)
     ("incbhj" "#define ENABLE_BHJDEBUG
-#include \"bhjdebug.h\"" nil 24)
+#include \"bhjdebug.h\"" nil 25)
     ))
 
 (define-abbrev-table 'gnus-article-edit-mode-abbrev-table '(    ))
