@@ -25,8 +25,7 @@ typedef enum {
 class CEkbHistWnd;
 #include <string>
 #include <list>
-using std::string;
-using std::list;
+
 class CEkbEdit : public CEdit
 {
 // Construction
@@ -81,10 +80,11 @@ private:
 	CListBox* m_listBox;
 	CEkbHistWnd* m_simpleWnd;
 	UINT m_id;
+	std::list<std::string> m_histList;
 	CString m_strHistFile;
 	void saveHist();
-	string getSelected();
-	void SetWindowText(const string& str);
+	std::string getSelected();
+	void SetWindowText(const std::string& str);
 	void SetWindowText(const CString& str);
 	// Generated message map functions
 protected:

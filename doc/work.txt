@@ -1796,4 +1796,4 @@ VC6 classwizard, will require u2d (line endings must be all in DOS format)!
 borqs svn repoes: linux/oms/opl/
 AT&T sim card puk passcode: 67437876
 
-#pragma warning( disable : 4507 34 )
+#pragma warning( disable : 4786 )

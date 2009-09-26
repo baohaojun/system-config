@@ -54,6 +54,7 @@ BOOL CRunBhjRunDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 	m_CmdEdit.createListBox();
+	m_CmdEdit.setHistFile("RunBhjRun.txt");
 	
 	// TODO: Add extra initialization here
 	

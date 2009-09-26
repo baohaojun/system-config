@@ -1,13 +1,15 @@
+
 // EkbEdit.cpp : implementation file
 //
 
+#include <list>
+#include <string>
 #include "stdafx.h"
+
 #include "runbhjrun.h"
 
 #include <list>
 #include <string>
-using std::list;
-using std::string;
 #include "EkbEdit.h"
 #include "bhjlib.h"
 
@@ -23,7 +25,6 @@ using namespace boost;
 #include "bhjdebug.h" 
 
 using namespace bhj;
-using namespace std;
 
 
 #ifdef _DEBUG
@@ -151,7 +152,7 @@ void CEkbEdit::getTextFromSelectedItem()
 	}	
 }
 
-void CEkbEdit::SetWindowText(const string& str)
+void CEkbEdit::SetWindowText(const std::string& str)
 {
 	CWnd::SetWindowText(str.c_str());
 }
@@ -323,7 +324,7 @@ void CEkbEdit::forwardKillWord()
 	Clear();
 }
 
-string CEkbEdit::getSelected()
+std::string CEkbEdit::getSelected()
 {
 	if (!m_listBox) {
 		return "";
@@ -349,6 +350,12 @@ void CEkbEdit::escapeEdit()
 	}
 }
 
+void doo()
+{
+	std::list<std::string> ls;
+	ls.sort();
+}
+
 BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg) 
 {
 	// TODO: Add your specialized code here and/or call the base class
@@ -372,7 +379,18 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 			handler();												\
 			return true;											\
 		}															\
-	} while (0);
+	} while (0)
+
+#define HandleKeyIf(key, spec, handler, cond) do {					\
+		if (pMsg->wParam == (key) && getSpecKeyState() == (spec)) {	\
+			if (cond) {												\
+				handler();											\
+				return true;										\
+			} else {												\
+				return CEdit::PreTranslateMessage(pMsg);			\
+			}														\
+		}															\
+	} while (0)
 
 
 	HandleKey('N', eCtrl, selectNextItem);
@@ -391,14 +409,16 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey('F', eAlt, forwardWord);
 	HandleKey('D', eAlt, forwardKillWord);
 	HandleKey(VK_BACK, eAlt, backwardKillWord);
-	HandleKey(VK_ESCAPE, eNone, escapeEdit);
+	HandleKeyIf(VK_ESCAPE, eNone, escapeEdit, GetLength());
+
 
 	if (pMsg->wParam == VK_RETURN && getSpecKeyState() == eNone && getSelected().size()) {
 		BHJDEBUG(" in vk_return");
 		SetWindowText(getSelected());
-		///m_histList.push_back(getSelected());
-		///m_histList.sort();
-		///m_histList.unique();
+
+		m_histList.push_back(getSelected());
+		m_histList.sort();
+		m_histList.unique();
 		saveHist();
 		fillListBox("");
 		if (m_simpleWnd) {
@@ -428,11 +448,11 @@ void CEkbEdit::saveHist()
 		return;
 	}
 
-	///m_histList.sort();
-	///m_histList.unique();
-	///for (list<string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
-	///fprintf(fp, "%s\n", *i);
-	///}
+	m_histList.sort();
+	m_histList.unique();
+	for (list<std::string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+		fprintf(fp, "%s\n", i->c_str());
+	}
 	fclose(fp);
 }
 
@@ -465,13 +485,13 @@ void CEkbEdit::fillListBox(const CString& text)
 	
 	m_listBox->ResetContent();
 	m_listBox->AddString(text);
-	///m_histList.sort();
-	///m_histList.unique();
-	// for (list<string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
-	// 	if (regex_match(*i, regex((const char*)text))) {
-	// 		m_listBox->AddString(i->c_str());
-	// 	}
-	// }
+	m_histList.sort();
+	m_histList.unique();
+	for (list<std::string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+		if (text.IsEmpty() || regex_search(*i, regex((const char*)text))) {
+			m_listBox->AddString(i->c_str());
+		}
+	}
 
 	if (m_listBox->GetCount()) {
 		m_listBox->SetSel(0, true);
@@ -499,15 +519,16 @@ int CEkbEdit::setHistFile(const CString& strFileName)
 	}
 
 	char buff[2048];
-	//m_histList.clear();
+	m_histList.clear();
 	while (fgets(buff, 2048, fp)) { //the '\n' is in the buff!
-		string str = buff;
+		std::string str = buff;
 		str = regex_replace(str, regex("\r|\n"), "", match_default|format_perl);
-		//m_histList.push_back(str);
+		m_histList.push_back(str);
 	}
 	fclose(fp);
-	//m_histList.sort();
-	//m_histList.unique();
+	m_histList.sort();
+	m_histList.unique();
+	fillListBox("");
 	return 0;
 }
 

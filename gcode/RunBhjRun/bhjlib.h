@@ -1,5 +1,6 @@
 #ifndef __BHJLIB_H__
 #define __BHJLIB_H__
+#pragma warning( disable : 4786 )
 #define BOOST_THREAD_USE_DLL
 #include <map>
 #include <list>
