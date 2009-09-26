@@ -8,6 +8,8 @@
 //
 #include <list>
 using std::list;
+#include <string>
+using std::string;
 #include "simplewnd.h"
 /////////////////////////////////////////////////////////////////////////////
 // CEmacsEdit window
@@ -22,7 +24,6 @@ typedef enum {
 	eCtrlShift = eCtrl|eShift,
 } specKeyState_t;
 
-typedef list<CString> tStrList;
 
 class CEmacsEdit : public CEdit
 {
@@ -78,10 +79,12 @@ private:
 	CListBox* m_listBox;
 	CSimpleWnd* m_simpleWnd;
 	UINT m_id;
-	tStrList m_histList;
+	list<string> m_histList;
 	CString m_strHistFile;
 	void saveHist();
-	CString getSelected();
+	string getSelected();
+	void SetWindowText(const string& str);
+	void SetWindowText(const CString& str);
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(CEmacsEdit)

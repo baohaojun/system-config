@@ -1,0 +1,678 @@
+// EkbEdit.cpp : implementation file
+//
+
+#include "stdafx.h"
+#include "runbhjrun.h"
+
+#include <list>
+#include <string>
+using std::list;
+using std::string;
+#include "EkbEdit.h"
+#include "bhjlib.h"
+
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <boost/regex.hpp>
+
+using namespace boost;
+#include <iostream>
+#include <string>
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
+
+using namespace bhj;
+using namespace std;
+
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+// CEkbEdit
+
+CEkbEdit::CEkbEdit()
+{
+	m_listBox = NULL;
+	m_simpleWnd = NULL;
+	m_id = 0;
+	m_strHistFile = "";
+
+}
+
+CEkbEdit::~CEkbEdit()
+{
+}
+
+
+BEGIN_MESSAGE_MAP(CEkbEdit, CEdit)
+	//{{AFX_MSG_MAP(CEkbEdit)
+	ON_CONTROL_REFLECT_EX(EN_CHANGE, OnChange)
+	ON_WM_KILLFOCUS()
+	ON_WM_SETFOCUS()
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CEkbEdit message handlers
+
+specKeyState_t CEkbEdit::getSpecKeyState()
+{
+	int skState = eNone;
+	if (GetKeyState(VK_CONTROL)<0) {
+		skState |= eCtrl;
+	}
+
+	if (GetKeyState(VK_MENU) < 0) {
+		skState |= eAlt;
+	}
+
+	if (GetKeyState(VK_SHIFT) < 0) {
+		skState |= eShift;
+	}
+
+	return (specKeyState_t) skState;
+}
+
+void CEkbEdit::setListBox(CListBox& listBox)
+{
+	if (m_simpleWnd) {
+		return;
+	}
+	m_listBox = &listBox;
+}
+
+void CEkbEdit::createListBox()
+{
+	if (m_listBox) {
+		BHJDEBUG(" already has a listbox");
+		return;
+	}
+
+	m_simpleWnd = new CEkbHistWnd(this);
+
+	m_listBox = m_simpleWnd->m_listBox;
+}
+
+void CEkbEdit::selectNextItem()
+{
+	selectPrevItem(0);
+}
+
+void CEkbEdit::selectPrevItem(int prev)
+{
+	if (!m_listBox) {
+		return;
+	}
+
+	if (m_simpleWnd) {
+		m_simpleWnd->show();
+	}
+
+	if (m_listBox->GetCount() == 0) {
+		return;
+	}
+
+	for (int i = 0; i<m_listBox->GetCount(); i++) {
+		if (m_listBox->GetSel(i)) {
+			m_listBox->SetSel(-1, false);
+			if (prev) {
+				i = (i + m_listBox->GetCount() - 1) % m_listBox->GetCount();
+			} else {
+				i = (i+1) % m_listBox->GetCount();
+			}		
+			int ret = m_listBox->SetSel(i, true);
+			return;
+		}
+	}
+	if (prev) {
+		m_listBox->SetSel(m_listBox->GetCount()-1, true);
+	} else {
+		m_listBox->SetSel(0, true);
+	}
+}
+
+void CEkbEdit::getTextFromSelectedItem()
+{
+	if (!m_listBox || !m_listBox->GetCount()) {
+		return;
+	}
+	for (int i=0; i<m_listBox->GetCount(); i++) {
+		if (m_listBox->GetSel(i)) {
+			CString str;
+			m_listBox->GetText(i, str);
+			SetWindowText(str);
+			return;
+		}
+	}	
+}
+
+void CEkbEdit::SetWindowText(const string& str)
+{
+	CWnd::SetWindowText(str.c_str());
+}
+
+void CEkbEdit::SetWindowText(const CString& str)
+{
+	CWnd::SetWindowText((const char*)str);
+}
+void CEkbEdit::endOfLine()
+{
+	CString text;
+	GetWindowText(text);
+	SetSel(text.GetLength(), text.GetLength());
+}
+
+void CEkbEdit::beginOfLine()
+{
+	SetSel(0, 0);
+}
+
+void CEkbEdit::killEndOfLine()
+{
+	int start, end;
+	GetSel(start, end);
+	CString text;
+	GetWindowText(text);
+	SetSel(start, text.GetLength());
+	Clear();
+}
+
+void CEkbEdit::killBeginOfLine()
+{
+	int start, end; 
+	GetSel(start, end);
+	SetSel(0, end);
+	Clear();
+}
+
+void CEkbEdit::forwardChar()
+{
+	int start, end;
+	GetSel(start, end);
+	CString text;
+	GetWindowText(text);
+	if (end < text.GetLength()) {
+		end ++;
+	}
+	SetSel(end, end);	
+}
+
+void CEkbEdit::backwardChar()
+{
+	int start, end;
+	GetSel(start, end);
+	if (start > 0) {
+		start --;
+	}
+
+	SetSel(start, start);
+}
+
+int CEkbEdit::GetLength()
+{
+	CString text;
+	GetWindowText(text);
+	return text.GetLength();
+}
+
+void CEkbEdit::deleteChar()
+{
+	int start, end;
+	GetSel(start, end);
+	if (end < GetLength()) {
+		SetSel(end, end+1);
+		Clear();
+	}
+}
+
+
+void CEkbEdit::backwardWord()
+{
+	int start, end;
+	GetSel(start, end);
+	CString text;
+	GetWindowText(text);
+	enum {
+		eInWord,
+		eOutWord,
+	};
+	int state = eOutWord;
+	for (int i=start-1; i>=0; i--) {
+		if (state == eInWord && !isalnum(text[i])) {
+			SetSel(i+1, i+1);
+			return;
+		} else if (isalnum(text[i])) {
+			state = eInWord;
+		}
+	}		
+	SetSel(0, 0);
+}
+void CEkbEdit::backwardKillWord()
+{
+	int start, end;
+	GetSel(start, end);
+	CString text;
+	GetWindowText(text);
+	enum {
+		eInWord,
+		eOutWord,
+	};
+	int state = eOutWord;
+	for (int i=start-1; i>=0; i--) {
+		if (state == eInWord && !isalnum(text[i])) {
+			SetSel(i+1, start);
+			Clear();
+			return;
+		} else if (isalnum(text[i])) {
+			state = eInWord;
+		}
+	}		
+	SetSel(0, start);
+	Clear();
+}
+
+void CEkbEdit::forwardWord()
+{
+	int start, end;
+	GetSel(start, end);
+	CString text;
+	GetWindowText(text);
+	enum {
+		eInWord,
+		eOutWord,
+	};
+	int state = eOutWord;
+	for (int i=end+1; i<GetLength(); i++) {
+		if (state == eInWord && !isalnum(text[i])) {
+			SetSel(i, i);
+			return;
+		} else if (isalnum(text[i])) {
+			state = eInWord;
+		}
+	}
+	SetSel(GetLength(), GetLength());
+}
+
+void CEkbEdit::forwardKillWord()
+{
+	int start, end;
+	GetSel(start, end);
+
+	CString text;
+	GetWindowText(text);
+	enum {
+		eInWord,
+		eOutWord,
+	};
+	int state = eOutWord;
+	for (int i=end+1; i<GetLength(); i++) {
+		if (state == eInWord && !isalnum(text[i])) {
+			SetSel(end, i);
+			Clear();
+			return;
+		} else if (isalnum(text[i])) {
+			state = eInWord;
+		}
+	}
+	SetSel(end, GetLength());
+	Clear();
+}
+
+string CEkbEdit::getSelected()
+{
+	if (!m_listBox) {
+		return "";
+	}
+
+	
+	for (int i=0; i<m_listBox->GetCount(); i++) {
+		if (m_listBox->GetSel(i)) {
+			CString text;
+			m_listBox->GetText(i, text);
+			return (const char*)text;
+		}
+	}
+	return "";
+}
+
+void CEkbEdit::escapeEdit()
+{
+	SetSel(0, GetLength());
+	Clear();
+	if (m_simpleWnd) {
+		m_simpleWnd->hide();
+	}
+}
+
+BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg) 
+{
+	// TODO: Add your specialized code here and/or call the base class
+
+	// TODO: Add your specialized code here and/or call the base class
+	int start,end;
+	GetSel(start,end);
+	CString text;
+	this->GetWindowText(text);
+	char head=0,second=0;
+	if(text.GetLength()>0) head=text.GetAt(0);
+	if(text.GetLength()>1) second=text.GetAt(1);
+	bool bCut=true;
+
+	if (pMsg->message != WM_KEYDOWN && pMsg->message != WM_SYSKEYDOWN) {
+		return CEdit::PreTranslateMessage(pMsg);
+	}
+
+#define HandleKey(key, spec, handler) do {							\
+		if (pMsg->wParam == (key) && getSpecKeyState() == (spec)) {	\
+			handler();												\
+			return true;											\
+		}															\
+	} while (0);
+
+
+	HandleKey('N', eCtrl, selectNextItem);
+	HandleKey('P', eCtrl, selectPrevItem);
+	HandleKey(VK_DOWN, eNone, selectNextItem);
+	HandleKey(VK_UP, eNone, selectPrevItem);
+	HandleKey(VK_RETURN, eCtrl, getTextFromSelectedItem);
+	HandleKey('E', eCtrl, endOfLine);
+	HandleKey('A', eCtrl, beginOfLine);
+	HandleKey('U', eCtrl, killBeginOfLine);
+	HandleKey('K', eCtrl, killEndOfLine);
+	HandleKey('F', eCtrl, forwardChar);
+	HandleKey('B', eCtrl, backwardChar);
+	HandleKey('D', eCtrl, deleteChar);
+	HandleKey('B', eAlt, backwardWord);
+	HandleKey('F', eAlt, forwardWord);
+	HandleKey('D', eAlt, forwardKillWord);
+	HandleKey(VK_BACK, eAlt, backwardKillWord);
+	HandleKey(VK_ESCAPE, eNone, escapeEdit);
+
+	if (pMsg->wParam == VK_RETURN && getSpecKeyState() == eNone && getSelected().size()) {
+		BHJDEBUG(" in vk_return");
+		SetWindowText(getSelected());
+		///m_histList.push_back(getSelected());
+		///m_histList.sort();
+		///m_histList.unique();
+		saveHist();
+		fillListBox("");
+		if (m_simpleWnd) {
+			m_simpleWnd->hide();
+		}
+		return CEdit::PreTranslateMessage(pMsg);
+	}
+		
+	return CEdit::PreTranslateMessage(pMsg);
+}
+
+CString CEkbEdit::getText()
+{
+	CString text;
+	GetWindowText(text);
+	return text;
+}
+
+void CEkbEdit::saveHist()
+{
+	if (m_strHistFile.GetLength() == 0) {
+		return ;
+	}
+
+	FILE* fp = fopen(m_strHistFile, "wb");
+	if (!fp) {
+		return;
+	}
+
+	///m_histList.sort();
+	///m_histList.unique();
+	///for (list<string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+	///fprintf(fp, "%s\n", *i);
+	///}
+	fclose(fp);
+}
+
+BOOL CEkbEdit::OnChange() 
+{
+
+	if (m_simpleWnd) {
+		if (GetLength()) {
+			m_simpleWnd->show();
+		} else {
+			m_simpleWnd->hide();
+		}
+	}
+
+
+	fillListBox(getText());
+	return false;
+}
+
+bool stringContains(const CString& src, const CString& tgt)
+{
+	return src.Find(tgt) >= 0;
+}
+
+void CEkbEdit::fillListBox(const CString& text)
+{
+	if (!m_listBox) {
+		return;
+	}
+	
+	m_listBox->ResetContent();
+	m_listBox->AddString(text);
+	///m_histList.sort();
+	///m_histList.unique();
+	// for (list<string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+	// 	if (regex_match(*i, regex((const char*)text))) {
+	// 		m_listBox->AddString(i->c_str());
+	// 	}
+	// }
+
+	if (m_listBox->GetCount()) {
+		m_listBox->SetSel(0, true);
+	}
+}
+
+int CEkbEdit::setHistFile(const CString& strFileName)
+{
+// HRESULT SHGetFolderPath(          HWND hwndOwner,
+//     int nFolder,
+//     HANDLE hToken,
+//     DWORD dwFlags,
+//     LPTSTR pszPath
+// );
+	char strAppPath[MAX_PATH] = "";
+	HRESULT ret = SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, SHGFP_TYPE_CURRENT, strAppPath);
+	if (ret != S_OK) {
+		return -1;
+	}
+
+	m_strHistFile.Format("%s\\%s", strAppPath, strFileName);
+	FILE* fp = fopen(m_strHistFile, "rb");
+	if (!fp) {
+		return -1;
+	}
+
+	char buff[2048];
+	//m_histList.clear();
+	while (fgets(buff, 2048, fp)) { //the '\n' is in the buff!
+		string str = buff;
+		str = regex_replace(str, regex("\r|\n"), "", match_default|format_perl);
+		//m_histList.push_back(str);
+	}
+	fclose(fp);
+	//m_histList.sort();
+	//m_histList.unique();
+	return 0;
+}
+
+void CEkbEdit::OnKillFocus(CWnd* pNewWnd) 
+{
+	CEdit::OnKillFocus(pNewWnd);
+	
+	if (m_simpleWnd) {
+		m_simpleWnd->ShowWindow(SW_HIDE);
+	}
+	
+}
+
+void CEkbEdit::OnSetFocus(CWnd* pOldWnd) 
+{
+	CEdit::OnSetFocus(pOldWnd);
+	
+	if (m_simpleWnd) {
+		m_simpleWnd->ShowWindow(SW_SHOWNA);
+		m_listBox->SetSel(0, true);
+	}
+	
+}
+
+void CEkbEdit::weVeMoved()
+{
+	if (m_simpleWnd) {
+		m_simpleWnd->weVeMoved();
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// CEkbEdit message handlers
+/////////////////////////////////////////////////////////////////////////////
+// CEkbHistWnd
+
+CEkbHistWnd::CEkbHistWnd(CEdit* master)
+{
+	m_master = master;
+	CRect rect;
+	::GetWindowRect(m_master->GetSafeHwnd(), &rect);
+//	m_master->ClientToScreen(&rect);
+	
+	int x = rect.left;
+	int y = rect.bottom+2;
+	BHJDEBUG(" x is %d, y is %d", x, y);
+	int w = rect.Width();
+	int h = rect.Height()*10;
+     static TCHAR szAppName[] = TEXT ("HelloWin") ;
+     HWND         hwnd ;
+     WNDCLASS     wndclass ;
+
+     wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
+     wndclass.lpfnWndProc   = ::DefWindowProc ;
+     wndclass.cbClsExtra    = 0 ;
+     wndclass.cbWndExtra    = 0 ;
+     wndclass.hInstance     = AfxGetInstanceHandle() ;
+     wndclass.hIcon         = LoadIcon (NULL, IDI_APPLICATION) ;
+     wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW) ;
+     wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
+     wndclass.lpszMenuName  = NULL ;
+     wndclass.lpszClassName = szAppName ;
+
+     if (!RegisterClass (&wndclass))
+     {
+		 MessageBox ("This program requires Windows NT!");
+		 return;
+     }
+     
+     hwnd = CreateWindow (szAppName,                  // window class name
+                          TEXT ("The Hello Program"), // window caption
+						  WS_POPUP|WS_DISABLED|WS_CLIPCHILDREN,
+                          x,              // initial x position
+                          y,              // initial y position
+                          w,              // initial x size
+                          h,              // initial y size
+                          NULL,                       // parent window handle
+                          NULL,                       // window menu handle
+                          AfxGetInstanceHandle(),                  // program instance handle
+                          NULL) ;                     // creation parameters
+
+	 SubclassWindow(hwnd);
+	 ModifyStyleEx(0, WS_EX_TOOLWINDOW);
+	 m_listBox = new CListBox();
+	 GetClientRect(&rect);
+	 rect.DeflateRect(1, 1);
+	 m_listBox->Create(WS_VSCROLL|LBS_NOTIFY|LBS_SORT|LBS_MULTIPLESEL|LBS_NOINTEGRALHEIGHT, rect, this, 0);
+	 m_listBox->ShowWindow(SW_SHOWNA);
+	 m_listBox->UpdateWindow();
+
+}
+
+CEkbHistWnd::~CEkbHistWnd()
+{
+}
+
+
+BEGIN_MESSAGE_MAP(CEkbHistWnd, CWnd)
+	//{{AFX_MSG_MAP(CEkbHistWnd)
+	ON_WM_SHOWWINDOW()
+	ON_WM_PAINT()
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+
+/////////////////////////////////////////////////////////////////////////////
+// CEkbHistWnd message handlers
+
+void CEkbHistWnd::OnShowWindow(BOOL bShow, UINT nStatus) 
+{
+	CWnd::OnShowWindow(bShow, nStatus);
+	CRect rect;
+	calcWindowRect(rect);
+	SetWindowPos(&wndTopMost, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE);
+}
+
+void CEkbHistWnd::calcWindowRect(CRect& rect)
+{
+	m_master->GetWindowRect(&rect);
+	BHJDEBUG(" top is %d, left is %d, height is %d, width is %d", rect.top, rect.left, rect.Height(), rect.Width());
+	CRect tmpRect = rect;
+	int top = rect.bottom + 2;
+	int left = rect.left;
+
+	rect.OffsetRect(0, top-tmpRect.top);
+	BHJDEBUG(" again top is %d, left is %d, height is %d, width is %d", rect.top, rect.left, rect.Height(), rect.Width());	
+	rect.bottom += rect.Height()*9;
+	BHJDEBUG(" again top is %d, left is %d, height is %d, width is %d", rect.top, rect.left, rect.Height(), rect.Width());	
+
+	RECT waRect;
+	SystemParametersInfo(SPI_GETWORKAREA, 0, &waRect, 0);
+
+
+	if (rect.bottom > waRect.bottom) {
+		BHJDEBUG(" hello world");
+		int bottom = tmpRect.top - 2;
+		int height = rect.Height();
+		rect.bottom = bottom;
+		rect.top =bottom - height;
+	}
+}
+
+void CEkbHistWnd::hide()
+{
+	ShowWindow(SW_HIDE);
+}
+
+void CEkbHistWnd::show()
+{
+	ShowWindow(SW_SHOWNA);
+}
+
+void CEkbHistWnd::weVeMoved()
+{
+	CRect rect;
+	calcWindowRect(rect);
+	SetWindowPos(&wndTopMost, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE);
+}
+
+void CEkbHistWnd::OnPaint() 
+{
+	CPaintDC dc(this); // device context for painting
+	CRect rect;
+	GetClientRect(&rect);
+	dc.FillSolidRect(&rect, RGB(0, 0, 0));
+	
+	
+}

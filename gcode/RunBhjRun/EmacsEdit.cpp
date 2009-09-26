@@ -1,12 +1,31 @@
 // EmacsEdit.cpp : implementation file
 //
 
+
 #include "stdafx.h"
+
 #include "EmacsEdit.h"
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
 #include <shlobj.h>
 #include "simplewnd.h"
+#include <string>
+#include <boost/regex.hpp>
+
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <boost/regex.hpp>
+
+#include <boost/regex.hpp>
+#include <iostream>
+#include <string>
+
+
+
+using namespace std;
+using namespace bhj;
+using namespace boost;
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -132,6 +151,15 @@ void CEmacsEdit::getTextFromSelectedItem()
 	}	
 }
 
+void CEmacsEdit::SetWindowText(const string& str)
+{
+	CWnd::SetWindowText(str.c_str());
+}
+
+void CEmacsEdit::SetWindowText(const CString& str)
+{
+	CWnd::SetWindowText((const char*)str);
+}
 void CEmacsEdit::endOfLine()
 {
 	CString text;
@@ -295,7 +323,7 @@ void CEmacsEdit::forwardKillWord()
 	Clear();
 }
 
-CString CEmacsEdit::getSelected()
+string CEmacsEdit::getSelected()
 {
 	if (!m_listBox) {
 		return "";
@@ -306,7 +334,7 @@ CString CEmacsEdit::getSelected()
 		if (m_listBox->GetSel(i)) {
 			CString text;
 			m_listBox->GetText(i, text);
-			return text;
+			return (const char*)text;
 		}
 	}
 	return "";
@@ -365,8 +393,7 @@ BOOL CEmacsEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey(VK_BACK, eAlt, backwardKillWord);
 	HandleKey(VK_ESCAPE, eNone, escapeEdit);
 
-
-	if (pMsg->wParam == VK_RETURN && getSpecKeyState() == eNone && getSelected().GetLength()) {
+	if (pMsg->wParam == VK_RETURN && getSpecKeyState() == eNone && getSelected().size()) {
 		BHJDEBUG(" in vk_return");
 		SetWindowText(getSelected());
 		m_histList.push_back(getSelected());
@@ -403,7 +430,7 @@ void CEmacsEdit::saveHist()
 
 	m_histList.sort();
 	m_histList.unique();
-	for (tStrList::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+	for (list<string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
 		fprintf(fp, "%s\n", *i);
 	}
 	fclose(fp);
@@ -440,9 +467,9 @@ void CEmacsEdit::fillListBox(const CString& text)
 	m_listBox->AddString(text);
 	m_histList.sort();
 	m_histList.unique();
-	for (tStrList::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
-		if (stringContains(*i, text)) {
-			m_listBox->AddString(*i);
+	for (list<string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+		if (regex_match(*i, regex((const char*)text))) {
+			m_listBox->AddString(i->c_str());
 		}
 	}
 
@@ -474,11 +501,9 @@ int CEmacsEdit::setHistFile(const CString& strFileName)
 	char buff[2048];
 	m_histList.clear();
 	while (fgets(buff, 2048, fp)) { //the '\n' is in the buff!
-		CStringArray strArr;
-		stringSplit(buff, "\r", strArr);
-		CString str = stringJoin("", strArr);
-		stringSplit(str, '\n', strArr);
-		m_histList.push_back(stringJoin("", strArr));
+		string str = buff;
+		str = regex_replace(str, regex("\r|\n"), "", match_default|format_perl);
+		m_histList.push_back(str);
 	}
 	fclose(fp);
 	m_histList.sort();

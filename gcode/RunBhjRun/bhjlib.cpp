@@ -22,11 +22,6 @@ list<string> split(const string& regex, const string& src)
 	return ls;
 }
 
-string join(const string& sep, const list<string>& ls)
-{
-	return "";
-}
-
 string remove_pattern(const string& src, const string& pat)
 {
 	return regex_replace(src, regex(pat), "", match_default | format_perl);

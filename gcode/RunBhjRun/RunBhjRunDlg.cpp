@@ -3,7 +3,9 @@
 
 #include "stdafx.h"
 #include "RunBhjRun.h"
+#include "EkbEdit.h"
 #include "RunBhjRunDlg.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,7 +30,7 @@ void CRunBhjRunDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CRunBhjRunDlg)
-		// NOTE: the ClassWizard will add DDX and DDV calls here
+	DDX_Control(pDX, IDC_CmdEdit, m_CmdEdit);
 	//}}AFX_DATA_MAP
 }
 
@@ -37,7 +39,7 @@ BEGIN_MESSAGE_MAP(CRunBhjRunDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(IDC_BROWSE, &CRunBhjRunDlg::OnBnClickedBrowse)
+	ON_BN_CLICKED(IDC_BROWSE, CRunBhjRunDlg::OnBnClickedBrowse)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -51,6 +53,7 @@ BOOL CRunBhjRunDlg::OnInitDialog()
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
+	m_CmdEdit.createListBox();
 	
 	// TODO: Add extra initialization here
 	
@@ -96,4 +99,11 @@ HCURSOR CRunBhjRunDlg::OnQueryDragIcon()
 void CRunBhjRunDlg::OnBnClickedBrowse()
 {
  
+}
+
+void CRunBhjRunDlg::OnOK() 
+{
+	// TODO: Add extra validation here
+	
+	CDialog::OnOK();
 }
