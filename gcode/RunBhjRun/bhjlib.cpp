@@ -26,4 +26,22 @@ string remove_pattern(const string& src, const string& pat)
 {
 	return regex_replace(src, regex(pat), "", match_default | format_perl);
 }
+
+cstring::cstring(const CString& CStr) 
+{
+	reserve(CStr.GetLength());
+	for (int i=0; i<CStr.GetLength(); i++) {
+		push_back(CStr[i]);
+	}
+}
+
+cstring::operator CString() 
+{
+	CString CStr;
+	CStr.GetBuffer(size());
+	for (string::iterator i = begin(); i != end(); i++) {
+		CStr += *i;
+	}
+	return CStr;
+}
 close_namespace(bhj)

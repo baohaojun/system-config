@@ -25,6 +25,7 @@ using namespace boost;
 #include "bhjdebug.h" 
 
 using namespace bhj;
+using namespace std;
 
 
 #ifdef _DEBUG
@@ -152,7 +153,7 @@ void CEkbEdit::getTextFromSelectedItem()
 	}	
 }
 
-void CEkbEdit::SetWindowText(const std::string& str)
+void CEkbEdit::SetWindowText(const string& str)
 {
 	CWnd::SetWindowText(str.c_str());
 }
@@ -324,7 +325,7 @@ void CEkbEdit::forwardKillWord()
 	Clear();
 }
 
-std::string CEkbEdit::getSelected()
+string CEkbEdit::getSelected()
 {
 	if (!m_listBox) {
 		return "";
@@ -348,12 +349,6 @@ void CEkbEdit::escapeEdit()
 	if (m_simpleWnd) {
 		m_simpleWnd->hide();
 	}
-}
-
-void doo()
-{
-	std::list<std::string> ls;
-	ls.sort();
 }
 
 BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg) 
@@ -450,7 +445,7 @@ void CEkbEdit::saveHist()
 
 	m_histList.sort();
 	m_histList.unique();
-	for (list<std::string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+	for (list<string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
 		fprintf(fp, "%s\n", i->c_str());
 	}
 	fclose(fp);
@@ -487,7 +482,9 @@ void CEkbEdit::fillListBox(const CString& text)
 	m_listBox->AddString(text);
 	m_histList.sort();
 	m_histList.unique();
-	for (list<std::string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+
+	list<string> tokens = split("\\s+", 
+	for (list<string>::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
 		if (text.IsEmpty() || regex_search(*i, regex((const char*)text))) {
 			m_listBox->AddString(i->c_str());
 		}
@@ -521,7 +518,7 @@ int CEkbEdit::setHistFile(const CString& strFileName)
 	char buff[2048];
 	m_histList.clear();
 	while (fgets(buff, 2048, fp)) { //the '\n' is in the buff!
-		std::string str = buff;
+		string str = buff;
 		str = regex_replace(str, regex("\r|\n"), "", match_default|format_perl);
 		m_histList.push_back(str);
 	}
