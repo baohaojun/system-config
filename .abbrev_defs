@@ -11,7 +11,10 @@
 
 (define-abbrev-table 'browse-kill-ring-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'c++-mode-abbrev-table '(    ("ccs" "const cstring&" nil 0)
+(define-abbrev-table 'c++-mode-abbrev-table '(    ("cc" "const char*" nil 1)
+    ("ccs" "const cstring&" nil 1)
+    ("cms" "const CString&" nil 10)
+    ("mcs" "const CString&" nil 5)
     ))
 
 (define-abbrev-table 'c-mode-abbrev-table '(    ))
@@ -50,12 +53,12 @@
 
 (define-abbrev-table 'gdb-script-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'global-abbrev-table '(    ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 39)
+(define-abbrev-table 'global-abbrev-table '(    ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 53)
     ("cltenv" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" " nil 11)
     ("eclt" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" /usr/atria/bin/cleartool" nil 11)
     ("eld" "EnterLeaveDebug();" nil 30)
     ("incbhj" "#define ENABLE_BHJDEBUG
-#include \"bhjdebug.h\"" nil 25)
+#include \"bhjdebug.h\"" nil 26)
     ))
 
 (define-abbrev-table 'gnus-article-edit-mode-abbrev-table '(    ))
@@ -139,9 +142,9 @@ fi
 (define-abbrev-table 'text-mode-abbrev-table '(    ("fanfan" "Dong Guiwei ‘¶­‘¹ó‘Íþ <guiwei.dong@borqs.com>
 Cc: rui li <rui.li@borqs.com>, \"Gao Shujun ‘¸ß‘Êç‘¾ü\" <shujun.gao@borqs.com>, \"'jianli.zhang'\" <jianli.zhang@borqs.com>" nil 1)
     ("telteam" "Anle Zhou <anle.zhou@gmail.com>
-Cc: Kimber <haijun.ji@borqs.com>,  Tide Yin Gmail <tideyin@gmail.com>,  Vincent Ying <vincent.ying@borqs.com>,  \"kevin.yan\" <kevin.yan@borqs.com>,  Anle Zhou <anle.zhou@borqs.com>,  Cheng Liao <cheng.liao@borqs.com>,  Damon Zheng <qiang.zheng@borqs.com>,  Derek Hong <mingsong.hong@borqs.com>,  Eric Lu <eric.lu@borqs.com>,  Harold Shi <harold.shi@borqs.com>,  HL Ren <hailin.ren@borqs.com>,  Hong Liang <hong.liang@borqs.com>,  Hui Li <hui.li@borqs.com>,  JG Ma <junguo.ma@borqs.com>,  Jing Xu <jing.xu@borqs.com>,  JM Zhou <jianmin.zhou@borqs.com>,  Jun Wei <jun.wei@borqs.com>,  KB Chen <kaibing.chen@borqs.com>,  Leo Yao <shihong.yao@borqs.com>,  MQ Ren <mingqi.ren@borqs.com>,  Ping Xiao <ping.xiao@borqs.com>,  Ray Fan <ray.fan@borqs.com>,  Shawn Bow <shawn.bow@borqs.com>,  Stone Zhang <stone.zhang@borqs.com>,  Tide Yin <tide.yin@borqs.com>,  Wei Liang <wei.liang@borqs.com>,  XF Wang <xianfeng.wang@borqs.com>,  XY Chen <xiaoyi.chen@borqs.com>,  YM Liang <yumin.liang@borqs.com>,  Yu Bai <yu.bai@borqs.com>,  Yu Wang <yu.wang@borqs.com>,  ZD Zhang <zhaodong.zhang@borqs.com>,  ZH Qi <zhiheng.qi@borqs.com>" nil 1)
+Cc: Kimber <haijun.ji@borqs.com>,  Tide Yin Gmail <tideyin@gmail.com>,  Vincent Ying <vincent.ying@borqs.com>,  \"kevin.yan\" <kevin.yan@borqs.com>,  Anle Zhou <anle.zhou@borqs.com>,  Cheng Liao <cheng.liao@borqs.com>,  Damon Zheng <qiang.zheng@borqs.com>,  Derek Hong <mingsong.hong@borqs.com>,  Eric Lu <eric.lu@borqs.com>,  Harold Shi <harold.shi@borqs.com>,  HL Ren <hailin.ren@borqs.com>,  Hong Liang <hong.liang@borqs.com>,  Hui Li <hui.li@borqs.com>,  JG Ma <junguo.ma@borqs.com>,  Jing Xu <jing.xu@borqs.com>,  JM Zhou <jianmin.zhou@borqs.com>,  Jun Wei <jun.wei@borqs.com>,  KB Chen <kaibing.chen@borqs.com>,  Leo Yao <shihong.yao@borqs.com>,  MQ Ren <mingqi.ren@borqs.com>,  Ping Xiao <ping.xiao@borqs.com>,  Ray Fan <ray.fan@borqs.com>,  Shawn Bow <shawn.bow@borqs.com>,  Stone Zhang <stone.zhang@borqs.com>,  Tide Yin <tide.yin@borqs.com>,  Wei Liang <wei.liang@borqs.com>,  XF Wang <xianfeng.wang@borqs.com>,  XY Chen <xiaoyi.chen@borqs.com>,  YM Liang <yumin.liang@borqs.com>,  Yu Bai <yu.bai@borqs.com>,  Yu Wang <yu.wang@borqs.com>,  ZD Zhang <zhaodong.zhang@borqs.com>,  ZH Qi <zhiheng.qi@borqs.com>" nil 2)
     ("toolsg" "Tide Yin ‘£¨‘Òü‘ÌÎ‘£© <tide.yin@borqs.com>
-Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yumin'\" <yumin.liang@borqs.com>, 'Ren Mingqi ‘ÈÎ‘Ã÷‘ç÷' <mingqi.ren@borqs.com>, \"'yu.wang'\" <yu.wang@borqs.com>, \"'‘Ð¤‘Æ¼'\" <ping.xiao@borqs.com>" nil 0)
+Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yumin'\" <yumin.liang@borqs.com>, 'Ren Mingqi ‘ÈÎ‘Ã÷‘ç÷' <mingqi.ren@borqs.com>, \"'yu.wang'\" <yu.wang@borqs.com>, \"'‘Ð¤‘Æ¼'\" <ping.xiao@borqs.com>" nil 2)
     ))
 
 (define-abbrev-table 'thumbs-mode-abbrev-table '(    ))
