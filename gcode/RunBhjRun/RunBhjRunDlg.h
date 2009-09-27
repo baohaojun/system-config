@@ -39,6 +39,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	virtual void OnOK();
+	afx_msg void OnMove(int x, int y);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:

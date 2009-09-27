@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CRunBhjRunDlg, CDialog)
 	//{{AFX_MSG_MAP(CRunBhjRunDlg)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_MOVE()
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BROWSE, CRunBhjRunDlg::OnBnClickedBrowse)
 END_MESSAGE_MAP()
@@ -107,4 +108,12 @@ void CRunBhjRunDlg::OnOK()
 	// TODO: Add extra validation here
 	
 	//CDialog::OnOK();
+}
+
+void CRunBhjRunDlg::OnMove(int x, int y) 
+{
+	CDialog::OnMove(x, y);
+	
+	m_CmdEdit.weVeMoved();
+	
 }

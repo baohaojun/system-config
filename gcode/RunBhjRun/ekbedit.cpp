@@ -25,6 +25,8 @@ using namespace boost;
 #include "bhjdebug.h" 
 #include "HListBox.h"
 #include <commctrl.h>
+#include <map>
+using std::map;
 
 using namespace bhj;
 using std::list;
@@ -128,9 +130,9 @@ void CEkbEdit::showBalloon()
 		BHJDEBUG(" showBalloon");
 		EDITBALLOONTIP tip = {sizeof(EDITBALLOONTIP)};
 		tip.ttiIcon = TTI_NONE;
-		tip.pszText = L"hello world"; /wstring(getSelected()).c_str();
+		tip.pszText = L"hello world"; //wstring(getSelected()).c_str();
 		wprintf(L"hello %s\n", tip.pszText);
-		Edit ShowBalloonTip(m_hWnd, &tip); tooltip
+		
 	}
 
 }
@@ -148,39 +150,28 @@ void CEkbEdit::selectPrevItem(int prev)
 		return;
 	}
 
-	for (int i = 0; i<m_listBox->GetCount(); i++) {
-		if (m_listBox->GetSel(i)) {
-			m_listBox->SetSel(-1, false);
-			if (prev) {
-				i = (i + m_listBox->GetCount() - 1) % m_listBox->GetCount();
-			} else {
-				i = (i+1) % m_listBox->GetCount();
-			}		
-			int ret = m_listBox->SetSel(i, true);
-			showBalloon();
-			return;
-		}
+	if (m_listBox->GetCurSel() >= 0) {
+		int i = m_listBox->GetCurSel();
+		m_listBox->SetCurSel(-1);
+		if (prev) {
+			i = (i + m_listBox->GetCount() - 1) % m_listBox->GetCount();
+		} else {
+			i = (i+1) % m_listBox->GetCount();
+		}		
+		int ret = m_listBox->SetCurSel(i);
+		showBalloon();
+		return;
 	}
 	if (prev) {
-		m_listBox->SetSel(m_listBox->GetCount()-1, true);
+		m_listBox->SetCurSel(m_listBox->GetCount()-1);
 	} else {
-		m_listBox->SetSel(0, true);
+		m_listBox->SetCurSel(0);
 	}
 }
 
 void CEkbEdit::getTextFromSelectedItem()
 {
-	if (!m_listBox || !m_listBox->GetCount()) {
-		return;
-	}
-	for (int i=0; i<m_listBox->GetCount(); i++) {
-		if (m_listBox->GetSel(i)) {
-			CString str;
-			m_listBox->GetText(i, str);
-			SetWindowText(str);
-			return;
-		}
-	}	
+	SetWindowText(getSelected());
 }
 
 void CEkbEdit::SetWindowText(const cstring& str)
@@ -357,19 +348,18 @@ void CEkbEdit::forwardKillWord()
 
 cstring CEkbEdit::getSelected()
 {
-	if (!m_listBox) {
+	if (!m_listBox || !m_listBox->GetCount()) {
 		return "";
 	}
 
-	
-	for (int i=0; i<m_listBox->GetCount(); i++) {
-		if (m_listBox->GetSel(i)) {
-			CString text;
-			m_listBox->GetText(i, text);
-			return (const char*)text;
-		}
+	if (m_listBox->GetCurSel() < 0) {
+		return "";
 	}
-	return "";
+
+	int i = m_listBox->GetCurSel();
+	CString text;
+	m_listBox->GetText(i, text);
+	return text;
 }
 
 void CEkbEdit::escapeEdit()
@@ -380,7 +370,7 @@ void CEkbEdit::escapeEdit()
 		m_simpleWnd->hide();
 	}
 	if (m_listBox) {
-		m_listBox->SetSel(-1, false);
+		m_listBox->SetCurSel(-1);
 	}
 }
 
@@ -525,7 +515,7 @@ void CEkbEdit::fillListBox(const CString& text)
 	}
 
 	if (m_listBox->GetCount()) {
-		m_listBox->SetSel(0, true);
+		m_listBox->SetCurSel(0);
 	}
 }
 
@@ -566,6 +556,10 @@ int CEkbEdit::setHistFile(const CString& strFileName)
 void CEkbEdit::OnKillFocus(CWnd* pNewWnd) 
 {
 	CEdit::OnKillFocus(pNewWnd);
+	if ((m_simpleWnd && (CWnd*)m_simpleWnd == pNewWnd) || 
+		(m_listBox && (CWnd*)m_listBox == pNewWnd)) {
+		return;
+	}
 	
 	if (m_simpleWnd) {
 		m_simpleWnd->ShowWindow(SW_HIDE);
@@ -579,7 +573,7 @@ void CEkbEdit::OnSetFocus(CWnd* pOldWnd)
 	
 	if (m_simpleWnd && GetLength()) {
 		m_simpleWnd->ShowWindow(SW_SHOWNA);
-		m_listBox->SetSel(0, true);
+		m_listBox->SetCurSel(0);
 	}
 	
 }
@@ -596,59 +590,67 @@ void CEkbEdit::weVeMoved()
 /////////////////////////////////////////////////////////////////////////////
 // CEkbHistWnd
 
+static ATOM RegisterClass(cstring str)
+{
+	static map<cstring, ATOM> name_class_map;
+	
+	if (name_class_map.find(str) != name_class_map.end()) {
+		return name_class_map[str];
+	}
+	
+	WNDCLASS     wndclass ;
+
+	wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
+	wndclass.lpfnWndProc   = ::DefWindowProc ;
+	wndclass.cbClsExtra    = 0 ;
+	wndclass.cbWndExtra    = 0 ;
+	wndclass.hInstance     = AfxGetInstanceHandle() ;
+	wndclass.hIcon         = LoadIcon (NULL, IDI_APPLICATION) ;
+	wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW) ;
+	wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
+	wndclass.lpszMenuName  = NULL ;
+	wndclass.lpszClassName = str.c_str();
+
+	ATOM atom;
+	if (!(atom = RegisterClass (&wndclass)))
+	{
+		FmtMessageBox("Failed to register class for %s", str.c_str());
+		exit(-1);
+	}
+
+	name_class_map[str] = atom;
+	return atom;
+}
+
+static HWND newWindow(cstring wc_name)
+{
+	RegisterClass(wc_name);
+	return CreateWindow (wc_name,                  // window class name
+						 "",
+						 WS_POPUP|WS_CLIPCHILDREN,
+						 CW_USEDEFAULT,              // initial x position
+						 CW_USEDEFAULT,              // initial y position
+						 CW_USEDEFAULT,              // initial x size
+						 CW_USEDEFAULT,              // initial y size
+						 NULL,                       // parent window handle
+						 NULL,                       // window menu handle
+						 AfxGetInstanceHandle(),                  // program instance handle
+						 NULL) ;                     // creation parameters
+}
+
 CEkbHistWnd::CEkbHistWnd(CEdit* master)
 {
 	m_master = master;
-	CRect rect;
-	::GetWindowRect(m_master->GetSafeHwnd(), &rect);
-//	m_master->ClientToScreen(&rect);
 	
-	int x = rect.left;
-	int y = rect.bottom+2;
-	BHJDEBUG(" x is %d, y is %d", x, y);
-	int w = rect.Width();
-	int h = rect.Height()*10;
-     static TCHAR szAppName[] = TEXT ("HelloWin") ;
-     HWND         hwnd ;
-     WNDCLASS     wndclass ;
+	HWND hwnd = newWindow ("CEkbHistWnd");
 
-     wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
-     wndclass.lpfnWndProc   = ::DefWindowProc ;
-     wndclass.cbClsExtra    = 0 ;
-     wndclass.cbWndExtra    = 0 ;
-     wndclass.hInstance     = AfxGetInstanceHandle() ;
-     wndclass.hIcon         = LoadIcon (NULL, IDI_APPLICATION) ;
-     wndclass.hCursor       = LoadCursor (NULL, IDC_ARROW) ;
-     wndclass.hbrBackground = (HBRUSH) GetStockObject (WHITE_BRUSH) ;
-     wndclass.lpszMenuName  = NULL ;
-     wndclass.lpszClassName = szAppName ;
-
-     if (!RegisterClass (&wndclass))
-     {
-		 MessageBox ("This program requires Windows NT!");
-		 return;
-     }
-     
-     hwnd = CreateWindow (szAppName,                  // window class name
-                          TEXT ("The Hello Program"), // window caption
-						  WS_POPUP|WS_DISABLED|WS_CLIPCHILDREN,
-                          x,              // initial x position
-                          y,              // initial y position
-                          w,              // initial x size
-                          h,              // initial y size
-                          NULL,                       // parent window handle
-                          NULL,                       // window menu handle
-                          AfxGetInstanceHandle(),                  // program instance handle
-                          NULL) ;                     // creation parameters
-
-	 SubclassWindow(hwnd);
-	 ModifyStyleEx(0, WS_EX_TOOLWINDOW);
-	 m_listBox = new CHListBox();
-	 GetClientRect(&rect);
-	 rect.DeflateRect(1, 1);
-	 m_listBox->Create(WS_VSCROLL|WS_HSCROLL|LBS_NOTIFY|LBS_MULTIPLESEL|LBS_NOINTEGRALHEIGHT, rect, this, 0);
-	 m_listBox->ShowWindow(SW_SHOWNA);
-	 m_listBox->UpdateWindow();
+	SubclassWindow(hwnd);
+	ModifyStyleEx(0, WS_EX_TOOLWINDOW);
+	m_listBox = new CHListBox();
+	
+	m_listBox->Create(WS_VSCROLL|WS_HSCROLL|LBS_NOTIFY|LBS_NOINTEGRALHEIGHT, CRect(0, 0, 1, 1), this, 0);
+	m_listBox->ShowWindow(SW_SHOWNA);
+	m_listBox->UpdateWindow();
 
 }
 
@@ -661,6 +663,7 @@ BEGIN_MESSAGE_MAP(CEkbHistWnd, CWnd)
 	//{{AFX_MSG_MAP(CEkbHistWnd)
 	ON_WM_SHOWWINDOW()
 	ON_WM_PAINT()
+	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -673,7 +676,7 @@ void CEkbHistWnd::OnShowWindow(BOOL bShow, UINT nStatus)
 	CWnd::OnShowWindow(bShow, nStatus);
 	CRect rect;
 	calcWindowRect(rect);
-	SetWindowPos(&wndTopMost, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE);
+	SetWindowPos(&wndTop, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE);
 }
 
 void CEkbHistWnd::calcWindowRect(CRect& rect)
@@ -716,7 +719,7 @@ void CEkbHistWnd::weVeMoved()
 {
 	CRect rect;
 	calcWindowRect(rect);
-	SetWindowPos(&wndTopMost, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE);
+	SetWindowPos(&wndTop, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE);
 }
 
 void CEkbHistWnd::OnPaint() 
@@ -749,3 +752,15 @@ END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CBallon message handlers
+
+void CEkbHistWnd::OnSize(UINT nType, int cx, int cy) 
+{
+	CWnd::OnSize(nType, cx, cy);
+	
+	CRect rect;
+	GetClientRect(&rect);
+	rect.DeflateRect(1, 1);
+
+	m_listBox->MoveWindow(rect.left, rect.top, rect.Width(), rect.Height());
+	
+}

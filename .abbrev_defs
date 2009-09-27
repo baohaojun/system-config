@@ -13,8 +13,10 @@
 
 (define-abbrev-table 'c++-mode-abbrev-table '(    ("cc" "const char*" nil 1)
     ("ccs" "const cstring&" nil 1)
-    ("cms" "const CString&" nil 10)
-    ("mcs" "const CString&" nil 5)
+    ("cms" "const CString&" nil 11)
+    ("cs" "cstring" nil 0)
+    ("mcs" "const CString&" nil 6)
+    ("ms" "CString" nil 0)
     ))
 
 (define-abbrev-table 'c-mode-abbrev-table '(    ))

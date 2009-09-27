@@ -20,6 +20,7 @@ namespace bhj {
 		cstring(const char* c_str) : string(c_str) {};
 		operator CString();
 		operator wstring();
+		operator const char*();
 	};
 
 	typedef list<cstring> lstring_t;
@@ -28,6 +29,9 @@ namespace bhj {
 	bool fields_match(const cstring& src, const cstring& fstr);
 
 	bool string_contains(const cstring& src, const cstring& tgt);
+	cstring string_format(const char* fmt, ...);
+	int FmtMessageBox(const char* fmt, ...);
 };
 
 #endif
+

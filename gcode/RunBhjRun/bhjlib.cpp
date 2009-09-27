@@ -59,6 +59,11 @@ cstring::operator wstring()
 	return wstr;	
 }
 
+cstring::operator const char*()
+{
+	return c_str();
+}
+
 bool fields_match(const cstring& src, const cstring& fstr)
 {
 	lstring_t tokens = split("\\s+", fstr);
@@ -74,4 +79,26 @@ bool string_contains(const cstring& src, const cstring& tgt)
 {
 	return src.find(tgt) != std::string::npos;
 }
+
+cstring string_format(const char* fmt, ...)
+{
+	va_list argList;
+	va_start(argList, fmt);
+	CString str;
+	str.FormatV(fmt, argList);
+	va_end(argList);
+	return str;
+}
+
+int FmtMessageBox(const char* fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	CString str;
+	str.FormatV(fmt, args);
+	va_end(args);
+	AfxMessageBox(str);
+	return 0;
+}
+
 close_namespace(bhj)
