@@ -23,6 +23,8 @@ using namespace boost;
 #include <string>
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
+#include "HListBox.h"
+#include <commctrl.h>
 
 using namespace bhj;
 using std::list;
@@ -80,7 +82,7 @@ specKeyState_t CEkbEdit::getSpecKeyState()
 	return (specKeyState_t) skState;
 }
 
-void CEkbEdit::setListBox(CListBox& listBox)
+void CEkbEdit::setListBox(CHListBox& listBox)
 {
 	if (m_simpleWnd) {
 		return;
@@ -105,6 +107,33 @@ void CEkbEdit::selectNextItem()
 	selectPrevItem(0);
 }
 
+CRect CEkbEdit::GetClientRect()
+{
+	CRect rect;
+	CEdit::GetClientRect(&rect);
+	return rect;
+}
+void CEkbEdit::showBalloon()
+{
+	if (!m_listBox) {
+		return;
+	}
+	CClientDC dc(m_listBox);
+	CFont * f = m_listBox->GetFont();
+	dc.SelectObject(f);
+	CSize sz = dc.GetTextExtent(getSelected());
+	sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
+	BHJDEBUG(" text width is %d, edit width is %d", sz.cx, GetClientRect().Width());
+	if (sz.cx > GetClientRect().Width()) {
+		BHJDEBUG(" showBalloon");
+		EDITBALLOONTIP tip = {sizeof(EDITBALLOONTIP)};
+		tip.ttiIcon = TTI_NONE;
+		tip.pszText = L"hello world"; /wstring(getSelected()).c_str();
+		wprintf(L"hello %s\n", tip.pszText);
+		Edit ShowBalloonTip(m_hWnd, &tip); tooltip
+	}
+
+}
 void CEkbEdit::selectPrevItem(int prev)
 {
 	if (!m_listBox) {
@@ -128,6 +157,7 @@ void CEkbEdit::selectPrevItem(int prev)
 				i = (i+1) % m_listBox->GetCount();
 			}		
 			int ret = m_listBox->SetSel(i, true);
+			showBalloon();
 			return;
 		}
 	}
@@ -349,6 +379,9 @@ void CEkbEdit::escapeEdit()
 	if (m_simpleWnd) {
 		m_simpleWnd->hide();
 	}
+	if (m_listBox) {
+		m_listBox->SetSel(-1, false);
+	}
 }
 
 BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg) 
@@ -404,6 +437,7 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey('F', eAlt, forwardWord);
 	HandleKey('D', eAlt, forwardKillWord);
 	HandleKey(VK_BACK, eAlt, backwardKillWord);
+	HandleKey(VK_BACK, eCtrl, backwardKillWord);
 	HandleKeyIf(VK_ESCAPE, eNone, escapeEdit, GetLength());
 
 
@@ -543,7 +577,7 @@ void CEkbEdit::OnSetFocus(CWnd* pOldWnd)
 {
 	CEdit::OnSetFocus(pOldWnd);
 	
-	if (m_simpleWnd) {
+	if (m_simpleWnd && GetLength()) {
 		m_simpleWnd->ShowWindow(SW_SHOWNA);
 		m_listBox->SetSel(0, true);
 	}
@@ -609,10 +643,10 @@ CEkbHistWnd::CEkbHistWnd(CEdit* master)
 
 	 SubclassWindow(hwnd);
 	 ModifyStyleEx(0, WS_EX_TOOLWINDOW);
-	 m_listBox = new CListBox();
+	 m_listBox = new CHListBox();
 	 GetClientRect(&rect);
 	 rect.DeflateRect(1, 1);
-	 m_listBox->Create(WS_VSCROLL|LBS_NOTIFY|LBS_MULTIPLESEL|LBS_NOINTEGRALHEIGHT, rect, this, 0);
+	 m_listBox->Create(WS_VSCROLL|WS_HSCROLL|LBS_NOTIFY|LBS_MULTIPLESEL|LBS_NOINTEGRALHEIGHT, rect, this, 0);
 	 m_listBox->ShowWindow(SW_SHOWNA);
 	 m_listBox->UpdateWindow();
 
@@ -694,3 +728,24 @@ void CEkbHistWnd::OnPaint()
 	
 	
 }
+/////////////////////////////////////////////////////////////////////////////
+// CBallon
+
+CBallon::CBallon()
+{
+}
+
+CBallon::~CBallon()
+{
+}
+
+
+BEGIN_MESSAGE_MAP(CBallon, CWnd)
+	//{{AFX_MSG_MAP(CBallon)
+		// NOTE - the ClassWizard will add and remove mapping macros here.
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+
+/////////////////////////////////////////////////////////////////////////////
+// CBallon message handlers

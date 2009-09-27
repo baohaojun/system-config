@@ -8,7 +8,6 @@
 //
 
 
-#include "simplewnd.h"
 /////////////////////////////////////////////////////////////////////////////
 // CEkbEdit window
 typedef enum {
@@ -28,6 +27,8 @@ class CEkbHistWnd;
 using std::list;
 
 #include "bhjlib.h"
+class CHListBox;
+
 using namespace bhj;
 
 class CEkbEdit : public CEdit
@@ -56,11 +57,13 @@ public:
 
 	int setHistFile(const CString& strFileName);
 	void createListBox();
-	void setListBox(CListBox& listBox);
+	void setListBox(CHListBox& listBox);
 
 
 	
 private:
+	void showBalloon();
+	CRect GetClientRect();
 	specKeyState_t getSpecKeyState();
 	void selectNextItem();
 	void selectPrevItem(int prev=1);
@@ -81,7 +84,7 @@ private:
 	void escapeEdit();
 	CString getText();
 	void fillListBox(const CString& text);
-	CListBox* m_listBox;
+	CHListBox* m_listBox;
 	CEkbHistWnd* m_simpleWnd;
 	UINT m_id;
 	typedef list<string> lstring_t;
@@ -113,7 +116,7 @@ class CEkbHistWnd : public CWnd
 // Construction
 public:
 	CEkbHistWnd(CEdit* master);
-	CListBox* m_listBox;
+	CHListBox* m_listBox;
 private:
 	CEdit* m_master;
 
@@ -148,6 +151,42 @@ protected:
 };
 
 /////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// CBallon window
+
+class CBallon : public CWnd
+{
+// Construction
+public:
+	CBallon();
+
+// Attributes
+public:
+
+// Operations
+public:
+
+// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(CBallon)
+	//}}AFX_VIRTUAL
+
+// Implementation
+public:
+	virtual ~CBallon();
+
+public:
+	showBallon(const cstring& text);
+	
+	// Generated message map functions
+protected:
+	//{{AFX_MSG(CBallon)
+		// NOTE - the ClassWizard will add and remove member functions here.
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+};
 
 /////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}

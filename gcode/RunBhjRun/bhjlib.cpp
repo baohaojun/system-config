@@ -9,16 +9,16 @@ open_namespace(bhj)
 using namespace boost;
 using std::list;
 using std::string;
-list<string> split(const cstring& regex, const cstring& src)
+lstring_t split(const cstring& regex, const cstring& src)
 {
-	list<string> ls;
+	lstring_t ls;
 
 	boost::regex e(regex);
 	boost::sregex_token_iterator i(src.begin(), src.end(), e, -1);
 	boost::sregex_token_iterator j;
 	while(i != j)
 	{
-		ls.push_back(*i++);
+		ls.push_back(string(*i++));
 	}
 
 	
@@ -46,6 +46,17 @@ cstring::operator CString()
 		CStr += *i;
 	}
 	return CStr;
+}
+
+cstring::operator wstring()
+{
+	wchar_t *wbuff = new wchar_t[size()+1];
+	const char *str = c_str();
+	int n = mbstowcs(wbuff, str, size());
+	wbuff[n] = L'\0';
+	wstring wstr = wbuff;
+	delete []wbuff;
+	return wstr;	
 }
 
 bool fields_match(const cstring& src, const cstring& fstr)

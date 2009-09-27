@@ -11,12 +11,7 @@
 
 (define-abbrev-table 'browse-kill-ring-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'c++-mode-abbrev-table '(    ("cs" "cstring" nil 3)
-    ("gse" "int start, end;
-	GetSel(start, end);
-" nil 1)
-    ("mfcs" "CString" nil 1)
-    ("spfunc" "static int (const CStringArray& args, CString& result, int opcode)" nil 1)
+(define-abbrev-table 'c++-mode-abbrev-table '(    ("ccs" "const cstring&" nil 0)
     ))
 
 (define-abbrev-table 'c-mode-abbrev-table '(    ))

@@ -10,6 +10,7 @@ class CString;
 namespace bhj {
 	using std::list;
 	using std::string;
+	using std::wstring;
 
 
 	class cstring : public string {
@@ -18,13 +19,14 @@ namespace bhj {
 		cstring(const string& str) : string(str) {};
 		cstring(const char* c_str) : string(c_str) {};
 		operator CString();
+		operator wstring();
 	};
 
-
-	list<string> split(const cstring& regex, const cstring& src);
+	typedef list<cstring> lstring_t;
+	list<cstring> split(const cstring& regex, const cstring& src);
 	cstring remove_pattern(const cstring& src, const cstring& pat);
 	bool fields_match(const cstring& src, const cstring& fstr);
-	typedef list<string> lstring_t;
+
 	bool string_contains(const cstring& src, const cstring& tgt);
 };
 

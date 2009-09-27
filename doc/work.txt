@@ -1797,3 +1797,7 @@ borqs svn repoes: linux/oms/opl/
 AT&T sim card puk passcode: 67437876
 
 #pragma warning( disable : 4786 )
+
+book: coders at work
+
+firefox plugin: nosquint
