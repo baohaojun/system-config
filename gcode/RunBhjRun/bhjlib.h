@@ -15,6 +15,7 @@ namespace bhj {
 
 	class cstring : public string {
 	public:
+		cstring() {};
 		cstring(const CString&);
 		cstring(const string& str) : string(str) {};
 		cstring(const char* c_str) : string(c_str) {};

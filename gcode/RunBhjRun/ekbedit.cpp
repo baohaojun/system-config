@@ -115,6 +115,7 @@ CRect CEkbEdit::GetClientRect()
 	CEdit::GetClientRect(&rect);
 	return rect;
 }
+
 void CEkbEdit::showBalloon()
 {
 	if (!m_listBox) {
@@ -123,17 +124,12 @@ void CEkbEdit::showBalloon()
 	CClientDC dc(m_listBox);
 	CFont * f = m_listBox->GetFont();
 	dc.SelectObject(f);
-	CSize sz = dc.GetTextExtent(getSelected());
+	CSize sz = dc.GetTextExtent(getSelectedText());
 	sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
 	BHJDEBUG(" text width is %d, edit width is %d", sz.cx, GetClientRect().Width());
-	if (sz.cx > GetClientRect().Width()) {
-		BHJDEBUG(" showBalloon");
-		EDITBALLOONTIP tip = {sizeof(EDITBALLOONTIP)};
-		tip.ttiIcon = TTI_NONE;
-		tip.pszText = L"hello world"; //wstring(getSelected()).c_str();
-		wprintf(L"hello %s\n", tip.pszText);
-		
-	}
+	if (sz.cx > GetClientRect().Width()||1) {
+		getBalloon()->showBalloon(getSelectedRect(), getSelectedText());
+	} 
 
 }
 void CEkbEdit::selectPrevItem(int prev)
@@ -171,7 +167,7 @@ void CEkbEdit::selectPrevItem(int prev)
 
 void CEkbEdit::getTextFromSelectedItem()
 {
-	SetWindowText(getSelected());
+	SetWindowText(getSelectedText());
 }
 
 void CEkbEdit::SetWindowText(const cstring& str)
@@ -346,7 +342,23 @@ void CEkbEdit::forwardKillWord()
 	Clear();
 }
 
-cstring CEkbEdit::getSelected()
+CRect CEkbEdit::getSelectedRect()
+{
+	CRect rect;
+	if (!m_listBox || m_listBox->GetCurSel()<0) {
+		GetWindowRect(&rect);
+		return rect;
+	}
+	
+	m_listBox->GetItemRect(m_listBox->GetCurSel(), &rect);
+	CRect lbRect;
+	m_listBox->GetWindowRect(&lbRect);
+	
+	rect.OffsetRect(lbRect.left, lbRect.top);
+	return rect;
+}
+
+cstring CEkbEdit::getSelectedText()
 {
 	if (!m_listBox || !m_listBox->GetCount()) {
 		return "";
@@ -431,11 +443,11 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKeyIf(VK_ESCAPE, eNone, escapeEdit, GetLength());
 
 
-	if (pMsg->wParam == VK_RETURN && getSpecKeyState() == eNone && getSelected().size()) {
+	if (pMsg->wParam == VK_RETURN && getSpecKeyState() == eNone && getSelectedText().size()) {
 		BHJDEBUG(" in vk_return");
-		SetWindowText(getSelected());
+		SetWindowText(getSelectedText());
 
-		m_histList.push_back(getSelected());
+		m_histList.push_back(getSelectedText());
 		m_histList.sort();
 		m_histList.unique();
 		saveHist();
@@ -570,6 +582,7 @@ void CEkbEdit::OnKillFocus(CWnd* pNewWnd)
 void CEkbEdit::OnSetFocus(CWnd* pOldWnd) 
 {
 	CEdit::OnSetFocus(pOldWnd);
+	weVeMoved();
 	
 	if (m_simpleWnd && GetLength()) {
 		m_simpleWnd->ShowWindow(SW_SHOWNA);
@@ -732,26 +745,40 @@ void CEkbHistWnd::OnPaint()
 	
 }
 /////////////////////////////////////////////////////////////////////////////
-// CBallon
+// CBalloon
 
-CBallon::CBallon()
+CBalloon* CBalloon::getInstance()
+{
+	static CBalloon* theBalloon;
+	if (!theBalloon) {
+		theBalloon = new CBalloon();
+	}
+	return theBalloon;
+}
+
+CBalloon::CBalloon()
+{
+	HWND hwnd = newWindow ("CEkbHistWnd");
+
+	SubclassWindow(hwnd);
+	//ModifyStyleEx(0, WS_EX_TOOLWINDOW|WS_EX_TRANSPARENT);
+}
+
+CBalloon::~CBalloon()
 {
 }
 
-CBallon::~CBallon()
-{
-}
 
-
-BEGIN_MESSAGE_MAP(CBallon, CWnd)
-	//{{AFX_MSG_MAP(CBallon)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
+BEGIN_MESSAGE_MAP(CBalloon, CWnd)
+	//{{AFX_MSG_MAP(CBalloon)
+	ON_WM_SHOWWINDOW()
+	ON_WM_PAINT()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CBallon message handlers
+// CBalloon message handlers
 
 void CEkbHistWnd::OnSize(UINT nType, int cx, int cy) 
 {
@@ -763,4 +790,31 @@ void CEkbHistWnd::OnSize(UINT nType, int cx, int cy)
 
 	m_listBox->MoveWindow(rect.left, rect.top, rect.Width(), rect.Height());
 	
+}
+
+void CBalloon::OnShowWindow(BOOL bShow, UINT nStatus) 
+{
+	CWnd::OnShowWindow(bShow, nStatus);
+}
+
+void CBalloon::showBalloon(CRect rect, const cstring& text)
+{
+	m_text = text;
+	BHJDEBUG(" CBalloon:: rect is %d %d %dx%d", rect.left, rect.top, rect.Width(), rect.Height());
+	SetWindowPos(&wndTopMost, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE);
+	ShowWindow(SW_SHOWNA);
+	UpdateWindow();
+}
+
+void CBalloon::OnPaint() 
+{
+	CPaintDC dc(this); // device context for painting
+
+	CRect rect;
+	GetClientRect(&rect);
+	rect.InflateRect(-2, -2);
+	dc.FillSolidRect(&rect, RGB(200, 200, 30));	
+	// TODO: Add your message handler code here
+	
+	// Do not call CWnd::OnPaint() for painting messages CListBox
 }

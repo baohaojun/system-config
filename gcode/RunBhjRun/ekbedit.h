@@ -62,6 +62,7 @@ public:
 
 	
 private:
+	CRect getSelectedRect();
 	void showBalloon();
 	CRect GetClientRect();
 	specKeyState_t getSpecKeyState();
@@ -92,7 +93,7 @@ private:
 
 	CString m_strHistFile;
 	void saveHist();
-	cstring getSelected();
+	cstring getSelectedText();
 	void SetWindowText(const cstring& str);
 	void SetWindowText(const CString& str);
 	// Generated message map functions
@@ -155,13 +156,16 @@ protected:
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-// CBallon window
+// CBalloon window
 
-class CBallon : public CWnd
+#define getBalloon() (CBalloon::getInstance())
+class CBalloon : public CWnd
 {
 // Construction
 public:
-	CBallon();
+	static CBalloon* getInstance();
+private:
+	CBalloon();
 
 // Attributes
 public:
@@ -171,20 +175,24 @@ public:
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CBallon)
+	//{{AFX_VIRTUAL(CBalloon)
 	//}}AFX_VIRTUAL
 
 // Implementation
 public:
-	virtual ~CBallon();
+	virtual ~CBalloon();
+
+private:
+	cstring m_text;
 
 public:
-	showBallon(const cstring& text);
+	void showBalloon(CRect rect, const cstring& text);
 	
 	// Generated message map functions
 protected:
-	//{{AFX_MSG(CBallon)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	//{{AFX_MSG(CBalloon)
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
+	afx_msg void OnPaint();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
