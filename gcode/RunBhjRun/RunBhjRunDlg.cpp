@@ -5,6 +5,8 @@
 #include "RunBhjRun.h"
 #include "EkbEdit.h"
 #include "RunBhjRunDlg.h"
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
 
 
 #ifdef _DEBUG
@@ -39,6 +41,7 @@ BEGIN_MESSAGE_MAP(CRunBhjRunDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_MOVE()
+	ON_WM_WINDOWPOSCHANGED()
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BROWSE, CRunBhjRunDlg::OnBnClickedBrowse)
 END_MESSAGE_MAP()
@@ -115,5 +118,14 @@ void CRunBhjRunDlg::OnMove(int x, int y)
 	CDialog::OnMove(x, y);
 	
 	m_CmdEdit.weVeMoved();
+	
+}
+
+void CRunBhjRunDlg::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos) 
+{
+	CDialog::OnWindowPosChanged(lpwndpos);
+	BHJDEBUG(" OnWindowPosChanged");
+	
+	
 	
 }

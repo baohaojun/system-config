@@ -127,9 +127,11 @@ void CEkbEdit::showBalloon()
 	CSize sz = dc.GetTextExtent(getSelectedText());
 	sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
 	BHJDEBUG(" text width is %d, edit width is %d", sz.cx, GetClientRect().Width());
-	if (sz.cx > GetClientRect().Width()||1) {
-		getBalloon()->showBalloon(getSelectedRect(), getSelectedText());
-	} 
+	if (sz.cx > GetClientRect().Width()) {
+		getBalloon()->showBalloon(GetParent(), getSelectedRect(), getSelectedText());
+	} else {
+		getBalloon()->ShowWindow(SW_HIDE);
+	}
 
 }
 void CEkbEdit::selectPrevItem(int prev)
@@ -695,15 +697,12 @@ void CEkbHistWnd::OnShowWindow(BOOL bShow, UINT nStatus)
 void CEkbHistWnd::calcWindowRect(CRect& rect)
 {
 	m_master->GetWindowRect(&rect);
-	BHJDEBUG(" top is %d, left is %d, height is %d, width is %d", rect.top, rect.left, rect.Height(), rect.Width());
 	CRect tmpRect = rect;
 	int top = rect.bottom + 2;
 	int left = rect.left;
 
 	rect.OffsetRect(0, top-tmpRect.top);
-	BHJDEBUG(" again top is %d, left is %d, height is %d, width is %d", rect.top, rect.left, rect.Height(), rect.Width());	
 	rect.bottom += rect.Height()*9;
-	BHJDEBUG(" again top is %d, left is %d, height is %d, width is %d", rect.top, rect.left, rect.Height(), rect.Width());	
 
 	RECT waRect;
 	SystemParametersInfo(SPI_GETWORKAREA, 0, &waRect, 0);
@@ -758,10 +757,10 @@ CBalloon* CBalloon::getInstance()
 
 CBalloon::CBalloon()
 {
-	HWND hwnd = newWindow ("CEkbHistWnd");
+	HWND hwnd = newWindow ("CBalloon");
 
 	SubclassWindow(hwnd);
-	//ModifyStyleEx(0, WS_EX_TOOLWINDOW|WS_EX_TRANSPARENT);
+	ModifyStyleEx(0, WS_EX_TOOLWINDOW);
 }
 
 CBalloon::~CBalloon()
@@ -797,11 +796,10 @@ void CBalloon::OnShowWindow(BOOL bShow, UINT nStatus)
 	CWnd::OnShowWindow(bShow, nStatus);
 }
 
-void CBalloon::showBalloon(CRect rect, const cstring& text)
+void CBalloon::showBalloon(CWnd* owner, CRect rect, const cstring& text)
 {
 	m_text = text;
-	BHJDEBUG(" CBalloon:: rect is %d %d %dx%d", rect.left, rect.top, rect.Width(), rect.Height());
-	SetWindowPos(&wndTopMost, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE);
+	SetWindowPos(&wndTopMost, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE); 
 	ShowWindow(SW_SHOWNA);
 	UpdateWindow();
 }

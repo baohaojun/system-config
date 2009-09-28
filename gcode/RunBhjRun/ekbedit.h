@@ -186,7 +186,7 @@ private:
 	cstring m_text;
 
 public:
-	void showBalloon(CRect rect, const cstring& text);
+	void showBalloon(CWnd* owner, CRect rect, const cstring& text);
 	
 	// Generated message map functions
 protected:
