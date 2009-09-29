@@ -1,6 +1,8 @@
 #include "bhjlib.h"
 #include "stdafx.h"
 #include <boost/regex.hpp>
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
 
 #define OPEN_NAMESPACE(n) namespace n {
 #define CLOSE_NAMESPACE(n) }
@@ -115,6 +117,91 @@ cstring dirname(const cstring& path)
 	int n = p.find_last_of("/");
 	p.erase(n);
 	return p;
+}
+
+cstring bce_dirname(const cstring& path)
+{
+	cstring p = regex_replace(path, regex("\\\\+"), "/", match_default|format_perl);
+
+	if (!string_contains(p, "/")) {
+		if (p.size()==2 && p.at(1)==':') {
+			return p + "/";
+		}
+		return ".";
+	}
+
+	int n = p.find_last_of("/");
+	p.erase(n);
+	if (p.size()==2 && p.at(1)==':') {
+		return p + "/";
+	}
+	return p;
+
+}
+
+cstring basename(const cstring& path)
+{
+	cstring p = regex_replace(path, regex("\\\\+"), "/", match_default|format_perl);
+	while (p[p.size() -1] == '/') {
+		p.erase(p.size() - 1);
+	}
+
+	if (!string_contains(p, "/")) {
+		return p;
+	}
+
+	int n = p.find_last_of("/");
+	p.erase(0, n);
+	return p.empty() ? "/" : p;
+
+}
+
+cstring bce_basename(const cstring& path)
+{
+	cstring p = regex_replace(path, regex("\\\\+"), "/", match_default|format_perl);
+
+	if (p[p.size() - 1] == '/') {
+		return "";
+	}
+
+	if (!string_contains(p, "/")) { //if it is like `c:', return `c:/'
+		if (p.size()>1 && p.at(1)==':') {
+			return "";
+		}
+		return p;
+	}
+
+	int n = p.find_last_of("/");
+	p.erase(0, n+1);
+	return p;
+
+}
+
+bool is_abspath(const cstring& path)
+{
+	if (path.size() < 2) {
+		return false;
+	}
+	return (path[1] == ':');
+}
+
+lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
+{
+	lstring_t ls_match;
+	WIN32_FIND_DATA wfd;
+	BHJDEBUG(" patten is %s", (dir+"/*"+base+"*").c_str());
+	HANDLE hfile = FindFirstFile(cstring(dir + "/*" + base + "*"), &wfd);
+	while (hfile != INVALID_HANDLE_VALUE) {
+		if (dir.at(dir.size() - 1) == '/') {
+			ls_match.push_back(dir + wfd.cFileName);
+		} else {
+			ls_match.push_back(dir + "/" + wfd.cFileName);
+		}
+		if (FindNextFile(hfile, &wfd) == 0) {
+			break;
+		}
+	}
+	return ls_match;
 }
 
 CLOSE_NAMESPACE(bhj)

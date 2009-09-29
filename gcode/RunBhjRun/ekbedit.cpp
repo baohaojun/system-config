@@ -25,6 +25,9 @@ using namespace boost;
 #include "bhjdebug.h" 
 #include <commctrl.h>
 #include <map>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 using std::map;
 
 using namespace bhj;
@@ -103,10 +106,6 @@ void CEkbEdit::createListBox()
 	m_listBox = m_simpleWnd->m_listBox;
 }
 
-void CEkbEdit::selectNextItem()
-{
-	selectPrevItem(0);
-}
 
 CRect GetWindowRect(CWnd* wnd)
 {
@@ -137,7 +136,8 @@ void CEkbEdit::selectPrevItem(int prev)
 		return;
 	}
 
-	if (m_simpleWnd) {
+	if (m_simpleWnd && !m_simpleWnd->IsWindowVisible()) {
+		fillListBox(getText());
 		m_simpleWnd->show();
 	}
 
@@ -163,14 +163,21 @@ void CEkbEdit::selectPrevItem(int prev)
 	}
 }
 
+void CEkbEdit::selectNextItem()
+{
+	selectPrevItem(0);
+}
+
 void CEkbEdit::getTextFromSelectedItem()
 {
 	SetWindowText(getSelectedText());
+	SetSel(GetLength(), GetLength());
 }
 
 void CEkbEdit::SetWindowText(const cstring& str)
 {
 	CWnd::SetWindowText(str.c_str());
+	SetSel(GetLength(), GetLength());
 }
 
 void CEkbEdit::SetWindowText(const CString& str)
@@ -179,9 +186,7 @@ void CEkbEdit::SetWindowText(const CString& str)
 }
 void CEkbEdit::endOfLine()
 {
-	CString text;
-	GetWindowText(text);
-	SetSel(text.GetLength(), text.GetLength());
+	SetSel(GetLength(), GetLength());
 }
 
 void CEkbEdit::beginOfLine()
@@ -193,9 +198,7 @@ void CEkbEdit::killEndOfLine()
 {
 	int start, end;
 	GetSel(start, end);
-	CString text;
-	GetWindowText(text);
-	SetSel(start, text.GetLength());
+	SetSel(start, GetLength());
 	Clear();
 }
 
@@ -498,6 +501,26 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
 			ls_match.push_back(*i);
 		}
 	}
+
+
+	if (bce_dirname(text).c_str()[0] == '.') {
+		return ls_match;
+	}
+
+	struct _stat stat;
+	if (is_abspath(text) && 
+		(_stat(bce_dirname(text), &stat) == 0) &&
+		(stat.st_mode|_S_IFDIR)) {
+
+		BHJDEBUG("%s is a dir %s", text.c_str(), bce_dirname(text).c_str());
+		lstring_t files = getMatchingFiles(bce_dirname(text), bce_basename(text));
+		if (!files.empty()) {
+			ls_match.push_back("****************");
+			ls_match.insert(ls_match.end(), files.begin(), files.end());
+		}
+	}
+						   
+		
 	return ls_match;
 }
 
@@ -513,7 +536,7 @@ void CEkbEdit::fillListBox(const CString& text)
 	m_histList.unique();
 
 	
-	lstring_t ls_match = m_histList;
+	lstring_t ls_match = getMatchingStrings(text);
 	for (lstring_t::iterator i = ls_match.begin(); i != ls_match.end(); i++) {
 		m_listBox->AddString(CString(cstring(*i)));
 	}
@@ -940,8 +963,6 @@ CRect CHListBox::getSelectedRect()
 	CRect lbRect = ::GetWindowRect(this);
 	
 	rect.OffsetRect(lbRect.left, lbRect.top);
-	BHJDEBUG(" rect is %d %d %dx%d", rect.left, rect.top, rect.Width(), rect.Height());
-	BHJDEBUG(" lbRect is %d %d %dx%d", lbRect.left, lbRect.top, lbRect.Width(), lbRect.Height());
 	return rect;
 }
 
@@ -953,7 +974,6 @@ void CHListBox::OnSelchange()
 	dc.SelectObject(f);
 	CSize sz = dc.GetTextExtent(getSelectedText());
 	sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
-	BHJDEBUG(" text width is %d, edit width is %d", sz.cx, ::GetClientRect(this).Width());
 	if (sz.cx > ::GetClientRect(this).Width()) {
 		getBalloon(this)->showBalloon(getSelectedRect(), getSelectedText());
 	} else {
@@ -974,3 +994,4 @@ LONG CBalloon::getTextWidth(cstring str)
 	CSize sz = getTextSize(str);
 	return sz.cx;
 }
+

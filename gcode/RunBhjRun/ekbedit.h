@@ -88,10 +88,13 @@ private:
 	CString getText();
 	void fillListBox(const CString& text);
 	lstring_t getMatchingStrings(const cstring& text);
+	int getPoint(); //emacs term, point:-)
+private: //member vars
 	CHListBox* m_listBox;
 	CEkbHistWnd* m_simpleWnd;
 	UINT m_id;
 	lstring_t m_histList;
+	int m_mark; //emacs term, mark;
 	
 
 	CString m_strHistFile;

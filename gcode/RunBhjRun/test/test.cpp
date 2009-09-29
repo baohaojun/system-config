@@ -39,8 +39,16 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 		strHello.LoadString(IDS_HELLO);
 		cout << (LPCTSTR)strHello << endl;
 	}
-	BHJDEBUG(" dirname is %s", dirname("q:\\\\alsdjf/asdklfj/asdkfj///").c_str());
+	BHJDEBUG(" dirname is %s", bce_dirname("q:\\").c_str());
+	BHJDEBUG(" basename is `%s'", basename("/").c_str());
+	
+	WIN32_FIND_DATA wfd;
+	HANDLE hfile = FindFirstFile("c:/***", &wfd);
+	while (hfile != INVALID_HANDLE_VALUE) {
+		BHJDEBUG(" found a file %s", wfd.cFileName);
+		if (FindNextFile(hfile, &wfd) == 0) {
+			break;
+		}
+	}
 	return nRetCode;
 }
-
-

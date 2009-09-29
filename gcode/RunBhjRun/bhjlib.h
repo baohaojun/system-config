@@ -33,6 +33,13 @@ namespace bhj {
 	cstring string_format(const char* fmt, ...);
 	int FmtMessageBox(const char* fmt, ...);
 	cstring dirname(const cstring& path);
+	cstring basename(const cstring& path);
+
+	cstring bce_dirname(const cstring& path); //bce: basename can be empty, take everything before the last '/'.
+	cstring bce_basename(const cstring& path);
+	bool is_abspath(const cstring& path);
+
+	lstring_t getMatchingFiles(const cstring& dir, const cstring& base);
 };
 
 #endif
