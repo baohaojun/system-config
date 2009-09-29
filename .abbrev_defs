@@ -14,6 +14,7 @@
 (define-abbrev-table 'c++-mode-abbrev-table '(    ("cc" "const char*" nil 6)
     ("ccs" "const cstring&" nil 1)
     ("cms" "const CString&" nil 11)
+    ("cs" "cstring" nil 0)
     ("mcs" "const CString&" nil 15)
     ))
 

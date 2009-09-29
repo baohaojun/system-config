@@ -717,7 +717,7 @@ void CEkbHistWnd::weVeMoved()
 void CEkbHistWnd::OnPaint() 
 {
 	CPaintDC dc(this); // device context for painting
-	CRect rect = ::GetWindowRect(this);
+	CRect rect = ::GetClientRect(this);
 	dc.FillSolidRect(&rect, RGB(0, 0, 0));
 	
 	
@@ -778,6 +778,8 @@ void CBalloon::OnShowWindow(BOOL bShow, UINT nStatus)
 void CBalloon::showBalloon(CRect rect, const cstring& text)
 {
 	m_text = text;
+	LONG cx = getTextWidth(text);
+	rect.InflateRect(m_border + (cx-rect.Width())/2, 0);
 	SetWindowPos(&wndTop, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE); 
 	ShowWindow(SW_SHOWNA);
 	UpdateWindow();
@@ -788,11 +790,9 @@ void CBalloon::OnPaint()
 	CPaintDC dc(this); // device context for painting
 
 	CRect rect = ::GetClientRect(this);
-	rect.InflateRect(-2, -2);
-	dc.FillSolidRect(&rect, RGB(200, 200, 30));	
-	// TODO: Add your message handler code here
-	
-	// Do not call CWnd::OnPaint() for painting messages CListBox
+	dc.FillSolidRect(&rect, RGB(10, 36, 106));	
+	dc.SetTextColor(RGB(255, 255, 255));
+	dc.TextOut(m_border, 0, m_text);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -810,7 +810,7 @@ CHListBox::~CHListBox()
 
 BEGIN_MESSAGE_MAP(CHListBox, CListBox)
 	//{{AFX_MSG_MAP(CHListBox)
-		// NOTE - the ClassWizard will add and remove mapping macros here.
+	ON_CONTROL_REFLECT(LBN_SELCHANGE, OnSelchange)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -881,18 +881,8 @@ int CHListBox::DeleteString(int n)
 int CHListBox::SetCurSel(int nSelect)
 {
 	int ret = CListBox::SetCurSel(nSelect);
+	OnSelchange();
 
-	CClientDC dc(this);
-	CFont * f = GetFont();
-	dc.SelectObject(f);
-	CSize sz = dc.GetTextExtent(getSelectedText());
-	sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
-	BHJDEBUG(" text width is %d, edit width is %d", sz.cx, ::GetClientRect(this).Width());
-	if (sz.cx > ::GetClientRect(this).Width()) {
-		getBalloon(this)->showBalloon(getSelectedRect(), getSelectedText());
-	} else {
-		getBalloon(this)->ShowWindow(SW_HIDE);
-	}
 	return ret;
 }
 
@@ -930,3 +920,33 @@ CRect CHListBox::getSelectedRect()
 	return rect;
 }
 
+
+void CHListBox::OnSelchange() 
+{
+		CClientDC dc(this);
+	CFont * f = GetFont();
+	dc.SelectObject(f);
+	CSize sz = dc.GetTextExtent(getSelectedText());
+	sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
+	BHJDEBUG(" text width is %d, edit width is %d", sz.cx, ::GetClientRect(this).Width());
+	if (sz.cx > ::GetClientRect(this).Width()) {
+		getBalloon(this)->showBalloon(getSelectedRect(), getSelectedText());
+	} else {
+		getBalloon(this)->ShowWindow(SW_HIDE);
+	}
+}
+
+CSize CBalloon::getTextSize(cstring text)
+{
+	CClientDC dc(this);
+	CFont * f = GetFont();
+	dc.SelectObject(f);
+	CSize sz = dc.GetTextExtent(text);
+	return sz;
+}
+
+LONG CBalloon::getTextWidth(cstring str)
+{
+	CSize sz = getTextSize(str);
+	return sz.cx;
+}

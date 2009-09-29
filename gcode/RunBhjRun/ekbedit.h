@@ -167,6 +167,7 @@ public:
 	static CBalloon* getInstance(CWnd* owner);
 private:
 	CBalloon(CWnd* owner);
+	enum {m_border = 5};
 
 // Attributes
 public:
@@ -185,9 +186,13 @@ public:
 
 private:
 	cstring m_text;
+	CSize getTextSize(cstring str);
+	LONG getTextWidth(cstring str);
+	
 
 public:
 	void showBalloon(CRect rect, const cstring& text);
+	
 	
 	// Generated message map functions
 protected:
@@ -235,7 +240,7 @@ protected:
         void updateWidth(LPCTSTR s);
 	int width;
 	//{{AFX_MSG(CHListBox)
-		// NOTE - the ClassWizard will add and remove member functions here.
+	afx_msg void OnSelchange();
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
