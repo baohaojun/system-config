@@ -23,7 +23,6 @@ using namespace boost;
 #include <string>
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
-#include "HListBox.h"
 #include <commctrl.h>
 #include <map>
 using std::map;
@@ -109,31 +108,29 @@ void CEkbEdit::selectNextItem()
 	selectPrevItem(0);
 }
 
-CRect CEkbEdit::GetClientRect()
+CRect GetWindowRect(CWnd* wnd)
 {
 	CRect rect;
-	CEdit::GetClientRect(&rect);
+	wnd->GetWindowRect(&rect);
 	return rect;
 }
 
-void CEkbEdit::showBalloon()
+CRect GetClientRect(CWnd* wnd)
 {
-	if (!m_listBox) {
-		return;
-	}
-	CClientDC dc(m_listBox);
-	CFont * f = m_listBox->GetFont();
-	dc.SelectObject(f);
-	CSize sz = dc.GetTextExtent(getSelectedText());
-	sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
-	BHJDEBUG(" text width is %d, edit width is %d", sz.cx, GetClientRect().Width());
-	if (sz.cx > GetClientRect().Width()) {
-		getBalloon()->showBalloon(GetParent(), getSelectedRect(), getSelectedText());
-	} else {
-		getBalloon()->ShowWindow(SW_HIDE);
+	CRect rect;
+	wnd->GetClientRect(&rect);
+	return rect;
+}
+
+HWND getTopParentHwnd(CWnd* wnd)
+{
+	if (!wnd || !wnd->GetParentOwner()) {
+		return NULL;
 	}
 
+	return wnd->GetParentOwner()->m_hWnd;
 }
+
 void CEkbEdit::selectPrevItem(int prev)
 {
 	if (!m_listBox) {
@@ -157,7 +154,6 @@ void CEkbEdit::selectPrevItem(int prev)
 			i = (i+1) % m_listBox->GetCount();
 		}		
 		int ret = m_listBox->SetCurSel(i);
-		showBalloon();
 		return;
 	}
 	if (prev) {
@@ -342,22 +338,6 @@ void CEkbEdit::forwardKillWord()
 	}
 	SetSel(end, GetLength());
 	Clear();
-}
-
-CRect CEkbEdit::getSelectedRect()
-{
-	CRect rect;
-	if (!m_listBox || m_listBox->GetCurSel()<0) {
-		GetWindowRect(&rect);
-		return rect;
-	}
-	
-	m_listBox->GetItemRect(m_listBox->GetCurSel(), &rect);
-	CRect lbRect;
-	m_listBox->GetWindowRect(&lbRect);
-	
-	rect.OffsetRect(lbRect.left, lbRect.top);
-	return rect;
 }
 
 cstring CEkbEdit::getSelectedText()
@@ -576,7 +556,7 @@ void CEkbEdit::OnKillFocus(CWnd* pNewWnd)
 	}
 	
 	if (m_simpleWnd) {
-		m_simpleWnd->ShowWindow(SW_HIDE);
+		//m_simpleWnd->ShowWindow(SW_HIDE);
 	}
 	
 }
@@ -584,7 +564,7 @@ void CEkbEdit::OnKillFocus(CWnd* pNewWnd)
 void CEkbEdit::OnSetFocus(CWnd* pOldWnd) 
 {
 	CEdit::OnSetFocus(pOldWnd);
-	weVeMoved();
+	//weVeMoved();
 	
 	if (m_simpleWnd && GetLength()) {
 		m_simpleWnd->ShowWindow(SW_SHOWNA);
@@ -637,7 +617,7 @@ static ATOM RegisterClass(cstring str)
 	return atom;
 }
 
-static HWND newWindow(cstring wc_name)
+static HWND newWindow(cstring wc_name, HWND h_owner=NULL)
 {
 	RegisterClass(wc_name);
 	return CreateWindow (wc_name,                  // window class name
@@ -647,7 +627,7 @@ static HWND newWindow(cstring wc_name)
 						 CW_USEDEFAULT,              // initial y position
 						 CW_USEDEFAULT,              // initial x size
 						 CW_USEDEFAULT,              // initial y size
-						 NULL,                       // parent window handle
+						 h_owner,                       // parent window handle
 						 NULL,                       // window menu handle
 						 AfxGetInstanceHandle(),                  // program instance handle
 						 NULL) ;                     // creation parameters
@@ -657,7 +637,7 @@ CEkbHistWnd::CEkbHistWnd(CEdit* master)
 {
 	m_master = master;
 	
-	HWND hwnd = newWindow ("CEkbHistWnd");
+	HWND hwnd = newWindow ("CEkbHistWnd", getTopParentHwnd(master));
 
 	SubclassWindow(hwnd);
 	ModifyStyleEx(0, WS_EX_TOOLWINDOW);
@@ -737,8 +717,7 @@ void CEkbHistWnd::weVeMoved()
 void CEkbHistWnd::OnPaint() 
 {
 	CPaintDC dc(this); // device context for painting
-	CRect rect;
-	GetClientRect(&rect);
+	CRect rect = ::GetWindowRect(this);
 	dc.FillSolidRect(&rect, RGB(0, 0, 0));
 	
 	
@@ -746,18 +725,19 @@ void CEkbHistWnd::OnPaint()
 /////////////////////////////////////////////////////////////////////////////
 // CBalloon
 
-CBalloon* CBalloon::getInstance()
+CBalloon* CBalloon::getInstance(CWnd *owner)
 {
-	static CBalloon* theBalloon;
-	if (!theBalloon) {
-		theBalloon = new CBalloon();
+	static map<CWnd*, CBalloon*> owner_map;
+
+	if (!owner_map[owner]) {
+		owner_map[owner] = new CBalloon(owner);
 	}
-	return theBalloon;
+	return owner_map[owner];
 }
 
-CBalloon::CBalloon()
+CBalloon::CBalloon(CWnd* owner)
 {
-	HWND hwnd = newWindow ("CBalloon");
+	HWND hwnd = newWindow ("CBalloon", getTopParentHwnd(owner));
 
 	SubclassWindow(hwnd);
 	ModifyStyleEx(0, WS_EX_TOOLWINDOW);
@@ -783,8 +763,7 @@ void CEkbHistWnd::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	
-	CRect rect;
-	GetClientRect(&rect);
+	CRect rect = ::GetClientRect(this);
 	rect.DeflateRect(1, 1);
 
 	m_listBox->MoveWindow(rect.left, rect.top, rect.Width(), rect.Height());
@@ -796,10 +775,10 @@ void CBalloon::OnShowWindow(BOOL bShow, UINT nStatus)
 	CWnd::OnShowWindow(bShow, nStatus);
 }
 
-void CBalloon::showBalloon(CWnd* owner, CRect rect, const cstring& text)
+void CBalloon::showBalloon(CRect rect, const cstring& text)
 {
 	m_text = text;
-	SetWindowPos(&wndTopMost, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE); 
+	SetWindowPos(&wndTop, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE); 
 	ShowWindow(SW_SHOWNA);
 	UpdateWindow();
 }
@@ -808,11 +787,146 @@ void CBalloon::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
-	CRect rect;
-	GetClientRect(&rect);
+	CRect rect = ::GetClientRect(this);
 	rect.InflateRect(-2, -2);
 	dc.FillSolidRect(&rect, RGB(200, 200, 30));	
 	// TODO: Add your message handler code here
 	
 	// Do not call CWnd::OnPaint() for painting messages CListBox
 }
+
+/////////////////////////////////////////////////////////////////////////////
+// CHListBox
+
+CHListBox::CHListBox()
+{
+ width = 0;
+}
+
+CHListBox::~CHListBox()
+{
+}
+
+
+BEGIN_MESSAGE_MAP(CHListBox, CListBox)
+	//{{AFX_MSG_MAP(CHListBox)
+		// NOTE - the ClassWizard will add and remove mapping macros here.
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+/////////////////////////////////////////////////////////////////////////////
+// CHListBox message handlers
+void CHListBox::updateWidth(LPCTSTR s)
+{
+	CClientDC dc(this);
+	CFont * f = CListBox::GetFont();
+	dc.SelectObject(f);
+	CSize sz = dc.GetTextExtent(s, _tcslen(s));
+	sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
+	if(sz.cx > width)
+	{ /* extend */
+		width = sz.cx;
+		CListBox::SetHorizontalExtent(width);
+	} /* extend */
+}
+
+int CHListBox::AddString(LPCTSTR s)
+{
+	int result = CListBox::AddString(s);
+	if(result < 0)
+		return result;
+	updateWidth(s);
+	return result;
+}
+
+int CHListBox::InsertString(int i, LPCTSTR s)
+{
+	int result = CListBox::InsertString(i, s);
+	if(result < 0)
+		return result;
+	updateWidth(s);
+	return result;
+}
+
+void CHListBox::ResetContent()
+{
+	CListBox::ResetContent();
+	width = 0;
+}
+
+int CHListBox::DeleteString(int n)
+{
+	int result = CListBox::DeleteString(n);
+	if(result < 0)
+		return result;
+	CClientDC dc(this);
+
+	CFont * f = CListBox::GetFont();
+	dc.SelectObject(f);
+
+	width = 0;
+	for(int i = 0; i < CListBox::GetCount(); i++)
+	{ /* scan strings */
+		CString s;
+		CListBox::GetText(i, s);
+		CSize sz = dc.GetTextExtent(s);
+		sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
+		if(sz.cx > width)
+			width = sz.cx;
+	} /* scan strings */
+	CListBox::SetHorizontalExtent(width);
+	return result;
+}
+
+int CHListBox::SetCurSel(int nSelect)
+{
+	int ret = CListBox::SetCurSel(nSelect);
+
+	CClientDC dc(this);
+	CFont * f = GetFont();
+	dc.SelectObject(f);
+	CSize sz = dc.GetTextExtent(getSelectedText());
+	sz.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
+	BHJDEBUG(" text width is %d, edit width is %d", sz.cx, ::GetClientRect(this).Width());
+	if (sz.cx > ::GetClientRect(this).Width()) {
+		getBalloon(this)->showBalloon(getSelectedRect(), getSelectedText());
+	} else {
+		getBalloon(this)->ShowWindow(SW_HIDE);
+	}
+	return ret;
+}
+
+cstring CHListBox::getSelectedText()
+{
+	if (GetCurSel() < 0) {
+		return "";
+	}
+
+	int i = GetCurSel();
+	CString text;
+	GetText(i, text);
+	return text;
+}
+
+CRect CHListBox::GetItemRect(int idx)
+{
+	CRect rect;
+	CListBox::GetItemRect(idx, &rect);
+	return rect;
+}
+
+CRect CHListBox::getSelectedRect()
+{
+	if (GetCurSel()<0) {
+		return ::GetWindowRect(this);
+	}
+	
+	CRect rect = GetItemRect(GetCurSel());
+	CRect lbRect = ::GetWindowRect(this);
+	
+	rect.OffsetRect(lbRect.left, lbRect.top);
+	BHJDEBUG(" rect is %d %d %dx%d", rect.left, rect.top, rect.Width(), rect.Height());
+	BHJDEBUG(" lbRect is %d %d %dx%d", lbRect.left, lbRect.top, lbRect.Width(), lbRect.Height());
+	return rect;
+}
+

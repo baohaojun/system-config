@@ -490,7 +490,6 @@ DEP_CPP_EKBED=\
 	".\bhjlib.h"\
 	".\EkbEdit.h"\
 	".\RunBhjRun.h"\
-	".\simplewnd.h"\
 	".\StdAfx.h"\
 	
 NODEP_CPP_EKBED=\
@@ -771,6 +770,7 @@ NODEP_CPP_EKBED=\
 	".\oost\utility\base_from_member.hpp"\
 	".\oost\utility\enable_if.hpp"\
 	".\oost\version.hpp"\
+	".\simplewnd.h"\
 	".\sing\cstring"\
 	".\thread.h"\
 	".\tl\_abbrevs.h"\
@@ -884,18 +884,16 @@ NODEP_CPP_EKBED=\
 # End Source File
 # Begin Source File
 
-SOURCE=.\HListBox.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\RunBhjRun.cpp
 DEP_CPP_RUNBH=\
 	".\bhjlib.h"\
 	".\EkbEdit.h"\
 	".\RunBhjRun.h"\
 	".\RunBhjRunDlg.h"\
-	".\simplewnd.h"\
 	".\StdAfx.h"\
+	
+NODEP_CPP_RUNBH=\
+	".\simplewnd.h"\
 	
 # End Source File
 # Begin Source File
@@ -910,8 +908,10 @@ DEP_CPP_RUNBHJ=\
 	".\EkbEdit.h"\
 	".\RunBhjRun.h"\
 	".\RunBhjRunDlg.h"\
-	".\simplewnd.h"\
 	".\StdAfx.h"\
+	
+NODEP_CPP_RUNBHJ=\
+	".\simplewnd.h"\
 	
 # End Source File
 # Begin Source File
@@ -934,10 +934,6 @@ SOURCE=.\bhjlib.h
 # Begin Source File
 
 SOURCE=.\EkbEdit.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\HListBox.h
 # End Source File
 # Begin Source File
 
