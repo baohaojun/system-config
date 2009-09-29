@@ -26,7 +26,8 @@ public class SoundManager {
     private static SoundManager mInstance = null;
     private Context mContext;
     private AudioManager mAudioManager;
-    private final float FX_VOLUME = 1.0f;
+    // Align sound effect volume on music volume
+    private final float FX_VOLUME = -1.0f;
     private boolean mSilentMode;
 
     private SoundManager(Context context) {
