@@ -49,6 +49,7 @@ CEkbEdit::CEkbEdit()
 	m_simpleWnd = NULL;
 	m_id = 0;
 	m_strHistFile = "";
+	m_mark = -1;
 
 }
 
@@ -168,12 +169,34 @@ void CEkbEdit::selectNextItem()
 	selectPrevItem(0);
 }
 
+void CEkbEdit::move_to(int pos)
+{
+	if (pos < 0) {
+		pos = 0;
+	}
+	
+	if (pos > GetLength()) {
+		pos = GetLength();
+	}
+	SetSel(pos, pos);
+	if (m_mark >= 0) {
+		SetSel(m_mark, pos);
+	}
+
+	CPoint p = PosFromChar(pos);
+	SetCaretPos(p);
+}
+
 void CEkbEdit::getTextFromSelectedItem()
 {
 	SetWindowText(getSelectedText());
-	SetSel(GetLength(), GetLength());
+	move_to(GetLength());
 }
 
+int CEkbEdit::getPoint()
+{
+	return CharFromPos(GetCaretPos());
+}
 void CEkbEdit::SetWindowText(const cstring& str)
 {
 	CWnd::SetWindowText(str.c_str());
@@ -184,21 +207,20 @@ void CEkbEdit::SetWindowText(const CString& str)
 {
 	CWnd::SetWindowText((const char*)str);
 }
+
 void CEkbEdit::endOfLine()
 {
-	SetSel(GetLength(), GetLength());
+	move_to(GetLength());
 }
 
 void CEkbEdit::beginOfLine()
 {
-	SetSel(0, 0);
+	move_to(0);
 }
 
 void CEkbEdit::killEndOfLine()
 {
-	int start, end;
-	GetSel(start, end);
-	SetSel(start, GetLength());
+	SetSel(getPoint(), GetLength());
 	Clear();
 }
 
@@ -212,32 +234,22 @@ void CEkbEdit::killBeginOfLine()
 
 void CEkbEdit::forwardChar()
 {
-	int start, end;
-	GetSel(start, end);
-	CString text;
-	GetWindowText(text);
-	if (end < text.GetLength()) {
-		end ++;
+
+	if (getPoint() < GetLength()) {
+		move_to(getPoint() + 1);
 	}
-	SetSel(end, end);	
 }
 
 void CEkbEdit::backwardChar()
 {
-	int start, end;
-	GetSel(start, end);
-	if (start > 0) {
-		start --;
+	if (getPoint() > 0) {
+		move_to(getPoint() - 1);
 	}
-
-	SetSel(start, start);
 }
 
 int CEkbEdit::GetLength()
 {
-	CString text;
-	GetWindowText(text);
-	return text.GetLength();
+	return getText().size();
 }
 
 void CEkbEdit::deleteChar()
@@ -371,6 +383,33 @@ void CEkbEdit::escapeEdit()
 	}
 }
 
+void CEkbEdit::set_mark_command()
+{
+	m_mark = getPoint();
+}
+
+void CEkbEdit::keyboard_quit()
+{
+	m_mark = -1;
+	SetSel(getPoint(), getPoint());
+}
+
+void CEkbEdit::debug_caret()
+{
+	CPoint p = CEdit::GetCaretPos();
+	BHJDEBUG(" CEdit caret x is %d, y is %d", p.x, p.y);
+	p = PosFromChar(GetLength());
+	BHJDEBUG(" PosFromChar caret x is %d, y is %d", p.x, p.y);
+	SetCaretPos(p);
+}
+
+void CEkbEdit::exchange_point_and_mark()
+{
+	int point = getPoint();
+	int tmp = m_mark;
+	m_mark = point;
+	move_to(tmp);
+}
 BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg) 
 {
 	// TODO: Add your specialized code here and/or call the base class
@@ -415,6 +454,7 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey(VK_RETURN, eCtrl, getTextFromSelectedItem);
 	HandleKey('E', eCtrl, endOfLine);
 	HandleKey('A', eCtrl, beginOfLine);
+	HandleKey('X', eCtrl, exchange_point_and_mark);
 	HandleKey('U', eCtrl, killBeginOfLine);
 	HandleKey('K', eCtrl, killEndOfLine);
 	HandleKey('F', eCtrl, forwardChar);
@@ -423,6 +463,9 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey('B', eAlt, backwardWord);
 	HandleKey('F', eAlt, forwardWord);
 	HandleKey('D', eAlt, forwardKillWord);
+	HandleKey('D', eCtrlAlt, debug_caret);
+	HandleKey('G', eCtrl, keyboard_quit);
+	HandleKey(VK_SPACE, eCtrl, set_mark_command);
 	HandleKey(VK_BACK, eAlt, backwardKillWord);
 	HandleKey(VK_BACK, eCtrl, backwardKillWord);
 	HandleKeyIf(VK_ESCAPE, eNone, escapeEdit, GetLength());
@@ -446,7 +489,7 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	return CEdit::PreTranslateMessage(pMsg);
 }
 
-CString CEkbEdit::getText()
+cstring CEkbEdit::getText()
 {
 	CString text;
 	GetWindowText(text);
@@ -995,3 +1038,59 @@ LONG CBalloon::getTextWidth(cstring str)
 	return sz.cx;
 }
 
+CSize CEkbEdit::getTextSize(cstring text)
+{
+	CClientDC dc(this);
+	dc.SelectObject(GetFont());
+	CSize sz = dc.GetTextExtent(text);
+	return sz;
+}
+
+LONG CEkbEdit::getTextWidth(cstring str)
+{
+	CSize sz = getTextSize(str);
+	return sz.cx;
+}
+
+int CEkbEdit::CharFromPos(CPoint p)
+{
+	return CEdit::CharFromPos(p);
+}
+
+CPoint CEkbEdit::PosFromChar(int point)
+{
+	if (point >= GetLength()) {
+		int display_start = CharFromPos(CPoint(1, 1));
+		
+		cstring display_str = getSubText(display_start, GetLength());
+		int display_width = getTextWidth(display_str);
+		BHJDEBUG(" display_width is %d", display_width);
+		return CPoint(1+display_width, 1);
+	}
+	return CEdit::PosFromChar(point);
+}
+
+
+cstring CEkbEdit::getSubText(int start, int end)
+{
+
+	//range of start: [ 0, GetLength()-1 ]
+	//range of end:   [ 0, GetLength()   ]
+	if (start > GetLength() - 1) {
+		start = GetLength() - 1;
+	}
+
+	if (end > GetLength()) {
+		end = GetLength();
+	}
+
+	start = start < 0 ? 0 : start;
+	end = end < 0 ? 0 : end;
+	
+	
+	if (start >= end) {
+		return "";
+	}
+
+	return getText().substr(start, end-start);	
+}

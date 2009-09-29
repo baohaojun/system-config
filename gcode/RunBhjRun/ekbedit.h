@@ -85,10 +85,22 @@ private:
 	void backwardKillWord();
 	void forwardKillWord();
 	void escapeEdit();
-	CString getText();
+	void set_mark_command();
+	void keyboard_quit();
+	void move_to(int pos);
+	void debug_caret();
+	void exchange_point_and_mark();
+	cstring getText();
 	void fillListBox(const CString& text);
 	lstring_t getMatchingStrings(const cstring& text);
 	int getPoint(); //emacs term, point:-)
+	void setsel(int to);
+	CPoint PosFromChar(int point);
+	int CharFromPos(CPoint pnt);
+	LONG getTextWidth(cstring str);
+	CSize getTextSize(cstring text);
+	cstring getSubText(int start, int end);
+
 private: //member vars
 	CHListBox* m_listBox;
 	CEkbHistWnd* m_simpleWnd;
