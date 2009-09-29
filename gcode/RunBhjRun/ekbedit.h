@@ -90,6 +90,10 @@ private:
 	void move_to(int pos);
 	void debug_caret();
 	void exchange_point_and_mark();
+	void kill_region();
+	void delete_range(int start, int end);
+	void yank();
+	void kill_ring_save();
 	cstring getText();
 	void fillListBox(const CString& text);
 	lstring_t getMatchingStrings(const cstring& text);
@@ -120,6 +124,7 @@ protected:
 	afx_msg BOOL OnChange();
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnPaint();
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

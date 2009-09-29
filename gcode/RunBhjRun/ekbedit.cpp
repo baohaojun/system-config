@@ -63,6 +63,7 @@ BEGIN_MESSAGE_MAP(CEkbEdit, CEdit)
 	ON_CONTROL_REFLECT_EX(EN_CHANGE, OnChange)
 	ON_WM_KILLFOCUS()
 	ON_WM_SETFOCUS()
+	ON_WM_PAINT()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -178,12 +179,15 @@ void CEkbEdit::move_to(int pos)
 	if (pos > GetLength()) {
 		pos = GetLength();
 	}
+
 	SetSel(pos, pos);
+
 	if (m_mark >= 0) {
 		SetSel(m_mark, pos);
 	}
 
 	CPoint p = PosFromChar(pos);
+	BHJDEBUG(" move_to x is %d", p.x);
 	SetCaretPos(p);
 }
 
@@ -197,10 +201,12 @@ int CEkbEdit::getPoint()
 {
 	return CharFromPos(GetCaretPos());
 }
+
 void CEkbEdit::SetWindowText(const cstring& str)
 {
 	CWnd::SetWindowText(str.c_str());
-	SetSel(GetLength(), GetLength());
+	m_mark = -1;
+	move_to(GetLength());
 }
 
 void CEkbEdit::SetWindowText(const CString& str)
@@ -220,16 +226,12 @@ void CEkbEdit::beginOfLine()
 
 void CEkbEdit::killEndOfLine()
 {
-	SetSel(getPoint(), GetLength());
-	Clear();
+	delete_range(getPoint(), GetLength());
 }
 
 void CEkbEdit::killBeginOfLine()
 {
-	int start, end; 
-	GetSel(start, end);
-	SetSel(0, end);
-	Clear();
+	delete_range(0, getPoint());
 }
 
 void CEkbEdit::forwardChar()
@@ -254,19 +256,16 @@ int CEkbEdit::GetLength()
 
 void CEkbEdit::deleteChar()
 {
-	int start, end;
-	GetSel(start, end);
+	int end = getPoint();
 	if (end < GetLength()) {
-		SetSel(end, end+1);
-		Clear();
+		delete_range(end, end+1);
 	}
 }
 
 
 void CEkbEdit::backwardWord()
 {
-	int start, end;
-	GetSel(start, end);
+	int start = getPoint();
 	CString text;
 	GetWindowText(text);
 	enum {
@@ -276,18 +275,24 @@ void CEkbEdit::backwardWord()
 	int state = eOutWord;
 	for (int i=start-1; i>=0; i--) {
 		if (state == eInWord && !isalnum(text[i])) {
-			SetSel(i+1, i+1);
+			move_to(i+1);
 			return;
 		} else if (isalnum(text[i])) {
 			state = eInWord;
 		}
 	}		
-	SetSel(0, 0);
+	move_to(0);
 }
+
+void CEkbEdit::delete_range(int start, int end)
+{
+	SetSel(start, end);
+	Clear();
+}
+
 void CEkbEdit::backwardKillWord()
 {
-	int start, end;
-	GetSel(start, end);
+	int start = getPoint();
 	CString text;
 	GetWindowText(text);
 	enum {
@@ -297,21 +302,18 @@ void CEkbEdit::backwardKillWord()
 	int state = eOutWord;
 	for (int i=start-1; i>=0; i--) {
 		if (state == eInWord && !isalnum(text[i])) {
-			SetSel(i+1, start);
-			Clear();
+			delete_range(i+1, start);
 			return;
 		} else if (isalnum(text[i])) {
 			state = eInWord;
 		}
 	}		
-	SetSel(0, start);
-	Clear();
+	delete_range(0, start);
 }
 
 void CEkbEdit::forwardWord()
 {
-	int start, end;
-	GetSel(start, end);
+	int end = getPoint();
 	CString text;
 	GetWindowText(text);
 	enum {
@@ -321,19 +323,18 @@ void CEkbEdit::forwardWord()
 	int state = eOutWord;
 	for (int i=end+1; i<GetLength(); i++) {
 		if (state == eInWord && !isalnum(text[i])) {
-			SetSel(i, i);
+			move_to(i);
 			return;
 		} else if (isalnum(text[i])) {
 			state = eInWord;
 		}
 	}
-	SetSel(GetLength(), GetLength());
+	move_to(GetLength());
 }
 
 void CEkbEdit::forwardKillWord()
 {
-	int start, end;
-	GetSel(start, end);
+	int end = getPoint();
 
 	CString text;
 	GetWindowText(text);
@@ -344,15 +345,13 @@ void CEkbEdit::forwardKillWord()
 	int state = eOutWord;
 	for (int i=end+1; i<GetLength(); i++) {
 		if (state == eInWord && !isalnum(text[i])) {
-			SetSel(end, i);
-			Clear();
+			delete_range(end, i);
 			return;
 		} else if (isalnum(text[i])) {
 			state = eInWord;
 		}
 	}
-	SetSel(end, GetLength());
-	Clear();
+	delete_range(end, GetLength());
 }
 
 cstring CEkbEdit::getSelectedText()
@@ -373,8 +372,8 @@ cstring CEkbEdit::getSelectedText()
 
 void CEkbEdit::escapeEdit()
 {
-	SetSel(0, GetLength());
-	Clear();
+	delete_range(0, GetLength());
+	m_mark = -1;
 	if (m_simpleWnd) {
 		m_simpleWnd->hide();
 	}
@@ -410,13 +409,24 @@ void CEkbEdit::exchange_point_and_mark()
 	m_mark = point;
 	move_to(tmp);
 }
+
+void CEkbEdit::kill_region()
+{
+	Cut();
+}
+
+void CEkbEdit::kill_ring_save()
+{
+	Copy();
+}
+
+void CEkbEdit::yank()
+{
+	Paste();
+}
+
 BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg) 
 {
-	// TODO: Add your specialized code here and/or call the base class
-
-	// TODO: Add your specialized code here and/or call the base class
-	int start,end;
-	GetSel(start,end);
 	CString text;
 	this->GetWindowText(text);
 	char head=0,second=0;
@@ -465,6 +475,11 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey('D', eAlt, forwardKillWord);
 	HandleKey('D', eCtrlAlt, debug_caret);
 	HandleKey('G', eCtrl, keyboard_quit);
+	HandleKey('W', eCtrl, kill_region);
+	HandleKey('W', eAlt, kill_ring_save);
+	HandleKey('Y', eCtrl, yank);
+
+	
 	HandleKey(VK_SPACE, eCtrl, set_mark_command);
 	HandleKey(VK_BACK, eAlt, backwardKillWord);
 	HandleKey(VK_BACK, eCtrl, backwardKillWord);
@@ -1093,4 +1108,14 @@ cstring CEkbEdit::getSubText(int start, int end)
 	}
 
 	return getText().substr(start, end-start);	
+}
+
+void CEkbEdit::OnPaint() 
+{
+	CPaintDC dc(this); // device context for painting
+	
+	// TODO: Add your message handler code here
+	
+	// Do not call CEdit::OnPaint() for painting messages
+	//CEdit::OnPaint();
 }
