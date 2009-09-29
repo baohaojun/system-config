@@ -64,6 +64,8 @@ BEGIN_MESSAGE_MAP(CEkbEdit, CEdit)
 	ON_WM_KILLFOCUS()
 	ON_WM_SETFOCUS()
 	ON_WM_PAINT()
+	ON_WM_CREATE()
+	ON_WM_WINDOWPOSCHANGING()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -656,6 +658,7 @@ void CEkbEdit::OnSetFocus(CWnd* pOldWnd)
 {
 	CEdit::OnSetFocus(pOldWnd);
 	//weVeMoved();
+	HideCaret();
 	
 	if (m_simpleWnd && GetLength()) {
 		m_simpleWnd->ShowWindow(SW_SHOWNA);
@@ -1113,9 +1116,19 @@ cstring CEkbEdit::getSubText(int start, int end)
 void CEkbEdit::OnPaint() 
 {
 	CPaintDC dc(this); // device context for painting
+}
+
+int CEkbEdit::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+{
+	if (CEdit::OnCreate(lpCreateStruct) == -1)
+		return -1;
 	
+	return 0;
+}
+
+void CEkbEdit::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos) 
+{
+	CEdit::OnWindowPosChanging(lpwndpos);
 	// TODO: Add your message handler code here
 	
-	// Do not call CEdit::OnPaint() for painting messages
-	//CEdit::OnPaint();
 }

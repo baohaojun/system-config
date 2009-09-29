@@ -125,6 +125,8 @@ protected:
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnPaint();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnWindowPosChanging(WINDOWPOS FAR* lpwndpos);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

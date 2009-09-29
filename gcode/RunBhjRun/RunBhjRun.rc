@@ -89,11 +89,11 @@ IDD_RUNBHJRUN_DIALOG DIALOGEX 0, 0, 247, 95
 STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "RunBhjRun"
-FONT 9, "Tahoma"
+FONT 10, "Courier New"
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,11,9,20,20
     LTEXT           "Type the name of a program, folder, document, or\nInternet resource, and RunBhjRun will open it for you.",
-                    IDC_STATIC,44,9,188,20
+                    IDC_STATIC,38,9,202,26
     LTEXT           "&Open",IDC_STATIC,12,48,20,8
     EDITTEXT        IDC_CmdEdit,44,44,173,14,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "OK",IDOK,59,71,50,14
