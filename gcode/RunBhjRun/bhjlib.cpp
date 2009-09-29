@@ -2,10 +2,10 @@
 #include "stdafx.h"
 #include <boost/regex.hpp>
 
-#define open_namespace(n) namespace n {
-#define close_namespace(n) }
+#define OPEN_NAMESPACE(n) namespace n {
+#define CLOSE_NAMESPACE(n) }
 
-open_namespace(bhj)
+OPEN_NAMESPACE(bhj)
 using namespace boost;
 using std::list;
 using std::string;
@@ -101,4 +101,20 @@ int FmtMessageBox(const char* fmt, ...)
 	return 0;
 }
 
-close_namespace(bhj)
+cstring dirname(const cstring& path)
+{
+	cstring p = regex_replace(path, regex("\\\\+"), "/", match_default|format_perl);
+	while (p[p.size() -1] == '/') {
+		p.erase(p.size() - 1);
+	}
+
+	if (!string_contains(p, "/")) {
+		return ".";
+	}
+
+	int n = p.find_last_of("/");
+	p.erase(n);
+	return p;
+}
+
+CLOSE_NAMESPACE(bhj)

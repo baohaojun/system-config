@@ -32,6 +32,7 @@ namespace bhj {
 	bool string_contains(const cstring& src, const cstring& tgt);
 	cstring string_format(const char* fmt, ...);
 	int FmtMessageBox(const char* fmt, ...);
+	cstring dirname(const cstring& path);
 };
 
 #endif

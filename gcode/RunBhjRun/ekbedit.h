@@ -34,6 +34,7 @@ using namespace bhj;
 CRect GetClientRect(CWnd* wnd);
 CRect GetWindowRect(CWnd* wnd);
 HWND getTopParentHwnd(CWnd* wnd);
+LOGFONT getLogFont(CFont*);
 class CEkbEdit : public CEdit
 {
 // Construction
@@ -86,11 +87,12 @@ private:
 	void escapeEdit();
 	CString getText();
 	void fillListBox(const CString& text);
+	lstring_t getMatchingStrings(const cstring& text);
 	CHListBox* m_listBox;
 	CEkbHistWnd* m_simpleWnd;
 	UINT m_id;
-	typedef list<string> lstring_t;
 	lstring_t m_histList;
+	
 
 	CString m_strHistFile;
 	void saveHist();
@@ -168,6 +170,7 @@ public:
 private:
 	CBalloon(CWnd* owner);
 	enum {m_border = 5};
+	CFont m_font;
 
 // Attributes
 public:

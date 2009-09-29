@@ -490,6 +490,17 @@ bool stringContains(const CString& src, const CString& tgt)
 	return src.Find(tgt) >= 0;
 }
 
+lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
+{
+	lstring_t ls_match;
+	for (lstring_t::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+		if (fields_match(*i, text)) {
+			ls_match.push_back(*i);
+		}
+	}
+	return ls_match;
+}
+
 void CEkbEdit::fillListBox(const CString& text)
 {
 	if (!m_listBox) {
@@ -502,10 +513,9 @@ void CEkbEdit::fillListBox(const CString& text)
 	m_histList.unique();
 
 	
-	for (lstring_t::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
-		if (fields_match(*i, text)) {
-			m_listBox->AddString(CString(cstring(*i)));
-		}
+	lstring_t ls_match = m_histList;
+	for (lstring_t::iterator i = ls_match.begin(); i != ls_match.end(); i++) {
+		m_listBox->AddString(CString(cstring(*i)));
 	}
 
 	if (m_listBox->GetCount()) {
@@ -633,6 +643,13 @@ static HWND newWindow(cstring wc_name, HWND h_owner=NULL)
 						 NULL) ;                     // creation parameters
 }
 
+LOGFONT getLogFont(CFont* font)
+{
+	LOGFONT lfont;
+	font->GetLogFont(&lfont);
+	return lfont;
+}
+
 CEkbHistWnd::CEkbHistWnd(CEdit* master)
 {
 	m_master = master;
@@ -640,10 +657,13 @@ CEkbHistWnd::CEkbHistWnd(CEdit* master)
 	HWND hwnd = newWindow ("CEkbHistWnd", getTopParentHwnd(master));
 
 	SubclassWindow(hwnd);
+	CFont* font = m_master->GetFont();
+	BHJDEBUG(" face name is %s", getLogFont(font).lfFaceName);
 	ModifyStyleEx(0, WS_EX_TOOLWINDOW);
 	m_listBox = new CHListBox();
 	
 	m_listBox->Create(WS_VSCROLL|WS_HSCROLL|LBS_NOTIFY|LBS_NOINTEGRALHEIGHT, CRect(0, 0, 1, 1), this, 0);
+	m_listBox->SetFont(font);
 	m_listBox->ShowWindow(SW_SHOWNA);
 	m_listBox->UpdateWindow();
 
@@ -731,6 +751,8 @@ CBalloon* CBalloon::getInstance(CWnd *owner)
 
 	if (!owner_map[owner]) {
 		owner_map[owner] = new CBalloon(owner);
+		//owner_map[owner]->SetFont(owner->GetFont());
+		//BHJDEBUG(" balloon face name is %s", getLogFont(owner_map[owner]->GetFont()).lfFaceName);
 	}
 	return owner_map[owner];
 }
@@ -740,6 +762,8 @@ CBalloon::CBalloon(CWnd* owner)
 	HWND hwnd = newWindow ("CBalloon", getTopParentHwnd(owner));
 
 	SubclassWindow(hwnd);
+	LOGFONT lf = getLogFont(owner->GetFont());
+	m_font.CreateFontIndirect(&lf);
 	ModifyStyleEx(0, WS_EX_TOOLWINDOW);
 }
 
@@ -792,6 +816,7 @@ void CBalloon::OnPaint()
 	CRect rect = ::GetClientRect(this);
 	dc.FillSolidRect(&rect, RGB(10, 36, 106));	
 	dc.SetTextColor(RGB(255, 255, 255));
+	dc.SelectObject(&m_font);
 	dc.TextOut(m_border, 0, m_text);
 }
 
@@ -939,8 +964,7 @@ void CHListBox::OnSelchange()
 CSize CBalloon::getTextSize(cstring text)
 {
 	CClientDC dc(this);
-	CFont * f = GetFont();
-	dc.SelectObject(f);
+	dc.SelectObject(&m_font);
 	CSize sz = dc.GetTextExtent(text);
 	return sz;
 }
