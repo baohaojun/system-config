@@ -194,6 +194,7 @@ void CEkbEdit::move_to(int pos)
 
 void CEkbEdit::getTextFromSelectedItem()
 {
+	keyboard_quit();
 	SetWindowText(getSelectedText());
 	move_to(GetLength());
 }
@@ -400,6 +401,7 @@ void CEkbEdit::keyboard_quit()
 void CEkbEdit::exchange_point_and_mark()
 {
 	int point = getPoint();
+	BHJDEBUG(" point is %d", point);
 	int tmp = m_mark;
 	m_mark = point;
 	move_to(tmp);
