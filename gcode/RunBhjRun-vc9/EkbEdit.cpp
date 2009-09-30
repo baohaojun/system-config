@@ -203,7 +203,18 @@ int CEkbEdit::getPoint()
 {
 	long start, end;
 	CRichEditCtrl::GetSel(start, end);
-	return start;
+	CPoint pt = GetCaretPos();
+	CPoint pts = PosFromChar(start);
+	CPoint pte = PosFromChar(end);
+
+	int sdelta = abs(pt.x-pts.x);
+	int edelta = abs(pt.x-pte.x);
+
+	if (sdelta < edelta) {
+		return start;
+	} else {
+		return end;
+	}
 }
 
 void CEkbEdit::SetWindowText(const cstring& str)
@@ -401,7 +412,7 @@ void CEkbEdit::keyboard_quit()
 void CEkbEdit::exchange_point_and_mark()
 {
 	int point = getPoint();
-	BHJDEBUG(" point is %d", point);
+	BHJDEBUG(" point is %d, mark is %d", point, m_mark);
 	int tmp = m_mark;
 	m_mark = point;
 	move_to(tmp);
