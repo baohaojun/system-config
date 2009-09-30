@@ -99,10 +99,13 @@ private:
 	lstring_t getMatchingStrings(const cstring& text);
 	int getPoint(); //emacs term, point:-)
 	void setsel(int to);
+	void SetSel(long start, long end);
+	void shift_move(long start, long end);
 	CPoint PosFromChar(int point);
 	int CharFromPos(CPoint pnt);
 	LONG getTextWidth(cstring str);
 	CSize getTextSize(cstring text);
+	LONG getTextHeight(cstring str);
 	cstring getSubText(int start, int end);
 
 private: //member vars
@@ -124,9 +127,10 @@ protected:
 	afx_msg BOOL OnChange();
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnPaint();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnWindowPosChanging(WINDOWPOS FAR* lpwndpos);
+	afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
+	afx_msg void OnHscroll();
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

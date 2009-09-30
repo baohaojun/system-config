@@ -27,6 +27,8 @@ using namespace boost;
 #include <map>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <vector>
+using std::vector;
 
 using std::map;
 
@@ -63,9 +65,10 @@ BEGIN_MESSAGE_MAP(CEkbEdit, CEdit)
 	ON_CONTROL_REFLECT_EX(EN_CHANGE, OnChange)
 	ON_WM_KILLFOCUS()
 	ON_WM_SETFOCUS()
-	ON_WM_PAINT()
 	ON_WM_CREATE()
 	ON_WM_WINDOWPOSCHANGING()
+	ON_WM_CTLCOLOR_REFLECT()
+	ON_CONTROL_REFLECT(EN_HSCROLL, OnHscroll)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -182,15 +185,15 @@ void CEkbEdit::move_to(int pos)
 		pos = GetLength();
 	}
 
-	SetSel(pos, pos);
-
 	if (m_mark >= 0) {
-		SetSel(m_mark, pos);
-	}
+		int start, end;
+		GetSel(start, end);
 
-	CPoint p = PosFromChar(pos);
-	BHJDEBUG(" move_to x is %d", p.x);
-	SetCaretPos(p);
+
+		SetSel(m_mark, pos); 
+	} else {
+		CEdit::SetSel(pos, pos);
+	}
 }
 
 void CEkbEdit::getTextFromSelectedItem()
@@ -201,13 +204,23 @@ void CEkbEdit::getTextFromSelectedItem()
 
 int CEkbEdit::getPoint()
 {
-	return CharFromPos(GetCaretPos());
+	int start, end;
+	CEdit::GetSel(start, end);
+	if (start == end) {
+		return start;
+	}
+
+	if (start == m_mark) {
+		return end;
+	} else {
+		return start;
+	}
 }
 
 void CEkbEdit::SetWindowText(const cstring& str)
 {
 	CWnd::SetWindowText(str.c_str());
-	m_mark = -1;
+	keyboard_quit();
 	move_to(GetLength());
 }
 
@@ -286,9 +299,138 @@ void CEkbEdit::backwardWord()
 	move_to(0);
 }
 
+void CEkbEdit::SetSel(long start, long end)
+{
+	if (start < 0) {
+		start = 0;
+	}
+
+	if (end < 0) {
+		end = 0;
+	}
+
+	if (start > GetLength()) {
+		start = GetLength();
+	}
+	if (end > GetLength()) {
+		end = GetLength();
+	}
+
+	CEdit::SetSel(start, start);
+	if (start == end) {
+		return;
+	}
+   
+	shift_move(start, end);
+}
+
+void CEkbEdit::shift_move(long start, long end)
+{
+	BHJDEBUG(" move from %d to %d", start, end);
+	int nk = start>end ? start-end : end-start;
+
+	BYTE kb[256];
+	memset(kb, 0, 256);
+	GetKeyboardState(kb);
+	
+	
+	int spec_keys[] = {
+		VK_LCONTROL,
+		VK_LMENU,
+		VK_LSHIFT,
+		VK_LWIN,
+		VK_RCONTROL,
+		VK_RMENU,
+		VK_RSHIFT,
+		VK_RWIN,
+		0,
+	};
+
+	typedef list<INPUT> vinput_t;
+	vinput_t vi;
+	vinput_t vi_cancel;
+
+
+	for (int i=0; spec_keys[i]; i++) {
+		int k = spec_keys[i];
+		if (kb[k] & 0x80) {//this key is down
+			INPUT input;
+
+			memset(&input, 0, sizeof(input));
+			input.type = INPUT_KEYBOARD;
+			input.ki.wScan = ::MapVirtualKey(k, 0);  
+			input.ki.dwFlags = KEYEVENTF_SCANCODE|KEYEVENTF_KEYUP;
+			vi.push_back(input); //get it up
+
+			input.ki.dwFlags = KEYEVENTF_SCANCODE;
+			vi_cancel.push_front(input);
+		}
+	}
+
+	if (kb[VK_NUMLOCK] & 0x1) {//numlock is on
+		BHJDEBUG(" numlock is on");
+		INPUT input;
+		memset(&input, 0, sizeof(input));
+		input.type = INPUT_KEYBOARD;
+		input.ki.wScan = ::MapVirtualKey(VK_NUMLOCK, 0);
+		input.ki.dwFlags = KEYEVENTF_SCANCODE;
+		vi.push_back(input);
+		input.ki.dwFlags = KEYEVENTF_SCANCODE|KEYEVENTF_KEYUP;
+		vi.push_back(input);
+	}
+
+
+	for (i=0; i<nk; i++) {
+
+		INPUT input;
+
+		memset(&input, 0, sizeof(input));
+		input.type = INPUT_KEYBOARD;
+		input.ki.wScan = ::MapVirtualKey( VK_LSHIFT, 0 );  
+		input.ki.dwFlags = KEYEVENTF_SCANCODE;
+		vi.push_back(input);
+
+		memset(&input, 0, sizeof(input));
+		input.type = INPUT_KEYBOARD;
+		input.ki.wVk = start>end ? VK_LEFT : VK_RIGHT;
+		input.ki.dwFlags = 0;
+		vi.push_back(input);
+
+		memset(&input, 0, sizeof(input));
+		input.type = INPUT_KEYBOARD;
+		input.ki.wVk = start>end ? VK_LEFT : VK_RIGHT;
+		input.ki.dwFlags = KEYEVENTF_KEYUP;
+		vi.push_back(input);
+
+		memset(&input, 0, sizeof(input));
+		input.type = INPUT_KEYBOARD;
+		input.ki.wScan = ::MapVirtualKey( VK_LSHIFT, 0 );
+		input.ki.dwFlags = KEYEVENTF_KEYUP|KEYEVENTF_SCANCODE;
+		vi.push_back(input);
+
+	}
+
+
+
+
+	INPUT *send = new INPUT[vi.size() + vi_cancel.size()];
+	vinput_t::iterator vi_i;
+	for (i=0, vi_i = vi.begin(); vi_i != vi.end(); i++, vi_i++) {
+		send[i] = *vi_i;
+	}
+
+	for (vi_i = vi_cancel.begin(); vi_i != vi_cancel.end(); i++, vi_i++) {
+		send[i] = *vi_i;
+	}
+	
+	SendInput(vi.size() + vi_cancel.size(), send, sizeof(INPUT));
+	delete []send;
+}
+
 void CEkbEdit::delete_range(int start, int end)
 {
-	SetSel(start, end);
+	keyboard_quit();
+	CEdit::SetSel(start, end);
 	Clear();
 }
 
@@ -375,7 +517,7 @@ cstring CEkbEdit::getSelectedText()
 void CEkbEdit::escapeEdit()
 {
 	delete_range(0, GetLength());
-	m_mark = -1;
+	keyboard_quit();
 	if (m_simpleWnd) {
 		m_simpleWnd->hide();
 	}
@@ -391,17 +533,8 @@ void CEkbEdit::set_mark_command()
 
 void CEkbEdit::keyboard_quit()
 {
-	m_mark = -1;
 	SetSel(getPoint(), getPoint());
-}
-
-void CEkbEdit::debug_caret()
-{
-	CPoint p = CEdit::GetCaretPos();
-	BHJDEBUG(" CEdit caret x is %d, y is %d", p.x, p.y);
-	p = PosFromChar(GetLength());
-	BHJDEBUG(" PosFromChar caret x is %d, y is %d", p.x, p.y);
-	SetCaretPos(p);
+	m_mark = -1;
 }
 
 void CEkbEdit::exchange_point_and_mark()
@@ -415,16 +548,40 @@ void CEkbEdit::exchange_point_and_mark()
 void CEkbEdit::kill_region()
 {
 	Cut();
+	keyboard_quit();
 }
 
 void CEkbEdit::kill_ring_save()
 {
 	Copy();
+	keyboard_quit();
 }
 
 void CEkbEdit::yank()
 {
 	Paste();
+	keyboard_quit();
+}
+
+bool want_debug_key(int vk)
+{
+	int ndks[] = {
+		VK_LEFT,
+		VK_RIGHT,
+		VK_SHIFT,
+		VK_CONTROL,
+		VK_MENU,
+		VK_LCONTROL, 
+		VK_LSHIFT,
+		VK_LMENU,
+		0
+	};
+	for (int i=0; ndks[i]; i++) {
+		if (vk == ndks[i]) {
+			return false;
+		}
+	}
+	return true;		
 }
 
 BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg) 
@@ -436,11 +593,33 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	if(text.GetLength()>1) second=text.GetAt(1);
 	bool bCut=true;
 
+	// if (pMsg->message == WM_KEYDOWN || pMsg->message == WM_SYSKEYDOWN ||
+	// 	pMsg->message == WM_KEYUP || pMsg->message == WM_SYSKEYUP) {
+	// 	BYTE kb[256];
+	// 	GetKeyboardState(kb);
+	// 	for (int i=0; i<256; i++) {
+	// 		printf("%d ", kb[i]);
+	// 		if (i%16 == 0){
+	// 			printf("\n");
+	// 		}
+	// 	}
+	// 	printf("\n********************************\n");
+	// 	fflush(stdout);
+	// }
+
+	// return CEdit::PreTranslateMessage(pMsg);
+
 	if (pMsg->message != WM_KEYDOWN && pMsg->message != WM_SYSKEYDOWN) {
 		return CEdit::PreTranslateMessage(pMsg);
 	}
 
+	int debug_key = 0;
 #define HandleKey(key, spec, handler) do {							\
+		if (!debug_key && want_debug_key(pMsg->wParam)) {			\
+			BHJDEBUG(" key is %d, spec is %d",						\
+					 pMsg->wParam, getSpecKeyState());				\
+		}															\
+		debug_key = 1;												\
 		if (pMsg->wParam == (key) && getSpecKeyState() == (spec)) {	\
 			handler();												\
 			return true;											\
@@ -465,6 +644,8 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey(VK_UP, eNone, selectPrevItem);
 	HandleKey(VK_RETURN, eCtrl, getTextFromSelectedItem);
 	HandleKey('E', eCtrl, endOfLine);
+	HandleKey(VK_HOME, eNone, beginOfLine);
+	HandleKey(VK_END, eNone, endOfLine);
 	HandleKey('A', eCtrl, beginOfLine);
 	HandleKey('X', eCtrl, exchange_point_and_mark);
 	HandleKey('U', eCtrl, killBeginOfLine);
@@ -475,7 +656,6 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey('B', eAlt, backwardWord);
 	HandleKey('F', eAlt, forwardWord);
 	HandleKey('D', eAlt, forwardKillWord);
-	HandleKey('D', eCtrlAlt, debug_caret);
 	HandleKey('G', eCtrl, keyboard_quit);
 	HandleKey('W', eCtrl, kill_region);
 	HandleKey('W', eAlt, kill_ring_save);
@@ -643,11 +823,12 @@ int CEkbEdit::setHistFile(const CString& strFileName)
 void CEkbEdit::OnKillFocus(CWnd* pNewWnd) 
 {
 	CEdit::OnKillFocus(pNewWnd);
+	Invalidate(false);
 	if ((m_simpleWnd && (CWnd*)m_simpleWnd == pNewWnd) || 
 		(m_listBox && (CWnd*)m_listBox == pNewWnd)) {
 		return;
 	}
-	
+
 	if (m_simpleWnd) {
 		//m_simpleWnd->ShowWindow(SW_HIDE);
 	}
@@ -658,8 +839,8 @@ void CEkbEdit::OnSetFocus(CWnd* pOldWnd)
 {
 	CEdit::OnSetFocus(pOldWnd);
 	//weVeMoved();
-	HideCaret();
-	
+	//HideCaret();
+	//Invalidate(false);
 	if (m_simpleWnd && GetLength()) {
 		m_simpleWnd->ShowWindow(SW_SHOWNA);
 		m_listBox->SetCurSel(0);
@@ -1070,6 +1251,12 @@ LONG CEkbEdit::getTextWidth(cstring str)
 	return sz.cx;
 }
 
+LONG CEkbEdit::getTextHeight(cstring str)
+{
+	CSize sz = getTextSize(str);
+	return sz.cy;
+}
+
 int CEkbEdit::CharFromPos(CPoint p)
 {
 	return CEdit::CharFromPos(p);
@@ -1113,11 +1300,6 @@ cstring CEkbEdit::getSubText(int start, int end)
 	return getText().substr(start, end-start);	
 }
 
-void CEkbEdit::OnPaint() 
-{
-	CPaintDC dc(this); // device context for painting
-}
-
 int CEkbEdit::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
 	if (CEdit::OnCreate(lpCreateStruct) == -1)
@@ -1131,4 +1313,14 @@ void CEkbEdit::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos)
 	CEdit::OnWindowPosChanging(lpwndpos);
 	// TODO: Add your message handler code here
 	
+}
+
+HBRUSH CEkbEdit::CtlColor(CDC* pDC, UINT nCtlColor) 
+{
+	return NULL;
+}
+
+void CEkbEdit::OnHscroll() 
+{
+	BHJDEBUG(" OnHscroll");
 }

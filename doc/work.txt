@@ -1803,3 +1803,8 @@ book: coders at work
 firefox plugin: nosquint
 
 
+****************************************************************
+****************************************************************
+It turns out, simulating the shift key to select text only works correctly when NUMLOCK is off...
+
+
