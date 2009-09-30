@@ -379,5 +379,9 @@
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="RunBhjRun.rc"
+		/>
 	</Globals>
 </VisualStudioProject>

@@ -6,7 +6,7 @@
 #include <list>
 #include <string>
 
-class CString;
+
 namespace bhj {
 	using std::list;
 	using std::string;

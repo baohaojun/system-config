@@ -46,6 +46,7 @@ BOOL CRunBhjRunApp::InitInstance()
 	//  of your final executable, you should remove from the following
 	//  the specific initialization routines you do not need.
 
+	AfxInitRichEdit2();
 	CRunBhjRunDlg dlg;
 	m_pMainWnd = &dlg;
 	int nResponse = dlg.DoModal();

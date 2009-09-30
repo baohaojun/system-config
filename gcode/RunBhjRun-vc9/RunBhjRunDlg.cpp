@@ -44,6 +44,7 @@ BEGIN_MESSAGE_MAP(CRunBhjRunDlg, CDialog)
 	ON_WM_WINDOWPOSCHANGED()
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BROWSE, CRunBhjRunDlg::OnBnClickedBrowse)
+	ON_BN_CLICKED(IDOK, &CRunBhjRunDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -128,4 +129,10 @@ void CRunBhjRunDlg::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos)
 	
 	
 	
+}
+
+void CRunBhjRunDlg::OnBnClickedOk()
+{
+	// TODO: Add your control notification handler code here
+	OnOK();
 }

@@ -35,7 +35,7 @@ CRect GetClientRect(CWnd* wnd);
 CRect GetWindowRect(CWnd* wnd);
 HWND getTopParentHwnd(CWnd* wnd);
 LOGFONT getLogFont(CFont*);
-class CEkbEdit : public CEdit
+class CEkbEdit : public CRichEditCtrl
 {
 // Construction
 public:
@@ -98,11 +98,6 @@ private:
 	void fillListBox(const CString& text);
 	lstring_t getMatchingStrings(const cstring& text);
 	int getPoint(); //emacs term, point:-)
-	void setsel(int to);
-	void SetSel(long start, long end);
-	void shift_move(long start, long end);
-	CPoint PosFromChar(int point);
-	int CharFromPos(CPoint pnt);
 	LONG getTextWidth(cstring str);
 	CSize getTextSize(cstring text);
 	LONG getTextHeight(cstring str);
@@ -145,10 +140,10 @@ class CEkbHistWnd : public CWnd
 {
 // Construction
 public:
-	CEkbHistWnd(CEdit* master);
+	CEkbHistWnd(CRichEditCtrl* master);
 	CHListBox* m_listBox;
 private:
-	CEdit* m_master;
+	CRichEditCtrl* m_master;
 
 
 // Attributes

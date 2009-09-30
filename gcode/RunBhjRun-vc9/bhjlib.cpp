@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "bhjlib.h"
 #include "stdafx.h"
 #include <boost/regex.hpp>
