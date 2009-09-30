@@ -40,6 +40,7 @@ namespace bhj {
 	bool is_abspath(const cstring& path);
 
 	lstring_t getMatchingFiles(const cstring& dir, const cstring& base);
+	void debug_lstring(const lstring_t& ls);
 };
 
 #endif

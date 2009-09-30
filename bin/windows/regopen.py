@@ -19,6 +19,9 @@ if len(sys.argv) != 2:
 
 
 keyToOpen = sys.argv[1]
+while keyToOpen[0] == '\\':
+    keyToOpen = keyToOpen[1:]
+
 if keyToOpen[0:5] == '/proc': #/proc/registry
     keyToOpen = keyToOpen[len('/proc/registry/'):]
     reobj = re.compile('/')

@@ -53,13 +53,16 @@ END_MESSAGE_MAP()
 BOOL CRunBhjRunDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+	m_CmdEdit.SetEventMask(ENM_CHANGE|m_CmdEdit.GetEventMask());
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
+
 	m_CmdEdit.createListBox();
 	m_CmdEdit.setHistFile("RunBhjRun.txt");
+
 	
 	// TODO: Add extra initialization here
 	
@@ -105,13 +108,6 @@ HCURSOR CRunBhjRunDlg::OnQueryDragIcon()
 void CRunBhjRunDlg::OnBnClickedBrowse()
 {
  
-}
-
-void CRunBhjRunDlg::OnOK() 
-{
-	// TODO: Add extra validation here
-	
-	//CDialog::OnOK();
 }
 
 void CRunBhjRunDlg::OnMove(int x, int y) 

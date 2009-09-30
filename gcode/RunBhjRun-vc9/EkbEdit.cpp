@@ -62,7 +62,6 @@ CEkbEdit::~CEkbEdit()
 
 BEGIN_MESSAGE_MAP(CEkbEdit, CRichEditCtrl)
 	//{{AFX_MSG_MAP(CEkbEdit)
-	ON_CONTROL_REFLECT_EX(EN_CHANGE, OnChange)
 	ON_WM_KILLFOCUS()
 	ON_WM_SETFOCUS()
 	ON_WM_CREATE()
@@ -70,6 +69,7 @@ BEGIN_MESSAGE_MAP(CEkbEdit, CRichEditCtrl)
 	ON_WM_CTLCOLOR_REFLECT()
 	ON_CONTROL_REFLECT(EN_HSCROLL, OnHscroll)
 	//}}AFX_MSG_MAP
+	ON_CONTROL_REFLECT_EX(EN_CHANGE, &CEkbEdit::OnEnChange)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -202,7 +202,7 @@ int CEkbEdit::getPoint()
 {
 	long start, end;
 	CRichEditCtrl::GetSel(start, end);
-	return end;
+	return start;
 }
 
 void CEkbEdit::SetWindowText(const cstring& str)
@@ -423,6 +423,18 @@ void CEkbEdit::yank()
 	keyboard_quit();
 }
 
+void CEkbEdit::undo()
+{
+	Undo();
+	keyboard_quit();
+}
+
+void CEkbEdit::redo()
+{
+	Redo();
+	keyboard_quit();
+}
+
 bool want_debug_key(int vk)
 {
 	int ndks[] = {
@@ -525,7 +537,9 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey(VK_SPACE, eCtrl, set_mark_command);
 	HandleKey(VK_BACK, eAlt, backwardKillWord);
 	HandleKey(VK_BACK, eCtrl, backwardKillWord);
-	HandleKeyIf(VK_ESCAPE, eNone, escapeEdit, GetLength());
+	HandleKey(VkKeyScan('/'), eCtrl, undo);
+	HandleKey(VkKeyScan('/'), eAlt, redo);
+	HandleKeyIf(VK_ESCAPE, eNone, escapeEdit, (GetLength()||(m_simpleWnd&&m_simpleWnd->IsWindowVisible())));
 
 
 	if (pMsg->wParam == VK_RETURN && getSpecKeyState() == eNone && getSelectedText().size()) {
@@ -574,7 +588,7 @@ void CEkbEdit::saveHist()
 
 BOOL CEkbEdit::OnChange() 
 {
-
+	BHJDEBUG(" OnChange");
 	if (m_simpleWnd) {
 		if (GetLength()) {
 			m_simpleWnd->show();
@@ -603,7 +617,7 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
 	}
 
 
-	if (bce_dirname(text).c_str()[0] == '.') {
+	if (bce_dirname(text).c_str()[0] == '.' && text.size() < 2) {
 		return ls_match;
 	}
 
@@ -617,6 +631,21 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
 		if (!files.empty()) {
 			ls_match.push_back("****************");
 			ls_match.insert(ls_match.end(), files.begin(), files.end());
+		}
+	}
+
+	if (text.size() >= 2 && 
+		!string_contains(text, "/") && 
+		!string_contains(text, "\\")) {
+		cstring path_env = getenv("PATH");
+		lstring_t paths = split(";", path_env);
+		debug_lstring(paths);
+		for (lstring_t::iterator i = paths.begin(); i != paths.end(); i++) {
+			lstring_t files = getMatchingFiles(bce_dirname(*i + "/"), text);
+			if (!files.empty()) {
+				ls_match.push_back("****************");
+				ls_match.insert(ls_match.end(), files.begin(), files.end());
+			}
 		}
 	}
 						   
@@ -1152,7 +1181,7 @@ int CEkbEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CEkbEdit::OnWindowPosChanging(WINDOWPOS FAR* lpwndpos) 
 {
 	CRichEditCtrl::OnWindowPosChanging(lpwndpos);
-	// TODO: Add your message handler code here
+
 	
 }
 
@@ -1164,4 +1193,17 @@ HBRUSH CEkbEdit::CtlColor(CDC* pDC, UINT nCtlColor)
 void CEkbEdit::OnHscroll() 
 {
 	BHJDEBUG(" OnHscroll");
+}
+
+BOOL CEkbEdit::OnEnChange()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CRichEditCtrl::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
+	BHJDEBUG(" OnEnChange");
+	OnChange();
+	return false;
 }

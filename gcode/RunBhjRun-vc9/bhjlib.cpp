@@ -205,4 +205,10 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 	return ls_match;
 }
 
+void debug_lstring(const lstring_t& ls)
+{
+	for (lstring_t::const_iterator i = ls.begin(); i != ls.end(); i++) {
+		BHJDEBUG(" %s", i->c_str());
+	}
+}
 CLOSE_NAMESPACE(bhj)

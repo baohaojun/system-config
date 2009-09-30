@@ -38,7 +38,6 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
-	virtual void OnOK();
 	afx_msg void OnMove(int x, int y);
 	afx_msg void OnWindowPosChanged(WINDOWPOS FAR* lpwndpos);
 	//}}AFX_MSG

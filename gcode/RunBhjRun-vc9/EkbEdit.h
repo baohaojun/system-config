@@ -102,6 +102,8 @@ private:
 	CSize getTextSize(cstring text);
 	LONG getTextHeight(cstring str);
 	cstring getSubText(int start, int end);
+	void undo();
+	void redo();
 
 private: //member vars
 	CHListBox* m_listBox;
@@ -129,6 +131,8 @@ protected:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg BOOL OnEnChange();
 };
 
 /////////////////////////////////////////////////////////////////////////////
