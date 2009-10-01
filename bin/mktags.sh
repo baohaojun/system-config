@@ -29,4 +29,5 @@ find . \( '-path' '*/CVS' \
     -o -iname '*.java' \
     -o -iname '*.el' \
     -o -iname '*.pl' \
+    -o -iname '*.inl' \
     \) -print |etags -

@@ -129,6 +129,34 @@ void CRunBhjRunDlg::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos)
 
 void CRunBhjRunDlg::OnBnClickedOk()
 {
-	// TODO: Add your control notification handler code here
+	CString text;
+	m_CmdEdit.GetWindowText(text);
+
+	STARTUPINFO si;
+	memset(&si, 0, sizeof(si));
+	si.cb = sizeof(si);
+	si.dwFlags = STARTF_USESHOWWINDOW;
+	si.wShowWindow = SW_HIDE;
+	PROCESS_INFORMATION pi;
+	memset(&pi, 0, sizeof(pi));
+	
+	CString cmdline;
+	cmdline.Format("q:/bin/windows/redirect_vc6/of.exe %s", text);
+	
+	CreateProcess(NULL,
+				  cmdline.GetBuffer(0), 
+				  NULL,
+				  NULL,
+				  false, 
+				  0, 
+				  NULL,
+				  NULL,
+				  &si,
+				  &pi);
+
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+				  
+				  
 	OnOK();
 }
