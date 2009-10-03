@@ -1,5 +1,6 @@
 #!/bin/bash 
 . ~/.bashrc-windows
+set -e
 (echo -n \>; for x in "$@"; do 
     echo -n \`"$x"\'\ 
 done; echo \:) >> ~/shellHelper_vc6.log

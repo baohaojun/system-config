@@ -653,6 +653,13 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
 		cstring path_env = getenv("PATH");
 		lstring_t paths = split(";", path_env);
 		debug_lstring(paths);
+		
+		paths.push_back(get_sh_folder(CSIDL_COMMON_DESKTOPDIRECTORY));
+		paths.push_back(get_sh_folder(CSIDL_DESKTOPDIRECTORY));
+		paths.push_back(get_sh_folder(CSIDL_APPDATA)+"/Microsoft/Internet Explorer/Quick Launch");
+		paths.push_back(get_sh_folder(CSIDL_COMMON_APPDATA)+"/Microsoft/Internet Explorer/Quick Launch");
+		//BHJDEBUG(" we are talking about %s", (get_sh_folder(CSIDL_COMMON_APPDATA)+"Microsoft/Internet Explorer/Quick Launch/").c_str());
+
 		for (lstring_t::iterator i = paths.begin(); i != paths.end(); i++) {
 			lstring_t files = getMatchingFiles(bce_dirname(*i + "/"), text);
 			if (!files.empty()) {
@@ -786,7 +793,7 @@ static ATOM RegisterClass(cstring str)
 	ATOM atom;
 	if (!(atom = RegisterClass (&wndclass)))
 	{
-		FmtMessageBox("Failed to register class for %s", str.c_str());
+		fmt_messagebox("Failed to register class for %s", str.c_str());
 		exit(-1);
 	}
 

@@ -140,23 +140,15 @@ void CRunBhjRunDlg::OnBnClickedOk()
 	PROCESS_INFORMATION pi;
 	memset(&pi, 0, sizeof(pi));
 	
+	text = CString(quote_first_file(text));
+	
 	CString cmdline;
 	cmdline.Format("q:/bin/windows/redirect_vc6/of.exe %s", text);
 	
-	CreateProcess(NULL,
-				  cmdline.GetBuffer(0), 
-				  NULL,
-				  NULL,
-				  false, 
-				  0, 
-				  NULL,
-				  NULL,
-				  &si,
-				  &pi);
-
-	CloseHandle(pi.hProcess);
-	CloseHandle(pi.hThread);
-				  
+	program_runner pr(NULL, cmdline, read_err);
+	if (pr.exit_code()) {
+		fmt_messagebox("Error: `%s' failed: \n\n\t%s", cmdline.GetBuffer(0), pr.get_output().c_str());
+	}
 				  
 	OnOK();
 }

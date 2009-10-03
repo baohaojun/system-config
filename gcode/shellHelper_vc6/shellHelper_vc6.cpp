@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#define ENABLE_BHJDEBUG
 
 char *strdup_quote(char *res, const char* src)
 {
@@ -35,7 +36,7 @@ void chomp(char *line)
 	}
 }
 
-int system(char* cmd)
+int system2(char* cmd)
 {
 	STARTUPINFO si = {0};
 	PROCESS_INFORMATION pi = {0};
@@ -59,11 +60,15 @@ int system(char* cmd)
 	}
 
 	WaitForSingleObject(pi.hProcess, INFINITE);
+
+	DWORD exitCode = 0;
+	if (!GetExitCodeProcess(pi.hProcess, &exitCode)) {
+		printf(" Error: GetExitCodeProcess %d\n", GetLastError());
+		fflush(stdout);
+	}
 	CloseHandle( pi.hProcess );
 	CloseHandle( pi.hThread );
 
-	DWORD exitCode = 0;
-	GetExitCodeProcess(pi.hProcess, &exitCode);
 	return exitCode;
 
 }
@@ -106,6 +111,6 @@ int main(int argc, char* argv[])
 	printf("Will run `%s'\n", new_cmd_str);
 	fflush(stdout);
 
-	return system(new_cmd_str);
+	return system2(new_cmd_str);
 
 }

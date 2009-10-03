@@ -10,7 +10,6 @@ function SetPath()
     paths=(
         /cygdrive/c/Python25/
         /cygdrive/c/Python25/Lib/site-packages/PyQt4
-        /cygdrive/c/Python25/Lib/site-packages/PyQt4/
         /cygdrive/c/PROGRA~1/Java/JDK16~1.0_1/bin #"/cygdrive/c/Program Files/Java/jdk1.6.0_13/bin/"
         ~/bin/windows/lnks
         ~/bin
