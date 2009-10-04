@@ -413,6 +413,13 @@ lstring_t cmdline2args(const cstring& str)
 	return cp.get_args();
 }
 
+cstring get_win_path(const cstring& upath)
+{
+	cstring cmd = format_string("cygpath -alm \"%s\"", upath.c_str());
+	program_runner pr(NULL, cmd, read_out);
+	return regex_replace(pr.get_output(), regex("\r|\n"), "", match_default|format_perl);
+}
+
 cstring quote_first_file(const cstring& str)
 {
 	cmdline_parser cp(str);
@@ -422,13 +429,40 @@ cstring quote_first_file(const cstring& str)
 	for (lstring_t::iterator i=ls.begin(); i!=ls.end(); n_args++, i++) {
 		cstring prefix = cp.get_text_of_args(0, n_args);
 		if (file_exist(prefix)) {
-			return format_string("\"%s\" %s", prefix.c_str(), cp.get_text_of_args(n_args+1, ls.size()).c_str());
+			return format_string("\"%s\" %s", get_win_path(prefix).c_str(), cp.get_text_of_args(n_args+1, ls.size()).c_str());
 		}
 		if (file_exist(prefix+".exe")) {
-			return format_string("\"%s.exe\" %s", prefix.c_str(), cp.get_text_of_args(n_args+1, ls.size()).c_str());
+			return format_string("\"%s.exe\" %s", get_win_path(prefix).c_str(), cp.get_text_of_args(n_args+1, ls.size()).c_str());
 		}
 	}
 	return str;
+}
+
+void cmdline_to_file_and_args(const cstring& str, cstring& file, cstring& args)
+{
+	file="";
+	args="";
+	cmdline_parser cp(str);
+	lstring_t ls = cp.get_args();
+
+	int n_args = 0;
+	for (lstring_t::iterator i=ls.begin(); i!=ls.end(); n_args++, i++) {
+		cstring prefix = cp.get_text_of_args(0, n_args);
+		if (file_exist(prefix)) {
+			file = get_win_path(unquote(prefix));
+			args = cp.get_text_of_args(n_args+1, ls.size());
+			return;
+		}
+		if (file_exist(prefix+".exe")) {
+			file = get_win_path(unquote(prefix)+".exe");
+			args = cp.get_text_of_args(n_args+1, ls.size());
+			return;
+		}
+	}
+	if (ls.size() > 0) {
+		file = ls.front();
+	}
+	args = cp.get_text_of_args(1, ls.size());
 }
 
 cstring format_string(const char* fmt, ...)

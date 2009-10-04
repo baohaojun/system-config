@@ -7,6 +7,7 @@
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
 #include <algorithm>
+typedef unsigned int cygwin_conv_path_t;
 using std::copy;
 using namespace bhj;
 
@@ -78,6 +79,19 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 		cout << (LPCTSTR)strHello << endl;
 	}
 
+	HMODULE h = LoadLibrary("cygwin1.dll");
+	void (*init)() = (void (*)())GetProcAddress(h, "cygwin_dll_init");
+	init();
+
+	typedef int ssize_t;
+	typedef ssize_t (*ccp_func) (cygwin_conv_path_t what, const void * from, void * to, size_t size);
+
+	ccp_func ccp = (ccp_func)GetProcAddress(h, "cygwin_conv_path");
+	char buff[1024] = {0};
+	BHJDEBUG(" proc is %d", ccp(0, ".", buff, 1000));
+	BHJDEBUG(" buff is %s", buff);
+	
+	return 0;
 	using std::string;
    string TestString = "1111122222333334444455555";
    TestString.resize(50);

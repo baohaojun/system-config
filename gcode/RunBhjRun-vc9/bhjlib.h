@@ -78,6 +78,8 @@ namespace bhj {
 	cstring read_program_output(const cstring& exec, const cstring& cmdline, which_output_t which);
 	cstring string_from_buffer(const char* buf, int size);
 	void fmt_messagebox(const char* fmt, ...);
+	cstring get_win_path(const cstring& upath);
+	void cmdline_to_file_and_args(const cstring& str, cstring& file, cstring& args);
 };
 
 

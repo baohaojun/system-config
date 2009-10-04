@@ -127,28 +127,59 @@ void CRunBhjRunDlg::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos)
 	
 }
 
+static const char *
+startError (int err)
+{
+  switch (err)
+    {
+    case 0:
+      return "The operating system is out of memory or resources.";
+    case ERROR_FILE_NOT_FOUND:
+      return "The specified file was not found.";
+    case ERROR_PATH_NOT_FOUND:
+      return "The specified path was not found.";
+    case ERROR_BAD_FORMAT:
+      return "The .exe file is invalid (non-Win32 .exe or error in "
+        ".exe image).";
+    case SE_ERR_ACCESSDENIED:
+      return "The operating system denied access to the specified file.";
+    case SE_ERR_ASSOCINCOMPLETE:
+      return "The file name association is incomplete or invalid.";
+    case SE_ERR_DDEBUSY:
+      return "The DDE transaction could not be completed because "
+        "other DDE transactions were being processed.";
+    case SE_ERR_DDEFAIL:
+      return "The DDE transaction failed.";
+    case SE_ERR_DDETIMEOUT:
+      return "The DDE transaction could not be completed because the "
+        "request timed out.";
+    case SE_ERR_DLLNOTFOUND:
+      return "The specified dynamic-link library was not found.";
+    case SE_ERR_NOASSOC:
+      return "There is no application associated with the given file "
+        "name extension.";
+    case SE_ERR_OOM:
+      return "There was not enough memory to complete the operation.";
+    case SE_ERR_SHARE:
+      return "A sharing violation occurred.";
+    default:
+      return "An unknown error occurred.";
+    }
+}
+
 void CRunBhjRunDlg::OnBnClickedOk()
 {
 	CString text;
 	m_CmdEdit.GetWindowText(text);
 
-	STARTUPINFO si;
-	memset(&si, 0, sizeof(si));
-	si.cb = sizeof(si);
-	si.dwFlags = STARTF_USESHOWWINDOW;
-	si.wShowWindow = SW_HIDE;
-	PROCESS_INFORMATION pi;
-	memset(&pi, 0, sizeof(pi));
-	
-	text = CString(quote_first_file(text));
-	
-	CString cmdline;
-	cmdline.Format("q:/bin/windows/redirect_vc6/of.exe %s", text);
-	
-	program_runner pr(NULL, cmdline, read_err);
-	if (pr.exit_code()) {
-		fmt_messagebox("Error: `%s' failed: \n\n\t%s", cmdline.GetBuffer(0), pr.get_output().c_str());
+	cstring file;
+	cstring args;
+	cmdline_to_file_and_args(text, file, args);
+
+	ShowWindow(SW_HIDE);
+	int ret = (int) ShellExecute(NULL, "open", file, args, NULL, SW_SHOWNORMAL);
+	if (ret <= 32) {
+		fmt_messagebox("Error: can't start %s: %s", file.c_str(), startError(ret));
 	}
-				  
 	OnOK();
 }
