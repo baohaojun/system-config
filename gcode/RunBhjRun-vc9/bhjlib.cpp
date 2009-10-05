@@ -507,7 +507,7 @@ void cmdline_to_file_and_args(const cstring& str, cstring& file, cstring& args)
 	int n_args = 0;
 	for (lstring_t::iterator i=ls.begin(); i!=ls.end(); n_args++, i++) {
 		cstring prefix = cp.get_text_of_args(0, n_args);
-		if (file_exist(prefix)) {
+		if (file_exist(prefix) || file_exist(get_win_path(unquote(prefix)))) {
 			file = get_win_path(unquote(prefix));
 			args = cp.get_text_of_args(n_args+1, ls.size());
 			return;
