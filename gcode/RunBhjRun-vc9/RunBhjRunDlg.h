@@ -45,6 +45,7 @@ protected:
 public:
 	afx_msg void OnBnClickedBrowse();
 	afx_msg void OnBnClickedOk();
+	afx_msg void OnWindowPosChanging(WINDOWPOS* lpwndpos);
 };
 
 //{{AFX_INSERT_LOCATION}}

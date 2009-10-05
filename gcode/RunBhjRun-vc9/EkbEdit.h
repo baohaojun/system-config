@@ -109,6 +109,7 @@ private:
 
 private: //member vars
 	CHListBox* m_listBox;
+	bool m_skip_onchange;
 	CEkbHistWnd* m_simpleWnd;
 	UINT m_id;
 	lstring_t m_histList;
@@ -124,11 +125,12 @@ private: //member vars
 	
 
 	CString m_strHistFile;
-	void saveHist();
+
 	cstring getSelectedText();
 	void SetWindowText(const cstring& str);
-	void SetWindowText(const CString& str);
 	// Generated message map functions
+public:
+	void saveHist();
 protected:
 	//{{AFX_MSG(CEkbEdit)
 	afx_msg BOOL OnChange();

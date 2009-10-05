@@ -47,6 +47,7 @@ static char THIS_FILE[] = __FILE__;
 
 CEkbEdit::CEkbEdit()
 {
+	m_skip_onchange = false;
 	m_listBox = NULL;
 	m_simpleWnd = NULL;
 	m_id = 0;
@@ -140,6 +141,7 @@ HWND getTopParentHwnd(CWnd* wnd)
 
 void CEkbEdit::selectPrevItem(int prev)
 {
+	EnterLeaveDebug(); 
 	if (!m_listBox) {
 		return;
 	}
@@ -162,13 +164,15 @@ void CEkbEdit::selectPrevItem(int prev)
 			i = (i+1) % m_listBox->GetCount();
 		}		
 		int ret = m_listBox->SetCurSel(i);
-		return;
-	}
-	if (prev) {
-		m_listBox->SetCurSel(m_listBox->GetCount()-1);
+
 	} else {
-		m_listBox->SetCurSel(0);
+		if (prev) {
+			m_listBox->SetCurSel(m_listBox->GetCount()-1);
+		} else {
+			m_listBox->SetCurSel(0);
+		}
 	}
+	SetWindowText(getSelectedText());
 }
 
 void CEkbEdit::selectNextItem()
@@ -220,14 +224,15 @@ int CEkbEdit::getPoint()
 
 void CEkbEdit::SetWindowText(const cstring& str)
 {
+	EnterLeaveDebug(); 
+	m_skip_onchange = true;
 	CWnd::SetWindowText(str.c_str());
-	keyboard_quit();
+	m_skip_onchange = false;
+	//keyboard_quit(); can't use this one, since it will call the switch_find_mode(), which in turn calls fillListBox();
+	SetSel(GetLength(), GetLength());
+	m_mark = -1;
+	
 	move_to(GetLength());
-}
-
-void CEkbEdit::SetWindowText(const CString& str)
-{
-	CWnd::SetWindowText((const char*)str);
 }
 
 void CEkbEdit::endOfLine()
@@ -267,7 +272,9 @@ void CEkbEdit::backwardChar()
 
 int CEkbEdit::GetLength()
 {
-	return getText().size();
+	CString text;
+	GetWindowText(text);
+	return text.GetLength();
 }
 
 void CEkbEdit::deleteChar()
@@ -391,6 +398,11 @@ void CEkbEdit::escapeEdit()
 {
 
 	if (m_simpleWnd && m_simpleWnd->IsWindowVisible()) {
+		if (m_listBox->GetCurSel() > 0) {
+			m_listBox->SetCurSel(0);
+			SetWindowText(getSelectedText());
+			return;
+		}
 		m_simpleWnd->hide();
 		if (m_listBox) {
 			m_listBox->SetCurSel(-1);
@@ -469,7 +481,6 @@ void CEkbEdit::switch_find_mode(int mode)
 	} else {
 		m_find_mode = mode;
 	}
-	m_use_history = false;
 	if (m_find_mode == mode_use_locate) {
 		cmdline_parser cp(getText());
 		getLocateMatchingFiles(cp.get_args(), true);
@@ -591,10 +602,8 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 		BHJDEBUG(" in vk_return");
 		SetWindowText(getSelectedText());
 
-		m_histList.push_back(getSelectedText());
-		m_histList.sort();
-		m_histList.unique();
-		saveHist();
+		m_histList.push_front(getSelectedText());
+		m_histList = unique_ls(m_histList);
 		fillListBox("");
 		if (m_simpleWnd) {
 			m_simpleWnd->hide();
@@ -610,6 +619,13 @@ cstring CEkbEdit::getText()
 	CString text;
 	GetWindowText(text);
 	return text;
+	// long start, end;
+	// GetSel(start, end);
+	// if (start > end) {
+	// 	std::swap(start, end);
+	// }
+	
+	// return text.Mid(0, start) + text.Mid(end, GetLength()-end);
 }
 
 void CEkbEdit::saveHist()
@@ -623,8 +639,6 @@ void CEkbEdit::saveHist()
 		return;
 	}
 
-	m_histList.sort();
-	m_histList.unique();
 	for (lstring_t::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
 		fprintf(fp, "%s\n", i->c_str());
 	}
@@ -633,7 +647,8 @@ void CEkbEdit::saveHist()
 
 BOOL CEkbEdit::OnChange() 
 {
-	BHJDEBUG(" OnChange");
+	EnterLeaveDebug(); 
+	BHJDEBUG(" OnChange, m_skip_onchange is %s", m_skip_onchange ? "true" : "false");
 	if (m_simpleWnd) {
 		if (GetLength()) {
 			m_simpleWnd->show();
@@ -642,7 +657,9 @@ BOOL CEkbEdit::OnChange()
 		}
 	}
 
-
+	if (m_skip_onchange) {
+		return false;
+	}
 	fillListBox(getText());
 	return false;
 }
@@ -680,7 +697,6 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
 		(_stat(bce_dirname(text), &stat) == 0) &&
 		(stat.st_mode|_S_IFDIR)) {
 
-		BHJDEBUG("%s is a dir %s", text.c_str(), bce_dirname(text).c_str());
 		lstring_t files = getMatchingFiles(bce_dirname(text), bce_basename(text));
 		list_append(ls_match, files);
 	} else if (m_find_mode == mode_use_path_env && 
@@ -702,15 +718,13 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
 
 void CEkbEdit::fillListBox(const CString& text)
 {
+	EnterLeaveDebug(); 
 	if (!m_listBox) {
 		return;
 	}
 	
 	m_listBox->ResetContent();
 	m_listBox->AddString(text);
-	m_histList.sort();
-	m_histList.unique();
-
 	
 	lstring_t ls_match = getMatchingStrings(text);
 	if (ls_match.size()>1000) {
@@ -754,8 +768,11 @@ int CEkbEdit::setHistFile(const CString& strFileName)
 		m_histList.push_back(str);
 	}
 	fclose(fp);
-	m_histList.sort();
-	m_histList.unique();
+	m_histList = unique_ls(m_histList);
+	if (m_histList.size()) {
+		SetWindowText(m_histList.front());
+		SetSel(0, GetLength());
+	}
 	fillListBox("");
 	return 0;
 }
@@ -868,6 +885,7 @@ CEkbHistWnd::CEkbHistWnd(CRichEditCtrl* master)
 	m_listBox = new CHListBox();
 	
 	m_listBox->Create(WS_VSCROLL|WS_HSCROLL|LBS_NOTIFY|LBS_NOINTEGRALHEIGHT, CRect(0, 0, 1, 1), this, 0);
+	//m_listBox->ModifyStyleEx(0, WS_EX_RIGHT);
 	m_listBox->SetFont(font);
 	m_listBox->ShowWindow(SW_SHOWNA);
 	m_listBox->UpdateWindow();
@@ -1004,11 +1022,18 @@ void CBalloon::OnShowWindow(BOOL bShow, UINT nStatus)
 	CWnd::OnShowWindow(bShow, nStatus);
 }
 
+static void debug_rect(const CRect& rect, const cstring& str)
+{
+	BHJDEBUG(" %s is %d %d %dx%d", str.c_str(), rect.left, rect.top, rect.Width(), rect.Height());
+}
+
 void CBalloon::showBalloon(CRect rect, const cstring& text)
 {
 	m_text = text;
 	LONG cx = getTextWidth(text);
-	rect.InflateRect(m_border + (cx-rect.Width())/2, 0);
+
+	//rect.InflateRect(m_border + (cx-rect.Width())/2, 0);
+	rect.right = rect.left + cx;
 	SetWindowPos(&wndTop, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE); 
 	ShowWindow(SW_SHOWNA);
 	UpdateWindow();
@@ -1019,10 +1044,10 @@ void CBalloon::OnPaint()
 	CPaintDC dc(this); // device context for painting
 
 	CRect rect = ::GetClientRect(this);
-	dc.FillSolidRect(&rect, RGB(10, 36, 106));	
+	dc.FillSolidRect(&rect, GetSysColor(COLOR_HIGHLIGHT));
 	dc.SetTextColor(RGB(255, 255, 255));
 	dc.SelectObject(&m_font);
-	dc.TextOut(m_border, 0, m_text);
+	dc.TextOut(0, 0, m_text);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1132,6 +1157,8 @@ CRect CHListBox::GetItemRect(int idx)
 {
 	CRect rect;
 	CListBox::GetItemRect(idx, &rect);
+	CRect rect2 = ::GetClientRect(this);
+	rect.right = rect.left+rect2.Width();
 	return rect;
 }
 
@@ -1142,8 +1169,10 @@ CRect CHListBox::getSelectedRect()
 	}
 	
 	CRect rect = GetItemRect(GetCurSel());
+
+	debug_rect(rect, "getSelectedRect, rect");
 	CRect lbRect = ::GetWindowRect(this);
-	
+	debug_rect(lbRect, "getSelectedRect, lbRect");
 	rect.OffsetRect(lbRect.left, lbRect.top);
 	return rect;
 }
@@ -1254,7 +1283,6 @@ BOOL CEkbEdit::OnEnChange()
 	// with the ENM_CHANGE flag ORed into the mask.
 
 	// TODO:  Add your control notification handler code here
-	BHJDEBUG(" OnEnChange");
 	OnChange();
 	return false;
 }

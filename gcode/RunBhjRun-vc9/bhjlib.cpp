@@ -77,7 +77,11 @@ cstring::operator const char*() const
 bool fields_match(const cstring& src, const lstring_t& tokens)
 {
 	for (lstring_t::const_iterator i = tokens.begin(); i != tokens.end(); i++) {
-		if (!string_nocase_contains(src, *i)) {
+		if (i->size()>1 && (i->c_str())[0] == '!') {
+			if (string_nocase_contains(src, i->c_str()+1)) {
+				return false;
+			}
+		} else if (!string_nocase_contains(src, *i)) {
 			return false;
 		}
 	}
@@ -194,7 +198,6 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 {
 	lstring_t ls_match;
 	WIN32_FIND_DATA wfd;
-	BHJDEBUG(" patten is %s", (dir+"/*"+base+"*").c_str());
 	HANDLE hfile = FindFirstFile(cstring(dir + "/*" + base + "*"), &wfd);
 	while (hfile != INVALID_HANDLE_VALUE) {
 		if (string_nocase_contains(wfd.cFileName, base)) {

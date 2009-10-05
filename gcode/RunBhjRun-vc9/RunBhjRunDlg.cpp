@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CRunBhjRunDlg, CDialog)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BROWSE, CRunBhjRunDlg::OnBnClickedBrowse)
 	ON_BN_CLICKED(IDOK, &CRunBhjRunDlg::OnBnClickedOk)
+	ON_WM_WINDOWPOSCHANGING()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -180,6 +181,18 @@ void CRunBhjRunDlg::OnBnClickedOk()
 	int ret = (int) ShellExecute(NULL, "open", file, args, NULL, SW_SHOWNORMAL);
 	if (ret <= 32) {
 		fmt_messagebox("Error: can't start %s: %s", file.c_str(), startError(ret));
+	} else {
+		m_CmdEdit.saveHist();
 	}
+	Sleep(1000);
 	OnOK();
+}
+
+void CRunBhjRunDlg::OnWindowPosChanging(WINDOWPOS* lpwndpos)
+{
+	lpwndpos->x=0;
+	lpwndpos->y=0;
+	CDialog::OnWindowPosChanging(lpwndpos);
+
+	// TODO: Add your message handler code here
 }

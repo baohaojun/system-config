@@ -101,7 +101,7 @@ function dict()
 }
 
 function llocate() {
-    locateEmacs.sh "$@"|sed -e 's/^.:/"/; s/$/"/'
+    locateEmacs.sh "$@"|sed -e 's/^/"/; s/$/"/'
 }
 
 function edit_1()
