@@ -8,6 +8,9 @@
 #include <sys/types.h> 
 #include <sys/stat.h>
 #include <algorithm>
+extern "C" char *strcasestr(const char *S, const char *FIND);
+#include <map>
+using std::map;
 
 
 #define OPEN_NAMESPACE(n) namespace n {
@@ -71,11 +74,10 @@ cstring::operator const char*() const
 	return c_str();
 }
 
-bool fields_match(const cstring& src, const cstring& fstr)
+bool fields_match(const cstring& src, const lstring_t& tokens)
 {
-	lstring_t tokens = split("\\s+", fstr);
-	for (lstring_t::iterator i = tokens.begin(); i != tokens.end(); i++) {
-		if (!string_contains(src, *i)) {
+	for (lstring_t::const_iterator i = tokens.begin(); i != tokens.end(); i++) {
+		if (!string_nocase_contains(src, *i)) {
 			return false;
 		}
 	}
@@ -85,6 +87,15 @@ bool fields_match(const cstring& src, const cstring& fstr)
 bool string_contains(const cstring& src, const cstring& tgt)
 {
 	return src.find(tgt) != std::string::npos;
+}
+
+bool string_nocase_contains(const cstring& src, const cstring& tgt)
+{
+	if (strcasestr(src.c_str(), tgt.c_str())) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 cstring string_format(const char* fmt, ...)
@@ -186,16 +197,69 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 	BHJDEBUG(" patten is %s", (dir+"/*"+base+"*").c_str());
 	HANDLE hfile = FindFirstFile(cstring(dir + "/*" + base + "*"), &wfd);
 	while (hfile != INVALID_HANDLE_VALUE) {
-		if (dir.at(dir.size() - 1) == '/') {
-			ls_match.push_back(dir + wfd.cFileName);
-		} else {
-			ls_match.push_back(dir + "/" + wfd.cFileName);
+		if (string_nocase_contains(wfd.cFileName, base)) {
+			if (dir.at(dir.size() - 1) == '/') {
+				ls_match.push_back(dir + wfd.cFileName);
+			} else {
+				ls_match.push_back(dir + "/" + wfd.cFileName);
+			}
 		}
 		if (FindNextFile(hfile, &wfd) == 0) {
 			break;
 		}
 	}
 	return ls_match;
+}
+
+lstring_t getPathEnvMatchingFiles(const lstring_t& args)
+{
+	lstring_t res;
+	cstring path_env = getenv("PATH");
+	lstring_t paths = split(";", path_env);
+
+	paths.push_back(get_sh_folder(CSIDL_COMMON_DESKTOPDIRECTORY));
+	paths.push_back(get_sh_folder(CSIDL_DESKTOPDIRECTORY));
+	paths.push_back(get_sh_folder(CSIDL_APPDATA)+"/Microsoft/Internet Explorer/Quick Launch");
+	paths.push_back(get_sh_folder(CSIDL_COMMON_APPDATA)+"/Microsoft/Internet Explorer/Quick Launch");
+
+	paths = unique_ls(paths);
+	debug_lstring(paths);
+	//BHJDEBUG(" we are talking about %s", (get_sh_folder(CSIDL_COMMON_APPDATA)+"Microsoft/Internet Explorer/Quick Launch/").c_str());
+
+	for (lstring_t::iterator i = paths.begin(); i != paths.end(); i++) {
+		lstring_t files = getMatchingFiles(bce_dirname(*i + "/"), args.front());
+		for (lstring_t::iterator i=files.begin(); i!=files.end(); i++) {
+			if (fields_match(*i, args)) {
+				res.push_back(*i);
+			}
+		}
+	}
+	return res;
+}
+
+lstring_t getLocateMatchingFiles(const lstring_t& args_const, bool rerun_locate)
+{
+	lstring_t res;
+	if (args_const.empty()) {
+		return res;
+	}
+	lstring_t args = args_const;
+	static cstring saved_str;
+	static lstring_t saved_ls;
+	if (rerun_locate && saved_str != args.front()) {
+		saved_str = args.front();
+		program_runner pr(NULL, format_string("bash run-locate.sh %s", args.front().c_str()), read_out);
+		cstring output = pr.get_output();
+		
+		saved_ls = split("\r\n|\n", output);
+	}
+	args.pop_front();
+	for (lstring_t::iterator i=saved_ls.begin(); i!=saved_ls.end(); i++) {
+		if (fields_match(*i, args)) {
+			res.push_back(*i);
+		}
+	}
+	return res;
 }
 
 void debug_lstring(const lstring_t& ls)
@@ -418,6 +482,19 @@ cstring get_win_path(const cstring& upath)
 	cstring cmd = format_string("cygpath -alm \"%s\"", upath.c_str());
 	program_runner pr(NULL, cmd, read_out);
 	return regex_replace(pr.get_output(), regex("\r|\n"), "", match_default|format_perl);
+}
+
+lstring_t unique_ls(const lstring_t& ls)
+{
+	lstring_t res;
+	map<cstring, int> smap;
+	for (lstring_t::const_iterator i=ls.begin(); i!=ls.end(); i++) {
+		if (!smap[*i]) {
+			smap[*i] = 1;
+			res.push_back(*i);
+		}
+	}
+	return res;
 }
 
 cstring quote_first_file(const cstring& str)

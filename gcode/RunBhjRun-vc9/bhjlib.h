@@ -43,7 +43,8 @@ namespace bhj {
 
 	list<cstring> split(const cstring& regex, const cstring& src);
 	cstring remove_pattern(const cstring& src, const cstring& pat);
-	bool fields_match(const cstring& src, const cstring& fstr);
+	bool fields_match(const cstring& src, const lstring_t& fields);
+	bool string_nocase_contains(const cstring& src, const cstring& tgt);
 
 	bool string_contains(const cstring& src, const cstring& tgt);
 	cstring string_format(const char* fmt, ...);
@@ -55,6 +56,8 @@ namespace bhj {
 	bool is_abspath(const cstring& path);
 
 	lstring_t getMatchingFiles(const cstring& dir, const cstring& base);
+	lstring_t getPathEnvMatchingFiles(const lstring_t& args);
+	lstring_t getLocateMatchingFiles(const lstring_t& args, bool rerun_locate = false);
 	void debug_lstring(const lstring_t& ls);
 	cstring get_sh_folder(int csid);
 	cstring quote_first_file(const cstring& str);
@@ -80,6 +83,15 @@ namespace bhj {
 	void fmt_messagebox(const char* fmt, ...);
 	cstring get_win_path(const cstring& upath);
 	void cmdline_to_file_and_args(const cstring& str, cstring& file, cstring& args);
+	lstring_t unique_ls(const lstring_t& ls);
+	template <class T> void list_append(list<T>& ls, const list<T>& lt)
+	{
+		if (!lt.empty()) {
+			ls.insert(ls.end(), lt.begin(), lt.end());
+		}
+	}
+
+
 };
 
 

@@ -94,6 +94,8 @@ private:
 	void delete_range(int start, int end);
 	void yank();
 	void kill_ring_save();
+	void switch_find_mode(int mode=-1);
+	void toggle_history();
 	cstring getText();
 	void fillListBox(const CString& text);
 	lstring_t getMatchingStrings(const cstring& text);
@@ -111,6 +113,14 @@ private: //member vars
 	UINT m_id;
 	lstring_t m_histList;
 	int m_mark; //emacs term, mark;
+	bool m_use_history;
+	enum {
+		//mode_use_find_first_file,
+		mode_use_path_env,
+		mode_use_locate,
+		mode_last_not_used,
+	};
+	int m_find_mode;
 	
 
 	CString m_strHistFile;

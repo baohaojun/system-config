@@ -52,7 +52,8 @@ CEkbEdit::CEkbEdit()
 	m_id = 0;
 	m_strHistFile = "";
 	m_mark = -1;
-
+	m_find_mode = mode_use_path_env;
+	m_use_history = true;
 }
 
 CEkbEdit::~CEkbEdit()
@@ -194,8 +195,8 @@ void CEkbEdit::move_to(int pos)
 
 void CEkbEdit::getTextFromSelectedItem()
 {
-	keyboard_quit();
 	SetWindowText(getSelectedText());
+	keyboard_quit();
 	move_to(GetLength());
 }
 
@@ -388,14 +389,18 @@ cstring CEkbEdit::getSelectedText()
 
 void CEkbEdit::escapeEdit()
 {
+
+	if (m_simpleWnd && m_simpleWnd->IsWindowVisible()) {
+		m_simpleWnd->hide();
+		if (m_listBox) {
+			m_listBox->SetCurSel(-1);
+		}
+		return;
+	}
+
 	delete_range(0, GetLength());
 	keyboard_quit();
-	if (m_simpleWnd) {
-		m_simpleWnd->hide();
-	}
-	if (m_listBox) {
-		m_listBox->SetCurSel(-1);
-	}
+
 }
 
 void CEkbEdit::set_mark_command()
@@ -406,6 +411,7 @@ void CEkbEdit::set_mark_command()
 void CEkbEdit::keyboard_quit()
 {
 	SetSel(getPoint(), getPoint());
+	switch_find_mode(mode_use_path_env);
 	m_mark = -1;
 }
 
@@ -448,6 +454,30 @@ void CEkbEdit::redo()
 	keyboard_quit();
 }
 
+void CEkbEdit::toggle_history()
+{
+	m_use_history = !m_use_history;
+	if (m_simpleWnd && m_simpleWnd->IsWindowVisible()) {
+		fillListBox(getText());
+	}
+}
+
+void CEkbEdit::switch_find_mode(int mode)
+{
+	if (mode < 0) {
+		m_find_mode = (m_find_mode+1)%mode_last_not_used;
+	} else {
+		m_find_mode = mode;
+	}
+	m_use_history = false;
+	if (m_find_mode == mode_use_locate) {
+		cmdline_parser cp(getText());
+		getLocateMatchingFiles(cp.get_args(), true);
+	}
+	if (m_simpleWnd && m_simpleWnd->IsWindowVisible()) {
+		fillListBox(getText());
+	}
+}
 bool want_debug_key(int vk)
 {
 	int ndks[] = {
@@ -552,6 +582,8 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey(VK_BACK, eCtrl, backwardKillWord);
 	HandleKey(VkKeyScan('/'), eCtrl, undo);
 	HandleKey(VkKeyScan('/'), eAlt, redo);
+	HandleKey('H', eAlt, toggle_history);
+	HandleKey('M', eAlt, switch_find_mode);
 	HandleKeyIf(VK_ESCAPE, eNone, escapeEdit, (GetLength()||(m_simpleWnd&&m_simpleWnd->IsWindowVisible())));
 
 
@@ -623,12 +655,21 @@ bool stringContains(const CString& src, const CString& tgt)
 lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
 {
 	lstring_t ls_match;
-	for (lstring_t::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
-		if (fields_match(*i, text)) {
-			ls_match.push_back(*i);
+
+	cmdline_parser cp(text);
+	lstring_t args = cp.get_args();
+
+	if (m_use_history) {
+		for (lstring_t::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
+			if (fields_match(*i, args)) {
+				ls_match.push_back(*i);
+			}
 		}
 	}
 
+	if (args.empty()) {
+		return ls_match;
+	}
 
 	if (bce_dirname(text).c_str()[0] == '.' && text.size() < 2) {
 		return ls_match;
@@ -641,36 +682,22 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
 
 		BHJDEBUG("%s is a dir %s", text.c_str(), bce_dirname(text).c_str());
 		lstring_t files = getMatchingFiles(bce_dirname(text), bce_basename(text));
-		if (!files.empty()) {
-			ls_match.push_back("****************");
-			ls_match.insert(ls_match.end(), files.begin(), files.end());
-		}
+		list_append(ls_match, files);
+	} else if (m_find_mode == mode_use_path_env && 
+		args.front().size() >= 2 && 
+		!string_contains(args.front(), "/") && 
+		!string_contains(args.front(), "\\")) {
+		
+		lstring_t files = getPathEnvMatchingFiles(args);
+		list_append(ls_match, files);
+	} else if (m_find_mode == mode_use_locate &&
+			   args.front().size() >= 2) {
+		
+		lstring_t files = getLocateMatchingFiles(args);
+		list_append(ls_match, files);
 	}
 
-	if (text.size() >= 2 && 
-		!string_contains(text, "/") && 
-		!string_contains(text, "\\")) {
-		cstring path_env = getenv("PATH");
-		lstring_t paths = split(";", path_env);
-		debug_lstring(paths);
-		
-		paths.push_back(get_sh_folder(CSIDL_COMMON_DESKTOPDIRECTORY));
-		paths.push_back(get_sh_folder(CSIDL_DESKTOPDIRECTORY));
-		paths.push_back(get_sh_folder(CSIDL_APPDATA)+"/Microsoft/Internet Explorer/Quick Launch");
-		paths.push_back(get_sh_folder(CSIDL_COMMON_APPDATA)+"/Microsoft/Internet Explorer/Quick Launch");
-		//BHJDEBUG(" we are talking about %s", (get_sh_folder(CSIDL_COMMON_APPDATA)+"Microsoft/Internet Explorer/Quick Launch/").c_str());
-
-		for (lstring_t::iterator i = paths.begin(); i != paths.end(); i++) {
-			lstring_t files = getMatchingFiles(bce_dirname(*i + "/"), text);
-			if (!files.empty()) {
-				ls_match.push_back("****************");
-				ls_match.insert(ls_match.end(), files.begin(), files.end());
-			}
-		}
-	}
-						   
-		
-	return ls_match;
+	return unique_ls(ls_match);
 }
 
 void CEkbEdit::fillListBox(const CString& text)
@@ -686,6 +713,10 @@ void CEkbEdit::fillListBox(const CString& text)
 
 	
 	lstring_t ls_match = getMatchingStrings(text);
+	if (ls_match.size()>1000) {
+		ls_match.resize(1000);
+		m_listBox->AddString("...");
+	}
 	for (lstring_t::iterator i = ls_match.begin(); i != ls_match.end(); i++) {
 		m_listBox->AddString(CString(cstring(*i)));
 	}

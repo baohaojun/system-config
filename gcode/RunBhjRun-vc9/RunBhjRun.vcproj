@@ -330,6 +330,14 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\strcasestr.c"
+				>
+			</File>
+			<File
+				RelativePath=".\strncasecmp.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -357,6 +365,10 @@
 			</File>
 			<File
 				RelativePath="StdAfx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\str-two-way.h"
 				>
 			</File>
 		</Filter>
