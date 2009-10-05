@@ -60,7 +60,6 @@ namespace bhj {
 	lstring_t getLocateMatchingFiles(const lstring_t& args, bool rerun_locate = false);
 	void debug_lstring(const lstring_t& ls);
 	cstring get_sh_folder(int csid);
-	cstring quote_first_file(const cstring& str);
 	bool file_exist(const cstring& str);
 	lstring_t cmdline2args(const cstring& str);
 	cstring format_string(const char* fmt, ...);

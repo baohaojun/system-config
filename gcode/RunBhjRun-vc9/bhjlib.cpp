@@ -497,24 +497,6 @@ lstring_t unique_ls(const lstring_t& ls)
 	return res;
 }
 
-cstring quote_first_file(const cstring& str)
-{
-	cmdline_parser cp(str);
-	lstring_t ls = cp.get_args();
-
-	int n_args = 0;
-	for (lstring_t::iterator i=ls.begin(); i!=ls.end(); n_args++, i++) {
-		cstring prefix = cp.get_text_of_args(0, n_args);
-		if (file_exist(prefix)) {
-			return format_string("\"%s\" %s", get_win_path(prefix).c_str(), cp.get_text_of_args(n_args+1, ls.size()).c_str());
-		}
-		if (file_exist(prefix+".exe")) {
-			return format_string("\"%s.exe\" %s", get_win_path(prefix).c_str(), cp.get_text_of_args(n_args+1, ls.size()).c_str());
-		}
-	}
-	return str;
-}
-
 void cmdline_to_file_and_args(const cstring& str, cstring& file, cstring& args)
 {
 	file="";
