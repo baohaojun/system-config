@@ -214,6 +214,34 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 	return ls_match;
 }
 
+cstring getWhichFile(const cstring& file)
+{
+	if (string_contains(file, "\\") || string_contains(file, "/")) {
+		return file;
+	}
+
+	cstring path_env = getenv("PATH");
+	lstring_t paths = split(";", path_env);
+	
+	paths.push_back(get_sh_folder(CSIDL_COMMON_DESKTOPDIRECTORY));
+	paths.push_back(get_sh_folder(CSIDL_DESKTOPDIRECTORY));
+	paths.push_back(get_sh_folder(CSIDL_APPDATA)+"/Microsoft/Internet Explorer/Quick Launch");
+	paths.push_back(get_sh_folder(CSIDL_COMMON_APPDATA)+"/Microsoft/Internet Explorer/Quick Launch");
+
+	paths = unique_ls(paths);
+	for (lstring_t::iterator i = paths.begin(); i != paths.end(); i++) {
+		WIN32_FIND_DATA wfd;
+		HANDLE hfile = FindFirstFile(string_format("%s/%s", i->c_str(), file.c_str()), &wfd);
+		if (hfile == INVALID_HANDLE_VALUE) {
+			hfile = FindFirstFile(string_format("%s/%s.exe", i->c_str(), file.c_str()), &wfd);
+		}
+		if (hfile != INVALID_HANDLE_VALUE && !strncasecmp(wfd.cFileName, file, file.size())) {
+			return get_win_path(bce_dirname(*i+"/") + "/" + wfd.cFileName);
+		}	
+	}
+	return file;
+}
+
 lstring_t getPathEnvMatchingFiles(const lstring_t& args)
 {
 	lstring_t res;

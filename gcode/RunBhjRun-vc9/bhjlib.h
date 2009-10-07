@@ -57,6 +57,7 @@ namespace bhj {
 
 	lstring_t getMatchingFiles(const cstring& dir, const cstring& base);
 	lstring_t getPathEnvMatchingFiles(const lstring_t& args);
+	cstring getWhichFile(const cstring& file);
 	lstring_t getLocateMatchingFiles(const lstring_t& args, bool rerun_locate = false);
 	void debug_lstring(const lstring_t& ls);
 	cstring get_sh_folder(int csid);

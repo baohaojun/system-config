@@ -20,6 +20,7 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 #include "bhjlib.h"
+extern "C" int strncasecmp(const char *s1, const char *s2, size_t n);
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
