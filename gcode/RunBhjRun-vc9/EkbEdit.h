@@ -96,6 +96,8 @@ private:
 	void kill_ring_save();
 	void switch_find_mode(int mode=-1);
 	void toggle_history();
+	void scroll_up();
+	void scroll_down();
 	cstring getText();
 	void fillListBox(const CString& text);
 	lstring_t getMatchingStrings(const cstring& text);
@@ -106,6 +108,10 @@ private:
 	cstring getSubText(int start, int end);
 	void undo();
 	void redo();
+	void end_of_lb();
+	void begin_of_lb();
+	void scroll_left();
+	void scroll_right();
 
 private: //member vars
 	CHListBox* m_listBox;
@@ -117,6 +123,7 @@ private: //member vars
 	bool m_use_history;
 	enum {
 		//mode_use_find_first_file,
+		mode_use_nothing,
 		mode_use_path_env,
 		mode_use_locate,
 		mode_last_not_used,

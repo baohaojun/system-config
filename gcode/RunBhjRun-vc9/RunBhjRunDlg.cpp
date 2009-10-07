@@ -181,6 +181,8 @@ void CRunBhjRunDlg::OnBnClickedOk()
 	int ret = (int) ShellExecute(NULL, "open", getWhichFile(file), args, NULL, SW_SHOWNORMAL);
 	if (ret <= 32) {
 		fmt_messagebox("Error: can't start %s: %s", file.c_str(), startError(ret));
+		OnOK();
+		return;
 	} else {
 		m_CmdEdit.saveHist();
 	}

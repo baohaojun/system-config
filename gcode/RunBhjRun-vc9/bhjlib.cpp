@@ -198,9 +198,9 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 {
 	lstring_t ls_match;
 	WIN32_FIND_DATA wfd;
-	HANDLE hfile = FindFirstFile(cstring(dir + "/*" + base + "*"), &wfd);
+	HANDLE hfile = FindFirstFile(cstring(dir + "/" + base + "*"), &wfd);
 	while (hfile != INVALID_HANDLE_VALUE) {
-		if (string_nocase_contains(wfd.cFileName, base)) {
+		if (1 /*string_nocase_contains(wfd.cFileName, base)*/) {
 			if (dir.at(dir.size() - 1) == '/') {
 				ls_match.push_back(dir + wfd.cFileName);
 			} else {
@@ -245,6 +245,13 @@ cstring getWhichFile(const cstring& file)
 lstring_t getPathEnvMatchingFiles(const lstring_t& args)
 {
 	lstring_t res;
+	if (args.size() < 1) {
+		return res;
+	}
+	cstring front = args.front();
+	lstring_t args2 = args;
+	args2.pop_front();
+
 	cstring path_env = getenv("PATH");
 	lstring_t paths = split(";", path_env);
 
@@ -258,9 +265,9 @@ lstring_t getPathEnvMatchingFiles(const lstring_t& args)
 	//BHJDEBUG(" we are talking about %s", (get_sh_folder(CSIDL_COMMON_APPDATA)+"Microsoft/Internet Explorer/Quick Launch/").c_str());
 
 	for (lstring_t::iterator i = paths.begin(); i != paths.end(); i++) {
-		lstring_t files = getMatchingFiles(bce_dirname(*i + "/"), args.front());
+		lstring_t files = getMatchingFiles(bce_dirname(*i + "/"), front);
 		for (lstring_t::iterator i=files.begin(); i!=files.end(); i++) {
-			if (fields_match(*i, args)) {
+			if (fields_match(*i, args2)) {
 				res.push_back(*i);
 			}
 		}

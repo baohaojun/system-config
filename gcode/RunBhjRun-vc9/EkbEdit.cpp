@@ -53,7 +53,7 @@ CEkbEdit::CEkbEdit()
 	m_id = 0;
 	m_strHistFile = "";
 	m_mark = -1;
-	m_find_mode = mode_use_path_env;
+	m_find_mode = mode_use_nothing;
 	m_use_history = true;
 }
 
@@ -489,6 +489,57 @@ void CEkbEdit::switch_find_mode(int mode)
 		fillListBox(getText());
 	}
 }
+
+void CEkbEdit::scroll_up()
+{
+	if (m_listBox) {
+		m_listBox->SendMessage(WM_VSCROLL, SB_PAGEDOWN, 0);
+		int top = m_listBox->GetTopIndex();
+		m_listBox->SetCurSel(top);
+	}
+}
+
+void CEkbEdit::scroll_down()
+{
+	if (m_listBox) {
+		m_listBox->SendMessage(WM_VSCROLL, SB_PAGEUP, 0);
+		int top = m_listBox->GetTopIndex();
+		m_listBox->SetCurSel(top);
+	}				  
+}
+
+void CEkbEdit::end_of_lb()
+{
+	if (m_listBox) {
+		m_listBox->SendMessage(WM_VSCROLL, SB_BOTTOM, 0);
+		m_listBox->SendMessage(WM_HSCROLL, SB_RIGHT, 0);
+		int count = m_listBox->GetCount();
+		m_listBox->SetCurSel(count-1);
+	}
+}
+
+void CEkbEdit::scroll_left()
+{
+	if (m_listBox) {
+		m_listBox->SendMessage(WM_HSCROLL, SB_LINERIGHT, 0);
+	}
+}
+
+void CEkbEdit::scroll_right()
+{
+	if (m_listBox) {
+		m_listBox->SendMessage(WM_HSCROLL, SB_LINELEFT, 0);
+	}
+}
+
+void CEkbEdit::begin_of_lb()
+{
+	if (m_listBox) {
+		m_listBox->SendMessage(WM_VSCROLL, SB_TOP, 0);
+		m_listBox->SetCurSel(0);
+	}
+}
+
 bool want_debug_key(int vk)
 {
 	int ndks[] = {
@@ -540,14 +591,14 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	}
 
 	int debug_key = 0;
-#define HandleKey(key, spec, handler) do {							\
+#define HandleKey(key, spec, handler, ...) do {							\
 		if (!debug_key && want_debug_key(pMsg->wParam)) {			\
 			BHJDEBUG(" key is %d, spec is %d",						\
 					 pMsg->wParam, getSpecKeyState());				\
 		}															\
 		debug_key = 1;												\
 		if (pMsg->wParam == (key) && getSpecKeyState() == (spec)) {	\
-			handler();												\
+			handler(##__VA_ARGS__);												\
 			return true;											\
 		}															\
 	} while (0)
@@ -593,8 +644,17 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 	HandleKey(VK_BACK, eCtrl, backwardKillWord);
 	HandleKey(VkKeyScan('/'), eCtrl, undo);
 	HandleKey(VkKeyScan('/'), eAlt, redo);
+	HandleKey(VkKeyScan('.'), eAltShift, end_of_lb);
+	HandleKey(VkKeyScan(','), eAltShift, begin_of_lb);
+	HandleKey(VkKeyScan(','), eAlt, scroll_right);
+	HandleKey(VkKeyScan('.'), eAlt, scroll_left);
 	HandleKey('H', eAlt, toggle_history);
-	HandleKey('M', eAlt, switch_find_mode);
+	HandleKey('P', eAlt, switch_find_mode, mode_use_path_env);
+	HandleKey('L', eAlt, switch_find_mode, mode_use_locate);
+	HandleKey('N', eAlt, switch_find_mode, mode_use_nothing);
+	HandleKey('V', eCtrl, scroll_up);
+	HandleKey('V', eAlt, scroll_down);
+
 	HandleKeyIf(VK_ESCAPE, eNone, escapeEdit, (GetLength()||(m_simpleWnd&&m_simpleWnd->IsWindowVisible())));
 
 
@@ -649,6 +709,14 @@ BOOL CEkbEdit::OnChange()
 {
 	EnterLeaveDebug(); 
 	BHJDEBUG(" OnChange, m_skip_onchange is %s", m_skip_onchange ? "true" : "false");
+	if (m_skip_onchange) {
+		return false;
+	}
+
+	if (m_find_mode == mode_use_locate) {
+		m_find_mode = mode_use_nothing;
+	}
+
 	if (m_simpleWnd) {
 		if (GetLength()) {
 			m_simpleWnd->show();
@@ -657,9 +725,7 @@ BOOL CEkbEdit::OnChange()
 		}
 	}
 
-	if (m_skip_onchange) {
-		return false;
-	}
+
 	fillListBox(getText());
 	return false;
 }
@@ -925,7 +991,7 @@ void CEkbHistWnd::calcWindowRect(CRect& rect)
 	int left = rect.left;
 
 	rect.OffsetRect(0, top-tmpRect.top);
-	rect.bottom += rect.Height()*9;
+	rect.bottom += rect.Height()*20;
 
 	RECT waRect;
 	SystemParametersInfo(SPI_GETWORKAREA, 0, &waRect, 0);
