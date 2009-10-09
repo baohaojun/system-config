@@ -118,6 +118,13 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 		strHello.LoadString(IDS_HELLO);
 		cout << (LPCTSTR)strHello << endl;
 	}
+	if (is_dir_cyg("/")) {
+		BHJDEBUG(" / is a dir");
+	}
+	if (is_dir_cyg("//192.168.33.33")) {
+		BHJDEBUG(" //dood is a dir");
+	}
+	return 0;
 
 	WIN32_FIND_DATA wfd;
    	HANDLE hfile = FindFirstFile("\\192.168.1.11\*", &wfd);
@@ -135,6 +142,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 		return 0;
 	}
 	return 0;
+
    // 	HMODULE h = LoadLibrary("cygwin1.dll");
    // 	void (*init)() = (void (*)())GetProcAddress(h, "cygwin_dll_init");
    // 	init();

@@ -23,7 +23,12 @@ namespace bhj {
 		cstring(const char* c_str) : string(c_str) {};
 		operator CString() const;
 		operator wstring() const;
-		operator const char*() const;
+		string::reference operator [](string::size_type i) {
+			return string::operator [](i);
+		}
+		string::const_reference operator [](string::size_type i) const {
+			return string::operator [](i);
+		}
 	};
 	
 	typedef list<cstring> lstring_t;
@@ -66,22 +71,25 @@ namespace bhj {
 	void debug_lstring(const lstring_t& ls);
 	cstring get_sh_folder(int csid);
 	bool file_exist(const cstring& str);
+
 	lstring_t cmdline2args(const cstring& str);
 	cstring format_string(const char* fmt, ...);
 	typedef enum which_output_t {
+		read_none,
 		read_out,
 		read_err,
 	};
 
 	class program_runner {
 	public:
-		program_runner(const char* exec, const cstring& cmdline, which_output_t which);
+		program_runner(const char* exec, const cstring& cmdline, which_output_t which = read_none, int timeout = -1);
 		DWORD exit_code();
 		cstring get_output();
-	private:
+	private: 
 		DWORD m_exit_code;
 		cstring m_str_output;
 	};
+	
 	cstring read_program_output(const cstring& exec, const cstring& cmdline, which_output_t which);
 	cstring string_from_buffer(const char* buf, int size);
 	void fmt_messagebox(const char* fmt, ...);
@@ -94,7 +102,10 @@ namespace bhj {
 			ls.insert(ls.end(), lt.begin(), lt.end());
 		}
 	}
+	bool is_dir_cyg(const cstring& path);
 
+	cstring unquote_str(const cstring& str);
+	cstring quote_str(const cstring& str);
 
 };
 

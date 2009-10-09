@@ -69,11 +69,6 @@ cstring::operator wstring() const
 	return wstr;	
 }
 
-cstring::operator const char*() const
-{
-	return c_str();
-}
-
 bool fields_match(const cstring& src, const lstring_t& tokens)
 {
 	for (lstring_t::const_iterator i = tokens.begin(); i != tokens.end(); i++) {
@@ -128,27 +123,6 @@ cstring dirname(const cstring& path)
 	return p;
 }
 
-cstring bce_dirname(const cstring& path)
-{
-	cstring p = regex_replace(path, regex("\\\\+"), "/", match_default|format_perl);
-
-	if (!string_contains(p, "/")) {
-		if (p.size()==2 && p.at(1)==':') {
-			return p + "/";
-		}
-		return ".";
-	}
-	p = regex_replace(p, regex("/+"), "/", match_default|format_perl);
-
-	int n = p.find_last_of("/");
-	p.erase(n);
-	if (p.size()==2 && p.at(1)==':') {
-		return p + "/";
-	}
-	return p;
-
-}
-
 cstring basename(const cstring& path)
 {
 	cstring p = regex_replace(path, regex("\\\\+"), "/", match_default|format_perl);
@@ -163,6 +137,33 @@ cstring basename(const cstring& path)
 	int n = p.find_last_of("/");
 	p.erase(0, n);
 	return p.empty() ? "/" : p;
+
+}
+
+cstring bce_dirname(const cstring& path)
+{
+	int n_not_slash = path.find_first_not_of("\\/");
+	cstring left = string_left_of(path, n_not_slash);
+	cstring right = string_right_of(path, n_not_slash);
+
+	left = regex_replace(left, regex("\\\\"), "/", match_default|format_perl);
+	right = regex_replace(right, regex("\\\\+"), "/", match_default|format_perl);
+	right = regex_replace(right, regex("/+"), "/", match_default|format_perl);
+	cstring p = left + right;
+
+	if (!string_contains(p, "/")) {
+		if (p.size()==2 && p.at(1)==':') {
+			return p + "/";
+		}
+		return ".";
+	}
+
+	int n = p.find_last_of("/");
+	p.erase(n);
+	if (p.size()==2 && p.at(1)==':') {
+		return p + "/";
+	}
+	return p;
 
 }
 
@@ -192,34 +193,80 @@ bool is_abspath(const cstring& path)
 	if (path.size() < 2) {
 		return false;
 	}
-	return (path.c_str()[1] == ':');
+	if (path.c_str()[1] == ':') {
+		return true;
+	}
+
+	cstring p = regex_replace(path, regex("\\\\"), "/", match_default|format_perl);
+	if (p[0] == '/') {
+		if (p[1] != '/') {
+			return true;
+		} else if (p.find_last_of("/") == 1) {//the last / is the 2nd, it has no / after the beginning //!
+			return false;
+		} else {
+			return true;
+		}
+	}
+	return false;
 }
 
 lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 {
+	cstring cmd = quote_str(dir);
+	cstring pat = string_format("%s*", base.c_str());
+	pat = quote_str(pat);
+
+	cstring find = getWhichFile("find.exe");
+	find = quote_str(find);
+	
+	cmd = string_format("%s %s -maxdepth 1 -iname %s -print0", find.c_str(), cmd.c_str(), pat.c_str());
+	program_runner pr(NULL, cmd, read_out);
+	cstring output = pr.get_output();
+	fwrite(output.c_str(), output.size(), 1, stdout);
+	fflush(stdout);
+
 	lstring_t ls_match;
-	WIN32_FIND_DATA wfd;
-	HANDLE hfile = FindFirstFile(cstring(dir + "/" + base + "*"), &wfd);
-	while (hfile != INVALID_HANDLE_VALUE) {
-		if (1 /*string_nocase_contains(wfd.cFileName, base)*/) {
-			if (dir.at(dir.size() - 1) == '/') {
-				ls_match.push_back(dir + wfd.cFileName);
-			} else {
-				ls_match.push_back(dir + "/" + wfd.cFileName);
+	for (int i=0, j=0; i<output.size(); i++) {
+		if (output[i] == 0) {
+			cstring str = output.substr(j, i-j);
+			j = i+1;
+
+			if (str.find_first_of(" \x09\x0a\x0b\x0c\x0d")) {
+				str = cstring("\"") + str + "\"";
 			}
-			if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-				ls_match.back() += "/";
-			}
-			if (ls_match.back().find_first_of(" \x09\x0a\x0b\x0c\x0d") != cstring::npos) {
-				ls_match.back() = cstring("\"")+ls_match.back()+"\"";
-			}
-		}
-		if (FindNextFile(hfile, &wfd) == 0) {
-			break;
+			ls_match.push_back(str);
 		}
 	}
 	return ls_match;
+
+
+	
 }
+// lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
+// {
+// 	lstring_t ls_match;
+// 	WIN32_FIND_DATA wfd;
+// 	HANDLE hfile = FindFirstFile(cstring(dir + "/" + base + "*"), &wfd);
+// 	while (hfile != INVALID_HANDLE_VALUE) {
+// 		if (1 /*string_nocase_contains(wfd.cFileName, base)*/) {
+// 			if (dir.at(dir.size() - 1) == '/') {
+// 				ls_match.push_back(dir + wfd.cFileName);
+// 			} else {
+// 				ls_match.push_back(dir + "/" + wfd.cFileName);
+// 			}
+// 			if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+// 				ls_match.back() += "/";
+// 			}
+// 			if (ls_match.back().find_first_of(" \x09\x0a\x0b\x0c\x0d") != cstring::npos) {
+// 				ls_match.back() = cstring("\"")+ls_match.back()+"\"";
+// 			}
+// 		}
+// 		if (FindNextFile(hfile, &wfd) == 0) {
+// 			break;
+// 		}
+// 	}
+// 	return ls_match;
+// }
 
 cstring getWhichFile(const cstring& file)
 {
@@ -238,11 +285,11 @@ cstring getWhichFile(const cstring& file)
 	paths = unique_ls(paths);
 	for (lstring_t::iterator i = paths.begin(); i != paths.end(); i++) {
 		WIN32_FIND_DATA wfd;
-		HANDLE hfile = FindFirstFile(string_format("%s/%s", i->c_str(), file.c_str()), &wfd);
+		HANDLE hfile = FindFirstFile(string_format("%s/%s", i->c_str(), file.c_str()).c_str(), &wfd);
 		if (hfile == INVALID_HANDLE_VALUE) {
-			hfile = FindFirstFile(string_format("%s/%s.exe", i->c_str(), file.c_str()), &wfd);
+			hfile = FindFirstFile(string_format("%s/%s.exe", i->c_str(), file.c_str()).c_str(), &wfd);
 		}
-		if (hfile != INVALID_HANDLE_VALUE && !strncasecmp(wfd.cFileName, file, file.size())) {
+		if (hfile != INVALID_HANDLE_VALUE && !strncasecmp(wfd.cFileName, file.c_str(), file.size())) {
 			return get_win_path(bce_dirname(*i+"/") + "/" + wfd.cFileName);
 		}	
 	}
@@ -329,7 +376,21 @@ cstring get_sh_folder(int csid)
 	}
 }
 
-cstring unquote(const cstring& str)
+cstring quote_str(const cstring& str)
+{
+	cstring res = "\"";
+	res.reserve(str.size());
+	for (cstring::const_iterator i=str.begin(); i!=str.end(); i++) {
+		if (*i == '"' || *i == '\\') {
+			res.push_back('\\');
+		}
+		res.push_back(*i);
+	}
+	res.push_back('"');
+	return res;
+}
+
+cstring unquote_str(const cstring& str)
 {
 	cstring res;
 	enum {
@@ -364,12 +425,6 @@ cstring unquote(const cstring& str)
 		}
 	}
 	return res;		
-}
-
-bool file_exist(const cstring& str)
-{
-	struct _stat stat;
-	return _stat(unquote(str), &stat) == 0;
 }
 
 static bool isquote(char c)
@@ -549,7 +604,7 @@ lstring_t cmdline2args(const cstring& str)
 
 cstring get_win_path(const cstring& upath)
 {
-	cstring cmd = format_string("cygpath -alm \"%s\"", upath.c_str());
+	cstring cmd = format_string("cygpath -alw \"%s\"", upath.c_str());
 	program_runner pr(NULL, cmd, read_out);
 	return regex_replace(pr.get_output(), regex("\r|\n"), "", match_default|format_perl);
 }
@@ -577,13 +632,13 @@ void cmdline_to_file_and_args(const cstring& str, cstring& file, cstring& args)
 	int n_args = 0;
 	for (lstring_t::iterator i=ls.begin(); i!=ls.end(); n_args++, i++) {
 		cstring prefix = cp.get_text_of_args(0, n_args);
-		if (file_exist(prefix) || file_exist(get_win_path(unquote(prefix)))) {
-			file = get_win_path(unquote(prefix));
+		if (file_exist(prefix) || file_exist(get_win_path(unquote_str(prefix)))) {
+			file = get_win_path(unquote_str(prefix));
 			args = cp.get_text_of_args(n_args+1, ls.size());
 			return;
 		}
 		if (file_exist(prefix+".exe")) {
-			file = get_win_path(unquote(prefix)+".exe");
+			file = get_win_path(unquote_str(prefix)+".exe");
 			args = cp.get_text_of_args(n_args+1, ls.size());
 			return;
 		}
@@ -604,13 +659,12 @@ cstring format_string(const char* fmt, ...)
 	return res;
 }
 
-program_runner::program_runner(const char* exec, const cstring& cmdline, which_output_t which)
+program_runner::program_runner(const char* exec, const cstring& cmdline, which_output_t which, int timeout)
 {
 	HANDLE                pipe_read, pipe_write;
     SECURITY_ATTRIBUTES   sa;
     STARTUPINFO           startup;
     PROCESS_INFORMATION   pinfo;
-    char                  program_path[ MAX_PATH ];
     int                   ret;
 
     sa.nLength = sizeof(sa);
@@ -618,13 +672,16 @@ program_runner::program_runner(const char* exec, const cstring& cmdline, which_o
     sa.bInheritHandle = TRUE;
 
     /* create pipe, and ensure its read handle isn't inheritable */
-    ret = CreatePipe( &pipe_read, &pipe_write, &sa, 0 );
-    if (!ret) {
-        fprintf(stderr, "CreatePipe() failure, error %ld\n", GetLastError() );
-        return;
-    }
+	if (which != read_none) {
+		ret = CreatePipe( &pipe_read, &pipe_write, &sa, 0 );
+		if (!ret) {
+			fprintf(stderr, "CreatePipe() failure, error %ld\n", GetLastError() );
+			return;
+		}
+		SetHandleInformation( pipe_read, HANDLE_FLAG_INHERIT, 0 );
+	}
 
-    SetHandleInformation( pipe_read, HANDLE_FLAG_INHERIT, 0 );
+
 
     ZeroMemory( &startup, sizeof(startup) );
     startup.cb = sizeof(startup);
@@ -632,17 +689,20 @@ program_runner::program_runner(const char* exec, const cstring& cmdline, which_o
 	if (which == read_out) {
 		startup.hStdOutput = pipe_write;
 		startup.hStdError  = GetStdHandle( STD_ERROR_HANDLE );
-	} else {
+	} else if (which == read_err) {
 		startup.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 		startup.hStdError = pipe_write;
+	} else {
+		startup.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+		startup.hStdError = GetStdHandle(STD_ERROR_HANDLE);
 	}
+		
     startup.dwFlags    = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
 	startup.wShowWindow = SW_HIDE;
 
     ZeroMemory( &pinfo, sizeof(pinfo) );
 
     /* get path of current program */
-    GetModuleFileName( NULL, program_path, sizeof(program_path) );
 	CString cl_buf = CString(cmdline);
 
     ret = CreateProcess(
@@ -659,7 +719,7 @@ program_runner::program_runner(const char* exec, const cstring& cmdline, which_o
 		&startup,                 /* startup info, i.e. std handles */
 		&pinfo );
 
-    CloseHandle( pipe_write );
+
 
     if (!ret) {
         fprintf(stderr, "CreateProcess failure, error %ld\n", GetLastError() );
@@ -667,26 +727,53 @@ program_runner::program_runner(const char* exec, const cstring& cmdline, which_o
         return;
     }
 
-	char  temp[4096];
-	DWORD  count;
+	if (which != read_none) {
+		CloseHandle( pipe_write );
+		char  temp[4096];
+		DWORD  count;
 
-	while (1) {
-		ret = ReadFile( pipe_read, temp, 4096, &count, NULL );
-		if (ret && count == 0) {
-			break;
-		} 
-		if (ret) {
-			m_str_output += string_from_buffer(temp, count);
-		} else {
-			BHJDEBUG(" Error: read from pipe %d", GetLastError());
-			break;
+		if (timeout > 0) {
+			DWORD res = WaitForSingleObject(pipe_read, timeout);
+			if (res == WAIT_TIMEOUT) {
+				m_exit_code = -1;
+				BHJDEBUG(" wait for pipe timeout!");
+				goto bail;
+			}
+		}
+
+
+		while (1) {
+			ret = ReadFile( pipe_read, temp, 4096, &count, NULL );
+			if (ret && count == 0) {
+				break;
+			} 
+			if (ret) {
+				m_str_output += string_from_buffer(temp, count);
+			} else {
+				BHJDEBUG(" Error: read from pipe %d", GetLastError());
+				break;
+			}
 		}
 	}
-	CloseHandle( pipe_read );
 
+
+	if (timeout > 0) {
+		DWORD res = WaitForSingleObject(pinfo.hProcess, timeout);
+		if (res == WAIT_TIMEOUT) {
+			m_exit_code = -1;
+			BHJDEBUG(" wait for process timeout!");
+			goto bail;
+		}
+	} else {
+		WaitForSingleObject(pinfo.hProcess, INFINITE);
+	}
 	WaitForSingleObject(pinfo.hProcess, INFINITE);
 	if (!GetExitCodeProcess(pinfo.hProcess, &m_exit_code)) {
 		BHJDEBUG(" Error: GetExitCodeProcess");
+	}
+bail:
+	if (which != read_none) {
+		CloseHandle( pipe_read );
 	}
     CloseHandle( pinfo.hProcess );
     CloseHandle( pinfo.hThread );
@@ -747,5 +834,25 @@ cstring string_left_of(const cstring& str, int point)
 
 	return str.substr(0, point);
 }
+
+bool is_dir_cyg(const cstring& path)
+{
+	
+	cstring cmd = string_format("test -d %s", quote_str(path).c_str());
+	cmd = string_format("bash -c %s", quote_str(cmd).c_str());
+
+	program_runner pr(NULL, cmd, read_none, 500);
+	return pr.exit_code() == 0;
+}
+
+bool file_exist(const cstring& path)
+{
+	
+	cstring cmd = string_format("test -e %s", quote_str(path).c_str());
+	cmd = string_format("bash -c %s", quote_str(cmd).c_str());
+	program_runner pr(NULL, cmd, read_none, 500);
+	return pr.exit_code() == 0;
+}
+
 
 CLOSE_NAMESPACE(bhj)

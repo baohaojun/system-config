@@ -141,7 +141,6 @@ HWND getTopParentHwnd(CWnd* wnd)
 
 void CEkbEdit::selectPrevItem(int prev)
 {
-	EnterLeaveDebug(); 
 	if (!m_listBox) {
 		return;
 	}
@@ -224,7 +223,6 @@ int CEkbEdit::getPoint()
 
 void CEkbEdit::SetWindowText(const cstring& str)
 {
-	EnterLeaveDebug(); 
 	m_skip_onchange = true;
 	CWnd::SetWindowText(str.c_str());
 	m_skip_onchange = false;
@@ -430,7 +428,6 @@ void CEkbEdit::keyboard_quit()
 void CEkbEdit::exchange_point_and_mark()
 {
 	int point = getPoint();
-	BHJDEBUG(" point is %d, mark is %d", point, m_mark);
 	int tmp = m_mark;
 	m_mark = point;
 	move_to(tmp);
@@ -590,7 +587,7 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 		return CRichEditCtrl::PreTranslateMessage(pMsg);
 	}
 
-	int debug_key = 0;
+	int debug_key = 1;
 #define HandleKey(key, spec, handler, ...) do {							\
 		if (!debug_key && want_debug_key(pMsg->wParam)) {			\
 			BHJDEBUG(" key is %d, spec is %d",						\
@@ -659,7 +656,6 @@ BOOL CEkbEdit::PreTranslateMessage(MSG* pMsg)
 
 
 	if (pMsg->wParam == VK_RETURN && getSpecKeyState() == eNone && getSelectedText().size()) {
-		BHJDEBUG(" in vk_return");
 		SetWindowText(getSelectedText());
 
 		m_histList.push_front(getSelectedText());
@@ -707,8 +703,6 @@ void CEkbEdit::saveHist()
 
 BOOL CEkbEdit::OnChange() 
 {
-	EnterLeaveDebug(); 
-	BHJDEBUG(" OnChange, m_skip_onchange is %s", m_skip_onchange ? "true" : "false");
 	if (m_skip_onchange) {
 		return false;
 	}
@@ -763,10 +757,9 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text, int point)
 	}
 
 	struct _stat stat;
-	if (is_abspath(args.back()) && 
-		(_stat(bce_dirname(args.back()), &stat) == 0) &&
-		(stat.st_mode|_S_IFDIR)) {
+	if (is_abspath(args.back()) && is_dir_cyg(bce_dirname(args.back()))) {
 
+		BHJDEBUG(" %s is abs", args.back().c_str());
 		lstring_t files = getMatchingFiles(bce_dirname(args.back()), bce_basename(args.back()));
 		for (lstring_t::iterator i=files.begin(); i!=files.end(); i++) {
 			ls_match.insert(ls_match.end(), cp.get_prefix(args.size() - 1) + *i + right_str);
@@ -791,7 +784,6 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text, int point)
 
 void CEkbEdit::fillListBox(const CString& text)
 {
-	EnterLeaveDebug(); 
 	if (!m_listBox) {
 		return;
 	}
@@ -925,7 +917,7 @@ static ATOM RegisterClass(cstring str)
 static HWND newWindow(cstring wc_name, HWND h_owner=NULL)
 {
 	RegisterClass(wc_name);
-	return CreateWindow (wc_name,                  // window class name
+	return CreateWindow (wc_name.c_str(),                  // window class name
 						 "",
 						 WS_POPUP|WS_CLIPCHILDREN,
 						 CW_USEDEFAULT,              // initial x position
@@ -953,7 +945,6 @@ CEkbHistWnd::CEkbHistWnd(CRichEditCtrl* master)
 
 	SubclassWindow(hwnd);
 	CFont* font = m_master->GetParentOwner()->GetFont();
- 	BHJDEBUG(" face name is %s", getLogFont(font).lfFaceName);
 	ModifyStyleEx(0, WS_EX_TOOLWINDOW);
 	m_listBox = new CHListBox();
 	
@@ -1005,7 +996,6 @@ void CEkbHistWnd::calcWindowRect(CRect& rect)
 
 
 	if (rect.bottom > waRect.bottom) {
-		BHJDEBUG(" hello world");
 		int bottom = tmpRect.top - 2;
 		int height = rect.Height();
 		rect.bottom = bottom;
@@ -1048,7 +1038,6 @@ CBalloon* CBalloon::getInstance(CWnd *owner)
 	if (!owner_map[owner]) {
 		owner_map[owner] = new CBalloon(owner);
 		//owner_map[owner]->SetFont(owner->GetFont());
-		//BHJDEBUG(" balloon face name is %s", getLogFont(owner_map[owner]->GetFont()).lfFaceName);
 	}
 	return owner_map[owner];
 }
@@ -1345,7 +1334,6 @@ HBRUSH CEkbEdit::CtlColor(CDC* pDC, UINT nCtlColor)
 
 void CEkbEdit::OnHscroll() 
 {
-	BHJDEBUG(" OnHscroll");
 }
 
 BOOL CEkbEdit::OnEnChange()
