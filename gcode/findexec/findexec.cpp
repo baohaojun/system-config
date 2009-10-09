@@ -28,7 +28,8 @@
 #include <vector>
 #include <string>
 #include <psapi.h>
-#include <bhjdebug.h>
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
 using namespace std;
 
 #include "findexec.h"
@@ -241,6 +242,8 @@ bool IsWindowSwitchable(HWND wnd)
     DWORD ex_style = GetWindowLong(wnd, GWL_EXSTYLE);
     if (ex_style&WS_EX_TOOLWINDOW)
         return false;
+	if (ex_style & WS_EX_APPWINDOW)
+		return true;
     if (style&WS_SYSMENU) {
         HWND wnd_owner = GetWindow(wnd, GW_OWNER);
         HWND wnd_shell = GetShellWindow();

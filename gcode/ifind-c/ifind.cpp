@@ -13,7 +13,8 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include "bhjdebug.h"
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
 #include <psapi.h>
 
 using namespace std;
@@ -105,7 +106,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 void looking_for_foreground()
 {
     HWND hwnd=GetForegroundWindow();
-    debug_window(hwnd);
     wchar_t buff[1024];
     GetClassNameW(hwnd, buff, 1024);
     _wcslwr_s(buff, wcslen(buff)+1);
@@ -423,7 +423,6 @@ BOOL CALLBACK EnumWindowsProc(HWND wnd, LPARAM lParam)
         return TRUE;
 	
     if (!IsWindowVisible(wnd) || !IsWindowSwitchable(wnd)) {
-        debug_window(wnd);
         return true;
     } 
 
@@ -507,6 +506,8 @@ bool IsWindowSwitchable(HWND wnd)
     DWORD ex_style = GetWindowLong(wnd, GWL_EXSTYLE);
     if (ex_style&WS_EX_TOOLWINDOW)
         return false;
+	if (ex_style & WS_EX_APPWINDOW)
+		return true;
     if (style&WS_SYSMENU) {
         HWND wnd_owner = GetWindow(wnd, GW_OWNER);
         HWND wnd_shell = GetShellWindow();
@@ -565,10 +566,6 @@ void found_action()
 
     idx_selected %= v_winfo_backup.size();
     HWND wnd=v_winfo_backup[idx_selected].wnd;
-    debug_window(wnd);
-
-
-
     restore_window(wnd);
 
     if (minimize_others) {
