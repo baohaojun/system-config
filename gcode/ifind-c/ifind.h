@@ -10,7 +10,8 @@
 
 /*types*/
 typedef struct {
-    HWND wnd;
+    HWND hwnd;
+	vector<HWND> sub_hwnd;
     HICON icon;
     wstring title_class;
     bool iconized;
@@ -40,22 +41,22 @@ extern unsigned int window_number;
 void update_found_list();
 LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM);
 bool window_match(wstring&);
-BOOL CALLBACK EnumWindowsProc(HWND wnd, LPARAM lParam);
-bool IsChildWnd(HWND wnd);
-void draw_window(HWND wnd);
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
+bool IsChildWnd(HWND hwnd);
+void draw_window(HWND hwnd);
 void rect_offset(RECT &rect, int x, int y);
 int get_item_rect(RECT &rect, bool icon, unsigned int idx);
 void get_looking_for_rect(RECT &rect);
 void found_action(void);
-void draw_mask_on_selected(HWND wnd, HDC hdc=NULL);
-void change_selected(HWND wnd, int idx);
-bool IsWindowSwitchable(HWND wnd);
+void draw_mask_on_selected(HWND hwnd, HDC hdc=NULL);
+void change_selected(HWND hwnd, int idx);
+bool IsWindowSwitchable(HWND hwnd);
 void handle_wm_lbuttondown(WPARAM wParam, LPARAM lParam);
 void handle_wm_lbuttondblclk(WPARAM wParam, LPARAM lParam);
 int get_shown_item_idx_from_xy(LPARAM l);
 void parse_command_line();
 void hide_or_quit();
-void restore_window(HWND wnd);
+void restore_window(HWND hwnd);
 int number_of_visible_items();
 void initialize_metrics();
 void handle_mouse_wheel(WPARAM wParam, LPARAM lParam);

@@ -178,7 +178,7 @@ void CRunBhjRunDlg::OnBnClickedOk()
 	cmdline_to_file_and_args(text, file, args);
 
 	ShowWindow(SW_HIDE);
-	int ret = (int) ShellExecute(NULL, "open", getWhichFile(file), args, NULL, SW_SHOWNORMAL);
+	int ret = (int) ShellExecute(NULL, NULL, getWhichFile(file), args, NULL, SW_SHOWNORMAL);
 	if (ret <= 32) {
 		fmt_messagebox("Error: can't start %s: %s", file.c_str(), startError(ret));
 		OnOK();

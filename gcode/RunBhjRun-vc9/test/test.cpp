@@ -60,6 +60,46 @@ void print_sh_folders()
 	}
 }
 
+static const char *
+startError (int err)
+{
+  switch (err)
+    {
+    case 0:
+      return "The operating system is out of memory or resources.";
+    case ERROR_FILE_NOT_FOUND:
+      return "The specified file was not found.";
+    case ERROR_PATH_NOT_FOUND:
+      return "The specified path was not found.";
+    case ERROR_BAD_FORMAT:
+      return "The .exe file is invalid (non-Win32 .exe or error in "
+        ".exe image).";
+    case SE_ERR_ACCESSDENIED:
+      return "The operating system denied access to the specified file.";
+    case SE_ERR_ASSOCINCOMPLETE:
+      return "The file name association is incomplete or invalid.";
+    case SE_ERR_DDEBUSY:
+      return "The DDE transaction could not be completed because "
+        "other DDE transactions were being processed.";
+    case SE_ERR_DDEFAIL:
+      return "The DDE transaction failed.";
+    case SE_ERR_DDETIMEOUT:
+      return "The DDE transaction could not be completed because the "
+        "request timed out.";
+    case SE_ERR_DLLNOTFOUND:
+      return "The specified dynamic-link library was not found.";
+    case SE_ERR_NOASSOC:
+      return "There is no application associated with the given file "
+        "name extension.";
+    case SE_ERR_OOM:
+      return "There was not enough memory to complete the operation.";
+    case SE_ERR_SHARE:
+      return "A sharing violation occurred.";
+    default:
+      return "An unknown error occurred.";
+    }
+}
+
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
 	int nRetCode = 0;
@@ -79,80 +119,86 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 		cout << (LPCTSTR)strHello << endl;
 	}
 
-	HMODULE h = LoadLibrary("cygwin1.dll");
-	void (*init)() = (void (*)())GetProcAddress(h, "cygwin_dll_init");
-	init();
-
-	typedef int ssize_t;
-	typedef ssize_t (*ccp_func) (cygwin_conv_path_t what, const void * from, void * to, size_t size);
-
-	ccp_func ccp = (ccp_func)GetProcAddress(h, "cygwin_conv_path");
-	char buff[1024] = {0};
-	BHJDEBUG(" proc is %d", ccp(0, ".", buff, 1000));
-	BHJDEBUG(" buff is %s", buff);
-	
+	int ret = (int)ShellExecute(NULL, NULL, "C:/WINDOWS/system32/desk.cpl", NULL, NULL, SW_SHOWNORMAL);	
+	if (ret <= 32) {
+		fmt_messagebox("Error: can't start %s: %s", "C:/windows/system32/desk.cpl", startError(ret));
+		return 0;
+	}
 	return 0;
-	using std::string;
-   string TestString = "1111122222333334444455555";
-   TestString.resize(50);
+   // 	HMODULE h = LoadLibrary("cygwin1.dll");
+   // 	void (*init)() = (void (*)())GetProcAddress(h, "cygwin_dll_init");
+   // 	init();
+
+   // 	typedef int ssize_t;
+   // 	typedef ssize_t (*ccp_func) (cygwin_conv_path_t what, const void * from, void * to, size_t size);
+
+   // 	ccp_func ccp = (ccp_func)GetProcAddress(h, "cygwin_conv_path");
+   // 	char buff[1024] = {0};
+   // 	BHJDEBUG(" proc is %d", ccp(0, ".", buff, 1000));
+   // 	BHJDEBUG(" buff is %s", buff);
+	
+   // 	return 0;
+   // 	using std::string;
+   // string TestString = "1111122222333334444455555";
+   // TestString.resize(50);
    
-   const char *dood = "hello world";
-   copy(dood, dood+strlen(dood), TestString.begin());
-   cout << "[" << TestString << "]" << endl
-        << "size: " << TestString.size() << endl
-        << endl;
+   // const char *dood = "hello world";
+   // copy(dood, dood+strlen(dood), TestString.begin());
+   // cout << "[" << TestString << "]" << endl
+   //      << "size: " << TestString.size() << endl
+   //      << endl;
 
-   TestString.resize(5);
-   cout << "[" << TestString << "]" << endl
-        << "size: " << TestString.size() << endl
-        << endl;
+   // TestString.resize(5);
+   // cout << "[" << TestString << "]" << endl
+   //      << "size: " << TestString.size() << endl
+   //      << endl;
 
-   TestString.resize(10);
-   cout << "[" << TestString << "]" << endl
-        << "size: " << TestString.size() << endl
-        << endl;
+   // TestString.resize(10);
+   // cout << "[" << TestString << "]" << endl
+   //      << "size: " << TestString.size() << endl
+   //      << endl;
 
-   TestString.resize(15,'6');
-   cout << "[" << TestString << "]" << endl
-        << "size: " << TestString.size() << endl;
+   // TestString.resize(15,'6');
+   // cout << "[" << TestString << "]" << endl
+   //      << "size: " << TestString.size() << endl;
 
-	return 0;
-	cstring str = GetCommandLine();
-	BHJDEBUG(" cmdline is `%s'", str.c_str());
+   // 	return 0;
+   // 	cstring str = GetCommandLine();
+   // 	BHJDEBUG(" cmdline is `%s'", str.c_str());
 
-	printf("argv ");
-	for (int i=0; i<argc; i++) {
-		printf("`%s' ", argv[i]);
-	}
-	printf("\n");
+   // 	printf("argv ");
+   // 	for (int i=0; i<argc; i++) {
+   // 		printf("`%s' ", argv[i]);
+   // 	}
+   // 	printf("\n");
 
-	printf("args ");
-	lstring_t ls = cmdline2args(str);
+   // 	printf("args ");
+   // 	lstring_t ls = cmdline2args(str);
 
-	cmdline_parser cp(str);
-	for (lstring_t::iterator i = ls.begin(); i != ls.end(); i++) {
-		printf("`%s' ", i->c_str());
-	}
-	printf("\n");
+   // 	cmdline_parser cp(str);
+   // 	for (lstring_t::iterator i = ls.begin(); i != ls.end(); i++) {
+   // 		printf("`%s' ", i->c_str());
+   // 	}
+   // 	printf("\n");
 
-	for (int i=0; i<ls.size(); i++) {
-		printf("text `%s'\n", cp.get_text_of_args(i).c_str());
-	}
+   // 	for (int i=0; i<ls.size(); i++) {
+   // 		printf("text `%s'\n", cp.get_text_of_args(i).c_str());
+   // 	}
 
-	return 0;
-	print_sh_folders();
-	return 0;
-	BHJDEBUG(" dirname is %s", bce_dirname("q:\\").c_str());
-	BHJDEBUG(" basename is `%s'", basename("/").c_str());
+   // 	return 0;
+   // 	print_sh_folders();
+   // 	return 0;
+   // 	BHJDEBUG(" dirname is %s", bce_dirname("q:\\").c_str());
+   // 	BHJDEBUG(" basename is `%s'", basename("/").c_str());
 	
-	WIN32_FIND_DATA wfd;
-	HANDLE hfile = FindFirstFile("c:/***", &wfd);
-	while (hfile != INVALID_HANDLE_VALUE) {
-		BHJDEBUG(" found a file %s", wfd.cFileName);
-		if (FindNextFile(hfile, &wfd) == 0) {
-			break;
-		}
-	}
+   // 	WIN32_FIND_DATA wfd;
+   // 	HANDLE hfile = FindFirstFile("c:/***", &wfd);
+   // 	while (hfile != INVALID_HANDLE_VALUE) {
+   // 		BHJDEBUG(" found a file %s", wfd.cFileName);
+   // 		if (FindNextFile(hfile, &wfd) == 0) {
+   // 			break;
+   // 		}
+   // 	}
 
-	return nRetCode;
+   // 	return nRetCode;
 }

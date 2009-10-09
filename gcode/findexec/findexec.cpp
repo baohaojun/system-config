@@ -111,6 +111,7 @@ void found_action(vector<HWND>& v_win)
     }
 
     HWND hTarW=v_win[i];
+	hTarW = GetLastActivePopup(hTarW);
     //debug_window(hTarW);
     if (IsChildWnd(hTarW))
         return;

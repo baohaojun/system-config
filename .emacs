@@ -709,8 +709,6 @@ div.tl{
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
 
-(server-start)
-
 (defun bhj-mimedown ()
   (interactive)
   (if (not mark-active)
@@ -836,5 +834,7 @@ div.tl{
   (w3m-goto-url "file:///cygdrive/d/knowledge/jdk-6u10-docs/1.html"))
 (keydef "C-M-j" 'bhj-jdk-help)
 (keydef (w3m "C-c e") (lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/w3m-external" w3m-current-url)))
+(server-start)
+
 
 ;(w32-register-hot-key [A-tab])

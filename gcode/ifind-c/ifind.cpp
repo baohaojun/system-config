@@ -246,16 +246,16 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     return DefWindowProc (hwnd, message, wParam, lParam);
 }
 
-void draw_window(HWND wnd)
+void draw_window(HWND hwnd)
 {
 
     HDC hdc;
     PAINTSTRUCT ps;
     RECT rect;
 
-    GetClientRect(wnd, &main_window_rect);
+    GetClientRect(hwnd, &main_window_rect);
     get_looking_for_rect(rect);
-    hdc = BeginPaint(wnd, &ps);
+    hdc = BeginPaint(hwnd, &ps);
 
     DrawText (hdc, looking_for.c_str(), -1, &rect,
               DT_SINGLELINE | DT_CENTER | DT_VCENTER);
@@ -272,7 +272,7 @@ void draw_window(HWND wnd)
         DrawIcon(hdc, rect.left, rect.top, v_winfo[i].icon);
     }
     if (v_winfo.size())
-        draw_mask_on_selected(wnd, hdc);
+        draw_mask_on_selected(hwnd, hdc);
     
     if (idx_first_visible > 0) {
         draw_button(hdc, 0);
@@ -282,7 +282,7 @@ void draw_window(HWND wnd)
         draw_button(hdc, 1);
     }
 
-    EndPaint (wnd, &ps);
+    EndPaint (hwnd, &ps);
 }
 
 void draw_button(HDC hdc, int down)
@@ -309,16 +309,16 @@ void draw_button(HDC hdc, int down)
     DeleteObject(brush);
 }
 
-void change_selected(HWND wnd, int idx)
+void change_selected(HWND hwnd, int idx)
 {
     if (v_winfo.size()<1) 
         return;
     RECT rect;
     idx %= v_winfo.size();
     if (get_item_rect(rect, false, idx)) {
-        draw_mask_on_selected(wnd);
+        draw_mask_on_selected(hwnd);
         idx_selected = idx;
-        draw_mask_on_selected(wnd);
+        draw_mask_on_selected(hwnd);
     } else {
         if (idx<idx_first_visible) {
             idx_first_visible=idx;
@@ -327,20 +327,20 @@ void change_selected(HWND wnd, int idx)
         }
 
         idx_selected = idx;
-        if (wnd)
-            InvalidateRect(wnd, NULL, true);
+        if (hwnd)
+            InvalidateRect(hwnd, NULL, true);
     }
 }
 
-void draw_mask_on_selected(HWND wnd, HDC hdc)
+void draw_mask_on_selected(HWND hwnd, HDC hdc)
 {
-    if (!wnd)
+    if (!hwnd)
         return;
     bool hdc_null = (hdc == NULL);
     if (hdc_null) {
-        hdc = GetDC(wnd);
+        hdc = GetDC(hwnd);
     }
-    GetClientRect(wnd, &main_window_rect);
+    GetClientRect(hwnd, &main_window_rect);
     RECT rect;
     get_item_rect(rect, false, idx_selected);
     
@@ -371,7 +371,7 @@ void draw_mask_on_selected(HWND wnd, HDC hdc)
     DeleteObject(hdc_mem);
 
     if (hdc_null) {
-        ReleaseDC(wnd, hdc);
+        ReleaseDC(hwnd, hdc);
     }
 }
 
@@ -416,73 +416,168 @@ bool my_get_window_module_file_name(HWND hwnd, wchar_t buff[], unsigned int size
 }
 
 
-BOOL CALLBACK EnumWindowsProc(HWND wnd, LPARAM lParam)
+void debug_window(HWND hwnd)
 {
-    vector<WINFO> *pv_winfo = (vector<WINFO>*) lParam;
-    if (wnd == main_window)
-        return TRUE;
-	
-    if (!IsWindowVisible(wnd) || !IsWindowSwitchable(wnd)) {
-        return true;
-    } 
-
     wchar_t buff[1024];
+    GetWindowTextW(hwnd, buff, 1024);
+    _wcslwr_s(buff, wcslen(buff)+1);
+    wprintf(L"window %08x name: %s\n", (int)hwnd, buff);
+
+    GetClassNameW(hwnd, buff, 1024);
+    _wcslwr_s(buff, wcslen(buff)+1);
+    wprintf(L"\tclass: %s\n", buff);
+    fflush(stdout);
+    
+}
+
+void debug_window(vector<HWND>& v_win)
+{
+    for(unsigned int i=0; i<v_win.size(); i++) {
+        debug_window(v_win[i]);
+    }
+}
+
+static HWND getUltraOwner(HWND hwnd)
+{
+	static HWND g_hwndShell = GetShellWindow();
+	HWND hwndOwner, hwndTmp = hwnd;
+	do {
+		hwndOwner = hwndTmp;
+		hwndTmp = GetWindow(hwndTmp, GW_OWNER);
+	} while (hwndTmp && hwndTmp != g_hwndShell); // service messages
+	return hwndOwner;
+}
+
+void GetWindowIcons(HWND hwnd, HICON* phIcon, HICON* phIconSm) {
+
+	_ASSERT(phIcon);
+
+	BOOL fIsHungApp = FALSE;
+
+	HICON hIcon = NULL;
+	if (!SendMessageTimeout(hwnd, WM_GETICON, ICON_BIG, 0, 
+		SMTO_ABORTIFHUNG, HUNG_TIMEOUT, (PDWORD_PTR)&hIcon)) {
+		DWORD dwErr = GetLastError();
+		if (dwErr == 0 || dwErr == 1460) {
+			fIsHungApp = TRUE;
+			goto _HUNG_ICON;
+		}
+	}
+	if (!hIcon) 
+		hIcon = (HICON)(UINT_PTR)GetClassLongPtr(hwnd, GCLP_HICON);
+
+	if (!hIcon) {
+_HUNG_ICON:		
+		hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	}
+	*phIcon = hIcon;
+
+	if (phIconSm) {
+		if (fIsHungApp)
+			goto _HUNG_ICONSM;
+		hIcon = NULL;
+		if (!SendMessageTimeout(hwnd, WM_GETICON, ICON_SMALL, 0, 
+			SMTO_ABORTIFHUNG, HUNG_TIMEOUT, (PDWORD_PTR)&hIcon)) {
+			DWORD dwErr = GetLastError();
+			if (dwErr == 0 || dwErr == 1460)
+				goto _HUNG_ICONSM;
+		}
+		if (!hIcon) {
+			if (!SendMessageTimeout(hwnd, WM_GETICON, ICON_SMALL2, 0, 
+				SMTO_ABORTIFHUNG, HUNG_TIMEOUT, (PDWORD_PTR)&hIcon)) {
+				DWORD dwErr = GetLastError();
+				if (dwErr == 0 || dwErr == 1460)
+					goto _HUNG_ICONSM;
+			}
+		}
+		if (!hIcon) {
+			hIcon = (HICON)(UINT_PTR)GetClassLongPtr(hwnd, GCLP_HICONSM);
+		}
+		if (hIcon) {
+			*phIconSm = hIcon;
+		} else {
+_HUNG_ICONSM:
+			*phIconSm = *phIcon;
+		}
+	}
+}
+
+HICON GetWindowIcons(HWND hwnd)
+{
+	HICON icon;
+	GetWindowIcons(hwnd, &icon, NULL);
+	return icon;
+}
+
+void add_matching_hwnd(HWND hwnd, vector<WINFO> *pv_winfo)
+{
+
+	HWND hwndOwner = getUltraOwner(hwnd);
+	if (hwndOwner != hwnd && GetWindowLongPtr(hwnd, GWL_EXSTYLE) & WS_EX_APPWINDOW) {
+		;//do nothing
+	} else {
+		for (vector<WINFO>::iterator i = pv_winfo->begin(); i != pv_winfo->end(); i++) {
+			if (i->hwnd == hwndOwner) {
+				return;
+			}
+		}
+	}
+
+	wchar_t buff[1024];
     WINFO winfo;
-    winfo.wnd=wnd;
+    winfo.hwnd=hwndOwner;
 
     wsprintf(buff, L"%02d: ", window_number++);
     winfo.title_class = buff;
 
-    if (IsIconic(wnd)) {
+    if (IsIconic(hwndOwner)) {
         winfo.title_class += L"-";
     } else {
         winfo.title_class += L"+";
     }
 
-    if (!is_window_topmost(wnd)) {
+    if (!is_window_topmost(hwndOwner)) {
         winfo.title_class += L"-";
     } else {
         winfo.title_class += L"+";
     }
 
-    ::GetWindowTextW(wnd, buff, 1024);
+    if (!InternalGetWindowText(hwndOwner, buff, 1024)) {
+		InternalGetWindowText(hwnd, buff, 1024);
+	}
     winfo.title_class += _wcslwr(buff);
 
-    ::GetClassName(wnd, buff, 1024);
+    ::GetClassName(hwndOwner, buff, 1024);
     winfo.title_class += L" : ";
     winfo.title_class += _wcslwr(buff);
 
-    my_get_window_module_file_name(wnd, buff, 1024);
+    my_get_window_module_file_name(hwndOwner, buff, 1024);
     winfo.title_class += L" : ";
     winfo.title_class += _wcslwr(wcsrchr(buff, PATH_SEPW)?wcsrchr(buff, PATH_SEPW)+1:buff);
         
 
     if (window_match(winfo.title_class)) {
 
-        HICON icon=NULL;
-            
-        icon = (HICON)(UINT_PTR)GetClassLongPtr(wnd, GCLP_HICON);
-        if (!icon) {
-            SendMessageTimeout(wnd, WM_GETICON, ICON_BIG, 0, 
-                               SMTO_ABORTIFHUNG, HUNG_TIMEOUT, (PDWORD_PTR)&icon);
-        }
-            
-        if (!icon) {
-            HWND wnd_owner = GetWindow(wnd, GW_OWNER);
-            if (wnd_owner)
-                icon = (HICON)(UINT_PTR)GetClassLongPtr(wnd_owner, GCLP_HICON);
-        }
-        if (!icon) {
-            icon = LoadIcon(NULL, IDI_APPLICATION);
-
-        }
+        HICON icon=GetWindowIcons(hwndOwner);
 
         winfo.icon = icon;
-        winfo.iconized = (bool)IsIconic(wnd);
-        winfo.topmost = is_window_topmost(wnd);
+        winfo.iconized = (bool)IsIconic(hwndOwner);
+        winfo.topmost = is_window_topmost(hwndOwner);
         pv_winfo->insert(pv_winfo->begin(), winfo);
     } 
+}
 
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
+{
+    vector<WINFO> *pv_winfo = (vector<WINFO>*) lParam;
+    if (hwnd == main_window)
+        return TRUE;
+	
+    if (!IsWindowVisible(hwnd) || !IsWindowSwitchable(hwnd)) {
+        return true;
+    } 
+
+	add_matching_hwnd(hwnd, pv_winfo);
     return TRUE;
 }
 
@@ -491,29 +586,38 @@ bool window_match(wstring& title_class)
     return title_class.find(looking_for) != wstring::npos;
 }
 
-bool IsChildWnd(HWND wnd)
+bool IsChildWnd(HWND hwnd)
 {
-    if (GetParent(wnd)) return true; 
+    if (GetParent(hwnd)) return true; 
     return false;
 }
 
-bool IsWindowSwitchable(HWND wnd)
+bool IsWindowSwitchable(HWND hwnd)
 {
-    DWORD style = GetWindowLong(wnd, GWL_STYLE);
+    DWORD style = GetWindowLong(hwnd, GWL_STYLE);
 
-    if (style&WS_OVERLAPPED)
-        return true;
-    DWORD ex_style = GetWindowLong(wnd, GWL_EXSTYLE);
-    if (ex_style&WS_EX_TOOLWINDOW)
-        return false;
-	if (ex_style & WS_EX_APPWINDOW)
+    if (!(style&WS_VISIBLE)) {
+		return false;
+	}
+	debug_window(hwnd);
+
+	HWND hwndOwner = getUltraOwner(hwnd);
+	DWORD exStyleOwner = GetWindowLongPtr(hwndOwner, GWL_EXSTYLE);
+	DWORD exStyleMe = GetWindowLongPtr(hwnd, GWL_EXSTYLE);
+
+	if (exStyleMe & WS_EX_TOOLWINDOW) {
+		return false;
+	}
+
+	if (exStyleMe & WS_EX_APPWINDOW) {
 		return true;
-    if (style&WS_SYSMENU) {
-        HWND wnd_owner = GetWindow(wnd, GW_OWNER);
-        HWND wnd_shell = GetShellWindow();
-        if (!wnd_owner || GetWindow(wnd_owner, GW_OWNER)==wnd_shell)
-            return true;
-    }
+	}
+
+	if (!(exStyleOwner & WS_EX_TOOLWINDOW) || exStyleMe & WS_EX_APPWINDOW || 
+		(!( exStyleMe & WS_EX_TOOLWINDOW) && exStyleMe & WS_EX_CONTROLPARENT)) {
+		return true;
+	}
+
     return false;
 }
 
@@ -565,14 +669,14 @@ void found_action()
     unsigned int idx_selected_backup = idx_selected;
 
     idx_selected %= v_winfo_backup.size();
-    HWND wnd=v_winfo_backup[idx_selected].wnd;
-    restore_window(wnd);
+    HWND hwnd=v_winfo_backup[idx_selected].hwnd;
+    restore_window(hwnd);
 
     if (minimize_others) {
         for (unsigned int i=0; i<v_winfo_backup.size(); i++) {
             if (i==idx_selected_backup)
                 continue;
-            minimize_window(v_winfo_backup[i].wnd);
+            minimize_window(v_winfo_backup[i].hwnd);
         }
     }
 
@@ -592,6 +696,7 @@ BOOL MySwitchToThisWindow(HWND hwnd) {
         return(FALSE);
 
 
+	hwnd = GetLastActivePopup(hwnd);
     BOOL fSuccess = TRUE;
 
     HWND hwndFrgnd = NULL;
@@ -644,9 +749,9 @@ BOOL MySwitchToThisWindow(HWND hwnd) {
     return(fSuccess);
 }
 
-void restore_window(HWND wnd)
+void restore_window(HWND hwnd)
 {
-    MySwitchToThisWindow(wnd);
+    MySwitchToThisWindow(hwnd);
 }
 
 void handle_wm_lbuttondown(WPARAM w, LPARAM l)
