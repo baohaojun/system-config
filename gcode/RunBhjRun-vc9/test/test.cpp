@@ -119,6 +119,16 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 		cout << (LPCTSTR)strHello << endl;
 	}
 
+	WIN32_FIND_DATA wfd;
+   	HANDLE hfile = FindFirstFile("\\192.168.1.11\*", &wfd);
+   	while (hfile != INVALID_HANDLE_VALUE) {
+   		BHJDEBUG(" found a file %s", wfd.cFileName);
+   		if (FindNextFile(hfile, &wfd) == 0) {
+   			break;
+   		}
+   	}
+	return 0;
+
 	int ret = (int)ShellExecute(NULL, NULL, "C:/WINDOWS/system32/desk.cpl", NULL, NULL, SW_SHOWNORMAL);	
 	if (ret <= 32) {
 		fmt_messagebox("Error: can't start %s: %s", "C:/windows/system32/desk.cpl", startError(ret));
