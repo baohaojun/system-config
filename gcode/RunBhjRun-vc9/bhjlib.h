@@ -33,6 +33,8 @@ namespace bhj {
 		cmdline_parser(const cstring& cmdline);
 		lstring_t get_args();
 		cstring get_text_of_args(unsigned int arg_start, unsigned int arg_end = 0);
+		cstring get_prefix(unsigned int argi);
+		cstring get_postfix(unsigned int argi);
 	private:
 		vector<int> m_lab; //list of arg begin
 		vector<int> m_lae;
@@ -45,6 +47,8 @@ namespace bhj {
 	cstring remove_pattern(const cstring& src, const cstring& pat);
 	bool fields_match(const cstring& src, const lstring_t& fields);
 	bool string_nocase_contains(const cstring& src, const cstring& tgt);
+	cstring string_left_of(const cstring& str, int point);
+	cstring string_right_of(const cstring& str, int point);
 
 	bool string_contains(const cstring& src, const cstring& tgt);
 	cstring string_format(const char* fmt, ...);

@@ -138,6 +138,7 @@ cstring bce_dirname(const cstring& path)
 		}
 		return ".";
 	}
+	p = regex_replace(p, regex("/+"), "/", match_default|format_perl);
 
 	int n = p.find_last_of("/");
 	p.erase(n);
@@ -205,6 +206,12 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 				ls_match.push_back(dir + wfd.cFileName);
 			} else {
 				ls_match.push_back(dir + "/" + wfd.cFileName);
+			}
+			if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+				ls_match.back() += "/";
+			}
+			if (ls_match.back().find_first_of(" \x09\x0a\x0b\x0c\x0d") != cstring::npos) {
+				ls_match.back() = cstring("\"")+ls_match.back()+"\"";
 			}
 		}
 		if (FindNextFile(hfile, &wfd) == 0) {
@@ -508,6 +515,31 @@ cstring cmdline_parser::get_text_of_args(unsigned int arg_start, unsigned int ar
 	return m_cmd_str.substr(text_start, text_end - text_start + 1);
 }
 
+cstring cmdline_parser::get_prefix(unsigned int argi)
+{
+	if (argi < 0) {
+		return "";
+	}
+
+	if (argi >= m_lae.size()) {
+		return m_cmd_str;
+	}
+
+	return m_cmd_str.substr(0, m_lab[argi]);	
+}
+
+cstring cmdline_parser::get_postfix(unsigned int argi)
+{
+	if (argi < 0) {
+		return m_cmd_str;
+	}
+
+	if (argi >= m_lae.size()) {
+		return "";
+	}
+	return m_cmd_str.substr(m_lae[argi]+1);
+}
+
 lstring_t cmdline2args(const cstring& str)
 {
 
@@ -688,6 +720,32 @@ void fmt_messagebox(const char* fmt, ...)
 	va_end(argList);
 	
 	AfxMessageBox(str);
+}
+
+cstring string_right_of(const cstring& str, int point)
+{
+	if (point >= str.size()) {
+		return "";
+	}
+
+	if (point < 0) {
+		return str;
+	}
+
+	return str.substr(point);
+}
+
+cstring string_left_of(const cstring& str, int point)
+{
+	if (point >= str.size()) {
+		return str;
+	}
+
+	if (point < 0) {
+		return "";
+	}
+
+	return str.substr(0, point);
 }
 
 CLOSE_NAMESPACE(bhj)

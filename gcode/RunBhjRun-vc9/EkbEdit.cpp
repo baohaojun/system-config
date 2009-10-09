@@ -726,6 +726,7 @@ BOOL CEkbEdit::OnChange()
 	}
 
 
+	
 	fillListBox(getText());
 	return false;
 }
@@ -735,17 +736,20 @@ bool stringContains(const CString& src, const CString& tgt)
 	return src.Find(tgt) >= 0;
 }
 
-lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
+lstring_t CEkbEdit::getMatchingStrings(const cstring& text, int point)
 {
 	lstring_t ls_match;
 
-	cmdline_parser cp(text);
+	cstring left_str = string_left_of(text, point);
+	cstring right_str = string_right_of(text, point);
+
+	cmdline_parser cp(left_str);
 	lstring_t args = cp.get_args();
 
 	if (m_use_history) {
 		for (lstring_t::iterator i = m_histList.begin(); i != m_histList.end(); i++) {
 			if (fields_match(*i, args)) {
-				ls_match.push_back(*i);
+				ls_match.push_back(*i + right_str);
 			}
 		}
 	}
@@ -754,17 +758,20 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text)
 		return ls_match;
 	}
 
-	if (bce_dirname(text).c_str()[0] == '.' && text.size() < 2) {
+	if (bce_dirname(args.back()).c_str()[0] == '.' && args.back().size() < 2) {
 		return ls_match;
 	}
 
 	struct _stat stat;
-	if (is_abspath(text) && 
-		(_stat(bce_dirname(text), &stat) == 0) &&
+	if (is_abspath(args.back()) && 
+		(_stat(bce_dirname(args.back()), &stat) == 0) &&
 		(stat.st_mode|_S_IFDIR)) {
 
-		lstring_t files = getMatchingFiles(bce_dirname(text), bce_basename(text));
-		list_append(ls_match, files);
+		lstring_t files = getMatchingFiles(bce_dirname(args.back()), bce_basename(args.back()));
+		for (lstring_t::iterator i=files.begin(); i!=files.end(); i++) {
+			ls_match.insert(ls_match.end(), cp.get_prefix(args.size() - 1) + *i + right_str);
+		}
+
 	} else if (m_find_mode == mode_use_path_env && 
 		args.front().size() >= 2 && 
 		!string_contains(args.front(), "/") && 
@@ -792,7 +799,7 @@ void CEkbEdit::fillListBox(const CString& text)
 	m_listBox->ResetContent();
 	m_listBox->AddString(text);
 	
-	lstring_t ls_match = getMatchingStrings(text);
+	lstring_t ls_match = getMatchingStrings(text, getPoint());
 	if (ls_match.size()>1000) {
 		ls_match.resize(1000);
 		m_listBox->AddString("...");

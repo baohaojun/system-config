@@ -100,7 +100,7 @@ private:
 	void scroll_down();
 	cstring getText();
 	void fillListBox(const CString& text);
-	lstring_t getMatchingStrings(const cstring& text);
+	lstring_t getMatchingStrings(const cstring& text, int point=-1);
 	int getPoint(); //emacs term, point:-)
 	LONG getTextWidth(cstring str);
 	CSize getTextSize(cstring text);
