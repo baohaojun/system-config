@@ -8,7 +8,6 @@
 #include <sys/types.h> 
 #include <sys/stat.h>
 #include <algorithm>
-extern "C" char *strcasestr(const char *S, const char *FIND);
 #include <map>
 using std::map;
 
@@ -756,7 +755,7 @@ program_runner::program_runner(const char* exec, const cstring& cmdline, which_o
 			if (ret) {
 				m_str_output += string_from_buffer(temp, count);
 			} else {
-				BHJDEBUG(" Error: read from pipe %d", GetLastError());
+				//BHJDEBUG(" Error: read from pipe %d", GetLastError());
 				break;
 			}
 		}

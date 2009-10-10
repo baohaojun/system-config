@@ -395,6 +395,7 @@ cstring CEkbEdit::getSelectedText()
 void CEkbEdit::escapeEdit()
 {
 
+	m_find_mode = mode_use_nothing;
 	if (m_simpleWnd && m_simpleWnd->IsWindowVisible()) {
 		if (m_listBox->GetCurSel() > 0) {
 			m_listBox->SetCurSel(0);
@@ -421,7 +422,7 @@ void CEkbEdit::set_mark_command()
 void CEkbEdit::keyboard_quit()
 {
 	SetSel(getPoint(), getPoint());
-	switch_find_mode(mode_use_path_env);
+	switch_find_mode(mode_use_nothing);
 	m_mark = -1;
 }
 
@@ -706,10 +707,8 @@ BOOL CEkbEdit::OnChange()
 	if (m_skip_onchange) {
 		return false;
 	}
-
-	if (m_find_mode == mode_use_locate) {
-		m_find_mode = mode_use_nothing;
-	}
+	
+	m_find_mode = mode_use_nothing;
 
 	if (m_simpleWnd) {
 		if (GetLength()) {
@@ -756,7 +755,6 @@ lstring_t CEkbEdit::getMatchingStrings(const cstring& text, int point)
 		return ls_match;
 	}
 
-	struct _stat stat;
 	if (is_abspath(args.back()) && is_dir_cyg(bce_dirname(args.back()))) {
 
 		BHJDEBUG(" %s is abs", args.back().c_str());

@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+extern "C" int strncasecmp(const char *s1, const char *s2, size_t n);
+extern "C" char *strcasestr(const char *S, const char *FIND);
 
 namespace bhj {
 	using std::list;
