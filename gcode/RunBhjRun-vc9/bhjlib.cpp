@@ -210,8 +210,40 @@ bool is_abspath(const cstring& path)
 	return false;
 }
 
+static lstring_t getMatchingFiles(const cstring& udir, const cstring& wdir, const cstring& base)
+{
+	lstring_t ls_match;
+	WIN32_FIND_DATA wfd;
+	HANDLE hfile = FindFirstFile(cstring(wdir + "/" + base + "*").c_str(), &wfd);
+	while (hfile != INVALID_HANDLE_VALUE) {
+		if (1 /*string_nocase_contains(wfd.cFileName, base)*/) {
+			if (wdir.at(udir.size() - 1) == '/') {
+				ls_match.push_back(udir + wfd.cFileName);
+			} else {
+				ls_match.push_back(udir + "/" + wfd.cFileName);
+			}
+			if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+				ls_match.back() += "/";
+			}
+			if (ls_match.back().find_first_of(" \x09\x0a\x0b\x0c\x0d") != cstring::npos) {
+				ls_match.back() = cstring("\"")+ls_match.back()+"\"";
+			}
+		}
+		if (FindNextFile(hfile, &wfd) == 0) {
+			break;
+		}
+	}
+	return ls_match;
+}
+
 lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 {
+	if (dir.size() > 1 && 
+		(dir[0] == '/' && dir[1] != '/' ||
+		 dir[0] != '/')) {
+		cstring wdir  = get_win_path(dir);
+		return getMatchingFiles(dir, wdir, base);
+	}
 	cstring cmd = quote_str(dir);
 	cstring pat = string_format("%s*", base.c_str());
 	pat = quote_str(pat);
@@ -226,12 +258,12 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 	fflush(stdout);
 
 	lstring_t ls_match;
-	for (int i=0, j=0; i<output.size(); i++) {
+	for (unsigned int i=0, j=0; i<output.size(); i++) {
 		if (output[i] == 0) {
 			cstring str = output.substr(j, i-j);
 			j = i+1;
 
-			if (str.find_first_of(" \x09\x0a\x0b\x0c\x0d")) {
+			if (str.find_first_of(" \x09\x0a\x0b\x0c\x0d") != cstring::npos) {
 				str = cstring("\"") + str + "\"";
 			}
 			ls_match.push_back(str);
@@ -242,31 +274,6 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 
 	
 }
-// lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
-// {
-// 	lstring_t ls_match;
-// 	WIN32_FIND_DATA wfd;
-// 	HANDLE hfile = FindFirstFile(cstring(dir + "/" + base + "*"), &wfd);
-// 	while (hfile != INVALID_HANDLE_VALUE) {
-// 		if (1 /*string_nocase_contains(wfd.cFileName, base)*/) {
-// 			if (dir.at(dir.size() - 1) == '/') {
-// 				ls_match.push_back(dir + wfd.cFileName);
-// 			} else {
-// 				ls_match.push_back(dir + "/" + wfd.cFileName);
-// 			}
-// 			if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-// 				ls_match.back() += "/";
-// 			}
-// 			if (ls_match.back().find_first_of(" \x09\x0a\x0b\x0c\x0d") != cstring::npos) {
-// 				ls_match.back() = cstring("\"")+ls_match.back()+"\"";
-// 			}
-// 		}
-// 		if (FindNextFile(hfile, &wfd) == 0) {
-// 			break;
-// 		}
-// 	}
-// 	return ls_match;
-// }
 
 cstring getWhichFile(const cstring& file)
 {
@@ -604,7 +611,19 @@ lstring_t cmdline2args(const cstring& str)
 
 cstring get_win_path(const cstring& upath)
 {
-	cstring cmd = format_string("cygpath -alw \"%s\"", upath.c_str());
+	if (upath.empty()) {
+		return "";
+	}
+
+	if (upath[0] != '/' && upath[0] != '\\') {
+		return upath;
+	}
+
+	const char* option = "-alm";
+	if (upath.size() > 1 && upath[0] == '/' && upath[1] == '/') {
+		option = "-alw";
+	}
+	cstring cmd = format_string("cygpath %s \"%s\"", option, upath.c_str());
 	program_runner pr(NULL, cmd, read_out);
 	return regex_replace(pr.get_output(), regex("\r|\n"), "", match_default|format_perl);
 }
@@ -811,7 +830,7 @@ void fmt_messagebox(const char* fmt, ...)
 
 cstring string_right_of(const cstring& str, int point)
 {
-	if (point >= str.size()) {
+	if (point >= (int)str.size()) {
 		return "";
 	}
 
@@ -824,7 +843,7 @@ cstring string_right_of(const cstring& str, int point)
 
 cstring string_left_of(const cstring& str, int point)
 {
-	if (point >= str.size()) {
+	if (point >= (int)str.size()) {
 		return str;
 	}
 
@@ -837,7 +856,15 @@ cstring string_left_of(const cstring& str, int point)
 
 bool is_dir_cyg(const cstring& path)
 {
-	
+	if (path.empty()) {
+		return false;
+	}
+
+	if (path[0] != '/' && path[0] != '\\') {
+		struct _stat stat;
+		return _stat(path.c_str(), &stat) == 0 && (stat.st_mode|_S_IFDIR);
+	}
+
 	cstring cmd = string_format("test -d %s", quote_str(path).c_str());
 	cmd = string_format("bash -c %s", quote_str(cmd).c_str());
 
@@ -847,11 +874,19 @@ bool is_dir_cyg(const cstring& path)
 
 bool file_exist(const cstring& path)
 {
-	
-	cstring cmd = string_format("test -e %s", quote_str(path).c_str());
-	cmd = string_format("bash -c %s", quote_str(cmd).c_str());
-	program_runner pr(NULL, cmd, read_none, 500);
-	return pr.exit_code() == 0;
+	if (path.empty()) {
+		return false;
+	}
+	if (path[0] == '/') {
+		cstring cmd = string_format("test -e %s", quote_str(path).c_str());
+		cmd = string_format("bash -c %s", quote_str(cmd).c_str());
+		program_runner pr(NULL, cmd, read_none, 500);
+		return pr.exit_code() == 0;
+	}
+
+	struct _stat stat;
+	return _stat(unquote_str(path).c_str(), &stat) == 0;
+
 }
 
 
