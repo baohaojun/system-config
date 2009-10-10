@@ -615,9 +615,10 @@ cstring get_win_path(const cstring& upath)
 		return "";
 	}
 
-	if (upath[0] != '/' && upath[0] != '\\') {
-		return upath;
-	}
+	// if (upath[0] != '/' && upath[0] != '\\') {
+	// 	return upath;
+	// }
+	//because the file can be a softlink, and we need to get to the real one
 
 	const char* option = "-alm";
 	if (upath.size() > 1 && upath[0] == '/' && upath[1] == '/') {
@@ -648,22 +649,8 @@ void cmdline_to_file_and_args(const cstring& str, cstring& file, cstring& args)
 	cmdline_parser cp(str);
 	lstring_t ls = cp.get_args();
 
-	int n_args = 0;
-	for (lstring_t::iterator i=ls.begin(); i!=ls.end(); n_args++, i++) {
-		cstring prefix = cp.get_text_of_args(0, n_args);
-		if (file_exist(prefix) || file_exist(get_win_path(unquote_str(prefix)))) {
-			file = get_win_path(unquote_str(prefix));
-			args = cp.get_text_of_args(n_args+1, ls.size());
-			return;
-		}
-		if (file_exist(prefix+".exe")) {
-			file = get_win_path(unquote_str(prefix)+".exe");
-			args = cp.get_text_of_args(n_args+1, ls.size());
-			return;
-		}
-	}
 	if (ls.size() > 0) {
-		file = ls.front();
+		file = get_win_path(getWhichFile(ls.front()));
 	}
 	args = cp.get_text_of_args(1, ls.size());
 }

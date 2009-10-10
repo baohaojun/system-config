@@ -1808,3 +1808,4 @@ firefox plugin: nosquint
 It turns out, simulating the shift key to select text only works correctly when NUMLOCK is off...
 
 
+cthall for blaze: C:\Program Files\DSPC\IFL\exec\Tavor_SAAR_OneNAND.ini
