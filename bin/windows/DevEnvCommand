@@ -1,0 +1,10 @@
+#!/bin/bash
+echo hello "$@" >> ~/devcmd.log
+echo '$1' is "$1" >> ~/devcmd.log
+echo '$2' is "$2" >> ~/devcmd.log
+if test "$1" = "File.OpenFile"; then
+    echo we are converting it >> ~/devcmd.log
+    set -- "$1" "$(cygpath -alw "$2")"
+fi
+echo devcmd "$@" >> ~/devcmd.log
+devcmd "$@"
