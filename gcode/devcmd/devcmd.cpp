@@ -35,8 +35,8 @@ int main(int argc, char* argv[])
 	CLSID clsid0, clsid1;
 
 	// Try a couple of possibilities.
-	CLSIDFromProgID(L"VisualStudio.DTE", &clsid0);
-	CLSIDFromProgID(L"VisualStudio.DTE.7.1", &clsid1);
+	CLSIDFromProgID(L"VisualStudio.DTE.9.0", &clsid0);
+	CLSIDFromProgID(L"VisualStudio.DTE", &clsid1);
 
 	// Get an interface to the running instance, if any..
 	IUnknown *pUnk;

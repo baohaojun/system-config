@@ -7,6 +7,7 @@
   (let ((default-directory "~/tools/emacs-site-lisp/")) (load-file "~/tools/emacs-site-lisp/subdirs.el"))
   (setq load-path
 	(cons "~/tools/emacs-site-lisp/" load-path))
+  ;;press F2 to get MSDN help
   (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
   (setq locate-command "locateEmacs.sh")
 )
