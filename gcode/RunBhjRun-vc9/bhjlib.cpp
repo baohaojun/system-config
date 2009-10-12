@@ -620,10 +620,12 @@ cstring get_win_path(const cstring& upath)
 	//because the file can be a softlink, and we need to get to the real one
 
 	const char* option = "-alm";
-	if (upath.size() > 1 && upath[0] == '/' && upath[1] == '/') {
+	if (upath.size() > 1 && 
+		(upath[0] == '/' || upath[0] == '\\') && 
+		(upath[1] == '/' || upath[1] == '\\')) {
 		option = "-alw";
 	}
-	cstring cmd = format_string("cygpath %s \"%s\"", option, upath.c_str());
+	cstring cmd = format_string("cygpath %s %s", option, quote_str(upath).c_str());
 	program_runner pr(NULL, cmd, read_out);
 	return regex_replace(pr.get_output(), regex("\r|\n"), "", match_default|format_perl);
 }
