@@ -143,7 +143,12 @@ function lcd()
         return -1
     fi
 
+
+
     link=$(readlink -f "$1")
+    if test -f "$link" && echo "${link##*.}"|grep -i '^lnk$' -q; then 
+            link=`readshortcut "$link"`
+    fi
     if [[ -d "$link" ]]; then
         cd "$link"
     else

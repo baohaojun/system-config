@@ -47,7 +47,9 @@ regSetVal -s set '\HKEY_CLASSES_ROOT\sh_auto_file\shell\open\command\' "$(qq_cmd
 regSetVal -s set '\HKEY_CLASSES_ROOT\*\shell\emacsedit\command\' 'q:\bin\windows\redirect_vc6\emacsedit.exe -n "%1"'
 regSetVal -s set '\HKEY_CLASSES_ROOT\*\shell\bashHere\command\' 'q:\bin\windows\redirect_vc6\runHere bash "%1"'
 regSetVal -s set '\HKEY_CLASSES_ROOT\*\shell\Locate It\command\' 'q:\bin\windows\redirect_vc6\LocateIt "%1"'
+regSetVal -s set '\HKEY_CLASSES_ROOT\*\shell\WinPath\command\' 'q:\bin\windows\redirect_vc6\winpath "%1"'
 regSetVal -s set '\HKEY_CLASSES_ROOT\Directory\shell\EmacsEdit\command\' 'q:\bin\windows\redirect_vc6\emacsedit.exe -n "%1"'
 regSetVal -s set '\HKEY_CLASSES_ROOT\Directory\shell\bashHere\command\' 'q:\bin\windows\redirect_vc6\runHere bash "%1"'
 regSetVal -s set '\HKEY_CLASSES_ROOT\Directory\shell\Locate It\command\' 'q:\bin\windows\redirect_vc6\LocateIt "%1"'
+regSetVal -s set '\HKEY_CLASSES_ROOT\Directory\shell\WinPath\command\' 'q:\bin\windows\redirect_vc6\winpath "%1"'
 regSetVal -i set '\HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel\obcaseinsensitive' 0
