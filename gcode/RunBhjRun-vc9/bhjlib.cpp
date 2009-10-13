@@ -216,7 +216,7 @@ static lstring_t getMatchingFiles(const cstring& udir, const cstring& wdir, cons
 	HANDLE hfile = FindFirstFile(cstring(wdir + "/" + base + "*").c_str(), &wfd);
 	while (hfile != INVALID_HANDLE_VALUE) {
 		if (1 /*string_nocase_contains(wfd.cFileName, base)*/) {
-			if (wdir.at(udir.size() - 1) == '/') {
+			if (udir.at(udir.size() - 1) == '/') {
 				ls_match.push_back(udir + wfd.cFileName);
 			} else {
 				ls_match.push_back(udir + "/" + wfd.cFileName);
