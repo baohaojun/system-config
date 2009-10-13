@@ -35,9 +35,11 @@ KeyToGrab(0),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(0),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +0)
 
 KeyToGrab(E),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs-)
+#KeyToGrab(F),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p puemacs -F 1 puemacs -load emacs)
+KeyToGrab(M),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p pucomm -F 1 pucomm -load comm)
 KeyToGrab(X),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs -fe run bash -c eterm-bhj.sh -fe -F 1 emacs.sh)
 KeyToGrab(P),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p powerpnt.exe -F 1 ppt)
-KeyToGrab(P),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c putty -F 1 putty -cygterm bash -c """myscr first""")
+KeyToGrab(P),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p putty -F 1 putty -cygterm bash -c """myscr first""")
 KeyToGrab(E),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p excel.exe -F 1 excel)
 KeyToGrab(W),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p winword.exe -F 1 word)
 KeyToGrab(W),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p explorer.exe -c wclass -F 1 "%HOMEDRIVE%%HOMEPATH%\My Documents")

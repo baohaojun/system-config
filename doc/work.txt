@@ -1538,7 +1538,7 @@ http://192.168.1.249/OSS/Ubuntu_Linux/Setup_build_env
 
 android build: CDPATH bash variable is considered harmful
 
-cd /d/tools/cygwin-1.7;  rm setup-1.7.exe; wget http://cygwin.com/setup-1.7.exe; chmod +x setup-1.7.exe; of ./setup-1.7.exe
+cd /d/tools/cygwin-1.7&&  rm -f setup-1.7.exe&& wget http://cygwin.com/setup-1.7.exe&& chmod +x setup-1.7.exe&& of ./setup-1.7.exe
 
 repo init -u git://android.git.kernel.org/platform/manifest.git -b android-1.5
 

@@ -835,7 +835,7 @@ div.tl{
   (w3m-goto-url "file:///cygdrive/d/knowledge/jdk-6u10-docs/1.html"))
 (keydef "C-M-j" 'bhj-jdk-help)
 (keydef (w3m "C-c e") (lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/w3m-external" w3m-current-url)))
-(server-start)
+
 
 ;; Command to point VS.NET at our current file & line
 (defun my-current-line ()
@@ -878,5 +878,5 @@ div.tl{
   (devenv-cmd "Debug.Start"))
 (global-set-key [f5] 'devenv-debug)
 
-
+(server-start)
 ;(w32-register-hot-key [A-tab])
