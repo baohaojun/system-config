@@ -4,6 +4,14 @@
 cd ~/doc
 regedit /s ime-noctrlshift-noaltshift.reg
 
+
+MYXWINSH=~/bin/windows/lnks/myxwin.sh
+(echo "#!/bin/bash -l"; echo export CYGWIN=tty; grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p'|grep -v checkX) > $MYXWINSH
+chmod +x $MYXWINSH
+myxwin.sh&
+net start sshd&
+(cd /e/cygwin-cvsroot && rsync -avz rsync://cygwin.com/src-cvs .)&
+
 (
     while ! ssh bhj2 echo hello; do true; done; 
     ssh bhj2 'while true; do 
@@ -18,10 +26,3 @@ sleep 300
 done'&
 
 )
-MYXWINSH=~/bin/windows/lnks/myxwin.sh
-(echo "#!/bin/bash -l"; echo export CYGWIN=tty; grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p'|grep -v checkX) > $MYXWINSH
-chmod +x $MYXWINSH
-myxwin.sh&
-net start sshd&
-cd /e/cygwin-cvsroot && rsync -avz rsync://cygwin.com/src-cvs .
-
