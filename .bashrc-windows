@@ -25,6 +25,7 @@ function SetPath()
         /cygdrive/c/WINDOWS
         /cygdrive/c/WINDOWS/System32/Wbem
         /cygdrive/c/WINDOWS/system32
+        "/cygdrive/c/Program Files/Intel/IPP/5.1/ia32/bin"
     )
 
     unset PATH
