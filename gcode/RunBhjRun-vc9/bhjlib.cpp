@@ -243,15 +243,10 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 		cstring wdir  = get_win_path(dir);
 		return getMatchingFiles(dir, wdir, base);
 	}
-	cstring cmd = quote_str(dir);
-	cstring pat = string_format("%s*", base.c_str());
-	pat = quote_str(pat);
 
 	cstring find = getWhichFile("find.exe");
-	find = quote_str(find);
 	
-	cmd = string_format("%s %s -maxdepth 1 -iname %s -print0", find.c_str(), cmd.c_str(), pat.c_str());
-	program_runner pr(NULL, cmd, read_out);
+	program_runner pr(find, dir, "-maxdepth", "1", "-iname", base+"*", "-print0", read_out);
 	cstring output = pr.get_output();
 	fwrite(output.c_str(), output.size(), 1, stdout);
 	fflush(stdout);
@@ -346,7 +341,7 @@ lstring_t getLocateMatchingFiles(const lstring_t& args_const, bool rerun_locate)
 	static lstring_t saved_ls;
 	if (rerun_locate && saved_str != args.front()) {
 		saved_str = args.front();
-		program_runner pr(NULL, format_string("bash run-locate.sh %s", args.front().c_str()), read_out);
+		program_runner pr("bash", "run-locate.sh", args.front(), read_out);
 		cstring output = pr.get_output();
 		
 		saved_ls = split("\r\n|\n", output);
@@ -625,8 +620,7 @@ cstring get_win_path(const cstring& upath)
 		(upath[1] == '/' || upath[1] == '\\')) {
 		option = "-alw";
 	}
-	cstring cmd = format_string("cygpath %s %s", option, quote_str(upath).c_str());
-	program_runner pr(NULL, cmd, read_out);
+	program_runner pr("cygpath", "option", upath, read_out);
 	return regex_replace(pr.get_output(), regex("\r|\n"), "", match_default|format_perl);
 }
 
@@ -666,8 +660,9 @@ cstring format_string(const char* fmt, ...)
 	return res;
 }
 
-program_runner::program_runner(const char* exec, const cstring& cmdline, which_output_t which, int timeout)
+void program_runner::ctor_helper(const cstring& cmdline, which_output_t which, int timeout)
 {
+	const char* exec = NULL;
 	HANDLE                pipe_read, pipe_write;
     SECURITY_ATTRIBUTES   sa;
     STARTUPINFO           startup;
@@ -854,9 +849,8 @@ bool is_dir_cyg(const cstring& path)
 	}
 
 	cstring cmd = string_format("test -d %s", quote_str(path).c_str());
-	cmd = string_format("bash -c %s", quote_str(cmd).c_str());
 
-	program_runner pr(NULL, cmd, read_none, 500);
+	program_runner pr("bash", "-c", cmd, read_none, 500);
 	return pr.exit_code() == 0;
 }
 
@@ -867,8 +861,7 @@ bool file_exist(const cstring& path)
 	}
 	if (path[0] == '/') {
 		cstring cmd = string_format("test -e %s", quote_str(path).c_str());
-		cmd = string_format("bash -c %s", quote_str(cmd).c_str());
-		program_runner pr(NULL, cmd, read_none, 500);
+		program_runner pr("bash", "-c", cmd, read_none, 500);
 		return pr.exit_code() == 0;
 	}
 
@@ -877,5 +870,172 @@ bool file_exist(const cstring& path)
 
 }
 
+program_runner::program_runner(const cstring& cmd, which_output_t which, int timeout)
+{
+	ctor_helper(quote_str(cmd), which, timeout);
+}
+
+program_runner::program_runner(const cstring& cmd, 
+							   const cstring& arg1, 
+							   which_output_t which, int timeout)
+{
+	ctor_helper(quote_str(cmd)
+				+ " " + quote_str(arg1)
+				,
+				which, 
+				timeout);
+}
+program_runner::program_runner(const cstring& cmd, 
+							   const cstring& arg1, 
+							   const cstring& arg2, 
+							   which_output_t which, int timeout)
+{
+	ctor_helper(quote_str(cmd)
+				+ " " + quote_str(arg1)
+				+ " " + quote_str(arg2)
+				,
+				which, 
+				timeout);
+}
+program_runner::program_runner(const cstring& cmd, 
+							   const cstring& arg1, 
+							   const cstring& arg2, 
+							   const cstring& arg3, 
+							   which_output_t which, int timeout)
+{
+	ctor_helper(quote_str(cmd)
+				+ " " + quote_str(arg1)
+				+ " " + quote_str(arg2)
+				+ " " + quote_str(arg3)
+				,
+				which, 
+				timeout);
+}
+program_runner::program_runner(const cstring& cmd, 
+							   const cstring& arg1, 
+							   const cstring& arg2, 
+							   const cstring& arg3, 
+							   const cstring& arg4, 
+							   which_output_t which, int timeout)
+{
+	ctor_helper(quote_str(cmd)
+				+ " " + quote_str(arg1)
+				+ " " + quote_str(arg2)
+				+ " " + quote_str(arg3)
+				+ " " + quote_str(arg4)
+				,
+				which, 
+				timeout);
+}
+program_runner::program_runner(const cstring& cmd, 
+							   const cstring& arg1, 
+							   const cstring& arg2, 
+							   const cstring& arg3, 
+							   const cstring& arg4, 
+							   const cstring& arg5, 
+							   which_output_t which, int timeout)
+{
+	ctor_helper(quote_str(cmd)
+				+ " " + quote_str(arg1)
+				+ " " + quote_str(arg2)
+				+ " " + quote_str(arg3)
+				+ " " + quote_str(arg4)
+				+ " " + quote_str(arg5)
+				,
+				which, 
+				timeout);
+}
+program_runner::program_runner(const cstring& cmd, 
+							   const cstring& arg1, 
+							   const cstring& arg2, 
+							   const cstring& arg3, 
+							   const cstring& arg4, 
+							   const cstring& arg5, 
+							   const cstring& arg6, 
+							   which_output_t which, int timeout)
+{
+	ctor_helper(quote_str(cmd)
+				+ " " + quote_str(arg1)
+				+ " " + quote_str(arg2)
+				+ " " + quote_str(arg3)
+				+ " " + quote_str(arg4)
+				+ " " + quote_str(arg5)
+				+ " " + quote_str(arg6)
+				,
+				which, 
+				timeout);
+}
+program_runner::program_runner(const cstring& cmd, 
+							   const cstring& arg1, 
+							   const cstring& arg2, 
+							   const cstring& arg3, 
+							   const cstring& arg4, 
+							   const cstring& arg5, 
+							   const cstring& arg6, 
+							   const cstring& arg7, 
+							   which_output_t which, int timeout)
+{
+	ctor_helper(quote_str(cmd)
+				+ " " + quote_str(arg1)
+				+ " " + quote_str(arg2)
+				+ " " + quote_str(arg3)
+				+ " " + quote_str(arg4)
+				+ " " + quote_str(arg5)
+				+ " " + quote_str(arg6)
+				+ " " + quote_str(arg7)
+				,
+				which, 
+				timeout);
+}
+program_runner::program_runner(const cstring& cmd, 
+							   const cstring& arg1, 
+							   const cstring& arg2, 
+							   const cstring& arg3, 
+							   const cstring& arg4, 
+							   const cstring& arg5, 
+							   const cstring& arg6, 
+							   const cstring& arg7, 
+							   const cstring& arg8, 
+							   which_output_t which, int timeout)
+{
+	ctor_helper(quote_str(cmd)
+				+ " " + quote_str(arg1)
+				+ " " + quote_str(arg2)
+				+ " " + quote_str(arg3)
+				+ " " + quote_str(arg4)
+				+ " " + quote_str(arg5)
+				+ " " + quote_str(arg6)
+				+ " " + quote_str(arg7)
+				+ " " + quote_str(arg8)
+				,
+				which, 
+				timeout);
+}
+program_runner::program_runner(const cstring& cmd, 
+							   const cstring& arg1, 
+							   const cstring& arg2, 
+							   const cstring& arg3, 
+							   const cstring& arg4, 
+							   const cstring& arg5, 
+							   const cstring& arg6, 
+							   const cstring& arg7, 
+							   const cstring& arg8, 
+							   const cstring& arg9, 
+							   which_output_t which, int timeout)
+{
+	ctor_helper(quote_str(cmd)
+				+ " " + quote_str(arg1)
+				+ " " + quote_str(arg2)
+				+ " " + quote_str(arg3)
+				+ " " + quote_str(arg4)
+				+ " " + quote_str(arg5)
+				+ " " + quote_str(arg6)
+				+ " " + quote_str(arg7)
+				+ " " + quote_str(arg8)
+				+ " " + quote_str(arg9)
+				,
+				which, 
+				timeout);
+}
 
 CLOSE_NAMESPACE(bhj)

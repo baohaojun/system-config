@@ -84,10 +84,76 @@ namespace bhj {
 
 	class program_runner {
 	public:
-		program_runner(const char* exec, const cstring& cmdline, which_output_t which = read_none, int timeout = -1);
+		program_runner(const cstring& cmd, which_output_t which = read_none, int timeout = -1);
+		program_runner(const cstring& cmd, 
+					   const cstring& arg1, 
+					   which_output_t which = read_none, int timeout = -1);
+		program_runner(const cstring& cmd, 
+					   const cstring& arg1, 
+					   const cstring& arg2, 
+					   which_output_t which = read_none, int timeout = -1);
+		program_runner(const cstring& cmd, 
+					   const cstring& arg1, 
+					   const cstring& arg2, 
+					   const cstring& arg3, 
+					   which_output_t which = read_none, int timeout = -1);
+		program_runner(const cstring& cmd, 
+					   const cstring& arg1, 
+					   const cstring& arg2, 
+					   const cstring& arg3, 
+					   const cstring& arg4, 
+					   which_output_t which = read_none, int timeout = -1);
+		program_runner(const cstring& cmd, 
+					   const cstring& arg1, 
+					   const cstring& arg2, 
+					   const cstring& arg3, 
+					   const cstring& arg4, 
+					   const cstring& arg5, 
+					   which_output_t which = read_none, int timeout = -1);
+		program_runner(const cstring& cmd, 
+					   const cstring& arg1, 
+					   const cstring& arg2, 
+					   const cstring& arg3, 
+					   const cstring& arg4, 
+					   const cstring& arg5, 
+					   const cstring& arg6, 
+					   which_output_t which = read_none, int timeout = -1);
+		program_runner(const cstring& cmd, 
+					   const cstring& arg1, 
+					   const cstring& arg2, 
+					   const cstring& arg3, 
+					   const cstring& arg4, 
+					   const cstring& arg5, 
+					   const cstring& arg6, 
+					   const cstring& arg7, 
+					   which_output_t which = read_none, int timeout = -1);
+		program_runner(const cstring& cmd, 
+					   const cstring& arg1, 
+					   const cstring& arg2, 
+					   const cstring& arg3, 
+					   const cstring& arg4, 
+					   const cstring& arg5, 
+					   const cstring& arg6, 
+					   const cstring& arg7, 
+					   const cstring& arg8, 
+					   which_output_t which = read_none, int timeout = -1);
+		program_runner(const cstring& cmd, 
+					   const cstring& arg1, 
+					   const cstring& arg2, 
+					   const cstring& arg3, 
+					   const cstring& arg4, 
+					   const cstring& arg5, 
+					   const cstring& arg6, 
+					   const cstring& arg7, 
+					   const cstring& arg8, 
+					   const cstring& arg9, 
+					   which_output_t which = read_none, int timeout = -1);
+
+		
 		DWORD exit_code();
 		cstring get_output();
 	private: 
+		void ctor_helper(const cstring& cmdline, which_output_t which = read_none, int timeout = -1);
 		DWORD m_exit_code;
 		cstring m_str_output;
 	};
