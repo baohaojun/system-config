@@ -244,7 +244,10 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 		return getMatchingFiles(dir, wdir, base);
 	}
 
-	cstring find = getWhichFile("find.exe");
+	static cstring find;
+	if (find.empty()) {
+		find = get_win_path("/bin/find.exe");
+	}
 	
 	program_runner pr(find, dir, "-maxdepth", "1", "-iname", base+"*", "-print0", read_out);
 	cstring output = pr.get_output();
@@ -264,9 +267,6 @@ lstring_t getMatchingFiles(const cstring& dir, const cstring& base)
 		}
 	}
 	return ls_match;
-
-
-	
 }
 
 cstring getWhichFile(const cstring& file)
@@ -609,6 +609,12 @@ cstring get_win_path(const cstring& upath)
 		return "";
 	}
 
+	static cstring up_save; // a little bit of performance sugar. Need worry about thread safety now.
+	static cstring res_save;
+
+	if (up_save == upath) {
+		return res_save;
+	}
 	// if (upath[0] != '/' && upath[0] != '\\') {
 	// 	return upath;
 	// }
@@ -620,8 +626,9 @@ cstring get_win_path(const cstring& upath)
 		(upath[1] == '/' || upath[1] == '\\')) {
 		option = "-alw";
 	}
-	program_runner pr("cygpath", "option", upath, read_out);
-	return regex_replace(pr.get_output(), regex("\r|\n"), "", match_default|format_perl);
+	program_runner pr("cygpath", option, upath, read_out);
+	res_save = regex_replace(pr.get_output(), regex("\r|\n"), "", match_default|format_perl);
+	return res_save;
 }
 
 lstring_t unique_ls(const lstring_t& ls)
