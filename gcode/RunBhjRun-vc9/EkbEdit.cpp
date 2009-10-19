@@ -481,6 +481,9 @@ void CEkbEdit::switch_find_mode(int mode)
 	}
 	if (m_find_mode == mode_use_locate) {
 		cmdline_parser cp(getText());
+		m_histList.push_front(getText());
+		m_histList = unique_ls(m_histList);
+		saveHist();
 		getLocateMatchingFiles(cp.get_args(), true);
 	}
 	if (m_simpleWnd && m_simpleWnd->IsWindowVisible()) {
