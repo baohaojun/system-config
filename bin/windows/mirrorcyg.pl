@@ -6,7 +6,6 @@ use File::Basename;
 	"http://kambing.ui.ac.id/cygwin", 
 	"http://kambing.ui.ac.id/cygwin", 
 	"http://kambing.ui.ac.id/cygwin", 
-        "http://mirror.cs.vt.edu/pub/cygwin/cygwin",
     );
 for (@site) {
     s!/*$!!;
