@@ -1,3 +1,50 @@
+(require 'easymenu)
+
+(defvar mo-git-blame-mode-map
+  (let ((map (make-keymap)))
+    (suppress-keymap map t)
+    (define-key map (kbd "b") 'mo-git-blame-reblame-for-revision-at)
+    (define-key map (kbd "c") 'mo-git-blame-content-for-revision-at)
+    (define-key map (kbd "l") 'mo-git-blame-log-for-revision-at)
+    (define-key map (kbd "L") 'mo-git-blame-log-for-current-revision)
+    (define-key map (kbd "o") 'mo-git-blame-overwrite-file-with-revision-at)
+    (define-key map (kbd "O") 'mo-git-blame-overwrite-file-with-current-revision)
+    (define-key map (kbd "q") 'mo-git-blame-quit)
+    (define-key map (kbd "s") 'mo-git-blame-show-revision-at)
+    (define-key map (kbd "S") 'mo-git-blame-show-current-revision)
+    (define-key map (kbd "RET") 'mo-git-blame-show-revision-at)
+    (define-key map (kbd "TAB") 'mo-git-blame-display-content-buffer)
+    (define-key map [?\C-x ?k] 'mo-git-blame-quit)
+    (define-key map [?\C-x ?\C-l] 'mo-git-blame-goto-line)
+    map)
+  "The mode map for the blame output window of mo-git-blame-mode.")
+
+(defvar mo-git-blame-content-mode-map
+  (let ((map (make-keymap)))
+    (suppress-keymap map t)
+    (define-key map (kbd "q") 'mo-git-blame-quit)
+    (define-key map [?\C-x ?k] 'mo-git-blame-quit)
+    (define-key map [?\C-x ?\C-l] 'mo-git-blame-goto-line)
+    map)
+  "The mode map for the content window of mo-git-blame-mode.")
+
+(easy-menu-define mo-git-blame-mode-menu mo-git-blame-mode-map
+  "MoGitBlame menu"
+  '("MoGitBlame"
+    ["Re-blame for revision at point" mo-git-blame-reblame-for-revision-at t]
+    ["Raw content for revision at point" mo-git-blame-content-for-revision-at t]
+    ["Log for revision at point" mo-git-blame-log-for-revision-at t]
+    ["Overwrite file with revision at point" mo-git-blame-overwrite-file-with-revision-at t]
+    ["'git show' for revision at point" mo-git-blame-show-revision-at t]
+    "---"
+    ["Log for current revision" mo-git-blame-log-for-current-revision t]
+    ["Overwrite file with current revision" mo-git-blame-overwrite-file-with-current-revision t]
+    ["'git show' for current revision" mo-git-blame-show-current-revision t]
+    "---"
+    ["Display content buffer" mo-git-blame-display-content-buffer t]
+    "---"
+    ["Exit MoGitBlame" mo-git-blame-quit t]))
+
 (defgroup mo-git-blame nil
   "Interactively use Git's 'blame' from Emacs."
   :prefix "mo-git-blame-"
@@ -47,36 +94,8 @@
     (or git-dir
         (error "No Git repository found"))))
 
-(defvar mo-git-blame-mode-map
-  (let ((map (make-keymap)))
-    (suppress-keymap map t)
-    (define-key map (kbd "b") 'mo-git-blame-reblame-for-revision-at)
-    (define-key map (kbd "c") 'mo-git-blame-content-for-revision-at)
-    (define-key map (kbd "l") 'mo-git-blame-log-for-revision-at)
-    (define-key map (kbd "L") 'mo-git-blame-log-for-current-revision)
-    (define-key map (kbd "o") 'mo-git-blame-overwrite-file-with-revision-at)
-    (define-key map (kbd "O") 'mo-git-blame-overwrite-file-with-current-revision)
-    (define-key map (kbd "q") 'mo-git-blame-quit)
-    (define-key map (kbd "s") 'mo-git-blame-show-revision-at)
-    (define-key map (kbd "S") 'mo-git-blame-show-current-revision)
-    (define-key map (kbd "RET") 'mo-git-blame-show-revision-at)
-    (define-key map (kbd "TAB") 'mo-git-blame-display-content-buffer)
-    (define-key map [?\C-x ?k] 'mo-git-blame-quit)
-    (define-key map [?\C-x ?\C-l] 'mo-git-blame-goto-line)
-    map)
-  "The mode map for the blame output window of mo-git-blame-mode.")
-
-(defvar mo-git-blame-content-mode-map
-  (let ((map (make-keymap)))
-    (suppress-keymap map t)
-    (define-key map (kbd "q") 'mo-git-blame-quit)
-    (define-key map [?\C-x ?k] 'mo-git-blame-quit)
-    (define-key map [?\C-x ?\C-l] 'mo-git-blame-goto-line)
-    map)
-  "The mode map for the content window of mo-git-blame-mode.")
-
 (defun mo-git-blame-run (&rest args)
-  (apply 'call-process "git" nil (current-buffer) nil args))
+  (apply 'call-process mo-git-blame-git-executable nil (current-buffer) nil args))
 
 (defun mo-git-blame-get-output-buffer ()
   (let* ((name "*mo-git-blame-output*")
