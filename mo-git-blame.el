@@ -14,7 +14,8 @@
     (define-key map (kbd "TAB") 'mo-git-blame-display-content-buffer)
     (define-key map [?\C-x ?k] 'mo-git-blame-quit)
     (define-key map [?\C-x ?\C-l] 'mo-git-blame-goto-line)
-    map))
+    map)
+  "The mode map for the blame output window of mo-git-blame-mode.")
 
 (defvar mo-git-blame-content-mode-map
   (let ((map (make-keymap)))
@@ -22,7 +23,8 @@
     (define-key map (kbd "q") 'mo-git-blame-quit)
     (define-key map [?\C-x ?k] 'mo-git-blame-quit)
     (define-key map [?\C-x ?\C-l] 'mo-git-blame-goto-line)
-    map))
+    map)
+  "The mode map for the content window of mo-git-blame-mode.")
 
 (defun mo-git-blame-run (&rest args)
   (apply 'call-process "git" nil (current-buffer) nil args))
@@ -42,20 +44,20 @@
     (save-match-data
       (beginning-of-line)
       (cond ((looking-at "^\\([a-f0-9]+\\) +\\(([^)]+)\\) *$")
-             (list 'hash (buffer-substring (match-beginning 1) (match-end 1))
-                   'file-name mo-git-blame-file-name
-                   'timestamp (buffer-substring (match-beginning 2) (match-end 2))))
+             (list :hash (buffer-substring (match-beginning 1) (match-end 1))
+                   :file-name (plist-get mo-git-blame-vars :file-name)
+                   :timestamp (buffer-substring (match-beginning 2) (match-end 2))))
             ((looking-at "^\\([a-f0-9]+\\) +\\(([^)]+)\\) +\\(.+\\)")
-             (list 'hash (buffer-substring (match-beginning 1) (match-end 1))
-                   'file-name (buffer-substring (match-beginning 3) (match-end 3))
-                   'timestamp (buffer-substring (match-beginning 2) (match-end 2))))
+             (list :hash (buffer-substring (match-beginning 1) (match-end 1))
+                   :file-name (buffer-substring (match-beginning 3) (match-end 3))
+                   :timestamp (buffer-substring (match-beginning 2) (match-end 2))))
             (t (error "Not a 'git blame' line"))))))
 
 (defun mo-git-blame-revision-at-point ()
-  (plist-get (mo-git-blame-parse-blame-line) 'hash))
+  (plist-get (mo-git-blame-parse-blame-line) :hash))
 
 (defun mo-git-blame-log-for-revision (revision)
-  (let ((file-name mo-git-blame-file-name)
+  (let ((file-name (plist-get mo-git-blame-vars :file-name))
         (buffer (mo-git-blame-get-output-buffer)))
     (with-current-buffer buffer
       (erase-buffer)
@@ -71,7 +73,7 @@
 (defun mo-git-blame-log-for-current-revision ()
   "Calls 'git log' for the buffer's current revision and file."
   (interactive)
-  (mo-git-blame-log-for-revision mo-git-blame-current-revision))
+  (mo-git-blame-log-for-revision (plist-get mo-git-blame-vars :current-revision)))
 
 (defun mo-git-blame-show-revision (revision)
   (let ((buffer (mo-git-blame-get-output-buffer)))
@@ -89,7 +91,7 @@
 (defun mo-git-blame-show-current-revision ()
   "Calls 'git show' for the current revision."
   (interactive)
-  (mo-git-blame-show-revision mo-git-blame-current-revision))
+  (mo-git-blame-show-revision (plist-get mo-git-blame-vars :current-revision)))
 
 (defun mo-git-blame-content-for-revision-at ()
   "Calls 'git cat-file' for the revision in the current line."
@@ -98,15 +100,15 @@
         (buffer (mo-git-blame-get-output-buffer)))
     (with-current-buffer buffer
       (erase-buffer)
-      (mo-git-blame-run "cat-file" "blob" (concat (plist-get info 'hash) ":" (plist-get info 'file-name)))
+      (mo-git-blame-run "cat-file" "blob" (concat (plist-get info :hash) ":" (plist-get info :file-name)))
       (goto-char (point-min)))
     (display-buffer buffer)))
 
 (defun mo-git-blame-overwrite-file-with-revision (revision)
-  (let ((file-name mo-git-blame-original-file-name))
+  (let ((file-name (plist-get mo-git-blame-vars :original-file-name)))
     (if (yes-or-no-p (format "Do you really want to overwrite %s with revision %s " file-name revision))
         (progn
-          (find-file (concat mo-git-blame-top-dir file-name))
+          (find-file (concat (plist-get mo-git-blame-vars :top-dir) file-name))
           (erase-buffer)
           (mo-git-blame-run "cat-file" "blob" (concat revision ":" file-name))
           (goto-char (point-min))))))
@@ -123,16 +125,16 @@ open buffer."
 the original file's content. The file is not saved but left modified in an
 open buffer."
   (interactive)
-  (mo-git-blame-overwrite-file-with-revision mo-git-blame-current-revision))
+  (mo-git-blame-overwrite-file-with-revision (plist-get mo-git-blame-vars :current-revision)))
 
 (defun mo-git-blame-reblame-for-revision-at ()
   "Calls 'git blame' for the revision in the current line."
   (interactive)
   (let* ((info (mo-git-blame-parse-blame-line))
-         (revision (plist-get info 'hash)))
-    (if (string= revision mo-git-blame-current-revision)
+         (revision (plist-get info :hash)))
+    (if (string= revision (plist-get mo-git-blame-vars :current-revision))
         (error "Already showing this revision"))
-    (mo-git-blame-file (concat mo-git-blame-top-dir (plist-get info 'file-name)) revision mo-git-blame-original-file-name)))
+    (mo-git-blame-file (concat (plist-get mo-git-blame-vars :top-dir) (plist-get info :file-name)) revision (plist-get mo-git-blame-vars :original-file-name))))
 
 (defun mo-git-blame-file (file-name &optional revision original-file-name)
   "Calls 'git blame' for REVISION of FILE-NAME or HEAD if REVISION
@@ -144,42 +146,44 @@ is not given."
          (base-name (concat (file-name-nondirectory file-name) "@" the-revision))
          (blame-buffer (get-buffer-create "*mo-git-blame*"))
          (content-buffer-name (concat "*mo-git-blame:" (file-name-nondirectory file-name) ":" the-revision "*"))
-         (content-buffer (if (local-variable-p 'mo-git-blame-content-buffer)
-                             mo-git-blame-content-buffer
+         (content-buffer (if (local-variable-p 'mo-git-blame-vars)
+                             (plist-get mo-git-blame-vars :content-buffer)
                            (get-buffer-create content-buffer-name)))
          (top-dir (magit-get-top-dir (file-name-directory file-name)))
          (relative-file-name (file-relative-name file-name top-dir))
          (blame-window (selected-window))
-         (content-window nil)
-         )
+         content-window the-buffer)
     (switch-to-buffer blame-buffer)
     (if (window-full-width-p)
         (split-window-horizontally 45))
     (select-window (setq content-window (next-window)))
     (switch-to-buffer content-buffer)
     (select-window blame-window)
+    (dolist (the-buffer (list blame-buffer content-buffer))
+      (with-current-buffer the-buffer
+        (toggle-read-only 0)
+        (kill-all-local-variables)
+        (buffer-disable-undo)
+        (erase-buffer)
+        (setq default-directory top-dir)
+        (set (make-local-variable 'mo-git-blame-vars)
+             (list :top-dir top-dir
+                   :file-name relative-file-name
+                   :full-file-name file-name
+                   :original-file-name (if (null original-file-name) file-name original-file-name)
+                   :current-revision the-revision
+                   :blame-buffer blame-buffer
+                   :blame-window blame-window
+                   :content-buffer content-buffer
+                   :content-window content-window))
+        (set (make-local-variable 'line-move-visual) nil)))
     (with-current-buffer blame-buffer
-      (toggle-read-only 0)
-      (kill-all-local-variables)
-      (buffer-disable-undo)
-      (erase-buffer)
-      (setq default-directory top-dir)
-      (set (make-local-variable 'mo-git-blame-top-dir) top-dir)
-      (set (make-local-variable 'mo-git-blame-file-name) relative-file-name)
-      (set (make-local-variable 'mo-git-blame-full-file-name) file-name)
-      (set (make-local-variable 'mo-git-blame-original-file-name) (if (null original-file-name) file-name original-file-name))
-      (set (make-local-variable 'mo-git-blame-current-revision) the-revision)
-      (set (make-local-variable 'mo-git-blame-blame-buffer) blame-buffer)
-      (set (make-local-variable 'mo-git-blame-blame-window) blame-window)
-      (set (make-local-variable 'mo-git-blame-content-buffer) content-buffer)
-      (set (make-local-variable 'mo-git-blame-content-window) content-window)
-      (set (make-local-variable 'line-move-visual) nil)
       (setq major-mode 'mo-git-blame-mode
             mode-name "MoGitBlame"
             mode-line-process ""
             truncate-lines t)
       (use-local-map mo-git-blame-mode-map)
-      (mo-git-blame-run "blame" the-revision "--" mo-git-blame-file-name)
+      (mo-git-blame-run "blame" the-revision "--" (plist-get mo-git-blame-vars :file-name))
       (goto-char (point-min))
       (save-match-data
         (while (re-search-forward "^\\([a-f0-9]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
@@ -192,24 +196,14 @@ is not given."
           (replace-match ")" nil nil)))
       (toggle-read-only t)
       (goto-char (point-min))
-      (scroll-all-mode 1)
-      )
+      (scroll-all-mode 1))
     (with-current-buffer content-buffer
-      (toggle-read-only 0)
       (rename-buffer content-buffer-name)
-      (kill-all-local-variables)
-      (buffer-disable-undo)
-      (erase-buffer)
       (setq buffer-file-name (file-name-nondirectory file-name)
             default-directory top-dir)
       (mo-git-blame-run "cat-file" "blob" (concat the-revision ":" relative-file-name))
       (normal-mode)
       (use-local-map mo-git-blame-content-mode-map)
-      (set (make-local-variable 'mo-git-blame-blame-buffer) blame-buffer)
-      (set (make-local-variable 'mo-git-blame-blame-window) blame-window)
-      (set (make-local-variable 'mo-git-blame-content-buffer) content-buffer)
-      (set (make-local-variable 'mo-git-blame-content-window) content-window)
-      (set (make-local-variable 'line-move-visual) nil)
       (font-lock-fontify-buffer)
       (toggle-read-only t)
       (set-buffer-modified-p nil)
@@ -221,35 +215,36 @@ is not given."
   (interactive)
   (delete-other-windows)
   (scroll-all-mode 0)
-  (save-match-data
+  (let ((buffer))
     (dolist (buffer (buffer-list))
-      (if (string-match "^\\*mo-git-blame" (buffer-name buffer))
+      (if (string-match-p "^\\*mo-git-blame" (buffer-name buffer))
           (kill-buffer buffer)))))
 
 (defun mo-git-blame-display-content-buffer ()
   "Show the content buffer in the content window."
   (interactive)
-  (let ((buffer mo-git-blame-content-buffer)
+  ; Declare buffer here because mo-git-blame-vars might not be available in the other buffer.
+  (let ((buffer (plist-get mo-git-blame-vars :content-buffer))
         (line-num (line-number-at-pos)))
-    (with-selected-window mo-git-blame-content-window
-      (switch-to-buffer buffer))
     (goto-line line-num)
     (recenter)
-    (with-selected-window mo-git-blame-content-window
+    (with-selected-window (plist-get mo-git-blame-vars :content-window)
+      (switch-to-buffer buffer)
       (goto-line line-num)
       (recenter))))
 
 (defun mo-git-blame-other-buffer ()
-  (if (eq (current-buffer) mo-git-blame-blame-buffer)
-      mo-git-blame-content-buffer
-    mo-git-blame-blame-buffer))
+  (plist-get mo-git-blame-vars
+             (if (eq (current-buffer) (plist-get mo-git-blame-vars :blame-buffer))
+                 :content-buffer
+               :blame-buffer)))
 
 (defun mo-git-blame-goto-line (line)
   "Goto a line in both the blame and the content buffer."
   (interactive "nGoto line: ")
-  (with-selected-window mo-git-blame-blame-window
+  (with-selected-window (plist-get mo-git-blame-vars :blame-window)
     (goto-line line))
-  (with-selected-window mo-git-blame-content-window
+  (with-selected-window (plist-get mo-git-blame-vars :content-window)
     (goto-line line)))
 
 (defun mo-git-blame-current ()
@@ -265,4 +260,5 @@ is not given."
 ;;   (mo-git-blame-file "/home/mosu/prog/video/mkvtoolnix/src/info/mkvinfo.cpp")) ;merge/cluster_helper.cpp"))
 ;; (global-set-key [?\C-c ?i ?g] 'mo-git-blame-special)
 
+(require 'magit)
 (provide 'mo-git-blame)
