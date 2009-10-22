@@ -8,6 +8,12 @@
   :group 'mo-git-blame
   :type 'string)
 
+(defcustom mo-git-blame-blame-window-width 45
+  "The width of the 'blame' window leaving the rest for the
+'content' window."
+  :group 'mo-git-blame
+  :type 'integer)
+
 ;; This function was taken from magit (called 'magit-trim-line' there).
 (defun mo-git-blame-trim-line (str)
   (cond ((string= str "")
@@ -245,7 +251,7 @@ the output of 'git blame' and the content."
          content-window the-buffer)
     (switch-to-buffer blame-buffer)
     (if (window-full-width-p)
-        (split-window-horizontally 45))
+        (split-window-horizontally mo-git-blame-blame-window-width))
     (select-window (setq content-window (next-window)))
     (switch-to-buffer content-buffer)
     (select-window blame-window)
