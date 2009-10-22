@@ -6,7 +6,7 @@ regedit /s ime-noctrlshift-noaltshift.reg
 
 
 MYXWINSH=~/bin/windows/lnks/myxwin.sh
-(echo "#!/bin/bash -l"; echo export CYGWIN=tty; grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p'|grep -v checkX) > $MYXWINSH
+(echo "#!/bin/bash -l"; grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p'|grep -v checkX) > $MYXWINSH
 chmod +x $MYXWINSH
 myxwin.sh&
 net start sshd&
