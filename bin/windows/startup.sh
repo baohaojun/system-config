@@ -1,5 +1,4 @@
 #!/bin/bash
-export CYGWIN=tty
 echo "\$0 is $0"
 #make sure PATH is sane
 export PATH=/bin:$PATH
