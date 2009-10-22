@@ -52,6 +52,7 @@ regSetVal -s set '\HKEY_CLASSES_ROOT\Directory\shell\EmacsEdit\command\' 'q:\bin
 regSetVal -s set '\HKEY_CLASSES_ROOT\Directory\shell\bashHere\command\' 'q:\bin\windows\redirect_vc6\runHere bash "%1"'
 regSetVal -s set '\HKEY_CLASSES_ROOT\Directory\shell\Locate It\command\' 'q:\bin\windows\redirect_vc6\LocateIt "%1"'
 regSetVal -s set '\HKEY_CLASSES_ROOT\Directory\shell\WinPath\command\' 'q:\bin\windows\redirect_vc6\winpath "%1"'
-regSetVal -s set '\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\CYGWIN' 'tty'
 regSetVal -i set '\HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel\obcaseinsensitive' 0
+regtool.exe unset '\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\CYGWIN'
+
 refresh-windows-env.py
