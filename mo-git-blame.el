@@ -1,3 +1,46 @@
+(defgroup mo-git-blame nil
+  "Interactively use Git's 'blame' from Emacs."
+  :prefix "mo-git-blame-"
+  :group 'tools)
+
+(defcustom mo-git-blame-git-executable "git"
+  "The name of the Git executable."
+  :group 'mo-git-blame
+  :type 'string)
+
+;; This function was taken from magit (called 'magit-trim-line' there).
+(defun mo-git-blame-trim-line (str)
+  (cond ((string= str "")
+         nil)
+        ((equal (elt str (- (length str) 1)) ?\n)
+         (substring str 0 (- (length str) 1)))
+        (t str)))
+
+;; This function was taken from magit (called 'magit-git-output' there).
+(defun mo-git-blame-git-output (args)
+  (with-output-to-string
+    (with-current-buffer standard-output
+      (apply #'process-file
+             mo-git-blame-git-executable
+             nil (list t nil) nil
+             args))))
+
+;; This function was taken from magit (called 'magit-git-string' there).
+(defun mo-git-blame-git-string (&rest args)
+  (mo-git-blame-trim-line (mo-git-blame-git-output args)))
+
+(defun mo-git-blame-get-top-dir (cwd)
+  (let ((cwd (expand-file-name cwd))
+        git-dir)
+    (setq git-dir
+          (if (file-directory-p cwd)
+              (let* ((default-directory cwd)
+                     (dir (file-name-directory (or (mo-git-blame-git-string "rev-parse" "--git-dir") ""))))
+                (if (and dir (file-directory-p dir))
+                    (file-name-as-directory dir)))))
+    (or git-dir
+        (error "No Git repository found"))))
+
 (defvar mo-git-blame-mode-map
   (let ((map (make-keymap)))
     (suppress-keymap map t)
@@ -188,7 +231,7 @@ REVISION is not given. Initializes the two windows that will show
 the output of 'git blame' and the content."
   (let* ((the-raw-revision (or revision "HEAD"))
          (the-revision (if (string= the-raw-revision "HEAD")
-                           (magit-git-string "rev-parse" "--short" "HEAD")
+                           (mo-git-blame-git-string "rev-parse" "--short" "HEAD")
                          the-raw-revision))
          (base-name (concat (file-name-nondirectory file-name) "@" the-revision))
          (blame-buffer (get-buffer-create "*mo-git-blame*"))
@@ -196,7 +239,7 @@ the output of 'git blame' and the content."
          (content-buffer (if (local-variable-p 'mo-git-blame-vars)
                              (plist-get mo-git-blame-vars :content-buffer)
                            (get-buffer-create content-buffer-name)))
-         (top-dir (magit-get-top-dir (file-name-directory file-name)))
+         (top-dir (mo-git-blame-get-top-dir (file-name-directory file-name)))
          (relative-file-name (file-relative-name file-name top-dir))
          (blame-window (selected-window))
          content-window the-buffer)
@@ -267,6 +310,7 @@ the output of 'git blame' and the content."
   (with-selected-window (plist-get mo-git-blame-vars :content-window)
     (goto-line line)))
 
+;;;###autoload
 (defun mo-git-blame-current ()
   "Calls mo-git-blame-file for HEAD for the current buffer."
   (interactive)
@@ -274,11 +318,4 @@ the output of 'git blame' and the content."
       (error "The current buffer is not associated with a file."))
   (mo-git-blame-file (buffer-file-name)))
 
-;; (defun mo-git-blame-special ()
-;;   ""
-;;   (interactive)
-;;   (mo-git-blame-file "/home/mosu/prog/video/mkvtoolnix/src/info/mkvinfo.cpp")) ;merge/cluster_helper.cpp"))
-;; (global-set-key [?\C-c ?i ?g] 'mo-git-blame-special)
-
-(require 'magit)
 (provide 'mo-git-blame)
