@@ -136,10 +136,57 @@ open buffer."
         (error "Already showing this revision"))
     (mo-git-blame-file (concat (plist-get mo-git-blame-vars :top-dir) (plist-get info :file-name)) revision (plist-get mo-git-blame-vars :original-file-name))))
 
+(defun mo-git-blame-mode ()
+  "Show the output of 'git blame' and the content of the file in
+two frames side-by-side. Allows iterative re-blaming for specific
+revisions. Can show the output of 'git log' and 'git show'. Can
+overwrite the file with the content of specific revisions by
+calling 'git cat-file blob ...'.
+
+Use 'mo-git-blame-current' interactively or 'mo-git-blame-file'
+from elisp.
+
+\\{mo-git-blame-mode-map}"
+  (setq major-mode 'mo-git-blame-mode
+        mode-name "MoGitBlame"
+        mode-line-process ""
+        truncate-lines t)
+  (use-local-map mo-git-blame-mode-map))
+
+(defun mo-git-blame-init-blame-buffer ()
+  (mo-git-blame-run "blame" (plist-get mo-git-blame-vars :current-revision) "--" (plist-get mo-git-blame-vars :file-name))
+  (goto-char (point-min))
+  (save-match-data
+    (while (re-search-forward "^\\([a-f0-9]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
+      (replace-match "\\1 \\2" nil nil))
+    (goto-char (point-min))
+    (while (re-search-forward "^\\([a-f0-9]+\\) +\\([^ ]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
+      (replace-match "\\1 \\3 \\2" nil nil))
+    (goto-char (point-min))
+    (while (re-search-forward " +[0-9]+)" nil t)
+      (replace-match ")" nil nil)))
+  (toggle-read-only t)
+  (goto-char (point-min))
+  (scroll-all-mode 1))
+
+(defun mo-git-blame-init-content-buffer ()
+  (rename-buffer (concat "*mo-git-blame:" (file-name-nondirectory (plist-get mo-git-blame-vars :full-file-name)) ":" (plist-get mo-git-blame-vars :current-revision) "*"))
+  (setq buffer-file-name (file-name-nondirectory (plist-get mo-git-blame-vars :full-file-name))
+        default-directory (plist-get mo-git-blame-vars :top-dir))
+  (mo-git-blame-run "cat-file" "blob" (concat (plist-get mo-git-blame-vars :current-revision) ":" (plist-get mo-git-blame-vars :file-name)))
+  (normal-mode)
+  (use-local-map mo-git-blame-content-mode-map)
+  (font-lock-fontify-buffer)
+  (toggle-read-only t)
+  (set-buffer-modified-p nil)
+  (scroll-all-mode 1)
+  (setq truncate-lines t))
+
 (defun mo-git-blame-file (file-name &optional revision original-file-name)
-  "Calls 'git blame' for REVISION of FILE-NAME or HEAD if REVISION
-is not given."
-  (let* ((the-raw-revision (if (null revision) "HEAD" revision))
+  "Calls 'git blame' for REVISION of FILE-NAME or HEAD if
+REVISION is not given. Initializes the two windows that will show
+the output of 'git blame' and the content."
+  (let* ((the-raw-revision (or revision "HEAD"))
          (the-revision (if (string= the-raw-revision "HEAD")
                            (magit-git-string "rev-parse" "--short" "HEAD")
                          the-raw-revision))
@@ -170,7 +217,7 @@ is not given."
              (list :top-dir top-dir
                    :file-name relative-file-name
                    :full-file-name file-name
-                   :original-file-name (if (null original-file-name) file-name original-file-name)
+                   :original-file-name (or original-file-name file-name)
                    :current-revision the-revision
                    :blame-buffer blame-buffer
                    :blame-window blame-window
@@ -178,37 +225,10 @@ is not given."
                    :content-window content-window))
         (set (make-local-variable 'line-move-visual) nil)))
     (with-current-buffer blame-buffer
-      (setq major-mode 'mo-git-blame-mode
-            mode-name "MoGitBlame"
-            mode-line-process ""
-            truncate-lines t)
-      (use-local-map mo-git-blame-mode-map)
-      (mo-git-blame-run "blame" the-revision "--" (plist-get mo-git-blame-vars :file-name))
-      (goto-char (point-min))
-      (save-match-data
-        (while (re-search-forward "^\\([a-f0-9]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
-          (replace-match "\\1 \\2" nil nil))
-        (goto-char (point-min))
-        (while (re-search-forward "^\\([a-f0-9]+\\) +\\([^ ]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
-          (replace-match "\\1 \\3 \\2" nil nil))
-        (goto-char (point-min))
-        (while (re-search-forward " +[0-9]+)" nil t)
-          (replace-match ")" nil nil)))
-      (toggle-read-only t)
-      (goto-char (point-min))
-      (scroll-all-mode 1))
+      (mo-git-blame-mode)
+      (mo-git-blame-init-blame-buffer))
     (with-current-buffer content-buffer
-      (rename-buffer content-buffer-name)
-      (setq buffer-file-name (file-name-nondirectory file-name)
-            default-directory top-dir)
-      (mo-git-blame-run "cat-file" "blob" (concat the-revision ":" relative-file-name))
-      (normal-mode)
-      (use-local-map mo-git-blame-content-mode-map)
-      (font-lock-fontify-buffer)
-      (toggle-read-only t)
-      (set-buffer-modified-p nil)
-      (scroll-all-mode 1)
-      (setq truncate-lines t))))
+      (mo-git-blame-init-content-buffer))))
 
 (defun mo-git-blame-quit ()
   "Kill the mo-git-blame buffers."
