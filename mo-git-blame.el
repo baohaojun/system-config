@@ -406,7 +406,7 @@ re-blaming."
 
 ;;;###autoload
 (defun mo-git-blame-current ()
-  "Calls mo-git-blame-file for HEAD for the current buffer."
+  "Calls `mo-git-blame-file' for HEAD for the current buffer."
   (interactive)
   (if (null (buffer-file-name))
       (error "The current buffer is not associated with a file."))
