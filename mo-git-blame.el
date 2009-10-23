@@ -92,7 +92,8 @@ interactive use, e.g. the file name, current revision etc.")
     (setq git-dir
           (if (file-directory-p cwd)
               (let* ((default-directory cwd)
-                     (dir (file-name-directory (or (mo-git-blame-git-string "rev-parse" "--git-dir") ""))))
+                     (dir (mo-git-blame-git-string "rev-parse" "--git-dir"))
+                     (dir (if dir (file-name-directory (expand-file-name dir)) "")))
                 (if (and dir (file-directory-p dir))
                     (file-name-as-directory dir)))))
     (or git-dir
