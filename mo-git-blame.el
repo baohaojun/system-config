@@ -30,6 +30,7 @@
 ;;; (autoload 'mo-git-blame-current "mo-git-blame" nil t)
 
 (require 'easymenu)
+(require 'scroll-all)
 
 (defvar mo-git-blame-vars nil
   "Buffer-local plist that stores various variables needed for
