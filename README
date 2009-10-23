@@ -1,0 +1,141 @@
+mo-git-blame -- An interactive, interative 'git blame' mode for Emacs
+
+Copyright
+---------
+
+Copyright (C) 2009  Moritz Bunkus <moritz@bunkus.org>
+
+mo-git-blame is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3, or (at your option)
+any later version.
+
+mo-git-blame is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with GNU Emacs; see the file COPYING.  If not, write to the Free
+Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+02111-1307, USA.
+
+Installation
+------------
+
+Put this file somewhere in your load-path or add the directory it
+is in to it, e.g.:
+
+(add-to-list 'load-path "~/.emacs.d/mo-git-blame")
+
+Then add two autoload definitions:
+
+(autoload 'mo-git-blame-file "mo-git-blame" nil t)
+(autoload 'mo-git-blame-current "mo-git-blame" nil t)
+
+Optionally bind keys to these functions, e.g.
+
+(global-set-key [?\C-c ?g ?c] 'mo-git-blame-current)
+(global-set-key [?\C-c ?g ?f] 'mo-git-blame-file)
+
+Usage
+-----
+
+There are two ways to invoke it: `mo-git-blame-file' which lets you
+select a file for which 'git blame' should be called and
+`mo-git-blame-current' which does the same for the current buffer's
+associated file.
+
+Once the mode starts it splits the window vertically. The left one
+is filled with the blame output while the right one is filled with the
+content at the current revision. Syntax highlighting is enabled for
+the content window. The content buffer's name will contain the file
+name and the current revision.
+
+mo-git-blame works with three different buffers:
+
+1. the `blame' buffer which contains the output of `git blame' and
+which is the main buffer from which actions can be invoked
+
+2. the `content' buffer which shows the file content at the current
+revision. This buffer has syntax highlighting turned on. Only a few
+actions can be invoked from this buffer (e.g. `q' for exiting
+mo-git-blame).
+
+3. the `output' buffer which contains the output of several git
+commands, e.g. 'git show' or 'git cat-file'.
+
+Normally the `blame' and the `content' buffer are shown
+side-by-side. If the user requests additional information then the
+`output' buffer is shown instead of the `content' buffer. The user can
+return to the `content' buffer with <TAB>.
+
+You can invoke several actions from the blame buffer with single key
+strokes. These include but are not limited to:
+
+b   -- Call 'git blame' for the file for the revision listed in the
+       current line. Sets the content buffer to contain the file
+       content at the new revision.
+c   -- Call 'git cat-file blob ...' for the revision listed in the
+       current line and show the output in the `output' buffer. The
+       output will not have syntax highlighting.
+i   -- Display the current state information (current revision, git
+       repository path etc) in the right window.
+l   -- Call 'git log' for the revision listed in the current line and
+       show the output in the `output' buffer.
+L   -- Call 'git log' for the current revision and show the output in
+       the `output' buffer.
+o   -- Overwrite the file with the content of the revision listed in
+       the current line. Asks for confirmation before actually
+       overwriting the file.
+O   -- Overwrite the file with the content of the current
+       revision. Asks for confirmation before actually overwriting the
+       file.
+q   -- Exit mo-git-blame and kill all its buffers.
+s   -- Call 'git show' for the revision listed in the current line and
+       show the output in the `output' buffer.
+S   -- Call 'git show' for the current revision and show the output in
+       the `output' buffer.
+TAB -- Re-display the `content' buffer in the right window if it has
+       replaced with the `output' buffer.
+RET -- Same as `s'.
+
+Customizing
+-----------
+
+There are several variables that can be customized. They belong to the
+group `mo-git-blame' and can be customized with
+
+(customize-group 'mo-git-blame)
+
+These variables include:
+
+* `mo-git-blame-git-executable' defaults to `git' and should point to
+  your `git' executable if it is not in your path.
+* `mo-git-blame-blame-window-width' defaults to 45 and determines the
+  initial width of the `blame' window.
+* `mo-git-blame-use-ido' determines whether or not the `ido' package
+  is used for various interactive lookups.
+
+Bugs, feature requests, contact
+-------------------------------
+
+You can reach me via email at Moritz Bunkus <moritz@bunkus.org>. I'm
+always grateful for bug reports and usually open to feature
+suggestions as far as my time permits.
+
+You can also file bug reports in my Bugzilla. I actively use Bugzilla
+and prefer this method to direct emails. Bugzilla can be found at
+
+https://www.bunkus.org/bugzilla/
+
+Patches, source code
+--------------------
+
+The latest version can always be retrieved from my Git repository:
+
+git clone git://git.bunkus.org/mo-git-blame.git
+
+If you want to send patches: Yes! By all means! Please do so! Please
+note that I'm using wide windows and do not like forced wrapping
+around 80 columns. I also don't like tabs. Thanks.
