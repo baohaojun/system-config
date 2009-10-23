@@ -300,7 +300,6 @@ from elisp.
 (defun mo-git-blame-read-file-name ()
   "Calls `read-file-name' or `ido-read-file-name' depending on
 the value of `mo-git-blame-use-ido'."
-  (interactive)
   (let ((the-func (cond ((eq mo-git-blame-use-ido 'always)
                          (require 'ido)
                          'ido-read-file-name)
