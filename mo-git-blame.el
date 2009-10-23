@@ -40,6 +40,7 @@ interactive use, e.g. the file name, current revision etc.")
     (suppress-keymap map t)
     (define-key map (kbd "b") 'mo-git-blame-reblame-for-revision-at)
     (define-key map (kbd "c") 'mo-git-blame-content-for-revision-at)
+    (define-key map (kbd "i") 'mo-git-blame-display-info)
     (define-key map (kbd "l") 'mo-git-blame-log-for-revision-at)
     (define-key map (kbd "L") 'mo-git-blame-log-for-current-revision)
     (define-key map (kbd "o") 'mo-git-blame-overwrite-file-with-revision-at)
@@ -250,6 +251,21 @@ open buffer."
     (if (string= revision (plist-get mo-git-blame-vars :current-revision))
         (error "Already showing this revision"))
     (mo-git-blame-file (concat (plist-get mo-git-blame-vars :top-dir) (plist-get info :file-name)) revision (plist-get mo-git-blame-vars :original-file-name))))
+
+(defun mo-git-blame-display-info ()
+  "Displays short information about the current revision."
+  (interactive)
+  (let ((buffer (mo-git-blame-get-output-buffer))
+        (vars mo-git-blame-vars))
+    (with-current-buffer buffer
+      (erase-buffer)
+      (insert (format "Current revision:   %s\n" (plist-get vars :current-revision))
+              (format "Git repository:     %s\n" (plist-get vars :top-dir))
+              (format "Original file name: %s\n" (file-relative-name (plist-get vars :original-file-name)
+                                                                     (plist-get vars :top-dir)))
+              (format "Current file name:  %s\n" (plist-get vars :file-name)))
+      (goto-char (point-min)))
+    (display-buffer buffer)))
 
 (defun mo-git-blame-mode ()
   "Show the output of 'git blame' and the content of the file in
