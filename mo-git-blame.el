@@ -1,5 +1,9 @@
 (require 'easymenu)
 
+(defvar mo-git-blame-vars nil
+  "Buffer-local plist that stores various variables needed for
+interactive use, e.g. the file name, current revision etc.")
+
 (defvar mo-git-blame-mode-map
   (let ((map (make-keymap)))
     (suppress-keymap map t)
