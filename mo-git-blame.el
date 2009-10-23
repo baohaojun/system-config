@@ -65,6 +65,17 @@ interactive use, e.g. the file name, current revision etc.")
   :group 'mo-git-blame
   :type 'integer)
 
+(defcustom mo-git-blame-use-ido 'if-available
+  "Controls whether or not ido will be used. Possible choices:
+
+  `never'        -- do not use ido even if it is loaded
+  `if-available' -- use ido if it has been loaded before
+  `always'       -- automatically load ido and use it"
+  :group 'mo-git-blame
+  :type '(choice (const :tag "Always" always)
+                 (const :tag "If available" if-available)
+                 (const :tag "Never" never)))
+
 ;; This function was taken from magit (called 'magit-trim-line' there).
 (defun mo-git-blame-trim-line (str)
   (cond ((string= str "")
@@ -255,11 +266,33 @@ from elisp.
   (scroll-all-mode 1)
   (setq truncate-lines t))
 
-(defun mo-git-blame-file (file-name &optional revision original-file-name)
-  "Calls 'git blame' for REVISION of FILE-NAME or HEAD if
+(defun mo-git-blame-read-file-name ()
+  "Calls `read-file-name' or `ido-read-file-name' depending on
+the value of `mo-git-blame-use-ido'."
+  (interactive)
+  (let ((the-func (cond ((eq mo-git-blame-use-ido 'always)
+                         (require 'ido)
+                         'ido-read-file-name)
+                        ((and (eq mo-git-blame-use-ido 'if-available)
+                              (functionp 'ido-read-file-name))
+                         'ido-read-file-name)
+                        (t 'read-file-name))))
+    (funcall the-func "File for 'git blame': " nil nil t)))
+
+(defun mo-git-blame-file (&optional file-name revision original-file-name)
+  "Calls 'git blame' for REVISION of FILE-NAME or `HEAD' if
 REVISION is not given. Initializes the two windows that will show
-the output of 'git blame' and the content."
-  (let* ((the-raw-revision (or revision "HEAD"))
+the output of 'git blame' and the content.
+
+If FILE-NAME is missing it will be read with `find-file' in
+interactive mode.
+
+ORIGINAL-FILE-NAME defaults to FILE-NAME if not given. This is
+used for tracking renaming and moving of files during iterative
+re-blaming."
+  (interactive)
+  (let* ((file-name (or file-name (mo-git-blame-read-file-name)))
+         (the-raw-revision (or revision "HEAD"))
          (the-revision (if (string= the-raw-revision "HEAD")
                            (mo-git-blame-git-string "rev-parse" "--short" "HEAD")
                          the-raw-revision))
