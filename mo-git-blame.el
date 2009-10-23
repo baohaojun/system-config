@@ -309,6 +309,7 @@ the value of `mo-git-blame-use-ido'."
                         (t 'read-file-name))))
     (funcall the-func "File for 'git blame': " nil nil t)))
 
+;;;###autoload
 (defun mo-git-blame-file (&optional file-name revision original-file-name)
   "Calls 'git blame' for REVISION of FILE-NAME or `HEAD' if
 REVISION is not given. Initializes the two windows that will show
