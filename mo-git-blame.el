@@ -78,6 +78,7 @@ interactive use, e.g. the file name, current revision etc.")
     ["Overwrite file with current revision" mo-git-blame-overwrite-file-with-current-revision t]
     ["'git show' for current revision" mo-git-blame-show-current-revision t]
     "---"
+    ["Display status information" mo-git-blame-display-info t]
     ["Display content buffer" mo-git-blame-display-content-buffer t]
     "---"
     ["Exit MoGitBlame" mo-git-blame-quit t]))
