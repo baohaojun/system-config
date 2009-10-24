@@ -85,6 +85,9 @@ l   -- Call 'git log' for the revision listed in the current line and
        show the output in the `output' buffer.
 L   -- Call 'git log' for the current revision and show the output in
        the `output' buffer.
+p   -- Call 'git blame' for the file for the revision that was shown
+       prior to the current one. Works only if you've used `b'
+       before.
 o   -- Overwrite the file with the content of the revision listed in
        the current line. Asks for confirmation before actually
        overwriting the file.

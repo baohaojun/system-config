@@ -29,6 +29,7 @@
 ;;; (autoload 'mo-git-blame-file "mo-git-blame" nil t)
 ;;; (autoload 'mo-git-blame-current "mo-git-blame" nil t)
 
+(require 'cl)
 (require 'easymenu)
 (require 'scroll-all)
 
@@ -46,6 +47,7 @@ interactive use, e.g. the file name, current revision etc.")
     (define-key map (kbd "L") 'mo-git-blame-log-for-current-revision)
     (define-key map (kbd "o") 'mo-git-blame-overwrite-file-with-revision-at)
     (define-key map (kbd "O") 'mo-git-blame-overwrite-file-with-current-revision)
+    (define-key map (kbd "p") 'mo-git-blame-reblame-for-prior-revision)
     (define-key map (kbd "q") 'mo-git-blame-quit)
     (define-key map (kbd "s") 'mo-git-blame-show-revision-at)
     (define-key map (kbd "S") 'mo-git-blame-show-current-revision)
@@ -77,6 +79,8 @@ interactive use, e.g. the file name, current revision etc.")
     ["Log for current revision" mo-git-blame-log-for-current-revision t]
     ["Overwrite file with current revision" mo-git-blame-overwrite-file-with-current-revision t]
     ["'git show' for current revision" mo-git-blame-show-current-revision t]
+    "---"
+    ["Re-blame for prior revision" mo-git-blame-reblame-for-prior-revision t]
     "---"
     ["Display status information" mo-git-blame-display-info t]
     ["Display content buffer" mo-git-blame-display-content-buffer t]
@@ -254,14 +258,35 @@ open buffer."
         (error "Already showing this revision"))
     (mo-git-blame-file (concat (plist-get mo-git-blame-vars :top-dir) (plist-get info :file-name)) revision (plist-get mo-git-blame-vars :original-file-name))))
 
+(defun mo-git-blame-reblame-for-prior-revision ()
+  "Calls 'git blame' for the revision shown before the current
+one (see `prior revisions' in the info output of
+`mo-git-blame-display-info')."
+  (interactive)
+  (let ((rev-list (plist-get mo-git-blame-vars :prior-revisions))
+        revision-plist)
+    (unless rev-list
+      (error "No revision shown prior to the current one"))
+    (setq revision-plist (car rev-list))
+    (mo-git-blame-file (plist-get revision-plist :full-file-name)
+                       (plist-get revision-plist :revision)
+                       (plist-get mo-git-blame-vars :original-file-name))))
+
 (defun mo-git-blame-display-info ()
   "Displays short information about the current revision."
   (interactive)
-  (let ((buffer (mo-git-blame-get-output-buffer))
-        (vars mo-git-blame-vars))
+  (let* ((buffer (mo-git-blame-get-output-buffer))
+         (vars mo-git-blame-vars)
+         (prior-revs (plist-get vars :prior-revisions))
+         (prior-revs-str (if prior-revs
+                             (reduce (lambda (joined element) (concat (or joined "") (if joined " " "") element))
+                                     (mapcar (lambda (element) (plist-get element :revision))
+                                             prior-revs))
+                           "none")))
     (with-current-buffer buffer
       (erase-buffer)
       (insert (format "Current revision:   %s\n" (plist-get vars :current-revision))
+              (format "Prior revisions:    %s\n" prior-revs-str)
               (format "Git repository:     %s\n" (plist-get vars :top-dir))
               (format "Original file name: %s\n" (file-relative-name (plist-get vars :original-file-name)
                                                                      (plist-get vars :top-dir)))
@@ -354,8 +379,17 @@ re-blaming."
          (top-dir (mo-git-blame-get-top-dir (file-name-directory file-name)))
          (relative-file-name (file-relative-name file-name top-dir))
          (blame-window (selected-window))
-         content-window the-buffer)
+         (prior-vars (if (local-variable-p 'mo-git-blame-vars) mo-git-blame-vars))
+         content-window the-buffer prior-revisions)
     (switch-to-buffer blame-buffer)
+    (setq prior-revisions (if prior-vars (plist-get prior-vars :prior-revisions)))
+    (setq prior-revisions
+          (if (and prior-revisions (string= the-revision (plist-get (car prior-revisions) :revision)))
+              (cdr prior-revisions)
+            (if prior-vars
+                (cons (list :full-file-name (plist-get prior-vars :full-file-name)
+                            :revision (plist-get prior-vars :current-revision))
+                      prior-revisions))))
     (if (window-full-width-p)
         (split-window-horizontally mo-git-blame-blame-window-width))
     (select-window (setq content-window (next-window)))
@@ -374,6 +408,7 @@ re-blaming."
                    :full-file-name file-name
                    :original-file-name (or original-file-name file-name)
                    :current-revision the-revision
+                   :prior-revisions prior-revisions
                    :blame-buffer blame-buffer
                    :blame-window blame-window
                    :content-buffer content-buffer
