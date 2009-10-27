@@ -10,8 +10,10 @@ static int BHJDEBUG(const char* fmt, ...)
 	va_start(ap, fmt);
 	buf.FormatV(fmt, ap);
 	va_end(ap);
-
-	printf("%s\n", buf);	
+#ifdef _DEBUG
+	TRACE("%s\n", buf.GetBuffer(0));
+#endif
+	printf("%s\n", buf.GetBuffer(0));	
 	fflush(stdout);
 	return 0;
 }

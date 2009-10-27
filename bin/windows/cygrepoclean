@@ -1,10 +1,10 @@
 #!/bin/bash
 
 cd /d/tools/cygwin/repo
-cat setup-2.ini|grep 'install:\|source:' | perl -npe 's!: (.*?) !$1!' |sort -u >setup.1
+cat setup-2.ini|grep 'install:\|source:' | perl -npe 's!.*:\s+(.*?)\s+.*!$1!' |sort -u >setup.1
 
 find release-2 -type f|sort >setup.2
 
-diff setup.1 setup.2 | grep ">"                                  > setup.3
-cat setup.3 | sed -e 's:> :rm -vf :'|bash
+diff setup.1 setup.2 | grep ">" > setup.3
+cat setup.3 | sed -e 's:> :rm -vf :' |bash -x
 
