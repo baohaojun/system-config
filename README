@@ -73,9 +73,17 @@ return to the `content' buffer with <TAB>.
 You can invoke several actions from the blame buffer with single key
 strokes. These include but are not limited to:
 
+a   -- Call 'git blame' for the file for the first ancestor of the
+       revision listed in the current line. Sets the content buffer to
+       contain the file content at the new revision.
+A   -- Call 'git blame' for the file for the first ancestor of the
+       current revision. Sets the content buffer to contain the file
+       content at the new revision.
 b   -- Call 'git blame' for the file for the revision listed in the
        current line. Sets the content buffer to contain the file
        content at the new revision.
+B   -- Call 'git blame' for the file for a specific revision read from
+       the minibuffer.
 c   -- Call 'git cat-file blob ...' for the revision listed in the
        current line and show the output in the `output' buffer. The
        output will not have syntax highlighting.

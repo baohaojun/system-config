@@ -40,7 +40,10 @@ interactive use, e.g. the file name, current revision etc.")
 (defvar mo-git-blame-mode-map
   (let ((map (make-keymap)))
     (suppress-keymap map t)
+    (define-key map (kbd "a") 'mo-git-blame-reblame-for-ancestor-of-revision-at)
+    (define-key map (kbd "A") 'mo-git-blame-reblame-for-ancestor-of-current-revision)
     (define-key map (kbd "b") 'mo-git-blame-reblame-for-revision-at)
+    (define-key map (kbd "B") 'mo-git-blame-reblame-for-specific-revision)
     (define-key map (kbd "c") 'mo-git-blame-content-for-revision-at)
     (define-key map (kbd "i") 'mo-git-blame-display-info)
     (define-key map (kbd "l") 'mo-git-blame-log-for-revision-at)
@@ -61,7 +64,13 @@ interactive use, e.g. the file name, current revision etc.")
 (defvar mo-git-blame-content-mode-map
   (let ((map (make-keymap)))
     (suppress-keymap map t)
+    (define-key map (kbd "A") 'mo-git-blame-reblame-for-ancestor-of-current-revision)
+    (define-key map (kbd "B") 'mo-git-blame-reblame-for-specific-revision)
+    (define-key map (kbd "i") 'mo-git-blame-display-info)
+    (define-key map (kbd "L") 'mo-git-blame-log-for-current-revision)
+    (define-key map (kbd "O") 'mo-git-blame-overwrite-file-with-current-revision)
     (define-key map (kbd "q") 'mo-git-blame-quit)
+    (define-key map (kbd "S") 'mo-git-blame-show-current-revision)
     (define-key map [?\C-x ?k] 'mo-git-blame-quit)
     (define-key map [?\C-x ?\C-l] 'mo-git-blame-goto-line)
     map)
@@ -71,16 +80,19 @@ interactive use, e.g. the file name, current revision etc.")
   "MoGitBlame menu"
   '("MoGitBlame"
     ["Re-blame for revision at point" mo-git-blame-reblame-for-revision-at t]
+    ["Re-blame for ancestor of revision at point" mo-git-blame-reblame-for-ancestor-of-revision-at-point t]
     ["Raw content for revision at point" mo-git-blame-content-for-revision-at t]
     ["Log for revision at point" mo-git-blame-log-for-revision-at t]
     ["Overwrite file with revision at point" mo-git-blame-overwrite-file-with-revision-at t]
     ["'git show' for revision at point" mo-git-blame-show-revision-at t]
     "---"
+    ["Re-blame for ancestor of current revision" mo-git-blame-reblame-for-ancestor-of-current-revision t]
     ["Log for current revision" mo-git-blame-log-for-current-revision t]
     ["Overwrite file with current revision" mo-git-blame-overwrite-file-with-current-revision t]
     ["'git show' for current revision" mo-git-blame-show-current-revision t]
     "---"
     ["Re-blame for prior revision" mo-git-blame-reblame-for-prior-revision t]
+    ["Re-blame for a specific revision" mo-git-blame-reblame-for-specific-revision t]
     "---"
     ["Display status information" mo-git-blame-display-info t]
     ["Display content buffer" mo-git-blame-display-content-buffer t]
@@ -160,6 +172,12 @@ interactive use, e.g. the file name, current revision etc.")
           (with-current-buffer buffer
             (use-local-map mo-git-blame-mode-map))))
     buffer))
+
+(defun mo-git-blame-parse-rev (revision)
+  (let ((result (mo-git-blame-git-string "rev-parse" "--short" revision)))
+    (unless result
+      (error "Unparseable revision %s" revision))
+    result))
 
 (defun mo-git-blame-parse-blame-line ()
   (save-excursion
@@ -249,6 +267,16 @@ open buffer."
   (interactive)
   (mo-git-blame-overwrite-file-with-revision (plist-get mo-git-blame-vars :current-revision)))
 
+(defun mo-git-blame-reblame-for-ancestor-of-revision-at ()
+  "Calls 'git blame' for the ancestor of the revision in the current line."
+  (interactive)
+  (mo-git-blame-reblame-for-specific-revision (mo-git-blame-parse-rev (concat (plist-get (mo-git-blame-parse-blame-line) :hash) "~"))))
+
+(defun mo-git-blame-reblame-for-ancestor-of-current-revision ()
+  "Calls 'git blame' for the ancestor of the current revision."
+  (interactive)
+  (mo-git-blame-reblame-for-specific-revision (mo-git-blame-parse-rev (concat (plist-get mo-git-blame-vars :current-revision) "~"))))
+
 (defun mo-git-blame-reblame-for-revision-at ()
   "Calls 'git blame' for the revision in the current line."
   (interactive)
@@ -257,6 +285,14 @@ open buffer."
     (if (string= revision (plist-get mo-git-blame-vars :current-revision))
         (error "Already showing this revision"))
     (mo-git-blame-file (concat (plist-get mo-git-blame-vars :top-dir) (plist-get info :file-name)) revision (plist-get mo-git-blame-vars :original-file-name))))
+
+(defun mo-git-blame-reblame-for-specific-revision (&optional revision)
+  "Calls 'git blame' for a specific revision."
+  (interactive "sRevision: ")
+  (setq revision (mo-git-blame-parse-rev revision))
+  (if (string= revision (plist-get mo-git-blame-vars :current-revision))
+      (error "Already showing this revision"))
+  (mo-git-blame-file (concat (plist-get mo-git-blame-vars :top-dir) (plist-get mo-git-blame-vars :file-name)) revision (plist-get mo-git-blame-vars :original-file-name)))
 
 (defun mo-git-blame-reblame-for-prior-revision ()
   "Calls 'git blame' for the revision shown before the current
@@ -368,7 +404,7 @@ re-blaming."
   (let* ((file-name (or file-name (mo-git-blame-read-file-name)))
          (the-raw-revision (or revision "HEAD"))
          (the-revision (if (string= the-raw-revision "HEAD")
-                           (mo-git-blame-git-string "rev-parse" "--short" "HEAD")
+                           (mo-git-blame-parse-rev "HEAD")
                          the-raw-revision))
          (base-name (concat (file-name-nondirectory file-name) "@" the-revision))
          (blame-buffer (get-buffer-create "*mo-git-blame*"))
