@@ -4,27 +4,12 @@ use strict;
 our $" = ", ";
 
 my $file = $ARGV[0];
-$file =~ s!/+$!!;
 
-chomp(my $cwd = `pwd`);
-
-if ($file =~ m#^//(?!/)#) {
-    print $file;
-    exit (0);
+if ($file !~ m#^/#) {
+    chomp($file = `readlink -m "$file"`);
 }
 
-if ($cwd =~ m#^//(?!/)# and $file !~ m#^/#) {
-    $file = "$cwd/$file";
-    $file =~ s#/+#/#g;
-    print "/$file";
-    exit (0);
-}
-
-if ($file !~ m#^/#) {#file path is not absolute
-    $file = "$cwd/$file";
-}
-
-$file =~ s#/+#/#g; #remove extra PATHSEP
+print "\$file is $file\n";
 
 sub canonic_files
 {
@@ -34,9 +19,10 @@ sub canonic_files
     my @good_base;
 
     foreach my $dir (@dirs) {
-        if (not -d $dir) {
+        if ($dir ne "/" and $dir ne "//") {
+            print "basename is ", basename($dir), ", dirname is ", dirname($dir), "\n";
             @existing_dirs = (@existing_dirs, canonic_files(basename($dir), dirname($dir)));
-
+            print " \@existing_dirs is ", @existing_dirs, "\n";
         } else {
             @existing_dirs = (@existing_dirs, $dir);
         }
@@ -44,9 +30,20 @@ sub canonic_files
 
     foreach my $dir (@existing_dirs) {
         opendir my $dh, $dir or next;
-        my @matches = map {$_ = "$dir/$_"} grep {uc $base eq uc $_} readdir($dh);
+        my @matches;
+        if ($dir =~ m#/$#) {
+            @matches = map {$_ = "$dir$_"} grep {uc $base eq uc $_} readdir($dh);
+        } else {
+            @matches = map {$_ = "$dir/$_"} grep {uc $base eq uc $_} readdir($dh);
+        }
         if (scalar @matches == 0) {
-            @good_base = (@good_base, "$dir/$base");
+            print "\$dir is $dir";
+            if ($dir =~ m#/$#) {
+
+                @good_base = (@good_base, $dir.$base); 
+            } else {
+                @good_base = (@good_base, "$dir/$base");
+            }
         } else {
             @good_base = (@good_base, @matches);
         }

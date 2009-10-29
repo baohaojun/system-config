@@ -1809,3 +1809,4 @@ It turns out, simulating the shift key to select text only works correctly when 
 
 
 cthall for blaze: C:\Program Files\DSPC\IFL\exec\Tavor_SAAR_OneNAND.ini
+http://ftp.science.nus.edu.sg/ubuntu/
