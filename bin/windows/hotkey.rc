@@ -34,7 +34,7 @@ KeyToGrab(9),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), 
 KeyToGrab(0),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -0)
 KeyToGrab(0),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +0)
 
-KeyToGrab(E),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs-)
+KeyToGrab(E),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -t emacs@ )
 #KeyToGrab(F),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p puemacs -F 1 puemacs -load emacs)
 KeyToGrab(M),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p pucomm -F 1 pucomm -load comm)
 KeyToGrab(X),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs -fe run bash -c eterm-bhj.sh -fe -F 1 emacs.sh)

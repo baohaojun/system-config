@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-findexec.exe -F 1 -c emacs-&
+findexec.exe -F 1 -t emacs@&
 findexec.exe -F 1 -p puemacs&
 
 argv=( "$@" )
