@@ -157,15 +157,10 @@ function lcd()
     fi
 }
 
-function wpclip()
+function ccd()
 {
-    FILE=$1
-    if echo "${FILE##*.}"|grep -i '^lnk$' -q; then #this is a .lnk file
-        FILE=`readshortcut "$FILE"`
-    fi
-    FILE=`cygpath -alw "$FILE"`
-
-    echo -n "$FILE"|putclip    
+    local dir=`getclip`
+    cd "$dir"
 }
 
 export EDITOR=emacsedit.sh
