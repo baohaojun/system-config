@@ -150,6 +150,7 @@ sub handleVcOutput($)
             chdir($sln_dir);
             my $proj_dir = getProjDir($1);
             chomp($proj_dir = `cygpath -au "$proj_dir"`);
+            $proj_dir or die "cygpath failed";
             die "proj_dir is empty!" if (not $proj_dir);
             my @proj_dir = canonic_files(".", $proj_dir);
             die "found more than 1 proj_dir" if (scalar @proj_dir != 1);
@@ -158,12 +159,14 @@ sub handleVcOutput($)
         if (m/^(\s*)(.*?)(\([0-9]+(?:,[0-9]+)?\).*:.*)/) {
             
             chomp(my $key = `cygpath -au "$2"`);
+            $key or die "cygpath failed";
             $key = uc($key);
             my $err_file;
             if ($err_file_canonic{$key}) {
                 $err_file = $err_file_canonic{$key};
             } else {
                 chomp($err_file = `cygpath -au "$2"`);
+                $err_file or die "cygpath failed";
                 my @err_file = canonic_files(basename($err_file), dirname($err_file));
                 die "File `$2' doesn't exist!" if (scalar @err_file != 1);
                 
@@ -197,6 +200,7 @@ sub getProjDir($)
 
     close SLN_FILE;
     chomp(my $proj_dir = `cygpath -au "$proj_dir[0]"`);
+    $proj_dir or die "Error: $proj in getProjDir, no such project?";
     return dirname($proj_dir);
     
 }
