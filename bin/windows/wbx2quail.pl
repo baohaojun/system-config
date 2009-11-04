@@ -11,6 +11,9 @@ while (<>) {
 
 @keys = sort keys %hash;
 
+#print like the following:
+#("aaaa" ["工" "恭恭敬敬"])
+$" = qq(" ");
 foreach $key (@keys) {
-    print "@{$hash{$key}}\n";
+    print qq(("$key" ["@{$hash{$key}}"])), "\n";
 }
