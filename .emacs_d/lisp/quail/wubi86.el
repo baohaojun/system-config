@@ -8,10 +8,8 @@
 "汉字输入∷【五笔八六】∷"
 
   '(("" . quail-delete-last-char)
-   ("." . quail-next-translation)
-   ("[" . quail-next-translation)
-   ("," . quail-prev-translation)
-   ("]" . quail-prev-translation)
+   ([(control n)] . quail-next-translation)
+   ([(control p)] . quail-prev-translation)
    (" " . quail-select-current))
   nil nil nil nil)
 
