@@ -388,14 +388,6 @@
 
 (global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
 
-(defun bhj-lqqm-pic-collect ()
-  (interactive)
-  (shell-command-on-region (point-min) (point-max) "emacs-lqqm-collect.sh"))
-
-(defun bhj-lqqm-pic-view ()
-  (interactive)
-  (shell-command "emacs-lqqm-view.sh"))
-
 (add-hook 'w3m-mode-hook 
           (lambda () 
             (local-set-key [(left)] 'backward-char)
@@ -405,12 +397,6 @@
             (local-set-key [(n)] 'next-line)
             (local-set-key [(p)] 'previous-line)
             ))
-
-
-(add-hook 'term-mode-hook
-          (lambda ()
-            (local-set-key [(control shift c)] 'bhj-lqqm-pic-collect)
-            (local-set-key [(control shift v)] 'bhj-lqqm-pic-view)))
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
