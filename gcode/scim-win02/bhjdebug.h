@@ -1,0 +1,100 @@
+#ifndef __BHJDEBUG_H__
+#define __BHJDEBUG_H__
+
+#ifdef ENABLE_BHJDEBUG
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+//#include <pthread.h>
+#define pthread_self() 0
+#define pthread_t int
+#define PATH_SEPW L'\\'
+#define PATH_SEP '\\'
+
+#define WIDEN2(x) L ## x
+#define WIDEN(x) WIDEN2(x)
+#define __WFILE__ WIDEN(__FILE__)
+#define __WFUNCTION__ WIDEN(__FUNCTION__)
+#define BHJ_LOG_FILENAME "c:\\cygwin\\tmp\\screen-exchange"
+
+#define BHJDEBUG_START() do {                   \
+    FILE *fp = fopen(BHJ_LOG_FILENAME, "w");    \
+    fclose(fp);                                 \
+    } while (0)
+    
+
+#define BHJDEBUGW(fmt, ...) do {\
+        wprintf(L"%s %s() %d: " fmt L"\n", wcsrchr(__WFILE__, PATH_SEPW)?wcsrchr(__WFILE__, PATH_SEPW)+1:__WFILE__, \
+                __WFUNCTION__, __LINE__,                              \
+               ##__VA_ARGS__);\
+        fflush(stderr);\
+    } while(0)
+
+#define BHJDEBUG(fmt, ...) do {                                         \
+        pthread_t tmp = pthread_self();                                 \
+        FILE *fp = fopen(BHJ_LOG_FILENAME, "ab");                        \
+        fprintf(fp, "%s:%d: %s() bhj %x " fmt "\n", strrchr(__FILE__, PATH_SEP)?strrchr(__FILE__, PATH_SEP)+1:__FILE__, \
+                __LINE__, __FUNCTION__, tmp,                            \
+                ##__VA_ARGS__);                                         \
+        fclose(fp);                                                     \
+        fprintf(stderr, "%s:%d: %s() bhj %x " fmt "\n", strrchr(__FILE__, PATH_SEP)?strrchr(__FILE__, PATH_SEP)+1:__FILE__, \
+               __LINE__, __FUNCTION__, tmp,                             \
+               ##__VA_ARGS__);                                          \
+        fflush(stderr);                                                 \
+    } while(0)
+
+#define simple_debug(a, b) BHJDEBUG(#a " is " #b, a)
+#define dsimple_debug(a) simple_debug(a, %d)
+#define xsimple_debug(a) simple_debug(a, %x)
+
+
+
+#ifdef __cplusplus
+class CEnterLeaveDebug {
+public:
+    char *m_file;
+    char *m_func;
+    int m_line;
+    CEnterLeaveDebug(const char * file, const char *func, int line) {
+        m_file = strdup(strrchr(file, PATH_SEP)?strrchr(file, PATH_SEP)+1:file);
+        m_func = strdup(func);
+        m_line = line;
+        FILE *fp = fopen(BHJ_LOG_FILENAME, "ab");                        
+        fprintf(fp, "%s:%d: bhj entering %s\n", m_file, line, func);
+        fclose(fp);
+        fprintf(stderr, "%s:%d: bhj entering %s\n", m_file, line, func);
+        fflush(stderr);
+    };
+    
+    ~CEnterLeaveDebug() {
+        FILE *fp = fopen(BHJ_LOG_FILENAME, "ab");
+        fprintf(fp, "%s:%d: bhj leaving %s\n", m_file, m_line, m_func);
+        fclose(fp);
+
+        fprintf(stderr, "%s:%d: bhj leaving %s\n", m_file, m_line, m_func);
+        fflush(stderr);
+        free(m_func);
+        free(m_file);
+    };
+};
+
+#define EnterLeaveDebug() CEnterLeaveDebug EnterLeave##__LINE__(__FILE__, __FUNCTION__, __LINE__)
+
+#else
+
+#define EnterLeaveDebug()
+
+#endif
+
+
+//#if 1
+
+#else 
+#define BHJDEBUG_START(...)
+#define BHJDEBUG(...)
+#define simple_debug(...)
+#define dsimple_debug(...)
+#define xsimple_debug(...)
+#define EnterLeaveDebug(...)
+#endif
+#endif
