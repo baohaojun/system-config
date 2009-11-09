@@ -1,4 +1,4 @@
-LIBRARY         WINGB
+LIBRARY         SCIM
 
 EXPORTS
                 ImeConversionList
