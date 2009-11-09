@@ -402,6 +402,7 @@ used for tracking renaming and moving of files during iterative
 re-blaming."
   (interactive)
   (let* ((file-name (or file-name (mo-git-blame-read-file-name)))
+         (has-blame-vars (local-variable-p 'mo-git-blame-vars))
          (the-raw-revision (or revision "HEAD"))
          (the-revision (if (string= the-raw-revision "HEAD")
                            (mo-git-blame-parse-rev "HEAD")
@@ -409,13 +410,14 @@ re-blaming."
          (base-name (concat (file-name-nondirectory file-name) "@" the-revision))
          (blame-buffer (get-buffer-create "*mo-git-blame*"))
          (content-buffer-name (concat "*mo-git-blame:" (file-name-nondirectory file-name) ":" the-revision "*"))
-         (content-buffer (if (local-variable-p 'mo-git-blame-vars)
+         (content-buffer (if has-blame-vars
                              (plist-get mo-git-blame-vars :content-buffer)
                            (get-buffer-create content-buffer-name)))
          (top-dir (mo-git-blame-get-top-dir (file-name-directory file-name)))
          (relative-file-name (file-relative-name file-name top-dir))
          (blame-window (selected-window))
-         (prior-vars (if (local-variable-p 'mo-git-blame-vars) mo-git-blame-vars))
+         (prior-vars (if has-blame-vars mo-git-blame-vars))
+         (line-to-go-to (if has-blame-vars (line-number-at-pos) 1))
          content-window the-buffer prior-revisions)
     (switch-to-buffer blame-buffer)
     (setq prior-revisions (if prior-vars (plist-get prior-vars :prior-revisions)))
@@ -454,7 +456,8 @@ re-blaming."
       (mo-git-blame-mode)
       (mo-git-blame-init-blame-buffer))
     (with-current-buffer content-buffer
-      (mo-git-blame-init-content-buffer))))
+      (mo-git-blame-init-content-buffer))
+    (mo-git-blame-goto-line line-to-go-to)))
 
 (defun mo-git-blame-quit ()
   "Kill the mo-git-blame buffers."
