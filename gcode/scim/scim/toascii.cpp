@@ -637,7 +637,7 @@ UINT PASCAL TranslateSymbolChar(
 
     lpTransMsg->message = WM_CHAR;
     lpTransMsg->wParam  = (DWORD)LOBYTE(wSymbolCharCode);
-    lpTransMsg->lParam 1UL;
+    lpTransMsg->lParam = 1UL;
     uRet++;
 #endif
 

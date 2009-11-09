@@ -637,7 +637,7 @@ void PASCAL RegisterImeClass(
 /*      TRUE - successful                                             */
 /*      FALSE - failure                                               */
 /**********************************************************************/
-BOOL CALLBACK ImeDllInit(
+BOOL CALLBACK DllMain(
     HINSTANCE hInstance,        // instance handle of this library
     DWORD     fdwReason,        // reason called
     LPVOID    lpvReserve)       // reserve pointer
