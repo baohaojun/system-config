@@ -1,6 +1,7 @@
 #ifndef __BHJDEBUG_H__
 #define __BHJDEBUG_H__
 
+#pragma warning (disable: 4996)
 #ifdef ENABLE_BHJDEBUG
 #include <stdio.h>
 #include <string.h>

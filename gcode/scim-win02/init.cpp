@@ -27,6 +27,8 @@ void PASCAL InitStatusUIData(
 {
     EnterLeaveDebug();
     int   iContentHi;
+	static TCHAR sz[] = L"hello";
+	szImeName = sz;
 
 
     // iContentHi is to get the maximum value of predefined STATUS_DIM_Y and
@@ -41,6 +43,7 @@ void PASCAL InitStatusUIData(
     sImeG.rcStatusText.left = 0;
     sImeG.rcStatusText.top = 0;
 
+	BHJDEBUG(" szImeName is %s", szImeName);
     sImeG.rcStatusText.right = sImeG.rcStatusText.left +
         strbytelen(szImeName) * sImeG.xChiCharWi/2 + STATUS_NAME_MARGIN + STATUS_DIM_X * 4;
     sImeG.rcStatusText.bottom = sImeG.rcStatusText.top + iContentHi;
