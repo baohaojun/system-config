@@ -16,9 +16,6 @@
 #define IDS_CHICHAR             0x0201
 
 #define IDS_EUDC                0x0202
-#if defined(CROSSREF)
-#define IDS_NONE                0x0204
-#endif //CROSSREF
 
 #define IDS_USRDIC_FILTER       0x0210
 
@@ -104,9 +101,7 @@
 #define MAXCAND                 256
 #define IME_MAXCAND             94
 #define IME_XGB_MAXCAND         190
-#if defined(COMBO_IME)
 #define IME_UNICODE_MAXCAND     256
-#endif //COMBO_IME
 #define MAXCODE                 12
 #define MAXSOFTKEYS             48
 
@@ -120,7 +115,6 @@
 #define BOX_UI                  0
 #define LIN_UI                  1
 
-#if defined(COMBO_IME)
 
 #define IMEINDEXNUM             3
 
@@ -130,7 +124,6 @@
 #define INDEX_GBK               1
 #define INDEX_UNICODE           2
 
-#endif
 
 // border for UI
 #define UI_MARGIN               4
@@ -273,10 +266,8 @@ typedef struct tagImeL {        // local structure, per IME structure
                                 // window key related data
     WORD        fModeConfig;    // quick key/prediction mode
     WORD        nMaxKey;        // max key of compsiton str
-#if defined(COMBO_IME)
     DWORD           dwRegImeIndex;  // this value defers in different
                                     // process, so can not set in sImeG
-#endif
    BOOL         fWinLogon;
 } IMEL;
 
@@ -343,11 +334,6 @@ typedef struct _tagImeG {       // global structure, can be share by all IMEs,
     int         iPerp;
     int         iParaTol;
     int         iPerpTol;
-#if defined(CROSSREF)
-// reverse conversion
-    HKL         hRevKL;         // the HKL of reverse mapping IME
-    DWORD        nRevMaxKey;
-#endif //CROSSREF
 } IMEG;
 
 typedef IMEG      *PIMEG;
@@ -371,9 +357,6 @@ typedef struct _tagPRIVCONTEXT {// IME private data for each context
 // input data
     TCHAR       bSeq[13];        // sequence code of input char
     DWORD       fdwGB;
-#ifdef CROSSREF
-    HIMCC           hRevCandList;   // memory for reconsion result
-#endif //CROSSREF
 } PRIVCONTEXT;
 
 typedef PRIVCONTEXT      *PPRIVCONTEXT;
@@ -431,13 +414,9 @@ extern TCHAR     szSoftkeyMenuClassName[];
 extern TCHAR     szHandCursor[];
 extern TCHAR     szChinese[];
 extern TCHAR     szCandInf[];
-#if defined(COMBO_IME)
 extern TCHAR    pszImeName[IMEINDEXNUM][MAX_PATH];
 extern TCHAR    *szImeName;
 extern TCHAR    szImeRegName[];
-#else
-extern TCHAR      szImeName[];
-#endif //COMBO_IME
 extern TCHAR      szImeXGBName[];
 extern TCHAR      szSymbol[];
 extern TCHAR      szNoSymbol[];
@@ -457,18 +436,12 @@ extern TCHAR      szPerp[];
 extern TCHAR      szPara[];
 extern TCHAR      szPerpTol[];
 extern TCHAR      szParaTol[];
-#if defined(COMBO_IME)
 extern TCHAR      szRegImeIndex[];
-#endif
 extern const NEARCARET ncUIEsc[], ncAltUIEsc[];
 extern const POINT ptInputEsc[], ptAltInputEsc[];
 extern BYTE      VirtKey48Map[];
 extern TCHAR     szWarnTitle[];
 extern TCHAR     szErrorTitle[];
-#if defined(CROSSREF)
-extern TCHAR szRegRevKL[];
-extern TCHAR szRegRevMaxKey[];
-#endif
 
 int WINAPI LibMain(HANDLE, WORD, WORD, LPTSTR);         // init.c
 LRESULT CALLBACK UIWndProc(HWND, UINT, WPARAM, LPARAM); // ui.c
@@ -502,10 +475,6 @@ LONG OpenReg_PathSetup(HKEY *);
 LONG OpenReg_User(HKEY ,LPCTSTR ,PHKEY);
 VOID InfoMessage(HANDLE ,WORD );                                 //ddis.c
 VOID FatalMessage(HANDLE ,WORD);                                 //ddis.c
-#if defined(CROSSREF)
-void PASCAL ReverseConversionList(HWND);                         // ddis.c
-void CrossReverseConv(LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPCANDIDATELIST);
-#endif
 
 UINT PASCAL TranslateImeMessage(LPTRANSMSGLIST, LPINPUTCONTEXT, LPPRIVCONTEXT);        // toascii.c
 
@@ -567,20 +536,13 @@ WORD PASCAL XGBEngine(LPPRIVCONTEXT);
 void PASCAL XGBAddCodeIntoCand(LPCANDIDATELIST, WORD);             // compose.c
 UINT PASCAL UnicodeProcessKey(WORD wCharCode, LPPRIVCONTEXT  lpImcP);
 WORD PASCAL UnicodeEngine(LPPRIVCONTEXT lpImcP);
-#if defined(COMBO_IME)
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
-#endif
 // dialog procedure
 BOOL FAR PASCAL ImeVerDlgProc(HWND, UINT, WORD, LONG);
 BOOL FAR PASCAL CrtWordDlgProc(HWND, UINT, WORD, LONG);
 BOOL FAR PASCAL SetImeDlgProc(HWND, UINT, WORD, LONG);
 
 
-#ifdef UNICODE
 extern TCHAR SKLayout[NumsSK][MAXSOFTKEYS];
 extern TCHAR SKLayoutS[NumsSK][MAXSOFTKEYS];
-#else
-extern BYTE SKLayout[NumsSK][MAXSOFTKEYS*2];
-extern BYTE SKLayoutS[NumsSK][MAXSOFTKEYS*2];
-#endif  //UNICODE
 
