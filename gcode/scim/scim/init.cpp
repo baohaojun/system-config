@@ -516,22 +516,6 @@ void PASCAL RegisterIme(
         
         
 
-#ifdef CROSSREF                 
-    if(RegQueryValueEx(hKeyGB, 
-                       szRegRevKL,
-                       NULL,
-                       NULL,                  // null-terminate string
-                       (LPBYTE)&sImeG.hRevKL, // &bData,
-                       &ValueSize) != ERROR_SUCCESS)
-    sImeG.hRevKL = NULL;
-    if(RegQueryValueEx (hKeyGB, 
-                        szRegRevMaxKey,
-                        NULL,
-                        NULL,                       //null-terminate string
-                        (LPBYTE)&sImeG.nRevMaxKey,  //&bData,
-                        &ValueSize) != ERROR_SUCCESS)
-    sImeG.hRevKL = NULL;
-#endif
 
     RegCloseKey(hKeyGB);
     RegCloseKey(hKeyCurrVersion);

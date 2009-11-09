@@ -12,89 +12,6 @@ Module Name:
 #include <immdev.h>
 #include <imedefs.h>
 
-#if defined(CROSSREF)
-//*******************************************************************
-// The parameters are inherited from SelectOneCand
-//    CrossReverseConv()
-//*******************************************************************
-void CrossReverseConv(
-    LPINPUTCONTEXT      lpIMC,
-    LPCOMPOSITIONSTRING lpCompStr,
-    LPPRIVCONTEXT       lpImcP,
-    LPCANDIDATELIST     lpCandList)
-{
-    LPGUIDELINE lpGuideLine;
-
-    if (!sImeG.hRevKL) {
-        return;
-    }
-
-
-    lpGuideLine = ImmLockIMCC(lpIMC->hGuideLine);
-
-    if (!lpGuideLine) {
-        return;
-    }
-
-    if (lpCompStr->dwResultStrLen != sizeof(WORD)/sizeof(TCHAR)) {
-        // we only can reverse convert one DBCS character for now
-        lpGuideLine->dwLevel = GL_LEVEL_NOGUIDELINE;
-        lpGuideLine->dwIndex = GL_ID_UNKNOWN;
-    } else {
-        TCHAR szStrBuf[4];
-        UINT uSize;
-         LPCANDIDATELIST     lpRevCandList;
-
-        if(lpImcP->hRevCandList == (HIMCC)NULL){
-            // we alloc memory in lpImcP->hRevCandList, 
-            // for reverse convert result codes; When finish reconvert, 
-            // should read out this info.
-REALLOC:
-            lpImcP->hRevCandList = (HIMCC)GlobalAlloc(GHND,sizeof(CANDIDATELIST)+1*sizeof(DWORD)+(MAXCODE+1)*sizeof(TCHAR)); 
-            if (lpImcP->hRevCandList == (HIMCC)NULL) {
-                return ;
-            }
-               lpRevCandList = (LPCANDIDATELIST)GlobalLock((HGLOBAL)lpImcP->hRevCandList);
-            if (lpRevCandList == NULL) {
-                return ;
-            }
-           }else{
-               lpRevCandList = (LPCANDIDATELIST)GlobalLock((HGLOBAL)lpImcP->hRevCandList);
-               if (lpRevCandList == NULL) {
-                goto REALLOC;
-               }
-        }
-
-        *(LPUNAWORD)szStrBuf = *(LPUNAWORD)((LPBYTE)lpCompStr +
-            lpCompStr->dwResultStrOffset);
-        szStrBuf[1] = TEXT('\0');
-
-        memset(lpRevCandList, 0, sizeof(CANDIDATELIST)+1*sizeof(DWORD)+(MAXCODE+1)*sizeof(TCHAR));
-        lpRevCandList->dwSize = sizeof(CANDIDATELIST)+1*sizeof(DWORD)+(MAXCODE+1)*sizeof(TCHAR);
-
-        uSize = ImmGetConversionList(sImeG.hRevKL, (HIMC)NULL, szStrBuf,
-            (LPCANDIDATELIST)lpRevCandList, 
-            lpRevCandList->dwSize, GCL_REVERSECONVERSION);
-
-        GlobalUnlock((HGLOBAL)lpImcP->hRevCandList);
-        
-
-        if (uSize) {
-            if (lpImcP->fdwImeMsg & MSG_ALREADY_START) {
-                lpImcP->fdwImeMsg &= ~(MSG_END_COMPOSITION|
-                    MSG_START_COMPOSITION);
-            } else {
-                lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg|
-                    MSG_START_COMPOSITION) & ~(MSG_END_COMPOSITION);
-            }
-        } else {
-            GlobalFree((HGLOBAL)lpImcP->hRevCandList);
-        }
-    }
-
-    ImmUnlockIMCC(lpIMC->hGuideLine);
-}
-#endif //CROSSREF
 
 /**********************************************************************/
 /* SelectOneCand()                                                    */
@@ -155,9 +72,6 @@ void PASCAL SelectOneCand(
     // init Engine private data
     *(LPDWORD)lpImcP->bSeq = 0;
 
-#ifdef CROSSREF
-    CrossReverseConv(lpIMC, lpCompStr, lpImcP, lpCandList);
-#endif
 
     return;
 }

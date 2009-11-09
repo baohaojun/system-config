@@ -551,19 +551,6 @@ BOOL WINAPI ImeProcessKey(   // if this key is need by IME?
         fRet = FALSE;
     } else if(uVirtKey == VK_CAPITAL) {
         DWORD fdwConversion;
-#ifdef LATER
-            if (lpbKeyState[VK_CAPITAL] & 0x01) {
-            // change to native mode
-            fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
-                ~(IME_CMODE_CHARCODE | IME_CMODE_EUDC);
-                        uCaps = 0;
-                } else {
-            // change to alphanumeric mode
-            fdwConversion = lpIMC->fdwConversion & ~(IME_CMODE_CHARCODE |
-                IME_CMODE_NATIVE | IME_CMODE_EUDC);
-                        uCaps = 1;
-                }
-#else
                 if (lpbKeyState[VK_CAPITAL] & 0x01) {
             // change to alphanumeric mode
             fdwConversion = lpIMC->fdwConversion & ~(IME_CMODE_CHARCODE |
@@ -575,7 +562,6 @@ BOOL WINAPI ImeProcessKey(   // if this key is need by IME?
                 ~(IME_CMODE_CHARCODE | IME_CMODE_EUDC); 
                         uCaps = 0;
         }
-#endif //LATER
         ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
         fRet = FALSE;
     } else if((iRet == CST_ALPHANUMERIC)

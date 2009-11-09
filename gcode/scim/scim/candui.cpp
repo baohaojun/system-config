@@ -48,11 +48,7 @@ void PASCAL CalcCandPos(
     POINT          ptNew, ptSTWPos;
     RECT           rcWorkArea;
 
-#ifdef MUL_MONITOR
-    rcWorkArea = ImeMonitorWorkAreaFromPoint(*lpptWnd);
-#else
     rcWorkArea = sImeG.rcWorkArea;
-#endif
 
 
     ptNew.x = lpptWnd->x + lpImeL->xCompWi + UI_MARGIN;
@@ -121,11 +117,7 @@ void AdjustCandPos(
     UINT           uEsc;
     RECT           rcWorkArea;
 
-#ifdef MUL_MONITOR
-    rcWorkArea = ImeMonitorWorkAreaFromPoint(*lpptWnd);
-#else
     rcWorkArea = sImeG.rcWorkArea;
-#endif
 
     lpIMC = (LPINPUTCONTEXT)ImmLockIMC(hIMC);
     if (!lpIMC) {
@@ -178,22 +170,7 @@ void PASCAL AdjustCandRectBoundry(
     UINT  uEsc;
     RECT  rcWorkArea;
 
-#ifdef MUL_MONITOR
-
-    {
-        RECT rcCandWnd;
-
-        *(LPPOINT)&rcCandWnd = *(LPPOINT)lpptCandWnd;
-
-        rcCandWnd.right = rcCandWnd.left + sImeG.xCandWi;
-        rcCandWnd.bottom = rcCandWnd.top + sImeG.yCandHi;
-
-        rcWorkArea = ImeMonitorWorkAreaFromRect(&rcCandWnd);
-    }
-
-#else
     rcWorkArea = sImeG.rcWorkArea;
-#endif
 
     // be a normal rectangle, not a negative rectangle
     if (lpIMC->cfCandForm[0].rcArea.left > lpIMC->cfCandForm[0].rcArea.right) {
@@ -435,20 +412,7 @@ void PASCAL AdjustCandBoundry(
 
     RECT  rcWorkArea;
 
-#ifdef MUL_MONITOR
-    {
-        RECT rcCandWnd;
-
-        *(LPPOINT)&rcCandWnd = *(LPPOINT)lpptCandWnd;
-
-        rcCandWnd.right = rcCandWnd.left + sImeG.xCandWi;
-        rcCandWnd.bottom = rcCandWnd.top + sImeG.yCandHi;
-
-        rcWorkArea = ImeMonitorWorkAreaFromRect(&rcCandWnd);
-    }
-#else
     rcWorkArea = sImeG.rcWorkArea;
-#endif
     if (lpptCandWnd->x < rcWorkArea.left) {
         lpptCandWnd->x = rcWorkArea.left;
     } else if (lpptCandWnd->x + sImeG.xCandWi > rcWorkArea.right) {
@@ -558,11 +522,7 @@ void PASCAL ShowCand(           // Show the candidate window
             }
 
                ImmGetStatusWindowPos(hIMC, (LPPOINT)&ptSTWPos);
-#ifdef MUL_MONITOR
-            rcWorkArea = ImeMonitorWorkAreaFromPoint(ptSTWPos);
-#else
             rcWorkArea = sImeG.rcWorkArea;
-#endif
             Comp_CandWndLen = 0;
             if(uOpenCand) {
                 Comp_CandWndLen += sImeG.xCandWi + UI_MARGIN;

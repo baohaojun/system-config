@@ -169,11 +169,7 @@ void PASCAL GetNearCaretPosition(   // decide a near caret position according
         }
     }
 
-#ifdef MUL_MONITOR 
-    rcWorkArea = ImeMonitorWorkAreaFromPoint(*lpptCaret);
-#else
     rcWorkArea = sImeG.rcWorkArea; 
-#endif
 
     if (lpptNearCaret->x < rcWorkArea.left) {
         lpptNearCaret->x = rcWorkArea.left;
@@ -342,11 +338,7 @@ void PASCAL SetCompPosition(    // set the composition window position
     RECT  rcWorkArea;
 
 
-#ifdef MUL_MONITOR 
-    rcWorkArea = ImeMonitorWorkAreaFromWindow(lpIMC->hWnd);
-#else
     rcWorkArea = sImeG.rcWorkArea;
-#endif
 
     // the client coordinate position (0, 0) of composition window
     ptWnd.x = 0;
@@ -778,11 +770,7 @@ BOOL PASCAL CompButtonUp(       // finish drag, set comp  window to this
         return (FALSE);
     }
 
-#ifdef MUL_MONITOR
-    rcWorkArea = ImeMonitorWorkAreaFromWindow(lpIMC->hWnd);
-#else
     rcWorkArea = sImeG.rcWorkArea;
-#endif
 
     if (pt.x < rcWorkArea.left) {
         pt.x = rcWorkArea.left;
@@ -929,47 +917,9 @@ void PASCAL PaintCompWindow(
         } else {
         }
     } else {
-#ifdef CROSSREF
-        {    
-            LPCANDIDATELIST lpRevCandList;
-            LPPRIVCONTEXT       lpImcP;
-
-            lpImcP = (LPPRIVCONTEXT)ImmLockIMCC(lpIMC->hPrivate);
-            if (lpImcP) {
-                if(lpImcP->hRevCandList){    
-                       lpRevCandList = (LPCANDIDATELIST)GlobalLock((HGLOBAL)lpImcP->hRevCandList);
-                       if (lpRevCandList != NULL && lpRevCandList->dwCount) {
-
-                        // green text for information
-                        SetTextColor(hDC, RGB(0x00, 0x80, 0x00));
-                        SetBkColor(hDC, RGB(0xc0, 0xc0, 0xc0));
-
-                        ExtTextOut(hDC, 
-                            lpImeL->rcCompText.left, 
-                            lpImeL->rcCompText.top,
-                            ETO_OPAQUE, 
-                            &lpImeL->rcCompText,
-                            (LPTSTR)((LPBYTE)lpRevCandList+lpRevCandList->dwOffset[0]), 
-                            (int)lstrlen((LPTSTR)((LPBYTE)lpRevCandList + lpRevCandList->dwOffset[0])),
-                            NULL);
-                               GlobalUnlock((HGLOBAL)lpImcP->hRevCandList);
-                        GlobalFree((HGLOBAL)lpImcP->hRevCandList);
-                        lpImcP->hRevCandList = 0;
-                        goto CrossCodeFinish;
-                    }
-                }
-            }    
             ExtTextOut(hDC, lpImeL->rcCompText.left, lpImeL->rcCompText.top,
             ETO_OPAQUE, &lpImeL->rcCompText,
             (LPTSTR)NULL, 0, NULL);
-CrossCodeFinish:
-            ImmUnlockIMCC(lpIMC->hPrivate);
-        }
-#else
-            ExtTextOut(hDC, lpImeL->rcCompText.left, lpImeL->rcCompText.top,
-            ETO_OPAQUE, &lpImeL->rcCompText,
-            (LPTSTR)NULL, 0, NULL);
-#endif
     }
 
     if (sImeG.fDiffSysCharSet) {

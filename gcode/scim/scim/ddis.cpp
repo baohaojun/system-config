@@ -65,79 +65,6 @@ BOOL WINAPI ImeInquire(         // initialized data structure of IME
 
     return (TRUE);
 }
-#if defined(CROSSREF)
-/**********************************************************************/
-/* ReverseConversionList()                                            */
-/**********************************************************************/
-void PASCAL ReverseConversionList(HWND   hLayoutListBox)
-{
-    int      nLayouts, i, nIMEs;
-    TCHAR    szTmpImeName[24];
-    HKL FAR *lpKLMem;
-
-    LoadString(hInst, IDS_NONE, szTmpImeName, sizeof(szTmpImeName)/sizeof(TCHAR));
-
-    SendMessage(hLayoutListBox, LB_INSERTSTRING,
-        0, (LPARAM)szTmpImeName);
-
-    SendMessage(hLayoutListBox, LB_SELECTSTRING,
-        0, (LPARAM)szTmpImeName);
-
-    SendMessage(hLayoutListBox, LB_SETITEMDATA,
-        0, (LPARAM)(HKL)NULL);
-
-    nLayouts = GetKeyboardLayoutList(0, NULL);
-
-    lpKLMem = GlobalAlloc(GPTR, sizeof(HKL) * nLayouts);
-    if (!lpKLMem) {
-        return;
-    }
-
-    GetKeyboardLayoutList(nLayouts, lpKLMem);
-
-    for (i = 0, nIMEs = 0; i < nLayouts; i++) {
-        HKL hKL;
-
-        hKL = *(lpKLMem + i);
-
-        if (LOWORD(hKL) != NATIVE_LANGUAGE) {
-            // not support other language
-            continue;
-        }
-
-        if (!ImmGetConversionList(hKL, (HIMC)NULL, NULL,
-            NULL, 0, GCL_REVERSECONVERSION)) {
-            // this IME not support reverse conversion
-            continue;
-        }
-
-        if (!ImmEscape(hKL, (HIMC)NULL, IME_ESC_IME_NAME,
-            szTmpImeName)) {
-            // this IME does not report the IME name
-            continue;
-        }
-        if( lstrcmp(szTmpImeName, szImeName) == 0)
-            continue;
-
-        nIMEs++;
-
-        SendMessage(hLayoutListBox, LB_INSERTSTRING,
-            nIMEs, (LPARAM)szTmpImeName);
-
-        if (hKL == sImeG.hRevKL) {
-            SendMessage(hLayoutListBox, LB_SELECTSTRING, nIMEs,
-                (LPARAM)szTmpImeName);
-        }
-
-        SendMessage(hLayoutListBox, LB_SETITEMDATA,
-            nIMEs, (LPARAM)hKL);
-    }
-
-    GlobalFree((HGLOBAL)lpKLMem);
-
-    return;
-}
-#endif //CROSSREF
 
 /**********************************************************************/
 /* ImeSetDlgProc()                                                 */
@@ -154,12 +81,6 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
     LONG         DlgWidth, DlgHeight;
     static DWORD TempParam;
 
-#ifdef CROSSREF
-    HIMC           hIMC;
-    LPINPUTCONTEXT lpIMC;
-    HWND          hLayoutListBox;
-    static HIMC   hOldIMC;
-#endif //CROSSREF
 
     switch (uMessage) {
     case WM_INITDIALOG:
@@ -177,18 +98,6 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
 
         TempParam = sImeG.IC_Trace;
         CheckDlgButton (hDlg, IDC_TRACE, sImeG.IC_Trace);
-#ifdef CROSSREF
-        hLayoutListBox = GetDlgItem(hDlg, IDD_LAYOUT_LIST);
-
-        hIMC = ImmGetContext(hLayoutListBox);
-        if(hIMC){
-            ImmSetOpenStatus(hIMC, FALSE);
-        }
-        ImmReleaseContext(hLayoutListBox, hIMC);
-
-        // put all reverse conversion hKL into this list
-        ReverseConversionList(hLayoutListBox);
-#endif //CROSSREF
 
         return (TRUE);          // don't want to set focus to special control
     case WM_COMMAND:
@@ -238,115 +147,11 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
 
                 if ( hKeyCurrVersion )
                    RegCloseKey(hKeyCurrVersion);
-#ifdef CROSSREF
-    {
-        HWND hLayoutListBox;
-        int  iCurSel;
-        HKL  hKL;
-        DWORD retCode;
-
-        hLayoutListBox = GetDlgItem(hDlg, IDD_LAYOUT_LIST);
-
-        iCurSel = (int)SendMessage(hLayoutListBox, LB_GETCURSEL, 0, 0);
-
-        hKL = (HKL)SendMessage(hLayoutListBox, LB_GETITEMDATA,
-            iCurSel, 0);
-
-        if (sImeG.hRevKL != hKL) {
-            WORD nRevMaxKey;
-            HKEY hKeyAppUser, hKeyIMEUser;
-            LPPRIVCONTEXT  lpImcP;
-
-            sImeG.hRevKL = hKL;
-
-
-            //set reverse layout to registry
-            retCode = OpenReg_PathSetup(&hKeyAppUser);
-            if (retCode) {
-                RegCreateKey(HKEY_CURRENT_USER, REGSTR_PATH_SETUP, &hKeyCurrVersion);
-            }
-
-            retCode = RegCreateKeyEx(hKeyAppUser, szImeRegName, 0,
-                NULL, REG_OPTION_NON_VOLATILE,    KEY_ALL_ACCESS    , NULL, &hKeyIMEUser, NULL);
-
-            if (retCode) {
-                DWORD   dwDisposition;
-        
-                retCode = RegCreateKeyEx (hKeyCurrVersion,
-                                 szImeRegName,
-                              0,
-                              0,
-                              REG_OPTION_NON_VOLATILE,
-                              KEY_ALL_ACCESS,
-                              NULL,
-                              &hKeyGB,
-                              &dwDisposition);
-            }
-
-            RegSetValueEx(hKeyIMEUser, szRegRevKL, 0, REG_DWORD, (LPBYTE)&hKL,sizeof(hKL));
-
-            // get the new size
-            nRevMaxKey = (WORD)ImmEscape(hKL, (HIMC)NULL, IME_ESC_MAX_KEY,
-                NULL);
-
-            if (lpImeL->nMaxKey != nRevMaxKey) {
-                if(lpImeL->nMaxKey < nRevMaxKey)
-                    lpImeL->nMaxKey = nRevMaxKey;
-
-                // set the width & height for composition window
-                 lpImeL->rcCompText.right = lpImeL->rcCompText.left +
-                    sImeG.xChiCharWi * ((lpImeL->nMaxKey+2)/2);
-                lpImeL->xCompWi = lpImeL->rcCompText.right + lpImeL->cxCompBorder * (2 + 4);
-
-                //generate message to broadcast change comp win size
-                hIMC = (HIMC)ImmGetContext(hDlg);
-                if (!hIMC) {
-                    return TRUE;
-                }
-                lpIMC = (LPINPUTCONTEXT)ImmLockIMC(hIMC);
-                if (!lpIMC) {
-                    return TRUE;
-                }
-                lpImcP = (LPPRIVCONTEXT)ImmLockIMCC(lpIMC->hPrivate);
-                if (!lpImcP) {
-                    goto ChgConfigUnlockIMC;
-                }
-                lpImcP->fdwImeMsg |= MSG_IMN_COMPOSITIONPOS;
-                GenerateMessage(hIMC, lpIMC, lpImcP);
-                ImmUnlockIMCC(lpIMC->hPrivate);
-ChgConfigUnlockIMC:
-                ImmUnlockIMC(hIMC);
-            } //end of change nMaxKey
-
-            RegSetValueEx(hKeyIMEUser, szRegRevMaxKey, 0, REG_DWORD, (LPBYTE)&lpImeL->nMaxKey,sizeof(DWORD));
-
-            RegCloseKey(hKeyAppUser);
-            RegCloseKey(hKeyIMEUser);
-
-        } //end of change RegRevKL
-    }
-#endif    //CROSSREF
 
             }
-#ifdef CROSSREF
-            hLayoutListBox = GetDlgItem(hDlg, IDD_LAYOUT_LIST);
-            hIMC = ImmGetContext(hLayoutListBox);
-            if(hIMC) {
-                   ImmSetOpenStatus(hIMC, TRUE);
-            }
-            ImmReleaseContext(hLayoutListBox, hIMC);
-#endif //CROSSREF
             EndDialog(hDlg, FALSE);
             break;
         case IDCANCEL:
-#ifdef CROSSREF
-            hLayoutListBox = GetDlgItem(hDlg, IDD_LAYOUT_LIST);
-            hIMC = ImmGetContext(hLayoutListBox);
-            if(hIMC) {
-                   ImmSetOpenStatus(hIMC, TRUE);
-            }
-            ImmReleaseContext(hLayoutListBox, hIMC);
-#endif //CROSSREF
             EndDialog(hDlg, FALSE);
             break;
         case IDC_TRACE:
@@ -377,14 +182,6 @@ ChgConfigUnlockIMC:
         
         return (FALSE);
     case WM_CLOSE:
-#ifdef CROSSREF
-            hLayoutListBox = GetDlgItem(hDlg, IDD_LAYOUT_LIST);
-            hIMC = ImmGetContext(hLayoutListBox);
-            if(hIMC) {
-                   ImmSetOpenStatus(hIMC, TRUE);
-            }
-            ImmReleaseContext(hLayoutListBox, hIMC);
-#endif //CROSSREF
         EndDialog(hDlg, FALSE);
         return (TRUE);
     default:
@@ -1237,16 +1034,6 @@ void PASCAL InitContext(
     } else if (!lpIMC->hWnd) {
     } else {
 
-#ifdef MUL_MONITOR
-        RECT rcWorkArea;
-
-        rcWorkArea = ImeMonitorWorkAreaFromWindow(lpIMC->hWnd);
-
-        lpIMC->ptStatusWndPos.x = rcWorkArea.left;
-
-        lpIMC->ptStatusWndPos.y = rcWorkArea.bottom -
-            sImeG.yStatusHi;
-#else
         POINT ptWnd;
 
         ptWnd.x = 0;
@@ -1264,7 +1051,6 @@ void PASCAL InitContext(
 
         lpIMC->ptStatusWndPos.y = sImeG.rcWorkArea.bottom -
             sImeG.yStatusHi;
-#endif
 
         lpIMC->fdwInit |= INIT_STATUSWNDPOS;
     }
@@ -1346,9 +1132,6 @@ BOOL PASCAL Select(
 
         *(LPDWORD)lpImcP->bSeq = 0;
 
-#ifdef CROSSREF
-        lpImcP->hRevCandList   = (HIMCC) NULL;
-#endif //CROSSREF
         
         lpIMC->fOpen = TRUE;
 

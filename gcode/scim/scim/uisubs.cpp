@@ -40,7 +40,6 @@ void PASCAL DrawDragBorder(
     x -= (*(LPPOINTS)&lCursorOffset).x;
     y -= (*(LPPOINTS)&lCursorOffset).y;
 
-#ifndef MUL_MONITOR
     // check for the min boundary of the display
     if (x < sImeG.rcWorkArea.left) {
         x = sImeG.rcWorkArea.left;
@@ -49,12 +48,10 @@ void PASCAL DrawDragBorder(
     if (y < sImeG.rcWorkArea.top) {
         y = sImeG.rcWorkArea.top;
     }
-#endif
 
     // check for the max boundary of the display
     GetWindowRect(hWnd, &rcWnd);
 
-#ifndef MUL_MONITOR
 
     if (x + rcWnd.right - rcWnd.left > sImeG.rcWorkArea.right) {
         x = sImeG.rcWorkArea.right - (rcWnd.right - rcWnd.left);
@@ -64,7 +61,6 @@ void PASCAL DrawDragBorder(
         y = sImeG.rcWorkArea.bottom - (rcWnd.bottom - rcWnd.top);
     }
 
-#endif
 
     // draw the moving track
     hDC = CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL);
@@ -223,11 +219,7 @@ LRESULT CALLBACK ContextMenuWndProc(
                    return (0L);
                }
 
-#ifdef MUL_MONITOR 
-            rcWorkArea = ImeMonitorWorkAreaFromWindow(hCMenuWnd);
-#else
             rcWorkArea = sImeG.rcWorkArea;
-#endif
 
             hIMC = (HIMC)GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
             if (!hIMC) {
@@ -246,13 +238,6 @@ LRESULT CALLBACK ContextMenuWndProc(
 
             ImeConfigure(GetKeyboardLayout(0), lpIMC->hWnd, IME_CONFIG_GENERAL, NULL);
 
-#ifdef CROSSREF
-            {
-            HWND hCompWnd;
-            hCompWnd = GetCompWnd(hUIWnd);
-            DestroyWindow(hCompWnd);
-            }
-#endif
                 
             lpImcP->iImeState = CST_INIT;
             CompCancel(hIMC, lpIMC);

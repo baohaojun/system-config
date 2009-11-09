@@ -57,20 +57,7 @@ void PASCAL AdjustStatusBoundary(
 
     RECT     rcWorkArea;
 
-#ifdef MUL_MONITOR
-    {
-        RECT rcStatusWnd;
-
-        rcStatusWnd.left = lppt->x;
-        rcStatusWnd.top = lppt->y;
-        rcStatusWnd.right = rcStatusWnd.left + sImeG.xStatusWi;
-        rcStatusWnd.bottom = rcStatusWnd.top + sImeG.yStatusHi;
-
-        rcWorkArea = ImeMonitorWorkAreaFromRect(&rcStatusWnd);
-   }
-#else
     rcWorkArea = sImeG.rcWorkArea;
-#endif
 
     // display boundary check
     if (lppt->x < rcWorkArea.left) {
@@ -214,9 +201,6 @@ void PASCAL OpenStatus(         // open status window
     } 
     else if (lpIMC = (LPINPUTCONTEXT)ImmLockIMC(hIMC)) {
            
-#ifdef MUL_MONITOR
-           rcWorkArea = ImeMonitorWorkAreaFromWindow(lpIMC->hWnd);
-#endif
 
            if (lpIMC->ptStatusWndPos.x < rcWorkArea.left) {
                lpIMC->ptStatusWndPos.x = rcWorkArea.left;

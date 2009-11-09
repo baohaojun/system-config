@@ -577,11 +577,6 @@ BOOL FAR PASCAL ImeVerDlgProc(HWND, UINT, WORD, LONG);
 BOOL FAR PASCAL CrtWordDlgProc(HWND, UINT, WORD, LONG);
 BOOL FAR PASCAL SetImeDlgProc(HWND, UINT, WORD, LONG);
 
-#ifdef MUL_MONITOR  //  Multi-Monitor Support
-RECT PASCAL ImeMonitorWorkAreaFromWindow(HWND);                 // mmonitor.c
-RECT PASCAL ImeMonitorWorkAreaFromPoint(POINT);                 // mmonitor.c
-RECT PASCAL ImeMonitorWorkAreaFromRect(LPRECT);                 // mmonitor.c
-#endif
 
 #ifdef UNICODE
 extern TCHAR SKLayout[NumsSK][MAXSOFTKEYS];

@@ -203,7 +203,6 @@ void PASCAL CheckSoftKbdPosition(
     LPINPUTCONTEXT lpIMC)
 {
 
-#ifndef MUL_MONITOR
     UINT fPortionBits = 0;
     UINT fPortionTest;
     int  xPortion, yPortion, nPortion;
@@ -277,19 +276,6 @@ void PASCAL CheckSoftKbdPosition(
 
         break;
     }
-#else   //MUL_MONITOR
-    RECT rcWorkArea, rcWnd;
-
-    GetWindowRect(lpUIPrivate->hSoftKbdWnd, &rcWnd);
-
-    rcWorkArea = ImeMonitorWorkAreaFromWindow(lpIMC->hWnd);
-
-    lpIMC->ptSoftKbdPos.x = rcWorkArea.right -
-                            (rcWnd.right-rcWnd.left)-UI_MARGIN;
-
-    lpIMC->ptSoftKbdPos.y = rcWorkArea.bottom -
-                            (rcWnd.bottom-rcWnd.top)-UI_MARGIN;
-#endif
     return;
 }
 
@@ -916,11 +902,7 @@ void PASCAL SetContext(         // the context activated/deactivated
     DWORD    dwRegImeIndex;
     RECT            rcWorkArea;
 
-#ifdef MUL_MONITOR
-    rcWorkArea = ImeMonitorWorkAreaFromWindow(hUIWnd);
-#else
     rcWorkArea = sImeG.rcWorkArea;
-#endif
 
 
     hIMC = (HIMC)GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
@@ -1047,20 +1029,6 @@ SetShowStatus:
                                (LPDWORD)&ValueType,
                             (LPBYTE)&sImeG.IC_Trace,
                             (LPDWORD)&ValueSize);
-#ifdef CROSSREF         
-            if(RegQueryValueEx (hKeyGB, szRegRevKL,
-                     NULL,
-                     NULL,             //null-terminate string
-                     (LPBYTE)&sImeG.hRevKL,              //&bData,
-                     &ValueSize) != ERROR_SUCCESS)
-            sImeG.hRevKL = NULL;
-            if(RegQueryValueEx (hKeyGB, szRegRevMaxKey,
-                     NULL,
-                     NULL,             //null-terminate string
-                     (LPBYTE)&sImeG.nRevMaxKey,              //&bData,
-                     &ValueSize) != ERROR_SUCCESS)
-            sImeG.hRevKL = NULL;
-#endif
         
 
             // query ¹â±ê¸úËæ value
@@ -1372,11 +1340,7 @@ LRESULT CALLBACK UIWndProc(
                 POINT           ptPos;
                 RECT            rcWorkArea;
 
-#ifdef MUL_MONITOR
-                rcWorkArea = ImeMonitorWorkAreaFromWindow(hUIWnd);
-#else
                 rcWorkArea = sImeG.rcWorkArea;
-#endif
 
                 ptPos.x = ((LPPOINTS)&lParam)->x;
                 ptPos.y = ((LPPOINTS)&lParam)->y;

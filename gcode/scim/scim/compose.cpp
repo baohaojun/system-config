@@ -698,9 +698,6 @@ UINT PASCAL Finalize(
         // set iImeState with CST_INIT
         lpImcP->iImeState = CST_INIT;
         *(LPDWORD)lpImcP->bSeq = 0;
-#ifdef CROSSREF
-        CrossReverseConv(lpIMC, lpCompStr, lpImcP, lpCandList);
-#endif
     }
 
     ImmUnlockIMCC(lpIMC->hCandInfo);
