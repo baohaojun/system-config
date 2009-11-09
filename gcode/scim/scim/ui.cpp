@@ -1426,11 +1426,8 @@ LRESULT CALLBACK UIWndProc(
     case WM_IME_COMPOSITIONFULL:
         return (0L);
     case WM_IME_SELECT:
-//#if  defined(LATER)
+
         SetContext(hUIWnd, (BOOL)wParam, 0);
-//#else
-//        SelectIME(hUIWnd, (BOOL)wParam);
-//#endif
         return (0L);
     case WM_MOUSEACTIVATE:
         return (MA_NOACTIVATE);
