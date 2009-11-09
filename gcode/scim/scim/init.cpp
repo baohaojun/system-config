@@ -199,9 +199,7 @@ void PASCAL InitImeGlobalData(
 
     hInst = hInstance;
     LoadString(hInst, IDS_IMEREGNAME, szImeRegName, MAX_PATH);    
-    LoadString(hInst, IDS_IMENAME_QW, pszImeName[0], MAX_PATH);    
-    LoadString(hInst, IDS_IMENAME_NM, pszImeName[1], MAX_PATH);    
-    LoadString(hInst, IDS_IMENAME_UNI, pszImeName[2], MAX_PATH);    
+    LoadString(hInst, IDS_IMENAME_UNI, pszImeName[0], MAX_PATH);    
     // get the UI class name
     LoadString(hInst, IDS_IMEUICLASS, szUIClassName,
     CLASS_LEN);
@@ -581,7 +579,6 @@ BOOL CALLBACK DllMain(
             HKEY  hKeyCurrVersion;
             HKEY  hKeyGB;
             LONG  retCode;
-            DWORD ValueType;
             DWORD ValueSize;
 
             retCode = OpenReg_PathSetup(&hKeyCurrVersion);
@@ -609,25 +606,7 @@ BOOL CALLBACK DllMain(
 
                 if ( hKeyGB )
                 {
-                    retCode = RegQueryValueEx(hKeyGB,
-                              szRegImeIndex,
-                              NULL,
-                              (LPDWORD)&ValueType,
-                              (LPBYTE)&sImeL.dwRegImeIndex,
-                              (LPDWORD)&ValueSize);
-
-                    if ( retCode != ERROR_SUCCESS )  {
-                         //set GB/QW as default
-
-                       sImeL.dwRegImeIndex = 0;
-                       RegSetValueEx (hKeyGB, szRegImeIndex,
-                                   (DWORD)0,
-                                   REG_DWORD,
-                                   (LPBYTE)&sImeL.dwRegImeIndex,
-                                   sizeof(DWORD));  
-                    }
-    
-                    //readout current ImeName
+					sImeL.dwRegImeIndex = 0;
                     szImeName = pszImeName[sImeL.dwRegImeIndex];
 
                     RegCloseKey(hKeyGB);

@@ -395,23 +395,9 @@ BOOL DBCSToGBCode (
     wCode = AreaCode;
 
 //check valid GB range code first
-    if(sImeL.dwRegImeIndex==INDEX_GB){
-        if(LOBYTE(wCode) < 0xa1 || LOBYTE(wCode) > 0xfe 
-        || HIBYTE(wCode) < 0xa1 || HIBYTE(wCode) > 0xfe)
-            return FALSE;
-       AbSeq[1] = ((wCode -0xa0) % 256) % 10;
-       AbSeq[0] = ((wCode -0xa0) % 256) / 10;
-       AreaCode = (wCode - 0xa0 -AbSeq[0] * 10 -AbSeq[1])/256;
-       AbSeq[3] = ((AreaCode -0xa0) % 256) % 10;
-       AbSeq[2] = ((AreaCode -0xa0) % 256) / 10; 
-       AbSeq[4] = TEXT('\0';)
-    }else if(sImeL.dwRegImeIndex==INDEX_GBK || sImeL.dwRegImeIndex==INDEX_UNICODE){
-        WORD    tmp;
-        tmp = HIBYTE(wCode) | (LOBYTE(wCode)<<8);
-        wsprintf(AbSeq,TEXT("%04x"), tmp);
-    }
-    else
-        return FALSE;
+	WORD    tmp;
+	tmp = HIBYTE(wCode) | (LOBYTE(wCode)<<8);
+	wsprintf(AbSeq,TEXT("%04x"), tmp);
 
        return TRUE;
 }
@@ -645,12 +631,7 @@ DWORD WINAPI ImeConversionList(
             ImmUnlockIMC(hIMC);
             return (FALSE);
         }
-        if(sImeL.dwRegImeIndex==INDEX_GB)
-            return (Conversion(lpszSrc, lpCandList, uBufLen));
-        else if(sImeL.dwRegImeIndex==INDEX_GBK)
-            return (XGBConversion(lpszSrc, lpCandList, uBufLen));
-        else if(sImeL.dwRegImeIndex==INDEX_UNICODE)
-            return (XGBConversion(lpszSrc, lpCandList, uBufLen));
+		return (XGBConversion(lpszSrc, lpCandList, uBufLen));
         break;
     case GCL_REVERSECONVERSION:
         if (!uBufLen) {
@@ -667,12 +648,7 @@ DWORD WINAPI ImeConversionList(
         // swap lead byte & second byte, UNICODE don't need it
         // wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);  For Big5
 
-        if(sImeL.dwRegImeIndex==INDEX_GB)
-            return (ReverseConversion(wCode, lpCandList, uBufLen));
-        else if(sImeL.dwRegImeIndex==INDEX_GBK)
-            return (XGBReverseConversion(wCode, lpCandList, uBufLen));
-        else if(sImeL.dwRegImeIndex==INDEX_UNICODE)
-            return (UnicodeReverseConversion(wCode, lpCandList, uBufLen));
+		return (UnicodeReverseConversion(wCode, lpCandList, uBufLen));
 
         break;
     default:

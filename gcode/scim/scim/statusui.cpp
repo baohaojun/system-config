@@ -369,16 +369,6 @@ void PASCAL SetStatus(
                     NULL, REG_OPTION_NON_VOLATILE,    KEY_ALL_ACCESS    , NULL, &hKeyGB, NULL);
 
         if (retCode) {
-            RegCloseKey(hKeyCurrVersion);
-            return;
-        }
-        retCode = RegSetValueEx (hKeyGB, 
-                                 szRegImeIndex,
-                                 (DWORD)0,
-                                 REG_DWORD,
-                                 (LPBYTE)&sImeL.dwRegImeIndex,
-                                 sizeof(DWORD));
-        if (retCode) {
             RegCloseKey(hKeyGB);
             RegCloseKey(hKeyCurrVersion);
             return;

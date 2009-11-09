@@ -1213,32 +1213,14 @@ void PASCAL PaintCandWindow(
 
 		szStrBuf[0] = szDigit[i + CAND_START];
 
-		if(sImeL.dwRegImeIndex == INDEX_GB || sImeL.dwRegImeIndex == INDEX_GBK){
-			iLen = lstrlen((LPTSTR)((LPBYTE)lpCandList +
-									lpCandList->dwOffset[dwStart]));
 
-			if (iLen > 10 * 2 / sizeof(TCHAR)) {
-				iLen = 10 * 2 / sizeof(TCHAR);
-				CopyMemory(&szStrBuf[2],
-						   ((LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart])),
-						   (iLen - 2) * sizeof(TCHAR));
-				// maybe not good for UNICODE
-				szStrBuf[iLen] = TEXT('.');
-				szStrBuf[iLen+1] = TEXT('.');
-				szStrBuf[iLen+2] = TEXT('\0');
-			} else {
-				CopyMemory(&szStrBuf[2],
-						   (LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]),
-						   iLen*sizeof(TCHAR));
-			}
-		}else if(sImeL.dwRegImeIndex == INDEX_UNICODE){
-			WORD  wCode;
-			wCode = *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]);
+		WORD  wCode;
+		wCode = *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]);
 
-			szStrBuf[2]= wCode;
-			szStrBuf[3]=TEXT('\0');
-			iLen = 2/sizeof(TCHAR);
-		}
+		szStrBuf[2]= wCode;
+		szStrBuf[3]=TEXT('\0');
+		iLen = 2/sizeof(TCHAR);
+
 
 
 		ExtTextOut(hDC, sImeG.rcCandText.left,
@@ -1270,35 +1252,15 @@ void PASCAL PaintCandWindow(
 			wsprintf (GbSeq,TEXT("%04lx"),wGB);    // get GB string
 			wGB -= 0xa0a0;
 			wsprintf (AbSeq,TEXT("%02d%02d"),HIBYTE(wGB),LOBYTE(wGB));
-//             if (lpImcP->fdwGB & IME_SELECT_GB) {
-			switch(sImeL.dwRegImeIndex){
-			case INDEX_GB:
-                lstrcpy (szMyStrBuf,TEXT("("));
-                lstrcat (szMyStrBuf,GbSeq);
-                lstrcat (szMyStrBuf,TEXT(", "));
-                lstrcat (szMyStrBuf,AbSeq);
-                lstrcat (szMyStrBuf,TEXT(")"));
-                iMyLen = 12;
 
-				break;
-			case INDEX_GBK:
-                lstrcpy (szMyStrBuf,TEXT("    "));
-                lstrcat (szMyStrBuf,TEXT("("));
-                lstrcat (szMyStrBuf,GbSeq);
-                lstrcat (szMyStrBuf,TEXT(")"));
-                iMyLen = 10;
+			lstrcpy (szMyStrBuf,TEXT("("));
+			lstrcat (szMyStrBuf,GbSeq);
+			lstrcat (szMyStrBuf,TEXT(", "));
+			wsprintf (AbSeq,TEXT("%04lx"),wCode);
+			lstrcat (szMyStrBuf, AbSeq);
+			lstrcat (szMyStrBuf,TEXT(")"));
+			iMyLen = lstrlen(szMyStrBuf);
 
-				break;
-			case INDEX_UNICODE:        //adjust code display info
-                lstrcpy (szMyStrBuf,TEXT("("));
-                lstrcat (szMyStrBuf,GbSeq);
-                lstrcat (szMyStrBuf,TEXT(", "));
-                wsprintf (AbSeq,TEXT("%04lx"),wCode);
-                lstrcat (szMyStrBuf, AbSeq);
-                lstrcat (szMyStrBuf,TEXT(")"));
-                iMyLen = lstrlen(szMyStrBuf);
-				break;
-			}
         
 			GBARInfo.top = sImeG.rcCandText.top + i * sImeG.yChiCharHi;
 			GBARInfo.left = sImeG.rcCandText.left;

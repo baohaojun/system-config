@@ -197,145 +197,57 @@ int PASCAL Engine(
             return -1;
         }
 
-        if(sImeL.dwRegImeIndex == INDEX_GB)
-        {
 
-            // GB
-            DWORD i;
-            WORD wCode;
-            TCHAR ResaultStr[3];
+		// UNICODE
+		DWORD i;
+		WORD wCode;
+		TCHAR ResaultStr[3];
 
-            if((lpImcP->bSeq[2] == TEXT('?'))) {
-                wCode = GBEngine(lpImcP);
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-                for (i = 0; i < IME_MAXCAND; i++, wCode++) {
-                     AddCodeIntoCand(lpCandList, wCode);
-                }
-                return (ENGINE_COMP);
-            } else if(wCharCode == TEXT(' ')) {
-                wCode = GBSpcEng(lpImcP);
-                lpImcP->bSeq[2] = 0;
-                lpImcP->bSeq[3] = 0;
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-                for (i = 0; i < IME_MAXCAND; i++, wCode++) {
-                     AddCodeIntoCand(lpCandList, wCode);
-                }
-                return (ENGINE_COMP);
-            } else {
-                   InitCompStr(lpCompStr);
+		memset(ResaultStr, 0, sizeof(ResaultStr));
 
-                // the result string = the selected candidate;
-                wCode = GBEngine(lpImcP);
-                MultiByteToWideChar(NATIVE_ANSI_CP, 0, (LPCSTR)&wCode, 2, ResaultStr, sizeof(ResaultStr)/sizeof(TCHAR));
-                ResaultStr[1] = TEXT('\0');
-                lstrcpy((LPTSTR)((LPBYTE)lpCompStr + lpCompStr->dwResultStrOffset),ResaultStr);
+		if((lpImcP->bSeq[2] == TEXT('?') || wCharCode == TEXT(' ')))  {
+			lpImcP->bSeq[2] = TEXT('0');
+			lpImcP->bSeq[3] = TEXT('0');
+			lpImcP->bSeq[4] = TEXT('\0');
 
-                // calculate result string length
-                lpCompStr->dwResultStrLen = lstrlen(ResaultStr);
+			wCode = UnicodeEngine(lpImcP);
 
-                return (ENGINE_RESAULT);
-            }
+			wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
 
-          }else if(sImeL.dwRegImeIndex == INDEX_GBK)
-        {
-            // XGB
-            DWORD i;
-            WORD wCode;
-            TCHAR ResaultStr[3];
+			lpCandList->dwCount = 0;
+			for (i = 0; i < IME_UNICODE_MAXCAND; i++, wCode++) {
+				// add this string into candidate list
+				*(LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[
+							  lpCandList->dwCount]) = wCode;
+				// null terminator
+				*(LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[
+							  lpCandList->dwCount] + sizeof(WORD)) = TEXT('\0');
 
-            if((lpImcP->bSeq[2] == TEXT('?')))  {
-                wCode = XGBEngine(lpImcP);
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-
-                for (i = 0; i < (0x7e-0x40+1); i++, wCode++) {
-                    XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-                wCode ++;
-                for (i = 0; i < (0xfe-0x80+1); i++, wCode++) {
-                    XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-                return (ENGINE_COMP);
-            } else if(wCharCode == TEXT(' ')) {
-                wCode = XGBSpcEng(lpImcP);
-                lpImcP->bSeq[2] = 0;
-                lpImcP->bSeq[3] = 0;
-
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-
-                for (i = 0; i < (0x7e-0x40+1); i++, wCode++) {
-                    XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-                wCode ++;
-                for (i = 0; i < (0xfe-0x80+1); i++, wCode++) {
-                    XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-                return (ENGINE_COMP);
-            } else {
-                   InitCompStr(lpCompStr);
-
-                // the result string = the selected candidate;
-                wCode = XGBEngine(lpImcP);
-                MultiByteToWideChar(NATIVE_ANSI_CP, 0, (LPCSTR)&wCode, 2, ResaultStr, sizeof(ResaultStr)/sizeof(TCHAR));
-                ResaultStr[1] = TEXT('\0');
-                lstrcpy((LPTSTR)((LPBYTE)lpCompStr + lpCompStr->dwResultStrOffset),ResaultStr);
-
-                // calculate result string length
-                lpCompStr->dwResultStrLen = lstrlen(ResaultStr);
-
-                return (ENGINE_RESAULT);
-            }
-          }else if(sImeL.dwRegImeIndex == INDEX_UNICODE)
-        {
-            // UNICODE
-            DWORD i;
-            WORD wCode;
-            TCHAR ResaultStr[3];
-
-            memset(ResaultStr, 0, sizeof(ResaultStr));
-
-            if((lpImcP->bSeq[2] == TEXT('?') || wCharCode == TEXT(' ')))  {
-                lpImcP->bSeq[2] = TEXT('0');
-                lpImcP->bSeq[3] = TEXT('0');
-                lpImcP->bSeq[4] = TEXT('\0');
-
-                wCode = UnicodeEngine(lpImcP);
-
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-
-                lpCandList->dwCount = 0;
-                for (i = 0; i < IME_UNICODE_MAXCAND; i++, wCode++) {
-                    // add this string into candidate list
-                    *(LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[
-                    lpCandList->dwCount]) = wCode;
-                    // null terminator
-                    *(LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[
-                    lpCandList->dwCount] + sizeof(WORD)) = TEXT('\0');
-
-                    lpCandList->dwOffset[lpCandList->dwCount + 1] =
+				lpCandList->dwOffset[lpCandList->dwCount + 1] =
                     lpCandList->dwOffset[lpCandList->dwCount] +
                     sizeof(WORD) + sizeof(TCHAR);
-                    lpCandList->dwCount++;
+				lpCandList->dwCount++;
 
-                }
-                return (ENGINE_COMP);
-            } else {
-                   InitCompStr(lpCompStr);
+			}
+			return (ENGINE_COMP);
+		} else {
+			InitCompStr(lpCompStr);
 
-                // the result string = the selected candidate;
-                wCode = UnicodeEngine(lpImcP);
-                {
-                    WCHAR    UniStr[2];
+			// the result string = the selected candidate;
+			wCode = UnicodeEngine(lpImcP);
+			{
+				WCHAR    UniStr[2];
 
-                    UniStr[0] = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-                    UniStr[1] = 0;
-                    lstrcpy((LPTSTR)((LPBYTE)lpCompStr + lpCompStr->dwResultStrOffset),UniStr);
+				UniStr[0] = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
+				UniStr[1] = 0;
+				lstrcpy((LPTSTR)((LPBYTE)lpCompStr + lpCompStr->dwResultStrOffset),UniStr);
 
-                    // calculate result string length
-                    lpCompStr->dwResultStrLen = lstrlen(UniStr);
-                }
-                return (ENGINE_RESAULT);
-            }
-        }
+				// calculate result string length
+				lpCompStr->dwResultStrLen = lstrlen(UniStr);
+			}
+			return (ENGINE_RESAULT);
+		}
+
     }
     MessageBeep((UINT)-1);
     return (ENGINE_COMP);

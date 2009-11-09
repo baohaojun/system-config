@@ -257,65 +257,24 @@ BOOL PASCAL SetString(
       lpImcP->bSeq[2] = 0;
       lpImcP->bSeq[3] = 0;
 
-   if(sImeL.dwRegImeIndex == INDEX_GB){
 
-       for (ii=0;ii<4;ii++) {
-          iRet = GBProcessKey(*(LPBYTE)((LPBYTE)lpszRead+ii),lpImcP);
-          if (iRet == CST_INPUT) {
-             lpImcP->bSeq[ii] = *(LPBYTE)((LPBYTE)lpszRead+ii);
-          } else {
-          goto Finalize;
-
-          }
-       }
-
-       wCode = GBEngine (lpImcP);
-       wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-       for (i = 0; i < MAX_COMP;i++, wCode++) {
-           AddCodeIntoCand(lpCandList, wCode);
-       }
-
-    }else if(sImeL.dwRegImeIndex == INDEX_GBK){
-        for (ii=0;ii<4;ii++) {
-           iRet = XGBProcessKey(*(LPBYTE)((LPBYTE)lpszRead+ii),lpImcP);
-           if (iRet == CST_INPUT) {
+	  for (ii=0;ii<4;ii++) {
+		  iRet = UnicodeProcessKey(*(LPBYTE)((LPBYTE)lpszRead+ii),lpImcP);
+		  if (iRet == CST_INPUT) {
               lpImcP->bSeq[ii] = *(LPBYTE)((LPBYTE)lpszRead+ii);
-           } else {
-           goto Finalize;
+		  } else {
+			  goto Finalize;
+		  }
+	  }
 
-           }
-        }
-
-        wCode = XGBEngine(lpImcP);
+	  wCode = UnicodeEngine(lpImcP);
+	  wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
     
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
+	  for (i = 0; i < (0x100); i++, wCode++) {
+		  UnicodeAddCodeIntoCand(lpCandList, wCode);
+	  }
 
-                for (i = 0; i < (0x7e-0x40+1); i++, wCode++) {
-                XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-                wCode ++;
-                for (i = 0; i < (0xfe-0x80+1); i++, wCode++) {
-                XGBAddCodeIntoCand(lpCandList, wCode);
-                }
 
-    }else if(sImeL.dwRegImeIndex == INDEX_UNICODE){
-        for (ii=0;ii<4;ii++) {
-           iRet = UnicodeProcessKey(*(LPBYTE)((LPBYTE)lpszRead+ii),lpImcP);
-           if (iRet == CST_INPUT) {
-              lpImcP->bSeq[ii] = *(LPBYTE)((LPBYTE)lpszRead+ii);
-           } else {
-               goto Finalize;
-           }
-        }
-
-        wCode = UnicodeEngine(lpImcP);
-        wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-    
-        for (i = 0; i < (0x100); i++, wCode++) {
-            UnicodeAddCodeIntoCand(lpCandList, wCode);
-        }
-
-    }
 
     if (lpCandList->dwCount == 1) {
                 lstrcpy((LPTSTR)((LPBYTE)lpCompStr + lpCompStr->dwResultStrOffset),

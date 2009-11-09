@@ -894,7 +894,6 @@ void PASCAL SetContext(         // the context activated/deactivated
     LPPRIVCONTEXT  lpImcP;
     HGLOBAL        hUIPrivate;
     register LPUIPRIV lpUIPrivate;
-    DWORD    dwRegImeIndex;
     RECT            rcWorkArea;
 
     rcWorkArea = sImeG.rcWorkArea;
@@ -998,54 +997,6 @@ SetShowStatus:
             return;
         }
 
-        // init ime properties & reset context
-        {
-            HKEY  hKeyCurrVersion;
-            HKEY  hKeyGB;
-            DWORD ValueType;
-            DWORD ValueSize;
-            LONG    retCode;
-
-            retCode = OpenReg_PathSetup(&hKeyCurrVersion);
-            if (retCode) {
-            TCHAR    Buf[MAX_PATH];
-                wsprintf (Buf, TEXT("Error: RegOpenKeyEx = %d"), retCode);
-                MessageBox (lpIMC->hWnd, Buf, szWarnTitle, MB_OK | MB_ICONINFORMATION);
-                return;
-            }
-
-            retCode = OpenReg_User (hKeyCurrVersion,
-                               szImeRegName,
-                               &hKeyGB);
-            // query ¹â±ê¸úËæ value
-            ValueSize = sizeof(DWORD);
-            RegQueryValueEx (hKeyGB, szRegImeIndex,
-                            (DWORD)0,
-                            (LPDWORD)&ValueType,
-                            (LPBYTE)&dwRegImeIndex,
-                            (LPDWORD)&ValueSize);
-
-            RegCloseKey(hKeyGB);
-            RegCloseKey(hKeyCurrVersion);
-
-        }
-
-        if(sImeL.dwRegImeIndex != dwRegImeIndex) {
-        DWORD    dwConvMode;
-        int        cxBorder, cyBorder;
-
-            //change current IME index
-            dwConvMode = lpIMC->fdwConversion ^ (IME_CMODE_INDEX_FIRST << sImeL.dwRegImeIndex);
-            sImeL.dwRegImeIndex = dwRegImeIndex;
-            szImeName = pszImeName[dwRegImeIndex];
-            dwConvMode |= (IME_CMODE_INDEX_FIRST << dwRegImeIndex);
-            // re-caculate statusuidata
-            cxBorder = GetSystemMetrics(SM_CXBORDER);
-            cyBorder = GetSystemMetrics(SM_CYBORDER);
-            InitStatusUIData(cxBorder, cyBorder);
-
-            ImmSetConversionStatus(hIMC, dwConvMode, lpIMC->fdwSentence);
-        }
 
         if(SaTC_Trace == 0) {
             int UI_MODE;

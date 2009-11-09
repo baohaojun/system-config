@@ -156,22 +156,11 @@ void PASCAL ChooseCand(         // choose one of candidate strings by
     }
 
     if (wCharCode == TEXT('=')) {      // next selection
-        if(sImeL.dwRegImeIndex == INDEX_GB){
-            if (lpCandList->dwSelection >= ((IME_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
-                MessageBeep((UINT)-1);
-                return;
-            }
-           }else if(sImeL.dwRegImeIndex == INDEX_GBK){
-            if (lpCandList->dwSelection >= ((IME_XGB_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
-                MessageBeep((UINT)-1);
-                return;
-            }
-           }else if(sImeL.dwRegImeIndex == INDEX_UNICODE){
-            if (lpCandList->dwSelection >= ((IME_UNICODE_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
-                MessageBeep((UINT)-1);
-                return;
-            }
-        }
+
+		if (lpCandList->dwSelection >= ((IME_UNICODE_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
+			MessageBeep((UINT)-1);
+			return;
+		}
         lpCandList->dwSelection += lpCandList->dwPageSize;
         // inform UI, dwSelectedCand is changed
         lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
@@ -190,28 +179,13 @@ void PASCAL ChooseCand(         // choose one of candidate strings by
     }
 
     if (wCharCode == 0x23) {      // previous selection
-        if(sImeL.dwRegImeIndex == INDEX_GB){
-            if (lpCandList->dwSelection >= ((IME_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
-                MessageBeep((UINT)-1);
-                return;
-            }else{
-                lpCandList->dwSelection = ((IME_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize;
-            }
-           }else if(sImeL.dwRegImeIndex == INDEX_GBK){
-            if (lpCandList->dwSelection >= ((IME_XGB_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
-                MessageBeep((UINT)-1);
-                return;
-            }else{
-                lpCandList->dwSelection = ((IME_XGB_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize;
-            }
-           }else if(sImeL.dwRegImeIndex == INDEX_UNICODE){
-            if (lpCandList->dwSelection >= ((IME_UNICODE_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
-                MessageBeep((UINT)-1);
-                return;
-            }else{
-                lpCandList->dwSelection = ((IME_UNICODE_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize;
-            }
-        }
+		if (lpCandList->dwSelection >= ((IME_UNICODE_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
+			MessageBeep((UINT)-1);
+			return;
+		}else{
+			lpCandList->dwSelection = ((IME_UNICODE_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize;
+		}
+
         // inform UI, dwSelectedCand is changed
         lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
         return;

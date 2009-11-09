@@ -479,14 +479,7 @@ UINT PASCAL ProcessKey(     // this key will cause the IME go to what state
     if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {      
 
 //        if (lpImcP->fdwGB & IME_SELECT_GB) {
-                switch(sImeL.dwRegImeIndex){
-                case INDEX_GB:
-                        return (GBProcessKey(wCharCode,lpImcP));
-                case INDEX_GBK:
-                        return (XGBProcessKey (wCharCode,lpImcP));
-                case INDEX_UNICODE:
-                        return(UnicodeProcessKey(wCharCode, lpImcP));
-                }
+		return(UnicodeProcessKey(wCharCode, lpImcP));
      }
 
   return (CST_INVALID);

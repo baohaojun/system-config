@@ -31,8 +31,6 @@
 #define IDS_IMECMENUCLASS       0x0325
 #define IDS_IMESOFTKEYMENUCLASS 0x0326
 #define IDS_IMEREGNAME          0x0327
-#define IDS_IMENAME_QW          0x0328
-#define IDS_IMENAME_NM          0x0329
 #define IDS_IMENAME_UNI         0x0330
 
 #define IDS_WARN_OPENREG        0x0602
@@ -116,13 +114,11 @@
 #define LIN_UI                  1
 
 
-#define IMEINDEXNUM             3
+#define IMEINDEXNUM             1
 
 #define IME_CMODE_INDEX_FIRST   0x1000
 
-#define INDEX_GB                0
-#define INDEX_GBK               1
-#define INDEX_UNICODE           2
+#define INDEX_UNICODE           0
 
 
 // border for UI
