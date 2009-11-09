@@ -17,7 +17,6 @@ Module Name:
 #pragma data_seg(".ShareDate")
 IMEG      sImeG = {0};
 
-#ifdef UNICODE
 TCHAR SKLayout[NumsSK][MAXSOFTKEYS] = {
         0x3000, 0xFF10, 0xFF11, 0xFF12, 0xFF13, 0xFF14, 0xFF15, 0xFF16,
         0xFF17, 0xFF18, 0xFF19, 0xFF41, 0xFF42, 0xFF43, 0xFF44, 0xFF45,
@@ -202,38 +201,6 @@ TCHAR SKLayoutS[NumsSK][MAXSOFTKEYS] = {
         0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020,
         0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020, 0x0020,
     };
-#else
-BYTE SKLayout[NumsSK][MAXSOFTKEYS*2] = {
-    "¡¡£°£±£²£³£´£µ£¶£·£¸£¹£á£â£ã£ä£å£æ£ç£è£é£ê£ë£ì£í£î£ï£ð£ñ£ò£ó£ô£õ£ö£÷£ø£ù£ú£»£½£¬£­£®£¯£à£Û£Ü£Ý£§",
-    "¡¡                    ¦Ê¦Ö¦Ô¦Ì¦Ã¦Í¦Î¦Ï¦È¦Ð¦Ñ  ¦Ø¦×¦É  ¦Á¦Ä¦Ë¦Å¦Ç¦Õ¦Â¦Ó¦Æ¦Ò                      ",
-    "¡¡                    §Ý§ì§ê§ß§Ó§à§á§â§Ø§ã§ä§å§î§í§Ù§Ú§Ñ§Ô§Þ§Õ§×§ë§Ò§é§Ö§è§æ  §ï  §ð§ñ  §Û  §Ü§ç",
-    "¡¡¨æ¨É    ¨Ó    ¨Ú¨Þ¨â¨Ç¨Ö¨Ï¨Î¨Í¨Ñ¨Õ¨Ø¨Û¨è¨Ü¨à¨é¨Ù¨ß¨ã¨Æ¨Ð¨Ë¨Ô¨ç¨Ò¨Ê  ¨×¨È¨ä  ¨Ý  ¨á¨å¨Å        ",
-    "¡¡                    ¨¥  ¨³¨§¨£¨¨  ¨©¨¯¨ª¨«¨¬¨¶¨µ¨°  ¨¡¨¤¨¦  ¨®¨´¨¢¨²¨­¨±    ¨·  ¨¸¨¹  ¨º      ",
-    "¡¡  ¤£¤¥¤§¤©¤«¤­¤¯¤±¤³¤Ê¤â¤à¤Ì¤¹¤Í¤Î¤Ï¤Ä¤Ò¤Õ¤Ø¤å¤ã¤Ã¤Æ¤µ¤»¤Ë¤½¤Á¤á¤·¤ß¤¿¤Þ¤Û  ¤ç¤ó¤î¤ò¤¡¤È  ¤ð¤ñ",
-    "¡¡¥±¥£¥¥¥ô¥§¥©¥«¥õ¥­¥¯¥Ê¥â¥à¥Ì¥¹¥Í¥Î¥Ï¥Ä¥Ò¥Õ¥Ø¥å¥ã¥Ã¥Æ¥µ¥»¥Ë¥½¥Á¥á¥·¥ß¥¿¥Þ¥Û¥³¥ç¥ö¥î¥ò¥¡¥È¥ó¥ð¥ñ",
-    "¡¡¡¥£¬¡¢£»£º£¿£¡¡­¡ª¡¤¡²£¨¡¾¡´¡°¡µ¡¶¡·¡Ã¡¸¡¹¡º£Û£©£¢£§¡®¡±¡³¡©¡¬¡¿¡¯¡½¡«¡¼¡»¡§£Ý¡¦£û£ý¡££à¡¨£ü£®",
-    "¡¡¢û¢ò¢ó¢ô¢õ¢ö¢÷¢ø¢ù¢ú¢å¢É¢Ç¢ç¢³¢è¢é¢ê¢¸¢ë¢ì¢í¢Ë¢Ê¢¹¢º¢±¢´¢æ¢µ¢·¢È¢²¢Æ¢¶¢Å¢î  ¢Ì¢ü¢Í¢Î¢ñ        ",
-    "¡¡  ¡Ô¡Ù£½¡Ü¡Ý£¼£¾¡Ú¡Û¡Ä¡Ñ¡Ï¡Æ£­¡Ç¡È¡É¡Ò¡Ê  ¡ß¡×¡Õ¡Ó¡Ø¡À¡Á¡Å¡Â  ¡Ð£«¡Î£¯¡Í¡à    ¡Ë¡Ì  ¡Ö¡Þ      ",
-    "¡¡¡è¡ã¡ä¡å¡ç¡ê£¤¡ë£¥¡æ°Ù  ºÁÍò¶þÒÚÕ×¼ªÆßÌ«ÅÄ°¬    °Ë¾Å¡ðÈýÇ§ËÄÁùÎ¢Ò»ÀåÎå·Ö      ¡é      Ê®      ",
-    "¡¡©¨©±©²©³©´©µ©¶©·  ©¤©Ð©ä©â©Ò©Â©Ó©Ô©Õ©Ç©Ö©×  ©æ©å  ©¦©À©Ã©Ñ©Ä©Æ©ã©Á©á©Å©à    ©ç©¬    ©°©ª  ©®  ",
-    "¡¡                    ¡ö£Þ£À¡ø¡î¡ù¡ú¡û¡ó¡ü¡ý¡þ£þ£ß¡ô¡õ¡ì¡ï¡÷¡ð¡ò£Ü¡í£¦¡ñ££                      ",
-    };
-BYTE SKLayoutS[NumsSK][MAXSOFTKEYS*2] = {
-    "¡¡£©£¡£À££¡ç£¥£Þ£¦£ª£¨£Á£Â£Ã£Ä£Å£Æ£Ç£È£É£Ê£Ë£Ì£Í£Î£Ï£Ð£Ñ£Ò£Ó£Ô£Õ£Ö£×£Ø£Ù£Ú£º£«£¼£ß£¾£¿¡«£û£ü£ý£¢",
-    "                      ¦ª¦¶¦´¦¬¦£¦­¦®¦¯¦¨¦°¦±  ¦¸¦·¦©  ¦¡¦¤¦«¦¥¦§¦µ¦¢¦³¦¦¦²                      ",
-    "                      §­§¼§º§¯§£§°§±§²§¨§³§´§µ§¾§½§©§ª§¡§¤§®§¥§§§»§¢§¹§¦§¸§¶  §¿  §À§Á  §«  §¬§·",
-    "                                                                                                ",
-    "                                                                                                ",
-    "    ¤¤¤¦¤¨¤ª¤¬¤®¤°¤²¤´¤Ñ¤í¤ë¤×¤º¤Ú¤Ý¤Ü¤Å¤Ó¤Ö¤Ù¤æ¤ä  ¤Ç¤¶¤¼¤Ô¤¾¤Â¤ì¤¸¤ê¤À¤é¤Ü  ¤è  ¤ï  ¤¢¤É      ",
-    "  ¥²¥¤¥¦  ¥¨¥ª¥¬  ¥®¥°¥Ñ¥í¥ë¥×¥º¥Ú¥Ý¥Ð¥Å¥Ó¥Ö¥Ù¥æ¥ä  ¥Ç¥¶¥¼¥Ô¥¾¥Â¥ì¥¸¥ê¥À¥é¥Ü¥´¥è  ¥ï  ¥¢¥É      ",
-    "                                                                                                ",
-    "                      ¢Ù¢Ó¢Ñ¢Û¢½¢Ü¢Ý¢Þ¢Â¢ß¢à¢á¢Õ¢Ô¢Ã¢Ä¢»¢¾¢Ú¢¿¢Á¢Ò¢¼¢Ð¢À¢Ï¢â  ¢Ö  ¢×¢Ø          ",
-    "                                                                                                ",
-    "                      °Û      ·¡      Æâ          °Ç¾ÁÁãÈþÇªËÁÂ½  Ò¼  Îé                Ê°      ",
-    "  ©©©¹©º©»©¼©½©¾©¿  ©¥©Ø©ì©ê©Ú©Ê©Û©Ü©Ý©Ï©Þ©ß  ©î©í  ©§©È©Ë©Ù©Ì©Î©ë©É©é©Í©è    ©ï©­    ©¸©«  ©¯  ",
-    "                                                                                                ",
-    };
-#endif //UNICODE
 
 #pragma data_seg()
 
@@ -255,17 +222,9 @@ TCHAR      szSoftkeyMenuClassName[CLASS_LEN];
 TCHAR      szHandCursor[] = TEXT("Hand");
 TCHAR      szChinese[] = TEXT("Chinese");
 TCHAR      szEnglish[] = TEXT("English");
-#if defined(COMBO_IME)
 TCHAR        pszImeName[IMEINDEXNUM][MAX_PATH];
 TCHAR        *szImeName;
 TCHAR        szImeRegName[MAX_PATH];
-#else
-#if defined(GB)
-TCHAR      szImeName[] = pszImeName[0];
-#else
-TCHAR      szImeName[] = pszImeName[1];
-#endif
-#endif //COMBO_IME
 TCHAR      szCode[] = TEXT("Code");
 TCHAR      szEudc[] = TEXT("Eudc");
 TCHAR      szFullShape[] = TEXT("FullShape");
@@ -277,23 +236,12 @@ TCHAR      szSoftKBD[] = TEXT("SoftKBD");
 TCHAR      szNoSoftKBD[] = TEXT("NoSoftKBD");
 TCHAR      szDigit[] = TEXT("01234567890");
 
-#ifdef UNICODE
 TCHAR      szCandInf[] ={0x0020, 0x0020, 0x0020, 0x6570, 0x5B57, 0x952E, 0x0000};
 TCHAR       szTrace[]= {0x5149, 0x6807, 0x8DDF, 0x968F, 0x0000};
 TCHAR      szRegRevKL[] = {0x7F16, 0x7801, 0x67E5, 0x8BE2, 0x0000};
 TCHAR      szRegRevMaxKey[] = {0x7F16, 0x7801, 0x67E5, 0x8BE2, 0x7801, 0x957F, 0x0000};
 TCHAR       szWarnTitle[] = {0x8B66, 0x544A, 0x0000};
 TCHAR       szErrorTitle[] = {0x9519, 0x8BEF, 0x0000};
-#else
-BYTE       szCandInf[] = "   Êý×Ö¼ü";
-BYTE       szTrace[]= "¹â±ê¸úËæ";
-#if defined(CROSSREF)
-BYTE  szRegRevKL[] = "±àÂë²éÑ¯";
-BYTE  szRegRevMaxKey[] = "±àÂë²éÑ¯Âë³¤";
-#endif //CROSSREF
-BYTE  szWarnTitle[]="¾¯¸æ";    
-BYTE  szErrorTitle[]="´íÎó";
-#endif //UNICODE
 
 // convert char to upper case
 BYTE bUpper[] = {
@@ -333,9 +281,7 @@ TCHAR szPara[] = TEXT("Parallel Distance");
 TCHAR szPerp[] = TEXT("Perpendicular Distance");
 TCHAR szParaTol[] = TEXT("Parallel Tolerance");
 TCHAR szPerpTol[] = TEXT("Perpendicular Tolerance");
-#if defined(COMBO_IME)
 TCHAR szRegImeIndex[] = TEXT("IME Index");
-#endif
 // decide UI offset base on escapement
 const NEARCARET ncUIEsc[] = {
    // LogFontX  LogFontY  ParaX   PerpX   ParaY   PerpY

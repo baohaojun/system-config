@@ -337,17 +337,8 @@ void PASCAL SetSoftKbdData(
         {
             WORD CHIByte, CLOByte;
 
-#ifdef UNICODE
             lpSoftKbdData->wCode[0][bVirtKey] = SKLayout[lpImeL->dwSKWant][i];
             lpSoftKbdData->wCode[1][bVirtKey] = SKLayoutS[lpImeL->dwSKWant][i];
-#else
-            CHIByte = SKLayout[lpImeL->dwSKWant][i*2] & 0x00ff;
-            CLOByte = SKLayout[lpImeL->dwSKWant][i*2 + 1] & 0x00ff;
-            lpSoftKbdData->wCode[0][bVirtKey] = (CHIByte << 8) | CLOByte;
-            CHIByte = SKLayoutS[lpImeL->dwSKWant][i*2] & 0x00ff;
-            CLOByte = SKLayoutS[lpImeL->dwSKWant][i*2 + 1] & 0x00ff;
-            lpSoftKbdData->wCode[1][bVirtKey] = (CHIByte << 8) | CLOByte;
-#endif
         }
     }
 
@@ -922,9 +913,7 @@ void PASCAL SetContext(         // the context activated/deactivated
     LPPRIVCONTEXT  lpImcP;
     HGLOBAL        hUIPrivate;
     register LPUIPRIV lpUIPrivate;
-#if defined(COMBO_IME)
     DWORD    dwRegImeIndex;
-#endif
     RECT            rcWorkArea;
 
 #ifdef MUL_MONITOR
@@ -1048,15 +1037,9 @@ SetShowStatus:
                 return;
             }
 
-#if defined(COMBO_IME)
             retCode = OpenReg_User (hKeyCurrVersion,
                                szImeRegName,
                                &hKeyGB);
-#else
-            retCode = OpenReg_User (hKeyCurrVersion,
-                               szImeName,
-                               &hKeyGB);
-#endif //COMBO_IME
             // query 光标跟随 value
             ValueSize = sizeof(DWORD);
             RegQueryValueEx (hKeyGB,szTrace ,
@@ -1080,7 +1063,6 @@ SetShowStatus:
 #endif
         
 
-#if defined(COMBO_IME)
             // query 光标跟随 value
             ValueSize = sizeof(DWORD);
             RegQueryValueEx (hKeyGB, szRegImeIndex,
@@ -1088,14 +1070,12 @@ SetShowStatus:
                             (LPDWORD)&ValueType,
                             (LPBYTE)&dwRegImeIndex,
                             (LPDWORD)&ValueSize);
-#endif
 
             RegCloseKey(hKeyGB);
             RegCloseKey(hKeyCurrVersion);
 
         }
 
-#if defined(COMBO_IME)
         if(sImeL.dwRegImeIndex != dwRegImeIndex) {
         DWORD    dwConvMode;
         int        cxBorder, cyBorder;
@@ -1112,7 +1092,6 @@ SetShowStatus:
 
             ImmSetConversionStatus(hIMC, dwConvMode, lpIMC->fdwSentence);
         }
-#endif //COMBO_IME
 
         if(sImeG.IC_Trace != SaTC_Trace) {
             int UI_MODE;

@@ -242,7 +242,6 @@ void PASCAL ChooseCand(         // choose one of candidate strings by
     }
 
     if (wCharCode == TEXT('=')) {      // next selection
-#if defined(COMBO_IME)
         if(sImeL.dwRegImeIndex == INDEX_GB){
             if (lpCandList->dwSelection >= ((IME_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
                 MessageBeep((UINT)-1);
@@ -259,16 +258,6 @@ void PASCAL ChooseCand(         // choose one of candidate strings by
                 return;
             }
         }
-#else //COMBO_IME
-#if defined(GB)
-        if (lpCandList->dwSelection >= ((IME_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
-#else
-        if (lpCandList->dwSelection >= ((IME_XGB_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
-#endif
-            MessageBeep((UINT)-1);
-            return;
-           }
-#endif //COMBO_IME
         lpCandList->dwSelection += lpCandList->dwPageSize;
         // inform UI, dwSelectedCand is changed
         lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
@@ -287,7 +276,6 @@ void PASCAL ChooseCand(         // choose one of candidate strings by
     }
 
     if (wCharCode == 0x23) {      // previous selection
-#if defined(COMBO_IME)
         if(sImeL.dwRegImeIndex == INDEX_GB){
             if (lpCandList->dwSelection >= ((IME_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
                 MessageBeep((UINT)-1);
@@ -310,21 +298,6 @@ void PASCAL ChooseCand(         // choose one of candidate strings by
                 lpCandList->dwSelection = ((IME_UNICODE_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize;
             }
         }
-#else //COMBO_IME
-        #if defined(GB)
-        if (lpCandList->dwSelection >= ((IME_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize) {
-        #else
-        if (lpCandList->dwSelection >= ((IME_XGB_MAXCAND-1)/CANDPERPAGE - 1)*lpCandList->dwPageSize) {
-        #endif
-            MessageBeep((UINT)-1);
-            return;
-        }
-        #if defined(GB)
-        lpCandList->dwSelection = ((IME_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize;
-        #else
-        lpCandList->dwSelection = ((IME_XGB_MAXCAND-1)/CANDPERPAGE)*lpCandList->dwPageSize;
-        #endif
-#endif //COMBO_IME
         // inform UI, dwSelectedCand is changed
         lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
         return;

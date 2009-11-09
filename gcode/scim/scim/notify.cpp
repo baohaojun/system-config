@@ -257,7 +257,6 @@ BOOL PASCAL SetString(
       lpImcP->bSeq[2] = 0;
       lpImcP->bSeq[3] = 0;
 
-#if    defined(COMBO_IME)
    if(sImeL.dwRegImeIndex == INDEX_GB){
 
        for (ii=0;ii<4;ii++) {
@@ -317,54 +316,6 @@ BOOL PASCAL SetString(
         }
 
     }
-#else //COMBO_IME
-#ifdef GB
-   {
-
-       for (ii=0;ii<4;ii++) {
-          iRet = GBProcessKey(*(LPBYTE)((LPBYTE)lpszRead+ii),lpImcP);
-          if (iRet == CST_INPUT) {
-             lpImcP->bSeq[ii] = *(LPBYTE)((LPBYTE)lpszRead+ii);
-          } else {
-          goto Finalize;
-
-          }
-       }
-
-       wCode = GBEngine (lpImcP);
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-                for (i = 0; i < MAX_COMP;i++, wCode++) {
-                AddCodeIntoCand(lpCandList, wCode);
-            }
-
-    } 
-#else
-    {
-        for (ii=0;ii<4;ii++) {
-           iRet = XGBProcessKey(*(LPBYTE)((LPBYTE)lpszRead+ii),lpImcP);
-           if (iRet == CST_INPUT) {
-              lpImcP->bSeq[ii] = *(LPBYTE)((LPBYTE)lpszRead+ii);
-           } else {
-           goto Finalize;
-
-           }
-        }
-
-        wCode = XGBEngine(lpImcP);
-    
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-
-                for (i = 0; i < (0x7e-0x40+1); i++, wCode++) {
-                XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-                wCode ++;
-                for (i = 0; i < (0xfe-0x80+1); i++, wCode++) {
-                XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-
-    }
-#endif //GB    
-#endif //COMBO_IME
 
     if (lpCandList->dwCount == 1) {
                 lstrcpy((LPTSTR)((LPBYTE)lpCompStr + lpCompStr->dwResultStrOffset),

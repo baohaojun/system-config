@@ -381,7 +381,6 @@ void PASCAL SetStatus(
 
     ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
     } else if (PtInRect(&sImeG.rcImeName, *lpptCursor)) {
-#if defined(COMBO_IME)
     DWORD dwConvMode;
     int     cxBorder, cyBorder;
     HKEY  hKeyCurrVersion;
@@ -427,7 +426,6 @@ void PASCAL SetStatus(
         RegCloseKey(hKeyGB);
         RegCloseKey(hKeyCurrVersion);
 
-#endif //COMBO_IME
     } else if (PtInRect(&sImeG.rcShapeText, *lpptCursor)) {
     DWORD dwConvMode;
 
@@ -587,7 +585,6 @@ void PASCAL PaintStatusWindow(
         return;
     }
 
-#if defined(COMBO_IME)
     //in case the IME index has been changed and the ImeName size is different
     {
        POINTS         ptPos;
@@ -600,7 +597,6 @@ void PASCAL PaintStatusWindow(
                     sImeG.xStatusWi, sImeG.yStatusHi, 
                     SWP_NOACTIVATE|SWP_NOCOPYBITS|SWP_NOZORDER);
     }
-#endif //COMBO_IME
 
     // set font
     if (sImeG.fDiffSysCharSet) {

@@ -307,16 +307,8 @@ LRESULT CALLBACK ContextMenuWndProc(
                 szIMEGUDHlpName[0] = TEXT('\0');
               GetWindowsDirectory((LPTSTR)szIMEGUDHlpName, MAX_PATH);
               lstrcat((LPTSTR)szIMEGUDHlpName, TEXT("\\HELP\\") );
-#if defined(COMBO_IME)
             //COMBO_IME has only one IME help file
                 lstrcat((LPTSTR)szIMEGUDHlpName, TEXT("WINGB.CHM"));
-#else //COMBO_IME
-#ifdef GB
-                lstrcpy((LPTSTR)szIMEGUDHlpName, TEXT("WINGB.CHM"));
-#else
-                lstrcpy((LPTSTR)szIMEGUDHlpName, TEXT("WINNM.HLP"));
-#endif
-#endif //COMBO_IME
               HtmlHelp(hCMenuWnd,szIMEGUDHlpName,HH_DISPLAY_TOPIC,0L);
             }
             break;

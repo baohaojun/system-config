@@ -35,9 +35,7 @@ BOOL WINAPI ImeInquire(         // initialized data structure of IME
 
     lpImeInfo->dwPrivateDataSize = sizeof(PRIVCONTEXT);
     lpImeInfo->fdwProperty = IME_PROP_KBD_CHAR_FIRST|
-#ifdef UNICODE
                              IME_PROP_UNICODE|
-#endif
                              IME_PROP_CANDLIST_START_FROM_1|
                              IME_PROP_IGNORE_UPKEYS;
 
@@ -212,7 +210,6 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
                                  &hKeyCurrVersion);
                 }
 
-#if defined(COMBO_IME)
 
                 if ( hKeyCurrVersion != NULL )
                 {
@@ -226,21 +223,6 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
                                          &hKeyGB, 
                                          NULL);
                 }
-#else
-
-                if ( hKeyCurrVersion != NULL )
-                {
-                    retCode = RegCreateKeyEx(hKeyCurrVersion, 
-                                         szImeName, 
-                                         0,
-                                         NULL, 
-                                         REG_OPTION_NON_VOLATILE,
-                                         KEY_ALL_ACCESS,
-                                         NULL,
-                                         &hKeyGB,
-                                         NULL);
-                }
-#endif //COMBO_IME
 
                 if (hKeyGB != NULL){
 
@@ -284,7 +266,6 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
                 RegCreateKey(HKEY_CURRENT_USER, REGSTR_PATH_SETUP, &hKeyCurrVersion);
             }
 
-#if defined(COMBO_IME)
             retCode = RegCreateKeyEx(hKeyAppUser, szImeRegName, 0,
                 NULL, REG_OPTION_NON_VOLATILE,    KEY_ALL_ACCESS    , NULL, &hKeyIMEUser, NULL);
 
@@ -301,24 +282,6 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
                               &hKeyGB,
                               &dwDisposition);
             }
-#else
-            retCode = RegCreateKeyEx(hKeyAppUser, szImeName, 0,
-                NULL, REG_OPTION_NON_VOLATILE,    KEY_ALL_ACCESS    , NULL, &hKeyIMEUser, NULL);
-
-            if (retCode) {
-                DWORD   dwDisposition;
-        
-                retCode = RegCreateKeyEx (hKeyCurrVersion,
-                                 szImeName,
-                              0,
-                              0,
-                              REG_OPTION_NON_VOLATILE,
-                              KEY_ALL_ACCESS,
-                              NULL,
-                              &hKeyGB,
-                              &dwDisposition);
-            }
-#endif //COMBO_IME
 
             RegSetValueEx(hKeyIMEUser, szRegRevKL, 0, REG_DWORD, (LPBYTE)&hKL,sizeof(hKL));
 
@@ -643,15 +606,12 @@ BOOL DBCSToGBCode (
 {        
     WORD    AreaCode;
 
-#ifdef UNICODE
     //Converte Unicode to GBK
     // change CP_ACP to 936, so that it can work under Multilingul Env.
     WideCharToMultiByte(NATIVE_ANSI_CP, WC_COMPOSITECHECK, &wCode, 1, (char *)&AreaCode, 2, NULL, NULL);
     wCode = AreaCode;
-#endif
 
 //check valid GB range code first
-#if defined(COMBO_IME)
     if(sImeL.dwRegImeIndex==INDEX_GB){
         if(LOBYTE(wCode) < 0xa1 || LOBYTE(wCode) > 0xfe 
         || HIBYTE(wCode) < 0xa1 || HIBYTE(wCode) > 0xfe)
@@ -670,25 +630,6 @@ BOOL DBCSToGBCode (
     else
         return FALSE;
 
-#else //COMBO_IME
-#ifdef GB
-        if(LOBYTE(wCode) < 0xa1 || LOBYTE(wCode) > 0xfe 
-        || HIBYTE(wCode) < 0xa1 || HIBYTE(wCode) > 0xfe)
-            return FALSE;
-       AbSeq[1] = ((wCode -0xa0) % 256) % 10;
-       AbSeq[0] = ((wCode -0xa0) % 256) / 10;
-       AreaCode = (wCode - 0xa0 -AbSeq[0] * 10 -AbSeq[1])/256;
-       AbSeq[3] = ((AreaCode -0xa0) % 256) % 10;
-       AbSeq[2] = ((AreaCode -0xa0) % 256) / 10; 
-       AbSeq[4] = TEXT('\0');
-#else
-       {
-        WORD    tmp;
-        tmp = HIBYTE(wCode) | (LOBYTE(wCode)<<8);
-        wsprintf(AbSeq,TEXT("%04x"), tmp);
-       }
-#endif //GB
-#endif //COMBO_IME
        return TRUE;
 }
 /***************************************************************************
@@ -711,7 +652,6 @@ BOOL AreaToGB (
         return TRUE;
 }
 
-#if defined(COMBO_IME)
 /**********************************************************************/
 /* UnicodeReverseConversion()                                                */
 /**********************************************************************/
@@ -754,20 +694,6 @@ DWORD PASCAL UnicodeReverseConversion(
     //lpCandList->dwPageSize = CANDPERPAGE; New Spac
     lpCandList->dwOffset[0] = sizeof(CANDIDATELIST) + sizeof(DWORD) ;
 
-#ifndef UNICODE
-    {
-        WCHAR szWideStr[2];
-        int i;
-
-        memset(szWideStr, 0, sizeof(szWideStr));
-        // change CP_ACP to 936, so that it can work under Multilingul Env.
-        MultiByteToWideChar(NATIVE_ANSI_CP, 0, (LPCSTR)&wCode, sizeof(WORD), szWideStr, sizeof(szWideStr));
-
-        wCode = HIBYTE((WORD)szWideStr[0]) | (LOBYTE((WORD)szWideStr[0]) << 8 );
-    }
-    if(!DBCSToGBCode (wCode, AbSeq))
-        return 0;  //actual is DBCSToGBInternalCode
-#endif
 
     wsprintf(AbSeq,TEXT("%04x"), wCode);
     lstrcpy((LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[0]),AbSeq);
@@ -778,7 +704,6 @@ DWORD PASCAL UnicodeReverseConversion(
 
     return (dwSize);
 }
-#endif //COMBO_IME
 
 /**********************************************************************/
 /* XGBReverseConversion()                                                */
@@ -937,36 +862,16 @@ DWORD WINAPI ImeConversionList(
             ImmUnlockIMC(hIMC);
             return (FALSE);
         }
-#if defined(COMBO_IME)
         if(sImeL.dwRegImeIndex==INDEX_GB)
             return (Conversion(lpszSrc, lpCandList, uBufLen));
         else if(sImeL.dwRegImeIndex==INDEX_GBK)
             return (XGBConversion(lpszSrc, lpCandList, uBufLen));
         else if(sImeL.dwRegImeIndex==INDEX_UNICODE)
             return (XGBConversion(lpszSrc, lpCandList, uBufLen));
-#else //COMBO_IME
-#ifdef GB
-        return (Conversion(lpszSrc, lpCandList, uBufLen));
-
-#else
-
-        return (XGBConversion(lpszSrc, lpCandList, uBufLen));
-#endif //GB
-#endif //COMBO_IME
         break;
     case GCL_REVERSECONVERSION:
         if (!uBufLen) {
-#if defined(COMBO_IME)
             return 1;
-#else //COMBO_IME
-#ifdef GB
-            return 1;
-
-#else
-            return 1;
-
-#endif //GB
-#endif //COMBO_IME
         }
 
         // only support one DBCS char reverse conversion
@@ -979,22 +884,12 @@ DWORD WINAPI ImeConversionList(
         // swap lead byte & second byte, UNICODE don't need it
         // wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);  For Big5
 
-#if defined(COMBO_IME)
         if(sImeL.dwRegImeIndex==INDEX_GB)
             return (ReverseConversion(wCode, lpCandList, uBufLen));
         else if(sImeL.dwRegImeIndex==INDEX_GBK)
             return (XGBReverseConversion(wCode, lpCandList, uBufLen));
         else if(sImeL.dwRegImeIndex==INDEX_UNICODE)
             return (UnicodeReverseConversion(wCode, lpCandList, uBufLen));
-#else //COMBO_IME
-#ifdef GB
-            return (ReverseConversion(wCode, lpCandList, uBufLen));
-
-#else
-            return (XGBReverseConversion(wCode, lpCandList, uBufLen));
-
-#endif //GB
-#endif //COMBO_IME
 
         break;
     default:

@@ -168,7 +168,6 @@ UINT PASCAL GBProcessKey(     // this key will cause the IME go to what state
         return (CST_INVALID_INPUT);
 }
 
-#if defined(COMBO_IME)
 /**********************************************************************/
 /* UnicodeProcessKey()                                                       */
 /* Return Value:                                                      */
@@ -213,7 +212,6 @@ UINT PASCAL UnicodeProcessKey(     // this key will cause the IME go to what sta
                 return (CST_ALPHANUMERIC);
 
 }
-#endif //COMBO_IME
 
 /**********************************************************************/
 /* XGBProcessKey()                                                       */
@@ -481,7 +479,6 @@ UINT PASCAL ProcessKey(     // this key will cause the IME go to what state
     if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {      
 
 //        if (lpImcP->fdwGB & IME_SELECT_GB) {
-#if defined(COMBO_IME)
                 switch(sImeL.dwRegImeIndex){
                 case INDEX_GB:
                         return (GBProcessKey(wCharCode,lpImcP));
@@ -490,16 +487,6 @@ UINT PASCAL ProcessKey(     // this key will cause the IME go to what state
                 case INDEX_UNICODE:
                         return(UnicodeProcessKey(wCharCode, lpImcP));
                 }
-#else //COMBO_IME
-#ifdef GB
-          return (GBProcessKey(wCharCode,lpImcP));
-
-//        } else {
-#else
-          return (XGBProcessKey (wCharCode,lpImcP));
-//          }
-#endif //GB
-#endif //COMBO_IME
      }
 
   return (CST_INVALID);
@@ -622,46 +609,20 @@ UINT PASCAL TranslateSymbolChar(
     lpTransMsg = lpTransBuf->TransMsg;
 
     // NT need to modify this!
-#ifdef UNICODE
     lpTransMsg->message = WM_CHAR;
     lpTransMsg->wParam  = (DWORD)wSymbolCharCode;
     lpTransMsg->lParam  = 1UL;
     lpTransMsg++;
     uRet++;
-#else
-    lpTransMsg->message = WM_CHAR;
-    lpTransMsg->wParam  = (DWORD)HIBYTE(wSymbolCharCode);
-    lpTransMsg->lParam  = 1UL;
-    lpTransMsg++;
-    uRet++;
-
-    lpTransMsg->message = WM_CHAR;
-    lpTransMsg->wParam  = (DWORD)LOBYTE(wSymbolCharCode);
-    lpTransMsg->lParam = 1UL;
-    uRet++;
-#endif
 
     if(SymbolMode) {
         lpTransMsg = lpTransBuf->TransMsg;
 
-#ifdef UNICODE
         lpTransMsg->message = WM_CHAR;
         lpTransMsg->wParam  = (DWORD)wSymbolCharCode;
         lpTransMsg->lParam  = 1UL;
         lpTransMsg++;
         uRet++;
-#else
-        lpTransMsg->message = WM_CHAR;
-        lpTransMsg->wParam  = (DWORD)HIBYTE(wSymbolCharCode);
-        lpTransMsg->lParam  = 1UL;
-        lpTransMsg++;
-        uRet++;
-
-        lpTransMsg->message = WM_CHAR;
-        lpTransMsg->wParam  = (DWORD)LOBYTE(wSymbolCharCode);
-        lpTransMsg->lParam  = 1UL;
-        uRet++;
-#endif
     }
 
     return (uRet);         // generate two messages
@@ -685,21 +646,10 @@ UINT PASCAL TranslateFullChar(
     lpTransMsg = lpTransBuf->TransMsg;
 
     // NT need to modify this!
-#ifdef UNICODE
     lpTransMsg->message = WM_CHAR;
     lpTransMsg->wParam  = (DWORD)wCharCode;
     lpTransMsg->lParam  = 1UL;
     lpTransMsg++;
-#else
-    lpTransMsg->message = WM_CHAR;
-    lpTransMsg->wParam  = (DWORD)HIBYTE(wCharCode);
-    lpTransMsg->lParam  = 1UL;
-    lpTransMsg++;
-
-    lpTransMsg->message = WM_CHAR;
-    lpTransMsg->wParam  = (DWORD)LOBYTE(wCharCode);
-    lpTransMsg->lParam  = 1UL;
-#endif
     return (2);         // generate two messages
 }
  
@@ -963,11 +913,7 @@ UINT WINAPI ImeToAsciiEx(
     UINT                uNumMsg;
     int                 iRet;
 
-#ifdef UNICODE
     wCharCode = HIWORD(uVirtKey);
-#else
-    wCharCode = HIBYTE(uVirtKey);
-#endif
     uVirtKey = LOBYTE(uVirtKey);
 
     // hIMC=NULL?
@@ -1047,7 +993,6 @@ UINT WINAPI ImeToAsciiEx(
                         SKDataIndex = 0;
                 }
 
-#ifdef UNICODE          //
                 if (lpbKeyState[VK_SHIFT] & 0x80) {
                     wSymbolCharCode = SKLayoutS[lpImeL->dwSKWant][SKDataIndex];
                 } else {
@@ -1055,18 +1000,6 @@ UINT WINAPI ImeToAsciiEx(
                 }
 
                 if(wSymbolCharCode == 0x0020) {
-#else
-                if (lpbKeyState[VK_SHIFT] & 0x80) {
-                CHIByte = SKLayoutS[lpImeL->dwSKWant][SKDataIndex*2] & 0x00ff;
-                        CLOByte = SKLayoutS[lpImeL->dwSKWant][SKDataIndex*2 + 1] & 0x00ff;
-                } else {
-                CHIByte = SKLayout[lpImeL->dwSKWant][SKDataIndex*2] & 0x00ff;
-                        CLOByte = SKLayout[lpImeL->dwSKWant][SKDataIndex*2 + 1] & 0x00ff;
-                }
-
-            wSymbolCharCode = (CHIByte << 8) | CLOByte;
-                if(wSymbolCharCode == 0x2020) {
-#endif
                         MessageBeep((UINT) -1);
                         uNumMsg = 0;
                 } else {
@@ -1085,163 +1018,79 @@ UINT WINAPI ImeToAsciiEx(
         if (lpIMC->fdwConversion & IME_CMODE_SYMBOL) {
                     WORD wSymbolCharCode;
                         if(wCharCode == TEXT('.')) {
-#ifdef UNICODE
                                wSymbolCharCode = 0x3002;
-#else
-                                wSymbolCharCode = TEXT('¡£');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT(',')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0xff0c;
-#else
-                                wSymbolCharCode = TEXT('£¬');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT(';')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0xff1b;
-#else
-                                wSymbolCharCode = TEXT('£»');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT(':')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0xff1a;
-#else
-                                wSymbolCharCode = TEXT('£º');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('?')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0xff1f;
-#else
-                                wSymbolCharCode = TEXT('£¿');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('!')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0xff01;
-#else
-                                wSymbolCharCode = TEXT('£¡');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('(')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0xff08;
-#else
-                                wSymbolCharCode = TEXT('£¨');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT(')')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0xff09;
-#else
-                                wSymbolCharCode = TEXT('£©');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('\\')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0x3001;
-#else
-                                wSymbolCharCode = TEXT('¡¢');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('@')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0x00b7;
-#else
-                                wSymbolCharCode = TEXT('¡¤');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('&')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0x2014;
-#else
-                                wSymbolCharCode = TEXT('¡ª');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('$')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0xffe5;
-#else
-                                wSymbolCharCode = TEXT('£¤');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('_')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0x2014;
-#else
-                                wSymbolCharCode = TEXT('¡ª');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, TRUE);
                         } else if(wCharCode == TEXT('^')) {
-#ifdef UNICODE
                                 wSymbolCharCode = 0x2026;
-#else
-                                wSymbolCharCode = TEXT('¡­');
-#endif
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, TRUE);
                         } else if(wCharCode == TEXT('"')) {
                                 if(lpImcP->uSYHFlg) {
-#ifdef UNICODE
                                         wSymbolCharCode = 0x201d;
                                 } else {
                                         wSymbolCharCode = 0x201c;
 
-#else
-                                        wSymbolCharCode = TEXT('¡±');
-                                } else {
-                                        wSymbolCharCode = TEXT('¡°');
-#endif
                                 }
                         lpImcP->uSYHFlg ^= 0x00000001;
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('\'')) {
                                 if(lpImcP->uDYHFlg) {
-#ifdef UNICODE
                                         wSymbolCharCode = 0x2019;
                                 } else {
                                         wSymbolCharCode = 0x2018;
-#else
-                                        wSymbolCharCode = TEXT('¡¯');
-                                } else {
-                                        wSymbolCharCode = TEXT('¡®');
-#endif
                                 }
                         lpImcP->uDYHFlg ^= 0x00000001;
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('<')) {
                                 if(lpImcP->uDSMHFlg) {
-#ifdef UNICODE
                                         wSymbolCharCode = 0x3008;
-#else
-                                        wSymbolCharCode = TEXT('¡´');
-#endif
                                         lpImcP->uDSMHCount++;
                                 } else {
-#ifdef UNICODE
                                         wSymbolCharCode = 0x300a;
-#else
-                                        wSymbolCharCode = TEXT('¡¶');
-#endif
                                 lpImcP->uDSMHFlg = 0x00000001;
                                 }
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
                         } else if(wCharCode == TEXT('>')) {
                                 if((lpImcP->uDSMHFlg) && (lpImcP->uDSMHCount)) {
-#ifdef UNICODE
                                         wSymbolCharCode = 0x3009;
-#else
-                                        wSymbolCharCode = TEXT('¡µ');
-#endif
                                         lpImcP->uDSMHCount--;
                                 } else {
-#ifdef UNICODE
                                         wSymbolCharCode = 0x300b;
-#else
-                                        wSymbolCharCode = TEXT('¡·');
-#endif
                                 lpImcP->uDSMHFlg = 0x00000000;
                                 }
                     uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);

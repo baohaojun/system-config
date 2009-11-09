@@ -1301,7 +1301,6 @@ void PASCAL PaintCandWindow(
 
             szStrBuf[0] = szDigit[i + CAND_START];
 
-#if defined(COMBO_IME)
             if(sImeL.dwRegImeIndex == INDEX_GB || sImeL.dwRegImeIndex == INDEX_GBK){
                 iLen = lstrlen((LPTSTR)((LPBYTE)lpCandList +
                     lpCandList->dwOffset[dwStart]));
@@ -1324,35 +1323,11 @@ void PASCAL PaintCandWindow(
                 WORD  wCode;
                 wCode = *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]);
 
-#ifdef UNICODE
                 szStrBuf[2]= wCode;
                 szStrBuf[3]=TEXT('\0');
-#else
-                szStrBuf[2]= LOBYTE(wCode);
-                szStrBuf[3]= HIBYTE(wCode);
-                szStrBuf[4]=TEXT('\0');
-#endif
                 iLen = 2/sizeof(TCHAR);
             }
 
-#else
-            iLen = lstrlen((LPTSTR)((LPBYTE)lpCandList +
-                lpCandList->dwOffset[dwStart]));
-
-            if (iLen > 10 * 2 / sizeof(TCHAR)) {
-                iLen = 10 * 2 / sizeof(TCHAR);
-                CopyMemory(&szStrBuf[2],
-                    ((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]),
-                    (iLen - 2) * sizeof(TCHAR));
-                szStrBuf[iLen] = TEXT('.');
-                szStrBuf[iLen+1] = TEXT('.');
-                szStrBuf[iLen+2] = TEXT('\0');
-            } else {
-                CopyMemory(&szStrBuf[2],
-                    ((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]),
-                    iLen*sizeof(TCHAR));
-            }
-#endif //COMBO_IME
 
             ExtTextOut(hDC, sImeG.rcCandText.left,
                 sImeG.rcCandText.top + i * sImeG.yChiCharHi,
@@ -1370,7 +1345,6 @@ void PASCAL PaintCandWindow(
              TCHAR szMyStrBuf[12 * sizeof(WCHAR) / sizeof(TCHAR)];
              RECT  GBARInfo;
 
-#ifdef UNICODE
 
 
              wCode = *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]);
@@ -1384,20 +1358,7 @@ void PASCAL PaintCandWindow(
              wsprintf (GbSeq,TEXT("%04lx"),wGB);    // get GB string
              wGB -= 0xa0a0;
              wsprintf (AbSeq,TEXT("%02d%02d"),HIBYTE(wGB),LOBYTE(wGB));
-#else
-             wCode = *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]);
-             MultiByteToWideChar(CP_ACP, NULL, &wCode, 2, &wGB, 1);    
-                          
-             wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-
-             wsprintf (GbSeq,"%04lx",wCode);    // get GB string
-            
-             wCode -= 0xa0a0;
-
-             wsprintf (AbSeq,"%02d%02d",HIBYTE(wCode),LOBYTE(wCode));
-#endif
 //             if (lpImcP->fdwGB & IME_SELECT_GB) {
-#if defined(COMBO_IME)
         switch(sImeL.dwRegImeIndex){
         case INDEX_GB:
                 lstrcpy (szMyStrBuf,TEXT("("));
@@ -1426,24 +1387,6 @@ void PASCAL PaintCandWindow(
                 iMyLen = lstrlen(szMyStrBuf);
             break;
         }
-#else //COMBO_IME
-#ifdef GB
-                lstrcpy (szMyStrBuf,TEXT("("));
-                lstrcat (szMyStrBuf,GbSeq);
-                lstrcat (szMyStrBuf,TEXT(", "));
-                lstrcat (szMyStrBuf,AbSeq);
-                lstrcat (szMyStrBuf,TEXT(")"));
-                iMyLen = 12;
-
-#else
-                lstrcpy (szMyStrBuf,TEXT("    "));
-                lstrcat (szMyStrBuf,TEXT("("));
-                lstrcat (szMyStrBuf,GbSeq);
-                lstrcat (szMyStrBuf,TEXT(")"));
-                iMyLen = 10;
-
-#endif //GB        
-#endif //COMBO_IME
         
              GBARInfo.top = sImeG.rcCandText.top + i * sImeG.yChiCharHi;
              GBARInfo.left = sImeG.rcCandText.left;
@@ -1488,11 +1431,7 @@ void PASCAL PaintCandWindow(
                 iLen*sizeof(TCHAR));
 
             for(j=0; j<iLen; j++) {
-#ifdef UNICODE
                 if(szStrBuf[j] > 0x100) {
-#else
-                if(szStrBuf[j] & 0x80) {
-#endif
                     j++;
                     continue;
                 }

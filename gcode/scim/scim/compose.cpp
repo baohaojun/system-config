@@ -14,11 +14,8 @@ Module Name:
 #include <imedefs.h>
 
 void PASCAL XGBAddCodeIntoCand(LPCANDIDATELIST, WORD);
-#if defined(COMBO_IME)
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
-#endif
 
-#if defined(COMBO_IME)
 /**********************************************************************/
 /* UnicodeEngine()                                                         */
 /* Description:                                                       */
@@ -36,7 +33,6 @@ WORD PASCAL UnicodeEngine(LPPRIVCONTEXT lpImcP)
          return (0);
      }
 }
-#endif //COMBO_IME
 
 /**********************************************************************/
 /* XGBEngine()                                                         */
@@ -201,7 +197,6 @@ int PASCAL Engine(
             return -1;
         }
 
-#if defined(COMBO_IME)
         if(sImeL.dwRegImeIndex == INDEX_GB)
         {
 
@@ -231,14 +226,8 @@ int PASCAL Engine(
 
                 // the result string = the selected candidate;
                 wCode = GBEngine(lpImcP);
-#ifdef UNICODE
                 MultiByteToWideChar(NATIVE_ANSI_CP, 0, (LPCSTR)&wCode, 2, ResaultStr, sizeof(ResaultStr)/sizeof(TCHAR));
                 ResaultStr[1] = TEXT('\0');
-#else
-                ResaultStr[0] = LOBYTE(wCode);
-                ResaultStr[1] = HIBYTE(wCode);
-                ResaultStr[2] = 0x00;
-#endif
                 lstrcpy((LPTSTR)((LPBYTE)lpCompStr + lpCompStr->dwResultStrOffset),ResaultStr);
 
                 // calculate result string length
@@ -286,14 +275,8 @@ int PASCAL Engine(
 
                 // the result string = the selected candidate;
                 wCode = XGBEngine(lpImcP);
-#ifdef UNICODE
                 MultiByteToWideChar(NATIVE_ANSI_CP, 0, (LPCSTR)&wCode, 2, ResaultStr, sizeof(ResaultStr)/sizeof(TCHAR));
                 ResaultStr[1] = TEXT('\0');
-#else
-                ResaultStr[0] = LOBYTE(wCode);
-                ResaultStr[1] = HIBYTE(wCode);
-                ResaultStr[2] = 0x00;
-#endif
                 lstrcpy((LPTSTR)((LPBYTE)lpCompStr + lpCompStr->dwResultStrOffset),ResaultStr);
 
                 // calculate result string length
@@ -321,16 +304,9 @@ int PASCAL Engine(
 
                 lpCandList->dwCount = 0;
                 for (i = 0; i < IME_UNICODE_MAXCAND; i++, wCode++) {
-#ifdef UNICODE
                     // add this string into candidate list
                     *(LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[
                     lpCandList->dwCount]) = wCode;
-#else
-                    WideCharToMultiByte(NATIVE_ANSI_CP, NULL, &wCode, 1, &xCode, 2, NULL, NULL);
-                    // add this string into candidate list
-                    *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[
-                    lpCandList->dwCount]) = xCode;
-#endif
                     // null terminator
                     *(LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[
                     lpCandList->dwCount] + sizeof(WORD)) = TEXT('\0');
@@ -360,112 +336,6 @@ int PASCAL Engine(
                 return (ENGINE_RESAULT);
             }
         }
-#else //COMBO_IME
-#ifdef GB
-        {
-
-            // GB
-            DWORD i;
-            WORD wCode;
-            TCHAR ResaultStr[3];
-
-            if((lpImcP->bSeq[2] == TEXT('?'))) {
-                wCode = GBEngine(lpImcP);
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-                for (i = 0; i < IME_MAXCAND; i++, wCode++) {
-                     AddCodeIntoCand(lpCandList, wCode);
-                }
-                return (ENGINE_COMP);
-            } else if(wCharCode == TEXT(' ')) {
-                wCode = GBSpcEng(lpImcP);
-                lpImcP->bSeq[2] = 0;
-                lpImcP->bSeq[3] = 0;
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-                for (i = 0; i < IME_MAXCAND; i++, wCode++) {
-                     AddCodeIntoCand(lpCandList, wCode);
-                }
-                return (ENGINE_COMP);
-            } else {
-                   InitCompStr(lpCompStr);
-
-                // the result string = the selected candidate;
-                wCode = GBEngine(lpImcP);
-#ifdef UNICODE
-                // change CP_ACP to 936, so that it can work under Multilingul Env.
-                MultiByteToWideChar(NATIVE_ANSI_CP, NULL, &wCode, 2, ResaultStr, sizeof(ResaultStr)/sizeof(TCHAR));
-                ResaultStr[1] = TEXT('\0');
-#else
-                ResaultStr[0] = LOBYTE(wCode);
-                ResaultStr[1] = HIBYTE(wCode);
-                ResaultStr[2] = 0x00;
-#endif
-                lstrcpy((LPTSTR)lpCompStr + lpCompStr->dwResultStrOffset,ResaultStr);
-
-                // calculate result string length
-                lpCompStr->dwResultStrLen = lstrlen(ResaultStr);
-
-                return (ENGINE_RESAULT);
-            }
-
-          }
-#else
-        {
-            // XGB
-            DWORD i;
-            WORD wCode;
-            TCHAR ResaultStr[3];
-
-            if((lpImcP->bSeq[2] == TEXT('?')))  {
-                wCode = XGBEngine(lpImcP);
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-
-                for (i = 0; i < (0x7e-0x40+1); i++, wCode++) {
-                    XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-                wCode ++;
-                for (i = 0; i < (0xfe-0x80+1); i++, wCode++) {
-                    XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-                return (ENGINE_COMP);
-            } else if(wCharCode == TEXT(' ')) {
-                wCode = XGBSpcEng(lpImcP);
-                lpImcP->bSeq[2] = 0;
-                lpImcP->bSeq[3] = 0;
-
-                wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-
-                for (i = 0; i < (0x7e-0x40+1); i++, wCode++) {
-                    XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-                wCode ++;
-                for (i = 0; i < (0xfe-0x80+1); i++, wCode++) {
-                    XGBAddCodeIntoCand(lpCandList, wCode);
-                }
-                return (ENGINE_COMP);
-            } else {
-                   InitCompStr(lpCompStr);
-
-                // the result string = the selected candidate;
-                wCode = XGBEngine(lpImcP);
-#ifdef UNICODE
-                // change CP_ACP to 936, so that it can work under Multilingul Env.
-                MultiByteToWideChar(NATIVE_ANSI_CP, NULL, &wCode, 2, ResaultStr, sizeof(ResaultStr)/sizeof(TCHAR));
-                ResaultStr[1] = TEXT('\0');
-#else
-                ResaultStr[0] = LOBYTE(wCode);
-                ResaultStr[1] = HIBYTE(wCode);
-                ResaultStr[2] = 0x00;
-#endif
-                lstrcpy((LPTSTR)lpCompStr + lpCompStr->dwResultStrOffset,ResaultStr);
-
-                // calculate result string length
-                lpCompStr->dwResultStrLen = lstrlen(ResaultStr);
-
-                return (ENGINE_RESAULT);
-            }
-        }
-#endif //GB
-#endif //COMBO_IME
     }
     MessageBeep((UINT)-1);
     return (ENGINE_COMP);
@@ -485,7 +355,6 @@ void PASCAL AddCodeIntoCand(
     }
 
     wInCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-#ifdef UNICODE
     {
         TCHAR wUnicode;
         // change CP_ACP to 936, so that it can work under Multilingul Env.
@@ -493,11 +362,6 @@ void PASCAL AddCodeIntoCand(
         *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[
             lpCandList->dwCount]) = wUnicode;
     }
-#else
-    // add GB string into candidate list
-    *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[
-        lpCandList->dwCount]) = wInCode;
-#endif
     // null terminator
     *(LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[
         lpCandList->dwCount] + sizeof(WORD)) = TEXT('\0');
@@ -509,7 +373,6 @@ void PASCAL AddCodeIntoCand(
     return;
 }
 
-#if defined(COMBO_IME)
 /**********************************************************************/
 /* UnicodeAddCodeIntoCand()                                                  */
 /**********************************************************************/
@@ -535,7 +398,6 @@ void PASCAL UnicodeAddCodeIntoCand(
 
     return;
 }
-#endif //COMBO_IME
 
 /**********************************************************************/
 /* XGBAddCodeIntoCand()                                                  */
@@ -551,7 +413,6 @@ void PASCAL XGBAddCodeIntoCand(
     }
 
     wInCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-#ifdef UNICODE
     {
         TCHAR wUnicode;
 
@@ -560,11 +421,6 @@ void PASCAL XGBAddCodeIntoCand(
         *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[
             lpCandList->dwCount]) = wUnicode;
     }
-#else
-    // add GB string into candidate list
-    *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[
-        lpCandList->dwCount]) = wInCode;
-#endif
     *(LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[
         lpCandList->dwCount] + sizeof(WORD)) = TEXT('\0');
 

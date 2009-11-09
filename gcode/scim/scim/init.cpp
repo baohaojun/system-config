@@ -291,13 +291,6 @@ void PASCAL InitImeGlobalData(
     // full shape space
     sImeG.wFullSpace = sImeG.wFullABC[0];
 
-#ifndef UNICODE
-    // reverse internal code to internal code, NT don't need it
-    for (i = 0; i < (sizeof(sImeG.wFullABC) / 2); i++) {
-        sImeG.wFullABC[i] = (sImeG.wFullABC[i] << 8) |
-            (sImeG.wFullABC[i] >> 8);
-    }
-#endif
 
     LoadString(hInst, IDS_STATUSERR, sImeG.szStatusErr,
         sizeof(sImeG.szStatusErr)/sizeof(TCHAR));
@@ -647,7 +640,6 @@ BOOL CALLBACK DllMain(
          RegisterIme(hInstance);
 
     // init globaldata & load globaldata from resource
-#if defined(COMBO_IME)
          {
             HKEY  hKeyCurrVersion;
             HKEY  hKeyGB;
@@ -708,7 +700,6 @@ BOOL CALLBACK DllMain(
              }
          }
 
-#endif  //COMBO_IME
 
          if (!hInst) {
             InitImeGlobalData(hInstance);
@@ -763,7 +754,6 @@ BOOL CALLBACK DllMain(
 
 int strbytelen (LPTSTR lpStr)
 {
-#ifdef UNICODE
     int i, len, iRet;
 
     len = lstrlen(lpStr);
@@ -772,8 +762,5 @@ int strbytelen (LPTSTR lpStr)
             iRet++;
     }
     return iRet;
-#else
-    return lstrlen(lpStr);
-#endif
 }
 
