@@ -436,7 +436,7 @@ UINT PASCAL ProcessKey(     // this key will cause the IME go to what state
         register LPGUIDELINE lpGuideLine;
         register UINT        iImeState;
 
-        lpGuideLine = ImmLockIMCC(lpIMC->hGuideLine);
+        lpGuideLine = (LPGUIDELINE)ImmLockIMCC(lpIMC->hGuideLine);
                 if(!lpGuideLine){
             return (CST_INVALID);
                 }
@@ -527,7 +527,7 @@ BOOL WINAPI ImeProcessKey(   // if this key is need by IME?
     }
 
     nChars = ToAscii(uVirtKey, HIWORD(lParam), lpbKeyState,
-                (LPVOID)szAscii, 0);
+                (LPWORD)szAscii, 0);
 
     if (!nChars) {
         szAscii[0] = 0;
@@ -959,7 +959,6 @@ UINT WINAPI ImeToAsciiEx(
     // CST_SOFTKB
     if (iRet == CST_SOFTKB) {
             WORD wSymbolCharCode;
-                WORD CHIByte, CLOByte;
                 int  SKDataIndex;
 
                 // Mapping VK

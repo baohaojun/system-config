@@ -117,13 +117,13 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="."
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCIM_EXPORTS;COMBO_IME"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCIM_EXPORTS;COMBO_IME;NO_STRICT"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				CompileAs="1"
+				CompileAs="2"
 				ShowIncludes="false"
 			/>
 			<Tool
@@ -274,31 +274,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\candh.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\candhp.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\candinf1.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\candinf2.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\candlx.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\candmult.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\candprmp.bmp"
 				>
 			</File>
 			<File
@@ -322,10 +302,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\cz.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\english.bmp"
 				>
 			</File>
@@ -335,10 +311,6 @@
 			</File>
 			<File
 				RelativePath=".\fullshp.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\gb.bmp"
 				>
 			</File>
 			<File
@@ -362,14 +334,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\leftnone.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\midnone.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\none.bmp"
 				>
 			</File>
@@ -379,10 +343,6 @@
 			</File>
 			<File
 				RelativePath=".\nsoftkbd.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\rghtnone.bmp"
 				>
 			</File>
 			<File

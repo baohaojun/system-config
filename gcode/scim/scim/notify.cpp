@@ -408,7 +408,7 @@ BOOL WINAPI ImeSetCompositionString(
     } else if (dwReadLen != dwCompLen) {
         return (FALSE);
     } else if (lpRead == lpComp) {
-    } else if (!lstrcmp(lpRead, lpComp)) {
+    } else if (!lstrcmp((LPCWSTR)lpRead, (LPCWSTR)lpComp)) {
         // composition string must  == reading string
     } else {
         // composition string != reading string
@@ -442,7 +442,7 @@ BOOL WINAPI ImeSetCompositionString(
         return (FALSE);
     }
 
-    fRet = SetString(hIMC, lpIMC, lpCompStr, lpImcP, lpRead, dwReadLen);
+    fRet = SetString(hIMC, lpIMC, lpCompStr, lpImcP, (LPTSTR)lpRead, dwReadLen);
 
     ImmUnlockIMCC(lpIMC->hPrivate);
     ImmUnlockIMCC(lpIMC->hCompStr);

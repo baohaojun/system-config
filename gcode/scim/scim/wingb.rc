@@ -227,7 +227,7 @@ CAPTION "输入法设置"
 FONT  9,"SimSun",400,0,134
 BEGIN
     GROUPBOX        "输入法界面设置",IDC_STATIC,16,68,168,28
-    CONTROL         "光标跟随",IDC_TRACE,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "光标跟随",IDC_STATIC,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,72,80,53,10
     DEFPUSHBUTTON   "确定",IDOK,49,110,43,12
     PUSHBUTTON      "取消",IDCANCEL,119,110,43,12

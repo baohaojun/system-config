@@ -20,7 +20,7 @@ Module Name:
 /* Return Value :                                                     */
 /*      window handle of composition                                  */
 /**********************************************************************/
-HWND PASCAL GetCompWnd(
+extern "C" HWND PASCAL GetCompWnd(
     HWND hUIWnd)                // UI window
 {
     HGLOBAL  hUIPrivate;
@@ -348,35 +348,7 @@ void PASCAL SetCompPosition(    // set the composition window position
     ptWnd.x -= lpImeL->cxCompBorder;
     ptWnd.y -= lpImeL->cyCompBorder;
     
-    if (!sImeG.IC_Trace) {
-        int  Comp_CandWndLen;
-
-           ImmGetStatusWindowPos(hIMC, (LPPOINT)&ptSTWPos);
-
-        // reset status window for LINE_UI(FIX_UI)
-        Comp_CandWndLen = 0;
-        if(uStartComp) {
-            Comp_CandWndLen += lpImeL->xCompWi + UI_MARGIN;
-            if(uOpenCand) {
-                Comp_CandWndLen += sImeG.xCandWi + UI_MARGIN;
-            }
-            if(ptSTWPos.x+sImeG.xStatusWi+Comp_CandWndLen>rcWorkArea.right) {
-                ptSTWPos.x=rcWorkArea.right-sImeG.xStatusWi-Comp_CandWndLen;
-            }
-
-            SetWindowPos(GetStatusWnd(GetWindow(hCompWnd, GW_OWNER)), NULL,
-                (int)ptSTWPos.x, (int)ptSTWPos.y,
-                0, 0, SWP_NOACTIVATE|SWP_NOCOPYBITS|SWP_NOSIZE|SWP_NOZORDER);
-            ImmSetStatusWindowPos(hIMC, (LPPOINT)&ptSTWPos);
-        }
-
-        ptWnd.x = ptSTWPos.x + sImeG.xStatusWi + UI_MARGIN;
-        ptWnd.y = ptSTWPos.y;
-        lpIMC->cfCompForm.ptCurrentPos = ptWnd;
-        ScreenToClient(lpIMC->hWnd, &lpIMC->cfCompForm.ptCurrentPos);
-        fChange = TRUE;
-
-    } else if (lpIMC->cfCompForm.dwStyle & CFS_FORCE_POSITION) {
+    if (lpIMC->cfCompForm.dwStyle & CFS_FORCE_POSITION) {
         POINT ptNew;            // new position of UI
 
         ptNew.x = lpIMC->cfCompForm.ptCurrentPos.x;
@@ -986,11 +958,7 @@ LRESULT CALLBACK CompWndProc(           // composition window proc
         break;
     case WM_IME_NOTIFY:
         if (wParam != IMN_SETCOMPOSITIONWINDOW) {
-        // 9.8.del
-        //} else if (sImeG.IC_Trace) {
-        //    SetCompWindow(hCompWnd);
         } else {
-            // 9.8.add
             SetCompWindow(hCompWnd);
         }
         break;

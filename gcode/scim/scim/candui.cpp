@@ -11,6 +11,8 @@ Module Name:
 #include <windows.h>
 #include <immdev.h>
 #include <imedefs.h>
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
 
 /**********************************************************************/
 /* GetCandWnd                                                         */
@@ -45,7 +47,7 @@ void PASCAL CalcCandPos(
     HWND    hUIWnd,
     LPPOINT lpptWnd)            // the composition window position
 {
-    POINT          ptNew, ptSTWPos;
+    POINT          ptNew;
     RECT           rcWorkArea;
 
     rcWorkArea = sImeG.rcWorkArea;
@@ -63,42 +65,6 @@ void PASCAL CalcCandPos(
         ptNew.y = rcWorkArea.bottom - sImeG.yCandHi;
     }
 
-    if(!sImeG.IC_Trace) {
-        HWND hCompWnd;
-
-           ImmGetStatusWindowPos(hIMC, (LPPOINT)&ptSTWPos);
-        hCompWnd = GetCompWnd(hUIWnd);
-        if (hCompWnd) {
-            ptNew.x = ptSTWPos.x + sImeG.xStatusWi + lpImeL->xCompWi + 2 * UI_MARGIN;
-            if((ptSTWPos.x + sImeG.xStatusWi + sImeG.xCandWi + lpImeL->xCompWi + 2 * UI_MARGIN)>
-              rcWorkArea.right) {
-              if (ptSTWPos.x >= (sImeG.xCandWi + lpImeL->xCompWi + 2 * UI_MARGIN)) { 
-                ptNew.x = ptSTWPos.x - lpImeL->xCompWi - sImeG.xCandWi - 2 * UI_MARGIN;
-              } else {
-                ptNew.x = ptSTWPos.x + sImeG.xStatusWi + UI_MARGIN;
-              }
-            }
-
-
-            ptNew.y = ptSTWPos.y + lpImeL->cyCompBorder - sImeG.cyCandBorder;
-            if (ptNew.y + sImeG.yCandHi > rcWorkArea.bottom) {
-                ptNew.y = rcWorkArea.bottom - sImeG.yCandHi;
-            }
-        } else {
-            ptNew.x = ptSTWPos.x + sImeG.xStatusWi + UI_MARGIN;
-            if(((ptSTWPos.x + sImeG.xStatusWi + sImeG.xCandWi + UI_MARGIN)>=
-              rcWorkArea.right)
-              && (ptSTWPos.x >= sImeG.xCandWi + UI_MARGIN)) { 
-                ptNew.x = ptSTWPos.x - sImeG.xCandWi - UI_MARGIN;
-            }
-
-            ptNew.y = ptSTWPos.y + lpImeL->cyCompBorder - sImeG.cyCandBorder;
-            if (ptNew.y + sImeG.yCandHi > rcWorkArea.bottom) {
-                ptNew.y = rcWorkArea.bottom - sImeG.yCandHi;
-            }
-        }
-    }
-    
     lpptWnd->x = ptNew.x;
     lpptWnd->y = ptNew.y;
 
@@ -459,9 +425,6 @@ LRESULT PASCAL SetCandPosition(
     } else if (lpIMC->cfCandForm[0].dwStyle == CFS_CANDIDATEPOS) {
         AdjustCandBoundry(&ptNew);
     } else if (lpIMC->cfCandForm[0].dwStyle == CFS_EXCLUDE) {
-           if(!sImeG.IC_Trace) {
-               CalcCandPos(hIMC, hUIWnd, &ptNew);
-        }
         AdjustCandBoundry(&ptNew);
     }
 
@@ -593,7 +556,7 @@ void PASCAL OpenCand(
                POINT ptCaret;
 
             AdjustCandBoundry(&ptWnd);
-            if((!sImeG.IC_Trace) || (!GetCaretPos(&ptCaret))) {
+            if((!GetCaretPos(&ptCaret))) {
 
                 if(GetCompWnd(hUIWnd)) {
                     ptWnd.x = ptWnd.y = 0;
@@ -964,8 +927,7 @@ void PASCAL CandSetCursor(
         GetCursorPos(&ptCursor);
         ScreenToClient(hCandWnd, &ptCursor);
 
-        if (PtInRect(&sImeG.rcCandText, ptCursor)
-           && sImeG.IC_Trace) {
+        if (PtInRect(&sImeG.rcCandText, ptCursor)) {
             SetCursor(LoadCursor(hInst, szHandCursor));
             MouseSelectCandStr(hCandWnd, &ptCursor);
             return;
@@ -1225,102 +1187,92 @@ void PASCAL PaintCandWindow(
     }
 
     // draw CandWnd Layout
-    if (sImeG.IC_Trace) {
-        RECT rcWnd;
 
-        GetClientRect(hCandWnd, &rcWnd);
-        DrawConcaveRect(hDC,
-            rcWnd.left,
-            rcWnd.top + UI_CANDINF,
-            rcWnd.right - 1,
-            rcWnd.bottom - 1);
-    } else {
-        RECT rcWnd;
+	RECT rcWnd;
 
-        GetClientRect(hCandWnd, &rcWnd);
-        DrawConcaveRect(hDC,
-            sImeG.rcCandText.left - 1,
-            rcWnd.top,
-            sImeG.rcCandText.right + 1,
-            rcWnd.bottom - 1);
-    }
+	GetClientRect(hCandWnd, &rcWnd);
+	DrawConcaveRect(hDC,
+					rcWnd.left,
+					rcWnd.top + UI_CANDINF,
+					rcWnd.right - 1,
+					rcWnd.bottom - 1);
 
     SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
     SetBkColor(hDC, RGB(0xC0, 0xC0, 0xC0));
 
-    if (sImeG.IC_Trace) {
-        ExtTextOut(hDC, sImeG.rcCandText.left, sImeG.rcCandText.top,
-            ETO_OPAQUE, &sImeG.rcCandText, NULL, 0, NULL);
-        szStrBuf[0] = TEXT('1');
-        szStrBuf[1] = TEXT(':');
 
-        for (i = 0; dwStart < dwEnd; dwStart++, i++) {
-            int  iLen;
+	ExtTextOut(hDC, sImeG.rcCandText.left, sImeG.rcCandText.top,
+			   ETO_OPAQUE, &sImeG.rcCandText, NULL, 0, NULL);
+	szStrBuf[0] = TEXT('1');
+	szStrBuf[1] = TEXT(':');
 
-            iLen = 0;
+	for (i = 0; dwStart < dwEnd; dwStart++, i++) {
+		int  iLen;
 
-            szStrBuf[0] = szDigit[i + CAND_START];
+		iLen = 0;
 
-            if(sImeL.dwRegImeIndex == INDEX_GB || sImeL.dwRegImeIndex == INDEX_GBK){
-                iLen = lstrlen((LPTSTR)((LPBYTE)lpCandList +
-                    lpCandList->dwOffset[dwStart]));
+		szStrBuf[0] = szDigit[i + CAND_START];
 
-                if (iLen > 10 * 2 / sizeof(TCHAR)) {
-                    iLen = 10 * 2 / sizeof(TCHAR);
-                    CopyMemory(&szStrBuf[2],
-                        ((LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart])),
-                        (iLen - 2) * sizeof(TCHAR));
-                    // maybe not good for UNICODE
-                    szStrBuf[iLen] = TEXT('.');
-                    szStrBuf[iLen+1] = TEXT('.');
-                    szStrBuf[iLen+2] = TEXT('\0');
-                } else {
-                    CopyMemory(&szStrBuf[2],
-                        (LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]),
-                        iLen*sizeof(TCHAR));
-                }
-            }else if(sImeL.dwRegImeIndex == INDEX_UNICODE){
-                WORD  wCode;
-                wCode = *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]);
+		if(sImeL.dwRegImeIndex == INDEX_GB || sImeL.dwRegImeIndex == INDEX_GBK){
+			iLen = lstrlen((LPTSTR)((LPBYTE)lpCandList +
+									lpCandList->dwOffset[dwStart]));
 
-                szStrBuf[2]= wCode;
-                szStrBuf[3]=TEXT('\0');
-                iLen = 2/sizeof(TCHAR);
-            }
+			if (iLen > 10 * 2 / sizeof(TCHAR)) {
+				iLen = 10 * 2 / sizeof(TCHAR);
+				CopyMemory(&szStrBuf[2],
+						   ((LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart])),
+						   (iLen - 2) * sizeof(TCHAR));
+				// maybe not good for UNICODE
+				szStrBuf[iLen] = TEXT('.');
+				szStrBuf[iLen+1] = TEXT('.');
+				szStrBuf[iLen+2] = TEXT('\0');
+			} else {
+				CopyMemory(&szStrBuf[2],
+						   (LPTSTR)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]),
+						   iLen*sizeof(TCHAR));
+			}
+		}else if(sImeL.dwRegImeIndex == INDEX_UNICODE){
+			WORD  wCode;
+			wCode = *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]);
+
+			szStrBuf[2]= wCode;
+			szStrBuf[3]=TEXT('\0');
+			iLen = 2/sizeof(TCHAR);
+		}
 
 
-            ExtTextOut(hDC, sImeG.rcCandText.left,
-                sImeG.rcCandText.top + i * sImeG.yChiCharHi,
-                (UINT)0, NULL,
-                szStrBuf,
-                iLen + 2, NULL);
+		ExtTextOut(hDC, sImeG.rcCandText.left,
+				   sImeG.rcCandText.top + i * sImeG.yChiCharHi,
+				   (UINT)0, NULL,
+				   szStrBuf,
+				   iLen + 2, NULL);
     
-           // QW/GB info
-           {
+		// QW/GB info
+		{
 
-             int   iMyLen;
-             WORD  wCode, wGB;
-             TCHAR  AbSeq[5];
-             TCHAR  GbSeq[5];
-             TCHAR szMyStrBuf[12 * sizeof(WCHAR) / sizeof(TCHAR)];
-             RECT  GBARInfo;
+			int   iMyLen;
+			WORD  wCode, wGB;
+			TCHAR  AbSeq[5];
+			TCHAR  GbSeq[5];
+			TCHAR szMyStrBuf[12 * sizeof(WCHAR) / sizeof(TCHAR)];
+			RECT  GBARInfo;
 
 
 
-             wCode = *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]);
-             AbSeq[0] = wCode;
-             AbSeq[1] = TEXT('\0');
-             //  change the CP_ACP to 936, so that it can work under Multilingul Env.
-             WideCharToMultiByte(NATIVE_ANSI_CP, WC_COMPOSITECHECK, AbSeq, 1, (BYTE*)GbSeq, sizeof(GbSeq), NULL, NULL);
+			wCode = *(LPUNAWORD)((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]);
+			AbSeq[0] = wCode;
+			AbSeq[1] = TEXT('\0');
+			//  change the CP_ACP to 936, so that it can work under Multilingul Env.
+			WideCharToMultiByte(NATIVE_ANSI_CP, WC_COMPOSITECHECK, AbSeq, 1, (LPSTR)GbSeq, sizeof(GbSeq), NULL, NULL);
                           
-             wGB = HIBYTE(GbSeq[0]) | (LOBYTE(GbSeq[0]) << 8);
+			wGB = HIBYTE(GbSeq[0]) | (LOBYTE(GbSeq[0]) << 8);
 
-             wsprintf (GbSeq,TEXT("%04lx"),wGB);    // get GB string
-             wGB -= 0xa0a0;
-             wsprintf (AbSeq,TEXT("%02d%02d"),HIBYTE(wGB),LOBYTE(wGB));
+			wsprintf (GbSeq,TEXT("%04lx"),wGB);    // get GB string
+			wGB -= 0xa0a0;
+			wsprintf (AbSeq,TEXT("%02d%02d"),HIBYTE(wGB),LOBYTE(wGB));
 //             if (lpImcP->fdwGB & IME_SELECT_GB) {
-        switch(sImeL.dwRegImeIndex){
-        case INDEX_GB:
+			switch(sImeL.dwRegImeIndex){
+			case INDEX_GB:
                 lstrcpy (szMyStrBuf,TEXT("("));
                 lstrcat (szMyStrBuf,GbSeq);
                 lstrcat (szMyStrBuf,TEXT(", "));
@@ -1328,16 +1280,16 @@ void PASCAL PaintCandWindow(
                 lstrcat (szMyStrBuf,TEXT(")"));
                 iMyLen = 12;
 
-            break;
-        case INDEX_GBK:
+				break;
+			case INDEX_GBK:
                 lstrcpy (szMyStrBuf,TEXT("    "));
                 lstrcat (szMyStrBuf,TEXT("("));
                 lstrcat (szMyStrBuf,GbSeq);
                 lstrcat (szMyStrBuf,TEXT(")"));
                 iMyLen = 10;
 
-            break;
-        case INDEX_UNICODE:        //adjust code display info
+				break;
+			case INDEX_UNICODE:        //adjust code display info
                 lstrcpy (szMyStrBuf,TEXT("("));
                 lstrcat (szMyStrBuf,GbSeq);
                 lstrcat (szMyStrBuf,TEXT(", "));
@@ -1345,97 +1297,22 @@ void PASCAL PaintCandWindow(
                 lstrcat (szMyStrBuf, AbSeq);
                 lstrcat (szMyStrBuf,TEXT(")"));
                 iMyLen = lstrlen(szMyStrBuf);
-            break;
-        }
+				break;
+			}
         
-             GBARInfo.top = sImeG.rcCandText.top + i * sImeG.yChiCharHi;
-             GBARInfo.left = sImeG.rcCandText.left;
-             GBARInfo.right = sImeG.rcCandText.right;
-             GBARInfo.bottom = sImeG.rcCandText.bottom;
-             DrawText(hDC, szMyStrBuf, lstrlen(szMyStrBuf),
+			GBARInfo.top = sImeG.rcCandText.top + i * sImeG.yChiCharHi;
+			GBARInfo.left = sImeG.rcCandText.left;
+			GBARInfo.right = sImeG.rcCandText.right;
+			GBARInfo.bottom = sImeG.rcCandText.bottom;
+			DrawText(hDC, szMyStrBuf, lstrlen(szMyStrBuf),
                      &GBARInfo, DT_RIGHT | DT_SINGLELINE);
-           }
-        }
-
-    } else {
-        int  nX;
-
-        ExtTextOut(hDC, sImeG.rcCandText.left, sImeG.rcCandText.top + 1,
-            ETO_OPAQUE, &sImeG.rcCandText, NULL, 0, NULL);
-        nX = 0;
-        for (i = 0; dwStart < dwEnd; dwStart++, i++) {
-            int  iLen;
-            int j, k;
-            TCHAR AnsiStr[MAXCODE+1];
-            SIZE StrSize;
-
-            // display numbers
-            AnsiStr[0] = szDigit[i + CAND_START];
-            AnsiStr[1] = TEXT(':');
-            AnsiStr[2] = 0;
-            ExtTextOut(hDC, sImeG.rcCandText.left + nX,
-                    sImeG.rcCandText.top + 1,
-                    ETO_CLIPPED, &sImeG.rcCandText,
-                    AnsiStr,
-                    lstrlen(AnsiStr), NULL);
-            if(!GetTextExtentPoint(hDC, (LPCTSTR)AnsiStr, lstrlen(AnsiStr), &StrSize))
-                memset(&StrSize, 0, sizeof(SIZE));
-            nX += StrSize.cx;
-
-            // display chinese word and code
-            iLen = lstrlen((LPTSTR)((LPBYTE)lpCandList +
-                lpCandList->dwOffset[dwStart]));
-
-            CopyMemory(szStrBuf,
-                ((LPBYTE)lpCandList + lpCandList->dwOffset[dwStart]),
-                iLen*sizeof(TCHAR));
-
-            for(j=0; j<iLen; j++) {
-                if(szStrBuf[j] > 0x100) {
-                    j++;
-                    continue;
-                }
-                break;
-            }
-            
-            k = j-1;
-            for(j=0; j<iLen - k; j++) {
-                AnsiStr[j] = szStrBuf[j+k];
-            }
-            AnsiStr[j] = 0;
-            szStrBuf[k] = 0;
+		}
+	}
 
 
-            ExtTextOut(hDC, sImeG.rcCandText.left + nX,
-                    sImeG.rcCandText.top + 1,
-                    ETO_CLIPPED, &sImeG.rcCandText,
-                    szStrBuf,
-                    lstrlen(szStrBuf), NULL);
-
-            if(!GetTextExtentPoint(hDC, (LPCTSTR)szStrBuf, lstrlen(szStrBuf), &StrSize))
-                memset(&StrSize, 0, sizeof(SIZE));
-            nX += StrSize.cx;
-
-            ExtTextOut(hDC, sImeG.rcCandText.left + nX,
-                    sImeG.rcCandText.top + 1,
-                    ETO_CLIPPED, &sImeG.rcCandText,
-                    AnsiStr,
-                    lstrlen(AnsiStr), NULL);
-
-            if(!GetTextExtentPoint(hDC, (LPCTSTR)AnsiStr, lstrlen(AnsiStr), &StrSize))
-                memset(&StrSize, 0, sizeof(SIZE));
-            nX += StrSize.cx;
-
-        }
-    }
     
     // load all bitmap
-    if (sImeG.IC_Trace) {
-        hCandInfBmp = LoadBitmap(hInst, TEXT("Candinf"));
-    } else {
-        hCandInfBmp = NULL;
-    }
-
+	hCandInfBmp = LoadBitmap(hInst, TEXT("Candinf"));
 
     hMemDC = CreateCompatibleDC(hDC);
 

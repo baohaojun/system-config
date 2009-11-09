@@ -256,16 +256,7 @@ LRESULT CALLBACK ContextMenuWndProc(
             GenerateMessage(hIMC, lpIMC, lpImcP);
             
             // set cand window data
-            if(sImeG.IC_Trace) {
-                UI_MODE = BOX_UI;
-            } else {
-                POINT ptSTFixPos;
-                
-                UI_MODE = LIN_UI;
-                ptSTFixPos.x = 0;
-                ptSTFixPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
-                ImmSetStatusWindowPos(hIMC, (LPPOINT)&ptSTFixPos);
-            }
+			UI_MODE = BOX_UI;
             InitCandUIData(
                 GetSystemMetrics(SM_CXBORDER),
                 GetSystemMetrics(SM_CYBORDER), UI_MODE);
@@ -503,7 +494,6 @@ void PASCAL ContextMenu(
     LPINPUTCONTEXT lpIMC;
     HMENU          hMenu, hCMenu;
     RECT           rcStatusWnd;
-    RECT           rcWorkArea;
 
     hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
     if(!hUIWnd){

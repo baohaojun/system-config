@@ -193,7 +193,6 @@ void PASCAL InitImeGlobalData(
     TCHAR   szChiChar[4];
     SIZE    lTextSize;
     HGLOBAL hResData;
-    int     i;
     DWORD   dwSize;
     HKEY    hKeyIMESetting;
     LONG    lRet;
@@ -271,11 +270,7 @@ void PASCAL InitImeGlobalData(
     sImeG.xChiCharWi = lTextSize.cx;
     sImeG.yChiCharHi = lTextSize.cy;
 
-    if(sImeG.IC_Trace) {
-        UI_MODE = BOX_UI;
-    } else {
-        UI_MODE = LIN_UI;
-    }
+	UI_MODE = BOX_UI;
 
     InitCandUIData(cxBorder, cyBorder, UI_MODE);
 
@@ -439,15 +434,11 @@ void PASCAL RegisterIme(
     HKEY  hKeyCurrVersion;
     HKEY  hKeyGB;
     DWORD retCode;
-    TCHAR Buf[LINE_LEN];
-    DWORD ValueType;
-    DWORD ValueSize;
 
     // init ime charact
     lstrcpy(sImeG.UsedCodes, TEXT("0123456789abcdef"));
     sImeG.wNumCodes = (WORD)lstrlen(sImeG.UsedCodes);
     sImeG.IC_Enter = 0;
-    sImeG.IC_Trace = 0;
     
     retCode = OpenReg_PathSetup(&hKeyCurrVersion);
     if (retCode) {
@@ -459,7 +450,6 @@ void PASCAL RegisterIme(
                             &hKeyGB);
     if (retCode != ERROR_SUCCESS) {
         DWORD dwDisposition;
-        DWORD Value;
         
         retCode = RegCreateKeyEx (hKeyCurrVersion,
                                   szImeRegName,
@@ -470,18 +460,7 @@ void PASCAL RegisterIme(
                                   NULL,
                                   &hKeyGB,
                                   &dwDisposition);
-        if ( retCode  == ERROR_SUCCESS)
-        {
-
-            Value = 1;
-            RegSetValueEx(hKeyGB, 
-                      szTrace,
-                      (DWORD)0,
-                      REG_DWORD,
-                      (LPBYTE)&Value,
-                      sizeof(DWORD));
-        }
-        else
+        if ( retCode  != ERROR_SUCCESS)
         {
            // error to create hKeyGB key.
            // return here;
@@ -489,32 +468,6 @@ void PASCAL RegisterIme(
            return;
         }
     }
-
-    ValueSize = sizeof(DWORD);
-    if (RegQueryValueEx(hKeyGB, 
-                        szTrace,
-                        NULL,
-                        (LPDWORD)&ValueType,
-                        (LPBYTE)&sImeG.IC_Trace,
-                        (LPDWORD)&ValueSize) != ERROR_SUCCESS)
-    {
-        DWORD Value = 1;
-        RegSetValueEx(hKeyGB,
-                      szTrace,
-                      (DWORD)0,
-                      REG_DWORD,
-                      (LPBYTE)&Value,
-                      sizeof(DWORD));
-
-        RegQueryValueEx(hKeyGB, 
-                        szTrace,
-                        NULL,
-                        (LPDWORD)&ValueType,
-                        (LPBYTE)&sImeG.IC_Trace,
-                        (LPDWORD)&ValueSize);
-    }
-        
-        
 
 
     RegCloseKey(hKeyGB);

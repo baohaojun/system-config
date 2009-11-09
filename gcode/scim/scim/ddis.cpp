@@ -96,8 +96,6 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
             (int)(sImeG.rcWorkArea.bottom - DlgHeight)/2,
             (int)0, (int)0, SWP_NOSIZE);
 
-        TempParam = sImeG.IC_Trace;
-        CheckDlgButton (hDlg, IDC_TRACE, sImeG.IC_Trace);
 
         return (TRUE);          // don't want to set focus to special control
     case WM_COMMAND:
@@ -109,7 +107,6 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
                 DWORD retCode;
                 //CHAR  Buf[LINE_LEN];
 
-                sImeG.IC_Trace = TempParam;
                 
                 retCode = OpenReg_PathSetup(&hKeyCurrVersion);
 
@@ -135,13 +132,6 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
 
                 if (hKeyGB != NULL){
 
-                    RegSetValueEx (hKeyGB, 
-                               szTrace,
-                               (DWORD)0,
-                               REG_DWORD,
-                               (LPBYTE)&sImeG.IC_Trace,
-                               sizeof(DWORD));
-
                     RegCloseKey(hKeyGB);
                 }
 
@@ -153,10 +143,6 @@ BOOL FAR PASCAL ImeSetDlgProc(  // dialog procedure of configuration
             break;
         case IDCANCEL:
             EndDialog(hDlg, FALSE);
-            break;
-        case IDC_TRACE:
-            // Set Current InputMode Param(temp)
-            TempParam = (TempParam ^ 0x00000001) & 0x00000001;
             break;
         default:
             return (FALSE);
@@ -243,7 +229,7 @@ DWORD PASCAL XGBConversion(
     if(!hImcP){
         return(0);
     }
-    lpImcP= GlobalLock (hImcP);
+    lpImcP= (LPPRIVCONTEXT)GlobalLock (hImcP);
     if(!lpImcP){
         GlobalFree(hImcP);
         return(0);
@@ -334,7 +320,7 @@ DWORD PASCAL Conversion(
     if(!hImcP){
         return(0);
     }
-    lpImcP= GlobalLock (hImcP);
+    lpImcP= (LPPRIVCONTEXT)GlobalLock (hImcP);
     if(!lpImcP){
         GlobalFree(hImcP);
         return(0);
@@ -405,7 +391,7 @@ BOOL DBCSToGBCode (
 
     //Converte Unicode to GBK
     // change CP_ACP to 936, so that it can work under Multilingul Env.
-    WideCharToMultiByte(NATIVE_ANSI_CP, WC_COMPOSITECHECK, &wCode, 1, (char *)&AreaCode, 2, NULL, NULL);
+    WideCharToMultiByte(NATIVE_ANSI_CP, WC_COMPOSITECHECK, (LPCWSTR)&wCode, 1, (char *)&AreaCode, 2, NULL, NULL);
     wCode = AreaCode;
 
 //check valid GB range code first
@@ -760,7 +746,7 @@ LRESULT WINAPI ImeEscape(       // escape function of IMEs
         if ( lpData == NULL )
            return  FALSE;
 
-        lstrcpy(lpData, szImeName);
+        lstrcpy((LPWSTR)lpData, szImeName);
         return (TRUE);
 
     case IME_ESC_GETHELPFILENAME:
@@ -774,7 +760,7 @@ LRESULT WINAPI ImeEscape(       // escape function of IMEs
            GetWindowsDirectory((LPTSTR)szIMEGUDHlpName, MAX_PATH);
            lstrcat((LPTSTR)szIMEGUDHlpName, TEXT("\\HELP\\WINGB.CHM"));
 
-           lstrcpy(lpData, szIMEGUDHlpName);
+           lstrcpy((LPWSTR)lpData, szIMEGUDHlpName);
 
            return TRUE;
 
@@ -1081,7 +1067,6 @@ BOOL PASCAL Select(
     BOOL           fSelect)
 {
     LPPRIVCONTEXT  lpImcP;
-    UINT           i;
 
     if (fSelect) {
 

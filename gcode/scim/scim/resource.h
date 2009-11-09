@@ -1,16 +1,7 @@
-
-/*************************************************
- *  resource.h                                   *
- *                                               *
- *  Copyright (C) 1995-1999 Microsoft Inc.       *
- *                                               *
- *************************************************/
-
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by wingb.rc
 //
-#define IDC_TRACE                       1000
 #define IDC_ORGNAME                     1001
 #define IDD_LAYOUT_LIST                 1018
 
@@ -24,4 +15,3 @@
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
-

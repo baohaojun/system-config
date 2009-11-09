@@ -288,7 +288,7 @@ int PASCAL Engine(
         {
             // UNICODE
             DWORD i;
-            WORD wCode, xCode;
+            WORD wCode;
             TCHAR ResaultStr[3];
 
             memset(ResaultStr, 0, sizeof(ResaultStr));

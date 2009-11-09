@@ -321,7 +321,6 @@ void PASCAL SetSoftKbdData(
         }
 
         {
-            WORD CHIByte, CLOByte;
 
             lpSoftKbdData->wCode[0][bVirtKey] = SKLayout[lpImeL->dwSKWant][i];
             lpSoftKbdData->wCode[1][bVirtKey] = SKLayoutS[lpImeL->dwSKWant][i];
@@ -594,10 +593,8 @@ void PASCAL ShowUI(             // show the sub windows
                     RDW_FRAME|RDW_INVALIDATE|RDW_ERASE);
             }
 
-            if (sImeG.IC_Trace) {            // modify 95.7.17
-                SendMessage(lpUIPrivate->hCompWnd, WM_IME_NOTIFY,
-                    IMN_SETCOMPOSITIONWINDOW, 0);
-            }
+			SendMessage(lpUIPrivate->hCompWnd, WM_IME_NOTIFY,
+						IMN_SETCOMPOSITIONWINDOW, 0);
 
             if (lpUIPrivate->nShowCompCmd == SW_HIDE) {
                 ShowComp(hUIWnd, nShowCmd);
@@ -621,10 +618,8 @@ void PASCAL ShowUI(             // show the sub windows
                     RDW_FRAME|RDW_INVALIDATE|RDW_ERASE);
             }
 
-            if (sImeG.IC_Trace) {            
-                SendMessage(lpUIPrivate->hCandWnd, WM_IME_NOTIFY,
-                    IMN_SETCANDIDATEPOS, 0x0001);
-            }
+			SendMessage(lpUIPrivate->hCandWnd, WM_IME_NOTIFY,
+						IMN_SETCANDIDATEPOS, 0x0001);
 
             if (lpUIPrivate->nShowCandCmd == SW_HIDE) {
                 ShowCand(hUIWnd, nShowCmd);
@@ -1024,15 +1019,6 @@ SetShowStatus:
                                &hKeyGB);
             // query 光标跟随 value
             ValueSize = sizeof(DWORD);
-            RegQueryValueEx (hKeyGB,szTrace ,
-                            (DWORD)0,
-                               (LPDWORD)&ValueType,
-                            (LPBYTE)&sImeG.IC_Trace,
-                            (LPDWORD)&ValueSize);
-        
-
-            // query 光标跟随 value
-            ValueSize = sizeof(DWORD);
             RegQueryValueEx (hKeyGB, szRegImeIndex,
                             (DWORD)0,
                             (LPDWORD)&ValueType,
@@ -1061,7 +1047,7 @@ SetShowStatus:
             ImmSetConversionStatus(hIMC, dwConvMode, lpIMC->fdwSentence);
         }
 
-        if(sImeG.IC_Trace != SaTC_Trace) {
+        if(SaTC_Trace == 0) {
             int UI_MODE;
 
             lpImcP->iImeState = CST_INIT;
@@ -1082,24 +1068,13 @@ SetShowStatus:
             SendMessage(GetCandWnd(hUIWnd), WM_DESTROY, (WPARAM)0, (LPARAM)0);
             
             // set cand window data
-            if(sImeG.IC_Trace) {
-                UI_MODE = BOX_UI;
-            } else {
-                POINT ptSTFixPos;
-            
-    
-                UI_MODE = LIN_UI;
-                ptSTFixPos.x = 0;
-                ptSTFixPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
-                ImmSetStatusWindowPos(hIMC, (LPPOINT)&ptSTFixPos);
-            }
-            
+			UI_MODE = BOX_UI;
             InitCandUIData(
                 GetSystemMetrics(SM_CXBORDER),
                 GetSystemMetrics(SM_CYBORDER), UI_MODE);
         }
             
-        SaTC_Trace = sImeG.IC_Trace;
+        SaTC_Trace = 1;
 
         // init Caps
         {
@@ -1128,8 +1103,7 @@ SetShowStatus:
             ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
         }
 
-        if ((lpIMC->cfCompForm.dwStyle & CFS_FORCE_POSITION)
-            && (sImeG.IC_Trace)) {
+        if ((lpIMC->cfCompForm.dwStyle & CFS_FORCE_POSITION)) {
             POINT ptNew;            // new position of UI
             POINT ptSTWPos;
 
@@ -1266,8 +1240,7 @@ LRESULT CALLBACK UIWndProc(
         StartComp(hUIWnd);
         break;
     case WM_IME_COMPOSITION:
-        if (!sImeG.IC_Trace) {
-        } else if (lParam & GCS_RESULTSTR) {
+		if (lParam & GCS_RESULTSTR) {
             MoveDefaultCompPosition(hUIWnd);
         } else {
         }
@@ -1363,18 +1336,6 @@ LRESULT CALLBACK UIWndProc(
                 lpImcP = (LPPRIVCONTEXT)ImmLockIMCC(lpIMC->hPrivate);
                 if (!lpImcP) {
                     return (1L);
-                }
-
-                if(!sImeG.IC_Trace) {
-                    lpIMC->cfCompForm.dwStyle = CFS_RECT;
-                    lpIMC->cfCompForm.ptCurrentPos.x = ptPos.x + sImeG.xStatusWi + UI_MARGIN;
-                    lpIMC->cfCompForm.ptCurrentPos.y = ptPos.y;
-                    CopyRect(&lpIMC->cfCompForm.rcArea, &rcWorkArea);
-
-                    ScreenToClient(lpIMC->hWnd, &lpIMC->cfCompForm.ptCurrentPos);
-                    // set composition window to the new poosition
-                    PostMessage(GetCompWnd(hUIWnd), WM_IME_NOTIFY, IMN_SETCOMPOSITIONWINDOW, 0);
-
                 }
 
                 ImmUnlockIMCC(lpIMC->hPrivate);

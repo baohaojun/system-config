@@ -72,24 +72,6 @@ void PASCAL AdjustStatusBoundary(
     lppt->y = (short)(rcWorkArea.bottom - sImeG.yStatusHi);
     }
 
-    if(sImeG.IC_Trace) {
-    } else {
-        int             Comp_CandWndLen;
-
-        Comp_CandWndLen = 0;
-        if(uStartComp) {
-                Comp_CandWndLen += lpImeL->xCompWi + UI_MARGIN;
-        }
-        
-        if(uOpenCand) {
-           Comp_CandWndLen += sImeG.xCandWi + UI_MARGIN;
-        }
-
-        if(lppt->x + sImeG.xStatusWi + Comp_CandWndLen > rcWorkArea.right) {
-          lppt->x=(SHORT)(rcWorkArea.right-sImeG.xStatusWi-Comp_CandWndLen);
-        }
-    }
-    
     return;
 }
 
@@ -102,7 +84,6 @@ LRESULT PASCAL SetStatusWindowPos(
     HWND           hUIWnd;
     HIMC           hIMC;
     LPINPUTCONTEXT lpIMC;
-    RECT           rcStatusWnd;
     POINTS         ptPos;
 
     hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
@@ -216,13 +197,8 @@ void PASCAL OpenStatus(         // open status window
               lpIMC->ptStatusWndPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
            }
     
-           if(sImeG.IC_Trace) {
-              ptPos.x = lpIMC->ptStatusWndPos.x;
-              ptPos.y = lpIMC->ptStatusWndPos.y;
-           } else {
-              ptPos.x = rcWorkArea.left;
-              ptPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
-           }
+		   ptPos.x = lpIMC->ptStatusWndPos.x;
+		   ptPos.y = lpIMC->ptStatusWndPos.y;
 
            ImmUnlockIMC(hIMC);
            nShowStatusCmd = SW_SHOWNOACTIVATE;

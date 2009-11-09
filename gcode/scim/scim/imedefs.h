@@ -303,7 +303,6 @@ typedef struct _tagImeG {       // global structure, can be share by all IMEs,
     TCHAR       UsedCodes[17];
     WORD        wNumCodes;
     DWORD       IC_Enter;
-    DWORD       IC_Trace;
 
     RECT        rcWorkArea;     // the work area of applications
 // Chinese char width & height
@@ -464,7 +463,6 @@ extern TCHAR      szRegImeIndex[];
 extern const NEARCARET ncUIEsc[], ncAltUIEsc[];
 extern const POINT ptInputEsc[], ptAltInputEsc[];
 extern BYTE      VirtKey48Map[];
-extern TCHAR     szTrace[];
 extern TCHAR     szWarnTitle[];
 extern TCHAR     szErrorTitle[];
 #if defined(CROSSREF)
@@ -524,7 +522,7 @@ void PASCAL SoftkeyMenu(HWND, int, int);                        // uisubs.c
 LRESULT CALLBACK ContextMenuWndProc(HWND, UINT, WPARAM,LPARAM); // uisubs.c
 LRESULT CALLBACK SoftkeyMenuWndProc(HWND, UINT, WPARAM,LPARAM); // uisubs.c
 
-HWND    PASCAL GetCompWnd(HWND);                                // compui.c
+extern "C" HWND    PASCAL GetCompWnd(HWND);                                // compui.c
 void    PASCAL SetCompPosition(HWND, HIMC, LPINPUTCONTEXT);     // compui.c
 void    PASCAL SetCompWindow(HWND);                             // compui.c
 void    PASCAL MoveDefaultCompPosition(HWND);                   // compui.c
