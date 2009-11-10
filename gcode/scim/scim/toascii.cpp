@@ -446,8 +446,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 	return (CST_INVALID);
 }
 
-BOOL WINAPI ImeProcessKey(		// if this key is need by IME?
-							 HIMC hIMC,
+BOOL WINAPI ImeProcessKey(HIMC hIMC,
 							 UINT uVirtKey, LPARAM lParam,
 							 CONST LPBYTE lpbKeyState)
 {
