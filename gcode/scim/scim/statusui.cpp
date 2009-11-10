@@ -291,13 +291,13 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 	} else if (PtInRect(&sImeG.rcImeIcon, *lpptCursor)) {
 		DWORD fdwConversion;
 
-		if (lpIMC->fdwConversion & (IME_CMODE_CHARCODE | IME_CMODE_EUDC)) {
+		if (lpIMC->fdwConversion & (0 | IME_CMODE_EUDC)) {
 			// change to native mode
 			fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
-				~(IME_CMODE_CHARCODE | IME_CMODE_EUDC);
+				~(0 | IME_CMODE_EUDC);
 		} else if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
 			// change to alphanumeric mode
-			fdwConversion = lpIMC->fdwConversion & ~(IME_CMODE_CHARCODE |
+			fdwConversion = lpIMC->fdwConversion & ~(0 |
 													 IME_CMODE_NATIVE |
 													 IME_CMODE_EUDC);
 		} else {
@@ -318,7 +318,7 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 							0);
 			}
 			fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
-				~(IME_CMODE_CHARCODE | IME_CMODE_EUDC);
+				~(0 | IME_CMODE_EUDC);
 			// 10.11 add
 			uCaps = 0;
 		}
@@ -327,9 +327,6 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 	} else if (PtInRect(&sImeG.rcImeName, *lpptCursor)) {
 		DWORD dwConvMode;
 		int cxBorder, cyBorder;
-		HKEY hKeyCurrVersion;
-		HKEY hKeyGB;
-		DWORD retCode;
 
 		//change current IME index
 		dwConvMode =
@@ -347,26 +344,11 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 		ImmSetConversionStatus(hIMC, dwConvMode, lpIMC->fdwSentence);
 
 		//set IME index in registry
-		retCode = OpenReg_PathSetup(&hKeyCurrVersion);
-		if (retCode) {
-			return;
-		}
-		retCode = RegCreateKeyEx(hKeyCurrVersion, szImeRegName, 0,
-								 NULL, REG_OPTION_NON_VOLATILE,
-								 KEY_ALL_ACCESS, NULL, &hKeyGB, NULL);
-
-		if (retCode) {
-			RegCloseKey(hKeyGB);
-			RegCloseKey(hKeyCurrVersion);
-			return;
-		}
-		RegCloseKey(hKeyGB);
-		RegCloseKey(hKeyCurrVersion);
 
 	} else if (PtInRect(&sImeG.rcShapeText, *lpptCursor)) {
 		DWORD dwConvMode;
 
-		if (lpIMC->fdwConversion & IME_CMODE_CHARCODE) {
+		if (lpIMC->fdwConversion & 0) {
 			MessageBeep((UINT) - 1);
 		} else if (lpIMC->fdwConversion & IME_CMODE_EUDC) {
 			MessageBeep((UINT) - 1);
@@ -377,7 +359,7 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 	} else if (PtInRect(&sImeG.rcSymbol, *lpptCursor)) {
 		DWORD fdwConversion;
 
-		if (lpIMC->fdwConversion & IME_CMODE_CHARCODE) {
+		if (lpIMC->fdwConversion & 0) {
 			MessageBeep((UINT) - 1);
 		} else {
 			fdwConversion = lpIMC->fdwConversion ^ IME_CMODE_SYMBOL;

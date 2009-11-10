@@ -30,10 +30,11 @@ ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 	lpImeInfo->dwPrivateDataSize = sizeof(PRIVCONTEXT);
 	lpImeInfo->fdwProperty = IME_PROP_KBD_CHAR_FIRST |
 		IME_PROP_UNICODE |
-		IME_PROP_CANDLIST_START_FROM_1 | IME_PROP_IGNORE_UPKEYS;
+		IME_PROP_CANDLIST_START_FROM_1 |
+		IME_PROP_IGNORE_UPKEYS;
 
 	lpImeInfo->fdwConversionCaps =
-		IME_CMODE_NATIVE | IME_CMODE_CHARCODE | IME_CMODE_NOCONVERSION;
+		IME_CMODE_NATIVE | IME_CMODE_NOCONVERSION;
 	lpImeInfo->fdwSentenceCaps = 0;
 	// IME will have different distance base multiple of 900 escapement
 	lpImeInfo->fdwUICaps = UI_CAP_ROT90;
@@ -509,16 +510,13 @@ BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 				//
 				// Change to alphanumeric mode.
 				//
-				fdwConversion = lpIMC->fdwConversion &
-					~(IME_CMODE_NATIVE | IME_CMODE_CHARCODE |
-					  IME_CMODE_EUDC);
+				fdwConversion = lpIMC->fdwConversion & ~IME_CMODE_NATIVE;
 			} else {
 
 				//
 				// Change to native mode
 				//
-				fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
-					~(IME_CMODE_CHARCODE | IME_CMODE_EUDC);
+				fdwConversion = lpIMC->fdwConversion | IME_CMODE_NATIVE;
 			}
 
 			ImmSetConversionStatus(hIMC, fdwConversion,
@@ -594,25 +592,6 @@ BOOL WINAPI ImeSetActiveContext(HIMC hIMC, BOOL fOn)
 	}
 
 	return (TRUE);
-}
-
-/**********************************************************************/
-//OpenReg_PathSetup(HKEY *phKey);
-/**********************************************************************/
-LONG OpenReg_PathSetup(HKEY * phKey)
-{
-	return RegOpenKeyEx(HKEY_CURRENT_USER,
-						REGSTR_PATH_SETUP,
-						0,
-						KEY_ENUMERATE_SUB_KEYS |
-						KEY_EXECUTE | KEY_QUERY_VALUE, phKey);
-}
-
-LONG OpenReg_User(HKEY hKey,	// handle of open key 
-				  LPCTSTR lpszSubKey,	// address of name of subkey to open 
-				  PHKEY phkResult)	// address of handle of open key 
-{
-	return RegOpenKeyEx(hKey, lpszSubKey, 0, KEY_ALL_ACCESS, phkResult);
 }
 
 VOID InfoMessage(HANDLE hWnd, WORD wMsgID)

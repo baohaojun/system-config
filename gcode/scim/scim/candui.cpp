@@ -14,11 +14,6 @@ Module Name:
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h"
 
-/**********************************************************************/
-/* GetCandWnd                                                         */
-/* Return Value :                                                     */
-/*      window handle of candidatte                                   */
-/**********************************************************************/
 HWND PASCAL GetCandWnd(HWND hUIWnd)	// UI window
 {
 	HGLOBAL hUIPrivate;
@@ -67,9 +62,6 @@ void PASCAL CalcCandPos(HIMC hIMC, HWND hUIWnd, LPPOINT lpptWnd)	// the composit
 	return;
 }
 
-/**********************************************************************/
-/* AdjustCandPos                                                      */
-/**********************************************************************/
 void AdjustCandPos(HIMC hIMC, LPPOINT lpptWnd)	// the composition window position
 {
 	LPINPUTCONTEXT lpIMC;
@@ -118,9 +110,6 @@ void AdjustCandPos(HIMC hIMC, LPPOINT lpptWnd)	// the composition window positio
 	return;
 }
 
-/**********************************************************************/
-/* AdjustCandRectBoundry                                              */
-/**********************************************************************/
 void PASCAL AdjustCandRectBoundry(LPINPUTCONTEXT lpIMC, LPPOINT lpptCandWnd)	// the caret position
 {
 	RECT rcExclude, rcUIRect, rcInterSect;
@@ -364,9 +353,6 @@ void PASCAL AdjustCandRectBoundry(LPINPUTCONTEXT lpIMC, LPPOINT lpptCandWnd)	// 
 	return;
 }
 
-/**********************************************************************/
-/* AdjustCandBoundry                                                  */
-/**********************************************************************/
 void PASCAL AdjustCandBoundry(LPPOINT lpptCandWnd)	// the position
 {
 
@@ -388,46 +374,6 @@ void PASCAL AdjustCandBoundry(LPPOINT lpptCandWnd)	// the position
 	return;
 }
 
-/**********************************************************************/
-/* SetCandPosition()                                                  */
-/**********************************************************************/
-LRESULT PASCAL SetCandPosition(HWND hCandWnd)
-{
-	HWND hUIWnd;
-	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
-	POINT ptNew;
-
-	hUIWnd = GetWindow(hCandWnd, GW_OWNER);
-
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
-		return (1L);
-	}
-
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return (1L);
-	}
-
-	ptNew = lpIMC->cfCandForm[0].ptCurrentPos;
-
-	ClientToScreen((HWND) lpIMC->hWnd, &ptNew);
-
-	if (lpIMC->cfCandForm[0].dwStyle & CFS_FORCE_POSITION) {
-	} else if (lpIMC->cfCandForm[0].dwStyle == CFS_CANDIDATEPOS) {
-		AdjustCandBoundry(&ptNew);
-	} else if (lpIMC->cfCandForm[0].dwStyle == CFS_EXCLUDE) {
-		AdjustCandBoundry(&ptNew);
-	}
-
-	SetWindowPos(hCandWnd, NULL, ptNew.x, ptNew.y,
-				 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
-
-	ImmUnlockIMC(hIMC);
-
-	return (0L);
-}
 
 void PASCAL ShowCand(HWND hUIWnd, int nShowCandCmd)
 {
@@ -499,9 +445,6 @@ void PASCAL ShowCand(HWND hUIWnd, int nShowCandCmd)
 	return;
 }
 
-/**********************************************************************/
-/* OpenCand                                                           */
-/**********************************************************************/
 void PASCAL OpenCand(HWND hUIWnd)
 {
 	HGLOBAL hUIPrivate;
@@ -632,9 +575,6 @@ void PASCAL OpenCand(HWND hUIWnd)
 	return;
 }
 
-/**********************************************************************/
-/* CloseCand                                                          */
-/**********************************************************************/
 void PASCAL CloseCand(HWND hUIWnd)
 {
 	uOpenCand = 0;
@@ -642,9 +582,6 @@ void PASCAL CloseCand(HWND hUIWnd)
 	return;
 }
 
-/**********************************************************************/
-/* DestroyCandWindow                                                  */
-/**********************************************************************/
 void PASCAL DestroyCandWindow(HWND hCandWnd)
 {
 	HGLOBAL hUIPrivate;
@@ -676,399 +613,7 @@ void PASCAL DestroyCandWindow(HWND hCandWnd)
 	return;
 }
 
-/**********************************************************************/
-/* MouseSelectCandStr()                                               */
-/**********************************************************************/
-void PASCAL MouseSelectCandStr(HWND hCandWnd, LPPOINT lpCursor)
-{
-	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
-	LPCANDIDATEINFO lpCandInfo;
-	LPCANDIDATELIST lpCandList;
-	DWORD dwValue;
 
-	hIMC =
-		(HIMC) GetWindowLongPtr(GetWindow(hCandWnd, GW_OWNER),
-								IMMGWLP_IMC);
-	if (!hIMC) {
-		return;
-	}
-
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return;
-	}
-
-	if (!lpIMC->hCandInfo) {
-		ImmUnlockIMC(hIMC);
-		return;
-	}
-
-	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->hCandInfo);
-	if (!lpCandInfo) {
-		ImmUnlockIMC(hIMC);
-		return;
-	}
-
-	dwValue = (lpCursor->y - sImeG.rcCandText.top) / sImeG.yChiCharHi;
-
-	lpCandList = (LPCANDIDATELIST) ((LPBYTE) lpCandInfo +
-									lpCandInfo->dwOffset[0]);
-
-	dwValue = dwValue + lpCandList->dwSelection /
-		lpCandList->dwPageSize * lpCandList->dwPageSize;
-
-	if (dwValue >= lpCandList->dwCount) {
-		// invalid choice
-		MessageBeep((UINT) - 1);
-	} else {
-		NotifyIME(hIMC, NI_SELECTCANDIDATESTR, 0, dwValue);
-	}
-
-	ImmUnlockIMCC(lpIMC->hCandInfo);
-
-	ImmUnlockIMC(hIMC);
-
-	return;
-}
-
-void PASCAL CandPageDownUP(HWND hCandWnd, UINT uCandDownUp)
-{
-	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
-	LPPRIVCONTEXT imcPrivPtr;
-	LPCANDIDATEINFO lpCandInfo;
-	LPCANDIDATELIST lpCandList;
-	HDC hDC;
-	HBITMAP hCandHpBmp, hCandUpBmp, hCandDpBmp, hCandEpBmp;
-	HBITMAP hOldBmp;
-	HDC hMemDC;
-
-	// change candlist
-	hIMC =
-		(HIMC) GetWindowLongPtr(GetWindow(hCandWnd, GW_OWNER),
-								IMMGWLP_IMC);
-	if (!hIMC) {
-		return;
-	}
-	// get lpIMC
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return;
-	}
-	// get imcPrivPtr
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-	if (!imcPrivPtr) {
-		return;
-	}
-	// get lpCandInfo
-	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->hCandInfo);
-
-	if (!lpCandInfo) {
-		return;
-	}
-	// get lpCandList and init dwCount & dwSelection
-	lpCandList = (LPCANDIDATELIST)
-		((LPBYTE) lpCandInfo + lpCandInfo->dwOffset[0]);
-
-	switch (uCandDownUp) {
-	case uCandHome:
-		ChooseCand(0x24, lpIMC, lpCandInfo, imcPrivPtr);
-		NotifyIME(hIMC, NI_CHANGECANDIDATELIST, 0, 0);
-		break;
-	case uCandUp:
-		ChooseCand('-', lpIMC, lpCandInfo, imcPrivPtr);
-		NotifyIME(hIMC, NI_CHANGECANDIDATELIST, 0, 0);
-		break;
-	case uCandDown:
-		ChooseCand('=', lpIMC, lpCandInfo, imcPrivPtr);
-		NotifyIME(hIMC, NI_CHANGECANDIDATELIST, 0, 0);
-		break;
-	case uCandEnd:
-		ChooseCand(0x23, lpIMC, lpCandInfo, imcPrivPtr);
-		NotifyIME(hIMC, NI_CHANGECANDIDATELIST, 0, 0);
-		break;
-	default:
-		break;
-	}
-
-	ImmUnlockIMCC(lpIMC->hPrivate);
-	ImmUnlockIMCC(lpIMC->hCandInfo);
-	ImmUnlockIMC(hIMC);
-
-	// draw button down
-	hDC = GetDC(hCandWnd);
-	if (hDC == NULL)
-		return;
-
-	hMemDC = CreateCompatibleDC(hDC);
-
-	if (hMemDC == NULL) {
-		ReleaseDC(hCandWnd, hDC);
-		return;
-	}
-
-	hOldBmp = NULL;
-
-	switch (uCandDownUp) {
-	case uCandHome:
-
-		hCandHpBmp = LoadBitmap(hInst, TEXT("CandHp"));
-		if (hCandHpBmp != NULL) {
-			hOldBmp = SelectObject(hMemDC, hCandHpBmp);
-			BitBlt(hDC, sImeG.rcCandBTH.left, sImeG.rcCandBTH.top,
-				   sImeG.rcCandBTH.right - sImeG.rcCandBTH.left,
-				   STATUS_DIM_Y, hMemDC, 0, 0, SRCCOPY);
-			DeleteObject(hCandHpBmp);
-		}
-
-		break;
-	case uCandUp:
-
-		hCandUpBmp = LoadBitmap(hInst, TEXT("CandUp"));
-		if (hCandUpBmp != NULL) {
-			hOldBmp = SelectObject(hMemDC, hCandUpBmp);
-			BitBlt(hDC, sImeG.rcCandBTU.left, sImeG.rcCandBTU.top,
-				   sImeG.rcCandBTU.right - sImeG.rcCandBTU.left,
-				   STATUS_DIM_Y, hMemDC, 0, 0, SRCCOPY);
-			DeleteObject(hCandUpBmp);
-		}
-		break;
-	case uCandDown:
-		hCandDpBmp = LoadBitmap(hInst, TEXT("CandDp"));
-		if (hCandDpBmp != NULL) {
-			hOldBmp = SelectObject(hMemDC, hCandDpBmp);
-			BitBlt(hDC, sImeG.rcCandBTD.left, sImeG.rcCandBTD.top,
-				   sImeG.rcCandBTD.right - sImeG.rcCandBTD.left,
-				   STATUS_DIM_Y, hMemDC, 0, 0, SRCCOPY);
-			DeleteObject(hCandDpBmp);
-		}
-		break;
-	case uCandEnd:
-		hCandEpBmp = LoadBitmap(hInst, TEXT("CandEp"));
-		if (hCandEpBmp != NULL) {
-			hOldBmp = SelectObject(hMemDC, hCandEpBmp);
-			BitBlt(hDC, sImeG.rcCandBTE.left, sImeG.rcCandBTE.top,
-				   sImeG.rcCandBTE.right - sImeG.rcCandBTE.left,
-				   STATUS_DIM_Y, hMemDC, 0, 0, SRCCOPY);
-			DeleteObject(hCandEpBmp);
-		}
-		break;
-	default:
-		break;
-	}
-
-	if (hOldBmp != NULL)
-		SelectObject(hMemDC, hOldBmp);
-
-	DeleteDC(hMemDC);
-	ReleaseDC(hCandWnd, hDC);
-
-	return;
-}
-
-/**********************************************************************/
-/* CandSetCursor()                                                    */
-/**********************************************************************/
-void PASCAL CandSetCursor(HWND hCandWnd, LPARAM lParam)
-{
-	POINT ptCursor;
-	RECT rcWnd;
-
-	if (GetWindowLong(hCandWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-		SetCursor(LoadCursor(NULL, IDC_SIZEALL));
-		return;
-	}
-
-	if (HIWORD(lParam) == WM_LBUTTONDOWN) {
-		SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
-
-		GetCursorPos(&ptCursor);
-		ScreenToClient(hCandWnd, &ptCursor);
-
-		if (PtInRect(&sImeG.rcCandText, ptCursor)) {
-			SetCursor(LoadCursor(hInst, szHandCursor));
-			MouseSelectCandStr(hCandWnd, &ptCursor);
-			return;
-		} else if (PtInRect(&sImeG.rcCandBTH, ptCursor)) {
-			CandPageDownUP(hCandWnd, uCandHome);
-			return;
-		} else if (PtInRect(&sImeG.rcCandBTU, ptCursor)) {
-			CandPageDownUP(hCandWnd, uCandUp);
-			return;
-		} else if (PtInRect(&sImeG.rcCandBTD, ptCursor)) {
-			CandPageDownUP(hCandWnd, uCandDown);
-			return;
-		} else if (PtInRect(&sImeG.rcCandBTE, ptCursor)) {
-			CandPageDownUP(hCandWnd, uCandEnd);
-			return;
-		} else {
-			SetCursor(LoadCursor(NULL, IDC_SIZEALL));
-		}
-	} else if (HIWORD(lParam) == WM_LBUTTONUP) {
-		HDC hDC;
-		HBITMAP hCandHBmp, hCandUBmp, hCandDBmp, hCandEBmp;
-		HBITMAP hOldBmp;
-		HDC hMemDC;
-
-		hDC = GetDC(hCandWnd);
-
-		hMemDC = CreateCompatibleDC(hDC);
-
-		if (hMemDC) {
-
-			hCandHBmp = LoadBitmap(hInst, TEXT("CandH"));
-
-			if (hCandHBmp) {
-				hOldBmp = SelectObject(hMemDC, hCandHBmp);
-				BitBlt(hDC, sImeG.rcCandBTH.left, sImeG.rcCandBTH.top,
-					   sImeG.rcCandBTH.right - sImeG.rcCandBTH.left,
-					   STATUS_DIM_Y, hMemDC, 0, 0, SRCCOPY);
-				SelectObject(hMemDC, hOldBmp);
-
-				DeleteObject(hCandHBmp);
-			}
-
-
-			hCandUBmp = LoadBitmap(hInst, TEXT("CandU"));
-
-			if (hCandUBmp) {
-
-				hOldBmp = SelectObject(hMemDC, hCandUBmp);
-				BitBlt(hDC, sImeG.rcCandBTU.left, sImeG.rcCandBTU.top,
-					   sImeG.rcCandBTU.right - sImeG.rcCandBTU.left,
-					   STATUS_DIM_Y, hMemDC, 0, 0, SRCCOPY);
-				SelectObject(hMemDC, hOldBmp);
-
-				DeleteObject(hCandUBmp);
-			}
-
-			hCandDBmp = LoadBitmap(hInst, TEXT("CandD"));
-
-			if (hCandDBmp) {
-				hOldBmp = SelectObject(hMemDC, hCandDBmp);
-				BitBlt(hDC, sImeG.rcCandBTD.left, sImeG.rcCandBTD.top,
-					   sImeG.rcCandBTD.right - sImeG.rcCandBTD.left,
-					   STATUS_DIM_Y, hMemDC, 0, 0, SRCCOPY);
-				SelectObject(hMemDC, hOldBmp);
-				DeleteObject(hCandDBmp);
-			}
-
-
-			hCandEBmp = LoadBitmap(hInst, TEXT("CandE"));
-
-			if (hCandEBmp) {
-
-				hOldBmp = SelectObject(hMemDC, hCandEBmp);
-				BitBlt(hDC, sImeG.rcCandBTE.left, sImeG.rcCandBTE.top,
-					   sImeG.rcCandBTE.right - sImeG.rcCandBTE.left,
-					   STATUS_DIM_Y, hMemDC, 0, 0, SRCCOPY);
-
-				SelectObject(hMemDC, hOldBmp);
-				DeleteObject(hCandEBmp);
-			}
-
-			DeleteDC(hMemDC);
-		}
-
-
-		ReleaseDC(hCandWnd, hDC);
-
-		return;
-	} else {
-		SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
-
-		GetCursorPos(&ptCursor);
-		ScreenToClient(hCandWnd, &ptCursor);
-
-		if (PtInRect(&sImeG.rcCandText, ptCursor)) {
-			SetCursor(LoadCursor(hInst, szHandCursor));
-			return;
-		} else if (PtInRect(&sImeG.rcCandBTH, ptCursor)) {
-			SetCursor(LoadCursor(hInst, szHandCursor));
-		} else if (PtInRect(&sImeG.rcCandBTU, ptCursor)) {
-			SetCursor(LoadCursor(hInst, szHandCursor));
-		} else if (PtInRect(&sImeG.rcCandBTD, ptCursor)) {
-			SetCursor(LoadCursor(hInst, szHandCursor));
-		} else if (PtInRect(&sImeG.rcCandBTE, ptCursor)) {
-			SetCursor(LoadCursor(hInst, szHandCursor));
-		} else {
-			SetCursor(LoadCursor(NULL, IDC_SIZEALL));
-		}
-
-		return;
-	}
-
-	SetCapture(hCandWnd);
-	GetCursorPos(&ptCursor);
-	SetWindowLong(hCandWnd, UI_MOVE_XY, MAKELONG(ptCursor.x, ptCursor.y));
-	GetWindowRect(hCandWnd, &rcWnd);
-	SetWindowLong(hCandWnd, UI_MOVE_OFFSET,
-				  MAKELONG(ptCursor.x - rcWnd.left,
-						   ptCursor.y - rcWnd.top));
-
-	DrawDragBorder(hCandWnd, MAKELONG(ptCursor.x, ptCursor.y),
-				   GetWindowLong(hCandWnd, UI_MOVE_OFFSET));
-
-	return;
-}
-
-/**********************************************************************/
-/* CandButtonUp()                                                     */
-/**********************************************************************/
-BOOL PASCAL CandButtonUp(HWND hCandWnd)
-{
-	LONG lTmpCursor, lTmpOffset;
-	POINT pt;
-	HWND hUIWnd;
-	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
-
-	if (GetWindowLong(hCandWnd, UI_MOVE_OFFSET) == WINDOW_NOT_DRAG) {
-		return FALSE;
-	}
-
-	lTmpCursor = GetWindowLong(hCandWnd, UI_MOVE_XY);
-
-	// calculate the org by the offset
-	lTmpOffset = GetWindowLong(hCandWnd, UI_MOVE_OFFSET);
-
-	pt.x = (*(LPPOINTS) & lTmpCursor).x - (*(LPPOINTS) & lTmpOffset).x;
-	pt.y = (*(LPPOINTS) & lTmpCursor).y - (*(LPPOINTS) & lTmpOffset).y;
-
-	DrawDragBorder(hCandWnd, lTmpCursor, lTmpOffset);
-	SetWindowLong(hCandWnd, UI_MOVE_OFFSET, WINDOW_NOT_DRAG);
-	ReleaseCapture();
-
-	hUIWnd = GetWindow(hCandWnd, GW_OWNER);
-
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
-		return FALSE;
-	}
-
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return FALSE;
-	}
-
-	AdjustCandBoundry(&pt);
-
-	ScreenToClient(lpIMC->hWnd, &pt);
-
-	lpIMC->cfCandForm[0].dwStyle |= CFS_CANDIDATEPOS;
-	lpIMC->cfCandForm[0].ptCurrentPos = pt;
-
-	ImmUnlockIMC(hIMC);
-
-	PostMessage(hCandWnd, WM_IME_NOTIFY, IMN_SETCANDIDATEPOS, 0x0001);
-
-	return (TRUE);
-}
-
-/**********************************************************************/
-/* UpdateCandWindow()                                                 */
-/**********************************************************************/
 void PASCAL PaintCandWindow(HWND hCandWnd, HDC hDC)
 {
 	HIMC hIMC;
@@ -1335,9 +880,6 @@ void PASCAL PaintCandWindow(HWND hCandWnd, HDC hDC)
 	return;
 }
 
-/**********************************************************************/
-/* CandWndProc()                                                      */
-/**********************************************************************/
 LRESULT CALLBACK
 CandWndProc(HWND hCandWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -1345,34 +887,7 @@ CandWndProc(HWND hCandWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		DestroyCandWindow(hCandWnd);
 		break;
-	case WM_SETCURSOR:
-		CandSetCursor(hCandWnd, lParam);
-		break;
-	case WM_MOUSEMOVE:
-		if (GetWindowLong(hCandWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-			POINT ptCursor;
-
-			DrawDragBorder(hCandWnd,
-						   GetWindowLong(hCandWnd, UI_MOVE_XY),
-						   GetWindowLong(hCandWnd, UI_MOVE_OFFSET));
-			GetCursorPos(&ptCursor);
-			SetWindowLong(hCandWnd, UI_MOVE_XY,
-						  MAKELONG(ptCursor.x, ptCursor.y));
-			DrawDragBorder(hCandWnd, MAKELONG(ptCursor.x, ptCursor.y),
-						   GetWindowLong(hCandWnd, UI_MOVE_OFFSET));
-		} else {
-			return DefWindowProc(hCandWnd, uMsg, wParam, lParam);
-		}
-		break;
-	case WM_LBUTTONUP:
-		if (!CandButtonUp(hCandWnd)) {
-			return DefWindowProc(hCandWnd, uMsg, wParam, lParam);
-		}
-		break;
 	case WM_IME_NOTIFY:
-		if (wParam == IMN_SETCANDIDATEPOS) {
-			return SetCandPosition(hCandWnd);
-		}
 		break;
 	case WM_PAINT:
 		{

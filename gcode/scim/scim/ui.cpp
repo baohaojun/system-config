@@ -361,10 +361,6 @@ BOOL UpdateStatusWindow(HWND hUIWnd)
 	return (TRUE);
 }
 
-
-/**********************************************************************/
-/* NotifyUI()                                                         */
-/**********************************************************************/
 void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 {
 	HWND hStatusWnd;
@@ -633,7 +629,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 				// change to alphanumeric mode
 				fdwConversion =
 					lpIMC->
-					fdwConversion & ~(IME_CMODE_CHARCODE | IME_CMODE_NATIVE
+					fdwConversion & ~(0 | IME_CMODE_NATIVE
 									  | IME_CMODE_EUDC);
 			} else {
 				// change to native mode
@@ -641,7 +637,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 					fdwConversion =
 						(lpIMC->
 						 fdwConversion | IME_CMODE_NATIVE) &
-						~(IME_CMODE_CHARCODE | IME_CMODE_EUDC);
+						~(0 | IME_CMODE_EUDC);
 				} else {
 					fdwConversion = lpIMC->fdwConversion;
 				}
@@ -724,9 +720,6 @@ void PASCAL SelectIME(			// switch IMEs
 	return;
 }
 
-/**********************************************************************/
-/* UIPaint()                                                          */
-/**********************************************************************/
 LRESULT PASCAL UIPaint(HWND hUIWnd)
 {
 	PAINTSTRUCT ps;
@@ -768,6 +761,8 @@ LRESULT PASCAL UIPaint(HWND hUIWnd)
 LRESULT CALLBACK
 UIWndProc(HWND hUIWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	EnterLeaveDebug(); 
+	BHJDEBUG(" uMsg is 0x%08x", uMsg);
 
 	switch (uMsg) {
 	case WM_CREATE:
@@ -898,6 +893,7 @@ UIWndProc(HWND hUIWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEACTIVATE:
 		return (MA_NOACTIVATE);
 	case WM_PAINT:
+		BHJDEBUG(" UIPaint in UIWndProc");
 		return UIPaint(hUIWnd);
 	default:
 		return DefWindowProc(hUIWnd, uMsg, wParam, lParam);

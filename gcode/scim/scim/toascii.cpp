@@ -138,8 +138,8 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 			return (CST_CHOOSE);
 		}
 	}
-	// IME_CMODE_CHARCODE
-	if (lpIMC->fdwConversion & IME_CMODE_CHARCODE) {	//Code Input Mode
+	// 0
+	if (lpIMC->fdwConversion & 0) {	//Code Input Mode
 		return (CST_INVALID);
 	}
 
@@ -266,14 +266,14 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 		DWORD fdwConversion;
 		if (lpbKeyState[VK_CAPITAL] & 0x01) {
 			// change to alphanumeric mode
-			fdwConversion = lpIMC->fdwConversion & ~(IME_CMODE_CHARCODE |
+			fdwConversion = lpIMC->fdwConversion & ~(0 |
 													 IME_CMODE_NATIVE |
 													 IME_CMODE_EUDC);
 			uCaps = 1;
 		} else {
 			// change to native mode
 			fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
-				~(IME_CMODE_CHARCODE | IME_CMODE_EUDC);
+				~(0 | IME_CMODE_EUDC);
 			uCaps = 0;
 		}
 		ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
@@ -776,9 +776,9 @@ ImeToAsciiEx(UINT uVirtKey,
 
 		uNumMsg = TranslateImeMessage(lpTransBuf, lpIMC, imcPrivPtr);
 	}
-	// CST_INPUT(IME_CMODE_CHARCODE)
+	// CST_INPUT(0)
 	else if (iRet == CST_INPUT
-			 && lpIMC->fdwConversion & IME_CMODE_CHARCODE) {
+			 && lpIMC->fdwConversion & 0) {
 		uNumMsg =
 			TranslateToAscii(uVirtKey, uScanCode, lpTransBuf, wCharCode);
 	}

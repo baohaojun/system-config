@@ -414,7 +414,6 @@ void PASCAL SetPrivateFileSetting(LPBYTE, int, DWORD, LPCTSTR);	// ddis.c
 
 void PASCAL InitCompStr(LPCOMPOSITIONSTRING);	// ddis.c
 BOOL PASCAL ClearCand(LPINPUTCONTEXT);	// ddis.c
-LONG OpenReg_PathSetup(HKEY *);
 VOID InfoMessage(HANDLE, WORD);	//ddis.c
 VOID FatalMessage(HANDLE, WORD);	//ddis.c
 
@@ -444,7 +443,6 @@ void PASCAL CompCancel(HIMC, LPINPUTCONTEXT);
 
 HWND PASCAL GetCandWnd(HWND);	// candui.c
 void PASCAL CalcCandPos(HIMC, HWND, LPPOINT);	// candui.c
-LRESULT PASCAL SetCandPosition(HWND);	// candui.c
 void PASCAL ShowCand(HWND, int);	// candui.c
 void PASCAL OpenCand(HWND);		// candui.c
 void PASCAL CloseCand(HWND);	// candui.c
@@ -465,7 +463,6 @@ void PASCAL InitCandUIData(int, int, int);
 BOOL UpdateStatusWindow(HWND);
 void PASCAL EngChCand(LPCOMPOSITIONSTRING, LPCANDIDATELIST, LPPRIVCONTEXT,
 					  LPINPUTCONTEXT, WORD);
-void PASCAL CandPageDownUP(HWND, UINT);
 void PASCAL GenerateImeMessage(HIMC, LPINPUTCONTEXT, DWORD);
 UINT PASCAL TranslateSymbolChar(LPTRANSMSGLIST, WORD, BOOL);
 WORD PASCAL XGBEngine(LPPRIVCONTEXT);

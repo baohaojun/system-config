@@ -521,33 +521,11 @@ BOOL PASCAL InitImeLocalData(HINSTANCE hInstL)
 void PASCAL RegisterIme(HINSTANCE hInstance)
 {
 
-	HKEY hKeyCurrVersion;
-
-	HKEY hKeyGB;
-
-	DWORD retCode;
-
-	// init ime charact
 	lstrcpy(sImeG.UsedCodes, TEXT("0123456789abcdef"));
 
 	sImeG.wNumCodes = (WORD) lstrlen(sImeG.UsedCodes);
 
 	sImeG.IC_Enter = 0;
-
-	retCode = OpenReg_PathSetup(&hKeyCurrVersion);
-
-	if (retCode) {
-
-		RegCreateKey(HKEY_CURRENT_USER, REGSTR_PATH_SETUP,
-					 &hKeyCurrVersion);
-
-	}
-
-
-	RegCloseKey(hKeyGB);
-
-	RegCloseKey(hKeyCurrVersion);
-
 	return;
 
 }
@@ -673,59 +651,11 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 		RegisterIme(hInstance);
 
 		// init globaldata & load globaldata from resource
-		{
-
-			HKEY hKeyCurrVersion;
-
-			HKEY hKeyGB;
-
-			LONG retCode;
-
-			DWORD ValueSize;
-
-			retCode = OpenReg_PathSetup(&hKeyCurrVersion);
-
-			if (retCode) {
-
-				RegCreateKey(HKEY_CURRENT_USER,
-							 REGSTR_PATH_SETUP, &hKeyCurrVersion);
-
-			}
-
-			if (hKeyCurrVersion)
-			{
-
-				retCode =
-					RegCreateKeyEx(hKeyCurrVersion,
-								   szImeRegName,
-								   0,
-								   NULL,
-								   REG_OPTION_NON_VOLATILE,
-								   KEY_ALL_ACCESS, NULL, &hKeyGB, NULL);
-
-				ValueSize = sizeof(DWORD);
-
-				if (hKeyGB)
-				{
-
-					sImeL.dwRegImeIndex = 0;
-
-					szImeName = pszImeName[sImeL.dwRegImeIndex];
-
-					RegCloseKey(hKeyGB);
-
-				}
-
-				RegCloseKey(hKeyCurrVersion);
-
-			}
-
-		}
+		sImeL.dwRegImeIndex = 0;
+		szImeName = pszImeName[sImeL.dwRegImeIndex];
 
 		if (!hInst) {
-
 			InitImeGlobalData(hInstance);
-
 		}
 
 		if (!lpImeL) {
@@ -741,7 +671,6 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 		break;
 
 	case DLL_PROCESS_DETACH:
-
 		{
 
 			WNDCLASSEX wcWndCls;
@@ -770,14 +699,9 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 
 			}
 
-			if (!GetClassInfoEx(hInstance, szUIClassName, &wcWndCls)) {
-
-			} else if (!UnregisterClass(szUIClassName, hInstance)) {
-
-			} else {
+			if (GetClassInfoEx(hInstance, szUIClassName, &wcWndCls) && UnregisterClass(szUIClassName, hInstance)) {
 
 				DestroyIcon(wcWndCls.hIcon);
-
 				DestroyIcon(wcWndCls.hIconSm);
 
 			}
@@ -796,7 +720,7 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 
 }
 
-int strbytelen(LPTSTR lpStr)
+int strbytelen(LPTSTR lpStr) //used for calculating text size
 {
 
 	int i, len, iRet;
