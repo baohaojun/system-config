@@ -576,6 +576,7 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 LRESULT CALLBACK
 StatusWndProc(HWND hStatusWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	BHJDEBUG("received msg %s", msg_name(uMsg));
 	switch (uMsg) {
 	case WM_DESTROY:
 		DestroyStatusWindow(hStatusWnd);
@@ -648,6 +649,7 @@ StatusWndProc(HWND hStatusWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEACTIVATE:
 		return (MA_NOACTIVATE);
 	default:
+		BHJDEBUG(" msg %s not handled", msg_name(uMsg));
 		return DefWindowProc(hStatusWnd, uMsg, wParam, lParam);
 	}
 

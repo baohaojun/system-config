@@ -149,7 +149,6 @@ ImeConversionList(HIMC hIMC,
 
 BOOL WINAPI ImeDestroy(UINT uReserved)
 {
-	EnterLeaveDebug(); 
 	if (uReserved) {
 		return FALSE;
 	}
@@ -157,9 +156,10 @@ BOOL WINAPI ImeDestroy(UINT uReserved)
 	return (TRUE);
 }
 
+//this function is an "escape", meaning that it provides some information that
+//can't be get elsewhere. well, we've got no escape!
 LRESULT WINAPI ImeEscape(HIMC hIMC, UINT uSubFunc, LPVOID lpData)
 {
-	EnterLeaveDebug(); 
 	return FALSE;
 
 }

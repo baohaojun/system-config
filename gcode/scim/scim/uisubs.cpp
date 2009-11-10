@@ -171,6 +171,7 @@ void PASCAL DrawFrameBorder(	// border of IME
 LRESULT CALLBACK
 ContextMenuWndProc(HWND hCMenuWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	BHJDEBUG("received msg %s", msg_name(uMsg));
 	switch (uMsg) {
 	case WM_DESTROY:
 		{
@@ -315,6 +316,7 @@ ContextMenuWndProc(HWND hCMenuWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		return DefWindowProc(hCMenuWnd, uMsg, wParam, lParam);
 	default:
+		BHJDEBUG(" msg %s not handled", msg_name(uMsg));
 		return DefWindowProc(hCMenuWnd, uMsg, wParam, lParam);
 	}
 

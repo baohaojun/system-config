@@ -212,7 +212,6 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 							 UINT uVirtKey, LPARAM lParam,
 							 CONST LPBYTE lpbKeyState)
 {
-	EnterLeaveDebug(); 
 	LPINPUTCONTEXT lpIMC;
 	LPPRIVCONTEXT imcPrivPtr;
 	BYTE szAscii[4];
@@ -351,7 +350,6 @@ UINT PASCAL
 TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 					LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 {
-	EnterLeaveDebug(); 
 	UINT uNumMsg;
 	UINT i;
 	BOOL bLockMsgBuf;
@@ -551,7 +549,6 @@ ImeToAsciiEx(UINT uVirtKey,
 			 CONST LPBYTE lpbKeyState,
 			 LPTRANSMSGLIST lpTransBuf, UINT fuState, HIMC hIMC)
 {
-	EnterLeaveDebug(); 
 	WORD wCharCode;
 	LPINPUTCONTEXT lpIMC;
 	LPCOMPOSITIONSTRING lpCompStr;

@@ -904,6 +904,7 @@ LRESULT CALLBACK CompWndProc(	// composition window proc
 								HWND hCompWnd, UINT uMsg, WPARAM wParam,
 								LPARAM lParam)
 {
+	BHJDEBUG("received msg %s", msg_name(uMsg));
 	switch (uMsg) {
 	case WM_DESTROY:
 		DestroyCompWindow(hCompWnd);
@@ -951,6 +952,7 @@ LRESULT CALLBACK CompWndProc(	// composition window proc
 	case WM_MOUSEACTIVATE:
 		return (MA_NOACTIVATE);
 	default:
+		BHJDEBUG(" msg %s not handled", msg_name(uMsg));
 		return DefWindowProc(hCompWnd, uMsg, wParam, lParam);
 	}
 	return (0L);
