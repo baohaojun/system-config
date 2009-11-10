@@ -466,7 +466,7 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	HWND hUIWnd;
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 	HGDIOBJ hOldFont;
 	HBITMAP hImeIconBmp, hSymbolBmp;
 	HBITMAP hOldBmp;
@@ -484,8 +484,8 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 		MessageBeep((UINT) - 1);
 		return;
 	}
-	// get lpImcP
-	if (!(lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate))) {
+	// get imcPrivPtr
+	if (!(imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate))) {
 		MessageBeep((UINT) - 1);
 		return;
 	}

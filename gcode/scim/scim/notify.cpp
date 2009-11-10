@@ -18,24 +18,24 @@ Module Name:
 #include "bhjdebug.h" 
 
 void PASCAL
-GenerateMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT lpImcP)
+GenerateMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 {
 
 	if (!hIMC) {
 		return;
 	} else if (!lpIMC) {
 		return;
-	} else if (!lpImcP) {
+	} else if (!imcPrivPtr) {
 		return;
-	} else if (lpImcP->fdwImeMsg & MSG_IN_IMETOASCIIEX) {
+	} else if (imcPrivPtr->fdwImeMsg & MSG_IN_IMETOASCIIEX) {
 		return;
 	} else {
 	}
 
-	lpIMC->dwNumMsgBuf += TranslateImeMessage(NULL, lpIMC, lpImcP);
+	lpIMC->dwNumMsgBuf += TranslateImeMessage(NULL, lpIMC, imcPrivPtr);
 
-	lpImcP->fdwImeMsg &= (MSG_ALREADY_OPEN | MSG_ALREADY_START);
-	lpImcP->fdwGcsFlag = 0;
+	imcPrivPtr->fdwImeMsg &= (MSG_ALREADY_OPEN | MSG_ALREADY_START);
+	imcPrivPtr->fdwGcsFlag = 0;
 
 	ImmGenerateMessage(hIMC);
 	return;
@@ -44,28 +44,28 @@ GenerateMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT lpImcP)
 void PASCAL
 GenerateImeMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, DWORD fdwImeMsg)
 {
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 
-	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-	if (!lpImcP) {
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	if (!imcPrivPtr) {
 		return;
 	}
 
-	lpImcP->fdwImeMsg |= fdwImeMsg;
+	imcPrivPtr->fdwImeMsg |= fdwImeMsg;
 
 	if (fdwImeMsg & MSG_CLOSE_CANDIDATE) {
-		lpImcP->fdwImeMsg &= ~(MSG_OPEN_CANDIDATE | MSG_CHANGE_CANDIDATE);
+		imcPrivPtr->fdwImeMsg &= ~(MSG_OPEN_CANDIDATE | MSG_CHANGE_CANDIDATE);
 	} else if (fdwImeMsg & (MSG_OPEN_CANDIDATE | MSG_CHANGE_CANDIDATE)) {
-		lpImcP->fdwImeMsg &= ~(MSG_CLOSE_CANDIDATE);
+		imcPrivPtr->fdwImeMsg &= ~(MSG_CLOSE_CANDIDATE);
 	}
 
 	if (fdwImeMsg & MSG_END_COMPOSITION) {
-		lpImcP->fdwImeMsg &= ~(MSG_START_COMPOSITION);
+		imcPrivPtr->fdwImeMsg &= ~(MSG_START_COMPOSITION);
 	} else if (fdwImeMsg & MSG_START_COMPOSITION) {
-		lpImcP->fdwImeMsg &= ~(MSG_END_COMPOSITION);
+		imcPrivPtr->fdwImeMsg &= ~(MSG_END_COMPOSITION);
 	}
 
-	GenerateMessage(hIMC, lpIMC, lpImcP);
+	GenerateMessage(hIMC, lpIMC, imcPrivPtr);
 
 	ImmUnlockIMCC(lpIMC->hPrivate);
 
@@ -74,22 +74,22 @@ GenerateImeMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, DWORD fdwImeMsg)
 
 void PASCAL CompCancel(HIMC hIMC, LPINPUTCONTEXT lpIMC)
 {
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 
 	if (!lpIMC->hPrivate) {
 		return;
 	}
 
-	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-	if (!lpImcP) {
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	if (!imcPrivPtr) {
 		return;
 	}
 
-	lpImcP->fdwGcsFlag = (DWORD) 0;
+	imcPrivPtr->fdwGcsFlag = (DWORD) 0;
 
-	if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
-		CandEscapeKey(lpIMC, lpImcP);
-	} else if (lpImcP->fdwImeMsg & MSG_ALREADY_START) {
+	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
+		CandEscapeKey(lpIMC, imcPrivPtr);
+	} else if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
 		LPCOMPOSITIONSTRING lpCompStr;
 		LPGUIDELINE lpGuideLine;
 
@@ -107,7 +107,7 @@ void PASCAL CompCancel(HIMC hIMC, LPINPUTCONTEXT lpIMC)
 			return;
 		}
 
-		CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, lpImcP);
+		CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, imcPrivPtr);
 
 		if (lpGuideLine) {
 			ImmUnlockIMCC(lpIMC->hGuideLine);
@@ -120,7 +120,7 @@ void PASCAL CompCancel(HIMC hIMC, LPINPUTCONTEXT lpIMC)
 		return;
 	}
 
-	GenerateMessage(hIMC, lpIMC, lpImcP);
+	GenerateMessage(hIMC, lpIMC, imcPrivPtr);
 
 	ImmUnlockIMCC(lpIMC->hPrivate);
 
@@ -131,7 +131,7 @@ BOOL PASCAL
 SetString(HIMC hIMC,
 		  LPINPUTCONTEXT lpIMC,
 		  LPCOMPOSITIONSTRING lpCompStr,
-		  LPPRIVCONTEXT lpImcP, LPTSTR lpszRead, DWORD dwReadLen)
+		  LPPRIVCONTEXT imcPrivPtr, LPTSTR lpszRead, DWORD dwReadLen)
 {
 	LPCANDIDATELIST lpCandList;
 	LPCANDIDATEINFO lpCandInfo;
@@ -153,9 +153,9 @@ SetString(HIMC hIMC,
 	dwReadLen = dwReadLen / sizeof(TCHAR);
 
 
-	lstrcpy(lpImcP->bSeq, lpszRead);
+	lstrcpy(imcPrivPtr->bSeq, lpszRead);
 
-	if (lpImcP->bSeq[3] == TEXT('?')) {
+	if (imcPrivPtr->bSeq[3] == TEXT('?')) {
 		MAX_COMP = 94;
 	} else {
 		MAX_COMP = 1;
@@ -208,23 +208,23 @@ SetString(HIMC hIMC,
 	lpCompStr->dwResultStrLen = 0;
 
 	// set private input context
-	lpImcP->iImeState = CST_INPUT;
+	imcPrivPtr->iImeState = CST_INPUT;
 
-	if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
-		lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
+		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 			~(MSG_OPEN_CANDIDATE);
 	}
 
-	if (!(lpImcP->fdwImeMsg & MSG_ALREADY_START)) {
-		lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_START_COMPOSITION) &
+	if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_START)) {
+		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_START_COMPOSITION) &
 			~(MSG_END_COMPOSITION);
 	}
 
-	lpImcP->fdwImeMsg |= MSG_COMPOSITION;
-	lpImcP->fdwGcsFlag = GCS_COMPREAD | GCS_COMP |
+	imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
+	imcPrivPtr->fdwGcsFlag = GCS_COMPREAD | GCS_COMP |
 		GCS_DELTASTART | GCS_CURSORPOS;
 
-	lpImcP->fdwImeMsg |= MSG_GUIDELINE;
+	imcPrivPtr->fdwImeMsg |= MSG_GUIDELINE;
 
 	lpCandList->dwCount = 0;
 
@@ -232,23 +232,23 @@ SetString(HIMC hIMC,
 		goto Finalize;
 	}
 
-	lpImcP->bSeq[0] = 0;
-	lpImcP->bSeq[1] = 0;
-	lpImcP->bSeq[2] = 0;
-	lpImcP->bSeq[3] = 0;
+	imcPrivPtr->bSeq[0] = 0;
+	imcPrivPtr->bSeq[1] = 0;
+	imcPrivPtr->bSeq[2] = 0;
+	imcPrivPtr->bSeq[3] = 0;
 
 
 	for (ii = 0; ii < 4; ii++) {
 		iRet =
-			UnicodeProcessKey(*(LPBYTE) ((LPBYTE) lpszRead + ii), lpImcP);
+			UnicodeProcessKey(*(LPBYTE) ((LPBYTE) lpszRead + ii), imcPrivPtr);
 		if (iRet == CST_INPUT) {
-			lpImcP->bSeq[ii] = *(LPBYTE) ((LPBYTE) lpszRead + ii);
+			imcPrivPtr->bSeq[ii] = *(LPBYTE) ((LPBYTE) lpszRead + ii);
 		} else {
 			goto Finalize;
 		}
 	}
 
-	wCode = UnicodeEngine(lpImcP);
+	wCode = UnicodeEngine(imcPrivPtr);
 	wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
 
 	for (i = 0; i < (0x100); i++, wCode++) {
@@ -267,34 +267,34 @@ SetString(HIMC hIMC,
 			lstrlen((LPTSTR)
 					((LPBYTE) lpCandList + lpCandList->dwOffset[0]));
 
-		lpImcP->fdwImeMsg |= MSG_COMPOSITION;
-		lpImcP->dwCompChar = (DWORD) 0;
-		lpImcP->fdwGcsFlag |= GCS_CURSORPOS | GCS_RESULTREAD | GCS_RESULT;
+		imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
+		imcPrivPtr->dwCompChar = (DWORD) 0;
+		imcPrivPtr->fdwGcsFlag |= GCS_CURSORPOS | GCS_RESULTREAD | GCS_RESULT;
 
-		if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
-			lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
+			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 				~(MSG_OPEN_CANDIDATE);
 		} else {
-			lpImcP->fdwImeMsg &=
+			imcPrivPtr->fdwImeMsg &=
 				~(MSG_CLOSE_CANDIDATE | MSG_OPEN_CANDIDATE);
 		}
 
-		lpImcP->iImeState = CST_INIT;
-		*(LPDWORD) lpImcP->bSeq = 0;
+		imcPrivPtr->iImeState = CST_INIT;
+		*(LPDWORD) imcPrivPtr->bSeq = 0;
 		lpCandList->dwCount = 0;
 
 
 	} else if (lpCandList->dwCount > 1) {
-		lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_OPEN_CANDIDATE) &
+		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_OPEN_CANDIDATE) &
 			~(MSG_CLOSE_CANDIDATE);
 
 	} else if (lpCandList->dwCount == 0) {
-		lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 			~(MSG_OPEN_CANDIDATE);
 
 	};
   Finalize:
-	GenerateMessage(hIMC, lpIMC, lpImcP);
+	GenerateMessage(hIMC, lpIMC, imcPrivPtr);
 
 	return (TRUE);
 }
@@ -309,7 +309,7 @@ ImeSetCompositionString(HIMC hIMC,
 
 	LPINPUTCONTEXT lpIMC;
 	LPCOMPOSITIONSTRING lpCompStr;
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 	BOOL fRet;
 
 	if (!hIMC) {
@@ -369,7 +369,7 @@ ImeSetCompositionString(HIMC hIMC,
 		return FALSE;
 	}
 
-	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
 	if (!lpCompStr) {
 		ImmUnlockIMCC(lpIMC->hCompStr);
 		ImmUnlockIMC(hIMC);
@@ -377,7 +377,7 @@ ImeSetCompositionString(HIMC hIMC,
 	}
 
 	fRet =
-		SetString(hIMC, lpIMC, lpCompStr, lpImcP, (LPTSTR) lpRead,
+		SetString(hIMC, lpIMC, lpCompStr, imcPrivPtr, (LPTSTR) lpRead,
 				  dwReadLen);
 
 	ImmUnlockIMCC(lpIMC->hPrivate);
@@ -397,7 +397,7 @@ void PASCAL NotifySelectCand(	// app tell IME that one candidate string is
 {
 	LPCANDIDATELIST lpCandList;
 	LPCOMPOSITIONSTRING lpCompStr;
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 
 	if (!lpCandInfo) {
 		return;
@@ -427,16 +427,16 @@ void PASCAL NotifySelectCand(	// app tell IME that one candidate string is
 	if (!lpCompStr) {
 		return;
 	}
-	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
 	if (!lpCompStr) {
 		ImmUnlockIMCC(lpIMC->hCompStr);
 		return;
 	}
 	// translate into message buffer
-	SelectOneCand(lpIMC, lpCompStr, lpImcP, lpCandList);
+	SelectOneCand(lpIMC, lpCompStr, imcPrivPtr, lpCandList);
 
 	// let app generate those messages in its message loop
-	GenerateMessage(hIMC, lpIMC, lpImcP);
+	GenerateMessage(hIMC, lpIMC, imcPrivPtr);
 
 	ImmUnlockIMCC(lpIMC->hPrivate);
 	ImmUnlockIMCC(lpIMC->hCompStr);
@@ -646,17 +646,17 @@ NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 			break;
 		case CPS_COMPLETE:
 			{
-				LPPRIVCONTEXT lpImcP;
+				LPPRIVCONTEXT imcPrivPtr;
 
-				lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-				if (!lpImcP) {
+				imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+				if (!imcPrivPtr) {
 					break;
 				}
 
-				if (lpImcP->iImeState == CST_INIT) {
+				if (imcPrivPtr->iImeState == CST_INIT) {
 					CompCancel(hIMC, lpIMC);
 					// can not do any thing
-				} else if (lpImcP->iImeState == CST_CHOOSE) {
+				} else if (imcPrivPtr->iImeState == CST_CHOOSE) {
 					LPCOMPOSITIONSTRING lpCompStr;
 					LPCANDIDATEINFO lpCandInfo;
 
@@ -676,12 +676,12 @@ NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 							(LPCANDIDATELIST) ((LPBYTE) lpCandInfo +
 											   lpCandInfo->dwOffset[0]);
 
-						SelectOneCand(lpIMC, lpCompStr, lpImcP,
+						SelectOneCand(lpIMC, lpCompStr, imcPrivPtr,
 									  lpCandList);
 
 						ImmUnlockIMCC(lpIMC->hCandInfo);
 
-						GenerateMessage(hIMC, lpIMC, lpImcP);
+						GenerateMessage(hIMC, lpIMC, imcPrivPtr);
 					}
 
 					if (lpCompStr)
@@ -691,7 +691,7 @@ NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 													IME_CMODE_SYMBOL)) !=
 						   IME_CMODE_NATIVE) {
 					CompCancel(hIMC, lpIMC);
-				} else if (lpImcP->iImeState == CST_INPUT) {
+				} else if (imcPrivPtr->iImeState == CST_INPUT) {
 					LPCOMPOSITIONSTRING lpCompStr;
 					LPGUIDELINE lpGuideLine;
 					LPCANDIDATEINFO lpCandInfo;
@@ -710,11 +710,11 @@ NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 					}
 
 
-					CompWord(' ', lpIMC, lpCompStr, lpImcP, lpGuideLine);
+					CompWord(' ', lpIMC, lpCompStr, imcPrivPtr, lpGuideLine);
 
-					if (lpImcP->iImeState == CST_INPUT) {
+					if (imcPrivPtr->iImeState == CST_INPUT) {
 						CompCancel(hIMC, lpIMC);
-					} else if (lpImcP->iImeState != CST_CHOOSE) {
+					} else if (imcPrivPtr->iImeState != CST_CHOOSE) {
 					} else if (lpCandInfo =
 							   (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->
 															 hCandInfo)) {
@@ -724,8 +724,8 @@ NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 							(LPCANDIDATELIST) ((LPBYTE) lpCandInfo +
 											   lpCandInfo->dwOffset[0]);
 
-//                        SelectOneCand(hIMC, lpIMC, lpCompStr, lpImcP, lpCandList);
-						SelectOneCand(lpIMC, lpCompStr, lpImcP,
+//                        SelectOneCand(hIMC, lpIMC, lpCompStr, imcPrivPtr, lpCandList);
+						SelectOneCand(lpIMC, lpCompStr, imcPrivPtr,
 									  lpCandList);
 
 						ImmUnlockIMCC(lpIMC->hCandInfo);
@@ -738,17 +738,17 @@ NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 						ImmUnlockIMCC(lpIMC->hGuideLine);
 
 					// don't phrase predition under this case
-					if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
-						lpImcP->fdwImeMsg =
-							(lpImcP->
+					if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
+						imcPrivPtr->fdwImeMsg =
+							(imcPrivPtr->
 							 fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 							~(MSG_OPEN_CANDIDATE | MSG_CHANGE_CANDIDATE);
 					} else {
-						lpImcP->fdwImeMsg &=
+						imcPrivPtr->fdwImeMsg &=
 							~(MSG_CLOSE_CANDIDATE | MSG_OPEN_CANDIDATE);
 					}
 
-					GenerateMessage(hIMC, lpIMC, lpImcP);
+					GenerateMessage(hIMC, lpIMC, imcPrivPtr);
 				} else {
 					CompCancel(hIMC, lpIMC);
 				}

@@ -56,11 +56,6 @@ ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 	return (TRUE);
 }
 
-/**********************************************************************/
-/* ImeSetDlgProc()                                                 */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 BOOL FAR PASCAL ImeSetDlgProc(	// dialog procedure of configuration
 								 HWND hDlg, UINT uMessage, WORD wParam,
 								 LONG lParam)
@@ -89,40 +84,6 @@ BOOL FAR PASCAL ImeSetDlgProc(	// dialog procedure of configuration
 	case WM_COMMAND:
 		switch (wParam) {
 		case IDOK:
-			{
-				HKEY hKeyCurrVersion;
-				HKEY hKeyGB;
-				DWORD retCode;
-				//CHAR  Buf[LINE_LEN];
-
-
-				retCode = OpenReg_PathSetup(&hKeyCurrVersion);
-
-				if (retCode) {
-					RegCreateKey(HKEY_CURRENT_USER,
-								 REGSTR_PATH_SETUP, &hKeyCurrVersion);
-				}
-
-
-				if (hKeyCurrVersion != NULL) {
-					retCode = RegCreateKeyEx(hKeyCurrVersion,
-											 szImeRegName,
-											 0,
-											 NULL,
-											 REG_OPTION_NON_VOLATILE,
-											 KEY_ALL_ACCESS,
-											 NULL, &hKeyGB, NULL);
-				}
-
-				if (hKeyGB != NULL) {
-
-					RegCloseKey(hKeyGB);
-				}
-
-				if (hKeyCurrVersion)
-					RegCloseKey(hKeyCurrVersion);
-
-			}
 			EndDialog(hDlg, FALSE);
 			break;
 		case IDCANCEL:
@@ -158,16 +119,6 @@ BOOL FAR PASCAL ImeSetDlgProc(	// dialog procedure of configuration
 	return (TRUE);
 }
 
-/**********************************************************************/
-/* ImeConfigure()                                                     */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
-/*BOOL WINAPI ImeConfigure(      // configurate the IME setting
-    HKL     hKL,               // hKL of this IME
-    HWND    hAppWnd,           // the owner window
-    DWORD   dwMode)            // mode of dialog
-{*/
 BOOL WINAPI ImeConfigure(		// configurate the IME setting
 							HKL hKL,	// hKL of this IME
 							HWND hAppWnd,	// the owner window
@@ -183,377 +134,6 @@ BOOL WINAPI ImeConfigure(		// configurate the IME setting
 		break;
 	}
 	return (TRUE);
-}
-
-
-/**********************************************************************/
-/* XGBConversion()                                                       */
-/**********************************************************************/
-DWORD PASCAL
-XGBConversion(LPCTSTR lpszReading, LPCANDIDATELIST lpCandList,
-			  UINT uBufLen)
-{
-	UINT MAX_COMP;
-	UINT uMaxCand;
-	UINT iRet;
-	WORD wCode;
-	LPPRIVCONTEXT lpImcP;
-	HGLOBAL hImcP;
-	int i;
-	DWORD dwSize;
-	if (!(lstrlen(lpszReading) == 4)) {
-		return (0);
-	}
-
-	hImcP = GlobalAlloc(GMEM_MOVEABLE, sizeof(PRIVCONTEXT));
-	if (!hImcP) {
-		return (0);
-	}
-	lpImcP = (LPPRIVCONTEXT) GlobalLock(hImcP);
-	if (!lpImcP) {
-		GlobalFree(hImcP);
-		return (0);
-	}
-	lstrcpy(lpImcP->bSeq, lpszReading);
-	if (lpImcP->bSeq[3] == TEXT('?')) {
-		MAX_COMP = 178;
-	} else {
-		MAX_COMP = 1;
-	}
-	dwSize =					// similar to ClearCand
-		// header length
-		sizeof(CANDIDATELIST) +
-		// candidate string pointers
-		sizeof(DWORD) * MAX_COMP +
-		// string plus NULL terminator
-		(sizeof(WORD) + sizeof(TCHAR)) * MAX_COMP;
-	if (!uBufLen) {
-		return (dwSize);
-	}
-
-	uMaxCand = uBufLen - sizeof(CANDIDATELIST);
-
-	uMaxCand /= sizeof(DWORD) + sizeof(WORD) + sizeof(TCHAR);
-	if (!uMaxCand) {
-		// can not even put one string
-		return (0);
-	}
-
-	lpCandList->dwSize = dwSize;
-	lpCandList->dwStyle = IME_CAND_READ;	// candidate having same reading
-	lpCandList->dwCount = 0;
-	lpCandList->dwSelection = 0;
-	lpCandList->dwPageSize = CANDPERPAGE;
-	lpCandList->dwOffset[0] = sizeof(CANDIDATELIST) + sizeof(DWORD) *
-		(uMaxCand - 1);
-	lpImcP->bSeq[0] = 0;
-	lpImcP->bSeq[1] = 0;
-	lpImcP->bSeq[2] = 0;
-	lpImcP->bSeq[3] = 0;
-
-	for (i = 0; i < 4; i++) {
-		iRet = XGBProcessKey(*(LPBYTE) ((LPBYTE) lpszReading + i), lpImcP);
-		if (iRet == CST_INPUT) {
-			lpImcP->bSeq[i] = *(LPBYTE) ((LPBYTE) lpszReading + i);
-		} else {
-			return (DWORD) 0;
-		}
-	}
-	wCode = XGBEngine(lpImcP);
-
-	wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-
-	for (i = 0; i < (0x7e - 0x40 + 1); i++, wCode++) {
-		XGBAddCodeIntoCand(lpCandList, wCode);
-	}
-	wCode++;
-	for (i = 0; i < (0xfe - 0x80 + 1); i++, wCode++) {
-		XGBAddCodeIntoCand(lpCandList, wCode);
-	}
-
-	GlobalUnlock(hImcP);
-	GlobalFree(hImcP);
-	return (dwSize);
-}
-
-/**********************************************************************/
-/* Conversion()                                                       */
-/**********************************************************************/
-DWORD PASCAL
-Conversion(LPCTSTR lpszReading, LPCANDIDATELIST lpCandList, UINT uBufLen)
-{
-	UINT MAX_COMP, i;
-	UINT uMaxCand;
-	UINT iRet;
-	WORD wCode;
-	LPPRIVCONTEXT lpImcP;
-	HGLOBAL hImcP;
-
-	DWORD dwSize;
-	if (!(lstrlen(lpszReading) == 4)) {
-		return (0);
-	}
-
-	hImcP = GlobalAlloc(GMEM_MOVEABLE, sizeof(PRIVCONTEXT));
-	if (!hImcP) {
-		return (0);
-	}
-	lpImcP = (LPPRIVCONTEXT) GlobalLock(hImcP);
-	if (!lpImcP) {
-		GlobalFree(hImcP);
-		return (0);
-	}
-	lstrcpy(lpImcP->bSeq, lpszReading);
-	if (lpImcP->bSeq[3] == TEXT('?')) {
-		MAX_COMP = 94;
-	} else {
-		MAX_COMP = 1;
-	}
-	dwSize =					// similar to ClearCand
-		// header length
-		sizeof(CANDIDATELIST) +
-		// candidate string pointers
-		sizeof(DWORD) * MAX_COMP +
-		// string plus NULL terminator
-		(sizeof(WORD) + sizeof(TCHAR)) * MAX_COMP;
-	if (!uBufLen) {
-		return (dwSize);
-	}
-
-	uMaxCand = uBufLen - sizeof(CANDIDATELIST);
-
-	uMaxCand /= sizeof(DWORD) + sizeof(WORD) + sizeof(TCHAR);
-	if (!uMaxCand) {
-		// can not even put one string
-		return (0);
-	}
-
-	lpCandList->dwSize = dwSize;
-	lpCandList->dwStyle = IME_CAND_READ;	// candidate having same reading
-	lpCandList->dwCount = 0;
-	lpCandList->dwSelection = 0;
-	lpCandList->dwPageSize = CANDPERPAGE;
-	lpCandList->dwOffset[0] = sizeof(CANDIDATELIST) + sizeof(DWORD) *
-		(uMaxCand - 1);
-	lpImcP->bSeq[0] = 0;
-	lpImcP->bSeq[1] = 0;
-	lpImcP->bSeq[2] = 0;
-	lpImcP->bSeq[3] = 0;
-
-	for (i = 0; i < 4; i++) {
-		iRet = GBProcessKey(*(LPBYTE) ((LPBYTE) lpszReading + i), lpImcP);
-		if (iRet == CST_INPUT) {
-			lpImcP->bSeq[i] = *(LPBYTE) ((LPBYTE) lpszReading + i);
-		} else {
-			return (DWORD) 0;
-		}
-	}
-	wCode = GBEngine(lpImcP);
-	wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-	for (i = 0; i < MAX_COMP; i++, wCode++) {
-		AddCodeIntoCand(lpCandList, wCode);
-	}
-
-	GlobalUnlock(hImcP);
-	GlobalFree(hImcP);
-	return (dwSize);
-}
-
-BOOL DBCSToGBCode(WORD wCode, TCHAR AbSeq[5])
-{
-	WORD AreaCode;
-
-	//Converte Unicode to GBK
-	// change CP_ACP to 936, so that it can work under Multilingul Env.
-	WideCharToMultiByte(NATIVE_ANSI_CP, WC_COMPOSITECHECK,
-						(LPCWSTR) & wCode, 1, (char *) &AreaCode, 2, NULL,
-						NULL);
-	wCode = AreaCode;
-
-//check valid GB range code first
-	WORD tmp;
-	tmp = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-	wsprintf(AbSeq, TEXT("%04x"), tmp);
-
-	return TRUE;
-}
-
-/***************************************************************************
-BOOL AreaToGB ( BYTE    AbSeq[5],BYTE    GbSeq[5])
-***************************************************************************/
-BOOL AreaToGB(TCHAR AbSeq[5], TCHAR GbSeq[5])
-{
-	TCHAR MbSeq[3];				// Temp string
-	// Area turn
-	wsprintf(MbSeq, TEXT("%lx"), (AbSeq[0] * 10 + AbSeq[1] + 0xa0));
-	GbSeq[0] = MbSeq[0];
-	GbSeq[1] = MbSeq[1];
-	//position turn
-	wsprintf(MbSeq, TEXT("%lx"), (AbSeq[2] * 10 + AbSeq[3] + 0xa0));
-	GbSeq[2] = MbSeq[0];
-	GbSeq[3] = MbSeq[1];
-	GbSeq[4] = TEXT('\0');
-	return TRUE;
-}
-
-DWORD PASCAL
-UnicodeReverseConversion(WORD wCode,
-						 LPCANDIDATELIST lpCandList, UINT uBufLen)
-{
-	UINT MAX_COMP = 1;
-	UINT nMaxKey = 4;
-	TCHAR AbSeq[5];
-	UINT uMaxCand;
-	DWORD dwSize =				// similar to ClearCand
-		// header length
-		sizeof(CANDIDATELIST) +
-		// candidate string pointers
-		sizeof(DWORD) * MAX_COMP +
-		// string plus NULL terminator
-		(sizeof(TCHAR) * nMaxKey + sizeof(TCHAR));
-
-	if (!uBufLen) {
-		return (dwSize);
-	}
-
-	uMaxCand = uBufLen - sizeof(CANDIDATELIST);
-
-	uMaxCand /= sizeof(DWORD) + (sizeof(TCHAR) * nMaxKey + sizeof(TCHAR));
-	if (uMaxCand == 0) {
-		// can not put one string
-		return (0);
-	}
-
-	lpCandList->dwSize = sizeof(CANDIDATELIST) +
-		sizeof(DWORD) * uMaxCand + (sizeof(TCHAR) * nMaxKey +
-									sizeof(TCHAR));
-	lpCandList->dwStyle = IME_CAND_READ;
-	lpCandList->dwCount = 0;
-	lpCandList->dwSelection = 0;
-	//lpCandList->dwPageSize = CANDPERPAGE; New Spac
-	lpCandList->dwOffset[0] = sizeof(CANDIDATELIST) + sizeof(DWORD);
-
-
-	wsprintf(AbSeq, TEXT("%04x"), wCode);
-	lstrcpy((LPTSTR) ((LPBYTE) lpCandList + lpCandList->dwOffset[0]),
-			AbSeq);
-
-
-	// string count ++
-	lpCandList->dwCount = 1;
-
-	return (dwSize);
-}
-
-DWORD PASCAL
-XGBReverseConversion(WORD wCode, LPCANDIDATELIST lpCandList, UINT uBufLen)
-{
-	UINT MAX_COMP = 1;
-	UINT nMaxKey = 4;
-	TCHAR AbSeq[5];
-	UINT uMaxCand;
-	DWORD dwSize =				// similar to ClearCand
-		// header length
-		sizeof(CANDIDATELIST) +
-		// candidate string pointers
-		sizeof(DWORD) * MAX_COMP +
-		// string plus NULL terminator
-		(sizeof(TCHAR) * nMaxKey + sizeof(TCHAR));
-
-	if (!uBufLen) {
-		return (dwSize);
-	}
-
-	uMaxCand = uBufLen - sizeof(CANDIDATELIST);
-
-	uMaxCand /= sizeof(DWORD) + (sizeof(TCHAR) * nMaxKey + sizeof(TCHAR));
-	if (uMaxCand == 0) {
-		// can not put one string
-		return (0);
-	}
-
-	lpCandList->dwSize = sizeof(CANDIDATELIST) +
-		sizeof(DWORD) * uMaxCand + (sizeof(TCHAR) * nMaxKey +
-									sizeof(TCHAR));
-	lpCandList->dwStyle = IME_CAND_READ;
-	lpCandList->dwCount = 0;
-	lpCandList->dwSelection = 0;
-	//lpCandList->dwPageSize = CANDPERPAGE; New Spac
-	lpCandList->dwOffset[0] = sizeof(CANDIDATELIST) + sizeof(DWORD);
-
-	if (!DBCSToGBCode(wCode, AbSeq))
-		return 0;				//actual is DBCSToGBInternalCode
-
-
-	lstrcpy((LPTSTR) ((LPBYTE) lpCandList + lpCandList->dwOffset[0]),
-			AbSeq);
-
-
-	// string count ++
-	lpCandList->dwCount = 1;
-
-	return (dwSize);
-}
-
-
-DWORD PASCAL
-ReverseConversion(WORD wCode, LPCANDIDATELIST lpCandList, UINT uBufLen)
-{
-	UINT MAX_COMP = 2;
-	UINT nMaxKey = 4;
-	TCHAR AbSeq[5];
-	TCHAR GbSeq[5];
-	UINT uMaxCand;
-	DWORD dwSize =				// similar to ClearCand
-		// header length
-		sizeof(CANDIDATELIST) +
-		// candidate string pointers
-		sizeof(DWORD) * MAX_COMP +
-		// string plus NULL terminator
-		(sizeof(TCHAR) * nMaxKey + sizeof(TCHAR));
-
-	if (!uBufLen) {
-		return (dwSize);
-	}
-
-	uMaxCand = uBufLen - sizeof(CANDIDATELIST);
-
-	uMaxCand /= sizeof(DWORD) + (sizeof(TCHAR) * nMaxKey + sizeof(TCHAR));
-	if (uMaxCand == 0) {
-		// can not put one string
-		return (0);
-	}
-
-	lpCandList->dwSize = sizeof(CANDIDATELIST) +
-		sizeof(DWORD) * uMaxCand + (sizeof(TCHAR) * nMaxKey +
-									sizeof(TCHAR));
-	lpCandList->dwStyle = IME_CAND_READ;
-	lpCandList->dwCount = 0;
-	lpCandList->dwSelection = 0;
-	//lpCandList->dwPageSize = CANDPERPAGE; New Spac
-	lpCandList->dwOffset[0] = sizeof(CANDIDATELIST) + sizeof(DWORD);
-
-	if (!DBCSToGBCode(wCode, AbSeq))
-		return 0;
-	AreaToGB(AbSeq, GbSeq);
-	AbSeq[1] += TEXT('0');
-	AbSeq[0] += TEXT('0');
-	AbSeq[3] += TEXT('0');
-	AbSeq[2] += TEXT('0');
-
-	lstrcpy((LPTSTR) ((LPBYTE) lpCandList + lpCandList->dwOffset[0]),
-			AbSeq);
-	lpCandList->dwOffset[1] =
-		lpCandList->dwOffset[0] + 4 * sizeof(TCHAR) + sizeof(TCHAR);
-
-	lstrcpy((LPTSTR) ((LPBYTE) lpCandList + lpCandList->dwOffset[1]),
-			GbSeq);
-
-
-	// string count ++
-	lpCandList->dwCount = 2;
-
-	return (dwSize);
 }
 
 //This function is used by another IME to query what's the 
@@ -576,8 +156,6 @@ BOOL WINAPI ImeDestroy(UINT uReserved)
 	return (TRUE);
 }
 
-#define IME_INPUTKEYTOSEQUENCE  0x22
-
 LRESULT WINAPI ImeEscape(HIMC hIMC, UINT uSubFunc, LPVOID lpData)
 {
 	EnterLeaveDebug(); 
@@ -585,9 +163,6 @@ LRESULT WINAPI ImeEscape(HIMC hIMC, UINT uSubFunc, LPVOID lpData)
 
 }
 
-/**********************************************************************/
-/* InitCompStr()                                                      */
-/**********************************************************************/
 void PASCAL InitCompStr(		// init setting for composing string
 						   LPCOMPOSITIONSTRING lpCompStr)
 {
@@ -615,11 +190,6 @@ void PASCAL InitCompStr(		// init setting for composing string
 	return;
 }
 
-/**********************************************************************/
-/* ClearCompStr()                                                     */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 BOOL PASCAL ClearCompStr(LPINPUTCONTEXT lpIMC)
 {
 	HIMCC hMem;
@@ -716,11 +286,6 @@ BOOL PASCAL ClearCompStr(LPINPUTCONTEXT lpIMC)
 	return (TRUE);
 }
 
-/**********************************************************************/
-/* ClearCand()                                                        */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 BOOL PASCAL ClearCand(LPINPUTCONTEXT lpIMC)
 {
 	HIMCC hMem;
@@ -779,11 +344,6 @@ BOOL PASCAL ClearCand(LPINPUTCONTEXT lpIMC)
 	return (TRUE);
 }
 
-/**********************************************************************/
-/* ClearGuideLine()                                                   */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 BOOL PASCAL ClearGuideLine(LPINPUTCONTEXT lpIMC)
 {
 	HIMCC hMem;
@@ -819,9 +379,6 @@ BOOL PASCAL ClearGuideLine(LPINPUTCONTEXT lpIMC)
 	return (TRUE);
 }
 
-/**********************************************************************/
-/* InitContext()                                                      */
-/**********************************************************************/
 void PASCAL InitContext(LPINPUTCONTEXT lpIMC)
 {
 	if (lpIMC->fdwInit & INIT_STATUSWNDPOS) {
@@ -866,7 +423,7 @@ void PASCAL InitContext(LPINPUTCONTEXT lpIMC)
 
 BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 {
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 
 	if (fSelect) {
 
@@ -891,27 +448,27 @@ BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 	if (!lpIMC->hPrivate)
 		return FALSE;
 
-	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-	if (!lpImcP)
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	if (!imcPrivPtr)
 		return FALSE;
 
 	if (fSelect) {
 		//
 		// init fields of hPrivate
 		//
-		lpImcP->iImeState = CST_INIT;
-		lpImcP->fdwImeMsg = (DWORD) 0;
-		lpImcP->dwCompChar = (DWORD) 0;
-		lpImcP->fdwGcsFlag = (DWORD) 0;
+		imcPrivPtr->iImeState = CST_INIT;
+		imcPrivPtr->fdwImeMsg = (DWORD) 0;
+		imcPrivPtr->dwCompChar = (DWORD) 0;
+		imcPrivPtr->fdwGcsFlag = (DWORD) 0;
 
-		lpImcP->uSYHFlg = (UINT) 0;
-		lpImcP->uDYHFlg = (UINT) 0;
-		lpImcP->uDSMHCount = (UINT) 0;
-		lpImcP->uDSMHFlg = (UINT) 0;
+		imcPrivPtr->uSYHFlg = (UINT) 0;
+		imcPrivPtr->uDYHFlg = (UINT) 0;
+		imcPrivPtr->uDSMHCount = (UINT) 0;
+		imcPrivPtr->uDSMHFlg = (UINT) 0;
 
-		//lpImcP->fdwSentence = (DWORD)NULL;
+		//imcPrivPtr->fdwSentence = (DWORD)NULL;
 
-		*(LPDWORD) lpImcP->bSeq = 0;
+		*(LPDWORD) imcPrivPtr->bSeq = 0;
 
 
 		lpIMC->fOpen = TRUE;
@@ -1051,11 +608,6 @@ LONG OpenReg_PathSetup(HKEY * phKey)
 						KEY_EXECUTE | KEY_QUERY_VALUE, phKey);
 }
 
-/**********************************************************************/
-//LONG OpenReg_User(HKEY hKey,        // handle of open key 
-//                LPCTSTR  lpszSubKey,    // address of name of subkey to open 
-//                PHKEY  phkResult);     // address of handle of open key 
-/**********************************************************************/
 LONG OpenReg_User(HKEY hKey,	// handle of open key 
 				  LPCTSTR lpszSubKey,	// address of name of subkey to open 
 				  PHKEY phkResult)	// address of handle of open key 

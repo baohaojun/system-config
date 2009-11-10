@@ -21,15 +21,15 @@ void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
 /* Description:                                                       */
 /*      Conv GBcode                                                   */
 /**********************************************************************/
-WORD PASCAL UnicodeEngine(LPPRIVCONTEXT lpImcP)
+WORD PASCAL UnicodeEngine(LPPRIVCONTEXT imcPrivPtr)
 {
-	if (lpImcP->bSeq[3] || lpImcP->bSeq[2] == TEXT('?')
-		|| lpImcP->bSeq[2] == TEXT(' ')) {
-		if (lpImcP->bSeq[2] == TEXT('?') || lpImcP->bSeq[2] == TEXT(' ')) {
-			lpImcP->bSeq[2] = TEXT('0');
-			lpImcP->bSeq[3] = TEXT('0');
+	if (imcPrivPtr->bSeq[3] || imcPrivPtr->bSeq[2] == TEXT('?')
+		|| imcPrivPtr->bSeq[2] == TEXT(' ')) {
+		if (imcPrivPtr->bSeq[2] == TEXT('?') || imcPrivPtr->bSeq[2] == TEXT(' ')) {
+			imcPrivPtr->bSeq[2] = TEXT('0');
+			imcPrivPtr->bSeq[3] = TEXT('0');
 		}
-		return (AsciiToGB(lpImcP));
+		return (AsciiToGB(imcPrivPtr));
 	} else {
 		return (0);
 	}
@@ -40,16 +40,16 @@ WORD PASCAL UnicodeEngine(LPPRIVCONTEXT lpImcP)
 /* Description:                                                       */
 /*      Conv GBcode                                                   */
 /**********************************************************************/
-WORD PASCAL XGBEngine(LPPRIVCONTEXT lpImcP)
+WORD PASCAL XGBEngine(LPPRIVCONTEXT imcPrivPtr)
 {
 	WORD wCode;
 
-	if (lpImcP->bSeq[3] || (lpImcP->bSeq[2] == TEXT('?'))) {
-		if (lpImcP->bSeq[2] == TEXT('?')) {	//add 626
-			lpImcP->bSeq[2] = TEXT('4');
-			lpImcP->bSeq[3] = TEXT('0');
+	if (imcPrivPtr->bSeq[3] || (imcPrivPtr->bSeq[2] == TEXT('?'))) {
+		if (imcPrivPtr->bSeq[2] == TEXT('?')) {	//add 626
+			imcPrivPtr->bSeq[2] = TEXT('4');
+			imcPrivPtr->bSeq[3] = TEXT('0');
 		}
-		wCode = AsciiToGB(lpImcP);
+		wCode = AsciiToGB(imcPrivPtr);
 		return wCode;
 	} else {
 		return ((WORD) NULL);
@@ -61,13 +61,13 @@ WORD PASCAL XGBEngine(LPPRIVCONTEXT lpImcP)
 /* Description:                                                       */
 /*      Conv GBcode for Space                                         */
 /**********************************************************************/
-WORD PASCAL XGBSpcEng(LPPRIVCONTEXT lpImcP)
+WORD PASCAL XGBSpcEng(LPPRIVCONTEXT imcPrivPtr)
 {
 	WORD wCode;
 
-	lpImcP->bSeq[2] = TEXT('4');
-	lpImcP->bSeq[3] = TEXT('0');
-	wCode = AsciiToGB(lpImcP);
+	imcPrivPtr->bSeq[2] = TEXT('4');
+	imcPrivPtr->bSeq[3] = TEXT('0');
+	wCode = AsciiToGB(imcPrivPtr);
 
 	return wCode;
 }
@@ -77,26 +77,26 @@ WORD PASCAL XGBSpcEng(LPPRIVCONTEXT lpImcP)
 /* Description:                                                       */
 /*      Conv GBcode                                                   */
 /**********************************************************************/
-WORD PASCAL GBEngine(LPPRIVCONTEXT lpImcP)
+WORD PASCAL GBEngine(LPPRIVCONTEXT imcPrivPtr)
 {
 	WORD wCode;
 
-	if (lpImcP->bSeq[3] || (lpImcP->bSeq[2] == TEXT('?'))) {
+	if (imcPrivPtr->bSeq[3] || (imcPrivPtr->bSeq[2] == TEXT('?'))) {
 
-		if (lpImcP->bSeq[0] >= TEXT('0') && lpImcP->bSeq[0] <= TEXT('9')) {	//Area mode
-			if (lpImcP->bSeq[2] == TEXT('?')) {
+		if (imcPrivPtr->bSeq[0] >= TEXT('0') && imcPrivPtr->bSeq[0] <= TEXT('9')) {	//Area mode
+			if (imcPrivPtr->bSeq[2] == TEXT('?')) {
 
-				lpImcP->bSeq[2] = TEXT('0');
-				lpImcP->bSeq[3] = TEXT('1');
+				imcPrivPtr->bSeq[2] = TEXT('0');
+				imcPrivPtr->bSeq[3] = TEXT('1');
 			}
-			return (AsciiToArea(lpImcP));
-		} else if (lpImcP->bSeq[0] >= TEXT('a') && lpImcP->bSeq[0] <= TEXT('f')) {	//GB mode
+			return (AsciiToArea(imcPrivPtr));
+		} else if (imcPrivPtr->bSeq[0] >= TEXT('a') && imcPrivPtr->bSeq[0] <= TEXT('f')) {	//GB mode
 
-			if (lpImcP->bSeq[2] == TEXT('?')) {
-				lpImcP->bSeq[2] = TEXT('a');
-				lpImcP->bSeq[3] = TEXT('1');
+			if (imcPrivPtr->bSeq[2] == TEXT('?')) {
+				imcPrivPtr->bSeq[2] = TEXT('a');
+				imcPrivPtr->bSeq[3] = TEXT('1');
 			}
-			wCode = AsciiToGB(lpImcP);
+			wCode = AsciiToGB(imcPrivPtr);
 			return wCode;
 		} else {
 			return ((WORD) NULL);
@@ -111,16 +111,16 @@ WORD PASCAL GBEngine(LPPRIVCONTEXT lpImcP)
 /* Description:                                                       */
 /*      Conv GBcode for Space                                         */
 /**********************************************************************/
-WORD PASCAL GBSpcEng(LPPRIVCONTEXT lpImcP)
+WORD PASCAL GBSpcEng(LPPRIVCONTEXT imcPrivPtr)
 {
-	if (lpImcP->bSeq[0] >= TEXT('0') && lpImcP->bSeq[0] <= TEXT('9')) {	//Area mode
-		lpImcP->bSeq[2] = TEXT('0');
-		lpImcP->bSeq[3] = TEXT('1');
-		return (AsciiToArea(lpImcP));
-	} else if (lpImcP->bSeq[0] >= TEXT('a') && lpImcP->bSeq[0] <= TEXT('f')) {	//GB mode
-		lpImcP->bSeq[2] = TEXT('a');
-		lpImcP->bSeq[3] = TEXT('1');
-		return (AsciiToGB(lpImcP));
+	if (imcPrivPtr->bSeq[0] >= TEXT('0') && imcPrivPtr->bSeq[0] <= TEXT('9')) {	//Area mode
+		imcPrivPtr->bSeq[2] = TEXT('0');
+		imcPrivPtr->bSeq[3] = TEXT('1');
+		return (AsciiToArea(imcPrivPtr));
+	} else if (imcPrivPtr->bSeq[0] >= TEXT('a') && imcPrivPtr->bSeq[0] <= TEXT('f')) {	//GB mode
+		imcPrivPtr->bSeq[2] = TEXT('a');
+		imcPrivPtr->bSeq[3] = TEXT('1');
+		return (AsciiToGB(imcPrivPtr));
 	} else {
 		return ((WORD) NULL);
 	}
@@ -130,15 +130,15 @@ WORD PASCAL GBSpcEng(LPPRIVCONTEXT lpImcP)
 /* AsciiToGB                                                          */
 /* Description:                                                       */
 /**********************************************************************/
-WORD PASCAL AsciiToGB(LPPRIVCONTEXT lpImcP)
+WORD PASCAL AsciiToGB(LPPRIVCONTEXT imcPrivPtr)
 {
 	WORD GBCode;
 
 	GBCode =
-		(CharToHex(lpImcP->bSeq[2]) << 4) + CharToHex(lpImcP->bSeq[3]);
+		(CharToHex(imcPrivPtr->bSeq[2]) << 4) + CharToHex(imcPrivPtr->bSeq[3]);
 	GBCode = GBCode * 256;
 	GBCode =
-		(CharToHex(lpImcP->bSeq[0]) << 4) + CharToHex(lpImcP->bSeq[1]) +
+		(CharToHex(imcPrivPtr->bSeq[0]) << 4) + CharToHex(imcPrivPtr->bSeq[1]) +
 		GBCode;
 
 	return (GBCode);
@@ -148,15 +148,15 @@ WORD PASCAL AsciiToGB(LPPRIVCONTEXT lpImcP)
 /* AsciiToArea                                                        */
 /* Description:                                                       */
 /**********************************************************************/
-WORD PASCAL AsciiToArea(LPPRIVCONTEXT lpImcP)
+WORD PASCAL AsciiToArea(LPPRIVCONTEXT imcPrivPtr)
 {
 	WORD AreaCode;
 	AreaCode =
-		(CharToHex(lpImcP->bSeq[2]) * 10) + CharToHex(lpImcP->bSeq[3]) +
+		(CharToHex(imcPrivPtr->bSeq[2]) * 10) + CharToHex(imcPrivPtr->bSeq[3]) +
 		0xa0;
 	AreaCode = AreaCode * 256;
 	AreaCode =
-		(CharToHex(lpImcP->bSeq[0]) * 10) + CharToHex(lpImcP->bSeq[1]) +
+		(CharToHex(imcPrivPtr->bSeq[0]) * 10) + CharToHex(imcPrivPtr->bSeq[1]) +
 		AreaCode + 0xa0;
 	return (AreaCode);
 }
@@ -173,21 +173,16 @@ WORD PASCAL CharToHex(TCHAR cChar)
 
 
 
-/**********************************************************************/
-/* Engine()                                                           */
-/* Description:                                                       */
-/*      search MB and fill lpCompStr and lpCandList                   */
-/**********************************************************************/
 int PASCAL
 Engine(LPCOMPOSITIONSTRING lpCompStr,
 	   LPCANDIDATELIST lpCandList,
-	   LPPRIVCONTEXT lpImcP, LPINPUTCONTEXT lpIMC, WORD wCharCode)
+	   LPPRIVCONTEXT imcPrivPtr, LPINPUTCONTEXT lpIMC, WORD wCharCode)
 {
 	if (lpCompStr->dwCursorPos < 4
-		&& (lpImcP->bSeq[2] != TEXT('?')) && (wCharCode != TEXT(' '))) {
+		&& (imcPrivPtr->bSeq[2] != TEXT('?')) && (wCharCode != TEXT(' '))) {
 		return (ENGINE_COMP);
 	} else if ((lpCompStr->dwCursorPos == 4)
-			   || (lpImcP->bSeq[2] == TEXT('?'))
+			   || (imcPrivPtr->bSeq[2] == TEXT('?'))
 			   || ((wCharCode == TEXT(' '))
 				   && (lpCompStr->dwCursorPos == 2))) {
 
@@ -196,7 +191,7 @@ Engine(LPCOMPOSITIONSTRING lpCompStr,
 			return -1;
 		}
 
-		if (!lpImcP) {
+		if (!imcPrivPtr) {
 			MessageBeep((UINT) - 1);
 			return -1;
 		}
@@ -208,12 +203,12 @@ Engine(LPCOMPOSITIONSTRING lpCompStr,
 
 		memset(ResaultStr, 0, sizeof(ResaultStr));
 
-		if ((lpImcP->bSeq[2] == TEXT('?') || wCharCode == TEXT(' '))) {
-			lpImcP->bSeq[2] = TEXT('0');
-			lpImcP->bSeq[3] = TEXT('0');
-			lpImcP->bSeq[4] = TEXT('\0');
+		if ((imcPrivPtr->bSeq[2] == TEXT('?') || wCharCode == TEXT(' '))) {
+			imcPrivPtr->bSeq[2] = TEXT('0');
+			imcPrivPtr->bSeq[3] = TEXT('0');
+			imcPrivPtr->bSeq[4] = TEXT('\0');
 
-			wCode = UnicodeEngine(lpImcP);
+			wCode = UnicodeEngine(imcPrivPtr);
 
 			wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
 
@@ -239,7 +234,7 @@ Engine(LPCOMPOSITIONSTRING lpCompStr,
 			InitCompStr(lpCompStr);
 
 			// the result string = the selected candidate;
-			wCode = UnicodeEngine(lpImcP);
+			wCode = UnicodeEngine(imcPrivPtr);
 			{
 				WCHAR UniStr[2];
 
@@ -360,7 +355,7 @@ void PASCAL XGBAddCodeIntoCand(LPCANDIDATELIST lpCandList, WORD wCode)
 void PASCAL
 CompEscapeKey(LPINPUTCONTEXT lpIMC,
 			  LPCOMPOSITIONSTRING lpCompStr,
-			  LPGUIDELINE lpGuideLine, LPPRIVCONTEXT lpImcP)
+			  LPGUIDELINE lpGuideLine, LPPRIVCONTEXT imcPrivPtr)
 {
 	if (!lpGuideLine) {
 		MessageBeep((UINT) - 1);
@@ -369,25 +364,25 @@ CompEscapeKey(LPINPUTCONTEXT lpIMC,
 		lpGuideLine->dwIndex = GL_ID_UNKNOWN;
 		lpGuideLine->dwStrLen = 0;
 
-		lpImcP->fdwImeMsg |= MSG_GUIDELINE;
+		imcPrivPtr->fdwImeMsg |= MSG_GUIDELINE;
 	}
 
-	if (lpImcP->iImeState != CST_CHOOSE) {
-		if (lpImcP->fdwImeMsg & MSG_ALREADY_START) {
-			lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_END_COMPOSITION) &
+	if (imcPrivPtr->iImeState != CST_CHOOSE) {
+		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
+			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_END_COMPOSITION) &
 				~(MSG_START_COMPOSITION);
 		}
 	}
 
 
-	lpImcP->iImeState = CST_INIT;
-	*(LPDWORD) lpImcP->bSeq = 0;
+	imcPrivPtr->iImeState = CST_INIT;
+	*(LPDWORD) imcPrivPtr->bSeq = 0;
 
 	if (lpCompStr) {
 		InitCompStr(lpCompStr);
-		lpImcP->fdwImeMsg |= MSG_COMPOSITION;
-		lpImcP->dwCompChar = VK_ESCAPE;
-		lpImcP->fdwGcsFlag |= (GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
+		imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
+		imcPrivPtr->dwCompChar = VK_ESCAPE;
+		imcPrivPtr->fdwGcsFlag |= (GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
 							   GCS_DELTASTART);
 	}
 
@@ -399,44 +394,44 @@ CompEscapeKey(LPINPUTCONTEXT lpIMC,
 /**********************************************************************/
 void PASCAL
 CompBackSpaceKey(LPINPUTCONTEXT lpIMC,
-				 LPCOMPOSITIONSTRING lpCompStr, LPPRIVCONTEXT lpImcP)
+				 LPCOMPOSITIONSTRING lpCompStr, LPPRIVCONTEXT imcPrivPtr)
 {
 
 	if (lpCompStr->dwCursorPos < sizeof(BYTE)) {
 		lpCompStr->dwCursorPos = sizeof(BYTE);
 	}
 
-	lpImcP->bSeq[3] = 0;
+	imcPrivPtr->bSeq[3] = 0;
 
 	// go back a compsoition char
 	lpCompStr->dwCursorPos -= sizeof(BYTE);
 
 	// clean the sequence code
-	lpImcP->bSeq[lpCompStr->dwCursorPos] = 0;
+	imcPrivPtr->bSeq[lpCompStr->dwCursorPos] = 0;
 
-	lpImcP->fdwImeMsg |= MSG_COMPOSITION;
-	lpImcP->dwCompChar = TEXT('\b');
-	lpImcP->fdwGcsFlag |= (GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
+	imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
+	imcPrivPtr->dwCompChar = TEXT('\b');
+	imcPrivPtr->fdwGcsFlag |= (GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
 						   GCS_DELTASTART);
 
 	if (!lpCompStr->dwCursorPos) {
-		if (lpImcP->fdwImeMsg & (MSG_ALREADY_OPEN)) {
+		if (imcPrivPtr->fdwImeMsg & (MSG_ALREADY_OPEN)) {
 			ClearCand(lpIMC);
-			lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 				~(MSG_OPEN_CANDIDATE);
 		}
 
-		if (lpImcP->iImeState != CST_INIT) {
-			lpImcP->iImeState = CST_INIT;
+		if (imcPrivPtr->iImeState != CST_INIT) {
+			imcPrivPtr->iImeState = CST_INIT;
 			lpCompStr->dwCompReadStrLen = lpCompStr->dwCompStrLen =
 				lpCompStr->dwDeltaStart = lpCompStr->dwCursorPos;
-			Finalize(lpIMC, lpCompStr, lpImcP, TEXT('\b'));
+			Finalize(lpIMC, lpCompStr, imcPrivPtr, TEXT('\b'));
 			return;
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_ALREADY_START) {
+		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
 			InitCompStr(lpCompStr);
-			lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_END_COMPOSITION) &
+			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_END_COMPOSITION) &
 				~(MSG_START_COMPOSITION);
 			return;
 		}
@@ -446,7 +441,7 @@ CompBackSpaceKey(LPINPUTCONTEXT lpIMC,
 	lpCompStr->dwCompReadStrLen = lpCompStr->dwCompStrLen =
 		lpCompStr->dwDeltaStart = lpCompStr->dwCursorPos;
 
-	Finalize(lpIMC, lpCompStr, lpImcP, TEXT('\b'));
+	Finalize(lpIMC, lpCompStr, imcPrivPtr, TEXT('\b'));
 
 	return;
 }
@@ -456,7 +451,7 @@ CompBackSpaceKey(LPINPUTCONTEXT lpIMC,
 /**********************************************************************/
 void PASCAL
 CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
-			LPPRIVCONTEXT lpImcP, LPGUIDELINE lpGuideLine, WORD wCharCode)
+			LPPRIVCONTEXT imcPrivPtr, LPGUIDELINE lpGuideLine, WORD wCharCode)
 {
 	register DWORD dwCursorPos;
 
@@ -469,29 +464,29 @@ CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
 		lpGuideLine->dwLevel = GL_LEVEL_ERROR;
 		lpGuideLine->dwIndex = GL_ID_TOOMANYSTROKE;
 
-		lpImcP->fdwImeMsg |= MSG_GUIDELINE;
+		imcPrivPtr->fdwImeMsg |= MSG_GUIDELINE;
 		return;
 	}
 	// set MSG_START_COMPOSITION
-	if (!(lpImcP->fdwImeMsg & MSG_ALREADY_START)) {
-		lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_START_COMPOSITION) &
+	if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_START)) {
+		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_START_COMPOSITION) &
 			~(MSG_END_COMPOSITION);
 	}
 
-	if (lpImcP->iImeState == CST_INIT) {
+	if (imcPrivPtr->iImeState == CST_INIT) {
 		// clean the 4 bytes in one time
-		*(LPDWORD) lpImcP->bSeq = 0;
+		*(LPDWORD) imcPrivPtr->bSeq = 0;
 	}
 
 
-	lpImcP->bSeq[dwCursorPos] = (BYTE) wCharCode;
+	imcPrivPtr->bSeq[dwCursorPos] = (BYTE) wCharCode;
 
-	lpImcP->dwCompChar = (DWORD) wCharCode;
+	imcPrivPtr->dwCompChar = (DWORD) wCharCode;
 
 	// set reading string for lpCompStr
 	*((LPUNAWORD) ((LPBYTE) lpCompStr + lpCompStr->dwCompReadStrOffset +
 				   dwCursorPos * sizeof(TCHAR))) =
-		(BYTE) lpImcP->dwCompChar;
+		(BYTE) imcPrivPtr->dwCompChar;
 
 	*((LPUNAWORD) ((LPBYTE) lpCompStr + lpCompStr->dwCompReadAttrOffset +
 				   dwCursorPos * sizeof(TCHAR))) =
@@ -515,13 +510,13 @@ CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
 	lpCompStr->dwCursorPos = lpCompStr->dwCompStrLen;
 
 	// set lpImcp->iImeState
-	lpImcP->iImeState = CST_INPUT;
+	imcPrivPtr->iImeState = CST_INPUT;
 
 	// tell app, there is a composition char generated
-	lpImcP->fdwImeMsg |= MSG_COMPOSITION;
+	imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
 
 	// set lpImeP->fdwGcsFlag
-	lpImcP->fdwGcsFlag |=
+	imcPrivPtr->fdwGcsFlag |=
 		GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS | GCS_DELTASTART;
 
 	return;
@@ -530,7 +525,7 @@ CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
 
 UINT PASCAL
 Finalize(LPINPUTCONTEXT lpIMC,
-		 LPCOMPOSITIONSTRING lpCompStr, LPPRIVCONTEXT lpImcP,
+		 LPCOMPOSITIONSTRING lpCompStr, LPPRIVCONTEXT imcPrivPtr,
 		 WORD wCharCode)
 {
 	LPCANDIDATEINFO lpCandInfo;
@@ -553,7 +548,7 @@ Finalize(LPINPUTCONTEXT lpIMC,
 	lpCandList->dwSelection = 0;
 
 	// search the IME tables
-	fEngine = Engine(lpCompStr, lpCandList, lpImcP, lpIMC, wCharCode);
+	fEngine = Engine(lpCompStr, lpCandList, imcPrivPtr, lpIMC, wCharCode);
 
 	if (fEngine == ENGINE_COMP) {
 		lpCandInfo->dwCount = 1;
@@ -561,7 +556,7 @@ Finalize(LPINPUTCONTEXT lpIMC,
 		if (((lpCompStr->dwCursorPos < 3) && (wCharCode != TEXT(' ')))
 			|| ((lpCompStr->dwCursorPos == 3)
 				&& (wCharCode != TEXT(' ')) && (wCharCode != TEXT('?')))) {
-			lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 				~(MSG_OPEN_CANDIDATE);
 			ImmUnlockIMCC(lpIMC->hCandInfo);
 			return (fEngine);
@@ -569,45 +564,45 @@ Finalize(LPINPUTCONTEXT lpIMC,
 
 		if (lpCandList->dwCount != 0x0000) {
 			// open composition candidate UI window for the string(s)
-			if ((lpImcP->
+			if ((imcPrivPtr->
 				 fdwImeMsg & (MSG_ALREADY_OPEN | MSG_CLOSE_CANDIDATE)) ==
 				(MSG_ALREADY_OPEN | MSG_CLOSE_CANDIDATE)) {
-				lpImcP->fdwImeMsg =
-					(lpImcP->
+				imcPrivPtr->fdwImeMsg =
+					(imcPrivPtr->
 					 fdwImeMsg | MSG_CHANGE_CANDIDATE) &
 					~(MSG_CLOSE_CANDIDATE);
-			} else if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
-				lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
+			} else if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
+				imcPrivPtr->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
 			} else {
-				lpImcP->fdwImeMsg =
-					(lpImcP->
+				imcPrivPtr->fdwImeMsg =
+					(imcPrivPtr->
 					 fdwImeMsg | MSG_OPEN_CANDIDATE) &
 					~(MSG_CLOSE_CANDIDATE);
 			}
 
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_ALREADY_START) {
-			lpImcP->fdwImeMsg |= MSG_COMPOSITION;
+		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
+			imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
 		}
 	} else if (fEngine == ENGINE_ASCII) {
 	} else if (fEngine == ENGINE_RESAULT) {
 
 		// Set lpImep!   and tell application, there is a reslut string
-		lpImcP->fdwImeMsg |= MSG_COMPOSITION;
-		lpImcP->dwCompChar = (DWORD) 0;
-		lpImcP->fdwGcsFlag |= GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
+		imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
+		imcPrivPtr->dwCompChar = (DWORD) 0;
+		imcPrivPtr->fdwGcsFlag |= GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
 			GCS_DELTASTART | GCS_RESULTREAD | GCS_RESULT;
 
-		if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
-			lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
+			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 				~(MSG_OPEN_CANDIDATE);
 		}
 		// clear  candidate now
 		lpCandList->dwCount = 0;
 		// set iImeState with CST_INIT
-		lpImcP->iImeState = CST_INIT;
-		*(LPDWORD) lpImcP->bSeq = 0;
+		imcPrivPtr->iImeState = CST_INIT;
+		*(LPDWORD) imcPrivPtr->bSeq = 0;
 	}
 
 	ImmUnlockIMCC(lpIMC->hCandInfo);
@@ -623,7 +618,7 @@ void PASCAL CompWord(			// compose the Chinese word(s) according to
 						WORD wCharCode,
 						LPINPUTCONTEXT lpIMC,
 						LPCOMPOSITIONSTRING lpCompStr,
-						LPPRIVCONTEXT lpImcP, LPGUIDELINE lpGuideLine)
+						LPPRIVCONTEXT imcPrivPtr, LPGUIDELINE lpGuideLine)
 {
 
 	// lpComStr=NULL?
@@ -633,7 +628,7 @@ void PASCAL CompWord(			// compose the Chinese word(s) according to
 	}
 	// escape key
 	if (wCharCode == VK_ESCAPE) {	// not good to use VK as char, but...
-		CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, lpImcP);
+		CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, imcPrivPtr);
 		return;
 	}
 	// GuideLine
@@ -643,7 +638,7 @@ void PASCAL CompWord(			// compose the Chinese word(s) according to
 	} else {
 		// previous input error cause us trancate some chars
 		if (lpGuideLine->dwLevel == GL_LEVEL_ERROR) {
-			lpImcP->bSeq[lpCompStr->dwCursorPos / 2] = 0;
+			imcPrivPtr->bSeq[lpCompStr->dwCursorPos / 2] = 0;
 			lpCompStr->dwCompReadStrLen = lpCompStr->dwCompStrLen =
 				lpCompStr->dwCursorPos;
 			lpCompStr->dwCompReadAttrLen = lpCompStr->dwCompReadStrLen;
@@ -653,12 +648,12 @@ void PASCAL CompWord(			// compose the Chinese word(s) according to
 		lpGuideLine->dwIndex = GL_ID_UNKNOWN;
 		lpGuideLine->dwStrLen = 0;
 
-		lpImcP->fdwImeMsg |= MSG_GUIDELINE;
+		imcPrivPtr->fdwImeMsg |= MSG_GUIDELINE;
 	}
 
 	// backspace key
 	if (wCharCode == TEXT('\b')) {
-		CompBackSpaceKey(lpIMC, lpCompStr, lpImcP);
+		CompBackSpaceKey(lpIMC, lpCompStr, imcPrivPtr);
 		return;
 	}
 
@@ -666,10 +661,10 @@ void PASCAL CompWord(			// compose the Chinese word(s) according to
 	if (wCharCode == TEXT(' ')) {
 	} else {
 		// build up composition string info
-		CompStrInfo(lpCompStr, lpImcP, lpGuideLine, wCharCode);
+		CompStrInfo(lpCompStr, imcPrivPtr, lpGuideLine, wCharCode);
 	}
 
-	Finalize(lpIMC, lpCompStr, lpImcP, wCharCode);	// compsition
+	Finalize(lpIMC, lpCompStr, imcPrivPtr, wCharCode);	// compsition
 
 	return;
 }

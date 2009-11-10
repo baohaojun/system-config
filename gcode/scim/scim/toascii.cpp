@@ -28,16 +28,16 @@ BOOL IsUsedCode(WORD wCharCode)
 }
 
 UINT PASCAL GBProcessKey(		// this key will cause the IME go to what state
-							WORD wCharCode, LPPRIVCONTEXT lpImcP)
+							WORD wCharCode, LPPRIVCONTEXT imcPrivPtr)
 {
-	if (!lpImcP) {
+	if (!imcPrivPtr) {
 		return (CST_INVALID);
 	}
 	// check space 
 	if (wCharCode == TEXT(' ')) {
-		if (lpImcP->bSeq[0] && lpImcP->bSeq[1]) {
+		if (imcPrivPtr->bSeq[0] && imcPrivPtr->bSeq[1]) {
 			return (CST_INPUT);
-		} else if (!lpImcP->bSeq[0]) {
+		} else if (!imcPrivPtr->bSeq[0]) {
 			return (CST_ALPHANUMERIC);
 		} else {
 			return (CST_INVALID_INPUT);
@@ -48,22 +48,22 @@ UINT PASCAL GBProcessKey(		// this key will cause the IME go to what state
 		|| (wCharCode >= TEXT('a') && wCharCode <= TEXT('f'))
 		|| (wCharCode == TEXT('?'))) {
 
-		if (!lpImcP->bSeq[0]) {
+		if (!imcPrivPtr->bSeq[0]) {
 			if (wCharCode == TEXT('?')) {
 				// 0x0??? - 0xF??? is OK
 				return (CST_ALPHANUMERIC);
 			} else {
 				// there is no 0x0??? - 0x7???
-				lpImcP->bSeq[1] = TEXT('\0');
+				imcPrivPtr->bSeq[1] = TEXT('\0');
 				return (CST_INPUT);
 			}
 
-		} else if (!lpImcP->bSeq[1]) {
+		} else if (!imcPrivPtr->bSeq[1]) {
 
-			if (lpImcP->bSeq[0] >= TEXT('0') && lpImcP->bSeq[0] <= TEXT('9')) {	//Area
-				if ((lpImcP->bSeq[0] == TEXT('0')
+			if (imcPrivPtr->bSeq[0] >= TEXT('0') && imcPrivPtr->bSeq[0] <= TEXT('9')) {	//Area
+				if ((imcPrivPtr->bSeq[0] == TEXT('0')
 					 && wCharCode == TEXT('0'))
-					|| (lpImcP->bSeq[0] == TEXT('9')
+					|| (imcPrivPtr->bSeq[0] == TEXT('9')
 						&& wCharCode >= TEXT('5'))
 					|| (wCharCode >= TEXT('a')
 						&& wCharCode <= TEXT('f'))
@@ -71,33 +71,33 @@ UINT PASCAL GBProcessKey(		// this key will cause the IME go to what state
 					// there is less than 95 area and bigger than 0 area
 					return (CST_INVALID_INPUT);
 				} else {
-					lpImcP->bSeq[2] = TEXT('\0');
+					imcPrivPtr->bSeq[2] = TEXT('\0');
 					return (CST_INPUT);
 				}
 			}
 
-			if (lpImcP->bSeq[0] >= TEXT('a') && lpImcP->bSeq[0] <= TEXT('f')) {	//GB
-				if ((lpImcP->bSeq[0] == TEXT('a')
+			if (imcPrivPtr->bSeq[0] >= TEXT('a') && imcPrivPtr->bSeq[0] <= TEXT('f')) {	//GB
+				if ((imcPrivPtr->bSeq[0] == TEXT('a')
 					 && wCharCode == TEXT('0'))
-					|| (lpImcP->bSeq[0] == TEXT('f')
+					|| (imcPrivPtr->bSeq[0] == TEXT('f')
 						&& wCharCode == TEXT('f'))
 					|| (wCharCode == TEXT('?'))) {
 					// there is less than 95 area and bigger than 0 area
 					return (CST_INVALID_INPUT);
 				} else {
-					lpImcP->bSeq[2] = TEXT('\0');
+					imcPrivPtr->bSeq[2] = TEXT('\0');
 					return (CST_INPUT);
 				}
 			}
 
-		} else if (!lpImcP->bSeq[2]) {
+		} else if (!imcPrivPtr->bSeq[2]) {
 
 			if (wCharCode == TEXT('?')) {
 				return (CST_INPUT);
 			}
-			if (lpImcP->bSeq[0] >= TEXT('0') && lpImcP->bSeq[0] <= TEXT('9')) {	//Area
+			if (imcPrivPtr->bSeq[0] >= TEXT('0') && imcPrivPtr->bSeq[0] <= TEXT('9')) {	//Area
 				if (wCharCode >= TEXT('0') && wCharCode <= TEXT('9')) {
-					lpImcP->bSeq[3] = TEXT('\0');
+					imcPrivPtr->bSeq[3] = TEXT('\0');
 					return (CST_INPUT);
 				} else {
 					return (CST_INVALID_INPUT);
@@ -105,27 +105,27 @@ UINT PASCAL GBProcessKey(		// this key will cause the IME go to what state
 
 			}
 
-			if (lpImcP->bSeq[0] >= TEXT('a') && lpImcP->bSeq[0] <= TEXT('f')) {	//GB
+			if (imcPrivPtr->bSeq[0] >= TEXT('a') && imcPrivPtr->bSeq[0] <= TEXT('f')) {	//GB
 				if (wCharCode >= TEXT('a') && wCharCode <= TEXT('f')) {
-					lpImcP->bSeq[3] = TEXT('\0');
+					imcPrivPtr->bSeq[3] = TEXT('\0');
 					return (CST_INPUT);
 				} else {
 					return (CST_INVALID_INPUT);
 				}
 			}
-		} else if (!lpImcP->bSeq[3]) {
+		} else if (!imcPrivPtr->bSeq[3]) {
 
-			if (lpImcP->bSeq[2] == TEXT('?')) {
+			if (imcPrivPtr->bSeq[2] == TEXT('?')) {
 				if (wCharCode == TEXT('?')) {
 					return (CST_INPUT);
 				} else {
 					return (CST_INVALID_INPUT);
 				}
 			}
-			if (lpImcP->bSeq[0] >= TEXT('0') && lpImcP->bSeq[0] <= TEXT('9')) {	//Area
-				if ((lpImcP->bSeq[2] == TEXT('0')
+			if (imcPrivPtr->bSeq[0] >= TEXT('0') && imcPrivPtr->bSeq[0] <= TEXT('9')) {	//Area
+				if ((imcPrivPtr->bSeq[2] == TEXT('0')
 					 && wCharCode == TEXT('0'))
-					|| (lpImcP->bSeq[2] == TEXT('9')
+					|| (imcPrivPtr->bSeq[2] == TEXT('9')
 						&& wCharCode >= TEXT('5'))
 					|| (wCharCode >= TEXT('a')
 						&& wCharCode <= TEXT('f'))
@@ -136,10 +136,10 @@ UINT PASCAL GBProcessKey(		// this key will cause the IME go to what state
 					return (CST_INPUT);
 				}
 			}
-			if (lpImcP->bSeq[0] >= TEXT('a') && lpImcP->bSeq[0] <= TEXT('f')) {	//GB
-				if ((lpImcP->bSeq[2] == TEXT('a')
+			if (imcPrivPtr->bSeq[0] >= TEXT('a') && imcPrivPtr->bSeq[0] <= TEXT('f')) {	//GB
+				if ((imcPrivPtr->bSeq[2] == TEXT('a')
 					 && wCharCode == TEXT('0'))
-					|| (lpImcP->bSeq[2] == TEXT('f')
+					|| (imcPrivPtr->bSeq[2] == TEXT('f')
 						&& wCharCode == TEXT('f'))
 					|| (wCharCode == TEXT('?'))) {
 					// there is less than 95 area and bigger than 0 area
@@ -167,16 +167,16 @@ UINT PASCAL GBProcessKey(		// this key will cause the IME go to what state
 /*      different state which input key will change IME to (CST_      */
 /**********************************************************************/
 UINT PASCAL UnicodeProcessKey(	// this key will cause the IME go to what state
-								 WORD wCharCode, LPPRIVCONTEXT lpImcP)
+								 WORD wCharCode, LPPRIVCONTEXT imcPrivPtr)
 {
-	if (!lpImcP) {
+	if (!imcPrivPtr) {
 		return (CST_INVALID);
 	}
 
 	if (wCharCode == TEXT(' ')) {
-		if (lpImcP->bSeq[0] && lpImcP->bSeq[1]) {
+		if (imcPrivPtr->bSeq[0] && imcPrivPtr->bSeq[1]) {
 			return (CST_INPUT);
-		} else if (!lpImcP->bSeq[0]) {
+		} else if (!imcPrivPtr->bSeq[0]) {
 			return (CST_ALPHANUMERIC);
 		} else {
 			return (CST_INVALID_INPUT);
@@ -190,14 +190,14 @@ UINT PASCAL UnicodeProcessKey(	// this key will cause the IME go to what state
 		|| (wCharCode == TEXT('?'))) {
 
 		if (wCharCode == TEXT('?')) {
-			if (!lpImcP->bSeq[2]) {
+			if (!imcPrivPtr->bSeq[2]) {
 				return (CST_INPUT);
 			} else
 				return (CST_INVALID_INPUT);
 		} else {
 			return (CST_INPUT);
 		}
-	} else if (lpImcP->bSeq[0]) {
+	} else if (imcPrivPtr->bSeq[0]) {
 		return (CST_INVALID_INPUT);
 	} else
 		return (CST_ALPHANUMERIC);
@@ -205,16 +205,16 @@ UINT PASCAL UnicodeProcessKey(	// this key will cause the IME go to what state
 }
 
 UINT PASCAL XGBProcessKey(		// this key will cause the IME go to what state
-							 WORD wCharCode, LPPRIVCONTEXT lpImcP)
+							 WORD wCharCode, LPPRIVCONTEXT imcPrivPtr)
 {
-	if (!lpImcP) {
+	if (!imcPrivPtr) {
 		return (CST_INVALID);
 	}
 
 	if (wCharCode == TEXT(' ')) {
-		if (lpImcP->bSeq[0] && lpImcP->bSeq[1]) {
+		if (imcPrivPtr->bSeq[0] && imcPrivPtr->bSeq[1]) {
 			return (CST_INPUT);
-		} else if (!lpImcP->bSeq[0]) {
+		} else if (!imcPrivPtr->bSeq[0]) {
 			return (CST_ALPHANUMERIC);
 		} else {
 			return (CST_INVALID_INPUT);
@@ -228,7 +228,7 @@ UINT PASCAL XGBProcessKey(		// this key will cause the IME go to what state
 		|| (wCharCode >= TEXT('a') && wCharCode <= TEXT('f'))
 		|| (wCharCode == TEXT('?'))) {
 
-		if (!lpImcP->bSeq[0]) {
+		if (!imcPrivPtr->bSeq[0]) {
 			if (wCharCode == TEXT('?')) {
 				// 0x0??? - 0xF??? is OK
 				// : - @ was filted
@@ -236,7 +236,7 @@ UINT PASCAL XGBProcessKey(		// this key will cause the IME go to what state
 
 			} else if (wCharCode >= TEXT('8') && wCharCode <= TEXT('f')) {
 				// 0x0??? - 0xF??? is OK
-				lpImcP->bSeq[1] = TEXT('\0');
+				imcPrivPtr->bSeq[1] = TEXT('\0');
 				return (CST_INPUT);
 
 			} else {
@@ -244,43 +244,43 @@ UINT PASCAL XGBProcessKey(		// this key will cause the IME go to what state
 				return (CST_INVALID_INPUT);
 			}
 
-		} else if (!lpImcP->bSeq[1]) {
+		} else if (!imcPrivPtr->bSeq[1]) {
 
-			if ((lpImcP->bSeq[0] == TEXT('f') && wCharCode == TEXT('f'))
-				|| (lpImcP->bSeq[0] == TEXT('8') && wCharCode == TEXT('0'))
+			if ((imcPrivPtr->bSeq[0] == TEXT('f') && wCharCode == TEXT('f'))
+				|| (imcPrivPtr->bSeq[0] == TEXT('8') && wCharCode == TEXT('0'))
 				|| (wCharCode == TEXT('?'))) {
 				//XGB is 81 - fe
 				return (CST_INVALID_INPUT);
 			} else {
-				lpImcP->bSeq[2] = TEXT('\0');
+				imcPrivPtr->bSeq[2] = TEXT('\0');
 				return (CST_INPUT);
 			}
 
-		} else if (!lpImcP->bSeq[2]) {
+		} else if (!imcPrivPtr->bSeq[2]) {
 
 			if (wCharCode == TEXT('?')) {
-				lpImcP->bSeq[3] = TEXT('\0');
+				imcPrivPtr->bSeq[3] = TEXT('\0');
 				return (CST_INPUT);
 			}
 
 			if (wCharCode >= TEXT('4') && wCharCode <= TEXT('f')) {
-				lpImcP->bSeq[3] = TEXT('\0');
+				imcPrivPtr->bSeq[3] = TEXT('\0');
 				return (CST_INPUT);
 			} else {
 				return (CST_INVALID_INPUT);
 			}
 
-		} else if (!lpImcP->bSeq[3]) {
+		} else if (!imcPrivPtr->bSeq[3]) {
 
-			if (lpImcP->bSeq[2] == TEXT('?')) {
+			if (imcPrivPtr->bSeq[2] == TEXT('?')) {
 				if (wCharCode == TEXT('?')) {
 					return (CST_INPUT);
 				} else {
 					return (CST_INVALID_INPUT);
 				}
 			}
-			if ((lpImcP->bSeq[2] == TEXT('7') && wCharCode == TEXT('f'))
-				|| (lpImcP->bSeq[2] == TEXT('f') && wCharCode == TEXT('f'))
+			if ((imcPrivPtr->bSeq[2] == TEXT('7') && wCharCode == TEXT('f'))
+				|| (imcPrivPtr->bSeq[2] == TEXT('f') && wCharCode == TEXT('f'))
 				|| (wCharCode == TEXT('?'))) {
 				//trail byte
 				//40 - 7e, 80 - fe
@@ -311,14 +311,14 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 						  UINT uVirtKey,
 						  UINT uScanCode,
 						  LPBYTE lpbKeyState, LPINPUTCONTEXT lpIMC,
-						  LPPRIVCONTEXT lpImcP)
+						  LPPRIVCONTEXT imcPrivPtr)
 {
 
 	if (!lpIMC) {
 		return (CST_INVALID);
 	}
 
-	if (!lpImcP) {
+	if (!imcPrivPtr) {
 		return (CST_INVALID);
 	}
 
@@ -352,7 +352,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 		return (CST_CAPITAL);
 	}
 	// candidate alaredy open,  <,>,pageup,pagedown,?,ECS,key
-	if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
+	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
 		if (uVirtKey == VK_PRIOR) {	// PageUp
 			return (CST_CHOOSE);
 		} else if (uVirtKey == VK_NEXT) {	// PageDown
@@ -374,7 +374,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 	}
 
 	// candidate alaredy open, shift + num key
-	if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
+	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
 		if ((wCharCode >= TEXT('0')) && wCharCode <= TEXT('9')) {
 			return (CST_CHOOSE);
 		}
@@ -394,7 +394,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 	} else if (wCharCode == TEXT('?')) {
 	} else if (wCharCode == TEXT(' ')) {
 	} else if (wCharCode >= TEXT(' ') && wCharCode <= TEXT('~')) {
-		if (!IsUsedCode(wCharCode) && lpImcP->iImeState != CST_INIT)
+		if (!IsUsedCode(wCharCode) && imcPrivPtr->iImeState != CST_INIT)
 			return (CST_INVALID_INPUT);
 	}
 	// Esc key
@@ -406,7 +406,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 		if (!lpGuideLine) {
 			return (CST_INVALID);
 		}
-		if (lpImcP->fdwImeMsg & MSG_ALREADY_START) {
+		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
 			iImeState = CST_INPUT;
 		} else if (!lpGuideLine) {
 			iImeState = CST_INVALID;
@@ -423,7 +423,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 	}
 	// BackSpace Key
 	else if (uVirtKey == VK_BACK) {
-		if (lpImcP->fdwImeMsg & MSG_ALREADY_START) {
+		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
 			return (CST_INPUT);
 		} else {
 			return (CST_INVALID);
@@ -440,24 +440,19 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 	} else {
 	}
 	if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
-		return (UnicodeProcessKey(wCharCode, lpImcP));
+		return (UnicodeProcessKey(wCharCode, imcPrivPtr));
 	}
 
 	return (CST_INVALID);
 }
 
-/**********************************************************************/
-/* ImeProcessKey()                                                    */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 BOOL WINAPI ImeProcessKey(		// if this key is need by IME?
 							 HIMC hIMC,
 							 UINT uVirtKey, LPARAM lParam,
 							 CONST LPBYTE lpbKeyState)
 {
 	LPINPUTCONTEXT lpIMC;
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 	BYTE szAscii[4];
 	int nChars;
 	int iRet;
@@ -473,8 +468,8 @@ BOOL WINAPI ImeProcessKey(		// if this key is need by IME?
 		return FALSE;
 	}
 
-	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-	if (!lpImcP) {
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	if (!imcPrivPtr) {
 		ImmUnlockIMC(hIMC);
 		return FALSE;
 	}
@@ -488,22 +483,22 @@ BOOL WINAPI ImeProcessKey(		// if this key is need by IME?
 
 	iRet =
 		ProcessKey((WORD) szAscii[0], uVirtKey, HIWORD(lParam),
-				   lpbKeyState, lpIMC, lpImcP);
+				   lpbKeyState, lpIMC, imcPrivPtr);
 	if (iRet == CST_INVALID) {
 		fRet = FALSE;
 	} else if ((iRet == CST_INPUT) && (uVirtKey == TEXT('\b'))
-			   && (lpImcP->iImeState == CST_INIT)) {
-		lpImcP->fdwImeMsg = ((lpImcP->fdwImeMsg | MSG_END_COMPOSITION)
+			   && (imcPrivPtr->iImeState == CST_INIT)) {
+		imcPrivPtr->fdwImeMsg = ((imcPrivPtr->fdwImeMsg | MSG_END_COMPOSITION)
 							 & ~(MSG_START_COMPOSITION)) &
 			~(MSG_IN_IMETOASCIIEX);
 
-		if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
+		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
 			ClearCand(lpIMC);
-			lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 				~(MSG_OPEN_CANDIDATE);
 		}
 
-		GenerateMessage(hIMC, lpIMC, lpImcP);
+		GenerateMessage(hIMC, lpIMC, imcPrivPtr);
 		fRet = FALSE;
 	} else if (uVirtKey == VK_CAPITAL) {
 		DWORD fdwConversion;
@@ -597,7 +592,7 @@ UINT PASCAL TranslateToAscii(	// translate the key to WM_CHAR
 /**********************************************************************/
 UINT PASCAL
 TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
-					LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT lpImcP)
+					LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 {
 	UINT uNumMsg;
 	UINT i;
@@ -608,8 +603,8 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 	bLockMsgBuf = FALSE;
 
 	for (i = 0; i < 2; i++) {
-		if (lpImcP->fdwImeMsg & MSG_CLOSE_CANDIDATE) {
-			if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
+		if (imcPrivPtr->fdwImeMsg & MSG_CLOSE_CANDIDATE) {
+			if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
 				if (!i) {
 					uNumMsg++;
 				} else {
@@ -617,13 +612,13 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 					lpTransMsg->wParam = IMN_CLOSECANDIDATE;
 					lpTransMsg->lParam = 0x0001;
 					lpTransMsg++;
-					lpImcP->fdwImeMsg &= ~(MSG_ALREADY_OPEN);
+					imcPrivPtr->fdwImeMsg &= ~(MSG_ALREADY_OPEN);
 				}
 			}
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_END_COMPOSITION) {
-			if (lpImcP->fdwImeMsg & MSG_ALREADY_START) {
+		if (imcPrivPtr->fdwImeMsg & MSG_END_COMPOSITION) {
+			if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
 				if (!i) {
 					uNumMsg++;
 				} else {
@@ -631,13 +626,13 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 					lpTransMsg->wParam = 0;
 					lpTransMsg->lParam = 0;
 					lpTransMsg++;
-					lpImcP->fdwImeMsg &= ~(MSG_ALREADY_START);
+					imcPrivPtr->fdwImeMsg &= ~(MSG_ALREADY_START);
 				}
 			}
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_START_COMPOSITION) {
-			if (!(lpImcP->fdwImeMsg & MSG_ALREADY_START)) {
+		if (imcPrivPtr->fdwImeMsg & MSG_START_COMPOSITION) {
+			if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_START)) {
 				if (!i) {
 					uNumMsg++;
 				} else {
@@ -645,12 +640,12 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 					lpTransMsg->wParam = 0;
 					lpTransMsg->lParam = 0;
 					lpTransMsg++;
-					lpImcP->fdwImeMsg |= MSG_ALREADY_START;
+					imcPrivPtr->fdwImeMsg |= MSG_ALREADY_START;
 				}
 			}
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_IMN_COMPOSITIONPOS) {
+		if (imcPrivPtr->fdwImeMsg & MSG_IMN_COMPOSITIONPOS) {
 			if (!i) {
 				uNumMsg++;
 			} else {
@@ -661,18 +656,18 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 			}
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_COMPOSITION) {
+		if (imcPrivPtr->fdwImeMsg & MSG_COMPOSITION) {
 			if (!i) {
 				uNumMsg++;
 			} else {
 				lpTransMsg->message = WM_IME_COMPOSITION;
-				lpTransMsg->wParam = (DWORD) lpImcP->dwCompChar;
-				lpTransMsg->lParam = (DWORD) lpImcP->fdwGcsFlag;
+				lpTransMsg->wParam = (DWORD) imcPrivPtr->dwCompChar;
+				lpTransMsg->lParam = (DWORD) imcPrivPtr->fdwGcsFlag;
 				lpTransMsg++;
 			}
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_GUIDELINE) {
+		if (imcPrivPtr->fdwImeMsg & MSG_GUIDELINE) {
 			if (!i) {
 				uNumMsg++;
 			} else {
@@ -683,8 +678,8 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 			}
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_OPEN_CANDIDATE) {
-			if (!(lpImcP->fdwImeMsg & MSG_ALREADY_OPEN)) {
+		if (imcPrivPtr->fdwImeMsg & MSG_OPEN_CANDIDATE) {
+			if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN)) {
 				if (!i) {
 					uNumMsg++;
 				} else {
@@ -692,12 +687,12 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 					lpTransMsg->wParam = IMN_OPENCANDIDATE;
 					lpTransMsg->lParam = 0x0001;
 					lpTransMsg++;
-					lpImcP->fdwImeMsg |= MSG_ALREADY_OPEN;
+					imcPrivPtr->fdwImeMsg |= MSG_ALREADY_OPEN;
 				}
 			}
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_CHANGE_CANDIDATE) {
+		if (imcPrivPtr->fdwImeMsg & MSG_CHANGE_CANDIDATE) {
 			if (!i) {
 				uNumMsg++;
 			} else {
@@ -708,7 +703,7 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 			}
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_IMN_UPDATE_STATUS) {
+		if (imcPrivPtr->fdwImeMsg & MSG_IMN_UPDATE_STATUS) {
 			if (!i) {
 				uNumMsg++;
 			} else {
@@ -719,7 +714,7 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 			}
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_IMN_DESTROYCAND) {
+		if (imcPrivPtr->fdwImeMsg & MSG_IMN_DESTROYCAND) {
 			if (!i) {
 				uNumMsg++;
 			} else {
@@ -730,7 +725,7 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 			}
 		}
 
-		if (lpImcP->fdwImeMsg & MSG_BACKSPACE) {
+		if (imcPrivPtr->fdwImeMsg & MSG_BACKSPACE) {
 			if (!i) {
 				uNumMsg++;
 			} else {
@@ -748,7 +743,7 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 				return (uNumMsg);
 			}
 
-			if (lpImcP->fdwImeMsg & MSG_IN_IMETOASCIIEX) {
+			if (imcPrivPtr->fdwImeMsg & MSG_IN_IMETOASCIIEX) {
 				UINT uNumMsgLimit;
 
 				uNumMsgLimit = lpTransBuf->uMsgCount;
@@ -806,7 +801,7 @@ ImeToAsciiEx(UINT uVirtKey,
 	WORD wCharCode;
 	LPINPUTCONTEXT lpIMC;
 	LPCOMPOSITIONSTRING lpCompStr;
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 	UINT uNumMsg;
 	int iRet;
 
@@ -827,17 +822,17 @@ ImeToAsciiEx(UINT uVirtKey,
 			TranslateToAscii(uVirtKey, uScanCode, lpTransBuf, wCharCode);
 		return (uNumMsg);
 	}
-	// get lpImcP
-	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	// get imcPrivPtr
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
 
-	if (!lpImcP) {
+	if (!imcPrivPtr) {
 		ImmUnlockIMC(hIMC);
 		uNumMsg =
 			TranslateToAscii(uVirtKey, uScanCode, lpTransBuf, wCharCode);
 		return (uNumMsg);
 	}
 	// get lpCompStr and init
-	if (lpImcP->fdwGcsFlag & (GCS_RESULTREAD | GCS_RESULT)) {
+	if (imcPrivPtr->fdwGcsFlag & (GCS_RESULTREAD | GCS_RESULT)) {
 		lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
 
 		if (lpCompStr) {
@@ -846,19 +841,19 @@ ImeToAsciiEx(UINT uVirtKey,
 
 		ImmUnlockIMCC(lpIMC->hCompStr);
 
-		lpImcP->fdwGcsFlag = (DWORD) 0;
+		imcPrivPtr->fdwGcsFlag = (DWORD) 0;
 	}
 	// Now all composition realated information already pass to app
 	// a brand new start
 
-	// init lpImcP->fdwImeMsg
-	lpImcP->fdwImeMsg = lpImcP->fdwImeMsg & (MSG_ALREADY_OPEN |
+	// init imcPrivPtr->fdwImeMsg
+	imcPrivPtr->fdwImeMsg = imcPrivPtr->fdwImeMsg & (MSG_ALREADY_OPEN |
 											 MSG_ALREADY_START) |
 		MSG_IN_IMETOASCIIEX;
 
 	// Process Key(wCharCode)
 	iRet = ProcessKey(wCharCode, uVirtKey, uScanCode, lpbKeyState, lpIMC,
-					  lpImcP);
+					  imcPrivPtr);
 
 	// iRet process
 	// CST_ALPHANUMERIC
@@ -867,10 +862,10 @@ ImeToAsciiEx(UINT uVirtKey,
 
 	// CST_ALPHANUMERIC
 	if (iRet == CST_ALPHANUMERIC) {
-		if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
-			lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
+			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 				~(MSG_OPEN_CANDIDATE) & ~(MSG_IN_IMETOASCIIEX);
-			GenerateMessage(hIMC, lpIMC, lpImcP);
+			GenerateMessage(hIMC, lpIMC, imcPrivPtr);
 		}
 
 		if (lpIMC->fdwConversion & IME_CMODE_SYMBOL) {
@@ -944,44 +939,44 @@ ImeToAsciiEx(UINT uVirtKey,
 				uNumMsg =
 					TranslateSymbolChar(lpTransBuf, wSymbolCharCode, TRUE);
 			} else if (wCharCode == TEXT('"')) {
-				if (lpImcP->uSYHFlg) {
+				if (imcPrivPtr->uSYHFlg) {
 					wSymbolCharCode = 0x201d;
 				} else {
 					wSymbolCharCode = 0x201c;
 
 				}
-				lpImcP->uSYHFlg ^= 0x00000001;
+				imcPrivPtr->uSYHFlg ^= 0x00000001;
 				uNumMsg =
 					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
 										FALSE);
 			} else if (wCharCode == TEXT('\'')) {
-				if (lpImcP->uDYHFlg) {
+				if (imcPrivPtr->uDYHFlg) {
 					wSymbolCharCode = 0x2019;
 				} else {
 					wSymbolCharCode = 0x2018;
 				}
-				lpImcP->uDYHFlg ^= 0x00000001;
+				imcPrivPtr->uDYHFlg ^= 0x00000001;
 				uNumMsg =
 					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
 										FALSE);
 			} else if (wCharCode == TEXT('<')) {
-				if (lpImcP->uDSMHFlg) {
+				if (imcPrivPtr->uDSMHFlg) {
 					wSymbolCharCode = 0x3008;
-					lpImcP->uDSMHCount++;
+					imcPrivPtr->uDSMHCount++;
 				} else {
 					wSymbolCharCode = 0x300a;
-					lpImcP->uDSMHFlg = 0x00000001;
+					imcPrivPtr->uDSMHFlg = 0x00000001;
 				}
 				uNumMsg =
 					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
 										FALSE);
 			} else if (wCharCode == TEXT('>')) {
-				if ((lpImcP->uDSMHFlg) && (lpImcP->uDSMHCount)) {
+				if ((imcPrivPtr->uDSMHFlg) && (imcPrivPtr->uDSMHCount)) {
 					wSymbolCharCode = 0x3009;
-					lpImcP->uDSMHCount--;
+					imcPrivPtr->uDSMHCount--;
 				} else {
 					wSymbolCharCode = 0x300b;
-					lpImcP->uDSMHFlg = 0x00000000;
+					imcPrivPtr->uDSMHFlg = 0x00000000;
 				}
 				uNumMsg =
 					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
@@ -1020,12 +1015,12 @@ ImeToAsciiEx(UINT uVirtKey,
 		} else {
 		}
 
-		lpImcP->iImeState = CST_CHOOSE;
-		ChooseCand(wCharCode, lpIMC, lpCandInfo, lpImcP);
+		imcPrivPtr->iImeState = CST_CHOOSE;
+		ChooseCand(wCharCode, lpIMC, lpCandInfo, imcPrivPtr);
 
 		ImmUnlockIMCC(lpIMC->hCandInfo);
 
-		uNumMsg = TranslateImeMessage(lpTransBuf, lpIMC, lpImcP);
+		uNumMsg = TranslateImeMessage(lpTransBuf, lpIMC, imcPrivPtr);
 	}
 	// CST_INPUT(IME_CMODE_CHARCODE)
 	else if (iRet == CST_INPUT
@@ -1049,13 +1044,13 @@ ImeToAsciiEx(UINT uVirtKey,
 			return (CST_INVALID);
 		}
 		// composition
-		CompWord(wCharCode, lpIMC, lpCompStr, lpImcP, lpGuideLine);
+		CompWord(wCharCode, lpIMC, lpCompStr, imcPrivPtr, lpGuideLine);
 
 		ImmUnlockIMCC(lpIMC->hGuideLine);
 		ImmUnlockIMCC(lpIMC->hCompStr);
 
 		// generate message
-		uNumMsg = TranslateImeMessage(lpTransBuf, lpIMC, lpImcP);
+		uNumMsg = TranslateImeMessage(lpTransBuf, lpIMC, imcPrivPtr);
 	}
 	// ELSE
 	else if (iRet == CST_INVALID_INPUT) {
@@ -1066,9 +1061,9 @@ ImeToAsciiEx(UINT uVirtKey,
 			TranslateToAscii(uVirtKey, uScanCode, lpTransBuf, wCharCode);
 	}
 
-	// reset lpImcP->fdwImeMsg
-	lpImcP->fdwImeMsg &= (MSG_ALREADY_OPEN | MSG_ALREADY_START);
-	lpImcP->fdwGcsFlag &= (GCS_RESULTREAD | GCS_RESULT);
+	// reset imcPrivPtr->fdwImeMsg
+	imcPrivPtr->fdwImeMsg &= (MSG_ALREADY_OPEN | MSG_ALREADY_START);
+	imcPrivPtr->fdwGcsFlag &= (GCS_RESULTREAD | GCS_RESULT);
 
 	ImmUnlockIMCC(lpIMC->hPrivate);
 	ImmUnlockIMC(hIMC);

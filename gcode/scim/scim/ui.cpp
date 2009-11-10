@@ -189,7 +189,7 @@ void PASCAL ShowUI(				// show the sub windows
 {
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 	HGLOBAL hUIPrivate;
 	LPUIPRIV lpUIPrivate;
 
@@ -198,7 +198,7 @@ void PASCAL ShowUI(				// show the sub windows
 		nShowCmd = SW_HIDE;
 	} else if (!(lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC))) {
 		nShowCmd = SW_HIDE;
-	} else if (!(lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate))) {
+	} else if (!(imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate))) {
 		ImmUnlockIMC(hIMC);
 		nShowCmd = SW_HIDE;
 	} else {
@@ -224,7 +224,7 @@ void PASCAL ShowUI(				// show the sub windows
 	lpUIPrivate->fdwSetContext |= ISC_SHOWUICOMPOSITIONWINDOW;
 
 	if ((lpUIPrivate->fdwSetContext & ISC_SHOWUICOMPOSITIONWINDOW) &&
-		(lpImcP->fdwImeMsg & MSG_ALREADY_START)) {
+		(imcPrivPtr->fdwImeMsg & MSG_ALREADY_START)) {
 		if (lpUIPrivate->hCompWnd) {
 
 			if (lpUIPrivate->nShowCompCmd != SW_HIDE) {
@@ -250,7 +250,7 @@ void PASCAL ShowUI(				// show the sub windows
 	}
 
 	if ((lpUIPrivate->fdwSetContext & ISC_SHOWUICANDIDATEWINDOW) &&
-		(lpImcP->fdwImeMsg & MSG_ALREADY_OPEN)) {
+		(imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN)) {
 		if (lpUIPrivate->hCandWnd) {
 			if (lpUIPrivate->nShowCandCmd != SW_HIDE) {
 				// some time the WM_NCPAINT is eaten by the app
@@ -491,7 +491,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 {
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 	HGLOBAL hUIPrivate;
 	register LPUIPRIV lpUIPrivate;
 	RECT rcWorkArea;
@@ -582,8 +582,8 @@ void PASCAL SetContext(			// the context activated/deactivated
 		}
 
 
-		lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-		if (!lpImcP) {
+		imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+		if (!imcPrivPtr) {
 			GlobalUnlock(hUIPrivate);
 			ImmUnlockIMC(hIMC);
 			return;
@@ -593,15 +593,15 @@ void PASCAL SetContext(			// the context activated/deactivated
 		if (SaTC_Trace == 0) {
 			int UI_MODE;
 
-			lpImcP->iImeState = CST_INIT;
+			imcPrivPtr->iImeState = CST_INIT;
 			CompCancel(hIMC, lpIMC);
 
 			// init fields of hPrivate
-			lpImcP->fdwImeMsg = (DWORD) 0;
-			lpImcP->dwCompChar = (DWORD) 0;
-			lpImcP->fdwGcsFlag = (DWORD) 0;
-			lpImcP->uSYHFlg = 0x00000000;
-			lpImcP->uDYHFlg = 0x00000000;
+			imcPrivPtr->fdwImeMsg = (DWORD) 0;
+			imcPrivPtr->dwCompChar = (DWORD) 0;
+			imcPrivPtr->fdwGcsFlag = (DWORD) 0;
+			imcPrivPtr->uSYHFlg = 0x00000000;
+			imcPrivPtr->uDYHFlg = 0x00000000;
 
 			// change compwnd size
 
@@ -850,7 +850,7 @@ UIWndProc(HWND hUIWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				HIMC hIMC;
 				LPINPUTCONTEXT lpIMC;
-				LPPRIVCONTEXT lpImcP;
+				LPPRIVCONTEXT imcPrivPtr;
 				//COMPOSITIONFORM CompForm;
 				POINT ptPos;
 				RECT rcWorkArea;
@@ -874,8 +874,8 @@ UIWndProc(HWND hUIWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					return (1L);
 				}
 
-				lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-				if (!lpImcP) {
+				imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+				if (!imcPrivPtr) {
 					return (1L);
 				}
 

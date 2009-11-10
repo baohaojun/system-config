@@ -19,7 +19,7 @@ Module Name:
 void PASCAL
 SelectOneCand(LPINPUTCONTEXT lpIMC,
 			  LPCOMPOSITIONSTRING lpCompStr,
-			  LPPRIVCONTEXT lpImcP, LPCANDIDATELIST lpCandList)
+			  LPPRIVCONTEXT imcPrivPtr, LPCANDIDATELIST lpCandList)
 {
 	DWORD dwCompStrLen;
 	DWORD dwReadStrLen;
@@ -29,7 +29,7 @@ SelectOneCand(LPINPUTCONTEXT lpIMC,
 		return;
 	}
 
-	if (!lpImcP) {
+	if (!imcPrivPtr) {
 		MessageBeep((UINT) - 1);
 		return;
 	}
@@ -52,23 +52,22 @@ SelectOneCand(LPINPUTCONTEXT lpIMC,
 					  lpCandList->dwOffset[lpCandList->dwSelection]));
 
 	// tell application, there is a reslut string
-	lpImcP->fdwImeMsg |= MSG_COMPOSITION;
-	lpImcP->dwCompChar = (DWORD) 0;
-	lpImcP->fdwGcsFlag |= GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
+	imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
+	imcPrivPtr->dwCompChar = (DWORD) 0;
+	imcPrivPtr->fdwGcsFlag |= GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
 		GCS_DELTASTART | GCS_RESULTREAD | GCS_RESULT;
 
-	if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
-		lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
+		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 			~(MSG_OPEN_CANDIDATE);
 	}
 	// no candidate now, the right candidate string already be finalized
 	lpCandList->dwCount = 0;
 
-	lpImcP->iImeState = CST_INIT;
+	imcPrivPtr->iImeState = CST_INIT;
 
 
-	// init Engine private data
-	*(LPDWORD) lpImcP->bSeq = 0;
+	*(LPDWORD) imcPrivPtr->bSeq = 0;
 
 
 	return;
@@ -77,20 +76,20 @@ SelectOneCand(LPINPUTCONTEXT lpIMC,
 /**********************************************************************/
 /* CandEscapeKey()                                                    */
 /**********************************************************************/
-void PASCAL CandEscapeKey(LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT lpImcP)
+void PASCAL CandEscapeKey(LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 {
 	LPCOMPOSITIONSTRING lpCompStr;
 	LPGUIDELINE lpGuideLine;
 
 	// clean all candidate information
-	if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
+	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
 		ClearCand(lpIMC);
-		lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 			~(MSG_OPEN_CANDIDATE);
 	}
 
 	// if it start composition, we need to clean composition
-	if (!(lpImcP->fdwImeMsg & MSG_ALREADY_START)) {
+	if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_START)) {
 		return;
 	}
 
@@ -104,7 +103,7 @@ void PASCAL CandEscapeKey(LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT lpImcP)
 		return;
 	}
 
-	CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, lpImcP);
+	CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, imcPrivPtr);
 
 	ImmUnlockIMCC(lpIMC->hGuideLine);
 	ImmUnlockIMCC(lpIMC->hCompStr);
@@ -119,13 +118,13 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 						  // input char
 						  WORD wCharCode,
 						  LPINPUTCONTEXT lpIMC,
-						  LPCANDIDATEINFO lpCandInfo, LPPRIVCONTEXT lpImcP)
+						  LPCANDIDATEINFO lpCandInfo, LPPRIVCONTEXT imcPrivPtr)
 {
 	LPCANDIDATELIST lpCandList;
 	LPCOMPOSITIONSTRING lpCompStr;
 
 	if (wCharCode == VK_ESCAPE) {	// escape key
-		CandEscapeKey(lpIMC, lpImcP);
+		CandEscapeKey(lpIMC, imcPrivPtr);
 		return;
 	}
 
@@ -145,7 +144,7 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 			MessageBeep((UINT) - 1);
 		}
 		// inform UI, dwSelectedCand is changed
-		lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
+		imcPrivPtr->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
 		return;
 	}
 
@@ -159,7 +158,7 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 		}
 		lpCandList->dwSelection += lpCandList->dwPageSize;
 		// inform UI, dwSelectedCand is changed
-		lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
+		imcPrivPtr->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
 		return;
 	}
 
@@ -170,7 +169,7 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 		}
 		lpCandList->dwSelection -= lpCandList->dwPageSize;
 		// inform UI, dwSelectedCand is changed
-		lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
+		imcPrivPtr->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
 		return;
 	}
 
@@ -187,7 +186,7 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 		}
 
 		// inform UI, dwSelectedCand is changed
-		lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
+		imcPrivPtr->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
 		return;
 	}
 
@@ -198,7 +197,7 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 		}
 		lpCandList->dwSelection = 0;
 		// inform UI, dwSelectedCand is changed
-		lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
+		imcPrivPtr->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
 		return;
 	}
 
@@ -209,7 +208,7 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 		}
 		lpCandList->dwSelection = 0;
 		// inform UI, dwSelectedCand is changed
-		lpImcP->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
+		imcPrivPtr->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
 		return;
 	}
 
@@ -241,7 +240,7 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 			return;
 		}
 		// translate into translate buffer
-		SelectOneCand(lpIMC, lpCompStr, lpImcP, lpCandList);
+		SelectOneCand(lpIMC, lpCompStr, imcPrivPtr, lpCandList);
 
 		ImmUnlockIMCC(lpIMC->hCompStr);
 

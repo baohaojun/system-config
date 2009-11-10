@@ -415,7 +415,6 @@ void PASCAL SetPrivateFileSetting(LPBYTE, int, DWORD, LPCTSTR);	// ddis.c
 void PASCAL InitCompStr(LPCOMPOSITIONSTRING);	// ddis.c
 BOOL PASCAL ClearCand(LPINPUTCONTEXT);	// ddis.c
 LONG OpenReg_PathSetup(HKEY *);
-LONG OpenReg_User(HKEY, LPCTSTR, PHKEY);
 VOID InfoMessage(HANDLE, WORD);	//ddis.c
 VOID FatalMessage(HANDLE, WORD);	//ddis.c
 
@@ -474,8 +473,8 @@ UINT PASCAL GBProcessKey(WORD, LPPRIVCONTEXT);
 UINT PASCAL XGBProcessKey(WORD, LPPRIVCONTEXT);
 WORD PASCAL XGBEngine(LPPRIVCONTEXT);
 void PASCAL XGBAddCodeIntoCand(LPCANDIDATELIST, WORD);	// compose.c
-UINT PASCAL UnicodeProcessKey(WORD wCharCode, LPPRIVCONTEXT lpImcP);
-WORD PASCAL UnicodeEngine(LPPRIVCONTEXT lpImcP);
+UINT PASCAL UnicodeProcessKey(WORD wCharCode, LPPRIVCONTEXT imcPrivPtr);
+WORD PASCAL UnicodeEngine(LPPRIVCONTEXT imcPrivPtr);
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
 // dialog procedure
 BOOL FAR PASCAL ImeVerDlgProc(HWND, UINT, WORD, LONG);

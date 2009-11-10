@@ -543,32 +543,6 @@ void PASCAL RegisterIme(HINSTANCE hInstance)
 
 	}
 
-	retCode = OpenReg_User(hKeyCurrVersion, szImeRegName, &hKeyGB);
-
-	if (retCode != ERROR_SUCCESS) {
-
-		DWORD dwDisposition;
-
-		retCode =
-			RegCreateKeyEx(hKeyCurrVersion,
-						   szImeRegName,
-						   0,
-						   0,
-						   REG_OPTION_NON_VOLATILE,
-						   KEY_ALL_ACCESS, NULL, &hKeyGB, &dwDisposition);
-
-		if (retCode != ERROR_SUCCESS)
-		{
-
-			// error to create hKeyGB key.
-			// return here;
-			RegCloseKey(hKeyCurrVersion);
-
-			return;
-
-		}
-
-	}
 
 	RegCloseKey(hKeyGB);
 

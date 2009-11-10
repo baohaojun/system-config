@@ -736,7 +736,7 @@ void PASCAL CandPageDownUP(HWND hCandWnd, UINT uCandDownUp)
 {
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 	LPCANDIDATEINFO lpCandInfo;
 	LPCANDIDATELIST lpCandList;
 	HDC hDC;
@@ -756,9 +756,9 @@ void PASCAL CandPageDownUP(HWND hCandWnd, UINT uCandDownUp)
 	if (!lpIMC) {
 		return;
 	}
-	// get lpImcP
-	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-	if (!lpImcP) {
+	// get imcPrivPtr
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	if (!imcPrivPtr) {
 		return;
 	}
 	// get lpCandInfo
@@ -773,19 +773,19 @@ void PASCAL CandPageDownUP(HWND hCandWnd, UINT uCandDownUp)
 
 	switch (uCandDownUp) {
 	case uCandHome:
-		ChooseCand(0x24, lpIMC, lpCandInfo, lpImcP);
+		ChooseCand(0x24, lpIMC, lpCandInfo, imcPrivPtr);
 		NotifyIME(hIMC, NI_CHANGECANDIDATELIST, 0, 0);
 		break;
 	case uCandUp:
-		ChooseCand('-', lpIMC, lpCandInfo, lpImcP);
+		ChooseCand('-', lpIMC, lpCandInfo, imcPrivPtr);
 		NotifyIME(hIMC, NI_CHANGECANDIDATELIST, 0, 0);
 		break;
 	case uCandDown:
-		ChooseCand('=', lpIMC, lpCandInfo, lpImcP);
+		ChooseCand('=', lpIMC, lpCandInfo, imcPrivPtr);
 		NotifyIME(hIMC, NI_CHANGECANDIDATELIST, 0, 0);
 		break;
 	case uCandEnd:
-		ChooseCand(0x23, lpIMC, lpCandInfo, lpImcP);
+		ChooseCand(0x23, lpIMC, lpCandInfo, imcPrivPtr);
 		NotifyIME(hIMC, NI_CHANGECANDIDATELIST, 0, 0);
 		break;
 	default:
@@ -1075,7 +1075,7 @@ void PASCAL PaintCandWindow(HWND hCandWnd, HDC hDC)
 	LPINPUTCONTEXT lpIMC;
 	LPCANDIDATEINFO lpCandInfo;
 	LPCANDIDATELIST lpCandList;
-	LPPRIVCONTEXT lpImcP;
+	LPPRIVCONTEXT imcPrivPtr;
 	HGDIOBJ hOldFont;
 	DWORD dwStart, dwEnd;
 	TCHAR szStrBuf[2 * MAXSTRLEN * sizeof(WCHAR) / sizeof(TCHAR) + 1];
@@ -1109,8 +1109,8 @@ void PASCAL PaintCandWindow(HWND hCandWnd, HDC hDC)
 		goto UpCandW2UnlockCandInfo;
 	}
 
-	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-	if (!lpImcP) {
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	if (!imcPrivPtr) {
 		goto UpCandW2UnlockCandInfo;
 	}
 	// set font

@@ -196,7 +196,7 @@ ContextMenuWndProc(HWND hCMenuWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				HIMC hIMC;
 				LPINPUTCONTEXT lpIMC;
-				LPPRIVCONTEXT lpImcP;
+				LPPRIVCONTEXT imcPrivPtr;
 				int UI_MODE;
 				HWND hUIWnd;
 				RECT rcWorkArea;
@@ -219,8 +219,8 @@ ContextMenuWndProc(HWND hCMenuWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					return (0L);
 				}
 
-				lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-				if (!lpImcP) {
+				imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+				if (!imcPrivPtr) {
 					return (0L);
 				}
 
@@ -228,7 +228,7 @@ ContextMenuWndProc(HWND hCMenuWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 							 IME_CONFIG_GENERAL, NULL);
 
 
-				lpImcP->iImeState = CST_INIT;
+				imcPrivPtr->iImeState = CST_INIT;
 				CompCancel(hIMC, lpIMC);
 
 				// change compwnd size
@@ -241,9 +241,9 @@ ContextMenuWndProc(HWND hCMenuWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					lpIMC->fdwInit |= INIT_CONVERSION;
 				}
 
-				lpImcP->fdwImeMsg =
-					lpImcP->fdwImeMsg | MSG_IMN_DESTROYCAND;
-				GenerateMessage(hIMC, lpIMC, lpImcP);
+				imcPrivPtr->fdwImeMsg =
+					imcPrivPtr->fdwImeMsg | MSG_IMN_DESTROYCAND;
+				GenerateMessage(hIMC, lpIMC, imcPrivPtr);
 
 				// set cand window data
 				UI_MODE = BOX_UI;
