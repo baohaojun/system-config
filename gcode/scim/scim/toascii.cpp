@@ -205,6 +205,9 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 	return (CST_INVALID);
 }
 
+//this function is called to determing whether the key event is wanted by our IME
+
+//The IME will do the conversion with ImeToAsciiEx
 BOOL WINAPI ImeProcessKey(HIMC hIMC,
 							 UINT uVirtKey, LPARAM lParam,
 							 CONST LPBYTE lpbKeyState)
@@ -344,15 +347,11 @@ UINT PASCAL TranslateToAscii(	// translate the key to WM_CHAR
 	return (0);
 }
 
-/**********************************************************************/
-/* TranslateImeMessage()                                              */
-/* Return Value:                                                      */
-/*      the number of translated messages                             */
-/**********************************************************************/
 UINT PASCAL
 TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 					LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 {
+	EnterLeaveDebug(); 
 	UINT uNumMsg;
 	UINT i;
 	BOOL bLockMsgBuf;
@@ -546,11 +545,6 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 	return (uNumMsg);
 }
 
-/**********************************************************************/
-/* ImeToAsciiEx()                                                     */
-/* Return Value:                                                      */
-/*      the number of translated message                              */
-/**********************************************************************/
 UINT WINAPI
 ImeToAsciiEx(UINT uVirtKey,
 			 UINT uScanCode,

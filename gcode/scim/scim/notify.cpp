@@ -20,6 +20,7 @@ Module Name:
 void PASCAL
 GenerateMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 {
+	EnterLeaveDebug(); 
 
 	if (!hIMC) {
 		return;
@@ -44,6 +45,7 @@ GenerateMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 void PASCAL
 GenerateImeMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, DWORD fdwImeMsg)
 {
+	EnterLeaveDebug(); 
 	LPPRIVCONTEXT imcPrivPtr;
 
 	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
@@ -127,177 +129,9 @@ void PASCAL CompCancel(HIMC hIMC, LPINPUTCONTEXT lpIMC)
 	return;
 }
 
-BOOL PASCAL
-SetString(HIMC hIMC,
-		  LPINPUTCONTEXT lpIMC,
-		  LPCOMPOSITIONSTRING lpCompStr,
-		  LPPRIVCONTEXT imcPrivPtr, LPTSTR lpszRead, DWORD dwReadLen)
-{
-	LPCANDIDATELIST lpCandList;
-	LPCANDIDATEINFO lpCandInfo;
-	LPGUIDELINE lpGuideLine;
-	UINT iRet, ii;
-	UINT MAX_COMP, i;
-	WORD wCode;
 
-	// For Windows NT Unicode,
-	// dwCompReadStrLen is the number of the Unicode characters(Not in Bytes)
-	// But the above the Parameter dwReadLen is in Bytes.
-	// the length of the attribute information is
-	// the same as the length in Unicode character counts.
-	// Each attribute byte corresponds to each Unicode character of
-	// the string.
-
-	//
-	// convert from byte count to the string length
-	dwReadLen = dwReadLen / sizeof(TCHAR);
-
-
-	lstrcpy(imcPrivPtr->bSeq, lpszRead);
-
-	if (imcPrivPtr->bSeq[3] == TEXT('?')) {
-		MAX_COMP = 94;
-	} else {
-		MAX_COMP = 1;
-	}
-
-	if (dwReadLen > 4) {
-		return FALSE;
-	}
-
-	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->hCandInfo);
-	if (!lpCandInfo) {
-		return (-1);
-	}
-	// get lpCandList and init dwCount & dwSelection
-	lpCandList = (LPCANDIDATELIST)
-		((LPBYTE) lpCandInfo + lpCandInfo->dwOffset[0]);
-
-	InitCompStr(lpCompStr);
-	ClearCand(lpIMC);
-
-	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(lpIMC->hGuideLine);
-	if (lpGuideLine) {
-		ImmUnlockIMCC(lpIMC->hGuideLine);
-	}
-	CopyMemory((LPTSTR)
-			   ((LPBYTE) lpCompStr + lpCompStr->dwCompReadStrOffset),
-			   lpszRead, dwReadLen * sizeof(TCHAR) + sizeof(TCHAR));
-	CopyMemory((LPTSTR) ((LPBYTE) lpCompStr + lpCompStr->dwCompStrOffset),
-			   lpszRead, dwReadLen * sizeof(TCHAR) + sizeof(TCHAR));
-
-	lpCompStr->dwCompReadAttrLen = dwReadLen;
-	lpCompStr->dwCompAttrLen = lpCompStr->dwCompReadAttrLen;
-	for (i = 0; i < dwReadLen; i++) {	// The IME has converted these chars
-		*((LPBYTE) lpCompStr + lpCompStr->dwCompReadAttrOffset + i) =
-			ATTR_TARGET_CONVERTED;
-
-	}
-	lpCompStr->dwCompReadStrLen = dwReadLen;
-	lpCompStr->dwCompStrLen = lpCompStr->dwCompReadStrLen;
-
-	// dlta start from 0;
-	lpCompStr->dwDeltaStart = 0;
-	// cursor is next to composition string
-	lpCompStr->dwCursorPos = lpCompStr->dwCompStrLen;
-
-
-	lpCompStr->dwResultReadClauseLen = 0;
-	lpCompStr->dwResultReadStrLen = 0;
-	lpCompStr->dwResultClauseLen = 0;
-	lpCompStr->dwResultStrLen = 0;
-
-	// set private input context
-	imcPrivPtr->iImeState = CST_INPUT;
-
-	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
-			~(MSG_OPEN_CANDIDATE);
-	}
-
-	if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_START)) {
-		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_START_COMPOSITION) &
-			~(MSG_END_COMPOSITION);
-	}
-
-	imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
-	imcPrivPtr->fdwGcsFlag = GCS_COMPREAD | GCS_COMP |
-		GCS_DELTASTART | GCS_CURSORPOS;
-
-	imcPrivPtr->fdwImeMsg |= MSG_GUIDELINE;
-
-	lpCandList->dwCount = 0;
-
-	if (dwReadLen < 4) {
-		goto Finalize;
-	}
-
-	imcPrivPtr->bSeq[0] = 0;
-	imcPrivPtr->bSeq[1] = 0;
-	imcPrivPtr->bSeq[2] = 0;
-	imcPrivPtr->bSeq[3] = 0;
-
-
-	for (ii = 0; ii < 4; ii++) {
-		iRet =
-			UnicodeProcessKey(*(LPBYTE) ((LPBYTE) lpszRead + ii), imcPrivPtr);
-		if (iRet == CST_INPUT) {
-			imcPrivPtr->bSeq[ii] = *(LPBYTE) ((LPBYTE) lpszRead + ii);
-		} else {
-			goto Finalize;
-		}
-	}
-
-	wCode = UnicodeEngine(imcPrivPtr);
-	wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-
-	for (i = 0; i < (0x100); i++, wCode++) {
-		UnicodeAddCodeIntoCand(lpCandList, wCode);
-	}
-
-
-
-	if (lpCandList->dwCount == 1) {
-		lstrcpy((LPTSTR)
-				((LPBYTE) lpCompStr + lpCompStr->dwResultStrOffset),
-				(LPTSTR) ((LPBYTE) lpCandList + lpCandList->dwOffset[0]));
-
-		// calculate result string length
-		lpCompStr->dwResultStrLen =
-			lstrlen((LPTSTR)
-					((LPBYTE) lpCandList + lpCandList->dwOffset[0]));
-
-		imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
-		imcPrivPtr->dwCompChar = (DWORD) 0;
-		imcPrivPtr->fdwGcsFlag |= GCS_CURSORPOS | GCS_RESULTREAD | GCS_RESULT;
-
-		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
-				~(MSG_OPEN_CANDIDATE);
-		} else {
-			imcPrivPtr->fdwImeMsg &=
-				~(MSG_CLOSE_CANDIDATE | MSG_OPEN_CANDIDATE);
-		}
-
-		imcPrivPtr->iImeState = CST_INIT;
-		*(LPDWORD) imcPrivPtr->bSeq = 0;
-		lpCandList->dwCount = 0;
-
-
-	} else if (lpCandList->dwCount > 1) {
-		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_OPEN_CANDIDATE) &
-			~(MSG_CLOSE_CANDIDATE);
-
-	} else if (lpCandList->dwCount == 0) {
-		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
-			~(MSG_OPEN_CANDIDATE);
-
-	};
-  Finalize:
-	GenerateMessage(hIMC, lpIMC, imcPrivPtr);
-
-	return (TRUE);
-}
+//we don't allow SetCompPosition
+//we don't know what it does!
 
 BOOL WINAPI
 ImeSetCompositionString(HIMC hIMC,
@@ -306,85 +140,7 @@ ImeSetCompositionString(HIMC hIMC,
 						DWORD dwCompLen, LPVOID lpRead, DWORD dwReadLen)
 {
 	EnterLeaveDebug(); 
-
-	LPINPUTCONTEXT lpIMC;
-	LPCOMPOSITIONSTRING lpCompStr;
-	LPPRIVCONTEXT imcPrivPtr;
-	BOOL fRet;
-
-	if (!hIMC) {
-		return FALSE;
-	}
-	// composition string must  == reading string
-	// reading is more important
-	if (!dwReadLen) {
-		dwReadLen = dwCompLen;
-	}
-	// composition string must  == reading string
-	// reading is more important
-	if (!lpRead) {
-		lpRead = lpComp;
-	}
-
-	if (!dwReadLen) {
-		lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-		if (!lpIMC) {
-			return FALSE;
-		}
-
-		CompCancel(hIMC, lpIMC);
-		ImmUnlockIMC(hIMC);
-		return (TRUE);
-	} else if (!lpRead) {
-		return FALSE;
-	} else if (!dwCompLen) {
-	} else if (!lpComp) {
-	} else if (dwReadLen != dwCompLen) {
-		return FALSE;
-	} else if (lpRead == lpComp) {
-	} else if (!lstrcmp((LPCWSTR) lpRead, (LPCWSTR) lpComp)) {
-		// composition string must  == reading string
-	} else {
-		// composition string != reading string
-		return FALSE;
-	}
-
-	if (dwIndex != SCS_SETSTR) {
-		return FALSE;
-	}
-
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return FALSE;
-	}
-
-	if (!lpIMC->hCompStr) {
-		ImmUnlockIMC(hIMC);
-		return FALSE;
-	}
-
-	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
-	if (!lpCompStr) {
-		ImmUnlockIMC(hIMC);
-		return FALSE;
-	}
-
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-	if (!lpCompStr) {
-		ImmUnlockIMCC(lpIMC->hCompStr);
-		ImmUnlockIMC(hIMC);
-		return FALSE;
-	}
-
-	fRet =
-		SetString(hIMC, lpIMC, lpCompStr, imcPrivPtr, (LPTSTR) lpRead,
-				  dwReadLen);
-
-	ImmUnlockIMCC(lpIMC->hPrivate);
-	ImmUnlockIMCC(lpIMC->hCompStr);
-	ImmUnlockIMC(hIMC);
-
-	return (fRet);
+	return FALSE;
 }
 
 void PASCAL NotifySelectCand(	// app tell IME that one candidate string is
