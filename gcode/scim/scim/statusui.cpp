@@ -287,61 +287,61 @@ void PASCAL SetStatus(
     hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
     hIMC = (HIMC)GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
     if (!hIMC) {
-    return;
+		return;
     }
 
     lpIMC = (LPINPUTCONTEXT)ImmLockIMC(hIMC);
     if (!lpIMC) {
-    return;
+		return;
     }
 
     if (!lpIMC->fOpen) {
-    ImmSetOpenStatus(hIMC, TRUE);
+		ImmSetOpenStatus(hIMC, TRUE);
     } else if (PtInRect(&sImeG.rcImeIcon, *lpptCursor)) {
-    DWORD fdwConversion;
+		DWORD fdwConversion;
 
-    if (lpIMC->fdwConversion & (IME_CMODE_CHARCODE|IME_CMODE_EUDC)) {
-        // change to native mode
-        fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
-        ~(IME_CMODE_CHARCODE | IME_CMODE_EUDC);
-    } else if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
-        // change to alphanumeric mode
-        fdwConversion = lpIMC->fdwConversion & ~(IME_CMODE_CHARCODE |
-        IME_CMODE_NATIVE | IME_CMODE_EUDC);
-    } else {
+		if (lpIMC->fdwConversion & (IME_CMODE_CHARCODE|IME_CMODE_EUDC)) {
+			// change to native mode
+			fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
+				~(IME_CMODE_CHARCODE | IME_CMODE_EUDC);
+		} else if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
+			// change to alphanumeric mode
+			fdwConversion = lpIMC->fdwConversion & ~(IME_CMODE_CHARCODE |
+													 IME_CMODE_NATIVE | IME_CMODE_EUDC);
+		} else {
 
     
-        BYTE  lpbKeyState[256];
+			BYTE  lpbKeyState[256];
 
-        GetKeyboardState(lpbKeyState);
+			GetKeyboardState(lpbKeyState);
     
-        if (lpbKeyState[VK_CAPITAL] & 1)        
-        {
-        // Simulate a key press
-        keybd_event( VK_CAPITAL,
-                           0x3A,
-                          KEYEVENTF_EXTENDEDKEY | 0,
-                          0 );
+			if (lpbKeyState[VK_CAPITAL] & 1)        
+			{
+				// Simulate a key press
+				keybd_event( VK_CAPITAL,
+							 0x3A,
+							 KEYEVENTF_EXTENDEDKEY | 0,
+							 0 );
  
-        // Simulate a key release
-        keybd_event( VK_CAPITAL,
-                           0x3A,
-                           KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,
-                           0);
-        }
-        fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
-        ~(IME_CMODE_CHARCODE | IME_CMODE_EUDC);
+				// Simulate a key release
+				keybd_event( VK_CAPITAL,
+							 0x3A,
+							 KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,
+							 0);
+			}
+			fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
+				~(IME_CMODE_CHARCODE | IME_CMODE_EUDC);
             // 10.11 add
             uCaps = 0;
-    }
+		}
 
-    ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
+		ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
     } else if (PtInRect(&sImeG.rcImeName, *lpptCursor)) {
-    DWORD dwConvMode;
-    int     cxBorder, cyBorder;
-    HKEY  hKeyCurrVersion;
-    HKEY  hKeyGB;
-    DWORD retCode;
+		DWORD dwConvMode;
+		int     cxBorder, cyBorder;
+		HKEY  hKeyCurrVersion;
+		HKEY  hKeyGB;
+		DWORD retCode;
 
         //change current IME index
         dwConvMode = lpIMC->fdwConversion ^ (IME_CMODE_INDEX_FIRST << sImeL.dwRegImeIndex);
@@ -362,7 +362,7 @@ void PASCAL SetStatus(
             return;
         }
         retCode = RegCreateKeyEx(hKeyCurrVersion, szImeRegName, 0,
-                    NULL, REG_OPTION_NON_VOLATILE,    KEY_ALL_ACCESS    , NULL, &hKeyGB, NULL);
+								 NULL, REG_OPTION_NON_VOLATILE,    KEY_ALL_ACCESS    , NULL, &hKeyGB, NULL);
 
         if (retCode) {
             RegCloseKey(hKeyGB);
@@ -373,46 +373,27 @@ void PASCAL SetStatus(
         RegCloseKey(hKeyCurrVersion);
 
     } else if (PtInRect(&sImeG.rcShapeText, *lpptCursor)) {
-    DWORD dwConvMode;
+		DWORD dwConvMode;
 
-    if (lpIMC->fdwConversion & IME_CMODE_CHARCODE) {
-        MessageBeep((UINT)-1);
-    } else if (lpIMC->fdwConversion & IME_CMODE_EUDC) {
-        MessageBeep((UINT)-1);
-    } else {
-        dwConvMode = lpIMC->fdwConversion ^ IME_CMODE_FULLSHAPE;
-        ImmSetConversionStatus(hIMC, dwConvMode, lpIMC->fdwSentence);
-    }
+		if (lpIMC->fdwConversion & IME_CMODE_CHARCODE) {
+			MessageBeep((UINT)-1);
+		} else if (lpIMC->fdwConversion & IME_CMODE_EUDC) {
+			MessageBeep((UINT)-1);
+		} else {
+			dwConvMode = lpIMC->fdwConversion ^ IME_CMODE_FULLSHAPE;
+			ImmSetConversionStatus(hIMC, dwConvMode, lpIMC->fdwSentence);
+		}
     } else if (PtInRect(&sImeG.rcSymbol, *lpptCursor)) {
-    DWORD fdwConversion;
+		DWORD fdwConversion;
 
-    if (lpIMC->fdwConversion & IME_CMODE_CHARCODE) {
-        MessageBeep((UINT)-1);
+		if (lpIMC->fdwConversion & IME_CMODE_CHARCODE) {
+			MessageBeep((UINT)-1);
+		} else {
+			fdwConversion = lpIMC->fdwConversion ^ IME_CMODE_SYMBOL;
+			ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
+		}
     } else {
-        fdwConversion = lpIMC->fdwConversion ^ IME_CMODE_SYMBOL;
-        ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
-    }
-    } else if (PtInRect(&sImeG.rcSKText, *lpptCursor)) {
-    DWORD fdwConversion;
-        LPPRIVCONTEXT  lpImcP;
-
-    lpImcP = (LPPRIVCONTEXT)ImmLockIMCC(lpIMC->hPrivate);
-    
-    if(lpImcP) {
-            if(!(lpImeL->hSKMenu)) {
-                lpImeL->hSKMenu = LoadMenu (hInst, TEXT("SKMENU"));
-            }
-
-        lpImeL->dwSKState[lpImeL->dwSKWant] = 
-                lpImeL->dwSKState[lpImeL->dwSKWant]^1;
-        fdwConversion = lpIMC->fdwConversion ^ IME_CMODE_SOFTKBD;
-        ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
-            ImmUnlockIMCC(lpIMC->hPrivate);
-        } else {
-        MessageBeep((UINT)-1);
-        }
-    } else {
-    MessageBeep((UINT)-1);
+		MessageBeep((UINT)-1);
     }
 
     ImmUnlockIMC(hIMC);
@@ -446,17 +427,7 @@ void PASCAL StatusSetCursor(
        if (HIWORD(lParam) == WM_LBUTTONDOWN) {
           SetStatus(hStatusWnd, &ptCursor);
        } else if (HIWORD(lParam) == WM_RBUTTONUP) {
-              if (PtInRect(&sImeG.rcSKText, ptCursor)) {
-                 static BOOL fSoftkey= FALSE;
-                 // prevent recursive
-                 if (fSoftkey) {
-                   // configuration already bring up
-                   return;
-                 }
-                 fSoftkey = TRUE;
-                 SoftkeyMenu(hStatusWnd, ptSavCursor.x, ptSavCursor.y);
-                 fSoftkey = FALSE;
-              }else{
+		   {
                  static BOOL fCmenu=FALSE;
                  // prevent recursive
             if (fCmenu) {
@@ -508,7 +479,7 @@ void PASCAL PaintStatusWindow(
     LPINPUTCONTEXT lpIMC;
     LPPRIVCONTEXT  lpImcP;
     HGDIOBJ        hOldFont;
-    HBITMAP        hImeIconBmp, hShapeBmp, hSymbolBmp, hSKBmp;
+    HBITMAP        hImeIconBmp, hShapeBmp, hSymbolBmp;
     HBITMAP        hOldBmp;
     HDC            hMemDC;
 
@@ -583,12 +554,10 @@ void PASCAL PaintStatusWindow(
     // load all bitmap
     hSymbolBmp = (HBITMAP)NULL;
     hShapeBmp = (HBITMAP)NULL;
-    hSKBmp = (HBITMAP)NULL;
 
     if (!lpIMC->fOpen) {
        hSymbolBmp = LoadBitmap(hInst, szNone);
        hShapeBmp = LoadBitmap(hInst, szNone);
-       hSKBmp = LoadBitmap(hInst, szNone);
        hImeIconBmp = LoadBitmap(hInst, szChinese);
     } else if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
               hImeIconBmp = LoadBitmap(hInst, szChinese);
@@ -639,12 +608,7 @@ void PASCAL PaintStatusWindow(
            STATUS_DIM_Y,
            hMemDC, 0, 0, SRCCOPY);
 
-    SelectObject(hMemDC, hSKBmp);
 
-    BitBlt(hDC, sImeG.rcSKText.left, sImeG.rcSKText.top,
-           sImeG.xStatusWi - sImeG.rcSKText.left,
-           STATUS_DIM_Y,
-           hMemDC, 0, 0, SRCCOPY);
 
     SelectObject(hMemDC, hOldBmp);
 
@@ -653,7 +617,6 @@ void PASCAL PaintStatusWindow(
     DeleteObject(hImeIconBmp);
     DeleteObject(hSymbolBmp);
     DeleteObject(hShapeBmp);
-    DeleteObject(hSKBmp);
     if (sImeG.fDiffSysCharSet) {
         DeleteObject(SelectObject(hDC, hOldFont));
     }

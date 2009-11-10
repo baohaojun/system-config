@@ -42,34 +42,7 @@ void PASCAL CMenuDestroyed(             // context menu window
 
     GlobalUnlock(hUIPrivate);
 }
-/**********************************************************************/
-/* SoftkeyMenuDestroyed()                                                    */
-/**********************************************************************/
-void PASCAL SoftkeyMenuDestroyed(             // context menu window
-                                        // already destroyed
-    HWND hUIWnd)
-{
-    HGLOBAL  hUIPrivate;
-    LPUIPRIV lpUIPrivate;
 
-    hUIPrivate = (HGLOBAL)GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-    if (!hUIPrivate) {     
-        return;
-    }
-
-    lpUIPrivate = (LPUIPRIV)GlobalLock(hUIPrivate);
-    if (!lpUIPrivate) {    
-        return;
-    }
-
-    lpUIPrivate->hSoftkeyMenuWnd = NULL;
-
-    GlobalUnlock(hUIPrivate);
-}
-
-/**********************************************************************/
-/* CreateUIWindow()                                                   */
-/**********************************************************************/
 void PASCAL CreateUIWindow(             // create composition window
     HWND hUIWnd)
 {
@@ -113,10 +86,7 @@ void PASCAL DestroyUIWindow(            // destroy composition window
         PostMessage(lpUIPrivate->hCMenuWnd, WM_USER_DESTROY, 0, 0);
     }
     //destroy SoftkeyMenuWnd
-    if (lpUIPrivate->hSoftkeyMenuWnd) {
-        SetWindowLongPtr(lpUIPrivate->hSoftkeyMenuWnd, SOFTKEYMENU_HUIWND,(LONG_PTR)0);
-        PostMessage(lpUIPrivate->hSoftkeyMenuWnd, WM_USER_DESTROY, 0, 0);
-    }
+
 
     // composition window need to be destroyed
     if (lpUIPrivate->hCompWnd) {
@@ -551,12 +521,7 @@ void PASCAL NotifyUI(
         case IMN_PRIVATE_CMENUDESTROYED:
             CMenuDestroyed(hUIWnd);
             break;
-        case IMN_PRIVATE_SOFTKEYMENUDESTROYED:
-            SoftkeyMenuDestroyed(hUIWnd);
-            break;
         }
-        break;
-    case IMN_SOFTKBDDESTROYED:
         break;
     default:
         break;

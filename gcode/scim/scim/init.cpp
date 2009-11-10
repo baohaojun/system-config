@@ -72,11 +72,6 @@ void PASCAL InitStatusUIData(
     sImeG.rcSymbol.right = sImeG.rcSymbol.left + STATUS_DIM_X;
     sImeG.rcSymbol.bottom = sImeG.rcSymbol.top + iContentHi;
 
-    // right bottom of SK bar
-    sImeG.rcSKText.left = sImeG.rcSymbol.right;  
-    sImeG.rcSKText.top = sImeG.rcStatusText.top;
-    sImeG.rcSKText.right = sImeG.rcSKText.left + STATUS_DIM_X;
-    sImeG.rcSKText.bottom = sImeG.rcSKText.top + iContentHi;
 
     return;
 }
@@ -218,10 +213,6 @@ void PASCAL InitImeGlobalData(
 
     //get the ContextMenu class name
     LoadString(hInst, IDS_IMECMENUCLASS, szCMenuClassName,
-    CLASS_LEN);
-
-    //get the softkeyboard Menu class name
-    LoadString(hInst, IDS_IMESOFTKEYMENUCLASS, szSoftkeyMenuClassName,
     CLASS_LEN);
 
     // work area
@@ -546,15 +537,7 @@ void PASCAL RegisterImeClass(
 
        RegisterClassEx(&wcWndCls);
     }
-    // IME softkeyboard menu class
-    if (!GetClassInfoEx(hInstance, szSoftkeyMenuClassName, &wcWndCls)) {
-       wcWndCls.style         = 0;
-       wcWndCls.hbrBackground = GetStockObject(NULL_BRUSH);
-       wcWndCls.lpfnWndProc   = SoftkeyMenuWndProc;
-       wcWndCls.lpszClassName = (LPTSTR)szSoftkeyMenuClassName;
 
-       RegisterClassEx(&wcWndCls);
-    }
 
     return;
 }
@@ -635,10 +618,6 @@ BOOL CALLBACK DllMain(
 
             if (GetClassInfoEx(hInstance, szCMenuClassName, &wcWndCls)) {
                 UnregisterClass(szCMenuClassName, hInstance);
-            }
-
-            if (GetClassInfoEx(hInstance, szSoftkeyMenuClassName, &wcWndCls)) {
-               UnregisterClass(szSoftkeyMenuClassName, hInstance);
             }
 
             if (GetClassInfoEx(hInstance, szStatusClassName, &wcWndCls)) {

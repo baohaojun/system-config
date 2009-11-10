@@ -342,14 +342,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\nsoftkbd.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\softkbd.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\symbol.bmp"
 				>
 			</File>

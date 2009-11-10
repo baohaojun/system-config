@@ -182,39 +182,6 @@ BEGIN
     END
 END
 
-SKMENU MENU DISCARDABLE 
-BEGIN
-    POPUP ""
-    BEGIN
-        MENUITEM "ＰＣ键盘",                    IDM_SKL1
-        MENUITEM SEPARATOR
-        MENUITEM "希腊字母",                    IDM_SKL2
-        MENUITEM SEPARATOR
-        MENUITEM "俄文字母",                    IDM_SKL3
-        MENUITEM SEPARATOR
-        MENUITEM "注音符号",                    IDM_SKL4
-        MENUITEM SEPARATOR
-        MENUITEM "拼    音",                    IDM_SKL5
-        MENUITEM SEPARATOR
-        MENUITEM "日文平假名",                  IDM_SKL6
-        MENUITEM SEPARATOR
-        MENUITEM "日文片假名",                  IDM_SKL7
-        MENUITEM "标点符号",                    IDM_SKL8, MENUBARBREAK
-        MENUITEM SEPARATOR
-        MENUITEM "数字序号",                    IDM_SKL9
-        MENUITEM SEPARATOR
-        MENUITEM "数学符号",                    IDM_SKL10
-        MENUITEM SEPARATOR
-        MENUITEM "单位符号",                    IDM_SKL11
-        MENUITEM SEPARATOR
-        MENUITEM "制表符",                      IDM_SKL12
-        MENUITEM SEPARATOR
-        MENUITEM "特殊符号",                    IDM_SKL13
-        MENUITEM SEPARATOR
-    END
-END
-
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
@@ -331,7 +298,6 @@ BEGIN
     IDS_IMECANDCLASS        "ImeCandwinime"
     IDS_IMESTATUSCLASS      "ImeStatuswinime"
     IDS_IMECMENUCLASS       "ImeCMenuwinime"		 
-    IDS_IMESOFTKEYMENUCLASS "ImeSoftkeyMenuwinime"	 
 END
 
 STRINGTABLE DISCARDABLE 

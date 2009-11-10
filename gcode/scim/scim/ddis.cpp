@@ -1083,10 +1083,6 @@ BOOL PASCAL Select(
 
         //lpImcP->fdwSentence = (DWORD)NULL;
 
-        //
-        // reset SK State
-        //
-
         *(LPDWORD)lpImcP->bSeq = 0;
 
         
@@ -1146,10 +1142,6 @@ BOOL PASCAL Select(
 
     } else {
 
-        if (lpImeL->hSKMenu) {
-            DestroyMenu(lpImeL->hSKMenu);
-            lpImeL->hSKMenu = NULL;
-        }
 
         if (lpImeL->hPropMenu) {
             DestroyMenu(lpImeL->hPropMenu);

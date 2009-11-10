@@ -29,7 +29,6 @@
 #define IDS_IMECANDCLASS        0x0323
 #define IDS_IMESTATUSCLASS      0x0324
 #define IDS_IMECMENUCLASS       0x0325
-#define IDS_IMESOFTKEYMENUCLASS 0x0326
 #define IDS_IMEREGNAME          0x0327
 #define IDS_IMENAME_UNI         0x0330
 
@@ -46,20 +45,6 @@
 
 #define IDM_IME                 0x0450
 
-#define IDM_SKL1                0x0500
-#define IDM_SKL2                0x0501
-#define IDM_SKL3                0x0502
-#define IDM_SKL4                0x0503
-#define IDM_SKL5                0x0504
-#define IDM_SKL6                0x0505
-#define IDM_SKL7                0x0506
-#define IDM_SKL8                0x0507
-#define IDM_SKL9                0x0508
-#define IDM_SKL10               0x0509
-#define IDM_SKL11               0x050a
-#define IDM_SKL12               0x050b
-#define IDM_SKL13               0x050c
-
 #define DlgPROP                 101
 #define DlgUIMODE               102
 #define IDC_UIMODE1             1001
@@ -75,7 +60,6 @@
 #define CST_INPUT               1
 #define CST_CHOOSE              2
 #define CST_SYMBOL              3
-#define CST_SOFTKB              4           // not in iImeState
 #define CST_TOGGLE_PHRASEWORD   5           // not in iImeState
 #define CST_ALPHABET            6           // not in iImeState
 #define CST_ALPHANUMERIC        7           // not in iImeState
@@ -156,7 +140,6 @@
 #define IMN_PRIVATE_UPDATE_SOFTKBD            0x0005
 #define IMN_PRIVATE_DESTROYCANDWIN            0x0006
 #define IMN_PRIVATE_CMENUDESTROYED            0x0007
-#define IMN_PRIVATE_SOFTKEYMENUDESTROYED      0x0008
 
 #define MSG_ALREADY_OPEN                0x000001
 #define MSG_ALREADY_OPEN2               0x000002
@@ -235,8 +218,6 @@
 // window extra for context menu owner
 #define CMENU_HUIWND            0
 #define CMENU_MENU              4
-#define SOFTKEYMENU_HUIWND      0
-#define SOFTKEYMENU_MENU        4
 
 #define WM_USER_DESTROY         (WM_USER + 0x0400)
 
@@ -248,9 +229,6 @@ typedef DWORD UNALIGNED FAR *LPUNADWORD;
 typedef WORD  UNALIGNED FAR *LPUNAWORD;
 
 typedef struct tagImeL {        // local structure, per IME structure
-    DWORD       dwSKState[NumsSK];
-    DWORD       dwSKWant;
-    HMENU       hSKMenu;        // SoftKeyboard Menu
     HMENU       hPropMenu;      // Property Menu
     HINSTANCE   hInst;          // IME DLL instance handle
     int         xCompWi;        // width
@@ -315,7 +293,7 @@ typedef struct _tagImeG {       // global structure, can be share by all IMEs,
     RECT        rcImeName;      // ImeName position relative to status window
     RECT        rcShapeText;    // shape text relative to status window
     RECT        rcSymbol;       // symbol relative to status window
-    RECT        rcSKText;       // SK text relative to status window
+    //RECT        rcSKText;       // SK text relative to status window
 // full shape space (reversed internal code)
     WORD        wFullSpace;
 // full shape chars (internal code)
@@ -371,7 +349,6 @@ typedef struct _tagUIPRIV {     // IME private UI data
     DWORD   fdwSetContext;      // the actions to take at set context time
     HIMC    hIMC;               // the recent selected hIMC
     HWND    hCMenuWnd;          // a window owner for context menu
-    HWND    hSoftkeyMenuWnd;    // a window owner for softkeyboard menu
 } UIPRIV;
 
 typedef UIPRIV      *PUIPRIV;
@@ -406,7 +383,6 @@ extern TCHAR     szCompClassName[];
 extern TCHAR     szCandClassName[];
 extern TCHAR     szStatusClassName[];
 extern TCHAR     szCMenuClassName[];
-extern TCHAR     szSoftkeyMenuClassName[];
 extern TCHAR     szHandCursor[];
 extern TCHAR     szChinese[];
 extern TCHAR     szCandInf[];
@@ -481,9 +457,8 @@ void PASCAL DrawDragBorder(HWND, LONG, LONG);                   // uisubs.c
 void PASCAL DrawFrameBorder(HDC, HWND);                         // uisubs.c
 
 void PASCAL ContextMenu(HWND, int, int);                        // uisubs.c
-void PASCAL SoftkeyMenu(HWND, int, int);                        // uisubs.c
 LRESULT CALLBACK ContextMenuWndProc(HWND, UINT, WPARAM,LPARAM); // uisubs.c
-LRESULT CALLBACK SoftkeyMenuWndProc(HWND, UINT, WPARAM,LPARAM); // uisubs.c
+//LRESULT CALLBACK SoftkeyMenuWndProc(HWND, UINT, WPARAM,LPARAM); // uisubs.c
 
 extern "C" HWND    PASCAL GetCompWnd(HWND);                                // compui.c
 void    PASCAL SetCompPosition(HWND, HIMC, LPINPUTCONTEXT);     // compui.c

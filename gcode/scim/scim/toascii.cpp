@@ -372,14 +372,14 @@ UINT PASCAL ProcessKey(     // this key will cause the IME go to what state
         return (CST_CAPITAL);
         }
 
-    if ((lpIMC->fdwConversion & IME_CMODE_SOFTKBD)
-       && (lpImeL->dwSKWant != 0)){
-        if (wCharCode >= TEXT(' ') && wCharCode <= TEXT('~')) {
-          return (CST_SOFTKB);
-                } else {
-          return (CST_INVALID);
-                }
-    }
+    // if ((lpIMC->fdwConversion & IME_CMODE_SOFTKBD)
+    //    && (lpImeL->dwSKWant != 0)){
+    //     if (wCharCode >= TEXT(' ') && wCharCode <= TEXT('~')) {
+    //       return (CST_SOFTKB);
+    //             } else {
+    //       return (CST_INVALID);
+    //             }
+    // }
         
     // candidate alaredy open,  <,>,pageup,pagedown,?,ECS,key
     if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
