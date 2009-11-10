@@ -1025,7 +1025,7 @@ BOOL PASCAL CandButtonUp(HWND hCandWnd)
 	LPINPUTCONTEXT lpIMC;
 
 	if (GetWindowLong(hCandWnd, UI_MOVE_OFFSET) == WINDOW_NOT_DRAG) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lTmpCursor = GetWindowLong(hCandWnd, UI_MOVE_XY);
@@ -1044,12 +1044,12 @@ BOOL PASCAL CandButtonUp(HWND hCandWnd)
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	if (!hIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
 	if (!lpIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	AdjustCandBoundry(&pt);

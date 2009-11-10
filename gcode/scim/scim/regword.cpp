@@ -23,7 +23,7 @@ Module Name:
 BOOL WINAPI
 ImeRegisterWord(LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 {
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -35,7 +35,7 @@ ImeRegisterWord(LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 BOOL WINAPI
 ImeUnregisterWord(LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 {
-	return (FALSE);
+	return FALSE;
 }
 
 /**********************************************************************/
@@ -45,7 +45,7 @@ ImeUnregisterWord(LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 /**********************************************************************/
 UINT WINAPI ImeGetRegisterWordStyle(UINT nItem, LPSTYLEBUF lpStyleBuf)
 {
-	return (FALSE);
+	return FALSE;
 }
 
 /**********************************************************************/
@@ -58,5 +58,5 @@ ImeEnumRegisterWord(REGISTERWORDENUMPROC lpfnRegisterWordEnumProc,
 					LPCTSTR lpszReading,
 					DWORD dwStyle, LPCTSTR lpszString, LPVOID lpData)
 {
-	return (FALSE);
+	return FALSE;
 }

@@ -352,7 +352,7 @@ BOOL UpdateStatusWindow(HWND hUIWnd)
 	HWND hStatusWnd;
 
 	if (!(hStatusWnd = GetStatusWnd(hUIWnd))) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	InvalidateRect(hStatusWnd, &(sImeG.rcStatusText), TRUE);
@@ -606,7 +606,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 			// change compwnd size
 
 			// init fields of hIMC
-			lpIMC->is_active = TRUE;
+			lpIMC->fOpen = TRUE;
 
 			SendMessage(GetCandWnd(hUIWnd), WM_DESTROY, (WPARAM) 0,
 						(LPARAM) 0);

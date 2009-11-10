@@ -64,7 +64,7 @@ BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
 	ptTol.x = (ptTol.x >= 0) ? ptTol.x : -ptTol.x;
 
 	if (ptDelta.x > ptTol.x) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	ptDelta.y = lpptOrg->y - lpptNearCaret->y;
@@ -77,7 +77,7 @@ BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
 	ptTol.y = (ptTol.y >= 0) ? ptTol.y : -ptTol.y;
 
 	if (ptDelta.y > ptTol.y) {
-		return (FALSE);
+		return FALSE;
 	}
 	// build up the UI rectangle (composition window)
 	rcUIRect.left = lpptOrg->x;
@@ -86,7 +86,7 @@ BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
 	rcUIRect.bottom = rcUIRect.top + lpImeL->yCompHi;
 
 	if (IntersectRect(&rcInterRect, &rcUIRect, lprcInputRect)) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	return (TRUE);
@@ -283,7 +283,7 @@ BOOL PASCAL AdjustCompPosition(	// IME adjust position according to
 		if (FitInLazyOperation(lpptOrg, &ptNearCaret, &rcInputRect, uEsc))
 	{
 		// happy ending!!!, don't change position
-		return (FALSE);
+		return FALSE;
 	} else {
 		*lpptOrg = ptNearCaret;
 
@@ -305,7 +305,7 @@ BOOL PASCAL AdjustCompPosition(	// IME adjust position according to
 	} else
 		if (FitInLazyOperation(lpptOrg, &ptNearCaret, &rcInputRect, uEsc))
 	{
-		return (FALSE);
+		return FALSE;
 	} else {
 		*lpptOrg = ptNearCaret;
 
@@ -690,7 +690,7 @@ BOOL PASCAL CompButtonUp(		// finish drag, set comp  window to this
 	RECT rcWorkArea;
 
 	if (GetWindowLong(hCompWnd, UI_MOVE_OFFSET) == WINDOW_NOT_DRAG) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lTmpCursor = GetWindowLong(hCompWnd, UI_MOVE_XY);
@@ -712,12 +712,12 @@ BOOL PASCAL CompButtonUp(		// finish drag, set comp  window to this
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	if (!hIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
 	if (!lpIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	rcWorkArea = sImeG.rcWorkArea;

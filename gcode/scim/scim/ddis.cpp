@@ -24,7 +24,7 @@ BOOL WINAPI
 ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 {
 	if (!lpImeInfo) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpImeInfo->dwPrivateDataSize = sizeof(PRIVCONTEXT);
@@ -129,7 +129,7 @@ BOOL FAR PASCAL ImeSetDlgProc(	// dialog procedure of configuration
 			EndDialog(hDlg, FALSE);
 			break;
 		default:
-			return (FALSE);
+			return FALSE;
 		}
 		return (TRUE);
 	case WM_PAINT:
@@ -147,12 +147,12 @@ BOOL FAR PASCAL ImeSetDlgProc(	// dialog procedure of configuration
 							rc.top + 7, rc.right - 7, rc.bottom - 40);
 		}
 
-		return (FALSE);
+		return FALSE;
 	case WM_CLOSE:
 		EndDialog(hDlg, FALSE);
 		return (TRUE);
 	default:
-		return (FALSE);
+		return FALSE;
 	}
 
 	return (TRUE);
@@ -179,7 +179,7 @@ BOOL WINAPI ImeConfigure(		// configurate the IME setting
 				  (DLGPROC) ImeSetDlgProc);
 		break;
 	default:
-		return (FALSE);
+		return FALSE;
 		break;
 	}
 	return (TRUE);
@@ -596,12 +596,12 @@ ImeConversionList(HIMC hIMC,
 	case GCL_CONVERSION:
 		lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
 		if (!lpIMC) {
-			return (FALSE);
+			return FALSE;
 		}
 		lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
 		if (!lpImcP) {
 			ImmUnlockIMC(hIMC);
-			return (FALSE);
+			return FALSE;
 		}
 		return (XGBConversion(lpszSrc, lpCandList, uBufLen));
 		break;
@@ -639,7 +639,7 @@ BOOL WINAPI ImeDestroy(			// this dll is unloaded
 						  UINT uReserved)
 {
 	if (uReserved) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	return (TRUE);
@@ -673,9 +673,9 @@ LRESULT WINAPI ImeEscape(		// escape function of IMEs
 		case IME_ESC_GET_EUDC_DICTIONARY:
 		case IME_ESC_SET_EUDC_DICTIONARY:
 		case IME_INPUTKEYTOSEQUENCE:	// will not supported in next version
-			return (FALSE);		// will not supported in GB IME
+			return FALSE;		// will not supported in GB IME
 		default:
-			return (FALSE);
+			return FALSE;
 
 		}
 		break;
@@ -683,7 +683,7 @@ LRESULT WINAPI ImeEscape(		// escape function of IMEs
 	case IME_ESC_GET_EUDC_DICTIONARY:
 	case IME_ESC_SET_EUDC_DICTIONARY:
 	case IME_INPUTKEYTOSEQUENCE:
-		return (FALSE);
+		return FALSE;
 	case IME_ESC_MAX_KEY:
 		return ((WORD) 4);
 	case IME_ESC_IME_NAME:
@@ -712,7 +712,7 @@ LRESULT WINAPI ImeEscape(		// escape function of IMEs
 		}
 
 	default:
-		return (FALSE);
+		return FALSE;
 	}
 
 	return (lRet);
@@ -760,7 +760,7 @@ BOOL PASCAL ClearCompStr(LPINPUTCONTEXT lpIMC)
 	DWORD dwSize;
 
 	if (!lpIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	dwSize =
@@ -789,18 +789,18 @@ BOOL PASCAL ClearCompStr(LPINPUTCONTEXT lpIMC)
 	} else {
 		ImmDestroyIMCC(lpIMC->hCompStr);
 		lpIMC->hCompStr = ImmCreateIMCC(dwSize);
-		return (FALSE);
+		return FALSE;
 	}
 
 	if (!lpIMC->hCompStr) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
 	if (!lpCompStr) {
 		ImmDestroyIMCC(lpIMC->hCompStr);
 		lpIMC->hCompStr = ImmCreateIMCC(dwSize);
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpCompStr->dwSize = dwSize;
@@ -868,7 +868,7 @@ BOOL PASCAL ClearCand(LPINPUTCONTEXT lpIMC)
 		(sizeof(WORD) + sizeof(WORD)) * (MAXCAND + 1);
 
 	if (!lpIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	if (!lpIMC->hCandInfo) {
@@ -879,18 +879,18 @@ BOOL PASCAL ClearCand(LPINPUTCONTEXT lpIMC)
 	} else {
 		ImmDestroyIMCC(lpIMC->hCandInfo);
 		lpIMC->hCandInfo = ImmCreateIMCC(dwSize);
-		return (FALSE);
+		return FALSE;
 	}
 
 	if (!lpIMC->hCandInfo) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->hCandInfo);
 	if (!lpCandInfo) {
 		ImmDestroyIMCC(lpIMC->hCandInfo);
 		lpIMC->hCandInfo = ImmCreateIMCC(dwSize);
-		return (FALSE);
+		return FALSE;
 	}
 	// ordering of strings are
 	// buffer size
@@ -935,7 +935,7 @@ BOOL PASCAL ClearGuideLine(LPINPUTCONTEXT lpIMC)
 
 	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(lpIMC->hGuideLine);
 	if (!lpGuideLine) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpGuideLine->dwSize = dwSize;
@@ -997,11 +997,6 @@ void PASCAL InitContext(LPINPUTCONTEXT lpIMC)
 	return;
 }
 
-/**********************************************************************/
-/* Select()                                                           */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 {
 	LPPRIVCONTEXT lpImcP;
@@ -1052,7 +1047,7 @@ BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 		*(LPDWORD) lpImcP->bSeq = 0;
 
 
-		lpIMC->is_active = TRUE;
+		lpIMC->fOpen = TRUE;
 
 		if (!(lpIMC->fdwInit & INIT_CONVERSION)) {
 			lpIMC->fdwConversion = IME_CMODE_NATIVE;
@@ -1137,12 +1132,12 @@ BOOL WINAPI ImeSelect(HIMC hIMC, BOOL fSelect)
 
 
 	if (!hIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
+	lpIMC = ImmLockIMC(hIMC);
 	if (!lpIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	fRet = Select(hIMC, lpIMC, fSelect);
@@ -1166,7 +1161,7 @@ BOOL WINAPI ImeSetActiveContext(HIMC hIMC, BOOL fOn)
 
 		lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
 		if (!lpIMC) {
-			return (FALSE);
+			return FALSE;
 		}
 
 		InitContext(lpIMC);

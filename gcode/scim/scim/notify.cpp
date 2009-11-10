@@ -163,7 +163,7 @@ SetString(HIMC hIMC,
 	}
 
 	if (dwReadLen > 4) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->hCandInfo);
@@ -313,7 +313,7 @@ ImeSetCompositionString(HIMC hIMC,
 	BOOL fRet;
 
 	if (!hIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 	// composition string must  == reading string
 	// reading is more important
@@ -329,51 +329,51 @@ ImeSetCompositionString(HIMC hIMC,
 	if (!dwReadLen) {
 		lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
 		if (!lpIMC) {
-			return (FALSE);
+			return FALSE;
 		}
 
 		CompCancel(hIMC, lpIMC);
 		ImmUnlockIMC(hIMC);
 		return (TRUE);
 	} else if (!lpRead) {
-		return (FALSE);
+		return FALSE;
 	} else if (!dwCompLen) {
 	} else if (!lpComp) {
 	} else if (dwReadLen != dwCompLen) {
-		return (FALSE);
+		return FALSE;
 	} else if (lpRead == lpComp) {
 	} else if (!lstrcmp((LPCWSTR) lpRead, (LPCWSTR) lpComp)) {
 		// composition string must  == reading string
 	} else {
 		// composition string != reading string
-		return (FALSE);
+		return FALSE;
 	}
 
 	if (dwIndex != SCS_SETSTR) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
 	if (!lpIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	if (!lpIMC->hCompStr) {
 		ImmUnlockIMC(hIMC);
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
 	if (!lpCompStr) {
 		ImmUnlockIMC(hIMC);
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
 	if (!lpCompStr) {
 		ImmUnlockIMCC(lpIMC->hCompStr);
 		ImmUnlockIMC(hIMC);
-		return (FALSE);
+		return FALSE;
 	}
 
 	fRet =
@@ -564,7 +564,7 @@ NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 		}
 		break;
 	case NI_SELECTCANDIDATESTR:
-		if (!lpIMC->is_active) {
+		if (!lpIMC->fOpen) {
 			fRet = FALSE;
 			break;
 		} else if (lpIMC->fdwConversion & IME_CMODE_NOCONVERSION) {
@@ -603,7 +603,7 @@ NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 		if (dwIndex != 0) {
 			fRet = FALSE;
 			break;
-		} else if (!lpIMC->is_active) {
+		} else if (!lpIMC->fOpen) {
 			fRet = FALSE;
 			break;
 		} else if (lpIMC->fdwConversion & IME_CMODE_NOCONVERSION) {

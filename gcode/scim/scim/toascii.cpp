@@ -24,7 +24,7 @@ BOOL IsUsedCode(WORD wCharCode)
 			break;
 	if (wFlg < sImeG.wNumCodes)
 		return (TRUE);
-	return (FALSE);
+	return FALSE;
 }
 
 UINT PASCAL GBProcessKey(		// this key will cause the IME go to what state
@@ -323,7 +323,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 	}
 
 	// filter system key (alt,alt+,ctrl,shift)
-	// and is_active, IME_CMODE_NOCONVERSION
+	// and fOpen, IME_CMODE_NOCONVERSION
 	if (uVirtKey == VK_MENU) {	// ALT key
 		return (CST_INVALID);
 	} else if (uScanCode & KF_ALTDOWN) {	// ALT-xx key
@@ -332,7 +332,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 		return (CST_INVALID);
 	} else if (uVirtKey == VK_SHIFT) {	// SHIFT key
 		return (CST_INVALID);
-	} else if (!lpIMC->is_active) {	// don't compose in 
+	} else if (!lpIMC->fOpen) {	// don't compose in 
 		// close status
 		return (CST_INVALID);
 	} else if (lpIMC->fdwConversion & IME_CMODE_NOCONVERSION) {
@@ -465,18 +465,18 @@ BOOL WINAPI ImeProcessKey(		// if this key is need by IME?
 
 	// can't compose in NULL hIMC
 	if (!hIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
 	if (!lpIMC) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
 	if (!lpImcP) {
 		ImmUnlockIMC(hIMC);
-		return (FALSE);
+		return FALSE;
 	}
 
 	nChars = ToAscii(uVirtKey, HIWORD(lParam), lpbKeyState,

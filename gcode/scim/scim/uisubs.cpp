@@ -238,7 +238,7 @@ ContextMenuWndProc(HWND hCMenuWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				// change compwnd size
 
 				// init fields of hIMC
-				lpIMC->is_active = TRUE;
+				lpIMC->fOpen = TRUE;
 
 				if (!(lpIMC->fdwInit & INIT_CONVERSION)) {
 					lpIMC->fdwConversion = IME_CMODE_NATIVE;

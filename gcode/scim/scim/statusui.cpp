@@ -286,7 +286,7 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 		return;
 	}
 
-	if (!lpIMC->is_active) {
+	if (!lpIMC->fOpen) {
 		ImmSetOpenStatus(hIMC, TRUE);
 	} else if (PtInRect(&sImeG.rcImeIcon, *lpptCursor)) {
 		DWORD fdwConversion;
@@ -515,7 +515,7 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	}
 	// draw Ime Name
 
-	if (lpIMC->is_active) {
+	if (lpIMC->fOpen) {
 		SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
 	} else {
 		SetTextColor(hDC, RGB(0x80, 0x80, 0x80));
@@ -538,7 +538,7 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	// load all bitmap
 	hSymbolBmp = (HBITMAP) NULL;
 
-	if (!lpIMC->is_active) {
+	if (!lpIMC->fOpen) {
 		hSymbolBmp = LoadBitmap(hInst, szNone);
 		hImeIconBmp = LoadBitmap(hInst, szChinese);
 	} else if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
@@ -707,7 +707,7 @@ BOOL FAR PASCAL ImeVerDlgProc(	// dialog procedure of configuration
 			EndDialog(hDlg, FALSE);
 			break;
 		default:
-			return (FALSE);
+			return FALSE;
 			break;
 		}
 		return (TRUE);
@@ -731,9 +731,9 @@ BOOL FAR PASCAL ImeVerDlgProc(	// dialog procedure of configuration
 							rc.top + 10, rc.right - 10, rc.bottom - 43);
 		}
 
-		return (FALSE);
+		return FALSE;
 	default:
-		return (FALSE);
+		return FALSE;
 	}
 
 	return (TRUE);
