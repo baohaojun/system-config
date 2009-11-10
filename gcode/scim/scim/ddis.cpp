@@ -1052,7 +1052,7 @@ BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 		*(LPDWORD) lpImcP->bSeq = 0;
 
 
-		lpIMC->fOpen = TRUE;
+		lpIMC->is_active = TRUE;
 
 		if (!(lpIMC->fdwInit & INIT_CONVERSION)) {
 			lpIMC->fdwConversion = IME_CMODE_NATIVE;

@@ -323,7 +323,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 	}
 
 	// filter system key (alt,alt+,ctrl,shift)
-	// and fOpen, IME_CMODE_NOCONVERSION
+	// and is_active, IME_CMODE_NOCONVERSION
 	if (uVirtKey == VK_MENU) {	// ALT key
 		return (CST_INVALID);
 	} else if (uScanCode & KF_ALTDOWN) {	// ALT-xx key
@@ -332,7 +332,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 		return (CST_INVALID);
 	} else if (uVirtKey == VK_SHIFT) {	// SHIFT key
 		return (CST_INVALID);
-	} else if (!lpIMC->fOpen) {	// don't compose in 
+	} else if (!lpIMC->is_active) {	// don't compose in 
 		// close status
 		return (CST_INVALID);
 	} else if (lpIMC->fdwConversion & IME_CMODE_NOCONVERSION) {

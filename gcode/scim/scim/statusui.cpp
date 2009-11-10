@@ -286,7 +286,7 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 		return;
 	}
 
-	if (!lpIMC->fOpen) {
+	if (!lpIMC->is_active) {
 		ImmSetOpenStatus(hIMC, TRUE);
 	} else if (PtInRect(&sImeG.rcImeIcon, *lpptCursor)) {
 		DWORD fdwConversion;
@@ -515,7 +515,7 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	}
 	// draw Ime Name
 
-	if (lpIMC->fOpen) {
+	if (lpIMC->is_active) {
 		SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
 	} else {
 		SetTextColor(hDC, RGB(0x80, 0x80, 0x80));
@@ -538,7 +538,7 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	// load all bitmap
 	hSymbolBmp = (HBITMAP) NULL;
 
-	if (!lpIMC->fOpen) {
+	if (!lpIMC->is_active) {
 		hSymbolBmp = LoadBitmap(hInst, szNone);
 		hImeIconBmp = LoadBitmap(hInst, szChinese);
 	} else if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {

@@ -606,7 +606,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 			// change compwnd size
 
 			// init fields of hIMC
-			lpIMC->fOpen = TRUE;
+			lpIMC->is_active = TRUE;
 
 			SendMessage(GetCandWnd(hUIWnd), WM_DESTROY, (WPARAM) 0,
 						(LPARAM) 0);

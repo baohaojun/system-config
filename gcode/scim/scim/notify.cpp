@@ -564,7 +564,7 @@ NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 		}
 		break;
 	case NI_SELECTCANDIDATESTR:
-		if (!lpIMC->fOpen) {
+		if (!lpIMC->is_active) {
 			fRet = FALSE;
 			break;
 		} else if (lpIMC->fdwConversion & IME_CMODE_NOCONVERSION) {
@@ -603,7 +603,7 @@ NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 		if (dwIndex != 0) {
 			fRet = FALSE;
 			break;
-		} else if (!lpIMC->fOpen) {
+		} else if (!lpIMC->is_active) {
 			fRet = FALSE;
 			break;
 		} else if (lpIMC->fdwConversion & IME_CMODE_NOCONVERSION) {
