@@ -561,24 +561,16 @@ BOOL WINAPI NotifyIME(
                     IME_CMODE_NOCONVERSION|IME_CMODE_SYMBOL);
             }
 
-            if ((lpIMC->fdwConversion ^ dwIndex) & IME_CMODE_SOFTKBD) {
-
-                fdwImeMsg |= MSG_IMN_UPDATE_SOFTKBD;
-
-            }
-
             if ((lpIMC->fdwConversion ^ dwIndex) == IME_CMODE_NATIVE) {
                 lpIMC->fdwConversion &= ~(IME_CMODE_CHARCODE|
                     IME_CMODE_NOCONVERSION|IME_CMODE_EUDC);
-                fdwImeMsg |= MSG_IMN_UPDATE_SOFTKBD;
             }
 
             if (fdwImeMsg) {
                 GenerateImeMessage(hIMC, lpIMC, fdwImeMsg);
             }
 
-            if ((lpIMC->fdwConversion ^ dwIndex) & ~(IME_CMODE_FULLSHAPE|
-                IME_CMODE_SOFTKBD)) {
+            if ((lpIMC->fdwConversion ^ dwIndex) & ~(IME_CMODE_FULLSHAPE)) {
             } else {
                 break;
             }
@@ -586,9 +578,6 @@ BOOL WINAPI NotifyIME(
             CompCancel(hIMC, lpIMC);
             break;
         case IMC_SETOPENSTATUS:
-            if (lpIMC->fdwConversion & IME_CMODE_SOFTKBD) {
-                GenerateImeMessage(hIMC, lpIMC, MSG_IMN_UPDATE_SOFTKBD);
-            }
             CompCancel(hIMC, lpIMC);
             break;
         default:

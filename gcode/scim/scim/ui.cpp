@@ -85,7 +85,6 @@ void PASCAL DestroyUIWindow(            // destroy composition window
         SetWindowLongPtr(lpUIPrivate->hCMenuWnd, CMENU_HUIWND,(LONG_PTR)0);
         PostMessage(lpUIPrivate->hCMenuWnd, WM_USER_DESTROY, 0, 0);
     }
-    //destroy SoftkeyMenuWnd
 
 
     // composition window need to be destroyed
@@ -103,10 +102,6 @@ void PASCAL DestroyUIWindow(            // destroy composition window
         DestroyWindow(lpUIPrivate->hStatusWnd);
     }
 
-    // soft keyboard window need to be destroyed
-    if (lpUIPrivate->hSoftKbdWnd) {
-        ImmDestroySoftKeyboard(lpUIPrivate->hSoftKbdWnd);
-    }
 
     GlobalUnlock(hUIPrivate);
 
@@ -181,13 +176,6 @@ void PASCAL StatusWndMsg(       // set the show hide state and
         if (fdwSetContext == ISC_HIDE_CAND_WINDOW) {
             ShowCand(
                 hUIWnd, SW_HIDE);
-        }
-
-        fdwSetContext = lpUIPrivate->fdwSetContext &
-            (ISC_SHOW_SOFTKBD|ISC_HIDE_SOFTKBD);
-
-        if (fdwSetContext == ISC_HIDE_SOFTKBD) {
-            lpUIPrivate->fdwSetContext &= ~(ISC_HIDE_SOFTKBD);
         }
 
         ShowStatus(
@@ -318,24 +306,6 @@ void PASCAL ShowUI(             // show the sub windows
     } else if (lpUIPrivate->hStatusWnd) {
         DestroyWindow(lpUIPrivate->hStatusWnd);
     } 
-
-    if (!lpIMC->fOpen) {
-        if (lpUIPrivate->nShowCompCmd != SW_HIDE) {
-        }
-    } else if ((lpUIPrivate->fdwSetContext & ISC_SHOW_SOFTKBD) &&
-        (lpIMC->fdwConversion & IME_CMODE_SOFTKBD)) {
-        if (!lpUIPrivate->hSoftKbdWnd) {
-        } else if (lpUIPrivate->nShowSoftKbdCmd == SW_HIDE) {
-        } else if (lpUIPrivate->hIMC != hIMC) {
-        } else {
-            RedrawWindow(lpUIPrivate->hSoftKbdWnd, NULL, NULL,
-                RDW_FRAME|RDW_INVALIDATE);
-        }
-    } else if (lpUIPrivate->nShowSoftKbdCmd == SW_HIDE) {
-    } else if (lpUIPrivate->fdwSetContext & ISC_OPEN_STATUS_WINDOW) {
-        lpUIPrivate->fdwSetContext |= ISC_HIDE_SOFTKBD;
-    } else {
-    }
 
     // we switch to this hIMC
     lpUIPrivate->hIMC = hIMC;
@@ -576,10 +546,9 @@ void PASCAL SetContext(         // the context activated/deactivated
         register DWORD fdwSetContext;
 
         lpUIPrivate->fdwSetContext = lpUIPrivate->fdwSetContext &
-            ~(ISC_SHOWUIALL|ISC_HIDE_SOFTKBD);
+            ~(ISC_SHOWUIALL);
 
-        lpUIPrivate->fdwSetContext |= (lShowUI & ISC_SHOWUIALL) |
-            ISC_SHOW_SOFTKBD;
+        lpUIPrivate->fdwSetContext |= (lShowUI & ISC_SHOWUIALL);
 
         {
         HKEY hKey;

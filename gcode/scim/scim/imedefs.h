@@ -85,7 +85,6 @@
 #define IME_XGB_MAXCAND         190
 #define IME_UNICODE_MAXCAND     256
 #define MAXCODE                 12
-#define MAXSOFTKEYS             48
 
 // set ime character
 #define SIC_INIT                0
@@ -137,7 +136,6 @@
 #define IMN_PRIVATE_UPDATE_STATUS             0x0001
 #define IMN_PRIVATE_COMPOSITION_SIZE          0x0002
 #define IMN_PRIVATE_UPDATE_QUICK_KEY          0x0004
-#define IMN_PRIVATE_UPDATE_SOFTKBD            0x0005
 #define IMN_PRIVATE_DESTROYCANDWIN            0x0006
 #define IMN_PRIVATE_CMENUDESTROYED            0x0007
 
@@ -154,7 +152,6 @@
 #define MSG_END_COMPOSITION             0x040000
 #define MSG_COMPOSITION                 0x080000
 #define MSG_IMN_COMPOSITIONPOS          0x100000
-#define MSG_IMN_UPDATE_SOFTKBD          0x200000
 #define MSG_IMN_UPDATE_STATUS           0x000400
 #define MSG_GUIDELINE                   0x400000
 #define MSG_IN_IMETOASCIIEX             0x800000
@@ -171,15 +168,13 @@
 #define SC_HIDE_STATUS          0x0010
 
 // the new flag for set context
-#define ISC_SHOW_SOFTKBD        0x02000000
 #define ISC_OPEN_STATUS_WINDOW  0x04000000
 #define ISC_OFF_CARET_UI        0x08000000
-#define ISC_SHOW_UI_ALL         (ISC_SHOWUIALL|ISC_SHOW_SOFTKBD|ISC_OPEN_STATUS_WINDOW)
-#define ISC_SETCONTEXT_UI       (ISC_SHOWUIALL|ISC_SHOW_SOFTKBD)
+#define ISC_SHOW_UI_ALL         (ISC_SHOWUIALL|ISC_OPEN_STATUS_WINDOW)
+#define ISC_SETCONTEXT_UI       (ISC_SHOWUIALL)
 
 #define ISC_HIDE_COMP_WINDOW            0x00400000
 #define ISC_HIDE_CAND_WINDOW            0x00800000
-#define ISC_HIDE_SOFTKBD                0x01000000
 // the flag for composition string show status
 #define IME_STR_SHOWED          0x0001
 #define IME_STR_ERROR           0x0002
@@ -342,8 +337,6 @@ typedef struct _tagUIPRIV {     // IME private UI data
     int     nShowCompCmd;
     HWND    hCandWnd;           // candidate window for composition
     int     nShowCandCmd;
-    HWND    hSoftKbdWnd;        // soft keyboard window
-    int     nShowSoftKbdCmd;
     HWND    hStatusWnd;         // status window
     int     nShowStatusCmd;
     DWORD   fdwSetContext;      // the actions to take at set context time
@@ -458,7 +451,6 @@ void PASCAL DrawFrameBorder(HDC, HWND);                         // uisubs.c
 
 void PASCAL ContextMenu(HWND, int, int);                        // uisubs.c
 LRESULT CALLBACK ContextMenuWndProc(HWND, UINT, WPARAM,LPARAM); // uisubs.c
-//LRESULT CALLBACK SoftkeyMenuWndProc(HWND, UINT, WPARAM,LPARAM); // uisubs.c
 
 extern "C" HWND    PASCAL GetCompWnd(HWND);                                // compui.c
 void    PASCAL SetCompPosition(HWND, HIMC, LPINPUTCONTEXT);     // compui.c

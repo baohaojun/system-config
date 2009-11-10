@@ -39,7 +39,7 @@ BOOL WINAPI ImeInquire(
         IME_CMODE_CHARCODE|IME_CMODE_NOCONVERSION;
     lpImeInfo->fdwSentenceCaps = 0;
     // IME will have different distance base multiple of 900 escapement
-    lpImeInfo->fdwUICaps = UI_CAP_ROT90|UI_CAP_SOFTKBD;
+    lpImeInfo->fdwUICaps = UI_CAP_ROT90;
     // composition string is the reading string for simple IME
     lpImeInfo->fdwSCSCaps = SCS_CAP_COMPSTR|SCS_CAP_MAKEREAD;
     // IME want to decide conversion mode on ImeSelect
@@ -1089,13 +1089,11 @@ BOOL PASCAL Select(
         lpIMC->fOpen = TRUE;
 
         if (!(lpIMC->fdwInit & INIT_CONVERSION)) {
-            lpIMC->fdwConversion = (lpIMC->fdwConversion & IME_CMODE_SOFTKBD) |
-                IME_CMODE_NATIVE;
+            lpIMC->fdwConversion = IME_CMODE_NATIVE;
             lpIMC->fdwInit |= INIT_CONVERSION;
         }
 
-        if (lpIMC->fdwInit & INIT_SENTENCE) {
-        } else if (lpImeL->fModeConfig & MODE_CONFIG_PREDICT) {
+		if (lpImeL->fModeConfig & MODE_CONFIG_PREDICT) {
             lpIMC->fdwSentence = IME_SMODE_PHRASEPREDICT;
             lpIMC->fdwInit |= INIT_SENTENCE;
         } 

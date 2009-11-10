@@ -751,9 +751,6 @@ void PASCAL MouseSelectCandStr(
     return;
 }
 
-/**********************************************************************/
-/* CandPageDownUP()                                                   */
-/**********************************************************************/
 void PASCAL CandPageDownUP(
     HWND hCandWnd,
     UINT uCandDownUp)
