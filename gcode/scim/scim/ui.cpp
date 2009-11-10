@@ -91,9 +91,6 @@ void PASCAL CreateUIWindow(             // create composition window
     return;
 }
 
-/**********************************************************************/
-/* DestroyUIWindow()                                                  */
-/**********************************************************************/
 void PASCAL DestroyUIWindow(            // destroy composition window
     HWND hUIWnd)
 {

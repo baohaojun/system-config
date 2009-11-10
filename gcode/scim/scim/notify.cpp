@@ -140,11 +140,6 @@ void PASCAL CompCancel(
     return;
 }
 
-/**********************************************************************/
-/* SetString()                                                        */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 BOOL PASCAL SetString(
     HIMC                hIMC,
     LPINPUTCONTEXT      lpIMC,
@@ -316,11 +311,6 @@ BOOL PASCAL SetString(
     return (TRUE);
 }
 
-/**********************************************************************/
-/* ImeSetCompositionString()                                          */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 BOOL WINAPI ImeSetCompositionString(
     HIMC   hIMC,
     DWORD  dwIndex,

@@ -19,14 +19,10 @@ Module Name:
 #include <regstr.h>
 #include <winuser.h>    
 HWND  hCrtDlg = NULL;
-/**********************************************************************/
-/* ImeInquire()                                                       */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
-BOOL WINAPI ImeInquire(         // initialized data structure of IME
-    LPIMEINFO lpImeInfo,        // IME specific data report to IMM
-    LPTSTR    lpszWndCls,       // the class name of UI
+
+BOOL WINAPI ImeInquire(
+    LPIMEINFO lpImeInfo,
+    LPTSTR    lpszWndCls,
     DWORD     dwSystemInfoFlags)
 {
     if (!lpImeInfo) {

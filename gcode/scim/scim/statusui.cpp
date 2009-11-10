@@ -19,11 +19,7 @@ Module Name:
 #include <imedefs.h>
 #include <resource.h>
 extern HWND hCrtDlg;
-/**********************************************************************/
-/* GetStatusWnd                                                       */
-/* Return Value :                                                     */
-/*      window handle of status window                                */
-/**********************************************************************/
+
 HWND PASCAL GetStatusWnd(
     HWND hUIWnd)                // UI window
 {

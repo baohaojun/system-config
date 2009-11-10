@@ -436,10 +436,7 @@ LRESULT PASCAL SetCandPosition(
     return (0L);
 }
 
-/**********************************************************************/
-/* ShowCand()                                                         */
-/**********************************************************************/
-void PASCAL ShowCand(           // Show the candidate window
+void PASCAL ShowCand(
     HWND    hUIWnd,
     int     nShowCandCmd)
 {
