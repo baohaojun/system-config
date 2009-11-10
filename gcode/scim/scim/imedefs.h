@@ -6,6 +6,8 @@
  *                                               *
  *************************************************/
 
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
 #define NATIVE_CHARSET          GB2312_CHARSET
 #define NATIVE_ANSI_CP          936
 #define NATIVE_LANGUAGE         0x0804
@@ -39,7 +41,6 @@
 
 #define IDM_HLP                 0x0400
 #define IDM_OPTGUD              0x0403
-#define IDM_IMEGUD              0x0405
 #define IDM_VER                 0x0401
 #define IDM_PROP                0x0402
 

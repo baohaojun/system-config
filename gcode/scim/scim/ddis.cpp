@@ -359,9 +359,6 @@ Conversion(LPCTSTR lpszReading, LPCANDIDATELIST lpCandList, UINT uBufLen)
 	return (dwSize);
 }
 
-/**************************************************************************
-BOOL DBCSToGBCode ( WORD    wCode, BYTE    AbSeq[5])
-***************************************************************************/
 BOOL DBCSToGBCode(WORD wCode, TCHAR AbSeq[5])
 {
 	WORD AreaCode;
@@ -399,9 +396,6 @@ BOOL AreaToGB(TCHAR AbSeq[5], TCHAR GbSeq[5])
 	return TRUE;
 }
 
-/**********************************************************************/
-/* UnicodeReverseConversion()                                                */
-/**********************************************************************/
 DWORD PASCAL
 UnicodeReverseConversion(WORD wCode,
 						 LPCANDIDATELIST lpCandList, UINT uBufLen)
@@ -451,9 +445,6 @@ UnicodeReverseConversion(WORD wCode,
 	return (dwSize);
 }
 
-/**********************************************************************/
-/* XGBReverseConversion()                                                */
-/**********************************************************************/
 DWORD PASCAL
 XGBReverseConversion(WORD wCode, LPCANDIDATELIST lpCandList, UINT uBufLen)
 {
@@ -505,9 +496,6 @@ XGBReverseConversion(WORD wCode, LPCANDIDATELIST lpCandList, UINT uBufLen)
 }
 
 
-/**********************************************************************/
-/* ReverseConversion()                                                */
-/**********************************************************************/
 DWORD PASCAL
 ReverseConversion(WORD wCode, LPCANDIDATELIST lpCandList, UINT uBufLen)
 {
@@ -568,76 +556,19 @@ ReverseConversion(WORD wCode, LPCANDIDATELIST lpCandList, UINT uBufLen)
 	return (dwSize);
 }
 
-/**********************************************************************/
-/* ImeConversionList()                                                */
-/**********************************************************************/
+//This function is used by another IME to query what's the 
+//encoding of their input character, the hell with it!
 DWORD WINAPI
 ImeConversionList(HIMC hIMC,
 				  LPCTSTR lpszSrc,
 				  LPCANDIDATELIST lpCandList, DWORD uBufLen, UINT uFlag)
 {
-	WORD wCode;
-	LPINPUTCONTEXT lpIMC;
-	LPPRIVCONTEXT lpImcP;
-
-	if (!uBufLen) {
-	} else if (!lpszSrc) {
-		return (0);
-	} else if (!*lpszSrc) {
-		return (0);
-	} else if (!lpCandList) {
-		return (0);
-	} else if (uBufLen <= sizeof(CANDIDATELIST)) {
-		// buffer size can not even put the header information
-		return (0);
-	}
-
-	switch (uFlag) {
-	case GCL_CONVERSION:
-		lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-		if (!lpIMC) {
-			return FALSE;
-		}
-		lpImcP = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-		if (!lpImcP) {
-			ImmUnlockIMC(hIMC);
-			return FALSE;
-		}
-		return (XGBConversion(lpszSrc, lpCandList, uBufLen));
-		break;
-	case GCL_REVERSECONVERSION:
-		if (!uBufLen) {
-			return 1;
-		}
-		// only support one DBCS char reverse conversion
-		if (*(LPTSTR) ((LPBYTE) lpszSrc + sizeof(WORD)) != TEXT('\0')) {
-			return (0);
-		}
-
-		wCode = *(LPWORD) lpszSrc;
-
-		// swap lead byte & second byte, UNICODE don't need it
-		// wCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);  For Big5
-
-		return (UnicodeReverseConversion(wCode, lpCandList, uBufLen));
-
-		break;
-	default:
-		return (0);
-		break;
-	}
-
-	return (0);
+	return 0;
 }
 
-/**********************************************************************/
-/* ImeDestroy()                                                       */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
-BOOL WINAPI ImeDestroy(			// this dll is unloaded
-						  UINT uReserved)
+BOOL WINAPI ImeDestroy(UINT uReserved)
 {
+	EnterLeaveDebug(); 
 	if (uReserved) {
 		return FALSE;
 	}
@@ -645,77 +576,13 @@ BOOL WINAPI ImeDestroy(			// this dll is unloaded
 	return (TRUE);
 }
 
-/**********************************************************************/
-/* ImeEscape()                                                        */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 #define IME_INPUTKEYTOSEQUENCE  0x22
 
-LRESULT WINAPI ImeEscape(		// escape function of IMEs
-							HIMC hIMC, UINT uSubFunc, LPVOID lpData)
+LRESULT WINAPI ImeEscape(HIMC hIMC, UINT uSubFunc, LPVOID lpData)
 {
-	LRESULT lRet;
+	EnterLeaveDebug(); 
+	return FALSE;
 
-	switch (uSubFunc) {
-	case IME_ESC_QUERY_SUPPORT:
-
-		if (lpData == NULL)
-			return FALSE;
-
-		switch (*(LPUINT) lpData) {
-		case IME_ESC_QUERY_SUPPORT:
-		case IME_ESC_MAX_KEY:
-		case IME_ESC_IME_NAME:
-		case IME_ESC_GETHELPFILENAME:
-			return (TRUE);
-		case IME_ESC_SEQUENCE_TO_INTERNAL:
-		case IME_ESC_GET_EUDC_DICTIONARY:
-		case IME_ESC_SET_EUDC_DICTIONARY:
-		case IME_INPUTKEYTOSEQUENCE:	// will not supported in next version
-			return FALSE;		// will not supported in GB IME
-		default:
-			return FALSE;
-
-		}
-		break;
-	case IME_ESC_SEQUENCE_TO_INTERNAL:
-	case IME_ESC_GET_EUDC_DICTIONARY:
-	case IME_ESC_SET_EUDC_DICTIONARY:
-	case IME_INPUTKEYTOSEQUENCE:
-		return FALSE;
-	case IME_ESC_MAX_KEY:
-		return ((WORD) 4);
-	case IME_ESC_IME_NAME:
-
-		if (lpData == NULL)
-			return FALSE;
-
-		lstrcpy((LPWSTR) lpData, szImeName);
-		return (TRUE);
-
-	case IME_ESC_GETHELPFILENAME:
-		{
-			TCHAR szIMEGUDHlpName[MAX_PATH];
-
-			if (lpData == NULL)
-				return FALSE;
-
-			szIMEGUDHlpName[0] = 0;
-			GetWindowsDirectory((LPTSTR) szIMEGUDHlpName, MAX_PATH);
-			lstrcat((LPTSTR) szIMEGUDHlpName, TEXT("\\HELP\\WINGB.CHM"));
-
-			lstrcpy((LPWSTR) lpData, szIMEGUDHlpName);
-
-			return TRUE;
-
-		}
-
-	default:
-		return FALSE;
-	}
-
-	return (lRet);
 }
 
 /**********************************************************************/

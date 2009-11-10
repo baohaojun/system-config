@@ -168,10 +168,6 @@ void PASCAL DrawFrameBorder(	// border of IME
 	return;
 }
 
-
-/**********************************************************************/
-/* ContextMenuWndProc()                                               */
-/**********************************************************************/
 LRESULT CALLBACK
 ContextMenuWndProc(HWND hCMenuWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -268,18 +264,6 @@ ContextMenuWndProc(HWND hCMenuWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				lstrcat((LPTSTR) szOPTGUDHlpName,
 						TEXT("\\HELP\\WINIME.CHM"));
 				HtmlHelp(hCMenuWnd, szOPTGUDHlpName, HH_DISPLAY_TOPIC, 0L);
-			}
-			break;
-		case IDM_IMEGUD:
-			{
-				TCHAR szIMEGUDHlpName[MAX_PATH];
-
-				szIMEGUDHlpName[0] = TEXT('\0');
-				GetWindowsDirectory((LPTSTR) szIMEGUDHlpName, MAX_PATH);
-				lstrcat((LPTSTR) szIMEGUDHlpName, TEXT("\\HELP\\"));
-				//COMBO_IME has only one IME help file
-				lstrcat((LPTSTR) szIMEGUDHlpName, TEXT("WINGB.CHM"));
-				HtmlHelp(hCMenuWnd, szIMEGUDHlpName, HH_DISPLAY_TOPIC, 0L);
 			}
 			break;
 		case IDM_VER:

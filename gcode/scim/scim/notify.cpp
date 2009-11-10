@@ -14,6 +14,8 @@ Module Name:
 #include <windows.h>
 #include <immdev.h>
 #include <imedefs.h>
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
 
 void PASCAL
 GenerateMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT lpImcP)
@@ -70,9 +72,6 @@ GenerateImeMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, DWORD fdwImeMsg)
 	return;
 }
 
-/**********************************************************************/
-/* CompCancel()                                                       */
-/**********************************************************************/
 void PASCAL CompCancel(HIMC hIMC, LPINPUTCONTEXT lpIMC)
 {
 	LPPRIVCONTEXT lpImcP;
@@ -306,6 +305,7 @@ ImeSetCompositionString(HIMC hIMC,
 						LPVOID lpComp,
 						DWORD dwCompLen, LPVOID lpRead, DWORD dwReadLen)
 {
+	EnterLeaveDebug(); 
 
 	LPINPUTCONTEXT lpIMC;
 	LPCOMPOSITIONSTRING lpCompStr;
@@ -387,11 +387,6 @@ ImeSetCompositionString(HIMC hIMC,
 	return (fRet);
 }
 
-
-
-/**********************************************************************/
-/* NotifySelectCand()                                                 */
-/**********************************************************************/
 void PASCAL NotifySelectCand(	// app tell IME that one candidate string is
 								// selected (by mouse or non keyboard action
 								// - for example sound)

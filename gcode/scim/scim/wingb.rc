@@ -138,12 +138,7 @@ PROPMENU MENU DISCARDABLE
 BEGIN
     POPUP ""
     BEGIN
-        POPUP "帮助"
-        BEGIN
-            MENUITEM "操作指南...",             IDM_OPTGUD
-            MENUITEM SEPARATOR
-            MENUITEM "输入法入门...",           IDM_IMEGUD
-        END
+        MENUITEM "操作指南...",             IDM_OPTGUD
         MENUITEM SEPARATOR
         MENUITEM "版本信息...",                 IDM_VER
         MENUITEM SEPARATOR
