@@ -1,14 +1,14 @@
 
 /*++
 
-Copyright (c) 1990-1999 Microsoft Corporation, All Rights Reserved
+  Copyright (c) 1990-1999 Microsoft Corporation, All Rights Reserved
 
-Module Name:
+  Module Name:
 
-    statusui.c
+  statusui.c
 
 
-++*/
+  ++*/
 
 
 #include <windows.h>
@@ -29,12 +29,12 @@ HWND PASCAL GetStatusWnd(
 
     hUIPrivate = (HGLOBAL)GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
     if (!hUIPrivate) {          // can not darw status window
-    return (HWND)NULL;
+		return (HWND)NULL;
     }
 
     lpUIPrivate = (LPUIPRIV)GlobalLock(hUIPrivate);
     if (!lpUIPrivate) {         // can not draw status window
-    return (HWND)NULL;
+		return (HWND)NULL;
     }
 
     hStatusWnd = lpUIPrivate->hStatusWnd;
@@ -57,15 +57,15 @@ void PASCAL AdjustStatusBoundary(
 
     // display boundary check
     if (lppt->x < rcWorkArea.left) {
-    lppt->x = (short)rcWorkArea.left;
+		lppt->x = (short)rcWorkArea.left;
     } else if (lppt->x + sImeG.xStatusWi > rcWorkArea.right) {
-    lppt->x = (short)(rcWorkArea.right - sImeG.xStatusWi);
+		lppt->x = (short)(rcWorkArea.right - sImeG.xStatusWi);
     }
 
     if (lppt->y < rcWorkArea.top) {
-    lppt->y = (short)rcWorkArea.top;
+		lppt->y = (short)rcWorkArea.top;
     } else if (lppt->y + sImeG.yStatusHi > rcWorkArea.bottom) {
-    lppt->y = (short)(rcWorkArea.bottom - sImeG.yStatusHi);
+		lppt->y = (short)(rcWorkArea.bottom - sImeG.yStatusHi);
     }
 
     return;
@@ -86,12 +86,12 @@ LRESULT PASCAL SetStatusWindowPos(
 
     hIMC = (HIMC)GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
     if (!hIMC) {
-       return (1L);
+		return (1L);
     }
 
     lpIMC = (LPINPUTCONTEXT)ImmLockIMC(hIMC);
     if (!lpIMC) {           // Oh! Oh!
-       return (1L);
+		return (1L);
     }
 
     ptPos.x = (short)lpIMC->ptStatusWndPos.x;
@@ -113,7 +113,7 @@ LRESULT PASCAL SetStatusWindowPos(
 /* ShowStatus()                                                       */
 /**********************************************************************/
 void PASCAL ShowStatus(         // Show the status window - shape / soft KBD
-                // alphanumeric ...
+	// alphanumeric ...
     HWND hUIWnd,
     int  nShowStatusCmd)
 {
@@ -122,16 +122,16 @@ void PASCAL ShowStatus(         // Show the status window - shape / soft KBD
 
     hUIPrivate = (HGLOBAL)GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
     if (!hUIPrivate) {          // can not darw status window
-       return;
+		return;
     }
 
     lpUIPrivate = (LPUIPRIV)GlobalLock(hUIPrivate);
     if (!lpUIPrivate) {         // can not draw status window
-       return;
+		return;
     }
 
     if (!lpUIPrivate->hStatusWnd) {
-    // not in show status window mode
+		// not in show status window mode
     } else if (lpUIPrivate->nShowStatusCmd != nShowStatusCmd) {
         SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
         SetStatusWindowPos(lpUIPrivate->hStatusWnd);
@@ -162,42 +162,42 @@ void PASCAL OpenStatus(         // open status window
 
     hUIPrivate = (HGLOBAL)GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
     if (!hUIPrivate)           // can not darw status window
-       return;
+		return;
     
 
     lpUIPrivate = (LPUIPRIV)GlobalLock(hUIPrivate);
     if (!lpUIPrivate)          // can not draw status window
-       return;
+		return;
     
 
     hIMC = (HIMC)GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
     if (!hIMC) {
-       ptPos.x = rcWorkArea.left;
-       ptPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
-       nShowStatusCmd = SW_HIDE;
+		ptPos.x = rcWorkArea.left;
+		ptPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
+		nShowStatusCmd = SW_HIDE;
     } 
     else if (lpIMC = (LPINPUTCONTEXT)ImmLockIMC(hIMC)) {
            
 
-           if (lpIMC->ptStatusWndPos.x < rcWorkArea.left) {
-               lpIMC->ptStatusWndPos.x = rcWorkArea.left;
-           } 
-           else if (lpIMC->ptStatusWndPos.x+sImeG.xStatusWi>rcWorkArea.right) {
-               lpIMC->ptStatusWndPos.x = rcWorkArea.right - sImeG.xStatusWi;
-           }
+		if (lpIMC->ptStatusWndPos.x < rcWorkArea.left) {
+			lpIMC->ptStatusWndPos.x = rcWorkArea.left;
+		} 
+		else if (lpIMC->ptStatusWndPos.x+sImeG.xStatusWi>rcWorkArea.right) {
+			lpIMC->ptStatusWndPos.x = rcWorkArea.right - sImeG.xStatusWi;
+		}
 
-           if (lpIMC->ptStatusWndPos.y < rcWorkArea.top) {
-              lpIMC->ptStatusWndPos.y = rcWorkArea.top;
-           } 
-           else if (lpIMC->ptStatusWndPos.y+sImeG.yStatusHi>rcWorkArea.right) {
-              lpIMC->ptStatusWndPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
-           }
+		if (lpIMC->ptStatusWndPos.y < rcWorkArea.top) {
+			lpIMC->ptStatusWndPos.y = rcWorkArea.top;
+		} 
+		else if (lpIMC->ptStatusWndPos.y+sImeG.yStatusHi>rcWorkArea.right) {
+			lpIMC->ptStatusWndPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
+		}
     
-		   ptPos.x = lpIMC->ptStatusWndPos.x;
-		   ptPos.y = lpIMC->ptStatusWndPos.y;
+		ptPos.x = lpIMC->ptStatusWndPos.x;
+		ptPos.y = lpIMC->ptStatusWndPos.y;
 
-           ImmUnlockIMC(hIMC);
-           nShowStatusCmd = SW_SHOWNOACTIVATE;
+		ImmUnlockIMC(hIMC);
+		nShowStatusCmd = SW_SHOWNOACTIVATE;
     } else {
         ptPos.x = rcWorkArea.left;
         ptPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
@@ -210,26 +210,26 @@ void PASCAL OpenStatus(         // open status window
                      0, 0,
                      SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
     } else {                            // create status window
-       lpUIPrivate->hStatusWnd = CreateWindowEx(
-                                     WS_EX_WINDOWEDGE|WS_EX_DLGMODALFRAME,
-                                     szStatusClassName, NULL, 
-                                     WS_POPUP|WS_DISABLED,
-                                     ptPos.x, ptPos.y,
-                                     sImeG.xStatusWi, sImeG.yStatusHi,
-                                     hUIWnd, (HMENU)NULL, hInst, NULL);
+		lpUIPrivate->hStatusWnd = CreateWindowEx(
+			WS_EX_WINDOWEDGE|WS_EX_DLGMODALFRAME,
+			szStatusClassName, NULL, 
+			WS_POPUP|WS_DISABLED,
+			ptPos.x, ptPos.y,
+			sImeG.xStatusWi, sImeG.yStatusHi,
+			hUIWnd, (HMENU)NULL, hInst, NULL);
 
-       if ( lpUIPrivate->hStatusWnd != NULL )
-       {
+		if ( lpUIPrivate->hStatusWnd != NULL )
+		{
 
             SetWindowLong(lpUIPrivate->hStatusWnd, UI_MOVE_OFFSET, WINDOW_NOT_DRAG);
             SetWindowLong(lpUIPrivate->hStatusWnd, UI_MOVE_XY, 0L);
-       }
+		}
     }
 
     lpUIPrivate->fdwSetContext |= ISC_OPEN_STATUS_WINDOW;
 
     if (hIMC) {
-       ShowStatus( hUIWnd, SW_SHOWNOACTIVATE);
+		ShowStatus( hUIWnd, SW_SHOWNOACTIVATE);
     }
 
     GlobalUnlock(hUIPrivate);
@@ -247,22 +247,22 @@ void PASCAL DestroyStatusWindow(
     LPUIPRIV lpUIPrivate;
 
     if (GetWindowLong(hStatusWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-    // undo the drag border
-    DrawDragBorder(hStatusWnd,
-        GetWindowLong(hStatusWnd, UI_MOVE_XY),
-        GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
+		// undo the drag border
+		DrawDragBorder(hStatusWnd,
+					   GetWindowLong(hStatusWnd, UI_MOVE_XY),
+					   GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
     }
 
     hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
 
     hUIPrivate = (HGLOBAL)GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
     if (!hUIPrivate) {          // can not darw status window
-    return;
+		return;
     }
 
     lpUIPrivate = (LPUIPRIV)GlobalLock(hUIPrivate);
     if (!lpUIPrivate) {         // can not draw status window
-    return;
+		return;
     }
 
     lpUIPrivate->nShowStatusCmd = SW_HIDE;
@@ -412,8 +412,8 @@ void PASCAL StatusSetCursor(
     RECT  rcWnd;
 
     if (GetWindowLong(hStatusWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-       SetCursor(LoadCursor(NULL, IDC_SIZEALL));
-       return;
+		SetCursor(LoadCursor(NULL, IDC_SIZEALL));
+		return;
     }
     
     GetCursorPos(&ptCursor);
@@ -422,46 +422,46 @@ void PASCAL StatusSetCursor(
     ScreenToClient(hStatusWnd, &ptCursor);
 
     if (PtInRect(&sImeG.rcStatusText, ptCursor)) {
-       SetCursor(LoadCursor(hInst, szHandCursor));
+		SetCursor(LoadCursor(hInst, szHandCursor));
 
-       if (HIWORD(lParam) == WM_LBUTTONDOWN) {
-          SetStatus(hStatusWnd, &ptCursor);
-       } else if (HIWORD(lParam) == WM_RBUTTONUP) {
-		   {
-                 static BOOL fCmenu=FALSE;
-                 // prevent recursive
-            if (fCmenu) {
-                // configuration already bring up
-            return;
+		if (HIWORD(lParam) == WM_LBUTTONDOWN) {
+			SetStatus(hStatusWnd, &ptCursor);
+		} else if (HIWORD(lParam) == WM_RBUTTONUP) {
+			{
+				static BOOL fCmenu=FALSE;
+				// prevent recursive
+				if (fCmenu) {
+					// configuration already bring up
+					return;
+				}
+				fCmenu = TRUE;
+				ContextMenu(hStatusWnd, ptSavCursor.x, ptSavCursor.y);
+				fCmenu = FALSE;
             }
-            fCmenu = TRUE;
-        ContextMenu(hStatusWnd, ptSavCursor.x, ptSavCursor.y);
-            fCmenu = FALSE;
-            }
 
-    }
+		}
 
-    return;
+		return;
     } else {
-    SetCursor(LoadCursor(NULL, IDC_SIZEALL));
+		SetCursor(LoadCursor(NULL, IDC_SIZEALL));
 
-    if (HIWORD(lParam) == WM_LBUTTONDOWN) {
-        // start drag
-        SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
-    } else {
-        return;
-    }
+		if (HIWORD(lParam) == WM_LBUTTONDOWN) {
+			// start drag
+			SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
+		} else {
+			return;
+		}
     }
 
     SetCapture(hStatusWnd);
     SetWindowLong(hStatusWnd, UI_MOVE_XY,
-    MAKELONG(ptSavCursor.x, ptSavCursor.y));
+				  MAKELONG(ptSavCursor.x, ptSavCursor.y));
     GetWindowRect(hStatusWnd, &rcWnd);
     SetWindowLong(hStatusWnd, UI_MOVE_OFFSET,
-    MAKELONG(ptSavCursor.x - rcWnd.left, ptSavCursor.y - rcWnd.top));
+				  MAKELONG(ptSavCursor.x - rcWnd.left, ptSavCursor.y - rcWnd.top));
 
     DrawDragBorder(hStatusWnd, MAKELONG(ptSavCursor.x, ptSavCursor.y),
-    GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
+				   GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
 
     return;
 }
@@ -487,13 +487,13 @@ void PASCAL PaintStatusWindow(
 
     hIMC = (HIMC)GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
     if (!hIMC) {
-       MessageBeep((UINT)-1);
-       return;
+		MessageBeep((UINT)-1);
+		return;
     }
 
     if (!(lpIMC = (LPINPUTCONTEXT)ImmLockIMC(hIMC))) {
-       MessageBeep((UINT)-1);
-       return;
+		MessageBeep((UINT)-1);
+		return;
     }
 
     // get lpImcP
@@ -504,15 +504,15 @@ void PASCAL PaintStatusWindow(
 
     //in case the IME index has been changed and the ImeName size is different
     {
-       POINTS         ptPos;
+		POINTS         ptPos;
 
-       ptPos.x = (short)lpIMC->ptStatusWndPos.x;
-       ptPos.y = (short)lpIMC->ptStatusWndPos.y;
+		ptPos.x = (short)lpIMC->ptStatusWndPos.x;
+		ptPos.y = (short)lpIMC->ptStatusWndPos.y;
 
-       SetWindowPos(hStatusWnd, NULL,
-                    ptPos.x, ptPos.y,
-                    sImeG.xStatusWi, sImeG.yStatusHi, 
-                    SWP_NOACTIVATE|SWP_NOCOPYBITS|SWP_NOZORDER);
+		SetWindowPos(hStatusWnd, NULL,
+					 ptPos.x, ptPos.y,
+					 sImeG.xStatusWi, sImeG.yStatusHi, 
+					 SWP_NOACTIVATE|SWP_NOCOPYBITS|SWP_NOZORDER);
     }
 
     // set font
@@ -530,9 +530,9 @@ void PASCAL PaintStatusWindow(
     // draw Ime Name
 
     if (lpIMC->fOpen) {
-       SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
+		SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
     } else {
-       SetTextColor(hDC, RGB(0x80, 0x80, 0x80));
+		SetTextColor(hDC, RGB(0x80, 0x80, 0x80));
     }
 
     SetBkColor(hDC, RGB(0xC0, 0xC0, 0xC0));
@@ -540,46 +540,46 @@ void PASCAL PaintStatusWindow(
              &sImeG.rcImeName, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     
     DrawConvexRect(hDC,
-    sImeG.rcImeName.left,
-    sImeG.rcImeName.top,
-    sImeG.rcImeName.right - 1,
-    sImeG.rcImeName.bottom - 1);
+				   sImeG.rcImeName.left,
+				   sImeG.rcImeName.top,
+				   sImeG.rcImeName.right - 1,
+				   sImeG.rcImeName.bottom - 1);
 
     DrawConvexRectP(hDC,
-    sImeG.rcImeName.left,
-    sImeG.rcImeName.top,
-    sImeG.rcImeName.right,
-    sImeG.rcImeName.bottom);
+					sImeG.rcImeName.left,
+					sImeG.rcImeName.top,
+					sImeG.rcImeName.right,
+					sImeG.rcImeName.bottom);
 
     // load all bitmap
     hSymbolBmp = (HBITMAP)NULL;
     hShapeBmp = (HBITMAP)NULL;
 
     if (!lpIMC->fOpen) {
-       hSymbolBmp = LoadBitmap(hInst, szNone);
-       hShapeBmp = LoadBitmap(hInst, szNone);
-       hImeIconBmp = LoadBitmap(hInst, szChinese);
+		hSymbolBmp = LoadBitmap(hInst, szNone);
+		hShapeBmp = LoadBitmap(hInst, szNone);
+		hImeIconBmp = LoadBitmap(hInst, szChinese);
     } else if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
-              hImeIconBmp = LoadBitmap(hInst, szChinese);
-           } else {
-              hImeIconBmp = LoadBitmap(hInst, szEnglish);
-           }
+		hImeIconBmp = LoadBitmap(hInst, szChinese);
+	} else {
+		hImeIconBmp = LoadBitmap(hInst, szEnglish);
+	}
 
-           if (!hShapeBmp) {
-              if (lpIMC->fdwConversion & IME_CMODE_FULLSHAPE) {
-                 hShapeBmp = LoadBitmap(hInst, szFullShape);
-              } else {
-                 hShapeBmp = LoadBitmap(hInst, szHalfShape);
-              }
-           }
+	if (!hShapeBmp) {
+		if (lpIMC->fdwConversion & IME_CMODE_FULLSHAPE) {
+			hShapeBmp = LoadBitmap(hInst, szFullShape);
+		} else {
+			hShapeBmp = LoadBitmap(hInst, szHalfShape);
+		}
+	}
 
-           if (!hSymbolBmp) {
-              if (lpIMC->fdwConversion & IME_CMODE_SYMBOL) {
-                 hSymbolBmp = LoadBitmap(hInst, szSymbol);
-              } else {
-                 hSymbolBmp = LoadBitmap(hInst, szNoSymbol);
-              }
-           }
+	if (!hSymbolBmp) {
+		if (lpIMC->fdwConversion & IME_CMODE_SYMBOL) {
+			hSymbolBmp = LoadBitmap(hInst, szSymbol);
+		} else {
+			hSymbolBmp = LoadBitmap(hInst, szNoSymbol);
+		}
+	}
 
 
     ImmUnlockIMC(hIMC);
@@ -635,63 +635,63 @@ LRESULT CALLBACK StatusWndProc(
 {
     switch (uMsg) {
     case WM_DESTROY:
-    DestroyStatusWindow(hStatusWnd);
-    break;
+		DestroyStatusWindow(hStatusWnd);
+		break;
     case WM_SETCURSOR:
-    StatusSetCursor(hStatusWnd, lParam);
-    break;
+		StatusSetCursor(hStatusWnd, lParam);
+		break;
     case WM_MOUSEMOVE:
-    if (GetWindowLong(hStatusWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-        POINT ptCursor;
+		if (GetWindowLong(hStatusWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
+			POINT ptCursor;
 
-        DrawDragBorder(hStatusWnd,
-        GetWindowLong(hStatusWnd, UI_MOVE_XY),
-        GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
-        GetCursorPos(&ptCursor);
-        SetWindowLong(hStatusWnd, UI_MOVE_XY,
-        MAKELONG(ptCursor.x, ptCursor.y));
-        DrawDragBorder(hStatusWnd, MAKELONG(ptCursor.x, ptCursor.y),
-        GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
-    } else {
-        return DefWindowProc(hStatusWnd, uMsg, wParam, lParam);
-    }
-    break;
+			DrawDragBorder(hStatusWnd,
+						   GetWindowLong(hStatusWnd, UI_MOVE_XY),
+						   GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
+			GetCursorPos(&ptCursor);
+			SetWindowLong(hStatusWnd, UI_MOVE_XY,
+						  MAKELONG(ptCursor.x, ptCursor.y));
+			DrawDragBorder(hStatusWnd, MAKELONG(ptCursor.x, ptCursor.y),
+						   GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
+		} else {
+			return DefWindowProc(hStatusWnd, uMsg, wParam, lParam);
+		}
+		break;
     case WM_LBUTTONUP:
 
-    if (GetWindowLong(hStatusWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-        LONG  lTmpCursor, lTmpOffset;
+		if (GetWindowLong(hStatusWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
+			LONG  lTmpCursor, lTmpOffset;
 
-        lTmpCursor = GetWindowLong(hStatusWnd, UI_MOVE_XY);
+			lTmpCursor = GetWindowLong(hStatusWnd, UI_MOVE_XY);
 
-        // calculate the org by the offset
-        lTmpOffset = GetWindowLong(hStatusWnd, UI_MOVE_OFFSET);
+			// calculate the org by the offset
+			lTmpOffset = GetWindowLong(hStatusWnd, UI_MOVE_OFFSET);
 
-        DrawDragBorder(hStatusWnd, lTmpCursor, lTmpOffset);
+			DrawDragBorder(hStatusWnd, lTmpCursor, lTmpOffset);
 
-        (*(LPPOINTS)&lTmpCursor).x -= (*(LPPOINTS)&lTmpOffset).x;
-        (*(LPPOINTS)&lTmpCursor).y -= (*(LPPOINTS)&lTmpOffset).y;
+			(*(LPPOINTS)&lTmpCursor).x -= (*(LPPOINTS)&lTmpOffset).x;
+			(*(LPPOINTS)&lTmpCursor).y -= (*(LPPOINTS)&lTmpOffset).y;
 
-        SetWindowLong(hStatusWnd, UI_MOVE_OFFSET, WINDOW_NOT_DRAG);
-        ReleaseCapture();
+			SetWindowLong(hStatusWnd, UI_MOVE_OFFSET, WINDOW_NOT_DRAG);
+			ReleaseCapture();
 
-        AdjustStatusBoundary((LPPOINTS)&lTmpCursor,
-                        GetWindow(hStatusWnd, GW_OWNER));
+			AdjustStatusBoundary((LPPOINTS)&lTmpCursor,
+								 GetWindow(hStatusWnd, GW_OWNER));
 
-        SendMessage(GetWindow(hStatusWnd, GW_OWNER), WM_IME_CONTROL,
-        IMC_SETSTATUSWINDOWPOS, lTmpCursor);
-    } else {
-        return DefWindowProc(hStatusWnd, uMsg, wParam, lParam);
-    }
-    break;
+			SendMessage(GetWindow(hStatusWnd, GW_OWNER), WM_IME_CONTROL,
+						IMC_SETSTATUSWINDOWPOS, lTmpCursor);
+		} else {
+			return DefWindowProc(hStatusWnd, uMsg, wParam, lParam);
+		}
+		break;
 
     case WM_IME_NOTIFY:
         // get work area for changing
         SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
 
-    if (wParam == IMN_SETSTATUSWINDOWPOS) {
-        SetStatusWindowPos(hStatusWnd);
-    }
-    break;
+		if (wParam == IMN_SETSTATUSWINDOWPOS) {
+			SetStatusWindowPos(hStatusWnd);
+		}
+		break;
     case WM_PAINT:
     {
         HDC         hDC;
@@ -703,9 +703,9 @@ LRESULT CALLBACK StatusWndProc(
     }
     break;
     case WM_MOUSEACTIVATE:
-    return (MA_NOACTIVATE);
+		return (MA_NOACTIVATE);
     default:
-    return DefWindowProc(hStatusWnd, uMsg, wParam, lParam);
+		return DefWindowProc(hStatusWnd, uMsg, wParam, lParam);
     }
 
     return (0L);
@@ -727,57 +727,57 @@ BOOL FAR PASCAL ImeVerDlgProc(  // dialog procedure of configuration
 
     switch (uMessage) {
     case WM_INITDIALOG:
-         hCrtDlg = hDlg;        
-         // reset position
-         GetWindowRect(hDlg, &rc);
-         DlgWidth =  rc.right - rc.left;
-         DlgHeight =  rc.bottom - rc.top;
+		hCrtDlg = hDlg;        
+		// reset position
+		GetWindowRect(hDlg, &rc);
+		DlgWidth =  rc.right - rc.left;
+		DlgHeight =  rc.bottom - rc.top;
     
-         SetWindowPos(hDlg, HWND_TOP,
-                      (int)(sImeG.rcWorkArea.right - DlgWidth)/2,
-                      (int)(sImeG.rcWorkArea.bottom - DlgHeight)/2,
-                      (int)0, (int)0, SWP_NOSIZE);
+		SetWindowPos(hDlg, HWND_TOP,
+					 (int)(sImeG.rcWorkArea.right - DlgWidth)/2,
+					 (int)(sImeG.rcWorkArea.bottom - DlgHeight)/2,
+					 (int)0, (int)0, SWP_NOSIZE);
 
-         return (TRUE);          // don't want to set focus to special control
+		return (TRUE);          // don't want to set focus to special control
     case WM_COMMAND:
-    switch (wParam) {
-    case IDOK:
-        EndDialog(hDlg, FALSE);
-        break;
-    case IDCANCEL:
-        EndDialog(hDlg, FALSE);
-        break;
-    default:
-        return (FALSE);
-        break;
-    }
-    return (TRUE);
+		switch (wParam) {
+		case IDOK:
+			EndDialog(hDlg, FALSE);
+			break;
+		case IDCANCEL:
+			EndDialog(hDlg, FALSE);
+			break;
+		default:
+			return (FALSE);
+			break;
+		}
+		return (TRUE);
 
     case WM_CLOSE:        
         EndDialog(hDlg, FALSE);
         return FALSE;
 
     case WM_PAINT:
-        {
-            RECT rc;
+	{
+		RECT rc;
 
         GetClientRect(hDlg, &rc);
-            DrawConvexRect(GetDC(hDlg),
-            rc.left + 10,
-            rc.top + 10,
-            rc.right - 10 - 1,
-            rc.bottom - 43 - 1);
+		DrawConvexRect(GetDC(hDlg),
+					   rc.left + 10,
+					   rc.top + 10,
+					   rc.right - 10 - 1,
+					   rc.bottom - 43 - 1);
 
-            DrawConvexRectP(GetDC(hDlg),
-            rc.left + 10,
-            rc.top + 10,
-            rc.right - 10,
-            rc.bottom - 43);
-        }
+		DrawConvexRectP(GetDC(hDlg),
+						rc.left + 10,
+						rc.top + 10,
+						rc.right - 10,
+						rc.bottom - 43);
+	}
         
     return (FALSE);
     default:
-    return (FALSE);
+		return (FALSE);
     }
 
     return (TRUE);
