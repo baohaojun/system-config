@@ -310,14 +310,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\fullshp.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\halfshp.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\hand.cur"
 				>
 			</File>

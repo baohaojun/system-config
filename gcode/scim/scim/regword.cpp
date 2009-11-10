@@ -20,12 +20,10 @@ Module Name:
 /* Return Value:                                                      */
 /*      TRUE - successful, FALSE - failure                            */
 /**********************************************************************/
-BOOL WINAPI ImeRegisterWord(
-    LPCTSTR lpszReading,
-    DWORD   dwStyle,
-    LPCTSTR lpszString)
+BOOL WINAPI
+ImeRegisterWord (LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 {
-    return (FALSE);
+  return (FALSE);
 }
 
 
@@ -34,12 +32,10 @@ BOOL WINAPI ImeRegisterWord(
 /* Return Value:                                                      */
 /*      TRUE - successful, FALSE - failure                            */
 /**********************************************************************/
-BOOL WINAPI ImeUnregisterWord(
-    LPCTSTR lpszReading,
-    DWORD   dwStyle,
-    LPCTSTR lpszString)
+BOOL WINAPI
+ImeUnregisterWord (LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 {
-    return (FALSE);
+  return (FALSE);
 }
 
 /**********************************************************************/
@@ -47,11 +43,10 @@ BOOL WINAPI ImeUnregisterWord(
 /* Return Value:                                                      */
 /*      number of styles copied/required                              */
 /**********************************************************************/
-UINT WINAPI ImeGetRegisterWordStyle(
-    UINT       nItem,
-    LPSTYLEBUF lpStyleBuf)
+UINT WINAPI
+ImeGetRegisterWordStyle (UINT nItem, LPSTYLEBUF lpStyleBuf)
 {
-    return (FALSE);
+  return (FALSE);
 }
 
 /**********************************************************************/
@@ -59,13 +54,10 @@ UINT WINAPI ImeGetRegisterWordStyle(
 /* Return Value:                                                      */
 /*      the last value return by the callback function                */
 /**********************************************************************/
-UINT WINAPI ImeEnumRegisterWord(
-    REGISTERWORDENUMPROC lpfnRegisterWordEnumProc,
-    LPCTSTR              lpszReading,
-    DWORD                dwStyle,
-    LPCTSTR              lpszString,
-    LPVOID               lpData)
+UINT WINAPI
+ImeEnumRegisterWord (REGISTERWORDENUMPROC lpfnRegisterWordEnumProc,
+		     LPCTSTR lpszReading,
+		     DWORD dwStyle, LPCTSTR lpszString, LPVOID lpData)
 {
-    return (FALSE);
+  return (FALSE);
 }
-

@@ -15,5 +15,3 @@ Module Name:
 #include <windows.h>
 #include <immdev.h>
 #include <imedefs.h>
-
-

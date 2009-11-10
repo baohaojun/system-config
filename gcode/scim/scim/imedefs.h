@@ -60,11 +60,11 @@
 #define CST_INPUT               1
 #define CST_CHOOSE              2
 #define CST_SYMBOL              3
-#define CST_TOGGLE_PHRASEWORD   5           // not in iImeState
-#define CST_ALPHABET            6           // not in iImeState
-#define CST_ALPHANUMERIC        7           // not in iImeState
-#define CST_INVALID             8           // not in iImeState
-#define CST_INVALID_INPUT       9           // not in iImeState
+#define CST_TOGGLE_PHRASEWORD   5	// not in iImeState
+#define CST_ALPHABET            6	// not in iImeState
+#define CST_ALPHANUMERIC        7	// not in iImeState
+#define CST_INVALID             8	// not in iImeState
+#define CST_INVALID_INPUT       9	// not in iImeState
 #define CST_ONLINE_CZ           10
 #define CST_CAPITAL             11
 
@@ -185,13 +185,13 @@
 #define MODE_CONFIG_PREDICT             0x0004
 
 // the virtual key value
-#define VK_OEM_SEMICLN                  0xba    //  ;    :
-#define VK_OEM_EQUAL                    0xbb    //  =    +
-#define VK_OEM_SLASH                    0xbf    //  /    ?
-#define VK_OEM_LBRACKET                 0xdb    //  [    {
-#define VK_OEM_BSLASH                   0xdc    //  \    |
-#define VK_OEM_RBRACKET                 0xdd    //  ]    }
-#define VK_OEM_QUOTE                    0xde    //  '    "
+#define VK_OEM_SEMICLN                  0xba	//  ;    :
+#define VK_OEM_EQUAL                    0xbb	//  =    +
+#define VK_OEM_SLASH                    0xbf	//  /    ?
+#define VK_OEM_LBRACKET                 0xdb	//  [    {
+#define VK_OEM_BSLASH                   0xdc	//  \    |
+#define VK_OEM_RBRACKET                 0xdd	//  ]    }
+#define VK_OEM_QUOTE                    0xde	//  '    "
 
 #define MAXMBNUMS                       40
 
@@ -221,284 +221,268 @@
 #define NEAR_CARET_CANDIDATE    0x0002
 
 typedef DWORD UNALIGNED FAR *LPUNADWORD;
-typedef WORD  UNALIGNED FAR *LPUNAWORD;
+typedef WORD UNALIGNED FAR *LPUNAWORD;
 
-typedef struct tagImeL {        // local structure, per IME structure
-    HMENU       hPropMenu;      // Property Menu
-    HINSTANCE   hInst;          // IME DLL instance handle
-    int         xCompWi;        // width
-    int         yCompHi;        // height
-    POINT       ptDefComp;      // default composition window position
-    int         cxCompBorder;   // border width of composition window
-    int         cyCompBorder;   // border height of composition window
-    RECT        rcCompText;     // text position relative to composition
-                                // window key related data
-    WORD        fModeConfig;    // quick key/prediction mode
-    WORD        nMaxKey;        // max key of compsiton str
-    DWORD           dwRegImeIndex;  // this value defers in different
-                                    // process, so can not set in sImeG
-   BOOL         fWinLogon;
+typedef struct tagImeL
+{				// local structure, per IME structure
+  HMENU hPropMenu;		// Property Menu
+  HINSTANCE hInst;		// IME DLL instance handle
+  int xCompWi;			// width
+  int yCompHi;			// height
+  POINT ptDefComp;		// default composition window position
+  int cxCompBorder;		// border width of composition window
+  int cyCompBorder;		// border height of composition window
+  RECT rcCompText;		// text position relative to composition
+  // window key related data
+  WORD fModeConfig;		// quick key/prediction mode
+  WORD nMaxKey;			// max key of compsiton str
+  DWORD dwRegImeIndex;		// this value defers in different
+  // process, so can not set in sImeG
+  BOOL fWinLogon;
 } IMEL;
 
-typedef IMEL      *PIMEL;
+typedef IMEL *PIMEL;
 typedef IMEL NEAR *NPIMEL;
-typedef IMEL FAR  *LPIMEL;
+typedef IMEL FAR *LPIMEL;
 
-#define NFULLABC        95
-typedef struct _tagFullABC {   // match with the IMEG
-    WORD wFullABC[NFULLABC];
-} FULLABC;
-
-typedef FULLABC      *PFULLABC;
-typedef FULLABC NEAR *NPFULLABC;
-typedef FULLABC FAR  *LPFULLABC;
 
 // global sturcture for ime init data
-typedef struct _tagImeG {       // global structure, can be share by all IMEs,
-                                // the seperation (IMEL and IMEG) is only
-                                // useful in UNI-IME, other IME can use one
+typedef struct _tagImeG
+{				// global structure, can be share by all IMEs,
+  // the seperation (IMEL and IMEG) is only
+  // useful in UNI-IME, other IME can use one
 // the system charset is not NATIVE_CHARSET
-    BOOL        fDiffSysCharSet;
+  BOOL fDiffSysCharSet;
 // IME Charact
-    TCHAR       UsedCodes[17];
-    WORD        wNumCodes;
-    DWORD       IC_Enter;
+  TCHAR UsedCodes[17];
+  WORD wNumCodes;
+  DWORD IC_Enter;
 
-    RECT        rcWorkArea;     // the work area of applications
+  RECT rcWorkArea;		// the work area of applications
 // Chinese char width & height
-    int         xChiCharWi;
-    int         yChiCharHi;
+  int xChiCharWi;
+  int yChiCharHi;
 // candidate list of composition
-    int         xCandWi;        // width of candidate list
-    int         yCandHi;        // high of candidate list
-    int         cxCandBorder;   // border width of candidate list
-    int         cyCandBorder;   // border height of candidate list
-    RECT        rcCandText;     // text position relative to candidate window
-    RECT        rcCandBTD;
-    RECT        rcCandBTU;
-    RECT        rcCandBTE;
-    RECT        rcCandBTH;
-    RECT        rcCandInf;
-    RECT        rcCandIcon;
+  int xCandWi;			// width of candidate list
+  int yCandHi;			// high of candidate list
+  int cxCandBorder;		// border width of candidate list
+  int cyCandBorder;		// border height of candidate list
+  RECT rcCandText;		// text position relative to candidate window
+  RECT rcCandBTD;
+  RECT rcCandBTU;
+  RECT rcCandBTE;
+  RECT rcCandBTH;
+  RECT rcCandInf;
+  RECT rcCandIcon;
 // status window
-    int         xStatusWi;      // width of status window
-    int         yStatusHi;      // high of status window
-    RECT        rcStatusText;   // text position relative to status window
-    RECT        rcImeIcon;      // ImeIcon position relative to status window
-    RECT        rcImeName;      // ImeName position relative to status window
-    RECT        rcShapeText;    // shape text relative to status window
-    RECT        rcSymbol;       // symbol relative to status window
-    //RECT        rcSKText;       // SK text relative to status window
-// full shape space (reversed internal code)
-    WORD        wFullSpace;
-// full shape chars (internal code)
-    WORD        wFullABC[NFULLABC];
-// error string
-    TCHAR        szStatusErr[8];
-    int         cbStatusErr;
+  int xStatusWi;		// width of status window
+  int yStatusHi;		// high of status window
+  RECT rcStatusText;		// text position relative to status window
+  RECT rcImeIcon;		// ImeIcon position relative to status window
+  RECT rcImeName;		// ImeName position relative to status window
+  RECT rcShapeText;		// shape text relative to status window
+  RECT rcSymbol;		// symbol relative to status window
+  //RECT        rcSKText;       // SK text relative to status window
+  TCHAR szStatusErr[8];
+  int cbStatusErr;
 // candidate string start from 0 or 1
-    int         iCandStart;
+  int iCandStart;
 // setting of UI
-    int         iPara;
-    int         iPerp;
-    int         iParaTol;
-    int         iPerpTol;
+  int iPara;
+  int iPerp;
+  int iParaTol;
+  int iPerpTol;
 } IMEG;
 
-typedef IMEG      *PIMEG;
+typedef IMEG *PIMEG;
 typedef IMEG NEAR *NPIMEG;
-typedef IMEG FAR  *LPIMEG;
+typedef IMEG FAR *LPIMEG;
 
 
 #define IME_SELECT_GB     0x0001
 #define IME_SELECT_XGB    0x0002
 #define IME_SELECT_AREA   0x0004
 
-typedef struct _tagPRIVCONTEXT {// IME private data for each context
-    int         iImeState;      // the composition state - input, choose, or
-    BOOL        fdwImeMsg;      // what messages should be generated
-    DWORD       dwCompChar;     // wParam of WM_IME_COMPOSITION
-    DWORD       fdwGcsFlag;     // lParam for WM_IME_COMPOSITION
-    UINT        uSYHFlg;
-    UINT        uDYHFlg;
-    UINT        uDSMHCount;
-    UINT        uDSMHFlg;
+typedef struct _tagPRIVCONTEXT
+{				// IME private data for each context
+  int iImeState;		// the composition state - input, choose, or
+  BOOL fdwImeMsg;		// what messages should be generated
+  DWORD dwCompChar;		// wParam of WM_IME_COMPOSITION
+  DWORD fdwGcsFlag;		// lParam for WM_IME_COMPOSITION
+  UINT uSYHFlg;
+  UINT uDYHFlg;
+  UINT uDSMHCount;
+  UINT uDSMHFlg;
 // input data
-    TCHAR       bSeq[13];        // sequence code of input char
-    DWORD       fdwGB;
+  TCHAR bSeq[13];		// sequence code of input char
+  DWORD fdwGB;
 } PRIVCONTEXT;
 
-typedef PRIVCONTEXT      *PPRIVCONTEXT;
+typedef PRIVCONTEXT *PPRIVCONTEXT;
 typedef PRIVCONTEXT NEAR *NPPRIVCONTEXT;
-typedef PRIVCONTEXT FAR  *LPPRIVCONTEXT;
+typedef PRIVCONTEXT FAR *LPPRIVCONTEXT;
 
-typedef struct _tagUIPRIV {     // IME private UI data
-    HWND    hCompWnd;           // composition window
-    int     nShowCompCmd;
-    HWND    hCandWnd;           // candidate window for composition
-    int     nShowCandCmd;
-    HWND    hStatusWnd;         // status window
-    int     nShowStatusCmd;
-    DWORD   fdwSetContext;      // the actions to take at set context time
-    HIMC    hIMC;               // the recent selected hIMC
-    HWND    hCMenuWnd;          // a window owner for context menu
+typedef struct _tagUIPRIV
+{				// IME private UI data
+  HWND hCompWnd;		// composition window
+  int nShowCompCmd;
+  HWND hCandWnd;		// candidate window for composition
+  int nShowCandCmd;
+  HWND hStatusWnd;		// status window
+  int nShowStatusCmd;
+  DWORD fdwSetContext;		// the actions to take at set context time
+  HIMC hIMC;			// the recent selected hIMC
+  HWND hCMenuWnd;		// a window owner for context menu
 } UIPRIV;
 
-typedef UIPRIV      *PUIPRIV;
+typedef UIPRIV *PUIPRIV;
 typedef UIPRIV NEAR *NPUIPRIV;
-typedef UIPRIV FAR  *LPUIPRIV;
+typedef UIPRIV FAR *LPUIPRIV;
 
 
-typedef struct tagNEARCARET {   // for near caret offset calculatation
-    int iLogFontFacX;
-    int iLogFontFacY;
-    int iParaFacX;
-    int iPerpFacX;
-    int iParaFacY;
-    int iPerpFacY;
+typedef struct tagNEARCARET
+{				// for near caret offset calculatation
+  int iLogFontFacX;
+  int iLogFontFacY;
+  int iParaFacX;
+  int iPerpFacX;
+  int iParaFacY;
+  int iPerpFacY;
 } NEARCARET;
 
-typedef NEARCARET      *PNEARCARET;
+typedef NEARCARET *PNEARCARET;
 typedef NEARCARET NEAR *NPNEARCARET;
-typedef NEARCARET FAR  *LPNEARCARET;
+typedef NEARCARET FAR *LPNEARCARET;
 
 extern HINSTANCE hInst;
-extern IMEG      sImeG;
-extern IMEL      sImeL;
-extern LPIMEL    lpImeL;
-extern HDC       ST_UI_hDC;
-extern UINT      uStartComp;
-extern UINT      uOpenCand;
-extern UINT      uCaps;
-extern DWORD     SaTC_Trace;
-extern TCHAR     szUIClassName[];
-extern TCHAR     szCompClassName[];
-extern TCHAR     szCandClassName[];
-extern TCHAR     szStatusClassName[];
-extern TCHAR     szCMenuClassName[];
-extern TCHAR     szHandCursor[];
-extern TCHAR     szChinese[];
-extern TCHAR     szCandInf[];
-extern TCHAR    pszImeName[IMEINDEXNUM][MAX_PATH];
-extern TCHAR    *szImeName;
-extern TCHAR    szImeRegName[];
-extern TCHAR      szImeXGBName[];
-extern TCHAR      szSymbol[];
-extern TCHAR      szNoSymbol[];
-extern TCHAR      szEnglish[];
-extern TCHAR      szCode[];
-extern TCHAR      szEudc[];
-extern TCHAR      szFullShape[];
-extern TCHAR      szHalfShape[];
-extern TCHAR      szNone[];
-extern TCHAR      szDigit[];
-extern BYTE      bUpper[];
-extern WORD      fMask[];
-extern TCHAR      szRegIMESetting[];
-extern TCHAR      szPerp[];
-extern TCHAR      szPara[];
-extern TCHAR      szPerpTol[];
-extern TCHAR      szParaTol[];
-extern TCHAR      szRegImeIndex[];
+extern IMEG sImeG;
+extern IMEL sImeL;
+extern LPIMEL lpImeL;
+extern HDC ST_UI_hDC;
+extern UINT uStartComp;
+extern UINT uOpenCand;
+extern UINT uCaps;
+extern DWORD SaTC_Trace;
+extern TCHAR szUIClassName[];
+extern TCHAR szCompClassName[];
+extern TCHAR szCandClassName[];
+extern TCHAR szStatusClassName[];
+extern TCHAR szCMenuClassName[];
+extern TCHAR szHandCursor[];
+extern TCHAR szChinese[];
+extern TCHAR pszImeName[IMEINDEXNUM][MAX_PATH];
+extern TCHAR *szImeName;
+extern TCHAR szImeRegName[];
+extern TCHAR szImeXGBName[];
+extern TCHAR szSymbol[];
+extern TCHAR szNoSymbol[];
+extern TCHAR szEnglish[];
+extern TCHAR szCode[];
+extern TCHAR szEudc[];
+extern TCHAR szHalfShape[];
+extern TCHAR szNone[];
+extern TCHAR szDigit[];
+extern BYTE bUpper[];
+extern WORD fMask[];
+extern TCHAR szRegIMESetting[];
+extern TCHAR szPerp[];
+extern TCHAR szPara[];
+extern TCHAR szPerpTol[];
+extern TCHAR szParaTol[];
+extern TCHAR szRegImeIndex[];
 extern const NEARCARET ncUIEsc[], ncAltUIEsc[];
 extern const POINT ptInputEsc[], ptAltInputEsc[];
-extern BYTE      VirtKey48Map[];
-extern TCHAR     szWarnTitle[];
-extern TCHAR     szErrorTitle[];
+extern BYTE VirtKey48Map[];
+extern TCHAR szWarnTitle[];
+extern TCHAR szErrorTitle[];
 
-int WINAPI LibMain(HANDLE, WORD, WORD, LPTSTR);         // init.c
-LRESULT CALLBACK UIWndProc(HWND, UINT, WPARAM, LPARAM); // ui.c
-LRESULT PASCAL UIPaint(HWND);                           // ui.c
+int WINAPI LibMain (HANDLE, WORD, WORD, LPTSTR);	// init.c
+LRESULT CALLBACK UIWndProc (HWND, UINT, WPARAM, LPARAM);	// ui.c
+LRESULT PASCAL UIPaint (HWND);	// ui.c
 
 // for engine
-WORD PASCAL GBEngine(LPPRIVCONTEXT);
-WORD PASCAL AsciiToGB(LPPRIVCONTEXT);
-WORD PASCAL AsciiToArea(LPPRIVCONTEXT);
-WORD PASCAL CharToHex(TCHAR);
+WORD PASCAL GBEngine (LPPRIVCONTEXT);
+WORD PASCAL AsciiToGB (LPPRIVCONTEXT);
+WORD PASCAL AsciiToArea (LPPRIVCONTEXT);
+WORD PASCAL CharToHex (TCHAR);
 
-void PASCAL AddCodeIntoCand(LPCANDIDATELIST, WORD);             // compose.c
-void PASCAL CompWord(WORD, LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT,
-     LPGUIDELINE);                                              // compose.c
-UINT PASCAL Finalize(LPINPUTCONTEXT, LPCOMPOSITIONSTRING,
-     LPPRIVCONTEXT, WORD);                                      // compose.c
-void PASCAL CompEscapeKey(LPINPUTCONTEXT, LPCOMPOSITIONSTRING,
-     LPGUIDELINE, LPPRIVCONTEXT);                               // compose.c
+void PASCAL AddCodeIntoCand (LPCANDIDATELIST, WORD);	// compose.c
+void PASCAL CompWord (WORD, LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPGUIDELINE);	// compose.c
+UINT PASCAL Finalize (LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, WORD);	// compose.c
+void PASCAL CompEscapeKey (LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPGUIDELINE, LPPRIVCONTEXT);	// compose.c
 
-void PASCAL SelectOneCand(LPINPUTCONTEXT, LPCOMPOSITIONSTRING,
-     LPPRIVCONTEXT, LPCANDIDATELIST);                           // chcand.c
-void PASCAL CandEscapeKey(LPINPUTCONTEXT, LPPRIVCONTEXT);       // chcand.c
-void PASCAL ChooseCand(WORD, LPINPUTCONTEXT, LPCANDIDATEINFO,
-     LPPRIVCONTEXT);                                            // chcand.c
+void PASCAL SelectOneCand (LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPCANDIDATELIST);	// chcand.c
+void PASCAL CandEscapeKey (LPINPUTCONTEXT, LPPRIVCONTEXT);	// chcand.c
+void PASCAL ChooseCand (WORD, LPINPUTCONTEXT, LPCANDIDATEINFO, LPPRIVCONTEXT);	// chcand.c
 
-void PASCAL SetPrivateFileSetting(LPBYTE, int, DWORD, LPCTSTR); // ddis.c
+void PASCAL SetPrivateFileSetting (LPBYTE, int, DWORD, LPCTSTR);	// ddis.c
 
-void PASCAL InitCompStr(LPCOMPOSITIONSTRING);                   // ddis.c
-BOOL PASCAL ClearCand(LPINPUTCONTEXT);                          // ddis.c
-LONG OpenReg_PathSetup(HKEY *);
-LONG OpenReg_User(HKEY ,LPCTSTR ,PHKEY);
-VOID InfoMessage(HANDLE ,WORD );                                 //ddis.c
-VOID FatalMessage(HANDLE ,WORD);                                 //ddis.c
+void PASCAL InitCompStr (LPCOMPOSITIONSTRING);	// ddis.c
+BOOL PASCAL ClearCand (LPINPUTCONTEXT);	// ddis.c
+LONG OpenReg_PathSetup (HKEY *);
+LONG OpenReg_User (HKEY, LPCTSTR, PHKEY);
+VOID InfoMessage (HANDLE, WORD);	//ddis.c
+VOID FatalMessage (HANDLE, WORD);	//ddis.c
 
-UINT PASCAL TranslateImeMessage(LPTRANSMSGLIST, LPINPUTCONTEXT, LPPRIVCONTEXT);        // toascii.c
+UINT PASCAL TranslateImeMessage (LPTRANSMSGLIST, LPINPUTCONTEXT, LPPRIVCONTEXT);	// toascii.c
 
-void PASCAL GenerateMessage(HIMC, LPINPUTCONTEXT,LPPRIVCONTEXT);  // notify.c
+void PASCAL GenerateMessage (HIMC, LPINPUTCONTEXT, LPPRIVCONTEXT);	// notify.c
 
-DWORD PASCAL ReadingToPattern(LPCTSTR, BOOL);                   // regword.c
-void  PASCAL ReadingToSequence(LPCTSTR, LPBYTE, BOOL);          // regword.c
+DWORD PASCAL ReadingToPattern (LPCTSTR, BOOL);	// regword.c
+void PASCAL ReadingToSequence (LPCTSTR, LPBYTE, BOOL);	// regword.c
 
-void PASCAL DrawDragBorder(HWND, LONG, LONG);                   // uisubs.c
-void PASCAL DrawFrameBorder(HDC, HWND);                         // uisubs.c
+void PASCAL DrawDragBorder (HWND, LONG, LONG);	// uisubs.c
+void PASCAL DrawFrameBorder (HDC, HWND);	// uisubs.c
 
-void PASCAL ContextMenu(HWND, int, int);                        // uisubs.c
-LRESULT CALLBACK ContextMenuWndProc(HWND, UINT, WPARAM,LPARAM); // uisubs.c
+void PASCAL ContextMenu (HWND, int, int);	// uisubs.c
+LRESULT CALLBACK ContextMenuWndProc (HWND, UINT, WPARAM, LPARAM);	// uisubs.c
 
-extern "C" HWND    PASCAL GetCompWnd(HWND);                                // compui.c
-void    PASCAL SetCompPosition(HWND, HIMC, LPINPUTCONTEXT);     // compui.c
-void    PASCAL SetCompWindow(HWND);                             // compui.c
-void    PASCAL MoveDefaultCompPosition(HWND);                   // compui.c
-void    PASCAL ShowComp(HWND, int);                             // compui.c
-void    PASCAL StartComp(HWND);                                 // compui.c
-void    PASCAL EndComp(HWND);                                   // compui.c
-void    PASCAL UpdateCompWindow(HWND);                          // compui.c
-LRESULT CALLBACK CompWndProc(HWND, UINT, WPARAM, LPARAM);       // compui.c
-void    PASCAL CompCancel(HIMC, LPINPUTCONTEXT);
+extern "C" HWND PASCAL GetCompWnd (HWND);	// compui.c
+void PASCAL SetCompPosition (HWND, HIMC, LPINPUTCONTEXT);	// compui.c
+void PASCAL SetCompWindow (HWND);	// compui.c
+void PASCAL MoveDefaultCompPosition (HWND);	// compui.c
+void PASCAL ShowComp (HWND, int);	// compui.c
+void PASCAL StartComp (HWND);	// compui.c
+void PASCAL EndComp (HWND);	// compui.c
+void PASCAL UpdateCompWindow (HWND);	// compui.c
+LRESULT CALLBACK CompWndProc (HWND, UINT, WPARAM, LPARAM);	// compui.c
+void PASCAL CompCancel (HIMC, LPINPUTCONTEXT);
 
-HWND    PASCAL GetCandWnd(HWND);                                // candui.c
-void    PASCAL CalcCandPos(HIMC, HWND, LPPOINT);                            // candui.c
-LRESULT PASCAL SetCandPosition(HWND);                           // candui.c
-void    PASCAL ShowCand(HWND, int);                             // candui.c
-void    PASCAL OpenCand(HWND);                                  // candui.c
-void    PASCAL CloseCand(HWND);                                 // candui.c
-void    PASCAL PaintCandWindow(HWND, HDC);                      // candui.c
-LRESULT CALLBACK CandWndProc(HWND, UINT, WPARAM, LPARAM);       // candui.c
+HWND PASCAL GetCandWnd (HWND);	// candui.c
+void PASCAL CalcCandPos (HIMC, HWND, LPPOINT);	// candui.c
+LRESULT PASCAL SetCandPosition (HWND);	// candui.c
+void PASCAL ShowCand (HWND, int);	// candui.c
+void PASCAL OpenCand (HWND);	// candui.c
+void PASCAL CloseCand (HWND);	// candui.c
+void PASCAL PaintCandWindow (HWND, HDC);	// candui.c
+LRESULT CALLBACK CandWndProc (HWND, UINT, WPARAM, LPARAM);	// candui.c
 
-HWND    PASCAL GetStatusWnd(HWND);                              // statusui.c
-LRESULT PASCAL SetStatusWindowPos(HWND);                        // statusui.c
-void    PASCAL ShowStatus(HWND, int);                           // statusui.c
-void    PASCAL OpenStatus(HWND);                                // statusui.c
-LRESULT CALLBACK StatusWndProc(HWND, UINT, WPARAM, LPARAM);     // statusui.c
-void DrawConvexRect(HDC, int, int, int, int);
-void DrawConvexRectP(HDC, int, int, int, int);
-void DrawConcaveRect(HDC, int, int, int, int);
-BOOL IsUsedCode(WORD);
-void PASCAL InitStatusUIData(int, int);
-void PASCAL InitCandUIData(int, int, int);
-BOOL UpdateStatusWindow(HWND);
-void PASCAL EngChCand(LPCOMPOSITIONSTRING, LPCANDIDATELIST, LPPRIVCONTEXT, LPINPUTCONTEXT, WORD);
-void PASCAL CandPageDownUP(HWND, UINT);
-void PASCAL GenerateImeMessage(HIMC, LPINPUTCONTEXT, DWORD);
-UINT PASCAL TranslateSymbolChar(LPTRANSMSGLIST, WORD, BOOL);
-UINT PASCAL TranslateFullChar(LPTRANSMSGLIST, WORD);
-UINT PASCAL ConvListProcessKey(BYTE,LPPRIVCONTEXT);     //ddis.c
-UINT PASCAL GBProcessKey(WORD, LPPRIVCONTEXT);
-UINT PASCAL XGBProcessKey(WORD, LPPRIVCONTEXT);
-WORD PASCAL XGBEngine(LPPRIVCONTEXT);
-void PASCAL XGBAddCodeIntoCand(LPCANDIDATELIST, WORD);             // compose.c
-UINT PASCAL UnicodeProcessKey(WORD wCharCode, LPPRIVCONTEXT  lpImcP);
-WORD PASCAL UnicodeEngine(LPPRIVCONTEXT lpImcP);
-void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
+HWND PASCAL GetStatusWnd (HWND);	// statusui.c
+LRESULT PASCAL SetStatusWindowPos (HWND);	// statusui.c
+void PASCAL ShowStatus (HWND, int);	// statusui.c
+void PASCAL OpenStatus (HWND);	// statusui.c
+LRESULT CALLBACK StatusWndProc (HWND, UINT, WPARAM, LPARAM);	// statusui.c
+void DrawConvexRect (HDC, int, int, int, int);
+void DrawConvexRectP (HDC, int, int, int, int);
+void DrawConcaveRect (HDC, int, int, int, int);
+BOOL IsUsedCode (WORD);
+void PASCAL InitStatusUIData (int, int);
+void PASCAL InitCandUIData (int, int, int);
+BOOL UpdateStatusWindow (HWND);
+void PASCAL EngChCand (LPCOMPOSITIONSTRING, LPCANDIDATELIST, LPPRIVCONTEXT,
+		       LPINPUTCONTEXT, WORD);
+void PASCAL CandPageDownUP (HWND, UINT);
+void PASCAL GenerateImeMessage (HIMC, LPINPUTCONTEXT, DWORD);
+UINT PASCAL TranslateSymbolChar (LPTRANSMSGLIST, WORD, BOOL);
+UINT PASCAL ConvListProcessKey (BYTE, LPPRIVCONTEXT);	//ddis.c
+UINT PASCAL GBProcessKey (WORD, LPPRIVCONTEXT);
+UINT PASCAL XGBProcessKey (WORD, LPPRIVCONTEXT);
+WORD PASCAL XGBEngine (LPPRIVCONTEXT);
+void PASCAL XGBAddCodeIntoCand (LPCANDIDATELIST, WORD);	// compose.c
+UINT PASCAL UnicodeProcessKey (WORD wCharCode, LPPRIVCONTEXT lpImcP);
+WORD PASCAL UnicodeEngine (LPPRIVCONTEXT lpImcP);
+void PASCAL UnicodeAddCodeIntoCand (LPCANDIDATELIST, WORD);
 // dialog procedure
-BOOL FAR PASCAL ImeVerDlgProc(HWND, UINT, WORD, LONG);
-BOOL FAR PASCAL CrtWordDlgProc(HWND, UINT, WORD, LONG);
-BOOL FAR PASCAL SetImeDlgProc(HWND, UINT, WORD, LONG);
-
+BOOL FAR PASCAL ImeVerDlgProc (HWND, UINT, WORD, LONG);
+BOOL FAR PASCAL CrtWordDlgProc (HWND, UINT, WORD, LONG);
+BOOL FAR PASCAL SetImeDlgProc (HWND, UINT, WORD, LONG);
