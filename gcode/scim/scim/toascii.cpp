@@ -15,11 +15,6 @@ Module Name:
 #include <immdev.h>
 #include <imedefs.h>
 
-/**********************************************************************/
-/* IsUsedCode()                                                       */
-/* Return Value:                                                      */
-/*      TURE: is UsedCode;  FALSE: is'nt UsedCode;                    */
-/**********************************************************************/
 BOOL IsUsedCode(
     WORD wCharCode)
 {

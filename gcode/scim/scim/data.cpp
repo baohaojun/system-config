@@ -14,9 +14,9 @@ Module Name:
 #include <immdev.h>
 #include "imedefs.h"
 
-#pragma data_seg(".ShareDate")
+#pragma comment(linker, "/SECTION:.shared,RWS")
+#pragma data_seg(".shared")
 IMEG      sImeG = {0};
-
 
 #pragma data_seg()
 

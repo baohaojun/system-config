@@ -42,7 +42,7 @@ void PASCAL InitStatusUIData(
         strbytelen(szImeName) * sImeG.xChiCharWi/2 + STATUS_NAME_MARGIN + STATUS_DIM_X * 4;
     sImeG.rcStatusText.bottom = sImeG.rcStatusText.top + iContentHi;
 
-    sImeG.xStatusWi = STATUS_DIM_X * 4 + STATUS_NAME_MARGIN +
+    sImeG.xStatusWi = STATUS_DIM_X * 3 + STATUS_NAME_MARGIN +
         strbytelen(szImeName) * sImeG.xChiCharWi/2 + 6 * cxBorder;
     sImeG.yStatusHi = iContentHi + 6 * cxBorder;
     

@@ -289,7 +289,7 @@ END
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_IMENAME_UNI         "UNICODE"
+    IDS_IMENAME_UNI         "°ü°üÎå±Ê"
 
     IDS_IMEUICLASS          "InterCodeIme"
     IDS_IMECOMPCLASS        "ImeCompwinime"
