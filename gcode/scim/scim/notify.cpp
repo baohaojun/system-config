@@ -400,28 +400,7 @@ BOOL WINAPI ImeSetCompositionString(
     return (fRet);
 }
 
-/**********************************************************************/
-/* ToggleSoftKbd()                                                    */
-/**********************************************************************/
-void PASCAL ToggleSoftKbd(
-    HIMC            hIMC,
-    LPINPUTCONTEXT  lpIMC)
-{
-    LPPRIVCONTEXT lpImcP;
 
-    lpImcP = (LPPRIVCONTEXT)ImmLockIMCC(lpIMC->hPrivate);
-    if (!lpImcP) {
-        return;
-    }
-
-    lpImcP->fdwImeMsg |= MSG_IMN_UPDATE_SOFTKBD;
-
-    GenerateMessage(hIMC, lpIMC, lpImcP);
-
-    ImmUnlockIMCC(lpIMC->hPrivate);
-
-    return;
-}
 
 /**********************************************************************/
 /* NotifySelectCand()                                                 */

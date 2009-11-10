@@ -232,8 +232,6 @@ TCHAR      szHalfShape[] = TEXT("HalfShape");
 TCHAR      szSymbol[] = TEXT("Symbol");
 TCHAR      szNoSymbol[] = TEXT("NoSymbol");
 TCHAR      szNone[] = TEXT("None");
-TCHAR      szSoftKBD[] = TEXT("SoftKBD");
-TCHAR      szNoSoftKBD[] = TEXT("NoSoftKBD");
 TCHAR      szDigit[] = TEXT("01234567890");
 
 TCHAR      szCandInf[] ={0x0020, 0x0020, 0x0020, 0x6570, 0x5B57, 0x952E, 0x0000};

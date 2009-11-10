@@ -422,8 +422,6 @@ extern TCHAR      szEudc[];
 extern TCHAR      szFullShape[];
 extern TCHAR      szHalfShape[];
 extern TCHAR      szNone[];
-extern TCHAR      szSoftKBD[];
-extern TCHAR      szNoSoftKBD[];
 extern TCHAR      szDigit[];
 extern BYTE      bUpper[];
 extern WORD      fMask[];
@@ -506,7 +504,6 @@ void    PASCAL OpenCand(HWND);                                  // candui.c
 void    PASCAL CloseCand(HWND);                                 // candui.c
 void    PASCAL PaintCandWindow(HWND, HDC);                      // candui.c
 LRESULT CALLBACK CandWndProc(HWND, UINT, WPARAM, LPARAM);       // candui.c
-void    PASCAL UpdateSoftKbd(HWND);
 
 HWND    PASCAL GetStatusWnd(HWND);                              // statusui.c
 LRESULT PASCAL SetStatusWindowPos(HWND);                        // statusui.c
@@ -539,6 +536,4 @@ BOOL FAR PASCAL CrtWordDlgProc(HWND, UINT, WORD, LONG);
 BOOL FAR PASCAL SetImeDlgProc(HWND, UINT, WORD, LONG);
 
 
-extern TCHAR SKLayout[NumsSK][MAXSOFTKEYS];
-extern TCHAR SKLayoutS[NumsSK][MAXSOFTKEYS];
 

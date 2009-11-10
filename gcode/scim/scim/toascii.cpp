@@ -950,143 +950,109 @@ UINT WINAPI ImeToAsciiEx(
     // CST_SYMBOL
 
     // CST_SOFTKB
-    if (iRet == CST_SOFTKB) {
-            WORD wSymbolCharCode;
-                int  SKDataIndex;
-
-                // Mapping VK
-                if(uVirtKey == 0x20) {
-                        SKDataIndex = 0;
-                } else if(uVirtKey >= 0x30 && uVirtKey <= 0x39) {
-                        SKDataIndex = uVirtKey - 0x30 + 1;
-                } else if (uVirtKey >= 0x41 && uVirtKey <= 0x5a) {
-                        SKDataIndex = uVirtKey - 0x41 + 0x0b;
-                } else if (uVirtKey >= 0xba && uVirtKey <= 0xbf) {
-                        SKDataIndex = uVirtKey - 0xba + 0x25;
-                } else if (uVirtKey >= 0xdb && uVirtKey <= 0xde) {
-                        SKDataIndex = uVirtKey - 0xdb + 0x2c;
-                } else if (uVirtKey == 0xc0) {
-                        SKDataIndex = 0x2b;
-                } else {
-                        SKDataIndex = 0;
-                }
-
-                if (lpbKeyState[VK_SHIFT] & 0x80) {
-                    wSymbolCharCode = SKLayoutS[lpImeL->dwSKWant][SKDataIndex];
-                } else {
-                    wSymbolCharCode = SKLayout[lpImeL->dwSKWant][SKDataIndex];
-                }
-
-                if(wSymbolCharCode == 0x0020) {
-                        MessageBeep((UINT) -1);
-                        uNumMsg = 0;
-                } else {
-                uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                }
-        } 
 
     // CST_ALPHANUMERIC
-    else if (iRet == CST_ALPHANUMERIC) {
-            if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
+	if (iRet == CST_ALPHANUMERIC) {
+		if (lpImcP->fdwImeMsg & MSG_ALREADY_OPEN) {
             lpImcP->fdwImeMsg = (lpImcP->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
                 ~(MSG_OPEN_CANDIDATE) & ~(MSG_IN_IMETOASCIIEX);
             GenerateMessage(hIMC, lpIMC, lpImcP);
-                }
+		}
 
         if (lpIMC->fdwConversion & IME_CMODE_SYMBOL) {
-                    WORD wSymbolCharCode;
-                        if(wCharCode == TEXT('.')) {
-                               wSymbolCharCode = 0x3002;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT(',')) {
-                                wSymbolCharCode = 0xff0c;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT(';')) {
-                                wSymbolCharCode = 0xff1b;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT(':')) {
-                                wSymbolCharCode = 0xff1a;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('?')) {
-                                wSymbolCharCode = 0xff1f;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('!')) {
-                                wSymbolCharCode = 0xff01;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('(')) {
-                                wSymbolCharCode = 0xff08;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT(')')) {
-                                wSymbolCharCode = 0xff09;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('\\')) {
-                                wSymbolCharCode = 0x3001;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('@')) {
-                                wSymbolCharCode = 0x00b7;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('&')) {
-                                wSymbolCharCode = 0x2014;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('$')) {
-                                wSymbolCharCode = 0xffe5;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('_')) {
-                                wSymbolCharCode = 0x2014;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, TRUE);
-                        } else if(wCharCode == TEXT('^')) {
-                                wSymbolCharCode = 0x2026;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, TRUE);
-                        } else if(wCharCode == TEXT('"')) {
-                                if(lpImcP->uSYHFlg) {
-                                        wSymbolCharCode = 0x201d;
-                                } else {
-                                        wSymbolCharCode = 0x201c;
+			WORD wSymbolCharCode;
+			if(wCharCode == TEXT('.')) {
+				wSymbolCharCode = 0x3002;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT(',')) {
+				wSymbolCharCode = 0xff0c;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT(';')) {
+				wSymbolCharCode = 0xff1b;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT(':')) {
+				wSymbolCharCode = 0xff1a;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('?')) {
+				wSymbolCharCode = 0xff1f;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('!')) {
+				wSymbolCharCode = 0xff01;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('(')) {
+				wSymbolCharCode = 0xff08;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT(')')) {
+				wSymbolCharCode = 0xff09;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('\\')) {
+				wSymbolCharCode = 0x3001;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('@')) {
+				wSymbolCharCode = 0x00b7;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('&')) {
+				wSymbolCharCode = 0x2014;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('$')) {
+				wSymbolCharCode = 0xffe5;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('_')) {
+				wSymbolCharCode = 0x2014;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, TRUE);
+			} else if(wCharCode == TEXT('^')) {
+				wSymbolCharCode = 0x2026;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, TRUE);
+			} else if(wCharCode == TEXT('"')) {
+				if(lpImcP->uSYHFlg) {
+					wSymbolCharCode = 0x201d;
+				} else {
+					wSymbolCharCode = 0x201c;
 
-                                }
-                        lpImcP->uSYHFlg ^= 0x00000001;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('\'')) {
-                                if(lpImcP->uDYHFlg) {
-                                        wSymbolCharCode = 0x2019;
-                                } else {
-                                        wSymbolCharCode = 0x2018;
-                                }
-                        lpImcP->uDYHFlg ^= 0x00000001;
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('<')) {
-                                if(lpImcP->uDSMHFlg) {
-                                        wSymbolCharCode = 0x3008;
-                                        lpImcP->uDSMHCount++;
-                                } else {
-                                        wSymbolCharCode = 0x300a;
-                                lpImcP->uDSMHFlg = 0x00000001;
-                                }
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else if(wCharCode == TEXT('>')) {
-                                if((lpImcP->uDSMHFlg) && (lpImcP->uDSMHCount)) {
-                                        wSymbolCharCode = 0x3009;
-                                        lpImcP->uDSMHCount--;
-                                } else {
-                                        wSymbolCharCode = 0x300b;
-                                lpImcP->uDSMHFlg = 0x00000000;
-                                }
-                    uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
-                        } else {
-                        if (lpIMC->fdwConversion & IME_CMODE_FULLSHAPE) {
-                            // convert to DBCS
-                            uNumMsg = TranslateFullChar(lpTransBuf, wCharCode);
-                        } else {
-                            uNumMsg = TranslateToAscii(uVirtKey, uScanCode, lpTransBuf,
-                                wCharCode);
-                        }
-                        }
+				}
+				lpImcP->uSYHFlg ^= 0x00000001;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('\'')) {
+				if(lpImcP->uDYHFlg) {
+					wSymbolCharCode = 0x2019;
+				} else {
+					wSymbolCharCode = 0x2018;
+				}
+				lpImcP->uDYHFlg ^= 0x00000001;
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('<')) {
+				if(lpImcP->uDSMHFlg) {
+					wSymbolCharCode = 0x3008;
+					lpImcP->uDSMHCount++;
+				} else {
+					wSymbolCharCode = 0x300a;
+					lpImcP->uDSMHFlg = 0x00000001;
+				}
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else if(wCharCode == TEXT('>')) {
+				if((lpImcP->uDSMHFlg) && (lpImcP->uDSMHCount)) {
+					wSymbolCharCode = 0x3009;
+					lpImcP->uDSMHCount--;
+				} else {
+					wSymbolCharCode = 0x300b;
+					lpImcP->uDSMHFlg = 0x00000000;
+				}
+				uNumMsg = TranslateSymbolChar(lpTransBuf, wSymbolCharCode, FALSE);
+			} else {
+				if (lpIMC->fdwConversion & IME_CMODE_FULLSHAPE) {
+					// convert to DBCS
+					uNumMsg = TranslateFullChar(lpTransBuf, wCharCode);
+				} else {
+					uNumMsg = TranslateToAscii(uVirtKey, uScanCode, lpTransBuf,
+											   wCharCode);
+				}
+			}
         } else if (lpIMC->fdwConversion & IME_CMODE_FULLSHAPE) {
             // convert to DBCS
             uNumMsg = TranslateFullChar(lpTransBuf, wCharCode);
         } else {
             uNumMsg = TranslateToAscii(uVirtKey, uScanCode, lpTransBuf,
-                wCharCode);
+									   wCharCode);
         }
     }
     // CST_CHOOSE

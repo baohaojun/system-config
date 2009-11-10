@@ -36,7 +36,7 @@ BOOL WINAPI ImeInquire(
                              IME_PROP_IGNORE_UPKEYS;
 
     lpImeInfo->fdwConversionCaps = IME_CMODE_NATIVE|IME_CMODE_FULLSHAPE|
-        IME_CMODE_CHARCODE|IME_CMODE_SOFTKBD|IME_CMODE_NOCONVERSION;
+        IME_CMODE_CHARCODE|IME_CMODE_NOCONVERSION;
     lpImeInfo->fdwSentenceCaps = 0;
     // IME will have different distance base multiple of 900 escapement
     lpImeInfo->fdwUICaps = UI_CAP_ROT90|UI_CAP_SOFTKBD;

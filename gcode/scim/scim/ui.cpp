@@ -147,308 +147,6 @@ void PASCAL DestroyUIWindow(            // destroy composition window
 }
 
 /**********************************************************************/
-/* ShowSoftKbd                                                        */
-/**********************************************************************/
-void PASCAL ShowSoftKbd(   // Show the soft keyboard window
-    HWND          hUIWnd,
-    int           nShowSoftKbdCmd,
-    LPPRIVCONTEXT lpImcP)
-{
-    HGLOBAL  hUIPrivate;
-    LPUIPRIV lpUIPrivate;
-
-    hUIPrivate = (HGLOBAL)GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-    if (!hUIPrivate) {          // can not darw status window
-        return;
-    }
-
-    lpUIPrivate = (LPUIPRIV)GlobalLock(hUIPrivate);
-    if (!lpUIPrivate) {         // can not draw status window
-        return;
-    }
-
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL1, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL2, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL3, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL4, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL5, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL6, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL7, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL8, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL9, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL10, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL11, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL12, MF_UNCHECKED);
-    CheckMenuItem(lpImeL->hSKMenu, IDM_SKL13, MF_UNCHECKED);
-
-    if (!lpUIPrivate->hSoftKbdWnd) {
-        // not in show status window mode
-    } else if (lpUIPrivate->nShowSoftKbdCmd != nShowSoftKbdCmd) {
-        ImmShowSoftKeyboard(lpUIPrivate->hSoftKbdWnd, nShowSoftKbdCmd);
-        lpUIPrivate->nShowSoftKbdCmd = nShowSoftKbdCmd;
-    }
-
-    GlobalUnlock(hUIPrivate);
-    return;
-}
-
-/**********************************************************************/
-/* CheckSoftKbdPosition()                                             */
-/**********************************************************************/
-void PASCAL CheckSoftKbdPosition(
-    LPUIPRIV       lpUIPrivate,
-    LPINPUTCONTEXT lpIMC)
-{
-
-    UINT fPortionBits = 0;
-    UINT fPortionTest;
-    int  xPortion, yPortion, nPortion;
-    RECT rcWnd;
-
-    // portion of dispaly
-    // 0  1
-    // 2  3
-
-    if (lpUIPrivate->hCompWnd) {
-        GetWindowRect(lpUIPrivate->hCompWnd, &rcWnd);
-
-        if (rcWnd.left > sImeG.rcWorkArea.right / 2) {
-            xPortion = 1;
-        } else {
-            xPortion = 0;
-        }
-
-        if (rcWnd.top > sImeG.rcWorkArea.bottom / 2) {
-            yPortion = 1;
-        } else {
-            yPortion = 0;
-        }
-
-        fPortionBits |= 0x0001 << (yPortion * 2 + xPortion);
-    }
-
-    if (lpUIPrivate->hStatusWnd) {
-        GetWindowRect(lpUIPrivate->hStatusWnd, &rcWnd);
-
-        if (rcWnd.left > sImeG.rcWorkArea.right / 2) {
-            xPortion = 1;
-        } else {
-            xPortion = 0;
-        }
-
-        if (rcWnd.top > sImeG.rcWorkArea.bottom / 2) {
-            yPortion = 1;
-        } else {
-            yPortion = 0;
-        }
-
-        fPortionBits |= 0x0001 << (yPortion * 2 + xPortion);
-    }
-
-    GetWindowRect(lpUIPrivate->hSoftKbdWnd, &rcWnd);
-
-    // start from portion 3
-    for (nPortion = 3, fPortionTest = 0x0008; fPortionTest;
-        nPortion--, fPortionTest >>= 1) {
-        if (fPortionTest & fPortionBits) {
-            // someone here!
-            continue;
-        }
-
-        if (nPortion % 2) {
-            lpIMC->ptSoftKbdPos.x = sImeG.rcWorkArea.right -
-                (rcWnd.right - rcWnd.left) - UI_MARGIN;
-        } else {
-            lpIMC->ptSoftKbdPos.x = sImeG.rcWorkArea.left;
-        }
-
-        if (nPortion / 2) {
-            lpIMC->ptSoftKbdPos.y = sImeG.rcWorkArea.bottom -
-                (rcWnd.bottom - rcWnd.top) - UI_MARGIN;
-        } else {
-            lpIMC->ptSoftKbdPos.y = sImeG.rcWorkArea.top;
-        }
-
-        lpIMC->fdwInit |= INIT_SOFTKBDPOS;
-
-        break;
-    }
-    return;
-}
-
-/**********************************************************************/
-/* SetSoftKbdData()                                                   */
-/**********************************************************************/
-void PASCAL SetSoftKbdData(
-    HWND           hSoftKbdWnd,
-    LPINPUTCONTEXT lpIMC)
-{
-    int         i;
-    LPSOFTKBDDATA lpSoftKbdData;
-    LPPRIVCONTEXT  lpImcP;
-
-    HGLOBAL hsSoftKbdData;
-
-       lpImcP = (LPPRIVCONTEXT)ImmLockIMCC(lpIMC->hPrivate);
-    if (!lpImcP) {
-        return;
-    }
-    
-    hsSoftKbdData = GlobalAlloc(GHND, sizeof(SOFTKBDDATA) * 2);
-    if (!hsSoftKbdData) {
-        ImmUnlockIMCC(lpIMC->hPrivate);
-        return;
-    }
-
-    lpSoftKbdData = (LPSOFTKBDDATA)GlobalLock(hsSoftKbdData);
-    if (!lpSoftKbdData) {         // can not draw soft keyboard window
-        ImmUnlockIMCC(lpIMC->hPrivate);
-        return;
-    }
-
-    lpSoftKbdData->uCount = 2;
-
-    for (i = 0; i < 48; i++) {
-        BYTE bVirtKey;
-
-        bVirtKey = VirtKey48Map[i];
-
-        if (!bVirtKey) {
-            continue;
-        }
-
-        {
-
-            lpSoftKbdData->wCode[0][bVirtKey] = SKLayout[lpImeL->dwSKWant][i];
-            lpSoftKbdData->wCode[1][bVirtKey] = SKLayoutS[lpImeL->dwSKWant][i];
-        }
-    }
-
-    SendMessage(hSoftKbdWnd, WM_IME_CONTROL, IMC_SETSOFTKBDDATA,
-        (LPARAM)lpSoftKbdData);
-
-    GlobalUnlock(hsSoftKbdData);
-
-    // free storage for UI settings
-    GlobalFree(hsSoftKbdData);
-    ImmUnlockIMCC(lpIMC->hPrivate);
-    return;
-}
-
-/**********************************************************************/
-/* UpdateSoftKbd()                                                    */
-/**********************************************************************/
-void PASCAL UpdateSoftKbd(
-    HWND   hUIWnd)
-{
-    HIMC           hIMC;
-    LPINPUTCONTEXT lpIMC;
-    LPPRIVCONTEXT  lpImcP;
-    HGLOBAL        hUIPrivate;
-    LPUIPRIV       lpUIPrivate;
-
-    hIMC = (HIMC)GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-    if (!hIMC) {
-        return;
-    }
-
-    lpIMC = (LPINPUTCONTEXT)ImmLockIMC(hIMC);
-    if (!lpIMC) {
-        return;
-    }
-
-    hUIPrivate = (HGLOBAL)GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-    if (!hUIPrivate) {          // can not darw soft keyboard window
-        ImmUnlockIMC(hIMC);
-        return;
-    }
-
-    lpUIPrivate = (LPUIPRIV)GlobalLock(hUIPrivate);
-    if (!lpUIPrivate) {         // can not draw soft keyboard window
-        ImmUnlockIMC(hIMC);
-        return;
-    }
-
-    lpImcP = (LPPRIVCONTEXT)ImmLockIMCC(lpIMC->hPrivate);
-    if (!lpImcP) {
-        GlobalUnlock(hUIPrivate);
-        ImmUnlockIMC(hIMC);
-        return;
-    }
-
-    if (!(lpIMC->fdwConversion & IME_CMODE_SOFTKBD)) {
-        if (lpUIPrivate->hSoftKbdWnd) {
-
-            ImmDestroySoftKeyboard(lpUIPrivate->hSoftKbdWnd);
-            lpUIPrivate->hSoftKbdWnd = NULL;
-        }
-
-        lpUIPrivate->nShowSoftKbdCmd = SW_HIDE;
-    } else if (!lpIMC->fOpen) {
-        if (lpUIPrivate->nShowSoftKbdCmd != SW_HIDE) {
-            ShowSoftKbd(hUIWnd, SW_HIDE, NULL);
-        }
-    } else {
-        if (!lpUIPrivate->hSoftKbdWnd) {
-            // create soft keyboard
-            lpUIPrivate->hSoftKbdWnd =
-                ImmCreateSoftKeyboard(SOFTKEYBOARD_TYPE_C1, hUIWnd,
-                0, 0);
-        }
-
-        if (!(lpIMC->fdwInit & INIT_SOFTKBDPOS)) {
-            CheckSoftKbdPosition(lpUIPrivate, lpIMC);
-        }
-
-        SetSoftKbdData(lpUIPrivate->hSoftKbdWnd, lpIMC);
-
-        lpUIPrivate->fdwSetContext |= ISC_SHOW_SOFTKBD;
-
-        if (lpUIPrivate->nShowSoftKbdCmd == SW_HIDE) {
-            SetWindowPos(lpUIPrivate->hSoftKbdWnd, NULL,
-                lpIMC->ptSoftKbdPos.x, lpIMC->ptSoftKbdPos.y,
-                0, 0, SWP_NOACTIVATE|SWP_NOSIZE|SWP_NOZORDER);
-
-            // only show, if the application want to show it
-            if (lpUIPrivate->fdwSetContext & ISC_SHOW_SOFTKBD) {
-                ShowSoftKbd(hUIWnd, SW_SHOWNOACTIVATE, lpImcP);
-            }
-        }
-    }
-
-    ImmUnlockIMCC(lpIMC->hPrivate);
-    GlobalUnlock(hUIPrivate);
-    ImmUnlockIMC(hIMC);
-
-    return;
-}
-
-/**********************************************************************/
-/* SoftKbdDestryed()                                                  */
-/**********************************************************************/
-void PASCAL SoftKbdDestroyed(           // soft keyboard window
-                                        // already destroyed
-    HWND hUIWnd)
-{
-    HGLOBAL  hUIPrivate;
-    LPUIPRIV lpUIPrivate;
-
-    hUIPrivate = (HGLOBAL)GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-    if (!hUIPrivate) {     
-        return;
-    }
-
-    lpUIPrivate = (LPUIPRIV)GlobalLock(hUIPrivate);
-    if (!lpUIPrivate) {    
-        return;
-    }
-
-    lpUIPrivate->hSoftKbdWnd = NULL;
-
-    GlobalUnlock(hUIPrivate);
-}
-
-/**********************************************************************/
 /* StatusWndMsg()                                                     */
 /**********************************************************************/
 void PASCAL StatusWndMsg(       // set the show hide state and
@@ -520,7 +218,6 @@ void PASCAL StatusWndMsg(       // set the show hide state and
 
         if (fdwSetContext == ISC_HIDE_SOFTKBD) {
             lpUIPrivate->fdwSetContext &= ~(ISC_HIDE_SOFTKBD);
-            ShowSoftKbd(hUIWnd, SW_HIDE, NULL);
         }
 
         ShowStatus(
@@ -564,7 +261,6 @@ void PASCAL ShowUI(             // show the sub windows
         ShowStatus(hUIWnd, nShowCmd);
         ShowComp(hUIWnd, nShowCmd);
         ShowCand(hUIWnd, nShowCmd);
-        ShowSoftKbd(hUIWnd, nShowCmd, NULL);
         return;
     }
 
@@ -655,16 +351,12 @@ void PASCAL ShowUI(             // show the sub windows
 
     if (!lpIMC->fOpen) {
         if (lpUIPrivate->nShowCompCmd != SW_HIDE) {
-            ShowSoftKbd(hUIWnd, SW_HIDE, NULL);
         }
     } else if ((lpUIPrivate->fdwSetContext & ISC_SHOW_SOFTKBD) &&
         (lpIMC->fdwConversion & IME_CMODE_SOFTKBD)) {
         if (!lpUIPrivate->hSoftKbdWnd) {
-            UpdateSoftKbd(hUIWnd);
         } else if (lpUIPrivate->nShowSoftKbdCmd == SW_HIDE) {
-            ShowSoftKbd(hUIWnd, nShowCmd, lpImcP);
         } else if (lpUIPrivate->hIMC != hIMC) {
-            UpdateSoftKbd(hUIWnd);
         } else {
             RedrawWindow(lpUIPrivate->hSoftKbdWnd, NULL, NULL,
                 RDW_FRAME|RDW_INVALIDATE);
@@ -673,7 +365,6 @@ void PASCAL ShowUI(             // show the sub windows
     } else if (lpUIPrivate->fdwSetContext & ISC_OPEN_STATUS_WINDOW) {
         lpUIPrivate->fdwSetContext |= ISC_HIDE_SOFTKBD;
     } else {
-        ShowSoftKbd(hUIWnd, SW_HIDE, NULL);
     }
 
     // we switch to this hIMC
@@ -851,9 +542,6 @@ void PASCAL NotifyUI(
         break;
     case IMN_PRIVATE:
         switch (lParam) {
-        case IMN_PRIVATE_UPDATE_SOFTKBD:
-            UpdateSoftKbd(hUIWnd);
-            break;
         case IMN_PRIVATE_UPDATE_STATUS:
             UpdateStatusWindow(hUIWnd);
             break;
@@ -869,7 +557,6 @@ void PASCAL NotifyUI(
         }
         break;
     case IMN_SOFTKBDDESTROYED:
-        SoftKbdDestroyed(hUIWnd);
         break;
     default:
         break;

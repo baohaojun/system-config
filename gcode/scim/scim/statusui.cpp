@@ -612,13 +612,6 @@ void PASCAL PaintStatusWindow(
               }
            }
 
-           if (!hSKBmp) {
-              if (lpIMC->fdwConversion & IME_CMODE_SOFTKBD) {
-                 hSKBmp = LoadBitmap(hInst, szSoftKBD);
-           } else {
-                 hSKBmp = LoadBitmap(hInst, szNoSoftKBD);
-           }
-    }
 
     ImmUnlockIMC(hIMC);
     ImmUnlockIMCC(lpIMC->hPrivate);
