@@ -21,9 +21,9 @@ Module Name:
 /*      TRUE - successful, FALSE - failure                            */
 /**********************************************************************/
 BOOL WINAPI
-ImeRegisterWord (LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
+ImeRegisterWord(LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 {
-  return (FALSE);
+	return (FALSE);
 }
 
 
@@ -33,9 +33,9 @@ ImeRegisterWord (LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 /*      TRUE - successful, FALSE - failure                            */
 /**********************************************************************/
 BOOL WINAPI
-ImeUnregisterWord (LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
+ImeUnregisterWord(LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 {
-  return (FALSE);
+	return (FALSE);
 }
 
 /**********************************************************************/
@@ -43,10 +43,9 @@ ImeUnregisterWord (LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 /* Return Value:                                                      */
 /*      number of styles copied/required                              */
 /**********************************************************************/
-UINT WINAPI
-ImeGetRegisterWordStyle (UINT nItem, LPSTYLEBUF lpStyleBuf)
+UINT WINAPI ImeGetRegisterWordStyle(UINT nItem, LPSTYLEBUF lpStyleBuf)
 {
-  return (FALSE);
+	return (FALSE);
 }
 
 /**********************************************************************/
@@ -55,9 +54,9 @@ ImeGetRegisterWordStyle (UINT nItem, LPSTYLEBUF lpStyleBuf)
 /*      the last value return by the callback function                */
 /**********************************************************************/
 UINT WINAPI
-ImeEnumRegisterWord (REGISTERWORDENUMPROC lpfnRegisterWordEnumProc,
-		     LPCTSTR lpszReading,
-		     DWORD dwStyle, LPCTSTR lpszString, LPVOID lpData)
+ImeEnumRegisterWord(REGISTERWORDENUMPROC lpfnRegisterWordEnumProc,
+					LPCTSTR lpszReading,
+					DWORD dwStyle, LPCTSTR lpszString, LPVOID lpData)
 {
-  return (FALSE);
+	return (FALSE);
 }
