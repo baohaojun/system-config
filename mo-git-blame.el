@@ -161,7 +161,9 @@ interactive use, e.g. the file name, current revision etc.")
         (error "No Git repository found"))))
 
 (defun mo-git-blame-run (&rest args)
-  (apply 'call-process mo-git-blame-git-executable nil (current-buffer) nil args))
+  (message "Running 'git %s'..." (car args))
+  (apply 'call-process mo-git-blame-git-executable nil (current-buffer) nil args)
+  (message "Running 'git %s'... done" (car args)))
 
 (defun mo-git-blame-get-output-buffer ()
   (let* ((name "*mo-git-blame-output*")
@@ -475,11 +477,11 @@ re-blaming."
   ; Declare buffer here because mo-git-blame-vars might not be available in the other buffer.
   (let ((buffer (plist-get mo-git-blame-vars :content-buffer))
         (line-num (line-number-at-pos)))
-    (goto-line line-num)
+    (mo-git-blame-goto-line-markless line-num)
     (recenter)
     (with-selected-window (plist-get mo-git-blame-vars :content-window)
       (switch-to-buffer buffer)
-      (goto-line line-num)
+      (mo-git-blame-goto-line-markless line-num)
       (recenter))))
 
 (defun mo-git-blame-other-buffer ()
@@ -488,13 +490,17 @@ re-blaming."
                  :content-buffer
                :blame-buffer)))
 
+(defun mo-git-blame-goto-line-markless (line)
+  (goto-char (point-min))
+  (goto-char (line-beginning-position line)))
+
 (defun mo-git-blame-goto-line (line)
   "Goto a line in both the blame and the content buffer."
   (interactive "nGoto line: ")
   (with-selected-window (plist-get mo-git-blame-vars :blame-window)
-    (goto-line line))
+    (mo-git-blame-goto-line-markless line))
   (with-selected-window (plist-get mo-git-blame-vars :content-window)
-    (goto-line line)))
+    (mo-git-blame-goto-line-markless line)))
 
 ;;;###autoload
 (defun mo-git-blame-current ()
