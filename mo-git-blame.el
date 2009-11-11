@@ -417,7 +417,7 @@ re-blaming."
          (relative-file-name (file-relative-name file-name top-dir))
          (blame-window (selected-window))
          (prior-vars (if has-blame-vars mo-git-blame-vars))
-         (line-to-go-to (if has-blame-vars (line-number-at-pos) 1))
+         (line-to-go-to (line-number-at-pos))
          content-window the-buffer prior-revisions)
     (switch-to-buffer blame-buffer)
     (setq prior-revisions (if prior-vars (plist-get prior-vars :prior-revisions)))
