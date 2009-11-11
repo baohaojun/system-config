@@ -73,9 +73,6 @@ SelectOneCand(LPINPUTCONTEXT lpIMC,
 	return;
 }
 
-/**********************************************************************/
-/* CandEscapeKey()                                                    */
-/**********************************************************************/
 void PASCAL CandEscapeKey(LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 {
 	LPCOMPOSITIONSTRING lpCompStr;
@@ -111,9 +108,6 @@ void PASCAL CandEscapeKey(LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 	return;
 }
 
-/**********************************************************************/
-/* ChooseCand()                                                       */
-/**********************************************************************/
 void PASCAL ChooseCand(			// choose one of candidate strings by
 						  // input char
 						  WORD wCharCode,

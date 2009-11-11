@@ -61,12 +61,9 @@
 #define CST_INPUT               1
 #define CST_CHOOSE              2
 #define CST_SYMBOL              3
-#define CST_TOGGLE_PHRASEWORD   5	// not in iImeState
-#define CST_ALPHABET            6	// not in iImeState
 #define CST_ALPHANUMERIC        7	// not in iImeState
 #define CST_INVALID             8	// not in iImeState
 #define CST_INVALID_INPUT       9	// not in iImeState
-#define CST_ONLINE_CZ           10
 #define CST_CAPITAL             11
 
 // state engin

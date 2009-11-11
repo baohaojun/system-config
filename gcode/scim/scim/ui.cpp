@@ -52,14 +52,17 @@ void PASCAL DestroyUIWindow(	// destroy composition window
 	// composition window need to be destroyed
 	if (hCompWnd) {
 		DestroyWindow(hCompWnd);
+		hCompWnd = NULL;
 	}
 	// candidate window need to be destroyed
 	if (hCandWnd) {
 		DestroyWindow(hCandWnd);
+		hCandWnd = NULL;
 	}
 	// status window need to be destroyed
 	if (hStatusWnd) {
 		DestroyWindow(hStatusWnd);
+		hStatusWnd = NULL;
 	}
 
 	return;

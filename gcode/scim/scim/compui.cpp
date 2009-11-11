@@ -787,9 +787,6 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 	return;
 }
 
-/**********************************************************************/
-/* UpdateCompWindow()                                                 */
-/**********************************************************************/
 void PASCAL UpdateCompWindow(HWND hUIWnd)
 {
 	HWND hCompWnd;
@@ -801,9 +798,6 @@ void PASCAL UpdateCompWindow(HWND hUIWnd)
 	ReleaseDC(hCompWnd, hDC);
 }
 
-/**********************************************************************/
-/* CompWndProc()                                                      */
-/**********************************************************************/
 LRESULT CALLBACK CompWndProc(	// composition window proc
 								HWND hCompWnd, UINT uMsg, WPARAM wParam,
 								LPARAM lParam)
