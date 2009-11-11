@@ -99,14 +99,6 @@ BOOL FAR PASCAL ImeSetDlgProc(	// dialog procedure of configuration
 			RECT rc;
 
 			GetClientRect(hDlg, &rc);
-			DrawConvexRect(GetDC(hDlg),
-						   rc.left + 7,
-						   rc.top + 7, rc.right - 7 - 1,
-						   rc.bottom - 40 - 1);
-
-			DrawConvexRectP(GetDC(hDlg),
-							rc.left + 7,
-							rc.top + 7, rc.right - 7, rc.bottom - 40);
 		}
 
 		return FALSE;

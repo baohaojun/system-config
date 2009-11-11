@@ -95,7 +95,6 @@
 #define SIC_SAVE1               4
 
 #define BOX_UI                  0
-#define LIN_UI                  1
 
 
 #define IMEINDEXNUM             1
@@ -292,14 +291,11 @@ typedef struct _tagImeG {		// global structure, can be share by all IMEs,
 	int iPerpTol;
 } IMEG;
 
+
 typedef IMEG *PIMEG;
 typedef IMEG NEAR *NPIMEG;
 typedef IMEG FAR *LPIMEG;
 
-
-#define IME_SELECT_GB     0x0001
-#define IME_SELECT_XGB    0x0002
-#define IME_SELECT_AREA   0x0004
 
 typedef struct _tagPRIVCONTEXT {	// IME private data for each context
 	int iImeState;				// the composition state - input, choose, or
@@ -327,7 +323,6 @@ typedef struct _tagUIPRIV {		// IME private UI data
 	HWND hStatusWnd;			// status window
 	int nShowStatusCmd;
 	DWORD fdwSetContext;		// the actions to take at set context time
-	HIMC hIMC;					// the recent selected hIMC
 	HWND hCMenuWnd;				// a window owner for context menu
 } UIPRIV;
 
@@ -391,7 +386,6 @@ extern BYTE VirtKey48Map[];
 extern TCHAR szWarnTitle[];
 extern TCHAR szErrorTitle[];
 
-int WINAPI LibMain(HANDLE, WORD, WORD, LPTSTR);	// init.c
 LRESULT CALLBACK UIWndProc(HWND, UINT, WPARAM, LPARAM);	// ui.c
 LRESULT PASCAL UIPaint(HWND);	// ui.c
 
@@ -452,9 +446,6 @@ LRESULT PASCAL SetStatusWindowPos(HWND);	// statusui.c
 void PASCAL ShowStatus(HWND, int);	// statusui.c
 void PASCAL OpenStatus(HWND);	// statusui.c
 LRESULT CALLBACK StatusWndProc(HWND, UINT, WPARAM, LPARAM);	// statusui.c
-void DrawConvexRect(HDC, int, int, int, int);
-void DrawConvexRectP(HDC, int, int, int, int);
-void DrawConcaveRect(HDC, int, int, int, int);
 BOOL IsUsedCode(WORD);
 void PASCAL InitStatusUIData(int, int);
 void PASCAL InitCandUIData(int, int, int);

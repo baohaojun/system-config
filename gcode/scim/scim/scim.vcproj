@@ -202,6 +202,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\imewnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\init.cpp"
 				>
 			</File>
@@ -241,6 +245,10 @@
 			>
 			<File
 				RelativePath=".\imedefs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\imewnd.h"
 				>
 			</File>
 			<File

@@ -795,9 +795,6 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 		RECT rcWnd;
 
 		GetClientRect(hCompWnd, &rcWnd);
-		DrawConcaveRect(hDC,
-						rcWnd.left,
-						rcWnd.top, rcWnd.right - 1, rcWnd.bottom - 1);
 	}
 
 	SetBkColor(hDC, RGB(0xC0, 0xC0, 0xC0));

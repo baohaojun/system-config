@@ -43,8 +43,7 @@ void PASCAL CMenuDestroyed(		// context menu window
 	GlobalUnlock(hUIPrivate);
 }
 
-void PASCAL CreateUIWindow(		// create composition window
-							  HWND hUIWnd)
+void PASCAL CreateUIWindow(HWND hUIWnd)
 {
 	HGLOBAL hUIPrivate;
 
@@ -295,7 +294,6 @@ void PASCAL ShowUI(				// show the sub windows
 		DestroyWindow(lpUIPrivate->hStatusWnd);
 	}
 	// we switch to this hIMC
-	lpUIPrivate->hIMC = hIMC;
 
 	GlobalUnlock(hUIPrivate);
 
@@ -890,9 +888,6 @@ UIWndProc(HWND hUIWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return (0L);
 	case WM_MOUSEACTIVATE:
 		return (MA_NOACTIVATE);
-	case WM_PAINT:
-		BHJDEBUG(" UIPaint in UIWndProc");
-		return UIPaint(hUIWnd);
 	default:
 		BHJDEBUG(" msg %s not handled", msg_name(uMsg));
 		return DefWindowProc(hUIWnd, uMsg, wParam, lParam);

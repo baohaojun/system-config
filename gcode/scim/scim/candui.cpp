@@ -683,10 +683,6 @@ void PASCAL PaintCandWindow(HWND hCandWnd, HDC hDC)
 	RECT rcWnd;
 
 	GetClientRect(hCandWnd, &rcWnd);
-	DrawConcaveRect(hDC,
-					rcWnd.left,
-					rcWnd.top + UI_CANDINF, rcWnd.right - 1,
-					rcWnd.bottom - 1);
 
 	SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
 	SetBkColor(hDC, RGB(0xC0, 0xC0, 0xC0));

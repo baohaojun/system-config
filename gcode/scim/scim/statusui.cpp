@@ -507,16 +507,6 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	DrawText(hDC, szImeName, lstrlen(szImeName),
 			 &sImeG.rcImeName, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-	DrawConvexRect(hDC,
-				   sImeG.rcImeName.left,
-				   sImeG.rcImeName.top,
-				   sImeG.rcImeName.right - 1, sImeG.rcImeName.bottom - 1);
-
-	DrawConvexRectP(hDC,
-					sImeG.rcImeName.left,
-					sImeG.rcImeName.top,
-					sImeG.rcImeName.right, sImeG.rcImeName.bottom);
-
 	// load all bitmap
 	hSymbolBmp = (HBITMAP) NULL;
 
@@ -705,14 +695,6 @@ BOOL FAR PASCAL ImeVerDlgProc(	// dialog procedure of configuration
 			RECT rc;
 
 			GetClientRect(hDlg, &rc);
-			DrawConvexRect(GetDC(hDlg),
-						   rc.left + 10,
-						   rc.top + 10, rc.right - 10 - 1,
-						   rc.bottom - 43 - 1);
-
-			DrawConvexRectP(GetDC(hDlg),
-							rc.left + 10,
-							rc.top + 10, rc.right - 10, rc.bottom - 43);
 		}
 
 		return FALSE;

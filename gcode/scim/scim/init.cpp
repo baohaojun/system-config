@@ -110,138 +110,79 @@ void PASCAL InitCandUIData(int cxBorder, int cyBorder, int UIMode)
 
 	sImeG.cyCandBorder = cyBorder * 2;
 
-	if (UIMode == LIN_UI) {
+	sImeG.rcCandText.left = cxBorder;
 
-		sImeG.rcCandIcon.left = 0;
+	sImeG.rcCandText.top = 2 * cyBorder + UI_CANDINF;
 
-		sImeG.rcCandIcon.top = cyBorder + 2;
+	if (sImeG.xChiCharWi * 9 > (UI_CANDICON * 6 + UI_CANDBTH * 4))
 
-		sImeG.rcCandIcon.right = sImeG.rcCandIcon.left + UI_CANDICON;
+		sImeG.rcCandText.right =
+			sImeG.rcCandText.left + sImeG.xChiCharWi * 9;
 
-		sImeG.rcCandIcon.bottom = sImeG.rcCandIcon.top + UI_CANDICON;
+	else
 
-		sImeG.rcCandText.left = sImeG.rcCandIcon.right + 3;
+		sImeG.rcCandText.right =
+			sImeG.rcCandText.left + (UI_CANDICON * 6 + UI_CANDBTH * 4);
 
-		sImeG.rcCandText.top = cyBorder;
+	sImeG.rcCandText.bottom =
+		sImeG.rcCandText.top + sImeG.yChiCharHi * CANDPERPAGE;
 
-		sImeG.rcCandText.right = sImeG.rcCandText.left + UI_CANDSTR;
+	sImeG.xCandWi =
+		sImeG.rcCandText.right + sImeG.cxCandBorder * 2 + cxBorder * 4;
 
-		sImeG.rcCandText.bottom = sImeG.rcCandText.top + iContentHi;
+	sImeG.yCandHi =
+		sImeG.rcCandText.bottom + sImeG.cyCandBorder * 2 +
+		cyBorder * 4;
 
-		sImeG.rcCandBTH.top = cyBorder * 4;
+	sImeG.rcCandIcon.left = cxBorder;
 
-		sImeG.rcCandBTH.left = sImeG.rcCandText.right + 5;
+	sImeG.rcCandIcon.top = cyBorder + 2;
 
-		sImeG.rcCandBTH.right = sImeG.rcCandBTH.left + UI_CANDBTW;
+	sImeG.rcCandIcon.right = sImeG.rcCandIcon.left + UI_CANDICON;
 
-		sImeG.rcCandBTH.bottom = sImeG.rcCandBTH.top + UI_CANDBTH;
+	sImeG.rcCandIcon.bottom = sImeG.rcCandIcon.top + UI_CANDICON;
 
-		sImeG.rcCandBTU.top = cyBorder * 4;
+	sImeG.rcCandInf.left = sImeG.rcCandIcon.right;
 
-		sImeG.rcCandBTU.left = sImeG.rcCandBTH.right;
+	sImeG.rcCandInf.top = cyBorder + 3;
 
-		sImeG.rcCandBTU.right = sImeG.rcCandBTU.left + UI_CANDBTW;
+	sImeG.rcCandInf.right = sImeG.rcCandInf.left + UI_CANDICON * 5;
 
-		sImeG.rcCandBTU.bottom = sImeG.rcCandBTU.top + UI_CANDBTH;
+	sImeG.rcCandInf.bottom = sImeG.rcCandInf.top + UI_CANDBTH;
 
-		sImeG.rcCandBTD.top = cyBorder * 4;
+	sImeG.rcCandBTE.top = cyBorder * 5;
 
-		sImeG.rcCandBTD.left = sImeG.rcCandBTU.right;
+	sImeG.rcCandBTE.right = sImeG.rcCandText.right + cxBorder;
 
-		sImeG.rcCandBTD.right = sImeG.rcCandBTD.left + UI_CANDBTW;
+	sImeG.rcCandBTE.bottom = sImeG.rcCandBTE.top + UI_CANDBTH;
 
-		sImeG.rcCandBTD.bottom = sImeG.rcCandBTD.top + UI_CANDBTH;
+	sImeG.rcCandBTE.left = sImeG.rcCandBTE.right - UI_CANDBTW;
 
-		sImeG.rcCandBTE.top = cyBorder * 4;
+	sImeG.rcCandBTD.top = cyBorder * 5;
 
-		sImeG.rcCandBTE.left = sImeG.rcCandBTD.right;
+	sImeG.rcCandBTD.right = sImeG.rcCandBTE.left;
 
-		sImeG.rcCandBTE.right = sImeG.rcCandBTE.left + UI_CANDBTW;
+	sImeG.rcCandBTD.bottom = sImeG.rcCandBTD.top + UI_CANDBTH;
 
-		sImeG.rcCandBTE.bottom = sImeG.rcCandBTE.top + UI_CANDBTH;
+	sImeG.rcCandBTD.left = sImeG.rcCandBTD.right - UI_CANDBTW;
 
-		sImeG.xCandWi =
-			sImeG.rcCandBTE.right + sImeG.cxCandBorder * 2 + cxBorder * 4;
+	sImeG.rcCandBTU.top = cyBorder * 5;
 
-		sImeG.yCandHi =
-			sImeG.rcCandText.bottom + sImeG.cyCandBorder * 2 +
-			cyBorder * 4;
+	sImeG.rcCandBTU.right = sImeG.rcCandBTD.left;
 
-	} else {
+	sImeG.rcCandBTU.bottom = sImeG.rcCandBTU.top + UI_CANDBTH;
 
-		sImeG.rcCandText.left = cxBorder;
+	sImeG.rcCandBTU.left = sImeG.rcCandBTU.right - UI_CANDBTW;
 
-		sImeG.rcCandText.top = 2 * cyBorder + UI_CANDINF;
+	sImeG.rcCandBTH.top = cyBorder * 5;
 
-		if (sImeG.xChiCharWi * 9 > (UI_CANDICON * 6 + UI_CANDBTH * 4))
+	sImeG.rcCandBTH.right = sImeG.rcCandBTU.left;
 
-			sImeG.rcCandText.right =
-				sImeG.rcCandText.left + sImeG.xChiCharWi * 9;
+	sImeG.rcCandBTH.bottom = sImeG.rcCandBTH.top + UI_CANDBTH;
 
-		else
+	sImeG.rcCandBTH.left = sImeG.rcCandBTH.right - UI_CANDBTW;
 
-			sImeG.rcCandText.right =
-				sImeG.rcCandText.left + (UI_CANDICON * 6 + UI_CANDBTH * 4);
 
-		sImeG.rcCandText.bottom =
-			sImeG.rcCandText.top + sImeG.yChiCharHi * CANDPERPAGE;
-
-		sImeG.xCandWi =
-			sImeG.rcCandText.right + sImeG.cxCandBorder * 2 + cxBorder * 4;
-
-		sImeG.yCandHi =
-			sImeG.rcCandText.bottom + sImeG.cyCandBorder * 2 +
-			cyBorder * 4;
-
-		sImeG.rcCandIcon.left = cxBorder;
-
-		sImeG.rcCandIcon.top = cyBorder + 2;
-
-		sImeG.rcCandIcon.right = sImeG.rcCandIcon.left + UI_CANDICON;
-
-		sImeG.rcCandIcon.bottom = sImeG.rcCandIcon.top + UI_CANDICON;
-
-		sImeG.rcCandInf.left = sImeG.rcCandIcon.right;
-
-		sImeG.rcCandInf.top = cyBorder + 3;
-
-		sImeG.rcCandInf.right = sImeG.rcCandInf.left + UI_CANDICON * 5;
-
-		sImeG.rcCandInf.bottom = sImeG.rcCandInf.top + UI_CANDBTH;
-
-		sImeG.rcCandBTE.top = cyBorder * 5;
-
-		sImeG.rcCandBTE.right = sImeG.rcCandText.right + cxBorder;
-
-		sImeG.rcCandBTE.bottom = sImeG.rcCandBTE.top + UI_CANDBTH;
-
-		sImeG.rcCandBTE.left = sImeG.rcCandBTE.right - UI_CANDBTW;
-
-		sImeG.rcCandBTD.top = cyBorder * 5;
-
-		sImeG.rcCandBTD.right = sImeG.rcCandBTE.left;
-
-		sImeG.rcCandBTD.bottom = sImeG.rcCandBTD.top + UI_CANDBTH;
-
-		sImeG.rcCandBTD.left = sImeG.rcCandBTD.right - UI_CANDBTW;
-
-		sImeG.rcCandBTU.top = cyBorder * 5;
-
-		sImeG.rcCandBTU.right = sImeG.rcCandBTD.left;
-
-		sImeG.rcCandBTU.bottom = sImeG.rcCandBTU.top + UI_CANDBTH;
-
-		sImeG.rcCandBTU.left = sImeG.rcCandBTU.right - UI_CANDBTW;
-
-		sImeG.rcCandBTH.top = cyBorder * 5;
-
-		sImeG.rcCandBTH.right = sImeG.rcCandBTU.left;
-
-		sImeG.rcCandBTH.bottom = sImeG.rcCandBTH.top + UI_CANDBTH;
-
-		sImeG.rcCandBTH.left = sImeG.rcCandBTH.right - UI_CANDBTW;
-
-	}
 
 }
 
@@ -449,10 +390,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 
 }
 
-
-/**********************************************************************/
-/* InitImeLocalData()                                                 */
-/**********************************************************************/
 BOOL PASCAL InitImeLocalData(HINSTANCE hInstL)
 {
 
