@@ -43,8 +43,6 @@ UINT PASCAL UnicodeProcessKey(	// this key will cause the IME go to what state
 			return (CST_INVALID_INPUT);
 		}
 	}
-	// check finalize char
-	// 0000 -- ffff
 
 	if ((wCharCode >= TEXT('0') && wCharCode <= TEXT('9'))
 		|| (wCharCode >= TEXT('a') && wCharCode <= TEXT('f'))

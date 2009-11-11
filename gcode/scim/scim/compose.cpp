@@ -13,14 +13,8 @@ Module Name:
 #include <immdev.h>
 #include <imedefs.h>
 
-void PASCAL XGBAddCodeIntoCand(LPCANDIDATELIST, WORD);
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
 
-/**********************************************************************/
-/* UnicodeEngine()                                                         */
-/* Description:                                                       */
-/*      Conv GBcode                                                   */
-/**********************************************************************/
 WORD PASCAL UnicodeEngine(LPPRIVCONTEXT imcPrivPtr)
 {
 	if (imcPrivPtr->bSeq[3] || imcPrivPtr->bSeq[2] == TEXT('?')
@@ -35,101 +29,6 @@ WORD PASCAL UnicodeEngine(LPPRIVCONTEXT imcPrivPtr)
 	}
 }
 
-/**********************************************************************/
-/* XGBEngine()                                                         */
-/* Description:                                                       */
-/*      Conv GBcode                                                   */
-/**********************************************************************/
-WORD PASCAL XGBEngine(LPPRIVCONTEXT imcPrivPtr)
-{
-	WORD wCode;
-
-	if (imcPrivPtr->bSeq[3] || (imcPrivPtr->bSeq[2] == TEXT('?'))) {
-		if (imcPrivPtr->bSeq[2] == TEXT('?')) {	//add 626
-			imcPrivPtr->bSeq[2] = TEXT('4');
-			imcPrivPtr->bSeq[3] = TEXT('0');
-		}
-		wCode = AsciiToGB(imcPrivPtr);
-		return wCode;
-	} else {
-		return ((WORD) NULL);
-	}
-}
-
-/**********************************************************************/
-/* XGBSpcEng()                                                         */
-/* Description:                                                       */
-/*      Conv GBcode for Space                                         */
-/**********************************************************************/
-WORD PASCAL XGBSpcEng(LPPRIVCONTEXT imcPrivPtr)
-{
-	WORD wCode;
-
-	imcPrivPtr->bSeq[2] = TEXT('4');
-	imcPrivPtr->bSeq[3] = TEXT('0');
-	wCode = AsciiToGB(imcPrivPtr);
-
-	return wCode;
-}
-
-/**********************************************************************/
-/* GBEngine()                                                         */
-/* Description:                                                       */
-/*      Conv GBcode                                                   */
-/**********************************************************************/
-WORD PASCAL GBEngine(LPPRIVCONTEXT imcPrivPtr)
-{
-	WORD wCode;
-
-	if (imcPrivPtr->bSeq[3] || (imcPrivPtr->bSeq[2] == TEXT('?'))) {
-
-		if (imcPrivPtr->bSeq[0] >= TEXT('0') && imcPrivPtr->bSeq[0] <= TEXT('9')) {	//Area mode
-			if (imcPrivPtr->bSeq[2] == TEXT('?')) {
-
-				imcPrivPtr->bSeq[2] = TEXT('0');
-				imcPrivPtr->bSeq[3] = TEXT('1');
-			}
-			return (AsciiToArea(imcPrivPtr));
-		} else if (imcPrivPtr->bSeq[0] >= TEXT('a') && imcPrivPtr->bSeq[0] <= TEXT('f')) {	//GB mode
-
-			if (imcPrivPtr->bSeq[2] == TEXT('?')) {
-				imcPrivPtr->bSeq[2] = TEXT('a');
-				imcPrivPtr->bSeq[3] = TEXT('1');
-			}
-			wCode = AsciiToGB(imcPrivPtr);
-			return wCode;
-		} else {
-			return ((WORD) NULL);
-		}
-	} else
-		return ((WORD) NULL);
-
-}
-
-/**********************************************************************/
-/* GBSpcEng()                                                         */
-/* Description:                                                       */
-/*      Conv GBcode for Space                                         */
-/**********************************************************************/
-WORD PASCAL GBSpcEng(LPPRIVCONTEXT imcPrivPtr)
-{
-	if (imcPrivPtr->bSeq[0] >= TEXT('0') && imcPrivPtr->bSeq[0] <= TEXT('9')) {	//Area mode
-		imcPrivPtr->bSeq[2] = TEXT('0');
-		imcPrivPtr->bSeq[3] = TEXT('1');
-		return (AsciiToArea(imcPrivPtr));
-	} else if (imcPrivPtr->bSeq[0] >= TEXT('a') && imcPrivPtr->bSeq[0] <= TEXT('f')) {	//GB mode
-		imcPrivPtr->bSeq[2] = TEXT('a');
-		imcPrivPtr->bSeq[3] = TEXT('1');
-		return (AsciiToGB(imcPrivPtr));
-	} else {
-		return ((WORD) NULL);
-	}
-}
-
-/**********************************************************************/
-/* AsciiToGB                                                          */
-/* Description:                                                       */
-/**********************************************************************/
 WORD PASCAL AsciiToGB(LPPRIVCONTEXT imcPrivPtr)
 {
 	WORD GBCode;
@@ -142,23 +41,6 @@ WORD PASCAL AsciiToGB(LPPRIVCONTEXT imcPrivPtr)
 		GBCode;
 
 	return (GBCode);
-}
-
-/**********************************************************************/
-/* AsciiToArea                                                        */
-/* Description:                                                       */
-/**********************************************************************/
-WORD PASCAL AsciiToArea(LPPRIVCONTEXT imcPrivPtr)
-{
-	WORD AreaCode;
-	AreaCode =
-		(CharToHex(imcPrivPtr->bSeq[2]) * 10) + CharToHex(imcPrivPtr->bSeq[3]) +
-		0xa0;
-	AreaCode = AreaCode * 256;
-	AreaCode =
-		(CharToHex(imcPrivPtr->bSeq[0]) * 10) + CharToHex(imcPrivPtr->bSeq[1]) +
-		AreaCode + 0xa0;
-	return (AreaCode);
 }
 
 WORD PASCAL CharToHex(TCHAR cChar)
@@ -288,9 +170,6 @@ void PASCAL AddCodeIntoCand(LPCANDIDATELIST lpCandList, WORD wCode)
 	return;
 }
 
-/**********************************************************************/
-/* UnicodeAddCodeIntoCand()                                                  */
-/**********************************************************************/
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST lpCandList, WORD wCode)
 {
 	if (lpCandList->dwCount >= IME_UNICODE_MAXCAND) {
@@ -314,44 +193,6 @@ void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST lpCandList, WORD wCode)
 	return;
 }
 
-/**********************************************************************/
-/* XGBAddCodeIntoCand()                                                  */
-/**********************************************************************/
-void PASCAL XGBAddCodeIntoCand(LPCANDIDATELIST lpCandList, WORD wCode)
-{
-	WORD wInCode;
-
-	if (lpCandList->dwCount >= IME_XGB_MAXCAND) {
-		return;
-	}
-
-	wInCode = HIBYTE(wCode) | (LOBYTE(wCode) << 8);
-	{
-		TCHAR wUnicode;
-
-		// change CP_ACP to 936, so that it can work under Multilingul Env.
-		MultiByteToWideChar(NATIVE_ANSI_CP, 0, (LPCSTR) & wInCode, 2,
-							&wUnicode, 1);
-		*(LPUNAWORD) ((LPBYTE) lpCandList +
-					  lpCandList->dwOffset[lpCandList->dwCount]) =
-			wUnicode;
-	}
-	*(LPTSTR) ((LPBYTE) lpCandList +
-			   lpCandList->dwOffset[lpCandList->dwCount] + sizeof(WORD)) =
-		TEXT('\0');
-
-	lpCandList->dwOffset[lpCandList->dwCount + 1] =
-		lpCandList->dwOffset[lpCandList->dwCount] +
-		sizeof(WORD) + sizeof(TCHAR);
-	lpCandList->dwCount++;
-
-	return;
-}
-
-
-/**********************************************************************/
-/* CompEscapeKey()                                                    */
-/**********************************************************************/
 void PASCAL
 CompEscapeKey(LPINPUTCONTEXT lpIMC,
 			  LPCOMPOSITIONSTRING lpCompStr,

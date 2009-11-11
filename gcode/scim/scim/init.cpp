@@ -530,10 +530,6 @@ void PASCAL RegisterIme(HINSTANCE hInstance)
 
 }
 
-
-/**********************************************************************/
-/* RegisterImeClass()                                                 */
-/**********************************************************************/
 void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 {
 
