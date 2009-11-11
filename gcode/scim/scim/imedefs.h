@@ -315,22 +315,6 @@ typedef PRIVCONTEXT *PPRIVCONTEXT;
 typedef PRIVCONTEXT NEAR *NPPRIVCONTEXT;
 typedef PRIVCONTEXT FAR *LPPRIVCONTEXT;
 
-typedef struct _tagUIPRIV {		// IME private UI data
-	HWND hCompWnd;				// composition window
-	int nShowCompCmd;
-	HWND hCandWnd;				// candidate window for composition
-	int nShowCandCmd;
-	HWND hStatusWnd;			// status window
-	int nShowStatusCmd;
-	DWORD fdwSetContext;		// the actions to take at set context time
-	HWND hCMenuWnd;				// a window owner for context menu
-} UIPRIV;
-
-typedef UIPRIV *PUIPRIV;
-typedef UIPRIV NEAR *NPUIPRIV;
-typedef UIPRIV FAR *LPUIPRIV;
-
-
 typedef struct tagNEARCARET {	// for near caret offset calculatation
 	int iLogFontFacX;
 	int iLogFontFacY;
@@ -350,7 +334,6 @@ extern IMEL sImeL;
 extern LPIMEL lpImeL;
 extern HDC ST_UI_hDC;
 extern UINT uStartComp;
-extern UINT uOpenCand;
 extern UINT uCaps;
 extern DWORD SaTC_Trace;
 extern TCHAR szUIClassName[];
@@ -460,3 +443,4 @@ BOOL FAR PASCAL ImeVerDlgProc(HWND, UINT, WORD, LONG);
 BOOL FAR PASCAL CrtWordDlgProc(HWND, UINT, WORD, LONG);
 BOOL FAR PASCAL SetImeDlgProc(HWND, UINT, WORD, LONG);
 const char* msg_name(UINT msg);
+extern HWND hCandWnd, hCompWnd, hCMenuWnd, hStatusWnd;

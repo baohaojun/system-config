@@ -25,37 +25,12 @@ void PASCAL CMenuDestroyed(		// context menu window
 							  // already destroyed
 							  HWND hUIWnd)
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {
-		return;
-	}
-
-	lpUIPrivate->hCMenuWnd = NULL;
-
-	GlobalUnlock(hUIPrivate);
+	hCMenuWnd = NULL;
 }
 
 void PASCAL CreateUIWindow(HWND hUIWnd)
 {
-	HGLOBAL hUIPrivate;
 
-	// create storage for UI setting
-	hUIPrivate = GlobalAlloc(GHND, sizeof(UIPRIV));
-	if (!hUIPrivate) {
-		return;
-	}
-
-	SetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE, (LONG_PTR) hUIPrivate);
-
-	// set the default position for UI window, it is hide now
 	SetWindowPos(hUIWnd, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	ShowWindow(hUIWnd, SW_SHOWNOACTIVATE);
@@ -66,43 +41,26 @@ void PASCAL CreateUIWindow(HWND hUIWnd)
 void PASCAL DestroyUIWindow(	// destroy composition window
 							   HWND hUIWnd)
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
 
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {
-		return;
-	}
 	//destroy ContextMenuWnd
-	if (lpUIPrivate->hCMenuWnd) {
-		SetWindowLongPtr(lpUIPrivate->hCMenuWnd, CMENU_HUIWND,
+	if (hCMenuWnd) {
+		SetWindowLongPtr(hCMenuWnd, CMENU_HUIWND,
 						 (LONG_PTR) 0);
-		PostMessage(lpUIPrivate->hCMenuWnd, WM_USER_DESTROY, 0, 0);
+		PostMessage(hCMenuWnd, WM_USER_DESTROY, 0, 0);
 	}
 
 	// composition window need to be destroyed
-	if (lpUIPrivate->hCompWnd) {
-		DestroyWindow(lpUIPrivate->hCompWnd);
+	if (hCompWnd) {
+		DestroyWindow(hCompWnd);
 	}
 	// candidate window need to be destroyed
-	if (lpUIPrivate->hCandWnd) {
-		DestroyWindow(lpUIPrivate->hCandWnd);
+	if (hCandWnd) {
+		DestroyWindow(hCandWnd);
 	}
 	// status window need to be destroyed
-	if (lpUIPrivate->hStatusWnd) {
-		DestroyWindow(lpUIPrivate->hStatusWnd);
+	if (hStatusWnd) {
+		DestroyWindow(hStatusWnd);
 	}
-
-
-	GlobalUnlock(hUIPrivate);
-
-	// free storage for UI settings
-	GlobalFree(hUIPrivate);
 
 	return;
 }
@@ -113,64 +71,26 @@ void PASCAL DestroyUIWindow(	// destroy composition window
 void PASCAL StatusWndMsg(		// set the show hide state and
 							HWND hUIWnd, BOOL fOn)
 {
-	HGLOBAL hUIPrivate;
 	HIMC hIMC;
-	HWND hStatusWnd;
 
-	register LPUIPRIV lpUIPrivate;
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {
-		return;
-	}
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	if (!hIMC) {
-		GlobalUnlock(hUIPrivate);
 		return;
 	}
 
 	if (fOn) {
-		lpUIPrivate->fdwSetContext |= ISC_OPEN_STATUS_WINDOW;
 
-		if (!lpUIPrivate->hStatusWnd) {
+		if (!hStatusWnd) {
 			OpenStatus(hUIWnd);
 		}
-	} else {
-		lpUIPrivate->fdwSetContext &= ~(ISC_OPEN_STATUS_WINDOW);
-	}
-
-	hStatusWnd = lpUIPrivate->hStatusWnd;
-
-	GlobalUnlock(hUIPrivate);
+	} 
 
 	if (!hStatusWnd) {
 		return;
 	}
 
 	if (!fOn) {
-		register DWORD fdwSetContext;
-
-		fdwSetContext = lpUIPrivate->fdwSetContext &
-			(ISC_SHOWUICOMPOSITIONWINDOW | ISC_HIDE_COMP_WINDOW);
-
-		if (fdwSetContext == ISC_HIDE_COMP_WINDOW) {
-			ShowComp(hUIWnd, SW_HIDE);
-		}
-
-		fdwSetContext = lpUIPrivate->fdwSetContext &
-			(ISC_SHOWUICANDIDATEWINDOW | ISC_HIDE_CAND_WINDOW);
-
-		if (fdwSetContext == ISC_HIDE_CAND_WINDOW) {
-			ShowCand(hUIWnd, SW_HIDE);
-		}
-
-		ShowStatus(hUIWnd, SW_HIDE);
 	} else if (hIMC) {
 		ShowStatus(hUIWnd, SW_SHOWNOACTIVATE);
 	} else {
@@ -186,11 +106,10 @@ void PASCAL StatusWndMsg(		// set the show hide state and
 void PASCAL ShowUI(				// show the sub windows
 					  HWND hUIWnd, int nShowCmd)
 {
+	BHJDEBUG(" ShowUI called");
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	LPPRIVCONTEXT imcPrivPtr;
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
 
 	if (nShowCmd == SW_HIDE) {
 	} else if (!(hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC))) {
@@ -200,8 +119,7 @@ void PASCAL ShowUI(				// show the sub windows
 	} else if (!(imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate))) {
 		ImmUnlockIMC(hIMC);
 		nShowCmd = SW_HIDE;
-	} else {
-	}
+	} 
 
 	if (nShowCmd == SW_HIDE) {
 		ShowStatus(hUIWnd, nShowCmd);
@@ -210,94 +128,48 @@ void PASCAL ShowUI(				// show the sub windows
 		return;
 	}
 
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {			// can not darw status window
-		goto ShowUIUnlockIMCC;
-	}
+	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
+		if (hCompWnd) {
 
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {			// can not draw status window
-		goto ShowUIUnlockIMCC;
-	}
-
-	lpUIPrivate->fdwSetContext |= ISC_SHOWUICOMPOSITIONWINDOW;
-
-	if ((lpUIPrivate->fdwSetContext & ISC_SHOWUICOMPOSITIONWINDOW) &&
-		(imcPrivPtr->fdwImeMsg & MSG_ALREADY_START)) {
-		if (lpUIPrivate->hCompWnd) {
-
-			if (lpUIPrivate->nShowCompCmd != SW_HIDE) {
-				// some time the WM_NCPAINT is eaten by the app
-				RedrawWindow(lpUIPrivate->hCompWnd, NULL, NULL,
-							 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
-			}
-
-			SendMessage(lpUIPrivate->hCompWnd, WM_IME_NOTIFY,
+			RedrawWindow(hCompWnd, NULL, NULL,
+						 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
+			SendMessage(hCompWnd, WM_IME_NOTIFY,
 						IMN_SETCOMPOSITIONWINDOW, 0);
 
-			if (lpUIPrivate->nShowCompCmd == SW_HIDE) {
-				ShowComp(hUIWnd, nShowCmd);
-			}
 		} else {
 			StartComp(hUIWnd);
 		}
-	} else if (lpUIPrivate->nShowCompCmd == SW_HIDE) {
-	} else if (lpUIPrivate->fdwSetContext & ISC_OPEN_STATUS_WINDOW) {
-		lpUIPrivate->fdwSetContext |= ISC_HIDE_COMP_WINDOW;
 	} else {
 		ShowComp(hUIWnd, SW_HIDE);
 	}
 
-	if ((lpUIPrivate->fdwSetContext & ISC_SHOWUICANDIDATEWINDOW) &&
-		(imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN)) {
-		if (lpUIPrivate->hCandWnd) {
-			if (lpUIPrivate->nShowCandCmd != SW_HIDE) {
-				// some time the WM_NCPAINT is eaten by the app
-				RedrawWindow(lpUIPrivate->hCandWnd, NULL, NULL,
-							 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
-			}
-
-			SendMessage(lpUIPrivate->hCandWnd, WM_IME_NOTIFY,
+	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
+		BHJDEBUG(" RedrawWindow called");
+		if (hCandWnd) {
+			RedrawWindow(hCandWnd, NULL, NULL,
+						 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
+			
+			SendMessage(hCandWnd, WM_IME_NOTIFY,
 						IMN_SETCANDIDATEPOS, 0x0001);
-
-			if (lpUIPrivate->nShowCandCmd == SW_HIDE) {
-				ShowCand(hUIWnd, nShowCmd);
-			}
 		} else {
 			OpenCand(hUIWnd);
 		}
-	} else if (lpUIPrivate->nShowCandCmd == SW_HIDE) {
-	} else if (lpUIPrivate->fdwSetContext & ISC_OPEN_STATUS_WINDOW) {
-		lpUIPrivate->fdwSetContext |= ISC_HIDE_CAND_WINDOW;
 	} else {
+		BHJDEBUG(" RedrawWindow not called");
 		ShowCand(hUIWnd, SW_HIDE);
 	}
 
-	if (lpUIPrivate->fdwSetContext & ISC_OPEN_STATUS_WINDOW) {
-		if (!lpUIPrivate->hStatusWnd) {
-			OpenStatus(hUIWnd);
-		}
-		if (lpUIPrivate->nShowStatusCmd != SW_HIDE) {
-			// some time the WM_NCPAINT is eaten by the app
-			RedrawWindow(lpUIPrivate->hStatusWnd, NULL, NULL,
-						 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
-		}
 
-		SendMessage(lpUIPrivate->hStatusWnd, WM_IME_NOTIFY,
-					IMN_SETSTATUSWINDOWPOS, 0);
-		if (lpUIPrivate->nShowStatusCmd == SW_HIDE) {
-			ShowStatus(hUIWnd, nShowCmd);
-		} else {
-			ShowStatus(hUIWnd, nShowCmd);
-		}
-	} else if (lpUIPrivate->hStatusWnd) {
-		DestroyWindow(lpUIPrivate->hStatusWnd);
+	if (!hStatusWnd) {
+		OpenStatus(hUIWnd);
 	}
-	// we switch to this hIMC
+	RedrawWindow(hStatusWnd, NULL, NULL,
+				 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 
-	GlobalUnlock(hUIPrivate);
+	SendMessage(hStatusWnd, WM_IME_NOTIFY,
+				IMN_SETSTATUSWINDOWPOS, 0);
+	ShowStatus(hUIWnd, nShowCmd);
 
-  ShowUIUnlockIMCC:
 	ImmUnlockIMCC(lpIMC->hPrivate);
 	ImmUnlockIMC(hIMC);
 
@@ -483,11 +355,10 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 void PASCAL SetContext(			// the context activated/deactivated
 						  HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 {
+	EnterLeaveDebug(); 
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	LPPRIVCONTEXT imcPrivPtr;
-	HGLOBAL hUIPrivate;
-	register LPUIPRIV lpUIPrivate;
 	RECT rcWorkArea;
 
 	rcWorkArea = sImeG.rcWorkArea;
@@ -504,72 +375,10 @@ void PASCAL SetContext(			// the context activated/deactivated
 		return;
 	}
 
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {
-		ImmUnlockIMC(hIMC);
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {
-		ImmUnlockIMC(hIMC);
-		return;
-	}
-
 	if (fOn) {
-		register DWORD fdwSetContext;
 
-		lpUIPrivate->fdwSetContext = lpUIPrivate->fdwSetContext &
-			~(ISC_SHOWUIALL);
-
-		lpUIPrivate->fdwSetContext |= (lShowUI & ISC_SHOWUIALL);
-
-		{
-			HKEY hKey;
-			DWORD bcData;
-			char buf[256];
-			bcData = 256;
-			if (RegOpenKeyEx(HKEY_CURRENT_USER,
-							 TEXT("Control Panel\\Input Method"),
-							 0,
-							 KEY_ENUMERATE_SUB_KEYS |
-							 KEY_EXECUTE | KEY_QUERY_VALUE, &hKey)) {
-				goto SetShowStatus;
-			}
-			if (RegQueryValueEx(hKey, TEXT("show status"), NULL, NULL,	//null-terminate string
-								(LPBYTE) buf,	//&bData,
-								&bcData) != ERROR_SUCCESS) {
-				// Set default as ON if no entry in registry
-				lpUIPrivate->fdwSetContext |= ISC_OPEN_STATUS_WINDOW;
-				goto SetShowStatus;
-			}
-			if (strcmp(buf, "1") == 0)
-				lpUIPrivate->fdwSetContext |= ISC_OPEN_STATUS_WINDOW;
-			else
-				lpUIPrivate->fdwSetContext &= ~ISC_OPEN_STATUS_WINDOW;
-		  SetShowStatus:
-			RegCloseKey(hKey);
-		}
-
-		fdwSetContext = lpUIPrivate->fdwSetContext &
-			(ISC_SHOWUICOMPOSITIONWINDOW | ISC_HIDE_COMP_WINDOW);
-
-		if (fdwSetContext == ISC_HIDE_COMP_WINDOW) {
-			ShowComp(hUIWnd, SW_HIDE);
-		} else if (fdwSetContext & ISC_HIDE_COMP_WINDOW) {
-			lpUIPrivate->fdwSetContext &= ~(ISC_HIDE_COMP_WINDOW);
-		} else {
-		}
-
-		fdwSetContext = lpUIPrivate->fdwSetContext &
-			(ISC_SHOWUICANDIDATEWINDOW | ISC_HIDE_CAND_WINDOW);
-
-		if (fdwSetContext == ISC_HIDE_CAND_WINDOW) {
-			ShowCand(hUIWnd, SW_HIDE);
-		} else if (fdwSetContext & ISC_HIDE_CAND_WINDOW) {
-			lpUIPrivate->fdwSetContext &= ~(ISC_HIDE_CAND_WINDOW);
-		} else {
-		}
+		ShowComp(hUIWnd, SW_SHOW);
+		ShowCand(hUIWnd, SW_SHOW);
 
 		if (lpIMC->cfCandForm[0].dwIndex != 0) {
 			lpIMC->cfCandForm[0].dwStyle = CFS_DEFAULT;
@@ -578,7 +387,6 @@ void PASCAL SetContext(			// the context activated/deactivated
 
 		imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
 		if (!imcPrivPtr) {
-			GlobalUnlock(hUIPrivate);
 			ImmUnlockIMC(hIMC);
 			return;
 		}
@@ -663,11 +471,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 			ScreenToClient(lpIMC->hWnd, &lpIMC->cfCompForm.ptCurrentPos);
 			lpIMC->cfCompForm.dwStyle = CFS_DEFAULT;
 		}
-	} else {
-		lpUIPrivate->fdwSetContext &= ~ISC_SETCONTEXT_UI;
-	}
-
-	GlobalUnlock(hUIPrivate);
+	} 
 
 	UIPaint(hUIWnd);
 
@@ -722,8 +526,6 @@ LRESULT PASCAL UIPaint(HWND hUIWnd)
 {
 	PAINTSTRUCT ps;
 	MSG sMsg;
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
 
 	// for safety
 	BeginPaint(hUIWnd, &ps);
@@ -731,24 +533,8 @@ LRESULT PASCAL UIPaint(HWND hUIWnd)
 
 	// some application will not remove the WM_PAINT messages
 	PeekMessage(&sMsg, hUIWnd, WM_PAINT, WM_PAINT, PM_REMOVE | PM_NOYIELD);
+	ShowUI(hUIWnd, SW_SHOWNOACTIVATE);
 
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {
-		return (0L);
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {
-		return (0L);
-	}
-
-	if (lpUIPrivate->fdwSetContext & ISC_SETCONTEXT_UI) {
-		ShowUI(hUIWnd, SW_SHOWNOACTIVATE);
-	} else {
-		ShowUI(hUIWnd, SW_HIDE);
-	}
-
-	GlobalUnlock(hUIPrivate);
 
 	return (0L);
 }
@@ -1200,3 +986,5 @@ const char* msg_name(UINT msg)
 	}
 	return "WM_UNKNOWN";
 }
+
+HWND hCandWnd, hCompWnd, hCMenuWnd, hStatusWnd;

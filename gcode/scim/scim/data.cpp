@@ -22,7 +22,6 @@ IMEG sImeG = { 0 };
 
 HDC ST_UI_hDC;
 UINT uStartComp = 0;
-UINT uOpenCand = 0;
 UINT uCaps = 0;
 DWORD SaTC_Trace;
 

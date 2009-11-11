@@ -330,9 +330,6 @@ ContextMenuWndProc(HWND hCMenuWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void PASCAL ContextMenu(HWND hStatusWnd, int x, int y)
 {
 	HWND hUIWnd;
-	HWND hCMenuWnd;
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	HMENU hMenu, hCMenu;
@@ -354,22 +351,13 @@ void PASCAL ContextMenu(HWND hStatusWnd, int x, int y)
 		return;
 	}
 
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {
-		goto ContextMenuUnlockIMC;
-	}
 
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {
-		goto ContextMenuUnlockIMC;
-	}
-
-	if (!lpUIPrivate->hCMenuWnd) {
+	if (!hCMenuWnd) {
 		// this is important to assign owner window, otherwise the focus
 		// will be gone
 
 		// When UI terminate, it need to destroy this window
-		lpUIPrivate->hCMenuWnd = CreateWindowEx(CS_HREDRAW | CS_VREDRAW,
+		hCMenuWnd = CreateWindowEx(CS_HREDRAW | CS_VREDRAW,
 												szCMenuClassName,
 												TEXT("Context Menu"),
 												WS_POPUP | WS_DISABLED, 0,
@@ -378,10 +366,9 @@ void PASCAL ContextMenu(HWND hStatusWnd, int x, int y)
 
 	}
 
-	hCMenuWnd = lpUIPrivate->hCMenuWnd;
+	hCMenuWnd = hCMenuWnd;
 
 	// Unlock before we call into TrackPopupMenu().
-	GlobalUnlock(hUIPrivate);
 
 	if (!hCMenuWnd) {
 		goto ContextMenuUnlockIMC;

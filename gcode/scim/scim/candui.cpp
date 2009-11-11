@@ -16,23 +16,6 @@ Module Name:
 
 HWND PASCAL GetCandWnd(HWND hUIWnd)	// UI window
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
-	HWND hCandWnd;
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {			// can not darw candidate window
-		return (HWND) NULL;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {			// can not draw candidate window
-		return (HWND) NULL;
-	}
-
-	hCandWnd = lpUIPrivate->hCandWnd;
-
-	GlobalUnlock(hUIPrivate);
 	return (hCandWnd);
 }
 
@@ -377,93 +360,17 @@ void PASCAL AdjustCandBoundry(LPPOINT lpptCandWnd)	// the position
 
 void PASCAL ShowCand(HWND hUIWnd, int nShowCandCmd)
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {			// can not darw candidate window
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {			// can not draw candidate window
-		return;
-	}
-
-	if (lpUIPrivate->nShowCandCmd == nShowCandCmd) {
-		goto SwCandNoChange;
-	}
-
-	if (nShowCandCmd == SW_HIDE) {
-		lpUIPrivate->fdwSetContext &= ~(ISC_HIDE_CAND_WINDOW);
-	}
-
-	if (!lpUIPrivate->hCandWnd) {
-		// not in show candidate window mode
-	} else if (lpUIPrivate->nShowCandCmd == nShowCandCmd) {
-	} else {
-		if (nShowCandCmd == SW_HIDE) {
-			uOpenCand = 0;
-		} else {
-			HIMC hIMC;
-			POINT ptSTWPos;
-			int Comp_CandWndLen;
-			RECT rcWorkArea;
-
-			uOpenCand = 1;
-
-			// reset status window for LINE_UI(FIX_UI)
-			hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-			if (!hIMC) {
-				goto ShowCand;
-			}
-
-			ImmGetStatusWindowPos(hIMC, (LPPOINT) & ptSTWPos);
-			rcWorkArea = sImeG.rcWorkArea;
-			Comp_CandWndLen = 0;
-			if (uOpenCand) {
-				Comp_CandWndLen += sImeG.xCandWi + UI_MARGIN;
-				if (uStartComp) {
-					Comp_CandWndLen += lpImeL->xCompWi + UI_MARGIN;
-				}
-				if (ptSTWPos.x + sImeG.xStatusWi + Comp_CandWndLen >
-					rcWorkArea.right) {
-					PostMessage(GetCompWnd(hUIWnd),
-								WM_IME_NOTIFY, IMN_SETCOMPOSITIONWINDOW,
-								0);
-				}
-			}
-		}
-
-	  ShowCand:
-		ShowWindow(lpUIPrivate->hCandWnd, nShowCandCmd);
-		lpUIPrivate->nShowCandCmd = nShowCandCmd;
-	}
-
-  SwCandNoChange:
-	GlobalUnlock(hUIPrivate);
+	BHJDEBUG(" ShowCand %d", nShowCandCmd);
+	ShowWindow(hCandWnd, nShowCandCmd);
 	return;
 }
 
 void PASCAL OpenCand(HWND hUIWnd)
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
+	BHJDEBUG(" ");
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	POINT ptWnd;
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {			// can not darw candidate window
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {			// can not draw candidate window
-		return;
-	}
-
-	lpUIPrivate->fdwSetContext |= ISC_SHOWUICANDIDATEWINDOW;
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	if (!hIMC) {
@@ -510,9 +417,9 @@ void PASCAL OpenCand(HWND hUIWnd)
 		} else if (lpIMC->cfCandForm[0].dwStyle == CFS_CANDIDATEPOS) {
 			AdjustCandBoundry(&ptWnd);
 		} else {
-			if (lpUIPrivate->nShowCompCmd != SW_HIDE) {
+			if (1) {//FIXME
 				ptWnd.x = ptWnd.y = 0;
-				ClientToScreen(lpUIPrivate->hCompWnd, &ptWnd);
+				ClientToScreen(hCompWnd, &ptWnd);
 			} else {
 				ptWnd = lpIMC->cfCompForm.ptCurrentPos;
 				ClientToScreen(lpIMC->hWnd, &ptWnd);
@@ -530,9 +437,9 @@ void PASCAL OpenCand(HWND hUIWnd)
 		}
 	} else {
 		// make cand windows trace comp window !
-		if (lpUIPrivate->nShowCompCmd != SW_HIDE) {
+		if (1) { //FIXME
 			ptWnd.x = ptWnd.y = 0;
-			ClientToScreen(lpUIPrivate->hCompWnd, &ptWnd);
+			ClientToScreen(hCompWnd, &ptWnd);
 		} else {
 			ptWnd = lpIMC->cfCompForm.ptCurrentPos;
 			ClientToScreen(lpIMC->hWnd, &ptWnd);
@@ -550,66 +457,40 @@ void PASCAL OpenCand(HWND hUIWnd)
 
 	ImmUnlockIMC(hIMC);
 
-	if (lpUIPrivate->hCandWnd) {
-		SetWindowPos(lpUIPrivate->hCandWnd,
+	if (hCandWnd) {
+		SetWindowPos(hCandWnd,
 					 NULL,
 					 ptWnd.x,
 					 ptWnd.y,
 					 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
 	} else {
-		lpUIPrivate->hCandWnd =
+		hCandWnd =
 			CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME,
 						   szCandClassName, NULL, WS_POPUP | WS_DISABLED,
 						   ptWnd.x, ptWnd.y, sImeG.xCandWi, sImeG.yCandHi,
 						   hUIWnd, (HMENU) NULL, hInst, NULL);
 
-		SetWindowLong(lpUIPrivate->hCandWnd, UI_MOVE_OFFSET,
+		SetWindowLong(hCandWnd, UI_MOVE_OFFSET,
 					  WINDOW_NOT_DRAG);
-		SetWindowLong(lpUIPrivate->hCandWnd, UI_MOVE_XY, 0L);
+		SetWindowLong(hCandWnd, UI_MOVE_XY, 0L);
 	}
 
 	ShowCand(hUIWnd, SW_SHOWNOACTIVATE);
 
   OpenCandUnlockUIPriv:
-	GlobalUnlock(hUIPrivate);
 	return;
 }
 
 void PASCAL CloseCand(HWND hUIWnd)
 {
-	uOpenCand = 0;
+	BHJDEBUG(" ");
 	ShowCand(hUIWnd, SW_HIDE);
 	return;
 }
 
 void PASCAL DestroyCandWindow(HWND hCandWnd)
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
-
-	if (GetWindowLong(hCandWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-		// undo the drag border
-		DrawDragBorder(hCandWnd,
-					   GetWindowLong(hCandWnd, UI_MOVE_XY),
-					   GetWindowLong(hCandWnd, UI_MOVE_OFFSET));
-	}
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(GetWindow(hCandWnd, GW_OWNER),
-											IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {			// can not darw candidate window
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {			// can not draw candidate window
-		return;
-	}
-
-	lpUIPrivate->nShowCandCmd = SW_HIDE;
-
-	lpUIPrivate->hCandWnd = (HWND) NULL;
-
-	GlobalUnlock(hUIPrivate);
+	hCandWnd = (HWND) NULL;
 	return;
 }
 

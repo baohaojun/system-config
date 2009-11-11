@@ -22,23 +22,6 @@ Module Name:
 /**********************************************************************/
 extern "C" HWND PASCAL GetCompWnd(HWND hUIWnd)	// UI window
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
-	HWND hCompWnd;
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {			// can not darw candidate window
-		return (HWND) NULL;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {			// can not draw candidate window
-		return (HWND) NULL;
-	}
-
-	hCompWnd = lpUIPrivate->hCompWnd;
-
-	GlobalUnlock(hUIPrivate);
 	return (hCompWnd);
 }
 
@@ -496,41 +479,7 @@ void PASCAL MoveDefaultCompPosition(	// the default comp position
 void PASCAL ShowComp(			// Show the composition window
 						HWND hUIWnd, int nShowCompCmd)
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
-
-	// show or hid the UI window
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {
-		return;
-	}
-
-	if (lpUIPrivate->nShowCompCmd == nShowCompCmd) {
-		goto SwCompNoChange;
-	}
-
-	if (nShowCompCmd == SW_HIDE) {
-		lpUIPrivate->fdwSetContext &= ~(ISC_HIDE_COMP_WINDOW);
-	}
-
-	if (lpUIPrivate->hCompWnd) {
-		if (nShowCompCmd == SW_HIDE) {
-			uStartComp = 0;
-		} else {
-			uStartComp = 1;
-		}
-
-		ShowWindow(lpUIPrivate->hCompWnd, nShowCompCmd);
-		lpUIPrivate->nShowCompCmd = nShowCompCmd;
-	}
-
-  SwCompNoChange:
-	GlobalUnlock(hUIPrivate);
+	ShowWindow(hCompWnd, nShowCompCmd);
 	return;
 }
 
@@ -540,17 +489,10 @@ void PASCAL ShowComp(			// Show the composition window
 void PASCAL StartComp(HWND hUIWnd)
 {
 	HIMC hIMC;
-	HGLOBAL hUIPrivate;
 	LPINPUTCONTEXT lpIMC;
-	LPUIPRIV lpUIPrivate;
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	if (!hIMC) {
-		return;
-	}
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {
 		return;
 	}
 
@@ -559,38 +501,28 @@ void PASCAL StartComp(HWND hUIWnd)
 		return;
 	}
 
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {			// can not draw composition window
-		ImmUnlockIMC(hIMC);
-		return;
-	}
-
-	lpUIPrivate->fdwSetContext |= ISC_SHOWUICOMPOSITIONWINDOW;
-
-	if (!lpUIPrivate->hCompWnd) {
-		lpUIPrivate->hCompWnd =
+	if (!hCompWnd) {
+		hCompWnd =
 			CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME,
 						   szCompClassName, NULL, WS_POPUP | WS_DISABLED,
 						   0, 0, lpImeL->xCompWi, lpImeL->yCompHi, hUIWnd,
 						   (HMENU) NULL, hInst, NULL);
 
-		if (lpUIPrivate->hCompWnd) {
-			SetWindowLong(lpUIPrivate->hCompWnd, UI_MOVE_OFFSET,
+		if (hCompWnd) {
+			SetWindowLong(hCompWnd, UI_MOVE_OFFSET,
 						  WINDOW_NOT_DRAG);
-			SetWindowLong(lpUIPrivate->hCompWnd, UI_MOVE_XY,
+			SetWindowLong(hCompWnd, UI_MOVE_XY,
 						  lpImeL->nMaxKey);
 		}
 	}
 
 	uStartComp = 1;
 	// try to set the position of composition UI window near the caret
-	SetCompPosition(lpUIPrivate->hCompWnd, hIMC, lpIMC);
+	SetCompPosition(hCompWnd, hIMC, lpIMC);
 
 	ImmUnlockIMC(hIMC);
 
 	ShowComp(hUIWnd, SW_SHOWNOACTIVATE);
-
-	GlobalUnlock(hUIPrivate);
 
 	return;
 }
@@ -611,32 +543,7 @@ void PASCAL EndComp(HWND hUIWnd)
 void PASCAL DestroyCompWindow(	// destroy composition window
 								 HWND hCompWnd)
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
-
-	if (GetWindowLong(hCompWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-		// undo the drag border
-		DrawDragBorder(hCompWnd,
-					   GetWindowLong(hCompWnd, UI_MOVE_XY),
-					   GetWindowLong(hCompWnd, UI_MOVE_OFFSET));
-	}
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(GetWindow(hCompWnd, GW_OWNER),
-											IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {
-		return;
-	}
-
-	lpUIPrivate->nShowCompCmd = SW_HIDE;
-
-	lpUIPrivate->hCompWnd = (HWND) NULL;
-
-	GlobalUnlock(hUIPrivate);
+	hCompWnd = (HWND) NULL;
 	return;
 }
 

@@ -22,23 +22,6 @@ extern HWND hCrtDlg;
 
 HWND PASCAL GetStatusWnd(HWND hUIWnd)	// UI window
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
-	HWND hStatusWnd;
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {			// can not darw status window
-		return (HWND) NULL;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {			// can not draw status window
-		return (HWND) NULL;
-	}
-
-	hStatusWnd = lpUIPrivate->hStatusWnd;
-
-	GlobalUnlock(hUIPrivate);
 	return (hStatusWnd);
 }
 
@@ -114,30 +97,7 @@ void PASCAL ShowStatus(			// Show the status window - shape / soft KBD
 						  // alphanumeric ...
 						  HWND hUIWnd, int nShowStatusCmd)
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {			// can not darw status window
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {			// can not draw status window
-		return;
-	}
-
-	if (!lpUIPrivate->hStatusWnd) {
-		// not in show status window mode
-	} else if (lpUIPrivate->nShowStatusCmd != nShowStatusCmd) {
-		SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
-		SetStatusWindowPos(lpUIPrivate->hStatusWnd);
-		ShowWindow(lpUIPrivate->hStatusWnd, nShowStatusCmd);
-		lpUIPrivate->nShowStatusCmd = nShowStatusCmd;
-	} else {
-	}
-
-	GlobalUnlock(hUIPrivate);
+	ShowWindow(hStatusWnd, nShowStatusCmd);
 	return;
 }
 
@@ -147,8 +107,6 @@ void PASCAL ShowStatus(			// Show the status window - shape / soft KBD
 void PASCAL OpenStatus(			// open status window
 						  HWND hUIWnd)
 {
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	POINT ptPos;
@@ -156,16 +114,6 @@ void PASCAL OpenStatus(			// open status window
 	RECT rcWorkArea;
 
 	rcWorkArea = sImeG.rcWorkArea;
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate)			// can not darw status window
-		return;
-
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate)			// can not draw status window
-		return;
-
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	if (!hIMC) {
@@ -200,33 +148,31 @@ void PASCAL OpenStatus(			// open status window
 		nShowStatusCmd = SW_HIDE;
 	}
 
-	if (lpUIPrivate->hStatusWnd) {
-		SetWindowPos(lpUIPrivate->hStatusWnd, NULL,
+	if (hStatusWnd) {
+		SetWindowPos(hStatusWnd, NULL,
 					 ptPos.x, ptPos.y,
 					 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
 	} else {					// create status window
-		lpUIPrivate->hStatusWnd =
+		hStatusWnd =
 			CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME,
 						   szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
 						   ptPos.x, ptPos.y, sImeG.xStatusWi,
 						   sImeG.yStatusHi, hUIWnd, (HMENU) NULL, hInst,
 						   NULL);
 
-		if (lpUIPrivate->hStatusWnd != NULL) {
+		if (hStatusWnd != NULL) {
 
-			SetWindowLong(lpUIPrivate->hStatusWnd, UI_MOVE_OFFSET,
+			SetWindowLong(hStatusWnd, UI_MOVE_OFFSET,
 						  WINDOW_NOT_DRAG);
-			SetWindowLong(lpUIPrivate->hStatusWnd, UI_MOVE_XY, 0L);
+			SetWindowLong(hStatusWnd, UI_MOVE_XY, 0L);
 		}
 	}
 
-	lpUIPrivate->fdwSetContext |= ISC_OPEN_STATUS_WINDOW;
 
 	if (hIMC) {
 		ShowStatus(hUIWnd, SW_SHOWNOACTIVATE);
 	}
 
-	GlobalUnlock(hUIPrivate);
 	return;
 }
 
@@ -235,34 +181,7 @@ void PASCAL OpenStatus(			// open status window
 /**********************************************************************/
 void PASCAL DestroyStatusWindow(HWND hStatusWnd)
 {
-	HWND hUIWnd;
-	HGLOBAL hUIPrivate;
-	LPUIPRIV lpUIPrivate;
-
-	if (GetWindowLong(hStatusWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-		// undo the drag border
-		DrawDragBorder(hStatusWnd,
-					   GetWindowLong(hStatusWnd, UI_MOVE_XY),
-					   GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
-	}
-
-	hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
-
-	hUIPrivate = (HGLOBAL) GetWindowLongPtr(hUIWnd, IMMGWLP_PRIVATE);
-	if (!hUIPrivate) {			// can not darw status window
-		return;
-	}
-
-	lpUIPrivate = (LPUIPRIV) GlobalLock(hUIPrivate);
-	if (!lpUIPrivate) {			// can not draw status window
-		return;
-	}
-
-	lpUIPrivate->nShowStatusCmd = SW_HIDE;
-
-	lpUIPrivate->hStatusWnd = (HWND) NULL;
-
-	GlobalUnlock(hUIPrivate);
+	hStatusWnd = (HWND) NULL;
 	return;
 }
 
