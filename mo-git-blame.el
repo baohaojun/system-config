@@ -222,7 +222,8 @@ interactive use, e.g. the file name, current revision etc.")
     (with-current-buffer buffer
       (erase-buffer)
       (mo-git-blame-run "show" revision)
-      (goto-char (point-min)))
+      (goto-char (point-min))
+      (diff-mode))
     (display-buffer buffer)))
 
 (defun mo-git-blame-show-revision-at ()
