@@ -20,11 +20,6 @@
 #include <resource.h>
 extern HWND hCrtDlg;
 
-HWND PASCAL GetStatusWnd(HWND hUIWnd)	// UI window
-{
-	return (hStatusWnd);
-}
-
 /**********************************************************************/
 /* AdjustStatusBoundary()                                             */
 /**********************************************************************/
@@ -152,7 +147,7 @@ void PASCAL OpenStatus(			// open status window
 					 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
 	} else {					// create status window
 		hStatusWnd =
-			CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME,
+			CreateWindowEx(WS_EX_TOPMOST, 
 						   szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
 						   ptPos.x, ptPos.y, sImeG.xStatusWi,
 						   sImeG.yStatusHi, hUIWnd, (HMENU) NULL, hInst,

@@ -26,4 +26,6 @@ public:
 	virtual void paint() {};
 };
 
+void debug_rect(const CRect& rect);
+void FillSolidRect(HDC hdc, const CRect& rect, COLORREF rgb);
 #endif

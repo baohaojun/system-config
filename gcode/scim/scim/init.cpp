@@ -286,23 +286,11 @@ BOOL PASCAL InitImeLocalData(HINSTANCE hInstL)
 
 	lpImeL->cyCompBorder = cyBorder * 2;
 
-	lpImeL->rcCompText.left = cxBorder;
 
-	lpImeL->rcCompText.top = cyBorder;
+	lpImeL->xCompWi = 400;
 
-	lpImeL->rcCompText.right =
-		lpImeL->rcCompText.left +
-		sImeG.xChiCharWi * ((lpImeL->nMaxKey + 2) / 2);
 
-	lpImeL->rcCompText.bottom = lpImeL->rcCompText.top + iContentHi;
-
-	// set the width & height for composition window
-	lpImeL->xCompWi =
-		lpImeL->rcCompText.right + lpImeL->cxCompBorder * 2 + cxBorder * 4;
-
-	lpImeL->yCompHi =
-		lpImeL->rcCompText.bottom + lpImeL->cyCompBorder * 2 +
-		cyBorder * 4;
+	lpImeL->yCompHi = 60;
 
 	// default position of composition window
 	lpImeL->ptDefComp.x =

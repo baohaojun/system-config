@@ -211,7 +211,6 @@ typedef struct tagImeL {		// local structure, per IME structure
 	POINT ptDefComp;			// default composition window position
 	int cxCompBorder;			// border width of composition window
 	int cyCompBorder;			// border height of composition window
-	RECT rcCompText;			// text position relative to composition
 	// window key related data
 	WORD fModeConfig;			// quick key/prediction mode
 	WORD nMaxKey;				// max key of compsiton str
@@ -365,11 +364,9 @@ void PASCAL MoveDefaultCompPosition(HWND);	// compui.c
 void PASCAL ShowComp(HWND, int);	// compui.c
 void PASCAL StartComp(HWND);	// compui.c
 void PASCAL EndComp(HWND);		// compui.c
-void PASCAL UpdateCompWindow(HWND);	// compui.c
 LRESULT CALLBACK CompWndProc(HWND, UINT, WPARAM, LPARAM);	// compui.c
 void PASCAL CompCancel(HIMC, LPINPUTCONTEXT);
 
-HWND PASCAL GetStatusWnd(HWND);	// statusui.c
 LRESULT PASCAL SetStatusWindowPos(HWND);	// statusui.c
 void PASCAL ShowStatus(HWND, int);	// statusui.c
 void PASCAL OpenStatus(HWND);	// statusui.c

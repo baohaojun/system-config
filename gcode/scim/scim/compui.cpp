@@ -14,6 +14,7 @@ Module Name:
 #include <immdev.h>
 #include "imedefs.h"
 #include <regstr.h>
+#include "imewnd.h"
 
 /**********************************************************************/
 /* GetCompWnd                                                         */
@@ -25,15 +26,11 @@ extern "C" HWND PASCAL GetCompWnd(HWND hUIWnd)	// UI window
 	return (hCompWnd);
 }
 
-/**********************************************************************/
-/* FitInLazyOperation()                                               */
-/* Return Value :                                                     */
-/*      TRUE or FALSE                                                 */
-/**********************************************************************/
 BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
 								  LPPOINT lpptOrg, LPPOINT lpptNearCaret,	// the suggested near caret position
 								  LPRECT lprcInputRect, UINT uEsc)
 {
+	return false;
 	POINT ptDelta, ptTol;
 	RECT rcUIRect, rcInterRect;
 
@@ -359,12 +356,7 @@ void PASCAL SetCompPosition(	// set the composition window position
 	return;
 }
 
-
-/**********************************************************************/
-/* SetCompWindow()                                                    */
-/**********************************************************************/
-void PASCAL SetCompWindow(		// set the position of composition window
-							 HWND hCompWnd)
+void PASCAL SetCompWindow(HWND hCompWnd)
 {
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
@@ -453,7 +445,7 @@ void PASCAL StartComp(HWND hUIWnd)
 
 	if (!hCompWnd) {
 		hCompWnd =
-			CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME,
+			CreateWindowEx(WS_EX_TOPMOST,
 						   szCompClassName, NULL, WS_POPUP | WS_DISABLED,
 						   0, 0, 400, 60, hUIWnd,
 						   (HMENU) NULL, hInst, NULL);
@@ -493,7 +485,6 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	LPCOMPOSITIONSTRING lpCompStr;
-	BOOL fShowString;
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	if (!hIMC) {
@@ -511,30 +502,22 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 	}
 
 
+	RECT rcWnd;
+	GetClientRect(hCompWnd, &rcWnd);
+	debug_rect(rcWnd);
 
-	// draw CompWnd Layout
-	{
-		RECT rcWnd;
+	FillSolidRect(hDC, rcWnd, RGB(255, 255, 255));
 
-		GetClientRect(hCompWnd, &rcWnd);
-	}
 
-	SetBkColor(hDC, RGB(0xC0, 0xC0, 0xC0));
-
-	fShowString = (BOOL) 0;
+	SetBkColor(hDC, RGB(255, 255, 255));
 
 	if (lpCompStr->dwCompStrLen > 0) {
-		ExtTextOut(hDC, 10, 20, 0, NULL, (LPTSTR) ((LPBYTE) lpCompStr + lpCompStr->dwCompStrOffset), (int) lpCompStr->dwCompStrLen, NULL);
-				   
-		// DrawText(hDC,
-		// 		 (LPTSTR) ((LPBYTE) lpCompStr +
-		// 				   lpCompStr->dwCompStrOffset),
-		// 		 (int) lpCompStr->dwCompStrLen, &lpImeL->rcCompText,
-		// 		 DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+
+		int n = lpCompStr->dwCompStrLen;
+		LPTSTR dood = (LPTSTR) ((LPBYTE) lpCompStr + lpCompStr->dwCompStrOffset);
+
+		ExtTextOut(hDC, 10, 1, ETO_CLIPPED, &rcWnd, dood, n, NULL);
 	} else {
-		ExtTextOut(hDC, lpImeL->rcCompText.left, lpImeL->rcCompText.top,
-				   ETO_OPAQUE, &lpImeL->rcCompText, (LPTSTR) NULL, 0,
-				   NULL);
 	}
 
 
@@ -575,14 +558,6 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 		dwEnd = lpCandList->dwCount;
 	}
 
-	RECT rcWnd;
-
-	GetClientRect(hCompWnd, &rcWnd);
-
-	SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
-	SetBkColor(hDC, RGB(0xC0, 0xC0, 0xC0));
-
-
 	szStrBuf[0] = TEXT('1');
 	szStrBuf[1] = TEXT(':');
 
@@ -600,11 +575,11 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 		szStrBuf[2] = wCode;
 		szStrBuf[3] = TEXT('\0');
 
-		BHJDEBUG("szStrBuf is %04x", wCode);
+		BHJDEBUG("szStrBuf is %04x %d", wCode, i);
 
 
-		ExtTextOut(hDC, i*20,
-				   0,
+		ExtTextOut(hDC, i * 40,
+				   20,
 				   0, NULL, szStrBuf, 3, NULL);
 
 	}
@@ -621,17 +596,6 @@ UpCandW2UnlockIMC:
 	ImmUnlockIMCC(lpIMC->hCompStr);
 	ImmUnlockIMC(hIMC);
 	return;
-}
-
-void PASCAL UpdateCompWindow(HWND hUIWnd)
-{
-	HWND hCompWnd;
-	HDC hDC;
-
-	hCompWnd = GetCompWnd(hUIWnd);
-	hDC = GetDC(hCompWnd);
-	PaintCompWindow(hUIWnd, hCompWnd, hDC);
-	ReleaseDC(hCompWnd, hDC);
 }
 
 LRESULT CALLBACK CompWndProc(	// composition window proc

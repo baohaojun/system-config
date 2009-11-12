@@ -15,6 +15,7 @@ Module Name:
 #include <immdev.h>
 #include <imedefs.h>
 #include <regstr.h>
+#include "imewnd.h"
 
 void PASCAL CreateUIWindow(HWND hUIWnd)
 {
@@ -188,12 +189,6 @@ void PASCAL ShowGuideLine(HWND hUIWnd)
 /**********************************************************************/
 BOOL UpdateStatusWindow(HWND hUIWnd)
 {
-	HWND hStatusWnd;
-
-	if (!(hStatusWnd = GetStatusWnd(hUIWnd))) {
-		return FALSE;
-	}
-
 	InvalidateRect(hStatusWnd, &(sImeG.rcStatusText), TRUE);
 	UpdateWindow(hStatusWnd);
 
@@ -202,8 +197,6 @@ BOOL UpdateStatusWindow(HWND hUIWnd)
 
 void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 {
-	HWND hStatusWnd;
-
 	switch (wParam) {
 	case IMN_OPENSTATUSWINDOW:
 		//PostStatus(hUIWnd, TRUE);
@@ -232,21 +225,12 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		break;
 	case IMN_SETOPENSTATUS:
 	case IMN_SETCONVERSIONMODE:
-		hStatusWnd = GetStatusWnd(hUIWnd);
 		if (!hStatusWnd) {
 			return;
 		}
 
 		{
-			RECT rcRect;
-
-			rcRect = sImeG.rcStatusText;
-
-			// off by 1
-			rcRect.right += 1;
-			rcRect.bottom += 1;
-
-			RedrawWindow(hStatusWnd, &rcRect, NULL, RDW_INVALIDATE);
+			RedrawWindow(hStatusWnd, NULL, NULL, RDW_INVALIDATE);
 		}
 		break;
 	case IMN_SETCOMPOSITIONFONT:
@@ -270,7 +254,6 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case IMN_SETSTATUSWINDOWPOS:
-		hStatusWnd = GetStatusWnd(hUIWnd);
 		if (hStatusWnd) {
 			PostMessage(hStatusWnd, WM_IME_NOTIFY, wParam, lParam);
 		} else {
@@ -496,14 +479,7 @@ UIWndProc(HWND hUIWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			hCompWnd = GetCompWnd(hUIWnd);
 
 			if (hCompWnd) {
-				RECT rcRect;
-
-				rcRect = lpImeL->rcCompText;
-				// off by 1
-				rcRect.right += 1;
-				rcRect.bottom += 1;
-
-				RedrawWindow(hCompWnd, &rcRect, NULL, RDW_INVALIDATE);
+				RedrawWindow(hCompWnd, NULL, NULL, RDW_INVALIDATE);
 			}
 		}
 		break;
@@ -522,81 +498,7 @@ UIWndProc(HWND hUIWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						 SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOMOVE);
 
 		break;
-	case WM_IME_CONTROL:
-		switch (wParam) {
-		case IMC_GETCANDIDATEPOS:
-			return (1L);		// not implemented yet
-		case IMC_GETCOMPOSITIONFONT:
-			return (1L);		// not implemented yet
-		case IMC_GETCOMPOSITIONWINDOW:
-			return GetCompWindow(hUIWnd, (LPCOMPOSITIONFORM) lParam);
-		case IMC_GETSTATUSWINDOWPOS:
-			{
-				HWND hStatusWnd;
-				RECT rcStatusWnd;
-				LPARAM lParam;
-
-				hStatusWnd = GetStatusWnd(hUIWnd);
-				if (!hStatusWnd) {
-					return (0L);	// fail, return (0, 0)?
-				}
-
-				if (!GetWindowRect(hStatusWnd, &rcStatusWnd)) {
-					return (0L);	// fail, return (0, 0)?
-				}
-
-				lParam = MAKELRESULT(rcStatusWnd.left, rcStatusWnd.top);
-
-				return (lParam);
-			}
-			return (0L);
-		case IMC_SETSTATUSWINDOWPOS:
-			{
-				HIMC hIMC;
-				LPINPUTCONTEXT lpIMC;
-				LPPRIVCONTEXT imcPrivPtr;
-				//COMPOSITIONFORM CompForm;
-				POINT ptPos;
-				RECT rcWorkArea;
-
-				rcWorkArea = sImeG.rcWorkArea;
-
-				ptPos.x = ((LPPOINTS) & lParam)->x;
-				ptPos.y = ((LPPOINTS) & lParam)->y;
-
-				hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-				if (!hIMC) {
-					return (1L);
-				}
-
-				if (!ImmSetStatusWindowPos(hIMC, &ptPos)) {
-					return (1L);
-				}
-				// set comp window position when TraceCuer
-				lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-				if (!lpIMC) {
-					return (1L);
-				}
-
-				imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-				if (!imcPrivPtr) {
-					return (1L);
-				}
-
-				ImmUnlockIMCC(lpIMC->hPrivate);
-				ImmUnlockIMC(hIMC);
-
-				return (0L);
-			}
-			return (1L);
-		default:
-			return (1L);
-		}
-		break;
-	case WM_IME_COMPOSITIONFULL:
-		return (0L);
 	case WM_IME_SELECT:
-
 		SetContext(hUIWnd, (BOOL) wParam, 0);
 		return (0L);
 	case WM_MOUSEACTIVATE:
