@@ -13,8 +13,10 @@
 
 (define-abbrev-table 'c++-mode-abbrev-table '(    ("c_" "c_str()" nil 0)
     ("cc" "const char*" nil 7)
+    ("ccr" "const CRect&" nil 2)
     ("ccs" "const cstring&" nil 6)
     ("cms" "const CString&" nil 11)
+    ("cr" "CRect" nil 0)
     ("cs" "cstring" nil 25)
     ("dcs" "c_str()" nil 0)
     ("mcs" "const CString&" nil 16)
@@ -57,12 +59,12 @@
 
 (define-abbrev-table 'gdb-script-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'global-abbrev-table '(    ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 77)
+(define-abbrev-table 'global-abbrev-table '(    ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 92)
     ("cltenv" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" " nil 11)
     ("eclt" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" /usr/atria/bin/cleartool" nil 11)
     ("eld" "EnterLeaveDebug();" nil 32)
     ("incbhj" "#define ENABLE_BHJDEBUG
-#include \"bhjdebug.h\"" nil 30)
+#include \"bhjdebug.h\"" nil 31)
     ))
 
 (define-abbrev-table 'gnus-article-edit-mode-abbrev-table '(    ))

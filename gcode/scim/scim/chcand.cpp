@@ -45,9 +45,9 @@ SelectOneCand(LPINPUTCONTEXT lpIMC,
 															  dwSelection]));
 
 	// the result string = the selected candidate;
-	lstrcpy((LPTSTR) ((LPBYTE) lpCompStr + lpCompStr->dwResultStrOffset),
-			(LPTSTR) ((LPBYTE) lpCandList +
-					  lpCandList->dwOffset[lpCandList->dwSelection]));
+	lstrcpy((LPTSTR) ((LPBYTE) lpCompStr + lpCompStr->dwResultStrOffset), L"2");
+			// (LPTSTR) ((LPBYTE) lpCandList +
+			// 		  lpCandList->dwOffset[lpCandList->dwSelection]));
 
 	// tell application, there is a reslut string
 	imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
@@ -112,6 +112,7 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 						  LPINPUTCONTEXT lpIMC,
 						  LPCANDIDATEINFO lpCandInfo, LPPRIVCONTEXT imcPrivPtr)
 {
+	BHJDEBUG(" ");
 	LPCANDIDATELIST lpCandList;
 	LPCOMPOSITIONSTRING lpCompStr;
 
