@@ -300,9 +300,6 @@ BOOL PASCAL AdjustCompPosition(	// IME adjust position according to
 	return (TRUE);
 }
 
-/**********************************************************************/
-/* SetCompPosition()                                                  */
-/**********************************************************************/
 void PASCAL SetCompPosition(	// set the composition window position
 							   HWND hCompWnd, HIMC hIMC,
 							   LPINPUTCONTEXT lpIMC)
@@ -483,9 +480,6 @@ void PASCAL ShowComp(			// Show the composition window
 	return;
 }
 
-/**********************************************************************/
-/* StartComp()                                                        */
-/**********************************************************************/
 void PASCAL StartComp(HWND hUIWnd)
 {
 	HIMC hIMC;
@@ -507,17 +501,8 @@ void PASCAL StartComp(HWND hUIWnd)
 						   szCompClassName, NULL, WS_POPUP | WS_DISABLED,
 						   0, 0, lpImeL->xCompWi, lpImeL->yCompHi, hUIWnd,
 						   (HMENU) NULL, hInst, NULL);
-
-		if (hCompWnd) {
-			SetWindowLong(hCompWnd, UI_MOVE_OFFSET,
-						  WINDOW_NOT_DRAG);
-			SetWindowLong(hCompWnd, UI_MOVE_XY,
-						  lpImeL->nMaxKey);
-		}
 	}
 
-	uStartComp = 1;
-	// try to set the position of composition UI window near the caret
 	SetCompPosition(hCompWnd, hIMC, lpIMC);
 
 	ImmUnlockIMC(hIMC);
@@ -547,122 +532,10 @@ void PASCAL DestroyCompWindow(	// destroy composition window
 	return;
 }
 
-/**********************************************************************/
-/* CompSetCursor()                                                    */
-/**********************************************************************/
-void PASCAL CompSetCursor(HWND hCompWnd, LPARAM lParam)
-{
-	POINT ptCursor;
-	RECT rcWnd;
-
-	SetCursor(LoadCursor(NULL, IDC_SIZEALL));
-
-	if (GetWindowLong(hCompWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-		return;
-	}
-
-	if (HIWORD(lParam) != WM_LBUTTONDOWN) {
-		return;
-	}
-	// start dragging
-	SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
-
-	SetCapture(hCompWnd);
-	GetCursorPos(&ptCursor);
-	SetWindowLong(hCompWnd, UI_MOVE_XY, MAKELONG(ptCursor.x, ptCursor.y));
-	GetWindowRect(hCompWnd, &rcWnd);
-	SetWindowLong(hCompWnd, UI_MOVE_OFFSET,
-				  MAKELONG(ptCursor.x - rcWnd.left,
-						   ptCursor.y - rcWnd.top));
-
-	DrawDragBorder(hCompWnd, MAKELONG(ptCursor.x, ptCursor.y),
-				   GetWindowLong(hCompWnd, UI_MOVE_OFFSET));
-
-	return;
-}
-
-
-/**********************************************************************/
-/* CompButtonUp()                                                     */
-/**********************************************************************/
-BOOL PASCAL CompButtonUp(		// finish drag, set comp  window to this
-							// position
-							HWND hCompWnd)
-{
-	LONG lTmpCursor, lTmpOffset;
-	POINT pt;
-	HWND hUIWnd;
-	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
-	RECT rcWorkArea;
-
-	if (GetWindowLong(hCompWnd, UI_MOVE_OFFSET) == WINDOW_NOT_DRAG) {
-		return FALSE;
-	}
-
-	lTmpCursor = GetWindowLong(hCompWnd, UI_MOVE_XY);
-
-	// calculate the org by the offset
-	lTmpOffset = GetWindowLong(hCompWnd, UI_MOVE_OFFSET);
-
-	pt.x = (*(LPPOINTS) & lTmpCursor).x - (*(LPPOINTS) & lTmpOffset).x;
-	pt.y = (*(LPPOINTS) & lTmpCursor).y - (*(LPPOINTS) & lTmpOffset).y;
-
-	DrawDragBorder(hCompWnd, lTmpCursor, lTmpOffset);
-	SetWindowLong(hCompWnd, UI_MOVE_OFFSET, WINDOW_NOT_DRAG);
-
-	SetWindowLong(hCompWnd, UI_MOVE_XY, lpImeL->nMaxKey);
-
-	ReleaseCapture();
-
-	hUIWnd = GetWindow(hCompWnd, GW_OWNER);
-
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
-		return FALSE;
-	}
-
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return FALSE;
-	}
-
-	rcWorkArea = sImeG.rcWorkArea;
-
-	if (pt.x < rcWorkArea.left) {
-		pt.x = rcWorkArea.left;
-	} else if (pt.x + lpImeL->xCompWi > rcWorkArea.right) {
-		pt.x = rcWorkArea.right - lpImeL->xCompWi;
-	}
-
-	if (pt.y < rcWorkArea.top) {
-		pt.y = rcWorkArea.top;
-	} else if (pt.y + lpImeL->yCompHi > rcWorkArea.bottom) {
-		pt.y = rcWorkArea.bottom - lpImeL->yCompHi;
-	}
-
-	lpIMC->cfCompForm.dwStyle = CFS_FORCE_POSITION;
-	lpIMC->cfCompForm.ptCurrentPos.x = pt.x + lpImeL->cxCompBorder;
-	lpIMC->cfCompForm.ptCurrentPos.y = pt.y + lpImeL->cyCompBorder;
-
-	ScreenToClient(lpIMC->hWnd, &lpIMC->cfCompForm.ptCurrentPos);
-
-	ImmUnlockIMC(hIMC);
-
-	// set composition window to the new poosition
-	PostMessage(hCompWnd, WM_IME_NOTIFY, IMN_SETCOMPOSITIONWINDOW, 0);
-
-	return (TRUE);
-}
-
-/**********************************************************************/
-/* PaintCompWindow()                                                */
-/**********************************************************************/
 void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 {
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
-	HGDIOBJ hOldFont;
 	LPCOMPOSITIONSTRING lpCompStr;
 	LPGUIDELINE lpGuideLine;
 	BOOL fShowString;
@@ -675,16 +548,6 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
 	if (!lpIMC) {
 		return;
-	}
-
-	if (sImeG.fDiffSysCharSet) {
-		LOGFONT lfFont;
-		ZeroMemory(&lfFont, sizeof(lfFont));
-		hOldFont = GetCurrentObject(hDC, OBJ_FONT);
-		lfFont.lfHeight = -MulDiv(12, GetDeviceCaps(hDC, LOGPIXELSY), 72);
-		lfFont.lfCharSet = NATIVE_CHARSET;
-		lstrcpy(lfFont.lfFaceName, TEXT("Simsun"));
-		SelectObject(hDC, CreateFontIndirect(&lfFont));
 	}
 
 	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
@@ -777,10 +640,6 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 				   NULL);
 	}
 
-	if (sImeG.fDiffSysCharSet) {
-		DeleteObject(SelectObject(hDC, hOldFont));
-	}
-
 	ImmUnlockIMCC(lpIMC->hGuideLine);
 	ImmUnlockIMCC(lpIMC->hCompStr);
 	ImmUnlockIMC(hIMC);
@@ -808,28 +667,10 @@ LRESULT CALLBACK CompWndProc(	// composition window proc
 		DestroyCompWindow(hCompWnd);
 		break;
 	case WM_SETCURSOR:
-		CompSetCursor(hCompWnd, lParam);
 		break;
 	case WM_MOUSEMOVE:
-		if (GetWindowLong(hCompWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-			POINT ptCursor;
-
-			DrawDragBorder(hCompWnd,
-						   GetWindowLong(hCompWnd, UI_MOVE_XY),
-						   GetWindowLong(hCompWnd, UI_MOVE_OFFSET));
-			GetCursorPos(&ptCursor);
-			SetWindowLong(hCompWnd, UI_MOVE_XY,
-						  MAKELONG(ptCursor.x, ptCursor.y));
-			DrawDragBorder(hCompWnd, MAKELONG(ptCursor.x, ptCursor.y),
-						   GetWindowLong(hCompWnd, UI_MOVE_OFFSET));
-		} else {
-			return DefWindowProc(hCompWnd, uMsg, wParam, lParam);
-		}
 		break;
 	case WM_LBUTTONUP:
-		if (!CompButtonUp(hCompWnd)) {
-			return DefWindowProc(hCompWnd, uMsg, wParam, lParam);
-		}
 		break;
 	case WM_IME_NOTIFY:
 		if (wParam != IMN_SETCOMPOSITIONWINDOW) {

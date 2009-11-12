@@ -199,10 +199,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 
 	HDC hDC;
 
-	HGDIOBJ hOldFont;
-
-	LOGFONT lfFont;
-
 	TCHAR szChiChar[4];
 
 	SIZE lTextSize;
@@ -249,22 +245,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 	// get size of Chinese char
 	hDC = GetDC(NULL);
 
-	hOldFont = GetCurrentObject(hDC, OBJ_FONT);
-
-	GetObject(hOldFont, sizeof(LOGFONT), &lfFont);
-
-	sImeG.fDiffSysCharSet = TRUE;
-
-	ZeroMemory(&lfFont, sizeof(lfFont));
-
-	lfFont.lfHeight = -MulDiv(12, GetDeviceCaps(hDC, LOGPIXELSY), 72);
-
-	lfFont.lfCharSet = NATIVE_CHARSET;
-
-	lstrcpy(lfFont.lfFaceName, TEXT("Simsun"));
-
-	SelectObject(hDC, CreateFontIndirect(&lfFont));
-
 	if (!GetTextExtentPoint
 		(hDC, (LPTSTR) szChiChar, lstrlen(szChiChar), &lTextSize))
 
@@ -283,12 +263,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 		sImeG.rcWorkArea.top = 0;
 
 		sImeG.rcWorkArea.bottom = GetDeviceCaps(hDC, VERTRES);
-
-	}
-
-	if (sImeG.fDiffSysCharSet) {
-
-		DeleteObject(SelectObject(hDC, hOldFont));
 
 	}
 
@@ -542,20 +516,6 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 		wcWndCls.lpfnWndProc = StatusWndProc;
 
 		wcWndCls.lpszClassName = (LPTSTR) szStatusClassName;
-
-		RegisterClassEx(&wcWndCls);
-
-	}
-	// IME context menu class
-	if (!GetClassInfoEx(hInstance, szCMenuClassName, &wcWndCls)) {
-
-		wcWndCls.style = 0;
-
-		wcWndCls.hbrBackground = GetStockObject(NULL_BRUSH);
-
-		wcWndCls.lpfnWndProc = ContextMenuWndProc;
-
-		wcWndCls.lpszClassName = (LPTSTR) szCMenuClassName;
 
 		RegisterClassEx(&wcWndCls);
 

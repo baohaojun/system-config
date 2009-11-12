@@ -469,10 +469,6 @@ void PASCAL OpenCand(HWND hUIWnd)
 						   szCandClassName, NULL, WS_POPUP | WS_DISABLED,
 						   ptWnd.x, ptWnd.y, sImeG.xCandWi, sImeG.yCandHi,
 						   hUIWnd, (HMENU) NULL, hInst, NULL);
-
-		SetWindowLong(hCandWnd, UI_MOVE_OFFSET,
-					  WINDOW_NOT_DRAG);
-		SetWindowLong(hCandWnd, UI_MOVE_XY, 0L);
 	}
 
 	ShowCand(hUIWnd, SW_SHOWNOACTIVATE);
@@ -502,7 +498,6 @@ void PASCAL PaintCandWindow(HWND hCandWnd, HDC hDC)
 	LPCANDIDATEINFO lpCandInfo;
 	LPCANDIDATELIST lpCandList;
 	LPPRIVCONTEXT imcPrivPtr;
-	HGDIOBJ hOldFont;
 	DWORD dwStart, dwEnd;
 	TCHAR szStrBuf[2 * MAXSTRLEN * sizeof(WCHAR) / sizeof(TCHAR) + 1];
 	int i;
@@ -540,16 +535,6 @@ void PASCAL PaintCandWindow(HWND hCandWnd, HDC hDC)
 		goto UpCandW2UnlockCandInfo;
 	}
 	// set font
-	if (sImeG.fDiffSysCharSet) {
-		LOGFONT lfFont;
-		ZeroMemory(&lfFont, sizeof(lfFont));
-		hOldFont = GetCurrentObject(hDC, OBJ_FONT);
-		lfFont.lfHeight = -MulDiv(12, GetDeviceCaps(hDC, LOGPIXELSY), 72);
-		lfFont.lfCharSet = NATIVE_CHARSET;
-		lstrcpy(lfFont.lfFaceName, TEXT("Simsun"));
-		SelectObject(hDC, CreateFontIndirect(&lfFont));
-	}
-
 	lpCandList = (LPCANDIDATELIST) ((LPBYTE) lpCandInfo +
 									lpCandInfo->dwOffset[0]);
 
@@ -744,9 +729,6 @@ void PASCAL PaintCandWindow(HWND hCandWnd, HDC hDC)
 	if (hCandInfBmp)
 		DeleteObject(hCandInfBmp);
 
-	if (sImeG.fDiffSysCharSet) {
-		DeleteObject(SelectObject(hDC, hOldFont));
-	}
 
 	ImmUnlockIMCC(lpIMC->hPrivate);
   UpCandW2UnlockCandInfo:

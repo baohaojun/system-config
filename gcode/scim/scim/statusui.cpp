@@ -159,13 +159,6 @@ void PASCAL OpenStatus(			// open status window
 						   ptPos.x, ptPos.y, sImeG.xStatusWi,
 						   sImeG.yStatusHi, hUIWnd, (HMENU) NULL, hInst,
 						   NULL);
-
-		if (hStatusWnd != NULL) {
-
-			SetWindowLong(hStatusWnd, UI_MOVE_OFFSET,
-						  WINDOW_NOT_DRAG);
-			SetWindowLong(hStatusWnd, UI_MOVE_XY, 0L);
-		}
 	}
 
 
@@ -176,18 +169,12 @@ void PASCAL OpenStatus(			// open status window
 	return;
 }
 
-/**********************************************************************/
-/* DestroyStatusWindow()                                              */
-/**********************************************************************/
 void PASCAL DestroyStatusWindow(HWND hStatusWnd)
 {
 	hStatusWnd = (HWND) NULL;
 	return;
 }
 
-/**********************************************************************/
-/* SetStatus                                                          */
-/**********************************************************************/
 void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 {
 	HWND hUIWnd;
@@ -294,81 +281,12 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 	return;
 }
 
-/**********************************************************************/
-/* StatusSetCursor()                                                  */
-/**********************************************************************/
-void PASCAL StatusSetCursor(HWND hStatusWnd, LPARAM lParam)
-{
-	POINT ptCursor, ptSavCursor;
-	RECT rcWnd;
-
-	if (GetWindowLong(hStatusWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-		SetCursor(LoadCursor(NULL, IDC_SIZEALL));
-		return;
-	}
-
-	GetCursorPos(&ptCursor);
-	ptSavCursor = ptCursor;
-
-	ScreenToClient(hStatusWnd, &ptCursor);
-
-	if (PtInRect(&sImeG.rcStatusText, ptCursor)) {
-		SetCursor(LoadCursor(hInst, szHandCursor));
-
-		if (HIWORD(lParam) == WM_LBUTTONDOWN) {
-			SetStatus(hStatusWnd, &ptCursor);
-		} else if (HIWORD(lParam) == WM_RBUTTONUP) {
-			{
-				static BOOL fCmenu = FALSE;
-				// prevent recursive
-				if (fCmenu) {
-					// configuration already bring up
-					return;
-				}
-				fCmenu = TRUE;
-				ContextMenu(hStatusWnd, ptSavCursor.x, ptSavCursor.y);
-				fCmenu = FALSE;
-			}
-
-		}
-
-		return;
-	} else {
-		SetCursor(LoadCursor(NULL, IDC_SIZEALL));
-
-		if (HIWORD(lParam) == WM_LBUTTONDOWN) {
-			// start drag
-			SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
-		} else {
-			return;
-		}
-	}
-
-	SetCapture(hStatusWnd);
-	SetWindowLong(hStatusWnd, UI_MOVE_XY,
-				  MAKELONG(ptSavCursor.x, ptSavCursor.y));
-	GetWindowRect(hStatusWnd, &rcWnd);
-	SetWindowLong(hStatusWnd, UI_MOVE_OFFSET,
-				  MAKELONG(ptSavCursor.x - rcWnd.left,
-						   ptSavCursor.y - rcWnd.top));
-
-	DrawDragBorder(hStatusWnd, MAKELONG(ptSavCursor.x, ptSavCursor.y),
-				   GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
-
-	return;
-}
-
-
-/**********************************************************************/
-/* PaintStatusWindow()                                                */
-/**********************************************************************/
 void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 {
 	HWND hUIWnd;
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	LPPRIVCONTEXT imcPrivPtr;
-	HGDIOBJ hOldFont;
 	HBITMAP hImeIconBmp, hSymbolBmp;
 	HBITMAP hOldBmp;
 	HDC hMemDC;
@@ -403,18 +321,6 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 					 SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_NOZORDER);
 	}
 
-	// set font
-	if (sImeG.fDiffSysCharSet) {
-		LOGFONT lfFont;
-
-		ZeroMemory(&lfFont, sizeof(lfFont));
-		hOldFont = GetCurrentObject(hDC, OBJ_FONT);
-		lfFont.lfHeight = -MulDiv(12, GetDeviceCaps(hDC, LOGPIXELSY), 72);
-		lfFont.lfCharSet = NATIVE_CHARSET;
-		lstrcpy(lfFont.lfFaceName, TEXT("Simsun"));
-		SelectObject(hDC, CreateFontIndirect(&lfFont));
-	}
-	// draw Ime Name
 
 	if (lpIMC->fOpen) {
 		SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
@@ -472,9 +378,6 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 
 	DeleteObject(hImeIconBmp);
 	DeleteObject(hSymbolBmp);
-	if (sImeG.fDiffSysCharSet) {
-		DeleteObject(SelectObject(hDC, hOldFont));
-	}
 
 	return;
 }
@@ -491,50 +394,10 @@ StatusWndProc(HWND hStatusWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		DestroyStatusWindow(hStatusWnd);
 		break;
 	case WM_SETCURSOR:
-		StatusSetCursor(hStatusWnd, lParam);
 		break;
 	case WM_MOUSEMOVE:
-		if (GetWindowLong(hStatusWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-			POINT ptCursor;
-
-			DrawDragBorder(hStatusWnd,
-						   GetWindowLong(hStatusWnd, UI_MOVE_XY),
-						   GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
-			GetCursorPos(&ptCursor);
-			SetWindowLong(hStatusWnd, UI_MOVE_XY,
-						  MAKELONG(ptCursor.x, ptCursor.y));
-			DrawDragBorder(hStatusWnd, MAKELONG(ptCursor.x, ptCursor.y),
-						   GetWindowLong(hStatusWnd, UI_MOVE_OFFSET));
-		} else {
-			return DefWindowProc(hStatusWnd, uMsg, wParam, lParam);
-		}
 		break;
 	case WM_LBUTTONUP:
-
-		if (GetWindowLong(hStatusWnd, UI_MOVE_OFFSET) != WINDOW_NOT_DRAG) {
-			LONG lTmpCursor, lTmpOffset;
-
-			lTmpCursor = GetWindowLong(hStatusWnd, UI_MOVE_XY);
-
-			// calculate the org by the offset
-			lTmpOffset = GetWindowLong(hStatusWnd, UI_MOVE_OFFSET);
-
-			DrawDragBorder(hStatusWnd, lTmpCursor, lTmpOffset);
-
-			(*(LPPOINTS) & lTmpCursor).x -= (*(LPPOINTS) & lTmpOffset).x;
-			(*(LPPOINTS) & lTmpCursor).y -= (*(LPPOINTS) & lTmpOffset).y;
-
-			SetWindowLong(hStatusWnd, UI_MOVE_OFFSET, WINDOW_NOT_DRAG);
-			ReleaseCapture();
-
-			AdjustStatusBoundary((LPPOINTS) & lTmpCursor,
-								 GetWindow(hStatusWnd, GW_OWNER));
-
-			SendMessage(GetWindow(hStatusWnd, GW_OWNER), WM_IME_CONTROL,
-						IMC_SETSTATUSWINDOWPOS, lTmpCursor);
-		} else {
-			return DefWindowProc(hStatusWnd, uMsg, wParam, lParam);
-		}
 		break;
 
 	case WM_IME_NOTIFY:
@@ -565,61 +428,3 @@ StatusWndProc(HWND hStatusWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return (0L);
 }
 
-/**********************************************************************/
-/* ImeVerDlgProc()                                                    */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
-BOOL FAR PASCAL ImeVerDlgProc(	// dialog procedure of configuration
-								 HWND hDlg, UINT uMessage, WORD wParam,
-								 LONG lParam)
-{
-	RECT rc;
-	LONG DlgWidth, DlgHeight;
-
-	switch (uMessage) {
-	case WM_INITDIALOG:
-		hCrtDlg = hDlg;
-		// reset position
-		GetWindowRect(hDlg, &rc);
-		DlgWidth = rc.right - rc.left;
-		DlgHeight = rc.bottom - rc.top;
-
-		SetWindowPos(hDlg, HWND_TOP,
-					 (int) (sImeG.rcWorkArea.right - DlgWidth) / 2,
-					 (int) (sImeG.rcWorkArea.bottom - DlgHeight) / 2,
-					 (int) 0, (int) 0, SWP_NOSIZE);
-
-		return (TRUE);			// don't want to set focus to special control
-	case WM_COMMAND:
-		switch (wParam) {
-		case IDOK:
-			EndDialog(hDlg, FALSE);
-			break;
-		case IDCANCEL:
-			EndDialog(hDlg, FALSE);
-			break;
-		default:
-			return FALSE;
-			break;
-		}
-		return (TRUE);
-
-	case WM_CLOSE:
-		EndDialog(hDlg, FALSE);
-		return FALSE;
-
-	case WM_PAINT:
-		{
-			RECT rc;
-
-			GetClientRect(hDlg, &rc);
-		}
-
-		return FALSE;
-	default:
-		return FALSE;
-	}
-
-	return (TRUE);
-}

@@ -21,7 +21,6 @@ IMEG sImeG = { 0 };
 //#pragma data_seg()
 
 HDC ST_UI_hDC;
-UINT uStartComp = 0;
 UINT uCaps = 0;
 DWORD SaTC_Trace;
 

@@ -115,14 +115,6 @@
 #define STATUS_DIM_Y            20
 #define STATUS_NAME_MARGIN      20
 
-// if UI_MOVE_OFFSET == WINDOW_NOTDRAG, not in drag operation
-#define WINDOW_NOT_DRAG         0xFFFFFFFF
-
-// window extra for composition window
-#define UI_MOVE_OFFSET          0
-#define UI_MOVE_XY              4
-
-// the start number of candidate list
 #define CAND_START              1
 #define uCandHome               0
 #define uCandUp                 1
@@ -242,12 +234,7 @@ typedef IMEL FAR *LPIMEL;
 
 
 // global sturcture for ime init data
-typedef struct _tagImeG {		// global structure, can be share by all IMEs,
-	// the seperation (IMEL and IMEG) is only
-	// useful in UNI-IME, other IME can use one
-// the system charset is not NATIVE_CHARSET
-	BOOL fDiffSysCharSet;
-// IME Charact
+typedef struct _tagImeG {
 	TCHAR UsedCodes[17];
 	WORD wNumCodes;
 	DWORD IC_Enter;
@@ -330,7 +317,6 @@ extern IMEG sImeG;
 extern IMEL sImeL;
 extern LPIMEL lpImeL;
 extern HDC ST_UI_hDC;
-extern UINT uStartComp;
 extern UINT uCaps;
 extern DWORD SaTC_Trace;
 extern TCHAR szUIClassName[];
@@ -396,12 +382,6 @@ void PASCAL GenerateMessage(HIMC, LPINPUTCONTEXT, LPPRIVCONTEXT);	// notify.c
 DWORD PASCAL ReadingToPattern(LPCTSTR, BOOL);	// regword.c
 void PASCAL ReadingToSequence(LPCTSTR, LPBYTE, BOOL);	// regword.c
 
-void PASCAL DrawDragBorder(HWND, LONG, LONG);	// uisubs.c
-void PASCAL DrawFrameBorder(HDC, HWND);	// uisubs.c
-
-void PASCAL ContextMenu(HWND, int, int);	// uisubs.c
-LRESULT CALLBACK ContextMenuWndProc(HWND, UINT, WPARAM, LPARAM);	// uisubs.c
-
 extern "C" HWND PASCAL GetCompWnd(HWND);	// compui.c
 void PASCAL SetCompPosition(HWND, HIMC, LPINPUTCONTEXT);	// compui.c
 void PASCAL SetCompWindow(HWND);	// compui.c
@@ -436,8 +416,6 @@ UINT PASCAL UnicodeProcessKey(WORD wCharCode, LPPRIVCONTEXT imcPrivPtr);
 WORD PASCAL UnicodeEngine(LPPRIVCONTEXT imcPrivPtr);
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
 // dialog procedure
-BOOL FAR PASCAL ImeVerDlgProc(HWND, UINT, WORD, LONG);
-BOOL FAR PASCAL CrtWordDlgProc(HWND, UINT, WORD, LONG);
 BOOL FAR PASCAL SetImeDlgProc(HWND, UINT, WORD, LONG);
 const char* msg_name(UINT msg);
-extern HWND hCandWnd, hCompWnd, hCMenuWnd, hStatusWnd;
+extern HWND hCandWnd, hCompWnd, hStatusWnd;

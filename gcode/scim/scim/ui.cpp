@@ -16,18 +16,6 @@ Module Name:
 #include <imedefs.h>
 #include <regstr.h>
 
-
-
-/**********************************************************************/
-/* CMenuDestryed()                                                    */
-/**********************************************************************/
-void PASCAL CMenuDestroyed(		// context menu window
-							  // already destroyed
-							  HWND hUIWnd)
-{
-	hCMenuWnd = NULL;
-}
-
 void PASCAL CreateUIWindow(HWND hUIWnd)
 {
 
@@ -42,14 +30,6 @@ void PASCAL DestroyUIWindow(	// destroy composition window
 							   HWND hUIWnd)
 {
 
-	//destroy ContextMenuWnd
-	if (hCMenuWnd) {
-		SetWindowLongPtr(hCMenuWnd, CMENU_HUIWND,
-						 (LONG_PTR) 0);
-		PostMessage(hCMenuWnd, WM_USER_DESTROY, 0, 0);
-	}
-
-	// composition window need to be destroyed
 	if (hCompWnd) {
 		DestroyWindow(hCompWnd);
 		hCompWnd = NULL;
@@ -340,8 +320,7 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 			SendMessage(GetCandWnd(hUIWnd), WM_DESTROY, (WPARAM) 0,
 						(LPARAM) 0);
 			break;
-		case IMN_PRIVATE_CMENUDESTROYED:
-			CMenuDestroyed(hUIWnd);
+		default:
 			break;
 		}
 		break;

@@ -127,7 +127,7 @@ void PASCAL CompCancel(HIMC hIMC, LPINPUTCONTEXT lpIMC)
 }
 
 
-//we don't allow SetCompPosition
+//we don't allow ImeSetCompositionString
 //we don't know what it does!
 
 BOOL WINAPI
