@@ -421,17 +421,6 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 			}
 		}
 
-		if (imcPrivPtr->fdwImeMsg & MSG_GUIDELINE) {
-			if (!i) {
-				uNumMsg++;
-			} else {
-				lpTransMsg->message = WM_IME_NOTIFY;
-				lpTransMsg->wParam = IMN_GUIDELINE;
-				lpTransMsg->lParam = 0;
-				lpTransMsg++;
-			}
-		}
-
 		if (imcPrivPtr->fdwImeMsg & MSG_OPEN_CANDIDATE) {
 			if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN)) {
 				if (!i) {

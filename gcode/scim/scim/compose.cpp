@@ -198,15 +198,6 @@ CompEscapeKey(LPINPUTCONTEXT lpIMC,
 			  LPCOMPOSITIONSTRING lpCompStr,
 			  LPGUIDELINE lpGuideLine, LPPRIVCONTEXT imcPrivPtr)
 {
-	if (!lpGuideLine) {
-		MessageBeep((UINT) - 1);
-	} else if (lpGuideLine->dwLevel != GL_LEVEL_NOGUIDELINE) {
-		lpGuideLine->dwLevel = GL_LEVEL_NOGUIDELINE;
-		lpGuideLine->dwIndex = GL_ID_UNKNOWN;
-		lpGuideLine->dwStrLen = 0;
-
-		imcPrivPtr->fdwImeMsg |= MSG_GUIDELINE;
-	}
 
 	if (imcPrivPtr->iImeState != CST_CHOOSE) {
 		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
