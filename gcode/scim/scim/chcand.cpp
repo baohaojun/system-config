@@ -55,11 +55,6 @@ SelectOneCand(LPINPUTCONTEXT lpIMC,
 	imcPrivPtr->fdwGcsFlag |= GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
 		GCS_DELTASTART | GCS_RESULTREAD | GCS_RESULT;
 
-	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
-			~(MSG_OPEN_CANDIDATE);
-	}
-	// no candidate now, the right candidate string already be finalized
 	lpCandList->dwCount = 0;
 
 	imcPrivPtr->iImeState = CST_INIT;
@@ -77,13 +72,6 @@ void PASCAL CandEscapeKey(LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 	LPGUIDELINE lpGuideLine;
 
 	// clean all candidate information
-	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-		ClearCand(lpIMC);
-		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
-			~(MSG_OPEN_CANDIDATE);
-	}
-
-	// if it start composition, we need to clean composition
 	if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_START)) {
 		return;
 	}

@@ -246,8 +246,6 @@ CompBackSpaceKey(LPINPUTCONTEXT lpIMC,
 	if (!lpCompStr->dwCursorPos) {
 		if (imcPrivPtr->fdwImeMsg & (MSG_ALREADY_OPEN)) {
 			ClearCand(lpIMC);
-			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
-				~(MSG_OPEN_CANDIDATE);
 		}
 
 		if (imcPrivPtr->iImeState != CST_INIT) {
@@ -332,7 +330,6 @@ CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
 	// tell app, there is a composition char generated
 	imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
 
-	// set lpImeP->fdwGcsFlag
 	imcPrivPtr->fdwGcsFlag |=
 		GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS | GCS_DELTASTART;
 
@@ -373,8 +370,6 @@ Finalize(LPINPUTCONTEXT lpIMC,
 		if (((lpCompStr->dwCursorPos < 3) && (wCharCode != TEXT(' ')))
 			|| ((lpCompStr->dwCursorPos == 3)
 				&& (wCharCode != TEXT(' ')) && (wCharCode != TEXT('?')))) {
-			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
-				~(MSG_OPEN_CANDIDATE);
 			ImmUnlockIMCC(lpIMC->hCandInfo);
 			return (fEngine);
 		}
@@ -406,20 +401,20 @@ Finalize(LPINPUTCONTEXT lpIMC,
 	} else if (fEngine == ENGINE_RESAULT) {
 
 		// Set lpImep!   and tell application, there is a reslut string
-		imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
-		imcPrivPtr->dwCompChar = (DWORD) 0;
-		imcPrivPtr->fdwGcsFlag |= GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
-			GCS_DELTASTART | GCS_RESULTREAD | GCS_RESULT;
+		// imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
+		// imcPrivPtr->dwCompChar = (DWORD) 0;
+		 imcPrivPtr->fdwGcsFlag |= GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
+		 	GCS_DELTASTART | GCS_RESULTREAD | GCS_RESULT;
 
-		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
-				~(MSG_OPEN_CANDIDATE);
-		}
-		// clear  candidate now
-		lpCandList->dwCount = 0;
-		// set iImeState with CST_INIT
-		imcPrivPtr->iImeState = CST_INIT;
-		*(LPDWORD) imcPrivPtr->bSeq = 0;
+		// if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
+		// 	imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
+		// 		~(MSG_OPEN_CANDIDATE);
+		// }
+		// // clear  candidate now
+		// lpCandList->dwCount = 0;
+		// // set iImeState with CST_INIT
+		// imcPrivPtr->iImeState = CST_INIT;
+		// *(LPDWORD) imcPrivPtr->bSeq = 0;
 	}
 
 	ImmUnlockIMCC(lpIMC->hCandInfo);

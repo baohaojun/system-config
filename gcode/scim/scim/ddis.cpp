@@ -156,8 +156,7 @@ LRESULT WINAPI ImeEscape(HIMC hIMC, UINT uSubFunc, LPVOID lpData)
 
 }
 
-void PASCAL InitCompStr(		// init setting for composing string
-						   LPCOMPOSITIONSTRING lpCompStr)
+void PASCAL InitCompStr(LPCOMPOSITIONSTRING lpCompStr)
 {
 	if (!lpCompStr) {
 		return;

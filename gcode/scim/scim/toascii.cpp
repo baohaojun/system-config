@@ -348,6 +348,7 @@ UINT PASCAL
 TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 					LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 {
+	EnterLeaveDebug(); 
 	UINT uNumMsg;
 	UINT i;
 	BOOL bLockMsgBuf;
@@ -357,20 +358,6 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 	bLockMsgBuf = FALSE;
 
 	for (i = 0; i < 2; i++) {
-		if (imcPrivPtr->fdwImeMsg & MSG_CLOSE_CANDIDATE) {
-			if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-				if (!i) {
-					uNumMsg++;
-				} else {
-					lpTransMsg->message = WM_IME_NOTIFY;
-					lpTransMsg->wParam = IMN_CLOSECANDIDATE;
-					lpTransMsg->lParam = 0x0001;
-					lpTransMsg++;
-					imcPrivPtr->fdwImeMsg &= ~(MSG_ALREADY_OPEN);
-				}
-			}
-		}
-
 		if (imcPrivPtr->fdwImeMsg & MSG_END_COMPOSITION) {
 			if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
 				if (!i) {
