@@ -370,6 +370,7 @@ Finalize(LPINPUTCONTEXT lpIMC,
 		if (((lpCompStr->dwCursorPos < 3) && (wCharCode != TEXT(' ')))
 			|| ((lpCompStr->dwCursorPos == 3)
 				&& (wCharCode != TEXT(' ')) && (wCharCode != TEXT('?')))) {
+
 			ImmUnlockIMCC(lpIMC->hCandInfo);
 			return (fEngine);
 		}

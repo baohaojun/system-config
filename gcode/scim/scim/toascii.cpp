@@ -348,6 +348,7 @@ UINT PASCAL
 TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 					LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 {
+	return true;
 	EnterLeaveDebug(); 
 	UINT uNumMsg;
 	UINT i;
@@ -518,6 +519,7 @@ ImeToAsciiEx(UINT uVirtKey,
 			 CONST LPBYTE lpbKeyState,
 			 LPTRANSMSGLIST lpTransBuf, UINT fuState, HIMC hIMC)
 {
+	EnterLeaveDebug(); 
 	WORD wCharCode;
 	LPINPUTCONTEXT lpIMC;
 	LPCOMPOSITIONSTRING lpCompStr;
@@ -542,251 +544,61 @@ ImeToAsciiEx(UINT uVirtKey,
 			TranslateToAscii(uVirtKey, uScanCode, lpTransBuf, wCharCode);
 		return (uNumMsg);
 	}
-	// get imcPrivPtr
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
 
-	if (!imcPrivPtr) {
-		ImmUnlockIMC(hIMC);
-		uNumMsg =
-			TranslateToAscii(uVirtKey, uScanCode, lpTransBuf, wCharCode);
-		return (uNumMsg);
+	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
+
+	if (lpCompStr) {
+		lpCompStr->dwResultStrLen = 0;
 	}
-	// get lpCompStr and init
-	if (imcPrivPtr->fdwGcsFlag & (GCS_RESULTREAD | GCS_RESULT)) {
-		lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
-
-		if (lpCompStr) {
-			lpCompStr->dwResultStrLen = 0;
-		}
-
-		ImmUnlockIMCC(lpIMC->hCompStr);
-
-		imcPrivPtr->fdwGcsFlag = (DWORD) 0;
-	}
-	// Now all composition realated information already pass to app
-	// a brand new start
-
-	// init imcPrivPtr->fdwImeMsg
-	imcPrivPtr->fdwImeMsg = imcPrivPtr->fdwImeMsg & (MSG_ALREADY_OPEN |
-											 MSG_ALREADY_START) |
-		MSG_IN_IMETOASCIIEX;
-
-	// Process Key(wCharCode)
-	iRet = ProcessKey(wCharCode, uVirtKey, uScanCode, lpbKeyState, lpIMC,
-					  imcPrivPtr);
-
-	// iRet process
-	// CST_ALPHANUMERIC
-	// CST_SYMBOL
 
 
-	// CST_ALPHANUMERIC
-	if (iRet == CST_ALPHANUMERIC) {
-		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
-				~(MSG_OPEN_CANDIDATE) & ~(MSG_IN_IMETOASCIIEX);
-			GenerateMessage(hIMC, lpIMC, imcPrivPtr);
-		}
-
-		if (lpIMC->fdwConversion & IME_CMODE_SYMBOL) {
-			WORD wSymbolCharCode;
-			if (wCharCode == TEXT('.')) {
-				wSymbolCharCode = 0x3002;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT(',')) {
-				wSymbolCharCode = 0xff0c;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT(';')) {
-				wSymbolCharCode = 0xff1b;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT(':')) {
-				wSymbolCharCode = 0xff1a;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('?')) {
-				wSymbolCharCode = 0xff1f;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('!')) {
-				wSymbolCharCode = 0xff01;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('(')) {
-				wSymbolCharCode = 0xff08;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT(')')) {
-				wSymbolCharCode = 0xff09;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('\\')) {
-				wSymbolCharCode = 0x3001;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('@')) {
-				wSymbolCharCode = 0x00b7;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('&')) {
-				wSymbolCharCode = 0x2014;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('$')) {
-				wSymbolCharCode = 0xffe5;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('_')) {
-				wSymbolCharCode = 0x2014;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode, TRUE);
-			} else if (wCharCode == TEXT('^')) {
-				wSymbolCharCode = 0x2026;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode, TRUE);
-			} else if (wCharCode == TEXT('"')) {
-				if (imcPrivPtr->uSYHFlg) {
-					wSymbolCharCode = 0x201d;
-				} else {
-					wSymbolCharCode = 0x201c;
-
-				}
-				imcPrivPtr->uSYHFlg ^= 0x00000001;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('\'')) {
-				if (imcPrivPtr->uDYHFlg) {
-					wSymbolCharCode = 0x2019;
-				} else {
-					wSymbolCharCode = 0x2018;
-				}
-				imcPrivPtr->uDYHFlg ^= 0x00000001;
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('<')) {
-				if (imcPrivPtr->uDSMHFlg) {
-					wSymbolCharCode = 0x3008;
-					imcPrivPtr->uDSMHCount++;
-				} else {
-					wSymbolCharCode = 0x300a;
-					imcPrivPtr->uDSMHFlg = 0x00000001;
-				}
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else if (wCharCode == TEXT('>')) {
-				if ((imcPrivPtr->uDSMHFlg) && (imcPrivPtr->uDSMHCount)) {
-					wSymbolCharCode = 0x3009;
-					imcPrivPtr->uDSMHCount--;
-				} else {
-					wSymbolCharCode = 0x300b;
-					imcPrivPtr->uDSMHFlg = 0x00000000;
-				}
-				uNumMsg =
-					TranslateSymbolChar(lpTransBuf, wSymbolCharCode,
-										FALSE);
-			} else {
-				uNumMsg = TranslateToAscii(uVirtKey, uScanCode, lpTransBuf,
-										   wCharCode);
+	InitCompStr(lpCompStr);
+	
+	LPTRANSMSG lpTransMsg = lpTransBuf->TransMsg;
+	bool block = false;
+	// calculate result string length
+	lpCompStr->dwResultStrLen = 1;
+	HIMCC hMem;
+	uNumMsg = 1;
+	// the result string = the selected candidate;
+	static wchar_t x[2] = {0x9999, 0};
+	lstrcpy((LPTSTR) ((LPBYTE) lpCompStr + lpCompStr->dwResultStrOffset), x);
+	x[0]++;
+	UINT uNumMsgLimit = lpTransBuf->uMsgCount;
+	BHJDEBUG(" uNumMsgLimit is %d", uNumMsgLimit);
+	if (uNumMsgLimit < 1) {
+		if (!lpIMC->hMsgBuf) {
+			lpIMC->hMsgBuf = ImmCreateIMCC(uNumMsg * sizeof(TRANSMSG));
+			lpIMC->dwNumMsgBuf = 0;
+		} else if (hMem = ImmReSizeIMCC(lpIMC->hMsgBuf,
+										(lpIMC->dwNumMsgBuf +
+										 uNumMsg) * sizeof(TRANSMSG)))
+		{
+			if (hMem != lpIMC->hMsgBuf) {
+				ImmDestroyIMCC(lpIMC->hMsgBuf);
+				lpIMC->hMsgBuf = hMem;
 			}
 		} else {
-			uNumMsg = TranslateToAscii(uVirtKey, uScanCode, lpTransBuf,
-									   wCharCode);
-		}
-	}
-	// CST_CHOOSE
-	else if (iRet == CST_CHOOSE) {
-		LPCANDIDATEINFO lpCandInfo;
-
-		lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->hCandInfo);
-		if (!lpCandInfo) {
-			return (CST_INVALID);
+			return (0);
 		}
 
-		if (uVirtKey == VK_PRIOR) {
-			wCharCode = TEXT('-');
-		} else if (uVirtKey == VK_NEXT) {
-			wCharCode = TEXT('=');
-		} else if (uVirtKey == VK_SPACE) {
-			wCharCode = TEXT('1');
-		} else if (uVirtKey <= TEXT('9')) {
-			// convert shift-0 ... shift-9 to 0 ... 9
-			wCharCode = (WORD) uVirtKey;
-		} else if (uVirtKey == VK_HOME) {
-			wCharCode = 0x24;
-		} else if (uVirtKey == VK_END) {
-			wCharCode = 0x23;
+		lpTransMsg = (LPTRANSMSG) ImmLockIMCC(lpIMC->hMsgBuf);
+		if (!lpTransMsg) {
+			return (0);
 		} else {
+			block = true;
 		}
+	} 
 
-		imcPrivPtr->iImeState = CST_CHOOSE;
-		ChooseCand(wCharCode, lpIMC, lpCandInfo, imcPrivPtr);
-
-		ImmUnlockIMCC(lpIMC->hCandInfo);
-
-		uNumMsg = TranslateImeMessage(lpTransBuf, lpIMC, imcPrivPtr);
-	}
-	// CST_INPUT(0)
-	else if (iRet == CST_INPUT
-			 && lpIMC->fdwConversion & 0) {
-		uNumMsg =
-			TranslateToAscii(uVirtKey, uScanCode, lpTransBuf, wCharCode);
-	}
-	// CST_INPUT 
-	else if (iRet == CST_INPUT) {
-		LPGUIDELINE lpGuideLine;
-
-		// get lpCompStr & lpGuideLine
-		lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
-		if (!lpCompStr) {
-			return (CST_INVALID);
-		}
-
-		lpGuideLine = (LPGUIDELINE) ImmLockIMCC(lpIMC->hGuideLine);
-		if (!lpGuideLine) {
-			ImmUnlockIMCC(lpIMC->hCompStr);
-			return (CST_INVALID);
-		}
-		// composition
-		CompWord(wCharCode, lpIMC, lpCompStr, imcPrivPtr, lpGuideLine);
-
-		ImmUnlockIMCC(lpIMC->hGuideLine);
-		ImmUnlockIMCC(lpIMC->hCompStr);
-
-		// generate message
-		uNumMsg = TranslateImeMessage(lpTransBuf, lpIMC, imcPrivPtr);
-	}
-	// ELSE
-	else if (iRet == CST_INVALID_INPUT) {
-		MessageBeep((UINT) - 1);
-		uNumMsg = 0;
-	} else {
-		uNumMsg =
-			TranslateToAscii(uVirtKey, uScanCode, lpTransBuf, wCharCode);
+	lpTransMsg->message = WM_IME_COMPOSITION;
+	lpTransMsg->wParam = 0;
+	lpTransMsg->lParam = GCS_RESULTREAD|GCS_RESULT;
+	if (block == true) {
+		ImmUnlockIMCC(lpIMC->hMsgBuf);
 	}
 
-	// reset imcPrivPtr->fdwImeMsg
-	imcPrivPtr->fdwImeMsg &= (MSG_ALREADY_OPEN | MSG_ALREADY_START);
-	imcPrivPtr->fdwGcsFlag &= (GCS_RESULTREAD | GCS_RESULT);
+	ImmUnlockIMCC(lpIMC->hCompStr);
 
-	ImmUnlockIMCC(lpIMC->hPrivate);
-	ImmUnlockIMC(hIMC);
-
-	return (uNumMsg);
+	imcPrivPtr->fdwGcsFlag = (DWORD) 0;
+	return 1;
 }

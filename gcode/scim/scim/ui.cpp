@@ -455,7 +455,7 @@ LRESULT PASCAL UIPaint(HWND hUIWnd)
 LRESULT CALLBACK
 UIWndProc(HWND hUIWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	BHJDEBUG("received msg %s", msg_name(uMsg));
+	//BHJDEBUG("received msg %s", msg_name(uMsg));
 	switch (uMsg) {
 	case WM_CREATE:
 		CreateUIWindow(hUIWnd);
@@ -504,7 +504,7 @@ UIWndProc(HWND hUIWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEACTIVATE:
 		return (MA_NOACTIVATE);
 	default:
-		BHJDEBUG(" msg %s not handled", msg_name(uMsg));
+		//BHJDEBUG(" msg %s not handled", msg_name(uMsg));
 		return DefWindowProc(hUIWnd, uMsg, wParam, lParam);
 	}
 	return (0L);
