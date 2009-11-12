@@ -309,7 +309,6 @@ void PASCAL SetCompPosition(	// set the composition window position
 	BOOL fChange = FALSE;
 	RECT rcWorkArea;
 
-
 	rcWorkArea = sImeG.rcWorkArea;
 
 	// the client coordinate position (0, 0) of composition window
