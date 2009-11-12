@@ -304,9 +304,8 @@ void PASCAL SetCompPosition(	// set the composition window position
 							   HWND hCompWnd, HIMC hIMC,
 							   LPINPUTCONTEXT lpIMC)
 {
+	return;
 	POINT ptWnd;
-	POINT ptSTWPos;
-	HWND hCandWnd;
 	BOOL fChange = FALSE;
 	RECT rcWorkArea;
 
@@ -347,30 +346,8 @@ void PASCAL SetCompPosition(	// set the composition window position
 		ClientToScreen((HWND) lpIMC->hWnd, &ptNew);
 		fChange = AdjustCompPosition(lpIMC, &ptWnd, &ptNew);
 	} else {
-		POINT ptNew;			// new position of UI
-
-		ImmGetStatusWindowPos(hIMC, (LPPOINT) & ptSTWPos);
-		ptNew.x = ptSTWPos.x + sImeG.xStatusWi + UI_MARGIN;
-		if ((ptSTWPos.x + sImeG.xStatusWi + sImeG.xCandWi +
-			 lpImeL->xCompWi + 2 * UI_MARGIN) >= rcWorkArea.right) {
-			ptNew.x = ptSTWPos.x - lpImeL->xCompWi - UI_MARGIN;
-		}
-		ptNew.y = ptSTWPos.y;
-		if (ptWnd.x != ptNew.x) {
-			ptWnd.x = ptNew.x;
-			fChange = TRUE;
-		}
-
-		if (ptWnd.y != ptNew.y) {
-			ptWnd.y = ptNew.y;
-			fChange = TRUE;
-		}
-
-		if (fChange) {
-			lpIMC->cfCompForm.ptCurrentPos = ptNew;
-
-			ScreenToClient(lpIMC->hWnd, &lpIMC->cfCompForm.ptCurrentPos);
-		}
+		//fixme
+		BHJDEBUG(" fixme");
 	}
 
 	if (!fChange) {
@@ -379,26 +356,6 @@ void PASCAL SetCompPosition(	// set the composition window position
 	SetWindowPos(hCompWnd, NULL,
 				 ptWnd.x, ptWnd.y,
 				 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
-
-	hCandWnd = GetCandWnd(GetWindow(hCompWnd, GW_OWNER));
-
-	if (!hCandWnd) {
-		return;
-	}
-
-	// decide the position of candidate window by UI's position
-	CalcCandPos(hIMC, GetWindow(hCompWnd, GW_OWNER), &ptWnd);
-
-	ScreenToClient(lpIMC->hWnd, &ptWnd);
-
-	lpIMC->cfCandForm[0].dwStyle = CFS_CANDIDATEPOS;
-	lpIMC->cfCandForm[0].ptCurrentPos = ptWnd;
-
-	if (!IsWindowVisible(hCandWnd)) {
-		return;
-	}
-
-	PostMessage(hCandWnd, WM_IME_NOTIFY, IMN_SETCANDIDATEPOS, 0x0001);
 
 	return;
 }
@@ -499,7 +456,7 @@ void PASCAL StartComp(HWND hUIWnd)
 		hCompWnd =
 			CreateWindowEx(WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME,
 						   szCompClassName, NULL, WS_POPUP | WS_DISABLED,
-						   0, 0, lpImeL->xCompWi, lpImeL->yCompHi, hUIWnd,
+						   0, 0, 400, 60, hUIWnd,
 						   (HMENU) NULL, hInst, NULL);
 	}
 
@@ -537,7 +494,6 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	LPCOMPOSITIONSTRING lpCompStr;
-	LPGUIDELINE lpGuideLine;
 	BOOL fShowString;
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
@@ -555,10 +511,7 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 		return;
 	}
 
-	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(lpIMC->hGuideLine);
-	if (!lpGuideLine) {
-		return;
-	}
+
 
 	// draw CompWnd Layout
 	{
@@ -571,74 +524,99 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 
 	fShowString = (BOOL) 0;
 
-	if (!lpGuideLine) {
-	} else if (lpGuideLine->dwLevel == GL_LEVEL_NOGUIDELINE) {
-	} else if (!lpGuideLine->dwStrLen) {
-		if (lpGuideLine->dwLevel == GL_LEVEL_ERROR) {
-			fShowString |= IME_STR_ERROR;
-		}
-	} else {
-		// if there is information string, we will show the information
-		// string
-		if (lpGuideLine->dwLevel == GL_LEVEL_ERROR) {
-			// red text for error
-			SetTextColor(hDC, RGB(0xFF, 0, 0));
-			// light gray background for error
-			SetBkColor(hDC, RGB(0x80, 0x80, 0x80));
-		}
-
-		ExtTextOut(hDC, lpImeL->rcCompText.left, lpImeL->rcCompText.top,
-				   ETO_OPAQUE, &lpImeL->rcCompText,
-				   (LPCTSTR) ((LPBYTE) lpGuideLine +
-							  lpGuideLine->dwStrOffset),
-				   (UINT) lpGuideLine->dwStrLen, NULL);
-		fShowString |= IME_STR_SHOWED;
-	}
-
-	if (fShowString & IME_STR_SHOWED) {
-		// already show it, don't need to show
-	} else if (lpCompStr->dwCompStrLen > 0) {
-		ExtTextOut(hDC, lpImeL->rcCompText.left, lpImeL->rcCompText.top,
-				   ETO_OPAQUE, &lpImeL->rcCompText, (LPTSTR) NULL, 0,
-				   NULL);
-		DrawText(hDC,
-				 (LPTSTR) ((LPBYTE) lpCompStr +
-						   lpCompStr->dwCompStrOffset),
-				 (int) lpCompStr->dwCompStrLen, &lpImeL->rcCompText,
-				 DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-		if (fShowString & IME_STR_ERROR) {
-			// red text for error
-			//SetTextColor(hDC, RGB(0xFF, 0, 0));
-			// light gray background for error
-			SetBkColor(hDC, RGB(0x80, 0x80, 0x80));
-			ExtTextOut(hDC, lpImeL->rcCompText.left +
-					   lpCompStr->dwCursorPos * sImeG.xChiCharWi / 2,
-					   lpImeL->rcCompText.top,
-					   ETO_CLIPPED, &lpImeL->rcCompText,
-					   (LPTSTR) ((LPBYTE) lpCompStr +
-								 lpCompStr->dwCompStrOffset +
-								 lpCompStr->dwCursorPos),
-					   (UINT) lpCompStr->dwCompStrLen -
-					   lpCompStr->dwCursorPos, NULL);
-		} else if (lpCompStr->dwCursorPos < lpCompStr->dwCompStrLen) {
-			// light gray background for cursor start
-			SetBkColor(hDC, RGB(0x80, 0x80, 0x80));
-			ExtTextOut(hDC, lpImeL->rcCompText.left +
-					   lpCompStr->dwCursorPos * sImeG.xChiCharWi / 2,
-					   lpImeL->rcCompText.top,
-					   ETO_CLIPPED, &lpImeL->rcCompText,
-					   (LPTSTR) ((LPBYTE) lpCompStr +
-								 lpCompStr->dwCompStrOffset +
-								 lpCompStr->dwCursorPos),
-					   (UINT) lpCompStr->dwCompStrLen -
-					   lpCompStr->dwCursorPos, NULL);
-		} else {
-		}
+	if (lpCompStr->dwCompStrLen > 0) {
+		ExtTextOut(hDC, 10, 20, 0, NULL, (LPTSTR) ((LPBYTE) lpCompStr + lpCompStr->dwCompStrOffset), (int) lpCompStr->dwCompStrLen, NULL);
+				   
+		// DrawText(hDC,
+		// 		 (LPTSTR) ((LPBYTE) lpCompStr +
+		// 				   lpCompStr->dwCompStrOffset),
+		// 		 (int) lpCompStr->dwCompStrLen, &lpImeL->rcCompText,
+		// 		 DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 	} else {
 		ExtTextOut(hDC, lpImeL->rcCompText.left, lpImeL->rcCompText.top,
 				   ETO_OPAQUE, &lpImeL->rcCompText, (LPTSTR) NULL, 0,
 				   NULL);
 	}
+
+
+	LPCANDIDATEINFO lpCandInfo;
+	LPCANDIDATELIST lpCandList;
+	LPPRIVCONTEXT imcPrivPtr;
+	DWORD dwStart, dwEnd;
+	TCHAR szStrBuf[2 * MAXSTRLEN * sizeof(WCHAR) / sizeof(TCHAR) + 1];
+	int i;
+
+
+	if (!lpIMC->hCandInfo) {
+		BHJDEBUG(" no candinfo");
+		goto UpCandW2UnlockIMC;
+	}
+
+	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->hCandInfo);
+	if (!lpCandInfo) {
+		goto UpCandW2UnlockIMC;
+	}
+
+	if (!lpIMC->hPrivate) {
+		goto UpCandW2UnlockCandInfo;
+	}
+
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	if (!imcPrivPtr) {
+		goto UpCandW2UnlockCandInfo;
+	}
+	// set font
+	lpCandList = (LPCANDIDATELIST) ((LPBYTE) lpCandInfo +
+									lpCandInfo->dwOffset[0]);
+
+	dwStart = lpCandList->dwSelection;
+	dwEnd = dwStart + lpCandList->dwPageSize;
+
+	if (dwEnd > lpCandList->dwCount) {
+		dwEnd = lpCandList->dwCount;
+	}
+
+	RECT rcWnd;
+
+	GetClientRect(hCompWnd, &rcWnd);
+
+	SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
+	SetBkColor(hDC, RGB(0xC0, 0xC0, 0xC0));
+
+
+	szStrBuf[0] = TEXT('1');
+	szStrBuf[1] = TEXT(':');
+
+	for (i = 0; dwStart < dwEnd; dwStart++, i++) {
+		BHJDEBUG(" I'm gono draw cand in comp");
+
+		szStrBuf[0] = szDigit[i + CAND_START];
+
+
+		WORD wCode;
+		wCode =
+			*(LPUNAWORD) ((LPBYTE) lpCandList +
+						  lpCandList->dwOffset[dwStart]);
+
+		szStrBuf[2] = wCode;
+		szStrBuf[3] = TEXT('\0');
+
+		BHJDEBUG("szStrBuf is %04x", wCode);
+
+
+		ExtTextOut(hDC, i*20,
+				   0,
+				   0, NULL, szStrBuf, 3, NULL);
+
+	}
+
+
+
+
+	ImmUnlockIMCC(lpIMC->hPrivate);
+UpCandW2UnlockCandInfo:
+	ImmUnlockIMCC(lpIMC->hCandInfo);
+UpCandW2UnlockIMC:
 
 	ImmUnlockIMCC(lpIMC->hGuideLine);
 	ImmUnlockIMCC(lpIMC->hCompStr);

@@ -45,7 +45,7 @@ void PASCAL InitStatusUIData(int cxBorder, int cyBorder)
 	sImeG.rcStatusText.bottom = sImeG.rcStatusText.top + iContentHi;
 
 	sImeG.xStatusWi =
-		STATUS_DIM_X * 3 + STATUS_NAME_MARGIN +
+		STATUS_DIM_X * 2 + STATUS_NAME_MARGIN +
 		strbytelen(szImeName) * sImeG.xChiCharWi / 2 + 6 * cxBorder;
 
 	sImeG.yStatusHi = iContentHi + 6 * cxBorder;
@@ -70,17 +70,7 @@ void PASCAL InitStatusUIData(int cxBorder, int cyBorder)
 
 	sImeG.rcImeName.bottom = sImeG.rcImeName.top + iContentHi;
 
-	// middle bottom of Shape bar
-	sImeG.rcShapeText.left = sImeG.rcImeName.right;
-
-	sImeG.rcShapeText.top = sImeG.rcStatusText.top;
-
-	sImeG.rcShapeText.right = sImeG.rcShapeText.left + STATUS_DIM_X;
-
-	sImeG.rcShapeText.bottom = sImeG.rcShapeText.top + iContentHi;
-
-	// middle bottom of Symbol bar
-	sImeG.rcSymbol.left = sImeG.rcShapeText.right;
+	sImeG.rcSymbol.left = sImeG.rcImeName.right;
 
 	sImeG.rcSymbol.top = sImeG.rcStatusText.top;
 
@@ -91,101 +81,6 @@ void PASCAL InitStatusUIData(int cxBorder, int cyBorder)
 	return;
 
 }
-
-void PASCAL InitCandUIData(int cxBorder, int cyBorder, int UIMode)
-{
-
-	int iContentHi;
-
-	// iContentHi is to get the maximum value of predefined COMP_TEXT_Y and
-	// a real Chinese character's height in the current HDC.
-
-	iContentHi = COMP_TEXT_Y;
-
-	if (iContentHi < sImeG.yChiCharHi)
-
-		iContentHi = sImeG.yChiCharHi;
-
-	sImeG.cxCandBorder = cxBorder * 2;
-
-	sImeG.cyCandBorder = cyBorder * 2;
-
-	sImeG.rcCandText.left = cxBorder;
-
-	sImeG.rcCandText.top = 2 * cyBorder + UI_CANDINF;
-
-	if (sImeG.xChiCharWi * 9 > (UI_CANDICON * 6 + UI_CANDBTH * 4))
-
-		sImeG.rcCandText.right =
-			sImeG.rcCandText.left + sImeG.xChiCharWi * 9;
-
-	else
-
-		sImeG.rcCandText.right =
-			sImeG.rcCandText.left + (UI_CANDICON * 6 + UI_CANDBTH * 4);
-
-	sImeG.rcCandText.bottom =
-		sImeG.rcCandText.top + sImeG.yChiCharHi * CANDPERPAGE;
-
-	sImeG.xCandWi =
-		sImeG.rcCandText.right + sImeG.cxCandBorder * 2 + cxBorder * 4;
-
-	sImeG.yCandHi =
-		sImeG.rcCandText.bottom + sImeG.cyCandBorder * 2 +
-		cyBorder * 4;
-
-	sImeG.rcCandIcon.left = cxBorder;
-
-	sImeG.rcCandIcon.top = cyBorder + 2;
-
-	sImeG.rcCandIcon.right = sImeG.rcCandIcon.left + UI_CANDICON;
-
-	sImeG.rcCandIcon.bottom = sImeG.rcCandIcon.top + UI_CANDICON;
-
-	sImeG.rcCandInf.left = sImeG.rcCandIcon.right;
-
-	sImeG.rcCandInf.top = cyBorder + 3;
-
-	sImeG.rcCandInf.right = sImeG.rcCandInf.left + UI_CANDICON * 5;
-
-	sImeG.rcCandInf.bottom = sImeG.rcCandInf.top + UI_CANDBTH;
-
-	sImeG.rcCandBTE.top = cyBorder * 5;
-
-	sImeG.rcCandBTE.right = sImeG.rcCandText.right + cxBorder;
-
-	sImeG.rcCandBTE.bottom = sImeG.rcCandBTE.top + UI_CANDBTH;
-
-	sImeG.rcCandBTE.left = sImeG.rcCandBTE.right - UI_CANDBTW;
-
-	sImeG.rcCandBTD.top = cyBorder * 5;
-
-	sImeG.rcCandBTD.right = sImeG.rcCandBTE.left;
-
-	sImeG.rcCandBTD.bottom = sImeG.rcCandBTD.top + UI_CANDBTH;
-
-	sImeG.rcCandBTD.left = sImeG.rcCandBTD.right - UI_CANDBTW;
-
-	sImeG.rcCandBTU.top = cyBorder * 5;
-
-	sImeG.rcCandBTU.right = sImeG.rcCandBTD.left;
-
-	sImeG.rcCandBTU.bottom = sImeG.rcCandBTU.top + UI_CANDBTH;
-
-	sImeG.rcCandBTU.left = sImeG.rcCandBTU.right - UI_CANDBTW;
-
-	sImeG.rcCandBTH.top = cyBorder * 5;
-
-	sImeG.rcCandBTH.right = sImeG.rcCandBTU.left;
-
-	sImeG.rcCandBTH.bottom = sImeG.rcCandBTH.top + UI_CANDBTH;
-
-	sImeG.rcCandBTH.left = sImeG.rcCandBTH.right - UI_CANDBTW;
-
-
-
-}
-
 
 /**********************************************************************/
 /* InitImeGlobalData()                                                */
@@ -222,7 +117,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 	LoadString(hInst, IDS_IMECOMPCLASS, szCompClassName, CLASS_LEN);
 
 	// get the candidate class name
-	LoadString(hInst, IDS_IMECANDCLASS, szCandClassName, CLASS_LEN);
 
 	// get the status class name
 	LoadString(hInst, IDS_IMESTATUSCLASS, szStatusClassName, CLASS_LEN);
@@ -275,8 +169,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 	sImeG.yChiCharHi = lTextSize.cy;
 
 	UI_MODE = BOX_UI;
-
-	InitCandUIData(cxBorder, cyBorder, UI_MODE);
 
 	InitStatusUIData(cxBorder, cyBorder);
 
@@ -498,17 +390,7 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 		RegisterClassEx(&wcWndCls);
 
 	}
-	// IME candidate class
-	// register IME candidate class
-	if (!GetClassInfoEx(hInstance, szCandClassName, &wcWndCls)) {
 
-		wcWndCls.lpfnWndProc = CandWndProc;
-
-		wcWndCls.lpszClassName = (LPTSTR) szCandClassName;
-
-		RegisterClassEx(&wcWndCls);
-
-	}
 	// IME status class
 	// register IME status class
 	if (!GetClassInfoEx(hInstance, szStatusClassName, &wcWndCls)) {
@@ -577,12 +459,6 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 			if (GetClassInfoEx(hInstance, szStatusClassName, &wcWndCls)) {
 
 				UnregisterClass(szStatusClassName, hInstance);
-
-			}
-
-			if (GetClassInfoEx(hInstance, szCandClassName, &wcWndCls)) {
-
-				UnregisterClass(szCandClassName, hInstance);
 
 			}
 

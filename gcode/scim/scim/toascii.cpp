@@ -471,12 +471,7 @@ TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
 		if (imcPrivPtr->fdwImeMsg & MSG_IMN_DESTROYCAND) {
 			if (!i) {
 				uNumMsg++;
-			} else {
-				lpTransMsg->message = WM_IME_NOTIFY;
-				lpTransMsg->wParam = IMN_PRIVATE;
-				lpTransMsg->lParam = IMN_PRIVATE_DESTROYCANDWIN;
-				lpTransMsg++;
-			}
+			} 
 		}
 
 		if (imcPrivPtr->fdwImeMsg & MSG_BACKSPACE) {

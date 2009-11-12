@@ -93,9 +93,7 @@ LRESULT PASCAL SetStatusWindowPos(HWND hStatusWnd)
 /**********************************************************************/
 /* ShowStatus()                                                       */
 /**********************************************************************/
-void PASCAL ShowStatus(			// Show the status window - shape / soft KBD
-						  // alphanumeric ...
-						  HWND hUIWnd, int nShowStatusCmd)
+void PASCAL ShowStatus(HWND hUIWnd, int nShowStatusCmd)
 {
 	ShowWindow(hStatusWnd, nShowStatusCmd);
 	return;
@@ -251,17 +249,6 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 
 		//set IME index in registry
 
-	} else if (PtInRect(&sImeG.rcShapeText, *lpptCursor)) {
-		DWORD dwConvMode;
-
-		if (lpIMC->fdwConversion & 0) {
-			MessageBeep((UINT) - 1);
-		} else if (lpIMC->fdwConversion & IME_CMODE_EUDC) {
-			MessageBeep((UINT) - 1);
-		} else {
-			dwConvMode = lpIMC->fdwConversion ^ IME_CMODE_FULLSHAPE;
-			ImmSetConversionStatus(hIMC, dwConvMode, lpIMC->fdwSentence);
-		}
 	} else if (PtInRect(&sImeG.rcSymbol, *lpptCursor)) {
 		DWORD fdwConversion;
 

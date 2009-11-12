@@ -35,11 +35,6 @@ void PASCAL DestroyUIWindow(	// destroy composition window
 		hCompWnd = NULL;
 	}
 	// candidate window need to be destroyed
-	if (hCandWnd) {
-		DestroyWindow(hCandWnd);
-		hCandWnd = NULL;
-	}
-	// status window need to be destroyed
 	if (hStatusWnd) {
 		DestroyWindow(hStatusWnd);
 		hStatusWnd = NULL;
@@ -107,7 +102,6 @@ void PASCAL ShowUI(				// show the sub windows
 	if (nShowCmd == SW_HIDE) {
 		ShowStatus(hUIWnd, nShowCmd);
 		ShowComp(hUIWnd, nShowCmd);
-		ShowCand(hUIWnd, nShowCmd);
 		return;
 	}
 
@@ -128,18 +122,10 @@ void PASCAL ShowUI(				// show the sub windows
 
 	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
 		BHJDEBUG(" RedrawWindow called");
-		if (hCandWnd) {
-			RedrawWindow(hCandWnd, NULL, NULL,
-						 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
-			
-			SendMessage(hCandWnd, WM_IME_NOTIFY,
-						IMN_SETCANDIDATEPOS, 0x0001);
-		} else {
-			OpenCand(hUIWnd);
-		}
+		//FIXME show cand?
 	} else {
 		BHJDEBUG(" RedrawWindow not called");
-		ShowCand(hUIWnd, SW_HIDE);
+		//hide cand?
 	}
 
 
@@ -229,27 +215,17 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		break;
 	case IMN_OPENCANDIDATE:
 		if (lParam & 0x00000001) {
-			OpenCand(hUIWnd);
+			//fixme: open cand
 		}
 		break;
 	case IMN_CHANGECANDIDATE:
 		if (lParam & 0x00000001) {
-			HDC hDC;
-			HWND hCandWnd;
-
-			hCandWnd = GetCandWnd(hUIWnd);
-			if (!hCandWnd) {
-				return;
-			}
-
-			hDC = GetDC(hCandWnd);
-			PaintCandWindow(hCandWnd, hDC);
-			ReleaseDC(hCandWnd, hDC);
+			//update cand, fixme;
 		}
 		break;
 	case IMN_CLOSECANDIDATE:
 		if (lParam & 0x00000001) {
-			CloseCand(hUIWnd);
+			//fixme close cand
 		}
 		break;
 	case IMN_SETSENTENCEMODE:
@@ -290,14 +266,7 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		break;
 	case IMN_SETCANDIDATEPOS:
 		{
-			HWND hCandWnd;
-
-			hCandWnd = GetCandWnd(hUIWnd);
-			if (!hCandWnd) {
-				return;
-			}
-
-			PostMessage(hCandWnd, WM_IME_NOTIFY, wParam, lParam);
+			//fixme change cand pos
 		}
 		break;
 	case IMN_SETSTATUSWINDOWPOS:
@@ -315,10 +284,6 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		switch (lParam) {
 		case IMN_PRIVATE_UPDATE_STATUS:
 			UpdateStatusWindow(hUIWnd);
-			break;
-		case IMN_PRIVATE_DESTROYCANDWIN:
-			SendMessage(GetCandWnd(hUIWnd), WM_DESTROY, (WPARAM) 0,
-						(LPARAM) 0);
 			break;
 		default:
 			break;
@@ -360,7 +325,6 @@ void PASCAL SetContext(			// the context activated/deactivated
 	if (fOn) {
 
 		ShowComp(hUIWnd, SW_SHOW);
-		ShowCand(hUIWnd, SW_SHOW);
 
 		if (lpIMC->cfCandForm[0].dwIndex != 0) {
 			lpIMC->cfCandForm[0].dwStyle = CFS_DEFAULT;
@@ -392,13 +356,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 			// init fields of hIMC
 			lpIMC->fOpen = TRUE;
 
-			SendMessage(GetCandWnd(hUIWnd), WM_DESTROY, (WPARAM) 0,
-						(LPARAM) 0);
-
-			// set cand window data
 			UI_MODE = BOX_UI;
-			InitCandUIData(GetSystemMetrics(SM_CXBORDER),
-						   GetSystemMetrics(SM_CYBORDER), UI_MODE);
 		}
 
 		SaTC_Trace = 1;
@@ -436,21 +394,8 @@ void PASCAL SetContext(			// the context activated/deactivated
 		}
 
 		if ((lpIMC->cfCompForm.dwStyle & CFS_FORCE_POSITION)) {
-			POINT ptNew;		// new position of UI
-			POINT ptSTWPos;
 
-			ImmGetStatusWindowPos(hIMC, (LPPOINT) & ptSTWPos);
-
-			ptNew.x = ptSTWPos.x + sImeG.xStatusWi + UI_MARGIN;
-			if ((ptSTWPos.x + sImeG.xStatusWi + sImeG.xCandWi +
-				 lpImeL->xCompWi + 2 * UI_MARGIN) >= rcWorkArea.right) {
-				ptNew.x = ptSTWPos.x - lpImeL->xCompWi - UI_MARGIN;
-			}
-			ptNew.x += lpImeL->cxCompBorder;
-			ptNew.y = ptSTWPos.y + lpImeL->cyCompBorder;
-			lpIMC->cfCompForm.ptCurrentPos = ptNew;
-
-			ScreenToClient(lpIMC->hWnd, &lpIMC->cfCompForm.ptCurrentPos);
+			//fixme 
 			lpIMC->cfCompForm.dwStyle = CFS_DEFAULT;
 		}
 	} 

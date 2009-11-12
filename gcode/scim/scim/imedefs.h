@@ -105,12 +105,6 @@
 #define UI_MARGIN               4
 #define COMP_TEXT_Y             17
 
-#define UI_CANDINF              20
-#define UI_CANDBTW              13
-#define UI_CANDBTH              13
-#define UI_CANDICON             16
-#define UI_CANDSTR              300
-
 #define STATUS_DIM_X            20
 #define STATUS_DIM_Y            20
 #define STATUS_NAME_MARGIN      20
@@ -125,8 +119,6 @@
 #define IMN_PRIVATE_UPDATE_STATUS             0x0001
 #define IMN_PRIVATE_COMPOSITION_SIZE          0x0002
 #define IMN_PRIVATE_UPDATE_QUICK_KEY          0x0004
-#define IMN_PRIVATE_DESTROYCANDWIN            0x0006
-#define IMN_PRIVATE_CMENUDESTROYED            0x0007
 
 #define MSG_ALREADY_OPEN                0x000001
 #define MSG_ALREADY_OPEN2               0x000002
@@ -243,30 +235,16 @@ typedef struct _tagImeG {
 // Chinese char width & height
 	int xChiCharWi;
 	int yChiCharHi;
-// candidate list of composition
-	int xCandWi;				// width of candidate list
-	int yCandHi;				// high of candidate list
-	int cxCandBorder;			// border width of candidate list
-	int cyCandBorder;			// border height of candidate list
-	RECT rcCandText;			// text position relative to candidate window
-	RECT rcCandBTD;
-	RECT rcCandBTU;
-	RECT rcCandBTE;
-	RECT rcCandBTH;
-	RECT rcCandInf;
-	RECT rcCandIcon;
-// status window
+
 	int xStatusWi;				// width of status window
 	int yStatusHi;				// high of status window
 	RECT rcStatusText;			// text position relative to status window
 	RECT rcImeIcon;				// ImeIcon position relative to status window
 	RECT rcImeName;				// ImeName position relative to status window
-	RECT rcShapeText;			// shape text relative to status window
 	RECT rcSymbol;				// symbol relative to status window
 	//RECT        rcSKText;       // SK text relative to status window
 	TCHAR szStatusErr[8];
 	int cbStatusErr;
-// candidate string start from 0 or 1
 	int iCandStart;
 // setting of UI
 	int iPara;
@@ -321,7 +299,6 @@ extern UINT uCaps;
 extern DWORD SaTC_Trace;
 extern TCHAR szUIClassName[];
 extern TCHAR szCompClassName[];
-extern TCHAR szCandClassName[];
 extern TCHAR szStatusClassName[];
 extern TCHAR szCMenuClassName[];
 extern TCHAR szHandCursor[];
@@ -335,7 +312,6 @@ extern TCHAR szNoSymbol[];
 extern TCHAR szEnglish[];
 extern TCHAR szCode[];
 extern TCHAR szEudc[];
-extern TCHAR szHalfShape[];
 extern TCHAR szNone[];
 extern TCHAR szDigit[];
 extern BYTE bUpper[];
@@ -393,14 +369,6 @@ void PASCAL UpdateCompWindow(HWND);	// compui.c
 LRESULT CALLBACK CompWndProc(HWND, UINT, WPARAM, LPARAM);	// compui.c
 void PASCAL CompCancel(HIMC, LPINPUTCONTEXT);
 
-HWND PASCAL GetCandWnd(HWND);	// candui.c
-void PASCAL CalcCandPos(HIMC, HWND, LPPOINT);	// candui.c
-void PASCAL ShowCand(HWND, int);	// candui.c
-void PASCAL OpenCand(HWND);		// candui.c
-void PASCAL CloseCand(HWND);	// candui.c
-void PASCAL PaintCandWindow(HWND, HDC);	// candui.c
-LRESULT CALLBACK CandWndProc(HWND, UINT, WPARAM, LPARAM);	// candui.c
-
 HWND PASCAL GetStatusWnd(HWND);	// statusui.c
 LRESULT PASCAL SetStatusWindowPos(HWND);	// statusui.c
 void PASCAL ShowStatus(HWND, int);	// statusui.c
@@ -408,7 +376,6 @@ void PASCAL OpenStatus(HWND);	// statusui.c
 LRESULT CALLBACK StatusWndProc(HWND, UINT, WPARAM, LPARAM);	// statusui.c
 BOOL IsUsedCode(WORD);
 void PASCAL InitStatusUIData(int, int);
-void PASCAL InitCandUIData(int, int, int);
 BOOL UpdateStatusWindow(HWND);
 void PASCAL GenerateImeMessage(HIMC, LPINPUTCONTEXT, DWORD);
 UINT PASCAL TranslateSymbolChar(LPTRANSMSGLIST, WORD, BOOL);
@@ -418,4 +385,4 @@ void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
 // dialog procedure
 BOOL FAR PASCAL SetImeDlgProc(HWND, UINT, WORD, LONG);
 const char* msg_name(UINT msg);
-extern HWND hCandWnd, hCompWnd, hStatusWnd;
+extern HWND hCompWnd, hStatusWnd;
