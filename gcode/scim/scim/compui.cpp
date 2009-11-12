@@ -514,6 +514,7 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 	if (g_comp_str.size()) {
 		wstring wstr = to_wstring(g_comp_str);
 		ExtTextOut(hDC, 10, 1, 0, 0, wstr.c_str(), wstr.size(), NULL);
+		BHJDEBUG(" g_comp_str size is %d, wstr size is %d", g_comp_str.size(), wstr.size());
 	} 
 
 

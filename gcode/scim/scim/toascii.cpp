@@ -383,6 +383,8 @@ ImeToAsciiEx(u32 vk,
 		return to_wm_char(vk, kbd_scan, lpTransBuf, lpbKeyState);
 	}
 
+	ic.add_msg(WM_IME_STARTCOMPOSITION, 0, 0);
+	ic.add_msg(WM_IME_COMPOSITION, 0, 0);
 	int n = 10;
 	int i;
 	for (i=0; i<n; i++) {

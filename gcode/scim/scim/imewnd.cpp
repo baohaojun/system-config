@@ -157,19 +157,25 @@ string g_comp_str;
 
 wstring to_wstring(const string& str)
 {
+	WCHAR tmp;
 	int n = MultiByteToWideChar(CP_UTF8, 
-								MB_PRECOMPOSED,
+								0,
 								str.c_str(),
 								str.size(), 
-								NULL, 
+								&tmp, 
 								0);
+
+	BHJDEBUG(" n is %d, str size %d, lasterror: %x", n, str.size(), GetLastError());
+	if (n == 0) {
+		return L"Hello world";
+	}
 
 	WCHAR* buf = (WCHAR*)malloc(n * sizeof(WCHAR));
 	if (!buf) {
 		return L"";
 	}
 	MultiByteToWideChar(CP_UTF8, 
-						MB_PRECOMPOSED, 
+						0,
 						str.c_str(), 
 						str.size(),
 						buf,
