@@ -18,6 +18,7 @@ SelectOneCand(LPINPUTCONTEXT lpIMC,
 			  LPCOMPOSITIONSTRING lpCompStr,
 			  LPPRIVCONTEXT imcPrivPtr, LPCANDIDATELIST lpCandList)
 {
+	BHJDEBUG(" ");
 	DWORD dwCompStrLen;
 	DWORD dwReadStrLen;
 
