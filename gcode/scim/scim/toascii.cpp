@@ -324,12 +324,12 @@ TranslateSymbolChar(LPTRANSMSGLIST lpTransBuf,
 	return (uRet);				// generate two messages
 }
 
-UINT PASCAL TranslateToAscii(	// translate the key to WM_CHAR
-								// as keyboard driver
-								UINT uVirtKey,
-								UINT uScanCode, LPTRANSMSGLIST lpTransBuf,
-								WORD wCharCode)
+UINT PASCAL TranslateToAscii(
+	UINT uVirtKey,
+	UINT uScanCode, LPTRANSMSGLIST lpTransBuf,
+	WORD wCharCode)
 {
+	BHJDEBUG(" translate to ascii %04x", wCharCode);
 	LPTRANSMSG lpTransMsg;
 
 	lpTransMsg = lpTransBuf->TransMsg;

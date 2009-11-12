@@ -134,7 +134,6 @@
 #define MSG_COMPOSITION                 0x080000
 #define MSG_IMN_COMPOSITIONPOS          0x100000
 #define MSG_IMN_UPDATE_STATUS           0x000400
-#define MSG_GUIDELINE                   0x400000
 #define MSG_IN_IMETOASCIIEX             0x800000
 #define MSG_IMN_DESTROYCAND             0x004000
 #define MSG_BACKSPACE                   0x000800
@@ -159,12 +158,6 @@
 #define IME_STR_SHOWED          0x0001
 #define IME_STR_ERROR           0x0002
 
-// the mode configuration for an IME
-#define MODE_CONFIG_QUICK_KEY           0x0001
-#define MODE_CONFIG_WORD_PREDICT        0x0002
-#define MODE_CONFIG_PREDICT             0x0004
-
-// the virtual key value
 #define VK_OEM_SEMICLN                  0xba	//  ;    :
 #define VK_OEM_EQUAL                    0xbb	//  =    +
 #define VK_OEM_SLASH                    0xbf	//  /    ?

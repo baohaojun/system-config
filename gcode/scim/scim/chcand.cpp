@@ -13,9 +13,6 @@ Module Name:
 #include <imedefs.h>
 
 
-/**********************************************************************/
-/* SelectOneCand()                                                    */
-/**********************************************************************/
 void PASCAL
 SelectOneCand(LPINPUTCONTEXT lpIMC,
 			  LPCOMPOSITIONSTRING lpCompStr,

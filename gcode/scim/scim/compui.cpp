@@ -418,9 +418,6 @@ void PASCAL MoveDefaultCompPosition(	// the default comp position
 	return;
 }
 
-/**********************************************************************/
-/* ShowComp()                                                         */
-/**********************************************************************/
 void PASCAL ShowComp(			// Show the composition window
 						HWND hUIWnd, int nShowCompCmd)
 {

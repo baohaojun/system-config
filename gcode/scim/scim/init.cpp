@@ -299,8 +299,6 @@ BOOL PASCAL InitImeLocalData(HINSTANCE hInstL)
 	lpImeL->ptDefComp.y =
 		sImeG.rcWorkArea.bottom - lpImeL->yCompHi - cyBorder * 2;
 
-	lpImeL->fModeConfig = MODE_CONFIG_QUICK_KEY | MODE_CONFIG_PREDICT;
-
 	return (TRUE);
 
 }

@@ -139,63 +139,6 @@ ImeSetCompositionString(HIMC hIMC,
 	return FALSE;
 }
 
-void PASCAL NotifySelectCand(	// app tell IME that one candidate string is
-								// selected (by mouse or non keyboard action
-								// - for example sound)
-								HIMC hIMC,
-								LPINPUTCONTEXT lpIMC,
-								LPCANDIDATEINFO lpCandInfo, DWORD dwIndex,
-								DWORD dwValue)
-{
-	LPCANDIDATELIST lpCandList;
-	LPCOMPOSITIONSTRING lpCompStr;
-	LPPRIVCONTEXT imcPrivPtr;
-
-	if (!lpCandInfo) {
-		return;
-	}
-
-	if (dwIndex >= lpCandInfo->dwCount) {
-		// wanted candidate list is not created yet!
-		return;
-	} else if (dwIndex == 0) {
-		if (lpIMC->fdwConversion & 0) {
-			return;				// not implemented yet
-		}
-	}
-
-	lpCandList = (LPCANDIDATELIST)
-		((LPBYTE) lpCandInfo + lpCandInfo->dwOffset[0]);
-
-	// the selected value even more than the number of total candidate
-	// strings, it is imposible. should be error of app
-	if (dwValue >= lpCandList->dwCount) {
-		return;
-	}
-	// app select this candidate string
-	lpCandList->dwSelection = dwValue;
-
-	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
-	if (!lpCompStr) {
-		return;
-	}
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
-	if (!lpCompStr) {
-		ImmUnlockIMCC(lpIMC->hCompStr);
-		return;
-	}
-	// translate into message buffer
-	SelectOneCand(lpIMC, lpCompStr, imcPrivPtr, lpCandList);
-
-	// let app generate those messages in its message loop
-	GenerateMessage(hIMC, lpIMC, imcPrivPtr);
-
-	ImmUnlockIMCC(lpIMC->hPrivate);
-	ImmUnlockIMCC(lpIMC->hCompStr);
-
-	return;
-}
-
 BOOL WINAPI
 NotifyIME(HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue)
 {

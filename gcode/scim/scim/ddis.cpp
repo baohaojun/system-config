@@ -471,11 +471,6 @@ BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 			lpIMC->fdwInit |= INIT_CONVERSION;
 		}
 
-		if (lpImeL->fModeConfig & MODE_CONFIG_PREDICT) {
-			lpIMC->fdwSentence = IME_SMODE_PHRASEPREDICT;
-			lpIMC->fdwInit |= INIT_SENTENCE;
-		}
-
 		if (!(lpIMC->fdwInit & INIT_LOGFONT)) {
 			HDC hDC;
 			HGDIOBJ hSysFont;

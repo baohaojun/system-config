@@ -221,9 +221,6 @@ CompEscapeKey(LPINPUTCONTEXT lpIMC,
 	return;
 }
 
-/**********************************************************************/
-/* CompBackSpaceKey()                                                 */
-/**********************************************************************/
 void PASCAL
 CompBackSpaceKey(LPINPUTCONTEXT lpIMC,
 				 LPCOMPOSITIONSTRING lpCompStr, LPPRIVCONTEXT imcPrivPtr)
@@ -278,9 +275,6 @@ CompBackSpaceKey(LPINPUTCONTEXT lpIMC,
 	return;
 }
 
-/**********************************************************************/
-/* CompStrInfo()                                                      */
-/**********************************************************************/
 void PASCAL
 CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
 			LPPRIVCONTEXT imcPrivPtr, LPGUIDELINE lpGuideLine, WORD wCharCode)
@@ -290,15 +284,6 @@ CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
 	//
 	dwCursorPos = lpCompStr->dwCursorPos;
 
-	// dwCrusorPos limit
-	if (dwCursorPos >= lpImeL->nMaxKey) {
-		// exceed the max input key limitation
-		lpGuideLine->dwLevel = GL_LEVEL_ERROR;
-		lpGuideLine->dwIndex = GL_ID_TOOMANYSTROKE;
-
-		imcPrivPtr->fdwImeMsg |= MSG_GUIDELINE;
-		return;
-	}
 	// set MSG_START_COMPOSITION
 	if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_START)) {
 		imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_START_COMPOSITION) &
@@ -463,25 +448,6 @@ void PASCAL CompWord(			// compose the Chinese word(s) according to
 		CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, imcPrivPtr);
 		return;
 	}
-	// GuideLine
-	if (!lpGuideLine) {
-	} else if (lpGuideLine->dwLevel == GL_LEVEL_NOGUIDELINE) {
-		lpGuideLine->dwStrLen = 0;
-	} else {
-		// previous input error cause us trancate some chars
-		if (lpGuideLine->dwLevel == GL_LEVEL_ERROR) {
-			imcPrivPtr->bSeq[lpCompStr->dwCursorPos / 2] = 0;
-			lpCompStr->dwCompReadStrLen = lpCompStr->dwCompStrLen =
-				lpCompStr->dwCursorPos;
-			lpCompStr->dwCompReadAttrLen = lpCompStr->dwCompReadStrLen;
-			lpCompStr->dwCompAttrLen = lpCompStr->dwCompStrLen;
-		}
-		lpGuideLine->dwLevel = GL_LEVEL_NOGUIDELINE;
-		lpGuideLine->dwIndex = GL_ID_UNKNOWN;
-		lpGuideLine->dwStrLen = 0;
-
-		imcPrivPtr->fdwImeMsg |= MSG_GUIDELINE;
-	}
 
 	// backspace key
 	if (wCharCode == TEXT('\b')) {
@@ -492,7 +458,6 @@ void PASCAL CompWord(			// compose the Chinese word(s) according to
 
 	if (wCharCode == TEXT(' ')) {
 	} else {
-		// build up composition string info
 		CompStrInfo(lpCompStr, imcPrivPtr, lpGuideLine, wCharCode);
 	}
 
