@@ -248,14 +248,14 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 		DWORD fdwConversion;
 
 		if (lpIMC->fdwConversion & 0) {
-			MessageBeep((UINT) - 1);
+			MessageBeep((u32) - 1);
 		} else {
 			fdwConversion = lpIMC->fdwConversion ^ IME_CMODE_SYMBOL;
 			ImmSetConversionStatus(hIMC, fdwConversion,
 								   lpIMC->fdwSentence);
 		}
 	} else {
-		MessageBeep((UINT) - 1);
+		MessageBeep((u32) - 1);
 	}
 
 	ImmUnlockIMC(hIMC);
@@ -277,17 +277,17 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	if (!hIMC) {
-		MessageBeep((UINT) - 1);
+		MessageBeep((u32) - 1);
 		return;
 	}
 
 	if (!(lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC))) {
-		MessageBeep((UINT) - 1);
+		MessageBeep((u32) - 1);
 		return;
 	}
 	// get imcPrivPtr
 	if (!(imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate))) {
-		MessageBeep((UINT) - 1);
+		MessageBeep((u32) - 1);
 		return;
 	}
 	//in case the IME index has been changed and the ImeName size is different
@@ -368,7 +368,7 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 /* StatusWndProc()                                                    */
 /**********************************************************************/
 LRESULT CALLBACK
-StatusWndProc(HWND hStatusWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+StatusWndProc(HWND hStatusWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 {
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
 	switch (uMsg) {

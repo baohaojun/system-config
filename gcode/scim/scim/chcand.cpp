@@ -23,12 +23,12 @@ SelectOneCand(LPINPUTCONTEXT lpIMC,
 	DWORD dwReadStrLen;
 
 	if (!lpCompStr) {
-		MessageBeep((UINT) - 1);
+		MessageBeep((u32) - 1);
 		return;
 	}
 
 	if (!imcPrivPtr) {
-		MessageBeep((UINT) - 1);
+		MessageBeep((u32) - 1);
 		return;
 	}
 	// backup the dwCompStrLen, this value decide whether
@@ -96,7 +96,7 @@ void PASCAL CandEscapeKey(LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 
 void PASCAL ChooseCand(			// choose one of candidate strings by
 						  // input char
-						  WORD wCharCode,
+						  WORD kbd_char,
 						  LPINPUTCONTEXT lpIMC,
 						  LPCANDIDATEINFO lpCandInfo, LPPRIVCONTEXT imcPrivPtr)
 {
@@ -104,37 +104,37 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 	LPCANDIDATELIST lpCandList;
 	LPCOMPOSITIONSTRING lpCompStr;
 
-	if (wCharCode == VK_ESCAPE) {	// escape key
+	if (kbd_char == VK_ESCAPE) {	// escape key
 		CandEscapeKey(lpIMC, imcPrivPtr);
 		return;
 	}
 
 	if (!lpCandInfo) {
-		MessageBeep((UINT) - 1);
+		MessageBeep((u32) - 1);
 		return;
 	}
 
 	lpCandList = (LPCANDIDATELIST)
 		((LPBYTE) lpCandInfo + lpCandInfo->dwOffset[0]);
 
-	if (wCharCode == TEXT(' ')) {	// circle selection
+	if (kbd_char == TEXT(' ')) {	// circle selection
 		if ((lpCandList->dwSelection += lpCandList->dwPageSize) >=
 			lpCandList->dwCount) {
 			// no more candidates, restart it!
 			lpCandList->dwSelection = 0;
-			MessageBeep((UINT) - 1);
+			MessageBeep((u32) - 1);
 		}
 		// inform UI, dwSelectedCand is changed
 		imcPrivPtr->fdwImeMsg |= MSG_CHANGE_CANDIDATE;
 		return;
 	}
 
-	if (wCharCode == TEXT('=')) {	// next selection
+	if (kbd_char == TEXT('=')) {	// next selection
 
 		if (lpCandList->dwSelection >=
 			((IME_UNICODE_MAXCAND -
 			  1) / CANDPERPAGE) * lpCandList->dwPageSize) {
-			MessageBeep((UINT) - 1);
+			MessageBeep((u32) - 1);
 			return;
 		}
 		lpCandList->dwSelection += lpCandList->dwPageSize;
@@ -143,9 +143,9 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 		return;
 	}
 
-	if (wCharCode == TEXT('-')) {	// previous selection
+	if (kbd_char == TEXT('-')) {	// previous selection
 		if (lpCandList->dwSelection < lpCandList->dwPageSize) {
-			MessageBeep((UINT) - 1);
+			MessageBeep((u32) - 1);
 			return;
 		}
 		lpCandList->dwSelection -= lpCandList->dwPageSize;
@@ -154,11 +154,11 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 		return;
 	}
 
-	if (wCharCode == 0x23) {	// previous selection
+	if (kbd_char == 0x23) {	// previous selection
 		if (lpCandList->dwSelection >=
 			((IME_UNICODE_MAXCAND -
 			  1) / CANDPERPAGE) * lpCandList->dwPageSize) {
-			MessageBeep((UINT) - 1);
+			MessageBeep((u32) - 1);
 			return;
 		} else {
 			lpCandList->dwSelection =
@@ -171,9 +171,9 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 		return;
 	}
 
-	if (wCharCode == 0x24) {
+	if (kbd_char == 0x24) {
 		if (lpCandList->dwSelection < lpCandList->dwPageSize) {
-			MessageBeep((UINT) - 1);
+			MessageBeep((u32) - 1);
 			return;
 		}
 		lpCandList->dwSelection = 0;
@@ -182,9 +182,9 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 		return;
 	}
 
-	if (wCharCode == TEXT('?')) {	// home selection
+	if (kbd_char == TEXT('?')) {	// home selection
 		if (lpCandList->dwSelection == 0) {
-			MessageBeep((UINT) - 1);	// already home!
+			MessageBeep((u32) - 1);	// already home!
 			return;
 		}
 		lpCandList->dwSelection = 0;
@@ -193,24 +193,24 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 		return;
 	}
 
-	if ((wCharCode >= TEXT('0')) && wCharCode <= TEXT('9')) {
+	if ((kbd_char >= TEXT('0')) && kbd_char <= TEXT('9')) {
 
 		DWORD dwSelCand;
 
-		dwSelCand = wCharCode - TEXT('0') - CAND_START;
-		if (wCharCode == TEXT('0')) {
+		dwSelCand = kbd_char - TEXT('0') - CAND_START;
+		if (kbd_char == TEXT('0')) {
 			dwSelCand = 9;
 		}
 
 		if (dwSelCand >= CANDPERPAGE) {
 			// out of candidate page range
-			MessageBeep((UINT) - 1);
+			MessageBeep((u32) - 1);
 			return;
 		}
 
 		if ((lpCandList->dwSelection + dwSelCand) >= lpCandList->dwCount) {
 			// out of range
-			MessageBeep((UINT) - 1);
+			MessageBeep((u32) - 1);
 			return;
 		}
 

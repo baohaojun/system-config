@@ -28,7 +28,7 @@ extern "C" HWND PASCAL GetCompWnd(HWND hUIWnd)	// UI window
 
 BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
 								  LPPOINT lpptOrg, LPPOINT lpptNearCaret,	// the suggested near caret position
-								  LPRECT lprcInputRect, UINT uEsc)
+								  LPRECT lprcInputRect, u32 uEsc)
 {
 	return false;
 	POINT ptDelta, ptTol;
@@ -78,8 +78,8 @@ BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
 void PASCAL GetNearCaretPosition(	// decide a near caret position according
 									// to the caret position
 									LPPOINT lpptFont,
-									UINT uEsc,
-									UINT uRot,
+									u32 uEsc,
+									u32 uRot,
 									LPPOINT lpptCaret,
 									LPPOINT lpptNearCaret, BOOL fFlags)
 {
@@ -173,7 +173,7 @@ BOOL PASCAL AdjustCompPosition(	// IME adjust position according to
 								  LPPOINT lpptNew)	// new expect position
 {
 	POINT ptNearCaret, ptOldNearCaret;
-	UINT uEsc, uRot;
+	u32 uEsc, uRot;
 	RECT rcUIRect, rcInputRect, rcInterRect;
 	POINT ptFont;
 
@@ -217,8 +217,8 @@ BOOL PASCAL AdjustCompPosition(	// IME adjust position according to
 	// 450 to 1350 index 1
 	// 1350 to 2250 index 2
 	// 2250 to 3150 index 3
-	uEsc = (UINT) ((lpIMC->lfFont.A.lfEscapement + 450) / 900 % 4);
-	uRot = (UINT) ((lpIMC->lfFont.A.lfOrientation + 450) / 900 % 4);
+	uEsc = (u32) ((lpIMC->lfFont.A.lfEscapement + 450) / 900 % 4);
+	uRot = (u32) ((lpIMC->lfFont.A.lfOrientation + 450) / 900 % 4);
 
 	// decide the input rectangle
 	rcInputRect.left = lpptNew->x;
@@ -427,6 +427,7 @@ void PASCAL ShowComp(			// Show the composition window
 
 void PASCAL StartComp(HWND hUIWnd)
 {
+	EnterLeaveDebug(); 
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 
@@ -479,6 +480,8 @@ void PASCAL DestroyCompWindow(	// destroy composition window
 
 void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 {
+	EnterLeaveDebug(); 
+	BHJDEBUG(" g_comp_str is %s", g_comp_str.c_str());
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	LPCOMPOSITIONSTRING lpCompStr;
@@ -503,19 +506,15 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 	GetClientRect(hCompWnd, &rcWnd);
 	debug_rect(rcWnd);
 
-	FillSolidRect(hDC, rcWnd, RGB(255, 255, 255));
+	//FillSolidRect(hDC, rcWnd, RGB(255, 255, 255));
 
 
 	SetBkColor(hDC, RGB(255, 255, 255));
 
-	if (lpCompStr->dwCompStrLen > 0) {
-
-		int n = lpCompStr->dwCompStrLen;
-		LPTSTR dood = (LPTSTR) ((LPBYTE) lpCompStr + lpCompStr->dwCompStrOffset);
-
-		ExtTextOut(hDC, 10, 1, ETO_CLIPPED, &rcWnd, dood, n, NULL);
-	} else {
-	}
+	if (g_comp_str.size()) {
+		wstring wstr = to_wstring(g_comp_str);
+		ExtTextOut(hDC, 10, 1, 0, 0, wstr.c_str(), wstr.size(), NULL);
+	} 
 
 
 	LPCANDIDATEINFO lpCandInfo;
@@ -596,7 +595,7 @@ UpCandW2UnlockIMC:
 }
 
 LRESULT CALLBACK CompWndProc(	// composition window proc
-								HWND hCompWnd, UINT uMsg, WPARAM wParam,
+								HWND hCompWnd, u32 uMsg, WPARAM wParam,
 								LPARAM lParam)
 {
 	//BHJDEBUG("received msg %s", msg_name(uMsg));

@@ -14,27 +14,27 @@ Module Name:
 #include <windows.h>
 #include <immdev.h>
 #include <imedefs.h>
+#include "imewnd.h"
 
-BOOL IsUsedCode(WORD wCharCode)
+BOOL IsUsedCode(WORD kbd_char)
 {
 	WORD wFlg;
 
 	for (wFlg = 0; wFlg < sImeG.wNumCodes; wFlg++)
-		if (wCharCode == sImeG.UsedCodes[wFlg])
+		if (kbd_char == sImeG.UsedCodes[wFlg])
 			break;
 	if (wFlg < sImeG.wNumCodes)
 		return (TRUE);
 	return FALSE;
 }
 
-UINT PASCAL UnicodeProcessKey(	// this key will cause the IME go to what state
-								 WORD wCharCode, LPPRIVCONTEXT imcPrivPtr)
+u32 PASCAL UnicodeProcessKey(WORD kbd_char, LPPRIVCONTEXT imcPrivPtr)
 {
 	if (!imcPrivPtr) {
 		return (CST_INVALID);
 	}
 
-	if (wCharCode == TEXT(' ')) {
+	if (kbd_char == TEXT(' ')) {
 		if (imcPrivPtr->bSeq[0] && imcPrivPtr->bSeq[1]) {
 			return (CST_INPUT);
 		} else if (!imcPrivPtr->bSeq[0]) {
@@ -44,11 +44,11 @@ UINT PASCAL UnicodeProcessKey(	// this key will cause the IME go to what state
 		}
 	}
 
-	if ((wCharCode >= TEXT('0') && wCharCode <= TEXT('9'))
-		|| (wCharCode >= TEXT('a') && wCharCode <= TEXT('f'))
-		|| (wCharCode == TEXT('?'))) {
+	if ((kbd_char >= TEXT('0') && kbd_char <= TEXT('9'))
+		|| (kbd_char >= TEXT('a') && kbd_char <= TEXT('f'))
+		|| (kbd_char == TEXT('?'))) {
 
-		if (wCharCode == TEXT('?')) {
+		if (kbd_char == TEXT('?')) {
 			if (!imcPrivPtr->bSeq[2]) {
 				return (CST_INPUT);
 			} else
@@ -63,10 +63,10 @@ UINT PASCAL UnicodeProcessKey(	// this key will cause the IME go to what state
 
 }
 
-UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
-						  WORD wCharCode,
-						  UINT uVirtKey,
-						  UINT uScanCode,
+u32 PASCAL ProcessKey(			// this key will cause the IME go to what state
+						  WORD kbd_char,
+						  u32 vk,
+						  u32 kbd_scan,
 						  LPBYTE lpbKeyState, LPINPUTCONTEXT lpIMC,
 						  LPPRIVCONTEXT imcPrivPtr)
 {
@@ -81,50 +81,50 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 
 	// filter system key (alt,alt+,ctrl,shift)
 	// and fOpen, IME_CMODE_NOCONVERSION
-	if (uVirtKey == VK_MENU) {	// ALT key
+	if (vk == VK_MENU) {	// ALT key
 		return (CST_INVALID);
-	} else if (uScanCode & KF_ALTDOWN) {	// ALT-xx key
+	} else if (kbd_scan & KF_ALTDOWN) {	// ALT-xx key
 		return (CST_INVALID);
-	} else if (uVirtKey == VK_CONTROL) {	// CTRL key
+	} else if (vk == VK_CONTROL) {	// CTRL key
 		return (CST_INVALID);
-	} else if (uVirtKey == VK_SHIFT) {	// SHIFT key
+	} else if (vk == VK_SHIFT) {	// SHIFT key
 		return (CST_INVALID);
 	} else if (!lpIMC->fOpen) {	// don't compose in 
 		// close status
 		return (CST_INVALID);
 	} else if (lpIMC->fdwConversion & IME_CMODE_NOCONVERSION) {
 		// Caps on/off
-		if (uVirtKey == VK_CAPITAL) {
+		if (vk == VK_CAPITAL) {
 			return (CST_CAPITAL);
 		} else
 			return (CST_INVALID);
 
-	} else if (uVirtKey >= VK_NUMPAD0 && uVirtKey <= VK_DIVIDE) {
+	} else if (vk >= VK_NUMPAD0 && vk <= VK_DIVIDE) {
 		return (CST_INVALID);
 	} else {
 	}
 
 	// Caps on/off
-	if (uVirtKey == VK_CAPITAL) {
+	if (vk == VK_CAPITAL) {
 		return (CST_CAPITAL);
 	}
 	// candidate alaredy open,  <,>,pageup,pagedown,?,ECS,key
 	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-		if (uVirtKey == VK_PRIOR) {	// PageUp
+		if (vk == VK_PRIOR) {	// PageUp
 			return (CST_CHOOSE);
-		} else if (uVirtKey == VK_NEXT) {	// PageDown
+		} else if (vk == VK_NEXT) {	// PageDown
 			return (CST_CHOOSE);
-		} else if (wCharCode == TEXT('-')) {
+		} else if (kbd_char == TEXT('-')) {
 			return (CST_CHOOSE);
-		} else if (wCharCode == TEXT('=')) {
+		} else if (kbd_char == TEXT('=')) {
 			return (CST_CHOOSE);
-		} else if (uVirtKey == VK_HOME) {
+		} else if (vk == VK_HOME) {
 			return (CST_CHOOSE);
-		} else if (uVirtKey == VK_END) {
+		} else if (vk == VK_END) {
 			return (CST_CHOOSE);
-		} else if (uVirtKey == VK_ESCAPE) {	// Esc
+		} else if (vk == VK_ESCAPE) {	// Esc
 			return (CST_CHOOSE);
-		} else if (wCharCode == TEXT(' ')) {
+		} else if (kbd_char == TEXT(' ')) {
 			return (CST_CHOOSE);
 		} else {
 		}
@@ -132,7 +132,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 
 	// candidate alaredy open, shift + num key
 	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-		if ((wCharCode >= TEXT('0')) && wCharCode <= TEXT('9')) {
+		if ((kbd_char >= TEXT('0')) && kbd_char <= TEXT('9')) {
 			return (CST_CHOOSE);
 		}
 	}
@@ -143,21 +143,21 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 
 	if (!(lpIMC->fdwConversion & IME_CMODE_NATIVE)) {
 		// alphanumeric mode
-		if (wCharCode >= TEXT(' ') && wCharCode <= TEXT('~')) {
+		if (kbd_char >= TEXT(' ') && kbd_char <= TEXT('~')) {
 			return (CST_ALPHANUMERIC);
 		} else {
 			return (CST_INVALID);
 		}
-	} else if (wCharCode == TEXT('?')) {
-	} else if (wCharCode == TEXT(' ')) {
-	} else if (wCharCode >= TEXT(' ') && wCharCode <= TEXT('~')) {
-		if (!IsUsedCode(wCharCode) && imcPrivPtr->iImeState != CST_INIT)
+	} else if (kbd_char == TEXT('?')) {
+	} else if (kbd_char == TEXT(' ')) {
+	} else if (kbd_char >= TEXT(' ') && kbd_char <= TEXT('~')) {
+		if (!IsUsedCode(kbd_char) && imcPrivPtr->iImeState != CST_INIT)
 			return (CST_INVALID_INPUT);
 	}
 	// Esc key
-	if (uVirtKey == VK_ESCAPE) {
+	if (vk == VK_ESCAPE) {
 		register LPGUIDELINE lpGuideLine;
-		register UINT iImeState;
+		register u32 iImeState;
 
 		lpGuideLine = (LPGUIDELINE) ImmLockIMCC(lpIMC->hGuideLine);
 		if (!lpGuideLine) {
@@ -179,7 +179,7 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 		return (iImeState);
 	}
 	// BackSpace Key
-	else if (uVirtKey == VK_BACK) {
+	else if (vk == VK_BACK) {
 		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
 			return (CST_INPUT);
 		} else {
@@ -187,17 +187,17 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 		}
 	}
 	// NumPad key and Other Input vailid key
-	else if (uVirtKey >= VK_NUMPAD0 && uVirtKey <= VK_DIVIDE) {
+	else if (vk >= VK_NUMPAD0 && vk <= VK_DIVIDE) {
 		return (CST_ALPHANUMERIC);
-	} else if (wCharCode > TEXT('~')) {
+	} else if (kbd_char > TEXT('~')) {
 		return (CST_INVALID);
-	} else if (wCharCode < TEXT(' ')) {
+	} else if (kbd_char < TEXT(' ')) {
 		return (CST_INVALID);
 	} else if (lpIMC->fdwConversion & IME_CMODE_EUDC) {
 	} else {
 	}
 	if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
-		return (UnicodeProcessKey(wCharCode, imcPrivPtr));
+		return (UnicodeProcessKey(kbd_char, imcPrivPtr));
 	}
 
 	return (CST_INVALID);
@@ -207,9 +207,16 @@ UINT PASCAL ProcessKey(			// this key will cause the IME go to what state
 
 //The IME will do the conversion with ImeToAsciiEx
 BOOL WINAPI ImeProcessKey(HIMC hIMC,
-							 UINT uVirtKey, LPARAM lParam,
+							 u32 vk, LPARAM lParam,
 							 CONST LPBYTE lpbKeyState)
 {
+	BHJDEBUG(" vk is %x, lParam is %x", vk, lParam);
+	char kbd_char = LOBYTE(vk);
+	BHJDEBUG(" kbd_char is %x", kbd_char);
+
+	if (isprint(kbd_char)) {
+		return true;
+	}
 	LPINPUTCONTEXT lpIMC;
 	LPPRIVCONTEXT imcPrivPtr;
 	BYTE szAscii[4];
@@ -233,7 +240,7 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 		return FALSE;
 	}
 
-	nChars = ToAscii(uVirtKey, HIWORD(lParam), lpbKeyState,
+	nChars = ToAscii(vk, HIWORD(lParam), lpbKeyState,
 					 (LPWORD) szAscii, 0);
 
 	if (!nChars) {
@@ -241,11 +248,11 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 	}
 
 	iRet =
-		ProcessKey((WORD) szAscii[0], uVirtKey, HIWORD(lParam),
+		ProcessKey((WORD) szAscii[0], vk, HIWORD(lParam),
 				   lpbKeyState, lpIMC, imcPrivPtr);
 	if (iRet == CST_INVALID) {
 		fRet = FALSE;
-	} else if ((iRet == CST_INPUT) && (uVirtKey == TEXT('\b'))
+	} else if ((iRet == CST_INPUT) && (vk == TEXT('\b'))
 			   && (imcPrivPtr->iImeState == CST_INIT)) {
 		imcPrivPtr->fdwImeMsg = ((imcPrivPtr->fdwImeMsg | MSG_END_COMPOSITION)
 							 & ~(MSG_START_COMPOSITION)) &
@@ -259,7 +266,7 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 
 		GenerateMessage(hIMC, lpIMC, imcPrivPtr);
 		fRet = FALSE;
-	} else if (uVirtKey == VK_CAPITAL) {
+	} else if (vk == VK_CAPITAL) {
 		DWORD fdwConversion;
 		if (lpbKeyState[VK_CAPITAL] & 0x01) {
 			// change to alphanumeric mode
@@ -277,7 +284,7 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 		fRet = FALSE;
 	} else if ((iRet == CST_ALPHANUMERIC)
 			   && !(lpIMC->fdwConversion & IME_CMODE_FULLSHAPE)
-			   && (uVirtKey == VK_SPACE)) {
+			   && (vk == VK_SPACE)) {
 		fRet = FALSE;
 	} else {
 		fRet = TRUE;
@@ -294,11 +301,11 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 /* Return Value:                                                      */
 /*      the number of translated chars                                */
 /**********************************************************************/
-UINT PASCAL
+u32 PASCAL
 TranslateSymbolChar(LPTRANSMSGLIST lpTransBuf,
 					WORD wSymbolCharCode, BOOL SymbolMode)
 {
-	UINT uRet;
+	u32 uRet;
 	LPTRANSMSG lpTransMsg;
 
 	uRet = 0;
@@ -324,281 +331,64 @@ TranslateSymbolChar(LPTRANSMSGLIST lpTransBuf,
 	return (uRet);				// generate two messages
 }
 
-UINT PASCAL TranslateToAscii(
-	UINT uVirtKey,
-	UINT uScanCode, LPTRANSMSGLIST lpTransBuf,
-	WORD wCharCode)
+static u32 to_wm_char(
+	u32 vk,
+	u32 kbd_scan, 
+	LPTRANSMSGLIST lpTransBuf, 
+	PBYTE kbd_state
+	)
 {
-	BHJDEBUG(" translate to ascii %04x", wCharCode);
-	LPTRANSMSG lpTransMsg;
 
-	lpTransMsg = lpTransBuf->TransMsg;
+	BYTE szAscii[4];
 
-	if (wCharCode) {			// one char code
-		lpTransMsg->message = WM_CHAR;
-		lpTransMsg->wParam = wCharCode;
-		lpTransMsg->lParam = (uScanCode << 16) | 1UL;
-		return (1);
-	}
-	// no char code case
-	return (0);
-}
+	int nChars = ToAscii(vk, kbd_scan, kbd_state,
+					 (LPWORD) szAscii, 0);
 
-UINT PASCAL
-TranslateImeMessage(LPTRANSMSGLIST lpTransBuf,
-					LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
-{
-	return true;
-	EnterLeaveDebug(); 
-	UINT uNumMsg;
-	UINT i;
-	BOOL bLockMsgBuf;
-	LPTRANSMSG lpTransMsg;
-
-	uNumMsg = 0;
-	bLockMsgBuf = FALSE;
-
-	for (i = 0; i < 2; i++) {
-		if (imcPrivPtr->fdwImeMsg & MSG_END_COMPOSITION) {
-			if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
-				if (!i) {
-					uNumMsg++;
-				} else {
-					lpTransMsg->message = WM_IME_ENDCOMPOSITION;
-					lpTransMsg->wParam = 0;
-					lpTransMsg->lParam = 0;
-					lpTransMsg++;
-					imcPrivPtr->fdwImeMsg &= ~(MSG_ALREADY_START);
-				}
-			}
-		}
-
-		if (imcPrivPtr->fdwImeMsg & MSG_START_COMPOSITION) {
-			if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_START)) {
-				if (!i) {
-					uNumMsg++;
-				} else {
-					lpTransMsg->message = WM_IME_STARTCOMPOSITION;
-					lpTransMsg->wParam = 0;
-					lpTransMsg->lParam = 0;
-					lpTransMsg++;
-					imcPrivPtr->fdwImeMsg |= MSG_ALREADY_START;
-				}
-			}
-		}
-
-		if (imcPrivPtr->fdwImeMsg & MSG_IMN_COMPOSITIONPOS) {
-			if (!i) {
-				uNumMsg++;
-			} else {
-				lpTransMsg->message = WM_IME_NOTIFY;
-				lpTransMsg->wParam = IMN_SETCOMPOSITIONWINDOW;
-				lpTransMsg->lParam = 0;
-				lpTransMsg++;
-			}
-		}
-
-		if (imcPrivPtr->fdwImeMsg & MSG_COMPOSITION) {
-			if (!i) {
-				uNumMsg++;
-			} else {
-				lpTransMsg->message = WM_IME_COMPOSITION;
-				lpTransMsg->wParam = (DWORD) imcPrivPtr->dwCompChar;
-				lpTransMsg->lParam = (DWORD) imcPrivPtr->fdwGcsFlag;
-				lpTransMsg++;
-			}
-		}
-
-		if (imcPrivPtr->fdwImeMsg & MSG_OPEN_CANDIDATE) {
-			if (!(imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN)) {
-				if (!i) {
-					uNumMsg++;
-				} else {
-					lpTransMsg->message = WM_IME_NOTIFY;
-					lpTransMsg->wParam = IMN_OPENCANDIDATE;
-					lpTransMsg->lParam = 0x0001;
-					lpTransMsg++;
-					imcPrivPtr->fdwImeMsg |= MSG_ALREADY_OPEN;
-				}
-			}
-		}
-
-		if (imcPrivPtr->fdwImeMsg & MSG_CHANGE_CANDIDATE) {
-			if (!i) {
-				uNumMsg++;
-			} else {
-				lpTransMsg->message = WM_IME_NOTIFY;
-				lpTransMsg->wParam = IMN_CHANGECANDIDATE;
-				lpTransMsg->lParam = 0x0001;
-				lpTransMsg++;
-			}
-		}
-
-		if (imcPrivPtr->fdwImeMsg & MSG_IMN_UPDATE_STATUS) {
-			if (!i) {
-				uNumMsg++;
-			} else {
-				lpTransMsg->message = WM_IME_NOTIFY;
-				lpTransMsg->wParam = IMN_PRIVATE;
-				lpTransMsg->lParam = IMN_PRIVATE_UPDATE_STATUS;
-				lpTransMsg++;
-			}
-		}
-
-		if (imcPrivPtr->fdwImeMsg & MSG_IMN_DESTROYCAND) {
-			if (!i) {
-				uNumMsg++;
-			} 
-		}
-
-		if (imcPrivPtr->fdwImeMsg & MSG_BACKSPACE) {
-			if (!i) {
-				uNumMsg++;
-			} else {
-				lpTransMsg->message = WM_CHAR;
-				lpTransMsg->wParam = TEXT('\b');
-				lpTransMsg->lParam = 0x000e;
-				lpTransMsg++;
-			}
-		}
-
-		if (!i) {
-			HIMCC hMem;
-
-			if (!uNumMsg) {
-				return (uNumMsg);
-			}
-
-			if (imcPrivPtr->fdwImeMsg & MSG_IN_IMETOASCIIEX) {
-				UINT uNumMsgLimit;
-
-				uNumMsgLimit = lpTransBuf->uMsgCount;
-
-				if (uNumMsg <= uNumMsgLimit) {
-					lpTransMsg = lpTransBuf->TransMsg;
-					continue;
-				}
-			}
-			// we need to use message buffer
-			if (!lpIMC->hMsgBuf) {
-				lpIMC->hMsgBuf = ImmCreateIMCC(uNumMsg * sizeof(TRANSMSG));
-				lpIMC->dwNumMsgBuf = 0;
-			} else if (hMem = ImmReSizeIMCC(lpIMC->hMsgBuf,
-											(lpIMC->dwNumMsgBuf +
-											 uNumMsg) * sizeof(TRANSMSG)))
-			{
-				if (hMem != lpIMC->hMsgBuf) {
-					ImmDestroyIMCC(lpIMC->hMsgBuf);
-					lpIMC->hMsgBuf = hMem;
-				}
-			} else {
-				return (0);
-			}
-
-			lpTransMsg = (LPTRANSMSG) ImmLockIMCC(lpIMC->hMsgBuf);
-			if (!lpTransMsg) {
-				return (0);
-			}
-
-			lpTransMsg += lpIMC->dwNumMsgBuf;
-
-			bLockMsgBuf = TRUE;
-		} else {
-			if (bLockMsgBuf) {
-				ImmUnlockIMCC(lpIMC->hMsgBuf);
-			}
-		}
+	if (!nChars) {
+		BHJDEBUG(" ToAscii failed");
 	}
 
-	return (uNumMsg);
-}
-
-UINT WINAPI
-ImeToAsciiEx(UINT uVirtKey,
-			 UINT uScanCode,
-			 CONST LPBYTE lpbKeyState,
-			 LPTRANSMSGLIST lpTransBuf, UINT fuState, HIMC hIMC)
-{
-	EnterLeaveDebug(); 
-	WORD wCharCode;
-	LPINPUTCONTEXT lpIMC;
-	LPCOMPOSITIONSTRING lpCompStr;
-	LPPRIVCONTEXT imcPrivPtr;
-	UINT uNumMsg;
-	int iRet;
-
-	wCharCode = HIWORD(uVirtKey);
-	uVirtKey = LOBYTE(uVirtKey);
-
-	// hIMC=NULL?
-	if (!hIMC) {
-		uNumMsg =
-			TranslateToAscii(uVirtKey, uScanCode, lpTransBuf, wCharCode);
-		return (uNumMsg);
-	}
-	// get lpIMC
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-
-	if (!lpIMC) {
-		uNumMsg =
-			TranslateToAscii(uVirtKey, uScanCode, lpTransBuf, wCharCode);
-		return (uNumMsg);
-	}
-
-	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
-
-	if (lpCompStr) {
-		lpCompStr->dwResultStrLen = 0;
-	}
-
-
-	InitCompStr(lpCompStr);
-	
 	LPTRANSMSG lpTransMsg = lpTransBuf->TransMsg;
-	bool block = false;
-	// calculate result string length
-	lpCompStr->dwResultStrLen = 1;
-	HIMCC hMem;
-	uNumMsg = 1;
-	// the result string = the selected candidate;
-	static wchar_t x[2] = {0x9999, 0};
-	lstrcpy((LPTSTR) ((LPBYTE) lpCompStr + lpCompStr->dwResultStrOffset), x);
-	x[0]++;
-	UINT uNumMsgLimit = lpTransBuf->uMsgCount;
-	BHJDEBUG(" uNumMsgLimit is %d", uNumMsgLimit);
-	if (uNumMsgLimit < 1) {
-		if (!lpIMC->hMsgBuf) {
-			lpIMC->hMsgBuf = ImmCreateIMCC(uNumMsg * sizeof(TRANSMSG));
-			lpIMC->dwNumMsgBuf = 0;
-		} else if (hMem = ImmReSizeIMCC(lpIMC->hMsgBuf,
-										(lpIMC->dwNumMsgBuf +
-										 uNumMsg) * sizeof(TRANSMSG)))
-		{
-			if (hMem != lpIMC->hMsgBuf) {
-				ImmDestroyIMCC(lpIMC->hMsgBuf);
-				lpIMC->hMsgBuf = hMem;
-			}
-		} else {
-			return (0);
-		}
+	int i;
+	for (i=0; i<nChars; i++) {
 
-		lpTransMsg = (LPTRANSMSG) ImmLockIMCC(lpIMC->hMsgBuf);
-		if (!lpTransMsg) {
-			return (0);
-		} else {
-			block = true;
-		}
-	} 
+		lpTransMsg[i].message = WM_CHAR;
+		lpTransMsg[i].wParam = szAscii[i];
+		lpTransMsg[i].lParam = (kbd_scan << 16) | 1UL;
+	}
+	return i;
+}
 
-	lpTransMsg->message = WM_IME_COMPOSITION;
-	lpTransMsg->wParam = 0;
-	lpTransMsg->lParam = GCS_RESULTREAD|GCS_RESULT;
-	if (block == true) {
-		ImmUnlockIMCC(lpIMC->hMsgBuf);
+u32 WINAPI
+ImeToAsciiEx(u32 vk,
+			 u32 kbd_scan,
+			 CONST LPBYTE lpbKeyState,
+			 LPTRANSMSGLIST lpTransBuf, u32 fuState, HIMC hIMC)
+{
+	char kbd_char = (char)(vk);
+	BHJDEBUG(" char is %x", vk);
+
+	if (isalpha(kbd_char)) {
+		g_comp_str.push_back((char)tolower(kbd_char));
 	}
 
-	ImmUnlockIMCC(lpIMC->hCompStr);
+	BHJDEBUG(" g_comp_str is %s", g_comp_str.c_str());
+	if (!hIMC) {
+		return to_wm_char(vk, kbd_scan, lpTransBuf, lpbKeyState);
+	}
 
-	imcPrivPtr->fdwGcsFlag = (DWORD) 0;
-	return 1;
+	input_context ic(hIMC, lpTransBuf->TransMsg, lpTransBuf->uMsgCount);
+
+	if (!ic) {
+		return to_wm_char(vk, kbd_scan, lpTransBuf, lpbKeyState);
+	}
+
+	int n = 10;
+	int i;
+	for (i=0; i<n; i++) {
+		if (!ic.add_msg(WM_CHAR, 0x9999+i, 1)) {
+			break;
+		}
+	}
+	return i;
 }

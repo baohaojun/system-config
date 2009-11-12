@@ -79,13 +79,8 @@ void PASCAL StatusWndMsg(		// set the show hide state and
 	return;
 }
 
-/**********************************************************************/
-/* ShowUI()                                                           */
-/**********************************************************************/
-void PASCAL ShowUI(				// show the sub windows
-					  HWND hUIWnd, int nShowCmd)
+void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 {
-	BHJDEBUG(" ShowUI called");
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	LPPRIVCONTEXT imcPrivPtr;
@@ -125,7 +120,6 @@ void PASCAL ShowUI(				// show the sub windows
 		BHJDEBUG(" RedrawWindow called");
 		//FIXME show cand?
 	} else {
-		BHJDEBUG(" RedrawWindow not called");
 		//hide cand?
 	}
 
@@ -169,10 +163,10 @@ void PASCAL ShowGuideLine(HWND hUIWnd)
 
 	if (!lpGuideLine) {
 	} else if (lpGuideLine->dwLevel == GL_LEVEL_ERROR) {
-		MessageBeep((UINT) - 1);
-		MessageBeep((UINT) - 1);
+		MessageBeep((u32) - 1);
+		MessageBeep((u32) - 1);
 	} else if (lpGuideLine->dwLevel == GL_LEVEL_WARNING) {
-		MessageBeep((UINT) - 1);
+		MessageBeep((u32) - 1);
 	} else {
 	}
 
@@ -285,7 +279,6 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 void PASCAL SetContext(			// the context activated/deactivated
 						  HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 {
-	EnterLeaveDebug(); 
 	HIMC hIMC;
 	LPINPUTCONTEXT lpIMC;
 	LPPRIVCONTEXT imcPrivPtr;
@@ -453,7 +446,7 @@ LRESULT PASCAL UIPaint(HWND hUIWnd)
 /* UIWndProc()                                                        */
 /**********************************************************************/
 LRESULT CALLBACK
-UIWndProc(HWND hUIWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 {
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
 	switch (uMsg) {
@@ -578,7 +571,7 @@ void DrawConcaveRect(HDC hDC, int x1, int y1, int x2, int y2)
 
 struct {
 	const char* name;
-	UINT msg;
+	u32 msg;
 } msg_name_map [] = {
 	{"WM_NULL", WM_NULL},
 	{"WM_CREATE", WM_CREATE},
@@ -806,7 +799,7 @@ struct {
 	{NULL, 0}
 };
 
-const char* msg_name(UINT msg)
+const char* msg_name(u32 msg)
 {
 	for (int i=0; msg_name_map[i].name; i++) {
 		if (msg_name_map[i].msg == msg) {

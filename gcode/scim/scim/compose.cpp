@@ -58,23 +58,23 @@ WORD PASCAL CharToHex(TCHAR cChar)
 int PASCAL
 Engine(LPCOMPOSITIONSTRING lpCompStr,
 	   LPCANDIDATELIST lpCandList,
-	   LPPRIVCONTEXT imcPrivPtr, LPINPUTCONTEXT lpIMC, WORD wCharCode)
+	   LPPRIVCONTEXT imcPrivPtr, LPINPUTCONTEXT lpIMC, WORD kbd_char)
 {
 	if (lpCompStr->dwCursorPos < 4
-		&& (imcPrivPtr->bSeq[2] != TEXT('?')) && (wCharCode != TEXT(' '))) {
+		&& (imcPrivPtr->bSeq[2] != TEXT('?')) && (kbd_char != TEXT(' '))) {
 		return (ENGINE_COMP);
 	} else if ((lpCompStr->dwCursorPos == 4)
 			   || (imcPrivPtr->bSeq[2] == TEXT('?'))
-			   || ((wCharCode == TEXT(' '))
+			   || ((kbd_char == TEXT(' '))
 				   && (lpCompStr->dwCursorPos == 2))) {
 
 		if (!lpCompStr) {
-			MessageBeep((UINT) - 1);
+			MessageBeep((u32) - 1);
 			return -1;
 		}
 
 		if (!imcPrivPtr) {
-			MessageBeep((UINT) - 1);
+			MessageBeep((u32) - 1);
 			return -1;
 		}
 
@@ -85,7 +85,7 @@ Engine(LPCOMPOSITIONSTRING lpCompStr,
 
 		memset(ResaultStr, 0, sizeof(ResaultStr));
 
-		if ((imcPrivPtr->bSeq[2] == TEXT('?') || wCharCode == TEXT(' '))) {
+		if ((imcPrivPtr->bSeq[2] == TEXT('?') || kbd_char == TEXT(' '))) {
 			imcPrivPtr->bSeq[2] = TEXT('0');
 			imcPrivPtr->bSeq[3] = TEXT('0');
 			imcPrivPtr->bSeq[4] = TEXT('\0');
@@ -133,7 +133,7 @@ Engine(LPCOMPOSITIONSTRING lpCompStr,
 		}
 
 	}
-	MessageBeep((UINT) - 1);
+	MessageBeep((u32) - 1);
 	return (ENGINE_COMP);
 }
 
@@ -275,7 +275,7 @@ CompBackSpaceKey(LPINPUTCONTEXT lpIMC,
 
 void PASCAL
 CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
-			LPPRIVCONTEXT imcPrivPtr, LPGUIDELINE lpGuideLine, WORD wCharCode)
+			LPPRIVCONTEXT imcPrivPtr, LPGUIDELINE lpGuideLine, WORD kbd_char)
 {
 	register DWORD dwCursorPos;
 
@@ -294,9 +294,9 @@ CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
 	}
 
 
-	imcPrivPtr->bSeq[dwCursorPos] = (BYTE) wCharCode;
+	imcPrivPtr->bSeq[dwCursorPos] = (BYTE) kbd_char;
 
-	imcPrivPtr->dwCompChar = (DWORD) wCharCode;
+	imcPrivPtr->dwCompChar = (DWORD) kbd_char;
 
 	// set reading string for lpCompStr
 	*((LPUNAWORD) ((LPBYTE) lpCompStr + lpCompStr->dwCompReadStrOffset +
@@ -337,14 +337,14 @@ CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
 }
 
 
-UINT PASCAL
+u32 PASCAL
 Finalize(LPINPUTCONTEXT lpIMC,
 		 LPCOMPOSITIONSTRING lpCompStr, LPPRIVCONTEXT imcPrivPtr,
-		 WORD wCharCode)
+		 WORD kbd_char)
 {
 	LPCANDIDATEINFO lpCandInfo;
 	LPCANDIDATELIST lpCandList;
-	UINT fEngine;
+	u32 fEngine;
 
 	if (!lpIMC->hCandInfo) {
 		return (0);
@@ -362,14 +362,14 @@ Finalize(LPINPUTCONTEXT lpIMC,
 	lpCandList->dwSelection = 0;
 
 	// search the IME tables
-	fEngine = Engine(lpCompStr, lpCandList, imcPrivPtr, lpIMC, wCharCode);
+	fEngine = Engine(lpCompStr, lpCandList, imcPrivPtr, lpIMC, kbd_char);
 
 	if (fEngine == ENGINE_COMP) {
 		lpCandInfo->dwCount = 1;
 
-		if (((lpCompStr->dwCursorPos < 3) && (wCharCode != TEXT(' ')))
+		if (((lpCompStr->dwCursorPos < 3) && (kbd_char != TEXT(' ')))
 			|| ((lpCompStr->dwCursorPos == 3)
-				&& (wCharCode != TEXT(' ')) && (wCharCode != TEXT('?')))) {
+				&& (kbd_char != TEXT(' ')) && (kbd_char != TEXT('?')))) {
 
 			ImmUnlockIMCC(lpIMC->hCandInfo);
 			return (fEngine);
@@ -428,7 +428,7 @@ Finalize(LPINPUTCONTEXT lpIMC,
 /**********************************************************************/
 void PASCAL CompWord(			// compose the Chinese word(s) according to
 						// input key
-						WORD wCharCode,
+						WORD kbd_char,
 						LPINPUTCONTEXT lpIMC,
 						LPCOMPOSITIONSTRING lpCompStr,
 						LPPRIVCONTEXT imcPrivPtr, LPGUIDELINE lpGuideLine)
@@ -436,28 +436,28 @@ void PASCAL CompWord(			// compose the Chinese word(s) according to
 
 	// lpComStr=NULL?
 	if (!lpCompStr) {
-		MessageBeep((UINT) - 1);
+		MessageBeep((u32) - 1);
 		return;
 	}
 	// escape key
-	if (wCharCode == VK_ESCAPE) {	// not good to use VK as char, but...
+	if (kbd_char == VK_ESCAPE) {	// not good to use VK as char, but...
 		CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, imcPrivPtr);
 		return;
 	}
 
 	// backspace key
-	if (wCharCode == TEXT('\b')) {
+	if (kbd_char == TEXT('\b')) {
 		CompBackSpaceKey(lpIMC, lpCompStr, imcPrivPtr);
 		return;
 	}
 
 
-	if (wCharCode == TEXT(' ')) {
+	if (kbd_char == TEXT(' ')) {
 	} else {
-		CompStrInfo(lpCompStr, imcPrivPtr, lpGuideLine, wCharCode);
+		CompStrInfo(lpCompStr, imcPrivPtr, lpGuideLine, kbd_char);
 	}
 
-	Finalize(lpIMC, lpCompStr, imcPrivPtr, wCharCode);	// compsition
+	Finalize(lpIMC, lpCompStr, imcPrivPtr, kbd_char);	// compsition
 
 	return;
 }

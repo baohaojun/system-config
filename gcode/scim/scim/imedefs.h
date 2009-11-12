@@ -196,6 +196,10 @@
 typedef DWORD UNALIGNED FAR *LPUNADWORD;
 typedef WORD UNALIGNED FAR *LPUNAWORD;
 
+typedef UINT u32;
+typedef unsigned char u8;
+typedef unsigned short u16;
+
 typedef struct tagImeL {		// local structure, per IME structure
 	HMENU hPropMenu;			// Property Menu
 	HINSTANCE hInst;			// IME DLL instance handle
@@ -256,10 +260,10 @@ typedef struct _tagPRIVCONTEXT {	// IME private data for each context
 	BOOL fdwImeMsg;				// what messages should be generated
 	DWORD dwCompChar;			// wParam of WM_IME_COMPOSITION
 	DWORD fdwGcsFlag;			// lParam for WM_IME_COMPOSITION
-	UINT uSYHFlg;
-	UINT uDYHFlg;
-	UINT uDSMHCount;
-	UINT uDSMHFlg;
+	u32 uSYHFlg;
+	u32 uDYHFlg;
+	u32 uDSMHCount;
+	u32 uDSMHFlg;
 // input data
 	TCHAR bSeq[13];				// sequence code of input char
 	DWORD fdwGB;
@@ -287,7 +291,7 @@ extern IMEG sImeG;
 extern IMEL sImeL;
 extern LPIMEL lpImeL;
 extern HDC ST_UI_hDC;
-extern UINT uCaps;
+extern u32 uCaps;
 extern DWORD SaTC_Trace;
 extern TCHAR szUIClassName[];
 extern TCHAR szCompClassName[];
@@ -320,7 +324,7 @@ extern BYTE VirtKey48Map[];
 extern TCHAR szWarnTitle[];
 extern TCHAR szErrorTitle[];
 
-LRESULT CALLBACK UIWndProc(HWND, UINT, WPARAM, LPARAM);	// ui.c
+LRESULT CALLBACK UIWndProc(HWND, u32, WPARAM, LPARAM);	// ui.c
 LRESULT PASCAL UIPaint(HWND);	// ui.c
 
 // for engine
@@ -329,7 +333,7 @@ WORD PASCAL CharToHex(TCHAR);
 
 void PASCAL AddCodeIntoCand(LPCANDIDATELIST, WORD);	// compose.c
 void PASCAL CompWord(WORD, LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPGUIDELINE);	// compose.c
-UINT PASCAL Finalize(LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, WORD);	// compose.c
+u32 PASCAL Finalize(LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, WORD);	// compose.c
 void PASCAL CompEscapeKey(LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPGUIDELINE, LPPRIVCONTEXT);	// compose.c
 
 void PASCAL SelectOneCand(LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPCANDIDATELIST);	// chcand.c
@@ -343,8 +347,6 @@ BOOL PASCAL ClearCand(LPINPUTCONTEXT);	// ddis.c
 VOID InfoMessage(HANDLE, WORD);	//ddis.c
 VOID FatalMessage(HANDLE, WORD);	//ddis.c
 
-UINT PASCAL TranslateImeMessage(LPTRANSMSGLIST, LPINPUTCONTEXT, LPPRIVCONTEXT);	// toascii.c
-
 void PASCAL GenerateMessage(HIMC, LPINPUTCONTEXT, LPPRIVCONTEXT);	// notify.c
 
 DWORD PASCAL ReadingToPattern(LPCTSTR, BOOL);	// regword.c
@@ -357,22 +359,22 @@ void PASCAL MoveDefaultCompPosition(HWND);	// compui.c
 void PASCAL ShowComp(HWND, int);	// compui.c
 void PASCAL StartComp(HWND);	// compui.c
 void PASCAL EndComp(HWND);		// compui.c
-LRESULT CALLBACK CompWndProc(HWND, UINT, WPARAM, LPARAM);	// compui.c
+LRESULT CALLBACK CompWndProc(HWND, u32, WPARAM, LPARAM);	// compui.c
 void PASCAL CompCancel(HIMC, LPINPUTCONTEXT);
 
 LRESULT PASCAL SetStatusWindowPos(HWND);	// statusui.c
 void PASCAL ShowStatus(HWND, int);	// statusui.c
 void PASCAL OpenStatus(HWND);	// statusui.c
-LRESULT CALLBACK StatusWndProc(HWND, UINT, WPARAM, LPARAM);	// statusui.c
+LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);	// statusui.c
 BOOL IsUsedCode(WORD);
 void PASCAL InitStatusUIData(int, int);
 BOOL UpdateStatusWindow(HWND);
 void PASCAL GenerateImeMessage(HIMC, LPINPUTCONTEXT, DWORD);
-UINT PASCAL TranslateSymbolChar(LPTRANSMSGLIST, WORD, BOOL);
-UINT PASCAL UnicodeProcessKey(WORD wCharCode, LPPRIVCONTEXT imcPrivPtr);
+u32 PASCAL TranslateSymbolChar(LPTRANSMSGLIST, WORD, BOOL);
+u32 PASCAL UnicodeProcessKey(WORD kbd_char, LPPRIVCONTEXT imcPrivPtr);
 WORD PASCAL UnicodeEngine(LPPRIVCONTEXT imcPrivPtr);
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
 // dialog procedure
-BOOL FAR PASCAL SetImeDlgProc(HWND, UINT, WORD, LONG);
-const char* msg_name(UINT msg);
+BOOL FAR PASCAL SetImeDlgProc(HWND, u32, WORD, LONG);
+const char* msg_name(u32 msg);
 extern HWND hCompWnd, hStatusWnd;

@@ -31,7 +31,7 @@ GenerateMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 	} else {
 	}
 
-	lpIMC->dwNumMsgBuf += TranslateImeMessage(NULL, lpIMC, imcPrivPtr);
+	lpIMC->dwNumMsgBuf += 0;
 
 	imcPrivPtr->fdwImeMsg &= (MSG_ALREADY_OPEN | MSG_ALREADY_START);
 	imcPrivPtr->fdwGcsFlag = 0;

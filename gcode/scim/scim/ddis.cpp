@@ -58,7 +58,7 @@ ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 }
 
 BOOL FAR PASCAL ImeSetDlgProc(	// dialog procedure of configuration
-								 HWND hDlg, UINT uMessage, WORD wParam,
+								 HWND hDlg, u32 uMessage, WORD wParam,
 								 LONG lParam)
 {
 	RECT rc;
@@ -134,12 +134,12 @@ BOOL WINAPI ImeConfigure(		// configurate the IME setting
 DWORD WINAPI
 ImeConversionList(HIMC hIMC,
 				  LPCTSTR lpszSrc,
-				  LPCANDIDATELIST lpCandList, DWORD uBufLen, UINT uFlag)
+				  LPCANDIDATELIST lpCandList, DWORD uBufLen, u32 uFlag)
 {
 	return 0;
 }
 
-BOOL WINAPI ImeDestroy(UINT uReserved)
+BOOL WINAPI ImeDestroy(u32 uReserved)
 {
 	if (uReserved) {
 		return FALSE;
@@ -150,7 +150,7 @@ BOOL WINAPI ImeDestroy(UINT uReserved)
 
 //this function is an "escape", meaning that it provides some information that
 //can't be get elsewhere. well, we've got no escape!
-LRESULT WINAPI ImeEscape(HIMC hIMC, UINT uSubFunc, LPVOID lpData)
+LRESULT WINAPI ImeEscape(HIMC hIMC, u32 uSubFunc, LPVOID lpData)
 {
 	return FALSE;
 
@@ -453,10 +453,10 @@ BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 		imcPrivPtr->dwCompChar = (DWORD) 0;
 		imcPrivPtr->fdwGcsFlag = (DWORD) 0;
 
-		imcPrivPtr->uSYHFlg = (UINT) 0;
-		imcPrivPtr->uDYHFlg = (UINT) 0;
-		imcPrivPtr->uDSMHCount = (UINT) 0;
-		imcPrivPtr->uDSMHFlg = (UINT) 0;
+		imcPrivPtr->uSYHFlg = (u32) 0;
+		imcPrivPtr->uDYHFlg = (u32) 0;
+		imcPrivPtr->uDSMHCount = (u32) 0;
+		imcPrivPtr->uDSMHFlg = (u32) 0;
 
 		//imcPrivPtr->fdwSentence = (DWORD)NULL;
 

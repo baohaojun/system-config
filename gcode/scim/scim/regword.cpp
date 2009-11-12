@@ -43,7 +43,7 @@ ImeUnregisterWord(LPCTSTR lpszReading, DWORD dwStyle, LPCTSTR lpszString)
 /* Return Value:                                                      */
 /*      number of styles copied/required                              */
 /**********************************************************************/
-UINT WINAPI ImeGetRegisterWordStyle(UINT nItem, LPSTYLEBUF lpStyleBuf)
+u32 WINAPI ImeGetRegisterWordStyle(u32 nItem, LPSTYLEBUF lpStyleBuf)
 {
 	return FALSE;
 }
@@ -53,7 +53,7 @@ UINT WINAPI ImeGetRegisterWordStyle(UINT nItem, LPSTYLEBUF lpStyleBuf)
 /* Return Value:                                                      */
 /*      the last value return by the callback function                */
 /**********************************************************************/
-UINT WINAPI
+u32 WINAPI
 ImeEnumRegisterWord(REGISTERWORDENUMPROC lpfnRegisterWordEnumProc,
 					LPCTSTR lpszReading,
 					DWORD dwStyle, LPCTSTR lpszString, LPVOID lpData)
