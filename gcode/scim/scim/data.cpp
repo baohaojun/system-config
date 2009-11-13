@@ -10,10 +10,12 @@ HDC ST_UI_hDC;
 u32 uCaps = 0;
 
 HINSTANCE hInst;
-TCHAR szUIClassName[CLASS_LEN];
-TCHAR szCompClassName[CLASS_LEN];
-TCHAR szCandClassName[CLASS_LEN];
-TCHAR szStatusClassName[CLASS_LEN];
+//    IDS_IMEUICLASS          "BhjImeUI"
+//    IDS_IMECOMPCLASS        "BhjImeComp"
+//    IDS_IMESTATUSCLASS      "BhjImeStatus"
+TCHAR szUIClassName[CLASS_LEN] = L"BhjImeUI";
+TCHAR szCompClassName[CLASS_LEN] = L"BhjImeComp";
+TCHAR szStatusClassName[CLASS_LEN] = L"BhjImeStatus";
 TCHAR szCMenuClassName[CLASS_LEN];
 TCHAR szHandCursor[] = TEXT("Hand");
 TCHAR szChinese[] = TEXT("Chinese");

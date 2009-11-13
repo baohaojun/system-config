@@ -79,10 +79,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 
 	hInst = hInstance;
 
-	szUIClassName = L"bhj_ime_ui";
-	szCompClassName = L"bhj_ime_cand";
-	szStatusClassName = L"bhj_ime_status";
-
 	HDC hDC = GetDC(NULL);
 
 	if (!GetTextExtentPoint (hDC, (LPTSTR) szChiChar, 1, &lTextSize)) {
