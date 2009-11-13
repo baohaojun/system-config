@@ -150,14 +150,6 @@ typedef struct _tagImeG {
 	int xChiCharWi;
 	int yChiCharHi;
 
-	int xStatusWi;				// width of status window
-	int yStatusHi;				// high of status window
-	RECT rcStatusText;			// text position relative to status window
-	RECT rcImeIcon;				// ImeIcon position relative to status window
-	RECT rcImeName;				// ImeName position relative to status window
-	RECT rcSymbol;				// symbol relative to status window
-	TCHAR szStatusErr[8];
-
 	int iPara;
 	int iPerp;
 	int iParaTol;

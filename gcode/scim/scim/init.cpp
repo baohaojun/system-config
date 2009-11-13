@@ -20,53 +20,6 @@ void PASCAL InitStatusUIData()
 	if (iContentHi < sImeG.yChiCharHi) {
 		iContentHi = sImeG.yChiCharHi;
 	}
-
-	// right bottom of status
-	sImeG.rcStatusText.left = 0;
-
-	sImeG.rcStatusText.top = 0;
-
-	sImeG.rcStatusText.right =
-		sImeG.rcStatusText.left +
-		strbytelen(szImeName) * sImeG.xChiCharWi / 2 +
-		STATUS_NAME_MARGIN + STATUS_DIM_X * 4;
-
-	sImeG.rcStatusText.bottom = sImeG.rcStatusText.top + iContentHi;
-
-	sImeG.xStatusWi =
-		STATUS_DIM_X * 2 + STATUS_NAME_MARGIN +
-		strbytelen(szImeName) * sImeG.xChiCharWi / 2;
-
-	sImeG.yStatusHi = iContentHi;
-
-	// left bottom of imeicon bar
-	sImeG.rcImeIcon.left = sImeG.rcStatusText.left;
-
-	sImeG.rcImeIcon.top = sImeG.rcStatusText.top;
-
-	sImeG.rcImeIcon.right = sImeG.rcImeIcon.left + STATUS_DIM_X;
-
-	sImeG.rcImeIcon.bottom = sImeG.rcImeIcon.top + iContentHi;
-
-	// left bottom of imename bar
-	sImeG.rcImeName.left = sImeG.rcImeIcon.right;
-
-	sImeG.rcImeName.top = sImeG.rcStatusText.top;
-
-	sImeG.rcImeName.right =
-		sImeG.rcImeName.left +
-		strbytelen(szImeName) * sImeG.xChiCharWi / 2 + STATUS_NAME_MARGIN;
-
-	sImeG.rcImeName.bottom = sImeG.rcImeName.top + iContentHi;
-
-	sImeG.rcSymbol.left = sImeG.rcImeName.right;
-
-	sImeG.rcSymbol.top = sImeG.rcStatusText.top;
-
-	sImeG.rcSymbol.right = sImeG.rcSymbol.left + STATUS_DIM_X;
-
-	sImeG.rcSymbol.bottom = sImeG.rcSymbol.top + iContentHi;
-
 	return;
 
 }

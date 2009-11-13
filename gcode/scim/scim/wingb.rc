@@ -99,26 +99,6 @@ HAND                    CURSOR  DISCARDABLE     "HAND.CUR"
 // Bitmap
 //
 
-ENGLISH                 BITMAP  MOVEABLE PURE   "English.bmp"
-CODE                    BITMAP  MOVEABLE PURE   "code.bmp"
-EUDC                    BITMAP  MOVEABLE PURE   "eudc.bmp"
-SYMBOL                  BITMAP  MOVEABLE PURE   "symbol.bmp"
-NOSYMBOL                BITMAP  MOVEABLE PURE   "nosymbol.bmp"
-NONE                    BITMAP  MOVEABLE PURE   "None.bmp"
-CHINESE                 BITMAP  MOVEABLE PURE   "Chinese.bmp"
-IMENAME                 BITMAP  MOVEABLE PURE   "ImeName.bmp"
-IMEXGBNAME              BITMAP  DISCARDABLE     "imexgbna.bmp"
-CANDSEL                 BITMAP  DISCARDABLE     "candsel.bmp"
-CANDHP                  BITMAP  DISCARDABLE     "candhp.bmp"
-CANDH                   BITMAP  DISCARDABLE     "c.bmp"
-CANDEP                  BITMAP  DISCARDABLE     "candep.bmp"
-CANDE                   BITMAP  DISCARDABLE     "cande.bmp"
-CANDDP                  BITMAP  DISCARDABLE     "canddp.bmp"
-CANDD                   BITMAP  DISCARDABLE     "Candd.bmp"
-CANDUP                  BITMAP  DISCARDABLE     "candup.bmp"
-CANDU                   BITMAP  DISCARDABLE     "candu.bmp"
-CANDINF                 BITMAP  DISCARDABLE     "candinf1.bmp"
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Icon

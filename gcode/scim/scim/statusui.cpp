@@ -34,13 +34,15 @@ void hide_status_wnd()
 void PASCAL OpenStatus(HWND hUIWnd)
 {
 	POINT ptPos;
+#define STATE_WIDTH 70
+#define STATE_HEIGHT 25
 
-	ptPos.x = get_wa_rect().right - sImeG.xStatusWi;
-	ptPos.y = get_wa_rect().bottom - sImeG.yStatusHi;
+	ptPos.x = get_wa_rect().right - STATE_WIDTH;
+	ptPos.y = get_wa_rect().bottom - STATE_HEIGHT;
 
 	if (!g_hStatusWnd) {					// create status window
 		g_hStatusWnd = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
-									  ptPos.x, ptPos.y, sImeG.xStatusWi, sImeG.yStatusHi, 
+									  ptPos.x, ptPos.y, STATE_WIDTH, STATE_HEIGHT,
 									  hUIWnd, (HMENU) NULL, hInst,
 									  NULL);
 	}
