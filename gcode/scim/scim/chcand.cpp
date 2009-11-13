@@ -11,10 +11,11 @@ Module Name:
 #include <windows.h>
 #include <immdev.h>
 #include <imedefs.h>
+#include "imewnd.h"
 
 
 void PASCAL
-SelectOneCand(LPINPUTCONTEXT lpIMC,
+SelectOneCand(input_context& ic,
 			  LPCOMPOSITIONSTRING lpCompStr,
 			  LPPRIVCONTEXT imcPrivPtr, LPCANDIDATELIST lpCandList)
 {
@@ -66,7 +67,7 @@ SelectOneCand(LPINPUTCONTEXT lpIMC,
 	return;
 }
 
-void PASCAL CandEscapeKey(LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
+void PASCAL CandEscapeKey(input_context& ic, LPPRIVCONTEXT imcPrivPtr)
 {
 	LPCOMPOSITIONSTRING lpCompStr;
 	LPGUIDELINE lpGuideLine;
@@ -76,20 +77,20 @@ void PASCAL CandEscapeKey(LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 		return;
 	}
 
-	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
+	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
 	if (!lpCompStr) {
 		return;
 	}
 
-	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(lpIMC->hGuideLine);
+	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(ic->hGuideLine);
 	if (!lpGuideLine) {
 		return;
 	}
 
-	CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, imcPrivPtr);
+	CompEscapeKey(ic, lpCompStr, lpGuideLine, imcPrivPtr);
 
-	ImmUnlockIMCC(lpIMC->hGuideLine);
-	ImmUnlockIMCC(lpIMC->hCompStr);
+	ImmUnlockIMCC(ic->hGuideLine);
+	ImmUnlockIMCC(ic->hCompStr);
 
 	return;
 }
@@ -97,7 +98,7 @@ void PASCAL CandEscapeKey(LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 void PASCAL ChooseCand(			// choose one of candidate strings by
 						  // input char
 						  WORD kbd_char,
-						  LPINPUTCONTEXT lpIMC,
+						  input_context& ic,
 						  LPCANDIDATEINFO lpCandInfo, LPPRIVCONTEXT imcPrivPtr)
 {
 	BHJDEBUG(" ");
@@ -105,7 +106,7 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 	LPCOMPOSITIONSTRING lpCompStr;
 
 	if (kbd_char == VK_ESCAPE) {	// escape key
-		CandEscapeKey(lpIMC, imcPrivPtr);
+		CandEscapeKey(ic, imcPrivPtr);
 		return;
 	}
 
@@ -216,14 +217,14 @@ void PASCAL ChooseCand(			// choose one of candidate strings by
 
 		lpCandList->dwSelection = lpCandList->dwSelection + dwSelCand;
 
-		lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
+		lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
 		if (!lpCompStr) {
 			return;
 		}
 		// translate into translate buffer
-		SelectOneCand(lpIMC, lpCompStr, imcPrivPtr, lpCandList);
+		SelectOneCand(ic, lpCompStr, imcPrivPtr, lpCandList);
 
-		ImmUnlockIMCC(lpIMC->hCompStr);
+		ImmUnlockIMCC(ic->hCompStr);
 
 		return;
 	}

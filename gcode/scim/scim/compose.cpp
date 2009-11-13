@@ -12,6 +12,7 @@ Module Name:
 #include <windows.h>
 #include <immdev.h>
 #include <imedefs.h>
+#include "imewnd.h"
 
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
 
@@ -58,7 +59,7 @@ WORD PASCAL CharToHex(TCHAR cChar)
 int PASCAL
 Engine(LPCOMPOSITIONSTRING lpCompStr,
 	   LPCANDIDATELIST lpCandList,
-	   LPPRIVCONTEXT imcPrivPtr, LPINPUTCONTEXT lpIMC, WORD kbd_char)
+	   LPPRIVCONTEXT imcPrivPtr, input_context& ic, WORD kbd_char)
 {
 	if (lpCompStr->dwCursorPos < 4
 		&& (imcPrivPtr->bSeq[2] != TEXT('?')) && (kbd_char != TEXT(' '))) {
@@ -194,7 +195,7 @@ void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST lpCandList, WORD wCode)
 }
 
 void PASCAL
-CompEscapeKey(LPINPUTCONTEXT lpIMC,
+CompEscapeKey(input_context& ic,
 			  LPCOMPOSITIONSTRING lpCompStr,
 			  LPGUIDELINE lpGuideLine, LPPRIVCONTEXT imcPrivPtr)
 {
@@ -222,7 +223,7 @@ CompEscapeKey(LPINPUTCONTEXT lpIMC,
 }
 
 void PASCAL
-CompBackSpaceKey(LPINPUTCONTEXT lpIMC,
+CompBackSpaceKey(input_context& ic,
 				 LPCOMPOSITIONSTRING lpCompStr, LPPRIVCONTEXT imcPrivPtr)
 {
 
@@ -245,14 +246,14 @@ CompBackSpaceKey(LPINPUTCONTEXT lpIMC,
 
 	if (!lpCompStr->dwCursorPos) {
 		if (imcPrivPtr->fdwImeMsg & (MSG_ALREADY_OPEN)) {
-			ClearCand(lpIMC);
+			ClearCand(ic);
 		}
 
 		if (imcPrivPtr->iImeState != CST_INIT) {
 			imcPrivPtr->iImeState = CST_INIT;
 			lpCompStr->dwCompReadStrLen = lpCompStr->dwCompStrLen =
 				lpCompStr->dwDeltaStart = lpCompStr->dwCursorPos;
-			Finalize(lpIMC, lpCompStr, imcPrivPtr, TEXT('\b'));
+			Finalize(ic, lpCompStr, imcPrivPtr, TEXT('\b'));
 			return;
 		}
 
@@ -268,7 +269,7 @@ CompBackSpaceKey(LPINPUTCONTEXT lpIMC,
 	lpCompStr->dwCompReadStrLen = lpCompStr->dwCompStrLen =
 		lpCompStr->dwDeltaStart = lpCompStr->dwCursorPos;
 
-	Finalize(lpIMC, lpCompStr, imcPrivPtr, TEXT('\b'));
+	Finalize(ic, lpCompStr, imcPrivPtr, TEXT('\b'));
 
 	return;
 }
@@ -338,7 +339,7 @@ CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
 
 
 u32 PASCAL
-Finalize(LPINPUTCONTEXT lpIMC,
+Finalize(input_context& ic,
 		 LPCOMPOSITIONSTRING lpCompStr, LPPRIVCONTEXT imcPrivPtr,
 		 WORD kbd_char)
 {
@@ -346,11 +347,11 @@ Finalize(LPINPUTCONTEXT lpIMC,
 	LPCANDIDATELIST lpCandList;
 	u32 fEngine;
 
-	if (!lpIMC->hCandInfo) {
+	if (!ic->hCandInfo) {
 		return (0);
 	}
 	// get lpCandInfo
-	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->hCandInfo);
+	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(ic->hCandInfo);
 
 	if (!lpCandInfo) {
 		return (0);
@@ -362,7 +363,7 @@ Finalize(LPINPUTCONTEXT lpIMC,
 	lpCandList->dwSelection = 0;
 
 	// search the IME tables
-	fEngine = Engine(lpCompStr, lpCandList, imcPrivPtr, lpIMC, kbd_char);
+	fEngine = Engine(lpCompStr, lpCandList, imcPrivPtr, ic, kbd_char);
 
 	if (fEngine == ENGINE_COMP) {
 		lpCandInfo->dwCount = 1;
@@ -371,7 +372,7 @@ Finalize(LPINPUTCONTEXT lpIMC,
 			|| ((lpCompStr->dwCursorPos == 3)
 				&& (kbd_char != TEXT(' ')) && (kbd_char != TEXT('?')))) {
 
-			ImmUnlockIMCC(lpIMC->hCandInfo);
+			ImmUnlockIMCC(ic->hCandInfo);
 			return (fEngine);
 		}
 
@@ -418,7 +419,7 @@ Finalize(LPINPUTCONTEXT lpIMC,
 		// *(LPDWORD) imcPrivPtr->bSeq = 0;
 	}
 
-	ImmUnlockIMCC(lpIMC->hCandInfo);
+	ImmUnlockIMCC(ic->hCandInfo);
 
 	return fEngine;
 }
@@ -429,7 +430,7 @@ Finalize(LPINPUTCONTEXT lpIMC,
 void PASCAL CompWord(			// compose the Chinese word(s) according to
 						// input key
 						WORD kbd_char,
-						LPINPUTCONTEXT lpIMC,
+						input_context& ic,
 						LPCOMPOSITIONSTRING lpCompStr,
 						LPPRIVCONTEXT imcPrivPtr, LPGUIDELINE lpGuideLine)
 {
@@ -441,13 +442,13 @@ void PASCAL CompWord(			// compose the Chinese word(s) according to
 	}
 	// escape key
 	if (kbd_char == VK_ESCAPE) {	// not good to use VK as char, but...
-		CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, imcPrivPtr);
+		CompEscapeKey(ic, lpCompStr, lpGuideLine, imcPrivPtr);
 		return;
 	}
 
 	// backspace key
 	if (kbd_char == TEXT('\b')) {
-		CompBackSpaceKey(lpIMC, lpCompStr, imcPrivPtr);
+		CompBackSpaceKey(ic, lpCompStr, imcPrivPtr);
 		return;
 	}
 
@@ -457,7 +458,7 @@ void PASCAL CompWord(			// compose the Chinese word(s) according to
 		CompStrInfo(lpCompStr, imcPrivPtr, lpGuideLine, kbd_char);
 	}
 
-	Finalize(lpIMC, lpCompStr, imcPrivPtr, kbd_char);	// compsition
+	Finalize(ic, lpCompStr, imcPrivPtr, kbd_char);	// compsition
 
 	return;
 }

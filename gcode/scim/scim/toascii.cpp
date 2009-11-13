@@ -67,11 +67,11 @@ u32 PASCAL ProcessKey(			// this key will cause the IME go to what state
 						  WORD kbd_char,
 						  u32 vk,
 						  u32 kbd_scan,
-						  LPBYTE lpbKeyState, LPINPUTCONTEXT lpIMC,
+						  LPBYTE lpbKeyState, input_context& ic,
 						  LPPRIVCONTEXT imcPrivPtr)
 {
 
-	if (!lpIMC) {
+	if (!ic) {
 		return (CST_INVALID);
 	}
 
@@ -89,10 +89,10 @@ u32 PASCAL ProcessKey(			// this key will cause the IME go to what state
 		return (CST_INVALID);
 	} else if (vk == VK_SHIFT) {	// SHIFT key
 		return (CST_INVALID);
-	} else if (!lpIMC->fOpen) {	// don't compose in 
+	} else if (!ic->fOpen) {	// don't compose in 
 		// close status
 		return (CST_INVALID);
-	} else if (lpIMC->fdwConversion & IME_CMODE_NOCONVERSION) {
+	} else if (ic->fdwConversion & IME_CMODE_NOCONVERSION) {
 		// Caps on/off
 		if (vk == VK_CAPITAL) {
 			return (CST_CAPITAL);
@@ -137,11 +137,11 @@ u32 PASCAL ProcessKey(			// this key will cause the IME go to what state
 		}
 	}
 	// 0
-	if (lpIMC->fdwConversion & 0) {	//Code Input Mode
+	if (ic->fdwConversion & 0) {	//Code Input Mode
 		return (CST_INVALID);
 	}
 
-	if (!(lpIMC->fdwConversion & IME_CMODE_NATIVE)) {
+	if (!(ic->fdwConversion & IME_CMODE_NATIVE)) {
 		// alphanumeric mode
 		if (kbd_char >= TEXT(' ') && kbd_char <= TEXT('~')) {
 			return (CST_ALPHANUMERIC);
@@ -159,7 +159,7 @@ u32 PASCAL ProcessKey(			// this key will cause the IME go to what state
 		register LPGUIDELINE lpGuideLine;
 		register u32 iImeState;
 
-		lpGuideLine = (LPGUIDELINE) ImmLockIMCC(lpIMC->hGuideLine);
+		lpGuideLine = (LPGUIDELINE) ImmLockIMCC(ic->hGuideLine);
 		if (!lpGuideLine) {
 			return (CST_INVALID);
 		}
@@ -174,7 +174,7 @@ u32 PASCAL ProcessKey(			// this key will cause the IME go to what state
 			iImeState = CST_INPUT;
 		}
 
-		ImmUnlockIMCC(lpIMC->hGuideLine);
+		ImmUnlockIMCC(ic->hGuideLine);
 
 		return (iImeState);
 	}
@@ -193,10 +193,10 @@ u32 PASCAL ProcessKey(			// this key will cause the IME go to what state
 		return (CST_INVALID);
 	} else if (kbd_char < TEXT(' ')) {
 		return (CST_INVALID);
-	} else if (lpIMC->fdwConversion & IME_CMODE_EUDC) {
+	} else if (ic->fdwConversion & IME_CMODE_EUDC) {
 	} else {
 	}
-	if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
+	if (ic->fdwConversion & IME_CMODE_NATIVE) {
 		return (UnicodeProcessKey(kbd_char, imcPrivPtr));
 	}
 
@@ -217,26 +217,23 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 	if (isprint(kbd_char)) {
 		return true;
 	}
-	LPINPUTCONTEXT lpIMC;
+	
 	LPPRIVCONTEXT imcPrivPtr;
 	BYTE szAscii[4];
 	int nChars;
 	int iRet;
 	BOOL fRet;
 
-	// can't compose in NULL hIMC
-	if (!hIMC) {
+
+
+	input_context ic(hIMC);
+	if (!ic) {
 		return FALSE;
 	}
 
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return FALSE;
-	}
-
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
 	if (!imcPrivPtr) {
-		ImmUnlockIMC(hIMC);
+		
 		return FALSE;
 	}
 
@@ -249,7 +246,7 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 
 	iRet =
 		ProcessKey((WORD) szAscii[0], vk, HIWORD(lParam),
-				   lpbKeyState, lpIMC, imcPrivPtr);
+				   lpbKeyState, ic, imcPrivPtr);
 	if (iRet == CST_INVALID) {
 		fRet = FALSE;
 	} else if ((iRet == CST_INPUT) && (vk == TEXT('\b'))
@@ -259,39 +256,39 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 			~(MSG_IN_IMETOASCIIEX);
 
 		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-			ClearCand(lpIMC);
+			ClearCand(ic);
 			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_CLOSE_CANDIDATE) &
 				~(MSG_OPEN_CANDIDATE);
 		}
 
-		GenerateMessage(hIMC, lpIMC, imcPrivPtr);
+		GenerateMessage(hIMC, ic, imcPrivPtr);
 		fRet = FALSE;
 	} else if (vk == VK_CAPITAL) {
 		DWORD fdwConversion;
 		if (lpbKeyState[VK_CAPITAL] & 0x01) {
 			// change to alphanumeric mode
-			fdwConversion = lpIMC->fdwConversion & ~(0 |
+			fdwConversion = ic->fdwConversion & ~(0 |
 													 IME_CMODE_NATIVE |
 													 IME_CMODE_EUDC);
 			uCaps = 1;
 		} else {
 			// change to native mode
-			fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
+			fdwConversion = (ic->fdwConversion | IME_CMODE_NATIVE) &
 				~(0 | IME_CMODE_EUDC);
 			uCaps = 0;
 		}
-		ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
+		ImmSetConversionStatus(hIMC, fdwConversion, ic->fdwSentence);
 		fRet = FALSE;
 	} else if ((iRet == CST_ALPHANUMERIC)
-			   && !(lpIMC->fdwConversion & IME_CMODE_FULLSHAPE)
+			   && !(ic->fdwConversion & IME_CMODE_FULLSHAPE)
 			   && (vk == VK_SPACE)) {
 		fRet = FALSE;
 	} else {
 		fRet = TRUE;
 	}
 
-	ImmUnlockIMCC(lpIMC->hPrivate);
-	ImmUnlockIMC(hIMC);
+	ImmUnlockIMCC(ic->hPrivate);
+	
 
 	return (fRet);
 }

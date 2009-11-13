@@ -54,23 +54,20 @@ LRESULT PASCAL SetStatusWindowPos(HWND hStatusWnd)
 {
 	HWND hUIWnd;
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 	POINTS ptPos;
 
 	hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
+
+	input_context ic(hIMC);
+	if (!ic) {				// Oh! Oh!
 		return (1L);
 	}
 
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {				// Oh! Oh!
-		return (1L);
-	}
-
-	ptPos.x = (short) lpIMC->ptStatusWndPos.x;
-	ptPos.y = (short) lpIMC->ptStatusWndPos.y;
+	ptPos.x = (short) ic->ptStatusWndPos.x;
+	ptPos.y = (short) ic->ptStatusWndPos.y;
 
 	// display boundary adjust
 	AdjustStatusBoundary(&ptPos, hUIWnd);
@@ -81,7 +78,7 @@ LRESULT PASCAL SetStatusWindowPos(HWND hStatusWnd)
 				 SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_NOSIZE |
 				 SWP_NOZORDER);
 
-	ImmUnlockIMC(hIMC);
+	
 
 	return (0L);
 }
@@ -102,7 +99,7 @@ void PASCAL OpenStatus(			// open status window
 						  HWND hUIWnd)
 {
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 	POINT ptPos;
 	int nShowStatusCmd;
 	RECT rcWorkArea;
@@ -110,37 +107,35 @@ void PASCAL OpenStatus(			// open status window
 	rcWorkArea = get_wa_rect();
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
+	input_context ic(hIMC);
+
+	if (!ic) {
 		ptPos.x = rcWorkArea.left;
 		ptPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
 		nShowStatusCmd = SW_HIDE;
-	} else if (lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC)) {
-
-
-		if (lpIMC->ptStatusWndPos.x < rcWorkArea.left) {
-			lpIMC->ptStatusWndPos.x = rcWorkArea.left;
-		} else if (lpIMC->ptStatusWndPos.x + sImeG.xStatusWi >
-				   rcWorkArea.right) {
-			lpIMC->ptStatusWndPos.x = rcWorkArea.right - sImeG.xStatusWi;
-		}
-
-		if (lpIMC->ptStatusWndPos.y < rcWorkArea.top) {
-			lpIMC->ptStatusWndPos.y = rcWorkArea.top;
-		} else if (lpIMC->ptStatusWndPos.y + sImeG.yStatusHi >
-				   rcWorkArea.right) {
-			lpIMC->ptStatusWndPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
-		}
-
-		ptPos.x = lpIMC->ptStatusWndPos.x;
-		ptPos.y = lpIMC->ptStatusWndPos.y;
-
-		ImmUnlockIMC(hIMC);
-		nShowStatusCmd = SW_SHOWNOACTIVATE;
 	} else {
-		ptPos.x = rcWorkArea.left;
-		ptPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
-		nShowStatusCmd = SW_HIDE;
-	}
+
+
+		if (ic->ptStatusWndPos.x < rcWorkArea.left) {
+			ic->ptStatusWndPos.x = rcWorkArea.left;
+		} else if (ic->ptStatusWndPos.x + sImeG.xStatusWi >
+				   rcWorkArea.right) {
+			ic->ptStatusWndPos.x = rcWorkArea.right - sImeG.xStatusWi;
+		}
+
+		if (ic->ptStatusWndPos.y < rcWorkArea.top) {
+			ic->ptStatusWndPos.y = rcWorkArea.top;
+		} else if (ic->ptStatusWndPos.y + sImeG.yStatusHi >
+				   rcWorkArea.right) {
+			ic->ptStatusWndPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
+		}
+
+		ptPos.x = ic->ptStatusWndPos.x;
+		ptPos.y = ic->ptStatusWndPos.y;
+
+		
+		nShowStatusCmd = SW_SHOWNOACTIVATE;
+	} 
 
 	if (hStatusWnd) {
 		SetWindowPos(hStatusWnd, NULL,
@@ -173,31 +168,28 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 {
 	HWND hUIWnd;
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 
 	hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
+
+	input_context ic(hIMC);
+	if (!ic) {
 		return;
 	}
 
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return;
-	}
-
-	if (!lpIMC->fOpen) {
+	if (!ic->fOpen) {
 		ImmSetOpenStatus(hIMC, TRUE);
 	} else if (PtInRect(&sImeG.rcImeIcon, *lpptCursor)) {
 		DWORD fdwConversion;
 
-		if (lpIMC->fdwConversion & (0 | IME_CMODE_EUDC)) {
+		if (ic->fdwConversion & (0 | IME_CMODE_EUDC)) {
 			// change to native mode
-			fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
+			fdwConversion = (ic->fdwConversion | IME_CMODE_NATIVE) &
 				~(0 | IME_CMODE_EUDC);
-		} else if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
+		} else if (ic->fdwConversion & IME_CMODE_NATIVE) {
 			// change to alphanumeric mode
-			fdwConversion = lpIMC->fdwConversion & ~(0 |
+			fdwConversion = ic->fdwConversion & ~(0 |
 													 IME_CMODE_NATIVE |
 													 IME_CMODE_EUDC);
 		} else {
@@ -217,20 +209,20 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 							0x3A, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,
 							0);
 			}
-			fdwConversion = (lpIMC->fdwConversion | IME_CMODE_NATIVE) &
+			fdwConversion = (ic->fdwConversion | IME_CMODE_NATIVE) &
 				~(0 | IME_CMODE_EUDC);
 			// 10.11 add
 			uCaps = 0;
 		}
 
-		ImmSetConversionStatus(hIMC, fdwConversion, lpIMC->fdwSentence);
+		ImmSetConversionStatus(hIMC, fdwConversion, ic->fdwSentence);
 	} else if (PtInRect(&sImeG.rcImeName, *lpptCursor)) {
 		DWORD dwConvMode;
 		int cxBorder, cyBorder;
 
 		//change current IME index
 		dwConvMode =
-			lpIMC->fdwConversion ^ (IME_CMODE_INDEX_FIRST << sImeL.
+			ic->fdwConversion ^ (IME_CMODE_INDEX_FIRST << sImeL.
 									dwRegImeIndex);
 		sImeL.dwRegImeIndex = (sImeL.dwRegImeIndex + 1) % IMEINDEXNUM;
 		szImeName = pszImeName[sImeL.dwRegImeIndex];
@@ -241,25 +233,25 @@ void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
 		cyBorder = GetSystemMetrics(SM_CYBORDER);
 		InitStatusUIData(cxBorder, cyBorder);
 
-		ImmSetConversionStatus(hIMC, dwConvMode, lpIMC->fdwSentence);
+		ImmSetConversionStatus(hIMC, dwConvMode, ic->fdwSentence);
 
 		//set IME index in registry
 
 	} else if (PtInRect(&sImeG.rcSymbol, *lpptCursor)) {
 		DWORD fdwConversion;
 
-		if (lpIMC->fdwConversion & 0) {
+		if (ic->fdwConversion & 0) {
 			MessageBeep((u32) - 1);
 		} else {
-			fdwConversion = lpIMC->fdwConversion ^ IME_CMODE_SYMBOL;
+			fdwConversion = ic->fdwConversion ^ IME_CMODE_SYMBOL;
 			ImmSetConversionStatus(hIMC, fdwConversion,
-								   lpIMC->fdwSentence);
+								   ic->fdwSentence);
 		}
 	} else {
 		MessageBeep((u32) - 1);
 	}
 
-	ImmUnlockIMC(hIMC);
+	
 
 	return;
 }
@@ -268,7 +260,7 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 {
 	HWND hUIWnd;
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 	LPPRIVCONTEXT imcPrivPtr;
 	HBITMAP hImeIconBmp, hSymbolBmp;
 	HBITMAP hOldBmp;
@@ -277,17 +269,14 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
-		MessageBeep((u32) - 1);
-		return;
-	}
 
-	if (!(lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC))) {
+	input_context ic(hIMC);
+	if (!ic) {
 		MessageBeep((u32) - 1);
 		return;
 	}
 	// get imcPrivPtr
-	if (!(imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate))) {
+	if (!(imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate))) {
 		MessageBeep((u32) - 1);
 		return;
 	}
@@ -295,8 +284,8 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	{
 		POINTS ptPos;
 
-		ptPos.x = (short) lpIMC->ptStatusWndPos.x;
-		ptPos.y = (short) lpIMC->ptStatusWndPos.y;
+		ptPos.x = (short) ic->ptStatusWndPos.x;
+		ptPos.y = (short) ic->ptStatusWndPos.y;
 
 		SetWindowPos(hStatusWnd, NULL,
 					 ptPos.x, ptPos.y,
@@ -305,7 +294,7 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	}
 
 
-	if (lpIMC->fOpen) {
+	if (ic->fOpen) {
 		SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
 	} else {
 		SetTextColor(hDC, RGB(0x80, 0x80, 0x80));
@@ -318,17 +307,17 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	// load all bitmap
 	hSymbolBmp = (HBITMAP) NULL;
 
-	if (!lpIMC->fOpen) {
+	if (!ic->fOpen) {
 		hSymbolBmp = LoadBitmap(hInst, szNone);
 		hImeIconBmp = LoadBitmap(hInst, szChinese);
-	} else if (lpIMC->fdwConversion & IME_CMODE_NATIVE) {
+	} else if (ic->fdwConversion & IME_CMODE_NATIVE) {
 		hImeIconBmp = LoadBitmap(hInst, szChinese);
 	} else {
 		hImeIconBmp = LoadBitmap(hInst, szEnglish);
 	}
 
 	if (!hSymbolBmp) {
-		if (lpIMC->fdwConversion & IME_CMODE_SYMBOL) {
+		if (ic->fdwConversion & IME_CMODE_SYMBOL) {
 			hSymbolBmp = LoadBitmap(hInst, szSymbol);
 		} else {
 			hSymbolBmp = LoadBitmap(hInst, szNoSymbol);
@@ -336,8 +325,8 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	}
 
 
-	ImmUnlockIMC(hIMC);
-	ImmUnlockIMCC(lpIMC->hPrivate);
+	
+	ImmUnlockIMCC(ic->hPrivate);
 
 	hMemDC = CreateCompatibleDC(hDC);
 

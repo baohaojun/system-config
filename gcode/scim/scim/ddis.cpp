@@ -19,7 +19,6 @@ Module Name:
 #include <regstr.h>
 #include <winuser.h>
 #include "imewnd.h"
-HWND hCrtDlg = NULL;
 
 BOOL WINAPI
 ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
@@ -58,76 +57,12 @@ ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 	return (TRUE);
 }
 
-BOOL FAR PASCAL ImeSetDlgProc(	// dialog procedure of configuration
-								 HWND hDlg, u32 uMessage, WORD wParam,
-								 LONG lParam)
-{
-	RECT rc;
-	LONG DlgWidth, DlgHeight;
-	static DWORD TempParam;
-
-
-	switch (uMessage) {
-	case WM_INITDIALOG:
-		hCrtDlg = hDlg;
-		// reset position
-		GetWindowRect(hDlg, &rc);
-		DlgWidth = rc.right - rc.left;
-		DlgHeight = rc.bottom - rc.top;
-
-
-		SetWindowPos(hDlg, HWND_TOP,
-					 (int) (get_wa_rect().right - DlgWidth) / 2,
-					 (int) (get_wa_rect().bottom - DlgHeight) / 2,
-					 (int) 0, (int) 0, SWP_NOSIZE);
-
-
-		return (TRUE);			// don't want to set focus to special control
-	case WM_COMMAND:
-		switch (wParam) {
-		case IDOK:
-			EndDialog(hDlg, FALSE);
-			break;
-		case IDCANCEL:
-			EndDialog(hDlg, FALSE);
-			break;
-		default:
-			return FALSE;
-		}
-		return (TRUE);
-	case WM_PAINT:
-		{
-			RECT rc;
-
-			GetClientRect(hDlg, &rc);
-		}
-
-		return FALSE;
-	case WM_CLOSE:
-		EndDialog(hDlg, FALSE);
-		return (TRUE);
-	default:
-		return FALSE;
-	}
-
-	return (TRUE);
-}
-
 BOOL WINAPI ImeConfigure(		// configurate the IME setting
 							HKL hKL,	// hKL of this IME
 							HWND hAppWnd,	// the owner window
 							DWORD dwMode, LPVOID lpData)	// mode of dialog
 {
-	switch (dwMode) {
-	case IME_CONFIG_GENERAL:
-		DialogBox(hInst, TEXT("ImeSet"), (HWND) hAppWnd,
-				  (DLGPROC) ImeSetDlgProc);
-		break;
-	default:
-		return FALSE;
-		break;
-	}
-	return (TRUE);
+	return FALSE;
 }
 
 //This function is used by another IME to query what's the 
@@ -183,13 +118,13 @@ void PASCAL InitCompStr(LPCOMPOSITIONSTRING lpCompStr)
 	return;
 }
 
-BOOL PASCAL ClearCompStr(LPINPUTCONTEXT lpIMC)
+BOOL PASCAL ClearCompStr(input_context& ic)
 {
 	HIMCC hMem;
 	LPCOMPOSITIONSTRING lpCompStr;
 	DWORD dwSize;
 
-	if (!lpIMC) {
+	if (!ic) {
 		return FALSE;
 	}
 
@@ -211,25 +146,25 @@ BOOL PASCAL ClearCompStr(LPINPUTCONTEXT lpIMC)
 		// result string plus NULL terminateor
 		MAXSTRLEN * sizeof(WORD) + sizeof(WORD);
 
-	if (!lpIMC->hCompStr) {
+	if (!ic->hCompStr) {
 		// it maybe free by other IME, init it
-		lpIMC->hCompStr = ImmCreateIMCC(dwSize);
-	} else if (hMem = ImmReSizeIMCC(lpIMC->hCompStr, dwSize)) {
-		lpIMC->hCompStr = hMem;
+		ic->hCompStr = ImmCreateIMCC(dwSize);
+	} else if (hMem = ImmReSizeIMCC(ic->hCompStr, dwSize)) {
+		ic->hCompStr = hMem;
 	} else {
-		ImmDestroyIMCC(lpIMC->hCompStr);
-		lpIMC->hCompStr = ImmCreateIMCC(dwSize);
+		ImmDestroyIMCC(ic->hCompStr);
+		ic->hCompStr = ImmCreateIMCC(dwSize);
 		return FALSE;
 	}
 
-	if (!lpIMC->hCompStr) {
+	if (!ic->hCompStr) {
 		return FALSE;
 	}
 
-	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
+	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
 	if (!lpCompStr) {
-		ImmDestroyIMCC(lpIMC->hCompStr);
-		lpIMC->hCompStr = ImmCreateIMCC(dwSize);
+		ImmDestroyIMCC(ic->hCompStr);
+		ic->hCompStr = ImmCreateIMCC(dwSize);
 		return FALSE;
 	}
 
@@ -275,11 +210,11 @@ BOOL PASCAL ClearCompStr(LPINPUTCONTEXT lpIMC)
 	lpCompStr->dwResultStrOffset = lpCompStr->dwResultClauseOffset +
 		sizeof(DWORD) + sizeof(DWORD);
 
-	GlobalUnlock((HGLOBAL) lpIMC->hCompStr);
+	GlobalUnlock((HGLOBAL) ic->hCompStr);
 	return (TRUE);
 }
 
-BOOL PASCAL ClearCand(LPINPUTCONTEXT lpIMC)
+BOOL PASCAL ClearCand(input_context& ic)
 {
 	HIMCC hMem;
 	LPCANDIDATEINFO lpCandInfo;
@@ -292,29 +227,29 @@ BOOL PASCAL ClearCand(LPINPUTCONTEXT lpIMC)
 		// string plus NULL terminator
 		(sizeof(WORD) + sizeof(WORD)) * (MAXCAND + 1);
 
-	if (!lpIMC) {
+	if (!ic) {
 		return FALSE;
 	}
 
-	if (!lpIMC->hCandInfo) {
+	if (!ic->hCandInfo) {
 		// it maybe free by other IME, init it
-		lpIMC->hCandInfo = ImmCreateIMCC(dwSize);
-	} else if (hMem = ImmReSizeIMCC(lpIMC->hCandInfo, dwSize)) {
-		lpIMC->hCandInfo = hMem;
+		ic->hCandInfo = ImmCreateIMCC(dwSize);
+	} else if (hMem = ImmReSizeIMCC(ic->hCandInfo, dwSize)) {
+		ic->hCandInfo = hMem;
 	} else {
-		ImmDestroyIMCC(lpIMC->hCandInfo);
-		lpIMC->hCandInfo = ImmCreateIMCC(dwSize);
+		ImmDestroyIMCC(ic->hCandInfo);
+		ic->hCandInfo = ImmCreateIMCC(dwSize);
 		return FALSE;
 	}
 
-	if (!lpIMC->hCandInfo) {
+	if (!ic->hCandInfo) {
 		return FALSE;
 	}
 
-	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->hCandInfo);
+	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(ic->hCandInfo);
 	if (!lpCandInfo) {
-		ImmDestroyIMCC(lpIMC->hCandInfo);
-		lpIMC->hCandInfo = ImmCreateIMCC(dwSize);
+		ImmDestroyIMCC(ic->hCandInfo);
+		ic->hCandInfo = ImmCreateIMCC(dwSize);
 		return FALSE;
 	}
 	// ordering of strings are
@@ -333,27 +268,27 @@ BOOL PASCAL ClearCand(LPINPUTCONTEXT lpIMC)
 	lpCandList->dwOffset[0] = sizeof(CANDIDATELIST) +
 		sizeof(DWORD) * (MAXCAND);
 
-	ImmUnlockIMCC(lpIMC->hCandInfo);
+	ImmUnlockIMCC(ic->hCandInfo);
 	return (TRUE);
 }
 
-BOOL PASCAL ClearGuideLine(LPINPUTCONTEXT lpIMC)
+BOOL PASCAL ClearGuideLine(input_context& ic)
 {
 	HIMCC hMem;
 	LPGUIDELINE lpGuideLine;
 	DWORD dwSize = sizeof(GUIDELINE) + sImeG.cbStatusErr;
 
-	if (!lpIMC->hGuideLine) {
+	if (!ic->hGuideLine) {
 		// it maybe free by IME
-		lpIMC->hGuideLine = ImmCreateIMCC(dwSize);
-	} else if (hMem = ImmReSizeIMCC(lpIMC->hGuideLine, dwSize)) {
-		lpIMC->hGuideLine = hMem;
+		ic->hGuideLine = ImmCreateIMCC(dwSize);
+	} else if (hMem = ImmReSizeIMCC(ic->hGuideLine, dwSize)) {
+		ic->hGuideLine = hMem;
 	} else {
-		ImmDestroyIMCC(lpIMC->hGuideLine);
-		lpIMC->hGuideLine = ImmCreateIMCC(dwSize);
+		ImmDestroyIMCC(ic->hGuideLine);
+		ic->hGuideLine = ImmCreateIMCC(dwSize);
 	}
 
-	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(lpIMC->hGuideLine);
+	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(ic->hGuideLine);
 	if (!lpGuideLine) {
 		return FALSE;
 	}
@@ -367,68 +302,68 @@ BOOL PASCAL ClearGuideLine(LPINPUTCONTEXT lpIMC)
 	CopyMemory((LPBYTE) lpGuideLine + lpGuideLine->dwStrOffset,
 			   sImeG.szStatusErr, sImeG.cbStatusErr);
 
-	ImmUnlockIMCC(lpIMC->hGuideLine);
+	ImmUnlockIMCC(ic->hGuideLine);
 
 	return (TRUE);
 }
 
-void PASCAL InitContext(LPINPUTCONTEXT lpIMC)
+void PASCAL InitContext(input_context& ic)
 {
-	if (lpIMC->fdwInit & INIT_STATUSWNDPOS) {
-	} else if (!lpIMC->hWnd) {
+	if (ic->fdwInit & INIT_STATUSWNDPOS) {
+	} else if (!ic->hWnd) {
 	} else {
 
 		POINT ptWnd;
 
 		ptWnd.x = 0;
 		ptWnd.y = 0;
-		ClientToScreen(lpIMC->hWnd, &ptWnd);
+		ClientToScreen(ic->hWnd, &ptWnd);
 
 		if (ptWnd.x < get_wa_rect().left) {
-			lpIMC->ptStatusWndPos.x = get_wa_rect().left;
+			ic->ptStatusWndPos.x = get_wa_rect().left;
 		} else if (ptWnd.x + sImeG.xStatusWi > get_wa_rect().right) {
-			lpIMC->ptStatusWndPos.x =
+			ic->ptStatusWndPos.x =
 				get_wa_rect().right - sImeG.xStatusWi;
 		} else {
-			lpIMC->ptStatusWndPos.x = ptWnd.x;
+			ic->ptStatusWndPos.x = ptWnd.x;
 		}
 
-		lpIMC->ptStatusWndPos.y =
+		ic->ptStatusWndPos.y =
 			get_wa_rect().bottom - sImeG.yStatusHi;
 
-		lpIMC->fdwInit |= INIT_STATUSWNDPOS;
+		ic->fdwInit |= INIT_STATUSWNDPOS;
 	}
 	return;
 }
 
-BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
+BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 {
 	LPPRIVCONTEXT imcPrivPtr;
 
 	if (fSelect) {
 
-		if (!ClearCompStr(lpIMC))
+		if (!ClearCompStr(ic))
 			return FALSE;
 
-		if (!ClearCand(lpIMC))
+		if (!ClearCand(ic))
 			return FALSE;
 
-		ClearGuideLine(lpIMC);
+		ClearGuideLine(ic);
 	}
 
-	if (lpIMC->cfCandForm[0].dwIndex != 0)
-		lpIMC->cfCandForm[0].dwStyle = CFS_DEFAULT;
+	if (ic->cfCandForm[0].dwIndex != 0)
+		ic->cfCandForm[0].dwStyle = CFS_DEFAULT;
 
 	// We add this hack for switching from other IMEs, this IME has a bug.
 	// Before this bug fixed in this IME, it depends on this hack.
-	if (lpIMC->cfCandForm[0].dwStyle == CFS_DEFAULT) {
-		lpIMC->cfCandForm[0].dwIndex = (DWORD) - 1;
+	if (ic->cfCandForm[0].dwStyle == CFS_DEFAULT) {
+		ic->cfCandForm[0].dwIndex = (DWORD) - 1;
 	}
 
-	if (!lpIMC->hPrivate)
+	if (!ic->hPrivate)
 		return FALSE;
 
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
 	if (!imcPrivPtr)
 		return FALSE;
 
@@ -451,27 +386,27 @@ BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 		*(LPDWORD) imcPrivPtr->bSeq = 0;
 
 
-		lpIMC->fOpen = TRUE;
+		ic->fOpen = TRUE;
 
-		if (!(lpIMC->fdwInit & INIT_CONVERSION)) {
-			lpIMC->fdwConversion = IME_CMODE_NATIVE;
-			lpIMC->fdwInit |= INIT_CONVERSION;
+		if (!(ic->fdwInit & INIT_CONVERSION)) {
+			ic->fdwConversion = IME_CMODE_NATIVE;
+			ic->fdwInit |= INIT_CONVERSION;
 		}
 
-		if (!(lpIMC->fdwInit & INIT_LOGFONT)) {
+		if (!(ic->fdwInit & INIT_LOGFONT)) {
 			HDC hDC;
 			HGDIOBJ hSysFont;
 
 			//hSysFont = GetStockObject(SYSTEM_FONT);
 			hDC = GetDC(NULL);
 			hSysFont = GetCurrentObject(hDC, OBJ_FONT);
-			GetObject(hSysFont, sizeof(LOGFONT), &lpIMC->lfFont.A);
+			GetObject(hSysFont, sizeof(LOGFONT), &ic->lfFont.A);
 			ReleaseDC(NULL, hDC);
 
-			lpIMC->fdwInit |= INIT_LOGFONT;
+			ic->fdwInit |= INIT_LOGFONT;
 		}
 
-		InitContext(lpIMC);
+		InitContext(ic);
 
 		//
 		// Set Caps status
@@ -484,17 +419,17 @@ BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 				//
 				// Change to alphanumeric mode.
 				//
-				fdwConversion = lpIMC->fdwConversion & ~IME_CMODE_NATIVE;
+				fdwConversion = ic->fdwConversion & ~IME_CMODE_NATIVE;
 			} else {
 
 				//
 				// Change to native mode
 				//
-				fdwConversion = lpIMC->fdwConversion | IME_CMODE_NATIVE;
+				fdwConversion = ic->fdwConversion | IME_CMODE_NATIVE;
 			}
 
 			ImmSetConversionStatus(hIMC, fdwConversion,
-								   lpIMC->fdwSentence);
+								   ic->fdwSentence);
 		}
 
 	} else {
@@ -504,14 +439,9 @@ BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 			DestroyMenu(lpImeL->hPropMenu);
 			lpImeL->hPropMenu = NULL;
 		}
-
-		if (hCrtDlg) {
-			SendMessage(hCrtDlg, WM_CLOSE, (WPARAM) NULL, (LPARAM) NULL);
-			hCrtDlg = NULL;
-		}
 	}
 
-	ImmUnlockIMCC(lpIMC->hPrivate);
+	ImmUnlockIMCC(ic->hPrivate);
 
 	return (TRUE);
 }
@@ -523,22 +453,18 @@ BOOL PASCAL Select(HIMC hIMC, LPINPUTCONTEXT lpIMC, BOOL fSelect)
 /**********************************************************************/
 BOOL WINAPI ImeSelect(HIMC hIMC, BOOL fSelect)
 {
-	LPINPUTCONTEXT lpIMC;
+	
 	BOOL fRet;
 
 
-	if (!hIMC) {
+	input_context ic(hIMC);
+	if (!ic) {
 		return FALSE;
 	}
 
-	lpIMC = ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return FALSE;
-	}
+	fRet = Select(hIMC, ic, fSelect);
 
-	fRet = Select(hIMC, lpIMC, fSelect);
-
-	ImmUnlockIMC(hIMC);
+	
 
 	return (fRet);
 }
@@ -551,18 +477,14 @@ BOOL WINAPI ImeSelect(HIMC hIMC, BOOL fSelect)
 BOOL WINAPI ImeSetActiveContext(HIMC hIMC, BOOL fOn)
 {
 	if (!fOn) {
-	} else if (!hIMC) {
-	} else {
-		LPINPUTCONTEXT lpIMC;
-
-		lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-		if (!lpIMC) {
+		input_context ic(hIMC);
+		if (!ic) {
 			return FALSE;
 		}
 
-		InitContext(lpIMC);
+		InitContext(ic);
 
-		ImmUnlockIMC(hIMC);
+		
 	}
 
 	return (TRUE);

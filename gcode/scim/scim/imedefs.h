@@ -6,6 +6,8 @@
  *                                               *
  *************************************************/
 
+#ifndef __IMEDEFS_H__
+#define __IMEDEFS_H__
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
 #define NATIVE_CHARSET          GB2312_CHARSET
@@ -327,36 +329,38 @@ LRESULT PASCAL UIPaint(HWND);	// ui.c
 WORD PASCAL AsciiToGB(LPPRIVCONTEXT);
 WORD PASCAL CharToHex(TCHAR);
 
-void PASCAL AddCodeIntoCand(LPCANDIDATELIST, WORD);	// compose.c
-void PASCAL CompWord(WORD, LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPGUIDELINE);	// compose.c
-u32 PASCAL Finalize(LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, WORD);	// compose.c
-void PASCAL CompEscapeKey(LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPGUIDELINE, LPPRIVCONTEXT);	// compose.c
 
-void PASCAL SelectOneCand(LPINPUTCONTEXT, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPCANDIDATELIST);	// chcand.c
-void PASCAL CandEscapeKey(LPINPUTCONTEXT, LPPRIVCONTEXT);	// chcand.c
-void PASCAL ChooseCand(WORD, LPINPUTCONTEXT, LPCANDIDATEINFO, LPPRIVCONTEXT);	// chcand.c
+class input_context;
+void PASCAL AddCodeIntoCand(LPCANDIDATELIST, WORD);	// compose.c
+void PASCAL CompWord(WORD, input_context&, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPGUIDELINE);	// compose.c
+u32 PASCAL Finalize(input_context&, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, WORD);	// compose.c
+void PASCAL CompEscapeKey(input_context&, LPCOMPOSITIONSTRING, LPGUIDELINE, LPPRIVCONTEXT);	// compose.c
+
+void PASCAL SelectOneCand(input_context&, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPCANDIDATELIST);	// chcand.c
+void PASCAL CandEscapeKey(input_context&, LPPRIVCONTEXT);	// chcand.c
+void PASCAL ChooseCand(WORD, input_context&, LPCANDIDATEINFO, LPPRIVCONTEXT);	// chcand.c
 
 void PASCAL SetPrivateFileSetting(LPBYTE, int, DWORD, LPCTSTR);	// ddis.c
 
 void PASCAL InitCompStr(LPCOMPOSITIONSTRING);	// ddis.c
-BOOL PASCAL ClearCand(LPINPUTCONTEXT);	// ddis.c
+BOOL PASCAL ClearCand(input_context&);	// ddis.c
 VOID InfoMessage(HANDLE, WORD);	//ddis.c
 VOID FatalMessage(HANDLE, WORD);	//ddis.c
 
-void PASCAL GenerateMessage(HIMC, LPINPUTCONTEXT, LPPRIVCONTEXT);	// notify.c
+void PASCAL GenerateMessage(HIMC, input_context&, LPPRIVCONTEXT);	// notify.c
 
 DWORD PASCAL ReadingToPattern(LPCTSTR, BOOL);	// regword.c
 void PASCAL ReadingToSequence(LPCTSTR, LPBYTE, BOOL);	// regword.c
 
 extern "C" HWND PASCAL GetCompWnd(HWND);	// compui.c
-void PASCAL SetCompPosition(HWND, HIMC, LPINPUTCONTEXT);	// compui.c
+void PASCAL SetCompPosition(HWND, HIMC, input_context&);	// compui.c
 void PASCAL SetCompWindow(HWND);	// compui.c
 void PASCAL MoveDefaultCompPosition(HWND);	// compui.c
 void PASCAL ShowComp(HWND, int);	// compui.c
 void PASCAL StartComp(HWND);	// compui.c
 void PASCAL EndComp(HWND);		// compui.c
 LRESULT CALLBACK CompWndProc(HWND, u32, WPARAM, LPARAM);	// compui.c
-void PASCAL CompCancel(HIMC, LPINPUTCONTEXT);
+void PASCAL CompCancel(HIMC, input_context&);
 
 LRESULT PASCAL SetStatusWindowPos(HWND);	// statusui.c
 void PASCAL ShowStatus(HWND, int);	// statusui.c
@@ -365,12 +369,12 @@ LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);	// statusui.c
 BOOL IsUsedCode(WORD);
 void PASCAL InitStatusUIData(int, int);
 BOOL UpdateStatusWindow(HWND);
-void PASCAL GenerateImeMessage(HIMC, LPINPUTCONTEXT, DWORD);
+void PASCAL GenerateImeMessage(HIMC, input_context&, DWORD);
 u32 PASCAL TranslateSymbolChar(LPTRANSMSGLIST, WORD, BOOL);
 u32 PASCAL UnicodeProcessKey(WORD kbd_char, LPPRIVCONTEXT imcPrivPtr);
 WORD PASCAL UnicodeEngine(LPPRIVCONTEXT imcPrivPtr);
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
 // dialog procedure
-BOOL FAR PASCAL SetImeDlgProc(HWND, u32, WORD, LONG);
 const char* msg_name(u32 msg);
 extern HWND hCompWnd, hStatusWnd;
+#endif

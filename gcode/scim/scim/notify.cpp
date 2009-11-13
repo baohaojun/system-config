@@ -16,13 +16,12 @@ Module Name:
 #include <imedefs.h>
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
+#include "imewnd.h"
 
 void PASCAL
-GenerateMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
+GenerateMessage(HIMC hIMC, input_context& ic, LPPRIVCONTEXT imcPrivPtr)
 {
-	if (!hIMC) {
-		return;
-	} else if (!lpIMC) {
+	if (!ic) {
 		return;
 	} else if (!imcPrivPtr) {
 		return;
@@ -31,7 +30,7 @@ GenerateMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 	} else {
 	}
 
-	lpIMC->dwNumMsgBuf += 0;
+	ic->dwNumMsgBuf += 0;
 
 	imcPrivPtr->fdwImeMsg &= (MSG_ALREADY_OPEN | MSG_ALREADY_START);
 	imcPrivPtr->fdwGcsFlag = 0;
@@ -41,11 +40,11 @@ GenerateMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, LPPRIVCONTEXT imcPrivPtr)
 }
 
 void PASCAL
-GenerateImeMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, DWORD fdwImeMsg)
+GenerateImeMessage(HIMC hIMC, input_context& ic, DWORD fdwImeMsg)
 {
 	LPPRIVCONTEXT imcPrivPtr;
 
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
 	if (!imcPrivPtr) {
 		return;
 	}
@@ -64,22 +63,22 @@ GenerateImeMessage(HIMC hIMC, LPINPUTCONTEXT lpIMC, DWORD fdwImeMsg)
 		imcPrivPtr->fdwImeMsg &= ~(MSG_END_COMPOSITION);
 	}
 
-	GenerateMessage(hIMC, lpIMC, imcPrivPtr);
+	GenerateMessage(hIMC, ic, imcPrivPtr);
 
-	ImmUnlockIMCC(lpIMC->hPrivate);
+	ImmUnlockIMCC(ic->hPrivate);
 
 	return;
 }
 
-void PASCAL CompCancel(HIMC hIMC, LPINPUTCONTEXT lpIMC)
+void PASCAL CompCancel(HIMC hIMC, input_context& ic)
 {
 	LPPRIVCONTEXT imcPrivPtr;
 
-	if (!lpIMC->hPrivate) {
+	if (!ic->hPrivate) {
 		return;
 	}
 
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
 	if (!imcPrivPtr) {
 		return;
 	}
@@ -87,41 +86,41 @@ void PASCAL CompCancel(HIMC hIMC, LPINPUTCONTEXT lpIMC)
 	imcPrivPtr->fdwGcsFlag = (DWORD) 0;
 
 	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-		CandEscapeKey(lpIMC, imcPrivPtr);
+		CandEscapeKey(ic, imcPrivPtr);
 	} else if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
 		LPCOMPOSITIONSTRING lpCompStr;
 		LPGUIDELINE lpGuideLine;
 
-		lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
+		lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
 		if (!lpCompStr) {
-			ImmUnlockIMCC(lpIMC->hCompStr);
-			ImmUnlockIMCC(lpIMC->hPrivate);
+			ImmUnlockIMCC(ic->hCompStr);
+			ImmUnlockIMCC(ic->hPrivate);
 			return;
 		}
 
-		lpGuideLine = (LPGUIDELINE) ImmLockIMCC(lpIMC->hGuideLine);
+		lpGuideLine = (LPGUIDELINE) ImmLockIMCC(ic->hGuideLine);
 		if (!lpGuideLine) {
-			ImmUnlockIMCC(lpIMC->hGuideLine);
-			ImmUnlockIMCC(lpIMC->hPrivate);
+			ImmUnlockIMCC(ic->hGuideLine);
+			ImmUnlockIMCC(ic->hPrivate);
 			return;
 		}
 
-		CompEscapeKey(lpIMC, lpCompStr, lpGuideLine, imcPrivPtr);
+		CompEscapeKey(ic, lpCompStr, lpGuideLine, imcPrivPtr);
 
 		if (lpGuideLine) {
-			ImmUnlockIMCC(lpIMC->hGuideLine);
+			ImmUnlockIMCC(ic->hGuideLine);
 		}
 		if (lpCompStr) {
-			ImmUnlockIMCC(lpIMC->hCompStr);
+			ImmUnlockIMCC(ic->hCompStr);
 		}
 	} else {
-		ImmUnlockIMCC(lpIMC->hPrivate);
+		ImmUnlockIMCC(ic->hPrivate);
 		return;
 	}
 
-	GenerateMessage(hIMC, lpIMC, imcPrivPtr);
+	GenerateMessage(hIMC, ic, imcPrivPtr);
 
-	ImmUnlockIMCC(lpIMC->hPrivate);
+	ImmUnlockIMCC(ic->hPrivate);
 
 	return;
 }

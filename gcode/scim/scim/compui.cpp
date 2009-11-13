@@ -158,7 +158,7 @@ void PASCAL GetNearCaretPosition(LPPOINT lpptFont,
 }
 
 BOOL PASCAL AdjustCompPosition(
-	LPINPUTCONTEXT lpIMC, 
+	input_context& ic, 
 	LPPOINT lpptOrg, 
 	LPPOINT lpptNew)
 {
@@ -168,22 +168,22 @@ BOOL PASCAL AdjustCompPosition(
 	POINT ptFont;
 
 	// we need to adjust according to font attribute
-	if (lpIMC->lfFont.A.lfWidth > 0) {
-		ptFont.x = lpIMC->lfFont.A.lfWidth * 2;
-	} else if (lpIMC->lfFont.A.lfWidth < 0) {
-		ptFont.x = -lpIMC->lfFont.A.lfWidth * 2;
-	} else if (lpIMC->lfFont.A.lfHeight > 0) {
-		ptFont.x = lpIMC->lfFont.A.lfHeight;
-	} else if (lpIMC->lfFont.A.lfHeight < 0) {
-		ptFont.x = -lpIMC->lfFont.A.lfHeight;
+	if (ic->lfFont.A.lfWidth > 0) {
+		ptFont.x = ic->lfFont.A.lfWidth * 2;
+	} else if (ic->lfFont.A.lfWidth < 0) {
+		ptFont.x = -ic->lfFont.A.lfWidth * 2;
+	} else if (ic->lfFont.A.lfHeight > 0) {
+		ptFont.x = ic->lfFont.A.lfHeight;
+	} else if (ic->lfFont.A.lfHeight < 0) {
+		ptFont.x = -ic->lfFont.A.lfHeight;
 	} else {
 		ptFont.x = lpImeL->yCompHi;
 	}
 
-	if (lpIMC->lfFont.A.lfHeight > 0) {
-		ptFont.y = lpIMC->lfFont.A.lfHeight;
-	} else if (lpIMC->lfFont.A.lfHeight < 0) {
-		ptFont.y = -lpIMC->lfFont.A.lfHeight;
+	if (ic->lfFont.A.lfHeight > 0) {
+		ptFont.y = ic->lfFont.A.lfHeight;
+	} else if (ic->lfFont.A.lfHeight < 0) {
+		ptFont.y = -ic->lfFont.A.lfHeight;
 	} else {
 		ptFont.y = ptFont.x;
 	}
@@ -207,8 +207,8 @@ BOOL PASCAL AdjustCompPosition(
 	// 450 to 1350 index 1
 	// 1350 to 2250 index 2
 	// 2250 to 3150 index 3
-	uEsc = (u32) ((lpIMC->lfFont.A.lfEscapement + 450) / 900 % 4);
-	uRot = (u32) ((lpIMC->lfFont.A.lfOrientation + 450) / 900 % 4);
+	uEsc = (u32) ((ic->lfFont.A.lfEscapement + 450) / 900 % 4);
+	uRot = (u32) ((ic->lfFont.A.lfOrientation + 450) / 900 % 4);
 
 	// decide the input rectangle
 	rcInputRect.left = lpptNew->x;
@@ -289,7 +289,7 @@ BOOL PASCAL AdjustCompPosition(
 
 void PASCAL SetCompPosition(	// set the composition window position
 							   HWND hCompWnd, HIMC hIMC,
-							   LPINPUTCONTEXT lpIMC)
+							   input_context& ic)
 {
 	return;
 	POINT ptWnd;
@@ -306,12 +306,12 @@ void PASCAL SetCompPosition(	// set the composition window position
 	ptWnd.x -= lpImeL->cxCompBorder;
 	ptWnd.y -= lpImeL->cyCompBorder;
 
-	if (lpIMC->cfCompForm.dwStyle & CFS_FORCE_POSITION) {
+	if (ic->cfCompForm.dwStyle & CFS_FORCE_POSITION) {
 		POINT ptNew;			// new position of UI
 
-		ptNew.x = lpIMC->cfCompForm.ptCurrentPos.x;
-		ptNew.y = lpIMC->cfCompForm.ptCurrentPos.y;
-		ClientToScreen((HWND) lpIMC->hWnd, &ptNew);
+		ptNew.x = ic->cfCompForm.ptCurrentPos.x;
+		ptNew.y = ic->cfCompForm.ptCurrentPos.y;
+		ClientToScreen((HWND) ic->hWnd, &ptNew);
 		if (ptWnd.x != ptNew.x) {
 			ptWnd.x = ptNew.x;
 			fChange = TRUE;
@@ -324,13 +324,13 @@ void PASCAL SetCompPosition(	// set the composition window position
 			ptWnd.x -= lpImeL->cxCompBorder;
 			ptWnd.y -= lpImeL->cyCompBorder;
 		}
-	} else if (lpIMC->cfCompForm.dwStyle != CFS_DEFAULT) {
+	} else if (ic->cfCompForm.dwStyle != CFS_DEFAULT) {
 		POINT ptNew;			// new position of UI
 
-		ptNew.x = lpIMC->cfCompForm.ptCurrentPos.x;
-		ptNew.y = lpIMC->cfCompForm.ptCurrentPos.y;
-		ClientToScreen((HWND) lpIMC->hWnd, &ptNew);
-		fChange = AdjustCompPosition(lpIMC, &ptWnd, &ptNew);
+		ptNew.x = ic->cfCompForm.ptCurrentPos.x;
+		ptNew.y = ic->cfCompForm.ptCurrentPos.y;
+		ClientToScreen((HWND) ic->hWnd, &ptNew);
+		fChange = AdjustCompPosition(ic, &ptWnd, &ptNew);
 	} else {
 		//fixme
 		BHJDEBUG(" fixme");
@@ -349,7 +349,7 @@ void PASCAL SetCompPosition(	// set the composition window position
 void PASCAL SetCompWindow(HWND hCompWnd)
 {
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 	HWND hUIWnd;
 
 	hUIWnd = GetWindow(hCompWnd, GW_OWNER);
@@ -357,18 +357,14 @@ void PASCAL SetCompWindow(HWND hCompWnd)
 		return;
 	}
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
+	input_context ic(hIMC);
+	if (!ic) {
 		return;
 	}
 
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return;
-	}
+	SetCompPosition(hCompWnd, hIMC, ic);
 
-	SetCompPosition(hCompWnd, hIMC, lpIMC);
-
-	ImmUnlockIMC(hIMC);
+	
 
 	return;
 }
@@ -381,29 +377,26 @@ void PASCAL MoveDefaultCompPosition(	// the default comp position
 									   HWND hUIWnd)
 {
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 	HWND hCompWnd;
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
-		return;
-	}
 
 	hCompWnd = GetCompWnd(hUIWnd);
 	if (!hCompWnd) {
 		return;
 	}
 
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
+	input_context ic(hIMC);
+	if (!ic) {
 		return;
 	}
 
-	if (!(lpIMC->cfCompForm.dwStyle & CFS_FORCE_POSITION)) {
-		SetCompPosition(hCompWnd, hIMC, lpIMC);
+	if (!(ic->cfCompForm.dwStyle & CFS_FORCE_POSITION)) {
+		SetCompPosition(hCompWnd, hIMC, ic);
 	}
 
-	ImmUnlockIMC(hIMC);
+	
 
 	return;
 }
@@ -419,15 +412,12 @@ void PASCAL StartComp(HWND hUIWnd)
 {
 	EnterLeaveDebug(); 
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
-		return;
-	}
 
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
+	input_context ic(hIMC);
+	if (!ic) {
 		return;
 	}
 
@@ -439,9 +429,9 @@ void PASCAL StartComp(HWND hUIWnd)
 						   (HMENU) NULL, hInst, NULL);
 	}
 
-	SetCompPosition(hCompWnd, hIMC, lpIMC);
+	SetCompPosition(hCompWnd, hIMC, ic);
 
-	ImmUnlockIMC(hIMC);
+	
 
 	ShowComp(hUIWnd, SW_SHOWNOACTIVATE);
 
@@ -473,20 +463,17 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 	EnterLeaveDebug(); 
 	BHJDEBUG(" g_comp_str is %s", g_comp_str.c_str());
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 	LPCOMPOSITIONSTRING lpCompStr;
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
+
+	input_context ic(hIMC);
+	if (!ic) {
 		return;
 	}
 
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return;
-	}
-
-	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(lpIMC->hCompStr);
+	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
 	if (!lpCompStr) {
 		return;
 	}
@@ -516,21 +503,21 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 	int i;
 
 
-	if (!lpIMC->hCandInfo) {
+	if (!ic->hCandInfo) {
 		BHJDEBUG(" no candinfo");
 		goto UpCandW2UnlockIMC;
 	}
 
-	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(lpIMC->hCandInfo);
+	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(ic->hCandInfo);
 	if (!lpCandInfo) {
 		goto UpCandW2UnlockIMC;
 	}
 
-	if (!lpIMC->hPrivate) {
+	if (!ic->hPrivate) {
 		goto UpCandW2UnlockCandInfo;
 	}
 
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
 	if (!imcPrivPtr) {
 		goto UpCandW2UnlockCandInfo;
 	}
@@ -574,14 +561,14 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 
 
 
-	ImmUnlockIMCC(lpIMC->hPrivate);
+	ImmUnlockIMCC(ic->hPrivate);
 UpCandW2UnlockCandInfo:
-	ImmUnlockIMCC(lpIMC->hCandInfo);
+	ImmUnlockIMCC(ic->hCandInfo);
 UpCandW2UnlockIMC:
 
-	ImmUnlockIMCC(lpIMC->hGuideLine);
-	ImmUnlockIMCC(lpIMC->hCompStr);
-	ImmUnlockIMC(hIMC);
+	ImmUnlockIMCC(ic->hGuideLine);
+	ImmUnlockIMCC(ic->hCompStr);
+	
 	return;
 }
 

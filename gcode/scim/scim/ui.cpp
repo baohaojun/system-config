@@ -82,16 +82,15 @@ void PASCAL StatusWndMsg(		// set the show hide state and
 void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 {
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 	LPPRIVCONTEXT imcPrivPtr;
-
-	if (nShowCmd == SW_HIDE) {
-	} else if (!(hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC))) {
+	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
+	input_context ic(hIMC);
+	
+	if (!ic) {
 		nShowCmd = SW_HIDE;
-	} else if (!(lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC))) {
-		nShowCmd = SW_HIDE;
-	} else if (!(imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate))) {
-		ImmUnlockIMC(hIMC);
+	} else if (!(imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate))) {
+		
 		nShowCmd = SW_HIDE;
 	} 
 
@@ -134,8 +133,8 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 				IMN_SETSTATUSWINDOWPOS, 0);
 	ShowStatus(hUIWnd, nShowCmd);
 
-	ImmUnlockIMCC(lpIMC->hPrivate);
-	ImmUnlockIMC(hIMC);
+	ImmUnlockIMCC(ic->hPrivate);
+	
 
 	return;
 }
@@ -146,20 +145,17 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 void PASCAL ShowGuideLine(HWND hUIWnd)
 {
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 	LPGUIDELINE lpGuideLine;
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
+
+	input_context ic(hIMC);
+	if (!ic) {
 		return;
 	}
 
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
-		return;
-	}
-
-	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(lpIMC->hGuideLine);
+	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(ic->hGuideLine);
 
 	if (!lpGuideLine) {
 	} else if (lpGuideLine->dwLevel == GL_LEVEL_ERROR) {
@@ -170,8 +166,8 @@ void PASCAL ShowGuideLine(HWND hUIWnd)
 	} else {
 	}
 
-	ImmUnlockIMCC(lpIMC->hGuideLine);
-	ImmUnlockIMC(hIMC);
+	ImmUnlockIMCC(ic->hGuideLine);
+	
 
 	return;
 }
@@ -277,7 +273,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 						  HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 {
 	HIMC hIMC;
-	LPINPUTCONTEXT lpIMC;
+	
 	LPPRIVCONTEXT imcPrivPtr;
 	RECT rcWorkArea;
 
@@ -286,12 +282,8 @@ void PASCAL SetContext(			// the context activated/deactivated
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 
-	if (!hIMC) {
-		return;
-	}
-	// get lpIMC
-	lpIMC = (LPINPUTCONTEXT) ImmLockIMC(hIMC);
-	if (!lpIMC) {
+	input_context ic(hIMC);
+	if (!ic) {
 		return;
 	}
 
@@ -299,14 +291,14 @@ void PASCAL SetContext(			// the context activated/deactivated
 
 		ShowComp(hUIWnd, SW_SHOW);
 
-		if (lpIMC->cfCandForm[0].dwIndex != 0) {
-			lpIMC->cfCandForm[0].dwStyle = CFS_DEFAULT;
+		if (ic->cfCandForm[0].dwIndex != 0) {
+			ic->cfCandForm[0].dwStyle = CFS_DEFAULT;
 		}
 
 
-		imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(lpIMC->hPrivate);
+		imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
 		if (!imcPrivPtr) {
-			ImmUnlockIMC(hIMC);
+			
 			return;
 		}
 
@@ -315,7 +307,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 			int UI_MODE;
 
 			imcPrivPtr->iImeState = CST_INIT;
-			CompCancel(hIMC, lpIMC);
+			CompCancel(hIMC, ic);
 
 			// init fields of hPrivate
 			imcPrivPtr->fdwImeMsg = (DWORD) 0;
@@ -327,7 +319,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 			// change compwnd size
 
 			// init fields of hIMC
-			lpIMC->fOpen = TRUE;
+			ic->fOpen = TRUE;
 
 			UI_MODE = BOX_UI;
 		}
@@ -347,35 +339,35 @@ void PASCAL SetContext(			// the context activated/deactivated
 				uCaps = 1;
 				// change to alphanumeric mode
 				fdwConversion =
-					lpIMC->
+					ic->
 					fdwConversion & ~(0 | IME_CMODE_NATIVE
 									  | IME_CMODE_EUDC);
 			} else {
 				// change to native mode
 				if (uCaps == 1) {
 					fdwConversion =
-						(lpIMC->
+						(ic->
 						 fdwConversion | IME_CMODE_NATIVE) &
 						~(0 | IME_CMODE_EUDC);
 				} else {
-					fdwConversion = lpIMC->fdwConversion;
+					fdwConversion = ic->fdwConversion;
 				}
 				uCaps = 0;
 			}
 			ImmSetConversionStatus(hIMC, fdwConversion,
-								   lpIMC->fdwSentence);
+								   ic->fdwSentence);
 		}
 
-		if ((lpIMC->cfCompForm.dwStyle & CFS_FORCE_POSITION)) {
+		if ((ic->cfCompForm.dwStyle & CFS_FORCE_POSITION)) {
 
 			//fixme 
-			lpIMC->cfCompForm.dwStyle = CFS_DEFAULT;
+			ic->cfCompForm.dwStyle = CFS_DEFAULT;
 		}
 	} 
 
 	UIPaint(hUIWnd);
 
-	ImmUnlockIMC(hIMC);
+	
 	return;
 }
 
