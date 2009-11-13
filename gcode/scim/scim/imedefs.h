@@ -348,7 +348,6 @@ void PASCAL StartComp(HWND);	// compui.c
 void PASCAL EndComp();
 LRESULT CALLBACK CompWndProc(HWND, u32, WPARAM, LPARAM);	// compui.c
 
-LRESULT PASCAL SetStatusWindowPos(HWND);	// statusui.c
 void PASCAL ShowStatus(HWND, int);	// statusui.c
 void PASCAL OpenStatus(HWND);	// statusui.c
 LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);

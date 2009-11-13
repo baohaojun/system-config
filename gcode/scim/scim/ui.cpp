@@ -127,7 +127,6 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	RedrawWindow(hStatusWnd, NULL, NULL,
 				 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 
-	SetStatusWindowPos(hUIWnd);
 	ShowStatus(hUIWnd, nShowCmd);
 
 	ImmUnlockIMCC(ic->hPrivate);
@@ -229,7 +228,6 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case IMN_SETSTATUSWINDOWPOS:
-		SetStatusWindowPos(hUIWnd);
 		break;
 	case IMN_GUIDELINE:
 		ShowGuideLine(hUIWnd);
@@ -251,11 +249,7 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 	return;
 }
 
-/**********************************************************************/
-/* SetContext()                                                       */
-/**********************************************************************/
-void PASCAL SetContext(			// the context activated/deactivated
-						  HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
+void PASCAL SetContext(HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 {
 	HIMC hIMC;
 	

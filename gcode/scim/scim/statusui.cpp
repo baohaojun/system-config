@@ -21,64 +21,6 @@
 #include "imewnd.h"
 extern HWND hCrtDlg;
 
-/**********************************************************************/
-/* AdjustStatusBoundary()                                             */
-/**********************************************************************/
-void PASCAL AdjustStatusBoundary(LPPOINTS lppt, HWND hUIWnd)
-{
-
-	RECT rcWorkArea;
-
-	rcWorkArea = get_wa_rect();
-
-	// display boundary check
-	if (lppt->x < rcWorkArea.left) {
-		lppt->x = (short) rcWorkArea.left;
-	} else if (lppt->x + sImeG.xStatusWi > rcWorkArea.right) {
-		lppt->x = (short) (rcWorkArea.right - sImeG.xStatusWi);
-	}
-
-	if (lppt->y < rcWorkArea.top) {
-		lppt->y = (short) rcWorkArea.top;
-	} else if (lppt->y + sImeG.yStatusHi > rcWorkArea.bottom) {
-		lppt->y = (short) (rcWorkArea.bottom - sImeG.yStatusHi);
-	}
-
-	return;
-}
-
-LRESULT PASCAL SetStatusWindowPos(HWND hUIWnd)
-{
-	HIMC hIMC;
-	
-	POINTS ptPos;
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-
-	input_context ic(hIMC);
-	if (!ic) {
-		return (1L);
-	}
-
-	ptPos.x = (short) ic->ptStatusWndPos.x;
-	ptPos.y = (short) ic->ptStatusWndPos.y;
-
-	// display boundary adjust
-	AdjustStatusBoundary(&ptPos, hUIWnd);
-
-	SetWindowPos(hStatusWnd, NULL,
-				 ptPos.x, ptPos.y,
-				 0, 0,
-				 SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_NOSIZE |
-				 SWP_NOZORDER);
-
-	
-
-	return (0L);
-}
-
-/**********************************************************************/
-/* ShowStatus()                                                       */
-/**********************************************************************/
 void PASCAL ShowStatus(HWND hUIWnd, int nShowStatusCmd)
 {
 	ShowWindow(hStatusWnd, nShowStatusCmd);
@@ -98,49 +40,27 @@ void PASCAL OpenStatus(HWND hUIWnd)
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	input_context ic(hIMC);
 
+	ptPos.x = rcWorkArea.right - sImeG.xStatusWi;
+	ptPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
+
 	if (!ic) {
-		ptPos.x = rcWorkArea.left;
-		ptPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
 		nShowStatusCmd = SW_HIDE;
 	} else {
-
-
-		if (ic->ptStatusWndPos.x < rcWorkArea.left) {
-			ic->ptStatusWndPos.x = rcWorkArea.left;
-		} else if (ic->ptStatusWndPos.x + sImeG.xStatusWi >
-				   rcWorkArea.right) {
-			ic->ptStatusWndPos.x = rcWorkArea.right - sImeG.xStatusWi;
-		}
-
-		if (ic->ptStatusWndPos.y < rcWorkArea.top) {
-			ic->ptStatusWndPos.y = rcWorkArea.top;
-		} else if (ic->ptStatusWndPos.y + sImeG.yStatusHi >
-				   rcWorkArea.right) {
-			ic->ptStatusWndPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
-		}
-
-		ptPos.x = ic->ptStatusWndPos.x;
-		ptPos.y = ic->ptStatusWndPos.y;
-
-		
 		nShowStatusCmd = SW_SHOWNOACTIVATE;
 	} 
 
 	if (hStatusWnd) {
-		SetWindowPos(hStatusWnd, NULL,
-					 ptPos.x, ptPos.y,
-					 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
+		SetWindowPos(hStatusWnd, NULL, 
+					 ptPos.x, ptPos.y, 0, 0,
+					 SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
 	} else {					// create status window
-		hStatusWnd =
-			CreateWindowEx(0,
-						   szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
+		hStatusWnd = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
 						   ptPos.x, ptPos.y, sImeG.xStatusWi,
 						   sImeG.yStatusHi, hUIWnd, (HMENU) NULL, hInst,
 						   NULL);
 	}
 
-
-	if (hIMC) {
+	if (ic) {
 		ShowStatus(hUIWnd, SW_SHOWNOACTIVATE);
 	}
 
