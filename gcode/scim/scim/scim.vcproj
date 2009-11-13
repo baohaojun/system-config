@@ -213,10 +213,6 @@
 				RelativePath=".\ui.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\uisubs.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

@@ -7,23 +7,6 @@
 
 int strbytelen(LPTSTR);
 
-void PASCAL InitStatusUIData()
-{
-
-	int iContentHi;
-
-	// iContentHi is to get the maximum value of predefined STATUS_DIM_Y and
-    //int cxBorder, int cyBorder	// a real Chinese character's height in the current HDC.
-
-	iContentHi = STATUS_DIM_Y;
-
-	if (iContentHi < sImeG.yChiCharHi) {
-		iContentHi = sImeG.yChiCharHi;
-	}
-	return;
-
-}
-
 void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 {
 	TCHAR szChiChar[4] = {0x9999, 0};
@@ -42,8 +25,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 	sImeG.xChiCharWi = lTextSize.cx;
 	sImeG.yChiCharHi = lTextSize.cy;
 
-
-	InitStatusUIData();
 
 	sImeG.iPara = 0;
 	sImeG.iPerp = sImeG.yChiCharHi;

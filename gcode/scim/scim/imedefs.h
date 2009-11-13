@@ -55,69 +55,6 @@
 #define ENGINE_MULTISEL         5
 #define ENGINE_ESC              6
 
-#define CANDPERPAGE             9
-
-#define MAXSTRLEN               40
-#define MAXCAND                 256
-#define IME_MAXCAND             94
-#define IME_XGB_MAXCAND         190
-#define IME_UNICODE_MAXCAND     256
-#define MAXCODE                 12
-
-// set ime character
-#define SIC_INIT                0
-#define SIC_SAVE2               1
-#define SIC_READY               2
-#define SIC_MODIFY              3
-#define SIC_SAVE1               4
-
-#define BOX_UI                  0
-
-
-#define IMEINDEXNUM             1
-
-#define IME_CMODE_INDEX_FIRST   0x1000
-
-#define INDEX_UNICODE           0
-
-
-// border for UI
-#define UI_MARGIN               4
-#define COMP_TEXT_Y             17
-
-#define STATUS_DIM_X            20
-#define STATUS_DIM_Y            20
-#define STATUS_NAME_MARGIN      20
-
-#define uCandHome               0
-#define uCandUp                 1
-#define uCandDown               2
-#define uCandEnd                3
-#define CandGBinfoLen           64
-// the flag for an opened or start UI
-#define IMN_PRIVATE_COMPOSITION_SIZE          0x0002
-#define IMN_PRIVATE_UPDATE_QUICK_KEY          0x0004
-
-#define MSG_ALREADY_OPEN                0x000001
-#define MSG_ALREADY_OPEN2               0x000002
-#define MSG_OPEN_CANDIDATE              0x000010
-#define MSG_OPEN_CANDIDATE2             0x000020
-#define MSG_CLOSE_CANDIDATE             0x000100
-#define MSG_CLOSE_CANDIDATE2            0x000200
-#define MSG_CHANGE_CANDIDATE            0x001000
-#define MSG_CHANGE_CANDIDATE2           0x002000
-#define MSG_ALREADY_START               0x010000
-#define MSG_START_COMPOSITION           0x020000
-#define MSG_END_COMPOSITION             0x040000
-#define MSG_COMPOSITION                 0x080000
-#define MSG_IMN_COMPOSITIONPOS          0x100000
-#define MSG_IMN_UPDATE_STATUS           0x000400
-#define MSG_IN_IMETOASCIIEX             0x800000
-#define MSG_IMN_DESTROYCAND             0x004000
-#define MSG_BACKSPACE                   0x000800
-#define GEN_MSG_MAX             6
-
-
 #define VK_OEM_SEMICLN                  0xba	//  ;    :
 #define VK_OEM_EQUAL                    0xbb	//  =    +
 #define VK_OEM_SLASH                    0xbf	//  /    ?
@@ -126,21 +63,11 @@
 #define VK_OEM_RBRACKET                 0xdd	//  ]    }
 #define VK_OEM_QUOTE                    0xde	//  '    "
 
-#define MAXMBNUMS                       40
-
-// for ime property info
-#define MAXNUMCODES                     48
-
-#define LINE_LEN                80
 #define CLASS_LEN               24
 
-#define NumsSK                  13
 
 #define NEAR_CARET_FIRST_TIME   0x0001
 #define NEAR_CARET_CANDIDATE    0x0002
-
-typedef DWORD UNALIGNED FAR *LPUNADWORD;
-typedef WORD UNALIGNED FAR *LPUNAWORD;
 
 typedef UINT u32;
 typedef unsigned char u8;
@@ -177,26 +104,18 @@ typedef NEARCARET FAR *LPNEARCARET;
 
 extern HINSTANCE hInst;
 extern IMEG sImeG;
-extern HDC ST_UI_hDC;
-extern u32 uCaps;
+
+
 extern TCHAR szUIClassName[];
 extern TCHAR szCompClassName[];
 extern TCHAR szStatusClassName[];
-extern TCHAR szHandCursor[];
 extern TCHAR *szImeName;
-extern TCHAR szNoSymbol[];
-extern TCHAR szEnglish[];
-extern TCHAR szCode[];
-extern TCHAR szEudc[];
-extern TCHAR szNone[];
-extern TCHAR szPerp[];
-extern TCHAR szPara[];
-extern TCHAR szPerpTol[];
-extern TCHAR szParaTol[];
-extern TCHAR szRegImeIndex[];
+
+
+
+
 extern const NEARCARET ncUIEsc[], ncAltUIEsc[];
 extern const POINT ptInputEsc[], ptAltInputEsc[];
-extern BYTE VirtKey48Map[];
 
 
 LRESULT CALLBACK UIWndProc(HWND, u32, WPARAM, LPARAM);	// ui.c
@@ -218,7 +137,6 @@ void hide_comp_wnd();
 
 void PASCAL OpenStatus(HWND);	// statusui.c
 LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);
-void PASCAL InitStatusUIData();
 
 // dialog procedure
 const char* msg_name(u32 msg);
