@@ -185,7 +185,6 @@
 #define TAG_RULER                 0x00000002
 #define TAG_CRTWORDCODE           0x00000004
 
-// window extra for context menu owner
 #define CMENU_HUIWND            0
 #define CMENU_MENU              4
 
@@ -354,7 +353,6 @@ void PASCAL ReadingToSequence(LPCTSTR, LPBYTE, BOOL);	// regword.c
 
 extern "C" HWND PASCAL GetCompWnd(HWND);	// compui.c
 void PASCAL SetCompPosition(HWND, HIMC, input_context&);	// compui.c
-void PASCAL SetCompWindow(HWND);	// compui.c
 void PASCAL MoveDefaultCompPosition(HWND);	// compui.c
 void PASCAL ShowComp(HWND, int);	// compui.c
 void PASCAL StartComp(HWND);	// compui.c
@@ -365,7 +363,7 @@ void PASCAL CompCancel(HIMC, input_context&);
 LRESULT PASCAL SetStatusWindowPos(HWND);	// statusui.c
 void PASCAL ShowStatus(HWND, int);	// statusui.c
 void PASCAL OpenStatus(HWND);	// statusui.c
-LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);	// statusui.c
+LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);
 BOOL IsUsedCode(WORD);
 void PASCAL InitStatusUIData(int, int);
 BOOL UpdateStatusWindow(HWND);

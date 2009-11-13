@@ -47,22 +47,15 @@ void PASCAL AdjustStatusBoundary(LPPOINTS lppt, HWND hUIWnd)
 	return;
 }
 
-/**********************************************************************/
-/* SetStatusWindowPos()                                               */
-/**********************************************************************/
-LRESULT PASCAL SetStatusWindowPos(HWND hStatusWnd)
+LRESULT PASCAL SetStatusWindowPos(HWND hUIWnd)
 {
-	HWND hUIWnd;
 	HIMC hIMC;
 	
 	POINTS ptPos;
-
-	hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
-
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 
 	input_context ic(hIMC);
-	if (!ic) {				// Oh! Oh!
+	if (!ic) {
 		return (1L);
 	}
 
@@ -143,7 +136,7 @@ void PASCAL OpenStatus(			// open status window
 					 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
 	} else {					// create status window
 		hStatusWnd =
-			CreateWindowEx(WS_EX_TOPMOST, 
+			CreateWindowEx(0,
 						   szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
 						   ptPos.x, ptPos.y, sImeG.xStatusWi,
 						   sImeG.yStatusHi, hUIWnd, (HMENU) NULL, hInst,
@@ -158,176 +151,32 @@ void PASCAL OpenStatus(			// open status window
 	return;
 }
 
-void PASCAL DestroyStatusWindow(HWND hStatusWnd)
+static void DestroyStatusWindow()
 {
-	hStatusWnd = (HWND) NULL;
+	hStatusWnd = NULL;
 	return;
 }
 
-void PASCAL SetStatus(HWND hStatusWnd, LPPOINT lpptCursor)
+static void PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 {
-	HWND hUIWnd;
-	HIMC hIMC;
-	
 
-	hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-
-	input_context ic(hIMC);
-	if (!ic) {
-		return;
-	}
-
-	if (!ic->fOpen) {
-		ImmSetOpenStatus(hIMC, TRUE);
-	} else if (PtInRect(&sImeG.rcImeIcon, *lpptCursor)) {
-		DWORD fdwConversion;
-
-		if (ic->fdwConversion & (0 | IME_CMODE_EUDC)) {
-			// change to native mode
-			fdwConversion = (ic->fdwConversion | IME_CMODE_NATIVE) &
-				~(0 | IME_CMODE_EUDC);
-		} else if (ic->fdwConversion & IME_CMODE_NATIVE) {
-			// change to alphanumeric mode
-			fdwConversion = ic->fdwConversion & ~(0 |
-													 IME_CMODE_NATIVE |
-													 IME_CMODE_EUDC);
-		} else {
-
-
-			BYTE lpbKeyState[256];
-
-			GetKeyboardState(lpbKeyState);
-
-			if (lpbKeyState[VK_CAPITAL] & 1) {
-				// Simulate a key press
-				keybd_event(VK_CAPITAL, 0x3A, KEYEVENTF_EXTENDEDKEY | 0,
-							0);
-
-				// Simulate a key release
-				keybd_event(VK_CAPITAL,
-							0x3A, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,
-							0);
-			}
-			fdwConversion = (ic->fdwConversion | IME_CMODE_NATIVE) &
-				~(0 | IME_CMODE_EUDC);
-			// 10.11 add
-			uCaps = 0;
-		}
-
-		ImmSetConversionStatus(hIMC, fdwConversion, ic->fdwSentence);
-	} else if (PtInRect(&sImeG.rcImeName, *lpptCursor)) {
-		DWORD dwConvMode;
-		int cxBorder, cyBorder;
-
-		//change current IME index
-		dwConvMode =
-			ic->fdwConversion ^ (IME_CMODE_INDEX_FIRST << sImeL.
-									dwRegImeIndex);
-		sImeL.dwRegImeIndex = (sImeL.dwRegImeIndex + 1) % IMEINDEXNUM;
-		szImeName = pszImeName[sImeL.dwRegImeIndex];
-		dwConvMode |= (IME_CMODE_INDEX_FIRST << sImeL.dwRegImeIndex);
-
-		// re-caculate statusuidata
-		cxBorder = GetSystemMetrics(SM_CXBORDER);
-		cyBorder = GetSystemMetrics(SM_CYBORDER);
-		InitStatusUIData(cxBorder, cyBorder);
-
-		ImmSetConversionStatus(hIMC, dwConvMode, ic->fdwSentence);
-
-		//set IME index in registry
-
-	} else if (PtInRect(&sImeG.rcSymbol, *lpptCursor)) {
-		DWORD fdwConversion;
-
-		if (ic->fdwConversion & 0) {
-			MessageBeep((u32) - 1);
-		} else {
-			fdwConversion = ic->fdwConversion ^ IME_CMODE_SYMBOL;
-			ImmSetConversionStatus(hIMC, fdwConversion,
-								   ic->fdwSentence);
-		}
-	} else {
-		MessageBeep((u32) - 1);
-	}
-
-	
-
-	return;
-}
-
-void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
-{
-	HWND hUIWnd;
-	HIMC hIMC;
-	
-	LPPRIVCONTEXT imcPrivPtr;
 	HBITMAP hImeIconBmp, hSymbolBmp;
 	HBITMAP hOldBmp;
 	HDC hMemDC;
 
-	hUIWnd = GetWindow(hStatusWnd, GW_OWNER);
+	SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
 
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
+	SetBkColor(hDC, RGB(0xff, 0xff, 0xff));
 
-	input_context ic(hIMC);
-	if (!ic) {
-		MessageBeep((u32) - 1);
-		return;
-	}
-	// get imcPrivPtr
-	if (!(imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate))) {
-		MessageBeep((u32) - 1);
-		return;
-	}
-	//in case the IME index has been changed and the ImeName size is different
-	{
-		POINTS ptPos;
-
-		ptPos.x = (short) ic->ptStatusWndPos.x;
-		ptPos.y = (short) ic->ptStatusWndPos.y;
-
-		SetWindowPos(hStatusWnd, NULL,
-					 ptPos.x, ptPos.y,
-					 sImeG.xStatusWi, sImeG.yStatusHi,
-					 SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_NOZORDER);
-	}
-
-
-	if (ic->fOpen) {
-		SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
-	} else {
-		SetTextColor(hDC, RGB(0x80, 0x80, 0x80));
-	}
-
-	SetBkColor(hDC, RGB(0xC0, 0xC0, 0xC0));
 	DrawText(hDC, szImeName, lstrlen(szImeName),
 			 &sImeG.rcImeName, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 	// load all bitmap
 	hSymbolBmp = (HBITMAP) NULL;
 
-	if (!ic->fOpen) {
-		hSymbolBmp = LoadBitmap(hInst, szNone);
-		hImeIconBmp = LoadBitmap(hInst, szChinese);
-	} else if (ic->fdwConversion & IME_CMODE_NATIVE) {
-		hImeIconBmp = LoadBitmap(hInst, szChinese);
-	} else {
-		hImeIconBmp = LoadBitmap(hInst, szEnglish);
-	}
+	hImeIconBmp = LoadBitmap(hInst, szChinese);
 
-	if (!hSymbolBmp) {
-		if (ic->fdwConversion & IME_CMODE_SYMBOL) {
-			hSymbolBmp = LoadBitmap(hInst, szSymbol);
-		} else {
-			hSymbolBmp = LoadBitmap(hInst, szNoSymbol);
-		}
-	}
-
-
-	
-	ImmUnlockIMCC(ic->hPrivate);
-
+	hSymbolBmp = LoadBitmap(hInst, szSymbol);
 	hMemDC = CreateCompatibleDC(hDC);
 
 	hOldBmp = SelectObject(hMemDC, hImeIconBmp);
@@ -354,16 +203,13 @@ void PASCAL PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 	return;
 }
 
-/**********************************************************************/
-/* StatusWndProc()                                                    */
-/**********************************************************************/
 LRESULT CALLBACK
 StatusWndProc(HWND hStatusWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 {
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
 	switch (uMsg) {
 	case WM_DESTROY:
-		DestroyStatusWindow(hStatusWnd);
+		DestroyStatusWindow();
 		break;
 	case WM_SETCURSOR:
 		break;
@@ -373,12 +219,6 @@ StatusWndProc(HWND hStatusWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_IME_NOTIFY:
-		// get work area for changing
-		SystemParametersInfo(SPI_GETWORKAREA, 0, &get_wa_rect(), 0);
-
-		if (wParam == IMN_SETSTATUSWINDOWPOS) {
-			SetStatusWindowPos(hStatusWnd);
-		}
 		break;
 	case WM_PAINT:
 		{

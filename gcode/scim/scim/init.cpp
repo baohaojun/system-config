@@ -336,7 +336,7 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 
 	wcWndCls.style = CS_IME | CS_HREDRAW | CS_VREDRAW;
 
-	wcWndCls.hbrBackground = GetStockObject(LTGRAY_BRUSH);
+	wcWndCls.hbrBackground = GetStockObject(WHITE_BRUSH);
 
 	// IME composition class
 	// register IME composition class

@@ -105,9 +105,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 
 			RedrawWindow(hCompWnd, NULL, NULL,
 						 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
-			SendMessage(hCompWnd, WM_IME_NOTIFY,
-						IMN_SETCOMPOSITIONWINDOW, 0);
-
+			MoveDefaultCompPosition(hUIWnd);
 		} else {
 			StartComp(hUIWnd);
 		}
@@ -129,8 +127,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	RedrawWindow(hStatusWnd, NULL, NULL,
 				 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 
-	SendMessage(hStatusWnd, WM_IME_NOTIFY,
-				IMN_SETSTATUSWINDOWPOS, 0);
+	SetStatusWindowPos(hUIWnd);
 	ShowStatus(hUIWnd, nShowCmd);
 
 	ImmUnlockIMCC(ic->hPrivate);
@@ -224,16 +221,7 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case IMN_SETCOMPOSITIONWINDOW:
-		{
-			HWND hCompWnd;
-
-			hCompWnd = GetCompWnd(hUIWnd);
-			if (!hCompWnd) {
-				return;
-			}
-
-			PostMessage(hCompWnd, WM_IME_NOTIFY, wParam, lParam);
-		}
+		MoveDefaultCompPosition(hUIWnd);
 		break;
 	case IMN_SETCANDIDATEPOS:
 		{
@@ -241,10 +229,7 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case IMN_SETSTATUSWINDOWPOS:
-		if (hStatusWnd) {
-			PostMessage(hStatusWnd, WM_IME_NOTIFY, wParam, lParam);
-		} else {
-		}
+		SetStatusWindowPos(hUIWnd);
 		break;
 	case IMN_GUIDELINE:
 		ShowGuideLine(hUIWnd);

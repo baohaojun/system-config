@@ -57,10 +57,11 @@ ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 	return (TRUE);
 }
 
-BOOL WINAPI ImeConfigure(		// configurate the IME setting
-							HKL hKL,	// hKL of this IME
-							HWND hAppWnd,	// the owner window
-							DWORD dwMode, LPVOID lpData)	// mode of dialog
+BOOL WINAPI ImeConfigure(
+	HKL hKL,
+	HWND hAppWnd,
+	DWORD dwMode,
+	LPVOID lpData)
 {
 	return FALSE;
 }

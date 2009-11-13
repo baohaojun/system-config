@@ -346,32 +346,6 @@ void PASCAL SetCompPosition(	// set the composition window position
 	return;
 }
 
-void PASCAL SetCompWindow(HWND hCompWnd)
-{
-	HIMC hIMC;
-	
-	HWND hUIWnd;
-
-	hUIWnd = GetWindow(hCompWnd, GW_OWNER);
-	if (!hUIWnd) {
-		return;
-	}
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	input_context ic(hIMC);
-	if (!ic) {
-		return;
-	}
-
-	SetCompPosition(hCompWnd, hIMC, ic);
-
-	
-
-	return;
-}
-
-/**********************************************************************/
-/* MoveDefaultCompPosition()                                          */
-/**********************************************************************/
 void PASCAL MoveDefaultCompPosition(	// the default comp position
 									   // need to near the caret
 									   HWND hUIWnd)
@@ -423,7 +397,7 @@ void PASCAL StartComp(HWND hUIWnd)
 
 	if (!hCompWnd) {
 		hCompWnd =
-			CreateWindowEx(WS_EX_TOPMOST,
+			CreateWindowEx(0, 
 						   szCompClassName, NULL, WS_POPUP | WS_DISABLED,
 						   0, 0, 400, 60, hUIWnd,
 						   (HMENU) NULL, hInst, NULL);
@@ -458,33 +432,13 @@ void PASCAL DestroyCompWindow(	// destroy composition window
 	return;
 }
 
-void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
+void PASCAL PaintCompWindow(HWND hCompWnd, HDC hDC)
 {
 	EnterLeaveDebug(); 
 	BHJDEBUG(" g_comp_str is %s", g_comp_str.c_str());
-	HIMC hIMC;
-	
-	LPCOMPOSITIONSTRING lpCompStr;
-
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-
-	input_context ic(hIMC);
-	if (!ic) {
-		return;
-	}
-
-	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
-	if (!lpCompStr) {
-		return;
-	}
-
 
 	RECT rcWnd;
 	GetClientRect(hCompWnd, &rcWnd);
-	debug_rect(rcWnd);
-
-	//FillSolidRect(hDC, rcWnd, RGB(255, 255, 255));
-
 
 	SetBkColor(hDC, RGB(255, 255, 255));
 
@@ -493,82 +447,6 @@ void PASCAL PaintCompWindow(HWND hUIWnd, HWND hCompWnd, HDC hDC)
 		ExtTextOut(hDC, 10, 1, 0, 0, wstr.c_str(), wstr.size(), NULL);
 		BHJDEBUG(" g_comp_str size is %d, wstr size is %d", g_comp_str.size(), wstr.size());
 	} 
-
-
-	LPCANDIDATEINFO lpCandInfo;
-	LPCANDIDATELIST lpCandList;
-	LPPRIVCONTEXT imcPrivPtr;
-	DWORD dwStart, dwEnd;
-	TCHAR szStrBuf[2 * MAXSTRLEN * sizeof(WCHAR) / sizeof(TCHAR) + 1];
-	int i;
-
-
-	if (!ic->hCandInfo) {
-		BHJDEBUG(" no candinfo");
-		goto UpCandW2UnlockIMC;
-	}
-
-	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(ic->hCandInfo);
-	if (!lpCandInfo) {
-		goto UpCandW2UnlockIMC;
-	}
-
-	if (!ic->hPrivate) {
-		goto UpCandW2UnlockCandInfo;
-	}
-
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
-	if (!imcPrivPtr) {
-		goto UpCandW2UnlockCandInfo;
-	}
-	// set font
-	lpCandList = (LPCANDIDATELIST) ((LPBYTE) lpCandInfo +
-									lpCandInfo->dwOffset[0]);
-
-	dwStart = lpCandList->dwSelection;
-	dwEnd = dwStart + lpCandList->dwPageSize;
-
-	if (dwEnd > lpCandList->dwCount) {
-		dwEnd = lpCandList->dwCount;
-	}
-
-	szStrBuf[0] = TEXT('1');
-	szStrBuf[1] = TEXT(':');
-
-	for (i = 0; dwStart < dwEnd; dwStart++, i++) {
-		BHJDEBUG(" I'm gono draw cand in comp");
-
-		szStrBuf[0] = szDigit[i + CAND_START];
-
-
-		WORD wCode;
-		wCode =
-			*(LPUNAWORD) ((LPBYTE) lpCandList +
-						  lpCandList->dwOffset[dwStart]);
-
-		szStrBuf[2] = wCode;
-		szStrBuf[3] = TEXT('\0');
-
-		BHJDEBUG("szStrBuf is %04x %d", wCode, i);
-
-
-		ExtTextOut(hDC, i * 40,
-				   20,
-				   0, NULL, szStrBuf, 3, NULL);
-
-	}
-
-
-
-
-	ImmUnlockIMCC(ic->hPrivate);
-UpCandW2UnlockCandInfo:
-	ImmUnlockIMCC(ic->hCandInfo);
-UpCandW2UnlockIMC:
-
-	ImmUnlockIMCC(ic->hGuideLine);
-	ImmUnlockIMCC(ic->hCompStr);
-	
 	return;
 }
 
@@ -588,10 +466,8 @@ LRESULT CALLBACK CompWndProc(	// composition window proc
 	case WM_LBUTTONUP:
 		break;
 	case WM_IME_NOTIFY:
-		if (wParam != IMN_SETCOMPOSITIONWINDOW) {
-		} else {
-			SetCompWindow(hCompWnd);
-		}
+		BHJDEBUG(" wm_ime_notify wp %x, lp %x", wParam, lParam);
+		// must not delete this case, because DefWindowProc will hang the IME
 		break;
 	case WM_PAINT:
 		{
@@ -599,7 +475,7 @@ LRESULT CALLBACK CompWndProc(	// composition window proc
 			PAINTSTRUCT ps;
 
 			hDC = BeginPaint(hCompWnd, &ps);
-			PaintCompWindow(GetWindow(hCompWnd, GW_OWNER), hCompWnd, hDC);
+			PaintCompWindow(hCompWnd, hDC);
 			EndPaint(hCompWnd, &ps);
 		}
 		break;
