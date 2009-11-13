@@ -16,16 +16,6 @@ Module Name:
 #include <regstr.h>
 #include "imewnd.h"
 
-/**********************************************************************/
-/* GetCompWnd                                                         */
-/* Return Value :                                                     */
-/*      window handle of composition                                  */
-/**********************************************************************/
-extern "C" HWND PASCAL GetCompWnd(HWND hUIWnd)	// UI window
-{
-	return (hCompWnd);
-}
-
 BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
 								  LPPOINT lpptOrg, LPPOINT lpptNearCaret,	// the suggested near caret position
 								  LPRECT lprcInputRect, u32 uEsc)
@@ -287,8 +277,7 @@ BOOL PASCAL AdjustCompPosition(
 	return (TRUE);
 }
 
-void PASCAL SetCompPosition(HWND hCompWnd, HIMC hIMC,
-							   input_context& ic)
+void PASCAL SetCompPosition(input_context& ic)
 {
 	POINT ptWnd;
 	BOOL fChange = FALSE;
@@ -296,7 +285,7 @@ void PASCAL SetCompPosition(HWND hCompWnd, HIMC hIMC,
 	ptWnd.x = 0;
 	ptWnd.y = 0;
 
-	ClientToScreen(hCompWnd, &ptWnd);
+	ClientToScreen(g_hCompWnd, &ptWnd);
 
 	if (1) {
 		POINT ptNew;			// new position of UI
@@ -313,40 +302,35 @@ void PASCAL SetCompPosition(HWND hCompWnd, HIMC hIMC,
 	if (!fChange) {
 		return;
 	}
-	SetWindowPos(hCompWnd, NULL,
+	SetWindowPos(g_hCompWnd, NULL,
 				 ptWnd.x, ptWnd.y,
 				 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
 
 	return;
 }
 
-void PASCAL MoveDefaultCompPosition(	// the default comp position
-									   // need to near the caret
-									   HWND hUIWnd)
+void PASCAL MoveDefaultCompPosition(HWND hUIWnd)
 {
-	HIMC hIMC;
-	
-	HWND hCompWnd;
-
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-
-	hCompWnd = GetCompWnd(hUIWnd);
-	if (!hCompWnd) {
+	if (!g_hCompWnd) {
 		return;
 	}
+
+	HIMC hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
+
+
 
 	input_context ic(hIMC);
 	if (!ic) {
 		return;
 	}
 
-	SetCompPosition(hCompWnd, hIMC, ic);
+	SetCompPosition(ic);
 	return;
 }
 
 void PASCAL ShowComp(int nShowCmd)
 {
-	ShowWindow(hCompWnd, nShowCmd);
+	ShowWindow(g_hCompWnd, nShowCmd);
 	return;
 }
 
@@ -363,13 +347,13 @@ void PASCAL StartComp(HWND hUIWnd)
 		return;
 	}
 
-	if (!hCompWnd) {
-		hCompWnd = CreateWindowEx(0, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
+	if (!g_hCompWnd) {
+		g_hCompWnd = CreateWindowEx(0, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
 								  0, 0, 400, 60, hUIWnd,
 								  (HMENU) NULL, hInst, NULL);
 	}
 
-	SetCompPosition(hCompWnd, hIMC, ic);
+	SetCompPosition(ic);
 	ShowComp(SW_SHOWNOACTIVATE);
 
 	return;
@@ -384,17 +368,17 @@ void PASCAL EndComp()
 
 static void DestroyCompWindow()
 {
-	hCompWnd = (HWND) NULL;
+	g_hCompWnd = (HWND) NULL;
 	return;
 }
 
-void PASCAL PaintCompWindow(HWND hCompWnd, HDC hDC)
+void PASCAL PaintCompWindow(HDC hDC)
 {
 	EnterLeaveDebug(); 
 	BHJDEBUG(" g_comp_str is %s", g_comp_str.c_str());
 
 	RECT rcWnd;
-	GetClientRect(hCompWnd, &rcWnd);
+	GetClientRect(g_hCompWnd, &rcWnd);
 
 	Rectangle(hDC, rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom);
 
@@ -406,11 +390,18 @@ void PASCAL PaintCompWindow(HWND hCompWnd, HDC hDC)
 	return;
 }
 
-LRESULT CALLBACK CompWndProc(	// composition window proc
-								HWND hCompWnd, u32 uMsg, WPARAM wParam,
-								LPARAM lParam)
+LRESULT CALLBACK CompWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 {
+
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
+
+	if (!g_hCompWnd) {
+		g_hCompWnd = hWnd;
+	} else if (g_hCompWnd != hWnd) {
+		BHJDEBUG(" Error: CompWndProc hWnd %x is not g_hCompWnd %x", hWnd, g_hCompWnd);	
+		exit(-1);
+	}
+	
 	switch (uMsg) {
 	case WM_DESTROY:
 		DestroyCompWindow();
@@ -430,16 +421,16 @@ LRESULT CALLBACK CompWndProc(	// composition window proc
 			HDC hDC;
 			PAINTSTRUCT ps;
 
-			hDC = BeginPaint(hCompWnd, &ps);
-			PaintCompWindow(hCompWnd, hDC);
-			EndPaint(hCompWnd, &ps);
+			hDC = BeginPaint(g_hCompWnd, &ps);
+			PaintCompWindow(hDC);
+			EndPaint(g_hCompWnd, &ps);
 		}
 		break;
 	case WM_MOUSEACTIVATE:
 		return (MA_NOACTIVATE);
 	default:
 		//BHJDEBUG(" msg %s not handled", msg_name(uMsg));
-		return DefWindowProc(hCompWnd, uMsg, wParam, lParam);
+		return DefWindowProc(g_hCompWnd, uMsg, wParam, lParam);
 	}
 	return (0L);
 }

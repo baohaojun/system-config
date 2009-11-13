@@ -23,7 +23,7 @@ extern HWND hCrtDlg;
 
 void PASCAL ShowStatus(HWND hUIWnd, int nShowStatusCmd)
 {
-	ShowWindow(hStatusWnd, nShowStatusCmd);
+	ShowWindow(g_hStatusWnd, nShowStatusCmd);
 	return;
 }
 
@@ -49,12 +49,12 @@ void PASCAL OpenStatus(HWND hUIWnd)
 		nShowStatusCmd = SW_SHOWNOACTIVATE;
 	} 
 
-	if (hStatusWnd) {
-		SetWindowPos(hStatusWnd, NULL, 
+	if (g_hStatusWnd) {
+		SetWindowPos(g_hStatusWnd, NULL, 
 					 ptPos.x, ptPos.y, 0, 0,
 					 SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
 	} else {					// create status window
-		hStatusWnd = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
+		g_hStatusWnd = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
 						   ptPos.x, ptPos.y, sImeG.xStatusWi,
 						   sImeG.yStatusHi, hUIWnd, (HMENU) NULL, hInst,
 						   NULL);
@@ -69,11 +69,11 @@ void PASCAL OpenStatus(HWND hUIWnd)
 
 static void DestroyStatusWindow()
 {
-	hStatusWnd = NULL;
+	g_hStatusWnd = NULL;
 	return;
 }
 
-static void PaintStatusWindow(HDC hDC, HWND hStatusWnd)
+static void PaintStatusWindow(HDC hDC)
 {
 
 	HBITMAP hImeIconBmp, hSymbolBmp;
@@ -120,9 +120,16 @@ static void PaintStatusWindow(HDC hDC, HWND hStatusWnd)
 }
 
 LRESULT CALLBACK
-StatusWndProc(HWND hStatusWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
+StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 {
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
+	if (!g_hStatusWnd) {
+		g_hStatusWnd = hWnd;
+	} else if (g_hStatusWnd != hWnd) {
+		BHJDEBUG(" Error: hWnd %x not g_hStatusWnd %x", hWnd, g_hStatusWnd);
+		exit(-1);
+	}		
+	
 	switch (uMsg) {
 	case WM_DESTROY:
 		DestroyStatusWindow();
@@ -134,16 +141,16 @@ StatusWndProc(HWND hStatusWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 			HDC hDC;
 			PAINTSTRUCT ps;
 
-			hDC = BeginPaint(hStatusWnd, &ps);
-			PaintStatusWindow(hDC, hStatusWnd);
-			EndPaint(hStatusWnd, &ps);
+			hDC = BeginPaint(g_hStatusWnd, &ps);
+			PaintStatusWindow(hDC);
+			EndPaint(g_hStatusWnd, &ps);
 		}
 		break;
 	case WM_MOUSEACTIVATE:
 		return (MA_NOACTIVATE);
 	default:
 		//BHJDEBUG(" msg %s not handled", msg_name(uMsg));
-		return DefWindowProc(hStatusWnd, uMsg, wParam, lParam);
+		return DefWindowProc(g_hStatusWnd, uMsg, wParam, lParam);
 	}
 
 	return (0L);

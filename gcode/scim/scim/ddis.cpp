@@ -93,35 +93,6 @@ LRESULT WINAPI ImeEscape(HIMC hIMC, u32 uSubFunc, LPVOID lpData)
 
 }
 
-void PASCAL InitContext(input_context& ic)
-{
-	if (ic->fdwInit & INIT_STATUSWNDPOS) {
-	} else if (!ic->hWnd) {
-	} else {
-
-		POINT ptWnd;
-
-		ptWnd.x = 0;
-		ptWnd.y = 0;
-		ClientToScreen(ic->hWnd, &ptWnd);
-
-		if (ptWnd.x < get_wa_rect().left) {
-			ic->ptStatusWndPos.x = get_wa_rect().left;
-		} else if (ptWnd.x + sImeG.xStatusWi > get_wa_rect().right) {
-			ic->ptStatusWndPos.x =
-				get_wa_rect().right - sImeG.xStatusWi;
-		} else {
-			ic->ptStatusWndPos.x = ptWnd.x;
-		}
-
-		ic->ptStatusWndPos.y =
-			get_wa_rect().bottom - sImeG.yStatusHi;
-
-		ic->fdwInit |= INIT_STATUSWNDPOS;
-	}
-	return;
-}
-
 BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 {
 	if (fSelect) {
@@ -143,11 +114,7 @@ BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 			ic->fdwInit |= INIT_LOGFONT;
 		}
 
-		InitContext(ic);
 
-		//
-		// Set Caps status
-		//
 		{
 			DWORD fdwConversion;
 
@@ -169,13 +136,6 @@ BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 								   ic->fdwSentence);
 		}
 
-	} else {
-
-
-		if (lpImeL->hPropMenu) {
-			DestroyMenu(lpImeL->hPropMenu);
-			lpImeL->hPropMenu = NULL;
-		}
 	}
 
 
@@ -212,32 +172,10 @@ BOOL WINAPI ImeSelect(HIMC hIMC, BOOL fSelect)
 /**********************************************************************/
 BOOL WINAPI ImeSetActiveContext(HIMC hIMC, BOOL fOn)
 {
-	if (!fOn) {
-		input_context ic(hIMC);
-		if (!ic) {
-			return FALSE;
-		}
-
-		InitContext(ic);
-
-		
+	input_context ic(hIMC);
+	if (!ic) {
+		return FALSE;
 	}
-
 	return (TRUE);
 }
 
-VOID InfoMessage(HANDLE hWnd, WORD wMsgID)
-{
-	TCHAR szStr[256];
-
-	LoadString(NULL, wMsgID, szStr, sizeof(szStr) / sizeof(TCHAR));
-	MessageBox(hWnd, szStr, szWarnTitle, MB_ICONINFORMATION | MB_OK);
-}
-
-VOID FatalMessage(HANDLE hWnd, WORD wMsgID)
-{
-	TCHAR szStr[256];
-
-	LoadString(NULL, wMsgID, szStr, sizeof(szStr) / sizeof(TCHAR));
-	MessageBox(hWnd, szStr, szErrorTitle, MB_ICONSTOP | MB_OK);
-}

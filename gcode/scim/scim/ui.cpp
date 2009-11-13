@@ -31,14 +31,14 @@ void PASCAL DestroyUIWindow(	// destroy composition window
 							   HWND hUIWnd)
 {
 
-	if (hCompWnd) {
-		DestroyWindow(hCompWnd);
-		hCompWnd = NULL;
+	if (g_hCompWnd) {
+		DestroyWindow(g_hCompWnd);
+		g_hCompWnd = NULL;
 	}
 	// candidate window need to be destroyed
-	if (hStatusWnd) {
-		DestroyWindow(hStatusWnd);
-		hStatusWnd = NULL;
+	if (g_hStatusWnd) {
+		DestroyWindow(g_hStatusWnd);
+		g_hStatusWnd = NULL;
 	}
 
 	return;
@@ -60,12 +60,12 @@ void PASCAL StatusWndMsg(		// set the show hide state and
 
 	if (fOn) {
 
-		if (!hStatusWnd) {
+		if (!g_hStatusWnd) {
 			OpenStatus(hUIWnd);
 		}
 	} 
 
-	if (!hStatusWnd) {
+	if (!g_hStatusWnd) {
 		return;
 	}
 
@@ -97,9 +97,9 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	}
 
 	if (g_comp_str.size()) {
-		if (hCompWnd) {
+		if (g_hCompWnd) {
 
-			RedrawWindow(hCompWnd, NULL, NULL,
+			RedrawWindow(g_hCompWnd, NULL, NULL,
 						 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 			MoveDefaultCompPosition(hUIWnd);
 		} else {
@@ -109,10 +109,10 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 		ShowComp(SW_HIDE);
 	}
 
-	if (!hStatusWnd) {
+	if (!g_hStatusWnd) {
 		OpenStatus(hUIWnd);
 	}
-	RedrawWindow(hStatusWnd, NULL, NULL,
+	RedrawWindow(g_hStatusWnd, NULL, NULL,
 				 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 
 	ShowStatus(hUIWnd, nShowCmd);
@@ -162,8 +162,8 @@ void PASCAL ShowGuideLine(HWND hUIWnd)
 /**********************************************************************/
 BOOL UpdateStatusWindow(HWND hUIWnd)
 {
-	InvalidateRect(hStatusWnd, &(sImeG.rcStatusText), TRUE);
-	UpdateWindow(hStatusWnd);
+	InvalidateRect(g_hStatusWnd, &(sImeG.rcStatusText), TRUE);
+	UpdateWindow(g_hStatusWnd);
 
 	return (TRUE);
 }
@@ -198,12 +198,12 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		break;
 	case IMN_SETOPENSTATUS:
 	case IMN_SETCONVERSIONMODE:
-		if (!hStatusWnd) {
+		if (!g_hStatusWnd) {
 			return;
 		}
 
 		{
-			RedrawWindow(hStatusWnd, NULL, NULL, RDW_INVALIDATE);
+			RedrawWindow(g_hStatusWnd, NULL, NULL, RDW_INVALIDATE);
 		}
 		break;
 	case IMN_SETCOMPOSITIONWINDOW:
@@ -346,17 +346,10 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_IME_COMPOSITION:
 		if (lParam & GCS_RESULTSTR) {
 			MoveDefaultCompPosition(hUIWnd);
-		} else {
 		}
 
-		{
-			HWND hCompWnd;
-
-			hCompWnd = GetCompWnd(hUIWnd);
-
-			if (hCompWnd) {
-				RedrawWindow(hCompWnd, NULL, NULL, RDW_INVALIDATE);
-			}
+		if (g_hCompWnd) {
+			RedrawWindow(g_hCompWnd, NULL, NULL, RDW_INVALIDATE);
 		}
 		break;
 	case WM_IME_ENDCOMPOSITION:
@@ -691,4 +684,4 @@ const char* msg_name(u32 msg)
 	return "WM_UNKNOWN";
 }
 
-HWND hCandWnd, hCompWnd, hCMenuWnd, hStatusWnd;
+HWND hCandWnd, g_hCompWnd, hCMenuWnd, g_hStatusWnd;

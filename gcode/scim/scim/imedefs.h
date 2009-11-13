@@ -200,7 +200,6 @@ typedef unsigned char u8;
 typedef unsigned short u16;
 
 typedef struct tagImeL {		// local structure, per IME structure
-	HMENU hPropMenu;			// Property Menu
 	HINSTANCE hInst;			// IME DLL instance handle
 	int xCompWi;				// width
 	int yCompHi;				// height
@@ -301,16 +300,7 @@ LRESULT PASCAL UIPaint(HWND);	// ui.c
 
 class input_context;
 
-void PASCAL InitCompStr(LPCOMPOSITIONSTRING);	// ddis.c
-VOID InfoMessage(HANDLE, WORD);	//ddis.c
-VOID FatalMessage(HANDLE, WORD);	//ddis.c
-
-
-DWORD PASCAL ReadingToPattern(LPCTSTR, BOOL);	// regword.c
-void PASCAL ReadingToSequence(LPCTSTR, LPBYTE, BOOL);	// regword.c
-
-extern "C" HWND PASCAL GetCompWnd(HWND);	// compui.c
-void PASCAL SetCompPosition(HWND, HIMC, input_context&);	// compui.c
+void PASCAL SetCompPosition(input_context&);	// compui.c
 void PASCAL MoveDefaultCompPosition(HWND);	// compui.c
 void PASCAL ShowComp(int);	// compui.c
 void PASCAL StartComp(HWND);	// compui.c
@@ -325,5 +315,5 @@ BOOL UpdateStatusWindow(HWND);
 
 // dialog procedure
 const char* msg_name(u32 msg);
-extern HWND hCompWnd, hStatusWnd;
+extern HWND g_hCompWnd, g_hStatusWnd;
 #endif
