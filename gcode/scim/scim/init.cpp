@@ -90,19 +90,11 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 
 	int cxBorder, cyBorder;
 
-	int UI_MODE;
-
 	HDC hDC;
 
 	TCHAR szChiChar[4];
 
 	SIZE lTextSize;
-
-	DWORD dwSize;
-
-	HKEY hKeyIMESetting;
-
-	LONG lRet;
 
 	hInst = hInstance;
 
@@ -149,7 +141,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 
 	sImeG.yChiCharHi = lTextSize.cy;
 
-	UI_MODE = BOX_UI;
 
 	InitStatusUIData(cxBorder, cyBorder);
 
@@ -158,80 +149,11 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 
 	sImeG.cbStatusErr = lstrlen(sImeG.szStatusErr);
 
-	sImeG.iCandStart = CAND_START;
+	sImeG.iPara = 0;
+	sImeG.iPerp = sImeG.yChiCharHi;
 
-	// get the UI offset for near caret operation
-	RegCreateKey(HKEY_CURRENT_USER, szRegIMESetting, &hKeyIMESetting);
-
-	dwSize = sizeof(DWORD);
-
-	lRet = RegQueryValueEx(hKeyIMESetting,
-						   szPara,
-						   NULL, NULL, (LPBYTE) & sImeG.iPara, &dwSize);
-
-	if (lRet != ERROR_SUCCESS) {
-
-		sImeG.iPara = 0;
-
-		RegSetValueEx(hKeyIMESetting,
-					  szPara,
-					  (DWORD) 0,
-					  REG_BINARY, (LPBYTE) & sImeG.iPara, sizeof(int));
-
-	}
-
-	dwSize = sizeof(DWORD);
-
-	lRet = RegQueryValueEx(hKeyIMESetting,
-						   szPerp,
-						   NULL, NULL, (LPBYTE) & sImeG.iPerp, &dwSize);
-
-	if (lRet != ERROR_SUCCESS) {
-
-		sImeG.iPerp = sImeG.yChiCharHi;
-
-		RegSetValueEx(hKeyIMESetting,
-					  szPerp,
-					  (DWORD) 0,
-					  REG_BINARY, (LPBYTE) & sImeG.iPerp, sizeof(int));
-
-	}
-
-	dwSize = sizeof(DWORD);
-
-	lRet = RegQueryValueEx(hKeyIMESetting,
-						   szParaTol,
-						   NULL, NULL, (LPBYTE) & sImeG.iParaTol, &dwSize);
-
-	if (lRet != ERROR_SUCCESS) {
-
-		sImeG.iParaTol = sImeG.xChiCharWi * 4;
-
-		RegSetValueEx(hKeyIMESetting,
-					  szParaTol,
-					  (DWORD) 0,
-					  REG_BINARY, (LPBYTE) & sImeG.iParaTol, sizeof(int));
-
-	}
-
-	dwSize = sizeof(DWORD);
-
-	lRet = RegQueryValueEx(hKeyIMESetting,
-						   szPerpTol,
-						   NULL, NULL, (LPBYTE) & sImeG.iPerpTol, &dwSize);
-
-	if (lRet != ERROR_SUCCESS) {
-
-		sImeG.iPerpTol = lTextSize.cy;
-
-		RegSetValueEx(hKeyIMESetting,
-					  szPerpTol,
-					  (DWORD) 0,
-					  REG_BINARY, (LPBYTE) & sImeG.iPerpTol, sizeof(int));
-
-	}
-
-	RegCloseKey(hKeyIMESetting);
+	sImeG.iParaTol = sImeG.xChiCharWi * 4;
+	sImeG.iPerpTol = lTextSize.cy;
 
 	return;
 

@@ -111,7 +111,6 @@
 #define STATUS_DIM_Y            20
 #define STATUS_NAME_MARGIN      20
 
-#define CAND_START              1
 #define uCandHome               0
 #define uCandUp                 1
 #define uCandDown               2
@@ -237,7 +236,6 @@ typedef struct _tagImeG {
 	RECT rcSymbol;				// symbol relative to status window
 	TCHAR szStatusErr[8];
 	int cbStatusErr;
-	int iCandStart;
 // setting of UI
 	int iPara;
 	int iPerp;
@@ -288,7 +286,6 @@ extern IMEL sImeL;
 extern LPIMEL lpImeL;
 extern HDC ST_UI_hDC;
 extern u32 uCaps;
-extern DWORD SaTC_Trace;
 extern TCHAR szUIClassName[];
 extern TCHAR szCompClassName[];
 extern TCHAR szStatusClassName[];

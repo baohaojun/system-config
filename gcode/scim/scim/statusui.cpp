@@ -127,13 +127,6 @@ StatusWndProc(HWND hStatusWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		DestroyStatusWindow();
 		break;
-	case WM_SETCURSOR:
-		break;
-	case WM_MOUSEMOVE:
-		break;
-	case WM_LBUTTONUP:
-		break;
-
 	case WM_IME_NOTIFY:
 		break;
 	case WM_PAINT:

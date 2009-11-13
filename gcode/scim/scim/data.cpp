@@ -22,7 +22,6 @@ IMEG sImeG = { 0 };
 
 HDC ST_UI_hDC;
 u32 uCaps = 0;
-DWORD SaTC_Trace;
 
 HINSTANCE hInst;
 IMEL sImeL;

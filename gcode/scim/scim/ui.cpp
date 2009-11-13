@@ -282,27 +282,6 @@ void PASCAL SetContext(HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 		}
 
 
-		if (SaTC_Trace == 0) {
-			int UI_MODE;
-
-			imcPrivPtr->iImeState = CST_INIT;
-
-			imcPrivPtr->fdwImeMsg = (DWORD) 0;
-			imcPrivPtr->dwCompChar = (DWORD) 0;
-			imcPrivPtr->fdwGcsFlag = (DWORD) 0;
-			imcPrivPtr->uSYHFlg = 0x00000000;
-			imcPrivPtr->uDYHFlg = 0x00000000;
-
-			// change compwnd size
-
-			// init fields of hIMC
-			ic->fOpen = TRUE;
-
-			UI_MODE = BOX_UI;
-		}
-
-		SaTC_Trace = 1;
-
 		// init Caps
 		{
 			BYTE lpbKeyState[256];
