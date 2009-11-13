@@ -356,7 +356,6 @@ BOOL IsUsedCode(WORD);
 void PASCAL InitStatusUIData(int, int);
 BOOL UpdateStatusWindow(HWND);
 void PASCAL GenerateImeMessage(HIMC, input_context&, DWORD);
-u32 PASCAL UnicodeProcessKey(WORD kbd_char, LPPRIVCONTEXT imcPrivPtr);
 WORD PASCAL UnicodeEngine(LPPRIVCONTEXT imcPrivPtr);
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
 // dialog procedure
