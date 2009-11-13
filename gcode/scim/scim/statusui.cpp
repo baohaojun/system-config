@@ -62,48 +62,16 @@ static void DestroyStatusWindow()
 
 static void PaintStatusWindow(HDC hDC)
 {
-
-	HBITMAP hImeIconBmp, hSymbolBmp;
-	HBITMAP hOldBmp;
-	HDC hMemDC;
+	
+	CRect rect;
+	GetClientRect(g_hStatusWnd, &rect);
 
 	SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
 
 	SetBkColor(hDC, RGB(0xff, 0xff, 0xff));
 
 	DrawText(hDC, szImeName, lstrlen(szImeName),
-			 &sImeG.rcImeName, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-
-	// load all bitmap
-	hSymbolBmp = (HBITMAP) NULL;
-
-	hImeIconBmp = LoadBitmap(hInst, szChinese);
-
-	hSymbolBmp = LoadBitmap(hInst, szSymbol);
-	hMemDC = CreateCompatibleDC(hDC);
-
-	hOldBmp = SelectObject(hMemDC, hImeIconBmp);
-
-	BitBlt(hDC, sImeG.rcImeIcon.left, sImeG.rcImeIcon.top,
-		   sImeG.rcImeIcon.right - sImeG.rcImeIcon.left,
-		   STATUS_DIM_Y, hMemDC, 0, 0, SRCCOPY);
-
-	SelectObject(hMemDC, hSymbolBmp);
-
-	BitBlt(hDC, sImeG.rcSymbol.left, sImeG.rcSymbol.top,
-		   sImeG.rcSymbol.right - sImeG.rcSymbol.left,
-		   STATUS_DIM_Y, hMemDC, 0, 0, SRCCOPY);
-
-
-
-	SelectObject(hMemDC, hOldBmp);
-
-	DeleteDC(hMemDC);
-
-	DeleteObject(hImeIconBmp);
-	DeleteObject(hSymbolBmp);
-
-	return;
+			 &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
 LRESULT CALLBACK

@@ -206,12 +206,6 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 
 			WNDCLASSEX wcWndCls;
 
-			if (GetClassInfoEx(hInstance, szCMenuClassName, &wcWndCls)) {
-
-				UnregisterClass(szCMenuClassName, hInstance);
-
-			}
-
 			if (GetClassInfoEx(hInstance, szStatusClassName, &wcWndCls)) {
 
 				UnregisterClass(szStatusClassName, hInstance);

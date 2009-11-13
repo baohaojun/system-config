@@ -10,22 +10,14 @@ HDC ST_UI_hDC;
 u32 uCaps = 0;
 
 HINSTANCE hInst;
-//    IDS_IMEUICLASS          "BhjImeUI"
-//    IDS_IMECOMPCLASS        "BhjImeComp"
-//    IDS_IMESTATUSCLASS      "BhjImeStatus"
+
 TCHAR szUIClassName[CLASS_LEN] = L"BhjImeUI";
 TCHAR szCompClassName[CLASS_LEN] = L"BhjImeComp";
 TCHAR szStatusClassName[CLASS_LEN] = L"BhjImeStatus";
-TCHAR szCMenuClassName[CLASS_LEN];
-TCHAR szHandCursor[] = TEXT("Hand");
-TCHAR szChinese[] = TEXT("Chinese");
-TCHAR szEnglish[] = TEXT("English");
 TCHAR *szImeName;
-TCHAR szCode[] = TEXT("Code");
-TCHAR szEudc[] = TEXT("Eudc");
-TCHAR szSymbol[] = TEXT("Symbol");
-TCHAR szNoSymbol[] = TEXT("NoSymbol");
-TCHAR szNone[] = TEXT("None");
+
+
+
 
 // convert char to upper case
 
