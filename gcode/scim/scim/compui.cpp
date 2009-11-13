@@ -287,44 +287,18 @@ BOOL PASCAL AdjustCompPosition(
 	return (TRUE);
 }
 
-void PASCAL SetCompPosition(	// set the composition window position
-							   HWND hCompWnd, HIMC hIMC,
+void PASCAL SetCompPosition(HWND hCompWnd, HIMC hIMC,
 							   input_context& ic)
 {
-	return;
 	POINT ptWnd;
 	BOOL fChange = FALSE;
-	RECT rcWorkArea;
 
-	rcWorkArea = get_wa_rect();
-
-	// the client coordinate position (0, 0) of composition window
 	ptWnd.x = 0;
 	ptWnd.y = 0;
-	// convert to screen coordinates
+
 	ClientToScreen(hCompWnd, &ptWnd);
-	ptWnd.x -= lpImeL->cxCompBorder;
-	ptWnd.y -= lpImeL->cyCompBorder;
 
-	if (ic->cfCompForm.dwStyle & CFS_FORCE_POSITION) {
-		POINT ptNew;			// new position of UI
-
-		ptNew.x = ic->cfCompForm.ptCurrentPos.x;
-		ptNew.y = ic->cfCompForm.ptCurrentPos.y;
-		ClientToScreen((HWND) ic->hWnd, &ptNew);
-		if (ptWnd.x != ptNew.x) {
-			ptWnd.x = ptNew.x;
-			fChange = TRUE;
-		}
-		if (ptWnd.y != ptNew.y) {
-			ptWnd.y = ptNew.y;
-			fChange = TRUE;
-		}
-		if (fChange) {
-			ptWnd.x -= lpImeL->cxCompBorder;
-			ptWnd.y -= lpImeL->cyCompBorder;
-		}
-	} else if (ic->cfCompForm.dwStyle != CFS_DEFAULT) {
+	if (1) {
 		POINT ptNew;			// new position of UI
 
 		ptNew.x = ic->cfCompForm.ptCurrentPos.x;
@@ -406,21 +380,14 @@ void PASCAL StartComp(HWND hUIWnd)
 	return;
 }
 
-/**********************************************************************/
-/* EndComp()                                                          */
-/**********************************************************************/
-void PASCAL EndComp(HWND hUIWnd)
+void PASCAL EndComp()
 {
 	ShowComp(SW_HIDE);
 
 	return;
 }
 
-/**********************************************************************/
-/* DestroyCompWindow()                                                */
-/**********************************************************************/
-void PASCAL DestroyCompWindow(	// destroy composition window
-								 HWND hCompWnd)
+static void DestroyCompWindow()
 {
 	hCompWnd = (HWND) NULL;
 	return;
@@ -434,7 +401,7 @@ void PASCAL PaintCompWindow(HWND hCompWnd, HDC hDC)
 	RECT rcWnd;
 	GetClientRect(hCompWnd, &rcWnd);
 
-	SetBkColor(hDC, RGB(255, 255, 255));
+	Rectangle(hDC, rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom);
 
 	if (g_comp_str.size()) {
 		wstring wstr = to_wstring(g_comp_str);
@@ -451,7 +418,7 @@ LRESULT CALLBACK CompWndProc(	// composition window proc
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
 	switch (uMsg) {
 	case WM_DESTROY:
-		DestroyCompWindow(hCompWnd);
+		DestroyCompWindow();
 		break;
 	case WM_SETCURSOR:
 		break;

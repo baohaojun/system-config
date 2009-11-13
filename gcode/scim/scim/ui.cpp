@@ -292,9 +292,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 			int UI_MODE;
 
 			imcPrivPtr->iImeState = CST_INIT;
-			CompCancel(hIMC, ic);
 
-			// init fields of hPrivate
 			imcPrivPtr->fdwImeMsg = (DWORD) 0;
 			imcPrivPtr->dwCompChar = (DWORD) 0;
 			imcPrivPtr->fdwGcsFlag = (DWORD) 0;
@@ -422,8 +420,7 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_IME_ENDCOMPOSITION:
-		// you can destroy the composition window here
-		EndComp(hUIWnd);
+		EndComp();
 		break;
 	case WM_IME_NOTIFY:
 		NotifyUI(hUIWnd, wParam, lParam);

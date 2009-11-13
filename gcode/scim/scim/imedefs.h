@@ -235,7 +235,6 @@ typedef struct _tagImeG {
 	RECT rcImeIcon;				// ImeIcon position relative to status window
 	RECT rcImeName;				// ImeName position relative to status window
 	RECT rcSymbol;				// symbol relative to status window
-	//RECT        rcSKText;       // SK text relative to status window
 	TCHAR szStatusErr[8];
 	int cbStatusErr;
 	int iCandStart;
@@ -330,16 +329,6 @@ WORD PASCAL CharToHex(TCHAR);
 
 
 class input_context;
-void PASCAL AddCodeIntoCand(LPCANDIDATELIST, WORD);	// compose.c
-void PASCAL CompWord(WORD, input_context&, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPGUIDELINE);	// compose.c
-u32 PASCAL Finalize(input_context&, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, WORD);	// compose.c
-void PASCAL CompEscapeKey(input_context&, LPCOMPOSITIONSTRING, LPGUIDELINE, LPPRIVCONTEXT);	// compose.c
-
-void PASCAL SelectOneCand(input_context&, LPCOMPOSITIONSTRING, LPPRIVCONTEXT, LPCANDIDATELIST);	// chcand.c
-void PASCAL CandEscapeKey(input_context&, LPPRIVCONTEXT);	// chcand.c
-void PASCAL ChooseCand(WORD, input_context&, LPCANDIDATEINFO, LPPRIVCONTEXT);	// chcand.c
-
-void PASCAL SetPrivateFileSetting(LPBYTE, int, DWORD, LPCTSTR);	// ddis.c
 
 void PASCAL InitCompStr(LPCOMPOSITIONSTRING);	// ddis.c
 BOOL PASCAL ClearCand(input_context&);	// ddis.c
@@ -356,9 +345,8 @@ void PASCAL SetCompPosition(HWND, HIMC, input_context&);	// compui.c
 void PASCAL MoveDefaultCompPosition(HWND);	// compui.c
 void PASCAL ShowComp(int);	// compui.c
 void PASCAL StartComp(HWND);	// compui.c
-void PASCAL EndComp(HWND);		// compui.c
+void PASCAL EndComp();
 LRESULT CALLBACK CompWndProc(HWND, u32, WPARAM, LPARAM);	// compui.c
-void PASCAL CompCancel(HIMC, input_context&);
 
 LRESULT PASCAL SetStatusWindowPos(HWND);	// statusui.c
 void PASCAL ShowStatus(HWND, int);	// statusui.c
@@ -368,7 +356,6 @@ BOOL IsUsedCode(WORD);
 void PASCAL InitStatusUIData(int, int);
 BOOL UpdateStatusWindow(HWND);
 void PASCAL GenerateImeMessage(HIMC, input_context&, DWORD);
-u32 PASCAL TranslateSymbolChar(LPTRANSMSGLIST, WORD, BOOL);
 u32 PASCAL UnicodeProcessKey(WORD kbd_char, LPPRIVCONTEXT imcPrivPtr);
 WORD PASCAL UnicodeEngine(LPPRIVCONTEXT imcPrivPtr);
 void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);

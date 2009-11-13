@@ -223,58 +223,6 @@ CompEscapeKey(input_context& ic,
 }
 
 void PASCAL
-CompBackSpaceKey(input_context& ic,
-				 LPCOMPOSITIONSTRING lpCompStr, LPPRIVCONTEXT imcPrivPtr)
-{
-
-	if (lpCompStr->dwCursorPos < sizeof(BYTE)) {
-		lpCompStr->dwCursorPos = sizeof(BYTE);
-	}
-
-	imcPrivPtr->bSeq[3] = 0;
-
-	// go back a compsoition char
-	lpCompStr->dwCursorPos -= sizeof(BYTE);
-
-	// clean the sequence code
-	imcPrivPtr->bSeq[lpCompStr->dwCursorPos] = 0;
-
-	imcPrivPtr->fdwImeMsg |= MSG_COMPOSITION;
-	imcPrivPtr->dwCompChar = TEXT('\b');
-	imcPrivPtr->fdwGcsFlag |= (GCS_COMPREAD | GCS_COMP | GCS_CURSORPOS |
-						   GCS_DELTASTART);
-
-	if (!lpCompStr->dwCursorPos) {
-		if (imcPrivPtr->fdwImeMsg & (MSG_ALREADY_OPEN)) {
-			ClearCand(ic);
-		}
-
-		if (imcPrivPtr->iImeState != CST_INIT) {
-			imcPrivPtr->iImeState = CST_INIT;
-			lpCompStr->dwCompReadStrLen = lpCompStr->dwCompStrLen =
-				lpCompStr->dwDeltaStart = lpCompStr->dwCursorPos;
-			Finalize(ic, lpCompStr, imcPrivPtr, TEXT('\b'));
-			return;
-		}
-
-		if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
-			InitCompStr(lpCompStr);
-			imcPrivPtr->fdwImeMsg = (imcPrivPtr->fdwImeMsg | MSG_END_COMPOSITION) &
-				~(MSG_START_COMPOSITION);
-			return;
-		}
-	}
-	// reading string is composition string for some simple IMEs
-	// delta start is the same as cursor position for backspace
-	lpCompStr->dwCompReadStrLen = lpCompStr->dwCompStrLen =
-		lpCompStr->dwDeltaStart = lpCompStr->dwCursorPos;
-
-	Finalize(ic, lpCompStr, imcPrivPtr, TEXT('\b'));
-
-	return;
-}
-
-void PASCAL
 CompStrInfo(LPCOMPOSITIONSTRING lpCompStr,
 			LPPRIVCONTEXT imcPrivPtr, LPGUIDELINE lpGuideLine, WORD kbd_char)
 {
@@ -424,41 +372,3 @@ Finalize(input_context& ic,
 	return fEngine;
 }
 
-/**********************************************************************/
-/* CompWord()                                                         */
-/**********************************************************************/
-void PASCAL CompWord(			// compose the Chinese word(s) according to
-						// input key
-						WORD kbd_char,
-						input_context& ic,
-						LPCOMPOSITIONSTRING lpCompStr,
-						LPPRIVCONTEXT imcPrivPtr, LPGUIDELINE lpGuideLine)
-{
-
-	// lpComStr=NULL?
-	if (!lpCompStr) {
-		MessageBeep((u32) - 1);
-		return;
-	}
-	// escape key
-	if (kbd_char == VK_ESCAPE) {	// not good to use VK as char, but...
-		CompEscapeKey(ic, lpCompStr, lpGuideLine, imcPrivPtr);
-		return;
-	}
-
-	// backspace key
-	if (kbd_char == TEXT('\b')) {
-		CompBackSpaceKey(ic, lpCompStr, imcPrivPtr);
-		return;
-	}
-
-
-	if (kbd_char == TEXT(' ')) {
-	} else {
-		CompStrInfo(lpCompStr, imcPrivPtr, lpGuideLine, kbd_char);
-	}
-
-	Finalize(ic, lpCompStr, imcPrivPtr, kbd_char);	// compsition
-
-	return;
-}

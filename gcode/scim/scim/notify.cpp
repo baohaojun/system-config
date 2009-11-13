@@ -70,62 +70,6 @@ GenerateImeMessage(HIMC hIMC, input_context& ic, DWORD fdwImeMsg)
 	return;
 }
 
-void PASCAL CompCancel(HIMC hIMC, input_context& ic)
-{
-	LPPRIVCONTEXT imcPrivPtr;
-
-	if (!ic->hPrivate) {
-		return;
-	}
-
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
-	if (!imcPrivPtr) {
-		return;
-	}
-
-	imcPrivPtr->fdwGcsFlag = (DWORD) 0;
-
-	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-		CandEscapeKey(ic, imcPrivPtr);
-	} else if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
-		LPCOMPOSITIONSTRING lpCompStr;
-		LPGUIDELINE lpGuideLine;
-
-		lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
-		if (!lpCompStr) {
-			ImmUnlockIMCC(ic->hCompStr);
-			ImmUnlockIMCC(ic->hPrivate);
-			return;
-		}
-
-		lpGuideLine = (LPGUIDELINE) ImmLockIMCC(ic->hGuideLine);
-		if (!lpGuideLine) {
-			ImmUnlockIMCC(ic->hGuideLine);
-			ImmUnlockIMCC(ic->hPrivate);
-			return;
-		}
-
-		CompEscapeKey(ic, lpCompStr, lpGuideLine, imcPrivPtr);
-
-		if (lpGuideLine) {
-			ImmUnlockIMCC(ic->hGuideLine);
-		}
-		if (lpCompStr) {
-			ImmUnlockIMCC(ic->hCompStr);
-		}
-	} else {
-		ImmUnlockIMCC(ic->hPrivate);
-		return;
-	}
-
-	GenerateMessage(hIMC, ic, imcPrivPtr);
-
-	ImmUnlockIMCC(ic->hPrivate);
-
-	return;
-}
-
-
 //we don't allow ImeSetCompositionString
 //we don't know what it does!
 
