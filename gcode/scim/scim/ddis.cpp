@@ -1,15 +1,3 @@
-
-/*++
-
-Copyright (c) 1990-1999 Microsoft Corporation, All Rights Reserved
-
-Module Name:
-
-    ddis.c
-
-++*/
-
-
 #include <windows.h>
 #include <windowsx.h>
 #include <winerror.h>
@@ -90,7 +78,7 @@ BOOL WINAPI ImeSelect(HIMC hIMC, BOOL fSelect)
 		return FALSE;
 	}
 
-	return true;
+	return TRUE;
 }
 
 BOOL WINAPI ImeSetActiveContext(HIMC hIMC, BOOL fOn)

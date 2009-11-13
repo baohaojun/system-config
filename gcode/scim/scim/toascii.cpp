@@ -8,10 +8,7 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 							 u32 vk, LPARAM lParam,
 							 CONST LPBYTE lpbKeyState)
 {
-	BHJDEBUG(" vk is %x, lParam is %x", vk, lParam);
 	char kbd_char = LOBYTE(vk);
-	BHJDEBUG(" kbd_char is %x", kbd_char);
-
 	if (isprint(kbd_char)) {
 		return true;
 	}
@@ -34,7 +31,7 @@ static u32 to_wm_char(
 					 (LPWORD) szAscii, 0);
 
 	if (!nChars) {
-		BHJDEBUG(" ToAscii failed");
+		//BHJDEBUG(" ToAscii failed"); //but it's ok, we will return 0
 	}
 
 	LPTRANSMSG lpTransMsg = lpTransBuf->TransMsg;
@@ -55,7 +52,6 @@ ImeToAsciiEx(u32 vk,
 			 LPTRANSMSGLIST lpTransBuf, u32 fuState, HIMC hIMC)
 {
 	char kbd_char = (char)(vk);
-	BHJDEBUG(" char is %x", vk);
 
 	if (isalpha(kbd_char)) {
 		g_comp_str.push_back((char)tolower(kbd_char));
@@ -69,12 +65,14 @@ ImeToAsciiEx(u32 vk,
 
 	ic.add_msg(WM_IME_STARTCOMPOSITION, 0, 0);
 	ic.add_msg(WM_IME_COMPOSITION, 0, 0);
-	int n = 10;
+	int n = 3;
 	int i;
 	for (i=0; i<n; i++) {
+		BHJDEBUG(" i is %d", i);
 		if (!ic.add_msg(WM_CHAR, 0x9999+i, 1)) {
+			BHJDEBUG(" Error: add message");
 			break;
 		}
 	}
-	return i;
+	return i+2;
 }

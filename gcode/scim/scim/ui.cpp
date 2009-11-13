@@ -103,14 +103,6 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	return;
 }
 
-BOOL UpdateStatusWindow(HWND hUIWnd)
-{
-	InvalidateRect(g_hStatusWnd, &(sImeG.rcStatusText), TRUE);
-	UpdateWindow(g_hStatusWnd);
-
-	return (TRUE);
-}
-
 void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 {
 	switch (wParam) {
@@ -162,13 +154,6 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 	case IMN_GUIDELINE:
 		break;
 	case IMN_PRIVATE:
-		switch (lParam) {
-		case IMN_PRIVATE_UPDATE_STATUS:
-			UpdateStatusWindow(hUIWnd);
-			break;
-		default:
-			break;
-		}
 		break;
 	default:
 		break;

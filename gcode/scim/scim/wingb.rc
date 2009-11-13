@@ -225,48 +225,6 @@ END
 // String Table
 //
 
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_STATUSERR           "错误"
-    IDS_CHICHAR             "中"
-    IDS_EUDC                "用户造字"
-#ifdef CROSSREF
-    IDS_NONE                "[无]"
-#endif	
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_USRDIC_FILTER       "用户词库"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_FILE_OPEN_ERR       "文件 %s 打开错误 , 输入法不能工作"
-    IDS_MEM_LESS_ERR        "内存不足 , 输入法不能工作"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_SETFILE             "winime.SET"
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-    IDS_IMENAME_UNI         "包包五笔"
-
-    IDS_IMEUICLASS          "InterCodeIme"
-    IDS_IMECOMPCLASS        "ImeCompwinime"
-    IDS_IMECANDCLASS        "ImeCandwinime"
-    IDS_IMESTATUSCLASS      "ImeStatuswinime"
-    IDS_IMECMENUCLASS       "ImeCMenuwinime"		 
-END
-
-STRINGTABLE DISCARDABLE 
-BEGIN
-	IDS_WARN_OPENREG		"无法打开REGISTRY ！"
-END
-
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //

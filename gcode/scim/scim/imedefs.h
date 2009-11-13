@@ -16,28 +16,6 @@
 // resource ID
 #define IDI_IME                 0x0100
 
-#define IDS_STATUSERR           0x0200
-#define IDS_CHICHAR             0x0201
-
-#define IDS_EUDC                0x0202
-
-#define IDS_USRDIC_FILTER       0x0210
-
-#define IDS_FILE_OPEN_ERR       0x0220
-#define IDS_MEM_LESS_ERR        0x0221
-
-#define IDS_SETFILE             0x0300
-#define IDS_IMENAME             0x0320
-#define IDS_IMEUICLASS          0x0321
-#define IDS_IMECOMPCLASS        0x0322
-#define IDS_IMECANDCLASS        0x0323
-#define IDS_IMESTATUSCLASS      0x0324
-#define IDS_IMECMENUCLASS       0x0325
-#define IDS_IMEREGNAME          0x0327
-#define IDS_IMENAME_UNI         0x0330
-
-#define IDS_WARN_OPENREG        0x0602
-
 
 #define IDC_STATIC              -1
 
@@ -117,7 +95,6 @@
 #define uCandEnd                3
 #define CandGBinfoLen           64
 // the flag for an opened or start UI
-#define IMN_PRIVATE_UPDATE_STATUS             0x0001
 #define IMN_PRIVATE_COMPOSITION_SIZE          0x0002
 #define IMN_PRIVATE_UPDATE_QUICK_KEY          0x0004
 
@@ -180,8 +157,7 @@ typedef struct _tagImeG {
 	RECT rcImeName;				// ImeName position relative to status window
 	RECT rcSymbol;				// symbol relative to status window
 	TCHAR szStatusErr[8];
-	int cbStatusErr;
-// setting of UI
+
 	int iPara;
 	int iPerp;
 	int iParaTol;
@@ -217,9 +193,7 @@ extern TCHAR szStatusClassName[];
 extern TCHAR szCMenuClassName[];
 extern TCHAR szHandCursor[];
 extern TCHAR szChinese[];
-extern TCHAR pszImeName[IMEINDEXNUM][MAX_PATH];
 extern TCHAR *szImeName;
-extern TCHAR szImeRegName[];
 extern TCHAR szImeXGBName[];
 extern TCHAR szSymbol[];
 extern TCHAR szNoSymbol[];
@@ -256,8 +230,7 @@ void hide_comp_wnd();
 
 void PASCAL OpenStatus(HWND);	// statusui.c
 LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);
-void PASCAL InitStatusUIData(int, int);
-BOOL UpdateStatusWindow(HWND);
+void PASCAL InitStatusUIData();
 
 // dialog procedure
 const char* msg_name(u32 msg);

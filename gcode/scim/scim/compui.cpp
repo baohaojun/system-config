@@ -289,17 +289,13 @@ void PASCAL SetCompPosition(input_context& ic)
 
 	ClientToScreen(g_hCompWnd, &ptWnd);
 
-	if (1) {
-		POINT ptNew;			// new position of UI
+	POINT ptNew;			// new position of UI
 
-		ptNew.x = ic->cfCompForm.ptCurrentPos.x;
-		ptNew.y = ic->cfCompForm.ptCurrentPos.y;
-		ClientToScreen((HWND) ic->hWnd, &ptNew);
-		fChange = AdjustCompPosition(ic, &ptWnd, &ptNew);
-	} else {
-		//fixme
-		BHJDEBUG(" fixme");
-	}
+	ptNew.x = ic->cfCompForm.ptCurrentPos.x;
+	ptNew.y = ic->cfCompForm.ptCurrentPos.y;
+	ClientToScreen((HWND) ic->hWnd, &ptNew);
+	fChange = AdjustCompPosition(ic, &ptWnd, &ptNew);
+
 
 	if (!fChange) {
 		return;
@@ -338,7 +334,6 @@ void hide_comp_wnd()
 
 void PASCAL StartComp(HWND hUIWnd)
 {
-	EnterLeaveDebug(); 
 	input_context ic(hUIWnd);
 	if (!ic) {
 		return;
@@ -364,9 +359,6 @@ static void DestroyCompWindow()
 
 void PASCAL PaintCompWindow(HDC hDC)
 {
-	EnterLeaveDebug(); 
-	BHJDEBUG(" g_comp_str is %s", g_comp_str.c_str());
-
 	RECT rcWnd;
 	GetClientRect(g_hCompWnd, &rcWnd);
 
@@ -375,7 +367,6 @@ void PASCAL PaintCompWindow(HDC hDC)
 	if (g_comp_str.size()) {
 		wstring wstr = to_wstring(g_comp_str);
 		ExtTextOut(hDC, 10, 1, 0, 0, wstr.c_str(), wstr.size(), NULL);
-		BHJDEBUG(" g_comp_str size is %d, wstr size is %d", g_comp_str.size(), wstr.size());
 	} 
 	return;
 }

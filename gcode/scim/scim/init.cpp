@@ -7,19 +7,19 @@
 
 int strbytelen(LPTSTR);
 
-void PASCAL InitStatusUIData(int cxBorder, int cyBorder)
+void PASCAL InitStatusUIData()
 {
 
 	int iContentHi;
 
 	// iContentHi is to get the maximum value of predefined STATUS_DIM_Y and
-	// a real Chinese character's height in the current HDC.
+    //int cxBorder, int cyBorder	// a real Chinese character's height in the current HDC.
 
 	iContentHi = STATUS_DIM_Y;
 
-	if (iContentHi < sImeG.yChiCharHi)
-
+	if (iContentHi < sImeG.yChiCharHi) {
 		iContentHi = sImeG.yChiCharHi;
+	}
 
 	// right bottom of status
 	sImeG.rcStatusText.left = 0;
@@ -35,9 +35,9 @@ void PASCAL InitStatusUIData(int cxBorder, int cyBorder)
 
 	sImeG.xStatusWi =
 		STATUS_DIM_X * 2 + STATUS_NAME_MARGIN +
-		strbytelen(szImeName) * sImeG.xChiCharWi / 2 + 6 * cxBorder;
+		strbytelen(szImeName) * sImeG.xChiCharWi / 2;
 
-	sImeG.yStatusHi = iContentHi + 6 * cxBorder;
+	sImeG.yStatusHi = iContentHi;
 
 	// left bottom of imeicon bar
 	sImeG.rcImeIcon.left = sImeG.rcStatusText.left;
@@ -73,67 +73,28 @@ void PASCAL InitStatusUIData(int cxBorder, int cyBorder)
 
 void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 {
-
-	int cxBorder, cyBorder;
-
-	HDC hDC;
-
-	TCHAR szChiChar[4];
+	TCHAR szChiChar[4] = {0x9999, 0};
 
 	SIZE lTextSize;
 
 	hInst = hInstance;
 
-	LoadString(hInst, IDS_IMEREGNAME, szImeRegName, MAX_PATH);
+	szUIClassName = L"bhj_ime_ui";
+	szCompClassName = L"bhj_ime_cand";
+	szStatusClassName = L"bhj_ime_status";
 
-	LoadString(hInst, IDS_IMENAME_UNI, pszImeName[0], MAX_PATH);
+	HDC hDC = GetDC(NULL);
 
-	// get the UI class name
-	LoadString(hInst, IDS_IMEUICLASS, szUIClassName, CLASS_LEN);
-
-	// get the composition class name
-	LoadString(hInst, IDS_IMECOMPCLASS, szCompClassName, CLASS_LEN);
-
-	// get the candidate class name
-
-	// get the status class name
-	LoadString(hInst, IDS_IMESTATUSCLASS, szStatusClassName, CLASS_LEN);
-
-	//get the ContextMenu class name
-	LoadString(hInst, IDS_IMECMENUCLASS, szCMenuClassName, CLASS_LEN);
-
-	// work area
-	cxBorder = GetSystemMetrics(SM_CXBORDER);
-
-	cyBorder = GetSystemMetrics(SM_CYBORDER);
-
-	// get the Chinese char
-	LoadString(hInst, IDS_CHICHAR, szChiChar,
-			   sizeof(szChiChar) / sizeof(TCHAR));
-
-	// get size of Chinese char
-	hDC = GetDC(NULL);
-
-	if (!GetTextExtentPoint
-		(hDC, (LPTSTR) szChiChar, lstrlen(szChiChar), &lTextSize))
-
+	if (!GetTextExtentPoint (hDC, (LPTSTR) szChiChar, 1, &lTextSize)) {
 		memset(&lTextSize, 0, sizeof(SIZE));
-
+	}
 	ReleaseDC(NULL, hDC);
 
-	// get text metrics to decide the width & height of composition window
-	// these IMEs always use system font to show
 	sImeG.xChiCharWi = lTextSize.cx;
-
 	sImeG.yChiCharHi = lTextSize.cy;
 
 
-	InitStatusUIData(cxBorder, cyBorder);
-
-	LoadString(hInst, IDS_STATUSERR, sImeG.szStatusErr,
-			   sizeof(sImeG.szStatusErr) / sizeof(TCHAR));
-
-	sImeG.cbStatusErr = lstrlen(sImeG.szStatusErr);
+	InitStatusUIData();
 
 	sImeG.iPara = 0;
 	sImeG.iPerp = sImeG.yChiCharHi;
@@ -234,8 +195,7 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 	switch (fdwReason) {
 
 	case DLL_PROCESS_ATTACH:
-
-		szImeName = pszImeName[0];
+		szImeName = L"\x5305\x5305\x4e94\x7b14"; //包包五笔
 
 		if (!hInst) {
 			InitImeGlobalData(hInstance);

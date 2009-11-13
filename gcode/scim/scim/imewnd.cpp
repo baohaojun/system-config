@@ -176,9 +176,8 @@ wstring to_wstring(const string& str)
 								&tmp, 
 								0);
 
-	BHJDEBUG(" n is %d, str size %d, lasterror: %x", n, str.size(), GetLastError());
 	if (n == 0) {
-		return L"Hello world";
+		return L"Error: MultiByteToWideChar";
 	}
 
 	WCHAR* buf = (WCHAR*)malloc(n * sizeof(WCHAR));
