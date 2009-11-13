@@ -245,24 +245,6 @@ typedef IMEG NEAR *NPIMEG;
 typedef IMEG FAR *LPIMEG;
 
 
-typedef struct _tagPRIVCONTEXT {	// IME private data for each context
-	int iImeState;				// the composition state - input, choose, or
-	BOOL fdwImeMsg;				// what messages should be generated
-	DWORD dwCompChar;			// wParam of WM_IME_COMPOSITION
-	DWORD fdwGcsFlag;			// lParam for WM_IME_COMPOSITION
-	u32 uSYHFlg;
-	u32 uDYHFlg;
-	u32 uDSMHCount;
-	u32 uDSMHFlg;
-// input data
-	TCHAR bSeq[13];				// sequence code of input char
-	DWORD fdwGB;
-} PRIVCONTEXT;
-
-typedef PRIVCONTEXT *PPRIVCONTEXT;
-typedef PRIVCONTEXT NEAR *NPPRIVCONTEXT;
-typedef PRIVCONTEXT FAR *LPPRIVCONTEXT;
-
 typedef struct tagNEARCARET {	// for near caret offset calculatation
 	int iLogFontFacX;
 	int iLogFontFacY;
@@ -316,10 +298,6 @@ extern TCHAR szErrorTitle[];
 LRESULT CALLBACK UIWndProc(HWND, u32, WPARAM, LPARAM);	// ui.c
 LRESULT PASCAL UIPaint(HWND);	// ui.c
 
-// for engine
-WORD PASCAL AsciiToGB(LPPRIVCONTEXT);
-WORD PASCAL CharToHex(TCHAR);
-
 
 class input_context;
 
@@ -328,7 +306,6 @@ BOOL PASCAL ClearCand(input_context&);	// ddis.c
 VOID InfoMessage(HANDLE, WORD);	//ddis.c
 VOID FatalMessage(HANDLE, WORD);	//ddis.c
 
-void PASCAL GenerateMessage(HIMC, input_context&, LPPRIVCONTEXT);	// notify.c
 
 DWORD PASCAL ReadingToPattern(LPCTSTR, BOOL);	// regword.c
 void PASCAL ReadingToSequence(LPCTSTR, LPBYTE, BOOL);	// regword.c
@@ -346,9 +323,7 @@ void PASCAL OpenStatus(HWND);	// statusui.c
 LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);
 void PASCAL InitStatusUIData(int, int);
 BOOL UpdateStatusWindow(HWND);
-void PASCAL GenerateImeMessage(HIMC, input_context&, DWORD);
-WORD PASCAL UnicodeEngine(LPPRIVCONTEXT imcPrivPtr);
-void PASCAL UnicodeAddCodeIntoCand(LPCANDIDATELIST, WORD);
+
 // dialog procedure
 const char* msg_name(u32 msg);
 extern HWND hCompWnd, hStatusWnd;

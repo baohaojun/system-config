@@ -18,58 +18,6 @@ Module Name:
 #include "bhjdebug.h" 
 #include "imewnd.h"
 
-void PASCAL
-GenerateMessage(HIMC hIMC, input_context& ic, LPPRIVCONTEXT imcPrivPtr)
-{
-	if (!ic) {
-		return;
-	} else if (!imcPrivPtr) {
-		return;
-	} else if (imcPrivPtr->fdwImeMsg & MSG_IN_IMETOASCIIEX) {
-		return;
-	} else {
-	}
-
-	ic->dwNumMsgBuf += 0;
-
-	imcPrivPtr->fdwImeMsg &= (MSG_ALREADY_OPEN | MSG_ALREADY_START);
-	imcPrivPtr->fdwGcsFlag = 0;
-
-	ImmGenerateMessage(hIMC);
-	return;
-}
-
-void PASCAL
-GenerateImeMessage(HIMC hIMC, input_context& ic, DWORD fdwImeMsg)
-{
-	LPPRIVCONTEXT imcPrivPtr;
-
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
-	if (!imcPrivPtr) {
-		return;
-	}
-
-	imcPrivPtr->fdwImeMsg |= fdwImeMsg;
-
-	if (fdwImeMsg & MSG_CLOSE_CANDIDATE) {
-		imcPrivPtr->fdwImeMsg &= ~(MSG_OPEN_CANDIDATE | MSG_CHANGE_CANDIDATE);
-	} else if (fdwImeMsg & (MSG_OPEN_CANDIDATE | MSG_CHANGE_CANDIDATE)) {
-		imcPrivPtr->fdwImeMsg &= ~(MSG_CLOSE_CANDIDATE);
-	}
-
-	if (fdwImeMsg & MSG_END_COMPOSITION) {
-		imcPrivPtr->fdwImeMsg &= ~(MSG_START_COMPOSITION);
-	} else if (fdwImeMsg & MSG_START_COMPOSITION) {
-		imcPrivPtr->fdwImeMsg &= ~(MSG_END_COMPOSITION);
-	}
-
-	GenerateMessage(hIMC, ic, imcPrivPtr);
-
-	ImmUnlockIMCC(ic->hPrivate);
-
-	return;
-}
-
 //we don't allow ImeSetCompositionString
 //we don't know what it does!
 

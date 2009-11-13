@@ -83,14 +83,10 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 {
 	HIMC hIMC;
 	
-	LPPRIVCONTEXT imcPrivPtr;
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	input_context ic(hIMC);
 	
 	if (!ic) {
-		nShowCmd = SW_HIDE;
-	} else if (!(imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate))) {
-		
 		nShowCmd = SW_HIDE;
 	} 
 
@@ -100,7 +96,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 		return;
 	}
 
-	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_START) {
+	if (g_comp_str.size()) {
 		if (hCompWnd) {
 
 			RedrawWindow(hCompWnd, NULL, NULL,
@@ -112,14 +108,6 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	} else {
 		ShowComp(SW_HIDE);
 	}
-
-	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
-		BHJDEBUG(" RedrawWindow called");
-		//FIXME show cand?
-	} else {
-		//hide cand?
-	}
-
 
 	if (!hStatusWnd) {
 		OpenStatus(hUIWnd);
@@ -253,7 +241,6 @@ void PASCAL SetContext(HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 {
 	HIMC hIMC;
 	
-	LPPRIVCONTEXT imcPrivPtr;
 	RECT rcWorkArea;
 
 	rcWorkArea = get_wa_rect();
@@ -274,15 +261,6 @@ void PASCAL SetContext(HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 			ic->cfCandForm[0].dwStyle = CFS_DEFAULT;
 		}
 
-
-		imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
-		if (!imcPrivPtr) {
-			
-			return;
-		}
-
-
-		// init Caps
 		{
 			BYTE lpbKeyState[256];
 			DWORD fdwConversion;

@@ -27,7 +27,7 @@ ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 		return FALSE;
 	}
 
-	lpImeInfo->dwPrivateDataSize = sizeof(PRIVCONTEXT);
+	lpImeInfo->dwPrivateDataSize = 0;
 	lpImeInfo->fdwProperty = IME_PROP_KBD_CHAR_FIRST |
 		IME_PROP_UNICODE |
 		IME_PROP_CANDLIST_START_FROM_1 |
@@ -93,31 +93,6 @@ LRESULT WINAPI ImeEscape(HIMC hIMC, u32 uSubFunc, LPVOID lpData)
 
 }
 
-void PASCAL InitCompStr(LPCOMPOSITIONSTRING lpCompStr)
-{
-	if (!lpCompStr) {
-		return;
-	}
-
-	lpCompStr->dwCompReadAttrLen = 0;
-	lpCompStr->dwCompReadClauseLen = 0;
-	lpCompStr->dwCompReadStrLen = 0;
-
-	lpCompStr->dwCompAttrLen = 0;
-	lpCompStr->dwCompClauseLen = 0;
-	lpCompStr->dwCompStrLen = 0;
-
-	lpCompStr->dwCursorPos = 0;
-	lpCompStr->dwDeltaStart = 0;
-
-	lpCompStr->dwResultReadClauseLen = 0;
-	lpCompStr->dwResultReadStrLen = 0;
-
-	lpCompStr->dwResultClauseLen = 0;
-	lpCompStr->dwResultStrLen = 0;
-
-	return;
-}
 
 BOOL PASCAL ClearCompStr(input_context& ic)
 {
@@ -273,41 +248,6 @@ BOOL PASCAL ClearCand(input_context& ic)
 	return (TRUE);
 }
 
-BOOL PASCAL ClearGuideLine(input_context& ic)
-{
-	HIMCC hMem;
-	LPGUIDELINE lpGuideLine;
-	DWORD dwSize = sizeof(GUIDELINE) + sImeG.cbStatusErr;
-
-	if (!ic->hGuideLine) {
-		// it maybe free by IME
-		ic->hGuideLine = ImmCreateIMCC(dwSize);
-	} else if (hMem = ImmReSizeIMCC(ic->hGuideLine, dwSize)) {
-		ic->hGuideLine = hMem;
-	} else {
-		ImmDestroyIMCC(ic->hGuideLine);
-		ic->hGuideLine = ImmCreateIMCC(dwSize);
-	}
-
-	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(ic->hGuideLine);
-	if (!lpGuideLine) {
-		return FALSE;
-	}
-
-	lpGuideLine->dwSize = dwSize;
-	lpGuideLine->dwLevel = GL_LEVEL_NOGUIDELINE;
-	lpGuideLine->dwIndex = GL_ID_UNKNOWN;
-	lpGuideLine->dwStrLen = 0;
-	lpGuideLine->dwStrOffset = sizeof(GUIDELINE);
-
-	CopyMemory((LPBYTE) lpGuideLine + lpGuideLine->dwStrOffset,
-			   sImeG.szStatusErr, sImeG.cbStatusErr);
-
-	ImmUnlockIMCC(ic->hGuideLine);
-
-	return (TRUE);
-}
-
 void PASCAL InitContext(input_context& ic)
 {
 	if (ic->fdwInit & INIT_STATUSWNDPOS) {
@@ -339,7 +279,6 @@ void PASCAL InitContext(input_context& ic)
 
 BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 {
-	LPPRIVCONTEXT imcPrivPtr;
 
 	if (fSelect) {
 
@@ -349,7 +288,6 @@ BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 		if (!ClearCand(ic))
 			return FALSE;
 
-		ClearGuideLine(ic);
 	}
 
 	if (ic->cfCandForm[0].dwIndex != 0)
@@ -364,29 +302,7 @@ BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 	if (!ic->hPrivate)
 		return FALSE;
 
-	imcPrivPtr = (LPPRIVCONTEXT) ImmLockIMCC(ic->hPrivate);
-	if (!imcPrivPtr)
-		return FALSE;
-
 	if (fSelect) {
-		//
-		// init fields of hPrivate
-		//
-		imcPrivPtr->iImeState = CST_INIT;
-		imcPrivPtr->fdwImeMsg = (DWORD) 0;
-		imcPrivPtr->dwCompChar = (DWORD) 0;
-		imcPrivPtr->fdwGcsFlag = (DWORD) 0;
-
-		imcPrivPtr->uSYHFlg = (u32) 0;
-		imcPrivPtr->uDYHFlg = (u32) 0;
-		imcPrivPtr->uDSMHCount = (u32) 0;
-		imcPrivPtr->uDSMHFlg = (u32) 0;
-
-		//imcPrivPtr->fdwSentence = (DWORD)NULL;
-
-		*(LPDWORD) imcPrivPtr->bSeq = 0;
-
-
 		ic->fOpen = TRUE;
 
 		if (!(ic->fdwInit & INIT_CONVERSION)) {
