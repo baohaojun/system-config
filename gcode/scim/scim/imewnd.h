@@ -37,7 +37,11 @@ void FillSolidRect(HDC hdc, const CRect& rect, COLORREF rgb);
 class input_context
 {
 public:	
-	input_context(HIMC himc, LPTRANSMSG msg_buf = NULL, u32 msg_buf_size = 0);
+	HIMC get_handle() {
+		return m_himc;
+	}
+	input_context(HIMC himc, LPTRANSMSG msg_buf, u32 msg_buf_size = 0);
+	input_context(HWND hwnd);
 	~input_context() {
 		if (m_himc) {
 			ImmUnlockIMC(m_himc);

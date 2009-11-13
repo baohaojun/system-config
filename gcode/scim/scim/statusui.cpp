@@ -29,16 +29,14 @@ void PASCAL ShowStatus(HWND hUIWnd, int nShowStatusCmd)
 
 void PASCAL OpenStatus(HWND hUIWnd)
 {
-	HIMC hIMC;
-	
 	POINT ptPos;
 	int nShowStatusCmd;
 	RECT rcWorkArea;
 
 	rcWorkArea = get_wa_rect();
 
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	input_context ic(hIMC);
+
+	input_context ic(hUIWnd);
 
 	ptPos.x = rcWorkArea.right - sImeG.xStatusWi;
 	ptPos.y = rcWorkArea.bottom - sImeG.yStatusHi;

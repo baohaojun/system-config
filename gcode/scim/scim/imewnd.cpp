@@ -29,6 +29,21 @@ input_context::input_context(HIMC himc, LPTRANSMSG msg_buf, u32 msg_buf_size) :
 	} 
 }
 
+input_context::input_context(HWND hUIWnd) :
+	m_himc(NULL),
+	m_ic(NULL),
+	m_msg_buf(NULL),
+	m_msg_buf_size(0),
+	m_num_msg(0)
+{
+	if (hUIWnd) {
+		m_himc = (HIMC)GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
+	}
+	if (m_himc) {
+		m_ic = (LPINPUTCONTEXT)ImmLockIMC(m_himc);
+	}
+}
+
 class trans_msg
 {
 public:

@@ -315,11 +315,7 @@ void PASCAL MoveDefaultCompPosition(HWND hUIWnd)
 		return;
 	}
 
-	HIMC hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-
-
-
-	input_context ic(hIMC);
+	input_context ic(hUIWnd);
 	if (!ic) {
 		return;
 	}
@@ -337,12 +333,7 @@ void PASCAL ShowComp(int nShowCmd)
 void PASCAL StartComp(HWND hUIWnd)
 {
 	EnterLeaveDebug(); 
-	HIMC hIMC;
-	
-
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-
-	input_context ic(hIMC);
+	input_context ic(hUIWnd);
 	if (!ic) {
 		return;
 	}

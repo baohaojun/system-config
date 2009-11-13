@@ -93,7 +93,7 @@ LRESULT WINAPI ImeEscape(HIMC hIMC, u32 uSubFunc, LPVOID lpData)
 
 }
 
-BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
+BOOL PASCAL Select(input_context& ic, BOOL fSelect)
 {
 	if (fSelect) {
 		if (!(ic->fdwInit & INIT_CONVERSION)) {
@@ -132,7 +132,7 @@ BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 				fdwConversion = ic->fdwConversion | IME_CMODE_NATIVE;
 			}
 
-			ImmSetConversionStatus(hIMC, fdwConversion,
+			ImmSetConversionStatus(ic.get_handle(), fdwConversion,
 								   ic->fdwSentence);
 		}
 
@@ -142,37 +142,19 @@ BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 	return (TRUE);
 }
 
-/**********************************************************************/
-/* ImeSelect()                                                        */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 BOOL WINAPI ImeSelect(HIMC hIMC, BOOL fSelect)
 {
-	
-	BOOL fRet;
-
-
-	input_context ic(hIMC);
+	input_context ic(hIMC, NULL);
 	if (!ic) {
 		return FALSE;
 	}
 
-	fRet = Select(hIMC, ic, fSelect);
-
-	
-
-	return (fRet);
+	return Select(ic, fSelect);
 }
 
-/**********************************************************************/
-/* ImeSetActiveContext()                                              */
-/* Return Value:                                                      */
-/*      TRUE - successful, FALSE - failure                            */
-/**********************************************************************/
 BOOL WINAPI ImeSetActiveContext(HIMC hIMC, BOOL fOn)
 {
-	input_context ic(hIMC);
+	input_context ic(hIMC, NULL);
 	if (!ic) {
 		return FALSE;
 	}

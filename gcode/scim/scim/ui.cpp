@@ -81,10 +81,7 @@ void PASCAL StatusWndMsg(		// set the show hide state and
 
 void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 {
-	HIMC hIMC;
-	
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	input_context ic(hIMC);
+	input_context ic(hUIWnd);
 	
 	if (!ic) {
 		nShowCmd = SW_HIDE;
@@ -122,44 +119,6 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	return;
 }
 
-/**********************************************************************/
-/* ShowGuideLine                                                      */
-/**********************************************************************/
-void PASCAL ShowGuideLine(HWND hUIWnd)
-{
-	HIMC hIMC;
-	
-	LPGUIDELINE lpGuideLine;
-
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-
-	input_context ic(hIMC);
-	if (!ic) {
-		return;
-	}
-
-	lpGuideLine = (LPGUIDELINE) ImmLockIMCC(ic->hGuideLine);
-
-	if (!lpGuideLine) {
-	} else if (lpGuideLine->dwLevel == GL_LEVEL_ERROR) {
-		MessageBeep((u32) - 1);
-		MessageBeep((u32) - 1);
-	} else if (lpGuideLine->dwLevel == GL_LEVEL_WARNING) {
-		MessageBeep((u32) - 1);
-	} else {
-	}
-
-	ImmUnlockIMCC(ic->hGuideLine);
-	
-
-	return;
-}
-
-/**********************************************************************/
-/* UpdateStatusWindow()                                               */
-/* Return Value:                                                      */
-/*     none                                                             */
-/**********************************************************************/
 BOOL UpdateStatusWindow(HWND hUIWnd)
 {
 	InvalidateRect(g_hStatusWnd, &(sImeG.rcStatusText), TRUE);
@@ -217,8 +176,6 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 	case IMN_SETSTATUSWINDOWPOS:
 		break;
 	case IMN_GUIDELINE:
-		ShowGuideLine(hUIWnd);
-
 		break;
 	case IMN_PRIVATE:
 		switch (lParam) {
@@ -238,16 +195,13 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 
 void PASCAL SetContext(HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 {
-	HIMC hIMC;
-	
 	RECT rcWorkArea;
 
 	rcWorkArea = get_wa_rect();
 
 
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 
-	input_context ic(hIMC);
+	input_context ic(hUIWnd);
 	if (!ic) {
 		return;
 	}
@@ -283,7 +237,7 @@ void PASCAL SetContext(HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 				}
 				uCaps = 0;
 			}
-			ImmSetConversionStatus(hIMC, fdwConversion,
+			ImmSetConversionStatus(ic.get_handle(), fdwConversion,
 								   ic->fdwSentence);
 		}
 	} 
