@@ -18,6 +18,7 @@
 #include <regstr.h>
 #include <imedefs.h>
 #include <resource.h>
+#include "imewnd.h"
 extern HWND hCrtDlg;
 
 /**********************************************************************/
@@ -28,7 +29,7 @@ void PASCAL AdjustStatusBoundary(LPPOINTS lppt, HWND hUIWnd)
 
 	RECT rcWorkArea;
 
-	rcWorkArea = sImeG.rcWorkArea;
+	rcWorkArea = get_wa_rect();
 
 	// display boundary check
 	if (lppt->x < rcWorkArea.left) {
@@ -106,7 +107,7 @@ void PASCAL OpenStatus(			// open status window
 	int nShowStatusCmd;
 	RECT rcWorkArea;
 
-	rcWorkArea = sImeG.rcWorkArea;
+	rcWorkArea = get_wa_rect();
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	if (!hIMC) {
@@ -384,7 +385,7 @@ StatusWndProc(HWND hStatusWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_IME_NOTIFY:
 		// get work area for changing
-		SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &get_wa_rect(), 0);
 
 		if (wParam == IMN_SETSTATUSWINDOWPOS) {
 			SetStatusWindowPos(hStatusWnd);

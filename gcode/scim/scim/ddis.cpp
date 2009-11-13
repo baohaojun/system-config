@@ -18,6 +18,7 @@ Module Name:
 #include <resource.h>
 #include <regstr.h>
 #include <winuser.h>
+#include "imewnd.h"
 HWND hCrtDlg = NULL;
 
 BOOL WINAPI
@@ -76,8 +77,8 @@ BOOL FAR PASCAL ImeSetDlgProc(	// dialog procedure of configuration
 
 
 		SetWindowPos(hDlg, HWND_TOP,
-					 (int) (sImeG.rcWorkArea.right - DlgWidth) / 2,
-					 (int) (sImeG.rcWorkArea.bottom - DlgHeight) / 2,
+					 (int) (get_wa_rect().right - DlgWidth) / 2,
+					 (int) (get_wa_rect().bottom - DlgHeight) / 2,
 					 (int) 0, (int) 0, SWP_NOSIZE);
 
 
@@ -383,33 +384,20 @@ void PASCAL InitContext(LPINPUTCONTEXT lpIMC)
 		ptWnd.y = 0;
 		ClientToScreen(lpIMC->hWnd, &ptWnd);
 
-		if (ptWnd.x < sImeG.rcWorkArea.left) {
-			lpIMC->ptStatusWndPos.x = sImeG.rcWorkArea.left;
-		} else if (ptWnd.x + sImeG.xStatusWi > sImeG.rcWorkArea.right) {
+		if (ptWnd.x < get_wa_rect().left) {
+			lpIMC->ptStatusWndPos.x = get_wa_rect().left;
+		} else if (ptWnd.x + sImeG.xStatusWi > get_wa_rect().right) {
 			lpIMC->ptStatusWndPos.x =
-				sImeG.rcWorkArea.right - sImeG.xStatusWi;
+				get_wa_rect().right - sImeG.xStatusWi;
 		} else {
 			lpIMC->ptStatusWndPos.x = ptWnd.x;
 		}
 
 		lpIMC->ptStatusWndPos.y =
-			sImeG.rcWorkArea.bottom - sImeG.yStatusHi;
+			get_wa_rect().bottom - sImeG.yStatusHi;
 
 		lpIMC->fdwInit |= INIT_STATUSWNDPOS;
 	}
-
-	if (lpIMC->fdwInit & INIT_COMPFORM) {
-	} else if (!lpIMC->hWnd) {
-	} else {
-		POINT ptWnd;
-
-		ptWnd = lpImeL->ptDefComp;
-		ScreenToClient(lpIMC->hWnd, &ptWnd);
-		lpIMC->cfCompForm.dwStyle = CFS_DEFAULT;
-		lpIMC->cfCompForm.ptCurrentPos = ptWnd;
-		lpIMC->fdwInit |= INIT_COMPFORM;
-	}
-
 	return;
 }
 

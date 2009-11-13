@@ -281,7 +281,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 	LPPRIVCONTEXT imcPrivPtr;
 	RECT rcWorkArea;
 
-	rcWorkArea = sImeG.rcWorkArea;
+	rcWorkArea = get_wa_rect();
 
 
 	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);

@@ -204,7 +204,6 @@ typedef struct tagImeL {		// local structure, per IME structure
 	HINSTANCE hInst;			// IME DLL instance handle
 	int xCompWi;				// width
 	int yCompHi;				// height
-	POINT ptDefComp;			// default composition window position
 	int cxCompBorder;			// border width of composition window
 	int cyCompBorder;			// border height of composition window
 	// window key related data
@@ -226,8 +225,6 @@ typedef struct _tagImeG {
 	WORD wNumCodes;
 	DWORD IC_Enter;
 
-	RECT rcWorkArea;			// the work area of applications
-// Chinese char width & height
 	int xChiCharWi;
 	int yChiCharHi;
 

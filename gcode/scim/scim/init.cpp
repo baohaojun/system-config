@@ -125,9 +125,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 	LoadString(hInst, IDS_IMECMENUCLASS, szCMenuClassName, CLASS_LEN);
 
 	// work area
-	SystemParametersInfo(SPI_GETWORKAREA, 0, &sImeG.rcWorkArea, 0);
-
-	// border
 	cxBorder = GetSystemMetrics(SM_CXBORDER);
 
 	cyBorder = GetSystemMetrics(SM_CYBORDER);
@@ -143,22 +140,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 		(hDC, (LPTSTR) szChiChar, lstrlen(szChiChar), &lTextSize))
 
 		memset(&lTextSize, 0, sizeof(SIZE));
-
-	if (sImeG.rcWorkArea.right < 2 * UI_MARGIN) {
-
-		sImeG.rcWorkArea.left = 0;
-
-		sImeG.rcWorkArea.right = GetDeviceCaps(hDC, HORZRES);
-
-	}
-
-	if (sImeG.rcWorkArea.bottom < 2 * UI_MARGIN) {
-
-		sImeG.rcWorkArea.top = 0;
-
-		sImeG.rcWorkArea.bottom = GetDeviceCaps(hDC, VERTRES);
-
-	}
 
 	ReleaseDC(NULL, hDC);
 
@@ -291,14 +272,6 @@ BOOL PASCAL InitImeLocalData(HINSTANCE hInstL)
 
 
 	lpImeL->yCompHi = 60;
-
-	// default position of composition window
-	lpImeL->ptDefComp.x =
-		sImeG.rcWorkArea.right - lpImeL->xCompWi - cxBorder * 2;
-
-	lpImeL->ptDefComp.y =
-		sImeG.rcWorkArea.bottom - lpImeL->yCompHi - cyBorder * 2;
-
 	return (TRUE);
 
 }

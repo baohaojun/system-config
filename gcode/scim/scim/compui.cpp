@@ -140,7 +140,7 @@ void PASCAL GetNearCaretPosition(LPPOINT lpptFont,
 		}
 	}
 
-	rcWorkArea = sImeG.rcWorkArea;
+	rcWorkArea = get_wa_rect();
 
 	if (lpptNearCaret->x < rcWorkArea.left) {
 		lpptNearCaret->x = rcWorkArea.left;
@@ -296,7 +296,7 @@ void PASCAL SetCompPosition(	// set the composition window position
 	BOOL fChange = FALSE;
 	RECT rcWorkArea;
 
-	rcWorkArea = sImeG.rcWorkArea;
+	rcWorkArea = get_wa_rect();
 
 	// the client coordinate position (0, 0) of composition window
 	ptWnd.x = 0;
