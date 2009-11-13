@@ -1,16 +1,3 @@
-
-/*++
-
-Copyright (c) 1990-1999 Microsoft Corporation, All Rights Reserved
-
-Module Name:
-
-    ui.c
-
-
-++*/
-
-
 #include <windows.h>
 #include <immdev.h>
 #include <imedefs.h>
@@ -44,30 +31,6 @@ void PASCAL DestroyUIWindow(	// destroy composition window
 	return;
 }
 
-/**********************************************************************/
-/* StatusWndMsg()                                                     */
-/**********************************************************************/
-void PASCAL StatusWndMsg(HWND hUIWnd, BOOL fOn)
-{
-	if (!fOn) {
-		return;
-	}
-
-	if (!g_hStatusWnd) {
-		OpenStatus(hUIWnd);
-	}
-
-	if (!g_hStatusWnd) {
-		return;
-	}
-
-	if (!GetWindowLongPtr(hUIWnd, IMMGWLP_IMC)) {
-		hide_status_wnd();
-	} else {
-		show_status_wnd();
-	}
-}
-
 void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 {
 	input_context ic(hUIWnd);
@@ -77,8 +40,6 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 		hide_comp_wnd();
 		return;
 	} 
-
-
 
 	if (g_comp_str.size()) {
 		if (g_hCompWnd) {
@@ -107,12 +68,9 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 {
 	switch (wParam) {
 	case IMN_OPENSTATUSWINDOW:
-		//PostStatus(hUIWnd, TRUE);
-		StatusWndMsg(hUIWnd, TRUE);
+		OpenStatus(hUIWnd);
 		break;
 	case IMN_CLOSESTATUSWINDOW:
-		//PostStatus(hUIWnd, FALSE);
-		StatusWndMsg(hUIWnd, FALSE);
 		break;
 	case IMN_OPENCANDIDATE:
 		if (lParam & 0x00000001) {
@@ -162,7 +120,7 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 	return;
 }
 
-void PASCAL SetContext(HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
+void PASCAL SetContext(HWND hUIWnd, BOOL fOn)
 {
 	input_context ic(hUIWnd);
 	if (!ic) {
@@ -245,15 +203,10 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		NotifyUI(hUIWnd, wParam, lParam);
 		break;
 	case WM_IME_SETCONTEXT:
-		SetContext(hUIWnd, (BOOL) wParam, lParam);
-
-		if (wParam && GetWindowLongPtr(hUIWnd, IMMGWLP_IMC))
-			SetWindowPos(hUIWnd, NULL, 0, 0, 0, 0,
-						 SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOMOVE);
-
+		SetContext(hUIWnd, (BOOL) wParam);
 		break;
 	case WM_IME_SELECT:
-		SetContext(hUIWnd, (BOOL) wParam, 0);
+		SetContext(hUIWnd, (BOOL) wParam);
 		return (0L);
 	case WM_MOUSEACTIVATE:
 		return (MA_NOACTIVATE);
@@ -570,4 +523,4 @@ const char* msg_name(u32 msg)
 	return "WM_UNKNOWN";
 }
 
-HWND hCandWnd, g_hCompWnd, hCMenuWnd, g_hStatusWnd;
+HWND hCandWnd, g_hCompWnd, g_hStatusWnd;
