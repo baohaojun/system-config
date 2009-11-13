@@ -93,161 +93,6 @@ LRESULT WINAPI ImeEscape(HIMC hIMC, u32 uSubFunc, LPVOID lpData)
 
 }
 
-
-BOOL PASCAL ClearCompStr(input_context& ic)
-{
-	HIMCC hMem;
-	LPCOMPOSITIONSTRING lpCompStr;
-	DWORD dwSize;
-
-	if (!ic) {
-		return FALSE;
-	}
-
-	dwSize =
-		// header length
-		sizeof(COMPOSITIONSTRING) +
-		// composition reading attribute plus NULL terminator
-		lpImeL->nMaxKey * sizeof(BYTE) + sizeof(BYTE) +
-		// composition reading clause
-		sizeof(DWORD) + sizeof(DWORD) +
-		// composition reading string plus NULL terminator
-		lpImeL->nMaxKey * sizeof(WORD) + sizeof(WORD) +
-		// result reading clause
-		sizeof(DWORD) + sizeof(DWORD) +
-		// result reading string plus NULL terminateor
-		lpImeL->nMaxKey * sizeof(WORD) + sizeof(WORD) +
-		// result clause
-		sizeof(DWORD) + sizeof(DWORD) +
-		// result string plus NULL terminateor
-		MAXSTRLEN * sizeof(WORD) + sizeof(WORD);
-
-	if (!ic->hCompStr) {
-		// it maybe free by other IME, init it
-		ic->hCompStr = ImmCreateIMCC(dwSize);
-	} else if (hMem = ImmReSizeIMCC(ic->hCompStr, dwSize)) {
-		ic->hCompStr = hMem;
-	} else {
-		ImmDestroyIMCC(ic->hCompStr);
-		ic->hCompStr = ImmCreateIMCC(dwSize);
-		return FALSE;
-	}
-
-	if (!ic->hCompStr) {
-		return FALSE;
-	}
-
-	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
-	if (!lpCompStr) {
-		ImmDestroyIMCC(ic->hCompStr);
-		ic->hCompStr = ImmCreateIMCC(dwSize);
-		return FALSE;
-	}
-
-	lpCompStr->dwSize = dwSize;
-
-	// 1. composition (reading) string - simple IME
-	// 2. result reading string
-	// 3. result string
-
-	lpCompStr->dwCompReadAttrLen = 0;
-	lpCompStr->dwCompReadAttrOffset = sizeof(COMPOSITIONSTRING);
-	lpCompStr->dwCompReadClauseLen = 0;
-	lpCompStr->dwCompReadClauseOffset = lpCompStr->dwCompReadAttrOffset +
-		lpImeL->nMaxKey * sizeof(TCHAR) + sizeof(TCHAR);
-	lpCompStr->dwCompReadStrLen = 0;
-	lpCompStr->dwCompReadStrOffset = lpCompStr->dwCompReadClauseOffset +
-		sizeof(DWORD) + sizeof(DWORD);
-
-	// composition string is the same with composition reading string 
-	// for simple IMEs
-	lpCompStr->dwCompAttrLen = 0;
-	lpCompStr->dwCompAttrOffset = lpCompStr->dwCompReadAttrOffset;
-	lpCompStr->dwCompClauseLen = 0;
-	lpCompStr->dwCompClauseOffset = lpCompStr->dwCompReadClauseOffset;
-	lpCompStr->dwCompStrLen = 0;
-	lpCompStr->dwCompStrOffset = lpCompStr->dwCompReadStrOffset;
-
-	lpCompStr->dwCursorPos = 0;
-	lpCompStr->dwDeltaStart = 0;
-
-	lpCompStr->dwResultReadClauseLen = 0;
-	lpCompStr->dwResultReadClauseOffset = lpCompStr->dwCompStrOffset +
-		lpImeL->nMaxKey * sizeof(WORD) + sizeof(WORD);
-	lpCompStr->dwResultReadStrLen = 0;
-	lpCompStr->dwResultReadStrOffset =
-		lpCompStr->dwResultReadClauseOffset + sizeof(DWORD) +
-		sizeof(DWORD);
-
-	lpCompStr->dwResultClauseLen = 0;
-	lpCompStr->dwResultClauseOffset = lpCompStr->dwResultReadStrOffset +
-		lpImeL->nMaxKey * sizeof(WORD) + sizeof(WORD);
-	lpCompStr->dwResultStrOffset = 0;
-	lpCompStr->dwResultStrOffset = lpCompStr->dwResultClauseOffset +
-		sizeof(DWORD) + sizeof(DWORD);
-
-	GlobalUnlock((HGLOBAL) ic->hCompStr);
-	return (TRUE);
-}
-
-BOOL PASCAL ClearCand(input_context& ic)
-{
-	HIMCC hMem;
-	LPCANDIDATEINFO lpCandInfo;
-	LPCANDIDATELIST lpCandList;
-	DWORD dwSize =
-		// header length
-		sizeof(CANDIDATEINFO) + sizeof(CANDIDATELIST) +
-		// candidate string pointers
-		sizeof(DWORD) * (MAXCAND + 1) +
-		// string plus NULL terminator
-		(sizeof(WORD) + sizeof(WORD)) * (MAXCAND + 1);
-
-	if (!ic) {
-		return FALSE;
-	}
-
-	if (!ic->hCandInfo) {
-		// it maybe free by other IME, init it
-		ic->hCandInfo = ImmCreateIMCC(dwSize);
-	} else if (hMem = ImmReSizeIMCC(ic->hCandInfo, dwSize)) {
-		ic->hCandInfo = hMem;
-	} else {
-		ImmDestroyIMCC(ic->hCandInfo);
-		ic->hCandInfo = ImmCreateIMCC(dwSize);
-		return FALSE;
-	}
-
-	if (!ic->hCandInfo) {
-		return FALSE;
-	}
-
-	lpCandInfo = (LPCANDIDATEINFO) ImmLockIMCC(ic->hCandInfo);
-	if (!lpCandInfo) {
-		ImmDestroyIMCC(ic->hCandInfo);
-		ic->hCandInfo = ImmCreateIMCC(dwSize);
-		return FALSE;
-	}
-	// ordering of strings are
-	// buffer size
-	lpCandInfo->dwSize = dwSize;
-	lpCandInfo->dwCount = 0;
-	lpCandInfo->dwOffset[0] = sizeof(CANDIDATEINFO);
-	lpCandList = (LPCANDIDATELIST) ((LPBYTE) lpCandInfo +
-									lpCandInfo->dwOffset[0]);
-	// whole candidate info size - header
-	lpCandList->dwSize = lpCandInfo->dwSize - sizeof(CANDIDATEINFO);
-	lpCandList->dwStyle = IME_CAND_READ;
-	lpCandList->dwCount = 0;
-	lpCandList->dwSelection = 0;
-	lpCandList->dwPageSize = CANDPERPAGE;
-	lpCandList->dwOffset[0] = sizeof(CANDIDATELIST) +
-		sizeof(DWORD) * (MAXCAND);
-
-	ImmUnlockIMCC(ic->hCandInfo);
-	return (TRUE);
-}
-
 void PASCAL InitContext(input_context& ic)
 {
 	if (ic->fdwInit & INIT_STATUSWNDPOS) {
@@ -279,32 +124,7 @@ void PASCAL InitContext(input_context& ic)
 
 BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 {
-
 	if (fSelect) {
-
-		if (!ClearCompStr(ic))
-			return FALSE;
-
-		if (!ClearCand(ic))
-			return FALSE;
-
-	}
-
-	if (ic->cfCandForm[0].dwIndex != 0)
-		ic->cfCandForm[0].dwStyle = CFS_DEFAULT;
-
-	// We add this hack for switching from other IMEs, this IME has a bug.
-	// Before this bug fixed in this IME, it depends on this hack.
-	if (ic->cfCandForm[0].dwStyle == CFS_DEFAULT) {
-		ic->cfCandForm[0].dwIndex = (DWORD) - 1;
-	}
-
-	if (!ic->hPrivate)
-		return FALSE;
-
-	if (fSelect) {
-		ic->fOpen = TRUE;
-
 		if (!(ic->fdwInit & INIT_CONVERSION)) {
 			ic->fdwConversion = IME_CMODE_NATIVE;
 			ic->fdwInit |= INIT_CONVERSION;
@@ -358,7 +178,6 @@ BOOL PASCAL Select(HIMC hIMC, input_context& ic, BOOL fSelect)
 		}
 	}
 
-	ImmUnlockIMCC(ic->hPrivate);
 
 	return (TRUE);
 }

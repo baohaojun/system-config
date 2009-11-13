@@ -302,7 +302,6 @@ LRESULT PASCAL UIPaint(HWND);	// ui.c
 class input_context;
 
 void PASCAL InitCompStr(LPCOMPOSITIONSTRING);	// ddis.c
-BOOL PASCAL ClearCand(input_context&);	// ddis.c
 VOID InfoMessage(HANDLE, WORD);	//ddis.c
 VOID FatalMessage(HANDLE, WORD);	//ddis.c
 

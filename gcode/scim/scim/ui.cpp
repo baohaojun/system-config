@@ -117,7 +117,6 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 
 	ShowStatus(hUIWnd, nShowCmd);
 
-	ImmUnlockIMCC(ic->hPrivate);
 	
 
 	return;
@@ -257,10 +256,6 @@ void PASCAL SetContext(HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 
 		ShowComp(SW_SHOWNOACTIVATE);
 
-		if (ic->cfCandForm[0].dwIndex != 0) {
-			ic->cfCandForm[0].dwStyle = CFS_DEFAULT;
-		}
-
 		{
 			BYTE lpbKeyState[256];
 			DWORD fdwConversion;
@@ -290,12 +285,6 @@ void PASCAL SetContext(HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 			}
 			ImmSetConversionStatus(hIMC, fdwConversion,
 								   ic->fdwSentence);
-		}
-
-		if ((ic->cfCompForm.dwStyle & CFS_FORCE_POSITION)) {
-
-			//fixme 
-			ic->cfCompForm.dwStyle = CFS_DEFAULT;
 		}
 	} 
 

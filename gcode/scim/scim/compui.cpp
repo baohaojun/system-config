@@ -340,12 +340,7 @@ void PASCAL MoveDefaultCompPosition(	// the default comp position
 		return;
 	}
 
-	if (!(ic->cfCompForm.dwStyle & CFS_FORCE_POSITION)) {
-		SetCompPosition(hCompWnd, hIMC, ic);
-	}
-
-	
-
+	SetCompPosition(hCompWnd, hIMC, ic);
 	return;
 }
 
