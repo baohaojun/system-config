@@ -354,7 +354,7 @@ void PASCAL ReadingToSequence(LPCTSTR, LPBYTE, BOOL);	// regword.c
 extern "C" HWND PASCAL GetCompWnd(HWND);	// compui.c
 void PASCAL SetCompPosition(HWND, HIMC, input_context&);	// compui.c
 void PASCAL MoveDefaultCompPosition(HWND);	// compui.c
-void PASCAL ShowComp(HWND, int);	// compui.c
+void PASCAL ShowComp(int);	// compui.c
 void PASCAL StartComp(HWND);	// compui.c
 void PASCAL EndComp(HWND);		// compui.c
 LRESULT CALLBACK CompWndProc(HWND, u32, WPARAM, LPARAM);	// compui.c

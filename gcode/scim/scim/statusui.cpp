@@ -85,11 +85,7 @@ void PASCAL ShowStatus(HWND hUIWnd, int nShowStatusCmd)
 	return;
 }
 
-/**********************************************************************/
-/* OpenStatus()                                                       */
-/**********************************************************************/
-void PASCAL OpenStatus(			// open status window
-						  HWND hUIWnd)
+void PASCAL OpenStatus(HWND hUIWnd)
 {
 	HIMC hIMC;
 	

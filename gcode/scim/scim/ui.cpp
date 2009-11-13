@@ -96,7 +96,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 
 	if (nShowCmd == SW_HIDE) {
 		ShowStatus(hUIWnd, nShowCmd);
-		ShowComp(hUIWnd, nShowCmd);
+		ShowComp(nShowCmd);
 		return;
 	}
 
@@ -110,7 +110,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 			StartComp(hUIWnd);
 		}
 	} else {
-		ShowComp(hUIWnd, SW_HIDE);
+		ShowComp(SW_HIDE);
 	}
 
 	if (imcPrivPtr->fdwImeMsg & MSG_ALREADY_OPEN) {
@@ -274,7 +274,7 @@ void PASCAL SetContext(			// the context activated/deactivated
 
 	if (fOn) {
 
-		ShowComp(hUIWnd, SW_SHOW);
+		ShowComp(SW_SHOWNOACTIVATE);
 
 		if (ic->cfCandForm[0].dwIndex != 0) {
 			ic->cfCandForm[0].dwStyle = CFS_DEFAULT;

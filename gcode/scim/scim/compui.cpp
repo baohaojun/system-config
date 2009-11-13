@@ -375,10 +375,9 @@ void PASCAL MoveDefaultCompPosition(	// the default comp position
 	return;
 }
 
-void PASCAL ShowComp(			// Show the composition window
-						HWND hUIWnd, int nShowCompCmd)
+void PASCAL ShowComp(int nShowCmd)
 {
-	ShowWindow(hCompWnd, nShowCompCmd);
+	ShowWindow(hCompWnd, nShowCmd);
 	return;
 }
 
@@ -396,18 +395,13 @@ void PASCAL StartComp(HWND hUIWnd)
 	}
 
 	if (!hCompWnd) {
-		hCompWnd =
-			CreateWindowEx(0, 
-						   szCompClassName, NULL, WS_POPUP | WS_DISABLED,
-						   0, 0, 400, 60, hUIWnd,
-						   (HMENU) NULL, hInst, NULL);
+		hCompWnd = CreateWindowEx(0, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
+								  0, 0, 400, 60, hUIWnd,
+								  (HMENU) NULL, hInst, NULL);
 	}
 
 	SetCompPosition(hCompWnd, hIMC, ic);
-
-	
-
-	ShowComp(hUIWnd, SW_SHOWNOACTIVATE);
+	ShowComp(SW_SHOWNOACTIVATE);
 
 	return;
 }
@@ -417,7 +411,7 @@ void PASCAL StartComp(HWND hUIWnd)
 /**********************************************************************/
 void PASCAL EndComp(HWND hUIWnd)
 {
-	ShowComp(hUIWnd, SW_HIDE);
+	ShowComp(SW_HIDE);
 
 	return;
 }
