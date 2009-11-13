@@ -178,10 +178,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\chcand.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\compui.cpp"
 				>
 			</File>
@@ -199,14 +195,6 @@
 			</File>
 			<File
 				RelativePath=".\init.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mmonitor.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\notify.cpp"
 				>
 			</File>
 			<File
