@@ -189,7 +189,6 @@
 
 #define WM_USER_DESTROY         (WM_USER + 0x0400)
 
-// the flags for GetNearCaretPosition
 #define NEAR_CARET_FIRST_TIME   0x0001
 #define NEAR_CARET_CANDIDATE    0x0002
 

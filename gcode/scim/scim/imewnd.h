@@ -62,10 +62,15 @@ private:
 	bool copy_old_msg();
 
 private:
+	//to prevent copying..
+	input_context(const input_context&);
+	input_context& operator=(const input_context&); 
+
+private:
 	LPINPUTCONTEXT m_ic;
 	HIMC m_himc;
-	LPTRANSMSG m_msg_buf;
-	u32 m_msg_buf_size;
+	const LPTRANSMSG m_msg_buf;
+	const u32 m_msg_buf_size;
 	u32 m_num_msg;
 };
 extern string g_comp_str;
@@ -80,5 +85,7 @@ extern string g_comp_str;
 // );
 
 wstring to_wstring(const string& str);
+CRect get_wa_rect();
+
 
 #endif

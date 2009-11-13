@@ -24,13 +24,9 @@ input_context::input_context(HIMC himc, LPTRANSMSG msg_buf, u32 msg_buf_size) :
 	m_msg_buf_size(msg_buf_size),
 	m_num_msg(0)
 {
-	EnterLeaveDebug(); 
 	if (himc) {
 		m_ic = (LPINPUTCONTEXT)ImmLockIMC(himc);
-	} else {
-		m_ic = NULL;
-	}
-	BHJDEBUG(" m_msg_buf_size is %d", m_msg_buf_size);
+	} 
 }
 
 class trans_msg
@@ -184,4 +180,11 @@ wstring to_wstring(const string& str)
 	wstring wstr = buf;
 	free(buf);
 	return wstr;
+}
+
+CRect get_wa_rect()
+{
+	CRect rect;
+	SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
+	return rect;
 }

@@ -372,11 +372,6 @@ ImeToAsciiEx(u32 vk,
 		g_comp_str.push_back((char)tolower(kbd_char));
 	}
 
-	BHJDEBUG(" g_comp_str is %s", g_comp_str.c_str());
-	if (!hIMC) {
-		return to_wm_char(vk, kbd_scan, lpTransBuf, lpbKeyState);
-	}
-
 	input_context ic(hIMC, lpTransBuf->TransMsg, lpTransBuf->uMsgCount);
 
 	if (!ic) {

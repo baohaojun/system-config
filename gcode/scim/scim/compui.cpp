@@ -72,16 +72,12 @@ BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
 	return (TRUE);
 }
 
-/**********************************************************************/
-/* GetNearCaretPosition()                                             */
-/**********************************************************************/
-void PASCAL GetNearCaretPosition(	// decide a near caret position according
-									// to the caret position
-									LPPOINT lpptFont,
-									u32 uEsc,
-									u32 uRot,
-									LPPOINT lpptCaret,
-									LPPOINT lpptNearCaret, BOOL fFlags)
+void PASCAL GetNearCaretPosition(LPPOINT lpptFont,
+								 u32 uEsc,
+								 u32 uRot,
+								 LPPOINT lpptCaret,
+								 LPPOINT lpptNearCaret, 
+								 BOOL fFlags)
 {
 	LONG lFontSize;
 	LONG xWidthUI, yHeightUI, xBorder, yBorder;
@@ -161,16 +157,10 @@ void PASCAL GetNearCaretPosition(	// decide a near caret position according
 	return;
 }
 
-/**********************************************************************/
-/* AdjustCompPosition()                                               */
-/* Return Value :                                                     */
-/*      the position of composition window is changed or not          */
-/**********************************************************************/
-BOOL PASCAL AdjustCompPosition(	// IME adjust position according to
-								  // composition form
-								  LPINPUTCONTEXT lpIMC, LPPOINT lpptOrg,	// original composition window
-								  // and final position
-								  LPPOINT lpptNew)	// new expect position
+BOOL PASCAL AdjustCompPosition(
+	LPINPUTCONTEXT lpIMC, 
+	LPPOINT lpptOrg, 
+	LPPOINT lpptNew)
 {
 	POINT ptNearCaret, ptOldNearCaret;
 	u32 uEsc, uRot;

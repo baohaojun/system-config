@@ -227,9 +227,6 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 			RedrawWindow(hStatusWnd, NULL, NULL, RDW_INVALIDATE);
 		}
 		break;
-	case IMN_SETCOMPOSITIONFONT:
-		// we are not going to change font, but an IME can do this if it want
-		break;
 	case IMN_SETCOMPOSITIONWINDOW:
 		{
 			HWND hCompWnd;
@@ -382,35 +379,6 @@ void PASCAL SetContext(			// the context activated/deactivated
 	return;
 }
 
-
-/**********************************************************************/
-/* GetCompWindow()                                                    */
-/**********************************************************************/
-LRESULT PASCAL GetCompWindow(HWND hUIWnd, LPCOMPOSITIONFORM lpCompForm)
-{
-	HWND hCompWnd;
-	RECT rcCompWnd;
-
-	hCompWnd = GetCompWnd(hUIWnd);
-
-	if (!hCompWnd) {
-		return (1L);
-	}
-
-	if (!GetWindowRect(hCompWnd, &rcCompWnd)) {
-		return (1L);
-	}
-
-	lpCompForm->dwStyle = CFS_POINT | CFS_RECT;
-	lpCompForm->ptCurrentPos = *(LPPOINT) & rcCompWnd;
-	lpCompForm->rcArea = rcCompWnd;
-
-	return (0L);
-}
-
-/**********************************************************************/
-/* SelectIME()                                                        */
-/**********************************************************************/
 void PASCAL SelectIME(			// switch IMEs
 						 HWND hUIWnd, BOOL fSelect)
 {
