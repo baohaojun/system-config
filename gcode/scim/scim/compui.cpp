@@ -1,20 +1,22 @@
-
-/*++
-
-Copyright (c) 1990-1999 Microsoft Corporation, All Rights Reserved
-
-Module Name:
-
-    compui.c
-
-++*/
-
-
 #include <windows.h>
 #include <immdev.h>
 #include "imedefs.h"
 #include <regstr.h>
 #include "imewnd.h"
+
+static int comp_wnd_width()
+{
+	CRect rect;
+	GetWindowRect(g_hCompWnd, &rect);
+	return rect.Width();
+}
+
+static int comp_wnd_height()
+{
+	CRect rect;
+	GetWindowRect(g_hCompWnd, &rect);
+	return rect.Height();	
+}
 
 BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
 								  LPPOINT lpptOrg, LPPOINT lpptNearCaret,	// the suggested near caret position
@@ -52,8 +54,8 @@ BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
 	// build up the UI rectangle (composition window)
 	rcUIRect.left = lpptOrg->x;
 	rcUIRect.top = lpptOrg->y;
-	rcUIRect.right = rcUIRect.left + lpImeL->xCompWi;
-	rcUIRect.bottom = rcUIRect.top + lpImeL->yCompHi;
+	rcUIRect.right = rcUIRect.left + comp_wnd_width();
+	rcUIRect.bottom = rcUIRect.top + comp_wnd_height();
 
 	if (IntersectRect(&rcInterRect, &rcUIRect, lprcInputRect)) {
 		return FALSE;
@@ -79,10 +81,10 @@ void PASCAL GetNearCaretPosition(LPPOINT lpptFont,
 		lFontSize = lpptFont->y;
 	}
 
-	xWidthUI = lpImeL->xCompWi;
-	yHeightUI = lpImeL->yCompHi;
-	xBorder = lpImeL->cxCompBorder;
-	yBorder = lpImeL->cyCompBorder;
+	xWidthUI = comp_wnd_width();
+	yHeightUI = comp_wnd_height();
+	xBorder = 0;
+	yBorder = 0;
 
 	if (fFlags & NEAR_CARET_FIRST_TIME) {
 		lpptNearCaret->x = lpptCaret->x +
@@ -167,7 +169,7 @@ BOOL PASCAL AdjustCompPosition(
 	} else if (ic->lfFont.A.lfHeight < 0) {
 		ptFont.x = -ic->lfFont.A.lfHeight;
 	} else {
-		ptFont.x = lpImeL->yCompHi;
+		ptFont.x = comp_wnd_height();
 	}
 
 	if (ic->lfFont.A.lfHeight > 0) {
@@ -179,11 +181,11 @@ BOOL PASCAL AdjustCompPosition(
 	}
 
 	// if the input char is too big, we don't need to consider so much
-	if (ptFont.x > lpImeL->yCompHi * 8) {
-		ptFont.x = lpImeL->yCompHi * 8;
+	if (ptFont.x > comp_wnd_height() * 8) {
+		ptFont.x = comp_wnd_height() * 8;
 	}
-	if (ptFont.y > lpImeL->yCompHi * 8) {
-		ptFont.y = lpImeL->yCompHi * 8;
+	if (ptFont.y > comp_wnd_height() * 8) {
+		ptFont.y = comp_wnd_height() * 8;
 	}
 
 	if (ptFont.x < sImeG.xChiCharWi) {
@@ -232,8 +234,8 @@ BOOL PASCAL AdjustCompPosition(
 	// build up the new suggest UI rectangle (composition window)
 	rcUIRect.left = ptNearCaret.x;
 	rcUIRect.top = ptNearCaret.y;
-	rcUIRect.right = rcUIRect.left + lpImeL->xCompWi;
-	rcUIRect.bottom = rcUIRect.top + lpImeL->yCompHi;
+	rcUIRect.right = rcUIRect.left + comp_wnd_width();
+	rcUIRect.bottom = rcUIRect.top + comp_wnd_height();
 
 	ptOldNearCaret = ptNearCaret;
 
@@ -257,8 +259,8 @@ BOOL PASCAL AdjustCompPosition(
 	// build up the new suggest UI rectangle (composition window)
 	rcUIRect.left = ptNearCaret.x;
 	rcUIRect.top = ptNearCaret.y;
-	rcUIRect.right = rcUIRect.left + lpImeL->xCompWi;
-	rcUIRect.bottom = rcUIRect.top + lpImeL->yCompHi;
+	rcUIRect.right = rcUIRect.left + comp_wnd_width();
+	rcUIRect.bottom = rcUIRect.top + comp_wnd_height();
 
 	// OK, no intersect between the adjust position and input char
 	if (IntersectRect(&rcInterRect, &rcUIRect, &rcInputRect)) {

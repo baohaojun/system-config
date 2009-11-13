@@ -44,16 +44,6 @@ ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 	lpImeInfo->fdwSelectCaps = (DWORD) 0;
 
 	lstrcpy(lpszWndCls, (LPTSTR) szUIClassName);
-
-	if (lpImeL) {
-		if (dwSystemInfoFlags & IME_SYSINFO_WINLOGON) {
-			//  the client app is running in logon mode.
-			lpImeL->fWinLogon = TRUE;
-		} else
-			lpImeL->fWinLogon = FALSE;
-
-	}
-
 	return (TRUE);
 }
 

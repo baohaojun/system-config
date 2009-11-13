@@ -169,26 +169,6 @@ typedef UINT u32;
 typedef unsigned char u8;
 typedef unsigned short u16;
 
-typedef struct tagImeL {		// local structure, per IME structure
-	HINSTANCE hInst;			// IME DLL instance handle
-	int xCompWi;				// width
-	int yCompHi;				// height
-	int cxCompBorder;			// border width of composition window
-	int cyCompBorder;			// border height of composition window
-	// window key related data
-	WORD fModeConfig;			// quick key/prediction mode
-	WORD nMaxKey;				// max key of compsiton str
-	DWORD dwRegImeIndex;		// this value defers in different
-	// process, so can not set in sImeG
-	BOOL fWinLogon;
-} IMEL;
-
-typedef IMEL *PIMEL;
-typedef IMEL NEAR *NPIMEL;
-typedef IMEL FAR *LPIMEL;
-
-
-// global sturcture for ime init data
 typedef struct _tagImeG {
 	int xChiCharWi;
 	int yChiCharHi;
@@ -229,8 +209,6 @@ typedef NEARCARET FAR *LPNEARCARET;
 
 extern HINSTANCE hInst;
 extern IMEG sImeG;
-extern IMEL sImeL;
-extern LPIMEL lpImeL;
 extern HDC ST_UI_hDC;
 extern u32 uCaps;
 extern TCHAR szUIClassName[];

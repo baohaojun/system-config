@@ -190,15 +190,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\empty.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\imewnd.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\init.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\regword.cpp"
 				>
 			</File>
 			<File

@@ -1,21 +1,7 @@
-
-/*++
-
-Copyright (c) 1990-1999 Microsoft Corporation, All Rights Reserved
-
-Module Name:
-
-    data.c
-
-++*/
-
-
 #include <windows.h>
 #include <immdev.h>
 #include "imedefs.h"
 
-//#pragma comment(linker, "/SECTION:.shared,RWS")
-//#pragma data_seg(".shared")
 IMEG sImeG = { 0 };
 
 //#pragma data_seg()
@@ -24,8 +10,6 @@ HDC ST_UI_hDC;
 u32 uCaps = 0;
 
 HINSTANCE hInst;
-IMEL sImeL;
-LPIMEL lpImeL;
 TCHAR szUIClassName[CLASS_LEN];
 TCHAR szCompClassName[CLASS_LEN];
 TCHAR szCandClassName[CLASS_LEN];

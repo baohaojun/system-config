@@ -1,14 +1,3 @@
-
-/*++
-
-Copyright (c) 1990-1999 Microsoft Corporation, All Rights Reserved
-
-Module Name:
-
-    init.c
-
-++*/
-
 #include <windows.h>
 #include <winerror.h>
 #include <memory.h>
@@ -156,45 +145,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 
 }
 
-BOOL PASCAL InitImeLocalData(HINSTANCE hInstL)
-{
-
-	int cxBorder, cyBorder;
-
-	int iContentHi;
-
-	// iContentHi is to get the maximum value of predefined COMP_TEXT_Y and
-	// a real Chinese character's height in the current HDC.
-
-	iContentHi = COMP_TEXT_Y;
-
-	if (iContentHi < sImeG.yChiCharHi)
-
-		iContentHi = sImeG.yChiCharHi;
-
-	lpImeL->hInst = hInstL;
-
-	lpImeL->nMaxKey = 4;
-
-	// border + raising edge + sunken edge
-	cxBorder = GetSystemMetrics(SM_CXBORDER);
-
-	cyBorder = GetSystemMetrics(SM_CYBORDER);
-
-	// text position relative to the composition window
-	lpImeL->cxCompBorder = cxBorder * 2;
-
-	lpImeL->cyCompBorder = cyBorder * 2;
-
-
-	lpImeL->xCompWi = 400;
-
-
-	lpImeL->yCompHi = 60;
-	return (TRUE);
-
-}
-
 void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 {
 
@@ -285,19 +235,10 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 
 	case DLL_PROCESS_ATTACH:
 
-		sImeL.dwRegImeIndex = 0;
-		szImeName = pszImeName[sImeL.dwRegImeIndex];
+		szImeName = pszImeName[0];
 
 		if (!hInst) {
 			InitImeGlobalData(hInstance);
-		}
-
-		if (!lpImeL) {
-
-			lpImeL = &sImeL;
-
-			InitImeLocalData(hInstance);
-
 		}
 
 		RegisterImeClass(hInstance, hInstance);
