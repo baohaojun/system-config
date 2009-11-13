@@ -1,11 +1,3 @@
-
-/*************************************************
- *  imedefs.h                                    *
- *                                               *
- *  Copyright (C) 1995-1999 Microsoft Inc.       *
- *                                               *
- *************************************************/
-
 #ifndef __IMEDEFS_H__
 #define __IMEDEFS_H__
 #define ENABLE_BHJDEBUG
@@ -13,47 +5,7 @@
 #define NATIVE_CHARSET          GB2312_CHARSET
 #define NATIVE_ANSI_CP          936
 #define NATIVE_LANGUAGE         0x0804
-// resource ID
-#define IDI_IME                 0x0100
 
-
-#define IDC_STATIC              -1
-
-#define IDM_HLP                 0x0400
-#define IDM_OPTGUD              0x0403
-#define IDM_VER                 0x0401
-#define IDM_PROP                0x0402
-
-#define IDM_IME                 0x0450
-
-#define DlgPROP                 101
-#define DlgUIMODE               102
-#define IDC_UIMODE1             1001
-#define IDC_UIMODE2             1002
-#define IDC_USER1               1003
-
-// setting offset in .SET file
-#define OFFSET_MODE_CONFIG      0
-#define OFFSET_READLAYOUT       4
-
-// state of composition
-#define CST_INIT                0
-#define CST_INPUT               1
-#define CST_CHOOSE              2
-#define CST_SYMBOL              3
-#define CST_ALPHANUMERIC        7	// not in iImeState
-#define CST_INVALID             8	// not in iImeState
-#define CST_INVALID_INPUT       9	// not in iImeState
-#define CST_CAPITAL             11
-
-// state engin
-#define ENGINE_COMP             0
-#define ENGINE_ASCII            1
-#define ENGINE_RESAULT          2
-#define ENGINE_CHCAND           3
-#define ENGINE_BKSPC            4
-#define ENGINE_MULTISEL         5
-#define ENGINE_ESC              6
 
 #define VK_OEM_SEMICLN                  0xba	//  ;    :
 #define VK_OEM_EQUAL                    0xbb	//  =    +

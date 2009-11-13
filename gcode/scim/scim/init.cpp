@@ -5,8 +5,6 @@
 #include <imedefs.h>
 #include <regstr.h>
 
-int strbytelen(LPTSTR);
-
 void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 {
 	TCHAR szChiChar[4] = {0x9999, 0};
@@ -25,7 +23,6 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 	sImeG.xChiCharWi = lTextSize.cx;
 	sImeG.yChiCharHi = lTextSize.cy;
 
-
 	sImeG.iPara = 0;
 	sImeG.iPerp = sImeG.yChiCharHi;
 
@@ -41,29 +38,24 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 
 	WNDCLASSEX wcWndCls;
 
-	// IME UI class
-	// Register IME UI class
+
 	wcWndCls.cbSize = sizeof(WNDCLASSEX);
 
 	wcWndCls.cbClsExtra = 0;
 
 	wcWndCls.cbWndExtra = sizeof(INT_PTR) * 2;
 
-	wcWndCls.hIcon =
-		LoadImage(hInstL, MAKEINTRESOURCE(IDI_IME),
-				  IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR);
+	wcWndCls.hIcon = NULL;
 
 	wcWndCls.hInstance = hInstance;
 
-	wcWndCls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wcWndCls.hCursor = NULL;
 
 	wcWndCls.hbrBackground = GetStockObject(NULL_BRUSH);
 
 	wcWndCls.lpszMenuName = (LPTSTR) NULL;
 
-	wcWndCls.hIconSm =
-		LoadImage(hInstL, MAKEINTRESOURCE(IDI_IME),
-				  IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
+	wcWndCls.hIconSm = NULL;
 
 	// IME UI class
 	if (!GetClassInfoEx(hInstance, szUIClassName, &wcWndCls)) {
@@ -94,8 +86,6 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 
 	}
 
-	// IME status class
-	// register IME status class
 	if (!GetClassInfoEx(hInstance, szStatusClassName, &wcWndCls)) {
 
 		wcWndCls.lpfnWndProc = StatusWndProc;
@@ -170,24 +160,5 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 	}
 
 	return (TRUE);
-
-}
-
-int strbytelen(LPTSTR lpStr) //used for calculating text size
-{
-
-	int i, len, iRet;
-
-	len = lstrlen(lpStr);
-
-	for (i = 0, iRet = 0; i < len; i++, iRet++) {
-
-		if (lpStr[i] > 0x100)
-
-			iRet++;
-
-	}
-
-	return iRet;
 
 }
