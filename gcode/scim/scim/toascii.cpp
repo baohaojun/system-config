@@ -16,55 +16,7 @@ Module Name:
 #include <imedefs.h>
 #include "imewnd.h"
 
-BOOL IsUsedCode(WORD kbd_char)
-{
-	WORD wFlg;
 
-	for (wFlg = 0; wFlg < sImeG.wNumCodes; wFlg++)
-		if (kbd_char == sImeG.UsedCodes[wFlg])
-			break;
-	if (wFlg < sImeG.wNumCodes)
-		return (TRUE);
-	return FALSE;
-}
-
-u32 PASCAL UnicodeProcessKey(WORD kbd_char, LPPRIVCONTEXT imcPrivPtr)
-{
-	if (!imcPrivPtr) {
-		return (CST_INVALID);
-	}
-
-	if (kbd_char == TEXT(' ')) {
-		if (imcPrivPtr->bSeq[0] && imcPrivPtr->bSeq[1]) {
-			return (CST_INPUT);
-		} else if (!imcPrivPtr->bSeq[0]) {
-			return (CST_ALPHANUMERIC);
-		} else {
-			return (CST_INVALID_INPUT);
-		}
-	}
-
-	if ((kbd_char >= TEXT('0') && kbd_char <= TEXT('9'))
-		|| (kbd_char >= TEXT('a') && kbd_char <= TEXT('f'))
-		|| (kbd_char == TEXT('?'))) {
-
-		if (kbd_char == TEXT('?')) {
-			if (!imcPrivPtr->bSeq[2]) {
-				return (CST_INPUT);
-			} else
-				return (CST_INVALID_INPUT);
-		} else {
-			return (CST_INPUT);
-		}
-	} else if (imcPrivPtr->bSeq[0]) {
-		return (CST_INVALID_INPUT);
-	} else
-		return (CST_ALPHANUMERIC);
-
-}
-
-//this function is called to determing whether the key event is wanted by our IME
-//The IME will do the conversion with ImeToAsciiEx
 BOOL WINAPI ImeProcessKey(HIMC hIMC,
 							 u32 vk, LPARAM lParam,
 							 CONST LPBYTE lpbKeyState)

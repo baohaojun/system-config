@@ -82,9 +82,6 @@ void PASCAL InitStatusUIData(int cxBorder, int cyBorder)
 
 }
 
-/**********************************************************************/
-/* InitImeGlobalData()                                                */
-/**********************************************************************/
 void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 {
 
@@ -198,22 +195,6 @@ BOOL PASCAL InitImeLocalData(HINSTANCE hInstL)
 
 }
 
-
-/**********************************************************************/
-/* RegisterIme()                                                      */
-/**********************************************************************/
-void PASCAL RegisterIme(HINSTANCE hInstance)
-{
-
-	lstrcpy(sImeG.UsedCodes, TEXT("0123456789abcdef"));
-
-	sImeG.wNumCodes = (WORD) lstrlen(sImeG.UsedCodes);
-
-	sImeG.IC_Enter = 0;
-	return;
-
-}
-
 void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 {
 
@@ -304,9 +285,6 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 
 	case DLL_PROCESS_ATTACH:
 
-		RegisterIme(hInstance);
-
-		// init globaldata & load globaldata from resource
 		sImeL.dwRegImeIndex = 0;
 		szImeName = pszImeName[sImeL.dwRegImeIndex];
 

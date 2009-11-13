@@ -221,10 +221,6 @@ typedef IMEL FAR *LPIMEL;
 
 // global sturcture for ime init data
 typedef struct _tagImeG {
-	TCHAR UsedCodes[17];
-	WORD wNumCodes;
-	DWORD IC_Enter;
-
 	int xChiCharWi;
 	int yChiCharHi;
 
@@ -348,7 +344,6 @@ LRESULT CALLBACK CompWndProc(HWND, u32, WPARAM, LPARAM);	// compui.c
 void PASCAL ShowStatus(HWND, int);	// statusui.c
 void PASCAL OpenStatus(HWND);	// statusui.c
 LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);
-BOOL IsUsedCode(WORD);
 void PASCAL InitStatusUIData(int, int);
 BOOL UpdateStatusWindow(HWND);
 void PASCAL GenerateImeMessage(HIMC, input_context&, DWORD);
