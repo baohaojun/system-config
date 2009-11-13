@@ -40,7 +40,7 @@ void PASCAL OpenStatus(HWND hUIWnd)
 	ptPos.x = get_wa_rect().right - STATE_WIDTH;
 	ptPos.y = get_wa_rect().bottom - STATE_HEIGHT;
 
-	if (!g_hStatusWnd) {					// create status window
+	if (!g_hStatusWnd) {
 		g_hStatusWnd = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
 									  ptPos.x, ptPos.y, STATE_WIDTH, STATE_HEIGHT,
 									  hUIWnd, (HMENU) NULL, hInst,
