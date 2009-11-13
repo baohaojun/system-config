@@ -47,51 +47,38 @@ void PASCAL DestroyUIWindow(	// destroy composition window
 /**********************************************************************/
 /* StatusWndMsg()                                                     */
 /**********************************************************************/
-void PASCAL StatusWndMsg(		// set the show hide state and
-							HWND hUIWnd, BOOL fOn)
+void PASCAL StatusWndMsg(HWND hUIWnd, BOOL fOn)
 {
-	HIMC hIMC;
-
-
-	hIMC = (HIMC) GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
-	if (!hIMC) {
+	if (!fOn) {
 		return;
 	}
 
-	if (fOn) {
-
-		if (!g_hStatusWnd) {
-			OpenStatus(hUIWnd);
-		}
-	} 
+	if (!g_hStatusWnd) {
+		OpenStatus(hUIWnd);
+	}
 
 	if (!g_hStatusWnd) {
 		return;
 	}
 
-	if (!fOn) {
-	} else if (hIMC) {
-		ShowStatus(hUIWnd, SW_SHOWNOACTIVATE);
+	if (!GetWindowLongPtr(hUIWnd, IMMGWLP_IMC)) {
+		hide_status_wnd();
 	} else {
-		ShowStatus(hUIWnd, SW_HIDE);
+		show_status_wnd();
 	}
-
-	return;
 }
 
 void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 {
 	input_context ic(hUIWnd);
 	
-	if (!ic) {
-		nShowCmd = SW_HIDE;
+	if (!ic || nShowCmd == SW_HIDE) {
+		hide_status_wnd();
+		hide_comp_wnd();
+		return;
 	} 
 
-	if (nShowCmd == SW_HIDE) {
-		ShowStatus(hUIWnd, nShowCmd);
-		ShowComp(nShowCmd);
-		return;
-	}
+
 
 	if (g_comp_str.size()) {
 		if (g_hCompWnd) {
@@ -103,7 +90,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 			StartComp(hUIWnd);
 		}
 	} else {
-		ShowComp(SW_HIDE);
+		hide_comp_wnd();
 	}
 
 	if (!g_hStatusWnd) {
@@ -112,10 +99,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	RedrawWindow(g_hStatusWnd, NULL, NULL,
 				 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 
-	ShowStatus(hUIWnd, nShowCmd);
-
-	
-
+	show_status_wnd();
 	return;
 }
 
@@ -195,53 +179,17 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 
 void PASCAL SetContext(HWND hUIWnd, BOOL fOn, LPARAM lShowUI)
 {
-	RECT rcWorkArea;
-
-	rcWorkArea = get_wa_rect();
-
-
-
 	input_context ic(hUIWnd);
 	if (!ic) {
 		return;
 	}
 
 	if (fOn) {
-
-		ShowComp(SW_SHOWNOACTIVATE);
-
-		{
-			BYTE lpbKeyState[256];
-			DWORD fdwConversion;
-
-			if (!GetKeyboardState(lpbKeyState))
-				lpbKeyState[VK_CAPITAL] = 0;
-
-			if (lpbKeyState[VK_CAPITAL] & 0x01) {
-				// 10.11 add
-				uCaps = 1;
-				// change to alphanumeric mode
-				fdwConversion =
-					ic->
-					fdwConversion & ~(0 | IME_CMODE_NATIVE
-									  | IME_CMODE_EUDC);
-			} else {
-				// change to native mode
-				if (uCaps == 1) {
-					fdwConversion =
-						(ic->
-						 fdwConversion | IME_CMODE_NATIVE) &
-						~(0 | IME_CMODE_EUDC);
-				} else {
-					fdwConversion = ic->fdwConversion;
-				}
-				uCaps = 0;
-			}
-			ImmSetConversionStatus(ic.get_handle(), fdwConversion,
-								   ic->fdwSentence);
-		}
-	} 
-
+		show_comp_wnd();
+	} else {
+		hide_comp_wnd();
+		hide_status_wnd();
+	}
 	UIPaint(hUIWnd);
 
 	
@@ -307,7 +255,6 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_IME_ENDCOMPOSITION:
-		EndComp();
 		break;
 	case WM_IME_NOTIFY:
 		NotifyUI(hUIWnd, wParam, lParam);

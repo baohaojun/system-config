@@ -140,24 +140,6 @@
 #define MSG_BACKSPACE                   0x000800
 #define GEN_MSG_MAX             6
 
-// the flag for set context
-#define SC_SHOW_UI              0x0001
-#define SC_HIDE_UI              0x0002
-#define SC_ALREADY_SHOW_STATUS  0x0004
-#define SC_WANT_SHOW_STATUS     0x0008
-#define SC_HIDE_STATUS          0x0010
-
-// the new flag for set context
-#define ISC_OPEN_STATUS_WINDOW  0x04000000
-#define ISC_OFF_CARET_UI        0x08000000
-#define ISC_SHOW_UI_ALL         (ISC_SHOWUIALL|ISC_OPEN_STATUS_WINDOW)
-#define ISC_SETCONTEXT_UI       (ISC_SHOWUIALL)
-
-#define ISC_HIDE_COMP_WINDOW            0x00400000
-#define ISC_HIDE_CAND_WINDOW            0x00800000
-// the flag for composition string show status
-#define IME_STR_SHOWED          0x0001
-#define IME_STR_ERROR           0x0002
 
 #define VK_OEM_SEMICLN                  0xba	//  ;    :
 #define VK_OEM_EQUAL                    0xbb	//  =    +
@@ -176,18 +158,6 @@
 #define CLASS_LEN               24
 
 #define NumsSK                  13
-
-// mb file for create word
-#define ID_LENGTH 28
-#define NUMTABLES 7
-#define TAG_DESCRIPTION           0x00000001
-#define TAG_RULER                 0x00000002
-#define TAG_CRTWORDCODE           0x00000004
-
-#define CMENU_HUIWND            0
-#define CMENU_MENU              4
-
-#define WM_USER_DESTROY         (WM_USER + 0x0400)
 
 #define NEAR_CARET_FIRST_TIME   0x0001
 #define NEAR_CARET_CANDIDATE    0x0002
@@ -279,10 +249,6 @@ extern TCHAR szEnglish[];
 extern TCHAR szCode[];
 extern TCHAR szEudc[];
 extern TCHAR szNone[];
-extern TCHAR szDigit[];
-extern BYTE bUpper[];
-extern WORD fMask[];
-extern TCHAR szRegIMESetting[];
 extern TCHAR szPerp[];
 extern TCHAR szPara[];
 extern TCHAR szPerpTol[];
@@ -291,8 +257,7 @@ extern TCHAR szRegImeIndex[];
 extern const NEARCARET ncUIEsc[], ncAltUIEsc[];
 extern const POINT ptInputEsc[], ptAltInputEsc[];
 extern BYTE VirtKey48Map[];
-extern TCHAR szWarnTitle[];
-extern TCHAR szErrorTitle[];
+
 
 LRESULT CALLBACK UIWndProc(HWND, u32, WPARAM, LPARAM);	// ui.c
 LRESULT PASCAL UIPaint(HWND);	// ui.c
@@ -302,12 +267,15 @@ class input_context;
 
 void PASCAL SetCompPosition(input_context&);	// compui.c
 void PASCAL MoveDefaultCompPosition(HWND);	// compui.c
-void PASCAL ShowComp(int);	// compui.c
 void PASCAL StartComp(HWND);	// compui.c
-void PASCAL EndComp();
 LRESULT CALLBACK CompWndProc(HWND, u32, WPARAM, LPARAM);	// compui.c
 
-void PASCAL ShowStatus(HWND, int);	// statusui.c
+void show_status_wnd();
+void hide_status_wnd();
+
+void show_comp_wnd();
+void hide_comp_wnd();
+
 void PASCAL OpenStatus(HWND);	// statusui.c
 LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);
 void PASCAL InitStatusUIData(int, int);

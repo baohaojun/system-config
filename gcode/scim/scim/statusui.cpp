@@ -21,47 +21,36 @@
 #include "imewnd.h"
 extern HWND hCrtDlg;
 
-void PASCAL ShowStatus(HWND hUIWnd, int nShowStatusCmd)
+void show_status_wnd()
 {
-	ShowWindow(g_hStatusWnd, nShowStatusCmd);
-	return;
+	ShowWindow(g_hStatusWnd, SW_SHOWNOACTIVATE);
+}
+
+void hide_status_wnd()
+{
+	ShowWindow(g_hStatusWnd, SW_HIDE);
 }
 
 void PASCAL OpenStatus(HWND hUIWnd)
 {
 	POINT ptPos;
-	int nShowStatusCmd;
-	RECT rcWorkArea;
 
-	rcWorkArea = get_wa_rect();
+	ptPos.x = get_wa_rect().right - sImeG.xStatusWi;
+	ptPos.y = get_wa_rect().bottom - sImeG.yStatusHi;
 
+	if (!g_hStatusWnd) {					// create status window
+		g_hStatusWnd = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
+									  ptPos.x, ptPos.y, sImeG.xStatusWi, sImeG.yStatusHi, 
+									  hUIWnd, (HMENU) NULL, hInst,
+									  NULL);
+	}
 
 	input_context ic(hUIWnd);
-
-	ptPos.x = rcWorkArea.right - sImeG.xStatusWi;
-	ptPos.y = rcWorkArea.bottom - sImeG.yStatusHi;
-
 	if (!ic) {
-		nShowStatusCmd = SW_HIDE;
+		hide_status_wnd();
 	} else {
-		nShowStatusCmd = SW_SHOWNOACTIVATE;
-	} 
-
-	if (g_hStatusWnd) {
-		SetWindowPos(g_hStatusWnd, NULL, 
-					 ptPos.x, ptPos.y, 0, 0,
-					 SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
-	} else {					// create status window
-		g_hStatusWnd = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
-						   ptPos.x, ptPos.y, sImeG.xStatusWi,
-						   sImeG.yStatusHi, hUIWnd, (HMENU) NULL, hInst,
-						   NULL);
+		show_status_wnd();
 	}
-
-	if (ic) {
-		ShowStatus(hUIWnd, SW_SHOWNOACTIVATE);
-	}
-
 	return;
 }
 

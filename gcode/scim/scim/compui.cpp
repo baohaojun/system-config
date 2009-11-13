@@ -324,10 +324,14 @@ void PASCAL MoveDefaultCompPosition(HWND hUIWnd)
 	return;
 }
 
-void PASCAL ShowComp(int nShowCmd)
+void show_comp_wnd()
 {
-	ShowWindow(g_hCompWnd, nShowCmd);
-	return;
+	ShowWindow(g_hCompWnd, SW_SHOWNOACTIVATE);
+}
+
+void hide_comp_wnd()
+{
+	ShowWindow(g_hCompWnd, SW_HIDE);
 }
 
 void PASCAL StartComp(HWND hUIWnd)
@@ -345,14 +349,7 @@ void PASCAL StartComp(HWND hUIWnd)
 	}
 
 	SetCompPosition(ic);
-	ShowComp(SW_SHOWNOACTIVATE);
-
-	return;
-}
-
-void PASCAL EndComp()
-{
-	ShowComp(SW_HIDE);
+	show_comp_wnd();
 
 	return;
 }

@@ -93,55 +93,6 @@ LRESULT WINAPI ImeEscape(HIMC hIMC, u32 uSubFunc, LPVOID lpData)
 
 }
 
-BOOL PASCAL Select(input_context& ic, BOOL fSelect)
-{
-	if (fSelect) {
-		if (!(ic->fdwInit & INIT_CONVERSION)) {
-			ic->fdwConversion = IME_CMODE_NATIVE;
-			ic->fdwInit |= INIT_CONVERSION;
-		}
-
-		if (!(ic->fdwInit & INIT_LOGFONT)) {
-			HDC hDC;
-			HGDIOBJ hSysFont;
-
-			//hSysFont = GetStockObject(SYSTEM_FONT);
-			hDC = GetDC(NULL);
-			hSysFont = GetCurrentObject(hDC, OBJ_FONT);
-			GetObject(hSysFont, sizeof(LOGFONT), &ic->lfFont.A);
-			ReleaseDC(NULL, hDC);
-
-			ic->fdwInit |= INIT_LOGFONT;
-		}
-
-
-		{
-			DWORD fdwConversion;
-
-			if (GetKeyState(VK_CAPITAL) & 0x01) {
-
-				//
-				// Change to alphanumeric mode.
-				//
-				fdwConversion = ic->fdwConversion & ~IME_CMODE_NATIVE;
-			} else {
-
-				//
-				// Change to native mode
-				//
-				fdwConversion = ic->fdwConversion | IME_CMODE_NATIVE;
-			}
-
-			ImmSetConversionStatus(ic.get_handle(), fdwConversion,
-								   ic->fdwSentence);
-		}
-
-	}
-
-
-	return (TRUE);
-}
-
 BOOL WINAPI ImeSelect(HIMC hIMC, BOOL fSelect)
 {
 	input_context ic(hIMC, NULL);
@@ -149,7 +100,7 @@ BOOL WINAPI ImeSelect(HIMC hIMC, BOOL fSelect)
 		return FALSE;
 	}
 
-	return Select(ic, fSelect);
+	return true;
 }
 
 BOOL WINAPI ImeSetActiveContext(HIMC hIMC, BOOL fOn)
