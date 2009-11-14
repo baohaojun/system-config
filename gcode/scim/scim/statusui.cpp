@@ -47,11 +47,6 @@ static void PaintStatusWindow(HDC hDC)
 	
 	CRect rect;
 	GetClientRect(g_hStatusWnd, &rect);
-
-	SetTextColor(hDC, RGB(0x00, 0x00, 0x00));
-
-	SetBkColor(hDC, RGB(0xff, 0xff, 0xff));
-
 	DrawText(hDC, szImeName, lstrlen(szImeName),
 			 &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }

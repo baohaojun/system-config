@@ -24,11 +24,8 @@ ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 	lpImeInfo->fdwConversionCaps =
 		IME_CMODE_NATIVE | IME_CMODE_NOCONVERSION;
 	lpImeInfo->fdwSentenceCaps = 0;
-	// IME will have different distance base multiple of 900 escapement
 	lpImeInfo->fdwUICaps = UI_CAP_ROT90;
-	// composition string is the reading string for simple IME
 	lpImeInfo->fdwSCSCaps = SCS_CAP_COMPSTR | SCS_CAP_MAKEREAD;
-	// IME want to decide conversion mode on ImeSelect
 	lpImeInfo->fdwSelectCaps = (DWORD) 0;
 
 	lstrcpy(lpszWndCls, (LPTSTR) szUIClassName);
