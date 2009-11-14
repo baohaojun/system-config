@@ -74,42 +74,23 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 
 	wcWndCls.hbrBackground = GetStockObject(WHITE_BRUSH);
 
-	// IME composition class
-	// register IME composition class
 	if (!GetClassInfoEx(hInstance, szCompClassName, &wcWndCls)) {
-
 		wcWndCls.lpfnWndProc = CompWndProc;
-
 		wcWndCls.lpszClassName = (LPTSTR) szCompClassName;
-
 		RegisterClassEx(&wcWndCls);
-
 	}
 
 	if (!GetClassInfoEx(hInstance, szStatusClassName, &wcWndCls)) {
-
 		wcWndCls.lpfnWndProc = StatusWndProc;
-
 		wcWndCls.lpszClassName = (LPTSTR) szStatusClassName;
-
 		RegisterClassEx(&wcWndCls);
-
 	}
-
-	return;
-
 }
 
 
-/**********************************************************************/
-/* ImeDllInit()                                                       */
-/* Return Value:                                                      */
-/*      TRUE - successful                                             */
-/*      FALSE - failure                                               */
-/**********************************************************************/
-BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
-					  DWORD fdwReason,	// reason called
-					  LPVOID lpvReserve)	// reserve pointer
+BOOL CALLBACK DllMain(HINSTANCE hInstance,
+					  DWORD fdwReason,
+					  LPVOID lpvReserve)
 {
 
 	switch (fdwReason) {
@@ -131,24 +112,16 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 			WNDCLASSEX wcWndCls;
 
 			if (GetClassInfoEx(hInstance, szStatusClassName, &wcWndCls)) {
-
 				UnregisterClass(szStatusClassName, hInstance);
-
 			}
 
 			if (GetClassInfoEx(hInstance, szCompClassName, &wcWndCls)) {
-
 				UnregisterClass(szCompClassName, hInstance);
-
 			}
 
-			if (GetClassInfoEx(hInstance, szUIClassName, &wcWndCls) && UnregisterClass(szUIClassName, hInstance)) {
-
-				DestroyIcon(wcWndCls.hIcon);
-				DestroyIcon(wcWndCls.hIconSm);
-
+			if (GetClassInfoEx(hInstance, szUIClassName, &wcWndCls)) {
+				UnregisterClass(szUIClassName, hInstance);
 			}
-
 		}
 
 		break;

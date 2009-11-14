@@ -58,10 +58,10 @@ extern HINSTANCE g_hInst;
 extern IMEG sImeG;
 
 
-extern TCHAR szUIClassName[];
-extern TCHAR szCompClassName[];
-extern TCHAR szStatusClassName[];
-extern TCHAR *szImeName;
+extern const TCHAR szUIClassName[];
+extern const TCHAR szCompClassName[];
+extern const TCHAR szStatusClassName[];
+extern const TCHAR *szImeName;
 
 
 
@@ -71,7 +71,6 @@ extern const POINT ptInputEsc[], ptAltInputEsc[];
 
 
 LRESULT CALLBACK UIWndProc(HWND, u32, WPARAM, LPARAM);	// ui.c
-LRESULT PASCAL UIPaint(HWND);	// ui.c
 
 
 class input_context;

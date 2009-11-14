@@ -30,7 +30,7 @@ void PASCAL OpenStatus(HWND hUIWnd)
 	if (!g_hStatusWnd) {
 		g_hStatusWnd = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
 									  ptPos.x, ptPos.y, STATE_WIDTH, STATE_HEIGHT,
-									  NULL, (HMENU) NULL, g_hInst, NULL);
+									  hUIWnd, (HMENU) NULL, g_hInst, NULL);
 	}
 
 	input_context ic(hUIWnd);

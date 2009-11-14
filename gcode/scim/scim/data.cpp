@@ -8,10 +8,10 @@ IMEG sImeG = { 0 };
 
 HINSTANCE g_hInst;
 
-TCHAR szUIClassName[CLASS_LEN] = L"BhjImeUI";
-TCHAR szCompClassName[CLASS_LEN] = L"BhjImeComp";
-TCHAR szStatusClassName[CLASS_LEN] = L"BhjImeStatus";
-TCHAR *szImeName;
+const TCHAR szUIClassName[CLASS_LEN] = L"BhjImeUI";
+const TCHAR szCompClassName[CLASS_LEN] = L"BhjImeComp";
+const TCHAR szStatusClassName[CLASS_LEN] = L"BhjImeStatus";
+const TCHAR *szImeName;
 
 // decide UI offset base on escapement
 const NEARCARET ncUIEsc[] = {

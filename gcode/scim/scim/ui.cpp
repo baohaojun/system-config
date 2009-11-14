@@ -16,16 +16,11 @@ void PASCAL CreateUIWindow(HWND hUIWnd)
 
 void PASCAL DestroyUIWindow(HWND hUIWnd)
 {
-	if (g_hCompWnd) {
-		DestroyWindow(g_hCompWnd);
-		g_hCompWnd = NULL;
-	}
-	if (g_hStatusWnd) {
-		DestroyWindow(g_hStatusWnd);
-		g_hStatusWnd = NULL;
-	}
+	DestroyWindow(g_hCompWnd);
+	g_hCompWnd = NULL;
 
-	return;
+	DestroyWindow(g_hStatusWnd);
+	g_hStatusWnd = NULL;
 }
 
 void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
@@ -67,53 +62,12 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 	case IMN_OPENSTATUSWINDOW:
 		OpenStatus(hUIWnd);
 		break;
-	case IMN_CLOSESTATUSWINDOW:
-		break;
-	case IMN_OPENCANDIDATE:
-		if (lParam & 0x00000001) {
-			//fixme: open cand
-		}
-		break;
-	case IMN_CHANGECANDIDATE:
-		if (lParam & 0x00000001) {
-			//update cand, fixme;
-		}
-		break;
-	case IMN_CLOSECANDIDATE:
-		if (lParam & 0x00000001) {
-			//fixme close cand
-		}
-		break;
-	case IMN_SETSENTENCEMODE:
-		break;
-	case IMN_SETOPENSTATUS:
-	case IMN_SETCONVERSIONMODE:
-		if (!g_hStatusWnd) {
-			return;
-		}
-
-		{
-			RedrawWindow(g_hStatusWnd, NULL, NULL, RDW_INVALIDATE);
-		}
-		break;
 	case IMN_SETCOMPOSITIONWINDOW:
 		MoveDefaultCompPosition(hUIWnd);
-		break;
-	case IMN_SETCANDIDATEPOS:
-		{
-			//fixme change cand pos
-		}
-		break;
-	case IMN_SETSTATUSWINDOWPOS:
-		break;
-	case IMN_GUIDELINE:
-		break;
-	case IMN_PRIVATE:
 		break;
 	default:
 		break;
 	}
-
 	return;
 }
 
@@ -126,45 +80,20 @@ void PASCAL SetContext(HWND hUIWnd, BOOL fOn)
 
 	if (fOn) {
 		show_comp_wnd();
+		ShowUI(hUIWnd, SW_SHOWNOACTIVATE);
 	} else {
 		hide_comp_wnd();
 		hide_status_wnd();
 	}
-	UIPaint(hUIWnd);
-
-	
-	return;
 }
 
-void PASCAL SelectIME(			// switch IMEs
-						 HWND hUIWnd, BOOL fSelect)
+void PASCAL SelectIME(HWND hUIWnd, BOOL fSelect)
 {
 	if (!fSelect) {
 		ShowUI(hUIWnd, SW_HIDE);
 	} else {
-
 		ShowUI(hUIWnd, SW_SHOWNOACTIVATE);
-
 	}
-
-	return;
-}
-
-LRESULT PASCAL UIPaint(HWND hUIWnd)
-{
-	PAINTSTRUCT ps;
-	MSG sMsg;
-
-	// for safety
-	BeginPaint(hUIWnd, &ps);
-	EndPaint(hUIWnd, &ps);
-
-	// some application will not remove the WM_PAINT messages
-	PeekMessage(&sMsg, hUIWnd, WM_PAINT, WM_PAINT, PM_REMOVE | PM_NOYIELD);
-	ShowUI(hUIWnd, SW_SHOWNOACTIVATE);
-
-
-	return (0L);
 }
 
 LRESULT CALLBACK
@@ -451,4 +380,4 @@ const char* msg_name(u32 msg)
 	return "WM_UNKNOWN";
 }
 
-HWND hCandWnd, g_hCompWnd, g_hStatusWnd;
+HWND g_hCompWnd, g_hStatusWnd;

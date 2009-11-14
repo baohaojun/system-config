@@ -340,7 +340,7 @@ void PASCAL StartComp(HWND hUIWnd)
 
 	if (!g_hCompWnd) {
 		g_hCompWnd = CreateWindowEx(0, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
-									0, 0, 400, 60, NULL,
+									0, 0, 400, 60, hUIWnd,
 									(HMENU) NULL, g_hInst, NULL);
 	}
 
