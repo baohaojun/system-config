@@ -144,7 +144,7 @@ sub handleVcOutput($)
         s!^\s+(.*?): see declaration!$1: error C2371: see declaration!;
         s!\):!) :!g;
         s!\(([0-9]+),[0-9]+\)!($1)!;
-        s!error CS([0-9]+):!error C$1:!;
+        s!error (?:CS|RC)([0-9]+) ?:!error C$1:!;
         #------ Build started: Project: AlibImpl, Configuration: Release Win32 ------
         if (m!^-+Configuration: (.*?) ! or m!^------ Build started: Project: (.*?), !) {
             chdir($sln_dir);

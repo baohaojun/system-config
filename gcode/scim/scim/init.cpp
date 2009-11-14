@@ -152,7 +152,7 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 					  DWORD fdwReason,
 					  LPVOID lpvReserve)
 {
-	EnterLeaveDebug(); 
+	EnterLeaveDebug();
 
 	switch (fdwReason) {
 
