@@ -11,7 +11,7 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 
 	SIZE lTextSize;
 
-	hInst = hInstance;
+	g_hInst = hInstance;
 
 	HDC hDC = GetDC(NULL);
 
@@ -117,7 +117,7 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,	// instance handle of this library
 	case DLL_PROCESS_ATTACH:
 		szImeName = L"\x5305\x5305\x4e94\x7b14"; //包包五笔
 
-		if (!hInst) {
+		if (!g_hInst) {
 			InitImeGlobalData(hInstance);
 		}
 

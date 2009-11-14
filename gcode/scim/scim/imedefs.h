@@ -54,7 +54,7 @@ typedef NEARCARET *PNEARCARET;
 typedef NEARCARET NEAR *NPNEARCARET;
 typedef NEARCARET FAR *LPNEARCARET;
 
-extern HINSTANCE hInst;
+extern HINSTANCE g_hInst;
 extern IMEG sImeG;
 
 
