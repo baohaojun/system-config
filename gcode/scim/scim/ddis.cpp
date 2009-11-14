@@ -16,10 +16,7 @@ ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 	}
 
 	lpImeInfo->dwPrivateDataSize = 0;
-	lpImeInfo->fdwProperty = IME_PROP_KBD_CHAR_FIRST |
-		IME_PROP_UNICODE |
-		IME_PROP_CANDLIST_START_FROM_1 |
-		IME_PROP_IGNORE_UPKEYS;
+	lpImeInfo->fdwProperty = IME_PROP_KBD_CHAR_FIRST | IME_PROP_UNICODE;
 
 	lpImeInfo->fdwConversionCaps =
 		IME_CMODE_NATIVE | IME_CMODE_NOCONVERSION;

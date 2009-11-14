@@ -4,13 +4,13 @@
 #include <immdev.h>
 #include <imedefs.h>
 #include <regstr.h>
-
+#include "imewnd.h"
 #include <map>
 #include <string>
 #include <vector>
 using namespace std;
 
-map<string, vector<string>> g_quail_rules;
+rule_map_t g_quail_rules;
 
 static void init_quail_rules()
 {
@@ -152,6 +152,7 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 					  DWORD fdwReason,
 					  LPVOID lpvReserve)
 {
+	EnterLeaveDebug(); 
 
 	switch (fdwReason) {
 

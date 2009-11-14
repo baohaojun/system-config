@@ -202,3 +202,51 @@ CRect get_wa_rect()
 	SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0);
 	return rect;
 }
+
+hdc_with_font::hdc_with_font(HDC hdc, wstring fnt_family)
+{
+	LOGFONT lfFont;
+	ZeroMemory(&lfFont, sizeof(lfFont));
+	m_dc = hdc;
+	m_old_font = GetCurrentObject(hdc, OBJ_FONT);
+	lfFont.lfHeight = -MulDiv(12, GetDeviceCaps(hdc, LOGPIXELSY), 72);
+	lfFont.lfCharSet = DEFAULT_CHARSET;
+	lstrcpy(lfFont.lfFaceName, fnt_family.c_str());
+	m_this_font = CreateFontIndirect(&lfFont); //delete at destructor
+	SelectObject(hdc, m_this_font);
+}
+
+hdc_with_font::~hdc_with_font()
+{
+	SelectObject(m_dc, m_old_font);
+	DeleteObject(m_this_font);
+}
+
+void hdc_with_font::use_this_font() //in case it is selected out
+{
+	SelectObject(m_dc, m_this_font);
+}
+
+void hdc_with_font::draw_text(const wstring& str, CRect& rect)
+{
+	use_this_font();
+	DrawText(m_dc, str.c_str(), str.size(), &rect, DT_VCENTER|DT_SINGLELINE);
+}
+
+int hdc_with_font::get_text_width(const wstring& str)
+{
+	use_this_font();
+	CSize size;
+	GetTextExtentPoint(m_dc, str.c_str(), str.size(), &size);
+	return size.cx;
+	
+}
+
+int input_context::send_text(const string& str)
+{
+	wstring wstr = to_wstring(str);
+	for (size_t i=0; i<wstr.size(); i++) {
+		add_msg(WM_CHAR, wstr[i], 1);
+	}
+	return wstr.size();
+}

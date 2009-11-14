@@ -4,8 +4,9 @@
 #include <atltypes.h>
 #include <immdev.h>
 #include <string>
-using std::string;
-using std::wstring;
+#include <map>
+#include <vector>
+using namespace std;
 
 typedef UINT u32;
 class CBhjWnd {
@@ -48,6 +49,8 @@ public:
 		}
 	}
 
+	int send_text(const string&);
+	
 	LPINPUTCONTEXT operator->() {
 		return m_ic;
 	}
@@ -60,7 +63,7 @@ public:
 		}
 	}
 
-	bool add_msg(u32 msg, WPARAM wp, LPARAM lp);
+	bool add_msg(u32 msg, WPARAM wp = 0, LPARAM lp = 0);
 private:
 	bool enlarge_msg_buf(u32 n);
 	bool copy_old_msg();
@@ -78,6 +81,19 @@ private:
 	u32 m_num_msg;
 };
 
+class hdc_with_font
+{
+public:
+	hdc_with_font(HDC, wstring);
+	~hdc_with_font();
+	void use_this_font();
+	void draw_text(const wstring& text, CRect& rect);
+	int get_text_width(const wstring& text);
+private:
+	HFONT m_old_font, m_this_font;
+	HDC m_dc;
+};
+
 extern string g_comp_str;
 
 // int MultiByteToWideChar(
@@ -91,7 +107,9 @@ extern string g_comp_str;
 
 wstring to_wstring(const string& str);
 CRect get_wa_rect();
-const int comp_dft_width = 400;
+const int comp_dft_width = 600;
 const int comp_dft_height = 60;
-
+typedef map<string, vector<string>> rule_map_t;
+extern rule_map_t g_quail_rules;
+extern u32 g_first_cand, g_last_cand, g_active_cand;
 #endif

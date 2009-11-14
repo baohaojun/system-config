@@ -350,10 +350,115 @@ void PASCAL StartComp(HWND hUIWnd)
 	return;
 }
 
+static void high_light(HDC hdc, const CRect& rect)
+{
+	HDC hdc_mem = CreateCompatibleDC(hdc); 
+
+	HBITMAP hbitmap = CreateCompatibleBitmap(hdc, 
+											 rect.right-rect.left,
+											 rect.bottom-rect.top);
+	HBITMAP hbitmap_old = SelectObject(hdc_mem, hbitmap); 
+	HBRUSH hbrush = CreateSolidBrush(0x2837df);
+    
+	RECT rect_mem = {0, 0, rect.Width(), rect.Height()};
+	FillRect(hdc_mem, &rect_mem, hbrush);
+
+	BitBlt(hdc, 
+		   rect.left, rect.top,
+		   rect.Width(), rect.Height(),
+		   hdc_mem,
+		   0,0, 
+		   SRCINVERT);
+
+	DeleteObject(hbrush);
+	SelectObject(hdc_mem, hbitmap_old);
+	DeleteObject(hbitmap);
+	DeleteObject(hdc_mem);
+}
+
+void draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
+{
+	hdc_with_font dc_lucida(hdc, L"Lucida Console");
+
+	int left = rect.left;
+	CRect rc_text = rect;
+	wstring seq = L"0:";
+
+	BHJDEBUG(" first %d, active %d, last %d", g_first_cand, g_active_cand, g_last_cand);
+	if (g_first_cand > g_last_cand && g_first_cand != g_active_cand) {
+		for (int i=g_last_cand; i>=0; i--) {
+			if (seq[0] == L'9') {
+				seq[0] = L'0';
+			} else {
+				seq[0] += 1;
+			}
+			
+			u32 seq_width = dc_lucida.get_text_width(seq);
+			wstring cand = to_wstring(cands[i]);
+			u32 cand_width = dc_lucida.get_text_width(cand);
+
+			left += seq_width + cand_width + 6;
+			if (left > rect.right && i != g_last_cand) {
+				g_first_cand = i+1;
+				break;
+			} else {
+				g_first_cand = i;
+			}
+		}
+	} else {
+		g_last_cand = g_first_cand;
+	}
+
+	left = rect.left;
+	if (g_first_cand <= g_last_cand) {
+		for (size_t i=g_first_cand; i<cands.size() && i-g_first_cand < (u32)10; i++) {
+			if (seq[0] == L'9') {
+				seq[0] = L'0';
+			} else {
+				seq[0] += 1;
+			}
+
+			u32 seq_width = dc_lucida.get_text_width(seq);
+			wstring cand = to_wstring(cands[i]);
+			u32 cand_width = dc_lucida.get_text_width(cand);
+			if (left + seq_width + cand_width + 6 > (u32)rect.right
+				&& i != g_first_cand) {
+				g_last_cand = i-1;
+				break;
+			} else {
+				g_last_cand = i;
+			}
+				
+			rc_text.left = left;
+			left += seq_width;
+			rc_text.right = left;
+			left += 2;
+			SetTextColor(hdc, RGB(0, 0, 0));
+			dc_lucida.draw_text(seq, rc_text);
+
+
+			rc_text.left = left;
+			left += cand_width;
+			rc_text.right = left;
+			left += 4;
+			dc_lucida.draw_text(cand, rc_text);
+
+			if (i == g_active_cand) {
+				high_light(hdc, rc_text);
+			} 
+		}
+	}
+	BHJDEBUG(" first %d, active %d, last %d", g_first_cand, g_active_cand, g_last_cand);
+}
+
 void PASCAL PaintCompWindow(HDC hdc)
 {
 	CRect rcWnd;
 	GetClientRect(g_hCompWnd, &rcWnd);
+	Rectangle(hdc, rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom);
+
+	rcWnd.left += 5;
+	rcWnd.right -= 5;
 
 	CRect rc_top = rcWnd;
 	rc_top.bottom = (rcWnd.top+rcWnd.bottom)/2;
@@ -361,14 +466,18 @@ void PASCAL PaintCompWindow(HDC hdc)
 	CRect rc_bot = rcWnd;
 	rc_bot.top = rc_top.bottom;
 
-	Rectangle(hdc, rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom);
+
 
 	if (g_comp_str.size()) {
 		wstring wstr = to_wstring(g_comp_str);
-		DrawText(hdc, wstr.c_str(), wstr.size(), &rc_top, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
+		DrawText(hdc, wstr.c_str(), wstr.size(), &rc_top, DT_VCENTER|DT_SINGLELINE);
 	} 
 
-	MoveToEx(hdc, 0, (rcWnd.top+rcWnd.bottom)/2, NULL);
+	if (g_quail_rules.find(g_comp_str) != g_quail_rules.end()) {
+		draw_cands(hdc, rc_bot, g_quail_rules[g_comp_str]);
+	}
+
+	MoveToEx(hdc, rcWnd.left, (rcWnd.top+rcWnd.bottom)/2, NULL);
 	LineTo(hdc, rcWnd.right, (rcWnd.top+rcWnd.bottom)/2);
 	return;
 }
