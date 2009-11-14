@@ -180,7 +180,7 @@ wstring to_wstring(const string& str)
 		return L"Error: MultiByteToWideChar";
 	}
 
-	WCHAR* buf = (WCHAR*)malloc(n * sizeof(WCHAR));
+	WCHAR* buf = (WCHAR*)malloc((n+1) * sizeof(WCHAR));
 	if (!buf) {
 		return L"";
 	}

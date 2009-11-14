@@ -340,7 +340,7 @@ void PASCAL StartComp(HWND hUIWnd)
 
 	if (!g_hCompWnd) {
 		g_hCompWnd = CreateWindowEx(0, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
-									0, 0, 400, 60, hUIWnd,
+									0, 0, comp_dft_width, comp_dft_height, hUIWnd,
 									(HMENU) NULL, g_hInst, NULL);
 	}
 
@@ -350,17 +350,26 @@ void PASCAL StartComp(HWND hUIWnd)
 	return;
 }
 
-void PASCAL PaintCompWindow(HDC hDC)
+void PASCAL PaintCompWindow(HDC hdc)
 {
-	RECT rcWnd;
+	CRect rcWnd;
 	GetClientRect(g_hCompWnd, &rcWnd);
 
-	Rectangle(hDC, rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom);
+	CRect rc_top = rcWnd;
+	rc_top.bottom = (rcWnd.top+rcWnd.bottom)/2;
+
+	CRect rc_bot = rcWnd;
+	rc_bot.top = rc_top.bottom;
+
+	Rectangle(hdc, rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom);
 
 	if (g_comp_str.size()) {
 		wstring wstr = to_wstring(g_comp_str);
-		ExtTextOut(hDC, 10, 1, 0, 0, wstr.c_str(), wstr.size(), NULL);
+		DrawText(hdc, wstr.c_str(), wstr.size(), &rc_top, DT_CENTER|DT_VCENTER|DT_SINGLELINE);
 	} 
+
+	MoveToEx(hdc, 0, (rcWnd.top+rcWnd.bottom)/2, NULL);
+	LineTo(hdc, rcWnd.right, (rcWnd.top+rcWnd.bottom)/2);
 	return;
 }
 

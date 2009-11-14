@@ -77,6 +77,7 @@ private:
 	const u32 m_msg_buf_size;
 	u32 m_num_msg;
 };
+
 extern string g_comp_str;
 
 // int MultiByteToWideChar(
@@ -90,6 +91,7 @@ extern string g_comp_str;
 
 wstring to_wstring(const string& str);
 CRect get_wa_rect();
-
+const int comp_dft_width = 400;
+const int comp_dft_height = 60;
 
 #endif

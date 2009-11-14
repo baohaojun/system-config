@@ -47,8 +47,7 @@ static void PaintStatusWindow(HDC hDC)
 	
 	CRect rect;
 	GetClientRect(g_hStatusWnd, &rect);
-	DrawText(hDC, szImeName, lstrlen(szImeName),
-			 &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	DrawText(hDC, szImeName, lstrlen(szImeName), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
 LRESULT CALLBACK
