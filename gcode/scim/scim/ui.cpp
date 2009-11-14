@@ -14,15 +14,12 @@ void PASCAL CreateUIWindow(HWND hUIWnd)
 	return;
 }
 
-void PASCAL DestroyUIWindow(	// destroy composition window
-							   HWND hUIWnd)
+void PASCAL DestroyUIWindow(HWND hUIWnd)
 {
-
 	if (g_hCompWnd) {
 		DestroyWindow(g_hCompWnd);
 		g_hCompWnd = NULL;
 	}
-	// candidate window need to be destroyed
 	if (g_hStatusWnd) {
 		DestroyWindow(g_hStatusWnd);
 		g_hStatusWnd = NULL;
@@ -170,9 +167,6 @@ LRESULT PASCAL UIPaint(HWND hUIWnd)
 	return (0L);
 }
 
-/**********************************************************************/
-/* UIWndProc()                                                        */
-/**********************************************************************/
 LRESULT CALLBACK
 UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -215,72 +209,6 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		return DefWindowProc(hUIWnd, uMsg, wParam, lParam);
 	}
 	return (0L);
-}
-
-void DrawConvexRect(HDC hDC, int x1, int y1, int x2, int y2)
-{
-	HPEN hPen, hOldPen;
-
-	SelectObject(hDC, GetStockObject(LTGRAY_BRUSH));
-	SelectObject(hDC, GetStockObject(WHITE_PEN));
-	MoveToEx(hDC, x1, y1, NULL);
-	LineTo(hDC, x2, y1);
-	MoveToEx(hDC, x1, y1, NULL);
-	LineTo(hDC, x1, y2);
-	hPen = CreatePen(PS_SOLID, 1, RGB(128, 128, 128));
-
-	if (hPen) {
-		hOldPen = SelectObject(hDC, hPen);
-		MoveToEx(hDC, x2 - 1, y2 - 1, NULL);
-		LineTo(hDC, x2 - 1, y1);
-		MoveToEx(hDC, x2 - 1, y2 - 1, NULL);
-		LineTo(hDC, x1, y2 - 1);
-		SelectObject(hDC, hOldPen);
-		DeleteObject(hPen);
-	}
-}
-
-void DrawConvexRectP(HDC hDC, int x1, int y1, int x2, int y2)
-{
-	HPEN hPen, hOldPen;
-
-	SelectObject(hDC, GetStockObject(LTGRAY_BRUSH));
-	SelectObject(hDC, GetStockObject(WHITE_PEN));
-	MoveToEx(hDC, x1, y1, NULL);
-	LineTo(hDC, x2 - 1, y1);
-	MoveToEx(hDC, x1, y1, NULL);
-	LineTo(hDC, x1, y2 - 1);
-	hPen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
-
-	if (hPen) {
-		hOldPen = SelectObject(hDC, hPen);
-		MoveToEx(hDC, x2 - 1, y2 - 1, NULL);
-		LineTo(hDC, x2 - 1, y1);
-		MoveToEx(hDC, x2 - 1, y2 - 1, NULL);
-		LineTo(hDC, x1, y2 - 1);
-		SelectObject(hDC, hOldPen);
-		DeleteObject(hPen);
-	}
-}
-
-void DrawConcaveRect(HDC hDC, int x1, int y1, int x2, int y2)
-{
-	HPEN hLtPen = CreatePen(PS_SOLID, 1, 0x00808080);
-
-	if (hLtPen != NULL) {
-		HPEN OldPen = SelectObject(hDC, hLtPen);
-		MoveToEx(hDC, x1, y1, NULL);
-		LineTo(hDC, x2, y1);
-		MoveToEx(hDC, x1, y1, NULL);
-		LineTo(hDC, x1, y2);
-		SelectObject(hDC, GetStockObject(WHITE_PEN));
-		MoveToEx(hDC, x2, y2, NULL);
-		LineTo(hDC, x2, y1 - 1);
-		MoveToEx(hDC, x2, y2, NULL);
-		LineTo(hDC, x1 - 1, y2);
-		SelectObject(hDC, OldPen);
-		DeleteObject(hLtPen);
-	}
 }
 
 struct {

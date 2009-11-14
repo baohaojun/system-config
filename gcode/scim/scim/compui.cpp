@@ -18,9 +18,8 @@ static int comp_wnd_height()
 	return rect.Height();	
 }
 
-BOOL PASCAL FitInLazyOperation(	// fit in lazy operation or not
-								  LPPOINT lpptOrg, LPPOINT lpptNearCaret,	// the suggested near caret position
-								  LPRECT lprcInputRect, u32 uEsc)
+BOOL PASCAL FitInLazyOperation(LPPOINT lpptOrg, LPPOINT lpptNearCaret, 
+							   LPRECT lprcInputRect, u32 uEsc)
 {
 	return false;
 	POINT ptDelta, ptTol;
@@ -341,19 +340,13 @@ void PASCAL StartComp(HWND hUIWnd)
 
 	if (!g_hCompWnd) {
 		g_hCompWnd = CreateWindowEx(0, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
-								  0, 0, 400, 60, hUIWnd,
-								  (HMENU) NULL, hInst, NULL);
+									0, 0, 400, 60, NULL,
+									(HMENU) NULL, hInst, NULL);
 	}
 
 	SetCompPosition(ic);
 	show_comp_wnd();
 
-	return;
-}
-
-static void DestroyCompWindow()
-{
-	g_hCompWnd = (HWND) NULL;
 	return;
 }
 
@@ -384,15 +377,6 @@ LRESULT CALLBACK CompWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	
 	switch (uMsg) {
-	case WM_DESTROY:
-		DestroyCompWindow();
-		break;
-	case WM_SETCURSOR:
-		break;
-	case WM_MOUSEMOVE:
-		break;
-	case WM_LBUTTONUP:
-		break;
 	case WM_IME_NOTIFY:
 		BHJDEBUG(" wm_ime_notify wp %x, lp %x", wParam, lParam);
 		// must not delete this case, because DefWindowProc will hang the IME

@@ -1,16 +1,3 @@
-
-/*++
-
-  Copyright (c) 1990-1999 Microsoft Corporation, All Rights Reserved
-
-  Module Name:
-
-  statusui.c
-
-
-  ++*/
-
-
 #include <windows.h>
 #include <immdev.h>
 #include <htmlhelp.h>
@@ -43,8 +30,7 @@ void PASCAL OpenStatus(HWND hUIWnd)
 	if (!g_hStatusWnd) {
 		g_hStatusWnd = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
 									  ptPos.x, ptPos.y, STATE_WIDTH, STATE_HEIGHT,
-									  hUIWnd, (HMENU) NULL, hInst,
-									  NULL);
+									  NULL, (HMENU) NULL, hInst, NULL);
 	}
 
 	input_context ic(hUIWnd);
@@ -53,12 +39,6 @@ void PASCAL OpenStatus(HWND hUIWnd)
 	} else {
 		show_status_wnd();
 	}
-	return;
-}
-
-static void DestroyStatusWindow()
-{
-	g_hStatusWnd = NULL;
 	return;
 }
 
@@ -88,9 +68,6 @@ StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	}		
 	
 	switch (uMsg) {
-	case WM_DESTROY:
-		DestroyStatusWindow();
-		break;
 	case WM_IME_NOTIFY:
 		break;
 	case WM_PAINT:
