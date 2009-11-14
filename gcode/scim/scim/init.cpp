@@ -5,8 +5,68 @@
 #include <imedefs.h>
 #include <regstr.h>
 
+#include <map>
+#include <string>
+#include <vector>
+using namespace std;
+
+map<string, vector<string>> g_quail_rules;
+
+static void init_quail_rules()
+{
+	const int max_line = 8192;
+	char buff[max_line];
+
+	FILE* fp = fopen("Q:\\.emacs_d\\lisp\\quail\\wubi86.el", "rb");
+	if (!fp) {
+		bhjerr("Error: can't open quail file");
+	}
+
+	enum {
+		rule_begin,
+		rule_defining,
+		rule_end,
+	} state = rule_begin;
+
+	while (fgets(buff, max_line, fp)) {
+		if (state == rule_begin && strstr(buff, "quail-define-rules")) {
+			state = rule_defining;
+			continue;
+		}
+
+		if (state == rule_defining) {
+			int quote = 0;
+			string key_rule;
+			string key;
+			for (int i=0; buff[i]; i++) {
+				if (buff[i] == '"') {
+					quote++;
+					if (quote % 2) {
+						key_rule = "";
+					} else if (quote == 2) {
+						key = key_rule;
+					} else {
+						g_quail_rules[key].push_back(key_rule);
+					}
+				} else {
+					if (quote % 2) {
+						key_rule.push_back(buff[i]);
+					}
+				}
+			}
+
+			if (quote == 0) { //we hit a line there is no quote, must been stopped
+				break;
+			}
+		}
+	}
+	fclose(fp);
+}
+
 void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 {
+	init_quail_rules();
+
 	TCHAR szChiChar[4] = {0x9999, 0};
 
 	SIZE lTextSize;

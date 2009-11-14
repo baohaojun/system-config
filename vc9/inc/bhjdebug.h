@@ -47,6 +47,11 @@
 #define dsimple_debug(a) simple_debug(a, %d)
 #define xsimple_debug(a) simple_debug(a, %x)
 
+#define bhjerr(fmt, ...) do {					\
+		BHJDEBUG(fmt, ##__VA_ARGS__);			\
+		exit(-1);								\
+	} while (0)
+
 
 
 #ifdef __cplusplus
