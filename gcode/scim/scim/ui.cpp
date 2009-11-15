@@ -118,7 +118,6 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		DestroyUIWindow(hUIWnd);
 		break;
 	case WM_IME_STARTCOMPOSITION:
-		// you can create a window as the composition window here
 		StartComp(hUIWnd);
 		break;
 	case WM_IME_COMPOSITION:
