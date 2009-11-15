@@ -37,20 +37,22 @@
 
 #define BHJDEBUG(fmt, ...) do {                                         \
         pthread_t tid = pthread_self();                                 \
+		char exe[1024] = "";											\
+		GetModuleFileNameA(NULL, exe, 1023);							\
 		FILE *fp = fopen("d:/log.txt", "a");							\
 		if (!fp) {														\
 			fp = fopen("d:/log.txt", "w");								\
 		}																\
 		if (fp) {														\
-			fprintf(fp, "%s:%d: %s() bhj %x " fmt "\n",				\
+			fprintf(fp, "%s:%d: %s() %s %x " fmt "\n",					\
 					strrchr(__FILE__, PATH_SEP)?						\
 					strrchr(__FILE__, PATH_SEP)+1:__FILE__,				\
-					__LINE__, __FUNCTION__, tid,						\
+					__LINE__, __FUNCTION__, exe, tid,					\
 					##__VA_ARGS__);										\
 			fclose(fp);													\
 		}																\
-        fprintf(stderr, "%s:%d: %s() bhj %x " fmt "\n", strrchr(__FILE__, PATH_SEP)?strrchr(__FILE__, PATH_SEP)+1:__FILE__, \
-				__LINE__, __FUNCTION__, tid,							\
+        fprintf(stderr, "%s:%d: %s() %s %x " fmt "\n", strrchr(__FILE__, PATH_SEP)?strrchr(__FILE__, PATH_SEP)+1:__FILE__, \
+				__LINE__, __FUNCTION__, exe, tid,						\
 				##__VA_ARGS__);											\
         fflush(stderr);                                                 \
     } while(0)

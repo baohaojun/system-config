@@ -25,6 +25,7 @@ void PASCAL DestroyUIWindow(HWND hUIWnd)
 
 void static redraw_comp()
 {
+	show_comp_wnd();
 	RedrawWindow(g_hCompWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 }
 
@@ -71,19 +72,21 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 	case IMN_OPENSTATUSWINDOW:
 		OpenStatus(hUIWnd);
 		break;
-	case IMN_SETCOMPOSITIONWINDOW:
-		BHJDEBUG(" imn_setcompositionwindow, comp is %s", g_comp_str.c_str());
-		MoveDefaultCompPosition(hUIWnd);
-		redraw_comp();
-		break;
 	case IMN_SETCANDIDATEPOS:
 		BHJDEBUG(" IMN_SETCANDIDATEPOS");
+
+	case IMN_SETCOMPOSITIONWINDOW:
 	case IMN_PRIVATE:
+		if (!g_comp_str.size()) {
+			hide_comp_wnd();
+			break;
+		}
 		if (!g_hCompWnd) {
 			StartComp(hUIWnd);
 		}
 		MoveDefaultCompPosition(hUIWnd);
 		redraw_comp();
+		break;
 	default:
 		break;
 	}
@@ -92,6 +95,7 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 
 void PASCAL SetContext(HWND hUIWnd, BOOL fOn)
 {
+	EnterLeaveDebug(); 
 	input_context ic(hUIWnd);
 	if (!ic) {
 		return;
@@ -108,6 +112,7 @@ void PASCAL SetContext(HWND hUIWnd, BOOL fOn)
 
 void PASCAL SelectIME(HWND hUIWnd, BOOL fSelect)
 {
+	EnterLeaveDebug(); 
 	if (!fSelect) {
 		ShowUI(hUIWnd, SW_HIDE);
 	} else {

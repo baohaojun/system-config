@@ -280,7 +280,6 @@ BOOL PASCAL AdjustCompPosition(
 
 void PASCAL SetCompPosition(input_context& ic)
 {
-	BHJDEBUG(" SetCompPosition");
 	POINT ptWnd;
 	BOOL fChange = FALSE;
 
@@ -296,7 +295,6 @@ void PASCAL SetCompPosition(input_context& ic)
 		ptNew.x = ic->cfCandForm[0].ptCurrentPos.x;
 		ptNew.y = ic->cfCandForm[0].ptCurrentPos.y;
 	}
-	BHJDEBUG(" g_hCompWnd is %x, ptNew.x is %d, ptNew.y is %d", g_hCompWnd, ptNew.x, ptNew.y);
 	ClientToScreen((HWND) ic->hWnd, &ptNew);
 	fChange = AdjustCompPosition(ic, &ptWnd, &ptNew);
 
@@ -307,8 +305,6 @@ void PASCAL SetCompPosition(input_context& ic)
 	SetWindowPos(g_hCompWnd, NULL,
 				 ptWnd.x, ptWnd.y,
 				 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
-	show_comp_wnd();
-
 	return;
 }
 
@@ -334,6 +330,7 @@ void show_comp_wnd()
 
 void hide_comp_wnd()
 {
+	BHJDEBUG(" hide_comp_wnd");
 	ShowWindow(g_hCompWnd, SW_HIDE);
 }
 

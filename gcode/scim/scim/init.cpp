@@ -12,14 +12,15 @@ using namespace std;
 
 rule_map_t g_quail_rules;
 
-static void init_quail_rules()
+static bool init_quail_rules()
 {
 	const int max_line = 8192;
 	char buff[max_line];
 
 	FILE* fp = fopen("Q:\\.emacs_d\\lisp\\quail\\wubi86.el", "rb");
 	if (!fp) {
-		bhjerr("Error: can't open quail file");
+		BHJDEBUG(" Error: can't open quail file");
+		return false;
 	}
 
 	enum {
@@ -61,11 +62,14 @@ static void init_quail_rules()
 		}
 	}
 	fclose(fp);
+	return true;
 }
 
-void PASCAL InitImeGlobalData(HINSTANCE hInstance)
+static bool InitImeGlobalData(HINSTANCE hInstance)
 {
-	init_quail_rules();
+	if (!init_quail_rules()) {
+		return false;
+	}
 
 	TCHAR szChiChar[4] = {0x9999, 0};
 
@@ -89,7 +93,7 @@ void PASCAL InitImeGlobalData(HINSTANCE hInstance)
 	sImeG.iParaTol = sImeG.xChiCharWi * 4;
 	sImeG.iPerpTol = lTextSize.cy;
 
-	return;
+	return true;
 
 }
 
@@ -166,8 +170,8 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 	case DLL_PROCESS_ATTACH:
 		szImeName = L"\x5305\x5305\x4e94\x7b14"; //包包五笔
 
-		if (!g_hInst) {
-			InitImeGlobalData(hInstance);
+		if (!g_hInst && ! InitImeGlobalData(hInstance)) {
+			return false;
 		}
 
 		RegisterImeClass(hInstance, hInstance);

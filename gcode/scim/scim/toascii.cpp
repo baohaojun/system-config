@@ -37,12 +37,12 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 						  u32 vk, LPARAM scan_code,
 						  CONST LPBYTE kbd_state)
 {
-	// BHJDEBUG(" vk is %x, scan_code is, cnt:%d, sc:0x%02x, ext:%s, prev:%s", 
-	// 		 vk, 
-	// 		 (scan_code&0xffff),
-	// 		 (scan_code & (0xff<<16)) >> 16,
-	// 		 scan_code & (1 << 24) ? "yes" : "no", //extended, e.g., right ctrl/shift/menu
-	// 		 scan_code & (1<<30) ? "up" : "down");
+	BHJDEBUG(" vk is %x, scan_code is, cnt:%d, sc:0x%02x, ext:%s, prev:%s", 
+			 vk, 
+			 (scan_code&0xffff),
+			 (scan_code & (0xff<<16)) >> 16,
+			 scan_code & (1 << 24) ? "yes" : "no", //extended, e.g., right ctrl/shift/menu
+			 scan_code & (1<<30) ? "up" : "down");
 
 	if (g_comp_str.size()) {
 		return true;
