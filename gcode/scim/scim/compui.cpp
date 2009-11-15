@@ -290,11 +290,8 @@ void PASCAL SetCompPosition(input_context& ic)
 	ClientToScreen(g_hCompWnd, &ptWnd);
 
 	POINT ptNew;			// new position of UI
-	GetCaretPos(&ptNew);
-	if (ptNew.x == 0 && ptNew.y == 0) {
-		ptNew.x = ic->cfCompForm.ptCurrentPos.x;
-		ptNew.y = ic->cfCompForm.ptCurrentPos.y;
-	}
+	ptNew.x = ic->cfCompForm.ptCurrentPos.x;
+	ptNew.y = ic->cfCompForm.ptCurrentPos.y;
 	if (ptNew.x == 0 && ptNew.y == 0) {
 		ptNew.x = ic->cfCandForm[0].ptCurrentPos.x;
 		ptNew.y = ic->cfCandForm[0].ptCurrentPos.y;
