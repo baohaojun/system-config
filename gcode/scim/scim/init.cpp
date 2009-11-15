@@ -168,7 +168,7 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 	switch (fdwReason) {
 
 	case DLL_PROCESS_ATTACH:
-		szImeName = L"\x5305\x5305\x4e94\x7b14"; //包包五笔
+		g_ime_name = ime_off;
 
 		if (!g_hInst && ! InitImeGlobalData(hInstance)) {
 			return false;

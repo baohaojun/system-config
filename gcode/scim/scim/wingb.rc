@@ -1,20 +1,7 @@
-
-/*************************************************
- *  wingb.rc                                     *
- *                                               *
- *  Copyright (C) 1995-1999 Microsoft Inc.       *
- *                                               *
- *************************************************/
-
-//Microsoft Visual C++ generated resource script.
-//
 #include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 2 resource.
-//
+
 #include "winuser.h"
 #include "immdev.h"
 #include "imedefs.h"

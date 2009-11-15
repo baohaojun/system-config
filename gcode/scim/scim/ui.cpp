@@ -25,7 +25,7 @@ void PASCAL DestroyUIWindow(HWND hUIWnd)
 
 void static redraw_comp()
 {
-	show_comp_wnd();
+	show_comp_wnd(); //doesn't mean shit if it is hidden, right?
 	RedrawWindow(g_hCompWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 }
 
@@ -67,7 +67,6 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 
 void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 {
-	EnterLeaveDebug(); 
 	switch (wParam) {
 	case IMN_OPENSTATUSWINDOW:
 		OpenStatus(hUIWnd);
@@ -95,7 +94,6 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 
 void PASCAL SetContext(HWND hUIWnd, BOOL fOn)
 {
-	EnterLeaveDebug(); 
 	input_context ic(hUIWnd);
 	if (!ic) {
 		return;
@@ -112,7 +110,6 @@ void PASCAL SetContext(HWND hUIWnd, BOOL fOn)
 
 void PASCAL SelectIME(HWND hUIWnd, BOOL fSelect)
 {
-	EnterLeaveDebug(); 
 	if (!fSelect) {
 		ShowUI(hUIWnd, SW_HIDE);
 	} else {

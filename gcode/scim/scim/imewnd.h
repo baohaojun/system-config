@@ -65,6 +65,7 @@ public:
 
 	bool add_msg(u32 msg, WPARAM wp = 0, LPARAM lp = 0);
 	bool add_show_comp_msg();
+	bool add_update_status_msg();
 private:
 	bool enlarge_msg_buf(u32 n);
 	bool copy_old_msg();
@@ -114,5 +115,8 @@ const int comp_dft_height = 60;
 typedef map<string, vector<string>> rule_map_t;
 extern rule_map_t g_quail_rules;
 extern u32 g_first_cand, g_last_cand, g_active_cand;
+extern string g_ime_name;
+extern const char *const ime_off;
+extern const char *const ime_on;
 extern "C" char *strcasestr(const char *S, const char *FIND);
 #endif

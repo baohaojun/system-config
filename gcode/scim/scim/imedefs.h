@@ -61,11 +61,6 @@ extern IMEG sImeG;
 extern const TCHAR szUIClassName[];
 extern const TCHAR szCompClassName[];
 extern const TCHAR szStatusClassName[];
-extern const TCHAR *szImeName;
-
-
-
-
 extern const NEARCARET ncUIEsc[], ncAltUIEsc[];
 extern const POINT ptInputEsc[], ptAltInputEsc[];
 

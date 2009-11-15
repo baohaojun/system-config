@@ -15,7 +15,7 @@ typedef enum {
 } modifier_t;
 
 
-static modifier_t get_mod_state (const LPBYTE kbd_state)
+static modifier_t get_mod_state ()
 {
 	int mod = 0;
 	if (GetKeyState(VK_CONTROL) & 0x8000) {
@@ -31,64 +31,6 @@ static modifier_t get_mod_state (const LPBYTE kbd_state)
 	}
 
 	return (modifier_t)mod;
-}
-
-BOOL WINAPI ImeProcessKey(HIMC hIMC,
-						  u32 vk, LPARAM scan_code,
-						  CONST LPBYTE kbd_state)
-{
-	BHJDEBUG(" vk is %x, scan_code is, cnt:%d, sc:0x%02x, ext:%s, prev:%s", 
-			 vk, 
-			 (scan_code&0xffff),
-			 (scan_code & (0xff<<16)) >> 16,
-			 scan_code & (1 << 24) ? "yes" : "no", //extended, e.g., right ctrl/shift/menu
-			 scan_code & (1<<30) ? "up" : "down");
-
-	if (g_comp_str.size()) {
-		return true;
-	}
-
-	BYTE szAscii[2];
-
-	int nChars = ToAscii(vk, scan_code, kbd_state, (LPWORD) szAscii, 0);
-
-	if (nChars != 1) {
-		return false;
-	}
-
-	if (isgraph(szAscii[0])) {
-		return true;
-	}
-	return false;
-}
-
-
-static u32 to_wm_char(
-	u32 vk,
-	u32 kbd_scan, 
-	LPTRANSMSGLIST lpTransBuf, 
-	PBYTE kbd_state
-	)
-{
-
-	BYTE szAscii[4];
-
-	int nChars = ToAscii(vk, kbd_scan, kbd_state,
-					 (LPWORD) szAscii, 0);
-
-	if (!nChars) {
-		//BHJDEBUG(" ToAscii failed"); //but it's ok, we will return 0
-	}
-
-	LPTRANSMSG lpTransMsg = lpTransBuf->TransMsg;
-	int i;
-	for (i=0; i<nChars; i++) {
-
-		lpTransMsg[i].message = WM_CHAR;
-		lpTransMsg[i].wParam = szAscii[i];
-		lpTransMsg[i].lParam = (kbd_scan << 16) | 1UL;
-	}
-	return i;
 }
 
 static void beep()
@@ -120,6 +62,43 @@ static void comp_remove_all()
 }
 
 #define beep() BHJDEBUG(" Beep"); beep()
+
+BOOL WINAPI ImeProcessKey(HIMC hIMC,
+						  u32 vk, LPARAM scan_code,
+						  CONST LPBYTE kbd_state)
+{
+	// BHJDEBUG(" vk is %x, scan_code is, cnt:%d, sc:0x%02x, ext:%s, prev:%s", 
+	// 		 vk, 
+	// 		 (scan_code&0xffff),
+	// 		 (scan_code & (0xff<<16)) >> 16,
+	// 		 scan_code & (1 << 24) ? "yes" : "no", //extended, e.g., right ctrl/shift/menu
+	// 		 scan_code & (1<<30) ? "up" : "down");
+#define bhjreturn(ret) BHJDEBUG(" return " #ret); return ret
+
+	vk = LOWORD(vk);
+
+	if (get_mod_state() == mod_ctrl && vk == VK_OEM_5) { //C-\, always want to be able to toggle
+		bhjreturn (true);
+	}
+		
+	if (g_comp_str.size()) {//started composing, want every key
+		bhjreturn (true);
+	}
+
+	if (g_ime_name == ime_off) { //english mode, want nothing except the toggle key above.
+		bhjreturn (false);
+	}
+
+	char szAscii[2] = "";
+
+	int nChars = ToAscii(vk, scan_code, kbd_state, (LPWORD) szAscii, 0);
+
+	if (isgraph(szAscii[0])) { //not started composing, and a graph, we want it, 'cause the composing might start
+		bhjreturn (true);
+	}
+	bhjreturn (false); //not started composing, composing can only start with a graph?
+}
+
 u32 WINAPI
 ImeToAsciiEx(u32 vk,
 			 u32 scan_code,
@@ -128,35 +107,63 @@ ImeToAsciiEx(u32 vk,
 {
 	char kbd_char = (char) (HIWORD(vk));
 	vk = LOWORD(vk);
+	if (vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU) {
+		return 0; //no beep
+	}
+
 	input_context ic(hIMC, lpTransBuf->TransMsg, lpTransBuf->uMsgCount);
 
 	if (!ic) {
-		return to_wm_char(vk, scan_code, lpTransBuf, kbd_state);
+		bhjreturn (0);
 	}
 
-	if (!g_comp_str.size()) {
-		unsigned char ascii[2];
-		int n_ascii = ToAscii(vk, scan_code, kbd_state, (LPWORD)ascii, 0);
-		if (n_ascii != 1) {
+	const modifier_t mod = get_mod_state();
+	if (mod == mod_ctrl && vk == VK_OEM_5) { //my toggle key, made the same as emacs
+		if (g_ime_name == ime_off) {
+			g_ime_name = ime_on;
+			ic.add_update_status_msg();
+			bhjreturn (1);
+		} else {
+			g_ime_name = ime_off;
+			comp_remove_all();
+			ic.add_update_status_msg();
+			ic.add_show_comp_msg();
+			bhjreturn (2);
+		}
+	}
+
+	unsigned char ascii[2] = "";
+	int n_ascii = ToAscii(vk, scan_code, kbd_state, (LPWORD)ascii, 0);
+	const char c = ascii[0];
+
+	if (!g_comp_str.size()) { //not composing, ImeProcessKey has guarantee we only receive isgraph
+		if (!isgraph(c)) {
 			beep();
-			return 0; //error, 0 means no messages generated
+			bhjreturn (0); //Error, ImeProcessKey guarantee has been broken?
 		}
 
-		char c = ascii[0];
-		if (isalpha(c)) {
+		if (isalpha(c) || c == ';') {
 			comp_append_1(c);
 
 			//FIXME if only one cand with this key, pop it up
 			ic.add_msg(WM_IME_STARTCOMPOSITION, 0, 0);
 			ic.add_show_comp_msg();
-			return 2;
+			bhjreturn (2);
 		} else {
-			return to_wm_char(vk, scan_code, lpTransBuf, kbd_state);
+			string s;
+			s.push_back(c);
+			bhjreturn (ic.send_text(s));
 		}
 	}
 	
 	//g_comp_str not empty
-	modifier_t mod = get_mod_state(kbd_state);
+	if (g_comp_str[0] == ';') {
+		if (isprint(c)) {
+			comp_append_1(c);
+			ic.add_show_comp_msg();
+			return 1;
+		}
+	}
 	string key = g_comp_str;
 
 	//yeah, yeah, this is ugly, but we can't init a ref in the if,
@@ -173,25 +180,23 @@ ImeToAsciiEx(u32 vk,
 		switch (vk) {
 		case VK_RETURN:
 			comp_remove_all();
-			return ic.send_text(key);
+			if (key[0] == ';' && key.size() > 1) {
+				key.erase(0, 1);
+			}
+			bhjreturn (ic.send_text(key));
 		case VK_BACK:
 			comp_remove_1();
 			ic.add_show_comp_msg();
-			return 1;
+			bhjreturn (1);
 		case VK_SPACE:
 			comp_remove_all();
 			if (g_quail_rules.find(key) != g_quail_rules.end()) {
-				return ic.send_text(g_quail_rules[key][0]);
+				bhjreturn (ic.send_text(g_quail_rules[key][0]));
 			} else {
 				beep();
-				return 0;
+				bhjreturn (0);
 			}
 		default:
-			if (vk >= 'A' && vk <= 'Z') {
-				comp_append_1(vk-'A'+'a');
-				ic.add_show_comp_msg();
-				return 1;
-			}
 			if (vk >= '0' && vk <= '9') {
 				u32 index = vk - '0';
 				if (index == 0) {
@@ -202,11 +207,21 @@ ImeToAsciiEx(u32 vk,
 
 				if (index > g_last_cand || index > cands.size()) {
 					beep();
-					return 0;
+					bhjreturn (0);
 				}
 				comp_remove_all();
-				return ic.send_text(g_quail_rules[key][index]);				
+				bhjreturn (ic.send_text(g_quail_rules[key][index]));				
+			} else if (vk >= 'A' && vk <= 'Z') {
+				int i = 0;
+				if (key[0] >= 'a' && key[0] < 'z' && key.size() == 4 && cands.size()) { // 'z' is for pinyin
+					i += ic.send_text(cands[0]);
+					comp_remove_all();
+				}
+				comp_append_1(vk-'A'+'a');
+				i += ic.add_show_comp_msg();
+				bhjreturn (i);
 			}
+
 		}
 	} else if (mod == mod_ctrl) {
 	again:
@@ -214,26 +229,26 @@ ImeToAsciiEx(u32 vk,
 		case 'G':
 			comp_remove_all();
 			ic.add_show_comp_msg();
-			return 1;
+			bhjreturn (1);
 		case 'N':
 			if (g_last_cand >= cands.size() - 1) {
 				beep();
-				return 0;
+				bhjreturn (0);
 			} else {
 				g_first_cand = g_last_cand + 1;
 				g_active_cand = g_first_cand;
 				ic.add_show_comp_msg();
-				return 1;
+				bhjreturn (1);
 			}
 		case 'P':
 			if (g_first_cand == 0) {
 				beep();
-				return 0;
+				bhjreturn (0);
 			} else {
 				g_last_cand = g_first_cand - 1;
 				g_active_cand = g_last_cand;
 				ic.add_show_comp_msg();
-				return 1;
+				bhjreturn (1);
 			}
 		case 'F':
 			if (g_active_cand == g_last_cand) {
@@ -242,7 +257,7 @@ ImeToAsciiEx(u32 vk,
 			}
 			g_active_cand++;
 			ic.add_show_comp_msg();
-			return 1;
+			bhjreturn (1);
 		case 'B':
 			if (g_active_cand == g_first_cand) {
 				vk = 'P';
@@ -250,17 +265,24 @@ ImeToAsciiEx(u32 vk,
 			}
 			g_active_cand--;
 			ic.add_show_comp_msg();
-			return 1;
+			bhjreturn (1);
 		case VK_CONTROL:
-			return 0;
+			bhjreturn (0);
 		default:
 			beep();
-			return 0;
+			bhjreturn (0);
 		}
 	}
-			
+	if (isprint(c) && cands.size()) {
+		comp_remove_all();
+		string text = cands[0];
+		text.push_back(c);
+		bhjreturn (ic.send_text(cands[0]+c));
+	}		
 	beep();
-	return 0;
+	bhjreturn (0);
 }
 
 u32 g_first_cand, g_last_cand, g_active_cand;
+const char *const ime_off = "包包英文";
+const char *const ime_on = "包包五笔";

@@ -137,6 +137,10 @@ bool input_context::add_show_comp_msg()
 	return add_msg(WM_IME_NOTIFY, IMN_PRIVATE, 0);
 }
 
+bool input_context::add_update_status_msg()
+{
+	return add_msg(WM_IME_NOTIFY, IMN_OPENSTATUSWINDOW, 0);
+}
 bool input_context::add_msg(u32 msg, WPARAM wp, LPARAM lp)
 {
 	if (m_num_msg < m_msg_buf_size) {

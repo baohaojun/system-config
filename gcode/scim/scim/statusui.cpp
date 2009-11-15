@@ -11,6 +11,7 @@ extern HWND hCrtDlg;
 void show_status_wnd()
 {
 	ShowWindow(g_hStatusWnd, SW_SHOWNOACTIVATE);
+	RedrawWindow(g_hStatusWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 }
 
 void hide_status_wnd()
@@ -47,7 +48,8 @@ static void PaintStatusWindow(HDC hDC)
 	
 	CRect rect;
 	GetClientRect(g_hStatusWnd, &rect);
-	DrawText(hDC, szImeName, lstrlen(szImeName), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	wstring name = to_wstring(g_ime_name);
+	DrawText(hDC, name.c_str(), name.size(), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
 
 LRESULT CALLBACK
@@ -84,3 +86,4 @@ StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	return (0L);
 }
 
+string g_ime_name;
