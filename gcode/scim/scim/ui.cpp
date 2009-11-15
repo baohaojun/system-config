@@ -66,6 +66,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 
 void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 {
+	EnterLeaveDebug(); 
 	switch (wParam) {
 	case IMN_OPENSTATUSWINDOW:
 		OpenStatus(hUIWnd);
@@ -75,6 +76,14 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		MoveDefaultCompPosition(hUIWnd);
 		redraw_comp();
 		break;
+	case IMN_SETCANDIDATEPOS:
+		BHJDEBUG(" IMN_SETCANDIDATEPOS");
+	case IMN_PRIVATE:
+		if (!g_hCompWnd) {
+			StartComp(hUIWnd);
+		}
+		MoveDefaultCompPosition(hUIWnd);
+		redraw_comp();
 	default:
 		break;
 	}
@@ -123,7 +132,6 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_IME_COMPOSITION:
 
 		if (lParam & GCS_RESULTSTR) {
-			BHJDEBUG(" wm_ime_composition, MoveDefaultCompPosition");
 			MoveDefaultCompPosition(hUIWnd);
 		}
 		redraw_comp();

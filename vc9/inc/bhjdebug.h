@@ -37,9 +37,21 @@
 
 #define BHJDEBUG(fmt, ...) do {                                         \
         pthread_t tid = pthread_self();                                 \
+		FILE *fp = fopen("d:/log.txt", "a");							\
+		if (!fp) {														\
+			fp = fopen("d:/log.txt", "w");								\
+		}																\
+		if (fp) {														\
+			fprintf(fp, "%s:%d: %s() bhj %x " fmt "\n",				\
+					strrchr(__FILE__, PATH_SEP)?						\
+					strrchr(__FILE__, PATH_SEP)+1:__FILE__,				\
+					__LINE__, __FUNCTION__, tid,						\
+					##__VA_ARGS__);										\
+			fclose(fp);													\
+		}																\
         fprintf(stderr, "%s:%d: %s() bhj %x " fmt "\n", strrchr(__FILE__, PATH_SEP)?strrchr(__FILE__, PATH_SEP)+1:__FILE__, \
-               __LINE__, __FUNCTION__, tid,                             \
-               ##__VA_ARGS__);                                          \
+				__LINE__, __FUNCTION__, tid,							\
+				##__VA_ARGS__);											\
         fflush(stderr);                                                 \
     } while(0)
 

@@ -148,7 +148,7 @@ ImeToAsciiEx(u32 vk,
 
 			//FIXME if only one cand with this key, pop it up
 			ic.add_msg(WM_IME_STARTCOMPOSITION, 0, 0);
-			ic.add_msg(WM_IME_COMPOSITION, 0, 0);
+			ic.add_show_comp_msg();
 			return 2;
 		} else {
 			return to_wm_char(vk, scan_code, lpTransBuf, kbd_state);
@@ -176,7 +176,7 @@ ImeToAsciiEx(u32 vk,
 			return ic.send_text(key);
 		case VK_BACK:
 			comp_remove_1();
-			ic.add_msg(WM_IME_COMPOSITION, 0, 0);
+			ic.add_show_comp_msg();
 			return 1;
 		case VK_SPACE:
 			comp_remove_all();
@@ -189,7 +189,7 @@ ImeToAsciiEx(u32 vk,
 		default:
 			if (vk >= 'A' && vk <= 'Z') {
 				comp_append_1(vk-'A'+'a');
-				ic.add_msg(WM_IME_COMPOSITION, 0, 0);
+				ic.add_show_comp_msg();
 				return 1;
 			}
 			if (vk >= '0' && vk <= '9') {
@@ -213,7 +213,7 @@ ImeToAsciiEx(u32 vk,
 		switch (vk) {
 		case 'G':
 			comp_remove_all();
-			ic.add_msg(WM_IME_COMPOSITION);
+			ic.add_show_comp_msg();
 			return 1;
 		case 'N':
 			if (g_last_cand >= cands.size() - 1) {
@@ -222,7 +222,7 @@ ImeToAsciiEx(u32 vk,
 			} else {
 				g_first_cand = g_last_cand + 1;
 				g_active_cand = g_first_cand;
-				ic.add_msg(WM_IME_COMPOSITION);
+				ic.add_show_comp_msg();
 				return 1;
 			}
 		case 'P':
@@ -232,7 +232,7 @@ ImeToAsciiEx(u32 vk,
 			} else {
 				g_last_cand = g_first_cand - 1;
 				g_active_cand = g_last_cand;
-				ic.add_msg(WM_IME_COMPOSITION);
+				ic.add_show_comp_msg();
 				return 1;
 			}
 		case 'F':
@@ -241,7 +241,7 @@ ImeToAsciiEx(u32 vk,
 				goto again;
 			}
 			g_active_cand++;
-			ic.add_msg(WM_IME_COMPOSITION);
+			ic.add_show_comp_msg();
 			return 1;
 		case 'B':
 			if (g_active_cand == g_first_cand) {
@@ -249,7 +249,7 @@ ImeToAsciiEx(u32 vk,
 				goto again;
 			}
 			g_active_cand--;
-			ic.add_msg(WM_IME_COMPOSITION);
+			ic.add_show_comp_msg();
 			return 1;
 		case VK_CONTROL:
 			return 0;

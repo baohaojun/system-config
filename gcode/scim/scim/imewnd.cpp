@@ -132,6 +132,11 @@ bool input_context::enlarge_msg_buf(u32 n)
 	}
 }
 
+bool input_context::add_show_comp_msg()
+{
+	return add_msg(WM_IME_NOTIFY, IMN_PRIVATE, 0);
+}
+
 bool input_context::add_msg(u32 msg, WPARAM wp, LPARAM lp)
 {
 	if (m_num_msg < m_msg_buf_size) {
@@ -326,5 +331,6 @@ int input_context::send_text(const string& str)
 		return 0;
 	}
 	add_msg(WM_IME_COMPOSITION, 0, GCS_COMP|GCS_RESULT|GCS_RESULTREAD);
-	return 1;
+	add_show_comp_msg();
+	return 2;
 }

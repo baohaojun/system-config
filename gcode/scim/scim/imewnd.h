@@ -64,6 +64,7 @@ public:
 	}
 
 	bool add_msg(u32 msg, WPARAM wp = 0, LPARAM lp = 0);
+	bool add_show_comp_msg();
 private:
 	bool enlarge_msg_buf(u32 n);
 	bool copy_old_msg();
