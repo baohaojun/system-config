@@ -196,6 +196,27 @@ wstring to_wstring(const string& str)
 	return wstr;
 }
 
+string to_string(const wstring& wstr)
+{
+	if (wstr.empty()) {
+		return "";
+	}
+
+	int n = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+	if (n == 0) {
+		return "Error: WideCharToMultiByte";
+	}
+	char *buf = (char*)malloc((n+1) * sizeof(char));
+	if (!buf) {
+		return "Error: malloc";
+	}
+	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), buf, n+1, NULL, NULL);
+	buf[n] = 0;
+	string str = buf;
+	free(buf);
+	return str;
+}
+
 CRect get_wa_rect()
 {
 	CRect rect;
@@ -242,11 +263,77 @@ int hdc_with_font::get_text_width(const wstring& str)
 	
 }
 
+bool fill_result(input_context& ic, const wstring& wstr_result)
+{
+    HIMCC               hMem;
+    LPCOMPOSITIONSTRING lpCompStr;
+    DWORD               dwSize;
+
+    dwSize = sizeof(COMPOSITIONSTRING) +  (wstr_result.size() + 1) * sizeof(WORD);
+
+    if (!ic->hCompStr) {
+        ic->hCompStr = ImmCreateIMCC(dwSize);
+		if (!ic->hCompStr) {
+			return false;
+		}
+
+		lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
+		if (!lpCompStr) {
+			return false;
+		}
+		lpCompStr->dwSize = dwSize;
+		ImmUnlockIMCC(ic->hCompStr);
+	}
+
+	lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
+	if (!lpCompStr) {
+		return false;
+	}
+
+	if (dwSize > lpCompStr->dwSize) {
+		ImmUnlockIMCC(ic->hCompStr);
+		hMem = ImmReSizeIMCC(ic->hCompStr, dwSize);
+		if (!hMem) {
+			return false;
+		}
+		if (ic->hCompStr != hMem) {
+			ImmDestroyIMCC(ic->hCompStr);
+			ic->hCompStr = hMem;
+		}
+
+		lpCompStr = (LPCOMPOSITIONSTRING) ImmLockIMCC(ic->hCompStr);
+		if (!lpCompStr) {
+			return false;
+		}
+		lpCompStr->dwSize = dwSize;
+	}
+
+    dwSize = lpCompStr->dwSize; //save it
+
+	memset(lpCompStr, 0, dwSize);
+	lpCompStr->dwSize = dwSize;
+	lpCompStr->dwResultStrLen = wstr_result.size();
+	lpCompStr->dwResultStrOffset = sizeof(COMPOSITIONSTRING);
+	memcpy((char *)lpCompStr+sizeof(COMPOSITIONSTRING), wstr_result.c_str(), wstr_result.size() * sizeof(wchar_t));
+
+	ImmUnlockIMCC(ic->hCompStr);	
+    return true;
+}
+
+// int input_context::send_text(const string& str)
+// {
+// 	wstring wstr = to_wstring(str);
+// 	for (size_t i=0; i<wstr.size(); i++) {
+// 		add_msg(WM_CHAR, wstr[i], 1);
+// 	}
+// 	return wstr.size();
+// }
+
 int input_context::send_text(const string& str)
 {
-	wstring wstr = to_wstring(str);
-	for (size_t i=0; i<wstr.size(); i++) {
-		add_msg(WM_CHAR, wstr[i], 1);
+	if (!fill_result(*this, to_wstring(str))) {
+		return 0;
 	}
-	return wstr.size();
+	add_msg(WM_IME_COMPOSITION, 0, GCS_RESULT|GCS_RESULTREAD);
+	return 1;
 }

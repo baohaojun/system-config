@@ -152,7 +152,14 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 					  DWORD fdwReason,
 					  LPVOID lpvReserve)
 {
-	EnterLeaveDebug();
+
+	wchar_t buf[1024] = L"";
+	GetModuleFileName(NULL, buf, 1023);
+	string exe_name = to_string(buf);
+	if (strcasestr(exe_name.c_str(), "xwin.exe")) {
+		BHJDEBUG("Error: xwin.exe is calling, they can't handle IME!");
+		return false;
+	}		
 
 	switch (fdwReason) {
 

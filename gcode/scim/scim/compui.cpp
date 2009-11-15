@@ -384,7 +384,6 @@ void draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 	CRect rc_text = rect;
 	wstring seq = L"0:";
 
-	BHJDEBUG(" first %d, active %d, last %d", g_first_cand, g_active_cand, g_last_cand);
 	if (g_first_cand > g_last_cand && g_first_cand != g_active_cand) {
 		for (int i=g_last_cand; i>=0; i--) {
 			if (seq[0] == L'9') {
@@ -448,7 +447,6 @@ void draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 			} 
 		}
 	}
-	BHJDEBUG(" first %d, active %d, last %d", g_first_cand, g_active_cand, g_last_cand);
 }
 
 void PASCAL PaintCompWindow(HDC hdc)
@@ -490,8 +488,7 @@ LRESULT CALLBACK CompWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	if (!g_hCompWnd) {
 		g_hCompWnd = hWnd;
 	} else if (g_hCompWnd != hWnd) {
-		BHJDEBUG(" Error: CompWndProc hWnd %x is not g_hCompWnd %x", hWnd, g_hCompWnd);	
-		exit(-1);
+		bhjerr(" Error: CompWndProc hWnd %x is not g_hCompWnd %x", hWnd, g_hCompWnd);	
 	}
 	
 	switch (uMsg) {

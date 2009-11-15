@@ -173,20 +173,18 @@ ImeToAsciiEx(u32 vk,
 		switch (vk) {
 		case VK_RETURN:
 			comp_remove_all();
-			ic.add_msg(WM_IME_COMPOSITION);
-			return 1 + ic.send_text(key);
+			return ic.send_text(key);
 		case VK_BACK:
 			comp_remove_1();
 			ic.add_msg(WM_IME_COMPOSITION, 0, 0);
 			return 1;
 		case VK_SPACE:
-			ic.add_msg(WM_IME_COMPOSITION, 0, 0);
 			comp_remove_all();
 			if (g_quail_rules.find(key) != g_quail_rules.end()) {
-				return 1 + ic.send_text(g_quail_rules[key][0]);
+				return ic.send_text(g_quail_rules[key][0]);
 			} else {
 				beep();
-				return 1;
+				return 0;
 			}
 		default:
 			if (vk >= 'A' && vk <= 'Z') {
@@ -206,9 +204,8 @@ ImeToAsciiEx(u32 vk,
 					beep();
 					return 0;
 				}
-				ic.add_msg(WM_IME_COMPOSITION);
 				comp_remove_all();
-				return 1 + ic.send_text(g_quail_rules[key][index]);				
+				return ic.send_text(g_quail_rules[key][index]);				
 			}
 		}
 	} else if (mod == mod_ctrl) {

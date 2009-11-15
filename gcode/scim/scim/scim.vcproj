@@ -206,6 +206,30 @@
 				>
 			</File>
 			<File
+				RelativePath=".\strcasestr.c"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="1"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\strncasecmp.c"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						CompileAs="1"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\toascii.cpp"
 				>
 			</File>
@@ -229,6 +253,10 @@
 			</File>
 			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\str-two-way.h"
 				>
 			</File>
 		</Filter>

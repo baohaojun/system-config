@@ -106,10 +106,12 @@ extern string g_comp_str;
 // );
 
 wstring to_wstring(const string& str);
+string to_string(const wstring& wstr);
 CRect get_wa_rect();
 const int comp_dft_width = 600;
 const int comp_dft_height = 60;
 typedef map<string, vector<string>> rule_map_t;
 extern rule_map_t g_quail_rules;
 extern u32 g_first_cand, g_last_cand, g_active_cand;
+extern "C" char *strcasestr(const char *S, const char *FIND);
 #endif
