@@ -23,6 +23,16 @@ void PASCAL DestroyUIWindow(HWND hUIWnd)
 	g_hStatusWnd = NULL;
 }
 
+void static redraw_comp()
+{
+	RedrawWindow(g_hCompWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
+}
+
+void static redraw_status()
+{
+	RedrawWindow(g_hStatusWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
+}
+
 void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 {
 	input_context ic(hUIWnd);
@@ -36,8 +46,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	if (g_comp_str.size()) {
 		if (g_hCompWnd) {
 
-			RedrawWindow(g_hCompWnd, NULL, NULL,
-						 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
+			redraw_comp();
 			MoveDefaultCompPosition(hUIWnd);
 		} else {
 			StartComp(hUIWnd);
@@ -49,8 +58,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	if (!g_hStatusWnd) {
 		OpenStatus(hUIWnd);
 	}
-	RedrawWindow(g_hStatusWnd, NULL, NULL,
-				 RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
+	redraw_status();
 
 	show_status_wnd();
 	return;
@@ -63,7 +71,9 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		OpenStatus(hUIWnd);
 		break;
 	case IMN_SETCOMPOSITIONWINDOW:
+		BHJDEBUG(" imn_setcompositionwindow, comp is %s", g_comp_str.c_str());
 		MoveDefaultCompPosition(hUIWnd);
+		redraw_comp();
 		break;
 	default:
 		break;
@@ -112,13 +122,12 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		StartComp(hUIWnd);
 		break;
 	case WM_IME_COMPOSITION:
+
 		if (lParam & GCS_RESULTSTR) {
+			BHJDEBUG(" wm_ime_composition, MoveDefaultCompPosition");
 			MoveDefaultCompPosition(hUIWnd);
 		}
-
-		if (g_hCompWnd) {
-			RedrawWindow(g_hCompWnd, NULL, NULL, RDW_INVALIDATE);
-		}
+		redraw_comp();
 		break;
 	case WM_IME_ENDCOMPOSITION:
 		break;

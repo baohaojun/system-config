@@ -320,20 +320,11 @@ bool fill_result(input_context& ic, const wstring& wstr_result)
     return true;
 }
 
-// int input_context::send_text(const string& str)
-// {
-// 	wstring wstr = to_wstring(str);
-// 	for (size_t i=0; i<wstr.size(); i++) {
-// 		add_msg(WM_CHAR, wstr[i], 1);
-// 	}
-// 	return wstr.size();
-// }
-
 int input_context::send_text(const string& str)
 {
 	if (!fill_result(*this, to_wstring(str))) {
 		return 0;
 	}
-	add_msg(WM_IME_COMPOSITION, 0, GCS_RESULT|GCS_RESULTREAD);
+	add_msg(WM_IME_COMPOSITION, 0, GCS_COMP|GCS_RESULT|GCS_RESULTREAD);
 	return 1;
 }
