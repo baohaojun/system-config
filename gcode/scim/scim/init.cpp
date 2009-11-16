@@ -12,10 +12,14 @@ using namespace std;
 
 rule_map_t g_quail_rules;
 
+list<wchar_t> g_history_list;
 static bool init_quail_rules()
 {
 	const int max_line = 8192;
 	char buff[max_line];
+	for (int i=0; i<100; i++) {
+		g_history_list.push_back(0);
+	}
 
 	FILE* fp = fopen("Q:\\.emacs_d\\lisp\\quail\\wubi86.el", "rb");
 	if (!fp) {

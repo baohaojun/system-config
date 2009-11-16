@@ -331,9 +331,19 @@ bool fill_result(input_context& ic, const wstring& wstr_result)
 
 int input_context::send_text(const string& str)
 {
-	if (!fill_result(*this, to_wstring(str))) {
+	wstring wstr = to_wstring(str);
+	if (!fill_result(*this, wstr)) {
 		return 0;
 	}
+
+	for (int i=0; i < wstr.size(); i++) {
+		if (wstr[i] > 127) { //this is a non-ascii char, we want to make it into history
+			g_history_list.push_back(wstr[i]);
+			g_history_list.pop_front();
+		}
+	}
+
+		
 	add_msg(WM_IME_COMPOSITION, 0, GCS_COMP|GCS_RESULT|GCS_RESULTREAD);
 	add_show_comp_msg();
 	return 2;
@@ -354,4 +364,38 @@ u32 input_context::return_ime_msgs()
 		add_msg(WM_IME_ENDCOMPOSITION);
 	}
 	return m_num_msg;
+}
+
+static void promote_cand_for_key(string cand, const string& key) //cand can't be passed as a ref, weird?
+{
+	vector<string> &cands = g_quail_rules[key];
+	for (vector<string>::iterator i = cands.begin(); i != cands.end(); i++) {
+		if (*i == cand) {
+			cands.erase(i);
+			break;
+		}
+	}
+	cands.insert(cands.begin(), cand);
+}
+
+int input_context::send_text(const string& cand, const string& key)
+{
+	int ret = send_text(cand);
+	if (g_quail_rules.find(key) == g_quail_rules.end() 
+		|| g_quail_rules[key].empty()) {
+		
+		BHJDEBUG(" Error: send_text(cand, key) unnecessary call: key(%s), cand(%s)", key.c_str(), cand.c_str());
+		return ret;
+	}
+
+	if (g_quail_rules[key][0] == cand) { // no need to reorder;
+		return ret;
+	}
+	
+	if (key.size() != 4) {// we only want to re-order if key is a full key (4)
+		return ret;
+	}
+
+	promote_cand_for_key(cand, key);
+	return ret;
 }

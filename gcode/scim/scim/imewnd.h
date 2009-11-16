@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <list>
 using namespace std;
 
 typedef UINT u32;
@@ -50,6 +51,7 @@ public:
 	}
 
 	int send_text(const string&);
+	int send_text(const string& cand, const string& key);
 	
 	LPINPUTCONTEXT operator->() {
 		return m_ic;
@@ -119,5 +121,6 @@ extern u32 g_first_cand, g_last_cand, g_active_cand;
 extern string g_ime_name;
 extern const char *const ime_off;
 extern const char *const ime_on;
+extern list<wchar_t> g_history_list;
 extern "C" char *strcasestr(const char *S, const char *FIND);
 #endif
