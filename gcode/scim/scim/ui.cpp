@@ -72,8 +72,6 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
 		OpenStatus(hUIWnd);
 		break;
 	case IMN_SETCANDIDATEPOS:
-		BHJDEBUG(" IMN_SETCANDIDATEPOS");
-
 	case IMN_SETCOMPOSITIONWINDOW:
 	case IMN_PRIVATE:
 		if (!g_comp_str.size()) {

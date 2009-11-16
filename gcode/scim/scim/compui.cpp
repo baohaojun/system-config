@@ -325,12 +325,14 @@ void PASCAL MoveDefaultCompPosition(HWND hUIWnd)
 
 void show_comp_wnd()
 {
+	if (g_comp_str.empty()) {
+		return hide_comp_wnd();
+	}
 	ShowWindow(g_hCompWnd, SW_SHOWNOACTIVATE);
 }
 
 void hide_comp_wnd()
 {
-	BHJDEBUG(" hide_comp_wnd");
 	ShowWindow(g_hCompWnd, SW_HIDE);
 }
 
@@ -412,6 +414,7 @@ void draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 	}
 
 	left = rect.left;
+	seq[0] = L'0';
 	if (g_first_cand <= g_last_cand) {
 		for (size_t i=g_first_cand; i<cands.size() && i-g_first_cand < (u32)10; i++) {
 			if (seq[0] == L'9') {
@@ -496,7 +499,6 @@ LRESULT CALLBACK CompWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	
 	switch (uMsg) {
 	case WM_IME_NOTIFY:
-		BHJDEBUG(" wm_ime_notify wp %x, lp %x", wParam, lParam);
 		// must not delete this case, because DefWindowProc will hang the IME
 		break;
 	case WM_PAINT:

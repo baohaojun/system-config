@@ -64,6 +64,7 @@ public:
 	}
 
 	bool add_msg(u32 msg, WPARAM wp = 0, LPARAM lp = 0);
+	u32 return_ime_msgs();
 	bool add_show_comp_msg();
 	bool add_update_status_msg();
 private:

@@ -59,8 +59,7 @@ StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	if (!g_hStatusWnd) {
 		g_hStatusWnd = hWnd;
 	} else if (g_hStatusWnd != hWnd) {
-		BHJDEBUG(" Error: hWnd %x not g_hStatusWnd %x", hWnd, g_hStatusWnd);
-		exit(-1);
+		bhjerr(" Error: hWnd %x not g_hStatusWnd %x", hWnd, g_hStatusWnd);
 	}		
 	
 	switch (uMsg) {

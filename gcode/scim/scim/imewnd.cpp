@@ -76,13 +76,11 @@ trans_msg::~trans_msg()
 
 bool input_context::copy_old_msg()
 {
-	if (m_num_msg == m_msg_buf_size && m_num_msg > 0) { // copy the old messages over
-		LPTRANSMSG msg_buf = trans_msg(*this);
-		if (!msg_buf) {
-			return false;
-		}
-		memcpy(msg_buf + m_ic->dwNumMsgBuf, m_msg_buf, m_num_msg*sizeof(TRANSMSG));
+	LPTRANSMSG msg_buf = trans_msg(*this);
+	if (!msg_buf) {
+		return false;
 	}
+	memcpy(msg_buf + m_ic->dwNumMsgBuf, m_msg_buf, m_num_msg*sizeof(TRANSMSG));
 	return true;
 }
 
@@ -91,8 +89,7 @@ bool input_context::enlarge_msg_buf(u32 n)
 	HIMCC hMem;
 
 	if (m_num_msg < m_msg_buf_size) { // this function must not be called when there's still space 
-		BHJDEBUG(" Error: enlarge_msg_buf called when still have space!");
-		exit(-1);
+		bhjerr(" Error: enlarge_msg_buf called when still have space!");
 	}
 
 	if (m_num_msg == m_msg_buf_size) { // this should be the first time we are called
@@ -122,8 +119,11 @@ bool input_context::enlarge_msg_buf(u32 n)
 			m_ic->hMsgBuf = hMem;
 		}
 
-		if (!copy_old_msg()) {
-			return false;
+		if (m_num_msg == m_msg_buf_size && m_num_msg > 0) { // copy the old messages over
+			if (!copy_old_msg()) {
+				return false;
+			}
+			m_num_msg += m_ic->dwNumMsgBuf; //number of valid messages
 		}
 		m_ic->dwNumMsgBuf += n; //this last n messages are not valid yet!
 		return true;
@@ -337,4 +337,21 @@ int input_context::send_text(const string& str)
 	add_msg(WM_IME_COMPOSITION, 0, GCS_COMP|GCS_RESULT|GCS_RESULTREAD);
 	add_show_comp_msg();
 	return 2;
+}
+
+// int input_context::send_text(const string& str)
+// {
+// 	wstring wstr = to_wstring(str);
+// 	for (size_t i = 0; i < wstr.size(); i++) {
+// 		add_msg(WM_CHAR, wstr[i], 1);
+// 	}
+// 	return wstr.size();
+// }
+
+u32 input_context::return_ime_msgs()
+{
+	if (g_comp_str.empty()) {
+		add_msg(WM_IME_ENDCOMPOSITION);
+	}
+	return m_num_msg;
 }
