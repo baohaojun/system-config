@@ -10,6 +10,12 @@
 using namespace std;
 
 typedef UINT u32;
+typedef map<string, vector<string>> rule_map_t;
+typedef map<string, map<string, int>> rule_trans_t;
+typedef map<string, u32> cand_hist_t;
+
+typedef UINT64 u64;
+
 class CBhjWnd {
 public:
 	CBhjWnd() {m_hWnd = 0;};
@@ -51,7 +57,6 @@ public:
 	}
 
 	int send_text(const string&);
-	int send_text(const string& cand, const string& key);
 	
 	LPINPUTCONTEXT operator->() {
 		return m_ic;
@@ -113,15 +118,29 @@ extern string g_comp_str;
 wstring to_wstring(const string& str);
 string to_string(const wstring& wstr);
 CRect get_wa_rect();
+void promote_cand_for_key(u32 cand_num, const string& key);
+
 const int comp_dft_width = 600;
 const int comp_dft_height = 60;
-typedef map<string, vector<string>> rule_map_t;
+
 extern rule_map_t g_quail_rules;
 extern rule_map_t g_reverse_rules;
+extern rule_trans_t g_trans_rule;
+extern cand_hist_t g_cand_hist;
+
 extern u32 g_first_cand, g_last_cand, g_active_cand;
 extern string g_ime_name;
 extern const char *const ime_off;
 extern const char *const ime_on;
 extern list<wchar_t> g_history_list;
 extern "C" char *strcasestr(const char *S, const char *FIND);
+template<class key_type, class mapped_type> 
+bool map_has_key(const map<key_type, mapped_type>& map_query, const key_type& key)
+{
+	if (map_query.find(key) != map_query.end()) {
+		return true;
+	} else {
+		return false;
+	}
+}
 #endif

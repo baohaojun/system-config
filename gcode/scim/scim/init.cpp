@@ -12,6 +12,11 @@ using namespace std;
 
 rule_map_t g_quail_rules;
 rule_map_t g_reverse_rules;
+cand_hist_t g_cand_hist;
+rule_trans_t g_trans_rule;
+
+//FIXME what about the quail transit map?
+
 typedef UINT64 u64;
 
 static u64
@@ -67,6 +72,10 @@ static bool init_quail_rules()
 						data = buff + i + 1;
 					} else if (quote == 2) {
 						key = data;
+						string trans = key;
+						for (size_t i=1; i+1 < trans.size(); i++) {
+							g_trans_rule[trans.substr(0, i)][trans.substr(i, 1)] = 1;
+						}
 					} else {
 						g_quail_rules[key].push_back(data);
 					}

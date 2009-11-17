@@ -383,12 +383,66 @@ static void high_light(HDC hdc, const CRect& rect)
 
 void draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 {
+	class debug_u32 {
+	public:
+		debug_u32(const string& name, u32 *u32_ptr) {
+			m_name = name;
+			m_u32_ptr = u32_ptr;
+			BHJDEBUG(" %s is %d at beginning", name.c_str(), *u32_ptr);
+		}
+		~debug_u32() {
+			BHJDEBUG(" %s is %d at end", m_name.c_str(), *m_u32_ptr);
+		}
+	private:
+		string m_name;
+		u32* m_u32_ptr;
+	};
+
+	debug_u32 active("g_first_cand", &g_first_cand);
+
 	hdc_with_font dc_lucida(hdc, L"Lucida Console");
 
 	int left = rect.left;
 	CRect rc_text = rect;
 	wstring seq = L"0:";
 
+	if (g_first_cand + g_last_cand + g_active_cand == 0 && 
+		map_has_key(g_cand_hist, g_comp_str) &&
+		g_cand_hist[g_comp_str] < cands.size() &&
+		g_cand_hist[g_comp_str] >= 0) {
+
+		BHJDEBUG(" has a comp history");
+		g_first_cand = 0;
+		g_active_cand = g_cand_hist[g_comp_str];
+
+		for (size_t i=0; i < cands.size(); i++) {
+
+			if (seq[0] == L'9') {
+				seq[0] = L'0';
+			} else {
+				seq[0] += 1;
+			}
+			u32 seq_width = dc_lucida.get_text_width(seq);
+			wstring cand = to_wstring(cands[i]);
+			u32 cand_width = dc_lucida.get_text_width(cand);
+
+			left += seq_width + cand_width + 6;
+
+			if (left > rect.right && //can't draw this one
+				i > g_first_cand) { //make sure at least one is drawn
+				g_first_cand = i--;
+				left = rect.left;
+				seq[0] = L'0';
+				continue;
+			} 
+
+			if (g_active_cand == i) {
+				g_last_cand = g_first_cand;
+				break;
+			}
+		}
+	}
+			
 	if (g_first_cand > g_last_cand && g_first_cand != g_active_cand) {
 		for (int i=g_last_cand; i>=0; i--) {
 			if (seq[0] == L'9') {

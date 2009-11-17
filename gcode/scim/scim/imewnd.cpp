@@ -366,36 +366,32 @@ u32 input_context::return_ime_msgs()
 	return m_num_msg;
 }
 
-static void promote_cand_for_key(string cand, const string& key) //cand can't be passed as a ref, weird?
+void promote_cand_for_key(u32 cand_num, const string& key) //cand can't be passed as a ref, weird?
 {
-	vector<string> &cands = g_quail_rules[key];
-	for (vector<string>::iterator i = cands.begin(); i != cands.end(); i++) {
-		if (*i == cand) {
-			cands.erase(i);
-			break;
-		}
-	}
-	cands.insert(cands.begin(), cand);
-}
 
-int input_context::send_text(const string& cand, const string& key)
-{
-	int ret = send_text(cand);
-	if (g_quail_rules.find(key) == g_quail_rules.end() 
+	if (!map_has_key(g_quail_rules, key)
 		|| g_quail_rules[key].empty()) {
 		
-		BHJDEBUG(" Error: send_text(cand, key) unnecessary call: key(%s), cand(%s)", key.c_str(), cand.c_str());
-		return ret;
+		BHJDEBUG(" Error: promote_cand_for_key(cand, key) unnecessary call: key(%s), cand(%d)", key.c_str(), cand_num);
+		return;
 	}
 
-	if (g_quail_rules[key][0] == cand) { // no need to reorder;
-		return ret;
-	}
-	
-	if (key.size() != 4) {// we only want to re-order if key is a full key (4)
-		return ret;
+	if (cand_num == 0 && !map_has_key(g_cand_hist, key)) { // no need to reorder;
+		return;
 	}
 
-	promote_cand_for_key(cand, key);
-	return ret;
+	g_cand_hist[key] = cand_num;
+
+	// if (key.size() != 4) {// we only want to re-order if key is a full key (4)
+	// 	return;
+	// }
+
+	// vector<string> &cands = g_quail_rules[key];
+	// for (vector<string>::iterator i = cands.begin(); i != cands.end(); i++) {
+	// 	if (*i == cand) {
+	// 		cands.erase(i);
+	// 		break;
+	// 	}
+	// }
+	// cands.insert(cands.begin(), cand);
 }

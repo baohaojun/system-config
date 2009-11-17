@@ -122,7 +122,7 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="0"
+				DebugInformationFormat="3"
 				CompileAs="2"
 				ShowIncludes="false"
 			/>
@@ -140,7 +140,7 @@
 				AdditionalOptions="imm32.lib htmlhelp.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="wingb.def"
-				GenerateDebugInformation="false"
+				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

@@ -179,7 +179,7 @@ ImeToAsciiEx(u32 vk,
 
 	if (g_comp_str.empty()) { //special case
 		return handler_map[0].handler(ic, mod, vk, c);
-	} 
+	}
 
 	for (int i = 1/*special*/; handler_map[i]; i++) {
 		const char*const comp = handler_map[i].comp_begin;
@@ -188,8 +188,6 @@ ImeToAsciiEx(u32 vk,
 		}
 	}
 
-
-	
 	//g_comp_str not empty
 	if (g_comp_str[0] == ';') {
 		if (isprint(c)) {
@@ -223,8 +221,10 @@ ImeToAsciiEx(u32 vk,
 		case VK_SPACE:
 
 			if (cands.size()) {
-				comp_remove_all();
-				return_ic_msgs(ic.send_text(cands[0], key));
+				ic.send_text(cands[g_active_cand]);
+				promote_cand_for_key(g_active_cand, key);
+				comp_remove_all(); //this will change g_active_cand, must after using it
+				return_ic_msgs(1);
 			} else {
 				comp_append_1(' ');
 				return_ic_msgs(ic.add_show_comp_msg());
@@ -242,11 +242,13 @@ ImeToAsciiEx(u32 vk,
 					beep();
 					return_ic_msgs(0);
 				}
+				ic.send_text(cands[index]);
+				promote_cand_for_key(index, key);
 				comp_remove_all();
-				return_ic_msgs(ic.send_text(cands[index], key));
+				return_ic_msgs(1);
 			} else if (vk >= 'A' && vk <= 'Z') {
-				if (key[0] >= 'a' && key[0] < 'z' && key.size() == 4 && cands.size()) { // 'z' is for pinyin
-					ic.send_text(cands[0]); //sending first cand, no need to reorder
+				if (cands.size() == 1 && !map_has_key(g_trans_rule, key)) {
+					ic.send_text(cands[0]);
 					comp_remove_all();
 				}
 				comp_append_1(vk-'A'+'a');
@@ -303,10 +305,12 @@ ImeToAsciiEx(u32 vk,
 	} 
 	
 	if (isprint(c) && cands.size()) {
+		string send = cands[g_active_cand];
+		send.push_back(c);
+		ic.send_text(send);
+		promote_cand_for_key(g_active_cand, key);
 		comp_remove_all();
-		string text = cands[0];
-		text.push_back(c);
-		return_ic_msgs(ic.send_text(cands[0]+c));
+		return_ic_msgs(1);
 	} 
 
 	if (isprint(c)) {
@@ -349,16 +353,6 @@ template<class Col> string join(const string& sep, const Col& col)
 		}
 	}
 	return res;
-}
-
-template<class key_type, class mapped_type> 
-bool map_has_key(const map<key_type, mapped_type>& map_query, const key_type& key)
-{
-	if (map_query.find(key) != map_query.end()) {
-		return true;
-	} else {
-		return false;
-	}
 }
 
 static string reverse_wubi_key(const wstring& ws)
