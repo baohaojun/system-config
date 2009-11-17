@@ -12,6 +12,19 @@ using namespace std;
 
 rule_map_t g_quail_rules;
 rule_map_t g_reverse_rules;
+typedef UINT64 u64;
+
+static u64
+GetSystemTimeAsUINT64()
+{
+    FILETIME filetime;
+    GetSystemTimeAsFileTime( &filetime );
+
+    ULARGE_INTEGER large;
+    memcpy( &large, &filetime, sizeof(FILETIME) );
+
+    return large.QuadPart;
+}
 
 list<wchar_t> g_history_list;
 static bool init_quail_rules()
@@ -34,6 +47,7 @@ static bool init_quail_rules()
 		rule_end,
 	} state = rule_begin;
 
+	u64 ts = GetSystemTimeAsUINT64();
 	while (fgets(buff, max_line, fp)) {
 		if (state == rule_begin && strstr(buff, "quail-define-rules")) {
 			state = rule_defining;
@@ -42,21 +56,19 @@ static bool init_quail_rules()
 
 		if (state == rule_defining) {
 			int quote = 0;
-			string key_rule;
-			string key;
+			char * key;
+			char * data;
+
 			for (int i=0; buff[i]; i++) {
 				if (buff[i] == '"') {
+					buff[i] = 0;
 					quote++;
 					if (quote % 2) {
-						key_rule = "";
+						data = buff + i + 1;
 					} else if (quote == 2) {
-						key = key_rule;
+						key = data;
 					} else {
-						g_quail_rules[key].push_back(key_rule);
-					}
-				} else {
-					if (quote % 2) {
-						key_rule.push_back(buff[i]);
+						g_quail_rules[key].push_back(data);
 					}
 				}
 			}
@@ -73,25 +85,22 @@ static bool init_quail_rules()
 		BHJDEBUG(" Error: can't open reverse.txt");
 		return true; //if we get here, at least we can input.
 	}
-	
 	while (fgets(buff, max_line, fp)) {
-
+		
 		int quote = 0;
-		string key_rule;
-		string key;
+		char * key;
+		char * data;
+
 		for (int i=0; buff[i]; i++) {
 			if (buff[i] == '"') {
+				buff[i] = 0;
 				quote++;
 				if (quote % 2) {
-					key_rule = "";
+					data = buff + i + 1;
 				} else if (quote == 2) {
-					key = key_rule;
+					key = data;
 				} else {
-					g_reverse_rules[key].push_back(key_rule);
-				}
-			} else {
-				if (quote % 2) {
-					key_rule.push_back(buff[i]);
+					g_reverse_rules[key].push_back(data);
 				}
 			}
 		}
