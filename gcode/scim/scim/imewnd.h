@@ -117,6 +117,7 @@ const int comp_dft_width = 600;
 const int comp_dft_height = 60;
 typedef map<string, vector<string>> rule_map_t;
 extern rule_map_t g_quail_rules;
+extern rule_map_t g_reverse_rules;
 extern u32 g_first_cand, g_last_cand, g_active_cand;
 extern string g_ime_name;
 extern const char *const ime_off;

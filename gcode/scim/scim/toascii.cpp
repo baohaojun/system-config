@@ -77,7 +77,7 @@ struct comp_want_key_t {
 
 comp_want_key_t empty_want_key_map[];
 
-BOOL WINAPI ImeProcessKey(HIMC hIMC,
+BOOL WINAPI ImeProcessKey(HIMC /*hIMC*/,
 						  u32 vk, LPARAM scan_code,
 						  CONST LPBYTE kbd_state)
 {
@@ -113,7 +113,7 @@ BOOL WINAPI ImeProcessKey(HIMC hIMC,
 
 	char szAscii[2] = "";
 
-	int nChars = ToAscii(vk, scan_code, kbd_state, (LPWORD) szAscii, 0);
+	ToAscii(vk, scan_code, kbd_state, (LPWORD) szAscii, 0);
 
 	if (isgraph(szAscii[0])) { //not started composing, and a graph, we want it, 'cause the composing might start
 		bhjreturn (true);
@@ -136,12 +136,12 @@ u32 WINAPI
 ImeToAsciiEx(u32 vk,
 			 u32 scan_code,
 			 CONST LPBYTE kbd_state,
-			 LPTRANSMSGLIST lpTransBuf, u32 fuState, HIMC hIMC)
+			 LPTRANSMSGLIST lpTransBuf, u32 /*fuState*/, HIMC hIMC)
 {
 
 #define return_ic_msgs(a) a; bhjreturn(ic.return_ime_msgs())
 
-	char kbd_char = (char) (HIWORD(vk));
+	//char kbd_char = (char) (HIWORD(vk));
 	vk = LOWORD(vk);
 	if (vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU) {
 		return 0; //no beep
@@ -174,7 +174,7 @@ ImeToAsciiEx(u32 vk,
 	}
 
 	unsigned char ascii[2] = "";
-	int n_ascii = ToAscii(vk, scan_code, kbd_state, (LPWORD)ascii, 0);
+	ToAscii(vk, scan_code, kbd_state, (LPWORD)ascii, 0);
 	const char c = ascii[0];
 
 	if (g_comp_str.empty()) { //special case
@@ -321,9 +321,87 @@ u32 g_first_cand, g_last_cand, g_active_cand;
 const char *const ime_off = "包包英文";
 const char *const ime_on = "包包中文";
 
+template<class Col> list<typename Col::value_type> bhj_unique(const Col& col)
+{
+	map<Col::value_type, int> u_map;
+	list<Col::value_type> res;
+	for (Col::const_iterator i = col.begin(); i != col.end(); i++) {
+		if (u_map[*i]) {
+			continue;
+		} else {
+			u_map[*i] = 1;
+			res.push_back(*i);
+		}
+	}
+	return res;
+}
+
+template<class Col> string join(const string& sep, const Col& col)
+{
+	string res;
+	for (Col::const_iterator i = col.begin(); /*empty*/; /*empty*/) {
+		res += *i;
+		i++;
+		if (i != col.end()) {
+			res += sep;
+		} else {
+			break;
+		}
+	}
+	return res;
+}
+
+template<class key_type, class mapped_type> 
+bool map_has_key(const map<key_type, mapped_type>& map_query, const key_type& key)
+{
+	if (map_query.find(key) != map_query.end()) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 static string reverse_wubi_key(const wstring& ws)
 {
-	return "abcd";
+	size_t n = ws.size();
+	if (n < 2) {
+		return "????";
+	}
+
+	string C1 = to_string(ws.substr(0, 1));
+	string C2 = to_string(ws.substr(1, 1));
+	string Cn = to_string(ws.substr(n-1, 1));
+	
+	string res;
+	if (!map_has_key(g_reverse_rules, C1) || !map_has_key(g_reverse_rules, C2) || !map_has_key(g_reverse_rules, Cn)) {
+		beep();
+		return "????";
+	}
+	
+	list<string> res_list;
+	if (n == 2) {
+		for (size_t i=0; i < g_reverse_rules[C1].size(); i++) {
+			for (size_t j=0; j < g_reverse_rules[C2].size(); j++) {
+				res_list.push_back(g_reverse_rules[C1][i] + g_reverse_rules[C2][j]);
+			}
+		}
+	} else {
+		for (size_t i=0; i < g_reverse_rules[C1].size(); i++) {
+			for (size_t j=0; j < g_reverse_rules[C2].size(); j++) {
+				for (size_t k=0; k < g_reverse_rules[Cn].size(); k++) {
+					res_list.push_back(
+						g_reverse_rules[C1][i].substr(0, 1) + 
+						g_reverse_rules[C2][j].substr(0, 1) +
+						g_reverse_rules[Cn][k].substr(0, 2));
+				}
+			}
+		}
+	}
+	
+	if (res_list.empty()) {
+		return "????";
+	}
+	return join(" ", bhj_unique(res_list));
 }
 
 static wstring g_ws_self_help;
@@ -370,7 +448,7 @@ static int empty_handler(input_context& ic, modifier_t mod, u32 vk, char c)
 	}
 }
 
-static int self_help_handler(input_context& ic, modifier_t mod, u32 vk, char c)
+static int self_help_handler(input_context& ic, modifier_t mod, u32 vk, char /*c*/)
 {
 	if (mod == mod_ctrl && vk == 'B') {
 		self_help_comp(g_ws_self_help.size()+1);
@@ -386,7 +464,7 @@ static int self_help_handler(input_context& ic, modifier_t mod, u32 vk, char c)
 	return_ic_msgs(ic.add_show_comp_msg());
 }
 
-static int normal_handler(input_context& ic, modifier_t mod, u32 vk, char c)
+static int normal_handler(input_context& ic, modifier_t mod, u32 vk, char /*c*/)
 {
 	return_ic_msgs(0);
 }

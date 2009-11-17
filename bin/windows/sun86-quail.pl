@@ -4,6 +4,7 @@ use utf8;
 
 open($fwubi, "<", "wubi.txt") or die $!;
 open($fpy, "<", "py.txt") or die $!;
+open($fpy, ">", "reverse.txt") or die $!;
 
 $line = 0;
 while (<$fwubi>) {
@@ -24,8 +25,19 @@ while (<$fwubi>) {
         if (length (decode_utf8 $chinese) == 1) { 
             $seq{$chinese} = $line unless $seq{$chinese};
             push @{$chinese_hash{$chinese}}, $key;
+            next if (length (decode_utf8 $key) == 1);
+            $key2 = substr $key, 0, 2;
+            next if $done_reverse{$key2.$chinese};
+            $done_reverse{$key2.$chinese} = 1;
+            push @{$reverse_hash{$chinese}}, $key2;
         }
     }
+}
+
+@keys = sort {$seq{$a} <=> $seq{$b}} keys %reverse_hash;
+foreach $key (@keys) {
+    $" = qq(" ");
+    print qq/"$key" "@{$reverse_hash{$key}}"/, "\n";
 }
 
 while (<$fpy>) {

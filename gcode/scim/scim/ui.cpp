@@ -14,7 +14,7 @@ void PASCAL CreateUIWindow(HWND hUIWnd)
 	return;
 }
 
-void PASCAL DestroyUIWindow(HWND hUIWnd)
+void PASCAL DestroyUIWindow()
 {
 	DestroyWindow(g_hCompWnd);
 	g_hCompWnd = NULL;
@@ -65,7 +65,7 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	return;
 }
 
-void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM lParam)
+void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM /*lParam*/)
 {
 	switch (wParam) {
 	case IMN_OPENSTATUSWINDOW:
@@ -124,7 +124,7 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		CreateUIWindow(hUIWnd);
 		break;
 	case WM_DESTROY:
-		DestroyUIWindow(hUIWnd);
+		DestroyUIWindow();
 		break;
 	case WM_IME_STARTCOMPOSITION:
 		StartComp(hUIWnd);

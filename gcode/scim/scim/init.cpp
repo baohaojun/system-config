@@ -11,6 +11,7 @@
 using namespace std;
 
 rule_map_t g_quail_rules;
+rule_map_t g_reverse_rules;
 
 list<wchar_t> g_history_list;
 static bool init_quail_rules()
@@ -62,6 +63,36 @@ static bool init_quail_rules()
 
 			if (quote == 0) { //we hit a line there is no quote, must been stopped
 				break;
+			}
+		}
+	}
+	fclose(fp);
+	fp = NULL;
+	fp = fopen("Q:\\.emacs_d\\lisp\\quail\\reverse.txt", "rb");
+	if (!fp) {
+		BHJDEBUG(" Error: can't open reverse.txt");
+		return true; //if we get here, at least we can input.
+	}
+	
+	while (fgets(buff, max_line, fp)) {
+
+		int quote = 0;
+		string key_rule;
+		string key;
+		for (int i=0; buff[i]; i++) {
+			if (buff[i] == '"') {
+				quote++;
+				if (quote % 2) {
+					key_rule = "";
+				} else if (quote == 2) {
+					key = key_rule;
+				} else {
+					g_reverse_rules[key].push_back(key_rule);
+				}
+			} else {
+				if (quote % 2) {
+					key_rule.push_back(buff[i]);
+				}
 			}
 		}
 	}

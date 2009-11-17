@@ -336,7 +336,7 @@ int input_context::send_text(const string& str)
 		return 0;
 	}
 
-	for (int i=0; i < wstr.size(); i++) {
+	for (size_t i=0; i < wstr.size(); i++) {
 		if (wstr[i] > 127) { //this is a non-ascii char, we want to make it into history
 			g_history_list.push_back(wstr[i]);
 			g_history_list.pop_front();

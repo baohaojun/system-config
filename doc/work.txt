@@ -1811,4 +1811,7 @@ It turns out, simulating the shift key to select text only works correctly when 
 cthall for blaze: C:\Program Files\DSPC\IFL\exec\Tavor_SAAR_OneNAND.ini
 http://ftp.science.nus.edu.sg/ubuntu/
 
+svn st -q|grep '.dll$\|.lib$\|.exe$\|.zip$\|.chi$\|.chm$\|.exp' -i
+svn st -q|grep '.h$\|.cpp$\|.dsp$\|.dsw$\|.rc$\|.ini$' -v
+
 
