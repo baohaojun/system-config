@@ -142,6 +142,7 @@ sub handleVcOutput($)
         next if (m!\(\d+\): Could not find the file!);
         s!^[0-9]+>!!; #get rid of `1>'
         s!^\s+(.*?): see declaration!$1: error C2371: see declaration!;
+        s!^\s+(.*?): see refer!$1: error C2371: see refer!;
         s!\):!) :!g;
         s!\(([0-9]+),[0-9]+\)!($1)!;
         s!error (?:CS|RC)([0-9]+) ?:!error C$1:!;
