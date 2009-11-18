@@ -322,8 +322,13 @@
 (defun bhj-insert-pwdu ()
   (interactive)
   (insert "'")
-  (call-process "cygpath" nil t nil "-au" (expand-file-name default-directory))
-  (backward-delete-char 1)
+  (if (eq system-type 'cygwin)
+      (insert 
+       (replace-regexp-in-string
+        "^/.?scp:.*?@.*?:" "" 
+        (expand-file-name default-directory)))
+    (call-process "cygpath" nil t nil "-au" )
+    (backward-delete-char 1))
   (insert "'"))
 
 (defcustom bhj-clt-branch "dbg_zch68_a22242_ringtone-hx11i"
