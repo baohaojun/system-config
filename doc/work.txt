@@ -1815,3 +1815,479 @@ svn st -q|grep '.dll$\|.lib$\|.exe$\|.zip$\|.chi$\|.chm$\|.exp' -i
 svn st -q|grep '.h$\|.cpp$\|.dsp$\|.dsw$\|.rc$\|.ini$' -v
 
 HKEY_CURRENT_USER\Control Panel\Input Method\Hot Keys\00000011
+*** 1.txt	2009-11-18 13:28:56.296875000 +0800
+--- 2.txt	2009-11-18 13:28:11.484375000 +0800
+***************
+*** 391977,391990 ****
+  "$DLL"="WINTRUST.DLL"
+  "CallbackAllocFunction"="SoftpubLoadDefUsageCallData"
+  "CallbackFreeFunction"="SoftpubFreeDefUsageCallData"
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\RNG]
+! "Seed"=hex:b8,52,31,01,8a,dd,62,be,3f,8e,83,68,e3,d2,ab,ff,40,5b,3f,b6,68,6a,\
+!   36,e1,88,35,9e,16,cd,da,03,f6,7a,cc,7d,11,a4,85,74,3d,fa,4e,63,6b,25,39,e8,\
+!   97,e1,cd,00,4a,90,cb,65,32,5c,a4,84,f0,e1,62,07,a3,63,56,3a,9c,85,96,48,49,\
+!   c8,64,0a,8b,00,fd,e9,49
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\Services]
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\CTF]
+  
+--- 391977,391990 ----
+  "$DLL"="WINTRUST.DLL"
+  "CallbackAllocFunction"="SoftpubLoadDefUsageCallData"
+  "CallbackFreeFunction"="SoftpubFreeDefUsageCallData"
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\RNG]
+! "Seed"=hex:d9,f6,48,67,7d,94,ea,30,f6,9c,da,42,97,1c,88,2b,84,47,96,46,2a,cc,\
+!   38,5a,03,ea,e1,c2,be,a5,70,93,93,5e,4c,77,f4,50,a9,ee,5f,af,2b,af,33,8d,3e,\
+!   48,3a,b3,5b,9e,80,4f,aa,0a,5d,09,b5,a6,74,03,c2,2a,d4,e3,51,ee,18,29,e6,c6,\
+!   5d,0c,ca,0a,99,5a,bc,ce
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\Services]
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\CTF]
+  
+***************
+*** 687917,687926 ****
+--- 687917,687946 ----
+  "DisplayName"="Tor 0.2.0.34"
+  "UninstallString"="\"C:\\Program Files\\Vidalia Bundle\\Uninstall.exe\""
+  "NoModify"=dword:00000001
+  "NoRepair"=dword:00000001
+  
++ [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\UniFonts_is1]
++ "Inno Setup: Setup Version"="5.2.3"
++ "Inno Setup: App Path"="C:\\Program Files\\UniFonts"
++ "InstallLocation"="C:\\Program Files\\UniFonts\\"
++ "Inno Setup: Icon Group"="Unicode Super-CJK Fonts"
++ "Inno Setup: User"="bhj"
++ "Inno Setup: Setup Type"="full"
++ "Inno Setup: Selected Components"="font,font\\sun,font\\ming,link,link\\chs,link\\cht,link\\eng"
++ "Inno Setup: Deselected Components"=""
++ "DisplayName"="Unicode Super-CJK Fonts V5.4"
++ "UninstallString"="\"C:\\Program Files\\UniFonts\\unins000.exe\""
++ "QuietUninstallString"="\"C:\\Program Files\\UniFonts\\unins000.exe\" /SILENT"
++ "Publisher"="okuc.net"
++ "URLInfoAbout"="http://okuc.net"
++ "HelpLink"="http://okuc.net"
++ "URLUpdateInfo"="http://okuc.net/software/UniFonts.exe"
++ "NoModify"=dword:00000001
++ "NoRepair"=dword:00000001
++ "InstallDate"="20091118"
++ 
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\vghd]
+  "DisplayName"="VirtuaGirl HD"
+  "UninstallString"="d:\\Profiles\\bhj\\Start Menu\\Programs\\VirtuaGirl HD\\uninstall.lnk"
+  "HelpLink"="http://www.VirtuaGirlHD.com/help.php"
+  
+***************
+*** 694094,694132 ****
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink]
+  "FontLinkControl"=dword:00004000
+  "FontLinkDefaultChar"=dword:00003000
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink]
+! "Lucida Sans Unicode"=hex(7):4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,\
+!   2e,00,54,00,54,00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,\
+!   00,74,00,68,00,69,00,63,00,00,00,00,00
+! "SimSun"=hex(7):67,00,75,00,6c,00,69,00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,\
+!   00,75,00,6c,00,69,00,6d,00,00,00,4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,\
+!   43,00,2e,00,54,00,54,00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,47,\
+!   00,6f,00,74,00,68,00,69,00,63,00,00,00,6d,00,69,00,6e,00,67,00,6c,00,69,00,\
+!   75,00,2e,00,74,00,74,00,63,00,2c,00,50,00,4d,00,69,00,6e,00,67,00,4c,00,69,\
+!   00,55,00,00,00,53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,54,00,54,00,43,00,\
+!   2c,00,53,00,69,00,6d,00,53,00,75,00,6e,00,2d,00,50,00,75,00,61,00,00,00,00,\
+!   00
+! "Tahoma"=hex(7):53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,54,00,54,00,43,00,2c,\
+!   00,53,00,69,00,6d,00,53,00,75,00,6e,00,00,00,53,00,69,00,6d,00,53,00,75,00,\
+!   6e,00,2e,00,54,00,54,00,43,00,2c,00,53,00,69,00,6d,00,53,00,75,00,6e,00,2d,\
+!   00,50,00,75,00,61,00,00,00,67,00,75,00,6c,00,69,00,6d,00,2e,00,74,00,74,00,\
+!   63,00,2c,00,67,00,75,00,6c,00,69,00,6d,00,00,00,4d,00,53,00,47,00,4f,00,54,\
+!   00,48,00,49,00,43,00,2e,00,54,00,54,00,43,00,2c,00,4d,00,53,00,20,00,55,00,\
+!   49,00,20,00,47,00,6f,00,74,00,68,00,69,00,63,00,00,00,6d,00,69,00,6e,00,67,\
+!   00,6c,00,69,00,75,00,2e,00,74,00,74,00,63,00,2c,00,50,00,4d,00,69,00,6e,00,\
+!   67,00,4c,00,69,00,55,00,00,00,00,00
+! "Microsoft Sans Serif"=hex(7):53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,54,00,\
+!   54,00,43,00,2c,00,53,00,69,00,6d,00,53,00,75,00,6e,00,00,00,53,00,69,00,6d,\
+!   00,53,00,75,00,6e,00,2e,00,54,00,54,00,43,00,2c,00,53,00,69,00,6d,00,53,00,\
+!   75,00,6e,00,2d,00,50,00,75,00,61,00,00,00,67,00,75,00,6c,00,69,00,6d,00,2e,\
+!   00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,69,00,6d,00,00,00,4d,00,53,00,\
+!   47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,00,54,00,43,00,2c,00,4d,00,53,\
+!   00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,68,00,69,00,63,00,00,00,6d,00,\
+!   69,00,6e,00,67,00,6c,00,69,00,75,00,2e,00,74,00,74,00,63,00,2c,00,50,00,4d,\
+!   00,69,00,6e,00,67,00,4c,00,69,00,55,00,00,00,00,00
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontMapper]
+  "ARIAL"=dword:00000000
+  "COURIER"=dword:00008800
+  "COURIER NEW"=dword:00008000
+--- 694114,694237 ----
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink]
+  "FontLinkControl"=dword:00004000
+  "FontLinkDefaultChar"=dword:00003000
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink]
+! "Lucida Sans Unicode"=hex(7):53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,74,00,\
+!   74,00,63,00,2c,00,4e,00,53,00,69,00,6d,00,53,00,75,00,6e,00,00,00,53,00,75,\
+!   00,6e,00,2d,00,45,00,78,00,74,00,41,00,2e,00,74,00,74,00,66,00,00,00,53,00,\
+!   75,00,6e,00,2d,00,45,00,78,00,74,00,42,00,2e,00,74,00,74,00,66,00,00,00,67,\
+!   00,75,00,6c,00,69,00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,\
+!   69,00,6d,00,00,00,4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,\
+!   00,54,00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,\
+!   68,00,69,00,63,00,00,00,00,00
+! "SimSun"=hex(7):53,00,75,00,6e,00,2d,00,45,00,78,00,74,00,41,00,2e,00,74,00,74,\
+!   00,66,00,00,00,53,00,75,00,6e,00,2d,00,45,00,78,00,74,00,42,00,2e,00,74,00,\
+!   74,00,66,00,00,00,6d,00,69,00,63,00,72,00,6f,00,73,00,73,00,2e,00,74,00,74,\
+!   00,66,00,00,00,67,00,75,00,6c,00,69,00,6d,00,2e,00,74,00,74,00,63,00,2c,00,\
+!   67,00,75,00,6c,00,69,00,6d,00,00,00,4d,00,53,00,47,00,4f,00,54,00,48,00,49,\
+!   00,43,00,2e,00,54,00,54,00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,\
+!   47,00,6f,00,74,00,68,00,69,00,63,00,00,00,00,00
+! "Tahoma"=hex(7):53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,74,00,74,00,63,00,2c,\
+!   00,4e,00,53,00,69,00,6d,00,53,00,75,00,6e,00,00,00,53,00,75,00,6e,00,2d,00,\
+!   45,00,78,00,74,00,41,00,2e,00,74,00,74,00,66,00,00,00,53,00,75,00,6e,00,2d,\
+!   00,45,00,78,00,74,00,42,00,2e,00,74,00,74,00,66,00,00,00,67,00,75,00,6c,00,\
+!   69,00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,69,00,6d,00,00,\
+!   00,4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,00,54,00,43,00,\
+!   2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,68,00,69,00,63,\
+!   00,00,00,00,00
+! "Microsoft Sans Serif"=hex(7):53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,74,00,\
+!   74,00,63,00,2c,00,4e,00,53,00,69,00,6d,00,53,00,75,00,6e,00,00,00,53,00,75,\
+!   00,6e,00,2d,00,45,00,78,00,74,00,41,00,2e,00,74,00,74,00,66,00,00,00,53,00,\
+!   75,00,6e,00,2d,00,45,00,78,00,74,00,42,00,2e,00,74,00,74,00,66,00,00,00,67,\
+!   00,75,00,6c,00,69,00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,\
+!   69,00,6d,00,00,00,4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,\
+!   00,54,00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,\
+!   68,00,69,00,63,00,00,00,00,00
+! "Arial"=hex(7):53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,74,00,74,00,63,00,2c,\
+!   00,4e,00,53,00,69,00,6d,00,53,00,75,00,6e,00,00,00,53,00,75,00,6e,00,2d,00,\
+!   45,00,78,00,74,00,41,00,2e,00,74,00,74,00,66,00,00,00,53,00,75,00,6e,00,2d,\
+!   00,45,00,78,00,74,00,42,00,2e,00,74,00,74,00,66,00,00,00,67,00,75,00,6c,00,\
+!   69,00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,69,00,6d,00,00,\
+!   00,4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,00,54,00,43,00,\
+!   2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,68,00,69,00,63,\
+!   00,00,00,00,00
+! "Times New Roman"=hex(7):53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,74,00,74,00,\
+!   63,00,2c,00,4e,00,53,00,69,00,6d,00,53,00,75,00,6e,00,00,00,53,00,75,00,6e,\
+!   00,2d,00,45,00,78,00,74,00,41,00,2e,00,74,00,74,00,66,00,00,00,53,00,75,00,\
+!   6e,00,2d,00,45,00,78,00,74,00,42,00,2e,00,74,00,74,00,66,00,00,00,67,00,75,\
+!   00,6c,00,69,00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,69,00,\
+!   6d,00,00,00,4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,00,54,\
+!   00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,68,00,\
+!   69,00,63,00,00,00,00,00
+! "MingLiU"=hex(7):6d,00,69,00,6e,00,67,00,6c,00,69,00,75,00,62,00,2e,00,74,00,\
+!   74,00,63,00,2c,00,4d,00,69,00,6e,00,67,00,4c,00,69,00,55,00,2d,00,65,00,78,\
+!   00,74,00,42,00,00,00,53,00,75,00,6e,00,2d,00,45,00,78,00,74,00,41,00,2e,00,\
+!   74,00,74,00,66,00,00,00,53,00,75,00,6e,00,2d,00,45,00,78,00,74,00,42,00,2e,\
+!   00,74,00,74,00,66,00,00,00,6d,00,69,00,63,00,72,00,6f,00,73,00,73,00,2e,00,\
+!   74,00,74,00,66,00,00,00,67,00,75,00,6c,00,69,00,6d,00,2e,00,74,00,74,00,63,\
+!   00,2c,00,67,00,75,00,6c,00,69,00,6d,00,00,00,4d,00,53,00,47,00,4f,00,54,00,\
+!   48,00,49,00,43,00,2e,00,54,00,54,00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,\
+!   00,20,00,47,00,6f,00,74,00,68,00,69,00,63,00,00,00,00,00
+! "PMingLiU"=hex(7):6d,00,69,00,6e,00,67,00,6c,00,69,00,75,00,62,00,2e,00,74,00,\
+!   74,00,63,00,2c,00,4d,00,69,00,6e,00,67,00,4c,00,69,00,55,00,2d,00,65,00,78,\
+!   00,74,00,42,00,00,00,53,00,75,00,6e,00,2d,00,45,00,78,00,74,00,41,00,2e,00,\
+!   74,00,74,00,66,00,00,00,53,00,75,00,6e,00,2d,00,45,00,78,00,74,00,42,00,2e,\
+!   00,74,00,74,00,66,00,00,00,6d,00,69,00,63,00,72,00,6f,00,73,00,73,00,2e,00,\
+!   74,00,74,00,66,00,00,00,67,00,75,00,6c,00,69,00,6d,00,2e,00,74,00,74,00,63,\
+!   00,2c,00,67,00,75,00,6c,00,69,00,6d,00,00,00,4d,00,53,00,47,00,4f,00,54,00,\
+!   48,00,49,00,43,00,2e,00,54,00,54,00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,\
+!   00,20,00,47,00,6f,00,74,00,68,00,69,00,63,00,00,00,00,00
+! "MingLiU-ExtB"=hex(7):6d,00,69,00,6e,00,67,00,6c,00,69,00,75,00,2e,00,74,00,74,\
+!   00,63,00,2c,00,4d,00,69,00,6e,00,67,00,4c,00,69,00,55,00,00,00,53,00,75,00,\
+!   6e,00,2d,00,45,00,78,00,74,00,41,00,2e,00,74,00,74,00,66,00,00,00,53,00,75,\
+!   00,6e,00,2d,00,45,00,78,00,74,00,42,00,2e,00,74,00,74,00,66,00,00,00,6d,00,\
+!   69,00,63,00,72,00,6f,00,73,00,73,00,2e,00,74,00,74,00,66,00,00,00,67,00,75,\
+!   00,6c,00,69,00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,69,00,\
+!   6d,00,00,00,4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,00,54,\
+!   00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,68,00,\
+!   69,00,63,00,00,00,00,00
+! "PMingLiU-ExtB"=hex(7):6d,00,69,00,6e,00,67,00,6c,00,69,00,75,00,2e,00,74,00,\
+!   74,00,63,00,2c,00,4d,00,69,00,6e,00,67,00,4c,00,69,00,55,00,00,00,53,00,75,\
+!   00,6e,00,2d,00,45,00,78,00,74,00,41,00,2e,00,74,00,74,00,66,00,00,00,53,00,\
+!   75,00,6e,00,2d,00,45,00,78,00,74,00,42,00,2e,00,74,00,74,00,66,00,00,00,6d,\
+!   00,69,00,63,00,72,00,6f,00,73,00,73,00,2e,00,74,00,74,00,66,00,00,00,67,00,\
+!   75,00,6c,00,69,00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,69,\
+!   00,6d,00,00,00,4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,00,\
+!   54,00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,68,\
+!   00,69,00,63,00,00,00,00,00
+! "PSimSun"=hex(7):53,00,75,00,6e,00,2d,00,45,00,78,00,74,00,41,00,2e,00,74,00,\
+!   74,00,66,00,00,00,53,00,75,00,6e,00,2d,00,45,00,78,00,74,00,42,00,2e,00,74,\
+!   00,74,00,66,00,00,00,6d,00,69,00,63,00,72,00,6f,00,73,00,73,00,2e,00,74,00,\
+!   74,00,66,00,00,00,67,00,75,00,6c,00,69,00,6d,00,2e,00,74,00,74,00,63,00,2c,\
+!   00,67,00,75,00,6c,00,69,00,6d,00,00,00,4d,00,53,00,47,00,4f,00,54,00,48,00,\
+!   49,00,43,00,2e,00,54,00,54,00,43,00,2c,00,4d,00,53,00,20,00,55,00,49,00,20,\
+!   00,47,00,6f,00,74,00,68,00,69,00,63,00,00,00,00,00
+! "Sun-ExtA"=hex(7):53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,74,00,74,00,63,00,\
+!   2c,00,4e,00,53,00,69,00,6d,00,53,00,75,00,6e,00,00,00,53,00,75,00,6e,00,2d,\
+!   00,45,00,78,00,74,00,42,00,2e,00,74,00,74,00,66,00,00,00,6d,00,69,00,63,00,\
+!   72,00,6f,00,73,00,73,00,2e,00,74,00,74,00,66,00,00,00,67,00,75,00,6c,00,69,\
+!   00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,69,00,6d,00,00,00,\
+!   4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,00,54,00,43,00,2c,\
+!   00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,68,00,69,00,63,00,\
+!   00,00,00,00
+! "Sun-ExtB"=hex(7):53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,74,00,74,00,63,00,\
+!   2c,00,4e,00,53,00,69,00,6d,00,53,00,75,00,6e,00,00,00,53,00,75,00,6e,00,2d,\
+!   00,45,00,78,00,74,00,41,00,2e,00,74,00,74,00,66,00,00,00,6d,00,69,00,63,00,\
+!   72,00,6f,00,73,00,73,00,2e,00,74,00,74,00,66,00,00,00,67,00,75,00,6c,00,69,\
+!   00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,69,00,6d,00,00,00,\
+!   4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,00,54,00,43,00,2c,\
+!   00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,68,00,69,00,63,00,\
+!   00,00,00,00
+! "SimSun-ExtB"=hex(7):53,00,69,00,6d,00,53,00,75,00,6e,00,2e,00,74,00,74,00,63,\
+!   00,2c,00,4e,00,53,00,69,00,6d,00,53,00,75,00,6e,00,00,00,53,00,75,00,6e,00,\
+!   2d,00,45,00,78,00,74,00,41,00,2e,00,74,00,74,00,66,00,00,00,53,00,75,00,6e,\
+!   00,2d,00,45,00,78,00,74,00,42,00,2e,00,74,00,74,00,66,00,00,00,67,00,75,00,\
+!   6c,00,69,00,6d,00,2e,00,74,00,74,00,63,00,2c,00,67,00,75,00,6c,00,69,00,6d,\
+!   00,00,00,4d,00,53,00,47,00,4f,00,54,00,48,00,49,00,43,00,2e,00,54,00,54,00,\
+!   43,00,2c,00,4d,00,53,00,20,00,55,00,49,00,20,00,47,00,6f,00,74,00,68,00,69,\
+!   00,63,00,00,00,00,00
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontMapper]
+  "ARIAL"=dword:00000000
+  "COURIER"=dword:00008800
+  "COURIER NEW"=dword:00008000
+***************
+*** 694639,694648 ****
+--- 694744,694756 ----
+  "Frutiger Linotype Bold (TrueType)"="frutbd.ttf"
+  "Frutiger Linotype (TrueType)"="frutiger.ttf"
+  "Frutiger Linotype Italic (TrueType)"="frutit.ttf"
+  "Frutiger Linotype Bold Italic (TrueType)"="frutz.ttf"
+  "Simsun (Founder Extended) (TrueType)"="SURSONG.TTF"
++ "Sun-ExtA (TrueType)"="Sun-ExtA.ttf"
++ "Sun-ExtB (TrueType)"="Sun-ExtB.ttf"
++ "MingLiU-ExtB (TrueType)"="mingliub.ttc"
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontSubstitutes]
+  "Arial CE,238"="Arial,238"
+  "Arial CYR,204"="Arial,204"
+  "Arial Greek,161"="Arial,161"
+***************
+*** 696554,696563 ****
+--- 696662,696676 ----
+  "ARABIC"=dword:00000000
+  "VIETNAMESE"=dword:00000003
+  "INDIAN"=dword:00000004
+  "SURROGATE"=dword:00000002
+  
++ [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\LanguagePack\SurrogateFallback]
++ "Plane1"="Sun-ExtB"
++ "Plane2"="Sun-ExtB"
++ "Plane15"="Sun-ExtB"
++ 
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\LastFontSweep]
+  "LastSweepTime"=hex:b2,3b,7b,51,4e,3a,ca,01
+  
+  [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MCI]
+  "AVIVideo"="mciavi.drv"
+***************
+*** 948962,948971 ****
+--- 949075,949092 ----
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Internet Explorer\International\Scripts\4]
+  "IEPropFontName"="Times New Roman"
+  "IEFixedFontName"="Courier New"
+  
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Internet Explorer\International\Scripts\41]
++ "IEFixedFontName"="MingLiU-ExtB"
++ "IEPropFontName"="MingLiU-ExtB"
++ 
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Internet Explorer\International\Scripts\42]
++ "IEFixedFontName"="Sun-ExtB"
++ "IEPropFontName"="Sun-ExtB"
++ 
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Internet Explorer\International\Scripts\5]
+  "IEPropFontName"="Times New Roman"
+  "IEFixedFontName"="Courier New"
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Internet Explorer\International\Scripts\6]
+***************
+*** 953325,953334 ****
+--- 953446,953457 ----
+  "Themes"="Themes"
+  "Xlstart"="XLSTART"
+  "SymbolNameDisplay"=dword:00000001
+  "DesignerPersonalFolders"="Personal Folders"
+  "DesignerServers"="My Servers"
++ "FontLink1"="Sun-ExtB,134"
++ "FontLink2"="MingLiU-ExtB,136"
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\10.0\Common\LanguageResources]
+  "WinXPLanguagePatch"=dword:00000001
+  "InstallLanguage"=dword:00000804
+  "PreviousInstallLanguage"=dword:00000804
+***************
+*** 953373,953382 ****
+--- 953496,953513 ----
+  "UserName"=hex:00,00
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\10.0\Shortcut Bar]
+  "Fresh"=dword:00000001
+  
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\11.0]
++ 
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\11.0\Common]
++ 
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\11.0\Common\General]
++ "FontLink1"="Sun-ExtB,134"
++ "FontLink2"="MingLiU-ExtB,136"
++ 
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\12.0]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\12.0\Access]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\12.0\Access\Security]
+***************
+*** 953414,953423 ****
+--- 953545,953556 ----
+  "FirstRunTime"=dword:013b56dd
+  "FirstRun"=dword:00000000
+  "Authorized"=dword:7fffffff
+  "ShownOptIn"=dword:00000001
+  "OfficeMenuDiscovered"=dword:00000001
++ "FontLink1"="Sun-ExtB,134"
++ "FontLink2"="MingLiU-ExtB,136"
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\12.0\Common\Internet]
+  "UseRWHlinkNavigation"="d:\\Profiles\\bhj\\Local Settings\\Temp\\DVR-T377_WH07.pptx"
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\12.0\Common\LanguageResources]
+***************
+*** 960023,960041 ****
+--- 960156,960190 ----
+  "Description"="2"
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\12.0\Word\Wizards]
+  "PageSize"="A4"
+  
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\13.0]
++ 
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\13.0\Common]
++ 
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\13.0\Common\General]
++ "FontLink1"="Sun-ExtB,134"
++ "FontLink2"="MingLiU-ExtB,136"
++ 
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\8.0]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\8.0\Common]
+  "NUSRegistered"=dword:00000001
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\8.0\Common\Toolbars]
+  "BtnSize"=dword:00000000
+  "Tooltips"=dword:00000001
+  
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\9.0]
++ 
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\9.0\Common]
++ 
++ [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\9.0\Common\General]
++ "FontLink1"="Sun-ExtB,134"
++ "FontLink2"="MingLiU-ExtB,136"
++ 
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\Access]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\Access\Addins]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Office\Access\Addins\AceCnfViewer.sortie]
+***************
+*** 972770,972780 ****
+  "VSBuildRcNum"=dword:00000001
+  "ShutdownReason"=dword:00000003
+  "UserType"=dword:00000000
+  "VSSKU"=dword:00000000
+  "UserPriv"=dword:00000002
+! "StillAlive"=hex(b):90,f4,5c,f9,0e,68,ca,01
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\WAB]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\WAB\WAB4]
+  "OlkContactRefresh"=dword:00000000
+--- 972919,972929 ----
+  "VSBuildRcNum"=dword:00000001
+  "ShutdownReason"=dword:00000003
+  "UserType"=dword:00000000
+  "VSSKU"=dword:00000000
+  "UserPriv"=dword:00000002
+! "StillAlive"=hex(b):90,52,2d,ac,0f,68,ca,01
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\WAB]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\WAB\WAB4]
+  "OlkContactRefresh"=dword:00000000
+***************
+*** 973363,973373 ****
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU\*]
+  "a"="Q:\\TavorSAAR_PV_OBM_NTIM_LB-ONENAND.bin"
+! "MRUList"="gbcaeihjfd"
+  "b"="Q:\\obm.mff"
+  "c"="Q:\\TAVOR_LINUX_NTOBM.bin"
+  "d"="d:\\Profiles\\bhj\\My Documents\\cmcc-mep\\bnd_MEP_FILE_.bin"
+  "e"="Q:\\clairo.mff"
+  "f"="Q:\\src\\alchemy\\vc6\\AlchemyLibRelease-2009-11-16.tgz"
+--- 973512,973522 ----
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU\*]
+  "a"="Q:\\TavorSAAR_PV_OBM_NTIM_LB-ONENAND.bin"
+! "MRUList"="hgbcaeijfd"
+  "b"="Q:\\obm.mff"
+  "c"="Q:\\TAVOR_LINUX_NTOBM.bin"
+  "d"="d:\\Profiles\\bhj\\My Documents\\cmcc-mep\\bnd_MEP_FILE_.bin"
+  "e"="Q:\\clairo.mff"
+  "f"="Q:\\src\\alchemy\\vc6\\AlchemyLibRelease-2009-11-16.tgz"
+***************
+*** 973460,973470 ****
+  "a"="Q:\\gcode\\scim\\scim\\wingb.rc"
+  "MRUList"="a"
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU\reg]
+  "a"="d:\\Profiles\\bhj\\My Documents\\1.reg"
+! "MRUList"="ab"
+  "b"="d:\\Profiles\\bhj\\My Documents\\2.reg"
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU\sln]
+  "a"="Q:\\gcode\\scim-win02\\scim-win.sln"
+  "MRUList"="a"
+--- 973609,973619 ----
+  "a"="Q:\\gcode\\scim\\scim\\wingb.rc"
+  "MRUList"="a"
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU\reg]
+  "a"="d:\\Profiles\\bhj\\My Documents\\1.reg"
+! "MRUList"="ba"
+  "b"="d:\\Profiles\\bhj\\My Documents\\2.reg"
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU\sln]
+  "a"="Q:\\gcode\\scim-win02\\scim-win.sln"
+  "MRUList"="a"
+***************
+*** 1047997,1048007 ****
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Windows 3.1 Migration Status\Groups]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Windows 3.1 Migration Status\IniFiles]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\SessionInformation]
+! "ProgramCount"=dword:0000000a
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Volatile Environment]
+  "LOGONSERVER"="\\\\BHJ1"
+  "CLIENTNAME"="Console"
+  "SESSIONNAME"="Console"
+--- 1048146,1048156 ----
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Windows 3.1 Migration Status\Groups]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Windows 3.1 Migration Status\IniFiles]
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\SessionInformation]
+! "ProgramCount"=dword:00000009
+  
+  [HKEY_USERS\S-1-5-21-1343024091-1897051121-725345543-1004\Volatile Environment]
+  "LOGONSERVER"="\\\\BHJ1"
+  "CLIENTNAME"="Console"
+  "SESSIONNAME"="Console"
