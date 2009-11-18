@@ -262,7 +262,7 @@ ImeToAsciiEx(u32 vk,
 					promote_cand_for_key(g_active_cand, key);
 					comp_remove_all();
 				}
-				g_comp_str.push_back(c);
+				comp_append_1(c);
 				return_ic_msgs(ic.add_show_comp_msg());					
 			}
 

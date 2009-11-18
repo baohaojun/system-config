@@ -399,8 +399,6 @@ static void high_light(HDC hdc, const CRect& rect)
 static void 
 draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 {
-
-
 	hdc_with_font dc_lucida(hdc, L"Lucida Console");
 
 	int left = rect.left;

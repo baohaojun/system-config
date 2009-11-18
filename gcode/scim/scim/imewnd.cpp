@@ -377,9 +377,11 @@ void promote_cand_for_key(u32 cand_num, const string& key) //cand can't be passe
 	}
 
 	if (cand_num == 0 && !map_has_key(g_cand_hist, key)) { // no need to reorder;
+		BHJDEBUG(" return without handling");
 		return;
 	}
 
+	BHJDEBUG(" g_cand_hist[%s] is %d", key.c_str(), cand_num);
 	g_cand_hist[key] = cand_num;
 
 }
