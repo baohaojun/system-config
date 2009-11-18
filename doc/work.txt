@@ -1814,4 +1814,4 @@ http://ftp.science.nus.edu.sg/ubuntu/
 svn st -q|grep '.dll$\|.lib$\|.exe$\|.zip$\|.chi$\|.chm$\|.exp' -i
 svn st -q|grep '.h$\|.cpp$\|.dsp$\|.dsw$\|.rc$\|.ini$' -v
 
-
+HKEY_CURRENT_USER\Control Panel\Input Method\Hot Keys\00000011
