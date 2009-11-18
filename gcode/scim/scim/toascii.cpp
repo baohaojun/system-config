@@ -247,13 +247,23 @@ ImeToAsciiEx(u32 vk,
 				comp_remove_all();
 				return_ic_msgs(1);
 			} else if (vk >= 'A' && vk <= 'Z') {
-				if (cands.size() == 1 && !map_has_key(g_trans_rule, key)) {
-					ic.send_text(cands[0]);
+				string new_key = key;
+				new_key.push_back(c);
+
+				if (map_has_key(g_quail_rules, new_key)) {
+					const vector<string>& new_cands = g_quail_rules[new_key];
+					if (new_cands.size() == 1 && !map_has_key(g_trans_rule, new_key)) {
+						ic.send_text(new_cands[0]);
+						comp_remove_all();
+						return_ic_msgs(ic);
+					}
+				} else if (cands.size() && !map_has_key(g_trans_rule, key)) {
+					ic.send_text(cands[g_active_cand]);
+					promote_cand_for_key(g_active_cand, key);
 					comp_remove_all();
 				}
-				comp_append_1(vk-'A'+'a');
-				ic.add_show_comp_msg();
-				return_ic_msgs(ic);
+				g_comp_str.push_back(c);
+				return_ic_msgs(ic.add_show_comp_msg());					
 			}
 
 		}
@@ -355,11 +365,14 @@ template<class Col> string join(const string& sep, const Col& col)
 	return res;
 }
 
-static string reverse_wubi_key(const wstring& ws)
+static list<string> reverse_wubi_key(const wstring& ws)
 {
+	list<string> res_error;
+	res_error.push_back("????");
+
 	size_t n = ws.size();
 	if (n < 2) {
-		return "????";
+		return res_error;
 	}
 
 	string C1 = to_string(ws.substr(0, 1));
@@ -369,7 +382,7 @@ static string reverse_wubi_key(const wstring& ws)
 	string res;
 	if (!map_has_key(g_reverse_rules, C1) || !map_has_key(g_reverse_rules, C2) || !map_has_key(g_reverse_rules, Cn)) {
 		beep();
-		return "????";
+		return res_error;
 	}
 	
 	list<string> res_list;
@@ -393,9 +406,9 @@ static string reverse_wubi_key(const wstring& ws)
 	}
 	
 	if (res_list.empty()) {
-		return "????";
+		return res_error;
 	}
-	return join(" ", bhj_unique(res_list));
+	return bhj_unique(res_list);
 }
 
 static wstring g_ws_self_help;
@@ -413,7 +426,7 @@ static void self_help_comp(u32 n)
 	}
 	reverse(ws.begin(), ws.end());
 	g_comp_str = "!add word: (";
-	g_comp_str += reverse_wubi_key(ws);
+	g_comp_str += join(" ", reverse_wubi_key(ws));
 	g_comp_str += ") -> ";
 	g_comp_str += to_string(ws);
 }
@@ -450,7 +463,10 @@ static int self_help_handler(input_context& ic, modifier_t mod, u32 vk, char /*c
 			   g_ws_self_help.size() > 2) {
 		self_help_comp(g_ws_self_help.size() - 1);
 	} else if (mod == mod_none && vk == VK_RETURN) {
-		BHJDEBUG(" accept");
+		const list<string>& revs = reverse_wubi_key(g_ws_self_help);
+		for (list<string>::const_iterator i = revs.begin(); i != revs.end(); i++) {
+			self_make_cand_for_key(to_string(g_ws_self_help), *i);
+		}
 		comp_remove_all();
 	} else {
 		beep();

@@ -239,7 +239,7 @@
 
 (defun do_en_when_ch (arg)
   "input method is active, but we want it out temporarily"
-  (interactive "Press enter to input: \n")
+  (interactive "senter to input: \n")
   (insert arg))
 
 (defun tmp_en_ch ()

@@ -382,16 +382,23 @@ void promote_cand_for_key(u32 cand_num, const string& key) //cand can't be passe
 
 	g_cand_hist[key] = cand_num;
 
-	// if (key.size() != 4) {// we only want to re-order if key is a full key (4)
-	// 	return;
-	// }
+}
 
-	// vector<string> &cands = g_quail_rules[key];
-	// for (vector<string>::iterator i = cands.begin(); i != cands.end(); i++) {
-	// 	if (*i == cand) {
-	// 		cands.erase(i);
-	// 		break;
-	// 	}
-	// }
-	// cands.insert(cands.begin(), cand);
+void self_make_cand_for_key(const string& cand, const string& key)
+{
+	if (key.size() != 4 || cand.empty()) {// we only want to re-order if key is a full key (4)
+		return;
+	}
+
+	vector<string> &cands = g_quail_rules[key];
+	int active = 0;
+	for (vector<string>::iterator i = cands.begin(); i != cands.end(); i++, active++) {
+		if (*i == cand) {
+			g_cand_hist[key] = active;
+			return;
+		}
+	}
+	
+	cands.push_back(cand);
+	g_cand_hist[key] = cands.size() - 1;	
 }

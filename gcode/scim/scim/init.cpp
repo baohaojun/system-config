@@ -73,7 +73,7 @@ static bool init_quail_rules()
 					} else if (quote == 2) {
 						key = data;
 						string trans = key;
-						for (size_t i=1; i+1 < trans.size(); i++) {
+						for (size_t i=1; i < trans.size(); i++) {
 							g_trans_rule[trans.substr(0, i)][trans.substr(i, 1)] = 1;
 						}
 					} else {

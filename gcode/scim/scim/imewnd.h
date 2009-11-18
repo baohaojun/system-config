@@ -119,6 +119,7 @@ wstring to_wstring(const string& str);
 string to_string(const wstring& wstr);
 CRect get_wa_rect();
 void promote_cand_for_key(u32 cand_num, const string& key);
+void self_make_cand_for_key(const string& cand, const string& key);
 
 const int comp_dft_width = 600;
 const int comp_dft_height = 60;

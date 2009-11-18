@@ -381,24 +381,25 @@ static void high_light(HDC hdc, const CRect& rect)
 	DeleteObject(hdc_mem);
 }
 
-void draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
-{
-	class debug_u32 {
-	public:
-		debug_u32(const string& name, u32 *u32_ptr) {
-			m_name = name;
-			m_u32_ptr = u32_ptr;
-			BHJDEBUG(" %s is %d at beginning", name.c_str(), *u32_ptr);
-		}
-		~debug_u32() {
-			BHJDEBUG(" %s is %d at end", m_name.c_str(), *m_u32_ptr);
-		}
-	private:
-		string m_name;
-		u32* m_u32_ptr;
-	};
+// class debug_u32 {
+// public:
+// 	debug_u32(const string& name, u32 *u32_ptr) {
+// 		m_name = name;
+// 		m_u32_ptr = u32_ptr;
+// 		BHJDEBUG(" %s is %d at beginning", name.c_str(), *u32_ptr);
+// 	}
+// 	~debug_u32() {
+// 		BHJDEBUG(" %s is %d at end", m_name.c_str(), *m_u32_ptr);
+// 	}
+// private:
+// 	string m_name;
+// 	u32* m_u32_ptr;
+// };
 
-	debug_u32 active("g_first_cand", &g_first_cand);
+static void 
+draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
+{
+
 
 	hdc_with_font dc_lucida(hdc, L"Lucida Console");
 
@@ -411,7 +412,6 @@ void draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 		g_cand_hist[g_comp_str] < cands.size() &&
 		g_cand_hist[g_comp_str] >= 0) {
 
-		BHJDEBUG(" has a comp history");
 		g_first_cand = 0;
 		g_active_cand = g_cand_hist[g_comp_str];
 
@@ -511,6 +511,7 @@ void draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 
 void PASCAL PaintCompWindow(HDC hdc)
 {
+	hdc_with_font dc_lucida(hdc, L"Lucida Console");
 	CRect rcWnd;
 	GetClientRect(g_hCompWnd, &rcWnd);
 	Rectangle(hdc, rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom);
@@ -527,7 +528,26 @@ void PASCAL PaintCompWindow(HDC hdc)
 
 
 	if (g_comp_str.size()) {
-		wstring wstr = to_wstring(g_comp_str);
+		string str_on_comp = g_comp_str;
+		if (map_has_key(g_trans_rule, g_comp_str)) {
+			list<string> trans;
+			for(rule_trans_t::mapped_type::iterator i = g_trans_rule[g_comp_str].begin();
+				i != g_trans_rule[g_comp_str].end();
+				i++) {
+				trans.push_back(i->first);
+			}
+			u32 s1 = trans.size();
+			trans.sort();
+			trans.unique();
+			if (trans.size()) {
+				str_on_comp.push_back('[');
+				for (list<string>::iterator i = trans.begin(); i != trans.end(); i++) {
+					str_on_comp += *i;
+				}
+				str_on_comp.push_back(']');
+			}
+		}
+		wstring wstr = to_wstring(str_on_comp);
 		DrawText(hdc, wstr.c_str(), wstr.size(), &rc_top, DT_VCENTER|DT_SINGLELINE);
 	} 
 
