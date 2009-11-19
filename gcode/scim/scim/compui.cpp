@@ -341,7 +341,7 @@ void PASCAL StartComp(HWND hUIWnd)
 	}
 
 	if (!get_comp_wnd(hUIWnd)) {
-		HWND comp = CreateWindowEx(0, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
+		HWND comp = CreateWindowEx(WS_EX_TOPMOST, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
 									0, 0, comp_dft_width, comp_dft_height, hUIWnd,
 									(HMENU) NULL, g_hInst, NULL);
 		set_comp_wnd(hUIWnd, comp);
@@ -563,10 +563,8 @@ LRESULT CALLBACK CompWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 
 	switch (uMsg) {
 	case WM_CREATE:
-		BHJDEBUG(" COMP Create");
 		break;
 	case WM_DESTROY:
-		BHJDEBUG(" COMP Destroy");
 		break;
 	case WM_IME_NOTIFY:
 		// must not delete this case, because DefWindowProc will hang the IME

@@ -10,7 +10,6 @@ extern HWND hCrtDlg;
 
 void show_status_wnd(HWND hUIWnd)
 {
-	EnterLeaveDebug(); 
 	ShowWindow(get_status_wnd(hUIWnd), SW_SHOWNOACTIVATE);
 	RedrawWindow(get_status_wnd(hUIWnd), NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 }
@@ -22,16 +21,15 @@ void hide_status_wnd(HWND hUIWnd)
 
 void PASCAL OpenStatus(HWND hUIWnd)
 {
-	BHJDEBUG(" ");
 	POINT ptPos;
-#define STATE_WIDTH 70
-#define STATE_HEIGHT 25
+#define STATE_WIDTH 20
+#define STATE_HEIGHT 15
 
 	ptPos.x = get_wa_rect().right - STATE_WIDTH;
 	ptPos.y = get_wa_rect().bottom - STATE_HEIGHT;
 
-	if (get_status_wnd(hUIWnd)) {
-		HWND stat = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
+	if (!get_status_wnd(hUIWnd)) {
+		HWND stat = CreateWindowEx(WS_EX_TOPMOST, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
 									  ptPos.x, ptPos.y, STATE_WIDTH, STATE_HEIGHT,
 									  hUIWnd, (HMENU) NULL, g_hInst, NULL);
 		set_status_wnd(hUIWnd, stat);
@@ -62,10 +60,8 @@ StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	
 	switch (uMsg) {
 	case WM_CREATE:
-		BHJDEBUG(" Stat Create");
 		break;
 	case WM_DESTROY:
-		BHJDEBUG(" Stat Destroy");
 		break;
 	case WM_IME_NOTIFY:
 		break;

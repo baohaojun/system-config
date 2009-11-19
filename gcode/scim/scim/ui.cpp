@@ -43,7 +43,6 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	}
 
 	if (!get_status_wnd(hUIWnd)) {
-		BHJDEBUG(" OpenStatus in ShowUI");
 		OpenStatus(hUIWnd);
 	}
 	redraw_status(hUIWnd);
@@ -56,7 +55,6 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM /*lParam*/)
 {
 	switch (wParam) {
 	case IMN_OPENSTATUSWINDOW:
-		BHJDEBUG(" OpenStatus in NotifyUI");
 		OpenStatus(hUIWnd);
 		break;
 	case IMN_SETCANDIDATEPOS:
@@ -66,7 +64,7 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM /*lParam*/)
 			hide_comp_wnd(hUIWnd);
 			break;
 		}
-		if (get_comp_wnd(hUIWnd)) {
+		if (!get_comp_wnd(hUIWnd)) {
 			StartComp(hUIWnd);
 		}
 		MoveDefaultCompPosition(hUIWnd);
@@ -109,10 +107,8 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
 	switch (uMsg) {
 	case WM_CREATE:
-		BHJDEBUG(" UI Create");
 		break;
 	case WM_DESTROY:
-		BHJDEBUG(" UI Destroy");
 		DestroyUIWindow(hUIWnd);
 		break;
 	case WM_IME_STARTCOMPOSITION:

@@ -332,8 +332,8 @@ ImeToAsciiEx(u32 vk,
 }
 
 u32 g_first_cand, g_last_cand, g_active_cand;
-const char *const ime_off = "包包英文";
-const char *const ime_on = "包包中文";
+const char *const ime_off = "En";
+const char *const ime_on = "Ch";
 
 template<class Col> list<typename Col::value_type> bhj_unique(const Col& col)
 {
