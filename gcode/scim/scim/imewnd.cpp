@@ -22,7 +22,8 @@ input_context::input_context(HIMC himc, LPTRANSMSG msg_buf, u32 msg_buf_size) :
 	m_ic(NULL),
 	m_msg_buf(msg_buf),
 	m_msg_buf_size(msg_buf_size),
-	m_num_msg(0)
+	m_num_msg(0),
+	m_hUIWnd(0)
 {
 	if (himc) {
 		m_ic = (LPINPUTCONTEXT)ImmLockIMC(himc);
@@ -34,9 +35,11 @@ input_context::input_context(HWND hUIWnd) :
 	m_ic(NULL),
 	m_msg_buf(NULL),
 	m_msg_buf_size(0),
-	m_num_msg(0)
+	m_num_msg(0),
+	m_hUIWnd(NULL)
 {
 	if (hUIWnd) {
+		m_hUIWnd = hUIWnd;
 		m_himc = (HIMC)GetWindowLongPtr(hUIWnd, IMMGWLP_IMC);
 	}
 	if (m_himc) {
@@ -371,17 +374,13 @@ void promote_cand_for_key(u32 cand_num, const string& key) //cand can't be passe
 
 	if (!map_has_key(g_quail_rules, key)
 		|| g_quail_rules[key].empty()) {
-		
-		BHJDEBUG(" Error: promote_cand_for_key(cand, key) unnecessary call: key(%s), cand(%d)", key.c_str(), cand_num);
 		return;
 	}
 
 	if (cand_num == 0 && !map_has_key(g_cand_hist, key)) { // no need to reorder;
-		BHJDEBUG(" return without handling");
 		return;
 	}
 
-	BHJDEBUG(" g_cand_hist[%s] is %d", key.c_str(), cand_num);
 	g_cand_hist[key] = cand_num;
 
 }
@@ -403,4 +402,24 @@ void self_make_cand_for_key(const string& cand, const string& key)
 	
 	cands.push_back(cand);
 	g_cand_hist[key] = cands.size() - 1;	
+}
+
+ui_private_t g_ui_private;
+
+HWND get_comp_wnd(HWND hUIWnd)
+{
+	return g_ui_private[hUIWnd].h_comp_wnd;
+}
+HWND get_status_wnd(HWND hUIWnd)
+{
+	return g_ui_private[hUIWnd].h_stat_wnd;
+}
+
+void set_comp_wnd(HWND hUIWnd, HWND comp)
+{
+	g_ui_private[hUIWnd].set_comp(comp);
+}
+void set_status_wnd(HWND hUIWnd, HWND stat)
+{
+	g_ui_private[hUIWnd].set_stat(stat);
 }

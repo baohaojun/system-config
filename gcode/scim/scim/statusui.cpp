@@ -8,19 +8,21 @@
 #include "imewnd.h"
 extern HWND hCrtDlg;
 
-void show_status_wnd()
+void show_status_wnd(HWND hUIWnd)
 {
-	ShowWindow(g_hStatusWnd, SW_SHOWNOACTIVATE);
-	RedrawWindow(g_hStatusWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
+	EnterLeaveDebug(); 
+	ShowWindow(get_status_wnd(hUIWnd), SW_SHOWNOACTIVATE);
+	RedrawWindow(get_status_wnd(hUIWnd), NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 }
 
-void hide_status_wnd()
+void hide_status_wnd(HWND hUIWnd)
 {
-	ShowWindow(g_hStatusWnd, SW_HIDE);
+	ShowWindow(get_status_wnd(hUIWnd), SW_HIDE);
 }
 
 void PASCAL OpenStatus(HWND hUIWnd)
 {
+	BHJDEBUG(" ");
 	POINT ptPos;
 #define STATE_WIDTH 70
 #define STATE_HEIGHT 25
@@ -28,26 +30,27 @@ void PASCAL OpenStatus(HWND hUIWnd)
 	ptPos.x = get_wa_rect().right - STATE_WIDTH;
 	ptPos.y = get_wa_rect().bottom - STATE_HEIGHT;
 
-	if (!g_hStatusWnd) {
-		g_hStatusWnd = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
+	if (get_status_wnd(hUIWnd)) {
+		HWND stat = CreateWindowEx(0, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
 									  ptPos.x, ptPos.y, STATE_WIDTH, STATE_HEIGHT,
 									  hUIWnd, (HMENU) NULL, g_hInst, NULL);
+		set_status_wnd(hUIWnd, stat);
 	}
 
 	input_context ic(hUIWnd);
 	if (!ic) {
-		hide_status_wnd();
+		hide_status_wnd(hUIWnd);
 	} else {
-		show_status_wnd();
+		show_status_wnd(hUIWnd);
 	}
 	return;
 }
 
-static void PaintStatusWindow(HDC hDC)
+static void PaintStatusWindow(HWND hWnd, HDC hDC)
 {
 	
 	CRect rect;
-	GetClientRect(g_hStatusWnd, &rect);
+	GetClientRect(hWnd, &rect);
 	wstring name = to_wstring(g_ime_name);
 	DrawText(hDC, name.c_str(), name.size(), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
@@ -56,13 +59,14 @@ LRESULT CALLBACK
 StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 {
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
-	if (!g_hStatusWnd) {
-		g_hStatusWnd = hWnd;
-	} else if (g_hStatusWnd != hWnd) {
-		bhjerr(" Error: hWnd %x not g_hStatusWnd %x", hWnd, g_hStatusWnd);
-	}		
 	
 	switch (uMsg) {
+	case WM_CREATE:
+		BHJDEBUG(" Stat Create");
+		break;
+	case WM_DESTROY:
+		BHJDEBUG(" Stat Destroy");
+		break;
 	case WM_IME_NOTIFY:
 		break;
 	case WM_PAINT:
@@ -70,16 +74,16 @@ StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 			HDC hDC;
 			PAINTSTRUCT ps;
 
-			hDC = BeginPaint(g_hStatusWnd, &ps);
-			PaintStatusWindow(hDC);
-			EndPaint(g_hStatusWnd, &ps);
+			hDC = BeginPaint(hWnd, &ps);
+			PaintStatusWindow(hWnd, hDC);
+			EndPaint(hWnd, &ps);
 		}
 		break;
 	case WM_MOUSEACTIVATE:
 		return (MA_NOACTIVATE);
 	default:
 		//BHJDEBUG(" msg %s not handled", msg_name(uMsg));
-		return DefWindowProc(g_hStatusWnd, uMsg, wParam, lParam);
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 
 	return (0L);

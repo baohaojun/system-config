@@ -6,16 +6,12 @@
 
 static int comp_wnd_width()
 {
-	CRect rect;
-	GetWindowRect(g_hCompWnd, &rect);
-	return rect.Width();
+	return comp_dft_width;
 }
 
 static int comp_wnd_height()
 {
-	CRect rect;
-	GetWindowRect(g_hCompWnd, &rect);
-	return rect.Height();	
+	return comp_dft_height;
 }
 
 BOOL PASCAL FitInLazyOperation(LPPOINT lpptOrg, LPPOINT lpptNearCaret, 
@@ -286,7 +282,7 @@ void PASCAL SetCompPosition(input_context& ic)
 	ptWnd.x = 0;
 	ptWnd.y = 0;
 
-	ClientToScreen(g_hCompWnd, &ptWnd);
+	ClientToScreen(ic.get_comp_wnd(), &ptWnd);
 
 	POINT ptNew;			// new position of UI
 	ptNew.x = ic->cfCompForm.ptCurrentPos.x;
@@ -302,7 +298,7 @@ void PASCAL SetCompPosition(input_context& ic)
 	if (!fChange) {
 		return;
 	}
-	SetWindowPos(g_hCompWnd, NULL,
+	SetWindowPos(ic.get_comp_wnd(), NULL,
 				 ptWnd.x, ptWnd.y,
 				 0, 0, SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
 	return;
@@ -310,30 +306,31 @@ void PASCAL SetCompPosition(input_context& ic)
 
 void PASCAL MoveDefaultCompPosition(HWND hUIWnd)
 {
-	if (!g_hCompWnd) {
-		return;
-	}
-
 	input_context ic(hUIWnd);
 	if (!ic) {
 		return;
+	}
+
+
+	if (!ic.get_comp_wnd()) {
+		bhjerr("Error: MoveDefaultCompPosition with NULL comp");
 	}
 
 	SetCompPosition(ic);
 	return;
 }
 
-void show_comp_wnd()
+void show_comp_wnd(HWND hUIWnd)
 {
 	if (g_comp_str.empty()) {
-		return hide_comp_wnd();
+		return hide_comp_wnd(hUIWnd);
 	}
-	ShowWindow(g_hCompWnd, SW_SHOWNOACTIVATE);
+	ShowWindow(get_comp_wnd(hUIWnd), SW_SHOWNOACTIVATE);
 }
 
-void hide_comp_wnd()
+void hide_comp_wnd(HWND hUIWnd)
 {
-	ShowWindow(g_hCompWnd, SW_HIDE);
+	ShowWindow(get_comp_wnd(hUIWnd), SW_HIDE);
 }
 
 void PASCAL StartComp(HWND hUIWnd)
@@ -343,14 +340,15 @@ void PASCAL StartComp(HWND hUIWnd)
 		return;
 	}
 
-	if (!g_hCompWnd) {
-		g_hCompWnd = CreateWindowEx(0, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
+	if (!get_comp_wnd(hUIWnd)) {
+		HWND comp = CreateWindowEx(0, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
 									0, 0, comp_dft_width, comp_dft_height, hUIWnd,
 									(HMENU) NULL, g_hInst, NULL);
+		set_comp_wnd(hUIWnd, comp);
 	}
 
 	SetCompPosition(ic);
-	show_comp_wnd();
+	show_comp_wnd(hUIWnd);
 
 	return;
 }
@@ -507,11 +505,11 @@ draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 	}
 }
 
-void PASCAL PaintCompWindow(HDC hdc)
+void PASCAL PaintCompWindow(HWND hWnd, HDC hdc)
 {
 	hdc_with_font dc_lucida(hdc, L"Lucida Console");
 	CRect rcWnd;
-	GetClientRect(g_hCompWnd, &rcWnd);
+	GetClientRect(hWnd, &rcWnd);
 	Rectangle(hdc, rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom);
 
 	rcWnd.left += 5;
@@ -563,13 +561,13 @@ LRESULT CALLBACK CompWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
 
-	if (!g_hCompWnd) {
-		g_hCompWnd = hWnd;
-	} else if (g_hCompWnd != hWnd) {
-		bhjerr(" Error: CompWndProc hWnd %x is not g_hCompWnd %x", hWnd, g_hCompWnd);	
-	}
-	
 	switch (uMsg) {
+	case WM_CREATE:
+		BHJDEBUG(" COMP Create");
+		break;
+	case WM_DESTROY:
+		BHJDEBUG(" COMP Destroy");
+		break;
 	case WM_IME_NOTIFY:
 		// must not delete this case, because DefWindowProc will hang the IME
 		break;
@@ -578,16 +576,16 @@ LRESULT CALLBACK CompWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 			HDC hDC;
 			PAINTSTRUCT ps;
 
-			hDC = BeginPaint(g_hCompWnd, &ps);
-			PaintCompWindow(hDC);
-			EndPaint(g_hCompWnd, &ps);
+			hDC = BeginPaint(hWnd, &ps);
+			PaintCompWindow(hWnd, hDC);
+			EndPaint(hWnd, &ps);
 		}
 		break;
 	case WM_MOUSEACTIVATE:
 		return (MA_NOACTIVATE);
 	default:
 		//BHJDEBUG(" msg %s not handled", msg_name(uMsg));
-		return DefWindowProc(g_hCompWnd, uMsg, wParam, lParam);
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
 	return (0L);
 }

@@ -75,16 +75,15 @@ void PASCAL MoveDefaultCompPosition(HWND);	// compui.c
 void PASCAL StartComp(HWND);	// compui.c
 LRESULT CALLBACK CompWndProc(HWND, u32, WPARAM, LPARAM);	// compui.c
 
-void show_status_wnd();
-void hide_status_wnd();
+void show_status_wnd(HWND);
+void hide_status_wnd(HWND);
 
-void show_comp_wnd();
-void hide_comp_wnd();
+void show_comp_wnd(HWND hUIWnd);
+void hide_comp_wnd(HWND);
 
 void PASCAL OpenStatus(HWND);	// statusui.c
 LRESULT CALLBACK StatusWndProc(HWND, u32, WPARAM, LPARAM);
 
 // dialog procedure
 const char* msg_name(u32 msg);
-extern HWND g_hCompWnd, g_hStatusWnd;
 #endif

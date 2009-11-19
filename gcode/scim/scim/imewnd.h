@@ -7,6 +7,8 @@
 #include <map>
 #include <vector>
 #include <list>
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
 using namespace std;
 
 typedef UINT u32;
@@ -16,28 +18,49 @@ typedef map<string, u32> cand_hist_t;
 
 typedef UINT64 u64;
 
-class CBhjWnd {
-public:
-	CBhjWnd() {m_hWnd = 0;};
-	virtual void paint() = 0;
-	virtual void init(HWND hwnd) {
-		m_hWnd = hwnd;
+HWND get_comp_wnd(HWND);
+HWND get_status_wnd(HWND);
+
+void set_comp_wnd(HWND, HWND);
+void set_status_wnd(HWND, HWND);
+
+struct ui_private_data
+{
+	HWND h_comp_wnd;
+	HWND h_stat_wnd;
+	
+	void set_comp(HWND comp) {
+		if (h_comp_wnd) {
+			bhjerr("Error: comp wnd reset when already inited");
+		}
+		h_comp_wnd = comp;
 	};
-private:
-	HWND m_hWnd;
+	
+	void set_stat(HWND stat) {
+		if (h_stat_wnd) {
+			bhjerr("Error: stat wnd reset when already inited");
+		}
+		h_stat_wnd = stat;
+	};
+
+	ui_private_data() {
+		h_comp_wnd = NULL;
+		h_stat_wnd = NULL;
+	};
+	
+	~ui_private_data() {
+		if (h_comp_wnd) {
+			DestroyWindow(h_comp_wnd);
+		}
+		if (h_stat_wnd) {
+			DestroyWindow(h_stat_wnd);
+		}
+	}
 };
 
-class CBhjStatusWnd : public CBhjWnd 
-{
-public:
-	virtual void paint() {};
-};
+typedef map<HWND, ui_private_data> ui_private_t;
 
-class CBhjCompCandWnd : public CBhjWnd
-{
-public:
-	virtual void paint() {};
-};
+extern ui_private_t g_ui_private;
 
 void debug_rect(const CRect& rect);
 void FillSolidRect(HDC hdc, const CRect& rect, COLORREF rgb);
@@ -48,6 +71,22 @@ public:
 	HIMC get_handle() {
 		return m_himc;
 	}
+
+	HWND get_ui_wnd() {
+		if (!m_hUIWnd) {
+			bhjerr("Error: get_ui_wnd with NULL m_hUIWnd");
+		}
+		return m_hUIWnd;
+	}
+
+	HWND get_comp_wnd() {
+		return ::get_comp_wnd(get_ui_wnd()); //NULL m_hUIWnd is checked
+	}
+	
+	HWND get_status_wnd() {
+		return ::get_comp_wnd(get_ui_wnd());
+	}
+
 	input_context(HIMC himc, LPTRANSMSG msg_buf, u32 msg_buf_size = 0);
 	input_context(HWND hwnd);
 	~input_context() {
@@ -89,6 +128,7 @@ private:
 	const LPTRANSMSG m_msg_buf;
 	const u32 m_msg_buf_size;
 	u32 m_num_msg;
+	HWND m_hUIWnd;
 };
 
 class hdc_with_font
@@ -144,4 +184,5 @@ bool map_has_key(const map<key_type, mapped_type>& map_query, const key_type& ke
 		return false;
 	}
 }
+
 #endif

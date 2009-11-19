@@ -4,34 +4,20 @@
 #include <regstr.h>
 #include "imewnd.h"
 
-void PASCAL CreateUIWindow(HWND hUIWnd)
+void PASCAL DestroyUIWindow(HWND h_ui_wnd)
 {
-
-	SetWindowPos(hUIWnd, NULL, 0, 0, 0, 0, SWP_NOACTIVATE | SWP_NOZORDER);
-
-	ShowWindow(hUIWnd, SW_SHOWNOACTIVATE);
-
-	return;
+	g_ui_private.erase(h_ui_wnd); //Fix me, what if no such key?
 }
 
-void PASCAL DestroyUIWindow()
+void static redraw_comp(HWND hUIWnd)
 {
-	DestroyWindow(g_hCompWnd);
-	g_hCompWnd = NULL;
-
-	DestroyWindow(g_hStatusWnd);
-	g_hStatusWnd = NULL;
+	show_comp_wnd(hUIWnd); //doesn't mean shit if it is hidden, right?
+	RedrawWindow(get_comp_wnd(hUIWnd), NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 }
 
-void static redraw_comp()
+void static redraw_status(HWND hUIWnd)
 {
-	show_comp_wnd(); //doesn't mean shit if it is hidden, right?
-	RedrawWindow(g_hCompWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
-}
-
-void static redraw_status()
-{
-	RedrawWindow(g_hStatusWnd, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
+	RedrawWindow(get_status_wnd(hUIWnd), NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE);
 }
 
 void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
@@ -39,29 +25,30 @@ void PASCAL ShowUI(HWND hUIWnd, int nShowCmd)
 	input_context ic(hUIWnd);
 	
 	if (!ic || nShowCmd == SW_HIDE) {
-		hide_status_wnd();
-		hide_comp_wnd();
+		hide_status_wnd(hUIWnd);
+		hide_comp_wnd(hUIWnd);
 		return;
 	} 
 
 	if (g_comp_str.size()) {
-		if (g_hCompWnd) {
+		if (get_comp_wnd(hUIWnd)) {
 
-			redraw_comp();
+			redraw_comp(hUIWnd);
 			MoveDefaultCompPosition(hUIWnd);
 		} else {
 			StartComp(hUIWnd);
 		}
 	} else {
-		hide_comp_wnd();
+		hide_comp_wnd(hUIWnd);
 	}
 
-	if (!g_hStatusWnd) {
+	if (!get_status_wnd(hUIWnd)) {
+		BHJDEBUG(" OpenStatus in ShowUI");
 		OpenStatus(hUIWnd);
 	}
-	redraw_status();
+	redraw_status(hUIWnd);
 
-	show_status_wnd();
+	show_status_wnd(hUIWnd);
 	return;
 }
 
@@ -69,20 +56,21 @@ void PASCAL NotifyUI(HWND hUIWnd, WPARAM wParam, LPARAM /*lParam*/)
 {
 	switch (wParam) {
 	case IMN_OPENSTATUSWINDOW:
+		BHJDEBUG(" OpenStatus in NotifyUI");
 		OpenStatus(hUIWnd);
 		break;
 	case IMN_SETCANDIDATEPOS:
 	case IMN_SETCOMPOSITIONWINDOW:
 	case IMN_PRIVATE:
 		if (!g_comp_str.size()) {
-			hide_comp_wnd();
+			hide_comp_wnd(hUIWnd);
 			break;
 		}
-		if (!g_hCompWnd) {
+		if (get_comp_wnd(hUIWnd)) {
 			StartComp(hUIWnd);
 		}
 		MoveDefaultCompPosition(hUIWnd);
-		redraw_comp();
+		redraw_comp(hUIWnd);
 		break;
 	default:
 		break;
@@ -98,11 +86,11 @@ void PASCAL SetContext(HWND hUIWnd, BOOL fOn)
 	}
 
 	if (fOn) {
-		show_comp_wnd();
+		show_comp_wnd(hUIWnd);
 		ShowUI(hUIWnd, SW_SHOWNOACTIVATE);
 	} else {
-		hide_comp_wnd();
-		hide_status_wnd();
+		hide_comp_wnd(hUIWnd);
+		hide_status_wnd(hUIWnd);
 	}
 }
 
@@ -121,10 +109,11 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
 	switch (uMsg) {
 	case WM_CREATE:
-		CreateUIWindow(hUIWnd);
+		BHJDEBUG(" UI Create");
 		break;
 	case WM_DESTROY:
-		DestroyUIWindow();
+		BHJDEBUG(" UI Destroy");
+		DestroyUIWindow(hUIWnd);
 		break;
 	case WM_IME_STARTCOMPOSITION:
 		StartComp(hUIWnd);
@@ -134,7 +123,7 @@ UIWndProc(HWND hUIWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		if (lParam & GCS_RESULTSTR) {
 			MoveDefaultCompPosition(hUIWnd);
 		}
-		redraw_comp();
+		redraw_comp(hUIWnd);
 		break;
 	case WM_IME_ENDCOMPOSITION:
 		break;
@@ -396,4 +385,3 @@ const char* msg_name(u32 msg)
 	return "WM_UNKNOWN";
 }
 
-HWND g_hCompWnd, g_hStatusWnd;
