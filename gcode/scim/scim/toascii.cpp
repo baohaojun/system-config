@@ -327,7 +327,7 @@ ImeToAsciiEx(u32 vk,
 				index -= 1;
 				index += g_first_cand;
 
-				if (index > g_last_cand || index > cands.size()) {
+				if (index > g_last_cand || index >= cands.size()) {
 					beep();
 					return_ic_msgs(0);
 				}
