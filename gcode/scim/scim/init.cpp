@@ -139,7 +139,7 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 		wstring ui_class = get_ui_class_name();
 		wcWndCls.lpszClassName = ui_class.c_str();
 
-		ATOM a = RegisterClassEx(&wcWndCls);
+		RegisterClassEx(&wcWndCls);
 	}
 
 	wcWndCls.style = CS_IME | CS_HREDRAW | CS_VREDRAW;

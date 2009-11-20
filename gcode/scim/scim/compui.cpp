@@ -353,7 +353,7 @@ void PASCAL StartComp(HWND hUIWnd)
 	return;
 }
 
-static void high_light(HDC hdc, const CRect& rect)
+void high_light(HDC hdc, const CRect& rect)
 {
 	HDC hdc_mem = CreateCompatibleDC(hdc); 
 

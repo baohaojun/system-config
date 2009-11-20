@@ -187,5 +187,5 @@ bool map_has_key(const map<key_type, mapped_type>& map_query, const key_type& ke
 wstring get_ui_class_name();
 wstring get_comp_class_name();
 wstring get_status_class_name();
-
+void high_light(HDC hdc, const CRect& rect);
 #endif

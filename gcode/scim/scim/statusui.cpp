@@ -22,8 +22,8 @@ void hide_status_wnd(HWND hUIWnd)
 void PASCAL OpenStatus(HWND hUIWnd)
 {
 	POINT ptPos;
-#define STATE_WIDTH 15
-#define STATE_HEIGHT 15
+#define STATE_WIDTH 32
+#define STATE_HEIGHT 16
 
 	ptPos.x = get_wa_rect().right - STATE_WIDTH;
 	ptPos.y = get_wa_rect().bottom - STATE_HEIGHT;
@@ -32,6 +32,16 @@ void PASCAL OpenStatus(HWND hUIWnd)
 		HWND stat = CreateWindowEx(WS_EX_TOPMOST, get_status_class_name().c_str(), NULL, WS_POPUP | WS_DISABLED,
 									  ptPos.x, ptPos.y, STATE_WIDTH, STATE_HEIGHT,
 									  hUIWnd, (HMENU) NULL, g_hInst, NULL);
+
+		//ModifyStyleEx
+		SetWindowLong (stat, GWL_EXSTYLE , 
+					   GetWindowLong (stat , GWL_EXSTYLE ) | WS_EX_LAYERED);
+
+		SetLayeredWindowAttributes(stat,
+								   RGB(255, 255, 255),
+								   255,
+								   LWA_COLORKEY|LWA_ALPHA);
+		
 		set_status_wnd(hUIWnd, stat);
 	}
 
@@ -44,14 +54,105 @@ void PASCAL OpenStatus(HWND hUIWnd)
 	return;
 }
 
-static void PaintStatusWindow(HWND hWnd, HDC hDC)
+#define HUNG_TIMEOUT 250
+static void GetWindowIcons(HWND hwnd, HICON* phIcon, HICON* phIconSm) 
+{
+
+	_ASSERT(phIcon);
+
+	BOOL fIsHungApp = FALSE;
+
+	HICON hIcon = NULL;
+	if (!SendMessageTimeout(hwnd, WM_GETICON, ICON_BIG, 0, 
+							SMTO_ABORTIFHUNG, HUNG_TIMEOUT, (PDWORD_PTR)&hIcon)) {
+		DWORD dwErr = GetLastError();
+		if (dwErr == 0 || dwErr == 1460) {
+			fIsHungApp = TRUE;
+			goto _HUNG_ICON;
+		}
+	}
+	if (!hIcon) 
+		hIcon = (HICON)(UINT_PTR)GetClassLongPtr(hwnd, GCLP_HICON);
+
+	if (!hIcon) {
+	_HUNG_ICON:		
+		hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	}
+	*phIcon = hIcon;
+
+	if (phIconSm) {
+		if (fIsHungApp)
+			goto _HUNG_ICONSM;
+		hIcon = NULL;
+		if (!SendMessageTimeout(hwnd, WM_GETICON, ICON_SMALL, 0, 
+								SMTO_ABORTIFHUNG, HUNG_TIMEOUT, (PDWORD_PTR)&hIcon)) {
+			DWORD dwErr = GetLastError();
+			if (dwErr == 0 || dwErr == 1460)
+				goto _HUNG_ICONSM;
+		}
+		if (!hIcon) {
+			if (!SendMessageTimeout(hwnd, WM_GETICON, ICON_SMALL2, 0, 
+									SMTO_ABORTIFHUNG, HUNG_TIMEOUT, (PDWORD_PTR)&hIcon)) {
+				DWORD dwErr = GetLastError();
+				if (dwErr == 0 || dwErr == 1460)
+					goto _HUNG_ICONSM;
+			}
+		}
+		if (!hIcon) {
+			hIcon = (HICON)(UINT_PTR)GetClassLongPtr(hwnd, GCLP_HICONSM);
+		}
+		if (hIcon) {
+			*phIconSm = hIcon;
+		} else {
+		_HUNG_ICONSM:
+			*phIconSm = *phIcon;
+		}
+	}
+}
+
+static HICON GetWindowIcons(HWND hwnd)
+{
+	HICON icon, icon_small;
+	GetWindowIcons(hwnd, &icon, &icon_small);
+	return icon;
+}
+
+static void PaintStatusWindow(HWND hWnd, HDC hdc)
 {
 	
 	CRect rect;
 	GetClientRect(hWnd, &rect);
+
+	// hdc = GetDC(NULL);
+	// CPoint pt = rect.TopLeft();
+	// ClientToScreen(hWnd, &pt);
+	// rect.OffsetRect(pt);
+
 	wstring name = to_wstring(g_ime_name);
-	DrawText(hDC, name.c_str(), name.size(), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	HWND hUIWnd = GetWindow(hWnd, GW_OWNER);
+	input_context ic(hUIWnd);
+
+	if (!ic || !ic->hWnd) {
+		DrawText(hdc, name.c_str(), name.size(), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	} else {
+		HWND hWnd = ic->hWnd;
+		while (GetParent(hWnd) && GetParent(hWnd) != hWnd) {
+			hWnd = GetParent(hWnd);
+		}
+		HICON icon = GetWindowIcons(hWnd);
+		SetBkMode(hdc, TRANSPARENT);
+		SetTextColor(hdc, RGB(0, 255, 266));
+
+		DrawIconEx (hdc, 0, 0, icon, rect.Width()/2, rect.Height(), 0, NULL, DI_NORMAL); 
+		rect.left = rect.Width()/2;
+
+		DrawText(hdc, name.c_str(), name.size(), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+	}
+
 }
+
+
 
 LRESULT CALLBACK
 StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
