@@ -213,10 +213,24 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 	wchar_t buf[1024] = L"";
 	GetModuleFileName(NULL, buf, 1023);
 	string exe_name = to_string(buf);
-	if (strcasestr(exe_name.c_str(), "xwin.exe")) {
-		BHJDEBUG("Error: xwin.exe is calling, they can't handle IME!");
-		return false;
-	}		
+	int n = exe_name.find_last_of("/\\");
+	if (n != exe_name.npos) {
+		exe_name = exe_name.substr(n);
+		exe_name[0] = '/';
+	}
+
+	const char* exclude_exes[] = {
+		"/xwin.exe",
+		"/conime.exe",
+		NULL,
+	};
+
+	for (int i=0; exclude_exes[i]; i++) {
+		if (!_stricmp(exe_name.c_str(), exclude_exes[i])) {
+			BHJDEBUG("Error: %s is calling, they can't handle IME!", exclude_exes[i]);
+			return false;
+		}		
+	} 
 
 	switch (fdwReason) {
 
