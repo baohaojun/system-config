@@ -35,91 +35,7 @@ GetSystemTimeAsUINT64()
 }
 
 list<wchar_t> g_history_list;
-static bool init_quail_rules()
-{
-	const int max_line = 8192;
-	char buff[max_line];
-	for (int i=0; i<100; i++) {
-		g_history_list.push_back(0);
-	}
 
-	FILE* fp = fopen("Q:\\.emacs_d\\lisp\\quail\\wubi86.el", "rb");
-	if (!fp) {
-		BHJDEBUG(" Error: can't open quail file");
-		return false;
-	}
-
-	enum {
-		rule_begin,
-		rule_defining,
-		rule_end,
-	} state = rule_begin;
-
-	u64 ts = GetSystemTimeAsUINT64();
-	while (fgets(buff, max_line, fp)) {
-		if (state == rule_begin && strstr(buff, "quail-define-rules")) {
-			state = rule_defining;
-			continue;
-		}
-
-		if (state == rule_defining) {
-			int quote = 0;
-			char * key;
-			char * data;
-
-			for (int i=0; buff[i]; i++) {
-				if (buff[i] == '"') {
-					buff[i] = 0;
-					quote++;
-					if (quote % 2) {
-						data = buff + i + 1;
-					} else if (quote == 2) {
-						key = data;
-						string trans = key;
-						for (size_t i=1; i < trans.size(); i++) {
-							g_trans_rule[trans.substr(0, i)][trans.substr(i, 1)] = 1;
-						}
-					} else {
-						g_quail_rules[key].push_back(data);
-					}
-				}
-			}
-
-			if (quote == 0) { //we hit a line there is no quote, must been stopped
-				break;
-			}
-		}
-	}
-	fclose(fp);
-	fp = NULL;
-	fp = fopen("Q:\\.emacs_d\\lisp\\quail\\reverse.txt", "rb");
-	if (!fp) {
-		BHJDEBUG(" Error: can't open reverse.txt");
-		return true; //if we get here, at least we can input.
-	}
-	while (fgets(buff, max_line, fp)) {
-		
-		int quote = 0;
-		char * key;
-		char * data;
-
-		for (int i=0; buff[i]; i++) {
-			if (buff[i] == '"') {
-				buff[i] = 0;
-				quote++;
-				if (quote % 2) {
-					data = buff + i + 1;
-				} else if (quote == 2) {
-					key = data;
-				} else {
-					g_reverse_rules[key].push_back(data);
-				}
-			}
-		}
-	}
-	fclose(fp);
-	return true;
-}
 
 // #pragma comment (lib, "ws2_32")
 // static bool init_wsock()
@@ -162,10 +78,6 @@ static bool InitImeGlobalData(HINSTANCE hInstance)
 	// 	BHJDEBUG(" Error: init_wsock failed");
 	// 	return false;
 	// }
-
-	if (!init_quail_rules()) {
-		return false;
-	}
 
 	TCHAR szChiChar[4] = {0x9999, 0};
 
