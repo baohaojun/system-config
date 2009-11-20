@@ -25,7 +25,8 @@ ImeInquire(LPIMEINFO lpImeInfo, LPTSTR lpszWndCls, DWORD dwSystemInfoFlags)
 	lpImeInfo->fdwSCSCaps = SCS_CAP_COMPSTR | SCS_CAP_MAKEREAD;
 	lpImeInfo->fdwSelectCaps = (DWORD) 0;
 
-	lstrcpy(lpszWndCls, (LPTSTR) szUIClassName);
+	
+	lstrcpy(lpszWndCls, get_ui_class_name().c_str());
 	return (TRUE);
 }
 

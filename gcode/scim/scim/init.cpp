@@ -8,6 +8,9 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <winsock.h>
+
+
 using namespace std;
 
 rule_map_t g_quail_rules;
@@ -118,8 +121,48 @@ static bool init_quail_rules()
 	return true;
 }
 
+// #pragma comment (lib, "ws2_32")
+// static bool init_wsock()
+// {
+// 	WORD wVersionRequested;
+// 	WSADATA wsaData;
+// 	int err;
+ 
+// 	wVersionRequested = MAKEWORD( 2, 2 );
+ 
+// 	err = WSAStartup( wVersionRequested, &wsaData );
+// 	if ( err != 0 ) {
+// 		/* Tell the user that we could not find a usable */
+// 		/* WinSock DLL.                                  */
+// 		return false;
+// 	}
+ 
+// /* Confirm that the WinSock DLL supports 2.2.*/
+// /* Note that if the DLL supports versions greater    */
+// /* than 2.2 in addition to 2.2, it will still return */
+// /* 2.2 in wVersion since that is the version we      */
+// /* requested.                                        */
+ 
+// 	if ( LOBYTE( wsaData.wVersion ) != 2 ||
+// 		 HIBYTE( wsaData.wVersion ) != 2 ) {
+// 		/* Tell the user that we could not find a usable */
+// 		/* WinSock DLL.                                  */
+// 		WSACleanup( );
+// 		return false; 
+// 	}
+ 
+// /* The WinSock DLL is acceptable. Proceed. */
+// 	return true;
+
+// }
+
 static bool InitImeGlobalData(HINSTANCE hInstance)
 {
+	// if (!init_wsock()) {
+	// 	BHJDEBUG(" Error: init_wsock failed");
+	// 	return false;
+	// }
+
 	if (!init_quail_rules()) {
 		return false;
 	}
@@ -175,31 +218,33 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 	wcWndCls.hIconSm = NULL;
 
 	// IME UI class
-	if (!GetClassInfoEx(hInstance, szUIClassName, &wcWndCls)) {
+	if (!GetClassInfoEx(hInstance, get_ui_class_name().c_str(), &wcWndCls)) {
 
 		wcWndCls.style = CS_IME;
 
 		wcWndCls.lpfnWndProc = UIWndProc;
 
-		wcWndCls.lpszClassName = (LPTSTR) szUIClassName;
+		wstring ui_class = get_ui_class_name();
+		wcWndCls.lpszClassName = ui_class.c_str();
 
-		RegisterClassEx(&wcWndCls);
-
+		ATOM a = RegisterClassEx(&wcWndCls);
 	}
 
 	wcWndCls.style = CS_IME | CS_HREDRAW | CS_VREDRAW;
 
 	wcWndCls.hbrBackground = GetStockObject(WHITE_BRUSH);
 
-	if (!GetClassInfoEx(hInstance, szCompClassName, &wcWndCls)) {
+	if (!GetClassInfoEx(hInstance, get_comp_class_name().c_str(), &wcWndCls)) {
 		wcWndCls.lpfnWndProc = CompWndProc;
-		wcWndCls.lpszClassName = (LPTSTR) szCompClassName;
+		wstring comp = get_comp_class_name();
+		wcWndCls.lpszClassName = comp.c_str();
 		RegisterClassEx(&wcWndCls);
 	}
 
-	if (!GetClassInfoEx(hInstance, szStatusClassName, &wcWndCls)) {
+	if (!GetClassInfoEx(hInstance, get_status_class_name().c_str(), &wcWndCls)) {
 		wcWndCls.lpfnWndProc = StatusWndProc;
-		wcWndCls.lpszClassName = (LPTSTR) szStatusClassName;
+		wstring stat = get_status_class_name();
+		wcWndCls.lpszClassName = stat.c_str();
 		RegisterClassEx(&wcWndCls);
 	}
 }
@@ -209,7 +254,6 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 					  DWORD fdwReason,
 					  LPVOID lpvReserve)
 {
-
 	wchar_t buf[1024] = L"";
 	GetModuleFileName(NULL, buf, 1023);
 	string exe_name = to_string(buf);
@@ -250,16 +294,16 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 
 			WNDCLASSEX wcWndCls;
 
-			if (GetClassInfoEx(hInstance, szStatusClassName, &wcWndCls)) {
-				UnregisterClass(szStatusClassName, hInstance);
+			if (GetClassInfoEx(hInstance, get_status_class_name().c_str(), &wcWndCls)) {
+				UnregisterClass(get_status_class_name().c_str(), hInstance);
 			}
 
-			if (GetClassInfoEx(hInstance, szCompClassName, &wcWndCls)) {
-				UnregisterClass(szCompClassName, hInstance);
+			if (GetClassInfoEx(hInstance, get_comp_class_name().c_str(), &wcWndCls)) {
+				UnregisterClass(get_comp_class_name().c_str(), hInstance);
 			}
 
-			if (GetClassInfoEx(hInstance, szUIClassName, &wcWndCls)) {
-				UnregisterClass(szUIClassName, hInstance);
+			if (GetClassInfoEx(hInstance, get_ui_class_name().c_str(), &wcWndCls)) {
+				UnregisterClass(get_ui_class_name().c_str(), hInstance);
 			}
 		}
 

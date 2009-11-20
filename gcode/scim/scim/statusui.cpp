@@ -22,14 +22,14 @@ void hide_status_wnd(HWND hUIWnd)
 void PASCAL OpenStatus(HWND hUIWnd)
 {
 	POINT ptPos;
-#define STATE_WIDTH 20
+#define STATE_WIDTH 15
 #define STATE_HEIGHT 15
 
 	ptPos.x = get_wa_rect().right - STATE_WIDTH;
 	ptPos.y = get_wa_rect().bottom - STATE_HEIGHT;
 
 	if (!get_status_wnd(hUIWnd)) {
-		HWND stat = CreateWindowEx(WS_EX_TOPMOST, szStatusClassName, NULL, WS_POPUP | WS_DISABLED,
+		HWND stat = CreateWindowEx(WS_EX_TOPMOST, get_status_class_name().c_str(), NULL, WS_POPUP | WS_DISABLED,
 									  ptPos.x, ptPos.y, STATE_WIDTH, STATE_HEIGHT,
 									  hUIWnd, (HMENU) NULL, g_hInst, NULL);
 		set_status_wnd(hUIWnd, stat);

@@ -423,3 +423,23 @@ void set_status_wnd(HWND hUIWnd, HWND stat)
 {
 	g_ui_private[hUIWnd].set_stat(stat);
 }
+
+
+static wstring szUIClassName = L"BhjImeUI";
+static wstring szCompClassName = L"BhjImeComp";
+static wstring szStatusClassName = L"BhjImeStatus";
+
+wstring get_ui_class_name()
+{
+	return szUIClassName + to_wstring(ime_off);
+}
+
+wstring get_comp_class_name()
+{
+	return szCompClassName + to_wstring(ime_off);
+}
+
+wstring get_status_class_name()
+{
+	return szStatusClassName + to_wstring(ime_off);
+}

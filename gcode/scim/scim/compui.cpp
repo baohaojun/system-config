@@ -341,7 +341,7 @@ void PASCAL StartComp(HWND hUIWnd)
 	}
 
 	if (!get_comp_wnd(hUIWnd)) {
-		HWND comp = CreateWindowEx(WS_EX_TOPMOST, szCompClassName, NULL, WS_POPUP | WS_DISABLED,
+		HWND comp = CreateWindowEx(WS_EX_TOPMOST, get_comp_class_name().c_str(), NULL, WS_POPUP | WS_DISABLED,
 									0, 0, comp_dft_width, comp_dft_height, hUIWnd,
 									(HMENU) NULL, g_hInst, NULL);
 		set_comp_wnd(hUIWnd, comp);
