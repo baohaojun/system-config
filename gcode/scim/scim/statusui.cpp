@@ -123,6 +123,7 @@ static void PaintStatusWindow(HWND hWnd, HDC hdc)
 	CRect rect;
 	GetClientRect(hWnd, &rect);
 
+	//hdc_with_font dc_lucida(hdc, L"Lucida Console", 12);
 	// hdc = GetDC(NULL);
 	// CPoint pt = rect.TopLeft();
 	// ClientToScreen(hWnd, &pt);
@@ -140,14 +141,12 @@ static void PaintStatusWindow(HWND hWnd, HDC hdc)
 			hWnd = GetParent(hWnd);
 		}
 		HICON icon = GetWindowIcons(hWnd);
-		SetBkMode(hdc, TRANSPARENT);
-		SetTextColor(hdc, RGB(0, 255, 266));
+		SetBkColor(hdc, RGB(254, 254, 255));
+		SetTextColor(hdc, RGB(22, 1, 33));
 
 		DrawIconEx (hdc, 0, 0, icon, rect.Width()/2, rect.Height(), 0, NULL, DI_NORMAL); 
 		rect.left = rect.Width()/2;
-
 		DrawText(hdc, name.c_str(), name.size(), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-
 	}
 
 }

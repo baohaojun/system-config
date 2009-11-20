@@ -134,7 +134,7 @@ private:
 class hdc_with_font
 {
 public:
-	hdc_with_font(HDC, wstring);
+	hdc_with_font(HDC, wstring, int size=12);
 	~hdc_with_font();
 	void use_this_font();
 	void draw_text(const wstring& text, CRect& rect);
