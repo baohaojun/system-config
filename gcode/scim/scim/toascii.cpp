@@ -466,6 +466,10 @@ static list<string> reverse_wubi_key(const wstring& ws)
 
 	string C1 = to_string(ws.substr(0, 1));
 	string C2 = to_string(ws.substr(1, 1));
+	string C3;
+	if (ws.size() > 2) { 
+		C3 = to_string(ws.substr(2, 1));
+	}
 	string Cn = to_string(ws.substr(n-1, 1));
 	
 	string res;
@@ -481,7 +485,7 @@ static list<string> reverse_wubi_key(const wstring& ws)
 				res_list.push_back(g_reverse_rules[C1][i] + g_reverse_rules[C2][j]);
 			}
 		}
-	} else {
+	} else if (n == 3) {
 		for (size_t i=0; i < g_reverse_rules[C1].size(); i++) {
 			for (size_t j=0; j < g_reverse_rules[C2].size(); j++) {
 				for (size_t k=0; k < g_reverse_rules[Cn].size(); k++) {
@@ -489,6 +493,20 @@ static list<string> reverse_wubi_key(const wstring& ws)
 						g_reverse_rules[C1][i].substr(0, 1) + 
 						g_reverse_rules[C2][j].substr(0, 1) +
 						g_reverse_rules[Cn][k].substr(0, 2));
+				}
+			}
+		}
+	} else {
+		for (size_t i=0; i < g_reverse_rules[C1].size(); i++) {
+			for (size_t j=0; j < g_reverse_rules[C2].size(); j++) {
+				for (size_t k=0; k < g_reverse_rules[C3].size(); k++) {
+					for (size_t l=0; l < g_reverse_rules[Cn].size(); l++) {
+						res_list.push_back(
+							g_reverse_rules[C1][i].substr(0, 1) + 
+							g_reverse_rules[C2][j].substr(0, 1) +
+							g_reverse_rules[C3][k].substr(0, 1) +
+							g_reverse_rules[Cn][l].substr(0, 1));
+					}
 				}
 			}
 		}
