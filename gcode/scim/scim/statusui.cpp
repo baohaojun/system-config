@@ -23,13 +23,13 @@ void PASCAL OpenStatus(HWND hUIWnd)
 {
 	POINT ptPos;
 #define STATE_WIDTH 32
-#define STATE_HEIGHT 16
+#define STATE_HEIGHT 32
 
 	ptPos.x = get_wa_rect().right - STATE_WIDTH;
 	ptPos.y = get_wa_rect().bottom - STATE_HEIGHT;
 
 	if (!get_status_wnd(hUIWnd)) {
-		HWND stat = CreateWindowEx(WS_EX_TOPMOST, get_status_class_name().c_str(), NULL, WS_POPUP | WS_DISABLED,
+		HWND stat = CreateWindowEx(WS_EX_TOPMOST|WS_EX_TRANSPARENT, get_status_class_name().c_str(), NULL, WS_POPUP | WS_DISABLED,
 									  ptPos.x, ptPos.y, STATE_WIDTH, STATE_HEIGHT,
 									  hUIWnd, (HMENU) NULL, g_hInst, NULL);
 
@@ -39,7 +39,7 @@ void PASCAL OpenStatus(HWND hUIWnd)
 
 		SetLayeredWindowAttributes(stat,
 								   RGB(255, 255, 255),
-								   255,
+								   100,
 								   LWA_COLORKEY|LWA_ALPHA);
 		
 		set_status_wnd(hUIWnd, stat);
@@ -143,10 +143,8 @@ static void PaintStatusWindow(HWND hWnd, HDC hdc)
 		HICON icon = GetWindowIcons(hWnd);
 		SetBkColor(hdc, RGB(254, 254, 255));
 		SetTextColor(hdc, RGB(22, 1, 33));
-
-		DrawIconEx (hdc, 0, 0, icon, rect.Width()/2, rect.Height(), 0, NULL, DI_NORMAL); 
-		rect.left = rect.Width()/2;
-		DrawText(hdc, name.c_str(), name.size(), &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+		
+		DrawIconEx (hdc, 0, 0, icon, rect.Width(), rect.Height(), 0, NULL, DI_NORMAL); 
 	}
 
 }
@@ -167,6 +165,17 @@ StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		{
+			if (g_ime_name == ime_off) {
+				SetLayeredWindowAttributes(hWnd,
+										   RGB(255, 255, 255),
+										   100,
+										   LWA_COLORKEY|LWA_ALPHA);
+			} else {
+				SetLayeredWindowAttributes(hWnd, 
+										   RGB(255, 255, 255),
+										   200,
+										   LWA_COLORKEY|LWA_ALPHA);
+			}
 			HDC hDC;
 			PAINTSTRUCT ps;
 
