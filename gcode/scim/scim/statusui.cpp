@@ -167,12 +167,12 @@ StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			if (g_ime_name == ime_off) {
 				SetLayeredWindowAttributes(hWnd,
-										   RGB(255, 255, 255),
+										   RGB_TRANS_KEY,
 										   100,
 										   LWA_COLORKEY|LWA_ALPHA);
 			} else {
 				SetLayeredWindowAttributes(hWnd, 
-										   RGB(255, 255, 255),
+										   RGB_TRANS_KEY,
 										   200,
 										   LWA_COLORKEY|LWA_ALPHA);
 			}

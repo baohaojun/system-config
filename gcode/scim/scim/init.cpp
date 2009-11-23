@@ -153,6 +153,7 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 		RegisterClassEx(&wcWndCls);
 	}
 
+	wcWndCls.hbrBackground = CreateSolidBrush(RGB_TRANS_KEY);
 	if (!GetClassInfoEx(hInstance, get_status_class_name().c_str(), &wcWndCls)) {
 		wcWndCls.lpfnWndProc = StatusWndProc;
 		wstring stat = get_status_class_name();

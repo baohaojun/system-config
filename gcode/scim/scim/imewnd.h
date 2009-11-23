@@ -9,6 +9,8 @@
 #include <list>
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
+
+#define RGB_TRANS_KEY RGB(255, 255, 254)
 using namespace std;
 
 typedef UINT u32;
