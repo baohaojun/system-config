@@ -194,14 +194,25 @@ git is already/still running."
     (setq mo-git-blame-process nil)
     (message "Running 'git blame'... done")))
 
+(defun mo-git-blame-commit-info-to-time (entry)
+  (let* ((tz (plist-get entry :author-tz))
+         (mult (if (string= "+" (substring tz 0 1)) 1 -1))
+         (hours (string-to-number (substring tz 1 3)))
+         (minutes (string-to-number (substring tz 3 5))))
+    (seconds-to-time (+ (string-to-number (plist-get entry :author-time))
+                        (* mult
+                           (+ (* minutes 60)
+                              (* hours 3600)))))))
+
 (defun mo-git-blame-process-filter-process-entry (entry)
   (with-current-buffer (plist-get mo-git-blame-vars :blame-buffer)
     (save-excursion
       (let ((inhibit-read-only t)
-            (info (format "%s (%s %s) %s"
+            (info (format "%s (%s %s %s) %s"
                           (substring (symbol-name (plist-get entry :hash)) 0 8)
                           (plist-get entry :author)
-                          (format-time-string "%Y-%m-%d %T %z" (seconds-to-time (string-to-number (plist-get entry :author-time))) t)
+                          (format-time-string "%Y-%m-%d %T" (mo-git-blame-commit-info-to-time entry) t)
+                          (plist-get entry :author-tz)
                           (plist-get entry :filename)))
             i)
         (mo-git-blame-goto-line-markless (plist-get entry :result-line))
