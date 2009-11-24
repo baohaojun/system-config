@@ -255,9 +255,6 @@ git is already/still running."
                  )
 
                 (t (setq matched nil)))
-          (if matched
-              (put-text-property (match-beginning 0) (match-end 0)
-                                 'face (list :foreground "#ff0000")))
           (next-line))))))
 
 (defun mo-git-blame-run* (&rest args)
