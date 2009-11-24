@@ -270,38 +270,58 @@ open buffer."
   (interactive)
   (mo-git-blame-overwrite-file-with-revision (plist-get mo-git-blame-vars :current-revision)))
 
-(defun mo-git-blame-reblame-for-ancestor-of-revision-at ()
-  "Calls 'git blame' for the ancestor of the revision in the current line."
-  (interactive)
-  (mo-git-blame-reblame-for-specific-revision (mo-git-blame-parse-rev (concat (plist-get (mo-git-blame-parse-blame-line) :hash) "~"))))
+(defun mo-git-blame-reblame-for-ancestor-of-revision-at (&optional arg)
+  "Calls 'git blame' for the ancestor of the revision in the current line.
 
-(defun mo-git-blame-reblame-for-ancestor-of-current-revision ()
-  "Calls 'git blame' for the ancestor of the current revision."
-  (interactive)
-  (mo-git-blame-reblame-for-specific-revision (mo-git-blame-parse-rev (concat (plist-get mo-git-blame-vars :current-revision) "~"))))
+With a numeric prefix argument ARG only the ARG lines before and
+after point are blamed by using git blame's `-L'
+option. Otherwise the whole file is blamed."
+  (interactive "P")
+  (mo-git-blame-reblame-for-specific-revision (mo-git-blame-parse-rev (concat (plist-get (mo-git-blame-parse-blame-line) :hash) "~")) arg))
 
-(defun mo-git-blame-reblame-for-revision-at ()
-  "Calls 'git blame' for the revision in the current line."
-  (interactive)
+(defun mo-git-blame-reblame-for-ancestor-of-current-revision (&optional arg)
+  "Calls 'git blame' for the ancestor of the current revision.
+
+With a numeric prefix argument ARG only the ARG lines before and
+after point are blamed by using git blame's `-L'
+option. Otherwise the whole file is blamed."
+  (interactive "P")
+  (mo-git-blame-reblame-for-specific-revision (mo-git-blame-parse-rev (concat (plist-get mo-git-blame-vars :current-revision) "~")) arg))
+
+(defun mo-git-blame-reblame-for-revision-at (&optional arg)
+  "Calls 'git blame' for the revision in the current line.
+
+With a numeric prefix argument ARG only the ARG lines before and
+after point are blamed by using git blame's `-L'
+option. Otherwise the whole file is blamed."
+  (interactive "P")
   (let* ((info (mo-git-blame-parse-blame-line))
          (revision (plist-get info :hash)))
     (if (string= revision (plist-get mo-git-blame-vars :current-revision))
         (error "Already showing this revision"))
-    (mo-git-blame-file (concat (plist-get mo-git-blame-vars :top-dir) (plist-get info :file-name)) revision (plist-get mo-git-blame-vars :original-file-name))))
+    (mo-git-blame-file (concat (plist-get mo-git-blame-vars :top-dir) (plist-get info :file-name)) revision (plist-get mo-git-blame-vars :original-file-name) arg)))
 
-(defun mo-git-blame-reblame-for-specific-revision (&optional revision)
-  "Calls 'git blame' for a specific revision."
-  (interactive "sRevision: ")
+(defun mo-git-blame-reblame-for-specific-revision (&optional revision arg)
+  "Calls 'git blame' for a specific REVISION.
+
+With a numeric prefix argument ARG only the ARG lines before and
+after point are blamed by using git blame's `-L'
+option. Otherwise the whole file is blamed."
+  (interactive "sRevision: \nP")
   (setq revision (mo-git-blame-parse-rev revision))
   (if (string= revision (plist-get mo-git-blame-vars :current-revision))
       (error "Already showing this revision"))
-  (mo-git-blame-file (concat (plist-get mo-git-blame-vars :top-dir) (plist-get mo-git-blame-vars :file-name)) revision (plist-get mo-git-blame-vars :original-file-name)))
+  (mo-git-blame-file (concat (plist-get mo-git-blame-vars :top-dir) (plist-get mo-git-blame-vars :file-name)) revision (plist-get mo-git-blame-vars :original-file-name) arg))
 
-(defun mo-git-blame-reblame-for-prior-revision ()
+(defun mo-git-blame-reblame-for-prior-revision (&optional arg)
   "Calls 'git blame' for the revision shown before the current
 one (see `prior revisions' in the info output of
-`mo-git-blame-display-info')."
-  (interactive)
+`mo-git-blame-display-info').
+
+With a numeric prefix argument ARG only the ARG lines before and
+after point are blamed by using git blame's `-L'
+option. Otherwise the whole file is blamed."
+  (interactive "P")
   (let ((rev-list (plist-get mo-git-blame-vars :prior-revisions))
         revision-plist)
     (unless rev-list
@@ -309,7 +329,8 @@ one (see `prior revisions' in the info output of
     (setq revision-plist (car rev-list))
     (mo-git-blame-file (plist-get revision-plist :full-file-name)
                        (plist-get revision-plist :revision)
-                       (plist-get mo-git-blame-vars :original-file-name))))
+                       (plist-get mo-git-blame-vars :original-file-name)
+                       arg)))
 
 (defun mo-git-blame-display-info ()
   "Displays short information about the current revision."
@@ -333,6 +354,12 @@ one (see `prior revisions' in the info output of
       (goto-char (point-min)))
     (display-buffer buffer)))
 
+(defun mo-git-blame-number-of-content-lines ()
+  (with-current-buffer (plist-get mo-git-blame-vars :content-buffer)
+    (save-excursion
+      (goto-char (point-max))
+      (line-number-at-pos))))
+
 (defun mo-git-blame-mode ()
   "Show the output of 'git blame' and the content of the file in
 two frames side-by-side. Allows iterative re-blaming for specific
@@ -350,21 +377,40 @@ from elisp.
         truncate-lines t)
   (use-local-map mo-git-blame-mode-map))
 
-(defun mo-git-blame-init-blame-buffer ()
-  (mo-git-blame-run "blame" (plist-get mo-git-blame-vars :current-revision) "--" (plist-get mo-git-blame-vars :file-name))
-  (goto-char (point-min))
-  (save-match-data
-    (while (re-search-forward "^\\([a-f0-9]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
-      (replace-match "\\1 \\2" nil nil))
+(defun mo-git-blame-init-blame-buffer (start-line lines-to-blame)
+  (let* ((num-content-lines (mo-git-blame-number-of-content-lines))
+         (num-lines-to-append (if (and start-line
+                                       (< (+ start-line lines-to-blame)
+                                          num-content-lines))
+                                  (- num-content-lines start-line lines-to-blame)))
+         args i)
+    (if (and start-line (> start-line 1))
+        (dotimes (i (1- start-line))
+          (insert "\n")))
+
+    (setq args (list (plist-get mo-git-blame-vars :current-revision) "--" (plist-get mo-git-blame-vars :file-name)))
+    (if start-line
+        (setq args (append (list "-L" (format "%d,+%d" start-line lines-to-blame))
+                           args)))
+    (apply 'mo-git-blame-run "blame" args)
+
+    (if num-lines-to-append
+        (dotimes (i num-lines-to-append)
+          (insert "\n")))
+
     (goto-char (point-min))
-    (while (re-search-forward "^\\([a-f0-9]+\\) +\\([^ ]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
-      (replace-match "\\1 \\3 \\2" nil nil))
+    (save-match-data
+      (while (re-search-forward "^\\([a-f0-9]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
+        (replace-match "\\1 \\2" nil nil))
+      (goto-char (point-min))
+      (while (re-search-forward "^\\([a-f0-9]+\\) +\\([^ ]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
+        (replace-match "\\1 \\3 \\2" nil nil))
+      (goto-char (point-min))
+      (while (re-search-forward " +[0-9]+)" nil t)
+        (replace-match ")" nil nil)))
+    (toggle-read-only t)
     (goto-char (point-min))
-    (while (re-search-forward " +[0-9]+)" nil t)
-      (replace-match ")" nil nil)))
-  (toggle-read-only t)
-  (goto-char (point-min))
-  (scroll-all-mode 1))
+    (scroll-all-mode 1)))
 
 (defun mo-git-blame-init-content-buffer ()
   (rename-buffer (concat "*mo-git-blame:" (file-name-nondirectory (plist-get mo-git-blame-vars :full-file-name)) ":" (plist-get mo-git-blame-vars :current-revision) "*"))
@@ -392,8 +438,8 @@ the value of `mo-git-blame-use-ido'."
     (funcall the-func "File for 'git blame': " nil nil t)))
 
 ;;;###autoload
-(defun mo-git-blame-file (&optional file-name revision original-file-name)
-  "Calls 'git blame' for REVISION of FILE-NAME or `HEAD' if
+(defun mo-git-blame-file (&optional file-name revision original-file-name num-lines-to-blame)
+  "Calls `git blame' for REVISION of FILE-NAME or `HEAD' if
 REVISION is not given. Initializes the two windows that will show
 the output of 'git blame' and the content.
 
@@ -402,7 +448,12 @@ interactive mode.
 
 ORIGINAL-FILE-NAME defaults to FILE-NAME if not given. This is
 used for tracking renaming and moving of files during iterative
-re-blaming."
+re-blaming.
+
+With a numeric prefix argument or with NUM-LINES-TO-BLAME only
+the NUM-LINES-TO-BLAME lines before and after point are blamed by
+using git blame's `-L' option. Otherwise the whole file is
+blamed."
   (interactive)
   (let* ((file-name (or file-name (mo-git-blame-read-file-name)))
          (has-blame-vars (local-variable-p 'mo-git-blame-vars))
@@ -421,7 +472,10 @@ re-blaming."
          (blame-window (selected-window))
          (prior-vars (if has-blame-vars mo-git-blame-vars))
          (line-to-go-to (line-number-at-pos))
-         content-window the-buffer prior-revisions)
+         (lines-to-blame (or num-lines-to-blame
+                             (if (and current-prefix-arg (> (prefix-numeric-value current-prefix-arg) 0))
+                                 (prefix-numeric-value current-prefix-arg))))
+         content-window the-buffer prior-revisions start-line)
     (switch-to-buffer blame-buffer)
     (setq prior-revisions (if prior-vars (plist-get prior-vars :prior-revisions)))
     (setq prior-revisions
@@ -455,11 +509,15 @@ re-blaming."
                    :content-buffer content-buffer
                    :content-window content-window))
         (set (make-local-variable 'line-move-visual) nil)))
-    (with-current-buffer blame-buffer
-      (mo-git-blame-mode)
-      (mo-git-blame-init-blame-buffer))
     (with-current-buffer content-buffer
       (mo-git-blame-init-content-buffer))
+    (when lines-to-blame
+      (setq start-line (max 1 (- line-to-go-to lines-to-blame))
+            lines-to-blame (1+ (- (+ line-to-go-to lines-to-blame)
+                                  start-line))))
+    (with-current-buffer blame-buffer
+      (mo-git-blame-mode)
+      (mo-git-blame-init-blame-buffer start-line lines-to-blame))
     (mo-git-blame-goto-line line-to-go-to)))
 
 (defun mo-git-blame-quit ()
