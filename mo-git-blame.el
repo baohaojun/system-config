@@ -109,6 +109,13 @@ interactive use, e.g. the file name, current revision etc.")
   :group 'mo-git-blame
   :type 'string)
 
+(defcustom mo-git-blame-incremental t
+  "Runs `git blame' in the background with the --incremental
+option if this variable is non-nil."
+  :group 'mo-git-blame
+  :type '(choice (const :tag "Use --incremental" t)
+                 (const :tag "Don't use --incremental" nil)))
+
 (defcustom mo-git-blame-blame-window-width 45
   "The width of the 'blame' window leaving the rest for the
 'content' window."
@@ -164,6 +171,112 @@ interactive use, e.g. the file name, current revision etc.")
   (message "Running 'git %s'..." (car args))
   (apply 'call-process mo-git-blame-git-executable nil (current-buffer) nil args)
   (message "Running 'git %s'... done" (car args)))
+
+(defvar mo-git-blame-process nil)
+(defvar mo-git-blame-client-buffer nil)
+
+(defun mo-git-blame-assert-not-running ()
+  "Exits with an error if `mo-git-blame-incremental' is true and
+git is already/still running."
+  (if (and mo-git-blame-incremental
+           mo-git-blame-process
+           (get-buffer "*mo-git-blame-process*"))
+      (error "Git is already running")))
+
+(defun mo-git-blame-process-sentinel (process event)
+  (let ((msg (format "Git %s." (substring event 0 -1)))
+        (successp (string-match "^finished" event)))
+    (with-current-buffer (process-buffer process)
+      (let ((inhibit-read-only t))
+        (goto-char (point-max))
+        (insert msg "\n")
+        (message msg)))
+    (setq mo-git-blame-process nil)
+    (message "Running 'git blame'... done")))
+
+(defun mo-git-blame-process-filter-process-entry (entry)
+  (with-current-buffer (plist-get mo-git-blame-vars :blame-buffer)
+    (save-excursion
+      (let ((inhibit-read-only t)
+            (info (format "%s (%s %s) %s"
+                          (substring (symbol-name (plist-get entry :hash)) 0 8)
+                          (plist-get entry :author)
+                          (format-time-string "%Y-%m-%d %T %z" (seconds-to-time (string-to-number (plist-get entry :author-time))) t)
+                          (plist-get entry :filename)))
+            i)
+        (mo-git-blame-goto-line-markless (plist-get entry :result-line))
+        (dotimes (i (plist-get entry :num-lines))
+          (insert info)
+          (goto-char (line-beginning-position 2)))))))
+
+(defun mo-git-blame-set-entry (key value)
+  (let ((plist (or (plist-get mo-git-blame-data mo-git-blame-curr-entry)
+                   (list :hash mo-git-blame-curr-entry))))
+    (setq mo-git-blame-data
+          (plist-put mo-git-blame-data
+                     mo-git-blame-curr-entry
+                     (plist-put plist key value)))))
+
+(defun mo-git-blame-process-filter (process string)
+  (with-current-buffer (process-buffer process)
+    (let ((inhibit-read-only t)
+          done matched)
+      (save-excursion
+        (goto-char (process-mark process))
+        (insert string)
+        (set-marker (process-mark process) (point)))
+      (while (not done)
+        (goto-char (line-end-position))
+        (setq done (= (point) (point-max)))
+        (goto-char (line-beginning-position))
+        (unless done
+          (setq matched t)
+          (cond ((and (not mo-git-blame-curr-entry)
+                      (looking-at "^\\([a-fA-F0-9]\\{40\\}\\) +\\([0-9]+\\) +\\([0-9]+\\) +\\([0-9]+\\)$"))
+                 ;; SHA line, beginning of entry
+                 (setq mo-git-blame-curr-entry (intern (buffer-substring-no-properties (match-beginning 1) (match-end 1))))
+                 (mo-git-blame-set-entry :source-line (string-to-number (buffer-substring-no-properties (match-beginning 2) (match-end 2))))
+                 (mo-git-blame-set-entry :result-line (string-to-number (buffer-substring-no-properties (match-beginning 3) (match-end 3))))
+                 (mo-git-blame-set-entry :num-lines (string-to-number (buffer-substring-no-properties (match-beginning 4) (match-end 4))))
+                 )
+
+                ((and mo-git-blame-curr-entry
+                      (looking-at "^filename +\\(.+\\)$"))
+                 ;; filename line, end of entry
+                 (mo-git-blame-set-entry :filename (buffer-substring-no-properties (match-beginning 1) (match-end 1)))
+                 (mo-git-blame-process-filter-process-entry (plist-get mo-git-blame-data mo-git-blame-curr-entry))
+                 (setq mo-git-blame-curr-entry nil)
+                 )
+                ((and mo-git-blame-curr-entry
+                      (looking-at "^\\([a-zA-Z0-9-]+\\) +\\(.+\\)$"))
+                 ;; property line
+                 (mo-git-blame-set-entry (intern (concat ":" (buffer-substring-no-properties (match-beginning 1) (match-end 1))))
+                                         (buffer-substring-no-properties (match-beginning 2) (match-end 2)))
+                 )
+
+                (t (setq matched nil)))
+          (if matched
+              (put-text-property (match-beginning 0) (match-end 0)
+                                 'face (list :foreground "#ff0000")))
+          (next-line))))))
+
+(defun mo-git-blame-run* (&rest args)
+  (message "Running 'git blame'...")
+  (let ((buf (get-buffer-create "*mo-git-blame-process*"))
+        (cmd (car args))
+        (dir default-directory)
+        (vars mo-git-blame-vars))
+    (save-excursion
+      (set-buffer buf)
+      (setq buffer-read-only t)
+      (let ((inhibit-read-only t))
+        (set (make-local-variable 'mo-git-blame-data) nil)
+        (set (make-local-variable 'mo-git-blame-curr-entry) nil)
+        (set (make-local-variable 'mo-git-blame-vars) vars)
+        (setq default-directory dir
+              mo-git-blame-process (apply 'start-file-process cmd buf mo-git-blame-git-executable args))
+        (set-process-sentinel mo-git-blame-process 'mo-git-blame-process-sentinel)
+        (set-process-filter mo-git-blame-process 'mo-git-blame-process-filter)))))
 
 (defun mo-git-blame-get-output-buffer ()
   (let* ((name "*mo-git-blame-output*")
@@ -377,7 +490,7 @@ from elisp.
         truncate-lines t)
   (use-local-map mo-git-blame-mode-map))
 
-(defun mo-git-blame-init-blame-buffer (start-line lines-to-blame)
+(defun mo-git-blame-run-blame-normally (start-line lines-to-blame)
   (let* ((num-content-lines (mo-git-blame-number-of-content-lines))
          (num-lines-to-append (if (and start-line
                                        (< (+ start-line lines-to-blame)
@@ -396,21 +509,38 @@ from elisp.
 
     (if num-lines-to-append
         (dotimes (i num-lines-to-append)
-          (insert "\n")))
+          (insert "\n")))))
 
+(defun mo-git-blame-run-blame-incrementally (start-line lines-to-blame)
+  (let* ((num-content-lines (mo-git-blame-number-of-content-lines))
+         i)
+    (dotimes (i (1- num-content-lines))
+      (insert "\n"))
+
+    (setq args (list "--incremental" (plist-get mo-git-blame-vars :current-revision) "--" (plist-get mo-git-blame-vars :file-name)))
+    (if start-line
+        (setq args (append (list "-L" (format "%d,+%d" start-line lines-to-blame))
+                           args)))
+    (mo-git-blame-assert-not-running)
+    (apply 'mo-git-blame-run* "blame" args)))
+
+(defun mo-git-blame-init-blame-buffer (start-line lines-to-blame)
+  (if mo-git-blame-incremental
+      (mo-git-blame-run-blame-incrementally start-line lines-to-blame)
+    (mo-git-blame-run-blame-normally start-line lines-to-blame))
+  (goto-char (point-min))
+  (save-match-data
+    (while (re-search-forward "^\\([a-f0-9]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
+      (replace-match "\\1 \\2" nil nil))
     (goto-char (point-min))
-    (save-match-data
-      (while (re-search-forward "^\\([a-f0-9]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
-        (replace-match "\\1 \\2" nil nil))
-      (goto-char (point-min))
-      (while (re-search-forward "^\\([a-f0-9]+\\) +\\([^ ]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
-        (replace-match "\\1 \\3 \\2" nil nil))
-      (goto-char (point-min))
-      (while (re-search-forward " +[0-9]+)" nil t)
-        (replace-match ")" nil nil)))
-    (toggle-read-only t)
+    (while (re-search-forward "^\\([a-f0-9]+\\) +\\([^ ]+\\) +\\(([^)]+)\\) \\(.*\\)" nil t)
+      (replace-match "\\1 \\3 \\2" nil nil))
     (goto-char (point-min))
-    (scroll-all-mode 1)))
+    (while (re-search-forward " +[0-9]+)" nil t)
+      (replace-match ")" nil nil)))
+  (toggle-read-only t)
+  (goto-char (point-min))
+  (scroll-all-mode 1))
 
 (defun mo-git-blame-init-content-buffer ()
   (rename-buffer (concat "*mo-git-blame:" (file-name-nondirectory (plist-get mo-git-blame-vars :full-file-name)) ":" (plist-get mo-git-blame-vars :current-revision) "*"))
@@ -455,6 +585,7 @@ the NUM-LINES-TO-BLAME lines before and after point are blamed by
 using git blame's `-L' option. Otherwise the whole file is
 blamed."
   (interactive)
+  (mo-git-blame-assert-not-running)
   (let* ((file-name (or file-name (mo-git-blame-read-file-name)))
          (has-blame-vars (local-variable-p 'mo-git-blame-vars))
          (the-raw-revision (or revision "HEAD"))
@@ -570,3 +701,7 @@ blamed."
   (mo-git-blame-file (buffer-file-name)))
 
 (provide 'mo-git-blame)
+
+;; Leave this in for debugging purposes:
+;; (global-set-key [?\C-c ?i ?b] (lambda () (interactive) (let ((mo-git-blame-incremental t)) (mo-git-blame-current))))
+;; (global-set-key [?\C-c ?i ?B] (lambda () (interactive) (let ((mo-git-blame-incremental nil)) (mo-git-blame-current))))
