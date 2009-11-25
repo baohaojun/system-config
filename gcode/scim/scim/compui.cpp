@@ -397,7 +397,7 @@ void high_light(HDC hdc, const CRect& rect)
 static void 
 draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 {
-	hdc_with_font dc_lucida(hdc, L"Lucida Console");
+	hdc_with_font dc_lucida(hdc, L"Lucida Console", 10);
 
 	int left = rect.left;
 	CRect rc_text = rect;
@@ -507,7 +507,6 @@ draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 
 void PASCAL PaintCompWindow(HWND hWnd, HDC hdc)
 {
-	hdc_with_font dc_lucida(hdc, L"Lucida Console");
 	CRect rcWnd;
 	GetClientRect(hWnd, &rcWnd);
 	Rectangle(hdc, rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom);
