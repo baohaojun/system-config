@@ -256,6 +256,9 @@ ETH0IP=`/sbin/ifconfig eth0 |grep 'inet addr:'|perl -npe 's/.*?:([0-9]{1,3}.[0-9
 echo 1 >/proc/sys/net/ipv4/ip_forward;
 /etc/init.d/iptables restart
 /sbin/iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source $ETH0IP
+
+#the above 3 lines can enable NAT
+
 /sbin/iptables -t nat -A PREROUTING -i eth0    -j DNAT --to-destination 10.194.167.225 -m tcp --dport 2628 -p tcp
 /sbin/iptables -t nat -A PREROUTING -i eth0    -j DNAT --to-destination 192.168.1.42 -m tcp --dport 23 -p tcp
 /sbin/iptables -t nat -A PREROUTING -i eth0 -p tcp -j DNAT --to-destination 192.168.1.2:23 -m tcp --dport 2323
@@ -2291,3 +2294,4 @@ HKEY_CURRENT_USER\Control Panel\Input Method\Hot Keys\00000011
   "LOGONSERVER"="\\\\BHJ1"
   "CLIENTNAME"="Console"
   "SESSIONNAME"="Console"
+lpr1357
