@@ -2295,3 +2295,6 @@ HKEY_CURRENT_USER\Control Panel\Input Method\Hot Keys\00000011
   "CLIENTNAME"="Console"
   "SESSIONNAME"="Console"
 lpr1357
+
+
+xkeycaps
