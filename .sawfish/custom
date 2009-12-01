@@ -1,5 +1,5 @@
 ;; sawfish user customization -- do not edit by hand!
-;; sawfish version 1.3.3, written Tue Dec  1 05:46:02 2009
+;; sawfish version 1.3.3, written Tue Dec  1 06:20:18 2009
 
 (custom-set-typed-variable (quote default-frame-style) (quote Crux) (quote frame-style))
 (custom-set-keymap (quote global-keymap) (quote (keymap ((run-shell-command "/usr/bin/gnome-screensaver-command -a") . "H-l") (cycle-windows-backwards . "H-ISO_Left_Tab") (cycle-windows-backwards . "M-ISO_Left_Tab") (iswitch-window . "H-s") (cycle-windows . "M-TAB") (next-workspace . "W-Right") (previous-workspace . "W-Left"))))

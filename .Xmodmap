@@ -1,0 +1,9 @@
+! The "Caps Lock" key generates Control_L, and the Control modifier
+keycode 0x42 =	Control_L
+keycode 0x25 =	Control_L
+keycode 108  =  Super_L
+clear lock
+clear mod1
+add	mod1 = Alt_L
+add    Control = Control_L Control_L Control_R
+add    mod4 = Super_L Super_L
