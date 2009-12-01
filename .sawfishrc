@@ -1,0 +1,84 @@
+(load-file "/home/bhj/.sawfish/iswitch-window.jl")
+(bind-keys global-keymap "H-s" 'iswitch-window)
+
+
+(bind-keys global-keymap "H-C-i" (lambda () (system "~/bin/import.sh&")))
+(bind-keys global-keymap "H-r" (lambda () (system "grun&")))
+(bind-keys window-keymap "H-i" (lambda () (display-message (concat "Window class is: " (window-class (input-focus))))))
+
+
+(defun bhj-activate-window (window)
+  (if (window-iconified-p window)
+      (uniconify-window window))
+  (activate-window window))
+
+
+(defun find-window-or-exec (wclass #!optional wcommand)
+  (if (eq (catch 'wFound
+            (mapc (lambda (window)
+                    (if (equal wclass (window-class window))
+                        (progn 
+                          (bhj-activate-window window)
+                          (throw 'wFound 'wFound))))
+                  (stacking-order)))
+          'wFound)
+      nil
+    (if wcommand
+        (system (concat wcommand "&")))))
+
+(mapc
+ (lambda (args)
+   (let ((key (car args))
+         (wclass (cadr args))
+         (wcommand (caddr args)))
+     (bind-keys global-keymap key
+                (lambda ()
+                  (find-window-or-exec wclass wcommand)))))
+ '(
+   ("H-e" "Emacs" "emacs-snapshot-gtk")
+   ("H-p" "Gnome-terminal" "gnome-terminal --hide-menubar --zoom 1.2 -e /home/bhj/bin/myscr")
+   ("H-a" "Acroread-en" "acroread")
+   ("H-n" "Firefox" "firefox")
+   ;("H-n" "Iceweasel" "iceweasel")
+   ))
+
+(mapc 
+ (lambda (arg)
+   (let ((wclass nil) (wmark nil))
+     (bind-keys global-keymap (concat "C-M-" (format nil "%d" arg))
+                (lambda ()
+                  (setq wmark (input-focus))
+                  (setq wclass (window-class (input-focus)))))
+     (bind-keys global-keymap (concat "H-" (format nil "%d" arg))
+                (lambda ()
+                  (if (and  (windowp wmark) (window-mapped-p wmark))
+                      (bhj-activate-window wmark)
+                    (if wclass
+                        (find-window-or-exec wclass)))))))
+ '(0 1 2 3 4 5 6 7 8 9))
+
+(bind-keys global-keymap "H-k" (lambda () (system "emacsclient.emacs-snapshot -n ~/doc/work.txt&")))
+
+
+(bind-keys global-keymap "H-d"
+           (lambda ()
+             (if (not (showing-desktop-p))
+                 (show-desktop)
+               (hide-desktop))))
+
+(setenv "XMODIFIERS" "@im=SCIM")
+(setenv "XIM" "SCIM")
+(setenv "GTK_IM_MODULE" "scim")
+(setenv "TZ" "Asia/Shanghai")
+
+
+(if (boundp 'ProgramsStarted)
+      nil ;; Sawfish has already started those Programs
+  (setq ProgramsStarted t)
+  (system "for x in ~/.sawfish/start/*; do ($x&); done"))
+
+
+
+
+
+
