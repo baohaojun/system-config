@@ -16,7 +16,9 @@
   (tool-bar-mode -1)
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
-  (set-frame-font "Monaco-14")
+  (if (eq system-type 'gnu/linux)
+      (set-frame-font "Monaco-11")
+    (set-frame-font "Monaco-14"))
   (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size 16))
   (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size 16))
 
@@ -327,8 +329,7 @@
        (replace-regexp-in-string
         "^/.?scp:.*?@.*?:" "" 
         (expand-file-name default-directory)))
-    (call-process "cygpath" nil t nil "-au" )
-    (backward-delete-char 1))
+    (insert default-directory))
   (insert "'"))
 
 (defcustom bhj-clt-branch "dbg_zch68_a22242_ringtone-hx11i"
