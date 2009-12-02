@@ -1801,6 +1801,11 @@ AT&T sim card puk passcode: 67437876
 
 #pragma warning( disable : 4786 )
 
+//bool<-BOOL
+#pragma warning( disable : 4800 )
+
+
+#pragma comment(lib, "AlBaseLib.lib")
 book: coders at work
 
 firefox plugin: nosquint
@@ -2296,5 +2301,12 @@ HKEY_CURRENT_USER\Control Panel\Input Method\Hot Keys\00000011
   "SESSIONNAME"="Console"
 lpr1357
 
+ login: marvell
+password: 4Tp<QS]3R7
+ or 
+ login: log
+password: IrUF+e1<hA
+ you can consult with Leo
 
 xkeycaps
+
