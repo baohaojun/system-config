@@ -2310,3 +2310,4 @@ password: IrUF+e1<hA
 
 xkeycaps
 
+cd /opl/tel*/modu*; rmmod g_file_storage; rmmod g_android_adb; insmod g_ether.ko
