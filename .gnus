@@ -6,8 +6,8 @@
  message-default-charset 'utf-8
  gnus-select-method '(nnimap "bhj2"
                              (nnimap-address "bhj2")
-                             (nnimap-server-port 993)
-                             (nnimap-stream ssl))
+                             (nnimap-server-port 143)
+                             (nnimap-stream network))
  gnus-signature-limit 500
  message-cite-function 'message-cite-original-without-signature
  )

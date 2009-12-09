@@ -2308,6 +2308,14 @@ password: 4Tp<QS]3R7
 password: IrUF+e1<hA
  you can consult with Leo
 
+how to check if CP log is good:
+check whether the CP offline log is enabled, have log001 folder, mipsram log is existed
+
 xkeycaps
+
+lftp ftp://borqsftp.8800.org
+echo flash > /sys/bootinfo/reboot_setting; reboot
+
+for x in /proc/*/fd/*; do echo -n $x; ls -l $x; done|grep /local
 
 cd /opl/tel*/modu*; rmmod g_file_storage; rmmod g_android_adb; insmod g_ether.ko
