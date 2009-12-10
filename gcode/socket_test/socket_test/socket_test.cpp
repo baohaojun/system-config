@@ -105,12 +105,9 @@ static const char* strSockError(int errorCode)
 }
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
-	if (!AfxWinInit(::GetModuleHandle(NULL), NULL, ::GetCommandLine(), 0))
-	{
-		return 1;
-	}
 	
-	init_sock_lib();
+	WSADATA wsaData;
+	WSAStartup(MAKEWORD(2,2), &wsaData);
 
 	SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	
@@ -124,9 +121,9 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 
 	sockaddr_in client_addr = {0};
 	client_addr.sin_family = AF_INET;
-	client_addr.sin_port = htons(12345);
+	client_addr.sin_port = htons(7);
 	if (argc == 1) {
-		client_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+		client_addr.sin_addr.s_addr = inet_addr("192.168.11.150");
 	} else {
 		client_addr.sin_addr.s_addr = inet_addr(argv[1]);
 	}
@@ -161,8 +158,11 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 		return -1;
 	}
 
-	char buff[1024];
-	while (fgets(buff, 1024, stdin)) {
+	sock_opt = 0;
+	ioctlsocket(sock, FIONBIO, &sock_opt);
+
+	char buff[1024] ="hello world\n";
+	while (true) {
 		ret = send(sock, buff, strlen(buff), 0);
 		if (ret == SOCKET_ERROR) {
 			BHJDEBUG(" Error: %s", strSockError(WSAGetLastError()));
@@ -173,7 +173,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 		}
 
 		buff[1023] = 0;
-		ret = recv(sock, buff, 1023, 0);
+		ret = recv(sock, buff, 512, 0);
 
 		if (ret = SOCKET_ERROR) {
 			BHJDEBUG(" Error: %s", strSockError(WSAGetLastError()));
