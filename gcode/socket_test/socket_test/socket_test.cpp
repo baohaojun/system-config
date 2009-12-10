@@ -172,10 +172,10 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			return -1;
 		}
 
-		buff[1023] = 0;
+		memset(buff, 0, 1024);
 		ret = recv(sock, buff, 512, 0);
 
-		if (ret = SOCKET_ERROR) {
+		if (ret == SOCKET_ERROR) {
 			BHJDEBUG(" Error: %s", strSockError(WSAGetLastError()));
 			return -1;
 		} else {
