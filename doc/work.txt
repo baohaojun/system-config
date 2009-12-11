@@ -620,6 +620,7 @@ _   underscore
 ****************************************************************
 
 howto b204 gimx7XmPGR
+svn rIh4kKbG
 
 ****************************************************************
 vmware licensing
@@ -629,7 +630,7 @@ VMware Server 2 for Linux 	A848H-FHW2V-U2NAM-4TLCM
 
 ****************************************************************
 
-svn rIh4kKbG
+
 ****************************************************************
 
 You need to edit you project settings as follows:
