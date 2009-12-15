@@ -1,4 +1,0 @@
--q -dSAFER -dNOPAUSE -dBATCH -sDEVICE#pdfwrite 
--sOutputFile#"latex companion.pdf" 
--dCompatibilityLevel#1.4 
--c .setpdfwrite -f "latex companion.ps" 
