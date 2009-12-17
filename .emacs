@@ -460,7 +460,7 @@
  '(shell-file-name "/bin/bash")
  '(show-paren-mode t nil (paren))
  '(show-paren-style (quote parenthesis))
- '(starttls-use-gnutls nil)
+ '(starttls-use-gnutls t)
  '(text-mode-hook (quote (text-mode-hook-identify)))
  '(tooltip-mode nil)
  '(tooltip-use-echo-area t)

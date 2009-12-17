@@ -26,11 +26,10 @@
 
 
 (setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
       user-mail-address "baohaojun@gmail.com"
-      smtpmail-default-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-server "smtp.gmail.com"
-      smtpmail-smtp-service 587
+      smtpmail-default-smtp-server "bhj2"
+      smtpmail-smtp-server "bhj2"
+      smtpmail-smtp-service 25
       mail-default-reply-to "haojun.bao@borqs.com"
       smtpmail-local-domain "borqs.com")
 

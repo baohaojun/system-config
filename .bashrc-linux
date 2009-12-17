@@ -10,4 +10,5 @@ function apt-get()
 alias aptitude='ssh -t root@localhost aptitude'
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-export PATH="$PATH":/usr/sbin/:/sbin:~/bin/:~/bin/linux
+export PATH="$PATH":/usr/sbin/:/sbin:~/bin/:~/bin/linux:~/tools/arm-linux-4.1.1/bin
+alias sudo='sudo env PATH=$PATH'

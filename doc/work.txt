@@ -2320,3 +2320,22 @@ echo flash > /sys/bootinfo/reboot_setting; reboot
 for x in /proc/*/fd/*; do echo -n $x; ls -l $x; done|grep /local
 
 cd /opl/tel*/modu*; rmmod g_file_storage; rmmod g_android_adb; insmod g_ether.ko
+
+
+ FBW FTP
+ftp://173.161.7.217
+username: Borqs (case sensitive)
+password: fbwborqs (case sensitive)
+
+****************************************************************
+mail from:<baohaojun@gmail.com>
+rcpt to:<baohj_zj@hotmail.com>
+data
+From: baohj_zj@hotmail.com
+To: shit@shit.com
+Subject: hello bhj world
+
+proof
+.
+quit
+
