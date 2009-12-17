@@ -2390,8 +2390,19 @@ smtpd_tls_ask_ccert = yes
 smtpd_tls_req_ccert =no
 smtp_tls_enforce_peername = no
 
-****************************************************************
 
+
+****************************************************************
+deb http://mirror.bjtu.edu.cn/ubuntu/ karmic main multiverse restricted universe
+deb http://mirror.bjtu.edu.cn/ubuntu/ karmic-backports main multiverse restricted universe
+deb http://mirror.bjtu.edu.cn/ubuntu/ karmic-proposed main multiverse restricted universe
+deb http://mirror.bjtu.edu.cn/ubuntu/ karmic-security main multiverse restricted universe
+deb http://mirror.bjtu.edu.cn/ubuntu/ karmic-updates main multiverse restricted universe
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ karmic main multiverse restricted universe
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ karmic-backports main multiverse restricted universe
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ karmic-proposed main multiverse restricted universe
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ karmic-security main multiverse restricted universe
+deb-src http://mirror.bjtu.edu.cn/ubuntu/ karmic-updates main multiverse restricted universe
 
 lftp ftp://borqsftp.8800.org
 echo flash > /sys/bootinfo/reboot_setting; reboot
