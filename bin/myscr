@@ -2,7 +2,7 @@
 cd 
 source ~/.bash_profile
 #. /etc/bash_completion
-session_name="$1"
+session_name=${1:-first}
 
 screen -wipe
 if  screen -list|grep $session_name 
