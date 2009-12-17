@@ -1,0 +1,90 @@
+#title IMEI MEP Howto
+
+<contents>
+To test MEP, you need do 3 steps:
+
+ 1. Generate an unbound IMEI ([[http://en.wikipedia.org/wiki/International_Mobile_Equipment_Identity][International Mobile Equipment Identity]])
+    file. 
+
+ 2. Generate an unbound MEP file.
+
+ 3. Bind the IMEI and MEP into the phone.
+
+You can do all the above with Alchemy. You can get the latest version
+of Alchemy (1.0.29) from http://rapidshare.com/files/296777275/Alchemy-1.0.29.exe.html
+
+
+* Generate Unbound IMEI
+
+In Alchemy, enter the following command <code>generate imei
+12345678901234 c:\imei.bin</code>. See the following screen.
+
+Run =help generate imei= to see help on =generate imei=.
+
+The output file is saved at c:\imei.bin, you can specify other
+location.
+
+The IMEI in this example is 12345678901234, you can change that if you
+want. It must be 14 digits.
+
+    [[../images/SS-2009.10.23-16.02.36.png]]
+
+
+
+* Generate Unbound MEP
+
+In Alchemy, Run the command <code>! generateMEP 334 020 123456 654321 3</code>.
+
+Run the command =!= to see help on =!=, and =! generateMEP= to see help on
+=generateMEP=. =generateMEP= takes 2 mandatory argument, the Mobile
+Country Code (MCC) and the Mobile Network Code (MNC). In this example,
+the MCC is 334, the MNC is 020. And then following 3 arguments are
+optional. The =123456= is the default unlock password, the =654321= is the
+default unblock password. =3= is the default trial limit.
+
+MEP file will be saved as "MEP_FILE_0.bin" in the same folder as the
+Alchemy.exe program. Please copy it to c:\mep.bin.
+
+
+[[../images/SS-2009.10.23-18.32.59.png]]
+
+
+** Generate Multiple-MCC-MNC MEP
+
+For e.g., to lock 3 groups of MCC/MNC combinations 310/980, 311/180,
+and 310/410, you need to run the =! generateMEP= command as below:
+
+=! generateMEP.exe 310:311:310 980:180:410=
+
+
+* Bind IMEI/MEP into Phone
+
+Make sure you have copied the unbound MEP to =c:\mep.bin=,
+then run the following command in Alchemy:
+
+=bind imei mep c:\imei.bin c:\mep.bin=
+
+You need to wait for up to 1 minute, Alchemy will be non-responding
+during this period. 
+
+
+
+* How to test MEP SIM card lock
+
+ 1. See the following image. In the AT page, enter the AT command
+    <code>AT+CLCK="PN",2</code>, you should see a response
+    <code>+CLCK: 1</code>.    [[../images/SS-2009.10.23-15.27.56.png]]
+
+ 2. If the SIM card and MEP matches, the phone should be able to
+    register to the network. It should be the same behavior as if the
+    MEP has not been there at all.
+
+ 3. If they don't match, the Subsidy Lock screen should pop up. See
+    the following image. Input the the password you used to generate
+    MEP to unlock it. The default is 123456. If you input the wrong
+    password too many times, another screen will popup, then you need
+    to input the unblock password, default 654321.
+
+    [[../images/fb.png]]
+
+

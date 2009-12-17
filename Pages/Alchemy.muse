@@ -1,0 +1,226 @@
+#title The Borqs Alchemy Library Usage Manual
+#author Bao Haojun <haojun.bao@borqs.com>
+
+
+Copyright Borqs, Inc. 2009, All Rights Reserved
+<contents>
+
+* Introduction
+
+This user manual corresponds to Borqs Alchemy Library version
+1.0.6. This is the library to be used for testing the OMS phone. The
+main functions of this library include:
+ - Initialization. Connection to the phone is established through
+   usbnet; connection status callback and logging callback functions
+   are saved.
+ - Execution. Test commands can be sent to the phone. Refer to the
+   `TCMD Reference Manual' for a complete detailed list of supported
+   commands.
+ - Help system. A simple help system is built-in in this library, it
+   will print a simplified list of the *TCMD* commands supported by this
+   library.
+
+Three files are provided for development, together with a
+sample console project. The 3 development files are:
+ 1. =libalchemy.h=, the header file used for compilation
+ 2. =alchemylib.lib=, the .lib file used for linking
+ 3. =alchemylib.dll=, the .dll file used for running your program.
+
+
+** How to use the library
+
+You can develop either win32 or console applications using this
+library. MFC must be used, and it must be linked as a shared DLL. 
+ - If MFC is not used, compilation will fail.
+ - If MFC is linked as a static library, runtime exception will occur.
+
+The library is built with VC6, so VC6 must be used to develop projects
+using this library.
+
+To create a console mode AlchemyTest project, do the following steps
+in VC6:
+ 1. Create a console application. Enter the Project name and
+    Location. See Fig.[[#NewProject]].
+ 2. Select MFC support. See Fig.[[#MFCSupport]].
+ 3. Click Finish.
+ 4. In =Build->Set Active Configuration=, set the configuration to *win32 Release*.
+ 5. Click =Project->Settings=, add the alchemylib.lib to the libraries,
+    and add the current current directory =\.= to the additional library
+    path. See Fig.[[#AddLib]]
+ 6. Copy the *.h* and *.lib* file to your project directory.
+ 7. Copy the .dll file to your project build output directory, in this
+    case, =C:\AlchemyTest\Release=.
+ 8. Copy the .cpp and .h files in the sample project to your project
+    directory, change the name if necessary. Or you can copy/paste the code manually.
+ 9. Press =Ctrl+F5=, to build and execute =AlchemyTest.exe=, a DOS window
+    will pop up, input =version= in it, and check the result.
+ 
+
+
+[[Q:\public_html\atpass\New0015.png][Create a new project]]
+
+[[Q:\public_html\atpass\Win32_Console_Application_-_Step_1_of_10016.png][Make sure `An application that supports MFC.' is selected]]
+
+[[Q:\public_html\atpass\Project_Settings0017.png][Add the alchemylib.lib]]
+
+* The Header File
+
+** Types Defined By AlchemyLib
+
+<example>    
+  typedef enum {
+      connectStateOK,
+      connectStateFail,
+  } connectState_T;
+  
+  typedef enum {
+      DL_URGENT,  
+      DL_INFO,    
+      DL_VERBOSE,  
+      DL_DEBUG,    
+  }dbgLvl_T;
+  
+  typedef void (*StateUpdateCbFuncT) (connectState_T);
+  typedef void (*PrintLogCbFuncT) (const char*);
+  typedef CArray<unsigned char, const unsigned char&> CU8Array;
+</example>
+
+ - The =connectState_T= is used in the =StateUpdateCbFuncT= callback
+   function as the argument type. =connectStateOK= means connection is
+   successfully established. =connectStateFail= means connection failed.
+
+ - The =StateUpdateCbFuncT= is the prototype for status update callback
+   function. The function should be provided by the library user. It
+   will be called when connection status changes. The callback
+   function is only used in GUI application. In a console application,
+   the callback must be =NULL=.
+
+ - The =PrintLogCbFuncT= is the prototype for the log display callback
+   function. When AlchemyLib is connecting to the phone or executing
+   test command, it will produce logs. User can use this callback
+   function to customize displaying the log in a =RichEditCtrl=, for
+   e.g.. It must not be used in a console application, since the log
+   will already be printed to the console.
+
+ - =dbgLvl_T= is used to set and get debug level. If the debug level is
+   set to DL_DEBUG, then all log will be sent to the logging callback
+   provided by user; set to DL_URGENT, then only the most important
+   log will be sent to the callback. It is only usefull in GUI
+   application. In console application, all log will be printed to the
+   console.
+
+ - =CU8Array= is the type for holding the test execution result. Many
+   test commands will return *binary* information, so a =CString= can't be
+   used, since it can only represent *text* strings, not binary data.
+
+** Functions Exported By AlchemyLib
+
+<example>
+  int InitAlchemyLib(StateUpdateCbFuncT, PrintLogCbFuncT);
+
+  int cliCarryOut(const CString& sCommand);
+  int cliCarryOut(const char *sCommand);
+  int cliCarryOut(const CString& sCommand, CU8Array& result);
+  
+  dbgLvl_T getDbgLvl();
+  void setDbgLvl(dbgLvl_T dl);
+</example>
+
+ - =InitAlchemyLib= is the function to initialize AlchemyLib, it takes 2
+   function pointers as argument, the connect status callback and the
+   log callback. In console mode, both must be =NULL=.
+
+ - =cliCarryOut= is the function to execute a test command. 
+
+    - You can pass a =CString= object or a basic =zero ended C string= as
+      input. 
+
+    - If you don't care about the result, then use either of the first
+      2 versions of =cliCarryOut=, which has no output argument. 
+
+    - The 3rd version takes a =CU8Array&= as output argument.
+
+    - Return value is 0 if the command is carried out successfully, -1
+      otherwise (test commands can fail for many reasons, for e.g., an
+      invalid command, the phone is not connected yet, etc.).
+
+ - =getDbgLvl= and =setDbgLvl= are the function for managing debug level,
+   they are useless for a console application since all log are
+   printed.
+
+** Commands Supported By AlchemyLib cliCarryOut
+ 
+There are 3 types of commands. 
+
+  Help commands :: There are only 4 help commands, whose purpose is
+     to supply a simple help system: =help=, =todo=, =bugs= and =commands=.
+    - =help= will print a simple help
+    - =todo= will print a =TODO= list
+    - =bugs= will print a known bugs list
+    - =commands= will print the other 2 types of commands
+
+  Specific test commands :: There are many of them, for e.g.:
+    - =version= will read the software version from the phone, 
+    - =reboot flash= will reboot the phone into flash mode
+    - =set lcdbl= will set the LCD back light, it takes a single *uint8*
+      argument, so =set lcdbl 0= or =set lcdbl= will turn the LCD back
+      light off, =set lcdbl 255= or =set lcdbl 0xff= will turn the LCD
+      back light to the maximum lightness. Note that if no argument is
+      supplied, then a default value is assumed, in this case
+      =(uint8)0=, and that both decimal and hexadecimal forms are
+      accepted.
+<example>
+Alchemy\>set lcdbl 0xff
+logger.cpp:102: () bhj 400  send: "opCode 0x00000012,data: 0x02 0xff
+logger.cpp:102: () bhj 400  Do command 'set lcdbl' ...
+logger.cpp:102: () bhj 400  recv header: 0x80 0xec 0x12 0x00 0x00 0x06 0x00 0x00
+ 0x00 0x00 0x00 0x00
+logger.cpp:102: () bhj 400  outlen is 0
+logger.cpp:102: () bhj 400  `set lcdbl`: success!
+</example>
+    - =get lcdbl= will read the current LCD back light.
+<example>
+Alchemy\>get lcdbl
+logger.cpp:102: () bhj 400  send: "opCode 0x00000012,data: 0x01 0x00
+logger.cpp:102: () bhj 400  Do command 'get lcdbl' ...
+logger.cpp:102: () bhj 400  recv header: 0x82 0x8e 0x12 0x00 0x00 0x06 0x00 0x00
+ 0x01 0x00 0x00 0x00
+logger.cpp:102: () bhj 400  outlen is 1
+logger.cpp:102: () bhj 400  "\xff"
+logger.cpp:102: () bhj 400     in hex: 0xff
+logger.cpp:102: () bhj 400  `get lcdbl`: success!
+</example>
+    - many others... Note that a complete list of them can be printed
+      by the =commands= command.
+
+  Versatile test command :: There is only 1 such command: =opcode=. All
+     the specific commands are actually all of the same format: `*OPCODE*
+     *DATA* ', for e.g., =set lcdbl= and =get lcdbl= shares the same =OPCODE=,
+     0x12, and the first byte of *DATA* tells if it's a *set(0x2)* or a
+     *get(0x1)*, the second byte is the LCD back light value. In the
+     case of =get lcdbl=, the value is ignored. The =opcode= command can
+     be used if a new command need to be tested. So, =opcode 0x12 0x2=
+     =0xff= will do exactly the same thing as =set lcdbl 0xff=.
+
+* Usage Of AlchemyTest
+
+AlchemyTest is the sample console alchemy application. You can use it
+in 3 ways:
+
+  - Test interactively: =.\AlchemyTest=. See Fig.[[#interactiveTest]].
+  - Test a single command: for e.g, =.\AlchemyTest -c "set lcdbl
+    0xff"=. See Fig.[[#singleCmdTest]].
+  - Test a script file: for e.g., =.\AlchemyTest testcase1.txt=. See Fig.[[#scriptTest]].
+
+You can read the source code to get more information.
+
+[[Q:\public_html\atpass\CWINDOWSsystem32cmd_exe_-_AlchemyCli_exe0018.png][Interactive test]]
+
+[[Q:\public_html\atpass\CWINDOWSsystem32cmd_exe0019.png][Test a single command]]
+
+[[Q:\public_html\atpass\CWINDOWSsystem32cmd_exe0020.png][Test a script]]
+
+* Reference
+
+The =TCMD reference manual= should be used for what every OPCODE test
+command does.

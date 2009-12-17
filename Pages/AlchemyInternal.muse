@@ -1,0 +1,10 @@
+#title Alchemy Design Document
+#author Bao Haojun <haojun.bao@borqs.com>
+
+<contents>
+
+* Introduction
+
+This document will serve as a simple guide on the current design and implementation of Alchemy. Other thoughts, such as it's expandability, maintainability, etc., are also evaluated.
+
+First I will talk about the components of Alchemy. Then the 

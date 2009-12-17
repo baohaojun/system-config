@@ -2314,12 +2314,6 @@ check whether the CP offline log is enabled, have log001 folder, mipsram log is 
 
 xkeycaps
 
-lftp ftp://borqsftp.8800.org
-echo flash > /sys/bootinfo/reboot_setting; reboot
-
-for x in /proc/*/fd/*; do echo -n $x; ls -l $x; done|grep /local
-
-cd /opl/tel*/modu*; rmmod g_file_storage; rmmod g_android_adb; insmod g_ether.ko
 
 
  FBW FTP
@@ -2397,3 +2391,11 @@ smtpd_tls_req_ccert =no
 smtp_tls_enforce_peername = no
 
 ****************************************************************
+
+
+lftp ftp://borqsftp.8800.org
+echo flash > /sys/bootinfo/reboot_setting; reboot
+
+for x in /proc/*/fd/*; do echo -n $x; ls -l $x; done|grep /local
+cd /opl/tel*/modu*; rmmod g_file_storage; rmmod g_ether; insmod g_android_adb.ko
+cd /opl/tel*/modu*; rmmod g_file_storage; rmmod g_android_adb; insmod g_ether.ko
