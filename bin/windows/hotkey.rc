@@ -46,7 +46,7 @@ KeyToGrab(W),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(Q),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py dexplore.exe)
 KeyToGrab(T),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(screen-exchange.sh)
 KeyToGrab(B),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p bash.exe bash --rcfile ~/.bashrc-min -i)
-KeyToGrab(N),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p chrome -F 1 http://google.com)
+KeyToGrab(N),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p chrome -F 1 http://www.google.com/calendar/render)
 #KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c acrobat -F 1 acroread)
 KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py alchemy.exe test.exe.lnk)
 KeyToGrab(C),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py "")
