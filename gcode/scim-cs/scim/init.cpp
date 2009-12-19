@@ -8,7 +8,8 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <winsock.h>
+
+#include "ime-socket.h"
 
 
 using namespace std;
@@ -37,40 +38,7 @@ GetSystemTimeAsUINT64()
 list<wchar_t> g_history_list;
 
 
-// #pragma comment (lib, "ws2_32")
-// static bool init_wsock()
-// {
-// 	WORD wVersionRequested;
-// 	WSADATA wsaData;
-// 	int err;
- 
-// 	wVersionRequested = MAKEWORD( 2, 2 );
- 
-// 	err = WSAStartup( wVersionRequested, &wsaData );
-// 	if ( err != 0 ) {
-// 		/* Tell the user that we could not find a usable */
-// 		/* WinSock DLL.                                  */
-// 		return false;
-// 	}
- 
-// /* Confirm that the WinSock DLL supports 2.2.*/
-// /* Note that if the DLL supports versions greater    */
-// /* than 2.2 in addition to 2.2, it will still return */
-// /* 2.2 in wVersion since that is the version we      */
-// /* requested.                                        */
- 
-// 	if ( LOBYTE( wsaData.wVersion ) != 2 ||
-// 		 HIBYTE( wsaData.wVersion ) != 2 ) {
-// 		/* Tell the user that we could not find a usable */
-// 		/* WinSock DLL.                                  */
-// 		WSACleanup( );
-// 		return false; 
-// 	}
- 
-// /* The WinSock DLL is acceptable. Proceed. */
-// 	return true;
 
-// }
 
 static bool InitImeGlobalData(HINSTANCE hInstance)
 {
@@ -78,6 +46,8 @@ static bool InitImeGlobalData(HINSTANCE hInstance)
 	// 	BHJDEBUG(" Error: init_wsock failed");
 	// 	return false;
 	// }
+	
+	init_ime_socket();
 
 	TCHAR szChiChar[4] = {0x9999, 0};
 
@@ -177,14 +147,12 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 	}
 
 	const char* exclude_exes[] = {
-		"/xwin.exe",
-		"/conime.exe",
+		"/notepad.exe",
 		NULL,
 	};
 
 	for (int i=0; exclude_exes[i]; i++) {
-		if (!_stricmp(exe_name.c_str(), exclude_exes[i])) {
-			BHJDEBUG("Error: %s is calling, they can't handle IME!", exclude_exes[i]);
+		if (_stricmp(exe_name.c_str(), exclude_exes[i])) {
 			return false;
 		}		
 	} 

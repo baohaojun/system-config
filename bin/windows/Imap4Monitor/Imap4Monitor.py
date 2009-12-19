@@ -123,7 +123,6 @@ class ConfigDlg (QDialog):
         except:
             type_, value_ = sys.exc_info()[:2]
             self.trayIcon.showMessage("Error:", `type_` + ' ' + `value_`, QSystemTrayIcon.Information, 1)
-            print "Error: ", `type_`, ' ', `value_`
             self.trayIcon.setIcon(QIcon(":/error-mail.png"))
             self.timer.start(300000)
         

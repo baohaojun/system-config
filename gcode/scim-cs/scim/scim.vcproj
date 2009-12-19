@@ -194,6 +194,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ime-socket.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\imewnd.cpp"
 				>
 			</File>
@@ -243,6 +247,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\ime-socket.h"
+				>
+			</File>
 			<File
 				RelativePath=".\imedefs.h"
 				>

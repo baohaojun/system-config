@@ -669,7 +669,6 @@ cstring format_string(const char* fmt, ...)
 
 void program_runner::ctor_helper(const cstring& cmdline, which_output_t which, int timeout)
 {
-	const char* exec = NULL;
 	HANDLE                pipe_read, pipe_write;
     SECURITY_ATTRIBUTES   sa;
     STARTUPINFO           startup;
@@ -715,7 +714,7 @@ void program_runner::ctor_helper(const cstring& cmdline, which_output_t which, i
 	CString cl_buf = CString(cmdline);
 
     ret = CreateProcess(
-		exec,
+		NULL,
 		cl_buf.GetBuffer(0),
 		/* the fork-server argument will set the
 		   debug = 2 in the child           */

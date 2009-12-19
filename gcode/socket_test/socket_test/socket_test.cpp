@@ -39,127 +39,14 @@ static bool init_sock_lib()
 	return true;
 }
 
-static struct {
-	int code;
-	const char *errStr;
-} sock_err_map[] = {
-	{WSAEINTR, "WSAEINTR"},
-	{WSAEBADF, "WSAEBADF"},
-	{WSAEACCES, "WSAEACCES"},
-	{WSAEFAULT, "WSAEFAULT"},
-	{WSAEINVAL, "WSAEINVAL"},
-	{WSAEMFILE, "WSAEMFILE"},
-	{WSAEWOULDBLOCK, "WSAEWOULDBLOCK"},
-	{WSAEINPROGRESS, "WSAEINPROGRESS"},
-	{WSAEALREADY, "WSAEALREADY"},
-	{WSAENOTSOCK, "WSAENOTSOCK"},
-	{WSAEDESTADDRREQ, "WSAEDESTADDRREQ"},
-	{WSAEMSGSIZE, "WSAEMSGSIZE"},
-	{WSAEPROTOTYPE, "WSAEPROTOTYPE"},
-	{WSAENOPROTOOPT, "WSAENOPROTOOPT"},
-	{WSAEPROTONOSUPPORT, "WSAEPROTONOSUPPORT"},
-	{WSAESOCKTNOSUPPORT, "WSAESOCKTNOSUPPORT"},
-	{WSAEOPNOTSUPP, "WSAEOPNOTSUPP"},
-	{WSAEPFNOSUPPORT, "WSAEPFNOSUPPORT"},
-	{WSAEAFNOSUPPORT, "WSAEAFNOSUPPORT"},
-	{WSAEADDRINUSE, "WSAEADDRINUSE"},
-	{WSAEADDRNOTAVAIL, "WSAEADDRNOTAVAIL"},
-	{WSAENETDOWN, "WSAENETDOWN"},
-	{WSAENETUNREACH, "WSAENETUNREACH"},
-	{WSAENETRESET, "WSAENETRESET"},
-	{WSAECONNABORTED, "WSAECONNABORTED"},
-	{WSAECONNRESET, "WSAECONNRESET"},
-	{WSAENOBUFS, "WSAENOBUFS"},
-	{WSAEISCONN, "WSAEISCONN"},
-	{WSAENOTCONN, "WSAENOTCONN"},
-	{WSAESHUTDOWN, "WSAESHUTDOWN"},
-	{WSAETOOMANYREFS, "WSAETOOMANYREFS"},
-	{WSAETIMEDOUT, "WSAETIMEDOUT"},
-	{WSAECONNREFUSED, "WSAECONNREFUSED"},
-	{WSAELOOP, "WSAELOOP"},
-	{WSAENAMETOOLONG, "WSAENAMETOOLONG"},
-	{WSAEHOSTDOWN, "WSAEHOSTDOWN"},
-	{WSAEHOSTUNREACH, "WSAEHOSTUNREACH"},
-	{WSAENOTEMPTY, "WSAENOTEMPTY"},
-	{WSAEPROCLIM, "WSAEPROCLIM"},
-	{WSAEUSERS, "WSAEUSERS"},
-	{WSAEDQUOT, "WSAEDQUOT"},
-	{WSAESTALE, "WSAESTALE"},
-	{WSAEREMOTE, "WSAEREMOTE"},
-	{WSAEDISCON, "WSAEDISCON"},
-	{WSASYSNOTREADY, "WSASYSNOTREADY"},
-	{WSAVERNOTSUPPORTED, "WSAVERNOTSUPPORTED"},
-	{WSANOTINITIALISED, "WSANOTINITIALISED"},
-	{0, NULL},
-};
 
-
-static const char* strSockError(int errorCode)
-{
-	for (int i=0; sock_err_map[i].code; i++) {
-		if (errorCode == sock_err_map[i].code) {
-			return sock_err_map[i].errStr;
-		}
-	}
-	return "unknown socket error:";
-}
 int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 {
 	
 	WSADATA wsaData;
 	WSAStartup(MAKEWORD(2,2), &wsaData);
 
-	SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	
-	if (sock == INVALID_SOCKET) {
-		BHJDEBUG(" Error: %s", strSockError(WSAGetLastError()));
-		return -1;
-	}
 
-	unsigned long sock_opt = 1;
-	ioctlsocket(sock, FIONBIO, &sock_opt);
-
-	sockaddr_in client_addr = {0};
-	client_addr.sin_family = AF_INET;
-	client_addr.sin_port = htons(7);
-	if (argc == 1) {
-		client_addr.sin_addr.s_addr = inet_addr("192.168.11.150");
-	} else {
-		client_addr.sin_addr.s_addr = inet_addr(argv[1]);
-	}
-	int ret = connect(sock, (const sockaddr*)&client_addr, sizeof(client_addr));
-	if (ret) {
-		int err = WSAGetLastError();
-		BHJDEBUG(" Error: %s %d", strSockError(err), err);
-	}
-
-	fd_set fd_w;
-	FD_ZERO(&fd_w);
-	FD_SET(sock, &fd_w);
-	
-	fd_set fd_e;
-	FD_ZERO(&fd_e);
-	FD_SET(sock, &fd_e);
-
-	struct timeval to = {2, 0};
-	ret = select(0, NULL, &fd_w, &fd_e, &to);
-	if (ret == SOCKET_ERROR) {
-		int err = WSAGetLastError();
-		BHJDEBUG(" Error: select %s %d", strSockError(err), err);
-		return -1;
-	}  else if (ret == 0) {
-		BHJDEBUG(" Error: timeout");
-		return -1;
-	}else if (FD_ISSET(sock, &fd_w)) {
-		BHJDEBUG(" Yes, connect OK");
-	} else if (FD_ISSET(sock, &fd_e)) {
-		int err = WSAGetLastError();
-		BHJDEBUG(" Error: connect %s %d", strSockError(err), err);
-		return -1;
-	}
-
-	sock_opt = 0;
-	ioctlsocket(sock, FIONBIO, &sock_opt);
 
 	char buff[1024] ="hello world\n";
 	while (true) {

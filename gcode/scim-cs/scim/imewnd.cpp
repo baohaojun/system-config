@@ -425,9 +425,9 @@ void set_status_wnd(HWND hUIWnd, HWND stat)
 }
 
 
-static wstring szUIClassName = L"BhjImeUI";
-static wstring szCompClassName = L"BhjImeComp";
-static wstring szStatusClassName = L"BhjImeStatus";
+static wstring szUIClassName = L"BhjCsImeUI";
+static wstring szCompClassName = L"BhjCsImeComp";
+static wstring szStatusClassName = L"BhjCsImeStatus";
 
 wstring get_ui_class_name()
 {

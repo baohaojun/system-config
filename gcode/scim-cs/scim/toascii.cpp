@@ -3,6 +3,7 @@
 #include <imedefs.h>
 #include "imewnd.h"
 #include <algorithm>
+#include "ime-socket.h"
 using std::reverse;
 
 typedef enum {
@@ -167,6 +168,14 @@ BOOL WINAPI ImeProcessKey(HIMC /*hIMC*/,
 						  u32 vk, LPARAM scan_code,
 						  CONST LPBYTE kbd_state)
 {
+
+	static bool ime_connected = false;
+
+	if (!ime_connected) {
+		BHJDEBUG(" connect_ime_server");
+		ime_connected = true;
+		connect_ime_server();
+	}
 	// BHJDEBUG(" vk is %x, scan_code is, cnt:%d, sc:0x%02x, ext:%s, prev:%s", 
 	// 		 vk, 
 	// 		 (scan_code&0xffff),
