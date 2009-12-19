@@ -18,5 +18,12 @@ while True:
         line = sock.readline()
         if not line or line == 'end:\n':
             break
+
+        if ':' not in line:
+            print ' ',
+
         print line,
+
+        if 'end:' in line:
+            print
 
