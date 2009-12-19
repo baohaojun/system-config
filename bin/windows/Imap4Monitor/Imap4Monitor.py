@@ -92,7 +92,7 @@ class ConfigDlg (QDialog):
         settings.setValue("username", QVariant(self.username))
         self.hide()
 
-        for auth in open(os.path.join(os.environ['HOME'], '/.authinfo')):
+        for auth in open(os.path.join(os.environ['HOME'], '.authinfo')):
             authList = auth.split()
             if all((authList[1] == str(self.host),
                    authList[3] == str(self.username),
@@ -123,6 +123,7 @@ class ConfigDlg (QDialog):
         except:
             type_, value_ = sys.exc_info()[:2]
             self.trayIcon.showMessage("Error:", `type_` + ' ' + `value_`, QSystemTrayIcon.Information, 1)
+            print "Error: ", `type_`, ' ', `value_`
             self.trayIcon.setIcon(QIcon(":/error-mail.png"))
             self.timer.start(300000)
         

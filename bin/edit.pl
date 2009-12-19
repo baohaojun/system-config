@@ -5,10 +5,17 @@ use String::ShellQuote;
 $ssh_cmd = "/scp:$myname\@$myip:$myfile";
 $ssh_cmd = shell_quote($ssh_cmd);
 
-$ssh_cmd = <<EOC;
+if ($remote_ip eq 'localhost') {
+    $ssh_cmd = <<EOC;
+emacsclient -n $ssh_cmd
+EOC
+
+} else {
+    $ssh_cmd = <<EOC;
 psexec.exe -sid "\$(cygpath -alw "\$(which findexec)")" -c emacs-
 emacsclient -n $ssh_cmd
 EOC
+}
 
 $ssh_cmd =~ s/\n/;/g;
 $ssh_cmd = shell_quote($ssh_cmd);

@@ -12,3 +12,33 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export PATH="$PATH":/usr/sbin/:/sbin:~/bin/:~/bin/linux:~/tools/arm-linux-4.1.1/bin
 alias sudo='sudo env PATH=$PATH'
+
+
+if test -z "$SSH_CLIENT"; then
+    export LOCALIP=localhost
+    export LOCALPORT=22
+    export REMOTEIP=localhost
+    export PS1HostName=`hostname`
+    export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m)\n\$'
+
+    function sudoedit()
+    {
+        if [[ $WHOAMI == root ]] && [[ -f "$1" ]]; then
+            echo using root to do edit, won\'t check read permission
+        else
+            if ! [[ -r "$1" ]]; then
+                echo Error: "$1" is not readable
+                return 1
+            fi
+            if ! [[ -w "$1" ]]; then
+                echo Warning: "$1" is not writable
+            fi
+        fi    
+
+        local file=$( readlink -f "$1" )
+        WHOAMI=root ~/bin/edit.pl "$file"
+    }
+
+alias edit='emacsclient.emacs-snapshot -n'
+
+fi
