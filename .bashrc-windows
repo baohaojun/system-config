@@ -8,10 +8,8 @@ function SetPath()
 {
     local paths
     paths=(
-        /cygdrive/c/Python25/
-        /cygdrive/c/Python25/Lib/site-packages/PyQt4
-        /cygdrive/c/PROGRA~1/Java/JDK16~1.0_1/bin #"/cygdrive/c/Program Files/Java/jdk1.6.0_13/bin/"
         ~/bin/windows/lnks
+        /cygdrive/c/PROGRA~1/Java/JDK16~1.0_1/bin #"/cygdrive/c/Program Files/Java/jdk1.6.0_13/bin/"
         ~/bin
         ~/bin/windows
         ~/bin/windows/redirect_vc6
@@ -164,8 +162,8 @@ function ccd()
 }
 
 export EDITOR=emacsedit.sh
-export PYTHON_INCLUDE='c:\python25\include'
-export PYTHON_LIB='c:\python25\libs\python25.lib'
+# export PYTHON_INCLUDE='c:\python25\include'
+# export PYTHON_LIB='c:\python25\libs\python25.lib'
 export ADBHOST=192.168.100.2
 export ADB_HOST=192.168.100.2
 export LC_ALL=en_US.UTF-8

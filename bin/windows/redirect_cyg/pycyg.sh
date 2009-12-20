@@ -13,7 +13,9 @@ pyfile="$1"
  fi
 shift
 pyfile=`cygpath -alw "$pyfile"`
-/cygdrive/c/python25/python "$pyfile" "$@"
+echo python lib is: $PYHON_LIB
+echo python include is: $PYHON_INCLUDE
+python "$pyfile" "$@"
 if [[ $debug == true ]]
 then
     echo -n Press any key to exit ...
