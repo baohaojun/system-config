@@ -7,8 +7,6 @@ import threading, special_keys
 from OrderedSet import OrderedSet
 
 
-_g_reverse_rules = {}
-
 
 @contextmanager
 def autolock(lock):
@@ -73,13 +71,72 @@ class ime_quail:
             else:
                 return OrderedSet()
 
+class ime_reverse:
+    def __init__(self):
+        self.rules = {}
+        self.lock = threading.RLock()
+        
+    def has_han(self, han):
+        with autolock(self.lock):
+            return han in self.rules
 
+    def set_reverse(self, han, codes):
+        with autolock(self.lock):
+            self.rules[han] = codes
+
+    def get_reverse(self, han):
+        with autolock(self.lock):
+            if self.has_han(han):
+                return self.rules[han]
+            else:
+                return ()
+
+_g_ime_reverse = ime_reverse()
 _g_ime_trans = ime_trans()
 _g_ime_quail = ime_quail()
 
 class ime_keyboard:
-    def __init__(self):
+    all_mods = ['', #no modifier
+                  'A', # alt
+                  'AC',# alt ctrl
+                  'ACS', #alt ctrl shift
+                  'AS',
+                  'C',
+                  'CS',
+                  'S'
+                  ]
+
+    def __init__(self, keystr):
         self.special_keys = special_keys.special_keys
+        keys = keystr.split()
+        mods = keys[:-1]
+        mods = ''.join(mods)
+        mods = list(mods)
+        mods.sort()
+        mods = OrderedSet(mods)
+        self.mods = ''.join(mods)
+        
+        assert self.mods in ime_keyboard.all_mods, "invalid modifiers"
+        
+        self.key = keys[-1]
+        
+        assert len(self.key), "empty keys"
+        if len(self.key) == 1:
+            assert isgraph(self.key), "key not graphic"
+        else:
+            assert self.key in self.special_keys, "key is not special function, like in emacs"
+
+    def __eq__(self, other_key):
+        if isinstance(other_key, str):
+            other_key = ime_keyboard(other_key)
+        return self.name == other_key.name
+
+    @property
+    def name(self):
+        if not self.mods:
+            return self.key
+        else:
+            return self.mods + ' ' + self.key
 
 class ime:
     def __init__(self, sock):
@@ -90,15 +147,6 @@ class ime:
         self.__hintstr = ''
         self.__cands = []
         self.__cand_index = 0
-        self.__all_mods = ['', #no modifier
-                           'A', # alt
-                           'AC',# alt ctrl
-                           'ACS', #alt ctrl shift
-                           'AS',
-                           'C',
-                           'CS',
-                           'S'
-                           ]
 
     def __write(self, str_):
         self.__sock.write(bytes(str_, 'utf-8'))
@@ -108,6 +156,8 @@ class ime:
 
     def __error(self):
         exc_info = sys.exc_info()
+        traceback.print_tb(exc_info[2])
+        sys.stderr.flush()
         self.__write("%s: %s\n" % (repr(exc_info[0]), repr(exc_info[1])))
 
     def __reply(self, reply):
@@ -158,27 +208,12 @@ class ime:
             self.__reply('no')
 
     def keyed(self, arg):
-        keys = arg.split()
-        assert keys, "empty keys"
+        key = ime_keyboard(arg)
 
-        mods = keys[:-1]
-        mods.sort()
-        mods = ''.join(mods)
-        
-        assert mods in self.__all_mods, "invalid modifiers"
-        
-        key = keys[-1]
-        
-        assert len(key), "empty keys"
-        if len(key) == 1:
-            assert isgraph(key), "key not graphic"
-        else:
-            assert key in self.special_keys, "key is not special function, like in emacs"
-
-        if mods == 'C' and key == '\\':
+        if key == 'C \\':
             self.__toggle()
-        elif not mods and len(key) == 1 and ord(key) in range(ord('a'), ord('z')+1):
-            self.__compstr += key
+        elif len(key.name) == 1 and ord(key.name) in range(ord('a'), ord('z')+1):
+            self.__compstr += key.name
         
         self.comp()
         self.hint()
@@ -229,14 +264,13 @@ def _init_reverse():
 
 
     def init_one_rule(line):
-        global _g_reverse_rules
         mo = reobj.match(line)
         if mo:
             key = mo.group(1)
             cands = mo.group(2).split('" "')
             cands[0] = cands[0][1:]
             cands[-1] = cands[-1][:-1]
-            _g_reverse_rules[key] = cands
+            _g_ime_reverse.set_reverse(key, tuple(cands))
 
     with closing(open(os.path.join(os.environ['HOME'], 
                                    '.emacs_d', 
@@ -272,7 +306,7 @@ def _init_quail():
                                    '.emacs_d', 
                                    'lisp', 
                                    'quail', 
-                                   'wubi86.el'),
+                                   '2.el'),
                       'r', encoding = 'utf-8'
                       )
                  ) as quail_file:
