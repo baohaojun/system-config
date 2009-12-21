@@ -34,7 +34,7 @@ special_keys = (
     "non-convert",    # VK_NONCONVERT     0x1D 
     "accept",         # VK_ACCEPT         0x1E 
     "mode-change",    # VK_MODECHANGE     0x1F 
-    None,                # VK_SPACE          0x20 
+    'space',                # VK_SPACE          0x20 
     "prior",          # VK_PRIOR          0x21 
     "next",           # VK_NEXT           0x22 
     "end",            # VK_END            0x23 

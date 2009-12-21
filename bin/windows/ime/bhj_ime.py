@@ -137,8 +137,25 @@ class ime_keyboard:
             return self.key
         else:
             return self.mods + ' ' + self.key
+        
+    def isgraph(self):
+        if not self.mods and len(self.key) == 1:
+            return True
+        else:
+            return False
+
+    def isprint(self):
+        return self.isgraph() or self == 'space'
+
+    def is_lc_alpha(self):
+        if self.isgraph():
+            return ord(self.name) in range(ord('a'), ord('z')+1)
+        else:
+            return False
 
 class ime:
+    comp_empty_wanted_keys = ('C g', 'C q', 'C +')
+    mcpp = 10 #max cands per page
     def __init__(self, sock):
         self.special_keys = special_keys.special_keys
         self.__on = False
@@ -147,6 +164,7 @@ class ime:
         self.__hintstr = ''
         self.__cands = []
         self.__cand_index = 0
+        self.__commitstr = ''
 
     def __write(self, str_):
         self.__sock.write(bytes(str_, 'utf-8'))
@@ -192,35 +210,111 @@ class ime:
         assert arg, "want must take non empty arg"
         
         arg = arg[:-1] #get rid of the '?' at the end
-        keys = arg.split()
+        key = ime_keyboard(arg)
 
-        assert keys, "want must take at least 1 key"
-
-        mods = keys[:-1]
-        mods.sort()
-        mods = ''.join(mods)
-        assert mods in self.__all_mods, "invalid modifiers"
-        key = keys[-1]
-
-        if mods == 'C' and key == '\\':
+        if key == 'C \\':
             self.__reply('yes')
-        else:
-            self.__reply('no')
+        elif not self.__on:
+            self.__reply('on')
+        elif self.__compstr:
+            self.__reply('yes')
+        elif key.name in ime.comp_empty_wanted_keys:
+            self.__reply('yes')
+        elif key.isgraph():
+            self.__reply('yes')
 
+        self.__reply('no')
+
+    def __return(self):
+        self.__commitstr += self.__compstr
+        self.__cancel_ime()
+
+    def __keyed_when_no_comp(self, key):
+        if key.isalpha() or key == ';':
+            self.__commitstr += key.name
+        else:
+            self.__commit(key.name)
+
+    def __commit(self, commitstr):
+        self.commitstr += commitstr
+
+    def __cancel_ime(self):
+        self.__compstr = ''
+        self.__cands = []
+        self.__cand_index = 0
+        self.__hintstr = ''
+
+    def __space(self):
+        pass
+
+    def __backspace(self):
+        pass
+
+    def __digit(self, key):
+        pass
+
+    def __lc_alpha(self, key):
+        pass
     def keyed(self, arg):
         key = ime_keyboard(arg)
 
         if key == 'C \\':
             self.__toggle()
-        elif len(key.name) == 1 and ord(key.name) in range(ord('a'), ord('z')+1):
-            self.__compstr += key.name
-        
+        elif key == 'C g':
+            self.__cancel_ime()
+        elif not self.__compstr:
+            self.__keyed_when_no_comp(key)
+        elif self.__compstr[0:4] == '!add':
+            self.__add_word(key)
+        elif self.__compstr[0] == ';':
+            self.__english_mode(key)
+        elif key == 'return':
+            self.__return()
+        elif key == 'space':
+            self.__space()
+        elif key == 'backspace':
+            self.__backspace()
+        elif key.isdigit():
+            self.__digit(key.name)
+        elif key.is_lc_alpha():
+            self.__lc_alpha(key.name)
+        elif key == 'C n':
+            self.__next_page_cand()
+        elif key == 'C p':
+            self.__prev_page_cand()
+        elif key == 'C f':
+            self.__next_cand()
+        elif key == 'C b':
+            self.__prev_cand()
+        elif key.isprint():
+            if self.__cands:
+                self.__commit_cand()
+            return self.keyed(key.name)
+
+        else:
+            self.__beep()
+            
         self.comp()
         self.hint()
         self.cands()
         self.active()
         self.cand_index()
 
+    def __next_page_cand(self):
+        pass
+    def __prev_page_cand(self):
+        pass
+
+    def __next_cand(self):
+        pass
+    def __prev_cand(self):
+        pass
+
+    def __commit_cand(self):
+        pass
+
+    def __beep(self):
+        pass
 
     def hint(self, arg=''):
         self.__reply('hint:')
