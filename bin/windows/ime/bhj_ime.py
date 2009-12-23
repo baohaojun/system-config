@@ -39,8 +39,10 @@ class ime_trans:
 
 class ime_quail:
     def __init__(self):
-        self.rules = {}
+        import wubi86
         self.lock = threading.RLock()
+        self.rules = wubi86.g_quail_map;
+
 
     def has_comp(self, comp):
         with autolock(self.lock):
@@ -49,51 +51,33 @@ class ime_quail:
             else:
                 return False
 
-    def add_comp_cand(self, comp, cand):
-        with autolock(self.lock):
-            if not self.has_comp(comp):
-                self.rules[comp] = OrderedSet()
-            
-            self.rules[comp].add(cand)
-
-    def add_comp_ncands(self, comp, cands):
-        with autolock(self.lock):
-            if not self.has_comp(comp):
-                self.rules[comp] = OrderedSet(cands)
-            else:
-                for cand in cands:
-                    self.add_comp_cand(comp, cand)
-
     def get_cands(self, comp):
         with autolock(self.lock):
             if self.has_comp(comp):
                 return self.rules[comp]
             else:
-                return OrderedSet()
+                return ()
 
 class ime_reverse:
     def __init__(self):
-        self.rules = {}
         self.lock = threading.RLock()
+        import wubi86_reverse
+        self.rules = wubi86_reverse.g_reverse_map;
         
-    def has_han(self, han):
+    def has_reverse(self, han):
         with autolock(self.lock):
             return han in self.rules
 
-    def set_reverse(self, han, codes):
-        with autolock(self.lock):
-            self.rules[han] = codes
-
     def get_reverse(self, han):
         with autolock(self.lock):
-            if self.has_han(han):
+            if self.has_reverse(han):
                 return self.rules[han]
             else:
                 return ()
 
-_g_ime_reverse = ime_reverse()
-_g_ime_trans = ime_trans()
-_g_ime_quail = ime_quail()
+_g_ime_reverse = None
+_g_ime_trans = None
+_g_ime_quail = None
 
 class ime_keyboard:
     all_mods = ['', #no modifier
@@ -146,6 +130,9 @@ class ime_keyboard:
 
     def isprint(self):
         return self.isgraph() or self == 'space'
+
+    def isalpha(self):
+        return self.isgraph() and (self.name)
 
     def is_lc_alpha(self):
         if self.isgraph():
@@ -354,65 +341,12 @@ class ime:
 
 
 def _init_reverse():
-    reobj = re.compile('^"(.*?)" (.*)$')
-
-
-    def init_one_rule(line):
-        mo = reobj.match(line)
-        if mo:
-            key = mo.group(1)
-            cands = mo.group(2).split('" "')
-            cands[0] = cands[0][1:]
-            cands[-1] = cands[-1][:-1]
-            _g_ime_reverse.set_reverse(key, tuple(cands))
-
-    with closing(open(os.path.join(os.environ['HOME'], 
-                                   '.emacs_d', 
-                                   'lisp', 
-                                   'quail', 
-                                   'reverse.txt'),
-                      'r', encoding='utf-8')) as reverse_file:
-        for line in reverse_file:
-            init_one_rule(line)
-
+    global _g_ime_reverse
+    _g_ime_reverse = ime_reverse()
 
 def _init_quail():
-    start = False
-    reobj = re.compile('^\("(.*?)" \[(.*)\]\)$')
-
-    def init_one_trans(key):
-        _g_ime_trans.add_trans(key)
-
-    def init_one_rule(line):
-        mo = reobj.match(line)
-        if mo:
-            key = mo.group(1)
-            init_one_trans(key)
-
-            cands = mo.group(2).split('" "')
-
-            cands[0] = cands[0][1:]
-            cands[-1] = cands[-1][:-1]
-
-            _g_ime_quail.add_comp_ncands(key, cands)
-
-    with closing(open(os.path.join(os.environ['HOME'], 
-                                   '.emacs_d', 
-                                   'lisp', 
-                                   'quail', 
-                                   '2.el'),
-                      'r', encoding = 'utf-8'
-                      )
-                 ) as quail_file:
-        for line in quail_file:
-            if line == '(quail-define-rules\n':
-                start = True 
-
-            if not start:
-                continue
-
-            init_one_rule(line)
-
+    global _g_ime_quail
+    _g_ime_quail = ime_quail()
 def init():
     _init_quail()
     _init_reverse()
