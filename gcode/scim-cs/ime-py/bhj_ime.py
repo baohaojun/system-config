@@ -119,10 +119,15 @@ class ime_keyboard:
         self.key = keys[-1]
         
         assert len(self.key), "empty keys"
+
         if len(self.key) == 1:
-            assert isgraph(self.key), "key not graphic"
+            assert isgraph(self.key), "key not graphic" #' ' is 'space', see below
         else:
             assert self.key in self.special_keys, "key is not special function, like in emacs"
+
+        if self.key == 'space': 
+            self.key = ' '
+
 
     def __eq__(self, other_key):
         if isinstance(other_key, str):
