@@ -23,9 +23,29 @@ class ime_trans:
             import wubi86_trans
             self.rules = wubi86_trans.g_trans_map
         
-    def has_prefix(self, prefix):
+    def has_trans(self, prefix):
         with autolock(self.lock):
             if prefix in self.rules:
+                return True
+            else:
+                return False
+    
+    def get_trans(self, prefix):
+        with autolock(self.lock):
+            if prefix in self.rules:
+                return '[%s]' % self.rules[prefix]
+            else:
+                return ''
+
+class ime_history:
+    def __init__(self):
+        self.lock = threading.RLock()
+        with autolock(self.lock):
+            self.rules = {}
+
+    def has_history(self, comp):
+        with autolock(self.lock):
+            if comp in self.rules:
                 return True
             else:
                 return False
@@ -37,7 +57,7 @@ class ime_quail:
         self.rules = wubi86.g_quail_map;
 
 
-    def has_comp(self, comp):
+    def has_quail(self, comp):
         with autolock(self.lock):
             if comp in self.rules:
                 return True
@@ -46,7 +66,7 @@ class ime_quail:
 
     def get_cands(self, comp):
         with autolock(self.lock):
-            if self.has_comp(comp):
+            if self.has_quail(comp):
                 return self.rules[comp]
             else:
                 return ()
@@ -71,6 +91,7 @@ class ime_reverse:
 _g_ime_reverse = None
 _g_ime_trans = None
 _g_ime_quail = None
+_g_ime_history = None
 
 class ime_keyboard:
     all_mods = ['', #no modifier
@@ -121,6 +142,8 @@ class ime_keyboard:
         else:
             return False
 
+    def isdigit(self):
+        return self.isgraph() and isdigit(self.name)
     def isprint(self):
         return self.isgraph() or self == 'space'
 
@@ -140,11 +163,26 @@ class ime:
         self.special_keys = special_keys.special_keys
         self.__on = False
         self.__sock = sock
-        self.__compstr = ''
-        self.__hintstr = ''
-        self.__cands = []
-        self.__cand_index = 0
-        self.__commitstr = ''
+        self.compstr = ''
+        self.cand_index = 0
+        self.commitstr = ''
+
+    @property
+    def cand_index(self):
+        return self.__cand_index
+
+    @cand_index.setter
+    def cand_index(self, value):
+        self.__cand_index = value
+        
+        if _g_ime_quail.has_quail(self.compstr):
+            num_cands = len(_g_ime_quail.get_cands(self.compstr))
+            assert self.cand_index < num_cands, 'cand_index set to something too large!'
+            min_cand = int(self.cand_index / ime.mcpp * ime.mcpp)
+            max_cand_p1 = min (min_cand + ime.mcpp, num_cands)
+            self.__cands = _g_ime_quail.get_cands(self.compstr)[min_cand : max_cand_p1]
+        else:
+            self.__cands = ()
 
     @property
     def commitstr(self):
@@ -157,14 +195,32 @@ class ime:
 
     @property
     def compstr(self):
-        return self.__commitstr
+        return self.__compstr
 
     @compstr.setter
     def compstr(self, value):
         assert isinstance(value, str), "compstr must be set to be a string"
-        self.__commitstr = value
-
+        self.__compstr = value
+        if _g_ime_history.has_history(self.compstr):
+            self.cand_index = _g_ime_history[self.compstr]
+        else:
+            self.cand_index = 0
+            
+        self.hintstr = _g_ime_trans.get_trans(self.compstr)
         
+        if _g_ime_quail.has_quail(self.compstr) \
+                and not _g_ime_trans.has_trans(self.compstr) \
+                and len(self.__cands) == 1:
+            self.__commit_cand()
+
+    @property
+    def hintstr(self):
+        return self.__hintstr
+
+    @hintstr.setter
+    def hintstr(self, value):
+        self.__hintstr = value
+
     def __write(self, str_):
         self.__sock.write(bytes(str_, 'utf-8'))
 
@@ -214,8 +270,8 @@ class ime:
         if key == 'C \\':
             self.__reply('yes')
         elif not self.__on:
-            self.__reply('on')
-        elif self.__compstr:
+            self.__reply('no')
+        elif self.compstr:
             self.__reply('yes')
         elif key.name in ime.comp_empty_wanted_keys:
             self.__reply('yes')
@@ -239,10 +295,8 @@ class ime:
         self.__commitstr += commitstr
 
     def __cancel_ime(self):
-        self.__compstr = ''
-        self.__cands = []
-        self.__cand_index = 0
-        self.__hintstr = ''
+        self.compstr = ''
+        self.cand_index = 0
 
     def __space(self):
         pass
@@ -254,7 +308,8 @@ class ime:
         pass
 
     def __lc_alpha(self, key):
-        pass
+        self.compstr += key
+
     def keyed(self, arg):
         key = ime_keyboard(arg)
 
@@ -262,11 +317,11 @@ class ime:
             self.__toggle()
         elif key == 'C g':
             self.__cancel_ime()
-        elif not self.__compstr:
+        elif not self.compstr:
             self.__keyed_when_no_comp(key)
-        elif self.__compstr[0:4] == '!add':
+        elif self.compstr[0:4] == '!add':
             self.__add_word(key)
-        elif self.__compstr[0] == ';':
+        elif self.compstr[0] == ';':
             self.__english_mode(key)
         elif key == 'return':
             self.__return()
@@ -298,15 +353,16 @@ class ime:
         self.hint()
         self.cands()
         self.active()
-        self.cand_index()
+        self.cand_idx()
+        self.commit()
 
     def __english_mode(self, key):
         if key.isprint():
-            self.__compstr += key.name
+            self.compstr += key.name
         elif key == 'backspace':
-            self.__compstr = self.__compstr[:-1]
+            self.compstr = self.compstr[:-1]
         elif key == 'return':
-            self.__commit(self.__compstr)
+            self.__commit(self.compstr)
 
 
     def __next_page_cand(self):
@@ -320,27 +376,33 @@ class ime:
         pass
 
     def __commit_cand(self):
-        pass
+        cand_index = self.cand_index % ime.mcpp
+        self.commitstr = self.__cands[cand_index]
+        self.compstr = ''
 
     def commit(self):
-        self.__reply('commit: %s' % self.__commitstr)
+        if self.commitstr:
+            self.__reply('commit: %s' % self.commitstr)
 
     def __beep(self):
         pass
 
     def hint(self, arg=''):
-        self.__reply('hint: ' + self.__hintstr)
+        if self.hintstr:
+            self.__reply('hint: ' + self.hintstr)
 
     def comp(self, arg=''):
-        self.__reply('comp: ' + self.__compstr)
+        if self.compstr:
+            self.__reply('comp: ' + self.compstr)
             
     def cands(self, arg=''):
         cands = []
-        for x in _g_ime_quail.get_cands(self.__compstr):
+        for x in self.__cands:
             x = x.replace('%', '%25')
             x = x.replace(' ', '%20')
             cands.append(x)
-        self.__reply('cands: ' + ' '.join(cands))
+        if cands:
+            self.__reply('cands: ' + ' '.join(cands))
 
     def active(self, arg=''):
         if self.__on:
@@ -348,15 +410,15 @@ class ime:
         else:
             self.__reply('active: no')
 
-    def cand_index(self, arg=''):
-        self.__reply('cand_index: %d' % self.__cand_index)
+    def cand_idx(self, arg=''):
+        if self.cand_index:
+            self.__reply('cand_index: %d' % self.cand_index)
 
     def __toggle(self):
         self.__on = not self.__on
 
         if not self.__on:
-            self.__compstr = ''
-            self.__cands = []
+            self.compstr = ''
 
 def init():
     global _g_ime_trans
@@ -368,6 +430,8 @@ def init():
     global _g_ime_reverse
     _g_ime_reverse = ime_reverse()
 
+    global _g_ime_history
+    _g_ime_history = ime_history()
     print('ime init complete')
     sys.stdout.flush()
 if __name__ == '__main__':
