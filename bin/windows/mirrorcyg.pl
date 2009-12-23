@@ -3,15 +3,13 @@ use File::Path;
 use File::Basename;
 
 @site =(
-	"http://kambing.ui.ac.id/cygwin", 
-	"http://kambing.ui.ac.id/cygwin", 
-	"http://kambing.ui.ac.id/cygwin", 
+    "http://mirrors.kernel.org/sourceware/cygwin/"
     );
 for (@site) {
     s!/*$!!;
 }
 
-$ini = "setup-2.ini";
+$ini = "setup.ini";
 
 $dir="/cygdrive/d/tools/cygwin/repo";
 mkpath $dir;
