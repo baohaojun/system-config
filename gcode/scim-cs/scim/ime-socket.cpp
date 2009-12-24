@@ -136,6 +136,7 @@ static void start_ime_server()
 
 void ime_write_line(const string& line)
 {
+start:
 	string str = line;
 	str.push_back('\n');
 
@@ -146,7 +147,8 @@ void ime_write_line(const string& line)
 		int ret = send(g_ime_sock, str.substr(n).c_str(), total - n, 0);
 		if (ret == SOCKET_ERROR) {
 			bhj_sock_error("ime_write_line: ");
-			return connect_ime_server();
+			connect_ime_server();
+			goto start;
 		}
 		n += ret;
 	}
