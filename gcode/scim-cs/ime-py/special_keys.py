@@ -18,9 +18,9 @@ special_keys = (
 
     None, None,             #    0x0E .. 0x0F        
 
-    None,                # VK_SHIFT          0x10 
-    None,                # VK_CONTROL        0x11 
-    None,                # VK_MENU           0x12 
+    "shift",                # VK_SHIFT          0x10 
+    "control",                # VK_CONTROL        0x11 
+    "menu",                # VK_MENU           0x12 
     "pause",          # VK_PAUSE          0x13 
     "capslock",       # VK_CAPITAL        0x14 
     "kana",           # VK_KANA/VK_HANGUL 0x15 

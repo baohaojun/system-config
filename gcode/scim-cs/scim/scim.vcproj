@@ -114,7 +114,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="0"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="."
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;SCIM_EXPORTS;COMBO_IME;NO_STRICT"

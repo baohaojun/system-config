@@ -9,8 +9,8 @@ def ime_handler(sock):
     ime.handle()
 
 ime_listen_sock = socket(AF_INET, SOCK_STREAM);
-ime_listen_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-ime_listen_sock.bind(('0.0.0.0', 12345))
+#ime_listen_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+ime_listen_sock.bind(('127.0.0.1', 12345))
 ime_listen_sock.listen(5)
 
 bhj_ime.init()

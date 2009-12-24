@@ -190,4 +190,6 @@ wstring get_ui_class_name();
 wstring get_comp_class_name();
 wstring get_status_class_name();
 void high_light(HDC hdc, const CRect& rect);
+string string_format(const char* fmt, ...);
+
 #endif

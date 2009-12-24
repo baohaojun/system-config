@@ -7,6 +7,8 @@ using std::string;
 void connect_ime_server();
 bool init_ime_socket();
 string sock_error();
-extern SOCKET g_ime_sock;
+
+string ime_recv_line();
+void ime_write_line(const string& line);
 
 #endif //_IME_SOCKET_H__

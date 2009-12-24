@@ -6,21 +6,21 @@
 #include "ime-socket.h"
 using std::reverse;
 
-typedef enum {
-	mod_none = 0,
-	mod_ctrl = 1,
-	mod_shift = 2,
-	mod_menu = 4,
-	mod_ctrlshift = mod_ctrl | mod_shift,
-	mod_ctrlmenu = mod_ctrl | mod_menu,
-	mod_shiftmenu = mod_shift | mod_menu,
-	mod_ctrlshiftmenu = mod_ctrl | mod_shift | mod_menu,
-} modifier_t;
+typedef unsigned int modifier_t;
+
+const modifier_t mod_none = 0;
+const modifier_t mod_ctrl = 1;
+const modifier_t mod_shift = 2;
+const modifier_t mod_menu = 4;
+const modifier_t mod_ctrlshift = mod_ctrl | mod_shift;
+const modifier_t mod_ctrlmenu = mod_ctrl | mod_menu;
+const modifier_t mod_shiftmenu = mod_shift | mod_menu;
+const modifier_t mod_ctrlshiftmenu = mod_ctrl | mod_shift | mod_menu;
 
 
 static modifier_t get_mod_state ()
 {
-	int mod = 0;
+	modifier_t mod = 0;
 	if (GetKeyState(VK_CONTROL) & 0x8000) {
 		mod |= mod_ctrl;
 	}
@@ -184,9 +184,9 @@ static const char *special_keys[256] = {
 
     NULL, NULL,             //    0x0E .. 0x0F        
 
-    NULL,                // VK_SHIFT          0x10 
-    NULL,                // VK_CONTROL        0x11 
-    NULL,                // VK_MENU           0x12 
+    "shift",                // VK_SHIFT          0x10 
+    "control",                // VK_CONTROL        0x11 
+    "menu",                // VK_MENU           0x12 
     "pause",          // VK_PAUSE          0x13 
     "capslock",       // VK_CAPITAL        0x14 
     "kana",           // VK_KANA/VK_HANGUL 0x15 
@@ -200,7 +200,7 @@ static const char *special_keys[256] = {
     "non-convert",    // VK_NONCONVERT     0x1D 
     "accept",         // VK_ACCEPT         0x1E 
     "mode-change",    // VK_MODECHANGE     0x1F 
-    'space',                // VK_SPACE          0x20 
+    "space",                // VK_SPACE          0x20 
     "prior",          // VK_PRIOR          0x21 
     "next",           // VK_NEXT           0x22 
     "end",            // VK_END            0x23 
@@ -361,12 +361,112 @@ static const char *special_keys[256] = {
 };
 
 
-string get_key_desc(u32 vk, u32 sc, modifier_t mod)
+static char get_ascii(u32 vk, u32 sc, modifier_t mod)
 {
-	return '';
+	BYTE keystate[256];
+	memset (keystate, 0, sizeof (keystate));
+	keystate[vk] = 0x80;
+	if (mod & mod_shift) {
+		keystate[VK_SHIFT] = 0x80;
+	}
+
+	if (mod & mod_ctrl) {
+		keystate[VK_CONTROL] = 0x80;
+		keystate[VK_LCONTROL] = 0x80;
+	} 
+	
+	if (mod & mod_menu) {
+		keystate[VK_MENU] = 0x80;
+		keystate[VK_RMENU] = 0x80;
+    }
+
+	unsigned char ascii[2] = "";
+	ToAscii(vk, sc, keystate, (LPWORD)ascii, 0);
+	return ascii[0];
+}
+
+static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
+{
+	BHJDEBUG(" vk %d, sc %d, mod is %d", vk, sc, mod);
+	if (vk > sizeof(special_keys)/sizeof(special_keys[0])) {
+		return "";
+	}
+
+	if (special_keys[vk]) {
+		if (!strcmp(special_keys[vk], "control") 
+			|| !strcmp(special_keys[vk], "lcontrol")
+			|| !strcmp(special_keys[vk], "rcontrol")) {
+			mod &= ~mod_ctrl;
+		} else if (!strcmp(special_keys[vk], "shift") 
+				   || !strcmp(special_keys[vk], "lshift")
+				   || !strcmp(special_keys[vk], "rshift")) {
+			mod &= ~mod_shift;
+		} else if (!strcmp(special_keys[vk], "menu") 
+				   || !strcmp(special_keys[vk], "lmenu")
+				   || !strcmp(special_keys[vk], "rmenu")) {
+			mod &= ~mod_menu;
+		}
+	}
+
+	if (mod == mod_none) {
+		if (special_keys[vk]) {
+			return special_keys[vk];
+		} else {
+			char c = get_ascii(vk, sc, mod);
+			if (isgraph(c)) {
+				string ret;
+				ret.push_back(c);
+				return ret;
+			} else {
+				BHJDEBUG(" Error: vk not special, and not graph: %d", vk);
+				exit(-1);
+			}
+		}
+	}
+
+	if (mod == mod_shift) {
+		if (special_keys[vk]) {
+			return string("S ") + special_keys[vk];
+		} else {
+			char c = get_ascii(vk, sc, mod);
+			if (isgraph(c)) {
+				string ret;
+				ret.push_back(c);
+				return ret;
+			} else {
+				BHJDEBUG(" Error: shift + vk not special, and not graph: %d", vk);
+				exit(-1);
+			}
+		}
+	}
+
+	if (mod & mod_menu) {
+		return string("A ") + get_key_desc(vk, sc, mod & ~mod_menu);
+	}
+
+	if (mod & mod_ctrl) {
+		return string("C ") + get_key_desc(vk, sc, mod & ~mod_ctrl);
+	}
+	
+	return "";
 }
 //return false if IME don't want this key
 //return true if want it
+
+static bool want(const string& key_desc)
+{
+	BHJDEBUG(" want: %s?", key_desc.c_str());
+	ime_write_line(string_format("want %s?", key_desc.c_str()));
+	string ret = ime_recv_line();
+	ime_recv_line(); //read the "end:" off 
+	BHJDEBUG(" got %s", ret.c_str());
+	if (ret == "yes") {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 BOOL WINAPI ImeProcessKey(HIMC /*hIMC*/,
 						  u32 vk, LPARAM scan_code,
 						  CONST LPBYTE kbd_state)
@@ -389,10 +489,6 @@ BOOL WINAPI ImeProcessKey(HIMC /*hIMC*/,
 #define bhjreturn(ret) return ret
 	vk = LOWORD(vk);
 	modifier_t mod = get_mod_state();
-
-	if (vk > sizeof(special_keys)/sizeof(special_keys[0])) {
-		return false;
-	}
 
 	string key_desc = get_key_desc(vk, scan_code, mod);
 	if (key_desc.empty()) {

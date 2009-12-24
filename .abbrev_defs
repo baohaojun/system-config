@@ -19,9 +19,10 @@
     ("cms" "const CString&" nil 11)
     ("cr" "CRect" nil 0)
     ("cs" "cstring" nil 33)
-    ("dcs" "c_str()" nil 9)
+    ("dcs" "c_str()" nil 10)
     ("mcs" "const CString&" nil 16)
     ("ms" "CString" nil 3)
+    ("se" "SOCKET_ERROR" nil 0)
     ))
 
 (define-abbrev-table 'c-mode-abbrev-table '(    ))
@@ -60,7 +61,7 @@
 
 (define-abbrev-table 'gdb-script-mode-abbrev-table '(    ))
 
-(define-abbrev-table 'global-abbrev-table '(    ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 101)
+(define-abbrev-table 'global-abbrev-table '(    ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 102)
     ("cltenv" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" " nil 11)
     ("eclt" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" /usr/atria/bin/cleartool" nil 11)
     ("eld" "EnterLeaveDebug();" nil 32)

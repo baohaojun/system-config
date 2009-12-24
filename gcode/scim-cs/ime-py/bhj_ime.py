@@ -252,6 +252,8 @@ class ime:
             while line and line[-1] in ('\r', '\n'):
                 line = line[:-1]
             
+            print('line is %s' % repr(line))
+            sys.stdout.flush()
             pos = line.find(' ')
             if pos == -1:
                 func = line
@@ -282,8 +284,8 @@ class ime:
             self.__reply('yes')
         elif key.isgraph():
             self.__reply('yes')
-
-        self.__reply('no')
+        else:
+            self.__reply('no')
 
     def __return(self):
         self.commitstr += self.compstr

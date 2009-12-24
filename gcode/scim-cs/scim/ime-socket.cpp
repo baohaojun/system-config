@@ -14,7 +14,7 @@
 using namespace std;
 #pragma comment (lib, "ws2_32")
 
-SOCKET g_ime_sock;
+static SOCKET g_ime_sock;
 static struct {
 	int code;
 	const char *errStr;
@@ -108,7 +108,7 @@ static void start_ime_server()
 
     ZeroMemory( &pinfo, sizeof(pinfo) );
 
-	wchar_t buff[] = L"c:/python25/python.exe \"q:/bin/windows/ime/ime-server.py\"";
+	wchar_t buff[] = L"c:/python31/python.exe \"q:/gcode/scim-cs/ime-py/ime-server.py\"";
     ret = CreateProcess(
 		NULL,
 		buff, //error for L"q:\\dood.exe", because it must not be const!!!
@@ -134,9 +134,55 @@ static void start_ime_server()
 
 }
 
+void ime_write_line(const string& line)
+{
+	string str = line;
+	str.push_back('\n');
+
+	size_t total = str.size();
+	size_t n = 0;
+
+	while (n < total) {
+		int ret = send(g_ime_sock, str.substr(n).c_str(), total - n, 0);
+		if (ret == SOCKET_ERROR) {
+			bhj_sock_error("ime_write_line: ");
+			return connect_ime_server();
+		}
+		n += ret;
+	}
+}
+
+string ime_recv_line()
+{
+	string str;
+	int cap = 1024;
+	str.reserve(cap);
+	for (int i=0; ;i++ ) {
+		if (i == cap) {
+			cap = (int)(cap * 1.5);
+			str.reserve(cap);
+		}
+		char c;
+		int ret = recv(g_ime_sock, &c, 1, 0);
+		if (ret == SOCKET_ERROR) {
+			bhj_sock_error("ime_recv_line: ");
+			connect_ime_server();
+			return "";
+		}
+		if (c == '\n') {
+			return str;
+		} else {
+			str.push_back(c);
+		}
+	}
+}
+
 void connect_ime_server()
 {
 start:
+	if (g_ime_sock) {
+		closesocket(g_ime_sock);
+	}
 	g_ime_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	
 	if (g_ime_sock == INVALID_SOCKET) {
@@ -169,19 +215,16 @@ start:
 	ret = select(0, NULL, &fd_w, &fd_e, &to);
 	if (ret == SOCKET_ERROR) {
 		bhj_sock_error(""); 
-		closesocket(g_ime_sock);
 		start_ime_server();
 		goto start;
 	}  else if (ret == 0) {
 		BHJDEBUG(" timeout");
-		closesocket(g_ime_sock);
 		start_ime_server();
 		goto start;
 	}else if (FD_ISSET(g_ime_sock, &fd_w)) {
 		BHJDEBUG(" connect OK");
 	} else if (FD_ISSET(g_ime_sock, &fd_e)) {
 		bhj_sock_error(""); 
-		closesocket(g_ime_sock);
 		start_ime_server();
 		goto start;
 	}

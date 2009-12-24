@@ -425,9 +425,9 @@ void set_status_wnd(HWND hUIWnd, HWND stat)
 }
 
 
-static wstring szUIClassName = L"BhjCsImeUI";
-static wstring szCompClassName = L"BhjCsImeComp";
-static wstring szStatusClassName = L"BhjCsImeStatus";
+static wstring szUIClassName = L"BhjScim";
+static wstring szCompClassName = L"BhjScimComp";
+static wstring szStatusClassName = L"BhjScimStatus";
 
 wstring get_ui_class_name()
 {
@@ -442,4 +442,29 @@ wstring get_comp_class_name()
 wstring get_status_class_name()
 {
 	return szStatusClassName + to_wstring(ime_off);
+}
+
+string string_format(const char* fmt, ...)
+{
+	int cap = 1024;
+	char *buff = new char[cap];
+	va_list ap;
+
+	va_start(ap, fmt);
+	for (;;) {
+		int ret = vsnprintf(buff, cap-1, fmt, ap);
+		if (ret < 0) {
+			cap = int(cap*1.5);
+			delete []buff;
+			buff = new char[cap];
+			continue;
+		}
+		buff[ret] = 0;
+		break;
+	}
+	va_end(ap);
+
+	string str = buff;
+	delete []buff;
+	return str;
 }

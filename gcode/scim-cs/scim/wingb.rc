@@ -22,9 +22,9 @@ LANGUAGE  0x04, 0x02
 //
 
 #define VER_LEGALCOPYRIGHT_YEARS        "1981-1999"
-#define VER_FILEDESCRIPTION_STR         "包包五笔"
-#define VER_INTERNALNAME_STR            "BaoBao IME"
-#define VER_ORIGINALFILENAME_STR        "scim.dll"
+#define VER_FILEDESCRIPTION_STR         "影舞笔"
+#define VER_INTERNALNAME_STR            "Shadow IME"
+#define VER_ORIGINALFILENAME_STR        "scim9.dll"
 #define VER_LEGALCOPYRIGHT_STR "Copyright (C) BaoHaojun Corp. " VER_LEGALCOPYRIGHT_YEARS
 #define VER_FILEVERSION     VER_PRODUCTVERSION
 #define VER_FILEVERSION_STR VER_PRODUCTVERSION_STR
