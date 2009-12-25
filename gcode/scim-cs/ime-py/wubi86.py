@@ -1,4 +1,4 @@
-#!/bin/env python 
+#!/bin/env python
 # -*- coding: utf-8 -*-
 
 g_quail_map = {

@@ -4,7 +4,8 @@ use utf8;
 
 open($fwubi, "<", "wubi.txt") or die $!;
 open($fpy, "<", "py.txt") or die $!;
-open($fpy, ">", "reverse.txt") or die $!;
+open($freverse, ">", "reverse.txt") or die $!;
+open($fquail, ">", "quail.txt") or die $!;
 
 $line = 0;
 while (<$fwubi>) {
@@ -36,8 +37,8 @@ while (<$fwubi>) {
 
 @keys = sort {$seq{$a} <=> $seq{$b}} keys %reverse_hash;
 foreach $key (@keys) {
-    $" = qq(" ");
-    print qq/"$key" "@{$reverse_hash{$key}}"/, "\n";
+    $" = qq(", ");
+    print $freverse qq/"$key" : ("@{$reverse_hash{$key}}",),/, "\n";
 }
 
 while (<$fpy>) {
@@ -50,22 +51,27 @@ while (<$fpy>) {
 @keys = sort keys %key_hash;
 
 # #("aaaa" ["工" "恭恭敬敬"])
-$" = qq(" ");
+
+$head = <<EOC;
+#!/bin/env python
+# -*- coding: utf-8 -*-
+
+g_quail_map = {
+EOC
+
+print $fquail $head;
+
+$" = qq(", ");
 foreach $key (@keys) {
-    print qq(("$key" ["@{$key_hash{$key}}"])), "\n";
+    print $fquail qq("$key" : ("@{$key_hash{$key}}",),), "\n";
 }
+
 
 @keys = sort keys %py_hash;
 
 foreach $key (@keys) {
     @py_data = map {$_ = ${$_}{"chinese"} . ${$_}{"wubi"} } sort {$seq{$a{"chinese"}} <=> $seq{$b{"chinese"}}} @{$py_hash{$key}};
-    $" = qq(" ");
-    print qq/("$key" ["@py_data"])/, "\n";
+    $" = qq(", ");
+    print $fquail qq/"$key" : ("@py_data",),/, "\n";
 }
-# foreach $key (keys %single_key_hash) {
-# #    print qq(("$key" ["$single_key_hash{$key}"])), "\n";
-# }
-
-# foreach $key (sort keys %reverse_single_hanchar_hash) {
-#     print qq(("$key" ["@{$reverse_single_hanchar_hash{$key}}"])), "\n" if (scalar(@{$reverse_single_hanchar_hash{$key}}) > 1);
-# }
+print $fquail "}\n"
