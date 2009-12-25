@@ -45,12 +45,16 @@ class ime_history:
         with autolock(self.lock):
             self.rules = {}
 
-    def has_history(self, comp):
+    def set_history(self, comp, idx):
+        with autolock(self.lock):
+            self.rules[comp] = idx
+
+    def get_history(self, comp):
         with autolock(self.lock):
             if comp in self.rules:
-                return True
+                return self.rules[comp]
             else:
-                return False
+                return 0
 
 class ime_quail:
     def __init__(self):
@@ -224,11 +228,8 @@ class ime:
     def compstr(self, value):
         assert isinstance(value, str), "compstr must be set to be a string"
         self.__compstr = value
-        if _g_ime_history.has_history(self.compstr):
-            self.cand_index = _g_ime_history[self.compstr]
-        else:
-            self.cand_index = 0
-            
+        self.cand_index = _g_ime_history.get_history(self.compstr)
+
         self.hintstr = _g_ime_trans.get_trans(self.compstr)
         
         if _g_ime_quail.has_quail(self.compstr) \
@@ -411,6 +412,7 @@ class ime:
     def __commit_cand(self):
         cand_index = self.cand_index % ime.mcpp
         self.commitstr = self.__cands[cand_index]
+        _g_ime_history.set_history(self.compstr, self.cand_index)
         self.compstr = ''
 
     def beep(self):

@@ -410,6 +410,7 @@ public:
 	string hintstr;
 	string activestr;
 	string commitstr;
+	string beepstr;
 };
 
 ime_client get_client_reply()
@@ -433,6 +434,11 @@ ime_client get_client_reply()
 			client.cand_idx = str.substr(strlen("cand_index: "));
 		} else if (string_begin_with(str, "active: ")) {
 			client.activestr = str.substr(strlen("active: "));
+		} else if (string_begin_with(str, "beep: ")) {
+			client.beepstr = str.substr(strlen("beep: "));
+		} else {
+			client.compstr = str;
+			beep();
 		}
 	}
 	return client;
@@ -488,6 +494,10 @@ ImeToAsciiEx(u32 vk,
 	}
 
 	g_hint_str = client.hintstr;
+	if (!client.beepstr.empty()) {
+		beep();
+	}
+
 	return ic.return_ime_msgs();
 }
 
