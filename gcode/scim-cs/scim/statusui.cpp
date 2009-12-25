@@ -165,15 +165,15 @@ StatusWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		{
-			if (g_ime_name == ime_off) {
+			if (g_ime_name == "Y") {
 				SetLayeredWindowAttributes(hWnd,
 										   RGB_TRANS_KEY,
-										   100,
+										   200,
 										   LWA_COLORKEY|LWA_ALPHA);
 			} else {
 				SetLayeredWindowAttributes(hWnd, 
 										   RGB_TRANS_KEY,
-										   200,
+										   100,
 										   LWA_COLORKEY|LWA_ALPHA);
 			}
 			HDC hDC;

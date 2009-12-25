@@ -30,4 +30,4 @@ find . \( '-path' '*/CVS' \
     -o -iname '*.el' \
     -o -iname '*.pl' \
     -o -iname '*.inl' \
-    \) -print |etags -
+    \) -print0 |xargs -0 etags

@@ -335,8 +335,46 @@ void high_light(HDC hdc, const CRect& rect)
 // 	u32* m_u32_ptr;
 // };
 
+static string str_percent_decode(const string& str)
+{
+	string res;
+	for (size_t i = 0; i < str.size(); i++) {
+		if (str[i] != '%') {
+			res.push_back(str[i]);
+		} else if (i + 2 < str.size()) {
+			string hex = str.substr(i+1, 2);
+			char c = (char) strtol(hex.c_str(), NULL, 16);
+			res.push_back(c);
+			i += 2; //there's still a i++ in the for statement
+		} else {
+			BHJDEBUG(" Error: '%' is seen less than 2 chars from the end of str");
+			break;
+		}			
+	}
+	return res;
+}
+
+static vector<string> str_split_space(const string& str)
+{
+	size_t start = 0;
+	vector<string> res;
+	if (str.empty()) {
+		return res;
+	}
+	for (;;) {
+		size_t spc = str.find(' ', start);
+		if (spc == string::npos) {
+			res.push_back(str.substr(start));
+			break;
+		}
+		res.push_back(str.substr(start, spc-start));
+		start = spc+1;
+	}
+	return res;
+}
+
 static void 
-draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
+draw_cands(HDC hdc, const CRect& rect)
 {
 	hdc_with_font dc_lucida(hdc, L"Lucida Console", 10);
 
@@ -344,105 +382,42 @@ draw_cands(HDC hdc, const CRect& rect, const vector<string>& cands)
 	CRect rc_text = rect;
 	wstring seq = L"0:";
 
-	if (g_first_cand + g_last_cand + g_active_cand == 0 && 
-		map_has_key(g_cand_hist, g_comp_str) &&
-		g_cand_hist[g_comp_str] < cands.size() &&
-		g_cand_hist[g_comp_str] >= 0) {
-
-		g_first_cand = 0;
-		g_active_cand = g_cand_hist[g_comp_str];
-
-		for (size_t i=0; i < cands.size(); i++) {
-
-			if (seq[0] == L'9') {
-				seq[0] = L'0';
-			} else {
-				seq[0] += 1;
-			}
-			u32 seq_width = dc_lucida.get_text_width(seq);
-			wstring cand = to_wstring(cands[i]);
-			u32 cand_width = dc_lucida.get_text_width(cand);
-
-			left += seq_width + cand_width + 6;
-
-			if (left > rect.right && //can't draw this one
-				i > g_first_cand) { //make sure at least one is drawn
-				g_first_cand = i--;
-				left = rect.left;
-				seq[0] = L'0';
-				continue;
-			} 
-
-			if (g_active_cand == i) {
-				g_last_cand = g_first_cand;
-				break;
-			}
-		}
-	}
-			
-	if (g_first_cand > g_last_cand && g_first_cand != g_active_cand) {
-		for (int i=g_last_cand; i>=0; i--) {
-			if (seq[0] == L'9') {
-				seq[0] = L'0';
-			} else {
-				seq[0] += 1;
-			}
-			
-			u32 seq_width = dc_lucida.get_text_width(seq);
-			wstring cand = to_wstring(cands[i]);
-			u32 cand_width = dc_lucida.get_text_width(cand);
-
-			left += seq_width + cand_width + 6;
-			if (left > rect.right && i != g_last_cand) {
-				g_first_cand = i+1;
-				break;
-			} else {
-				g_first_cand = i;
-			}
-		}
-	} else {
-		g_last_cand = g_first_cand;
+	vector<string> cands = str_split_space(g_cands_str);
+	if (cands.size() > 10) {
+		bhjerr("Error: got more than 10 cands");
 	}
 
-	left = rect.left;
-	seq[0] = L'0';
-	if (g_first_cand <= g_last_cand) {
-		for (size_t i=g_first_cand; i<cands.size() && i-g_first_cand < (u32)10; i++) {
-			if (seq[0] == L'9') {
-				seq[0] = L'0';
-			} else {
-				seq[0] += 1;
-			}
+	size_t idx = atoi(g_cand_idx_str.c_str());
+	idx %= 10;
 
-			u32 seq_width = dc_lucida.get_text_width(seq);
-			wstring cand = to_wstring(cands[i]);
-			u32 cand_width = dc_lucida.get_text_width(cand);
-			if (left + seq_width + cand_width + 6 > (u32)rect.right
-				&& i != g_first_cand) {
-				g_last_cand = i-1;
-				break;
-			} else {
-				g_last_cand = i;
-			}
+	for (size_t i=0; i<cands.size() && i < 10; i++) {
+		if (seq[0] == L'9') {
+			seq[0] = L'0';
+		} else {
+			seq[0] += 1;
+		}
+
+		u32 seq_width = dc_lucida.get_text_width(seq);
+		wstring cand = to_wstring(str_percent_decode(cands[i]));
+		u32 cand_width = dc_lucida.get_text_width(cand);
 				
-			rc_text.left = left;
-			left += seq_width;
-			rc_text.right = left;
-			left += 2;
-			SetTextColor(hdc, RGB(0, 0, 0));
-			dc_lucida.draw_text(seq, rc_text);
+		rc_text.left = left;
+		left += seq_width;
+		rc_text.right = left;
+		left += 2;
+		SetTextColor(hdc, RGB(0, 0, 0));
+		dc_lucida.draw_text(seq, rc_text);
 
 
-			rc_text.left = left;
-			left += cand_width;
-			rc_text.right = left;
-			left += 4;
-			dc_lucida.draw_text(cand, rc_text);
+		rc_text.left = left;
+		left += cand_width;
+		rc_text.right = left;
+		left += 4;
+		dc_lucida.draw_text(cand, rc_text);
 
-			if (i == g_active_cand) {
-				high_light(hdc, rc_text);
-			} 
-		}
+		if (i == idx) {
+			high_light(hdc, rc_text);
+		} 
 	}
 }
 
@@ -464,32 +439,11 @@ void PASCAL PaintCompWindow(HWND hWnd, HDC hdc)
 
 
 	if (g_comp_str.size()) {
-		string str_on_comp = g_comp_str;
-		if (map_has_key(g_trans_rule, g_comp_str)) {
-			list<string> trans;
-			for(rule_trans_t::mapped_type::iterator i = g_trans_rule[g_comp_str].begin();
-				i != g_trans_rule[g_comp_str].end();
-				i++) {
-				trans.push_back(i->first);
-			}
-			u32 s1 = trans.size();
-			trans.sort();
-			trans.unique();
-			if (trans.size()) {
-				str_on_comp.push_back('[');
-				for (list<string>::iterator i = trans.begin(); i != trans.end(); i++) {
-					str_on_comp += *i;
-				}
-				str_on_comp.push_back(']');
-			}
-		}
-		wstring wstr = to_wstring(str_on_comp);
+		wstring wstr = to_wstring(g_comp_str);
 		DrawText(hdc, wstr.c_str(), wstr.size(), &rc_top, DT_VCENTER|DT_SINGLELINE);
 	} 
 
-	if (g_quail_rules.find(g_comp_str) != g_quail_rules.end()) {
-		draw_cands(hdc, rc_bot, g_quail_rules[g_comp_str]);
-	}
+	draw_cands(hdc, rc_bot);
 
 	MoveToEx(hdc, rcWnd.left, (rcWnd.top+rcWnd.bottom)/2, NULL);
 	LineTo(hdc, rcWnd.right, (rcWnd.top+rcWnd.bottom)/2);

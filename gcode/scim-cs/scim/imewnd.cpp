@@ -177,6 +177,9 @@ bool input_context::add_msg(u32 msg, WPARAM wp, LPARAM lp)
 }
 
 string g_comp_str;
+string g_cands_str;
+string g_hint_str;
+string g_cand_idx_str;
 
 wstring to_wstring(const string& str)
 {
@@ -339,14 +342,6 @@ int input_context::send_text(const string& str)
 		return 0;
 	}
 
-	for (size_t i=0; i < wstr.size(); i++) {
-		if (wstr[i] > 127) { //this is a non-ascii char, we want to make it into history
-			g_history_list.push_back(wstr[i]);
-			g_history_list.pop_front();
-		}
-	}
-
-		
 	add_msg(WM_IME_COMPOSITION, 0, GCS_COMP|GCS_RESULT|GCS_RESULTREAD);
 	add_show_comp_msg();
 	return 2;
@@ -369,40 +364,6 @@ u32 input_context::return_ime_msgs()
 	return m_num_msg;
 }
 
-void promote_cand_for_key(u32 cand_num, const string& key) //cand can't be passed as a ref, weird?
-{
-
-	if (!map_has_key(g_quail_rules, key)
-		|| g_quail_rules[key].empty()) {
-		return;
-	}
-
-	if (cand_num == 0 && !map_has_key(g_cand_hist, key)) { // no need to reorder;
-		return;
-	}
-
-	g_cand_hist[key] = cand_num;
-
-}
-
-void self_make_cand_for_key(const string& cand, const string& key)
-{
-	if (key.size() != 4 || cand.empty()) {// we only want to re-order if key is a full key (4)
-		return;
-	}
-
-	vector<string> &cands = g_quail_rules[key];
-	int active = 0;
-	for (vector<string>::iterator i = cands.begin(); i != cands.end(); i++, active++) {
-		if (*i == cand) {
-			g_cand_hist[key] = active;
-			return;
-		}
-	}
-	
-	cands.push_back(cand);
-	g_cand_hist[key] = cands.size() - 1;	
-}
 
 ui_private_t g_ui_private;
 
@@ -425,23 +386,23 @@ void set_status_wnd(HWND hUIWnd, HWND stat)
 }
 
 
-static wstring szUIClassName = L"BhjScim";
-static wstring szCompClassName = L"BhjScimComp";
-static wstring szStatusClassName = L"BhjScimStatus";
+static wstring szUIClassName = L"BhjScimE";
+static wstring szCompClassName = L"BhjScimCompE";
+static wstring szStatusClassName = L"BhjScimStatusE";
 
 wstring get_ui_class_name()
 {
-	return szUIClassName + to_wstring(ime_off);
+	return szUIClassName;
 }
 
 wstring get_comp_class_name()
 {
-	return szCompClassName + to_wstring(ime_off);
+	return szCompClassName;
 }
 
 wstring get_status_class_name()
 {
-	return szStatusClassName + to_wstring(ime_off);
+	return szStatusClassName;
 }
 
 string string_format(const char* fmt, ...)

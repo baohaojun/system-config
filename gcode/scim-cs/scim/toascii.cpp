@@ -465,11 +465,32 @@ ImeToAsciiEx(u32 vk,
 
 	ime_write_line(string_format("keyed %s", key_desc.c_str()));
 	ime_client client = get_client_reply();
-	BHJDEBUG(" cands is %s", client.candsstr.c_str());
-	return 0;
+	if (g_ime_name != client.activestr) {
+		ic.add_update_status_msg();
+		g_ime_name = client.activestr;
+	}
+
+	if (g_comp_str.empty() && !client.compstr.empty()) {
+		ic.add_msg(WM_IME_STARTCOMPOSITION, 0, 0);
+	}
+
+	if (g_comp_str != client.compstr
+		|| g_cands_str != client.candsstr
+		|| g_cand_idx_str != client.cand_idx) {
+		g_comp_str = client.compstr;
+		g_cands_str = client.candsstr;
+		g_cand_idx_str = client.cand_idx;
+		ic.add_show_comp_msg();
+	}
+
+	if (!client.commitstr.empty()) {
+		ic.send_text(client.commitstr);
+	}
+
+	g_hint_str = client.hintstr;
+	return ic.return_ime_msgs();
 }
 
-u32 g_first_cand, g_last_cand, g_active_cand;
-const char *const ime_off = "E";
-const char *const ime_on = "C";
+
+
 

@@ -14,13 +14,6 @@
 
 using namespace std;
 
-rule_map_t g_quail_rules;
-rule_map_t g_reverse_rules;
-cand_hist_t g_cand_hist;
-rule_trans_t g_trans_rule;
-
-//FIXME what about the quail transit map?
-
 typedef UINT64 u64;
 
 static u64
@@ -34,11 +27,6 @@ GetSystemTimeAsUINT64()
 
     return large.QuadPart;
 }
-
-list<wchar_t> g_history_list;
-
-
-
 
 static bool InitImeGlobalData(HINSTANCE hInstance)
 {
@@ -160,7 +148,6 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 	switch (fdwReason) {
 
 	case DLL_PROCESS_ATTACH:
-		g_ime_name = ime_off;
 
 		if (!g_hInst && ! InitImeGlobalData(hInstance)) {
 			return false;

@@ -6,7 +6,9 @@ from contextlib import contextmanager, closing
 import threading, special_keys
 from OrderedSet import OrderedSet
 
-
+def debug(*args):
+    print(*args)
+    sys.stdout.flush()
 
 @contextmanager
 def autolock(lock):
@@ -153,7 +155,7 @@ class ime_keyboard:
         return self.isgraph() or self == 'space'
 
     def isalpha(self):
-        return self.isgraph() and (self.name)
+        return self.isgraph() and isalpha(self.name)
 
     def is_lc_alpha(self):
         if self.isgraph():
@@ -171,6 +173,15 @@ class ime:
         self.compstr = ''
         self.cand_index = 0
         self.commitstr = ''
+        self.beepstr = ''
+
+    @property
+    def beepstr(self):
+        return self.__beepstr
+
+    @beepstr.setter
+    def beepstr(self, value):
+        self.__beepstr = value
 
     @property
     def cand_index(self):
@@ -182,8 +193,15 @@ class ime:
         
         if _g_ime_quail.has_quail(self.compstr):
             num_cands = len(_g_ime_quail.get_cands(self.compstr))
-            assert self.cand_index < num_cands, 'cand_index set to something too large!'
-            min_cand = int(self.cand_index / ime.mcpp * ime.mcpp)
+            if not self.cand_index < num_cands:
+                self.cand_index = max(0, num_cands-1)
+                self.beepstr = 'Y'
+
+            if self.cand_index < 0:
+                self.cand_index = 0
+                self.beepstr = 'Y'
+
+            min_cand = self.cand_index // ime.mcpp * ime.mcpp
             max_cand_p1 = min (min_cand + ime.mcpp, num_cands)
             self.__cands = _g_ime_quail.get_cands(self.compstr)[min_cand : max_cand_p1]
         else:
@@ -290,23 +308,15 @@ class ime:
     def __return(self):
         self.commitstr += self.compstr
         self.compstr = ''
-        self.__cancel_ime()
 
     def __keyed_when_no_comp(self, key):
         if key.isalpha() or key == ';':
             self.compstr += key.name
         else:
-            self.__commit(key.name)
-
-    def __commit(self, commitstr):
-        self.__commitstr += commitstr
-
-    def __cancel_ime(self):
-        self.compstr = ''
-        self.cand_index = 0
+            self.commitstr += key.name
 
     def __space(self):
-        pass
+        self.__commit_cand()
 
     def __backspace(self):
         pass
@@ -314,8 +324,50 @@ class ime:
     def __digit(self, key):
         pass
 
-    def __lc_alpha(self, key):
-        self.compstr += key
+    def keyed_when_comp(self, key):
+
+        comp = self.compstr + key.name;
+        if _g_ime_quail.has_quail(comp): #we have cand
+            self.compstr += key.name
+        elif _g_ime_trans.has_trans(comp): #we have hope to get cand
+            self.compstr += key.name
+        else:
+            self.cand_impossible_after_key(key)
+
+    def cand_impossible_after_key(self, key):
+        if _g_ime_quail.has_quail(self.compstr):
+            self.cand_possible_before_key(key)
+        else:
+            self.__english_mode(key)
+
+    def cand_possible_before_key(self, key): #impossible after key
+        if key == 'return':
+            self.__english_mode(key)
+        elif key == 'space':
+            self.__commit_cand()
+        elif key == 'backspace':
+            self.__english_mode(key)
+        elif key.isdigit():
+            self.cand_index = (int(key.name) + 9) % 10 + self.cand_index // 10 * 10;
+            self.__commit_cand()
+        elif key.isalpha():
+            self.__commit_cand()
+            self.__keyed_when_no_comp(key)
+        elif key == 'C n':
+            self.cand_index += ime.mcpp
+        elif key == 'C p':
+            self.cand_index -= ime.mcpp
+        elif key == 'C f':
+            self.cand_index += 1
+        elif key == 'C b':
+            self.cand_index -= 1
+        elif key.isprint():
+            self.__commit_cand()
+            self.__keyed_when_no_comp(key)
+        else:
+            self.beepstr = 'y'
+            
+
 
     def keyed(self, arg):
         key = ime_keyboard(arg)
@@ -323,76 +375,53 @@ class ime:
         if key == 'C \\':
             self.__toggle()
         elif key == 'C g':
-            self.__cancel_ime()
+            self.compstr = ''
         elif not self.compstr:
             self.__keyed_when_no_comp(key)
         elif self.compstr[0:4] == '!add':
             self.__add_word(key)
-        elif self.compstr[0] == ';':
-            self.__english_mode(key)
-        elif key == 'return':
-            self.__return()
-        elif key == 'space':
-            self.__space()
-        elif key == 'backspace':
-            self.__backspace()
-        elif key.isdigit():
-            self.__digit(key.name)
-        elif key.is_lc_alpha():
-            self.__lc_alpha(key.name)
-        elif key == 'C n':
-            self.__next_page_cand()
-        elif key == 'C p':
-            self.__prev_page_cand()
-        elif key == 'C f':
-            self.__next_cand()
-        elif key == 'C b':
-            self.__prev_cand()
-        elif key.isprint():
-            if self.__cands:
-                self.__commit_cand()
-            return self.keyed(key.name)
-
         else:
-            self.__beep()
-            
+            self.keyed_when_comp(key)
+
         self.comp()
         self.hint()
         self.cands()
         self.active()
         self.cand_idx()
         self.commit()
+        self.beep()
+
+
+        
 
     def __english_mode(self, key):
-        if key.isprint():
+        if self.compstr == ';' and key == 'space':
+            self.commitstr += '; '
+            self.compstr = ''
+        elif key.isprint():
             self.compstr += key.name
         elif key == 'backspace':
             self.compstr = self.compstr[:-1]
         elif key == 'return':
-            self.__commit(self.compstr)
-
-
-    def __next_page_cand(self):
-        pass
-    def __prev_page_cand(self):
-        pass
-
-    def __next_cand(self):
-        pass
-    def __prev_cand(self):
-        pass
+            if self.compstr and self.compstr[0] == ';':
+                self.compstr = self.compstr[1:]
+            self.commitstr += self.compstr
+            self.compstr = ''
 
     def __commit_cand(self):
         cand_index = self.cand_index % ime.mcpp
         self.commitstr = self.__cands[cand_index]
         self.compstr = ''
 
+    def beep(self):
+        if self.beepstr:
+            self.__reply('beep: %s' % self.beepstr)
+            self.beepstr = ''
+
     def commit(self):
         if self.commitstr:
             self.__reply('commit: %s' % self.commitstr)
-
-    def __beep(self):
-        pass
+            self.commitstr = ''
 
     def hint(self, arg=''):
         if self.hintstr:
@@ -413,9 +442,9 @@ class ime:
 
     def active(self, arg=''):
         if self.__on:
-            self.__reply('active: yes')
+            self.__reply('active: Y')
         else:
-            self.__reply('active: no')
+            self.__reply('active: N')
 
     def cand_idx(self, arg=''):
         if self.cand_index:
