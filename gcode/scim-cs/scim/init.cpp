@@ -135,15 +135,17 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 	}
 
 	const char* exclude_exes[] = {
-		"/notepad.exe",
+		"/xwin.exe",
+		"/conime.exe",
 		NULL,
 	};
 
 	for (int i=0; exclude_exes[i]; i++) {
-		if (_stricmp(exe_name.c_str(), exclude_exes[i])) {
+		if (!_stricmp(exe_name.c_str(), exclude_exes[i])) {
+			BHJDEBUG("Error: %s is calling, they can't handle IME!", exclude_exes[i]);
 			return false;
 		}		
-	} 
+	}
 
 	switch (fdwReason) {
 
