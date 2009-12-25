@@ -254,7 +254,7 @@ void PASCAL MoveDefaultCompPosition(HWND hUIWnd)
 
 
 	if (!ic.get_comp_wnd()) {
-		bhjerr("Error: MoveDefaultCompPosition with NULL comp");
+		StartComp(hUIWnd);
 	}
 
 	SetCompPosition(ic);
@@ -294,31 +294,6 @@ void PASCAL StartComp(HWND hUIWnd)
 	return;
 }
 
-void high_light(HDC hdc, const CRect& rect)
-{
-	HDC hdc_mem = CreateCompatibleDC(hdc); 
-
-	HBITMAP hbitmap = CreateCompatibleBitmap(hdc, 
-											 rect.right-rect.left,
-											 rect.bottom-rect.top);
-	HBITMAP hbitmap_old = SelectObject(hdc_mem, hbitmap); 
-	HBRUSH hbrush = CreateSolidBrush(0x2837df);
-    
-	RECT rect_mem = {0, 0, rect.Width(), rect.Height()};
-	FillRect(hdc_mem, &rect_mem, hbrush);
-
-	BitBlt(hdc, 
-		   rect.left, rect.top,
-		   rect.Width(), rect.Height(),
-		   hdc_mem,
-		   0,0, 
-		   SRCINVERT);
-
-	DeleteObject(hbrush);
-	SelectObject(hdc_mem, hbitmap_old);
-	DeleteObject(hbitmap);
-	DeleteObject(hdc_mem);
-}
 
 // class debug_u32 {
 // public:
@@ -376,7 +351,7 @@ static vector<string> str_split_space(const string& str)
 static void 
 draw_cands(HDC hdc, const CRect& rect)
 {
-	hdc_with_font dc_lucida(hdc, L"Lucida Console", 10);
+	hdc_with_font dc_lucida(hdc, L"Lucida Console", 12);
 
 	int left = rect.left;
 	CRect rc_text = rect;
@@ -413,10 +388,12 @@ draw_cands(HDC hdc, const CRect& rect)
 		left += cand_width;
 		rc_text.right = left;
 		left += 4;
-		dc_lucida.draw_text(cand, rc_text);
+
 
 		if (i == idx) {
-			high_light(hdc, rc_text);
+			dc_lucida.draw_text(cand, rc_text, RGB(0xff-0xdf, 0xff-0x37, 0xff-0x28));
+		} else {
+			dc_lucida.draw_text(cand, rc_text);
 		} 
 	}
 }
@@ -439,8 +416,20 @@ void PASCAL PaintCompWindow(HWND hWnd, HDC hdc)
 
 
 	if (g_comp_str.size()) {
-		wstring wstr = to_wstring(g_comp_str);
-		DrawText(hdc, wstr.c_str(), wstr.size(), &rc_top, DT_VCENTER|DT_SINGLELINE);
+		hdc_with_font dc_lucida(hdc, L"Lucida Console", 12);
+		CRect rect = rc_top;
+		dc_lucida.draw_text(g_comp_str, rect);
+
+		rect.left += dc_lucida.get_text_width(g_comp_str);
+		rect.right = rect.left + dc_lucida.get_text_width(" ");
+
+		dc_lucida.draw_text(" ", rect, RGB(0, 0, 0), OPAQUE);
+
+		rect.left = rect.right;
+		rect.right = rc_top.right;
+		if (!g_hint_str.empty()) {
+			dc_lucida.draw_text(g_hint_str, rect);
+		}
 	} 
 
 	draw_cands(hdc, rc_bot);

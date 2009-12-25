@@ -263,19 +263,79 @@ void hdc_with_font::use_this_font() //in case it is selected out
 	SelectObject(m_dc, m_this_font);
 }
 
-void hdc_with_font::draw_text(const wstring& str, CRect& rect)
+void hdc_with_font::draw_text(const wstring& str, CRect& rect, colorref bg_color, bkmode bkm, colorref fg_color)
 {
 	use_this_font();
+	
+	if (bg_color.m_init) {
+		COLORREF save = GetBkColor(m_dc);
+		SetBkColor(m_dc, bg_color);
+		bg_color = save;
+	}
+
+	if (fg_color.m_init) {
+		COLORREF save = GetTextColor(m_dc);
+		SetTextColor(m_dc, fg_color);
+		fg_color = save;
+	}
+
+	if (bkm.m_init) {
+		int save = GetBkMode(m_dc);
+		SetBkMode(m_dc, bkm);
+		bkm = save;
+	}
+
 	DrawText(m_dc, str.c_str(), str.size(), &rect, DT_VCENTER|DT_SINGLELINE);
+
+	if (bg_color.m_init) {
+		SetBkColor(m_dc, bg_color);
+	}
+
+	if (fg_color.m_init) {
+		SetTextColor(m_dc, fg_color);
+	}
+
+	if (bkm.m_init) {
+		SetBkMode(m_dc, bkm);
+	}
 }
 
-int hdc_with_font::get_text_width(const wstring& str)
+void hdc_with_font::draw_text(const string& text, CRect& rect, colorref bg_color, bkmode bkm, colorref fg_color)
+{
+	draw_text(to_wstring(text), rect, bg_color, bkm, fg_color);
+}
+
+CSize hdc_with_font::get_text_size(const wstring& str)
 {
 	use_this_font();
 	CSize size;
 	GetTextExtentPoint(m_dc, str.c_str(), str.size(), &size);
-	return size.cx;
-	
+	return size;
+}
+
+int hdc_with_font::get_text_width(const wstring& str)
+{
+	return get_text_size(str).cx;
+}
+
+int hdc_with_font::get_text_height(const wstring& str)
+{
+	return get_text_size(str).cy;
+}
+
+CSize hdc_with_font::get_text_size(const string& str)
+{
+	return get_text_size(to_wstring(str));
+}
+
+int hdc_with_font::get_text_width(const string& str)
+{
+	return get_text_width(to_wstring(str));
+}
+
+int hdc_with_font::get_text_height(const string& str)
+{
+	return get_text_height(to_wstring(str));
 }
 
 bool fill_result(input_context& ic, const wstring& wstr_result)

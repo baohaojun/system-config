@@ -482,10 +482,12 @@ ImeToAsciiEx(u32 vk,
 
 	if (g_comp_str != client.compstr
 		|| g_cands_str != client.candsstr
-		|| g_cand_idx_str != client.cand_idx) {
+		|| g_cand_idx_str != client.cand_idx
+		|| g_hint_str != client.hintstr) {
 		g_comp_str = client.compstr;
 		g_cands_str = client.candsstr;
 		g_cand_idx_str = client.cand_idx;
+		g_hint_str = client.hintstr;
 		ic.add_show_comp_msg();
 	}
 
@@ -500,7 +502,3 @@ ImeToAsciiEx(u32 vk,
 
 	return ic.return_ime_msgs();
 }
-
-
-
-

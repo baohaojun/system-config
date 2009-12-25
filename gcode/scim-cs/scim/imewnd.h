@@ -132,12 +132,44 @@ private:
 
 class hdc_with_font
 {
+	class colorref {
+	public:
+		bool m_init;
+		COLORREF m_rgb;
+		colorref() : m_init(false){};
+		colorref(COLORREF rgb): m_init(true), m_rgb(rgb) {};
+		operator COLORREF () {
+			return m_rgb;
+		}
+	};
+
+	class bkmode {
+	public:
+		bool m_init;
+		int m_bkm;
+		bkmode() : m_init(false) {};
+		bkmode(int bkm) : m_init(true), m_bkm(bkm) {};
+		operator int () {
+			return m_bkm;
+		}
+	};
+
 public:
 	hdc_with_font(HDC, wstring, int size=12);
 	~hdc_with_font();
 	void use_this_font();
-	void draw_text(const wstring& text, CRect& rect);
+	void draw_text(const wstring& text, CRect& rect, colorref bg_color = colorref(), bkmode bkm = bkmode(), colorref fg_color = colorref());
+	void draw_text(const string& text, CRect& rect, colorref bg_color = colorref(), bkmode bkm = bkmode(), colorref fg_color = colorref());
+
 	int get_text_width(const wstring& text);
+	int get_text_width(const string& text);
+
+	int get_text_height(const wstring& text);
+	int get_text_height(const string& text);
+
+	CSize get_text_size(const wstring& text);
+	CSize get_text_size(const string& text);
+
 private:
 	HFONT m_old_font, m_this_font;
 	HDC m_dc;
@@ -166,19 +198,10 @@ const int comp_dft_height = 60;
 
 extern string g_ime_name;
 extern "C" char *strcasestr(const char *S, const char *FIND);
-template<class key_type, class mapped_type> 
-bool map_has_key(const map<key_type, mapped_type>& map_query, const key_type& key)
-{
-	if (map_query.find(key) != map_query.end()) {
-		return true;
-	} else {
-		return false;
-	}
-}
+
 wstring get_ui_class_name();
 wstring get_comp_class_name();
 wstring get_status_class_name();
-void high_light(HDC hdc, const CRect& rect);
 string string_format(const char* fmt, ...);
 
 #endif
