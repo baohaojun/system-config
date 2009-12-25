@@ -13,3 +13,4 @@ foreach (@Processes[1..$#Processes]) {
     printf "%9d%9d  %s\n", $3, $2, $1;
 }
 
+system('rm TempWmicBatchFile.bat')
