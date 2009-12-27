@@ -45,7 +45,7 @@
 (require 'windata)
 (require 'gud)
 ;; maybe not necessary
-(require 'gdb-ui)
+(require 'gdb-mi)
 
 (defvar perldb-version "0.01"
   "")
@@ -615,7 +615,7 @@ With arg, use separate IO iff arg is positive."
                                    perldb-window-configuration)))))
 
 (defun perldb-get-buffer (id)
-  (cond ((assoc id gdb-buffer-rules-assoc)
+  (cond ((assoc id gdb-buffer-rules)
          (gdb-get-buffer-create id))
         ((eq id 'gud-comint-buffer) gud-comint-buffer)
         ((eq id 'source-buffer)
@@ -800,9 +800,9 @@ With arg, use separate IO iff arg is positive."
 
 
 ;; Init
-(unless (assoc 'perldb-locals-buffer gdb-buffer-rules-assoc)
-  (setq gdb-buffer-rules-assoc
-        (nconc gdb-buffer-rules-assoc
+(unless (assoc 'perldb-locals-buffer gdb-buffer-rules)
+  (setq gdb-buffer-rules
+        (nconc gdb-buffer-rules
                '((perldb-locals-buffer perldb-locals-buffer-name)
                  (perldb-stack-buffer perldb-stack-buffer-name)
                  (perldb-breakpoints-buffer perldb-breakpoints-buffer-name)
