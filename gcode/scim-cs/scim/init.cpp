@@ -11,7 +11,6 @@
 
 #include "ime-socket.h"
 
-
 using namespace std;
 
 typedef UINT64 u64;
@@ -121,30 +120,90 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 }
 
 
-BOOL CALLBACK DllMain(HINSTANCE hInstance,
-					  DWORD fdwReason,
-					  LPVOID lpvReserve)
+static vector<string> get_enable_only_list()
+{
+	vector<string> res;
+	FILE *fp = fopen("c:/etc/ywb/enable_only.rc", "rb");
+	if (!fp) {
+		return res; //res is empty
+	}
+
+	char buff[1024];
+	while(fgets(buff, 1024, fp)) {
+		buff[strlen(buff) - 1] = 0;
+		res.push_back(buff);
+	}
+	fclose(fp);
+	if (!res.size()) {//make sure res is not empty, basically this
+					  //disable all process from using our IME,
+					  //because the only process enabled is "no such
+					  //program.exe".
+		res.push_back("no such program.exe"); 
+	}
+	return res;
+}
+
+static vector<string> get_disable_list()
+{
+	vector<string> res;
+	res.push_back("xwin.exe");
+	res.push_back("conime.exe");
+	res.push_back("winlogon.exe");
+
+	FILE *fp = fopen("c:/etc/ywb/disable.rc", "rb");
+	if (!fp) {
+		return res;
+	}
+
+	char buff[1024];
+	while (fgets(buff, 1024, fp)) {
+		buff[strlen(buff) - 1] = 0;
+		res.push_back(buff);
+	}
+	fclose(fp);
+	return res;
+}
+
+static bool calling_process_ok()
 {
 	wchar_t buf[1024] = L"";
 	GetModuleFileName(NULL, buf, 1023);
 	string exe_name = to_string(buf);
 	int n = exe_name.find_last_of("/\\");
 	if (n != exe_name.npos) {
-		exe_name = exe_name.substr(n);
-		exe_name[0] = '/';
+		exe_name = exe_name.substr(n+1);
 	}
 
-	const char* exclude_exes[] = {
-		"/xwin.exe",
-		"/conime.exe",
-		NULL,
-	};
+	vector<string> enable_list = get_enable_only_list();
+	if (enable_list.size()) {
+		for (vector<string>::iterator i = enable_list.begin(); i != enable_list.end(); i++) {
+			if (!_stricmp(exe_name.c_str(), i->c_str())) {
+				return true;
+			}
+		}
+		BHJDEBUG("disable ime for %s, because it's not in the enable list", exe_name.c_str());
+		return false; //if there is a enable list, and the calling process is not in it, that means it's excluded.
+	}
 
-	for (int i=0; exclude_exes[i]; i++) {
-		if (!_stricmp(exe_name.c_str(), exclude_exes[i])) {
-			BHJDEBUG("Error: %s is calling, they can't handle IME!", exclude_exes[i]);
-			return false;
-		}		
+	vector<string> disable_list = get_disable_list();
+	if (disable_list.size()) {
+		for (vector<string>::iterator i = disable_list.begin(); i != disable_list.end(); i++) {
+			if (!_stricmp(exe_name.c_str(), i->c_str())) {
+				BHJDEBUG("disable ime for %s, because it's in the disable list", exe_name.c_str());
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+BOOL CALLBACK DllMain(HINSTANCE hInstance,
+					  DWORD fdwReason,
+					  LPVOID lpvReserve)
+{
+
+	if (! calling_process_ok()) {
+		return false;
 	}
 
 	switch (fdwReason) {

@@ -104,7 +104,11 @@ static void start_ime_server()
 
 	startup.wShowWindow = SW_HIDE;
 
-    startup.dwFlags    = STARTF_USESTDHANDLES|STARTF_USESHOWWINDOW;
+    startup.dwFlags    = STARTF_USESHOWWINDOW;
+
+	if (startup.hStdInput && startup.hStdOutput && startup.hStdError) {
+		startup.dwFlags |= STARTF_USESTDHANDLES;
+	}
 
     ZeroMemory( &pinfo, sizeof(pinfo) );
 
@@ -121,11 +125,7 @@ static void start_ime_server()
 		&startup, /* startup info, i.e. std handles */
 		&pinfo );
 
-	BHJDEBUG(" end of CreateProcess");
-
-
     if (!ret) {
-		BHJDEBUG(" Error: can't start ime server");
         return;
     }
 
@@ -220,11 +220,9 @@ start:
 		start_ime_server();
 		goto start;
 	}  else if (ret == 0) {
-		BHJDEBUG(" timeout");
 		start_ime_server();
 		goto start;
 	}else if (FD_ISSET(g_ime_sock, &fd_w)) {
-		BHJDEBUG(" connect OK");
 	} else if (FD_ISSET(g_ime_sock, &fd_e)) {
 		bhj_sock_error(""); 
 		start_ime_server();

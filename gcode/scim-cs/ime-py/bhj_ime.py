@@ -271,8 +271,6 @@ class ime:
             while line and line[-1] in ('\r', '\n'):
                 line = line[:-1]
             
-            print('line is %s' % repr(line))
-            sys.stdout.flush()
             pos = line.find(' ')
             if pos == -1:
                 func = line

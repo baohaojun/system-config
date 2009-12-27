@@ -294,22 +294,6 @@ void PASCAL StartComp(HWND hUIWnd)
 	return;
 }
 
-
-// class debug_u32 {
-// public:
-// 	debug_u32(const string& name, u32 *u32_ptr) {
-// 		m_name = name;
-// 		m_u32_ptr = u32_ptr;
-// 		BHJDEBUG(" %s is %d at beginning", name.c_str(), *u32_ptr);
-// 	}
-// 	~debug_u32() {
-// 		BHJDEBUG(" %s is %d at end", m_name.c_str(), *m_u32_ptr);
-// 	}
-// private:
-// 	string m_name;
-// 	u32* m_u32_ptr;
-// };
-
 static string str_percent_decode(const string& str)
 {
 	string res;
@@ -322,7 +306,6 @@ static string str_percent_decode(const string& str)
 			res.push_back(c);
 			i += 2; //there's still a i++ in the for statement
 		} else {
-			BHJDEBUG(" Error: '%' is seen less than 2 chars from the end of str");
 			break;
 		}			
 	}
@@ -443,7 +426,6 @@ LRESULT CALLBACK CompWndProc(HWND hWnd, u32 uMsg, WPARAM wParam, LPARAM lParam)
 {
 
 	//BHJDEBUG("received msg %s", msg_name(uMsg));
-
 	switch (uMsg) {
 	case WM_CREATE:
 		break;

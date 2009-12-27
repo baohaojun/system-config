@@ -272,7 +272,6 @@ static char get_ascii(u32 vk, u32 sc, modifier_t mod)
 
 static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
 {
-	BHJDEBUG(" vk %d, sc %d, mod is %d", vk, sc, mod);
 	if (vk > sizeof(special_keys)/sizeof(special_keys[0])) {
 		return "";
 	}
@@ -303,8 +302,7 @@ static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
 				ret.push_back(c);
 				return ret;
 			} else {
-				BHJDEBUG(" Error: vk not special, and not graph: %d", vk);
-				exit(-1);
+				bhjerr(" Error: vk not special, and not graph: %d", vk);
 			}
 		}
 	}
@@ -319,8 +317,7 @@ static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
 				ret.push_back(c);
 				return ret;
 			} else {
-				BHJDEBUG(" Error: shift + vk not special, and not graph: %d", vk);
-				exit(-1);
+				bhjerr(" Error: shift + vk not special, and not graph: %d", vk);
 			}
 		}
 	}
@@ -340,11 +337,9 @@ static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
 
 static bool want(const string& key_desc)
 {
-	BHJDEBUG(" want: %s?", key_desc.c_str());
 	ime_write_line(string_format("want %s?", key_desc.c_str()));
 	string ret = ime_recv_line();
 	ime_recv_line(); //read the "end:" off 
-	BHJDEBUG(" got %s", ret.c_str());
 	if (ret == "yes") {
 		return true;
 	} else if (ret == "no") {
@@ -362,7 +357,6 @@ BOOL WINAPI ImeProcessKey(HIMC /*hIMC*/,
 	static bool ime_connected = false;
 
 	if (!ime_connected) {
-		BHJDEBUG(" connect_ime_server");
 		ime_connected = true;
 		connect_ime_server();
 	}
