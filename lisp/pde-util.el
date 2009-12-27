@@ -221,6 +221,7 @@ print Dumper(@vars)\n"))
 (defvar pde-tip-index 0
   "Indicate which tip should display")
 
+;;;###autoload
 (defun pde-tip (&optional arg)
   (interactive "P")
   (let ((files (directory-files (concat pde-load-path "doc/tips/") t "^[^.]")))

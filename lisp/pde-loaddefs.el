@@ -1,9 +1,9 @@
 
 ;;;### (autoloads (compile-dwim-run compile-dwim-compile compile-dwim-alist)
-;;;;;;  "compile-dwim" "compile-dwim.el" (18434 46526))
+;;;;;;  "compile-dwim" "compile-dwim.el" (19248 57129))
 ;;; Generated autoloads from compile-dwim.el
 
-(defvar compile-dwim-alist `((perl (or (name . "\\.pl$") (mode . cperl-mode)) "%i -wc \"%f\"" "%i \"%f\"") (c (or (name . "\\.c$") (mode . c-mode)) ("gcc -o %n %f" "gcc -g -o %n %f") ,@(if (memq system-type '(windows-nt ms-dos)) (list "%n.exe" "%n.exe") (list '("./%n" "cint %f") "%n"))) (c++ (or (name . "\\.cpp$") (mode . c++-mode)) ("g++ -o %n %f" "g++ -g -o %n %f") ,@(if (memq system-type '(windows-nt ms-dos)) (list "%n.exe" "%n.exe") (list '("./%n" "cint %f") "%n"))) (java (or (name . "\\.java$") (mode . java-mode)) "javac %f" "java %n" "%n.class") (python (or (name . "\\.py$") (mode . python-mode)) "%i %f" "%i %f") (javascript (or (name . "\\.js$") (mode . javascript-mode)) "smjs -f %f" "smjs -f %f") (tex (or (name . "\\.tex$") (name . "\\.ltx$") (mode . tex-mode) (mode . latex-mode)) "latex %f" "latex %f" "%n.dvi") (texinfo (name . "\\.texi$") (makeinfo-buffer) (makeinfo-buffer) "%.info") (sh (or (name . "\\.sh$") (mode . sh-mode)) "%i ./%f" "%i ./%f") (f99 (name . "\\.f90$") "f90 %f -o %n" "./%n" "%n") (f77 (name . "\\.[Ff]$") "f77 %f -o %n" "./%n" "%n") (php (or (name . "\\.php$") (mode . php-mode)) "php %f" "php %f") (elisp (or (name . "\\.el$") (mode . emacs-lisp-mode) (mode . lisp-interaction-mode)) (emacs-lisp-byte-compile) (emacs-lisp-byte-compile) "%fc")) "\
+(defvar compile-dwim-alist `((perl (or (name . "\\.pl$") (mode . cperl-mode)) "%i -wc \"%f\"" "%i \"%f\"") (c (or (name . "\\.c$") (mode . c-mode)) ("gcc -o %n %f" "gcc -g -o %n %f") ,@(if (memq system-type '(windows-nt ms-dos)) (list "%n.exe" "%n.exe") (list '("./%n" "cint %f") "%n"))) (c++ (or (name . "\\.cpp$") (mode . c++-mode)) ("g++ -o %n %f" "g++ -g -o %n %f") ,@(if (memq system-type '(windows-nt ms-dos)) (list "%n.exe" "%n.exe") (list '("./%n" "cint %f") "%n"))) (java (or (name . "\\.java$") (mode . java-mode)) "javac %f" "java %n" "%n.class") (python (or (name . "\\.py$") (mode . python-mode)) "%i %f" "%i %f") (javascript (or (name . "\\.js$") (mode . javascript-mode)) "smjs -f %f" "smjs -f %f") (tex (or (name . "\\.tex$") (name . "\\.ltx$") (mode . tex-mode) (mode . latex-mode)) "latex %f" "latex %f" "%n.dvi") (texinfo (name . "\\.texi$") (makeinfo-buffer) (makeinfo-buffer) "%.info") (sh (or (name . "\\.sh$") (mode . sh-mode)) "%i ./%f" "%i ./%f") (f99 (name . "\\.f90$") "f90 %f -o %n" "./%n" "%n") (f77 (name . "\\.[Ff]$") "f77 %f -o %n" "./%n" "%n") (php (or (name . "\\.php$") (mode . php-mode)) "php -l %f" "php %f") (elisp (or (name . "\\.el$") (mode . emacs-lisp-mode) (mode . lisp-interaction-mode)) (emacs-lisp-byte-compile) (emacs-lisp-byte-compile) "%fc")) "\
 Settings for certain file type.
 A list like ((TYPE CONDITION COMPILE-COMMAND RUN-COMMAND EXE-FILE) ...).
 In commands, these format specification are available:
@@ -34,7 +34,7 @@ Not documented
 ;;;***
 
 ;;;### (autoloads (help-dwim-active-type help-dwim) "help-dwim" "help-dwim.el"
-;;;;;;  (18441 26150))
+;;;;;;  (18941 29007))
 ;;; Generated autoloads from help-dwim.el
 
 (autoload 'help-dwim "help-dwim" "\
@@ -53,7 +53,7 @@ Use `help-dwim-customize-type' for active or deactive type globally.
 ;;;***
 
 ;;;### (autoloads (imenu-tree imenu-tree-icons) "imenu-tree" "imenu-tree.el"
-;;;;;;  (18432 51110))
+;;;;;;  (18941 29007))
 ;;; Generated autoloads from imenu-tree.el
 
 (defvar imenu-tree-icons '(("Types" . "function") ("Variables" . "variable")) "\
@@ -71,8 +71,8 @@ With prefix argument, select imenu tree buffer window.
 
 ;;;***
 
-;;;### (autoloads (inf-perl-start) "inf-perl" "inf-perl.el" (18432
-;;;;;;  51499))
+;;;### (autoloads (inf-perl-start) "inf-perl" "inf-perl.el" (18941
+;;;;;;  29007))
 ;;; Generated autoloads from inf-perl.el
 
 (defalias 'run-perl 'inf-perl-start)
@@ -86,7 +86,7 @@ If there is a process already running in `*perl*', switch to that buffer.
 ;;;***
 
 ;;;### (autoloads (pde-project-find-file) "pde-project" "pde-project.el"
-;;;;;;  (18441 48775))
+;;;;;;  (18941 29007))
 ;;; Generated autoloads from pde-project.el
 
 (autoload 'pde-project-find-file "pde-project" "\
@@ -98,9 +98,10 @@ With prefix argument, to rebuild the cache.
 
 ;;;***
 
-;;;### (autoloads (pde-generate-loaddefs pde-search-cpan pde-apropos-module
-;;;;;;  pde-list-core-modules pde-list-module-shadows) "pde-util"
-;;;;;;  "pde-util.el" (18314 6826))
+;;;### (autoloads (pde-tip pde-generate-loaddefs pde-yaml-load pde-yaml-dump
+;;;;;;  pde-search-cpan pde-apropos-module pde-list-core-modules
+;;;;;;  pde-list-module-shadows) "pde-util" "pde-util.el" (19250
+;;;;;;  10011))
 ;;; Generated autoloads from pde-util.el
 
 (autoload 'pde-list-module-shadows "pde-util" "\
@@ -123,16 +124,55 @@ Search anything in CPAN.
 
 \(fn MOD)" t nil)
 
+(autoload 'pde-yaml-dump "pde-util" "\
+Read Perl data from region and dump as YAML.
+For example call the command on region:
+    {
+      'session' => {
+        'dbic_class' => 'AddressDB::Session',
+        'flash_to_stash' => '1'
+      }
+    }
+will turn out to be:
+   ---
+   session:
+     dbic_class: AddressDB::Session
+     flash_to_stash: 1
+
+\(fn BEG END REPLACE)" t nil)
+
+(autoload 'pde-yaml-load "pde-util" "\
+Read YAML data and dump as Perl data.
+For example call the command on region:
+   ---
+   session:
+     dbic_class: AddressDB::Session
+     flash_to_stash: 1
+will turn out to be:
+    $VAR1 = {
+      'session' => {
+        'dbic_class' => 'AddressDB::Session',
+        'flash_to_stash' => '1'
+      }
+    }
+
+\(fn BEG END REPLACE)" t nil)
+
 (autoload 'pde-generate-loaddefs "pde-util" "\
 Create pde-loaddefs.el
 
 \(fn LISP-DIR)" t nil)
 
+(autoload 'pde-tip "pde-util" "\
+Not documented
+
+\(fn &optional ARG)" t nil)
+
 ;;;***
 
 ;;;### (autoloads (pde-perl-mode-hook pde-indent-dwim pde-ido-imenu-completion
 ;;;;;;  pde-compilation-buffer-name pde-ffap-locate pde-tabbar-register)
-;;;;;;  "pde" "pde.el" (18441 26191))
+;;;;;;  "pde" "pde.el" (18941 29007))
 ;;; Generated autoloads from pde.el
 
 (autoload 'pde-tabbar-register "pde" "\
@@ -174,7 +214,7 @@ Hooks run when enter perl-mode
 ;;;***
 
 ;;;### (autoloads (perlcritic-region perlcritic) "perlcritic" "perlcritic.el"
-;;;;;;  (18297 5667))
+;;;;;;  (18941 29007))
 ;;; Generated autoloads from perlcritic.el
 
 (autoload 'perlcritic "perlcritic" "\
@@ -191,7 +231,7 @@ Not documented
 
 ;;;***
 
-;;;### (autoloads (perldb-ui) "perldb-ui" "perldb-ui.el" (18290 12388))
+;;;### (autoloads (perldb-ui) "perldb-ui" "perldb-ui.el" (19236 17102))
 ;;; Generated autoloads from perldb-ui.el
 
 (autoload 'perldb-ui "perldb-ui" "\
@@ -204,7 +244,7 @@ and source-file directory for your debugger.
 ;;;***
 
 ;;;### (autoloads (perldoc-tree perldoc perldoc-pod-encoding-list)
-;;;;;;  "perldoc" "perldoc.el" (18399 8683))
+;;;;;;  "perldoc" "perldoc.el" (18941 29007))
 ;;; Generated autoloads from perldoc.el
 
 (defvar perldoc-pod-encoding-list '(("perltw" . big5)) "\
@@ -228,7 +268,7 @@ Create pod tree.
 ;;;***
 
 ;;;### (autoloads (perltidy-dwim perltidy-subroutine perltidy-buffer
-;;;;;;  perltidy-region) "perltidy" "perltidy.el" (18297 7199))
+;;;;;;  perltidy-region) "perltidy" "perltidy.el" (18941 29007))
 ;;; Generated autoloads from perltidy.el
 
 (autoload 'perltidy-region "perltidy" "\
@@ -258,7 +298,7 @@ perltidy for whole buffer.
 
 ;;;***
 
-;;;### (autoloads (tags-tree) "tags-tree" "tags-tree.el" (18402 37122))
+;;;### (autoloads (tags-tree) "tags-tree" "tags-tree.el" (18941 29007))
 ;;; Generated autoloads from tags-tree.el
 
 (autoload 'tags-tree "tags-tree" "\
@@ -269,7 +309,7 @@ Not documented
 ;;;***
 
 ;;;### (autoloads (template-simple-expand template-simple-expand-template)
-;;;;;;  "template-simple" "template-simple.el" (18432 53609))
+;;;;;;  "template-simple" "template-simple.el" (18941 29007))
 ;;; Generated autoloads from template-simple.el
 
 (autoload 'template-simple-expand-template "template-simple" "\
@@ -288,7 +328,7 @@ Use `template-expand-function' to expand the parsed template.
 
 ;;;***
 
-;;;### (autoloads (tempo-x-space) "tempo-x" "tempo-x.el" (18432 51606))
+;;;### (autoloads (tempo-x-space) "tempo-x" "tempo-x.el" (18941 29007))
 ;;; Generated autoloads from tempo-x.el
 
 (autoload 'tempo-x-space "tempo-x" "\
@@ -298,8 +338,8 @@ Expand tempo if complete in `tempo-local-tags' or insert space.
 
 ;;;***
 
-;;;### (autoloads (tree-minor-mode) "tree-mode" "tree-mode.el" (18439
-;;;;;;  35848))
+;;;### (autoloads (tree-minor-mode) "tree-mode" "tree-mode.el" (18941
+;;;;;;  29007))
 ;;; Generated autoloads from tree-mode.el
 
 (autoload 'tree-minor-mode "tree-mode" "\
@@ -312,7 +352,7 @@ More keybindings for tree-widget.
 ;;;***
 
 ;;;### (autoloads (windata-display-buffer windata-restore-named-winconf
-;;;;;;  windata-name-winconf) "windata" "windata.el" (18432 52547))
+;;;;;;  windata-name-winconf) "windata" "windata.el" (18941 29007))
 ;;; Generated autoloads from windata.el
 
 (autoload 'windata-name-winconf "windata" "\

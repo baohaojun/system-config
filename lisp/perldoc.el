@@ -134,24 +134,29 @@ With prefix arguments force cache update."
   (if (and (null re-cache)
            (file-exists-p perldoc-cache-el))
       (load perldoc-cache-el)
-    (message "This may take some time, please wait...")
     ;; full name for perl to locate file
     (setq perldoc-cache-pl (expand-file-name perldoc-cache-pl)
           perldoc-cache-el (expand-file-name perldoc-cache-el))
-    (unless (file-exists-p perldoc-cache-pl)
-      (perldoc-create-pl))
-    (set-process-sentinel
-     (start-process "perldoc-build" nil pde-perl-program
-                    perldoc-cache-pl perldoc-cache-el)
-     (lambda (proc event)
-       (if (zerop (process-exit-status proc))
-           (progn
-             (message "Create perldoc cache successfully!")
-             (load perldoc-cache-el)
-             (if (get-buffer perldoc-tree-buffer)
-                 (with-current-buffer perldoc-tree-buffer
-                   (tree-mode-reflesh))))
-         (error "Create perldoc cache failed! %s" event))))))
+    (if (file-writable-p perldoc-cache-el)
+        (when (or (file-exists-p perldoc-cache-pl)
+                  (if (file-writable-p perldoc-cache-pl)
+                      (progn (perldoc-create-pl) t)
+                    (message "can't create cache file '%s', file is not writable" perldoc-cache-el)
+                    nil))
+          (message "This may take some time, please wait...")
+          (set-process-sentinel
+           (start-process "perldoc-build" nil pde-perl-program
+                          perldoc-cache-pl perldoc-cache-el)
+           (lambda (proc event)
+             (if (zerop (process-exit-status proc))
+                 (progn
+                   (message "Create perldoc cache successfully!")
+                   (load perldoc-cache-el)
+                   (if (get-buffer perldoc-tree-buffer)
+                       (with-current-buffer perldoc-tree-buffer
+                         (tree-mode-reflesh))))
+               (error "Create perldoc cache failed! %s" event)))))
+      (message "can't create script '%s', file is not writable" perldoc-cache-pl))))
 
 (defun perldoc-recache-everyday (&optional days)
   "If the cache file is expired DAYS, force caches update."
