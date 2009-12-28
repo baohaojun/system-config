@@ -29,11 +29,6 @@ GetSystemTimeAsUINT64()
 
 static bool InitImeGlobalData(HINSTANCE hInstance)
 {
-	// if (!init_wsock()) {
-	// 	BHJDEBUG(" Error: init_wsock failed");
-	// 	return false;
-	// }
-	
 	init_ime_socket();
 
 	TCHAR szChiChar[4] = {0x9999, 0};
@@ -148,7 +143,6 @@ static vector<string> get_disable_list()
 	vector<string> res;
 	res.push_back("xwin.exe");
 	res.push_back("conime.exe");
-	res.push_back("winlogon.exe");
 
 	FILE *fp = fopen("c:/etc/ywb/disable.rc", "rb");
 	if (!fp) {
@@ -181,7 +175,6 @@ static bool calling_process_ok()
 				return true;
 			}
 		}
-		BHJDEBUG("disable ime for %s, because it's not in the enable list", exe_name.c_str());
 		return false; //if there is a enable list, and the calling process is not in it, that means it's excluded.
 	}
 
@@ -189,7 +182,6 @@ static bool calling_process_ok()
 	if (disable_list.size()) {
 		for (vector<string>::iterator i = disable_list.begin(); i != disable_list.end(); i++) {
 			if (!_stricmp(exe_name.c_str(), i->c_str())) {
-				BHJDEBUG("disable ime for %s, because it's in the disable list", exe_name.c_str());
 				return false;
 			}
 		}
@@ -202,8 +194,13 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 					  LPVOID lpvReserve)
 {
 
-	if (! calling_process_ok()) {
-		return false;
+	if (fdwReason == DLL_PROCESS_ATTACH) {
+		if (! calling_process_ok()) {
+			BHJDEBUG("not ok.");
+			return false;
+		} else {
+			BHJDEBUG("ok");
+		}
 	}
 
 	switch (fdwReason) {
