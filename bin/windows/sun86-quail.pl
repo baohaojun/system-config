@@ -4,8 +4,8 @@ use utf8;
 
 open($fwubi, "<", "wubi.txt") or die $!;
 open($fpy, "<", "py.txt") or die $!;
-open($freverse, ">", "reverse.txt") or die $!;
-open($fquail, ">", "quail.txt") or die $!;
+open($freverse, ">", "wubi86_reverse.py") or die $!;
+open($fquail, ">", "wubi86.py") or die $!;
 open($fquail_el, ">", "wubi86.el") or die $!;
 
 
