@@ -75,6 +75,11 @@ function svn-info-clip()
 
 function of()
 {
+    if test -e "$1"; then
+        cygstart "$@"
+        return
+    fi
+
     if which "$1" >/dev/null 2>&1; then
         if [[ "$1" == of ]]; then
             local file=`which cygstart`
