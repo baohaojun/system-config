@@ -3,7 +3,6 @@
 #include <memory.h>
 #include <immdev.h>
 #include <imedefs.h>
-#include <regstr.h>
 #include "imewnd.h"
 #include <map>
 #include <string>

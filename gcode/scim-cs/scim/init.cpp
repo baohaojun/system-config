@@ -3,7 +3,7 @@
 #include <memory.h>
 #include <immdev.h>
 #include <imedefs.h>
-#include <regstr.h>
+
 #include "imewnd.h"
 #include <map>
 #include <string>
@@ -50,8 +50,6 @@ static bool InitImeGlobalData(HINSTANCE hInstance)
 	sImeG.iPara = 0;
 	sImeG.iPerp = sImeG.yChiCharHi;
 
-	sImeG.iParaTol = sImeG.xChiCharWi * 4;
-	sImeG.iPerpTol = lTextSize.cy;
 
 	return true;
 

@@ -4,7 +4,6 @@
 #include <immdev.h>
 #include <imedefs.h>
 #include <resource.h>
-#include <regstr.h>
 #include <winuser.h>
 #include "imewnd.h"
 

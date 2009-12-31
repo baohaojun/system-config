@@ -31,8 +31,6 @@ typedef struct _tagImeG {
 
 	int iPara;
 	int iPerp;
-	int iParaTol;
-	int iPerpTol;
 } IMEG;
 
 

@@ -2,7 +2,6 @@
 #include <immdev.h>
 #include <htmlhelp.h>
 #include <string.h>
-#include <regstr.h>
 #include <imedefs.h>
 #include <resource.h>
 #include "imewnd.h"

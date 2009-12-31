@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <immdev.h>
 #include "imedefs.h"
-#include <regstr.h>
 #include "imewnd.h"
 
 static int comp_wnd_width()

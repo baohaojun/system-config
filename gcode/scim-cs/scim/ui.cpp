@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <immdev.h>
 #include <imedefs.h>
-#include <regstr.h>
 #include "imewnd.h"
 
 void PASCAL DestroyUIWindow(HWND h_ui_wnd)
