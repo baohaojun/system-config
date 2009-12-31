@@ -195,6 +195,9 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 	if (fdwReason == DLL_PROCESS_ATTACH) {
 		if (! calling_process_ok()) {
 			BHJDEBUG("not ok.");
+			if (!g_hInst) {
+				g_hInst = hInstance; //hack, so that the class names are unique.
+			}
 			return false;
 		} else {
 			BHJDEBUG("ok");
@@ -214,22 +217,6 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 		break;
 
 	case DLL_PROCESS_DETACH:
-		{
-
-			WNDCLASSEX wcWndCls;
-
-			if (GetClassInfoEx(hInstance, get_status_class_name().c_str(), &wcWndCls)) {
-				UnregisterClass(get_status_class_name().c_str(), hInstance);
-			}
-
-			if (GetClassInfoEx(hInstance, get_comp_class_name().c_str(), &wcWndCls)) {
-				UnregisterClass(get_comp_class_name().c_str(), hInstance);
-			}
-
-			if (GetClassInfoEx(hInstance, get_ui_class_name().c_str(), &wcWndCls)) {
-				UnregisterClass(get_ui_class_name().c_str(), hInstance);
-			}
-		}
 
 		break;
 

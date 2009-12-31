@@ -1,6 +1,9 @@
 #include "imewnd.h"
+#include "imedefs.h"
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
+#include <Psapi.h>
+#pragma comment(lib, "psapi")
 
 void debug_rect(const CRect& rect)
 {
@@ -446,23 +449,39 @@ void set_status_wnd(HWND hUIWnd, HWND stat)
 }
 
 
-static wstring szUIClassName = L"BhjScimEscim8";
-static wstring szCompClassName = L"BhjScimCompEscim8";
-static wstring szStatusClassName = L"BhjScimStatusEscim8";
+static wstring szUIClassName = L"BhjYwb";
+static wstring szCompClassName = L"BhjYwbComp";
+static wstring szStatusClassName = L"BhjYwbStatus";
+
+static wstring get_moudle_name()
+{
+	static wstring module_name; //performance evil
+	if (!module_name.empty()) {
+		return module_name;
+	}
+
+	wchar_t buff[1024] = L"";
+	GetModuleBaseName(GetCurrentProcess(), g_hInst, buff, 1024);
+	string tmp = to_string(buff);
+	module_name = to_wstring(tmp.substr(0, tmp.size()-4)); //remove the ".dll"
+	
+	BHJDEBUG(" module_name is %s", to_string(module_name).c_str());
+	return module_name;
+}
 
 wstring get_ui_class_name()
 {
-	return szUIClassName;
+	return szUIClassName + get_moudle_name();
 }
 
 wstring get_comp_class_name()
 {
-	return szCompClassName;
+	return szCompClassName + get_moudle_name();
 }
 
 wstring get_status_class_name()
 {
-	return szStatusClassName;
+	return szStatusClassName + get_moudle_name();
 }
 
 string string_format(const char* fmt, ...)

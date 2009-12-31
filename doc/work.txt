@@ -2406,6 +2406,8 @@ deb-src http://mirror.bjtu.edu.cn/ubuntu/ karmic-updates main multiverse restric
 
 cat ~/.namelist|grep @ |perl -a -F'\t' -ne 'chomp($F[5]); printf(q("%s" <%s>, ), $F[2], $F[5])'|perl -npe 's/\s*" </" </g; s/""/"xx"/g'|putclip.exe
 
+mv /c/etc/ywb/enable_only.rc.bak /c/etc/ywb/enable_only.rc
+mv /c/etc/ywb/enable_only.rc /c/etc/ywb/enable_only.rc.bak
 lftp ftp://borqsftp.8800.org
 echo flash > /sys/bootinfo/reboot_setting; reboot
 
