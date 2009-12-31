@@ -118,7 +118,7 @@ BOOL PASCAL AdjustCompPosition(
 	} else if (ic->lfFont.A.lfHeight < 0) {
 		ptFont.x = -ic->lfFont.A.lfHeight;
 	} else {
-		ptFont.x = comp_wnd_height();
+		ptFont.x = comp_wnd_height() / 2;
 	}
 
 	if (ic->lfFont.A.lfHeight > 0) {
