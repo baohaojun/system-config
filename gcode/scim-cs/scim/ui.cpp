@@ -5,7 +5,7 @@
 
 void PASCAL DestroyUIWindow(HWND h_ui_wnd)
 {
-	g_ui_private.erase(h_ui_wnd); //Fix me, what if no such key?
+	g_ui_private->erase(h_ui_wnd); //Fix me, what if no such key?
 }
 
 void static redraw_comp(HWND hUIWnd)

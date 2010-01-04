@@ -59,7 +59,7 @@ struct ui_private_data
 
 typedef map<HWND, ui_private_data> ui_private_t;
 
-extern ui_private_t g_ui_private;
+extern ui_private_t* g_ui_private;
 
 void debug_rect(const CRect& rect);
 void FillSolidRect(HDC hdc, const CRect& rect, COLORREF rgb);

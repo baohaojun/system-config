@@ -428,24 +428,42 @@ u32 input_context::return_ime_msgs()
 }
 
 
-ui_private_t g_ui_private;
+ui_private_t* g_ui_private;
+
+
+//To verify that some global var dtor will be called too early. Before DestroyUIWindow.
+// class dood{
+// public:
+// 	dood() {};
+// 	~dood();
+// };
+// dood::~dood()
+// {
+// 	int i=10;
+// 	i*=5;
+// 	int* j = &i;
+// 	j+=i;
+// }
+
+// dood dx;
 
 HWND get_comp_wnd(HWND hUIWnd)
 {
-	return g_ui_private[hUIWnd].h_comp_wnd;
+	return (*g_ui_private)[hUIWnd].h_comp_wnd;
 }
 HWND get_status_wnd(HWND hUIWnd)
 {
-	return g_ui_private[hUIWnd].h_stat_wnd;
+	return (*g_ui_private)[hUIWnd].h_stat_wnd;
 }
 
 void set_comp_wnd(HWND hUIWnd, HWND comp)
 {
-	g_ui_private[hUIWnd].set_comp(comp);
+	(*g_ui_private)[hUIWnd].set_comp(comp);
 }
+
 void set_status_wnd(HWND hUIWnd, HWND stat)
 {
-	g_ui_private[hUIWnd].set_stat(stat);
+	(*g_ui_private)[hUIWnd].set_stat(stat);
 }
 
 
