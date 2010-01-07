@@ -5,10 +5,11 @@ cd ~/doc
 regedit /s ime-noctrlshift-noaltshift.reg
 
 
-MYXWINSH=~/bin/windows/lnks/myxwin.sh
-(echo "#!/bin/bash -l"; grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p'|grep -v checkX) > $MYXWINSH
-chmod +x $MYXWINSH
-myxwin.sh&
+# MYXWINSH=~/bin/windows/lnks/myxwin.sh
+# (echo "#!/bin/bash -l"; grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p'|grep -v checkX) > $MYXWINSH
+# chmod +x $MYXWINSH
+# myxwin.sh&
+startxwin&
 net start sshd&
 (cd /e/cygwin-cvsroot && rsync -avz rsync://cygwin.com/src-cvs .)&
 
