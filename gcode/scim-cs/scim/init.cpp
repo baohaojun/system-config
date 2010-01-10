@@ -141,6 +141,7 @@ static vector<string> get_disable_list()
 {
 	vector<string> res;
 	res.push_back("xwin.exe");
+	res.push_back("logonui.exe");
 	res.push_back("conime.exe");
 
 	FILE *fp = fopen("c:/etc/ywb/disable.rc", "rb");
