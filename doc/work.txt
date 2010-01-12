@@ -2526,3 +2526,11 @@ cd /opl/tel*/modu*; rmmod g_file_storage; rmmod g_android_adb; insmod g_ether.ko
 
 
 ime: ;pyqt bug
+
+mkdir mydroid
+cd mydroid
+repo init -u git://android.git.kernel.org/platform/manifest.git -b eclair
+repo sync
+. build/envsetup.sh
+lunch generic-eng
+make
