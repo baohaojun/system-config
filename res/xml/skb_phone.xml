@@ -56,7 +56,7 @@
       <toggle_state state_id="@string/toggle_phone_sym" label="等 待" code="51"/>
     </key>
     <key icon="@drawable/num9" code="16">
-      <toggle_state state_id="@string/toggle_phone_sym" label=","
+      <toggle_state state_id="@string/toggle_phone_sym" label="\#"/>
         icon="@drawable/numpound"/>
     </key>
     <key code="67" key_type="1" repeat="true"/>
