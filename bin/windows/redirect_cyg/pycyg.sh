@@ -13,9 +13,8 @@ pyfile="$1"
  fi
 shift
 pyfile=`cygpath -alw "$pyfile"`
-echo python lib is: $PYHON_LIB
-echo python include is: $PYHON_INCLUDE
-python "$pyfile" "$@"
+
+wpy25 "$pyfile" "$@"
 if [[ $debug == true ]]
 then
     echo -n Press any key to exit ...

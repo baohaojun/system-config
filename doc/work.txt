@@ -2527,6 +2527,9 @@ cd /opl/tel*/modu*; rmmod g_file_storage; rmmod g_android_adb; insmod g_ether.ko
 
 ime: ;pyqt bug
 
+echo hello > /dev/block/mtdblock1; rm /local/nvm/MEP.nvm; rm /local/nvm/UDP.nvm
+
+
 mkdir mydroid
 cd mydroid
 repo init -u git://android.git.kernel.org/platform/manifest.git -b eclair
@@ -2534,3 +2537,4 @@ repo sync
 . build/envsetup.sh
 lunch generic-eng
 make
+
