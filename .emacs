@@ -239,17 +239,30 @@
 
 (global-set-key ";" 'tmp_en_ch)
 
+(mapcar 'eval (mapcar (lambda (char) (list 'global-set-key (string char) ''tmp_en_ch)) "ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+
+
 (defun do_en_when_ch (arg)
   "input method is active, but we want it out temporarily"
   (interactive "senter to input: \n")
-  (insert arg))
+  arg)
 
 (defun tmp_en_ch ()
   "tell if input method is active, get out of it for a while"
   (interactive)
   (if (equal nil current-input-method)
-      (insert ";")
-    (call-interactively 'do_en_when_ch)))
+      (insert last-input-char)
+    (let ((last-char last-input-char)
+          (eng_input (call-interactively 'do_en_when_ch))
+          )
+      (if (equal last-char ?\;)
+          (if (string-equal eng_input "")
+              (insert "; ")
+            (insert eng_input))
+        (progn
+          (insert last-char)
+          (insert eng_input))))))
+      
 
 (prefer-coding-system 'gbk)
 (prefer-coding-system 'utf-8-unix)

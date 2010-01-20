@@ -12,6 +12,7 @@ regedit /s ime-noctrlshift-noaltshift.reg
 startxwin&
 net start sshd&
 (cd /e/cygwin-cvsroot && rsync -avz rsync://cygwin.com/src-cvs .)&
+~/gcode/scim-cs/ime-py/ime-server.py&
 
 (
     while ! ssh bhj2 echo hello; do true; done; 
