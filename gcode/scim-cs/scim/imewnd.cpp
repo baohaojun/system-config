@@ -483,7 +483,6 @@ static wstring get_moudle_name()
 	string tmp = to_string(buff);
 	module_name = to_wstring(tmp.substr(0, tmp.size()-4)); //remove the ".dll"
 	
-	BHJDEBUG(" module_name is %s", to_string(module_name).c_str());
 	return module_name;
 }
 

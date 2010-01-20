@@ -201,8 +201,6 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 				g_hInst = hInstance; //hack, so that the class names are unique.
 			}
 			return false;
-		} else {
-			BHJDEBUG("ok");
 		}
 	}
 

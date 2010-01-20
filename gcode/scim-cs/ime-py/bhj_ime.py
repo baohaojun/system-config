@@ -1,4 +1,5 @@
 #!/bin/env python
+# -*- coding: utf-8 -*-
 from __future__ import with_statement
 import os, sys, re, traceback
 from ime_ascii import *
@@ -60,7 +61,7 @@ class ime_quail:
     def __init__(self):
         import wubi86
         self.lock = threading.RLock()
-        self.rules = wubi86.g_quail_map;
+        self.rules = wubi86.g_quail_map
 
 
     def has_quail(self, comp):
@@ -81,7 +82,7 @@ class ime_reverse:
     def __init__(self):
         self.lock = threading.RLock()
         import wubi86_reverse
-        self.rules = wubi86_reverse.g_reverse_map;
+        self.rules = wubi86_reverse.g_reverse_map
         
     def has_reverse(self, han):
         with autolock(self.lock):
@@ -309,9 +310,12 @@ class ime:
         self.compstr = ''
 
     def __keyed_when_no_comp(self, key):
-        if key.isalpha() or key == ';':
+        comp = key.name
+        if _g_ime_quail.has_quail(comp) or key.isalpha() or key == ';':
             self.compstr += key.name
-        else:
+        elif _g_ime_trans.has_trans(comp):
+            self.compstr += key.name
+        else: 
             self.commitstr += key.name
 
     def __space(self):
@@ -324,7 +328,8 @@ class ime:
         pass
 
     def keyed_when_comp(self, key):
-
+        if self.compstr[-1] in '?_*^!()$' and key == 'S space':
+            key = ime_keyboard('space')
         comp = self.compstr + key.name;
         if _g_ime_quail.has_quail(comp): #we have cand
             self.compstr += key.name
@@ -382,12 +387,12 @@ class ime:
         else:
             self.keyed_when_comp(key)
 
-        self.comp()
-        self.hint()
-        self.cands()
-        self.active()
-        self.cand_idx()
-        self.commit()
+        self.reply_comp()
+        self.reply_hint()
+        self.reply_cands()
+        self.reply_active()
+        self.reply_cand_idx()
+        self.reply_commit()
         self.beep()
 
 
@@ -395,16 +400,17 @@ class ime:
 
     def __english_mode(self, key):
         if self.compstr == ';' and key == 'space':
-            self.commitstr += '; '
+            self.commitstr += '；'
             self.compstr = ''
         elif key.isprint():
             self.compstr += key.name
         elif key == 'backspace':
             self.compstr = self.compstr[:-1]
         elif key == 'return':
+            comp = self.compstr
             if self.compstr and self.compstr[0] == ';':
-                self.compstr = self.compstr[1:]
-            self.commitstr += self.compstr
+                comp = self.compstr[1:]
+            self.commitstr += comp
             self.compstr = ''
 
     def __commit_cand(self):
@@ -418,20 +424,20 @@ class ime:
             self.__reply('beep: %s' % self.beepstr)
             self.beepstr = ''
 
-    def commit(self):
+    def reply_commit(self):
         if self.commitstr:
             self.__reply('commit: %s' % self.commitstr)
             self.commitstr = ''
 
-    def hint(self, arg=''):
+    def reply_hint(self, arg=''):
         if self.hintstr:
             self.__reply('hint: ' + self.hintstr)
 
-    def comp(self, arg=''):
+    def reply_comp(self, arg=''):
         if self.compstr:
             self.__reply('comp: ' + self.compstr)
             
-    def cands(self, arg=''):
+    def reply_cands(self, arg=''):
         cands = []
         for x in self.__cands:
             x = x.replace('%', '%25')
@@ -440,13 +446,13 @@ class ime:
         if cands:
             self.__reply('cands: ' + ' '.join(cands))
 
-    def active(self, arg=''):
+    def reply_active(self, arg=''):
         if self.__on:
             self.__reply('active: Y')
         else:
             self.__reply('active: N')
 
-    def cand_idx(self, arg=''):
+    def reply_cand_idx(self, arg=''):
         if self.cand_index:
             self.__reply('cand_index: %d' % self.cand_index)
 
