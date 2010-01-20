@@ -237,9 +237,8 @@
 
 (put 'narrow-to-region 'disabled nil)
 
-(global-set-key ";" 'tmp_en_ch)
 
-(mapcar 'eval (mapcar (lambda (char) (list 'global-set-key (string char) ''tmp_en_ch)) "ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+(mapcar 'eval (mapcar (lambda (char) (list 'global-set-key (string char) ''tmp_en_ch)) ";ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
 
 
 (defun do_en_when_ch (arg)
@@ -256,8 +255,8 @@
           (eng_input (call-interactively 'do_en_when_ch))
           )
       (if (equal last-char ?\;)
-          (if (string-equal eng_input "")
-              (insert "; ")
+          (if (or (string-equal eng_input "") (string-equal eng_input " "))
+              (insert "；")
             (insert eng_input))
         (progn
           (insert last-char)
