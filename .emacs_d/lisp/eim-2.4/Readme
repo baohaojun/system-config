@@ -26,7 +26,7 @@ eim-wb-user-file 的位置。eim-wb-history-file 要修改成能保存的文件�
 可。eim-wb-user-file 可以不修改，如果不改则使用默认的 mywb.txt。如果修
 改则可以自己指定一个文件。文件格式参考 mywb.txt。
 
-(add-to-list 'load-path "~/.emacs.d/site-lisp/eim")
+(add-to-list 'load-path "~/.emacs_d/lisp/eim-2.4")
 (autoload 'eim-use-package "eim" "Another emacs input method")
 ;; Tooltip 暂时还不好用
 (setq eim-use-tooltip nil)
