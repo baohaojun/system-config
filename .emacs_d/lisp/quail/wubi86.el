@@ -4,15 +4,21 @@
 
 
 (require 'quail)
-(quail-define-package "chinese-wubi86" "Chinese-CNS" "五笔" t
-"汉字输入∷【五笔八六】∷"
+(quail-define-package "chinese-wubi86" ;name
+                      "Chinese-CNS" ;lang
+                      "五笔" ;title
+                      t ; guidance
+                      "汉字输入∷【五笔八六】∷" ;doc string
 
-  '(("" . quail-delete-last-char)
-   ([(control n)] . quail-next-translation-block)
-   ([(control p)] . quail-prev-translation-block)
-   ([(control g)] . quail-abort-translation)
-   (" " . quail-select-current))
-  nil nil nil nil)
+                      '(("" . quail-delete-last-char)
+                        ([(control n)] . quail-next-translation-block)
+                        ([(control p)] . quail-prev-translation-block)
+                        ([(control g)] . quail-abort-translation)
+                        (" " . quail-select-current)) ; translation-keys
+                      nil nil nil nil  ; forget last, deterministic, kbd-translate, show-layout, 
+                      nil nil nil nil  ; create-decode-map, max-shortest, overlay-plist, update-trans-func
+                      nil nil ; conv keys, simple
+                      )
 
 (quail-define-rules
 ("a" ["工"])

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export PATH=~/tools/emacswin/bin/:/bin:/usr/bin:"$PATH"
+rm TAGS
 
 find . \( '-path' '*/CVS' \
     '-o' '-path' '*/.svn' \
@@ -31,4 +32,4 @@ find . \( '-path' '*/CVS' \
     -o -iname '*.pl' \
     -o -iname '*.inl' \
     -o -iname '*.aidl' \
-    \) -print0 |xargs -0 etags
+    \) -print0 |xargs -0 etags -a
