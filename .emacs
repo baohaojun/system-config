@@ -243,7 +243,7 @@
 
 (defun do_en_when_ch (arg)
   "input method is active, but we want it out temporarily"
-  (interactive "senter to input: \n")
+  (interactive (list (read-string (format "Press enter to input: %s" (string last-char)))))
   arg)
 
 (defun tmp_en_ch ()
@@ -251,7 +251,7 @@
   (interactive)
   (if (equal nil current-input-method)
       (insert last-input-char)
-    (let ((last-char last-input-char)
+    (let* ((last-char last-input-char)
           (eng_input (call-interactively 'do_en_when_ch))
           )
       (if (equal last-char ?\;)
