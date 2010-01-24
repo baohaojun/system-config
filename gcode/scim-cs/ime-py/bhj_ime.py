@@ -374,6 +374,7 @@ class ime:
 
 
     def keyed(self, arg):
+        debug('keyed args:', arg)
         key = ime_keyboard(arg)
 
         if key == 'C \\':

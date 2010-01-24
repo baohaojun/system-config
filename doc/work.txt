@@ -2539,3 +2539,13 @@ lunch generic-eng
 make
 
 http://www.packetix.net/en/secure/install/ vpn
+
+(defun hello ()
+  (interactive))
+(let* ((overriding-terminal-local-map (let ((map (make-sparse-keymap)))
+                                       (define-key map [t] 'hello)
+                                       map))
+      (event (read-key-sequence-vector "hello")))
+  (format "%s %s %s" event (event-modifiers (aref event  0))
+          (event-basic-type (aref event 0))))
+(read-event)

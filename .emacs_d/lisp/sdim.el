@@ -30,6 +30,30 @@
   (if (and (overlayp eim-overlay) (overlay-start eim-overlay))
       (delete-overlay eim-overlay)))
 
+(defvar eim-mode-map
+  (let ((map (make-sparse-keymap))
+        (i ?\ ))
+    (while (< i 127)
+      (define-key map (char-to-string i) 'eim-self-insert-command)
+      (setq i (1+ i)))
+    (setq i 128)
+    (while (< i 256)
+      (define-key map (vector i) 'eim-self-insert-command)
+      (setq i (1+ i)))
+    (dolist (i (number-sequence ?1 ?9))
+      (define-key map (char-to-string i) 'eim-number-select))
+    (define-key map " " 'eim-select-current)
+    (define-key map [backspace] 'eim-delete-last-char)
+    (define-key map [delete] 'eim-delete-last-char)
+    (define-key map "\177" 'eim-delete-last-char)
+    (define-key map "\C-n" 'eim-next-page)
+    (define-key map "\C-p" 'eim-previous-page)
+    (define-key map "\C-m" 'eim-quit-no-clear)
+    (define-key map "\C-c" 'eim-quit-clear)
+    (define-key map "\C-g" 'eim-quit-clear)
+    map)
+  "Keymap")
+
 (defun eim-start-translation (key)
   "Start translation of the typed character KEY by the current Quail package.
 Return the input string."
