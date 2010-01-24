@@ -42,17 +42,18 @@
   "Face to show current string"
   :group 'eim)
 
-(defvar eim-current-key "" "已经输入的代码")
-(defvar eim-current-str "" "当前选择的词条")
-(defvar eim-current-cands "" "所有可选的词条。
+(defvar eim-comp-str "" "当前选择的词条")
+(defvar eim-cands-str "" "所有可选的词条。
 比如：\"菹(aie) 伜(wvfh) 伹(wegg) 倅(wywf) 傶(wdht%20wdhy) 卆(vfj) 哫(kkhy) 啐(kyw) 嘁(kdht%20kdhy) 岨(megg)\"
-词条与词条之间用空格分开，如果候选词内出现空格的话会用%20代替。
-")
-
-(defvar eim-current-index 1 "当前激活的候选词序号，如果按下上屏键的话，对应的候选词就会上屏。")
-
+词条与词条之间用空格分开，如果候选词内出现空格的话会用%20代替。")
+(defvar eim-commit-str "" "上屏字符串")
+(defvar eim-beep? "" "出错吡一声")
+(defvar eim-active? "" "在emacs-ime里没有用的变量，只有在notepad等有用")
+(defvar eim-cand-index 1 "当前激活的候选词序号，如果按下上屏键的话，对应的候选词就会上屏。")
 (defvar eim-hint-str "" "提示帮助")
+
 (defvar eim-translating nil "记录是否在转换状态")
+(defvar eim-answer-ready nil "答案是否已经到达")
 (defvar eim-overlay nil "显示当前选择词条的overlay")
 
 (defvar eim-use-tooltip t)
@@ -65,12 +66,9 @@
   "Keymap")
 
 (defvar eim-local-variable-list
-  '(eim-current-str
-    eim-guidance-str
-    eim-translating
+  '(eim-translating
     input-method-function
-    inactivate-current-input-method-function
-    eim-overlay)
+    inactivate-current-input-method-function)
   "A list of buffer local variable")
 
 (defvar eim-ime-connection nil "connection to the ime server, normally localhost:12345")
@@ -87,46 +85,37 @@
 
 (defun eim-network-filter (proc data)
   (setq eim-server-answer (concat eim-server-answer data))
-  (let ((answer (split-string eim-server-answer "^end:\n" t)))
-    (when (> (length answer) 1)
-      (setq eim-server-answer (apply 'concat (cdr answer)))
-      (setq answer (car answer))
-      (eim-got-ime-answer answer))))
+  (if (string-match "^end:\n" eim-server-answer)
+      (progn 
+        (setq answer (substring eim-server-answer 0 (match-beginning 0))
+              eim-server-answer (substring eim-server-answer 0 (match-end 0)))
+        (eim-got-ime-answer answer))))
 
-
-;;     422:    def reply_beep(self):
-;;     427:    def reply_commit(self):
-;;     432:    def reply_hint(self, arg=''):
-;;     436:    def reply_comp(self, arg=''):
-;;     440:    def reply_cands(self, arg=''):
-;;     449:    def reply_active(self, arg=''):
-;;     455:    def reply_cand_idx(self, arg=''):
 
 (defun eim-got-ime-answer (answer)
-  (let ((answer (split-string answer "\n" t))
-        comp-str cands-str cand-index beep? commit-str hint-str active?)
+  (message "%s" answer)
+  (let ((answer (split-string answer "\n" t)))
+    (setq eim-comp-str "" eim-cands-str "" eim-cand-index "" eim-beep? "" eim-commit-str "" eim-hint-str "" eim-active? "")
     (while answer
       (cond
        ((string-match "^comp: " (car answer))
-        (setq comp-str (substring (car answer) (length "comp: "))))
+        (setq eim-comp-str (substring (car answer) (match-end 0))))
        ((string-match "^cands: " (car answer))
-        (setq cands-str (substring (car answer) (length "cands: "))))
+        (setq eim-cands-str (substring (car answer) (match-end 0))))
        ((string-match "^commit: " (car answer))
-        (setq commit-str (substring (car answer) (length "commit: "))))
+        (setq eim-commit-str (substring (car answer) (match-end 0))))
        ((string-match "^hint: " (car answer))
-        (setq hint-str (substring (car answer) (length "hint: "))))
+        (setq eim-hint-str (substring (car answer) (match-end 0))))
        ((string-match "^beep: " (car answer))
-        (setq beep? (substring (car answer) (length "beep: "))))
+        (setq eim-beep? (substring (car answer) (match-end 0))))
        ((string-match "^cand_index: " (car answer))
-        (setq cand-index (substring (car answer) (length "cand_index: "))))
+        (setq eim-cand-index (substring (car answer) (match-end 0))))
        ((string-match "^active: " (car answer))
-        (setq active? (substring (car answer) (length "active: "))))
+        (setq eim-active? (substring (car answer) (match-end 0))))
        (t
-        (error "unknown answer from ime server: %s" (car answer))))
+        (message "unknown answer from ime server: %s" (car answer))))
       (setq answer (cdr answer)))
-    (when beep?
-      (beep)
-      (message "hello world"))))
+    (setq eim-answer-ready t)))
     
         
         
@@ -147,13 +136,6 @@
 
 
 
-(eim-connect-to-server)
-(process-send-string eim-ime-connection "keyed a\nkeyed C c\nkeyed return\n")
-
-
-
-  
-
 (defun eim-use-package (package-name &optional word-file active-func)
   (interactive)
   (mapc 'kill-local-variable eim-local-variable-list)
@@ -165,9 +147,7 @@
   ;; If we are in minibuffer, turn off the current input method
   ;; before exiting.
   (when (eq (selected-window) (minibuffer-window))
-    (add-hook 'minibuffer-exit-hook 'eim-exit-from-minibuffer))
-  (if (functionp (eim-active-function))
-      (funcall (eim-active-function))))
+    (add-hook 'minibuffer-exit-hook 'eim-exit-from-minibuffer)))
 
 (defun eim-inactivate ()
   (interactive)
@@ -178,7 +158,7 @@
   (setq eim-translating nil)
   (eim-delete-region)
   (setq eim-current-choices nil)
-  (setq eim-guidance-str "")
+  (setq eim-hint-str "")
   (when eim-use-tooltip
     (x-hide-tip)))
 
@@ -208,34 +188,41 @@
 (defun eim-show ()
   (unless enable-multibyte-characters
     (setq eim-current-key nil
-          eim-current-str nil)
+          eim-comp-str nil)
     (error "Can't input characters in current unibyte buffer"))
   (eim-delete-region)
-  (insert eim-current-str)
-  (move-overlay eim-overlay (overlay-start eim-overlay) (point))
-  ;; Then, show the guidance.
-  (when (and (not input-method-use-echo-area)
-             (null unread-command-events)
-             (null unread-post-input-method-events))
-    (if (eq (selected-window) (minibuffer-window))
-        ;; Show the guidance in the next line of the currrent
-        ;; minibuffer.
-        (eim-minibuffer-message
-         (format "  [%s]\n%s"
-                 current-input-method-title eim-guidance-str))
-      ;; Show the guidance in echo area without logging.
-      (let ((message-log-max nil))
-        (if eim-use-tooltip
-            (let ((pos (string-match ": " eim-guidance-str)))
-              (if pos
-                  (setq eim-guidance-str
-                        (concat (substring eim-guidance-str 0 pos)
-                                "\n"
-                                (make-string (/ (- (string-width eim-guidance-str) pos) 2) (decode-char 'ucs #x2501))
-                                "\n"
-                                (substring eim-guidance-str (+ pos 2)))))
-              (eim-show-tooltip eim-guidance-str))
-          (message "%s" eim-guidance-str))))))
+  (when (length eim-commit-str)
+    (insert eim-commit-str)
+    (move-overlay eim-overlay (point) (point)))
+
+  (when (length eim-comp-str)
+    (insert eim-comp-str)
+    (move-overlay eim-overlay (overlay-start eim-overlay) (point))))
+
+
+  ;; ;; Then, show the guidance.
+  ;; (when (and (not input-method-use-echo-area)
+  ;;            (null unread-command-events)
+  ;;            (null unread-post-input-method-events))
+  ;;   (if (eq (selected-window) (minibuffer-window))
+  ;;       ;; Show the guidance in the next line of the currrent
+  ;;       ;; minibuffer.
+  ;;       (eim-minibuffer-message
+  ;;        (format "  [%s]\n%s"
+  ;;                current-input-method-title eim-guidance-str))
+  ;;     ;; Show the guidance in echo area without logging.
+  ;;     (let ((message-log-max nil))
+  ;;       (if eim-use-tooltip
+  ;;           (let ((pos (string-match ": " eim-guidance-str)))
+  ;;             (if pos
+  ;;                 (setq eim-guidance-str
+  ;;                       (concat (substring eim-guidance-str 0 pos)
+  ;;                               "\n"
+  ;;                               (make-string (/ (- (string-width eim-guidance-str) pos) 2) (decode-char 'ucs #x2501))
+  ;;                               "\n"
+  ;;                               (substring eim-guidance-str (+ pos 2)))))
+  ;;             (eim-show-tooltip eim-guidance-str))
+  ;;         (message "%s" eim-guidance-str))))))
 
 (defun eim-make-guidance-frame ()
   "Make a new one-line frame for Quail guidance."
@@ -276,14 +263,7 @@
           (buffer-undo-list t)
           (inhibit-modification-hooks t))
       (unwind-protect
-          (let ((input-string (eim-start-translation key)))
-            ;;   (message "input-string: %s" input-string)
-            (setq eim-guidance-str "")
-            (when (and (stringp input-string)
-                       (> (length input-string) 0))
-              (if input-method-exit-on-first-char
-                  (list (aref input-string 0))
-                (eim-input-string-to-events input-string))))
+          (eim-start-translation key)
         (eim-delete-overlays)
         (set-buffer-modified-p modified-p)
         ;; Run this hook only when the current input method doesn't
@@ -291,6 +271,33 @@
         ;; conversion function should run this hook at a proper
         ;; timing.
         (run-hooks 'input-method-after-insert-chunk-hook)))))
+
+(defun eim-key-modifier (event)
+  (let ((mod (event-modifiers event))
+        (mod-str ""))
+    (while mod
+      (case (car mod)
+        ('control
+         (setq mod-str (format "%s C" mod-str)))
+        ('shift
+         (setq mod-str (format "%s S" mod-str)))
+        (t
+         (setq mod-str (format "%s A" mod-str))))
+      (setq mod (cdr mod)))
+    mod-str))
+
+(defun eim-key-base (event)
+  (let ((base (event-basic-type event))
+        (base-str ""))
+    (cond
+     ((symbolp base)
+      (symbol-name base))
+     ((equal base 32)
+      "space")
+     ((numberp base)
+      (string base))
+     (t
+      "unknown"))))      
 
 (defun eim-start-translation (key)
   "Start translation of the typed character KEY by the current Quail package.
@@ -301,103 +308,33 @@ Return the input string."
       ;; OK, we can start translation.
       (let* ((echo-keystrokes 0)
              (help-char nil)
-             (overriding-terminal-local-map (eim-mode-map))
+             (overriding-terminal-local-map eim-mode-map)
              (generated-events nil)
              (input-method-function nil)
              (modified-p (buffer-modified-p))
              last-command-event last-command this-command)
-        (setq eim-current-str ""
-              eim-current-key ""
-              eim-translating t)
-        (if key
-            (setq unread-command-events
-                  (cons key unread-command-events)))
+        (setq eim-translating t)
+
         (while eim-translating
           (set-buffer-modified-p modified-p)
           (let* ((prompt (if input-method-use-echo-area
-                             (format "%s%s %s"
-                                     (or input-method-previous-message "")
-                                     eim-current-key
-                                     eim-guidance-str)))
-                 (keyseq (read-key-sequence prompt nil nil t))
-                 (cmd (lookup-key (eim-mode-map) keyseq)))
-            ;;             (message "key: %s, cmd:%s\nlcmd: %s, lcmdv: %s, tcmd: %s"
-            ;;                      key cmd last-command last-command-event this-command)
-            (if (if key
-                    (commandp cmd)
-                  (eq cmd 'eim-self-insert-command))
-                (progn
-                  ;; (message "keyseq: %s" keyseq)
-                  (setq last-command-event (aref keyseq (1- (length keyseq)))
-                        last-command this-command
-                        this-command cmd)
-                  (setq key t)
-                  (condition-case err
-                      (call-interactively cmd)
-                    (error (message "%s" (cdr err)) (beep))))
-              ;; KEYSEQ is not defined in the translation keymap.
-              ;; Let's return the event(s) to the caller.
-              (setq unread-command-events
-                    (string-to-list (this-single-command-raw-keys)))
-              ;; (message "unread-command-events: %s" unread-command-events)
-              (eim-terminate-translation))))
-        ;;    (1message "return: %s" eim-current-str)
-        eim-current-str)
-    ;; Since KEY doesn't start any translation, just return it.
-    ;; But translate KEY if necessary.
-    (char-to-string key)))
-
-;;; borrow from completion-ui
-(defun eim-frame-posn-at-point (&optional position window)
-  "Return pixel position of top left corner of glyph at POSITION,
-relative to top left corner of frame containing WINDOW. Defaults
-to the position of point in the selected window."
-  (unless window (setq window (selected-window)))
-  (unless position (setq position (window-point window)))
-  (let ((x-y (posn-x-y (posn-at-point position window)))
-        (edges (window-inside-pixel-edges window)))
-    (cons (+ (car x-y) (car  edges))
-          (+ (cdr x-y) (cadr edges)))))
-
-(defface eim-tooltip-face '((((class color)) :inherit tooltip))
-  "face to display items"
-  :group 'eim)
-
-(defun eim-show-tooltip (text)
-  "Show tooltip text near cursor."
-  (let ((pos (eim-frame-posn-at-point))
-        (fg (face-attribute 'eim-tooltip-face :foreground nil 'tooltip))
-        (bg (face-attribute 'eim-tooltip-face :background nil 'tooltip))
-        (params tooltip-frame-parameters)
-        ;; seem the top position should add 65 pixel to make
-        ;; the text display under the baseline of cursor
-        (top-adjust 65)
-        (frame-height (frame-pixel-height))
-        (frame-width (frame-pixel-width))
-        (lines (split-string text "\n"))
-        width height left top)
-    (setq width (* (frame-char-width) (apply 'max (mapcar 'string-width lines)))
-          height (* (frame-char-height) (length lines)))
-    (setq left (frame-parameter nil 'left)
-          top (frame-parameter nil 'top))
-    ;; if the cursor is at near the right frame fringe or at bottom
-    ;; of the bottom fringe, move the frame to
-    ;; -frame-width or -frame-height from right or bottom
-    (if (< (- frame-width (car pos)) width)
-        (setq left (+ left (max 0 (- frame-width width))))
-      (setq left (+ left (car pos))))
-    (if (< (- frame-height (cdr pos)) (+ height top-adjust))
-        (setq top (+ top (max 0 (- frame-height height))))
-      (setq top (+ top (cdr pos))))
-    (setq top (+ top top-adjust))
-    (when (stringp fg)
-      (setq params (append params `((foreground-color . ,fg)
-                                    (border-color . ,fg)))))
-    (when (stringp bg)
-      (setq params (append params `((background-color . ,bg)))))
-    (setq params (append params `((left . ,left) (top . ,top))))
-    (x-show-tip (propertize text 'face 'eim-tooltip-face)
-                nil params eim-tooltip-timeout)))
+                             (format "%s"
+                                     (or input-method-previous-message ""))))
+                 (keyseq (if key (prog1 (vector key) (setq key nil))
+                           (read-key-sequence-vector prompt)))
+                 (keyed-str (format "keyed %s %s\n" 
+                                    (eim-key-modifier (aref keyseq 0))
+                                    (eim-key-base (aref keyseq 0)))))
+            (message "%s" eim-server-answer)
+            (setq eim-answer-ready nil eim-server-answer "")
+            (process-send-string eim-ime-connection keyed-str)
+            (sit-for 10)
+                        
+            (if (not (length eim-comp-str))
+                (setq eim-translating nil)))))))
 
 (register-input-method
  "sdim" "euc-cn" 'eim-use-package "影舞笔")
+
+(setq default-input-method "sdim")
+(toggle-input-method)
