@@ -393,7 +393,7 @@ class ime:
         self.reply_active()
         self.reply_cand_idx()
         self.reply_commit()
-        self.beep()
+        self.reply_beep()
 
 
         
@@ -419,7 +419,7 @@ class ime:
         _g_ime_history.set_history(self.compstr, self.cand_index)
         self.compstr = ''
 
-    def beep(self):
+    def reply_beep(self):
         if self.beepstr:
             self.__reply('beep: %s' % self.beepstr)
             self.beepstr = ''
