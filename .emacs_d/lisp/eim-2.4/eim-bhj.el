@@ -22,21 +22,6 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-;;; Commentary:
-
-;;
-
-;; Put this file into your load-path and the following into your ~/.emacs:
-;; (add-to-list 'load-path "~/.emacs.d/site-lisp/eim")
-;; (autoload 'eim-use-package "eim" "Another emacs input method")
-
-;; (register-input-method
-;;  "eim-wb" "euc-cn" 'eim-use-package
-;;  "五笔" "汉字五笔输入法" "wb.txt")
-;; (register-input-method
-;;  "eim-py" "euc-cn" 'eim-use-package
-;;  "拼音" "汉字拼音输入法" "py.txt")
-
 ;;; Code:
 
 (provide 'eim)
@@ -45,6 +30,7 @@
 (require 'help-mode)
 
 (defvar eim-version "2.4")
+(defvar eim-server-answer "" "anser from server")
 
 
 (defgroup eim nil
@@ -87,6 +73,8 @@
     eim-overlay)
   "A list of buffer local variable")
 
+(defvar eim-ime-connection nil "connection to the ime server, normally localhost:12345")
+
 (dolist (var eim-local-variable-list)
   (make-variable-buffer-local var)
   (put var 'permanent-local t))
@@ -97,13 +85,81 @@
       (delete-region (overlay-start eim-overlay)
                      (overlay-end eim-overlay))))
 
-;;;_ , eim-use-package
+(defun eim-network-filter (proc data)
+  (setq eim-server-answer (concat eim-server-answer data))
+  (let ((answer (split-string eim-server-answer "^end:\n" t)))
+    (when (> (length answer) 1)
+      (setq eim-server-answer (apply 'concat (cdr answer)))
+      (setq answer (car answer))
+      (eim-got-ime-answer answer))))
+
+
+;;     422:    def reply_beep(self):
+;;     427:    def reply_commit(self):
+;;     432:    def reply_hint(self, arg=''):
+;;     436:    def reply_comp(self, arg=''):
+;;     440:    def reply_cands(self, arg=''):
+;;     449:    def reply_active(self, arg=''):
+;;     455:    def reply_cand_idx(self, arg=''):
+
+(defun eim-got-ime-answer (answer)
+  (let ((answer (split-string answer "\n" t))
+        comp-str cands-str cand-index beep? commit-str hint-str active?)
+    (while answer
+      (cond
+       ((string-match "^comp: " (car answer))
+        (setq comp-str (substring (car answer) (length "comp: "))))
+       ((string-match "^cands: " (car answer))
+        (setq cands-str (substring (car answer) (length "cands: "))))
+       ((string-match "^commit: " (car answer))
+        (setq commit-str (substring (car answer) (length "commit: "))))
+       ((string-match "^hint: " (car answer))
+        (setq hint-str (substring (car answer) (length "hint: "))))
+       ((string-match "^beep: " (car answer))
+        (setq beep? (substring (car answer) (length "beep: "))))
+       ((string-match "^cand_index: " (car answer))
+        (setq cand-index (substring (car answer) (length "cand_index: "))))
+       ((string-match "^active: " (car answer))
+        (setq active? (substring (car answer) (length "active: "))))
+       (t
+        (error "unknown answer from ime server: %s" (car answer))))
+      (setq answer (cdr answer)))
+    (when beep?
+      (beep)
+      (message "hello world"))))
+    
+        
+        
+    
+
+(defun eim-network-sentinel (proc event)
+  '(do nothing))
+
+(defun eim-connect-to-server ()
+  (unless eim-ime-connection
+    (setq eim-ime-connection 
+          (make-network-process :name "ime-server"
+                                :host "localhost"
+                                :service 12345
+                                :buffer "*ime-server*"
+                                :filter 'eim-network-filter
+                                :sentinel 'eim-network-sentinel))))
+
+
+
+(eim-connect-to-server)
+(process-send-string eim-ime-connection "keyed a\nkeyed C c\nkeyed return\n")
+
+
+
+  
+
 (defun eim-use-package (package-name &optional word-file active-func)
   (interactive)
   (mapc 'kill-local-variable eim-local-variable-list)
   (mapc 'make-local-variable eim-local-variable-list)
+  (eim-connect-to-server)
 
-  (eim-install-variable)
   (setq input-method-function 'eim-input-method)
   (setq inactivate-current-input-method-function 'eim-inactivate)
   ;; If we are in minibuffer, turn off the current input method
@@ -135,7 +191,7 @@
 (defun eim-exit-from-minibuffer ()
   (inactivate-input-method)
   (if (<= (minibuffer-depth) 1)
-      (remove-hook 'minibuffer-exit-hook 'quail-exit-from-minibuffer)))
+      (remove-hook 'minibuffer-exit-hook 'eim-exit-from-minibuffer)))
 
 (defun eim-setup-overlays ()
   (let ((pos (point)))
@@ -343,3 +399,5 @@ to the position of point in the selected window."
     (x-show-tip (propertize text 'face 'eim-tooltip-face)
                 nil params eim-tooltip-timeout)))
 
+(register-input-method
+ "sdim" "euc-cn" 'eim-use-package "影舞笔")
