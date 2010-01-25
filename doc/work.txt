@@ -2540,6 +2540,8 @@ make
 
 http://www.packetix.net/en/secure/install/ vpn
 
+Avant Browser
+
 (defun hello ()
   (interactive))
 (let* ((overriding-terminal-local-map (let ((map (make-sparse-keymap)))
@@ -2549,3 +2551,4 @@ http://www.packetix.net/en/secure/install/ vpn
   (format "%s %s %s" event (event-modifiers (aref event  0))
           (event-basic-type (aref event 0))))
 (read-event)
+
