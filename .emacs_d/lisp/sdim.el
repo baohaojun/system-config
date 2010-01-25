@@ -1,60 +1,281 @@
-(register-input-method
- "sdim" "euc-cn" 'sdim-use-package "影舞笔")
+;;; -*- coding: utf-8 -*-
+;;; sdim.el --- Emacs Input method
 
-(defun sdim-use-package (&rest args)
-  (interactive)
-  (mapc 'kill-local-variable sdim-local-variable-list)
-  (mapc 'make-local-variable sdim-local-variable-list)
+;; Copyright 2006 Ye Wenbin
+;;
+;; Author: wenbinye@163.com
+;; Version: $Id: sdim.el,v 1.5 2007/01/14 01:50:15 ywb Exp $
+;; Keywords:
+;; X-URL: not distributed yet
 
-  (setq input-method-function 'sdim-input-method)
-  (setq inactivate-current-input-method-function 'sdim-inactivate)
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program; if not, write to the Free Software
+;; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-  (when (eq (selected-window) (minibuffer-window))
-    (add-hook 'minibuffer-exit-hook 'sdim-exit-from-minibuffer))
-  (run-hooks 'sdim-active-hook))
+;;; Code:
 
-(defvar eim-overlay nil "显示当前选择词条的 overlay")
+(provide 'sdim)
+(eval-when-compile
+  (require 'cl))
+(require 'help-mode)
 
-(defface eim-string-face '((t (:underline t)))
-  "Face to show current string")
+(defvar sdim-version "2.4")
+(defvar sdim-server-answer "" "anser from server")
 
-(defun eim-setup-overlays ()
-  (let ((pos (point)))
-    (if (overlayp eim-overlay)
-        (move-overlay eim-overlay pos pos)
-      (setq eim-overlay (make-overlay pos pos))
-      (if input-method-highlight-flag
-          (overlay-put eim-overlay 'face 'eim-string-face)))))
 
-(defun eim-delete-overlays ()
-  (if (and (overlayp eim-overlay) (overlay-start eim-overlay))
-      (delete-overlay eim-overlay)))
+(defgroup sdim nil
+  "sdim: emacs input method"
+  :group 'lsdim)
+(defvar sdim-page-length 7 "每页显示的词条数目")
 
-(defvar eim-mode-map
-  (let ((map (make-sparse-keymap))
-        (i ?\ ))
-    (while (< i 127)
-      (define-key map (char-to-string i) 'eim-self-insert-command)
-      (setq i (1+ i)))
-    (setq i 128)
-    (while (< i 256)
-      (define-key map (vector i) 'eim-self-insert-command)
-      (setq i (1+ i)))
-    (dolist (i (number-sequence ?1 ?9))
-      (define-key map (char-to-string i) 'eim-number-select))
-    (define-key map " " 'eim-select-current)
-    (define-key map [backspace] 'eim-delete-last-char)
-    (define-key map [delete] 'eim-delete-last-char)
-    (define-key map "\177" 'eim-delete-last-char)
-    (define-key map "\C-n" 'eim-next-page)
-    (define-key map "\C-p" 'eim-previous-page)
-    (define-key map "\C-m" 'eim-quit-no-clear)
-    (define-key map "\C-c" 'eim-quit-clear)
-    (define-key map "\C-g" 'eim-quit-clear)
+(defface sdim-string-face '((t (:underline t)))
+  "Face to show current string"
+  :group 'sdim)
+
+(defvar sdim-comp-str "" "当前选择的词条")
+(defvar sdim-cands-str "" "所有可选的词条。
+比如：\"菹(aie) 伜(wvfh) 伹(wegg) 倅(wywf) 傶(wdht%20wdhy) 卆(vfj) 哫(kkhy) 啐(kyw) 嘁(kdht%20kdhy) 岨(megg)\"
+词条与词条之间用空格分开，如果候选词内出现空格的话会用%20代替。")
+(defvar sdim-commit-str "" "上屏字符串")
+(defvar sdim-beep? "" "出错吡一声")
+(defvar sdim-active? "" "在emacs-ime里没有用的变量，只有在notepad等有用")
+(defvar sdim-cand-index 1 "当前激活的候选词序号，如果按下上屏键的话，对应的候选词就会上屏。")
+(defvar sdim-hint-str "" "提示帮助")
+
+(defvar sdim-translating nil "记录是否在转换状态")
+(defvar sdim-answer-ready nil "答案是否已经到达")
+(defvar sdim-overlay nil "显示当前选择词条的overlay")
+
+(defvar sdim-use-tooltip t)
+(defvar sdim-tooltip-timeout 15)
+
+(defun sdim-im-key-event ()
+  (interactive))
+(defvar sdim-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [t] 'sdim-im-key-event)
     map)
   "Keymap")
 
-(defun eim-start-translation (key)
+(defvar sdim-local-variable-list
+  '(sdim-translating
+    input-method-function
+    inactivate-current-input-method-function)
+  "A list of buffer local variable")
+
+(defvar sdim-ime-connection nil "connection to the ime server, normally localhost:12345")
+
+(dolist (var sdim-local-variable-list)
+  (make-variable-buffer-local var)
+  (put var 'permanent-local t))
+
+(defsubst sdim-delete-region ()
+  "Delete the text in the current translation region of E+."
+  (if (overlay-start sdim-overlay)
+      (delete-region (overlay-start sdim-overlay)
+                     (overlay-end sdim-overlay))))
+
+(defun sdim-network-filter (proc data)
+  (with-current-buffer (process-buffer proc)
+    (insert data))
+  (setq sdim-server-answer (concat sdim-server-answer data))
+  (if (string-match "^end:\n" sdim-server-answer)
+      (progn 
+        (setq answer (substring sdim-server-answer 0 (match-beginning 0))
+              sdim-server-answer (substring sdim-server-answer 0 (match-end 0)))
+        (sdim-got-ime-answer answer))))
+
+
+(defun sdim-got-ime-answer (answer)
+  (let ((answer (split-string answer "\n" t)))
+    (setq sdim-comp-str "" sdim-cands-str "" sdim-cand-index "" sdim-beep? "" sdim-commit-str "" sdim-hint-str "" sdim-active? "")
+    (while answer
+      (cond
+       ((string-match "^comp: " (car answer))
+        (setq sdim-comp-str (substring (car answer) (match-end 0))))
+       ((string-match "^cands: " (car answer))
+        (setq sdim-cands-str (substring (car answer) (match-end 0))))
+       ((string-match "^commit: " (car answer))
+        (setq sdim-commit-str (substring (car answer) (match-end 0))))
+       ((string-match "^hint: " (car answer))
+        (setq sdim-hint-str (substring (car answer) (match-end 0))))
+       ((string-match "^beep: " (car answer))
+        (setq sdim-beep? (substring (car answer) (match-end 0))))
+       ((string-match "^cand_index: " (car answer))
+        (setq sdim-cand-index (substring (car answer) (match-end 0))))
+       ((string-match "^active: " (car answer))
+        (setq sdim-active? (substring (car answer) (match-end 0))))
+       (t
+        (message "unknown answer from ime server: %s" (car answer))))
+      (setq answer (cdr answer)))
+    (setq sdim-answer-ready t)
+    (when (= (length sdim-comp-str) 0)
+      (setq sdim-translating nil))))
+
+
+    
+
+(defun sdim-network-sentinel (proc event)
+  '(do nothing))
+
+(defun sdim-connect-to-server ()
+  (unless sdim-ime-connection
+    (setq sdim-ime-connection 
+          (make-network-process :name "ime-server"
+                                :host "localhost"
+                                :service 12345
+                                :buffer "*ime-server*"
+                                :filter 'sdim-network-filter
+                                :sentinel 'sdim-network-sentinel))))
+
+
+
+(defun sdim-use-package (package-name &optional word-file active-func)
+  (interactive)
+  (mapc 'kill-local-variable sdim-local-variable-list)
+  (mapc 'make-local-variable sdim-local-variable-list)
+  (sdim-connect-to-server)
+
+  (setq input-method-function 'sdim-input-method)
+  (setq inactivate-current-input-method-function 'sdim-inactivate)
+  ;; If we are in minibuffer, turn off the current input method
+  ;; before exiting.
+  (when (eq (selected-window) (minibuffer-window))
+    (add-hook 'minibuffer-exit-hook 'sdim-exit-from-minibuffer)))
+
+(defun sdim-inactivate ()
+  (interactive)
+  (mapc 'kill-local-variable sdim-local-variable-list))
+
+(defun sdim-terminate-translation ()
+  "Terminate the translation of the current key."
+  (setq sdim-translating nil)
+  (sdim-delete-region)
+  (setq sdim-current-choices nil)
+  (setq sdim-hint-str "")
+  (when sdim-use-tooltip
+    (x-hide-tip)))
+
+(defun sdim-translate (char)
+  (if (functionp sdim-translate-function)
+      (funcall sdim-translate-function char)
+    (char-to-string char)))
+
+;;;_ , Core function of input method (stole from quail)
+(defun sdim-exit-from-minibuffer ()
+  (inactivate-input-method)
+  (if (<= (minibuffer-depth) 1)
+      (remove-hook 'minibuffer-exit-hook 'sdim-exit-from-minibuffer)))
+
+(defun sdim-setup-overlays ()
+  (let ((pos (point)))
+    (if (overlayp sdim-overlay)
+        (move-overlay sdim-overlay pos pos)
+      (setq sdim-overlay (make-overlay pos pos))
+      (if input-method-highlight-flag
+          (overlay-put sdim-overlay 'face 'sdim-string-face)))))
+
+(defun sdim-delete-overlays ()
+  (if (and (overlayp sdim-overlay) (overlay-start sdim-overlay))
+      (delete-overlay sdim-overlay)))
+
+(defun sdim-minibuffer-message (string)
+  (message nil)
+  (let ((point-max (point-max))
+        (inhibit-quit t))
+    (save-excursion
+      (goto-char point-max)
+      (insert string))
+    (sit-for 1000000)
+    (delete-region point-max (point-max))
+    (when quit-flag
+      (setq quit-flag nil
+            unread-command-events '(7)))))
+
+(defun sdim-show ()
+  (unless enable-multibyte-characters
+    (setq sdim-current-key nil
+          sdim-comp-str nil)
+    (error "Can't input characters in current unibyte buffer"))
+  (sdim-delete-region)
+  (when (length sdim-commit-str)
+    (insert sdim-commit-str)
+    (move-overlay sdim-overlay (point) (point)))
+
+  (when (length sdim-comp-str)
+    (insert sdim-comp-str)
+    (move-overlay sdim-overlay (overlay-start sdim-overlay) (point)))
+  (when (and (not input-method-use-echo-area)
+             (null unread-command-events)
+             (null unread-post-input-method-events))
+    (if (eq (selected-window) (minibuffer-window))
+        ;; Show the guidance in the next line of the currrent
+        ;; minibuffer.
+        (sdim-minibuffer-message
+         (format "  [%s]\n%s"
+                 current-input-method-title sdim-cands-str))
+      ;; Show the guidance in echo area without logging.
+      (let ((message-log-max nil))
+        (message "%s" sdim-cands-str)))))
+
+
+(defun sdim-input-method (key)
+  (if (or buffer-read-only
+          overriding-terminal-local-map
+          overriding-local-map)
+      (list key)
+    (sdim-setup-overlays)
+    (let ((modified-p (buffer-modified-p))
+          (buffer-undo-list t)
+          (inhibit-modification-hooks t))
+      (unwind-protect
+          (sdim-start-translation key)
+        (sdim-delete-overlays)
+        (set-buffer-modified-p modified-p)
+        ;; Run this hook only when the current input method doesn't
+        ;; require conversion. When conversion is required, the
+        ;; conversion function should run this hook at a proper
+        ;; timing.
+        (run-hooks 'input-method-after-insert-chunk-hook)))))
+
+(defun sdim-key-modifier (event)
+  (let ((mod (event-modifiers event))
+        (mod-str ""))
+    (while mod
+      (case (car mod)
+        ('control
+         (setq mod-str (format "%s C" mod-str)))
+        ('shift
+         (setq mod-str (format "%s S" mod-str)))
+        (t
+         (setq mod-str (format "%s A" mod-str))))
+      (setq mod (cdr mod)))
+    mod-str))
+
+(defun sdim-key-base (event)
+  (let ((base (event-basic-type event))
+        (base-str ""))
+    (cond
+     ((symbolp base)
+      (symbol-name base))
+     ((equal base 32)
+      "space")
+     ((numberp base)
+      (string base))
+     (t
+      "unknown"))))      
+
+(defun sdim-start-translation (key)
   "Start translation of the typed character KEY by the current Quail package.
 Return the input string."
   ;; Check the possibility of translating KEY.
@@ -63,75 +284,33 @@ Return the input string."
       ;; OK, we can start translation.
       (let* ((echo-keystrokes 0)
              (help-char nil)
-             (overriding-terminal-local-map (eim-mode-map))
+             (overriding-terminal-local-map sdim-mode-map)
              (generated-events nil)
              (input-method-function nil)
              (modified-p (buffer-modified-p))
              last-command-event last-command this-command)
-        (setq eim-current-str ""
-              eim-current-key ""
-              eim-translating t)
-        (if key
-            (setq unread-command-events
-                  (cons key unread-command-events)))
-        (while eim-translating
-          (set-buffer-modified-p modified-p)
-          (let* ((prompt (if input-method-use-echo-area
-                             (format "%s%s %s"
-                                     (or input-method-previous-message "")
-                                     eim-current-key
-                                     eim-guidance-str)))
-                 (keyseq (read-key-sequence prompt nil nil t))
-                 (cmd (lookup-key (eim-mode-map) keyseq)))
-            ;;             (message "key: %s, cmd:%s\nlcmd: %s, lcmdv: %s, tcmd: %s"
-            ;;                      key cmd last-command last-command-event this-command)
-            (if (if key
-                    (commandp cmd)
-                  (eq cmd 'eim-self-insert-command))
-                (progn
-                  ;; (message "keyseq: %s" keyseq)
-                  (setq last-command-event (aref keyseq (1- (length keyseq)))
-                        last-command this-command
-                        this-command cmd)
-                  (setq key t)
-                  (condition-case err
-                      (call-interactively cmd)
-                    (error (message "%s" (cdr err)) (beep))))
-              ;; KEYSEQ is not defined in the translation keymap.
-              ;; Let's return the event(s) to the caller.
-              (setq unread-command-events
-                    (string-to-list (this-single-command-raw-keys)))
-              ;; (message "unread-command-events: %s" unread-command-events)
-              (eim-terminate-translation))))
-        ;;    (1message "return: %s" eim-current-str)
-        eim-current-str)
-    ;; Since KEY doesn't start any translation, just return it.
-    ;; But translate KEY if necessary.
-    (char-to-string key)))
+        (setq sdim-translating t)
 
-(defun sdim-input-method (key)
-  (if (or buffer-read-only
-          overriding-terminal-local-map
-          overriding-local-map)
-      (list key)
-    ;; (message "call with key: %c" key)
-    (eim-setup-overlays)
-    (let ((modified-p (buffer-modified-p))
-          (buffer-undo-list t)
-          (inhibit-modification-hooks t))
-      (unwind-protect
-          (let ((input-string (eim-start-translation key)))
-            ;;   (message "input-string: %s" input-string)
-            (setq eim-guidance-str "")
-            (when (and (stringp input-string)
-                       (> (length input-string) 0))
-              (if input-method-exit-on-first-char
-                  (list (aref input-string 0))
-                (eim-input-string-to-events input-string))))
-        (eim-delete-overlays)
-        (set-buffer-modified-p modified-p)
-        ;; Run this hook only when the current input method doesn't
-        ;; require conversion. When conversion is required, the
-        ;; conversion function should run this hook at a proper
-        ;; timing.
-        (run-hooks 'input-method-after-insert-chunk-hook)))))
+        (while sdim-translating
+
+          (set-buffer-modified-p modified-p)
+          (let* ((prompt  (if input-method-use-echo-area
+                             (format "%s %s"
+                                     (or input-method-previous-message "")
+                                     sdim-cands-str)))
+                 (keyseq (if key 
+                             (prog1 (vector key) (setq key nil))
+                           (read-key-sequence-vector prompt)))
+                 (keyed-str (format "keyed %s %s\n" 
+                                    (sdim-key-modifier (aref keyseq 0))
+                                    (sdim-key-base (aref keyseq 0)))))
+            (setq sdim-answer-ready nil sdim-server-answer "")
+            (process-send-string sdim-ime-connection keyed-str)
+            (accept-process-output sdim-ime-connection)
+            (sdim-show))))))
+
+(register-input-method
+ "sdim" "euc-cn" 'sdim-use-package "影舞笔")
+
+(setq default-input-method "sdim")
+(toggle-input-method)
