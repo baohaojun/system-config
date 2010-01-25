@@ -121,10 +121,12 @@
 
 ;;;; You need this if you decide to use gnuclient
 
+(autoload 'sdim-use-package "sdim" "Shadow dance input method")
 (register-input-method
- "chinese-wubi86" "Chinese-CNS" 'quail-use-package
- "WuBi" "WuBi"
- "quail/wubi86")
+ "sdim" "euc-cn" 'sdim-use-package "影舞笔")
+
+(setq default-input-method "sdim")
+
 
 (let ((x "~/.emacs_d/UnicodeData.txt"))
   (when (file-exists-p x)
@@ -428,7 +430,6 @@
  '(bhj-grep-default-directory (quote default-directory))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
- '(default-input-method "chinese-wubi86")
  '(delete-old-versions t)
  '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
  '(dictem-server "localhost")

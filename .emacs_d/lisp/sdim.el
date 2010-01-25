@@ -309,8 +309,3 @@ Return the input string."
             (accept-process-output sdim-ime-connection)
             (sdim-show))))))
 
-(register-input-method
- "sdim" "euc-cn" 'sdim-use-package "影舞笔")
-
-(setq default-input-method "sdim")
-(toggle-input-method)
