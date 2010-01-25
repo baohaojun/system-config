@@ -31,12 +31,12 @@
 
 (defvar sdim-version "2.4")
 (defvar sdim-server-answer "" "anser from server")
+(defvar sdim-ime-debug nil "debug mode, transaction is saved in buffer")
 
 
 (defgroup sdim nil
   "sdim: emacs input method"
   :group 'lsdim)
-(defvar sdim-page-length 7 "每页显示的词条数目")
 
 (defface sdim-string-face '((t (:underline t)))
   "Face to show current string"
@@ -86,8 +86,9 @@
                      (overlay-end sdim-overlay))))
 
 (defun sdim-network-filter (proc data)
-  (with-current-buffer (process-buffer proc)
-    (insert data))
+  (when sdim-ime-debug
+    (with-current-buffer (process-buffer proc)
+      (insert data)))
   (setq sdim-server-answer (concat sdim-server-answer data))
   (if (string-match "^end:\n" sdim-server-answer)
       (progn 
@@ -98,7 +99,7 @@
 
 (defun sdim-got-ime-answer (answer)
   (let ((answer (split-string answer "\n" t)))
-    (setq sdim-comp-str "" sdim-cands-str "" sdim-cand-index "" sdim-beep? "" sdim-commit-str "" sdim-hint-str "" sdim-active? "")
+    (setq sdim-comp-str "" sdim-cands-str "" sdim-cand-index "0" sdim-beep? "" sdim-commit-str "" sdim-hint-str "" sdim-active? "")
     (while answer
       (cond
        ((string-match "^comp: " (car answer))
@@ -120,7 +121,7 @@
       (setq answer (cdr answer)))
     (setq sdim-answer-ready t)
     (sdim-show)
-    (when (= (length sdim-comp-str) 0)
+    (when (string-equal "" sdim-comp-str)
       (setq sdim-translating nil))))
 
 
@@ -209,11 +210,30 @@
           sdim-comp-str nil)
     (error "Can't input characters in current unibyte buffer"))
   (sdim-delete-region)
-  (when (length sdim-commit-str)
+  (when (not (string-equal "" sdim-commit-str))
     (insert sdim-commit-str)
     (move-overlay sdim-overlay (point) (point)))
 
-  (when (length sdim-comp-str)
+  (if (not (string-equal "" sdim-cands-str))
+      (let ((cands-list (mapcar (lambda (str) (replace-regexp-in-string "%20" " " str))
+                                 (split-string sdim-cands-str " ")))
+             (cand-index (read sdim-cand-index)))
+        (setq sdim-comp-str (nth cand-index cands-list))
+        (let ((i 0))
+          (setq sdim-cands-str "")
+          (mapc (lambda (str) (setq i (% (1+ i) 10) 
+                                    prefix (string (+ ?0 i) ?.))
+                  (setq sdim-cands-str (concat sdim-cands-str 
+                                               (if (eq i 0)
+                                                   ""
+                                                 " ")
+                                               prefix
+                                               str))) cands-list))))
+     
+        
+        
+              
+  (when (not (string-equal "" sdim-comp-str))
     (insert sdim-comp-str)
     (move-overlay sdim-overlay (overlay-start sdim-overlay) (point)))
   (when (and (not input-method-use-echo-area)
