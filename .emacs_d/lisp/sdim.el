@@ -218,12 +218,15 @@
       (let ((cands-list (mapcar (lambda (str) (replace-regexp-in-string "%20" " " str))
                                  (split-string sdim-cands-str " ")))
              (cand-index (read sdim-cand-index)))
-        (setq sdim-comp-str (nth cand-index cands-list))
+        (setq sdim-comp-str (substring (nth cand-index cands-list) 0))
         (let ((i 0))
           (setq sdim-cands-str "")
-          (mapc (lambda (str) (setq i (% (1+ i) 10) 
-                                    prefix (string (+ ?0 i) ?.))
-                  (setq sdim-cands-str (concat sdim-cands-str 
+          (mapc (lambda (str)
+                  (when (eq i cand-index)
+                    (put-text-property 0 (length str) 'face '(:background "green2") str))
+                  (setq i (1+ i)
+                        prefix (string (+ ?0 (% i 10)) ?.)
+                        sdim-cands-str (concat sdim-cands-str 
                                                (if (eq i 0)
                                                    ""
                                                  " ")
@@ -233,7 +236,7 @@
         
         
               
-  (when (not (string-equal "" sdim-comp-str))
+  (when t
     (insert sdim-comp-str)
     (move-overlay sdim-overlay (overlay-start sdim-overlay) (point)))
   (when (and (not input-method-use-echo-area)
@@ -270,31 +273,39 @@
         (run-hooks 'input-method-after-insert-chunk-hook)))))
 
 (defun sdim-key-modifier (event)
-  (let ((mod (event-modifiers event))
-        (mod-str ""))
-    (while mod
-      (case (car mod)
-        ('control
-         (setq mod-str (format "%s C" mod-str)))
-        ('shift
-         (setq mod-str (format "%s S" mod-str)))
-        (t
-         (setq mod-str (format "%s A" mod-str))))
-      (setq mod (cdr mod)))
-    mod-str))
+  (if (and (numberp event)
+           (<= event ?Z)
+           (>= event ?A))
+      ""
+    (let ((mod (event-modifiers event))
+          (mod-str ""))
+      (while mod
+        (case (car mod)
+          ('control
+           (setq mod-str (format "%s C" mod-str)))
+          ('shift
+           (setq mod-str (format "%s S" mod-str)))
+          (t
+           (setq mod-str (format "%s A" mod-str))))
+        (setq mod (cdr mod)))
+      mod-str)))
 
 (defun sdim-key-base (event)
-  (let ((base (event-basic-type event))
-        (base-str ""))
-    (cond
-     ((symbolp base)
-      (symbol-name base))
-     ((equal base 32)
-      "space")
-     ((numberp base)
-      (string base))
-     (t
-      "unknown"))))      
+  (if (and (numberp event)
+           (<= event ?Z)
+           (>= event ?A))
+      (string event)
+    (let ((base (event-basic-type event))
+          (base-str ""))
+      (cond
+       ((symbolp base)
+        (symbol-name base))
+       ((equal base 32)
+        "space")
+       ((numberp base)
+        (string base))
+       (t
+        "unknown")))))      
 
 (defun sdim-start-translation (key)
   "Start translation of the typed character KEY by the current Quail package.
