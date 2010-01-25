@@ -119,6 +119,7 @@
         (message "unknown answer from ime server: %s" (car answer))))
       (setq answer (cdr answer)))
     (setq sdim-answer-ready t)
+    (sdim-show)
     (when (= (length sdim-comp-str) 0)
       (setq sdim-translating nil))))
 
@@ -306,6 +307,5 @@ Return the input string."
                                     (sdim-key-base (aref keyseq 0)))))
             (setq sdim-answer-ready nil sdim-server-answer "")
             (process-send-string sdim-ime-connection keyed-str)
-            (accept-process-output sdim-ime-connection)
-            (sdim-show))))))
+            (accept-process-output sdim-ime-connection))))))
 
