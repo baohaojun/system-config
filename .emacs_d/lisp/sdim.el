@@ -211,7 +211,10 @@
     (error "Can't input characters in current unibyte buffer"))
   (sdim-delete-region)
   (when (not (string-equal "" sdim-commit-str))
-    (insert sdim-commit-str)
+    (let ((inhibit-modification-hooks nil))
+      (insert sdim-commit-str)
+      (if auto-fill-function
+          (apply normal-auto-fill-function ())))
     (move-overlay sdim-overlay (point) (point)))
 
   (if (not (string-equal "" sdim-cands-str))
