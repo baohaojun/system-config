@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e 
 #this script will generate unicode font for pdflatex usage
 (mkdir -p ~/.texmf-var/fonts/truetype/;
 cp $1.ttf ~/.texmf-var/fonts/truetype/;
@@ -12,7 +13,7 @@ mkdir -p ~/.texmf-var/fonts/tfm/$1/
 mv *.tfm ~/.texmf-var/fonts/tfm/$1/
 
 (mkdir -p ~/.texmf-var/tex/latex/cjk/utf-8;
-cd mkdir ~/.texmf-var/tex/latex/cjk/utf-8;
+cd ~/.texmf-var/tex/latex/cjk/utf-8;
 cat <<End|sed -e "s/%fontname%/$1/g" > c70$1.fd
 \ProvidesFile{c70%fontname%.fd}
 % character set: Unicode U+0080 - U+FFFD
@@ -29,3 +30,5 @@ End
 updmap --enable Map $1.map
 texhash
 )
+
+echo 'OK!'
