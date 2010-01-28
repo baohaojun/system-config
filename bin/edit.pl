@@ -12,7 +12,7 @@ EOC
 
 } else {
     $ssh_cmd = <<EOC;
-psexec.exe -sid "\$(cygpath -alw "\$(which findexec)")" -c emacs-
+psexec.exe -sid "\$(cygpath -alw "\$(which findexec)")" -t emacs@
 emacsclient -n $ssh_cmd
 EOC
 }
