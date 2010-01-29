@@ -1,12 +1,9 @@
 ;;; -*- coding: utf-8 -*-
-;;; sdim.el --- Emacs Input method
+;;; sdim.el --- Shadow Dance Input method
 
-;; Copyright 2006 Ye Wenbin
+;; Copyright 2010 Bao Haojun
 ;;
-;; Author: wenbinye@163.com
-;; Version: $Id: sdim.el,v 1.5 2007/01/14 01:50:15 ywb Exp $
-;; Keywords:
-;; X-URL: not distributed yet
+;; Author: baohaojun@gmail.com
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,25 +19,13 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-;;; Code:
-
 (provide 'sdim)
-(eval-when-compile
-  (require 'cl))
-(require 'help-mode)
-
-(defvar sdim-version "2.4")
 (defvar sdim-server-answer "" "anser from server")
 (defvar sdim-ime-debug nil "debug mode, transaction is saved in buffer")
 
 
-(defgroup sdim nil
-  "sdim: emacs input method"
-  :group 'lsdim)
-
 (defface sdim-string-face '((t (:underline t)))
-  "Face to show current string"
-  :group 'sdim)
+  "Face to show current string")
 
 (defvar sdim-comp-str "" "当前选择的词条")
 (defvar sdim-cands-str "" "所有可选的词条。
@@ -111,7 +96,8 @@
        ((string-match "^hint: " (car answer))
         (setq sdim-hint-str (substring (car answer) (match-end 0))))
        ((string-match "^beep: " (car answer))
-        (setq sdim-beep? (substring (car answer) (match-end 0))))
+        (setq sdim-beep? (substring (car answer) (match-end 0)))
+        (beep))
        ((string-match "^cand_index: " (car answer))
         (setq sdim-cand-index (substring (car answer) (match-end 0))))
        ((string-match "^active: " (car answer))

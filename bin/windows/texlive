@@ -1,0 +1,14 @@
+#!/bin/bash
+export TEXDIR=/z/texlive
+export TEXDIRW=/q/.tlportable2009
+export TEXMFCONFIG=/q/.tlportable2009/texmf-config
+export TEXMFDIST=/z/texlive/texmf-dist
+export TEXMFHOME=/q/.tlportable2009/texmf-home
+export TEXMFLOCAL=/z/texlive/texmf-local
+export TEXMFMAIN=/z/texlive/texmf
+export TEXMFSYSCONFIG=/q/.tlportable2009/texmf-config
+export TEXMFSYSVAR=/q/.tlportable2009/texmf-var
+export TEXMFVAR=/q/.tlportable2009/texmf-var
+export PATH=/z/texlive/bin/i386-cygwin:$PATH
+
+"$@"
