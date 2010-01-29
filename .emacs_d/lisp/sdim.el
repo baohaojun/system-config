@@ -327,5 +327,6 @@ Return the input string."
                                     (sdim-key-base (aref keyseq 0)))))
             (setq sdim-answer-ready nil sdim-server-answer "")
             (process-send-string sdim-ime-connection keyed-str)
-            (accept-process-output sdim-ime-connection))))))
+            (while (not sdim-answer-ready)
+              (accept-process-output sdim-ime-connection)))))))
 
