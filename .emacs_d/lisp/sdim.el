@@ -206,7 +206,7 @@
   (if (not (string-equal "" sdim-cands-str))
       (let ((cands-list (mapcar (lambda (str) (replace-regexp-in-string "%20" " " str))
                                  (split-string sdim-cands-str " ")))
-             (cand-index (read sdim-cand-index)))
+             (cand-index (% (read sdim-cand-index) 10)))
         (setq sdim-comp-str (substring (nth cand-index cands-list) 0))
         (let ((i 0))
           (setq sdim-cands-str "")
