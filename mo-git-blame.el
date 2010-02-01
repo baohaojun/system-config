@@ -158,12 +158,13 @@ option if this variable is non-nil."
   (let ((cwd (expand-file-name cwd))
         git-dir)
     (setq git-dir
-          (if (file-directory-p cwd)
-              (let* ((default-directory cwd)
-                     (dir (mo-git-blame-git-string "rev-parse" "--git-dir"))
-                     (dir (if dir (file-name-directory (expand-file-name dir)) "")))
-                (if (and dir (file-directory-p dir))
-                    (file-name-as-directory dir)))))
+          (or (getenv "GIT_WORK_TREE")
+              (if (file-directory-p cwd)
+                  (let* ((default-directory cwd)
+                         (dir (mo-git-blame-git-string "rev-parse" "--git-dir"))
+                         (dir (if dir (file-name-directory (expand-file-name dir)) "")))
+                    (if (and dir (file-directory-p dir))
+                        (file-name-as-directory dir))))))
     (or git-dir
         (error "No Git repository found"))))
 
