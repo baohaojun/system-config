@@ -46,7 +46,7 @@ function emacs-site-lisps()
     file_list=(
         http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
         http://cvs.savannah.gnu.org/viewvc/*checkout*/emacsweblogs/weblogger/lisp/xml-rpc.el
-        http://debian.cn99.com/debian/pool/main/e/emacs-goodies-el/emacs-goodies-el_31.2.orig.tar.gz
+        http://debian.cn99.com/debian/pool/main/e/emacs-goodies-el/emacs-goodies-el_31.4.tar.gz
         http://mwolson.org/static/dist/muse-latest.tar.gz
         http://debian.cn99.com/debian/pool/main/w/w3m-el-snapshot/w3m-el-snapshot_1.4.364+0.20090802.orig.tar.gz
     )
@@ -219,6 +219,16 @@ function fstab-q()
         echo 'q: is already mounted case-sensitive'
     else
         echo 'q: /q some_fs binary 0 0' >> $FSTAB
+    fi
+}
+
+function get-cscope()
+{
+    if ! test -d /c/download/cscope/cscope; then
+        mkdir -p /c/download/cscope
+        cd /c/download/cscope
+        cvs -d:pserver:anonymous@cscope.cvs.sourceforge.net:/cvsroot/cscope login
+        cvs -z3 -d:pserver:anonymous@cscope.cvs.sourceforge.net:/cvsroot/cscope co -P cscope
     fi
 }
 

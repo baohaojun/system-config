@@ -229,41 +229,7 @@
 (autoload 'global-dictionary-tooltip-mode "dictionary"
   "Enable/disable dictionary-tooltip-mode for all buffers" t)
 
-
-(global-set-key [(control c)(d)] 'dictionary-lookup-definition)
-(global-set-key [(control c)(s)] 'dictionary-search)
-(global-set-key [(control c)(m)] 'dictionary-match-words)
-
-
-(setq dictionary-tooltip-dictionary "wn")
-
 (put 'narrow-to-region 'disabled nil)
-
-
-(mapcar 'eval (mapcar (lambda (char) (list 'global-set-key (string char) ''tmp_en_ch)) ";ABCDEFGHIJKLMNOPQRSTUVWXYZ"))
-
-
-(defun do_en_when_ch (arg)
-  "input method is active, but we want it out temporarily"
-  (interactive (list (read-string (format "Press enter to input: %s" (string last-char)))))
-  arg)
-
-(defun tmp_en_ch ()
-  "tell if input method is active, get out of it for a while"
-  (interactive)
-  (if (equal nil current-input-method)
-      (insert last-input-char)
-    (let* ((last-char last-input-char)
-          (eng_input (call-interactively 'do_en_when_ch))
-          )
-      (if (equal last-char ?\;)
-          (if (or (string-equal eng_input "") (string-equal eng_input " "))
-              (insert "；")
-            (insert eng_input))
-        (progn
-          (insert last-char)
-          (insert eng_input))))))
-      
 
 (prefer-coding-system 'gbk)
 (prefer-coding-system 'utf-8-unix)
