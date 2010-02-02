@@ -5,7 +5,6 @@
 KeyToGrab(ESCAPE),          WithModifier(LWin),      WithAction(MaximizeWindow)
 KeyToGrab(F1),          WithModifier(LWin),      WithAction(MaximizeWindow)
 KeyToGrab(F2),          WithModifier(LWin),      WithAction(MaximizeVertical)
-KeyToGrab(F1),          WithModifier(LCtrl),     WithAction(MaximizeHorizontal)
 KeyToGrab(Y),           WithModifier(LWin),      WithAction(RestoreWindow)
 KeyToGrab(Z),           WithModifier(LWin),      WithAction(MinimizeWindow)
 KeyToGrab(Q),           WithModifier(LAlt+LWin+LCtrl),      WithAction(Quit)

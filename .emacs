@@ -231,6 +231,23 @@
 
 (put 'narrow-to-region 'disabled nil)
 
+(define-key global-map [(ctrl f1)] 'cscope-find-this-symbol)
+(define-key global-map [(ctrl f2)] 'cscope-find-global-definition)
+(define-key global-map [(ctrl f3)] 'cscope-find-called-functions)
+(define-key global-map [(ctrl f4)] 'cscope-find-functions-calling-this-function)
+(define-key global-map [(ctrl f5)] 'cscope-find-this-text-string)
+(define-key global-map [(ctrl f6)] 'cscope-find-egrep-pattern)
+(define-key global-map [(ctrl f7)] 'cscope-find-this-file)
+(define-key global-map [(ctrl f8)] 'cscope-find-files-including-file)
+
+(define-key global-map [(ctrl f9)] 'cscope-next-symbol)
+(define-key global-map [(ctrl f10)] 'cscope-prev-symbol)
+(define-key global-map [(ctrl f11)] 'cscope-next-file)
+(define-key global-map [(ctrl f12)] 'cscope-prev-file)
+
+(define-key global-map [(meta f9)] 'cscope-display-buffer)
+(define-key global-map [(meta f10)] 'cscope-display-buffer-toggle) 
+
 (prefer-coding-system 'gbk)
 (prefer-coding-system 'utf-8-unix)
 (set-default-coding-systems 'utf-8-unix)
@@ -396,6 +413,7 @@
  '(bhj-grep-default-directory (quote default-directory))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
+ '(cscope-do-not-update-database t)
  '(delete-old-versions t)
  '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
  '(dictem-server "localhost")

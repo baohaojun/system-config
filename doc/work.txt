@@ -2583,3 +2583,26 @@ Avant Browser
           (event-basic-type (aref event 0))))
 (read-event)
 
+find \( '-path' '*/CVS' \
+    '-o' '-path' '*/.svn' \
+    '-o' '-path' '*/autom4te.cache' \
+    '-o' '-path' '*/{arch}' \
+    '-o' '-path' '*/.hg' \
+    '-o' '-path' '*/_darcs' \
+    '-o' '-path' '*/.git' \
+    '-o' '-path' '*/.bzr' \
+    '-o' '-path' '*~*' \
+    '-o' '-path' '*#' \
+    '-o' '-path' '*/TAGS' \
+    '-o' '-path' '*/tags'\
+    '-o' '-path' '*/semantic.cache' \
+    '-o' '-iname' '*.o'\
+    '-o' '-iname' '*.class' \
+    '-o' '-iname' '*.obj'\
+    '-o' '-iname' '*.pyc'\
+    '-o' '-iname' '*.elc'\
+    '-o' '-path' '*/.ignore'\
+    '-o' '-path' '*/.repo'\
+    '-o' '-iname' "cscope.files"\
+    -o -iname "cscope.out"\
+    \) -prune -o -type f -print0|xargs -0 grep . -Il > cscope.files
