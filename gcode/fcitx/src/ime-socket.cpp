@@ -16,11 +16,13 @@
 
 using namespace std;
 
-static int g_ime_sock;
+static int g_ime_sock = -1;
 
 string sock_error()
 {
-	return strerror(errno);
+	int err = errno;
+	errno = 0; //clear the error!
+	return strerror(err);
 }
 
 #define bhj_sock_error(fmt, ...) do {								\
@@ -31,13 +33,12 @@ string sock_error()
 #define ignore 1+
 static void start_ime_server()
 {
-	ignore system("python3.1 ~/gcode/scim-cs/ime-py/ime-server.py&");
+	ignore system("python3.1 ~/gcode/scim-cs/ime-py/ime-server.py >/dev/null 2>&1 &");
 }
 
 void ime_write_line(const string& line)
 {
 start:
-	BHJDEBUG(" begine write line");
 	string str = line;
 	str.push_back('\n');
 
@@ -83,18 +84,15 @@ string ime_recv_line()
 void connect_ime_server()
 {
 start:
-	if (g_ime_sock) {
+	if (g_ime_sock < 0) {
 		close(g_ime_sock);
 	}
-	g_ime_sock = socket(AF_INET, SOCK_STREAM, 0);
+	g_ime_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	
 	if (g_ime_sock < 0) {
-		bhj_sock_error("");
+		bhj_sock_error("create socket");
 		exit(-1);
 	}
-
-	unsigned long sock_opt = 1;
-	ioctl(g_ime_sock, FIONBIO, &sock_opt);
 
 	struct sockaddr_in client_addr = {0};
 	client_addr.sin_family = AF_INET;
@@ -102,35 +100,33 @@ start:
 	client_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 	int ret = connect(g_ime_sock, (const sockaddr*)&client_addr, sizeof(client_addr));
-	if (ret) {
-		bhj_sock_error("");
-	}
 
-	fd_set fd_w;
-	FD_ZERO(&fd_w);
-	FD_SET(g_ime_sock, &fd_w);
-	
-	fd_set fd_e;
-	FD_ZERO(&fd_e);
-	FD_SET(g_ime_sock, &fd_e);
-
-	struct timeval to = {1, 0};
-	ret = select(0, NULL, &fd_w, &fd_e, &to);
 	if (ret < 0) {
-		bhj_sock_error(""); 
 		start_ime_server();
-		goto start;
-	}  else if (ret == 0) {
-		start_ime_server();
-		goto start;
-	}else if (FD_ISSET(g_ime_sock, &fd_w)) {
-	} else if (FD_ISSET(g_ime_sock, &fd_e)) {
-		bhj_sock_error(""); 
-		start_ime_server();
+		g_ime_sock = -1;
+		bhj_sock_error("connect error");
+		system("sleep 1");
 		goto start;
 	}
-	sock_opt = 0;
-	ioctl(g_ime_sock, FIONBIO, &sock_opt); 
 	return;
 }
 
+#ifdef IME_SOCK_TEST
+int main()
+{
+	connect_ime_server();
+	while(true) {
+		char buff[1024];
+		printf(">");
+		fflush(stdout);
+		fgets(buff, 1024, stdin);
+		ime_write_line(buff);
+		string answer = ime_recv_line();
+		if (answer.empty() || answer == "end:") {
+			continue;
+		}
+		BHJDEBUG(": %s", answer.c_str());
+	}
+	return 0;
+}
+#endif

@@ -256,6 +256,7 @@ class ime:
         exc_info = sys.exc_info()
         traceback.print_tb(exc_info[2])
         sys.stderr.flush()
+        debug("%s: %s\n" % (repr(exc_info[0]), repr(exc_info[1])))
         self.__write("%s: %s\n" % (repr(exc_info[0]), repr(exc_info[1])))
 
     def __reply(self, reply):
@@ -279,6 +280,9 @@ class ime:
             else :
                 func = line[:pos]
                 arg = line[pos+1 : ]
+
+            if not line:
+                return
             try:
                 eval('self.%s' % func)(arg)
             except:

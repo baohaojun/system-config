@@ -474,6 +474,7 @@ FcitxInstance::translate_key(const string& key_desc)
 
 	if (!client.compstr.empty()) {
 		update_preedit_string(utf8_mbstowcs(client.compstr), AttributeList());
+		BHJDEBUG("client comp reply: %s", client.compstr.c_str());
 		show_preedit_string();
 	} else {
 		hide_preedit_string();
@@ -505,7 +506,7 @@ FcitxInstance::translate_key(const string& key_desc)
 
 static bool want(const string& key_desc)
 {
-	BHJDEBUG(" before write line");
+	BHJDEBUG(" want %s?", key_desc.c_str());
 	ime_write_line(string("want ") + key_desc + "?");
 	string ret = ime_recv_line();
 	ime_recv_line(); //read the "end:" off 
@@ -514,13 +515,14 @@ static bool want(const string& key_desc)
 	} else if (ret == "no") {
 		return false;
 	} else {
-		bhjerr(" want: got wrong answer");
+		BHJDEBUG(" want: got wrong answer %s", ret.c_str());
 	}
 }
 
 bool
 FcitxInstance::process_key_event (const KeyEvent& key)
 {
+
 	static bool ime_server_inited = false;
 	if (!ime_server_inited) {
 		connect_ime_server();
@@ -540,7 +542,7 @@ FcitxInstance::process_key_event (const KeyEvent& key)
 	if (key_name.empty()) {
 		return false;
 	}
-
+	BHJDEBUG(" key event %s", key_name.c_str());
 	if (want(key_name)) {
 		translate_key(key_name);
 		return true;
@@ -596,12 +598,14 @@ void
 FcitxInstance::focus_in ()
 {
     m_focused = true;
+	//ime_write_line("keyed C \\");
     DisplayInputWindow();
 }
 
 void
 FcitxInstance::focus_out ()
 {
+	//ime_write_line("keyed C \\");
     m_focused = false;
 }
 
