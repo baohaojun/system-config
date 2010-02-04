@@ -31,7 +31,6 @@ Bool IsKey (const KeyEvent &key, KeyEvent * keymatch)
 
 void SendHZtoClient (FcitxInstance &fInst, char *strHZ)
 {
-	fInst.send_string(strHZ);
 }
 
 void EnterChineseMode (Bool bState)

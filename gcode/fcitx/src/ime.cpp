@@ -486,7 +486,6 @@ bool ProcessKey (FcitxInstance& fInst, const KeyEvent& key)
 		bShowNext = True;
 	}
 
-	fInst.DisplayInputWindow ();
 	return true;
 	
     case IRV_DISPLAY_LAST:
@@ -498,13 +497,11 @@ bool ProcessKey (FcitxInstance& fInst, const KeyEvent& key)
 	uMessageDown = 1;
 	strcpy (messageDown[0].strMsg, strStringGet);
 	messageDown[0].type = MSG_TIPS;
-	fInst.DisplayInputWindow ();
 	return true;
 	
     case IRV_DISPLAY_MESSAGE:
 	bShowNext = False;
 	bShowPrev = False;
-	fInst.DisplayInputWindow ();
 	return true;
 	
     case IRV_GET_LEGEND:
@@ -517,13 +514,11 @@ bool ProcessKey (FcitxInstance& fInst, const KeyEvent& key)
 		bShowNext = True;
 	    bLastIsNumber = False;
 	    iCodeInputCount = 0;
-	    fInst.DisplayInputWindow ();
 	}
 	else {
 	    ResetInput ();
 	    uMessageDown=uMessageUp=0;
 	    		
-		fInst.DisplayInputWindow ();
 	}
 
 	return true;
@@ -537,12 +532,9 @@ bool ProcessKey (FcitxInstance& fInst, const KeyEvent& key)
 	    && bAutoHideInputWindow && (retVal == IRV_PUNC || (!bPhraseTips || (bPhraseTips && !lastIsSingleHZ))))
 	    fInst.ResetInputWindow();
 	    else
-	    fInst.DisplayInputWindow ();
-
+			;
 	    
     case IRV_GET_CANDWORDS_NEXT:
-	if (retVal == IRV_GET_CANDWORDS_NEXT || lastIsSingleHZ == -1)
-	    fInst.DisplayInputWindow ();
 	SendHZtoClient (fInst, strStringGet);
 	bLastIsNumber = False;
 	lastIsSingleHZ = 0;

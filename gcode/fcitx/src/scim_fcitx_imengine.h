@@ -80,6 +80,18 @@ private:
     int get_maxlen (const String &encoding);
 };
 
+class ime_client
+{
+public:
+	string compstr;
+	string candsstr;
+	string cand_idx;
+	string hintstr;
+	string activestr;
+	string commitstr;
+	string beepstr;
+};
+
 class FcitxInstance : public IMEngineInstanceBase
 {
 public:
@@ -88,7 +100,6 @@ public:
     Pointer <FcitxFactory> m_factory;
 
     CommonLookupTable m_lookup_table;
-    WideString        m_preedit_string;
 
     bool              m_forward;
     bool              m_focused;
@@ -98,8 +109,10 @@ public:
     IConvert m_iconv;
 
 public:
-    void send_string(char* str);
-    void DisplayInputWindow();
+
+
+    void send_string(const string&);
+    void DisplayInputWindow(const ime_client&);
     void ResetInputWindow();
     void ChangeIMState();
     FcitxInstance (FcitxFactory *factory,
@@ -118,6 +131,8 @@ public:
     virtual void focus_in ();
     virtual void focus_out ();
     virtual void trigger_property (const String &property);
+private:
+	string compstr;
 };
 
 #endif

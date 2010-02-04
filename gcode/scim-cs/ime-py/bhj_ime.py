@@ -130,7 +130,8 @@ class ime_keyboard:
         if len(self.key) == 1:
             assert isgraph(self.key), "key not graphic" #' ' is 'space', see below
         else:
-            assert self.key in self.special_keys, "key is not special function, like in emacs"
+            #assert self.key in self.special_keys, "key is not special function, like in emacs"
+            pass
 
         if self.key == 'space': 
             self.key = ' '
@@ -447,7 +448,11 @@ class ime:
         for x in self.__cands:
             x = x.replace('%', '%25')
             x = x.replace(' ', '%20')
-            cands.append(x)
+            try:
+                bytes(x, 'utf-8')
+                cands.append(x)
+            except:
+                cands.append('?')
         if cands:
             self.__reply('cands: ' + ' '.join(cands))
 

@@ -44,6 +44,8 @@
 #include "ime-socket.h"
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
+#include <vector>
+using std::vector;
 
 #define scim_module_init fcitx_LTX_scim_module_init
 #define scim_module_exit fcitx_LTX_scim_module_exit
@@ -242,109 +244,92 @@ FcitxInstance::~FcitxInstance ()
 
 }
 
-void FcitxInstance::DisplayInputWindow()
+
+
+static vector<string> str_split_space(const string& str)
 {
-    String sup, sdown;
-    WideString aux, table;
-    WideString tmp;
-    AttributeList attributes;
-    std::vector<WideString> labels;
-    int attr_start=0;
-    int iCurTmp=iCursorPos;
-    attributes.clear();
-
-    for (int i=0; i<uMessageUp; i++) {
-		FCIM_DEUBG();
-	
-		if (!bShowCursor) {
-			m_gbiconv.convert(tmp, messageUp[i].strMsg);
-			aux.append(tmp);
-			attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-			attr_start+=tmp.length();
-			continue;
+	size_t start = 0;
+	vector<string> res;
+	if (str.empty()) {
+		return res;
+	}
+	for (;;) {
+		size_t spc = str.find(' ', start);
+		if (spc == string::npos) {
+			res.push_back(str.substr(start));
+			break;
 		}
+		res.push_back(str.substr(start, spc-start));
+		start = spc+1;
+	}
+	return res;
+}
 
-		if (iCurTmp>strlen(messageUp[i].strMsg)) {
-			m_gbiconv.convert(tmp, messageUp[i].strMsg);
-			aux.append(tmp);
-			attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-			attr_start+=tmp.length();
-		}
-		else if (iCurTmp<strlen(messageUp[i].strMsg)){
-			m_gbiconv.convert(tmp, messageUp[i].strMsg, iCurTmp+1);
-			aux.append(tmp);
-			attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-			attr_start+=tmp.length();
-	  
-			attributes.push_back(Attribute(attr_start-1, 1, SCIM_ATTR_BACKGROUND, cursorColor));
-	  
-			if(iCurTmp+1<strlen(messageUp[i].strMsg)) {
-				m_gbiconv.convert(tmp, messageUp[i].strMsg+iCurTmp+1);
-				aux.append(tmp);
-				attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-				attr_start+=tmp.length();
-			}
-		
+static string str_percent_decode(const string& str)
+{
+	string res;
+	for (size_t i = 0; i < str.size(); i++) {
+		if (str[i] != '%') {
+			res.push_back(str[i]);
+		} else if (i + 2 < str.size()) {
+			string hex = str.substr(i+1, 2);
+			char c = (char) strtol(hex.c_str(), NULL, 16);
+			res.push_back(c);
+			i += 2; //there's still a i++ in the for statement
 		} else {
-			m_gbiconv.convert(tmp, messageUp[i].strMsg);  
-			aux.append(tmp);
-			attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-			attr_start+=tmp.length();
-			if(i==uMessageUp-1) {
-				aux.append(utf8_mbstowcs(String(" ")));
-				attributes.push_back(Attribute(attr_start, 1, SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-				attributes.push_back(Attribute(attr_start, 1, SCIM_ATTR_BACKGROUND, cursorColor));
-			}
-	      
-		}
-		
+			break;
+		}			
+	}
+	return res;
+}
 
-		iCurTmp-=strlen(messageUp[i].strMsg);	
+void FcitxInstance::DisplayInputWindow(const ime_client& client)
+{
 
-    }
+	compstr = client.compstr;
+	if (!client.compstr.empty()) {
+		update_preedit_string(utf8_mbstowcs(client.compstr), AttributeList());
+		BHJDEBUG("client comp reply: %s", client.compstr.c_str());
+		show_preedit_string();
+	} else {
+		hide_preedit_string();
+	}
 
-	
-    if (uMessageUp) {
-		update_aux_string(aux, attributes);
+	if (!client.hintstr.empty()) {
+		update_aux_string(utf8_mbstowcs(client.hintstr), AttributeList());
 		show_aux_string();
     } else {
 		hide_aux_string();
     }
 
-    attributes.clear();
-    attr_start=0;
-    for (int i=0; i<uMessageDown; i++) {
-		sdown.append(messageDown[i].strMsg);
-		m_gbiconv.convert(tmp, messageDown[i].strMsg);
-		attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageDown[i].type]));
-		attr_start+=tmp.length();
-    }
-
-    if (!uMessageDown) {
+	if (!client.commitstr.empty()) {
+		send_string(client.commitstr);
+	}
+    if (client.candsstr.empty()) {
 		hide_lookup_table();
 		return;
     }
 
-    m_gbiconv.convert(table, sdown);
+	vector<string> cands = str_split_space(client.candsstr);
+
+	size_t idx = atoi(client.cand_idx.c_str());
+	idx %= 10;
+
 
     m_lookup_table.clear();
-    if (bShowPrev) {
-		m_lookup_table.append_candidate(utf8_mbstowcs("i want some space ok? some space ok? hehe hehe "));
-		labels.push_back(WideString());
-    }
-    m_lookup_table.append_candidate(table, attributes);
-    labels.push_back(WideString());
-    if (bShowNext) {
-		m_lookup_table.append_candidate(utf8_mbstowcs("i want some space ok? some space ok? hehe hehe "));
-		labels.push_back(WideString());
+    for (size_t i=0; i < cands.size(); i++) {
+
+		AttributeList attributes;
+		WideString cand_wstr = utf8_mbstowcs(str_percent_decode(cands[i]));
+
+		if (i == idx) {
+			attributes.push_back(Attribute(0, cand_wstr.size(), SCIM_ATTR_BACKGROUND, SCIM_RGB_COLOR(0, 200, 50)));
+		}
+		m_lookup_table.append_candidate(cand_wstr, attributes);
     }
 
-    m_lookup_table.set_page_size(1);
-    if (bShowPrev) {
-		m_lookup_table.page_down();
-    }
-
-    m_lookup_table.set_candidate_labels (labels);	
+    m_lookup_table.set_page_size(10);
+	m_lookup_table.fix_page_size(10);
     update_lookup_table(m_lookup_table);
     show_lookup_table();
 		
@@ -369,13 +354,9 @@ void FcitxInstance::ChangeIMState()
 	
 }
 
-void FcitxInstance::send_string(char* str)
+void FcitxInstance::send_string(const string& str)
 {
-    String s=str;
-    WideString com;
-    m_gbiconv.convert(com, s);
-  
-    commit_string(com);
+    commit_string(utf8_mbstowcs(str));
 }
 
 
@@ -421,18 +402,6 @@ bool string_begin_with(const string& src, const string& dst)
 	return false;
 }
 
-class ime_client
-{
-public:
-	string compstr;
-	string candsstr;
-	string cand_idx;
-	string hintstr;
-	string activestr;
-	string commitstr;
-	string beepstr;
-};
-
 ime_client get_client_reply()
 {
 	ime_client client;
@@ -457,7 +426,7 @@ ime_client get_client_reply()
 		} else if (string_begin_with(str, "beep: ")) {
 			client.beepstr = str.substr(strlen("beep: "));
 		} else {
-			client.compstr = str;
+			client.hintstr = str;
 			//beep();
 		}
 	}
@@ -472,36 +441,7 @@ FcitxInstance::translate_key(const string& key_desc)
 	ime_write_line(string("keyed ") + key_desc);
 	ime_client client = get_client_reply();
 
-	if (!client.compstr.empty()) {
-		update_preedit_string(utf8_mbstowcs(client.compstr), AttributeList());
-		BHJDEBUG("client comp reply: %s", client.compstr.c_str());
-		show_preedit_string();
-	} else {
-		hide_preedit_string();
-	}
-
-
-	// if (g_comp_str != client.compstr
-	// 	|| g_cands_str != client.candsstr
-	// 	|| g_cand_idx_str != client.cand_idx
-	// 	|| g_hint_str != client.hintstr) {
-	// 	g_comp_str = client.compstr;
-	// 	g_cands_str = client.candsstr;
-	// 	g_cand_idx_str = client.cand_idx;
-	// 	g_hint_str = client.hintstr;
-	// 	ic.add_show_comp_msg();
-	// }
-
-	// if (!client.commitstr.empty()) {
-	// 	ic.send_text(client.commitstr);
-	// }
-
-	// g_hint_str = client.hintstr;
-	// if (!client.beepstr.empty()) {
-	// 	beep();
-	// }
-
-	// return ic.return_ime_msgs();
+	DisplayInputWindow(client);
 }
 
 static bool want(const string& key_desc)
@@ -534,6 +474,18 @@ FcitxInstance::process_key_event (const KeyEvent& key)
 		return false;
 	}
 
+	if (compstr.empty()) {
+		if (key.is_control_down()
+			|| key.is_alt_down()
+			|| key.is_meta_down()
+			|| key.is_super_down()
+			|| key.is_hyper_down()) {
+			return false;
+		} else if (!isgraph(key.get_ascii_code())) {
+			return false;
+		}
+	}
+		
 	String key_name;
 	int ascii_code = key.get_ascii_code();
 
@@ -543,11 +495,8 @@ FcitxInstance::process_key_event (const KeyEvent& key)
 		return false;
 	}
 	BHJDEBUG(" key event %s", key_name.c_str());
-	if (want(key_name)) {
-		translate_key(key_name);
-		return true;
-	}
-	return false;
+	translate_key(key_name);
+	return true;
 }
 
 void
@@ -585,8 +534,6 @@ FcitxInstance::move_preedit_caret (unsigned int /*pos*/)
 void
 FcitxInstance::reset ()
 {
-    m_preedit_string = WideString ();
-
     m_iconv.set_encoding (get_encoding ());
     m_lookup_table.clear ();
 
@@ -599,7 +546,7 @@ FcitxInstance::focus_in ()
 {
     m_focused = true;
 	//ime_write_line("keyed C \\");
-    DisplayInputWindow();
+    //fixme DisplayInputWindow();
 }
 
 void
