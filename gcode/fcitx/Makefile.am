@@ -24,11 +24,11 @@ AUX_DIST                = $(ac_aux_dir)/config.guess \
 			$(ac_aux_dir)/missing \
 			$(ac_aux_dir)/depcomp
 
-EXTRA_DIST		= mkinstalldirs  bootstrap scim-m17n.spec
+EXTRA_DIST		= mkinstalldirs  bootstrap scim-sdim.spec
 
 ## @end 1
 AUTOMAKE_OPTIONS 	= gnu
-SUBDIRS 		= src icons tools data
+SUBDIRS 		= src icons
 ## @start 1
 MAINTAINERCLEANFILES 	= Makefile.in aclocal.m4 configure config.h.in $(AUX_DIST)
 

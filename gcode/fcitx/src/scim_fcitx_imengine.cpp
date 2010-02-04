@@ -37,8 +37,6 @@
 
 #include <scim.h>
 #include "scim_fcitx_imengine.h"
-#include "main.h"
-#include "ime.h"
 #include <string.h>
 #include <ctype.h>
 #include "ime-socket.h"
@@ -235,8 +233,6 @@ FcitxInstance::FcitxInstance (FcitxFactory *factory,
 	  m_focused (false),
 	  m_iconv (encoding)
 {
-    imeState = IS_CHN;
-    Fcim_main(1, NULL);
 }
 
 FcitxInstance::~FcitxInstance ()
@@ -301,7 +297,6 @@ void FcitxInstance::DisplayInputWindow(const ime_client& client)
     if (client.candsstr.empty()) {
 		if (!client.compstr.empty()) {
 			update_preedit_string(utf8_mbstowcs(client.compstr), AttributeList());
-			BHJDEBUG("client comp reply: %s", client.compstr.c_str());
 			show_preedit_string();
 		} else {
 			hide_preedit_string();
@@ -336,25 +331,6 @@ void FcitxInstance::DisplayInputWindow(const ime_client& client)
     update_lookup_table(m_lookup_table);
     show_lookup_table();
 		
-}
-
-void FcitxInstance::ResetInputWindow()
-{
-    uMessageDown=uMessageUp=0;
-    hide_aux_string();
-    hide_lookup_table();
-}
-
-void FcitxInstance::ChangeIMState()
-{
-    if(imeState==IS_CHN) 
-		imeState=IS_ENG;
-    else
-		imeState=IS_CHN;
-    
-    ResetInput();
-    ResetInputWindow();
-	
 }
 
 void FcitxInstance::send_string(const string& str)
@@ -447,21 +423,6 @@ FcitxInstance::translate_key(const string& key_desc)
 	DisplayInputWindow(client);
 }
 
-static bool want(const string& key_desc)
-{
-	BHJDEBUG(" want %s?", key_desc.c_str());
-	ime_write_line(string("want ") + key_desc + "?");
-	string ret = ime_recv_line();
-	ime_recv_line(); //read the "end:" off 
-	if (ret == "yes") {
-		return true;
-	} else if (ret == "no") {
-		return false;
-	} else {
-		BHJDEBUG(" want: got wrong answer %s", ret.c_str());
-	}
-}
-
 bool
 FcitxInstance::process_key_event (const KeyEvent& key)
 {
@@ -497,7 +458,6 @@ FcitxInstance::process_key_event (const KeyEvent& key)
 	if (key_name.empty()) {
 		return false;
 	}
-	BHJDEBUG(" key event %s", key_name.c_str());
 	translate_key(key_name);
 	return true;
 }

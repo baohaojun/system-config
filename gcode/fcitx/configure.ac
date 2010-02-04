@@ -94,8 +94,6 @@ AC_SUBST(SCIM_FCITXDATADIR)
 
 AC_CONFIG_FILES([Makefile
 		 src/Makefile
-		 data/Makefile
-		 tools/Makefile
 		 icons/Makefile
 		 scim-fcitx.spec])
 AC_OUTPUT

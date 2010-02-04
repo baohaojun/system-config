@@ -103,8 +103,6 @@ public:
 
     bool              m_forward;
     bool              m_focused;
-    IME_STATE imeState;
-
 
     IConvert m_iconv;
 
@@ -113,11 +111,9 @@ public:
 
     void send_string(const string&);
     void DisplayInputWindow(const ime_client&);
-    void ResetInputWindow();
-    void ChangeIMState();
     FcitxInstance (FcitxFactory *factory,
-                     const String& encoding,
-                     int id = -1);
+				   const String& encoding,
+				   int id = -1);
     virtual ~FcitxInstance ();
 
 	void translate_key(const string& key_name);
@@ -137,5 +133,5 @@ private:
 
 #endif
 /*
-vi:ts=4:nowrap:ai:expandtab
+  vi:ts=4:nowrap:ai:expandtab
 */

@@ -68,10 +68,10 @@ string ime_recv_line()
 		}
 		char c;
 		int ret = recv(g_ime_sock, &c, 1, 0);
-		if (ret < 0) {
+		if (ret <= 0) {
 			bhj_sock_error("ime_recv_line: ");
 			connect_ime_server();
-			return "";
+			return "end:"; //this is a hack
 		}
 		if (c == '\n') {
 			return str;
@@ -84,7 +84,7 @@ string ime_recv_line()
 void connect_ime_server()
 {
 start:
-	if (g_ime_sock < 0) {
+	if (g_ime_sock >= 0) {
 		close(g_ime_sock);
 	}
 	g_ime_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -103,7 +103,6 @@ start:
 
 	if (ret < 0) {
 		start_ime_server();
-		g_ime_sock = -1;
 		bhj_sock_error("connect error");
 		system("sleep 1");
 		goto start;
@@ -125,7 +124,6 @@ int main()
 		if (answer.empty() || answer == "end:") {
 			continue;
 		}
-		BHJDEBUG(": %s", answer.c_str());
 	}
 	return 0;
 }

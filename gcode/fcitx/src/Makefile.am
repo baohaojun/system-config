@@ -23,46 +23,17 @@ INCLUDES		= -I$(top_builddir) \
 			  -DSCIM_ICONDIR=\"@SCIM_ICONDIR@\"\
 			  -DSCIM_FCITXDATADIR=\"@SCIM_FCITXDATADIR@/\"
 
-noinst_HEADERS = \
-scim_fcitx_imengine.h \
-ime.h \
-main.h \
-punc.h \
-PYFA.h \
-py.h \
-pyMapTable.h \
-pyParser.h \
-sp.h \
-tools.h \
-version.h \
-table.h \
-xim.h\
-ime-socket.h
-			  qw.h
-
+noinst_HEADERS = bhjdebug.h ime-socket.h scim_fcitx_imengine.h version.h 
 moduledir		= @SCIM_MODULEDIR@/IMEngine
 module_LTLIBRARIES	= fcitx.la
 
-fcitx_la_SOURCES = scim_fcitx_imengine.cpp\
-ime.cpp\
-main.cpp\
-py.cpp\
-pyMapTable.cpp\
-qw.cpp\
-tools.cpp\
-table.cpp\
-punc.cpp\
-PYFA.cpp\
-pyParser.cpp\
-sp.cpp\
-xim.cpp\
-ime-socket.cpp
+fcitx_la_SOURCES = ime-socket.cpp scim_fcitx_imengine.cpp
 
-fcitx_la_CFLAGS		= @SCIM_CFLAGS@ @SCIM_DEBUG_FLAGS@
-fcitx_la_CXXFLAGS	= @SCIM_CFLAGS@ @SCIM_DEBUG_FLAGS@
+fcitx_la_CFLAGS = @SCIM_CFLAGS@ @SCIM_DEBUG_FLAGS@
+fcitx_la_CXXFLAGS = @SCIM_CFLAGS@ @SCIM_DEBUG_FLAGS@
 
-fcitx_la_LDFLAGS		= -avoid-version \
-		     	  -rpath $(moduledir) \
-			  -module \
-			  @SCIM_LIBS@ 
+fcitx_la_LDFLAGS = -avoid-version \
+-rpath $(moduledir) \
+-module \
+@SCIM_LIBS@ 
 

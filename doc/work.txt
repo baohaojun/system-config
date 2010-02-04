@@ -2654,22 +2654,7 @@ find \( '-path' '*/CVS' \
     -o -iname "cscope.out"\
     \) -prune -o -type f -print0|xargs -0 grep . -Il > cscope.files
 
-apt-get install subversion subversion-tools 
-sudo apt-get install subversion subversion-tools 
-apt-get install nvidia-glx
-sudo apt-get install nvidia-glx
-sudo apt-get install nvidia-glx-96
-apt-get install sawfish-gnome 
-apt-get install sawfish
-apt-get install python3.2 
-apt-get install vim
-apt-get install emacs-snapshot
-apt-get install msttcorefonts 
-apt-get install w3m-el-snapshot 
-apt-get install msn-pecan
-apt-get install acroread
-apt-get install imagemagick emacs-goodies-el 
-apt-get install muse-el 
+sudo apt-get install subversion-tools subversion emacs-snapshot vim python3.1 sawfish imagemagick emacs-goodies-el muse-el w3m-el-snapshot msttcorefonts grun
 
 
 .authinfo format:
