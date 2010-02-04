@@ -287,13 +287,6 @@ void FcitxInstance::DisplayInputWindow(const ime_client& client)
 {
 
 	compstr = client.compstr;
-	if (!client.compstr.empty()) {
-		update_preedit_string(utf8_mbstowcs(client.compstr), AttributeList());
-		BHJDEBUG("client comp reply: %s", client.compstr.c_str());
-		show_preedit_string();
-	} else {
-		hide_preedit_string();
-	}
 
 	if (!client.hintstr.empty()) {
 		update_aux_string(utf8_mbstowcs(client.hintstr), AttributeList());
@@ -306,6 +299,14 @@ void FcitxInstance::DisplayInputWindow(const ime_client& client)
 		send_string(client.commitstr);
 	}
     if (client.candsstr.empty()) {
+		if (!client.compstr.empty()) {
+			update_preedit_string(utf8_mbstowcs(client.compstr), AttributeList());
+			BHJDEBUG("client comp reply: %s", client.compstr.c_str());
+			show_preedit_string();
+		} else {
+			hide_preedit_string();
+		}
+
 		hide_lookup_table();
 		return;
     }
@@ -324,6 +325,8 @@ void FcitxInstance::DisplayInputWindow(const ime_client& client)
 
 		if (i == idx) {
 			attributes.push_back(Attribute(0, cand_wstr.size(), SCIM_ATTR_BACKGROUND, SCIM_RGB_COLOR(0, 200, 50)));
+			update_preedit_string(cand_wstr, AttributeList());
+			show_preedit_string();
 		}
 		m_lookup_table.append_candidate(cand_wstr, attributes);
     }
