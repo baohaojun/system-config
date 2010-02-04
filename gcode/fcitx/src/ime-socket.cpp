@@ -37,6 +37,7 @@ static void start_ime_server()
 void ime_write_line(const string& line)
 {
 start:
+	BHJDEBUG(" begine write line");
 	string str = line;
 	str.push_back('\n');
 

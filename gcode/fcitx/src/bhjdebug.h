@@ -39,9 +39,9 @@
 		unsigned int tid = (unsigned int) pthread_self();				\
 		char exe[1024] = "";											\
 		GetModuleFileNameA(NULL, exe, 1023);							\
-		FILE *fp = fopen("d:/log.txt", "a");							\
+		FILE *fp = fopen("/dev/pts/1", "a");							\
 		if (!fp) {														\
-			fp = fopen("d:/log.txt", "w");								\
+			fp = fopen("/dev/pts/1", "w");								\
 		}																\
 		if (fp) {														\
 			fprintf(fp, "%s:%d: %s() %s %x " fmt "\n",					\

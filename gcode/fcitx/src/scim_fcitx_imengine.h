@@ -52,6 +52,8 @@ void FCIM_DEUBG();
 #else 
 #define FCIM_DEUBG()
 #endif
+#include <string>
+using std::string;
 
 class FcitxFactory : public IMEngineFactoryBase
 {
@@ -105,6 +107,7 @@ public:
                      int id = -1);
     virtual ~FcitxInstance ();
 
+	void translate_key(const string& key_name);
     virtual bool process_key_event (const KeyEvent& key);
     virtual void move_preedit_caret (unsigned int pos);
     virtual void select_candidate (unsigned int item);

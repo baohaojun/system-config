@@ -64,6 +64,5 @@ fcitx_la_CXXFLAGS	= @SCIM_CFLAGS@ @SCIM_DEBUG_FLAGS@
 fcitx_la_LDFLAGS		= -avoid-version \
 		     	  -rpath $(moduledir) \
 			  -module \
-			  @LIBTOOL_EXPORT_OPTIONS@ \
 			  @SCIM_LIBS@ 
 

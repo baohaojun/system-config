@@ -40,6 +40,10 @@
 #include "main.h"
 #include "ime.h"
 #include <string.h>
+#include <ctype.h>
+#include "ime-socket.h"
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
 
 #define scim_module_init fcitx_LTX_scim_module_init
 #define scim_module_exit fcitx_LTX_scim_module_exit
@@ -375,20 +379,173 @@ void FcitxInstance::send_string(char* str)
 }
 
 
+static String get_complex_key_name(const KeyEvent& key)
+{
+	String name;
+	KeyEvent stripped_key(key.code);
+
+	if (key.is_control_down()) {
+		name += "C ";
+	} 
+
+	if (key.is_shift_down() && !isgraph(stripped_key.get_ascii_code())) {
+		name += "S ";
+	}
+
+	if (key.is_alt_down()) {
+		name += "A ";
+	}
+
+
+	if (isgraph(stripped_key.get_ascii_code())) {
+		name.push_back(stripped_key.get_ascii_code());
+	} else {
+		String stripped_str = stripped_key.get_key_string();
+
+		for (int i = 0; i < stripped_str.size(); i++) {
+			name.push_back(tolower(stripped_str[i]));
+		}
+	}
+	return name;
+}
+
+bool string_begin_with(const string& src, const string& dst)
+{
+	if (src.size() < dst.size()) {
+		return false;
+	}
+
+	if (!strncmp(src.c_str(), dst.c_str(), dst.size())) {
+		return true;
+	}
+	return false;
+}
+
+class ime_client
+{
+public:
+	string compstr;
+	string candsstr;
+	string cand_idx;
+	string hintstr;
+	string activestr;
+	string commitstr;
+	string beepstr;
+};
+
+ime_client get_client_reply()
+{
+	ime_client client;
+	for (;;) {
+		string str = ime_recv_line();
+		if (str.empty() || str == "end:") {
+			break;
+		}
+
+		if (string_begin_with(str, "commit: ")) {
+			client.commitstr = str.substr(strlen("commit: "));
+		} else if (string_begin_with(str, "hint: ")) {
+			client.hintstr = str.substr(strlen("hint: "));
+		} else if (string_begin_with(str, "comp: ")) {
+			client.compstr = str.substr(strlen("comp: "));
+		} else if (string_begin_with(str, "cands: ")) {
+			client.candsstr = str.substr(strlen("cands: "));
+		} else if (string_begin_with(str, "cand_index: ")) {
+			client.cand_idx = str.substr(strlen("cand_index: "));
+		} else if (string_begin_with(str, "active: ")) {
+			client.activestr = str.substr(strlen("active: "));
+		} else if (string_begin_with(str, "beep: ")) {
+			client.beepstr = str.substr(strlen("beep: "));
+		} else {
+			client.compstr = str;
+			//beep();
+		}
+	}
+	return client;
+}
+
+
+void 
+FcitxInstance::translate_key(const string& key_desc)
+{
+
+	ime_write_line(string("keyed ") + key_desc);
+	ime_client client = get_client_reply();
+
+	if (!client.compstr.empty()) {
+		update_preedit_string(utf8_mbstowcs(client.compstr), AttributeList());
+		show_preedit_string();
+	} else {
+		hide_preedit_string();
+	}
+
+
+	// if (g_comp_str != client.compstr
+	// 	|| g_cands_str != client.candsstr
+	// 	|| g_cand_idx_str != client.cand_idx
+	// 	|| g_hint_str != client.hintstr) {
+	// 	g_comp_str = client.compstr;
+	// 	g_cands_str = client.candsstr;
+	// 	g_cand_idx_str = client.cand_idx;
+	// 	g_hint_str = client.hintstr;
+	// 	ic.add_show_comp_msg();
+	// }
+
+	// if (!client.commitstr.empty()) {
+	// 	ic.send_text(client.commitstr);
+	// }
+
+	// g_hint_str = client.hintstr;
+	// if (!client.beepstr.empty()) {
+	// 	beep();
+	// }
+
+	// return ic.return_ime_msgs();
+}
+
+static bool want(const string& key_desc)
+{
+	BHJDEBUG(" before write line");
+	ime_write_line(string("want ") + key_desc + "?");
+	string ret = ime_recv_line();
+	ime_recv_line(); //read the "end:" off 
+	if (ret == "yes") {
+		return true;
+	} else if (ret == "no") {
+		return false;
+	} else {
+		bhjerr(" want: got wrong answer");
+	}
+}
+
 bool
 FcitxInstance::process_key_event (const KeyEvent& key)
 {
+	static bool ime_server_inited = false;
+	if (!ime_server_inited) {
+		connect_ime_server();
+		ime_server_inited = true;
+	}
     if (!m_focused) return false;
 
-#ifdef SF_DEBUG
     if (key.is_key_release()) {
-		update_aux_string (utf8_mbstowcs(key.get_key_string()));
-		show_aux_string ();
 		return false;
-    }
-#endif
-	
-    return ProcessKey(*this, key);
+	}
+
+	String key_name;
+	int ascii_code = key.get_ascii_code();
+
+	key_name = get_complex_key_name(key);
+
+	if (key_name.empty()) {
+		return false;
+	}
+
+	if (want(key_name)) {
+		translate_key(key_name);
+		return true;
+	}
+	return false;
 }
 
 void
