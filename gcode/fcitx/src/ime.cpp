@@ -171,7 +171,6 @@ bool ProcessKey (FcitxInstance& fInst, const KeyEvent& key)
 		
 		if (fInst.imeState == IS_CHN) {
 		    SwitchIM (-1);
-		    fInst.refresh_status_property();
 		}
 	    }
 	    else if (key2 == switchKey && keyReleased == KR_CTRL && !bDoubleSwitchKey) {
@@ -409,7 +408,6 @@ bool ProcessKey (FcitxInstance& fInst, const KeyEvent& key)
 			}
 			else if (key2==KeyEvent("Control+5")) {
 			    SetIM ();
-			    fInst.refresh_status_property();
 			    LoadConfig (False);
 
 
@@ -572,7 +570,6 @@ INPUT_RETURN_VALUE ChangeCorner (FcitxInstance& fInst)
     ResetInput ();
     fInst.ResetInputWindow ();
     bCorner = !bCorner;
-    fInst.refresh_letter_property();
 
     SaveProfile ();
 
@@ -582,7 +579,6 @@ INPUT_RETURN_VALUE ChangeCorner (FcitxInstance& fInst)
 INPUT_RETURN_VALUE ChangePunc (FcitxInstance& fInst)
 {
     bChnPunc = !bChnPunc;
-    fInst.refresh_punct_property();
     SaveProfile ();
 
     return IRV_DO_NOTHING;
@@ -591,7 +587,6 @@ INPUT_RETURN_VALUE ChangePunc (FcitxInstance& fInst)
 INPUT_RETURN_VALUE ChangeGBK (FcitxInstance& fInst)
 {
     bUseGBK = !bUseGBK;
-    fInst.refresh_gbk_property();
     ResetInput ();
     fInst.ResetInputWindow ();
 
@@ -606,7 +601,6 @@ INPUT_RETURN_VALUE ChangeLegend (FcitxInstance& fInst)
     bUseLegend = !bUseLegend;
     ResetInput ();
     fInst.ResetInputWindow ();
-    fInst.refresh_legend_property();
 
     //DisplayMainWindow ();
     //XUnmapWindow (dpy, inputWindow);
@@ -663,7 +657,7 @@ void DoPhraseTips (void)
 /*
 #define _DEBUG
 */
-void RegisterNewIM (char *strName, 
+void RegisterNewIM (const char *strName, 
 		    void (*ResetIM) (void),
 		    INPUT_RETURN_VALUE (*DoInput) (const KeyEvent&),
 		    INPUT_RETURN_VALUE (*GetCandWords) (SEARCH_MODE),
@@ -689,7 +683,7 @@ void RegisterNewIM (char *strName,
     iIMCount++;
 }
 
-Bool IsIM (char *strName)
+Bool IsIM (const char *strName)
 {
     if (strstr (im[iIMIndex].strName, strName))
 	return True;

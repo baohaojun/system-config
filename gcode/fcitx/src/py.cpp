@@ -107,17 +107,17 @@ Bool LoadPYBaseDict (void)
     if (!fp)
 	return False;
 
-    fread (&iPYFACount, sizeof (int), 1, fp);
+    1+fread (&iPYFACount, sizeof (int), 1, fp);
     PYFAList = (PYFA *) malloc (sizeof (PYFA) * iPYFACount);
     for (i = 0; i < iPYFACount; i++) {
-	fread (PYFAList[i].strMap, sizeof (char) * 2, 1, fp);
+	1+fread (PYFAList[i].strMap, sizeof (char) * 2, 1, fp);
 	PYFAList[i].strMap[2] = '\0';
-	fread (&(PYFAList[i].iBase), sizeof (int), 1, fp);
+	1+fread (&(PYFAList[i].iBase), sizeof (int), 1, fp);
 	PYFAList[i].pyBase = (PyBase *) malloc (sizeof (PyBase) * PYFAList[i].iBase);
 	for (j = 0; j < PYFAList[i].iBase; j++) {
-	    fread (PYFAList[i].pyBase[j].strHZ, sizeof (char) * 2, 1, fp);
+	    1+fread (PYFAList[i].pyBase[j].strHZ, sizeof (char) * 2, 1, fp);
 	    PYFAList[i].pyBase[j].strHZ[2] = '\0';
-	    fread (&iLen, sizeof (int), 1, fp);
+	    1+fread (&iLen, sizeof (int), 1, fp);
 	    PYFAList[i].pyBase[j].iIndex = iLen;
 	    PYFAList[i].pyBase[j].iHit = 0;
 	    PYFAList[i].pyBase[j].flag = 0;
@@ -183,12 +183,12 @@ Bool LoadPYOtherDict (void)
 	    PYFAList[i].pyBase[j].phrase = (PyPhrase *) malloc (sizeof (PyPhrase) * k);
 
 	    for (k = 0; k < PYFAList[i].pyBase[j].iPhrase; k++) {
-		fread (&iLen, sizeof (int), 1, fp);
+		1+fread (&iLen, sizeof (int), 1, fp);
 		PYFAList[i].pyBase[j].phrase[k].strMap = (char *) malloc (sizeof (char) * (iLen + 1));
-		fread (PYFAList[i].pyBase[j].phrase[k].strMap, sizeof (char) * iLen, 1, fp);
+		1+fread (PYFAList[i].pyBase[j].phrase[k].strMap, sizeof (char) * iLen, 1, fp);
 		PYFAList[i].pyBase[j].phrase[k].strMap[iLen] = '\0';
 		PYFAList[i].pyBase[j].phrase[k].strPhrase = (char *) malloc (sizeof (char) * (iLen + 1));
-		fread (PYFAList[i].pyBase[j].phrase[k].strPhrase, sizeof (char) * iLen, 1, fp);
+		1+fread (PYFAList[i].pyBase[j].phrase[k].strPhrase, sizeof (char) * iLen, 1, fp);
 		PYFAList[i].pyBase[j].phrase[k].strPhrase[iLen] = '\0';
 		PYFAList[i].pyBase[j].phrase[k].iIndex = 0;
 		PYFAList[i].pyBase[j].phrase[k].iHit = 0;
@@ -219,18 +219,18 @@ Bool LoadPYOtherDict (void)
 	    temp = PYFAList[i].pyBase[j].userPhrase;
 	    for (k = 0; k < PYFAList[i].pyBase[j].iUserPhrase; k++) {
 		phrase = (PyPhrase *) malloc (sizeof (PyPhrase));
-		fread (&iLen, sizeof (int), 1, fp);
+		1+fread (&iLen, sizeof (int), 1, fp);
 		phrase->strMap = (char *) malloc (sizeof (char) * (iLen + 1));
-		fread (phrase->strMap, sizeof (char) * iLen, 1, fp);
+		1+fread (phrase->strMap, sizeof (char) * iLen, 1, fp);
 		phrase->strMap[iLen] = '\0';
 		phrase->strPhrase = (char *) malloc (sizeof (char) * (iLen + 1));
-		fread (phrase->strPhrase, sizeof (char) * iLen, 1, fp);
+		1+fread (phrase->strPhrase, sizeof (char) * iLen, 1, fp);
 		phrase->strPhrase[iLen] = '\0';
-		fread (&iLen, sizeof (int), 1, fp);
+		1+fread (&iLen, sizeof (int), 1, fp);
 		phrase->iIndex = iLen;
 		if (iLen > iCounter)
 		    iCounter = iLen;
-		fread (&iLen, sizeof (int), 1, fp);
+		1+fread (&iLen, sizeof (int), 1, fp);
 		phrase->iHit = iLen;
 		phrase->flag = 0;
 
@@ -251,15 +251,15 @@ Bool LoadPYOtherDict (void)
     strcat (strPath, PY_INDEX_FILE);
     fp = fopen (strPath, "rb");
     if (fp) {
-	fread (&iLen, sizeof (uint), 1, fp);
+	1+fread (&iLen, sizeof (uint), 1, fp);
 	if (iLen > iCounter)
 	    iCounter = iLen;
 	while (!feof (fp)) {
-	    fread (&i, sizeof (int), 1, fp);
-	    fread (&j, sizeof (int), 1, fp);
-	    fread (&k, sizeof (int), 1, fp);
-	    fread (&iIndex, sizeof (uint), 1, fp);
-	    fread (&iLen, sizeof (uint), 1, fp);
+	    1+fread (&i, sizeof (int), 1, fp);
+	    1+fread (&j, sizeof (int), 1, fp);
+	    1+fread (&k, sizeof (int), 1, fp);
+	    1+fread (&iIndex, sizeof (uint), 1, fp);
+	    1+fread (&iLen, sizeof (uint), 1, fp);
 
 	    if (k >= 0) {
 		PYFAList[i].pyBase[j].phrase[k].iIndex = iIndex;
@@ -282,15 +282,15 @@ Bool LoadPYOtherDict (void)
     if (fp) {
 	pPyFreq = pyFreq;
 
-	fread (&iPYFreqCount, sizeof (uint), 1, fp);
+	1+fread (&iPYFreqCount, sizeof (uint), 1, fp);
 
 	for (i = 0; i < iPYFreqCount; i++) {
 	    pyFreqTemp = (PyFreq *) malloc (sizeof (PyFreq));
 	    pyFreqTemp->next = NULL;
 	    pyFreqTemp->bIsSym = False;
 
-	    fread (pyFreqTemp->strPY, sizeof (char) * 11, 1, fp);
-	    fread (&j, sizeof (int), 1, fp);
+	    1+fread (pyFreqTemp->strPY, sizeof (char) * 11, 1, fp);
+	    1+fread (&j, sizeof (int), 1, fp);
 	    pyFreqTemp->iCount = j;
 
 	    pyFreqTemp->HZList = (HZ *) malloc (sizeof (HZ));
@@ -299,13 +299,13 @@ Bool LoadPYOtherDict (void)
 
 	    for (k = 0; k < pyFreqTemp->iCount; k++) {
 		HZTemp = (HZ *) malloc (sizeof (HZ));
-		fread (HZTemp->strHZ, sizeof (char) * 2, 1, fp);
+		1+fread (HZTemp->strHZ, sizeof (char) * 2, 1, fp);
 		HZTemp->strHZ[2] = '\0';
-		fread (&j, sizeof (int), 1, fp);
+		1+fread (&j, sizeof (int), 1, fp);
 		HZTemp->iPYFA = j;
-		fread (&j, sizeof (int), 1, fp);
+		1+fread (&j, sizeof (int), 1, fp);
 		HZTemp->iHit = j;
-		fread (&j, sizeof (int), 1, fp);
+		1+fread (&j, sizeof (int), 1, fp);
 		HZTemp->iIndex = j;
 		HZTemp->flag = 0;
 		pHZ->next = HZTemp;

@@ -187,7 +187,7 @@ INPUT_RETURN_VALUE ChangeLegend (FcitxInstance& finst);
 void            SwitchIM (INT8 index);
 void            DoPhraseTips ();
 
-void            RegisterNewIM (char *strName, 
+void            RegisterNewIM (const char *strName, 
 			       void (*ResetIM) (void), 
 			       INPUT_RETURN_VALUE (*DoInput) (int), 
 			       INPUT_RETURN_VALUE (*GetCandWords) (SEARCH_MODE), 
@@ -198,7 +198,7 @@ void            RegisterNewIM (char *strName,
 			       void (*Destroy) (void));
 
 
-Bool            IsIM (char *strName);
+Bool            IsIM (const char *strName);
 void            SaveIM (void);
 void            SetIM (void);
 void 		CloseIM(FcitxInstance&);

@@ -88,12 +88,10 @@ public:
     CommonLookupTable m_lookup_table;
     WideString        m_preedit_string;
 
-    bool              m_unicode;
     bool              m_forward;
     bool              m_focused;
     IME_STATE imeState;
 
-    unsigned int      m_max_preedit_len;
 
     IConvert m_iconv;
     Property              m_status_property;
@@ -124,18 +122,6 @@ public:
     virtual void focus_in ();
     virtual void focus_out ();
     virtual void trigger_property (const String &property);
-    void refresh_status_property ();
-    void refresh_letter_property ();
-    void refresh_punct_property ();
-    void refresh_gbk_property ();
-    void refresh_legend_property ();
-    void refresh_lock_property ();
-
-
-private:
-
-    void initialize_properties ();
-
 };
 
 #endif

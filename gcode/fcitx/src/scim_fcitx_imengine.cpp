@@ -225,17 +225,14 @@ FcitxInstance::FcitxInstance (FcitxFactory *factory,
 			      const String& encoding,
 			      int id)
     : IMEngineInstanceBase (factory, encoding, id),
-m_factory (factory),
 m_status_property (SCIM_PROP_STATUS, ""),
 m_letter_property (SCIM_PROP_LETTER, "Full/Half Letter"),
 m_punct_property (SCIM_PROP_PUNCT, "Full/Half Punct"),
 m_gbk_property (SCIM_PROP_GBK, "GBK"),
 m_legend_property (SCIM_PROP_LEGEND, "Legend"),
 m_lock_property (SCIM_PROP_LOCK, "Lock"),
-m_unicode (true),
 m_forward (false),
 m_focused (false),
-m_max_preedit_len (4),
 m_iconv (encoding)
 {
     imeState = IS_CHN;
@@ -371,7 +368,6 @@ void FcitxInstance::ChangeIMState()
     
     ResetInput();
     ResetInputWindow();
-    refresh_status_property();
 	
 }
 
@@ -438,10 +434,6 @@ FcitxInstance::reset ()
 {
     m_preedit_string = WideString ();
 
-    if (m_unicode) m_max_preedit_len = 4;
-    else if (m_factory)
-        m_max_preedit_len = m_factory->get_maxlen (get_encoding ()) * 2;
-
     m_iconv.set_encoding (get_encoding ());
     m_lookup_table.clear ();
 
@@ -453,9 +445,6 @@ void
 FcitxInstance::focus_in ()
 {
     m_focused = true;
-
-    initialize_properties ();
-
     DisplayInputWindow();
 }
 
@@ -468,126 +457,7 @@ FcitxInstance::focus_out ()
 void
 FcitxInstance::trigger_property (const String &property)
 {
-    if (property == SCIM_PROP_STATUS) {
-	if (imeState==IS_CHN) {
-	    SwitchIM(-1);
-	    refresh_status_property();
-	}
-    }
-    else if (property == SCIM_PROP_LOCK) {
-	bLocked=!bLocked;
-	refresh_lock_property();
-    } else if (property == SCIM_PROP_LEGEND) {
-	ChangeLegend(*this);
-    } else if (property == SCIM_PROP_GBK) {
-	ChangeGBK(*this);
-    } else if (property == SCIM_PROP_PUNCT) {
-	ChangePunc(*this);
-    } else if (property == SCIM_PROP_LETTER) {
-	ChangeCorner(*this);
-    }
-
 }
-
-void
-FcitxInstance::initialize_properties ()
-{
-    PropertyList proplist;
-
-    proplist.push_back (m_status_property);
-    proplist.push_back (m_letter_property);
-    proplist.push_back (m_punct_property);
-    proplist.push_back (m_gbk_property);
-    proplist.push_back (m_legend_property);
-    proplist.push_back (m_lock_property);
-
-    register_properties (proplist);
-    refresh_status_property ();
-    refresh_letter_property ();
-    refresh_punct_property ();
-    refresh_gbk_property ();
-    refresh_legend_property ();
-    refresh_lock_property ();
-}
-
-void
-FcitxInstance::refresh_status_property ()
-{
-    if (!m_focused) return;
-
-    int i = strlen(SCIM_STATUS_ICON) + strlen(im[iIMIndex].strName) + 5;
-    char *buff = (char*)malloc(sizeof(char)*i);
-    sprintf(buff, SCIM_STATUS_ICON, imeState==IS_CHN?"":"no", im[iIMIndex].strName);
-
-	    
-    m_status_property.set_icon(buff);
-
-    update_property (m_status_property);
-    free(buff);
-}
-
-void 
-FcitxInstance::refresh_letter_property ()
-{
-    if (!m_focused) return;
-
-    if (bCorner)
-        m_letter_property.set_icon(SCIM_FULL_LETTER_ICON);
-    else
-	m_letter_property.set_icon(SCIM_HALF_LETTER_ICON);
-    update_property (m_letter_property);
-}
-void 
-FcitxInstance::refresh_punct_property ()
-{
-    if (!m_focused) return;
-
-    if (bChnPunc)
-        m_punct_property.set_icon(SCIM_FULL_PUNCT_ICON);
-    else
-	m_punct_property.set_icon(SCIM_HALF_PUNCT_ICON);
-    update_property (m_punct_property);
-}
-
-void
-FcitxInstance::refresh_gbk_property ()
-{
-    if (!m_focused) return;
-    int i = strlen(SCIM_GBK_ICON) + 5;
-    char *buff = (char*)malloc(sizeof(char)*i);
-    sprintf(buff, SCIM_GBK_ICON, bUseGBK?"":"no");
-    
-    m_gbk_property.set_icon(buff);
-    update_property (m_gbk_property);
-    free(buff);
-}
-
-void
-FcitxInstance::refresh_legend_property ()
-{
-    if (!m_focused) return;
-    int i = strlen(SCIM_LEGEND_ICON) + 5;
-    char *buff = (char*)malloc(sizeof(char)*i);
-    sprintf(buff, SCIM_LEGEND_ICON, bUseLegend?"":"no");
-    
-    m_legend_property.set_icon(buff);
-    update_property (m_legend_property);
-    free(buff);
-}
-
-void
-FcitxInstance::refresh_lock_property ()
-{
-    if (!m_focused) return;
-    int i = strlen(SCIM_LOCK_ICON) + 5;
-    char *buff = (char*)malloc(sizeof(char)*i);
-    sprintf(buff, SCIM_LOCK_ICON, bLocked?"":"no");
-    
-    m_lock_property.set_icon(buff);
-    update_property (m_lock_property);
-    free(buff);
-}
-
 
 /*
   vi:ts=4:nowrap:ai:expandtab
