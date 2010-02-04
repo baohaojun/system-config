@@ -101,8 +101,8 @@ extern "C" {
 
         if (!_scim_config.null ()) {
             languages = _scim_config->read (
-		String (SCIM_CONFIG_IMENGINE_FCITX_LANGUAGES),
-		String ("default"));
+				String (SCIM_CONFIG_IMENGINE_FCITX_LANGUAGES),
+				String ("default"));
         } else {
             languages = String ("default");
         }
@@ -131,7 +131,7 @@ FcitxFactory::FcitxFactory ()
 
 IConvert FcitxInstance::m_gbiconv("GB18030");
 FcitxFactory::FcitxFactory (const WideString& name,
-			    const String& languages)
+							const String& languages)
 {
     // do not allow too long name
     if (name.length () <= 8)
@@ -159,7 +159,7 @@ WideString
 FcitxFactory::get_authors () const
 {
     return utf8_mbstowcs (String (
-			      ("(C) 2002-2004 James Su <suzhe@tsinghua.org.cn>")));
+							  ("(C) 2002-2004 James Su <suzhe@tsinghua.org.cn>")));
 }
 
 WideString
@@ -172,15 +172,15 @@ WideString
 FcitxFactory::get_help () const
 {
     return utf8_mbstowcs (String ((
-				      "Hot Keys:\n\n"
-				      "  Control+u:\n"
-				      "    switch between Multibyte encoding and Unicode.\n\n"
-				      "  Control+comma:\n"
-				      "    switch between full/half width punctuation mode.\n\n"
-				      "  Shift+space:\n"
-				      "    switch between full/half width letter mode.\n\n"
-				      "  Esc:\n"
-				      "    reset the input method.\n")));
+									  "Hot Keys:\n\n"
+									  "  Control+u:\n"
+									  "    switch between Multibyte encoding and Unicode.\n\n"
+									  "  Control+comma:\n"
+									  "    switch between full/half width punctuation mode.\n\n"
+									  "  Shift+space:\n"
+									  "    switch between full/half width letter mode.\n\n"
+									  "  Esc:\n"
+									  "    reset the input method.\n")));
 }
 
 String
@@ -222,18 +222,18 @@ FcitxFactory::get_maxlen (const String &encoding)
 
 // implementation of FcitxInstance
 FcitxInstance::FcitxInstance (FcitxFactory *factory,
-			      const String& encoding,
-			      int id)
+							  const String& encoding,
+							  int id)
     : IMEngineInstanceBase (factory, encoding, id),
-m_status_property (SCIM_PROP_STATUS, ""),
-m_letter_property (SCIM_PROP_LETTER, "Full/Half Letter"),
-m_punct_property (SCIM_PROP_PUNCT, "Full/Half Punct"),
-m_gbk_property (SCIM_PROP_GBK, "GBK"),
-m_legend_property (SCIM_PROP_LEGEND, "Legend"),
-m_lock_property (SCIM_PROP_LOCK, "Lock"),
-m_forward (false),
-m_focused (false),
-m_iconv (encoding)
+	  m_status_property (SCIM_PROP_STATUS, ""),
+	  m_letter_property (SCIM_PROP_LETTER, "Full/Half Letter"),
+	  m_punct_property (SCIM_PROP_PUNCT, "Full/Half Punct"),
+	  m_gbk_property (SCIM_PROP_GBK, "GBK"),
+	  m_legend_property (SCIM_PROP_LEGEND, "Legend"),
+	  m_lock_property (SCIM_PROP_LOCK, "Lock"),
+	  m_forward (false),
+	  m_focused (false),
+	  m_iconv (encoding)
 {
     imeState = IS_CHN;
     Fcim_main(1, NULL);
@@ -256,94 +256,94 @@ void FcitxInstance::DisplayInputWindow()
     attributes.clear();
 
     for (int i=0; i<uMessageUp; i++) {
-	FCIM_DEUBG();
+		FCIM_DEUBG();
 	
-	if (!bShowCursor) {
-	    m_gbiconv.convert(tmp, messageUp[i].strMsg);
-	    aux.append(tmp);
-	    attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-	    attr_start+=tmp.length();
-	    continue;
-	}
+		if (!bShowCursor) {
+			m_gbiconv.convert(tmp, messageUp[i].strMsg);
+			aux.append(tmp);
+			attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
+			attr_start+=tmp.length();
+			continue;
+		}
 
-	if (iCurTmp>strlen(messageUp[i].strMsg)) {
-	    m_gbiconv.convert(tmp, messageUp[i].strMsg);
-	    aux.append(tmp);
-	    attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-	    attr_start+=tmp.length();
-	}
-	else if (iCurTmp<strlen(messageUp[i].strMsg)){
-	    m_gbiconv.convert(tmp, messageUp[i].strMsg, iCurTmp+1);
-	    aux.append(tmp);
-	    attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-	    attr_start+=tmp.length();
+		if (iCurTmp>strlen(messageUp[i].strMsg)) {
+			m_gbiconv.convert(tmp, messageUp[i].strMsg);
+			aux.append(tmp);
+			attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
+			attr_start+=tmp.length();
+		}
+		else if (iCurTmp<strlen(messageUp[i].strMsg)){
+			m_gbiconv.convert(tmp, messageUp[i].strMsg, iCurTmp+1);
+			aux.append(tmp);
+			attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
+			attr_start+=tmp.length();
 	  
-	    attributes.push_back(Attribute(attr_start-1, 1, SCIM_ATTR_BACKGROUND, cursorColor));
+			attributes.push_back(Attribute(attr_start-1, 1, SCIM_ATTR_BACKGROUND, cursorColor));
 	  
-	    if(iCurTmp+1<strlen(messageUp[i].strMsg)) {
-		m_gbiconv.convert(tmp, messageUp[i].strMsg+iCurTmp+1);
-		aux.append(tmp);
-		attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-		attr_start+=tmp.length();
-	    }
+			if(iCurTmp+1<strlen(messageUp[i].strMsg)) {
+				m_gbiconv.convert(tmp, messageUp[i].strMsg+iCurTmp+1);
+				aux.append(tmp);
+				attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
+				attr_start+=tmp.length();
+			}
 		
-	} else {
-	    m_gbiconv.convert(tmp, messageUp[i].strMsg);  
-	    aux.append(tmp);
-	    attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-	    attr_start+=tmp.length();
-	    if(i==uMessageUp-1) {
-		aux.append(utf8_mbstowcs(String(" ")));
-		attributes.push_back(Attribute(attr_start, 1, SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
-		attributes.push_back(Attribute(attr_start, 1, SCIM_ATTR_BACKGROUND, cursorColor));
-	    }
+		} else {
+			m_gbiconv.convert(tmp, messageUp[i].strMsg);  
+			aux.append(tmp);
+			attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
+			attr_start+=tmp.length();
+			if(i==uMessageUp-1) {
+				aux.append(utf8_mbstowcs(String(" ")));
+				attributes.push_back(Attribute(attr_start, 1, SCIM_ATTR_FOREGROUND, messageColor[messageUp[i].type]));
+				attributes.push_back(Attribute(attr_start, 1, SCIM_ATTR_BACKGROUND, cursorColor));
+			}
 	      
-	}
+		}
 		
 
-	iCurTmp-=strlen(messageUp[i].strMsg);	
+		iCurTmp-=strlen(messageUp[i].strMsg);	
 
     }
 
 	
     if (uMessageUp) {
-	update_aux_string(aux, attributes);
-	show_aux_string();
+		update_aux_string(aux, attributes);
+		show_aux_string();
     } else {
-	hide_aux_string();
+		hide_aux_string();
     }
 
     attributes.clear();
     attr_start=0;
     for (int i=0; i<uMessageDown; i++) {
-	sdown.append(messageDown[i].strMsg);
-	m_gbiconv.convert(tmp, messageDown[i].strMsg);
-	attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageDown[i].type]));
-	attr_start+=tmp.length();
+		sdown.append(messageDown[i].strMsg);
+		m_gbiconv.convert(tmp, messageDown[i].strMsg);
+		attributes.push_back(Attribute(attr_start, tmp.length(), SCIM_ATTR_FOREGROUND, messageColor[messageDown[i].type]));
+		attr_start+=tmp.length();
     }
 
     if (!uMessageDown) {
-	hide_lookup_table();
-	return;
+		hide_lookup_table();
+		return;
     }
 
     m_gbiconv.convert(table, sdown);
 
     m_lookup_table.clear();
     if (bShowPrev) {
-	m_lookup_table.append_candidate(utf8_mbstowcs("i want some space ok? some space ok? hehe hehe "));
-	labels.push_back(WideString());
+		m_lookup_table.append_candidate(utf8_mbstowcs("i want some space ok? some space ok? hehe hehe "));
+		labels.push_back(WideString());
     }
     m_lookup_table.append_candidate(table, attributes);
     labels.push_back(WideString());
     if (bShowNext) {
-	m_lookup_table.append_candidate(utf8_mbstowcs("i want some space ok? some space ok? hehe hehe "));
-	labels.push_back(WideString());
+		m_lookup_table.append_candidate(utf8_mbstowcs("i want some space ok? some space ok? hehe hehe "));
+		labels.push_back(WideString());
     }
 
     m_lookup_table.set_page_size(1);
     if (bShowPrev) {
-	m_lookup_table.page_down();
+		m_lookup_table.page_down();
     }
 
     m_lookup_table.set_candidate_labels (labels);	
@@ -362,9 +362,9 @@ void FcitxInstance::ResetInputWindow()
 void FcitxInstance::ChangeIMState()
 {
     if(imeState==IS_CHN) 
-	imeState=IS_ENG;
+		imeState=IS_ENG;
     else
-	imeState=IS_CHN;
+		imeState=IS_CHN;
     
     ResetInput();
     ResetInputWindow();
@@ -388,9 +388,9 @@ FcitxInstance::process_key_event (const KeyEvent& key)
 
 #ifdef SF_DEBUG
     if (key.is_key_release()) {
-	update_aux_string (utf8_mbstowcs(key.get_key_string()));
-	show_aux_string ();
-	return false;
+		update_aux_string (utf8_mbstowcs(key.get_key_string()));
+		show_aux_string ();
+		return false;
     }
 #endif
 	
