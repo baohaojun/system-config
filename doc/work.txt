@@ -2571,6 +2571,53 @@ make
 
 http://www.packetix.net/en/secure/install/ vpn
 
+1. Management of VPN Server or VPN Bridge
+2. Management of VPN Clinet
+3. Use of VPN Tools (certificate creation and communication speed measurement)
+
+Select 1, 2 or 3: 2
+
+Specify the host name or IP address of the computer that the destination VPN Client is operating on.
+If nothing is input and Enter is pressed, connection will be made to localhost (this computer).
+Input destination:
+
+Connected to VPN Client "localhost".
+
+VPN Client>KeepSet /HOST:public.softether.com:443 /PROTOCOL:tcp /INTERVAL:50
+KeepSet command - Set the Keep Alive Internet Connection Function
+The command terminated normally.
+
+VPN Client>KeepEnable
+KeepEnable command - Enable the Keep Alive Internet Connection Function
+The command terminated normally.
+
+VPN Client>AccountImport secure.vpn
+AccountImport command - Import VPN Connection Setting
+The VPN Connection Setting "Secure" was imported.
+The command terminated normally.
+
+VPN Client>AccountConnect secure
+AccountConnect command - Start Connection to VPN Server using VPN Connection Setting
+The command terminated normally.
+
+VPN Client>AccountList
+AccountList command - Get List of VPN Connection Settings
+Item                        |Value
+----------------------------+-----------------------------------------------
+VPN Connection Setting Name |Secure
+Status                      |Connected
+VPN Server Address          |public.softether.com (Direct TCP/IP Connection)
+Virtual Network Adapter Name|VPN
+The command terminated normally.
+
+KeepSet /HOST:public.softether.com:443 /PROTOCOL:tcp /INTERVAL:50
+KeepEnable
+AccountImport secure.vpn
+AccountConnect secure
+AccountList
+
+sudo dhclient vpn_vpn
+
 Avant Browser
 
 (defun hello ()
