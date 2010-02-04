@@ -16,6 +16,7 @@ using namespace scim;
 #include "tools.h"
 #include "sp.h"
 #include "qw.h"
+#include <string.h>
 
 
 int             iCursorPos;

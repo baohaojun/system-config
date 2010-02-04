@@ -16,6 +16,7 @@ using namespace scim;
 #include "sp.h"
 #include "pyMapTable.h"
 #include "pyParser.h"
+#include <string.h>
 
 
 SP_C            SPMap_C[] = {

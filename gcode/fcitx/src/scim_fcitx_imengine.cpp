@@ -39,6 +39,7 @@
 #include "scim_fcitx_imengine.h"
 #include "main.h"
 #include "ime.h"
+#include <string.h>
 
 #define scim_module_init fcitx_LTX_scim_module_init
 #define scim_module_exit fcitx_LTX_scim_module_exit

@@ -3,6 +3,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 int Fcim_main(int argc, char *argv[]);
 
 
