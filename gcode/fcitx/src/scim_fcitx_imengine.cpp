@@ -225,12 +225,6 @@ FcitxInstance::FcitxInstance (FcitxFactory *factory,
 							  const String& encoding,
 							  int id)
     : IMEngineInstanceBase (factory, encoding, id),
-	  m_status_property (SCIM_PROP_STATUS, ""),
-	  m_letter_property (SCIM_PROP_LETTER, "Full/Half Letter"),
-	  m_punct_property (SCIM_PROP_PUNCT, "Full/Half Punct"),
-	  m_gbk_property (SCIM_PROP_GBK, "GBK"),
-	  m_legend_property (SCIM_PROP_LEGEND, "Legend"),
-	  m_lock_property (SCIM_PROP_LOCK, "Lock"),
 	  m_forward (false),
 	  m_focused (false),
 	  m_iconv (encoding)
