@@ -2670,3 +2670,9 @@ apt-get install msn-pecan
 apt-get install acroread
 apt-get install imagemagick emacs-goodies-el 
 apt-get install muse-el 
+
+
+.authinfo format:
+machine bhj2 login bhj password ??? port 143
+
+.offlineimaprc: folderfilter = lambda foldername: all([x.lower() not in foldername.lower() for x in ('all mail', 'spam', 'trash', 'sent mail')])

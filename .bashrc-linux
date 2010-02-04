@@ -12,7 +12,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export PATH=/usr/local/arm-linux/bin:$PATH:/usr/sbin/:/sbin:~/bin/:~/bin/linux
 alias sudo='sudo env PATH=$PATH'
-
+alias of=gnome-open
 
 if test -z "$SSH_CLIENT"; then
     export LOCALIP=localhost

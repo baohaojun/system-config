@@ -126,6 +126,12 @@ class ConfigDlg (QDialog):
             print "Error:", `type_` + ' ' + `value_`
             self.trayIcon.setIcon(QIcon(":/error-mail.png"))
             self.timer.start(300000)
+            
+        finally:
+            try:
+                x.logout()
+            except:
+                pass
         
 
     
