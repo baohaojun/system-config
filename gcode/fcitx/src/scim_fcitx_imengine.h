@@ -94,13 +94,6 @@ public:
 
 
     IConvert m_iconv;
-    Property              m_status_property;
-    Property              m_letter_property;
-    Property              m_punct_property;
-    Property              m_gbk_property;
-    Property              m_legend_property;
-    Property              m_lock_property;
-
 
 public:
     void send_string(char* str);
