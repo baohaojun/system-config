@@ -10,7 +10,12 @@ function apt-get()
 alias aptitude='ssh -t root@localhost aptitude'
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-export PATH=/usr/local/arm-linux/bin:$PATH:/usr/sbin/:/sbin:~/bin/:~/bin/linux
+
+PATH=/usr/local/jdk1.5/bin:/usr/local/arm-linux/bin:$PATH:
+CLASSPATH=/usr/local/jdk1.5/lib:.
+JAVA_HOME=/usr/local/jdk1.5
+export PATH CLASSPATH JAVA_HOME
+
 alias sudo='sudo env PATH=$PATH'
 alias of=gnome-open
 

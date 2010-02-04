@@ -1,0 +1,117 @@
+2005-05-12 13:45  baohaojun
+
+	* src/: ime.cpp, scim_fcitx_imengine.cpp: refine the scim-fcitx
+	  cursor support
+
+2005-05-12 08:14  baohaojun
+
+	* src/: ime.cpp, ime.h, scim_fcitx_imengine.cpp, tools.cpp: cursor
+	  supported again in scim-fcitx
+
+2005-05-11 22:12  baohaojun
+
+	* src/: ime.cpp, ime.h, tools.cpp: get rid of lumaqq, it is out of
+	  problem in scim
+
+2005-05-11 21:07  baohaojun
+
+	* src/: scim_fcitx_imengine.cpp, scim_fcitx_imengine.h: modify the
+	  license to GPL, instead of LGPL, since the original fcitx is GPL
+
+2005-05-10 15:44  baohaojun
+
+	* README: updated readme
+
+2005-05-10 15:43  baohaojun
+
+	* src/ime.cpp: fix the space key's behavior after the semicolon;
+	  key
+
+2005-05-10 09:28  baohaojun
+
+	* src/ime.cpp: get rid of the "latex support". sorry.
+
+2005-05-09 16:07  baohaojun
+
+	* tools/: Makefile.am, Makefile.in: remove toosl/Makefile.in out of
+	  cvs
+
+2005-05-09 16:01  baohaojun
+
+	* tools/.cvsignore: minor fix for tools/.cvsignore
+
+2005-05-09 16:00  baohaojun
+
+	* Makefile.am, data/.cvsignore, tools/.cvsignore: fixed Makefile.am
+	  to make tools before data is made since data will need tools
+
+2005-05-09 15:48  baohaojun
+
+	* tools/createPYMB.cpp: make this file compile, so that we don't
+	  need to put wbx.mb pybase.mb etc. in cvs
+
+2005-05-09 15:46  baohaojun
+
+	* .cvsignore, icons/.cvsignore, src/.cvsignore, tools/.cvsignore:
+	  cvs ignore created
+
+2005-05-09 15:41  baohaojun
+
+	* Makefile.in, aclocal.m4, config.guess, config.h.in, config.sub,
+	  configure, depcomp, install-sh, ltmain.sh, missing,
+	  icons/Makefile.in, src/Makefile.in, tools/Makefile.am,
+	  tools/Makefile.in, tools/createPYMB.c, tools/mb2txt,
+	  tools/txt2mb: maintainer clean files shouldn't be in cvs
+
+2005-05-09 15:38  baohaojun
+
+	* data/Makefile.in: remove Makefile.in, this shouldn't be in cvs
+
+2005-05-09 15:36  baohaojun
+
+	* data/: .cvsignore, Makefile.am, Makefile.in, cj.mb, erbi.mb,
+	  pybase.mb, pyphrase.mb, wbx.mb: ignore these files
+
+2005-05-09 00:11  baohaojun
+
+	* data/Makefile.am, data/Makefile.in, data/cj.mb, data/cj.txt,
+	  data/erbi.mb, data/erbi.txt, data/gbkpy.org, data/punc.mb,
+	  data/pyPhrase.org, data/pySym.mb, data/pybase.mb,
+	  data/pyphrase.mb, data/sp.dat, data/tables.conf, data/wbx.mb,
+	  data/wbx.txt, icons/Makefile.am, icons/Makefile.in,
+	  icons/cangjie.png, icons/erbi.png, icons/fcitx.png,
+	  icons/full-letter.png, icons/full-punct.png, icons/gbk.png,
+	  icons/half-letter.png, icons/half-punct.png, icons/legend.png,
+	  icons/lock.png, icons/nocangjie.png, icons/noerbi.png,
+	  icons/nofcitx.png, icons/nogbk.png, icons/nolegend.png,
+	  icons/nolock.png, icons/nopinyin.png, icons/noquwei.png,
+	  icons/noshuangpin.png, icons/nowubi86.png, icons/nowubi98.png,
+	  icons/pinyin.png, icons/quwei.png, icons/shuangpin.png,
+	  icons/wubi86.png, icons/wubi98.png, src/Makefile.am,
+	  src/Makefile.in, src/PYFA.cpp, src/PYFA.h, src/ime.cpp,
+	  src/ime.h, src/main.cpp, src/main.h, src/punc.cpp, src/punc.h,
+	  src/py.cpp, src/py.h, src/pyMapTable.cpp, src/pyMapTable.h,
+	  src/pyParser.cpp, src/pyParser.h, src/qw.cpp, src/qw.h,
+	  src/scim_fcitx_imengine.cpp, src/scim_fcitx_imengine.h,
+	  src/sp.cpp, src/sp.h, src/table.cpp, src/table.h, src/tools.cpp,
+	  src/tools.h, src/version.h, src/xim.cpp, src/xim.h,
+	  tools/Makefile.am, tools/Makefile.in, tools/createPYMB.c,
+	  tools/mb2txt, tools/mb2txt.c, tools/txt2mb, tools/txt2mb.c:
+	  ported Yuking's fcitx-3.1.1 to scim>1.2.0
+
+2005-05-08 23:54  baohaojun
+
+	* AUTHORS, ChangeLog, aclocal.m4, bootstrap, config.guess,
+	  config.h.in, config.sub, configure, configure.ac, COPYING,
+	  INSTALL, depcomp, install-sh, Makefile.am, Makefile.in, NEWS,
+	  README, THANKS, ltmain.sh, missing, mkinstalldirs,
+	  scim-fcitx.spec.in: Initial revision
+
+2005-05-08 23:54  baohaojun
+
+	* AUTHORS, ChangeLog, aclocal.m4, bootstrap, config.guess,
+	  config.h.in, config.sub, configure, configure.ac, COPYING,
+	  INSTALL, depcomp, install-sh, Makefile.am, Makefile.in, NEWS,
+	  README, THANKS, ltmain.sh, missing, mkinstalldirs,
+	  scim-fcitx.spec.in: rename to fcitx
+

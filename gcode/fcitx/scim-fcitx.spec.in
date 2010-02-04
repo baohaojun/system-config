@@ -1,0 +1,57 @@
+%define nam             @PACKAGE@
+%define ver             @VERSION@
+%define rel             1
+
+# Something's not quite right with libtool....
+%define __libtoolize    echo
+
+Summary:        FCITX Input Method Engine for SCIM
+Name:           %{nam}
+Version:        %{ver}
+Release:        %{rel}
+License:        GPL
+Group:          System Environment/Libraries
+URL:            http://sourceforge.net:/projects/scim
+BuildRoot:      %{_tmppath}/%{name}-%{version}-root
+
+Source0:        %{name}-%{version}.tar.gz
+#NoSource:	0
+
+PreReq:         /sbin/ldconfig, /bin/sh
+
+Requires:	scim >= @SCIM_VERSION@
+BuildRequires:  scim-devel >= @SCIM_VERSION@
+
+%description
+scim-fcitx is the fcitx chinese input method ported to the scim input method platform
+
+%changelog
+* Thu May  5 2005 Haojun Bao <baohaojun@yahoo.com>
+- first release of scim-fcitx.
+
+#--------------------------------------------------
+
+%prep
+
+%setup -n %{name}-%{version}
+
+%build
+%configure --disable-static
+
+make 
+
+%install
+[ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf $RPM_BUILD_ROOT
+make DESTDIR=${RPM_BUILD_ROOT} install
+
+rm -f $RPM_BUILD_ROOT/@SCIM_MODULEDIR@/IMEngine/fcitx.{a,la}
+
+%clean
+[ -n "$RPM_BUILD_ROOT" -a "$RPM_BUILD_ROOT" != / ] && rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-, root, root)
+%doc AUTHORS COPYING NEWS README ChangeLog
+@SCIM_MODULEDIR@/IMEngine/fcitx.so
+@SCIM_ICONDIR@/fcitx/*
+@SCIM_DATADIR@/fcitx/*
