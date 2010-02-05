@@ -2663,3 +2663,14 @@ machine bhj2 login bhj password ??? port 143
 .offlineimaprc: folderfilter = lambda foldername: all([x.lower() not in foldername.lower() for x in ('all mail', 'spam', 'trash', 'sent mail')])
 
 ps -ax  -o command,pid|grep scim|grep -v grep|awk '{print $2}'|xargs kill -9 
+auto usb0
+iface usb0 inet static
+       address 192.168.100.1
+       netmask 255.255.255.0
+
+smbnetfs /media/smb/
+
+route add 130.158.6.51 gw 192.168.1.1 #public.softether.com
+route add 202.106.196.115 gw 192.168.1.1 #dns
+route add 202.106.0.20 gw 192.168.1.1 #dns
+route add -net 130.158.6.0/24 gw 192.168.1.1 #maybe all public.softether.com? what the hell
