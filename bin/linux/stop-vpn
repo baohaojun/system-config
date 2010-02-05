@@ -1,0 +1,5 @@
+#!/bin/bash -x
+cd ~/bin/linux/ext
+sudo ./vpncmd /client localhost /cmd accountdisconnect bhj
+sudo ifconfig vpn_nic down
+sudo dhclient eth0

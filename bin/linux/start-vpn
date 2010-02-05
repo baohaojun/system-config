@@ -1,0 +1,16 @@
+#!/bin/bash -x
+cd ~/bin/linux/ext
+sudo ./vpncmd /client localhost /cmd accountdisconnect bhj
+sudo ./vpncmd /client localhost /cmd accountconnect bhj
+sudo dhclient eth0
+OLD_DNS_LIST=`cat /etc/resolv.conf|grep nameser|awk '{print $2}'`
+
+route -n
+GW=$(route -n|grep ^0.0.0.0|grep -v 10.0.0.1|awk '{print $2}')
+
+sleep 5
+while ! sudo dhclient vpn_nic; do echo ./vpncmd /client localhost /cmd accountlist bhj; sleep 5; done
+
+sudo route add 130.158.6.51 gw $GW
+for x in $OLD_DNS_LIST; do sudo route add $x gw $GW; done
+sudo route add -net 130.158.6.0/24 gw $GW
