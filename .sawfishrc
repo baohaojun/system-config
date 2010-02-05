@@ -35,7 +35,7 @@
                 (lambda ()
                   (find-window-or-exec wclass wcommand)))))
  '(
-   ("H-e" "Emacs" "emacs-snapshot-gtk")
+   ("H-e" "Emacs" "emacs.bhj")
    ("H-p" "Gnome-terminal" "gnome-terminal --hide-menubar --zoom 1.2 -e /home/bhj/bin/myscr")
    ("H-a" "Acroread-en" "acroread")
    ("H-n" "Firefox" "firefox")
@@ -70,7 +70,7 @@
 (setenv "XIM" "SCIM")
 (setenv "GTK_IM_MODULE" "scim")
 (setenv "TZ" "Asia/Shanghai")
-
+(setenv "PATH" (concat "/home/bhj/bin:/home/bhj/bin/linux:" (getenv "PATH")))
 
 (if (boundp 'ProgramsStarted)
       nil ;; Sawfish has already started those Programs

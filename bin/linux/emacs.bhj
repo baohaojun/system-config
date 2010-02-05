@@ -1,0 +1,2 @@
+#!/bin/bash
+GTK_IM_MODULE= XMODIFIERS= XIM= emacs&

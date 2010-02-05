@@ -2670,7 +2670,7 @@ iface usb0 inet static
 
 smbnetfs /media/smb/
 
-route add 130.158.6.51 gw 192.168.1.1 #public.softether.com
-route add 202.106.196.115 gw 192.168.1.1 #dns
-route add 202.106.0.20 gw 192.168.1.1 #dns
-route add -net 130.158.6.0/24 gw 192.168.1.1 #maybe all public.softether.com? what the hell
+sudo route add 130.158.6.51 gw 192.168.1.1 #public.softether.com
+sudo route add 202.106.196.115 gw 192.168.1.1 #dns
+sudo route add 202.106.0.20 gw 192.168.1.1 #dns
+sudo route add -net 130.158.6.0/24 gw 192.168.1.1 #maybe all public.softether.com? what the hell
