@@ -1,0 +1,12 @@
+#!/bin/bash
+
+cd ~/bin/linux/ext
+rm vpnclient-5350a-rtm-en-linux-x86.tar.gz
+wget http://packetix.net/en/special/files/vpn2_5350_en/vpnclient-5350a-rtm-en-linux-x64.tar.gz
+tar zxfv vpnclient-5350a-rtm-en-linux-x86.tar.gz
+find vpnc*/ -type f -print0 |xargs -0 bash -c 'mv "$@" .'
+sudo apt-get install zlib1g-dev libreadline5-dev
+make
+sudo ./vncclient start
+sudo ./vnccmd /client localhost /cmd niccreate nic
+sudo ./vnccmd /client localhost /cmd accountcreate bhj /server public.softether.com:443 /hub public /username public /nicname nic

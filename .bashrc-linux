@@ -11,7 +11,7 @@ alias aptitude='ssh -t root@localhost aptitude'
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-PATH=/usr/local/jdk1.5/bin:/usr/local/arm-linux/bin:~/bin/linux/:$PATH:
+PATH=/usr/local/jdk1.5/bin:/usr/local/arm-linux/bin:~/bin/linux/:~/bin/linux/ext:$PATH:
 CLASSPATH=/usr/local/jdk1.5/lib:.
 JAVA_HOME=/usr/local/jdk1.5
 export PATH CLASSPATH JAVA_HOME
