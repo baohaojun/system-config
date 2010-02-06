@@ -1,3 +1,4 @@
+#!/bin/bash
 function apt-get()
 {
     if test "$1" = source; then
@@ -44,6 +45,19 @@ if test -z "$SSH_CLIENT"; then
         WHOAMI=root ~/bin/edit.pl "$file"
     }
 
-alias edit='emacsclient.emacs-snapshot -n'
+alias edit=edit_1
+function edit_1()
+{
+    local file=$1
+    if test -e "$file"; then
+        emacsclient -n "$file"
+    else # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
+
+        [[ "$file" =~ :$ ]] && file=${file:0:${#file}-1}
+        local line=${file##*:}
+        file=${file%:*}
+        emacsclient -n +"${line:-1}" "$file"
+    fi
+}
 
 fi
