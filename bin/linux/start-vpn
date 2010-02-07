@@ -18,3 +18,5 @@ sudo route add -net 130.158.6.0/24 gw $GW
 sudo route del default gw 10.0.0.1
 sudo route add -net 64.233.183.0/24 gw 10.0.0.1 #blogspot, googlegroups need vpn
 sudo route add 82.94.164.162 gw 10.0.0.1
+sudo route add -net 64.147.188.0/24 gw 10.0.0.1
+
