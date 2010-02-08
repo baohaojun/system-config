@@ -23,6 +23,6 @@ for prefix in keys:
     trans = list(g_trans_map[prefix])
     trans.sort()
     trans = ''.join(trans)
-    trans_file.write('"%s" : "%s",\n' % (prefix, trans))
+    trans_file.write('%s : %s,\n' % (repr(prefix), repr(trans)))
 
 trans_file.write("}\n")
