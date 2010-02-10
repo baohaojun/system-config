@@ -2654,7 +2654,7 @@ find \( '-path' '*/CVS' \
     -o -iname "cscope.out"\
     \) -prune -o -type f -print0|xargs -0 grep . -Il > cscope.files
 
-sudo apt-get install subversion-tools subversion emacs-snapshot vim python3.1 sawfish imagemagick emacs-goodies-el muse-el w3m-el-snapshot msttcorefonts grun xclip 
+sudo apt-get install subversion-tools subversion emacs-snapshot vim python3.1 sawfish imagemagick emacs-goodies-el muse-el w3m-el-snapshot msttcorefonts grun xclip unrar
 
 
 .authinfo format:
