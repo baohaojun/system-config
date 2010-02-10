@@ -2677,6 +2677,118 @@ sudo route add -net 130.158.6.0/24 gw 192.168.1.1 #maybe all public.softether.co
 
 
 android build ****************************************************************
-sudo apt-get install git-core gnupg sun-java5-jdk flex bison gperf libsdl-dev libesd0-dev libwxgtk2.6-dev build-essential zip curl libncurses5-dev zlib1g-dev valgrind lib32readline5-dev
+sudo apt-get install git-core gnupg sun-java5-jdk flex bison gperf libsdl-dev libesd0-dev libwxgtk2.6-dev build-essential zip curl libncurses5-dev zlib1g-dev valgrind lib32readline5-dev grub2
 
 the quoting is wrong with o$, it's unnecessary! :: [[ "$dood" =~ 'o$' ]] ; echo $? 
+
+ARM体系结构中，共有31个32位的寄存器，其中16个总是可见的，并且最后两
+个，R14和R15（序号应该是从0开始）是特殊的，R14是Link Register(LR)，R15
+是Program Counter(PC)。其他的寄存器则完全是通用的，但是软件一般使用R13
+作为Stack Pointer (SP).
+
+ARM共有五种异常，每种异常对应一种特权执行模式。
+
+1. fast interrupt
+2. normal interrupt
+3. memory abort，可用于内存保护。
+4. undefined instruction
+5. software interrupt (SWI)，用于实现系统调用。
+
+当异常发生时，一些寄存器会被替换，比如所有异常模式下的R13&R14寄存器是跟用户模式下的不同的。fast interrupt模式有更多的寄存器可用，以便快速处理此种异常。bank这个词用在寄存器上是什么意思呢？快速异常还bank了寄存器8~12。最后一种特权模式，第六种，叫做system mode，这个mode使用的是与user mode一样的寄存器。这种模式下可以用来获取user mode无法访问的内存/协处理器。并且不禁止异常在这种模式下发生。
+
+异常向量。每个异常都有一个不同的异常处理程序入口。操作系统在初始化时为每个异常都安装一个处理程序。特权的系统任务通常运行于system mode，以便能捕获异常，使机器的状态不至丢失。
+
+通用寄存器外，处理器的状态还保存于状态寄存器中。当前程序状态寄存器(Current Program Status Register, CPSR)。
+
+4个条件码标志位 NZCV，Negative, Zero, Carry, oVerflow.
+2个中断禁止标志位，两种中断各一
+5个bit，标志当前cpu状态。
+1个bit，标志当前在ARM模式下还是Thumb模式下执行。
+
+每个异常模式还有自己的SPSR，Saved Program Status Register，用于保存异常发生前cpu的CPSR。
+
+ARM指令集，分为6类
+
+跳转指令
+数据处理指令
+状态寄存器存取指令
+普通寄存器存取指令
+协处理器指令
+异常产生指令
+
+大多数数据处理指令和一种协处理器指令可能会更新CPSR里的NZCV标志。
+几乎所有的ARM指令包含4个bit的条件域，16个可能值中一个会使当前指令无条件的执行。14个其他值指定特殊的条件下此指令才会执行，它们允许:
+
+· 测等与不等。
+· 有负数和无负数条件下测大于小于，大于等于和小于等于。
+· 每个CPSR里的NZCV位的单独测试。
+
+第16个值用于少数一些条件执行无意义的指令。
+
+· 标准的分支跳转指令允许向前跳16M，向后跑16M，总共加起来32兆？
+· 跳转并链接指令，允许函数调用。
+· 有一些跳转指令可以在指令集间切换，ARM和Thumb指令集？ARM代码可以调用Thumb子程序，ARM子程序可以跳转回Thumb调用者程序。
+
+·· 数据处理指令： 代数计算、逻辑指令；比较指令；乘法指令；数前零指令。
+
+计算、逻辑指令有：最多两个源值，其中一永远为寄存器，另一可为立即数，也
+可为可选移位的寄存器值。所以ARM没有移位指令。R15，也即PC也是一个通用寄
+存器，所以ARM可以直接把计算结果写入此寄存器从而实现跳转，所以这可以用来
+实现很多跳转功能。
+
+计算指令可选更新NZCV标志位。
+
+比较指令，它们使用与计算指令相同的指令格式，但是计算结果不会保存到目标寄存器；一定会(根据计算结果）更新NZCV标志。
+
+乘法指令，有32位的结果，也有64位的结果。也可以可选的做累加。
+
+数前零指令，Count Leading Zero, CLZ指令，数一个寄存器最大端有几个0，一直数到第一个1为止。结果保存到CLZ的目标寄存器里。
+
+× 写条件标志位；写中断使能位；写处理器状态位。
+
+· 存取单个寄存器；存取多个寄存器；交换内存与寄存器值。
+
+· 存取32位，16位，8位内存数据。16位8位可以选0扩展和正负号扩展
+
+偏移取址，一个基址与一个索引数相加减得到内存地址
+预索引取址，与偏移取址相同，但是基址与索引数计算结果写回基址寄存器。
+后索引取址，内存地址取基址寄存器值，但是计算结果写回基址寄存器。
+
+索引数可为立即数，也可为另一个索引寄存器的值。索引寄存器也可选的先移位。
+
+· Load Multiple/Store Multiple (LDM/STM)
+· 预增/后增/预减/后减
+
+LDM/STM可以用来快速调用子程序：STM保存寄存器到栈上，进入函数调用，LDM从栈上装载寄存器旧值，退出函数调用。
+SWP指令，可以用来实现semaphore，因为此操作是原子不可分的。
+
+协处理器指令：数据处理，数据传输，寄存器传输。
+
+异常产生指令：软中断SWI；软断点BKPT；
+
+软断点，如果有调试软件安装在abort异常的向量上，那么此调试程序开始调试；如果有调试硬件，那么可以直接进入调试，阻止about异常的产生。
+
+不支持指令异常：协处理器指令可以产生此异常；不被arm认识的无分配、无意义的指令也会产生异常。异常可以产生错误或者开始软件指令模拟。
+
+·2
+
+数据类型/处理器模式/寄存器/通用寄存器/程序状态寄存器/异常/内存和内存映射输入输出
+
+Byte/Halfword/Word
+
+7种处理器模式：usr/fiq/irq/svc/abt/und/sys
+
+svc=supervisor，给操作系统用的保护模式
+sys=system，给特权操作系统任务用的保护模式。
+
+模式转换可由软件控制/外部中断/内部异常处理
+
+31个通用寄存器/6个状态寄存器，状态寄存器只需要实现32位中的12位。
+
+处理完异常后返回时，有两种办法：数据处理指令，S位被设上，PC作为目标寄存器；Load Multiple with Restore CPSR指令。
+
+IMB，指令内存屏障，Instruction Memory Barriers。处理自修改代码。任何把
+程序装载入内存执行的系统都是支持自修改代码的系统。但是自修改的编程技巧
+应该尽量避免。IMB序列应该在一个程序里被写成一个系统依赖的子程序，以方便
+移植。
+
