@@ -2792,3 +2792,4 @@ IMB，指令内存屏障，Instruction Memory Barriers。处理自修改代码�
 应该尽量避免。IMB序列应该在一个程序里被写成一个系统依赖的子程序，以方便
 移植。
 
+$gconftool-2 -s /desktop/gnome/applications/window_manager/default --type string /usr/bin/sawfish

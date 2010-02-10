@@ -1,3 +1,0 @@
-#!/bin/bash
-
-display -window root ~/.sawfish/background.png
