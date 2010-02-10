@@ -1,5 +1,6 @@
 #!/bin/bash -x
 cd ~/bin/linux/ext
+sudo ./vpnclient stop
 sudo ./vpnclient start
 sudo ./vpncmd /client localhost /cmd accountdisconnect bhj
 sudo ./vpncmd /client localhost /cmd accountconnect bhj
@@ -17,6 +18,6 @@ for x in $OLD_DNS_LIST; do sudo route add $x gw $GW; done
 sudo route add -net 130.158.6.0/24 gw $GW
 sudo route del default gw 10.0.0.1
 sudo route add -net 64.233.183.0/24 gw 10.0.0.1 #blogspot, googlegroups need vpn
-sudo route add 82.94.164.162 gw 10.0.0.1
-sudo route add -net 64.147.188.0/24 gw 10.0.0.1
-
+sudo route add 82.94.164.162 gw 10.0.0.1 #python
+sudo route add -net 64.147.188.0/24 gw 10.0.0.1 #xmarks
+sudo route add -net 208.80.152.0/24 gw 10.0.0.1 #wikipedia

@@ -2677,7 +2677,7 @@ sudo route add -net 130.158.6.0/24 gw 192.168.1.1 #maybe all public.softether.co
 
 
 android build ****************************************************************
-sudo apt-get install git-core gnupg sun-java5-jdk flex bison gperf libsdl-dev libesd0-dev libwxgtk2.6-dev build-essential zip curl libncurses5-dev zlib1g-dev valgrind lib32readline5-dev grub2
+sudo apt-get install git-core gnupg sun-java5-jdk flex bison gperf libsdl-dev libesd0-dev libwxgtk2.6-dev build-essential zip curl libncurses5-dev zlib1g-dev valgrind lib32readline5-dev grub2 cscope
 
 the quoting is wrong with o$, it's unnecessary! :: [[ "$dood" =~ 'o$' ]] ; echo $? 
 
