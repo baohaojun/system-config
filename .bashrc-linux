@@ -7,6 +7,17 @@ function apt-get()
         sudo apt-get "$@"
     fi
 }
+
+function wp()
+{
+    FILE=${1:-`pwd`}
+    FILE=`readlink -f "$FILE"`
+
+    if [[ "$FILE" =~ ^/media/smb/ ]]; then
+        FILE=`echo "$FILE"|sed -e 's,^/media/smb/,\\\\\\\\,; s,/,\\\\,g'`
+    fi
+    echo -n "$FILE"|tee /dev/tty|xclip -i
+}
     
 alias aptitude='ssh -t root@localhost aptitude'
 export LC_ALL=en_US.UTF-8
