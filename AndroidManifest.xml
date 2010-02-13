@@ -16,6 +16,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.inputmethod.pinyin"
     android:sharedUserId="android.uid.shared">
+
+        <original-package android:name="com.android.inputmethod.pinyin" />
+
         <uses-permission android:name="android.permission.VIBRATE"/>
 
         <application android:icon="@drawable/app_icon"
