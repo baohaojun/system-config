@@ -22,7 +22,7 @@
     window.addEventListener('DOMContentLoaded',
 			    function(e) { keyhandler.contentLoad(e); },
 			    false);
-    window.addEventListener('DOMTitleChanged', 
+    window.addEventListener('DOMTitleChanged',
 			    function(e) { keyhandler.contentSelect(e); },
 			    false);
 })();

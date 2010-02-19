@@ -40,7 +40,7 @@ var factory = {
     }
 };
 
-var module = {    
+var module = {
     registerSelf: function(compmgr, spec, location, type) {
 	compmgr = compmgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
 	compmgr.registerFactoryLocation(CID, 'Firemacs Service', CONTRACT_ID,
@@ -49,24 +49,24 @@ var module = {
 	catmgr.addCategoryEntry('app-startup', CLASS_NAME,
 				CONTRACT_ID, true, true, null);
     },
-    
+
     unregisterSelf: function(compmgr, location, type) {
 	compmgr = compmgr.QueryInterface(Components.interfaces.nsIComponentRegistrar);
-	compmgr.unregisterFactoryLocation(CLASS_ID, location);        
+	compmgr.unregisterFactoryLocation(CLASS_ID, location);
     },
-    
+
     getClassObject: function(compmgr, cid, iid) {
 	if (!iid.equals(Components.interfaces.nsIFactory)) {
 	    throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
 	}
-	
+
 	if (!cid.equals(CID)) {
 	    throw Components.results.NS_ERROR_NO_INTERFACE;
 	}
 
 	return factory;
     },
-    
+
     canUnload: function(compmgr) {
 	return true;
     }

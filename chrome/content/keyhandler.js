@@ -29,7 +29,7 @@ Firemacs.KeyHandler = {
 
     // Key Event Handler
     keypress: function(e) {
-	if (this._status.get() === false) { 
+	if (this._status.get() === false) {
 	    return;
 	}
 
@@ -192,7 +192,7 @@ Firemacs.KeyHandler = {
 	    }
 	} else {
 	    key = prfx + ch;
-	    if (prfx !== '') { 
+	    if (prfx !== '') {
 		this._displayMessage(key, 300);
 	    }
 	}

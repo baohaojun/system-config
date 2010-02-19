@@ -9,7 +9,7 @@ Firemacs.SubFunc = {
     ////////////////////////////////////////////////////////////////
     //
     // Mark
-    // 
+    //
 
     marked: function(e) {
 	var o = e.originalTarget;
@@ -42,7 +42,7 @@ Firemacs.SubFunc = {
 		} else {
 		    o.selectionStart = o.selectionEnd;
 		}
-	    } 
+	    }
 	    else {
 		goDoCommand('cmd_selectNone');
 	    }
@@ -53,7 +53,7 @@ Firemacs.SubFunc = {
     ////////////////////////////////////////////////////////////////
     //
     // Buffer
-    // 
+    //
 
     // if o.selectionStart and o.selectionEnd are the same,
     // a caret becomes identical to a cursor.
@@ -81,7 +81,7 @@ Firemacs.SubFunc = {
     ////////////////////////////////////////////////////////////////
     //
     // Moving cursor
-    // 
+    //
 
     PreviousLine: function(e) {
 	if (this.marked(e)) {
@@ -140,7 +140,7 @@ Firemacs.SubFunc = {
 
     ////////////////////////////////////////////////////////////////
     //
-    // Generating a key event 
+    // Generating a key event
     // contributed by Hirano-san
     //
 
@@ -167,7 +167,7 @@ Firemacs.SubFunc = {
 	var tabs = gBrowser.tabContainer.childNodes;
 	var len = tabs.length;
 	var cTab = gBrowser.selectedTab;
-	
+
 	for (var i = 0; i < len; i++) {
 	    if (tabs[i] === cTab) {
 		var nTab = tabs[(i + move + len) % len];
@@ -237,7 +237,7 @@ Firemacs.SubFunc = {
 	    }
 	    var width = node.style.width;
 	    var height = node.style.height;
-	    if (width === '0' || width === '0px' || 
+	    if (width === '0' || width === '0px' ||
 		height === '0' || height === '0px') {
 		    return;
 	    }
@@ -265,7 +265,7 @@ Firemacs.SubFunc = {
 		node = node.contentDocument;
 		doc = node;
 	    }
-	    
+
 	    if (node.hasChildNodes()) {
 		var children = node.childNodes;
 		var length = children.length;
@@ -313,7 +313,7 @@ Firemacs.SubFunc = {
 	    this._displayMessage(errmsg, 1000);
 	    return;
 	}
-    
+
 	if (e.originalTarget.FMXtype == type) {
 	    index = e.originalTarget.FMXidx;
 	}
@@ -448,9 +448,9 @@ Firemacs.SubFuncFF2 = {
     },
 
     SearchOpen:     function() { gFindBar.onFindCmd(); },
-    SearchClose:    function() { gFindBar.closeFindBar();  }, 
+    SearchClose:    function() { gFindBar.closeFindBar();  },
     SearchField:    function() { return document.getElementById('find-field'); },
-    SearchUnhilite: function() { gFindBar.toggleHighlight(false); }, 
+    SearchUnhilite: function() { gFindBar.toggleHighlight(false); },
     SearchForward:  function() { gFindBar.onFindAgainCmd(); },
     SearchBackward: function() { gFindBar.onFindPreviousCmd(); }
 };
@@ -536,27 +536,27 @@ Firemacs.SubFuncFF3 = {
 	gFindBar.onFindAgainCommand(true);
     },
     copyText: function(copytext) {
-	var str = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString);  
+	var str = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString);
 	if (!str) {
 	    return;
 	}
-  
+
 	str.data = copytext;
-  
+
 	var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
 	if (!trans) {
 	    return;
 	}
-  
+
 	trans.addDataFlavor('text/unicode');
 	trans.setTransferData('text/unicode', str, copytext.length * 2);
-  
+
 	var clipid = Components.interfaces.nsIClipboard;
 	var clip = Components.classes['@mozilla.org/widget/clipboard;1'].getService(clipid);
-	if (!clip) { 
+	if (!clip) {
 	    return;
 	}
-  
+
 	clip.setData(trans, null, clipid.kGlobalClipboard);
     }
 };

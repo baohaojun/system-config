@@ -118,7 +118,7 @@ Firemacs.CommandHolder = Firemacs.defClass({
 Firemacs.Observer = {
     initialize: function(binder, config) {
 	this._binder = binder;
-	this._prefer = 	Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefService).getBranch(config.prefix + '.');
+	this._prefer = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefService).getBranch(config.prefix + '.');
 	return this;
     },
     addObserver: function() {

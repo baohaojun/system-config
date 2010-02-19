@@ -76,7 +76,7 @@ command keygroup lst = concatMap eachGroup keygroup
     where
       eachGroup gName = jsObj $ filter (\ent -> grp ent == gName) lst
           where
-            jsObj l = "Firemacs.Commands." ++ gName ++ " = {\n" ++ 
+            jsObj l = "Firemacs.Commands." ++ gName ++ " = {\n" ++
                       (jsArray $ map jsFunc l) ++
                       "};\n" ++
                       "\n"
@@ -141,7 +141,7 @@ makeContents3 lst = tabpanels
           where
             hd = take threshold ents
             tl = drop threshold ents
-            gridtag = dtag "grid" [("flex","1")] (columns ++ rows hd) 
+            gridtag = dtag "grid" [("flex","1")] (columns ++ rows hd)
             loop = grid tl
 
       columns = dtag "columns" [] (column ++ column)
