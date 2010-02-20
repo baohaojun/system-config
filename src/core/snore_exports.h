@@ -1,0 +1,12 @@
+#ifndef SNORE_EXPORT_H
+#define SNORE_EXPORT_H
+
+
+#ifdef SNORECORE_DLL
+# define SNORE_EXPORT Q_DECL_EXPORT
+#else
+# define SNORE_EXPORT Q_DECL_IMPORT
+#endif
+
+
+#endif//SNORE_EXPORT_H

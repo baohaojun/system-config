@@ -1,0 +1,9 @@
+if(WIN32)
+    message(STATUS "Adding Snarl notification backend")
+    set( SNARL__SRC
+        SnarlInterface.cpp
+        snarl_backend.cpp
+        )
+    automoc4_add_library(snarln_backend MODULE  ${SNARL__SRC} )
+    target_link_libraries(snarln_backend snore ${QT_QTCORE_LIBRARY} )
+endif(WIN32)
