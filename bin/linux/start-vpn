@@ -21,3 +21,6 @@ sudo route add -net 64.233.183.0/24 gw 10.0.0.1 #blogspot, googlegroups need vpn
 sudo route add 82.94.164.162 gw 10.0.0.1 #python
 sudo route add -net 64.147.188.0/24 gw 10.0.0.1 #xmarks
 sudo route add -net 208.80.152.0/24 gw 10.0.0.1 #wikipedia
+sudo route add -net 116.91.142.0/24 gw 10.0.0.1 #facebook b.static.ak.fbcdn.net
+sudo route add -net 66.220.146.0/24 gw 10.0.0.1 #facebook www.facebook.com
+
