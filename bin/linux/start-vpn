@@ -8,19 +8,47 @@ sudo dhclient eth0
 OLD_DNS_LIST=`cat /etc/resolv.conf|grep nameser|awk '{print $2}'`
 
 route -n
-GW=$(route -n|grep ^0.0.0.0|grep -v 10.0.0.1|awk '{print $2}')
+OLD_GW=$(route -n|grep ^0.0.0.0|grep -v 10.0.0.1|awk '{print $2}')
 
 sleep 5
 while ! sudo dhclient vpn_nic; do sudo vpncmd /client localhost /cmd accountlist bhj; sleep 5; done
 
-sudo route add 130.158.6.51 gw $GW
-for x in $OLD_DNS_LIST; do sudo route add $x gw $GW; done
-sudo route add -net 130.158.6.0/24 gw $GW
+sudo route add 130.158.6.51 gw $OLD_GW
+for x in $OLD_DNS_LIST; do sudo route add $x gw $OLD_GW; done
+sudo route add -net 130.158.6.0/24 gw $OLD_GW #softether, for vpn itself
 sudo route del default gw 10.0.0.1
-sudo route add -net 64.233.183.0/24 gw 10.0.0.1 #blogspot, googlegroups need vpn
-sudo route add 82.94.164.162 gw 10.0.0.1 #python
-sudo route add -net 64.147.188.0/24 gw 10.0.0.1 #xmarks
-sudo route add -net 208.80.152.0/24 gw 10.0.0.1 #wikipedia
-sudo route add -net 116.91.142.0/24 gw 10.0.0.1 #facebook b.static.ak.fbcdn.net
-sudo route add -net 66.220.146.0/24 gw 10.0.0.1 #facebook www.facebook.com
 
+OLD_GW_HOST=(cc.softether.com.
+public1.softether.com.
+public2.softether.com.
+public3.softether.com.
+public4.softether.com.
+public-nat.softether.com.
+keepalive.softether.com.
+public5.softether.com.
+public6.softether.com.
+public7.softether.com.
+public8.softether.com.
+public9.softether.com.
+public10.softether.com.
+vpn-pki.cc.tsukuba.ac.jp.
+public12.softether.com.
+public13.softether.com.
+vpn.cc.tsukuba.ac.jp.
+)
+
+NEW_GW_HOST=(
+blogspot.com
+python.org
+0.channel52.facebook.com
+www.facebook.com
+b.static.ak.fbcdn.net
+)
+for x in ${NEW_GW_HOST[@]}; do sudo route add $x gw 10.0.0.1; done
+
+NEW_GW_HOST_NET=(www.foxmarks.com.
+wikipedia.org
+)
+
+NEW_GW_NET=$(for x in ${NEW_GW_HOST_NET[@]}; do host $x; done|grep -v NXDOMAIN|grep 'has address'|awk '{print $4}'|perl -npe 's!(.*)\..*!\1.0/24!'|sort -u)
+for x in $NEW_GW_NET; do sudo route add -net $x gw 10.0.0.1; done
