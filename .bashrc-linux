@@ -18,16 +18,20 @@ function wp()
     fi
     echo -n "$FILE"|tee /dev/tty|xclip -i
 }
-    
-alias aptitude='ssh -t root@localhost aptitude'
+
+
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-PATH=/usr/local/jdk1.5/bin:/usr/local/arm-linux/bin:~/bin/linux/:~/bin/linux/ext:$PATH:
-CLASSPATH=/usr/local/jdk1.5/lib:.
-JAVA_HOME=/usr/local/jdk1.5
-export PATH CLASSPATH JAVA_HOME
+export PATH=/usr/local/jdk1.5/bin:/usr/local/arm-linux/bin:~/bin/linux/:~/bin/linux/ext:$PATH:
+export CLASSPATH=/usr/local/jdk1.5/lib:.
+export JAVA_HOME=/usr/local/jdk1.5
 
+export XMODIFIERS="@im=SCIM"
+export XIM=SCIM
+export GTK_IM_MODULE=scim
+
+alias aptitude='sudo aptitude'
 alias sudo='sudo env PATH=$PATH'
 alias of=gnome-open
 
@@ -43,10 +47,6 @@ if test -z "$SSH_CLIENT"; then
         if [[ $WHOAMI == root ]] && [[ -f "$1" ]]; then
             echo using root to do edit, won\'t check read permission
         else
-            if ! [[ -r "$1" ]]; then
-                echo Error: "$1" is not readable
-                return 1
-            fi
             if ! [[ -w "$1" ]]; then
                 echo Warning: "$1" is not writable
             fi
@@ -56,19 +56,20 @@ if test -z "$SSH_CLIENT"; then
         WHOAMI=root ~/bin/edit.pl "$file"
     }
 
-alias edit=edit_1
-function edit_1()
-{
-    local file=$1
-    if test -e "$file"; then
-        emacsclient -n "$file"
-    else # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
+    alias edit=edit_1
+    function edit_1()
+    {
+        local file=$1
+        if test -e "$file"; then
+            emacsclient -n "$file"
+        else # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
 
-        [[ "$file" =~ :$ ]] && file=${file:0:${#file}-1}
-        local line=${file##*:}
-        file=${file%:*}
-        emacsclient -n +"${line:-1}" "$file"
-    fi
-}
+            [[ "$file" =~ :$ ]] && file=${file:0:${#file}-1}
+            local line=${file##*:}
+            file=${file%:*}
+            emacsclient -n +"${line:-1}" "$file"
+        fi
+    }
 
 fi
+
