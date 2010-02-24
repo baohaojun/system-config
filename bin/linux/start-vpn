@@ -50,7 +50,7 @@ function set_route_hosts(){
             b.static.ak.fbcdn.net
             www.boxun.com
             72.14.203.104 #google cache?
-            74.125.95.132
+            74.125.95.132 #google cache? 
         )
     else 
         NEW_GW_HOST=(

@@ -1,5 +1,36 @@
 #!/bin/bash -x
-cd ~/bin/linux/ext
-sudo ./vpncmd /client localhost /cmd accountdisconnect bhj
-sudo ifconfig vpn_nic down
-sudo dhclient eth0
+function stop_vpn() {
+    cd ~/bin/linux/ext
+    sudo ./vpncmd /client localhost /cmd accountdisconnect bhj
+    sudo ifconfig vpn_nic down
+    sudo dhclient eth0
+}
+
+function stop_route_hosts(){
+    NEW_GW_HOST=(
+        $@
+    )
+
+    NEW_GW_HOST=$(
+        for x in ${NEW_GW_HOST[@]}
+        do
+            if [[ $x =~ ([0-9]{1,3}\.){3}[0-9]{1,3} ]]
+            then
+                echo $x has address $x; # to make it look like output from host(1)
+            else 
+                host $x; 
+            fi
+        done | grep 'has address'|awk '{print $4}'|sort -u
+    )
+
+    NEW_GW_HOST=(
+        $NEW_GW_HOST
+    )
+    for x in ${NEW_GW_HOST[@]}; do sudo route del $x gw 10.0.0.1; done
+}
+
+if test $# = 0; then
+    stop_vpn
+else
+    stop_route_hosts $@
+fi
