@@ -39,11 +39,19 @@ vpn.cc.tsukuba.ac.jp.
 
 NEW_GW_HOST=(
 blogspot.com
+www.google.com
 python.org
 0.channel52.facebook.com
 www.facebook.com
 b.static.ak.fbcdn.net
+www.boxun.com
 )
+
+NEW_GW_HOST=$(for x in ${NEW_GW_HOST[@]}; do host $x; done|grep 'has address'|awk '{print $4}'|sort -u)
+NEW_GW_HOST=($NEW_GW_HOST
+72.14.203.104 #google cache?
+74.125.95.132
+)    
 for x in ${NEW_GW_HOST[@]}; do sudo route add $x gw 10.0.0.1; done
 
 NEW_GW_HOST_NET=(www.foxmarks.com.
