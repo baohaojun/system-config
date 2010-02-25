@@ -11,13 +11,16 @@
 
 class Parser{
 public:
+    static class QNetworkReply* download(const QUrl &address);
+
+public:
     Parser(class SnarlNetworkFrontend* snarl);
 
-     struct SnarlNotification parse(QString &msg,QTcpSocket* client);
+     struct SnarlNotification parse(QString &msg,class QTcpSocket* client);
 
 private:
     class SnarlNetworkFrontend *snarl;
-    QString download(const QString &address);
+    QString downloadIcon(const QString &address);
     enum snpTypes{
         TYPE,
         APP,

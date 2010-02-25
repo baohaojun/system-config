@@ -7,6 +7,6 @@ set ( SnoreNotify_SRCS
 
 automoc4_add_library( snore  SHARED ${SnoreNotify_SRCS})
 set_target_properties( snore PROPERTIES COMPILE_FLAGS "-DSNORECORE_DLL" )
-target_link_libraries ( snore ${QT_QTCORE_LIBRARY}  )
+target_link_libraries ( snore ${QT_QTCORE_LIBRARY}  ${QT_QTGUI_LIBRARY}  )
 
 

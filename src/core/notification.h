@@ -1,16 +1,11 @@
 #ifndef NOTIFICATION_H
 #define NOTIFICATION_H
 #include "snore_exports.h"
-#include <QString>
-#include <QTcpSocket>
-#include <QUrl>
-#include <QHttp>
-#include <QObject>
-#include "QHash"
+#include <QHash>
 #include <QFile>
 #include "application.h"
-#include <QPointer>
-
+#include <Qt>
+#include <QTextEdit>
 
 
 
@@ -18,6 +13,13 @@
 class SNORE_EXPORT Notification:public QObject
 {
     Q_OBJECT
+public:
+    static inline QString toPlainText(const QString &string){
+        if(!Qt::mightBeRichText ( string))return string;
+        QTextEdit te;
+        te.setHtml(string);
+        return te.toPlainText();
+    };
 public:    
     Notification();
     Notification(QString source,QString title,QString text,QString icon,int timeout);
@@ -31,7 +33,7 @@ public:
         ACTION_3=3,
         CLOSED=4
 
-    };
+           };
 
     actions actionInvoked;
     QString source;

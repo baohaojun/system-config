@@ -1,5 +1,8 @@
 #include "snarl_backend.h"
 #include <QtCore>
+#include <QTextEdit>
+#include <iostream>
+
 
 
 
@@ -14,10 +17,14 @@ Snarl_Backend::Snarl_Backend()
 
 }
 
+
 int Snarl_Backend::notify(QSharedPointer<Notification>notification){
     int timeout=notification->timeout>=0?notification->timeout/1000:10;
     if(notification->id==0){
-        return snarlInterface->ShowMessage(notification->title.toLocal8Bit().data(), notification->text.toLocal8Bit().data(),timeout, notification->getIcon().toLocal8Bit().data());
+        QString title=Notification::toPlainText(notification->title);
+        QString text=Notification::toPlainText(notification->text);
+        qDebug()<<"Calling Snarl"<<title<< text<<QString::number(timeout)<< notification->getIcon();
+        return snarlInterface->ShowMessage(title.toLocal8Bit().data(), text.toLocal8Bit().data(),timeout, notification->getIcon().toLocal8Bit().data());
     }else{
         //update message
         snarlInterface->UpdateMessage(LONG32(notification->id),notification->title.toLocal8Bit().data(), notification->text.toLocal8Bit().data(),notification->getIcon().toLocal8Bit().data());

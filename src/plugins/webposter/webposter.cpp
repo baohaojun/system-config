@@ -18,7 +18,6 @@ int WebPoster::notify(QSharedPointer<Notification>notification){
     connect(reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
     return -1;
 
-
 }
 
 void WebPoster::closeNotification(int id){

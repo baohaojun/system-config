@@ -1,4 +1,4 @@
-#include <QtCore/QCoreApplication>
+#include <QtGui/QApplication>
 #include "core/snoreserver.h"
 #include <QDir>
 #include <QFile>
@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
     SnoreServer s;
 
     QDir pluginsDir(a.applicationDirPath()+"/plugins");

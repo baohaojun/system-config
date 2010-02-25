@@ -4,6 +4,8 @@
 #include "snoreserver.h"
 
 
+
+
 Notification::Notification():source("none"),timeout(10),notification(true){}
 Notification::Notification(QString source,QString title,QString text,QString icon,int timeout):source(source),title(title),text(text),timeout(timeout),icon(icon),notification(true)
 {       

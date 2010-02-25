@@ -7,5 +7,5 @@ add_subdirectory(webposter)
 add_subdirectory(registredapps)
 add_subdirectory(snarlnetwork)
 add_subdirectory(snarl)
-add_subdirectory(dbusbinding)
+#add_subdirectory(dbusbinding)
 

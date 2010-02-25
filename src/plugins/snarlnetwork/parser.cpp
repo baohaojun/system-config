@@ -8,6 +8,7 @@
 #include <QEventLoop>
 #include <QNetworkReply>
 #include <QObject>
+#include <QTcpSocket>
 
 Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
 {
@@ -68,7 +69,7 @@ Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
             sNotification.notification->text=value;
             break;
         case ICON:
-            sNotification.notification->setIcon(download(value));
+            sNotification.notification->setIcon(downloadIcon(value));
             break;
         case CLASS:
             sNotification.notification->alert=value;
@@ -117,7 +118,7 @@ Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
     return sNotification;
 }
 
- QString Parser::download(const QString &address){
+ QString Parser::downloadIcon(const QString &address){
      if(address=="")
          return "";
      if(address.startsWith("file://"))
@@ -132,15 +133,7 @@ Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
      if(file.exists())
          return filename;
 
-     QNetworkAccessManager manager;
-     QEventLoop loop;
-     QNetworkRequest request(url);
-     request.setRawHeader("User-Agent", "SnoreNotify");
-     QNetworkReply *reply=manager.get(request);
-     QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-
-     loop.exec();
-
+      QNetworkReply * reply=download(url);
 
      file.open(QIODevice::WriteOnly);
      file.write(reply->readAll());
@@ -150,5 +143,15 @@ Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
 
  }
 
+ QNetworkReply* Parser::download(const QUrl &address){
+     QNetworkAccessManager manager;
+     QEventLoop loop;
+     QNetworkRequest request(address);
+     request.setRawHeader("User-Agent", "SnoreNotify");
+     QNetworkReply *reply=manager.get(request);
+     QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+     loop.exec();
+     return reply;
+ }
 
 //#include "parser.moc"
