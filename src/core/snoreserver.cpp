@@ -4,7 +4,7 @@
 #include <QPluginLoader>
 
 
-QString const SnoreServer::snoreTMP=QDir::temp().path()+"/SnoreNotify";
+QString const SnoreServer::snoreTMP=QDir::temp().path()+"/SnoreNotify/";
 
 SnoreServer::SnoreServer():primaryNotificationBackend(0)
 {    qDebug()<<"Inititalized";
