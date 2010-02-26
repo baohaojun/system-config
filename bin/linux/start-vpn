@@ -1,4 +1,17 @@
 #!/bin/bash -x
+NEW_GW_HOST=(
+    blogspot.com
+    www.google.com
+    python.org
+    0.channel52.facebook.com
+    www.facebook.com
+    b.static.ak.fbcdn.net
+    www.boxun.com
+    72.14.203.104 #google cache?
+    74.125.95.132 #google cache? 
+    groups.google.com
+)
+
 function start_vpn() {
     cd ~/bin/linux/ext
     sudo ./vpnclient stop
@@ -40,19 +53,7 @@ function start_vpn() {
 }
 
 function set_route_hosts(){
-    if test $# = 0; then
-        NEW_GW_HOST=(
-            blogspot.com
-            www.google.com
-            python.org
-            0.channel52.facebook.com
-            www.facebook.com
-            b.static.ak.fbcdn.net
-            www.boxun.com
-            72.14.203.104 #google cache?
-            74.125.95.132 #google cache? 
-        )
-    else 
+    if test $# != 0; then
         NEW_GW_HOST=(
             $@
         )
