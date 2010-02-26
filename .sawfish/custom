@@ -1,7 +1,7 @@
 ;; sawfish user customization -- do not edit by hand!
-;; sawfish version 1.3.5.2, written Tue Feb 23 17:32:33 2010
+;; sawfish version 1.3.5.2, written Fri Feb 26 13:36:20 2010
 
-(custom-set-keymap (quote global-keymap) (quote (keymap ((run-shell-command "/usr/bin/gnome-screensaver-command -a") . "H-l") ((run-shell-command "/usr/bin/xclip -o |/usr/bin/xclip -i -selection clipboard") . "H-v") (cycle-windows-backwards . "H-ISO_Left_Tab") (cycle-windows-backwards . "M-ISO_Left_Tab") (iswitch-window . "H-s") (cycle-windows . "M-TAB") (next-workspace . "W-Right") (previous-workspace . "W-Left") ((run-shell-command "import ~/im.png") . "H-SPC"))))
+(custom-set-keymap (quote global-keymap) (quote (keymap ((run-shell-command "/usr/bin/gnome-screensaver-command -a") . "H-l") ((run-shell-command "/usr/local/bin/xclip -o |/usr/local/bin/xclip -i -selection clipboard") . "H-v") ((run-shell-command "/usr/local/bin/xclip -o -selection clipboard|/usr/local/bin/xclip -i") . "H-C-v") (cycle-windows-backwards . "H-ISO_Left_Tab") (cycle-windows-backwards . "M-ISO_Left_Tab") (iswitch-window . "H-s") (cycle-windows . "M-TAB") (next-workspace . "W-Right") (previous-workspace . "W-Left") ((run-shell-command "import ~/im.png") . "H-SPC"))))
 (custom-set-typed-variable (quote default-frame-style) (quote Crux) (quote frame-style))
 (custom-set-keymap (quote window-keymap) (quote (keymap (raise-and-pass-through-click . "Button1-Click") (maximize-window-toggle . "H-`") (iconify-window . "H-z") (delete-window-safely . "M-F4") (cycle-class . "H-c") (move-window-interactively . "W-Button1-Move") (popup-window-menu . "W-Button2-Click") (raise-lower-window . "W-Button3-Click") (lower-window-depth . "H--") (maximize-window-toggle . "H-F1") (raise-window-depth . "H-="))))
 (custom-set-typed-variable (quote wm-modifier-value) (quote (super)) (quote modifier-list))
