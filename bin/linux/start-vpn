@@ -10,6 +10,7 @@ NEW_GW_HOST=(
     72.14.203.104 #google cache?
     74.125.95.132 #google cache? 
     groups.google.com
+    developer.android.com
 )
 
 function start_vpn() {
