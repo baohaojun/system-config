@@ -5,12 +5,25 @@ set -e
 (mkdir -p ~/.texmf-var/fonts/truetype/;
 cp $1.ttf ~/.texmf-var/fonts/truetype/;
 cd ~/.texmf-var/fonts/truetype/;
-ttf2tfm $1.ttf -w $1@Unicode.sfd@
-for x in *.enc; do echo $x; done|perl -npe 's/(.*)\.(.*)/$1 <'$1'.ttf <$1.$2/' >$1.map
-mkdir -p ~/.texmf-var/fonts/enc/pdftex/$1
-mv *.enc ~/.texmf-var/fonts/enc/pdftex/$1/
-mkdir -p ~/.texmf-var/fonts/tfm/$1/
-mv *.tfm ~/.texmf-var/fonts/tfm/$1/
+rm -rf tmp
+mkdir tmp
+cd tmp
+cp /usr/share/latex-cjk-common/utils/subfonts/subfonts.pe .
+ln -s ../$1.ttf . 
+
+fontforge -script subfonts.pe $1.ttf $1 /usr/share/texmf-texlive/fonts/sfd/Unicode.sfd
+
+for i in *.pfb
+do
+    echo "$(basename $i .pfb) $(basename $i .pfb) <$i" >> $1.map
+done
+
+mkdir -p ~/.texmf-var/fonts/map/dvips/$1/ ~/.texmf-var/fonts/{afm,type1,tfm}/$1
+
+mv $1.map ~/.texmf-var/fonts/map/dvips/$1/
+mv *.afm ~/.texmf-var/fonts/afm/$1
+mv *.tfm ~/.texmf-var/fonts/tfm/$1
+mv *.pfb ~/.texmf-var/fonts/type1/$1
 
 (mkdir -p ~/.texmf-var/tex/latex/cjk/utf-8;
 cd ~/.texmf-var/tex/latex/cjk/utf-8;
@@ -26,11 +39,9 @@ cat <<End|sed -e "s/%fontname%/$1/g" > c70$1.fd
 \endinput
 End
 )
-cd ..
-rm tmp -rf
 
-texhash
 updmap --enable Map $1.map
+texhash
 )
 
 echo 'OK!'
