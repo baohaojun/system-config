@@ -26,11 +26,10 @@ cat <<End|sed -e "s/%fontname%/$1/g" > c70$1.fd
 \endinput
 End
 )
-cd ..
-rm tmp -rf
 
-texhash
 updmap --enable Map $1.map
+texhash
+
 )
 
 echo 'OK!'

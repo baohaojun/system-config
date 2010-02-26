@@ -40,8 +40,11 @@ cat <<End|sed -e "s/%fontname%/$1/g" > c70$1.fd
 End
 )
 
-updmap --enable Map $1.map
+cd ~/.texmf-var/fonts/truetype/
+rm tmp -rf
+
 texhash
+updmap --enable Map $1.map
 )
 
 echo 'OK!'
