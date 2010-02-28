@@ -5,9 +5,10 @@
 
 
 
+int Notification::DefaultTimeout=10;
 
-Notification::Notification():source("none"),timeout(10),notification(true){}
-Notification::Notification(QString source,QString title,QString text,QString icon,int timeout):source(source),title(title),text(text),timeout(timeout),icon(icon),notification(true)
+Notification::Notification(uint id):source("none"),timeout(10),id(id),notification(true){}
+Notification::Notification(QString source,QString title,QString text,QString icon,int timeout,uint id):source(source),title(title),text(text),timeout(timeout),id(id),icon(icon),notification(true)
 {       
 }
 
@@ -19,6 +20,12 @@ bool Notification::isNotification(){
     return notification;
 }
 
+void Notification::setIsNotification(bool b){
+    notification=b;
+}
+uint Notification::getID(){
+    return id;
+}
 
 QString Notification::toSnalrString()const{
     QString out("type=SNP#?version=1.1");

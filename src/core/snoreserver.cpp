@@ -2,6 +2,7 @@
 #include  <QDebug>
 #include "notification.h"
 #include <QPluginLoader>
+#include <iostream>
 
 
 QString const SnoreServer::snoreTMP=QDir::temp().path()+"/SnoreNotify/";
@@ -57,7 +58,9 @@ int SnoreServer::broadcastNotification(QSharedPointer<Notification> notification
     emit notify(notification);
     qDebug()<<"Broadcasting notification:"<<notification->toSnalrString();
     if(primaryNotificationBackend!=NULL){
-        return primaryNotificationBackend->notify(notification);        
+        notification->id=primaryNotificationBackend->notify(notification);
+        std::cout<<"Notification ID: "<<QString::number(notification->id).toLatin1().data()<<std::endl;
+        return  notification->id;
     }
     return -1;
 }
@@ -83,7 +86,7 @@ void SnoreServer::addApplication(QSharedPointer<Application> application){
 }
 
 
-bool SnoreServer::applicationListConontainsAlert(const QString &applicationName,const QString &alertName){
+bool SnoreServer::applicationListAlertIsActive(const QString &applicationName,const QString &alertName){
     return applications.contains(applicationName)&&applications.value(applicationName)->alerts.contains(alertName)
             &&!applications.value(applicationName)->alerts.value(alertName)->active;
 }

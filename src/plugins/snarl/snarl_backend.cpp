@@ -19,16 +19,16 @@ Snarl_Backend::Snarl_Backend()
 
 
 int Snarl_Backend::notify(QSharedPointer<Notification>notification){
-    int timeout=notification->timeout>=0?notification->timeout/1000:10;
-    if(notification->id==0){
+    int timeout=notification->timeout>=0?notification->timeout:10;
+    if(notification->getID()==0){
         QString title=Notification::toPlainText(notification->title);
         QString text=Notification::toPlainText(notification->text);
-        qDebug()<<"Calling Snarl"<<title<< text<<QString::number(timeout)<< notification->getIcon();
+        std::cout<<"Calling Snarl"<<title.toLocal8Bit().data()<< text.toLocal8Bit().data()<<" "<<QString::number(timeout).toLatin1().data()<< notification->getIcon().toLocal8Bit().data()<<std::endl;
         return snarlInterface->ShowMessage(title.toLocal8Bit().data(), text.toLocal8Bit().data(),timeout, notification->getIcon().toLocal8Bit().data());
     }else{
         //update message
-        snarlInterface->UpdateMessage(LONG32(notification->id),notification->title.toLocal8Bit().data(), notification->text.toLocal8Bit().data(),notification->getIcon().toLocal8Bit().data());
-        return notification->id;
+        snarlInterface->UpdateMessage(LONG32(notification->getID()),notification->title.toLocal8Bit().data(), notification->text.toLocal8Bit().data(),notification->getIcon().toLocal8Bit().data());
+        return notification->getID();
     }
 }
 

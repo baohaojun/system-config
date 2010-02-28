@@ -28,7 +28,7 @@ Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
 }
 
 
- SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
+SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
     msg=msg.trimmed();
 
     SnarlNotification sNotification;
@@ -36,6 +36,7 @@ Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
     sNotification.vailid=true;
     sNotification.notification=QSharedPointer<Notification>(new Notification());
     sNotification.clientSocket=client;
+    sNotification.notification->setIsNotification(false);
 
     snpTypes action(ERROR);  
     if(msg.startsWith("GET ")){
@@ -84,8 +85,9 @@ Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
 
     switch(action){
     case NOTIFICATION:
-        if(snarl->getSnore()->applicationListConontainsAlert(sNotification.notification->app,sNotification.notification->alert))
+        if(snarl->getSnore()->applicationListAlertIsActive(sNotification.notification->app,sNotification.notification->alert))
             break;
+        sNotification.notification->setIsNotification(true);
         return sNotification;
         break;    
     case ADD_CLASS:
@@ -118,40 +120,39 @@ Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
     return sNotification;
 }
 
- QString Parser::downloadIcon(const QString &address){
-     if(address=="")
-         return "";
-     if(address.startsWith("file://"))
-         return QString(address.mid(7));
-     QByteArray arr=address.toUtf8();
-     QUrl url=QUrl::fromEncoded(arr);
+QString Parser::downloadIcon(const QString &address){
+    if(address=="")
+        return "";
+    if(address.startsWith("file://"))
+        return QString(address.mid(7));
+    QByteArray arr=address.toUtf8();
+    QUrl url=QUrl::fromEncoded(arr);
 
-     QCryptographicHash hash(QCryptographicHash::Md5);
-     hash.addData(arr);
-     QString filename=QDir::temp().path()+"/SnoreNotify/"+hash.result().toHex()+address.mid(address.lastIndexOf(".")-1);
-     QFile file(filename);
-     if(file.exists())
-         return filename;
+    QCryptographicHash hash(QCryptographicHash::Md5);
+    hash.addData(arr);
+    QString filename=QDir::temp().path()+"/SnoreNotify/"+hash.result().toHex()+address.mid(address.lastIndexOf(".")-1);
+    QFile file(filename);
+    if(file.exists())
+        return filename;
 
-      QNetworkReply * reply=download(url);
+    QByteArray reply=download(url);
 
-     file.open(QIODevice::WriteOnly);
-     file.write(reply->readAll());
+    file.open(QIODevice::WriteOnly);
+    file.write(reply);
 
-     reply->deleteLater();
-     return filename;
+    return filename;
 
- }
+}
 
- QNetworkReply* Parser::download(const QUrl &address){
-     QNetworkAccessManager manager;
-     QEventLoop loop;
-     QNetworkRequest request(address);
-     request.setRawHeader("User-Agent", "SnoreNotify");
-     QNetworkReply *reply=manager.get(request);
-     QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-     loop.exec();
-     return reply;
- }
+QByteArray Parser::download(const QUrl &address){
+    QNetworkAccessManager manager;
+    QEventLoop loop;
+    QNetworkRequest request(address);
+    request.setRawHeader("User-Agent", "SnoreNotify");
+    QNetworkReply *reply=manager.get(request);
+    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+    return reply->readAll();
+}
 
 //#include "parser.moc"

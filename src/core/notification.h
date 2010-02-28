@@ -13,7 +13,9 @@
 class SNORE_EXPORT Notification:public QObject
 {
     Q_OBJECT
+    friend class SnoreServer;
 public:
+    static int DefaultTimeout;
     static inline QString toPlainText(const QString &string){
         if(!Qt::mightBeRichText ( string))return string;
         QTextEdit te;
@@ -21,9 +23,10 @@ public:
         return te.toPlainText();
     };
 public:    
-    Notification();
-    Notification(QString source,QString title,QString text,QString icon,int timeout);
+    Notification(uint id=0);
+    Notification(QString source,QString title,QString text,QString icon,int timeout=10,uint id=0);
     bool isNotification();
+    void setIsNotification(bool b);
     QString toSnalrString()const;
 
     enum actions{
@@ -44,17 +47,13 @@ public:
     int timeout;      
     void setIcon(const QString &icon){this->icon=icon; }
     QString getIcon();
-
     QVariantHash hints;
-
-    int id;
-
+    uint getID();
 
 
 
-
-
-private:    
+private:
+    uint id;
     QString icon;
     bool notification;
 

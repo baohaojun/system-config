@@ -18,14 +18,14 @@ SnarlNetworkFrontend::SnarlNetworkFrontend():parser(this){
 
 void SnarlNetworkFrontend::actionInvoked(QSharedPointer<Notification>notification){
     //TODO:fix callback
-    SnarlNotification sn=notifications.value(notification->id);
+    SnarlNotification sn=notifications.value(notification->getID());
     if(notification->actionInvoked==1)
         callback(sn,"SNP/1.1/304/Notification acknowledged/");
     else if(notification->actionInvoked==2)
         callback(sn,"SNP/1.1/302/Notification cancelled/");
 }
 void SnarlNetworkFrontend::notificationClosed(QSharedPointer<Notification>notification){
-    SnarlNotification sn=notifications.value(notification->id);
+    SnarlNotification sn=notifications.value(notification->getID());
     if(notification->actionInvoked==Notification::TIMED_OUT)
         callback(sn,"SNP/1.1/303/Notification timed out/");
     else
@@ -44,16 +44,18 @@ void SnarlNetworkFrontend::handleMessages(){
     QStringList incommings(QString::fromUtf8(client->readAll()).split("\r\n"));
     foreach(QString s,incommings){
         SnarlNotification noti=parser.parse(s,client);
-        notifications.insert(noti.notification->id,noti);
+        notifications.insert(noti.notification->getID(),noti);
         if(!noti.vailid)
             continue;
-        int notificationNR=getSnore()->broadcastNotification(noti.notification);
-        if(notificationNR!=-1){
-            out+="/"+QString::number(notificationNR)+"\r\n";
+        if(noti.notification->isNotification()){
+            getSnore()->broadcastNotification(noti.notification);
+            if(noti.notification->getID()!=0){
+                out+="/"+QString::number(noti.notification->getID())+"\r\n";
+            }
         }else{
             out+="\r\n";
         }
-        client->write(out.toUtf8());
+        client->write(out.toLatin1());
         if(noti.httpClient){
             client->disconnectFromHost();
             client->waitForDisconnected();
@@ -68,9 +70,9 @@ void SnarlNetworkFrontend::clientDisconnecd(){
 }
 
 void SnarlNetworkFrontend::callback(const SnarlNotification &sn,QString msg){
-    notifications.remove(sn.notification->id);
+    notifications.remove(sn.notification->getID());
     if(sn.clientSocket!=NULL&&!msg.isEmpty()){
-        msg+=QString::number(sn.notification->id);
+        msg+=QString::number(sn.notification->getID());
         qDebug()<<msg;
         sn.clientSocket->write(msg.toAscii()+"\n");
         sn.clientSocket->flush();

@@ -35,11 +35,11 @@ fNotification::fNotification(FreedesktopNotification_Backend* parent):parent(par
 
 
 
-int fNotification::send(){
+uint fNotification::send(){
     qDebug("Sending a notification");
     FreedesktopNotification n(notification.data());
     QDBusMessage recive=notificationInterface.call("Notify", QVariant::fromValue(n));
-    n.notification->id=recive.arguments().last().toInt();
+    uint id=recive.arguments().last().toInt();
 
     selfdistruct.setParent(this);
     selfdistruct.setSingleShot(true);
@@ -48,11 +48,11 @@ int fNotification::send(){
     QDBusConnection::sessionBus().connect("org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","ActionInvoked",this,SLOT(action(uint,QString)));
     if(getVendor()=="GNOME")
         QDBusConnection::sessionBus().connect("org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","NotificationClosed",this,SLOT(closed(uint,uint)));
-    return n.notification->id;
+    return id;
 }
 
 void fNotification::action(const uint &id, const QString &action_key){
-    if(id!=notification->id)return;
+    if(id!=notification->getID())return;
     close();
     qDebug()<<id<<"|"<<action_key ;
 
@@ -66,7 +66,7 @@ void fNotification::action(const uint &id, const QString &action_key){
 }
 void fNotification::closed(const uint &id,const uint &reason){
     qDebug()<<id<<"|"<<reason;;
-    if(id!=notification->id)return;
+    if(id!=notification->getID())return;
     close();
     if(reason==1)
         notification->actionInvoked=Notification::TIMED_OUT;

@@ -46,7 +46,7 @@ namespace Snarl {
 		M_OK              = 0x00000000,
 		M_OUT_OF_MEMORY   = 0x80000002,
 		M_TIMED_OUT       = 0x8000000A
-	};
+	} ;
 
 	enum SNARL_COMMANDS {
 		SNARL_SHOW = 1,

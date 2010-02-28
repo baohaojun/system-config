@@ -31,7 +31,7 @@ public:
     void notificationActionInvoked(QSharedPointer<Notification> notification);
 
     void addApplication(QSharedPointer<Application> application);
-    bool applicationListConontainsAlert(const QString &applicationName,const QString &alertName);
+    bool applicationListAlertIsActive(const QString &applicationName,const QString &alertName);
     void addAlert(const QString &appName,const QString &alertName, const QString &alertTitle);
     void removeApplication(const QString& appName);
 

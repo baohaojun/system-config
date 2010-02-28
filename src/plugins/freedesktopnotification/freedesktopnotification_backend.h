@@ -34,7 +34,7 @@ private:
 
 public:
     fNotification(FreedesktopNotification_Backend* parent);
-    int send();
+    uint send();
     QSharedPointer<Notification> notification;
 
 private:

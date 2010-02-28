@@ -11,7 +11,7 @@
 
 class Parser{
 public:
-    static class QNetworkReply* download(const QUrl &address);
+    static class QByteArray download(const QUrl &address);
 
 public:
     Parser(class SnarlNetworkFrontend* snarl);
