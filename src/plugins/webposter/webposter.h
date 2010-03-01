@@ -18,8 +18,7 @@ public slots:
 
 private:
         QNetworkAccessManager *manager;
-public slots:
-    void slotReadyRead();
+
 
 };
 #endif//WEBPOSTER_H

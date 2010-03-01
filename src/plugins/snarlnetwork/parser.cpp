@@ -12,6 +12,7 @@
 
 Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
 {
+    setParent(snarl);
     getSnpType.insert("type",TYPE);
     getSnpType.insert("app",APP);
     getSnpType.insert("version",VERSION);
@@ -155,4 +156,4 @@ QByteArray Parser::download(const QUrl &address){
     return reply->readAll();
 }
 
-//#include "parser.moc"
+#include "parser.moc"

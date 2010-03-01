@@ -6,7 +6,8 @@
 
 Q_EXPORT_PLUGIN2(snalnetwork,SnarlNetworkFrontend)
 
-SnarlNetworkFrontend::SnarlNetworkFrontend():parser(this){
+SnarlNetworkFrontend::SnarlNetworkFrontend(){
+    parser=new Parser(this);
     setProperty("name","SnarlNetworkFrontend");
     tcpServer=new QTcpServer(this);
     if(!tcpServer->listen(QHostAddress::Any,port)){
@@ -43,7 +44,7 @@ void SnarlNetworkFrontend::handleMessages(){
     QTcpSocket *client=qobject_cast<QTcpSocket*>(sender());
     QStringList incommings(QString::fromUtf8(client->readAll()).split("\r\n"));
     foreach(QString s,incommings){
-        SnarlNotification noti=parser.parse(s,client);
+        SnarlNotification noti=parser->parse(s,client);
         notifications.insert(noti.notification->getID(),noti);
         if(!noti.vailid)
             continue;

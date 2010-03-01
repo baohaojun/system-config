@@ -1,10 +1,12 @@
 #include "webposter.h"
 #include <QDebug>
 #include <QtCore>
+#include <iostream>
 Q_EXPORT_PLUGIN2(webposter,WebPoster)
 
-WebPoster::WebPoster():manager(new QNetworkAccessManager(this)){
+WebPoster::WebPoster(){
     setProperty("name","WebPoster");
+    manager=new QNetworkAccessManager(this);
 }
 
 int WebPoster::notify(QSharedPointer<Notification>notification){
@@ -15,23 +17,19 @@ int WebPoster::notify(QSharedPointer<Notification>notification){
     QNetworkRequest request(url);
     request.setRawHeader("User-Agent", "SnoreNotify");
     QNetworkReply *reply=manager->get(request);
-    connect(reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
+    QEventLoop loop;
+    connect(reply, SIGNAL(readyRead()), &loop, SLOT(quit()));
+    loop.exec();
+    std::cout<<"WbPoster"<<reply->readAll().data()<<std::endl;
     return -1;
 
 }
 
 void WebPoster::closeNotification(int id){
-//not supportted
+    //not supportted
 }
 
-void WebPoster::slotReadyRead(){
-    QNetworkReply *reply=qobject_cast<QNetworkReply*>(sender());
-    qDebug()<<reply->url();
-    qDebug()<<reply->readAll();
-    if(reply->errorString()!="Unknown error")
-        qWarning()<<reply->errorString();
-    reply->deleteLater();
-}
+
 
 
 #include "webposter.moc"

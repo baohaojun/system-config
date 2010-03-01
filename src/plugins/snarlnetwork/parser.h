@@ -9,7 +9,8 @@
 
 
 
-class Parser{
+class Parser:public QObject{
+    Q_OBJECT
 public:
     static class QByteArray download(const QUrl &address);
 

@@ -30,7 +30,7 @@ private slots:
 
 private:
     class QTcpServer *tcpServer;
-    Parser parser;
+    Parser *parser;
     QHash<int,SnarlNotification> notifications;
 
     void callback(const SnarlNotification &sn,QString msg);
