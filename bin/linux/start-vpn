@@ -1,5 +1,7 @@
 #!/bin/bash -x
 NEW_GW_HOST=(
+    lb.files.wordpress.com
+    lb.wordpress.com
     blogspot.com
     www.google.com
     python.org
