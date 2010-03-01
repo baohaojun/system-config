@@ -96,10 +96,12 @@ function set_route_nets(){
     for x in $NEW_GW_NET; do sudo route add -net $x gw 10.0.0.1; done
 }
 
-if test $# = 0; then
-    start_vpn
-    set_route_hosts
-    set_route_nets
-else
-    set_route_hosts "$@"
+if [[ "$BASH_SOURCE" == "$0" ]]; then
+    if test $# = 0; then
+        start_vpn
+        set_route_hosts
+        set_route_nets
+    else
+        set_route_hosts "$@"
+    fi
 fi
