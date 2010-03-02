@@ -81,7 +81,7 @@ function set_route_hosts(){
     for x in ${NEW_GW_HOST[@]}; do sudo route add $x gw 10.0.0.1; done
 }
 
-function set_route_nets(){
+function set_route_nets24(){
     NEW_GW_HOST_NET=(www.foxmarks.com.
         wikipedia.org
     )
@@ -96,11 +96,28 @@ function set_route_nets(){
     for x in $NEW_GW_NET; do sudo route add -net $x gw 10.0.0.1; done
 }
 
+function set_route_nets16(){
+    NEW_GW_HOST_NET=(
+        v24.lscache4.c.youtube.com
+        i3.ytimg.com
+    )
+
+    NEW_GW_NET=$(
+        for x in ${NEW_GW_HOST_NET[@]}
+        do
+            host $x; 
+        done | grep 'has address'|awk '{print $4}'|perl -npe 's!(.*)\..*\..*!\1.0.0/16!'|sort -u
+    )
+    
+    for x in $NEW_GW_NET; do sudo route add -net $x gw 10.0.0.1; done
+}
+
 if [[ "$BASH_SOURCE" == "$0" ]]; then
     if test $# = 0; then
         start_vpn
         set_route_hosts
-        set_route_nets
+        set_route_nets24
+        set_route_nets16
     else
         set_route_hosts "$@"
     fi
