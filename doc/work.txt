@@ -2843,3 +2843,57 @@ sasl_passwd: [smtp.gmail.com]:587 baohaojun@gmail.com:??
 
 $gconftool-2 -s /desktop/gnome/applications/window_manager/default --type string /usr/bin/sawfish
 
+dns 访问可以被读出来！
+ lastwhen=0
+   tcpdump -l -n -e port 53 \
+   | awk -W interactive '{if ($14 == "A?") print $15}' \
+   | while read domain
+   do
+     when=`date +%s`
+     if [ `expr $when - $lastwhen` -gt 2 ]
+     then
+       tput bold; echo "address request for $domain (audio on)"; tput sgr0
+       echo " $domain" | sed 's/www\.//' | text2wave | play -t wav - >/dev/null 2>&1
+       lastwhen=`date +%s`
+     else
+       tput bold; echo "address request for $domain (audio paused temporarily)"; tput sgr0
+     fi
+   done
+
+
+五笔口决
+
+G11王旁青头戋五一。
+F12土士二干十寸雨。
+D13大犬三羊古石厂。
+S14木丁西。
+A15工戈草头右框七。
+
+H21目具上止卜虎皮。
+J22日早两竖与虫依。
+K23口与川，字根稀，
+L24田甲方框四车力。
+M25山由贝，下框几。
+
+T31禾竹一撇双人立，
+反文条头共三一。
+R32白手看头三二斤，
+E33月衫乃用家衣底。
+W34人和八，登祭头，
+Q35金勺缺点无尾鱼，
+犬旁留乂儿一点夕，氏无七。
+
+Y41言文方广在四一，
+高头一捺谁人去。
+U42立辛两点六门病（疒），
+I43水旁兴头小倒立。
+O44火业头，四点米，
+P45之宝盖，摘礻(示)衤(衣)，建道底。
+
+N51已半巳满不出己，
+左框折尸心和羽。
+B52子耳了也框向上。
+V53女刀九臼山朝西。
+C54又巴马，丢矢矣，
+X55慈母无心弓和匕，幼无力。
+
