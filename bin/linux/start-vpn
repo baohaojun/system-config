@@ -6,16 +6,14 @@ NEW_GW_HOST=(
     www.google.com
     python.org
     0.channel52.facebook.com
-    www.facebook.com
     b.static.ak.fbcdn.net
-    www.boxun.com
     72.14.203.104 #google cache?
     74.125.95.132 #google cache? 
     groups.google.com
     developer.android.com
 )
 
-function start_vpn() {
+function start_vpn_client() {
     cd ~/bin/linux/ext
     sudo ./vpnclient stop
     sudo ./vpnclient start
@@ -25,34 +23,16 @@ function start_vpn() {
     OLD_DNS_LIST=`cat /etc/resolv.conf|grep nameser|awk '{print $2}'`
 
     route -n
-    OLD_GW=$(route -n|grep ^0.0.0.0|grep -v 10.0.0.1|awk '{print $2}')
+    export OLD_GW=$(route -n|grep ^0.0.0.0|grep -v 10.0.0.1|awk '{print $2}')
 
     sleep 5
     while ! sudo dhclient vpn_nic; do sudo vpncmd /client localhost /cmd accountlist bhj; sleep 5; done
 
-    sudo route add 130.158.6.51 gw $OLD_GW
     for x in $OLD_DNS_LIST; do sudo route add $x gw $OLD_GW; done
+    echo $OLD_DNS_LIST > ~/.vpn_old_dns
+    echo $OLD_GW > ~/.vpn_old_gw
     sudo route add -net 130.158.6.0/24 gw $OLD_GW #softether, for vpn itself
     sudo route del default gw 10.0.0.1
-
-    OLD_GW_HOST=(cc.softether.com.
-        public1.softether.com.
-        public2.softether.com.
-        public3.softether.com.
-        public4.softether.com.
-        public-nat.softether.com.
-        keepalive.softether.com.
-        public5.softether.com.
-        public6.softether.com.
-        public7.softether.com.
-        public8.softether.com.
-        public9.softether.com.
-        public10.softether.com.
-        vpn-pki.cc.tsukuba.ac.jp.
-        public12.softether.com.
-        public13.softether.com.
-        vpn.cc.tsukuba.ac.jp.
-    )
 }
 
 function set_route_hosts(){
@@ -78,18 +58,30 @@ function set_route_hosts(){
     NEW_GW_HOST=(
         $NEW_GW_HOST
     )
-    for x in ${NEW_GW_HOST[@]}; do sudo route add $x gw 10.0.0.1; done
+    for x in ${NEW_GW_HOST[@]}; do sudo route add $x gw ${SETGW:-10.0.0.1}; done
 }
 
 function set_route_nets24(){
-    NEW_GW_HOST_NET=(www.foxmarks.com.
-        wikipedia.org
-    )
+    if test $# != 0; then
+        NEW_GW_HOST_NET=(
+            $@
+        )
+    else
+        NEW_GW_HOST_NET=(
+            www.foxmarks.com.
+            wikipedia.org
+        )
+    fi
 
     NEW_GW_NET=$(
         for x in ${NEW_GW_HOST_NET[@]}
         do
-            host $x; 
+            if [[ $x =~ ([0-9]{1,3}\.){3}[0-9]{1,3} ]]
+            then
+                echo $x has address $x; # to make it look like output from host(1)
+            else 
+                host $x; 
+            fi
         done | grep 'has address'|awk '{print $4}'|perl -npe 's!(.*)\..*!\1.0/24!'|sort -u
     )
     
@@ -100,6 +92,8 @@ function set_route_nets16(){
     NEW_GW_HOST_NET=(
         v24.lscache4.c.youtube.com
         i3.ytimg.com
+        www.facebook.com
+        facebook.com
     )
 
     NEW_GW_NET=$(
@@ -114,8 +108,9 @@ function set_route_nets16(){
 
 if [[ "$BASH_SOURCE" == "$0" ]]; then
     if test $# = 0; then
-        start_vpn
+        start_vpn_client
         set_route_hosts
+        SETGW=$OLD_GW set_route_hosts mail.google.com
         set_route_nets24
         set_route_nets16
     else

@@ -1,0 +1,8 @@
+#!/bin/bash
+sudo bash -c "(echo domain public-vpn.softether.com; 
+echo search public-vpn.softether.com; 
+echo nameserver 10.0.0.1) > /etc/resolv.conf"
+
+OLD_GW=`cat ~/.vpn_old_gw`
+for x in `cat ~/.vpn_old_dns`; do sudo route add $x gw $OLD_GW; done
+sudo route add -net 130.158.6.0/24 gw $OLD_GW #softether, for vpn itself
