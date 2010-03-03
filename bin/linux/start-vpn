@@ -89,21 +89,33 @@ function set_route_nets24(){
 }
 
 function set_route_nets16(){
-    NEW_GW_HOST_NET=(
-        v24.lscache4.c.youtube.com
-        i3.ytimg.com
-        www.facebook.com
-        facebook.com
-    )
+    if test $# != 0; then
+        NEW_GW_HOST_NET=(
+            $@
+        )
+    else
+        NEW_GW_HOST_NET=(
+            v24.lscache4.c.youtube.com
+            i3.ytimg.com
+            www.facebook.com
+            facebook.com
+            twitter.com
+        )
+    fi
 
     NEW_GW_NET=$(
         for x in ${NEW_GW_HOST_NET[@]}
         do
-            host $x; 
+            if [[ $x =~ ([0-9]{1,3}\.){3}[0-9]{1,3} ]]
+            then
+                echo $x has address $x; # to make it look like output from host(1)
+            else 
+                host $x; 
+            fi
         done | grep 'has address'|awk '{print $4}'|perl -npe 's!(.*)\..*\..*!\1.0.0/16!'|sort -u
     )
     
-    for x in $NEW_GW_NET; do sudo route add -net $x gw 10.0.0.1; done
+    for x in $NEW_GW_NET; do echo $x; sudo route add -net $x gw 10.0.0.1; done
 }
 
 if [[ "$BASH_SOURCE" == "$0" ]]; then
