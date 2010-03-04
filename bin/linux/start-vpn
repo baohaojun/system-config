@@ -11,6 +11,7 @@ NEW_GW_HOST=(
     74.125.95.132 #google cache? 
     groups.google.com
     developer.android.com
+    www.mail-archive.com
 )
 
 function start_vpn_client() {
