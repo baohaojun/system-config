@@ -2898,3 +2898,5 @@ C54又巴马，丢矢矣，
 X55慈母无心弓和匕，幼无力。
 
 network.dnsCacheExpiration=0
+
+findout what is GScript / Remote DB
