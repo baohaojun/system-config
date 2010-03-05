@@ -2902,3 +2902,5 @@ network.dnsCacheExpiration=0
 findout what is GScript / Remote DB
 
 fs.inotify.max_user_watches = 65535
+
+wesnoth
