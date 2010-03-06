@@ -43,9 +43,14 @@ void SnoreServer::publicatePlugin(QObject *plugin){
     Notification_Backend * nb=qobject_cast<Notification_Backend *>(plugin);
     if(nb){
         qDebug()<<plugin->property("name").value<QString>()<<"is a Notification_Backend";
-        if(nb->isPrimaryNotificationBackend())
+        if(nb->isPrimaryNotificationBackend()){
+            if(primaryNotificationBackend){
+                notyfier.append(primaryNotificationBackend);
+                connect(this,SIGNAL(notify(QSharedPointer<Notification>)),primaryNotificationBackend,SLOT(notify(QSharedPointer<Notification>)));
+
+            }
             primaryNotificationBackend=nb;
-        else{
+        }else{
             notyfier.append(nb);
             connect(this,SIGNAL(notify(QSharedPointer<Notification>)),nb,SLOT(notify(QSharedPointer<Notification>)));
         }

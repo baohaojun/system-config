@@ -10,7 +10,7 @@ public:
     ~Growl_Backend();
     bool isPrimaryNotificationBackend(){return true;}
 private:
-    int id;
+    uint id;
     class Growl *growl;
 public slots:
     int notify(QSharedPointer<Notification>notification);
