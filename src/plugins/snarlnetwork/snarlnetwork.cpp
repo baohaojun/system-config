@@ -30,7 +30,7 @@ SnarlNetworkFrontend::SnarlNetworkFrontend(){
         qDebug()<<"The port is already used";
     }
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
-    std::cout<<"The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>"<<std::enl;
+    std::cout<<"The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>"<<std::endl;
 }
 
 
