@@ -16,7 +16,9 @@ Snarl_Backend::Snarl_Backend()
      this->installEventFilter(this);
 
 }
-
+Snarl_Backend::~Snarl_Backend(){
+    delete snarlInterface;
+}
 
 int Snarl_Backend::notify(QSharedPointer<Notification>notification){
     int timeout=notification->timeout>=0?notification->timeout:10;

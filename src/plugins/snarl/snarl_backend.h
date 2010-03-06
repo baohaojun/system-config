@@ -9,6 +9,7 @@ class Snarl_Backend:public Notification_Backend
     Q_INTERFACES(Notification_Backend)
 public:
     Snarl_Backend();
+    ~Snarl_Backend();
     bool isPrimaryNotificationBackend(){return true;}
 
 
