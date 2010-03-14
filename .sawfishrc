@@ -16,7 +16,7 @@
 (defun find-window-or-exec (wclass #!optional wcommand)
   (if (eq (catch 'wFound
             (mapc (lambda (window)
-                    (if (equal wclass (window-class window))
+                    (if (string-match wclass (window-class window) 0 t)
                         (progn 
                           (bhj-activate-window window)
                           (throw 'wFound 'wFound))))
@@ -37,9 +37,8 @@
  '(
    ("H-e" "Emacs" "emacs.bhj")
    ("H-p" "Gnome-terminal" "gnome-terminal --hide-menubar --zoom 1.2 -e ~/bin/myscr")
-   ("H-a" "Acroread-en" "acroread")
+   ("H-a" "Acroread\|Evince" "acroread")
    ("H-n" "Firefox" "firefox")
-   ;("H-n" "Iceweasel" "iceweasel")
    ))
 
 (mapc 
