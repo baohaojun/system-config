@@ -14,7 +14,8 @@ NEW_GW_HOST=(
     www.mail-archive.com
 )
 
-function start_vpn_client() {
+function start_vpn_client() 
+{
     cd ~/bin/linux/ext
     sudo ./vpnclient stop
     sudo ./vpnclient start
@@ -36,7 +37,8 @@ function start_vpn_client() {
     sudo route del default gw 10.0.0.1
 }
 
-function set_route_hosts(){
+function set_route_hosts()
+{
     if test $# != 0; then
         NEW_GW_HOST=(
             $@
@@ -51,7 +53,7 @@ function set_route_hosts(){
             then
                 echo $x has address $x; # to make it look like output from host(1)
             else 
-                host $x; 
+                host $x&
             fi
         done | grep 'has address'|awk '{print $4}'|sort -u
     )
@@ -62,14 +64,14 @@ function set_route_hosts(){
     for x in ${NEW_GW_HOST[@]}; do sudo route add $x gw ${SETGW:-10.0.0.1}; done
 }
 
-function set_route_nets24(){
+function set_route_nets24()
+{
     if test $# != 0; then
         NEW_GW_HOST_NET=(
             $@
         )
     else
         NEW_GW_HOST_NET=(
-            www.foxmarks.com.
             wikipedia.org
         )
     fi
@@ -81,7 +83,7 @@ function set_route_nets24(){
             then
                 echo $x has address $x; # to make it look like output from host(1)
             else 
-                host $x; 
+                host $x&
             fi
         done | grep 'has address'|awk '{print $4}'|perl -npe 's!(.*)\..*!\1.0/24!'|sort -u
     )
@@ -89,7 +91,8 @@ function set_route_nets24(){
     for x in $NEW_GW_NET; do sudo route add -net $x gw 10.0.0.1; done
 }
 
-function set_route_nets16(){
+function set_route_nets16()
+{
     if test $# != 0; then
         NEW_GW_HOST_NET=(
             $@
@@ -101,6 +104,7 @@ function set_route_nets16(){
             www.facebook.com
             facebook.com
             twitter.com
+            www.foxmarks.com.
         )
     fi
 
@@ -111,7 +115,7 @@ function set_route_nets16(){
             then
                 echo $x has address $x; # to make it look like output from host(1)
             else 
-                host $x; 
+                host $x&
             fi
         done | grep 'has address'|awk '{print $4}'|perl -npe 's!(.*)\..*\..*!\1.0.0/16!'|sort -u
     )
