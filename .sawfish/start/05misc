@@ -1,4 +1,6 @@
 #!/bin/bash
 python3.1 ~/gcode/scim-cs/ime-py/ime-server.py&
-(while true; do offlineimap; sleep 300; done)&
-python2.6 ~/bin/windows/Imap4Monitor/Imap4Monitor.py&
+if test -f ~/.offlineimaprc; then
+    (while true; do offlineimap; sleep 300; done)&
+    python2.6 ~/bin/windows/Imap4Monitor/Imap4Monitor.py&
+fi
