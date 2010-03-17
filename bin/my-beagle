@@ -6,7 +6,7 @@ do
     start_dir=`readlink -f "$start_dir"/..`
 done
 
-if test "$start_dir" = /
+if test "$start_dir" = / -o "$start_dir" = $HOME
 then
     start_dir=`readlink -f ~/.my_beagle_oldi`
 else
@@ -15,9 +15,11 @@ else
 fi
 
 beagle_dir=$start_dir/.beagle
-echo Beagle index found at "$beagle_dir" 1>&2
+#echo Beagle index found at "$beagle_dir" 1>&2
 
+longest_token=`get_longest_token "$@"`
 beagle-static-query \
     --add-static-backend "$beagle_dir" \
-    --backend none --max-hits 100000 "$@"\
-|sed -e 's!^file://!!'
+    --backend none --max-hits 100000 "$longest_token"\
+|sed -e 's!^file://!!'|grep -v '#'|sort -u
+echo /dev/null
