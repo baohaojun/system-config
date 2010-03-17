@@ -19,4 +19,5 @@ echo Beagle index found at "$beagle_dir" 1>&2
 
 beagle-static-query \
     --add-static-backend "$beagle_dir" \
-    --backend none --max-hits 100000 "$@"
+    --backend none --max-hits 100000 "$@"\
+|sed -e 's!^file://!!'
