@@ -1,0 +1,22 @@
+#!/bin/bash
+
+start_dir=`pwd`
+while test ! -d "$start_dir"/.beagle -a "$start_dir" != /
+do
+    start_dir=`readlink -f "$start_dir"/..`
+done
+
+if test "$start_dir" = /
+then
+    start_dir=`readlink -f ~/.my_beagle_oldi`
+else
+    rm ~/.my_beagle_oldi -f
+    ln -sf "$start_dir" ~/.my_beagle_oldi
+fi
+
+beagle_dir=$start_dir/.beagle
+echo Beagle index found at "$beagle_dir" 1>&2
+
+beagle-static-query \
+    --add-static-backend "$beagle_dir" \
+    --backend none --max-hits 100000 "$@"
