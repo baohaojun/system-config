@@ -2672,7 +2672,8 @@ find \( '-path' '*/CVS' \
     '-o' '-path' '*/.repo'\
     '-o' '-iname' "cscope.files"\
     -o -iname "cscope.out"\
-    \) -prune -o -type f -print0|~/.my-beagle-filter|xargs -0 grep . -Il > cscope.files
+    -o -ipath "*/.beagle"\
+    \) -prune -o -type f -print0|xargs -0 grep . -Il|~/.my-beagle-filter > cscope.files
 
 .authinfo format:
 machine bhj2 login bhj password ??? port 143
