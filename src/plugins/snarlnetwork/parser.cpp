@@ -87,6 +87,7 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
             sNotification.notification->text=value;
             break;
         case ICON:
+            sNotification.notification->hints.insert("SnarlIcon",value);
             sNotification.notification->setIcon(downloadIcon(value));
             break;
         case CLASS:

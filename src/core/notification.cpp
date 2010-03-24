@@ -51,6 +51,8 @@ QString Notification::toSnalrString()const{
         out+=QString("#?app="+app);
     if(!alert.isEmpty())
         out+=QString("#?class="+alert);
+    if(hints.contains("SnarlIcon"))
+        out+=QString("#?icon="+hints.value("SnarlIcon").value<QString>());
     out+=QString("#?title="+title+"#?text="+text+"#?timeout="+QString::number(timeout));
     return out;
 }
