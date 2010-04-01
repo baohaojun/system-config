@@ -135,4 +135,5 @@ if [[ "$BASH_SOURCE" == "$0" ]]; then
     else
         set_route_hosts "$@"
     fi
+    route -n > ~/.vpn_old_route
 fi

@@ -1,5 +1,5 @@
 #!/bin/bash
-route -n > ~/.vpn_old_route
+
 stop-vpn
 
 . start-vpn
@@ -10,7 +10,7 @@ cat ~/.vpn_old_route|awk '
         next
     };
     index($4, "H"){
-        if (index($4, "G") {
+        if (index($4, "G")) {
             print "sudo route add", $1, "gw", $2
 
         } else {
@@ -19,7 +19,7 @@ cat ~/.vpn_old_route|awk '
         next
     };
     {
-        if (index($4, "G") {
+        if (index($4, "G")) {
             print "sudo route add -net", $1, "netmask", $3, "gw", $2
         } else {
             print "sudo route add -net", $1, "netmask", $3, "dev", $8 # this is a net
