@@ -12,6 +12,8 @@ NEW_GW_HOST=(
     groups.google.com
     developer.android.com
     www.mail-archive.com
+    docs.google.com
+    1.bp.blogspot.com
 )
 
 function start_vpn_client() 
