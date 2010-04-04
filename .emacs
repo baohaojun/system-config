@@ -473,7 +473,6 @@
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
  '(w3m-bookmark-file "q:/.w3m_bookmark.html")
- '(weblogger-config-alist (quote (("default" "http://blog.csdn.net/flowermonk/services/MetaBlogApi.aspx" "flowermonk" "" "814038"))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil))
 
