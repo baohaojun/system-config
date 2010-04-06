@@ -8,13 +8,13 @@
 
 ;; Author: Mark A. Hershberger <mah@everybody.org>
 ;; Original Author: Daniel Lundin <daniel@codefactory.se>
-;; Version: 1.6.8
+;; Version: 1.6.9a
 ;; Created: May 13 2001
 ;; Keywords: xml rpc network
 ;; URL: http://launchpad.net/xml-rpc-el
-;; Last Modified: <2010-02-27 07:02:36 mah>
+;; Last Modified: <2010-03-11 01:50:35 mah>
 
-(defconst xml-rpc-version "1.6.8"
+(defconst xml-rpc-version "1.6.9a"
   "Current version of xml-rpc.el")
 
 ;; This file is NOT (yet) part of GNU Emacs.
@@ -125,6 +125,8 @@
 ;;; History:
 
 ;; 1.6.8   - Add a report-xml-rpc-bug function
+;;           Eliminate unused xml-rpc-get-temp-buffer-name
+;;           Improve compatibility with Xemacs
 
 ;; 1.6.7   - Skipped version
 
@@ -380,6 +382,8 @@ functions in xml.el."
    ((xml-rpc-value-datetimep value)
     `((value nil (dateTime.iso8601 nil ,(xml-rpc-datetime-to-string value)))))
    ;; list
+   ((vectorp value)
+    (xml-rpc-value-to-xml-list (append value nil)))
    ((xml-rpc-value-arrayp value)
     (let ((result nil)
           (xmlval nil))
@@ -509,9 +513,9 @@ or nil if called with ASYNC-CALLBACK-FUNCTION."
                                         "\n"))
               (url-mime-charset-string "utf-8;q=1, iso-8859-1;q=0.5")
               (url-request-coding-system xml-rpc-use-coding-system)
-              (url-http-attempt-keepalives t)
+              (url-http-attempt-keepalives nil)
               (url-request-extra-headers (list
-                                          (cons "Connection" "keep-alive")
+                                          (cons "Connection" "close")
                                           (cons "Content-Type"
                                                 "text/xml; charset=utf-8"))))
           (when (> xml-rpc-debug 1)
@@ -532,14 +536,12 @@ or nil if called with ASYNC-CALLBACK-FUNCTION."
                    (let ((result (xml-rpc-request-process-buffer
                                   (current-buffer))))
                      (when (> xml-rpc-debug 1)
-                       (with-current-buffer (create-file-buffer "result-data")
-                         (insert result)))
+                       (print result (create-file-buffer "result-data")))
                      result)))
                 (t                      ; Post emacs20 w3-el
                  (if async-callback-function
                      (url-retrieve server-url async-callback-function)
-                   (let ((buffer (url-retrieve-synchronously server-url))
-                         result)
+                   (let ((buffer (url-retrieve-synchronously server-url)))
                      (with-current-buffer buffer
                        (when (not (numberp url-http-response-status))
                          ;; this error may occur when keep-alive bug
@@ -561,8 +563,7 @@ or nil if called with ASYNC-CALLBACK-FUNCTION."
 (defun xml-rpc-clean (l)
   (cond
    ((listp l)
-    (let ((remain l)
-          elem
+    (let (elem
           (result nil))
       (while l
         ;; iterate
