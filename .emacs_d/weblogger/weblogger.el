@@ -1454,9 +1454,9 @@ internally).  If BUFFER is not given, use the current buffer."
 	   (cons "url"           (message-fetch-field "X-Url"))
 	   (cons "title"     (or (message-fetch-field "Subject")
 				 weblogger-default-title))
-           (cons "categories" (vconcat (or (message-tokenize-header
+           (cons "categories" (car (list (or (message-tokenize-header
                                             (message-fetch-field "Keywords") ", ")
-                                           weblogger-default-categories)))
+                                           weblogger-default-categories))))
 	   (cons "mt_keywords" (message-fetch-field "Summary"))
 
 	   (when (message-fetch-field "In-Reply-To")
