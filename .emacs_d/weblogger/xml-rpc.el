@@ -566,8 +566,13 @@ or nil if called with ASYNC-CALLBACK-FUNCTION."
           (result nil))
       (while l
         ;; iterate
-        (setq elem (car l)
-              l (cdr l))
+        (cond 
+         ((listp l)
+          (setq elem (car l)
+                l (cdr l)))
+         (t
+          (setq elem l
+                l nil)))
         ;; test the head
         (cond
          ;; a string, so clean it.
@@ -608,7 +613,7 @@ or nil if called with ASYNC-CALLBACK-FUNCTION."
                            url-http-response-status 200))
                (result (cond
                         ;; A probable XML response
-                        ((looking-at "<\\?xml ")
+                        ((looking-at "\\(\357\273\277\\)?<\\?xml ")
                          (xml-rpc-clean (xml-parse-region (point-min)
                                                           (point-max))))
 

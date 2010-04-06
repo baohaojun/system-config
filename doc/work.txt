@@ -2915,3 +2915,34 @@ fs.inotify.max_user_watches = 65535
 wesnoth
 beagle-static-query --add-static-backend /path/to/personal/index --backend none kconfig
 beagle-build-index --recursive --deny-pattern .beagle --enable-deletion --target .beagle/ .
+
+
+****************************************************************
+target thumb C: dalvikvm <= dalvik/dalvikvm/Main.c
+
+prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/arm-eabi-gcc  -I system/core/include   -I hardware/libhardware/include   -I hardware/libhardware_legacy/include   -I hardware/ril/include   -I dalvik/libnativehelper/include   -I frameworks/base/include   -I frameworks/base/opengl/include   -I external/skia/include   -I out/target/product/generic/obj/include   -I bionic/libc/arch-arm/include   -I bionic/libc/include   -I bionic/libstdc++/include   -I bionic/libc/kernel/common   -I bionic/libc/kernel/arch-arm   -I bionic/libm/include   -I bionic/libm/include/arch/arm   -I bionic/libthread_db/include   -I dalvik/libnativehelper/include/nativehelper   -I dalvik/include   -I dalvik/dalvikvm   -I out/target/product/generic/obj/EXECUTABLES/dalvikvm_intermediates  -c  -fno-exceptions -Wno-multichar -msoft-float -fpic -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -march=armv5te -mtune=xscale -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5TE__ -include system/core/include/arch/linux-arm/AndroidConfig.h -I system/core/include/arch/linux-arm/ -mthumb-interwork -DANDROID -fmessage-length=0 -W -Wall -Wno-unused -Winit-self -Wpointer-arith -Werror=return-type -Werror=non-virtual-dtor -Werror=address -Werror=sequence-point -DSK_RELEASE -DNDEBUG -g -Wstrict-aliasing=2 -finline-functions -fno-inline-functions-called-once -fgcse-after-reload -frerun-cse-after-loop -frename-registers -DNDEBUG -UDEBUG -mthumb -Os -fomit-frame-pointer -fno-strict-aliasing -finline-limit=64      -MD -o out/target/product/generic/obj/EXECUTABLES/dalvikvm_intermediates/Main.o dalvik/dalvikvm/Main.c
+
+target Executable: dalvikvm (out/target/product/generic/obj/EXECUTABLES/dalvikvm_intermediates/LINKED/dalvikvm)
+
+prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/arm-eabi-g++ -nostdlib -Bdynamic -Wl,-T,build/core/armelf.x -Wl,-dynamic-linker,/system/bin/linker -Wl,--gc-sections -Wl,-z,nocopyreloc -o out/target/product/generic/obj/EXECUTABLES/dalvikvm_intermediates/LINKED/dalvikvm -Lout/target/product/generic/obj/lib -Wl,-rpath-link=out/target/product/generic/obj/lib -ldvm -lssl -lz -lc -lstdc++ -lm  out/target/product/generic/obj/lib/crtbegin_dynamic.o         out/target/product/generic/obj/EXECUTABLES/dalvikvm_intermediates/Main.o        -Wl,--no-undefined   /home/bhj/src/eclair/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/../lib/gcc/arm-eabi/4.4.0/interwork/libgcc.a out/target/product/generic/obj/lib/crtend_android.o
+
+out/host/linux-x86/bin/acp -fpt out/target/product/generic/obj/EXECUTABLES/dalvikvm_intermediates/LINKED/dalvikvm out/target/product/generic/symbols/system/bin/dalvikvm
+
+target Strip: dalvikvm (out/target/product/generic/obj/EXECUTABLES/dalvikvm_intermediates/dalvikvm)
+
+out/host/linux-x86/bin/soslim --strip --shady --quiet out/target/product/generic/symbols/system/bin/dalvikvm --outfile out/target/product/generic/obj/EXECUTABLES/dalvikvm_intermediates/dalvikvm
+
+Install: out/target/product/generic/system/bin/dalvikvm
+
+out/host/linux-x86/bin/acp -fpt out/target/product/generic/obj/EXECUTABLES/dalvikvm_intermediates/dalvikvm out/target/product/generic/system/bin/dalvikvm
+
+
+
+****************************************************************
+nollec 
+. configure.sh pro=tdcpad_2G
+
+sudo bash -c './compile.sh && ./tdbuild.sh '
+
+****************************************************************
+lsz lrz zmodem接收发送文件

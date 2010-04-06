@@ -9,7 +9,7 @@
 ;; Keywords: weblog blogger cms movable type openweblog blog
 ;; URL: http://launchpad.net/weblogger-el
 ;; Version: 1.4.5
-;; Last Modified: <2010-03-11 01:00:19 mah>
+;; Last Modified: <2010-03-11 01:49:36 mah>
 ;; Package-Requires: ((xml-rpc "1.6.8"))
 
 (defconst weblogger-version "1.4.5"
@@ -378,11 +378,11 @@ shouldn't be changed.")
                                       ("blogger.newPost" . nil)
                                       ("blogger.editPost" . nil)
                                       ("blogger.deletePost" . nil)
-                                      ("metaWeblog.newPost" . nil)
-                                      ("metaWeblog.editPost" . nil)
-                                      ("metaWeblog.getPost" . nil)
-                                      ("metaWeblog.getRecentPosts" . nil)
-                                      ("metaWeblog.getCategories" . nil)
+                                      ("metaWeblog.newPost" . t)
+                                      ("metaWeblog.editPost" . t)
+                                      ("metaWeblog.getPost" . t)
+                                      ("metaWeblog.getRecentPosts" . t)
+                                      ("metaWeblog.getCategories" . t)
                                       ("metaWeblog.newMediaObject" . nil)
                                       ("metaWeblog.deletePost" . nil)
                                       ("metaWeblog.getTemplate" . nil)
@@ -717,7 +717,12 @@ available."
 		    (list "X-TextType"
 			  (cdr (assoc "texttype" entry)))
 		    (list "Subject" title)
-		    (list "Keywords" (cdr (assoc "tags" entry)))
+                    (list "Keywords" (let ((cats (cdr (assoc "categories" entry))))
+                                       (when (> (length cats) 0)
+                                         (mapconcat
+                                          (lambda (p) p)
+                                          cats ", "))))
+		    (list "Summary" (cdr (assoc "mt_keywords" entry)))
                                         ; Note that the blogger API on
                                         ; blogger.com is depcrated and
                                         ; broken on this element.
@@ -1341,8 +1346,6 @@ like."
 			(cons "url"          url))
 		      (when dateCreated
 			(cons "dateCreated"  dateCreated))
-		      (when tags
-			(cons "tags"   tags))
 		      (when categories
 			(cons "categories"   categories))
 		      (when textType
@@ -1368,12 +1371,11 @@ request."
            (cons "link" (cdr (assoc "url" entry))))
          (when (cdr (assoc "content" entry))
            (cons "description" (cdr (assoc "content" entry))))
-         (when (cdr (assoc "tags" entry))
-           (cons "mt_tags" (cdr (assoc "tags" entry))))
          (when (cdr (assoc "categories" entry))
-           (cons "categories" (cdr (assoc "categories" entry)))))))
-
-(defun weblogger-server-userid ()
+           (cons "categories" (cdr (assoc "categories" entry))))
+         (when (cdr (assoc "mt_keywords" entry))
+           (cons "mt_keywords" (cdr (assoc "mt_keywords" entry)))))))
+ (defun weblogger-server-userid ()
   "Get information on user."
   (or weblogger-server-userid
       (setq weblogger-server-userid
@@ -1452,7 +1454,11 @@ internally).  If BUFFER is not given, use the current buffer."
 	   (cons "url"           (message-fetch-field "X-Url"))
 	   (cons "title"     (or (message-fetch-field "Subject")
 				 weblogger-default-title))
-	   (cons "tags" (message-fetch-field "Keywords"))
+           (cons "categories" (vconcat (or (message-tokenize-header
+                                            (message-fetch-field "Keywords") ", ")
+                                           weblogger-default-categories)))
+	   (cons "mt_keywords" (message-fetch-field "Summary"))
+
 	   (when (message-fetch-field "In-Reply-To")
              (cons "trackbacks"
                    (or (message-tokenize-header

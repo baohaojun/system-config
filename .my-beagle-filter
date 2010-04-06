@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import sys
 while True:
-      line = sys.stdin.readline()[:-1]
+      line = sys.stdin.readline()
       if not line:
             break
       if "/arch/" in line:
-            if "x86" not in line and "i386" not in line:
-                  continue
-      print "%s" % line
+            #if "x86" not in line and "i386" not in line:
+            #      continue
+            pass
+      print "%s" % line[:-1]
