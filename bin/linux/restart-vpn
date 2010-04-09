@@ -24,4 +24,4 @@ cat ~/.vpn_old_route|awk '
         } else {
             print "sudo route add -net", $1, "netmask", $3, "dev", $8 # this is a net
         }
-    }'|sh
+    }'|perl -npe 's/^(.*)$/$1 || echo $1/' | sh 
