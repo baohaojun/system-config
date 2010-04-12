@@ -2946,3 +2946,8 @@ sudo bash -c './compile.sh && ./tdbuild.sh '
 
 ****************************************************************
 lsz lrz zmodem接收发送文件
+
+ A character set maps particular characters, like Z, to particular numbers, like 90. These numbers are called code points. A character encoding determines how those code points are represented in bytes. For instance, the code point 90 can be encoded as a signed byte, a little-endian unsigned short, a 4-byte, two's complement, big-endian integer, or in some still more complicated fashion. 
+
+
+<, >, &, ", and ' 这五个字符是XML预定义的需要转义的entity。

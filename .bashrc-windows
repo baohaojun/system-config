@@ -142,25 +142,6 @@ function edit()
     done
 }
 
-function lcd()
-{
-    if ! readlink -f "$1"; then
-        return -1
-    fi
-
-
-
-    link=$(readlink -f "$1")
-    if test -f "$link" && echo "${link##*.}"|grep -i '^lnk$' -q; then 
-            link=`readshortcut "$link"`
-    fi
-    if [[ -d "$link" ]]; then
-        cd "$link"
-    else
-        cd "$(dirname "$link")"
-    fi
-}
-
 function ccd()
 {
     local dir=`getclip`
