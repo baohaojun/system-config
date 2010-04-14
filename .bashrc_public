@@ -54,3 +54,4 @@ function lcd()
         cd "$(dirname "$link")"
     fi
 }
+stty -ixon -ixoff

@@ -2951,3 +2951,5 @@ lsz lrz zmodem接收发送文件
 
 
 <, >, &, ", and ' 这五个字符是XML预定义的需要转义的entity。
+
+Chracter references: &#1234; 和 &#x12345;
