@@ -278,7 +278,10 @@
 (global-set-key [(control meta o)]
                 (lambda()(interactive)
                   (let 
-                      ((regexp (current-word))) 
+                      ((regexp (if mark-active 
+                                   (buffer-substring-no-properties (region-beginning)
+                                                                   (region-end))
+                                 (current-word))))
                     (progn     
                       (setq regexp 
                             (read-string (format "List lines matching regexp [%s]: " regexp) nil nil regexp))
