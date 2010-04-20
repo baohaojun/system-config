@@ -613,8 +613,8 @@
                           'jdk-help-history)))))
 
   ;; Setting process-setup-function makes exit-message-function work
-  (call-process "/bin/bash" nil nil nil "/q/bin/windows/jdkhelp.sh" jdk-word)
-  (w3m-goto-url "file:///cygdrive/d/knowledge/jdk-6u10-docs/1.html"))
+  (call-process "/bin/bash" nil nil nil "jdkhelp.sh" jdk-word)
+  (w3m-goto-url "file:///d/knowledge/jdk-6u18-docs/1.html"))
 (keydef "C-M-j" 'bhj-jdk-help)
 (keydef (w3m "C-c e") (lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/w3m-external" w3m-current-url)))
 
