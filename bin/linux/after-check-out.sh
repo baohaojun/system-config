@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 #把windows-config下载回来，并全部拷到~下
 #cd ~
 #svn co http://windows-config.googlecode.com/svn/trunk
@@ -20,3 +21,5 @@ gconftool-2 -s /desktop/gnome/applications/window_manager/default --type string 
 mkdir ~/.fonts
 cp ~/doc/monaco-linux.ttf ~/.fonts
 fc-cache -v
+
+echo OK.
