@@ -82,7 +82,7 @@ do
     eval "function $x()
     {
         if test \$# = 1; then
-            local h=\`echo \"\$1\"|perl -npe 's!.*//(.*?)/.*!$1!'\`
+            local h=\`echo \"\$1\"|perl -npe 's!.*//(.*?)/.*!\$1!'\`
             command $x \$h
         else
             command $x "\$@"
