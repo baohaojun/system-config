@@ -1,2 +1,4 @@
 #!/bin/bash
 xclip -i -selection clipboard
+#Xwindows has 2/3 clipboard, named `clipboard', `primary', `secondary'. Default is primary.
+xclip -o -selection clipboard|xclip -i
