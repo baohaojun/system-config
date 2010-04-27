@@ -546,6 +546,8 @@ and its contents (BUFFER)"
 				   adjustment)))
     (with-temp-buffer
       (let ((fill-column temporary-fill-column))
+	(when (string-match "^\\( +\\)" str)
+	  (setq fill-prefix (match-string 1 str)))
 	(insert str)
 	(fill-region-as-paragraph (point-min) (point-max))
 	(buffer-substring (point-min) (point-max))))))
@@ -631,7 +633,7 @@ and its contents (BUFFER)"
   ;; Check (featurep 'unicode) is a workaround with navi2ch to avoid
   ;; error "error in process sentinel: Cannot open load file:
   ;; unicode".
-  ;; 
+  ;;
   ;; Details: navi2ch prior to 1.8.3 (which is currently last release
   ;; version as of 2010-01-18) always define `ucs-to-char' as autoload
   ;; file "unicode(.el)" (which came from Mule-UCS), hence it breaks
