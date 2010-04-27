@@ -2946,3 +2946,4 @@ lsz lrz zmodem接收发送文件
 
 Chracter references: &#1234; 和 &#x12345;
 sudo aptitude purge ~ilinux-image-2.*\(\!`uname -r`\)
+apt-get dist-upgrade -y 2>&1|grep '^Failed'|awk '{print $4}'|perl -npe 's!localhost!archive.ubuntu.com!'|sudo su - apt-mirror -c 'cd /var/spool/apt-mirror/mirror; wget --limit-rate=100m -t 0 -r -N -l inf -i -'
