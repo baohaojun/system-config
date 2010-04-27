@@ -1,0 +1,5 @@
+#!/bin/bash
+set -x
+package=`pwd|perl -npe 's!.*/src/!!; s!/!.!g'`
+echo $PATH
+adb shell pm uninstall $package
