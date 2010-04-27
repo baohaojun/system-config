@@ -306,6 +306,12 @@ Twittering-mode provides two functions for updating status:
 * `twittering-update-status-from-minibuffer': edit tweets in minibuffer
 * `twittering-update-status-from-pop-up-buffer': edit tweets in pop-up buffer")
 
+(defvar twittering-invoke-buffer nil
+  "The buffer where we invoke `twittering-get-and-render-timeline'.
+
+If we invoke `twittering-get-and-render-timeline' from a twittering buffer, then
+do not display unread notifier on mode line.")
+
 ;;;
 ;;; Proxy setting / functions
 ;;;
@@ -1562,7 +1568,9 @@ means the number of statuses retrieved after the last visiting of the buffer.")
   (let* ((buffer (twittering-get-buffer-from-spec twittering-new-tweets-spec))
 	 (current (or (cadr (assq buffer twittering-unread-status-info)) 0))
 	 (result (+ current twittering-new-tweets-count)))
-    (when (and buffer (not (eq buffer (current-buffer))))
+    (when buffer
+      (when (eq buffer twittering-invoke-buffer)
+	(setq result 0))
       (twittering-set-number-of-unread buffer result))))
 
 (defun twittering-enable-unread-status-notifier ()
@@ -3918,34 +3926,36 @@ variable `twittering-status-format'."
 			 (number-to-string count)))
       (twittering-http-get host method noninteractive parameters)))))
 
-(defun twittering-get-and-render-timeline (&optional noninteractive id)
-  (let ((spec (twittering-current-timeline-spec))
-	(spec-string (twittering-current-timeline-spec-string)))
-    (cond
-     ((not (twittering-account-authorized-p))
-      ;; ignore any requests if the account has not been authorized.
-      (message "No account for Twitter has been authorized.")
-      t)
-     ((and noninteractive (twittering-process-active-p spec))
-      ;; ignore non-interactive request if a process is waiting for responses.
-      t)
-     ((twittering-timeline-spec-primary-p spec)
-      (let ((info (twittering-timeline-spec-to-host-method spec))
-	    (is-search-spec (eq 'search (car spec))))
-	(when info
-	  (let* ((host (elt info 0))
-		 (method (elt info 1))
-		 ;; Assume that a list which was returned by
-		 ;; `twittering-current-timeline-data' is sorted.
-		 (since_id (or is-search-spec (cdr-safe (assq 'id (car (twittering-current-timeline-data spec))))))
-		 (word (and is-search-spec (cadr spec)))
-		 (proc (twittering-get-tweets host method noninteractive
-					      id since_id word)))
-	    (when proc
-	      (twittering-register-process proc spec spec-string))))))
-     (t
-      (let ((type (car spec)))
-	(error "%s has not been supported yet" type))))))
+(defun twittering-get-and-render-timeline (&optional noninteractive id buffer)
+  (setq twittering-invoke-buffer (current-buffer))
+  (with-current-buffer (or buffer (current-buffer))
+    (let ((spec (twittering-current-timeline-spec))
+	  (spec-string (twittering-current-timeline-spec-string)))
+      (cond
+       ((not (twittering-account-authorized-p))
+	;; ignore any requests if the account has not been authorized.
+	(message "No account for Twitter has been authorized.")
+	t)
+       ((and noninteractive (twittering-process-active-p spec))
+	;; ignore non-interactive request if a process is waiting for responses.
+	t)
+       ((twittering-timeline-spec-primary-p spec)
+	(let ((info (twittering-timeline-spec-to-host-method spec))
+	      (is-search-spec (eq 'search (car spec))))
+	  (when info
+	    (let* ((host (elt info 0))
+		   (method (elt info 1))
+		   ;; Assume that a list which was returned by
+		   ;; `twittering-current-timeline-data' is sorted.
+		   (since_id (or is-search-spec (cdr-safe (assq 'id (car (twittering-current-timeline-data spec))))))
+		   (word (and is-search-spec (cadr spec)))
+		   (proc (twittering-get-tweets host method noninteractive
+						id since_id word)))
+	      (when proc
+		(twittering-register-process proc spec spec-string))))))
+       (t
+	(let ((type (car spec)))
+	  (error "%s has not been supported yet" type)))))))
 
 (defun twittering-retrieve-image (image-url)
   (with-temp-buffer
@@ -4094,8 +4104,7 @@ managed by `twittering-mode'."
   (when (twittering-account-authorized-p)
     (let ((buffer-list (twittering-get-active-buffer-list)))
       (mapc (lambda (buffer)
-	      (with-current-buffer buffer
-		(twittering-get-and-render-timeline noninteractive)))
+	      (twittering-get-and-render-timeline noninteractive nil buffer))
 	    buffer-list))))
 
 (defun twittering-current-timeline-noninteractive ()
