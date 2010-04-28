@@ -1,0 +1,2 @@
+#!/bin/bash
+perl -npe 's/[^a-zA-Z0-9]/\n/g' "$@"|sort -u
