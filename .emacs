@@ -325,7 +325,7 @@
 
 (defun bhj-clt-insert-file-name ()
   (interactive)
-  (insert (car args)))
+  (insert (buffer-name (other-buffer (current-buffer) t))))
 
 (defun bhj-insert-pwdw ()
   (interactive)
@@ -353,7 +353,7 @@
   (insert bhj-clt-branch))
 
 
-(define-key minibuffer-local-shell-command-map [(control meta f)] 'bhj-clt-insert-file-name)
+(define-key minibuffer-local-map [(control meta f)] 'bhj-clt-insert-file-name)
 (define-key minibuffer-local-shell-command-map [(control meta b )] 'bhj-clt-insert-branch)
 (define-key minibuffer-local-shell-command-map [(control meta d )] 'bhj-insert-pwdu)
 (fset 'bhj-clt-co-mkbranch
