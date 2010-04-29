@@ -2,13 +2,12 @@
 sudo bash -c '
 (echo "<external-filters>"
 
-for x in `cat /etc/mime.types|grep "^text/"|awk "{print \$1}"`; do cat <<EOF
+for x in $(cat /etc/mime.types|grep "^text/"|awk "{print \$1}"); do cat <<EOF
 <filter>
   <mimetype>$x</mimetype>
   <command>beagle-java-filter</command>
   <arguments>%s</arguments>
 </filter>
 EOF
-
 done
-echo "</external-filters>") > /etc/beagle/external-filters'
+echo "</external-filters>") > /etc/beagle/external-filters.xml'

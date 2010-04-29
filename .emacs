@@ -661,4 +661,5 @@
 (global-set-key [f5] 'devenv-debug)
 
 (server-start)
+(setenv "IN_EMACS" "true")
 ;(w32-register-hot-key [A-tab])
