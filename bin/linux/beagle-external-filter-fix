@@ -1,0 +1,12 @@
+#!/bin/bash
+sudo bash -c '
+(echo "<external-filters>"
+for x in text/cache-manifest text/calendar text/css text/csv text/directory text/english text/enriched text/h323 text/html text/iuls text/mathml text/parityfec text/plain text/prs.lines.tag text/rfc822-headers text/richtext text/rtf text/scriptlet text/t140 text/texmacs text/tab-separated-values text/uri-list text/vnd.abc text/vnd.curl text/vnd.DMClientScript text/vnd.flatland.3dml text/vnd.fly text/vnd.fmi.flexstor text/vnd.in3d.3dml text/vnd.in3d.spot text/vnd.IPTC.NewsML text/vnd.IPTC.NITF text/vnd.latex-z text/vnd.motorola.reflex text/vnd.ms-mediapackage text/vnd.sun.j2me.app-descriptor text/vnd.wap.si text/vnd.wap.sl text/vnd.wap.wml text/vnd.wap.wmlscript text/x-bibtex text/x-boo text/x-c++hdr text/x-c++src text/x-chdr text/x-component text/x-crontab text/x-csh text/x-csrc text/x-dsrc text/x-diff text/x-haskell text/x-java text/x-literate-haskell text/x-makefile text/x-moc text/x-pascal text/x-pcs-gcd text/x-perl text/x-python text/x-scala text/x-server-parsed-html text/x-setext text/x-sh text/x-tcl text/x-tex text/x-vcalendar text/x-vcard; do cat <<EOF
+<filter>
+  <mimetype>$x</mimetype>
+  <command>beagle-java-filter</command>
+  <arguments>%s</arguments>
+</filter>
+EOF
+done
+echo "</external-filters>") > /etc/beagle/external-filters'
