@@ -1971,7 +1971,7 @@ been initialized yet."
   (setq major-mode 'twittering-mode)
   (setq buffer-read-only t)
   (buffer-disable-undo)
-  (setq mode-name "twittering-mode")
+  (setq mode-name "twittering")
   (setq mode-line-buffer-identification
 	`(,(default-value 'mode-line-buffer-identification)
 	  (:eval (twittering-mode-line-buffer-identification))))
