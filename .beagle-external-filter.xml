@@ -86,7 +86,7 @@ Simple Djvu filter
 <filter>
   <mimetype>text/x-java</mimetype>
   <extension>.java</extension>
-  <command>cat</command>
+  <command>beagle-java-filter</command>
   <arguments>%s</arguments>
 </filter>
 <filter>
