@@ -2906,7 +2906,7 @@ fs.inotify.max_user_watches = 65535
 
 wesnoth
 beagle-static-query --add-static-backend /path/to/personal/index --backend none kconfig
-beagle-build-index --recursive --deny-pattern .beagle --enable-deletion --target .beagle/ .
+beagle-build-index --recursive --deny-pattern .beagle --deny-pattern '[0-9].xml' --enable-deletion --target .beagle/ .
 
 
 ****************************************************************

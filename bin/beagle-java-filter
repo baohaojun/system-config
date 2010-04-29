@@ -1,2 +1,2 @@
 #!/bin/bash
-perl -npe 's/[^a-zA-Z0-9]/\n/g' "$@"|sort -u -f|head -n 10000
+perl -npe 's/[^a-zA-Z0-9]/\n/g' "$@"|sort -u -f
