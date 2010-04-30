@@ -1,0 +1,5 @@
+#!/bin/bash
+. ~/.bashrc-linux
+cat >/tmp/$$.java
+java -cp $CLASSPATH:~/bin/linux/ext/uncomment-java.jar Main /tmp/$$.java
+rm /tmp/$$.java
