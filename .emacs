@@ -662,4 +662,5 @@
 
 (server-start)
 (setenv "IN_EMACS" "true")
+(define-key weblogger-entry-mode-map "\C-c\C-k" 'ido-kill-buffer)
 ;(w32-register-hot-key [A-tab])
