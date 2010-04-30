@@ -1,0 +1,26 @@
+<Type Name="OptimizeIndexesRequest" FullName="Beagle.OptimizeIndexesRequest">
+  <TypeSignature Language="C#" Value="public class OptimizeIndexesRequest : Beagle.RequestMessage" />
+  <AssemblyInfo>
+    <AssemblyName>Beagle</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Beagle.RequestMessage</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OptimizeIndexesRequest ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

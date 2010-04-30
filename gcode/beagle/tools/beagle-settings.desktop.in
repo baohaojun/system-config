@@ -1,0 +1,11 @@
+[Desktop Entry]
+_Name=Search & Indexing
+_GenericName=Configure Desktop Search
+Exec=beagle-settings
+Icon=system-search
+Type=Application
+Categories=Settings;Utility;Filesystem;X-Ximian-Settings;
+X-GNOME-Bugzilla-Bugzilla=GNOME
+X-GNOME-Bugzilla-Product=beagle
+X-GNOME-Bugzilla-Component=General
+X-GNOME-Bugzilla-Version=0.3.9

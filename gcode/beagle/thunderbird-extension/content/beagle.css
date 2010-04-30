@@ -1,0 +1,12 @@
+
+statusbarpanel#beagle-icon[status="enabled"] {
+  list-style-image: url("chrome://beagle/skin/beagle.png");
+}
+
+statusbarpanel#beagle-icon[status="disabled"] {
+  list-style-image: url("chrome://beagle/skin/beagle-disabled.png");
+}
+
+statusbarpanel#beagle-icon[status="error"] {
+  list-style-image: url("chrome://beagle/skin/beagle-error.png");
+}

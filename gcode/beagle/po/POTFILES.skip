@@ -1,0 +1,8 @@
+beagled/DumpIndex.cs
+epiphany-extension/beagle.py
+search/beagle-search.desktop.in
+tools/beagle-settings.desktop.in
+Util/DigikamTags.cs
+Util/F-Spot/Imaging/Exif.cs
+Util/F-Spot/Imaging/IptcFile.cs
+Util/F-Spot/MetadataStore.cs

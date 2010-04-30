@@ -1,0 +1,1155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# G Karunakar <karunakar@randomink.org>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-07-11 18:14+0200\n"
+"PO-Revision-Date: 2005-04-03 20:00+0530\n"
+"Last-Translator: G Karunakar <karunakar@freedomink.org>\n"
+"Language-Team: Hindi <indlinux-hindi@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n!=1;\n"
+
+#: ../glue/eggtrayicon.c:127
+msgid "Orientation"
+msgstr "दिशा"
+
+#: ../glue/eggtrayicon.c:128
+msgid "The orientation of the tray."
+msgstr "ट्रै की दिशा"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "वार्तालाप इतिहास"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "आईएम दर्शक"
+
+#: ../ImLogViewer/ImLogWindow.cs:102
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "{0} में वार्तालाप"
+
+#: ../ImLogViewer/ImLogWindow.cs:109
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "{0} से वार्तालाप"
+
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
+msgid "Search"
+msgstr "खोजें"
+
+#: ../search/beagle-search.desktop.in.h:2
+msgid "Search for data on your desktop"
+msgstr "डेस्कटॉप पर डॉटा के लिए खोजें"
+
+#: ../search/Category.cs:109
+#, fuzzy, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} बॉइट"
+msgstr[1] "{0} बॉइट"
+
+#: ../search/Category.cs:111
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} of {2}"
+
+#: ../search/Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "कुछ नही मिला"
+
+#: ../search/Pages/NoMatch.cs:20
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr ""
+
+#: ../search/Pages/NoMatch.cs:24
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+
+#: ../search/Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+
+#: ../search/Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+
+#: ../search/Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr ""
+
+#: ../search/Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+
+#: ../search/Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
+msgid "Quick Tips"
+msgstr "झटपट नुस्खे"
+
+#: ../search/Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "बीगल को रूट की तरह चला नही सकते"
+
+#: ../search/Pages/RootUser.cs:13
+msgid ""
+"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"regular user."
+msgstr ""
+"सुरक्षा कारणों से बीगल को रूट की तरह चला नही सकते, सामान्य प्रयोक्ता की तरह पुनः चालू करें"
+
+#: ../search/Pages/StartDaemon.cs:19
+msgid "Search service not running"
+msgstr "खोज सेवा चल नहीं रहा है"
+
+#: ../search/Pages/StartDaemon.cs:21
+msgid "Start search service"
+msgstr "खोज सेवा शुरु करें"
+
+#: ../search/Search.cs:149
+msgid "_Find:"
+msgstr "ढूंढें: (_F)"
+
+#: ../search/Search.cs:163
+msgid "Find Now"
+msgstr "अभी ढूँढे"
+
+#: ../search/Search.cs:209
+msgid "Type in search terms"
+msgstr "खोजने के लिए पद टाईप करें"
+
+#: ../search/Search.cs:210
+msgid "Start searching"
+msgstr "ढूंढना चालू करें"
+
+#: ../search/Tiles/Contact.cs:30
+#, fuzzy
+msgid "Send Mail"
+msgstr "डाक में भेजें"
+
+#: ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "ई-मेल:"
+
+#: ../search/Tiles/Contact.cs:70
+msgid "Mobile Phone:"
+msgstr "मोबाईल फोन:"
+
+#: ../search/Tiles/Contact.cs:72
+msgid "Work Phone:"
+msgstr "कार्यालय फोन:"
+
+#: ../search/Tiles/Contact.cs:74
+msgid "Home Phone:"
+msgstr "घरेलू फोन:"
+
+#: ../search/Tiles/File.cs:34
+msgid "Reveal in Folder"
+msgstr "फ़ोल्डर में दिखाएँ"
+
+#: ../search/Tiles/File.cs:35
+msgid "E-Mail"
+msgstr "ई-मेल"
+
+# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+#, fuzzy
+msgid "Move to Trash"
+msgstr "रद्दी में भेजें"
+
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "शीर्षक:"
+
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:58
+msgid "Last Edited:"
+msgstr "आखरी संपादित"
+
+#: ../search/Tiles/File.cs:128
+msgid "Author:"
+msgstr "लेखक:"
+
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
+msgid "Full Path:"
+msgstr "पूर्ण पाथ:"
+
+#: ../search/Tiles/Folder.cs:31
+msgid "Empty"
+msgstr "खाली"
+
+#: ../search/Tiles/Folder.cs:33
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] ""
+msgstr[1] ""
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "वॉलपेपर की तरह लगाएँ"
+
+#: ../search/Tiles/Image.cs:78
+msgid "Modified:"
+msgstr "परिवर्धितः"
+
+#: ../search/Tiles/IMLog.cs:30
+msgid "IM Conversation"
+msgstr "आईएम वार्तालाप"
+
+#: ../search/Tiles/IMLog.cs:87
+msgid "Name:"
+msgstr "नाम:"
+
+#: ../search/Tiles/IMLog.cs:88 ../search/Tiles/MailMessage.cs:92
+msgid "Date Received:"
+msgstr "पाने की तिथि"
+
+#: ../search/Tiles/MailAttachment.cs:47
+msgid "Mail attachment"
+msgstr "डाक संलग्नक"
+
+#: ../search/Tiles/MailMessage.cs:55
+msgid "Send in Mail"
+msgstr "डाक में भेजें"
+
+#: ../search/Tiles/MailMessage.cs:87
+msgid "Subject:"
+msgstr "विषय:"
+
+#: ../search/Tiles/MailMessage.cs:89
+msgid "To:"
+msgstr ""
+
+#: ../search/Tiles/MailMessage.cs:89
+msgid "From:"
+msgstr "द्वारा:"
+
+#: ../search/Tiles/MailMessage.cs:92
+#, fuzzy
+msgid "Date Sent:"
+msgstr "देखने की तिथि"
+
+#: ../search/Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../search/Tiles/RSSFeed.cs:46
+msgid "Site:"
+msgstr "साइटः"
+
+#: ../search/Tiles/RSSFeed.cs:47
+msgid "Date Viewed:"
+msgstr "देखने की तिथि"
+
+#: ../search/Tiles/TextDocument.cs:37
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} पृष्ठ"
+msgstr[1] "{0} पृष्ठ"
+
+#: ../search/Tiles/Tile.cs:179
+msgid "Open"
+msgstr "खोलें"
+
+#: ../search/Tiles/Utils.cs:24
+#, fuzzy
+msgid "Applications"
+msgstr "अनुप्रयोग (_A)"
+
+#: ../search/Tiles/Utils.cs:26
+#, fuzzy
+msgid "Contacts"
+msgstr "संपर्क (_C)"
+
+#: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:30
+#, fuzzy
+msgid "Folders"
+msgstr "फ़ोल्डर"
+
+#: ../search/Tiles/Utils.cs:32
+msgid "Images"
+msgstr "छवि"
+
+#: ../search/Tiles/Utils.cs:34
+msgid "Audio"
+msgstr "ऑडियो"
+
+#: ../search/Tiles/Utils.cs:36
+msgid "Video"
+msgstr "वीडियो"
+
+#: ../search/Tiles/Utils.cs:38
+msgid "Documents"
+msgstr "दस्तावेज़"
+
+#: ../search/Tiles/Utils.cs:40
+msgid "Conversations"
+msgstr "बातचीत"
+
+#: ../search/Tiles/Utils.cs:42
+#, fuzzy
+msgid "Websites"
+msgstr "वेबसाईट"
+
+#: ../search/Tiles/Utils.cs:44
+#, fuzzy
+msgid "News Feeds"
+msgstr "समाचार सेवा"
+
+#: ../search/Tiles/Utils.cs:46
+#, fuzzy
+msgid "Archives"
+msgstr "अभिलेखागार"
+
+#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
+#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "आज"
+
+#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
+#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+msgid "Yesterday"
+msgstr "कल"
+
+#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
+#: ../search/Tiles/Utils.cs:196
+msgid "Tomorrow"
+msgstr ""
+
+#: ../search/Tiles/Utils.cs:200
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "{0} सप्ताह पहले"
+msgstr[1] "{0} सप्ताह पहले"
+
+#: ../search/Tiles/Utils.cs:202
+#, fuzzy, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "{0} सप्ताह पहले"
+msgstr[1] "{0} सप्ताह पहले"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:204
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "{0} महिना पहले"
+msgstr[1] "{0} महीने पहले"
+
+#: ../search/Tiles/Utils.cs:206
+#, fuzzy, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "{0} महिना पहले"
+msgstr[1] "{0} महीने पहले"
+
+#: ../search/Tiles/Utils.cs:208
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "{0} साल पहले"
+msgstr[1] "{0} साल पहले"
+
+#: ../search/Tiles/Utils.cs:210
+#, fuzzy, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "{0} साल पहले"
+msgstr[1] "{0} साल पहले"
+
+#. FIXME: We need filters for video in Beagle.
+#. They should land soon when entagged-sharp gets video support.
+#: ../search/Tiles/Video.cs:27
+msgid "Unknown duration"
+msgstr "अज्ञात अवधि"
+
+#: ../search/Tiles/WebHistory.cs:51
+msgid "URL:"
+msgstr "यूआरएल (URL):"
+
+#: ../search/Tiles/WebHistory.cs:52
+msgid "Accessed:"
+msgstr "पहुंचाः"
+
+#: ../search/Tray/TrayIcon.cs:32
+msgid "Desktop Search"
+msgstr "डेस्कटॉप खोज"
+
+#: ../search/Tray/TrayIcon.cs:57
+msgid "No Recent Searches"
+msgstr "हालिया कोई खोज नहीं (_S)"
+
+#: ../search/Tray/TrayIcon.cs:62
+msgid "Recent Searches"
+msgstr "हालिया खोज (_S)"
+
+#: ../search/Tray/TrayIcon.cs:78
+msgid "Clear"
+msgstr "खाली"
+
+#: ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "बाहर"
+
+#. Translators: the strings in TypeFilter.cs are for when the user
+#. * wants to limit search results to a specific type. You don't need
+#. * to give an exact translation of the exact same set of English
+#. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
+#: ../search/TypeFilter.cs:36
+msgid ""
+"file\n"
+"files"
+msgstr ""
+"file\n"
+"files"
+
+#: ../search/TypeFilter.cs:37
+msgid ""
+"mail\n"
+"email\n"
+"e-mail"
+msgstr ""
+"mail\n"
+"email\n"
+"e-mail"
+
+#: ../search/TypeFilter.cs:38
+msgid ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+msgstr ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instantmessages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+
+#: ../search/TypeFilter.cs:39
+msgid ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+msgstr ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+
+#: ../search/TypeFilter.cs:41
+msgid ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+msgstr ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+
+#: ../search/TypeFilter.cs:42
+msgid ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+msgstr ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+
+#: ../search/TypeFilter.cs:43
+msgid ""
+"folder\n"
+"folders"
+msgstr ""
+"folder\n"
+"folders"
+
+#: ../search/TypeFilter.cs:44
+msgid ""
+"image\n"
+"images\n"
+"img"
+msgstr ""
+"image\n"
+"images\n"
+"img"
+
+#: ../search/TypeFilter.cs:45
+msgid "audio"
+msgstr "ऑडियो"
+
+#: ../search/TypeFilter.cs:46
+msgid "video"
+msgstr "वीडियो"
+
+#: ../search/TypeFilter.cs:47
+msgid "media"
+msgstr "मीडिया"
+
+#: ../search/TypeFilter.cs:48
+msgid ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+msgstr ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+
+#: ../search/TypeFilter.cs:49
+msgid ""
+"conversation\n"
+"conversations"
+msgstr ""
+"conversation\n"
+"conversations"
+
+#: ../search/TypeFilter.cs:50
+msgid ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+msgstr ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+
+#: ../search/TypeFilter.cs:51
+msgid ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+msgstr ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+
+#: ../search/TypeFilter.cs:52
+msgid ""
+"archive\n"
+"archives"
+msgstr ""
+"archive\n"
+"archives"
+
+#: ../search/TypeFilter.cs:53
+msgid ""
+"person\n"
+"people"
+msgstr ""
+"person\n"
+"people"
+
+#: ../search/UIManager.cs:42
+#, fuzzy
+msgid "Close Desktop Search"
+msgstr "डेस्कटॉप खोज"
+
+#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
+msgid "Exit Desktop Search"
+msgstr ""
+
+#: ../search/UIManager.cs:54
+msgid "_Search"
+msgstr "खोजें (_S)"
+
+#: ../search/UIManager.cs:57
+msgid "_Actions"
+msgstr "कार्य (_A)"
+
+#: ../search/UIManager.cs:60
+msgid "Sor_t"
+msgstr ""
+
+#: ../search/UIManager.cs:63
+msgid "_Help"
+msgstr "मदद (_H)"
+
+#: ../search/UIManager.cs:72
+msgid "_Contents"
+msgstr "विषय सूची (_C)"
+
+#: ../search/UIManager.cs:74
+msgid "Help - Table of Contents"
+msgstr ""
+
+#: ../search/UIManager.cs:78
+msgid "About Desktop Search"
+msgstr "डेस्कटॉप खोज के बारे में"
+
+#: ../search/UIManager.cs:100
+msgid "_Everywhere"
+msgstr "हर जगह (_E)"
+
+#: ../search/UIManager.cs:102
+msgid "Search everywhere"
+msgstr "हर जगह खोजें"
+
+#: ../search/UIManager.cs:105
+msgid "_Applications"
+msgstr "अनुप्रयोग (_A)"
+
+#: ../search/UIManager.cs:107
+msgid "Search applications"
+msgstr "अनुप्रयोग खोजें"
+
+#: ../search/UIManager.cs:110
+msgid "_Contacts"
+msgstr "संपर्क (_C)"
+
+#: ../search/UIManager.cs:112
+msgid "Search contacts"
+msgstr "संपर्क खोजें"
+
+#: ../search/UIManager.cs:115
+msgid "Ca_lendar events"
+msgstr ""
+
+#: ../search/UIManager.cs:117
+#, fuzzy
+msgid "Search calendar events"
+msgstr "संपर्क खोजें"
+
+#: ../search/UIManager.cs:120
+msgid "_Documents"
+msgstr "दस्तावेज़ (_D)"
+
+#: ../search/UIManager.cs:122
+msgid "Search documents"
+msgstr "दस्तावेज़ खोजें"
+
+#: ../search/UIManager.cs:125
+msgid "Conve_rsations"
+msgstr "बातचीत (_r)"
+
+#: ../search/UIManager.cs:127
+msgid "Search E-Mail and Instant Messaging logs"
+msgstr ""
+
+#: ../search/UIManager.cs:130
+#, fuzzy
+msgid "_Images"
+msgstr "छवि"
+
+#: ../search/UIManager.cs:132
+msgid "Search images"
+msgstr "छवि खोजें"
+
+#: ../search/UIManager.cs:135
+#, fuzzy
+msgid "_Media"
+msgstr "मीडिया"
+
+#: ../search/UIManager.cs:137
+msgid "Search sound and video files"
+msgstr ""
+
+#: ../search/UIManager.cs:144
+msgid "Date _Modified"
+msgstr ""
+
+#: ../search/UIManager.cs:145
+msgid "Sort the most-recently-modified matches first"
+msgstr ""
+
+#: ../search/UIManager.cs:148
+msgid "_Name"
+msgstr "नाम (_N):"
+
+#: ../search/UIManager.cs:149
+msgid "Sort matches by name"
+msgstr ""
+
+#: ../search/UIManager.cs:152
+msgid "_Relevance"
+msgstr ""
+
+#: ../search/UIManager.cs:153
+msgid "Sort the best matches first"
+msgstr ""
+
+#: ../tools/Settings.cs:226
+msgid "Reload configuration"
+msgstr ""
+
+#: ../tools/Settings.cs:227
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+
+#: ../tools/Settings.cs:265
+msgid "Select Path"
+msgstr ""
+
+#: ../tools/Settings.cs:284
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr ""
+
+#: ../tools/Settings.cs:287
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+
+#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
+msgid "Path not added"
+msgstr ""
+
+#: ../tools/Settings.cs:307
+msgid "Remove obsolete paths"
+msgstr ""
+
+#: ../tools/Settings.cs:308
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+
+#: ../tools/Settings.cs:334
+msgid "Remove path"
+msgstr ""
+
+#: ../tools/Settings.cs:335
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+
+#: ../tools/Settings.cs:364
+msgid "Remove item"
+msgstr "वस्तु निकालें"
+
+#: ../tools/Settings.cs:365
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+
+#: ../tools/Settings.cs:408
+msgid "Invalid host entry"
+msgstr ""
+
+#: ../tools/Settings.cs:415
+msgid "Remote host already present in the list."
+msgstr ""
+
+#: ../tools/Settings.cs:424
+msgid "Netbeagle Node not added"
+msgstr ""
+
+#: ../tools/Settings.cs:440
+msgid "Remove host"
+msgstr ""
+
+#: ../tools/Settings.cs:441
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr ""
+
+#: ../tools/Settings.cs:462
+msgid "Select path"
+msgstr ""
+
+#: ../tools/Settings.cs:481
+msgid "The selected path is already configured for external access."
+msgstr ""
+
+#: ../tools/Settings.cs:505
+msgid "Remove public path"
+msgstr ""
+
+#: ../tools/Settings.cs:506
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
+msgstr ""
+
+#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
+#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
+msgid "Name"
+msgstr "नाम"
+
+#: ../tools/Settings.cs:634
+msgid "Type"
+msgstr "प्रकार"
+
+#: ../tools/Settings.cs:687
+msgid "Path:"
+msgstr "पथः"
+
+#: ../tools/Settings.cs:690
+msgid "Pattern:"
+msgstr "पैटर्न:"
+
+#: ../tools/Settings.cs:693
+msgid "Mail folder:"
+msgstr ""
+
+#: ../tools/Settings.cs:1041
+msgid "Select Folder"
+msgstr "फ़ोल्डर चुनें"
+
+#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
+msgid "P_ath:"
+msgstr ""
+
+#: ../tools/Settings.cs:1072
+msgid "M_ail folder:"
+msgstr ""
+
+#: ../tools/Settings.cs:1077
+msgid "P_attern:"
+msgstr ""
+
+#: ../tools/Settings.cs:1101
+msgid "Error adding path"
+msgstr ""
+
+#: ../tools/Settings.cs:1102
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+
+#: ../tools/Settings.cs:1132
+msgid "Show"
+msgstr "दिखाएँ"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add Remote Host</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Administration</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>प्रदर्शित करें</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:5
+msgid "<b>General</b>"
+msgstr "<b>सामान्य</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Networking</b>"
+msgstr "<b> नेटवर्किंग</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Privacy</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:8
+msgid "<b>Select Mail Folder</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:9
+msgid "Add Remote Host"
+msgstr ""
+
+#: ../tools/settings.glade.h:10
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+msgstr ""
+
+#: ../tools/settings.glade.h:12
+msgid "Add any additional paths to be included for indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:13
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr ""
+
+#: ../tools/settings.glade.h:14
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+
+#: ../tools/settings.glade.h:15
+msgid "Allow _external access to local search services"
+msgstr ""
+
+#: ../tools/settings.glade.h:16
+msgid "Alt"
+msgstr "ऑल्ट"
+
+#: ../tools/settings.glade.h:17
+msgid "Ctrl"
+msgstr "कंट्रोल"
+
+#: ../tools/settings.glade.h:18
+msgid "Display the search window by pressing:"
+msgstr ""
+
+#: ../tools/settings.glade.h:19
+msgid "Exclude Resource"
+msgstr ""
+
+#: ../tools/settings.glade.h:20
+msgid "Filename _pattern"
+msgstr ""
+
+#: ../tools/settings.glade.h:21
+msgid "I_ndex my home directory"
+msgstr ""
+
+#: ../tools/settings.glade.h:22
+msgid "Index data while on battery power"
+msgstr ""
+
+#: ../tools/settings.glade.h:23
+msgid "Indexing"
+msgstr "सूचीकरण"
+
+#: ../tools/settings.glade.h:24
+msgid "Networking"
+msgstr "नेटवर्किंग"
+
+#: ../tools/settings.glade.h:26
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:27
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr ""
+
+#: ../tools/settings.glade.h:29
+msgid "Search Preferences"
+msgstr "ढूंढने हेतु वरीयताएँ"
+
+#: ../tools/settings.glade.h:30
+msgid "Select Mail Folder"
+msgstr ""
+
+#: ../tools/settings.glade.h:31
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:32
+msgid "Specify paths that should be available for external access."
+msgstr ""
+
+#: ../tools/settings.glade.h:33
+msgid "Type:"
+msgstr "प्रकार:"
+
+#: ../tools/settings.glade.h:34
+msgid "_Address:"
+msgstr "पता (_A):"
+
+#: ../tools/settings.glade.h:35
+msgid "_Allow Beagle to be run as root"
+msgstr ""
+
+#: ../tools/settings.glade.h:36
+msgid "_Folder path"
+msgstr ""
+
+#: ../tools/settings.glade.h:37
+msgid "_Mail folder"
+msgstr ""
+
+#: ../tools/settings.glade.h:38
+msgid "_Maximum number of results displayed:"
+msgstr ""
+
+#: ../tools/settings.glade.h:39
+msgid "_Start search & indexing services automatically "
+msgstr ""
+
+#: ../tools/beagle-settings.desktop.in.h:1
+msgid "Configure Desktop Search & Indexing"
+msgstr ""
+
+#: ../tools/beagle-settings.desktop.in.h:2
+msgid "Configure search & indexing properties"
+msgstr ""
+
+#: ../tools/beagle-settings.desktop.in.h:3
+msgid "Search & Indexing"
+msgstr ""
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "इस कम्प्यूटर पर"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr ""
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr ""
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:82
+msgid "MMM d"
+msgstr "MMM d"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:85
+msgid "MMM d, yyyy"
+msgstr "MMM d, yyyy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:88
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:94
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:111
+#, csharp-format
+msgid "Today, {0}"
+msgstr "आज, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:114
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "कल, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:117
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "{0} दिन पहले, {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:122
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:127
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "MMMM d yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:137
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} घंटा"
+msgstr[1] "{0} घंटे"
+
+#: ../Util/StringFu.cs:144
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} मिनट"
+msgstr[1] "{0} मिनट"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:160
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} बॉइट"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:164
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} केेबी"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:167
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} एमबी"
+
+#~ msgid "Application"
+#~ msgstr "अनुप्रयोग"
+
+#~ msgid "Contact"
+#~ msgstr "संपर्क"
+
+#~ msgid "Image"
+#~ msgstr "छवि"

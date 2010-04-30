@@ -1,0 +1,30 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## beagle-status_watch.dpatch by Jose Carlos Garcia Sogo <jsogo@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad beagle-0.2.4~/tools/beagle-status beagle-0.2.4/tools/beagle-status
+--- beagle-0.2.4~/tools/beagle-status	2006-04-07 18:16:02.000000000 +0200
++++ beagle-0.2.4/tools/beagle-status	2006-04-08 15:31:27.000000000 +0200
+@@ -1,18 +1,3 @@
+ #!/bin/sh
+ 
+-# This line will be automatically uncommented when you "make install"
+-#installed=1
+-
+-if [ -z $installed ]; then
+-    CMD="./beagle-info"
+-else
+-    CMD="beagle-info"
+-fi
+-
+-while [ 1 ]; do
+-    str=`$CMD --status | head -n 20`
+-    clear
+-    echo "$str"
+-    # beagle-info causes a CPU spike, keep the hammering low
+-    sleep 5
+-done
++watch -n 5 beagle-info --status

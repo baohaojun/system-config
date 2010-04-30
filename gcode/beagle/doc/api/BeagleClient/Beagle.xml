@@ -1,0 +1,13 @@
+<Namespace Name="Beagle">
+  <Docs>
+    <summary>The Beagle namespace contains the classes necessary to interact with the Beagle service.</summary>
+    <remarks>There are several possible ways to interact with the Beagle service.
+	<list type="bullet">
+	    <item><term>Query the service.</term></item>
+	    <item><term>Submit data for indexing.</term></item>
+	    <item><term>Get current information about the index and the indexing process.</term></item>
+	    <item><term>Control the service.</term></item>
+	</list>
+    </remarks>
+  </Docs>
+</Namespace>
