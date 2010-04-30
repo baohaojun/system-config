@@ -146,4 +146,6 @@ else
     echo "OK. Not configure email"
 fi
 
+#wget -e 'robots=off' --timeout=10 -c -m --tries=0 http://antlr.org
+#wget -e 'robots=off' --timeout=10 -c -m --tries=0 http://www.stringtemplate.org/    
 echo OK.
