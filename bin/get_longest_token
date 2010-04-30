@@ -2,7 +2,7 @@
 
 import sys
 import re
-reg_obj = re.compile('[^a-zA-Z0-9]')
+reg_obj = re.compile('[^a-zA-Z0-9_]')
 tokens = []
 for arg in sys.argv[1:]:
     tokens.extend(reg_obj.split(arg))
