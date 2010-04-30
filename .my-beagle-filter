@@ -4,6 +4,26 @@ while True:
       line = sys.stdin.readline()
       if not line:
             break
+      if "cscope.files" in line:
+            continue
+      if "/1.xml" in line:
+            continue
+      if "/2.xml" in line:
+            continue
+      if "/3.xml" in line:
+            continue
+      if "/4.xml" in line:
+            continue
+      if "/5.xml" in line:
+            continue
+      if "/6.xml" in line:
+            continue
+      if "/7.xml" in line:
+            continue
+      if "/8.xml" in line:
+            continue
+      if "/current.xml" in line:
+            continue
       if "/arch/" in line:
             #if "x86" not in line and "i386" not in line:
             #      continue

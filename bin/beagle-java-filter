@@ -1,2 +1,0 @@
-#!/bin/bash
-perl -a -F'[^a-zA-Z0-9]' -ne 'for (@F) { $hash{lc($_)} = 1;} END(){for (keys %hash) {print "$_\n"}}' "$@"

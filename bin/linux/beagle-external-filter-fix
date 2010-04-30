@@ -17,7 +17,7 @@ EOF
 <filter>
   <mimetype>$x</mimetype>
   <extension>.$y</extension>
-  <command>beagle-java-filter</command>
+  <command>cat</command>
   <arguments>%s</arguments>
 </filter>
 EOF
@@ -26,7 +26,7 @@ done
 cat <<EOF
 <filter>
   <mimetype>$x</mimetype>
-  <command>beagle-java-filter</command>
+  <command>cat</command>
   <arguments>%s</arguments>
 </filter>
 EOF
