@@ -20,7 +20,8 @@
 #的话，就更复杂一点，要把它变成这样的参数交给beagle: hello,worldx,12
 
 for (@ARGV) {
-  @tokens = (@tokens, split('[^a-zA-Z0-9_]', $_));
+    $_ =~ s/\\./ /g;
+    @tokens = (@tokens, split('[^a-zA-Z0-9_]', $_));
 }
 
 $max_token = (sort {length($a) <=> length($b)} @tokens)[-1];
