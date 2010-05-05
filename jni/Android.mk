@@ -26,7 +26,6 @@ LOCAL_SRC_FILES := \
 LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
 LOCAL_LDLIBS += -lpthread
 LOCAL_MODULE := libjni_pinyinime
-LOCAL_PRELINK_MODULE := false
 LOCAL_SHARED_LIBRARIES := libcutils libutils
 
 include $(BUILD_SHARED_LIBRARY)
