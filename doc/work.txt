@@ -2950,3 +2950,6 @@ apt-get dist-upgrade -y 2>&1|grep '^Failed'|awk '{print $4}'|perl -npe 's!localh
 
 (tail -n 1 /var/spool/apt-mirror/var/archive-log.* 2>&1|grep -v ==|awk -F K '{print $1*1024}';  grep saved /var/spool/apt-mirror/var/archive-log.*|awk -F '[' '{print $2}'|awk -F / '{print $1}')|xargs bash -c 'y=0; for x in "$@"; do ((y+=$x)); done; ((y/=1024*1024)); echo $y\M; ' xx
 sudo vpncmd /client localhost /cmd accountstatusget bhj
+
+
+adb pull /data/data/com.android.providers.contacts/databases/contacts2.db . 

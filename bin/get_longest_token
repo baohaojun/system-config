@@ -21,6 +21,7 @@
 
 for (@ARGV) {
     $_ =~ s/\\./ /g;
+    $_ =~ s/\.(?!\*)/_/g;
     @tokens = (@tokens, split('[^a-zA-Z0-9_]', $_));
 }
 
