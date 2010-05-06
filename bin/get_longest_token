@@ -36,9 +36,9 @@ while ($max_token =~ m/([a-zA-Z]+)_+([a-zA-Z]+)(?=_|\b)/) {
     $max_token =~ s/([a-zA-Z]+)_+([a-zA-Z]+)(?=_|\b)/$1,$2/g;
 }
 
-$max_token =~ s/(\d.*?)_+([a-zA-Z]+)(?=_|\b)/$1,$2/g;
+$max_token =~ s/(\d.*?_+[a-zA-Z]+)(?=_|\b)/$1,/g;
 $max_token =~ s/__+/,/g;
-
+$max_token =~ s/^,+|,+$//g;
 print $max_token, "\n";
 
 
