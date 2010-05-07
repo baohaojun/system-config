@@ -36,8 +36,6 @@
 
 
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-(setq auto-mode-alist
-      (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
 
 (require 'w3m)
 
@@ -663,4 +661,17 @@
 (server-start)
 (setenv "IN_EMACS" "true")
 (define-key weblogger-entry-mode-map "\C-c\C-k" 'ido-kill-buffer)
+
+(defun poor-mans-csharp-mode ()
+  (csharp-mode)
+  (setq mode-name "C#")
+  (set-variable 'tab-width 8)
+  (set-variable 'indent-tabs-mode t)
+  (set-variable 'c-basic-offset 8)
+  (c-set-offset 'inline-open 0)
+  (c-set-offset 'case-label 0)
+)
+
+(setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
+			      auto-mode-alist))
 ;(w32-register-hot-key [A-tab])
