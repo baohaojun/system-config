@@ -3269,3 +3269,4 @@ adb pull /data/data/com.android.providers.contacts/databases/contacts2.db .
 ，必成大功。此兵之要，三军之所恃而动也。
 
 /home/bhj/Downloads/google_appengine/dev_appserver.py -a 0.0.0.0 /home/bhj/src/android-original/development/samples/SampleSyncAdapter/samplesyncadapter_server 
+$export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/
