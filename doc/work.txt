@@ -3267,3 +3267,5 @@ adb pull /data/data/com.android.providers.contacts/databases/contacts2.db .
 主必知之，知之必在于反间，故反间不可不厚也。
 昔殷之兴也，伊挚在夏；周之兴也，吕牙在殷。故明君贤将，能以上智为间者
 ，必成大功。此兵之要，三军之所恃而动也。
+
+/home/bhj/Downloads/google_appengine/dev_appserver.py -a 0.0.0.0 /home/bhj/src/android-original/development/samples/SampleSyncAdapter/samplesyncadapter_server 
