@@ -592,7 +592,7 @@
   (devenv-cmd "Debug.Start"))
 (global-set-key [f5] 'devenv-debug)
 
-(server-start)
+
 (setenv "IN_EMACS" "true")
 (define-key weblogger-entry-mode-map "\C-c\C-k" 'ido-kill-buffer)
 
@@ -608,4 +608,6 @@
 
 (setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
 			      auto-mode-alist))
+
+(server-start)
 ;(w32-register-hot-key [A-tab])
