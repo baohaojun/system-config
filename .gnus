@@ -59,6 +59,14 @@
           gnus-sum-thread-tree-single-leaf "`-> "
           gnus-sum-thread-tree-false-root "~>"))
 
+(add-to-list 'gnus-newsgroup-variables 'mm-coding-system-priorities)
+(setq gnus-parameters
+      (nconc
+       ;; Some charsets are just examples!
+       '(("\\bcn\\.bbs\\..*" ;; Chinese
+          (mm-coding-system-priorities
+           '(iso-8859-1 gbk utf-8))))
+       gnus-parameters))
 ;;Local Variables: ***
 ;;coding: utf-8 ***
 ;;End: ***
