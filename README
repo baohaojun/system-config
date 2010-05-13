@@ -35,17 +35,17 @@ The author of Firemacs is Kazu YAMAMOTO <kazu@Mew.org>
   5) Create three files: "components", "chrome", "install.rdf",
      "chrome.manifest"
 
-  5.1) Make symbolic link to the "components" directory of CVS:
+  5.1) Make symbolic link to the "components" directory of Git:
 
-	% ln -s $CVSDIR/components
+	% ln -s $GITDIR/components
 
-  5.2) Make symbolic link to the "chrome" directory of CVS:
+  5.2) Make symbolic link to the "chrome" directory of Git:
 
-	% ln -s $CVSDIR/chrome
+	% ln -s $GITDIR/chrome
 
-  5.3) Copy the "install.rdf" file from CVS:
+  5.3) Copy the "install.rdf" file from Git:
 
-	% cp $CVSDIR/install.rdf .
+	% cp $GITDIR/install.rdf .
 
   5.4) Create the "chrome.manifest" file whose contents are:
 
@@ -76,8 +76,7 @@ skin	firemacs	classic/1.0	chrome/skin/
   "make.hs" is written by Haskell. To compile and run it, type in the
   "chrome/content/db" directory:
 
-	% ghc --make make.hs
-	% ./make
+	% runghc make.hs
 	Generating "../config-name.js"... done
 	Generating "../keybinding.js"... done
 	Generating "../config.xul"... done
