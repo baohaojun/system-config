@@ -68,6 +68,11 @@ function cmd()
     fi
 }
 
+function svn-info-clip()
+{
+    svn info "$1" |grep '^URL:'|sed -e 's/^URL: //; s/^https/http/'|tr -d '\r\n' > /dev/clipboard
+}
+
 function of()
 {
     if test -e "$1"; then
@@ -135,6 +140,25 @@ function edit()
     for x in "$@"; do 
         edit_1 "$x"
     done
+}
+
+function lcd()
+{
+    if ! readlink -f "$1"; then
+        return -1
+    fi
+
+
+
+    link=$(readlink -f "$1")
+    if test -f "$link" && echo "${link##*.}"|grep -i '^lnk$' -q; then 
+            link=`readshortcut "$link"`
+    fi
+    if [[ -d "$link" ]]; then
+        cd "$link"
+    else
+        cd "$(dirname "$link")"
+    fi
 }
 
 function ccd()

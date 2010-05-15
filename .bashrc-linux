@@ -23,8 +23,8 @@ function wp()
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-export PATH=/usr/local/jdk1.5/bin:/usr/local/arm-linux/bin:~/bin/linux/:~/bin/linux/ext:$PATH:/home/bhj/bin/linux/ext/android-sdk-linux_86/tools
-export CLASSPATH=/usr/local/jdk1.5/lib:~/bin/linux/ext/stringtemplate.jar:~/bin/linux/ext/antlr3.jar:.
+export PATH=/usr/local/jdk1.5/bin:/usr/local/arm-linux/bin:~/bin/linux/:~/bin/linux/ext:$PATH:
+export CLASSPATH=/usr/local/jdk1.5/lib:.
 export JAVA_HOME=/usr/local/jdk1.5
 
 export XMODIFIERS="@im=SCIM"
@@ -67,25 +67,9 @@ if test -z "$SSH_CLIENT"; then
             [[ "$file" =~ :$ ]] && file=${file:0:${#file}-1}
             local line=${file##*:}
             file=${file%:*}
-            local x=0
-            while test ! -f "$file" && ((x++ < 10)); do
-                file=../"$file"
-            done
             emacsclient -n +"${line:-1}" "$file"
         fi
     }
 
 fi
 
-for x in host traceroute telnet
-do 
-    eval "function $x()
-    {
-        if test \$# = 1; then
-            local h=\`echo \"\$1\"|perl -npe 's!.*//(.*?)/.*!\$1!'\`
-            command $x \$h
-        else
-            command $x "\$@"
-        fi
-    }"
-done

@@ -17,16 +17,9 @@ fi
 beagle_dir=$start_dir/.beagle
 #echo Beagle index found at "$beagle_dir" 1>&2
 
-if test -f "$beagle_dir"/.beagle-filter
-then
-    beagle_filter="$beagle_dir"/.beagle-filter
-else
-    beagle_filter=~/.my-beagle-filter
-fi
-
 longest_token=`get_longest_token "$@"`
 beagle-static-query \
     --add-static-backend "$beagle_dir" \
     --backend none --max-hits 100000 "$longest_token"\
-|sed -e 's!^file://!!'|grep -v '#'|sort -u|$beagle_filter
+|sed -e 's!^file://!!'|grep -v '#'|sort -u|~/.my-beagle-filter
 echo /dev/null

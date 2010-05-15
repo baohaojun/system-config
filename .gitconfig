@@ -1,7 +1,0 @@
-[color]
-	ui = auto
-[user]
-	name = bhj
-	email = baohaojun@gmail.com
-[core]
-	excludesfile = ~/.gitexcludefile

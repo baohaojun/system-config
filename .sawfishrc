@@ -72,7 +72,6 @@
 (setenv "PATH" (concat 
                 (getenv "HOME") "/bin:" 
                 (getenv "HOME") "/bin/linux:" 
-                (getenv "HOME") "/home/bhj/bin/linux/ext/android-sdk-linux_86/tools:"
                 (getenv "PATH")))
 
 (if (boundp 'ProgramsStarted)

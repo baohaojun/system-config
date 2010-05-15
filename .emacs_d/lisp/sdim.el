@@ -67,9 +67,8 @@
 (defsubst sdim-delete-region ()
   "Delete the text in the current translation region of E+."
   (if (overlay-start sdim-overlay)
-      (let ((buffer-undo-list t))
-        (delete-region (overlay-start sdim-overlay)
-                       (overlay-end sdim-overlay)))))
+      (delete-region (overlay-start sdim-overlay)
+                     (overlay-end sdim-overlay))))
 
 (defun sdim-network-filter (proc data)
   (when sdim-ime-debug
@@ -198,18 +197,8 @@
     (error "Can't input characters in current unibyte buffer"))
   (sdim-delete-region)
   (when (not (string-equal "" sdim-commit-str))
-    (let ((inhibit-modification-hooks nil)
-          (repeat 1))
-      (if current-prefix-arg
-          (setq repeat (if (numberp current-prefix-arg)
-                           current-prefix-arg
-                         (car current-prefix-arg))
-                current-prefix-arg nil
-                prefix-arg nil))
-
-      (while (> repeat 0)
-        (insert sdim-commit-str)
-        (setq repeat (1- repeat)))
+    (let ((inhibit-modification-hooks nil))
+      (insert sdim-commit-str)
       (if auto-fill-function
           (apply normal-auto-fill-function ())))
     (move-overlay sdim-overlay (point) (point)))
@@ -237,8 +226,7 @@
         
               
   (when t
-    (let ((buffer-undo-list t))
-      (insert sdim-comp-str))
+    (insert sdim-comp-str)
     (move-overlay sdim-overlay (overlay-start sdim-overlay) (point)))
   (when (and (not input-method-use-echo-area)
              (null unread-command-events)
@@ -261,6 +249,7 @@
       (list key)
     (sdim-setup-overlays)
     (let ((modified-p (buffer-modified-p))
+          (buffer-undo-list t)
           (inhibit-modification-hooks t))
       (unwind-protect
           (sdim-start-translation key)

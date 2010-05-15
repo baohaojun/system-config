@@ -1,46 +1,10 @@
-#!/usr/bin/env perl
+#!/usr/bin/env python
 
-#beagle-grep.sh和my-beagle的辅助代码
+import sys
+import re
+reg_obj = re.compile('[^a-zA-Z_0-9]')
+tokens = []
+for arg in sys.argv[1:]:
+    tokens.extend(reg_obj.split(arg))
 
-#beagle分词是在StandardTokenizerImpl.java里实现的，这个文件又是从StandardTokenizerImpl.jflex生成的
-
-#分词的规则大概是这样的，abc_def为被中间的_分为两个词，但是abc_def1则会被认为是一个词，具体为什么要这样处理可以看代码
-#也可以执行一下我写的test-beagle.sh这个文件，后面加一些测试参数，看看分词会分成什么样子。比如：
-
-#test-beagle.sh __hello__worldx__12 __hello_world1_fuck3
-
-#执行的结果是这样的：
-
-# /tmp/11786.test-beagle/.beagle '12' 1
-# /tmp/11786.test-beagle/.beagle 'hello' 1
-# /tmp/11786.test-beagle/.beagle 'hello_world1_fuck3' 1
-# /tmp/11786.test-beagle/.beagle 'worldx' 1
-
-#这种情况下，我们要搜索 __hello_world1_fuck3 的话，不能直接整个交给beagle去搜，而是要把前面的__去掉，而 __hello__worldx__12
-#的话，就更复杂一点，要把它变成这样的参数交给beagle: hello,worldx,12
-
-for (@ARGV) {
-    $_ =~ s/\\./ /g;
-    $_ =~ s/\b[a-zA-Z0-9_]*?\.\*//g;
-    $_ =~ s/[^a-zA-Z0-9_]/_/g;
-    @tokens = (@tokens, split('[^a-zA-Z0-9_]', $_));
-}
-
-$max_token = (sort {length($a) <=> length($b)} @tokens)[-1];
-
-#去掉开头和结尾的_字符
-
-$max_token =~ s/^_+|_+$//g;
-
-while ($max_token =~ m/([a-zA-Z]+)_+([a-zA-Z]+)(?=_|\b)/) {
-    $max_token =~ s/([a-zA-Z]+)_+([a-zA-Z]+)(?=_|\b)/$1,$2/g;
-}
-
-$max_token =~ s/(\d.*?_+[a-zA-Z]+)(?=_|\b)/$1,/g;
-$max_token =~ s/__+/,/g;
-$max_token =~ s/,/ /g;
-print $max_token, "\n";
-
-
-
-# appended_comma = True 
+print max(tokens, key=len)

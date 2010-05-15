@@ -1,27 +1,8 @@
 #!/bin/bash
+sudo bash -c "(echo domain public-vpn.softether.com; 
+echo search public-vpn.softether.com; 
+echo nameserver 10.0.0.1) > /etc/resolv.conf"
 
-stop-vpn
-
-. start-vpn
-start_vpn_client
-
-cat ~/.vpn_old_route|awk '
-    (x++ < 2) {
-        next
-    };
-    index($4, "H"){
-        if (index($4, "G")) {
-            print "sudo route add", $1, "gw", $2
-
-        } else {
-            print "sudo route add", $1, "dev", $8
-        }
-        next
-    };
-    {
-        if (index($4, "G")) {
-            print "sudo route add -net", $1, "netmask", $3, "gw", $2
-        } else {
-            print "sudo route add -net", $1, "netmask", $3, "dev", $8 # this is a net
-        }
-    }'|perl -npe 's/^(.*)$/$1 || echo $1/' | sh 
+OLD_GW=`cat ~/.vpn_old_gw`
+for x in `cat ~/.vpn_old_dns`; do sudo route add $x gw $OLD_GW; done
+sudo route add -net 130.158.6.0/24 gw $OLD_GW #softether, for vpn itself
