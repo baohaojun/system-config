@@ -7,7 +7,7 @@ do
     then
         continue;
     fi
-    if test -e ~/$x -a "$(readlink -f ~/$x)" != ~/windows-config/$x; 
+    if test -e ~/$x -a "$(readlink -f ~/$x)" != "$(readlink -f ~/windows-config/$x)"; 
     then
         echo "Error: ~/$x already exist and it's not softlink to ~/windows-config/$x"
         exit -1
