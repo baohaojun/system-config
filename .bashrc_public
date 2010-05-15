@@ -70,4 +70,12 @@ function lookup_file()
     readlink -f "$file"
 }
 
+function git()
+{
+    if test `pwd` = ~
+    then
+        (cd ~/windows-config/; command git "$@")
+    fi            
+}
+
 stty -ixon -ixoff
