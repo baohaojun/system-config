@@ -1,0 +1,1217 @@
+<ui version="4.0" >
+ <author>D Bera &lt;dbera.web@gmail.com></author>
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>760</width>
+    <height>682</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Beagle Settings</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset>kerry.png</iconset>
+  </property>
+  <property name="sizeGripEnabled" >
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QTabWidget" name="TabWidget" >
+     <property name="currentIndex" >
+      <number>4</number>
+     </property>
+     <widget class="QWidget" name="GeneralTab" >
+      <attribute name="title" >
+       <string>General</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QCheckBox" name="AutoStartOption" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="toolTip" >
+          <string>Disabled until C# bindings for KDE is available</string>
+         </property>
+         <property name="text" >
+          <string>Start indexing service at startup</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="IndexHomeDirOption" >
+         <property name="text" >
+          <string>Index home directory</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="IndexOnBatteryOption" >
+         <property name="text" >
+          <string>Index on battery</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="IndexScreenSaverOption" >
+         <property name="text" >
+          <string>Index faster while screensaver is turned on</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="IndexingTab" >
+      <attribute name="title" >
+       <string>Indexing</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="title" >
+          <string>Additional paths to index</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QListWidget" name="RootsList" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="MinimumExpanding" hsizetype="Minimum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>500</width>
+              <height>80</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" >
+            <item>
+             <widget class="QPushButton" name="RootAddButton" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>75</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string>Add</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="RootRemoveButton" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>75</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string>Remove</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="title" >
+          <string>Directories to exclude</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QListWidget" name="ExcludeDirList" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="MinimumExpanding" hsizetype="Minimum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>500</width>
+              <height>80</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" >
+            <item>
+             <widget class="QPushButton" name="ExcludeDirAddButton" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>75</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string>Add</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="ExcludeDirRemoveButton" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>75</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string>Remove</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="QGroupBox" name="groupBox_10" >
+           <property name="title" >
+            <string>Filename patterns to exclude</string>
+           </property>
+           <layout class="QVBoxLayout" >
+            <item>
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="QLineEdit" name="PatternLineEdit" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="PatternAdd" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize" >
+                 <size>
+                  <width>30</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font" >
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text" >
+                 <string>+</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="PatternRemove" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize" >
+                 <size>
+                  <width>30</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font" >
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text" >
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QListWidget" name="PatternList" />
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_11" >
+           <property name="title" >
+            <string>Email folders to exclude</string>
+           </property>
+           <layout class="QVBoxLayout" >
+            <item>
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="QLineEdit" name="MailFolderLineEdit" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="MailFolderAdd" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize" >
+                 <size>
+                  <width>30</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font" >
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text" >
+                 <string>+</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="MailFolderRemove" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize" >
+                 <size>
+                  <width>30</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font" >
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text" >
+                 <string>-</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QListWidget" name="MailFolderList" />
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="BackendsTab" >
+      <property name="styleSheet" >
+       <string/>
+      </property>
+      <attribute name="title" >
+       <string>Backends</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="QCheckBox" name="filesBackend" >
+           <property name="text" >
+            <string>Files</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="locateBackend" >
+           <property name="text" >
+            <string>Supplement File backend results with matches from the 'locate' program</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3" >
+         <property name="title" >
+          <string>Email backends </string>
+         </property>
+         <property name="flat" >
+          <bool>true</bool>
+         </property>
+         <layout class="QHBoxLayout" >
+          <item>
+           <layout class="QHBoxLayout" >
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="kmailBackend" >
+              <property name="text" >
+               <string>KMail</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="evoBackend" >
+              <property name="text" >
+               <string>Evolution</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="tbirdBackend" >
+              <property name="text" >
+               <string>Thunderbird</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4" >
+         <property name="title" >
+          <string>IM backends </string>
+         </property>
+         <property name="flat" >
+          <bool>true</bool>
+         </property>
+         <layout class="QHBoxLayout" >
+          <item>
+           <layout class="QHBoxLayout" >
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="kopeteBackend" >
+              <property name="text" >
+               <string>Kopeta</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="konvBackend" >
+              <property name="text" >
+               <string>Konversation</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="pidginBackend" >
+              <property name="text" >
+               <string>Pidgin</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="empathyBackend" >
+              <property name="text" >
+               <string>Empathy</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_5" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title" >
+          <string>Browsing history and bookmark backends </string>
+         </property>
+         <property name="flat" >
+          <bool>true</bool>
+         </property>
+         <layout class="QHBoxLayout" >
+          <item>
+           <layout class="QHBoxLayout" >
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="konqBackend" >
+              <property name="text" >
+               <string>Konqueror</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="kBookmarkBackend" >
+              <property name="text" >
+               <string>Konqueror bookmark</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="ffBackend" >
+              <property name="text" >
+               <string>Firefox and Epiphany</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="operaBackend" >
+              <property name="text" >
+               <string>Opera</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_6" >
+         <property name="title" >
+          <string>PIM backends </string>
+         </property>
+         <property name="flat" >
+          <bool>true</bool>
+         </property>
+         <layout class="QHBoxLayout" >
+          <item>
+           <layout class="QHBoxLayout" >
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="korgBackend" >
+              <property name="text" >
+               <string>KOrganizer</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="knotesBackend" >
+              <property name="text" >
+               <string>KNotes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="kaddrbookBackend" >
+              <property name="text" >
+               <string>KAddressbook</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="tomboyBackend" >
+              <property name="text" >
+               <string>Tomboy</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="labyrinthBackend" >
+            <property name="text" >
+             <string>Labyrinth</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="edsBackend" >
+            <property name="text" >
+             <string>EvolutionDataServer</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_7" >
+         <property name="title" >
+          <string>RSS Reader backends </string>
+         </property>
+         <property name="flat" >
+          <bool>true</bool>
+         </property>
+         <layout class="QHBoxLayout" >
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="akregatorBackend" >
+            <property name="text" >
+             <string>Akregator (v1.2 or less)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="blamBackend" >
+            <property name="text" >
+             <string>Blam</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="lifereaBackend" >
+            <property name="text" >
+             <string>Liferea</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_8" >
+         <property name="title" >
+          <string>System backends </string>
+         </property>
+         <property name="flat" >
+          <bool>true</bool>
+         </property>
+         <layout class="QHBoxLayout" >
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="docBackend" >
+            <property name="text" >
+             <string>Documentation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="appBackend" >
+            <property name="text" >
+             <string>Application</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="manpagesBackend" >
+            <property name="text" >
+             <string>Manpages</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="monodocBackend" >
+            <property name="text" >
+             <string>Monodoc</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="NetworkingTab" >
+      <property name="enabled" >
+       <bool>true</bool>
+      </property>
+      <attribute name="title" >
+       <string>Networking</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QCheckBox" name="WebinterfaceOption" >
+         <property name="text" >
+          <string>Enable web interface to beagle search service</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="GoogleTab" >
+      <attribute name="title" >
+       <string>Google</string>
+      </attribute>
+      <attribute name="toolTip" >
+       <string>Settings for the Google backends</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QCheckBox" name="gmailLiveBackend" >
+         <property name="text" >
+          <string>Enable live GMail search</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_2" >
+           <property name="text" >
+            <string>Username</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <widget class="QLabel" name="label" >
+           <property name="text" >
+            <string>@gmail.com</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLineEdit" name="GoogleUsername" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_3" >
+           <property name="text" >
+            <string>Password</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QLineEdit" name="GooglePassword" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="echoMode" >
+            <enum>QLineEdit::PasswordEchoOnEdit</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QGroupBox" name="groupBox_9" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="title" >
+            <string/>
+           </property>
+           <property name="flat" >
+            <bool>true</bool>
+           </property>
+           <layout class="QHBoxLayout" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_4" >
+              <property name="text" >
+               <string>Stored in</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="OptionStorePasswordConf" >
+              <property name="text" >
+               <string>Plaintext in configuration file</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="OptionStorePasswordKWallet" >
+              <property name="text" >
+               <string>KDE Wallet</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="label_5" >
+           <property name="text" >
+            <string>IMAP folder to search</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QLineEdit" name="GMailSearchFolder" >
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="toolTip" >
+            <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">You can only search one IMAP folder. To search in all emails use &lt;span style=" font-weight:600;">[GMail]/All Mail&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="3" column="0" >
+          <widget class="QCheckBox" name="IsGoogleAppsAccount" >
+           <property name="text" >
+            <string>Google Apps domain</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" >
+          <widget class="QLineEdit" name="GoogleAppsAccountName" >
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>720</width>
+           <height>182</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>702</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="OkButton" >
+       <property name="text" >
+        <string>OK</string>
+       </property>
+       <property name="autoDefault" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="CancelButton" >
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+       <property name="autoDefault" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>TabWidget</tabstop>
+  <tabstop>AutoStartOption</tabstop>
+  <tabstop>IndexHomeDirOption</tabstop>
+  <tabstop>IndexOnBatteryOption</tabstop>
+  <tabstop>IndexScreenSaverOption</tabstop>
+  <tabstop>RootAddButton</tabstop>
+  <tabstop>RootsList</tabstop>
+  <tabstop>RootRemoveButton</tabstop>
+  <tabstop>ExcludeDirAddButton</tabstop>
+  <tabstop>ExcludeDirList</tabstop>
+  <tabstop>ExcludeDirRemoveButton</tabstop>
+  <tabstop>PatternLineEdit</tabstop>
+  <tabstop>PatternAdd</tabstop>
+  <tabstop>PatternRemove</tabstop>
+  <tabstop>PatternList</tabstop>
+  <tabstop>MailFolderLineEdit</tabstop>
+  <tabstop>MailFolderAdd</tabstop>
+  <tabstop>MailFolderRemove</tabstop>
+  <tabstop>MailFolderList</tabstop>
+  <tabstop>filesBackend</tabstop>
+  <tabstop>locateBackend</tabstop>
+  <tabstop>kmailBackend</tabstop>
+  <tabstop>evoBackend</tabstop>
+  <tabstop>tbirdBackend</tabstop>
+  <tabstop>kopeteBackend</tabstop>
+  <tabstop>konvBackend</tabstop>
+  <tabstop>pidginBackend</tabstop>
+  <tabstop>empathyBackend</tabstop>
+  <tabstop>konqBackend</tabstop>
+  <tabstop>kBookmarkBackend</tabstop>
+  <tabstop>ffBackend</tabstop>
+  <tabstop>operaBackend</tabstop>
+  <tabstop>korgBackend</tabstop>
+  <tabstop>knotesBackend</tabstop>
+  <tabstop>kaddrbookBackend</tabstop>
+  <tabstop>tomboyBackend</tabstop>
+  <tabstop>labyrinthBackend</tabstop>
+  <tabstop>edsBackend</tabstop>
+  <tabstop>akregatorBackend</tabstop>
+  <tabstop>blamBackend</tabstop>
+  <tabstop>lifereaBackend</tabstop>
+  <tabstop>docBackend</tabstop>
+  <tabstop>appBackend</tabstop>
+  <tabstop>manpagesBackend</tabstop>
+  <tabstop>monodocBackend</tabstop>
+  <tabstop>WebinterfaceOption</tabstop>
+  <tabstop>gmailLiveBackend</tabstop>
+  <tabstop>GoogleUsername</tabstop>
+  <tabstop>GooglePassword</tabstop>
+  <tabstop>OptionStorePasswordConf</tabstop>
+  <tabstop>OptionStorePasswordKWallet</tabstop>
+  <tabstop>GMailSearchFolder</tabstop>
+  <tabstop>OkButton</tabstop>
+  <tabstop>CancelButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+ <designerdata>
+  <property name="gridDeltaX" >
+   <number>10</number>
+  </property>
+  <property name="gridDeltaY" >
+   <number>10</number>
+  </property>
+  <property name="gridSnapX" >
+   <bool>false</bool>
+  </property>
+  <property name="gridSnapY" >
+   <bool>false</bool>
+  </property>
+  <property name="gridVisible" >
+   <bool>true</bool>
+  </property>
+ </designerdata>
+</ui>

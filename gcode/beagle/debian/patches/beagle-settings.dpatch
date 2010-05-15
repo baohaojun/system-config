@@ -1,0 +1,33 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## beagle-settings.dpatch by Jose Carlos Garcia Sogo <jsogo@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad beagle-0.2.18~/tools/beagle-settings.desktop.in beagle-0.2.18/tools/beagle-settings.desktop.in
+--- beagle-0.2.18~/tools/beagle-settings.desktop.in	2007-08-27 19:55:44.000000000 +0200
++++ beagle-0.2.18/tools/beagle-settings.desktop.in	2007-09-16 01:18:13.000000000 +0200
+@@ -6,7 +6,8 @@
+ Exec=beagle-settings
+ Icon=system-search
+ Type=Application
+-Categories=Application;Settings;AdvancedSettings;Utility;Filesystem;X-Ximian-Settings;
++StartupNotify=true
++Categories=Application;Settings;AdvancedSettings;Filesystem;X-Ximian-Settings;
+ X-GNOME-Bugzilla-Bugzilla=GNOME
+ X-GNOME-Bugzilla-Product=beagle
+ X-GNOME-Bugzilla-Component=General
+diff -urNad beagle-0.2.18~/tools/beagle-settings.desktop.in.in beagle-0.2.18/tools/beagle-settings.desktop.in.in
+--- beagle-0.2.18~/tools/beagle-settings.desktop.in.in	2007-02-07 20:04:11.000000000 +0100
++++ beagle-0.2.18/tools/beagle-settings.desktop.in.in	2007-09-16 01:19:28.000000000 +0200
+@@ -6,7 +6,8 @@
+ Exec=beagle-settings
+ Icon=system-search
+ Type=Application
+-Categories=Application;Settings;AdvancedSettings;Utility;Filesystem;X-Ximian-Settings;
++StartupNotify=true
++Categories=Application;Settings;AdvancedSettings;Filesystem;X-Ximian-Settings;
+ X-GNOME-Bugzilla-Bugzilla=GNOME
+ X-GNOME-Bugzilla-Product=beagle
+ X-GNOME-Bugzilla-Component=General

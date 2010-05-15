@@ -1,0 +1,23 @@
+1. About this package:
+
+This is fcitx ported to scim by baohaojun,
+<baohaojun@yahoo.com>. fcitx's author is yuking. scim's author is
+suzhe.
+
+The ported fcitx is based on original fcitx version 3.1.1, while
+scim's version is 1.2.0(higher versions should also be ok, unless
+specified otherwise).
+
+2. Prerequisitions
+
+Currently this package doesn't has binary distro files yet, so you
+must compile from source. you must have the scim and scim-dev
+installed to compile this package.
+
+3. Compilation & Installation
+
+if you checked out the code from cvs, then you should run
+$(top_srcdir)/bootstrap first. if you have problems running it, make
+sure you have automake-1.7.
+
+then do the "./configure && make && make install" triple.

@@ -1,0 +1,110 @@
+#!/bin/bash
+#
+# blocate
+# 
+# Copyright (C) 2008 Nirbheek Chauhan <nirbheek.chauhan@gmail.com>
+#
+
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+
+
+# Get the config directory
+if [ -n "${BEAGLE_HOME}" ]; then
+	CONFDIR="${BEAGLE_HOME}/.beagle/config"
+elif [ -n "${BEAGLE_STORAGE}" ]; then
+	CONFDIR="${BEAGLE_STORAGE}/config"
+elif [ -n "${BEAGLE_CONF_DIR}" ]; then
+	CONFDIR="${BEAGLE_CONF_DIR}"
+else
+	CONFDIR="/etc/beagle"
+fi
+
+CONFFILE="${CONFDIR}/blocate.conf"
+
+if ! [ -e "${CONFFILE}" ]; then
+	echo "Error: config file \"${CONFFILE}\" does not exist"
+	exit 1
+fi
+
+# Read config settings
+source "${CONFFILE}"
+
+print_help() {
+	# Use here-documents for great justice.
+	cat <<-DELIM
+		blocate: Special locate powered by Beagle
+		Web page: http://www.beagle-project.org/
+		Usage: blocate [OPTIONS] <query string>
+
+		Options:
+		  -d, --database NAME	    query backend given by NAME instead of default
+		  -d, --database PATH	    query backend given by PATH instead of default
+		  			    Both of the above options can be repeated.
+					    If they are specified then the default backends are ignored.
+					    Default backends are specified in ~/.beagle/config/blocate.conf or /etc/beagle/blocate.conf
+	DELIM
+}
+
+# While we still have arguments..
+while [ -n "${1}" ]; do
+	# Take one in; shift
+	arg=${1}; shift
+	if [[ "${arg}" == "-h" || "${arg}" == "--help" ]]; then
+		print_help
+		exit
+	elif [[ "${arg}" == "-d" || "${arg}" == "--database" ]]; then 
+		# Take in it's value; shift
+		argvalue=${1}; shift
+		# Ignore config file
+		ignore_config="true"
+		if [[ "${argvalue}" =~ "/" ]]; then
+			# If the dir is not an absolute path
+			if [ -n "${argvalue%%/*}" ]; then
+				echo "Error: \"${argvalue}\" - relative paths not allowed"
+				exit 1
+			else
+				# If absolute path and DNE
+				if ! [ -d "${argvalue}" ]; then
+					echo "Error: directory \"${argvalue}\" does not exist"
+					exit 1
+				fi
+			fi
+			arg="--add-static-backend ${argvalue}"
+		else
+			arg="--backend ${argvalue}"
+		fi
+	fi
+	OPTS=("${OPTS[@]}" "${arg}")
+done
+
+# If you give -d, --database as args, the entire config is ignored
+if [ "$ignore_config" != "true" ]; then
+	for i in ${STATIC_INDEXES}; do
+		OPTS=("${OPTS[@]}" "--add-static-backend" "${i}")
+	done
+	for i in ${BACKENDS}; do
+		OPTS=("${OPTS[@]}" "--backend" "${i}")
+	done
+fi
+
+# We add "--backend none" else it'll query all backends if there are no --backend params
+beagle-static-query ${OPTS[@]} --backend none
+

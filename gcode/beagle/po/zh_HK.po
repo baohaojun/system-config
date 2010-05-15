@@ -1,0 +1,1819 @@
+# Chinese (Hong Kong) translation of beagle.
+# Copyright (C) 2001, 03, 2004 Free Software Foundation, Inc.
+# Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>, 2005.
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle 0.3.8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-09-28 21:44+0800\n"
+"PO-Revision-Date: 2008-09-28 21:45+0800\n"
+"Last-Translator: Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>\n"
+"Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>交涉紀錄</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "IM 檢視器"
+
+#: ../ImLogViewer/ImLogWindow.cs:108 ../ImLogViewer/ImLogWindow.cs:120
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "於 {0} 交涉"
+
+#: ../ImLogViewer/ImLogWindow.cs:111
+#, csharp-format
+msgid "Conversations in {0} ({1})"
+msgstr "在 {0} 裏的談話 ({1})"
+
+#: ../ImLogViewer/ImLogWindow.cs:127
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "與 {0} 交涉"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "在這個電腦"
+
+#: ../Util/StringFu.cs:125 ../search/Beagle.Search.Tiles/Utils.cs:134
+#: ../search/Beagle.Search.Tiles/Utils.cs:216
+msgid "Today"
+msgstr "今天"
+
+#: ../Util/StringFu.cs:127 ../search/Beagle.Search.Tiles/Utils.cs:132
+#: ../search/Beagle.Search.Tiles/Utils.cs:214
+msgid "Yesterday"
+msgstr "昨天"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:130
+msgid "MMM d"
+msgstr "MMM d"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:133
+msgid "MMM d, yyyy"
+msgstr "MMM d, yyyy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:136
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:142
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:159
+#, csharp-format
+msgid "Today, {0}"
+msgstr "今天, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:162
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "昨天, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:167
+#, csharp-format
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "{0} 日前，{1}"
+msgstr[1] "{0} 天前，{1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:173
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:178
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "MMMM d yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:188
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} 小時"
+msgstr[1] "{0} 小時"
+
+#: ../Util/StringFu.cs:195
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} 分"
+msgstr[1] "{0} 分"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:229
+#, csharp-format
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} 位元組"
+msgstr[1] "{0} 位元組"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:233
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:236
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+
+#: ../epiphany-extension/beagle.py.in:167
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "beagle 正在製作 %s 的索引"
+
+#: ../epiphany-extension/beagle.py.in:187
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "beagle 正在製作連結 %s 的索引"
+
+#: ../epiphany-extension/beagle.py.in:232
+msgid "Index This Page"
+msgstr "索引這個頁面"
+
+#: ../epiphany-extension/beagle.py.in:239
+msgid "Index Link"
+msgstr "索引連結"
+
+#: ../epiphany-extension/beagle.py.in:246
+msgid "Reload Config File"
+msgstr "重新載入設定檔案"
+
+#: ../epiphany-extension/beagle.py.in:255
+msgid "Auto Index"
+msgstr "自動索引"
+
+#: ../epiphany-extension/beagle.py.in:262
+msgid "Prompt key words when index on demand"
+msgstr "要求索引時提示關鍵字"
+
+#: ../epiphany-extension/beagle.py.in:289
+msgid "Extra keywords to index"
+msgstr "要索引的特別關鍵字"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:27
+msgid "Index Information"
+msgstr "索引資訊"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:30
+msgid "Number of items currently indexed:"
+msgstr "目前索引項目的數量："
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:45
+msgid "<i>NOTE: The search service is still indexing new data.</i>"
+msgstr "<i>注意：搜尋服務仍然在索引新的資料中。</i>"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "找不到符合的結果。"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:21
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr "在你的電腦上沒有任何符合「{0}」搜尋的檔案。"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:24
+msgid "You can select \"Find in: All\" to search everywhere."
+msgstr "你可以選擇「尋找於：全部」來搜尋每個地方。"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr "你應該檢查搜尋文字的拼字以確定是否不小心拼錯了任何字。"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:28
+msgid ""
+"If you are searching for GMail emails, select \"Global\" Search Domain using "
+"the \"Search\" menu."
+msgstr "如果要搜尋 GMail 郵件，請使用「搜尋」選單來選擇「全域」搜尋網域。"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr "你可以使用大寫及小寫字母；搜尋是不區分大小寫的。"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr "要搜尋額外的條件，使用 OR。例如：<b>George OR Ringo</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr "要排除搜尋條件，請在前面加上減號，像是 <b>-cats</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr "在搜尋一段語詞時，加上引號。例如：<b>\"There be dragons\"</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:14
+msgid ""
+"Specify the extension to search among files with that extension. ex: <b>bean "
+"soup .html</b>"
+msgstr "指定要搜尋檔案的延伸檔名。例如：<b>bean soup .html</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:20
+#: ../search/Beagle.Search/UIManager.cs:106
+msgid "Quick Tips"
+msgstr "快速密訣"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "Beagle 不能以 root 身分執行"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:14
+msgid ""
+"For security reasons, Beagle cannot be run as root. You should restart as a "
+"regular user."
+msgstr "基於安全性的理由，Beagle 不能以 root 身分執行。你應該以一般使用者身分重新開始。"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:17
+msgid "Search service not running"
+msgstr "搜尋服務並未執行"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:19
+msgid ""
+"The search service does not appear to be running. You can start it by "
+"clicking the button below."
+msgstr "搜尋服務似乎尚未執行。你可以按下列按鈕來啟動它。"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:22
+msgid "Start search service"
+msgstr "啟動搜尋服務"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr "位於壓縮檔 {0} 中"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/File.cs:164
+msgid "File:"
+msgstr "檔案:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:81
+#: ../search/Beagle.Search.Tiles/Calendar.cs:44
+#: ../search/Beagle.Search.Tiles/File.cs:168
+#: ../search/Beagle.Search.Tiles/Note.cs:70
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
+#: ../search/Beagle.Search.Tiles/Task.cs:41
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:59
+msgid "Title:"
+msgstr "標題:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:83
+msgid "Inside File:"
+msgstr "在檔案中:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:86
+#: ../search/Beagle.Search.Tiles/File.cs:173
+msgid "Author:"
+msgstr "作者:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:44
+msgid "Description:"
+msgstr "描述:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "時刻:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:61
+msgid "Location:"
+msgstr "位置:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:65
+msgid "Attendees:"
+msgstr "到會者:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "傳送郵件"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "電子郵件:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:70
+msgid "Mobile Phone:"
+msgstr "流動電話:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:72
+msgid "Work Phone:"
+msgstr "公司電話:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:74
+msgid "Home Phone:"
+msgstr "家庭電話:"
+
+#: ../search/Beagle.Search.Tiles/File.cs:35
+msgid "Reveal in Folder"
+msgstr "在資料夾中顯示"
+
+#: ../search/Beagle.Search.Tiles/File.cs:36
+msgid "E-Mail"
+msgstr "電子郵件"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Beagle.Search.Tiles/File.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "移至垃圾桶"
+
+#: ../search/Beagle.Search.Tiles/File.cs:41
+msgid "Find Documents From Same Author"
+msgstr "尋找同一作者的文件"
+
+#: ../search/Beagle.Search.Tiles/File.cs:170
+#: ../search/Beagle.Search.Tiles/Folder.cs:51
+#: ../search/Beagle.Search.Tiles/Note.cs:71
+msgid "Last Edited:"
+msgstr "上次編輯的:"
+
+#: ../search/Beagle.Search.Tiles/File.cs:175
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Image.cs:87
+#: ../search/Beagle.Search.Tiles/Video.cs:45
+msgid "Full Path:"
+msgstr "完整路徑:"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:31
+msgid "Empty"
+msgstr "空的"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:33
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "包含 {0} 個項目"
+msgstr[1] "包含 {0} 個項目"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:30
+msgid "IM Conversation"
+msgstr "IM 對話"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
+msgid "Name:"
+msgstr "名稱:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:100
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Received:"
+msgstr "收到的資料:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:104
+msgid "Status:"
+msgstr "狀態:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:119
+msgid "Idle"
+msgstr "閒置"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:126
+msgid "Away"
+msgstr "離開"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:129
+msgid "Offline"
+msgstr "離線"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:132
+msgid "Available"
+msgstr "可用"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Beagle.Search.Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "設定為桌布"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:84
+#: ../search/Beagle.Search.Tiles/Note.cs:75
+msgid "Tags:"
+msgstr "標籤:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:86
+#: ../search/Beagle.Search.Tiles/Video.cs:44
+msgid "Modified:"
+msgstr "已修改:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:96
+msgid "Comment:"
+msgstr "註解："
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:45
+msgid "Mail attachment"
+msgstr "郵件附加檔案"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:48
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:70
+msgid "Find Messages From Sender"
+msgstr "以寄件者尋找郵件"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:58
+msgid "(untitled)"
+msgstr "(未命名)"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:68
+msgid "Send in Mail"
+msgstr "傳送至郵件"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:103
+msgid "Subject:"
+msgstr "主旨:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "To:"
+msgstr "收件者:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "From:"
+msgstr "寄件者:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Sent:"
+msgstr "傳送日期:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:114
+msgid "Folder:"
+msgstr "資料夾:"
+
+#: ../search/Beagle.Search.Tiles/Manpage.cs:56
+msgid "Manual page"
+msgstr "手冊頁"
+
+#: ../search/Beagle.Search.Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "以此開啟"
+
+#: ../search/Beagle.Search.Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} 片"
+msgstr[1] "{0} 片"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
+msgid "Site:"
+msgstr "站台:"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:61
+msgid "Date Viewed:"
+msgstr "檢視的日期:"
+
+#: ../search/Beagle.Search.Tiles/Task.cs:47
+msgid "Date:"
+msgstr "日期:"
+
+#: ../search/Beagle.Search.Tiles/TextDocument.cs:38
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} 頁"
+msgstr[1] "{0} 頁"
+
+#. Add the default 'Open' menu item
+#: ../search/Beagle.Search.Tiles/Tile.cs:100
+msgid "Open"
+msgstr "開啟"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:25
+#: ../search/Beagle.Search/SearchWindow.cs:83
+msgid "Applications"
+msgstr "應用程式"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:27
+#: ../search/Beagle.Search/SearchWindow.cs:93
+msgid "Contacts"
+msgstr "聯絡人"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:29
+#: ../search/Beagle.Search/SearchWindow.cs:95
+msgid "Calendar Events"
+msgstr "行事曆事件"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:31
+msgid "Folders"
+msgstr "資料夾"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:33
+msgid "Images"
+msgstr "圖片"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:35
+msgid "Audio"
+msgstr "音訊"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:37
+msgid "Video"
+msgstr "視像"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:39
+#: ../search/Beagle.Search/SearchWindow.cs:84
+msgid "Documents"
+msgstr "文件"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:41
+msgid "Conversations"
+msgstr "交談"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:43
+#: ../search/Beagle.Search/SearchWindow.cs:91
+msgid "Websites"
+msgstr "網站"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:45
+#: ../search/Beagle.Search/SearchWindow.cs:90
+msgid "News Feeds"
+msgstr "新聞餵信"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:47
+#: ../search/Beagle.Search/SearchWindow.cs:88
+msgid "Archives"
+msgstr "檔案庫"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:136
+#: ../search/Beagle.Search.Tiles/Utils.cs:218
+msgid "Tomorrow"
+msgstr "明天"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:234
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "{0} 週前"
+msgstr[1] "{0} 週前"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:236
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "{0} 週內"
+msgstr[1] "{0} 週內"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Beagle.Search.Tiles/Utils.cs:238
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "{0} 個月前"
+msgstr[1] "{0} 個月前"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:240
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "{0} 月內"
+msgstr[1] "{0} 月內"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:242
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "{0} 年前"
+msgstr[1] "{0} 年前"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:244
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "{0} 年內"
+msgstr[1] "{0} 年內"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:60
+msgid "URL:"
+msgstr "網址:"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:61
+msgid "Accessed:"
+msgstr "存取的:"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
+#: ../search/Beagle.Search/SearchWindow.cs:117
+msgid "Desktop Search"
+msgstr "桌面搜尋"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
+msgid "No Recent Searches"
+msgstr "沒有最近的搜尋"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
+msgid "Recent Searches"
+msgstr "最近的搜尋"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
+msgid "Clear"
+msgstr "清除"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
+msgid "Quit"
+msgstr "離開"
+
+#: ../search/Beagle.Search/Category.cs:142
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} 個結果"
+msgstr[1] "{0} 個結果"
+
+#: ../search/Beagle.Search/Category.cs:144
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} 於 {2}"
+
+#: ../search/Beagle.Search/Driver.cs:135
+msgid "Session D-Bus not accessible"
+msgstr "無法存取作業階段 D-Bus"
+
+#: ../search/Beagle.Search/Driver.cs:136
+msgid ""
+"Cannot run with parameter '--icon' when session D-Bus is not accessible."
+msgstr "當無法存取作業階段 D-Bus 時不能用引數「--icon」執行。"
+
+#: ../search/Beagle.Search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "隱藏"
+
+#. Translators: This labels are used in a combo-box to allow
+#. * the user to select which kind of data he wants to search.
+#.
+#: ../search/Beagle.Search/SearchWindow.cs:81
+msgid "All"
+msgstr "全部"
+
+#. Default search scope. Should be at the first
+#: ../search/Beagle.Search/SearchWindow.cs:82
+msgid "My Files"
+msgstr "我的檔案"
+
+#: ../search/Beagle.Search/SearchWindow.cs:85
+msgid "Pictures"
+msgstr "圖片"
+
+#: ../search/Beagle.Search/SearchWindow.cs:86
+msgid "Media"
+msgstr "媒體"
+
+#: ../search/Beagle.Search/SearchWindow.cs:87
+msgid "Source Code"
+msgstr "原始碼"
+
+#: ../search/Beagle.Search/SearchWindow.cs:89
+msgid "Emails"
+msgstr "電子郵件"
+
+#: ../search/Beagle.Search/SearchWindow.cs:92
+msgid "Chat Logs"
+msgstr "聊天紀錄檔"
+
+#: ../search/Beagle.Search/SearchWindow.cs:94
+msgid "Notes"
+msgstr "備註"
+
+#: ../search/Beagle.Search/SearchWindow.cs:138
+msgid "_Find in:"
+msgstr "尋找於(_F):"
+
+#: ../search/Beagle.Search/SearchWindow.cs:175
+msgid "Find Now"
+msgstr "立即尋找"
+
+#: ../search/Beagle.Search/SearchWindow.cs:237
+msgid "Type in search terms"
+msgstr "輸入搜尋條件"
+
+#: ../search/Beagle.Search/SearchWindow.cs:238
+msgid "Start searching"
+msgstr "開始搜尋"
+
+#: ../search/Beagle.Search/SearchWindow.cs:254
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "桌面搜尋：{0}"
+
+#: ../search/Beagle.Search/SearchWindow.cs:485
+msgid "There are computers near you running Beagle"
+msgstr "在你附近有執行 Beagle 的電腦"
+
+#: ../search/Beagle.Search/SearchWindow.cs:486
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr "你可以從「搜尋」選單選擇搜尋其他的電腦。"
+
+#: ../search/Beagle.Search/SearchWindow.cs:518
+msgid "Search service started"
+msgstr "搜尋服務已啟動"
+
+#: ../search/Beagle.Search/SearchWindow.cs:529
+msgid "Starting service failed"
+msgstr "啟動服務失敗"
+
+#: ../search/Beagle.Search/SearchWindow.cs:530
+msgid "Service is already running!"
+msgstr "服務已經在執行！"
+
+#: ../search/Beagle.Search/SearchWindow.cs:545
+msgid "Stopping service failed"
+msgstr "停止服務失敗"
+
+#: ../search/Beagle.Search/SearchWindow.cs:546
+msgid "Service was not running!"
+msgstr "服務並未執行！"
+
+#: ../search/Beagle.Search/SearchWindow.cs:560
+msgid "Search service stopped"
+msgstr "搜尋服務已停止"
+
+#: ../search/Beagle.Search/SearchWindow.cs:599
+msgid "Your data is being indexed"
+msgstr "你的資料已經做好索引"
+
+#: ../search/Beagle.Search/SearchWindow.cs:600
+msgid ""
+"The search service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr "搜尋服務正在為你的資料製作索引。在索引製作完成前搜尋的結果可能會不完整。"
+
+#: ../search/Beagle.Search/SearchWindow.cs:626
+#, csharp-format
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "顯示 {0} 個符合項"
+msgstr[1] "顯示所有 {0} 個符合項"
+
+#: ../search/Beagle.Search/SearchWindow.cs:628
+#, csharp-format
+msgid "Too many matches. Showing latest {0} of total {1}"
+msgstr "有太多符合項。顯示全部 {1} 項中的最後 {0} 項"
+
+#: ../search/Beagle.Search/UIManager.cs:53
+msgid "Close Desktop Search"
+msgstr "關閉桌面搜尋"
+
+#: ../search/Beagle.Search/UIManager.cs:58
+#: ../search/Beagle.Search/UIManager.cs:85
+msgid "Exit Desktop Search"
+msgstr "離開桌面搜尋工具"
+
+#: ../search/Beagle.Search/UIManager.cs:65
+msgid "_Search"
+msgstr "搜尋(_S)"
+
+#: ../search/Beagle.Search/UIManager.cs:68
+msgid "Search _Domains"
+msgstr "搜尋網域(_D)"
+
+#: ../search/Beagle.Search/UIManager.cs:71
+msgid "_Actions"
+msgstr "動作(_A)"
+
+#: ../search/Beagle.Search/UIManager.cs:74
+msgid "_View"
+msgstr "檢視(_V)"
+
+#: ../search/Beagle.Search/UIManager.cs:77
+msgid "Service _Options"
+msgstr "服務選項(_O)"
+
+#: ../search/Beagle.Search/UIManager.cs:80
+msgid "_Help"
+msgstr "求助(_H)"
+
+#: ../search/Beagle.Search/UIManager.cs:88
+msgid "Start service"
+msgstr "啟動服務"
+
+#: ../search/Beagle.Search/UIManager.cs:91
+msgid "Stop service"
+msgstr "停止服務"
+
+#: ../search/Beagle.Search/UIManager.cs:94
+msgid "Index information"
+msgstr "索引資訊"
+
+#: ../search/Beagle.Search/UIManager.cs:97
+msgid "_Contents"
+msgstr "內容(_C)"
+
+#: ../search/Beagle.Search/UIManager.cs:99
+msgid "Help - Table of Contents"
+msgstr "求助—目錄"
+
+#: ../search/Beagle.Search/UIManager.cs:103
+msgid "About Desktop Search"
+msgstr "關於桌面搜尋"
+
+#: ../search/Beagle.Search/UIManager.cs:125
+msgid "Sort by Date _Modified"
+msgstr "根據修改的日期(_M)排序"
+
+#: ../search/Beagle.Search/UIManager.cs:126
+msgid "Sort the most-recently-modified matches first"
+msgstr "先排序最近修改的符合項目"
+
+#: ../search/Beagle.Search/UIManager.cs:129
+msgid "Sort by _Name"
+msgstr "根據名稱排序(_N)"
+
+#: ../search/Beagle.Search/UIManager.cs:130
+msgid "Sort matches by name"
+msgstr "根據名稱排序比對結果"
+
+#: ../search/Beagle.Search/UIManager.cs:133
+msgid "Sort by _Relevance"
+msgstr "根據相關性排序(_R)"
+
+#: ../search/Beagle.Search/UIManager.cs:134
+msgid "Sort the best matches first"
+msgstr "先排序最符合的項目"
+
+#: ../search/Beagle.Search/UIManager.cs:141
+msgid "_Local"
+msgstr "本地端(_L)"
+
+#: ../search/Beagle.Search/UIManager.cs:143
+msgid "Search in personal data in this computer"
+msgstr "搜尋在這台電腦中的個人資料"
+
+#: ../search/Beagle.Search/UIManager.cs:147
+msgid "_System"
+msgstr "系統(_S)"
+
+#: ../search/Beagle.Search/UIManager.cs:149
+msgid "Search in system data on this computer"
+msgstr "搜尋在這台電腦上的系統資料"
+
+#: ../search/Beagle.Search/UIManager.cs:153
+msgid "_Global"
+msgstr "全域(_G)"
+
+#: ../search/Beagle.Search/UIManager.cs:155
+msgid "Search in internet services"
+msgstr "在互聯網服務中搜尋"
+
+#: ../search/Beagle.Search/UIManager.cs:159
+msgid "_Neighborhood"
+msgstr "鄰近地區(_N)"
+
+#: ../search/Beagle.Search/UIManager.cs:161
+msgid "Search on computers near me"
+msgstr "搜尋在我附近的電腦"
+
+#: ../search/Beagle.Search/UIManager.cs:169
+msgid "Show Details"
+msgstr "顯示更多訊息"
+
+#: ../search/Beagle.Search/UIManager.cs:276
+msgid "Couldn't launch web browser"
+msgstr "無法啟動網頁瀏覽器"
+
+#: ../search/beagle-search.desktop.in.in.h:1
+msgid "Search"
+msgstr "搜尋"
+
+#: ../search/beagle-search.desktop.in.in.h:2
+msgid "Search for data on your desktop"
+msgstr "搜尋桌面上的資料"
+
+#: ../tools/Settings.cs:57
+msgid "An error occurred"
+msgstr "發生錯誤"
+
+#: ../tools/Settings.cs:233 ../tools/Settings.cs:711
+#, csharp-format
+msgid "Display the search window by pressing {0}"
+msgstr "按下 {0} 顯示搜尋視窗要"
+
+#: ../tools/Settings.cs:363
+msgid "Reload configuration"
+msgstr "重新載入組態"
+
+#: ../tools/Settings.cs:364
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr "該組態檔案已經被其他的應用程式修改。你是否希望放棄目前顯示的數值並從磁碟重新載入組態？"
+
+#: ../tools/Settings.cs:498
+msgid "Select Path"
+msgstr "選擇路徑"
+
+#: ../tools/Settings.cs:517
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "該選擇的路徑已經被選為索引之用故不會被加入。"
+
+#: ../tools/Settings.cs:520
+msgid ""
+"The selected path wasn't added. The list contains items that supersedes it "
+"and the data is already being indexed."
+msgstr "該選擇的路徑不會被加入。在清單中已包含可代替它的項目且該資料也已經進入索引中。"
+
+#: ../tools/Settings.cs:531
+msgid "Path not added"
+msgstr "路徑沒有加入"
+
+#: ../tools/Settings.cs:540
+msgid "Remove obsolete paths"
+msgstr "移除過時的路徑"
+
+#: ../tools/Settings.cs:541
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr "加入此路徑將會廢棄某些已包含的既存路徑。此舉會致使過時的路徑被移除。你仍然希望加入它嗎？"
+
+#: ../tools/Settings.cs:567
+msgid "Remove path"
+msgstr "移除路徑"
+
+#: ../tools/Settings.cs:568
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr "你確定要從此做為索引之用的目錄清單中移除此路徑？"
+
+#: ../tools/Settings.cs:597
+msgid "Remove item"
+msgstr "移除項目"
+
+#: ../tools/Settings.cs:598
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr "你確定要從此做為索引之用的目錄清單中移除此項目？"
+
+#: ../tools/Settings.cs:645
+msgid "Remote host already present in the list."
+msgstr "遠端主機已顯示在清單中。"
+
+#: ../tools/Settings.cs:655
+msgid "Remote beagle host not added"
+msgstr "尚未加入遠端 beagle 主機"
+
+#: ../tools/Settings.cs:670
+msgid "Remove host"
+msgstr "移除主機"
+
+#: ../tools/Settings.cs:671
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "你確定要從此清單中移除此主機？"
+
+#: ../tools/Settings.cs:774 ../tools/Settings.cs:863 ../tools/Settings.cs:944
+#: ../tools/Settings.cs:1049 ../tools/Settings.cs:1771
+msgid "Name"
+msgstr "名稱"
+
+#: ../tools/Settings.cs:857
+msgid "Type"
+msgstr "類型"
+
+#: ../tools/Settings.cs:910
+msgid "Path:"
+msgstr "路徑:"
+
+#: ../tools/Settings.cs:913
+msgid "Pattern:"
+msgstr "樣式:"
+
+#: ../tools/Settings.cs:916
+msgid "Mail folder:"
+msgstr "郵件資料夾:"
+
+#: ../tools/Settings.cs:951
+msgid "Address"
+msgstr "地址"
+
+#: ../tools/Settings.cs:1296
+msgid "Select Folder"
+msgstr "選擇資料夾"
+
+#: ../tools/Settings.cs:1322 ../tools/settings.glade.h:36
+msgid "P_ath:"
+msgstr "路徑(_A):"
+
+#: ../tools/Settings.cs:1327
+msgid "M_ail folder:"
+msgstr "郵件資料夾(_A):"
+
+#: ../tools/Settings.cs:1332
+msgid "P_attern:"
+msgstr "樣式(_A):"
+
+#: ../tools/Settings.cs:1356
+msgid "Error adding path"
+msgstr "加入路徑錯誤"
+
+#: ../tools/Settings.cs:1357
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr "找不到指定的路徑因此無法將它加入到排除在索引之外的資源清單中。"
+
+#: ../tools/Settings.cs:1395
+#, csharp-format
+msgid "Connecting to {0}"
+msgstr "連線到 {0}"
+
+#: ../tools/Settings.cs:1731
+msgid "Evolution's mail."
+msgstr "Evolution 郵件。"
+
+#: ../tools/Settings.cs:1732
+msgid "Evolution's address book, memos and tasks."
+msgstr "Evolution 的通訊錄、備忘錄和工作。"
+
+#: ../tools/Settings.cs:1733
+msgid "Thunderbird's email."
+msgstr "Thunderbird 的電子郵件。"
+
+#: ../tools/Settings.cs:1734
+msgid "RSS feeds from Akregator."
+msgstr "Akregator 的 RSS 餵送。"
+
+#: ../tools/Settings.cs:1735
+msgid "RSS feeds from Blam."
+msgstr "Blam 的 RSS 餵送。"
+
+#: ../tools/Settings.cs:1736
+msgid "Files and folders on the local file system."
+msgstr "在本地端檔案系統中的檔案和資料夾。"
+
+#: ../tools/Settings.cs:1737
+msgid "Mail messages from KMail."
+msgstr "KMail 的郵件訊息。"
+
+#: ../tools/Settings.cs:1738
+msgid "Notes from KNotes."
+msgstr "KNotes 的筆記。"
+
+#: ../tools/Settings.cs:1739
+msgid "Agenda from KOrganizer."
+msgstr "KOrganizer 的行事曆。"
+
+#: ../tools/Settings.cs:1740
+msgid "Contacts from KAddressBook."
+msgstr "KAddressBook 的聯絡人。"
+
+#: ../tools/Settings.cs:1741
+msgid "Konqueror's bookmarks."
+msgstr "Konqueror 的書籤。"
+
+#: ../tools/Settings.cs:1742
+msgid "Konqueror's history."
+msgstr "Konqueror 的歷史紀錄。"
+
+#: ../tools/Settings.cs:1743
+msgid "IMs and chats from Konversation."
+msgstr "Konversation 的即時訊息與聊天"
+
+#: ../tools/Settings.cs:1744
+msgid "IMs and chats from Kopete"
+msgstr "Kopete 的即時訊息與聊天"
+
+#: ../tools/Settings.cs:1745
+msgid "Mind-maps from Labyrinth."
+msgstr "Labyrinth 的心智圖。"
+
+#: ../tools/Settings.cs:1746
+msgid "RSS feeds from Liferea."
+msgstr "Liferea 的 RSS 餵送。"
+
+#: ../tools/Settings.cs:1747
+msgid "Nautilus' metadata (emblems, notes, etc.)"
+msgstr "Nautilus 的中繼資料（圖章、筆記等等）"
+
+#: ../tools/Settings.cs:1748
+msgid "Search other search services in the network (EXPERIMENTAL)"
+msgstr "搜尋網絡中的其他搜尋服務"
+
+#: ../tools/Settings.cs:1749
+msgid "Opera's bookmarks and browsing history."
+msgstr "Opera 的書籤和瀏覽歷史紀錄。"
+
+#: ../tools/Settings.cs:1750
+msgid "IMs and chats from Pidgin."
+msgstr "來自 Pidgin 的即時訊息和聊天。"
+
+#: ../tools/Settings.cs:1751
+msgid "Notes from Tomboy."
+msgstr "Tomboy 的筆記。"
+
+#. System-wide indexes
+#: ../tools/Settings.cs:1753
+msgid "(System) Applications"
+msgstr "(系統)應用程式"
+
+#: ../tools/Settings.cs:1754
+msgid "(System) Help files"
+msgstr "(系統)求助檔案"
+
+#: ../tools/Settings.cs:1755
+msgid "(System) Manual pages"
+msgstr "(系統)手冊頁"
+
+#: ../tools/Settings.cs:1756
+msgid "(System) Supplementary search results using 'locate' command"
+msgstr "(系統)使用 'locate' 指令來補充搜尋結果"
+
+#: ../tools/Settings.cs:1757
+msgid "(System) Mono documentation"
+msgstr "(系統) Mono 文件"
+
+#: ../tools/Settings.cs:1758
+msgid "(System) Files from Windows' partition"
+msgstr "(系統)來自 Windows 分割區的檔案"
+
+#: ../tools/Settings.cs:1772
+msgid "Description"
+msgstr "描述"
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search"
+msgstr "設定桌面搜尋"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Search & Indexing"
+msgstr "搜尋 & 索引"
+
+#: ../tools/keygrabber.py:56
+msgid "Grab key combination"
+msgstr "抓取按鍵組合"
+
+#: ../tools/keygrabber.py:143
+msgid "Please press the new key combination"
+msgstr "請按下新的按鍵組合"
+
+#: ../tools/keygrabber.py:192
+msgid "Disabled"
+msgstr "Disabled"
+
+#: ../tools/settings.glade.h:1
+msgid ":"
+msgstr ":"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Administration</b>"
+msgstr "<b>系統管理</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>顯示</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>排除資源</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>General</b>"
+msgstr "<b>一般</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Local and System sources</b>"
+msgstr "<b>本地端及系統來源</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Networking</b>"
+msgstr "<b>網絡功能</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "<b>Privacy</b>"
+msgstr "<b>私人</b>"
+
+#: ../tools/settings.glade.h:9
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>選擇郵件資料夾</b>"
+
+#: ../tools/settings.glade.h:10
+msgid "<b>User Interface</b>"
+msgstr "<b>使用者介面</b>"
+
+#: ../tools/settings.glade.h:11
+msgid "<i>Changes will take effect only after daemon restart.</i>"
+msgstr "<i>更改會在伺服程式重新啟動後生效。</i>"
+
+#: ../tools/settings.glade.h:12
+msgid "<i>This setting does not apply while on battery power.</i>"
+msgstr "<i>這個設定值在使用電池電力時不能使用。</i>"
+
+#: ../tools/settings.glade.h:13
+msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">需要密碼。</span>"
+
+#: ../tools/settings.glade.h:14
+msgid "Add Remote Host"
+msgstr "加入遠端主機"
+
+#: ../tools/settings.glade.h:15
+msgid "Add a static host"
+msgstr "加入靜態主機"
+
+#: ../tools/settings.glade.h:16
+msgid "Add any additional paths to be included for indexing."
+msgstr "加入任何額外的路徑以包含至索引。"
+
+#: ../tools/settings.glade.h:17
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr "加入任何你希望使用網絡搜尋的遠端主機。"
+
+#: ../tools/settings.glade.h:18
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr "調整要顯示何種結果的類型，還有當根據類型排列時要以何種順序呈現。"
+
+#: ../tools/settings.glade.h:19
+msgid "Allow external access to local search services (EXPERIMENTAL)"
+msgstr "允許外部對本地搜尋服務的存取（實驗性質）"
+
+#: ../tools/settings.glade.h:20
+msgid "Automatically s_tart searching after the user has stopped typing"
+msgstr "當使用者停止打字後自動開始搜尋(_T)"
+
+#: ../tools/settings.glade.h:21
+msgid "Change"
+msgstr "更改"
+
+#: ../tools/settings.glade.h:22
+msgid "Data sources"
+msgstr "資料來源"
+
+#: ../tools/settings.glade.h:23
+msgid "Display the search window by pressing"
+msgstr "顯示搜尋視窗要按:"
+
+#: ../tools/settings.glade.h:24
+msgid "Enable the data sources that you want to index and search."
+msgstr "啟用你想要用來索引與搜尋的資料來源。"
+
+#: ../tools/settings.glade.h:25
+msgid "Enable web interface for local search service"
+msgstr "啟用對本地搜尋服務的網頁介面"
+
+#: ../tools/settings.glade.h:26
+msgid "Exclude Resource"
+msgstr "要排除的資源"
+
+#: ../tools/settings.glade.h:27
+msgid "Filename _pattern"
+msgstr "檔案名稱樣式(_P)"
+
+#: ../tools/settings.glade.h:28
+msgid "I_ndex my home directory"
+msgstr "製作我的家目錄索引(_N)"
+
+#: ../tools/settings.glade.h:29
+msgid ""
+"In order for you to perform Beagle searches on this computer, you must enter "
+"a password."
+msgstr "為了讓你能在這台電腦上進行 Beagle 搜尋，你必須輸入密碼。"
+
+#: ../tools/settings.glade.h:30
+msgid "Index data while on _battery power"
+msgstr "使用電池電力時索引資料(_B)"
+
+#: ../tools/settings.glade.h:31
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr "當進入螢幕保護程式後更積極的製作索引(_C)"
+
+#: ../tools/settings.glade.h:32
+msgid "Index name:"
+msgstr "索引名稱:"
+
+#: ../tools/settings.glade.h:33
+msgid "Indexing"
+msgstr "索引"
+
+#: ../tools/settings.glade.h:35
+msgid "Network options"
+msgstr "網絡選項"
+
+#: ../tools/settings.glade.h:37
+msgid "Password for {0}"
+msgstr "{0} 的密碼 "
+
+#: ../tools/settings.glade.h:38
+msgid "Password:"
+msgstr "密碼:"
+
+#: ../tools/settings.glade.h:39
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "請選擇你希望排除在索引之外的資源。"
+
+#: ../tools/settings.glade.h:40
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "請選擇你希望排除在索引之外的郵件資料夾。"
+
+#: ../tools/settings.glade.h:41
+msgid "Require a password to search this computer remotely"
+msgstr "需要密碼才能遠端搜尋這台電腦"
+
+#: ../tools/settings.glade.h:42
+msgid "Search Preferences"
+msgstr "搜尋偏好設定"
+
+#: ../tools/settings.glade.h:43
+msgid "Searching"
+msgstr "搜尋中"
+
+#: ../tools/settings.glade.h:44
+msgid "Select Mail Folder"
+msgstr "選擇郵件資料夾"
+
+#: ../tools/settings.glade.h:45
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr "請選擇你希望排除在索引之外的資源，像是路徑、樣式、郵件資料夾或物件的類型。"
+
+#: ../tools/settings.glade.h:46
+msgid "Type:"
+msgstr "類型:"
+
+#: ../tools/settings.glade.h:47
+msgid "_Allow Beagle to be run as root"
+msgstr "允許以 root 身分執行 Be_agle"
+
+#: ../tools/settings.glade.h:48
+msgid "_Browse..."
+msgstr "瀏覽(_B)..."
+
+#: ../tools/settings.glade.h:49
+msgid "_Choose from currently available hosts"
+msgstr "從目前可用的主機選擇(_C)"
+
+#: ../tools/settings.glade.h:50
+msgid "_Folder path"
+msgstr "資料夾路徑(_F)"
+
+#: ../tools/settings.glade.h:51
+msgid "_Hostname:"
+msgstr "主機名稱(_H)："
+
+#: ../tools/settings.glade.h:52
+msgid "_Mail folder"
+msgstr "郵件資料夾(_M)"
+
+#: ../tools/settings.glade.h:53
+msgid "_Password:"
+msgstr "密碼(_P):"
+
+#: ../tools/settings.glade.h:54
+msgid "_Start search & indexing services automatically "
+msgstr "自動啟動搜尋 & 索引服務(_S)"
+
+#~ msgid "Orientation"
+#~ msgstr "方向"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "系統匣的方向。"
+
+#~ msgid ""
+#~ "You can change the scope of your search using the \"Search\" menu. A "
+#~ "broader search scope might produce more results."
+#~ msgstr ""
+#~ "您可以使用「搜尋」選單來改變搜尋的範圍。愈廣大的搜尋範圍會產生愈多的結果。"
+
+#~ msgid "Unknown duration"
+#~ msgstr "未知的期間"
+
+#~ msgid ""
+#~ "file\n"
+#~ "files"
+#~ msgstr ""
+#~ "file\n"
+#~ "files"
+
+#~ msgid ""
+#~ "mail\n"
+#~ "email\n"
+#~ "e-mail"
+#~ msgstr ""
+#~ "mail\n"
+#~ "email\n"
+#~ "e-mail"
+
+#~ msgid ""
+#~ "im\n"
+#~ "ims\n"
+#~ "instant message\n"
+#~ "instant messages\n"
+#~ "instant-message\n"
+#~ "instant-messages\n"
+#~ "chat\n"
+#~ "chats"
+#~ msgstr ""
+#~ "im\n"
+#~ "ims\n"
+#~ "instant message\n"
+#~ "instant messages\n"
+#~ "instant-message\n"
+#~ "instant-messages\n"
+#~ "chat\n"
+#~ "chats"
+
+#~ msgid ""
+#~ "presentation\n"
+#~ "presentations\n"
+#~ "slideshow\n"
+#~ "slideshows\n"
+#~ "slide\n"
+#~ "slides"
+#~ msgstr ""
+#~ "presentation\n"
+#~ "presentations\n"
+#~ "slideshow\n"
+#~ "slideshows\n"
+#~ "slide\n"
+#~ "slides"
+
+#~ msgid ""
+#~ "application\n"
+#~ "applications\n"
+#~ "app\n"
+#~ "apps"
+#~ msgstr ""
+#~ "application\n"
+#~ "applications\n"
+#~ "app\n"
+#~ "apps"
+
+#~ msgid ""
+#~ "contact\n"
+#~ "contacts\n"
+#~ "vcard\n"
+#~ "vcards"
+#~ msgstr ""
+#~ "contact\n"
+#~ "contacts\n"
+#~ "vcard\n"
+#~ "vcards"
+
+#~ msgid ""
+#~ "folder\n"
+#~ "folders"
+#~ msgstr ""
+#~ "folder\n"
+#~ "folders"
+
+#~ msgid ""
+#~ "image\n"
+#~ "images\n"
+#~ "img"
+#~ msgstr ""
+#~ "image\n"
+#~ "images\n"
+#~ "img"
+
+#~ msgid "audio"
+#~ msgstr "音訊"
+
+#~ msgid "video"
+#~ msgstr "視訊"
+
+#~ msgid "media"
+#~ msgstr "媒體"
+
+#~ msgid ""
+#~ "document\n"
+#~ "documents\n"
+#~ "office document\n"
+#~ "office documents"
+#~ msgstr ""
+#~ "document\n"
+#~ "documents\n"
+#~ "office document\n"
+#~ "office documents"
+
+#~ msgid ""
+#~ "conversation\n"
+#~ "conversations"
+#~ msgstr ""
+#~ "conversation\n"
+#~ "conversations"
+
+#~ msgid ""
+#~ "web\n"
+#~ "www\n"
+#~ "website\n"
+#~ "websites"
+#~ msgstr ""
+#~ "web\n"
+#~ "www\n"
+#~ "website\n"
+#~ "websites"
+
+#~ msgid ""
+#~ "feed\n"
+#~ "news\n"
+#~ "blog\n"
+#~ "rss"
+#~ msgstr ""
+#~ "feed\n"
+#~ "news\n"
+#~ "blog\n"
+#~ "rss"
+
+#~ msgid ""
+#~ "archive\n"
+#~ "archives"
+#~ msgstr ""
+#~ "archive\n"
+#~ "archives"
+
+#~ msgid ""
+#~ "person\n"
+#~ "people"
+#~ msgstr ""
+#~ "person\n"
+#~ "people"
+
+#~ msgid "Sor_t"
+#~ msgstr "排序(_T)"
+
+#~ msgid "_Everywhere"
+#~ msgstr "任何地方(_E)"
+
+#~ msgid "Search everywhere"
+#~ msgstr "搜尋任何地方"
+
+#~ msgid "_Applications"
+#~ msgstr "應用程式(_A)"
+
+#~ msgid "_Contacts"
+#~ msgstr "連絡人(_C)"
+
+#~ msgid "Search contacts"
+#~ msgstr "搜尋連絡人"
+
+#~ msgid "Ca_lendar events"
+#~ msgstr "行事曆事件(_L)"
+
+#~ msgid "Search calendar events"
+#~ msgstr "搜尋行事曆事件"
+
+#~ msgid "_Documents"
+#~ msgstr "文件(_D)"
+
+#~ msgid "Search documents"
+#~ msgstr "搜尋文件"
+
+#~ msgid "Conve_rsations"
+#~ msgstr "交談(_R)"
+
+#~ msgid "Search E-Mail and Instant Messaging logs"
+#~ msgstr "搜尋電子郵件與即時訊息紀錄"
+
+#~ msgid "_Images"
+#~ msgstr "影像(_I)"
+
+#~ msgid "Search sound and video files"
+#~ msgstr "搜尋聲音與視訊檔案"
+
+#~ msgid "_Name"
+#~ msgstr "名稱(_N)"
+
+#~ msgid "Invalid host entry"
+#~ msgstr "無效的主機項目"
+
+#~ msgid "Select path"
+#~ msgstr "選擇路徑"
+
+#~ msgid "The selected path is already configured for external access."
+#~ msgstr "該選擇的路徑已經設定為供外部存取使用。"
+
+#~ msgid "Remove public path"
+#~ msgstr "移除公用路徑"
+
+#~ msgid ""
+#~ "Are you sure you wish to remove this entry from the list of public paths?"
+#~ msgstr "您確定要從此公用路徑清單中移除此項目？"
+
+#~ msgid "Show"
+#~ msgstr "顯示"
+
+#~ msgid "<b>Add Remote Host</b>"
+#~ msgstr "<b>加入遠端主機</b>"
+
+#~ msgid ""
+#~ "Add a remote search-enabled host you wish \n"
+#~ "to network with."
+#~ msgstr ""
+#~ "加入您希望使用網路搜尋的\n"
+#~ "遠端主機。"
+
+#~ msgid "Ctrl"
+#~ msgstr "Ctrl"
+
+#~ msgid "Specify paths that should be available for external access."
+#~ msgstr "指定要給外部存取使用的路徑。"
+
+#~ msgid "_Maximum number of results displayed:"
+#~ msgstr "最大顯示結果數(_M):"
+
+#~ msgid "Configure Desktop Search & Indexing"
+#~ msgstr "設定桌面搜尋 & 索引"
+
+#~ msgid "Configure search & indexing properties"
+#~ msgstr "設定桌面搜尋 & 索引屬性"
+
+#~ msgid "Image Directory"
+#~ msgstr "圖片目錄"
+
+#~ msgid "Thumbnail Directory"
+#~ msgstr "縮圖目錄"
+
+#~ msgid "Exif Directory"
+#~ msgstr "Exif 目錄"
+
+#~ msgid "GPS Directory"
+#~ msgstr "GPS 目錄"
+
+#~ msgid "InterOperability Directory"
+#~ msgstr "互通(InterOperability)目錄"
+
+#~ msgid "Unknown Directory"
+#~ msgstr "未知的目錄"
+
+#~ msgid "Previous {0}"
+#~ msgid_plural "Previous {0}"
+#~ msgstr[0] "前 {0} 個"
+#~ msgstr[1] "前 {0} 個"
+
+#~ msgid "Next {0}"
+#~ msgid_plural "Next {0}"
+#~ msgstr[0] "後 {0} 個"
+#~ msgstr[1] "後 {0} 個"
+
+#~ msgid "Start the daemon"
+#~ msgstr "啟動伺服程式"
+
+#~ msgid "Move to trash"
+#~ msgstr "移至垃圾桶"
+
+#~ msgid "Add to Library"
+#~ msgstr "加入到書庫"
+
+#~ msgid "Instant-Message"
+#~ msgstr "即時訊息"
+
+#~ msgid "Edited:"
+#~ msgstr "編輯的:"
+
+#~ msgid "More application results..."
+#~ msgstr "更多應用程式結果..."
+
+#~ msgid "Contact"
+#~ msgstr "連絡人"
+
+#~ msgid "More contact results..."
+#~ msgstr "顯示更多連絡人結果..."
+
+#~ msgid "More folder results..."
+#~ msgstr "更多資料夾結果..."
+
+#~ msgid "Image"
+#~ msgstr "圖片"
+
+#~ msgid "More image results..."
+#~ msgstr "更多圖片結果..."
+
+#~ msgid "More audio results..."
+#~ msgstr "更多音訊結果..."
+
+#~ msgid "More video results..."
+#~ msgstr "更多視訊結果..."
+
+#~ msgid "More document results..."
+#~ msgstr "更多文件結果..."
+
+#~ msgid "More conversation results..."
+#~ msgstr "更多交談結果..."
+
+#~ msgid "More website results..."
+#~ msgstr "更多網站結果..."
+
+#~ msgid "More news feed results..."
+#~ msgstr "更多新聞餵送結果..."
+
+#~ msgid "More archive results..."
+#~ msgstr "更多檔案庫結果..."
+
+#~ msgid "Directory Path"
+#~ msgstr "目錄路徑"
+
+#~ msgid ""
+#~ "If you're wondering whether Best is working check your notification area "
+#~ "(system tray)"
+#~ msgstr "如果您不確定 Best 是否在運作，請檢查您的通知區域(系統匣)"
+
+#~ msgid ""
+#~ "You are about to close the search tray. The search tray is automatically "
+#~ "started at login-time. Would you like to disable it for future sessions?"
+#~ msgstr ""
+#~ "您即將關閉搜尋匣。搜尋匣會在登入時自動啟動。您想要在往後的作業階段中停用它"
+#~ "嗎？"
+
+#~ msgid "in Addressbook"
+#~ msgstr "在通訊錄中"
+
+#~ msgid "in Web Pages"
+#~ msgstr "在網頁中"
+
+#~ msgid "in Chats"
+#~ msgstr "在聊天室中"
+
+#~ msgid "Show More Results"
+#~ msgstr "顯示更多結果"
+
+#~ msgid "Show Previous Results"
+#~ msgstr "顯示前一次結果"
+
+#~ msgid "Best <b>{0} results of {1}</b> are shown."
+#~ msgstr "Best 顯示 <b>{1} 個結果中的 {0} 個</b> 。"
+
+#~ msgid "Results <b>{0} through {1} of {2}</b> are shown."
+#~ msgstr "顯示全部 <b>{2} 個結果中 {0} 到 {1}</b>。"
+
+#~ msgid ""
+#~ "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+#~ "daemon isn't running."
+#~ msgstr ""
+#~ "對 <i>{0}</i> 的查詢失敗了。<br>原因可能是 beagle 伺服程式尚未執行。"
+
+#~ msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+#~ msgstr "對 <i>{0}</i> 的查詢失敗了。錯誤為：<br>{1}<br>"
+
+#~ msgid "Beagle Search"
+#~ msgstr "Beagle 搜尋"
+
+#~ msgid "Words:"
+#~ msgstr "字:"
+
+#~ msgid "Send IM"
+#~ msgstr "傳送 IM"
+
+#~ msgid "Conversation in {0}"
+#~ msgstr "交涉於 {0}"
+
+#~ msgid "Sent"
+#~ msgstr "已傳送"
+
+#~ msgid "Weblog:"
+#~ msgstr "部落格:"
+
+#~ msgid "by"
+#~ msgstr "依"
+
+#~ msgid "Published:"
+#~ msgstr "已發佈:"
+
+#~ msgid "in folder"
+#~ msgstr "於資料夾"
+
+#~ msgid "Last modified"
+#~ msgstr "上次修改過的"
+
+#~ msgid "Send to..."
+#~ msgstr "傳送郵件給..."
+
+#~ msgid "Email subject:"
+#~ msgstr "電子郵件主旨:"
+
+#~ msgid "Track"
+#~ msgstr "音軌"
+
+#~ msgid "from"
+#~ msgstr "from"
+
+#~ msgid "Enqueue"
+#~ msgstr "Enqueue"
+
+#~ msgid "Slides:"
+#~ msgstr "滑動鈕:"
+
+#~ msgid "from Networked Beagle on host"
+#~ msgstr "從主機上於網路運作的 Beagle"
+
+#~ msgid "Search Networked Beagle"
+#~ msgstr "搜尋於網路運作的 Beagle"

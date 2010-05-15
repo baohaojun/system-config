@@ -1,0 +1,80 @@
+<Type Name="RequestMessageExecutor" FullName="Beagle.RequestMessageExecutor">
+  <TypeSignature Language="C#" Value="public abstract class RequestMessageExecutor" />
+  <AssemblyInfo>
+    <AssemblyName>Beagle</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected RequestMessageExecutor ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AsyncResponseEvent">
+      <MemberSignature Language="C#" Value="public event Beagle.RequestMessageExecutor.AsyncResponse AsyncResponseEvent;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Beagle.RequestMessageExecutor+AsyncResponse</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Cleanup">
+      <MemberSignature Language="C#" Value="public virtual void Cleanup ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Execute">
+      <MemberSignature Language="C#" Value="public abstract Beagle.ResponseMessage Execute (Beagle.RequestMessage req);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Beagle.ResponseMessage</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="req" Type="Beagle.RequestMessage" />
+      </Parameters>
+      <Docs>
+        <param name="req">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SendAsyncResponse">
+      <MemberSignature Language="C#" Value="protected void SendAsyncResponse (Beagle.ResponseMessage response);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="response" Type="Beagle.ResponseMessage" />
+      </Parameters>
+      <Docs>
+        <param name="response">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

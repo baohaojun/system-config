@@ -1,0 +1,59 @@
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+
+#include "winuser.h"
+#include "immdev.h"
+#include "imedefs.h"
+#include "winver.h"
+
+#include <ntverp.h>
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+//LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+LANGUAGE  0x04, 0x02
+#pragma code_page(936)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+#define VER_LEGALCOPYRIGHT_YEARS        "1981-1999"
+#define VER_FILEDESCRIPTION_STR         "Ó°Îè±Ê"
+#define VER_INTERNALNAME_STR            "Shadow IME"
+#define VER_LEGALCOPYRIGHT_STR "Copyright (C) BaoHaojun Corp. " VER_LEGALCOPYRIGHT_YEARS
+#define VER_FILEVERSION     VER_PRODUCTVERSION
+
+#define VER_VERSION_SIMPLIFIED_CHINESE  "080403a8"
+#define VER_VERSION_TRANSLATION          0x804, 936
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION     VER_FILEVERSION
+PRODUCTVERSION  VER_PRODUCTVERSION
+FILEFLAGSMASK   VER_FILEFLAGSMASK
+FILEFLAGS       VER_FILEFLAGS
+FILEOS          VER_FILEOS
+FILETYPE        VFT_DRV 
+FILESUBTYPE     VFT2_DRV_INPUTMETHOD 
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+         BLOCK VER_VERSION_SIMPLIFIED_CHINESE 
+         BEGIN
+              VALUE "FileDescription",   VER_FILEDESCRIPTION_STR
+              VALUE "InternalName",      VER_INTERNALNAME_STR  
+              VALUE "LegalCopyright",    VER_LEGALCOPYRIGHT_STR 
+              VALUE "ProductName",       VER_PRODUCTNAME_STR
+         END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+         VALUE "Translation", VER_VERSION_TRANSLATION 
+    END
+END
+
+

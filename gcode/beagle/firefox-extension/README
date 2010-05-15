@@ -1,0 +1,41 @@
+
+Beagle Extension: Index webpages you visit using the Beagle Indexing Engine.
+An Extension for the Firefox Browser.  
+
+Installing:
+	Open the generated beagle.xpi in Firefox or Mozilla.  
+	This will fire the Extension Manager.
+
+Features:
+	Uses beagle's IndexingService backend to index data.
+	Using domain/wildcard/regular expression to exclude/include the urls 
+	Import/export preferences 
+	Auto index when browsing (just click the status icon for enable/disable auto-indexing) 
+	    - Index referrer URL while indexing web-pages 
+	On-demand indexing 
+	    - Index current page 
+	    - Index link (for all the different filetypes beagle filters) 
+	    - Index image , the alt text is indexed. 
+	    - Store the URL of the current page while indexing, which may be useful while searching 
+	Index firefox bookmarks
+	    - Name, url, shortcut url(keywords),description and the path (name of ancestor folders is saved. 
+	    - Menu item bookmarks->Index The Modified Bookmarks 
+	    - Index the bookmarks when the window close ( you can turn it on/off in preference window) 
+	    - Last-index-date is saved . So only new bookmarks will be indexed. 
+	
+Debug:
+	You can set browser.dom.window.dump.enabled to true, in about:config. Open firefox in terminal, then you can see the debug information. You should also check javascript error console.
+
+Localization:
+	Add your localization files to chrome/locale/your-language/ 
+
+Sidebar:
+	Since 0.3.3, included is a sidebar to search in the indexed webpages and bookmarks. The search returns the latest 20 results and marks the bookmarked webpages. Clicking on the results will open the links in a new tab.
+
+Visit http://beagle-project.org/Browser_Extension for details.
+This extension was written as a part of Google Summer of Code project, 2007 by Tao Fei (filia.tao@gmail.com).
+
+Changelog:
+    1.0.1 - initial version
+    1.0.2 - added sidebar
+    1.1.0 - added support for Firefox 3.0

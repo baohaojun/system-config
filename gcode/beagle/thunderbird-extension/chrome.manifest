@@ -1,0 +1,6 @@
+content 	beagle 	jar:chrome/beagle.jar!/content/
+overlay 	chrome://messenger/content/messenger.xul chrome://beagle/content/beagleMessenger.xul
+overlay		chrome://messenger/content/mailWindowOverlay.xul chrome://beagle/content/beagleMailWindow.xul
+locale 		beagle 	en-US 		jar:chrome/beagle.jar!/locale/en-US/
+locale 		beagle 	sv-SE 		jar:chrome/beagle.jar!/locale/sv-SE/
+skin 		beagle 	classic/1.0 	jar:chrome/beagle.jar!/skin/classic/

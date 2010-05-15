@@ -1,0 +1,1718 @@
+# Dutch messages for beagle.
+# Copyright (C) 2005, Novell Inc.
+# Fredrik Hedberg <fredrik@avafan.com>, 2005
+# Wouter Bolsterlee <uws+gnome@xs4all.nl>, 2005
+# Tino Meinen <a.t.meinen@chello.nl>, 2006.
+# Vincent van Adrighem <adrighem@gnome.org>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-10 10:11+0200\n"
+"PO-Revision-Date: 2006-09-10 17:06+0200\n"
+"Last-Translator: Tino Meinen <a.t.meinen@chello.nl>\n"
+"Language-Team: Dutch <vertaling@vrijschrift.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../glue/eggtrayicon.c:127
+msgid "Orientation"
+msgstr "Oriëntatie"
+
+#: ../glue/eggtrayicon.c:128
+msgid "The orientation of the tray."
+msgstr "Richting van het mededelingengebied"
+
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Openen..."
+
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Afsluiten"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "Info"
+
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Contacten"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr "Schermnaam"
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Primaire e-mail"
+
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Secondaire e-mail"
+
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Bijnaam"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+"Kon mork database niet openen:\n"
+"\n"
+" {0}"
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr "Het opgegeven ID bestaat niet in deze database!"
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgid_plural "Added {0} contacts"
+msgstr[0] "{0} contact toegevoegd"
+msgstr[1] "{0} contacten toegevoegd"
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr "Weergeven {0}"
+
+#: ../ContactViewer/ContactWindow.cs:205
+msgid "DisplayName"
+msgstr "SchermNaam"
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr "Selecteer een mork database-bestand"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "FirstName"
+msgstr "VoorNaam"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "NickName"
+msgstr "BijNaam"
+
+#: ../ContactViewer/ContactWindow.cs:303
+msgid "LastName"
+msgstr "AchterNaam"
+
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Primaire e-mail:"
+
+#: ../ContactViewer/ContactWindow.cs:313
+msgid "PrimaryEmail"
+msgstr "PrimaireE-mail"
+
+# displayname/screenname?
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Screen name:"
+msgstr "Schermnaam:"
+
+# aim = gaim-client?
+#: ../ContactViewer/ContactWindow.cs:317
+msgid "_AimScreenName"
+msgstr "_AimSchermNaam"
+
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Telefoon thuis:"
+
+#: ../ContactViewer/ContactWindow.cs:321
+msgid "HomePhone"
+msgstr "TelefoonThuis:"
+
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "Mobiele telefoon:"
+
+#: ../ContactViewer/ContactWindow.cs:325
+msgid "CellularNumber"
+msgstr "MobieleNummer"
+
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "Webpagina:"
+
+#: ../ContactViewer/ContactWindow.cs:329
+msgid "WebPage2"
+msgstr "WebPagina2"
+
+# verschijnt in contextmenu na rechtsklikken op contact
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "Stuur een e-mail"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Details..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "Kon geen geldig e-mailadres vinden!"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr "<b>Zelfgemaakte velden</b>"
+
+# thuisadres/homepagina?
+#: ../ContactViewer/contactviewer.glade.h:2
+msgid "<b>Home</b>"
+msgstr "<b>Thuis</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Internet</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Naam</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Opmerkingen</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Telefoon</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Werk</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "Extra e-mail:"
+
+#: ../ContactViewer/contactviewer.glade.h:9
+msgid "Address"
+msgstr "Adres"
+
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "Adres:"
+
+# Plaats/Stad
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Stad:"
+
+# meervoud is hier beter
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Contacten"
+
+# meervoud is hier beter
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Contactenviewer"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "Land:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr "Zelfgemaakt 1:"
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr "Zelfgemaakt 2:"
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr "Zelfgemaakt 3:"
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr "Zelfgemaakt 4:"
+
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Departement:"
+
+# detailweergave
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Gedetailleerde weergave"
+
+#: ../ContactViewer/contactviewer.glade.h:21
+msgid "Display:"
+msgstr "Weergave:"
+
+#: ../ContactViewer/contactviewer.glade.h:22 ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "E-Mail:"
+
+#: ../ContactViewer/contactviewer.glade.h:23
+msgid "Fax:"
+msgstr "Fax:"
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "First:"
+msgstr "Eerste:"
+
+#: ../ContactViewer/contactviewer.glade.h:25
+msgid "Home:"
+msgstr "Thuis:"
+
+#: ../ContactViewer/contactviewer.glade.h:26
+msgid "Last:"
+msgstr "Laatste:"
+
+#: ../ContactViewer/contactviewer.glade.h:27
+msgid "Mobile:"
+msgstr "Mobiele telefoon:"
+
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Nickname:"
+msgstr "Bijnaam:"
+
+#: ../ContactViewer/contactviewer.glade.h:29
+msgid "Organization:"
+msgstr "Organisatie:"
+
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Other"
+msgstr "Overige"
+
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Pager:"
+msgstr "Pager:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Preferred format:"
+msgstr "Voorkeursformaat:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "State/Province"
+msgstr "Staat/Provincie"
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "State/Province:"
+msgstr "Staat/provincie:"
+
+# naam/titel
+#: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+msgid "Title:"
+msgstr "Titel:"
+
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+"Onbekend\n"
+"Gewone tekst\n"
+"HTML"
+
+#: ../ContactViewer/contactviewer.glade.h:40
+msgid "Web Page:"
+msgstr "Webpagina:"
+
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid "Work:"
+msgstr "Werk:"
+
+#: ../ContactViewer/contactviewer.glade.h:42
+msgid "ZIP/Postal Code"
+msgstr "Postcode"
+
+#: ../ContactViewer/contactviewer.glade.h:43
+msgid "ZIP/Postal Code:"
+msgstr "Postcode:"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Gespreksgeschiedenis</b>"
+
+# expresberichten-viewer
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "IM-viewer"
+
+#: ../ImLogViewer/ImLogWindow.cs:102
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Gesprekken in {0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:109
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Gesprekken met {0}"
+
+#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:28
+msgid "Search"
+msgstr "Zoeken"
+
+# het is niet het bureaublad dat doorzocht wordt, maar de desktopcomputer
+# (tino)
+#: ../search/beagle-search.desktop.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Zoeken naar gegevens op uw computer"
+
+#: ../search/Category.cs:109
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} resultaat "
+msgstr[1] "{0} resultaten"
+
+#: ../search/Category.cs:111
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} van {2}"
+
+# geen zoekresultaten
+#: ../search/Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "Niets gevonden."
+
+#: ../search/Pages/NoMatch.cs:20
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr "Uw zoekopdracht naar ‘{0}’ heeft geen resultaten opgeleverd."
+
+# levert op/produceert
+#: ../search/Pages/NoMatch.cs:24
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+"U kunt de zoekopdracht aanpassen via het menu ‘Zoeken’. Een meer algemene "
+"zoekopdracht levert mogelijk meer resultaten op."
+
+# misschien heeft u per ongeluk een zoekwoord verkeerd gespeld
+#: ../search/Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+"U zou eens kunnen controleren of u misschien een zoekwoord verkeerd gespeld "
+"heeft."
+
+# het zoeken is niet gevoelig voor het gebruik van hoofletters en kleine letters.
+#: ../search/Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+"U mag hoofdletters of kleine letters gebruiken, dat maakt voor het zoeken "
+"niets uit."
+
+# Nederlandse variant?
+#: ../search/Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr ""
+"Om naar verschillende termen tegelijk te zoeken gebruikt u ‘OR’, "
+"bijvoorbeeld: <b>George OR Ringo</b>"
+
+#: ../search/Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+"Om zoektermen uit te sluiten zet u er een minteken voor, bijvoorbeeld: <b>-"
+"katten</b>"
+
+# wat zou een goede zin zijn in het Nederlands?
+#: ../search/Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+"Bij het zoeken naar een zin, voegt u aanhalingstekens toe, bijvoorbeeld: <b>"
+"\"There be dragons\"</b>"
+
+# handige tips/snelle tips/aanwijzingen/handwijzingen/tips
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:83
+msgid "Quick Tips"
+msgstr "Enkele tips"
+
+#: ../search/Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "Beagle kan niet worden uitgevoerd als 'root'"
+
+#: ../search/Pages/RootUser.cs:13
+msgid ""
+"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"regular user."
+msgstr ""
+"Voor beveilingsredenen kan Beagle niet worden uitgevoerd als 'root'. U moet "
+"het opstarten als normale gebruiker."
+
+#: ../search/Pages/StartDaemon.cs:19
+msgid "Search service not running"
+msgstr "De zoekdienst draait niet"
+
+# d.i. labeltekst
+#: ../search/Pages/StartDaemon.cs:21
+msgid "Start search service"
+msgstr "De zoekdienst opstarten"
+
+# dit staat voor het invoerveld:
+# Find [                             ] Find now
+# dus niet vertalen met Vind oid (tino)
+#: ../search/Search.cs:149
+msgid "_Find:"
+msgstr "_Zoeken naar:"
+
+#: ../search/Search.cs:164
+msgid "Find Now"
+msgstr "Nu zoeken"
+
+# (Dit is een tooltip)
+# intoetsen/typen/
+#: ../search/Search.cs:210
+msgid "Type in search terms"
+msgstr "Typ hier de zoektermen"
+
+#: ../search/Search.cs:211
+msgid "Start searching"
+msgstr "Beginnen met zoeken"
+
+#: ../search/Tiles/Calendar.cs:54
+msgid "Description:"
+msgstr "Omschrijving:"
+
+#: ../search/Tiles/Calendar.cs:57
+msgid "Location:"
+msgstr "Locatie:"
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Attendees:"
+msgstr "Aanwezigen:"
+
+# verschijnt in contextmenu na rechtsklikken op contact
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Stuur een e-mail"
+
+#: ../search/Tiles/Contact.cs:70
+msgid "Mobile Phone:"
+msgstr "Mobiele telefoon:"
+
+#: ../search/Tiles/Contact.cs:72
+msgid "Work Phone:"
+msgstr "Telefoon werk:"
+
+#: ../search/Tiles/Contact.cs:74
+msgid "Home Phone:"
+msgstr "Telefoon thuis:"
+
+#: ../search/Tiles/File.cs:34
+msgid "Reveal in Folder"
+msgstr "Tonen in map"
+
+#: ../search/Tiles/File.cs:35
+msgid "E-Mail"
+msgstr "E-mail"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Naar prullenbak verplaatsen"
+
+# laatst bekeken
+#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:58
+msgid "Last Edited:"
+msgstr "Laatst bewerkt:"
+
+#: ../search/Tiles/File.cs:128
+msgid "Author:"
+msgstr "Auteur:"
+
+#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:79
+msgid "Full Path:"
+msgstr "Volledig pad:"
+
+#: ../search/Tiles/Folder.cs:31
+msgid "Empty"
+msgstr "Leeg"
+
+#: ../search/Tiles/Folder.cs:33
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Bevat {0} item"
+msgstr[1] "Bevat {0} items"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Instellen als achtergrond"
+
+#: ../search/Tiles/Image.cs:78
+msgid "Modified:"
+msgstr "Laatste wijziging:"
+
+#: ../search/Tiles/IMLog.cs:30
+msgid "IM Conversation"
+msgstr "On-line gesprekken"
+
+#: ../search/Tiles/IMLog.cs:92
+msgid "Name:"
+msgstr "Naam:"
+
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
+msgid "Date Received:"
+msgstr "Ontvangen op:"
+
+#: ../search/Tiles/IMLog.cs:97
+msgid "Status:"
+msgstr "Status:"
+
+#: ../search/Tiles/IMLog.cs:112
+msgid "Idle"
+msgstr "Inactief"
+
+#: ../search/Tiles/IMLog.cs:119
+msgid "Away"
+msgstr "Afwezig"
+
+#: ../search/Tiles/IMLog.cs:122
+msgid "Offline"
+msgstr "Off-line"
+
+# aanwezig/beschikbaar
+#: ../search/Tiles/IMLog.cs:125
+msgid "Available"
+msgstr "Aanwezig"
+
+#: ../search/Tiles/MailAttachment.cs:45
+msgid "Mail attachment"
+msgstr "Mailbijlage"
+
+# zonder naam/titel/naamloos
+#: ../search/Tiles/MailMessage.cs:67
+msgid "(untitled)"
+msgstr "(zonder titel)"
+
+# met/in/via e-mail verzenden
+#: ../search/Tiles/MailMessage.cs:77
+msgid "Send in Mail"
+msgstr "Via e-mail verzenden"
+
+#: ../search/Tiles/MailMessage.cs:109
+msgid "Subject:"
+msgstr "Onderwerp:"
+
+#: ../search/Tiles/MailMessage.cs:111
+msgid "To:"
+msgstr "Aan:"
+
+#: ../search/Tiles/MailMessage.cs:111
+msgid "From:"
+msgstr "Van:"
+
+#: ../search/Tiles/MailMessage.cs:114
+msgid "Date Sent:"
+msgstr "Verstuurd op:"
+
+#
+# Common stuff for the templates
+#
+#: ../search/Tiles/MailMessage.cs:120
+msgid "Folder:"
+msgstr "Map:"
+
+#: ../search/Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Openen met"
+
+#: ../search/Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} dia"
+msgstr[1] "{0} dia's"
+
+#: ../search/Tiles/RSSFeed.cs:46
+msgid "Site:"
+msgstr "Site:"
+
+# laatst bekeken/bezocht
+#: ../search/Tiles/RSSFeed.cs:47
+msgid "Date Viewed:"
+msgstr "Laatste bekeken:"
+
+#: ../search/Tiles/TextDocument.cs:37
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} pagina"
+msgstr[1] "{0} pagina's"
+
+#: ../search/Tiles/Tile.cs:179
+msgid "Open"
+msgstr "Openen"
+
+#: ../search/Tiles/Utils.cs:24
+msgid "Applications"
+msgstr "Toepassingen"
+
+#: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr "Agendanotities"
+
+#
+# Common stuff for the templates
+#
+#: ../search/Tiles/Utils.cs:30
+msgid "Folders"
+msgstr "Mappen"
+
+#: ../search/Tiles/Utils.cs:32
+msgid "Images"
+msgstr "Afbeeldingen"
+
+# geluid/audio
+#: ../search/Tiles/Utils.cs:34
+msgid "Audio"
+msgstr "Audio"
+
+# beeld/video
+#: ../search/Tiles/Utils.cs:36
+msgid "Video"
+msgstr "Video"
+
+#: ../search/Tiles/Utils.cs:38
+msgid "Documents"
+msgstr "Documenten"
+
+#: ../search/Tiles/Utils.cs:40
+msgid "Conversations"
+msgstr "Gesprekken"
+
+#: ../search/Tiles/Utils.cs:42
+msgid "Websites"
+msgstr "Websites"
+
+#: ../search/Tiles/Utils.cs:44
+msgid "News Feeds"
+msgstr "Nieuws-stromen"
+
+# Meervoud is hier beter
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
+msgstr "Archieven"
+
+#: ../search/Tiles/Utils.cs:77 ../search/Tiles/Utils.cs:159
+#: ../Util/StringFu.cs:79
+msgid "Yesterday"
+msgstr "Gisteren"
+
+#: ../search/Tiles/Utils.cs:79 ../search/Tiles/Utils.cs:161
+#: ../Util/StringFu.cs:77
+msgid "Today"
+msgstr "Vandaag"
+
+#: ../search/Tiles/Utils.cs:81 ../search/Tiles/Utils.cs:163
+msgid "Tomorrow"
+msgstr "Morgen"
+
+#: ../search/Tiles/Utils.cs:179
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "{0} week geleden"
+msgstr[1] "{0} weken geleden"
+
+#: ../search/Tiles/Utils.cs:181
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "In {0} week"
+msgstr[1] "In {0} weken"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:183
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "{0} maand geleden"
+msgstr[1] "{0} maanden geleden"
+
+#: ../search/Tiles/Utils.cs:185
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "In {0} maand"
+msgstr[1] "In {0} maanden"
+
+#: ../search/Tiles/Utils.cs:187
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "{0} jaar geleden"
+msgstr[1] "{0} jaar geleden"
+
+# hier wel jaren ipv jaar in meervoud
+#: ../search/Tiles/Utils.cs:189
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "In {0} jaar"
+msgstr[1] "In {0} jaren"
+
+# duur/lengte
+#. FIXME: We need filters for video in Beagle.
+#. They should land soon when entagged-sharp gets video support.
+#: ../search/Tiles/Video.cs:27
+msgid "Unknown duration"
+msgstr "Onbekende lengte"
+
+#: ../search/Tiles/WebHistory.cs:51
+msgid "URL:"
+msgstr "URL:"
+
+#: ../search/Tiles/WebHistory.cs:52
+msgid "Accessed:"
+msgstr "Benaderd:"
+
+# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
+#: ../search/Tray/TrayIcon.cs:32
+msgid "Desktop Search"
+msgstr "Desktop doorzoeken"
+
+#: ../search/Tray/TrayIcon.cs:57
+msgid "No Recent Searches"
+msgstr "Geen recente zoekopdrachten"
+
+#: ../search/Tray/TrayIcon.cs:62
+msgid "Recent Searches"
+msgstr "Recente zoekopdrachten"
+
+#: ../search/Tray/TrayIcon.cs:78
+msgid "Clear"
+msgstr "Wissen"
+
+#. Translators: the strings in TypeFilter.cs are for when the user
+#. * wants to limit search results to a specific type. You don't need
+#. * to give an exact translation of the exact same set of English
+#. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
+#: ../search/TypeFilter.cs:36
+msgid ""
+"file\n"
+"files"
+msgstr ""
+"bestand\n"
+"bestanden"
+
+#: ../search/TypeFilter.cs:37
+msgid ""
+"mail\n"
+"email\n"
+"e-mail"
+msgstr ""
+"mail\n"
+"email\n"
+"e-mail\n"
+"bericht\n"
+"berichten"
+
+#: ../search/TypeFilter.cs:38
+msgid ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+msgstr ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats\n"
+"expresbericht\n"
+"expresberichten"
+
+#: ../search/TypeFilter.cs:39
+msgid ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+msgstr ""
+"presentatie\n"
+"presentaties\n"
+"diavoorstelling\n"
+"diavoorstellingen\n"
+"dia-voorstelling\n"
+"dis-voorstellingen\n"
+"dia\n"
+"dia's"
+
+#: ../search/TypeFilter.cs:41
+msgid ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+msgstr ""
+"applicatie\n"
+"applicaties\n"
+"toepassing\n"
+"toepassingen\n"
+"programma\n"
+"programma's"
+
+#: ../search/TypeFilter.cs:42
+msgid ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+msgstr ""
+"contact\n"
+"contacten\n"
+"vcard\n"
+"vcards"
+
+#: ../search/TypeFilter.cs:43
+msgid ""
+"folder\n"
+"folders"
+msgstr ""
+"map\n"
+"mappen\n"
+"folder\n"
+"folders\n"
+"directory\n"
+"directories"
+
+#: ../search/TypeFilter.cs:44
+msgid ""
+"image\n"
+"images\n"
+"img"
+msgstr ""
+"afbeelding\n"
+"afbeeldingen\n"
+"plaatje\n"
+"plaatjes\n"
+"foto\n"
+"foto's\n"
+"illustratie\n"
+"illustraties\n"
+"afb"
+
+#: ../search/TypeFilter.cs:45
+msgid "audio"
+msgstr ""
+"audio\n"
+"geluid"
+
+#: ../search/TypeFilter.cs:46
+msgid "video"
+msgstr ""
+"video\n"
+"beeld"
+
+#: ../search/TypeFilter.cs:47
+msgid "media"
+msgstr "media"
+
+#: ../search/TypeFilter.cs:48
+msgid ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+msgstr ""
+"document\n"
+"documenten\n"
+"office document\n"
+"office documenten"
+
+#: ../search/TypeFilter.cs:49
+msgid ""
+"conversation\n"
+"conversations"
+msgstr ""
+"gesprek\n"
+"gesprekken\n"
+"conversatie\n"
+"conversaties"
+
+#: ../search/TypeFilter.cs:50
+msgid ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+msgstr ""
+"web\n"
+"www\n"
+"website\n"
+"websites\n"
+"homepages\n"
+"webstek\n"
+"webstekken"
+
+#: ../search/TypeFilter.cs:51
+msgid ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+msgstr ""
+"feed\n"
+"news\n"
+"nieuws\n"
+"blog\n"
+"rss"
+
+#: ../search/TypeFilter.cs:52
+msgid ""
+"archive\n"
+"archives"
+msgstr ""
+"archief\n"
+"archieven\n"
+"zip-bestanden"
+
+#: ../search/TypeFilter.cs:53
+msgid ""
+"person\n"
+"people"
+msgstr ""
+"persoon\n"
+"personen\n"
+"mensen\n"
+"vrienden"
+
+# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
+#: ../search/UIManager.cs:44
+msgid "Close Desktop Search"
+msgstr "Desktop doorzoeking sluiten"
+
+# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
+#: ../search/UIManager.cs:49 ../search/UIManager.cs:71
+msgid "Exit Desktop Search"
+msgstr "Desktop doorzoeking afsluiten"
+
+#: ../search/UIManager.cs:56
+msgid "_Search"
+msgstr "_Zoeken"
+
+#: ../search/UIManager.cs:59
+msgid "_Actions"
+msgstr "_Acties"
+
+#: ../search/UIManager.cs:62
+msgid "Sor_t"
+msgstr "_Sorteren"
+
+#: ../search/UIManager.cs:65
+msgid "_Help"
+msgstr "_Hulp"
+
+#: ../search/UIManager.cs:74
+msgid "_Contents"
+msgstr "In_houd"
+
+#: ../search/UIManager.cs:76
+msgid "Help - Table of Contents"
+msgstr "Hulp - Inhoud"
+
+# Bureuablad doorzoeken/desktop doorzoeken/desktop zoekprogramma/zoekhulp
+#: ../search/UIManager.cs:80
+msgid "About Desktop Search"
+msgstr "Over 'Desktop doorzoeken'"
+
+# alles/overal (doorzoeken)
+#: ../search/UIManager.cs:102
+msgid "_Everywhere"
+msgstr "_Overal"
+
+#: ../search/UIManager.cs:104
+msgid "Search everywhere"
+msgstr "Alles doorzoeken"
+
+# Menu: Zoeken -> In/naar Toepassingen
+#: ../search/UIManager.cs:107
+msgid "_Applications"
+msgstr "_Toepassingen"
+
+# in toepassingen zoeken/toepassingen doorzoeken
+#: ../search/UIManager.cs:109
+msgid "Search applications"
+msgstr "In toepassingen zoeken"
+
+#: ../search/UIManager.cs:112
+msgid "_Contacts"
+msgstr "_Contacten"
+
+#: ../search/UIManager.cs:114
+msgid "Search contacts"
+msgstr "In contacten zoeken"
+
+#: ../search/UIManager.cs:117
+msgid "Ca_lendar events"
+msgstr "_Agendanotities"
+
+#: ../search/UIManager.cs:119
+msgid "Search calendar events"
+msgstr "In agendanotities zoeken"
+
+#: ../search/UIManager.cs:122
+msgid "_Documents"
+msgstr "_Documenten"
+
+#: ../search/UIManager.cs:124
+msgid "Search documents"
+msgstr "In documenten zoeken"
+
+#: ../search/UIManager.cs:127
+msgid "Conve_rsations"
+msgstr "_Gesprekken"
+
+# logboeken van expresberichten/
+#: ../search/UIManager.cs:129
+msgid "Search E-Mail and Instant Messaging logs"
+msgstr "In e-mail en expresberichten zoeken"
+
+#: ../search/UIManager.cs:132
+msgid "_Images"
+msgstr "_Afbeeldingen"
+
+#: ../search/UIManager.cs:134
+msgid "Search images"
+msgstr "In afbeeldingen zoeken"
+
+#: ../search/UIManager.cs:137
+msgid "_Media"
+msgstr "_Media"
+
+# in audio en videobestanden/beeld en geluidbestanden
+#: ../search/UIManager.cs:139
+msgid "Search sound and video files"
+msgstr "In beeld- en geluidbestanden zoeken"
+
+#: ../search/UIManager.cs:146
+msgid "Date _Modified"
+msgstr "_Laatste wijziging"
+
+# meest recentelijk gewijzigde bestanden
+#: ../search/UIManager.cs:147
+msgid "Sort the most-recently-modified matches first"
+msgstr "Meest recente resultaten eerst"
+
+#: ../search/UIManager.cs:150
+msgid "_Name"
+msgstr "_Naam"
+
+#: ../search/UIManager.cs:151
+msgid "Sort matches by name"
+msgstr "Resultaten sorteren op naam"
+
+#: ../search/UIManager.cs:154
+msgid "_Relevance"
+msgstr "_Relevantie"
+
+# eerst/bovenaan
+#: ../search/UIManager.cs:155
+msgid "Sort the best matches first"
+msgstr "De beste resultaten eerst"
+
+#: ../search/UIManager.cs:268
+msgid "Couldn't launch web browser"
+msgstr "Kon de webbrowser niet opstarten"
+
+#: ../tools/Settings.cs:226
+msgid "Reload configuration"
+msgstr "Configuratie opnieuw laden"
+
+#: ../tools/Settings.cs:227
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"Het configuratiebestand is door een andere toepassing gewijzigd. Wilt u de "
+"nu weergegeven waardes vervangen door de nieuwe waardes uit dit bestand?"
+
+#: ../tools/Settings.cs:265
+msgid "Select Path"
+msgstr "Pad selecteren"
+
+#: ../tools/Settings.cs:284
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "Het geselecteerde pad is niet toegevoegd, omdat het al aanwezig was."
+
+#: ../tools/Settings.cs:287
+msgid ""
+"The selected path wasn't added. The list contains items that supercedes it "
+"and the data is already being indexed."
+msgstr ""
+"Het geselecteerde pad is niet toegevoegd, omdat het onderdeel is van een "
+"ander in de lijst aanwezig pad en de gegevens dus al geïndexeerd worden."
+
+#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
+msgid "Path not added"
+msgstr "Pad niet toegevoegd"
+
+#: ../tools/Settings.cs:307
+msgid "Remove obsolete paths"
+msgstr "Overbodige paden verwijderen"
+
+#: ../tools/Settings.cs:308
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Toevoegen van dit pad zal enkele andere paden overbodig maken. Deze paden "
+"zullen na toevoeging verwijderd worden. Weet u zeker dat u dit pad wilt "
+"toevoegen?"
+
+#: ../tools/Settings.cs:334
+msgid "Remove path"
+msgstr "Pad verwijderen"
+
+#: ../tools/Settings.cs:335
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Weet u zeker dat u dit pad uit de lijst met paden die geïndexeerd worden "
+"wilt verwijderen?"
+
+#: ../tools/Settings.cs:364
+msgid "Remove item"
+msgstr "Item verwijderen"
+
+#: ../tools/Settings.cs:365
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Weet u zeker dat u dit item wilt verwijderen van de lijst met gegevens die "
+"geïndexeerd moeten worden?"
+
+#: ../tools/Settings.cs:408
+msgid "Invalid host entry"
+msgstr "Ongeldige host"
+
+# deze externe host staat al in de lijst
+#: ../tools/Settings.cs:415
+msgid "Remote host already present in the list."
+msgstr "Externe host reeds aanwezig in de lijst."
+
+#: ../tools/Settings.cs:424
+msgid "Netbeagle Node not added"
+msgstr "Netbeagle node niet toegevoegd"
+
+#: ../tools/Settings.cs:440
+msgid "Remove host"
+msgstr "Host verwijderen"
+
+#: ../tools/Settings.cs:441
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "Weet u zeker dat u deze host uit de lijst wilt verwijderen?"
+
+#: ../tools/Settings.cs:462
+msgid "Select path"
+msgstr "Selecteer pad"
+
+#: ../tools/Settings.cs:481
+msgid "The selected path is already configured for external access."
+msgstr "Het geselecteerde pad is al geconfigureerd voor toegang op afstand."
+
+#: ../tools/Settings.cs:505
+msgid "Remove public path"
+msgstr "Publiek pad verwijderen"
+
+#: ../tools/Settings.cs:506
+msgid ""
+"Are you sure you wish to remove this entry from the list of public paths?"
+msgstr ""
+"Weet u zeker dat u dit item uit de lijst van publieke paden wilt verwijdern?"
+
+#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
+#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
+msgid "Name"
+msgstr "Naam"
+
+#: ../tools/Settings.cs:634
+msgid "Type"
+msgstr "Type"
+
+#: ../tools/Settings.cs:687
+msgid "Path:"
+msgstr "Pad:"
+
+#: ../tools/Settings.cs:690
+msgid "Pattern:"
+msgstr "Patroon:"
+
+#: ../tools/Settings.cs:693
+msgid "Mail folder:"
+msgstr "E-mailmap:"
+
+#: ../tools/Settings.cs:1041
+msgid "Select Folder"
+msgstr "Map selecteren"
+
+# Map is hier veel duidelijker dan pad (tino) 
+# (je moet ook een map kiezen met de bestandsverkenner)
+#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
+msgid "P_ath:"
+msgstr "M_ap:"
+
+#: ../tools/Settings.cs:1072
+msgid "M_ail folder:"
+msgstr "_E-mailmap:"
+
+#: ../tools/Settings.cs:1077
+msgid "P_attern:"
+msgstr "P_atroon:"
+
+#: ../tools/Settings.cs:1101
+msgid "Error adding path"
+msgstr "Fout bij toevoegen van pad"
+
+# map hier veel duidelijker dan pad (tino)
+#: ../tools/Settings.cs:1102
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"De opgegeven map kon niet gevonden worden en is daarom niet toegevoegd aan "
+"de lijst met bronnen die niet geïndexeerd zullen worden."
+
+#: ../tools/Settings.cs:1132
+msgid "Show"
+msgstr "Tonen"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Add Remote Host</b>"
+msgstr "<b>Externe host toevoegen</b>"
+
+# beheer/systeembeheer
+#: ../tools/settings.glade.h:2
+msgid "<b>Administration</b>"
+msgstr "<b>Systeembeheer</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>Weergave</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Bronnen uitsluiten</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>General</b>"
+msgstr "<b>Algemeen</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Networking</b>"
+msgstr "<b>Netwerk</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Privacy</b>"
+msgstr "<b>Privacy</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>Mailmap selecteren</b>"
+
+#: ../tools/settings.glade.h:9
+msgid "Add Remote Host"
+msgstr "Externe host toevoegen"
+
+#: ../tools/settings.glade.h:10
+msgid ""
+"Add a remote search-enabled host you wish \n"
+"to network with."
+msgstr "Voeg een op afstand doorzoekbare host toe."
+
+# mappen ipv paden (je kiest een map met de bestandsverkenner) (tino)
+#: ../tools/settings.glade.h:12
+msgid "Add any additional paths to be included for indexing."
+msgstr "Voeg hier de overige mappen toe die u geïndexeerd wilt hebben."
+
+#: ../tools/settings.glade.h:13
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr "Voeg een willekeurig aantal op afstand doorzoekbare hosts toe."
+
+#: ../tools/settings.glade.h:14
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Stel in welke resultaattypen getoond moeten worden en in welke volgorde zij "
+"getoond moeten worden als op type gesorteerd wordt."
+
+#: ../tools/settings.glade.h:15
+msgid "Allow _external access to local search services"
+msgstr "E_xterne toegang tot lokale zoekdiensten toestaan"
+
+#: ../tools/settings.glade.h:16
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:17
+msgid "Ctrl"
+msgstr "Ctrl"
+
+# tonen met/oproepen met
+#: ../tools/settings.glade.h:18
+msgid "Display the search window by pressing:"
+msgstr "Het zoekvenster oproepen met:"
+
+#: ../tools/settings.glade.h:19
+msgid "Exclude Resource"
+msgstr "Bron uitsluiten"
+
+#: ../tools/settings.glade.h:20
+msgid "Filename _pattern"
+msgstr "Be_standsnaampatroon"
+
+#: ../tools/settings.glade.h:21
+msgid "I_ndex my home directory"
+msgstr "_Mijn persoonlijke map indexeren"
+
+#: ../tools/settings.glade.h:22
+msgid "Index data while on battery power"
+msgstr "Ook bij accustroom data indexeren"
+
+#: ../tools/settings.glade.h:23
+msgid "Indexing"
+msgstr "Indexeren"
+
+#: ../tools/settings.glade.h:24
+msgid "Networking"
+msgstr "Netwerk"
+
+#: ../tools/settings.glade.h:26
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Selecteer een bron die u niet geïndexeerd wilt hebben."
+
+#: ../tools/settings.glade.h:27
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Selecteer de E-mailmap die u niet geïndexeerd wilt hebben."
+
+#: ../tools/settings.glade.h:29
+msgid "Search Preferences"
+msgstr "Zoekvoorkeuren"
+
+#: ../tools/settings.glade.h:30
+msgid "Select Mail Folder"
+msgstr "E-mailmap selecteren"
+
+#: ../tools/settings.glade.h:31
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Geef alle bronnen, waaronder paden, patronen, e-mailmappen, of soort "
+"objecten, die u niet geïndexeerd wilt hebben."
+
+#: ../tools/settings.glade.h:32
+msgid "Specify paths that should be available for external access."
+msgstr "Geef de paden op die extern toegankelijk moeten zijn."
+
+#: ../tools/settings.glade.h:33
+msgid "Type:"
+msgstr "Type:"
+
+#: ../tools/settings.glade.h:34
+msgid "_Address:"
+msgstr "_Adres:"
+
+#: ../tools/settings.glade.h:35
+msgid "_Allow Beagle to be run as root"
+msgstr "_Beagle uit kunnen laten voeren als 'root'"
+
+# Map is hier veel duidelijker dan Mappenpad of pad. (tino)
+#: ../tools/settings.glade.h:36
+msgid "_Folder path"
+msgstr "_Map"
+
+#: ../tools/settings.glade.h:37
+msgid "_Mail folder"
+msgstr "_E-mailmap"
+
+# weergegeven/getoonde
+#: ../tools/settings.glade.h:38
+msgid "_Maximum number of results displayed:"
+msgstr "_Maximum aantal getoonde resultaten:"
+
+#: ../tools/settings.glade.h:39
+msgid "_Start search & indexing services automatically "
+msgstr "A_utomatisch de zoek- en indexeerdiensten starten"
+
+#: ../tools/beagle-settings.desktop.in.h:1
+msgid "Configure Desktop Search & Indexing"
+msgstr "Desktop doorzoeken en indexeren configureren"
+
+#: ../tools/beagle-settings.desktop.in.h:2
+msgid "Configure search & indexing properties"
+msgstr "Eigenschappen voor zoeken en indexeren configureren"
+
+#: ../tools/beagle-settings.desktop.in.h:3
+msgid "Search & Indexing"
+msgstr "Zoeken en indexeren"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "Op deze computer"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "Afbeeldingenmap"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "Miniaturenmap"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "Exif-map"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "GPS-map"
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr "InterOperability-map"
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "Onbekende map"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:82
+msgid "MMM d"
+msgstr "d MMMM"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:85
+msgid "MMM d, yyyy"
+msgstr "d MMMM yyyy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:88
+msgid "h:mm tt"
+msgstr "H:mm"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:94
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0} om {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:111
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Vandaag om {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:114
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Gisteren om {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:117
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "{0} dagen geleden om {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:122
+msgid "MMMM d, h:mm tt"
+msgstr "d MMMM om H:mm"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:127
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "d MMMM yyyy om H:mm"
+
+# Dit is om een tijdspanne aan te duiden, dus ik heb voor "uur" en niet voor
+# "uren" gekozen -- Wouter Bolsterlee
+#: ../Util/StringFu.cs:137
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} uur"
+msgstr[1] "{0} uur"
+
+# Tijdspannes in minuten zeggen we weer wel in het meervoud. Rare jongens, die
+# Nederlandstaligen... -- Wouter Bolsterlee
+#: ../Util/StringFu.cs:144
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minuut"
+msgstr[1] "{0} minuten"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:160
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} bytes"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:164
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:167
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+
+# meervoud is hier beter
+#~ msgid "Image"
+#~ msgstr "Afbeeldingen"
+
+#~ msgid "Edited:"
+#~ msgstr "Bewerkt:"
+
+#~ msgid "Directory Path"
+#~ msgstr "Het pad naar de map"
+
+#~ msgid "Start the daemon"
+#~ msgstr "De daemon opstarten"
+
+#~ msgid "Move to trash"
+#~ msgstr "Naar prullenbak verplaatsen"
+
+#~ msgid "Add to Library"
+#~ msgstr "Aan bibliotheek toevoegen"
+
+#~ msgid "Instant-Message"
+#~ msgstr "Expresbericht"
+
+#~ msgid "Previous {0}"
+#~ msgid_plural "Previous {0}"
+#~ msgstr[0] "Vorige {0}"
+#~ msgstr[1] "Vorige {0}"
+
+#~ msgid "Next {0}"
+#~ msgid_plural "Next {0}"
+#~ msgstr[0] "Volgende {0}"
+#~ msgstr[1] "Volgende {0}"
+
+#~ msgid "Show Information"
+#~ msgstr "Informatie tonen"
+
+#~ msgid "More application results..."
+#~ msgstr "Meer resultaten in toepassingen..."
+
+#~ msgid "More contact results..."
+#~ msgstr "Meer resultaten in contacten..."
+
+#~ msgid "More folder results..."
+#~ msgstr "Meer resultaten in mappen..."
+
+#~ msgid "More image results..."
+#~ msgstr "Meer resultaten in afbeeldingen..."
+
+#~ msgid "More audio results..."
+#~ msgstr "Meer resultaten in audio..."
+
+#~ msgid "More video results..."
+#~ msgstr "Meer resultaten in video..."
+
+#~ msgid "More document results..."
+#~ msgstr "Meer resultaten in documenten..."
+
+#~ msgid "More conversation results..."
+#~ msgstr "Meer resultaten in gesprekken..."
+
+#~ msgid "More website results..."
+#~ msgstr "Meer resultaten in websites..."
+
+#~ msgid "More news feed results..."
+#~ msgstr "Meer resultaten in nieuws-feeds..."
+
+#~ msgid "More archive results..."
+#~ msgstr "Meer resultaten in archieven..."
+
+#~ msgid ""
+#~ "Best cannot initialize Mozilla's Gecko runtime environment.\n"
+#~ "Have you upgraded Mozilla or Firefox recently?  If so, you\n"
+#~ "probably need to rebuild beagle against this new version.\n"
+#~ "See http://bugzilla.gnome.org/show_bug.cgi?id=326503 for\n"
+#~ "more information."
+#~ msgstr ""
+#~ "'Best' kan de Mozilla Gecko runtime environment niet initialiseren.\n"
+#~ "Heeft u onlangs Mozilla of Firefox een upgrade gegeven? In dat\n"
+#~ "geval moet u waarschijnlijk beagle opnieuw opbouwen met deze nieuwe\n"
+#~ "versie. Kijk op http://bugzilla.gnome.org/show_bug.cgi?id=326503\n"
+#~ "voor meer informatie."
+
+#~ msgid ""
+#~ "If you're wondering whether Best is working check your notification area "
+#~ "(system tray)"
+#~ msgstr ""
+#~ "Als je je afvraagt of Best werkt, controleer dan je mededelingengebied "
+#~ "(system tray)"
+
+#~ msgid ""
+#~ "You are about to close the search tray. The search tray is automatically "
+#~ "started at login-time. Would you like to disable it for future sessions?"
+#~ msgstr ""
+#~ "De zoekfunctie vanuit het mededelingengebied wordt afgesloten. Deze "
+#~ "zoekfunctie wordt automatisch opnieuw opgestart als u zich opnieuw "
+#~ "aanmeldt. Moet de zoekfunctie permanent uitgeschakeld worden?"
+
+#~ msgid "in Files"
+#~ msgstr "in bestanden"
+
+#~ msgid "in Addressbook"
+#~ msgstr "in adresboek"
+
+#~ msgid "in Chats"
+#~ msgstr "in chats"
+
+#~ msgid "Show More Results"
+#~ msgstr "Meer resultaten tonen"
+
+#~ msgid "Show Previous Results"
+#~ msgstr "Vorige resultaten tonen"
+
+#~ msgid "Best <b>{0} results of {1}</b> are shown."
+#~ msgstr "Beste <b>{0} van in totaal {1} resultaten</b> worden getoond."
+
+#~ msgid "Results <b>{0} through {1} of {2}</b> are shown."
+#~ msgstr "Resultaten <b>{0} tot en met {1} (totaal {2})</b> worden getoond."
+
+#~ msgid ""
+#~ "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+#~ "daemon isn't running."
+#~ msgstr ""
+#~ "De zoekopdracht naar <i>{0}</i> is mislukt. Waarschijnlijk is de beagle-"
+#~ "daemon niet actief."
+
+#~ msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+#~ msgstr "De zoekopdracht naar <i>{0}</i> is mislukt met fout:<br>{1}<br>"

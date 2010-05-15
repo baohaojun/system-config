@@ -1,0 +1,274 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## beagle_secure_scripts.dpatch by Jose Carlos Garcia Sogo <jsogo@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Secure shell scripts by removing the 'uninstalled' logic
+## DP: This prevents running the beagle scripts with various important
+## DP: paths set relative to the current directory.
+
+@DPATCH@
+diff -urNad beagle-0.3.9~/ImLogViewer/beagle-imlogviewer.in beagle-0.3.9/ImLogViewer/beagle-imlogviewer.in
+--- beagle-0.3.9~/ImLogViewer/beagle-imlogviewer.in	2007-11-27 12:49:57.000000000 +1100
++++ beagle-0.3.9/ImLogViewer/beagle-imlogviewer.in	2009-02-23 13:16:23.000346909 +1100
+@@ -1,18 +1,11 @@
+-#!@bash@
++#!/bin/bash
+ 
+ # This line will be automatically uncommented when you "make install"
+ #installed=1
+ 
+-if [ -z $installed ] ; then
+-    echo "*** Running uninstalled @target@ ***"
+-    THIS_PATH="../Util:../images:../Lucene.Net"
+-    THIS_EXE="./@target@"
+-    export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+-else
+     THIS_PATH="@pkglibdir@"
+     THIS_EXE="@pkglibdir@/@target@"
+     export LD_LIBRARY_PATH="@pkglibdir@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+-fi
+ 
+ MONO_PATH="$THIS_PATH${MONO_PATH+:$MONO_PATH}" exec -a beagle-imlogviewer mono $MONO_EXTRA_ARGS --debug $THIS_EXE "$@"
+ 
+diff -urNad beagle-0.3.9~/beagled/beagled-index-helper.in beagle-0.3.9/beagled/beagled-index-helper.in
+--- beagle-0.3.9~/beagled/beagled-index-helper.in	2008-02-10 13:40:46.000000000 +1100
++++ beagle-0.3.9/beagled/beagled-index-helper.in	2009-02-23 13:16:23.000346909 +1100
+@@ -1,22 +1,10 @@
+-#!@bash@
++#!/bin/bash
+ 
+ # This line will be automatically uncommented when you "make install"
+ #installed=1
+ 
+-if [ -z $installed ] ; then
+-    echo "*** Running uninstalled @target@ ***"
+-    THIS_PATH="../Util:../BeagleClient:."
+-    THIS_EXE="./@target@"
+-
+-    export BEAGLE_TOOL_PATH="../tools"
+-
+-    export MONO_PATH="../Util:../BeagleClient${MONO_PATH+:$MONO_PATH}"
+-    export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+-    export BEAGLE_FILTER_PATH="../Filters${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
+-else
+     THIS_PATH="@pkglibdir@"
+     THIS_EXE="@pkglibdir@/@target@"
+-fi
+ 
+ if [ -n "$_GET_ON_THE_HEAP_BUDDY_BANDWAGON" ]; then
+    n=1
+diff -urNad beagle-0.3.9~/beagled/beagled.in beagle-0.3.9/beagled/beagled.in
+--- beagle-0.3.9~/beagled/beagled.in	2008-01-03 20:22:37.000000000 +1100
++++ beagle-0.3.9/beagled/beagled.in	2009-02-23 13:16:23.000346909 +1100
+@@ -1,35 +1,8 @@
+-#!@bash@
++#!/bin/bash
+ 
+ # This line will be automatically uncommented when you "make install"
+ #installed=1
+ 
+-if [ -z $installed ] ; then
+-    echo "*** Running uninstalled @target@ ***"
+-
+-    # When we run uninstalled, run in the foreground by default.
+-    fg_default=1
+-
+-    TARGET_EXE="./@target@"
+-
+-    export _BEAGLED_INDEX_HELPER_PATH="."
+-
+-    export MONO_PATH="../Util:../BeagleClient${MONO_PATH+:$MONO_PATH}"
+-
+-    export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+-    
+-    export BEAGLE_FILTER_PATH="../Filters${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
+-    export BEAGLE_BACKEND_PATH=".${BEAGLE_BACKEND_PATH+:$BEAGLE_BACKEND_PATH}"
+-
+-    if [ -z $BEAGLE_WEBSERVER_DIR ] ; then
+-	    export BEAGLE_WEBSERVER_DIR="./webinterface"
+-    fi
+-
+-    if [ -z $BEAGLE_CONF_DIR ]; then
+-	    export BEAGLE_CONF_DIR="../conf-data"
+-    fi
+-
+-else
+-
+     # Otherwise default to running in the background
+     fg_default=0
+ 
+@@ -38,7 +11,6 @@
+     export _BEAGLED_INDEX_HELPER_PATH="@pkglibdir@"
+     export MONO_PATH="@pkglibdir@${MONO_PATH+:$MONO_PATH}"
+     export LD_LIBRARY_PATH="@pkglibdir@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+-fi
+ 
+ EVO_LIBDIR="@evolibdir@"
+ if [ -n "$EVO_LIBDIR" ]; then
+@@ -104,13 +76,7 @@
+    MONO_EXTRA_ARGS="--debug $MONO_EXTRA_ARGS"
+ fi
+ 
+-# The BEAGLE_MONO_RUNTIME variable can be used to specify the path
+-# to an alternative runtime.
+-if [ -z "$BEAGLE_MONO_RUNTIME" ]; then
+    export BEAGLE_MONO_RUNTIME="mono"
+-else
+-   echo "*** Using mono runtime at $BEAGLE_MONO_RUNTIME ***"
+-fi
+ 
+ if [ $monogrind -eq 1 ]; then
+     export GC_DONT_GC=1
+diff -urNad beagle-0.3.9~/beagled/wrapper.in beagle-0.3.9/beagled/wrapper.in
+--- beagle-0.3.9~/beagled/wrapper.in	2008-01-03 20:22:37.000000000 +1100
++++ beagle-0.3.9/beagled/wrapper.in	2009-02-23 13:16:23.000346909 +1100
+@@ -1,29 +1,13 @@
+-#!@bash@
++#!/bin/bash
+ 
+ # This line will be automatically uncommented when you "make install"
+ #installed=1
+ 
+-if [ -z $installed ] ; then
+-    echo "*** Running uninstalled @target@ ***"
+-    THIS_PATH="../Util:../BeagleClient:."
+-    THIS_EXE="./@target@"
+-
+-    export BEAGLE_TOOL_PATH="../tools"
+-    export MONO_PATH="../Util:../BeagleClient${MONO_PATH+:$MONO_PATH}"
+-    export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+-    export BEAGLE_FILTER_PATH="../Filters${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
+-
+-    if [ -z $BEAGLE_CONF_DIR ]; then
+-	    export BEAGLE_CONF_DIR="../conf-data"
+-    fi
+-
+-else
+     THIS_PATH="@pkglibdir@"
+     THIS_EXE="@pkglibdir@/@target@"
+ 
+     export MONO_PATH="@pkglibdir@${MONO_PATH+:$MONO_PATH}"
+     export LD_LIBRARY_PATH="@pkglibdir@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+-fi
+ 
+ MONO_PATH="$THIS_PATH${MONO_PATH+:$MONO_PATH}" exec -a @wrapper@ mono $MONO_EXTRA_ARGS $THIS_EXE "$@"
+ 
+diff -urNad beagle-0.3.9~/search/beagle-search.in beagle-0.3.9/search/beagle-search.in
+--- beagle-0.3.9~/search/beagle-search.in	2008-02-11 07:24:20.000000000 +1100
++++ beagle-0.3.9/search/beagle-search.in	2009-02-23 13:16:23.004346300 +1100
+@@ -1,24 +1,11 @@
+-#!@bash@
++#!/bin/bash
+ 
+ # This line will be automatically uncommented when you "make install"
+ #installed=1
+ 
+-if [ -z $installed ] ; then
+-    echo "*** Running uninstalled beagle-search ***"
+-    THIS_EXE="./Beagle.Search.exe"
+-
+-    export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+-    export MONO_PATH="../Util:../BeagleClient${MONO_PATH+:MONO_PATH}"
+-else
+     THIS_EXE="@pkglibdir@/Beagle.Search.exe"
+ 
+     export LD_LIBRARY_PATH="@pkglibdir@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+-fi
+-
+-if [ -z "$BEAGLE_MONO_RUNTIME" ]; then
+    export BEAGLE_MONO_RUNTIME="mono"
+-else
+-   echo "*** Using mono runtime at $BEAGLE_MONO_RUNTIME ***"
+-fi
+ 
+ exec -a beagle-search $BEAGLE_MONO_RUNTIME $MONO_EXTRA_ARGS $THIS_EXE "$@"
+diff -urNad beagle-0.3.9~/tools/beagle-index-info beagle-0.3.9/tools/beagle-index-info
+--- beagle-0.3.9~/tools/beagle-index-info	2007-11-29 01:38:16.000000000 +1100
++++ beagle-0.3.9/tools/beagle-index-info	2009-02-23 13:16:23.004346300 +1100
+@@ -3,10 +3,4 @@
+ # This line will be automatically uncommented when you "make install"
+ #installed=1
+ 
+-if [ -z $installed ]; then
+-    CMD="./beagle-info"
+-else
+-    CMD="beagle-info"
+-fi
+-
+-exec -a beagle-index-info $CMD --index-info
++exec -a beagle-index-info beagle-info --index-info
+diff -urNad beagle-0.3.9~/tools/beagle-ping beagle-0.3.9/tools/beagle-ping
+--- beagle-0.3.9~/tools/beagle-ping	2007-11-29 01:38:43.000000000 +1100
++++ beagle-0.3.9/tools/beagle-ping	2009-02-23 13:16:23.004346300 +1100
+@@ -3,10 +3,4 @@
+ # This line will be automatically uncommented when you "make install"
+ #installed=1
+ 
+-if [ -z $installed ]; then
+-    CMD="./beagle-info"
+-else
+-    CMD="beagle-info"
+-fi
+-
+-exec -a beagle-ping $CMD --daemon-version
++exec -a beagle-ping beagle-info --daemon-version
+diff -urNad beagle-0.3.9~/tools/beagle-status beagle-0.3.9/tools/beagle-status
+--- beagle-0.3.9~/tools/beagle-status	2008-07-18 22:39:29.000000000 +1000
++++ beagle-0.3.9/tools/beagle-status	2009-02-23 13:19:11.604354895 +1100
+@@ -1,14 +1,8 @@
+-#!/usr/bin/env bash
++#!/bin/bash
+ 
+ # This line will be automatically uncommented when you "make install"
+-#installed=1
+-
+-if [ -z $installed ]; then
+-    CMD="./beagle-info"
+-else
+-    CMD="beagle-info"
+-fi
+ 
++CMD="beagle-info"
+ while true; do
+     clear
+     echo -n "beagle-status at "
+diff -urNad beagle-0.3.9~/tools/wrapper.in beagle-0.3.9/tools/wrapper.in
+--- beagle-0.3.9~/tools/wrapper.in	2008-01-03 20:22:37.000000000 +1100
++++ beagle-0.3.9/tools/wrapper.in	2009-02-23 13:16:23.004346300 +1100
+@@ -3,36 +3,11 @@
+ # This line will be automatically uncommented when you "make install"
+ #installed=1
+ 
+-if [ -z $installed ] ; then
+-    echo "*** Running uninstalled @target@ ***" >&2
+-
+-    if [ -n "$BEAGLE_TOOL_PATH" ]; then
+-	TOOLDIR="$PWD/$BEAGLE_TOOL_PATH"
+-    else
+-	TOOLDIR="."
+-    fi
+-
+-    THIS_LIB_DIR="$TOOLDIR/../glue/.libs"
+-    THIS_PATH="$TOOLDIR/../Util:$TOOLDIR/../BeagleClient:$TOOLDIR/../beagled:$TOOLDIR/../images"
+-    THIS_EXE="$TOOLDIR/@target@"
+-    THIS_FILTERS="$TOOLDIR/../Filters"
+-    THIS_BACKENDS="$TOOLDIR/../beagled"
+-
+-    if [ -z $BEAGLE_CONF_DIR ]; then
+-	    export BEAGLE_CONF_DIR="../conf-data"
+-    fi
+-
+-else
+     THIS_LIB_DIR="@pkglibdir@:@libdir@"
+     THIS_PATH="@pkglibdir@:@libdir@"
+     THIS_EXE="@pkglibdir@/@target@"
+-fi
+ 
+-if [ -z "$BEAGLE_MONO_RUNTIME" ]; then
+    export BEAGLE_MONO_RUNTIME="mono"
+-else
+-   echo "*** Using mono runtime at $BEAGLE_MONO_RUNTIME ***" >&2
+-fi
+ 
+ LD_LIBRARY_PATH="$THIS_LIB_DIR${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}" MONO_PATH="$THIS_PATH${MONO_PATH+:$MONO_PATH}" BEAGLE_FILTER_PATH="$BEAGLE_FILTER_PATH${THIS_FILTERS+:$THIS_FILTERS}" BEAGLE_BACKEND_PATH="$BEAGLE_BACKEND_PATH${THIS_BACKENDS+:$THIS_BACKENDS}" exec $BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $THIS_EXE "$@"
+ 

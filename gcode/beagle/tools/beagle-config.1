@@ -1,0 +1,92 @@
+.\" beagle-config(1) manpage
+.\"
+.\" Copyright (C) 2005 Novell, Inc.
+.\" Copyright (C) 2008 D Bera <dbera.web@gmail.com>
+.\"
+.TH BEAGLE-CONFIG "1" "July 2008" "beagle" "Linux User's Manual"
+.SH NAME
+beagle-config \- command-line interface to Beagle configuration
+.SH SYNOPSIS
+.B beagle-config
+\fIoptions\fR
+.br
+.B beagle-config
+\fIsections\fR
+.br
+.B beagle-config
+\fIsections\fR \fIsection-options\fR [\fIparams\fR]
+.br
+.B beagle-config
+\fIxml-options\fR
+.SH DESCRIPTION
+.BR beagle-config
+is a command line tool designed to manipulate the Beagle configuration.
+.PP
+The configuration is stored in a series of files usually located in the \fB~/.beagle/config\fR directory. The configuration is split up into \fIsections\fR, each section being represented by 1 file.
+.PP
+The format used is the result of serialized objects. Manually modifying the configuration files is not recommended, you should use this utility instead. You can also the graphical interfaces beagle-settings (Gtk) or beagle-settings-qt (Qt4).
+.PP
+Each \fIsection\fR configures a different area of the Beagle system. Each section has a number of preset \fIsection-options\fR (commands) which you can perform on it via this command-line application.
+.PP
+The available sections, and available options for each section, are discovered at runtime. This manual does not attempt to document the sections in detail. This manual demonstrates how you can retrieve a list of available sections and their options.
+.PP
+\fIbeagle-config\fR can be used "offline", it does not require a Beagle daemon to be running for most operations. If a Beagle daemon is running, it will immediately be notified of any configuration changes, and your new settings will come into effect almost immediately. Alternatively, you can force a re-load with the \fB--beagled-reload-config\fR argument.
+.SH OPTIONS
+.TP
+.B --help 
+Print a brief copyright and usage message.
+.TP
+.B --beagled-reload-config
+Asks the beagle daemon to reload the configuration files.
+.TP
+.B --list-sections
+Lists all of the available sections for use as the \fIsections\fR parameter.
+.TP
+.B --version
+Print version information.
+.SH SECTION OPTIONS
+Each section has its own unique set of options available. To see a list of supported options for a particular section, run \fBbeagle-config section-name\fR with no additional parameters. Note that some of the options are strictly for internal usage by beagle and should not be modified by the user.
+.SH PARAMS
+To read the value of section-option, you do not need to give any params. Of course you need to supply params if you want to set a section-option. There are 3 types of section options. The params depend on the type of the section-option.
+.TP
+.I boolean option
+PARAMS is "true" or "false"
+.TP
+.I string option
+PARAMS is the value of the section-option.
+.TP
+.I list option
+To add a list option, pass a comma separated list of options
+.I "value1,value2,...".
+Run \fBbeagle-config section-name section-option\fR for the number of items in the list and their explanations.
+.br
+To remove a list option, pass
+.I "- value1,value2,..."
+where value1,value2,... are the exact values of the option that you want to remove.
+.SH XML OPTIONS
+Non-C# programs who want to get/set configuration values can use these options. If an error occurs, the return value can be checked to determine the kind of the error. The return value is
+.TP
+1: Bad section name
+.TP
+2: Invalid XML
+.TP
+3: XML does not correspond to the section name
+.SS Options
+.TP
+.B --read-xml SECTION
+Reads the xml of a section from stdin. Suitable for setting options by other programs.
+.TP
+.B --write-xml SECTION
+Print the section in xml format. Suitable for parsing by other programs.
+.SH AUTHOR
+Originally written by Daniel Drake <dsd@gentoo.org>.
+Modified by D Bera <dbera.web@gmail.com>
+.SH "REPORTING BUGS"
+Report bugs to <dashboard-hackers@gnome.org>.
+.SH COPYRIGHT
+Copyright \(co 2005 Novell, Inc., \(co 2008 D Bera
+.sp
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+.BR beagled (1)

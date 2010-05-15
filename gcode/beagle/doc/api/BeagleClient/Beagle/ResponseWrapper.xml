@@ -1,0 +1,49 @@
+<Type Name="ResponseWrapper" FullName="Beagle.ResponseWrapper">
+  <TypeSignature Language="C#" Value="public class ResponseWrapper" />
+  <AssemblyInfo>
+    <AssemblyName>Beagle</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ResponseWrapper ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ResponseWrapper (Beagle.ResponseMessage response);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="response" Type="Beagle.ResponseMessage" />
+      </Parameters>
+      <Docs>
+        <param name="response">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="public Beagle.ResponseMessage Message;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Beagle.ResponseMessage</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

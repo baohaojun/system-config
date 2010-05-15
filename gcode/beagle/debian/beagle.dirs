@@ -1,0 +1,4 @@
+usr/bin
+usr/sbin
+usr/lib/beagle/Backends
+etc/xdg/autostart
