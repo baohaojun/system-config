@@ -5,3 +5,7 @@
 	email = baohaojun@gmail.com
 [core]
 	excludesfile = ~/.gitexcludefile
+[alias]
+	st = status
+	ci = commit
+	co = checkout
