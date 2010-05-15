@@ -1,0 +1,2 @@
+#!/bin/bash
+python /usr/share/pyshared/html2text.py

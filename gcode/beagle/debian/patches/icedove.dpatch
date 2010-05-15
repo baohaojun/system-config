@@ -1,0 +1,20 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## icedove.dpatch by Jose Carlos Garcia Sogo <jsogo@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad beagle-0.3.0~/Util/Thunderbird.cs beagle-0.3.0/Util/Thunderbird.cs
+--- beagle-0.3.0~/Util/Thunderbird.cs	2007-11-02 11:03:41.000000000 +0100
++++ beagle-0.3.0/Util/Thunderbird.cs	2007-11-25 00:34:07.000000000 +0100
+@@ -33,7 +33,8 @@
+ 	public static class Thunderbird {
+ 		private static readonly string [] exec_names = new string [] {
+ 			"thunderbird",
+-			"mozilla-thunderbird"
++			"mozilla-thunderbird",
++			"icedove"
+ 		};
+ 		
+ 		public static string ExecutableName {

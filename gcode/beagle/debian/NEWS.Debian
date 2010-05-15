@@ -1,0 +1,11 @@
+
+  System wide indexing
+  --------------------
+
+  From this version, system wide indexing is enabled. By default documentation 
+  in /usr/share/doc, and /usr/gnome/help, as well as applications are going to
+  be indexed daily. What is going to be indexed is controlled by crawl-* files
+  in /etc/beagle directory.
+
+
+-- Jose Carlos Garcia Sogo <jsogo@debian.org> Sat, 06 May 2006 --

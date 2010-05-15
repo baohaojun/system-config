@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash 
 NEW_GW_HOST=(
     lb.files.wordpress.com
     lb.wordpress.com
@@ -12,22 +12,37 @@ NEW_GW_HOST=(
     groups.google.com
     developer.android.com
     www.mail-archive.com
+    docs.google.com
+    1.bp.blogspot.com
 )
+
+function sudo()
+{
+    echo sudo "$@"
+    command sudo env PATH=$PATH "$@"
+}
 
 function start_vpn_client() 
 {
     cd ~/bin/linux/ext
-    sudo ./vpnclient stop
-    sudo ./vpnclient start
-    sudo ./vpncmd /client localhost /cmd accountdisconnect bhj
-    sudo ./vpncmd /client localhost /cmd accountconnect bhj
+    sudo vpnclient stop
+    sudo vpnclient start
+    sudo vpncmd /client localhost /cmd accountdisconnect bhj
+    while ! sudo vpncmd /client localhost /cmd accountlist 2>&1|tee /dev/tty|grep -q 'Status.*|Connected'
+    do
+        if sudo vpncmd /client localhost /cmd accountlist 2>&1|tee /dev/tty|grep -q 'Status.*|Offline'
+        then
+            sudo vpncmd /client localhost /cmd accountconnect bhj;
+        fi
+        sleep 5;
+    done
+
     sudo dhclient eth0
     OLD_DNS_LIST=`cat /etc/resolv.conf|grep nameser|awk '{print $2}'`
 
     route -n
     export OLD_GW=$(route -n|grep ^0.0.0.0|grep -v 10.0.0.1|awk '{print $2}')
 
-    sleep 5
     while ! sudo dhclient vpn_nic; do sudo vpncmd /client localhost /cmd accountlist bhj; sleep 5; done
 
     for x in $OLD_DNS_LIST; do sudo route add $x gw $OLD_GW; done
@@ -35,6 +50,7 @@ function start_vpn_client()
     echo $OLD_GW > ~/.vpn_old_gw
     sudo route add -net 130.158.6.0/24 gw $OLD_GW #softether, for vpn itself
     sudo route del default gw 10.0.0.1
+    perl -npe 's/192\.168\..\.1/'$OLD_GW'/g' -i ~/.vpn_old_route
 }
 
 function set_route_hosts()
@@ -49,6 +65,7 @@ function set_route_hosts()
     NEW_GW_HOST=$(
         for x in ${NEW_GW_HOST[@]}
         do
+            x=`echo "$x"|perl -npe 's!.*//(.*?)/.*!$1!'`
             if [[ $x =~ ([0-9]{1,3}\.){3}[0-9]{1,3} ]]
             then
                 echo $x has address $x; # to make it look like output from host(1)
@@ -133,4 +150,5 @@ if [[ "$BASH_SOURCE" == "$0" ]]; then
     else
         set_route_hosts "$@"
     fi
+    route -n > ~/.vpn_old_route
 fi

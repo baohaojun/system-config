@@ -9,7 +9,7 @@ else
     export LOCALPORT=`echo $SSH_CONNECTION|awk '{print $4}'`
     export WHOAMI=`whoami`
     export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
-    export DISPLAY=$REMOTEIP:0.0
+    export DISPLAY=${DISPLAY:-$REMOTEIP:0.0}
     export PS1HostName=`hostname`
     export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m)\n\$'
 
@@ -36,3 +36,48 @@ else
 fi
 
 alias rm='rm -i'
+function svn-info-clip()
+{
+    svn info "$1" |grep '^URL:'|sed -e 's/^URL: //; s/^https/http/'|tr -d '\r\n' | putclip
+}
+
+function lcd()
+{
+    if ! readlink -f "$1"; then
+        return -1
+    fi
+
+
+
+    link=$(readlink -f "$1")
+    if test -f "$link" && echo "${link##*.}"|grep -i '^lnk$' -q; then 
+            link=`readshortcut "$link"`
+    fi
+    if [[ -d "$link" ]]; then
+        cd "$link"
+    else
+        cd "$(dirname "$link")"
+    fi
+}
+
+function lookup_file()
+{
+    local file="$1"
+    local x=0
+    while test ! -f "$file" && ((x++ < 10)); do
+        file=../"$file";
+    done
+    readlink -f "$file"
+}
+
+function git()
+{
+    if test `pwd` = ~
+    then
+        (cd ~/windows-config/; command git "$@")
+    else
+        command git "$@"
+    fi            
+}
+
+stty -ixon -ixoff

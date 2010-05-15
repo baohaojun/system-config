@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://beagle/locale/beagle.dtd">
+
+<window id="beagle-index-link"
+    title="Beagle Index "
+    style="width:400px" 
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    
+<stringbundleset id="stringbundleset">
+     <stringbundle id="beagleStrings"
+         src="chrome://beagle/locale/beagle.properties"/>
+</stringbundleset>
+
+<script type="application/x-javascript" 
+		src="chrome://beagle/content/i18n.js" />
+<script type="application/x-javascript" 
+		src="chrome://beagle/content/utils.js" />
+<script type="application/x-javascript" 
+		src="chrome://beagle/content/indexLink.js" />
+
+<textbox id="beagle-index-link-status" readonly="true" value="" />
+<hbox>
+    <button id="beagle-index-link-start" label="&beagle.index.link.start.label;" 
+        oncommand="beagleInvisibleBrowser.reload();" disabled="true"/>
+    <button id="beagle-index-link-stop" label="&beagle.index.link.stop.label;"  
+        oncommand="beagleInvisibleBrowser.stop();" />
+</hbox>
+
+<browser id="beagle-invisible-browser" type="content" collapsed="true"/>
+
+</window> 

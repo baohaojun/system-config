@@ -36,8 +36,6 @@
 
 
 (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-(setq auto-mode-alist
-      (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
 
 (require 'w3m)
 
@@ -132,8 +130,6 @@
   (when (file-exists-p x)
     (setq describe-char-unicodedata-file x)))
 
-
-(setq weblogger-entry-mode-hook '(flyspell-mode))
 
 (global-set-key [(meta ?/)] 'hippie-expand)
 
@@ -278,7 +274,10 @@
 (global-set-key [(control meta o)]
                 (lambda()(interactive)
                   (let 
-                      ((regexp (current-word))) 
+                      ((regexp (if mark-active 
+                                   (buffer-substring-no-properties (region-beginning)
+                                                                   (region-end))
+                                 (current-word))))
                     (progn     
                       (setq regexp 
                             (read-string (format "List lines matching regexp [%s]: " regexp) nil nil regexp))
@@ -324,7 +323,7 @@
 
 (defun bhj-clt-insert-file-name ()
   (interactive)
-  (insert (car args)))
+  (insert (buffer-name (other-buffer (current-buffer) t))))
 
 (defun bhj-insert-pwdw ()
   (interactive)
@@ -352,7 +351,7 @@
   (insert bhj-clt-branch))
 
 
-(define-key minibuffer-local-shell-command-map [(control meta f)] 'bhj-clt-insert-file-name)
+(define-key minibuffer-local-map [(control meta f)] 'bhj-clt-insert-file-name)
 (define-key minibuffer-local-shell-command-map [(control meta b )] 'bhj-clt-insert-branch)
 (define-key minibuffer-local-shell-command-map [(control meta d )] 'bhj-insert-pwdu)
 (fset 'bhj-clt-co-mkbranch
@@ -434,17 +433,7 @@
  '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
  '(dictem-server "localhost")
  '(dictionary-server "bhj2")
- '(ecb-compile-window-height nil)
- '(ecb-layout-name "left10")
- '(ecb-layout-window-sizes (quote (("top1" (0.25842696629213485 . 0.32075471698113206) (0.21910112359550563 . 0.32075471698113206) (0.5337078651685393 . 0.32075471698113206)))))
- '(ecb-new-ecb-frame nil)
- '(ecb-options-version "2.32")
- '(ecb-ping-program "false")
- '(ecb-tip-of-the-day nil)
- '(ecb-tree-buffer-style (quote image))
  '(ecomplete-database-file-coding-system (quote utf-8))
- '(emms-player-mplayer-command-name "mplayer.exe")
- '(emms-player-mplayer-parameters (quote ("-slave" "-quiet" "-really-quiet" "-vo" "null")))
  '(font-lock-maximum-decoration 2)
  '(gdb-find-source-frame t)
  '(gdb-same-frame t)
@@ -483,7 +472,8 @@
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
  '(w3m-bookmark-file "q:/.w3m_bookmark.html")
- '(weblogger-config-alist (quote (("yo2.cn" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")) ("bhj3" ("user" . "admin") ("server-url" . "http://bhj3/blog/xmlrpc.php") ("weblog" . "1")) ("default" ("user" . "baohaojun@gmail.com") ("server-url" . "http://baohaojun.yo2.cn/xmlrpc.php") ("weblog" . "1")))))
+ '(weblogger-config-alist (quote (("default\\" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog"))))
+ '(weblogger-start-edit-entry-hook (quote ((lambda nil (interactive) (auto-fill-mode 0)))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil))
 
@@ -540,72 +530,6 @@
 	(delete-region start end)
 	(insert match)))))
 
-
-(mapc
- '(lambda (cmd-host-pair)
-    (let ((cmd (car cmd-host-pair)) (x (cdr cmd-host-pair)))
-      (eval
-       `(defun ,(intern (format "%s-%s" cmd x)) ()
-        (interactive)
-        (let ((bhj-buffer ,(format "*bhj-%s-%s*" cmd x))
-              (bhj-buffer-term ,(format "bhj-%s-%s" cmd x))
-              (default-directory "c:/Documents and Settings/bhj/"))
-          (if (get-buffer-process (get-buffer bhj-buffer))
-              (switch-to-buffer bhj-buffer)
-            (progn
-              (if (bufferp (get-buffer bhj-buffer))
-                (kill-buffer (get-buffer bhj-buffer)))
-              (setenv "LOGIN_HOST_PORT" ,(format "bhj@%s:22" x))
-              (ansi-term ,(format "%s" cmd) bhj-buffer-term)
-              (local-set-key [(meta x)] 'execute-extended-command)
-              (local-set-key [(control c) (escape)] 'term-send-raw)
-              (local-set-key [(f1)] 'bhj-term-fn-key)
-              (local-set-key [(f2)] 'bhj-term-fn-key)
-              (local-set-key [(f3)] 'bhj-term-fn-key)
-              (local-set-key [(control c) (control j)] 'bhj-modify-term-map)
-              (local-set-key [(control c) (control k)] 'bhj-modify-term-map)
-              (local-set-key [(escape)] 'bhj-modify-term-map))))))))
- '((slin . bhj3) 
-   (slin . md1)
-   (slin . haoxue)
-   (slin . bhj1)
-   (slin . md2)
-   (slin . md3)
-   (slin . bhj)
-   (.mlj.ep . bhj1\#23)
-   (.mlj.ep . bhj1\#2323)))
-
-(defun bhj-term-fn-key ()
-  (interactive)
-  (case last-input-char
-    ('f1
-     (term-send-raw-string "\033[11~"))
-    ('f2
-     (term-send-raw-string "\033[12~"))
-    ('f3
-     (term-send-raw-string "\033[13~"))))
-
-(defun bhj-term-control_ ()
-  (interactive)
-  (term-send-raw-string "\C-_"))
-
-(defun bhj-modify-term-map ()
-  (interactive)
-  (if (term-in-char-mode)
-      (progn
-        (term-line-mode)
-        (local-set-key [(control c) (control c)] 'bhj-modify-term-map)
-        (local-set-key [(control c) (control j)] 'bhj-modify-term-map)
-        (local-set-key [(control c) (control k)] 'bhj-modify-term-map)
-        (local-set-key [(escape)] 'bhj-modify-term-map))
-    (progn
-      (term-char-mode)
-      (local-set-key [(control c) (escape)] 'term-send-raw)
-      (local-set-key [(control c) (control j)] 'bhj-modify-term-map)
-      (local-set-key [(control c) (control k)] 'bhj-modify-term-map)
-      (local-set-key [(control /)] 'bhj-term-control_)
-      (local-set-key [(escape)] 'bhj-modify-term-map))))
-
 (require 'xcscope)
 (global-set-key [(control z)] 'keyboard-quit)
 (global-set-key [(control x) (control z)] 'keyboard-quit)
@@ -621,8 +545,8 @@
                           'jdk-help-history)))))
 
   ;; Setting process-setup-function makes exit-message-function work
-  (call-process "/bin/bash" nil nil nil "/q/bin/windows/jdkhelp.sh" jdk-word)
-  (w3m-goto-url "file:///cygdrive/d/knowledge/jdk-6u10-docs/1.html"))
+  (call-process "/bin/bash" nil nil nil "jdkhelp.sh" jdk-word)
+  (w3m-goto-url "file:///d/knowledge/jdk-6u18-docs/1.html"))
 (keydef "C-M-j" 'bhj-jdk-help)
 (keydef (w3m "C-c e") (lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/w3m-external" w3m-current-url)))
 
@@ -667,6 +591,23 @@
   (interactive)
   (devenv-cmd "Debug.Start"))
 (global-set-key [f5] 'devenv-debug)
+
+
+(setenv "IN_EMACS" "true")
+(define-key weblogger-entry-mode-map "\C-c\C-k" 'ido-kill-buffer)
+
+(defun poor-mans-csharp-mode ()
+  (csharp-mode)
+  (setq mode-name "C#")
+  (set-variable 'tab-width 8)
+  (set-variable 'indent-tabs-mode t)
+  (set-variable 'c-basic-offset 8)
+  (c-set-offset 'inline-open 0)
+  (c-set-offset 'case-label 0)
+)
+
+(setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
+			      auto-mode-alist))
 
 (server-start)
 ;(w32-register-hot-key [A-tab])

@@ -1,0 +1,7 @@
+#!/bin/bash
+set -x
+. ~/.bashrc_public
+#search for AndroidManifest.xml
+MANIFEST=`lookup_file AndroidManifest.xml`
+package=$(xmlstarlet el -v $MANIFEST|grep '@package='|perl -npe "s#.*\@package=.(.*?)'.*#\$1#;")
+adb shell pm uninstall $package

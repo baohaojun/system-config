@@ -1,0 +1,8 @@
+[Desktop Entry]
+Exec=beagled --replace
+Name=Beagle Search Daemon
+Terminal=false
+Type=Application
+StartupNotify=false
+X-KDE-autostart-phase=2
+X-KDE-autostart-after=panel

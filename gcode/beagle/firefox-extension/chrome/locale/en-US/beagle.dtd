@@ -1,0 +1,42 @@
+<!ENTITY beagle.context.search.link.label           "Find References to this Link">
+<!ENTITY beagle.context.search.page.label           "Find References to this Page">
+
+<!ENTITY beagle.pref.label                          "Beagle Preferences">
+<!ENTITY beagle.pref.security.active.label          "Index pages with secure content">
+<!ENTITY beagle.pref.bookmark.active.label          "Index bookmarks when close the window">
+<!ENTITY beagle.pref.prompt.keywords.active.label   "Prompt for keywords when indexing on demand">
+<!ENTITY beagle.pref.default.action.label           "Default Action">
+<!ENTITY beagle.pref.default.action.tooltip         "What to do When the URL doesn't match any rule">
+<!ENTITY beagle.pref.conflict.action.label          "Conflict Action">
+<!ENTITY beagle.pref.conflict.action.tooltip        "What to do When the URL matches both rules in include list and exclude list">
+<!ENTITY beagle.pref.action.index.label             "Index">
+<!ENTITY beagle.pref.action.noindex.label           "No Index">
+<!ENTITY beagle.pref.groupbox.general.label         "General">
+<!ENTITY beagle.pref.groupbox.include.label         "Include">
+<!ENTITY beagle.pref.groupbox.exclude.label         "Exclude">
+<!ENTITY beagle.pref.filter.name.label              "Name">
+<!ENTITY beagle.pref.filter.pattern.label           "Pattern">
+<!ENTITY beagle.pref.filter.patterntype.label       "PatternType">
+<!ENTITY beagle.pref.filter.add.label		        "Add">
+<!ENTITY beagle.pref.filter.remove.label            "Remove">
+<!ENTITY beagle.pref.filter.add.dlg.title           "Add Rule">
+<!ENTITY beagle.pref.help.label                     "Help">
+<!ENTITY beagle.pref.save.label                     "Save">
+<!ENTITY beagle.pref.cancel.label                   "Cancel">
+
+<!ENTITY beagle.run.index.this.label                "Index This Page">
+<!ENTITY beagle.run.always.index.label              "Always Index This Site">
+<!ENTITY beagle.run.never.index.label               "Never  Index This Site">
+<!ENTITY beagle.run.preferences.label               "Preferences">
+<!ENTITY beagle.run.context.menu.label              "Beagle">
+<!ENTITY beagle.run.index.link.label                "Index This Link">
+<!ENTITY beagle.run.index.image.label               "Index This Image">
+<!ENTITY beagle.index.link.start.label              "Start">
+<!ENTITY beagle.index.link.stop.label               "Stop">
+
+<!ENTITY beagle.bookmark.index.modified.label       "Index The Modified Bookmarks">
+
+<!ENTITY beagle.sidebar.title "Beagle Search History Sidebar">
+<!ENTITY beagle.sidebar.commandkey "B">
+<!ENTITY beagle.sidebar.modifierskey "shift accel">
+
