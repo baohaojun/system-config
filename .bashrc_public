@@ -75,6 +75,8 @@ function git()
     if test `pwd` = ~
     then
         (cd ~/windows-config/; command git "$@")
+    else
+        command git "$@"
     fi            
 }
 
