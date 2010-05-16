@@ -1,7 +1,6 @@
 all:
-	java org.antlr.Tool *.g
-	javac *.java
-	jar cfv ~/bin/linux/ext/BeagleTokens.jar *.class
+	gmcs break.cs Token.cs StandardTokenizerImpl.cs
+	cp *.exe ~/bin/linux/ext/beagle-break.exe
 
 clean:
-	svn-clean
+	git clean -fdx 

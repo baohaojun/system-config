@@ -4,4 +4,4 @@ all:
 	jar cfv ~/bin/linux/ext/uncomment-java.jar *.class
 
 clean:
-	svn-clean
+	git clean -fxd

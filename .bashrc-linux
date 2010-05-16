@@ -16,7 +16,7 @@ function wp()
     if [[ "$FILE" =~ ^/media/smb/ ]]; then
         FILE=`echo "$FILE"|sed -e 's,^/media/smb/,\\\\\\\\,; s,/,\\\\,g'`
     fi
-    echo -n "$FILE"|tee /dev/tty|xclip -i
+    echo -n "$FILE"|tee /dev/tty|putclip
 }
 
 
@@ -24,7 +24,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 export PATH=/usr/local/jdk1.5/bin:/usr/local/arm-linux/bin:~/bin/linux/:~/bin/linux/ext:$PATH:/home/bhj/bin/linux/ext/android-sdk-linux_86/tools
-export CLASSPATH=/usr/local/jdk1.5/lib:~/bin/linux/ext/stringtemplate.jar:~/bin/linux/ext/antlr3.jar:.
+export CLASSPATH=/usr/local/jdk1.5/lib:~/bin/linux/ext/stringtemplate.jar:~/bin/linux/ext/antlr3.jar:~/bin/linux/ext/antlrworks.jar:.
 export JAVA_HOME=/usr/local/jdk1.5
 
 export XMODIFIERS="@im=SCIM"

@@ -20,10 +20,8 @@
 #的话，就更复杂一点，要把它变成这样的参数交给beagle: hello,worldx,12
 
 for (@ARGV) {
-    $_ =~ s/\\./ /g;
-    $_ =~ s/\b[a-zA-Z0-9_]*?\.\*//g;
-    $_ =~ s/[^a-zA-Z0-9_]/_/g;
-    @tokens = (@tokens, split('[^a-zA-Z0-9_]', $_));
+    $_ =~ s/\\./ /g; #把\b这种东西用空格代替掉，于是grep '\bHello'的时候，只会让beagle去搜Hello，而不是bHello
+    @tokens = (@tokens, $_);
 }
 
 $max_token = (sort {length($a) <=> length($b)} @tokens)[-1];
@@ -32,15 +30,8 @@ $max_token = (sort {length($a) <=> length($b)} @tokens)[-1];
 
 $max_token =~ s/^_+|_+$//g;
 
-while ($max_token =~ m/([a-zA-Z]+)_+([a-zA-Z]+)(?=_|\b)/) {
-    $max_token =~ s/([a-zA-Z]+)_+([a-zA-Z]+)(?=_|\b)/$1,$2/g;
-}
-
-$max_token =~ s/(\d.*?_+[a-zA-Z]+)(?=_|\b)/$1,/g;
-$max_token =~ s/__+/,/g;
-$max_token =~ s/,/ /g;
-print $max_token, "\n";
-
+print "max_token is $max_token\n";
+system("beagle-break.exe", $max_token);
 
 
 # appended_comma = True 
