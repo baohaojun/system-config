@@ -30,7 +30,6 @@ $max_token = (sort {length($a) <=> length($b)} @tokens)[-1];
 
 $max_token =~ s/^_+|_+$//g;
 
-print "max_token is $max_token\n";
 system("beagle-break.exe", $max_token);
 
 
