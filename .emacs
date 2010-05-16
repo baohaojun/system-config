@@ -608,6 +608,9 @@
 
 (setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
 			      auto-mode-alist))
+(desktop-save-mode 1)
+(require 'saveplace)
+(setq-default save-place t)
 
 (server-start)
 ;(w32-register-hot-key [A-tab])
