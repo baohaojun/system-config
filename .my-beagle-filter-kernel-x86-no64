@@ -4,7 +4,8 @@ while True:
       line = sys.stdin.readline()[:-1]
       if not line:
             break
-      if "/arch/" in line or "/include/asm-" in line:
+      if "/arch/" in line or ( "/include/asm-" in line and
+                               "/include/asm-generic" not in line):
             if "x86" not in line and "i386" not in line:
                   continue
             if "x86_64" in line:
