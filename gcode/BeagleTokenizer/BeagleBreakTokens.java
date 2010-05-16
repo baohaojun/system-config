@@ -12,7 +12,7 @@ class BeagleBreakTokens {
 	public static long lexerTime = 0;
 	public static boolean profile = false;
 
-	static JavaLexer lexer;
+	static BeagleTokens lexer;
 
 	public static void main(String[] args) {
 		try {
@@ -42,22 +42,9 @@ class BeagleBreakTokens {
 	// This method decides what action to take based on the type of
 	//   file we are looking at
 	public static void doFile(File f)
-							  throws Exception {
-		// If this is a directory, walk each file/dir in that directory
-		if (f.isDirectory()) {
-			String files[] = f.list();
-			for(int i=0; i < files.length; i++)
-				doFile(new File(f, files[i]));
-		}
-
-		// otherwise, if this is a java file, parse it!
-		else if ( ((f.getName().length()>5) &&
-				f.getName().substring(f.getName().length()-5).equals(".java"))
-			|| f.getName().equals("input") )
-		{
-			parseFile(f.getAbsolutePath());
-		}
-	}
+            throws Exception {
+            parseFile(f.getAbsolutePath());
+        }
 
 	static class CountDecisions extends BlankDebugEventListener {
 		public int numDecisions = 0;
@@ -77,39 +64,21 @@ class BeagleBreakTokens {
 			}
 			lexer.setCharStream(new ANTLRFileStream(f));
 			CommonTokenStream tokens = new CommonTokenStream();
-//			tokens.discardOffChannelTokens(true);
+
 			tokens.setTokenSource(lexer);
-			long start = System.currentTimeMillis();
+
 			tokens.LT(1); // force load
-			long stop = System.currentTimeMillis();
-			lexerTime += stop-start;
 
-			/*
-			long t1 = System.currentTimeMillis();
-			tokens.LT(1);
-			long t2 = System.currentTimeMillis();
-			System.out.println("lexing time: "+(t2-t1)+"ms");
-			*/
-			//System.out.println(tokens);
-
-			// Create a parser that reads from the scanner
-                        boolean lastNL = true; 
                         while (true) {
                             Token t = tokens.LT(1);
                             if (t == Token.EOF_TOKEN) {
                                 break;
-                            } else if (t.getType() == JavaParser.COMMENT || t.getType() == JavaParser.LINE_COMMENT) {
-                                if (! lastNL) {
-                                    System.out.println("");
-                                    lastNL = true;
-                                }
+                            } else if (t.getType() == BeagleTokens.OTHER) {
+                                System.out.print(" x ");
+                            } else if (t.getType() == BeagleTokens.WS) {
+                                System.out.print(" ");
                             } else {
                                 System.out.print(t.getText());
-                                if (t.getText().contains("\n")){
-                                    lastNL = true;
-                                } else {
-                                    lastNL = false;
-                                }
                             }
                             tokens.consume();
                         }

@@ -30,11 +30,7 @@ ALPHANUM : Alphanum ;
 
 
 
-COMPANY : {Alpha} ('&'|'@') Alpha ;
-
-EMAIL : Alphanum (('.'|'-'|'_') Alphanum)* '@' Alphanum (('.'|'-') {Alphanum})+ ;
-
-HOST : Alphanum (('.') Alphanum)+ '.'? ;
+COMPANY : Alpha ('&'|'@') Alpha ;
 
 NUM 
     : (Alpha Sep Has_Digit
@@ -45,9 +41,14 @@ NUM
         | Has_Digit Sep Alphanum (Sep Has_Digit Sep Alphanum)+) 
     ;
 
+EMAIL : Alphanum (('.'|'-'|'_') Alphanum)* '@' Alphanum (('.'|'-') Alphanum)+ ;
+
+HOST : Alphanum (('.') Alphanum)+ '.'? ;
+
 
 APOSTROPHE : Alphanum ('\'' Alphanum)+ ;
-WS  :  (' '|'\r'|'\t'|'\u000C'|'\n') 
+
+WS  :  (' '|'\r'|'\t'|'\u000C'|'\n')+
     ;
 
 OTHER : . ;
