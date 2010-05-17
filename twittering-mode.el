@@ -2098,6 +2098,7 @@ authorized -- The account has been authorized.")
       (define-key km (kbd "C-c C-d") 'twittering-direct-messages-timeline)
       (define-key km (kbd "C-c C-s") 'twittering-update-status-interactive)
       (define-key km (kbd "C-c C-e") 'twittering-erase-old-statuses)
+      (define-key km (kbd "C-c C-w") 'twittering-erase-all)
       (define-key km (kbd "C-c C-m") 'twittering-retweet)
       (define-key km (kbd "C-c C-h") 'twittering-set-current-hashtag)
       (define-key km (kbd "C-m") 'twittering-enter)
@@ -4460,6 +4461,11 @@ managed by `twittering-mode'."
       (twittering-remove-timeline-data spec) ;; clear current timeline.
       (twittering-render-timeline (current-buffer) nil) ;; clear buffer.
       (twittering-get-and-render-timeline))))
+
+(defun twittering-erase-all ()
+  (interactive)
+  (let ((inhibit-read-only t))
+    (erase-buffer)))
 
 (defun twittering-click ()
   (interactive)
