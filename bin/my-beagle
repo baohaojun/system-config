@@ -17,9 +17,9 @@ fi
 beagle_dir=$start_dir/.beagle
 #echo Beagle index found at "$beagle_dir" 1>&2
 
-if test -f "$beagle_dir"/.beagle-filter
+if test -f "$beagle_dir"/../.beagle-filter
 then
-    beagle_filter="$beagle_dir"/.beagle-filter
+    beagle_filter="$beagle_dir"/../.beagle-filter
 else
     beagle_filter=~/.my-beagle-filter
 fi
