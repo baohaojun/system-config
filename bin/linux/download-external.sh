@@ -14,4 +14,6 @@ mv antlr-3.2.jar antlr3.jar
 tar zxfv stringtemplate*tar.gz
 mv stringte*/lib/string*.jar stringtemplate.jar
 mv antlrworks-1.3.1.jar antlrworks.jar
+cd ~/.emacs_d/lisp/ext/
+
 echo OK

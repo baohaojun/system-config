@@ -1,7 +1,9 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
 (setq load-path
-      (cons (expand-file-name "~/.emacs_d/lisp") load-path))
+      (nconc (list (expand-file-name "~/.emacs_d/lisp")
+		   (expand-file-name "~/.emacs_d/lisp/ext"))
+	     load-path))
 
 (when  (eq system-type 'cygwin)
   (let ((default-directory "~/tools/emacs-site-lisp/")) (load-file "~/tools/emacs-site-lisp/subdirs.el"))
