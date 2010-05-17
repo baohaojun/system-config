@@ -325,7 +325,13 @@
 
 (defun bhj-clt-insert-file-name ()
   (interactive)
-  (insert (buffer-name (other-buffer (current-buffer) t))))
+  (let ((prev-buffer (other-buffer (current-buffer) t)))
+
+    (insert 
+     (if (buffer-file-name prev-buffer)
+         (replace-regexp-in-string ".*/" "" (buffer-file-name prev-buffer))
+       (buffer-name prev-buffer)))))
+
 
 (defun bhj-insert-pwdw ()
   (interactive)
