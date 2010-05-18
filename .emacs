@@ -260,6 +260,7 @@
 (define-key global-map [(meta f9)] 'cscope-display-buffer)
 ;(define-key global-map [(meta f10)] 'cscope-display-buffer-toggle) 
 (define-key global-map [(meta f10)] 'cscope-pop-mark)
+(define-key global-map [(meta *)] 'cscope-pop-mark)
 
 (prefer-coding-system 'gbk)
 (prefer-coding-system 'utf-8-unix)
@@ -302,10 +303,18 @@
 (standard-display-ascii ?\227 "\-")
 (standard-display-ascii ?\225 "\*")
 
+(defvar last-error-from-cscope nil)
 (defun bhj-next-error ()
   (interactive)
-  (if (string-equal (buffer-name) "*cscope*")
-      (cscope-next-symbol)
+  (if
+      (or
+       (string-equal (buffer-name) "*cscope*")
+       (and (not (next-error-buffer-p (current-buffer)))
+            last-error-from-cscope))
+      (progn
+        (cscope-next-symbol)
+        (setq last-error-from-cscope t))
+    (setq last-error-from-cscope nil)
     (next-error)
     (delete-other-windows)
     (with-current-buffer next-error-last-buffer
@@ -313,8 +322,14 @@
 
 (defun bhj-previous-error ()
   (interactive)
-  (if (string-equal (buffer-name) "*cscope*")
-      (cscope-prev-symbol)
+  (if (or
+       (string-equal (buffer-name) "*cscope*")
+       (and (not (next-error-buffer-p (current-buffer)))
+            last-error-from-cscope))
+      (progn
+        (cscope-prev-symbol)
+        (setq last-error-from-cscope t))
+    (setq last-error-from-cscope nil)
     (previous-error)
     (delete-other-windows)
     (with-current-buffer next-error-last-buffer
@@ -373,12 +388,27 @@
 
 (defcustom bhj-grep-default-directory "/pscp:a22242@10.194.131.91:/"
   "the default directory in which to run grep")
+
+(defvar last-grep-marker nil)
+
 (keydef "C-M-g" (progn
                   (let ((current-prefix-arg 4)
                         (default-directory (eval bhj-grep-default-directory))
                         (grep-use-null-device nil))
+                    (setq last-grep-marker (point-marker))
                     (call-interactively 'grep))))
 
+(keydef "M-g o" (let* ((marker last-grep-marker)
+                       (buffer (marker-buffer marker))
+                       (position (marker-position marker)))
+                  (set-buffer buffer)
+                  (or (and (>= position (point-min))
+                           (<= position (point-max)))
+                      (if widen-automatically
+                          (widen)
+                        (error "Global mark position is outside accessible part of buffer")))
+                  (goto-char position)
+                  (switch-to-buffer buffer)))
 
 (setq hippie-expand-try-functions-list 
       '(try-expand-dabbrev
