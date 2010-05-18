@@ -304,17 +304,21 @@
 
 (defun bhj-next-error ()
   (interactive)
-  (next-error)
-  (delete-other-windows)
-  (with-current-buffer next-error-last-buffer
-    (message "%s" (buffer-substring (line-beginning-position) (line-end-position)))))
+  (if (string-equal (buffer-name) "*cscope*")
+      (cscope-next-symbol)
+    (next-error)
+    (delete-other-windows)
+    (with-current-buffer next-error-last-buffer
+      (message "%s" (buffer-substring (line-beginning-position) (line-end-position))))))
 
 (defun bhj-previous-error ()
   (interactive)
-  (previous-error)
-  (delete-other-windows)
-  (with-current-buffer next-error-last-buffer
-    (message "%s" (buffer-substring (line-beginning-position) (line-end-position)))))
+  (if (string-equal (buffer-name) "*cscope*")
+      (cscope-prev-symbol)
+    (previous-error)
+    (delete-other-windows)
+    (with-current-buffer next-error-last-buffer
+      (message "%s" (buffer-substring (line-beginning-position) (line-end-position))))))
 
 (global-set-key [(meta n)] 'bhj-next-error)
 (global-set-key [(meta p)] 'bhj-previous-error)

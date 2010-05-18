@@ -74,6 +74,7 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-python"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-readme"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-scheme"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-emacs-lisp"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sun-c-file"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sun-h-file"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-tex"));
