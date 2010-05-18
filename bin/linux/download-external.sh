@@ -19,11 +19,19 @@ cd ~/.emacs_d/lisp/ext/
 mkdir -p ~/Downloads/intel
 cd ~/Downloads/intel
 
-wget http://download.intel.com/design/PentiumII/manuals/24319002.pdf
-wget http://download.intel.com/design/PentiumII/manuals/24319102.pdf
-wget http://download.intel.com/design/PentiumII/manuals/24319202.pdf
-mv 24319002.pdf "Intel Architecture Software Developer's Manual, Volume 1: Basic Architecture.pdf"
-mv 24319102.pdf "Intel Architecture Software Developer's Manual, Volume 2: Instruction Set Reference Manual.pdf"
-mv 24319202.pdf "Intel Architecture Software Developer's Manual, Volume 3: System Programming.pdf"
+
+cat <<EOF|lftp
+get http://download.intel.com/design/PentiumII/manuals/24319002.pdf -o "Intel Architecture Software Developer's Manual, Volume 1: Basic Architecture.pdf"
+get http://download.intel.com/design/PentiumII/manuals/24319102.pdf -o "Intel Architecture Software Developer's Manual, Volume 2: Instruction Set Reference Manual.pdf"
+get http://download.intel.com/design/PentiumII/manuals/24319202.pdf -o "Intel Architecture Software Developer's Manual, Volume 3: System Programming.pdf"
+get http://www.intel.com/Assets/PDF/manual/318148.pdf -o "Intel® 64 Architecture x2APIC Specification.pdf"
+get http://www.intel.com/Assets/PDF/manual/252046.pdf -o "Intel® 64 and IA-32 Architectures Software Developer's Manual, Documentation Changes.pdf"
+get http://www.intel.com/Assets/PDF/manual/253665.pdf -o "Intel® 64 and IA-32 Architectures Software Developer's Manual, Volume 1: Basic Architecture.pdf"
+get http://www.intel.com/Assets/PDF/manual/253666.pdf -o "Intel® 64 and IA-32 Architectures Software Developer's Manual, Volume 2A: Instruction Set Reference, A-M.pdf"
+get http://www.intel.com/Assets/PDF/manual/253667.pdf -o "Intel® 64 and IA-32 Architectures Software Developer's Manual, Volume 2B: Instruction Set Reference, N-Z.pdf"
+get http://www.intel.com/Assets/PDF/manual/253668.pdf -o "Intel® 64 and IA-32 Architectures Software Developer's Manual, Volume 3A: System Programming Guide.pdf"
+get http://www.intel.com/Assets/PDF/manual/253669.pdf -o "Intel® 64 and IA-32 Architectures Software Developer's Manual, Volume 3B: System Programming Guide.pdf"
+get http://www.intel.com/Assets/PDF/manual/248966.pdf -o "Intel® 64 and IA-32 Architectures Optimization Reference Manual.pdf"
+EOF
 
 echo OK
