@@ -28,5 +28,5 @@ longest_token=`get_longest_token "$@"`
 beagle-static-query \
     --add-static-backend "$beagle_dir" \
     --backend none --max-hits 100000 "$longest_token"\
-|sed -e 's!^file://!!'|grep -v '#'|sort -u|$beagle_filter
+|unurl.pl|sort -u|$beagle_filter
 echo /dev/null
