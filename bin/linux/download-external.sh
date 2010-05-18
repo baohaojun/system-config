@@ -16,4 +16,14 @@ mv stringte*/lib/string*.jar stringtemplate.jar
 mv antlrworks-1.3.1.jar antlrworks.jar
 cd ~/.emacs_d/lisp/ext/
 
+mkdir -p ~/Downloads/intel
+cd ~/Downloads/intel
+
+wget http://download.intel.com/design/PentiumII/manuals/24319002.pdf
+wget http://download.intel.com/design/PentiumII/manuals/24319102.pdf
+wget http://download.intel.com/design/PentiumII/manuals/24319202.pdf
+mv 24319002.pdf "Intel Architecture Software Developer's Manual, Volume 1: Basic Architecture.pdf"
+mv 24319102.pdf "Intel Architecture Software Developer's Manual, Volume 2: Instruction Set Reference Manual.pdf"
+mv 24319202.pdf "Intel Architecture Software Developer's Manual, Volume 3: System Programming.pdf"
+
 echo OK

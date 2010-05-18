@@ -309,6 +309,7 @@
   (if
       (or
        (string-equal (buffer-name) "*cscope*")
+       (string-equal (buffer-name (other-buffer (current-buffer) t)) "*cscope*")
        (and (not (next-error-buffer-p (current-buffer)))
             last-error-from-cscope))
       (progn
@@ -324,6 +325,7 @@
   (interactive)
   (if (or
        (string-equal (buffer-name) "*cscope*")
+       (string-equal (buffer-name (other-buffer (current-buffer) t)) "*cscope*")
        (and (not (next-error-buffer-p (current-buffer)))
             last-error-from-cscope))
       (progn
