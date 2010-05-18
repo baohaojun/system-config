@@ -309,8 +309,9 @@
   (if
       (or
        (string-equal (buffer-name) "*cscope*")
-       (string-equal (buffer-name (other-buffer (current-buffer) t)) "*cscope*")
+       (string-equal (buffer-name (window-buffer (next-window))) "*cscope*")
        (and (not (next-error-buffer-p (current-buffer)))
+            (not (next-error-buffer-p (window-buffer (next-window))))
             last-error-from-cscope))
       (progn
         (cscope-next-symbol)
@@ -325,8 +326,9 @@
   (interactive)
   (if (or
        (string-equal (buffer-name) "*cscope*")
-       (string-equal (buffer-name (other-buffer (current-buffer) t)) "*cscope*")
+       (string-equal (buffer-name (window-buffer (next-window))) "*cscope*")
        (and (not (next-error-buffer-p (current-buffer)))
+            (not (next-error-buffer-p (window-buffer (next-window))))
             last-error-from-cscope))
       (progn
         (cscope-prev-symbol)
