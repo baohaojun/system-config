@@ -231,6 +231,7 @@
 
 (define-key global-map [(ctrl f1)] 'cscope-find-this-symbol)
 (define-key global-map [(ctrl f2)] 'cscope-find-global-definition)
+(define-key global-map [(meta .)] 'cscope-find-global-definition)
 (define-key global-map [(ctrl f3)] 'cscope-find-called-functions)
 (define-key global-map [(ctrl f4)] 'cscope-find-functions-calling-this-function)
 (define-key global-map [(ctrl f5)] 'cscope-find-this-text-string)
