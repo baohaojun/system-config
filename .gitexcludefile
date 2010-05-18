@@ -2,6 +2,6 @@
 *.class
 *.pyc
 *.elc
-.beagle
 cscope.files
 cscope.out
+.beagle*
