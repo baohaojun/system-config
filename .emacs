@@ -237,6 +237,7 @@
 (define-key global-map [(ctrl f5)] 'cscope-find-this-text-string)
 (define-key global-map [(ctrl f6)] 'cscope-find-egrep-pattern)
 (define-key global-map [(ctrl f7)] 'cscope-find-this-file)
+(define-key global-map [(meta ,)] 'cscope-find-this-file)
 (define-key global-map [(ctrl f8)] 'cscope-find-files-including-file)
 
 (define-key global-map [escape f1] 'cscope-find-this-symbol)
