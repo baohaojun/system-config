@@ -21,7 +21,7 @@ if test -f "$beagle_dir"/../.beagle-filter
 then
     beagle_filter="$beagle_dir"/../.beagle-filter
 else
-    beagle_filter=~/.my-beagle-filter
+    beagle_filter=~/.beagle-filter
 fi
 
 longest_token=`get_longest_token "$@"`
