@@ -32,6 +32,7 @@ get -c http://www.intel.com/Assets/PDF/manual/253667.pdf -o "Intel® 64 and IA-3
 get -c http://www.intel.com/Assets/PDF/manual/253668.pdf -o "Intel® 64 and IA-32 Architectures Software Developer's Manual, Volume 3A: System Programming Guide.pdf"
 get -c http://www.intel.com/Assets/PDF/manual/253669.pdf -o "Intel® 64 and IA-32 Architectures Software Developer's Manual, Volume 3B: System Programming Guide.pdf"
 get -c http://www.intel.com/Assets/PDF/manual/248966.pdf -o "Intel® 64 and IA-32 Architectures Optimization Reference Manual.pdf"
+get -c http://www.acpi.info/DOWNLOADS/ACPIspec40.pdf
 EOF
 
 echo OK
