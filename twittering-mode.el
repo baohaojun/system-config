@@ -902,6 +902,29 @@ image are displayed."
       (remove-text-properties 0 (length str) '(need-to-be-updated nil) str))
     str))
 
+(defun twittering-build-unique-prefix (str-list)
+  "Create an unique shortest prefix to identify each element of STR-LIST.
+e.g.,
+  '(\"abcdef\" \"ab\" \"c\" \"def\")
+       => '(\"abc\" \"ab\" \"c\" \"d\")
+
+Duplicated elements should not exist in STR-LIST."
+  (mapcar
+   (lambda (el)
+     (let ((pre "\\`")
+           (c "")
+           (str el))
+       (while (and str (not (string= str "")))
+         (setq c (substring str 0 1)
+               str (substring str 1)
+               pre (concat pre c))
+         (when (= (count-if (lambda (el) (string-match pre el))
+                            str-list)
+                  1)
+           (setq str nil)))
+       (substring pre 2)))
+   str-list))
+
 ;;;
 ;;; Utility functions for portability
 ;;;
@@ -1793,13 +1816,23 @@ means the number of statuses retrieved after the last visiting of the buffer.")
   (setq twittering-unread-status-info
 	(remove nil
 		(mapcar (lambda (entry)
-			  (when (buffer-live-p (car entry))
+			  (when (and (buffer-live-p (car entry))
+				     (not (zerop (cadr entry))))
 			    entry))
 			twittering-unread-status-info)))
   (let ((sum (apply '+ (mapcar 'cadr twittering-unread-status-info))))
     (if (= 0 sum)
 	""
-      (format "tw(%d)" sum))))
+      (format "tw(%s)"
+	      (mapconcat
+	       'identity
+	       (mapcar* (lambda (buf count) (format "%s:%d" buf count))
+			(twittering-build-unique-prefix
+			 (mapcar (lambda (entry)
+				   (substring (buffer-name (car entry)) 1))
+				 twittering-unread-status-info))
+			(mapcar 'cadr twittering-unread-status-info))
+	       ",")))))
 
 (defun twittering-update-unread-status-info ()
   "Update `twittering-unread-status-info' with new tweets."
