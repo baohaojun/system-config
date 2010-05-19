@@ -63,7 +63,7 @@
        I can ignore all other arches except x86 when I'm reading Linux
        Kernel source code.
         
-    3. Use beagle-grep.sh in any directory of the source code:
+    3. Use beagle-grep.sh in any directory in the source tree:
 
          ~/bin/beagle-grep.sh -e "ENGLISH_STOP_WORDS" 
 
