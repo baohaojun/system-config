@@ -104,6 +104,7 @@ namespace Beagle.Daemon
 
 		static Regex allowed_regex = null;
 		static Regex denied_regex = null;
+		static Regex denied_dir_regex = null;
 
 		static Queue pending_files = new Queue ();
 		static Queue pending_directories = new Queue ();
@@ -132,6 +133,7 @@ namespace Beagle.Daemon
 
 			ArrayList allowed_patterns = new ArrayList ();
 			ArrayList denied_patterns = new ArrayList ();
+			ArrayList denied_dir_patterns = new ArrayList ();
 
 			int i = 0;
 			while (i < args.Length) {
@@ -195,6 +197,20 @@ namespace Beagle.Daemon
 						allowed_patterns.Add (next_arg);
 					}
 					
+					++i;
+					break;
+
+				case "--deny-directory-pattern":
+					if (next_arg == null)
+						break;
+					
+					if (next_arg.IndexOf (',') != -1) {
+						foreach (string pattern in next_arg.Split (','))
+							denied_dir_patterns.Add (pattern);
+					} else {
+						denied_dir_patterns.Add (next_arg);
+					}
+
 					++i;
 					break;
 
@@ -403,6 +419,9 @@ namespace Beagle.Daemon
 				if (denied_patterns.Count > 0)
 					denied_regex = StringFu.GetPatternRegex (denied_patterns);
 			}
+
+			if (denied_dir_patterns.Count > 0)
+				denied_dir_regex = StringFu.GetPatternRegex (denied_dir_patterns);
 
 			Log.Always ("Starting beagle-build-index (pid {0}) at {1}", Process.GetCurrentProcess ().Id, DateTime.Now);
 
@@ -1020,6 +1039,7 @@ namespace Beagle.Daemon
 				"                   \t\tIndex should be created and always updated with this option.\n" +
 				"  --enable-text-cache\t\tBuild text-cache of documents used for snippets.\n" +
 				"  --disable-directories\t\tDon't add directories to the index.\n" +
+				"  --deny-directory-pattern\t\tKeep any directory and files under it matching this pattern from being indexed.\n" +
 				"  --disable-filtering\t\tDisable all filtering of files. Only index attributes.\n" + 
 				"  --allow-pattern [pattern]\tOnly allow files that match the pattern to be indexed.\n" + 
 				"  --deny-pattern [pattern]\tKeep any files that match the pattern from being indexed.\n" + 
@@ -1041,16 +1061,20 @@ namespace Beagle.Daemon
 		
 		static bool Ignore (DirectoryInfo directory)
 		{
-			if (directory.Name.StartsWith ("."))
+			if (directory.Name.StartsWith (".")) //FIXME: is this a really good desicion?
 				return true;
-			
-			return false;
+
+			if (denied_dir_regex.IsMatch (directory.FullName)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		static bool Ignore (FileInfo file)
 		{
-			if (file.Name.StartsWith ("."))
-				return true;
+			// if (file.Name.StartsWith ("."))
+			// 	return true;
 
 			if (FileSystem.IsSpecialFile (file.FullName))
 				return true;

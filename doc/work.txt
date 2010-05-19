@@ -3271,3 +3271,5 @@ adb pull /data/data/com.android.providers.contacts/databases/contacts2.db .
 /home/bhj/Downloads/google_appengine/dev_appserver.py -a 0.0.0.0 /home/bhj/src/android-original/development/samples/SampleSyncAdapter/samplesyncadapter_server 
 $export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/
 repo forall -c "git checkout -b bhj-nv.11 tegra-9.12.11"
+
+mkdir .beagle; beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target .beagle/ .; ln ~/.my-beagle-filter-android .beagle-filter

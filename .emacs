@@ -37,7 +37,7 @@
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 
 
-(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+(require 'csharp-mode)
 
 (require 'w3m)
 
