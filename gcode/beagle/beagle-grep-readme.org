@@ -2,14 +2,15 @@
   
   I just found out about the beagle project couple of months ago, I'm
   totally excited by it. It's the missing brick that I longed for to
-  write a `grep on steroid' which I can use to write a source code
-  reading tool.
+  write a `grep on steroid' which I can use as a source code reading
+  tool.
 
   Yeah, right, I was using grep to read souce code, often times
   finding cscope insufficient (because some files are not source code,
-  and even cscope's fuzzy syntax parser can not parse them). With
-  large projects, such as Linux Kernel, or the even larger Android
-  system, grepping can be very slooow on the whole project.
+  and even cscope's fuzzy syntax parser can not parse them). On the
+  other hand, with large projects, such as Linux Kernel, or the even
+  larger Android system, grepping can be very slooow on the whole
+  project.
 
   The idea is very simple, whatever I want to grep, I ask beagle first
   which files might contain the thing that I want, then use grep on
@@ -74,8 +75,10 @@
          ...
    
        Note: althogh beagle-grep.sh's argument contains underscores, I
-       removed them using StandardTokenizerImpl.cs on the argument as
-       a StringStream:-)
+       removed them using a separate simple c# program (which uses
+       beagle's StandardTokenizerImpl) on the argument. Beagle has its
+       own special rules treating non-alphanum characters, and we must
+       respect that:-)
 
 * Where to find everything
 
@@ -90,7 +93,8 @@
     
      windows-config/gcode/beagle
 
-  The program break ENGLISH_STOP_WORDS to `ENGLISH STOP WORDS' is under:
+  The above mentioned simple c# program which breakes
+  ENGLISH_STOP_WORDS to `ENGLISH STOP WORDS' is under:
  
      windows-config/gcode/BeagleTokenizer
 
