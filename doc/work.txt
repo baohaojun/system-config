@@ -3272,4 +3272,4 @@ adb pull /data/data/com.android.providers.contacts/databases/contacts2.db .
 $export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/
 repo forall -c "git checkout -b bhj-nv.11 tegra-9.12.11"
 
-mkdir .beagle; beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target .beagle/ .; ln ~/.my-beagle-filter-android .beagle-filter
+mkdir -p ~/tmp/`pwd`/.beagle; beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target ~/tmp/`pwd`/.beagle/ .; ln ~/.my-beagle-filter-android .beagle-filter -sf; ln -sf ~/tmp/`pwd`/.beagle ./
