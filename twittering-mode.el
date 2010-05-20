@@ -47,12 +47,16 @@
 (require 'xml)
 (require 'parse-time)
 (when (> 22 emacs-major-version)
-  (add-to-list 'load-path
-	       (expand-file-name
-               "url-emacs21" (if load-file-name
-                                 (or (file-name-directory load-file-name)
-                                     ".")
-                               ".")))
+  (setq load-path
+	(append (mapcar (lambda (dir)
+			  (expand-file-name
+			   dir
+			   (if load-file-name
+			       (or (file-name-directory load-file-name)
+				   ".")
+			     ".")))
+			'("url-emacs21" "emacs21"))
+		load-path))
   (and (require 'un-define nil t)
        ;; the explicitly require 'unicode to update a workaround with
        ;; navi2ch. see a comment of `twittering-ucs-to-char' for more
@@ -269,12 +273,20 @@ SSL connections use 'curl' command as a backend.")
   "Cache a result of `twittering-find-curl-program'.
 DO NOT SET VALUE MANUALLY.")
 
+(defvar twittering-tls-program nil
+  "*List of strings containing commands to start TLS stream to a host.
+Each entry in the list is tried until a connection is successful.
+%h is replaced with server hostname, %p with port to connect to.
+Also see `tls-program'.
+If nil, this is initialized with a list of valied entries extracted from
+`tls-program'.")
+
 (defvar twittering-connection-type-order '(curl native))
   "*A list of connection methods in the preferred order."
 
 (defvar twittering-connection-type-table
   '((native (check . t)
-	    (https . nil)
+	    (https . twittering-start-http-session-native-tls-p)
 	    (start . twittering-start-http-session-native))
     (curl (check . twittering-start-http-session-curl-p)
 	  (https . twittering-start-http-session-curl-https-p)
@@ -447,20 +459,190 @@ pop-up buffer.")
 ;;;
 
 (defvar twittering-proxy-use nil)
-(defvar twittering-proxy-keep-alive nil)
 (defvar twittering-proxy-server nil
-  "*The proxy server for `twittering-mode'.
-If nil, it is initialized on entering `twittering-mode'.
-The port number is specified by `twittering-proxy-port'.")
+  "*Proxy server for `twittering-mode'.
+If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.
+
+To use individual proxies for HTTP and HTTPS, both `twittering-proxy-server'
+and `twittering-proxy-port' must be nil.")
 (defvar twittering-proxy-port nil
-  "*The port number of a proxy server for `twittering-mode'.
+  "*Port number for `twittering-mode'.
+If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.
+
+To use individual proxies for HTTP and HTTPS, both `twittering-proxy-server'
+and `twittering-proxy-port' must be nil.")
+(defvar twittering-proxy-keep-alive nil)
+(defvar twittering-proxy-user nil
+  "*Username for `twittering-proxy-server'.
+
+NOTE: If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.")
+(defvar twittering-proxy-password nil
+  "*Password for `twittering-proxy-server'.
+
+NOTE: If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.")
+
+(defvar twittering-http-proxy-server nil
+  "*HTTP proxy server for `twittering-mode'.
 If nil, it is initialized on entering `twittering-mode'.
-The server is specified by `twittering-proxy-server'.")
-(defvar twittering-proxy-user nil)
-(defvar twittering-proxy-password nil)
+The port number is specified by `twittering-http-proxy-port'.
+For HTTPS connection, the proxy specified by `twittering-https-proxy-server'
+and `twittering-https-proxy-port' is used.
+
+NOTE: If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.")
+(defvar twittering-http-proxy-port nil
+  "*Port number of a HTTP proxy server for `twittering-mode'.
+If nil, it is initialized on entering `twittering-mode'.
+The server is specified by `twittering-http-proxy-server'.
+For HTTPS connection, the proxy specified by `twittering-https-proxy-server'
+and `twittering-https-proxy-port' is used.
+
+NOTE: If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.")
+(defvar twittering-http-proxy-keep-alive nil
+  "*If non-nil, the Keep-alive is enabled. This is experimental.")
+(defvar twittering-http-proxy-user nil
+  "*Username for `twittering-http-proxy-server'.
+
+NOTE: If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.")
+(defvar twittering-http-proxy-password nil
+  "*Password for `twittering-http-proxy-server'.
+
+NOTE: If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.")
+
+(defvar twittering-https-proxy-server nil
+  "*HTTPS proxy server for `twittering-mode'.
+If nil, it is initialized on entering `twittering-mode'.
+The port number is specified by `twittering-https-proxy-port'.
+For HTTP connection, the proxy specified by `twittering-http-proxy-server'
+and `twittering-http-proxy-port' is used.
+
+NOTE: If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.")
+(defvar twittering-https-proxy-port nil
+  "*Port number of a HTTPS proxy server for `twittering-mode'.
+If nil, it is initialized on entering `twittering-mode'.
+The server is specified by `twittering-https-proxy-server'.
+For HTTP connection, the proxy specified by `twittering-http-proxy-server'
+and `twittering-http-proxy-port' is used.
+
+NOTE: If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.")
+(defvar twittering-https-proxy-keep-alive nil
+  "*If non-nil, the Keep-alive is enabled. This is experimental.")
+(defvar twittering-https-proxy-user nil
+  "*Username for `twittering-https-proxy-server'.
+
+NOTE: If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.")
+(defvar twittering-https-proxy-password nil
+  "*Password for `twittering-https-proxy-server'.
+
+NOTE: If both `twittering-proxy-server' and `twittering-proxy-port' are
+non-nil, the variables `twittering-proxy-*' have priority over other
+variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
+regardless of HTTP or HTTPS.")
+
+(defun twittering-normalize-proxy-vars ()
+  "Normalize the type of `twittering-http-proxy-port' and
+`twittering-https-proxy-port'."
+  (mapc (lambda (sym)
+	  (let ((value (symbol-value sym)))
+	    (cond
+	     ((null value)
+	      nil)
+	     ((integerp value)
+	      nil)
+	     ((stringp value)
+	      (set sym (string-to-number value)))
+	     (t
+	      (set sym nil)))))
+	'(twittering-proxy-port
+	  twittering-http-proxy-port
+	  twittering-https-proxy-port)))
+
+(defun twittering-proxy-info (scheme &optional item)
+  "Return an alist for proxy configuration registered for SCHEME.
+SCHEME must be a string \"http\", \"https\" or a symbol 'http or 'https.
+The server name is a string and the port number is an integer."
+  (twittering-normalize-proxy-vars)
+  (let ((scheme (if (symbolp scheme)
+		    (symbol-name scheme)
+		  scheme))
+	(info-list
+	 `((("http" "https")
+	    . ((server . ,twittering-proxy-server)
+	       (port . ,twittering-proxy-port)
+	       (keep-alive . ,twittering-proxy-keep-alive)
+	       (user . ,twittering-proxy-user)
+	       (password . ,twittering-proxy-password)))
+	   (("http")
+	    . ((server . ,twittering-http-proxy-server)
+	       (port . ,twittering-http-proxy-port)
+	       (keep-alive . ,twittering-http-proxy-keep-alive)
+	       (user . ,twittering-http-proxy-user)
+	       (password . ,twittering-http-proxy-password)))
+	   (("https")
+	    . ((server . ,twittering-https-proxy-server)
+	       (port . ,twittering-https-proxy-port)
+	       (keep-alive . ,twittering-https-proxy-keep-alive)
+	       (user . ,twittering-https-proxy-user)
+	       (password . ,twittering-https-proxy-password))))))
+    (let ((info
+	   (car (remove nil
+			(mapcar
+			 (lambda (entry)
+			   (when (member scheme (car entry))
+			     (let ((info (cdr entry)))
+			       (when (and (cdr (assq 'server info))
+					  (cdr (assq 'port info)))
+				 info))))
+			 info-list)))))
+      (if item
+	  (cdr (assq item info))
+	info))))
+
+(defun twittering-url-proxy-services ()
+  "Return the current proxy configuration for `twittering-mode' in the format
+of `url-proxy-services'."
+  (remove nil (mapcar
+	       (lambda (scheme)
+		 (let ((server (twittering-proxy-info scheme 'server))
+		       (port (twittering-proxy-info scheme 'port)))
+		   (when (and server port)
+		     `(,scheme . ,(format "%s:%s" server port)))))
+	       '("http" "https"))))
 
 (defun twittering-find-proxy (scheme)
-  "Find proxy server and its port for `twittering-mode' and returns
+  "Find proxy server and its port from the environmental variables and return
 a cons pair of them.
 SCHEME must be \"http\" or \"https\"."
   (cond
@@ -498,18 +680,19 @@ SCHEME must be \"http\" or \"https\"."
     ;; `url-scheme-get-property' before calling such functions.
     (url-scheme-get-property "http" 'name)
     (url-scheme-get-property "https" 'name))
-  (unless (and twittering-proxy-server twittering-proxy-port)
-    (let ((proxy-info (or (if twittering-use-ssl
-			      (twittering-find-proxy "https"))
-			  (twittering-find-proxy "http"))))
-      (when proxy-info
-	(let ((host (car proxy-info))
-	      (port (cdr proxy-info)))
-	  (setq twittering-proxy-server host)
-	  (setq twittering-proxy-port port)))))
+  (unless (and twittering-http-proxy-server
+	       twittering-http-proxy-port)
+    (let ((info (twittering-find-proxy "http")))
+      (setq twittering-http-proxy-server (car-safe info))
+      (setq twittering-http-proxy-port (cdr-safe info))))
+  (unless (and twittering-https-proxy-server
+	       twittering-https-proxy-port)
+    (let ((info (twittering-find-proxy "https")))
+      (setq twittering-https-proxy-server (car-safe info))
+      (setq twittering-https-proxy-port (cdr-safe info))))
   (if (and twittering-proxy-use
-	   (null twittering-proxy-server)
-	   (null twittering-proxy-port))
+	   (null (twittering-proxy-info "http"))
+	   (null (twittering-proxy-info "https")))
       (progn
 	(message "Disabling proxy due to lack of configuration.")
 	(setq twittering-proxy-use nil))
@@ -543,7 +726,7 @@ icon mode; otherwise, turn off icon mode."
 	    (< 0 (prefix-numeric-value arg))))
     (unless (eq prev-mode twittering-icon-mode)
       (twittering-update-mode-line)
-      (twittering-render-timeline (current-buffer)))))
+      (twittering-render-timeline (current-buffer) nil nil t))))
 
 (defvar twittering-icon-prop-hash (make-hash-table :test 'equal)
   "Hash table for storing display properties of icon. The key is the size of
@@ -1983,7 +2166,28 @@ static char *plugged[] = {
 \"            aaa                 \"
 };
 "))
-  "Image for indicator of active state.")
+  "Image for indicator of active state."
+;;; The above image is copied from `plugged.xpm' distributed with Wanderlust
+;;; by Yuuichi Teranishi <teranisi@gohome.org>.
+;;; The copyright of the image is below, which is copied from `COPYING' of
+;;; Wanderlust 2.14.
+;; Copyright (C) 1998-2001 Yuuichi Teranishi <teranisi@gohome.org>
+;;
+;;    This program is free software; you can redistribute it and/or modify
+;;    it under the terms of the GNU General Public License as published by
+;;    the Free Software Foundation; either version 2, or (at your option)
+;;    any later version.
+;;
+;;    This program is distributed in the hope that it will be useful,
+;;    but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;    GNU General Public License for more details.
+;;
+;;    You should have received a copy of the GNU General Public License
+;;    along with GNU Emacs; see the file COPYING.  If not, write to the
+;;    Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;;    Boston, MA 02111-1307, USA.
+)
 
 (defconst twittering-inactive-indicator-image
   (when (image-type-available-p 'xpm)
@@ -2016,7 +2220,28 @@ static char * unplugged_xpm[] = {
 \"             ......             \"
 };
 "))
-  "Image for indicator of inactive state.")
+  "Image for indicator of inactive state."
+;;; The above image is copied from `unplugged.xpm' distributed with Wanderlust
+;;; by Yuuichi Teranishi <teranisi@gohome.org>.
+;;; The copyright of the image is below, which is copied from `COPYING' of
+;;; Wanderlust 2.14.
+;; Copyright (C) 1998-2001 Yuuichi Teranishi <teranisi@gohome.org>
+;;
+;;    This program is free software; you can redistribute it and/or modify
+;;    it under the terms of the GNU General Public License as published by
+;;    the Free Software Foundation; either version 2, or (at your option)
+;;    any later version.
+;;
+;;    This program is distributed in the hope that it will be useful,
+;;    but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;    GNU General Public License for more details.
+;;
+;;    You should have received a copy of the GNU General Public License
+;;    along with GNU Emacs; see the file COPYING.  If not, write to the
+;;    Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;;    Boston, MA 02111-1307, USA.
+)
 
 (let ((props
        (when (display-mouse-p)
@@ -2063,9 +2288,16 @@ authorized -- The account has been authorized.")
   (unless (or (twittering-account-authorized-p)
 	      (twittering-account-authorization-queried-p))
     (setq twittering-account-authorization 'queried)
-    (twittering-call-api
-     'verify-credentials
-     `((sentinel . twittering-http-get-verify-credentials-sentinel)))))
+    (let ((proc
+	   (twittering-call-api
+	    'verify-credentials
+	    `((sentinel . twittering-http-get-verify-credentials-sentinel)))))
+      (unless proc
+	(setq twittering-account-authorization nil)
+	(message "Authorization for the account \"%s\" failed. Type M-x twit to retry."
+		 (twittering-get-username))
+	(setq twittering-username nil)
+	(setq twittering-password nil)))))
 
 (defun twittering-http-get-verify-credentials-sentinel (header-info proc noninteractive &optional suc-msg)
   (let ((status-line (cdr (assq 'status-line header-info)))
@@ -2418,7 +2650,7 @@ been initialized yet."
 	  ;; begins with @username.
 	  (when (and reply-to-id
 		     (string-match
-		      (concat "^@" username "\\(?:[\n\r \t]+\\)*")
+		      (concat "\\`@" username "\\(?:[\n\r \t]+\\)*")
 		      status))
 	    (add-to-list 'parameters
 			 `("in_reply_to_status_id" .
@@ -2477,17 +2709,21 @@ been initialized yet."
 ;;; Functions for URL library
 ;;;
 
+(defvar twittering-url-show-status t
+  "*Whether to show a running total of bytes transferred.")
 (defun twittering-url-wrapper (func &rest args)
   (let ((url-proxy-services
 	 (when twittering-proxy-use
-	   (let ((proxy-str (format "%s:%s" twittering-proxy-server
-				    twittering-proxy-port)))
-	     (if twittering-use-ssl
-		 `(("http" . ,proxy-str)
-		   ("https" . ,proxy-str))
-	       `(("http" . ,proxy-str))))))
-	(url-show-status nil))
-    (apply func args)))
+	   (twittering-url-proxy-services)))
+	(url-show-status twittering-url-show-status))
+    (if (eq func 'url-retrieve)
+	(let ((buffer (apply func args)))
+	  (when (buffer-live-p buffer)
+	    (with-current-buffer buffer
+	      (set (make-local-variable 'url-show-status)
+		   twittering-url-show-status)))
+	  buffer)
+      (apply func args))))
 
 (defun twittering-url-insert-file-contents (url)
   (twittering-url-wrapper 'url-insert-file-contents url))
@@ -2736,6 +2972,23 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 	 (headers (if (assoc "Expect" headers)
 		      headers
 		    (cons '("Expect" . "") headers)))
+	 (cacert-fullpath (when twittering-use-ssl
+			    (twittering-ensure-ca-cert)))
+	 (cacert-dir (when cacert-fullpath
+		       (file-name-directory cacert-fullpath)))
+	 (cacert-filename (when cacert-fullpath
+			    (file-name-nondirectory cacert-fullpath)))
+	 (default-directory
+	   ;; If `twittering-use-ssl' is non-nil, the `curl' process
+	   ;; is executed at the same directory as the temporary cert file.
+	   ;; Without changing directory, `curl' misses the cert file if
+	   ;; you use Emacs on Cygwin because the path on Emacs differs
+	   ;; from Windows.
+	   ;; With changing directory, `curl' on Windows can find the cert
+	   ;; file if you use Emacs on Cygwin.
+	   (if twittering-use-ssl
+	       cacert-dir
+	     default-directory))
 	 (curl-args
 	  `("--include" "--silent"
 	    ,@(mapcan (lambda (pair)
@@ -2747,14 +3000,25 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 			  `("-H" ,(format "%s: %s" (car pair) (cdr pair)))))
 		      headers)
 	    ,@(when twittering-use-ssl
-		`("--cacert" ,(twittering-ensure-ca-cert)))
+		`("--cacert" ,cacert-filename))
 	    ,@(when twittering-proxy-use
-		`("-x" ,(format "%s:%s" twittering-proxy-server
-				twittering-proxy-port)))
-	    ,@(when (and twittering-proxy-use
-			 twittering-proxy-user twittering-proxy-password)
-		`("-U" ,(format "%s:%s" twittering-proxy-user
-				twittering-proxy-password)))
+		(let* ((scheme (funcall request :schema))
+		       (host (twittering-proxy-info scheme 'server))
+		       (port (twittering-proxy-info scheme 'port)))
+		  (when (and host port)
+		    `("-x" ,(format "%s:%s" host port)))))
+	    ,@(when twittering-proxy-use
+		(let ((pair
+		       (cdr (assoc
+			     (funcall request :schema)
+			     `(("http" .
+				(,twittering-http-proxy-user
+				 . ,twittering-http-proxy-password))
+			       ("https" .
+				(,twittering-https-proxy-user
+				 . ,twittering-https-proxy-password)))))))
+		  (when (and pair (car pair) (cdr pair))
+		    `("-U" ,(format "%s:%s" (car pair) (cdr pair))))))
 	    ,@(when (string= "POST" method)
 		(mapcan (lambda (pair)
 			  (list
@@ -2775,13 +3039,26 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 		    temp-buffer
 		    twittering-curl-program
 		    curl-args)))
-	(set-process-sentinel
-	 curl-process
-	 (lambda (&rest args)
-	   (apply #'twittering-http-default-sentinel
-		  sentinel noninteractive args)))
+	(when curl-process
+	  (set-process-sentinel
+	   curl-process
+	   (lambda (&rest args)
+	     (apply #'twittering-http-default-sentinel
+		    sentinel noninteractive args))))
 	curl-process)))
   )
+
+(defun twittering-start-http-session-native-tls-p ()
+  (when (require 'tls nil t)
+    (let ((programs
+	   (remove nil
+		   (mapcar (lambda (cmd)
+			     (when (string-match "\\`\\([^ ]+\\) " cmd)
+			       (when (executable-find (match-string 1 cmd))
+				 cmd)))
+			   (or twittering-tls-program tls-program)))))
+      (setq twittering-tls-program programs)
+      programs)))
 
 ;; TODO: proxy
 (defun twittering-start-http-session-native (method headers host port path parameters &optional noninteractive sentinel)
@@ -2798,24 +3075,39 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 			  (concat "?" (request :query-string))
 			"")
 		      (request :headers-string)))
-	     (server (if twittering-proxy-use
-			 twittering-proxy-server
+	     (proxy-info
+	      (when twittering-proxy-use
+		(twittering-proxy-info (request :schema))))
+	     (server (if proxy-info
+			 (cdr (assq 'server proxy-info))
 		       (request :host)))
-	     (port (if twittering-proxy-use
-		       twittering-proxy-port
+	     (port (if proxy-info
+		       (cdr (assq 'port proxy-info))
 		     (request :port)))
-	     (proc (open-network-stream
-		    "network-connection-process" temp-buffer server port))
+	     (proc
+	      (cond
+	       (twittering-use-ssl
+		(let* ((tls-program twittering-tls-program)
+		       (proc
+			(open-tls-stream
+			 "network-connection-process" nil server port)))
+		  (when proc
+		    (set-process-buffer proc temp-buffer))
+		  proc))
+	       (t
+		(open-network-stream
+		 "network-connection-process" temp-buffer server port))))
 	     )
-	(lexical-let ((sentinel sentinel)
-		      (noninteractive noninteractive))
-	  (set-process-sentinel
-	   proc
-	   (lambda (&rest args)
-	     (apply #'twittering-http-default-sentinel
-		    sentinel noninteractive args))))
-	(debug-print request-str)
-	(process-send-string proc request-str)
+	(when proc
+	  (lexical-let ((sentinel sentinel)
+			(noninteractive noninteractive))
+	    (set-process-sentinel
+	     proc
+	     (lambda (&rest args)
+	       (apply #'twittering-http-default-sentinel
+		      sentinel noninteractive args))))
+	  (debug-print request-str)
+	  (process-send-string proc request-str))
 	proc)))
   )
 
@@ -2909,20 +3201,19 @@ Available keywords:
       (push (cons "Content-Length" "0") headers)
       (push (cons "Content-Type" "text/plain") headers))
     (when twittering-proxy-use
-      (when twittering-proxy-keep-alive
-	(push (cons "Proxy-Connection" "Keep-Alive")
-	      headers))
-      (when (and twittering-proxy-user
-		 twittering-proxy-password)
-	(push (cons "Proxy-Authorization"
-		    (concat
-		     "Basic "
-		     (base64-encode-string
-		      (concat
-		       twittering-proxy-user
-		       ":"
-		       twittering-proxy-password))))
-	      headers)))
+      (let* ((scheme (if twittering-use-ssl "https" "http"))
+	     (keep-alive (twittering-proxy-info scheme 'keep-alive))
+	     (user (twittering-proxy-info scheme 'user))
+	     (password (twittering-proxy-info scheme 'password)))
+	(when (twittering-proxy-info scheme 'keep-alive)
+	  (push (cons "Proxy-Connection" "Keep-Alive")
+		headers))
+	(when (and user password)
+	  (push (cons
+		 "Proxy-Authorization"
+		 (concat "Basic "
+			 (base64-encode-string (concat user ":" password))))
+		headers))))
     headers
     ))
 
@@ -2982,7 +3273,7 @@ Available keywords:
      (t
       (setq mes (format "Failure: unknown condition: %s" status))))
     (when (and mes (twittering-buffer-related-p))
-      (message mes))))
+      (message "%s" mes))))
 
 (defun twittering-http-get-default-sentinel (header-info proc noninteractive &optional suc-msg)
   (let ((status-line (cdr (assq 'status-line header-info)))
@@ -3543,7 +3834,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 ;;; display functions
 ;;;
 
-(defun twittering-render-timeline (buffer &optional additional timeline-data)
+(defun twittering-render-timeline (buffer &optional additional timeline-data keep-point)
   (with-current-buffer buffer
     (let* ((spec (twittering-get-timeline-spec-for-buffer buffer))
 	   (referring-id-table
@@ -3630,6 +3921,15 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	   timeline-data)))
       (debug-print (current-buffer))
       (cond
+       (keep-point
+	;; Restore points.
+	(mapc (lambda (pair)
+		(let* ((point (car pair))
+		       (window (cdr pair))
+		       (dest (max (point-max) point)))
+		  (set-window-point window dest)))
+	      point-window-list)
+	(goto-char original-pos))
        (rendering-entire
 	;; Go to the latest status of buffer after full insertion.
 	(let ((dest (if twittering-reverse-mode
@@ -4143,8 +4443,8 @@ variable `twittering-status-format'."
     (insert status)
     (goto-char (point-min))
     ;; skip user name
-    (re-search-forward "^[\n\r \t]*@[a-zA-Z0-9_-]+\\([\n\r \t]+@[a-zA-Z0-9_-]+\\)*" nil t)
-    (re-search-forward "[^\n\r \t]+" nil t)))
+    (re-search-forward "\\`[[:space:]]*@[a-zA-Z0-9_-]+\\([[:space:]]+@[a-zA-Z0-9_-]+\\)*" nil t)
+    (re-search-forward "[^[:space:]]" nil t)))
 
 (defun twittering-update-status-from-minibuffer (&optional init-str reply-to-id username spec)
   (and (not (twittering-timeline-spec-is-direct-messages-p spec))
@@ -4187,7 +4487,7 @@ variable `twittering-status-format'."
 		    (when (and reply-to-id
 			       username
 			       (string-match
-				(concat "^@" username "\\(?:[\n\r \t]+\\)*")
+				(concat "\\`@" username "\\(?:[\n\r \t]+\\)*")
 				status))
 		      (add-to-list 'parameters
 				   `("in_reply_to_status_id" . ,reply-to-id)))
@@ -4218,7 +4518,7 @@ variable `twittering-status-format'."
    ((stringp twittering-list-index-retrieved)
     (if (string= "" twittering-list-index-retrieved)
 	(message "%s does not have a list." username)
-      (message twittering-list-index-retrieved))
+      (message "%s" twittering-list-index-retrieved))
     nil)
    ((listp twittering-list-index-retrieved)
     twittering-list-index-retrieved)))

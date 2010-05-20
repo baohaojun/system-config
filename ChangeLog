@@ -1,3 +1,124 @@
+2010-05-20  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: The configuration of a proxy is referred via
+	the function `twittering-proxy-info'.
+	(twittering-proxy-info): return all configuration of the proxy for
+	the scheme.
+
+	* twittering-mode.el: Give priority to the variable
+	`twittering-proxy-*' over `twittering-http-proxy-*' and
+	`twittering-https-proxy-*'.
+	(twittering-proxy-server): defined as a variable.
+	(twittering-proxy-port): likewise.
+	(twittering-proxy-keep-alive): likewise.
+	(twittering-proxy-user): likewise.
+	(twittering-proxy-password): likewise.
+	(twittering-normalize-proxy-vars): normalize
+	`twittering-proxy-port'.
+	(twittering-proxy-info): return configuration generated from
+	`twittering-proxy-*' regardless of the scheme (HTTP or HTTPS) if
+	`twittering-proxy-server' and  `twittering-proxy-port' are
+	non-nil.
+
+2010-05-17  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el (twittering-start-http-session-curl): fix
+	extraction of the scheme from the variable `request'.
+
+	* twittering-mode.el: Use a relative path to specify the temporary
+	cert file for `curl' to ignore the difference of path
+	representation between Windows and Cygwin.
+	(twittering-start-http-session-curl): change directory before
+	invoking `curl' and specify the temporary cert file with relative
+	path.
+
+2010-05-15  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Add copyright of the ACTIVE/INACTIVE
+	indicators derived from Wanderlust.
+	(twittering-active-indicator-image): add the copyright as a
+	comment.
+	(twittering-inactive-indicator-image): likewise.
+
+	* twittering-mode.el: The function `twittering-icon-mode' keeps
+	the current cursor point.
+	(twittering-render-timeline): add a new argument `keep-point'.
+	(twittering-icon-mode): keep the current cursor point.
+
+	* test/test-twittering-mode.el: Remove an obsolete test and update
+	`test-format-status'.
+
+	* twittering-mode.el: The proxies for HTTP and HTTPS can be
+	configured individually. The variables
+	`twittering-proxy-{server,port,user,password,keep-alive}' are now
+	aliases.
+	(twittering-http-proxy-server): new variable.
+	(twittering-http-proxy-port): new variable.
+	(twittering-http-proxy-user): new variable.
+	(twittering-http-proxy-password): new variable.
+	(twittering-http-proxy-keep-alive): new variable.
+	(twittering-https-proxy-server): new variable.
+	(twittering-https-proxy-port): new variable.
+	(twittering-https-proxy-user): new variable.
+	(twittering-https-proxy-password): new variable.
+	(twittering-https-proxy-keep-alive): new variable.
+	(twittering-proxy-server): changed into an alias to
+	`twittering-http-proxy-server'.
+	(twittering-proxy-port): changed into an alias to
+	`twittering-http-proxy-port.
+	(twittering-proxy-user): changed into an alias to
+	`twittering-http-proxy-user.
+	(twittering-proxy-password): changed into an alias to
+	`twittering-http-proxy-password.
+	(twittering-proxy-keep-alive): changed into an alias to
+	`twittering-http-proxy-keep-alive.
+	(twittering-normalize-proxy-vars): new function.
+	(twittering-proxy-info): new function.
+	(twittering-url-proxy-services): new function.
+	(twittering-setup-proxy): initialize individual proxy
+	configurations for HTTP and HTTPS.
+
+	* twittering-mode.el: Enable to retrieve icon images silently.
+	(twittering-url-show-status): new variable.
+	(twittering-url-wrapper): control display of status even if the
+	retrieval is asynchronous.
+
+2010-05-11  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Fix initialization of `twittering-tls-program'.
+	(twittering-start-http-session-native-tls-p): use
+	`twittering-tls-program' if it is non-nil.
+
+2010-05-09  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Use "\\`" as the regexp for the head of a
+	tweet instead of "^". This prevents misinterpretation of tweets
+	including multiple lines.
+	(twittering-edit-post-status): correct the regexp for determining
+	whether the "in-reply-to" ID should be attached or not.
+	(twittering-update-status-from-minibuffer): likewise.
+	(twittering-status-not-blank-p): correct the regexp for
+	distinguish a blank tweet from a non-blank tweet.
+
+	* twittering-mode.el: Prevent applying improper functions to a
+	failed connection.
+	(twittering-verify-credentials): give up authorization if
+	`twittering-call-api' returns nil.
+	(twittering-start-http-session-curl): return nil if it failed to
+	open a connection.
+	(twittering-start-http-session-native): likewise.
+
+	* twittering-mode.el: Support HTTPS with `tls' library.
+	(twittering-tls-program): new variable.
+	(twittering-connection-type-table): register
+	`twittering-start-http-session-native-tls-p' as the "https" entry
+	for "native".
+	(twittering-start-http-session-native-tls-p): new function.
+	(twittering-start-http-session-native): call `open-tls-stream' if
+	`twittering-use-ssl' is non-nil.
+	* emacs21/tls.el: Imported from Emacs 22.2.1 on Debian 5.0 for
+	Emacs21 that does not include `tls.el'.
+
 2010-05-08  Tadashi MATSUO  <tad@mymail.twin.jp>
 
 	* twittering-mode.el: Add an abstract layer for Twitter API.
