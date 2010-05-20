@@ -69,6 +69,8 @@
 (setenv "XIM" "SCIM")
 (setenv "GTK_IM_MODULE" "scim")
 (setenv "TZ" "Asia/Shanghai")
+(setenv "LANG" "en_US.UTF-8")
+(setenv "LC_ALL" "en_US.UTF-8")
 (setenv "PATH" (concat 
                 (getenv "HOME") "/bin:" 
                 (getenv "HOME") "/bin/linux:" 

@@ -659,6 +659,7 @@
 (desktop-save-mode 1)
 (require 'saveplace)
 (setq-default save-place t)
-
+(require 'color-theme)
+(color-theme-comidia)
 (server-start)
 ;(w32-register-hot-key [A-tab])

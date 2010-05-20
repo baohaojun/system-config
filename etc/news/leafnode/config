@@ -1,0 +1,23 @@
+Expire = 70
+maxbytes = 32000
+maxcrosspost = 3
+maxfetch = 3000
+
+### Outgoing Servers (local messages are sent to them)
+
+server = nntp.aioe.org
+noread = 1
+only_groups_match_all = 1
+
+
+### Incoming server (remote articles are received from these hosts)
+
+server = news.edisontel.com
+nopost = 1
+
+server = news.eutelia.it
+nopost = 1
+
+server = news2.neva.ru
+nopost = 1
+
