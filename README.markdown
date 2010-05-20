@@ -1,3 +1,17 @@
+xwl's fork
+----------
+
+* unread tweets
+  * Show unread tweets for different buffers in a way similar to
+    erc-track-mode.
+  * Do not display unread notifier when updating tweets from a twittering
+    buffer.
+
+* misc
+  * (twittering-erase-all): New func, binded to "C-c C-w".
+  * (twittering-mode-setup): Short mode-name to just "twittering"
+
+
  Twittering-mode: a Twitter client for Emacs
 =============================================
 
