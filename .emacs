@@ -397,24 +397,15 @@
 
 (defvar last-grep-marker nil)
 
+(defvar cscope-marker-ring (make-ring 32)
+  "Ring of markers which are locations from which cscope was invoked.")
+
 (keydef "C-M-g" (progn
                   (let ((current-prefix-arg 4)
                         (default-directory (eval bhj-grep-default-directory))
                         (grep-use-null-device nil))
-                    (setq last-grep-marker (point-marker))
+                    (ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep))))
-
-(keydef "M-g o" (let* ((marker last-grep-marker)
-                       (buffer (marker-buffer marker))
-                       (position (marker-position marker)))
-                  (set-buffer buffer)
-                  (or (and (>= position (point-min))
-                           (<= position (point-max)))
-                      (if widen-automatically
-                          (widen)
-                        (error "Global mark position is outside accessible part of buffer")))
-                  (goto-char position)
-                  (switch-to-buffer buffer)))
 
 (setq hippie-expand-try-functions-list 
       '(try-expand-dabbrev
