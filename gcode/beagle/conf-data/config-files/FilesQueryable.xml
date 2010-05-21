@@ -14,6 +14,7 @@
 	<Value>*~</Value>
 	<Value>#*#</Value>
 	<Value>*.o</Value>
+	<Value>*.ko</Value>
 	<Value>*.a</Value>
 	<Value>*.la</Value>
 	<Value>*.lo</Value>

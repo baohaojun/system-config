@@ -1,1 +1,2 @@
-/usr/bin/gnome-open
+#!/bin/bash
+gnome-open "$@" > /dev/null 2>&1
