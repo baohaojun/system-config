@@ -1613,11 +1613,13 @@ Statuses are stored in ascending-order with respect to their IDs."
 		    statuses))))
       (when new-statuses
 	(let ((new-timeline-data
-	       (sort (append new-statuses timeline-data)
-		     (lambda (status1 status2)
-		       (let ((id1 (cdr (assq 'id status1)))
-			     (id2 (cdr (assq 'id status2))))
-			 (twittering-status-id< id2 id1))))))
+	       (if (twittering-timeline-spec-is-user-p spec)
+		   (append new-statuses timeline-data)
+		 (sort (append new-statuses timeline-data)
+		       (lambda (status1 status2)
+			 (let ((id1 (cdr (assq 'id status1)))
+			       (id2 (cdr (assq 'id status2))))
+			   (twittering-status-id< id2 id1)))))))
 	  (puthash spec `(,id-table ,referring-id-table ,new-timeline-data)
 		   twittering-timeline-data-table))
 	(when (twittering-jojo-mode-p spec)
@@ -3957,7 +3959,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	       (if (twittering-timeline-spec-is-user-p spec)
 		   (let* ((previous-cursor
 			   (cdr-safe (assq 'previous-cursor status)))
-			  (new-follower-p (string= previous-cursor "0"))))
+			  (new-follower-p (string= previous-cursor "0")))
 		     (setq pos
 			   (if twittering-reverse-mode
 			       (if new-follower-p (point-max) (point-min))
