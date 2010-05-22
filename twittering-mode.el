@@ -344,10 +344,12 @@ pop-up buffer.")
 	   (number-str (number-to-string number))
 	   (max_id (cdr (assq 'max_id args-alist)))
 	   (since_id (cdr (assq 'since_id args-alist)))
+	   (cursor (cdr (assq 'cursor args-alist)))
 	   (word (cdr (assq 'word args-alist)))
 	   (parameters
 	    `(,@(when max_id `(("max_id" . ,max_id)))
 	      ,@(when since_id `(("since_id" . ,since_id)))
+	      ,@(when cursor `(("cursor" . ,cursor)))
 	      ,@(cond
 		 ((eq spec-type 'search)
 		  `(("q" . ,word)
@@ -370,6 +372,7 @@ pop-up buffer.")
 	      (retweeted_by_me . "1/statuses/retweeted_by_me")
 	      (retweeted_to_me . "1/statuses/retweeted_to_me")
 	      (retweets_of_me . "1/statuses/retweets_of_me")
+	      (followers . "1/statuses/followers")
 	      (search . "search")))
 	   (host (cond ((eq spec-type 'search) twittering-api-search-host)
 		       (t twittering-api-host)))
@@ -1221,6 +1224,8 @@ as a list of a string on Emacs21."
 ;;; - (retweets_of_me):
 ;;;     tweets of the authenticated user that have been retweeted by others.
 ;;;
+;;; - (followers): followers.
+;;;
 ;;; - (search STRING): the result of searching with query STRING.
 ;;; - (merge SPEC1 SPEC2 ...): result of merging timelines SPEC1 SPEC2 ...
 ;;; - (filter REGEXP SPEC): timeline filtered with REGEXP.
@@ -1232,6 +1237,7 @@ as a list of a string on Emacs21."
 ;;; PRIMARY ::= USER | LIST | DIRECT_MESSSAGES | DIRECT_MESSSAGES_SENT
 ;;;             | FRIENDS | HOME | MENTIONS | PUBLIC | REPLIES
 ;;;             | RETWEETED_BY_ME | RETWEETED_TO_ME | RETWEETS_OF_ME
+;;;             | FOLLOWERS
 ;;;             | SEARCH
 ;;; COMPOSITE ::= MERGE | FILTER
 ;;;
@@ -1248,6 +1254,8 @@ as a list of a string on Emacs21."
 ;;; RETWEETED_BY_ME ::= ":retweeted_by_me"
 ;;; RETWEETED_TO_ME ::= ":retweeted_to_me"
 ;;; RETWEETS_OF_ME ::= ":retweets_of_me"
+;;;
+;;; FOLLOWERS ::= ":followers"
 ;;;
 ;;; SEARCH ::= ":search/" QUERY_STRING "/"
 ;;; QUERY_STRING ::= any string, where "/" is escaped by a backslash.
@@ -1277,6 +1285,7 @@ If SHORTEN is non-nil, the abbreviated expression will be used."
      ((eq type 'retweeted_by_me) ":retweeted_by_me")
      ((eq type 'retweeted_to_me) ":retweeted_to_me")
      ((eq type 'retweets_of_me) ":retweets_of_me")
+     ((eq type 'followers) ":followers")
      ((eq type 'search)
       (let ((query (car value)))
 	(concat ":search/"
@@ -1335,7 +1344,8 @@ Return cons of the spec and the rest string."
 		   ("replies" . replies)
 		   ("retweeted_by_me" . retweeted_by_me)
 		   ("retweeted_to_me" . retweeted_to_me)
-		   ("retweets_of_me" . retweets_of_me))))
+		   ("retweets_of_me" . retweets_of_me)
+		   ("followers" . followers))))
       (cond
        ((assoc type alist)
 	(let ((first-spec (list (cdr (assoc type alist)))))
@@ -1438,7 +1448,8 @@ Return nil if SPEC-STR is invalid as a timeline spec."
 		direct_messages direct_messages_sent
 		friends home mentions public replies
 		search
-		retweeted_by_me retweeted_to_me retweets_of_me))
+		retweeted_by_me retweeted_to_me retweets_of_me
+		followers))
 	(type (car spec)))
     (memq type primary-spec-types)))
 
@@ -1447,6 +1458,11 @@ Return nil if SPEC-STR is invalid as a timeline spec."
 direct_messages."
   (and spec
        (memq (car spec) '(direct_messages direct_messages_sent))))
+
+(defun twittering-timeline-spec-is-user-p (spec)
+  "Return non-nil if SPEC belongs to User Methods."
+  (and spec
+       (memq (car spec) '(followers))))
 
 (defun twittering-equal-string-as-timeline (spec-str1 spec-str2)
   "Return non-nil if SPEC-STR1 equals SPEC-STR2 as a timeline spec."
@@ -3491,6 +3507,8 @@ BUFFER may be a buffer or the name of an existing buffer."
 	   user-profile-image-url
 	   user-url
 	   user-protected
+	   previous-cursor
+	   next-cursor
 	   regex-index
 	   (retweeted-status-data (cddr (assq 'retweeted_status status-data)))
 	   original-created-at ;; need not export
@@ -3548,6 +3566,8 @@ BUFFER may be a buffer or the name of an existing buffer."
       (setq user-profile-image-url (assq-get 'profile_image_url user-data))
       (setq user-url (assq-get 'url user-data))
       (setq user-protected (assq-get 'protected user-data))
+      (setq previous-cursor (assq-get 'previous_cursor user-data))
+      (setq next-cursor (assq-get 'next_cursor user-data))
 
       (twittering-make-clickable-status-datum
        (mapcar (lambda (sym)
@@ -3560,6 +3580,8 @@ BUFFER may be a buffer or the name of an existing buffer."
                     user-profile-image-url
                     user-url
                     user-protected
+		    previous-cursor
+		    next-cursor
                     original-user-name
                     original-user-screen-name
 		    recipient-screen-name))))))
@@ -3717,6 +3739,35 @@ BUFFER may be a buffer or the name of an existing buffer."
 			       node))
 			(cdr-safe (assq 'direct-messages xmltree))))
 	       )))
+
+	 ((eq 'users_list (caar xmltree)) ; User Methods
+	  (let ((previous_cursor (assq 'previous_cursor (car xmltree)))
+		(next_cursor (assq 'next_cursor (car xmltree))))
+	    `(,@(mapcar
+		 (lambda (c-node)
+		   ;; Reconstruct to satisfy
+		   ;; `twittering-status-to-status-datum', and remove
+		   ;; 'retweeted_status here.
+		   (let* ((user (append
+				 (remove-if (lambda (entry)
+					      (eq (car-safe entry) 'status))
+					    c-node)
+				 (list previous_cursor next_cursor)))
+			  (status (or
+				   (remove-if (lambda (entry)
+						(eq (car-safe entry) 'retweeted_status))
+					      (assq 'status c-node))
+				   ;; Fake 'status for people with zero
+				   ;; tweets...
+				   (cons 'status (cdr user)))))
+		     (append status (list user))))
+		 (remove nil
+			 (mapcar
+			  (lambda (node)
+			    (and (consp node) (eq 'user (car node))
+				 node))
+			  (cdr-safe (assq 'users (assq 'users_list xmltree)))))))))
+
 	 ((eq 'statuses (caar xmltree))
 	  (cddr (car xmltree)))
 	 (t ;; unknown format?
@@ -3885,17 +3936,30 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	   (lambda (status)
 	     (let ((id (cdr (assq 'id status))))
 	       ;; Find where the status should be inserted.
-	       (while
-		   (let ((buf-id (get-text-property pos 'id)))
-		     (if (and buf-id
-			      (if twittering-reverse-mode
-				  (twittering-status-id< buf-id id)
-				(twittering-status-id< id buf-id)))
-			 (let ((next-pos
-				(twittering-get-next-status-head pos)))
-			   (setq pos (or next-pos (point-max)))
-			   next-pos)
-		       nil)))
+	       (if (twittering-timeline-spec-is-user-p
+		    (twittering-current-timeline-spec))
+		   (let* ((latest-status (car-safe (twittering-current-timeline-data)))
+			  (previous-cursor (cdr-safe (assq 'previous-cursor latest-status)))
+			  (new-follower-p (and previous-cursor
+					       (string= previous-cursor "0"))))
+		     (if twittering-reverse-mode
+			 (if new-follower-p
+			     (point-max)
+			   (point-min))
+		       (if new-follower-p
+			   (point-min)
+			 (point-max))))
+		 (while
+		     (let ((buf-id (get-text-property pos 'id)))
+		       (if (and buf-id
+				(if twittering-reverse-mode
+				    (twittering-status-id< buf-id id)
+				  (twittering-status-id< id buf-id)))
+			   (let ((next-pos
+				  (twittering-get-next-status-head pos)))
+			     (setq pos (or next-pos (point-max)))
+			     next-pos)
+			 nil))))
 	       (unless (twittering-status-id= id (get-text-property pos 'id))
 		 (let ((formatted-status (twittering-format-status status))
 		       (separator "\n"))
@@ -4554,14 +4618,17 @@ variable `twittering-status-format'."
 		;; `twittering-current-timeline-data' is sorted.
 		(car (twittering-current-timeline-data spec)))
 	       (since_id (cdr-safe (assq 'id latest-status)))
+	       (cursor (or (cdr-safe (assq id latest-status)) "-1"))
 	       (word (when is-search-spec (cadr spec)))
 	       (args
 		`((timeline-spec . ,spec)
 		  (timeline-spec-string . ,spec-string)
 		  (number . ,number)
-		  ,@(when id `((max_id . ,id)))
+		  ,@(when (and id (not (twittering-timeline-spec-is-user-p spec)))
+		      `((max_id . ,id)))
 		  ,@(cond
 		     (is-search-spec `((word . ,word)))
+		     ((twittering-timeline-spec-is-user-p spec) `((cursor . ,cursor)))
 		     ((and since_id (null id)) `((since_id . ,since_id)))
 		     (t nil))))
 	       (proc
@@ -5084,7 +5151,8 @@ managed by `twittering-mode'."
 		  (twittering-get-usernames-from-timeline)
 		  '(":direct_messages" ":direct_messages_sent" ":friends"
 		    ":home" ":mentions" ":public" ":replies"
-		    ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me")))
+		    ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me"
+		    ":followers")))
 	 (spec-string (twittering-completing-read prompt dummy-hist
 						  nil nil initial 'dummy-hist))
 	 (spec-string
@@ -5173,10 +5241,16 @@ Return nil if no statuses are rendered."
      (twittering-reverse-mode
       (message "The latest status."))
      (t
-      (let ((id (or (get-text-property (point) 'id)
-		    (let ((prev (twittering-get-previous-status-head)))
-		      (when prev
-			(get-text-property prev 'id))))))
+      (let ((id
+	     (cond
+	      ((twittering-timeline-spec-is-user-p
+		(twittering-current-timeline-spec))
+	       'previous-cursor)
+	      (t
+	       (or (get-text-property (point) 'id)
+		   (let ((prev (twittering-get-previous-status-head)))
+		     (when prev
+		       (get-text-property prev 'id))))))))
         (when id
 	  (message "Get more previous timeline...")
 	  (twittering-get-and-render-timeline nil id)))))))
@@ -5200,10 +5274,16 @@ The return value is nil or a positive integer greater than POS."
      (prev-pos
       (goto-char prev-pos))
      (twittering-reverse-mode
-      (let ((id (or (get-text-property (point) 'id)
-		    (let ((next (twittering-get-next-status-head)))
-		      (when next
-			(get-text-property next 'id))))))
+      (let ((id
+	     (cond
+	      ((twittering-timeline-spec-is-user-p
+		(twittering-current-timeline-spec))
+	       'next-cursor)
+	      (t
+	       (or (get-text-property (point) 'id)
+		   (let ((next (twittering-get-next-status-head)))
+		     (when next
+		       (get-text-property next 'id))))))))
 	(when id
 	  (message "Get more previous timeline...")
 	  (twittering-get-and-render-timeline nil id))))
