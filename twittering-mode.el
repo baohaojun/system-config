@@ -1630,6 +1630,42 @@ Statuses are stored in ascending-order with respect to their IDs."
 	  (run-hooks 'twittering-new-tweets-hook))
 	new-statuses))))
 
+(defun twittering-timeline-data-collect (&optional spec)
+  "Collect visible statuses for `twittering-render-timeline'."
+  (let* ((spec (or spec (twittering-current-timeline-spec)))
+	 (referring-id-table
+	  (twittering-current-timeline-referring-id-table spec))
+	 (timeline-data (twittering-current-timeline-data spec)))
+    (remove nil
+	    (mapcar
+	     (lambda (status)
+	       (let ((id (cdr (assq 'id status)))
+		     (source-id (cdr (assq 'source-id status))))
+		 (cond
+		  ((twittering-timeline-spec-is-user-p
+		    (twittering-current-timeline-spec))
+		   ;; We only care about new followers.
+		   (let ((username (cdr (assq 'user-screen-name status)))
+			 (pos (point-min))
+			 (try-match (lambda (p)
+				      (and p (string= (get-text-property p 'username)
+						      username)))))
+		     (while (and pos (not (funcall try-match pos)))
+		       (setq pos (twittering-get-next-status-head pos)))
+		     (unless (funcall try-match pos)
+		       status)))
+		  ((not source-id)
+		   ;; `status' is not a retweet.
+		   status)
+		  ((and source-id
+			(twittering-status-id=
+			 id (gethash source-id referring-id-table)))
+		   ;; `status' is the first retweet.
+		   status)
+		  (t
+		   nil))))
+	     timeline-data))))
+
 ;;;
 ;;; Process info
 ;;;
@@ -2039,7 +2075,11 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 	 (current (or (cadr (assq buffer twittering-unread-status-info)) 0))
 	 (result (+ current twittering-new-tweets-count)))
     (when buffer
-      (when (eq buffer twittering-invoke-buffer)
+      (when (or (eq buffer twittering-invoke-buffer)
+		(and (twittering-timeline-spec-is-user-p
+		      twittering-new-tweets-spec)
+		     (null (twittering-timeline-data-collect
+			     twittering-new-tweets-spec))))
 	(setq result 0))
       (twittering-set-number-of-unread buffer result))))
 
@@ -3888,29 +3928,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 (defun twittering-render-timeline (buffer &optional additional timeline-data keep-point)
   (with-current-buffer buffer
     (let* ((spec (twittering-get-timeline-spec-for-buffer buffer))
-	   (referring-id-table
-	    (twittering-current-timeline-referring-id-table spec))
-	   (timeline-data (or timeline-data
-			      (twittering-current-timeline-data spec)))
-	   (timeline-data
-	    ;; Collect visible statuses.
-	    (remove nil
-		    (mapcar
-		     (lambda (status)
-		       (let ((id (cdr (assq 'id status)))
-			     (source-id (cdr (assq 'source-id status))))
-			 (cond
-			  ((not source-id)
-			   ;; `status' is not a retweet.
-			   status)
-			  ((and source-id
-				(twittering-status-id=
-				 id (gethash source-id referring-id-table)))
-			   ;; `status' is the first retweet.
-			   status)
-			  (t
-			   nil))))
-		     timeline-data)))
+	   (timeline-data (twittering-timeline-data-collect spec))
 	   (timeline-data (if twittering-reverse-mode
 			      (reverse timeline-data)
 			    timeline-data))
@@ -3936,19 +3954,14 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	   (lambda (status)
 	     (let ((id (cdr (assq 'id status))))
 	       ;; Find where the status should be inserted.
-	       (if (twittering-timeline-spec-is-user-p
-		    (twittering-current-timeline-spec))
-		   (let* ((latest-status (car-safe (twittering-current-timeline-data)))
-			  (previous-cursor (cdr-safe (assq 'previous-cursor latest-status)))
-			  (new-follower-p (and previous-cursor
-					       (string= previous-cursor "0"))))
-		     (if twittering-reverse-mode
-			 (if new-follower-p
-			     (point-max)
-			   (point-min))
-		       (if new-follower-p
-			   (point-min)
-			 (point-max))))
+	       (if (twittering-timeline-spec-is-user-p spec)
+		   (let* ((previous-cursor
+			   (cdr-safe (assq 'previous-cursor status)))
+			  (new-follower-p (string= previous-cursor "0"))))
+		     (setq pos
+			   (if twittering-reverse-mode
+			       (if new-follower-p (point-max) (point-min))
+			     (if new-follower-p (point-min) (point-max)))))
 		 (while
 		     (let ((buf-id (get-text-property pos 'id)))
 		       (if (and buf-id
