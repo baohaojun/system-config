@@ -1,4 +1,4 @@
-Expire = 70
+expire = 70
 maxbytes = 32000
 maxcrosspost = 3
 maxfetch = 3000
