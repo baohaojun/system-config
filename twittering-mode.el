@@ -112,9 +112,9 @@ The upper limit is `twittering-max-number-of-tweets-on-retrieval'.")
 DO NOT SET VALUE MANUALLY.")
 
 (defvar twittering-timer-interval 90
-  "The interval of auto reloading. You should use 60 or more
-seconds for this variable because the number of API call is
-limited by the hour.")
+  "The interval of auto reloading.
+You should use 60 or more seconds for this variable because the number of API
+call is limited by the hour.")
 
 (defvar twittering-timer-for-redisplaying nil
   "Timer object for timeline redisplay statuses will be stored here.
@@ -1461,8 +1461,14 @@ direct_messages."
 
 (defun twittering-timeline-spec-is-user-p (spec)
   "Return non-nil if SPEC belongs to User Methods."
-  (and spec
-       (memq (car spec) '(followers))))
+  (and spec (memq (car spec) '(followers))))
+
+(defun twittering-timeline-spec-is-most-active-p (spec)
+  "Return non-nil if SPEC is a very active timeline spec.
+For less active spec, do not update it every `twittering-timer-interval',
+rather, at the start of each hour.  Or we could easily exceed requests limit of
+Twitter API, currently 150/hour.  SPEC is such as `home'."
+  (and spec (memq (car spec) '(home public))))
 
 (defun twittering-equal-string-as-timeline (spec-str1 spec-str2)
   "Return non-nil if SPEC-STR1 equals SPEC-STR2 as a timeline spec."
@@ -1632,12 +1638,13 @@ Statuses are stored in ascending-order with respect to their IDs."
 	  (run-hooks 'twittering-new-tweets-hook))
 	new-statuses))))
 
-(defun twittering-timeline-data-collect (&optional spec)
+(defun twittering-timeline-data-collect (&optional spec timeline-data)
   "Collect visible statuses for `twittering-render-timeline'."
   (let* ((spec (or spec (twittering-current-timeline-spec)))
 	 (referring-id-table
 	  (twittering-current-timeline-referring-id-table spec))
-	 (timeline-data (twittering-current-timeline-data spec)))
+	 (timeline-data
+	  (or timeline-data (twittering-current-timeline-data spec))))
     (remove nil
 	    (mapcar
 	     (lambda (status)
@@ -3929,7 +3936,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 (defun twittering-render-timeline (buffer &optional additional timeline-data keep-point)
   (with-current-buffer buffer
     (let* ((spec (twittering-get-timeline-spec-for-buffer buffer))
-	   (timeline-data (or timeline-data (twittering-timeline-data-collect spec)))
+	   (timeline-data (twittering-timeline-data-collect spec timeline-data))
 	   (timeline-data (if twittering-reverse-mode
 			      (reverse timeline-data)
 			    timeline-data))
@@ -4771,10 +4778,15 @@ variable `twittering-status-format'."
   "Invoke `twittering-get-and-render-timeline' for each active buffer
 managed by `twittering-mode'."
   (when (twittering-account-authorized-p)
-    (let ((buffer-list (twittering-get-active-buffer-list)))
-      (mapc (lambda (buffer)
-	      (twittering-get-and-render-timeline noninteractive nil buffer))
-	    buffer-list))))
+    (mapc
+     (lambda (buffer)
+       (let ((spec (twittering-get-timeline-spec-for-buffer buffer)))
+	 (when (or (twittering-timeline-spec-is-most-active-p spec)
+		   ;; hourly TODO: make it customizable? (xwl)
+		   (zerop (string-to-number
+			   (format-time-string "%M" (current-time)))))
+	   (twittering-get-and-render-timeline noninteractive nil buffer))))
+     (twittering-get-active-buffer-list))))
 
 (defun twittering-current-timeline-noninteractive ()
   (twittering-current-timeline t))
