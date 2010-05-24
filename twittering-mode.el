@@ -3507,7 +3507,7 @@ BUFFER may be a buffer or the name of an existing buffer."
 		   "<a href=\"\\(.*?\\)\".*?>\\(.*\\)</a>" html)
 	      (let ((uri (match-string-no-properties 1 html))
 		    (caption (match-string-no-properties 2 html)))
-		caption))))
+		caption))))
       (text . ,(twittering-decode-html-entities
 		(car (cddr (assq 'title atom-xml-entry)))))
       ,@(progn
@@ -4783,8 +4783,12 @@ managed by `twittering-mode'."
        (let ((spec (twittering-get-timeline-spec-for-buffer buffer)))
 	 (when (or (twittering-timeline-spec-is-most-active-p spec)
 		   ;; hourly TODO: make it customizable? (xwl)
-		   (zerop (string-to-number
-			   (format-time-string "%M" (current-time)))))
+		   (let ((min-and-sec
+			  (+ (* (string-to-number
+				 (format-time-string "%M" (current-time))) 60)
+			     (string-to-number
+			      (format-time-string "%S" (current-time))))))
+		     (<= min-and-sec twittering-timer-interval)))
 	   (twittering-get-and-render-timeline noninteractive nil buffer))))
      (twittering-get-active-buffer-list))))
 
