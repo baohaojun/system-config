@@ -1644,18 +1644,18 @@ Statuses are stored in ascending-order with respect to their IDs."
 	       (let ((id (cdr (assq 'id status)))
 		     (source-id (cdr (assq 'source-id status))))
 		 (cond
-		  ((twittering-timeline-spec-is-user-p
-		    (twittering-current-timeline-spec))
+		  ((twittering-timeline-spec-is-user-p spec)
 		   ;; We only care about new followers.
-		   (let ((username (cdr (assq 'user-screen-name status)))
-			 (pos (point-min))
-			 (try-match (lambda (p)
-				      (and p (string= (get-text-property p 'username)
-						      username)))))
-		     (while (and pos (not (funcall try-match pos)))
-		       (setq pos (twittering-get-next-status-head pos)))
-		     (unless (funcall try-match pos)
-		       status)))
+		   (with-current-buffer (twittering-get-buffer-from-spec spec)
+		     (let ((username (cdr (assq 'user-screen-name status)))
+			   (pos (point-min))
+			   (try-match (lambda (p)
+					(and p (string= (get-text-property p 'username)
+							username)))))
+		       (while (and pos (not (funcall try-match pos)))
+			 (setq pos (twittering-get-next-status-head pos)))
+		       (unless (funcall try-match pos)
+			 status))))
 		  ((not source-id)
 		   ;; `status' is not a retweet.
 		   status)
@@ -2073,15 +2073,14 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 
 (defun twittering-update-unread-status-info ()
   "Update `twittering-unread-status-info' with new tweets."
-  (let* ((buffer (twittering-get-buffer-from-spec twittering-new-tweets-spec))
+  (let* ((spec twittering-new-tweets-spec)
+	 (buffer (twittering-get-buffer-from-spec spec))
 	 (current (or (cadr (assq buffer twittering-unread-status-info)) 0))
 	 (result (+ current twittering-new-tweets-count)))
     (when buffer
       (when (or (eq buffer twittering-invoke-buffer)
-		(and (twittering-timeline-spec-is-user-p
-		      twittering-new-tweets-spec)
-		     (null (twittering-timeline-data-collect
-			     twittering-new-tweets-spec))))
+		(and (twittering-timeline-spec-is-user-p spec)
+		     (null (twittering-timeline-data-collect spec))))
 	(setq result 0))
       (twittering-set-number-of-unread buffer result))))
 
@@ -3930,7 +3929,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 (defun twittering-render-timeline (buffer &optional additional timeline-data keep-point)
   (with-current-buffer buffer
     (let* ((spec (twittering-get-timeline-spec-for-buffer buffer))
-	   (timeline-data (twittering-timeline-data-collect spec))
+	   (timeline-data (or timeline-data (twittering-timeline-data-collect spec)))
 	   (timeline-data (if twittering-reverse-mode
 			      (reverse timeline-data)
 			    timeline-data))
