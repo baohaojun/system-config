@@ -468,6 +468,7 @@
  '(case-fold-search t)
  '(cscope-display-cscope-buffer t)
  '(cscope-do-not-update-database t)
+ '(cscope-program "gtags-cscope-bhj")
  '(delete-old-versions t)
  '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
  '(dictem-server "localhost")

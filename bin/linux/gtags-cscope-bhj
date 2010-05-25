@@ -1,0 +1,3 @@
+#!/bin/bash
+#echo "-f cscope.out -d -L -7 /" "$@"
+echo "${5:1}${6}"|gtags-cscope|perl -npe 's/^>>.*//'
