@@ -1,17 +1,19 @@
 #!/bin/bash
 
 set -e 
+TMPD=tmp.$$
 #this script will generate unicode font for pdflatex usage
 (mkdir -p ~/.texmf-var/fonts/truetype/;
 cp $1.ttf ~/.texmf-var/fonts/truetype/;
 cd ~/.texmf-var/fonts/truetype/;
-rm -rf tmp
-mkdir tmp
-cd tmp
+rm -rf $TMPD
+mkdir $TMPD
+cd $TMPD
 cp /usr/share/latex-cjk-common/utils/subfonts/subfonts.pe .
 ln -s ../$1.ttf . 
 
-fontforge -script subfonts.pe $1.ttf $1 /usr/share/texmf-texlive/fonts/sfd/Unicode.sfd
+kpsewhich Unicode.sfd
+fontforge -script subfonts.pe $1.ttf $1 `kpsewhich Unicode.sfd`
 
 for i in *.pfb
 do
@@ -27,21 +29,25 @@ mv *.pfb ~/.texmf-var/fonts/type1/$1
 
 (mkdir -p ~/.texmf-var/tex/latex/cjk/utf-8;
 cd ~/.texmf-var/tex/latex/cjk/utf-8;
-cat <<End|sed -e "s/%fontname%/$1/g" > c70$1.fd
-\ProvidesFile{c70%fontname%.fd}
+bold="{<-> CJKb * ${1}}{\CJKbold}"
+if test $1 = simsun; then
+    bold="{<-> CJK * simhei}{}"
+fi
+cat <<End> c70$1.fd
+\ProvidesFile{c70${1}.fd}
 % character set: Unicode U+0080 - U+FFFD
 % font encoding: Unicode
 
-\DeclareFontFamily{C70}{%fontname%}{\hyphenchar \font\m@ne}
-\DeclareFontShape{C70}{%fontname%}{m}{n}{<-> CJK * %fontname%}{}
-\DeclareFontShape{C70}{%fontname%}{bx}{n}{<-> CJKb * %fontname%}{\CJKbold}
+\DeclareFontFamily{C70}{${1}}{\hyphenchar \font\m@ne}
+\DeclareFontShape{C70}{${1}}{m}{n}{<-> CJK * ${1}}{}
+\DeclareFontShape{C70}{${1}}{bx}{n}${bold}
 
 \endinput
 End
 )
 
 cd ~/.texmf-var/fonts/truetype/
-rm tmp -rf
+rm $TMPD -rf
 
 texhash
 updmap --enable Map $1.map

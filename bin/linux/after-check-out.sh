@@ -277,6 +277,8 @@ fi
 
 #wget -e 'robots=off' --timeout=30 -c -m --tries=0 http://antlr.org
 #wget -e 'robots=off' --timeout=30 -c -m --tries=0 http://www.stringtemplate.org/    
+#wget -e 'robots=off' --timeout=30 -c -m --tries=0 http://serghei.net/
+
 download-external.sh
 
 echo OK.

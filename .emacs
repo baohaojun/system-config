@@ -493,7 +493,6 @@
  '(muse-publish-date-format "%m/%e/%Y")
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
- '(preview-gs-command "c:/gs/gs8.54/bin/gswin32c.exe")
  '(require-final-newline t)
  '(safe-local-variable-values (quote ((major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
  '(save-place t nil (saveplace))
