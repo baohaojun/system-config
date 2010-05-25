@@ -30,7 +30,6 @@ export GTK_IM_MODULE=scim
 
 alias aptitude='sudo aptitude'
 alias sudo='sudo env PATH=$PATH'
-alias of=gnome-open
 
 if test -z "$SSH_CLIENT"; then
     export LOCALIP=localhost

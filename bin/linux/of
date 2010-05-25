@@ -1,2 +1,6 @@
 #!/bin/bash
-gnome-open "$@" > /dev/null 2>&1
+if test $# = 0; then
+    gnome-open "$(xclip -o -selection primary)" >/dev/null 2>&1
+else 
+    gnome-open "$@" > /dev/null 2>&1
+fi
