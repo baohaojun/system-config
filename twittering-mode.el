@@ -3359,7 +3359,7 @@ Available keywords:
 	    ;; xmltree with HTTP status-code is "200" when we
 	    ;; retrieved all un-retrieved statuses.
 	    (when (and new-statuses buffer)
-	      (twittering-render-timeline buffer t new-statuses))
+	      (twittering-render-timeline buffer t new-statuses t))
 	    (twittering-add-timeline-history spec-string)))
 	(if twittering-notify-successful-http-get
 	    (if suc-msg suc-msg (format "Success: Get %s." spec-string))
