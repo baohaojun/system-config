@@ -36,7 +36,7 @@
                   (find-window-or-exec wclass wcommand)))))
  '(
    ("H-e" "Emacs" "emacs.bhj")
-   ("H-p" "Gnome-terminal" "gnome-terminal --hide-menubar --zoom 1.2 -e ~/bin/myscr")
+   ("H-p" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
    ("H-a" "Acroread\|Evince" "acroread")
    ("H-n" "Firefox" "firefox")
    ))
