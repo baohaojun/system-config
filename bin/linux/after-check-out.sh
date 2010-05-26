@@ -129,7 +129,7 @@ zlib1g-dev
 '
 #lunar-applet
 
-sudo apt-get udpate
+sudo apt-get update
 sudo apt-get dist-upgrade -y
 sudo apt-get install -y $packages || for x in $packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
 
