@@ -2067,7 +2067,9 @@ means the number of statuses retrieved after the last visiting of the buffer.")
   (let ((sum (apply '+ (mapcar 'cadr twittering-unread-status-info))))
     (if (= 0 sum)
 	""
-      (format "tw(%s)"
+      (concat
+       twittering-logo
+       (format "(%s)"
 	      (mapconcat
 	       'identity
 	       (mapcar* (lambda (buf count) (format "%s:%d" buf count))
@@ -2076,7 +2078,7 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 				   (substring (buffer-name (car entry)) 1))
 				 twittering-unread-status-info))
 			(mapcar 'cadr twittering-unread-status-info))
-	       ",")))))
+	       ","))))))
 
 (defun twittering-update-unread-status-info ()
   "Update `twittering-unread-status-info' with new tweets."
@@ -2307,6 +2309,35 @@ static char * unplugged_xpm[] = {
 ;;    Boston, MA 02111-1307, USA.
 )
 
+(defconst twittering-logo-image
+  (when (image-type-available-p 'xpm)
+    '(image :type xpm
+	    :ascent center
+	    :data
+	    "/* XPM */
+static char *twitter_logo[] = {
+\"12 14 3 1\",
+\"  c None\",
+\"a c #33ccff\",
+\"b c #ffffff\",
+\"   bbbb          \",
+\"  baaaab         \",
+\"  baaaab         \",
+\"  baaaabbbbbbb   \",
+\"  baaaaaaaaaaab  \",
+\"  baaaaaaaaaaab  \",
+\"  baaaabbbbbbbb  \",
+\"  baaaab         \",
+\"  baaaab         \",
+\"  baaaabbbbbbbb  \",
+\"   baaaaaaaaaab  \",
+\"    baaaaaaaaab  \",
+\"     baaaaaaaab  \",
+\"      bbbbbbbb   \"
+};
+"))
+  "Image for twitter logo.")
+
 (let ((props
        (when (display-mouse-p)
 	 `(local-map
@@ -2318,11 +2349,18 @@ static char * unplugged_xpm[] = {
 	(apply 'propertize " "
 	       `(display ,twittering-active-indicator-image ,@props))
       " "))
+
   (defconst twittering-modeline-inactive
     (if twittering-inactive-indicator-image
 	(apply 'propertize "INACTIVE"
 	       `(display ,twittering-inactive-indicator-image ,@props))
-      "INACTIVE")))
+      "INACTIVE"))
+
+  (defconst twittering-logo
+    (if twittering-logo-image
+        (apply 'propertize " "
+               `(display ,twittering-logo-image))
+      "tw")))
 
 ;;;
 ;;; Account authorization
@@ -3507,7 +3545,7 @@ BUFFER may be a buffer or the name of an existing buffer."
 		   "<a href=\"\\(.*?\\)\".*?>\\(.*\\)</a>" html)
 	      (let ((uri (match-string-no-properties 1 html))
 		    (caption (match-string-no-properties 2 html)))
-		caption))))
+		caption))))
       (text . ,(twittering-decode-html-entities
 		(car (cddr (assq 'title atom-xml-entry)))))
       ,@(progn
