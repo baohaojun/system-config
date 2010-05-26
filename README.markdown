@@ -1,11 +1,15 @@
 xwl's fork
 ----------
 
+* new specs
+  * `followers'
+
 * unread tweets
   * Show unread tweets for different buffers in a way similar to
     erc-track-mode.
   * Do not display unread notifier when updating tweets from a twittering
     buffer.
+  * Show twitter logo on mode line.
 
 * misc
   * (twittering-erase-all): New func, binded to "C-c C-w".
