@@ -1,0 +1,36 @@
+#!/bin/bash
+
+Filter=${1:-~/.my-beagle-filter-android}
+
+find \( '-path' '*/CVS' \
+    '-o' '-path' '*/.svn' \
+    '-o' '-path' '*/autom4te.cache' \
+    '-o' '-path' '*/{arch}' \
+    '-o' '-path' '*/.hg' \
+    '-o' '-path' '*/_darcs' \
+    '-o' '-path' '*/.git' \
+    '-o' '-path' '*/.bzr' \
+    '-o' '-path' '*~*' \
+    '-o' '-path' '*#' \
+    '-o' '-path' '*/TAGS' \
+    '-o' '-path' '*/tags'\
+    '-o' '-path' '*/semantic.cache' \
+    '-o' '-path' './out' \
+    '-o' '-iname' '*.o'\
+    '-o' '-iname' '*.class' \
+    '-o' '-iname' '*.obj'\
+    '-o' '-iname' '*.pyc'\
+    '-o' '-iname' '*.elc'\
+    '-o' '-path' '*/.ignore'\
+    '-o' '-path' '*/.repo'\
+    '-o' '-iname' "cscope.files"\
+    -o -iname "cscope.out"\
+    -o -ipath "*/.beagle"\
+    \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter > cscope.files
+
+gtags -f cscope.files
+mkdir -p ~/tmp/`pwd`/.beagle
+beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target ~/tmp/`pwd`/.beagle/ .
+ln $Filter .beagle-filter -sf
+ln -sf ~/tmp/`pwd`/.beagle ./
+
