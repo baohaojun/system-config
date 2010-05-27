@@ -304,6 +304,12 @@ If nil, this is initialized with a list of valied entries extracted from
 (defvar twittering-username-face 'twittering-username-face)
 (defvar twittering-uri-face 'twittering-uri-face)
 
+(defvar twittering-zebra-1-face 'twittering-zebra-1-face)
+(defvar twittering-zebra-2-face 'twittering-zebra-2-face)
+
+(defface twittering-zebra-1-face `((t (:background "#e6e6fa"))) "" :group 'faces)
+(defface twittering-zebra-2-face `((t (:background "#ffe4e1"))) "" :group 'faces)
+
 (defvar twittering-use-native-retweet nil
   "Post retweets using native retweets if this variable is non-nil.")
 
@@ -1110,6 +1116,22 @@ Duplicated elements should not exist in STR-LIST."
            (setq str nil)))
        (substring pre 2)))
    str-list))
+
+(defun twittering-decorate-background (object)
+  "Append zebra background. "
+  (let* ((start 0)
+	 (other-faces (get-text-property start 'face object))
+	 end
+	 (prev-pos (twittering-get-previous-status-head))
+	 (zebra-face (if (and prev-pos
+			      (memq twittering-zebra-1-face
+				    (get-text-property prev-pos 'face)))
+			 twittering-zebra-2-face
+		       twittering-zebra-1-face)))
+    (while (setq end (next-single-property-change start 'face object))
+      (put-text-property start end 'face (cons zebra-face other-faces) object)
+      (setq start end other-faces (get-text-property start 'face object)))
+    (put-text-property start (length object) 'face zebra-face object)))
 
 ;;;
 ;;; Utility functions for portability
@@ -4025,7 +4047,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		   (add-text-properties 0 (length formatted-status)
 					`(belongs-spec ,spec)
 					formatted-status)
-		   (goto-char pos)
+		   (twittering-decorate-background formatted-status)
 		   (cond
 		    ((eq pos (point-max))
 		     ;; Insert a status after the current position.
