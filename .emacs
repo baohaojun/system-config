@@ -514,7 +514,8 @@
  '(weblogger-config-alist (quote (("default\\" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog"))))
  '(weblogger-start-edit-entry-hook (quote ((lambda nil (interactive) (auto-fill-mode 0)))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
- '(woman-use-own-frame nil))
+ '(woman-use-own-frame nil)
+ '(x-select-enable-clipboard t))
 
 
 
