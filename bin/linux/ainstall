@@ -1,0 +1,14 @@
+#!/bin/bash
+. ~/.bashrc
+Android_mk=`lookup_file Android.mk`
+
+apk=`grep LOCAL_PACKAGE_NAME $Android_mk|awk '{print $3}'`
+target_product=${TARGET_PRODUCT:-generic}
+
+File=`lookup_file out/target/product/$target_product/data/app/$apk.apk||true`
+if test ! -f "$File"; then #this line " is necessary, or else test will be confused
+    File=`lookup_file out/target/product/$target_product/system/app/$apk.apk`
+fi
+echo $File
+anduninst
+adb install $File

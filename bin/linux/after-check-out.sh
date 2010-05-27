@@ -37,9 +37,6 @@ fakeroot
 flashplugin-installer
 flex
 fontforge
-g++-4.2
-g++-4.2-multilib
-gcc-4.2
 gcc-4.4-doc
 gcc-multilib
 git-core

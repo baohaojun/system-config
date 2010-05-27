@@ -6,3 +6,8 @@ cscope.files
 cscope.out
 .beagle*
 \#*\#
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+.#*

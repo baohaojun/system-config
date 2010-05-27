@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 . ~/.bashrc_public
 #search for AndroidManifest.xml
 MANIFEST=`lookup_file AndroidManifest.xml`

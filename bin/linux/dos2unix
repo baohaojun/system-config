@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+for x in "$@"
+do
+    tr -d '\r' < "$x" > /tmp/dos2unix.$$
+    cat /tmp/dos2unix.$$ > "$x"
+done
+rm /tmp/dos2unix.$$
+    
