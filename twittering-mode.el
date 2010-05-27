@@ -4048,6 +4048,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 					`(belongs-spec ,spec)
 					formatted-status)
 		   (twittering-decorate-background formatted-status)
+		   (goto-char pos)
 		   (cond
 		    ((eq pos (point-max))
 		     ;; Insert a status after the current position.
@@ -4109,8 +4110,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 			 (- (point-max)
 			    (- original-buf-end original-pos))
 		       original-pos))))
-       ))
-    ))
+       ))))
 
 (defun twittering-replied-statuses-visible-p ()
   (let* ((pos (twittering-get-current-status-head))
