@@ -263,6 +263,9 @@
 ;(define-key global-map [(meta f10)] 'cscope-display-buffer-toggle) 
 (define-key global-map [(meta f10)] 'cscope-pop-mark)
 (define-key global-map [(meta *)] 'cscope-pop-mark)
+(eval-after-load "gtags" '(progn 
+                            (define-key gtags-mode-map [(meta *)] 'cscope-pop-mark)
+                            (define-key gtags-select-mode-map [(meta *)] 'cscope-pop-mark)))
 
 (prefer-coding-system 'gbk)
 (prefer-coding-system 'utf-8-unix)
@@ -276,17 +279,6 @@
 
 
 (fset 'grep-buffers-symbol-at-point 'current-word)
-(global-set-key [(control meta o)]
-                (lambda()(interactive)
-                  (let 
-                      ((regexp (if mark-active 
-                                   (buffer-substring-no-properties (region-beginning)
-                                                                   (region-end))
-                                 (current-word))))
-                    (progn     
-                      (setq regexp 
-                            (read-string (format "List lines matching regexp [%s]: " regexp) nil nil regexp))
-                      (occur regexp)))))
 
 (global-set-key [(control meta shift g)]
                 (lambda()(interactive)
@@ -406,6 +398,20 @@
                         (grep-use-null-device nil))
                     (ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep))))
+
+(global-set-key [(control meta o)]
+                (lambda()(interactive)
+                  (let 
+                      ((regexp (if mark-active 
+                                   (buffer-substring-no-properties (region-beginning)
+                                                                   (region-end))
+                                 (current-word))))
+                    (progn     
+                      (ring-insert cscope-marker-ring (point-marker))
+                      (setq regexp 
+                            (read-string (format "List lines matching regexp [%s]: " regexp) nil nil regexp))
+                      (occur regexp)))))
+
 
 (setq hippie-expand-try-functions-list 
       '(try-expand-dabbrev
