@@ -29,6 +29,7 @@ wmctrl
 emacs-goodies-el
 emacs-snapshot
 expect
+xmlstarlet
 exuberant-ctags
 fakeroot
 flashplugin-installer

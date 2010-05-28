@@ -16,8 +16,3 @@ do
         ln -s ~/windows-config/$x ~/
     fi
 done
-
-if test `whoami` = bhj; then
-    ln -sf ~/.gitconfig.`whoami` ~/.gitconfig
-fi
-echo OK
