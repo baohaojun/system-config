@@ -1,5 +1,4 @@
 #!/bin/bash
-
 start_dir=`pwd`
 while test ! -d "$start_dir"/.beagle -a "$start_dir" != /
 do
@@ -17,11 +16,12 @@ fi
 beagle_dir=$start_dir/.beagle
 #echo Beagle index found at "$beagle_dir" 1>&2
 
-if test -f "$beagle_dir"/../.beagle-filter
+if test -f "$start_dir"/.beagle-filter
 then
-    beagle_filter="$beagle_dir"/../.beagle-filter
+    beagle_filter="$start_dir"/.beagle-filter
 else
-    beagle_filter=~/.beagle-filter
+    echo 'Warning: you have no .beagle-filter! You will probablly see lots of noise' 1>&2
+    beagle_filter=cat
 fi
 
 longest_token=`get_longest_token "$@"`

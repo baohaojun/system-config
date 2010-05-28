@@ -3285,3 +3285,12 @@ http://dl.google.com/android/android-sdk_r06-windows.zip
 #wget -e 'robots=off' --timeout=30 -c -m --tries=0 http://antlr.org
 #wget -e 'robots=off' --timeout=30 -c -m --tries=0 http://www.stringtemplate.org/    
 #wget -e 'robots=off' --timeout=30 -c -m --tries=0 http://serghei.net/
+
+
+// create a ByteArray stream, which will be wrapped by a PrintStream
+ByteArrayOutputStream baos = new ByteArrayOutputStream();
+PrintStream ps = new PrintStream(baos);
+System.setOut(ps);
+
+// print whatever you got
+String result = baos.toString();
