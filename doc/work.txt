@@ -3294,3 +3294,5 @@ System.setOut(ps);
 
 // print whatever you got
 String result = baos.toString();
+
+  /home/bhj/src/nv-android/frameworks/base/core/res/res/values: 这个文件夹下的内容很有意思
