@@ -1,6 +1,8 @@
 xwl's fork
 ----------
 
+* Decorate tweets with zebra like background.
+
 * new specs
   * `followers'
 
@@ -14,7 +16,6 @@ xwl's fork
 * misc
   * (twittering-erase-all): New func, binded to "C-c C-w".
   * (twittering-mode-setup): Short mode-name to just "twittering"
-
 
  Twittering-mode: a Twitter client for Emacs
 =============================================
