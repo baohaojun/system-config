@@ -24,10 +24,16 @@ while True:
             continue
       if "/current.xml" in line:
             continue
-      if "/arch/" in line:
-            #if "x86" not in line and "i386" not in line:
-            #      continue
-            pass
+
+      if "/cts/tests/" in line:
+            continue
+
+      if "/test/" in line:
+            continue
+      
+      if "/tests/" in line:
+            continue
+
       if "/values-" in line:
             if "/values-zh-rCN" in line:
                   pass
