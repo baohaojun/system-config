@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cd ~/gcode/beagle/
+./configure
+make
+sudo make install
+git clean -xfd
+
+cd ~/gcode/BeagleTokenizer/
+make
+git clean -xfd
+
+cd ~/gcode/UncommentJava/
+make
+git clean -xfd

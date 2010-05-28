@@ -3279,3 +3279,9 @@ mkdir -p ~/tmp/`pwd`/.beagle; beagle-build-index --recursive --deny-directory-pa
 M-x toggle-debug-on-quit
 这样，每当卡住的时候按 C-g，emacs 就会打开一个 buffer，显示当前正运行的是哪个函数，以及整个函数调用的栈，看看栈底就知道到底是那个函数引起了卡住。我就是用这种方法发现了导致 emacs 卡住的元凶是 cedet 挂在 auto-save-hook 上的函数。
 http://dl.google.com/android/android-sdk_r06-windows.zip
+
+
+
+#wget -e 'robots=off' --timeout=30 -c -m --tries=0 http://antlr.org
+#wget -e 'robots=off' --timeout=30 -c -m --tries=0 http://www.stringtemplate.org/    
+#wget -e 'robots=off' --timeout=30 -c -m --tries=0 http://serghei.net/
