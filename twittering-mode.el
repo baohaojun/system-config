@@ -67,9 +67,6 @@
 
 (defconst twittering-mode-version "HEAD")
 (defconst twittering-mode-identity "$Id$")
-(defvar twittering-api-host "api.twitter.com")
-(defvar twittering-api-search-host "search.twitter.com")
-(defvar twittering-web-host "twitter.com")
 
 (defun twittering-mode-version ()
   "Display a message for twittering-mode version."
@@ -80,15 +77,195 @@
 	(message "%s" version-string)
       version-string)))
 
+;;;
+;;; User Customizable
+;;;
+
+(defgroup twittering nil
+  "Twitter client."
+  :prefix "twittering-"
+  :group 'applications)
+
+(defcustom twittering-api-host "api.twitter.com"
+  "Twitter api host."
+  :type 'string
+  :group 'twittering)
+
+(defcustom twittering-api-search-host "search.twitter.com"
+  "Twitter search host."
+  :type 'string
+  :group 'twittering)
+
+(defcustom twittering-web-host "twitter.com"
+  "Twitter web host."
+  :type 'string
+  :group 'twittering)
+
+(defcustom twittering-number-of-tweets-on-retrieval 20
+  "*The number of tweets which will be retrieved in one request.
+The upper limit is `twittering-max-number-of-tweets-on-retrieval'."
+  :type 'integer
+  :group 'twittering)
+
+(defcustom twittering-timer-interval 90
+  "The interval of auto reloading.
+You should use 60 or more seconds for this variable because the number of API
+call is limited by the hour."
+  :type 'integer
+  :group 'twittering)
+
+(defcustom twittering-username nil
+  "*An username of your Twitter account."
+  :type 'string
+  :group 'twittering)
+
+(defcustom twittering-password nil
+  "*A password of your Twitter account. Leave it blank is the
+recommended way because writing a password in .emacs file is so
+dangerous."
+  :type 'string
+  :group 'twittering)
+
+(defcustom twittering-initial-timeline-spec-string ":home"
+  "*The initial timeline spec string. If the value of the variable is a
+list of timeline spec strings, the timelines are rendered on their own
+buffers."
+  :type 'string
+  :group 'twittering)
+
+(defcustom twittering-status-format "%i %s,  %@:\n%FILL{  %T // from %f%L%r%R}\n "
+  "Format string for rendering statuses.
+Ex. \"%i %s,  %@:\\n%FILL{  %T // from %f%L%r%R}\n \"
+
+Items:
+ %s - screen_name
+ %S - name
+ %i - profile_image
+ %d - description
+ %l - location
+ %L - \" [location]\"
+ %r - \" sent to user\" (use on direct_messages{,_sent})
+ %r - \" in reply to user\" (use on other standard timeline)
+ %R - \" (retweeted by user)\"
+ %u - url
+ %j - user.id
+ %p - protected?
+ %c - created_at (raw UTC string)
+ %C{time-format-str} - created_at (formatted with time-format-str)
+ %@ - X seconds ago
+ %T - raw text
+ %t - text filled as one paragraph
+ %' - truncated
+ %FACE[face-name]{...} - strings decorated with the specified face.
+ %FILL{...} - strings filled as a paragraph.
+              You can use any other specifiers in braces.
+ %f - source
+ %# - id
+"
+  :type 'string
+  :group 'twittering)
+
+(defcustom twittering-retweet-format "RT: %t (via @%s)"
+  "Format string for retweet.
+
+Items:
+ %s - screen_name
+ %t - text
+ %% - %
+"
+  :type 'string
+  :group 'twittering)
+
+(defcustom twittering-fill-column nil
+  "*The fill-column used for \"%FILL{...}\" in `twittering-status-format'.
+If nil, the fill-column is automatically calculated."
+  :type 'integer
+  :group 'twittering)
+
+(defcustom twittering-show-replied-tweets t
+  "*The number of replied tweets which will be showed in one tweet.
+
+If the value is not a number and is non-nil, show all replied tweets
+which is already fetched.
+If the value is nil, doesn't show replied tweets."
+  :type 'symbol
+  :group 'twittering)
+
+(defcustom twittering-default-show-replied-tweets nil
+  "*The number of default replied tweets which will be showed in one tweet.
+This value will be used only when showing new tweets.
+
+See `twittering-show-replied-tweets' for more details."
+  :type 'symbol
+  :group 'twittering)
+
+(defcustom twittering-use-show-minibuffer-length t
+  "*Show current length of minibuffer if this variable is non-nil.
+
+We suggest that you should set to nil to disable the showing function
+when it conflict with your input method (such as AquaSKK, etc.)"
+  :type 'symbol
+  :group 'twittering)
+
+(defcustom twittering-notify-successful-http-get t
+  "Non-nil will notify successful http GET in minibuffer."
+  :type 'symbol
+  :group 'twittering)
+
+(defcustom twittering-use-ssl t
+  "Use SSL connection if this variable is non-nil.
+
+SSL connections use 'curl' command as a backend."
+  :type 'symbol
+  :group 'twittering)
+
+(defcustom twittering-tinyurl-service 'tinyurl
+  "The service to use. One of 'tinyurl' or 'toly'."
+  :type 'symbol
+  :group 'twittering)
+
+(defcustom twittering-timeline-spec-most-active-list '(home)
+  "See `twittering-timeline-spec-is-most-active-p'."
+  :type 'list
+  :group 'twittering)
+
+(defcustom twittering-request-confirmation-on-posting nil
+  "*If *non-nil*, confirmation will be requested on posting a tweet edited in
+pop-up buffer."
+  :type 'symbol
+  :group 'twittering)
+
+(defcustom twittering-timeline-spec-alias nil
+  "*Alist for aliases of timeline spec.
+Each element is (NAME . SPEC-STRING), where NAME is a string and
+SPEC-STRING is a string or a function that returns a timeline spec string.
+
+The alias can be referred as \"$NAME\" or \"$NAME(ARG)\" in timeline spec
+string. If SPEC-STRING is a string, ARG is simply ignored.
+If SPEC-STRING is a function, it is called with a string argument.
+For the style \"$NAME\", the function is called with nil.
+For the style \"$NAME(ARG)\", the function is called with a string ARG.
+
+For example, if you specify
+ '((\"FRIENDS\" . \"(USER1+USER2+USER3)\")
+   (\"to_me\" . \"(:mentions+:retweets_of_me+:direct_messages)\")
+   (\"related-to\" .
+            ,(lambda (username)
+               (if username
+                   (format \":search/to:%s OR from:%s OR @%s/\"
+                           username username username)
+                 \":home\")))),
+then you can use \"$to_me\" as
+\"(:mentions+:retweets_of_me+:direct_messages)\"."
+  :type 'list
+  :group 'twittering)
+
+;;;
+;;; Internal Variables
+;;;
+
 (defconst twittering-max-number-of-tweets-on-retrieval 200
   "The maximum number of `twittering-number-of-tweets-on-retrieval'.")
-
-(defvar twittering-number-of-tweets-on-retrieval 20
-  "*The number of tweets which will be retrieved in one request.
-The upper limit is `twittering-max-number-of-tweets-on-retrieval'.")
-
-(defvar twittering-tinyurl-service 'tinyurl
-  "The service to use. One of 'tinyurl' or 'toly'.")
 
 (defvar twittering-tinyurl-services-map
   '((tinyurl . "http://tinyurl.com/api-create.php?url=")
@@ -111,11 +288,6 @@ The upper limit is `twittering-max-number-of-tweets-on-retrieval'.")
   "Timer object for timeline refreshing will be stored here.
 DO NOT SET VALUE MANUALLY.")
 
-(defvar twittering-timer-interval 90
-  "The interval of auto reloading.
-You should use 60 or more seconds for this variable because the number of API
-call is limited by the hour.")
-
 (defvar twittering-timer-for-redisplaying nil
   "Timer object for timeline redisplay statuses will be stored here.
 DO NOT SET VALUE MANUALLY.")
@@ -123,46 +295,11 @@ DO NOT SET VALUE MANUALLY.")
 (defvar twittering-timer-interval-for-redisplaying 17
   "The interval of auto redisplaying statuses.")
 
-(defvar twittering-username nil
-  "*An username of your Twitter account.")
-
-(defvar twittering-password nil
-  "*A password of your Twitter account. Leave it blank is the
-recommended way because writing a password in .emacs file is so
-dangerous.")
-
-(defvar twittering-initial-timeline-spec-string ":home"
-  "*The initial timeline spec string. If the value of the variable is a
-list of timeline spec strings, the timelines are rendered on their own
-buffers.")
-
 (defvar twittering-timeline-spec nil
   "The timeline spec for the current buffer.")
+
 (defvar twittering-timeline-spec-string ""
   "The timeline spec string for the current buffer.")
-
-(defvar twittering-timeline-spec-alias nil
-  "*Alist for aliases of timeline spec.
-Each element is (NAME . SPEC-STRING), where NAME is a string and
-SPEC-STRING is a string or a function that returns a timeline spec string.
-
-The alias can be referred as \"$NAME\" or \"$NAME(ARG)\" in timeline spec
-string. If SPEC-STRING is a string, ARG is simply ignored.
-If SPEC-STRING is a function, it is called with a string argument.
-For the style \"$NAME\", the function is called with nil.
-For the style \"$NAME(ARG)\", the function is called with a string ARG.
-
-For example, if you specify
- '((\"FRIENDS\" . \"(USER1+USER2+USER3)\")
-   (\"to_me\" . \"(:mentions+:retweets_of_me+:direct_messages)\")
-   (\"related-to\" .
-            ,(lambda (username)
-               (if username
-                   (format \":search/to:%s OR from:%s OR @%s/\"
-                           username username username)
-                 \":home\")))),
-then you can use \"$to_me\" as
-\"(:mentions+:retweets_of_me+:direct_messages)\".")
 
 (defvar twittering-current-timeline-spec-string nil
   "The current timeline spec string. This variable should not be referred
@@ -200,74 +337,6 @@ Do not modify this variable directly. Use `twittering-activate-buffer',
   "*Non-nil means tweets are aligned in reverse order of `http://twitter.com/'.")
 (defvar twittering-display-remaining nil
   "*If non-nil, display remaining of rate limit on the mode line.")
-(defvar twittering-status-format "%i %s,  %@:\n%FILL{  %T // from %f%L%r%R}\n "
-  "Format string for rendering statuses.
-Ex. \"%i %s,  %@:\\n%FILL{  %T // from %f%L%r%R}\n \"
-
-Items:
- %s - screen_name
- %S - name
- %i - profile_image
- %d - description
- %l - location
- %L - \" [location]\"
- %r - \" sent to user\" (use on direct_messages{,_sent})
- %r - \" in reply to user\" (use on other standard timeline)
- %R - \" (retweeted by user)\"
- %u - url
- %j - user.id
- %p - protected?
- %c - created_at (raw UTC string)
- %C{time-format-str} - created_at (formatted with time-format-str)
- %@ - X seconds ago
- %T - raw text
- %t - text filled as one paragraph
- %' - truncated
- %FACE[face-name]{...} - strings decorated with the specified face.
- %FILL{...} - strings filled as a paragraph.
-              You can use any other specifiers in braces.
- %f - source
- %# - id
-")
-
-(defvar twittering-retweet-format "RT: %t (via @%s)"
-  "Format string for retweet.
-
-Items:
- %s - screen_name
- %t - text
- %% - %
-")
-
-(defvar twittering-fill-column nil
-  "*The fill-column used for \"%FILL{...}\" in `twittering-status-format'.
-If nil, the fill-column is automatically calculated.")
-
-(defvar twittering-show-replied-tweets t
-  "*The number of replied tweets which will be showed in one tweet.
-
-If the value is not a number and is non-nil, show all replied tweets
-which is already fetched.
-If the value is nil, doesn't show replied tweets.")
-
-(defvar twittering-default-show-replied-tweets nil
-  "*The number of default replied tweets which will be showed in one tweet.
-This value will be used only when showing new tweets.
-
-See `twittering-show-replied-tweets' for more details.")
-
-(defvar twittering-use-show-minibuffer-length t
-  "*Show current length of minibuffer if this variable is non-nil.
-
-We suggest that you should set to nil to disable the showing function
-when it conflict with your input method (such as AquaSKK, etc.)")
-
-(defvar twittering-notify-successful-http-get t)
-
-(defvar twittering-use-ssl t
-  "Use SSL connection if this variable is non-nil.
-
-SSL connections use 'curl' command as a backend.")
 
 (defvar twittering-curl-program nil
   "Cache a result of `twittering-find-curl-program'.
@@ -329,10 +398,6 @@ Twittering-mode provides two functions for updating status:
 
 If we invoke `twittering-get-and-render-timeline' from a twittering buffer, then
 do not display unread notifier on mode line.")
-
-(defvar twittering-request-confirmation-on-posting nil
-  "*If *non-nil*, confirmation will be requested on posting a tweet edited in
-pop-up buffer.")
 
 ;;;
 ;;; Abstract layer for Twitter API
@@ -1487,10 +1552,13 @@ direct_messages."
 
 (defun twittering-timeline-spec-is-most-active-p (spec)
   "Return non-nil if SPEC is a very active timeline spec.
-For less active spec, do not update it every `twittering-timer-interval',
-rather, at the start of each hour.  Or we could easily exceed requests limit of
-Twitter API, currently 150/hour.  SPEC is such as `home'."
-  (and spec (memq (car spec) '(home public))))
+
+For less active spec, do not update it every
+`twittering-timer-interval', rather, at the start of each hour.
+Or we could easily exceed requests limit of Twitter API,
+currently 150/hour.  SPEC is such as `home', the complete list is
+specified in `twittering-timeline-spec-most-active-list'."
+  (and spec (memq (car spec) twittering-timeline-spec-most-active-list)))
 
 (defun twittering-equal-string-as-timeline (spec-str1 spec-str2)
   "Return non-nil if SPEC-STR1 equals SPEC-STR2 as a timeline spec."
@@ -5237,12 +5305,14 @@ managed by `twittering-mode'."
 
 (defun twittering-read-timeline-spec-with-completion (prompt initial &optional as-string)
   (let* ((dummy-hist
-	  (append twittering-timeline-history
-		  (twittering-get-usernames-from-timeline)
-		  '(":direct_messages" ":direct_messages_sent" ":friends"
-		    ":home" ":mentions" ":public" ":replies"
-		    ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me"
-		    ":followers")))
+	  (append
+	   (list (substring-no-properties (twittering-get-username-at-pos (point))))
+	   twittering-timeline-history
+	   (twittering-get-usernames-from-timeline)
+	   '(":direct_messages" ":direct_messages_sent" ":friends"
+	     ":home" ":mentions" ":public" ":replies"
+	     ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me"
+	     ":followers")))
 	 (spec-string (twittering-completing-read prompt dummy-hist
 						  nil nil initial 'dummy-hist))
 	 (spec-string
@@ -5327,7 +5397,8 @@ Return nil if no statuses are rendered."
   (let ((pos (twittering-get-next-status-head)))
     (cond
      (pos
-      (goto-char pos))
+      (goto-char pos)
+      (forward-char))
      (twittering-reverse-mode
       (message "The latest status."))
      (t
@@ -5359,10 +5430,12 @@ The return value is nil or a positive integer greater than POS."
 (defun twittering-goto-previous-status ()
   "Go to previous status."
   (interactive)
-  (let ((prev-pos (twittering-get-previous-status-head)))
+  (let ((prev-pos
+	 (twittering-get-previous-status-head (line-beginning-position))))
     (cond
      (prev-pos
-      (goto-char prev-pos))
+      (goto-char prev-pos)
+      (forward-char))
      (twittering-reverse-mode
       (let ((id
 	     (cond
@@ -5413,7 +5486,9 @@ The return value is nil or a positive integer less than POS."
 		(not (equal (twittering-get-username-at-pos pos) user-name)))
       (setq pos (twittering-get-next-status-head pos)))
     (if pos
-	(goto-char pos)
+	(progn
+	  (goto-char pos)
+	  (forward-char))
       (if user-name
 	  (message "End of %s's status." user-name)
 	(message "Invalid user-name.")))))
@@ -5423,7 +5498,8 @@ The return value is nil or a positive integer less than POS."
   (interactive)
   (let ((user-name (twittering-get-username-at-pos (point)))
         (prev-pos (point))
-	(pos (twittering-get-previous-status-head (point))))
+	(pos (twittering-get-previous-status-head
+	      (line-beginning-position))))
     (while (and (not (eq pos nil))
                 (not (eq pos prev-pos))
 		(not (equal (twittering-get-username-at-pos pos) user-name)))
@@ -5432,7 +5508,9 @@ The return value is nil or a positive integer less than POS."
     (if (and pos
              (not (eq pos prev-pos))
              (equal (twittering-get-username-at-pos pos) user-name))
-	(goto-char pos)
+	(progn
+	  (goto-char pos)
+	  (forward-char))
       (if user-name
 	  (message "Start of %s's status." user-name)
 	(message "Invalid user-name.")))))

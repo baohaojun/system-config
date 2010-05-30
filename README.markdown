@@ -16,6 +16,8 @@ xwl's fork
 * misc
   * (twittering-erase-all): New func, binded to "C-c C-w".
   * (twittering-mode-setup): Short mode-name to just "twittering"
+  * Use defcustom to separate user customizable variables and internal
+    variables.  
 
  Twittering-mode: a Twitter client for Emacs
 =============================================
