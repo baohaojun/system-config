@@ -4,6 +4,13 @@
 #mv ~/trunk/* ~/trunk/.* ~ 
 
 #先把一些常用的软件装上，包括编译Android需要用到的软件。
+
+#make sure postfix is installed first, so that exim4 don't show up.
+
+sudo apt-get install postfix
+
+#all the other packages
+
 packages='
 ant
 ascii
@@ -25,11 +32,16 @@ dict-moby-thesaurus
 dict-web1913
 dict-wn
 dovecot-imapd
-wmctrl
+eclipse
+eclipse-jdt
+eclipse-pde
+eclipse-platform
+eclipse-platform-data
+eclipse-plugin-cvs
+eclipse-rcp
 emacs-goodies-el
 emacs-snapshot
 expect
-xmlstarlet
 exuberant-ctags
 fakeroot
 flashplugin-installer
@@ -51,8 +63,8 @@ htop
 ia32-libs
 imagemagick
 iotop
-language-pack-zh
 language-pack-en
+language-pack-zh
 lib32ncurses5-dev
 lib32readline5-dev
 lib32z-dev
@@ -108,6 +120,8 @@ subversion-tools
 sysv-rc-conf
 tkdiff
 traceroute
+ttf-wqy-microhei
+ttf-wqy-zenhei
 ubuntu-desktop
 unrar
 unzip
@@ -115,16 +129,17 @@ valgrind
 vim
 w3m-el-snapshot
 wget
+wmctrl
 wmii
 x11proto-core-dev
 xchm
 xclip
+xfonts-wqy
+xmlstarlet
 youtube-dl
 zip
 zlib1g-dev
-ttf-wqy-microhei
-ttf-wqy-zenhei
-xfonts-wqy
+
 '
 #lunar-applet
 
