@@ -29,7 +29,6 @@ wmctrl
 emacs-goodies-el
 emacs-snapshot
 expect
-xmlstarlet
 exuberant-ctags
 fakeroot
 flashplugin-installer
@@ -106,7 +105,6 @@ ssh
 subversion
 subversion-tools
 sysv-rc-conf
-texlive-full
 tkdiff
 traceroute
 ubuntu-desktop
@@ -150,4 +148,5 @@ cp ~/doc/monaco-linux.ttf ~/.fonts
 fc-cache -v
 
 #设置gmail邮件
-test `whoami` = bhj && . config_email
+test `whoami` = bhj && . config_email || true
+test `whomai` = bhj && sudo apt-get install texlive-full || true

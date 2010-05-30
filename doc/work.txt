@@ -3296,3 +3296,4 @@ System.setOut(ps);
 String result = baos.toString();
 
   /home/bhj/src/nv-android/frameworks/base/core/res/res/values: 这个文件夹下的内容很有意思
+sudo bash -c 'for x in `seq 1 254`; do echo 192.168.0.$x r$x; done >> /etc/hosts'

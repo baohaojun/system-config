@@ -25,7 +25,7 @@ while True:
       if "/current.xml" in line:
             continue
 
-      if "/cts/tests/" in line:
+      if "/cts/" in line:
             continue
 
       if "/test/" in line:
