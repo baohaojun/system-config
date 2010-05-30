@@ -661,3 +661,13 @@
 (color-theme-comidia)
 (server-start)
 ;(w32-register-hot-key [A-tab])
+(setq org-publish-project-alist
+      '(("org"
+         :base-directory "~/windows-config/org/"
+         :publishing-directory "~/public_html"
+         :section-numbers nil
+         :table-of-contents nil
+         :style "<link rel=\"stylesheet\"
+                     href=\"mystyle.css\"
+                     type=\"text/css\">")))
+

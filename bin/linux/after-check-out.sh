@@ -2,7 +2,7 @@
 
 #下载一些软件，比如antlr
 . ~/bin/linux/download-external.sh
-download_external&
+download_external >/dev/null 2>&1 &
 
 set -e
 export PATH=~/bin/linux/config:$PATH
