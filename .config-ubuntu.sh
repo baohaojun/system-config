@@ -29,7 +29,7 @@ sudo apt-get install -y git-core ssh subversion vim
 
 
 cd ~
-git clone git://192.168.0.46/windows-config.git || (cd ~/windows-config && git pull)
+git clone git://192.168.0.46/git/windows-config.git || (cd ~/windows-config && git pull)
 cd ~/windows-config
 git checkout -- . 
 ./bin/after-co-ln-s.sh
