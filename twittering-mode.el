@@ -5305,14 +5305,17 @@ managed by `twittering-mode'."
 
 (defun twittering-read-timeline-spec-with-completion (prompt initial &optional as-string)
   (let* ((dummy-hist
-	  (append
-	   (list (substring-no-properties (twittering-get-username-at-pos (point))))
-	   twittering-timeline-history
-	   (twittering-get-usernames-from-timeline)
-	   '(":direct_messages" ":direct_messages_sent" ":friends"
-	     ":home" ":mentions" ":public" ":replies"
-	     ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me"
-	     ":followers")))
+	  (remove
+	   nil
+	   (append
+	    (list (when (twittering-get-username-at-pos (point))
+		    (substring-no-properties (twittering-get-username-at-pos (point)))))
+	    twittering-timeline-history
+	    (twittering-get-usernames-from-timeline)
+	    '(":direct_messages" ":direct_messages_sent" ":friends"
+	      ":home" ":mentions" ":public" ":replies"
+	      ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me"
+	      ":followers"))))
 	 (spec-string (twittering-completing-read prompt dummy-hist
 						  nil nil initial 'dummy-hist))
 	 (spec-string
