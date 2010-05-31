@@ -7,7 +7,7 @@
 
 #make sure postfix is installed first, so that exim4 don't show up.
 
-sudo apt-get install postfix
+sudo apt-get install -y postfix
 
 #all the other packages
 
@@ -146,7 +146,7 @@ zlib1g-dev
 sudo apt-get update
 sudo apt-get dist-upgrade -y
 sudo apt-get install -y $packages || for x in $packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
-sudo apt-get build-dep beagle
+sudo apt-get build-dep -y beagle
 
 #把一些软件默认的版本换掉
 sudo update-alternatives --set emacs /usr/bin/emacs-snapshot

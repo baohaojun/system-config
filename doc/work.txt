@@ -3303,3 +3303,4 @@ dpkg-reconfig tzdata
 
 mount -w -t ext2 /dev/block/sdb1 /sdcard
 setprop EXTERNAL_STORAGE_STATE mounted
+nvflash 0x30300011
