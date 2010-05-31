@@ -3,6 +3,8 @@
 
 (define-abbrev-table 'Custom-mode-abbrev-table '())
 
+(define-abbrev-table 'apache-mode-abbrev-table '())
+
 (define-abbrev-table 'apropos-mode-abbrev-table '())
 
 (define-abbrev-table 'awk-mode-abbrev-table
@@ -53,7 +55,9 @@
 
 (define-abbrev-table 'conf-xdefaults-mode-abbrev-table '())
 
-(define-abbrev-table 'csharp-mode-abbrev-table '())
+(define-abbrev-table 'csharp-mode-abbrev-table
+  '(
+   ))
 
 (define-abbrev-table 'diff-mode-abbrev-table '())
 
@@ -97,7 +101,8 @@
 
 (define-abbrev-table 'java-mode-abbrev-table
   '(
-    ("le" "Log.e(LOG_TAG, \"" nil 0)
+    ("le" "Log.e(LOG_TAG, \"" nil 1)
+    ("string" "String" nil 2)
    ))
 
 (define-abbrev-table 'jython-mode-abbrev-table '())
@@ -125,6 +130,8 @@
 (define-abbrev-table 'objc-mode-abbrev-table
   '(
    ))
+
+(define-abbrev-table 'org-mode-abbrev-table '())
 
 (define-abbrev-table 'outline-mode-abbrev-table '())
 

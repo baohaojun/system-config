@@ -24,7 +24,7 @@ deb http://security.ubuntu.com/ubuntu lucid-security universe
 deb http://security.ubuntu.com/ubuntu lucid-security multiverse
 EOF"
 
-sudo apt-get udpate
+sudo apt-get update
 sudo apt-get install git-core ssh subversion vim
 
 mkdir ~/windows-config
