@@ -61,7 +61,7 @@ if test -z "$SSH_CLIENT"; then
         else # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
 
             [[ "$file" =~ :$ ]] && file=${file:0:${#file}-1}
-            local line=${file##*:}
+            [[ "$file" =~ : ]] && local line=${file##*:}
             file=${file%:*}
             local x=0
             while test ! -f "$file" && ((x++ < 10)); do

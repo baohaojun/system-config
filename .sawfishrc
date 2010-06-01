@@ -75,7 +75,7 @@
                 (getenv "HOME") "/bin:" 
                 (getenv "HOME") "/bin/linux:" 
                 (getenv "HOME") "/bin/linux/ext:" 
-                (getenv "HOME") "/home/bhj/bin/linux/ext/android-sdk-linux_86/tools:"
+                (getenv "HOME") "/bin/linux/ext/android-sdk-linux_86/tools:"
                 (getenv "PATH")))
 (setenv "CLASSPATH" (concat
                      "/usr/local/jdk1.5/lib:"

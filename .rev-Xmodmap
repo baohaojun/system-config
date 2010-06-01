@@ -1,0 +1,13 @@
+! The "Caps Lock" key generates Control_L, and the Control modifier
+keycode 0x25 =	Control_R
+keycode 108 = Alt_R
+
+clear lock
+clear mod1
+clear mod4
+clear mod5
+clear control
+
+add    mod1 = Alt_L
+add    control = Control_R Caps_Lock
+add    mod4 = Super_L Super_R Alt_R

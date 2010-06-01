@@ -3301,3 +3301,7 @@ dpkg-reconfig tzdata
 mount -w -t ext2 /dev/block/sdb1 /sdcard
 setprop EXTERNAL_STORAGE_STATE mounted
 nvflash 0x30300011
+
+fuser /dev/snd/controlC0 |xargs kill; strace alsa_aplay /sdcard/yy.wav
+repo init -u git://git.android-x86.org/platform/manifest.git
+repo init -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b donut-x86

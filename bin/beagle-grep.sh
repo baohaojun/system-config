@@ -1,4 +1,5 @@
 #!/bin/bash
+which beagle-break.exe >/dev/null || { echo 'Error: can not find beagle-break.exe in your $PATH, it should be set in your .sawfishrc' && exit -1; }
 echo -n beagle query argument \`'[01;31m'$(get_longest_token "$@")'[0m'\' 1>&2
 echo 1>&2
 my-beagle "$@"|tee /tmp/$$.beagel|xargs grep -H -n -I "$@" 
