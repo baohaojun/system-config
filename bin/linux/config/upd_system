@@ -166,3 +166,4 @@ fc-cache -v
 #设置gmail邮件
 test `whoami` = bhj && . config_email || true
 test `whomai` = bhj && sudo apt-get install texlive-full || true
+test `whomai` = bhj && crontab ~/.crontab
