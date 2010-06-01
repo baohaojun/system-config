@@ -540,9 +540,6 @@ Regards,
 David McAnally 
 
 mplayer.exe Banlieue_13_FRENCH_DVDRip_XViD-TheNewSquad-GGT.avi -sub District.B13.2004.Blu-ray.1080p.DTS.x264-CtrlHD.chs.srt -subcp gbk -subfps 23.976
-find /vobs/jem/hardhat/.build/arm/arm_v6_vfp_le/marco/fs/lib/modules/2.6.10_dev -name "*.ko"
-/vobs/jem/cee4_lsp/mobilinux/devkit/arm/v6_vfp_le/bin g++
-把 DNS 设置为 219.127.89.34 就 ok 了
 
 w3m-fill-column
 (let ((shell-file-name "c:/python25/python.exe")) (call-interactively 'shell))

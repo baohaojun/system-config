@@ -1,5 +1,6 @@
 #!/bin/bash
 . ~/.bashrc
+set -e
 build_env=`lookup_file build/envsetup.sh`
 top_dir=`dirname $build_env`
 top_dir=`readlink -f $top_dir/..`
@@ -12,6 +13,8 @@ cd $top_dir/
 . build/envsetup.sh
 cd - 
 
-lcd `lookup_file AndroidManifest.xml`
+lcd `lookup_file Android.mk`
 mm
 ainstall
+
+echo OK
