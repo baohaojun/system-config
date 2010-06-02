@@ -1,5 +1,6 @@
 ! The "Caps Lock" key generates Control_L, and the Control modifier
 keycode 108 = Alt_R
+keycode 0x25 = Control_R
 
 clear lock
 clear mod1
