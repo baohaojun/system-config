@@ -603,7 +603,6 @@
 	 (max-lines (when matches (- (length (split-string matches "\n")) 2)))
 	 (message-log-max nil)
 	 command highlight)
-    (message "hello %d" max-lines)
     (if (not matches)
 	(progn
 	  (message "No skeleton matches")

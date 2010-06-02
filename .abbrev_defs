@@ -63,6 +63,8 @@
 
 (define-abbrev-table 'docTeX-mode-abbrev-table '())
 
+(define-abbrev-table 'edebug-eval-mode-abbrev-table '())
+
 (define-abbrev-table 'emacs-wiki-mode-abbrev-table '())
 
 (define-abbrev-table 'fundamental-mode-abbrev-table
@@ -101,7 +103,8 @@
 
 (define-abbrev-table 'java-mode-abbrev-table
   '(
-    ("le" "Log.e(LOG_TAG, \"" nil 1)
+    ("le" "Log.e(TAG, \"" nil 12)
+    ("lv" "Log.v(TAG, \"" nil 0)
     ("string" "String" nil 2)
    ))
 
@@ -156,6 +159,10 @@ import pickle
     ("slef" "self" nil 4)
     ("true" "True" nil 2)
    ))
+
+(define-abbrev-table 'sawfish-console-mode-abbrev-table '())
+
+(define-abbrev-table 'sawfish-mode-abbrev-table '())
 
 (define-abbrev-table 'select-tags-table-mode-abbrev-table '())
 

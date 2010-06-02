@@ -1,5 +1,4 @@
 ! The "Caps Lock" key generates Control_L, and the Control modifier
-keycode 0x25 =	Control_L
 keycode 108 = Alt_R
 
 clear lock
