@@ -582,10 +582,10 @@
 (defun skeleton-display-abbrev (&optional choose)
   "Display the next possible abbrev for the text before point."
   (interactive (list t))
-  (when (looking-at "\\_>")
+  (when (looking-back "\\w\\|_" 1)
     (let* ((end (point))
            (start (save-excursion
-                    (search-backward-regexp "\\(\\_<.*?\\_>\\)")))
+                    (search-backward-regexp "\\(\\_<.*?\\)")))
            (word (when start (buffer-substring-no-properties start end)))
            (match (when (and word
                              (not (zerop (length word))))
@@ -595,8 +595,7 @@
         (insert match)))))
 
 (defun skeleton-display-matches (word &optional choose)
-  (let* (
-         (strlist (nreverse (skeleton-get-matches-order word)))
+  (let* ((strlist (nreverse (skeleton-get-matches-order word)))
          (matches (concat 
                    (mapconcat 'identity (delete word (delete-dups strlist)) "\n")
                    "\n"))
