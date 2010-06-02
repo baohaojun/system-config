@@ -576,6 +576,94 @@
 	(delete-region start end)
 	(insert match)))))
 
+(global-set-key [(control meta /)] 'skeleton-display-abbrev)
+
+
+(defun skeleton-display-abbrev (&optional choose)
+  "Display the next possible abbrev for the text before point."
+  (interactive (list t))
+  (when (looking-at "\\_>")
+    (let* ((end (point))
+           (start (save-excursion
+                    (search-backward-regexp "\\(\\_<.*?\\_>\\)")))
+           (word (when start (buffer-substring-no-properties start end)))
+           (match (when (and word
+                             (not (zerop (length word))))
+                    (skeleton-display-matches word choose))))
+      (when (and choose match)
+        (delete-region start end)
+        (insert match)))))
+
+(defun skeleton-display-matches (word &optional choose)
+  (let* (
+         (strlist (nreverse (skeleton-get-matches-order word)))
+         (matches (concat 
+                   (mapconcat 'identity (delete word (delete-dups strlist)) "\n")
+                   "\n"))
+	 (line 0)
+	 (max-lines (when matches (- (length (split-string matches "\n")) 2)))
+	 (message-log-max nil)
+	 command highlight)
+    (message "hello %d" max-lines)
+    (if (not matches)
+	(progn
+	  (message "No skeleton matches")
+	  nil)
+      (if (= max-lines 0)
+          (nth line (split-string matches "\n"))
+      (if (not choose)
+	  (progn
+	    (message "%s" matches)
+	    nil)
+	(setq highlight (ecomplete-highlight-match-line matches line))
+	(while (not (memq (setq command (read-event highlight)) '(? return)))
+	  (cond
+	   ((eq command ?\M-n)
+	    (setq line (% (1+ line) (1+ max-lines))))
+	   ((eq command ?\M-p)
+	    (setq line (% (+ max-lines line) (1+ max-lines)))))
+	  (setq highlight (ecomplete-highlight-match-line matches line)))
+	(when (eq command 'return)
+	  (nth line (split-string matches "\n"))))))))
+    
+(defun skeleton-get-matches-order (skeleton)
+  "get all the words that contains every character of the SKELETON from the current buffer"
+  (let ((skeleton-re (mapconcat 'string skeleton ".*")))
+    (save-excursion
+      (beginning-of-buffer)
+      (setq strlist nil)
+      (while (not (eobp))
+        (setq origpt (point))
+        (if (setq endpt (re-search-forward "\\(\\_<.*?\\_>\\)" nil t))
+            (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
+              (when (string-match skeleton-re substr)
+                (setq strlist (cons substr strlist))))
+          (end-of-buffer)))
+      strlist)))
+
+(defun skeleton-get-matches-no-order (skeleton)
+  "get all the words that contains every character of the SKELETON from the current buffer"
+  (let ((skeleton-list (string-to-list skeleton)))
+    (save-excursion
+      (beginning-of-buffer)
+      (setq strlist nil)
+      (while (not (eobp))
+        (setq origpt (point))
+        (if (setq endpt (re-search-forward "\\(\\_<.*?\\_>\\)" nil t))
+            (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0)))
+                  (skeleton-list skeleton-list)
+                  (match-ok t))
+              (while skeleton-list
+                (setq c (car skeleton-list)
+                      skeleton-list (cdr skeleton-list))
+                (unless (string-match (string c) substr)
+                  (setq match-ok nil
+                        skeleton-list nil)))
+              (when match-ok
+                (setq strlist (cons substr strlist))))
+          (end-of-buffer)))
+      strlist)))
+
 (require 'xcscope)
 (global-set-key [(control z)] 'keyboard-quit)
 (global-set-key [(control x) (control z)] 'keyboard-quit)
