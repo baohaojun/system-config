@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 cd ~/windows-config/
-for x in * .*;
+for x in `git ls-tree --name-only HEAD`
 do
     if test $x = . -o $x = .. -o $x = .git; 
     then
