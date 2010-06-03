@@ -1,0 +1,10 @@
+#!/bin/bash
+
+file="$1"
+x=0
+while test ! -e "$file" && ((x++ < 10)); do
+    file=../"$file";
+done
+readlink -f "$file"
+
+

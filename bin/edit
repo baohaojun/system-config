@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function edit_1()
+{
+    local file=$1
+    if test -e "$file"; then
+        emacsclient -n "$file"
+    else # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
+
+        [[ "$file" =~ :$ ]] && file=${file:0:${#file}-1}
+        [[ "$file" =~ : ]] && local line=${file##*:}
+        file=${file%:*}
+        local x=0
+        while test ! -f "$file" && ((x++ < 10)); do
+            file=../"$file"
+        done
+        emacsclient -n +"${line:-1}" "$file"
+    fi
+}
+
+edit_1 "$@"

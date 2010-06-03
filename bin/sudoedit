@@ -1,0 +1,16 @@
+#!/bin/bash
+function sudoedit()
+{
+    if [[ $WHOAMI == root ]] && [[ -f "$1" ]]; then
+        echo using root to do edit, won\'t check read permission
+    else
+        if ! [[ -w "$1" ]]; then
+            echo Warning: "$1" is not writable
+        fi
+    fi    
+
+    local file=$( readlink -f "$1" )
+    WHOAMI=root ~/bin/edit.pl "$file"
+}
+
+sudoedit "$@"

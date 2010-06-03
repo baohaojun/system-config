@@ -60,16 +60,6 @@ function lcd()
     fi
 }
 
-function lookup_file()
-{
-    local file="$1"
-    local x=0
-    while test ! -e "$file" && ((x++ < 10)); do
-        file=../"$file";
-    done
-    readlink -f "$file"
-}
-
 function git()
 {
     if test `pwd` = ~

@@ -3318,3 +3318,4 @@ xmodmap -e 'keycode 108 = Alt_R'
 xmodmap -e 'keycode 108 = Super_R'
 xmodmap -e 'keysym Super_L = Super_R'
 xmodmap -e 'keysym Super_R = Super_L'
+adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n com.eee168.haier.tv/.ui.BesTVProgramListActivity 

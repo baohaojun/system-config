@@ -37,40 +37,6 @@ if test -z "$SSH_CLIENT"; then
     export REMOTEIP=localhost
     export PS1HostName=`hostname`
     export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m)\n\$'
-
-    function sudoedit()
-    {
-        if [[ $WHOAMI == root ]] && [[ -f "$1" ]]; then
-            echo using root to do edit, won\'t check read permission
-        else
-            if ! [[ -w "$1" ]]; then
-                echo Warning: "$1" is not writable
-            fi
-        fi    
-
-        local file=$( readlink -f "$1" )
-        WHOAMI=root ~/bin/edit.pl "$file"
-    }
-
-    alias edit=edit_1
-    function edit_1()
-    {
-        local file=$1
-        if test -e "$file"; then
-            emacsclient -n "$file"
-        else # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
-
-            [[ "$file" =~ :$ ]] && file=${file:0:${#file}-1}
-            [[ "$file" =~ : ]] && local line=${file##*:}
-            file=${file%:*}
-            local x=0
-            while test ! -f "$file" && ((x++ < 10)); do
-                file=../"$file"
-            done
-            emacsclient -n +"${line:-1}" "$file"
-        fi
-    }
-
 fi
 
 for x in host traceroute telnet
