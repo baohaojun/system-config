@@ -1,13 +1,15 @@
 ! The "Caps Lock" key generates Control_L, and the Control modifier
-keycode 108 = Alt_R
+keycode 108 = Super_R
 keycode 0x25 = Control_R
+keysym Super_L = Super_R
 
 clear lock
 clear mod1
 clear mod4
-clear mod5
 clear control
 
-add    mod1 = Alt_L Meta_L
-add    control = Control_L Control_R Caps_Lock
-add    mod4 = Super_L Super_R Alt_R Hyper_L
+add mod1 = Alt_L
+add control = Control_L Control_R Caps_Lock
+add mod4 = Super_R
+! This is to make sawfish happy. Seems it will constantly do weird thing with Hyper/Super
+keysym Super_R = Super_L

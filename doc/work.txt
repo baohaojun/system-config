@@ -3305,3 +3305,16 @@ nvflash 0x30300011
 fuser /dev/snd/controlC0 |xargs kill; strace alsa_aplay /sdcard/yy.wav
 repo init -u git://git.android-x86.org/platform/manifest.git
 repo init -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b donut-x86
+
+printf %x $(sawfish-client -e "(x-lookup-keysym 'Meta_L)")
+sawfish-client -e '(event-name (read-event))'
+sawfish-client -e 'hyper-keysyms'
+sawfish-client -e 'super-keysyms'
+sawfish-client -e '(x-keysym-name 0xffe9)'
+sawfish-client -e "(x-lookup-keysym 'Meta_L)"
+xmodmap -e 'add control = Control_R Control_L Control_R'
+xmodmap -e 'clear control'
+xmodmap -e 'keycode 108 = Alt_R'
+xmodmap -e 'keycode 108 = Super_R'
+xmodmap -e 'keysym Super_L = Super_R'
+xmodmap -e 'keysym Super_R = Super_L'
