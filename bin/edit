@@ -18,4 +18,8 @@ function edit_1()
     fi
 }
 
-edit_1 "$@"
+if test x$IN_EMACS != x; then
+    edit_1 "$@" >/dev/null 2>&1 &
+else 
+    edit_1 "$@"
+fi
