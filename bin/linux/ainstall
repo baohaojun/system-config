@@ -2,6 +2,7 @@
 . ~/.bashrc
 
 Android_mk=`lookup_file Android.mk`
+install_bhj=`lookup_file install.bhj`
 target_product=${TARGET_PRODUCT:-generic}
 
 apk=`grep LOCAL_PACKAGE_NAME $Android_mk|awk '{print $3}'`
@@ -18,6 +19,7 @@ if test x$apk != x; then
         exit -1
     fi
     adb install $File
+    test x$install_bhj != x && $install_bhj
 else
     exe=`grep LOCAL_MODULE $Android_mk|perl -npe 's/.*=//g; s/\s*//g;'`
     File=`lookup_file out/target/product/$target_product/symbols/system/bin/$exe`

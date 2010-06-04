@@ -8,18 +8,6 @@ function apt-get()
     fi
 }
 
-function wp()
-{
-    FILE=${1:-`pwd`}
-    FILE=`readlink -f "$FILE"`
-
-    if [[ "$FILE" =~ ^/media/smb/ ]]; then
-        FILE=`echo "$FILE"|sed -e 's,^/media/smb/,\\\\\\\\,; s,/,\\\\,g'`
-    fi
-    echo -n "$FILE"|tee /dev/tty|putclip
-}
-
-
 export PATH=/usr/local/jdk1.5/bin:/usr/local/arm-linux/bin:~/bin/linux/:~/bin/linux/ext:$PATH:~/bin/linux/ext/android-sdk-linux_86/tools
 export CLASSPATH=/usr/local/jdk1.5/lib:~/bin/linux/ext/stringtemplate.jar:~/bin/linux/ext/antlr3.jar:~/bin/linux/ext/antlrworks.jar:.
 export JAVA_HOME=/usr/local/jdk1.5
