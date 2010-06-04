@@ -3,7 +3,7 @@ shopt -s nocaseglob
 shopt -s histappend
 shopt -s cdspell
 export HISTCONTROL="ignoredups"
-export HISTIGNORE="[   ]*:&:bg:fg:exit"
+export HISTIGNORE="bg:fg:exit"
 export PROMPT_COMMAND="history -a"
 alias ls='ls -hF --color=tty --show-control-chars'                 # classify files in colour
 alias dir='ls --color=auto --format=vertical --show-control-chars'
@@ -27,29 +27,11 @@ else
     . ~/.bashrc-linux
 fi
 . ~/.bashrc_public
+
 case $- in
-      *i*) [[ -f /etc/bash_completion ]] && . /etc/bash_completion && . ~/.bash_netcompletion ;;
+    *i*) [[ -f /etc/bash_completion ]] && . /etc/bash_completion && . ~/.bash_netcompletion ;;
+esac
 
-  esac
-
-
-alias mail=~/bin/mail
 alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
-
-if [[ $TERM == eterm-color ]]; then
-    export IN_EMACS=true;
-fi
-    
-    
-if [[ $IN_EMACS == true ]]; then
-    unset EMACS
-    #TERM=xterm will cause screen to act weird
-    export TERM=vt100
-    (stty cols 158 rows 58 
-    stty -imaxbel
-    stty -echoe -echok -echoctl -echoke)>/dev/null 2>&1
-    alias ls='ls --show-control-chars -hF'
-    alias slin='TERM=eterm-color slin'
-fi
 export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
