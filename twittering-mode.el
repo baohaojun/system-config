@@ -1187,7 +1187,7 @@ Duplicated elements should not exist in STR-LIST."
   (let* ((start 0)
 	 (other-faces (get-text-property start 'face object))
 	 end
-	 (prev-pos (twittering-get-previous-status-head))
+	 (prev-pos (or (twittering-get-previous-status-head) (point)))
 	 (zebra-face (if (and prev-pos
 			      (memq twittering-zebra-1-face
 				    (get-text-property prev-pos 'face)))
