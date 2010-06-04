@@ -7,26 +7,41 @@ target_product=${TARGET_PRODUCT:-generic}
 
 apk=`grep LOCAL_PACKAGE_NAME $Android_mk|awk '{print $3}'`
 
-if test x$apk != x; then
-    File=`lookup_file out/target/product/$target_product/data/app/$apk.apk||true`
-    if test ! -f "$File"; then #this line " is necessary, or else test will be confused
-        File=`lookup_file out/target/product/$target_product/system/app/$apk.apk`
+function ainstall() {
+
+    if test x$apk != x; then
+        File=`lookup_file out/target/product/$target_product/data/app/$apk.apk||true`
+        if test ! -f "$File"; then #this line " is necessary, or else test will be confused
+            File=`lookup_file out/target/product/$target_product/system/app/$apk.apk`
+        fi
+        echo $File
+        anduninst
+        if test ! -f "$File"; then
+            echo 'Error: apk file is empty'
+            exit -1
+        fi
+        adb install $File
+        test x$install_bhj != x && $install_bhj
+    else
+        exe=`grep LOCAL_MODULE $Android_mk|perl -npe 's/.*=//g; s/\s*//g;'`
+        File=`lookup_file out/target/product/$target_product/symbols/system/bin/$exe`
+        if test ! -f "$File"; then
+            echo 'Error: exe file is empty'
+            exit -1
+        fi
+        adb push $File /sdcard
+        adb shell chmod 777 /sdcard/`basename $File`
     fi
-    echo $File
-    anduninst
-    if test ! -f "$File"; then
-        echo 'Error: apk file is empty'
-        exit -1
+}
+
+function apkwhich() {
+    if test x$apk != x; then
+                File=`lookup_file out/target/product/$target_product/data/app/$apk.apk||true`
+        if test ! -f "$File"; then #this line " is necessary, or else test will be confused
+            File=`lookup_file out/target/product/$target_product/system/app/$apk.apk`
+        fi
+        echo -n $File
     fi
-    adb install $File
-    test x$install_bhj != x && $install_bhj
-else
-    exe=`grep LOCAL_MODULE $Android_mk|perl -npe 's/.*=//g; s/\s*//g;'`
-    File=`lookup_file out/target/product/$target_product/symbols/system/bin/$exe`
-    if test ! -f "$File"; then
-        echo 'Error: exe file is empty'
-        exit -1
-    fi
-    adb push $File /sdcard
-    adb shell chmod 777 /sdcard/`basename $File`
-fi
+}
+
+`basename $0` "$@"
