@@ -1,6 +1,14 @@
 #!/bin/bash
 . ~/.bashrc
 
+build_env=`lookup_file build/envsetup.sh`
+top_dir=`dirname $build_env`
+top_dir=`readlink -f $top_dir/..`
+
+if test -f $top_dir/TARGET_PRODUCT; then
+    . $top_dir/TARGET_PRODUCT
+fi
+
 Android_mk=`lookup_file Android.mk`
 install_bhj=`lookup_file install.bhj`
 target_product=${TARGET_PRODUCT:-generic}

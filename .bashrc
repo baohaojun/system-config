@@ -45,9 +45,9 @@ if [[ $IN_EMACS == true ]]; then
     unset EMACS
     #TERM=xterm will cause screen to act weird
     export TERM=vt100
-    stty cols 158 rows 58 
+    (stty cols 158 rows 58 
     stty -imaxbel
-    stty -echoe -echok -echoctl -echoke
+    stty -echoe -echok -echoctl -echoke)>/dev/null 2>&1
     alias ls='ls --show-control-chars -hF'
     alias slin='TERM=eterm-color slin'
 fi

@@ -83,4 +83,4 @@ function ucd()
     cd $dir
 }
 
-stty -ixon -ixoff
+stty -ixon -ixoff >/dev/null 2>&1
