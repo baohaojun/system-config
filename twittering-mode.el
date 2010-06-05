@@ -1735,35 +1735,37 @@ Statuses are stored in ascending-order with respect to their IDs."
 	  (twittering-current-timeline-referring-id-table spec))
 	 (timeline-data
 	  (or timeline-data (twittering-current-timeline-data spec))))
-    (remove nil
-	    (mapcar
-	     (lambda (status)
-	       (let ((id (cdr (assq 'id status)))
-		     (source-id (cdr (assq 'source-id status))))
-		 (cond
-		  ((twittering-timeline-spec-is-user-p spec)
-		   ;; We only care about new followers.
-		   (with-current-buffer (twittering-get-buffer-from-spec spec)
-		     (let ((username (cdr (assq 'user-screen-name status)))
-			   (pos (point-min))
-			   (try-match (lambda (p)
-					(and p (string= (get-text-property p 'username)
-							username)))))
-		       (while (and pos (not (funcall try-match pos)))
-			 (setq pos (twittering-get-next-status-head pos)))
-		       (unless (funcall try-match pos)
-			 status))))
-		  ((not source-id)
-		   ;; `status' is not a retweet.
-		   status)
-		  ((and source-id
-			(twittering-status-id=
-			 id (gethash source-id referring-id-table)))
-		   ;; `status' is the first retweet.
-		   status)
-		  (t
-		   nil))))
-	     timeline-data))))
+    (remove
+     nil
+     (mapcar
+      (lambda (status)
+	(let ((id (cdr (assq 'id status)))
+	      (source-id (cdr (assq 'source-id status))))
+	  (cond
+	   ((twittering-timeline-spec-is-user-p spec)
+	    ;; We only care about new followers.
+	    (with-current-buffer (twittering-get-buffer-from-spec spec)
+	      (let* ((username (cdr (assq 'user-screen-name status)))
+		     (pos (point-min))
+		     (try-match
+		      (lambda (p)
+			(and p (string= (get-text-property p 'username)
+					username)))))
+		(while (and pos (not (funcall try-match pos)))
+		  (setq pos (twittering-get-next-status-head pos)))
+		(unless (funcall try-match pos)
+		  status))))
+	   ((not source-id)
+	    ;; `status' is not a retweet.
+	    status)
+	   ((and source-id
+		 (twittering-status-id=
+		  id (gethash source-id referring-id-table)))
+	    ;; `status' is the first retweet.
+	    status)
+	   (t
+	    nil))))
+      timeline-data))))
 
 ;;;
 ;;; Process info
