@@ -66,7 +66,7 @@
 (require 'url)
 
 (defconst twittering-mode-version "HEAD")
-(defconst twittering-mode-identity "$Id$")
+s(defconst twittering-mode-identity "$Id$")
 
 (defun twittering-mode-version ()
   "Display a message for twittering-mode version."
@@ -2168,27 +2168,28 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 			    entry))
 			twittering-unread-status-info)))
   (let ((sum (apply '+ (mapcar 'cadr twittering-unread-status-info))))
-    (if (= 0 sum)
+    (if (zerop sum)
 	""
-      (concat
+      (format
+       "%s(%s)"
        twittering-logo
-       (format "(%s)"
-	       (mapconcat
-		'identity
-		(let ((tw-buffers (twittering-get-active-buffer-list)))
-		  (remove
-		   nil
-		   (mapcar* (lambda (buf pre buf-unread)
-			      (when (eq buf (car buf-unread))
-				(format "%s:%d" pre (cadr buf-unread))))
-			    tw-buffers
-			    (twittering-build-unique-prefix
-			     (mapcar (lambda (entry)
-				       (replace-regexp-in-string
-					"\\`:" "" (buffer-name entry)))
-				     tw-buffers))
-			    twittering-unread-status-info)))
-		","))))))
+       (mapconcat
+	'identity
+	(remove
+	 nil
+	 (let ((tw-buffers (twittering-get-active-buffer-list)))
+	   (mapcar (lambda (buf-unread)
+		     (some (lambda (buf pre)
+			     (when (eq (car buf-unread) buf)
+			       (format "%s:%d" pre (cadr buf-unread))))
+			   tw-buffers
+			   (twittering-build-unique-prefix
+			    (mapcar (lambda (entry)
+				      (replace-regexp-in-string
+				       "\\`:" "" (buffer-name entry)))
+				    tw-buffers))))
+		   twittering-unread-status-info)))
+	",")))))
 
 (defun twittering-update-unread-status-info ()
   "Update `twittering-unread-status-info' with new tweets."
