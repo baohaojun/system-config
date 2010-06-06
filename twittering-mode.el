@@ -1183,14 +1183,15 @@ Duplicated elements should not exist in STR-LIST."
    str-list))
 
 (defun twittering-decorate-background (object)
-  "Append zebra background. "
+  "Append zebra background to OBJECT.
+The zebra face is decided by looking at adjacent face. "
   (let* ((start 0)
 	 (other-faces (get-text-property start 'face object))
 	 end
-	 (prev-pos (or (twittering-get-previous-status-head) (point)))
-	 (zebra-face (if (and prev-pos
+	 (pos (twittering-get-current-status-head))
+	 (zebra-face (if (and pos
 			      (memq twittering-zebra-1-face
-				    (get-text-property prev-pos 'face)))
+				    (get-text-property pos 'face)))
 			 twittering-zebra-2-face
 		       twittering-zebra-1-face)))
     (while (setq end (next-single-property-change start 'face object))
@@ -1708,16 +1709,11 @@ Statuses are stored in ascending-order with respect to their IDs."
 			  status)))
 		    statuses))))
       (when new-statuses
-	(let ((new-timeline-data
-	       (if (twittering-timeline-spec-is-user-p spec)
-		   (append new-statuses timeline-data)
-		 (sort (append new-statuses timeline-data)
-		       (lambda (status1 status2)
-			 (let ((id1 (cdr (assq 'id status1)))
-			       (id2 (cdr (assq 'id status2))))
-			   (twittering-status-id< id2 id1)))))))
-	  (puthash spec `(,id-table ,referring-id-table ,new-timeline-data)
-		   twittering-timeline-data-table))
+	(puthash spec `(,id-table
+			,referring-id-table
+			;; Decreasingly by `id' except `followers'
+			,(append new-statuses timeline-data))
+		 twittering-timeline-data-table)
 	(when (twittering-jojo-mode-p spec)
 	  (mapc (lambda (status)
 		  (twittering-update-jojo (cdr (assq 'user-screen-name status))
@@ -1766,6 +1762,21 @@ Statuses are stored in ascending-order with respect to their IDs."
 	   (t
 	    nil))))
       timeline-data))))
+
+(defun twittering-timeline-data-is-previous-p (timeline-data)
+  "Are TIMELINE-DATA previous statuses?
+This is done by comparing statues in current buffer with TIMELINE-DATA."
+  (let ((status (car timeline-data)))
+    (if (twittering-timeline-spec-is-user-p spec)
+	(let* ((previous-cursor (cdr-safe (assq 'previous-cursor status)))
+	       (new-follower-p (string= previous-cursor "0")))
+	  (not new-follower-p))
+      (let* ((buf-id (get-text-property
+		      (twittering-get-current-status-head
+		       (if twittering-reverse-mode (point-min) (point-max)))
+		      'id))
+	     (id (cdr (assq 'id status))))
+	(and buf-id (twittering-status-id< id buf-id))))))
 
 ;;;
 ;;; Process info
@@ -2162,15 +2173,16 @@ means the number of statuses retrieved after the last visiting of the buffer.")
       (concat
        twittering-logo
        (format "(%s)"
-	      (mapconcat
-	       'identity
-	       (mapcar* (lambda (buf count) (format "%s:%d" buf count))
-			(twittering-build-unique-prefix
-			 (mapcar (lambda (entry)
-				   (substring (buffer-name (car entry)) 1))
-				 twittering-unread-status-info))
-			(mapcar 'cadr twittering-unread-status-info))
-	       ","))))))
+	      (mapconcat 'identity
+			 (mapcar*
+			  (lambda (buf count) (format "%s:%d" buf count))
+			  (twittering-build-unique-prefix
+			   (mapcar (lambda (entry)
+				     (replace-regexp-in-string
+				      "\\`:" "" (buffer-name (car entry))))
+				   twittering-unread-status-info))
+			  (mapcar 'cadr twittering-unread-status-info))
+			 ","))))))
 
 (defun twittering-update-unread-status-info ()
   "Update `twittering-unread-status-info' with new tweets."
@@ -4067,7 +4079,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
   (with-current-buffer buffer
     (let* ((spec (twittering-get-timeline-spec-for-buffer buffer))
 	   (timeline-data (twittering-timeline-data-collect spec timeline-data))
-	   (timeline-data (if twittering-reverse-mode
+	   (timeline-data (if twittering-reverse-mode ; increasing list by `id'
 			      (reverse timeline-data)
 			    timeline-data))
 	   (empty (null (twittering-get-first-status-head)))
@@ -4085,55 +4097,33 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
       (save-excursion
 	(when rendering-entire
 	  (erase-buffer))
-	(let ((pos (if rendering-entire
-		       (point-min)
-		     (twittering-get-first-status-head))))
+	(let* ((prev-p (twittering-timeline-data-is-previous-p timeline-data))
+	       (get-insert-point
+		(if prev-p
+		    (if twittering-reverse-mode 'point-min 'point-max)
+		  (if twittering-reverse-mode 'point-max 'point-min))))
+	  (when prev-p
+	    (setq timeline-data (reverse timeline-data)))
 	  (mapc
 	   (lambda (status)
-	     (let ((id (cdr (assq 'id status))))
-	       ;; Find where the status should be inserted.
-	       (if (twittering-timeline-spec-is-user-p spec)
-		   (let* ((previous-cursor
-			   (cdr-safe (assq 'previous-cursor status)))
-			  (new-follower-p (string= previous-cursor "0")))
-		     (setq pos
-			   (if twittering-reverse-mode
-			       (if new-follower-p (point-max) (point-min))
-			     (if new-follower-p (point-min) (point-max)))))
-		 (while
-		     (let ((buf-id (get-text-property pos 'id)))
-		       (if (and buf-id
-				(if twittering-reverse-mode
-				    (twittering-status-id< buf-id id)
-				  (twittering-status-id< id buf-id)))
-			   (let ((next-pos
-				  (twittering-get-next-status-head pos)))
-			     (setq pos (or next-pos (point-max)))
-			     next-pos)
-			 nil))))
-	       (unless (twittering-status-id= id (get-text-property pos 'id))
-		 (let ((formatted-status (twittering-format-status status))
-		       (separator "\n"))
-		   (add-text-properties 0 (length formatted-status)
-					`(belongs-spec ,spec)
-					formatted-status)
-		   (goto-char pos)
-		   (twittering-decorate-background formatted-status)
-		   (cond
-		    ((eq pos (point-max))
-		     ;; Insert a status after the current position.
-		     (insert formatted-status separator))
-		    (t
-		     ;; Use `insert-before-markers' in order to keep
-		     ;; which status is pointed by each marker.
-		     (insert-before-markers formatted-status separator)))
-		   ;; Now, `pos' points the head of the status.
-		   ;; It must be moved to the current point
-		   ;; in order to skip the status inserted just now.
-		   (setq pos (point))
-		   (when twittering-default-show-replied-tweets
-		     (twittering-show-replied-statuses
-		      twittering-default-show-replied-tweets))))))
+	     (let ((formatted-status (twittering-format-status status))
+		   (separator "\n"))
+	       (add-text-properties 0 (length formatted-status)
+				    `(belongs-spec ,spec)
+				    formatted-status)
+	       (goto-char (funcall get-insert-point))
+	       (twittering-decorate-background formatted-status)
+	       (cond
+		((eobp)
+		 ;; Insert a status after the current position.
+		 (insert formatted-status separator))
+		(t
+		 ;; Use `insert-before-markers' in order to keep
+		 ;; which status is pointed by each marker.
+		 (insert-before-markers formatted-status separator)))
+	       (when twittering-default-show-replied-tweets
+		 (twittering-show-replied-statuses
+		  twittering-default-show-replied-tweets))))
 	   timeline-data)))
       (debug-print (current-buffer))
       (cond
@@ -4179,8 +4169,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	  (goto-char (if twittering-reverse-mode
 			 (- (point-max)
 			    (- original-buf-end original-pos))
-		       original-pos))))
-       ))))
+		       original-pos))))))))
 
 (defun twittering-replied-statuses-visible-p ()
   (let* ((pos (twittering-get-current-status-head))
