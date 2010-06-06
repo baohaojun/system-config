@@ -2173,16 +2173,22 @@ means the number of statuses retrieved after the last visiting of the buffer.")
       (concat
        twittering-logo
        (format "(%s)"
-	      (mapconcat 'identity
-			 (mapcar*
-			  (lambda (buf count) (format "%s:%d" buf count))
-			  (twittering-build-unique-prefix
-			   (mapcar (lambda (entry)
-				     (replace-regexp-in-string
-				      "\\`:" "" (buffer-name (car entry))))
-				   twittering-unread-status-info))
-			  (mapcar 'cadr twittering-unread-status-info))
-			 ","))))))
+	       (mapconcat
+		'identity
+		(let ((tw-buffers (twittering-get-active-buffer-list)))
+		  (remove
+		   nil
+		   (mapcar* (lambda (buf pre buf-unread)
+			      (when (eq buf (car buf-unread))
+				(format "%s:%d" pre (cadr buf-unread))))
+			    tw-buffers
+			    (twittering-build-unique-prefix
+			     (mapcar (lambda (entry)
+				       (replace-regexp-in-string
+					"\\`:" "" (buffer-name entry)))
+				     tw-buffers))
+			    twittering-unread-status-info)))
+		","))))))
 
 (defun twittering-update-unread-status-info ()
   "Update `twittering-unread-status-info' with new tweets."
