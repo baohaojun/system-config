@@ -66,7 +66,7 @@
 (require 'url)
 
 (defconst twittering-mode-version "HEAD")
-s(defconst twittering-mode-identity "$Id$")
+(defconst twittering-mode-identity "$Id$")
 
 (defun twittering-mode-version ()
   "Display a message for twittering-mode version."
