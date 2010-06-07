@@ -5111,10 +5111,9 @@ managed by `twittering-mode'."
   (let ((username (copy-sequence (get-text-property (point) 'username)))
 	(method (if remove 'destroy-friendships 'create-friendships))
 	(mes (if remove "Unfollowing" "Following")))
-    (unless username
-      (setq username (or (twittering-read-username-with-completion
-			  "who: " "" 'twittering-user-history)
-			 "")))
+    (setq username (or (twittering-read-username-with-completion
+			"who: " "" 'twittering-user-history)
+		       ""))
     (if (string= "" username)
 	(message "No user selected")
       (set-text-properties 0 (length username) nil username)
@@ -5283,7 +5282,8 @@ managed by `twittering-mode'."
       timeline-data))))
 
 (defun twittering-read-username-with-completion (prompt init-user &optional history)
-  (let ((collection (append twittering-user-history
+  (let ((collection (append (twittering-get-all-usernames-at-pos)
+			    twittering-user-history
 			    (twittering-get-usernames-from-timeline))))
     (twittering-completing-read prompt collection nil nil init-user history)))
 
@@ -5306,8 +5306,7 @@ managed by `twittering-mode'."
 	  (remove
 	   nil
 	   (append
-	    (list (when (twittering-get-username-at-pos (point))
-		    (substring-no-properties (twittering-get-username-at-pos (point)))))
+	    (twittering-get-all-usernames-at-pos)
 	    twittering-timeline-history
 	    (twittering-get-usernames-from-timeline)
 	    '(":direct_messages" ":direct_messages_sent" ":friends"
@@ -5550,6 +5549,33 @@ The return value is nil or a positive integer less than POS."
                          (point-min)))
              (pos (max (point-min) (1- border))))
         (get-text-property pos 'username))))
+
+(defun twittering-get-all-usernames-at-pos (&optional point)
+  "Get all usernames contained in tweet at POINT.
+If there is an username under POINT, make it as `car', else make
+tweet author as the `car'.
+
+See also `twittering-get-username-at-pos'. "
+  (unless point (setq point (point)))
+  (let ((start (twittering-get-current-status-head point))
+        (end (or (twittering-get-next-status-head point) (point-max)))
+        n names
+	(top2
+	 (remove nil
+		 (list (get-text-property (point) 'screen-name-in-text)
+		       (twittering-get-username-at-pos point)))))
+    (when (setq n (get-text-property start 'screen-name-in-text))
+      (setq names (cons n names)))
+    (while (and (setq start (next-single-property-change
+                             start 'screen-name-in-text))
+                (< start end))
+      (when (setq n (get-text-property start 'screen-name-in-text))
+        (setq names (cons n names))))
+    (setq names (remove-duplicates names :test 'string=))
+    (when top2
+      (setq names (append top2 (delete-if (lambda (s) (member s top2))
+					  names))))
+    (mapcar 'substring-no-properties names)))
 
 (defun twittering-suspend ()
   "Suspend twittering-mode then switch to another buffer."
