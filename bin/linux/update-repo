@@ -1,13 +1,15 @@
 #!/bin/bash
-cd /var/cache/git/android-x86
+cd /var/cache/git/android-google
 repo init -u git://android.git.kernel.org/platform/manifest.git -b donut
 repo sync
 repo init -u git://android.git.kernel.org/platform/manifest.git -b eclair
 repo sync
+cd /var/cache/git/android-x86
 repo init -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b donut-x86
 repo sync
 repo init -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b eclair-x86
 repo sync
+cd /var/cache/git/android-nvidia
 repo init -u git://nv-tegra.nvidia.com/android/manifest.git -b eclair-tegra
 repo sync
 

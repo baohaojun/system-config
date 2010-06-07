@@ -3323,3 +3323,4 @@ adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAU
 modprobe snd-sb16 isapnp=0 irq=5
 SNDDEV="snd-sb16 isapnp=0 irq=5"
 fuser /dev/snd/controlC0 |xargs kill; alsa_aplay /sdcard/yy.wav
+repo init -u git://nv-tegra.nvidia.com/android/manifest.git -b eclair-tegra
