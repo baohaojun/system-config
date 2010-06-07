@@ -14,7 +14,7 @@ cd $top_dir/
 cd - 
 
 lcd `lookup_file Android.mk`
-mm
+mm "$@"
 ainstall
 
 echo OK
