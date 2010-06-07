@@ -1,3 +1,3 @@
-0,59/15 * * * * offlineimap
-13 * * * * ps aux|grep offlineimap|grep python|awk '{print $2}'|xargs kill
+0,59/15 * * * * offlineimap >/dev/null 2>&1
+13 * * * * ps aux|grep offlineimap|grep python|awk '{print $2}'|xargs kill >/dev/null 2>&1
 

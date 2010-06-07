@@ -43,7 +43,13 @@ function svn-info-clip()
 
 function lcd()
 {
-    if ! readlink -f "$1"; then
+    pushd . 
+    local x=0
+    while ! readlink -f "$1" >/dev/null && ((x++ < 10)); do 
+        set -- ../"$1";
+    done
+
+    if ! readlink -f "$1" >/dev/null; then
         return -1
     fi
 
@@ -79,7 +85,7 @@ function ucd()
         dir=`dirname $dir`
         dir_basename=`basename $dir`
     done
-    pushd
+    pushd .
     cd $dir
 }
 

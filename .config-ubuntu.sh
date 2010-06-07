@@ -37,7 +37,8 @@ wget http://192.168.0.46/jdk-1_5_0_22-linux-amd64.bin
 sudo sh ./jdk-1_5_0_22-linux-amd64.bin
 sudo mv jdk1.5.0_22 /usr/local/jdk1.5
 sudo apt-get install -y lftp
-mkdir -p ~/bin/linux/ext/
+mkdir -p ~/external
+ln -sf ~/external ~/bin/linux/ext
 cd ~/bin/linux/ext
 lftp -c "mirror -c http://192.168.0.46/google"
 tar zxfv ./google/android-sdk_r06-linux_86.tgz

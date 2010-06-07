@@ -3302,7 +3302,8 @@ mount -w -t ext2 /dev/block/sdb1 /sdcard
 setprop EXTERNAL_STORAGE_STATE mounted
 nvflash 0x30300011
 
-fuser /dev/snd/controlC0 |xargs kill; strace alsa_aplay /sdcard/yy.wav
+fuser /dev/snd/controlC0 |xargs kill; alsa_aplay /sdcard/yy.wav
+fuser /dev/snd/controlC0 |xargs kill; alsa_aplay -D default:CARD=I82801AAICH  /sdcard/yy.wav
 repo init -u git://git.android-x86.org/platform/manifest.git
 repo init -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b donut-x86
 
@@ -3319,3 +3320,6 @@ xmodmap -e 'keycode 108 = Super_R'
 xmodmap -e 'keysym Super_L = Super_R'
 xmodmap -e 'keysym Super_R = Super_L'
 adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n com.eee168.haier.tv/.ui.BesTVProgramListActivity 
+modprobe snd-sb16 isapnp=0 irq=5
+SNDDEV="snd-sb16 isapnp=0 irq=5"
+fuser /dev/snd/controlC0 |xargs kill; alsa_aplay /sdcard/yy.wav

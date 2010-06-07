@@ -40,8 +40,8 @@ function mkbeagleidx() {
 }
 
 function for-code-reading() {
-    mkgtags
-    mkbeagleidx
+    mkgtags&
+    mkbeagleidx&
 }
 
 `basename $0`

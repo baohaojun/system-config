@@ -1,3 +1,4 @@
 #!/bin/bash
 sleep 1
 import ~/x.png
+of ~/x.png
