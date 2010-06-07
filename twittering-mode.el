@@ -1767,7 +1767,8 @@ Statuses are stored in ascending-order with respect to their IDs."
   "Are TIMELINE-DATA previous statuses?
 This is done by comparing statues in current buffer with TIMELINE-DATA."
   (let ((status (car timeline-data)))
-    (if (twittering-timeline-spec-is-user-p spec)
+    (if (twittering-timeline-spec-is-user-p 
+	 (twittering-current-timeline-spec))
 	(let* ((previous-cursor (cdr-safe (assq 'previous-cursor status)))
 	       (new-follower-p (string= previous-cursor "0")))
 	  (not new-follower-p))
