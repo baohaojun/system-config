@@ -1,0 +1,27 @@
+#!/usr/bin/env python3.1
+
+#purpose:
+
+#o take a note of every dir that I have been to.
+#o `cd ori xx' should list the dirs that match these tokens, 
+#o better yet, it should allow me to choose which one and the change into it.
+#o The dir history should be in the order that's last visited. 
+
+#cd ori ext 
+
+import os
+from OrderedSet import *
+
+def where_pushd():
+    pwd = os.getcwd()
+    dir_history = open(os.environ['HOME'] + '/.where').read().split('\n');
+    dir_history = OrderedSet(dir_history);
+    dir_history.discard('');
+    if pwd in dir_history:
+        dir_history.discard(pwd)
+    dir_history.add(pwd)
+    dir_history.add('')
+    fil_ = open(os.environ['HOME'] + '/.where', 'w')
+    fil_.write('\n'.join(dir_history))
+
+where_pushd()

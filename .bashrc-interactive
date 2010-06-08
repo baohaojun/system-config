@@ -1,0 +1,9 @@
+#!/bin/bash
+
+. /etc/bash_completion
+. ~/.bash_netcompletion
+
+function cd () {
+    builtin cd -P "$@"
+    (where&)
+}

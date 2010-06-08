@@ -11,7 +11,6 @@ alias vdir='ls --color=auto --format=long --show-control-chars'
 alias ll='ls -l --show-control-chars'                              # long list
 alias la='ls -A --show-control-chars'                              # all but . and ..
 alias l='ls -CFl --show-control-chars --block-size=1'                              #
-alias cd='cd -P >/dev/null'
 alias vi=vim
 export EDITOR=vim
 export HISTSIZE=2000
@@ -29,7 +28,7 @@ fi
 . ~/.bashrc_public
 
 case $- in
-    *i*) [[ -f /etc/bash_completion ]] && . /etc/bash_completion && . ~/.bash_netcompletion ;;
+    *i*) . ~/.bashrc-interactive;;
 esac
 
 alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
