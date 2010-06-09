@@ -1,4 +1,5 @@
 #!/bin/bash
+. ~/.bashrc
 cd /var/cache/git/android-google
 repo init -u git://android.git.kernel.org/platform/manifest.git -b donut
 repo sync
