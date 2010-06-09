@@ -5,5 +5,5 @@
 
 function cd () {
     builtin cd -P "$@"
-    (where&)
+    (flock -x ~/.where.lock -c where&)
 }
