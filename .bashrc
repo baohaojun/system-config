@@ -24,7 +24,7 @@ then
 else
     . ~/.bashrc-linux
 fi
-. ~/.bashrc_public
+. ~/.bashrc-public
 
 case $- in
     *i*) . ~/.bashrc-interactive;;

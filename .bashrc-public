@@ -81,7 +81,7 @@ function _ucd()
     local x=0
     dir=`dirname $(pwd)`
     dir_basename=`basename $dir`
-    while ! echo $dir_basename|grep -e $1 -q && ((x++ < 10)); do
+    while ! echo $dir_basename|grep -e $1 -i -q && ((x++ < 10)); do
         dir=`dirname $dir`
         dir_basename=`basename $dir`
     done
