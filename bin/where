@@ -11,17 +11,25 @@
 
 import os
 from OrderedSet import *
+import sys
 
 def where_pushd():
     pwd = os.getcwd()
     dir_history = open(os.environ['HOME'] + '/.where').read().split('\n');
+    dir_history[:0] = [pwd]
     dir_history = OrderedSet(dir_history);
     dir_history.discard('');
-    if pwd in dir_history:
-        dir_history.discard(pwd)
-    dir_history.add(pwd)
     dir_history.add('')
     fil_ = open(os.environ['HOME'] + '/.where', 'w')
     fil_.write('\n'.join(dir_history))
 
-where_pushd()
+def where_ask(argv):
+    dir_history = open(os.environ['HOME'] + '/.where').read().split('\n');
+    for dir in dir_history:
+        if all([x.lower() in dir.lower() for x in argv]):
+            print(dir)
+
+if sys.argv[1:]:
+    where_ask(sys.argv[1:])
+else:
+    where_pushd()

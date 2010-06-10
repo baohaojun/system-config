@@ -4,15 +4,18 @@
 . ~/.bash_netcompletion
 
 function cd () {
-    builtin cd -P "$@" || cd_failed "$@"
+    builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@"
     (flock -x ~/.where.lock -c where&)
 }
 
 function cd_failed() {
-    local GREP="grep -i "
-    for x in "$@"; do 
-        GREP=$GREP" -e $x"
-    done
-    dirs=`$GREP ~/.where`
-    echo $dirs
+    dirs=( $(where "$@") )
+    if test ${#dirs[@]} = 0; then
+        echo 'Error: no such file or directory'
+        return 1
+    elif test ${#dirs[@]} = 1; then
+        cd ${dirs[0]}
+    else 
+        select dir in ${dirs[@]}; do cd $dir; break; done
+    fi
 }
