@@ -2,6 +2,7 @@ xwl's fork
 ----------
 
 * Decorate tweets with zebra like background.
+    Screenshot: http://xwl.appspot.com/images/twitter.png
 
 * new specs
   * `followers'
@@ -13,11 +14,13 @@ xwl's fork
     buffer.
   * Show twitter logo on mode line.
 
+    Screenshot: http://xwl.appspot.com/images/twitter_unread.png
+
 * misc
   * (twittering-erase-all): New func, binded to "C-c C-w".
   * (twittering-mode-setup): Short mode-name to just "twittering"
   * Use defcustom to separate user customizable variables and internal
-    variables.  
+    variables.
 
  Twittering-mode: a Twitter client for Emacs
 =============================================
