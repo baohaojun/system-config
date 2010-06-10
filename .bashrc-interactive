@@ -16,6 +16,6 @@ function cd_failed() {
     elif test ${#dirs[@]} = 1; then
         cd ${dirs[0]}
     else 
-        select dir in ${dirs[@]}; do cd $dir; break; done
+        select dir in ${dirs[@]}; do cd $dir; history -s cd $dir; break; done
     fi
 }
