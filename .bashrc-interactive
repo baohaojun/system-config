@@ -4,6 +4,15 @@
 . ~/.bash_netcompletion
 
 function cd () {
-    builtin cd -P "$@"
+    builtin cd -P "$@" || cd_failed "$@"
     (flock -x ~/.where.lock -c where&)
+}
+
+function cd_failed() {
+    local GREP="grep -i "
+    for x in "$@"; do 
+        GREP=$GREP" -e $x"
+    done
+    dirs=`$GREP ~/.where`
+    echo $dirs
 }

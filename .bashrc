@@ -1,7 +1,6 @@
 export PATH=/bin:"$PATH"
 shopt -s nocaseglob
 shopt -s histappend
-shopt -s cdspell
 export HISTCONTROL="ignoredups"
 export HISTIGNORE="bg:fg:exit"
 export PROMPT_COMMAND="history -a"
