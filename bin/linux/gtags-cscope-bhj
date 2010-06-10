@@ -9,7 +9,12 @@ while test -f "$gtags_file" \
     last_gtags_file=$gtags_file
     lcd "$gtags_file" >/dev/null 2>&1
     echo "${5:1}${6}"|gtags-cscope|perl -npe 's/^>>.*//; 
-s!^(.)!'`dirname $gtags_file|tr -d '\n'`'/$1!'
+s!^(.)!'`dirname $gtags_file|tr -d '\n'`'/$1!;
+$file=$_;
+$file =~ s/ .*//;
+if (not -e $file) {
+    next;
+}'
     cd ..
     gtags_file=`lookup_file GTAGS`
 done
