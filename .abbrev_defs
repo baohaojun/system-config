@@ -57,6 +57,30 @@
 
 (define-abbrev-table 'conf-xdefaults-mode-abbrev-table '())
 
+(define-abbrev-table 'cperl-mode-abbrev-table
+  '(
+    ("=head1" "=head1" cperl-electric-pod 0)
+    ("=head2" "=head2" cperl-electric-pod 0)
+    ("=over" "=over" cperl-electric-pod 0)
+    ("=pod" "=pod" cperl-electric-pod 0)
+    ("continue" "continue" cperl-electric-else 0)
+    ("do" "do" cperl-electric-keyword 0)
+    ("else" "else" cperl-electric-else 0)
+    ("elsif" "elsif" cperl-electric-keyword 0)
+    ("for" "for" cperl-electric-keyword 8)
+    ("foreach" "foreach" cperl-electric-keyword 0)
+    ("foreachmy" "foreachmy" cperl-electric-keyword 0)
+    ("formy" "formy" cperl-electric-keyword 0)
+    ("head1" "head1" cperl-electric-pod 0)
+    ("head2" "head2" cperl-electric-pod 0)
+    ("if" "if" cperl-electric-keyword 3)
+    ("over" "over" cperl-electric-pod 0)
+    ("pod" "pod" cperl-electric-pod 0)
+    ("unless" "unless" cperl-electric-keyword 3)
+    ("until" "until" cperl-electric-keyword 0)
+    ("while" "while" cperl-electric-keyword 0)
+   ))
+
 (define-abbrev-table 'csharp-mode-abbrev-table
   '(
    ))
@@ -80,6 +104,8 @@
 (define-abbrev-table 'global-abbrev-table
   '(
     ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 102)
+    ("cltenv" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" " nil 11)
+    ("eclt" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" /usr/atria/bin/cleartool" nil 11)
     ("eld" "EnterLeaveDebug();" nil 32)
     ("incbhj" "#define ENABLE_BHJDEBUG
 #include \"bhjdebug.h\"" nil 31)
@@ -104,8 +130,8 @@
 (define-abbrev-table 'java-mode-abbrev-table
   '(
     ("le" "Log.e(TAG, \"" nil 16)
-    ("lv" "Log.v(TAG, String.format(\"" nil 0)
-    ("string" "String" nil 15)
+    ("lv" "Log.v(TAG, String.format(\"" nil 5)
+    ("string" "String" nil 17)
    ))
 
 (define-abbrev-table 'jython-mode-abbrev-table '())
@@ -166,7 +192,10 @@ import pickle
 
 (define-abbrev-table 'select-tags-table-mode-abbrev-table '())
 
-(define-abbrev-table 'sgml-mode-abbrev-table '())
+(define-abbrev-table 'sgml-mode-abbrev-table
+  '(
+    ("andriod" "android" nil 0)
+   ))
 
 (define-abbrev-table 'sh-mode-abbrev-table
   '(

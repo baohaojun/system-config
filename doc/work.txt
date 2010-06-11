@@ -3328,3 +3328,72 @@ repo forall -c 'git config --add remote.$REPO_REMOTE.pushurl `git config remote.
 alsa_ctl restore 0 -f /sdcard/1.txt
 
 busybox: make CROSS_COMPILE= CFLAGS=-D\'CONFIG_DEFAULT_MODULES_DIR=\"/lib/modules\"\' V=1
+
+,com.android.globaltime.GlobalTime,,package,com.android.globaltime
+,com.android.mms.ui.ConversationList,,package,com.android.mms
+,com.android.browser.BrowserActivity,,package,com.android.browser
+,com.android.email.activity.Welcome,,package,com.android.email
+,com.android.spare_parts.SpareParts,,package,com.android.spare_parts
+,com.android.calendar.LaunchActivity,,package,com.android.calendar
+,com.example.android.rssreader.RssReader,,package,com.example.android.rssreader
+,com.android.camera.Camera,,package,com.android.camera
+,com.android.camera.VideoCamera,,package,com.android.camera
+,com.android.camera.GalleryPicker,,package,com.android.camera
+,com.android.deskclock.DeskClock,,package,com.android.deskclock
+,com.android.settings.Settings,,package,com.android.settings
+,com.android.contacts.DialtactsActivity,,package,com.android.contacts
+,com.android.contacts.DialtactsContactsEntryActivity,,package,com.android.contacts
+,com.android.music.MusicBrowserActivity,,package,com.android.music
+,com.android.music.VideoBrowserActivity,,package,com.android.music
+,org.openintents.filemanager.FileManagerActivity,,package,org.openintents.filemanager
+,com.example.android.lunarlander.LunarLander,,package,com.example.android.lunarlander
+,org.connectbot.HostListActivity,,package,org.connectbot
+,com.example.android.snake.Snake,,package,com.example.android.snake
+,com.android.development.Development,,package,com.android.development
+,com.example.android.jetboy.JetBoy,,package,com.example.android.jetboy
+,com.cooliris.media.Gallery,,package,com.cooliris.media
+,com.android.calculator2.Calculator,,package,com.android.calculator2
+,com.example.android.notepad.NotesList,,package,com.example.android.notepad
+
+perl -a -F, -n -e 'BEGIN{$i=0;} chomp($F[4]); print qq(    <item component="$F[4]/) . substr($F[1], length($F[4])) . qq(" screen="-1" x="$i" y="0"/>) . "\n"; $i++;' ==>
+    <item component="com.android.globaltime/".GlobalTime" screen="-1" x="0" y="0"/>
+    <item component="com.android.mms/".ui.ConversationList" screen="-1" x="1" y="0"/>
+    <item component="com.android.browser/".BrowserActivity" screen="-1" x="2" y="0"/>
+    <item component="com.android.email/".activity.Welcome" screen="-1" x="3" y="0"/>
+    <item component="com.android.spare_parts/".SpareParts" screen="-1" x="4" y="0"/>
+    <item component="com.android.calendar/".LaunchActivity" screen="-1" x="5" y="0"/>
+    <item component="com.example.android.rssreader/".RssReader" screen="-1" x="6" y="0"/>
+    <item component="com.android.camera/".Camera" screen="-1" x="7" y="0"/>
+    <item component="com.android.camera/".VideoCamera" screen="-1" x="8" y="0"/>
+    <item component="com.android.camera/".GalleryPicker" screen="-1" x="9" y="0"/>
+    <item component="com.android.deskclock/".DeskClock" screen="-1" x="10" y="0"/>
+    <item component="com.android.settings/".Settings" screen="-1" x="11" y="0"/>
+    <item component="com.android.contacts/".DialtactsActivity" screen="-1" x="12" y="0"/>
+    <item component="com.android.contacts/".DialtactsContactsEntryActivity" screen="-1" x="13" y="0"/>
+    <item component="com.android.music/".MusicBrowserActivity" screen="-1" x="14" y="0"/>
+    <item component="com.android.music/".VideoBrowserActivity" screen="-1" x="15" y="0"/>
+    <item component="org.openintents.filemanager/".FileManagerActivity" screen="-1" x="16" y="0"/>
+    <item component="com.example.android.lunarlander/".LunarLander" screen="-1" x="17" y="0"/>
+    <item component="org.connectbot/".HostListActivity" screen="-1" x="18" y="0"/>
+    <item component="com.example.android.snake/".Snake" screen="-1" x="19" y="0"/>
+    <item component="com.android.development/".Development" screen="-1" x="20" y="0"/>
+    <item component="com.example.android.jetboy/".JetBoy" screen="-1" x="21" y="0"/>
+    <item component="com.cooliris.media/".Gallery" screen="-1" x="22" y="0"/>
+    <item component="com.android.calculator2/".Calculator" screen="-1" x="23" y="0"/>
+    <item component="com.example.android.notepad/".NotesList" screen="-1" x="24" y="0"/>
+
+
+
+$ git checkout -b backup    # create a local backup branch with all your work
+$ git checkout master   
+$ git checkout -b backup2   # 2nd copy just to be safe
+$ git checkout master
+$ git reset --hard <this is the revision of the last svn-id> # clean up master to make the svn merge easier
+$ git svn fetch    # this should update to the current version on the svn server
+$ git rebase master backup  # may get a conflict here, fix and commit
+... # after conflict is fixed and commited
+$ git checkout master 
+$ git merge backup --ff  # merge in your local commits
+$ git svn dcommit        # push back to the svn
+
+git rebase --interactive --preserve-merges  refs/remotes/trunk
