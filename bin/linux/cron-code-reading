@@ -1,0 +1,10 @@
+#!/bin/bash
+exec >/dev/null
+function do_it() {
+    mkbeagleidx
+    mkgtags
+}
+
+for x in `locate .for-code-reading`; do 
+    cd `dirname $x` && do_it;
+done
