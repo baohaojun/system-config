@@ -7,6 +7,8 @@
 
 (define-abbrev-table 'apropos-mode-abbrev-table '())
 
+(define-abbrev-table 'asm-mode-abbrev-table '())
+
 (define-abbrev-table 'awk-mode-abbrev-table
   '(
    ))
@@ -78,8 +80,6 @@
 (define-abbrev-table 'global-abbrev-table
   '(
     ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 102)
-    ("cltenv" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" " nil 11)
-    ("eclt" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" /usr/atria/bin/cleartool" nil 11)
     ("eld" "EnterLeaveDebug();" nil 32)
     ("incbhj" "#define ENABLE_BHJDEBUG
 #include \"bhjdebug.h\"" nil 31)
@@ -103,9 +103,9 @@
 
 (define-abbrev-table 'java-mode-abbrev-table
   '(
-    ("le" "Log.e(TAG, \"" nil 12)
-    ("lv" "Log.v(TAG, \"" nil 0)
-    ("string" "String" nil 2)
+    ("le" "Log.e(TAG, \"" nil 16)
+    ("lv" "Log.v(TAG, String.format(\"" nil 0)
+    ("string" "String" nil 15)
    ))
 
 (define-abbrev-table 'jython-mode-abbrev-table '())

@@ -3,7 +3,7 @@
 . /etc/bash_completion
 . ~/.bash_netcompletion
 
-function cd () {
+function cd_bhj () {
     builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@"
     (flock -x ~/.where.lock -c where&)
 }
@@ -14,8 +14,10 @@ function cd_failed() {
         echo 'Error: no such file or directory'
         return 1
     elif test ${#dirs[@]} = 1; then
-        cd ${dirs[0]}
+        builtin cd ${dirs[0]}
     else 
-        select dir in ${dirs[@]}; do cd $dir; history -s cd $dir; break; done
+        select dir in ${dirs[@]}; do builtin cd $dir; history -s cd $dir; break; done
     fi
 }
+
+alias cd=cd_bhj

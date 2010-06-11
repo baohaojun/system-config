@@ -37,6 +37,10 @@ while True:
       if "/values-" in line:
             if "/values-zh-rCN" in line:
                   pass
+            elif "/values-land" in line:
+                  pass
+            elif "/values-port" in line:
+                  pass
             else:
                   continue
       print "%s" % line[:-1]

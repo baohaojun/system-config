@@ -30,7 +30,10 @@ $max_token = (sort {length($a) <=> length($b)} @tokens)[-1];
 
 $max_token =~ s/^_+|_+$//g;
 
-system("beagle-break.exe", $max_token);
+my $tokens = qx/beagle-break.exe "$max_token"/;
+$tokens =~ tr/\n/ /;
+print "$tokens\n";
+
 
 
 # appended_comma = True 
