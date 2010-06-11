@@ -1195,8 +1195,12 @@ The zebra face is decided by looking at adjacent face. "
 			 twittering-zebra-2-face
 		       twittering-zebra-1-face)))
     (while (setq end (next-single-property-change start 'face object))
-      (put-text-property start end 'face (cons zebra-face other-faces) object)
-      (setq start end other-faces (get-text-property start 'face object)))
+      (put-text-property start end 'face (if (listp other-faces)
+					     (cons zebra-face other-faces)
+					   (list zebra-face other-faces))
+			 object)
+      (setq start end
+	    other-faces (get-text-property start 'face object)))
     (put-text-property start (length object) 'face zebra-face object)))
 
 ;;;
