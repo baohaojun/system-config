@@ -2186,7 +2186,8 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 	   (mapcar (lambda (buf-unread)
 		     (some (lambda (buf pre)
 			     (when (eq (car buf-unread) buf)
-			       (format "%s:%d" pre (cadr buf-unread))))
+			       (twittering-decorate-unread-status-notifier
+				buf (format "%s:%d" pre (cadr buf-unread)))))
 			   tw-buffers
 			   (twittering-build-unique-prefix
 			    (mapcar (lambda (entry)
@@ -2233,6 +2234,27 @@ means the number of statuses retrieved after the last visiting of the buffer.")
   (setq global-mode-string
 	(remove '(:eval (twittering-make-unread-status-notifier-string))
 		global-mode-string)))
+
+(defun twittering-decorate-unread-status-notifier (buffer notifier)
+  (let ((map (make-sparse-keymap)))
+    (define-key map (vector 'mode-line 'mouse-2)
+      `(lambda (e)
+	 (interactive "e")
+	 (save-selected-window
+	   (select-window (posn-window (event-start e)))
+	   (switch-to-buffer ,buffer))))
+    (define-key map (vector 'mode-line 'mouse-3)
+      `(lambda (e)
+	 (interactive "e")
+	 (save-selected-window
+	   (select-window (posn-window (event-start e)))
+	   (switch-to-buffer-other-window ,buffer))))
+    (add-text-properties
+     0 (length notifier)
+     `(local-map ,map mouse-face mode-line-highlight help-echo
+		 "mouse-2: switch to buffer, mouse-3: switch to buffer in other window")
+     notifier)
+    notifier))
 
 ;;;
 ;;; mode-line icon
