@@ -13,8 +13,8 @@ xwl's fork
   * Do not display unread notifier when updating tweets from a twittering
     buffer.
   * Show twitter logo on mode line.
-
-    Screenshot: http://xwl.appspot.com/images/twitter_unread.png
+      Screenshot: http://xwl.appspot.com/images/twitter_unread.png
+  * Make unread notifier on mode line mouse clickable.
 
 * misc
   * (twittering-erase-all): New func, binded to "C-c C-w".
