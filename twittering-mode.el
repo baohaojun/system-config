@@ -4193,9 +4193,6 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
   (with-current-buffer buffer
     (let* ((spec (twittering-get-timeline-spec-for-buffer buffer))
 	   (timeline-data (twittering-timeline-data-collect spec timeline-data))
-	   (timeline-data (if twittering-reverse-mode ; increasing list by `id'
-			      (reverse timeline-data)
-			    timeline-data))
 	   (empty (null (twittering-get-first-status-head)))
 	   (rendering-entire (or empty (not additional)))
 	   (window-list (get-buffer-window-list (current-buffer) nil t))
@@ -4216,8 +4213,6 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		(if prev-p
 		    (if twittering-reverse-mode 'point-min 'point-max)
 		  (if twittering-reverse-mode 'point-max 'point-min))))
-	  (when prev-p
-	    (setq timeline-data (reverse timeline-data)))
 	  (mapc
 	   (lambda (status)
 	     (let ((formatted-status (twittering-format-status status))
@@ -4238,7 +4233,10 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	       (when twittering-default-show-replied-tweets
 		 (twittering-show-replied-statuses
 		  twittering-default-show-replied-tweets))))
-	   timeline-data)))
+	   ;; Always insert most adjacent tweet first.
+	   (if prev-p
+	       timeline-data		 ; sorted decreasingly
+	     (reverse timeline-data))))) ; sorted increasingly
       (debug-print (current-buffer))
       (cond
        (keep-point
