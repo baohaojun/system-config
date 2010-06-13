@@ -3397,3 +3397,36 @@ $ git merge backup --ff  # merge in your local commits
 $ git svn dcommit        # push back to the svn
 
 git rebase --interactive --preserve-merges  refs/remotes/trunk
+
+
+Successfully generated '/home/bhj/src/virtualbox-ose-3.1.6-dfsg/AutoConfig.kmk' and '/home/bhj/src/virtualbox-ose-3.1.6-dfsg/env.sh'.
+Source '/home/bhj/src/virtualbox-ose-3.1.6-dfsg/env.sh' once before you start to build VBox:
+
+  source /home/bhj/src/virtualbox-ose-3.1.6-dfsg/env.sh
+  kmk
+
+To compile the kernel modules, do:
+
+  cd ./out/linux.amd64/release/bin/src
+  make
+
+
+  +++ WARNING +++ WARNING +++ WARNING +++ WARNING +++ WARNING +++ WARNING +++
+  Hardening is enabled which means that the VBox binaries will not run from
+  the binary directory. The binaries have to be installed suid root and some
+  more prerequisites have to be fulfilled which is normally done by installing
+  the final package. For development, the hardening feature can be disabled
+  by specifying the --disable-hardening parameter. Please never disable that
+  feature for the final distribution!
+  +++ WARNING +++ WARNING +++ WARNING +++ WARNING +++ WARNING +++ WARNING +++
+
+Enjoy!
+
+git svn --trunk=svn://192.168.0.46/device/vendor/nvidia/nv-android/packages/apps/RHome clone svn://192.168.0.46/device/vendor/nvidia/nv-android/packages/apps/RHome
+
+
+composite -geometry +59+512 book_shelf.png video_background.png xx.png
+composite -geometry +59+364 book_shelf.png xx.png xx.png 
+composite -geometry +59+206 book_shelf.png xx.png xx.png 
+composite curtain_left.png xx.png xx.png 
+composite -geometry +880+0 curtain_right.png xx.png xx.png 
