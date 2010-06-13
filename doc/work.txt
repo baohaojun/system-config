@@ -3426,7 +3426,7 @@ git svn --trunk=svn://192.168.0.46/device/vendor/nvidia/nv-android/packages/apps
 
 
 composite -geometry +59+512 book_shelf.png video_background.png xx.png
-composite -geometry +59+364 book_shelf.png xx.png xx.png 
-composite -geometry +59+206 book_shelf.png xx.png xx.png 
+composite -geometry +59+354 book_shelf.png xx.png xx.png 
+composite -geometry +59+196 book_shelf.png xx.png xx.png 
 composite curtain_left.png xx.png xx.png 
 composite -geometry +880+0 curtain_right.png xx.png xx.png 
