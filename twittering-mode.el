@@ -3930,29 +3930,23 @@ BUFFER may be a buffer or the name of an existing buffer."
 	  (user-description (assq-get 'user-description status))
 	  (user-profile-image-url (assq-get 'user-profile-image-url status))
 	  (user-url (assq-get 'user-url status))
-	  (user-protected (assq-get 'user-protected status)))
+	  (user-protected (assq-get 'user-protected status))
+	  (original-user-name (assq-get 'original-user-name status))
+	  (original-user-screen-name (assq-get 'original-user-screen-name status)))
 
-      ;; make user-name clickable
-      (add-text-properties
-       0 (length user-name)
-       `(mouse-face highlight
-		    uri ,(twittering-get-status-url user-screen-name)
-		    screen-name-in-text ,user-screen-name
-		    goto-spec ,(twittering-string-to-timeline-spec
-				user-screen-name)
-		    face twittering-username-face)
-       user-name)
-
-      ;; make user-screen-name clickable
-      (add-text-properties
-       0 (length user-screen-name)
-       `(mouse-face highlight
-		    uri ,(twittering-get-status-url user-screen-name)
-		    screen-name-in-text ,user-screen-name
-		    goto-spec ,(twittering-string-to-timeline-spec
-				user-screen-name)
-		    face twittering-username-face)
-       user-screen-name)
+      ;; make user names clickable
+      (mapc (lambda (str)
+	      (add-text-properties
+	       0 (length str)
+	       `(mouse-face highlight
+			    uri ,(twittering-get-status-url user-screen-name)
+			    screen-name-in-text ,user-screen-name
+			    goto-spec ,(twittering-string-to-timeline-spec
+					user-screen-name)
+			    face twittering-username-face)
+	       str))
+	    (list user-name user-screen-name original-user-name
+		  original-user-screen-name))
 
       ;; make hashtag, listname, screenname, and URI in text clickable
       (let ((pos 0)
