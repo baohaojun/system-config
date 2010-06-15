@@ -407,7 +407,7 @@ Twittering-mode provides two functions for updating status:
 If we invoke `twittering-get-and-render-timeline' from a twittering buffer, then
 do not display unread notifier on mode line.")
 
-(defvar twittering-user-profile-separator " "
+(defvar twittering-user-profile-separator "             "
   "Separate user profile and time line.")
 
 ;;;
@@ -4284,17 +4284,15 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		   (progn
 		     (goto-char (point-min))
 		     (re-search-forward
-		      (concat "^" twittering-user-profile-separator) nil t 1))
+		      (concat "^" twittering-user-profile-separator "$") nil t 1))
 		     (goto-char (point-max))
 		     (re-search-backward
-		      (concat "^" twittering-user-profile-separator) nil t 1)))))
+		      (concat "^" twittering-user-profile-separator "$") nil t 1)))))
 	    (unless (funcall locate-separator)
 	      (twittering-render-user-profile timeline-data))
 	    (funcall locate-separator)
 	    (if twittering-reverse-mode
-		(progn
-		  (forward-line -1)
-		  (narrow-to-region (point-min) (point)))
+		(narrow-to-region (point-min) (line-beginning-position))
 	      (forward-line 1)
 	      (narrow-to-region (point) (point-max))))))
       (save-excursion
