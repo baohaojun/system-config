@@ -260,6 +260,14 @@ then you can use \"$to_me\" as
   :type 'list
   :group 'twittering)
 
+(defcustom twittering-convert-fix-size nil
+  "Size of user icon, when nil, use default avatar.
+
+The default profile_image_url in status is already an
+avatar(48x48).  So normally we don't have to convert it at all."
+  :type 'number
+  :group 'twittering)
+
 ;;;
 ;;; Internal Variables
 ;;;
@@ -398,6 +406,9 @@ Twittering-mode provides two functions for updating status:
 
 If we invoke `twittering-get-and-render-timeline' from a twittering buffer, then
 do not display unread notifier on mode line.")
+
+(defvar twittering-user-profile-separator " "
+  "Separate user profile and time line.")
 
 ;;;
 ;;; Abstract layer for Twitter API
@@ -808,7 +819,6 @@ icon and the value is a hash. The key of the child hash is URL and its value
 is the display property for the icon.")
 
 (defvar twittering-convert-program (executable-find "convert"))
-(defvar twittering-convert-fix-size 48)
 (defvar twittering-use-convert (not (null twittering-convert-program))
   "*This variable makes a sense only if `twittering-convert-fix-size'
 is non-nil. If this variable is non-nil, icon images are converted by
@@ -1203,6 +1213,26 @@ The zebra face is decided by looking at adjacent face. "
 	    other-faces (get-text-property start 'face object)))
     (put-text-property start (length object) 'face zebra-face object)))
 
+(defun twittering-decorate-uri (object)
+  "Decorate uri contained in OBJECT."
+  (let ((points-str '()))
+    (with-temp-buffer
+      (insert object)
+      (goto-char (point-min))
+      (while (re-search-forward twittering-regexp-uri nil t 1)
+	;; FIXME: why need `-1' here?
+	(setq points-str (cons (list (1- (match-beginning 1))
+				     (1- (match-end 1))
+				     (match-string 1))
+			       points-str))))
+    (mapc (lambda (p-s)
+	    (add-text-properties
+	     (nth 0 p-s) (nth 1 p-s)
+	     `(mouse-face highlight uri ,(nth 2 p-s) face twittering-uri-face)
+	     object))
+	  points-str)
+    object))
+
 ;;;
 ;;; Utility functions for portability
 ;;;
@@ -1293,6 +1323,9 @@ as a list of a string on Emacs21."
   (let ((full-width-commercial-at (twittering-ucs-to-char #xff20)))
     ;; Unicode Character 'FULLWIDTH COMMERCIAL AT' (U+FF20)
     (concat "\\(?:@\\|" (char-to-string full-width-commercial-at) "\\)")))
+
+(defvar twittering-regexp-uri
+  "\\(https?://[-_.!~*'()a-zA-Z0-9;/?:@&=+$,%#]+\\)")
 
 ;;;
 ;;; Timeline spec functions
@@ -1545,14 +1578,18 @@ Return nil if SPEC-STR is invalid as a timeline spec."
 	(type (car spec)))
     (memq type primary-spec-types)))
 
+(defun twittering-timeline-spec-user-p (spec)
+  "Return non-nil if SPEC is a user timeline spec."
+  (and spec (eq (car spec) 'user)))
+
 (defun twittering-timeline-spec-is-direct-messages-p (spec)
   "Return non-nil if SPEC is a timeline spec which is related of
 direct_messages."
   (and spec
        (memq (car spec) '(direct_messages direct_messages_sent))))
 
-(defun twittering-timeline-spec-is-user-p (spec)
-  "Return non-nil if SPEC belongs to User Methods."
+(defun twittering-timeline-spec-is-user-methods-p (spec)
+  "Return non-nil if SPEC belongs to `User Methods' API."
   (and spec (memq (car spec) '(followers))))
 
 (defun twittering-timeline-spec-is-most-active-p (spec)
@@ -1742,7 +1779,7 @@ Statuses are stored in ascending-order with respect to their IDs."
 	(let ((id (cdr (assq 'id status)))
 	      (source-id (cdr (assq 'source-id status))))
 	  (cond
-	   ((twittering-timeline-spec-is-user-p spec)
+	   ((twittering-timeline-spec-is-user-methods-p spec)
 	    ;; We only care about new followers.
 	    (with-current-buffer (twittering-get-buffer-from-spec spec)
 	      (let* ((username (cdr (assq 'user-screen-name status)))
@@ -1771,7 +1808,7 @@ Statuses are stored in ascending-order with respect to their IDs."
   "Are TIMELINE-DATA previous statuses?
 This is done by comparing statues in current buffer with TIMELINE-DATA."
   (let ((status (car timeline-data)))
-    (if (twittering-timeline-spec-is-user-p
+    (if (twittering-timeline-spec-is-user-methods-p
 	 (twittering-current-timeline-spec))
 	(let* ((previous-cursor (cdr-safe (assq 'previous-cursor status)))
 	       (new-follower-p (string= previous-cursor "0")))
@@ -2205,7 +2242,7 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 	 (result (+ current twittering-new-tweets-count)))
     (when buffer
       (when (or (eq buffer twittering-invoke-buffer)
-		(and (twittering-timeline-spec-is-user-p spec)
+		(and (twittering-timeline-spec-is-user-methods-p spec)
 		     (null (twittering-timeline-data-collect spec))))
 	(setq result 0))
       (twittering-set-number-of-unread buffer result))))
@@ -3833,6 +3870,12 @@ BUFFER may be a buffer or the name of an existing buffer."
 	   user-profile-image-url
 	   user-url
 	   user-protected
+	   user-following
+	   user-followers-count
+	   user-friends-count
+	   user-statuses-count
+	   user-favourites-count
+
 	   previous-cursor
 	   next-cursor
 	   regex-index
@@ -3892,6 +3935,11 @@ BUFFER may be a buffer or the name of an existing buffer."
       (setq user-profile-image-url (assq-get 'profile_image_url user-data))
       (setq user-url (assq-get 'url user-data))
       (setq user-protected (assq-get 'protected user-data))
+      (setq user-following (assq-get 'following user-data))
+      (setq user-followers-count (assq-get 'followers_count user-data))
+      (setq user-friends-count (assq-get 'friends_count user-data))
+      (setq user-statuses-count (assq-get 'statuses_count user-data))
+      (setq user-favourites-count (assq-get 'favourites_count user-data))
       (setq previous-cursor (assq-get 'previous_cursor user-data))
       (setq next-cursor (assq-get 'next_cursor user-data))
 
@@ -3906,6 +3954,11 @@ BUFFER may be a buffer or the name of an existing buffer."
                     user-profile-image-url
                     user-url
                     user-protected
+		    user-following
+		    user-followers-count
+		    user-friends-count
+		    user-statuses-count
+		    user-favourites-count
 		    previous-cursor
 		    next-cursor
                     original-user-name
@@ -3931,6 +3984,8 @@ BUFFER may be a buffer or the name of an existing buffer."
 	  (user-profile-image-url (assq-get 'user-profile-image-url status))
 	  (user-url (assq-get 'user-url status))
 	  (user-protected (assq-get 'user-protected status))
+
+
 	  (original-user-name (assq-get 'original-user-name status))
 	  (original-user-screen-name (assq-get 'original-user-screen-name status)))
 
@@ -3957,7 +4012,7 @@ BUFFER may be a buffer or the name of an existing buffer."
 		     "\\([a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+\\)\\|"
 		     twittering-regexp-atmark
 		     "\\([a-zA-Z0-9_-]+\\)\\|"
-		     "\\(https?://[-_.!~*'()a-zA-Z0-9;/?:@&=+$,%#]+\\)")))
+		     twittering-regexp-uri)))
 	(while
 	    (and (string-match regexp-str text pos)
 		 (let ((next-pos (match-end 0))
@@ -4211,19 +4266,40 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	   (timeline-data (twittering-timeline-data-collect spec timeline-data))
 	   (empty (null (twittering-get-first-status-head)))
 	   (rendering-entire (or empty (not additional)))
-	   (window-list (get-buffer-window-list (current-buffer) nil t))
+	   (window-list (get-buffer-window-list buffer nil t))
 	   (point-window-list
-	    (mapcar (lambda (window)
-		      (cons (window-point window) window))
+	    (mapcar (lambda (window) (cons (window-point window) window))
 		    window-list))
 	   (original-pos (point))
 	   (original-buf-end (point-max))
 	   (buffer-read-only nil))
       (twittering-update-status-format)
       (twittering-update-mode-line)
+      (when (and (twittering-timeline-spec-user-p spec)
+		 timeline-data)
+	(save-excursion
+	  (let ((locate-separator
+		 (lambda ()
+		   (if twittering-reverse-mode
+		   (progn
+		     (goto-char (point-min))
+		     (re-search-forward
+		      (concat "^" twittering-user-profile-separator) nil t 1))
+		     (goto-char (point-max))
+		     (re-search-backward
+		      (concat "^" twittering-user-profile-separator) nil t 1)))))
+	    (unless (funcall locate-separator)
+	      (twittering-render-user-profile timeline-data))
+	    (funcall locate-separator)
+	    (if twittering-reverse-mode
+		(progn
+		  (forward-line -1)
+		  (narrow-to-region (point-min) (point)))
+	      (forward-line 1)
+	      (narrow-to-region (point) (point-max))))))
       (save-excursion
 	(when rendering-entire
-	  (erase-buffer))
+	  (delete-region (point-min) (point-max)))
 	(let* ((prev-p (twittering-timeline-data-is-previous-p timeline-data))
 	       (get-insert-point
 		(if prev-p
@@ -4253,7 +4329,8 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	   (if prev-p
 	       timeline-data		 ; sorted decreasingly
 	     (reverse timeline-data))))) ; sorted increasingly
-      (debug-print (current-buffer))
+      (widen)
+      (debug-print buffer)
       (cond
        (keep-point
 	;; Restore points.
@@ -4298,6 +4375,92 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 			 (- (point-max)
 			    (- original-buf-end original-pos))
 		       original-pos))))))))
+
+(defun twittering-render-user-profile (timeline-data)
+  (if twittering-reverse-mode
+      (goto-char (point-max))
+    (goto-char (point-min)))
+  (let ((insert-separator
+	 (lambda ()
+	   (insert twittering-user-profile-separator "\n"))))
+    (when twittering-reverse-mode
+      (funcall insert-separator))
+
+    (let* ((status (car timeline-data))
+	   (user-name (cdr (assq 'user-name status)))
+	   (user-screen-name (cdr (assq 'user-screen-name status)))
+	   (user-id (cdr (assq 'user-id status)))
+	   (user-following (cdr (assq 'user-following status)))
+	   (user-description (cdr (assq 'user-description status)))
+	   (user-location (cdr (assq 'user-location status)))
+	   (user-url (cdr (assq 'user-url status)))
+	   (user-followers-count (cdr (assq 'user-followers-count status)))
+	   (user-friends-count (cdr (assq 'user-friends-count status)))
+	   (user-statuses-count (cdr (assq 'user-statuses-count status)))
+	   (user-favourites-count (cdr (assq 'user-favourites-count status)))
+
+	   (profile
+	    (concat
+	     (format "%s, @%s, #%s\n"
+		     ;; , %s you
+		     user-name user-screen-name user-id
+		     ;; (if (string= user-following "true")
+		     ;; 	 "follows" "doesn't follow")
+		     )
+
+	     ;; bio
+	     (if (string= user-description "")
+		 "\n"
+	       (concat "\n"
+		       (twittering-fill-string
+			(twittering-decorate-uri user-description))
+		       "\n\n"))
+
+	     ;; location, web
+	     (format "location: %s\n" (or user-location ""))
+	     (progn
+	       (when user-url
+		 (twittering-decorate-uri user-url))
+	       (format "     web: %s\n\n" (or user-url "")))
+
+	     ;; follow info
+	     (let ((len-list
+		    (mapcar
+		     (lambda (lst)
+		       (apply 'max (mapcar 'length lst)))
+		     (list
+		      (list user-friends-count user-statuses-count)
+		      (list user-followers-count user-favourites-count)))))
+
+	       (format
+		(format
+		 " %%%ds following, %%%ds followers\n %%%ds tweets,    %%%ds favourites\n"
+		 (car len-list) (cadr len-list) (car len-list) (cadr len-list))
+		user-friends-count user-followers-count user-statuses-count
+		user-favourites-count))))
+
+	   ;; Note, twitter provides two sizes of icon:
+	   ;;   1) 48x48 avatar
+	   ;;   2) original full sized
+	   ;; The avatar is named by adding a `_normal' after the original filename, but
+	   ;; before the file extension, e.g., original filename is `foo.jpg', the avatar will
+	   ;; be named `foo_normal.jpg'."
+	   (icon-string
+	    (if (and twittering-icon-mode window-system)
+		(let* ((url (cdr (assq 'user-profile-image-url status)))
+		       (orig-url (replace-regexp-in-string "_normal\\." "." url))
+		       (s (twittering-make-icon-string nil nil orig-url)))
+		  (add-text-properties 0 (length s)
+				       `(mouse-face highlight uri ,orig-url)
+				       s)
+		  s)
+	      "")))
+
+      ;; FIXME: how to align image and multiple lines text side by side?
+      (insert icon-string "\n" profile))
+
+    (unless twittering-reverse-mode
+      (funcall insert-separator))))
 
 (defun twittering-replied-statuses-visible-p ()
   (let* ((pos (twittering-get-current-status-head))
@@ -4892,11 +5055,11 @@ variable `twittering-status-format'."
 		`((timeline-spec . ,spec)
 		  (timeline-spec-string . ,spec-string)
 		  (number . ,number)
-		  ,@(when (and id (not (twittering-timeline-spec-is-user-p spec)))
+		  ,@(when (and id (not (twittering-timeline-spec-is-user-methods-p spec)))
 		      `((max_id . ,id)))
 		  ,@(cond
 		     (is-search-spec `((word . ,word)))
-		     ((twittering-timeline-spec-is-user-p spec) `((cursor . ,cursor)))
+		     ((twittering-timeline-spec-is-user-methods-p spec) `((cursor . ,cursor)))
 		     ((and since_id (null id)) `((since_id . ,since_id)))
 		     (t nil))))
 	       (proc
@@ -5045,8 +5208,7 @@ managed by `twittering-mode'."
 (defun twittering-current-timeline (&optional noninteractive)
   (interactive)
   (when (twittering-buffer-p)
-    (let ((spec-string (twittering-current-timeline-spec-string)))
-      (twittering-get-and-render-timeline noninteractive))))
+    (twittering-get-and-render-timeline noninteractive)))
 
 (defun twittering-update-status-interactive ()
   (interactive)
@@ -5525,7 +5687,7 @@ Return nil if no statuses are rendered."
      (t
       (let ((id
 	     (cond
-	      ((twittering-timeline-spec-is-user-p
+	      ((twittering-timeline-spec-is-user-methods-p
 		(twittering-current-timeline-spec))
 	       'previous-cursor)
 	      (t
@@ -5560,7 +5722,7 @@ The return value is nil or a positive integer greater than POS."
      (twittering-reverse-mode
       (let ((id
 	     (cond
-	      ((twittering-timeline-spec-is-user-p
+	      ((twittering-timeline-spec-is-user-methods-p
 		(twittering-current-timeline-spec))
 	       'next-cursor)
 	      (t
