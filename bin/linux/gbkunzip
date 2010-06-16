@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+[[ "$1" =~ .zip$ ]]
+FILE=`readlink -f "$1"`
+DIR=${FILE%%.zip}
+mkdir -p "$DIR"
+
+TD=/tmp/$$.gbkunzip
+mkdir $TD
+cd $TD
+
+LANG=C LC_ALL=C 7z x "$FILE" >/dev/null 2>&1
+convmv -f gbk -t utf8 -r --nosmart --notest * >/dev/null 2>&1
+cp * "$DIR" -va
+rm $TD -rf

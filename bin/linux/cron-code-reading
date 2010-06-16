@@ -1,5 +1,6 @@
 #!/bin/bash
 exec >/dev/null
+. ~/.bashrc
 function do_it() {
     mkbeagleidx
     mkgtags

@@ -9,6 +9,23 @@ function apkgname() {
     echo package is $package
 }
 
+function apk_main_activity() {
+    apkgname "$@"
+    export main_activity=$(xmlstarlet sel -N \
+        android="http://schemas.android.com/apk/res/android" \
+        -B -t -m '//activity' -c . -n $MANIFEST | 
+        grep 'category.LAUNCHER\|category.HOME' |
+        xmlstarlet el -v |
+        grep -v activity/intent-filter |
+        perl -npe "s#.*name='\.?(.*?)'.*#\$1#"
+    )
+
+    main_activity=${main_activity##$package.}
+    export main_activity=$package/.$main_activity
+    echo main_activity is $main_activity
+}
+
+
 function anduninst() {
     apkgname "$@"
     adb shell pm uninstall $package
