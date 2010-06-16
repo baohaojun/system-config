@@ -67,16 +67,16 @@
     ("do" "do" cperl-electric-keyword 0)
     ("else" "else" cperl-electric-else 0)
     ("elsif" "elsif" cperl-electric-keyword 0)
-    ("for" "for" cperl-electric-keyword 0)
+    ("for" "for" cperl-electric-keyword 8)
     ("foreach" "foreach" cperl-electric-keyword 0)
     ("foreachmy" "foreachmy" cperl-electric-keyword 0)
     ("formy" "formy" cperl-electric-keyword 0)
     ("head1" "head1" cperl-electric-pod 0)
     ("head2" "head2" cperl-electric-pod 0)
-    ("if" "if" cperl-electric-keyword 0)
+    ("if" "if" cperl-electric-keyword 3)
     ("over" "over" cperl-electric-pod 0)
     ("pod" "pod" cperl-electric-pod 0)
-    ("unless" "unless" cperl-electric-keyword 0)
+    ("unless" "unless" cperl-electric-keyword 3)
     ("until" "until" cperl-electric-keyword 0)
     ("while" "while" cperl-electric-keyword 0)
    ))
@@ -130,7 +130,7 @@
 (define-abbrev-table 'java-mode-abbrev-table
   '(
     ("le" "Log.e(TAG, \"" nil 16)
-    ("lv" "Log.v(TAG, String.format(\"" nil 6)
+    ("lv" "Log.v(TAG, String.format(\"" nil 5)
     ("string" "String" nil 17)
    ))
 
@@ -194,7 +194,6 @@ import pickle
 
 (define-abbrev-table 'sgml-mode-abbrev-table
   '(
-    ("adnroid" "android" nil 1)
     ("andriod" "android" nil 0)
    ))
 

@@ -29,9 +29,7 @@ function ainstall() {
             exit -1
         fi
         adb install $File
-        . apk_main_activity
-        apk_main_activity
-        adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n $main_activity
+        { test x$install_bhj != x/install.bhj && $install_bhj; } || true
     else
         exe=`grep LOCAL_MODULE $Android_mk|perl -npe 's/.*=//g; s/\s*//g;'`
         File=`lookup_file out/target/product/$target_product/symbols/system/bin/$exe`

@@ -40,8 +40,6 @@
    ("Super-p" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
    ("Super-a" "Acroread\|Evince" "acroread")
    ("Super-n" "Firefox" "firefox")
-   ("Super-w" "Nautilus" "nautilus")
-   ("Super-g" "Gimp" "gimp")
    ))
 
 (mapc 

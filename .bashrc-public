@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH=~/bin/:$PATH
 export PROMPT_COMMAND="history -a"
 
 if test -z "$SSH_CLIENT"; then
