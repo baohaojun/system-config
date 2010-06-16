@@ -3875,6 +3875,7 @@ BUFFER may be a buffer or the name of an existing buffer."
 	   id text source created-at truncated
 	   in-reply-to-status-id
 	   in-reply-to-screen-name
+
 	   (user-data (cddr (assq 'user status-data)))
 	   user-id user-name
 	   user-screen-name
@@ -3888,6 +3889,7 @@ BUFFER may be a buffer or the name of an existing buffer."
 	   user-friends-count
 	   user-statuses-count
 	   user-favourites-count
+	   user-created-at
 
 	   previous-cursor
 	   next-cursor
@@ -3953,6 +3955,8 @@ BUFFER may be a buffer or the name of an existing buffer."
       (setq user-friends-count (assq-get 'friends_count user-data))
       (setq user-statuses-count (assq-get 'statuses_count user-data))
       (setq user-favourites-count (assq-get 'favourites_count user-data))
+      (setq user-created-at (assq-get 'created_at user-data))
+
       (setq previous-cursor (assq-get 'previous_cursor user-data))
       (setq next-cursor (assq-get 'next_cursor user-data))
 
@@ -3962,6 +3966,7 @@ BUFFER may be a buffer or the name of an existing buffer."
                '(id text source created-at truncated
                     in-reply-to-status-id
                     in-reply-to-screen-name
+
                     user-id user-name user-screen-name user-location
                     user-description
                     user-profile-image-url
@@ -3972,6 +3977,8 @@ BUFFER may be a buffer or the name of an existing buffer."
 		    user-friends-count
 		    user-statuses-count
 		    user-favourites-count
+		    user-created-at
+		    
 		    previous-cursor
 		    next-cursor
                     original-user-name
@@ -4409,6 +4416,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	   (user-friends-count (cdr (assq 'user-friends-count status)))
 	   (user-statuses-count (cdr (assq 'user-statuses-count status)))
 	   (user-favourites-count (cdr (assq 'user-favourites-count status)))
+	   (user-created-at (cdr (assq 'user-created-at status)))
 
 	   (profile
 	    (concat
@@ -4455,7 +4463,14 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		 " %%%ds following, %%%ds followers\n %%%ds tweets,    %%%ds favourites\n"
 		 (car len-list) (cadr len-list) (car len-list) (cadr len-list))
 		user-friends-count user-followers-count user-statuses-count
-		user-favourites-count))))
+		user-favourites-count))
+
+	     ;; join date
+	     (format "\nJoined on %s."
+		     (mapconcat (lambda (i) 
+				  (aref (timezone-parse-date user-created-at) i))
+			      '(0 1 2)
+			      "-"))))
 
 	   ;; Note, twitter provides two sizes of icon:
 	   ;;   1) 48x48 avatar
