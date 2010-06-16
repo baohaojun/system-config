@@ -311,7 +311,7 @@ DO NOT SET VALUE MANUALLY.")
   "The current timeline spec string. This variable should not be referred
 directly. Use `twittering-current-timeline-spec-string' or
 `twittering-current-timeline-spec'.")
-(defvar twittering-list-index-retrieved nil)
+(defvar twittering-get-simple-retrieved nil)
 
 (defvar twittering-process-info-alist nil
   "Alist of active process and timeline spec retrieved by the process.")
@@ -414,8 +414,8 @@ do not display unread notifier on mode line.")
 
 (defun twittering-call-api (command args-alist &optional noninteractive)
   "Call Twitter API and return the process object for the request."
-  (cond
-   ((eq command 'retrieve-timeline)
+  (case command
+   ((retrieve-timeline)
     ;; Retrieve a timeline.
     (let* ((spec (cdr (assq 'timeline-spec args-alist)))
 	   (spec-string (cdr (assq 'timeline-spec-string args-alist)))
@@ -442,17 +442,19 @@ do not display unread notifier on mode line.")
 		       "atom"
 		     "xml"))
 	   (simple-spec-list
-	    '((direct_messages . "1/direct_messages")
+	    '((direct_messages      . "1/direct_messages")
 	      (direct_messages_sent . "1/direct_messages/sent")
-	      (friends . "1/statuses/friends_timeline")
-	      (home . "1/statuses/home_timeline")
-	      (mentions . "1/statuses/mentions")
-	      (public . "1/statuses/public_timeline")
-	      (replies . "1/statuses/replies")
+              
+	      (friends         . "1/statuses/friends_timeline")
+	      (home            . "1/statuses/home_timeline")
+	      (mentions        . "1/statuses/mentions")
+	      (public          . "1/statuses/public_timeline")
+	      (replies         . "1/statuses/replies")
 	      (retweeted_by_me . "1/statuses/retweeted_by_me")
 	      (retweeted_to_me . "1/statuses/retweeted_to_me")
-	      (retweets_of_me . "1/statuses/retweets_of_me")
-	      (followers . "1/statuses/followers")
+	      (retweets_of_me  . "1/statuses/retweets_of_me")
+	      (followers       . "1/statuses/followers")
+
 	      (search . "search")))
 	   (host (cond ((eq spec-type 'search) twittering-api-search-host)
 		       (t twittering-api-host)))
@@ -471,36 +473,42 @@ do not display unread notifier on mode line.")
       (if (and host method)
 	  (twittering-http-get host method noninteractive parameters format)
 	(error "Invalid timeline spec"))))
-   ((eq command 'get-list-index)
+   ((get-list-index)
     ;; Get list names.
     (let ((username (cdr (assq 'username args-alist)))
 	  (sentinel (cdr (assq 'sentinel args-alist))))
       (twittering-http-get twittering-api-host
 			   (concat "1/" username "/lists")
 			   t nil nil sentinel)))
-   ((eq command 'create-friendships)
-    ;; Create a friendship.
-    (let ((username (cdr (assq 'username args-alist))))
-      (twittering-http-post twittering-api-host
-			    "1/friendships/create"
-			    `(("screen_name" . ,username)))))
-   ((eq command 'destroy-friendships)
-    ;; Destroy a friendship
-    (let ((username (cdr (assq 'username args-alist))))
-      (twittering-http-post twittering-api-host
-			    "1/friendships/destroy"
-			    `(("screen_name" . ,username)))))
-   ((eq command 'create-favorites)
-    ;; Create a favorite.
+
+   ;; Friendship Methods
+   ((create-friendships destroy-friendships show-friendships)
+    (let ((username (cdr (assq 'username args-alist)))
+	  (method (concat "1/friendships/"
+			  (replace-regexp-in-string 
+			   "-friendships" "" (symbol-name command)))))
+      (case command 
+	((show-friendships)		; GET
+	 (twittering-http-get twittering-api-host
+			      method
+			      t
+			      `(("target_screen_name" . ,username))
+			      nil
+			      (cdr (assq 'sentinel args-alist))))
+	(t				; POST
+	 (twittering-http-post twittering-api-host
+			       method 
+			       `(("screen_name" . ,username)))))))
+
+   ((create-favorites)
     (let ((id (cdr (assq 'id args-alist))))
       (twittering-http-post twittering-api-host
 			    (concat "1/favorites/create/" id))))
-   ((eq command 'destroy-favorites)
-    ;; Destroy a favorite.
+   ((destroy-favorites)
     (let ((id (cdr (assq 'id args-alist))))
       (twittering-http-post twittering-api-host
 			    (concat "1/favorites/destroy/" id))))
-   ((eq command 'update-status)
+   ((update-status)
     ;; Post a tweet.
     (let* ((status (cdr (assq 'status args-alist)))
 	   (id (cdr (assq 'in-reply-to-status-id args-alist)))
@@ -509,25 +517,25 @@ do not display unread notifier on mode line.")
 	      ,@(when id `(("in_reply_to_status_id" . ,id))))))
       (twittering-http-post twittering-api-host "1/statuses/update"
 			    parameters)))
-   ((eq command 'destroy-status)
+   ((destroy-status)
     ;; Destroy a status.
     (let ((id (cdr (assq 'id args-alist))))
       (twittering-http-post twittering-api-host
 			    "1/statuses/destroy"
 			    `(("id" . ,id)))))
-   ((eq command 'retweet)
+   ((retweet)
     ;; Post a retweet.
     (let ((id (cdr (assq 'id args-alist))))
       (twittering-http-post twittering-api-host
 			    (concat "1/statuses/retweet/" id))))
-   ((eq command 'verify-credentials)
+   ((verify-credentials)
     ;; Verify the account.
     (let ((sentinel (cdr (assq 'sentinel args-alist))))
       (twittering-http-get twittering-api-host
 			   "1/account/verify_credentials"
 			   t nil nil
 			   sentinel)))
-   ((eq command 'send-direct-message)
+   ((send-direct-message)
     ;; Send a direct message.
     (let ((parameters
 	   `(("user" . ,(cdr (assq 'username args-alist)))
@@ -3314,7 +3322,7 @@ PARAMETERS: http request parameters (query string)"
     (delete-file twittering-cert-file)
     (setq twittering-cert-file nil)))
 
-;;; FIXME: file name is hard-coded. More robust way is desired.
+;; FIXME: file name is hard-coded. More robust way is desired.
 (defun twittering-ensure-ca-cert ()
   "Create a CA certificate file if it does not exist, and return
 its file name."
@@ -3422,8 +3430,7 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 	   (lambda (&rest args)
 	     (apply #'twittering-http-default-sentinel
 		    sentinel noninteractive args))))
-	curl-process)))
-  )
+	curl-process))))
 
 (defun twittering-start-http-session-native-tls-p ()
   (when (require 'tls nil t)
@@ -3488,7 +3495,7 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 	proc)))
   )
 
-;;; TODO: proxy
+;; TODO: proxy
 (defun twittering-make-http-request (method headers host port path parameters)
   "Returns an anonymous function, which holds request data.
 
@@ -3683,37 +3690,45 @@ Available keywords:
 	    (format "Response: %s (%s)" status-line error-mes)
 	  (format "Response: %s" status-line)))))))
 
-(defun twittering-http-get-list-index-sentinel (header-info proc noninteractive &optional suc-msg)
+(defun twittering-http-get-simple-sentinel (header-info proc noninteractive &optional suc-msg)
   (let ((status-line (cdr (assq 'status-line header-info)))
 	(status-code (cdr (assq 'status-code header-info)))
-	(indexes nil)
+	(ret nil)
 	(mes nil))
     (case-string
      status-code
      (("200")
       (let ((xmltree (twittering-get-response-body (process-buffer proc)
 						   'xml-parse-region)))
-	(when xmltree
-	  (setq indexes
-		(mapcar
-		 (lambda (c-node)
-		   (caddr (assq 'slug c-node)))
-		 (remove nil
-			 (mapcar
-			  (lambda (node)
-			    (and (consp node) (eq 'list (car node))
-				 node))
-			  (cdr-safe
-			   (assq 'lists (assq 'lists_list xmltree))))
-			 ))
-		))))
+	(case (caar xmltree)
+	  ((relationship)		; show-friendships
+	   (setq ret
+		 (string= (car 
+			   (reverse
+			    (assq 'following
+				  (assq 'target (car xmltree)))))
+			  "true")))
+	  (t				; get-list
+	   (when xmltree
+	     (setq ret
+		   (mapcar
+		    (lambda (c-node)
+		      (caddr (assq 'slug c-node)))
+		    (remove
+		     nil
+		     (mapcar
+		      (lambda (node)
+			(and (consp node) (eq 'list (car node))
+			     node))
+		      (cdr-safe
+		       (assq 'lists (assq 'lists_list xmltree))))))))))))
      (t
       (let ((error-mes (twittering-get-error-message (process-buffer proc))))
 	(if error-mes
 	    (setq mes (format "Response: %s (%s)" status-line error-mes))
 	  (setq mes (format "Response: %s" status-line))))))
-    (setq twittering-list-index-retrieved
-	  (or indexes
+    (setq twittering-get-simple-retrieved
+	  (or ret
 	      mes
 	      "")) ;; set "" explicitly if user does not have a list.
     nil))
@@ -4397,9 +4412,9 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 
 	   (profile
 	    (concat
-	     (format "%s, @%s, #%s\n"
-		     ;; , %s you
-		     user-name user-screen-name
+	     (format "%s, @%s, #%s, %s you\n"
+		     user-name
+		     user-screen-name
 		     (let ((tmp user-id)
 			   (ret ""))
 		       (while (> (length tmp) 3)
@@ -4408,10 +4423,8 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 					   ret)
 			       tmp (substring tmp 0 -3)))
 		       ret)
-
-		     ;; (if (string= user-following "true")
-		     ;; 	 "follows" "doesn't follow")
-		     )
+		     (if (twittering-followed-by-p user-screen-name)
+			 "follows" "doesn't follow"))
 
 	     ;; bio
 	     (if (string= user-description "")
@@ -5003,26 +5016,6 @@ variable `twittering-status-format'."
 	(remove-hook 'minibuffer-exit-hook 'twittering-finish-minibuffer))
       )))
 
-(defun twittering-get-list-index (username)
-  (twittering-call-api
-   'get-list-index
-   `((username . ,username)
-     (sentinel . twittering-http-get-list-index-sentinel))))
-
-(defun twittering-get-list-index-sync (username)
-  (setq twittering-list-index-retrieved nil)
-  (twittering-get-list-index username)
-  (while (not twittering-list-index-retrieved)
-    (sit-for 0.1))
-  (cond
-   ((stringp twittering-list-index-retrieved)
-    (if (string= "" twittering-list-index-retrieved)
-	(message "%s does not have a list." username)
-      (message "%s" twittering-list-index-retrieved))
-    nil)
-   ((listp twittering-list-index-retrieved)
-    twittering-list-index-retrieved)))
-
 (defun twittering-get-and-render-timeline (&optional noninteractive id buffer)
   (setq twittering-invoke-buffer (current-buffer))
   (with-current-buffer (or buffer (current-buffer))
@@ -5095,6 +5088,38 @@ variable `twittering-status-format'."
 		  (error "TinyURL failed: %s" longurl))
 	      (kill-buffer buffer))))
       nil)))
+
+;;;
+;;; API methods
+;;;
+
+(defun twittering-get-simple (method args-alist)
+  (twittering-call-api
+   method
+   `(,@args-alist
+     (sentinel . twittering-http-get-simple-sentinel))))
+
+(defun twittering-get-simple-sync (method args-alist)
+  (setq twittering-get-simple-retrieved nil)
+  (twittering-get-simple method args-alist)
+  (while (not twittering-get-simple-retrieved)
+    (sit-for 0.1))
+  (case method
+    ((get-list-index)
+     (cond
+      ((stringp twittering-get-simple-retrieved)
+       (if (string= "" twittering-get-simple-retrieved)
+	   (message "%s does not have a list." 
+		    (cdr (assq 'username args-alist)))
+	 (message "%s" twittering-get-simple-retrieved))
+       nil)
+      ((listp twittering-get-simple-retrieved)
+       twittering-get-simple-retrieved)))
+    ((show-friendships)
+     twittering-get-simple-retrieved)))
+
+(defun twittering-followed-by-p (username)
+  (twittering-get-simple-sync 'show-friendships `((username . ,username))))
 
 ;;;
 ;;; Commands
@@ -5577,7 +5602,8 @@ managed by `twittering-mode'."
 
 (defun twittering-read-list-name (username &optional list-index)
   (let* ((list-index (or list-index
-			 (twittering-get-list-index-sync username)))
+			 (twittering-get-simple-sync
+			  'get-list-index `((username . ,username)))))
 	 (username (prog1 (copy-sequence username)
 		     (set-text-properties 0 (length username) nil username)))
 	 (prompt (format "%s's list: " username))
@@ -5607,7 +5633,8 @@ managed by `twittering-mode'."
 	  (cond
 	   ((string-match "^\\([a-zA-Z0-9_-]+\\)/$" spec-string)
 	    (let* ((username (match-string 1 spec-string))
-		   (list-index (twittering-get-list-index-sync username))
+		   (list-index (twittering-get-simple-sync
+				'get-list-index `((username . ,username))))
 		   (listname
 		    (if list-index
 			(twittering-read-list-name username list-index)
