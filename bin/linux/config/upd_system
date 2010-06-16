@@ -1,3 +1,4 @@
+#!/bin/bash
 #把windows-config下载回来，并全部拷到~下
 #cd ~
 #svn co http://windows-config.googlecode.com/svn/trunk
@@ -60,15 +61,10 @@ grub2
 grun
 hibernate
 htop
-ia32-libs
 imagemagick
 iotop
 language-pack-en
 language-pack-zh
-lib32ncurses5-dev
-lib32readline5-dev
-lib32z-dev
-libc6-dev-i386
 libcurses-perl
 libcurses-ruby
 libcurses-ui-perl
@@ -139,13 +135,21 @@ xmlstarlet
 youtube-dl
 zip
 zlib1g-dev
+'
 
+x86_64_packages='
+ia32-libs
+lib32ncurses5-dev
+lib32readline5-dev
+lib32z-dev
+libc6-dev-i386
 '
 #lunar-applet
 
 sudo apt-get update
 sudo apt-get dist-upgrade -y
 sudo apt-get install -y $packages || for x in $packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
+sudo apt-get install -y $x86_64_packages || for x in $x86_64_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
 sudo apt-get build-dep -y beagle
 
 #把一些软件默认的版本换掉
