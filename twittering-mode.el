@@ -4401,7 +4401,16 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	    (concat
 	     (format "%s, @%s, #%s\n"
 		     ;; , %s you
-		     user-name user-screen-name user-id
+		     user-name user-screen-name
+		     (let ((tmp user-id)
+			   (ret ""))
+		       (while (> (length tmp) 3)
+			 (setq ret (concat (substring tmp -3)
+					   (if (string= ret "") "" ",")
+					   ret)
+			       tmp (substring tmp 0 -3)))
+		       ret)
+
 		     ;; (if (string= user-following "true")
 		     ;; 	 "follows" "doesn't follow")
 		     )
