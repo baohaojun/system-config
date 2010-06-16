@@ -4413,19 +4413,23 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 
 	   (profile
 	    (concat
-	     (format "%s, @%s, #%s, %s you\n"
+	     (format "%s, @%s, %s\n"
 		     user-name
 		     user-screen-name
-		     (let ((tmp user-id)
-			   (ret ""))
-		       (while (> (length tmp) 3)
-			 (setq ret (concat (substring tmp -3)
-					   (if (string= ret "") "" ",")
-					   ret)
-			       tmp (substring tmp 0 -3)))
-		       ret)
-		     (if (twittering-followed-by-p user-screen-name)
-			 "follows" "doesn't follow"))
+		     ;; #%s 
+		     ;; (let ((tmp user-id)
+		     ;; 	   (ret ""))
+		     ;;   (while (> (length tmp) 3)
+		     ;; 	 (setq ret (concat (substring tmp -3)
+		     ;; 			   (if (string= ret "") "" ",")
+		     ;; 			   ret)
+		     ;; 	       tmp (substring tmp 0 -3)))
+		     ;;   ret)
+		     (let ((f (twittering-followed-by-p user-screen-name)))
+		       (case f
+			 ((t) "follows you")
+			 ((nil) "doesn't follow you")
+			 ((-1) ""))))
 
 	     ;; bio
 	     (if (string= user-description "")
@@ -5110,8 +5114,14 @@ variable `twittering-status-format'."
 (defun twittering-get-simple-sync (method args-alist)
   (setq twittering-get-simple-retrieved nil)
   (twittering-get-simple method args-alist)
-  (while (not twittering-get-simple-retrieved)
-    (sit-for 0.1))
+  (let ((start (current-time)))
+    (while (and (not twittering-get-simple-retrieved)
+		;; Wait just for 3 seconds. FIXME: why it would fail sometimes?
+		(< (cadr (time-subtract (current-time) start)) 3))
+      (sit-for 0.1)))
+  (unless twittering-get-simple-retrieved
+    (message "twittering-get-simple-sync failed")
+    (setq twittering-get-simple-retrieved "error"))
   (case method
     ((get-list-index)
      (cond
@@ -5127,9 +5137,12 @@ variable `twittering-status-format'."
      twittering-get-simple-retrieved)))
 
 (defun twittering-followed-by-p (username)
-  (string= 
+  "Return -1 when error occurs."
+  (case-string 
    (twittering-get-simple-sync 'show-friendships `((username . ,username)))
-   "true"))
+   (("true") t)
+   (("false") nil)
+   (t -1)))
 
 ;;;
 ;;; Commands
