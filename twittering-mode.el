@@ -3702,12 +3702,9 @@ Available keywords:
 						   'xml-parse-region)))
 	(case (caar xmltree)
 	  ((relationship)		; show-friendships
-	   (setq ret
-		 (string= (car 
-			   (reverse
-			    (assq 'following
-				  (assq 'target (car xmltree)))))
-			  "true")))
+	   (setq ret (car 
+		      (reverse 
+		       (assq 'following (assq 'target (car xmltree)))))))
 	  (t				; get-list
 	   (when xmltree
 	     (setq ret
@@ -4466,7 +4463,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		user-favourites-count))
 
 	     ;; join date
-	     (format "\nJoined on %s."
+	     (format "\nJoined on %s.\n"
 		     (mapconcat (lambda (i) 
 				  (aref (timezone-parse-date user-created-at) i))
 			      '(0 1 2)
@@ -5134,7 +5131,9 @@ variable `twittering-status-format'."
      twittering-get-simple-retrieved)))
 
 (defun twittering-followed-by-p (username)
-  (twittering-get-simple-sync 'show-friendships `((username . ,username))))
+  (string= 
+   (twittering-get-simple-sync 'show-friendships `((username . ,username)))
+   "true"))
 
 ;;;
 ;;; Commands
