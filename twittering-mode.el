@@ -3881,7 +3881,6 @@ BUFFER may be a buffer or the name of an existing buffer."
 	   user-profile-image-url
 	   user-url
 	   user-protected
-	   user-following
 	   user-followers-count
 	   user-friends-count
 	   user-statuses-count
@@ -3947,7 +3946,6 @@ BUFFER may be a buffer or the name of an existing buffer."
       (setq user-profile-image-url (assq-get 'profile_image_url user-data))
       (setq user-url (assq-get 'url user-data))
       (setq user-protected (assq-get 'protected user-data))
-      (setq user-following (assq-get 'following user-data))
       (setq user-followers-count (assq-get 'followers_count user-data))
       (setq user-friends-count (assq-get 'friends_count user-data))
       (setq user-statuses-count (assq-get 'statuses_count user-data))
@@ -3969,7 +3967,6 @@ BUFFER may be a buffer or the name of an existing buffer."
                     user-profile-image-url
                     user-url
                     user-protected
-		    user-following
 		    user-followers-count
 		    user-friends-count
 		    user-statuses-count
@@ -4405,7 +4402,6 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	   (user-name (cdr (assq 'user-name status)))
 	   (user-screen-name (cdr (assq 'user-screen-name status)))
 	   (user-id (cdr (assq 'user-id status)))
-	   (user-following (cdr (assq 'user-following status)))
 	   (user-description (cdr (assq 'user-description status)))
 	   (user-location (cdr (assq 'user-location status)))
 	   (user-url (cdr (assq 'user-url status)))
