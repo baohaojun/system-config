@@ -27,7 +27,9 @@ def where_ask(argv):
     dir_history = open(os.environ['HOME'] + '/.where').read().split('\n');
     for dir in dir_history:
         if all([x.lower() in dir.lower() for x in argv]):
-            print(dir)
+            if any([x.lower() in dir.split('/')[-1].lower() for x in argv]):
+                if (os.path.exists(dir)):
+                    print(dir)
 
 if sys.argv[1:]:
     where_ask(sys.argv[1:])
