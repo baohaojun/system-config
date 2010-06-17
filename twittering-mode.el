@@ -4425,7 +4425,9 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		     ;; 			   ret)
 		     ;; 	       tmp (substring tmp 0 -3)))
 		     ;;   ret)
-		     (let ((f (twittering-followed-by-p user-screen-name)))
+		     (let ((f (if (string= twittering-username user-screen-name)
+				  -1
+				(twittering-followed-by-p user-screen-name))))
 		       (case f
 			 ((t) "follows you")
 			 ((nil) "doesn't follow you")
