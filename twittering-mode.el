@@ -311,7 +311,9 @@ DO NOT SET VALUE MANUALLY.")
   "The current timeline spec string. This variable should not be referred
 directly. Use `twittering-current-timeline-spec-string' or
 `twittering-current-timeline-spec'.")
+
 (defvar twittering-get-simple-retrieved nil)
+(make-variable-buffer-local 'twittering-get-simple-retrieved)
 
 (defvar twittering-process-info-alist nil
   "Alist of active process and timeline spec retrieved by the process.")
@@ -3008,7 +3010,8 @@ been initialized yet."
 
 (defun twittering-edit-post-status ()
   (interactive)
-  (let ((status (twittering-edit-extract-status))
+  (let ((status (replace-regexp-in-string
+		 "\n" "" (twittering-edit-extract-status)))
 	(reply-to-id (nth 0 twittering-reply-recipient))
 	(username (nth 1 twittering-reply-recipient))
 	(spec (nth 2 twittering-reply-recipient)))
