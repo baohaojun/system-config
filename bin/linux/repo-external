@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+use strict;
+
+chomp(my $pwd=`pwd`);
+die "$pwd: $!" unless (-e ".repo");
+
+my $repo_dirs=qx(repo forall -c pwd);
+our @repo_dirs=split(/\n/, $repo_dirs);
+
+
+sub search_subdir($) {
+    my $this_dir=$_[0];
+    opendir my $dh, $this_dir or die $!;
+
+    #for x in readdir($dh), 
+    #if x match exactly with a project dir, skip it
+    #elif it matches a prefix of a project dir, recurse it
+    #else print it, 
+
+    my @subdirs = grep {-d "$this_dir/$_" and !/^\.$|^\.\.$|^\.repo$/} readdir($dh);
+    closedir $dh;
+    for my $sd (@subdirs) {
+        if (grep {/^$this_dir\/$sd$/} @repo_dirs) {
+            next;
+        }
+        if (grep {/$this_dir\/$sd/} @repo_dirs) {
+            search_subdir("$this_dir/$sd");
+        } else {
+            print "$this_dir/$sd\n";
+        }        
+    }
+}
+
+search_subdir($pwd);

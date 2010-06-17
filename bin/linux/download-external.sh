@@ -1,7 +1,8 @@
 #!/bin/bash
 
 function download_antlr() {
-    mkdir -p ~/bin/linux/ext/
+    mkdir -p ~/external/bin/linux/ext
+    ln -sf  ~/external/bin/linux/ext ~/bin/linux/
     cd ~/bin/linux/ext/
     ext_download=(
         http://www.antlr.org/download/antlr-3.2.tar.gz
@@ -19,7 +20,8 @@ function download_antlr() {
 }
 
 function download_lisp() {
-    mkdir -p ~/.emacs_d/lisp/ext/
+    mkdir -p ~/external/.emacs_d/lisp/ext/
+    ln -sf ~/external/.emacs_d/lisp/ext ~/.emacs_d/lisp/
     cd ~/.emacs_d/lisp/ext/
 }
 

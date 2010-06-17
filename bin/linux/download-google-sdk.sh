@@ -2,8 +2,8 @@
 set -e
 
 
-mkdir ~/bin/linux/ext/android-sdk-linux_86/google -p
-cd ~/bin/linux/ext/android-sdk-linux_86/google
+mkdir ~/external/bin/linux/ext/android-sdk-linux_86/google -p
+cd ~/external/bin/linux/ext/android-sdk-linux_86/google
 wget -c http://dl.google.com/android/android-sdk_r06-windows.zip
 wget -c http://dl.google.com/android/android-sdk_r06-linux_86.tgz
 rm repository.xml* -f
