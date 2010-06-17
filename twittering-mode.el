@@ -313,7 +313,6 @@ directly. Use `twittering-current-timeline-spec-string' or
 `twittering-current-timeline-spec'.")
 
 (defvar twittering-get-simple-retrieved nil)
-(make-variable-buffer-local 'twittering-get-simple-retrieved)
 
 (defvar twittering-process-info-alist nil
   "Alist of active process and timeline spec retrieved by the process.")
@@ -2875,6 +2874,7 @@ been initialized yet."
 
   (make-local-variable 'twittering-timeline-spec)
   (make-local-variable 'twittering-timeline-spec-string)
+  (make-local-variable 'twittering-get-simple-retrieved)
   (make-local-variable 'twittering-active-mode)
   (make-local-variable 'twittering-icon-mode)
   (make-local-variable 'twittering-jojo-mode)
