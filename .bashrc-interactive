@@ -9,7 +9,7 @@ function cd_bhj () {
 }
 
 function cd_failed() {
-    dirs=( $(where "$@") )
+    IFS=$'\n' dirs=( $(where "$@") )
     if test ${#dirs[@]} = 0; then
         echo 'Error: no such file or directory'
         return 1

@@ -18,7 +18,11 @@ def where_pushd():
     dir_history = open(os.environ['HOME'] + '/.where').read().split('\n');
     dir_history[:0] = [pwd]
     dir_history = OrderedSet(dir_history);
-    dir_history.discard('');
+    
+    for x in OrderedSet(dir_history):
+        if not os.path.exists(x):
+            dir_history.discard(x)
+
     dir_history.add('')
     fil_ = open(os.environ['HOME'] + '/.where', 'w')
     fil_.write('\n'.join(dir_history))
