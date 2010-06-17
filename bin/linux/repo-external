@@ -7,7 +7,6 @@ die "$pwd: $!" unless (-e ".repo");
 my $repo_dirs=qx(repo forall -c pwd);
 our @repo_dirs=split(/\n/, $repo_dirs);
 
-
 sub search_subdir($) {
     my $this_dir=$_[0];
     opendir my $dh, $this_dir or die $!;
