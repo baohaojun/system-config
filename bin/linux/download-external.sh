@@ -4,6 +4,9 @@ function download_antlr() {
     mkdir -p ~/external/bin/linux/ext
     ln -sf  ~/external/bin/linux/ext ~/bin/linux/
     cd ~/bin/linux/ext/
+    wget http://android.git.kernel.org/repo
+    chmod +x repo
+
     ext_download=(
         http://www.antlr.org/download/antlr-3.2.tar.gz
         http://www.antlr.org/download/antlr-3.2.jar
@@ -17,6 +20,7 @@ function download_antlr() {
     tar zxfv stringtemplate*tar.gz
     ln -sf stringte*/lib/string*.jar stringtemplate.jar
     ln -sf antlrworks-1.3.1.jar antlrworks.jar
+
 }
 
 function download_lisp() {
