@@ -3010,7 +3010,9 @@ been initialized yet."
 (defun twittering-edit-post-status ()
   (interactive)
   (let ((status (replace-regexp-in-string
-		 "\n" "" (twittering-edit-extract-status)))
+		 "  ?\n" " " (replace-regexp-in-string
+			      "\\([[:ascii:]]\\)\n" "\\1 \n"
+			      (twittering-edit-extract-status))))
 	(reply-to-id (nth 0 twittering-reply-recipient))
 	(username (nth 1 twittering-reply-recipient))
 	(spec (nth 2 twittering-reply-recipient)))
@@ -5517,6 +5519,12 @@ managed by `twittering-mode'."
   (twittering-favorite t))
 
 (defun twittering-visit-timeline (&optional timeline-spec initial)
+  "Visit user, primary spec or list timeline.
+
+See `twittering-timeline-spec-primary-p' for what is a primary spec.  
+
+To visit a list, you can type like: \"foo/emacs\".  If you just
+type: \"foo/\", you can even see all lists created by \"foo\"."
   (interactive)
   (twittering-initialize-global-variables-if-necessary)
   (twittering-prepare-account-info)
