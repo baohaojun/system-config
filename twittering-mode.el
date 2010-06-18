@@ -2874,7 +2874,6 @@ been initialized yet."
 
   (make-local-variable 'twittering-timeline-spec)
   (make-local-variable 'twittering-timeline-spec-string)
-  (make-local-variable 'twittering-get-simple-retrieved)
   (make-local-variable 'twittering-active-mode)
   (make-local-variable 'twittering-icon-mode)
   (make-local-variable 'twittering-jojo-mode)
@@ -4001,7 +4000,6 @@ BUFFER may be a buffer or the name of an existing buffer."
 	  (user-profile-image-url (assq-get 'user-profile-image-url status))
 	  (user-url (assq-get 'user-url status))
 	  (user-protected (assq-get 'user-protected status))
-
 
 	  (original-user-name (assq-get 'original-user-name status))
 	  (original-user-screen-name (assq-get 'original-user-screen-name status)))
