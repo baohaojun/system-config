@@ -222,7 +222,7 @@ SSL connections use 'curl' command as a backend."
   :type 'symbol
   :group 'twittering)
 
-(defcustom twittering-timeline-spec-most-active-list '(home)
+(defcustom twittering-timeline-most-active-spec-strings '(":home")
   "See `twittering-timeline-spec-is-most-active-p'."
   :type 'list
   :group 'twittering)
@@ -1605,9 +1605,11 @@ direct_messages."
 For less active spec, do not update it every
 `twittering-timer-interval', rather, at the start of each hour.
 Or we could easily exceed requests limit of Twitter API,
-currently 150/hour.  SPEC is such as `home', the complete list is
-specified in `twittering-timeline-spec-most-active-list'."
-  (and spec (memq (car spec) twittering-timeline-spec-most-active-list)))
+currently 150/hour.  SPEC is such as '(home).  The complete list
+is specified in `twittering-timeline-most-active-spec-strings'."
+  (and spec
+       (member (twittering-timeline-spec-to-string spec)
+	       twittering-timeline-most-active-spec-strings)))
 
 (defun twittering-equal-string-as-timeline (spec-str1 spec-str2)
   "Return non-nil if SPEC-STR1 equals SPEC-STR2 as a timeline spec."
