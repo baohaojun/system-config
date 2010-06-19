@@ -4428,8 +4428,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
   (if twittering-reverse-mode
       (goto-char (point-max))
     (goto-char (point-min)))
-  (let ((buffer-read-only nil)
-	(insert-separator
+  (let ((insert-separator
 	 (lambda ()
 	   (insert twittering-user-profile-separator "\n"))))
     (when twittering-reverse-mode
@@ -4462,13 +4461,13 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		     ;; 			   ret)
 		     ;; 	       tmp (substring tmp 0 -3)))
 		     ;;   ret)
-		     (let ((f (if (string= twittering-username user-screen-name)
-				  -1
-				(twittering-followed-by-p user-screen-name))))
-		       (case f
-			 ((t) "follows you")
-			 ((nil) "doesn't follow you")
-			 ((-1) ""))))
+		     
+		     (cond ((twittering-followed-by-p user-screen-name)
+			    "follows you")
+			   ((eq twittering-get-simple-retrieved 'error)
+			    "...")
+			   (t
+			    "doesn't follow you")))
 
 	     ;; bio
 	     (if (string= user-description "")
@@ -5212,12 +5211,9 @@ variable `twittering-status-format'."
      twittering-get-simple-retrieved)))
 
 (defun twittering-followed-by-p (username)
-  "Return -1 when error occurs."
-  (case-string 
-   (twittering-get-simple-sync 'show-friendships `((username . ,username)))
-   (("true") t)
-   (("false") nil)
-   (t -1)))
+  (twittering-get-simple-sync 'show-friendships `((username . ,username)))
+  (and (stringp twittering-get-simple-retrieved)
+       (string= twittering-get-simple-retrieved "true")))
 
 ;;;
 ;;; Commands
