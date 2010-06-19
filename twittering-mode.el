@@ -2289,9 +2289,6 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 (defun twittering-enable-unread-status-notifier ()
   "Enable a notifier of unread statuses on `twittering-mode'."
   (interactive)
-  (setq twittering-unread-status-info
-	(mapcar (lambda (buffer) `(,buffer ,0))
-		(twittering-get-buffer-list)))
   (add-hook 'twittering-new-tweets-hook 'twittering-update-unread-status-info)
   (add-hook 'post-command-hook
 	    'twittering-reset-unread-status-info-if-necessary)
@@ -5316,6 +5313,9 @@ managed by `twittering-mode'."
      (lambda (buffer)
        (let ((spec (twittering-get-timeline-spec-for-buffer buffer)))
 	 (when (or (twittering-timeline-spec-is-most-active-p spec)
+		   ;; first run
+		   (not (member (twittering-timeline-spec-to-string spec)
+				twittering-timeline-history))
 		   ;; hourly TODO: make it customizable? (xwl)
 		   (let ((min-and-sec
 			  (+ (* (string-to-number
