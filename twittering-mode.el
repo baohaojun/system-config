@@ -4428,7 +4428,8 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
   (if twittering-reverse-mode
       (goto-char (point-max))
     (goto-char (point-min)))
-  (let ((insert-separator
+  (let ((buffer-read-only nil)
+	(insert-separator
 	 (lambda ()
 	   (insert twittering-user-profile-separator "\n"))))
     (when twittering-reverse-mode
