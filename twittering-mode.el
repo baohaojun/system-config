@@ -474,13 +474,20 @@ do not display unread notifier on mode line.")
       (if (and host method)
 	  (twittering-http-get host method noninteractive parameters format)
 	(error "Invalid timeline spec"))))
-   ((get-list-index)
+
+   ;; List methods
+   ((get-list-index get-list-subscriptions get-list-memberships)
     ;; Get list names.
-    (let ((username (cdr (assq 'username args-alist)))
-	  (sentinel (cdr (assq 'sentinel args-alist))))
-      (twittering-http-get twittering-api-host
-			   (concat "1/" username "/lists")
-			   t nil nil sentinel)))
+    (let* ((username (cdr (assq 'username args-alist)))
+	   (sentinel (cdr (assq 'sentinel args-alist)))
+	   (method (case command 
+		     ((get-list-index)
+		      (concat "1/" username "/lists"))
+		     ((get-list-subscriptions)
+		      (concat "1/" username "/lists/subscriptions"))
+		     ((get-list-memberships)
+		      (concat "1/" username "/lists/memberships")))))
+      (twittering-http-get twittering-api-host method t nil nil sentinel)))
 
    ;; Friendship Methods
    ((create-friendships destroy-friendships show-friendships)
@@ -501,6 +508,7 @@ do not display unread notifier on mode line.")
 			       method 
 			       `(("screen_name" . ,username)))))))
 
+   ;; Favorite Methods
    ((create-favorites)
     (let ((id (cdr (assq 'id args-alist))))
       (twittering-http-post twittering-api-host
@@ -509,6 +517,18 @@ do not display unread notifier on mode line.")
     (let ((id (cdr (assq 'id args-alist))))
       (twittering-http-post twittering-api-host
 			    (concat "1/favorites/destroy/" id))))
+
+   ;; List Subscribers Methods
+   ((subscribe-list unsubscribe-list)
+    (let* ((spec (cdr (assq 'timeline-spec args-alist)))
+	   (username (elt spec 1))
+	   (list-name (elt spec 2)))
+      (twittering-http-post twittering-api-host
+			    (format "1/%s/%s/subscribers"
+				    username list-name)
+			    (when (eq command 'unsubscribe-list)
+			      '(("_method" . "DELETE"))))))
+
    ((update-status)
     ;; Post a tweet.
     (let* ((status (cdr (assq 'status args-alist)))
@@ -519,13 +539,11 @@ do not display unread notifier on mode line.")
       (twittering-http-post twittering-api-host "1/statuses/update"
 			    parameters)))
    ((destroy-status)
-    ;; Destroy a status.
     (let ((id (cdr (assq 'id args-alist))))
       (twittering-http-post twittering-api-host
 			    "1/statuses/destroy"
 			    `(("id" . ,id)))))
    ((retweet)
-    ;; Post a retweet.
     (let ((id (cdr (assq 'id args-alist))))
       (twittering-http-post twittering-api-host
 			    (concat "1/statuses/retweet/" id))))
@@ -1239,6 +1257,18 @@ The zebra face is decided by looking at adjacent face. "
 	     object))
 	  points-str)
     object))
+
+(defun twittering-decorate-listname (listname)
+  (add-text-properties 0 (length listname)
+		       `(mouse-face
+			 highlight
+			 uri ,(twittering-get-status-url listname)
+			 goto-spec
+			 ,(twittering-string-to-timeline-spec
+			   listname)
+			 face twittering-username-face)
+		       listname)
+  listname)
 
 ;;;
 ;;; Utility functions for portability
@@ -3706,17 +3736,18 @@ Available keywords:
      (("200")
       (let ((xmltree (twittering-get-response-body (process-buffer proc)
 						   'xml-parse-region)))
-	(case (caar xmltree)
-	  ((relationship)		; show-friendships
-	   (setq ret (car 
-		      (reverse 
-		       (assq 'following (assq 'target (car xmltree)))))))
-	  (t				; get-list
-	   (when xmltree
+	(when xmltree
+	  (case (caar xmltree)
+	    ((relationship)		; show-friendships
+	     (setq ret (car 
+			(reverse 
+			 (assq 'following (assq 'target (car xmltree)))))))
+	    ;; get-list-index, get-list-subscriptions, get-list-memberships
+	    ((lists_list)
 	     (setq ret
 		   (mapcar
 		    (lambda (c-node)
-		      (caddr (assq 'slug c-node)))
+		      (substring (caddr (assq 'full_name c-node)) 1))
 		    (remove
 		     nil
 		     (mapcar
@@ -4469,6 +4500,37 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		user-friends-count user-followers-count user-statuses-count
 		user-favourites-count))
 
+	     ;; lists
+	     "\n"
+	     (let* ((prompts 
+		     (mapcar 
+		      (lambda (f) (format f user-screen-name))
+		      '("%s's Lists: "
+			"Lists %s Follows: " 
+			"Lists Following %s: ")))
+		    (width (apply 'max (mapcar 'length prompts))))
+	       (mapconcat 
+		'identity 
+		(mapcar* 
+		 (lambda (prompt method)
+		   (format 
+		    (format "%%%ds%%s" width)
+		    prompt
+		    (mapconcat 
+		     (lambda (l)
+		       (if (string= l "")
+			   "..."	; Indicate user may do a refresh here.
+			 (concat "@" (twittering-decorate-listname l))))
+		     (or (twittering-get-simple-sync 
+			  method `((username . ,user-screen-name)))
+			 (and (eq twittering-get-simple-retrieved 'error)
+			      (list "")))
+		     (concat "\n" (make-string width ? )))))
+		 prompts
+		 '(get-list-index get-list-subscriptions get-list-memberships))
+		"\n\n"))
+	     "\n"
+
 	     ;; join date
 	     (format "\nJoined on %s.\n"
 		     (mapconcat (lambda (i) 
@@ -5128,14 +5190,19 @@ variable `twittering-status-format'."
       (sit-for 0.1)))
   (unless twittering-get-simple-retrieved
     (message "twittering-get-simple-sync failed")
-    (setq twittering-get-simple-retrieved "error"))
+    (setq twittering-get-simple-retrieved 'error))
   (case method
-    ((get-list-index)
+    ((get-list-index get-list-subscriptions get-list-memberships)
      (cond
       ((stringp twittering-get-simple-retrieved)
        (if (string= "" twittering-get-simple-retrieved)
-	   (message "%s does not have a list." 
-		    (cdr (assq 'username args-alist)))
+	   (message 
+	    "%s does not have a %s." 
+	    (cdr (assq 'username args-alist))
+	    (cdr (assq method
+		       '((get-list-index         . "list")
+			 (get-list-subscriptions . "list subscription")
+			 (get-list-memberships   . "list membership")))))
 	 (message "%s" twittering-get-simple-retrieved))
        nil)
       ((listp twittering-get-simple-retrieved)
@@ -5452,16 +5519,24 @@ managed by `twittering-mode'."
 (defun twittering-follow (&optional remove)
   (interactive "P")
   (let ((username (copy-sequence (get-text-property (point) 'username)))
-	(method (if remove 'destroy-friendships 'create-friendships))
-	(mes (if remove "Unfollowing" "Following")))
+	(mes (if remove "Unfollowing" "Following"))
+	method args)
     (setq username (or (twittering-read-username-with-completion
 			"who: " "" 'twittering-user-history)
 		       ""))
     (if (string= "" username)
 	(message "No user selected")
       (set-text-properties 0 (length username) nil username)
+      (cond 
+       ((string-match "/" username)
+	(let ((spec (twittering-string-to-timeline-spec username)))
+	  (setq method  (if remove 'unsubscribe-list 'subscribe-list)
+		args `((timeline-spec . ,spec)))))
+       (t 
+	(setq method (if remove 'destroy-friendships 'create-friendships)
+	      args `((username . ,username)))))
       (if (y-or-n-p (format "%s %s? " mes username))
-	  (twittering-call-api method `((username . ,username)))
+	  (twittering-call-api method args)
 	(message "Request canceled")))))
 
 (defun twittering-unfollow ()
@@ -5645,7 +5720,13 @@ type: \"foo/\", you can even see all lists created by \"foo\"."
 	 (prompt (format "%s's list: " username))
 	 (listname
 	  (if list-index
-	      (twittering-completing-read prompt list-index nil t nil)
+	      (twittering-completing-read 
+	       prompt 
+	       (mapcar
+		(lambda (l) (caddr (twittering-string-to-timeline-spec l)))
+		list-index)
+	       nil 
+	       t)
 	    nil)))
     (if (string= "" listname)
 	nil
