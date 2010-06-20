@@ -3039,9 +3039,10 @@ been initialized yet."
 (defun twittering-edit-post-status ()
   (interactive)
   (let ((status (replace-regexp-in-string
-		 "  ?\n" " " (replace-regexp-in-string
-			      "\\([[:ascii:]]\\)\n" "\\1 \n"
-			      (twittering-edit-extract-status))))
+		 "\n" "" (replace-regexp-in-string
+			  "\\([[:ascii:]]\\) ?\n" 
+			  "\\1 \n" 
+			  (twittering-edit-extract-status))))
 	(reply-to-id (nth 0 twittering-reply-recipient))
 	(username (nth 1 twittering-reply-recipient))
 	(spec (nth 2 twittering-reply-recipient)))
