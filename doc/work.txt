@@ -3430,3 +3430,6 @@ composite -geometry +59+354 book_shelf.png xx.png xx.png
 composite -geometry +59+196 book_shelf.png xx.png xx.png 
 composite curtain_left.png xx.png xx.png 
 composite -geometry +880+0 curtain_right.png xx.png xx.png 
+git st -s|awk '{print $2}'|xargs bash -c 'for x in "$@"; do emacsclient $x; done' xx
+
+(rm -f /home/bhj/src/android-original/out/target/product/eeepc/obj/PACKAGING/systemimage_unopt_intermediates/system.img; rm -f /home/bhj/src/android-original/out/target/product/eeepc/system.img; rm -f /home/bhj/src/android-original/out/target/product/eeepc/eeepc.iso; cd ~/src/android-original/bootable/newinstaller/;  touch ./boot/isolinux/*; mm iso_img)

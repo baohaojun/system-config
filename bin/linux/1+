@@ -1,0 +1,10 @@
+#!/bin/bash
+if test "x`cat ~/.1+ 2>/dev/null`" = x; then
+        echo 0 > ~/.1+
+fi
+
+dood=`cat ~/.1+`
+((dood++))
+echo $dood > ~/.1+
+echo $dood
+
