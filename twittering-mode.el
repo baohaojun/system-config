@@ -5535,54 +5535,64 @@ managed by `twittering-mode'."
 	(browse-url uri))))
 
 (defun twittering-follow (&optional remove)
-  "Follow a user, a list or add a user to a list.
+  "Follow a user or a list.
 
-To add a user to a list, you shall run from the list buffer. 
 Non-nil optional REMOVE will do the opposite, unfollow. "
   (interactive "P")
-  (let ((user-or-list (or (twittering-read-username-with-completion
-			   "who: " "" 'twittering-user-history)
-			  ""))
-	prompt-format method args done)
-    (if (string= "" user-or-list)
-	(message "No user selected")
-      (set-text-properties 0 (length user-or-list) nil user-or-list)
-      ;; Try list members operation first when in a list buffer.
-      (when (and (eq (car (twittering-current-timeline-spec)) 'list)
-		 (not (string-match "/" user-or-list)))
-	(let ((spec (twittering-current-timeline-spec)))
-	  (setq prompt-format (format (if remove "Delete %%s from list %s? "
-					"Add %%s to list %s? ")
-				      (twittering-timeline-spec-to-string spec))
-		method  (if remove 'delete-list-members 'add-list-members)
-		args `((id . ,user-or-list)
-		       (timeline-spec . ,spec))))
-	(when (y-or-n-p (format prompt-format user-or-list))
-	  (twittering-call-api method args)
-	  (setq done t)))
-      ;; Follow user or list.
-      (unless done
-	(cond 
-	 ((string-match "/" user-or-list)
-	  (let ((spec (twittering-string-to-timeline-spec user-or-list)))
-	    (setq prompt-format (if remove "Unfollowing list %s? " 
-				  "Following list %s? ")
-		  method  (if remove 'unsubscribe-list 'subscribe-list)
-		  args `((timeline-spec . ,spec)))))
-	 (t 
-	  (setq prompt-format (if remove "Unfollowing %s? " "Following %s? ")
-		method (if remove 'destroy-friendships 'create-friendships)
-		args `((user-or-list . ,user-or-list)))))
-	(if (y-or-n-p (format prompt-format user-or-list))
-	    (twittering-call-api method args)
-	  (message "Request canceled"))))))
+  (let ((user-or-list (twittering-read-username-with-completion
+		       "who: " "" 'twittering-user-history))
+	prompt-format method args) 
+    (when (string= "" user-or-list)
+      (error "No user or list selected"))
+    (set-text-properties 0 (length user-or-list) nil user-or-list)
+    (if (string-match "/" user-or-list)
+	(let ((spec (twittering-string-to-timeline-spec user-or-list)))
+	  (setq prompt-format (if remove "Unfollowing list %s? " 
+				"Following list %s? ")
+		method  (if remove 'unsubscribe-list 'subscribe-list)
+		args `((timeline-spec . ,spec))))
+      (setq prompt-format (if remove "Unfollowing %s? " "Following %s? ")
+	    method (if remove 'destroy-friendships 'create-friendships)
+	    args `((user-or-list . ,user-or-list))))
+    (if (y-or-n-p (format prompt-format user-or-list))
+	(twittering-call-api method args)
+      (message "Request canceled"))))
 
 (defun twittering-unfollow ()
-  "Unfollow a user, a list or delete a user from a list.
-
-See also `twittering-follow'."
+  "Unfollow a user or a list."
   (interactive)
   (twittering-follow t))
+
+(defun twittering-add-list-members (&optional remove)
+  "Add a user to a list.
+
+Non-nil optional REMOVE will do the opposite, remove a user from
+a list. "
+  (interactive "P")
+  (let* ((username (twittering-read-username-with-completion
+		    (if remove "Remove who from list: " "Add who to list: ")
+		    "" 'twittering-user-history))
+	 (listname 
+	  (unless (string= username "")
+	    (or (twittering-read-list-name twittering-username)
+		(read-string
+		 "Failed to retrieve your list, enter list name manually or retry: ")))))
+    (when (or (string= username "") (string= listname ""))
+      (error "No user or list selected"))
+    (unless (string-match "/" listname)
+      (setq listname (concat twittering-username "/" listname)))
+    (if (y-or-n-p (format (if remove "Remove %s from %s? " "Add %s to %s? ")
+			  username listname))
+	(twittering-call-api 
+	 (if remove 'delete-list-members 'add-list-members)
+	 `((id . ,username)
+	   (timeline-spec . ,(twittering-string-to-timeline-spec listname))))
+      (message "Request canceled"))))
+
+(defun twittering-delete-list-members ()
+  "Delete a user to a list. "
+  (interactive)
+  (twittering-add-list-members t))
 
 (defun twittering-native-retweet ()
   (interactive)
