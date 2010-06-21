@@ -11,9 +11,10 @@ xwl's fork
 
 * new specs/API
   * `followers'
-  * show-friendships
-  * get-list-subscriptions, get-list-memberships
-  * subscribe-list, unsubscribe-list
+  * Friendship Methods: show-friendships
+  * List methods: get-list-subscriptions, get-list-memberships
+  * List Subscribers Methods: subscribe-list, unsubscribe-list
+  * List Members Methods: add-list-members, delete-list-members
   
 * unread tweets
   * Show unread tweets for different buffers in a way similar to
