@@ -415,154 +415,174 @@ do not display unread notifier on mode line.")
 
 (defun twittering-call-api (command args-alist &optional noninteractive)
   "Call Twitter API and return the process object for the request."
-  (case command
-   ((retrieve-timeline)
-    ;; Retrieve a timeline.
-    (let* ((spec (cdr (assq 'timeline-spec args-alist)))
-	   (spec-string (cdr (assq 'timeline-spec-string args-alist)))
-	   (spec-type (car-safe spec))
-	   (number (cdr (assq 'number args-alist)))
-	   (number-str (number-to-string number))
-	   (max_id (cdr (assq 'max_id args-alist)))
-	   (since_id (cdr (assq 'since_id args-alist)))
-	   (cursor (cdr (assq 'cursor args-alist)))
-	   (word (cdr (assq 'word args-alist)))
-	   (parameters
-	    `(,@(when max_id `(("max_id" . ,max_id)))
-	      ,@(when since_id `(("since_id" . ,since_id)))
-	      ,@(when cursor `(("cursor" . ,cursor)))
-	      ,@(cond
-		 ((eq spec-type 'search)
-		  `(("q" . ,word)
-		    ("rpp" . ,number-str)))
-		 ((eq spec-type 'list)
-		  `(("per_page" . ,number-str)))
-		 (t
-		  `(("count" . ,number-str))))))
-	   (format (if (eq spec-type 'search)
-		       "atom"
-		     "xml"))
-	   (simple-spec-list
-	    '((direct_messages      . "1/direct_messages")
-	      (direct_messages_sent . "1/direct_messages/sent")
+  ;; common arguments
+  (let ((spec (cdr (assq 'timeline-spec args-alist)))
+	(id (cdr (assq 'id args-alist)))
+	(username (cdr (assq 'username args-alist)))
+	(sentinel (cdr (assq 'sentinel args-alist))))
+    (case command
+      ((retrieve-timeline)
+       ;; Retrieve a timeline.
+       (let* ((spec-string (cdr (assq 'timeline-spec-string args-alist)))
+	      (spec-type (car-safe spec))
+	      (number (cdr (assq 'number args-alist)))
+	      (number-str (number-to-string number))
+	      (max_id (cdr (assq 'max_id args-alist)))
+	      (since_id (cdr (assq 'since_id args-alist)))
+	      (cursor (cdr (assq 'cursor args-alist)))
+	      (word (cdr (assq 'word args-alist)))
+	      (parameters
+	       `(,@(when max_id `(("max_id" . ,max_id)))
+		 ,@(when since_id `(("since_id" . ,since_id)))
+		 ,@(when cursor `(("cursor" . ,cursor)))
+		 ,@(cond
+		    ((eq spec-type 'search)
+		     `(("q" . ,word)
+		       ("rpp" . ,number-str)))
+		    ((eq spec-type 'list)
+		     `(("per_page" . ,number-str)))
+		    (t
+		     `(("count" . ,number-str))))))
+	      (format (if (eq spec-type 'search)
+			  "atom"
+			"xml"))
+	      (simple-spec-list
+	       '((direct_messages      . "1/direct_messages")
+		 (direct_messages_sent . "1/direct_messages/sent")
               
-	      (friends         . "1/statuses/friends_timeline")
-	      (home            . "1/statuses/home_timeline")
-	      (mentions        . "1/statuses/mentions")
-	      (public          . "1/statuses/public_timeline")
-	      (replies         . "1/statuses/replies")
-	      (retweeted_by_me . "1/statuses/retweeted_by_me")
-	      (retweeted_to_me . "1/statuses/retweeted_to_me")
-	      (retweets_of_me  . "1/statuses/retweets_of_me")
-	      (followers       . "1/statuses/followers")
+		 (friends         . "1/statuses/friends_timeline")
+		 (home            . "1/statuses/home_timeline")
+		 (mentions        . "1/statuses/mentions")
+		 (public          . "1/statuses/public_timeline")
+		 (replies         . "1/statuses/replies")
+		 (retweeted_by_me . "1/statuses/retweeted_by_me")
+		 (retweeted_to_me . "1/statuses/retweeted_to_me")
+		 (retweets_of_me  . "1/statuses/retweets_of_me")
+		 (followers       . "1/statuses/followers")
 
-	      (search . "search")))
-	   (host (cond ((eq spec-type 'search) twittering-api-search-host)
-		       (t twittering-api-host)))
-	   (method
-	    (cond
-	     ((eq spec-type 'user)
-	      (let ((username (elt spec 1)))
-		(concat "1/statuses/user_timeline/" username)))
-	     ((eq spec-type 'list)
-	      (let ((username (elt spec 1))
-		    (list-name (elt spec 2)))
-		(concat "1/" username "/lists/" list-name "/statuses")))
-	     ((assq spec-type simple-spec-list)
-	      (cdr (assq spec-type simple-spec-list)))
-	     (t nil))))
-      (if (and host method)
-	  (twittering-http-get host method noninteractive parameters format)
-	(error "Invalid timeline spec"))))
+		 (search . "search")))
+	      (host (cond ((eq spec-type 'search) twittering-api-search-host)
+			  (t twittering-api-host)))
+	      (method
+	       (cond
+		((eq spec-type 'user)
+		 (let ((username (elt spec 1)))
+		   (concat "1/statuses/user_timeline/" username)))
+		((eq spec-type 'list)
+		 (let ((username (elt spec 1))
+		       (list-name (elt spec 2)))
+		   (concat "1/" username "/lists/" list-name "/statuses")))
+		((assq spec-type simple-spec-list)
+		 (cdr (assq spec-type simple-spec-list)))
+		(t nil))))
+	 (if (and host method)
+	     (twittering-http-get host method noninteractive parameters format)
+	   (error "Invalid timeline spec"))))
 
-   ;; List methods
-   ((get-list-index get-list-subscriptions get-list-memberships)
-    ;; Get list names.
-    (let* ((username (cdr (assq 'username args-alist)))
-	   (sentinel (cdr (assq 'sentinel args-alist)))
-	   (method (case command 
-		     ((get-list-index)
-		      (concat "1/" username "/lists"))
-		     ((get-list-subscriptions)
-		      (concat "1/" username "/lists/subscriptions"))
-		     ((get-list-memberships)
-		      (concat "1/" username "/lists/memberships")))))
-      (twittering-http-get twittering-api-host method t nil nil sentinel)))
+      ;; List methods
+      ((get-list-index)			; Get list names.
+       (twittering-http-get twittering-api-host
+			    (concat "1/" username "/lists")
+			    t
+			    nil
+			    nil 
+			    sentinel))
+      ((get-list-subscriptions)	
+       (twittering-http-get twittering-api-host
+			    (concat "1/" username "/lists/subscriptions")
+			    t
+			    nil
+			    nil 
+			    sentinel))
+      ((get-list-memberships)	
+       (twittering-http-get twittering-api-host
+			    (concat "1/" username "/lists/memberships")
+			    t
+			    nil
+			    nil 
+			    sentinel))
 
-   ;; Friendship Methods
-   ((create-friendships destroy-friendships show-friendships)
-    (let ((username (cdr (assq 'username args-alist)))
-	  (method (concat "1/friendships/"
-			  (replace-regexp-in-string 
-			   "-friendships" "" (symbol-name command)))))
-      (case command 
-	((show-friendships)		; GET
-	 (twittering-http-get twittering-api-host
-			      method
-			      t
-			      `(("target_screen_name" . ,username))
-			      nil
-			      (cdr (assq 'sentinel args-alist))))
-	(t				; POST
+      ;; Friendship Methods
+      ((create-friendships)
+       (twittering-http-post twittering-api-host
+			     "1/friendships/create"
+			     `(("screen_name" . ,username))))
+      ((destroy-friendships)
+       (twittering-http-post twittering-api-host
+			     "1/friendships/destroy"
+			     `(("screen_name" . ,username))))
+      ((show-friendships)
+       (twittering-http-get twittering-api-host
+			    "1/friendships/show"
+			    t
+			    `(("target_screen_name" . ,username))
+			    nil 
+			    sentinel))
+       
+      ;; Favorite Methods
+      ((create-favorites)
+       (let ((id (cdr (assq 'id args-alist))))
 	 (twittering-http-post twittering-api-host
-			       method 
-			       `(("screen_name" . ,username)))))))
+			       (concat "1/favorites/create/" id))))
+      ((destroy-favorites)
+       (let ((id (cdr (assq 'id args-alist))))
+	 (twittering-http-post twittering-api-host
+			       (concat "1/favorites/destroy/" id))))
 
-   ;; Favorite Methods
-   ((create-favorites)
-    (let ((id (cdr (assq 'id args-alist))))
-      (twittering-http-post twittering-api-host
-			    (concat "1/favorites/create/" id))))
-   ((destroy-favorites)
-    (let ((id (cdr (assq 'id args-alist))))
-      (twittering-http-post twittering-api-host
-			    (concat "1/favorites/destroy/" id))))
+      ;; List Subscribers Methods
+      ((subscribe-list)
+       (twittering-http-post twittering-api-host
+			     (apply 'format "1/%s/%s/subscribers" (cdr spec))))
+      ((unsubscribe-list)
+       (twittering-http-post twittering-api-host
+			     (apply 'format "1/%s/%s/subscribers" (cdr spec))
+			     '(("_method" . "DELETE"))))
 
-   ;; List Subscribers Methods
-   ((subscribe-list unsubscribe-list)
-    (let* ((spec (cdr (assq 'timeline-spec args-alist)))
-	   (username (elt spec 1))
-	   (list-name (elt spec 2)))
-      (twittering-http-post twittering-api-host
-			    (format "1/%s/%s/subscribers"
-				    username list-name)
-			    (when (eq command 'unsubscribe-list)
-			      '(("_method" . "DELETE"))))))
+      ;; List Members Methods
+      ((add-list-members)
+       (twittering-http-post twittering-api-host 
+			     (apply 'format "1/%s/%s/members" (cdr spec))
+			     `(("id" . ,id))))
+      ((delete-list-members)
+       (twittering-http-post twittering-api-host 
+			     (apply 'format "1/%s/%s/members" (cdr spec))
+			     `(("id" . ,id)
+			       ("_method" . "DELETE"))))
 
-   ((update-status)
-    ;; Post a tweet.
-    (let* ((status (cdr (assq 'status args-alist)))
-	   (id (cdr (assq 'in-reply-to-status-id args-alist)))
-	   (parameters
-	    `(("status" . ,status)
-	      ,@(when id `(("in_reply_to_status_id" . ,id))))))
-      (twittering-http-post twittering-api-host "1/statuses/update"
-			    parameters)))
-   ((destroy-status)
-    (let ((id (cdr (assq 'id args-alist))))
-      (twittering-http-post twittering-api-host
-			    "1/statuses/destroy"
-			    `(("id" . ,id)))))
-   ((retweet)
-    (let ((id (cdr (assq 'id args-alist))))
-      (twittering-http-post twittering-api-host
-			    (concat "1/statuses/retweet/" id))))
-   ((verify-credentials)
-    ;; Verify the account.
-    (let ((sentinel (cdr (assq 'sentinel args-alist))))
-      (twittering-http-get twittering-api-host
-			   "1/account/verify_credentials"
-			   t nil nil
-			   sentinel)))
-   ((send-direct-message)
-    ;; Send a direct message.
-    (let ((parameters
-	   `(("user" . ,(cdr (assq 'username args-alist)))
-	     ("text" . ,(cdr (assq 'status args-alist))))))
-      (twittering-http-post twittering-api-host "1/direct_messages/new"
-			    parameters)))
-   (t
-    nil)))
+      ((update-status)
+       ;; Post a tweet.
+       (let* ((status (cdr (assq 'status args-alist)))
+	      (id (cdr (assq 'in-reply-to-status-id args-alist)))
+	      (parameters
+	       `(("status" . ,status)
+		 ,@(when id `(("in_reply_to_status_id" . ,id))))))
+	 (twittering-http-post twittering-api-host "1/statuses/update"
+			       parameters)))
+      ((destroy-status)
+       (let ((id (cdr (assq 'id args-alist))))
+	 (twittering-http-post twittering-api-host
+			       "1/statuses/destroy"
+			       `(("id" . ,id)))))
+      ((retweet)
+       (let ((id (cdr (assq 'id args-alist))))
+	 (twittering-http-post twittering-api-host
+			       (concat "1/statuses/retweet/" id))))
+      ((verify-credentials)
+       ;; Verify the account.
+       (let ((sentinel (cdr (assq 'sentinel args-alist))))
+	 (twittering-http-get twittering-api-host
+			      "1/account/verify_credentials"
+			      t nil nil
+			      sentinel)))
+      ((send-direct-message)
+       ;; Send a direct message.
+       (let ((parameters
+	      `(("user" . ,(cdr (assq 'username args-alist)))
+		("text" . ,(cdr (assq 'status args-alist))))))
+	 (twittering-http-post twittering-api-host "1/direct_messages/new"
+			       parameters)))
+      (t
+       nil))))
 
 ;;;
 ;;; Proxy setting / functions
@@ -5515,29 +5535,52 @@ managed by `twittering-mode'."
 	(browse-url uri))))
 
 (defun twittering-follow (&optional remove)
+  "Follow a user, a list or add a user to a list.
+
+To add a user to a list, you shall run from the list buffer. 
+Non-nil optional REMOVE will do the opposite, unfollow. "
   (interactive "P")
-  (let ((username (copy-sequence (get-text-property (point) 'username)))
-	(mes (if remove "Unfollowing" "Following"))
-	method args)
-    (setq username (or (twittering-read-username-with-completion
-			"who: " "" 'twittering-user-history)
-		       ""))
-    (if (string= "" username)
+  (let ((user-or-list (or (twittering-read-username-with-completion
+			   "who: " "" 'twittering-user-history)
+			  ""))
+	prompt-format method args done)
+    (if (string= "" user-or-list)
 	(message "No user selected")
-      (set-text-properties 0 (length username) nil username)
-      (cond 
-       ((string-match "/" username)
-	(let ((spec (twittering-string-to-timeline-spec username)))
-	  (setq method  (if remove 'unsubscribe-list 'subscribe-list)
-		args `((timeline-spec . ,spec)))))
-       (t 
-	(setq method (if remove 'destroy-friendships 'create-friendships)
-	      args `((username . ,username)))))
-      (if (y-or-n-p (format "%s %s? " mes username))
+      (set-text-properties 0 (length user-or-list) nil user-or-list)
+      ;; Try list members operation first when in a list buffer.
+      (when (and (eq (car (twittering-current-timeline-spec)) 'list)
+		 (not (string-match "/" user-or-list)))
+	(let ((spec (twittering-current-timeline-spec)))
+	  (setq prompt-format (format (if remove "Delete %%s from list %s? "
+					"Add %%s to list %s? ")
+				      (twittering-timeline-spec-to-string spec))
+		method  (if remove 'delete-list-members 'add-list-members)
+		args `((id . ,user-or-list)
+		       (timeline-spec . ,spec))))
+	(when (y-or-n-p (format prompt-format user-or-list))
 	  (twittering-call-api method args)
-	(message "Request canceled")))))
+	  (setq done t)))
+      ;; Follow user or list.
+      (unless done
+	(cond 
+	 ((string-match "/" user-or-list)
+	  (let ((spec (twittering-string-to-timeline-spec user-or-list)))
+	    (setq prompt-format (if remove "Unfollowing list %s? " 
+				  "Following list %s? ")
+		  method  (if remove 'unsubscribe-list 'subscribe-list)
+		  args `((timeline-spec . ,spec)))))
+	 (t 
+	  (setq prompt-format (if remove "Unfollowing %s? " "Following %s? ")
+		method (if remove 'destroy-friendships 'create-friendships)
+		args `((user-or-list . ,user-or-list)))))
+	(if (y-or-n-p (format prompt-format user-or-list))
+	    (twittering-call-api method args)
+	  (message "Request canceled"))))))
 
 (defun twittering-unfollow ()
+  "Unfollow a user, a list or delete a user from a list.
+
+See also `twittering-follow'."
   (interactive)
   (twittering-follow t))
 
