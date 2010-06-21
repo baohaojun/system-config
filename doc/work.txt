@@ -3436,3 +3436,5 @@ git st -s|awk '{print $2}'|xargs bash -c 'for x in "$@"; do emacsclient $x; done
 
 sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xfbef0d696de1c72ba5a835fe5a9bf3bb4e5e17b5
 deb http://ppa.launchpad.net/chromium-daily/ppa/ubuntu lucid main
+http://www.zqzj.net/
+http://www.5uproxy.net/
