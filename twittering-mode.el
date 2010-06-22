@@ -5553,7 +5553,7 @@ Non-nil optional REMOVE will do the opposite, unfollow. "
 		args `((timeline-spec . ,spec))))
       (setq prompt-format (if remove "Unfollowing %s? " "Following %s? ")
 	    method (if remove 'destroy-friendships 'create-friendships)
-	    args `((user-or-list . ,user-or-list))))
+	    args `((username . ,user-or-list))))
     (if (y-or-n-p (format prompt-format user-or-list))
 	(twittering-call-api method args)
       (message "Request canceled"))))
