@@ -149,6 +149,7 @@ Items:
  %j - user.id
  %p - protected?
  %c - created_at (raw UTC string)
+ %g - format %c using `gnus-user-date'
  %C{time-format-str} - created_at (formatted with time-format-str)
  %@ - X seconds ago
  %T - raw text
@@ -4904,6 +4905,9 @@ Example:
        (formater (twittering-generate-status-formater-base braced-str)))
       (twittering-update-filled-string nil nil formater status prefix))
      ("f" () (cdr (assq 'source status)))
+     ("g" () 
+      (require 'gnus-util)
+      (gnus-user-date (cdr (assq 'created-at status))))
      ("i" ()
       (when (and twittering-icon-mode window-system)
 	(let* ((url (cdr (assq 'user-profile-image-url status))))
