@@ -3434,7 +3434,10 @@ git st -s|awk '{print $2}'|xargs bash -c 'for x in "$@"; do emacsclient $x; done
 
 (rm -f /home/bhj/src/android-original/out/target/product/eeepc/obj/PACKAGING/systemimage_unopt_intermediates/system.img; rm -f /home/bhj/src/android-original/out/target/product/eeepc/system.img; rm -f /home/bhj/src/android-original/out/target/product/eeepc/eeepc.iso; cd ~/src/android-original/bootable/newinstaller/;  touch ./boot/isolinux/*; mm iso_img)
 
+chrome:
 sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xfbef0d696de1c72ba5a835fe5a9bf3bb4e5e17b5
+deb http://ppa.launchpad.net/chromium-daily/ppa/ubuntu lucid main
+
 deb http://ppa.launchpad.net/chromium-daily/ppa/ubuntu lucid main
 http://www.zqzj.net/
 http://www.5uproxy.net/
