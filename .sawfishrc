@@ -6,6 +6,10 @@
 (bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/linux/screenshot&")))
 (bind-keys global-keymap "Super-r" (lambda () (system "grun&")))
 (bind-keys window-keymap "Super-i" (lambda () (display-message (concat "Window class is: " (window-class (input-focus))))))
+(bind-keys global-keymap "Super-SPC" (lambda() 
+                                       (mapc (lambda (window)
+                                               (window-put window 'depth 0))
+                                             (stacking-order))))
 
 
 (defun bhj-activate-window (window)
