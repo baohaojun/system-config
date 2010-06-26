@@ -30,6 +30,7 @@ xwl's fork
   * (twittering-mode-setup): Short mode-name to just "twittering"
   * Use defcustom to separate user customizable variables and internal
     variables.
+  * %g: New format specifier, to format time string using `gnus-user-date'.  
 
  Twittering-mode: a Twitter client for Emacs
 =============================================
