@@ -149,7 +149,8 @@ Items:
  %j - user.id
  %p - protected?
  %c - created_at (raw UTC string)
- %g - format %c using `gnus-user-date'
+ %g - format %c using `gnus-user-date' (Note: this assumes you will not keep
+      latest statuses for more than a week)
  %C{time-format-str} - created_at (formatted with time-format-str)
  %@ - X seconds ago
  %T - raw text
@@ -1156,12 +1157,15 @@ image are displayed."
 		  (not (pos-visible-in-window-p pos window))))))
 
 (defun twittering-make-passed-time-string
-  (beg end encoded-created-at time-format &optional additional-properties)
-  (let* ((now (current-time))
-	 (secs (+ (* (- (car now) (car encoded-created-at)) 65536)
-		  (- (cadr now) (cadr encoded-created-at))))
+  (beg end created-at-str time-format &optional additional-properties)
+  (let* ((secs (time-to-seconds (time-since created-at-str)))
+	 (encoded (apply 'encode-time (parse-time-string created-at-str)))
 	 (time-string
 	  (cond
+	   ((string= time-format "%g")
+	    (require 'gnus-util)
+	    (gnus-user-date created-at-str))
+
 	   ((< secs 5) "less than 5 seconds ago")
 	   ((< secs 10) "less than 10 seconds ago")
 	   ((< secs 20) "less than 20 seconds ago")
@@ -1173,17 +1177,21 @@ image are displayed."
 	   ((< secs 5400) "about 1 hour ago")
 	   ((< secs 84600) (format "about %d hours ago"
 				   (/ (+ secs 1800) 3600)))
-	   (t (format-time-string time-format encoded-created-at))))
+	   (t (format-time-string time-format encoded))))
 	 (properties (append additional-properties
 			     (and beg (text-properties-at beg)))))
     ;; Restore properties.
     (when properties
       (add-text-properties 0 (length time-string) properties time-string))
-    (if (< secs 84600)
+    (if (and (< secs 84600)
+	     (if (string= time-format "%g") 
+		 (= (time-to-day-in-year (current-time))
+		    (time-to-day-in-year encoded))
+	       t))
 	(put-text-property 0 (length time-string)
 			   'need-to-be-updated
 			   `(twittering-make-passed-time-string
-			     ,encoded-created-at ,time-format)
+			     ,created-at-str ,time-format)
 			   time-string)
       ;; Remove the property required no longer.
       (remove-text-properties 0 (length time-string) '(need-to-be-updated nil)
@@ -4872,16 +4880,13 @@ Example:
      ("@\\({\\([^}]*\\)}\\)?"
       ((time-format (or (match-string 2 fmt-following) "%I:%M %p %B %d, %Y")))
       (let* ((created-at-str (cdr (assq 'created-at status)))
-	     (created-at
-	      (apply 'encode-time
-		     (parse-time-string created-at-str)))
 	     (url
 	      (twittering-get-status-url
 	       (cdr (assq 'user-screen-name status))
 	       (cdr (assq 'id status))))
 	     (properties
 	      `(mouse-face highlight face twittering-uri-face uri ,url)))
-	(twittering-make-passed-time-string nil nil created-at time-format
+	(twittering-make-passed-time-string nil nil created-at-str time-format
 					    properties)))
      ("C\\({\\([^}]*\\)}\\)?"
       ((time-format (or (match-string 2 fmt-following) "%H:%M:%S")))
@@ -4906,8 +4911,8 @@ Example:
       (twittering-update-filled-string nil nil formater status prefix))
      ("f" () (cdr (assq 'source status)))
      ("g" () 
-      (require 'gnus-util)
-      (gnus-user-date (cdr (assq 'created-at status))))
+      (twittering-make-passed-time-string 
+       nil nil (cdr (assq 'created-at status)) "%g"))
      ("i" ()
       (when (and twittering-icon-mode window-system)
 	(let* ((url (cdr (assq 'user-profile-image-url status))))
