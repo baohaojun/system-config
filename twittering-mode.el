@@ -3064,7 +3064,7 @@ been initialized yet."
 	  (current-window-configuration))
     (pop-to-buffer buf)
     (twittering-edit-mode)
-    (twittering-edit-setup-help username spec)
+    ;; (twittering-edit-setup-help username spec)
     (if (twittering-timeline-spec-is-direct-messages-p spec)
 	(message "C-c C-c to send, C-c C-k to cancel")
       (and (null init-str)
@@ -3140,7 +3140,7 @@ been initialized yet."
       (erase-buffer)
       (insert (nth twittering-edit-local-history-idx
 		   twittering-edit-local-history))
-      (twittering-edit-setup-help)
+      ;; (twittering-edit-setup-help)
       (goto-char (point-min)))))
 
 (defun twittering-edit-previous-history ()
@@ -3155,7 +3155,7 @@ been initialized yet."
       (erase-buffer)
       (insert (nth twittering-edit-local-history-idx
 		   twittering-edit-local-history))
-      (twittering-edit-setup-help)
+      ;; (twittering-edit-setup-help)
       (goto-char (point-min))))
   )
 
