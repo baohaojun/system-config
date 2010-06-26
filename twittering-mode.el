@@ -3096,27 +3096,17 @@ been initialized yet."
 	  (y-or-n-p "Send this tweet? "))
       (setq twittering-edit-history
 	    (cons status twittering-edit-history))
-      (cond
-       ((twittering-timeline-spec-is-direct-messages-p spec)
-	(if username
-	    (let ((parameters `(("user" . ,username)
-				("text" . ,status))))
-	      (twittering-http-post twittering-api-host "1/direct_messages/new"
-				    parameters))
-	  (message "No username specified")))
-       (t
-	(let ((parameters `(("status" . ,status))))
-	  ;; Add in_reply_to_status_id only when a posting status
-	  ;; begins with @username.
-	  (when (and reply-to-id
-		     (string-match
-		      (concat "\\`@" username "\\(?:[\n\r \t]+\\)*")
-		      status))
-	    (add-to-list 'parameters
-			 `("in_reply_to_status_id" .
-			   ,(format "%s" reply-to-id))))
-	  (twittering-http-post twittering-api-host "1/statuses/update"
-				parameters))))
+      (let ((parameters `(("status" . ,status))))
+	;; Add in_reply_to_status_id only when a posting status
+	;; begins with @username.
+	(when (and reply-to-id
+		   (string-match
+		    (concat "\\`@" username "\\(?:[\n\r \t]+\\)*")
+		    status))
+	  (add-to-list 'parameters `("in_reply_to_status_id" .
+				     ,(format "%s" reply-to-id))))
+	(twittering-http-post twittering-api-host "1/statuses/update"
+			      parameters))
       (twittering-edit-close))
      (t
       nil))))
@@ -5497,7 +5487,7 @@ managed by `twittering-mode'."
 	  (username
 	   (funcall twittering-update-status-function
 		    (if (twittering-timeline-spec-is-direct-messages-p spec)
-			nil
+			(concat "d " username " ")
 		      (concat "@" username " "))
 		    id username spec)))))
 
@@ -5740,10 +5730,7 @@ type: \"foo/\", you can even see all lists created by \"foo\"."
     (if (string= "" username)
 	(message "No user selected")
       (funcall twittering-update-status-function
-	       (if (twittering-timeline-spec-is-direct-messages-p spec)
-		   nil
-		 (concat "d " username " "))
-	       nil username spec))))
+	       (concat "d " username " ") nil username spec))))
 
 (defun twittering-reply-to-user ()
   (interactive)
