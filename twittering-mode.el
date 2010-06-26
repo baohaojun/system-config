@@ -268,6 +268,11 @@ avatar(48x48).  So normally we don't have to convert it at all."
   :type 'number
   :group 'twittering)
 
+(defcustom twittering-new-tweets-count-excluding-me nil
+  "Non-nil will exclude my own tweets when counting received new tweets."
+  :type 'boolean
+  :group 'twittering)
+
 ;;;
 ;;; Internal Variables
 ;;;
@@ -324,6 +329,7 @@ directly. Use `twittering-current-timeline-spec-string' or
 
 (defvar twittering-new-tweets-count 0
   "Number of new tweets when `twittering-new-tweets-hook' is run.")
+
 (defvar twittering-new-tweets-spec nil
   "Timeline spec, which new tweets belong to, when
 `twittering-new-tweets-hook' is run.")
@@ -1829,7 +1835,13 @@ Statuses are stored in ascending-order with respect to their IDs."
 					  (cdr (assq 'text status))))
 		new-statuses))
 	(let ((twittering-new-tweets-spec spec)
-	      (twittering-new-tweets-count (length new-statuses)))
+	      (twittering-new-tweets-count 
+	       (count-if (lambda (status)
+			   (if twittering-new-tweets-count-excluding-me
+			     (not (string= (cdr (assq 'user-screen-name status))
+					   twittering-username))
+			     t))
+			 new-statuses)))
 	  (run-hooks 'twittering-new-tweets-hook))
 	new-statuses))))
 
