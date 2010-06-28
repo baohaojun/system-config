@@ -260,10 +260,12 @@ then you can use \"$to_me\" as
   :type 'list
   :group 'twittering)
 
-(defcustom twittering-convert-fix-size nil
-  "Size of user icon, when nil, use default avatar.
+(defcustom twittering-convert-fix-size 48
+  "Size of user icon.
 
-The default profile_image_url in status is already an
+When nil, don't convert, simply use original size.
+
+Most default profile_image_url in status is already an
 avatar(48x48).  So normally we don't have to convert it at all."
   :type 'number
   :group 'twittering)
@@ -1024,7 +1026,11 @@ image are displayed."
      (t
       (put-text-property 0 (length icon-string)
 			 'need-to-be-updated
-			 `(twittering-make-icon-string ,image-url)
+			 `((lambda (&rest args)
+			     (let ((twittering-convert-fix-size
+				    ,twittering-convert-fix-size))
+			       (apply 'twittering-make-icon-string 
+				      (append args (list ,image-url))))))
 			 icon-string)
       (twittering-url-retrieve-async image-url 'twittering-register-image-data)
       icon-string))))
@@ -4573,7 +4579,8 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	    (if (and twittering-icon-mode window-system)
 		(let* ((url (cdr (assq 'user-profile-image-url status)))
 		       (orig-url (replace-regexp-in-string "_normal\\." "." url))
-		       (s (twittering-make-icon-string nil nil orig-url)))
+		       (s (let ((twittering-convert-fix-size nil))
+			    (twittering-make-icon-string nil nil orig-url))))
 		  (add-text-properties 0 (length s)
 				       `(mouse-face highlight uri ,orig-url)
 				       s)
