@@ -3441,3 +3441,10 @@ deb http://ppa.launchpad.net/chromium-daily/ppa/ubuntu lucid main
 deb http://ppa.launchpad.net/chromium-daily/ppa/ubuntu lucid main
 http://www.zqzj.net/
 http://www.5uproxy.net/
+
+mount -w -o remount /dev/block/mtdblock2 /system
+
+
+setprop EXTERNAL_STORAGE_STATE mounted
+$am broadcast -a android.intent.action.MEDIA_MOUNTED --ez read-only false -d file:///sdcar
+repo init -u git://r46/git/android-google/platform/manifest.git -b eclair-local

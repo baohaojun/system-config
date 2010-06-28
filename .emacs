@@ -157,6 +157,7 @@
   (c-set-style "K&R")
   (setq tab-width 4)
   (setq indent-tabs-mode t)
+  (c-set-offset 'innamespace 0)
   (setq c-basic-offset 4))
 
 (defun linux-c++-mode ()
@@ -168,6 +169,7 @@
   (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "K&R")
   (setq tab-width 4)
+  (c-set-offset 'innamespace 0)
   (setq indent-tabs-mode t)
   (setq c-basic-offset 4))
 
