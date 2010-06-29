@@ -3893,14 +3893,8 @@ BUFFER may be a buffer or the name of an existing buffer."
       (id . ,(progn
 	       (string-match ":\\([0-9]+\\)$" id-str)
 	       (match-string 1 id-str)))
-      (source
-       . ,(let ((html (twittering-decode-html-entities
-		       (car (cddr (assq 'twitter:source atom-xml-entry))))))
-	    (when (string-match
-		   "<a href=\"\\(.*?\\)\".*?>\\(.*\\)</a>" html)
-	      (let ((uri (match-string-no-properties 1 html))
-		    (caption (match-string-no-properties 2 html)))
-		caption))))
+      (source . ,(twittering-decode-html-entities
+		  (car (cddr (assq 'twitter:source atom-xml-entry)))))
       (text . ,(twittering-decode-html-entities
 		(car (cddr (assq 'title atom-xml-entry)))))
       ,@(progn
