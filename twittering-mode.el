@@ -2315,7 +2315,9 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 			   (twittering-build-unique-prefix
 			    (mapcar (lambda (entry)
 				      (replace-regexp-in-string
-				       "\\`:" "" (buffer-name entry)))
+				       ".+/" "" 
+				       (replace-regexp-in-string
+					"\\`:\\|/\\'" "" (buffer-name entry))))
 				    tw-buffers))))
 		   twittering-unread-status-info)))
 	",")))))
