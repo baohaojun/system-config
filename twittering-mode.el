@@ -4201,6 +4201,14 @@ been initialized yet."
 (defun twittering-url-retrieve-synchronously (url)
   (twittering-url-wrapper 'url-retrieve-synchronously url))
 
+(defadvice url-retrieve (around hexify-multibyte-string activate)
+  (let ((url (ad-get-arg 0)))
+    (if (multibyte-string-p url)
+	(let ((url-unreserved-chars (append '(?: ?/) url-unreserved-chars)))
+	  (ad-set-arg 0 (url-hexify-string url))
+	  ad-do-it)
+      ad-do-it)))
+
 ;;;
 ;;; Asynchronous retrieval
 ;;;
