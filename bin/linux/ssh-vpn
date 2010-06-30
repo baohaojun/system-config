@@ -30,7 +30,9 @@ sub do_ssh($) {
 
 while (1) {
   my $page = qx(wget http://vpn.tl/free/ssh/ -O -);
-  $page =~ m,免费账号: vpntl 密码: (.*)<br/>, or system("echo no password; sleep 30");
+  $page =~ m,免费账号: vpntl 密码: (.*)<br/>, or 
+      $page =~ m,.*value="(.*?)",s;
+  print "passwd is $1\n";
   my $passwd = $1;
   do_ssh($passwd);
 }
