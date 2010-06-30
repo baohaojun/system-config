@@ -1,4 +1,10 @@
 #!/bin/sh
+if test $# != 0; then
+    exec <<EOF
+$@
+EOF
+fi
+
 if test "$IN_EMACS" = true; then
 cat > /tmp/$$.putclip
 export FILE=/tmp/$$.putclip

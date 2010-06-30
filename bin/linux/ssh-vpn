@@ -1,0 +1,36 @@
+#!/usr/bin/env perl
+
+#!/usr/bin/env perl
+
+use Expect;
+use strict;
+
+sub do_ssh($) {
+  my $passwd = $_[0];
+  my $ssh = new Expect;
+  $ssh->raw_pty(0);
+  $ssh->spawn("ssh -C2qN -D 8080 vpntl\@free.vpn.tl") || die "Couldn't spawn ssh, $!";
+
+
+  # Look for a username prompt. On my box this looks like:
+  # "Name (ssh.cdrom.com:tex): "
+  # So, let's see what our username is.
+
+  unless ($ssh->expect(30,"vpntl\@free.vpn.tl's password:")) {
+    return "Never got password prompt on ssh, ".$ssh->exp_error()."\n";
+  }
+
+  print $ssh "$passwd\r";
+
+  my $undef;
+  unless ($ssh->expect($undef, "asdlfj asdlfj sldjf ")) {
+    return "got something not expected, we are waiting for eof ".$ssh->exp_error()."\n";
+  }
+}
+
+while (1) {
+  my $page = qx(wget http://vpn.tl/free/ssh/ -O -);
+  $page =~ m,免费账号: vpntl 密码: (.*)<br/>, or system("echo no password; sleep 30");
+  my $passwd = $1;
+  do_ssh($passwd);
+}
