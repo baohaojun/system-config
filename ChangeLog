@@ -1,3 +1,311 @@
+2010-07-01  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Support the url library included in Emacs 23
+	and later.
+	(twittering-oauth-get-token-alist-native): support the function
+	`url-generic-parse-url' that returns parsed URL object generated
+	as `structure'.
+	(twittering-oauth-get-token-alist-curl): likewise.
+
+	* twittering-mode.el (twittering-call-api): `user', `friends',
+	`mentions' and `public' timelines include native retweets.
+
+2010-06-30  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el (twittering-verify-credentials): reset
+	`twittering-username' when authentication via xAuth failed.
+
+	* twittering-mode.el (twittering-verify-credentials): invoke
+	`twittering-prepare-account-info' before authentication method
+	requiring account information.
+	(twittering-visit-timeline): invoke
+	`twittering-verify-credentials' before reading timeline spec.
+
+2010-06-29  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Confirm process status for avoiding
+	dead-lock.
+	(twittering-oauth-get-token-alist-native): confirm the process
+	status in order to avoid dead-lock. If the process exited
+	abnormally, the variable `result' becomes nil.
+	(twittering-oauth-get-token-alist-curl): likewise.
+	(twittering-verify-credentials): wait for the process to exit
+	in order to avoid dead-lock.
+	(twittering-get-list-index-sync): likewise.
+
+	* twittering-mode.el (twittering-verify-credentials): wait for the
+	process to exit in order to avoid dead-lock.
+
+	* twittering-mode.el: Support authentication via xAuth.
+	(twittering-get-list-index-sync): likewise.
+	(twittering-xauth-auth-str-access-token): new function.
+	(twittering-oauth-get-token-alist-url): add an argument
+	`post-body'.
+	(twittering-oauth-get-token-alist-native): likewise.
+	(twittering-oauth-get-token-alist-curl): likewise.
+	(twittering-oauth-get-token-alist): add an optional argument
+	`post-body'.
+	(twittering-xauth-get-access-token): new function.
+	(twittering-prepare-account-info): support xAuth.
+	(twittering-verify-credentials): likewise.
+	(twittering-http-application-headers-with-auth): likewise.
+	(twittering-visit-timeline): call
+	`twittering-prepare-account-info' for xAuth.
+
+2010-06-13  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el (twittering-write-and-encrypt): fix arguments
+	of `epg-context-set-progress-callback' because of the difference
+	between EasyPG 0.0.16 and that included in Emacs23.
+
+	* twittering-mode.el (twittering-save-private-info): change the
+	permission of the encrypted file in order to prevent others from
+	reading the file.
+	(twittering-write-and-encrypt): return t explicitly when it
+	succeeded in encrypting private information.
+
+	* twittering-mode.el (twittering-write-and-encrypt): In order to
+	prevent `epa-file' to encrypt the file double,
+	`epa-file-name-regexp' is temorarily changed into the null regexp
+	that never matches any string.
+
+2010-06-12  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Fix bugs.
+	(twittering-hmac-sha1): remove invalid arguments.
+	(twittering-oauth-auth-str): correct a variable.
+
+	* twittering-mode.el: Support master password for storing private
+	information in an encrypted file.
+	(twittering-use-master-password): new variable.
+	(twittering-private-info-file): new variable.
+	(twittering-variables-stored-with-encryption): new variable.
+	(twittering-load-private-info): new function.
+	(twittering-load-private-info-with-guide): new function.
+	(twittering-save-private-info): new function.
+	(twittering-save-private-info-with-guide): new function.
+	(twittering-capable-of-encryption-p): new function.
+	(twittering-read-from-encrypted-file): new function.
+	(twittering-write-and-encrypt): new function.
+	(twittering-verify-credentials): support master password.
+
+	* twittering-mode.el: Add codes for debugging functions for
+	OAuth.
+	(twittering-oauth-get-token-alist-url): add codes for debug.
+	(twittering-oauth-get-token-alist-native): likewise.
+	(twittering-oauth-get-token-alist-curl): likewise.
+
+2010-06-09  Yuto Hayamizu  <y.hayamizu@gmail.com>
+
+	* twittering-mode.el (twittering-oauth-get-access-token): reject
+	invalid PIN code input and strip extra white spaces.
+
+2010-06-05  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: confirm that a valid access token has been
+	retrieved.
+	(twittering-oauth-make-response-alist): do not decode a null entry.
+	(twittering-verify-credentials): confirm that the retrieved
+	`token-alist' is valid as an access token.
+
+2010-06-04  Yuto Hayamizu  <y.hayamizu@gmail.com>
+
+	* twittering-mode.el: removed (set-terminal-coding-system 'utf-8)
+	(twittering-mode-map): changed key bindings:
+	twittering-public-timeline: C-c C-g -> C-c C-p,
+	twittering-set-current-hashtag: C-c C-h -> C-c C-t
+	
+
+2010-06-03  Yuto Hayamizu  <y.hayamizu@gmail.com>
+
+	* twittering-mode.el: add encrypted oauth consumer key/secret
+	(twittering-auth-method): changed default value to 'oauth
+	(twittering-oauth-get-access-token): give users a choise to open
+	authrization URL with browser or not when
+	twittering-oauth-invoke-browser is nil.
+
+2010-06-03  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Use `twittering-oauth-use-ssl' instead of
+	`twittering-use-ssl' on functions for OAuth.
+	(twittering-oauth-use-ssl): add docstring.
+	(twittering-oauth-get-response-alist): use
+	`twittering-oauth-use-ssl' instead of `twittering-use-ssl'.
+	(twittering-oauth-get-token-alist-native): likewise.
+	(twittering-oauth-get-token-alist-curl): likewise.
+	(twittering-verify-credentials): likewise.
+
+	* twittering-mode.el: Restore window parameters after automatic
+	redisplaying.
+	(twittering-current-window-config): new function.
+	(twittering-restore-window-config-after-modification): new function.
+	(twittering-redisplay-status-on-each-buffer): restore window
+	parameters after redisplaying.
+
+	* twittering-mode.el: Suppress automatic redisplaying if
+	unnecessary.
+	(twittering-redisplay-status-on-each-buffer): do not modify buffer
+	if updated string is same as the current string in the meaning of
+	`string='.
+	(twittering-make-icon-string): give different strings for
+	displayed and undisplayed icon.
+
+	* twittering-mode.el: Stop automatic redisplaying of buffers in
+	which the mark and region are active.
+	(twittering-redisplay-status-on-buffer): do not update buffer
+	in which the mark and region are active.
+
+	* twittering-mode.el: Reimplement the status formater that allows
+	recursive specifiers such as "%FILL{%FACE[bold]{%C{%m/%d}}: %T}".
+	(twittering-parse-format-string): removed.
+	(twittering-generate-formater): removed.
+	(twittering-generate-status-formater-base): removed.
+	(twittering-generate-format-table): new function.
+	(twittering-generate-formater-for-first-spec): new function.
+	(twittering-generate-formater-for-current-level): new function.
+	(twittering-generate-format-status-function): new function.
+	(twittering-generate-format-status-function): use new
+	implementation.
+
+	* twittering-mode.el: Add an optional argument for the format
+	specifier `FILL'. The argument specifies the prefix for the filled
+	region.
+	(twittering-status-format): use 2 white spaces as fill-prefix in
+	default.
+	(twittering-fill-string): use an additional argument `prefix' as
+	`fill-prefix' for `fill-region-as-paragraph' if the argument is
+	non-nil.
+	(twittering-update-filled-string): transfer the local prefix for
+	`twittering-fill-string'.
+	(twittering-generate-formater-for-first-spec): recognize an
+	optional argument for the format specifier `FILL'.
+
+	* twittering-mode.el: Add a new format specifier
+	"%FOLD[prefix]{...}".
+	(twittering-fill-string): add an argument `keep-newline'. If it is
+	non-nil, do not remove newlines in given string.
+	(twittering-update-filled-string): add an argument
+	`keep-newline'.
+	(twittering-generate-formater-for-first-spec): add a new specifier
+	"%FOLD[prefix]{...}".
+
+	* twittering-mode.el: Fix unintended cursor motion caused by
+	automatic redisplaying.
+	(twittering-redisplay-status-on-each-buffer): fix the incorrect
+	cursor motion occurring when it points the beginning of region
+	that will be be modified.
+
+2010-05-27  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el (twittering-toggle-activate-buffer): restart
+	the timer if it is not active when activating a buffer.
+
+2010-05-24  Naohiro Aota  <naota@elisp.net>
+
+	* twittering-mode.el (twittering-native-retweet): Check if tweet
+	is my own one.
+
+2010-05-22  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Use the coding-system `utf-8-unix' for
+	reading data retrieved from Twitter.
+	(twittering-start-http-session-curl): use the coding-system
+	`utf-8-unix' for reading data retrieved from Twitter.
+	(twittering-start-http-session-native): likewise.
+
+	* twittering-mode.el: Omit a successful HTTP response and headers
+	if they seem to be sent from a proxy for CONNECT method.
+	(twittering-http-default-sentinel): omit a successful HTTP
+	response and headers from a proxy if using SSL via the proxy.
+	(twittering-get-response-header): do not remove headers from a
+	proxy.
+
+	* twittering-mode.el: Do not initialize `twittering-tls-program'
+	multiple times.
+	(twittering-start-http-session-native-tls-p): check `tls-program'
+	only if `twittering-tls-program' is nil.
+
+	* twittering-mode.el: Cache the result of capability confirmation
+	for `curl'.
+	(twittering-start-http-session-curl-p): do not initialize
+	`twittering-curl-program' multiple times.
+	(twittering-start-http-session-curl-https-p): do not execute
+	`curl' multiple times.
+
+	* twittering-mode.el: Look-up of connection type is rearranged.
+	(twittering-lookup-http-start-function): reimplemented.
+	(twittering-lookup-connection-type): new function.
+
+	* twittering-mode.el: Confirm an available connection method
+	before visiting a timeline.
+	(twittering-visit-timeline): confirm connection method.
+
+	* twittering-mode.el: Support authentication via OAuth. The
+	authentication requires a consumer information registered with
+	Twitter and an external WWW browser to authorize a request token.
+	(twittering-auth-method): new variable.
+	(twittering-oauth-consumer-key, twittering-oauth-consumer-secret):
+	new variables for specifying an OAuth consumer.
+	(twittering-oauth-access-token-alist): new variable for storing
+	access token.
+	(twittering-oauth-url-encode): new function.
+	(twittering-oauth-unhex): new function.
+	(twittering-oauth-url-decode): new function.
+	(twittering-oauth-make-signature-base-string): new function.
+	(twittering-oauth-make-random-string): new function.
+	(twittering-hmac-sha1): imported from
+	http://www.emacswiki.org/emacs/HmacShaOne .
+	(twittering-oauth-auth-str): new function.
+	(twittering-oauth-auth-str-request-token): new function.
+	(twittering-oauth-auth-str-exchange-token): new function.
+	(twittering-oauth-auth-str-access): new function.
+	(twittering-oauth-make-response-alist): new function.
+	(twittering-oauth-get-response-alist): new function.
+	(twittering-oauth-get-token-alist-url): new function.
+	(twittering-oauth-get-token-alist-native): new function.
+	(twittering-oauth-get-token-alist-curl): new function.
+	(twittering-oauth-get-token-function-table): new variable.
+	(twittering-oauth-get-token-function-type): new variable.
+	(twittering-oauth-invoke-browser): new variable.
+	(twittering-oauth-get-token-alist): new function.
+	(twittering-oauth-get-request-token): new function.
+	(twittering-oauth-exchange-request-token): new function.
+	(twittering-oauth-get-access-token): new function.
+	(twittering-prepare-account-info): acquire username and password
+	only if `twittering-auth-method' is symbol `basic'.
+	(twittering-verify-credentials): support Authentication via OAuth.
+	(twittering-http-application-headers): do not add Authorization
+	header.
+	(twittering-http-application-headers-with-auth): new function for
+	generating headers adapted for each authentication method.
+	(twittering-http-get): use
+	`twittering-http-application-headers-with-auth'.
+	(twittering-http-post): likewise.
+	(twittering-percent-encode): encode a string according to
+	Percent-Encoding defined in RFC3986 instead of RFC1738. It simply
+	calls `twittering-oauth-url-encode'.
+	(twittering-url-reserved-p): removed.
+	* test/test-twittering-mode.el: add new test `test-oauth'.
+	* emacs21/hex-util.el: imported from Emacs22.
+	* emacs21/sha1.el: imported from Emacs22.
+
+	* twittering-mode.el (twittering-oauth-get-access-token): fix the
+	guide string of authorization via OAuth.
+
+	* twittering-mode.el (twittering-hmac-sha1): fix indentation.
+
+	* twittering-mode.el: Fix `twittering-hmac-sha1' so that it works
+	well on Emacs23 and later.
+	(twittering-hmac-sha1): ensure that internal variables are unibyte
+	strings even on Emacs23 and later.
+	* test/test-twittering-mode.el: add new test `test-hmac-sha1'.
+
+	* emacs21/sha1.el: Imported from Gnus distributed with Emacs
+	22.2.1 on Debian 5.0 for Emacs21 that does not include `sha1.el'.
+	* emacs21/hex-util.el: Imported from Gnus distributed with Emacs
+	22.2.1 on Debian 5.0 for Emacs21 that does not include
+	`hex-util.el'.
+
 2010-05-20  Tadashi MATSUO  <tad@mymail.twin.jp>
 
 	* twittering-mode.el: The configuration of a proxy is referred via

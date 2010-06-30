@@ -7,21 +7,41 @@
 
 ### Important notice
 
+### Improvements
+
+* Support for storing private information in a file encrypted by master
+  password. Once you save the authorized account by using master password,
+  you have to input PIN no longer. This is enabled by
+  `(setq twittering-use-master-password t)'.
+  The private information is stored in `~/.twittering-mode.gpg', which can
+  be specified by `twittering-private-info-file'.
+  To enable master password, you need GnuPG and an additional Emacs LISP
+  program, which is `alpaca.el' or EasyPG (Emacs23 includes EasyPG).
+  To use with `alpaca.el', you should use the version 0.13. With other
+  versions of `alpaca.el' the current implementation may not work well
+  because it deeply depends on internal implementation of `alpaca.el'.
+* Authentication via xAuth.
+  You can enable xAuth by "(setq twittering-auth-method 'xauth)".
+* ...
+
+### Bug fixes
+
+* ...
+
+ 1.0.0: 2010-06-05
+------------------
+
+### Important notice
+
 #### Posting tweets with minibuffer is obsolete now.
 
 There's two way to edit and post tweets in twittering-mode: with
 minibuffer (existing way), and with pop-up buffer (new feature!).  You
 can choose it by setting the variable
 `twittering-update-status-function`. Currently its default value is
-the existing way, `twittering-update-status-from-minibuffer`, but in
-next release it will be changed to the new way
-`twittering-update-status-from-pop-up-buffer`.
-
-We recommend you to use the new feature by adding following code to
-your `.emacs`:
-
-    (setq twittering-update-status-function
-          'twittering-update-status-from-pop-up-buffer)
+the new way, `twittering-update-status-from-pop-up-buffer`. If you
+want to post from minibuffer, set the variable value to
+`twittering-update-status-from-minibuffer`.
 
 The new feature, pop-up buffer, has several advantages over the
 existing way.
@@ -37,6 +57,9 @@ existing way.
 * Auto proxy setup with environment variables (http_proxy, HTTP_PROXY)
 * Support for official ReTweet.
 * Added some format specifiers of tweets.
+* Support for recursive format specifiers such as
+  "%FILL{%FACE[bold]{%C{%m/%d}}: %T}".
+* Support for user-defined prefix on filling by "%FILL[prefix]{...}".
 * Displaying image files without temporary files.
 * Support multiple buffers, where their name is derived from timeline spec.
 * Multiple initial timelines by setting a list of timeline spec strings to
@@ -44,7 +67,6 @@ existing way.
 * Toggle automatic retrieval of the timeline by pressing 'a'.
 * Improved compatibility with global-font-lock mode.
 * Unread statuses notifier on mode-line (experimental).
-* Fixed fill-column for the format specifier "%FILL{...}".
 * Switching timeline buffers by pressing 'f' or 'b'.
 * Graphical indicators for SSL and ACTIVE/INACTIVE state on mode-line.
 * Asynchronous retrieval of icon images.
@@ -59,7 +81,16 @@ existing way.
   `twittering-proxy-port') nil.
 * Silent retrieval of icon images.
   You can enable silent retrieval by "(setq twittering-url-show-status nil)".
-* ...
+* Authentication via OAuth.
+  It requires a consumer information registered with Twitter and an external
+  WWW browser to authorize a request token. Additionally, for SSL, it
+  requires an external command `curl' or another command included in the
+  variable `tls-program', which may be `openssl' or `gnutls-cli'.
+  (Caution: Neither `openssl' nor `gnutls-cli' support SSL via proxy.)
+  You can disable SSL for OAuth by "(setq twittering-oauth-use-ssl nil)".
+  You can enable OAuth by "(setq twittering-auth-method 'oauth)".
+  If `twittering-oauth-invoke-browser' is non-nil, twittering-mode
+  automatically opens a browser on authorization.
 
 ### Bug fixes
 
@@ -71,14 +102,12 @@ existing way.
   * twittering-percent-encode
 * Improved portability.
   * twittering-completing-read
-* ...
 * And lots of minor fixes
 
 ### Thanks to
 
 * Alberto Garcia
 * IMAI Toshiyuki
-* ...
 
  0.9.0: 2009-12-29
 -------------------
