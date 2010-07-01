@@ -65,7 +65,6 @@
 
 (defconst twittering-mode-version "HEAD")
 
-(defvar twittering-web-host "twitter.com")
 (defvar twittering-oauth-request-token-url
   "https://api.twitter.com/oauth/request_token")
 (defvar twittering-oauth-authorization-url-base
