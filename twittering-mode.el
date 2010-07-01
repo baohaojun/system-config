@@ -2203,6 +2203,11 @@ BEG and END mean a region that had been modified."
 	      (set-window-point win point))))
 	config))
 
+(defun twittering-multibyte-string-p (string)
+  "Similar to `multibyte-string-p', but consider ascii only STRING not multibyte. "
+  (and (multibyte-string-p string)
+       (> (string-bytes string) (length string))))
+
 ;;;
 ;;; Utility functions for portability
 ;;;
@@ -4202,8 +4207,9 @@ been initialized yet."
 
 (defadvice url-retrieve (around hexify-multibyte-string activate)
   (let ((url (ad-get-arg 0)))
-    (if (multibyte-string-p url)
-	(let ((url-unreserved-chars (append '(?: ?/) url-unreserved-chars)))
+    (if (twittering-multibyte-string-p url)
+	(let ((url-unreserved-chars 
+	       (append '(?: ?/ ??) url-unreserved-chars)))
 	  (ad-set-arg 0 (url-hexify-string url))
 	  ad-do-it)
       ad-do-it)))
@@ -6235,17 +6241,16 @@ variable `twittering-status-format'."
 	     (mapconcat (lambda (x)
 			  (symbol-name (car x)))
 			twittering-tinyurl-services-map ", ")))
-    (if longurl
-	(let ((buffer
-	       (twittering-url-retrieve-synchronously (concat api longurl))))
-	  (with-current-buffer buffer
-	    (goto-char (point-min))
-	    (prog1
-		(if (search-forward-regexp "\n\r?\n\\([^\n\r]*\\)" nil t)
-		    (match-string-no-properties 1)
-		  (error "TinyURL failed: %s" longurl))
-	      (kill-buffer buffer))))
-      nil)))
+    (when longurl
+      (let ((buffer
+	     (twittering-url-retrieve-synchronously (concat api longurl))))
+	(with-current-buffer buffer
+	  (goto-char (point-min))
+	  (prog1
+	      (if (search-forward-regexp "\n\r?\n\\([^\n\r]*\\)" nil t)
+		  (match-string-no-properties 1)
+		(error "TinyURL failed: %s" longurl))
+	    (kill-buffer buffer)))))))
 
 ;;;
 ;;; API methods
