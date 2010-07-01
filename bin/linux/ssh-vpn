@@ -5,18 +5,18 @@
 use Expect;
 use strict;
 
-sub do_ssh($) {
-  my $passwd = $_[0];
+sub do_ssh($$) {
+  (my $username, my $passwd) = @_;
   my $ssh = new Expect;
   $ssh->raw_pty(0);
-  $ssh->spawn("ssh -C2qN -D 8080 vpntl\@free.vpn.tl") || die "Couldn't spawn ssh, $!";
+  $ssh->spawn("ssh -C2qN -D 8080 $username\@free.vpn.tl") || die "Couldn't spawn ssh, $!";
 
 
   # Look for a username prompt. On my box this looks like:
   # "Name (ssh.cdrom.com:tex): "
   # So, let's see what our username is.
 
-  unless ($ssh->expect(30,"vpntl\@free.vpn.tl's password:")) {
+  unless ($ssh->expect(30,"$username\@free.vpn.tl's password:")) {
     return "Never got password prompt on ssh, ".$ssh->exp_error()."\n";
   }
 
@@ -30,9 +30,12 @@ sub do_ssh($) {
 
 while (1) {
   my $page = qx(wget http://vpn.tl/free/ssh/ -O -);
-  $page =~ m,免费账号: vpntl 密码: (.*)<br/>, or 
-      $page =~ m,.*value="(.*?)",s;
-  print "passwd is $1\n";
-  my $passwd = $1;
-  do_ssh($passwd);
+  $page =~ m,免费账号: (.*?) 密码: (.*)<br/>, or 
+      $page =~ m,.*value="(.*?)".*value="(.*?)",s;
+
+  print "username is $1, passwd is $2\n";
+  
+  my $username = $1;
+  my $passwd = $2;
+  do_ssh($username, $passwd);
 }
