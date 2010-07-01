@@ -6261,15 +6261,13 @@ variable `twittering-status-format'."
   (setq twittering-get-simple-retrieved nil)
   (let ((proc (twittering-get-simple method args-alist)))
     (when proc
-      (while (and (not twittering-get-simple-retrieved)
-		  (not (memq (process-status proc)
-			     '(exit signal closed failed nil))))
-	(sit-for 0.1))))
-  ;; (let ((start (current-time)))
-  ;;   (while (and (not twittering-get-simple-retrieved)
-  ;; 		;; Wait just for 3 seconds. FIXME: why it would fail sometimes?
-  ;; 		(< (cadr (time-subtract (current-time) start)) 3))
-  ;;     (sit-for 0.1)))
+      (let ((start (current-time)))
+	(while (and (not twittering-get-simple-retrieved)
+		    (not (memq (process-status proc)
+			       '(exit signal closed failed nil)))
+		    ;; Wait just for 3 seconds. FIXME: why it would fail sometimes?
+		    (< (cadr (time-subtract (current-time) start)) 3))
+	  (sit-for 0.1)))))
   (unless twittering-get-simple-retrieved
     (message "twittering-get-simple-sync failed")
     (setq twittering-get-simple-retrieved 'error))
