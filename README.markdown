@@ -25,7 +25,7 @@ xwl's fork
       Screenshot: http://xwl.appspot.com/images/twitter_unread.png
   * Make unread notifier on mode line mouse clickable.
   * Cache latest status for interested specs, so that next time when we restart
-    twittering-mode, unread count could be update-to-date.
+    twittering-mode, unread count could be up-to-date.
 
 * misc
   * (twittering-erase-all): New func, binded to "C-c C-w".
