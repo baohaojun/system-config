@@ -2737,22 +2737,23 @@ Statuses are stored in ascending-order with respect to their IDs."
 		  (twittering-update-jojo (cdr (assq 'user-screen-name status))
 					  (cdr (assq 'text status))))
 		new-statuses))
-	(let ((twittering-new-tweets-spec spec)
-	      (twittering-new-tweets-count 
-	       (count-if 
-		(lambda (status)
-		  (when (or (not (member spec twittering-cache-specs))
-			    (twittering-status-id<
-			     (cdr (assoc spec twittering-cache-lastest-statuses))
-			     (cdr (assoc 'id status))))
-		    (or (not twittering-new-tweets-count-excluding-me)
-			(not (string= (cdr (assq 'user-screen-name status))
-				      twittering-username)))))
-		new-statuses)))
-	  (when (member spec twittering-cache-specs)
+	(let* ((twittering-new-tweets-spec spec)
+	       (spec-string (twittering-timeline-spec-to-string spec))
+	       (twittering-new-tweets-count 
+		(count-if 
+		 (lambda (status)
+		   (when (or (not (member spec-string twittering-cache-specs))
+			     (twittering-status-id<
+			      (cdr (assoc spec-string twittering-cache-lastest-statuses))
+			      (cdr (assoc 'id status))))
+		     (or (not twittering-new-tweets-count-excluding-me)
+			 (not (string= (cdr (assq 'user-screen-name status))
+				       twittering-username)))))
+		 new-statuses)))
+	  (when (member spec-string twittering-cache-spec-strings)
 	    (setq twittering-cache-lastest-statuses
-		  (cons (cons spec (cdr (assoc 'id (car new-statuses))))
-			(remove-if (lambda (entry) (equal spec (car entry)))
+		  (cons (cons spec-string (cdr (assoc 'id (car new-statuses))))
+			(remove-if (lambda (entry) (equal spec-string (car entry)))
 				   twittering-cache-lastest-statuses)))
 	    (twittering-cache-save))
 	  (run-hooks 'twittering-new-tweets-hook))
@@ -6268,12 +6269,12 @@ variable `twittering-status-format'."
 ;;;
 
 (defcustom twittering-cache-file "~/.twittering_cache"
-  "Filename for caching latest statu for `twittering-cache-specs'."
+  "Filename for caching latest statu for `twittering-cache-spec-strings'."
   :type 'string
   :group 'twittering)
 
-(defcustom twittering-cache-specs '()
-  "Spec list whose latest status will cached."
+(defcustom twittering-cache-spec-strings '()
+  "Spec string list whose latest status will cached."
   :type 'list
   :group 'twittering)
 
