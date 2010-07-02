@@ -2742,7 +2742,7 @@ Statuses are stored in ascending-order with respect to their IDs."
 	       (twittering-new-tweets-count 
 		(count-if 
 		 (lambda (status)
-		   (when (or (not (member spec-string twittering-cache-specs))
+		   (when (or (not (member spec-string twittering-cache-spec-strings))
 			     (twittering-status-id<
 			      (cdr (assoc spec-string twittering-cache-lastest-statuses))
 			      (cdr (assoc 'id status))))
