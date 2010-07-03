@@ -1802,8 +1802,11 @@ IMAGE-DATA is converted by `convert' if the image type of IMAGE-DATA is not
 available and `twittering-use-convert' is non-nil."
   (let* ((image-type (image-type-from-data image-data))
 	 (image-pair `(,image-type . ,image-data))
+	 ;; When GIF contains animations, it will be converted to couples of XPM
+	 ;; files, which is not what we want.
+	 (dest-type (if (eq image-type 'gif) 'gif 'xpm))
 	 (converted-size
-	  `(,twittering-convert-fix-size . ,twittering-convert-fix-size)))
+	  (cons twittering-convert-fix-size twittering-convert-fix-size)))
     (cond
      ((and (image-type-available-p image-type)
 	   (or (not (integerp twittering-convert-fix-size))
@@ -1812,9 +1815,9 @@ available and `twittering-use-convert' is non-nil."
       image-pair)
      (twittering-use-convert
       (let ((converted-data
-	     (twittering-convert-image-data image-data 'xpm image-type)))
+	     (twittering-convert-image-data image-data dest-type image-type)))
 	(if converted-data
-	    `(xpm . ,converted-data)
+	    (cons dest-type converted-data)
 	  twittering-error-icon-data-pair)))
      (t
       twittering-error-icon-data-pair))))
