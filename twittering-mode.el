@@ -374,6 +374,9 @@ Do not modify this variable directly. Use `twittering-activate-buffer',
 (defvar twittering-display-remaining nil
   "*If non-nil, display remaining of rate limit on the mode line.")
 
+(defvar twittering-allow-insecure-server-cert nil
+  "*If non-nil, twittering-mode allows insecure server certificates.")
+
 (defvar twittering-curl-program nil
   "Cache a result of `twittering-find-curl-program'.
 DO NOT SET VALUE MANUALLY.")
@@ -1257,8 +1260,8 @@ function."
 	  `(("Authorization" . ,auth-str)
 	    ("Accept-Charset" . "us-ascii")
 	    ("Content-Type" . "application/x-www-form-urlencoded")
-	    ("Content-Length" . ,(format "%d" (length post-body))))
-	  (url-request-data post-body))
+	    ("Content-Length" . ,(format "%d" (length post-body)))))
+	 (url-request-data post-body)
 	 (coding-system-for-read 'utf-8-unix))
     (lexical-let ((result 'queried))
       (let ((buffer
@@ -1326,6 +1329,7 @@ function."
 		  (or post-body ""))))
     (with-temp-buffer
       (let* ((coding-system-for-read 'utf-8-unix)
+	     (tls-program twittering-tls-program)
 	     (proc
 	      (funcall (if twittering-oauth-use-ssl
 			   'open-tls-stream
@@ -1340,11 +1344,19 @@ function."
 	     (lambda (&rest args)
 	       (let* ((proc (car args))
 		      (buffer (process-buffer proc))
-		      (status (process-status proc)))
+		      (status (process-status proc))
+		      (exit-status (process-exit-status proc)))
+		 (debug-printf "proc=%s stat=%s exit-status=%s"
+			       proc status exit-status)
 		 (cond
 		  ((not (memq status '(nil closed exit failed signal)))
 		   ;; continue
 		   )
+		  ((and (process-command proc)
+			(not (= 0 exit-status)))
+		   (message "%s exited abnormally (exit-status=%s)."
+			    (car (process-command proc)) exit-status)
+		   (setq result nil))
 		  (buffer
 		   (when twittering-debug-mode
 		     (with-current-buffer (twittering-debug-buffer)
@@ -1388,6 +1400,9 @@ function."
 		      headers)
 	    ,@(when twittering-oauth-use-ssl
 		`("--cacert" ,cacert-filename))
+	    ,@(when (and twittering-oauth-use-ssl
+			 twittering-allow-insecure-server-cert)
+		`("--insecure"))
 	    ,@(when twittering-proxy-use
 		(let* ((host (twittering-proxy-info scheme 'server))
 		       (port (twittering-proxy-info scheme 'port)))
@@ -1431,11 +1446,19 @@ function."
 	     (lambda (&rest args)
 	       (let* ((proc (car args))
 		      (buffer (process-buffer proc))
-		      (status (process-status proc)))
+		      (status (process-status proc))
+		      (exit-status (process-exit-status proc)))
+		 (debug-printf "proc=%s stat=%s exit-status=%s"
+			       proc status exit-status)
 		 (cond
 		  ((not (memq status '(nil closed exit failed signal)))
 		   ;; continue
 		   )
+		  ((and (process-command proc)
+			(not (= 0 exit-status)))
+		   (message "%s exited abnormally (exit-status=%s)."
+			    (car (process-command proc)) exit-status)
+		   (setq result nil))
 		  (buffer
 		   (when twittering-debug-mode
 		     (with-current-buffer (twittering-debug-buffer)
@@ -2225,12 +2248,41 @@ BEG and END mean a region that had been modified."
   ;; file "unicode(.el)" (which came from Mule-UCS), hence it breaks
   ;; `ucs-to-char' under non Mule-UCS environment. The problem is
   ;; fixed in navi2ch dated 2010-01-16 or later, but not released yet.
-  (if (and (featurep 'unicode) (functionp 'ucs-to-char))
-      (ucs-to-char num)
-    ;; Emacs21 have a partial support for UTF-8 text, so it can decode
-    ;; only parts of a text with Japanese.
-    (or (decode-char 'ucs num)
-	??)))
+  (or (if (and (featurep 'unicode) (functionp 'ucs-to-char))
+	  (ucs-to-char num)
+	;; Emacs21 have a partial support for UTF-8 text, so it can decode
+	;; only parts of a text with Japanese.
+	(decode-char 'ucs num))
+      twittering-unicode-replacement-char))
+
+(defvar twittering-unicode-replacement-char
+  (let ((twittering-unicode-replacement-char ??)
+	(code-point #xFFFD))
+    ;; "Unicode Character 'REPLACEMENT CHARACTER' (U+FFFD)"
+    (twittering-ucs-to-char code-point))
+  "*Replacement character used when `ucs-to-char' or `decode-char' return
+nil.")
+
+(defadvice decode-char (after twittering-add-fail-over-to-decode-char)
+  (when (null ad-return-value)
+    (setq ad-return-value twittering-unicode-replacement-char)))
+
+(defun twittering-xml-parse-region (&rest args)
+  "Wrapped `xml-parse-region' in order to avoid decoding errors.
+After activating the advice `twittering-add-fail-over-to-decode-char',
+`xml-parse-region' is called. This prevents `xml-parse-region' from
+exiting abnormally by decoding unknown numeric character reference."
+  (let ((activated (ad-is-active 'decode-char)))
+    (ad-enable-advice
+     'decode-char 'after 'twittering-add-fail-over-to-decode-char)
+    (ad-activate 'decode-char)
+    (unwind-protect
+	(apply 'xml-parse-region args)
+      (ad-disable-advice 'decode-char 'after
+			 'twittering-add-fail-over-to-decode-char)
+      (if activated
+	  (ad-activate 'decode-char)
+	(ad-deactivate 'decode-char)))))
 
 (defun twittering-remove-duplicates (list)
   "Return a copy of LIST with all duplicate elements removed.
@@ -3795,7 +3847,10 @@ authorized -- The account has been authorized.")
 	  (setq twittering-account-authorization nil)
 	  (message "Authorization failed. Type M-x twit to retry.")
 	  (setq twittering-username nil)
-	  (setq twittering-password nil))))))))
+	  (setq twittering-password nil))))))
+   (t
+    (message "%s is invalid as an authorization method."
+	     twittering-auth-method))))
 
 (defun twittering-http-get-verify-credentials-sentinel (header-info proc noninteractive &optional suc-msg)
   (let ((status-line (cdr (assq 'status-line header-info)))
@@ -4527,6 +4582,9 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 		      headers)
 	    ,@(when twittering-use-ssl
 		`("--cacert" ,cacert-filename))
+	    ,@(when (and twittering-use-ssl
+			 twittering-allow-insecure-server-cert)
+		`("--insecure"))
 	    ,@(when twittering-proxy-use
 		(let* ((scheme (funcall request :schema))
 		       (host (twittering-proxy-info scheme 'server))
@@ -4584,7 +4642,21 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 				 (when (executable-find (match-string 1 cmd))
 				   cmd)))
 			     tls-program))))
-	(setq twittering-tls-program programs)))
+	(setq twittering-tls-program
+	      (if twittering-allow-insecure-server-cert
+		  (mapcar
+		   (lambda (str)
+		     (cond
+		      ((string-match "^\\([^ ]*/\\)?openssl s_client " str)
+		       (concat (match-string 0 str) "-verify 0 "
+			       (substring str (match-end 0))))
+		      ((string-match "^\\([^ ]*/\\)?gnutls-cli " str)
+		       (concat (match-string 0 str) "--insecure "
+			       (substring str (match-end 0))))
+		      (t
+		       str)))
+		   programs)
+		programs))))
     (not (null twittering-tls-program))))
 
 ;; TODO: proxy
@@ -4739,8 +4811,8 @@ Available keywords:
 
 (defun twittering-get-error-message (buffer)
   (if buffer
-      (let ((xmltree (twittering-get-response-body buffer
-						   'xml-parse-region)))
+      (let ((xmltree (twittering-get-response-body
+		      buffer 'twittering-xml-parse-region)))
 	(car (cddr (assq 'error (or (assq 'errors xmltree)
 				    (assq 'hash xmltree))))))
     nil))
@@ -4804,9 +4876,10 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
        (cadr encoded-time))))
 
 (defun twittering-http-default-sentinel (func noninteractive proc stat &optional suc-msg)
-  (debug-printf "http-default-sentinel: proc=%s stat=%s" proc stat)
+  (debug-printf "http-default-sentinel: proc=%s stat=%s exit-status=%s" proc stat (process-exit-status proc))
   (let ((temp-buffer (process-buffer proc))
 	(status (process-status proc))
+	(exit-status (process-exit-status proc))
 	(mes nil))
     (when (and twittering-proxy-use twittering-use-ssl
 	       (buffer-live-p temp-buffer))
@@ -4836,18 +4909,24 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
       t)
      ((memq status '(exit signal closed failed))
       (unwind-protect
-	  (let* ((header (twittering-get-response-header temp-buffer))
-		 (header-info
-		  (and header (twittering-update-server-info header))))
-	    (setq mes
-		  (cond
-		   ((null header-info)
-		    "Failure: Bad http response.")
-		   ((and func (fboundp func))
-		    (with-current-buffer temp-buffer
-		      (funcall func header-info proc noninteractive suc-msg)))
-		   (t
-		    nil))))
+	  (setq mes
+		(if (and (process-command proc)
+			 (not (= 0 exit-status)))
+		    ;; The process exited abnormally.
+		    (format "%s exited abnormally (exit-status=%s)."
+			    (car (process-command proc)) exit-status)
+		  (let* ((header (twittering-get-response-header temp-buffer))
+			 (header-info
+			  (and header (twittering-update-server-info header))))
+		    (cond
+		     ((null header-info)
+		      "Failure: Bad http response.")
+		     ((and func (fboundp func))
+		      (with-current-buffer temp-buffer
+			(funcall func header-info proc noninteractive
+				 suc-msg)))
+		     (t
+		      nil)))))
 	;; unwindforms
 	(twittering-release-process proc)
 	(when (and (not twittering-debug-mode) (buffer-live-p temp-buffer))
@@ -4896,8 +4975,9 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
     (case-string
      status-code
      (("200")
-      (let ((xmltree (twittering-get-response-body (process-buffer proc)
-						   'xml-parse-region)))
+      (let ((xmltree
+	     (twittering-get-response-body
+	      (process-buffer proc) 'twittering-xml-parse-region)))
 	(when xmltree
 	  (case (caar xmltree)
 	    ((relationship)		; show-friendships
@@ -5002,7 +5082,8 @@ Return nil when parse failed.
 
 SPEC is timeline-spec which was used to retrieve BUFFER.
 BUFFER may be a buffer or the name of an existing buffer."
-  (let ((body (twittering-get-response-body buffer 'xml-parse-region)))
+  (let ((body
+	 (twittering-get-response-body buffer 'twittering-xml-parse-region)))
     (when body
       (if (eq 'search (car spec))
 	  (twittering-atom-xmltree-to-status body)
