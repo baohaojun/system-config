@@ -3245,6 +3245,11 @@ means the number of statuses retrieved after the last visiting of the buffer.")
   (let* ((entry (assq buffer twittering-unread-status-info))
 	 (current (or (cadr entry) 0)))
     (unless (= number current)
+      (when (zerop number)
+	(let ((spec-string 
+	       (twittering-get-timeline-spec-string-for-buffer buffer)))
+	  (when (member spec-string twittering-cache-spec-strings)
+	    (twittering-cache-save spec-string))))
       (setq twittering-unread-status-info
 	    (cons
 	     `(,buffer ,number)
@@ -3300,11 +3305,6 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 		(and (twittering-timeline-spec-is-user-methods-p spec)
 		     (null (twittering-timeline-data-collect spec))))
 	(setq result 0))
-      (when (zerop result)
-	(let ((spec-string 
-	       (twittering-get-timeline-spec-string-for-buffer buffer)))
-	  (when (member spec-string twittering-cache-spec-strings)
-	    (twittering-cache-save spec-string))))
       (twittering-set-number-of-unread buffer result))))
 
 (defun twittering-enable-unread-status-notifier ()
