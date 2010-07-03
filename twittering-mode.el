@@ -3243,13 +3243,15 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 
 (defun twittering-set-number-of-unread (buffer number)
   (let* ((entry (assq buffer twittering-unread-status-info))
-	 (current (or (cadr entry) 0)))
+	 (current (or (cadr entry) 0))
+	 (spec-string 
+	  (twittering-get-timeline-spec-string-for-buffer buffer)))
+    (when (and (zerop number) 
+	       (or (not (= number current))
+		   (not (zerop twittering-new-tweets-count)))
+	       (member spec-string twittering-cache-spec-strings))
+      (twittering-cache-save spec-string))
     (unless (= number current)
-      (when (zerop number)
-	(let ((spec-string 
-	       (twittering-get-timeline-spec-string-for-buffer buffer)))
-	  (when (member spec-string twittering-cache-spec-strings)
-	    (twittering-cache-save spec-string))))
       (setq twittering-unread-status-info
 	    (cons
 	     `(,buffer ,number)
