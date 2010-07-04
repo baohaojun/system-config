@@ -1825,9 +1825,6 @@ IMAGE-DATA is converted by `convert' if the image type of IMAGE-DATA is not
 available and `twittering-use-convert' is non-nil."
   (let* ((image-type (image-type-from-data image-data))
 	 (image-pair `(,image-type . ,image-data))
-	 ;; When GIF contains animations, it will be converted to couples of XPM
-	 ;; files, which is not what we want.
-	 (dest-type (if (eq image-type 'gif) 'gif 'xpm))
 	 (converted-size
 	  (cons twittering-convert-fix-size twittering-convert-fix-size)))
     (cond
@@ -1837,8 +1834,11 @@ available and `twittering-use-convert' is non-nil."
 		      converted-size)))
       image-pair)
      (twittering-use-convert
-      (let ((converted-data
-	     (twittering-convert-image-data image-data dest-type image-type)))
+      ;; When GIF contains animations, it will be converted to couples of XPM
+      ;; files, which is not what we want.
+      (let* ((dest-type (if (eq image-type 'gif) 'gif 'xpm))
+	     (converted-data
+	      (twittering-convert-image-data image-data dest-type image-type)))
 	(if converted-data
 	    (cons dest-type converted-data)
 	  twittering-error-icon-data-pair)))
@@ -6390,12 +6390,13 @@ When SPEC-STRING is non-nil, just save lastest status for SPEC-STRING. "
     (kill-buffer)))
 
 (defun twittering-cache-load ()
-  (setq twittering-cache-lastest-statuses
-	(with-temp-buffer
-	  (insert-file-contents twittering-cache-file)
-	  (read (current-buffer))))
-  (setq twittering-cache-saved-lastest-statuses
-	twittering-cache-lastest-statuses))
+  (when (file-exists-p twittering-cache-file)
+    (setq twittering-cache-lastest-statuses
+	  (with-temp-buffer
+	    (insert-file-contents twittering-cache-file)
+	    (read (current-buffer))))
+    (setq twittering-cache-saved-lastest-statuses
+	  twittering-cache-lastest-statuses)))
 
 ;;;
 ;;; API methods
