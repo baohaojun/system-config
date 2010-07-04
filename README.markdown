@@ -10,7 +10,7 @@ xwl's fork
     Screenshot: http://xwl.appspot.com/images/twitter.png
 
 * new specs/API
-  * `followers'
+  * `followers', `following'
   * Friendship Methods: show-friendships
   * List methods: get-list-subscriptions, get-list-memberships
   * List Subscribers Methods: subscribe-list, unsubscribe-list
