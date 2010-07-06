@@ -233,7 +233,7 @@ SSL connections use 'curl' command as a backend."
   :type 'symbol
   :group 'twittering)
 
-(defcustom twittering-timeline-most-active-spec-strings '(":home")
+(defcustom twittering-timeline-most-active-spec-strings '(":home" ":replies")
   "See `twittering-timeline-spec-is-most-active-p'."
   :type 'list
   :group 'twittering)
