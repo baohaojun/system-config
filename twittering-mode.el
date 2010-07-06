@@ -1755,9 +1755,10 @@ icon mode; otherwise, turn off icon mode."
       (twittering-render-timeline (current-buffer) nil nil t))))
 
 (defvar twittering-icon-prop-hash (make-hash-table :test 'equal)
-  "Hash table for storing display properties of icon. The key is the size of
-icon and the value is a hash. The key of the child hash is URL and its value
-is the display property for the icon.")
+  "Hash table for storing display properties of icon.
+The key is the size of icon and the value is a hash. The key of
+the child hash is URL and its value is the display property for
+the icon.")
 
 (defvar twittering-convert-program (executable-find "convert"))
 (defvar twittering-use-convert (not (null twittering-convert-program))
@@ -4930,7 +4931,7 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
 		    (cond
 		     ((null header-info)
 		      "Failure: Bad http response.")
-		     ((and func (fboundp func))
+		     ((and func (or (functionp func) (fboundp func)))
 		      (with-current-buffer temp-buffer
 			(funcall func header-info proc noninteractive
 				 suc-msg)))
@@ -4976,11 +4977,11 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
 	    (format "Response: %s (%s)" status-line error-mes)
 	  (format "Response: %s" status-line)))))))
 
-(defun twittering-http-get-simple-sentinel (header-info proc noninteractive &optional suc-msg)
+(defun twittering-http-get-simple-sentinel (header-info proc noninteractive
+							&optional suc-msg args)
   (let ((status-line (cdr (assq 'status-line header-info)))
 	(status-code (cdr (assq 'status-code header-info)))
-	(ret nil)
-	(mes nil))
+	ret mes)
     (case-string
      status-code
      (("200")
@@ -4996,17 +4997,20 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
 	    ;; get-list-index, get-list-subscriptions, get-list-memberships
 	    ((lists_list)
 	     (setq ret
-		   (mapcar
+		   (mapconcat
 		    (lambda (c-node)
 		      (substring (caddr (assq 'full_name c-node)) 1))
 		    (remove
 		     nil
 		     (mapcar
 		      (lambda (node)
-			(and (consp node) (eq 'list (car node))
-			     node))
+			(and (consp node) (eq 'list (car node)) node))
 		      (cdr-safe
-		       (assq 'lists (assq 'lists_list xmltree))))))))))))
+		       (assq 'lists (assq 'lists_list xmltree)))))
+		    " "))))
+	  (puthash (list (cdr (assoc 'username args)) (cdr (assoc 'method args)))
+		   (or ret "")
+		   twittering-simple-hash))))
      (t
       (let ((error-mes (twittering-get-error-message (process-buffer proc))))
 	(if error-mes
@@ -5717,13 +5721,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		     ;; 			   ret)
 		     ;; 	       tmp (substring tmp 0 -3)))
 		     ;;   ret)
-		     
-		     (cond ((twittering-followed-by-p user-screen-name)
-			    "follows you")
-			   ((eq twittering-get-simple-retrieved 'error)
-			    "...")
-			   (t
-			    "doesn't follow you")))
+		    (twittering-get-simple nil nil user-screen-name 'show-friendships))
 
 	     ;; bio
 	     (if (string= user-description "")
@@ -5763,25 +5761,17 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		      (lambda (f) (format f user-screen-name))
 		      '("%s's Lists: "
 			"Lists %s Follows: " 
-			"Lists Following %s: ")))
-		    (width (apply 'max (mapcar 'length prompts))))
+			"Lists Following %s: "))))
 	       (mapconcat 
 		'identity 
 		(mapcar* 
 		 (lambda (prompt method)
 		   (format 
-		    (format "%%%ds%%s" width)
+		    (format "%%%ds%%s"
+			    (twittering-calculate-list-info-prefix-width 
+			     user-screen-name))
 		    prompt
-		    (mapconcat 
-		     (lambda (l)
-		       (if (string= l "")
-			   "..."	; Indicate user may do a refresh here.
-			 (concat "@" (twittering-decorate-listname l))))
-		     (or (twittering-get-simple-sync 
-			  method `((username . ,user-screen-name)))
-			 (and (eq twittering-get-simple-retrieved 'error)
-			      (list "")))
-		     (concat "\n" (make-string width ? )))))
+		    (twittering-get-simple nil nil user-screen-name method)))
 		 prompts
 		 '(get-list-index get-list-subscriptions get-list-memberships))
 		"\n\n"))
@@ -5817,6 +5807,13 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 
     (unless twittering-reverse-mode
       (funcall insert-separator))))
+
+(defun twittering-calculate-list-info-prefix-width (username)
+  (apply 'max (mapcar 
+	       (lambda (f) (length (format f username)))
+	       '("%s's Lists: "
+		 "Lists %s Follows: " 
+		 "Lists Following %s: "))))
 
 (defun twittering-replied-statuses-visible-p ()
   (let* ((pos (twittering-get-current-status-head))
@@ -6410,15 +6407,40 @@ When SPEC-STRING is non-nil, just save lastest status for SPEC-STRING. "
 ;;; API methods
 ;;;
 
-(defun twittering-get-simple (method args-alist)
-  (twittering-call-api
-   method
-   `(,@args-alist
-     (sentinel . twittering-http-get-simple-sentinel))))
+(defvar twittering-simple-hash (make-hash-table :test 'equal)
+  "Hash table for storing results retrieved by `twittering-get-simple'.
+The key is a list of username and method(such as get-list-index), the value is
+string.")
+
+(defun twittering-get-simple (beg end username method)
+  (let ((ret (gethash (list username method) twittering-simple-hash))
+	(s " "))			; hold 'need-to-be-updated
+    (cond 
+     (ret
+      (remove-text-properties 0 (length s) '(need-to-be-updated nil) s)
+      (case method
+	((show-friendships)
+	 (if (string= "true" ret) "follows you" "doesn't follow you"))
+	((get-list-index get-list-subscriptions get-list-memberships)
+	 (mapconcat (lambda (l) (concat "@" (twittering-decorate-listname l)))
+		    (split-string ret)
+		    (concat "\n" (make-string
+				  (twittering-calculate-list-info-prefix-width 
+				   username)
+				  ? ))))
+	(t
+	 ret)))
+     (t 
+      (put-text-property 0 (length s)
+			 'need-to-be-updated
+			 `(twittering-get-simple ,username ,method)
+			 s)
+      (twittering-get-simple-1 method `((username . ,username)))
+      s))))
 
 (defun twittering-get-simple-sync (method args-alist)
   (setq twittering-get-simple-retrieved nil)
-  (let ((proc (twittering-get-simple method args-alist)))
+  (let ((proc (twittering-get-simple-1 method args-alist)))
     (when proc
       (let ((start (current-time)))
 	(while (and (not twittering-get-simple-retrieved)
@@ -6448,6 +6470,15 @@ When SPEC-STRING is non-nil, just save lastest status for SPEC-STRING. "
        twittering-get-simple-retrieved)))
     ((show-friendships)
      twittering-get-simple-retrieved)))
+
+(defun twittering-get-simple-1 (method args-alist)
+  (twittering-call-api
+   method
+   `(,@args-alist
+     (sentinel . (lambda (&rest args)
+		   (apply 'twittering-http-get-simple-sentinel
+			  (append args '(((method . ,method)
+					  ,@args-alist)))))))))
 
 (defun twittering-followed-by-p (username)
   (twittering-get-simple-sync 'show-friendships `((username . ,username)))
