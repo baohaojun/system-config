@@ -2245,7 +2245,7 @@ BEG and END mean a region that had been modified."
   ;; Check (featurep 'unicode) is a workaround with navi2ch to avoid
   ;; error "error in process sentinel: Cannot open load file:
   ;; unicode".
-  ;;
+  ;; 
   ;; Details: navi2ch prior to 1.8.3 (which is currently last release
   ;; version as of 2010-01-18) always define `ucs-to-char' as autoload
   ;; file "unicode(.el)" (which came from Mule-UCS), hence it breaks
@@ -3310,7 +3310,7 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 	 (current (or (cadr (assq buffer twittering-unread-status-info)) 0))
 	 (result (+ current twittering-new-tweets-count)))
     (when buffer
-      (when (or (eq buffer twittering-invoke-buffer)
+      (when (or (eq buffer (current-buffer))
 		(and (twittering-timeline-spec-is-user-methods-p spec)
 		     (null (twittering-timeline-data-collect spec))))
 	(setq result 0))
@@ -4932,9 +4932,7 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
 		     ((null header-info)
 		      "Failure: Bad http response.")
 		     ((and func (or (functionp func) (fboundp func)))
-		      (with-current-buffer temp-buffer
-			(funcall func header-info proc noninteractive
-				 suc-msg)))
+		      (funcall func header-info proc noninteractive suc-msg))
 		     (t
 		      nil)))))
 	;; unwindforms
@@ -6285,57 +6283,55 @@ variable `twittering-status-format'."
 	(remove-hook 'minibuffer-exit-hook 'twittering-finish-minibuffer))
       )))
 
-(defun twittering-get-and-render-timeline (&optional noninteractive id buffer)
-  (setq twittering-invoke-buffer (current-buffer))
-  (with-current-buffer (or buffer (current-buffer))
-    (let ((spec (twittering-current-timeline-spec))
-	  (spec-string (twittering-current-timeline-spec-string)))
-      (cond
-       ((not (twittering-account-authorized-p))
-	;; ignore any requests if the account has not been authorized.
-	(message "No account for Twitter has been authorized.")
-	t)
-       ((and noninteractive (twittering-process-active-p spec))
-	;; ignore non-interactive request if a process is waiting for responses.
-	t)
-       ((twittering-timeline-spec-primary-p spec)
-	(let* ((is-search-spec (eq 'search (car spec)))
-	       (default-number 20)
-	       (max-number (if is-search-spec
-			       100 ;; FIXME: refer to defconst.
-			     twittering-max-number-of-tweets-on-retrieval))
-	       (number twittering-number-of-tweets-on-retrieval)
-	       (number (cond
-			((integerp number) number)
-			((string-match "^[0-9]+$" number)
-			 (string-to-number number 10))
-			(t default-number)))
-	       (number (min (max 1 number) max-number))
-	       (latest-status
-		;; Assume that a list which was returned by
-		;; `twittering-current-timeline-data' is sorted.
-		(car (twittering-current-timeline-data spec)))
-	       (since_id (cdr-safe (assq 'id latest-status)))
-	       (cursor (or (cdr-safe (assq id latest-status)) "-1"))
-	       (word (when is-search-spec (cadr spec)))
-	       (args
-		`((timeline-spec . ,spec)
-		  (timeline-spec-string . ,spec-string)
-		  (number . ,number)
-		  ,@(when (and id (not (twittering-timeline-spec-is-user-methods-p spec)))
-		      `((max_id . ,id)))
-		  ,@(cond
-		     (is-search-spec `((word . ,word)))
-		     ((twittering-timeline-spec-is-user-methods-p spec) `((cursor . ,cursor)))
-		     ((and since_id (null id)) `((since_id . ,since_id)))
-		     (t nil))))
-	       (proc
-		(twittering-call-api 'retrieve-timeline args noninteractive)))
-	  (when proc
-	    (twittering-register-process proc spec spec-string))))
-       (t
-	(let ((type (car spec)))
-	  (error "%s has not been supported yet" type)))))))
+(defun twittering-get-and-render-timeline (&optional noninteractive id)
+  (let ((spec (twittering-current-timeline-spec))
+	(spec-string (twittering-current-timeline-spec-string)))
+    (cond
+     ((not (twittering-account-authorized-p))
+      ;; ignore any requests if the account has not been authorized.
+      (message "No account for Twitter has been authorized.")
+      t)
+     ((and noninteractive (twittering-process-active-p spec))
+      ;; ignore non-interactive request if a process is waiting for responses.
+      t)
+     ((twittering-timeline-spec-primary-p spec)
+      (let* ((is-search-spec (eq 'search (car spec)))
+	     (default-number 20)
+	     (max-number (if is-search-spec
+			     100 ;; FIXME: refer to defconst.
+			   twittering-max-number-of-tweets-on-retrieval))
+	     (number twittering-number-of-tweets-on-retrieval)
+	     (number (cond
+		      ((integerp number) number)
+		      ((string-match "^[0-9]+$" number)
+		       (string-to-number number 10))
+		      (t default-number)))
+	     (number (min (max 1 number) max-number))
+	     (latest-status
+	      ;; Assume that a list which was returned by
+	      ;; `twittering-current-timeline-data' is sorted.
+	      (car (twittering-current-timeline-data spec)))
+	     (since_id (cdr-safe (assq 'id latest-status)))
+	     (cursor (or (cdr-safe (assq id latest-status)) "-1"))
+	     (word (when is-search-spec (cadr spec)))
+	     (args
+	      `((timeline-spec . ,spec)
+		(timeline-spec-string . ,spec-string)
+		(number . ,number)
+		,@(when (and id (not (twittering-timeline-spec-is-user-methods-p spec)))
+		    `((max_id . ,id)))
+		,@(cond
+		   (is-search-spec `((word . ,word)))
+		   ((twittering-timeline-spec-is-user-methods-p spec) `((cursor . ,cursor)))
+		   ((and since_id (null id)) `((since_id . ,since_id)))
+		   (t nil))))
+	     (proc
+	      (twittering-call-api 'retrieve-timeline args noninteractive)))
+	(when proc
+	  (twittering-register-process proc spec spec-string))))
+     (t
+      (let ((type (car spec)))
+	(error "%s has not been supported yet" type))))))
 
 (defun twittering-tinyurl-get (longurl)
   "Tinyfy LONGURL."
@@ -6596,7 +6592,8 @@ managed by `twittering-mode'."
 			     (string-to-number
 			      (format-time-string "%S" (current-time))))))
 		     (<= min-and-sec twittering-timer-interval)))
-	   (twittering-get-and-render-timeline noninteractive nil buffer))))
+	   (with-current-buffer buffer
+	     (twittering-get-and-render-timeline noninteractive)))))
      (twittering-get-active-buffer-list))))
 
 (defun twittering-current-timeline-noninteractive ()
