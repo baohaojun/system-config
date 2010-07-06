@@ -3449,3 +3449,4 @@ setprop EXTERNAL_STORAGE_STATE mounted
 $am broadcast -a android.intent.action.MEDIA_MOUNTED --ez read-only false -d file:///sdcar
 repo init -u git://r46/git/android-google/platform/manifest.git -b eclair-local
 time make iso_img TARGET_PRODUCT=eeepc -j8
+http://queue.acm.org/detail.cfm?id=945136
