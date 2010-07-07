@@ -5182,7 +5182,9 @@ BUFFER may be a buffer or the name of an existing buffer."
 	    (assq-get 'recipient_screen_name status-data))
 	   recipient_screen_name
 	   source-id
-	   source-created-at)
+	   source-created-at
+
+	   original)
 
       ;; save original status and adjust data if status was retweeted
       (cond
@@ -5196,6 +5198,10 @@ BUFFER may be a buffer or the name of an existing buffer."
 	;; use id and created-at issued when retweeted.
 	(setq id (assq-get 'id status-data))
 	(setq created-at (assq-get 'created_at status-data))
+
+	(setq original (twittering-status-to-status-datum 
+			(cons (list (car status) (cadr status))
+			      (assq-delete-all 'retweeted_status status-data))))
 
 	(setq status-data retweeted-status-data
 	      user-data (cddr (assq 'user retweeted-status-data)))
@@ -5227,41 +5233,46 @@ BUFFER may be a buffer or the name of an existing buffer."
 			   (assq-get 'location user-data)))
       (setq user-description (twittering-decode-html-entities
 			      (assq-get 'description user-data)))
+
       (setq user-profile-image-url (assq-get 'profile_image_url user-data))
-      (setq user-url (assq-get 'url user-data))
-      (setq user-protected (assq-get 'protected user-data))
-      (setq user-followers-count (assq-get 'followers_count user-data))
-      (setq user-friends-count (assq-get 'friends_count user-data))
-      (setq user-statuses-count (assq-get 'statuses_count user-data))
-      (setq user-favourites-count (assq-get 'favourites_count user-data))
-      (setq user-created-at (assq-get 'created_at user-data))
+      (setq user-url               (assq-get 'url               user-data))
+      (setq user-protected         (assq-get 'protected         user-data))
+      (setq user-followers-count   (assq-get 'followers_count   user-data))
+      (setq user-friends-count     (assq-get 'friends_count     user-data))
+      (setq user-statuses-count    (assq-get 'statuses_count    user-data))
+      (setq user-favourites-count  (assq-get 'favourites_count  user-data))
+      (setq user-created-at        (assq-get 'created_at        user-data))
+      
+      (setq previous-cursor        (assq-get 'previous_cursor   user-data))
+      (setq next-cursor            (assq-get 'next_cursor       user-data))
+      
+      (let ((datum 
+	     (twittering-make-clickable-status-datum
+	      (mapcar (lambda (sym)
+			`(,sym . ,(symbol-value sym)))
+		      '(id text source created-at truncated
+			   in-reply-to-status-id
+			   in-reply-to-screen-name
 
-      (setq previous-cursor (assq-get 'previous_cursor user-data))
-      (setq next-cursor (assq-get 'next_cursor user-data))
-
-      (twittering-make-clickable-status-datum
-       (mapcar (lambda (sym)
-                 `(,sym . ,(symbol-value sym)))
-               '(id text source created-at truncated
-                    in-reply-to-status-id
-                    in-reply-to-screen-name
-
-                    user-id user-name user-screen-name user-location
-                    user-description
-                    user-profile-image-url
-                    user-url
-                    user-protected
-		    user-followers-count
-		    user-friends-count
-		    user-statuses-count
-		    user-favourites-count
-		    user-created-at
+			   user-id user-name user-screen-name user-location
+			   user-description
+			   user-profile-image-url
+			   user-url
+			   user-protected
+			   user-followers-count
+			   user-friends-count
+			   user-statuses-count
+			   user-favourites-count
+			   user-created-at
 		    
-		    previous-cursor
-		    next-cursor
-                    original-user-name
-                    original-user-screen-name
-		    recipient-screen-name))))))
+			   previous-cursor
+			   next-cursor
+			   original-user-name
+			   original-user-screen-name
+			   recipient-screen-name)))))
+	(if original
+	    (append datum `((original . ,original)))
+	  datum)))))
 
 (defun twittering-make-clickable-status-datum (status)
   (flet ((assq-get (item seq)
@@ -5692,7 +5703,8 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
     (when twittering-reverse-mode
       (funcall insert-separator))
 
-    (let* ((status (car timeline-data))
+    (let* ((status (or (cdr (assq 'original (car timeline-data)))
+		       (car timeline-data)))
 	   (user-name (cdr (assq 'user-name status)))
 	   (user-screen-name (cdr (assq 'user-screen-name status)))
 	   (user-id (cdr (assq 'user-id status)))
