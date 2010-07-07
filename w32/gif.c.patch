@@ -1,0 +1,18 @@
+diff --git a/coders/gif.c b/coders/gif.c
+index d000033..c803f30 100644
+--- a/coders/gif.c
++++ b/coders/gif.c
+@@ -1056,6 +1056,13 @@ static Image *ReadGIFImage(const ImageInfo *image_info,ExceptionInfo *exception)
+       break;
+     if (c == (unsigned char) ';')
+       break;  /* terminator */
++
++    /* Bad gif, try to be fault-tolerance. */
++    if( c !=  0 
++        && c != (unsigned char) '!' 
++        && c != (unsigned char) ',')
++         break;
++    
+     if (c == (unsigned char) '!')
+       {
+         /*
