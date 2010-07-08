@@ -4188,22 +4188,25 @@ been initialized yet."
 
 (defun twittering-update-status-from-pop-up-buffer (&optional init-str reply-to-id username spec)
   (interactive)
-  (let ((buf (twittering-get-or-generate-buffer twittering-edit-buffer)))
-    (setq twittering-pre-edit-window-configuration
-	  (current-window-configuration))
-    (pop-to-buffer buf)
-    (twittering-edit-mode)
-    (if (twittering-timeline-spec-is-direct-messages-p spec)
-	(message "C-c C-c to send, C-c C-k to cancel")
-      (and (null init-str)
-	   twittering-current-hashtag
-	   (setq init-str (format " #%s " twittering-current-hashtag)))
-      (message "C-c C-c to post, C-c C-k to cancel"))
-    (when init-str
-      (insert init-str)
-      (set-buffer-modified-p nil))
-    (make-local-variable 'twittering-reply-recipient)
-    (setq twittering-reply-recipient `(,reply-to-id ,username ,spec))))
+  (let ((buf (get-buffer twittering-edit-buffer)))
+    (if buf
+	(pop-to-buffer buf)
+      (setq buf (twittering-get-or-generate-buffer twittering-edit-buffer))
+      (setq twittering-pre-edit-window-configuration
+	    (current-window-configuration))
+      (pop-to-buffer buf)
+      (twittering-edit-mode)
+      (if (twittering-timeline-spec-is-direct-messages-p spec)
+	  (message "C-c C-c to send, C-c C-k to cancel")
+	(and (null init-str)
+	     twittering-current-hashtag
+	     (setq init-str (format " #%s " twittering-current-hashtag)))
+	(message "C-c C-c to post, C-c C-k to cancel"))
+      (when init-str
+	(insert init-str)
+	(set-buffer-modified-p nil))
+      (make-local-variable 'twittering-reply-recipient)
+      (setq twittering-reply-recipient `(,reply-to-id ,username ,spec)))))
 
 (defun twittering-edit-post-status ()
   (interactive)
