@@ -1,6 +1,10 @@
 xwl's fork
 ----------
 
+* Format tweets sent by myself specially: Inspired by "Twitter for iPhone",
+  currently an ad-hoc implementation, screenshot:
+  http://xwl.appspot.com/images/twitter_my_tweet.png
+
 * Render user profile: When visiting user timeline, we will place user profile
   info near its most recent tweet.  Currently, including big image, basic, bio,
   location, web, following status, lists, etc.  Screenshot:
@@ -10,7 +14,7 @@ xwl's fork
     Screenshot: http://xwl.appspot.com/images/twitter.png
 
 * new specs/API
-  * `followers', `following'
+  * User Methods: followers, following
   * Friendship Methods: show-friendships
   * List methods: get-list-subscriptions, get-list-memberships
   * List Subscribers Methods: subscribe-list, unsubscribe-list
