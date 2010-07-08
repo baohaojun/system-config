@@ -4207,19 +4207,12 @@ been initialized yet."
       (setq twittering-edit-history
 	    (cons status twittering-edit-history))
       (let ((parameters `(("status" . ,status))))
-	;; Add in_reply_to_status_id only when a posting status
-	;; begins with @username.
-	(when (and reply-to-id
-		   (string-match
-		    (concat "\\`@" username "\\(?:[\n\r \t]+\\)*")
-		    status))
+	(when reply-to-id
 	  (add-to-list 'parameters `("in_reply_to_status_id" .
 				     ,(format "%s" reply-to-id))))
 	(twittering-http-post twittering-api-host "1/statuses/update"
 			      parameters))
-      (twittering-edit-close))
-     (t
-      nil))))
+      (twittering-edit-close)))))
 
 (defun twittering-edit-cancel-status ()
   (interactive)
@@ -6365,6 +6358,28 @@ variable `twittering-status-format'."
 		(error "TinyURL failed: %s" longurl))
 	    (kill-buffer buffer)))))))
 
+(defun twittering-generate-organic-retweet ()
+  (let ((username (get-text-property (point) 'username))
+	(text (get-text-property (point) 'text))
+	(id (get-text-property (point) 'id))
+	(retweet-time (current-time))
+	(format-str (or twittering-retweet-format "RT: %t (via @%s)")))
+    (when username
+      (let ((prefix "%")
+	    (replace-table
+	     `(("%" . "%")
+	       ("s" . ,username)
+	       ("t" . ,text)
+	       ("#" . ,id)
+	       ("C{\\([^}]*\\)}" .
+		(lambda (context)
+		  (let ((str (cdr (assq 'following-string context)))
+			(match-data (cdr (assq 'match-data context))))
+		    (store-match-data match-data)
+		    (format-time-string (match-string 1 str) ',retweet-time))))
+	       )))
+	(twittering-format-string format-str prefix replace-table)))))
+
 ;;;
 ;;; Cache
 ;;;
@@ -6764,29 +6779,9 @@ managed by `twittering-mode'."
 
 (defun twittering-organic-retweet ()
   (interactive)
-  (let ((username (get-text-property (point) 'username))
-	(text (get-text-property (point) 'text))
-	(id (get-text-property (point) 'id))
-	(retweet-time (current-time))
-	(format-str (or twittering-retweet-format
-			"RT: %t (via @%s)")))
-    (when username
-      (let ((prefix "%")
-	    (replace-table
-	     `(("%" . "%")
-	       ("s" . ,username)
-	       ("t" . ,text)
-	       ("#" . ,id)
-	       ("C{\\([^}]*\\)}" .
-		(lambda (context)
-		  (let ((str (cdr (assq 'following-string context)))
-			(match-data (cdr (assq 'match-data context))))
-		    (store-match-data match-data)
-		    (format-time-string (match-string 1 str) ',retweet-time))))
-	       )))
-	(funcall twittering-update-status-function
-		 (twittering-format-string format-str prefix replace-table))
-	(goto-char (line-beginning-position))))))
+  (funcall twittering-update-status-function
+	   (twittering-generate-organic-retweet))
+  (goto-char (line-beginning-position)))
 
 (defun twittering-view-user-page ()
   (interactive)
@@ -6984,12 +6979,21 @@ type: \"foo/\", you can even see all lists created by \"foo\"."
       (funcall twittering-update-status-function
 	       (concat "d " username " ") nil username spec))))
 
-(defun twittering-reply-to-user ()
-  (interactive)
-  (let ((username (get-text-property (point) 'username)))
-    (if username
-	(funcall twittering-update-status-function (concat "@" username " "))
-      (message "No user selected"))))
+(defun twittering-reply-to-user (&optional quote)
+  "Non-nil QUOTE will quote status using `twittering-generate-organic-retweet'."
+  (interactive "P")
+  (let ((username (get-text-property (point) 'username))
+	(id (get-text-property (point) 'id))
+	(spec (get-text-property (point) 'belongs-spec))
+	(init-str (if quote 
+		      (twittering-generate-organic-retweet))
+		  (concat "@" username " "))))
+  (if username
+      (progn
+	(funcall twittering-update-status-function init-str id username spec)
+	(when quote 
+	  (goto-char (line-beginning-position))))
+    (message "No user selected"))))
 
 (defun twittering-search (&optional word)
   (interactive)
