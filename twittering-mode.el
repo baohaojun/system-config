@@ -174,6 +174,12 @@ Items:
   :type 'string
   :group 'twittering)
 
+(defcustom twittering-my-status-format nil
+  "Specific format for my posts.
+See `twittering-status-format'. "
+  :type 'string
+  :group 'twittering)
+
 (defcustom twittering-retweet-format "RT: %t (via @%s)"
   "Format string for retweet.
 
@@ -188,6 +194,11 @@ Items:
 (defcustom twittering-fill-column nil
   "*The fill-column used for \"%FILL{...}\" in `twittering-status-format'.
 If nil, the fill-column is automatically calculated."
+  :type 'integer
+  :group 'twittering)
+
+(defcustom twittering-my-fill-column nil
+  "Similar to `twittering-fill-column', specially for tweets sent by myself."
   :type 'integer
   :group 'twittering)
 
@@ -411,6 +422,9 @@ If nil, this is initialized with a list of valied entries extracted from
 `twittering-format-status-function'.")
 (defvar twittering-format-status-function nil
   "The formating function generated from `twittering-format-status-function-source'.")
+
+(defvar twittering-format-my-status-function-source "")
+(defvar twittering-format-my-status-function nil)
 
 (defvar twittering-timeline-data-table (make-hash-table :test 'equal))
 
@@ -2236,6 +2250,10 @@ BEG and END mean a region that had been modified."
   "Similar to `multibyte-string-p', but consider ascii only STRING not multibyte. "
   (and (multibyte-string-p string)
        (> (string-bytes string) (length string))))
+
+(defun twittering-my-status-p (status)
+  "Is STATUS sent by myself? "
+  (string= twittering-username (cdr (assq 'user-screen-name status))))
 
 ;;;
 ;;; Utility functions for portability
@@ -6136,7 +6154,21 @@ following symbols;
 		(id (cdr (assq 'id status)))
 		(text (cdr (assq 'text status)))
 		(common-properties (list 'username username 'id id 'text text))
-		(str (concat ,@body))
+		(col (and (twittering-my-status-p status) twittering-my-fill-column))
+		(str
+		 (let ((twittering-fill-column (or col twittering-fill-column)))
+		   (concat ,@body)))
+		(str
+		 (if col
+		     (progn
+		       ;; FIXME: matching against `:' is too ad-hoc.
+		       (string-match "\\(\\`.*:\\)" str)
+		       (replace-match (format (format "%%-%ds" col)
+					      (match-string 1 str))
+				      nil
+				      nil
+				      str))
+		   str))
 		(str (if prefix
 			 (replace-regexp-in-string "^" prefix str)
 		       str))
@@ -6159,24 +6191,36 @@ following symbols;
       (message "Failed to generate a status formater for `twittering-mode'.")
       nil))))
 
-(defun twittering-update-status-format (&optional format-str)
-  (let ((format-str (or format-str twittering-status-format)))
-    (unless (string= format-str twittering-format-status-function-source)
-      (setq twittering-format-status-function-source format-str)
-      (let ((before (get-buffer "*Compile-Log*")))
-	(setq twittering-format-status-function
-	      (byte-compile
-	       (twittering-generate-format-status-function format-str)))
-	(let ((current (get-buffer "*Compile-Log*")))
-	  (when (and (null before) current (= 0 (buffer-size current)))
-	    (kill-buffer current)))))
-    (setq twittering-status-format format-str)))
+(defun twittering-update-status-format ()
+  (mapc
+   (lambda (fmt-src-func)
+     (let ((fmt  (nth 0 fmt-src-func))
+	   (src  (nth 1 fmt-src-func))
+	   (func (nth 2 fmt-src-func)))
+       (unless (string= (symbol-value fmt) (symbol-value src))
+	 (set src (symbol-value fmt))
+	 (let ((before (get-buffer "*Compile-Log*")))
+	   (set func
+		(byte-compile
+		 (twittering-generate-format-status-function
+		  (symbol-value fmt))))
+	   (let ((current (get-buffer "*Compile-Log*")))
+	     (when (and (null before) current (= 0 (buffer-size current)))
+	       (kill-buffer current)))))))
+   '((twittering-status-format
+      twittering-format-status-function-source
+      twittering-format-status-function)
+     (twittering-my-status-format
+      twittering-format-my-status-function-source
+      twittering-format-my-status-function))))
 
 (defun twittering-format-status (status &optional prefix)
   "Format a STATUS by using `twittering-format-status-function'.
 Specification of FORMAT-STR is described in the document for the
 variable `twittering-status-format'."
-  (funcall twittering-format-status-function status prefix))
+  (if (and twittering-my-status-format (twittering-my-status-p status))
+      (funcall twittering-format-my-status-function status prefix)
+    (funcall twittering-format-status-function status prefix)))
 
 (defun twittering-format-status-for-redisplay (beg end status &optional prefix)
   (let* ((properties
