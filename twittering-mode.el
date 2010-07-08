@@ -1006,10 +1006,10 @@ The function corresponding to the symbol is determined by
       (setq l (1+ l)))
     result))
 
-;;;
-;;; The below function is derived from `hmac-sha1' retrieved
-;;; from http://www.emacswiki.org/emacs/HmacShaOne.
-;;;
+;;
+;; The below function is derived from `hmac-sha1' retrieved
+;; from http://www.emacswiki.org/emacs/HmacShaOne.
+;;
 (defun twittering-hmac-sha1 (key message)
   "Return an HMAC-SHA1 authentication code for KEY and MESSAGE.
 
@@ -1037,36 +1037,36 @@ encoding, which we can generate as follows:
 
 For keys and values that are already unibyte, the
 `encode-coding-string' calls just return the same string."
-;;; Return an HMAC-SHA1 authentication code for KEY and MESSAGE.
-;;; 
-;;; KEY and MESSAGE must be unibyte strings.  The result is a unibyte
-;;; string.  Use the function `encode-hex-string' or the function
-;;; `base64-encode-string' to produce human-readable output.
-;;; 
-;;; See URL:<http://en.wikipedia.org/wiki/HMAC> for more information
-;;; on the HMAC-SHA1 algorithm.
-;;; 
-;;; The Emacs multibyte representation actually uses a series of
-;;; 8-bit values under the hood, so we could have allowed multibyte
-;;; strings as arguments.  However, internal 8-bit values don't
-;;; correspond to any external representation \(at least for major
-;;; version 22).  This makes multibyte strings useless for generating
-;;; hashes.
-;;; 
-;;; Instead, callers must explicitly pick and use an encoding for
-;;; their multibyte data.  Most callers will want to use UTF-8
-;;; encoding, which we can generate as follows:
-;;; 
-;;; (let ((unibyte-key   (encode-coding-string key   'utf-8 t))
-;;;       (unibyte-value (encode-coding-string value 'utf-8 t)))
-;;; (hmac-sha1 unibyte-key unibyte-value))
-;;; 
-;;; For keys and values that are already unibyte, the
-;;; `encode-coding-string' calls just return the same string.
-;;;
-;;; Author: Derek Upham - sand (at) blarg.net
-;;;
-;;; Copyright: This code is in the public domain.
+;; Return an HMAC-SHA1 authentication code for KEY and MESSAGE.
+;; 
+;; KEY and MESSAGE must be unibyte strings.  The result is a unibyte
+;; string.  Use the function `encode-hex-string' or the function
+;; `base64-encode-string' to produce human-readable output.
+;; 
+;; See URL:<http://en.wikipedia.org/wiki/HMAC> for more information
+;; on the HMAC-SHA1 algorithm.
+;; 
+;; The Emacs multibyte representation actually uses a series of
+;; 8-bit values under the hood, so we could have allowed multibyte
+;; strings as arguments.  However, internal 8-bit values don't
+;; correspond to any external representation \(at least for major
+;; version 22).  This makes multibyte strings useless for generating
+;; hashes.
+;; 
+;; Instead, callers must explicitly pick and use an encoding for
+;; their multibyte data.  Most callers will want to use UTF-8
+;; encoding, which we can generate as follows:
+;; 
+;; (let ((unibyte-key   (encode-coding-string key   'utf-8 t))
+;;       (unibyte-value (encode-coding-string value 'utf-8 t)))
+;; (hmac-sha1 unibyte-key unibyte-value))
+;; 
+;; For keys and values that are already unibyte, the
+;; `encode-coding-string' calls just return the same string.
+;;
+;; Author: Derek Upham - sand (at) blarg.net
+;;
+;; Copyright: This code is in the public domain.
   (require 'sha1)
   (when (multibyte-string-p key)
     (error "key must be unibyte"))
@@ -2364,65 +2364,65 @@ as a list of a string on Emacs21."
 ;;; Timeline spec functions
 ;;;
 
-;;; Timeline spec as S-expression
-;;; - (user USER): timeline of the user whose name is USER. USER is a string.
-;;; - (list USER LIST):
-;;;     the list LIST of the user USER. LIST and USER are strings.
-;;;
-;;; - (direct_messages): received direct messages.
-;;; - (direct_messages_sent): sent direct messages.
-;;; - (friends): friends timeline.
-;;; - (home): home timeline.
-;;; - (mentions): mentions timeline.
-;;;     mentions (status containing @username) for the authenticating user.
-;;; - (public): public timeline.
-;;; - (replies): replies.
-;;; - (retweeted_by_me): retweets posted by the authenticating user.
-;;; - (retweeted_to_me): retweets posted by the authenticating user's friends.
-;;; - (retweets_of_me):
-;;;     tweets of the authenticated user that have been retweeted by others.
-;;;
-;;; - (following): friends.
-;;; - (followers): followers.
-;;;
-;;; - (search STRING): the result of searching with query STRING.
-;;; - (merge SPEC1 SPEC2 ...): result of merging timelines SPEC1 SPEC2 ...
-;;; - (filter REGEXP SPEC): timeline filtered with REGEXP.
-;;;
+;; Timeline spec as S-expression
+;; - (user USER): timeline of the user whose name is USER. USER is a string.
+;; - (list USER LIST):
+;;     the list LIST of the user USER. LIST and USER are strings.
+;;
+;; - (direct_messages): received direct messages.
+;; - (direct_messages_sent): sent direct messages.
+;; - (friends): friends timeline.
+;; - (home): home timeline.
+;; - (mentions): mentions timeline.
+;;     mentions (status containing @username) for the authenticating user.
+;; - (public): public timeline.
+;; - (replies): replies.
+;; - (retweeted_by_me): retweets posted by the authenticating user.
+;; - (retweeted_to_me): retweets posted by the authenticating user's friends.
+;; - (retweets_of_me):
+;;     tweets of the authenticated user that have been retweeted by others.
+;;
+;; - (following): friends.
+;; - (followers): followers.
+;;
+;; - (search STRING): the result of searching with query STRING.
+;; - (merge SPEC1 SPEC2 ...): result of merging timelines SPEC1 SPEC2 ...
+;; - (filter REGEXP SPEC): timeline filtered with REGEXP.
+;;
 
-;;; Timeline spec string
-;;;
-;;; SPEC ::= PRIMARY | COMPOSITE
-;;; PRIMARY ::= USER | LIST | DIRECT_MESSSAGES | DIRECT_MESSSAGES_SENT
-;;;             | FRIENDS | HOME | MENTIONS | PUBLIC | REPLIES
-;;;             | RETWEETED_BY_ME | RETWEETED_TO_ME | RETWEETS_OF_ME
-;;;             | FOLLOWING | FOLLOWERS
-;;;             | SEARCH
-;;; COMPOSITE ::= MERGE | FILTER
-;;;
-;;; USER ::= /[a-zA-Z0-9_-]+/
-;;; LIST ::= USER "/" LISTNAME
-;;; LISTNAME ::= /[a-zA-Z0-9_-]+/
-;;; DIRECT_MESSSAGES ::= ":direct_messages"
-;;; DIRECT_MESSSAGES_SENT ::= ":direct_messages_sent"
-;;; FRIENDS ::= ":friends"
-;;; HOME ::= ":home" | "~"
-;;; MENTIONS ::= ":mentions"
-;;; PUBLIC ::= ":public"
-;;; REPLIES ::= ":replies" | "@"
-;;; RETWEETED_BY_ME ::= ":retweeted_by_me"
-;;; RETWEETED_TO_ME ::= ":retweeted_to_me"
-;;; RETWEETS_OF_ME ::= ":retweets_of_me"
-;;;
-;;; FOLLOWING ::= ":following"
-;;; FOLLOWERS ::= ":followers"
-;;;
-;;; SEARCH ::= ":search/" QUERY_STRING "/"
-;;; QUERY_STRING ::= any string, where "/" is escaped by a backslash.
-;;; MERGE ::= "(" MERGED_SPECS ")"
-;;; MERGED_SPECS ::= SPEC | SPEC "+" MERGED_SPECS
-;;; FILTER ::= ":filter/" REGEXP "/" SPEC
-;;;
+;; Timeline spec string
+;;
+;; SPEC ::= PRIMARY | COMPOSITE
+;; PRIMARY ::= USER | LIST | DIRECT_MESSSAGES | DIRECT_MESSSAGES_SENT
+;;             | FRIENDS | HOME | MENTIONS | PUBLIC | REPLIES
+;;             | RETWEETED_BY_ME | RETWEETED_TO_ME | RETWEETS_OF_ME
+;;             | FOLLOWING | FOLLOWERS
+;;             | SEARCH
+;; COMPOSITE ::= MERGE | FILTER
+;;
+;; USER ::= /[a-zA-Z0-9_-]+/
+;; LIST ::= USER "/" LISTNAME
+;; LISTNAME ::= /[a-zA-Z0-9_-]+/
+;; DIRECT_MESSSAGES ::= ":direct_messages"
+;; DIRECT_MESSSAGES_SENT ::= ":direct_messages_sent"
+;; FRIENDS ::= ":friends"
+;; HOME ::= ":home" | "~"
+;; MENTIONS ::= ":mentions"
+;; PUBLIC ::= ":public"
+;; REPLIES ::= ":replies" | "@"
+;; RETWEETED_BY_ME ::= ":retweeted_by_me"
+;; RETWEETED_TO_ME ::= ":retweeted_to_me"
+;; RETWEETS_OF_ME ::= ":retweets_of_me"
+;;
+;; FOLLOWING ::= ":following"
+;; FOLLOWERS ::= ":followers"
+;;
+;; SEARCH ::= ":search/" QUERY_STRING "/"
+;; QUERY_STRING ::= any string, where "/" is escaped by a backslash.
+;; MERGE ::= "(" MERGED_SPECS ")"
+;; MERGED_SPECS ::= SPEC | SPEC "+" MERGED_SPECS
+;; FILTER ::= ":filter/" REGEXP "/" SPEC
+;;
 
 (defun twittering-timeline-spec-to-string (timeline-spec &optional shorten)
   "Convert TIMELINE-SPEC into a string.
@@ -3400,10 +3400,10 @@ static char * yellow3_xpm[] = {
 \"+$+++++++++#@@\",
 \"++@@@@@@@@@@@@\"};
 "
-;;; The above image is copied from `mew-lock.xpm' distributed with Mew.
-;;; The copyright of the image is below, which is copied from `mew.el'.
+;; The above image is copied from `mew-lock.xpm' distributed with Mew.
+;; The copyright of the image is below, which is copied from `mew.el'.
 
-;;; Copyright Notice:
+;; Copyright Notice:
 
 ;; Copyright (C) 1994-2009 Mew developing team.
 ;; All rights reserved.
@@ -3474,10 +3474,10 @@ static char *plugged[] = {
 };
 "))
   "Image for indicator of active state."
-;;; The above image is copied from `plugged.xpm' distributed with Wanderlust
-;;; by Yuuichi Teranishi <teranisi@gohome.org>.
-;;; The copyright of the image is below, which is copied from `COPYING' of
-;;; Wanderlust 2.14.
+;; The above image is copied from `plugged.xpm' distributed with Wanderlust
+;; by Yuuichi Teranishi <teranisi@gohome.org>.
+;; The copyright of the image is below, which is copied from `COPYING' of
+;; Wanderlust 2.14.
 ;; Copyright (C) 1998-2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
@@ -3528,10 +3528,10 @@ static char * unplugged_xpm[] = {
 };
 "))
   "Image for indicator of inactive state."
-;;; The above image is copied from `unplugged.xpm' distributed with Wanderlust
-;;; by Yuuichi Teranishi <teranisi@gohome.org>.
-;;; The copyright of the image is below, which is copied from `COPYING' of
-;;; Wanderlust 2.14.
+;; The above image is copied from `unplugged.xpm' distributed with Wanderlust
+;; by Yuuichi Teranishi <teranisi@gohome.org>.
+;; The copyright of the image is below, which is copied from `COPYING' of
+;; Wanderlust 2.14.
 ;; Copyright (C) 1998-2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
@@ -6760,8 +6760,7 @@ managed by `twittering-mode'."
 				   twittering-use-native-retweet)))
     (if use-native-retweet-flag
 	(twittering-native-retweet)
-      (twittering-organic-retweet))
-    (goto-char (line-beginning-position))))
+      (twittering-organic-retweet))))
 
 (defun twittering-organic-retweet ()
   (interactive)
@@ -6784,11 +6783,10 @@ managed by `twittering-mode'."
 			(match-data (cdr (assq 'match-data context))))
 		    (store-match-data match-data)
 		    (format-time-string (match-string 1 str) ',retweet-time))))
-	       ))
-	    )
+	       )))
 	(funcall twittering-update-status-function
-	 (twittering-format-string format-str prefix replace-table))
-	))))
+		 (twittering-format-string format-str prefix replace-table))
+	(goto-char (line-beginning-position))))))
 
 (defun twittering-view-user-page ()
   (interactive)
