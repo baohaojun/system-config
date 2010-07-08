@@ -130,7 +130,7 @@
 (define-abbrev-table 'java-mode-abbrev-table
   '(
     ("le" "Log.e(TAG, \"" nil 16)
-    ("lv" "Log.v(TAG, String.format(\"" nil 9)
+    ("lv" "Slog.v(TAG, String.format(\"" nil 0)
     ("string" "String" nil 18)
     ("sv" "System.out.print(String.format(\"" nil 0)
    ))

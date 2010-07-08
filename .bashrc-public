@@ -44,7 +44,10 @@ function svn-info-clip()
 
 function lcd()
 {
-    pushd . 
+    if test $# != 1; then
+        return 1
+    fi
+
     local ori=$1
     local x=0
     while ! test -e "$1" >/dev/null && ((x++ < 10)); do 
@@ -53,7 +56,7 @@ function lcd()
 
     if ! test -e "$1" >/dev/null; then
         _ucd $ori
-        return 
+        return $?
     fi
 
     link=$(readlink -f "$1")
@@ -61,10 +64,28 @@ function lcd()
             link=`readshortcut "$link"`
     fi
     if [[ -d "$link" ]]; then
-        cd "$link"
+        builtin cd "$link"
+        return $?
     else
-        cd "$(dirname "$link")"
+        builtin cd "$(dirname "$link")"
+        return $?
     fi
+}
+
+function _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will go to /home, 
+{
+    local x=0
+    dir=`dirname $(pwd)`
+    dir_basename=`basename $dir`
+    while ! echo $dir_basename|grep -e $1 -i -q && ((x++ < 10)); do
+        dir=`dirname $dir`
+        dir_basename=`basename $dir`
+    done
+    if test x$dir = x/; then #obviously, we very not likely want to go to / with this complex setup
+        return 1;
+    fi
+    builtin cd $dir
+    return $?
 }
 
 function git()
@@ -75,18 +96,6 @@ function git()
     else
         command git "$@"
     fi            
-}
-
-function _ucd()
-{
-    local x=0
-    dir=`dirname $(pwd)`
-    dir_basename=`basename $dir`
-    while ! echo $dir_basename|grep -e $1 -i -q && ((x++ < 10)); do
-        dir=`dirname $dir`
-        dir_basename=`basename $dir`
-    done
-    cd $dir
 }
 
 stty -ixon -ixoff >/dev/null 2>&1

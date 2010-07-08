@@ -3432,7 +3432,7 @@ composite curtain_left.png xx.png xx.png
 composite -geometry +880+0 curtain_right.png xx.png xx.png 
 git st -s|awk '{print $2}'|xargs bash -c 'for x in "$@"; do emacsclient $x; done' xx
 
-(rm -f /home/bhj/src/android-original/out/target/product/eeepc/obj/PACKAGING/systemimage_unopt_intermediates/system.img; rm -f /home/bhj/src/android-original/out/target/product/eeepc/system.img; rm -f /home/bhj/src/android-original/out/target/product/eeepc/eeepc.iso; cd ~/src/android-original/bootable/newinstaller/;  touch ./boot/isolinux/*; mm iso_img)
+(. ~/.bashrc; lcd out/target; rm -f product/eeepc/obj/PACKAGING/systemimage_unopt_intermediates/system.img; rm -f product/eeepc/system.img; rm -f product/eeepc/eeepc.iso; lcd bootable/newinstaller/;  touch ./boot/isolinux/*; mm iso_img)
 
 chrome:
 sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xfbef0d696de1c72ba5a835fe5a9bf3bb4e5e17b5
@@ -3452,3 +3452,4 @@ time make iso_img TARGET_PRODUCT=eeepc -j8
 http://queue.acm.org/detail.cfm?id=945136
 
 git://github.com/kazu-yamamoto/Goby.git firemacs
+/system/xbin/strace -f /init 2>&1 | nc 192.168.0.100 8888

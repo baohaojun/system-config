@@ -4,6 +4,7 @@
 . ~/.bash_netcompletion
 
 function cd_bhj () {
+    lcd "$@" && return $?
     builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@"
     (flock -x ~/.where.lock -c where&)
 }
