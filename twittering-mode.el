@@ -6982,18 +6982,18 @@ type: \"foo/\", you can even see all lists created by \"foo\"."
 (defun twittering-reply-to-user (&optional quote)
   "Non-nil QUOTE will quote status using `twittering-generate-organic-retweet'."
   (interactive "P")
-  (let ((username (get-text-property (point) 'username))
-	(id (get-text-property (point) 'id))
-	(spec (get-text-property (point) 'belongs-spec))
-	(init-str (if quote 
-		      (twittering-generate-organic-retweet))
-		  (concat "@" username " "))))
-  (if username
-      (progn
-	(funcall twittering-update-status-function init-str id username spec)
-	(when quote 
-	  (goto-char (line-beginning-position))))
-    (message "No user selected"))))
+  (let* ((username (get-text-property (point) 'username))
+	 (id (get-text-property (point) 'id))
+	 (spec (get-text-property (point) 'belongs-spec))
+	 (init-str (if quote 
+		       (twittering-generate-organic-retweet)
+		     (concat "@" username " "))))
+    (if username
+	(progn
+	  (funcall twittering-update-status-function init-str id username spec)
+	  (when quote 
+	    (goto-char (line-beginning-position))))
+      (message "No user selected"))))
 
 (defun twittering-search (&optional word)
   (interactive)
