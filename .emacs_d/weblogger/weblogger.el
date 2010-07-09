@@ -1263,8 +1263,7 @@ Otherwise, open a new entry."
                                         ; themselves if they
                                         ; want to.
   (if (message-fetch-field "Subject")
-      (message-goto-body) ;; If Subject exists, move cursor to message
-    ;; body
+      (message-goto-body) ;; If Subject exists, move cursor to message body
     (message-goto-subject)) ;; Else, drop cursor on Subject header
   (pop-to-buffer *weblogger-entry*))
 
@@ -1442,7 +1441,7 @@ internally).  If BUFFER is not given, use the current buffer."
   (unless buffer
     (setq buffer (current-buffer)))
   (save-excursion
-    (run-hooks weblogger-pre-struct-hook)
+    (run-hooks 'weblogger-pre-struct-hook)
     (set-buffer buffer)
     (delq nil
 	  (list

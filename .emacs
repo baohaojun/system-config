@@ -520,7 +520,6 @@
  '(w32-use-w32-font-dialog nil)
  '(w3m-bookmark-file "q:/.w3m_bookmark.html")
  '(weblogger-config-alist (quote (("default\\" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog"))))
- '(weblogger-start-edit-entry-hook (quote ((lambda nil (interactive) (auto-fill-mode 0)))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
  '(x-select-enable-clipboard t))
@@ -759,3 +758,19 @@
                      href=\"mystyle.css\"
                      type=\"text/css\">")))
 
+(setq weblogger-start-edit-entry-hook
+      (list
+       (lambda () 
+         (interactive)
+         (message-goto-body)
+         (shell-command-on-region
+          (point) (point-max) "unmarkdown" nil t nil nil))))
+
+
+(setq weblogger-pre-struct-hook
+      (list
+       (lambda ()
+         (interactive)
+         (message-goto-body)
+         (shell-command-on-region
+          (point) (point-max) "markdown" nil t nil nil))))
