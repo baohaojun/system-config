@@ -65,9 +65,11 @@ function lcd()
     fi
     if [[ -d "$link" ]]; then
         builtin cd "$link"
+        (flock -x ~/.where.lock -c where&)
         return $?
     else
         builtin cd "$(dirname "$link")"
+        (flock -x ~/.where.lock -c where&)
         return $?
     fi
 }
@@ -85,6 +87,7 @@ function _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home
         return 1;
     fi
     builtin cd $dir
+    (flock -x ~/.where.lock -c where&)
     return $?
 }
 

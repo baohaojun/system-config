@@ -1,12 +1,17 @@
 #!/bin/bash
+. ~/.bashrc
+lcd build/..
 base=`pwd`
+cd - 
 # configure root dir
-root=$base/out/host/linux-x86/product/sim/system
+root=$base/out/debug/host/linux-x86/pr/sim/system
 export ANDROID_ROOT=$root
 export ANDROID_PRODUCT_OUT=$ANDROID_ROOT
 # configure bootclasspath
 bootpath=$root/framework
-export BOOTCLASSPATH=$bootpath/core.jar:$bootpath/ext.jar:$bootpath/framework.jar:$bootpath/android.policy.jar:$bootpath/services.jar:$bootpath/android.awt.jar: $bootpath/am.jar
+export BOOTCLASSPATH=$bootpath/core.jar:$bootpath/ext.jar:$bootpath/framework.jar:$bootpath/android.policy.jar:$bootpath/services.jar:$bootpath/android.awt.jar:$bootpath/am.jar
+export PATH=$base/out/debug/host/linux-x86/pr/sim/system/bin:$PATH
 # this is where we create the dalvik-cache directory
-export ANDROID_DATA=/tmp/dalvik_$USER mkdir -p $ANDROID_DATA/dalvik-cache
+export ANDROID_DATA=/tmp/dalvik_$USER; 
+mkdir -p $ANDROID_DATA/dalvik-cache
 exec $root/bin/am $@
