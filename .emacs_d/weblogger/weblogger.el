@@ -519,37 +519,37 @@ The order of bindings in a keymap matters when it is used as a menu."
       '(menu-item "Setup your Weblog" weblogger-setup-weblog) 'start-weblog)))
 
 (defun weblogger-submit-bug-report ()
- "Submit a bug report on weblogger."
- (interactive)
- (require 'reporter)
- (let ((xml-rpc-tz-pd-defined-in
-        (if (fboundp 'find-lisp-object-file-name)
-            (find-lisp-object-file-name
-             'timezone-parse-date (symbol-function 'timezone-parse-date))
-          (symbol-file 'timezone-parse-date)))
-       (date-parses-as (timezone-parse-date "20091130T00:52:53")))
-   (reporter-submit-bug-report
-    weblogger-maintainer-address
-    (concat "weblogger.el " weblogger-version)
-    (list 'xml-rpc-tz-pd-defined-in
-          'date-parses-as
-          'xml-rpc-load-hook
-          'xml-rpc-use-coding-system
-          'xml-rpc-allow-unicode-string
-          'xml-rpc-base64-encode-unicode
-          'xml-rpc-base64-decode-unicode
-          'weblogger-config-alist
-          'weblogger-config-name
-          'weblogger-start-edit-entry-hook
-          'weblogger-edit-entry-hook
-          'weblogger-pre-struct-hook
-          'weblogger-edit-mode
-          'weblogger-edit-mode-toggle-hook
-          'weblogger-weblogger-mode-toggle-hook
-          'weblogger-server-url
-          'weblogger-entry-mode-hook
-          'weblogger-new-entry-hook
-          'weblogger-capabilities))))
+  "Submit a bug report on weblogger."
+  (interactive)
+  (require 'reporter)
+  (let ((xml-rpc-tz-pd-defined-in
+         (if (fboundp 'find-lisp-object-file-name)
+             (find-lisp-object-file-name
+              'timezone-parse-date (symbol-function 'timezone-parse-date))
+           (symbol-file 'timezone-parse-date)))
+        (date-parses-as (timezone-parse-date "20091130T00:52:53")))
+    (reporter-submit-bug-report
+     weblogger-maintainer-address
+     (concat "weblogger.el " weblogger-version)
+     (list 'xml-rpc-tz-pd-defined-in
+           'date-parses-as
+           'xml-rpc-load-hook
+           'xml-rpc-use-coding-system
+           'xml-rpc-allow-unicode-string
+           'xml-rpc-base64-encode-unicode
+           'xml-rpc-base64-decode-unicode
+           'weblogger-config-alist
+           'weblogger-config-name
+           'weblogger-start-edit-entry-hook
+           'weblogger-edit-entry-hook
+           'weblogger-pre-struct-hook
+           'weblogger-edit-mode
+           'weblogger-edit-mode-toggle-hook
+           'weblogger-weblogger-mode-toggle-hook
+           'weblogger-server-url
+           'weblogger-entry-mode-hook
+           'weblogger-new-entry-hook
+           'weblogger-capabilities))))
 
 ;;;###autoload
 (defun weblogger-select-configuration (&optional config)
@@ -687,52 +687,52 @@ available."
 	(title    (cdr (assoc "title"       entry))))
 
     (mapc 'message-add-header
-	    (delq nil
-		  (mapcar
-		   (lambda (bit)
-		     (when (car (cdr-safe bit))
-		       (concat (car bit) ": "
-			       (cadr bit))))
-		   (list
-		    (list "Message-ID"
-			  (when entry-id
-			    (format "<%s/%s@%s>"
-				    entry-id
-				    (weblogger-weblog-id)
-				    (url-host (url-generic-parse-url
-                                               weblogger-server-url)))))
-		    (list "Date"
-                          (format-time-string "%d %b %Y %H:%M:%S %z"
-                                              (caddr (assoc "dateCreated"
-                                                            entry))))
-		    (list "In-Reply-To"
-			  (let ((hold nil))
-			    (mapc
-			     (lambda (p)
-			       (setq hold (concat hold p ", ")))
-			     (cdr (assoc "trackbacks"  entry)))
-			    (when hold hold)))
-		    (list "X-URL"
-			  (cdr (assoc "url" entry)))
-		    (list "X-TextType"
-			  (cdr (assoc "texttype" entry)))
-		    (list "Subject" title)
-                    (list "Keywords" (let ((cats (cdr (assoc "categories" entry))))
-                                       (when (> (length cats) 0)
-                                         (mapconcat
-                                          (lambda (p) p)
-                                          cats ", "))))
-		    (list "Summary" (cdr (assoc "mt_keywords" entry)))
+          (delq nil
+                (mapcar
+                 (lambda (bit)
+                   (when (car (cdr-safe bit))
+                     (concat (car bit) ": "
+                             (cadr bit))))
+                 (list
+                  (list "Message-ID"
+                        (when entry-id
+                          (format "<%s/%s@%s>"
+                                  entry-id
+                                  (weblogger-weblog-id)
+                                  (url-host (url-generic-parse-url
+                                             weblogger-server-url)))))
+                  (list "Date"
+                        (format-time-string "%d %b %Y %H:%M:%S %z"
+                                            (caddr (assoc "dateCreated"
+                                                          entry))))
+                  (list "In-Reply-To"
+                        (let ((hold nil))
+                          (mapc
+                           (lambda (p)
+                             (setq hold (concat hold p ", ")))
+                           (cdr (assoc "trackbacks"  entry)))
+                          (when hold hold)))
+                  (list "X-URL"
+                        (cdr (assoc "url" entry)))
+                  (list "X-TextType"
+                        (cdr (assoc "texttype" entry)))
+                  (list "Subject" title)
+                  (list "Keywords" (let ((cats (cdr (assoc "categories" entry))))
+                                     (when (> (length cats) 0)
+                                       (mapconcat
+                                        (lambda (p) p)
+                                        cats ", "))))
+                  (list "Summary" (cdr (assoc "mt_keywords" entry)))
                                         ; Note that the blogger API on
                                         ; blogger.com is depcrated and
                                         ; broken on this element.
-		    (list "From"
-			  (or (cdr (assoc "authorName"  entry))
-			      weblogger-server-username))
-		    (list "Newsgroup"
-			  (or (weblogger-weblog-name-from-id
-                               (weblogger-weblog-id))
-                              "unknown"))))))
+                  (list "From"
+                        (or (cdr (assoc "authorName"  entry))
+                            weblogger-server-username))
+                  (list "Newsgroup"
+                        (or (weblogger-weblog-name-from-id
+                             (weblogger-weblog-id))
+                            "unknown"))))))
 
     (goto-char (point-max))
     (when body-line
@@ -824,9 +824,9 @@ it."
               (cond (auth-user auth-user)
                     (config-user config-user)
                     (t (if (and prompt weblogger-server-username)
-                      (read-from-minibuffer "Username: "
-                                            weblogger-server-username)
-                    (read-from-minibuffer "Username: "))))))
+                           (read-from-minibuffer "Username: "
+                                                 weblogger-server-username)
+                         (read-from-minibuffer "Username: "))))))
     weblogger-server-username))
 
 (defun weblogger-server-url ()
@@ -849,8 +849,8 @@ it"
                 "password" (url-host (url-generic-parse-url
                                       weblogger-server-url))
                 "http")))
-             (get-pass (nth 2 (cdr (assoc weblogger-config-name
-                                          weblogger-config-alist)))))
+            (get-pass (nth 2 (cdr (assoc weblogger-config-name
+                                         weblogger-config-alist)))))
         (setq weblogger-server-password
 	      (cond (auth-pass auth-pass)
 		    (get-pass get-pass)
@@ -1033,8 +1033,8 @@ is set, then add it to the current index and go to that entry."
   (when (y-or-n-p "Do you really want to delete this entry? ")
     (let* ((msgid (cdr
                    (assoc "entry-id"
-			    (ring-ref weblogger-entry-ring
-				      weblogger-ring-index)))))
+                          (ring-ref weblogger-entry-ring
+                                    weblogger-ring-index)))))
       (funcall weblogger-api-delete-entry msgid)
       (ring-remove weblogger-entry-ring weblogger-ring-index)
       (weblogger-edit-entry
@@ -1259,12 +1259,12 @@ Otherwise, open a new entry."
   (message-goto-keywords) ;; Create Keywords field in new entries
   (set-buffer-modified-p nil)
   (run-hooks 'weblogger-start-edit-entry-hook) ; Force hooks to clear
-                                               ; the modified flag
-                                               ; themselves if they
-                                               ; want to.
+                                        ; the modified flag
+                                        ; themselves if they
+                                        ; want to.
   (if (message-fetch-field "Subject")
       (message-goto-body) ;; If Subject exists, move cursor to message
-                          ;; body
+    ;; body
     (message-goto-subject)) ;; Else, drop cursor on Subject header
   (pop-to-buffer *weblogger-entry*))
 
@@ -1375,7 +1375,7 @@ request."
            (cons "categories" (cdr (assoc "categories" entry))))
          (when (cdr (assoc "mt_keywords" entry))
            (cons "mt_keywords" (cdr (assoc "mt_keywords" entry)))))))
- (defun weblogger-server-userid ()
+(defun weblogger-server-userid ()
   "Get information on user."
   (or weblogger-server-userid
       (setq weblogger-server-userid
@@ -1455,8 +1455,8 @@ internally).  If BUFFER is not given, use the current buffer."
 	   (cons "title"     (or (message-fetch-field "Subject")
 				 weblogger-default-title))
            (cons "categories" (car (list (or (message-tokenize-header
-                                            (message-fetch-field "Keywords") ", ")
-                                           weblogger-default-categories))))
+                                              (message-fetch-field "Keywords") ", ")
+                                             weblogger-default-categories))))
 	   (cons "mt_keywords" (message-fetch-field "Summary"))
 
 	   (when (message-fetch-field "In-Reply-To")

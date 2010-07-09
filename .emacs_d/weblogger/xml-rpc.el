@@ -268,25 +268,25 @@ Set it higher to get some info in the *Messages* buffer"
        (not (xml-rpc-value-structp value))))
 
 (defun xml-rpc-submit-bug-report ()
- "Submit a bug report on xml-rpc."
- (interactive)
- (require 'reporter)
- (let ((xml-rpc-tz-pd-defined-in
-        (if (fboundp 'find-lisp-object-file-name)
-            (find-lisp-object-file-name
-             'timezone-parse-date (symbol-function 'timezone-parse-date))
-          (symbol-file 'timezone-parse-date)))
-       (date-parses-as (timezone-parse-date "20091130T00:52:53")))
-   (reporter-submit-bug-report
-    xml-rpc-maintainer-address
-    (concat "xml-rpc.el " xml-rpc-version)
-    (list 'xml-rpc-tz-pd-defined-in
-          'date-parses-as
-          'xml-rpc-load-hook
-          'xml-rpc-use-coding-system
-          'xml-rpc-allow-unicode-string
-          'xml-rpc-base64-encode-unicode
-          'xml-rpc-base64-decode-unicode))))
+  "Submit a bug report on xml-rpc."
+  (interactive)
+  (require 'reporter)
+  (let ((xml-rpc-tz-pd-defined-in
+         (if (fboundp 'find-lisp-object-file-name)
+             (find-lisp-object-file-name
+              'timezone-parse-date (symbol-function 'timezone-parse-date))
+           (symbol-file 'timezone-parse-date)))
+        (date-parses-as (timezone-parse-date "20091130T00:52:53")))
+    (reporter-submit-bug-report
+     xml-rpc-maintainer-address
+     (concat "xml-rpc.el " xml-rpc-version)
+     (list 'xml-rpc-tz-pd-defined-in
+           'date-parses-as
+           'xml-rpc-load-hook
+           'xml-rpc-use-coding-system
+           'xml-rpc-allow-unicode-string
+           'xml-rpc-base64-encode-unicode
+           'xml-rpc-base64-decode-unicode))))
 
 (defun xml-rpc-value-booleanp (value)
   "Return t if VALUE is a boolean."
