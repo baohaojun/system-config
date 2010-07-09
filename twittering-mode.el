@@ -4223,19 +4223,22 @@ been initialized yet."
     (cond
      ((not (twittering-status-not-blank-p status))
       (message "Empty tweet!"))
-     ((< 140 (length status))
-      (message "Too long tweet!"))
-     ((or (not twittering-request-confirmation-on-posting)
-	  (y-or-n-p "Send this tweet? "))
-      (setq twittering-edit-history
-	    (cons status twittering-edit-history))
-      (let ((parameters `(("status" . ,status))))
-	(when reply-to-id
-	  (add-to-list 'parameters `("in_reply_to_status_id" .
-				     ,(format "%s" reply-to-id))))
-	(twittering-http-post twittering-api-host "1/statuses/update"
-			      parameters))
-      (twittering-edit-close)))))
+     (t
+      (when (< 140 (length status))
+	(unless (y-or-n-p "Too long tweet!  Truncate trailing? ")
+	  (error "Abort"))
+	(setq status (concat (substring status 0 138) "..")))
+      (when (or (not twittering-request-confirmation-on-posting)
+		(y-or-n-p "Send this tweet? "))
+	(setq twittering-edit-history
+	      (cons status twittering-edit-history))
+	(let ((parameters `(("status" . ,status))))
+	  (when reply-to-id
+	    (add-to-list 'parameters `("in_reply_to_status_id" .
+				       ,(format "%s" reply-to-id))))
+	  (twittering-http-post twittering-api-host "1/statuses/update"
+				parameters))
+	(twittering-edit-close))))))
 
 (defun twittering-edit-cancel-status ()
   (interactive)
