@@ -17,6 +17,8 @@ repo sync
 cd /var/cache/git/android-nvidia
 repo init -u git://nv-tegra.nvidia.com/android/manifest.git -b eclair-tegra
 repo sync
+repo init -u git://nv-tegra.nvidia.com/android/manifest.git -b froyo-tegra
+repo sync
 
 cd /var/cache/git/kernel-nvidia
 git pull
