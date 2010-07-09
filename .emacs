@@ -19,7 +19,7 @@
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
   (if (eq system-type 'gnu/linux)
-      (set-frame-font "Monaco-10.5")
+      (set-frame-font "Monaco-11.5")
     (set-frame-font "Monaco-14"))
   (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size 16))
   (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size 16))

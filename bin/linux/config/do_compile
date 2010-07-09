@@ -13,3 +13,9 @@ git clean -xfd
 cd ~/gcode/UncommentJava/
 make
 git clean -xfd
+
+cd ~/gcode/fcitx/
+./bootstrap
+./configure
+make
+sudo make install

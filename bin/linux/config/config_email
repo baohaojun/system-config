@@ -101,7 +101,7 @@ folderfilter = lambda foldername: all([x.lower() not in foldername.lower() for x
 EOF
 
     sudo /etc/init.d/dovecot restart
-    offlineimap
+    #offlineimap
 #now you should be able to start gnus in Emacs
 }
 
