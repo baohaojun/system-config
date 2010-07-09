@@ -51,6 +51,7 @@ fontforge
 gcc-4.4-doc
 gcc-multilib
 git-core
+gitk
 git-svn
 glibc-doc
 global
@@ -70,6 +71,7 @@ libcurses-ruby
 libcurses-ui-perl
 libcurses-widgets-perl
 libesd0-dev
+libexpect-perl
 libltdl7
 libncurses5-dev
 libncursesw5-dev
@@ -94,8 +96,8 @@ ncurses-hexedit
 ncurses-term
 nmap
 offlineimap
-openssh-server
 openjdk-6-doc
+openssh-server
 p7zip
 p7zip-full
 pbzip2
