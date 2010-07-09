@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+test $# = 2 || exit
+LINE=$1
+FILE=$2
+perl -ne 'if ($. != '$LINE') {print}' -i $FILE

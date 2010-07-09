@@ -69,7 +69,10 @@ function lcd()
     if test -f "$link" && echo "${link##*.}"|grep -i '^lnk$' -q; then 
             link=`readshortcut "$link"`
     fi
-    if [[ -d "$link" ]]; then
+    if test -d "$link"; then
+        if test "$link" = `pwd`; then
+            return 1;
+        fi
         builtin cd "$link"
         (flock -x ~/.where.lock -c where&)
         return $?
