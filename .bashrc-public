@@ -48,6 +48,12 @@ function lcd()
         return 1
     fi
 
+    if test "${1:0:2}" = '\\' -a `uname` = Linux; then
+        smbnetfs ~/smb >/dev/null 2>&1
+        builtin cd ~/smb/$(echo "$1"|perl -npe 's,\\,/,g')
+        return 0
+    fi
+
     local ori=$1
     local x=0
     while ! test -e "$1" >/dev/null && ((x++ < 10)); do 
