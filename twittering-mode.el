@@ -3363,13 +3363,15 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 	 (interactive "e")
 	 (save-selected-window
 	   (select-window (posn-window (event-start e)))
-	   (switch-to-buffer ,buffer))))
+	   (switch-to-buffer ,buffer)
+	   (twittering-set-number-of-unread ,buffer 0))))
     (define-key map (vector 'mode-line 'mouse-3)
       `(lambda (e)
 	 (interactive "e")
 	 (save-selected-window
 	   (select-window (posn-window (event-start e)))
-	   (switch-to-buffer-other-window ,buffer))))
+	   (switch-to-buffer-other-window ,buffer)
+	   (twittering-set-number-of-unread ,buffer 0))))
     (add-text-properties
      0 (length notifier)
      `(local-map ,map mouse-face mode-line-highlight help-echo
