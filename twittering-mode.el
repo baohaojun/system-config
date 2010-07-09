@@ -7013,12 +7013,14 @@ type: \"foo/\", you can even see all lists created by \"foo\"."
 	  ;; message which is outputted by `twittering-read-list-name'.
 	  )))))
 
-(defun twittering-direct-message ()
-  (interactive)
-  (let ((username (twittering-read-username-with-completion
-		   "who receive your message: "
-		   (get-text-property (point) 'username)
-		   'twittering-user-history))
+(defun twittering-direct-message (&optional ask)
+  (interactive "P")
+  (let ((username (or (and (not ask)
+			   (get-text-property (point) 'username))
+		      (twittering-read-username-with-completion
+		       "who receive your message: "
+		       (get-text-property (point) 'username)
+		       'twittering-user-history)))
 	(spec (or (get-text-property (point) 'belongs-spec)
 		  '(direct_messages))))
     (if (string= "" username)
