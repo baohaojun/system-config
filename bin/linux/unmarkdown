@@ -1,2 +1,5 @@
-#!/bin/bash
-python /usr/share/pyshared/html2text.py
+#!/usr/bin/env python
+import html2text, sys
+data = sys.stdin.read().decode('utf8')
+sys.stdout.write(html2text.html2text_file(data, None, '').encode('utf8'))
+

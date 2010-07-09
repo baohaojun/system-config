@@ -85,6 +85,7 @@ lynx
 make-doc
 manpages
 manpages-dev
+markdown
 meld
 minicom
 mplayer
@@ -105,6 +106,7 @@ pidgin
 postfix
 python2.6-doc
 python3.1
+python-html2text
 python-qt4
 python-soappy
 python-svn
