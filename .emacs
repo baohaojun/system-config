@@ -780,3 +780,82 @@
          (message-goto-body)
          (shell-command-on-region
           (point) (point-max) "markdown" nil t nil nil))))
+
+(require 'longlines)
+
+(defun longlines-encode-region (beg end &optional buffer)
+  "Note: This function Modified by Alan.
+Replace each soft newline between BEG and END with exactly one space.
+Hard newlines are left intact.  The optional argument BUFFER exists for
+compatibility with `format-alist', and is ignored."
+  ;;(message "longlines-encode by alan!\n")
+  (save-excursion
+    (let ((reg-max (max beg end))
+          (mod (buffer-modified-p)))
+      (goto-char (min beg end))
+      (while (search-forward "\n" reg-max t)
+        (let ((cur-char-pos (match-beginning 0)))
+          (unless (get-text-property cur-char-pos 'hard)
+            (if (or (aref (char-category-set (char-after (1+ cur-char-pos))) ?c)
+                    (aref (char-category-set (char-before cur-char-pos)) ?c))
+                (replace-match "")
+              (replace-match " "))
+            )))
+      (set-buffer-modified-p mod)
+      end)))
+
+(defun longlines-encode-string (string)
+  "Return a copy of STRING with each soft newline replaced by a space.
+     Hard newlines are left intact."
+  (let ((str (make-string (length string) ?\0))
+        (mpos (string-match "\n" string))
+        (lastpos 0)
+        (strpos 0))
+    ;; loop when we find a newline
+    (while (and mpos (< (1+ mpos) (length string)))
+      ;; need do something if it is a soft newline
+      (when (null (get-text-property mpos 'hard str))
+        ;; copy the matched sub-string
+        (let ((substr (substring string lastpos mpos)))
+          ;; store it the str
+          (store-substring str strpos substr)
+          ;; move strpos to next
+          (setq strpos (+ strpos (length substr)))
+          ;; if we need insert a space
+          (unless (or (aref (char-category-set (aref string (1+ mpos))) ?c)
+                      (aref (char-category-set (aref string (1- mpos))) ?c))
+            (aset str strpos ? )
+            (setq strpos (1+ strpos)))
+          ))
+      ;; remember last match position
+      (setq lastpos (1+ mpos))
+      ;; find next match
+      (setq mpos (string-match "\n" string lastpos))
+      )
+    (let ((substr (substring string lastpos)))
+      ;; copy the last part of the string
+      (store-substring str strpos substr)
+      ;;(message "len:%d\n" strpos)
+      (substring str 0 (+ strpos (length substr))))
+    ))
+
+(defun longlines-find-break-backward ()
+  "Move point backward to the first available breakpoint and return t.
+If no breakpoint is found, return nil."
+  (progn (backward-char 1)
+         (if (fill-nobreak-p)
+             (if (bolp)
+                 t
+               (longlines-find-break-backward))
+           t)))
+
+(defun longlines-find-break-forward ()
+  "Move point forward to the first available breakpoint and return t.
+If no break point is found, return nil."
+  (progn
+    (forward-char 1)
+    (if (fill-nobreak-p)
+        (if (eolp)
+            t
+          (longlines-find-break-forward))
+      t)))
