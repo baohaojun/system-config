@@ -5008,9 +5008,14 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
 	(when xmltree
 	  (case (caar xmltree)
 	    ((relationship)		; show-friendships
-	     (setq ret (car 
-			(reverse 
-			 (assq 'following (assq 'target (car xmltree)))))))
+	     (let ((checker
+		    (lambda (tag) 
+		      (string= (car
+				(last
+				 (assq tag (assq 'source (car xmltree)))))
+			       "true"))))
+	       (setq ret `((following . ,(funcall checker 'following))
+			   (followed-by . ,(funcall checker 'followed_by))))))
 	    ;; get-list-index, get-list-subscriptions, get-list-memberships
 	    ((lists_list)
 	     (setq ret
@@ -5265,33 +5270,34 @@ BUFFER may be a buffer or the name of an existing buffer."
       (setq previous-cursor        (assq-get 'previous_cursor   user-data))
       (setq next-cursor            (assq-get 'next_cursor       user-data))
       
-      (let ((datum 
-	     (twittering-make-clickable-status-datum
-	      (mapcar (lambda (sym)
-			`(,sym . ,(symbol-value sym)))
-		      '(id text source created-at truncated
-			   in-reply-to-status-id
-			   in-reply-to-screen-name
+      (twittering-make-clickable-status-datum
+       (remove 
+	nil
+	(mapcar (lambda (sym)
+		  (and (symbol-value sym)
+		       `(,sym . ,(symbol-value sym))))
+		'(id text source created-at truncated
+		     in-reply-to-status-id
+		     in-reply-to-screen-name
 
-			   user-id user-name user-screen-name user-location
-			   user-description
-			   user-profile-image-url
-			   user-url
-			   user-protected
-			   user-followers-count
-			   user-friends-count
-			   user-statuses-count
-			   user-favourites-count
-			   user-created-at
+		     user-id user-name user-screen-name user-location
+		     user-description
+		     user-profile-image-url
+		     user-url
+		     user-protected
+		     user-followers-count
+		     user-friends-count
+		     user-statuses-count
+		     user-favourites-count
+		     user-created-at
 		    
-			   previous-cursor
-			   next-cursor
-			   original-user-name
-			   original-user-screen-name
-			   recipient-screen-name)))))
-	(if original
-	    (append datum `((original . ,original)))
-	  datum)))))
+		     previous-cursor
+		     next-cursor
+		     original-user-name
+		     original-user-screen-name
+		     recipient-screen-name
+
+		     original)))))))
 
 (defun twittering-make-clickable-status-datum (status)
   (flet ((assq-get (item seq)
@@ -5738,7 +5744,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 
 	   (profile
 	    (concat
-	     (format "%s, @%s, %s\n"
+	     (format "%s, @%s%s\n"
 		     user-name
 		     user-screen-name
 		     ;; #%s 
@@ -5750,7 +5756,9 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		     ;; 			   ret)
 		     ;; 	       tmp (substring tmp 0 -3)))
 		     ;;   ret)
-		    (twittering-get-simple nil nil user-screen-name 'show-friendships))
+		     (if (string= user-screen-name twittering-username)
+			 ""
+		       (twittering-get-simple nil nil user-screen-name 'show-friendships)))
 
 	     ;; bio
 	     (if (string= user-description "")
@@ -6495,7 +6503,10 @@ string.")
       (remove-text-properties 0 (length s) '(need-to-be-updated nil) s)
       (case method
 	((show-friendships)
-	 (if (string= "true" ret) "follows you" "doesn't follow you"))
+	 (concat (or (when (cdr (assq 'following ret)) " <") " ")
+		 "--"
+		 (or (when (cdr (assq 'followed-by ret)) ">") "")
+		 " you"))
 	((get-list-index get-list-subscriptions get-list-memberships)
 	 (mapconcat (lambda (l) (concat "@" (twittering-decorate-listname l)))
 		    (split-string ret)
