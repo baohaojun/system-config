@@ -18,9 +18,15 @@
   (tool-bar-mode -1)
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
-  (if (eq system-type 'gnu/linux)
-      (set-frame-font "Monaco-11.5")
-    (set-frame-font "Monaco-14"))
+  (if (file-exists-p "~/.emacs-frame-font")
+      (set-frame-font 
+       (save-excursion
+         (find-file "~/.emacs-frame-font")
+         (goto-char (point-min))
+         (let ((monaco-font (read (current-buffer))))
+           (kill-buffer (current-buffer))
+           monaco-font)))
+      (set-frame-font "Monaco-10.5"))
   (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size 16))
   (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size 16))
 
