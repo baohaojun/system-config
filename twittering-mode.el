@@ -2809,7 +2809,8 @@ Statuses are stored in ascending-order with respect to their IDs."
       (when new-statuses
 	(puthash spec `(,id-table
 			,referring-id-table
-			;; Decreasingly by `id' except `followers'
+			;; Decreasingly by `id' except `followers', which is
+			;; sorted by recency one starts following me.
 			,(append new-statuses timeline-data))
 		 twittering-timeline-data-table)
 	(when (twittering-jojo-mode-p spec)
@@ -2820,21 +2821,18 @@ Statuses are stored in ascending-order with respect to their IDs."
 	(let* ((twittering-new-tweets-spec spec)
 	       (spec-string (twittering-timeline-spec-to-string spec))
 	       (twittering-new-tweets-count 
-		(count-if 
-		 (lambda (status)
-		   (when (or (not (member spec-string twittering-cache-spec-strings))
-			     (twittering-status-id<
-			      (cdr (assoc spec-string twittering-cache-lastest-statuses))
-			      (cdr (assoc 'id status))))
-		     (or (not twittering-new-tweets-count-excluding-me)
-			 (not (string= (cdr (assq 'user-screen-name status))
-				       twittering-username)))))
-		 new-statuses)))
+		(if (twittering-timeline-spec-is-user-methods-p spec)
+		    (twittering-count-unread-for-user-methods spec new-statuses)
+		  (count-if (lambda (st) (twittering-is-unread-status-p st spec))
+			    new-statuses))))
 	  (when (member spec-string twittering-cache-spec-strings)
 	    (setq twittering-cache-lastest-statuses
-		  (cons (cons spec-string (cdr (assoc 'id (car new-statuses))))
-			(remove-if (lambda (entry) (equal spec-string (car entry)))
-				   twittering-cache-lastest-statuses))))
+		  `((,spec-string . , (substring-no-properties 
+				       (cdr (assq (if (twittering-timeline-spec-is-user-methods-p spec)
+						      'user-screen-name 'id)
+						  (car new-statuses)))))
+		    ,@(remove-if (lambda (entry) (equal spec-string (car entry)))
+				 twittering-cache-lastest-statuses))))
 	  (run-hooks 'twittering-new-tweets-hook))
 	new-statuses))))
 
@@ -2892,6 +2890,41 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
 		      'id))
 	     (id (cdr (assq 'id status))))
 	(and buf-id (twittering-status-id< id buf-id))))))
+
+(defun twittering-is-unread-status-p (status &optional spec)
+  (let ((spec-string
+	 (twittering-timeline-spec-to-string
+	  (or spec (setq spec (twittering-current-timeline-spec))))))
+    (cond
+     ((and twittering-new-tweets-count-excluding-me
+	   (twittering-my-status-p status)
+	   (not (equal spec '(retweets_of_me))))
+      nil)
+     ((member spec-string twittering-cache-spec-strings)
+      (twittering-status-id<
+       (cdr (assoc spec-string twittering-cache-lastest-statuses))
+       (cdr (assq 'id status))))
+     (t 
+      t))))
+
+(defun twittering-count-unread-for-user-methods (spec new-statuses)
+  (let ((latest-username
+	 (or (with-current-buffer (twittering-get-buffer-from-spec spec)
+	       (funcall (if twittering-reverse-mode 'point-max 'point-min))
+	       (get-text-property (twittering-get-current-status-head) 'username))
+	     (let ((spec-string (twittering-timeline-spec-to-string spec)))
+	       (when (member spec-string twittering-cache-spec-strings)
+		 (cdr (assoc spec-string twittering-cache-lastest-statuses)))))))
+    (if (not latest-username)
+	(length new-statuses)
+      (let ((statuses new-statuses)
+	    (count 0))
+	(while (and statuses
+		    (not (string= latest-username
+				  (cdr (assq 'user-screen-name (car statuses))))))
+	  (setq count (1+ count)
+		statuses (cdr statuses)))
+	count))))
 
 ;;;
 ;;; Process info
@@ -3328,9 +3361,7 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 	 (current (or (cadr (assq buffer twittering-unread-status-info)) 0))
 	 (result (+ current twittering-new-tweets-count)))
     (when buffer
-      (when (or (eq buffer (current-buffer))
-		(and (twittering-timeline-spec-is-user-methods-p spec)
-		     (null (twittering-timeline-data-collect spec))))
+      (when (eq buffer (current-buffer))
 	(setq result 0))
       (twittering-set-number-of-unread buffer result))))
 
