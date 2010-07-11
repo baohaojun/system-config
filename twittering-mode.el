@@ -2255,6 +2255,12 @@ BEG and END mean a region that had been modified."
   "Is STATUS sent by myself? "
   (string= twittering-username (cdr (assq 'user-screen-name status))))
 
+(defun twittering-take (n lst)
+  "Take first N elements from LST."
+  (and (> n 0)
+       (car lst)
+       (cons (car lst) (twittering-take (1- n) (cdr lst)))))
+
 ;;;
 ;;; Utility functions for portability
 ;;;
@@ -2822,19 +2828,24 @@ Statuses are stored in ascending-order with respect to their IDs."
 	       (spec-string (twittering-timeline-spec-to-string spec))
 	       (twittering-new-tweets-count 
 		(if (twittering-timeline-spec-is-user-methods-p spec)
-		    (twittering-count-unread-for-user-methods spec new-statuses)
+		    (twittering-count-unread-for-user-methods spec statuses)
 		  (count-if (lambda (st) (twittering-is-unread-status-p st spec))
 			    new-statuses))))
 	  (when (member spec-string twittering-cache-spec-strings)
-	    (setq twittering-cache-lastest-statuses
-		  `((,spec-string . , (substring-no-properties 
-				       (cdr (assq (if (twittering-timeline-spec-is-user-methods-p spec)
-						      'user-screen-name 'id)
-						  (car new-statuses)))))
-		    ,@(remove-if (lambda (entry) (equal spec-string (car entry)))
-				 twittering-cache-lastest-statuses))))
-	  (run-hooks 'twittering-new-tweets-hook))
-	new-statuses))))
+	    (let ((latest 
+		   (if (twittering-timeline-spec-is-user-methods-p spec)
+		       (substring-no-properties 
+			(cdr (assq 'user-screen-name (car statuses))))
+		     (substring-no-properties 
+		      (cdr (assq 'id (car new-statuses)))))))
+	      (setq twittering-cache-lastest-statuses
+		    `((,spec-string . ,latest)
+		      ,@(remove-if (lambda (entry) (equal spec-string (car entry)))
+				   twittering-cache-lastest-statuses)))))
+	  (run-hooks 'twittering-new-tweets-hook)
+	  (if (twittering-timeline-spec-is-user-methods-p spec)
+	      (twittering-take twittering-new-tweets-count statuses)
+	    new-statuses))))))
 
 (defun twittering-timeline-data-collect (&optional spec timeline-data)
   "Collect visible statuses for `twittering-render-timeline'."
@@ -2851,18 +2862,7 @@ Statuses are stored in ascending-order with respect to their IDs."
 	      (source-id (cdr (assq 'source-id status))))
 	  (cond
 	   ((twittering-timeline-spec-is-user-methods-p spec)
-	    ;; We only care about new followers.
-	    (with-current-buffer (twittering-get-buffer-from-spec spec)
-	      (let* ((username (cdr (assq 'user-screen-name status)))
-		     (pos (point-min))
-		     (try-match
-		      (lambda (p)
-			(and p (string= (get-text-property p 'username)
-					username)))))
-		(while (and pos (not (funcall try-match pos)))
-		  (setq pos (twittering-get-next-status-head pos)))
-		(unless (funcall try-match pos)
-		  status))))
+	    t)
 	   ((not source-id)
 	    ;; `status' is not a retweet.
 	    status)
@@ -5749,6 +5749,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 			    (- original-buf-end original-pos))
 		       original-pos))))))))
 
+;; TODO: this is assuming the user has at least one tweet.
 (defun twittering-render-user-profile (timeline-data)
   (if twittering-reverse-mode
       (goto-char (point-max))
