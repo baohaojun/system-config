@@ -32,4 +32,4 @@ find . \( '-path' '*/CVS' \
     -o -iname '*.pl' \
     -o -iname '*.inl' \
     -o -iname '*.aidl' \
-    \) -print0 |xargs -0 etags -a
+    \) -print0 |xargs -0 etags -a "$@"
