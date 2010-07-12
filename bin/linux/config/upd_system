@@ -23,6 +23,7 @@ binutils-doc
 binutils-static
 bison
 build-essential
+conkeror
 cramfsprogs
 cscope
 curl
@@ -110,6 +111,7 @@ python-html2text
 python-qt4
 python-soappy
 python-svn
+rep
 samba
 sawfish
 screen
@@ -156,7 +158,7 @@ sudo apt-get update
 sudo apt-get dist-upgrade -y
 sudo apt-get install -y $packages || for x in $packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
 sudo apt-get install -y $x86_64_packages || for x in $x86_64_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
-sudo apt-get build-dep -y beagle scim-pinyin
+sudo apt-get build-dep -y beagle scim-pinyin sawfish librep rep-gtk
 
 #把一些软件默认的版本换掉
 sudo update-alternatives --set emacs /usr/bin/emacs-snapshot
