@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# Copyright (c) 2000, 2004, 2010 Tama Communications Corporation
+#
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Bless.sh: rewrite id's value of html for centralised cgi script.
+#
+# Usage:
+#       $ htags -fS key1        <- works well at generated place.
+#       $ cd ..
+#       $ mv src /var/tmp       <- move to another place. It doesn't work.
+#       $ cd /var/tmp/src/HTML
+#       $ sh bless.sh           <- OK. It will work well!
+#
+datadir=/usr/local/share
+if [ ! -f sitekey -o ! -s sitekey ]; then
+	echo "This hypertext is not made using the -S option."
+	exit 1
+fi
+pwd >"$datadir/gtags/sitekeys/`cat sitekey`"

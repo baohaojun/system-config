@@ -1,0 +1,17 @@
+.deps
+Makefile
+Makefile.in
+asm_parse.c
+asm_parse.h
+asm_scan.c
+php.c
+asm_res.gpf
+asm_res.h
+c_res.gpf
+c_res.h
+cpp_res.gpf
+cpp_res.h
+java_res.gpf
+java_res.h
+php_res.gpf
+php_res.h

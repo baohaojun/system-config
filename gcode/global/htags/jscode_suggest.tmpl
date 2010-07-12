@@ -1,0 +1,22 @@
+<link rel='stylesheet' type='text/css' href='jquery.suggest.css' />
+<script type='text/javascript' src='jquery.js'></script>
+<script type='text/javascript' src='jquery.suggest.js'></script>
+<script type='text/javascript'>
+function getType() {
+	return $('input:radio[name=type]:checked').val();
+}
+function getCheck(name) {
+	return $('input[name=' + name + ']').attr('checked') ? 1 : 0;
+}
+$(function() {
+	$('#pattern').suggest('@completion_action@',{
+		extraParams : {
+			type:  function() { return getType(); },
+			id:  '@id@',
+			limit: '@limit@',
+			icase: function() { return getCheck('icase'); },
+			other: function() { return getCheck('other'); },
+		}
+	});
+});
+</script>

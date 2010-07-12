@@ -1,0 +1,97 @@
+#! @PERL@
+#
+# Copyright (c) 2010 Tama Communications Corporation
+#
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+$script_name = 'completion.cgi';
+sub error_and_exit {
+	print STDERR "$script_name: " . $_[0];
+	exit 1;
+}
+if (! -x '@globalpath@') {
+	error_and_exit("server side command not found.");
+}
+@pairs = split (/&/, $ENV{'QUERY_STRING'});
+foreach $p (@pairs) {
+	($name, $value) = split(/=/, $p);
+	$value =~ tr/+/ /;
+	$value =~ s/%([\dA-Fa-f][\dA-Fa-f])/pack("C", hex($1))/eg;
+	$form{$name} = $value;
+}
+$q = $form{'q'};
+if (!$q) {
+	error_and_exit("request value is null.");
+}
+$type = $form{'type'};
+if ($type eq 'definition' || $type eq 'reference') {
+	$flags = 'c';
+} elsif ($type eq 'symbol') {
+	$flags = 'cs';
+} elsif ($type eq 'path') {
+	$flags = 'P';
+} elsif ($type eq 'idutils') {
+	$flags = 'cI';
+} elsif ($type eq 'grep') {
+	$flags = 'crs';
+} else {
+	error_and_exit("invalid type name.");
+}
+if ($form{'icase'}) {
+	$flags .= 'i';
+}
+if ($form{'other'}) {
+	$flags .= 'o';
+}
+if ($form{'limit'}) {
+	$limit = $form{'limit'};
+}
+if ($form{'id'}) {
+	$sitekeys = "@DATADIR@/gtags/sitekeys/" . $form{'id'};
+	if (-f $sitekeys && open(KEY, $sitekeys)) {
+		$distpath = <KEY>;
+		chop($distpath);
+		close(KEY);
+	} else {
+		error_and_exit("couldn't open unique key file(1).");
+	}
+	chdir("$distpath/cgi-bin");
+	if ($?) {
+		error_and_exit("couldn't find tag directory in secure mode.");
+	}
+	if (-s "../sitekey" && open(KEY, "../sitekey")) {
+		$sitekey = <KEY>;
+		chop($sitekey);
+		close(KEY);
+	} else {
+		error_and_exit("couldn't open unique key file(2).");
+	}
+	unless ($sitekey eq $form{'id'}) {
+		error_and_exit("site key is not corresponding.");
+	}
+}
+if (-f "../GTAGSROOT" && open(GTAGSROOT, "../GTAGSROOT")) {
+	$gtagsroot = <GTAGSROOT>;
+	chop($gtagsroot);
+	close(GTAGSROOT);
+} else {
+	$gtagsroot = "../..";
+}
+chdir($gtagsroot);
+print "Content-Type: text/html\n\n";
+open(PIPE, "-|") || exec '@globalpath@', '-'.$flags, '-e', $q;
+if ($limit > 0) {
+	while (<PIPE>) {
+		print if ($limit-- > 0);
+	}
+} else {
+	print <PIPE>;
+}
+close(PIPE);
+exit(0);

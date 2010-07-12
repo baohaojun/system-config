@@ -1,0 +1,35 @@
+;; Process this file with reserved.pl to create gperf source.
+;
+; Copyright (c) 2004 Tama Communications Corporation
+;
+; This file is free software; as a special exception the author gives
+; unlimited permission to copy and/or distribute it, with or without
+; modifications, as long as this notice is preserved.
+;
+; This program is distributed in the hope that it will be useful, but
+; WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+; implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+;
+; Pre-processer macro.
+;
+##			sharp
+#assert			sharp
+#define			sharp
+#elif			sharp
+#else			sharp
+#endif			sharp
+#error			sharp
+#ident			sharp
+#if			sharp
+#ifdef			sharp
+#ifndef			sharp
+#import			sharp
+#include		sharp
+#include_next		sharp
+#line			sharp
+#pragma			sharp
+#sccs			sharp
+#unassert		sharp
+#undef			sharp
+#warning		sharp

@@ -1,0 +1,121 @@
+#
+# Copyright (c) 1996, 1997, 1998, 1999, 2000, 2002, 2006, 2010
+#	Tama Communications Corporation
+#
+# This file is part of GNU GLOBAL.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# This file is converted to the following files:
+#       o command source file(for usage and help).
+#       o man format reference manual.
+#       o texinfo format reference manual.
+#
+@HEADER GOZILLA,1,March 2010,GNU Project
+@NAME   gozilla - force mozilla to display specified part of a source file.
+@SYNOPSIS
+	@name{gozilla} [-b browser][-p][+no] file
+	@name{gozilla} [-b browser][-p] -d name
+@DESCRIPTION
+	@name{Gozilla} forces @name{mozilla} to display specified part of a source file.
+	@name{Gozilla} can be used with other browsers like firefox and epiphany.
+
+	In advance of using this command, you must execute @xref{gtags,1}
+	and @xref{htags,1} at the root directory of a project to make tag files.
+	Then you can execute this command anywhere in the project.
+
+	First form:@br
+	You can specify a source file and optional line number.
+	This syntax is similar to @xref{vi,1} and @xref{emacs,1}.
+
+	Second form:@br
+	You can specify a definition name directly. The definition name should
+	exist in @file{GTAGS}.
+
+	Some browsers require you to load it before executing @name{gozilla}.
+@OPTIONS
+	The following options are available:
+	@begin_itemize
+	@item{@option{+no}}
+		Line number.
+	@item{@option{-b} @arg{browser}}
+		Browser to use. By default, it is assumed @name{mozilla}.
+	@item{@option{-d} @arg{name}}
+		Print object definitions.
+	@item{@option{--help}}
+		Show help.
+	@item{@option{-p}}
+		Print just a generated URL instead of displaying it.
+	@item{@arg{file}}
+		File name or alias name.
+	@item{@option{-q}, @option{--quiet}}
+		Quiet mode.
+	@item{@option{-v}, @option{--verbose}}
+		Verbose mode.
+	@item{@option{--version}}
+		Show version number.
+	@end_itemize
+@FILES
+	@begin_itemize
+	@item{@file{HTML/}}
+		Hypertext of source code.
+	@item{@file{GTAGS/}}
+		Tag file for object definitions.
+	@item{@file{$HOME/.gozillarc}}
+		Alias file. Please read source code for the detail.
+	@end_itemize
+@ENVIRONMENT
+	@begin_itemize
+	@item{@var{GTAGSROOT}}
+		The root directory of the project.
+	@item{@var{GTAGSDBPATH}}
+		The directory on which tag files exist.
+		This value is ignored when GTAGSROOT is not defined.
+	@item{@var{BROWSER}}
+		Browser to use. By default, it is assumed @name{mozilla}.
+	@end_itemize
+@EXAMPLES
+	$ gtags
+	$ htags
+	$ global -x main
+	main              82 ctags.c          main(argc, argv)
+	$ mozilla &
+	$ gozilla +82 ctags.c
+	$ gozilla -d main
+
+	$ firefox &
+	$ gozilla -b firefox +82 ctags.c
+
+@DIAGNOSTICS
+	@name{Gozilla} exits with a non 0 value if an error occurred, 0 otherwise.
+@SEE ALSO
+	@xref{global,1},
+	@xref{gtags,1},
+	@xref{htags,1},
+	@xref{firefox,1},
+	@xref{epiphany,1},
+	@xref{mozilla,1}.
+
+	GNU GLOBAL source code tag system@br
+	(http://www.gnu.org/software/global/).
+@NOTES
+	@name{Gozilla} means 'Global for mozilla'.
+@BUGS
+	@name{Gozilla} can accept not only source files but also text files,
+	directories, HTML files and even URLs, because it is omnivorous.
+@AUTHORS
+	Shigio YAMAGUCHI.
+@HISTORY
+	The @name{gozilla} command appeared in FreeBSD 2.2.2 but did not
+	installed by default.

@@ -1,0 +1,2010 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename global.info
+@settitle GNU GLOBAL source code tag system
+@comment %**end of header
+
+@include version.texi
+
+@c Define new index for options.
+@defcodeindex op
+@syncodeindex op cp
+
+@ifinfo
+@dircategory Development
+@direntry
+* GLOBAL: (global).             GNU GLOBAL source code tag system.
+@end direntry
+@end ifinfo
+
+@ifinfo
+This file documents the GNU GLOBAL source code tag system.
+
+Copyright (c) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2010
+Tama Communications Corporation
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, with no Front-Cover Texts,
+and with no Back-Cover Texts.
+A copy of the license is included in the section entitled "GNU
+Free Documentation License".
+@end ifinfo
+
+@titlepage
+@title GNU GLOBAL Source Code Tag System
+@subtitle Edition @value{EDITION}, for GNU GLOBAL version @value{VERSION}
+@subtitle @value{UPDATED}
+@author by Tama Communications Corporation
+@c copyright page
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2008, 2010
+Tama Communications Corporation
+@sp 2
+This manual is for @acronym{GNU} GLOBAL (version @value{VERSION},
+@value{UPDATED}), a source code tag system that works the same way
+across diverse environments.
+@sp 2
+Published by Tama Communications Corporation @*
+Tama-city, Tokyo, Japan.@*
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, with no Front-Cover Texts,
+and with no Back-Cover Texts.
+A copy of the license is included in the section entitled "GNU
+Free Documentation License".
+
+@end titlepage
+
+@ifnottex
+@node Top
+@top GNU GLOBAL source code tag system
+
+This manual documents version @value{VERSION} of the GNU GLOBAL source code tag system.
+
+@menu
+* Introduction::                        Overview of this tool.
+* Global::                              Command line GLOBAL.
+* Applications::			Various applications.
+* Other topics::                        Other topics.
+* Reference::                           Command References.
+* Copying This Manual::                 Copying This Manual.
+* Business Model::                      Business Model for Free Software.
+* Index::                               Option index.
+@end menu
+@end ifnottex
+
+@c ***************************************************************************
+@c Introduction
+@c ***************************************************************************
+@node Introduction
+@chapter Overview of this tool
+
+@section What is GNU GLOBAL?
+
+GNU GLOBAL is a source code tag system that works the same way
+across diverse environments such as Emacs editor, Vi editor,
+Less viewer, Bash shell, various web browsers, etc.
+You can locate specified objects such as functions, macros, structs, classes
+in your source files and move there easily.
+It is useful for hacking large projects which contain many sub-directories,
+many @code{#ifdef} and many @code{main()} functions.
+It is similar to ctags or etags, but is different from them at the point of
+independence of any editor.
+
+@section Concept of project
+
+GNU GLOBAL can treat a source tree containing sub-directories as a project.
+Anywhere in the project, you can utilize high performance tag database.
+You need not specify where the database is.
+Instead, global(1) locates it by itself.
+Because of this feature, you can move freely in a project,
+and in and out of many projects.
+
+@section Features
+
+GNU GLOBAL has following features:
+
+@itemize @bullet
+@item support C, C++, Yacc, Java, PHP4 and assembly.
+@item work the same way across diverse environments like follows:
+	@itemize @minus
+	@item Shell command line
+	@item Bash shell
+	@item Vi editor (Nvi, Elvis, vim)
+	@item Less viewer
+	@item Emacs editor (Emacs, Mule, Xemacs)
+	@item Web browser
+	@item Doxygen documentation system
+	@end itemize
+@item find the locations of specified object quickly.
+@item locate not only object definitions but also object references.
+@item allows duplicate objects.
+@item locate path names which include specified pattern.
+@item hierarchical search is available.
+@item search not only in a source project but also in library projects.
+@item generate completion list for completing input method.
+@item support various output format.
+@item allows customizing of the set of candidate files to be tagged.
+@item understand POSIX 1003.2 regular expression.
+@item support idutils as an external search engine.
+@item tag files are independent of machine architecture.
+@item support incremental updating of tag files.
+@item plug-in parser is available to treat new language.
+@item support customizing with @file{gtags.conf}.
+@item generate a hypertext of source code.
+@end itemize
+
+@c ***************************************************************************
+@c Global
+@c ***************************************************************************
+@node Global
+@chapter Command line GLOBAL
+
+You can use the tag facilities from shell command line.
+It is a big merit of GLOBAL compared with any other tag systems.
+
+@menu
+* Preparation::                         Preparation.
+* Basic usage::                         Basic usage.
+* Applied usage::                       Applied usage.
+@end menu
+
+@c ***************************************************************************
+@node   Preparation
+@section Preparation
+
+Before beginning, please read the FAQ (Frequently Asked Questions) file.
+
+    $ more /usr/local/share/gtags/FAQ
+
+First of all, you must execute gtags(1)(@pxref{gtags}) at the root of source tree.
+For example, if you want to browse the source code of Vi editor in FreeBSD,
+please move to the source directory and invoke gtags(1).
+
+@example
+
+    $ cd /usr/src/usr.bin/vi
+    $ gtags
+
+@end example
+
+Gtags traverses sub-directories, picks up source files and makes four tag files
+at the current directory.
+After this, the whole files under this directory is treated as a project.
+
+@example
+
+    $ ls G*
+    GPATH   GRTAGS  GTAGS
+
+@end example
+
+@itemize @bullet
+@item @file{GTAGS}
+        definition database
+@item @file{GRTAGS}
+        reference database
+@item @file{GPATH}
+        path name database
+@end itemize
+
+You should prepare for considerable disk space for the tag files.
+For example, Linux-2.6.32 source code requires the following disk space.
+
+@example
+    source code(Linux-2.6.32)       390MB
+
+    GPATH                             6MB
+    GTAGS                            81MB
+    GRTAGS                          202MB
+    -------------------------------------
+    total of tag files              289MB
+@end example
+
+@c ***************************************************************************
+@node   Basic usage
+@section Basic usage
+
+Consider the following source tree:
+
+@example
+
+/home/user/
+ |
+ |-ROOT/      <- @r{the root of source tree (GTAGS,GRTAGS,...)}
+    |
+    |- README       .....   +---------------+
+    |                       |The function of|
+    |                       +---------------+
+    |- DIR1/
+    |  |
+    |  |- fileA.c   .....   +---------------+
+    |  |                    |main()@{        |
+    |  |                    |       func1();|
+    |  |                    |       func2();|
+    |  |                    |@}              |
+    |  |                    +---------------+
+    |  |
+    |  |- fileB.c   .....   +---------------+
+    |                       |func1()@{ ... @} |
+    |                       +---------------+
+    |- DIR2/
+       |
+       |- fileC.c   .....   +---------------+
+                            |#ifdef X       |
+                            |func2()@{ i++; @}|
+                            |#else          |
+                            |func2()@{ i--; @}|
+                            |#endif         |
+                            |func3()@{       |
+                            |       func1();|
+                            |@}              |
+                            +---------------+
+
+@end example
+
+@itemize @bullet
+@item Once you make tag files at the root directory of the source tree,
+you can execute global(1) from anywhere in the tree.
+By default, you get the relative path of the located files.
+You need not specify where the tag file is. Instead, global(1) locates it by itself.
+
+@example
+
+    $ cd /home/user/ROOT
+    $ global func1
+    DIR1/fileB.c            # @r{func1() is defined in fileB.c}
+    $ cd DIR1
+    $ global func1
+    fileB.c                 # @r{relative path from DIR1}
+    $ cd ../DIR2
+    $ global func1
+    ../DIR1/fileB.c         # @r{relative path from DIR2}
+
+@end example
+
+Global command is possible to use only when you are in a project.
+If you are out of any project, it brings an error message like follows:
+
+@example
+
+    $ cd /home/user
+    $ global func1
+    global: GTAGS not found.
+
+@end example
+
+@item The @samp{-r} option locates object references.
+@opindex -r
+
+@example
+
+    $ global -r func2
+    ../DIR1/fileA.c         # @r{func2() is referred from fileA.c}
+
+@end example
+
+@item You can use POSIX regular expressions.
+
+@example
+
+    $ cd /home/user/ROOT
+    $ global 'func[1-3]'
+    DIR1/fileB.c            # @r{func1, func2 and func3 are matched}
+    DIR2/fileC.c
+
+@end example
+
+@item The @samp{-x} option shows the details.
+It is similar to the @samp{-x} option in ctags(1).
+@opindex -x
+
+@example
+
+    $ global func2
+    DIR2/fileC.c
+    $ global -x func2
+    func2              2 DIR2/fileC.c       func2()@{ i++; @}
+    func2              4 DIR2/fileC.c       func2()@{ i--; @}
+
+@end example
+
+@item The @samp{-a} option produces the absolute path name.
+@opindex -a
+
+@example
+
+    $ global -a func1
+    /home/user/ROOT/DIR1/fileB.c
+
+@end example
+
+@item The @samp{-s} command locates symbols which are not defined in @file{GTAGS}.
+@opindex -s
+
+@example
+
+    $ global -xs X
+    X                  1 DIR2/fileC.c #ifdef X
+
+@end example
+
+@item The @samp{-g} command locates the lines which have specified pattern.
+@opindex -g
+
+@example
+
+    $ global -xg '#ifdef'
+    #ifdef             1 DIR2/fileC.c #ifdef X
+
+@end example
+
+It is similar to egrep(1) but is far more convenient for source code reading,
+because it allows you to search through a project, and only in the source files.
+
+Additionally, you can use various options:
+@table @code
+@item @kbd{-O}
+@opindex -O
+search only in the text files.
+@item @kbd{-o}
+@opindex -o
+search in both the source files and text files.
+@item @kbd{-l}
+@opindex -l
+search only under the current directory.
+@end table
+
+The @kbd{-e}, @kbd{-G} and @kbd{-i} options are available too.
+The usage is the same as egrep(1).
+
+You can even change the output format of global(1) to the grep style
+using the @samp{--result=grep} option.
+@opindex --result
+Of course, these options can be used even by other commands.
+
+@item The @samp{-P} command locates path names which include specified pattern.
+@opindex -P
+
+@example
+
+    $ global -P fileB
+    DIR1/fileB.c
+    $ global -P '1/'
+    DIR1/fileA.c
+    DIR1/fileB.c
+    $ global -P '\.c$'
+    DIR1/fileA.c
+    DIR1/fileB.c
+    DIR2/fileC.c
+
+@end example
+
+@item The @samp{-f} command print a list of objects in specified file.
+@opindex -f
+
+@example
+
+    $ global -f DIR2/fileC.c
+    func2              2 DIR2/fileC.c   func2()@{ i++; @}
+    func2              4 DIR2/fileC.c   func2()@{ i--; @}
+    func3              6 DIR2/fileC.c   func3()@{
+
+@end example
+
+@item The @samp{-l} option limits the range of the retrieval under the current directory.
+@opindex -l
+@example
+
+    $ cd DIR1
+    $ global -xl func[1-3]
+    func1        1 fileB.c      func1()@{...@}
+
+@end example
+@end itemize
+
+@c ***************************************************************************
+@node   Applied usage
+@section Applied usage
+
+@itemize @bullet
+@item You can customize a set of candidate files to be tagged.
+@opindex -f
+
+@example
+
+    $ find . -type f -print >/tmp/list     # make a file set
+    $ vi /tmp/list                         # customize the file set
+    $ gtags -f /tmp/list
+
+@end example
+
+@item If your source files are on a read-only device, such as CDROM,
+then you cannot make tag files at the root of the source tree.
+In such case, you can make tag files in another place using
+the @code{GTAGSROOT} environment variable.
+
+@example
+
+    $ mkdir /var/dbpath
+    $ cd /cdrom/src                 # @r{the root of source tree}
+    $ gtags /var/dbpath             # @r{make tag files in /var/dbpath}
+    $ export GTAGSROOT=`pwd`
+    $ export GTAGSDBPATH=/var/dbpath
+    $ global func
+
+@end example
+
+There is another method for it. Since global(1) locates tag files also in
+@file{/usr/obj} + <current directory>, you can setup like follows:
+
+@example
+
+    $ cd /cdrom/src                 # @r{the root of source tree}
+    $ mkdir -p /usr/obj/cdrom/src
+    $ gtags /usr/obj/cdrom/src      # @r{make tag files in /usr/obj/cdrom/src}
+    $ global func
+
+@end example
+
+The value @file{/usr/obj} can be changed by environment variable
+@code{MAKEOBJDIRPREFIX}.
+The @samp{-O, --objdir} option do it automatically instead of you.
+@opindex -O
+
+@item If you want to locate objects that are not defined in the source tree,
+then you can specify library directories with the @code{GTAGSLIBPATH}
+environment variable.
+
+You should execute gtags at each directory of the path.
+If @file{GTAGS} is not found there, global ignores it.
+
+@example
+
+    $ pwd
+    /develop/src/mh                         # @r{this is a source project}
+    $ gtags
+    $ ls G*TAGS
+    GRTAGS  GTAGS
+    $ global mhl
+    uip/mhlsbr.c                            # @r{mhl() is found}
+    $ global strlen                         # @r{strlen() is not found}
+    $ (cd /usr/src/lib; gtags)              # @r{library source}
+    $ (cd /usr/src/sys; gtags)              # @r{kernel source}
+    $ export GTAGSLIBPATH=/usr/src/lib:/usr/src/sys
+    $ global strlen
+    ../../../usr/src/lib/libc/string/strlen.c  # @r{found in library}
+    $ global access
+    ../../../usr/src/sys/kern/vfs_syscalls.c   # @r{found in kernel}
+
+@end example
+
+Or, you can take a more straightforward way to do the same thing.
+In the following example, we treat as if the system library and the kernel
+are part of our project.
+
+@example
+
+    $ ln -s /usr/src/lib .
+    $ ln -s /usr/src/sys .
+    $ gtags
+    $ global strlen
+    lib/libc/string/strlen.c
+    $ global access
+    sys/kern/vfs_syscalls.c
+
+@end example
+
+@item If you forget object names, you can use the @samp{-c} (complete) command.
+@opindex -c
+
+@example
+
+    $ global -c kmem                # @r{maybe k..k.. kmem..}
+    kmem_alloc
+    kmem_alloc_pageable
+    kmem_alloc_wait
+    kmem_free
+    kmem_free_wakeup
+    kmem_init
+    kmem_malloc
+    kmem_suballoc                   # @r{This is what I need!}
+    $ global kmem_suballoc
+    ../vm/vm_kern.c
+
+@end example
+
+@item You can use the @samp{-c} command with the complete command in the shell.
+
+In Bash:
+@example
+
+    $ funcs()
+    > @{
+    >         local cur
+    >         cur=$@{COMP_WORDS[COMP_CWORD]@}
+    >         COMPREPLY=(`global -c $cur`)
+    > @}
+    $ complete -F funcs global
+    $ global kmem_@kbd{TAB}@kbd{TAB}
+    kmem_alloc           kmem_alloc_wait      kmem_init
+    kmem_alloc_nofault   kmem_free            kmem_malloc
+    kmem_alloc_pageable  kmem_free_wakeup     kmem_suballoc
+    $ global kmem_s@kbd{TAB}
+    $ global kmem_suballoc
+    ../vm/vm_kern.c
+
+@end example
+
+In Tcsh:
+@example
+
+    % set funcs=(`global -c`)
+    % complete global 'n/*/$funcs/'
+    % global kmem_@kbd{TAB}
+    kmem_alloc          kmem_free_wakeup
+    kmem_alloc_pageable kmem_init
+    kmem_alloc_wait     kmem_malloc
+    kmem_free           kmem_suballoc
+    % global kmem_s@kbd{TAB}
+    % global kmem_suballoc
+    ../vm/vm_kern.c
+
+@end example
+
+If you like input completion, you had better try globash(@pxref{GloBash}).
+It support you in a suitable way without any preparation.
+
+@item You can edit all files which have specified objects by typing
+one command, for example:
+
+@example
+
+    $ vi `global func1`     # @r{edit fileB.c}
+
+@end example
+
+@item If you want to browse many files in order, do the following:
+
+@example
+
+    $ global -xr fork | awk '@{printf "view +%s %s\n",$2,$3@}'
+    view +650 ../dev/aic7xxx/aic7xxx_asm.c
+    view +250 ibcs2/ibcs2_misc.c
+    view +401 linux/linux_misc.c
+    view +310 ../kern/init_main.c
+    view +318 ../kern/init_main.c
+    view +336 ../kern/init_main.c
+    view +351 ../kern/init_main.c
+    $ !! | sh            # @r{from now on, go to next tag with 'ZZ'.}
+
+@end example
+
+@end itemize
+
+@c ***************************************************************************
+@c Applications
+@c ***************************************************************************
+@node Applications
+@chapter Various applications
+
+@menu
+* GloBash::                             Global facility for Bash.
+* Less viewer::                         Less using GLOBAL.
+* Nvi-1.81.5 editor::                   Nvi-1.81.5 using GLOBAL.
+* Elvis editor::                        Elvis using GLOBAL.
+* Vim editor::                          Vim using GLOBAL.
+* Emacs editor::                        Extended Emacs using GLOBAL.
+* Gtags-cscope (fake cscope)::          Gtags-cscope (fake cscope).
+* Web browser::                         Hypertext generator.
+* Doxygen documentation system::	Doxygen using GLOBAL.
+@end menu
+
+@c ***************************************************************************
+@c GloBash
+@c ***************************************************************************
+@node GloBash
+@section Global facility for Bash
+
+Special support for Bash is available.
+
+@menu
+* Features(globash)::			Features.
+* Preparation(globash)::		Preparation.
+* Usage(globash)::			Usage.
+@end menu
+
+@c ***************************************************************************
+@node   Features(globash)
+@subsection Features
+
+@itemize @bullet
+@item
+Vi-like tag stack is available.
+@item
+Emacs-like tag name completion is available.
+@item
+Automatic invoking of editor.
+@item
+Tag mark facility is available.
+@item
+Yoo can manage a directory list by cookie facility.
+@end itemize
+
+@c ***************************************************************************
+@node   Preparation(globash)
+@subsection Preparation
+
+First, do the preparation of global. @xref{Preparation}.
+And you can invoke globash(1) command.
+@example
+
+    $ globash
+
+@end example
+
+Only first time, you will see the following message.
+
+@example
+    GloBash needs a working directory. Do you create '/home/you/.globash'? ([y]/n)
+@end example
+
+Inputing the ENTER key, you will see a prompt like this:
+
+@example
+
+    [/usr/src/sys]/kern _
+
+@end example
+
+This prompt means that the current directory is '/usr/src/sys/kern' and
+the root directory of the project is '/usr/src/sys'.
+Tag and marker are valid only in a project.
+
+When you try to go out of the project, globash warns like:
+@example
+
+    [/usr/src/sys] cd ..
+    You are going to get out of the current project.
+    Tag stack and marker will be removed. Sure? ([y]/n)_
+
+@end example
+
+If you answer @kbd{y} and @kbd{RET}
+or just @kbd{RET} in the above prompt then the tag stack and marker
+(described later) will be removed.
+
+If you need help then please type @kbd{ghelp}.
+
+@c ***************************************************************************
+@node   Usage(globash)
+@subsection Usage
+
+@itemize @bullet
+@item Almost global(1)(@pxref{global})'s command characters are available as a command.
+@example
+
+    [/usr/src/sys] x fork               <- @r{(global -x fork)}
+    >    1  fork              94 kern/kern_fork.c fork(p, uap)
+    [/usr/src/sys] r                    <- @r{(global -xr fork)}
+    >    1  fork              85 alpha/linux/linux_machdep.c
+         2  fork             184 i386/linux/linux_machdep.c
+    [/usr/src/sys] s lbolt              <- @r{(global -xs lbolt)}
+    >    1  lbolt            1210 i386/isa/wd_cd.c     tsleep((cad
+         2  lbolt            1211 i386/isa/wd_cd.c     tsleep((cad
+         3  lbolt            709 i386/isa/wfd.c     tsleep ((caddr
+    ...
+    [/usr/src/sys] g                    <- @r{(global -xg lbolt)}
+    >    1  lbolt            1210 i386/isa/wd_cd.c     tsleep((cad
+    ...
+    [/usr/src/sys] P init               <- @r{(global -xP init)}
+    >    1  path    1 dev/hea/eni_init.c 
+         2  path    1 dev/hfa/fore_init.c 
+         3  path    1 i386/i386/initcpu.c 
+         4  path    1 kern/init_main.c 
+         5  path    1 kern/init_sysent.c 
+         6  path    1 kern/vfs_init.c 
+         7  path    1 vm/vm_init.c 
+    [/usr/src/sys] _
+
+@end example
+
+If no argument is specified then the latest argument is used.
+
+@item Input completion facility is available. For each command, suitable completion is applied.
+
+@example
+    [/usr/src/sys] x kmem_@kbd{TAB}@kbd{TAB}
+    kmem_alloc          kmem_free           kmem_malloc         
+    kmem_alloc_nofault  kmem_free_wakeup    kmem_object         
+    kmem_alloc_wait     kmem_init           kmem_suballoc       
+    [/usr/src/sys] x kmem_s@kbd{TAB}
+    [/usr/src/sys] x kmem_suballoc
+
+@end example
+
+@item You can select a tag by the @kbd{show} command.
+@example
+
+    [/usr/src/sys] x main
+    >    1  main              70 alpha/alpha/gensetdefs.c main(in
+         2  main             1500 alpha/alpha/ieee_float.c main(i
+         3  main             227 boot/alpha/boot1/boot1.c main()
+    ....
+    [/usr/src/sys] show 3
+    (Load editor and show boot/alpha/boot1/boot1.c at line 227.)
+
+@end example
+
+The default editor is vi(1) but you can specify it statically by @code{EDITOR}
+environment variable or temporarily by options.
+
+@example
+
+    [/usr/src/sys] show -e 3
+    (Preloaded emacs show boot/alpha/boot1/boot1.c at line 227.)
+    [/usr/src/sys] show -l 3
+    (Load less and show boot/alpha/boot1/boot1.c at line 227.)
+    [/usr/src/sys] show -g 3
+    (Preloaded mozilla show boot/alpha/boot1/boot1.c at line 227.)
+
+@end example
+
+Otherwise, you can use the following commands (and abbreviated form):
+@table @code
+@item list (@kbd{l})
+print tag list.
+@item first
+go to the first tag.
+@item last
+go to the last tag.
+@item next (@kbd{n})
+go to next tag.
+@item prev (@kbd{p})
+go to previous tag.
+@item show n (@kbd{1,2,3,..,999})
+go to nth tag
+@end table
+
+@item You can use vi-like tag stack. You can return the previous tag list
+by the @kbd{pop} or @kbd{CTL-T} command.
+@example
+
+    [/usr/src/sys] x main
+    >    1  main              70 alpha/alpha/gensetdefs.c main(in
+         2  main             1500 alpha/alpha/ieee_float.c main(i
+         3  main             227 boot/alpha/boot1/boot1.c main()
+    ....
+    [/usr/src/sys] show 3
+    (Load editor and show boot/alpha/boot1/boot1.c at line 227.)
+    [/usr/src/sys] x fork          <- @r{push new tag on the tag stack.}
+    >    1  fork              94 kern/kern_fork.c fork(p, uap)
+    [/usr/src/sys] pop             <- @r{pop tag stack.}
+    [/usr/src/sys] show
+    (Load editor and show boot/alpha/boot1/boot1.c at line 227.)
+
+@end example
+
+You can print the tag stack by @kbd{tags} command.
+
+@item You can memory tags using the @kbd{mark} command.
+@example
+
+    [/usr/src/sys] x fork
+    >    1  fork              94 kern/kern_fork.c fork(p, uap)
+    [/usr/src/sys] mark
+    [/usr/src/sys] x main
+    >    1  main              70 alpha/alpha/gensetdefs.c main(in
+         2  main             1500 alpha/alpha/ieee_float.c main(i
+         3  main             227 boot/alpha/boot1/boot1.c main()
+    ....
+    [/usr/src/sys] mark -l              <- @r{show marker list.}
+         1  fork              94 kern/kern_fork.c fork(p, uap)
+    [/usr/src/sys] mark 1               <- @r{select a marker.}
+    (Load editor and show kern/kern_fork.c at line 227.)
+    [/usr/src/sys] list
+    >    1  main              70 alpha/alpha/gensetdefs.c main(in
+         2  main             1500 alpha/alpha/ieee_float.c main(i
+         3  main             227 boot/alpha/boot1/boot1.c main()
+    ....
+
+@end example
+
+Marked tags are valid until you go out of the current project or quit
+the current Bash session.
+
+@item You can memory directories using the @kbd{cookie} command,
+and return there using the @kbd{warp} command.
+@example
+
+    [/usr/src/sys] cookie               <- @r{drop a cookie.}
+    [/usr/src/sys] cd kern
+    [/usr/src/sys]/kern cookie          <- @r{drop a cookie again.}
+    [/usr/src/sys]/kern cd ../i386
+    [/usr/src/sys]/i386 cookie -l       <- @r{show cookie list.}
+         1  /usr/src/sys/kern
+         2  /usr/src/sys
+    [/usr/src/sys]/i386 warp 2          <- @r{warp to the selected cookie.}
+    [/usr/src/sys] _
+
+@end example
+
+Cookie directories are valid until you delete them.
+
+@end itemize
+
+@c ***************************************************************************
+@c Less viewer
+@c ***************************************************************************
+@node Less viewer
+@section Less using GLOBAL
+
+You can use GLOBAL as the tag system of Less(1) viewer instead of ctags.
+
+@menu
+* Features(Less)::                       Features.
+* Preparation(Less)::                    Preparation.
+* Usage(Less)::                          Usage.
+@end menu
+
+@c ***************************************************************************
+@node   Features(Less)
+@subsection Features
+
+@itemize @bullet
+@item
+You can use most of GLOBAL's facilities from Less viewer.
+@item
+Less viewer support duplicated tag.
+@end itemize
+
+@c ***************************************************************************
+@node   Preparation(Less)
+@subsection Preparation
+
+First, do the preparation of global. @xref{Preparation}.
+
+Second, to use global from Less, you need to set environment variable
+@code{LESSGLOBALTAGS} to "global".
+
+@example
+
+    $ export LESSGLOBALTAGS=global
+
+@end example
+
+@c ***************************************************************************
+@node   Usage(Less)
+@subsection Usage
+
+@itemize @bullet
+@item To go to func1, you can say
+@example
+
+    $ less -t func1
+
+@end example
+
+Please note that if @file{tags} exists in the current directory then Less use it.
+If you want to use @file{GTAGS} even if @file{tags} exists
+then please specify the tag file explicitly like this:
+
+@example
+
+    $ less -TGTAGS -t func1
+
+@end example
+
+@item To go to the referenced point of func1, please specify @file{GRTAGS}.
+@example
+
+    $ less -TGRTAGS -t func1
+
+@end example
+
+In the same way, you can use @file{GTAGS}, @file{GRTAGS},
+@file{GPATH} as tag files.
+
+@item If a number of objects are located, Less goes to the first tag.
+You can go to next tag by typing @kbd{t} and back by typing @kbd{T}.
+
+@table @code
+@item @kbd{t}
+go to next tag.
+@item @kbd{T}
+go to previous tag.
+@end table
+
+@item
+In a Less session, you can use @kbd{:t} command to locate new symbol.
+But in this case, you cannot change tag file from one specified by
+@samp{-T} option.
+
+@item With the @samp{-T-} option, Less read standard input as a tag file.
+You can connect global and Less with a pipe. It is very convenient.
+
+@example
+
+    $ global -x func | less -T-
+
+@end example
+
+In the same way, you can use the following command lines:
+
+@example
+
+    # pattern match with grep(1).
+    $ global -xg 'lseek(.*)' | less -T-
+
+    # pattern match with idutils(1).
+    $ global -xI func | less -T-
+
+    # all objects definitions in *.c.
+    $ global -f *.c | less -T-
+
+    # all files includes 'init' in its path.
+    $ global -Px init | less -T-
+
+@end example
+
+@item If your editor doesn't support GLOBAL directly then you can use Less
+as a footstool.
+
+@example
+
+    # invoke less
+    $ less -t main
+    main(int argc, char **argv)
+    @{
+    int i;
+    .....
+    [xxx/main.c (tag 1 of 55)]
+
+    # type 'v'(vi) command in less session.
+    v
+
+    # load vi and show the same position.
+    .....
+    main((int argc, char **argv)
+    @{
+    int i;
+    .....
+    [xxx/main.c 313 lines, 7783 char]
+
+    # type 'ZZ' command in vi session.
+    ZZ
+
+    # exit vi and back to less session.
+    main(int argc, char **argv)
+    @{
+    int i;
+    .....
+    [xxx/main.c (tag 1 of 55)]
+
+@end example
+
+@end itemize
+
+@c ***************************************************************************
+@c Nvi-1.81.5 editor
+@c ***************************************************************************
+@node Nvi-1.81.5 editor
+@section Nvi-1.81.5 using GLOBAL
+
+You can use GLOBAL as the tag system of Nvi editor instead of ctags.
+
+@menu
+* Features(Nvi-1.81.5)::		Features.
+* Preparation(Nvi-1.81.5)::             Preparation.
+* Usage(Nvi-1.81.5)::                   Usage.
+@end menu
+
+@c ***************************************************************************
+@node   Features(Nvi-1.81.5)
+@subsection Features
+
+@itemize @bullet
+@item
+You can use most of GLOBAL's facilities from Nvi.
+@item
+Intelligent recognition of the current token and its type.
+@end itemize
+
+@c ***************************************************************************
+@node   Preparation(Nvi-1.81.5)
+@subsection Preparation
+
+First, do the preparation of global. @xref{Preparation}.
+
+Second, to use global from Nvi, you need write to @file{.nexrc} like this:
+It assumed that @file{gtags.pl} is put on @file{$HOME/perl}.
+
+@example
+
+    $HOME/.nexrc
+    +----------------------------
+    |perl use lib "$ENV@{'HOME'@}/perl"
+    |perl require 'gtags.pl'
+    |map ^P :tagprev^M
+    |map ^N :tagnext^M
+    |map ^] :perl tag^M
+    |ab gtag perl tag qw(
+    |ab gta perl tag qw(
+    |ab gt perl tag qw(
+
+@end example
+
+You must start Nvi in a project described in @ref{Preparation}.
+
+@c ***************************************************************************
+@node   Usage(Nvi-1.81.5)
+@subsection Usage
+
+@itemize @bullet
+@item To go to func1, you can say
+@example
+
+    :perl tag qw(func1)
+
+@end example
+@example
+
+    Suggested .nexrc:
+    ab gtag perl tag qw(
+    ab gta perl tag qw(
+    ab gt perl tag qw(
+
+@end example
+
+@item To go to the referenced point of func1, add the option @samp{-r}
+@example
+
+    :perl tag qw(-r func1)
+
+@end example
+
+@item If a number of objects are located, Nvi goes to the first tag.
+You can go to next tag by typing @kbd{:tagnext} and back by typing @kbd{:tagprev}.
+
+@example
+
+    Suggested .nexrc:
+    map ^N :tagnext^M
+    map ^P :tagprev^M
+
+@end example
+
+@item If you don't specify any argument. ':perl tag' command do the followings:
+
+If the context of the current token is a definition then it is equivalent to
+@kbd{:perl tag qw(-r @var{current token})}.
+Otherwise, if it is a reference to some definitions then it is equivalent to
+@kbd{:perl tag qw(@var{current token})} else it is equivalent
+to @kbd{:perl tag qw(-s @var{current token})}.
+
+@example
+
+    Suggested .nexrc:
+    map ^] :perl tag^M
+
+@end example
+
+It is similar to @kbd{CTL-]} command.
+
+@item You can use the @samp{-s} option. It locates symbols which are not
+defined in @file{GTAGS}.
+@example
+
+    :perl tag qw(-s pat)
+
+@end example
+
+@item The @samp{-g}, @samp{-f} and @samp{-P} option are also available.
+It works like command line.
+@example
+
+    :perl tag qw(-g pat)
+
+@end example
+
+@item When you want to locate objects the name of which start with "set" or "get", use:
+@example
+
+    :perl tag qw(^[sg]et)
+
+@end example
+
+@item Other tag commands are also available:
+@table @code
+@item @kbd{CTL-T}
+returns to the most recent tag location.
+@item @kbd{:tagpop}
+returns to the most recent tag location.
+@item @kbd{:tagtop}
+returns to the top of the tag stack.
+@item @kbd{:display tags}
+display the tags stack.
+@end table
+@end itemize
+
+@c ***************************************************************************
+@c Elvis editor
+@c ***************************************************************************
+@node Elvis editor
+@section Elvis using GLOBAL
+
+Elvis 2.1 or the later has two variables, @code{tagprg} and @code{tagprgonce} for
+running an external tag search program. You can use them for GLOBAL.
+
+@menu
+* Features(Elvis)::                     Features.
+* Preparation(Elvis)::                  Preparation.
+* Usage(Elvis)::                        Usage.
+@end menu
+
+@c ***************************************************************************
+@node   Features(Elvis)
+@subsection Features
+
+@itemize @bullet
+@item
+You can use most of GLOBAL's facilities from Elvis.
+@item
+Mouse is supported.
+@end itemize
+
+@c ***************************************************************************
+@node   Preparation(Elvis)
+@subsection Preparation
+
+First, do the preparation of global. @xref{Preparation}.
+
+Second, start Elvis and execute @code{set tagprg="global -t $1"} like this:
+@opindex -t
+
+@example
+
+    $ elvis
+    ~
+    ~
+    ~
+    ~
+    ~
+    ~
+    :set tagprg="global -t $1"
+
+@end example
+
+@c ***************************************************************************
+@node   Usage(Elvis)
+@subsection Usage
+
+@itemize @bullet
+@item To go to func1, you can say
+@example
+
+    :tag func1
+
+@end example
+
+It seems same as original Elvis, but Elvis execute @code{global -t func1}
+internally and read the output instead of tags file.
+
+@item To go to the referenced point of func1, add @samp{-r} option.
+@opindex -r
+@example
+
+    :tag -r func1
+
+@end example
+
+@item To locate symbols which are not defined in @file{GTAGS}, try this.
+@opindex -s
+@example
+
+    :tag -s lbolt
+
+@end example
+
+@item To locate strings, try this.
+@opindex -g
+@example
+
+    :tag -g Copyright
+
+@end example
+
+@item When a lot of results are expected, you had better use the browse command.
+@example
+
+    :browse -r fork
+
+@end example
+
+It brings a following selection list. You can select a tag line and go to
+the point.
+
+@example
+
+    Browse -r fork (2 matches)
+    +----------------+----------------+--------------------
+    | TAG NAME       | SOURCE FILE    | SOURCE LINE                   
+    +----------------+----------------+--------------------
+    |fork            |ux/linux_misc.c | (line 565)                    
+    |fork            |ern/init_main.c | (line 191)                    
+    +----------------+----------------+--------------------
+
+@end example
+
+@item To get a list of objects in specified files, use @samp{-f} command.
+@opindex -f
+@example
+
+    :browse -f main.c               <- @r{locate definitions in main.c}
+
+@end example
+
+@item Other tag commands are also available:
+
+@table @code
+@item @kbd{CTL-]}
+        go to the definition of current token.
+@item @kbd{CTL-T}
+        return to the most recent tag context.
+@item @kbd{:tag}
+        without argument, go to the next tag.
+@item @kbd{:pop}
+        return to the most recent tag context.
+@item @kbd{:stack}
+        display the tags stack.
+@item @kbd{:stag}
+        creates a new window and moves its cursor to the tag's definition point.
+@item @kbd{:sbrowse}
+        same with @kbd{browse} but show in a new window.
+@end table
+
+@item You can use POSIX regular expressions.
+@opindex -g
+@example
+
+    :tag ^put_                  <- @r{locate objects start with 'put_'}
+    
+    :browse -g 'fseek(.*L_SET)' <- @r{locate fseek() using L_SET argument}
+
+@end example
+
+@item You can browse an object list of many files.
+@opindex -f
+@example
+
+    :browse -f *.c              <- @r{locate objects in *.c}
+
+@end example
+
+@item You can browse the files whose path includes specified pattern.
+@opindex -P
+@example
+
+    :browse -P /vm/             <- @r{under vm/ directory}
+    :browse -P \.h$             <- @r{all include files}
+    :browse -P init             <- @r{path including 'init'}
+
+@end example
+
+@item You can use mouse for tag operations.
+
+If you have a mouse, then you can use the left button to double-click
+on a word in the text, to have Elvis perform a @kbd{:tag} search on that word.
+Double-clicking the right button anywhere in the text will perform
+a @kbd{:pop} command.
+
+In the selection list by the @kbd{browse} command, you can use the left button
+to double-click on a tag name, to have Elvis select the tag.
+To come back, double-click on the right button.
+@end itemize
+
+@c ***************************************************************************
+@c Vim editor
+@c ***************************************************************************
+@node Vim editor
+@section Vim using GLOBAL
+
+In Vim 6.2 or later, you can use @file{gtags.vim} script.
+
+@menu
+* Features(Vim)::                       Features.
+* Preparation(Vim)::                    Preparation.
+* Usage(Vim)::                          Usage.
+@end menu
+
+@c ***************************************************************************
+@node   Features(Vim)
+@subsection Features
+
+@itemize @bullet
+@item
+You can use most of GLOBAL's facilities from Vim.
+@item
+Intelligent recognition of the current token and its type.
+@item
+Special character '%', '#' and input completion are available.
+@end itemize
+
+To our regret, tag stack facility is not available.
+If you want to use the facility, please try gtags-cscope
+@xref{Gtags-cscope (fake cscope)}.
+@c ***************************************************************************
+@node   Preparation(Vim)
+@subsection Preparation
+
+First, do the preparation of global. @xref{Preparation}.
+
+Second, copy @file{gtags.vim} to your plug-in directory or source it
+from your vimrc.
+
+@example
+
+    $ cp /usr/local/share/gtags/gtags.vim $HOME/.vim/plugin
+
+@end example
+
+@c ***************************************************************************
+@node   Usage(Vim)
+@subsection Usage
+
+@itemize @bullet
+@item To go to main, you can say
+@example
+
+    :Gtags main
+
+@end example
+
+Vim execute global(1), parse the output, list located objects
+in quickfix window and load the first entry.
+The quickfix windows is like this:
+@example
+
+gozilla/gozilla.c|200| main(int argc, char **argv)
+gtags-cscope/gtags-cscope.c|124| main(int argc, char **argv)
+gtags-parser/asm_scan.c|2056| int main()
+gtags-parser/gctags.c|157| main(int argc, char **argv)
+gtags-parser/php.c|2116| int main()
+gtags/gtags.c|152| main(int argc, char **argv)
+[Quickfix List]
+
+@end example
+
+You can go to any entry using quickfix command.
+
+@table @code
+@item @kbd{:cn}
+        go to the next entry.
+@item @kbd{:cp}
+        go to the previous entry.
+@item @kbd{:ccN}
+        go to the N'th entry.
+@item @kbd{:cl}
+        list all entries.
+@end table
+
+You can see the help of quickfix like this:
+@example
+
+    :h quickfix
+
+@end example
+
+@example
+    Suggested map:
+    map <C-n> :cn<CR>
+    map <C-p> :cp<CR>
+@end example
+
+@item To go to the referenced point of func1, add @samp{-r} option.
+@opindex -r
+@example
+
+    :Gtags -r func1
+
+@end example
+
+@item To locate symbols which are not defined in @file{GTAGS}, try this.
+@opindex -s
+@example
+
+    :Gtags -s lbolt
+
+@end example
+
+@item To locate strings, try this.
+@opindex -g
+@example
+
+    :Gtags -g int argc
+
+    :Gtags -g "root"
+
+    :Gtags -ge -C		<- @r{locate '-C'}
+
+@end example
+
+
+@item To get a list of objects in specified files, use -f command.
+@opindex -f
+@example
+
+    :Gtags -f main.c               <- @r{locate objects in main.c}
+
+@end example
+
+If you are editing @file{main.c} itself, you can use '%' instead.
+@example
+
+    :Gtags -f %                    <- @r{locate objects in main.c}
+
+@end example
+
+@item You can use POSIX regular expressions.
+@opindex -g
+@example
+
+    :Gtags ^put_                <- @r{locate objects start with 'put_'}
+    
+    :Gtags -g fseek(.*SEEK_SET) <- @r{locate fseek() using SEEK_SET}
+
+@end example
+
+@item Input completion is available.
+
+In the command line, press @kbd{CTL-D} after some typings
+and Vim will show a list of tag names that start with the string.
+Press @kbd{TAB} and Vim will complete the tag name.
+
+@example
+    :Gtags fu@kbd{TAB}
+
+    :Gtags func1               <- @r{'nc1' is appended by vim}
+@end example
+
+@item You can browse files whose path includes specified pattern.
+@opindex -P
+
+@example
+
+    :Gtags -P /vm/             <- @r{under vm/ directory}
+    :Gtags -P \.h$             <- @r{all include files}
+    :Gtags -P init             <- @r{path including 'init'}
+
+@end example
+
+@item You can use all options of global(1) except for the -c, -n, -p, -q, -u, -v and
+	all long name options. They are sent to global(1) as is.
+	For example,
+
+@example
+
+    :Gtags -gi paTtern    <- @r{match to both 'PATTERN' and 'pattern'.}
+
+    :Gtags -POi make      <- @r{match to Makefile but doesn't match to makeit.c.}
+
+@end example
+	About the other options, please see @xref{global}.
+
+@item The GtagsCursor command brings you to the definition or reference of the current token.
+
+	If the context of the current token is a definition then it is equivalent to
+	@kbd{:Gtags -r @var{current token}}.
+	Otherwise, if it is a reference to some definitions then it is equivalent to
+	@kbd{:Gtags @var{current token}} else it is equivalent
+	to @kbd{:Gtags -s @var{current token}}.
+
+@example
+
+    :GtagsCursor
+
+@end example
+
+@example
+
+    Suggested map:
+    map <C-\>^] :GtagsCursor<CR>
+
+@end example
+
+Though the mapping ':GtagsCursor' to '^]' seems suitable,
+it will bring an inconvenience in the help screen.
+
+@item If you have the hypertext generated by htags(1) then you can display
+	the same part of the source code on the mozilla browser.
+	Let's load mozilla and try this:
+
+@example
+
+    :Gozilla
+
+@end example
+
+@example
+
+    Suggested map:
+    map <C-g> :Gozilla<CR>
+
+@end example
+
+@item If you want to load Vim with all main()s then following command line is useful.
+
+@example
+
+    $ vim '+Gtags main'
+
+@end example
+@end itemize
+
+@c ***************************************************************************
+@c Emacs editor
+@c ***************************************************************************
+@node Emacs editor
+@section Extended Emacs using GLOBAL
+
+You can use GLOBAL as the tag system of Emacs editor instead of etags.
+
+@menu
+* Features(Emacs)::			Features.
+* Preparation(Emacs)::                  Preparation.
+* Usage(Emacs)::                        Usage.
+@end menu
+
+@c ***************************************************************************
+@node   Features(Emacs)
+@subsection Features
+
+@itemize @bullet
+@item
+You can use most of GLOBAL's facilities from the editor.
+@item
+More intelligent recognition of the current token and its type.
+@item
+Tag completion is available for input tag name.
+@item
+Mouse is supported.
+@end itemize
+
+@c ***************************************************************************
+@node   Preparation(Emacs)
+@subsection Preparation
+
+First, do the preparation of global. @xref{Preparation}.
+
+Second, to use global from Emacs, you need to load the @file{gtags.el}
+and execute gtags-mode function in it.
+
+Write the call to autoload function to your @file{$HOME/.emacs},
+start Emacs and execute gtags-mode function.
+If you put @file{gtags.el} in a directory other than the standard
+macro directory, you need to add it to @code{load-path}.
+
+@example
+
+    $HOME/.emacs
+    +------------------------------------------------------
+    |(setq load-path (cons "/home/owner/global" load-path))
+    |(autoload 'gtags-mode "gtags" "" t)
+    
+    $ emacs
+    
+    |
+    |J_:-----Mule: *scratch*       (Lisp Interaction)--L16--All----
+    |M-x gtags-mode[RET]
+    +------------------------------------------------------
+
+@end example
+
+If you want to get into gtags-mode whenever you get into c-mode
+then you can append the following code to your @file{$HOME/.emacs}.
+
+@example
+
+      (setq c-mode-hook
+          '(lambda ()
+              (gtags-mode 1)
+      ))
+
+@end example
+
+@c ***************************************************************************
+@node   Usage(Emacs)
+@subsection Usage
+
+@itemize @bullet
+@item To go to func1, invoke @code{gtags-find-tag}
+and you can see a prompt in the mini-buffer. Then input the tag name.
+@example
+
+    Find tag: func1			<- @r{'Find tag: ' is a prompt}
+
+@end example
+@item To go to the referenced point of func1, invoke @code{gtags-find-rtag}.
+
+@example
+
+    Find tag (reference): func1
+
+@end example
+
+@item Tag name completion is available.
+     You need to execute @code{gtags-make-complete-list} command before it.
+
+@example
+
+    Find tag: fu@kbd{TAB}
+    
+    Find tag: func1                     <- @r{'nc1' is appended by emacs}
+
+@end example
+
+@item If a number of objects are located, Emacs goes into @dfn{GTAGS SELECT MODE} like this:
+
+@example
+
+    +-------------------------------------------------------------
+    |main             347 i386/isa/ultra14f.c main()
+    |main             128 kern/init_main.c   main(framep)
+    |main             104 netiso/clnp_debug.c main()
+    |main             164 netiso/xebec/main.c main(argc, argv)
+    |
+    |
+    |
+    |
+    |
+    |J_:--%*-Mule: *scratch*       (Gtags Select)--L1--All----
+    |[GTAGS SELECT MODE] 4 lines
+    +-------------------------------------------------------------
+
+@end example
+
+Please select a tag line by any Emacs command and press @kbd{RET},
+and you can go to the tag's point. When you want to go to the next or
+the previous tag, please return to the above mode with @code{gtags-pop-stack}
+and reselect.
+
+You can customize the path style in this mode by setting @code{gtags-path-style}
+variable.
+
+@table @code
+@item @code{root}
+relative from the root of the project (Default)
+@item @code{relative}
+relative from the current directory
+@item @code{absolute}
+absolute (relative from the system root directory)
+@end table
+
+There are two method to set this variable:
+@itemize @bullet
+@item You can change it dynamically using the @code{customize} command of Emacs.
+
+You will find the entry in the Programming/Tools/Gtags group.
+
+@item You can change it when Emacs is loaded using @file{.emacs} file like this:
+
+@example
+
+    (setq gtags-mode-hook
+      '(lambda ()
+        (setq gtags-path-style 'relative)))
+
+@end example
+@end itemize
+
+@item @code{gtags-find-tag-from-here} command is available.
+
+If current token is a definition, it is equivalent to
+@kbd{Find tag (reference): @var{current token}RET},
+otherwise it is equivalent to @kbd{Find tag: @var{current token}RET}.
+
+@item To locate symbols which are not defined in @file{GTAGS}, try @code{gtags-find-symbol}.
+@example
+
+    Find symbol: lbolt		<- @r{'Find symbol:' is a prompt}
+
+@end example
+@item To locate strings, try @code{gtags-find-with-grep}.
+@example
+
+    Find pattern: Copyright
+
+@end example
+
+@item You can use POSIX regular expressions.
+
+@example
+
+    Find tag: ^put_                 <- @r{locate tags start with 'put_'}
+
+@end example
+
+@item Mouse command is available.
+
+If you use X version Emacs, try the following:
+
+Move the mouse cursor to an object name and click the middle button,
+and you can go to the point of the definitions, or to its references,
+depending on the context. In 'GTAGS SELECT MODE', move the mouse cursor
+to a line and click the center button.
+
+To return to the previous position, click the right button.
+@end itemize
+
+@c ***************************************************************************
+@c Gtags-cscope (fake cscope)
+@c ***************************************************************************
+@node Gtags-cscope (fake cscope)
+@section Gtags-cscope (fake cscope)
+
+You can use gtags-cscope(1) instead of cscope(1).
+For example, you can deceive Vim editor using the following commands:
+
+@example
+
+:set csprg=gtags-cscope
+:cs add GTAGS
+
+@end example
+
+After this, you can use built-in 'cs find' commands in the Vim editor.
+Though the deceit is not perfect ('cs find d' is not implemented),
+this method might be more convenient than @file{gtags.vim} in the point that
+you can use the tag stack facility of Vim.
+
+@c ***************************************************************************
+@c Web browser
+@c ***************************************************************************
+@node Web browser
+@section Hypertext generator
+
+You can use GLOBAL's facilities from web browsers.
+
+@menu
+* Features(browser)::                   Features.
+* Preparation(browser)::                Preparation.
+* Usage(browser)::                      Usage.
+@end menu
+
+@c ***************************************************************************
+@node   Features(browser)
+@subsection Features
+
+@itemize @bullet
+@item Htags makes a hypertext from C, C++, Yacc and Java source files.
+@item Once the hypertext is generated, you need nothing other than a web browser.
+@item You can move the hypertext to anywhere. It is independent of the source code.
+@item You can use all of your browser's functions, such as search,
+     history, bookmark, save, frames, windows, etc.
+@end itemize
+
+@c ***************************************************************************
+@node   Preparation(browser)
+@subsection Preparation
+
+At first, you must ensure that you have a lot of disk space for hypertext.
+For example, Linux-2.6.32 source code (390MB) requires 4-6 G byte of disk space.
+@example
+
+    source code(Linux-2.6.32)            390MB
+    GPATH,GTAGS,GRTAGS                   289MB
+
+    hypertext (with no option)           3.8GB
+    hypertext (with --suggest option)    5.7GB
+   
+@end example
+
+Please invoke gtags(1)(@pxref{gtags}) and htags(1)(@pxref{htags})
+in order like this:
+
+@example
+
+    (at the root directory of your source project)
+    $ gtags                 # @r{make tag files(GPATH,GTAGS,GRTAGS)}
+    $ htags                 # @r{make hypertext(HTML/)}
+
+@end example
+
+Then you will find a directory named @file{HTML} in the current directory.
+
+Htags has rich options. If you are new on htags then you are recommended to use
+the @samp{--suggest} option. This option makes some popular options effective,
+and invokes gtags(1) if there is no tag files.
+
+@example
+
+    $ htags --suggest
+
+@end example
+
+If HTTP server is available then the -D and -f option are also useful.
+
+@c ***************************************************************************
+@node   Usage(browser)
+@subsection Usage
+
+Please start a web browser like this:
+
+@example
+
+    $ lynx HTML/index.html
+
+@end example
+
+You will understand the usage by looking at the examples.
+
+You can move the HTML directory to anywhere. It is independent of the
+source code as long as CGI facility is not used.
+
+Using mozilla, you can also utilize the hypertext from your command line like this:
+
+@example
+
+    $ mozilla				# @r{load mozilla}
+    $ global -x main
+    main        10 main.c main(int argc, char *argv[]) @{
+    $ gozilla +10 main.c		# @r{usage is similar to vi editor.}
+    (show main.c at 10 on mozilla's screen.)
+    
+@end example
+
+But in this case, you must not move the HTML directory from the source directory.
+
+@c ***************************************************************************
+@c Doxygen documentation system
+@c ***************************************************************************
+@node Doxygen documentation system
+@section Doxygen using GLOBAL
+
+You can use GLOBAL as the source browser of Doxygen.
+
+Doxygen Release 1.4.3 or later has config option USE_HTAGS.
+When enabled in combination with SOURCE_BROWSER=YES, htags(1) is
+used as the source browser instead of Doxygen's own. 
+
+Here is an example.
+
+@example
+
+(in source directory)
+$ doxygen -g
+$ vi Doxyfile
++---------------------------------
+|...
+|INPUT                  = .
+|RECURSIVE              = YES
+|SOURCE_BROWSER         = YES
+|USE_HTAGS              = YES
+|...
+
+$ doxygen
+$ lynx html/index.html
+
+@end example
+
+@c ***************************************************************************
+@c Other topics
+@c ***************************************************************************
+@node Other topics
+@chapter Other topics
+
+@menu
+* Configuration::                       How to config GLOBAL.
+* Plug-in::                             Plug-in parser.
+* Incremental updating::                Incremental updating.
+@end menu
+
+@c ***************************************************************************
+@node   Configuration
+@section How to config GLOBAL
+
+You can customize GLOBAL using configuration file.
+
+@example
+
+    # cp gtags.conf /etc/gtags.conf         # system wide config file.
+    # vi /etc/gtags.conf
+
+    $ cp gtags.conf $HOME/.globalrc         # personal config file.
+    $ vi $HOME/.globalrc
+
+@end example
+
+If @file{$HOME/.globalrc} exists then GLOBAL use it, else if @file{/etc/gtags.conf}
+exists then GLOBAL use it. Otherwise default value is used.
+The format of @file{gtags.conf} is resemble to termcap(5). By default, 'default'
+target is used.
+About the capabilities, please see each command manual. @xref{Reference}.
+
+@c ***************************************************************************
+@node   Plug-in
+@section Plug-in parser
+
+You can write new parser for gtags(1).
+
+Command layer plug-in parser was abolished.
+Please write function layer plug-in parser instead.
+See @file{plugin-example/} to know function layer plug-in parser.
+
+@c ***************************************************************************
+@node   Incremental updating
+@section Incremental updating
+
+Modifying some source files, you need not remake the whole tag files.
+Instead, you can use incremental updating facility (@samp{-u} option).
+@opindex -u
+@example
+
+    $ gtags
+    $ cd kernel
+    $ vi user.c                             # @r{modify user.c}
+    ...
+    :wq
+    $ global -vu                            # @r{-v means verbose}
+    [Sat May 29 00:31:41 JST 2010] Gtags started.
+     Tag found in '/usr/local/src/linux-2.6.32'.
+     Incremental updating.
+    [Sat May 29 00:31:43 JST 2010] Updating 'GTAGS' and 'GRTAGS'.
+     [1/1] deleting tags of kernel/user.c
+     [1/1] extracting tags of kernel/user.c
+     Global databases have been modified.
+    [Sat May 29 00:31:51 JST 2010] Done.
+
+    $ global -vu                            # @r{try again}
+    [Sat May 29 00:33:16 JST 2010] Gtags started.
+     Tag found in '/usr/local/src/linux-2.6.32'.
+     Incremental updating.
+     Global databases are up to date.       # @r{do nothing}
+    [Sat May 29 00:33:19 JST 2010] Done.
+
+@end example
+
+@c ***************************************************************************
+@c Reference manual.
+@c ***************************************************************************
+@node Reference
+@chapter Command References
+@include reference.texi
+
+@c ***************************************************************************
+@c FDL
+@c ***************************************************************************
+@node Copying This Manual
+@appendix Copying This Manual
+
+@menu
+* GNU Free Documentation License::      License for copying this manual.
+@end menu
+
+@include fdl.texi
+
+@c ***************************************************************************
+@c Business Model
+@c ***************************************************************************
+@node Business Model
+@appendix Business Model
+
+@menu
+* The BOKIN Model Definition:: Business Model for Free Software.
+* Frequently Asked Questions:: BOKIN Model Frequently Asked Questions.
+@end menu
+
+@include define.texi
+@page
+@include faq.texi
+
+@node Index
+@unnumbered Option Index
+@printindex cp
+@contents
+@bye

@@ -1,0 +1,80 @@
+___________________________________
+|      |  |  |     |  _  |     |  |
+|  |___|  |  |  |  |    _|  |  |  |    GNU GLOBAL source code tag system
+|  |   |  |  |  |  |     |     |  |
+|  ~~  |   ~~|     |  ~  |  |  |   ~~|          for all hackers.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Copyright (c) 2003, 2004 Tama Communications Corporation
+
+ This file is free software; as a special exception the author gives
+ unlimited permission to copy and/or distribute it, with or without
+ modifications, as long as this notice is preserved.
+
+ This program is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+ implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+                ----------------------------------
+
+1. Required programs.
+
+To build the parser, you need to have the following package installed:
+
+	- GNU gperf 3.0.3	to look up reserved words.
+	- flex 2.5.4a		to generate php and assembly parser.
+	- GNU bison 1.875	to generate assembly parser.
+
+2. Reserved word processing using GNU gperf.
+
+This mechanism is independent of lex and bison.
+
+2.1 Outline
+
+(1) Generate gperf(1) source from each reserved word file.
+
+	<prefix>_res.in		reserved word file
+		|
+	    [reserved.pl]
+		|
+		v
+	<prefix>_res.gpf	gperf source file
+
+(2) Generate include file from gperf source.
+
+	<prefix>_res.gpf	gperf source file
+		|
+	    [gperf(1)]
+		|
+		v
+	<prefix>_res.h		include file
+
+(3) Include above file from lex source and you can use
+    <prefix>_reserved_word() function.
+
+	Lex source file
+	+-------------------------------------
+	|...
+	|#include "<prefix>_res.h"
+	|...
+	|WORD	{
+	|		if (<prefix>_reserved_word(yytext, yyleng)) {
+	|		    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	|			...
+	+-------------------------------------
+
+
+2.2 Reserved word file format.
+
+	o One word and 'word' which means 'reserved word' a line.
+	o Null line and the line start with ';' is skipped.
+	o You need not sort words by alphabetical order.
+
+	[Example]
+	+---------------------
+	|; This is comment.
+	|
+	|int		word
+	|auto		word
+	|...
+	|foreach	word
+	+---------------------

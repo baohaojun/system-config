@@ -1,0 +1,106 @@
+;; Process this file with reserved.pl to create gperf source.
+;
+; Copyright (c) 2003 Tama Communications Corporation
+;
+; This file is free software; as a special exception the author gives
+; unlimited permission to copy and/or distribute it, with or without
+; modifications, as long as this notice is preserved.
+;
+; This program is distributed in the hope that it will be useful, but
+; WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+; implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+;
+; C++ reserved word list.
+;
+::				word
+__P				word
+__attribute__,__attribute	word
+__extension__			word
+__thread			word
+asm,__asm,__asm__		word
+const,__const,__const__		word
+inline,__inline,__inline__	word
+signed,__signed,__signed__	word
+volatile,__volatile,__volatile__	word
+auto			word
+bool			word
+break			word
+case			word
+catch			word
+char			word
+class			word
+const_cast		word
+continue		word
+default			word
+delete			word
+do			word
+double			word
+dynamic_cast		word
+else			word
+enum			word
+explicit		word
+export			word
+extern			word
+false			word
+float			word
+for			word
+friend			word
+goto			word
+if			word
+int			word
+long			word
+mutable			word
+namespace		word
+new			word
+operator		word
+private			word
+protected		word
+public			word
+register		word
+reinterpret_cast	word
+return			word
+short			word
+sizeof			word
+static			word
+static_cast		word
+struct			word
+switch			word
+template		word
+this			word
+throw			word
+true			word
+try			word
+typedef			word
+typename		word
+typeid			word
+union			word
+unsigned		word
+using			word
+virtual			word
+void			word
+wchar_t			word
+while			word
+;
+; Pre-processer macro.
+;
+##			sharp
+#assert			sharp
+#define			sharp
+#elif			sharp
+#else			sharp
+#endif			sharp
+#error			sharp
+#ident			sharp
+#if			sharp
+#ifdef			sharp
+#ifndef			sharp
+#import			sharp
+#include		sharp
+#include_next		sharp
+#line			sharp
+#pragma			sharp
+#sccs			sharp
+#unassert		sharp
+#undef			sharp
+#warning		sharp
