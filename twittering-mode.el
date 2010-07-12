@@ -507,7 +507,12 @@ on authorization via OAuth.")
 		     `(("q" . ,word)
 		       ("rpp" . ,number-str)))
 		    ((eq spec-type 'list)
-		     `(("per_page" . ,number-str)))
+		     (let ((username (elt spec 1))
+			   (list-name (elt spec 2)))
+		       (if (member list-name '("following" "followers"))
+			   `(("count" . ,number-str)
+			     ("screen_name" . ,username))
+			 `(("per_page" . ,number-str)))))
 		    ((memq spec-type '(user friends mentions public))
 		     `(("count" . ,number-str)
 		       ("include_rts" . "true")))
@@ -529,9 +534,6 @@ on authorization via OAuth.")
 		 (retweeted_to_me . "1/statuses/retweeted_to_me")
 		 (retweets_of_me  . "1/statuses/retweets_of_me")
 
-		 (following       . "1/statuses/friends")
-		 (followers       . "1/statuses/followers")
-
 		 (search . "search")))
 	      (host (cond ((eq spec-type 'search) twittering-api-search-host)
 			  (t twittering-api-host)))
@@ -543,7 +545,13 @@ on authorization via OAuth.")
 		((eq spec-type 'list)
 		 (let ((username (elt spec 1))
 		       (list-name (elt spec 2)))
-		   (concat "1/" username "/lists/" list-name "/statuses")))
+		   (cond 
+		    ((string= list-name "followers")
+		     "1/statuses/followers")
+		    ((string= list-name "following")
+		     "1/statuses/friends")
+		    (t
+		     (concat "1/" username "/lists/" list-name "/statuses")))))
 		((assq spec-type simple-spec-list)
 		 (cdr (assq spec-type simple-spec-list)))
 		(t nil))))
@@ -2386,6 +2394,9 @@ as a list of a string on Emacs21."
 ;; - (user USER): timeline of the user whose name is USER. USER is a string.
 ;; - (list USER LIST):
 ;;     the list LIST of the user USER. LIST and USER are strings.
+;;     specially, 
+;;       (list USER following): friends that USER is following.
+;;       (list USER followers): followers of USER.
 ;;
 ;; - (direct_messages): received direct messages.
 ;; - (direct_messages_sent): sent direct messages.
@@ -2399,9 +2410,6 @@ as a list of a string on Emacs21."
 ;; - (retweeted_to_me): retweets posted by the authenticating user's friends.
 ;; - (retweets_of_me):
 ;;     tweets of the authenticated user that have been retweeted by others.
-;;
-;; - (following): friends.
-;; - (followers): followers.
 ;;
 ;; - (search STRING): the result of searching with query STRING.
 ;; - (merge SPEC1 SPEC2 ...): result of merging timelines SPEC1 SPEC2 ...
@@ -2432,9 +2440,6 @@ as a list of a string on Emacs21."
 ;; RETWEETED_TO_ME ::= ":retweeted_to_me"
 ;; RETWEETS_OF_ME ::= ":retweets_of_me"
 ;;
-;; FOLLOWING ::= ":following"
-;; FOLLOWERS ::= ":followers"
-;;
 ;; SEARCH ::= ":search/" QUERY_STRING "/"
 ;; QUERY_STRING ::= any string, where "/" is escaped by a backslash.
 ;; MERGE ::= "(" MERGED_SPECS ")"
@@ -2463,8 +2468,6 @@ If SHORTEN is non-nil, the abbreviated expression will be used."
      ((eq type 'retweeted_by_me) ":retweeted_by_me")
      ((eq type 'retweeted_to_me) ":retweeted_to_me")
      ((eq type 'retweets_of_me) ":retweets_of_me")
-     ((eq type 'following) ":following")
-     ((eq type 'followers) ":followers")
      ((eq type 'search)
       (let ((query (car value)))
 	(concat ":search/"
@@ -2514,18 +2517,16 @@ Return cons of the spec and the rest string."
    ((string-match "^:\\([a-z_-]+\\)" str)
     (let ((type (match-string 1 str))
 	  (following (substring str (match-end 0)))
-	  (alist '(("direct_messages" . direct_messages)
+	  (alist '(("direct_messages"      . direct_messages)
 		   ("direct_messages_sent" . direct_messages_sent)
-		   ("friends" . friends)
-		   ("home" . home)
-		   ("mentions" . mentions)
-		   ("public" . public)
-		   ("replies" . replies)
-		   ("retweeted_by_me" . retweeted_by_me)
-		   ("retweeted_to_me" . retweeted_to_me)
-		   ("retweets_of_me" . retweets_of_me)
-		   ("following" . following)
-		   ("followers" . followers))))
+		   ("friends"              . friends)
+		   ("home"                 . home)
+		   ("mentions"             . mentions)
+		   ("public"               . public)
+		   ("replies"              . replies)
+		   ("retweeted_by_me"      . retweeted_by_me)
+		   ("retweeted_to_me"      . retweeted_to_me)
+		   ("retweets_of_me"       . retweets_of_me))))
       (cond
        ((assoc type alist)
 	(let ((first-spec (list (cdr (assoc type alist)))))
@@ -2628,8 +2629,7 @@ Return nil if SPEC-STR is invalid as a timeline spec."
 		direct_messages direct_messages_sent
 		friends home mentions public replies
 		search
-		retweeted_by_me retweeted_to_me retweets_of_me
-		following followers))
+		retweeted_by_me retweeted_to_me retweets_of_me))
 	(type (car spec)))
     (memq type primary-spec-types)))
 
@@ -2645,7 +2645,9 @@ direct_messages."
 
 (defun twittering-timeline-spec-is-user-methods-p (spec)
   "Return non-nil if SPEC belongs to `User Methods' API."
-  (and spec (memq (car spec) '(following followers))))
+  (and spec 
+       (eq (car spec) 'list)
+       (member (car (last spec)) '("following" "followers"))))
 
 (defun twittering-timeline-spec-is-most-active-p (spec)
   "Return non-nil if SPEC is a very active timeline spec.
@@ -5442,7 +5444,7 @@ BUFFER may be a buffer or the name of an existing buffer."
 			(cdr-safe (assq 'direct-messages xmltree))))
 	       )))
 
-	 ((eq 'users_list (caar xmltree)) ; User Methods
+	 ((memq (caar xmltree) '(users users_list)) ; following, followers
 	  (let ((previous_cursor (assq 'previous_cursor (car xmltree)))
 		(next_cursor (assq 'next_cursor (car xmltree))))
 	    `(,@(mapcar
@@ -5466,9 +5468,8 @@ BUFFER may be a buffer or the name of an existing buffer."
 		 (remove nil
 			 (mapcar
 			  (lambda (node)
-			    (and (consp node) (eq 'user (car node))
-				 node))
-			  (cdr-safe (assq 'users (assq 'users_list xmltree)))))))))
+			    (and (consp node) (eq 'user (car node)) node))
+			  (cdr-safe (assq 'users (or (assq 'users_list xmltree) xmltree)))))))))
 
 	 ((eq 'statuses (caar xmltree))
 	  (cddr (car xmltree)))
@@ -7111,8 +7112,7 @@ type: \"foo/\", you can even see all lists created by \"foo\"."
 	    (twittering-get-usernames-from-timeline)
 	    '(":direct_messages" ":direct_messages_sent" ":friends"
 	      ":home" ":mentions" ":public" ":replies"
-	      ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me"
-	      ":following" ":followers"))))
+	      ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me"))))
 	 (spec-string (twittering-completing-read prompt dummy-hist
 						  nil nil initial 'dummy-hist))
 	 (spec-string
