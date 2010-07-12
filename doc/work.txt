@@ -3454,3 +3454,7 @@ http://queue.acm.org/detail.cfm?id=945136
 git://github.com/kazu-yamamoto/Goby.git firemacs
 /system/xbin/strace -f /init 2>&1 | nc 192.168.0.100 8888
 for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT
+
+hold a package
+echo libxfont1 hold | dpkg --set-selections
+echo libxfont1 install | dpkg --set-selections
