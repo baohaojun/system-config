@@ -29,7 +29,7 @@ function mkgtags() {
     -o -ipath "*/.beagle"\
     \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter > cscope.files
        
-        gtags -f cscope.files
+        gtags -f cscope.files -i
 }
 
 function mkbeagleidx() {
