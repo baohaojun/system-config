@@ -27,9 +27,7 @@ function mkgtags() {
     '-o' '-iname' "cscope.files"\
     -o -iname "cscope.out"\
     -o -ipath "*/.beagle"\
-    \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter > cscope.files
-       
-        gtags -f cscope.files -i "$@"
+    \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter | tee cscope.files | gtags -f - -i "$@"
 }
 
 function mkbeagleidx() {
