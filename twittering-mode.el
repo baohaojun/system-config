@@ -533,7 +533,7 @@ on authorization via OAuth.")
 		 (retweeted_by_me . "1/statuses/retweeted_by_me")
 		 (retweeted_to_me . "1/statuses/retweeted_to_me")
 		 (retweets_of_me  . "1/statuses/retweets_of_me")
-
+		 
 		 (search . "search")))
 	      (host (cond ((eq spec-type 'search) twittering-api-search-host)
 			  (t twittering-api-host)))
@@ -543,15 +543,13 @@ on authorization via OAuth.")
 		 (let ((username (elt spec 1)))
 		   (concat "1/statuses/user_timeline/" username)))
 		((eq spec-type 'list)
-		 (let ((username (elt spec 1))
-		       (list-name (elt spec 2)))
+		 (let ((u (elt spec 1))
+		       (l (elt spec 2)))
 		   (cond 
-		    ((string= list-name "followers")
-		     "1/statuses/followers")
-		    ((string= list-name "following")
-		     "1/statuses/friends")
-		    (t
-		     (concat "1/" username "/lists/" list-name "/statuses")))))
+		    ((string= l "followers") "1/statuses/followers")
+		    ((string= l "following") "1/statuses/friends")
+		    ((string= l "favorites") (concat "1/favorites/" u))
+		    (t (concat "1/" u "/lists/" l "/statuses")))))
 		((assq spec-type simple-spec-list)
 		 (cdr (assq spec-type simple-spec-list)))
 		(t nil))))
@@ -2220,17 +2218,17 @@ The zebra face is decided by looking at adjacent face. "
 	  points-str)
     object))
 
-(defun twittering-decorate-listname (listname)
-  (add-text-properties 0 (length listname)
+(defun twittering-decorate-listname (listname &optional display-string)
+  (unless display-string (setq display-string listname))
+  (add-text-properties 0 (length display-string)
 		       `(mouse-face
 			 highlight
 			 uri ,(twittering-get-status-url listname)
 			 goto-spec
-			 ,(twittering-string-to-timeline-spec
-			   listname)
+			 ,(twittering-string-to-timeline-spec listname)
 			 face twittering-username-face)
-		       listname)
-  listname)
+		       display-string)
+  display-string)
 
 (defun twittering-current-window-config (window-list)
   "Return window parameters of WINDOW-LIST."
@@ -3558,7 +3556,7 @@ static char * unplugged_xpm[] = {
 ;;
 ;;    This program is free software; you can redistribute it and/or modify
 ;;    it under the terms of the GNU General Public License as published by
-;;    the Free Software Foundation; either version 2, or (at your option)
+;;    the Free Software Foundation; either version 2, or (at your option)
 ;;    any later version.
 ;;
 ;;    This program is distributed in the hope that it will be useful,
@@ -5727,6 +5725,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		       (car timeline-data)))
 	   (user-name (cdr (assq 'user-name status)))
 	   (user-screen-name (cdr (assq 'user-screen-name status)))
+	   (u (substring-no-properties user-screen-name))
 	   (user-id (cdr (assq 'user-id status)))
 	   (user-description (cdr (assq 'user-description status)))
 	   (user-location (cdr (assq 'user-location status)))
@@ -5779,10 +5778,15 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 
 	       (format
 		(format
-		 " %%%ds following, %%%ds followers\n %%%ds tweets,    %%%ds favourites\n"
+		 " %%%ds %%s, %%%ds %%s\n %%%ds tweets,    %%%ds %%s\n"
 		 (car len-list) (cadr len-list) (car len-list) (cadr len-list))
-		user-friends-count user-followers-count user-statuses-count
-		user-favourites-count))
+		user-friends-count 
+		(twittering-decorate-listname (concat u "/following") "following")
+		user-followers-count
+		(twittering-decorate-listname (concat u "/followers") "followers")
+		user-statuses-count
+		user-favourites-count
+		(twittering-decorate-listname (concat u "/favorites") "favorites")))
 
 	     ;; lists
 	     "\n"
@@ -6973,7 +6977,9 @@ type: \"foo/\", you can even see all lists created by \"foo\"."
 	       (twittering-read-timeline-spec-with-completion
 		"timeline: " initial t))))
       (when timeline-spec
-	(switch-to-buffer (twittering-get-managed-buffer timeline-spec))))))
+	(switch-to-buffer (or (get-buffer (twittering-timeline-spec-to-string
+					   timeline-spec))
+			      (twittering-get-managed-buffer timeline-spec)))))))
 
 (defun twittering-other-user-timeline ()
   (interactive)
