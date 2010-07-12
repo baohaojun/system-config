@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Filter=${1:-~/.my-beagle-filter-android}
+Filter=${Filter:-~/.my-beagle-filter-android}
 
 function mkgtags() {
     find \( '-path' '*/CVS' \
@@ -29,7 +29,7 @@ function mkgtags() {
     -o -ipath "*/.beagle"\
     \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter > cscope.files
        
-        gtags -f cscope.files -i
+        gtags -f cscope.files -i "$@"
 }
 
 function mkbeagleidx() {
@@ -40,8 +40,8 @@ function mkbeagleidx() {
 }
 
 function for-code-reading() {
-    mkgtags&
-    mkbeagleidx&
+    mkgtags "$@"&
+    mkbeagleidx "$@"&
 }
 
-`basename $0`
+`basename $0` "$@"
