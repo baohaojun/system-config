@@ -507,7 +507,12 @@ on authorization via OAuth.")
 		     `(("q" . ,word)
 		       ("rpp" . ,number-str)))
 		    ((eq spec-type 'list)
-		     `(("per_page" . ,number-str)))
+		     (let ((username (elt spec 1))
+			   (list-name (elt spec 2)))
+		       (if (member list-name '("following" "followers"))
+			   `(("count" . ,number-str)
+			     ("screen_name" . ,username))
+			 `(("per_page" . ,number-str)))))
 		    ((memq spec-type '(user friends mentions public))
 		     `(("count" . ,number-str)
 		       ("include_rts" . "true")))
@@ -528,10 +533,7 @@ on authorization via OAuth.")
 		 (retweeted_by_me . "1/statuses/retweeted_by_me")
 		 (retweeted_to_me . "1/statuses/retweeted_to_me")
 		 (retweets_of_me  . "1/statuses/retweets_of_me")
-
-		 (following       . "1/statuses/friends")
-		 (followers       . "1/statuses/followers")
-
+		 
 		 (search . "search")))
 	      (host (cond ((eq spec-type 'search) twittering-api-search-host)
 			  (t twittering-api-host)))
@@ -541,9 +543,13 @@ on authorization via OAuth.")
 		 (let ((username (elt spec 1)))
 		   (concat "1/statuses/user_timeline/" username)))
 		((eq spec-type 'list)
-		 (let ((username (elt spec 1))
-		       (list-name (elt spec 2)))
-		   (concat "1/" username "/lists/" list-name "/statuses")))
+		 (let ((u (elt spec 1))
+		       (l (elt spec 2)))
+		   (cond 
+		    ((string= l "followers") "1/statuses/followers")
+		    ((string= l "following") "1/statuses/friends")
+		    ((string= l "favorites") (concat "1/favorites/" u))
+		    (t (concat "1/" u "/lists/" l "/statuses")))))
 		((assq spec-type simple-spec-list)
 		 (cdr (assq spec-type simple-spec-list)))
 		(t nil))))
@@ -2212,8 +2218,9 @@ The zebra face is decided by looking at adjacent face. "
 	  points-str)
     object))
 
-(defun twittering-decorate-listname (listname)
-  (add-text-properties 0 (length listname)
+(defun twittering-decorate-listname (listname &optional display-string)
+  (unless display-string (setq display-string listname))
+  (add-text-properties 0 (length display-string)
 		       `(mouse-face
 			 highlight
 			 uri ,(twittering-get-status-url listname)
@@ -2221,8 +2228,8 @@ The zebra face is decided by looking at adjacent face. "
 			 ,(twittering-string-to-timeline-spec
 			   listname)
 			 face twittering-username-face)
-		       listname)
-  listname)
+		       display-string)
+  display-string)
 
 (defun twittering-current-window-config (window-list)
   "Return window parameters of WINDOW-LIST."
@@ -2392,6 +2399,9 @@ as a list of a string on Emacs21."
 ;; - (user USER): timeline of the user whose name is USER. USER is a string.
 ;; - (list USER LIST):
 ;;     the list LIST of the user USER. LIST and USER are strings.
+;;     specially, 
+;;       (list USER following): friends that USER is following.
+;;       (list USER followers): followers of USER.
 ;;
 ;; - (direct_messages): received direct messages.
 ;; - (direct_messages_sent): sent direct messages.
@@ -2405,9 +2415,6 @@ as a list of a string on Emacs21."
 ;; - (retweeted_to_me): retweets posted by the authenticating user's friends.
 ;; - (retweets_of_me):
 ;;     tweets of the authenticated user that have been retweeted by others.
-;;
-;; - (following): friends.
-;; - (followers): followers.
 ;;
 ;; - (search STRING): the result of searching with query STRING.
 ;; - (merge SPEC1 SPEC2 ...): result of merging timelines SPEC1 SPEC2 ...
@@ -2438,9 +2445,6 @@ as a list of a string on Emacs21."
 ;; RETWEETED_TO_ME ::= ":retweeted_to_me"
 ;; RETWEETS_OF_ME ::= ":retweets_of_me"
 ;;
-;; FOLLOWING ::= ":following"
-;; FOLLOWERS ::= ":followers"
-;;
 ;; SEARCH ::= ":search/" QUERY_STRING "/"
 ;; QUERY_STRING ::= any string, where "/" is escaped by a backslash.
 ;; MERGE ::= "(" MERGED_SPECS ")"
@@ -2469,8 +2473,6 @@ If SHORTEN is non-nil, the abbreviated expression will be used."
      ((eq type 'retweeted_by_me) ":retweeted_by_me")
      ((eq type 'retweeted_to_me) ":retweeted_to_me")
      ((eq type 'retweets_of_me) ":retweets_of_me")
-     ((eq type 'following) ":following")
-     ((eq type 'followers) ":followers")
      ((eq type 'search)
       (let ((query (car value)))
 	(concat ":search/"
@@ -2522,16 +2524,14 @@ Return cons of the spec and the rest string."
 	  (following (substring str (match-end 0)))
 	  (alist '(("direct_messages" . direct_messages)
 		   ("direct_messages_sent" . direct_messages_sent)
-		   ("friends" . friends)
-		   ("home" . home)
-		   ("mentions" . mentions)
-		   ("public" . public)
-		   ("replies" . replies)
-		   ("retweeted_by_me" . retweeted_by_me)
-		   ("retweeted_to_me" . retweeted_to_me)
-		   ("retweets_of_me" . retweets_of_me)
-		   ("following" . following)
-		   ("followers" . followers))))
+		   ("friends"              . friends)
+		   ("home"                 . home)
+		   ("mentions"             . mentions)
+		   ("public"               . public)
+		   ("replies"              . replies)
+		   ("retweeted_by_me"      . retweeted_by_me)
+		   ("retweeted_to_me"      . retweeted_to_me)
+		   ("retweets_of_me"       . retweets_of_me))))
       (cond
        ((assoc type alist)
 	(let ((first-spec (list (cdr (assoc type alist)))))
@@ -2634,8 +2634,7 @@ Return nil if SPEC-STR is invalid as a timeline spec."
 		direct_messages direct_messages_sent
 		friends home mentions public replies
 		search
-		retweeted_by_me retweeted_to_me retweets_of_me
-		following followers))
+		retweeted_by_me retweeted_to_me retweets_of_me))
 	(type (car spec)))
     (memq type primary-spec-types)))
 
@@ -2651,7 +2650,9 @@ direct_messages."
 
 (defun twittering-timeline-spec-is-user-methods-p (spec)
   "Return non-nil if SPEC belongs to `User Methods' API."
-  (and spec (memq (car spec) '(following followers))))
+  (and spec 
+       (eq (car spec) 'list)
+       (member (car (last spec)) '("following" "followers"))))
 
 (defun twittering-timeline-spec-is-most-active-p (spec)
   "Return non-nil if SPEC is a very active timeline spec.
@@ -5479,7 +5480,7 @@ BUFFER may be a buffer or the name of an existing buffer."
 			(cdr-safe (assq 'direct-messages xmltree))))
 	       )))
 
-	 ((eq 'users_list (caar xmltree)) ; User Methods
+	 ((memq (caar xmltree) '(users users_list)) ; following, followers
 	  (let ((previous_cursor (assq 'previous_cursor (car xmltree)))
 		(next_cursor (assq 'next_cursor (car xmltree))))
 	    `(,@(mapcar
@@ -5503,9 +5504,8 @@ BUFFER may be a buffer or the name of an existing buffer."
 		 (remove nil
 			 (mapcar
 			  (lambda (node)
-			    (and (consp node) (eq 'user (car node))
-				 node))
-			  (cdr-safe (assq 'users (assq 'users_list xmltree)))))))))
+			    (and (consp node) (eq 'user (car node)) node))
+			  (cdr-safe (assq 'users (or (assq 'users_list xmltree) xmltree)))))))))
 
 	 ((eq 'statuses (caar xmltree))
 	  (cddr (car xmltree)))
@@ -5764,6 +5764,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		       (car timeline-data)))
 	   (user-name (cdr (assq 'user-name status)))
 	   (user-screen-name (cdr (assq 'user-screen-name status)))
+	   (u (substring-no-properties user-screen-name))
 	   (user-id (cdr (assq 'user-id status)))
 	   (user-description (cdr (assq 'user-description status)))
 	   (user-location (cdr (assq 'user-location status)))
@@ -5818,10 +5819,15 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 
 	       (format
 		(format
-		 " %%%ds following, %%%ds followers\n %%%ds tweets,    %%%ds favourites\n"
+		 " %%%ds %%s, %%%ds %%s\n %%%ds tweets,    %%%ds %%s\n"
 		 (car len-list) (cadr len-list) (car len-list) (cadr len-list))
-		user-friends-count user-followers-count user-statuses-count
-		user-favourites-count))
+		user-friends-count 
+		(twittering-decorate-listname (concat u "/following") "following")
+		user-followers-count
+		(twittering-decorate-listname (concat u "/followers") "followers")
+		user-statuses-count
+		user-favourites-count
+		(twittering-decorate-listname (concat u "/favorites") "favorites")))
 
 	     ;; lists
 	     "\n"
@@ -7015,7 +7021,12 @@ type: \"foo/\", you can even see all lists created by \"foo\"."
 	       (twittering-read-timeline-spec-with-completion
 		"timeline: " initial t))))
       (when timeline-spec
-	(switch-to-buffer (twittering-get-managed-buffer timeline-spec))))))
+	(switch-to-buffer
+	 (or (get-buffer 
+	      (if (stringp timeline-spec) 
+		  timeline-spec
+		(twittering-timeline-spec-to-string timeline-spec)))
+	     (twittering-get-managed-buffer timeline-spec)))))))
 
 (defun twittering-other-user-timeline ()
   (interactive)
@@ -7154,8 +7165,7 @@ type: \"foo/\", you can even see all lists created by \"foo\"."
 	    (twittering-get-usernames-from-timeline)
 	    '(":direct_messages" ":direct_messages_sent" ":friends"
 	      ":home" ":mentions" ":public" ":replies"
-	      ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me"
-	      ":following" ":followers"))))
+	      ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me"))))
 	 (spec-string (twittering-completing-read prompt dummy-hist
 						  nil nil initial 'dummy-hist))
 	 (spec-string
