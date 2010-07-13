@@ -632,21 +632,25 @@ on authorization via OAuth.")
 	 (twittering-http-post twittering-api-host "1/statuses/update"
 			       parameters)))
       ((destroy-status)
-       (let ((id (cdr (assq 'id args-alist))))
-	 (twittering-http-post twittering-api-host
+       (twittering-http-post twittering-api-host
 			       "1/statuses/destroy"
-			       `(("id" . ,id)))))
+			       `(("id" . ,id))))
       ((retweet)
-       (let ((id (cdr (assq 'id args-alist))))
-	 (twittering-http-post twittering-api-host
-			       (concat "1/statuses/retweet/" id))))
-      ((verify-credentials)
-       ;; Verify the account.
-       (let ((sentinel (cdr (assq 'sentinel args-alist))))
-	 (twittering-http-get twittering-api-host
-			      "1/account/verify_credentials"
-			      t nil nil
-			      sentinel)))
+       (twittering-http-post twittering-api-host
+			     (concat "1/statuses/retweet/" id)))
+
+      ;; Account Resources
+      ((verify-credentials)		; Verify the account.
+       (twittering-http-get
+	twittering-api-host "1/account/verify_credentials" t nil nil sentinel))
+
+      ((update-profile-image)
+       (let* ((image (cdr (assq 'image args-alist)))
+	      (image-type (image-type-from-file-header image)))
+       (twittering-http-post
+	twittering-api-host "1/account/update_profile_image"  
+	`(("image" . ,(format "@%s;type=image/%s" image image-type))))))
+
       ((send-direct-message)
        ;; Send a direct message.
        (let ((parameters
@@ -4602,7 +4606,6 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
       (setq twittering-cert-file file-name))))
 
 (defun twittering-start-http-session-curl (method headers host port path parameters &optional noninteractive sentinel)
-  ;; TODO: use curl
   (let* ((request (twittering-make-http-request
 		   method headers host port path parameters))
 	 (temp-buffer (generate-new-buffer "*twmode-http-buffer*"))
@@ -4659,16 +4662,24 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 				 . ,twittering-https-proxy-password)))))))
 		  (when (and pair (car pair) (cdr pair))
 		    `("-U" ,(format "%s:%s" (car pair) (cdr pair))))))
+
 	    ,@(when (string= "POST" method)
-		(mapcan (lambda (pair)
-			  (list
-			   "-d"
-			   (format "%s=%s"
-				   (twittering-percent-encode (car pair))
-				   (twittering-percent-encode (cdr pair)))))
-			parameters))
+		(let ((opt 
+                       (if (some 'twittering-is-uploading-file
+				 (mapcar 'cdr parameters))
+                           "-F"
+                         "-d")))
+                  (mapcan (lambda (pair)
+                            (let ((n (car pair))
+                                  (v (cdr pair)))
+                              (when (string= opt "-d")
+                                (setq n (twittering-percent-encode n)
+                                      v (twittering-percent-encode v)))
+                              (list opt (format "%s=%s" n v))))
+                          parameters)))
+
 	    ,(concat (funcall request :uri)
-		     (when parameters
+		     (when (and parameters (not (string= method "POST")))
 		       (concat "?" (funcall request :query-string))))))
 	 (coding-system-for-read 'utf-8-unix))
     (debug-print curl-args)
@@ -4809,8 +4820,7 @@ Available keywords:
 			(twittering-percent-encode (car pair))
 			(twittering-percent-encode (cdr pair))))
 		     parameters
-		     "&"))
-	 )
+		     "&")))
     (lexical-let ((data `((:method . ,method)
 			  (:host . ,host)
 			  (:port . ,port)
@@ -4845,9 +4855,10 @@ Available keywords:
 	    headers)
       (push (cons "Accept-Charset" "utf-8;q=0.7,*;q=0.7")
 	    headers))
-    (when (string= "POST" method)
-      (push (cons "Content-Length" "0") headers)
-      (push (cons "Content-Type" "text/plain") headers))
+    ;; This makes update-profile-image fail.
+    ;; (when (string= "POST" method)
+    ;;   (push (cons "Content-Length" "0") headers)
+    ;;   (push (cons "Content-Type" "text/plain") headers))
     (when twittering-proxy-use
       (let* ((scheme (if twittering-use-ssl "https" "http"))
 	     (keep-alive (twittering-proxy-info scheme 'keep-alive))
@@ -4862,8 +4873,7 @@ Available keywords:
 		 (concat "Basic "
 			 (base64-encode-string (concat user ":" password))))
 		headers))))
-    headers
-    ))
+    headers))
 
 (defun twittering-get-error-message (buffer)
   (if buffer
@@ -5090,7 +5100,9 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
 	 (url (format "%s://%s%s" scheme host path))
 	 (headers
 	  (twittering-http-application-headers-with-auth
-	   "POST" url parameters)))
+	   "POST" url (and (notany 'twittering-is-uploading-file
+				   (mapcar 'cdr parameters))
+			   parameters))))
     (twittering-start-http-session
      "POST" headers host nil path parameters noninteractive sentinel)))
 
@@ -5545,6 +5557,10 @@ BUFFER may be a buffer or the name of an existing buffer."
 	(list-push (substring encoded-str cursor) result)
 	(apply 'concat (nreverse result)))
     ""))
+
+(defun twittering-is-uploading-file (value)
+  "When VALUE in a post data pair \"name=VALUE\" starts with `@', it is uploading."
+  (string= (substring value 0 1) "@"))
 
 ;;;
 ;;; Statuses on buffer
@@ -6995,6 +7011,15 @@ a list. "
 (defun twittering-unfavorite ()
   (interactive)
   (twittering-favorite t))
+
+(defun twittering-update-profile-image (image)
+  "Update a new profile image.
+
+Note: the new image might not appear in your timeline immediately (this seems
+some limitation of twitter API?), but you can see your new image from web
+browser right away."
+  (interactive "fUpdate profile image: ")
+  (twittering-call-api 'update-profile-image `((image . ,image))))
 
 (defun twittering-visit-timeline (&optional timeline-spec initial)
   "Visit user, primary spec or list timeline.
