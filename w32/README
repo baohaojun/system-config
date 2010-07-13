@@ -1,6 +1,23 @@
+-*- outline -*- 
+
+* convert
+
 This is a GIF fault-tolerant `convert', from ImageMagick.  
 
 Built with VC2008.
+
+** gif.c.patch
+
+* curl 
+
+,----[ curl --version ]
+| curl 7.21.0 (i386-pc-win32) libcurl/7.21.0 OpenSSL/0.9.8h zlib/1.2.5
+| Protocols: dict file ftp ftps http https imap imaps ldap pop3 pop3s rtsp smtp smtps telnet tftp
+| Features: AsynchDNS Largefile NTLM SSL SSPI libz
+`----
+
+http://curl.haxx.se/download.html
+http://www.gknw.net/mirror/curl/win32/curl-7.21.0-ssl-sspi-zlib-static-bin-w32.zip
 
 
 - William
