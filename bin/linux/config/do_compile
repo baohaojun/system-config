@@ -1,21 +1,51 @@
 #!/bin/bash
 
-cd ~/gcode/beagle/
-./configure
-make
-sudo make install
-git clean -xfd
+function compile_beagle() {
+    cd ~/gcode/beagle/
+    ./configure
+    make
+    sudo make install
+    git clean -xfd
 
-cd ~/gcode/BeagleTokenizer/
-make
-git clean -xfd
+    cd ~/gcode/BeagleTokenizer/
+    make
+    git clean -xfd
+}
 
-cd ~/gcode/UncommentJava/
-make
-git clean -xfd
 
-cd ~/gcode/fcitx/
-./bootstrap
-./configure
-make
-sudo make install
+function compile_uncomment_java() {
+    cd ~/gcode/UncommentJava/
+    make
+    git clean -xfd
+}
+
+function compile_fcitx() {
+    cd ~/gcode/fcitx/
+    ./bootstrap
+    ./configure
+    make
+    sudo make install
+}
+
+function compile_gtags() {
+    cd ~/gcode/global/
+    sh reconf.sh
+    ./configure
+    make
+    sudo make install
+    git clean -xfd
+
+    cd ~/gcode/java-gtags-parser/
+    make
+    make clean
+}
+
+
+function do_compile() {
+    compile_beagle "$@"
+    compile_uncomment_java "$@"
+    compile_fcitx "$@"
+    compile_gtags "$@"
+}
+
+`basename $0` "$@"

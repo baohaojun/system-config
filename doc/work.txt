@@ -3458,3 +3458,5 @@ for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TAR
 hold a package
 echo libxfont1 hold | dpkg --set-selections
 echo libxfont1 install | dpkg --set-selections
+
+cat .repo/manifest.xml |grep name='".*"' -o|perl -npe 's,(.*),export $1; bash -c "(mkdir -p \$name.git && (cd \$name.git; git clone --mirror git://nv-tegra.nvidia.com/\$name . || git fetch git://nv-tegra.nvidia.com/\$name)&)",'|sh
