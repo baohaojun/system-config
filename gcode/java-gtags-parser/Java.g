@@ -363,8 +363,28 @@ classBodyDeclaration
 memberDecl
     :   genericMethodOrConstructorDecl
     |   memberDeclaration
-    |   'void' Identifier voidMethodDeclaratorRest
-    |   Identifier constructorDeclaratorRest
+    |   'void' Identifier
+        {
+            if (!$compilationUnit::is_private) {
+                System.out.print(String.format("\%s \%d \%s void method \%s\n",  
+                                               $Identifier.text,
+                                               $Identifier.line,
+                                               "dood.java",
+                                               $Identifier.text));
+            }
+        }
+        voidMethodDeclaratorRest
+    |   Identifier
+        {
+            if (!$compilationUnit::is_private) {
+                System.out.print(String.format("\%s \%d \%s constructor \%s\n",  
+                                               $Identifier.text,
+                                               $Identifier.line,
+                                               "dood.java",
+                                               $Identifier.text));
+            }
+        }
+        constructorDeclaratorRest
     |   interfaceDeclaration
     |   classDeclaration
     ;
@@ -401,7 +421,17 @@ genericMethodOrConstructorRest
     ;
 
 methodDeclaration
-    :   Identifier methodDeclaratorRest
+    :   Identifier
+        {
+            if (!$compilationUnit::is_private) {
+                System.out.print(String.format("\%s \%d \%s method \%s\n",  
+                                               $Identifier.text,
+                                               $Identifier.line,
+                                               "dood.java",
+                                               $Identifier.text));
+            }
+        }
+        methodDeclaratorRest
     ;
 
 fieldDeclaration
@@ -486,7 +516,7 @@ variableDeclaratorId
     :   Identifier
 {
             if (!$compilationUnit::is_private && !$compilationUnit::is_local_var) {
-                System.out.print(String.format("\%s \%d \%s variable \%s\n",  
+                System.out.print(String.format("\%s \%d \%s field \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                "dood.java",
