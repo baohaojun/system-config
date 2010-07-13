@@ -46,7 +46,11 @@ function lcd()
 {
     if test $# != 1; then
         return 1
+    elif test $1 = -; then
+        builtin cd -; 
+        return 0
     fi
+    
 
     if test "${1:0:2}" = '\\' -a `uname` = Linux; then
         smbnetfs ~/smb >/dev/null 2>&1
