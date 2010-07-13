@@ -2863,7 +2863,7 @@ Statuses are stored in ascending-order with respect to their IDs."
 	      (source-id (cdr (assq 'source-id status))))
 	  (cond
 	   ((twittering-timeline-spec-is-user-methods-p spec)
-	    t)
+	    status)
 	   ((not source-id)
 	    ;; `status' is not a retweet.
 	    status)
