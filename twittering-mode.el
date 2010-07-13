@@ -3287,6 +3287,11 @@ SPEC may be a timeline spec or a timeline spec string."
       (unless (eq (current-buffer) previous)
 	(switch-to-buffer previous)))))
 
+(defun twittering-switch-to-unread-timeline ()
+  (interactive)
+  (when twittering-unread-status-info
+    (switch-to-buffer (caar twittering-unread-status-info))))
+
 ;;;
 ;;; Unread statuses info
 ;;;
