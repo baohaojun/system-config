@@ -418,7 +418,10 @@
                       (ring-insert cscope-marker-ring (point-marker))
                       (setq regexp 
                             (read-string (format "List lines matching regexp [%s]: " regexp) nil nil regexp))
-                      (occur regexp)))))
+                      (if (eq major-mode 'antlr-mode)
+                          (let ((occur-excluded-properties t))
+                            (occur regexp))
+                        (occur regexp))))))
 
 
 (setq hippie-expand-try-functions-list 
