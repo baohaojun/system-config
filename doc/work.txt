@@ -3460,3 +3460,6 @@ echo libxfont1 hold | dpkg --set-selections
 echo libxfont1 install | dpkg --set-selections
 
 cat .repo/manifest.xml |grep name='".*"' -o|perl -npe 's,(.*),export $1; bash -c "(mkdir -p \$name.git && (cd \$name.git; git clone --mirror git://nv-tegra.nvidia.com/\$name . || git fetch git://nv-tegra.nvidia.com/\$name)&)",'|sh
+
+cat .repo/manifest.xml |grep name='".*"' -o|perl -npe 's,(.*),export $1; bash -c "(mkdir -p \$name.git && (cd \$name.git; git clone --mirror git://nv-tegra.nvidia.com/\$name . || git fetch git://nv-tegra.nvidia.com/\$name froyo-tegra && git branch froyo-tegra FETCH_HEAD)&)",'|sh
+
