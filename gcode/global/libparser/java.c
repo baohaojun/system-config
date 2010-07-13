@@ -42,6 +42,7 @@
 #endif
 
 #include "parser.h"
+#include "internal.h"
 
 /*
  * Function layer plugin parser sample
@@ -167,6 +168,7 @@ get_line(const struct parser_param *param)
 	while (linelen-- > 0
 		&& (linebuf[linelen] == '\n' || linebuf[linelen] == '\r'))
 		linebuf[linelen] = '\0';
+	DBG_PRINT(1, linebuf);
 	return linebuf;
 }
 
@@ -214,7 +216,7 @@ put_line(char *ctags_x, const struct parser_param *param)
 }
 
 void
-parser(const struct parser_param *param)
+java(const struct parser_param *param)
 {
 	char *ctags_x;
 
@@ -235,6 +237,7 @@ parser(const struct parser_param *param)
 			param->die("unexpected EOF.");
 		if (strcmp(ctags_x, TERMINATOR) == 0)
 			break;
+		printf("hello world %s\n", ctags_x);
 		put_line(ctags_x, param);
 	}
 }

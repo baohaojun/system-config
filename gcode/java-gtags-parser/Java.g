@@ -168,6 +168,14 @@
 grammar Java;
 options {backtrack=true; memoize=true;}
 
+@members {
+    private String fileName;
+    public JavaParser(TokenStream input, String _fileName) {
+        this(input);
+        fileName = _fileName;
+    }
+}
+
 @lexer::members {
   protected boolean enumIsKeyword = true;
   protected boolean assertIsKeyword = true;
@@ -196,13 +204,15 @@ compilationUnit
     ;
 
 packageDeclaration
-    :   'package' qualifiedName {
-            System.out.print(String.format("\%s \%d \%s package \%s\n",  
+    :   'package' qualifiedName
+        {
+            System.out.print(String.format("def \%s \%d \%s package \%s\n",  
                                            $qualifiedName.text,
                                            input.LT(1).getLine(),
-                                           "dood.java",
+                                           fileName,
                                            $qualifiedName.text));
-        } ';'
+        } 
+        ';'
     ;
 
 importDeclaration
@@ -259,12 +269,13 @@ classDeclaration
     ;
     
 normalClassDeclaration
-    :   'class' Identifier {
+    :   'class' Identifier 
+        {
             if (!$compilationUnit::is_private) {
-                System.out.print(String.format("\%s \%d \%s class \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s class \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         }
@@ -287,12 +298,13 @@ typeBound
     ;
 
 enumDeclaration
-    :   ENUM Identifier {
+    :   ENUM Identifier 
+        {
             if (!$compilationUnit::is_private) {
-                System.out.print(String.format("\%s \%d \%s enum \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s enum \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         }
@@ -308,12 +320,13 @@ enumConstants
     ;
     
 enumConstant
-    :   annotations? Identifier {
+    :   annotations? Identifier 
+        {
             if (!$compilationUnit::is_private) {
-                System.out.print(String.format("\%s \%d \%s enum constant \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s enum constant \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         }
@@ -330,12 +343,13 @@ interfaceDeclaration
     ;
     
 normalInterfaceDeclaration
-    :   'interface' Identifier {
+    :   'interface' Identifier 
+        {
             if (!$compilationUnit::is_private) {
-                System.out.print(String.format("\%s \%d \%s interface \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s interface \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         }
@@ -366,10 +380,10 @@ memberDecl
     |   'void' Identifier
         {
             if (!$compilationUnit::is_private) {
-                System.out.print(String.format("\%s \%d \%s void method \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s void method \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         }
@@ -377,10 +391,10 @@ memberDecl
     |   Identifier
         {
             if (!$compilationUnit::is_private) {
-                System.out.print(String.format("\%s \%d \%s constructor \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s constructor \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         }
@@ -398,22 +412,24 @@ genericMethodOrConstructorDecl
     ;
     
 genericMethodOrConstructorRest
-    :   (type | 'void') Identifier {
+    :   (type | 'void') Identifier 
+        {
             if (!$compilationUnit::is_private) {
-                System.out.print(String.format("\%s \%d \%s generic method \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s generic method \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         }
         methodDeclaratorRest
-    |   Identifier {
+    |   Identifier 
+        {
             if (!$compilationUnit::is_private) {
-                System.out.print(String.format("\%s \%d \%s constructor \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s constructor \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         }
@@ -424,10 +440,10 @@ methodDeclaration
     :   Identifier
         {
             if (!$compilationUnit::is_private) {
-                System.out.print(String.format("\%s \%d \%s method \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s method \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         }
@@ -514,16 +530,16 @@ constantDeclaratorRest
     
 variableDeclaratorId
     :   Identifier
-{
+        {
             if (!$compilationUnit::is_private && !$compilationUnit::is_local_var) {
-                System.out.print(String.format("\%s \%d \%s field \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s field \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         } 
-('[' ']')*
+        ('[' ']')*
     ;
 
 variableInitializer
@@ -690,12 +706,13 @@ elementValueArrayInitializer
     ;
     
 annotationTypeDeclaration
-    :   '@' 'interface' Identifier {
+    :   '@' 'interface' Identifier 
+        {
             if (!$compilationUnit::is_private) {
-                System.out.print(String.format("\%s \%d \%s interface \%s\n",  
+                System.out.print(String.format("def \%s \%d \%s interface \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
-                                               "dood.java",
+                                               fileName,
                                                $Identifier.text));
             }
         } annotationTypeBody
