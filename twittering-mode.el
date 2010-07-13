@@ -457,9 +457,6 @@ Twittering-mode provides two functions for updating status:
 If we invoke `twittering-get-and-render-timeline' from a twittering buffer, then
 do not display unread notifier on mode line.")
 
-(defvar twittering-user-profile-separator "             "
-  "Separate user profile and time line.")
-
 (defvar twittering-use-master-password nil
   "*Wheter to store private information encrypted with a master password.")
 (defvar twittering-private-info-file
@@ -599,13 +596,11 @@ on authorization via OAuth.")
        
       ;; Favorite Methods
       ((create-favorites)
-       (let ((id (cdr (assq 'id args-alist))))
-	 (twittering-http-post twittering-api-host
-			       (concat "1/favorites/create/" id))))
+       (twittering-http-post twittering-api-host
+			     (concat "1/favorites/create/" id)))
       ((destroy-favorites)
-       (let ((id (cdr (assq 'id args-alist))))
-	 (twittering-http-post twittering-api-host
-			       (concat "1/favorites/destroy/" id))))
+       (twittering-http-post twittering-api-host
+			     (concat "1/favorites/destroy/" id)))
 
       ;; List Subscribers Methods
       ((subscribe-list)
@@ -5655,14 +5650,8 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	(save-excursion
 	  (let ((locate-separator
 		 (lambda ()
-		   (if twittering-reverse-mode
-		   (progn
-		     (goto-char (point-min))
-		     (re-search-forward
-		      (concat "^" twittering-user-profile-separator "$") nil t 1))
-		     (goto-char (point-max))
-		     (re-search-backward
-		      (concat "^" twittering-user-profile-separator "$") nil t 1)))))
+		   (let ((p (next-single-property-change (point-min) 'user-profile-separator)))
+		     (when p (goto-char p))))))
 	    (unless (funcall locate-separator)
 	      (twittering-render-user-profile timeline-data))
 	    (funcall locate-separator)
@@ -5756,7 +5745,9 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
     (goto-char (point-min)))
   (let ((insert-separator
 	 (lambda ()
-	   (insert twittering-user-profile-separator "\n"))))
+	   (let ((s " "))
+	     (put-text-property 0 (length s) 'user-profile-separator t s)
+	     (insert s "\n")))))
     (when twittering-reverse-mode
       (funcall insert-separator))
 
