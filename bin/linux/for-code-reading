@@ -2,7 +2,7 @@
 
 Filter=${Filter:-~/.my-beagle-filter-android}
 
-function mkgtags() {
+function mkcscope_files() {
     find \( '-path' '*/CVS' \
         '-o' '-path' '*/.svn' \
         '-o' '-path' '*/autom4te.cache' \
@@ -27,7 +27,11 @@ function mkgtags() {
         '-o' '-iname' "cscope.files" \
         -o -iname "cscope.out" \
         -o -ipath "*/.beagle" \
-        \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter | tee cscope.files | gtags -f - "$@"
+        \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter | tee cscope.files
+}
+
+function mkgtags() {
+    mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@"
 }
 
 function mkbeagleidx() {

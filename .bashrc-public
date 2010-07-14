@@ -37,6 +37,7 @@ else
 fi
 
 alias rm='rm -i'
+alias mkgtags='mkgtags -i -v'
 function svn-info-clip()
 {
     svn info "$1" |grep '^URL:'|sed -e 's/^URL: //; s/^https/http/'|tr -d '\r\n' | putclip
