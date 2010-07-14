@@ -295,6 +295,12 @@ avatar(48x48).  So normally we don't have to convert it at all."
   :type 'boolean
   :group 'twittering)
 
+(defcustom twittering-new-tweets-count-excluding-replies-in-home nil
+  "Non-nil will exclude replies in home timeline when counting received new
+tweets."
+  :type 'boolean
+  :group 'twittering)
+
 (defcustom twittering-auth-method 'oauth
   "*Authentication method for `twittering-mode'.
 The symbol `basic' means Basic Authentication. The symbol `oauth' means
@@ -2261,6 +2267,9 @@ BEG and END mean a region that had been modified."
   "Is STATUS sent by myself? "
   (string= twittering-username (cdr (assq 'user-screen-name status))))
 
+(defun twittering-is-replies-p (status)
+  (string= twittering-username (cdr (assq 'in-reply-to-screen-name status))))
+
 (defun twittering-take (n lst)
   "Take first N elements from LST."
   (and (> n 0)
@@ -2896,9 +2905,12 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
 	 (twittering-timeline-spec-to-string
 	  (or spec (setq spec (twittering-current-timeline-spec))))))
     (cond
-     ((and twittering-new-tweets-count-excluding-me
-	   (twittering-my-status-p status)
-	   (not (equal spec '(retweets_of_me))))
+     ((or (and twittering-new-tweets-count-excluding-me
+	       (twittering-my-status-p status)
+	       (not (equal spec '(retweets_of_me))))
+	  (and twittering-new-tweets-count-excluding-replies-in-home
+	       (equal spec '(home))
+	       (twittering-is-replies-p status)))
       nil)
      ((member spec-string twittering-cache-spec-strings)
       (twittering-status-id<
