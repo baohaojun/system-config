@@ -41,14 +41,11 @@
 		    'bopomofo (font-spec :family "Simsun" :size 16)))
 
 (add-to-list 'load-path "~/.emacs_d/weblogger")
-
+(require 'weblogger)
 
 (require 'csharp-mode)
-
 (require 'w3m)
-
 (require 'tramp)
-(require 'weblogger)
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)
 (require 'ibuffer)
@@ -497,6 +494,7 @@
  '(indent-tabs-mode nil)
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))
+ '(longlines-auto-wrap nil)
  '(message-dont-reply-to-names (quote (".*haojun.*")))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
@@ -522,7 +520,7 @@
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
  '(w3m-bookmark-file "q:/.w3m_bookmark.html")
- '(weblogger-config-alist (quote (("default\\" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog"))))
+ '(weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog"))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
  '(x-select-enable-clipboard t))
@@ -767,7 +765,9 @@
          (interactive)
          (message-goto-body)
          (shell-command-on-region
-          (point) (point-max) "unmarkdown" nil t nil nil))))
+          (point) (point-max) "unmarkdown" nil t nil nil)
+         (set-buffer-modified-p nil)
+         (auto-fill-mode 0))))
 
 
 (setq weblogger-pre-struct-hook
@@ -836,23 +836,3 @@ compatibility with `format-alist', and is ignored."
       (substring str 0 (+ strpos (length substr))))
     ))
 
-(defun longlines-find-break-backward ()
-  "Move point backward to the first available breakpoint and return t.
-If no breakpoint is found, return nil."
-  (progn (backward-char 1)
-         (if (fill-nobreak-p)
-             (if (bolp)
-                 t
-               (longlines-find-break-backward))
-           t)))
-
-(defun longlines-find-break-forward ()
-  "Move point forward to the first available breakpoint and return t.
-If no break point is found, return nil."
-  (progn
-    (forward-char 1)
-    (if (fill-nobreak-p)
-        (if (eolp)
-            t
-          (longlines-find-break-forward))
-      t)))
