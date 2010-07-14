@@ -4665,7 +4665,7 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 
 	    ,@(when (string= "POST" method)
 		(let ((opt 
-                       (if (some 'twittering-is-uploading-file
+                       (if (some 'twittering-is-uploading-file-p
 				 (mapcar 'cdr parameters))
                            "-F"
                          "-d")))
@@ -5100,7 +5100,7 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
 	 (url (format "%s://%s%s" scheme host path))
 	 (headers
 	  (twittering-http-application-headers-with-auth
-	   "POST" url (and (notany 'twittering-is-uploading-file
+	   "POST" url (and (notany 'twittering-is-uploading-file-p
 				   (mapcar 'cdr parameters))
 			   parameters))))
     (twittering-start-http-session
@@ -5558,7 +5558,7 @@ BUFFER may be a buffer or the name of an existing buffer."
 	(apply 'concat (nreverse result)))
     ""))
 
-(defun twittering-is-uploading-file (value)
+(defun twittering-is-uploading-file-p (value)
   "When VALUE in a post data pair \"name=VALUE\" starts with `@', it is uploading."
   (string= (substring value 0 1) "@"))
 
