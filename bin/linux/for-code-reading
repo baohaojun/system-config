@@ -14,20 +14,20 @@ function mkgtags() {
         '-o' '-path' '*~*' \
         '-o' '-path' '*#' \
         '-o' '-path' '*/TAGS' \
-        '-o' '-path' '*/tags'\
-    '-o' '-path' '*/semantic.cache' \
+        '-o' '-path' '*/tags' \
+        '-o' '-path' '*/semantic.cache' \
         '-o' '-path' './out' \
-        '-o' '-iname' '*.o'\
-    '-o' '-iname' '*.class' \
-        '-o' '-iname' '*.obj'\
-    '-o' '-iname' '*.pyc'\
-    '-o' '-iname' '*.elc'\
-    '-o' '-path' '*/.ignore'\
-    '-o' '-path' '*/.repo'\
-    '-o' '-iname' "cscope.files"\
-    -o -iname "cscope.out"\
-    -o -ipath "*/.beagle"\
-    \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter | tee cscope.files | gtags -f - -i "$@"
+        '-o' '-iname' '*.o' \
+        '-o' '-iname' '*.class' \
+        '-o' '-iname' '*.obj' \
+        '-o' '-iname' '*.pyc' \
+        '-o' '-iname' '*.elc' \
+        '-o' '-path' '*/.ignore' \
+        '-o' '-path' '*/.repo' \
+        '-o' '-iname' "cscope.files" \
+        -o -iname "cscope.out" \
+        -o -ipath "*/.beagle" \
+        \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter | tee cscope.files | gtags -f - -i "$@"
 }
 
 function mkbeagleidx() {
