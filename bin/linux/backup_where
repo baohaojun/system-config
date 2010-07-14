@@ -1,0 +1,3 @@
+#!/bin/bash
+cat ~/.where ~/.where.bak|sort -u > ~/.where.bak2
+mv ~/.where.bak2 ~/.where.bak
