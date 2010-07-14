@@ -4937,14 +4937,11 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
 (defun twittering-http-get (host method &optional noninteractive parameters format sentinel)
   (let* ((format (or format "xml"))
 	 (sentinel (or sentinel 'twittering-http-get-default-sentinel))
-	 (scheme (if twittering-use-ssl
-		     "https"
-		   "http"))
+	 (scheme (if twittering-use-ssl "https" "http"))
 	 (path (concat "/" method "." format))
 	 (url (format "%s://%s%s" scheme host path))
-	 (headers
-	  (twittering-http-application-headers-with-auth
-	   "GET" url parameters)))
+	 (headers (twittering-http-application-headers-with-auth
+		   "GET" url parameters)))
     (twittering-start-http-session
      "GET" headers host nil path parameters noninteractive sentinel)))
 
@@ -5032,7 +5029,7 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
 	    ;; xmltree with HTTP status-code is "200" when we
 	    ;; retrieved all un-retrieved statuses.
 	    (when (and new-statuses buffer)
-	      (twittering-render-timeline buffer t new-statuses t))
+	      (twittering-render-timeline buffer t new-statuses))
 	    (twittering-add-timeline-history spec-string)))
 	(if twittering-notify-successful-http-get
 	    (if suc-msg suc-msg (format "Success: Get %s." spec-string))
@@ -5658,24 +5655,17 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 ;;; display functions
 ;;;
 
-(defun twittering-render-timeline (buffer &optional additional timeline-data keep-point)
+(defun twittering-render-timeline (buffer &optional additional timeline-data)
   (with-current-buffer buffer
-    (let* ((spec (twittering-get-timeline-spec-for-buffer buffer))
-	   (timeline-data (twittering-timeline-data-collect spec timeline-data))
-	   (empty (null (twittering-get-first-status-head)))
-	   (rendering-entire (or empty (not additional)))
-	   (window-list (get-buffer-window-list buffer nil t))
-	   (point-window-list
-	    (mapcar (lambda (window) (cons (window-point window) window))
-		    window-list))
-	   (original-pos (point))
-	   (original-buf-end (point-max))
-	   (buffer-read-only nil))
-      (twittering-update-status-format)
-      (twittering-update-mode-line)
-      (when (and (twittering-timeline-spec-user-p spec)
-		 timeline-data)
-	(save-excursion
+    (save-excursion
+      (let* ((spec (twittering-get-timeline-spec-for-buffer buffer))
+	     (timeline-data (twittering-timeline-data-collect spec timeline-data))
+	     (rendering-entire (or (null (twittering-get-first-status-head))
+				   (not additional)))
+	     (buffer-read-only nil))
+	(twittering-update-status-format)
+	(twittering-update-mode-line)
+	(when (and (twittering-timeline-spec-user-p spec) timeline-data)
 	  (let ((locate-separator
 		 (lambda ()
 		   (let ((p (next-single-property-change (point-min) 'user-profile-separator)))
@@ -5686,8 +5676,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	    (if twittering-reverse-mode
 		(narrow-to-region (point-min) (line-beginning-position))
 	      (forward-line 1)
-	      (narrow-to-region (point) (point-max))))))
-      (save-excursion
+	      (narrow-to-region (point) (point-max)))))
 	(when rendering-entire
 	  (delete-region (point-min) (point-max)))
 	(let* ((prev-p (twittering-timeline-data-is-previous-p timeline-data))
@@ -5717,54 +5706,10 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		  twittering-default-show-replied-tweets))))
 	   ;; Always insert most adjacent tweet first.
 	   (if prev-p
-	       timeline-data		 ; sorted decreasingly
-	     (reverse timeline-data))))) ; sorted increasingly
-      (widen)
-      (debug-print buffer)
-      (cond
-       (keep-point
-	;; Restore points.
-	(mapc (lambda (pair)
-		(let* ((point (car pair))
-		       (window (cdr pair))
-		       (dest (max (point-max) point)))
-		  (set-window-point window dest)))
-	      point-window-list)
-	(goto-char original-pos))
-       (rendering-entire
-	;; Go to the latest status of buffer after full insertion.
-	(let ((dest (if twittering-reverse-mode
-			(point-max)
-		      (point-min))))
-	  (if window-list
-	      (mapc
-	       (lambda (window)
-		 (set-window-point window dest)
-		 (if twittering-reverse-mode
-		     (twittering-set-window-end window (point-max))
-		   (set-window-start window (point-min))))
-	       window-list)
-	    ;; Move the buffer position if the buffer is invisible.
-	    (goto-char dest))))
-       ((not twittering-scroll-mode)
-	;; After additional insertion, the current position exists
-	;; on the same status.
-	;; Go to the original position.
-	(if point-window-list
-	    (mapc (lambda (pair)
-		    (let* ((point (car pair))
-			   (window (cdr pair))
-			   (dest (if twittering-reverse-mode
-				     (- (point-max)
-					(- original-buf-end point))
-				   point)))
-		      (set-window-point window dest)))
-		  point-window-list)
-	  ;; Move the buffer position if the buffer is invisible.
-	  (goto-char (if twittering-reverse-mode
-			 (- (point-max)
-			    (- original-buf-end original-pos))
-		       original-pos))))))))
+	       timeline-data		; sorted decreasingly
+	     (reverse timeline-data))))	; sorted increasingly
+	(widen)
+	(debug-print buffer)))))
 
 ;; TODO: this is assuming the user has at least one tweet.
 (defun twittering-render-user-profile (timeline-data)
@@ -6839,7 +6784,7 @@ managed by `twittering-mode'."
   (when (twittering-buffer-p)
     (let ((spec (twittering-current-timeline-spec)))
       (twittering-remove-timeline-data spec) ;; clear current timeline.
-      (twittering-render-timeline (current-buffer) nil) ;; clear buffer.
+      (twittering-render-timeline (current-buffer)) ;; clear buffer.
       (twittering-get-and-render-timeline))))
 
 (defun twittering-erase-all ()
