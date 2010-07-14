@@ -2,8 +2,8 @@
 exec >/dev/null
 . ~/.bashrc
 function do_it() {
-    mkbeagleidx
-    mkgtags
+    mkbeagleidx 
+    mkgtags -i
 }
 
 for x in `locate .for-code-reading`; do 
