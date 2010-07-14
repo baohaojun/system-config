@@ -43,6 +43,7 @@
 #include <fcntl.h>
 
 #include "parser.h"
+#include "internal.h"
 
 /*
  * Function layer plugin parser sample
@@ -53,12 +54,7 @@
 #define INITIAL_BUFSIZE		1024
 
 static char *argv[] = {
-	EXUBERANT_CTAGS,
-	NULL,
-	"-xu",
-	"--filter",
-	"--filter-terminator=" TERMINATOR "\n",
-	"--format=1",
+	"gtagsAntlrJavaParser",
 	NULL
 };
 static pid_t pid;
@@ -67,35 +63,9 @@ static char *linebuf;
 static size_t bufsize;
 
 static void
-copy_langmap_converting_cpp(char *dst, const char *src)
-{
-	const char *p;
-
-	if (strncmp(src, "cpp:", 4) == 0) {
-		memcpy(dst, "c++:", 4);
-		dst += 4;
-		src += 4;
-	}
-	while ((p = strstr(src, ",cpp:")) != NULL) {
-		memcpy(dst, src, p - src);
-		dst += p - src;
-		memcpy(dst, ",c++:", 5);
-		dst += 5;
-		src = p + 5;
-	}
-	strcpy(dst, src);
-}
-
-static void
 start_ctags(const struct parser_param *param)
 {
 	int opipe[2], ipipe[2];
-
-	argv[1] = malloc(sizeof(LANGMAP_OPTION) + strlen(param->langmap));
-	if (argv[1] == NULL)
-		param->die("short of memory.");
-	memcpy(argv[1], LANGMAP_OPTION, sizeof(LANGMAP_OPTION) - 1);
-	copy_langmap_converting_cpp(argv[1] + sizeof(LANGMAP_OPTION) - 1, param->langmap);
 
 	if (pipe(opipe) < 0 || pipe(ipipe) < 0)
 		param->die("cannot create pipe.");
@@ -109,13 +79,12 @@ start_ctags(const struct parser_param *param)
 			param->die("dup2 failed.");
 		close(opipe[0]);
 		close(ipipe[1]);
-		execvp(EXUBERANT_CTAGS, argv);
+		execvp("gtagsAntlrJavaParser", argv);
 		param->die("execvp failed.");
 	}
 	/* parent process */
 	if (pid < 0)
 		param->die("fork failed.");
-	free(argv[1]);
 	close(opipe[0]);
 	close(ipipe[1]);
 
@@ -227,7 +196,9 @@ put_line(char *ctags_x, const struct parser_param *param)
 		while (isspace((unsigned char)*p))
 			p++;
 	}
-	param->put(PARSER_DEF, tagname, lineno, filename, p, param->arg);
+	if (!strncmp(ctags_x, "def ", 4)) {
+		param->put(PARSER_DEF, tagname, lineno, filename, p, param->arg);
+	}
 }
 
 void

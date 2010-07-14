@@ -17,4 +17,5 @@ if (not -e $file) {
 }'
     cd ..
     gtags_file=`lookup_file GTAGS`
+    break;
 done
