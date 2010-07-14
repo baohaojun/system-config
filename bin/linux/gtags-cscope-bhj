@@ -1,21 +1,27 @@
-#!/bin/bash
-#echo "-f cscope.out -d -L -7 /" "$@"
-. ~/.bashrc
-gtags_file=`lookup_file GTAGS`
-last_gtags_file=
-while test -f "$gtags_file" \
-    -a ! -L "$gtags_file" \
-    -a "$last_gtags_file" != "$gtags_file"; do
-    last_gtags_file=$gtags_file
-    lcd "$gtags_file" >/dev/null 2>&1
-    echo "${5:1}${6}"|gtags-cscope|perl -npe 's/^>>.*//; 
-s!^(.)!'`dirname $gtags_file|tr -d '\n'`'/$1!;
-$file=$_;
-$file =~ s/ .*//;
-if (not -e $file) {
+#!/usr/bin/env perl
+
+use Getopt::Long;
+use strict;
+use String::ShellQuote;
+
+
+my $lookup_type = substr($ARGV[4], 1);
+$_ = $ARGV[5];
+(my $lookup_needle, my $lookup_restrict_regexp) = split;
+
+open(my $grep, "-|", "echo $lookup_type$lookup_needle|gtags-cscope");
+print "lookup_restrict_regexp is $lookup_restrict_regexp\n" if $lookup_restrict_regexp;
+
+while (<$grep>) {
+  chomp();
+  s/^>>.*//;
+  my $file=$_;
+  $file =~ s/ .*//;
+  if (not -e $file) {
     next;
-}'
-    cd ..
-    gtags_file=`lookup_file GTAGS`
-    break;
-done
+  }
+  if ($lookup_restrict_regexp && not m/$lookup_restrict_regexp/i) {
+    next;
+  }
+  print "$_\n";
+}
