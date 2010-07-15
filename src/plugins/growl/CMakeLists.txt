@@ -6,7 +6,7 @@ if( GROWL_CPP )
         growl_backend.cpp
         )
     automoc4_add_library(growl_backend MODULE  ${GROWL__SRC} )
-    target_link_libraries(growl_backend snore ${QT_QTCORE_LIBRARY} ${GROWL_CPP} )
+    target_link_libraries(growl_backend snorecore ${QT_QTCORE_LIBRARY} ${GROWL_CPP} )
 else( GROWL_CPP  )
     message( STATUS "libgrowl not found..., get it here http://github.com/mattn/gntp-send" )
 endif( GROWL_CPP )

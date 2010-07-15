@@ -38,12 +38,12 @@ FreedesktopNotification_Frontend::~FreedesktopNotification_Frontend(){
 }
 
 void FreedesktopNotification_Frontend::actionInvoked(QSharedPointer<Notification>notification){
-    emit ActionInvoked(notification->getID(),QString::number(notification->actionInvoked));
+    emit ActionInvoked(notification->id(),QString::number(notification->actionInvoked()));
 }
 
 void FreedesktopNotification_Frontend::notificationClosed(QSharedPointer<Notification>notification){
     uint reason;
-    switch(notification->actionInvoked){
+    switch(notification->actionInvoked()){
     case Notification::TIMED_OUT:
         reason=1;
         break;
@@ -56,7 +56,7 @@ void FreedesktopNotification_Frontend::notificationClosed(QSharedPointer<Notific
         reason=4;
     }
 
-    emit NotificationClosed(notification->getID(),reason);
+    emit NotificationClosed(notification->id(),reason);
 }
 
 QString FreedesktopNotification_Frontend::getImagefromHint(const FreedesktopImageHint &img){
@@ -85,7 +85,7 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
         icon=getImagefromHint(image);
     }
 
-    QSharedPointer<Notification> noti(new Notification(property("name").value<QString>(),summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id));
+    QSharedPointer<Notification> noti(new Notification(this,summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id));
     return getSnore()->broadcastNotification(noti);
 }
 

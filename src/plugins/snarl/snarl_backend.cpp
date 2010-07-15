@@ -18,6 +18,7 @@
 #include <QtCore>
 #include <QTextEdit>
 #include <iostream>
+#include <wchar.h>
 
 
 
@@ -29,7 +30,7 @@ Snarl_Backend::Snarl_Backend()
     setProperty("name","Snarl_Backend");
     snarlInterface=new Snarl::SnarlInterface();
     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersionExA();
-     this->installEventFilter(this);
+    this->installEventFilter(this);
 
 }
 Snarl_Backend::~Snarl_Backend(){
@@ -37,22 +38,47 @@ Snarl_Backend::~Snarl_Backend(){
 }
 
 int Snarl_Backend::notify(QSharedPointer<Notification>notification){
-    int timeout=notification->timeout>=0?notification->timeout:10;
-    if(notification->getID()==0){
-        QString title=Notification::toPlainText(notification->title);
-        QString text=Notification::toPlainText(notification->text);
-        std::cout<<"Calling Snarl"<<title.toLocal8Bit().data()<< text.toLocal8Bit().data()<<" "<<QString::number(timeout).toLatin1().data()<< notification->getIcon().toLocal8Bit().data()<<std::endl;
-        return snarlInterface->ShowMessage(title.toLocal8Bit().data(), text.toLocal8Bit().data(),timeout, notification->getIcon().toLocal8Bit().data());
+    QString qtitle(Notification::toPlainText(notification->title()));
+    QString qtext( Notification::toPlainText(notification->text()));
+    QString qicon(notification->icon());
+
+    wchar_t *title = new wchar_t[qtitle.length()+1];
+    wchar_t *text =  new wchar_t[qtext.length()+1];
+    wchar_t *icon =  new wchar_t[qicon.length()+1];
+
+    int i=0;
+    i=qtitle.toWCharArray(title);
+    title[i+1]=0;
+    i=qtext.toWCharArray(text);
+    text[i+1]=0;
+    i=qicon.toWCharArray(icon);
+    icon[i+1]=0;
+
+    if(notification->id()==0){
+        wprintf(L"Calling SnarlMessage\n"
+                L"Title: %s\n"
+                L"Text:%s\n"
+                L"Timeout: %i\n"
+                L"Icon: %s\n",title,text,notification->timeout(),icon);
+        return snarlInterface->ShowMessage(title,text,notification->timeout(), icon);
     }else{
         //update message
-        snarlInterface->UpdateMessage(LONG32(notification->getID()),notification->title.toLocal8Bit().data(), notification->text.toLocal8Bit().data(),notification->getIcon().toLocal8Bit().data());
-        return notification->getID();
+        wprintf(L"Updating SnarlMessage ID: %i\n"
+                L"Title: %s\n"
+                L"Text:%s\n"
+                L"Icon: %s\n",notification->id(),title,text,icon);
+        snarlInterface->UpdateMessage(notification->id(),title, text,icon);
+        return notification->id();
     }
+    delete[] title;
+    delete[] text;
+    delete[] icon;
 }
 
 void Snarl_Backend::closeNotification(int nr){
     snarlInterface->HideMessage(nr);
 }
+
 bool Snarl_Backend::eventFilter(QObject *obj, QEvent *event){
     qDebug()<<obj->objectName();
     return true;

@@ -33,9 +33,9 @@ void FreedesktopNotification::registerTypes(){
 QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i){
     QStringList actions;
     actions<<"1"<<" "<<"2"<<" ";
-    a<<i.notification->app<<uint(0)<<i.notification->getIcon()<<i.notification->title<<i.notification->text<<actions;
+    a<<i.notification->application()<<uint(0)<<i.notification->icon()<<i.notification->title()<<i.notification->text()<<actions;
     a.beginMap();
-    QImage img(i.notification->getIcon());
+    QImage img(i.notification->icon());
     if(!img.isNull()){
         img=img.scaledToWidth(50,Qt::FastTransformation);
         a.beginMapEntry();
@@ -44,7 +44,7 @@ QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i){
         a.endMapEntry();
     }
     a.endMap();
-    a<<i.notification->timeout*1000;
+    a<<i.notification->timeout()*1000;
     return a;
 }
 

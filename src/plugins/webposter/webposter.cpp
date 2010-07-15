@@ -18,6 +18,9 @@
 #include <QDebug>
 #include <QtCore>
 #include <iostream>
+
+#include "core/utils.h"
+
 Q_EXPORT_PLUGIN2(webposter,WebPoster)
 
 WebPoster::WebPoster(){
@@ -26,7 +29,7 @@ WebPoster::WebPoster(){
 }
 
 int WebPoster::notify(QSharedPointer<Notification>notification){
-    QByteArray byte(notification->toSnalrString().toLatin1().data());
+    QByteArray byte(Utils::notificationToSNTPString(notification).toLatin1().data());
     QUrl url("http://www.pro-zeit.ch/index.php");
     url.addEncodedQueryItem("action","add");
     url.addEncodedQueryItem("data",QUrl::toPercentEncoding(byte.toBase64()));

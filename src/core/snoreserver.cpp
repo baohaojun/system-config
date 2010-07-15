@@ -24,7 +24,8 @@
 QString const SnoreServer::snoreTMP=QDir::temp().path()+"/SnoreNotify/";
 
 SnoreServer::SnoreServer():primaryNotificationBackend(0)
-{    qDebug()<<"Inititalized";
+{
+    qDebug()<<"Inititalized";
     QDir home(snoreTMP);
     if(home.exists()){
         QStringList filetypes;
@@ -63,9 +64,10 @@ void SnoreServer::publicatePlugin(QObject *plugin){
             if(primaryNotificationBackend){
                 notyfier.append(primaryNotificationBackend);
                 connect(this,SIGNAL(notify(QSharedPointer<Notification>)),primaryNotificationBackend,SLOT(notify(QSharedPointer<Notification>)));
-
             }
             primaryNotificationBackend=nb;
+            primaryNotificationBackend->notify(QSharedPointer<Notification>(new Notification(NULL,"Welcome","Snore Notify succesfully registred "+plugin->property("name").value<QString>(),"")));
+
         }else{
             notyfier.append(nb);
             connect(this,SIGNAL(notify(QSharedPointer<Notification>)),nb,SLOT(notify(QSharedPointer<Notification>)));
@@ -77,25 +79,25 @@ void SnoreServer::publicatePlugin(QObject *plugin){
 
 int SnoreServer::broadcastNotification(QSharedPointer<Notification> notification){
     emit notify(notification);
-    qDebug()<<"Broadcasting notification:"<<notification->toSnalrString();
+    qDebug()<<"Broadcasting notification:"<<notification->toString();
     if(primaryNotificationBackend!=NULL){
-        notification->id=primaryNotificationBackend->notify(notification);
-        std::cout<<"Notification ID: "<<QString::number(notification->id).toLatin1().data()<<std::endl;
-        return  notification->id;
+        notification->_id=primaryNotificationBackend->notify(notification);
+        std::cout<<"Notification ID: "<<QString::number(notification->_id).toLatin1().data()<<std::endl;
+        return  notification->_id;
     }
     return -1;
 }
 
 void SnoreServer::closeNotification(QSharedPointer<Notification> notification){
-    emit closeNotify(notification->id);
-    Notification_Frontend *nf= qobject_cast<Notification_Frontend*>(plugins.value(notification->source));
+    emit closeNotify(notification->_id);
+    Notification_Frontend *nf= notification->_source;
     if(nf!=0){
         nf->notificationClosed(notification);
     }
 }
 
 void SnoreServer::notificationActionInvoked(QSharedPointer<Notification> notification){
-    Notification_Frontend *nf= qobject_cast<Notification_Frontend*>(plugins.value(notification->source));
+    Notification_Frontend *nf= notification->_source;
     if(nf!=0){
         nf->actionInvoked(notification);
     }

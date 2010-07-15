@@ -15,9 +15,13 @@
  ****************************************************************************************/
 
 #include "parser.h"
-#include "core/snoreserver.h"
 #include "snarlnetwork.h"
+
+#include "core/snoreserver.h"
 #include "core/notification.h"
+#include "core/utils.h"
+
+
 #include <QDir>
 #include <QCryptographicHash>
 #include <QNetworkAccessManager>
@@ -50,10 +54,9 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
 
     SnarlNotification sNotification;
     sNotification.httpClient=false;
-    sNotification.vailid=true;
-    sNotification.notification=QSharedPointer<Notification>(new Notification());
+    sNotification.vailid=true;   
     sNotification.clientSocket=client;
-    sNotification.notification->setIsNotification(false);
+
 
     snpTypes action(ERROR);  
     if(msg.startsWith("GET ")){
@@ -65,6 +68,13 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
         sNotification.httpClient=true;
     }
 
+    QString app;
+    QString title;
+    QString text;
+    QString sntpIcon;
+    QString icon;
+    QString alert;
+    int timeout=10;
 
     QString key;
     QString value;
@@ -74,67 +84,71 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
         value=s.mid(s.indexOf("=")+1);
         switch(getSnpType.value(key)){
         case APP:
-            sNotification.notification->app=value;
+            app=value;
             break;
         case ACTION:
             action=getSnpType.value(value);
             sNotification.action=value;
             break;
         case  TITLE:
-            sNotification.notification->title=value;
+            title=value;
             break;
         case TEXT:
-            sNotification.notification->text=value;
+            text=value;
             break;
         case ICON:
-            sNotification.notification->hints.insert("SnarlIcon",value);
-            sNotification.notification->setIcon(downloadIcon(value));
+            sntpIcon=value;
+            icon=downloadIcon(value);
             break;
         case CLASS:
-            sNotification.notification->alert=value;
+            alert=value;
         case TIMEOUT:
-            sNotification.notification->timeout=value.toInt();
+            timeout=value.toInt();
             break;
         default:
             break;
         }
     }
 
+    sNotification.notification=QSharedPointer<Notification>(new Notification(snarl,title,text,icon,timeout));
+    sNotification.notification->setIsNotification(false);
+    sNotification.notification->insertHint("SnarlIcon",sntpIcon);
+
 
     switch(action){
     case NOTIFICATION:
-        if(snarl->getSnore()->applicationListAlertIsActive(sNotification.notification->app,sNotification.notification->alert))
+        if(snarl->getSnore()->applicationListAlertIsActive(sNotification.notification->application(),sNotification.notification->alert()))
             break;
         sNotification.notification->setIsNotification(true);
         return sNotification;
         break;    
     case ADD_CLASS:
-        if(sNotification.notification->alert.isEmpty()){
+        if(sNotification.notification->alert().isEmpty()){
             qDebug()<<"Error registering alert with empty name";
             break;
         }
-        if(sNotification.notification->title.isEmpty())
-            sNotification.notification->title = sNotification.notification->alert;
-        snarl->getSnore()->addAlert(sNotification.notification->app,sNotification.notification->alert,sNotification.notification->title);
+        if(title.isEmpty())
+            title = alert;
+        snarl->getSnore()->addAlert(sNotification.notification->application(),alert,title);
         break;
     case REGISTER:
         qDebug()<<snarl->getSnore()->getAplicationList()->keys();
-        if(!snarl->getSnore()->getAplicationList()->contains(sNotification.notification->app)&&!sNotification.notification->app.isEmpty()){
-            snarl->getSnore()->addApplication(QSharedPointer<Application>(new Application(sNotification.notification->app)));
+        if(!snarl->getSnore()->getAplicationList()->contains(sNotification.notification->application())&&!sNotification.notification->application().isEmpty()){
+            snarl->getSnore()->addApplication(QSharedPointer<Application>(new Application(sNotification.notification->application())));
         }
         else
-            qDebug()<<sNotification.notification->app<<"already registred";
+            qDebug()<<sNotification.notification->application()<<"already registred";
         break;
     case UNREGISTER:
-        snarl->getSnore()->removeApplication(sNotification.notification->app);
+        snarl->getSnore()->removeApplication(sNotification.notification->application());
         break;
     case ERROR:
     default:
         sNotification.vailid=false;
         break;
     }
-    qDebug()<<sNotification.notification->toSnalrString();
-    sNotification.notification->hints.insert("SNaction",sNotification.action);
+    qDebug()<<Utils::notificationToSNTPString(sNotification.notification);
+    sNotification.notification->insertHint("SNaction",sNotification.action);
     return sNotification;
 }
 

@@ -23,42 +23,92 @@
 
 int Notification::DefaultTimeout=10;
 
-Notification::Notification(uint id):source("none"),timeout(10),id(id),notification(true){}
-Notification::Notification(QString source,QString title,QString text,QString icon,int timeout,uint id):source(source),title(title),text(text),timeout(timeout),id(id),icon(icon),notification(true)
-{       
-}
+QString Notification::toPlainText(const QString &string){
+        if(!Qt::mightBeRichText(string))
+            return string;
+        QTextEdit te;
+        te.setHtml(string);
+        return te.toPlainText();
+    };
 
-QString Notification::getIcon(){
-    return icon;
+Notification::Notification(uint id):
+        _id(id),
+        _timeout(10),
+        _source(NULL),
+        _notification(true)
+{}
+
+Notification::Notification(Notification_Frontend *source,QString title,QString text,QString icon,int timeout,uint id):
+        _id(id),
+        _timeout(timeout),
+        _source(source),
+        _title(title),
+        _text(text),
+        _icon(icon),
+        _notification(true)
+{}
+
+QString Notification::toString() const{
+    return QString("Title: "+_title+"\nText: "+_text);
 }
 
 bool Notification::isNotification(){
-    return notification;
+    return _notification;
 }
 
 void Notification::setIsNotification(bool b){
-    notification=b;
+    _notification=b;
 }
-uint Notification::getID(){
-    return id;
-}
-
-QString Notification::toSnalrString()const{
-    QString out("type=SNP#?version=1.1");
-    if(hints.contains("SNaction"))
-        out+=QString("#?action="+hints.value("SNaction").value<QString>());
-    if(!app.isEmpty())
-        out+=QString("#?app="+app);
-    if(!alert.isEmpty())
-        out+=QString("#?class="+alert);
-    if(hints.contains("SnarlIcon"))
-        out+=QString("#?icon="+hints.value("SnarlIcon").value<QString>());
-    out+=QString("#?title="+title+"#?text="+text+"#?timeout="+QString::number(timeout));
-    return out;
+const uint &Notification::id() const{
+    return _id;
 }
 
-QDataStream & operator<< ( QDataStream & stream, const Notification & noti){
-    stream<<noti.toSnalrString();
+const QString &Notification::Notification::icon() const{
+    return _icon;
+}
+
+const int &Notification::timeout() const{
+    return _timeout;
+}
+
+const Notification::actions &Notification::actionInvoked() const{
+    return _actionInvoked;
+}
+
+const Notification_Frontend *Notification::source() const{
+    return _source;
+}
+
+const QString &Notification::application() const{
+    return _app;
+}
+
+const QString &Notification::title() const{
+    return _title;
+}
+
+const QString &Notification::text() const{
+    return _text;
+}
+
+const QString &Notification::alert() const{
+    return _alert;
+}
+
+const QVariant Notification::hint(const QString &key) const{
+    return _hints.value(key);
+}
+
+bool Notification::hintExists(const QString &key){
+    return _hints.contains(key);
+}
+
+void Notification::insertHint(const QString &key, const QVariant &val){
+    _hints.insert(key,val);
+}
+
+QDataStream & operator<< ( QDataStream &stream, const Notification &noti){
+    stream<<noti.toString();
     return stream;
 }
 

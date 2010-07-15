@@ -5,5 +5,5 @@ if(QT_QTDBUS_FOUND)
 	    dbusbinding.cpp
 	    )
         automoc4_add_library(dbusbinding MODULE  ${DBUSBINDING_SRC} )
-        target_link_libraries(dbusbinding ${QT_QTDBUS_LIBRARY} snore  )
+        target_link_libraries(dbusbinding ${QT_QTDBUS_LIBRARY} snorecore  )
 endif(QT_QTDBUS_FOUND)

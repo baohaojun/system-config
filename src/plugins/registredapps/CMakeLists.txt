@@ -4,5 +4,5 @@ if(WITH_WEBINTERFACE)
       )
 
   automoc4_add_library(registredapps MODULE   ${REGISTREDAPPS_SRC} )
-  target_link_libraries(registredapps snore webinterface)
+  target_link_libraries(registredapps snorecore webinterface)
 endif(WITH_WEBINTERFACE)

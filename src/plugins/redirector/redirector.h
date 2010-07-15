@@ -33,6 +33,7 @@ public:
     class SnoreServer* getSnore();
     void setSnore(class SnoreServer *snore);
 
+
 public slots:
         int notify(QSharedPointer<class Notification>notification);
         void closeNotification(int nr);

@@ -30,20 +30,16 @@ class SNORE_EXPORT Notification:public QObject
 {
     Q_OBJECT
     friend class SnoreServer;
+    friend class Notification_Frontend;
 public:
     static int DefaultTimeout;
-    static inline QString toPlainText(const QString &string){
-        if(!Qt::mightBeRichText ( string))return string;
-        QTextEdit te;
-        te.setHtml(string);
-        return te.toPlainText();
-    };
+    static QString toPlainText(const QString &string);
 public:    
     Notification(uint id=0);
-    Notification(QString source,QString title,QString text,QString icon,int timeout=10,uint id=0);
+    Notification(class Notification_Frontend *source,QString title,QString text,QString icon,int timeout=10,uint id=0);
+    QString toString() const;
     bool isNotification();
     void setIsNotification(bool b);
-    QString toSnalrString()const;
 
     enum actions{
         TIMED_OUT=0,
@@ -51,27 +47,37 @@ public:
         ACTION_2=2,
         ACTION_3=3,
         CLOSED=4
-
            };
 
-    actions actionInvoked;
-    QString source;
-    QString app;
-    QString title;
-    QString text;
-    QString alert;
-    int timeout;      
-    void setIcon(const QString &icon){this->icon=icon; }
-    QString getIcon();
-    QVariantHash hints;
-    uint getID();
 
+
+    const uint &id() const;
+    const int &timeout() const;
+    const Notification::actions &actionInvoked() const;
+    const class Notification_Frontend *source() const;
+    const QString &application() const;
+    const QString &title() const;
+    const QString &text() const;
+    const QString &icon() const;
+    const QString &alert() const;
+    const QVariant hint(const QString &key) const;
+    bool hintExists(const QString &key);
+    void insertHint(const QString &key,const QVariant &val);
 
 
 private:
-    uint id;
-    QString icon;
-    bool notification;
+    uint _id;
+    int _timeout;
+    actions _actionInvoked;
+    class Notification_Frontend *_source;
+    QString _app;
+    QString _title;
+    QString _text;
+    QString _icon;
+    QString _alert;
+    QVariantHash _hints;
+
+    bool _notification;
 
 
 

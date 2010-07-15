@@ -1,18 +1,21 @@
 project( SnoreNotify )
 cmake_minimum_required( VERSION 2.8 )
-add_definitions ( -Wall )
+add_definitions( -Wall )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_PREFIX_PATH}/share/apps/cmake/modules)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package ( Qt4 REQUIRED )
+find_package( Qt4 REQUIRED )
 find_package( Automoc4 REQUIRED)
 
-include ( ${QT_USE_FILE} )
-include_directories (
+include( ${QT_USE_FILE} )
+include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}  ${CMAKE_CURRENT_BINARY_DIR}
         ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
-        ${QT_QTNETWORK_INCLUDE_DIR} )
+        ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR} )
+
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR} )
+set(LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 if (CMAKE_COMPILER_IS_GNUCXX)
    set (KDE4_ENABLE_EXCEPTIONS -fexceptions)
@@ -35,6 +38,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
    endif (CMAKE_SYSTEM_NAME MATCHES Linux)
 
 endif(CMAKE_COMPILER_IS_GNUCXX)
+
 
 
 option(WITH_WEBINTERFACE     "Buld with WebInterface"           OFF)

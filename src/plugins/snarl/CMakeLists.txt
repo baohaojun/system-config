@@ -5,5 +5,5 @@ if(WIN32)
         snarl_backend.cpp
         )
     automoc4_add_library(snarln_backend MODULE  ${SNARL__SRC} )
-    target_link_libraries(snarln_backend snore ${QT_QTCORE_LIBRARY} )
+    target_link_libraries(snarln_backend snorecore ${QT_QTCORE_LIBRARY} )
 endif(WIN32)

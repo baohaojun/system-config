@@ -15,10 +15,13 @@
  ****************************************************************************************/
 
 #include "redirector.h"
-#include <QDebug>
-#include <QHostAddress>
+
 #include "core/snoreserver.h"
 #include "core/notification.h"
+#include "core/utils.h"
+
+#include <QDebug>
+#include <QHostAddress>
 #include <QtCore>
 #include <QObject>
 
@@ -91,7 +94,7 @@ int Redircetor::notify(QSharedPointer<Notification>notification){
     foreach(QSharedPointer<QTcpSocket> s,subscribers.values()){
         if(s->isWritable()){
             qDebug()<<"Sending to subscriber"<<s->peerAddress();
-            s->write((notification->toSnalrString()+"\r\n").toLatin1());
+            s->write((Utils::notificationToSNTPString(notification)+"\r\n").toLatin1());
         }
     }
     return -1;
@@ -110,5 +113,6 @@ SnoreServer* Redircetor::getSnore(){
 void Redircetor::setSnore(SnoreServer *snore){
     this->WebInterface_Plugin::setSnore(snore);
 }
+
 
 #include "redirector.moc"

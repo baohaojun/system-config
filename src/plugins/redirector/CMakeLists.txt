@@ -3,5 +3,5 @@ if(WITH_WEBINTERFACE)
       redirector.cpp
       )
   automoc4_add_library(redirector MODULE  ${REDIRECTOR_SRC})
-  target_link_libraries(redirector  snore webinterface)
+  target_link_libraries(redirector  snorecore webinterface)
 endif(WITH_WEBINTERFACE)
