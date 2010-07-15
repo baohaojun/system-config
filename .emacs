@@ -520,7 +520,7 @@
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
  '(w3m-bookmark-file "q:/.w3m_bookmark.html")
- '(weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog"))))
+ '(weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("csdn" "http://blog.csdn.net/flowermonk/services/MetaBlogApi.aspx" "flowermonk" "" "814038"))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
  '(x-select-enable-clipboard t))
@@ -813,8 +813,12 @@ compatibility with `format-alist', and is ignored."
       (while (search-forward "\n" reg-max t)
         (let ((cur-char-pos (match-beginning 0)))
           (unless (get-text-property cur-char-pos 'hard)
-            (if (or (aref (char-category-set (char-after (1+ cur-char-pos))) ?c)
-                    (aref (char-category-set (char-before cur-char-pos)) ?c))
+            (if (or (aref (char-category-set (or 
+                                              (char-after (1+ cur-char-pos))
+                                              ? )) ?c)
+                    (aref (char-category-set (or 
+                                              (char-before cur-char-pos)
+                                              ? )) ?c))
                 (replace-match "")
               (replace-match " "))
             )))
