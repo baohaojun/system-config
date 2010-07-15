@@ -5036,7 +5036,7 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
 	    (when (and new-statuses buffer)
 	      (twittering-render-timeline buffer t new-statuses))
 	    (twittering-add-timeline-history spec-string)))
-	(if twittering-notify-successful-http-get
+	(if (and (not noninteractive) twittering-notify-successful-http-get)
 	    (if suc-msg suc-msg (format "Success: Get %s." spec-string))
 	  nil)))
      (t
@@ -6690,7 +6690,7 @@ managed by `twittering-mode'."
 			      (format-time-string "%S" (current-time))))))
 		     (<= min-and-sec twittering-timer-interval)))
 	   (with-current-buffer buffer
-	     (twittering-get-and-render-timeline noninteractive)))))
+	     (twittering-get-and-render-timeline t)))))
      (twittering-get-active-buffer-list))))
 
 (defun twittering-current-timeline-noninteractive ()
@@ -6899,7 +6899,9 @@ a list. "
 		    "" 'twittering-user-history))
 	 (listname 
 	  (unless (string= username "")
-	    (or (twittering-read-list-name twittering-username)
+	    (or (let ((s (twittering-current-timeline-spec-string)))
+		  (when s (y-or-n-p (format "from list: %s? " s))))
+		(twittering-read-list-name twittering-username)
 		(read-string
 		 "Failed to retrieve your list, enter list name manually or retry: ")))))
     (when (or (string= username "") (string= listname ""))
@@ -6915,7 +6917,7 @@ a list. "
       (message "Request canceled"))))
 
 (defun twittering-delete-list-members ()
-  "Delete a user to a list. "
+  "Delete a user from a list. "
   (interactive)
   (twittering-add-list-members t))
 
