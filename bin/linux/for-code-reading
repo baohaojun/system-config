@@ -34,6 +34,10 @@ function mkgtags() {
     mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@"
 }
 
+function mkgtags-filter() {
+    gtags --gtagslabel=plugin-example -f - "$@"
+}
+
 function mkbeagleidx() {
     mkdir -p ~/tmp/`pwd`/.beagle
     beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target ~/tmp/`pwd`/.beagle/ .

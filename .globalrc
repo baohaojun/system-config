@@ -43,7 +43,7 @@ gtags:\
 #
 plugin-example|Example of function layer plugin parser:\
 	:tc=common:extractmethod:\
-	:langmap=c\:.c.h,yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H,php\:.php.php3.phtml:\
+	:langmap=c\:.c,yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H.h,php\:.php.php3.phtml:\
 	:langmap=fortran\:.f.for.f77.f90.f95,pascal\:.p.pas,c#\:.cs,lisp\:.l.el.lisp,scheme\:.scm:\
 	:langmap=awk\:.awk,ruby\:.rb,perl\:.pl,python\:.py,make\:.mk,vim\:.vim,sh\:.sh:\
 	:gtags_parser=c\:/usr/local/lib/gtags/exuberant-ctags.la:\
