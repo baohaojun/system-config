@@ -1258,13 +1258,16 @@ Otherwise, open a new entry."
   (message-fetch-field "Keywords")
   (message-goto-keywords) ;; Create Keywords field in new entries
   (set-buffer-modified-p nil)
+
+  (if (message-fetch-field "Subject")
+      (message-goto-body) ;; If Subject exists, move cursor to message body
+    (message-goto-subject)) ;; Else, drop cursor on Subject header
+
   (run-hooks 'weblogger-start-edit-entry-hook) ; Force hooks to clear
                                         ; the modified flag
                                         ; themselves if they
                                         ; want to.
-  (if (message-fetch-field "Subject")
-      (message-goto-body) ;; If Subject exists, move cursor to message body
-    (message-goto-subject)) ;; Else, drop cursor on Subject header
+
   (pop-to-buffer *weblogger-entry*))
 
 (unless (fboundp 'assoc-string)

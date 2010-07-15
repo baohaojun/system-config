@@ -767,7 +767,20 @@
          (shell-command-on-region
           (point) (point-max) "unmarkdown" nil t nil nil)
          (set-buffer-modified-p nil)
-         (auto-fill-mode 0))))
+         (auto-fill-mode 0)
+         (flet ((longlines-wrap-region (beg end) nil)) 
+           (longlines-mode 1)
+           (auto-fill-mode 1)
+           (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p)))))
+
+(defun markdown-nobreak-p ()
+  "Returns nil if it is ok for fill-paragraph to insert a line
+  break at point"
+  ;; are we inside in square brackets
+  (or (looking-back "\\[[^]]*")
+      (save-excursion
+        (beginning-of-line)
+        (looking-at "    \\|\t"))))
 
 
 (setq weblogger-pre-struct-hook
@@ -775,8 +788,15 @@
        (lambda ()
          (interactive)
          (message-goto-body)
+         (longlines-mode 0)
+         (auto-fill-mode 0)
          (shell-command-on-region
-          (point) (point-max) "markdown" nil t nil nil))))
+          (point) (point-max) "markdown" nil t nil nil)
+         (flet ((longlines-wrap-region (beg end) nil)) 
+           (longlines-mode 1)
+           (auto-fill-mode 1)
+           (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p))
+         )))
 
 (require 'longlines)
 
