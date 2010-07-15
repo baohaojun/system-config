@@ -1777,7 +1777,7 @@ icon mode; otherwise, turn off icon mode."
 	    (< 0 (prefix-numeric-value arg))))
     (unless (eq prev-mode twittering-icon-mode)
       (twittering-update-mode-line)
-      (twittering-render-timeline (current-buffer) nil nil t))))
+      (twittering-render-timeline (current-buffer)))))
 
 (defvar twittering-icon-prop-hash (make-hash-table :test 'equal)
   "Hash table for storing display properties of icon.
