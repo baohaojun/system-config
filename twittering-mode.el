@@ -7143,7 +7143,10 @@ type: \"foo/\", you can even see all lists created by \"foo\"."
 	    (twittering-get-usernames-from-timeline)
 	    '(":direct_messages" ":direct_messages_sent" ":friends"
 	      ":home" ":mentions" ":public" ":replies"
-	      ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me"))))
+	      ":retweeted_by_me" ":retweeted_to_me" ":retweets_of_me")
+	    (mapcar (lambda (tl) (concat twittering-username "/" tl))
+		    '("followers" "following" "favorites"))
+	    )))
 	 (spec-string (twittering-completing-read prompt dummy-hist
 						  nil nil initial 'dummy-hist))
 	 (spec-string
