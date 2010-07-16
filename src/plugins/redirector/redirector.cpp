@@ -60,7 +60,7 @@ bool Redircetor::parseCommand(QTcpSocket *client, const QString &command){
             subscriber->connectToHost(addres,port ,QTcpSocket::ReadWrite);
             if(subscriber->waitForConnected()){
                 SnoreServer* snore(getSnore());
-                foreach(QSharedPointer<Application> a,snore->getAplicationList()->values()){
+                foreach(QSharedPointer<Application> a,snore->aplicationList().values()){
                     QString* app=&a->name;
                     subscriber->write(QString("type=SNP#?version=1.1#?action=register#?app="+*app+"\r\n").toUtf8());
                     foreach(const QSharedPointer<Alert> al,a->alerts.values()){

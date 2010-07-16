@@ -30,7 +30,6 @@ class SNORE_EXPORT Notification:public QObject
 {
     Q_OBJECT
     friend class SnoreServer;
-    friend class Notification_Frontend;
 public:
     static int DefaultTimeout;
     static QString toPlainText(const QString &string);

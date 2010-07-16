@@ -11,6 +11,10 @@ if(QT_QTDBUS_FOUND)
     automoc4_add_library(freedesktop_frontend MODULE  ${FREEDESKTOP_NOTIFICATION_FRONTEND_SRC} )
     target_link_libraries(freedesktop_frontend  snorecore ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY} )
 
+    install(TARGETS freedesktop_frontend RUNTIME DESTINATION bin/snoreplugins
+                                         LIBRARY DESTINATION lib
+                                         ARCHIVE DESTINATION lib)
+
 endif(QT_QTDBUS_FOUND)
 
 

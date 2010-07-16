@@ -43,7 +43,6 @@ private:
     QPointer<SnoreServer> snore;
 
 public slots:
-    ApplicationsList getApplicationList();
     void setAlertActive(const QString &application,const QString &alert,const bool active);
 
 signals:

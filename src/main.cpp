@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     SnoreServer s;
 
-    QDir pluginsDir(a.applicationDirPath()+"/plugins");
+    QDir pluginsDir(a.applicationDirPath()+"/snoreplugins");
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
         QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
         QObject *plugin = loader.instance();        

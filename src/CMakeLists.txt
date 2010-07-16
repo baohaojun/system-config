@@ -5,9 +5,14 @@ include_directories(
 
 add_subdirectory(core)
 
-add_executable ( SnoreNotify main.cpp )
-target_link_libraries ( SnoreNotify  snorecore ${QT_QTGUI_LIBRARY})
-add_dependencies(SnoreNotify snorecore)
+add_executable ( snorenotify main.cpp )
+target_link_libraries ( snorenotify  snorecore ${QT_QTGUI_LIBRARY})
+add_dependencies(snorenotify snorecore)
+
+install(TARGETS snorenotify RUNTIME DESTINATION bin
+                          LIBRARY DESTINATION lib
+                          ARCHIVE DESTINATION lib)
+
 
 add_subdirectory(webinterface)
 add_subdirectory(plugins)

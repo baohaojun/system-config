@@ -6,4 +6,8 @@ if(QT_QTDBUS_FOUND)
 	    )
         automoc4_add_library(dbusbinding MODULE  ${DBUSBINDING_SRC} )
         target_link_libraries(dbusbinding ${QT_QTDBUS_LIBRARY} snorecore  )
+
+        install(TARGETS dbusbinding RUNTIME DESTINATION bin/snoreplugins
+                                    LIBRARY DESTINATION lib
+                                    ARCHIVE DESTINATION lib)
 endif(QT_QTDBUS_FOUND)

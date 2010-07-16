@@ -29,11 +29,11 @@ Growl_Backend::~Growl_Backend(){
     delete growl;
 }
 
-int Growl_Backend::notify(QSharedPointer<Notification>notification){
-    QString title=Notification::toPlainText(notification->title);
-    QString text=Notification::toPlainText(notification->text);
+int Growl_Backend::notify(QSharedPointer<Notification> notification){
+    QString title=Notification::toPlainText(notification->title());
+    QString text=Notification::toPlainText(notification->text());
     qDebug()<<title<<text;
-    growl->Notify("SnoreNotification",title.toLatin1().data(),text.toLatin1().data(),NULL,notification->getIcon().toLatin1().data());
+    growl->Notify("SnoreNotification",title.toLatin1().data(),text.toLatin1().data(),NULL,notification->icon().toLatin1().data());
 return ++id;
 }
 

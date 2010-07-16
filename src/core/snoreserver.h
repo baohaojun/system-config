@@ -50,19 +50,20 @@ public:
     bool applicationListAlertIsActive(const QString &applicationName,const QString &alertName);
     void addAlert(const QString &appName,const QString &alertName, const QString &alertTitle);
     void removeApplication(const QString& appName);
+    const ApplicationsList &aplicationList() const;
+    const QHash<QString,Notification_Backend*> &primaryNotificationBackends() const;
+    void setNotificationBackend(Notification_Backend *backend);
 
-    ApplicationsList* getAplicationList(){
-        return &applications;
-    }
 
     QHash<QString,QObject*> plugins;
 
 private:
-    ApplicationsList applications;
+    ApplicationsList _applications;
 
 
-    QList<Notification_Backend*> notyfier;
-    Notification_Backend * primaryNotificationBackend;
+    QHash<QString,Notification_Backend*> _notyfier;
+    QHash<QString,Notification_Backend*> _primaryNotificationBackends;
+    Notification_Backend * _notificationBackend;
 
 
 signals:

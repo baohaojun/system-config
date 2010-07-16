@@ -23,13 +23,17 @@ void DBusPlugin::setSnore(SnoreServer *snore){
     new DBusBinding(this,snore);
 }
 
-DBusBinding::DBusBinding(DBusPlugin* parent,SnoreServer* snore):QDBusAbstractAdaptor(parent),snore(snore){
+DBusBinding::DBusBinding(DBusPlugin* parent,SnoreServer* snore):
+        QDBusAbstractAdaptor(parent),
+        snore(snore)
+{
     registerTypes();    
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService( "org.SnoreNotify" );
     dbus.registerObject( "/SnoreNotify", this );
     connect(snore,SIGNAL(applicationListChanged()),this,SLOT(applicationListChangedSlot()));
 }
+
 DBusBinding::~DBusBinding(){
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.unregisterService( "/SnoreNotify" );
@@ -43,20 +47,15 @@ void DBusBinding::registerTypes(){
     qDBusRegisterMetaType<AlertList>();
 }
 
-
-ApplicationsList DBusBinding::getApplicationList(){
-    return *snore->getAplicationList();
-}
-
 void DBusBinding::setAlertActive(const QString &application,const QString &name,const bool active){
-    QSharedPointer<Application> ap(snore->getAplicationList()->value(application));
+    QSharedPointer<Application> ap(snore->aplicationList().value(application));
     ap->alerts.value(name)->active=active;
-    emit applicationListChanged(*snore->getAplicationList());
+    emit applicationListChanged(snore->aplicationList());
 }
 
 
 void DBusBinding::applicationListChangedSlot(){
-    emit applicationListChanged(*snore->getAplicationList());
+    emit applicationListChanged(snore->aplicationList());
 }
 
 

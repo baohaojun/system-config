@@ -132,8 +132,8 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
         snarl->getSnore()->addAlert(sNotification.notification->application(),alert,title);
         break;
     case REGISTER:
-        qDebug()<<snarl->getSnore()->getAplicationList()->keys();
-        if(!snarl->getSnore()->getAplicationList()->contains(sNotification.notification->application())&&!sNotification.notification->application().isEmpty()){
+        qDebug()<<snarl->getSnore()->aplicationList().keys();
+        if(!snarl->getSnore()->aplicationList().contains(sNotification.notification->application())&&!sNotification.notification->application().isEmpty()){
             snarl->getSnore()->addApplication(QSharedPointer<Application>(new Application(sNotification.notification->application())));
         }
         else

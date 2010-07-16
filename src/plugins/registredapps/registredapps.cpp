@@ -32,7 +32,7 @@ bool RegistredApps::parseCommand(QTcpSocket *client, const QString &command){
         QString out;
         out+="Registred Applications\n";
         SnoreServer *snore=getSnore();
-        foreach(QSharedPointer<Application> a,snore->getAplicationList()->values()){
+        foreach(QSharedPointer<Application> a,snore->aplicationList().values()){
             out+=a->name+"\n";
             out+="Registred alerts of "+a->name+"\t alert\t title \t is Active\n";
             foreach(const QSharedPointer<Alert> al,a->alerts.values())

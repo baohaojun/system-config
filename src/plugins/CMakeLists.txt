@@ -1,4 +1,4 @@
-SET(LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/plugins)
+SET(LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/snoreplugins)
 
 add_subdirectory(freedesktopnotification)
 add_subdirectory(freedesktopfrontend)
