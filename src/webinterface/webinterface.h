@@ -28,15 +28,7 @@
 # define WEBINTERFACE_EXPORT Q_DECL_IMPORT
 #endif
 
-class WEBINTERFACE_EXPORT WebInterface_Plugin:public SnorePlugin{
-public:
-    virtual ~WebInterface_Plugin() {}
-    virtual QString display()=0;
-    virtual bool parseCommand(QTcpSocket *client,const QString &command)=0;
-
-};
-Q_DECLARE_INTERFACE(WebInterface_Plugin,
-                    "org.Snore.WebInterface/1.0")
+class WebInterface_Plugin;
 
 class WEBINTERFACE_EXPORT WebInterface:public QObject
 {
@@ -54,7 +46,7 @@ public slots:
 
 
 private:
-    static QPointer<WebInterface> instance;
+    static WebInterface *_instance;
     WebInterface();
     ~WebInterface();
     QList<WebInterface_Plugin*> webinterfaces;
@@ -68,5 +60,16 @@ private:
     };
     QHash<QString,WebInterface::ARGUMENTS> getArgument;
 };
+
+class WEBINTERFACE_EXPORT WebInterface_Plugin:public SnorePlugin{
+public:
+    WebInterface_Plugin(QString name,class SnoreServer *snore=0);
+    virtual ~WebInterface_Plugin();
+    virtual QString display()=0;
+    virtual bool parseCommand(QTcpSocket *client,const QString &command)=0;
+
+};
+Q_DECLARE_INTERFACE(WebInterface_Plugin,
+                    "org.Snore.WebInterface/1.0")
 
 #endif // WEBINTERFACE_H

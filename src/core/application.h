@@ -17,14 +17,13 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 #include "snore_exports.h"
-#include <QString>
-#include <QStringList>
-#include <QDebug>
+
 #include <QHash>
 #include <QSharedPointer>
 
 typedef QHash<QString,QSharedPointer<class Application> > ApplicationsList ;
 typedef QHash<QString,QSharedPointer<class Alert> > AlertList;
+
 class SNORE_EXPORT Application
 {
 public:

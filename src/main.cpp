@@ -13,12 +13,7 @@ int main(int argc, char *argv[])
 
     QDir pluginsDir(a.applicationDirPath()+"/snoreplugins");
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
-        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = loader.instance();        
-        if (plugin) {
-            s.publicatePlugin(plugin);
-        }else
-            qDebug()<<"Failed loading plugin: "<<loader.errorString();
+            s.publicatePlugin(pluginsDir.absoluteFilePath(fileName));
     }
 
 

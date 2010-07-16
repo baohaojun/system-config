@@ -117,7 +117,7 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
 
     switch(action){
     case NOTIFICATION:
-        if(snarl->getSnore()->applicationListAlertIsActive(sNotification.notification->application(),sNotification.notification->alert()))
+        if(snarl->snore()->applicationListAlertIsActive(sNotification.notification->application(),sNotification.notification->alert()))
             break;
         sNotification.notification->setIsNotification(true);
         return sNotification;
@@ -129,18 +129,18 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
         }
         if(title.isEmpty())
             title = alert;
-        snarl->getSnore()->addAlert(sNotification.notification->application(),alert,title);
+        snarl->snore()->addAlert(sNotification.notification->application(),alert,title);
         break;
     case REGISTER:
-        qDebug()<<snarl->getSnore()->aplicationList().keys();
-        if(!snarl->getSnore()->aplicationList().contains(sNotification.notification->application())&&!sNotification.notification->application().isEmpty()){
-            snarl->getSnore()->addApplication(QSharedPointer<Application>(new Application(sNotification.notification->application())));
+        qDebug()<<snarl->snore()->aplicationList().keys();
+        if(!snarl->snore()->aplicationList().contains(sNotification.notification->application())&&!sNotification.notification->application().isEmpty()){
+            snarl->snore()->addApplication(QSharedPointer<Application>(new Application(sNotification.notification->application())));
         }
         else
             qDebug()<<sNotification.notification->application()<<"already registred";
         break;
     case UNREGISTER:
-        snarl->getSnore()->removeApplication(sNotification.notification->application());
+        snarl->snore()->removeApplication(sNotification.notification->application());
         break;
     case ERROR:
     default:

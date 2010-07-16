@@ -15,21 +15,25 @@
  ****************************************************************************************/
 
 #include "notification.h"
+#include "snoreserver.h"
+
 #include <QDebug>
 #include <QTcpSocket>
-#include "snoreserver.h"
+#include <Qt>
+#include <QTextEdit>
+
 
 
 
 int Notification::DefaultTimeout=10;
 
 QString Notification::toPlainText(const QString &string){
-        if(!Qt::mightBeRichText(string))
-            return string;
-        QTextEdit te;
-        te.setHtml(string);
-        return te.toPlainText();
-    };
+    if(!Qt::mightBeRichText(string))
+        return string;
+    QTextEdit te;
+    te.setHtml(string);
+    return te.toPlainText();
+}
 
 Notification::Notification(uint id):
         _id(id),

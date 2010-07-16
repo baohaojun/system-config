@@ -22,7 +22,7 @@ class Growl_Backend:public Notification_Backend
     Q_OBJECT
     Q_INTERFACES(Notification_Backend);
 public:
-    Growl_Backend();
+    Growl_Backend(class SnoreServer *snore=0);
     ~Growl_Backend();
     bool isPrimaryNotificationBackend(){return true;}
 private:

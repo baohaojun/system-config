@@ -19,11 +19,11 @@
 #include "core/interface.h"
 #include <QtDBus>
 
-class FreedesktopNotification_Frontend:public QObject,Notification_Frontend{
+class FreedesktopNotification_Frontend:public Notification_Frontend{
     Q_OBJECT
     Q_INTERFACES(Notification_Frontend)
 public:
-    FreedesktopNotification_Frontend();
+    FreedesktopNotification_Frontend(class SnoreServer *snore=0);
     ~FreedesktopNotification_Frontend();
 
     QString getImagefromHint(const class FreedesktopImageHint &img);

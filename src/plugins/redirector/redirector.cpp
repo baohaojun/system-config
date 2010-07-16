@@ -24,13 +24,16 @@
 #include <QHostAddress>
 #include <QtCore>
 #include <QObject>
+#include <QTcpSocket>
 
 Q_EXPORT_PLUGIN2(redircetor,Redircetor)
 
 
 
-Redircetor::Redircetor(){
-    setProperty("name","Redircetor");
+Redircetor::Redircetor(SnoreServer *snore):
+        Notification_Backend("Redircetor",snore),
+        WebInterface_Plugin("Redircetor",snore)
+{
     WebInterface::getInstance()->publicatePlugin(this);
     getArgument.insert("subscribe",SUBSCRIBE);
     getArgument.insert("unsubscribe",UNSUBSCRIBE);
@@ -59,7 +62,7 @@ bool Redircetor::parseCommand(QTcpSocket *client, const QString &command){
             QSharedPointer<QTcpSocket> subscriber(new QTcpSocket);
             subscriber->connectToHost(addres,port ,QTcpSocket::ReadWrite);
             if(subscriber->waitForConnected()){
-                SnoreServer* snore(getSnore());
+                SnoreServer* snore(Notification_Backend::snore());
                 foreach(QSharedPointer<Application> a,snore->aplicationList().values()){
                     QString* app=&a->name;
                     subscriber->write(QString("type=SNP#?version=1.1#?action=register#?app="+*app+"\r\n").toUtf8());
@@ -105,13 +108,6 @@ void Redircetor::closeNotification(int nr){
 
 QString Redircetor::display(){
     return "<a href=\"/subscribe\" >Subscribe </a><br><a href=\"/unsubscribe\" >Unsubscribe </a><br><br><a href=\"/listsubscribers\" >Prints a list of all subscribers</a><br>";
-}
-
-SnoreServer* Redircetor::getSnore(){
-    return this->snore.data();
-}
-void Redircetor::setSnore(SnoreServer *snore){
-    this->WebInterface_Plugin::setSnore(snore);
 }
 
 

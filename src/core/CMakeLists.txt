@@ -4,6 +4,7 @@ set ( SnoreNotify_SRCS
 	application.cpp
         interface.cpp
         utils.cpp
+        trayiconnotifer.cpp
         )
 
 set ( SnoreNotify_HDR

@@ -16,18 +16,10 @@
 
 #ifndef SNORESERVER_H
 #define SNORESERVER_H
+
 #include "snore_exports.h"
-#include <QTcpServer>
-#include <QTcpSocket>
-#include <QObject>
-#include <QDir>
-#include <QQueue>
-#include <QTimer>
-#include <QSharedPointer>
 #include "application.h"
-#include <QSharedPointer>
 #include "interface.h"
-#include <QDir>
 
 
 class SNORE_EXPORT SnoreServer:public QObject
@@ -38,8 +30,8 @@ public:
 
 
 public:
-    SnoreServer();
-    void publicatePlugin(QObject* plugin);
+    SnoreServer(class QSystemTrayIcon *trayIcon=0);
+    void publicatePlugin(const QString &fileName);
 
 
     int broadcastNotification(QSharedPointer<Notification> notification);
@@ -55,7 +47,7 @@ public:
     void setNotificationBackend(Notification_Backend *backend);
 
 
-    QHash<QString,QObject*> plugins;
+    QHash<QString,SnorePlugin*> plugins;
 
 private:
     ApplicationsList _applications;
@@ -64,6 +56,8 @@ private:
     QHash<QString,Notification_Backend*> _notyfier;
     QHash<QString,Notification_Backend*> _primaryNotificationBackends;
     Notification_Backend * _notificationBackend;
+
+    class QSystemTrayIcon *_trayIcon;
 
 
 signals:

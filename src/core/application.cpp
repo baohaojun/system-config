@@ -17,10 +17,12 @@
 #include "application.h"
 
 
-Application::Application(const QString &name):name(name)
+Application::Application(const QString &name):
+        name(name)
 {}
 
-Application::Application():name("Error: Uninitialized Application")
+Application::Application():
+        name("Error: Uninitialized Application")
 {}
 
 void Application::addAlert(const QString &alert,const QString &title)

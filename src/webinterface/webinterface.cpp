@@ -22,12 +22,12 @@
 #include  <QDebug>
 #include <QtCore>
 
-QPointer<WebInterface> WebInterface::instance=0;
+WebInterface* WebInterface::_instance=0;
 
 WebInterface* WebInterface::getInstance(){
-    if(instance.isNull())
-        instance=new WebInterface();
-    return instance.data();
+    if(_instance==NULL)
+        _instance=new WebInterface();
+    return _instance;
 }
 
 WebInterface::WebInterface()
@@ -82,5 +82,13 @@ void WebInterface::handleMessages(){
 }
 
 
+WebInterface_Plugin::WebInterface_Plugin(QString name,SnoreServer *snore):
+        SnorePlugin(name,snore)
+{
+}
+
+WebInterface_Plugin::~WebInterface_Plugin(){
+
+}
 
 #include "webinterface.moc"

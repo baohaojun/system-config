@@ -25,7 +25,7 @@ class WebPoster: public Notification_Backend{
     Q_OBJECT
     Q_INTERFACES(Notification_Backend)
 public:
-    WebPoster();
+    WebPoster(class SnoreServer *snore=0);
     bool isPrimaryNotificationBackend(){return false;}
 
 public slots:

@@ -19,9 +19,11 @@
 #include <QtCore>
 
 Q_EXPORT_PLUGIN2(growl_backend,Growl_Backend)
-        Growl_Backend::Growl_Backend():id(0)
+
+Growl_Backend::Growl_Backend(SnoreServer *snore):
+Notification_Backend("Growl",snore),
+id(0)
 {
-    setProperty("name","Growl");
     const char *n[1] = { "SnoreNotification"};
     growl=new Growl(GROWL_TCP,NULL,"SnoreNotify",n,1);
 }
@@ -34,7 +36,7 @@ int Growl_Backend::notify(QSharedPointer<Notification> notification){
     QString text=Notification::toPlainText(notification->text());
     qDebug()<<title<<text;
     growl->Notify("SnoreNotification",title.toLatin1().data(),text.toLatin1().data(),NULL,notification->icon().toLatin1().data());
-return ++id;
+    return ++id;
 }
 
 void Growl_Backend::closeNotification(int nr){

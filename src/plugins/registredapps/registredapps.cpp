@@ -21,8 +21,9 @@
 
 Q_EXPORT_PLUGIN2(registredapps,RegistredApps)
 
-RegistredApps::RegistredApps(){
-    setProperty("name","RegistredApps");
+RegistredApps::RegistredApps(SnoreServer *snore):
+WebInterface_Plugin("RegistredApps",snore)
+{
     WebInterface::getInstance()->publicatePlugin(this);
 }
 
@@ -31,7 +32,7 @@ bool RegistredApps::parseCommand(QTcpSocket *client, const QString &command){
     if(command.toLower()=="overview"){
         QString out;
         out+="Registred Applications\n";
-        SnoreServer *snore=getSnore();
+        SnoreServer *snore=WebInterface_Plugin::snore();
         foreach(QSharedPointer<Application> a,snore->aplicationList().values()){
             out+=a->name+"\n";
             out+="Registred alerts of "+a->name+"\t alert\t title \t is Active\n";

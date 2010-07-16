@@ -16,16 +16,19 @@
 
 #include "freedesktopnotificationfrontend.h"
 #include "notificationsadaptor.h"
-#include <QtCore>
-#include <QtDBus>
-#include <QImage>
+
 #include "plugins/freedesktopnotification/fredesktopnotification.h"
 #include "core/snoreserver.h"
 
+#include <QtCore>
+#include <QtDBus>
+#include <QImage>
+
 Q_EXPORT_PLUGIN2(freedesktop_frontend,FreedesktopNotification_Frontend)
 
-FreedesktopNotification_Frontend::FreedesktopNotification_Frontend(){
-    setProperty("name","FreedesktopNotification_Frontend");
+FreedesktopNotification_Frontend::FreedesktopNotification_Frontend(SnoreServer *snore):
+Notification_Frontend("FreedesktopNotification_Frontend",snore)
+{
     new  NotificationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService( "org.freedesktop.Notifications" );
@@ -86,14 +89,14 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
     }
 
     QSharedPointer<Notification> noti(new Notification(this,summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id));
-    return getSnore()->broadcastNotification(noti);
+    return snore()->broadcastNotification(noti);
 }
 
 
 
 void FreedesktopNotification_Frontend::CloseNotification(uint id){
     QSharedPointer<Notification> n(new Notification(id));
-    getSnore()->closeNotification(n);
+    snore()->closeNotification(n);
 }
 
 QStringList FreedesktopNotification_Frontend::GetCapabilities()

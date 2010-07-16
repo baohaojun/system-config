@@ -25,7 +25,7 @@ class RegistredApps:public QObject,WebInterface_Plugin{
     Q_OBJECT
     Q_INTERFACES(SnorePlugin WebInterface_Plugin)
 public:
-    RegistredApps();
+    RegistredApps(class SnoreServer *snore=0);
     bool parseCommand(QTcpSocket *client, const QString &command);
     QString display();
 

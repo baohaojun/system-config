@@ -15,15 +15,19 @@
  ****************************************************************************************/
 
 #include "snoreserver.h"
-#include  <QDebug>
 #include "notification.h"
-#include <QPluginLoader>
 #include <iostream>
 
+#include <QPluginLoader>
+#include <QDebug>
+#include <QDir>
+#include <QSystemTrayIcon>
 
 QString const SnoreServer::snoreTMP=QDir::temp().path()+"/SnoreNotify/";
 
-SnoreServer::SnoreServer():_notificationBackend(0)
+SnoreServer::SnoreServer(QSystemTrayIcon *trayIcon):
+        _notificationBackend(0),
+        _trayIcon(trayIcon)
 {
     qDebug()<<"Inititalized";
     QDir home(snoreTMP);
@@ -40,17 +44,27 @@ SnoreServer::SnoreServer():_notificationBackend(0)
         QDir::temp().mkpath("SnoreNotify");
 }
 
-void SnoreServer::publicatePlugin(QObject *plugin){
-    QString pluginName(plugin->property("name").value<QString>());
+void SnoreServer::publicatePlugin(const QString &fileName){
+    QPluginLoader loader(fileName);
+    QObject *plugin = loader.instance();
+    if (plugin==NULL) {
+        qDebug()<<"Failed loading plugin: "<<loader.errorString();
+        return;
+    }
+
+    SnorePlugin *sp = qobject_cast<SnorePlugin*>(plugin);
+    if(sp==NULL){
+        qDebug()<<"Error:"<<fileName<<"is not a snarl plugin" ;
+        return;
+    }
+    QString pluginName(sp->name());
+
     qDebug()<<"Loading plugin: "<<pluginName;
 
+    plugins.insert(pluginName,sp);
+    qDebug()<<pluginName<<"is a SnorePlugin";
+    sp->setSnore(this);
 
-    SnorePlugin *sp=qobject_cast<SnorePlugin*>(plugin);
-    if(sp){
-        plugins.insert(pluginName,plugin);
-        qDebug()<<plugin->property("name").value<QString>()<<"is a SnorePlugin";
-        sp->setSnore(this);
-    }
     Notification_Frontend *nf=qobject_cast<Notification_Frontend*>(plugin);
     if(nf){
         qDebug()<<pluginName<<"is a Notification_Frontend";

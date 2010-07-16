@@ -25,9 +25,9 @@
 
 Q_EXPORT_PLUGIN2(snarl_backend,Snarl_Backend)
 
-Snarl_Backend::Snarl_Backend()
+Snarl_Backend::Snarl_Backend(SnoreServer *snore):
+Notification_Backend("SnarlBackend",snore)
 {
-    setProperty("name","Snarl_Backend");
     snarlInterface=new Snarl::SnarlInterface();
     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersionExA();
     this->installEventFilter(this);

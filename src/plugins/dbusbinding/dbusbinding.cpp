@@ -17,12 +17,6 @@
 #include "dbusbinding.h"
 #include <QtCore>
 
-Q_EXPORT_PLUGIN2(dbusbinding,DBusPlugin)
-
-void DBusPlugin::setSnore(SnoreServer *snore){
-    new DBusBinding(this,snore);
-}
-
 DBusBinding::DBusBinding(DBusPlugin* parent,SnoreServer* snore):
         QDBusAbstractAdaptor(parent),
         snore(snore)
@@ -52,7 +46,6 @@ void DBusBinding::setAlertActive(const QString &application,const QString &name,
     ap->alerts.value(name)->active=active;
     emit applicationListChanged(snore->aplicationList());
 }
-
 
 void DBusBinding::applicationListChangedSlot(){
     emit applicationListChanged(snore->aplicationList());
@@ -90,6 +83,7 @@ QDBusArgument &operator<<(QDBusArgument &a, const Application &ap){
     a.endStructure();
     return a;
 }
+
 const QDBusArgument & operator >>(const QDBusArgument &a, Application  &ap) {
     a.beginStructure();
     a>>ap.name;
@@ -104,6 +98,7 @@ QDBusArgument &operator<<(QDBusArgument &a, const Alert &al){
     a.endStructure();
     return a;
 }
+
 const QDBusArgument & operator >>(const QDBusArgument &a, Alert &al) {
     a.beginStructure();
     a>>al.name;
@@ -121,6 +116,7 @@ QDBusArgument &operator<<(QDBusArgument &a, const AlertList &al){
     a.endArray();
     return a;
 }
+
 const QDBusArgument & operator >>(const QDBusArgument &a, AlertList &al) {
     a.beginArray();
     al.clear();
@@ -131,6 +127,14 @@ const QDBusArgument & operator >>(const QDBusArgument &a, AlertList &al) {
     }
     a.endArray();
     return a;
+}
+
+Q_EXPORT_PLUGIN2(dbusbinding,DBusPlugin)
+
+DBusPlugin::DBusPlugin(SnoreServer *snore):
+SnorePlugin("DBusBackend",snore)
+{
+
 }
 
 #include "dbusbinding.moc"

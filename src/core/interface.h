@@ -18,26 +18,30 @@
 #define INTERFACE_H
 #include "snore_exports.h"
 #include "notification.h"
-#include <QObject>
-#include <QTcpSocket>
-#include <QSharedPointer>
-#include <QPointer>
 
-class SNORE_EXPORT SnorePlugin{
+
+class SNORE_EXPORT SnorePlugin:public QObject{
+    Q_OBJECT
 public:
-    virtual ~SnorePlugin(){}; 
+    SnorePlugin(QString name,class SnoreServer *snore=0);
+    virtual ~SnorePlugin();
     virtual void setSnore(class SnoreServer* snore);
-    virtual class SnoreServer* getSnore();
+    virtual class SnoreServer* snore();
+    const QString &name() const;
 private:
-    QPointer<class SnoreServer> snore;
+    SnorePlugin(){}
+    QString _name;
+    class SnoreServer *_snore;
+
 
 };
 
-class SNORE_EXPORT Notification_Backend:public QObject,public SnorePlugin
+class SNORE_EXPORT Notification_Backend:public SnorePlugin
 {
     Q_OBJECT
 public:
-    virtual ~Notification_Backend() {}
+    Notification_Backend(QString name,class SnoreServer *snore=0);
+    virtual ~Notification_Backend();
     virtual bool isPrimaryNotificationBackend()=0;
 
 public slots:
@@ -51,9 +55,10 @@ public slots:
 
 class SNORE_EXPORT Notification_Frontend:public SnorePlugin{
 public:
-    virtual ~Notification_Frontend() {}
-     virtual void actionInvoked(QSharedPointer<Notification> notification)=0;
-     virtual void notificationClosed(QSharedPointer<Notification> notification)=0;
+    Notification_Frontend(QString name,class SnoreServer *snore=0);
+    virtual ~Notification_Frontend();
+    virtual void actionInvoked(QSharedPointer<Notification> notification)=0;
+    virtual void notificationClosed(QSharedPointer<Notification> notification)=0;
 };
 
 

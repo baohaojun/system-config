@@ -21,22 +21,14 @@
 #include "core/application.h"
 #include "core/snoreserver.h"
 
-class DBusPlugin:public QObject,SnorePlugin{
-    Q_OBJECT
-    Q_INTERFACES(SnorePlugin)
-public:
-            DBusPlugin(){
-        setProperty("name","DbusBinding");
-    };
-    void setSnore(SnoreServer *snore);
 
-};
+class DBusPlugin;
 
 class DBusBinding: public QDBusAbstractAdaptor{
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.SnoreNotify")
 public:
-            DBusBinding(DBusPlugin* db,SnoreServer* snore);
+    DBusBinding(DBusPlugin* db,SnoreServer* snore);
     ~DBusBinding();
     static void registerTypes();
 private:
@@ -50,6 +42,14 @@ signals:
 
 private slots:
     void applicationListChangedSlot();
+
+};
+
+class DBusPlugin:public QObject,SnorePlugin{
+    Q_OBJECT
+    Q_INTERFACES(SnorePlugin)
+public:
+    DBusPlugin(class SnoreServer *snore=0);
 
 };
 

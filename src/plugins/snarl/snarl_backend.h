@@ -24,7 +24,7 @@ class Snarl_Backend:public Notification_Backend
     Q_OBJECT
     Q_INTERFACES(Notification_Backend)
 public:
-    Snarl_Backend();
+    Snarl_Backend(class SnoreServer *snore=0);
     ~Snarl_Backend();
     bool isPrimaryNotificationBackend(){return true;}
 

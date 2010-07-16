@@ -17,12 +17,9 @@
 #ifndef NOTIFICATION_H
 #define NOTIFICATION_H
 #include "snore_exports.h"
-#include <QHash>
-#include <QFile>
 #include "application.h"
-#include <Qt>
-#include <QTextEdit>
 
+#include <QVariant>
 
 
 

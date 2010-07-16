@@ -17,14 +17,44 @@
 #include "interface.h"
 #include "snoreserver.h"
 
+SnorePlugin::SnorePlugin(QString name,SnoreServer *snore):
+        _name(name),
+        _snore(snore)
+{}
+
+SnorePlugin::~SnorePlugin(){
+    delete _snore;
+}
 
 void SnorePlugin::setSnore(SnoreServer *snore){
-    this->snore=snore;
+    this->_snore=snore;
 }
 
-SnoreServer* SnorePlugin::getSnore(){
-    return snore.data();
+SnoreServer* SnorePlugin::snore(){
+    return _snore;
 }
 
+const QString &SnorePlugin::name() const{
+    return _name;
+}
+
+Notification_Backend::Notification_Backend(QString name, SnoreServer *snore):
+        SnorePlugin(name,snore)
+{
+
+}
+
+Notification_Backend::~Notification_Backend()
+{
+}
+
+Notification_Frontend::Notification_Frontend(QString name, SnoreServer *snore):
+        SnorePlugin(name,snore)
+{
+
+}
+
+Notification_Frontend::~Notification_Frontend(){
+}
 
 #include "interface.moc"

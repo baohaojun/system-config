@@ -26,12 +26,10 @@ class Redircetor:public Notification_Backend,WebInterface_Plugin{
 public:
     static const int port=9887;
 public:
-    Redircetor();
+    Redircetor(class SnoreServer *snore=0);
     bool isPrimaryNotificationBackend(){return false;}
     QString display();
     bool parseCommand(QTcpSocket *client, const QString &command);
-    class SnoreServer* getSnore();
-    void setSnore(class SnoreServer *snore);
 
 
 public slots:
@@ -40,7 +38,6 @@ public slots:
 
 private:
     QHash<QString,QSharedPointer<QTcpSocket> > subscribers;
-    QPointer<class SnoreServer> snore;
 
     enum ARGUMENTS{
         SUBSCRIBE=1,

@@ -16,21 +16,30 @@
 
 #include "snarlnetwork.h"
 #include "core/snoreserver.h"
+
 #include <QtCore>
 #include <QTcpServer>
+#include <QTcpSocket>
+
 #include <iostream>
 
 Q_EXPORT_PLUGIN2(snalnetwork,SnarlNetworkFrontend)
 
-SnarlNetworkFrontend::SnarlNetworkFrontend(){
+SnarlNetworkFrontend::SnarlNetworkFrontend(SnoreServer *snore):
+Notification_Frontend("SnarlNetworkFrontend",snore)
+{
     parser=new Parser(this);
-    setProperty("name","SnarlNetworkFrontend");
     tcpServer=new QTcpServer(this);
     if(!tcpServer->listen(QHostAddress::Any,port)){
         qDebug()<<"The port is already used";
     }
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
     std::cout<<"The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>"<<std::endl;
+}
+
+SnarlNetworkFrontend::~SnarlNetworkFrontend(){
+    delete parser;
+    delete tcpServer;
 }
 
 
@@ -53,7 +62,7 @@ void SnarlNetworkFrontend::notificationClosed(QSharedPointer<Notification>notifi
 void SnarlNetworkFrontend::handleConnection(){
     QTcpSocket *client = tcpServer->nextPendingConnection();
     connect(client,SIGNAL(readyRead()),this,SLOT(handleMessages()));
-    connect(client,SIGNAL(disconnected()), this, SLOT(deleteLater()));
+    connect(client,SIGNAL(disconnected()), client, SLOT(deleteLater()));
 }
 
 void SnarlNetworkFrontend::handleMessages(){
@@ -66,7 +75,7 @@ void SnarlNetworkFrontend::handleMessages(){
         if(!noti.vailid)
             continue;
         if(noti.notification->isNotification()){
-            getSnore()->broadcastNotification(noti.notification);
+            snore()->broadcastNotification(noti.notification);
             if(noti.notification->id()!=0){
                 out+="/"+QString::number(noti.notification->id())+"\r\n";
             }
@@ -80,11 +89,6 @@ void SnarlNetworkFrontend::handleMessages(){
         }
         qDebug()<<out;
     }
-}
-
-void SnarlNetworkFrontend::clientDisconnecd(){
-    QTcpSocket *client=(QTcpSocket*)sender();
-    client->deleteLater();
 }
 
 void SnarlNetworkFrontend::callback(const SnarlNotification &sn,QString msg){

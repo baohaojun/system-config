@@ -23,8 +23,9 @@
 
 Q_EXPORT_PLUGIN2(webposter,WebPoster)
 
-WebPoster::WebPoster(){
-    setProperty("name","WebPoster");
+WebPoster::WebPoster(SnoreServer *snore):
+Notification_Backend("WebPoster",snore)
+{
     manager=new QNetworkAccessManager(this);
 }
 
