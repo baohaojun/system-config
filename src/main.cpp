@@ -5,11 +5,14 @@
 #include <QList>
 #include <QDebug>
 #include <QPluginLoader>
+#include <QSystemTrayIcon>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    SnoreServer s;
+    QSystemTrayIcon *trayIcon=new QSystemTrayIcon();
+    trayIcon->show();
+    SnoreServer s(trayIcon);
 
     QDir pluginsDir(a.applicationDirPath()+"/snoreplugins");
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {

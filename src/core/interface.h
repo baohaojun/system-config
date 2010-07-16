@@ -36,8 +36,7 @@ private:
 
 };
 
-class SNORE_EXPORT Notification_Backend:public SnorePlugin
-{
+class SNORE_EXPORT Notification_Backend:public SnorePlugin{
     Q_OBJECT
 public:
     Notification_Backend(QString name,class SnoreServer *snore=0);
@@ -54,6 +53,7 @@ public slots:
 
 
 class SNORE_EXPORT Notification_Frontend:public SnorePlugin{
+    Q_OBJECT
 public:
     Notification_Frontend(QString name,class SnoreServer *snore=0);
     virtual ~Notification_Frontend();

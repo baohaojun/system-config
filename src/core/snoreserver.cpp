@@ -16,6 +16,8 @@
 
 #include "snoreserver.h"
 #include "notification.h"
+#include "trayiconnotifer.h"
+
 #include <iostream>
 
 #include <QPluginLoader>
@@ -42,6 +44,14 @@ SnoreServer::SnoreServer(QSystemTrayIcon *trayIcon):
 
     }else
         QDir::temp().mkpath("SnoreNotify");
+
+    if(trayIcon!=NULL){
+        _notificationBackend=new TrayIconNotifer(this,trayIcon);
+        _notyfier.insert(_notificationBackend->name(),_notificationBackend);
+        _primaryNotificationBackends.insert(_notificationBackend->name(),_notificationBackend);
+        connect(this,SIGNAL(notify(QSharedPointer<Notification>)),_notificationBackend,SLOT(notify(QSharedPointer<Notification>)));
+        _notificationBackend->notify(QSharedPointer<Notification>(new Notification(NULL,"Welcome","Snore Notify succesfully registred "+_notificationBackend->name(),"")));
+    }
 }
 
 void SnoreServer::publicatePlugin(const QString &fileName){
@@ -52,9 +62,10 @@ void SnoreServer::publicatePlugin(const QString &fileName){
         return;
     }
 
-    SnorePlugin *sp = qobject_cast<SnorePlugin*>(plugin);
+    //    SnorePlugin *sp = qobject_cast<SnorePlugin*>(plugin);
+    SnorePlugin *sp = dynamic_cast<SnorePlugin*>(plugin);
     if(sp==NULL){
-        qDebug()<<"Error:"<<fileName<<"is not a snarl plugin" ;
+        std::cerr<<"Error:"<<fileName.toLatin1().data()<<"is not a snarl plugin"<<std::endl ;
         return;
     }
     QString pluginName(sp->name());
@@ -82,7 +93,7 @@ void SnoreServer::publicatePlugin(const QString &fileName){
                 connect(this,SIGNAL(notify(QSharedPointer<Notification>)),_notificationBackend,SLOT(notify(QSharedPointer<Notification>)));
             }
             _notificationBackend=nb;
-            _notificationBackend->notify(QSharedPointer<Notification>(new Notification(NULL,"Welcome","Snore Notify succesfully registred "+plugin->property("name").value<QString>(),"")));
+            _notificationBackend->notify(QSharedPointer<Notification>(new Notification(NULL,"Welcome","Snore Notify succesfully registred "+pluginName,"")));
 
         }else{
             _notyfier.insert(pluginName,nb);
