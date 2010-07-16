@@ -245,7 +245,7 @@ SSL connections use 'curl' command as a backend."
   :group 'twittering)
 
 (defcustom twittering-timeline-most-active-spec-strings '(":home" ":replies")
-  "See `twittering-timeline-spec-is-most-active-p'."
+  "See `twittering-timeline-spec-most-active-p'."
   :type 'list
   :group 'twittering)
 
@@ -2650,19 +2650,23 @@ Return nil if SPEC-STR is invalid as a timeline spec."
   "Return non-nil if SPEC is a user timeline spec."
   (and spec (eq (car spec) 'user)))
 
-(defun twittering-timeline-spec-is-direct-messages-p (spec)
+(defun twittering-timeline-spec-list-p (spec)
+  "Return non-nil if SPEC is a list timeline spec."
+  (and spec (eq (car spec) 'list)))
+
+(defun twittering-timeline-spec-direct-messages-p (spec)
   "Return non-nil if SPEC is a timeline spec which is related of
 direct_messages."
   (and spec
        (memq (car spec) '(direct_messages direct_messages_sent))))
 
-(defun twittering-timeline-spec-is-user-methods-p (spec)
+(defun twittering-timeline-spec-user-methods-p (spec)
   "Return non-nil if SPEC belongs to `User Methods' API."
   (and spec 
        (eq (car spec) 'list)
        (member (car (last spec)) '("following" "followers"))))
 
-(defun twittering-timeline-spec-is-most-active-p (spec)
+(defun twittering-timeline-spec-most-active-p (spec)
   "Return non-nil if SPEC is a very active timeline spec.
 
 For less active spec, do not update it every
@@ -2836,13 +2840,13 @@ Statuses are stored in ascending-order with respect to their IDs."
 	(let* ((twittering-new-tweets-spec spec)
 	       (spec-string (twittering-timeline-spec-to-string spec))
 	       (twittering-new-tweets-count 
-		(if (twittering-timeline-spec-is-user-methods-p spec)
+		(if (twittering-timeline-spec-user-methods-p spec)
 		    (twittering-count-unread-for-user-methods spec statuses)
 		  (count-if (lambda (st) (twittering-is-unread-status-p st spec))
 			    new-statuses))))
 	  (when (member spec-string twittering-cache-spec-strings)
 	    (let ((latest 
-		   (if (twittering-timeline-spec-is-user-methods-p spec)
+		   (if (twittering-timeline-spec-user-methods-p spec)
 		       (substring-no-properties 
 			(cdr (assq 'user-screen-name (car statuses))))
 		     (substring-no-properties 
@@ -2852,7 +2856,9 @@ Statuses are stored in ascending-order with respect to their IDs."
 		      ,@(remove-if (lambda (entry) (equal spec-string (car entry)))
 				   twittering-cache-lastest-statuses)))))
 	  (run-hooks 'twittering-new-tweets-hook)
-	  (if (twittering-timeline-spec-is-user-methods-p spec)
+	  (if (and (twittering-timeline-spec-user-methods-p spec)
+		   ;; Insert all when buffer is empty.
+		   (> (buffer-size) 0))
 	      (twittering-take twittering-new-tweets-count statuses)
 	    new-statuses))))))
 
@@ -2870,7 +2876,7 @@ Statuses are stored in ascending-order with respect to their IDs."
 	(let ((id (cdr (assq 'id status)))
 	      (source-id (cdr (assq 'source-id status))))
 	  (cond
-	   ((twittering-timeline-spec-is-user-methods-p spec)
+	   ((twittering-timeline-spec-user-methods-p spec)
 	    status)
 	   ((not source-id)
 	    ;; `status' is not a retweet.
@@ -2888,7 +2894,7 @@ Statuses are stored in ascending-order with respect to their IDs."
   "Are TIMELINE-DATA previous statuses?
 This is done by comparing statues in current buffer with TIMELINE-DATA."
   (let ((status (car timeline-data)))
-    (if (twittering-timeline-spec-is-user-methods-p
+    (if (twittering-timeline-spec-user-methods-p
 	 (twittering-current-timeline-spec))
 	(let* ((previous-cursor (cdr-safe (assq 'previous-cursor status)))
 	       (new-follower-p (string= previous-cursor "0")))
@@ -4208,7 +4214,7 @@ been initialized yet."
     ""))
 
 (defun twittering-edit-setup-help (&optional username spec)
-  (let* ((item (if (twittering-timeline-spec-is-direct-messages-p spec)
+  (let* ((item (if (twittering-timeline-spec-direct-messages-p spec)
 		   (format "a direct message to %s" username)
 		 "a tweet"))
 	 (help-str (format (substitute-command-keys "Keymap:
@@ -4246,7 +4252,7 @@ been initialized yet."
 	    (current-window-configuration))
       (pop-to-buffer buf)
       (twittering-edit-mode)
-      (if (twittering-timeline-spec-is-direct-messages-p spec)
+      (if (twittering-timeline-spec-direct-messages-p spec)
 	  (message "C-c C-c to send, C-c C-k to cancel")
 	(and (null init-str)
 	     twittering-current-hashtag
@@ -6303,12 +6309,12 @@ variable `twittering-status-format'."
     (re-search-forward "[^[:space:]]" nil t)))
 
 (defun twittering-update-status-from-minibuffer (&optional init-str reply-to-id username spec)
-  (and (not (twittering-timeline-spec-is-direct-messages-p spec))
+  (and (not (twittering-timeline-spec-direct-messages-p spec))
        (null init-str)
        twittering-current-hashtag
        (setq init-str (format " #%s " twittering-current-hashtag)))
   (let ((status init-str)
-	(sign-str (if (twittering-timeline-spec-is-direct-messages-p spec)
+	(sign-str (if (twittering-timeline-spec-direct-messages-p spec)
 		      nil
 		    (twittering-sign-string)))
 	(not-posted-p t)
@@ -6328,7 +6334,7 @@ variable `twittering-status-format'."
 	      (setq prompt "status: ")
 	      (when (twittering-status-not-blank-p status)
 		(cond
-		 ((twittering-timeline-spec-is-direct-messages-p spec)
+		 ((twittering-timeline-spec-direct-messages-p spec)
 		  (if username
 		      (let ((parameters `(("user" . ,username)
 					  ("text" . ,status))))
@@ -6394,11 +6400,11 @@ variable `twittering-status-format'."
 	      `((timeline-spec . ,spec)
 		(timeline-spec-string . ,spec-string)
 		(number . ,number)
-		,@(when (and id (not (twittering-timeline-spec-is-user-methods-p spec)))
+		,@(when (and id (not (twittering-timeline-spec-user-methods-p spec)))
 		    `((max_id . ,id)))
 		,@(cond
 		   (is-search-spec `((word . ,word)))
-		   ((twittering-timeline-spec-is-user-methods-p spec) `((cursor . ,cursor)))
+		   ((twittering-timeline-spec-user-methods-p spec) `((cursor . ,cursor)))
 		   ((and since_id (null id)) `((since_id . ,since_id)))
 		   (t nil))))
 	     (proc
@@ -6682,7 +6688,7 @@ managed by `twittering-mode'."
     (mapc
      (lambda (buffer)
        (let ((spec (twittering-get-timeline-spec-for-buffer buffer)))
-	 (when (or (twittering-timeline-spec-is-most-active-p spec)
+	 (when (or (twittering-timeline-spec-most-active-p spec)
 		   ;; first run
 		   (not (member (twittering-timeline-spec-to-string spec)
 				twittering-timeline-history))
@@ -6817,7 +6823,7 @@ managed by `twittering-mode'."
 	 (get-text-property (point) 'screen-name-in-text)))
     (cond (screen-name-in-text
 	   (funcall twittering-update-status-function
-		    (if (twittering-timeline-spec-is-direct-messages-p spec)
+		    (if (twittering-timeline-spec-direct-messages-p spec)
 			nil
 		      (concat "@" screen-name-in-text " "))
 		    id screen-name-in-text spec))
@@ -6825,7 +6831,7 @@ managed by `twittering-mode'."
 	   (browse-url uri))
 	  (username
 	   (funcall twittering-update-status-function
-		    (if (twittering-timeline-spec-is-direct-messages-p spec)
+		    (if (twittering-timeline-spec-direct-messages-p spec)
 			(concat "d " username " ")
 		      (concat "@" username " "))
 		    id username spec)))))
@@ -6904,7 +6910,9 @@ a list. "
 	 (listname 
 	  (unless (string= username "")
 	    (or (let ((s (twittering-current-timeline-spec-string)))
-		  (when s (y-or-n-p (format "from list: %s? " s))))
+		  (when (and s (twittering-timeline-spec-list-p
+				(twittering-current-timeline-spec)))
+		    (y-or-n-p (format "from list: %s? " s))))
 		(twittering-read-list-name twittering-username)
 		(read-string
 		 "Failed to retrieve your list, enter list name manually or retry: ")))))
@@ -7245,7 +7253,7 @@ Return nil if no statuses are rendered."
      (t
       (let ((id
 	     (cond
-	      ((twittering-timeline-spec-is-user-methods-p
+	      ((twittering-timeline-spec-user-methods-p
 		(twittering-current-timeline-spec))
 	       'previous-cursor)
 	      (t
@@ -7280,7 +7288,7 @@ The return value is nil or a positive integer greater than POS."
      (twittering-reverse-mode
       (let ((id
 	     (cond
-	      ((twittering-timeline-spec-is-user-methods-p
+	      ((twittering-timeline-spec-user-methods-p
 		(twittering-current-timeline-spec))
 	       'next-cursor)
 	      (t
