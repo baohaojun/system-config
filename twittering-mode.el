@@ -4682,8 +4682,7 @@ Z70Br83gcfxaz2TE4JaY0KNA4gGK7ycH8WUBikQtBmV1UsCGECAhX2xrD2yuCRyv
 
 	    ,@(when (string= "POST" method)
 		(let ((opt 
-                       (if (some 'twittering-is-uploading-file-p
-				 (mapcar 'cdr parameters))
+                       (if (twittering-is-uploading-file-p parameters)
                            "-F"
                          "-d")))
                   (mapcan (lambda (pair)
@@ -5114,8 +5113,7 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
 	 (url (format "%s://%s%s" scheme host path))
 	 (headers
 	  (twittering-http-application-headers-with-auth
-	   "POST" url (and (notany 'twittering-is-uploading-file-p
-				   (mapcar 'cdr parameters))
+	   "POST" url (and (not (twittering-is-uploading-file-p parameters))
 			   parameters))))
     (twittering-start-http-session
      "POST" headers host nil path parameters noninteractive sentinel)))
@@ -5572,9 +5570,15 @@ BUFFER may be a buffer or the name of an existing buffer."
 	(apply 'concat (nreverse result)))
     ""))
 
-(defun twittering-is-uploading-file-p (value)
-  "When VALUE in a post data pair \"name=VALUE\" starts with `@', it is uploading."
-  (string= (substring value 0 1) "@"))
+(defun twittering-is-uploading-file-p (parameters)
+  "Check whether there is a pair '(\"image\" . \"@...\") in PARAMETERS."
+  (some (lambda (pair)
+	  (and (string= (car pair) "image")
+	       (when (string-match "\\`@\\([^;]+\\)" (cdr pair))
+	       	 (let ((f (match-string 1 (cdr pair))))
+	       	   (or (file-exists-p f)
+	       	       (error "%s doesn't exist" f))))))
+	parameters))
 
 ;;;
 ;;; Statuses on buffer
