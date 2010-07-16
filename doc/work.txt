@@ -3466,3 +3466,307 @@ cat .repo/manifest.xml |grep name='".*"' -o|perl -npe 's,(.*),export $1; bash -c
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 (require 'weblogger)
 (setq weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog"))))
+
+****************************************************************
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+
+<head profile="http://gmpg.org/xfn/11">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>Add-on security vulnerability announcement &laquo;  Mozilla Add-ons Blog</title>
+
+<link rel="stylesheet" href="http://blog.mozilla.com/addons/wp-content/themes/default/style.css" type="text/css" media="screen" />
+<link rel="pingback" href="http://blog.mozilla.com/addons/xmlrpc.php" />
+
+<style type="text/css" media="screen">
+
+	#page { background: url("http://blog.mozilla.com/addons/wp-content/themes/default/images/kubrickbgwide.jpg") repeat-y top; border: none; }
+
+</style>
+
+
+<link rel="alternate" type="application/rss+xml" title="Mozilla Add-ons Blog &raquo; Feed" href="http://blog.mozilla.com/addons/feed/" />
+
+<link rel="alternate" type="application/rss+xml" title="Mozilla Add-ons Blog &raquo; Comments Feed" href="http://blog.mozilla.com/addons/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Mozilla Add-ons Blog &raquo; Add-on security vulnerability announcement Comments Feed" href="http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/feed/" />
+<script type='text/javascript' src='http://blog.mozilla.com/addons/wp-includes/js/comment-reply.js?ver=20090102'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://blog.mozilla.com/addons/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://blog.mozilla.com/addons/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Mozilla Add-ons Blog' href='http://blog.mozilla.com/addons' />
+<link rel='start' title='AMO &#8211; preview of coming attractions' href='http://blog.mozilla.com/addons/2007/11/06/amo-preview-of-coming-attractions/' />
+<link rel='prev' title='2 Billion Firefox Add-on Downloads!' href='http://blog.mozilla.com/addons/2010/07/01/2-billion-downloads/' />
+<link rel='next' title='Rocket Your Firefox Contest at the Mozilla Summit' href='http://blog.mozilla.com/addons/2010/07/13/rocket-your-firefox-contest-at-the-mozilla-summit/' />
+<meta name="generator" content="WordPress 2.9.2" />
+<link rel='canonical' href='http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/' />
+<script type="text/javascript">s_account="mozillablog";</script><script src="/wp-content/js/s_code.js" type="text/javascript"></script><style type='text/css'>
+<!--#headerimg h1 a, #headerimg h1 a:visited, #headerimg .description { color: #eeeeee; }
+--></style>
+<style type="text/css">#header { background: url('http://people.mozilla.org/~morgamic/kubrickheader.jpg') no-repeat bottom center; }
+#headerimg { text-indent: -99999px; }
+#headerimg h1 a { position: absolute; top: 20px; display: block; height: 210px; min-width: 760px; text-align: center; margin-right: auto; margin-left: auto; }
+#content .commentlist .bypostauthor { background-color: #D3F8C0; }</style></head>
+
+<body class="single postid-1672">
+<div id="page">
+
+
+<div id="header" role="banner">
+	<div id="headerimg">
+		<h1><a href="http://blog.mozilla.com/addons/">Mozilla Add-ons Blog</a></h1>
+		<div class="description">Official Blog of Mozilla Add-ons</div>
+	</div>
+</div>
+<hr />
+
+	<div id="content" class="widecolumn" role="main">
+
+	
+		<div class="navigation">
+			<div class="alignleft">&laquo; <a href="http://blog.mozilla.com/addons/2010/07/01/2-billion-downloads/" rel="prev">2 Billion Firefox Add-on Downloads!</a></div>
+			<div class="alignright"><a href="http://blog.mozilla.com/addons/2010/07/13/rocket-your-firefox-contest-at-the-mozilla-summit/" rel="next">Rocket Your Firefox Contest at the Mozilla Summit</a> &raquo;</div>
+		</div>
+
+		<div class="post-1672 post hentry category-developers category-general category-security tag-add-on-reviews tag-add-ons tag-developers tag-security" id="post-1672">
+			<h2>Add-on security vulnerability announcement</h2>
+
+			<div class="entry">
+				<p>One malicious add-on and another add-on with a serious security vulnerability were discovered recently on <span style="color: #000000;">the Mozilla Add-ons site</span>. Both issues have been dealt with, and the details are described below.</p>
+<h2><span style="color: #000000;">Mozilla Sniffer</span></h2>
+<h3><span style="color: #000000;"> Issue</span></h3>
+
+<p><span style="color: #000000;"> An add-on called &#8220;Mozilla Sniffer&#8221; was uploaded on June 6th to addons.mozilla.org. It was discovered that this add-on contains code that intercepts login data submitted to any website, and sends this data to a remote location. Upon discovery on July 12th, the add-on was disabled and added to the blocklist, which will prompt the add-on to be uninstalled for all current users.<br />
+</span></p>
+<h3><span style="color: #000000;">Impact to users</span></h3>
+<p><span style="color: #000000;"> If a user installs this add-on and submits a login form with a password field, all form data will be submitted to a remote location. Uninstalling the add-on stops this behavior. Anybody who has installed this add-on should change their passwords as soon as possible.<br />
+</span></p>
+<h3><span style="color: #000000;"> Status</span></h3>
+<p><span style="color: #000000;"> Mozilla Sniffer has been downloaded approximately 1,800 times since its submission and currently reports 334 active daily users. All current users should receive an uninstall notification within a day or so. The site this add-on sends data to seems to be down at the moment, so it is unknown if data is still being collected.</span></p>
+
+<p><span style="color: #000000;">Mozilla Sniffer was not developed by Mozilla, and it was not reviewed by Mozilla. The add-on was in an experimental state, and all users that installed it should have seen a warning indicating it is unreviewed. Unreviewed add-ons are scanned for known viruses, trojans, and other malware, but some types of malicious behavior can only be detected in a code review.<br />
+</span></p>
+<h3><span style="color: #000000;"> Credit</span></h3>
+<p><span style="color: #000000;"> This issue was originally reported by Johann-Peter Hartmann.<br />
+</span></p>
+<h3><span style="color: #000000;"> Note</span></h3>
+<p><span style="color: #000000;"> Having unreviewed add-ons exposed to the public, even with low visibility, has been previously identified as an attack vector for hackers. For this reason, we&#8217;re already working on implementing a new security model for addons.mozilla.org that will require all add-ons to be code-reviewed before they are discoverable in the site. <a href="https://forums.addons.mozilla.org/viewtopic.php?f=19&amp;t=1134&amp;p=3158">Here&#8217;s more information about it</a>.</span></p>
+
+<h2><span style="color: #000000;">CoolPreviews</span></h2>
+<h3><span style="color: #000000;"> Issue</span></h3>
+<p><span style="color: #000000;"> A security escalation vulnerability was discovered in version 3.0.1 of the CoolPreviews add-on. The vulnerability can be triggered using a specially crafted hyperlink. If the user hovers the cursor over this link, the preview function executes remote JavaScript code with local chrome privileges, giving the attacking script control over the host computer. Version 3.0.1 and all older versions have been disabled on addons.mozilla.org, and a fixed version was uploaded and reviewed within a day of the developer being notified.<br />
+</span></p>
+<h3><span style="color: #000000;"> Impact to users</span></h3>
+<p><span style="color: #000000;"> Proof of concept code for this vulnerability was posted on <a href="http://d.hatena.ne.jp/teramako/20100621/p1">this blog</a>, but no known malicious exploits have been reported so far. If a user has a vulnerable version installed and clicks on a malicious link that targets the add-on, the code in the malicious link will run with local privileges, potentially gaining access to the file system and allowing code download and execution.</span></p>
+
+<p><span style="color: #000000;">All users of CoolPreviews should update to the latest version as soon as possible in order to avoid exposure.<br />
+</span></p>
+<h3><span style="color: #000000;"> Status</span></h3>
+<p><span style="color: #000000;"> Currently, 177,000 users have a vulnerable version installed. This is less than 25% of the current install base and it will continue to decrease as more users are prompted to update to a new version. Vulnerable versions will also be blocklisted very soon.<br />
+</span></p>
+<h3><span style="color: #000000;"> Credit</span></h3>
+<p><span style="color: #000000;"> This issue was originally reported by Alice White.</span></p>
+
+								<p>Tags: <a href="http://blog.mozilla.com/addons/tag/add-on-reviews/" rel="tag">add-on reviews</a>, <a href="http://blog.mozilla.com/addons/tag/add-ons/" rel="tag">add-ons</a>, <a href="http://blog.mozilla.com/addons/tag/developers/" rel="tag">developers</a>, <a href="http://blog.mozilla.com/addons/tag/security/" rel="tag">security</a></p>
+				<p class="postmetadata alt">
+					<small>
+						This entry was posted
+												on Tuesday, July 13th, 2010 at 3:25 pm						and is filed under <a href="http://blog.mozilla.com/addons/category/developers/" title="View all posts in developers" rel="category tag">developers</a>,  <a href="http://blog.mozilla.com/addons/category/general/" title="View all posts in general" rel="category tag">general</a>,  <a href="http://blog.mozilla.com/addons/category/security/" title="View all posts in security" rel="category tag">security</a>.
+						You can follow any responses to this entry through the <a href='http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/feed/'>RSS 2.0</a> feed.
+
+													You can <a href="#respond">leave a response</a>, or <a href="http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/trackback/" rel="trackback">trackback</a> from your own site.
+
+						
+					</small>
+
+				</p>
+
+			</div>
+		</div>
+
+	
+<!-- You can start editing here. -->
+
+	<h3 id="comments">7 Responses to &#8220;Add-on security vulnerability announcement&#8221;</h3>
+
+	<div class="navigation">
+
+		<div class="alignleft"></div>
+		<div class="alignright"></div>
+	</div>
+
+	<ol class="commentlist">
+			<li class="comment even thread-even depth-1" id="comment-104742">
+				<div id="div-comment-104742" class="comment-body">
+				<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/c398dd0c2ca7d5281d0a83242a924e76?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G' class='avatar avatar-32 photo' height='32' width='32' />		<cite class="fn"><a href='http://blog.dreasgrech.com' rel='external nofollow' class='url'>Andreas Grech</a></cite> <span class="says">says:</span>		</div>
+
+		<div class="comment-meta commentmetadata"><a href="http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/comment-page-1/#comment-104742">July 13, 2010 at 6:12 pm</a></div>
+
+		<p>Very interesting.</p>
+<p>I have written about this same concept just a couple of days ago as well: <a href="http://blog.dreasgrech.com/2010/07/stealing-login-details-with-google.html" rel="nofollow">http://blog.dreasgrech.com/2010/07/stealing-login-details-with-google.html</a></p>
+<p>In my post, I talk about how an attacker can intercept login details with a Google Chrome extension.</p>
+
+		<div class="reply">
+		<a rel='nofollow' class='comment-reply-link' href='/addons/2010/07/13/add-on-security-announcement/?replytocom=104742#respond' onclick='return addComment.moveForm("div-comment-104742", "104742", "respond", "1672")'>Reply</a>		</div>
+
+				</div>
+		</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-104906">
+				<div id="div-comment-104906" class="comment-body">
+				<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/ec9ef635222bec854dd2784d5ba2c530?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G' class='avatar avatar-32 photo' height='32' width='32' />		<cite class="fn">dynamis</cite> <span class="says">says:</span>		</div>
+
+		<div class="comment-meta commentmetadata"><a href="http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/comment-page-1/#comment-104906">July 13, 2010 at 11:43 pm</a></div>
+
+		<p>Mozilla Sniffer should be listed in this page isn&#8217; it?<br />
+<a href="https://www.mozilla.com/en-US/blocklist/" rel="nofollow">https://www.mozilla.com/en-US/blocklist/</a></p>
+
+		<div class="reply">
+		<a rel='nofollow' class='comment-reply-link' href='/addons/2010/07/13/add-on-security-announcement/?replytocom=104906#respond' onclick='return addComment.moveForm("div-comment-104906", "104906", "respond", "1672")'>Reply</a>		</div>
+
+				</div>
+		</li>
+		<li class="comment even thread-even depth-1" id="comment-105154">
+				<div id="div-comment-105154" class="comment-body">
+				<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/c510febb9bed68b5cc4a09f076701e0f?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G' class='avatar avatar-32 photo' height='32' width='32' />		<cite class="fn">Anonymous</cite> <span class="says">says:</span>		</div>
+
+		<div class="comment-meta commentmetadata"><a href="http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/comment-page-1/#comment-105154">July 14, 2010 at 1:20 pm</a></div>
+
+		<p>We prefer our privacy. The people who installed the add-on, did this on their own risk.</p>
+
+		<div class="reply">
+		<a rel='nofollow' class='comment-reply-link' href='/addons/2010/07/13/add-on-security-announcement/?replytocom=105154#respond' onclick='return addComment.moveForm("div-comment-105154", "105154", "respond", "1672")'>Reply</a>		</div>
+				</div>
+
+		</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-105185">
+				<div id="div-comment-105185" class="comment-body">
+				<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/22230f1b7353f03927b98cb5f2fa022a?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G' class='avatar avatar-32 photo' height='32' width='32' />		<cite class="fn"><a href='http://harryjohnston.wordpress.com' rel='external nofollow' class='url'>Harry Johnston</a></cite> <span class="says">says:</span>		</div>
+
+		<div class="comment-meta commentmetadata"><a href="http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/comment-page-1/#comment-105185">July 14, 2010 at 2:46 pm</a></div>
+
+		<p>What was the advertised purpose of the Mozilla Sniffer add-on?</p>
+
+		<div class="reply">
+		<a rel='nofollow' class='comment-reply-link' href='/addons/2010/07/13/add-on-security-announcement/?replytocom=105185#respond' onclick='return addComment.moveForm("div-comment-105185", "105185", "respond", "1672")'>Reply</a>		</div>
+				</div>
+		</li>
+		<li class="comment byuser comment-author-jvillalobosmozilla-com bypostauthor even thread-even depth-1" id="comment-105354">
+
+				<div id="div-comment-105354" class="comment-body">
+				<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/6d1966118f16e4b99a6e3ad07883be33?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G' class='avatar avatar-32 photo' height='32' width='32' />		<cite class="fn"><a href='http://xulforge.com' rel='external nofollow' class='url'>Jorge</a></cite> <span class="says">says:</span>		</div>
+
+		<div class="comment-meta commentmetadata"><a href="http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/comment-page-1/#comment-105354">July 14, 2010 at 9:36 pm</a></div>
+
+		<p>@dynamis: yes, I think it will be added eventually.<br />
+
+@Harry Johnston: it was advertised as a modified version of the TamperData add-on. And it was.</p>
+
+		<div class="reply">
+		<a rel='nofollow' class='comment-reply-link' href='/addons/2010/07/13/add-on-security-announcement/?replytocom=105354#respond' onclick='return addComment.moveForm("div-comment-105354", "105354", "respond", "1672")'>Reply</a>		</div>
+				</div>
+		</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-105504">
+				<div id="div-comment-105504" class="comment-body">
+
+				<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/3c0b2551f47d9051c1f83cd6e758fcf6?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G' class='avatar avatar-32 photo' height='32' width='32' />		<cite class="fn">John</cite> <span class="says">says:</span>		</div>
+
+		<div class="comment-meta commentmetadata"><a href="http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/comment-page-1/#comment-105504">July 15, 2010 at 5:46 am</a></div>
+
+		<p>Mozilla Sniffer and CoolPreview still not listed on the block list that we see.  I hope this isn&#8217;t the list they use for blocking!</p>
+
+<p>Also, I have no problem with Mozilla knowing how many downloads there have been but find it curious to know that they can tell us how often addons are being used.  Not sure that I like that.  What else are they collecting with that?</p>
+
+		<div class="reply">
+		<a rel='nofollow' class='comment-reply-link' href='/addons/2010/07/13/add-on-security-announcement/?replytocom=105504#respond' onclick='return addComment.moveForm("div-comment-105504", "105504", "respond", "1672")'>Reply</a>		</div>
+				</div>
+		</li>
+		<li class="comment even thread-even depth-1" id="comment-105596">
+				<div id="div-comment-105596" class="comment-body">
+
+				<div class="comment-author vcard">
+		<img alt='' src='http://www.gravatar.com/avatar/52a035f968b4dc4ed27e2af7a4feb89c?s=32&amp;d=http%3A%2F%2Fwww.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G' class='avatar avatar-32 photo' height='32' width='32' />		<cite class="fn">PFudd</cite> <span class="says">says:</span>		</div>
+
+		<div class="comment-meta commentmetadata"><a href="http://blog.mozilla.com/addons/2010/07/13/add-on-security-announcement/comment-page-1/#comment-105596">July 15, 2010 at 9:56 am</a></div>
+
+		<p>I&#8217;m hoping that this will encourage the signing of reviewed code, such that the apps available through addons.mozilla.org will finally stop saying &#8220;Author not verified&#8221; for every single addon.  Although, really, it should say &#8216;Code verified/not verified&#8217;  in addition to &#8216;Author verified/not verified&#8217;.</p>
+
+		<div class="reply">
+		<a rel='nofollow' class='comment-reply-link' href='/addons/2010/07/13/add-on-security-announcement/?replytocom=105596#respond' onclick='return addComment.moveForm("div-comment-105596", "105596", "respond", "1672")'>Reply</a>		</div>
+				</div>
+		</li>
+	</ol>
+
+	<div class="navigation">
+		<div class="alignleft"></div>
+
+		<div class="alignright"></div>
+	</div>
+ 
+
+
+<div id="respond">
+
+<h3>Leave a Reply</h3>
+
+<div class="cancel-comment-reply">
+	<small><a rel="nofollow" id="cancel-comment-reply-link" href="/addons/2010/07/13/add-on-security-announcement/#respond" style="display:none;">Click here to cancel reply.</a></small>
+</div>
+
+
+<form action="http://blog.mozilla.com/addons/wp-comments-post.php" method="post" id="commentform">
+
+
+<p><input type="text" name="author" id="author" value="" size="22" tabindex="1" aria-required='true' />
+<label for="author"><small>Name (required)</small></label></p>
+
+<p><input type="text" name="email" id="email" value="" size="22" tabindex="2" aria-required='true' />
+<label for="email"><small>Mail (will not be published) (required)</small></label></p>
+
+<p><input type="text" name="url" id="url" value="" size="22" tabindex="3" />
+<label for="url"><small>Website</small></label></p>
+
+
+<!--<p><small><strong>XHTML:</strong> You can use these tags: <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></small></p>-->
+
+<p><textarea name="comment" id="comment" cols="100%" rows="10" tabindex="4"></textarea></p>
+
+<p><input name="submit" type="submit" id="submit" tabindex="5" value="Submit Comment" />
+<input type='hidden' name='comment_post_ID' value='1672' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p>
+
+</form>
+
+</div>
+
+
+	
+	</div>
+
+<hr />
+<div id="footer" role="contentinfo">
+<!-- If you'd like to support WordPress, having the "powered by" link somewhere on your blog is the best way; it's our only promotion or advertising. -->
+	<p>
+		Mozilla Add-ons Blog is proudly powered by
+		<a href="http://mu.wordpress.org/">WordPress MU</a> running on <a href="http://blog.mozilla.com/">Blog.mozilla.com</a>. <a href="http://blog.mozilla.com/wp-signup.php" title="Create a new blog">Create a new blog</a> and join in the fun!
+		<br /><a href="http://blog.mozilla.com/addons/feed/">Entries (RSS)</a>
+
+		and <a href="http://blog.mozilla.com/addons/comments/feed/">Comments (RSS)</a>.
+		<!-- 39 queries. 0.146 seconds. -->
+	</p>
+</div>
+</div>
+
+<!-- Gorgeous design by Michael Heilemann - http://binarybonsai.com/kubrick/ -->
+
+		<script type="text/javascript">var s_code=s.t();if(s_code)document.write(s_code);</script>
+            <!-- end SiteCatalyst code version: H.14 --></body>
+
+</html>
