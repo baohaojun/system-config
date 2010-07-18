@@ -495,6 +495,7 @@
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))
  '(longlines-auto-wrap nil)
+ '(makefile-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(message-dont-reply-to-names (quote (".*haojun.*")))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
