@@ -482,6 +482,7 @@
  '(dictem-server "localhost")
  '(dictionary-server "bhj2")
  '(ecomplete-database-file-coding-system (quote utf-8))
+ '(emacs-lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(font-lock-maximum-decoration 2)
  '(gdb-find-source-frame t)
  '(gdb-same-frame t)
@@ -494,6 +495,7 @@
  '(indent-tabs-mode nil)
  '(ispell-program-name "aspell")
  '(keyboard-coding-system (quote cp936))
+ '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
  '(makefile-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(message-dont-reply-to-names (quote (".*haojun.*")))
@@ -861,3 +863,31 @@ compatibility with `format-alist', and is ignored."
       (substring str 0 (+ strpos (length substr))))
     ))
 
+;; becase we are putting our database under ~/tmp/for-code-reading/, 
+;; we need to redefine this function:
+(defun cscope-search-directory-hierarchy (directory)
+  "Look for a cscope database in the directory hierarchy.
+Starting from DIRECTORY, look upwards for a cscope database."
+  (let (this-directory database-dir)
+    (catch 'done
+      (if (file-regular-p directory)
+	  (throw 'done directory))
+      (setq directory (concat (getenv "HOME") "/tmp/for-code-reading/" (cscope-canonicalize-directory directory))
+	    this-directory directory)
+      (while this-directory
+	(if (or (file-exists-p (concat this-directory cscope-database-file))
+		(file-exists-p (concat this-directory cscope-index-file)))
+	    (progn
+	      (setq database-dir (substring
+                                  this-directory 
+                                  (length
+                                   (concat (getenv "HOME") "/tmp/for-code-reading/"))))
+	      (throw 'done database-dir)
+	      ))
+	(if (string-match "^\\(/\\|[A-Za-z]:[\\/]\\)$" this-directory)
+	    (throw 'done directory))
+	(setq this-directory (file-name-as-directory
+			      (file-name-directory
+			       (directory-file-name this-directory))))
+	))
+    ))

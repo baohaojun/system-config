@@ -1,5 +1,5 @@
 #!/bin/bash
-start_dir=`pwd`
+start_dir=~/tmp/for-code-reading/`pwd`
 while test ! -d "$start_dir"/.beagle -a "$start_dir" != /
 do
     start_dir=`readlink -f "$start_dir"/..`
@@ -20,7 +20,7 @@ if test -f "$start_dir"/.beagle-filter
 then
     beagle_filter="$start_dir"/.beagle-filter
 else
-    echo 'Warning: you have no .beagle-filter! You will probablly see lots of noise' 1>&2
+    echo 'Warning: you have no .beagle-filter at $start_dir! You will probablly see lots of noise' 1>&2
     beagle_filter=cat
 fi
 

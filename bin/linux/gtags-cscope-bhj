@@ -5,10 +5,19 @@ use strict;
 use String::ShellQuote;
 
 
+chomp(my $pwd = `pwd`);
+$pwd = "$ENV{HOME}/tmp/for-code-reading/$pwd";
+while ( not -f "$pwd/GTAGS" and not "$pwd" eq "/") {
+    chomp($pwd = `dirname "$pwd"`);
+}
+
+chdir $pwd;
+
 my $lookup_type = substr($ARGV[4], 1);
 $_ = $ARGV[5];
 (my $lookup_needle, my $lookup_restrict_regexp) = split;
 
+my $start_dir = substr($pwd, length("$ENV{HOME}/tmp/for-code-reading"));
 open(my $grep, "-|", "echo $lookup_type$lookup_needle|gtags-cscope");
 print "lookup_restrict_regexp is $lookup_restrict_regexp\n" if $lookup_restrict_regexp;
 
@@ -17,7 +26,7 @@ while (<$grep>) {
   s/^>>.*//;
   my $file=$_;
   $file =~ s/ .*//;
-  if (not -e $file) {
+  if (not -e "$start_dir/$file") {
     next;
   }
   if ($lookup_restrict_regexp && not m/$lookup_restrict_regexp/i) {

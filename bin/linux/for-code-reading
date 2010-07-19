@@ -1,6 +1,7 @@
 #!/bin/bash
 
 Filter=${Filter:-~/.my-beagle-filter-android}
+SrcReadingDir=~/tmp/for-code-reading/"`pwd`"
 
 function mkcscope_files() {
     find \( '-path' '*/CVS' \
@@ -27,22 +28,26 @@ function mkcscope_files() {
         '-o' '-iname' "cscope.files" \
         -o -iname "cscope.out" \
         -o -ipath "*/.beagle" \
-        \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter | tee cscope.files
+        \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter | tee "$SrcReadingDir"/cscope.files
+}
+
+function _mk_help_dir() {
+    mkdir -p "$SrcReadingDir"
 }
 
 function mkgtags() {
-    mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@"
+    _mk_help_dir
+    mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@" "$SrcReadingDir"
 }
 
 function mkgtags-filter() {
-    gtags --gtagslabel=plugin-example -f - "$@"
+    gtags --gtagslabel=plugin-example -f - "$@" "$SrcReadingDir"
 }
 
 function mkbeagleidx() {
-    mkdir -p ~/tmp/`pwd`/.beagle
-    beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target ~/tmp/`pwd`/.beagle/ .
-    ln $Filter .beagle-filter -sf
-    ln -sf ~/tmp/`pwd`/.beagle ./
+    mkdir -p "$SrcReadingDir"/.beagle
+    beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target "$SrcReadingDir"/.beagle/ .
+    ln $Filter "$SrcReadingDir"/.beagle-filter -sf
 }
 
 function for-code-reading() {
