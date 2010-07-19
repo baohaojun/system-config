@@ -47,7 +47,7 @@ function lcd()
 {
     if test $# != 1; then
         return 1
-    elif test $1 = -; then
+    elif test "$1" = -; then
         builtin cd -; 
         return 0
     fi
@@ -75,7 +75,7 @@ function lcd()
             link=`readshortcut "$link"`
     fi
     if test -d "$link"; then
-        if test "$link" = `pwd`; then
+        if test "$link" = "`pwd`"; then
             return 1;
         fi
         builtin cd "$link"

@@ -61,7 +61,11 @@
 (require 'muse-project)
 (setq muse-project-alist
       '(("Website" ("~/Pages" :default "index")
-         (:base "html" :path "~/public_html"))))
+         (:base "html" :path "/scp:bhj@192.168.0.46:/var/www/rayzer_doc"))))
+
+(setq muse-project-alist
+      '(("rayzer_doc" ("~/rayzer_doc" :default "index")
+         (:base "html" :path "/scp:bhj@192.168.0.46:/var/www/rayzer_doc"))))
 
 (setq-default abbrev-mode t)                                                                   
 (read-abbrev-file "~/.abbrev_defs")

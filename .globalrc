@@ -45,7 +45,7 @@ plugin-example|Example of function layer plugin parser:\
 	:tc=common:extractmethod:\
 	:langmap=c\:.c,yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H.h,php\:.php.php3.phtml:\
 	:langmap=fortran\:.f.for.f77.f90.f95,pascal\:.p.pas,c#\:.cs,lisp\:.l.el.lisp.jl,scheme\:.scm:\
-	:langmap=awk\:.awk,ruby\:.rb,perl\:.pl,python\:.py,make\:.mk,vim\:.vim,sh\:.sh:\
+	:langmap=awk\:.awk,ruby\:.rb,perl\:.pl,python\:.py,make\:.mk,vim\:.vim,matlab\:.m,sh\:.sh:\
 	:gtags_parser=c\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=yacc\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=asm\:/usr/local/lib/gtags/exuberant-ctags.la:\
@@ -63,6 +63,7 @@ plugin-example|Example of function layer plugin parser:\
 	:gtags_parser=python\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=vim\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=make\:/usr/local/lib/gtags/exuberant-ctags.la:\
+	:gtags_parser=matlab\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=sh\:/usr/local/lib/gtags/exuberant-ctags.la:
 #---------------------------------------------------------------------
 # Configuration for htags(1)
