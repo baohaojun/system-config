@@ -1,8 +1,9 @@
 #!/bin/bash
 start_dir=~/tmp/for-code-reading/`pwd`
+echo Starting at $start_dir 1>&2
 while test ! -d "$start_dir"/.beagle -a "$start_dir" != /
 do
-    start_dir=`readlink -f "$start_dir"/..`
+    start_dir=${start_dir%/*}
 done
 
 if test "$start_dir" = / -o "$start_dir" = $HOME
