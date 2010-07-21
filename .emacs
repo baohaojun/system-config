@@ -808,63 +808,61 @@
 (require 'longlines)
 
 (defun longlines-encode-region (beg end &optional buffer)
-  "Note: This function Modified by Alan.
-Replace each soft newline between BEG and END with exactly one space.
+  "Replace each soft newline between BEG and END with exactly one space.
 Hard newlines are left intact.  The optional argument BUFFER exists for
 compatibility with `format-alist', and is ignored."
-  ;;(message "longlines-encode by alan!\n")
   (save-excursion
     (let ((reg-max (max beg end))
           (mod (buffer-modified-p)))
-      (goto-char (min beg end))
-      (while (search-forward "\n" reg-max t)
-        (let ((cur-char-pos (match-beginning 0)))
-          (unless (get-text-property cur-char-pos 'hard)
-            (if (or (aref (char-category-set (or 
-                                              (char-after (1+ cur-char-pos))
-                                              ? )) ?c)
-                    (aref (char-category-set (or 
-                                              (char-before cur-char-pos)
-                                              ? )) ?c))
-                (replace-match "")
-              (replace-match " "))
-            )))
-      (set-buffer-modified-p mod)
-      end)))
 
-(defun longlines-encode-string (string)
+      (goto-char (min beg end))
+
+      (while (search-forward-regexp "\n *" reg-max t)
+        (let ((cur-char-pos (match-beginning 0)))
+
+          (unless (get-text-property cur-char-pos 'hard)
+            (if (or 
+                 (aref (char-category-set
+                        (or (char-after (match-end 0))
+                            ? )) 
+                       ?c)
+                 (aref (char-category-set 
+                        (or 
+                         (char-before cur-char-pos)
+                         ? )) 
+                       ?c))
+                (replace-match "")
+              (replace-match " ")))
+
+      (set-buffer-modified-p mod)
+      end)))))
+
+(defun longlines-encode-string (str1)
   "Return a copy of STRING with each soft newline replaced by a space.
      Hard newlines are left intact."
-  (let ((str (make-string (length string) ?\0))
-        (mpos (string-match "\n" string))
+  (let* ((str2 (make-string (length str1) ?\0))
+        (mstart (string-match "\n *" str1))
+        (mend (match-end 0))
         (lastpos 0)
-        (strpos 0))
-    ;; loop when we find a newline
-    (while (and mpos (< (1+ mpos) (length string)))
-      ;; need do something if it is a soft newline
-      (when (null (get-text-property mpos 'hard str))
-        ;; copy the matched sub-string
-        (let ((substr (substring string lastpos mpos)))
-          ;; store it the str
-          (store-substring str strpos substr)
-          ;; move strpos to next
-          (setq strpos (+ strpos (length substr)))
-          ;; if we need insert a space
-          (unless (or (aref (char-category-set (aref string (1+ mpos))) ?c)
-                      (aref (char-category-set (aref string (1- mpos))) ?c))
-            (aset str strpos ? )
-            (setq strpos (1+ strpos)))
-          ))
-      ;; remember last match position
-      (setq lastpos (1+ mpos))
-      ;; find next match
-      (setq mpos (string-match "\n" string lastpos))
-      )
-    (let ((substr (substring string lastpos)))
-      ;; copy the last part of the string
-      (store-substring str strpos substr)
-      ;;(message "len:%d\n" strpos)
-      (substring str 0 (+ strpos (length substr))))
+        (str2pos 0))
+
+    (while (and mstart mend (< (1+ mend) (length str1)))
+      (when (null (get-text-property mstart 'hard str1))
+        (let ((substr (substring str1 lastpos mstart)))
+          (store-substring str2 str2pos substr)
+          (setq str2pos (+ str2pos (length substr)))
+
+          (unless (or (aref (char-category-set (aref str1 (1+ (match-end 0)))) ?c)
+                      (aref (char-category-set (aref str1 (1- mstart))) ?c))
+            (aset str2 str2pos ? )
+            (setq str2pos (1+ str2pos)))))
+
+      (setq lastpos (1+ mend))
+      (setq mstart (string-match "\n *" str1 lastpos)))
+
+    (let ((last_line (substring str1 lastpos)))
+      (store-substring str2 str2pos last_line)
+      (substring str2 0 (+ str2pos (length last_line))))
     ))
 
 ;; becase we are putting our database under ~/tmp/for-code-reading/, 
