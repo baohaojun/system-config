@@ -108,8 +108,6 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-shellscript"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sh"));
 		}
 
 		override protected void DoPullSetup ()
