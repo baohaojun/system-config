@@ -767,19 +767,7 @@
                      href=\"mystyle.css\"
                      type=\"text/css\">")))
 
-(setq weblogger-start-edit-entry-hook
-      (list
-       (lambda () 
-         (interactive)
-         (message-goto-body)
-         (shell-command-on-region
-          (point) (point-max) "unmarkdown" nil t nil nil)
-         (set-buffer-modified-p nil)
-         (auto-fill-mode 0)
-         (flet ((longlines-wrap-region (beg end) nil)) 
-           (longlines-mode 1)
-           (auto-fill-mode 1)
-           (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p)))))
+
 
 (defun markdown-nobreak-p ()
   "Returns nil if it is ok for fill-paragraph to insert a line
@@ -805,6 +793,46 @@
            (auto-fill-mode 1)
            (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p))
          )))
+
+(setq weblogger-post-struct-hook
+      (list
+       (lambda ()
+         (interactive)
+         (run-hooks 'weblogger-start-edit-entry-hook)
+         (set-buffer-modified-p t))))
+
+(setq weblogger-start-edit-entry-hook
+      (list
+       (lambda () 
+         (interactive)
+         (message-goto-body)
+         (longlines-mode 0)
+         (auto-fill-mode 0)
+         (shell-command-on-region
+          (point) (point-max) "unmarkdown" nil t nil nil)
+         (set-buffer-modified-p nil)
+         (auto-fill-mode 0)
+         (flet ((longlines-wrap-region (beg end) nil)) 
+           (longlines-mode 1)
+           (auto-fill-mode 1)
+           (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p)))))
+
+(setq weblogger-pre-setup-headers-hook
+      (list
+       (lambda ()
+         (interactive)
+         (longlines-mode 0)
+         (auto-fill-mode 0))))
+
+(setq weblogger-post-setup-headers-hook
+      (list
+       (lambda ()
+         (interactive)
+         (flet ((longlines-wrap-region (beg end) nil)) 
+           (longlines-mode 1)
+           (auto-fill-mode 1)
+           (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p))
+         (set-buffer-modified-p nil))))
 
 (require 'longlines)
 
