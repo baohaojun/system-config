@@ -82,5 +82,11 @@ sub do_dailiav() {
 }
 
 while (1) {
-  do_dailiav();
+  if (@ARGV == 1) {
+    eval "$ARGV[0]()";
+    `sleep 1`;
+  } else {
+    do_vpn_tl();
+  }
+
 }
