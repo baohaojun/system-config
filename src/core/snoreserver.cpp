@@ -93,8 +93,9 @@ void SnoreServer::publicatePlugin(SnorePlugin *plugin){
         }
         _notyfier.insert(pluginName,nb);
         connect(this,SIGNAL(notify(QSharedPointer<Notification>)),nb,SLOT(notify(QSharedPointer<Notification>)));
-        connect(this,SIGNAL(closeNotify(int)),nb,SLOT(closeNotification(int)));
+        connect(this,SIGNAL(closeNotify(QSharedPointer<Notification>)),nb,SLOT(closeNotification(QSharedPointer<Notification>)));
         connect(this,SIGNAL(applicationInitialized(Application*)),nb,SLOT(registerApplication(Application*)));
+        connect(this,SIGNAL(applicationRemoved(Application*)),nb,SLOT(unregisterApplication(Application*)));
         nb->setSnore(this);
         nb->notify(QSharedPointer<Notification>(new Notification(NULL,"SnoreNotify","","Welcome","Snore Notify succesfully registred "+pluginName,"")));
 
@@ -113,7 +114,7 @@ int SnoreServer::broadcastNotification(QSharedPointer<Notification> notification
 }
 
 void SnoreServer::closeNotification(QSharedPointer<Notification> notification){
-    emit closeNotify(notification->_id);
+    emit closeNotify(notification);
     Notification_Frontend *nf= notification->_source;
     if(nf!=0){
         nf->notificationClosed(notification);

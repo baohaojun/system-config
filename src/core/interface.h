@@ -47,8 +47,9 @@ public:
 
 public slots:
     virtual void registerApplication(class Application *application)=0;
+    virtual void unregisterApplication(class Application *application)=0;
     virtual int notify(QSharedPointer<Notification> notification)=0;
-    virtual void closeNotification(int id)=0;
+    virtual void closeNotification(QSharedPointer<Notification> notification)=0;
 
     //    virtual void update
 

@@ -64,7 +64,7 @@ signals:
     void applicationInitialized(Application*);
     void applicationRemoved(Application*);
     void notify(QSharedPointer<Notification> noti);
-    void closeNotify(int id);
+    void closeNotify(QSharedPointer<Notification>);
 
 };
 

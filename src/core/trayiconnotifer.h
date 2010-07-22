@@ -13,8 +13,9 @@ public:
 
 public slots:
     void registerApplication(Application *application);
+    void unregisterApplication(class Application *application);
     int notify(QSharedPointer<Notification> notification);
-    void closeNotification(int id);
+    void closeNotification(QSharedPointer<Notification> notification);
 
 private:
     class QSystemTrayIcon *_trayIcon;

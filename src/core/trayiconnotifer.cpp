@@ -11,12 +11,15 @@ TrayIconNotifer::TrayIconNotifer(SnoreServer *snore, QSystemTrayIcon *icon):
 void TrayIconNotifer::registerApplication(Application *application){
 
 }
+void TrayIconNotifer::unregisterApplication(Application *application){
+
+}
 
 int TrayIconNotifer::notify(QSharedPointer<Notification> notification){
     _trayIcon->showMessage(notification->title(),notification->text(),QSystemTrayIcon::NoIcon,notification->timeout()*1000);
     return _id++;
 }
 
-void TrayIconNotifer::closeNotification(int id){
+void TrayIconNotifer::closeNotification(QSharedPointer<Notification> notification){
 
 }

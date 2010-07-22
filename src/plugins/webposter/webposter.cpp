@@ -33,6 +33,10 @@ void WebPoster::registerApplication(Application *application){
 
 }
 
+void WebPoster::unregisterApplication(Application *application){
+
+}
+
 int WebPoster::notify(QSharedPointer<Notification>notification){
     QByteArray byte(Utils::notificationToSNTPString(notification).toLatin1().data());
     QUrl url("http://www.pro-zeit.ch/index.php");
@@ -49,7 +53,7 @@ int WebPoster::notify(QSharedPointer<Notification>notification){
 
 }
 
-void WebPoster::closeNotification(int id){
+void WebPoster::closeNotification(QSharedPointer<Notification> notification){
     //not supportted
 }
 

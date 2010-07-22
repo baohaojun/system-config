@@ -15,8 +15,12 @@
  ****************************************************************************************/
 
 #include "snarl_backend.h"
+
+#include "core/snoreserver.h"
+
 #include <QtCore>
 #include <QTextEdit>
+
 #include <iostream>
 #include <wchar.h>
 
@@ -28,16 +32,23 @@ Q_EXPORT_PLUGIN2(snarl_backend,Snarl_Backend)
 Snarl_Backend::Snarl_Backend(SnoreServer *snore):
 Notification_Backend("SnarlBackend",snore)
 {
-    snarlInterface=new Snarl::SnarlInterface();
+    Snarl::SnarlInterface *snarlInterface = new Snarl::SnarlInterface();
+    _applications.insert("SnoreNotify",snarlInterface);
     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersionExA();
     this->installEventFilter(this);
 
 }
 Snarl_Backend::~Snarl_Backend(){
-    delete snarlInterface;
+
+    foreach(Application *a,this->snore()->aplications().values()){
+        unregisterApplication(a);
+    }
 }
 
 void Snarl_Backend::registerApplication(Application *application){
+    Snarl::SnarlInterface *snarlInterface = new Snarl::SnarlInterface();
+    _applications.insert(application->name(),snarlInterface);
+
     wchar_t *appName = toWchar(application->name());
     snarlInterface->RegisterApp(appName,L"",L"");
     wprintf(L"Registering %s with Snarl.",appName);
@@ -51,7 +62,18 @@ void Snarl_Backend::registerApplication(Application *application){
     delete [] appName;
 }
 
+void Snarl_Backend::unregisterApplication(Application *application){
+    Snarl::SnarlInterface *snarlInterface = _applications.take(application->name());
+    if(snarlInterface == NULL)
+        return;
+    snarlInterface->UnregisterApp();
+    delete snarlInterface;
+}
+
 int Snarl_Backend::notify(QSharedPointer<Notification>notification){
+    Snarl::SnarlInterface *snarlInterface = _applications.value(notification->application());
+    if(snarlInterface == NULL)
+        return -1;
     wchar_t *title = toWchar(Notification::toPlainText(notification->title()));
     wchar_t *text =  toWchar(Notification::toPlainText(notification->text()));
     wchar_t *icon =  toWchar(notification->icon());
@@ -77,8 +99,11 @@ int Snarl_Backend::notify(QSharedPointer<Notification>notification){
     delete[] icon;
 }
 
-void Snarl_Backend::closeNotification(int nr){
-    snarlInterface->HideMessage(nr);
+void Snarl_Backend::closeNotification(QSharedPointer<Notification> notification){
+    Snarl::SnarlInterface *snarlInterface = _applications.value(notification->application());
+    if(snarlInterface == NULL)
+        return;
+    snarlInterface->HideMessage(notification->id());
 }
 
 bool Snarl_Backend::eventFilter(QObject *obj, QEvent *event){

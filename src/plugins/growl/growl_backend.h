@@ -30,12 +30,12 @@ public:
     bool isPrimaryNotificationBackend(){return true;}
 private:
     uint id;
-    class Growl *growl;
     QHash<QString,class Growl*> _applications;
 public slots:
     void registerApplication(Application *application);
+    void unregisterApplication(class Application *application);
     int notify(QSharedPointer<Notification>notification);
-    void closeNotification(int nr);
+    void closeNotification(QSharedPointer<Notification> notification);
 };
 
 

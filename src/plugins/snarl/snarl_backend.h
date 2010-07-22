@@ -34,11 +34,12 @@ protected:
 private:   
     //returns a wchart_t aray has to deleted after use
     wchar_t *toWchar(const QString &string);
-    Snarl::SnarlInterface *snarlInterface;
+    QHash<QString,Snarl::SnarlInterface*> _applications;
 public slots:
     void registerApplication(Application *application);
+    void unregisterApplication(class Application *application);
     int notify(QSharedPointer<Notification>notification);
-    void closeNotification(int nr);
+    void closeNotification(QSharedPointer<Notification> notification);
 
 };
 
