@@ -43,6 +43,7 @@ public:
     void applicationIsInitialized(Application* application);
     void removeApplication(const QString& appName);
     const ApplicationsList &aplications() const;
+
     const QHash<QString,Notification_Backend*> &primaryNotificationBackends() const;
     void setNotificationBackend(Notification_Backend *backend);
 

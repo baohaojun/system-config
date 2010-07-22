@@ -23,3 +23,7 @@ int TrayIconNotifer::notify(QSharedPointer<Notification> notification){
 void TrayIconNotifer::closeNotification(QSharedPointer<Notification> notification){
 
 }
+
+bool TrayIconNotifer::isPrimaryNotificationBackend(){
+    return false;
+}

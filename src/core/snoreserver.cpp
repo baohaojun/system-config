@@ -28,7 +28,7 @@
 QString const SnoreServer::snoreTMP=QDir::temp().path()+"/SnoreNotify/";
 
 SnoreServer::SnoreServer(QSystemTrayIcon *trayIcon):
-        _notificationBackend(0),
+        _notificationBackend(NULL),
         _trayIcon(trayIcon)
 {
     qDebug()<<"Inititalized";
@@ -89,6 +89,7 @@ void SnoreServer::publicatePlugin(SnorePlugin *plugin){
             _primaryNotificationBackends.insert(pluginName,nb);
             if(_notificationBackend==NULL){
                 _notificationBackend=nb;
+                qDebug()<<"Primary NotificationBackend is"<<nb->name();
             }else{
                 connect(this,SIGNAL(notify(QSharedPointer<Notification>)),nb,SLOT(notify(QSharedPointer<Notification>)));
             }

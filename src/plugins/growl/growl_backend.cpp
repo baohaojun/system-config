@@ -28,7 +28,7 @@ Growl_Backend::Growl_Backend(SnoreServer *snore):
 Notification_Backend("Growl",snore),
 id(0)
 {
-    const char *n[1] = { "SnoreNotification"};
+    const char *n[1] = { "Default Alert"};
     Growl *growl = new Growl(GROWL_TCP,NULL,"SnoreNotify",n,1);
     _applications.insert("SnoreNotify",growl);
 
@@ -71,8 +71,8 @@ int Growl_Backend::notify(QSharedPointer<Notification> notification){
 
     QString title=Notification::toPlainText(notification->title());
     QString text=Notification::toPlainText(notification->text());
-    qDebug()<<notification->application()<<title<<text;
-    growl->Notify(notification->application().toLatin1().data(),title.toLatin1().data(),text.toLatin1().data(),NULL,notification->icon().toLatin1().data());
+    qDebug()<<"Notify Growl:"<<notification->application()<<title;
+    growl->Notify(notification->alert().toLatin1().data(),title.toLatin1().data(),text.toLatin1().data(),"",notification->icon().toLatin1().data());
     return ++id;
 }
 

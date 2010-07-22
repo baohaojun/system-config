@@ -9,7 +9,7 @@ class TrayIconNotifer:public Notification_Backend
     Q_OBJECT
 public:
     TrayIconNotifer(class SnoreServer *snore=0,class QSystemTrayIcon *icon=0);
-    bool isPrimaryNotificationBackend(){return true;}
+    bool isPrimaryNotificationBackend();
 
 public slots:
     void registerApplication(Application *application);
