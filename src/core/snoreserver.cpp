@@ -102,7 +102,7 @@ void SnoreServer::publicatePlugin(SnorePlugin *plugin){
         connect(this,SIGNAL(applicationInitialized(Application*)),nb,SLOT(registerApplication(Application*)));
         connect(this,SIGNAL(applicationRemoved(Application*)),nb,SLOT(unregisterApplication(Application*)));
         nb->setSnore(this);
-        nb->notify(QSharedPointer<Notification>(new Notification(NULL,"SnoreNotify","","Welcome","Snore Notify succesfully registred "+pluginName,"")));
+        nb->notify(QSharedPointer<Notification>(new Notification(NULL,"SnoreNotify","Default Alert","Welcome","Snore Notify succesfully registred "+pluginName,"")));
 
     }
 }

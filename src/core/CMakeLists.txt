@@ -25,6 +25,6 @@ install(TARGETS snorecore RUNTIME DESTINATION bin
                           LIBRARY DESTINATION lib
                           ARCHIVE DESTINATION lib)
 
-install(FILES ${SnoreNotify_HDR} DESTINATION include/snore)
+install(FILES ${SnoreNotify_HDR} DESTINATION include/snore/core)
 
 

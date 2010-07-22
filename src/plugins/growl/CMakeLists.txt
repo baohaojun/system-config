@@ -8,9 +8,7 @@ if( GROWL_CPP )
     automoc4_add_library(growl_backend MODULE  ${GROWL__SRC} )
     target_link_libraries(growl_backend snorecore ${QT_QTCORE_LIBRARY} ${GROWL_CPP} )
 
-    install(TARGETS growl_backend RUNTIME DESTINATION bin/snoreplugins
-                                  LIBRARY DESTINATION lib
-                                  ARCHIVE DESTINATION lib)
+    install(TARGETS growl_backend ${PLUGIN_INSTALL_PATH})
 
 else( GROWL_CPP  )
     message( STATUS "libgrowl not found..., get it here http://github.com/mattn/gntp-send" )
