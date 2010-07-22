@@ -101,46 +101,6 @@ $(CONFIG_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(CONFIG_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(CONFIG_WRAPPER)
 
-SETTINGS_TARGET    = Settings.exe
-SETTINGS_WRAPPER   = beagle-settings
-SETTINGS_CSFLAGS   = 
-SETTINGS_CSFILES   = $(srcdir)/Settings.cs
-SETTINGS_RESOURCES = $(srcdir)/settings.glade $(top_srcdir)/beagled/beagled-autostart.desktop $(top_srcdir)/search/beagle-search-autostart.desktop
-SETTINGS_RESOURCES_BUILD = $(foreach res,$(SETTINGS_RESOURCES), $(addprefix -resource:,$(srcdir)/$(res)),$(notdir $(res)))
-SETTINGS_ASSEMBLIES = $(BEAGLE_UI_LIBS) -r:../Util/UiUtil.dll
-
-if ENABLE_AVAHI
-SETTINGS_CSFLAGS += -define:ENABLE_AVAHI
-endif
-
-if ENABLE_GOOGLEBACKENDS
-SETTINGS_CSFLAGS += -define:ENABLE_GOOGLEBACKENDS
-endif
-
-$(SETTINGS_TARGET): $(SETTINGS_CSFILES) $(SETTINGS_RESOURCES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(SETTINGS_RESOURCES_BUILD) $(CSFLAGS) $(SETTINGS_CSFLAGS) $(SETTINGS_CSFILES) $(ASSEMBLIES) $(SETTINGS_ASSEMBLIES)
-
-$(SETTINGS_WRAPPER): $(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(SETTINGS_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(SETTINGS_WRAPPER)
-
-QT_SETTINGS_TARGET = SettingsQt.exe
-QT_SETTINGS_WRAPPER = beagle-settings-qt
-QT_SETTINGS_CSFILES = $(srcdir)/SettingsQt.cs
-QT_SETTINGS_UIFILE = $(srcdir)/beagle-settings-qt.ui
-QT_SETTINGS_UI_CSFILE = $(srcdir)/beagle-settings-qt.cs
-QT_SETTINGS_ASSEMBLIES = -r:../Util/Util.dll $(QYOTO_ASSEMBLY)
-QT_SETTINGS_ICON = $(srcdir)/kerry.png
-
-$(QT_SETTINGS_UI_CSFILE): $(QT_SETTINGS_UIFILE)
-	uics $(QT_SETTINGS_UIFILE) -o $@
-
-$(QT_SETTINGS_TARGET): $(QT_SETTINGS_CSFILES) $(QT_SETTINGS_UI_CSFILE) $(LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(CSFLAGS) $(SETTINGS_CSFLAGS) $(QT_SETTINGS_CSFILES) $(QT_SETTINGS_UI_CSFILE) $(ASSEMBLIES) $(QT_SETTINGS_ASSEMBLIES)
-
-$(QT_SETTINGS_WRAPPER): $(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(QT_SETTINGS_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(QT_SETTINGS_WRAPPER)
 
 TARGETS = 				\
 	$(INFO_TARGET)			\
@@ -148,14 +108,6 @@ TARGETS = 				\
 	$(QUERY_TARGET)			\
 	$(STATIC_QUERY_TARGET)		\
 	$(CONFIG_TARGET)
-
-if ENABLE_GUI
-TARGETS += $(SETTINGS_TARGET)
-endif
-
-if ENABLE_QT
-TARGETS += $(QT_SETTINGS_TARGET)
-endif
 
 if ENABLE_WV1
 TARGETS += $(DOC_EXTRACTOR_TARGET)

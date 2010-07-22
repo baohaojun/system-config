@@ -15,6 +15,8 @@ import sys
 
 def where_pushd():
     pwd = os.getcwd()
+    if '/tmp/for-code-reading' in pwd:
+        return
     dir_history = open(os.environ['HOME'] + '/.where').read().split('\n');
     dir_history[:0] = [pwd]
     dir_history = OrderedSet(dir_history);

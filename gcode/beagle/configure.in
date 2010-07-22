@@ -641,13 +641,6 @@ beagled/Makefile
 Filters/Makefile
 tools/Makefile
 tools/beagle-settings.desktop.in
-search/icons/Makefile
-search/beagle-search.desktop.in
-search/Makefile
-ImLogViewer/Makefile
-epiphany-extension/Makefile
-firefox-extension/Makefile
-thunderbird-extension/Makefile
 doc/Makefile
 doc/api/Makefile
 RDFAdapter/Makefile

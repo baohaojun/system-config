@@ -24,27 +24,13 @@ endif
 
 if ENABLE_GUI
 SUBDIRS +=			\
-	po			\
-	search			\
-	ImLogViewer
+	po			
+
 endif
 
 SUBDIRS +=			\
-	firefox-extension	\
 	tools			\
 	conf-data
-
-if ENABLE_EPIPHANY_EXTENSION
-SUBDIRS += epiphany-extension
-endif
-
-if ENABLE_THUNDERBIRD
-SUBDIRS += thunderbird-extension
-endif
-
-if ENABLE_RDF_ADAPTER
-SUBDIRS += RDFAdapter
-endif
 
 EXTRA_DIST = 			\
 	HACKING			\

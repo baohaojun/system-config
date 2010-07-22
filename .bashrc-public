@@ -38,9 +38,31 @@ fi
 
 alias rm='rm -i'
 alias mkgtags='mkgtags -i -v'
+alias bcd=cd_beagle
 function svn-info-clip()
 {
     svn info "$1" |grep '^URL:'|sed -e 's/^URL: //; s/^https/http/'|tr -d '\r\n' | putclip
+}
+
+function cd_beagle() 
+{
+    dest=~/tmp/for-code-reading/`pwd`
+    while test ! -d "$dest"/.beagle -a "$dest" != /; do
+        dest=${dest%/*};
+    done
+    if test "$dest" = /; then
+        return -1;
+    else
+        cd_ok "$dest"
+        return 0
+    fi
+}
+
+function cd_ok()
+{
+    builtin cd "$@"
+    history -s cd "$PWD"
+    return 0
 }
 
 function lcd()
@@ -48,8 +70,11 @@ function lcd()
     if test $# != 1; then
         return 1
     elif test "$1" = -; then
-        builtin cd -; 
+        cd_ok -
         return 0
+    elif test "$1" = .beagle; then
+        cd_beagle;
+        return 0;
     fi
     
 
