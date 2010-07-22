@@ -29,6 +29,7 @@ public:
     bool isPrimaryNotificationBackend(){return false;}
 
 public slots:
+        void registerApplication(Application *application);
         int notify(QSharedPointer<Notification>notification);
         void closeNotification(int id);
 

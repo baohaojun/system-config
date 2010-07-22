@@ -32,17 +32,17 @@ public:
 public:
     SnoreServer(class QSystemTrayIcon *trayIcon=0);
     void publicatePlugin(const QString &fileName);
+    void publicatePlugin(SnorePlugin *plugin);
 
 
     int broadcastNotification(QSharedPointer<Notification> notification);
     void closeNotification(QSharedPointer<Notification> notification);
     void notificationActionInvoked(QSharedPointer<Notification> notification);
 
-    void addApplication(QSharedPointer<Application> application);
-    bool applicationListAlertIsActive(const QString &applicationName,const QString &alertName);
-    void addAlert(const QString &appName,const QString &alertName, const QString &alertTitle);
+    void addApplication(Application *application);
+    void applicationIsInitialized(Application* application);
     void removeApplication(const QString& appName);
-    const ApplicationsList &aplicationList() const;
+    const ApplicationsList &aplications() const;
     const QHash<QString,Notification_Backend*> &primaryNotificationBackends() const;
     void setNotificationBackend(Notification_Backend *backend);
 
@@ -61,7 +61,8 @@ private:
 
 
 signals:
-    void applicationListChanged();
+    void applicationInitialized(Application*);
+    void applicationRemoved(Application*);
     void notify(QSharedPointer<Notification> noti);
     void closeNotify(int id);
 

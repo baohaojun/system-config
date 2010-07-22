@@ -29,6 +29,10 @@ Notification_Backend("WebPoster",snore)
     manager=new QNetworkAccessManager(this);
 }
 
+void WebPoster::registerApplication(Application *application){
+
+}
+
 int WebPoster::notify(QSharedPointer<Notification>notification){
     QByteArray byte(Utils::notificationToSNTPString(notification).toLatin1().data());
     QUrl url("http://www.pro-zeit.ch/index.php");

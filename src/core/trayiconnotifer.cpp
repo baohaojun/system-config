@@ -8,6 +8,9 @@ TrayIconNotifer::TrayIconNotifer(SnoreServer *snore, QSystemTrayIcon *icon):
         _id(0)
 {}
 
+void TrayIconNotifer::registerApplication(Application *application){
+
+}
 
 int TrayIconNotifer::notify(QSharedPointer<Notification> notification){
     _trayIcon->showMessage(notification->title(),notification->text(),QSystemTrayIcon::NoIcon,notification->timeout()*1000);

@@ -17,6 +17,9 @@
 #ifndef GROWL_BACKEND_H
 #define GROWL_BACKEND_H
 #include "core/interface.h"
+
+
+
 class Growl_Backend:public Notification_Backend
 {
     Q_OBJECT
@@ -28,9 +31,13 @@ public:
 private:
     uint id;
     class Growl *growl;
+    QHash<QString,class Growl*> _applications;
 public slots:
+    void registerApplication(Application *application);
     int notify(QSharedPointer<Notification>notification);
     void closeNotification(int nr);
 };
+
+
 
 #endif // GROWL_BACKEND_H

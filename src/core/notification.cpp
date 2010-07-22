@@ -42,10 +42,12 @@ Notification::Notification(uint id):
         _notification(true)
 {}
 
-Notification::Notification(Notification_Frontend *source,QString title,QString text,QString icon,int timeout,uint id):
+Notification::Notification(Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id):
         _id(id),
         _timeout(timeout),
         _source(source),
+        _app(application),
+        _alert(alert),
         _title(title),
         _text(text),
         _icon(icon),

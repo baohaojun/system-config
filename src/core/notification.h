@@ -32,7 +32,7 @@ public:
     static QString toPlainText(const QString &string);
 public:    
     Notification(uint id=0);
-    Notification(class Notification_Frontend *source,QString title,QString text,QString icon,int timeout=10,uint id=0);
+    Notification(class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0);
     QString toString() const;
     bool isNotification();
     void setIsNotification(bool b);
@@ -67,10 +67,10 @@ private:
     actions _actionInvoked;
     class Notification_Frontend *_source;
     QString _app;
+    QString _alert;
     QString _title;
     QString _text;
-    QString _icon;
-    QString _alert;
+    QString _icon;    
     QVariantHash _hints;
 
     bool _notification;

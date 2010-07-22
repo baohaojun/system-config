@@ -25,17 +25,40 @@ Notification_Backend("Growl",snore),
 id(0)
 {
     const char *n[1] = { "SnoreNotification"};
-    growl=new Growl(GROWL_TCP,NULL,"SnoreNotify",n,1);
+    growl = new Growl(GROWL_TCP,NULL,"SnoreNotify",n,1);
+    _applications.insert("SnoreNotify",growl);
+
 }
 Growl_Backend::~Growl_Backend(){
     delete growl;
 }
 
+void Growl_Backend::registerApplication(Application *application){
+    QList<Alert*> aList = application->alerts().values();
+    int alertCount = application->alerts().count();
+    char **n = new char*[alertCount];
+    for (int i = 0 ; i < alertCount; ++i){
+        QString name = aList.at(i)->name();
+        n[i] = new char[name.length()];
+        n[i] = name.toLatin1().data();
+    }
+
+    _applications.insert(application->name(),new Growl(GROWL_TCP,NULL,application->name().toLatin1().data(),(const char**)n,application->alerts().count()));
+
+    for (int i = 0 ; i < alertCount; ++i){
+        delete [] n[i];
+    }
+    delete [] n;
+}
+
 int Growl_Backend::notify(QSharedPointer<Notification> notification){
+    Growl *g = _applications.value(notification->application());
+    if(g==NULL)
+        g=growl;
     QString title=Notification::toPlainText(notification->title());
     QString text=Notification::toPlainText(notification->text());
-    qDebug()<<title<<text;
-    growl->Notify("SnoreNotification",title.toLatin1().data(),text.toLatin1().data(),NULL,notification->icon().toLatin1().data());
+    qDebug()<<notification->application()<<title<<text;
+    g->Notify(notification->application().toLatin1().data(),title.toLatin1().data(),text.toLatin1().data(),NULL,notification->icon().toLatin1().data());
     return ++id;
 }
 

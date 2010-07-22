@@ -24,18 +24,21 @@ class Snarl_Backend:public Notification_Backend
     Q_OBJECT
     Q_INTERFACES(Notification_Backend)
 public:
-    Snarl_Backend(class SnoreServer *snore=0);
+            Snarl_Backend(class SnoreServer *snore=0);
     ~Snarl_Backend();
     bool isPrimaryNotificationBackend(){return true;}
 
 
 protected:
-      bool eventFilter(QObject *obj, QEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event);
 private:   
+    //returns a wchart_t aray has to deleted after use
+    wchar_t *toWchar(const QString &string);
     Snarl::SnarlInterface *snarlInterface;
 public slots:
-        int notify(QSharedPointer<Notification>notification);
-        void closeNotification(int nr);
+    void registerApplication(Application *application);
+    int notify(QSharedPointer<Notification>notification);
+    void closeNotification(int nr);
 
 };
 

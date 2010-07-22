@@ -18,34 +18,73 @@
 
 
 Application::Application(const QString &name):
-        name(name)
-{}
-
-Application::Application():
-        name("Error: Uninitialized Application")
-{}
-
-void Application::addAlert(const QString &alert,const QString &title)
+        _name(name),
+        _initialized(false)
 {
-    alerts.insert(alert,QSharedPointer<Alert>(new Alert(alert,title)));
+    _alerts.insert("",new Alert("Default Alert","Default Alert"));
 }
 
+Application::Application():
+        _name("Error: Uninitialized Application")
+{}
+
+Application::~Application(){
+    foreach(Alert *a,_alerts){
+        a->deleteLater();
+    }
+}
+
+void Application::addAlert(Alert *alert)
+{
+    _alerts.insert(alert->name(),alert);
+}
+
+const QString &Application::name() const{
+    return _name;
+}
+
+const AlertList &Application::alerts() const{
+    return _alerts;
+}
+
+bool Application::isInitialized(){
+    return _initialized;
+}
+
+void Application::setInitialized(bool b){
+    _initialized = b;
+}
 
 Alert::Alert(const QString &name,const QString &title):
-        name(name),
-        title(title),
-        active(true)
+        _name(name),
+        _title(title),
+        _active(true)
 {}
 
 Alert::Alert(const QString &name,const QString &title,bool active):
-        name(name),
-        title(title),
-        active(active)
+        _name(name),
+        _title(title),
+        _active(active)
 {}
 
 Alert::Alert():
-        active(false)
+        _active(false)
 {}
+
+
+const QString &Alert::name() const{
+    return _name;
+}
+
+const QString &Alert::title() const{
+    return _title;
+}
+
+bool Alert::isActive() const{
+    return _active;
+}
+
+#include "application.moc"
 
 
 

@@ -88,7 +88,7 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
         icon=getImagefromHint(image);
     }
 
-    QSharedPointer<Notification> noti(new Notification(this,summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id));
+    QSharedPointer<Notification> noti(new Notification(this,app_name,"",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id));
     return snore()->broadcastNotification(noti);
 }
 

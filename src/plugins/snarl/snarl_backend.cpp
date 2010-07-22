@@ -37,36 +37,38 @@ Snarl_Backend::~Snarl_Backend(){
     delete snarlInterface;
 }
 
+void Snarl_Backend::registerApplication(Application *application){
+    wchar_t *appName = toWchar(application->name());
+    snarlInterface->RegisterApp(appName,L"",L"");
+    wprintf(L"Registering %s with Snarl.",appName);
+
+    foreach(Alert *alert,application->alerts()){
+        wchar_t *alertName = toWchar(alert->name());
+        wprintf(L"Registering %s als snarl alert classSnarl.",alertName);
+        snarlInterface->RegisterAlert(appName,alertName);
+        delete [] alertName;
+    }
+    delete [] appName;
+}
+
 int Snarl_Backend::notify(QSharedPointer<Notification>notification){
-    QString qtitle(Notification::toPlainText(notification->title()));
-    QString qtext( Notification::toPlainText(notification->text()));
-    QString qicon(notification->icon());
-
-    wchar_t *title = new wchar_t[qtitle.length()+1];
-    wchar_t *text =  new wchar_t[qtext.length()+1];
-    wchar_t *icon =  new wchar_t[qicon.length()+1];
-
-    int i=0;
-    i=qtitle.toWCharArray(title);
-    title[i+1]=0;
-    i=qtext.toWCharArray(text);
-    text[i+1]=0;
-    i=qicon.toWCharArray(icon);
-    icon[i+1]=0;
+    wchar_t *title = toWchar(Notification::toPlainText(notification->title()));
+    wchar_t *text =  toWchar(Notification::toPlainText(notification->text()));
+    wchar_t *icon =  toWchar(notification->icon());
 
     if(notification->id()==0){
         wprintf(L"Calling SnarlMessage\n"
-                L"Title: %s\n"
-                L"Text:%s\n"
-                L"Timeout: %i\n"
-                L"Icon: %s\n",title,text,notification->timeout(),icon);
+                L"Title: \"%s\"\n"
+                L"Text: \"%s\"\n"
+                L"Timeout: \"%i\"\n"
+                L"Icon: \"%s\"\n",title,text,notification->timeout(),icon);
         return snarlInterface->ShowMessage(title,text,notification->timeout(), icon);
     }else{
         //update message
-        wprintf(L"Updating SnarlMessage ID: %i\n"
-                L"Title: %s\n"
-                L"Text:%s\n"
-                L"Icon: %s\n",notification->id(),title,text,icon);
+        wprintf(L"Updating SnarlMessage ID: \"%i\"\n"
+                L"Title: \"%s\"\n"
+                L"Text: \"%s\"\n"
+                L"Icon: \"%s\"\n",notification->id(),title,text,icon);
         snarlInterface->UpdateMessage(notification->id(),title, text,icon);
         return notification->id();
     }
@@ -84,5 +86,10 @@ bool Snarl_Backend::eventFilter(QObject *obj, QEvent *event){
     return true;
 }
 
+wchar_t *Snarl_Backend::toWchar(const QString &string){
+    wchar_t *wc = new wchar_t[string.length()+1];
+    wc[string.toWCharArray(wc)] = 0;
+    return wc;
+}
 
 #include "snarl_backend.moc"

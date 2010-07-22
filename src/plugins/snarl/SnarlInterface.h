@@ -216,5 +216,4 @@ namespace Snarl {
 	};
 
 }
-
 #endif // SNARL_INTERFACE

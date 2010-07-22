@@ -46,14 +46,9 @@ SnoreServer::SnoreServer(QSystemTrayIcon *trayIcon):
         QDir::temp().mkpath("SnoreNotify");
 
     if(trayIcon!=NULL){
-        _notificationBackend=new TrayIconNotifer(this,trayIcon);
-        _notyfier.insert(_notificationBackend->name(),_notificationBackend);
-        _primaryNotificationBackends.insert(_notificationBackend->name(),_notificationBackend);
-        connect(this,SIGNAL(notify(QSharedPointer<Notification>)),_notificationBackend,SLOT(notify(QSharedPointer<Notification>)));
-        _notificationBackend->notify(QSharedPointer<Notification>(new Notification(NULL,"Welcome","Snore Notify succesfully registred "+_notificationBackend->name(),"")));
+        publicatePlugin(new TrayIconNotifer(this,trayIcon));
     }
 }
-
 void SnoreServer::publicatePlugin(const QString &fileName){
     QPluginLoader loader(fileName);
     QObject *plugin = loader.instance();
@@ -61,20 +56,24 @@ void SnoreServer::publicatePlugin(const QString &fileName){
         qDebug()<<"Failed loading plugin: "<<loader.errorString();
         return;
     }
-
-    //    SnorePlugin *sp = qobject_cast<SnorePlugin*>(plugin);
     SnorePlugin *sp = dynamic_cast<SnorePlugin*>(plugin);
     if(sp==NULL){
         std::cerr<<"Error:"<<fileName.toLatin1().data()<<"is not a snarl plugin"<<std::endl ;
         return;
     }
-    QString pluginName(sp->name());
+    publicatePlugin(sp);
+}
+
+void SnoreServer::publicatePlugin(SnorePlugin *plugin){
+
+
+    QString pluginName(plugin->name());
 
     qDebug()<<"Loading plugin: "<<pluginName;
 
-    plugins.insert(pluginName,sp);
+    plugins.insert(pluginName,plugin);
     qDebug()<<pluginName<<"is a SnorePlugin";
-    sp->setSnore(this);
+    plugin->setSnore(this);
 
     Notification_Frontend *nf=qobject_cast<Notification_Frontend*>(plugin);
     if(nf){
@@ -87,20 +86,18 @@ void SnoreServer::publicatePlugin(const QString &fileName){
     if(nb){
         qDebug()<<pluginName<<"is a Notification_Backend";
         if(nb->isPrimaryNotificationBackend()){
-            if(_notificationBackend){
-                _notyfier.insert(pluginName,nb);
-                _primaryNotificationBackends.insert(pluginName,nb);
-                connect(this,SIGNAL(notify(QSharedPointer<Notification>)),_notificationBackend,SLOT(notify(QSharedPointer<Notification>)));
+            _primaryNotificationBackends.insert(pluginName,nb);
+            if(_notificationBackend==NULL){
+                _notificationBackend=nb;
             }
-            _notificationBackend=nb;
-            _notificationBackend->notify(QSharedPointer<Notification>(new Notification(NULL,"Welcome","Snore Notify succesfully registred "+pluginName,"")));
-
-        }else{
-            _notyfier.insert(pluginName,nb);
-            connect(this,SIGNAL(notify(QSharedPointer<Notification>)),nb,SLOT(notify(QSharedPointer<Notification>)));
         }
+        _notyfier.insert(pluginName,nb);
+        connect(this,SIGNAL(notify(QSharedPointer<Notification>)),nb,SLOT(notify(QSharedPointer<Notification>)));
         connect(this,SIGNAL(closeNotify(int)),nb,SLOT(closeNotification(int)));
+        connect(this,SIGNAL(applicationInitialized(Application*)),nb,SLOT(registerApplication(Application*)));
         nb->setSnore(this);
+        nb->notify(QSharedPointer<Notification>(new Notification(NULL,"SnoreNotify","","Welcome","Snore Notify succesfully registred "+pluginName,"")));
+
     }
 }
 
@@ -130,28 +127,21 @@ void SnoreServer::notificationActionInvoked(QSharedPointer<Notification> notific
     }
 }
 
-void SnoreServer::addApplication(QSharedPointer<Application> application){
-    _applications.insert(application->name,application);
-    emit applicationListChanged();
+void SnoreServer::addApplication(Application *application){
+    _applications.insert(application->name(),application);
 }
 
-
-bool SnoreServer::applicationListAlertIsActive(const QString &applicationName,const QString &alertName){
-    return _applications.contains(applicationName)&&_applications.value(applicationName)->alerts.contains(alertName)
-            &&!_applications.value(applicationName)->alerts.value(alertName)->active;
-}
-
-void SnoreServer::addAlert(const QString &appName,const QString &alertName, const QString &alertTitle){
-    _applications.value(appName)->addAlert(alertName,alertTitle);
-    emit applicationListChanged();
+void SnoreServer::applicationIsInitialized(Application *application){
+    application->setInitialized(true);
+    emit applicationInitialized(application);
 }
 
 void SnoreServer::removeApplication(const QString& appName){
-    _applications.take(appName).clear();
-    emit applicationListChanged();
+    emit applicationRemoved(_applications.value(appName));
+    _applications.take(appName)->deleteLater();
 }
 
-const ApplicationsList &SnoreServer::aplicationList() const{
+const ApplicationsList &SnoreServer::aplications() const{
     return _applications;
 }
 

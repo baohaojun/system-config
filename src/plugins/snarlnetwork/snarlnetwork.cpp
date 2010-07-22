@@ -69,7 +69,10 @@ void SnarlNetworkFrontend::handleMessages(){
     QString out("SNP/1.1/0/OK");
     QTcpSocket *client=qobject_cast<QTcpSocket*>(sender());
     QStringList incommings(QString::fromUtf8(client->readAll()).split("\r\n"));
-    foreach(QString s,incommings){
+    foreach(const QString &msg,incommings){
+        QString s=msg.trimmed();
+        if(s == "")
+            continue;
         SnarlNotification noti=parser->parse(s,client);
         notifications.insert(noti.notification->id(),noti);
         if(!noti.vailid)

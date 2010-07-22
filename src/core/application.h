@@ -19,31 +19,46 @@
 #include "snore_exports.h"
 
 #include <QHash>
-#include <QSharedPointer>
 
-typedef QHash<QString,QSharedPointer<class Application> > ApplicationsList ;
-typedef QHash<QString,QSharedPointer<class Alert> > AlertList;
+typedef QHash<QString,class Application*> ApplicationsList ;
+typedef QHash<QString,class Alert*> AlertList;
 
-class SNORE_EXPORT Application
+class SNORE_EXPORT Application:public QObject
 {
+    Q_OBJECT
 public:
     Application(const QString &name);
     Application();
-    AlertList alerts;
-    QString name;
+    ~Application();
+    void addAlert(Alert *alert);
+    const QString &name() const;
+    const AlertList &alerts() const;
+    bool isInitialized();
+    void setInitialized(bool b);
 
 
-    void addAlert(const QString &alert,const QString &title);
+private:
+    QString _name;
+    AlertList _alerts;
+    bool _initialized;
+
 };
 
-class SNORE_EXPORT Alert{
+class SNORE_EXPORT Alert:public QObject
+{
+    Q_OBJECT
 public:
     Alert(const QString &name,const QString &title);
     Alert(const QString &name,const QString &title,bool active);
     Alert();
-    QString name;
-    QString title;
-    bool active;
+
+    const QString &name() const;
+    const QString &title() const;
+    bool isActive() const;
+private:
+    QString _name;
+    QString _title;
+    bool _active;
 };
 
 
