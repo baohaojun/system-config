@@ -89,10 +89,14 @@ void SnoreServer::publicatePlugin(SnorePlugin *plugin){
             _primaryNotificationBackends.insert(pluginName,nb);
             if(_notificationBackend==NULL){
                 _notificationBackend=nb;
+            }else{
+                connect(this,SIGNAL(notify(QSharedPointer<Notification>)),nb,SLOT(notify(QSharedPointer<Notification>)));
             }
+        }else{
+            connect(this,SIGNAL(notify(QSharedPointer<Notification>)),nb,SLOT(notify(QSharedPointer<Notification>)));
         }
         _notyfier.insert(pluginName,nb);
-        connect(this,SIGNAL(notify(QSharedPointer<Notification>)),nb,SLOT(notify(QSharedPointer<Notification>)));
+
         connect(this,SIGNAL(closeNotify(QSharedPointer<Notification>)),nb,SLOT(closeNotification(QSharedPointer<Notification>)));
         connect(this,SIGNAL(applicationInitialized(Application*)),nb,SLOT(registerApplication(Application*)));
         connect(this,SIGNAL(applicationRemoved(Application*)),nb,SLOT(unregisterApplication(Application*)));
@@ -104,7 +108,6 @@ void SnoreServer::publicatePlugin(SnorePlugin *plugin){
 
 int SnoreServer::broadcastNotification(QSharedPointer<Notification> notification){
     emit notify(notification);
-    qDebug()<<"Broadcasting notification:"<<notification->toString();
     if(_notificationBackend!=NULL){
         notification->_id=_notificationBackend->notify(notification);
         std::cout<<"Notification ID: "<<QString::number(notification->_id).toLatin1().data()<<std::endl;
@@ -151,6 +154,8 @@ const QHash<QString,Notification_Backend*> &SnoreServer::primaryNotificationBack
 }
 
 void SnoreServer::setNotificationBackend(Notification_Backend *backend){
+    connect(this,SIGNAL(notify(QSharedPointer<Notification>)),_notificationBackend,SLOT(notify(QSharedPointer<Notification>)));
+    disconnect(backend,SLOT(notify(QSharedPointer<Notification>)));
     _notificationBackend=backend;
 }
 

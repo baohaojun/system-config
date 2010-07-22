@@ -51,11 +51,9 @@ void Snarl_Backend::registerApplication(Application *application){
 
     wchar_t *appName = toWchar(application->name());
     snarlInterface->RegisterApp(appName,L"",L"");
-    wprintf(L"Registering %s with Snarl.",appName);
 
     foreach(Alert *alert,application->alerts()){
         wchar_t *alertName = toWchar(alert->name());
-        wprintf(L"Registering %s als snarl alert classSnarl.",alertName);
         snarlInterface->RegisterAlert(appName,alertName);
         delete [] alertName;
     }

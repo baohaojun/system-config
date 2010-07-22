@@ -50,8 +50,6 @@ Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
 
 
 SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
-    qDebug()<<msg;
-
     SnarlNotification sNotification;
     sNotification.httpClient=false;
     sNotification.vailid=true;   

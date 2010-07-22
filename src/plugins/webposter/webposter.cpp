@@ -48,7 +48,6 @@ int WebPoster::notify(QSharedPointer<Notification>notification){
     QEventLoop loop;
     connect(reply, SIGNAL(readyRead()), &loop, SLOT(quit()));
     loop.exec();
-    std::cout<<"WbPoster"<<reply->readAll().data()<<std::endl;
     return -1;
 
 }

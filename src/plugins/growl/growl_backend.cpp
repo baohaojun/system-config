@@ -45,16 +45,13 @@ void Growl_Backend::registerApplication(Application *application){
     char **n = new char*[alertCount];
     for (int i = 0 ; i < alertCount; ++i){
         QString name = aList.at(i)->name();
-        qDebug()<<name;
         n[i] = new char[name.length()+1];
         strcpy(n[i],name.toLatin1().data());
-        qDebug()<<"Add alert to growl"<<n[i];
     }
 
     _applications.insert(application->name(),new Growl(GROWL_TCP,NULL,application->name().toLatin1().data(),(const char**)n,application->alerts().count()));
 
     for (int i = 0 ; i < alertCount; ++i){
-        qDebug()<<"Delete"<<n[i];
         delete [] n[i];
     }
     delete [] n;
