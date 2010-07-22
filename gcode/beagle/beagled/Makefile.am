@@ -172,29 +172,6 @@ DAEMON_DLL_CSFILES +=						\
 	$(srcdir)/Zeroconf.cs
 endif
 
-snowballdir = $(srcdir)/Snowball.Net
-
-SNOWBALL_CSFILES =							\
-	$(snowballdir)/Lucene.Net/Analysis/Snowball/SnowballAnalyzer.cs	\
-	$(snowballdir)/Lucene.Net/Analysis/Snowball/SnowballFilter.cs	\
-	$(snowballdir)/SF/Snowball/Ext/ItalianStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/RussianStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/NorwegianStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/EnglishStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/German2Stemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/FinnishStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/PortugueseStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/SpanishStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/FrenchStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/DanishStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/SwedishStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/DutchStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/GermanStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/LovinsStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/KpStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/PorterStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Among.cs				\
-	$(snowballdir)/SF/Snowball/SnowballProgram.cs
 
 ############################################################
 
