@@ -643,7 +643,6 @@ tools/Makefile
 tools/beagle-settings.desktop.in
 doc/Makefile
 doc/api/Makefile
-RDFAdapter/Makefile
 conf-data/Makefile
 beagle-0.0.pc
 beagle-daemon.pc
