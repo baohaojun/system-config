@@ -3770,3 +3770,5 @@ cat .repo/manifest.xml |grep name='".*"' -o|perl -npe 's,(.*),export $1; bash -c
             <!-- end SiteCatalyst code version: H.14 --></body>
 
 </html>
+
+nvflash --bl bootloader.bin --download 4 bootloader.bin --go
