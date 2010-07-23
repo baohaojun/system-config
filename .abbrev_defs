@@ -35,6 +35,7 @@
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
+    ("pk" "printk(KERN_WARNING \"hello world %s %d\\n\", __FILE__, __LINE__);" nil 2)
    ))
 
 (define-abbrev-table 'change-log-mode-abbrev-table '())
@@ -83,7 +84,7 @@
 
 (define-abbrev-table 'csharp-mode-abbrev-table
   '(
-    ("lv" "Console.WriteLine(\"" nil 0)
+    ("lv" "Console.WriteLine(\"" nil 1)
    ))
 
 (define-abbrev-table 'diff-mode-abbrev-table '())

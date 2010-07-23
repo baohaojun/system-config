@@ -3772,3 +3772,4 @@ cat .repo/manifest.xml |grep name='".*"' -o|perl -npe 's,(.*),export $1; bash -c
 </html>
 
 nvflash --bl bootloader.bin --download 4 bootloader.bin --go
+sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'
