@@ -83,6 +83,7 @@
 
 (define-abbrev-table 'csharp-mode-abbrev-table
   '(
+    ("lv" "Console.WriteLine(\"" nil 0)
    ))
 
 (define-abbrev-table 'diff-mode-abbrev-table '())
@@ -136,6 +137,8 @@
    ))
 
 (define-abbrev-table 'jython-mode-abbrev-table '())
+
+(define-abbrev-table 'ld-script-mode-abbrev-table '())
 
 (define-abbrev-table 'lisp-mode-abbrev-table '())
 

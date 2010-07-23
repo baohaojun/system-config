@@ -183,23 +183,6 @@ UTIL_ASSEMBLIES =				\
 	-r:Mono.Posix				\
 	-r:ICSharpCode.SharpZipLib
 
-if ENABLE_THUNDERBIRD
-UTIL_CSFILES +=					\
-	$(srcdir)/Thunderbird.cs
-endif
-
-if ENABLE_AVAHI
-CSFLAGS += -define:ENABLE_AVAHI
-UTIL_CSFILES += 				\
-	$(srcdir)/AvahiBrowser.cs
-UTIL_ASSEMBLIES += $(AVAHI_SHARP_LIBS)
-endif
-
-if HAS_LIBCHM 
-UTIL_CSFILES +=					\
-	$(srcdir)/ChmFile.cs
-endif
-
 if ENABLE_INOTIFY
 INOTIFY_EXE = Inotify.exe
 CSFLAGS += -define:ENABLE_INOTIFY
@@ -271,8 +254,6 @@ uninstall-local:
 
 
 COND_CS_FILES =				\
-	$(srcdir)/AvahiBrowser.cs	\
-	$(srcdir)/ChmFile.cs		\
 	$(srcdir)/SemWeb/Euler.cs	\
 	$(srcdir)/Galago.cs		\
 	$(srcdir)/Thunderbird.cs

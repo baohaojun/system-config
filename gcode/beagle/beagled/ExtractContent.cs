@@ -416,7 +416,6 @@ class ExtractContentTool {
 		{
 			TokenStream outstream;
 			outstream = base.TokenStream (fieldName, reader);
-			outstream = new NoiseEmailHostFilter (outstream, true);
 
 			return outstream;
 		}

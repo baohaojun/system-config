@@ -10,5 +10,8 @@ mkdir $tmpd/.beagle; beagle-build-index --recursive --deny-pattern .beagle --ena
 beagle-dump-index --indexdir=$tmpd/.beagle --term-frequencies
 beagle-static-query --add-static-backend $tmpd/.beagle --backend none --max-hits 100000 "$@"
 beagle-extract-content $txt_file
+cd $tmpd
+mkbeagleidx >/dev/null
+beagle-grep.sh -e "${TBNAME:-1.cs}"
 #rm $tmpd -rf
 #my-beagle "$@"

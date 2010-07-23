@@ -487,15 +487,6 @@ namespace Beagle.Daemon {
 			private bool strip_extra_property_info = false;
 			private bool tokenize_email_hostname = false;
 
-			private NoiseEmailHostFilter.LinkCallback add_link = null;
-
-			public NoiseEmailHostFilter.LinkCallback AddLink {
-				set {
-				    lock (this)
-					    add_link = value;
-				}
-			}
-
 			public BeagleAnalyzer (bool is_indexing_analyzer)
 			{
 				if (is_indexing_analyzer) {
@@ -549,21 +540,6 @@ namespace Beagle.Daemon {
 
 				TokenStream outstream;
 				outstream = base.TokenStream (fieldName, reader);
-
-				NoiseEmailHostFilter.LinkCallback add_link_callback = null;
-				lock (this) {
-					if (fieldName == "Text")
-						add_link_callback = add_link;
-				}
-
-				if (fieldName == "Text"
-				    || fieldName == "HotText"
-				    || fieldName == "PropertyText"
-				    || is_text_prop) {
-					outstream = new NoiseEmailHostFilter (outstream, tokenize_email_hostname, add_link_callback);
-					// Sharing Stemmer is not thread safe.
-					// Currently our underlying lucene indexing is not done in multiple threads.
-				}
 
 				return outstream;
 			}
