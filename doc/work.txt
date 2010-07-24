@@ -3826,3 +3826,20 @@ sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'
 [  542.497862]  r7:00000000 r6:00000000 r5:00000000 r4:00000000
 
 encrypted pdf, print to ps, use ps2ps, then use ps2pdf
+remove the following: 
+
+mark currentfile eexec
+54dc5232e897cbaaa7584b7da7c23a6c59e7451851159cdbf40334cc2600
+30036a856fabb196b3ddab71514d79106c969797b119ae4379c5ac9b7318
+33471fc81a8e4b87bac59f7003cddaebea2a741c4e80818b4b136660994b
+18a85d6b60e3c6b57cc0815fe834bc82704ac2caf0b6e228ce1b2218c8c7
+67e87aef6db14cd38dda844c855b4e9c46d510cab8fdaa521d67cbb83ee1
+af966cc79653b9aca2a5f91f908bbd3f06ecc0c940097ec77e210e6184dc
+2f5777aacfc6907d43f1edb490a2a89c9af5b90ff126c0c3c5da9ae99f59
+d47040be1c0336205bf3c6169b1b01cd78f922ec384cd0fcab955c0c20de
+000000000000000000000000000000000000000000000000000000000000
+cleartomark
+
+
+remove already deleted files
+git st -s|grep '^ D'|awk '{print $2}'|xargs git rm 
