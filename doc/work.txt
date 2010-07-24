@@ -3771,5 +3771,58 @@ cat .repo/manifest.xml |grep name='".*"' -o|perl -npe 's,(.*),export $1; bash -c
 
 </html>
 
-nvflash --bl bootloader.bin --download 4 bootloader.bin --go
+sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go
+sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go
 sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'
+
+[   68.776054] TCP cubic registered
+[   68.779460] NET: Registered protocol family 17
+[   68.783902] Bluetooth: L2CAP ver 2.14
+[   68.787535] Bluetooth: L2CAP socket layer initialized
+[   68.792568] Bluetooth: SCO (Voice Link) ver 0.6
+[   68.797061] Bluetooth: SCO socket layer initialized
+[   68.801912] hello world /home/bhj/src/android-nv-froyo/kernel/kernel/kthread.c 132
+[   68.809438] hello world /home/bhj/src/android-nv-froyo/kernel/kernel/kthread.c 134
+[   68.809449] sched next kthreadd, prev kmmcd, on /home/bhj/src/android-nv-froyo/kernel/kernel/sched.c 5471
+[   68.809482] hello world /home/bhj/src/android-nv-froyo/kernel/kernel/kthread.c 209
+[   68.816910] sched next kthreadd, prev kmmcd, on /home/bhj/src/android-nv-froyo/kernel/kernel/sched.c 5471
+[   68.843467] Bluetooth: RFCOMM TTY layer initialized
+[   68.848310] Bluetooth: RFCOMM socket layer initialized
+[   68.853418] Bluetooth: RFCOMM ver 1.11
+[   68.857138] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[   68.862416] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[   68.868372]  p1 p2 p3 p4
+[   68.870933] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/base/core.c 884
+[   68.878774] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/base/bus.c 510
+[   68.886472] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/base/core.c 884
+[   68.894296] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/base/bus.c 510
+[   68.902001] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/base/core.c 884
+[   68.909838] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/base/bus.c 510
+[   68.917547] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/base/core.c 884
+[   68.925362] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/base/bus.c 510
+[   68.935091] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/base/core.c 884
+[   68.943030] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/base/bus.c 510
+[   68.950823] hello world /home/bhj/src/android-nv-froyo/kernel/drivers/mmc/core/mmc.c 738
+[  302.379397] INFO: task cpufreq-dvfsd:242 blocked for more than 120 seconds.
+[  302.386306] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  302.394084] cpufreq-dvfsd   D c03c1d88     0   242      2 0x00000000
+[  302.400418] Backtrace:
+[  302.402876] [<c03c18bc>] (schedule+0x0/0xc3c) from [<c00ccb94>] (kthread+0x6c/0x90)
+[  302.410495] [<c00ccb28>] (kthread+0x0/0x90) from [<c00b3c8c>] (do_exit+0x0/0x6cc)
+[  302.417920]  r7:00000000 r6:00000000 r5:00000000 r4:00000000
+[  422.419383] INFO: task cpufreq-dvfsd:242 blocked for more than 120 seconds.
+[  422.426290] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  422.434068] cpufreq-dvfsd   D c03c1d88     0   242      2 0x00000000
+[  422.440400] Backtrace:
+[  422.442840] [<c03c18bc>] (schedule+0x0/0xc3c) from [<c00ccb94>] (kthread+0x6c/0x90)
+[  422.450451] [<c00ccb28>] (kthread+0x0/0x90) from [<c00b3c8c>] (do_exit+0x0/0x6cc)
+[  422.457877]  r7:00000000 r6:00000000 r5:00000000 r4:00000000
+[  542.459370] INFO: task cpufreq-dvfsd:242 blocked for more than 120 seconds.
+[  542.466277] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  542.474055] cpufreq-dvfsd   D c03c1d88     0   242      2 0x00000000
+[  542.480386] Backtrace:
+[  542.482825] [<c03c18bc>] (schedule+0x0/0xc3c) from [<c00ccb94>] (kthread+0x6c/0x90)
+[  542.490436] [<c00ccb28>] (kthread+0x0/0x90) from [<c00b3c8c>] (do_exit+0x0/0x6cc)
+[  542.497862]  r7:00000000 r6:00000000 r5:00000000 r4:00000000
+
+encrypted pdf, print to ps, use ps2ps, then use ps2pdf

@@ -10,3 +10,4 @@
 	ci = commit
 	co = checkout
 	ci = commit -a
+        dt = difftool -t meld
