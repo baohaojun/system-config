@@ -29,7 +29,7 @@ $pwd =~ s!($pwd_pat.*?)/.*!$1!;
 chdir $pwd or die "$pwd: $!";
 
 $pat = shell_quote($pat);
-print "pat is `$pat'\n";
+print "pat is: $pat.\n";
 
 system("which beagle-break.exe") == 0
   or die "Error: can not find beagle-break.exe in your $ENV{PATH}, it should be set in your .sawfishrc";

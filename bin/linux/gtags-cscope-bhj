@@ -10,7 +10,9 @@ $pwd = "$ENV{HOME}/tmp/for-code-reading/$pwd";
 while ( not -f "$pwd/GTAGS" and not "$pwd" eq "/") {
     chomp($pwd = `dirname "$pwd"`);
 }
-
+if ($pwd eq "/") {
+    chomp($pwd = `readlink -f ~/.gtags-dir`)
+}
 chdir $pwd;
 
 my $lookup_type = substr($ARGV[4], 1);

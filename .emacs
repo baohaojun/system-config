@@ -75,32 +75,24 @@
 
 (defun grep-shell-quote-argument (argument)
   "Quote ARGUMENT for passing as argument to an inferior shell."
-  (if (or (eq system-type 'ms-dos)
-          (and (eq system-type 'windows-nt) (w32-shell-dos-semantics)))
-      ;; Quote using double quotes, but escape any existing quotes in
-      ;; the argument with backslashes.
-      (let ((result "")
-	    (start 0)
-	    end)
-	(if (or (null (string-match "[^\"]" argument))
-		(< (match-end 0) (length argument)))
-	    (while (string-match "[\"]" argument start)
-	      (setq end (match-beginning 0)
-		    result (concat result (substring argument start end)
-				   "\\" (substring argument end (1+ end)))
-		    start (1+ end))))
-	(concat "\"" result (substring argument start) "\""))
     (if (equal argument "")
         "\"\""
       ;; Quote everything except POSIX filename characters.
       ;; This should be safe enough even for really weird shells.
       (let ((result "") (start 0) end)
-        (while (string-match "[^-0-9a-zA-Z_./]" argument start)
+        (while (string-match "[].*?[^$\"\\]" argument start)
           (setq end (match-beginning 0)
                 result (concat result (substring argument start end)
-                               "\\" (substring argument end (1+ end)))
+                               (let ((char (aref argument end)))
+                                 (cond
+                                  ((eq ?$ char)
+                                   "\\\\\\")
+                                  ((eq ?\\  char)
+                                   "\\\\\\")
+                                  (t
+                                   "\\"))) (substring argument end (1+ end)))
                 start (1+ end)))
-        (concat "\"" result (substring argument start) "\"")))))
+        (concat "\"" result (substring argument start) "\""))))
 
 (defun grep-default-command ()
   "Compute the default grep command for C-u M-x grep to offer."
@@ -485,7 +477,7 @@
  '(delete-old-versions t)
  '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
  '(dictem-server "localhost")
- '(dictionary-server "bhj2")
+ '(dictionary-server "localhost")
  '(ecomplete-database-file-coding-system (quote utf-8))
  '(emacs-lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(font-lock-maximum-decoration 2)
@@ -527,7 +519,6 @@
  '(transient-mark-mode t)
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
- '(w3m-bookmark-file "q:/.w3m_bookmark.html")
  '(weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("csdn" "http://blog.csdn.net/flowermonk/services/MetaBlogApi.aspx" "flowermonk" "" "814038"))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
@@ -914,7 +905,8 @@ Starting from DIRECTORY, look upwards for a cscope database."
                                   (length
                                    (concat (getenv "HOME") "/tmp/for-code-reading/"))))
 	      (throw 'done database-dir)
-	      ))
+	      )
+          (throw 'done (expand-file-name "~/.gtags-dir/")))
 	(if (string-match "^\\(/\\|[A-Za-z]:[\\/]\\)$" this-directory)
 	    (throw 'done directory))
 	(setq this-directory (file-name-as-directory
