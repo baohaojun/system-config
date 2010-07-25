@@ -3,7 +3,7 @@ set -e
 if test $# = 2; then
 LINE=$1
 FILE=$2
-elif test $# = 1;
+elif test $# = 1; then
     LINE=${1#*:}
     FILE=${1%:*}
 else
