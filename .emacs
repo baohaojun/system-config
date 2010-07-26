@@ -99,7 +99,8 @@
   (let ((tag-default (grep-shell-quote-argument (grep-tag-default)))
 	;; This a regexp to match single shell arguments.
 	;; Could someone please add comments explaining it?
-	(sh-arg-re "\\(\\(?:\"\\(?:[^\"]\\|\\\\\"\\)+\"\\|'[^']+'\\|[^\"' \t\n]\\)+\\)")
+	(sh-arg-re "\\(\\(?:\"\\(?:\\\\\"\\|[^\"]\\)+\"\\|'[^']+'\\|\\(?:\\\\.\\|[^\"' \\|><\t\n]\\)\\)+\\)")
+
 	(grep-default (or (car grep-history) grep-command)))
     ;; In the default command, find the arg that specifies the pattern.
     (when (or (string-match
