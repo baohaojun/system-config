@@ -80,7 +80,7 @@
       ;; Quote everything except POSIX filename characters.
       ;; This should be safe enough even for really weird shells.
       (let ((result "") (start 0) end)
-        (while (string-match "[].*?[^$\"\\]" argument start)
+        (while (string-match "[].*[^$\"\\]" argument start)
           (setq end (match-beginning 0)
                 result (concat result (substring argument start end)
                                (let ((char (aref argument end)))
