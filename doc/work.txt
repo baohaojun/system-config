@@ -3843,3 +3843,18 @@ cleartomark
 
 remove already deleted files
 git st -s|grep '^ D'|awk '{print $2}'|xargs git rm 
+
+perl -e '$dood="recovery:680:a00:800,boot:1080:1000:800,mbr:2080:200:800,system:2280:10000:800,cache:12280:4000:800,misc:16280:400:800,userdata:16680:1c1580:800"; @dood=split(",", $dood); for $dood (@dood) {@xx=split(":", $dood); $start = eval("0x".$xx[1]); $size=eval("0x".$xx[2]); $mul = eval("0x".$xx[3]); $name=$xx[0]; $start *= $mul; $size*=$mul; print "name: $name, size: $size, start: $start\n"}'
+
+arch/arm/mach-tegra/include/mach/pinmux-t2.h: pin function definition
+arch/arm/mach-tegra/pinmux-t2-tables.c: pin function definition
+
+NvOdmPwmConfig, 配置背光？
+
+#include <linux/types.h>
+#include <linux/module.h>
+#include <linux/proc_fs.h>
+#include <linux/kernel.h> --> printk
+
+last do_initcalls c0027b6c
+
