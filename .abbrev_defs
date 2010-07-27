@@ -35,6 +35,7 @@
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
+    ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 0)
     ("pk" "printk(KERN_WARNING \"hello world %s %d\\n\", __FILE__, __LINE__);" nil 2)
    ))
 
