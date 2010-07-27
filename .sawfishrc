@@ -43,10 +43,8 @@
    ("Super-e" "Emacs" "emacs.bhj")
    ("Super-p" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
    ("Super-a" "Acroread|Evince" "acroread")
-   ("Super-n" "Firefox|Chromium|Conkeror" "firefox")
    ("Super-w" "Nautilus" "nautilus")
    ("Super-g" "Gimp" "gimp")
-   ("Super-q" "Eva" "eva")
    ))
 
 (mapc 
@@ -99,9 +97,12 @@
 
 (require 'sawfish.wm.commands.x-cycle)
 
-(setq cycle-groups '("OpenOffice|Acroread|Evince"
-                     "Firefox|Chromium|Conkeror"
-                     "Eva|Pidgin"))
+(setq im-class "Eva|Pidgin"
+      br-class "Firefox|Chromium|Conkeror"
+      dc-class "OpenOffice|Acroread|Evince"
+      cycle-groups (list im-class
+                     br-class
+                     dc-class))
 
 (define-cycle-command-pair
   'cycle-class-bhj 'cycle-class-bhj-backwards
@@ -120,3 +121,16 @@
                           (lambda (x) (equal (window-class x) class))))
                       (window-order)))))
   #:spec "%W")
+
+(define-cycle-command-pair
+  'cycle-im-window 'cycle-im-windows-backwards
+  (lambda () (filter-windows 
+              (lambda (x) (string-match im-class (window-class x)))
+              (stacking-order))))
+
+(define-cycle-command-pair
+  'cycle-br-window 'cycle-br-window-backwards
+  (lambda () (filter-windows 
+              (lambda (x) (string-match br-class (window-class x)))
+              (stacking-order))))
+
