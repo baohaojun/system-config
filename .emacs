@@ -80,7 +80,7 @@
       ;; Quote everything except POSIX filename characters.
       ;; This should be safe enough even for really weird shells.
       (let ((result "") (start 0) end)
-        (while (string-match "[].*?[^$\"\\]" argument start)
+        (while (string-match "[].*[^$\"\\]" argument start)
           (setq end (match-beginning 0)
                 result (concat result (substring argument start end)
                                (let ((char (aref argument end)))
@@ -99,7 +99,8 @@
   (let ((tag-default (grep-shell-quote-argument (grep-tag-default)))
 	;; This a regexp to match single shell arguments.
 	;; Could someone please add comments explaining it?
-	(sh-arg-re "\\(\\(?:\"\\(?:[^\"]\\|\\\\\"\\)+\"\\|'[^']+'\\|[^\"' \t\n]\\)+\\)")
+	(sh-arg-re "\\(\\(?:\"\\(?:\\\\\"\\|[^\"]\\)+\"\\|'[^']+'\\|\\(?:\\\\.\\|[^\"' \\|><\t\n]\\)\\)+\\)")
+
 	(grep-default (or (car grep-history) grep-command)))
     ;; In the default command, find the arg that specifies the pattern.
     (when (or (string-match
