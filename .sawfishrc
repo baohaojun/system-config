@@ -42,8 +42,8 @@
  '(
    ("Super-e" "Emacs" "emacs.bhj")
    ("Super-p" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
-   ("Super-a" "Acroread\|Evince" "acroread")
-   ("Super-n" "Firefox\|Chromium\|Conkeror" "firefox")
+   ("Super-a" "Acroread|Evince" "acroread")
+   ("Super-n" "Firefox|Chromium|Conkeror" "firefox")
    ("Super-w" "Nautilus" "nautilus")
    ("Super-g" "Gimp" "gimp")
    ("Super-q" "Eva" "eva")
@@ -96,3 +96,27 @@
       nil ;; Sawfish has already started those Programs
   (setq ProgramsStarted t)
   (system "for x in ~/.sawfish/start/*; do ($x&); done&"))
+
+(require 'sawfish.wm.commands.x-cycle)
+
+(setq cycle-groups '("OpenOffice|Acroread|Evince"
+                     "Firefox|Chromium|Conkeror"
+                     "Eva|Pidgin"))
+
+(define-cycle-command-pair
+  'cycle-class-bhj 'cycle-class-bhj-backwards
+  (lambda (w)
+    (let ((class (window-class w)))
+      (delete-if-not window-in-cycle-p
+                     (filter-windows
+                      (let ((grps cycle-groups) (matched nil) grp)
+                        (while (and grps (not matched))
+                          (setq grp (car grps)
+                                grps (cdr grps))
+                          (if (string-match grp class)
+                                (setq grps nil matched t)))
+                        (if matched
+                            (lambda (x) (string-match grp (window-class x)))
+                          (lambda (x) (equal (window-class x) class))))
+                      (window-order)))))
+  #:spec "%W")

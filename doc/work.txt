@@ -3858,3 +3858,4 @@ NvOdmPwmConfig, 配置背光？
 
 last do_initcalls c0027b6c
 
+words: EDID
