@@ -46,6 +46,7 @@
    ("Super-n" "Firefox\|Chromium\|Conkeror" "firefox")
    ("Super-w" "Nautilus" "nautilus")
    ("Super-g" "Gimp" "gimp")
+   ("Super-q" "Eva" "eva")
    ))
 
 (mapc 
