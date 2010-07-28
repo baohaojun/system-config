@@ -3,13 +3,30 @@
 . /etc/bash_completion
 . ~/.bash_netcompletion
 
-function cd_bhj () {
+function cd_bhj () 
+{
     lcd "$@" && return $?
     builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@"
     (flock -x ~/.where.lock -c where&)
 }
 
-function cd_failed() {
+function my_select() 
+{
+    local y=1
+    for x in "$@"; do 
+        echo $y\) "$x" >/dev/tty;
+        ((y++))
+    done
+
+    read -p "#?" NUM
+    if [[ x"$NUM" = x || ! "$NUM" =~ ^[1-9][0-9]*$ ]] || (( "$NUM" > $# )); then
+        NUM=1
+    fi
+    echo $NUM
+}
+
+function cd_failed() 
+{
     local IFS=$'\n'
     dirs=( $(where "$@") )
     if test ${#dirs[@]} = 0; then
@@ -18,7 +35,10 @@ function cd_failed() {
     elif test ${#dirs[@]} = 1; then
         builtin cd ${dirs[0]}
     else 
-        select dir in ${dirs[@]}; do builtin cd $dir; history -s cd $dir; break; done
+        NUM=`my_select "${dirs[@]}"`
+        ((NUM--))
+        builtin cd "${dirs[$NUM]}"
+        history -s cd $dir
     fi
 }
 
