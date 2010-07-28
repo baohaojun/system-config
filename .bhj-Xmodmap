@@ -1,7 +1,12 @@
-! The "Caps Lock" key generates Control_L, and the Control modifier
+! The Alt_R is now right Windows key
 keycode 108 = Super_R
+
+! The "Caps Lock" is now Control_L
 keycode 66 = Control_L
-keycode 37 = Caps_Lock
+
+! The scroll_clok is now caps_lock
+keycode 78 = Caps_Lock
+
 keysym Super_L = Super_R
 
 clear lock
