@@ -370,16 +370,17 @@
                     (ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep))))
 
-(setq grep-history-find-file (copy-list grep-history))
+(defvar grep-find-file-history nil)
+    
 
 (global-set-key [(meta s) ?p] 
                 (lambda ()
                   (interactive)
-                  (let ((grep-history grep-history-find-file)
+                  (let ((grep-history grep-find-file-history)
                         (current-prefix-arg 4))
                     (ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep)
-                    (setq grep-history-find-file grep-history))))
+                    (setq grep-find-file-history grep-history))))
                     
 
 (global-set-key [(control meta o)]
