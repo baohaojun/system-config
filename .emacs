@@ -474,6 +474,7 @@
  '(gdb-same-frame t)
  '(gdb-show-main t)
  '(gnus-ignored-newsgroups "")
+ '(grep-command "beagle-grep.sh -e")
  '(grep-use-null-device (quote auto-detect))
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
