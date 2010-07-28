@@ -4,6 +4,7 @@ use Getopt::Long;
 use strict;
 use String::ShellQuote;
 
+#gtags-cscope-bhj -f cscope.out -d -L -7 beagle-grep.sh
 
 chomp(my $pwd = `pwd`);
 $pwd = "$ENV{HOME}/tmp/for-code-reading/$pwd";

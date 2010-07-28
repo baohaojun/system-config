@@ -231,34 +231,9 @@
 
 (put 'narrow-to-region 'disabled nil)
 
-(define-key global-map [(ctrl f1)] 'cscope-find-this-symbol)
-(define-key global-map [(ctrl f2)] 'cscope-find-global-definition)
 (define-key global-map [(meta .)] 'cscope-find-global-definition)
-(define-key global-map [(ctrl f3)] 'cscope-find-called-functions)
-(define-key global-map [(ctrl f4)] 'cscope-find-functions-calling-this-function)
-(define-key global-map [(meta s) ?p] 'cscope-find-this-file)
-(define-key global-map [(ctrl f8)] 'cscope-find-files-including-file)
-
-(define-key global-map [escape f1] 'cscope-find-this-symbol)
-(define-key global-map [escape f2] 'cscope-find-global-definition)
-(define-key global-map [escape f3] 'cscope-find-called-functions)
-(define-key global-map [escape f4] 'cscope-find-functions-calling-this-function)
-(define-key global-map [escape f8] 'cscope-find-files-including-file)
-
-(define-key global-map [(ctrl f9)] 'cscope-next-symbol)
-(define-key global-map [(ctrl f10)] 'cscope-next-file)
-(define-key global-map [(ctrl f11)] 'cscope-prev-symbol)
-(define-key global-map [(ctrl f12)] 'cscope-prev-file)
-
-(define-key global-map [escape f9] 'cscope-next-symbol)
-(define-key global-map [escape f10] 'cscope-next-file)
-(define-key global-map [escape f11] 'cscope-prev-symbol)
-(define-key global-map [escape f12] 'cscope-prev-file)
-
-(define-key global-map [(meta f9)] 'cscope-display-buffer)
-;(define-key global-map [(meta f10)] 'cscope-display-buffer-toggle) 
-(define-key global-map [(meta f10)] 'cscope-pop-mark)
 (define-key global-map [(meta *)] 'cscope-pop-mark)
+
 (eval-after-load "gtags" '(progn 
                             (define-key gtags-mode-map [(meta *)] 'cscope-pop-mark)
                             (define-key gtags-select-mode-map [(meta *)] 'cscope-pop-mark)))
@@ -394,6 +369,18 @@
                         (grep-use-null-device nil))
                     (ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep))))
+
+(setq grep-history-find-file (copy-list grep-history))
+
+(global-set-key [(meta s) ?p] 
+                (lambda ()
+                  (interactive)
+                  (let ((grep-history grep-history-find-file)
+                        (current-prefix-arg 4))
+                    (ring-insert cscope-marker-ring (point-marker))
+                    (call-interactively 'grep)
+                    (setq grep-history-find-file grep-history))))
+                    
 
 (global-set-key [(control meta o)]
                 (lambda()(interactive)
