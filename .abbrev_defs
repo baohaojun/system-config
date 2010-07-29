@@ -38,7 +38,7 @@
   '(
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
     ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 15)
-    ("sdk" "printk(KERN_WARNING \"hello world %s %s %d %s\\n\", __FILE__, __FUNCTION__, __LINE__, host->parent->bus_id);" nil 0)
+    ("sdk" "printk(KERN_WARNING \"hello world %s %s %d %s\\n\", __FILE__, __FUNCTION__, __LINE__, dev_name(host->parent));" nil 9)
    ))
 
 (define-abbrev-table 'change-log-mode-abbrev-table '())

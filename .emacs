@@ -339,33 +339,34 @@
     (insert default-directory))
   (insert "'"))
 
-(defcustom bhj-clt-branch "dbg_zch68_a22242_ringtone-hx11i"
-  "the cleartool branch to use for mkbranch")
+;; old time motorola usage
+;; (defcustom bhj-clt-branch "dbg_zch68_a22242_ringtone-hx11i"
+;;   "the cleartool branch to use for mkbranch")
 
-(defun bhj-clt-insert-branch ()
-  (interactive)
-  (insert bhj-clt-branch))
-
+;; (defun bhj-clt-insert-branch ()
+;;   (interactive)
+;;   (insert bhj-clt-branch))
+;; (define-key minibuffer-local-shell-command-map [(control meta b )] 'bhj-clt-insert-branch)
 
 (define-key minibuffer-local-map [(control meta f)] 'bhj-clt-insert-file-name)
-(define-key minibuffer-local-shell-command-map [(control meta b )] 'bhj-clt-insert-branch)
+
 (define-key minibuffer-local-shell-command-map [(control meta d )] 'bhj-insert-pwdu)
 (fset 'bhj-clt-co-mkbranch
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217761 99 108 116 101 110 118 32 126 47 98 105 110 47 99 108 116 45 99 111 45 109 107 98 114 97 110 99 104 32 134217730 32 134217734 return] 0 "%d")) arg) (call-interactively 'bhj-reread-file)))
 
 
 
-(defcustom bhj-grep-default-directory "/pscp:a22242@10.194.131.91:/"
-  "the default directory in which to run grep")
 
 (defvar last-grep-marker nil)
 
 (defvar cscope-marker-ring (make-ring 32)
   "Ring of markers which are locations from which cscope was invoked.")
 
+;; (defcustom bhj-grep-default-directory "/pscp:a22242@10.194.131.91:/"
+;;   "the default directory in which to run grep")
 (keydef "C-M-g" (progn
                   (let ((current-prefix-arg 4)
-                        (default-directory (eval bhj-grep-default-directory))
+                        ;; (default-directory (eval bhj-grep-default-directory))
                         (grep-use-null-device nil))
                     (ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep))))
@@ -456,8 +457,6 @@
  '(Info-additional-directory-list (list "~/tools/emacswin/info/" "/usr/local/share/info" "/usr/share/info"))
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
- '(bhj-clt-branch "dbg_zch68_a22242_soundmgr")
- '(bhj-grep-default-directory (quote default-directory))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(cscope-display-cscope-buffer t)
