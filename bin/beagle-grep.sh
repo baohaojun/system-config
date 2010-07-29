@@ -63,5 +63,5 @@ if (!$find_file_only) {
 
 #see [[http://thomasbhj.spaces.live.com/blog/cns!FC1463FF7BEF1F15!243.entry]] for why
 for (@beagle_files) {
-  print "$_:1: [01;31m****************![0m\n" if m/$pat_save/;
+  print "$_:1: [01;31m****************![0m\n" if m/$pat_save/ and m/$pathpat/;
 }

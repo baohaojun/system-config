@@ -30,13 +30,15 @@
     ("dcs" "c_str()" nil 10)
     ("mcs" "const CString&" nil 16)
     ("ms" "CString" nil 3)
+    ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 1)
     ("se" "SOCKET_ERROR" nil 0)
    ))
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
-    ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 0)
-    ("pk" "printk(KERN_WARNING \"hello world %s %d\\n\", __FILE__, __LINE__);" nil 2)
+    ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 15)
+    ("sdk" "printk(KERN_WARNING \"hello world %s %s %d %s\\n\", __FILE__, __FUNCTION__, __LINE__, host->parent->bus_id);" nil 0)
    ))
 
 (define-abbrev-table 'change-log-mode-abbrev-table '())
@@ -144,6 +146,8 @@
 
 (define-abbrev-table 'lisp-mode-abbrev-table '())
 
+(define-abbrev-table 'log-view-mode-abbrev-table '())
+
 (define-abbrev-table 'makefile-automake-mode-abbrev-table '())
 
 (define-abbrev-table 'makefile-bsdmake-mode-abbrev-table '())
@@ -234,6 +238,10 @@ Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yum
 (define-abbrev-table 'thumbs-mode-abbrev-table '())
 
 (define-abbrev-table 'thumbs-view-image-mode-abbrev-table '())
+
+(define-abbrev-table 'vc-bzr-log-view-mode-abbrev-table '())
+
+(define-abbrev-table 'vc-dir-mode-abbrev-table '())
 
 (define-abbrev-table 'vc-git-log-view-mode-abbrev-table '())
 

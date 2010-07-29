@@ -84,6 +84,10 @@ function lcd()
         return 0
     fi
 
+    if [[ `pwd` =~ ^$HOME/smb/ ]]; then
+        return 1
+    fi
+
     local ori=$1
     local x=0
     while ! test -e "$1" >/dev/null && ((x++ < 10)); do 

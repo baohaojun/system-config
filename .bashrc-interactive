@@ -6,7 +6,7 @@
 function cd_bhj () 
 {
     lcd "$@" && return $?
-    builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@"
+    test $# == 1 && builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@"
     (flock -x ~/.where.lock -c where&)
 }
 
@@ -38,7 +38,8 @@ function cd_failed()
         NUM=`my_select "${dirs[@]}"`
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
-        history -s cd $dir
+        history -s cd "${dirs[$NUM]}"
+        history -s cd "$@"
     fi
 }
 
