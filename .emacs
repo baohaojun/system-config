@@ -474,7 +474,7 @@
  '(gdb-show-main t)
  '(gnus-ignored-newsgroups "")
  '(grep-command "beagle-grep.sh -e")
- '(grep-use-null-device (quote auto-detect))
+ '(grep-use-null-device nil)
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
