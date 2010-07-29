@@ -3861,3 +3861,6 @@ last do_initcalls c0027b6c
 words: EDID
 
 pidgin: Tools->Privacy
+“烎、囧、槑、玊、奣、嘦、勥、巭、嫑、恏、兲、氼、忈、炛 ”       你认识几个？
+
+tegra_charger_register
