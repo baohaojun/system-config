@@ -1,4 +1,4 @@
 #!/bin/bash
 sleep 1
-import ~/x.png
+scrot -s ~/x.png
 of ~/x.png
