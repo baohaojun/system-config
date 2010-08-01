@@ -3867,3 +3867,51 @@ tegra_charger_register
 
 git st -s|grep -v '^ D'|awk '{print $2}'|xargs git dt
 
+wine1.2终于出啦.虽然只是rc1.但是已经几近完美支持中文而且QQ不会突然崩溃.
+单文件版的Q2009貌似就是TM版的.还不支持显示用户是否是用手机登录的.而且分组顺序经常混乱.如今终于可以解决啦..~~
+大家首先
+在系统管理-软件源-其他软件-添加
+代码:ppa:ubuntu-wine/ppa
+关闭后打开终端
+代码:sudo apt-get update
+代码:sudo apt-get dist-upgrade
+系统就会自动升级你的wine至1.2 rc1啦
+如果不懂可以直接参考wine的官网
+http://www.winehq.org/download/deb
+有图片教程.不过是英文的.
+之后下载winetricks.
+代码:wget http://www.kegel.com/wine/winetricks
+代码:sh winetricks msxml3 gdiplus riched20 riched30 ie6 vcrun6 vcrun2005sp1 flash
+如果在安装msxml3时abord了然后就退出了可以尝试安装msxml6
+代码:sh winetricks msxml6 gdiplus riched20 riched30 ie6 vcrun6 vcrun2005sp1 flash
+然后
+从XP或Vista、Win7里复制一个宋体（SimSun.ttf）过来，放到~/.wine/dosdevices/c:/windows/Fonts下
+字体也可以在我的网盘上下载http://u.115.com/file/t7b413aeb
+打开 Wine 的注册表（直接在终端输入 regedit 即可，界面和windows注册表一样），按照找到下面得地方修改即可，没有的项目手动建立字符串就可以了。
+打开[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\FontSubstitutes]
+      MS Shell Dlg = SimSun
+      MS Shell Dlg 2 = SimSun
+      Tahoma = SimSun （这个没有手动新建字符串）
+最后下载改版的QQ2009 sp6.可以在绿色软件联盟下载到.
+http://www.xdowns.com/soft/40/62/2006/Soft_31579.html
+下载回来后解压.先运行config进行设置.再进入bin目录打开QQ.exe即可.刚打开可能会弹出错误但不影响运行.
+还有就是不能截图.一动鼠标会自动转成离开状态.
+
+----------------------------------------------------------------------------------------------------------------------
+继续.如要用QQ2010的请下载这个版本的QQ..2010 beta(发现很多电脑都会出现不同的问题.建议大家还是用SP6.没多大区别的.)
+http://www.xdowns.com/soft/40/62/2006/Soft_33294.html
+下载完解压.直接安装..
+安装完打开QQ.你会发现按上密码的时候就会崩溃.但是我们可以用密码前面的虚拟键盘输入.输入完后保存密码.自动登录就OK啦..
+QQ2010同样需要在regedit里面改字体.
+不过界面没有QQ2009支持得那么好.会有黑影...同样不能截图.也会自动转成离开状态.
+_____________________________________________________________________________________________________________________________
+
+注意啦......wine 出rc2了...使用
+代码:sudo apt-get update
+代码:sudo apt-get dist-upgrade
+升级wine 到rc2版本.
+然后使用QQ2009SP6就可以看到自定义图片和截图了...欢迎大家下载~~~~
+有什么问题大家就在这里讨论吧.
+
+insmod /data/dhd.ko "firmware_path=/data/sdio-cdc-g-11n-mfgtest-seqcmds.bin nvram_path=/data/nvram.txt"
+ls /data/sdio-cdc-g-11n-mfgtest-seqcmds.bin
