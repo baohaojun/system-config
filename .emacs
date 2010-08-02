@@ -372,7 +372,18 @@
                     (call-interactively 'grep))))
 
 (defvar grep-find-file-history nil)
+
+(defvar grep-rgrep-history nil)
     
+
+(global-set-key [(meta s) ?r] 
+                (lambda ()
+                  (interactive)
+                  (let ((grep-history grep-rgrep-history)
+                        (current-prefix-arg 4))
+                    (ring-insert cscope-marker-ring (point-marker))
+                    (call-interactively 'grep)
+                    (setq grep-rgrep-history grep-history))))
 
 (global-set-key [(meta s) ?p] 
                 (lambda ()
