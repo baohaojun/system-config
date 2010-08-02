@@ -5436,3 +5436,6 @@ ommands:
 MS Shell Dlg = wenquanyi
 MS Shell Dlg 2 = wenquanyi
 Tahoma = wenquanyi （这个没有手动新建字符串）
+make LINUXDIR=/home/bhj/src/android-nv-froyo/out/target/product/harmony/obj/KERNEL LINUXVER=2.6.32 CROSS_COMPILE=/home/bhj/src/android-nv-froyo/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/arm-eabi- ARCH=arm dhd-cdc-sdmmc-gpl-debug; adb shell mount -o remount rw /system; adb push dhd-cdc-sdmmc-gpl-debug-2.6.32/dhd.ko /system/lib/hw/wlan/
+
+adb shell svc power stayon true; adb shell wlarm_android up

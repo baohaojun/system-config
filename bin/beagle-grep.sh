@@ -6,6 +6,7 @@ use String::ShellQuote;
 
 my $pat = '';
 my $pathpat = '.';
+my $pathdeny = '^$';
 chomp(my $pwd =qx/pwd/);
 my $pwd_pat='no such componet';
 
@@ -15,6 +16,7 @@ my $find_file_only = 0;
 GetOptions(
            "e=s" => \$pat,
            "p=s" => \$pathpat,
+           "v=s" => \$pathdeny,
            "d=s" => \$pwd_pat,
            "i!" => \$ignore_case,
            "f!" => \$find_file_only,
@@ -56,6 +58,7 @@ if (!$find_file_only) {
 
   for (@beagle_files) {
     next unless m/$pathpat/i;
+    next if m/$pathdeny/i;
     print $grep "$_\n";
   }
   close $grep;

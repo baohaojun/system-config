@@ -37,14 +37,14 @@ function ainstall() {
             adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n $main_activity
         fi
     else
-        exe=`grep LOCAL_MODULE $Android_mk|perl -npe 's/.*=//g; s/\s*//g;'`
+        exe=`grep 'LOCAL_MODULE\b' $Android_mk|perl -npe 's/.*=//g; s/\s*//g;'`
         File=`lookup_file out/target/product/$target_product/symbols/system/bin/$exe`
         if test ! -f "$File"; then
             echo 'Error: exe file is empty'
             exit -1
         fi
-        adb push $File /sdcard
-        adb shell chmod 777 /sdcard/`basename $File`
+        adb push $File /data
+        adb shell chmod 777 /data/`basename $File`
     fi
 }
 

@@ -1,0 +1,8 @@
+#!/usr/bin/env perl
+
+$dest = pop( @ARGV);
+for (@ARGV) {
+  chomp($file=qx/lookup_file $_/);
+  
+  print "adb push $file $dest\n";
+}
