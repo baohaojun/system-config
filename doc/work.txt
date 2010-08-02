@@ -5432,3 +5432,7 @@ ommands:
   stkstart <addr> = request STK negotiation with <addr>
   terminate = terminate wpa_supplicant
   quit = exit wpa_cli
+6.注册表，打开[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\FontSubstitutes]
+MS Shell Dlg = wenquanyi
+MS Shell Dlg 2 = wenquanyi
+Tahoma = wenquanyi （这个没有手动新建字符串）
