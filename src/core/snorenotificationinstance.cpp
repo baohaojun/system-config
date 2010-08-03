@@ -14,36 +14,43 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#ifndef SNARL_BACKEND_H
-#define SNARL_BACKEND_H
-#include "core/interface.h"
-#include "SnarlInterface.h"
+#include "snorenotificationinstance.h"
 
-class Snarl_Backend:public Notification_Backend
+#include <QDebug>
+
+SnoreNotificationInstance::SnoreNotificationInstance()
 {
-    Q_OBJECT
-    Q_INTERFACES(Notification_Backend)
-public:
-    Snarl_Backend(class SnoreServer *snore=0);
-    ~Snarl_Backend();
-    bool isPrimaryNotificationBackend(){return true;}
+}
+
+SnoreNotificationInstance::SnoreNotificationInstance(const QString &appname, SnoreServer *parent):
+        _appName(appname),
+        _app(new Application(appname)),
+        _snore(parent)
+{
+    setParent(parent);
+}
+
+SnoreNotificationInstance::~SnoreNotificationInstance(){
+    unregisterWithBackends();
+}
 
 
-protected:
-    bool eventFilter(QObject *obj, QEvent *event);
-private:   
-    //returns a wchart_t aray has to deleted after use
-    wchar_t *toWchar(const QString &string);
-    QHash<QString,Snarl::SnarlInterface*> _applications;
-    Snarl::SnarlInterface* _defautSnarlinetrface;
-public slots:
-    void registerApplication(Application *application);
-    void unregisterApplication(class Application *application);
-    int notify(QSharedPointer<Notification>notification);
-    void closeNotification(QSharedPointer<Notification> notification);
+void SnoreNotificationInstance::addAlert(const QString &name, const QString &title){
+    _app->addAlert(new Alert(name,title));
 
-};
+}
 
+void SnoreNotificationInstance::registerWithBackends(){
+    _snore->addApplication(_app);
+    _snore->applicationIsInitialized(_app);
 
+}
 
-#endif // SNARL_BACKEND_H
+void SnoreNotificationInstance::unregisterWithBackends(){
+    _snore->removeApplication(_appName);
+}
+
+int SnoreNotificationInstance::notify(const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout){
+    qDebug()<<"Broadcasting"<<title;
+    return _snore->broadcastNotification(QSharedPointer<Notification>(new Notification(NULL,_appName,alert,title,text,icon,timeout)));
+}

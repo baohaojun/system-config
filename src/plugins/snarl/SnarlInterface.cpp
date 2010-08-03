@@ -1,4 +1,4 @@
-// About:
+﻿// About:
 //   Snarl C++ interface implementation
 //   To understand what the different functions do and what they return, please
 //   have a look at the API on http://www.fullphat.net/dev/api.htm.
@@ -17,7 +17,7 @@
 //
 // 
 // Authors:
-//   Written and maintained by Toke Noer N�ttrup
+//   Written and maintained by Toke Noer Nøttrup
 //   Original C++ version by "Whitman"
 //
 // License etc. :
@@ -30,6 +30,8 @@
 //-----------------------------------------------------------------------------
 
 // History
+//  2010/08/02 : Removed some dependencies on safe string functions
+//             : Added uckly casts of HWND to please MinGW64 (since Snarl is 32bit anyway, shouldn't matter.)
 //  2008/12/31 : Implemented V39 API
 //             : Moved SnarlInterface into new Snarl namespace and moved enums etc. out of class
 //             : Added WCHAR overloads for all functions
@@ -52,6 +54,7 @@
 //  2007/03/04 : Added - snGetAppPath, snGetIconsPath, snGetVersionEx, 
 //                       snSetTimeout, uSendEx
 
+#define _CRT_SECURE_NO_WARNINGS
 
 #include "SnarlInterface.h"
 
@@ -88,12 +91,12 @@ LONG32 SnarlInterface::ShowMessage(LPCSTR szTitle, LPCSTR szText, LONG32 timeout
 	ZeroMemory((void*)&ss, sizeof(ss));
 
 	ss.Cmd = SNARL_SHOW;
-	StringCbCopyA((LPSTR)&ss.Title, SNARL_STRING_LENGTH, szTitle);
-	StringCbCopyA((LPSTR)&ss.Text,  SNARL_STRING_LENGTH, szText);
-	StringCbCopyA((LPSTR)&ss.Icon,  SNARL_STRING_LENGTH, szIconPath);
+	strncpy((LPSTR)&ss.Title, szTitle, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ss.Text, szText, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ss.Icon, szIconPath, SNARL_STRING_LENGTH);
 	ss.Timeout = timeout;
 
-	ss.LngData2 = reinterpret_cast<LONG32>(hWndReply);
+	ss.LngData2 = static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(hWndReply));
 	ss.Id = static_cast<LONG32>(uReplyMsg);
 
 	m_nLastMessageId = Send(ss);
@@ -132,14 +135,14 @@ LONG32 SnarlInterface::ShowMessageEx(LPCSTR szClass, LPCSTR szTitle, LPCSTR szTe
 
 	ssex.Cmd = SNARL_EX_SHOW;
 	ssex.Timeout = timeout;
-	ssex.LngData2 = reinterpret_cast<LONG32>(hWndReply);
+	ssex.LngData2 = static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(hWndReply));
 	ssex.Id = static_cast<LONG32>(uReplyMsg);
 
-	StringCbCopyA((LPSTR)&ssex.Class, SNARL_STRING_LENGTH, szClass);
-	StringCbCopyA((LPSTR)&ssex.Title, SNARL_STRING_LENGTH, szTitle);
-	StringCbCopyA((LPSTR)&ssex.Text,  SNARL_STRING_LENGTH, szText);
-	StringCbCopyA((LPSTR)&ssex.Icon,  SNARL_STRING_LENGTH, szIconPath);
-	StringCbCopyA((LPSTR)&ssex.Extra, SNARL_STRING_LENGTH, szSoundFile);
+	strncpy((LPSTR)&ssex.Class, szClass, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ssex.Title, szTitle, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ssex.Text, szText, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ssex.Icon, szIconPath, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ssex.Extra, szSoundFile, SNARL_STRING_LENGTH);
 
 	m_nLastMessageId = Send(ssex);
 	return m_nLastMessageId;
@@ -229,10 +232,10 @@ M_RESULT SnarlInterface::UpdateMessage(LONG32 id, LPCSTR szTitle, LPCSTR szText,
 	ss.Cmd = SNARL_UPDATE;
 	ss.Id = id;
 	
-	StringCbCopyA((LPSTR)&ss.Title, SNARL_STRING_LENGTH, szTitle);
-	StringCbCopyA((LPSTR)&ss.Text,  SNARL_STRING_LENGTH, szText);
-	StringCbCopyA((LPSTR)&ss.Icon,  SNARL_STRING_LENGTH, szIconPath);
-
+	strncpy((LPSTR)&ss.Title, szTitle, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ss.Text, szText, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ss.Icon, szIconPath, SNARL_STRING_LENGTH);
+		
 	return static_cast<M_RESULT>(Send(ss));
 }
 
@@ -296,10 +299,10 @@ M_RESULT SnarlInterface::RegisterConfig2(HWND hWnd, LPCSTR szAppName, LONG32 rep
 	m_hwndFrom = hWnd;
 
 	ss.Cmd = SNARL_REGISTER_CONFIG_WINDOW_2;
-	ss.LngData2 = reinterpret_cast<LONG32>(hWnd);
+	ss.LngData2 = static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(hWnd));
 	ss.Id = replyMsg;
-	StringCbCopyA((LPSTR)&ss.Title, SNARL_STRING_LENGTH, szAppName);
-	StringCbCopyA((LPSTR)&ss.Icon, SNARL_STRING_LENGTH, szIcon);
+	strncpy((LPSTR)&ss.Title, szAppName, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ss.Icon, szIcon, SNARL_STRING_LENGTH);
 
 	return static_cast<M_RESULT>(Send(ss));
 }
@@ -331,7 +334,7 @@ M_RESULT SnarlInterface::RevokeConfig(HWND hWnd)
 	m_hwndFrom = NULL;
 
 	ss.Cmd = SNARL_REVOKE_CONFIG_WINDOW;
-	ss.LngData2 = reinterpret_cast<LONG32>(hWnd);
+	ss.LngData2 = static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(hWnd));
 
 	return static_cast<M_RESULT>(Send(ss));
 }
@@ -405,8 +408,8 @@ M_RESULT SnarlInterface::RegisterAlert(LPCSTR szAppName, LPCSTR szClass)
 {
 	SNARLSTRUCT ss;
 	ss.Cmd = SNARL_REGISTER_ALERT;
-	StringCbCopyA((LPSTR)&ss.Title, SNARL_STRING_LENGTH, szAppName);
-	StringCbCopyA((LPSTR)&ss.Text, SNARL_STRING_LENGTH, szClass);
+	strncpy((LPSTR)&ss.Title, szAppName, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ss.Text, szClass, SNARL_STRING_LENGTH);
 
 	return static_cast<M_RESULT>(Send(ss));
 }
@@ -442,7 +445,11 @@ LONG32 SnarlInterface::GetGlobalMsg()
 
 HWND SnarlInterface::GetSnarlWindow()
 {
-	return FindWindow(NULL, _T("Snarl"));
+	HWND hWnd = FindWindow(SNARL_WINDOW_CLASS, SNARL_WINDOW_TITLE);
+	if (hWnd == NULL)
+		hWnd = FindWindow(NULL, SNARL_WINDOW_TITLE);
+
+	return hWnd;
 }
 
 
@@ -457,18 +464,20 @@ LPCTSTR SnarlInterface::GetAppPath()
 	HWND hWnd = GetSnarlWindow();
 	if (hWnd)
 	{
-		HWND hWndPath = FindWindowEx(hWnd, 0, _T("static"), NULL);
+		HWND hWndPath = FindWindowEx(hWnd, NULL, _T("static"), NULL);
 		if (hWndPath)
 		{
 			TCHAR strTmp[MAX_PATH] = {0};
-			int nReturn = GetWindowText(hWndPath, strTmp, MAX_PATH);
+			int nReturn = GetWindowText(hWndPath, strTmp, MAX_PATH-1);
 			if (nReturn > 0) {
 				TCHAR* strReturn = AllocateString(nReturn + 1);
-				StringCchCopy(strReturn, nReturn + 1, strTmp);
+				_tcsncpy(strReturn, strTmp, nReturn + 1);
+								strReturn[nReturn] = 0;
 				return strReturn;
 			}
 		}
 	}
+
 	return NULL;
 }
 
@@ -487,13 +496,14 @@ LPCTSTR SnarlInterface::GetIconsPath()
 		return NULL;
 
 	size_t nLen = 0;
-	if (SUCCEEDED(StringCbLength(szPath, MAX_PATH, &nLen)))
+	// TODO: _tcsnlen MAX_PATH
+	if (nLen = _tcslen(szPath))
 	{
 		nLen += 10 + 1; // etc\\icons\\ + NULL
 		szIconPath = AllocateString(nLen);
 
-		StringCbCopy(szIconPath, nLen * sizeof(TCHAR), szPath);
-		StringCbCat(szIconPath, nLen * sizeof(TCHAR), _T("etc\\icons\\"));
+		_tcsncpy(szIconPath, szPath, nLen);
+		_tcsncat(szIconPath, _T("etc\\icons\\"), nLen);
 	}
 	
 	FreeString(szPath);
@@ -536,14 +546,14 @@ M_RESULT SnarlInterface::RegisterApp(LPCSTR Application, LPCSTR SmallIcon, LPCST
 {
 	m_hwndFrom = hWnd;
 	  
-    SNARLSTRUCT ss;
+	SNARLSTRUCT ss;
 	ss.Cmd = SNARL_REGISTER_APP;
 	
-	StringCbCopyA((LPSTR)&ss.Title, SNARL_STRING_LENGTH, Application);
-	StringCbCopyA((LPSTR)&ss.Icon,  SNARL_STRING_LENGTH, SmallIcon);
-	StringCbCopyA((LPSTR)&ss.Text,  SNARL_STRING_LENGTH, LargeIcon);
+	strncpy((LPSTR)&ss.Title, Application, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ss.Icon,  SmallIcon, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ss.Text,  LargeIcon, SNARL_STRING_LENGTH);
 
-	ss.LngData2 = reinterpret_cast<LONG32>(hWnd);
+	ss.LngData2 = static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(hWnd));
 	ss.Id = ReplyMsg;
 	ss.Timeout = GetCurrentProcessId();
 
@@ -594,17 +604,15 @@ LONG32 SnarlInterface::ShowNotification(LPCSTR Class, LPCSTR Title, LPCSTR Text,
 	SNARLSTRUCTEX ssex;
 	ssex.Cmd = SNARL_SHOW_NOTIFICATION;
 	
-	StringCbCopyExA((LPSTR)&ssex.Title, SNARL_STRING_LENGTH, Title, NULL, NULL, STRSAFE_IGNORE_NULLS);
-	StringCbCopyExA((LPSTR)&ssex.Text,  SNARL_STRING_LENGTH, Text,  NULL, NULL, STRSAFE_IGNORE_NULLS);
-	StringCbCopyExA((LPSTR)&ssex.Icon,  SNARL_STRING_LENGTH, Icon,  NULL, NULL, STRSAFE_IGNORE_NULLS);
+	strncpy((LPSTR)&ssex.Title, Title, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ssex.Text,  Text,  SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ssex.Icon,  Icon,  SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ssex.Extra, Sound, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ssex.Class, Class, SNARL_STRING_LENGTH);
 
 	ssex.Timeout = Timeout;
-	ssex.LngData2 = reinterpret_cast<LONG32>(hWndReply);
+	ssex.LngData2 = static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(hWndReply));
 	ssex.Id = uReplyMsg;
-
-	StringCbCopyExA((LPSTR)&ssex.Extra, SNARL_STRING_LENGTH, Sound, NULL, NULL, STRSAFE_IGNORE_NULLS);
-	StringCbCopyA((LPSTR)&ssex.Class,  SNARL_STRING_LENGTH, Class);
-    
 	ssex.Reserved1 = GetCurrentProcessId();
 	
 	m_nLastMessageId = Send(ssex);
@@ -643,7 +651,7 @@ M_RESULT SnarlInterface::ChangeAttribute(LONG32 Id, SNARL_ATTRIBUTES Attr, LPCST
 	ss.Id = Id;
 	ss.LngData2 = Attr;
 	
-	StringCbCopyExA((LPSTR)&ss.Text, SNARL_STRING_LENGTH, Value, NULL, NULL, STRSAFE_IGNORE_NULLS);
+	strncpy((LPSTR)&ss.Text, Value, SNARL_STRING_LENGTH);
 	
 	return static_cast<M_RESULT>(Send(ss));
 }
@@ -682,8 +690,8 @@ M_RESULT SnarlInterface::SetClassDefault(LPCSTR Class, SNARL_ATTRIBUTES Attr, LP
 	ss.LngData2 = Attr;
 	ss.Timeout = GetCurrentProcessId();
 	
-	StringCbCopyExA((LPSTR)&ss.Text, SNARL_STRING_LENGTH, Class, NULL, NULL, STRSAFE_IGNORE_NULLS);
-	StringCbCopyExA((LPSTR)&ss.Icon, SNARL_STRING_LENGTH, Value, NULL, NULL, STRSAFE_IGNORE_NULLS);
+	strncpy((LPSTR)&ss.Text, Class, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ss.Icon, Value, SNARL_STRING_LENGTH);
 
 	return static_cast<M_RESULT>(Send(ss));
 }
@@ -730,8 +738,8 @@ M_RESULT SnarlInterface::AddClass(LPCSTR Class, LPCSTR Description, SNARL_CLASS_
 	ss.LngData2 = Flags;
 	ss.Timeout = GetCurrentProcessId();
 	
-	StringCbCopyExA((LPSTR)&ss.Text,  SNARL_STRING_LENGTH, Class, NULL, NULL, STRSAFE_IGNORE_NULLS);
-	StringCbCopyExA((LPSTR)&ss.Title, SNARL_STRING_LENGTH, Description, NULL, NULL, STRSAFE_IGNORE_NULLS);
+	strncpy((LPSTR)&ss.Text,  Class, SNARL_STRING_LENGTH);
+	strncpy((LPSTR)&ss.Title, Description, SNARL_STRING_LENGTH);
 
 	LONG32 result = Send(ss);
 
@@ -741,7 +749,7 @@ M_RESULT SnarlInterface::AddClass(LPCSTR Class, LPCSTR Description, SNARL_CLASS_
 		SetClassDefault(Class, SNARL_ATTRIBUTE_ICON, DefaultIcon);
 		if (DefaultTimeout > 0) {
 			char str[64] = {0};
-			StringCbPrintfA((LPSTR)&str, sizeof(str), "%d", DefaultTimeout);
+			_snprintf((LPSTR)&str, sizeof(str), "%d", DefaultTimeout);
 			SetClassDefault(Class, SNARL_ATTRIBUTE_TIMEOUT, str);
 		}
 		
@@ -804,9 +812,9 @@ LPSTR SnarlInterface::WideToUTF8(LPCWSTR szWideStr)
 	if (szWideStr == NULL)
 		return NULL;
 
-    int nSize = WideCharToMultiByte(CP_UTF8, 0, szWideStr, -1, NULL, 0, NULL, NULL);
-    LPSTR szUTF8 = new char[nSize];
-    WideCharToMultiByte(CP_UTF8, 0, szWideStr, -1, szUTF8, nSize, NULL, NULL);
-    
-    return szUTF8;
+	int nSize = WideCharToMultiByte(CP_UTF8, 0, szWideStr, -1, NULL, 0, NULL, NULL);
+	LPSTR szUTF8 = new char[nSize];
+	WideCharToMultiByte(CP_UTF8, 0, szWideStr, -1, szUTF8, nSize, NULL, NULL);
+	
+	return szUTF8;
 }

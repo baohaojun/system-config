@@ -1,17 +1,23 @@
-#ifndef SNARL_INTERFACE
+﻿#ifndef SNARL_INTERFACE
 #define SNARL_INTERFACE
 
 #include <tchar.h>
 #include <windows.h>
-#include <strsafe.h>
+#include <cstdio>
 
-//be compatible with x64
-#define LONG32 intptr_t
+#ifndef SMTO_NOTIMEOUTIFNOTHUNG
+	#define SMTO_NOTIMEOUTIFNOTHUNG 8
+#endif
+
+
 
 namespace Snarl {
 
 	static const LPCTSTR SNARL_GLOBAL_MSG = _T("SnarlGlobalEvent");
 	static const LPCTSTR SNARL_APP_MSG    = _T("SnarlAppMessage");
+
+	static const LPCTSTR SNARL_WINDOW_CLASS = _T("w>Snarl");
+	static const LPCTSTR SNARL_WINDOW_TITLE = _T("Snarl");
 
 	static const int SNARL_STRING_LENGTH = 1024;
 	static const int SNARL_UNICODE_LENGTH = SNARL_STRING_LENGTH / 2;
@@ -34,7 +40,7 @@ namespace Snarl {
 
 	// --------------------------------------------------------------------
 	
-	typedef enum M_RESULT {
+	enum M_RESULT {
 		M_ABORTED         = 0x80000007,
 		M_ACCESS_DENIED   = 0x80000009,
 		M_ALREADY_EXISTS  = 0x8000000C,
@@ -80,7 +86,7 @@ namespace Snarl {
 	
 	static const SNARL_COMMANDS SNARL_GET_REVISION = SNARL_REVOKE_ALERT;
 	
-	typedef enum SNARL_APP_FLAGS {
+	enum SNARL_APP_FLAGS {
 		SNARL_APP_HAS_PREFS = 1,
 		SNARL_APP_HAS_ABOUT = 2
 	};
@@ -100,7 +106,7 @@ namespace Snarl {
 	};
 
 	/* Class attributes */
-	typedef enum SNARL_ATTRIBUTES {
+	enum SNARL_ATTRIBUTES {
 		SNARL_ATTRIBUTE_TITLE = 1,
 		SNARL_ATTRIBUTE_TEXT,
 		SNARL_ATTRIBUTE_ICON,
@@ -149,12 +155,12 @@ namespace Snarl {
 			SnarlInterface();
 			~SnarlInterface();
 
-			static HWND   GetSnarlWindow();		
+			static HWND   GetSnarlWindow();
 			static LONG32 GetGlobalMsg();
 
 			
-			LPTSTR AllocateString(size_t n) { return new TCHAR[n]; }
-			void FreeString(LPCTSTR str)    { delete [] str; str = NULL; }
+			LPTSTR AllocateString(size_t n)  { return new TCHAR[n]; }
+			void FreeString(LPCTSTR str)     { delete [] str; str = NULL; }
 			
 
 			LONG32  ShowMessage(LPCSTR szTitle, LPCSTR szText, LONG32 timeout = 0, LPCSTR szIconPath = "", HWND hWndReply = NULL, WPARAM uReplyMsg = 0);
@@ -210,10 +216,10 @@ namespace Snarl {
 			template <class T> LONG32 Send(T ss);
 			LPSTR  WideToUTF8(LPCWSTR szWideStr);
 			
-			LONG32 m_nLastMessageId;
 			HWND   m_hwndFrom; // set during snRegisterConfig() or snRegisterConfig2()
-
+			LONG32 m_nLastMessageId;
 	};
 
-}
+} // namespace Snarl
+
 #endif // SNARL_INTERFACE

@@ -34,8 +34,10 @@ Notification_Backend("SnarlBackend",snore)
 {
     Snarl::SnarlInterface *snarlInterface = new Snarl::SnarlInterface();
     _applications.insert("SnoreNotify",snarlInterface);
-    qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersionExA();
+    qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersionExA();    
+    _defautSnarlinetrface = new Snarl::SnarlInterface();
     this->installEventFilter(this);
+
 
 }
 Snarl_Backend::~Snarl_Backend(){
@@ -43,6 +45,7 @@ Snarl_Backend::~Snarl_Backend(){
     foreach(Application *a,this->snore()->aplications().values()){
         unregisterApplication(a);
     }
+    delete _defautSnarlinetrface;
 }
 
 void Snarl_Backend::registerApplication(Application *application){
@@ -71,7 +74,8 @@ void Snarl_Backend::unregisterApplication(Application *application){
 int Snarl_Backend::notify(QSharedPointer<Notification>notification){
     Snarl::SnarlInterface *snarlInterface = _applications.value(notification->application());
     if(snarlInterface == NULL)
-        return -1;
+        snarlInterface = _defautSnarlinetrface;
+
     wchar_t *title = toWchar(Notification::toPlainText(notification->title()));
     wchar_t *text =  toWchar(Notification::toPlainText(notification->text()));
     wchar_t *icon =  toWchar(notification->icon());

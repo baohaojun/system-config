@@ -17,6 +17,7 @@
 #include "snoreserver.h"
 #include "notification.h"
 #include "trayiconnotifer.h"
+#include "snorenotificationinstance.h"
 
 #include <iostream>
 
@@ -25,7 +26,7 @@
 #include <QDir>
 #include <QSystemTrayIcon>
 
-QString const SnoreServer::snoreTMP=QDir::temp().path()+"/SnoreNotify/";
+QString const SnoreServer::snoreTMP = QDir::temp().path()+"/SnoreNotify/";
 
 SnoreServer::SnoreServer(QSystemTrayIcon *trayIcon):
         _notificationBackend(NULL),
@@ -45,9 +46,12 @@ SnoreServer::SnoreServer(QSystemTrayIcon *trayIcon):
     }else
         QDir::temp().mkpath("SnoreNotify");
 
+    _defaultNotificationInterface = new SnoreNotificationInstance("Snore",this);
+
     if(trayIcon!=NULL){
         publicatePlugin(new TrayIconNotifer(this,trayIcon));
     }
+
 }
 void SnoreServer::publicatePlugin(const QString &fileName){
     QPluginLoader loader(fileName);
@@ -102,7 +106,7 @@ void SnoreServer::publicatePlugin(SnorePlugin *plugin){
         connect(this,SIGNAL(applicationInitialized(Application*)),nb,SLOT(registerApplication(Application*)));
         connect(this,SIGNAL(applicationRemoved(Application*)),nb,SLOT(unregisterApplication(Application*)));
         nb->setSnore(this);
-        nb->notify(QSharedPointer<Notification>(new Notification(NULL,"SnoreNotify","Default Alert","Welcome","Snore Notify succesfully registred "+pluginName,"")));
+        nb->notify(QSharedPointer<Notification>(new Notification(NULL,"Snore","Default Alert","Welcome","Snore Notify succesfully registred "+pluginName,"")));
 
     }
 }
@@ -110,7 +114,7 @@ void SnoreServer::publicatePlugin(SnorePlugin *plugin){
 int SnoreServer::broadcastNotification(QSharedPointer<Notification> notification){
     emit notify(notification);
     if(_notificationBackend!=NULL){
-        notification->_id=_notificationBackend->notify(notification);
+        notification->_id = _notificationBackend->notify(notification);
         std::cout<<"Notification ID: "<<QString::number(notification->_id).toLatin1().data()<<std::endl;
         return  notification->_id;
     }
@@ -150,6 +154,7 @@ const ApplicationsList &SnoreServer::aplications() const{
     return _applications;
 }
 
+
 const QHash<QString,Notification_Backend*> &SnoreServer::primaryNotificationBackends()const{
     return _primaryNotificationBackends;
 }
@@ -158,6 +163,10 @@ void SnoreServer::setNotificationBackend(Notification_Backend *backend){
     connect(this,SIGNAL(notify(QSharedPointer<Notification>)),_notificationBackend,SLOT(notify(QSharedPointer<Notification>)));
     disconnect(backend,SLOT(notify(QSharedPointer<Notification>)));
     _notificationBackend=backend;
+}
+
+SnoreNotificationInstance * SnoreServer::defaultNotificationInterface(){
+    return _defaultNotificationInterface;
 }
 
 #include "snoreserver.moc"

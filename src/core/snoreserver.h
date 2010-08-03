@@ -47,11 +47,13 @@ public:
     const QHash<QString,Notification_Backend*> &primaryNotificationBackends() const;
     void setNotificationBackend(Notification_Backend *backend);
 
+    class SnoreNotificationInstance *defaultNotificationInterface();
 
     QHash<QString,SnorePlugin*> plugins;
 
 private:
     ApplicationsList _applications;
+    class SnoreNotificationInstance *_defaultNotificationInterface;
 
 
     QHash<QString,Notification_Backend*> _notyfier;

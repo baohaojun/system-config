@@ -14,36 +14,29 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#ifndef SNARL_BACKEND_H
-#define SNARL_BACKEND_H
-#include "core/interface.h"
-#include "SnarlInterface.h"
+#ifndef SNORENOTIFICATIONINSTANCE_H
+#define SNORENOTIFICATIONINSTANCE_H
 
-class Snarl_Backend:public Notification_Backend
+#include "core/snoreserver.h"
+#include "core/application.h"
+
+class SnoreNotificationInstance:public QObject
 {
     Q_OBJECT
-    Q_INTERFACES(Notification_Backend)
 public:
-    Snarl_Backend(class SnoreServer *snore=0);
-    ~Snarl_Backend();
-    bool isPrimaryNotificationBackend(){return true;}
+    SnoreNotificationInstance(const QString &appname,SnoreServer *parent);
+    ~SnoreNotificationInstance();
+    void addAlert(const QString &name,const QString &title);
+    void registerWithBackends();
+    void unregisterWithBackends();
+    int notify(const QString &alert,const QString &title,const QString &text,const QString &icon=0,int timeout=10);
+private:
+    SnoreNotificationInstance();
+    const QString _appName;
+    Application *_app;
+    SnoreServer *_snore;
 
-
-protected:
-    bool eventFilter(QObject *obj, QEvent *event);
-private:   
-    //returns a wchart_t aray has to deleted after use
-    wchar_t *toWchar(const QString &string);
-    QHash<QString,Snarl::SnarlInterface*> _applications;
-    Snarl::SnarlInterface* _defautSnarlinetrface;
-public slots:
-    void registerApplication(Application *application);
-    void unregisterApplication(class Application *application);
-    int notify(QSharedPointer<Notification>notification);
-    void closeNotification(QSharedPointer<Notification> notification);
 
 };
 
-
-
-#endif // SNARL_BACKEND_H
+#endif // SNORENOTIFICATIONINSTANCE_H
