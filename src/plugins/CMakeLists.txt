@@ -1,7 +1,10 @@
 SET(LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH}/snoreplugins)
 
-add_subdirectory(freedesktopnotification)
-add_subdirectory(freedesktopfrontend)
+if(WITH_FREEDESKTOP_FRONTEND)
+    add_subdirectory(freedesktopnotification)
+else(WITH_FREEDESKTOP_FRONTEND)
+    add_subdirectory(freedesktopfrontend)
+endif(WITH_FREEDESKTOP_FRONTEND)
 #add_subdirectory(webposter)
 add_subdirectory(snarlnetwork)
 add_subdirectory(snarl)

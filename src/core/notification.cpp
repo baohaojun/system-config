@@ -81,6 +81,10 @@ const Notification::actions &Notification::actionInvoked() const{
     return _actionInvoked;
 }
 
+void Notification::setActionInvoked(const Notification::actions &action){
+    _actionInvoked = action;
+}
+
 const Notification_Frontend *Notification::source() const{
     return _source;
 }

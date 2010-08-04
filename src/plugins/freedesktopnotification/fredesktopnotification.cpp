@@ -48,7 +48,7 @@ QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i){
     return a;
 }
 
-const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotification &i){
+const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotification &){
 //not supported
     return a;
 }

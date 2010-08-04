@@ -9,19 +9,35 @@
 
 Q_EXPORT_PLUGIN2(freedesktopnotificationbackend,FreedesktopNotification_Backend)
 
+FreedesktopNotification_Backend::FreedesktopNotification_Backend(SnoreServer *snore):
+Notification_Backend("FreedesktopNotification_Backend",snore)
+{
+}
+
+bool FreedesktopNotification_Backend::isPrimaryNotificationBackend(){
+    return true;
+}
+
+void FreedesktopNotification_Backend::registerApplication(Application *application){
+    Q_UNUSED(application);
+}
+
+void FreedesktopNotification_Backend::unregisterApplication(Application *application){
+    Q_UNUSED(application);
+}
+
 int  FreedesktopNotification_Backend::notify( QSharedPointer<Notification> noti){
-    fNotification *n=new fNotification(this);
+    fNotification *n = new fNotification(this);
     qDebug()<<noti;
-    n->notification=noti;
+    n->notification = noti;
     return n->send();
 }
 
-void FreedesktopNotification_Backend::closeNotification(int id){
+void FreedesktopNotification_Backend::closeNotification(QSharedPointer<Notification> notification){
     //TODO: fix
-    //    fNotification *fn=new fNotification();
-    //    fn->notification=new Notification();
-    //    fn->notification->id=id;
-    //    fn->close();
+        fNotification *fn=new fNotification(this);
+        fn->notification=notification;
+        fn->close();
 }
 
 
@@ -44,7 +60,7 @@ uint fNotification::send(){
     selfdistruct.setParent(this);
     selfdistruct.setSingleShot(true);
     connect(&selfdistruct, SIGNAL(timeout()), this, SLOT(close()));
-    selfdistruct.start(notification->timeout*1000);
+    selfdistruct.start(notification->timeout()*1000);
     QDBusConnection::sessionBus().connect("org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","ActionInvoked",this,SLOT(action(uint,QString)));
     if(getVendor()=="GNOME")
         QDBusConnection::sessionBus().connect("org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","NotificationClosed",this,SLOT(closed(uint,uint)));
@@ -52,7 +68,7 @@ uint fNotification::send(){
 }
 
 void fNotification::action(const uint &id, const QString &action_key){
-    if(id!=notification->getID())return;
+    if(id!=notification->id())return;
     close();
     qDebug()<<id<<"|"<<action_key ;
 
@@ -60,19 +76,20 @@ void fNotification::action(const uint &id, const QString &action_key){
     //default is only working on gnome
 
 
-    notification->actionInvoked=(action_key=="default"?Notification::ACTION_1:Notification::actions(action_key.toInt()));
-    parent->getSnore()->notificationActionInvoked(notification);
+    notification->setActionInvoked(action_key=="default"?Notification::ACTION_1:Notification::actions(action_key.toInt()));
+    parent->snore()->notificationActionInvoked(notification);
     selfDelete();
 }
+
 void fNotification::closed(const uint &id,const uint &reason){
     qDebug()<<id<<"|"<<reason;;
-    if(id!=notification->getID())return;
+    if(id!=notification->id())return;
     close();
     if(reason==1)
-        notification->actionInvoked=Notification::TIMED_OUT;
+        notification->setActionInvoked(Notification::TIMED_OUT);
     if(reason==2)
-        notification->actionInvoked=Notification::CLOSED;
-    parent->getSnore()->closeNotification(notification);
+        notification->setActionInvoked(Notification::CLOSED);
+    parent->snore()->closeNotification(notification);
     selfDelete();
 }
 
@@ -81,8 +98,8 @@ void fNotification::closed(const uint &id,const uint &reason){
 void fNotification::close(){
     blockSignals(true);
     if( !selfdistruct.isActive()){
-        notification->actionInvoked=Notification::TIMED_OUT;
-        parent->getSnore()->closeNotification(notification);
+        notification->setActionInvoked(Notification::TIMED_OUT);
+        parent->snore()->closeNotification(notification);
         selfDelete();
     }
     selfdistruct.stop();
@@ -98,7 +115,7 @@ QString fNotification::getVendor(){
 }
 void fNotification::selfDelete(){
     notification.clear();
-    delete this;
+    deleteLater();
 }
 
 

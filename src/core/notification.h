@@ -30,13 +30,6 @@ class SNORE_EXPORT Notification:public QObject
 public:
     static int DefaultTimeout;
     static QString toPlainText(const QString &string);
-public:    
-    Notification(uint id=0);
-    Notification(class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0);
-    QString toString() const;
-    bool isNotification();
-    void setIsNotification(bool b);
-
     enum actions{
         TIMED_OUT=0,
         ACTION_1=1,
@@ -44,11 +37,17 @@ public:
         ACTION_3=3,
         CLOSED=4
            };
-
+public:    
+    Notification(uint id=0);
+    Notification(class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0);
+    QString toString() const;
+    bool isNotification();
+    void setIsNotification(bool b);
 
 
     const uint &id() const;
     const int &timeout() const;
+    void setActionInvoked(const Notification::actions &action);
     const Notification::actions &actionInvoked() const;
     const class Notification_Frontend *source() const;
     const QString &application() const;

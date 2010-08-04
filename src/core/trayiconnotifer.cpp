@@ -9,11 +9,11 @@ TrayIconNotifer::TrayIconNotifer(SnoreServer *snore, QSystemTrayIcon *icon):
 {}
 
 void TrayIconNotifer::registerApplication(Application *application){
-
+    Q_UNUSED(application)
 }
 void TrayIconNotifer::unregisterApplication(Application *application){
-
-}
+    Q_UNUSED(application)
+    }
 
 int TrayIconNotifer::notify(QSharedPointer<Notification> notification){
     _trayIcon->showMessage(notification->title(),notification->text(),QSystemTrayIcon::NoIcon,notification->timeout()*1000);
@@ -21,7 +21,7 @@ int TrayIconNotifer::notify(QSharedPointer<Notification> notification){
 }
 
 void TrayIconNotifer::closeNotification(QSharedPointer<Notification> notification){
-
+    Q_UNUSED(notification)
 }
 
 bool TrayIconNotifer::isPrimaryNotificationBackend(){

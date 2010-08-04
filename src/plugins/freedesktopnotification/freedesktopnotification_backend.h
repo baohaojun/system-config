@@ -11,14 +11,14 @@ class  FreedesktopNotification_Backend:public Notification_Backend
     Q_OBJECT
     Q_INTERFACES(Notification_Backend)
 public:            
-    FreedesktopNotification_Backend()
-    {
-        setProperty("name","FreedesktopNotification_Backend");
-    };
-    bool isPrimaryNotificationBackend(){return true;}    
+    FreedesktopNotification_Backend(class SnoreServer *snore=0);
+    bool isPrimaryNotificationBackend();
 public slots:
+    void registerApplication(Application *application);
+    void unregisterApplication(Application *application);
     int notify(QSharedPointer<class Notification>notification);
-    void closeNotification(int id);
+    void closeNotification(QSharedPointer<Notification> notification);
+
 
 };
 
@@ -27,6 +27,7 @@ public slots:
 
 class  fNotification:public QObject{
     Q_OBJECT
+    friend class FreedesktopNotification_Backend;
 public:
     static QDBusInterface notificationInterface;
 private:
