@@ -35,8 +35,8 @@ SnoreNotificationInstance::~SnoreNotificationInstance(){
 }
 
 
-void SnoreNotificationInstance::addAlert(const QString &name, const QString &title){
-    _app->addAlert(new Alert(name,title));
+void SnoreNotificationInstance::addAlert(const QString &name, const QString &title){    
+    _app->addAlert(new Alert(name,title.isNull()?name:title));
 
 }
 
@@ -54,3 +54,5 @@ int SnoreNotificationInstance::notify(const QString &alert, const QString &title
     qDebug()<<"Broadcasting"<<title;
     return _snore->broadcastNotification(QSharedPointer<Notification>(new Notification(NULL,_appName,alert,title,text,icon,timeout)));
 }
+
+#include "snorenotificationinstance.moc"

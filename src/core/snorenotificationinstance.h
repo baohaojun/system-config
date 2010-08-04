@@ -17,8 +17,8 @@
 #ifndef SNORENOTIFICATIONINSTANCE_H
 #define SNORENOTIFICATIONINSTANCE_H
 
-#include "core/snoreserver.h"
-#include "core/application.h"
+#include "snoreserver.h"
+#include "application.h"
 
 class SnoreNotificationInstance:public QObject
 {
@@ -26,10 +26,10 @@ class SnoreNotificationInstance:public QObject
 public:
     SnoreNotificationInstance(const QString &appname,SnoreServer *parent);
     ~SnoreNotificationInstance();
-    void addAlert(const QString &name,const QString &title);
+    void addAlert(const QString &name,const QString &title = 0);
     void registerWithBackends();
     void unregisterWithBackends();
-    int notify(const QString &alert,const QString &title,const QString &text,const QString &icon=0,int timeout=10);
+    int notify(const QString &alert,const QString &title,const QString &text,const QString &icon = 0,int timeout = 10);
 private:
     SnoreNotificationInstance();
     const QString _appName;
