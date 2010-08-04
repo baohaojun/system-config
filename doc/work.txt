@@ -3926,6 +3926,8 @@ wpa_supplicant -Dwext -ieth0 -c/etc/wpa_supplicant.conf
 
 mkdir /data/debugfs
 mount -t debugfs null /data/debugfs
+cat /data/debugfs/gpio
+cat /proc/interrupts
 cat /data/debugfs/mmc1/ios
 
 insmod /system/lib/hw/wlan/dhd.ko "firmware_path=/system/lib/hw/wlan/sdio-cdc-g-11n-mfgtest-seqcmds.bin nvram_path=/system/lib/hw/wlan/nvram.txt"
@@ -5439,3 +5441,7 @@ Tahoma = wenquanyi （这个没有手动新建字符串）
 make LINUXDIR=/home/bhj/src/android-nv-froyo/out/target/product/harmony/obj/KERNEL LINUXVER=2.6.32 CROSS_COMPILE=/home/bhj/src/android-nv-froyo/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/arm-eabi- ARCH=arm dhd-cdc-sdmmc-gpl-debug; adb shell mount -o remount rw /system; adb push dhd-cdc-sdmmc-gpl-debug-2.6.32/dhd.ko /system/lib/hw/wlan/
 
 adb shell svc power stayon true; adb shell wlarm_android up
+
+i2c bus spec: 
+http://www.nxp.com/acrobat_download2/literature/9398/39340011.pdf
+http://www.nxp.com/documents/user_manual/UM10204.pdf

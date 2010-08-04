@@ -37,9 +37,10 @@
 (define-abbrev-table 'c-mode-abbrev-table
   '(
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 15)
+    ("pe" "printk(KERN_WARNING \"hello error %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 2)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 27)
+    ("pw" "printk(KERN_WARNING \"hello warning %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
     ("sdk" "printk(KERN_WARNING \"hello world %s %s %d %s\\n\", __FILE__, __FUNCTION__, __LINE__, dev_name(host->parent));" nil 9)
-    ("wdb" "WL_ERROR((\"return %d in %s\\n\", __LINE__, __FUNCTION__));" nil 1)
    ))
 
 (define-abbrev-table 'change-log-mode-abbrev-table '())
@@ -109,7 +110,7 @@
 
 (define-abbrev-table 'global-abbrev-table
   '(
-    ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 102)
+    ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 103)
     ("cltenv" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" " nil 11)
     ("eclt" "DISPLAY=10.194.68.84:0 PATH=/usr/atria/bin/:\"$PATH\" /usr/atria/bin/cleartool" nil 11)
     ("eld" "EnterLeaveDebug();" nil 32)

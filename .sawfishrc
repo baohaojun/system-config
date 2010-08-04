@@ -42,7 +42,6 @@
  '(
    ("Super-e" "Emacs" "emacs.bhj")
    ("Super-p" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
-   ("Super-w" "Nautilus" "false")
    ))
 
 (mapc 
