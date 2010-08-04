@@ -5,3 +5,4 @@ xmodmap ~/.bhj-Xmodmap
 if test -f ~/.offlineimaprc; then
     python2.6 ~/bin/windows/Imap4Monitor/Imap4Monitor.py&
 fi
+wine /home/bhj/bin/linux/ext/QQ/Bin/QQ.exe >/dev/null&
