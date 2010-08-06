@@ -20,8 +20,8 @@ repo sync
 repo init -u git://nv-tegra.nvidia.com/android/manifest.git -b froyo-tegra
 repo sync
 
-cd /var/cache/git/kernel-nvidia
-git pull
+cd /git/android-nvidia/linux-2.6.git
+git fetch origin
 
 #git clone --mirror  git://android.git.kernel.org/tools/repo.git
 cd /git/repo.git
