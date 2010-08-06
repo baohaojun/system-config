@@ -94,7 +94,7 @@
 
 (require 'sawfish.wm.commands.x-cycle)
 
-(setq im-class "Eva|Pidgin"
+(setq im-class "Eva|Pidgin|Wine"
       br-class "Firefox|Chromium|Conkeror"
       dc-class "OpenOffice|Acroread|Evince"
       mg-class "Meld|Gimp|Gitk"

@@ -19,12 +19,15 @@ repo init -u git://nv-tegra.nvidia.com/android/manifest.git -b eclair-tegra
 repo sync
 repo init -u git://nv-tegra.nvidia.com/android/manifest.git -b froyo-tegra
 repo sync
+repo forall -c 'for x in `git tag`; do git branch tagbr-$x $x; done'
 
 cd /git/android-nvidia/linux-2.6.git
 git fetch origin 
+for x in `git tag`; do git branch tagbr-$x $x; done
 
 cd /git/android-nvidia/3rdparty/atheros.git
 git fetch origin
+for x in `git tag`; do git branch tagbr-$x $x; done
 
 #vendor/nvidia and hardware/tegra, we can do nothing, their git is maintained by us.
 
