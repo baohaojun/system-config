@@ -22,3 +22,7 @@ repo sync
 
 cd /var/cache/git/kernel-nvidia
 git pull
+
+#git clone --mirror  git://android.git.kernel.org/tools/repo.git
+cd /git/repo.git
+git fetch
