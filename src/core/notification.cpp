@@ -47,7 +47,7 @@ Notification::Notification ( Notification_Frontend *source, const QString &appli
         _id ( id ),
         _timeout ( timeout ),
         _source ( source ),
-        _app ( application ),
+        _application ( application ),
         _alert ( alert ),
         _title ( title ),
         _text ( text ),
@@ -101,7 +101,7 @@ const Notification_Frontend *Notification::source() const
 
 const QString &Notification::application() const
 {
-    return _app;
+    return _application;
 }
 
 const QString &Notification::title() const

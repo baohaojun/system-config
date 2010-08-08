@@ -21,51 +21,49 @@
 
 #include <iostream>
 
-FreedesktopNotification::FreedesktopNotification(QObject* parent)
+FreedesktopNotification::FreedesktopNotification()
 {
-    setParent(parent);
     registerTypes();
 }
 
-FreedesktopNotification::FreedesktopNotification(QSharedPointer< Notification > noti, QObject* parent):
+FreedesktopNotification::FreedesktopNotification(QSharedPointer< Notification > noti):
         notification(noti)
 {
-    setParent(parent);
     registerTypes();
 }
 
 void FreedesktopNotification::registerTypes() {
-    qDBusRegisterMetaType<FreedesktopImageHint*>();
-    qDBusRegisterMetaType<FreedesktopNotification*>();
+    qDBusRegisterMetaType<FreedesktopImageHint>();
+    qDBusRegisterMetaType<FreedesktopNotification>();
 }
 
-QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification *i) {
-    Q_ASSERT(!i->notification.isNull());
-    a<<i->notification->application();
+QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i) {
+    Q_ASSERT(!i.notification.isNull());
+    qDebug()<<i.notification->toString();
+    a<<i.notification->application();
     a<<uint(0);
-    a<<i->notification->icon();
-    a<<i->notification->title();
-    a<<i->notification->text();
+    a<<i.notification->icon();
+    a<<i.notification->title();
+    a<<i.notification->text();
     QStringList actions;
     actions<<"1"<<" "<<"2"<<" ";
     a<<actions;
     a.beginMap();
-    QImage img(i->notification->icon());
+    QImage img(i.notification->icon());
     if (!img.isNull()) {
         img=img.scaledToWidth(50,Qt::FastTransformation);
         a.beginMapEntry();
         a<<"image_data";
-        FreedesktopImageHint *fh = new FreedesktopImageHint(img);
+        FreedesktopImageHint fh(img);
         a<<fh;
-        fh->deleteLater();
         a.endMapEntry();
     }
     a.endMap();
-    a<<i->notification->timeout()*1000;
+    a<<i.notification->timeout()*1000;
     return a;
 }
 
-const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotification *) {
+const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotification &) {
 //not supported
     return a;
 }
@@ -94,18 +92,16 @@ QImage FreedesktopImageHint::toQImage()const {
     return QImage((uchar*)imageData.data(),width,height,QImage::Format_ARGB32 ).rgbSwapped();
 }
 
-QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopImageHint *i) {
+QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopImageHint &i) {
     a.beginStructure();
-    a << i->width<<i->height<<i->rowstride<<i->hasAlpha<<i->bitsPerSample<<i->channels<<i->imageData;
+    a << i.width<<i.height<<i.rowstride<<i.hasAlpha<<i.bitsPerSample<<i.channels<<i.imageData;
     a.endStructure();
     return a;
 }
 
-const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopImageHint *i) {
+const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopImageHint &i) {
     a.beginStructure();
-    a >> i->width>> i->height>> i->rowstride>> i->hasAlpha>> i->bitsPerSample>> i->channels>> i->imageData;
+    a >> i.width>> i.height>> i.rowstride>> i.hasAlpha>> i.bitsPerSample>> i.channels>> i.imageData;
     a.endStructure();
     return a;
 }
-
-#include "fredesktopnotification.moc"

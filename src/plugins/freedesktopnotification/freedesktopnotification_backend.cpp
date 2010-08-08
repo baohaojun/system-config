@@ -62,7 +62,7 @@ fNotification::fNotification(QSharedPointer< Notification > notification, Freede
 uint fNotification::send()
 {
     Q_ASSERT(!_notification.isNull());
-    FreedesktopNotification *n = new FreedesktopNotification( _notification );
+    FreedesktopNotification n ( _notification );
     QDBusMessage recive=notificationInterface.call ( "Notify", QVariant::fromValue ( n ) );
     uint id=recive.arguments().last().toInt();
     selfdistruct = new QTimer(this );

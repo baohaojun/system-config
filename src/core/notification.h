@@ -66,7 +66,7 @@ private:
     int _timeout;
     actions _actionInvoked;
     class Notification_Frontend *_source;
-    QString _app;
+    QString _application;
     QString _alert;
     QString _title;
     QString _text;
