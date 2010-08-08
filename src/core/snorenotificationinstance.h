@@ -24,12 +24,12 @@ class SnoreNotificationInstance:public QObject
 {
     Q_OBJECT
 public:
-    SnoreNotificationInstance(const QString &appname,SnoreServer *parent);
+    SnoreNotificationInstance ( const QString &appname,SnoreServer *parent );
     ~SnoreNotificationInstance();
-    void addAlert(const QString &name,const QString &title = 0);
+    void addAlert ( const QString &name,const QString &title = 0 );
     void registerWithBackends();
     void unregisterWithBackends();
-    int notify(const QString &alert,const QString &title,const QString &text,const QString &icon = 0,int timeout = 10);
+    int notify ( const QString &alert,const QString &title,const QString &text,const QString &icon = 0,int timeout = 10 );
 private:
     SnoreNotificationInstance();
     const QString _appName;

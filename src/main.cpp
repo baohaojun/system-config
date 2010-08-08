@@ -7,16 +7,17 @@
 #include <QPluginLoader>
 #include <QSystemTrayIcon>
 
-int main(int argc, char *argv[])
+int main ( int argc, char *argv[] )
 {
-    QApplication a(argc, argv);
+    QApplication a ( argc, argv );
     QSystemTrayIcon *trayIcon=new QSystemTrayIcon();
     trayIcon->show();
-    SnoreServer s(trayIcon);
+    SnoreServer s ( trayIcon );
 
-    QDir pluginsDir(a.applicationDirPath()+"/snoreplugins");
-    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
-            s.publicatePlugin(pluginsDir.absoluteFilePath(fileName));
+    QDir pluginsDir ( a.applicationDirPath() +"/snoreplugins" );
+    foreach ( QString fileName, pluginsDir.entryList ( QDir::Files ) )
+    {
+        s.publicatePlugin ( pluginsDir.absoluteFilePath ( fileName ) );
     }
 
 

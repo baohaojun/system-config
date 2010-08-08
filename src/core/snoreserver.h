@@ -30,22 +30,22 @@ public:
 
 
 public:
-    SnoreServer(class QSystemTrayIcon *trayIcon=0);
-    void publicatePlugin(const QString &fileName);
-    void publicatePlugin(SnorePlugin *plugin);
+    SnoreServer ( class QSystemTrayIcon *trayIcon=0 );
+    void publicatePlugin ( const QString &fileName );
+    void publicatePlugin ( SnorePlugin *plugin );
 
 
-    int broadcastNotification(QSharedPointer<Notification> notification);
-    void closeNotification(QSharedPointer<Notification> notification);
-    void notificationActionInvoked(QSharedPointer<Notification> notification);
+    int broadcastNotification ( QSharedPointer<Notification> notification );
+    void closeNotification ( QSharedPointer<Notification> notification );
+    void notificationActionInvoked ( QSharedPointer<Notification> notification );
 
-    void addApplication(Application *application);
-    void applicationIsInitialized(Application* application);
-    void removeApplication(const QString& appName);
+    void addApplication ( Application *application );
+    void applicationIsInitialized ( Application* application );
+    void removeApplication ( const QString& appName );
     const ApplicationsList &aplications() const;
 
     const QHash<QString,Notification_Backend*> &primaryNotificationBackends() const;
-    void setNotificationBackend(Notification_Backend *backend);
+    void setNotificationBackend ( Notification_Backend *backend );
 
     class SnoreNotificationInstance *defaultNotificationInterface();
 
@@ -64,10 +64,10 @@ private:
 
 
 signals:
-    void applicationInitialized(Application*);
-    void applicationRemoved(Application*);
-    void notify(QSharedPointer<Notification> noti);
-    void closeNotify(QSharedPointer<Notification>);
+    void applicationInitialized ( Application* );
+    void applicationRemoved ( Application* );
+    void notify ( QSharedPointer<Notification> noti );
+    void closeNotify ( QSharedPointer<Notification> );
 
 };
 

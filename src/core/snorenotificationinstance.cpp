@@ -22,37 +22,42 @@ SnoreNotificationInstance::SnoreNotificationInstance()
 {
 }
 
-SnoreNotificationInstance::SnoreNotificationInstance(const QString &appname, SnoreServer *parent):
-        _appName(appname),
-        _app(new Application(appname)),
-        _snore(parent)
+SnoreNotificationInstance::SnoreNotificationInstance ( const QString &appname, SnoreServer *parent ) :
+        _appName ( appname ),
+        _app ( new Application ( appname ) ),
+        _snore ( parent )
 {
-    setParent(parent);
+    setParent ( parent );
 }
 
-SnoreNotificationInstance::~SnoreNotificationInstance(){
+SnoreNotificationInstance::~SnoreNotificationInstance()
+{
     unregisterWithBackends();
 }
 
 
-void SnoreNotificationInstance::addAlert(const QString &name, const QString &title){    
-    _app->addAlert(new Alert(name,title.isNull()?name:title));
+void SnoreNotificationInstance::addAlert ( const QString &name, const QString &title )
+{
+    _app->addAlert ( new Alert ( name,title.isNull() ?name:title ) );
 
 }
 
-void SnoreNotificationInstance::registerWithBackends(){
-    _snore->addApplication(_app);
-    _snore->applicationIsInitialized(_app);
+void SnoreNotificationInstance::registerWithBackends()
+{
+    _snore->addApplication ( _app );
+    _snore->applicationIsInitialized ( _app );
 
 }
 
-void SnoreNotificationInstance::unregisterWithBackends(){
-    _snore->removeApplication(_appName);
+void SnoreNotificationInstance::unregisterWithBackends()
+{
+    _snore->removeApplication ( _appName );
 }
 
-int SnoreNotificationInstance::notify(const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout){
-    qDebug()<<"Broadcasting"<<title;
-    return _snore->broadcastNotification(QSharedPointer<Notification>(new Notification(NULL,_appName,alert,title,text,icon,timeout)));
+int SnoreNotificationInstance::notify ( const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout )
+{
+    qDebug() <<"Broadcasting"<<title;
+    return _snore->broadcastNotification ( QSharedPointer<Notification> ( new Notification ( NULL,_appName,alert,title,text,icon,timeout ) ) );
 }
 
 #include "snorenotificationinstance.moc"

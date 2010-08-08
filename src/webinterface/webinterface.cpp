@@ -24,70 +24,78 @@
 
 WebInterface* WebInterface::_instance=0;
 
-WebInterface* WebInterface::getInstance(){
-    if(_instance==NULL)
+WebInterface* WebInterface::getInstance()
+{
+    if ( _instance==NULL )
         _instance=new WebInterface();
     return _instance;
 }
 
 WebInterface::WebInterface()
 {
-    tcpServer=new QTcpServer(this);
-    if(!tcpServer->listen(QHostAddress::Any,port)){
-        qDebug()<<"The subscription port is already used";
+    tcpServer=new QTcpServer ( this );
+    if ( !tcpServer->listen ( QHostAddress::Any,port ) )
+    {
+        qDebug() <<"The subscription port is already used";
     }
-    getArgument.insert("",ROOT);
-    getArgument.insert("overview",OVERVIEW);
-    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
+    getArgument.insert ( "",ROOT );
+    getArgument.insert ( "overview",OVERVIEW );
+    connect ( tcpServer, SIGNAL ( newConnection() ), this, SLOT ( handleConnection() ) );
 
 }
-WebInterface::~WebInterface(){
-    qDebug()<<"Unloading Webinterface";
+WebInterface::~WebInterface()
+{
+    qDebug() <<"Unloading Webinterface";
     tcpServer->deleteLater();
 }
 
-void WebInterface::publicatePlugin(WebInterface_Plugin *plugin){
-    webinterfaces.append(plugin);
-    qDebug()<<"appending Webinterface Plugin";
+void WebInterface::publicatePlugin ( WebInterface_Plugin *plugin )
+{
+    webinterfaces.append ( plugin );
+    qDebug() <<"appending Webinterface Plugin";
 }
 
-void WebInterface::handleConnection(){
+void WebInterface::handleConnection()
+{
     QTcpSocket* client= tcpServer->nextPendingConnection();
-    connect(client,SIGNAL(readyRead()),this,SLOT(handleMessages()));
+    connect ( client,SIGNAL ( readyRead() ),this,SLOT ( handleMessages() ) );
 }
 
-void WebInterface::handleMessages(){
-    qDebug()<<"Webinteface";
-    QTcpSocket *client= (QTcpSocket*)sender();
-    QString in(QString::fromUtf8( client->readAll()));
-    in=in.mid(in.indexOf("/")+1);
-    in=in.mid(0,in.indexOf(" "));
+void WebInterface::handleMessages()
+{
+    qDebug() <<"Webinteface";
+    QTcpSocket *client= ( QTcpSocket* ) sender();
+    QString in ( QString::fromUtf8 ( client->readAll() ) );
+    in=in.mid ( in.indexOf ( "/" ) +1 );
+    in=in.mid ( 0,in.indexOf ( " " ) );
     QString out;
-    qDebug()<<getArgument.value(in.toLower());
-    if(!in.isEmpty())
-        foreach(WebInterface_Plugin* pl,webinterfaces){
-        qDebug()<<"Paring in:";
-        if(pl->parseCommand(client,in.toLower()))
+    qDebug() <<getArgument.value ( in.toLower() );
+    if ( !in.isEmpty() )
+        foreach ( WebInterface_Plugin* pl,webinterfaces )
+    {
+        qDebug() <<"Paring in:";
+        if ( pl->parseCommand ( client,in.toLower() ) )
             return;
     }
     out+="<html><head><TITLE>SnoreNotify Configuration</TITLE></head><body>";
-    foreach(WebInterface_Plugin* plugin, webinterfaces)
-        out.append(plugin->display());
+    foreach ( WebInterface_Plugin* plugin, webinterfaces )
+    out.append ( plugin->display() );
     out+="</body></html>";
-    client->write(out.toUtf8());
-    qDebug()<<"Sending over web interface:\n"<<out;
+    client->write ( out.toUtf8() );
+    qDebug() <<"Sending over web interface:\n"<<out;
     client->disconnectFromHost();
     client->waitForDisconnected();
 
 }
 
 
-WebInterface_Plugin::WebInterface_Plugin(QString name,SnoreServer *snore):
-        SnorePlugin(name,snore)
+WebInterface_Plugin::WebInterface_Plugin ( QString name,SnoreServer *snore ) :
+        SnorePlugin ( name,snore )
 {
 }
 
-WebInterface_Plugin::~WebInterface_Plugin(){
+WebInterface_Plugin::~WebInterface_Plugin()
+{
 
 }
 

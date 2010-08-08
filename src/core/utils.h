@@ -7,7 +7,7 @@ class SNORE_EXPORT Utils
 {
 public:
     Utils();
-    static QString notificationToSNTPString(QSharedPointer<Notification> notification);
+    static QString notificationToSNTPString ( QSharedPointer<Notification> notification );
 };
 
 #endif // UTILS_H

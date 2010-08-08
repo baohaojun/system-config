@@ -27,14 +27,14 @@ class SNORE_EXPORT Application:public QObject
 {
     Q_OBJECT
 public:
-    Application(const QString &name);
+    Application ( const QString &name );
     Application();
     ~Application();
-    void addAlert(Alert *alert);
+    void addAlert ( Alert *alert );
     const QString &name() const;
     const AlertList &alerts() const;
     bool isInitialized();
-    void setInitialized(bool b);
+    void setInitialized ( bool b );
 
 
 private:
@@ -48,8 +48,8 @@ class SNORE_EXPORT Alert:public QObject
 {
     Q_OBJECT
 public:
-    Alert(const QString &name,const QString &title);
-    Alert(const QString &name,const QString &title,bool active);
+    Alert ( const QString &name,const QString &title );
+    Alert ( const QString &name,const QString &title,bool active );
     Alert();
 
     const QString &name() const;

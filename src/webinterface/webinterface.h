@@ -37,7 +37,7 @@ public:
     static const int port=9886;
     static WebInterface* getInstance();
 public:
-     void publicatePlugin(WebInterface_Plugin* plugin);
+    void publicatePlugin ( WebInterface_Plugin* plugin );
 
 public slots:
     void handleConnection();
@@ -52,7 +52,8 @@ private:
     QList<WebInterface_Plugin*> webinterfaces;
     QTcpServer *tcpServer;
 
-    enum ARGUMENTS{
+    enum ARGUMENTS
+    {
         ROOT,
         SUBSCRIBE,
         UNSUBSCRIBE,
@@ -61,15 +62,16 @@ private:
     QHash<QString,WebInterface::ARGUMENTS> getArgument;
 };
 
-class WEBINTERFACE_EXPORT WebInterface_Plugin:public SnorePlugin{
+class WEBINTERFACE_EXPORT WebInterface_Plugin:public SnorePlugin
+{
 public:
-    WebInterface_Plugin(QString name,class SnoreServer *snore=0);
+    WebInterface_Plugin ( QString name,class SnoreServer *snore=0 );
     virtual ~WebInterface_Plugin();
-    virtual QString display()=0;
-    virtual bool parseCommand(QTcpSocket *client,const QString &command)=0;
+    virtual QString display() =0;
+    virtual bool parseCommand ( QTcpSocket *client,const QString &command ) =0;
 
 };
-Q_DECLARE_INTERFACE(WebInterface_Plugin,
-                    "org.Snore.WebInterface/1.0")
+Q_DECLARE_INTERFACE ( WebInterface_Plugin,
+                      "org.Snore.WebInterface/1.0" )
 
 #endif // WEBINTERFACE_H

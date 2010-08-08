@@ -40,7 +40,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
-option(WITH_WEBINTERFACE     "Buld with WebInterface"           OFF)
+option(WITH_WEBINTERFACE     	 "Buld with WebInterface"         OFF)
 
 set(PLUGIN_INSTALL_PATH  LIBRARY DESTINATION bin/snoreplugins)
 

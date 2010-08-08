@@ -112,10 +112,10 @@ QStringList FreedesktopNotification_Frontend::GetCapabilities()
 
 QString FreedesktopNotification_Frontend::GetServerInformation(QString& vendor, QString& version, QString& specVersion)
 {
-    vendor = "SnoreNotify";
+    vendor = "Snore";
     version = "0.01";
     specVersion = "0";
-    return "SnoreNotify";
+    return "Snore";
 }
 
 

@@ -17,70 +17,79 @@
 #include "application.h"
 
 
-Application::Application(const QString &name):
-        _name(name),
-        _initialized(false)
+Application::Application ( const QString &name ) :
+        _name ( name ),
+        _initialized ( false )
 {
-    _alerts.insert("",new Alert("Default Alert","Default Alert"));
+    _alerts.insert ( "",new Alert ( "Default Alert","Default Alert" ) );
 }
 
-Application::Application():
-        _name("Error: Uninitialized Application")
+Application::Application() :
+        _name ( "Error: Uninitialized Application" )
 {}
 
-Application::~Application(){
-    foreach(Alert *a,_alerts){
+Application::~Application()
+{
+    foreach ( Alert *a,_alerts )
+    {
         a->deleteLater();
     }
 }
 
-void Application::addAlert(Alert *alert)
+void Application::addAlert ( Alert *alert )
 {
-    _alerts.insert(alert->name(),alert);
+    _alerts.insert ( alert->name(),alert );
 }
 
-const QString &Application::name() const{
+const QString &Application::name() const
+{
     return _name;
 }
 
-const AlertList &Application::alerts() const{
+const AlertList &Application::alerts() const
+{
     return _alerts;
 }
 
-bool Application::isInitialized(){
+bool Application::isInitialized()
+{
     return _initialized;
 }
 
-void Application::setInitialized(bool b){
+void Application::setInitialized ( bool b )
+{
     _initialized = b;
 }
 
-Alert::Alert(const QString &name,const QString &title):
-        _name(name),
-        _title(title),
-        _active(true)
+Alert::Alert ( const QString &name,const QString &title ) :
+        _name ( name ),
+        _title ( title ),
+        _active ( true )
 {}
 
-Alert::Alert(const QString &name,const QString &title,bool active):
-        _name(name),
-        _title(title),
-        _active(active)
+Alert::Alert ( const QString &name,const QString &title,bool active ) :
+        _name ( name ),
+        _title ( title ),
+        _active ( active )
 {}
 
-Alert::Alert():
-        _active(false)
+Alert::Alert() :
+        _active ( false )
 {}
 
 
-const QString &Alert::name() const{
+const QString &Alert::name() const
+{
     return _name;
 }
 
-const QString &Alert::title() const{
+const QString &Alert::title() const
+{
     return _title;
 }
 
-bool Alert::isActive() const{
+bool Alert::isActive() const
+{
     return _active;
 }
 

@@ -29,25 +29,26 @@ class SNORE_EXPORT Notification:public QObject
     friend class SnoreServer;
 public:
     static int DefaultTimeout;
-    static QString toPlainText(const QString &string);
-    enum actions{
+    static QString toPlainText ( const QString &string );
+    enum actions
+    {
         TIMED_OUT=0,
         ACTION_1=1,
         ACTION_2=2,
         ACTION_3=3,
         CLOSED=4
-           };
-public:    
-    Notification(uint id=0);
-    Notification(class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0);
+    };
+public:
+    Notification ( uint id=0 );
+    Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0 );
     QString toString() const;
     bool isNotification();
-    void setIsNotification(bool b);
+    void setIsNotification ( bool b );
 
 
     const uint &id() const;
     const int &timeout() const;
-    void setActionInvoked(const Notification::actions &action);
+    void setActionInvoked ( const Notification::actions &action );
     const Notification::actions &actionInvoked() const;
     const class Notification_Frontend *source() const;
     const QString &application() const;
@@ -55,9 +56,9 @@ public:
     const QString &text() const;
     const QString &icon() const;
     const QString &alert() const;
-    const QVariant hint(const QString &key) const;
-    bool hintExists(const QString &key);
-    void insertHint(const QString &key,const QVariant &val);
+    const QVariant hint ( const QString &key ) const;
+    bool hintExists ( const QString &key );
+    void insertHint ( const QString &key,const QVariant &val );
 
 
 private:
@@ -69,7 +70,7 @@ private:
     QString _alert;
     QString _title;
     QString _text;
-    QString _icon;    
+    QString _icon;
     QVariantHash _hints;
 
     bool _notification;
@@ -78,6 +79,6 @@ private:
 
 };
 
-QDataStream & operator<< ( QDataStream & stream, const Notification & noti);
+QDataStream & operator<< ( QDataStream & stream, const Notification & noti );
 
 #endif // NOTIFICATION_H

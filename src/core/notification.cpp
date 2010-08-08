@@ -27,97 +27,115 @@
 
 int Notification::DefaultTimeout=10;
 
-QString Notification::toPlainText(const QString &string){
-    if(!Qt::mightBeRichText(string))
+QString Notification::toPlainText ( const QString &string )
+{
+    if ( !Qt::mightBeRichText ( string ) )
         return string;
     QTextEdit te;
-    te.setHtml(string);
+    te.setHtml ( string );
     return te.toPlainText();
 }
 
-Notification::Notification(uint id):
-        _id(id),
-        _timeout(10),
-        _source(NULL),
-        _notification(true)
+Notification::Notification ( uint id ) :
+        _id ( id ),
+        _timeout ( 10 ),
+        _source ( NULL ),
+        _notification ( true )
 {}
 
-Notification::Notification(Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id):
-        _id(id),
-        _timeout(timeout),
-        _source(source),
-        _app(application),
-        _alert(alert),
-        _title(title),
-        _text(text),
-        _icon(icon),
-        _notification(true)
+Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id ) :
+        _id ( id ),
+        _timeout ( timeout ),
+        _source ( source ),
+        _app ( application ),
+        _alert ( alert ),
+        _title ( title ),
+        _text ( text ),
+        _icon ( icon ),
+        _notification ( true )
 {}
 
-QString Notification::toString() const{
-    return QString("Title: "+_title+"\nText: "+_text);
+QString Notification::toString() const
+{
+    return QString ( "Title: "+_title+"\nText: "+_text );
 }
 
-bool Notification::isNotification(){
+bool Notification::isNotification()
+{
     return _notification;
 }
 
-void Notification::setIsNotification(bool b){
+void Notification::setIsNotification ( bool b )
+{
     _notification=b;
 }
-const uint &Notification::id() const{
+const uint &Notification::id() const
+{
     return _id;
 }
 
-const QString &Notification::Notification::icon() const{
+const QString &Notification::Notification::icon() const
+{
     return _icon;
 }
 
-const int &Notification::timeout() const{
+const int &Notification::timeout() const
+{
     return _timeout;
 }
 
-const Notification::actions &Notification::actionInvoked() const{
+const Notification::actions &Notification::actionInvoked() const
+{
     return _actionInvoked;
 }
 
-void Notification::setActionInvoked(const Notification::actions &action){
+void Notification::setActionInvoked ( const Notification::actions &action )
+{
     _actionInvoked = action;
 }
 
-const Notification_Frontend *Notification::source() const{
+const Notification_Frontend *Notification::source() const
+{
     return _source;
 }
 
-const QString &Notification::application() const{
+const QString &Notification::application() const
+{
     return _app;
 }
 
-const QString &Notification::title() const{
+const QString &Notification::title() const
+{
     return _title;
 }
 
-const QString &Notification::text() const{
+const QString &Notification::text() const
+{
     return _text;
 }
 
-const QString &Notification::alert() const{
+const QString &Notification::alert() const
+{
     return _alert;
 }
 
-const QVariant Notification::hint(const QString &key) const{
-    return _hints.value(key);
+const QVariant Notification::hint ( const QString &key ) const
+{
+    return _hints.value ( key );
 }
 
-bool Notification::hintExists(const QString &key){
-    return _hints.contains(key);
+bool Notification::hintExists ( const QString &key )
+{
+    return _hints.contains ( key );
 }
 
-void Notification::insertHint(const QString &key, const QVariant &val){
-    _hints.insert(key,val);
+void Notification::insertHint ( const QString &key, const QVariant &val )
+{
+    _hints.insert ( key,val );
 }
 
-QDataStream & operator<< ( QDataStream &stream, const Notification &noti){
+QDataStream & operator<< ( QDataStream &stream, const Notification &noti )
+{
     stream<<noti.toString();
     return stream;
 }

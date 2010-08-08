@@ -24,27 +24,28 @@
 
 class FreedesktopImageHint;
 
-class FreedesktopNotification{
+class FreedesktopNotification:public QObject{
+Q_OBJECT
 public:
     static void registerTypes();
 
 public:
-    FreedesktopNotification();
-    FreedesktopNotification(Notification *noti);
+    FreedesktopNotification(QObject * parent=0);
+    FreedesktopNotification(QSharedPointer<Notification> noti,QObject * parent=0);
 
     QPointer<FreedesktopImageHint> image;
-    Notification toNotification();
-    QPointer<Notification> notification;
+    QSharedPointer<Notification> notification;
 
 };
 
-Q_DECLARE_METATYPE(FreedesktopNotification);
+Q_DECLARE_METATYPE(FreedesktopNotification*);
 
-QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i);
-const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotification &i) ;
+QDBusArgument &operator<<(QDBusArgument &a,const FreedesktopNotification *i);
+const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotification *i) ;
 
-class FreedesktopImageHint
+class FreedesktopImageHint:public QObject
 {
+  Q_OBJECT
 public:
     FreedesktopImageHint();
     FreedesktopImageHint(const QImage &img);
@@ -61,9 +62,9 @@ public:
 
 
 };
-Q_DECLARE_METATYPE(FreedesktopImageHint);
+Q_DECLARE_METATYPE(FreedesktopImageHint*);
 
-QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopImageHint &i);
-const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopImageHint  &i) ;
+QDBusArgument &operator<<(QDBusArgument &a,  const FreedesktopImageHint *i);
+const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopImageHint  *i) ;
 
 #endif // FreedesktopNotification_H

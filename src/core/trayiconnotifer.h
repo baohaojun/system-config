@@ -8,14 +8,14 @@ class TrayIconNotifer:public Notification_Backend
 {
     Q_OBJECT
 public:
-    TrayIconNotifer(class SnoreServer *snore=0,class QSystemTrayIcon *icon=0);
+    TrayIconNotifer ( class SnoreServer *snore=0,class QSystemTrayIcon *icon=0 );
     bool isPrimaryNotificationBackend();
 
 public slots:
-    void registerApplication(Application *application);
-    void unregisterApplication(class Application *application);
-    int notify(QSharedPointer<Notification> notification);
-    void closeNotification(QSharedPointer<Notification> notification);
+    void registerApplication ( Application *application );
+    void unregisterApplication ( class Application *application );
+    int notify ( QSharedPointer<Notification> notification );
+    void closeNotification ( QSharedPointer<Notification> notification );
 
 private:
     class QSystemTrayIcon *_trayIcon;

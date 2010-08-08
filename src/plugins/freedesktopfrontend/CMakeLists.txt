@@ -1,4 +1,4 @@
-if(QT_QTDBUS_FOUND)
+if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
     message(STATUS "Adding freedesktop notification frontend")
 
     set ( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC
@@ -13,9 +13,7 @@ if(QT_QTDBUS_FOUND)
 
 
     install(TARGETS freedesktop_frontend ${PLUGIN_INSTALL_PATH})
-
-
-endif(QT_QTDBUS_FOUND)
+endif(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
 
 
 

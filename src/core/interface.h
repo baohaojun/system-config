@@ -22,57 +22,60 @@
 #include <QSharedPointer>
 
 
-class SNORE_EXPORT SnorePlugin:public QObject{
+class SNORE_EXPORT SnorePlugin:public QObject
+{
     Q_OBJECT
 public:
-    SnorePlugin(QString name,class SnoreServer *snore=0);
+    SnorePlugin ( QString name,class SnoreServer *snore=0 );
     virtual ~SnorePlugin();
-    virtual void setSnore(class SnoreServer* snore);
+    virtual void setSnore ( class SnoreServer* snore );
     virtual class SnoreServer* snore();
     const QString &name() const;
 private:
-    SnorePlugin(){}
+    SnorePlugin() {}
     QString _name;
     class SnoreServer *_snore;
 
 
 };
 
-class SNORE_EXPORT Notification_Backend:public SnorePlugin{
+class SNORE_EXPORT Notification_Backend:public SnorePlugin
+{
     Q_OBJECT
 public:
-    Notification_Backend(QString name,class SnoreServer *snore=0);
+    Notification_Backend ( QString name,class SnoreServer *snore=0 );
     virtual ~Notification_Backend();
-    virtual bool isPrimaryNotificationBackend()=0;
+    virtual bool isPrimaryNotificationBackend() =0;
 
 public slots:
-    virtual void registerApplication(class Application *application)=0;
-    virtual void unregisterApplication(class Application *application)=0;
-    virtual int notify(QSharedPointer<Notification> notification)=0;
-    virtual void closeNotification(QSharedPointer<Notification> notification)=0;
+    virtual void registerApplication ( class Application *application ) =0;
+    virtual void unregisterApplication ( class Application *application ) =0;
+    virtual int notify ( QSharedPointer<Notification> notification ) =0;
+    virtual void closeNotification ( QSharedPointer<Notification> notification ) =0;
 
     //    virtual void update
 
 };
 
 
-class SNORE_EXPORT Notification_Frontend:public SnorePlugin{
+class SNORE_EXPORT Notification_Frontend:public SnorePlugin
+{
     Q_OBJECT
 public:
-    Notification_Frontend(QString name,class SnoreServer *snore=0);
+    Notification_Frontend ( QString name,class SnoreServer *snore=0 );
     virtual ~Notification_Frontend();
-    virtual void actionInvoked(QSharedPointer<Notification> notification)=0;
-    virtual void notificationClosed(QSharedPointer<Notification> notification)=0;
+    virtual void actionInvoked ( QSharedPointer<Notification> notification ) =0;
+    virtual void notificationClosed ( QSharedPointer<Notification> notification ) =0;
 };
 
 
 
-Q_DECLARE_INTERFACE(SnorePlugin,
-                    "org.Snore.SnorePlugin/1.0")
-Q_DECLARE_INTERFACE(Notification_Frontend,
-                    "org.Snore.NotificationFrontend/1.0")
-Q_DECLARE_INTERFACE(Notification_Backend,
-                    "org.Snore.NotificationBackend/1.0")
+Q_DECLARE_INTERFACE ( SnorePlugin,
+                      "org.Snore.SnorePlugin/1.0" )
+Q_DECLARE_INTERFACE ( Notification_Frontend,
+                      "org.Snore.NotificationFrontend/1.0" )
+Q_DECLARE_INTERFACE ( Notification_Backend,
+                      "org.Snore.NotificationBackend/1.0" )
 
 
 #endif//INTERFACE_H

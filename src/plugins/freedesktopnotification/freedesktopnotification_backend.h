@@ -9,23 +9,24 @@ class fNotification;
 class  FreedesktopNotification_Backend:public Notification_Backend
 {
     Q_OBJECT
-    Q_INTERFACES(Notification_Backend)
-public:            
-    FreedesktopNotification_Backend(class SnoreServer *snore=0);
+    Q_INTERFACES ( Notification_Backend )
+public:
+    FreedesktopNotification_Backend ( class SnoreServer *snore=0 );
     bool isPrimaryNotificationBackend();
+    
 public slots:
-    void registerApplication(Application *application);
-    void unregisterApplication(Application *application);
-    int notify(QSharedPointer<class Notification>notification);
-    void closeNotification(QSharedPointer<Notification> notification);
-
+    void registerApplication ( Application *application );
+    void unregisterApplication ( Application *application );
+    int notify ( QSharedPointer<class Notification>notification );
+    void closeNotification ( QSharedPointer<Notification> notification );
 
 };
 
 
 
 
-class  fNotification:public QObject{
+class  fNotification:public QObject
+{
     Q_OBJECT
     friend class FreedesktopNotification_Backend;
 public:
@@ -34,18 +35,20 @@ private:
     static QString vendor;
 
 public:
-    fNotification(FreedesktopNotification_Backend* parent);
+    fNotification ( QSharedPointer<Notification> notification ,FreedesktopNotification_Backend* parent );
     uint send();
-    QSharedPointer<Notification> notification;
+    QSharedPointer<Notification> notification();
+
 
 private:
     Notification_Backend* parent;
     QString getVendor();
-    QTimer selfdistruct;
+    QTimer *selfdistruct;
+    QSharedPointer<Notification> _notification;
 
 private slots:
-    void action(const uint &id, const QString &action_key);
-    void closed(const uint &id,const uint &reason);
+    void action ( const uint &id, const QString &action_key );
+    void closed ( const uint &id,const uint &reason );
     void close();
     void selfDelete();
 };
