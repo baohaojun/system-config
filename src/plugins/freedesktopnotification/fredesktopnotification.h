@@ -32,6 +32,7 @@ public:
 public:
     FreedesktopNotification();
     FreedesktopNotification(QSharedPointer<Notification> noti);
+    
     QSharedPointer<Notification> notification;
 };
 
@@ -46,7 +47,7 @@ public:
     FreedesktopImageHint();
     FreedesktopImageHint(const QImage &img);
 
-    QImage toQImage()const;
+    QImage* toQImage()const;
 
     int width;
     int height;

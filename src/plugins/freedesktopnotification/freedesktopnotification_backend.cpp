@@ -33,7 +33,7 @@ void FreedesktopNotification_Backend::unregisterApplication ( Application *appli
 
 int  FreedesktopNotification_Backend::notify ( QSharedPointer<Notification> noti )
 {
-    fNotification *n = new fNotification ( noti , this);
+    fNotification *n = new fNotification ( noti );
     qDebug()<<"Sending Notification wit Freedesktop_Backend"<<noti->title()<<noti->text();
     uint out = n->send();
     n->deleteLater();
@@ -43,7 +43,7 @@ int  FreedesktopNotification_Backend::notify ( QSharedPointer<Notification> noti
 void FreedesktopNotification_Backend::closeNotification ( QSharedPointer<Notification> notification )
 {
     //TODO: fix
-    fNotification *fn = new fNotification ( notification,this );
+    fNotification *fn = new fNotification ( notification);
     fn->close();
 }
 
@@ -52,8 +52,8 @@ QString fNotification::vendor ( "" );
 
 QDBusInterface fNotification::notificationInterface ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications" );
 
-fNotification::fNotification(QSharedPointer< Notification > notification, FreedesktopNotification_Backend* parent):
-        QObject(parent),
+fNotification::fNotification(QSharedPointer< Notification > notification):
+        QObject(notification.data()),
         _notification(notification)
 {}
 
@@ -62,8 +62,8 @@ fNotification::fNotification(QSharedPointer< Notification > notification, Freede
 uint fNotification::send()
 {
     Q_ASSERT(!_notification.isNull());
-    FreedesktopNotification n ( _notification );
-    QDBusMessage recive=notificationInterface.call ( "Notify", QVariant::fromValue ( n ) );
+    QVariant n = QVariant::fromValue ( FreedesktopNotification( _notification ));
+    QDBusMessage recive = notificationInterface.call ( "Notify", n );
     uint id=recive.arguments().last().toInt();
     selfdistruct = new QTimer(this );
     selfdistruct->setSingleShot ( true );
@@ -130,7 +130,6 @@ QString fNotification::getVendor()
 void fNotification::selfDelete()
 {
     _notification.clear();
-    deleteLater();
 }
 
 

@@ -69,8 +69,9 @@ QString FreedesktopNotification_Frontend::getImagefromHint(const FreedesktopImag
     QFile file(filename);
     if(file.exists())return filename;
 
-    QImage qimage=img.toQImage();
-    qimage.save(filename,"PNG");
+    QImage *qimage = img.toQImage();
+    qimage->save(filename,"PNG");
+    delete qimage;
     qDebug()<<"Saving to "<<filename;
     return filename;
 }

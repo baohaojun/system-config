@@ -35,7 +35,7 @@ private:
     static QString vendor;
 
 public:
-    fNotification ( QSharedPointer<Notification> notification ,FreedesktopNotification_Backend* parent );
+    fNotification ( QSharedPointer<Notification> notification);
     uint send();
     QSharedPointer<Notification> notification();
 

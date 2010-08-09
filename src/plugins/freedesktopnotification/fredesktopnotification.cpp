@@ -38,7 +38,7 @@ void FreedesktopNotification::registerTypes() {
 }
 
 QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i) {
-    Q_ASSERT(!i.notification.isNull());
+ //   Q_ASSERT(!i.notification.isNull());
     qDebug()<<i.notification->toString();
     a<<i.notification->application();
     a<<uint(0);
@@ -88,8 +88,10 @@ FreedesktopImageHint::FreedesktopImageHint(const QImage &img) {
 }
 
 
-QImage FreedesktopImageHint::toQImage()const {
-    return QImage((uchar*)imageData.data(),width,height,QImage::Format_ARGB32 ).rgbSwapped();
+QImage *FreedesktopImageHint::toQImage() const {
+    QImage *img = new QImage((uchar*)imageData.data(),width,height,QImage::Format_ARGB32 );
+    img->rgbSwapped();
+    return img;
 }
 
 QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopImageHint &i) {
