@@ -25,18 +25,14 @@ class FreedesktopNotification_Frontend:public Notification_Frontend{
 public:
     FreedesktopNotification_Frontend(class SnoreServer *snore=0);
     ~FreedesktopNotification_Frontend();
-
     QString getImagefromHint(const class FreedesktopImageHint &img);
 
     void actionInvoked(QSharedPointer<Notification>notification);
     void notificationClosed(QSharedPointer<Notification>notification);
-
     uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
-
     void CloseNotification( uint id );
 
     QStringList GetCapabilities();
-
     QString GetServerInformation(QString& vendor, QString& version, QString& specVersion);
 
 signals:

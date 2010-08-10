@@ -86,8 +86,13 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
         hints["image_data"].value<QDBusArgument>()>>image;
         icon=getImagefromHint(image);
     }
-
-    QSharedPointer<Notification> noti(new Notification(this,app_name,"",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id));
+    if(!snore()->aplications().contains(app_name)){
+        Application *a = new Application(app_name);
+        a->addAlert(new Alert("DBus Alert","DBus Alert"));
+        snore()->addApplication(a);
+        snore()->applicationIsInitialized(a);
+    }
+    QSharedPointer<Notification> noti(new Notification(this,app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id));
     return snore()->broadcastNotification(noti);
 }
 
