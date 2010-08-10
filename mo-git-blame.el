@@ -2,7 +2,12 @@
 
 ;; Copyright (C) 2009, 2010  Moritz Bunkus <moritz@bunkus.org>
 ;; Copyright (C) 2010  Štěpán Němec <stepnem@gmail.com>
-;;
+
+;; Author: Moritz Bunkus <moritz@bunkus.org>
+;; Maintainer: Moritz Bunkus <moritz@bunkus.org>
+;; Version: 0.1.0
+;; Keywords: tools
+
 ;; mo-git-blame is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
 ;; published by the Free Software Foundation; either version 3, or (at
