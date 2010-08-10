@@ -1,6 +1,7 @@
-;;; mo-git-blame -- An interactive, interative 'git blame' mode for Emacs
+;;; mo-git-blame --- An interactive, iterative 'git blame' mode for Emacs
 
-;; Copyright (C) 2009  Moritz Bunkus <moritz@bunkus.org>
+;; Copyright (C) 2009, 2010  Moritz Bunkus <moritz@bunkus.org>
+;; Copyright (C) 2010  Štěpán Němec <stepnem@gmail.com>
 ;;
 ;; mo-git-blame is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -36,6 +37,8 @@
 (defvar mo-git-blame-vars nil
   "Buffer-local plist that stores various variables needed for
 interactive use, e.g. the file name, current revision etc.")
+
+(defvar mo-git-blame--wincfg nil)
 
 (defvar mo-git-blame-mode-map
   (let ((map (make-keymap)))
@@ -595,6 +598,8 @@ using git blame's `-L' option. Otherwise the whole file is
 blamed."
   (interactive)
   (mo-git-blame-assert-not-running)
+  (unless mo-git-blame--wincfg
+    (setq mo-git-blame--wincfg (current-window-configuration)))
   (let* ((file-name (or file-name (mo-git-blame-read-file-name)))
          (has-blame-vars (local-variable-p 'mo-git-blame-vars))
          (the-raw-revision (or revision "HEAD"))
@@ -663,12 +668,13 @@ blamed."
 (defun mo-git-blame-quit ()
   "Kill the mo-git-blame buffers."
   (interactive)
-  (delete-other-windows)
   (scroll-all-mode 0)
   (let ((buffer))
     (dolist (buffer (buffer-list))
       (if (string-match-p "^\\*mo-git-blame" (buffer-name buffer))
-          (kill-buffer buffer)))))
+          (kill-buffer buffer))))
+  (set-window-configuration mo-git-blame--wincfg)
+  (setq mo-git-blame--wincfg nil))
 
 (defun mo-git-blame-display-content-buffer ()
   "Show the content buffer in the content window."
