@@ -87,8 +87,8 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
         icon=getImagefromHint(image);
     }
     if(!snore()->aplications().contains(app_name)){
-        Application *a = new Application(app_name);
-        a->addAlert(new Alert("DBus Alert","DBus Alert"));
+        Application *a = new Application(app_name,app_icon);
+        a->addAlert(new Alert("DBus Alert","DBus Alert",app_icon));
         snore()->addApplication(a);
         snore()->applicationIsInitialized(a);
     }

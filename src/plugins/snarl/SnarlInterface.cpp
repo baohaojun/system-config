@@ -1,4 +1,4 @@
-﻿// About:
+// About:
 //   Snarl C++ interface implementation
 //   To understand what the different functions do and what they return, please
 //   have a look at the API on http://www.fullphat.net/dev/api.htm.

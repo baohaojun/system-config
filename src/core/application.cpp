@@ -17,8 +17,9 @@
 #include "application.h"
 
 
-Application::Application ( const QString &name ) :
+Application::Application (const QString &name, const QString &icon) :
         _name ( name ),
+        _icon(icon),
         _initialized ( false )
 {
     _alerts.insert ( "",new Alert ( "Default Alert","Default Alert" ) );
@@ -46,6 +47,11 @@ const QString &Application::name() const
     return _name;
 }
 
+const QString &Application::icon()const
+{
+    return _icon;
+}
+
 const AlertList &Application::alerts() const
 {
     return _alerts;
@@ -61,15 +67,10 @@ void Application::setInitialized ( bool b )
     _initialized = b;
 }
 
-Alert::Alert ( const QString &name,const QString &title ) :
+Alert::Alert (const QString &name, const QString &title, const QString &icon, bool active) :
         _name ( name ),
         _title ( title ),
-        _active ( true )
-{}
-
-Alert::Alert ( const QString &name,const QString &title,bool active ) :
-        _name ( name ),
-        _title ( title ),
+        _icon(icon),
         _active ( active )
 {}
 
@@ -86,6 +87,11 @@ const QString &Alert::name() const
 const QString &Alert::title() const
 {
     return _title;
+}
+
+const QString &Alert::icon() const
+{
+    return _icon;
 }
 
 bool Alert::isActive() const

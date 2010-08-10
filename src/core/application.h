@@ -27,11 +27,12 @@ class SNORE_EXPORT Application:public QObject
 {
     Q_OBJECT
 public:
-    Application ( const QString &name );
+    Application ( const QString &name, const QString &icon = "" );
     Application();
     ~Application();
     void addAlert ( Alert *alert );
     const QString &name() const;
+    const QString &icon() const;
     const AlertList &alerts() const;
     bool isInitialized();
     void setInitialized ( bool b );
@@ -39,6 +40,7 @@ public:
 
 private:
     QString _name;
+    QString _icon;
     AlertList _alerts;
     bool _initialized;
 
@@ -48,16 +50,17 @@ class SNORE_EXPORT Alert:public QObject
 {
     Q_OBJECT
 public:
-    Alert ( const QString &name,const QString &title );
-    Alert ( const QString &name,const QString &title,bool active );
+    Alert ( const QString &name,const QString &title="",const QString &icon="",bool active=true );
     Alert();
 
     const QString &name() const;
     const QString &title() const;
+    const QString &icon() const;
     bool isActive() const;
 private:
     QString _name;
     QString _title;
+    QString _icon;
     bool _active;
 };
 

@@ -53,7 +53,8 @@ void Snarl_Backend::registerApplication(Application *application){
     _applications.insert(application->name(),snarlInterface);
 
     wchar_t *appName = toWchar(application->name());
-    snarlInterface->RegisterApp(appName,L"",L"");
+    wchar_t *icon = toWchar(application->icon());
+    snarlInterface->RegisterApp(appName,icon,icon);
 
     foreach(Alert *alert,application->alerts()){
         wchar_t *alertName = toWchar(alert->name());
@@ -61,6 +62,7 @@ void Snarl_Backend::registerApplication(Application *application){
         delete [] alertName;
     }
     delete [] appName;
+    delete [] icon;
 }
 
 void Snarl_Backend::unregisterApplication(Application *application){

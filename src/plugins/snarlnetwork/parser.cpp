@@ -30,9 +30,10 @@
 #include <QObject>
 #include <QTcpSocket>
 
-Parser::Parser(SnarlNetworkFrontend *snarl):snarl(snarl)
+Parser::Parser(SnarlNetworkFrontend *snarl):
+        QObject(snarl),
+        snarl(snarl)
 {
-    setParent(snarl);
     getSnpType.insert("type",TYPE);
     getSnpType.insert("app",APP);
     getSnpType.insert("version",VERSION);

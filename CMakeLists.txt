@@ -17,6 +17,7 @@ include_directories(
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR} )
 set(LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH})
 
+
 if (CMAKE_COMPILER_IS_GNUCXX)
    set (KDE4_ENABLE_EXCEPTIONS -fexceptions)
    # Select flags.
@@ -38,6 +39,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
    endif (CMAKE_SYSTEM_NAME MATCHES Linux)
 
 endif(CMAKE_COMPILER_IS_GNUCXX)
+
 
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 option(WITH_WEBINTERFACE     	 "Buld with WebInterface"         OFF)
