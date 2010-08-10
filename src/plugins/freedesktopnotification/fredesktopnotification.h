@@ -47,7 +47,7 @@ public:
     FreedesktopImageHint();
     FreedesktopImageHint(const QImage &img);
 
-    QImage* toQImage()const;
+    QImage toQImage()const;
 
     int width;
     int height;

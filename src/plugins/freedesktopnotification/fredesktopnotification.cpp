@@ -88,10 +88,8 @@ FreedesktopImageHint::FreedesktopImageHint(const QImage &img) {
 }
 
 
-QImage *FreedesktopImageHint::toQImage() const {
-    QImage *img = new QImage((uchar*)imageData.data(),width,height,QImage::Format_ARGB32 );
-    img->rgbSwapped();
-    return img;
+QImage FreedesktopImageHint::toQImage() const {
+    return QImage((uchar*)imageData.data(),width,height,QImage::Format_ARGB32 ).rgbSwapped();
 }
 
 QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopImageHint &i) {
