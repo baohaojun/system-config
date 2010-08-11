@@ -3914,8 +3914,6 @@ ________________________________________________________________________________
 然后使用QQ2009SP6就可以看到自定义图片和截图了...欢迎大家下载~~~~
 有什么问题大家就在这里讨论吧.
 
-insmod /system/lib/hw/wlan/dhd.ko "firmware_path=/system/lib/hw/wlan/sdio-cdc-g-11n-mfgtest-seqcmds.bin nvram_path=/system/lib/hw/wlan/nvram.txt"
-insmod /data/dhd.ko "firmware_path=/system/lib/hw/wlan/sdio-cdc-g-11n-mfgtest-seqcmds.bin nvram_path=/system/lib/hw/wlan/nvram.txt"
 ls /data/sdio-cdc-g-11n-mfgtest-seqcmds.bin
 make LINUXDIR=/home/bhj/src/android-nv-froyo/out/target/product/harmony/obj/KERNEL LINUXVER=2.6.32 CROSS_COMPILE=/home/bhj/src/android-nv-froyo/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/arm-eabi- ARCH=arm dhd-cdc-sdmmc-gpl-debug
 
@@ -3930,11 +3928,14 @@ cat /data/debugfs/gpio
 cat /proc/interrupts
 cat /data/debugfs/mmc1/ios
 
-insmod /system/lib/hw/wlan/dhd.ko "firmware_path=/system/lib/hw/wlan/sdio-cdc-g-11n-mfgtest-seqcmds.bin nvram_path=/system/lib/hw/wlan/nvram.txt"
-wlarm_android up
-alias iw=/data/iw
+insmod /system/lib/hw/wlan/dhd.ko "firmware_path=/system/lib/hw/wlan/sdio-cdc-g-11n-mfgtest-seqcmds.bin nvram_path=/system/lib/hw/wlan/nvram.txt"; wlarm_android up
+alias iw=iwconfig
 cp /etc/wifi/wpa_supplicant.conf /data/misc/wifi
 chown wifi.wifi /data/misc/wifi/wpa_supplicant.conf
+
+
+stop wpa_supplicant
+stop dhcpcd
 start wpa_supplicant
 start dhcpcd
 
@@ -3947,6 +3948,12 @@ wpa_cli set_network 0 key_mgmt NONE
 wpa_cli enable_network 0
 
 stop wpa_supplicant
+
+insmod /system/lib/hw/wlan/ar6000.ko
+alias iw='iwconfig wlan0'
+start wpa_supplicant
+start dhcpcd
+
 
 insmod /system/lib/hw/wlan/dhd.ko "firmware_path=/system/lib/hw/wlan/sdio-cdc-g-11n-mfgtest-seqcmds.bin nvram_path=/system/lib/hw/wlan/nvram.txt"
 wlarm_android up
@@ -5528,8 +5535,29 @@ End
 insmod usbserial.ko vendor=0x19d2 product=0x0016
 busybox udhcpc -f -s /data/udhcp.cfg
 
+gdbserver :5039 --attach pid
 gdbserver :5039 /system/bin/wlarm_android join RayzerLink key 2008080808 imode bss amode shared bssid D8:5D:4C:1D:22:EC
 adb forward tcp:5039 tcp:5039
 (export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; adb forward tcp:5039 tcp:5039; export PATH=`pwd`/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:$PATH; gdbclient wlarm_android)
 
-simple QQ: http://www.ankty.com/soft/11/104/13414.html
+accelerometer, sysfs_create_file, shows up in /sys/class/input, and /sys/devices/virtual/input/input2
+
+
+mkdir /data/debugfs
+mount -t debugfs null /data/debugfs
+cat /data/debugfs/gpio
+cat /proc/interrupts
+
+
+stty intr ''
+bind '"\C-c": insert-comment'
+insmod /data/proc_i2c.ko
+function ri2c() {
+         echo read adap 0 addr 0xf reg $1 byte 1 > /proc/i2c_rw
+}
+
+function wi2c() {
+         echo write adap 0 addr 0xf reg $1 byte 1 val $2 > /proc/i2c_rw
+}
+
+echo read adap 0 addr 0xf reg 0x1b byte 1 > /proc/i2c_rw

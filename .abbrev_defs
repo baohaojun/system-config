@@ -38,9 +38,10 @@
   '(
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
     ("pe" "printk(KERN_WARNING \"hello error %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 2)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 27)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 29)
     ("pw" "printk(KERN_WARNING \"hello warning %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
     ("sdk" "printk(KERN_WARNING \"hello world %s %s %d %s\\n\", __FILE__, __FUNCTION__, __LINE__, dev_name(host->parent));" nil 9)
+    ("wpk" "wpa_printf(MSG_ERROR,  \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 3)
    ))
 
 (define-abbrev-table 'change-log-mode-abbrev-table '())

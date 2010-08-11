@@ -9,6 +9,7 @@ my $pathpat = '.';
 my $pathdeny = '^$';
 chomp(my $pwd =qx/pwd/);
 my $pwd_pat='no such componet';
+my $list_beagle;
 
 my $ignore_case;
 my $find_file_only = 0;
@@ -20,6 +21,7 @@ GetOptions(
            "d=s" => \$pwd_pat,
            "i!" => \$ignore_case,
            "f!" => \$find_file_only,
+           "l!" => \$list_beagle,
           );
 
 if ($ignore_case) {
@@ -52,6 +54,13 @@ print "beagle query argument `[01;31m"
 
 my $beagle_files = qx/my-beagle $pat/;
 my @beagle_files = split(/\n/, $beagle_files);
+
+if ($list_beagle) {
+  for (@beagle_files) {
+    print "$_:1: [01;31m****************![0m\n";
+  }
+  exit 0;
+}
 
 if (!$find_file_only) {
   open(my $grep, "|xargs grep -H -n -I $ignore_case -e $pat");

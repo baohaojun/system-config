@@ -85,7 +85,8 @@ function lcd()
     fi
 
     if [[ `pwd` =~ ^$HOME/smb/ ]]; then
-        return 1
+        _ucd $1
+        return $?
     fi
 
     local ori=$1
@@ -120,16 +121,16 @@ function lcd()
 function _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will go to /home, 
 {
     local x=0
-    dir=`dirname $(pwd)`
-    dir_basename=`basename $dir`
+    dir=`dirname "$(pwd)"`
+    dir_basename=`basename "$dir"`
     while ! echo $dir_basename|grep -e $1 -i -q && ((x++ < 10)); do
-        dir=`dirname $dir`
-        dir_basename=`basename $dir`
+        dir=`dirname "$dir"`
+        dir_basename=`basename "$dir"`
     done
-    if test x$dir = x/; then #obviously, we very not likely want to go to / with this complex setup
+    if test x"$dir" = x/; then #obviously, we very not likely want to go to / with this complex setup
         return 1;
     fi
-    builtin cd $dir
+    builtin cd "$dir"
     (flock -x ~/.where.lock -c where&)
     return $?
 }

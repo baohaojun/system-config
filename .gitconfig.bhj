@@ -7,7 +7,6 @@
 	excludesfile = ~/.gitexcludefile
 [alias]
 	st = status
-	ci = commit
 	co = checkout
 	ci = commit -a
         dt = difftool -t meld
