@@ -5551,6 +5551,7 @@ gdbserver :5039 /system/bin/wlarm_android join RayzerLink key 2008080808 imode b
 adb forward tcp:5039 tcp:5039
 (export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; adb forward tcp:5039 tcp:5039; export PATH=`pwd`/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:$PATH; gdbclient wlarm_android)
 
+simple QQ: http://www.ankty.com/soft/11/104/13414.html
 accelerometer, sysfs_create_file, shows up in /sys/class/input, and /sys/devices/virtual/input/input2
 
 
