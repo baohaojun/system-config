@@ -36,12 +36,14 @@
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
+    ("cpk" "printk(KERN_WARNING \"for continue %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 25)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
     ("pe" "printk(KERN_WARNING \"hello error %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 2)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 29)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 88)
+    ("psk" "printk(KERN_WARNING \"hello world %s %d\\n\", __FUNCTION__, __LINE__);" nil 2)
     ("pw" "printk(KERN_WARNING \"hello warning %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
     ("sdk" "printk(KERN_WARNING \"hello world %s %s %d %s\\n\", __FILE__, __FUNCTION__, __LINE__, dev_name(host->parent));" nil 9)
-    ("wpk" "wpa_printf(MSG_ERROR,  \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 3)
+    ("wpk" "wpa_printf(MSG_ERROR,  \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 12)
    ))
 
 (define-abbrev-table 'change-log-mode-abbrev-table '())

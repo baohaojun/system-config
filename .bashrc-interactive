@@ -38,9 +38,29 @@ function cd_failed()
         NUM=`my_select "${dirs[@]}"`
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
+        (flock -x ~/.where.lock -c where&)
         history -s cd "${dirs[$NUM]}"
         history -s cd "$@"
     fi
+}
+
+function fcd() 
+{
+    local IFS=$'\n'
+    dirs=( $(find . -type d -name "*$1*") )
+    if test ${#dirs[@]} = 0; then
+        echo 'Error: no such file or directory'
+        return 1
+    elif test ${#dirs[@]} = 1; then
+        builtin cd ${dirs[0]}
+    else 
+        NUM=`my_select "${dirs[@]}"`
+        ((NUM--))
+        builtin cd "${dirs[$NUM]}"
+        history -s cd "${dirs[$NUM]}"
+        history -s cd "$@"
+    fi
+    (flock -x ~/.where.lock -c where&)
 }
 
 alias cd=cd_bhj
