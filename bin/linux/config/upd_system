@@ -20,7 +20,6 @@ bash-doc
 binutils
 binutils-dev
 binutils-doc
-binutils-static
 bison
 build-essential
 conkeror
@@ -41,15 +40,13 @@ eclipse-platform
 eclipse-platform-data
 eclipse-plugin-cvs
 eclipse-rcp
+emacs23
 emacs-goodies-el
-emacs-snapshot
 expect
 exuberant-ctags
 fakeroot
-flashplugin-installer
 flex
 fontforge
-gcc-4.4-doc
 gcc-multilib
 git-core
 gitk
@@ -65,8 +62,6 @@ hibernate
 htop
 imagemagick
 iotop
-language-pack-en
-language-pack-zh
 libcurses-perl
 libcurses-ruby
 libcurses-ui-perl
@@ -83,7 +78,6 @@ libwxgtk2.6-dev
 libx11-dev
 libz-dev
 lynx
-make-doc
 manpages
 manpages-dev
 markdown
@@ -91,7 +85,6 @@ meld
 minicom
 mplayer
 msn-pecan
-msttcorefonts
 muse-el
 ncurses-dev
 ncurses-hexedit
@@ -127,8 +120,6 @@ tkdiff
 traceroute
 ttf-wqy-microhei
 ttf-wqy-zenhei
-ubuntu-desktop
-unrar
 unzip
 valgrind
 vim
@@ -146,6 +137,18 @@ zip
 zlib1g-dev
 '
 
+ubuntu_packages='
+binutils-static
+flashplugin-installer
+gcc-4.4-doc
+language-pack-en
+language-pack-zh
+make-doc
+msttcorefonts
+ubuntu-desktop
+unrar
+'
+
 x86_64_packages='
 ia32-libs
 lib32ncurses5-dev
@@ -159,6 +162,7 @@ sudo apt-get update
 sudo apt-get dist-upgrade -y
 sudo apt-get install -y $packages || for x in $packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
 sudo apt-get install -y $x86_64_packages || for x in $x86_64_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
+sudo apt-get install -y $ubuntu_packages || for x in $ubuntu_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
 sudo apt-get build-dep -y beagle scim-pinyin sawfish librep rep-gtk
 
 #把一些软件默认的版本换掉
