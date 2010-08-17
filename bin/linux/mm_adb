@@ -1,0 +1,10 @@
+#!/bin/bash
+LOG=mm.$$
+#set -e -o pipefail
+mm 2>&1|tee /tmp/$LOG
+adb_files=($(cat /tmp/$LOG|grep '^Install: '|perl -npe 's/.*: //'))
+for x in ${adb_files[@]}; do
+    y=`echo $x|perl -npe 's,out/target/product/.*?/,/,'`
+    adb_push $x $y
+done
+

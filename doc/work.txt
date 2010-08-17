@@ -1,0 +1,17 @@
+insmod /data/proc_i2c.ko
+function ri2c() {
+         echo read adap 0 addr 0xf reg $1 byte 1 > /proc/i2c_rw
+}
+
+function wi2c() {
+         echo write adap 0 addr 0xf reg $1 byte 1 val $2 > /proc/i2c_rw
+}
+
+function bi2c() {
+         echo read adap 3 addr 0x4 block 10 > /proc/i2c_rw
+}
+
+sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go
+sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go
+
+git config --add remote.origin.pushurl `git config remote.origin.url|perl -npe "s,.*//.*?/,bhj\@192.168.0.46:/,"`

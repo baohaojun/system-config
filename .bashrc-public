@@ -65,6 +65,12 @@ function cd_ok()
     return 0
 }
 
+function cd_record()
+{
+    history -s cd "`pwd`"
+   (flock -x ~/.where.lock -c where&)
+}
+
 function lcd()
 {
     if test $# != 1; then

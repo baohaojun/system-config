@@ -10,12 +10,6 @@ function cd_bhj ()
     cd_record
 }
 
-function cd_record()
-{
-    history -s cd "`pwd`"
-   (flock -x ~/.where.lock -c where&)
-}
-
 function my_select() 
 {
     local y=1
