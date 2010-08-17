@@ -81,6 +81,7 @@ function lcd()
     if test "${1:0:2}" = '\\' -a `uname` = Linux; then
         smbnetfs ~/smb >/dev/null 2>&1
         builtin cd ~/smb/$(echo "$1"|perl -npe 's,\\,/,g')
+        history -s cd "`pwd`"
         return 0
     fi
 
@@ -109,11 +110,11 @@ function lcd()
             return 1;
         fi
         builtin cd "$link"
-        (flock -x ~/.where.lock -c where&)
+        cd_record
         return $?
     else
         builtin cd "$(dirname "$link")"
-        (flock -x ~/.where.lock -c where&)
+        cd_record
         return $?
     fi
 }
@@ -131,7 +132,7 @@ function _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home
         return 1;
     fi
     builtin cd "$dir"
-    (flock -x ~/.where.lock -c where&)
+    cd_record
     return $?
 }
 

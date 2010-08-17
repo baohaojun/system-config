@@ -7,7 +7,13 @@ function cd_bhj ()
 {
     lcd "$@" && return $?
     test $# == 1 -o $# == 0 && builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@"
-    (flock -x ~/.where.lock -c where&)
+    cd_record
+}
+
+function cd_record()
+{
+    history -s cd "`pwd`"
+   (flock -x ~/.where.lock -c where&)
 }
 
 function my_select() 
@@ -38,8 +44,7 @@ function cd_failed()
         NUM=`my_select "${dirs[@]}"`
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
-        (flock -x ~/.where.lock -c where&)
-        history -s cd "${dirs[$NUM]}"
+        cd_record
         history -s cd "$@"
     fi
 }
@@ -57,10 +62,9 @@ function fcd()
         NUM=`my_select "${dirs[@]}"`
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
-        history -s cd "${dirs[$NUM]}"
         history -s cd "$@"
     fi
-    (flock -x ~/.where.lock -c where&)
+    cd_record
 }
 
 alias cd=cd_bhj
