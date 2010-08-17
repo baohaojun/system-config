@@ -166,9 +166,9 @@ sudo apt-get install -y $ubuntu_packages || for x in $ubuntu_packages; do sudo a
 sudo apt-get build-dep -y beagle scim-pinyin sawfish librep rep-gtk
 
 #把一些软件默认的版本换掉
-sudo update-alternatives --set emacs /usr/bin/emacs-snapshot
-sudo update-alternatives --set emacsclient /usr/bin/emacsclient.emacs-snapshot 
-sudo update-alternatives --set etags /usr/bin/etags.emacs-snapshot 
+sudo update-alternatives --set emacs /usr/bin/emacs23 || true
+sudo update-alternatives --set emacsclient /usr/bin/emacsclient.emacs23 || true
+sudo update-alternatives --set etags /usr/bin/etags.emacs23 || true
 
 #我们用的桌面系统是gnome，但是窗口管理器要换一个，gnome自带的是metacity，我们要用sawfish
 gconftool-2 -s /desktop/gnome/applications/window_manager/default --type string /usr/bin/sawfish

@@ -59,7 +59,7 @@
                         (find-window-or-exec wclass)))))))
  '(0 1 2 3 4 5 6 7 8 9))
 
-(bind-keys global-keymap "Super-k" (lambda () (system "emacsclient.emacs-snapshot -n ~/doc/work.txt&")))
+(bind-keys global-keymap "Super-k" (lambda () (system "emacsclient -n ~/doc/work.txt&")))
 
 
 (bind-keys global-keymap "Super-d"
@@ -87,15 +87,15 @@
                      (getenv "HOME") "/bin/linux/ext/antlrworks.jar:."))
 
 
-(if (or  (boundp 'ProgramsStarted) (not (string-equal (getenv "DISPLAY") ":0.0")))
-      nil ;; Sawfish has already started those Programs
+(when (or (string-equal (getenv "DISPLAY") ":0.0")
+        (string-equal (getenv "DISPLAY") ":0"))
   (setq ProgramsStarted t)
   (system "for x in ~/.sawfish/start/*; do ($x&); done&"))
 
 (require 'sawfish.wm.commands.x-cycle)
 
 (setq im-class "Eva|Pidgin|Wine"
-      br-class "Firefox|Chromium|Conkeror"
+      br-class "Firefox|Chromium|Conkeror|Iceweasel"
       dc-class "OpenOffice|Acroread|Evince"
       mg-class "Meld|Gimp|Gitk"
       cycle-groups (list im-class
