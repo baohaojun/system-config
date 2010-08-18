@@ -96,7 +96,7 @@
 
 (setq im-class "Eva|Pidgin|Wine"
       br-class "Firefox|Chromium|Conkeror|Iceweasel"
-      dc-class "OpenOffice|Acroread|Evince"
+      dc-class "OpenOffice|Acroread|Evince|Gnumeric"
       mg-class "Meld|Gimp|Gitk"
       cycle-groups (list im-class
                      br-class
