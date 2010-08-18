@@ -749,7 +749,9 @@
 (require 'saveplace)
 (setq-default save-place t)
 (require 'color-theme)
-(color-theme-initialize)
+(condition-case nil
+    (color-theme-initialize)
+  (error nil))
 (color-theme-arjen)
 (server-start)
 ;(w32-register-hot-key [A-tab])
