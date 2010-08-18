@@ -993,3 +993,13 @@ Starting from DIRECTORY, look upwards for a cscope database."
       (error "The marked buffer has been deleted"))
     (goto-char marker-point)
     (set-buffer old-buffer)))
+
+(defun where-are-we ()
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (shell-command-on-region 
+     1 (point) 
+     (concat "where-are-we " 
+             (or (buffer-file-name) (buffer-name))
+             (format " %s" tab-width)))))

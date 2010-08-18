@@ -44,13 +44,16 @@ $lines[0] =~ m/^\s*/;
 my $spaces = length($&);
 
 my @print_lines = ();
-push @print_lines, ("    =>  " . shift @lines);
+
+my $last_line = shift @lines;
+push @print_lines, ("    =>  " . $last_line);
 
 my $limit = 5;
 my $outmost = 0;
 
 
-my $last_print_line_num = $line_num;
+my $prev_print_line_num = $line_num;
+my $last_line_num = $line_num;
 
 for (@lines) {
   $line_num--;
@@ -64,10 +67,10 @@ for (@lines) {
 
   $_ =~ m/^\s*/;
   if ($spaces > length($&) or $limit < 5) {
-    if ($last_print_line_num != $line_num+1) {
+    if ($prev_print_line_num != $line_num+1) {
       push @print_lines, ("        " . (" " x $spaces) . "...");
     }
-    $last_print_line_num = $line_num;
+    $prev_print_line_num = $line_num;
     push @print_lines, ("        " . $_);
     $spaces = length($&);
   }
@@ -80,4 +83,5 @@ for (@lines) {
 }
 
 $,="\n";
+print "    $file_name:$last_line_num: $last_line\n";
 print reverse @print_lines;
