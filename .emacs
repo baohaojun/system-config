@@ -1001,5 +1001,17 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (shell-command-on-region 
      1 (point) 
      (concat "where-are-we " 
-             (or (buffer-file-name) (buffer-name))
-             (format " %s" tab-width)))))
+             (shell-quote-argument (or (buffer-file-name) (buffer-name)))
+             (format " %s" tab-width))))
+  
+  (find-file-other-window "~/.code-reading")
+  (with-current-buffer ".code-reading"
+    (goto-char (point-max))
+    (insert "\n****************\n\n")
+    (insert-buffer "*Shell Command Output*")
+    (previous-line)
+    (save-buffer)
+    (grep-mode)
+    (toggle-read-only nil)))
+
+(global-set-key [(control x) (w)] 'where-are-we)
