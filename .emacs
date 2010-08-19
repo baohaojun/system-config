@@ -776,21 +776,29 @@
         (beginning-of-line)
         (looking-at "    \\|\t"))))
 
+(setq weblogger-entry-mode-hook
+      (list
+       (lambda ()
+         (make-local-variable 'fill-nobreak-predicate)
+         (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p))))
 
 (setq weblogger-pre-struct-hook
       (list
        (lambda ()
          (interactive)
          (message-goto-body)
-         (longlines-mode 0)
-         (auto-fill-mode 0)
          (shell-command-on-region
           (point) (point-max) "markdown" nil t nil nil)
-         (flet ((longlines-wrap-region (beg end) nil)) 
-           (longlines-mode 1)
-           (auto-fill-mode 1)
-           (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p))
-         )))
+         (message-goto-body)
+         (save-excursion
+           (let ((body (buffer-substring-no-properties (point) (point-max))))
+             (find-file "~/markdown.html")
+             (kill-region (point-min) (point-max))
+             (insert body)
+             (save-buffer)
+             (kill-buffer)
+             (shell-command "of ~/markdown.html" nil nil)
+             (yes-or-no-p "Is the preview ok?"))))))
 
 (setq weblogger-post-struct-hook
       (list
@@ -804,93 +812,19 @@
        (lambda () 
          (interactive)
          (message-goto-body)
-         (longlines-mode 0)
-         (auto-fill-mode 0)
          (shell-command-on-region
           (point) (point-max) "unmarkdown" nil t nil nil)
-         (set-buffer-modified-p nil)
-         (auto-fill-mode 0)
-         (flet ((longlines-wrap-region (beg end) nil)) 
-           (longlines-mode 1)
-           (auto-fill-mode 1)
-           (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p)))))
-
-(setq weblogger-pre-setup-headers-hook
-      (list
-       (lambda ()
-         (interactive)
-         (longlines-mode 0)
-         (auto-fill-mode 0))))
+         (let ((paragraph-start (concat paragraph-start "\\|    \\|\t")))
+           (message-goto-body)
+           (fill-region (point) (point-max)))
+         (set-buffer-modified-p nil))))
 
 (setq weblogger-post-setup-headers-hook
       (list
        (lambda ()
          (interactive)
-         (flet ((longlines-wrap-region (beg end) nil)) 
-           (longlines-mode 1)
-           (auto-fill-mode 1)
-           (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p))
+         (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p)
          (set-buffer-modified-p nil))))
-
-(require 'longlines)
-
-(defun longlines-encode-region (beg end &optional buffer)
-  "Replace each soft newline between BEG and END with exactly one space.
-Hard newlines are left intact.  The optional argument BUFFER exists for
-compatibility with `format-alist', and is ignored."
-  (save-excursion
-    (let ((reg-max (max beg end))
-          (mod (buffer-modified-p)))
-
-      (goto-char (min beg end))
-
-      (while (search-forward-regexp "\n *" reg-max t)
-        (let ((cur-char-pos (match-beginning 0)))
-
-          (unless (get-text-property cur-char-pos 'hard)
-            (if (or 
-                 (aref (char-category-set
-                        (or (char-after (match-end 0))
-                            ? )) 
-                       ?c)
-                 (aref (char-category-set 
-                        (or 
-                         (char-before cur-char-pos)
-                         ? )) 
-                       ?c))
-                (replace-match "")
-              (replace-match " ")))
-
-      (set-buffer-modified-p mod)
-      end)))))
-
-(defun longlines-encode-string (str1)
-  "Return a copy of STRING with each soft newline replaced by a space.
-     Hard newlines are left intact."
-  (let* ((str2 (make-string (length str1) ?\0))
-        (mstart (string-match "\n *" str1))
-        (mend (match-end 0))
-        (lastpos 0)
-        (str2pos 0))
-
-    (while (and mstart mend (< (1+ mend) (length str1)))
-      (when (null (get-text-property mstart 'hard str1))
-        (let ((substr (substring str1 lastpos mstart)))
-          (store-substring str2 str2pos substr)
-          (setq str2pos (+ str2pos (length substr)))
-
-          (unless (or (aref (char-category-set (aref str1 (1+ (match-end 0)))) ?c)
-                      (aref (char-category-set (aref str1 (1- mstart))) ?c))
-            (aset str2 str2pos ? )
-            (setq str2pos (1+ str2pos)))))
-
-      (setq lastpos (1+ mend))
-      (setq mstart (string-match "\n *" str1 lastpos)))
-
-    (let ((last_line (substring str1 lastpos)))
-      (store-substring str2 str2pos last_line)
-      (substring str2 0 (+ str2pos (length last_line))))
-    ))
 
 ;; becase we are putting our database under ~/tmp/for-code-reading/, 
 ;; we need to redefine this function:
