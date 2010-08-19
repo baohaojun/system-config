@@ -1015,3 +1015,12 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (toggle-read-only nil)))
 
 (global-set-key [(control x) (w)] 'where-are-we)
+
+(defun visit-code-reading ()
+  (interactive)
+  (find-file "~/.code-reading")
+  (grep-mode)
+  (toggle-read-only nil))
+
+(global-set-key [(control x) (c)] 'visit-code-reading)
+             

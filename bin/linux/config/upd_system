@@ -63,6 +63,7 @@ hibernate
 htop
 imagemagick
 iotop
+lftp
 libcurses-perl
 libcurses-ruby
 libcurses-ui-perl

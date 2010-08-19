@@ -28,6 +28,7 @@
     ("cr" "CRect" nil 0)
     ("cs" "cstring" nil 33)
     ("dcs" "c_str()" nil 10)
+    ("lw" "LOGW(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("mcs" "const CString&" nil 16)
     ("ms" "CString" nil 3)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 1)
@@ -39,7 +40,7 @@
     ("cpk" "printk(KERN_WARNING \"for continue %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 25)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
     ("pe" "printk(KERN_WARNING \"hello error %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 2)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 88)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 89)
     ("psk" "printk(KERN_WARNING \"hello world %s %d\\n\", __FUNCTION__, __LINE__);" nil 2)
     ("pw" "printk(KERN_WARNING \"hello warning %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
     ("sdk" "printk(KERN_WARNING \"hello world %s %s %d %s\\n\", __FILE__, __FUNCTION__, __LINE__, dev_name(host->parent));" nil 9)
@@ -97,9 +98,13 @@
 
 (define-abbrev-table 'diff-mode-abbrev-table '())
 
+(define-abbrev-table 'dig-mode-abbrev-table '())
+
 (define-abbrev-table 'docTeX-mode-abbrev-table '())
 
 (define-abbrev-table 'edebug-eval-mode-abbrev-table '())
+
+(define-abbrev-table 'emacs-lisp-mode-abbrev-table '())
 
 (define-abbrev-table 'emacs-wiki-mode-abbrev-table '())
 
