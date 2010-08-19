@@ -2928,7 +2928,7 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
 (defun twittering-count-unread-for-user-methods (spec new-statuses)
   (let ((latest-username
 	 (or (with-current-buffer (twittering-get-buffer-from-spec spec)
-	       (funcall (if twittering-reverse-mode 'point-max 'point-min))
+	       (goto-char (funcall (if twittering-reverse-mode 'point-max 'point-min)))
 	       (get-text-property (twittering-get-current-status-head) 'username))
 	     (let ((spec-string (twittering-timeline-spec-to-string spec)))
 	       (when (member spec-string twittering-cache-spec-strings)
@@ -6514,7 +6514,7 @@ string.")
 
 (defun twittering-get-simple (beg end username method)
   (let ((ret (gethash (list username method) twittering-simple-hash))
-	(s " "))			; hold 'need-to-be-updated
+	(s "..."))			; hold 'need-to-be-updated
     (cond 
      (ret
       (remove-text-properties 0 (length s) '(need-to-be-updated nil) s)
