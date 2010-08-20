@@ -151,6 +151,10 @@ ubuntu-desktop
 unrar
 '
 
+debian_packages='
+emacs23-common-non-dfsg
+'
+
 x86_64_packages='
 ia32-libs
 lib32ncurses5-dev
@@ -165,6 +169,7 @@ sudo apt-get dist-upgrade -y
 sudo apt-get install -y $packages || for x in $packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
 sudo apt-get install -y $x86_64_packages || for x in $x86_64_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
 sudo apt-get install -y $ubuntu_packages || for x in $ubuntu_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
+sudo apt-get install -y $debian_packages || for x in $debian_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
 sudo apt-get build-dep -y beagle scim-pinyin sawfish librep rep-gtk
 
 #把一些软件默认的版本换掉

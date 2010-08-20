@@ -285,7 +285,7 @@
     (setq last-error-from-cscope nil)
     (next-error)
     (delete-other-windows)
-    (with-current-buffer next-error-last-buffer
+    (with-current-buffer code-reading-last-buffer
       (message "%s" (buffer-substring (line-beginning-position) (line-end-position))))))
 
 (defun bhj-previous-error ()
@@ -302,7 +302,7 @@
     (setq last-error-from-cscope nil)
     (previous-error)
     (delete-other-windows)
-    (with-current-buffer next-error-last-buffer
+    (with-current-buffer code-reading-last-buffer
       (message "%s" (buffer-substring (line-beginning-position) (line-end-position))))))
 
 (global-set-key [(meta n)] 'bhj-next-error)
@@ -945,7 +945,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (insert-buffer "*Shell Command Output*")
     (previous-line)
     (save-buffer)
-    (grep-mode)
     (toggle-read-only nil)))
 
 (global-set-key [(control x) (w)] 'where-are-we)
@@ -953,8 +952,137 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (defun visit-code-reading ()
   (interactive)
   (find-file "~/.code-reading")
-  (grep-mode)
+  (setq code-reading-last-buffer (current-buffer))
+  (use-local-map code-reading-grep-mode-map)
   (toggle-read-only nil))
 
 (global-set-key [(control x) (c)] 'visit-code-reading)
              
+
+  ;; if it's on a `error' line, i.e. entry 0 in the following, it
+  ;; means we are actually on 10th entry, we need go to entry 9
+
+  ;; if we are on entry 1, then we need call `prev-error'.
+
+    ;; 0 /usr/share/pyshared/html2text.py:270:                     if a:
+    ;; 1     class _html2text(sgmllib.SGMLParser):
+    ;; 2         ...
+    ;; 3         def handle_tag(self, tag, attrs, start):
+    ;; 4             ...
+    ;; 5             if tag == "a":
+    ;; 6                 ...
+    ;; 7                 else:
+    ;; 8                     if self.astack:
+    ;; 9                         ...
+    ;; 10 =>                      if a:
+  
+(defmacro current-line-string ()
+ `(buffer-substring-no-properties
+   (line-beginning-position)
+   (line-end-position)))
+
+(defun bhj-prev-code-reading ()
+  (interactive)
+  (with-current-buffer code-reading-last-buffer
+    (catch 'done
+      (let ((start-line-number (line-number-at-pos))
+            (start-line-str (current-line-string))
+            new-line-number target-file target-line 
+            error-line-number error-line-str
+            msg mk end-mk)
+        
+        (save-excursion
+          (end-of-line) ;; prepare for search-backward-regexp
+          (search-backward-regexp ":[0-9]+:")
+          (setq error-line-str (current-line-string)
+                error-line-number (line-number-at-pos))
+          (string-match "^\\s *\\(.*?\\):\\([0-9]+\\):" error-line-str)
+          (setq target-file (match-string 1 error-line-str)
+                target-line (match-string 2 error-line-str)))
+
+
+        (when (equal start-line-number error-line-number)
+          (search-forward "=>")
+          (next-line))
+        
+        (when (equal start-line-number (1+ error-line-number))
+          (search-backward-regexp "=>")
+          (next-line)
+          (bhj-prev-code-reading)
+          (throw 'done nil))
+        
+        (setq new-line-number (line-number-at-pos))
+        (previous-line)
+        (while (> new-line-number error-line-number)
+          (if (string-match "^\s *\\.\\.\\.$" (current-line-string))
+              (progn
+                (setq new-line-number (1- new-line-number))
+                (previous-line))
+            (back-to-indentation)
+            (let ((search-str (buffer-substring-no-properties (point) (line-end-position))))
+              (if (string-match "=>  \s *\\(.*\\)" search-str)
+                  (setq search-str (match-string 1 search-str)))
+              (setq msg (point-marker))
+              (save-excursion
+                (with-current-buffer (find-file-noselect target-file)
+                  (goto-line (read target-line))
+                  (end-of-line)
+                  (search-backward search-str)
+                  (back-to-indentation)
+                  (setq mk (point-marker))
+                  (end-of-line)
+                  (setq end-mk (point-marker))))
+              (compilation-goto-locus msg mk end-mk))
+            (throw 'done nil)))))))
+
+(defun bhj-next-code-reading ()
+  (interactive)
+  (with-current-buffer code-reading-last-buffer
+    (if (or (string-match "^\\s *=>" (current-line-string))
+            (not (string-match "^    " (current-line-string))))
+        (progn
+          (next-line)
+          (search-forward-regexp ":[0-9]+:")))
+    (next-line)
+    (while (string-match "^\\s *\\.\\.\\.$" (current-line-string))
+      (next-line))
+    (next-line)
+    (bhj-prev-code-reading)))
+
+(global-set-key [(meta shift u)] 'bhj-prev-code-reading)
+(global-set-key [(meta shift d)] 'bhj-next-code-reading)
+
+(defvar code-reading-grep-mode-map nil
+  "Keymap for code-reading-mode.")
+
+(defun code-reading-ret-key ()
+  (interactive)
+  (let ((start-line-str (current-line-string)))
+    (if (string-match "^    .*:[0-9]+:" start-line-str)
+        (progn
+          (search-forward-regexp "^    =>")
+          (next-line)
+          (bhj-prev-code-reading))
+      (if (string-match "^    " start-line-str)
+          (progn
+            (next-line)
+            (bhj-prev-code-reading))
+        (call-interactively 'self-insert-command)))))
+
+(defun bhj-prev-code-reading-no-select ()
+  (interactive)
+  (bhj-prev-code-reading)
+  (pop-to-buffer code-reading-last-buffer))
+
+(defun bhj-next-code-reading-no-select ()
+  (interactive)
+  (bhj-next-code-reading)
+  (pop-to-buffer code-reading-last-buffer))
+
+(setq code-reading-grep-mode-map
+      (let ((map (make-sparse-keymap)))
+        (define-key map "\C-m" 'code-reading-ret-key)
+        (define-key map [(return)] 'code-reading-ret-key)
+        (define-key map [(meta p)] 'bhj-prev-code-reading-no-select)
+        (define-key map [(meta n)] 'bhj-next-code-reading-no-select)
+        map))
