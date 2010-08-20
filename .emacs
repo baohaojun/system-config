@@ -937,15 +937,22 @@ Starting from DIRECTORY, look upwards for a cscope database."
      (concat "where-are-we " 
              (shell-quote-argument (or (buffer-file-name) (buffer-name)))
              (format " %s" tab-width))))
+  (pop-to-buffer "*Shell Command Output*")
+  (end-of-buffer)
+  (insert "\n")
+  (beginning-of-buffer)
+  (next-line)
+  (use-local-map code-reading-grep-mode-map)
+  (setq code-reading-last-buffer (current-buffer)))
   
-  (find-file-other-window "~/.code-reading")
-  (with-current-buffer ".code-reading"
-    (goto-char (point-max))
-    (insert "\n****************\n\n")
-    (insert-buffer "*Shell Command Output*")
-    (previous-line)
-    (save-buffer)
-    (toggle-read-only nil)))
+  ;; (find-file-other-window "~/.code-reading")
+  ;; (with-current-buffer ".code-reading"
+  ;;   (goto-char (point-max))
+  ;;   (insert "\n****************\n\n")
+  ;;   (insert-buffer "*Shell Command Output*")
+  ;;   (previous-line)
+  ;;   (save-buffer)
+  ;;   (toggle-read-only nil)))
 
 (global-set-key [(control x) (w)] 'where-are-we)
 
@@ -1067,7 +1074,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
           (progn
             (next-line)
             (bhj-prev-code-reading))
-        (call-interactively 'self-insert-command)))))
+        (insert "\n")))))
 
 (defun bhj-prev-code-reading-no-select ()
   (interactive)
