@@ -285,7 +285,7 @@
     (setq last-error-from-cscope nil)
     (next-error)
     (delete-other-windows)
-    (with-current-buffer code-reading-last-buffer
+    (with-current-buffer next-error-last-buffer
       (message "%s" (buffer-substring (line-beginning-position) (line-end-position))))))
 
 (defun bhj-previous-error ()
@@ -302,7 +302,7 @@
     (setq last-error-from-cscope nil)
     (previous-error)
     (delete-other-windows)
-    (with-current-buffer code-reading-last-buffer
+    (with-current-buffer next-error-last-buffer
       (message "%s" (buffer-substring (line-beginning-position) (line-end-position))))))
 
 (global-set-key [(meta n)] 'bhj-next-error)
@@ -941,27 +941,25 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (end-of-buffer)
   (insert "\n")
   (beginning-of-buffer)
-  (next-line)
-  (use-local-map code-reading-grep-mode-map)
-  (setq code-reading-last-buffer (current-buffer)))
+  (forward-line)
+  (waw-mode))
   
-  ;; (find-file-other-window "~/.code-reading")
-  ;; (with-current-buffer ".code-reading"
-  ;;   (goto-char (point-max))
-  ;;   (insert "\n****************\n\n")
-  ;;   (insert-buffer "*Shell Command Output*")
-  ;;   (previous-line)
-  ;;   (save-buffer)
-  ;;   (toggle-read-only nil)))
-
 (global-set-key [(control x) (w)] 'where-are-we)
 
 (defun visit-code-reading ()
   (interactive)
-  (find-file "~/.code-reading")
-  (setq code-reading-last-buffer (current-buffer))
-  (use-local-map code-reading-grep-mode-map)
-  (toggle-read-only nil))
+  (let ((from-waw nil))
+    (when (equal (buffer-name (current-buffer))
+               "*Shell Command Output*")
+      (setq from-waw t))
+      
+    (find-file "~/.code-reading")
+    (when from-waw
+      (goto-char (point-max))
+      (insert "****************\n\n")
+      (insert-buffer "*Shell Command Output*")
+      (previous-line))
+      (waw-mode)))
 
 (global-set-key [(control x) (c)] 'visit-code-reading)
              
@@ -988,9 +986,57 @@ Starting from DIRECTORY, look upwards for a cscope database."
    (line-beginning-position)
    (line-end-position)))
 
-(defun bhj-prev-code-reading ()
-  (interactive)
-  (with-current-buffer code-reading-last-buffer
+(defun waw-find-match (n search message)
+  (if (not n) (setq n 1))
+  (let ((r))
+    (while (> n 0)
+      (or (funcall search)
+          (error message))
+      (setq n (1- n)))))
+
+(defun waw-search-prev ()
+  (beginning-of-line)
+  (search-backward-regexp "^    ")
+  (let ((this-line-str (current-line-string)))
+    (cond ((string-match ":[0-9]+:" this-line-str)
+           (search-backward "    =>"))
+          ((string-match "^\\s *\\.\\.\\.$" this-line-str)
+           (forward-line -1))
+          (t))))
+
+(defun waw-search-next ()
+  (end-of-line)
+  (search-forward-regexp "^    ")
+  (let ((this-line-str (current-line-string)))
+    (cond ((string-match ":[0-9]+:" this-line-str)
+           (forward-line))
+          ((string-match "^\\s *\\.\\.\\.$" this-line-str)
+           (forward-line))
+          (t))))
+
+(defun waw-next-error (&optional argp reset)
+  (interactive "p")
+  (with-current-buffer
+      (if (next-error-buffer-p (current-buffer))
+          (current-buffer)
+        (next-error-find-buffer nil nil
+                                (lambda()
+                                  (eq major-mode 'waw-mode))))
+    
+    (goto-char (cond (reset (point-min))
+                     ((< argp 0) (line-beginning-position))
+                     ((> argp 0) (line-end-position))
+                     ((point))))
+    (waw-find-match
+     (abs argp)
+     (if (> argp 0)
+         #'waw-search-next
+       #'waw-search-prev)
+     "No more matches")
+
+    (forward-line) ;;this is because the following was written
+                   ;;originally as prev-error :-)
+     
     (catch 'done
       (let ((start-line-number (line-number-at-pos))
             (start-line-str (current-line-string))
@@ -1010,24 +1056,24 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
         (when (equal start-line-number error-line-number)
           (search-forward "=>")
-          (next-line))
+          (forward-line))
         
         (when (equal start-line-number (1+ error-line-number))
           (search-backward-regexp "=>")
-          (next-line)
-          (bhj-prev-code-reading)
+          (forward-line)
+          (waw-next-error -1)
           (throw 'done nil))
         
         (setq new-line-number (line-number-at-pos))
-        (previous-line)
+        (forward-line -1)
         (while (> new-line-number error-line-number)
-          (if (string-match "^\s *\\.\\.\\.$" (current-line-string))
+          (if (string-match "^\\s *\\.\\.\\.$" (current-line-string))
               (progn
                 (setq new-line-number (1- new-line-number))
-                (previous-line))
+                (forward-line -1))
             (back-to-indentation)
             (let ((search-str (buffer-substring-no-properties (point) (line-end-position))))
-              (if (string-match "=>  \s *\\(.*\\)" search-str)
+              (if (string-match "=>  \\s *\\(.*\\)" search-str)
                   (setq search-str (match-string 1 search-str)))
               (setq msg (point-marker))
               (save-excursion
@@ -1036,60 +1082,40 @@ Starting from DIRECTORY, look upwards for a cscope database."
                   (end-of-line)
                   (search-backward search-str)
                   (back-to-indentation)
-                  (setq mk (point-marker))
-                  (end-of-line)
-                  (setq end-mk (point-marker))))
+                  (setq mk (point-marker) end-mk (line-end-position))))
               (compilation-goto-locus msg mk end-mk))
             (throw 'done nil)))))))
 
-(defun bhj-next-code-reading ()
-  (interactive)
-  (with-current-buffer code-reading-last-buffer
-    (if (or (string-match "^\\s *=>" (current-line-string))
-            (not (string-match "^    " (current-line-string))))
-        (progn
-          (next-line)
-          (search-forward-regexp ":[0-9]+:")))
-    (next-line)
-    (while (string-match "^\\s *\\.\\.\\.$" (current-line-string))
-      (next-line))
-    (next-line)
-    (bhj-prev-code-reading)))
+(defvar waw-mode-map nil
+  "Keymap for where-are-we-mode.")
 
-(global-set-key [(meta shift u)] 'bhj-prev-code-reading)
-(global-set-key [(meta shift d)] 'bhj-next-code-reading)
-
-(defvar code-reading-grep-mode-map nil
-  "Keymap for code-reading-mode.")
-
-(defun code-reading-ret-key ()
+(defun waw-ret-key ()
   (interactive)
   (let ((start-line-str (current-line-string)))
     (if (string-match "^    .*:[0-9]+:" start-line-str)
         (progn
           (search-forward-regexp "^    =>")
-          (next-line)
-          (bhj-prev-code-reading))
+          (next-error 0))
       (if (string-match "^    " start-line-str)
           (progn
-            (next-line)
-            (bhj-prev-code-reading))
+            (next-error 0))
         (insert "\n")))))
 
-(defun bhj-prev-code-reading-no-select ()
-  (interactive)
-  (bhj-prev-code-reading)
-  (pop-to-buffer code-reading-last-buffer))
-
-(defun bhj-next-code-reading-no-select ()
-  (interactive)
-  (bhj-next-code-reading)
-  (pop-to-buffer code-reading-last-buffer))
-
-(setq code-reading-grep-mode-map
+(setq waw-mode-map
       (let ((map (make-sparse-keymap)))
-        (define-key map "\C-m" 'code-reading-ret-key)
-        (define-key map [(return)] 'code-reading-ret-key)
-        (define-key map [(meta p)] 'bhj-prev-code-reading-no-select)
-        (define-key map [(meta n)] 'bhj-next-code-reading-no-select)
+        (define-key map "\C-m" 'waw-ret-key)
+        (define-key map [(return)] 'waw-ret-key)
+        (define-key map [(meta p)] 'previous-error-no-select)
+        (define-key map [(meta n)] 'next-error-no-select)
         map))
+
+(put 'waw-mode 'mode-class 'special)
+(defun waw-mode ()
+  "Major mode for output from \\[where-are-we]."
+  (interactive)
+  (kill-all-local-variables)
+  (use-local-map waw-mode-map)
+  (setq major-mode 'waw-mode)
+  (setq mode-name "Where-are-we")
+  (setq next-error-function 'waw-next-error)
+  (run-mode-hooks 'waw-mode-hook))
