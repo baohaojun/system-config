@@ -946,19 +946,24 @@ Starting from DIRECTORY, look upwards for a cscope database."
   
 (global-set-key [(control x) (w)] 'where-are-we)
 
-(defun visit-code-reading ()
-  (interactive)
+(defvar code-reading-file "~/.code-reading")
+
+(defun visit-code-reading (&optional arg)
+  (interactive "p")
   (let ((from-waw nil))
     (when (equal (buffer-name (current-buffer))
                "*Shell Command Output*")
       (setq from-waw t))
-      
-    (find-file "~/.code-reading")
+    
+    (if (= arg 1)
+        (find-file code-reading-file)
+      (call-interactively 'find-file)
+      (setq code-reading-file (buffer-file-name)))
     (when from-waw
       (goto-char (point-max))
-      (insert "****************\n\n")
+      (insert "\n****************\n\n\n")
       (insert-buffer "*Shell Command Output*")
-      (previous-line))
+      (forward-line -2))
       (waw-mode)))
 
 (global-set-key [(control x) (c)] 'visit-code-reading)
