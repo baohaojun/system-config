@@ -14,12 +14,15 @@
      limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.android.inputmethod.pinyin"
-    android:sharedUserId="android.uid.shared">
+    package="com.android.inputmethod.pinyin">
 
         <original-package android:name="com.android.inputmethod.pinyin" />
 
         <uses-permission android:name="android.permission.VIBRATE"/>
+        <uses-permission android:name="android.permission.INTERNET"/>
+        <uses-permission android:name="android.permission.READ_USER_DICTIONARY"/>
+        <uses-permission android:name="android.permission.WRITE_USER_DICTIONARY"/>
+        <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
         <application android:icon="@drawable/app_icon"
           android:label="@string/ime_name">
