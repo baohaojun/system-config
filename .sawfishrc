@@ -94,10 +94,11 @@
 
 (require 'sawfish.wm.commands.x-cycle)
 
-(setq im-class "Eva|Pidgin|Wine"
-      br-class "Firefox|Chromium|Conkeror|Iceweasel"
-      dc-class "OpenOffice|Acroread|Evince|Gnumeric"
-      mg-class "Meld|Gimp|Gitk"
+(setq im-class "Eva|Pidgin|Wine" ;; im = instant messanger
+      br-class "Firefox|Chromium|Conkeror|Iceweasel" ;; br = browser
+      dc-class "OpenOffice|Acroread|Evince|Gnumeric" ;; dc = doc
+      mg-class "Meld|Gimp|Gitk" ;; mg = meld/gimp
+      fm-class "Nautilus" ;; fm = file manager
       cycle-groups (list im-class
                      br-class
                      dc-class))
@@ -144,3 +145,8 @@
               (lambda (x) (string-match mg-class (window-class x)))
               (stacking-order))))
 
+(define-cycle-command-pair
+  'cycle-fm-window 'cycle-fm-window-backwards
+  (lambda () (filter-windows
+              (lambda (x) (string-match fm-class (window-class x)))
+              (stacking-order))))
