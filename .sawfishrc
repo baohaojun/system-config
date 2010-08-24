@@ -95,7 +95,7 @@
 (require 'sawfish.wm.commands.x-cycle)
 
 (setq im-class "Eva|Pidgin|Wine" ;; im = instant messanger
-      br-class "Firefox|Chromium|Conkeror|Iceweasel" ;; br = browser
+      br-class "Firefox|Iceweasel|Epiphany" ;; br = browser
       dc-class "OpenOffice|Acroread|Evince|Gnumeric" ;; dc = doc
       mg-class "Meld|Gimp|Gitk" ;; mg = meld/gimp
       fm-class "Nautilus" ;; fm = file manager
