@@ -17,3 +17,4 @@ sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go
 git config --add remote.origin.pushurl `git config remote.origin.url|perl -npe "s,.*//.*?/,bhj\@192.168.0.46:/,"`
 sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'
 sudo aptitude purge ~ilinux-image-2.*\(\!`uname -r`\)
+for x in `git tag`; do git branch tagbr-$x $x; done
