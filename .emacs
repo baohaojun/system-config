@@ -620,7 +620,7 @@
                  (end-of-line)
                  (point))) 
               (format "\nmin: %d, max: %d, total: %d\n" min-disp max-disp max-line-num)))))
-      (ecomplete-highlight-match-line matches line))))) 
+      (ecomplete-highlight-match-line matches line)))))
 
 (defun skeleton-display-matches (word &optional choose)
   (let* ((strlist (nreverse (skeleton-get-matches-order word)))
