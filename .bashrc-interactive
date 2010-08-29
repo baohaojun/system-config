@@ -61,4 +61,11 @@ function fcd()
     cd_record
 }
 
+function rbcd()
+{
+    dirs=(`repo branches|perl -npe 's/.* in\b.//; s/,/ /g; s/ /\n/g'|sort -u`);
+    NUM=`my_select "${dirs[@]}"`
+    ((NUM--))
+    cd_bhj "${dirs[$NUM]}"
+}
 alias cd=cd_bhj
