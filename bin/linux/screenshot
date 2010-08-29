@@ -2,4 +2,3 @@
 sleep 1
 scrot -s ~/x.png
 of ~/x.png
-wp ~/x.png

@@ -599,35 +599,59 @@
         (delete-region start end)
         (insert match)))))
 
+(defun skeleton-highlight-match-line (matches line max-line-num)
+  (cond
+   ((< max-line-num 10)
+    (ecomplete-highlight-match-line matches line))
+   (t
+    (let* ((min-disp (* 9 (/ line 9)))
+          (max-disp (min max-line-num (+ (* 9 (/ line 9)) 8))) 
+          (line (% line 9))
+          (matches 
+           (with-temp-buffer
+             (insert matches)
+             (goto-line (1+ min-disp)) 
+             (beginning-of-line)
+             (concat
+              (buffer-substring-no-properties 
+               (point) 
+               (progn
+                 (goto-line (1+ max-disp))
+                 (end-of-line)
+                 (point))) 
+              (format "\nmin: %d, max: %d, total: %d\n" min-disp max-disp max-line-num)))))
+      (ecomplete-highlight-match-line matches line))))) 
+
 (defun skeleton-display-matches (word &optional choose)
   (let* ((strlist (nreverse (skeleton-get-matches-order word)))
          (matches (concat 
                    (mapconcat 'identity (delete word (delete-dups strlist)) "\n")
                    "\n"))
 	 (line 0)
-	 (max-lines (when matches (- (length (split-string matches "\n")) 2)))
+	 (max-line-num (when matches (- (length (split-string matches "\n")) 2)))
 	 (message-log-max nil)
 	 command highlight)
     (if (not matches)
 	(progn
 	  (message "No skeleton matches")
 	  nil)
-      (if (= max-lines 0)
+      (if (= max-line-num 0)
           (nth line (split-string matches "\n"))
       (if (not choose)
 	  (progn
 	    (message "%s" matches)
 	    nil)
-	(setq highlight (ecomplete-highlight-match-line matches line))
+	(setq highlight (skeleton-highlight-match-line matches line max-line-num)) 
 	(while (not (memq (setq command (read-event highlight)) '(? return)))
 	  (cond
 	   ((eq command ?\M-n)
-	    (setq line (% (1+ line) (1+ max-lines))))
+	    (setq line (% (1+ line) (1+ max-line-num))))
 	   ((eq command ?\M-p)
-	    (setq line (% (+ max-lines line) (1+ max-lines)))))
-	  (setq highlight (ecomplete-highlight-match-line matches line)))
+	    (setq line (% (+ max-line-num line) (1+ max-line-num)))))
+	  (setq highlight (skeleton-highlight-match-line matches line max-line-num)))
 	(when (eq command 'return)
 	  (nth line (split-string matches "\n"))))))))
+
     
 (defun skeleton-get-matches-order (skeleton)
   "get all the words that contains every character of the SKELETON from the current buffer"
