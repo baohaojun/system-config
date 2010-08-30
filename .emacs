@@ -601,6 +601,7 @@
 
 (defvar regexp-completion-history nil)
 
+(global-set-key [(meta return)] 'regexp-display-abbrev)
 (defun regexp-display-abbrev (regexp)
   "Display the possible abbrevs for the regexp."
   (interactive 
@@ -645,7 +646,7 @@
   (general-display-matches (delete word (nreverse (skeleton-get-matches-order word)))))
 
 (defun regexp-display-matches (regexp)
-  (general-display-matches (nreverse (regexp-get-matches regexp))))
+  (general-display-matches (delete "" (nreverse (regexp-get-matches regexp)))))
 
 (defun general-display-matches (strlist)
   (let* ((matches (concat 
