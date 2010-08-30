@@ -654,42 +654,32 @@
 
     
 (defun skeleton-get-matches-order (skeleton)
-  "get all the words that contains every character of the SKELETON from the current buffer"
-  (let ((skeleton-re (mapconcat 'string skeleton ".*")))
+  "Get all the words that contains every character of the
+SKELETON from the current buffer The words are ordered such that
+words closer to the (point) appear first"
+  (let ((skeleton-re (mapconcat 'string skeleton ".*"))
+        (strlist-before nil)
+        (strlist-after nil)
+        (strlist nil)
+        (current-pos (point)))
     (save-excursion
       (beginning-of-buffer)
-      (setq strlist nil)
       (while (not (eobp))
-        (setq origpt (point))
         (if (setq endpt (re-search-forward "\\(\\_<.*?\\_>\\)" nil t))
             (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
               (when (string-match skeleton-re substr)
-                (setq strlist (cons substr strlist))))
-          (end-of-buffer)))
-      strlist)))
-
-(defun skeleton-get-matches-no-order (skeleton)
-  "get all the words that contains every character of the SKELETON from the current buffer"
-  (let ((skeleton-list (string-to-list skeleton)))
-    (save-excursion
-      (beginning-of-buffer)
-      (setq strlist nil)
-      (while (not (eobp))
-        (setq origpt (point))
-        (if (setq endpt (re-search-forward "\\(\\_<.*?\\_>\\)" nil t))
-            (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0)))
-                  (skeleton-list skeleton-list)
-                  (match-ok t))
-              (while skeleton-list
-                (setq c (car skeleton-list)
-                      skeleton-list (cdr skeleton-list))
-                (unless (string-match (string c) substr)
-                  (setq match-ok nil
-                        skeleton-list nil)))
-              (when match-ok
-                (setq strlist (cons substr strlist))))
-          (end-of-buffer)))
-      strlist)))
+                (if (< (point) current-pos)
+                    (setq strlist-before (cons substr strlist-before))
+                  (setq strlist-after (cons substr strlist-after)))))
+          (end-of-buffer)))) 
+    (setq strlist-before  (delete-dups strlist-before) 
+          strlist-after (delete-dups (nreverse strlist-after))) 
+    (while (and strlist-before strlist-after)
+      (setq strlist (cons (car strlist-before) strlist)
+            strlist (cons (car strlist-after) strlist)
+            strlist-before (cdr strlist-before)
+            strlist-after (cdr strlist-after)))
+    (append strlist-after strlist-before strlist)))
 
 (require 'xcscope)
 (global-set-key [(control z)] 'keyboard-quit)
