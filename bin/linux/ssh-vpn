@@ -71,7 +71,7 @@ sub do_dailiav() {
            # <strong>用户名字:</strong><span>dailiavcom</span><br/>
            # <strong>密码:</strong><span>797897533</span><br/>
            # <strong>端口:</strong><span>22</span><br/>
-  $page =~ m,ssh服务器1地址.*?<span> (.*?)</span>.*?用户名字:.*?<span>(.*?)</span.*?密码:.*?<span>(.*?)</span>,s;
+  $page =~ m,ssh服务器.地址.*ssh服务器.地址.*?<span>(.*?)</span>.*?用户名字:.*?<span>(.*?)</span.*?密码:.*?<span>(.*?)</span>,s;
   #$page =~ m,免费账号: (.*?) 密码: (.*)<br/>, or 
       #$page =~ m,.*value="(.*?)".*value="(.*?)",s;
 
