@@ -442,14 +442,14 @@
 (fset 'bhj-isearch-yank
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("\371" 0 "%d")) arg)))
 
-(defun bhj-isearch-from-bod ()
-  (interactive)
+(defun bhj-isearch-from-bod (&optional col-indent)
+  (interactive "p")
   (let ((word (current-word)))
     (push-mark)
     (with-temp-buffer
       (insert word)
       (kill-ring-save (point-min) (point-max)))
-    (c-beginning-of-defun)
+    (beginning-of-indent col-indent)
     (call-interactively 'bhj-isearch-yank)))
 
 (global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
@@ -1040,3 +1040,38 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (setq mode-name "Where-are-we")
   (setq next-error-function 'waw-next-error)
   (run-mode-hooks 'waw-mode-hook))
+
+(defvar boe-default-indent-col 0)
+(make-variable-buffer-local 'boe-default-indent-col)
+
+(defun beginning-of-indent (&optional col-indent)
+  (interactive "p")
+  (goto-so-much-indent -1 col-indent))
+                
+(defun end-of-indent (&optional col-indent)
+  (interactive "p")
+  (goto-so-much-indent 1 col-indent))
+               
+(defun goto-so-much-indent (dir col-indent)
+  (push-mark)
+  (if current-prefix-arg
+      (setq boe-default-indent-col col-indent)
+    (setq col-indent boe-default-indent-col))
+  (back-to-indentation)
+  (setq col-indent (min col-indent (current-column)))
+  (let (done)
+    (while (not done)
+      (forward-line dir)
+      (if (< dir 0)
+          (beginning-of-line)
+        (end-of-line))
+      (if (or (eobp) (bobp))
+        (setq done t)
+        (unless (string-match "^\\s *$" (buffer-substring-no-properties (line-beginning-position)
+                                                                        (line-end-position)))
+          (back-to-indentation)
+          (when (<= (current-column) col-indent)
+            (setq done t)))))))
+
+(global-set-key [(meta shift a)] 'beginning-of-indent)
+(global-set-key [(meta shift e)] 'end-of-indent)
