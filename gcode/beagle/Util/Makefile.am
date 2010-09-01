@@ -8,9 +8,6 @@ CSFLAGS = -target:library
 UTIL_TARGET = Util.dll
 UTIL_TARGET_CONFIG = $(UTIL_TARGET).config
 
-UI_UTIL_TARGET = UiUtil.dll
-UI_UTIL_TARGET_CONFIG = $(UI_UTIL_TARGET).config
-
 if OS_LINUX
 CSFLAGS += -define:OS_LINUX
 endif
@@ -37,14 +34,11 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/ArrayFu.cs              	\
 	$(srcdir)/BatteryMonitor.cs		\
 	$(srcdir)/BetterBitArray.cs		\
-	$(srcdir)/camel.cs              	\
 	$(srcdir)/Config.cs			\
 	$(srcdir)/DateTimeUtil.cs		\
 	$(srcdir)/Debug.cs			\
 	$(srcdir)/DelayedTextWriter.cs		\
-	$(srcdir)/DigikamTags.cs		\
 	$(srcdir)/DirectoryWalker.cs		\
-	$(srcdir)/Evolution.cs			\
 	$(srcdir)/ExceptionHandlingThread.cs	\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileAdvise.cs			\
@@ -53,16 +47,11 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/GuidFu.cs			\
 	$(srcdir)/HtmlRemovingReader.cs		\
-	$(srcdir)/ICalParser.cs              	\
-	$(srcdir)/ImBuddy.cs              	\
 	$(srcdir)/Inotify.cs			\
-	$(srcdir)/KdeUtils.cs			\
-	$(srcdir)/KonqHistoryUtil.cs		\
 	$(srcdir)/LineReader.cs			\
 	$(srcdir)/Log.cs			\
 	$(srcdir)/Logger.cs             	\
 	$(srcdir)/MultiReader.cs        	\
-	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/NetworkService.cs		\
 	$(srcdir)/Note.cs               	\
 	$(srcdir)/Password.cs			\
@@ -113,15 +102,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/Hal/VolumeCrypto.cs		\
 	$(srcdir)/QueryKeywordMapping.cs
 
-if ENABLE_RDF_ADAPTER
-UTIL_CSFILES +=					\
-	$(srcdir)/SemWeb/Euler.cs
-endif
-
 # To reduce dependencies and other reasons, we don't build this
-IGNORED_SEMWEB_CSFILES =			\
-	$(srcdir)/SemWeb/AssemblyInfo.cs	\
-	$(srcdir)/SemWeb/SQLStore.cs
 
 # Semweb compile flag
 CSFLAGS += -define:DOTNET2
@@ -144,27 +125,6 @@ UTIL_TARGET_FILES = $(UTIL_CSFILES) $(EXTSTR)
 
 $(UTIL_TARGET): $(UTIL_TARGET_FILES)
 	$(CSC) -unsafe -out:$@ $(CSFLAGS) $^ $(UTIL_ASSEMBLIES)
-
-UI_UTIL_CSFILES =				\
-	$(srcdir)/CompatFileChooser.cs		\
-	$(srcdir)/GnomeFu.cs              	\
-	$(srcdir)/GtkUtils.cs			\
-	$(srcdir)/HigMessageDialog.cs
-
-UI_UTIL_ASSEMBLIES =				\
-	$(BEAGLE_UI_LIBS)			\
-	-r:Util.dll
-
-if ENABLE_GALAGO
-UI_UTIL_CSFILES +=				\
-	$(srcdir)/Galago.cs
-
-UI_UTIL_ASSEMBLIES += 				\
-	$(GALAGO_LIBS)
-endif
-
-$(UI_UTIL_TARGET): $(UI_UTIL_CSFILES) $(UTIL_TARGET)
-	$(CSC) -unsafe -out:$@ $(CSFLAGS) $(UI_UTIL_CSFILES) $(UI_UTIL_ASSEMBLIES)
 
 INOTIFY_TEST_CSFILES =				\
 	$(srcdir)/Inotify.cs			\
@@ -201,12 +161,9 @@ COND_CS_FILES =				\
 	$(srcdir)/Thunderbird.cs
 
 EXTRA_DIST =					\
-	$(IGNORED_SEMWEB_CSFILES)		\
 	$(EXTSTR_IN)				\
 	$(UTIL_CSFILES)				\
-	$(UI_UTIL_CSFILES)			\
 	$(COND_CS_FILES)			\
-	$(srcdir)/$(UI_UTIL_TARGET_CONFIG)	\
 	$(srcdir)/$(UTIL_TARGET_CONFIG)		\
 	inotify-test
 
@@ -214,8 +171,6 @@ CLEANFILES =			\
 	$(EXTSTR)		\
 	$(UTIL_TARGET)		\
 	$(UTIL_TARGET).mdb	\
-	$(UI_UTIL_TARGET)	\
-	$(UI_UTIL_TARGET).mdb	\
 	Inotify.exe		\
 	Inotify.exe.mdb
 

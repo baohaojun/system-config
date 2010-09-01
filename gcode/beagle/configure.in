@@ -477,21 +477,6 @@ fi
 
 dnl ----------------------------------------------
 
-dnl RDF Adapter is purely for research purposes right now
-
-AC_ARG_ENABLE([rdf-adapter],
-	AC_HELP_STRING([--enable-rdf-adapter], [Builds the RDF Adapter (default no)]),
-	enable_rdf_adapter=$enableval,
-	enable_rdf_adapter=no)
-
-if test "x$enable_rdf_adapter" = "xyes"; then
-	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:ENABLE_RDF_ADAPTER"
-fi
-
-AM_CONDITIONAL(ENABLE_RDF_ADAPTER, test "x$enable_rdf_adapter" = "xyes")
-
-dnl ----------------------------------------------
-
 dnl Conditional for debugging XML messages.
 
 AC_ARG_ENABLE([xml-dump],

@@ -231,7 +231,12 @@
 
 (put 'narrow-to-region 'disabled nil)
 
-(define-key global-map [(meta .)] 'cscope-find-global-definition)
+(defun my-cscope-find-global-definition ()
+  (interactive)
+  (nodup-ring-insert cscope-marker-ring (point-marker))
+  (call-interactively 'cscope-find-global-definition))
+
+(define-key global-map [(meta .)] 'my-cscope-find-global-definition)
 (define-key global-map [(meta control ,)] 'cscope-pop-mark)
 (define-key global-map [(meta control .)] 'cscope-pop-mark-back)
 
@@ -366,13 +371,17 @@
 (defvar cscope-marker-ring-poped (make-ring 32)
   "Ring of markers which are locations poped from cscope-marker-ring.")
 
+(defun nodup-ring-insert (ring obj)
+  (unless (and (not (ring-empty-p ring))
+               (equal (ring-ref ring 0) obj))
+    (ring-insert ring obj)))
 ;; (defcustom bhj-grep-default-directory "/pscp:a22242@10.194.131.91:/"
 ;;   "the default directory in which to run grep")
 (keydef "C-M-g" (progn
                   (let ((current-prefix-arg 4)
                         ;; (default-directory (eval bhj-grep-default-directory))
                         (grep-use-null-device nil))
-                    (ring-insert cscope-marker-ring (point-marker))
+                    (nodup-ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep))))
 
 (defvar grep-find-file-history nil)
@@ -385,7 +394,7 @@
                   (interactive)
                   (let ((grep-history grep-rgrep-history)
                         (current-prefix-arg 4))
-                    (ring-insert cscope-marker-ring (point-marker))
+                    (nodup-ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep)
                     (setq grep-rgrep-history grep-history))))
 
@@ -394,7 +403,7 @@
                   (interactive)
                   (let ((grep-history grep-find-file-history)
                         (current-prefix-arg 4))
-                    (ring-insert cscope-marker-ring (point-marker))
+                    (nodup-ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep)
                     (setq grep-find-file-history grep-history))))
                     
@@ -407,7 +416,7 @@
                                                                    (region-end))
                                  (current-word))))
                     (progn     
-                      (ring-insert cscope-marker-ring (point-marker))
+                      (nodup-ring-insert cscope-marker-ring (point-marker))
                       (setq regexp 
                             (read-string (format "List lines matching regexp [%s]: " regexp) nil nil regexp))
                       (if (eq major-mode 'antlr-mode)
@@ -782,12 +791,12 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (if (ring-empty-p cscope-marker-ring)
       (error "There are no marked buffers in the cscope-marker-ring yet"))
   (let* ( (marker (ring-remove cscope-marker-ring 0))
-	  (old-buffer (current-buffer))
-	  (marker-buffer (marker-buffer marker))
-	  marker-window
-	  (marker-point (marker-position marker))
-	  (cscope-buffer (get-buffer cscope-output-buffer-name)) )
-    (ring-insert cscope-marker-ring-poped (point-marker))
+          (old-buffer (current-buffer))
+          (marker-buffer (marker-buffer marker))
+          marker-window
+          (marker-point (marker-position marker))
+          (cscope-buffer (get-buffer cscope-output-buffer-name)) )
+    (nodup-ring-insert cscope-marker-ring-poped (point-marker))
 
     ;; After the following both cscope-marker-ring and cscope-marker will be
     ;; in the state they were immediately after the last search.  This way if
@@ -797,13 +806,13 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (setq cscope-marker marker)
 
     (if marker-buffer
-	(if (eq old-buffer cscope-buffer)
-	    (progn ;; In the *cscope* buffer.
-	      (set-buffer marker-buffer)
-	      (setq marker-window (display-buffer marker-buffer))
-	      (set-window-point marker-window marker-point)
-	      (select-window marker-window))
-	  (switch-to-buffer marker-buffer))
+        (if (eq old-buffer cscope-buffer)
+            (progn ;; In the *cscope* buffer.
+              (set-buffer marker-buffer)
+              (setq marker-window (display-buffer marker-buffer))
+              (set-window-point marker-window marker-point)
+              (select-window marker-window))
+          (switch-to-buffer marker-buffer))
       (error "The marked buffer has been deleted"))
     (goto-char marker-point)
     (set-buffer old-buffer)))
@@ -823,7 +832,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 	  marker-window
 	  (marker-point (marker-position marker))
 	  (cscope-buffer (get-buffer cscope-output-buffer-name)) )
-    (ring-insert cscope-marker-ring (point-marker))
+    (nodup-ring-insert cscope-marker-ring (point-marker))
 
     ;; After the following both cscope-marker-ring-poped and cscope-marker will be
     ;; in the state they were immediately after the last search.  This way if
@@ -1057,6 +1066,10 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (if current-prefix-arg
       (setq boe-default-indent-col col-indent)
     (setq col-indent boe-default-indent-col))
+  (back-to-indentation)
+  (setq col-indent (min col-indent (current-column)))
+  (when (< col-indent 0)
+    (setq col-indent (max 0 (1- (current-column)))))
   (let (done not-same-block)
     (while (not done)
       (forward-line dir)
