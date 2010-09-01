@@ -110,22 +110,6 @@ namespace Beagle.Daemon {
 		}
 	}
 
-#if ENABLE_RDF_ADAPTER
-	[RequestMessage (typeof (RDFQuery))]
-	public class RDFQueryExecutor : RequestMessageExecutor {
-
-		public override ResponseMessage Execute (RequestMessage request)
-		{
-			RDFQueryResult result = new RDFQueryResult ();
-			RDFQuery query = request as RDFQuery;
-			if (query == null)
-				return new ErrorResponse ("Only RDF query please!");
-
-			result.Hits = QueryDriver.DoRDFQuery (query);
-			return result;
-		}
-	}
-#endif
 
 	[RequestMessage (typeof (CountMatchQuery))]
 	public class CountMatchQueryExecutor : RequestMessageExecutor {

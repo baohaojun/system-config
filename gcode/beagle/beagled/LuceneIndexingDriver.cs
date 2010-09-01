@@ -652,11 +652,6 @@ namespace Beagle.Daemon {
 				secondary_writer.AddDocument (secondary_doc);
 			}
 
-#if ENABLE_RDF_ADAPTER
-			// Store the extracted links in the textcache
-			if (! disable_textcache && text_cache != null)
-				text_cache.AddLinks (indexable.Uri, indexable.Links);
-#endif
 
 			AdjustItemCount (1);
 		}

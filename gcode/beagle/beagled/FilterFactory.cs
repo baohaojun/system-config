@@ -329,9 +329,6 @@ namespace Beagle.Daemon {
 
 					indexable.SetTextReader (candidate_filter.GetTextReader ());
 					indexable.SetHotTextReader (candidate_filter.GetHotTextReader ());
-#if ENABLE_RDF_ADAPTER
-					indexable.Links = candidate_filter.Links;
-#endif
 
 					if (Debug)
 						Logger.Log.Debug ("Successfully filtered {0} with {1}", path, candidate_filter);

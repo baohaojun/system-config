@@ -421,16 +421,6 @@ namespace Beagle {
 			binary_stream = stream;
 		}
 
-#if ENABLE_RDF_ADAPTER
-		// List of links found in the content while indexing
-		private IList<string> links = null;
-
-		[XmlIgnore]
-		public IList<string> Links {
-			get { return links; }
-			set { links = value; }
-		}
-#endif
 
 		[XmlArrayItem (ElementName="Property", Type=typeof (Property))]
 		public ArrayList Properties {

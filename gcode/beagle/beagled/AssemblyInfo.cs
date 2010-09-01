@@ -50,9 +50,6 @@ using Beagle.Daemon;
 	typeof (InformationalMessagesRequestExecutor),
 	typeof (OptimizeIndexesExecutor),
 	typeof (QueryExecutor),
-#if ENABLE_RDF_ADAPTER
-	typeof (RDFQueryExecutor),
-#endif
 	typeof (ReloadConfigExecutor),
 	typeof (RemovableIndexExecutor),
 	typeof (ShutdownExecutor),

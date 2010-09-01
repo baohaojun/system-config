@@ -36,9 +36,6 @@ using Beagle;
 	 typeof (InformationalMessagesRequest),
 	 typeof (OptimizeIndexesRequest),
 	 typeof (Query),
-#if ENABLE_RDF_ADAPTER
-	 typeof (RDFQuery),
-#endif
 	 typeof (ReloadConfigRequest),
 	 typeof (RemovableIndexRequest),
 	 typeof (ShutdownRequest),
@@ -54,9 +51,6 @@ using Beagle;
 	 typeof (HitsAddedResponse),
 	 typeof (HitsSubtractedResponse),
 	 typeof (IndexingStatusResponse),
-#if ENABLE_RDF_ADAPTER
-	 typeof (RDFQueryResult),
-#endif
 	 typeof (RemovableIndexResponse),
 	 typeof (SearchTermResponse),
 	 typeof (SnippetResponse)

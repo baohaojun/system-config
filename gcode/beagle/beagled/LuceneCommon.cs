@@ -861,62 +861,8 @@ namespace Beagle.Daemon {
 					
 				AddPropertyToDocument (prop, target_doc);
 			}
-#if ENABLE_RDF_ADAPTER
-
-			// Now add the whitespace separated list of links extracted from the document of the text
-			// Add the property to the primary document. Why primary ?
-			// Because it stays with the "Text" property
-			Fieldable links_field = new LinksField (indexable.Links);
-			primary_doc.Add (links_field);
-
-			// Finally add a field containing a whitespace separated list of other fields in the document
-			AddFieldProperies (primary_doc);
-			if (secondary_doc != null)
-				AddFieldProperies (secondary_doc);
-#endif
 		}
 
-#if ENABLE_RDF_ADAPTER
-		private class LinksField : Fieldable {
-			IList<string> links;
-			internal LinksField (IList<string> links)
-			{
-				this.links = links;
-			}
-
-			public void  SetBoost(float boost) { }
-			public float GetBoost() { return 1.0f; }
-			public System.String Name() { return "TextLinks"; }
-
-			public System.String StringValue()
-			{
-				if (links == null)
-					return String.Empty;
-
-				StringBuilder sb = new StringBuilder ();
-				foreach (string link in links) {
-					sb.Append (link);
-					sb.Append (" ");
-				}
-
-				return sb.ToString ();
-			}
-
-			public System.IO.TextReader ReaderValue() { return null; }
-			public byte[] BinaryValue() { return null; }
-			public bool IsStored() { return false; }
-			public bool IsIndexed() { return true; }
-			public bool IsTokenized() { return true; }
-			public bool IsCompressed() { return false; }
-			public bool IsTermVectorStored() { return false; }
-			public bool IsStoreOffsetWithTermVector() { return false; }
-			public bool IsStorePositionWithTermVector() { return false; }
-			public bool IsBinary() { return false; }
-			public bool GetOmitNorms() { return true; }
-			public void  SetOmitNorms(bool omitNorms) { }
-			public bool IsLazy() { return false; }
-		}
-#endif
 
 		static private Document CreateSecondaryDocument (Uri uri, Uri parent_uri)
 		{
@@ -988,9 +934,6 @@ namespace Beagle.Daemon {
 				}
 			}
 
-#if ENABLE_RDF_ADAPTER
-			AddFieldProperies (new_doc);
-#endif
 			return new_doc;
 		}
 
@@ -1012,9 +955,6 @@ namespace Beagle.Daemon {
 				}
 			}
 
-#if ENABLE_RDF_ADAPTER
-			AddFieldProperies (doc);
-#endif
 			return doc;
 		}
 

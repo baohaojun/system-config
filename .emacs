@@ -1057,9 +1057,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (if current-prefix-arg
       (setq boe-default-indent-col col-indent)
     (setq col-indent boe-default-indent-col))
-  (back-to-indentation)
-  (setq col-indent (min col-indent (current-column)))
-  (let (done)
+  (let (done not-same-block)
     (while (not done)
       (forward-line dir)
       (if (< dir 0)
@@ -1067,10 +1065,13 @@ Starting from DIRECTORY, look upwards for a cscope database."
         (end-of-line))
       (if (or (eobp) (bobp))
         (setq done t)
-        (unless (string-match "^\\s *$" (buffer-substring-no-properties (line-beginning-position)
+        (if (string-match "^\\s *$" (buffer-substring-no-properties (line-beginning-position)
                                                                         (line-end-position)))
+            (setq not-same-block t)
           (back-to-indentation)
-          (when (<= (current-column) col-indent)
+          (and (not not-same-block) (/= (current-column) col-indent)
+               (setq not-same-block t))
+          (and (<= (current-column) col-indent) not-same-block
             (setq done t)))))))
 
 (global-set-key [(meta shift a)] 'beginning-of-indent)
