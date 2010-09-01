@@ -4,10 +4,6 @@ AUTOMAKE_OPTIONS = 1.8
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = beagle-0.0.pc beagle-daemon.pc
 
-if ENABLE_GUI
-pkgconfig_DATA += beagle-ui-0.0.pc
-endif
-
 SUBDIRS =
 
 SUBDIRS +=			\
@@ -20,12 +16,6 @@ SUBDIRS +=			\
 if BUILD_DOCS
 SUBDIRS +=			\
 	doc
-endif
-
-if ENABLE_GUI
-SUBDIRS +=			\
-	po			
-
 endif
 
 SUBDIRS +=			\

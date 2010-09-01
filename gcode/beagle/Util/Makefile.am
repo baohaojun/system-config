@@ -33,30 +33,7 @@ $(EXTSTR): $(EXTSTR_IN)
 		-e "s|\@SQLITE_MAJ_VER\@|$(SQLITE_MAJ_VER)|g"	\
 		< $(EXTSTR_IN) > $@
 
-F_SPOT_FILES =						\
-	$(srcdir)/F-Spot/Imaging/Bim.cs			\
-	$(srcdir)/F-Spot/Imaging/Ciff.cs		\
-	$(srcdir)/F-Spot/Imaging/DCRawFile.cs		\
-	$(srcdir)/F-Spot/Imaging/Exif.cs		\
-	$(srcdir)/F-Spot/Imaging/ImageFile.cs		\
-	$(srcdir)/F-Spot/Imaging/IptcFile.cs		\
-	$(srcdir)/F-Spot/Imaging/JpegFile.cs		\
-	$(srcdir)/F-Spot/Imaging/JpegHeader.cs		\
-	$(srcdir)/F-Spot/Imaging/MrwFile.cs		\
-	$(srcdir)/F-Spot/Imaging/OrderedWriter.cs	\
-	$(srcdir)/F-Spot/Imaging/PngFile.cs		\
-	$(srcdir)/F-Spot/Imaging/PnmFile.cs		\
-	$(srcdir)/F-Spot/Imaging/RafFile.cs		\
-	$(srcdir)/F-Spot/Imaging/SvgFile.cs		\
-	$(srcdir)/F-Spot/Imaging/Tiff.cs		\
-	$(srcdir)/F-Spot/Imaging/X3fFile.cs		\
-	$(srcdir)/F-Spot/Imaging/XmpFile.cs		\
-	$(srcdir)/F-Spot/BitConverter.cs		\
-	$(srcdir)/F-Spot/MetadataStore.cs		\
-	$(srcdir)/F-Spot/PixbufUtils.cs
-
 UTIL_CSFILES = 			        	\
-	$(F_SPOT_FILES)				\
 	$(srcdir)/ArrayFu.cs              	\
 	$(srcdir)/BatteryMonitor.cs		\
 	$(srcdir)/BetterBitArray.cs		\
@@ -74,7 +51,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/FileNameMarshaler.cs		\
 	$(srcdir)/FileSystem.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
-	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GuidFu.cs			\
 	$(srcdir)/HtmlRemovingReader.cs		\
 	$(srcdir)/ICalParser.cs              	\
@@ -89,7 +65,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/NetworkService.cs		\
 	$(srcdir)/Note.cs               	\
-	$(srcdir)/OperaHistory.cs		\
 	$(srcdir)/Password.cs			\
 	$(srcdir)/PathFinder.cs			\
 	$(srcdir)/PullingReader.cs      	\
@@ -136,31 +111,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/Hal/SystemPowerManagement.cs	\
 	$(srcdir)/Hal/Volume.cs			\
 	$(srcdir)/Hal/VolumeCrypto.cs		\
-	$(srcdir)/SemWeb/NamespaceManager.cs    \
-	$(srcdir)/SemWeb/Util.cs                \
-	$(srcdir)/SemWeb/UriMap.cs              \
-	$(srcdir)/SemWeb/Resource.cs            \
-	$(srcdir)/SemWeb/Statement.cs           \
-	$(srcdir)/SemWeb/Interfaces.cs		\
-	$(srcdir)/SemWeb/Store.cs               \
-	$(srcdir)/SemWeb/MemoryStore.cs         \
-	$(srcdir)/SemWeb/RdfReader.cs           \
-	$(srcdir)/SemWeb/RdfXmlReader.cs        \
-	$(srcdir)/SemWeb/N3Reader.cs            \
-	$(srcdir)/SemWeb/RdfWriter.cs           \
-	$(srcdir)/SemWeb/RdfXmlWriter.cs        \
-	$(srcdir)/SemWeb/N3Writer.cs            \
-	$(srcdir)/SemWeb/Query.cs	        \
-	$(srcdir)/SemWeb/LiteralFilters.cs      \
-	$(srcdir)/SemWeb/Query.cs               \
-	$(srcdir)/SemWeb/GraphMatch.cs		\
-	$(srcdir)/SemWeb/LiteralFilters.cs	\
-	$(srcdir)/SemWeb/Inference.cs           \
-	$(srcdir)/SemWeb/RDFS.cs                \
-	$(srcdir)/SemWeb/SpecialRelations.cs	\
-	$(srcdir)/SemWeb/Algos.cs               \
-	$(srcdir)/SemWeb/SparqlClient.cs	\
-	$(srcdir)/SemWeb/XPathSemWebNavigator.cs\
 	$(srcdir)/QueryKeywordMapping.cs
 
 if ENABLE_RDF_ADAPTER
@@ -199,8 +149,7 @@ UI_UTIL_CSFILES =				\
 	$(srcdir)/CompatFileChooser.cs		\
 	$(srcdir)/GnomeFu.cs              	\
 	$(srcdir)/GtkUtils.cs			\
-	$(srcdir)/HigMessageDialog.cs		\
-	$(srcdir)/XKeybinder.cs
+	$(srcdir)/HigMessageDialog.cs
 
 UI_UTIL_ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)			\
@@ -235,18 +184,11 @@ ALL_TARGETS =			\
 	$(UTIL_TARGET)		\
 	$(INOTIFY_EXE)
 
-if ENABLE_GUI
-ALL_TARGETS += $(UI_UTIL_TARGET)
-endif
-
 all: $(ALL_TARGETS)
 
 install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(UTIL_TARGET) $(UTIL_TARGET).mdb $(srcdir)/$(UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
-if ENABLE_GUI
-	$(INSTALL_DATA) $(UI_UTIL_TARGET) $(UI_UTIL_TARGET).mdb $(srcdir)/$(UI_UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
-endif
 
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET) $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET).mdb $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET_CONFIG)
