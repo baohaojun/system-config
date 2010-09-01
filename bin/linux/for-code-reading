@@ -3,7 +3,7 @@
 Filter=${Filter:-~/.my-beagle-filter-android}
 SrcReadingDir=~/tmp/for-code-reading/"`pwd`"
 SrcDir=`pwd`
-
+SrcRelDir=.
 while test "$SrcReadingDir" != "" -a ! -f "$SrcReadingDir"/cscope.files; do
     SrcReadingDir=${SrcReadingDir%/*}
 done
@@ -66,7 +66,7 @@ function mkgtags-filter() {
 
 function mkbeagleidx() {
     mkdir -p "$SrcReadingDir"/.beagle
-    beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target "$SrcReadingDir"/.beagle/ .
+    beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target "$SrcReadingDir"/.beagle/ "$SrcRelDir"
     ln $Filter "$SrcReadingDir"/.beagle-filter -sf
 }
 
