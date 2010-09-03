@@ -163,20 +163,14 @@ words closer to the (point) appear first"
             strlist (cons (car strlist-before) strlist)
             strlist-after (cdr strlist-after)
             strlist-before (cdr strlist-before)))
-    (append strlist-after strlist-before strlist)
-    ;; (let ((buf-old (current-buffer)))
-    ;;   (save-excursion
-    ;;     (with-temp-buffer
-    ;;       (let ((buf-tmp (current-buffer)))
-    ;;         (mapcar (lambda (x)
-    ;;                   (set-buffer x)
-    ;;                   (save-excursion
-    ;;                     (goto-char (point-min))
-    ;;                     (while (re-search-forward "\\(\\_<.*?\\_>\\)" nil t)
-    ;;                       (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
-    ;;                         (when (string-match skeleton-re substr)
-    ;;                           (setq strlist (cons substr strlist)))))))
-    ;;                 (delete buf-tmp (delete buf-old (buffer-list))))))))
-    ;; strlist
-    ))
-
+    (setq strlist (append strlist-after strlist-before strlist))
+    (when current-prefix-arg
+      (save-excursion
+        (let ((buffer-old (current-buffer))
+              (buffer (general-display-matches
+                       (mapcar 'buffer-name (buffer-list))))
+              (current-prefix-arg nil))
+          (with-current-buffer buffer
+            (unless (eq (current-buffer) buffer-old)
+              (setq strlist (append (skeleton-get-matches-order skeleton) strlist)))))))
+    strlist))
