@@ -1,6 +1,7 @@
 (provide 'electric-complete)
 (require 'ecomplete)
 (global-set-key [(control meta /)] 'skeleton-display-abbrev)
+(global-set-key [(control return)] 'skeleton-display-abbrev)
 
 
 (defun skeleton-display-abbrev ()
@@ -97,7 +98,8 @@
   (let ((strlist-before nil)
         (strlist-after nil)
         (strlist nil)
-        (current-pos (point)))
+        (current-pos (point))
+        (re (replace-regexp-in-string "\\*\\*" "\\(\\w\\|_\\)*" re t t)))
     (save-excursion
       (beginning-of-buffer)
       (while (not (eobp))
@@ -107,8 +109,8 @@
                   (setq strlist-before (cons substr strlist-before))
                 (setq strlist-after (cons substr strlist-after))))
           (end-of-buffer))))
-    (setq strlist-before  (delete-dups (nreverse strlist-before))
-          strlist-after (delete-dups strlist-after))
+    (setq strlist-before  (delete-dups strlist-before)
+          strlist-after (delete-dups (nreverse strlist-after)))
     (while (and strlist-before strlist-after)
       (setq strlist (cons (car strlist-before) strlist)
             strlist (cons (car strlist-after) strlist)
@@ -159,6 +161,22 @@ words closer to the (point) appear first"
     (while (and strlist-before strlist-after)
       (setq strlist (cons (car strlist-after) strlist)
             strlist (cons (car strlist-before) strlist)
-            strlist-after (cdr strlist-after)))
-            strlist-before (cdr strlist-before)
-    (append strlist-after strlist-before strlist)))
+            strlist-after (cdr strlist-after)
+            strlist-before (cdr strlist-before)))
+    (append strlist-after strlist-before strlist)
+    ;; (let ((buf-old (current-buffer)))
+    ;;   (save-excursion
+    ;;     (with-temp-buffer
+    ;;       (let ((buf-tmp (current-buffer)))
+    ;;         (mapcar (lambda (x)
+    ;;                   (set-buffer x)
+    ;;                   (save-excursion
+    ;;                     (goto-char (point-min))
+    ;;                     (while (re-search-forward "\\(\\_<.*?\\_>\\)" nil t)
+    ;;                       (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
+    ;;                         (when (string-match skeleton-re substr)
+    ;;                           (setq strlist (cons substr strlist)))))))
+    ;;                 (delete buf-tmp (delete buf-old (buffer-list))))))))
+    ;; strlist
+    ))
+

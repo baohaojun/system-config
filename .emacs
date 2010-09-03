@@ -796,6 +796,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
           marker-window
           (marker-point (marker-position marker))
           (cscope-buffer (get-buffer cscope-output-buffer-name)) )
+    (when (and (not (ring-empty-p cscope-marker-ring))
+               (equal marker (ring-ref cscope-marker-ring 0)))
+      (ring-remove cscope-marker-ring 0))
     (nodup-ring-insert cscope-marker-ring-poped (point-marker))
 
     ;; After the following both cscope-marker-ring and cscope-marker will be
