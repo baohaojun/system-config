@@ -28,6 +28,7 @@
     ("cr" "CRect" nil 0)
     ("cs" "cstring" nil 33)
     ("dcs" "c_str()" nil 10)
+    ("ld" "LOGD(\"%s: %d\\n\", __FUNCTION__, __LINE__);" nil 0)
     ("lw" "LOGW(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("mcs" "const CString&" nil 16)
     ("ms" "CString" nil 3)
@@ -38,6 +39,7 @@
 (define-abbrev-table 'c-mode-abbrev-table
   '(
     ("cpk" "printk(KERN_WARNING \"for continue %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 25)
+    ("ld" "LOGD(\"%s: %d\\n\", __FUNCTION__, __LINE__);" nil 0)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
     ("pe" "printk(KERN_WARNING \"hello error %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 2)
     ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 89)

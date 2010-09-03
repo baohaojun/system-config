@@ -85,9 +85,11 @@
 	(setq highlight (skeleton-highlight-match-line matches line max-line-num)) 
 	(while (not (memq (setq command (read-event highlight)) '(? return)))
 	  (cond
-	   ((eq command ?\M-n)
+	   ((or (eq command ?\M-n)
+                (eq command ?\C-n))
 	    (setq line (% (1+ line) (1+ max-line-num))))
-	   ((eq command ?\M-p)
+	   ((or (eq command ?\M-p)
+                (eq command ?\C-p))
 	    (setq line (% (+ max-line-num line) (1+ max-line-num)))))
 	  (setq highlight (skeleton-highlight-match-line matches line max-line-num)))
 	(when (eq command 'return)

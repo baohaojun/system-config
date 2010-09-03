@@ -19,6 +19,8 @@ then
         SrcRelDir=${SrcDir/#$UpSrcDir/.}
         cd $UpSrcDir
     fi
+else 
+    SrcReadingDir=~/tmp/for-code-reading/"`pwd`"
 fi
 
 function mkcscope_files() {

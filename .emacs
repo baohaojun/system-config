@@ -1092,3 +1092,24 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (global-set-key [(meta shift a)] 'beginning-of-indent)
 (global-set-key [(meta shift e)] 'end-of-indent)
+
+(defun indent-same-space-as-prev-line ()
+  (interactive)
+  (let* ((col1 (current-column))
+         (col2 (save-excursion
+                 (if (eolp)
+                     col1
+                   (search-forward-regexp "\\S " (line-end-position))
+                   (current-column))))
+         (col2- (save-excursion
+                  (forward-line -1)
+                  (move-to-column col1)
+                  (when (looking-at "\\S ")
+                    (search-forward-regexp "\\s "))
+                  (search-forward-regexp "\\S " (line-end-position))
+                  (current-column))))
+    (delete-region col1 col2)
+    (insert (make-string (- col2- col1 1) ? ))))
+
+(global-set-key [(meta shift ? )] 'indent-same-space-as-prev-line)
+              
