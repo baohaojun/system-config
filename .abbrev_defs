@@ -28,10 +28,10 @@
     ("cr" "CRect" nil 0)
     ("cs" "cstring" nil 33)
     ("dcs" "c_str()" nil 10)
-    ("ld" "LOGD(\"%s: %d\\n\", __FUNCTION__, __LINE__);" nil 0)
+    ("ld" "LOGD(\"%s: %d\", __FUNCTION__, __LINE__);" nil 0)
     ("lw" "LOGW(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("mcs" "const CString&" nil 16)
-    ("ms" "CString" nil 3)
+    ("ms" "CString" nil 7)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 1)
     ("se" "SOCKET_ERROR" nil 0)
    ))
@@ -39,7 +39,7 @@
 (define-abbrev-table 'c-mode-abbrev-table
   '(
     ("cpk" "printk(KERN_WARNING \"for continue %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 25)
-    ("ld" "LOGD(\"%s: %d\\n\", __FUNCTION__, __LINE__);" nil 0)
+    ("ld" "LOGD(\"%s: %d\\n\", __FUNCTION__, __LINE__);" nil 6)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
     ("pe" "printk(KERN_WARNING \"hello error %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 2)
     ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 89)
@@ -146,8 +146,8 @@
 
 (define-abbrev-table 'java-mode-abbrev-table
   '(
-    ("le" "Log.e(TAG, \"" nil 16)
-    ("lv" "Slog.v(TAG, String.format(\"" nil 0)
+    ("le" "Log.e(TAG, \"" nil 17)
+    ("lv" "Slog.v(TAG, String.format(\"" nil 1)
     ("string" "String" nil 18)
     ("sv" "System.out.print(String.format(\"" nil 0)
    ))

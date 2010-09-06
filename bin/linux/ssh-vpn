@@ -65,7 +65,7 @@ sub do_vpn_tl() {
   do_ssh($username, $password, $host);
 }
 
-sub do_dailiav() {
+sub ssh2() {
   my $page = qx(wget http://www.dailiav.com/ssh.html -O -|tee /dev/tty);
            # <strong>ssh服务器2地址:</strong><span> ssh2.dailiav.com</span> <br/>
            # <strong>用户名字:</strong><span>dailiavcom</span><br/>

@@ -49,6 +49,7 @@ fakeroot
 flex
 fontforge
 gcc-multilib
+gdb-doc
 git-core
 gitk
 git-svn
