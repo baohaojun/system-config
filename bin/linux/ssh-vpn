@@ -101,6 +101,50 @@ sub ssh3() {
   do_ssh($username, $password, $host);
 }
 
+sub ssh4() {
+  my $page = qx(wget http://freessh.us/ -O -|tee /dev/tty);
+
+        # <td bgcolor='#FFFFFF'>一号</td>
+	# 	<td bgcolor='#FFFFFF'>2free.freessh.us</td>
+        # <td bgcolor='#FFFFFF'>freessh</td>
+        # <td bgcolor='#FFFFFF'>55713</td>
+        # <td bgcolor='#FFFFFF'>2010-09-07 14:30:01</td>
+        # <td bgcolor='#FFFFFF'>正常</td>
+
+  $page =~ m,一号.*?'>(.*?)</td>.*?'>(.*?)</td.*?'>(.*?)</td>.*正常</td>,s;
+  #$page =~ m,免费账号: (.*?) 密码: (.*)<br/>, or 
+      #$page =~ m,.*value="(.*?)".*value="(.*?)",s;
+
+  my $host = $1;
+  my $username = $2;
+  my $password = $3;
+
+
+  print "ssh -C2qN -D 8080 $username\@$host, password is $password\n";
+  do_ssh($username, $password, $host);
+}
+
+sub ssh5() {
+  my $page = qx(wget http://www.sshcenter.info/free-ssh-account.php -O -|tee /dev/tty);
+
+# SSH 服务器：test.sshcenter.info<br />
+# SSH 端口：22<br />
+# 用户名称：sshcenter<br />
+# 用户密码：742944<br />
+
+  $page =~ m,SSH 服务器：(.*?)<.*用户名称：(.*?)<.*用户密码：(.*?)<,s;
+  #$page =~ m,免费账号: (.*?) 密码: (.*)<br/>, or 
+      #$page =~ m,.*value="(.*?)".*value="(.*?)",s;
+
+  my $host = $1;
+  my $username = $2;
+  my $password = $3;
+
+
+  print "ssh -C2qN -D 8080 $username\@$host, password is $password\n";
+  do_ssh($username, $password, $host);
+}
+
 while (1) {
   if (@ARGV == 1) {
     eval "$ARGV[0]()";
@@ -108,5 +152,5 @@ while (1) {
   } else {
     do_vpn_tl();
   }
-
+ `sleep 5`
 }
