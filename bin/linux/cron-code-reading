@@ -1,6 +1,7 @@
 #!/bin/bash
 exec >/dev/null
 . ~/.bashrc
+export PATH=/usr/local/bin:$PATH
 function do_it() {
     mkbeagleidx 
     mkgtags -i
