@@ -1,3 +1,161 @@
+2010-09-04  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el (twittering-push-uri-onto-kill-ring): avoid
+	pushing the same URL repeatedly.
+
+	* twittering-mode.el: Fix xAuth with `gnutls-cli'.
+	(twittering-oauth-get-token-alist-native): add a CRLF following
+	the POST body. `gnutls-cli', which may be invoked by
+	`open-tls-stream', requires the CRLF at the end of input.
+
+	* twittering-mode.el: Introduce `connection-info', which is
+	transferred to a sentinel.
+	(twittering-start-http-session): introduce the variable
+	`connection-info' to transfer the connection information to a
+	sentinel. Since `connection-info' includes `noninteractive', the
+	argument `noninteractive' is replaced with `connection-info'.
+	(twittering-start-http-session-curl): likewise.
+	(twittering-start-http-session-native): likewise.
+	(twittering-http-default-sentinel): use `connection-info' instead
+	of the current `twittering-use-ssl' and `twittering-proxy-use'.
+
+	* twittering-mode.el (twittering-http-post): remove use of unbound
+	variable `noninteractive'.
+
+	* twittering-mode.el (twittering-call-api): use the argument
+	`noninteractive' correctly.
+
+	* twittering-mode.el: Introduce a framework to pre-process HTTP
+	response buffer.
+	(twittering-connection-type-table): add the entries for
+	`pre-process-buffer'.
+	(twittering-oauth-get-response-alist): remove redundant
+	pre-processing for `openssl s_client'.
+	(twittering-oauth-get-token-alist-native): pre-process buffer
+	according to the variable `connection-info'.
+	(twittering-oauth-get-token-alist-curl): likewise.
+	(twittering-pre-process-buffer-curl): new function.
+	(twittering-pre-process-buffer-native): new function.
+	(twittering-http-default-sentinel): pre-process buffer with the
+	function registered as `pre-process-buffer' in `connection-info'.
+
+	* twittering-mode.el: Fix replying to tweets displayed as replied
+	tweets. Thanks to Naohiro Aota.
+	(twittering-enter): correctly use `original-id' for tweets
+	displayed by `twittering-show-replied-statuses'.
+
+2010-08-25  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Confirm that a buffer associated with a
+	process hs not been killed.
+	(twittering-oauth-get-token-alist-native): confirm that the buffer
+	associated with the process has not been killed.
+	(twittering-oauth-get-token-alist-curl): likewise.
+
+	* twittering-mode.el: Verify an account synchronously.
+	(twittering-verify-credentials): wait for the authorization to
+	finish.
+
+2010-08-22  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el (twittering-atom-xmltree-to-status-datum):
+	retrieve `user-screen-name' and optional `user-name' from XML for
+	StatusNet correctly. Thanks to Takashi Masuda.
+
+	* twittering-mode.el: Introduce `clean-up-sentinel' to
+	`twittering-call-api'. It is executed whenever the process
+	sentinel is invoked.
+	(twittering-call-api): add new argument `clean-up-sentinel' for
+	the command `get-list-index' and `verify-credentials'.
+	(twittering-start-http-session): add new argument
+	`clean-up-sentinel' executed whenever the process sentinel is
+	invoked.
+	(twittering-start-http-session-curl): likewise.
+	(twittering-start-http-session-native): likewise.
+	(twittering-http-get): likewise.
+	(twittering-http-post): likewise.
+	(twittering-http-default-sentinel): invoke `clean-up-sentinel' if
+	it is non-nil.
+
+	* twittering-mode.el: Fix the race condition on resetting
+	authorization information when the process exits abnormally.
+	(twittering-verify-credentials): use `clean-up-sentinel' for
+	resetting variables when the process exits abnormally or the HTTP
+	response is invalid.
+	(twittering-http-get-verify-credentials-clean-up-sentinel): new
+	function for resetting some variables when the process for
+	`verify-credentials' API exits abnormally.
+
+2010-08-21  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Restore `twittering-get-{search,status}-url'.
+	(twittering-lookup-get-status-url): removed.
+	(twittering-lookup-get-search-url): removed.
+	(twittering-get-status-url): look up a function suitable for
+	`twittering-service-method' and call it.
+	(twittering-get-search-url): likewise.
+	(twittering-make-clickable-status-datum): directly call
+	`twittering-get-status-url' and `twittering-get-search-url'
+	instead of calling them via `twittering-lookup-get-status-url' or
+	`twittering-lookup-get-search-url'.
+	(twittering-generate-format-table): likewise.
+	(twittering-generate-formater-for-first-spec): likewise.
+
+	* twittering-mode.el: Switch ways to parse XML depending on
+	`twittering-service-method'.
+	(twittering-atom-xmltree-to-status-datum): switch ways to parse
+	XML depending on `twittering-service-method'.
+
+	* twittering-mode.el: Simplify `twittering-call-api'.
+	(twittering-call-api): reduce calls of `twittering-api-path'.
+
+	* twittering-mode.el: Replace direct calls of
+	`twittering-http-post' with calls of `twittering-call-api'.
+	(twittering-update-status-from-minibuffer): use
+	`twittering-call-api' instead of `twittering-http-post'.
+
+2010-08-20  Takashi Masuda  <masutaka@nifty.com>
+
+	* twittering-mode.el: Support StatusNet.
+	(twittering-api-prefix): new variable.
+	(twittering-search-api-method): new variable.
+	(twittering-web-path-prefix): new variable.
+	(twittering-service-method): new variable.
+	(twittering-service-method-table): new variable.
+	(twittering-api-path): new function.
+	(twittering-lookup-get-status-url): new function.
+	(twittering-get-status-url-twitter): new function.
+	(twittering-get-status-url-statusnet): new function.
+	(twittering-lookup-get-search-url): new function.
+	(twittering-get-search-url-twitter): new function.
+	(twittering-get-search-url-statusnet): new function.
+	(twittering-call-api): generate a path of API by
+	`twittering-api-path'. (API のパスは twittering-api-path から取得
+	するようにした。)
+	(twittering-edit-post-status): likewise.
+	(twittering-update-status-from-minibuffer): likewise.
+	(twittering-atom-xmltree-to-status-datum): support the format
+	used in StatusNet.(いずれも検索関連の修正。
+	「interpret-time-diff.patch」「user-name が設定されていないユーザ
+	に対応」「検索時のユーザアイコンを取得出来るように修正」)
+	(twittering-make-clickable-status-datum): retrieve `status-url'
+	and `search-url' via `twittering-lookup-get-status-url' and
+	`twittering-lookup-get-search-url'. (twittering-lookup-get-status-url
+	と twittering-lookup-get-search-url を介して status-url と
+	search-url を取得するようにした。
+	(twittering-generate-format-table): likewise.
+	(twittering-generate-formater-for-first-spec): likewise.
+
+	* twittering-mode.el: fix statusnet user URL
+	(twittering-get-status-url-statusnet): fix user URL
+
+	* twittering-mode.el (twittering-generate-format-table):
+	Do not use icon images scaled by API unless Twitter.
+
+	* twittering-mode.el: fix statusnet URL
+	(twittering-get-status-url-statusnet): fix id URL
+	(twittering-get-status-url-statusnet): fix hashtag URL
+
 2010-08-20  Tadashi MATSUO  <tad@mymail.twin.jp>
 
 	* twittering-mode.el (twittering-edit-post-status): call
