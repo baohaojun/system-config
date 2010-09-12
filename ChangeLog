@@ -1,3 +1,109 @@
+2010-08-20  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el (twittering-edit-post-status): call
+	`twittering-call-api' instead of calling `twittering-http-post'
+	directly.
+
+	* twittering-mode.el: Do not add unnecessary parameter `source' to
+	API calls.
+	(twittering-http-post): do not add unnecessary parameter `source'.
+	(twittering-call-api): add the parameter `source' when using BASIC
+	authentication.
+
+	* twittering-mode.el (twittering-call-api): Change parameters in
+	order to follow the update of Twitter API.
+
+	* twittering-mode.el: Add `twittering-push-uri-onto-kill-ring' and
+	bind "U" to it. Thanks to Faried Nawaz.
+	(twittering-push-uri-onto-kill-ring): new function for pushing the
+	uri property of the current position onto the kill-ring.
+	(twittering-mode-map): bind "U" to
+	`twittering-push-uri-onto-kill-ring'.
+
+	* twittering-mode.el: Add `twittering-new-tweets-statuses' for the
+	hook functions of `twittering-new-tweets-hook'. Thanks to Faried
+	Nawaz.
+	(twittering-new-tweets-statuses): new variable.
+	(twittering-add-statuses-to-timeline-data): bind
+	`twittering-new-tweets-statuses' to `new-statuses' so that the
+	hook functions can refer to the new tweets.
+
+2010-08-15  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Confirm that sufficient information is
+	loaded from the private file.
+	(twittering-load-private-info): load only variables that are
+	enumerated in `twittering-variables-stored-with-encryption'.
+	(twittering-has-oauth-access-token-p): new function for checking
+	whether `twittering-oauth-access-token-alist' has sufficient
+	information.
+	(twittering-verify-credentials): confirm that sufficient
+	information is loaded from the private file.
+
+2010-08-06  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el: Fix options of `curl' for POST with an empty
+	body.
+	(twittering-start-http-session-curl): add an option "-d" whenever
+	`method' equals to "POST".
+
+	* twittering-mode.el: Use the ID of the retweeted original tweet
+	on generating a URL or retweeting it.
+	(twittering-status-to-status-datum): add new property `source-id'
+	specifying a source tweet of a retweet.
+	(twittering-generate-formater-for-first-spec): generate a URL for
+	a retweet from the ID of its source.
+	(twittering-generate-format-status-function): add `source-id' as a
+	common property.
+	(twittering-native-retweet): use `source-id' for a retweet.
+
+	* twittering-mode.el: Update the embedded CA certificate into
+	`Equifax Secure Certificate Authority'.
+	(twittering-ensure-ca-cert): replace the CA certificate with
+	`Equifax Secure Certificate Authority' currently referred by
+	`api.twitter.com' and `search.twitter.com'.
+
+2010-07-25  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el (twittering-mode): avoid repeating
+	authorization when `twittering-initial-timeline-spec-string' is a
+	list of multiple timeline spec strings.
+
+	* twittering-mode.el (twittering-http-default-sentinel): display
+	an error message when waiting for a response of an authorization
+	query.
+
+	* twittering-mode.el: Replace functions `mapcan' and `map' defined
+	in `cl-extra' with built-in functions in order to prevent the
+	byte-compiled `twittering-mode' from depending on `cl-extra'.
+	(twittering-oauth-get-token-alist-curl): replace `mapcan' with a
+	combination of `apply', `append' and `mapcar'.
+	(twittering-start-http-session-curl): likewise.
+
+2010-07-04  Tadashi MATSUO  <tad@mymail.twin.jp>
+
+	* twittering-mode.el (twittering-redisplay-status-on-buffer): Fix
+	the condition of redisplaying a timeline.
+
+	* twittering-mode.el: If it fails to retrieve an image a certain
+	times, retry no longer.
+	(twittering-create-image-pair): return
+	`twittering-error-icon-data-pair' if the argument `image-data' is
+	nil.
+	(twittering-make-icon-string): fix the condition of
+	`image-data'. If it is an integer, it means the time of retries.
+
+	* twittering-mode.el: Use icon images scaled by API if possible.
+	(twittering-generate-format-table): generate the URL of the scaled
+	icon image by API.
+
+	* twittering-mode.el: Use `GET users/profile_image' API only if
+	the variable `twittering-use-profile-image-api' is non-nil. Since
+	the API is rate limited, it may cause troubles on other API calls.
+	(twittering-use-profile-image-api): new variable.
+	(twittering-generate-format-table): call `GET users/profile_imagne'
+	API only if `twittering-use-profile-image-api' is non-nil.
+
 2010-07-03  Tadashi MATSUO  <tad@mymail.twin.jp>
 
 	* twittering-mode.el: Replace `xml-parse-region' with
