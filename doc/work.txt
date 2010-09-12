@@ -1,15 +1,15 @@
 insmod /data/proc_i2c.ko
 
 function ri2c() {
-         x=$1
-         for y in `seq 1 ${2:-1}`; do 
-             echo read adap 0 addr 0xf reg $x byte 1 > /proc/i2c_rw
+         x=$3
+         for y in `seq 1 ${4:-1}`; do 
+             echo read adap $1 addr $2 reg $x byte 1 > /proc/i2c_rw
              ((x++));
          done
 }
 
 function wi2c() {
-         echo write adap 3 addr 0x5c reg $1 byte 1 val $2 > /proc/i2c_rw
+         echo write adap $1 addr $2 reg $3 byte 1 val $4 > /proc/i2c_rw
 }
 
 function bi2c() {

@@ -152,5 +152,5 @@ while (1) {
   } else {
     do_vpn_tl();
   }
- `sleep 5`
+ `sleep 1`
 }
