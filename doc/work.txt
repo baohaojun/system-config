@@ -40,3 +40,4 @@ git@www.rayzertrack.com:ggl/pxa935/platform/manifest.git -b cupcake-rayzerlink
 git@www.rayzertrack.com:ggl/pxa935/platform/manifest.git -b rayzerlink-opl
 psql -c "INSERT INTO projects (use_contributor_agreements  ,submit_type  ,name) VALUES ('N' ,'M' ,'pxa935/tools/repo.git');" nvidiadb
 
+perl -ne 'if (2..2) {print "set -e\n" } print;'

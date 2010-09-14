@@ -84,7 +84,7 @@ function lcd()
     fi
     
 
-    if test "${1:0:2}" = '\\' -a `uname` = Linux; then
+    if [[ "${1:0:2}" =~ \\\\|// && `uname` = Linux ]]; then
         smbnetfs ~/smb >/dev/null 2>&1
         builtin cd ~/smb/"$(host-hosts "$1")"
         history -s cd "`pwd`"

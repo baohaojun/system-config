@@ -6,20 +6,17 @@ EOF
 fi
 
 if test "$IN_EMACS" = true; then
-cat > /tmp/$$.putclip
-export FILE=/tmp/$$.putclip
-(
-## `xclip' utility (http://xclip.sf.net/) mangles Cyrillic alphabet.
-# which xclip >/dev/null && { xclip -in "$1"; exit 0; }
-
-emacsclient --eval "
+    rm-last-nl > /tmp/$$.putclip
+    export FILE=/tmp/$$.putclip
+    (
+        emacsclient --eval "
 (let ((default-directory \"/tmp/\"))
 (view-file \"$FILE\")
 (kill-new (filter-buffer-substring (point-min) (point-max)))
 (View-quit))"
-rm $FILE
-) >/dev/null 2>&1&
+        rm $FILE
+    ) >/dev/null 2>&1&
 else 
-    xclip -i -selection clipboard
+    rm-last-nl|xclip -i -selection clipboard
     xclip -o -selection clipboard|xclip -i
 fi
