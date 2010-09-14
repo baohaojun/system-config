@@ -1,0 +1,23 @@
+#!/usr/bin/env perl
+BEGIN 
+{
+    %hosts = {};
+    open($file, "<", "/etc/hosts");
+    while (<$file>) {
+        next if m/^\s*#/;
+        next if m/^\s*$/;
+        @line = split;
+        $ip = shift @line;
+        for (@line) {
+            $hosts{$_} = $ip;
+        }
+    }
+}
+
+$arg = $ARGV[0];
+$arg =~ s,^(?:\\|/)*(.*?)(\\|/|$),$2,;
+$host = $1;
+$arg =~ s,\\,/,;
+$ip = $hosts{$host};
+$ip = $host unless $ip;
+print "$ip$arg";
