@@ -4,3 +4,6 @@ bindkey -m \033[4~ stuff G
 bindkey -m \033[1~ stuff g
 ignorecase on
 
+hardstatus on
+hardstatus alwayslastline
+hardstatus string "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..G} %H %{..Y} %m/%d %C%a "

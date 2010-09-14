@@ -5,9 +5,11 @@
 
 function cd_bhj () 
 {
+    history -s cd "$@"
+    local oldpwd=`pwd`
     lcd "$@" && return $?
     test $# == 1 -o $# == 0 && builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@"
-    cd_record
+    test "`pwd`" != "$oldpwd" && cd_record
 }
 
 function my_select() 
@@ -41,6 +43,7 @@ function cd_failed()
         cd_record
         history -s cd "$@"
     fi
+    return 0
 }
 
 function fcd() 

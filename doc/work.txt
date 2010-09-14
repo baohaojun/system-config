@@ -34,3 +34,9 @@ M-: (modify-syntax-entry ?_ "w")
 (export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; adb forward tcp:5039 tcp:5039; export PATH=`pwd`/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:$PATH; gdbclient sensor-daemon)
 gdbserver :5039 /system/bin/test-sensor
 gdbserver --attach :5039 `pidof sensor-daemon`
+
+git@www.rayzertrack.com:nv/android/manifest
+git@www.rayzertrack.com:ggl/pxa935/platform/manifest.git -b cupcake-rayzerlink
+git@www.rayzertrack.com:ggl/pxa935/platform/manifest.git -b rayzerlink-opl
+psql -c "INSERT INTO projects (use_contributor_agreements  ,submit_type  ,name) VALUES ('N' ,'M' ,'pxa935/tools/repo.git');" nvidiadb
+
