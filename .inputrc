@@ -39,6 +39,7 @@ set output-meta on
 "\eOF": end-of-line
 
 "\ek": "\C-a\C-kcat <<End|putclip\n\C-y\nEnd\n"
+"\C-\M-k": "\C-a\C-kcat <<End|putclip\n`\C-y`\nEnd\n"
 # Allow 8-bit input/output
 #$if Bash
   # Don't ring bell on completion
