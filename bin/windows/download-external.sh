@@ -44,11 +44,12 @@ function emacs-site-lisps()
     cp /usr/share/emacs/site-lisp/subdirs.el . 
 
     file_list=(
+        `wget http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2 >/dev/null 2>&1`
         http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
         http://cvs.savannah.gnu.org/viewvc/*checkout*/emacsweblogs/weblogger/lisp/xml-rpc.el
-        http://mirrors.163.com/debian/pool/main/e/emacs-goodies-el/emacs-goodies-el_34.1.tar.gz
-        http://mwolson.org/static/dist/muse-latest.tar.gz
-        http://debian.cn99.com/debian/pool/main/w/w3m-el-snapshot/w3m-el-snapshot_1.4.364+0.20090802.orig.tar.gz
+        `get-deb-src-dir emacs-goodies-el`
+        `get-deb-src-dir muse-el`
+        `get-deb-src-dir w3m-el-snapshot`
     )
     for x in "${file_list[@]}"; do
         if ! [[ -f "$(basename "$x")" ]]; then
