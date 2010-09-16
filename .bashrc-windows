@@ -171,13 +171,6 @@ alias repo='PATH=/bin:$PATH repo'
 alias wp="winpath.sh"
 alias up="unipath.sh"
 
-if [[ -d /cygdrive/q ]]; then
-   export HOME=/q
-   SetPath
-   return 0
-else 
-    export HOME=$(/bin/cygpath -au "$HOMEDRIVE$HOMEPATH")
-    SetPath
-    return 1
-fi
+SetPath
+return 0
 
