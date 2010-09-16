@@ -46,7 +46,7 @@ function emacs-site-lisps()
     file_list=(
         http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
         http://cvs.savannah.gnu.org/viewvc/*checkout*/emacsweblogs/weblogger/lisp/xml-rpc.el
-        http://debian.cn99.com/debian/pool/main/e/emacs-goodies-el/emacs-goodies-el_31.4.tar.gz
+        http://mirrors.163.com/debian/pool/main/e/emacs-goodies-el/emacs-goodies-el_34.1.tar.gz
         http://mwolson.org/static/dist/muse-latest.tar.gz
         http://debian.cn99.com/debian/pool/main/w/w3m-el-snapshot/w3m-el-snapshot_1.4.364+0.20090802.orig.tar.gz
     )
