@@ -15,7 +15,7 @@ then
     exit
 fi
 
-cd -P "$BIN_WINDOWS"/../..
+cd -P "$BIN_WINDOWS"/../../..
 export HOME2=`pwd`
 
 if test "$HOME2" != /q -a "$HOME2" != /cygdrive/q; then 

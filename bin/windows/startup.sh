@@ -18,7 +18,7 @@ then
     exit
 fi
 
-cd -P "$BIN_WINDOWS"/../..
+cd -P "$BIN_WINDOWS"/../../..
 export HOME2=`pwd` #Ah! and we know where we are now!
 rm /qq -f
 ln -sf "$HOME2" /qq
