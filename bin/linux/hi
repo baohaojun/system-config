@@ -1,18 +1,32 @@
 #!/usr/bin/env perl
 
 open($file, "<", glob("~/.bash_history"));
-%hist_words={};
-@hist_words=[];
-while(<$file>) {
-    while (m/((?:
+%hist_words;
+@hist_words;
+
+chomp($cmd = qx/basename $0/);
+
+if ($cmd eq "hi") {
+    while(<$file>) {
+        while (m/((?:
                (?:"(?:\\.|[^\\])+?") |
  	       '.*' |
                (?:`(?:\\.|[^\\])+?`) |
                (?:\\.|[^"'\ \\|><\t\n])+
              )+)/xgi) {
-        if (not $hist_words{$1}) {
-            $hist_words{$1} = 1;
-            push @hist_words, ($1);
+            if (not $hist_words{$1}) {
+                $hist_words{$1} = 1;
+                push @hist_words, ($1);
+            }
+        }
+    }
+} else {
+    while (<$file>) {
+        chomp;
+        next if m/^\s *$/;
+        if (not $hist_words{$_}) {
+            $hist_words{$_} = 1;
+            push @hist_words, ($_);
         }
     }
 }
@@ -40,6 +54,16 @@ for (1..@hist_matching_words) {
 print "#? ";
 $ans = <STDIN>;
 chomp($ans);
+if ($ans eq "") {
+    $ans = 1;
+}
+
+if ($ans < 1) {
+    $ans = 1;
+} elsif ($ans > @hist_matching_words) {
+    $ans = @hist_matching_words;
+}
+
 $ans = $hist_matching_words[$ans-1];
 open($file, "|-", "putclip");
 print $file "$ans\n";

@@ -1,13 +1,25 @@
 #!/bin/bash
-function wp()
+function smb_wp()
 {
     FILE=${1:-`pwd`}
     FILE=`readlink -f "$FILE"`
 
     if [[ "$FILE" =~ ~/smb/ ]]; then
         FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
+    else
+        FILE=z:$FILE
     fi
     echo -n "$FILE"|tee /dev/tty|putclip
+}
+
+function wp()
+{
+    FILE=${1:-`pwd`}
+    FILE=`readlink -f "$FILE"`
+
+    FILE=z:$FILE
+    echo -n "$FILE"|tee /dev/tty|putclip
+    history -s wp "$FILE"
 }
 
 function up()
@@ -16,6 +28,9 @@ function up()
     FILE=`readlink -f "$FILE"`
 
     echo -n "$FILE"|tee /dev/tty|putclip
+    history -s up "$FILE"
 }
 
-`basename "$0"` "$@"
+if test "$BASH_SOURCE" = "$0"; then
+    "`basename $0`" "$@"
+fi
