@@ -150,7 +150,7 @@ export ADBHOST=192.168.100.2
 export ADB_HOST=192.168.100.2
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-export DISPLAY=:0
+export DISPLAY=${DISPLAY:-:0}
 
 alias wpwd='cygpath -alw .; pwd|sed -e "s!/!.!g"; echo'
 alias perl='/bin/perl'
