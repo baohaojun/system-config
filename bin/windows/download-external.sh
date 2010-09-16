@@ -44,7 +44,11 @@ function emacs-site-lisps()
     cp /usr/share/emacs/site-lisp/subdirs.el . 
 
     file_list=(
-        `wget http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2 >/dev/null 2>&1`
+        `wget \
+        http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2 \
+        http://ftp.us.debian.org/debian/dists/sid/contrib/source/Sources.bz2 \
+        http://ftp.us.debian.org/debian/dists/sid/non-free/source/Sources.bz2 >/dev/null 2>&1`
+
         http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
         http://cvs.savannah.gnu.org/viewvc/*checkout*/emacsweblogs/weblogger/lisp/xml-rpc.el
         `get-deb-src-dir emacs-goodies-el`

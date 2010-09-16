@@ -3,7 +3,7 @@
 #system("rm Sources.bz2");
 #system("wget http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2");
 
-open($file, "-|", "bzcat Sources.bz2");
+open($file, "-|", "bzcat Sources.bz2*");
 
 $package = $ARGV[0];
 while (<$file>) {
