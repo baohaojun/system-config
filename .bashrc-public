@@ -154,4 +154,4 @@ function git()
 }
 
 stty -ixon -ixoff >/dev/null 2>&1
-. `which wp`
+

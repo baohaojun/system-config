@@ -39,3 +39,4 @@ do
         fi
     }"
 done
+. `which wp`
