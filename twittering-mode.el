@@ -5359,39 +5359,43 @@ BUFFER may be a buffer or the name of an existing buffer."
 (defun twittering-make-clickable-status-datum (status)
   (flet ((assq-get (item seq)
 		   (cdr (assq item seq))))
-    (let ((user-name (assq-get 'user-name status))
-	  (id (assq-get 'id status))
-	  (text (assq-get 'text status))
-	  (source (assq-get 'source status))
-	  (created-at (assq-get 'created-at status))
-	  (truncated (assq-get 'truncated status))
-	  (in-reply-to-status-id (assq-get 'in-reply-to-status-id status))
-	  (in-reply-to-screen-name (assq-get 'in-reply-to-screen-name status))
-	  (user-id (assq-get 'user-id status))
-	  (user-name (assq-get 'user-name status))
-	  (user-screen-name (assq-get 'user-screen-name status))
-	  (user-location (assq-get 'user-location status))
-	  (user-description (assq-get 'user-description status))
-	  (user-profile-image-url (assq-get 'user-profile-image-url status))
-	  (user-url (assq-get 'user-url status))
-	  (user-protected (assq-get 'user-protected status))
-
-	  (original-user-name (assq-get 'original-user-name status))
+    (let ((user-name                 (assq-get 'user-name                 status))
+	  (id                        (assq-get 'id                        status))
+	  (text                      (assq-get 'text                      status))
+	  (source                    (assq-get 'source                    status))
+	  (created-at                (assq-get 'created-at                status))
+	  (truncated                 (assq-get 'truncated                 status))
+	  (in-reply-to-status-id     (assq-get 'in-reply-to-status-id     status))
+	  (in-reply-to-screen-name   (assq-get 'in-reply-to-screen-name   status))
+	  (user-id                   (assq-get 'user-id                   status))
+	  (user-name                 (assq-get 'user-name                 status))
+	  (user-screen-name          (assq-get 'user-screen-name          status))
+	  (user-location             (assq-get 'user-location             status))
+	  (user-description          (assq-get 'user-description          status))
+	  (user-profile-image-url    (assq-get 'user-profile-image-url    status))
+	  (user-url                  (assq-get 'user-url                  status))
+	  (user-protected            (assq-get 'user-protected            status))
+	  (original-user-name        (assq-get 'original-user-name        status))
 	  (original-user-screen-name (assq-get 'original-user-screen-name status)))
-
+          
       ;; make user names clickable
-      (mapc (lambda (str)
-	      (add-text-properties
-	       0 (length str)
-	       `(mouse-face highlight
-			    uri ,(twittering-get-status-url user-screen-name)
-			    screen-name-in-text ,user-screen-name
-			    goto-spec ,(twittering-string-to-timeline-spec
-					user-screen-name)
-			    face twittering-username-face)
-	       str))
-	    (list user-name user-screen-name original-user-name
-		  original-user-screen-name))
+      (mapc (lambda (id-names)
+	      (mapc (lambda (name)
+		      (add-text-properties
+		       0 (length name)
+		       `(mouse-face 
+			 highlight
+			 uri ,(twittering-get-status-url (car id-names))
+			 screen-name-in-text ,user-screen-name
+			 goto-spec ,(twittering-string-to-timeline-spec
+				     (car id-names))
+			 face twittering-username-face)
+		       name))
+		    (cdr id-names)))
+	    `((,user-screen-name . (,user-name ,user-screen-name))
+	      ,@(when original-user-screen-name
+		  `((,original-user-screen-name . (,original-user-name 
+						   ,original-user-screen-name))))))
 
       ;; make hashtag, listname, screenname, and URI in text clickable
       (let ((pos 0)
