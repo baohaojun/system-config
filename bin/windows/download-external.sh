@@ -67,6 +67,7 @@ function emacs-site-lisps()
             tar zxfv "$(basename "$x")"; 
         fi
     done    
+    cd emacs-goodies-el*/elisp/emacs-goodies-el/ && mkdir themes
 }
 
 test "$DOWN" == yes && emacs-site-lisps
