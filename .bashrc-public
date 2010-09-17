@@ -145,7 +145,7 @@ function _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home
 
 function git()
 {
-    if test "`pwd`" = ~
+    if test "`pwd`" = "`readlink -f ~`"
     then
         (cd ~/windows-config/; command git "$@")
     else
