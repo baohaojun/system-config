@@ -675,7 +675,9 @@
 (setq-default save-place t)
 (require 'color-theme)
 (condition-case nil
-    (color-theme-initialize)
+    (progn
+      (color-theme-initialize)
+      (require 'color-theme-library))
   (error nil))
 (color-theme-arjen)
 (server-start)
