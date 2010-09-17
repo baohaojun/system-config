@@ -12,7 +12,7 @@ KeyToGrab(Y),           WithModifier(LWin),      WithAction(RestoreWindow)
 KeyToGrab(Z),           WithModifier(LWin),      WithAction(MinimizeWindow)
 KeyToGrab(Q),           WithModifier(LAlt+LWin+LCtrl),      WithAction(Quit)
 
-KeyToGrab(R),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p runbhjrun runbhjrun.exe.lnk)
+KeyToGrab(R),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p runbhjrun runbhjrun.exe)
 
 # Extern commands:
 KeyToGrab(1),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -1)
