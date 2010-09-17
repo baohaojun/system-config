@@ -48,6 +48,7 @@ const mask_key_state_t LEFT_WIN_ACTIVE=1<<6;
 const mask_key_state_t RIGHT_WIN_ACTIVE=1<<7;
 const mask_key_state_t NOTHING_IS_ACTIVE=0;
 
+extern bool g_switch_ralt_lwin;
 typedef struct 
 {
     unsigned char vk_code; //this is a bit redundant

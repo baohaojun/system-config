@@ -217,7 +217,7 @@ LRESULT CALLBACK KbdHookProc(int nCode, WPARAM wParam, LPARAM lParam)
     if (vkCodeInvalid(vkCode))
         goto out;
     
-    if (MapKeys(wParam, hook_struct)) {
+    if (g_switch_ralt_lwin && MapKeys(wParam, hook_struct)) {
         return 1;
     }
     
