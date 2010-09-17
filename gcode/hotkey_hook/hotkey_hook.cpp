@@ -3,7 +3,6 @@
 #include "bhjdebug.h" 
 #include <assert.h>
 #include <string.h>
-#include <direct.h>
 
 //global vars
 char *g_app_name = "hotkey_hook";
