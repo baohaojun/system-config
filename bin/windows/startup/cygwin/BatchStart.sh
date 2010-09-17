@@ -14,17 +14,19 @@ net start sshd&
 (cd /e/cygwin-cvsroot && rsync -avz rsync://cygwin.com/src-cvs .)&
 ~/gcode/scim-cs/ime-py/ime-server.py&
 
-(
-    while ! ssh bhj2 echo hello; do true; done; 
-    ssh bhj2 'while true; do 
+if grep bhj2 /etc/hosts; then
+    (
+        while ! ssh bhj2 echo hello; do true; done; 
+        ssh bhj2 'while true; do 
 offlineimap
 echo wait for 300 seconds
 sleep 300; done'&
-    
-    ssh bhj2 'while true; do 
+        
+        ssh bhj2 'while true; do 
 pop2imap --host1 localhost --user1 baohaojun@yahoo.com --port1 2000 --passfile1 .remote-auth --host2 localhost --user2 bhj --passfile2 .local-auth --folder hotmail.com --delete
 echo wait for 300 seconds
 sleep 300
 done'&
 
-)
+    )
+fi
