@@ -42,6 +42,7 @@
  '(
    ("Super-e" "Emacs" "emacs.bhj")
    ("Super-p" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
+   ("F12" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
    ))
 
 (mapc 

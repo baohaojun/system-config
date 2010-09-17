@@ -1,5 +1,6 @@
 ! The Alt_R is now right Windows key
-keycode 108 = Super_R
+keysym Super_L = Super_R
+keycode 108 = Super_L
 
 ! The "Caps Lock" is now Control_L
 keycode 66 = Control_L
@@ -7,7 +8,6 @@ keycode 66 = Control_L
 ! The scroll_clok is now caps_lock
 keycode 78 = Caps_Lock
 
-keysym Super_L = Super_R
 
 clear lock
 clear mod1
