@@ -50,8 +50,8 @@ function emacs-site-lisps()
         http://ftp.us.debian.org/debian/dists/sid/non-free/source/Sources.bz2 >/dev/null 2>&1`
 
         http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
-        http://cvs.savannah.gnu.org/viewvc/*checkout*/emacsweblogs/weblogger/lisp/xml-rpc.el
         `get-deb-src-dir emacs-goodies-el`
+        `get-deb-src-dir cscope`
         `get-deb-src-dir muse-el`
         `get-deb-src-dir w3m-el-snapshot`
     )
