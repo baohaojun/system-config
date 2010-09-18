@@ -94,6 +94,19 @@ function manual-download()
     done
 }
 
+function get-ms-addons()
+{
+    cd /c/download/
+    addon_list=(
+        http://download.microsoft.com/download/5/6/7/567758a3-759e-473e-bf8f-52154438565a/dotnetfx.exe
+        http://download.microsoft.com/download/0/6/1/061F001C-8752-4600-A198-53214C69B51F/dotnetfx35setup.exe
+    )
+    for x in "${page_list[@]}"; do 
+        wget -c "$x";
+        `basename "$x"` /q
+    done
+}
+
 test "$DOWN" == yes && manual-download
 
 function patch-puttycyg()
