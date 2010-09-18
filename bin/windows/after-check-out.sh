@@ -48,6 +48,7 @@ find . -type l -exec relink.sh '{}' \;
 ~/bin/windows/redirect.sh
 
 cd ~/bin/windows
+cpan String::ShellQuote
 ./update-password.sh
 echo 'after check out update success!'
 ln -sf ~/'Application Data/Microsoft/Internet Explorer/Quick Launch' ~/SendTo/ || report_error "Error: you are not doing it from $HOMEPATH"
