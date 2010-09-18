@@ -63,5 +63,7 @@ cygpath -alwm `which bash` > /cygdrive/c/.bash-loc
 
 #make sure the next time login will run this script again
 cd "$(cygpath -au "$HOMEDRIVE$HOMEPATH")"
-ln -sf "$HOME2"/bin/windows/startup.sh ./Start\ Menu/Programs/Startup/
+startup_dir=`regtool.exe -s get '\HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders\Startup'`
+startup_dir=`cygpath -au "$startup_dir"`
+ln -sf "$HOME2"/bin/windows/startup.sh "$startup_dir"
 
