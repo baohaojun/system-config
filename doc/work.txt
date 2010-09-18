@@ -41,3 +41,15 @@ git@www.rayzertrack.com:ggl/pxa935/platform/manifest.git -b rayzerlink-opl
 psql -c "INSERT INTO projects (use_contributor_agreements  ,submit_type  ,name) VALUES ('N' ,'M' ,'pxa935/tools/repo.git');" nvidiadb
 
 perl -ne 'if (2..2) {print "set -e\n" } print;'
+
+# $Id: minirc.dfl,v 1.1.1.1 2003/03/30 18:55:39 al-guest Exp $
+# Machine-generated file - use "minicom -s" to change parameters.
+pr port	/dev/com4
+pu baudrate 115200
+pu bits 8
+pu parity N
+pu stopbits 1
+pu minit
+pu mreset
+pu mconnect
+pu rtscts No
