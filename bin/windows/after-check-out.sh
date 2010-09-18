@@ -23,6 +23,7 @@ if test "$HOME2" != /q -a "$HOME2" != /cygdrive/q; then
     subst q: $(cygpath -sma "$HOME2") #if it is already /q, we will have problem here, so we put this in a conditional
 fi
 export HOME=/cygdrive/q
+~/windows-config/bin/after-co-ln-s.sh
 . ~/.bashrc-windows
 export HOME=/cygdrive/q 
 cd ~/bin/windows/Imap4Monitor/
