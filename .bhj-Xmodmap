@@ -20,3 +20,4 @@ add lock = Caps_Lock
 add mod4 = Super_R
 ! This is to make sawfish happy. Seems it will constantly do weird thing with Hyper/Super
 keysym Super_R = Super_L
+keysym Meta_L = Alt_L

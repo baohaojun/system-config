@@ -1,0 +1,14 @@
+#!/usr/bin/env perl
+
+$dir = $ARGV[0];
+open($file, "-|", "mkbootfs $dir|gzip");
+
+$final_size = 512*1024;
+$actual_size = read($file, $ramdisk, $final_size);
+$packing = "\xff" x ($final_size - $actual_size - 4);
+$ramdisk = $ramdisk . $packing . pack("L", $actual_size);
+die "Error: ramdisk final size not $final_size" if length($ramdisk) != $final_size;
+
+print "$ramdisk";
+
+
