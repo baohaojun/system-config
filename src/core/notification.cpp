@@ -74,7 +74,7 @@ const uint &Notification::id() const
     return _id;
 }
 
-const QString &Notification::Notification::icon() const
+const QString &Notification::icon() const
 {
     return _icon;
 }

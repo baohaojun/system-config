@@ -40,6 +40,9 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
+if(MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  /Zc:wchar_t-")
+endif(MSVC)
 
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 option(WITH_WEBINTERFACE     	 "Buld with WebInterface"         OFF)
