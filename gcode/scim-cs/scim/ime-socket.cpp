@@ -111,7 +111,7 @@ static void start_ime_server()
 
     ZeroMemory( &pinfo, sizeof(pinfo) );
 
-	wchar_t buff[] = L"c:/python31/python.exe \"q:/gcode/scim-cs/ime-py/ime-server.py\"";
+	wchar_t buff[] = L"c:/python31/python.exe \"q:/windows-config/gcode/scim-cs/ime-py/ime-server.py\"";
     ret = CreateProcess(
 		NULL,
 		buff, //error for L"q:\\dood.exe", because it must not be const!!!
