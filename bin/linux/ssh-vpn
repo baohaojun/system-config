@@ -148,9 +148,7 @@ sub ssh5() {
 while (1) {
   if (@ARGV == 1) {
     eval "$ARGV[0]()";
-    `sleep 1`;
   } else {
     do_vpn_tl();
   }
- `sleep 1`
 }

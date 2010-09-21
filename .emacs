@@ -158,7 +158,7 @@
   (setq tab-width 8)
   (setq indent-tabs-mode t)
   (c-set-offset 'innamespace 0)
-  (setq c-basic-offset 4))
+  (setq c-basic-offset 8))
 
 (defun linux-c++-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
@@ -171,7 +171,7 @@
   (setq tab-width 8)
   (c-set-offset 'innamespace 0)
   (setq indent-tabs-mode t)
-  (setq c-basic-offset 4))
+  (setq c-basic-offset 8))
 
 (setq auto-mode-alist (cons '(".*\\.[c]$" . linux-c-mode)
                             auto-mode-alist))

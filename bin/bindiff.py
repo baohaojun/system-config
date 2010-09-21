@@ -31,7 +31,9 @@ while True:
 
     for x in range(min(len(contentFile1), len(contentFile2))):
         if contentFile1[x]!=contentFile2[x]:
-            print 'diff on pos %d 1:%s 2:%s' % (y*blockSize+x, `contentFile1[x]`, `contentFile2[x]`)
+            print 'diff on pos %08x:%08x 1:%s 2:%s' % (
+                y*blockSize+x + options.seek1,
+                y*blockSize+x + options.seek2, `contentFile1[x]`, `contentFile2[x]`)
     
     if len(contentFile1) != len(contentFile2):
         print 'size mismatch: %d:%d' % (len(contentFile1), len(contentFile2))

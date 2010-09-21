@@ -68,7 +68,19 @@ function mkgtags-filter() {
 
 function mkbeagleidx() {
     mkdir -p "$SrcReadingDir"/.beagle
-    beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target "$SrcReadingDir"/.beagle/ "$SrcRelDir"
+
+    beagle-build-index --recursive \
+        --deny-directory-pattern `pwd`/out \
+        --enable-deletion \
+        --target "$SrcReadingDir"/.beagle/ \
+        "$SrcRelDir" 2>&1 \
+        |tee -a "$SrcReadingDir"/.beagle-build-log
+
+    cat "$SrcReadingDir"/.beagle-build-log |grep "No filter for" \
+        |sort -u > "$SrcReadingDir"/.beagle-build-log2
+
+    mv "$SrcReadingDir"/.beagle-build-log2 "$SrcReadingDir"/.beagle-build-log
+
     ln $Filter "$SrcReadingDir"/.beagle-filter -sf
 }
 
