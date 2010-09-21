@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+
+$rdfilename = $ARGV[0];
+open($file, "<", $rdfilename);
+seek $file, -4, 2;
+read $file, $len, 4;
+
+$len = unpack("L", $len);
+
+seek $file, 0, 0;
+read $file, $content, $len;
+
+system("mkdir $rdfilename-tmp");
+chdir("$rdfilename-tmp");
+open($pipe, "|-", "gunzip|cpio -i");
+
+print $pipe $content;
+close $pipe;
+
