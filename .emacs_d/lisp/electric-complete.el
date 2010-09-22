@@ -95,6 +95,7 @@
 	(when (eq command 'return)
 	  (nth line (split-string matches "\n")))))))
 
+
 (defun regexp-get-matches (re)
   "Display the possible completions for the regexp."
   (let ((strlist-before nil)
@@ -104,13 +105,12 @@
         (re (replace-regexp-in-string "\\*\\*" "\\(\\w\\|_\\)*" re t t)))
     (save-excursion
       (beginning-of-buffer)
-      (while (not (eobp))
-        (if (setq endpt (re-search-forward re nil t))
-            (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
-              (if (< (point) current-pos)
-                  (setq strlist-before (cons substr strlist-before))
-                (setq strlist-after (cons substr strlist-after))))
-          (end-of-buffer))))
+      (while (re-search-forward re nil t)
+        (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
+          (if (< (point) current-pos)
+              (setq strlist-before (cons substr strlist-before))
+            (setq strlist-after (cons substr strlist-after)))
+          (goto-char (1+ (match-beginning 0))))))
     (setq strlist-before  (delete-dups strlist-before)
           strlist-after (delete-dups (nreverse strlist-after)))
     (while (and strlist-before strlist-after)
@@ -120,24 +120,27 @@
             strlist-after (cdr strlist-after)))
     (setq strlist (append strlist-after strlist-before strlist))
     ;;get matches from other buffers
-    (let ((buf-old (current-buffer)))
-      (save-excursion
-        (with-temp-buffer
-          (let ((buf-tmp (current-buffer)))
-            (mapcar (lambda (x)
-                      (set-buffer x)
-                      (save-excursion
-                        (save-match-data
-                          (goto-char (point-min))
-                          (while (re-search-forward re nil t)
-                            (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
-                              (save-excursion
-                                (set-buffer buf-tmp)
-                                (insert (format "%s\n" substr))))))))
-                    (delete buf-tmp (delete buf-old (buffer-list))))
-            (set-buffer buf-tmp)
-            (append (split-string (buffer-substring-no-properties (point-min) (point-max)) "\n")
-                    strlist)))))))
+    (if current-prefix-arg
+        (let ((buf-old (current-buffer))
+              (current-prefix-arg nil))
+          (save-excursion
+            (with-temp-buffer
+              (let ((buf-tmp (current-buffer)))
+                (mapcar (lambda (x)
+                          (set-buffer x)
+                          (save-excursion
+                            (save-match-data
+                              (goto-char (point-min))
+                              (while (re-search-forward re nil t)
+                                (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
+                                  (save-excursion
+                                    (set-buffer buf-tmp)
+                                    (insert (format "%s\n" substr))))))))
+                        (delete buf-tmp (delete buf-old (buffer-list))))
+                (set-buffer buf-tmp)
+                (append (split-string (buffer-substring-no-properties (point-min) (point-max)) "\n")
+                        strlist)))))
+      strlist)))
 
 (defun skeleton-get-matches-order (skeleton)
   "Get all the words that contains every character of the
@@ -176,3 +179,4 @@ words closer to the (point) appear first"
             (unless (eq (current-buffer) buffer-old)
               (setq strlist (append (skeleton-get-matches-order skeleton) strlist)))))))
     strlist))
+
