@@ -17,10 +17,11 @@
 #ifndef SNORENOTIFICATIONINSTANCE_H
 #define SNORENOTIFICATIONINSTANCE_H
 
+#include "snore_exports.h"
 #include "snoreserver.h"
 #include "application.h"
 
-class SnoreNotificationInstance:public QObject
+class SNORE_EXPORT  SnoreNotificationInstance:public QObject
 {
     Q_OBJECT
 public:
