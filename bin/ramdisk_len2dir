@@ -10,8 +10,9 @@ $len = unpack("L", $len);
 seek $file, 0, 0;
 read $file, $content, $len;
 
-system("mkdir $rdfilename-tmp");
-chdir("$rdfilename-tmp");
+chomp($dir=`basename $rdfilename-tmp`);
+system("mkdir -p $dir");
+chdir($dir);
 open($pipe, "|-", "gunzip|cpio -i");
 
 print $pipe $content;

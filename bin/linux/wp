@@ -1,8 +1,9 @@
 #!/bin/bash
+
 function smb_wp()
 {
     FILE=${1:-`pwd`}
-    FILE=`readlink -f "$FILE"`
+    FILE=`lookup_file "$FILE"`
 
     if [[ "$FILE" =~ ~/smb/ ]]; then
         FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
@@ -15,7 +16,7 @@ function smb_wp()
 function wp()
 {
     FILE=${1:-`pwd`}
-    FILE=`readlink -f "$FILE"`
+    FILE=`lookup_file "$FILE"`
 
     FILE=z:$FILE
     echo -n "$FILE"|tee /dev/tty|putclip
@@ -25,7 +26,7 @@ function wp()
 function up()
 {
     FILE=${1:-`pwd`}
-    FILE=`readlink -f "$FILE"`
+    FILE=`lookup_file "$FILE"`
 
     echo -n "$FILE"|tee /dev/tty|putclip
     history -s up "$FILE"

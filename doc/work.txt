@@ -53,3 +53,5 @@ pu minit
 pu mreset
 pu mconnect
 pu rtscts No
+
+mount -w -o remount /dev/block/mtdblock7 /data
