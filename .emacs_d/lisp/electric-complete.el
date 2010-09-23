@@ -21,7 +21,43 @@
 
 (defvar regexp-completion-history nil)
 
-(global-set-key [(meta return)] 'regexp-display-abbrev)
+(global-set-key [(meta return)] 'easy-regexp-display-abbrev)
+
+(defun easy-regexp-display-abbrev (regexp)
+  "Simplify writing the regexp. Some thing like \"sthe.\" will be generated as 
+\"s.*?t.*?h.*?e\\W\", the rule is, for each 2 \\w character, fill in a \".*?\" pattern
+and the original pattern should be looked for backwards with \\w and \\."
+  (interactive
+   (progn
+     (list
+      (let ((oldcur (point)))
+        (push-mark (point))
+        (activate-mark)
+        (while (not (looking-back "\\w\\|\\."))
+          (backward-char))
+        (while (looking-back "\\w\\|\\.")
+          (backward-char))
+        (buffer-substring-no-properties (point) oldcur)))))
+  (let (last-char-w-p
+        (re-list (string-to-list regexp))
+        (new-re-list nil))
+    (while re-list
+      (setq char (car re-list)
+            re-list (cdr re-list))
+      (case (char-syntax char)
+        (?w (when last-char-w-p
+              (setq new-re-list (append (nreverse (string-to-list ".*?")) new-re-list)))
+            (setq last-char-w-p t
+                  new-re-list (cons char new-re-list)))
+        (t
+         (setq last-char-w-p nil)
+         (case char
+             (?. (setq new-re-list (append (nreverse (string-to-list "\\W")) new-re-list)))
+             (t (when (member char (string-to-list "^$*?[]+"))
+                    (setq new-re-list (cons ?\\ new-re-list)))
+                (setq new-re-list (cons char new-re-list)))))))
+    (setq regexp (apply 'string (nreverse new-re-list))))
+  (regexp-display-abbrev regexp))
 
 (defun regexp-display-abbrev (regexp)
   "Display the possible abbrevs for the regexp."
