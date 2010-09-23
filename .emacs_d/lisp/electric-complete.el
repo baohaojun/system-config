@@ -22,16 +22,18 @@
 (defvar regexp-completion-history nil)
 
 (global-set-key [(meta return)] 'regexp-display-abbrev)
+
 (defun regexp-display-abbrev (regexp)
   "Display the possible abbrevs for the regexp."
   (interactive 
    (progn
-     (list (read-shell-command "Get matches with regexp: "
-                               (grep-tag-default)
-                               'regexp-completion-history
-                               nil))))
+     (list 
+      (read-shell-command "Get matches with regexp: "
+                                      (grep-tag-default)
+                                      'regexp-completion-history
+                                      nil))))
   (let ((match (when (not (zerop (length regexp)))
-                (regexp-display-matches regexp))))
+                 (regexp-display-matches regexp))))
     (when match
       (when (and transient-mark-mode mark-active
                  (/= (point) (mark)))
@@ -105,12 +107,18 @@
         (re (replace-regexp-in-string "\\*\\*" "\\(\\w\\|_\\)*" re t t)))
     (save-excursion
       (beginning-of-buffer)
+      (message "hello %s" (current-buffer))
       (while (re-search-forward re nil t)
-        (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
-          (if (< (point) current-pos)
-              (setq strlist-before (cons substr strlist-before))
-            (setq strlist-after (cons substr strlist-after)))
-          (goto-char (1+ (match-beginning 0))))))
+        (let ((mb (match-beginning 0))
+              (me (match-end 0)))
+          (goto-char mb)
+          (unless (and (looking-at "\\w")
+                       (looking-back "\\w"))
+            (let ((substr (buffer-substring-no-properties mb me)))
+              (if (< (point) current-pos)
+                  (setq strlist-before (cons substr strlist-before))
+                (setq strlist-after (cons substr strlist-after)))))
+          (goto-char (1+ mb)))))
     (setq strlist-before  (delete-dups strlist-before)
           strlist-after (delete-dups (nreverse strlist-after)))
     (while (and strlist-before strlist-after)
@@ -118,28 +126,22 @@
             strlist (cons (car strlist-after) strlist)
             strlist-before (cdr strlist-before)
             strlist-after (cdr strlist-after)))
-    (setq strlist (append strlist-after strlist-before strlist))
+    (setq strlist (append (nreverse strlist-after) (nreverse strlist-before) strlist))
     ;;get matches from other buffers
     (if current-prefix-arg
         (let ((buf-old (current-buffer))
-              (current-prefix-arg nil))
+              (current-prefix-arg nil)
+              (buffer-regexp (read-shell-command "What other buffers to search: ")))
           (save-excursion
-            (with-temp-buffer
-              (let ((buf-tmp (current-buffer)))
-                (mapcar (lambda (x)
-                          (set-buffer x)
-                          (save-excursion
-                            (save-match-data
-                              (goto-char (point-min))
-                              (while (re-search-forward re nil t)
-                                (let ((substr (buffer-substring-no-properties (match-beginning 0) (match-end 0))))
-                                  (save-excursion
-                                    (set-buffer buf-tmp)
-                                    (insert (format "%s\n" substr))))))))
-                        (delete buf-tmp (delete buf-old (buffer-list))))
-                (set-buffer buf-tmp)
-                (append (split-string (buffer-substring-no-properties (point-min) (point-max)) "\n")
-                        strlist)))))
+            (mapcar (lambda (buf)
+                          (with-current-buffer buf ;;next let's recursive call
+                            (setq strlist (append (regexp-get-matches re) strlist))))
+                    (delete-if-not
+                     (lambda (x)
+                       (string-match-p buffer-regexp (buffer-name x)))
+                     (delete buf-old
+                             (buffer-list))))
+                strlist))
       strlist)))
 
 (defun skeleton-get-matches-order (skeleton)
@@ -164,11 +166,11 @@ words closer to the (point) appear first"
     (setq strlist-before  (delete-dups strlist-before)
           strlist-after (delete-dups (nreverse strlist-after)))
     (while (and strlist-before strlist-after)
-      (setq strlist (cons (car strlist-after) strlist)
-            strlist (cons (car strlist-before) strlist)
-            strlist-after (cdr strlist-after)
-            strlist-before (cdr strlist-before)))
-    (setq strlist (append strlist-after strlist-before strlist))
+      (setq strlist (cons (car strlist-before) strlist)
+            strlist (cons (car strlist-after) strlist)
+            strlist-before (cdr strlist-before)
+            strlist-after (cdr strlist-after)))
+    (setq strlist (append (nreverse strlist-after) (nreverse strlist-before) strlist))
     (when current-prefix-arg
       (save-excursion
         (let ((buffer-old (current-buffer))
