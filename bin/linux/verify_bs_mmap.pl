@@ -269,10 +269,12 @@ if (1) {
                     "start" => $last_start + $last_size, 
                     "size" => $start - ($last_start + $last_size),
                 } if $last_start + $last_size < $start;
-            } elsif ($check =~ m/enlage/) {
+            } elsif ($check =~ m/enlarge/) {
                 if ($last_start + $last_size < $start) {
                     $last_entry->{size} = $start - ($last_start + $last_size);
                     $last_entry->{file_name} .= "-enlaged";
+                } else {
+                    $entry->{start} = $last_start + $last_size;
                 }
             }
         }

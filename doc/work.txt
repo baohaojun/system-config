@@ -55,3 +55,29 @@ pu mconnect
 pu rtscts No
 
 mount -w -o remount /dev/block/mtdblock7 /data
+mount -t nfs 192.168.8.1:/home/bhj/src/benz3g/cupcake/out/target/product/generic/system /system&
+./write_block -2 0x600000  ./ramdisk /dev/block/mtdblock5
+dd if=/dev/block/mtdblock5 bs=1048576 skip=6 count=4 of=r2
+dd if=/data/ramdisk bs=1048576 seek=6 count=4 of=/dev/block/mtdblock5 #for test
+
+dd if=/data/ramdisk bs=1048576 seek=2 count=4 of=/dev/block/mtdblock5
+dd if=/data/zImage  bs=1048576 of=/dev/block/mtdblock5
+dd if=/data/blob  bs=524288 seek=1 count=1 of=/dev/block/mtdblock0
+tr '\000' '\377' < /dev/zero|dd bs=131072 of=/dev/block/mtdblock6 count=10
+
+mount -t yaffs2 /dev/block/mtdblock6 /system/
+mount -t yaffs2 /dev/block/mtdblock7 /opl/
+mount -t yaffs2 /dev/block/mtdblock13 /data
+
+nc -l -p 8892 |tar zxv
+tar czv . |nc phone 8892
+
+nc -l -p 8893 |tar zxv
+tar czv . |nc phone 8893
+
+cat /dev/zero|
+
+echo shit|awk 'BEGIN{for (i=0; i<1024; i++) {y=y "\xff" }} { while (1) print y}'|tr -d '\r\n' > /dev/block/mtdblock7
+mount -t yaffs2 /dev/block/mtdblock7 /opl
+
+export DO_SERVICE=true

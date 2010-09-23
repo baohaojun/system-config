@@ -153,5 +153,9 @@ function git()
     fi            
 }
 
+function rbranch()
+{
+    repo forall . -c 'echo $REPO_RREV'
+}
 stty -ixon -ixoff >/dev/null 2>&1
 
