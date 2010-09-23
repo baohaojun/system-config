@@ -107,7 +107,6 @@
         (re (replace-regexp-in-string "\\*\\*" "\\(\\w\\|_\\)*" re t t)))
     (save-excursion
       (beginning-of-buffer)
-      (message "hello %s" (current-buffer))
       (while (re-search-forward re nil t)
         (let ((mb (match-beginning 0))
               (me (match-end 0)))
