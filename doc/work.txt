@@ -40,7 +40,7 @@ git@www.rayzertrack.com:ggl/pxa935/platform/manifest.git -b cupcake-rayzerlink
 git@www.rayzertrack.com:ggl/pxa935/platform/manifest.git -b rayzerlink-opl
 psql -c "INSERT INTO projects (use_contributor_agreements  ,submit_type  ,name) VALUES ('N' ,'M' ,'pxa935/tools/repo.git');" nvidiadb
 
-perl -ne 'if (2..2) {print "set -e\n" } print;'
+perl -ne 'if (2..2) {print "set -ex\n" } print;'
 
 # $Id: minirc.dfl,v 1.1.1.1 2003/03/30 18:55:39 al-guest Exp $
 # Machine-generated file - use "minicom -s" to change parameters.
@@ -65,12 +65,22 @@ dd if=/data/zImage  bs=1048576 of=/dev/block/mtdblock5
 dd if=/data/blob  bs=524288 seek=1 count=1 of=/dev/block/mtdblock0
 tr '\000' '\377' < /dev/zero|dd bs=131072 of=/dev/block/mtdblock6 count=10
 
-mount -t yaffs2 /dev/block/mtdblock6 /system/
-mount -t yaffs2 /dev/block/mtdblock7 /opl/
-mount -t yaffs2 /dev/block/mtdblock13 /data
 
-nc -l -p 8892 |tar zxv
+mkdir /system; mount -t yaffs2 /dev/block/mtdblock6 /system/; cd /system; nc -l -p 8892|tar zxv
 tar czv . |nc phone 8892
+
+
+
+mkdir /opl; mount -t yaffs2 /dev/block/mtdblock7 /opl/; cd /opl
+nc -l -p 8888 > /data/arbel
+cat Arbel_NVM_SAC_NOCOMMRTC.bin |nc phone 8888
+dd if=/data/arbel bs=1048576  of=/dev/block/mtdblock2
+
+
+mkdir /data; mount -t yaffs2 /dev/block/mtdblock13 /data; cd /data
+nc -l -p 8888 > /data/tavor
+cat Tavor_M05_Poleg_AI_B0_Flash.bin |nc phone 8888
+dd if=/data/tavor bs=1048576 seek=7  of=/dev/block/mtdblock2
 
 nc -l -p 8893 |tar zxv
 tar czv . |nc phone 8893
@@ -80,4 +90,6 @@ cat /dev/zero|
 echo shit|awk 'BEGIN{for (i=0; i<1024; i++) {y=y "\xff" }} { while (1) print y}'|tr -d '\r\n' > /dev/block/mtdblock7
 mount -t yaffs2 /dev/block/mtdblock7 /opl
 
-export DO_SERVICE=true
+export DO_SERVICE=true; exec /init2
+
+replace init.rc
