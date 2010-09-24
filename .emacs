@@ -278,13 +278,6 @@
 (standard-display-ascii ?\227 "\-")
 (standard-display-ascii ?\225 "\*")
 
-(defvar last-error-from-cscope nil)
-
-(global-set-key [(meta n)] 'next-error)
-(global-set-key [(meta p)] 'previous-error)
-
-
-
 (keydef "C-S-g" (progn (setq grep-buffers-buffer-name "*grep-buffers*")(grep-buffers)))
 
 (defun bhj-clt-insert-file-name ()
