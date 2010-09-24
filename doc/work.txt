@@ -93,3 +93,4 @@ mount -t yaffs2 /dev/block/mtdblock7 /opl
 export DO_SERVICE=true; exec /init2
 
 replace init.rc
+(cd .repo/..; export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh; time make -j 8 )

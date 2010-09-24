@@ -14,17 +14,14 @@ alias vi=vim
 export EDITOR=vim
 export HISTSIZE=2000
 export HISTFILESIZE=100000
+. ~/.bashrc-public
+
 if [[ `uname` == CYGWIN_NT-5.1 ]]; 
 then
-    if . ~/.bashrc-windows; then
-        true #nothing
-    else #remote login
-        return
-    fi
+    . ~/.bashrc-windows
 else
     . ~/.bashrc-linux
 fi
-. ~/.bashrc-public
 
 case $- in
     *i*) . ~/.bashrc-interactive;;

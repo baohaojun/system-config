@@ -231,6 +231,10 @@
 
 (put 'narrow-to-region 'disabled nil)
 
+(add-hook 'cscope-list-entry-hook 
+          (lambda ()
+            (setq next-error-function 'cscope-next-error-bhj)))
+                                    
 (defun my-cscope-find-global-definition ()
   (interactive)
   (nodup-ring-insert cscope-marker-ring (point-marker))
@@ -275,43 +279,9 @@
 (standard-display-ascii ?\225 "\*")
 
 (defvar last-error-from-cscope nil)
-(defun bhj-next-error ()
-  (interactive)
-  (if
-      (or
-       (string-equal (buffer-name) "*cscope*")
-       (string-equal (buffer-name (window-buffer (next-window))) "*cscope*")
-       (and (not (next-error-buffer-p (current-buffer)))
-            (not (next-error-buffer-p (window-buffer (next-window))))
-            last-error-from-cscope))
-      (progn
-        (cscope-next-symbol)
-        (setq last-error-from-cscope t))
-    (setq last-error-from-cscope nil)
-    (next-error)
-    (delete-other-windows)
-    (with-current-buffer next-error-last-buffer
-      (message "%s" (buffer-substring (line-beginning-position) (line-end-position))))))
 
-(defun bhj-previous-error ()
-  (interactive)
-  (if (or
-       (string-equal (buffer-name) "*cscope*")
-       (string-equal (buffer-name (window-buffer (next-window))) "*cscope*")
-       (and (not (next-error-buffer-p (current-buffer)))
-            (not (next-error-buffer-p (window-buffer (next-window))))
-            last-error-from-cscope))
-      (progn
-        (cscope-prev-symbol)
-        (setq last-error-from-cscope t))
-    (setq last-error-from-cscope nil)
-    (previous-error)
-    (delete-other-windows)
-    (with-current-buffer next-error-last-buffer
-      (message "%s" (buffer-substring (line-beginning-position) (line-end-position))))))
-
-(global-set-key [(meta n)] 'bhj-next-error)
-(global-set-key [(meta p)] 'bhj-previous-error)
+(global-set-key [(meta n)] 'next-error)
+(global-set-key [(meta p)] 'previous-error)
 
 
 
@@ -954,6 +924,14 @@ Starting from DIRECTORY, look upwards for a cscope database."
           ((string-match "^\\s *\\.\\.\\.$" this-line-str)
            (forward-line))
           (t))))
+
+(defun cscope-next-error-bhj (&optional argp reset)
+  (pop-to-buffer "*cscope*")
+  (if (> argp 0)
+      (cscope-next-symbol)
+    (cscope-prev-symbol))
+  (pop-to-buffer "*cscope*")
+  (other-window 1))
 
 (defun waw-next-error (&optional argp reset)
   (interactive "p")
