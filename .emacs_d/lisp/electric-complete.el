@@ -23,41 +23,52 @@
 
 (global-set-key [(meta return)] 'easy-regexp-display-abbrev)
 
-(defun easy-regexp-display-abbrev (regexp)
+(defun easy-regexp-display-abbrev ()
   "Simplify writing the regexp. Some thing like \"sthe.\" will be generated as 
 \"s.*?t.*?h.*?e\\W\", the rule is, for each 2 \\w character, fill in a \".*?\" pattern
 and the original pattern should be looked for backwards with \\w and \\."
-  (interactive
-   (progn
-     (list
-      (let ((oldcur (point)))
-        (push-mark (point))
-        (activate-mark)
-        (while (not (looking-back "\\w\\|\\."))
-          (backward-char))
-        (while (looking-back "\\w\\|\\.")
-          (backward-char))
-        (buffer-substring-no-properties (point) oldcur)))))
-  (let (last-char-w-p
-        (re-list (string-to-list regexp))
-        (new-re-list nil))
-    (while re-list
-      (setq char (car re-list)
-            re-list (cdr re-list))
-      (case (char-syntax char)
-        (?w (when last-char-w-p
-              (setq new-re-list (append (nreverse (string-to-list ".*?")) new-re-list)))
-            (setq last-char-w-p t
-                  new-re-list (cons char new-re-list)))
-        (t
-         (setq last-char-w-p nil)
-         (case char
-             (?. (setq new-re-list (append (nreverse (string-to-list "\\W")) new-re-list)))
-             (t (when (member char (string-to-list "^$*?[]+"))
-                    (setq new-re-list (cons ?\\ new-re-list)))
-                (setq new-re-list (cons char new-re-list)))))))
-    (setq regexp (apply 'string (nreverse new-re-list))))
-  (regexp-display-abbrev regexp))
+  (interactive)
+  (let* (reg-part1
+         reg-part2 
+         regexp 
+         len1
+         len2
+         (oldcur (point)))
+    (push-mark (point))
+    (activate-mark)
+    (while (not (looking-back "\\w"))
+      (backward-char))
+    (setq reg-part2 (buffer-substring-no-properties (point) oldcur)
+          oldcur (point))
+    (while (looking-back "\\w\\|\\.")
+      (backward-char))
+    (setq reg-part1 (buffer-substring-no-properties (point) oldcur)
+          regexp (concat reg-part1 reg-part2)
+          len1 (length reg-part1)
+          len2 (length reg-part2))
+    
+    (let* (last-char-w-p
+          (re-list (string-to-list regexp))
+          (nth 0)
+          (new-re-list nil))
+
+      (while re-list
+        (setq char (car re-list)
+              re-list (cdr re-list))
+
+        (when (and (> nth 0) (<= nth len1))
+          (setq new-re-list (append (nreverse (string-to-list ".*?")) new-re-list)))
+        
+        (if (eq char ?.)
+            (setq new-re-list (append (nreverse (string-to-list "\\W")) new-re-list))
+          (case (char-syntax char)
+            (?w (setq new-re-list (cons char new-re-list)))
+            (t (when (member char (string-to-list "^$*?[]+"))
+                 (setq new-re-list (cons ?\\ new-re-list)))
+               (setq new-re-list (cons char new-re-list)))))
+        (setq nth (1+ nth)))
+      (setq regexp (apply 'string (nreverse new-re-list))))
+    (regexp-display-abbrev regexp)))
 
 (defun regexp-display-abbrev (regexp)
   "Display the possible abbrevs for the regexp."
