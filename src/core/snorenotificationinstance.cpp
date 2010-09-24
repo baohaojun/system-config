@@ -22,9 +22,9 @@ SnoreNotificationInstance::SnoreNotificationInstance()
 {
 }
 
-SnoreNotificationInstance::SnoreNotificationInstance ( const QString &appname, SnoreServer *parent ) :
+SnoreNotificationInstance::SnoreNotificationInstance ( const QString &appname, SnoreServer *parent,const QString &icon ) :
         _appName ( appname ),
-        _app ( new Application ( appname ) ),
+        _app ( new Application ( appname ,icon) ),
         _snore ( parent )
 {
     setParent ( parent );
@@ -36,9 +36,9 @@ SnoreNotificationInstance::~SnoreNotificationInstance()
 }
 
 
-void SnoreNotificationInstance::addAlert ( const QString &name, const QString &title )
+void SnoreNotificationInstance::addAlert (const QString &name, const QString &title, const QString &icon)
 {
-    _app->addAlert ( new Alert ( name,title.isNull() ?name:title ) );
+    _app->addAlert ( new Alert ( name,title.isNull() ?name:title,icon )  );
 
 }
 

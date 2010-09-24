@@ -25,9 +25,9 @@ class SNORE_EXPORT  SnoreNotificationInstance:public QObject
 {
     Q_OBJECT
 public:
-    SnoreNotificationInstance ( const QString &appname,SnoreServer *parent );
+    SnoreNotificationInstance ( const QString &appname, SnoreServer *parent, const QString &icon="" );
     ~SnoreNotificationInstance();
-    void addAlert ( const QString &name,const QString &title = 0 );
+    void addAlert ( const QString &name,const QString &title = 0, const QString &icon="" );
     void registerWithBackends();
     void unregisterWithBackends();
     int notify ( const QString &alert,const QString &title,const QString &text,const QString &icon = 0,int timeout = 10 );

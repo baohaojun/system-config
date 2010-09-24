@@ -53,8 +53,8 @@ void Snarl_Backend::registerApplication(Application *application){
 	Snarl::SnarlInterface *snarlInterface = new Snarl::SnarlInterface();
 	_applications.insert(application->name(),snarlInterface);
 
-	wchar_t *appName = toWchar(application->name());
-	wchar_t *icon = toWchar(application->icon());
+        wchar_t *appName = toWchar(application->name());
+        wchar_t *icon = toWchar(application->icon());
 	snarlInterface->RegisterApp(appName,icon,icon);
 
 	foreach(Alert *alert,application->alerts()){
@@ -82,7 +82,7 @@ int Snarl_Backend::notify(QSharedPointer<Notification>notification){
 	int id = notification->id();
 	wchar_t *title = toWchar(Notification::toPlainText(notification->title()));
 	wchar_t *text =  toWchar(Notification::toPlainText(notification->text()));
-	wchar_t *icon =  toWchar(notification->icon());
+        wchar_t *icon =  toWchar(notification->icon());
 
 	if(notification->id()==0){
 		wprintf(L"Calling SnarlMessage\n"
