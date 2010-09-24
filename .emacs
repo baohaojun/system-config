@@ -357,11 +357,6 @@
 (define-key minibuffer-local-map [(control meta f)] 'bhj-clt-insert-file-name)
 
 (define-key minibuffer-local-shell-command-map [(control meta d )] 'bhj-insert-pwdu)
-(fset 'bhj-clt-co-mkbranch
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217761 99 108 116 101 110 118 32 126 47 98 105 110 47 99 108 116 45 99 111 45 109 107 98 114 97 110 99 104 32 134217730 32 134217734 return] 0 "%d")) arg) (call-interactively 'bhj-reread-file)))
-
-
-
 
 (defvar last-grep-marker nil)
 
@@ -408,21 +403,32 @@
                     (setq grep-find-file-history grep-history))))
                     
 
-(global-set-key [(control meta o)]
-                (lambda()(interactive)
-                  (let 
-                      ((regexp (if mark-active 
-                                   (buffer-substring-no-properties (region-beginning)
-                                                                   (region-end))
-                                 (current-word))))
-                    (progn     
-                      (nodup-ring-insert cscope-marker-ring (point-marker))
-                      (setq regexp 
-                            (read-string (format "List lines matching regexp [%s]: " regexp) nil nil regexp))
-                      (if (eq major-mode 'antlr-mode)
-                          (let ((occur-excluded-properties t))
-                            (occur regexp))
-                        (occur regexp))))))
+(global-set-key [(control meta o)] 'bhj-occur)
+
+(defun bhj-occur ()
+  (interactive)
+  
+  (let 
+      ((regexp (if mark-active 
+                   (buffer-substring-no-properties (region-beginning)
+                                                   (region-end))
+                 (current-word))))
+    (progn     
+      (nodup-ring-insert cscope-marker-ring (point-marker))
+      (when (equal regexp "")
+        (setq regexp 
+              (buffer-substring-no-properties
+               (save-excursion 
+                 (back-to-indentation)
+                 (point))
+               (line-end-position))))
+      (setq regexp (replace-regexp-in-string "\\([][^$*?\\\\.+]\\)" "\\\\\\1" regexp))
+      (setq regexp 
+            (read-shell-command "List lines matching regexp: " regexp))
+      (if (eq major-mode 'antlr-mode)
+          (let ((occur-excluded-properties t))
+            (occur regexp))
+        (occur regexp)))))
 
 
 (setq hippie-expand-try-functions-list 
