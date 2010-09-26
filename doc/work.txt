@@ -61,7 +61,6 @@ dd if=/dev/block/mtdblock5 bs=1048576 skip=6 count=4 of=r2
 dd if=/data/ramdisk bs=1048576 seek=6 count=4 of=/dev/block/mtdblock5 #for test
 
 dd if=/data/ramdisk bs=1048576 seek=2 count=4 of=/dev/block/mtdblock5
-dd of=/ramdisk bs=1048576 count=4 skip=2 if=/dev/block/mtdblock5
 dd if=/data/zImage  bs=1048576 of=/dev/block/mtdblock5
 dd if=/data/blob  bs=524288 seek=1 count=1 of=/dev/block/mtdblock0
 tr '\000' '\377' < /dev/zero|dd bs=131072 of=/dev/block/mtdblock6 count=10
