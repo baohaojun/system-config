@@ -33,7 +33,6 @@ public:
     int notify ( const QString &alert,const QString &title,const QString &text,const QString &icon = 0,int timeout = 10 );
 private:
     SnoreNotificationInstance();
-    const QString _appName;
     Application *_app;
     SnoreServer *_snore;
 

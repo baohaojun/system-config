@@ -26,7 +26,7 @@ class Snarl_Backend:public Notification_Backend
 public:
     Snarl_Backend(class SnoreServer *snore=0);
     ~Snarl_Backend();
-    bool isPrimaryNotificationBackend(){return true;}
+    bool isPrimaryNotificationBackend();
 
 
 protected:
@@ -36,6 +36,7 @@ private:
     wchar_t *toWchar(const QString &string);
     QHash<QString,Snarl::SnarlInterface*> _applications;
     Snarl::SnarlInterface* _defautSnarlinetrface;
+
 public slots:
     void registerApplication(Application *application);
     void unregisterApplication(class Application *application);

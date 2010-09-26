@@ -23,7 +23,6 @@ SnoreNotificationInstance::SnoreNotificationInstance()
 }
 
 SnoreNotificationInstance::SnoreNotificationInstance ( const QString &appname, SnoreServer *parent,const QString &icon ) :
-        _appName ( appname ),
         _app ( new Application ( appname ,icon) ),
         _snore ( parent )
 {
@@ -51,13 +50,12 @@ void SnoreNotificationInstance::registerWithBackends()
 
 void SnoreNotificationInstance::unregisterWithBackends()
 {
-    _snore->removeApplication ( _appName );
+    _snore->removeApplication ( _app->name() );
 }
 
 int SnoreNotificationInstance::notify ( const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout )
 {
-    qDebug() <<"Broadcasting"<<title;
-    return _snore->broadcastNotification ( QSharedPointer<Notification> ( new Notification ( NULL,_appName,alert,title,text,icon,timeout ) ) );
+    return _snore->broadcastNotification ( QSharedPointer<Notification> ( new Notification ( NULL,_app->name(),alert,title,text,icon,timeout ) ) );
 }
 
 #include "snorenotificationinstance.moc"
