@@ -1925,7 +1925,7 @@ image are displayed."
   (let ((display-spec (twittering-get-display-spec-for-icon image-url))
 	(image-data (gethash image-url twittering-url-data-hash))
 	(properties (and beg (text-properties-at beg)))
-	(icon-string (copy-sequence " ")))
+	(icon-string (copy-sequence "...")))
     (when properties
       (add-text-properties 0 (length icon-string) properties icon-string))
     (cond
@@ -4396,7 +4396,7 @@ been initialized yet."
 
 (defun twittering-resolve-url-request ()
   "Resolve requests of asynchronous URL retrieval."
-  (when (null twittering-url-request-resolving-p)
+  (unless twittering-url-request-resolving-p
     (setq twittering-url-request-resolving-p t)
     ;; It is assumed that the following part is not processed
     ;; in parallel.
@@ -4414,12 +4414,8 @@ been initialized yet."
 	 'url-retrieve
 	 url
 	 (lambda (&rest args)
-	   (let* ((status (if (< 21 emacs-major-version)
-			      (car args)
-			    nil))
-		  (callback-args (if (< 21 emacs-major-version)
-				     (cdr args)
-				   args))
+	   (let* ((status (and (< 21 emacs-major-version) (car args)))
+		  (callback-args (if (< 21 emacs-major-version) (cdr args) args))
 		  (url (elt callback-args 0)))
 	     (goto-char (point-min))
 	     (if (and (or (null status) (not (member :error status)))
