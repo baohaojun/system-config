@@ -6491,7 +6491,7 @@ When SPEC-STRING is non-nil, just save lastest status for SPEC-STRING. "
 
 %S
 " twittering-cache-saved-lastest-statuses))
-    (write-file twittering-cache-file)
+    (write-region (point-min) (point-max) twittering-cache-file nil 'silent)
     (kill-buffer)))
 
 (defun twittering-cache-load ()
