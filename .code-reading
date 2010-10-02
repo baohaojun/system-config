@@ -1,0 +1,22 @@
+
+****************
+这个东西实际上是external clock的pinmux
+
+    /home/bhj/src/rayzerlink-pad/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/ap15/ap15rm_pinmux_tables.c:794:     &g_Ap15MuxCdev[0],
+        /*  Array of all the controller types in the system, pointing to the array of
+         *  instances of each controller.  Indexed using the NvRmIoModule value.
+         */
+        static const NvU32** g_Ap15MuxControllers[] = {
+            ...
+    =>      &g_Ap15MuxCdev[0],
+
+****************
+这个函数就是 pfnGetExtClockFreq 是怎么实现的，根据ap的版本不同有可能会调用不同的版本。
+
+    /home/bhj/src/rayzerlink-pad/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/common/nvrm_pinmux.c:136:         NvRmPrivAp15GetExternalClockSourceFreq,
+        static NvPinmuxPrivMethods* NvRmPrivGetPinmuxMethods(NvRmDeviceHandle hDevice)
+        {
+            ...
+            {
+                ...
+    =>          NvRmPrivAp15GetExternalClockSourceFreq,
