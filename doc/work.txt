@@ -94,3 +94,4 @@ export DO_SERVICE=true; exec /init2
 
 replace init.rc
 (cd .repo/..; export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh; time make -j 8 )
+/mnt/mysql /var/lib/mysql none bind 0 0

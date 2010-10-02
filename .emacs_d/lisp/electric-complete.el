@@ -87,29 +87,36 @@ and the original pattern should be looked for backwards with \\w and \\."
         (delete-region (point) (mark)))
       (insert match))))
   
+(defmacro max-mini-lines ()
+  `(if (floatp max-mini-window-height)
+       (truncate (* (frame-height) max-mini-window-height))
+     max-mini-window-height))
 
 (defun skeleton-highlight-match-line (matches line max-line-num)
-  (cond
-   ((< max-line-num 10)
-    (ecomplete-highlight-match-line matches line))
-   (t
-    (let* ((min-disp (* 9 (/ line 9)))
-          (max-disp (min max-line-num (+ (* 9 (/ line 9)) 8))) 
-          (line (% line 9))
-          (matches 
-           (with-temp-buffer
-             (insert matches)
-             (goto-line (1+ min-disp)) 
-             (beginning-of-line)
-             (concat
-              (buffer-substring-no-properties 
-               (point) 
-               (progn
-                 (goto-line (1+ max-disp))
-                 (end-of-line)
-                 (point))) 
-              (format "\nmin: %d, max: %d, total: %d\n" min-disp max-disp max-line-num)))))
-      (ecomplete-highlight-match-line matches line)))))
+  (let* ((max-lines (max-mini-lines))
+        (max-lines-1 (1- max-lines))
+        (max-lines-2 (1- max-lines-1)))
+    (cond
+     ((< max-line-num max-lines)
+      (ecomplete-highlight-match-line matches line))
+     (t
+      (let* ((min-disp (* max-lines-1 (/ line max-lines-1)))
+             (max-disp (min max-line-num (+ (* max-lines-1 (/ line max-lines-1)) max-lines-2))) 
+             (line (% line max-lines-1))
+             (matches 
+              (with-temp-buffer
+                (insert matches)
+                (goto-line (1+ min-disp)) 
+                (beginning-of-line)
+                (concat
+                 (buffer-substring-no-properties 
+                  (point) 
+                  (progn
+                    (goto-line (1+ max-disp))
+                    (end-of-line)
+                    (point))) 
+                 (format "\nmin: %d, max: %d, total: %d" min-disp max-disp max-line-num)))))
+        (ecomplete-highlight-match-line matches line))))))
 
 (defun skeleton-display-matches (word)
   (general-display-matches (delete word (nreverse (skeleton-get-matches-order word)))))

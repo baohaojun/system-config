@@ -155,10 +155,10 @@
   (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
   (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "k&r")
-  (setq tab-width 8)
+  (setq tab-width 4)
   (setq indent-tabs-mode t)
   (c-set-offset 'innamespace 0)
-  (setq c-basic-offset 8))
+  (setq c-basic-offset 4))
 
 (defun linux-c++-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
@@ -168,10 +168,10 @@
   (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
   (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "k&r")
-  (setq tab-width 8)
+  (setq tab-width 4)
   (c-set-offset 'innamespace 0)
   (setq indent-tabs-mode t)
-  (setq c-basic-offset 8))
+  (setq c-basic-offset 4))
 
 (setq auto-mode-alist (cons '(".*\\.[c]$" . linux-c-mode)
                             auto-mode-alist))
@@ -233,7 +233,9 @@
 
 (add-hook 'cscope-list-entry-hook 
           (lambda ()
-            (setq next-error-function 'cscope-next-error-bhj)))
+            (setq next-error-function 'cscope-next-error-bhj
+                  next-error-last-buffer (current-buffer))))
+          
                                     
 (defun my-cscope-find-global-definition ()
   (interactive)
@@ -346,6 +348,9 @@
 
 (defvar grep-rgrep-history nil)
     
+(global-set-key [(meta n)] 'next-error)
+(global-set-key [(meta p)] 'previous-error)
+
 
 (global-set-key [(meta s) ?r] 
                 (lambda ()
@@ -378,7 +383,8 @@
                  (current-word))))
     (progn     
       (nodup-ring-insert cscope-marker-ring (point-marker))
-      (when (equal regexp "")
+      (when (or (equal regexp "")
+                (not regexp))
         (setq regexp 
               (buffer-substring-no-properties
                (save-excursion 
