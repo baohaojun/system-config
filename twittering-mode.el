@@ -7150,11 +7150,11 @@ a list. "
 	 (listname 
 	  (unless (string= username "")
 	    (or (let ((s (twittering-current-timeline-spec-string)))
-		  (and s 
-		       (twittering-timeline-spec-list-p
-			(twittering-current-timeline-spec))
-		       (y-or-n-p (format "from list: %s? " s))
-		       s))
+		  (when (and s 
+			     (twittering-timeline-spec-list-p
+			      (twittering-current-timeline-spec))
+			     (y-or-n-p (format "from list: %s? " s)))
+		    s))
 		(twittering-read-list-name twittering-username)
 		(read-string
 		 "Failed to retrieve your list, enter list name manually or retry: ")))))
