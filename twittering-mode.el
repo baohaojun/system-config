@@ -4401,7 +4401,7 @@ been initialized yet."
 	(setq twittering-edit-history
 	      (cons status twittering-edit-history))
 	(cond
-	 ((twittering-timeline-spec-is-direct-messages-p spec)
+	 ((twittering-timeline-spec-direct-messages-p spec)
 	  (if username
 	      (twittering-call-api 'send-direct-message
 				   `((username . ,username)
