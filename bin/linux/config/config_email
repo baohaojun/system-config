@@ -65,11 +65,11 @@ plugin {
 }
 EOF
 
-    sudo bash -c "cat ~/.dovecot > /etc/dovecot/dovecot.conf"
+    sudo bash -c "cat $HOME/.dovecot > /etc/dovecot/dovecot.conf"
 
 
 # 配置offlineimap
-    read -p "Please input your password of this PC: " lpass
+    read -s -p "Please input your password of this PC: " lpass
     cat <<EOF > ~/.offlineimaprc
 [general]
 accounts = Gmail

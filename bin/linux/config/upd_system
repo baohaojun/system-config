@@ -13,20 +13,26 @@ sudo apt-get install -y postfix
 #all the other packages
 
 packages='
-command-not-found
 ant
 ascii
+autoconf
+automake
 automake1.9
+autotools-dev
 bash-doc
 binutils
 binutils-dev
 binutils-doc
+binutils-static
 bison
 build-essential
+cli-common-dev
+command-not-found
 conkeror
 cramfsprogs
 cscope
 curl
+debhelper
 dialog
 dictionary-el
 dict-jargon
@@ -34,6 +40,7 @@ dict-moby-thesaurus
 dict-web1913
 dict-wn
 dovecot-imapd
+dpatch
 eclipse
 eclipse-jdt
 eclipse-pde
@@ -42,12 +49,15 @@ eclipse-platform-data
 eclipse-plugin-cvs
 eclipse-rcp
 emacs23
+emacs23-common-non-dfsg
 emacs-goodies-el
 expect
 exuberant-ctags
 fakeroot
+flashplugin-installer
 flex
 fontforge
+gcc-4.4-doc
 gcc-multilib
 gdb-doc
 git-core
@@ -60,34 +70,72 @@ gnupg
 gperf
 grub2
 grun
+gtk-doc-tools
 hibernate
 htop
+ia32-libs
 imagemagick
+intltool
 iotop
+language-pack-en
+language-pack-zh
 lftp
+lib32ncurses5-dev
+lib32readline5-dev
+lib32z-dev
+libavahi-cil-dev
+libc6-dev-i386
+libchm-dev
 libcurses-perl
 libcurses-ruby
 libcurses-ui-perl
 libcurses-widgets-perl
 libesd0-dev
+libexif-dev
 libexpect-perl
+libgconf2.0-cil-dev
+libglade2.0-cil-dev
+libgmime2.2a-cil
+libgnome2.0-cil-dev
+libgnome-desktop-dev
+libgnome-vfs2.0-cil-dev
+libgsf0.0-cil
+libgtk2.0-cil-dev
+libgtk2.0-dev
 libltdl7
+libmono-cairo2.0-cil
+libmono-dev
+libmono-sharpzip2.84-cil
+libmono-sqlite2.0-cil
+libmono-system-runtime2.0-cil
 libncurses5-dev
 libncursesw5-dev
+libndesk-dbus1.0-cil-dev
+libndesk-dbus-glib1.0-cil-dev
+librsvg2-dev
 libruby1.8
 libsdl-dev
+libsqlite3-dev
+libtaglib-cil-dev
 libtool
+libwv-dev
 libwxgtk2.6-dev
 libx11-dev
+libxml2-dev
+libxss-dev
 libz-dev
 lynx
+make-doc
 manpages
 manpages-dev
 markdown
 meld
 minicom
+mono-devel
+monodoc-base
 mplayer
 msn-pecan
+msttcorefonts
 muse-el
 ncurses-dev
 ncurses-hexedit
@@ -100,6 +148,7 @@ p7zip
 p7zip-full
 pbzip2
 pidgin
+pkg-config
 postfix
 python2.6-doc
 python3.1
@@ -107,13 +156,14 @@ python-html2text
 python-qt4
 python-soappy
 python-svn
+pyvnc2swf
 rdesktop
 rep
 samba
 sawfish
+scim
 screen
 scrot
-scim
 sharutils
 smbnetfs
 ssh
@@ -124,9 +174,12 @@ tkdiff
 traceroute
 ttf-wqy-microhei
 ttf-wqy-zenhei
+ubuntu-desktop
+unrar
 unzip
 valgrind
 vim
+vnc4server
 w3m-el-snapshot
 wget
 wmctrl
@@ -134,45 +187,25 @@ wmii
 x11proto-core-dev
 xchm
 xclip
+xdg-utils
 xfonts-wqy
 xmlstarlet
+xtightvncviewer
 youtube-dl
 zip
 zlib1g-dev
 '
 
-ubuntu_packages='
-binutils-static
-flashplugin-installer
-gcc-4.4-doc
-language-pack-en
-language-pack-zh
-make-doc
-msttcorefonts
-ubuntu-desktop
-unrar
-'
-
-debian_packages='
-emacs23-common-non-dfsg
-'
-
-x86_64_packages='
-ia32-libs
-lib32ncurses5-dev
-lib32readline5-dev
-lib32z-dev
-libc6-dev-i386
-'
 #lunar-applet
 
 sudo apt-get update
 sudo apt-get dist-upgrade -y
-sudo apt-get install -y $packages || for x in $packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
-sudo apt-get install -y $x86_64_packages || for x in $x86_64_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
-sudo apt-get install -y $ubuntu_packages || for x in $ubuntu_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
-sudo apt-get install -y $debian_packages || for x in $debian_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
-sudo apt-get build-dep -y beagle scim-pinyin sawfish librep rep-gtk
+
+while ! sudo apt-get install -y $packages; do
+    packages=$(arg1-arg2 "$packages" "$(sudo apt-get install -y $packages 2>&1)");
+done
+
+sudo apt-get build-dep -y scim-pinyin sawfish librep rep-gtk
 
 #把一些软件默认的版本换掉
 sudo update-alternatives --set emacs /usr/bin/emacs23 || true
@@ -194,5 +227,5 @@ sudo cpan String::ShellQuote
 
 #设置gmail邮件
 test `whoami` = bhj && . config_email || true
-test `whoami` = bhj && sudo apt-get install texlive-full vnc4server pyvnc2swf xtightvncviewer || true
+test `whoami` = bhj && sudo apt-get install texlive-full || true
 test `whoami` = bhj && crontab ~/.crontab
