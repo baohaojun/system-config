@@ -1,0 +1,2 @@
+#!/bin/bash
+echo "export XAUTHORITY=$XAUTHORITY" >~/.new-xauth

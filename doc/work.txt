@@ -96,3 +96,40 @@ export DO_SERVICE=true; exec /init2
 replace init.rc
 (cd .repo/..; export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh; time make -j 8 )
 /mnt/mysql /var/lib/mysql none bind 0 0
+ssh -C2qN -D 8080 bhj@216.194.70.6
+
+1. 
+
+    ln -s /var/lib/mediawiki /var/www
+
+2. in /etc/mediawiki/apache.conf
+
+    Alias /wiki /var/lib/mediawiki/index.php
+
+3. in /etc/mediawiki/LocalSettings.php
+
+$wgArticlePath      = "/wiki/$1";  # Virtual path. This directory MUST be different from the one used in $wgScriptPath
+$wgUsePathInfo      = true;        # Enable use of pretty URLs
+$wgUseTeX           = true;
+$wgTexvc            = "/usr/bin/texvc";
+
+4. 
+
+    sudo mkdir /var/lib/mediawiki/images/math
+    sudo chown www-data\: /var/lib/mediawiki/images/math
+
+5. 
+
+    svn co http://svn.wikimedia.org/svnroot/mediawiki/trunk/mwdumper mwdumper
+    cd mwdumper
+    ant jar
+
+6. download enwiki-latest-pages-articles.xml.bz2
+
+    lftp -c "pget -n 15 http://download.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"
+
+7. 
+
+    java -server -jar mwdumper.jar --format=sql:1.5 /e/bhj/enwiki-latest-pages-articles.xml.bz2 |mysql --user=wikiuser --password=xxxx wikidb -f
+
+
