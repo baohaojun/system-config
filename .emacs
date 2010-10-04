@@ -1098,3 +1098,11 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (global-set-key [(meta shift ? )] 'indent-same-space-as-prev-line)
               
+(defun save-all-buffers-no-check-modified ()
+  (interactive)
+  (mapcar (lambda (x)
+            (when (buffer-file-name x)
+              (with-current-buffer x
+                (set-buffer-modified-p t)
+                (basic-save-buffer))))
+          (buffer-list)))
