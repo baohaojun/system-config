@@ -95,6 +95,8 @@ export DO_SERVICE=true; exec /init2
 
 replace init.rc
 (cd .repo/..; export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh; time make -j 8 )
+(cd .repo/..; export TARGET_PRODUCT=ventana; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh; time make -j 8 )
+(cd .repo/.. && export TARGET_PRODUCT=ventana; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT)
 /mnt/mysql /var/lib/mysql none bind 0 0
 ssh -C2qN -D 8080 bhj@216.194.70.6
 
@@ -133,3 +135,36 @@ $wgTexvc            = "/usr/bin/texvc";
     java -server -jar mwdumper.jar --format=sql:1.5 /e/bhj/enwiki-latest-pages-articles.xml.bz2 |mysql --user=wikiuser --password=xxxx wikidb -f
 
 
+############# config ##################
+#
+# set base_path    /var/spool/apt-mirror
+#
+# set mirror_path  $base_path/mirror
+# set skel_path    $base_path/skel
+# set var_path     $base_path/var
+# set cleanscript $var_path/clean.sh
+# set defaultarch  <running host architecture>
+# set postmirror_script $var_path/postmirror.sh
+# set run_postmirror 0
+set nthreads     20
+set _tilde 0
+#
+############# end config ##############
+
+deb-i386 http://archive.ubuntu.com/ubuntu/ lucid main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ lucid main restricted universe multiverse
+
+deb-i386 http://ppa.launchpad.net/ubuntu-wine/ lucid main 
+deb http://ppa.launchpad.net/ubuntu-wine/ lucid main 
+
+deb-i386 http://ftp.us.debian.org/debian sid main contrib non-free
+deb-i386 http://ftp.us.debian.org/debian testing main contrib non-free
+deb-i386 http://ftp.us.debian.org/debian stable main contrib non-free
+deb-src http://ftp.us.debian.org/debian sid main contrib non-free
+
+clean http://archive.ubuntu.com/ubuntu
+clean http://ftp.us.debian.org/debian
+clean http://ppa.launchpad.net/ubuntu-wine
+
+for x in `git branch -r`; do git diff $x 2>&1|grep diff -q || echo $x; done
+sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go

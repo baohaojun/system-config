@@ -20,3 +20,85 @@
             {
                 ...
     =>          NvRmPrivAp15GetExternalClockSourceFreq,
+
+****************
+
+    /home/bhj/src/android-nv-froyo/hardware/tegra/core/utils/nvos/aos/aos_semihost.h:44:     void (*SemiDebugString)( const char *msg );
+        /**
+         * AOS supports several file i/o (semihosting) implementations.
+         */
+        typedef struct NvAosSemihostRec
+        {
+            ...
+    =>      void (*SemiDebugString)( const char *msg );
+
+****************
+
+    /home/bhj/src/android-nv-froyo/frameworks/base/include/ui/KeycodeLabels.h:28:     { "HOME", 3 },
+        static const KeycodeLabel KEYCODES[] = {
+            ...
+    =>      { "HOME", 3 },
+
+****************
+
+    /usr/share/pyshared/html2text.py:207:     def handle_tag(self, tag, attrs, start):
+        class _html2text(sgmllib.SGMLParser):
+            ...
+    =>      def handle_tag(self, tag, attrs, start):
+
+****************
+
+    /usr/share/pyshared/html2text.py:270:                     if a:
+        class _html2text(sgmllib.SGMLParser):
+            ...
+            def handle_tag(self, tag, attrs, start):
+                ...
+                if tag == "a":
+                    ...
+                    else:
+                        if self.astack:
+                            ...
+    =>                      if a:
+
+****************
+这个地方应该是nv里配置哪个uart使用相关的代码。
+
+    /home/bhj/src/android-byd/hardware/tegra/core/utils/nvos/aos/nvap/aos_uart.c:76:         TRISTATE_UART(B,UAA);
+        static NvError aos_EnableUartA(NvU32 configuration)
+        {
+            ...
+            case NvOdmUartPinMap_Config1:
+    =>          TRISTATE_UART(B,UAA);
+
+****************
+这段代码很奇怪，(0?x)在C语言里根本不合法呀，到底是什么意思呢？
+但是仔细看了一下，原来如果x也是一个宏的话，比如18:17，那么就又有意义了。
+
+    /home/bhj/src/android-byd/hardware/tegra/core/include/nvrm_drf.h:55: #define NV_FIELD_SHIFT(x)       ((0?x)%32)
+        /*
+         * The NV_FIELD_* macros are helper macros for the public NV_DRF_* macros.
+         */
+        #define NV_FIELD_LOWBIT(x)      (0?x)
+        #define NV_FIELD_HIGHBIT(x)     (1?x)
+        ...
+    =>  #define NV_FIELD_SHIFT(x)       ((0?x)%32)
+
+****************
+这个临时文件是通过gcc -E用了上面的这个.h文件的一个.c文件出来的，APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_RANGE的定义用gtags都搜不到，但是用grep的话可以看见，它的定义如下：
+#define APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_RANGE                        18:18
+
+    ooo:2025:         TristateReg = NvRead32((void *)(0x70000000 + APB_MISC_PP_TRISTATE_REG_B_0)); TristateReg = (((TristateReg) & ~((0xFFFFFFFFUL>>(31-((1?APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_RANGE)%32)+((0?APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_RANGE)%32)))<< (((0?APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_RANGE)%32)))) | ((APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_NORMAL) << ((0?APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_RANGE)%32))); NvWrite32((void *)(0x70000000 + APB_MISC_PP_TRISTATE_REG_B_0),(TristateReg));;
+        static NvError aos_EnableUartA(NvU32 configuration)
+        {
+            ...
+            case NvOdmUartPinMap_Config1:
+    =>          TristateReg = NvRead32((void *)(0x70000000 + APB_MISC_PP_TRISTATE_REG_B_0)); TristateReg = (((TristateReg) & ~((0xFFFFFFFFUL>>(31-((1?APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_RANGE)%32)+((0?APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_RANGE)%32)))<< (((0?APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_RANGE)%32)))) | ((APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_NORMAL) << ((0?APB_MISC_PP_TRISTATE_REG_B_0_Z_UAA_RANGE)%32))); NvWrite32((void *)(0x70000000 + APB_MISC_PP_TRISTATE_REG_B_0),(TristateReg));;
+
+****************
+在这里设置用哪个终端出log
+
+    /home/bhj/src/android-byd/hardware/tegra/odm/harmony/odm_kit/query/nvodm_query.c:330:     return NvOdmDebugConsole_UartD;
+        NvOdmDebugConsole
+        NvOdmQueryDebugConsole(void)
+        {
+    =>      return NvOdmDebugConsole_UartD;

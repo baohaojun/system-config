@@ -1,3 +1,4 @@
+#!/bin/bash
 _ping() {
         local HOST_LIST
 
@@ -16,6 +17,17 @@ complete -F _ping telnet
 complete -F _ping ssh
 complete -F _ping slin
 
+_repo-switch() {
+    local br_list
+    COMPREPLY=()
+    cur=${COMP_WORDS[COMP_CWORD]}
+    
+    br_list=$( cd `lookup_file .repo/manifests` >/dev/null 2>&1; git branch -r |perl -npe 's,.*/,,')
+    COMPREPLY=( $( compgen -W "$br_list" -- "$cur" ) )
+    return 0
+}
+
+complete -F _repo-switch repo-switch
 
 _mail() {
     COMPREPLY=()
