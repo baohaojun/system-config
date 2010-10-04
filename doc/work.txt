@@ -168,3 +168,4 @@ clean http://ppa.launchpad.net/ubuntu-wine
 
 for x in `git branch -r`; do git diff $x 2>&1|grep diff -q || echo $x; done
 sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go
+sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go
