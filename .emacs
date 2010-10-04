@@ -1100,9 +1100,12 @@ Starting from DIRECTORY, look upwards for a cscope database."
               
 (defun save-all-buffers-no-check-modified ()
   (interactive)
-  (mapcar (lambda (x)
-            (when (buffer-file-name x)
-              (with-current-buffer x
-                (set-buffer-modified-p t)
-                (basic-save-buffer))))
-          (buffer-list)))
+  (flet ((verify-visited-file-modtime (&rest args) t)
+         (ask-user-about-supersession-threat (&rest args) t))
+    (mapcar (lambda (x)
+              (when (buffer-file-name x)
+                (with-current-buffer x
+                  (unless buffer-read-only
+                    (set-buffer-modified-p t)
+                    (basic-save-buffer))))) 
+            (buffer-list))))
