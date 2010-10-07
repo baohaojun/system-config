@@ -10,6 +10,7 @@ function cd_bhj ()
     lcd "$@" && return $?
     test $# == 1 -o $# == 0 && builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@"
     test "`pwd`" != "$oldpwd" && cd_record
+    true
 }
 
 function my_select() 

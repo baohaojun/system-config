@@ -169,3 +169,33 @@ clean http://ppa.launchpad.net/ubuntu-wine
 for x in `git branch -r`; do git diff $x 2>&1|grep diff -q || echo $x; done
 sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go
 sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go
+
+(find-file
+ (let ((file 
+        (replace-regexp-in-string "android-byd" "rayzerlink-ventana" (my-buffer-file-name (current-buffer)))))
+   (if (file-exists-p (replace-regexp-in-string "harmony" "ventana" file))
+       (replace-regexp-in-string "harmony" "ventana" file)
+     (if (file-exists-p (replace-regexp-in-string "harmony" "template" file))
+         (replace-regexp-in-string "harmony" "template" file)
+       (setq file (replace-regexp-in-string "harmony" "ventana" file))
+       
+       (if (file-exists-p (replace-regexp-in-string "e1162" "pm275" file))
+           (replace-regexp-in-string "e1162" "pm275" file)
+         (message "Error: can not find your file in ventana")
+         file)))))
+
+(find-file
+ (let ((file 
+        (replace-regexp-in-string "rayzerlink-ventana" "android-byd" (my-buffer-file-name (current-buffer)))))
+   (if (file-exists-p (replace-regexp-in-string "harmony" "ventana" file))
+       (replace-regexp-in-string "harmony" "ventana" file)
+     (if (file-exists-p (replace-regexp-in-string "harmony" "template" file))
+         (replace-regexp-in-string "harmony" "template" file)
+       (setq file (replace-regexp-in-string "harmony" "ventana" file))
+       
+       (if (file-exists-p (replace-regexp-in-string "e1162" "pm275" file))
+           (replace-regexp-in-string "e1162" "pm275" file)
+         (message "Error: can not find your file in ventana")
+         file)))))
+
+

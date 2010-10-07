@@ -1103,9 +1103,62 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (flet ((verify-visited-file-modtime (&rest args) t)
          (ask-user-about-supersession-threat (&rest args) t))
     (mapcar (lambda (x)
-              (when (buffer-file-name x)
+              (when (and (buffer-file-name x)
+                         (file-exists-p (buffer-file-name x)))
                 (with-current-buffer x
                   (unless buffer-read-only
                     (set-buffer-modified-p t)
                     (basic-save-buffer))))) 
             (buffer-list))))
+
+(defun revert-all-buffers ()
+  (interactive)
+  (mapcar (lambda (x)
+            (when (buffer-file-name x)
+              (with-current-buffer x
+                (if (file-exists-p (buffer-file-name x))
+                    (revert-buffer t t)
+                  (kill-buffer)))))
+          (buffer-list)))
+
+(defun my-buffer-file-name (buf)
+  (with-current-buffer buf
+    (if (eq major-mode 'dired-mode)
+        (replace-regexp-in-string "/*$" "" default-directory)
+      (or (buffer-file-name buf)
+          ""))))
+
+
+(defun switch-buffer-same-filename (&optional reverse)
+  (interactive)
+  (let* ((buf-list (if reverse 
+                       (nreverse (buffer-list))
+                     (buffer-list)))
+         (current-filepath (my-buffer-file-name (current-buffer)))
+         (current-filename (file-name-nondirectory current-filepath))
+         checking-filename
+         checking-filepath
+         buf-switched)
+    (while buf-list
+      (setq checking-filepath (my-buffer-file-name (car buf-list))
+            checking-filename (file-name-nondirectory checking-filepath))
+      (unless (eq (current-buffer) (car buf-list))
+        (when (string-equal checking-filename current-filename)
+            (progn
+              (unless reverse
+                (bury-buffer (current-buffer)))
+              (switch-to-buffer (car buf-list))
+              (message "switched to `%s'" (my-buffer-file-name (current-buffer)))
+              (setq buf-list nil
+                    buf-switched t))))
+      (setq buf-list (cdr buf-list)))
+    (unless buf-switched
+      (message "You have no other buffer named `%s'" current-filename))))
+
+(defun switch-buffer-same-filename-rev ()
+  (interactive)
+  (switch-buffer-same-filename t))
+
+(global-set-key [(meta s) ?c] 'switch-buffer-same-filename)
+(global-set-key [(ctrl x) ? ] 'switch-buffer-same-filename)
+(global-set-key [(ctrl x) ?\S- ] 'switch-buffer-same-filename-rev)
