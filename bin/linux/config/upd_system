@@ -49,8 +49,6 @@ eclipse-platform-data
 eclipse-plugin-cvs
 eclipse-rcp
 emacs23
-emacs23-el
-strace
 emacs23-common-non-dfsg
 emacs-goodies-el
 expect

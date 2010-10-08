@@ -8,6 +8,8 @@ function ri2c() {
          done
 }
 
+while true; do ri2c 0x0 0x03 0x0 10; done
+
 function wi2c() {
          echo write adap $1 addr $2 reg $3 byte 1 val $4 > /proc/i2c_rw
 }
@@ -102,7 +104,7 @@ replace init.rc
 ssh -C2qN -D 8080 bhj@216.194.70.6
 
 1. 
-
+    apt-get install mediawiki* ( very important are the extensions and math )
     ln -s /var/lib/mediawiki /var/www
 
 2. in /etc/mediawiki/apache.conf
@@ -115,6 +117,19 @@ $wgArticlePath      = "/wiki/$1";  # Virtual path. This directory MUST be differ
 $wgUsePathInfo      = true;        # Enable use of pretty URLs
 $wgUseTeX           = true;
 $wgTexvc            = "/usr/bin/texvc";
+
+$wgUseTidy = true;
+$wgTidyBin = '/usr/bin/tidy';   
+$wgTidyConf = $IP.'/extensions/tidy/tidy.conf';
+
+$wgForeignFileRepos[] = array(
+   'class'                   => 'ForeignAPIRepo',
+   'name'                    => 'shared',
+   'apibase'                 => 'http://commons.wikimedia.org/w/api.php',
+   'fetchDescription'        => true, // Optional
+   'descriptionCacheExpiry'  => 43200, // 12 hours, optional (values are seconds)
+   'apiThumbCacheExpiry'     => 43200, // 12 hours, optional, but required for local thumb caching
+);
 
 4. 
 
@@ -207,3 +222,4 @@ make -C ./vendor/broadcom/bcm4329/src/dhd/linux \
         LINUXVER=2.6.32 CROSS_COMPILE=/home/bhj/src/android-byd/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin/arm-eabi- ARCH=arm OEM_ANDROID=1 dhd-cdc-sdmmc-gpl-debug
 insmod /data/dhd.ko "firmware_path=/data/sdio-cdc-g-11n-mfgtest-seqcmds.bin nvram_path=/data/nvram.txt"
 insmod /system/lib/hw/wlan/bcm4329.ko "firmware_path=/system/lib/hw/wlan/fw_bcm4329.bin nvram_path=/system/lib/hw/wlan/nvram.txt iface_name=wlan"
+
