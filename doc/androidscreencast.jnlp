@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="0.2 1.0"
+      codebase="http://androidscreencast.googlecode.com/svn/trunk/AndroidScreencast/dist/"
+      href="androidscreencast.jnlp">
+   <information> 
+      <title>Android Screencast</title> 
+      <vendor>Alexandre Thiel</vendor>
+      <homepage href="http://code.google.com/p/androidscreencast/"/>
+      <description>Control an android device remotely !</description>
+      <description kind="short">Control an android device remotely</description>
+      <offline-allowed/> 
+      <shortcut online="true"/>
+      <update check="timeout" policy="always"/>
+   </information> 
+   <resources>
+      <j2se version="1.5+" href="http://java.sun.com/products/autodl/j2se"/>
+      <j2se version="1.5+"/>
+      <jar href="androidscreencast.jar" main="true" download="eager"/>
+      <jar href="ddmlib.jar" main="false" download="eager"/>
+   </resources>
+   <application-desc main-class="net.srcz.android.screencast.Main"/>
+   <security>
+	   <all-permissions/>
+	</security> 
+   
+</jnlp> 
