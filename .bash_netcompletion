@@ -28,7 +28,6 @@ _repo-switch() {
 }
 
 complete -F _repo-switch repo-switch
-complete -F _repo-switch git-track
 
 _mail() {
     COMPREPLY=()

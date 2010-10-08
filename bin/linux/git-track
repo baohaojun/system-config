@@ -1,5 +1,0 @@
-#!/bin/bash
-set -e
-. ~/.bash_profile
-cd `lookup_file .repo/manifests`
-git co -t -b "$1" origin/"$1"
