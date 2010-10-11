@@ -31,7 +31,6 @@ command-not-found
 conkeror
 cramfsprogs
 cscope
-cscope-el
 curl
 debhelper
 dialog
@@ -50,8 +49,9 @@ eclipse-platform-data
 eclipse-plugin-cvs
 eclipse-rcp
 emacs23
-emacs23-common-non-dfsg
 emacs23-el
+strace
+emacs23-common-non-dfsg
 emacs-goodies-el
 expect
 exuberant-ctags
@@ -68,7 +68,6 @@ git-svn
 glibc-doc
 global
 g++-multilib
-gnome
 gnupg
 gperf
 grub2
@@ -171,16 +170,15 @@ scrot
 sharutils
 smbnetfs
 ssh
-strace
 subversion
 subversion-tools
 sysv-rc-conf
-texlive-full
 tkdiff
 traceroute
 ttf-wqy-microhei
 ttf-wqy-zenhei
 ubuntu-desktop
+gnome
 unrar
 unzip
 valgrind

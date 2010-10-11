@@ -8,3 +8,4 @@ if test -f ~/.offlineimaprc; then
 fi
 wine /home/bhj/bin/linux/ext/QQ/Bin/QQ.exe >/dev/null&
 ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
+while true; do ssh -C2qN -D 8080 bhj@216.194.70.6; sleep 2; done

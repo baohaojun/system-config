@@ -3,7 +3,7 @@
 function download_antlr() {
     mkdir -p ~/external/bin/linux/ext
     ln -sf  ~/external/bin/linux/ext ~/bin/linux/
-    builtin cd ~/bin/linux/ext/
+    cd ~/bin/linux/ext/
     wget http://android.git.kernel.org/repo
     chmod +x repo
 
@@ -26,12 +26,12 @@ function download_antlr() {
 function download_lisp() {
     mkdir -p ~/external/.emacs_d/lisp/ext/
     ln -sf ~/external/.emacs_d/lisp/ext ~/.emacs_d/lisp/
-    builtin cd ~/.emacs_d/lisp/ext/
+    cd ~/.emacs_d/lisp/ext/
 }
 
 function download_books() {
     mkdir -p ~/Downloads/intel
-    builtin cd ~/Downloads/intel
+    cd ~/Downloads/intel
 
 #only download these things for myself, or else it will take too much time
     cat <<EOF|lftp || true

@@ -105,6 +105,16 @@ ssh -C2qN -D 8080 bhj@216.194.70.6
 
 1. 
     apt-get install mediawiki* ( very important are the extensions and math )
+    enable the extensions by linking them from
+    /etc/mediawiki-extensions/extensions-available into 
+    /etc/mediawiki-extensions/extensions-enabled
+    but, you need to disable the following 2 extensions:
+
+    ./SemanticMediaWiki.php
+    ./MetavidWiki.php:$smwgNamespaceIndex=100;
+    
+    they seem to visit a table named smw or something.
+
     ln -s /var/lib/mediawiki /var/www
 
 2. in /etc/mediawiki/apache.conf
@@ -184,7 +194,7 @@ clean http://ppa.launchpad.net/ubuntu-wine
 
 for x in `git branch -r`; do git diff $x 2>&1|grep diff -q || echo $x; done
 sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go
-sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go
+(cd .repo/../flashing && sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go)
 
 (find-file
  (let ((file 
@@ -223,3 +233,4 @@ make -C ./vendor/broadcom/bcm4329/src/dhd/linux \
 insmod /data/dhd.ko "firmware_path=/data/sdio-cdc-g-11n-mfgtest-seqcmds.bin nvram_path=/data/nvram.txt"
 insmod /system/lib/hw/wlan/bcm4329.ko "firmware_path=/system/lib/hw/wlan/fw_bcm4329.bin nvram_path=/system/lib/hw/wlan/nvram.txt iface_name=wlan"
 
+grep mediawiki|perl -a -F\\\| -ne '$table=$F[1]; $constraint=$F[2]; $indexdef=$F[4]; print "alter table $table drop constraint $constraint cascade;\n";'
