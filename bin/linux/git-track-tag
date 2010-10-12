@@ -1,0 +1,3 @@
+#!/bin/bash
+set -e
+git co -b tagbr-"$1" "$1"

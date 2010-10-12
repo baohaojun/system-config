@@ -73,3 +73,4 @@ function rbcd()
     cd_bhj "${dirs[$NUM]}"
 }
 alias cd=cd_bhj
+alias rcd='cd .repo/manifests'

@@ -1,5 +1,5 @@
 #!/bin/bash
-export PATH=~/bin/:$PATH:/home/bhj/src/android-nv-froyo/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:/home/bhj/external/bin/linux/ext/arm-2010q1/bin:/home/bhj/external/bin/linux/ext/arm-linux-4.1.1/bin
+export PATH=$HOME/bin/:$PATH:/home/bhj/src/android-nv-froyo/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:/home/bhj/external/bin/linux/ext/arm-2010q1/bin:/home/bhj/external/bin/linux/ext/arm-linux-4.1.1/bin
 export PROMPT_COMMAND="history -a"
 
 if test -z "$SSH_CLIENT"; then
@@ -14,7 +14,7 @@ else
     export PS1HostName=`hostname`
     export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m)\n\$'
 
-    function edit()
+    edit()
     {
         if [[ $WHOAMI == root ]] && [[ -f "$1" ]]; then
             echo using root to do edit, won\'t check read permission
@@ -39,12 +39,9 @@ fi
 alias rm='rm -i'
 alias mkgtags='mkgtags -i -v'
 alias bcd=cd_beagle
-function svn-info-clip()
-{
-    svn info "$1" |grep '^URL:'|sed -e 's/^URL: //; s/^https/http/'|tr -d '\r\n' | putclip
-}
 
-function cd_beagle() 
+
+cd_beagle() 
 {
     dest=~/tmp/for-code-reading/`pwd`
     while test ! -d "$dest"/.beagle -a "$dest" != / -a "$dest" != ""; do
@@ -59,20 +56,20 @@ function cd_beagle()
     fi
 }
 
-function cd_ok()
+cd_ok()
 {
     builtin cd "$@"
     history -s cd "$PWD"
     return 0
 }
 
-function cd_record()
+cd_record()
 {
     history -s cd "`pwd`"
    (flock -x ~/.where.lock -c where&)
 }
 
-function lcd()
+lcd()
 {
     if test $# != 1; then
         return 1
@@ -127,7 +124,7 @@ function lcd()
     fi
 }
 
-function _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will go to /home, 
+_ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will go to /home, 
 {
     local x=0
     dir=`dirname "$(pwd)"`
@@ -144,7 +141,7 @@ function _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home
     return $?
 }
 
-function git()
+git()
 {
     if test "`pwd`" = "`readlink -f ~`"
     then
@@ -154,9 +151,12 @@ function git()
     fi            
 }
 
-function rbranch()
+rbranch()
 {
     repo forall . -c 'echo $REPO_RREV'
 }
 stty -ixon -ixoff >/dev/null 2>&1
 
+if [ -n "$BASH_VERSION" ]; then
+    . ~/.bashrc-public-bash
+fi

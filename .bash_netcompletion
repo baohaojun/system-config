@@ -27,8 +27,29 @@ _repo-switch() {
     return 0
 }
 
+_remote_branches() {
+    local br_list
+    COMPREPLY=()
+    cur=${COMP_WORDS[COMP_CWORD]}
+    
+    br_list=$( git branch -r |perl -npe 's,.*/,,')
+    COMPREPLY=( $( compgen -W "$br_list" -- "$cur" ) )
+    return 0
+}
+
+_git_tags() {
+    local br_list
+    COMPREPLY=()
+    cur=${COMP_WORDS[COMP_CWORD]}
+    
+    br_list=$( git tag)
+    COMPREPLY=( $( compgen -W "$br_list" -- "$cur" ) )
+    return 0
+}
+    
 complete -F _repo-switch repo-switch
-complete -F _repo-switch git-track
+complete -F _remote_branches git-track
+complete -F _git_tags git-track-tag
 
 _mail() {
     COMPREPLY=()

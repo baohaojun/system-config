@@ -70,26 +70,6 @@
                  (show-desktop)
                (hide-desktop))))
 
-(setenv "XMODIFIERS" "@im=SCIM")
-(setenv "XIM" "SCIM")
-(setenv "GTK_IM_MODULE" "scim")
-(setenv "TZ" "Asia/Shanghai")
-(setenv "LANG" "en_US.UTF-8")
-(setenv "LC_ALL" "en_US.UTF-8")
-(setenv "PATH" (concat 
-                (getenv "HOME") "/bin:" 
-                (getenv "HOME") "/bin/linux:" 
-                (getenv "HOME") "/bin/linux/ext:" 
-                (getenv "HOME") "/bin/linux/ext/android-sdk-linux_86/tools:"
-                "/usr/local/sbin:"
-                (getenv "PATH")))
-(setenv "CLASSPATH" (concat
-                     "/usr/local/jdk1.5/lib:"
-                     (getenv "HOME") "/bin/linux/ext/stringtemplate.jar:"
-                     (getenv "HOME") "/bin/linux/ext/antlr3.jar:"
-                     (getenv "HOME") "/bin/linux/ext/antlrworks.jar:."))
-
-
 (when (or (string-equal (getenv "DISPLAY") ":0.0")
         (string-equal (getenv "DISPLAY") ":0"))
   (setq ProgramsStarted t)
