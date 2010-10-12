@@ -28,7 +28,7 @@ smtpd_tls_ask_ccert = yes
 smtpd_tls_req_ccert =no
 smtp_tls_enforce_peername = no
 EOF
-    sudo bash -c "cat ~/.postfix.cf >>/etc/postfix/main.cf"
+    sudo bash -c "cat $HOME/.postfix.cf >>/etc/postfix/main.cf"
     sudo bash -c "echo '[smtp.gmail.com]:587' $Gmail:$Gpass > /etc/postfix/sasl_passwd"
     cd /etc/postfix/
     sudo postmap sasl_passwd

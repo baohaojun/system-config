@@ -159,7 +159,7 @@ $wgForeignFileRepos[] = array(
 7. 
 
     java -server -jar mwdumper.jar --format=sql:1.5 /e/bhj/enwiki-latest-pages-articles.xml.bz2 |mysql --user=wikiuser --password=xxxx wikidb -f
-
+    java -server -jar mwdumper.jar --format=pgsql:1.5 
 
 ############# config ##################
 #
