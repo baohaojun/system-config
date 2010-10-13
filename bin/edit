@@ -3,6 +3,7 @@
 function edit_1()
 {
     local file=$1
+    file=${file##*file://}
     if test -e "$file"; then
         emacsclient -n "$(readlink -f "$file")"
     else # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’

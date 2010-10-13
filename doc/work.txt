@@ -236,3 +236,7 @@ insmod /system/lib/hw/wlan/bcm4329.ko "firmware_path=/system/lib/hw/wlan/fw_bcm4
 grep mediawiki|perl -a -F\\\| -ne '$table=$F[1]; $constraint=$F[2]; $indexdef=$F[4]; print "alter table $table drop constraint $constraint cascade;\n";'
 sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xfbef0d696de1c72ba5a835fe5a9bf3bb4e5e17b5
 sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com  5A9A06AEF9CB8DB0
+
+wikidb=# select column_name from information_schema.columns where table_name = 'page';
+http://localhost/wiki/Main_Page
+http://localhost/mediawiki/index.php?title=Special%3ASearch&search=armeb&go=Go

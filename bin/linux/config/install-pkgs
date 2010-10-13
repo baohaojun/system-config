@@ -151,6 +151,7 @@ python3.1
 python-html2text
 python-qt4
 python-soappy
+cvs
 python-svn
 pyvnc2swf
 rdesktop

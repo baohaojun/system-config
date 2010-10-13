@@ -331,14 +331,14 @@ dnl ----------------------------------------------
 PKG_CHECK_MODULES(BEAGLED,
 [
 	shared-mime-info
-	gmime-sharp >= $GMIME_SHARP_REQUIRED
+	gmime-sharp-2.4 >= $GMIME_SHARP_REQUIRED
 	glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
 ])
 BEAGLED_LIBS="$BEAGLED_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
 GSF_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gsf-sharp`
-GMIME_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gmime-sharp`
+GMIME_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gmime-sharp-2.4`
 
 dnl ----------------------------------------------
 dnl Epiphany Extension

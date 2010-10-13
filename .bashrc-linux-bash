@@ -1,3 +1,4 @@
+#!/bin/bash
 apt-get()
 {
     if test "$1" = source; then
@@ -21,3 +22,7 @@ do
 done
 . `which wp`
 
+renew-xauth()
+{
+    . ~/.new-xauth
+}
