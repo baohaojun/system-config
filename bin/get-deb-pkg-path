@@ -1,0 +1,21 @@
+#!/usr/bin/env perl
+
+#system("rm Sources.bz2");
+#system("wget http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2");
+
+open($file, "-|", "bzcat Packages.bz2*");
+
+$package = join("|", @ARGV);
+while (<$file>) {
+    chomp;
+    
+    if (m/^Package: ($package)$/) {
+        while(<$file>) {
+            chomp;
+            if (m/^Filename: (.*)$/) {
+                print "http://ftp.us.debian.org/debian/$1\n";
+                last;
+            } 
+        }
+    }
+}
