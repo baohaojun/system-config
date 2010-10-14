@@ -99,6 +99,7 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".m"));
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".ini"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.mozilla.xul+xml"));
 		}
 
 		const long LENGTH_CUTOFF = 5 * 1024 * 1024; // 5 Mb

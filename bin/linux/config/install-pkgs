@@ -193,7 +193,13 @@ xtightvncviewer
 youtube-dl
 zip
 zlib1g-dev
+ghc6
+ghc6-doc
+ghc6-prof
+tnef
+convmv
 '
+#zh-autoconvert
 while ! sudo apt-get install -y $packages; do
     packages=$(arg1-arg2 "$packages" "$(sudo apt-get install -y $packages 2>&1)");
 done

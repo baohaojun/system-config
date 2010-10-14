@@ -243,6 +243,7 @@
   (call-interactively 'cscope-find-global-definition))
 
 (define-key global-map [(meta .)] 'my-cscope-find-global-definition)
+(eval-after-load "js.el" (define-key js-mode-map [(meta .)] 'my-cscope-find-global-definition))
 (define-key global-map [(meta control ,)] 'cscope-pop-mark)
 (define-key global-map [(meta control .)] 'cscope-pop-mark-back)
 

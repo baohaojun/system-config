@@ -25,6 +25,7 @@ function compile_fcitx() {
     ./configure
     make
     sudo make install
+    git clean -xfd
 }
 
 function compile_gtags() {
@@ -38,6 +39,7 @@ function compile_gtags() {
     cd ~/gcode/java-gtags-parser/
     make
     make clean
+    git clean -xfd
 }
 
 
