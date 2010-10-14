@@ -41,11 +41,15 @@
     ("cpk" "printk(KERN_WARNING \"for continue %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 25)
     ("ld" "LOGD(\"%s: %d\\n\", __FUNCTION__, __LINE__);" nil 6)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
-    ("ne" "NvOsDebugPrintf(\"Error: %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
-    ("nk" "NvOsDebugPrintf(\"hello world %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
-    ("pe" "printk(KERN_WARNING \"hello error %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 2)
+    ("ne" "NvOsDebugPrintf(\"Error: %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
+    ("nk" "NvOsDebugPrintf(\"hello world %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 3)
+    ("pe" "printk(KERN_WARNING \"hello error: %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("pf" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 156)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 172)
+    ("pkh" "#include <linux/types.h>
+#include <linux/module.h>
+#include <linux/proc_fs.h>
+#include <linux/kernel.h>" nil 2)
     ("psk" "printk(KERN_WARNING \"hello world %s %d\\n\", __FUNCTION__, __LINE__);" nil 2)
     ("pw" "printk(KERN_WARNING \"hello warning %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
     ("sdk" "printk(KERN_WARNING \"hello world %s %s %d %s\\n\", __FILE__, __FUNCTION__, __LINE__, dev_name(host->parent));" nil 9)
@@ -154,6 +158,8 @@
     ("string" "String" nil 18)
     ("sv" "System.out.print(String.format(\"" nil 0)
    ))
+
+(define-abbrev-table 'js-mode-abbrev-table '())
 
 (define-abbrev-table 'jython-mode-abbrev-table '())
 

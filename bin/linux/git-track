@@ -1,4 +1,5 @@
 #!/bin/bash
 set -e
 . ~/.bash_profile
+test $# == 0 && set -- `tbranch`
 git co -t -b "$1" `git remote`/"$1"
