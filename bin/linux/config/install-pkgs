@@ -93,6 +93,8 @@ libexpect-perl
 libgconf2.0-cil-dev
 libglade2.0-cil-dev
 libgmime2.2a-cil
+libgmime2.4-cil-dev
+locate
 libgnome2.0-cil-dev
 libgnome-desktop-dev
 libgnome-vfs2.0-cil-dev
