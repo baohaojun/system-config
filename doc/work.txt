@@ -156,6 +156,16 @@ $wgForeignFileRepos[] = array(
 
     lftp -c "pget -n 15 http://download.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"
 
+7. Install postgresql, tune the performance: 
+
+ a) work_mem = 64MB				# min 64kB
+    maintenance_work_mem = 1280MB		# min 1MB
+ b) checkpoint_segments = 30		# in logfile segments, min 1, 16MB each
+    checkpoint_timeout = 1h		# range 30s-1h
+
+ both a) and b) are very important! It can make the difference between taking whole days and only a few hours
+
+
 7. 
 
     java -server -jar mwdumper.jar --format=sql:1.5 /e/bhj/enwiki-latest-pages-articles.xml.bz2 |mysql --user=wikiuser --password=xxxx wikidb -f
