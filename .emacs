@@ -101,7 +101,7 @@
 	;; Could someone please add comments explaining it?
 	(sh-arg-re "\\(\\(?:\"\\(?:\\\\\"\\|[^\"]\\)+\"\\|'[^']+'\\|\\(?:\\\\.\\|[^\"' \\|><\t\n]\\)\\)+\\)")
 
-	(grep-default (or (car grep-history) my-grep-command)))
+	(grep-default (or (car grep-history) grep-command)))
     ;; In the default command, find the arg that specifies the pattern.
     (when (or (string-match
 	       (concat "[^ ]+\\s +\\(?:-[^ ]+\\s +\\)*"
@@ -353,13 +353,11 @@
 (global-set-key [(meta n)] 'next-error)
 (global-set-key [(meta p)] 'previous-error)
 
-(setq my-grep-command "beagle-grep.sh -e pat") ;; should not put it into custom, the custom will be read every time and so the `(let ((grep-command ..' scheme will fail
 
 (global-set-key [(meta s) ?r] 
                 (lambda ()
                   (interactive)
                   (let ((grep-history grep-rgrep-history)
-                        (my-grep-command "rgrep -Hn -e pat")
                         (current-prefix-arg 4))
                     (nodup-ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep)
@@ -369,7 +367,6 @@
                 (lambda ()
                   (interactive)
                   (let ((grep-history grep-find-file-history)
-                        (my-grep-command "beagle-grep.sh -f -e pat")
                         (current-prefix-arg 4))
                     (nodup-ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep)
@@ -477,6 +474,7 @@
  '(gdb-same-frame t)
  '(gdb-show-main t)
  '(gnus-ignored-newsgroups "")
+ '(grep-command "beagle-grep.sh -e")
  '(grep-use-null-device nil)
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)

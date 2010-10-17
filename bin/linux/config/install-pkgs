@@ -79,6 +79,8 @@ language-pack-zh
 lftp
 lib32ncurses5-dev
 lib32readline5-dev
+lib32readline6-dev
+lib32z1-dev
 lib32z-dev
 libavahi-cil-dev
 libc6-dev-i386

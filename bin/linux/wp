@@ -19,7 +19,7 @@ function wp()
     FILE=`lookup_file "$FILE"`
 
     FILE=z:$FILE
-    echo -n "$FILE"|tee /dev/tty|putclip
+    echo -n "$FILE"|perl -npe 's,/,\\,g'|tee /dev/tty|putclip
     history -s wp "$FILE"
 }
 
