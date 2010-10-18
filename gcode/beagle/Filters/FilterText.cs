@@ -123,6 +123,16 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-awk"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-mozilla-bookmarks"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/rfc822"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/css"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-dsrc"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-gettext-translation"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-makefile"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-matlab"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-ocaml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sql"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-vhdl"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("addsapplication/xspf+xml"));
 		}
 
 		const long LENGTH_CUTOFF = 5 * 1024 * 1024; // 5 Mb

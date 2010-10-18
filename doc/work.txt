@@ -270,3 +270,4 @@ sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com  5A9A06AEF9CB8DB0
 wikidb=# select column_name from information_schema.columns where table_name = 'page';
 http://localhost/wiki/Main_Page
 http://localhost/mediawiki/index.php?title=Special%3ASearch&search=armeb&go=Go
+
