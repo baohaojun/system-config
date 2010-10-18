@@ -1,0 +1,5 @@
+This is a static copy of an hacked libbz2 src code.
+See the Makefile for build line
+
+It assumes that O_LARGEFILE is defined on your plateform, and that the
+long long type can handle 64 bits values. afaik, this is the case on most Linux.

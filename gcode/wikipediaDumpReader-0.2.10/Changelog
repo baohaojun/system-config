@@ -1,0 +1,33 @@
+0.2.10
+- Use a new indexing scheme for the entrylist - articles load faster now
+- Upgrade path for old indexing scheme
+- Utf8 fixes
+0.2.9
+- make it able to load wiktionary non-uppercased words
+- Ability to load a 64-bits module
+- added a small UI layout
+- Better corrupted files handling
+0.2.8
+- Added a friendly welcome dialog
+- Many of the 0.2.6 and 0.2.7 changes that i forgot to report here :-)
+0.2.5
+- several bug fixes and improvement in the parsing and rendering of wiki syntax
+- a few more options
+- repr'ed some print args, to avoid a silly bug when printing on an ascii local
+- moved the trunk to launchpad
+0.2.4
+- latex rendering thanks to Mathieu Beliveau <essorcreations@gmail.com>
+
+0.2.3
+- fixed Overflow in the index creation code. Rebuilding the index is needed.
+- basic table support
+- footnotes
+
+0.2.2
+- better wiki parser, can parse nested lists and word-definitions
+
+0.2.1
+- fixed loading bug when articles are on a compressed block boundary
+
+0.2.0
+- initial release
