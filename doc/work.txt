@@ -141,6 +141,26 @@ $wgForeignFileRepos[] = array(
    'apiThumbCacheExpiry'     => 43200, // 12 hours, optional, but required for local thumb caching
 );
 
+
+$wgUseFileCache = true; /* default: false */
+$wgFileCacheDirectory = "$IP/cache";
+$wgShowIPinHeader = false; 
+
+## Shared memory settings
+$wgMessageCacheType = CACHE_ACCEL;
+$wgCacheDirectory = "$IP/msg_cache";
+$wgParserCacheType = CACHE_ACCEL;
+# File cache!
+$wgUseGzip = true;
+$wgEnableSidebarCache = true;
+# NO DB HITS!
+$wgDisableCounters = true;
+$wgMiserMode = true;
+# Text cache
+$wgCompressRevisions = true;
+$wgRevisionCacheExpiry = 3*24*3600;
+$wgParserCacheExpireTime = 14*24*3600;
+
 4. 
 
     sudo mkdir /var/lib/mediawiki/images/math
