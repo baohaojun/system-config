@@ -271,3 +271,315 @@ wikidb=# select column_name from information_schema.columns where table_name = '
 http://localhost/wiki/Main_Page
 http://localhost/mediawiki/index.php?title=Special%3ASearch&search=armeb&go=Go
 
+window:
+    getInterface: function getInterface() { [native code] }
+    GetWeakReference: function GetWeakReference() { [native code] }
+    addthis_share: undefined
+    addthis_config: undefined
+    imgLoader: undefined
+    onunload: undefined
+    onbeforeunload: undefined
+    onresize: undefined
+    __captureElem: undefined
+    __dispatchEvent: undefined
+    __dispatchCapturedEvent: undefined
+    __dispatchCapturedMouseEvent: undefined
+    dump_js_obj: undefined
+    addthis_sendto: undefined
+    addthis_close: undefined
+    addthis_open: undefined
+    onload: undefined
+    _adr: undefined
+    _ate: undefined
+    location: http://www.irt.org/script/1296.htm
+    _atc: undefined
+    _duc: undefined
+    _euc: undefined
+    _atn: undefined
+    _atr: undefined
+    _atd: undefined
+    addthis_invoke: undefined
+    addthis_click: undefined
+    addthis_conf: undefined
+    addthis_pub: undefined
+    google_ui_features: undefined
+    google_color_text: undefined
+    google_color_url: undefined
+    google_color_link: undefined
+    google_color_bg: undefined
+    google_color_border: undefined
+    google_ad_type: undefined
+    google_ad_channel: undefined
+    google_ad_format: undefined
+    google_ad_height: undefined
+    google_ad_width: undefined
+    google_ad_client: undefined
+    tb_getPageSize: undefined
+    tb_parseQuery: undefined
+    tb_position: undefined
+    tb_remove: undefined
+    tb_showIframe: undefined
+    tb_show: undefined
+    tb_init: undefined
+    tb_pathToImage: undefined
+    addEventListener: function addEventListener() { [native code] }
+    $handle: undefined
+    $events: undefined
+    undefined: undefined
+    $: undefined
+    jQuery: undefined
+    navigator: [object Navigator]
+    __gwt_scriptsLoaded: undefined
+    __gwt_stylesLoaded: undefined
+    external: [xpconnect wrapped (nsISupports, nsISidebar, nsISidebarExternal, nsIClassInfo)]
+    window: [object Window]
+    org_irt_gwt_widget_DynamicMenu: undefined
+    document: [object HTMLDocument]
+    netscape: [object Object]
+    XPCSafeJSObjectWrapper: function XPCSafeJSObjectWrapper() { [native code] }
+    XPCNativeWrapper: function XPCNativeWrapper() { [native code] }
+    Components: [object nsXPCComponents]
+    globalStorage: [object StorageList]
+    sessionStorage: [object Storage]
+    getComputedStyle: function getComputedStyle() { [native code] }
+    dispatchEvent: function dispatchEvent() { [native code] }
+    removeEventListener: function removeEventListener() { [native code] }
+    name:
+    parent: [object Window]
+    top: [object Window]
+    getSelection: function getSelection() { [native code] }
+    scrollByLines: function scrollByLines() { [native code] }
+    dump: function dump() { [native code] }
+    setInterval: function setInterval() { [native code] }
+    postMessage: function postMessage() { [native code] }
+    setTimeout: function setTimeout() { [native code] }
+    clearInterval: function clearInterval() { [native code] }
+    frames: [object Window]
+    length: 0
+    scrollbars: [object BarProp]
+    scrollX: 0
+    scrollY: 0
+    scrollTo: function scrollTo() { [native code] }
+    scrollBy: function scrollBy() { [native code] }
+    scrollByPages: function scrollByPages() { [native code] }
+    sizeToContent: function sizeToContent() { [native code] }
+    clearTimeout: function clearTimeout() { [native code] }
+    setResizable: function setResizable() { [native code] }
+    captureEvents: function captureEvents() { [native code] }
+    releaseEvents: function releaseEvents() { [native code] }
+    routeEvent: function routeEvent() { [native code] }
+    enableExternalCapture: function enableExternalCapture() { [native code] }
+    disableExternalCapture: function disableExternalCapture() { [native code] }
+    open: function open() { [native code] }
+    openDialog: function openDialog() { [native code] }
+    applicationCache: [object OfflineResourceList]
+    self: [object Window]
+    screen: [object Screen]
+    history: [object History]
+    content: [object Window]
+    menubar: [object BarProp]
+    toolbar: [object BarProp]
+    locationbar: [object BarProp]
+    personalbar: [object BarProp]
+    statusbar: [object BarProp]
+    directories: [object BarProp]
+    closed: false
+    crypto: [object Crypto]
+    pkcs11: null
+    controllers: [object XULControllers]
+    opener: null
+    status:
+    defaultStatus:
+    innerWidth: 1440
+    innerHeight: 767
+    outerWidth: 1440
+    outerHeight: 850
+    screenX: 0
+    screenY: 25
+    pageXOffset: 0
+    pageYOffset: 0
+    scrollMaxX: 0
+    scrollMaxY: 3686
+    fullScreen: false
+    alert: function alert() { [native code] }
+    confirm: function confirm() { [native code] }
+    prompt: function prompt() { [native code] }
+    focus: function focus() { [native code] }
+    blur: function blur() { [native code] }
+    back: function back() { [native code] }
+    forward: function forward() { [native code] }
+    home: function home() { [native code] }
+    stop: function stop() { [native code] }
+    print: function print() { [native code] }
+    moveTo: function moveTo() { [native code] }
+    moveBy: function moveBy() { [native code] }
+    resizeTo: function resizeTo() { [native code] }
+    resizeBy: function resizeBy() { [native code] }
+    scroll: function scroll() { [native code] }
+    close: function close() { [native code] }
+    updateCommands: function updateCommands() { [native code] }
+    find: function find() { [native code] }
+    atob: function atob() { [native code] }
+    btoa: function btoa() { [native code] }
+    frameElement: null
+    showModalDialog: function showModalDialog() { [native code] }
+    localStorage: [object Storage]
+    
+document:
+    location: http://www.newsmth.net/bbsdoc.php?board=Picture&ftype=6
+    evaluate: function evaluate() { [native code] }
+    createExpression: function createExpression() { [native code] }
+    createNSResolver: function createNSResolver() { [native code] }
+    baseURI: http://www.newsmth.net/bbsdoc.php?board=Picture&ftype=6
+    textContent: null
+    compareDocumentPosition: function compareDocumentPosition() { [native code] }
+    getUserData: function getUserData() { [native code] }
+    isSameNode: function isSameNode() { [native code] }
+    lookupNamespaceURI: function lookupNamespaceURI() { [native code] }
+    setUserData: function setUserData() { [native code] }
+    lookupPrefix: function lookupPrefix() { [native code] }
+    isDefaultNamespace: function isDefaultNamespace() { [native code] }
+    isEqualNode: function isEqualNode() { [native code] }
+    documentURI: http://www.newsmth.net/bbsdoc.php?board=Picture&ftype=6
+    adoptNode: function adoptNode() { [native code] }
+    renameNode: function renameNode() { [native code] }
+    dispatchEvent: function dispatchEvent() { [native code] }
+    removeEventListener: function removeEventListener() { [native code] }
+    createNodeIterator: function createNodeIterator() { [native code] }
+    defaultView: [object Window]
+    createEvent: function createEvent() { [native code] }
+    activeElement: [object HTMLBodyElement]
+    getElementsByClassName: function getElementsByClassName() { [native code] }
+    hasFocus: function hasFocus() { [native code] }
+    elementFromPoint: function elementFromPoint() { [native code] }
+    getBoxObjectFor: function getBoxObjectFor() { [native code] }
+    width: 1398
+    height: 1020
+    domain: www.newsmth.net
+    designMode: off
+    getSelection: function getSelection() { [native code] }
+    body: [object HTMLBodyElement]
+    anchors: [object HTMLCollection]
+    links: [object HTMLCollection]
+    title:
+    URL: http://www.newsmth.net/bbsdoc.php?board=Picture&ftype=6
+    referrer:
+    forms: [object HTMLCollection]
+    cookie: UTMPKEY=16976564; UTMPNUM=11968; UTMPUSERID=guest
+    images: [object HTMLCollection]
+    getElementsByName: function getElementsByName() { [native code] }
+    documentElement: [object HTMLHtmlElement]
+    implementation: [object DOMImplementation]
+    doctype: null
+    getElementsByTagName: function getElementsByTagName() { [native code] }
+    getElementsByTagNameNS: function getElementsByTagNameNS() { [native code] }
+    getElementById: function getElementById() { [native code] }
+    createDocumentFragment: function createDocumentFragment() { [native code] }
+    createElement: function createElement() { [native code] }
+    importNode: function importNode() { [native code] }
+    createTextNode: function createTextNode() { [native code] }
+    nextSibling: null
+    firstChild: [object HTMLHtmlElement]
+    prefix: null
+    nodeValue: null
+    childNodes: [object NodeList]
+    nodeName: #document
+    namespaceURI: null
+    previousSibling: null
+    nodeType: 9
+    localName: null
+    lastChild: [object HTMLHtmlElement]
+    ownerDocument: null
+    parentNode: null
+    attributes: null
+    appendChild: function appendChild() { [native code] }
+    cloneNode: function cloneNode() { [native code] }
+    normalize: function normalize() { [native code] }
+    hasChildNodes: function hasChildNodes() { [native code] }
+    insertBefore: function insertBefore() { [native code] }
+    replaceChild: function replaceChild() { [native code] }
+    removeChild: function removeChild() { [native code] }
+    hasAttributes: function hasAttributes() { [native code] }
+    isSupported: function isSupported() { [native code] }
+    createComment: function createComment() { [native code] }
+    createCDATASection: function createCDATASection() { [native code] }
+    createProcessingInstruction: function createProcessingInstruction() { [native code] }
+    createAttribute: function createAttribute() { [native code] }
+    createEntityReference: function createEntityReference() { [native code] }
+    createElementNS: function createElementNS() { [native code] }
+    createAttributeNS: function createAttributeNS() { [native code] }
+    applets: [object HTMLCollection]
+    close: function close() { [native code] }
+    ELEMENT_NODE: 1
+    ATTRIBUTE_NODE: 2
+    TEXT_NODE: 3
+    CDATA_SECTION_NODE: 4
+    ENTITY_REFERENCE_NODE: 5
+    ENTITY_NODE: 6
+    PROCESSING_INSTRUCTION_NODE: 7
+    COMMENT_NODE: 8
+    DOCUMENT_NODE: 9
+    DOCUMENT_TYPE_NODE: 10
+    DOCUMENT_FRAGMENT_NODE: 11
+    NOTATION_NODE: 12
+    alinkColor:
+    linkColor:
+    vlinkColor:
+    bgColor:
+    fgColor:
+    embeds: [object HTMLCollection]
+    write: function write() { [native code] }
+    writeln: function writeln() { [native code] }
+    clear: function clear() { [native code] }
+    captureEvents: function captureEvents() { [native code] }
+    releaseEvents: function releaseEvents() { [native code] }
+    routeEvent: function routeEvent() { [native code] }
+    compatMode: BackCompat
+    plugins: [object HTMLCollection]
+    execCommand: function execCommand() { [native code] }
+    execCommandShowHelp: function execCommandShowHelp() { [native code] }
+    queryCommandEnabled: function queryCommandEnabled() { [native code] }
+    queryCommandIndeterm: function queryCommandIndeterm() { [native code] }
+    queryCommandState: function queryCommandState() { [native code] }
+    queryCommandSupported: function queryCommandSupported() { [native code] }
+    queryCommandText: function queryCommandText() { [native code] }
+    queryCommandValue: function queryCommandValue() { [native code] }
+    characterSet: GB2312
+    dir: ltr
+    contentType: text/html
+    lastModified: 01/01/1970 00:00:00
+    styleSheets: [object StyleSheetList]
+    preferredStyleSheetSet: myStyle
+    selectedStyleSheetSet:
+    lastStyleSheetSet: null
+    styleSheetSets: [object DOMStringList]
+    enableStyleSheetsForSet: function enableStyleSheetsForSet() { [native code] }
+    createRange: function createRange() { [native code] }
+    createTreeWalker: function createTreeWalker() { [native code] }
+    getAnonymousNodes: function getAnonymousNodes() { [native code] }
+    getAnonymousElementByAttribute: function getAnonymousElementByAttribute() { [native code] }
+    addBinding: function addBinding() { [native code] }
+    removeBinding: function removeBinding() { [native code] }
+    getBindingParent: function getBindingParent() { [native code] }
+    loadBindingDocument: function loadBindingDocument() { [native code] }
+    getFeature: function getFeature() { [native code] }
+    inputEncoding: GB2312
+    xmlEncoding: null
+    xmlStandalone: false
+    xmlVersion: null
+    strictErrorChecking: true
+    
+
+
+javascript:
+function dump_js_obj(obj) 
+{
+    for (var x in obj)
+    {
+        document.write(String(x) + ": " + obj[x] + "<p/>\n");
+    }        
+    document.close()
+} dump_js_obj(document)
+
+
+javascript:alert(window.pageYOffset + window.innerHeight + " " + document.height)

@@ -31,10 +31,10 @@ Firemacs.Commands.View = {
         this._sfun.moveTab(1);
     },
     ViScrollPageUp: function(e) {
-        goDoCommand('cmd_scrollPageUp');
+        this._sfun.subPageUp(e);
     },
     ViScrollPageDown: function(e) {
-        goDoCommand('cmd_scrollPageDown');
+        this._sfun.subPageDown(e);
     },
     PreviousPage: function(e) {
         if (typeof(BrowserBack) == 'function') { BrowserBack(); }

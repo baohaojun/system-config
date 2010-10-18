@@ -114,14 +114,14 @@ type:
 name: ViScrollPageUp
 case: View
 keyx: DEL
-body: goDoCommand('cmd_scrollPageUp');
+body: this._sfun.subPageUp(e);
 desc: scrolls a page up
 type: 
 -
 name: ViScrollPageDown
 case: View
 keyx: SPC
-body: goDoCommand('cmd_scrollPageDown');
+body: this._sfun.subPageDown(e);
 desc: scrolls a page down
 type: 
 -
