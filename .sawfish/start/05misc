@@ -9,6 +9,7 @@ fi
 wine /home/bhj/bin/linux/ext/QQ/Bin/QQ.exe >/dev/null&
 ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
 
+command renew-xauth
 while true; do
     if ps aux|grep ssh|grep bhj@216 -q; 
     then

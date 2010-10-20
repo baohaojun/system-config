@@ -74,3 +74,5 @@ function rbcd()
 }
 alias cd=cd_bhj
 alias rcd='cd .repo/manifests'
+. ~/.new-xauth
+alias rs="rfa 'git diff \$REPO_LREV|cat; git st -s|grep . && echo \`pwd\`'"
