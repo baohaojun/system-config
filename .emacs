@@ -1166,3 +1166,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key [(meta s) ?c] 'switch-buffer-same-filename)
 (global-set-key [(ctrl x) ? ] 'switch-buffer-same-filename)
 (global-set-key [(ctrl x) ?\S- ] 'switch-buffer-same-filename-rev)
+
+(defun sudoedit ()
+  (interactive)
+  (if (file-remote-p (buffer-file-name))
+      (find-alternate-file (replace-regexp-in-string "^/scp:.*?:" "" (buffer-file-name)))    
+    (find-alternate-file (concat "/scp:root@localhost:" (buffer-file-name)))))
