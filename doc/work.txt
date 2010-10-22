@@ -583,3 +583,6 @@ function dump_js_obj(obj)
 
 
 javascript:alert(window.pageYOffset + window.innerHeight + " " + document.height)
+cat <<End > ~/.emacs-frame-font
+"Monaco-11.5"
+End
