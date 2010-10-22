@@ -6,6 +6,9 @@ mkdir ~/external/bin/linux/ext/android-sdk-linux_86/google -p
 cd ~/external/bin/linux/ext/android-sdk-linux_86/google
 wget -c http://dl.google.com/android/android-sdk_r06-windows.zip
 wget -c http://dl.google.com/android/android-sdk_r06-linux_86.tgz
+wget -c http://dl.google.com/android/ndk/android-ndk-r4b-linux-x86.zip
+wget -c http://dl.google.com/android/ndk/android-ndk-r4b-darwin-x86.zip
+wget -c http://dl.google.com/android/ndk/android-ndk-r4b-windows.zip
 rm repository.xml* -f
 wget https://dl-ssl.google.com/android/repository/repository.xml
 
