@@ -2,6 +2,7 @@
 set -e
 packages='
 telnet
+flashplugin-nonfree
 ant
 ascii
 autoconf

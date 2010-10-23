@@ -1,0 +1,48 @@
+#!/usr/bin/env perl
+use strict;
+
+my $file1 = shift @ARGV;
+my $file2 = shift @ARGV;
+
+open(my $f1, "<", $file1) or die "Error open $file1";
+open(my $f2, "<", $file2) or die "Error open $file1";
+
+my %sha1_1;
+my %sha1_2;
+
+while(<$f1>) {
+    chomp;
+    my $key = substr($_, 0, 40);
+    my $file = substr($_, 42);
+
+    if (exists($sha1_1{$key})) {
+        printf("file `%s' in set1 can be deleted, it already exist by the name `%s'\n", $file, $sha1_1{$key});
+        next;
+    }
+               
+    $sha1_1{$key} = $file;
+}
+
+while(<$f2>) {
+    chomp;
+    my $key = substr($_, 0, 40);
+    my $file = substr($_, 42);
+
+    if (exists($sha1_2{$key})) {
+        printf("file `%s' in set2 can be deleted, it already exist by the name `%s'\n", $file, $sha1_2{$key});
+        next;
+    }
+    $sha1_2{$key} = $file;
+}
+
+foreach (keys(%sha1_1)) {
+    if (exists($sha1_2{$_})) {
+        printf("file in set1: `%s' sha1 eq to file in set2 `%s'\n", $sha1_1{$_}, $sha1_2{$_});
+    }
+}
+
+foreach (keys(%sha1_2)) {
+    if (exists($sha1_1{$_})) {
+        printf("file in set2: `%s' sha1 eq to file in set1 `%s'\n", $sha1_2{$_}, $sha1_1{$_});
+    }
+}

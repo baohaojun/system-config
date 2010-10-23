@@ -586,3 +586,6 @@ javascript:alert(window.pageYOffset + window.innerHeight + " " + document.height
 cat <<End > ~/.emacs-frame-font
 "Monaco-11.5"
 End
+
+find  . -name "sha1sum.txt" -prune -o -type f -print0 |xargs -0 sha1sum >sha1sum.txt
+ps aux|grep git|pn 2|xargs bash -c 'for x in "$@"; do ls -l /proc/$x/fd; done' xx
