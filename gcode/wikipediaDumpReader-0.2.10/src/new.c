@@ -860,7 +860,7 @@ int BZ_API(BZ2_bzRead) ( int*    bzerror, BZFILE* b, void*   buf, int     len )
 
 	return 0; /*not reached*/
 }
-
+#undef HAVE_LARGEFILE_SUPPORT
 #if !defined(HAVE_LARGEFILE_SUPPORT)
 typedef off_t Py_off_t;
 #elif SIZEOF_OFF_T >= 8
