@@ -312,24 +312,11 @@ BZ2File_tellbzblock(BZ2FileObject *self, PyObject *args)
 				"I/O operation on closed file");
 		goto cleanup;
 	}
-/*
-
-BZFILE *strm = self->fp;
-bzFile* bzf = (bzFile*)strm;
-FILE *handle = bzf->handle;
-fseeko(handle, 0xFFFFll, SEEK_SET);
-Py_off_t x = 0x1FFFFFFFFll;
-ret = PyLong_FromLongLong(x);	
-return ret;
-printf("%lli\n", (long long)ftello(handle));
-long long z;
-z = (long long)0x0000001000000000ll;
-printf("sizeof: %d\n", sizeof(long long));
-return Py_BuildValue("L", z);
-*/
-	//printf(">>>>%d\n", sizeof(Py_off_t));
-
-	return Py_BuildValue("i(II)Li", self->blockInfos.nbblock, self->blockInfos.blockStart_lo32, self->blockInfos.blockStart_hi32, self->blockInfos.currentBlockByte, self->blockInfos.currentBlockBitOffset);
+	return Py_BuildValue("i(II)Li", 
+						 self->blockInfos.nbblock, 
+						 self->blockInfos.blockStart_lo32, self->blockInfos.blockStart_hi32, 
+						 self->blockInfos.currentBlockByte, 
+						 self->blockInfos.currentBlockBitOffset);
 
 cleanup:
 	return ret;
