@@ -26,7 +26,7 @@
     ("ccs" "const cstring&" nil 8)
     ("cms" "const CString&" nil 11)
     ("cr" "CRect" nil 0)
-    ("cs" "cstring" nil 33)
+    ("cs" "cstring" nil 35)
     ("dcs" "c_str()" nil 10)
     ("ld" "LOGD(\"%s: %d\", __FUNCTION__, __LINE__);" nil 0)
     ("lw" "LOGW(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
@@ -212,6 +212,11 @@ import sys
 import os, traceback, thread
 import pickle
 " nil 4)
+    ("pytab" "# Local Variables: #
+# tab-width: 4 #
+# python-indent: 4 #
+# End: #
+" nil 0)
     ("signal" "SIGNAL" nil 3)
     ("slef" "self" nil 4)
     ("true" "True" nil 2)
