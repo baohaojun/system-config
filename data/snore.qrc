@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/root">
+        <file>zzz.png</file>
+    </qresource>
+</RCC>

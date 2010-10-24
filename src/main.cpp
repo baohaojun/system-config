@@ -1,5 +1,8 @@
-#include <QtGui/QApplication>
+
 #include "core/snoreserver.h"
+#include "trayicon.h"
+
+#include <QtGui/QApplication>
 #include <QDir>
 #include <QFile>
 #include <QList>
@@ -10,17 +13,19 @@
 int main ( int argc, char *argv[] )
 {
     QApplication a ( argc, argv );
-    QSystemTrayIcon *trayIcon=new QSystemTrayIcon();
-    trayIcon->show();
-    SnoreServer s ( trayIcon );
+    QSystemTrayIcon *trayIcon=new QSystemTrayIcon(QIcon(":/root/zzz.png"));
+    trayIcon->setVisible(true);
+
+    SnoreServer *s = new SnoreServer( trayIcon );
 
     QDir pluginsDir ( a.applicationDirPath() +"/snoreplugins" );
     foreach ( QString fileName, pluginsDir.entryList ( QDir::Files ) )
     {
-        s.publicatePlugin ( pluginsDir.absoluteFilePath ( fileName ) );
+        s->publicatePlugin ( pluginsDir.absoluteFilePath ( fileName ) );
     }
 
-
+    TrayIcon *i = new TrayIcon(trayIcon,s);
+    i->initConextMenu();
 
     return a.exec();
 }

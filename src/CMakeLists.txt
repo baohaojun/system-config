@@ -5,8 +5,10 @@ include_directories(
 
 add_subdirectory(core)
 
-add_executable ( snorenotify main.cpp )
-target_link_libraries ( snorenotify  snorecore ${QT_QTGUI_LIBRARY})
+QT4_ADD_RESOURCES(snorenotify_DEPS  ${SNORE_RCS})
+automoc4_add_executable( snorenotify main.cpp trayicon.cpp ${snorenotify_DEPS})
+
+target_link_libraries( snorenotify  snorecore ${QT_QTGUI_LIBRARY} )
 add_dependencies(snorenotify snorecore)
 
 install(TARGETS snorenotify RUNTIME DESTINATION bin
@@ -16,4 +18,3 @@ install(TARGETS snorenotify RUNTIME DESTINATION bin
 
 #add_subdirectory(webinterface)
 add_subdirectory(plugins)
-

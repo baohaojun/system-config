@@ -49,7 +49,7 @@ option(WITH_WEBINTERFACE     	 "Buld with WebInterface"         OFF)
 
 set(PLUGIN_INSTALL_PATH  LIBRARY DESTINATION bin/snoreplugins)
 
-
+add_subdirectory(data)
 add_subdirectory(src)
 
 install(FILES share/FindLibsnore.cmake DESTINATION share/apps/cmake/modules)
