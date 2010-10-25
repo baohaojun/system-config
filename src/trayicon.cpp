@@ -15,7 +15,7 @@
  ****************************************************************************************/
 
 #include "trayicon.h"
-#include "snore/core/snoreserver.h"
+#include "core/snoreserver.h"
 
 #include <QSystemTrayIcon>
 #include <QMenu>
