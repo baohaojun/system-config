@@ -197,6 +197,11 @@
 
 (define-abbrev-table 'perl-mode-abbrev-table '())
 
+(define-abbrev-table 'php-mode-abbrev-table
+  '(
+    ("wpk" "wfDebugLog('bhj', __FUNCTION__ . \"hello bhj\\n\");" nil 0)
+   ))
+
 (define-abbrev-table 'pike-mode-abbrev-table
   '(
    ))
@@ -247,6 +252,10 @@ fi
 (define-abbrev-table 'shell-mode-abbrev-table '())
 
 (define-abbrev-table 'special-mode-abbrev-table '())
+
+(define-abbrev-table 'sql-mode-abbrev-table
+  '(
+   ))
 
 (define-abbrev-table 'text-mode-abbrev-table
   '(
