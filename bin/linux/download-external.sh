@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir -p ~/external/bin/linux/ext/`uname -m`
+mkdir -p ~/external/bin/linux/ext/`uname -m` ~/external/bin/linux/ext/media-wiki-templates/ ~/external/bin/linux/ext/media-wiki-images
 function download_antlr() {
     mkdir -p ~/external/bin/linux/ext
     ln -sf  ~/external/bin/linux/ext ~/bin/linux/

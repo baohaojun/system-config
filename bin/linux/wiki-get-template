@@ -28,22 +28,22 @@ sub get_template($) {
   print STDERR "build $template into $mwt\n";
   if (! -e $mwt) {
     system("mkdir -p `dirname $mwt`; echo $sq_template > $mwt.info");
-    open DATA, "wiki-title-query Template:$sq_template | tail -n +2 |";
-    open TEMPLATE, ">$mwt";   
-    while (<DATA>) {
-      print TEMPLATE $_;
+    open(my $DATA, "wiki-title-query Template:$sq_template | tail -n +2 |");
+    open(my $TEMPLATE, ">$mwt");
+    while (<$DATA>) {
+      print $TEMPLATE $_;
     }
-    close DATA;
-    close TEMPLATE;
-    open TEMPLATE, "<$mwt";
+    close $DATA;
+    close $TEMPLATE;
+    open($TEMPLATE, "<$mwt");
     my $line = 0;
-    while (<TEMPLATE>) {
+    while (<$TEMPLATE>) {
       $line ++;
       if ($line == 1 and $_ =~ m/#REDIRECT \[\[Template:(.*)\]\]/) {
         my $template_redirect = $1;
         my $mwt_redirect = get_template($template_redirect);
         system("ln", "-sf", shell_quote($mwt_redirect), shell_quote($mwt));
-        close TEMPLATE;
+        close $TEMPLATE;
         last;
       }
     }
