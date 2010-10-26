@@ -1,0 +1,53 @@
+#!/usr/bin/perl -w
+use strict;
+use Digest::MD5;
+use String::ShellQuote;
+
+die "Usage: $0 TemplateName" if (scalar(@ARGV) != 1);
+
+my $template = shift @ARGV;
+
+sub get_template_info($) {
+  my $template = shift @_;
+  my $md5s = Digest::MD5::md5_hex($template);
+  my $md5s_d = substr($md5s, 0, 2);
+  my $md5s_f = substr($md5s, 2);
+  return ( shell_quote($template), 
+           $md5s,
+           $md5s_d,
+           $md5s_f,
+           glob("~/gcode/offline.wikipedia/mediawiki_sa/templates/$md5s_d/$md5s_f.mwt"),
+         );
+}
+
+sub get_template($);
+sub get_template($) {
+  my $template = shift @_;
+  my ($sq_template, $md5s, $md5s_d, $md5s_f, $mwt) = get_template_info($template);
+
+  print STDERR "build $template into $mwt\n";
+  if (! -e $mwt) {
+    system("mkdir -p `dirname $mwt`; echo $sq_template > $mwt.info");
+    open DATA, "wiki-title-query Template:$sq_template | tail -n +2 |";
+    open TEMPLATE, ">$mwt";   
+    while (<DATA>) {
+      print TEMPLATE $_;
+    }
+    close DATA;
+    close TEMPLATE;
+    open TEMPLATE, "<$mwt";
+    my $line = 0;
+    while (<TEMPLATE>) {
+      $line ++;
+      if ($line == 1 and $_ =~ m/#REDIRECT \[\[Template:(.*)\]\]/) {
+        my $template_redirect = $1;
+        my $mwt_redirect = get_template($template_redirect);
+        system("ln", "-sf", shell_quote($mwt_redirect), shell_quote($mwt));
+        close TEMPLATE;
+        last;
+      }
+    }
+  }
+  return $mwt;
+}
+get_template($template);
