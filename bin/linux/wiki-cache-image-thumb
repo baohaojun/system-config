@@ -1,0 +1,2 @@
+#!/bin/bash
+wiki-cache-image-thumb.job "$@" >/dev/null 2>&1 &

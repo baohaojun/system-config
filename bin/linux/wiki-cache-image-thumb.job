@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+url=$1
+md5=$2
+mkdir -p "`dirname $md5`"
+tsocks wget "$url" -O "$md5".$$.tmp -o /dev/null
+mv "$md5".$$.tmp "$md5"
+echo "$url" > "$md5".url
