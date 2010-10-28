@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 packages='
-tsocks
 telnet
 flashplugin-nonfree
 ant
