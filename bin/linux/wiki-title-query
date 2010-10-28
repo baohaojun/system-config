@@ -1,10 +1,4 @@
 #!/bin/bash
 set -e
 cd ~/windows-config/gcode/offline.wikipedia
-./quickstartsearch db "$@" > /tmp/ow.db.search.$$
-if test `cat /tmp/ow.db.search.$$|wc -l` != 1; then
-    echo "Error: dbsearch on \`$@' return not exactly 1 line" 1>&2
-    false
-fi
-
-python ~/gcode/wikipediaDumpReader-0.2.10/get_article.py $(cat /tmp/ow.db.search.$$|perl -npe 's/.*\[//; s/.*?\t//; s/\].*//')
+python ~/gcode/wikipediaDumpReader-0.2.10/get_article.py $(./quickstartsearch db "$@"|perl -npe 's/.*\[//; s/.*?\t//; s/\].*//')

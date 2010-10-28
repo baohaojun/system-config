@@ -39,9 +39,8 @@ sub get_template($) {
     my $line = 0;
     while (<$TEMPLATE>) {
       $line ++;
-      if ($line == 1 and $_ =~ m/^\s*#REDIRECT\s*\[\[Template:(.*)\]\]/i) {
+      if ($line == 1 and $_ =~ m/#REDIRECT \[\[Template:(.*)\]\]/) {
         my $template_redirect = $1;
-        $template_redirect =~ s/^template:/Template:/;
         my $mwt_redirect = get_template($template_redirect);
         system("ln", "-sf", shell_quote($mwt_redirect), shell_quote($mwt));
         close $TEMPLATE;
