@@ -12,7 +12,8 @@ include( ${QT_USE_FILE} )
 include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}  ${CMAKE_CURRENT_BINARY_DIR}
         ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
-        ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR} )
+        ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR} 
+		${CMAKE_SOURCE_DIR}/3party/gntp-send/headers)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR} )
 set(LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH})
@@ -45,11 +46,12 @@ if(MSVC)
 endif(MSVC)
 
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
-option(WITH_WEBINTERFACE     	 "Buld with WebInterface"         OFF)
+option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 
 set(PLUGIN_INSTALL_PATH  LIBRARY DESTINATION bin/snoreplugins)
 
 add_subdirectory(data)
+add_subdirectory(3party)
 add_subdirectory(src)
 
 install(FILES share/FindLibsnore.cmake DESTINATION share/apps/cmake/modules)
