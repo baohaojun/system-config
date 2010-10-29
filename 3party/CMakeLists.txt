@@ -14,8 +14,8 @@ set( GROWL_SEND_SRC
 add_library( growl  STATIC ${GROWL_SEND_SRC} )
 
 
-add_library( growl++ STATIC gntp-send/source/growl++.cpp)
-target_link_libraries ( growl++  growl)
+add_library( growl_cpp STATIC gntp-send/source/growl++.cpp)
+target_link_libraries ( growl_cpp  growl)
 
 endif(WITH_GROWL_BACKEND)
 

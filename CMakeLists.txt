@@ -54,4 +54,3 @@ add_subdirectory(data)
 add_subdirectory(3party)
 add_subdirectory(src)
 
-install(FILES share/FindLibsnore.cmake DESTINATION share/apps/cmake/modules)
