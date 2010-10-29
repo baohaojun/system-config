@@ -26,7 +26,7 @@ if (start < 0):
     maxI = 1 << I_bits
     maxl = 1 << l_bits
 
-    bh = -start/maxl + 1
+    bh = -start/maxl + 1 
     start = start + bh*maxl - bh*maxI
     sys.stderr.write("fixed start to be %d, bh is %x\n" % (start, bh))
 
