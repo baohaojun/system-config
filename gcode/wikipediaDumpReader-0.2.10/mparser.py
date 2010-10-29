@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 try:
 	import mod.bz2 as bz2
 except ImportError:
@@ -14,10 +15,10 @@ def buildIndex(inputbz2Archive):
         sys.stderr.write("Maybe not a correct mediawiki bz2 dump\n");
     blocknum = -1
     numarticles = 0
-    maxL = (1 << (struct.calcsize('l')*8))
+    maxI = (1 << (struct.calcsize('I')*8))
     def writeBlock(bzblocks):
-        sys.stderr.write("Processing block %d\n" % bzblocks[0]);
-        sys.stdout.write("block: %d\t%d %d\n" % (bzblocks[0], bzblocks[2], bzblocks[3]))
+        sys.stderr.write("Processing block 0x%x\n" % bzblocks[0]);
+        sys.stdout.write("block: 0x%x\t0x%x\t0x%x\n" % (bzblocks[0], bzblocks[2], bzblocks[3]))
         return bzblocks[0]
 
     try:
@@ -27,7 +28,7 @@ def buildIndex(inputbz2Archive):
                 bzblocks1 = f.tellbzblock()
                 if bzblocks1[0] != blocknum:
                     blocknum = writeBlock(bzblocks1)
-                    sys.stderr.write("%d articles found\n" % numarticles)
+                    sys.stderr.write("0x%x articles found\n" % numarticles)
                 if l == "  <page>\n":
                     start = f.tell()
                     break
@@ -39,7 +40,7 @@ def buildIndex(inputbz2Archive):
                  bzblocks2 = f.tellbzblock()
                  if bzblocks2[0] != blocknum:
                          blocknum = writeBlock(bzblocks2)
-                         sys.stderr.write("%d articles found\n" % numarticles)
+                         sys.stderr.write("0x%x articles found\n" % numarticles)
                  if l[0:11] == '    <title>':
                          titleline = l
                  if l == "  </page>\n":
@@ -51,7 +52,7 @@ def buildIndex(inputbz2Archive):
             title = titleline[11:-9]
             numarticles += 1
 
-            sys.stdout.write(("title: %s\t%s\t%d\t%d\n" % (title, bzblocks1[0], start - (bzblocks1[1][0] + bzblocks1[1][1] * maxL), ending - start) ))
+            sys.stdout.write(("title: %s\t0x%x\t0x%x\t0x%x\n" % (title, bzblocks1[0], start - (bzblocks1[1][0] + bzblocks1[1][1] * maxI), ending - start) ))
     except StopIteration:
         sys.stderr.write("End of that block : %s\n" % `f.name`)
 

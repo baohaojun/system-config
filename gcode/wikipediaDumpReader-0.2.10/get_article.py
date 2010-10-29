@@ -16,7 +16,7 @@ def die(arg):
     sys.exit(-1)
 
 f = bz2.BZ2File("/home/bhj/wikipedia/enwiki-latest-pages-articles.xml.bz2")
-prev_block_num, prev_block_byte, prev_block_bit, next_block_num, next_block_byte, next_block_bit, block, start, len_ = map(int, sys.argv[1:])
+prev_block_num, prev_block_byte, prev_block_bit, next_block_num, next_block_byte, next_block_bit, block, start, len_ = map(lambda(x): int(x, 0), sys.argv[1:])
 
 if block == prev_block_num:
     block_byte = prev_block_byte
@@ -29,9 +29,9 @@ else:
 
 L, olength = f.loadBlock(block_byte, block_bit, start, len_)
 if olength - start < len_:
+    sys.stderr.write("Read from the next block\n")
     L2, _ = f.loadBlock(next_block_byte, next_block_bit, 0, len_-(olength - start))
     L  = L[:olength-start] + L2[:start + len_-olength]
-
 
 try:
     D = parseString("<page>\n" + L)
@@ -44,3 +44,8 @@ title = n[0].firstChild.nodeValue
 n = D.getElementsByTagName('text')
 text = n[0].firstChild.nodeValue
 sys.stdout.write("%s\n%s" % (title.encode('utf-8'), text.encode('utf-8')))
+# Local Variables: #
+# tab-width: 4 #
+# python-indent: 4 #
+# End: #
+ 
