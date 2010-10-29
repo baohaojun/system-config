@@ -364,6 +364,18 @@
                     (nodup-ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep)
                     (setq grep-rgrep-history grep-history))))
+(defun grep-tag-default-path ()
+  (or (and transient-mark-mode mark-active
+	   (/= (point) (mark))
+	   (buffer-substring-no-properties (point) (mark)))
+      (save-excursion
+        (let* ((re "[^-a-zA-Z0-9._/]")
+               (p1 (progn (search-backward-regexp re)
+                          (1+ (point))))
+              (p2 (progn (forward-char)
+                         (search-forward-regexp re)
+                         (1- (point)))))
+          (buffer-substring-no-properties p1 p2)))))
 
 (global-set-key [(meta s) ?p] 
                 (lambda ()
@@ -371,9 +383,10 @@
                   (let ((grep-history grep-find-file-history)
                         (my-grep-command "beagle-grep.sh -f -e pat")
                         (current-prefix-arg 4))
-                    (nodup-ring-insert cscope-marker-ring (point-marker))
-                    (call-interactively 'grep)
-                    (setq grep-find-file-history grep-history))))
+                    (flet ((grep-tag-default () (grep-tag-default-path)))
+                      (nodup-ring-insert cscope-marker-ring (point-marker))
+                      (call-interactively 'grep)
+                      (setq grep-find-file-history grep-history)))))
                     
 
 (global-set-key [(control meta o)] 'bhj-occur)
