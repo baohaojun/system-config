@@ -51,12 +51,12 @@ void Snarl_Backend::registerApplication(Application *application){
     Snarl::SnarlInterface *snarlInterface = new Snarl::SnarlInterface();
     _applications.insert(application->name(),snarlInterface);
 
-    const char *appName = strdup(application->name().toAscii().constData());
-    const char *icon = strdup(application->icon().toAscii().constData());
+    const char *appName = strdup(application->name().toUtf8().constData());
+    const char *icon = strdup(application->icon().toUtf8().constData());
     snarlInterface->RegisterApp(appName,icon,icon);
 
     foreach(Alert *alert,application->alerts()){
-        snarlInterface->RegisterAlert(appName,alert->name().toAscii().constData());
+        snarlInterface->RegisterAlert(appName,alert->name().toUtf8().constData());
     }
     delete [] appName;
     delete [] icon;
@@ -77,9 +77,9 @@ int Snarl_Backend::notify(QSharedPointer<Notification>notification){
         snarlInterface = _defautSnarlinetrface;
 
     int id = notification->id();
-    const char *title = strdup(Notification::toPlainText(notification->title()).toAscii().constData());
-    const char *text =  strdup(Notification::toPlainText(notification->text()).toAscii().constData());
-    const char *icon =  strdup(notification->icon().toAscii().constData());
+    const char *title = strdup(Notification::toPlainText(notification->title()).toUtf8().constData());
+    const char *text =  strdup(Notification::toPlainText(notification->text()).toUtf8().constData());
+    const char *icon =  strdup(notification->icon().toUtf8().constData());
 
     if(notification->id()==0){
         printf("Calling SnarlMessage\n"

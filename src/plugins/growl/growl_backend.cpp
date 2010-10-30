@@ -46,10 +46,10 @@ void Growl_Backend::registerApplication(Application *application){
     for (int i = 0 ; i < alertCount; ++i){
         QString name = aList.at(i)->name();
         n[i] = new char[name.length()+1];
-        strcpy(n[i],name.toAscii().constData());
+        strcpy(n[i],name.toUtf8().constData());
     }
 
-    _applications.insert(application->name(),new Growl(GROWL_TCP,NULL,application->name().toAscii().constData(),(const char**)n,application->alerts().count()));
+    _applications.insert(application->name(),new Growl(GROWL_TCP,NULL,application->name().toUtf8().constData(),(const char**)n,application->alerts().count()));
 
     for (int i = 0 ; i < alertCount; ++i){
         delete [] n[i];
@@ -72,7 +72,7 @@ int Growl_Backend::notify(QSharedPointer<Notification> notification){
     QString title=Notification::toPlainText(notification->title());
     QString text=Notification::toPlainText(notification->text());
     qDebug()<<"Notify Growl:"<<notification->application()<<title;
-    growl->Notify(notification->alert().toAscii().constData(),title.toAscii().constData(),text.toAscii().constData(),"",notification->icon().toAscii().constData());
+    growl->Notify(notification->alert().toUtf8().constData(),title.toUtf8().constData(),text.toUtf8().constData(),"",notification->icon().toUtf8().constData());
     return ++id;
 }
 
