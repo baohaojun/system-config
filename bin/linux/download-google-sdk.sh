@@ -4,6 +4,7 @@ set -e
 
 mkdir ~/external/bin/linux/ext/android-sdk-linux_86/google -p
 cd ~/external/bin/linux/ext/android-sdk-linux_86/google
+wget -c http://www.crystax.net/data/android-ndk-r4-linux-x86-crystax-4.tar.bz2
 wget -c http://dl.google.com/android/android-sdk_r06-windows.zip
 wget -c http://dl.google.com/android/android-sdk_r06-linux_86.tgz
 wget -c http://dl.google.com/android/ndk/android-ndk-r4b-linux-x86.zip

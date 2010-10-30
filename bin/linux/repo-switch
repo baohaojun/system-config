@@ -4,4 +4,5 @@ set -e
 cd `lookup_file .repo/manifests`
 git co HEAD^
 for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
-repo init -b "$1"
+
+repo init "$@"
