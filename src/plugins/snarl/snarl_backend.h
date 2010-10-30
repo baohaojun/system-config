@@ -19,6 +19,9 @@
 #include "core/interface.h"
 #include "SnarlInterface.h"
 
+
+#include <QAbstractEventDispatcher>
+
 class Snarl_Backend:public Notification_Backend
 {
     Q_OBJECT
@@ -28,10 +31,11 @@ public:
     ~Snarl_Backend();
     bool isPrimaryNotificationBackend();
 
-
-protected:
-    bool eventFilter(QObject *obj, QEvent *event);
 private:   
+    static bool eventFilter(void *message);
+    static QAbstractEventDispatcher::EventFilter originalEventFilter;
+
+
     QHash<QString,Snarl::SnarlInterface*> _applications;
     Snarl::SnarlInterface* _defautSnarlinetrface;
 

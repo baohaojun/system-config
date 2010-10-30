@@ -20,7 +20,7 @@
 #include <QDebug>
 #include <QTcpSocket>
 #include <Qt>
-#include <QTextEdit>
+#include <QTextDocumentFragment>
 
 
 
@@ -29,11 +29,8 @@ int Notification::DefaultTimeout=10;
 
 QString Notification::toPlainText ( const QString &string )
 {
-    if ( !Qt::mightBeRichText ( string ) )
-        return string;
-    QTextEdit te;
-    te.setHtml ( string );
-    return te.toPlainText();
+    QTextDocumentFragment frag = QTextDocumentFragment::fromHtml(string);
+    return frag.toPlainText();
 }
 
 Notification::Notification ( uint id ) :

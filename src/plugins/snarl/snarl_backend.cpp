@@ -21,29 +21,30 @@
 #include <QtCore>
 #include <QTextEdit>
 
-
 #include <iostream>
-
-
-
 
 Q_EXPORT_PLUGIN2(snarl_backend,Snarl_Backend)
 
+QAbstractEventDispatcher::EventFilter Snarl_Backend::originalEventFilter = NULL;
+
 Snarl_Backend::Snarl_Backend(SnoreServer *snore):
-Notification_Backend("SnarlBackend",snore)
+        Notification_Backend("SnarlBackend",snore)
 {
     Snarl::SnarlInterface *snarlInterface = new Snarl::SnarlInterface();
     _applications.insert("SnoreNotify",snarlInterface);
     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersionExA();
     _defautSnarlinetrface = new Snarl::SnarlInterface();
+
+    //originalEventFilter = QAbstractEventDispatcher::instance()->setEventFilter(&eventFilter);
 }
 
-Snarl_Backend::~Snarl_Backend(){
-
+Snarl_Backend::~Snarl_Backend()
+{
     foreach(Application *a,this->snore()->aplications().values()){
         unregisterApplication(a);
     }
     delete _defautSnarlinetrface;
+    QAbstractEventDispatcher::instance()->setEventFilter(originalEventFilter);
 }
 
 void Snarl_Backend::registerApplication(Application *application){
@@ -106,9 +107,15 @@ void Snarl_Backend::closeNotification(QSharedPointer<Notification> notification)
     _defautSnarlinetrface->HideMessage(notification->id());
 }
 
-bool Snarl_Backend::eventFilter(QObject *obj, QEvent *event){
-    qDebug()<<obj->objectName();
-    return true;
+bool Snarl_Backend::eventFilter(void *message){
+    MSG *msg;
+    msg = (MSG*)message;
+    if(msg!=NULL){
+
+//        uint id = static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(msg->hwnd));
+//        qDebug()<<QString::number(id);
+    }
+    return originalEventFilter==NULL?true:originalEventFilter(message);
 }
 
 bool Snarl_Backend::isPrimaryNotificationBackend(){
