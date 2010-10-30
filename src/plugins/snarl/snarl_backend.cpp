@@ -23,7 +23,6 @@
 
 
 #include <iostream>
-#include <wchar.h>
 
 
 
@@ -37,10 +36,8 @@ Notification_Backend("SnarlBackend",snore)
     _applications.insert("SnoreNotify",snarlInterface);
     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersionExA();
     _defautSnarlinetrface = new Snarl::SnarlInterface();
-    this->installEventFilter(this);
-
-
 }
+
 Snarl_Backend::~Snarl_Backend(){
 
     foreach(Application *a,this->snore()->aplications().values()){
@@ -53,14 +50,12 @@ void Snarl_Backend::registerApplication(Application *application){
     Snarl::SnarlInterface *snarlInterface = new Snarl::SnarlInterface();
     _applications.insert(application->name(),snarlInterface);
 
-    wchar_t *appName = toWchar(application->name());
-    wchar_t *icon = toWchar(application->icon());
+    const char *appName = strdup(application->name().toAscii().constData());
+    const char *icon = strdup(application->icon().toAscii().constData());
     snarlInterface->RegisterApp(appName,icon,icon);
 
     foreach(Alert *alert,application->alerts()){
-        wchar_t *alertName = toWchar(alert->name());
-        snarlInterface->RegisterAlert(appName,alertName);
-        delete [] alertName;
+        snarlInterface->RegisterAlert(appName,alert->name().toAscii().constData());
     }
     delete [] appName;
     delete [] icon;
@@ -76,27 +71,28 @@ void Snarl_Backend::unregisterApplication(Application *application){
 
 int Snarl_Backend::notify(QSharedPointer<Notification>notification){
     Snarl::SnarlInterface *snarlInterface = _applications.value(notification->application());
+    qDebug()<<notification->application();
     if(snarlInterface == NULL)
         snarlInterface = _defautSnarlinetrface;
 
     int id = notification->id();
-    wchar_t *title = toWchar(Notification::toPlainText(notification->title()));
-    wchar_t *text =  toWchar(Notification::toPlainText(notification->text()));
-    wchar_t *icon =  toWchar(notification->icon());
+    const char *title = strdup(Notification::toPlainText(notification->title()).toAscii().constData());
+    const char *text =  strdup(Notification::toPlainText(notification->text()).toAscii().constData());
+    const char *icon =  strdup(notification->icon().toAscii().constData());
 
     if(notification->id()==0){
-        wprintf(L"Calling SnarlMessage\n"
-                L"Title: \"%s\"\n"
-                L"Text: \"%s\"\n"
-                L"Timeout: \"%i\"\n"
-                L"Icon: \"%s\"\n",title,text,notification->timeout(),icon);
+        printf("Calling SnarlMessage\n"
+               "Title: \"%s\"\n"
+               "Text: \"%s\"\n"
+               "Timeout: \"%i\"\n"
+               "Icon: \"%s\"\n",title,text,notification->timeout(),icon);
         id = snarlInterface->ShowMessage(title,text,notification->timeout(), icon);
     }else{
         //update message
-        wprintf(L"Updating SnarlMessage ID: \"%i\"\n"
-                L"Title: \"%s\"\n"
-                L"Text: \"%s\"\n"
-                L"Icon: \"%s\"\n",notification->id(),title,text,icon);
+        printf("Updating SnarlMessage ID: \"%i\"\n"
+               "Title: \"%s\"\n"
+               "Text: \"%s\"\n"
+               "Icon: \"%s\"\n",notification->id(),title,text,icon);
         snarlInterface->UpdateMessage(notification->id(),title, text,icon);
     }
 
@@ -107,21 +103,12 @@ int Snarl_Backend::notify(QSharedPointer<Notification>notification){
 }
 
 void Snarl_Backend::closeNotification(QSharedPointer<Notification> notification){
-    Snarl::SnarlInterface *snarlInterface = _applications.value(notification->application());
-    if(snarlInterface == NULL)
-        return;
-    snarlInterface->HideMessage(notification->id());
+    _defautSnarlinetrface->HideMessage(notification->id());
 }
 
 bool Snarl_Backend::eventFilter(QObject *obj, QEvent *event){
     qDebug()<<obj->objectName();
     return true;
-}
-
-wchar_t *Snarl_Backend::toWchar(const QString &string){
-    wchar_t *wc = new wchar_t[string.length() + 1];
-    wc[string.toWCharArray(wc)] = 0;
-    return wc;
 }
 
 bool Snarl_Backend::isPrimaryNotificationBackend(){

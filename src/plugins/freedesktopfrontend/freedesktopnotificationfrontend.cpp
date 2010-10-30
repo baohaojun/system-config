@@ -59,6 +59,7 @@ void FreedesktopNotification_Frontend::notificationClosed(QSharedPointer<Notific
         reason=4;
     }
 
+    qDebug()<<"Closinf Dbus notification"<<QString::number(notification->id());
     emit NotificationClosed(notification->id(),reason);
 }
 

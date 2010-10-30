@@ -1,4 +1,4 @@
-﻿#ifndef SNARL_INTERFACE
+#ifndef SNARL_INTERFACE
 #define SNARL_INTERFACE
 
 #include <tchar.h>

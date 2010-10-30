@@ -32,8 +32,6 @@ public:
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
 private:   
-    //returns a wchart_t aray has to deleted after use
-    wchar_t *toWchar(const QString &string);
     QHash<QString,Snarl::SnarlInterface*> _applications;
     Snarl::SnarlInterface* _defautSnarlinetrface;
 

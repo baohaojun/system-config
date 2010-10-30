@@ -99,13 +99,14 @@ void SnoreServer::publicatePlugin ( SnorePlugin *plugin )
     Notification_Backend * nb=qobject_cast<Notification_Backend *> ( plugin );
     if ( nb )
     {
+        nb->setSnore ( this );
         qDebug() <<pluginName<<"is a Notification_Backend";
         if ( nb->isPrimaryNotificationBackend() )
         {
             _primaryNotificationBackends.insert ( pluginName,nb );
-            if ( _notificationBackend==NULL )
+            if ( _notificationBackend == NULL )
             {
-                _notificationBackend=nb;
+                _notificationBackend = nb;
                 qDebug() <<"Primary NotificationBackend is"<<nb->name();
             }
         }
@@ -118,7 +119,6 @@ void SnoreServer::publicatePlugin ( SnorePlugin *plugin )
         connect ( this,SIGNAL ( closeNotify ( QSharedPointer<Notification> ) ),nb,SLOT ( closeNotification ( QSharedPointer<Notification> ) ) );
         connect ( this,SIGNAL ( applicationInitialized ( Application* ) ),nb,SLOT ( registerApplication ( Application* ) ) );
         connect ( this,SIGNAL ( applicationRemoved ( Application* ) ),nb,SLOT ( unregisterApplication ( Application* ) ) );
-        nb->setSnore ( this ); 
     }
 }
 
