@@ -83,8 +83,6 @@ FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
     FreedesktopNotification::registerTypes();
     QImage image(img.convertToFormat(QImage::Format_ARGB32));
     this->imageData.append((char*)image.rgbSwapped().bits(),image.numBytes());
-    if(hasedImages.contains(computeHash()))
-        return;
     width=image.width();
     height=image.height();
     rowstride=image.bytesPerLine();
