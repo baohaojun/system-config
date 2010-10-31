@@ -18,11 +18,30 @@ complete -F _ping ssh
 complete -F _ping slin
 
 _repo-switch() {
-    local br_list
+    local cur prev cmd br_list
     COMPREPLY=()
-    cur=${COMP_WORDS[COMP_CWORD]}
-    
-    br_list=$( cd `lookup_file .repo/manifests` >/dev/null 2>&1; git branch -r |perl -npe 's,.*/,,')
+    COMP_WORDBREAKS=${COMP_WORDBREAKS//:}
+
+    type _get_comp_words_by_ref &>/dev/null && {
+        _get_comp_words_by_ref -n: cur prev
+    } || {
+        cur=$(_get_cword ":")
+        prev=${COMP_WORDS[$COMP_CWORD-1]}
+    }
+    cmd=${COMP_WORDS[1]}
+
+    case "$prev" in
+        -b)
+            br_list=$( cd `lookup_file .repo/manifests` >/dev/null 2>&1; git branch -r |perl -npe 's,.*/,,')
+            ;;
+        -u)
+            br_list=$(
+                echo git://android-x86.git.sf.net/gitroot/android-x86/manifest.git;
+                echo git://nv-tegra.nvidia.com/android/manifest.git;
+                echo git://android.git.kernel.org/platform/manifest.git;
+            )
+            ;;
+    esac
     COMPREPLY=( $( compgen -W "$br_list" -- "$cur" ) )
     return 0
 }
