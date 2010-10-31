@@ -27,6 +27,7 @@ class SNORE_EXPORT SnoreServer:public QObject
     Q_OBJECT
 public:
     static const QString snoreTMP;
+    static void cleanupTMP();
 
 
 public:

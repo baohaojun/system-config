@@ -17,6 +17,7 @@ int main ( int argc, char *argv[] )
     trayIcon->setVisible(true);
 
     SnoreServer *s = new SnoreServer( trayIcon );
+    s->cleanupTMP();
 
     QDir pluginsDir ( a.applicationDirPath() +"/snoreplugins" );
     foreach ( QString fileName, pluginsDir.entryList ( QDir::Files ) )

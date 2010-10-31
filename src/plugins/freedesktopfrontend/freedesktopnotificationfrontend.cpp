@@ -64,14 +64,10 @@ void FreedesktopNotification_Frontend::notificationClosed(QSharedPointer<Notific
 }
 
 QString FreedesktopNotification_Frontend::getImagefromHint(const FreedesktopImageHint &img){
-    QCryptographicHash hash(QCryptographicHash::Md5);
-    hash.addData(img.imageData);
-    QString filename=SnoreServer::snoreTMP+hash.result().toHex()+".png";
-    QFile file(filename);
-    if(file.exists())return filename;
-
+    QString filename=QString(SnoreServer::snoreTMP).append(img.hash()).append(".png");
+    if(QFile::exists(filename))
+        return filename;
     img.toQImage().save(filename,"PNG");
-    qDebug()<<"Saving to "<<filename;
     return filename;
 }
 

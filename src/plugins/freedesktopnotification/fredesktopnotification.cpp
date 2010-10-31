@@ -38,7 +38,7 @@ void FreedesktopNotification::registerTypes() {
 }
 
 QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i) {
- //   Q_ASSERT(!i.notification.isNull());
+    //   Q_ASSERT(!i.notification.isNull());
     qDebug()<<i.notification->toString();
     a<<i.notification->application();
     a<<uint(0);
@@ -64,27 +64,48 @@ QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i) {
 }
 
 const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotification &) {
-//not supported
+    //not supported
     return a;
 }
 
 
-FreedesktopImageHint::FreedesktopImageHint() {
+QHash<QString,void*> FreedesktopImageHint::hasedImages;
+
+FreedesktopImageHint::FreedesktopImageHint()
+{
     FreedesktopNotification::registerTypes();
 }
 
 
 
-FreedesktopImageHint::FreedesktopImageHint(const QImage &img) {
+FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
+{
     FreedesktopNotification::registerTypes();
     QImage image(img.convertToFormat(QImage::Format_ARGB32));
+    this->imageData.append((char*)image.rgbSwapped().bits(),image.numBytes());
+    if(hasedImages.contains(computeHash()))
+        return;
     width=image.width();
     height=image.height();
     rowstride=image.bytesPerLine();
     hasAlpha=image.hasAlphaChannel();
     channels =image.isGrayscale()?1:hasAlpha?4:3;
     bitsPerSample=image.depth()/channels;
-    this->imageData.append((char*)image.rgbSwapped().bits(),image.numBytes());
+
+}
+
+QString FreedesktopImageHint::computeHash(){
+    if(this->_hash.isEmpty()){
+        Q_ASSERT(!imageData.isEmpty());
+        QCryptographicHash h(QCryptographicHash::Md5);
+        h.addData(imageData);
+        this->_hash = h.result().toHex();
+    }
+    return this->_hash;
+}
+QString FreedesktopImageHint::hash()const{
+    Q_ASSERT(!_hash.isEmpty());
+    return _hash;
 }
 
 
@@ -100,8 +121,9 @@ QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopImageHint &i) {
 }
 
 const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopImageHint &i) {
-    a.beginStructure();
+    a.beginStructure();    
     a >> i.width>> i.height>> i.rowstride>> i.hasAlpha>> i.bitsPerSample>> i.channels>> i.imageData;
     a.endStructure();
+    FreedesktopImageHint::hasedImages.insert(i.computeHash(),NULL);
     return a;
 }

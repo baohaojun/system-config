@@ -29,8 +29,7 @@ int Notification::DefaultTimeout=10;
 
 QString Notification::toPlainText ( const QString &string )
 {
-    QTextDocumentFragment frag = QTextDocumentFragment::fromHtml(string);
-    return frag.toPlainText();
+    return QTextDocumentFragment::fromHtml(string).toPlainText();
 }
 
 Notification::Notification ( uint id ) :

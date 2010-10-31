@@ -44,8 +44,12 @@ const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotificati
 class FreedesktopImageHint
 {
 public:
+    static QHash<QString,void*> hasedImages;
+public:    
     FreedesktopImageHint();
     FreedesktopImageHint(const QImage &img);
+    QString hash()const;
+    QString computeHash();
 
     QImage toQImage()const;
 
@@ -56,6 +60,7 @@ public:
     int bitsPerSample;
     int channels;
     QByteArray imageData;
+    QString _hash;
 
 
 };

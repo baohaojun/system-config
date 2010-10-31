@@ -27,12 +27,7 @@
 #include <QSystemTrayIcon>
 
 QString const SnoreServer::snoreTMP = QDir::temp().path() +"/SnoreNotify/";
-
-SnoreServer::SnoreServer ( QSystemTrayIcon *trayIcon ) :
-        _notificationBackend ( NULL ),
-        _trayIcon ( trayIcon )
-{
-    qDebug() <<"Inititalized";
+void SnoreServer::cleanupTMP(){
     QDir home ( snoreTMP );
     if ( home.exists() )
     {
@@ -46,8 +41,20 @@ SnoreServer::SnoreServer ( QSystemTrayIcon *trayIcon ) :
         }
 
     }
-    else
-        QDir::temp().mkpath ( "SnoreNotify" );
+    else{
+        home.cdUp();
+        home.mkdir("SnoreNotify");
+    }
+
+}
+
+SnoreServer::SnoreServer ( QSystemTrayIcon *trayIcon ) :
+        _notificationBackend ( NULL ),
+        _trayIcon ( trayIcon )
+{
+    qDebug() <<"Inititalized";
+
+
 
     _defaultNotificationInterface = new SnoreNotificationInstance ( "Snore",this );
 

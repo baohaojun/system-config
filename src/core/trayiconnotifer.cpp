@@ -49,7 +49,7 @@ void TrayIconNotifer::displayNotification(){
     }
     QSharedPointer<Notification> notification =  _notificationQue.takeLast();
     qDebug()<<"taking"<<notification->title();
-    _trayIcon->showMessage ( notification->title(),notification->text(),QSystemTrayIcon::NoIcon,notification->timeout() *1000 );
+    _trayIcon->showMessage ( Notification::toPlainText(notification->title()),Notification::toPlainText(notification->text()),QSystemTrayIcon::NoIcon,notification->timeout() *1000 );
     QTimer *t = new QTimer(notification.data());
     t->setInterval(notification->timeout() *1000);
     connect(t,SIGNAL(timeout()),this,SLOT(displayNotification()));
