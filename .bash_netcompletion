@@ -36,9 +36,12 @@ _repo-switch() {
             ;;
         -u)
             br_list=$(
-                echo git://android-x86.git.sf.net/gitroot/android-x86/manifest.git;
-                echo git://nv-tegra.nvidia.com/android/manifest.git;
-                echo git://android.git.kernel.org/platform/manifest.git;
+                (
+                    echo git://android-x86.git.sf.net/gitroot/android-x86/manifest.git;
+                    echo git://nv-tegra.nvidia.com/android/manifest.git;
+                    echo git://android.git.kernel.org/platform/manifest.git;
+                    cat ~/.remotes 2>/dev/null
+                ) |sort -u
             )
             ;;
     esac
