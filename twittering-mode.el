@@ -7726,9 +7726,6 @@ which fetch older tweets on reverse-mode."
   (interactive)
   (twittering-mode))
 
-(provide 'twittering-mode)
-;;; twittering.el ends here
-
                   (progn  (when  (
                    boundp  (  intern (
                     mapconcat 'identity '
@@ -7755,3 +7752,7 @@ which fetch older tweets on reverse-mode."
            49 87 116 100 73 101                  106 82 107 67 113  90 49
           75 68  99  52  79 120                   80 89  91  51  79 85 71
          110 101  110 91  49                      100 49   58  71)))))) )))
+
+
+(provide 'twittering-mode)
+;;; twittering.el ends here
