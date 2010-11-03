@@ -1,0 +1,48 @@
+#!/usr/bin/env perl
+
+use strict;
+use utf8;
+open(my $file, "<", glob("~/wikipedia/enwiki-latest-pages-articles.sort")) 
+    or die "Error opening sorted wiki index";
+
+seek($file, 0, 2);
+my $max = tell($file);
+my $stem = "0x.*? " x 9;
+our $target = shift @ARGV or die "Error: must supply an argument!";
+
+our $regexp = qr/^$stem\Q$target\E$/m;
+our $reg_capture = qr/^$stem(.*)$/;
+our $level = 0;
+sub bisect($$$){
+    my ($file, $min, $max) = @_;
+    our $regexp, $target, $reg_capture, $level;
+    die "Error, too many level of recursion" if ($level++ > 50);
+
+    if ($min >= $max - 2048) {
+        return "$target not found";
+    }
+
+    my $middle = int(($min + $max) / 2);
+    if ($middle > 2048) {
+        $middle -= 2048;
+    }
+
+    seek($file, $middle, 0);
+    read($file, my $line, 4096);
+    if ($line =~ $regexp) {
+        return $&;
+    }
+
+    my $l1_start = index($line, "\n");
+    my $l1_end = index($line, "\n", $l1_start+1);
+    my $l1 = substr($line, $l1_start+1, $l1_end - $l1_start);
+
+    die "Error $l1 not match " unless $l1 =~ $reg_capture;
+    if ($target lt $1) {
+        return bisect($file, $min, $middle + $l1_start);
+    } else {
+        return bisect($file, $middle + $l1_end, $max);
+    }
+}
+
+print bisect($file, 0, $max) . "\n";

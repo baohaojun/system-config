@@ -2,10 +2,13 @@
 import re, struct, sys
 from xml.dom.minidom import parseString
 
-re_title = re.compile("^title: (.*)" + "\t(-?[0-9]*)"*3 + "$")
-re_block = re.compile("^block: (-?[0-9]*)\t(-?[0-9]*) (-?[0-9]*)$")
+re_title = re.compile("^title: (.*)" + "\t(-?0x[0-9a-fA-F]*)"*3 + "$")
+re_block = re.compile("^block: " + "(-?0x[0-9a-fA-F]*)\t?"*3 + "$")
 
 prev_block = cur_block = None
+
+def Int(x):
+    return int(x, 0)
 
 while 1:
     l = sys.stdin.readline()
@@ -15,7 +18,7 @@ while 1:
     bmatch = re_block.match(l)
     if bmatch:
         prev_block = cur_block
-        cur_block = map(int, (bmatch.group(1), bmatch.group(2), bmatch.group(3)))
+        cur_block = map(Int, (bmatch.group(1), bmatch.group(2), bmatch.group(3)))
         if not prev_block:
             prev_block = cur_block
     else:
@@ -26,7 +29,7 @@ while 1:
             n = D.getElementsByTagName('title')
             title = n[0].firstChild.nodeValue.encode('utf-8')
 
-            start = int(tmatch.group(3))
+            start = Int(tmatch.group(3))
             if (start < 0):
                 # this is work-around for a bug where wikidump-reader incorrectly used 64bit instead of 32bit for the hi-4byte calc.
                 I_bits = struct.calcsize('I') * 8
@@ -41,6 +44,6 @@ while 1:
             sys.stdout.write (("0x%08x " * 9 + "%s\n") % (
                 prev_block[0], prev_block[1], prev_block[2],
                 cur_block[0], cur_block[1], cur_block[2],
-                int(tmatch.group(2)), start, int(tmatch.group(4)),
+                Int(tmatch.group(2)), start, Int(tmatch.group(4)),
                 title))
             prev_block = cur_block
