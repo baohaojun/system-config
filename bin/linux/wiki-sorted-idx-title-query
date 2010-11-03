@@ -11,6 +11,7 @@ my $stem = "0x.*? " x 9;
 our $target = shift @ARGV or die "Error: must supply an argument!";
 
 our $regexp = qr/^$stem\Q$target\E$/m;
+our $reg_remap = qr/^($stem)(\Q$target\E)$/m;
 our $reg_capture = qr/^$stem(.*)$/;
 our $level = 0;
 sub bisect($$$){
@@ -45,4 +46,7 @@ sub bisect($$$){
     }
 }
 
-print bisect($file, 0, $max) . "\n";
+my $res = bisect($file, 0, $max);
+die "Error: $res not match patter" unless $res =~ $regexp;
+$res =~ s/$reg_remap/100% [$2\t$1]/;
+print "$res\n";

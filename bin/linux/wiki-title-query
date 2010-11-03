@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 cd ~/windows-config/gcode/offline.wikipedia
-./quickstartsearch db "$@" > /tmp/ow.db.search.$$
+wiki-sorted-idx-title-query "$@" > /tmp/ow.db.search.$$
 if test `cat /tmp/ow.db.search.$$|wc -l` != 1; then
     echo "Error: dbsearch on \`$@' return not exactly 1 line" 1>&2
     false

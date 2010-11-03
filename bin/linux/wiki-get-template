@@ -39,6 +39,11 @@ sub get_template($) {
     my $line = 0;
     while (<$TEMPLATE>) {
       $line ++;
+      if ($line == 1 and $_ =~ m/^\s*$/) {
+          while (<$TEMPLATE>) {
+              last unless m/^\s*$/;
+          }
+      }
       if ($line == 1 and $_ =~ m/^\s*#REDIRECT\s*\[\[Template:(.*)\]\]/i) {
         my $template_redirect = $1;
         $template_redirect =~ s/^template:/Template:/;
