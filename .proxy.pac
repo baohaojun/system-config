@@ -15,7 +15,7 @@
          'pdk.android.com', 'photobucket.com', 'www.ccthere.com',
          'zh.wikisource.org', 'wikilivres.info', 'wretch.cc',
          'twbbs.org', 'video.google.com', 'groups.google.',
-         'book.kanunu.org', 'markmail.org'];
+         'book.kanunu.org', 'markmail.org', 'tolchz.net'];
     
     var regexp = new RegExp(blocked_site.join('|'));
     
