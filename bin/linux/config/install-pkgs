@@ -110,6 +110,7 @@ libmono-cairo2.0-cil
 libmono-dev
 libmono-sharpzip2.84-cil
 libmono-sqlite2.0-cil
+sqlitebrowser
 libmono-system-runtime2.0-cil
 libncurses5-dev
 libncursesw5-dev
