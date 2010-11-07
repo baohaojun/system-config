@@ -1,0 +1,2 @@
+#!/bin/bash
+for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT
