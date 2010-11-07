@@ -30,3 +30,4 @@ esac
 alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
 export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
+export USE_CCACHE=1

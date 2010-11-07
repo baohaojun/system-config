@@ -4,6 +4,14 @@ use Getopt::Long;
 use strict;
 use String::ShellQuote;
 
+print "gtags-cscope-bhj ";
+foreach my $x (@ARGV) {
+    $x = shell_quote($x);
+    print "$x ";
+}
+print "\n";
+
+
 #gtags-cscope-bhj -f cscope.out -d -L -7 beagle-grep.sh
 
 chomp(my $pwd = `pwd`);
@@ -14,26 +22,40 @@ while ( not -f "$pwd/GTAGS" and not "$pwd" eq "/") {
 if ($pwd eq "/") {
     chomp($pwd = `readlink -f ~/.gtags-dir`)
 }
-chdir $pwd;
 
 my $lookup_type = substr($ARGV[4], 1);
 $_ = $ARGV[5];
 (my $lookup_needle, my $lookup_restrict_regexp) = split;
 
-my $start_dir = substr($pwd, length("$ENV{HOME}/tmp/for-code-reading"));
-open(my $grep, "-|", "echo $lookup_type$lookup_needle|gtags-cscope");
-print "lookup_restrict_regexp is $lookup_restrict_regexp\n" if $lookup_restrict_regexp;
+sub do_cscope($$$$) {
+    my ($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp) = @_;
+    chdir ($pwd) or die "Error chdir $pwd";
+    my $start_dir = substr($pwd, length("$ENV{HOME}/tmp/for-code-reading"));
+    $start_dir =~ s,/+,/,g;
+    open(my $grep, "-|", "echo $lookup_type$lookup_needle|gtags-cscope");
 
-while (<$grep>) {
-  chomp();
-  s/^>>.*//;
-  my $file=$_;
-  $file =~ s/ .*//;
-  if (not -e "$start_dir/$file") {
-    next;
-  }
-  if ($lookup_restrict_regexp && not m/$lookup_restrict_regexp/i) {
-    next;
-  }
-  print "$_\n";
+    while (<$grep>) {
+        chomp();
+        s/^>>.*//;
+        my $file=$_;
+        $file =~ s/ .*//;
+        if (not -e "$start_dir/$file") {
+            next;
+        }
+        if ($lookup_restrict_regexp && not m/$lookup_restrict_regexp/i) {
+            next;
+        }
+        print "$start_dir/$_\n" unless $_ eq "";
+    }
+}
+
+do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
+chdir ($pwd);
+open(my $brothers, "<", ".beagle-brothers") or exit(0);
+while(<$brothers>) {
+    chomp;
+    s,/.beagle$,,;
+    my $pwd = $_;
+    print "\n\n================\n\n";
+    do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
 }

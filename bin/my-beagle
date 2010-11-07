@@ -26,8 +26,11 @@ else
 fi
 
 longest_token=`get_longest_token "$@"`
-beagle-static-query \
-    --add-static-backend "$beagle_dir" \
-    --backend none --max-hits 100000 "$longest_token"\
-|unurl.pl|grep -v '#'|sort -u|$beagle_filter
+for x in "$beagle_dir" `cat $beagle_dir/../.beagle-brothers`
+do 
+    beagle-static-query \
+        --add-static-backend "$x" \
+        --backend none --max-hits 100000 "$longest_token" | \
+        unurl.pl|grep -v '#'|sort -u|$beagle_filter
+done
 echo /dev/null

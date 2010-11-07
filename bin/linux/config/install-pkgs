@@ -209,6 +209,8 @@ tnef
 convmv
 '
 #zh-autoconvert
+export LC_ALL=C
+export LANG=C
 while ! sudo apt-get install -y $packages; do
     packages=$(arg1-arg2 "$packages" "$(sudo apt-get install -y $packages 2>&1)");
 done

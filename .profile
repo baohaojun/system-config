@@ -25,3 +25,4 @@ export GTK_IM_MODULE=scim
 export TZ="Asia/Shanghai"
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
+
