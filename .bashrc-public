@@ -1,5 +1,5 @@
 #!/bin/bash
-export PATH=/home/bhj/external/bin/linux/ext/android-sdk-linux_86/tools/ndk/android-ndk-r4b:$HOME/bin/:$PATH:/home/bhj/src/android-nv-froyo/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:/home/bhj/external/bin/linux/ext/arm-2010q1/bin:/home/bhj/external/bin/linux/ext/arm-linux-4.1.1/bin
+export PATH=/home/bhj/external/bin/linux/ext/android-sdk-linux_86/tools/ndk/android-ndk-r4b:$HOME/bin/:$PATH:/home/bhj/bin/linux/ext/arm-eabi-4.4.0/bin:/home/bhj/external/bin/linux/ext/arm-2010q1/bin:/home/bhj/external/bin/linux/ext/arm-linux-4.1.1/bin
 export PROMPT_COMMAND="history -a"
 
 if test -z "$SSH_CLIENT"; then
