@@ -13,7 +13,7 @@ install libstring-approx-perl in debian/ubuntu. No need to use cpan.
 However, the .emacs requires some hacking, since the cscope.el won't
 tell the cscope-program where did the tag-searching start: it will
 start the program in the directory where the database file is found;
-not the directory of the file in which user called the EMACS
+not the directory of the file in which user called the EMACS cscope-xxx
 command. Anyway, I choose to parse the info in using one of simplest
 IPC: environment variable:-)
 
