@@ -1,0 +1,23 @@
+* TODO add ignore file for EventHub
+
+* Android init process
+
+* Reading source code
+
+** TODO When grepping or tag-searching, the result should be re-ordered so that the matching item closer to the starting directory should come first.
+
+* Run dialog
+
+The Windows run dialog is so poor, that I've implemented my own RunBhjRun dialog. Features include: 
+
+** Cygwin support
+
+You can specify pathnames using both cygwin or windows style, such as:
+/c/windows/notepad.exe or c:\windows\notepad.exe, and the notepad.exe
+application will be started.
+
+Of course, cygwin is required to be installed. What, you are not using it already? G...
+
+** Emacs style key binding, auto completion, history
+
+I want to avoid the Mouse as much as possible, so the above items are essential to me. 
