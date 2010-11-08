@@ -594,3 +594,5 @@ nvtest omxplayer --camera --preview 640 480
 git@www.rayzertrack.com:ggl/pxa935/platform/manifest
 git@www.rayzertrack.com:nv/android/manifest
 bhj@localhost:/home/git/android/platform/manifest
+find . -name  `mm 2>&1|grep 'duplicate entry: .*$' -o |pn 3`|perl -ne 'print if (2..888)'|xargs rm -v
+
