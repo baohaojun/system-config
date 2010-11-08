@@ -1,6 +1,7 @@
 * TODO add ignore file for EventHub
 
-* Android init process
+* Android
+** init
 
 * Reading source code
 
@@ -35,5 +36,4 @@ anywhere, for e.g., you can type
 
 and the history entry containing A_VERY_LONG_WORD will pop-up, you can
 press C-n (to move onto that entry) and Enter (to exec it).
-
 
