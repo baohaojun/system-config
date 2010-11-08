@@ -20,4 +20,20 @@ Of course, cygwin is required to be installed. What, you are not using it alread
 
 ** Emacs style key binding, auto completion, history
 
-I want to avoid the Mouse as much as possible, so the above items are essential to me. 
+I want to avoid the Mouse as much as possible, so the above items are
+essential to me. You can get the easy ones pretty easilly (that's why
+they are called easy:-): C-b for bach-char, C-f for forward-char, etc.
+
+*** Auto completion: 
+    
+OK, I think it's something better. It's skeleton completion, which
+means to complete A_VERY_LONG_WORD, you don't need to type from the
+beginning, which Windows Run Dialog does, instead, you can start
+anywhere, for e.g., you can type 
+
+    very long
+
+and the history entry containing A_VERY_LONG_WORD will pop-up, you can
+press C-n (to move onto that entry) and Enter (to exec it).
+
+
