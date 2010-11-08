@@ -14,14 +14,23 @@ print "\n";
 
 #gtags-cscope-bhj -f cscope.out -d -L -7 beagle-grep.sh
 
-chomp(my $pwd = `pwd`);
-$pwd = "$ENV{HOME}/tmp/for-code-reading/$pwd";
+my $pwd;
+if (exists($ENV{CSCOPE_STARTING_DIR})) {
+    $pwd = $ENV{CSCOPE_STARTING_DIR};
+} else {
+    chomp($pwd = `pwd`);
+}
+
+$pwd = "$ENV{HOME}/tmp/for-code-reading$pwd";
+our $approx_dir = $pwd;
 while ( not -f "$pwd/GTAGS" and not "$pwd" eq "/") {
     chomp($pwd = `dirname "$pwd"`);
 }
 if ($pwd eq "/") {
     chomp($pwd = `readlink -f ~/.gtags-dir`)
 }
+
+$approx_dir = substr($approx_dir, length($pwd));
 
 my $lookup_type = substr($ARGV[4], 1);
 $_ = $ARGV[5];
@@ -34,6 +43,8 @@ sub do_cscope($$$$) {
     $start_dir =~ s,/+,/,g;
     open(my $grep, "-|", "echo $lookup_type$lookup_needle|gtags-cscope");
 
+    my @matches;
+
     while (<$grep>) {
         chomp();
         s/^>>.*//;
@@ -45,7 +56,18 @@ sub do_cscope($$$$) {
         if ($lookup_restrict_regexp && not m/$lookup_restrict_regexp/i) {
             next;
         }
-        print "$start_dir/$_\n" unless $_ eq "";
+        push @matches, $_ unless $_ eq "";
+
+        if (scalar @matches >= 500) {
+            print "Warning: too many matches, jumping out\n";
+            last;
+        }
+    }
+
+    use String::Approx 'adistr';
+    our $approx_dir;
+    for (sort {adistr($b, $approx_dir) <=> adistr($a, $approx_dir)} @matches) {
+        print "$start_dir/$_\n";
     }
 }
 
