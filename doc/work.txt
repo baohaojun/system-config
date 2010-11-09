@@ -596,3 +596,11 @@ git@www.rayzertrack.com:nv/android/manifest
 bhj@localhost:/home/git/android/platform/manifest
 find . -name  `mm 2>&1|grep 'duplicate entry: .*$' -o |pn 3`|perl -ne 'print if (2..888)'|xargs rm -v
 
+sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
+/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+/sbin/iptables -A FORWARD -i eth0 -o usb0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+/sbin/iptables -A FORWARD -i usb0 -o eth0 -j ACCEPT
+setprop dhcp.eth0.dns1 192.168.0.1
+setprop dhcp.eth0.dns2 192.168.0.1
+setprop dhcp.usb0.dns1 192.168.0.1
+setprop dhcp.usb0.dns2 192.168.0.1
