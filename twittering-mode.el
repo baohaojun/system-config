@@ -7127,11 +7127,11 @@ Non-nil optional REMOVE will do the opposite, unfollow. "
     (set-text-properties 0 (length user-or-list) nil user-or-list)
     (if (string-match "/" user-or-list)
 	(let ((spec (twittering-string-to-timeline-spec user-or-list)))
-	  (setq prompt-format (if remove "Unfollowing list %s? " 
-				"Following list %s? ")
+	  (setq prompt-format (if remove "Unfollowing list `%s'? " 
+				"Following list `%s'? ")
 		method  (if remove 'unsubscribe-list 'subscribe-list)
 		args `((timeline-spec . ,spec))))
-      (setq prompt-format (if remove "Unfollowing %s? " "Following %s? ")
+      (setq prompt-format (if remove "Unfollowing `%s'? " "Following `%s'? ")
 	    method (if remove 'destroy-friendships 'create-friendships)
 	    args `((username . ,user-or-list))))
     (if (y-or-n-p (format prompt-format user-or-list))
