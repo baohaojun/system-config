@@ -97,11 +97,11 @@ lcd()
 
     local ori=$1
     local x=0
-    while ! test -e "$1" >/dev/null && ((x++ < 10)); do 
+    while ! test -d "$1" >/dev/null && ((x++ < 10)); do 
         set -- ../"$1";
     done
 
-    if ! test -e "$1" >/dev/null; then
+    if ! test -d "$1" >/dev/null; then
         _ucd $ori
         return $?
     fi
