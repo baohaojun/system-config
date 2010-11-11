@@ -7158,7 +7158,7 @@ a list. "
 		  (when (and s 
 			     (twittering-timeline-spec-list-p
 			      (twittering-current-timeline-spec))
-			     (y-or-n-p (format "from list: %s? " s)))
+			     (y-or-n-p (format "from list: `%s'? " s)))
 		    s))
 		(twittering-read-list-name twittering-username)
 		(read-string
@@ -7167,7 +7167,7 @@ a list. "
       (error "No user or list selected"))
     (unless (string-match "/" listname)
       (setq listname (concat twittering-username "/" listname)))
-    (if (y-or-n-p (format (if remove "Remove %s from %s? " "Add %s to %s? ")
+    (if (y-or-n-p (format (if remove "Remove `%s' from `%s'? " "Add `%s' to `%s'? ")
 			  username listname))
 	(twittering-call-api 
 	 (if remove 'delete-list-members 'add-list-members)
