@@ -604,3 +604,11 @@ setprop dhcp.eth0.dns1 192.168.0.1
 setprop dhcp.eth0.dns2 192.168.0.1
 setprop dhcp.usb0.dns1 192.168.0.1
 setprop dhcp.usb0.dns2 192.168.0.1
+
+how to flash system using blob: 
+nanderase -z 0x00d40000 0x08000000
+arp
+setip
+
+Note: the last must be replaced as the actual system.img size!
+nandwrite -y 0x80800000 0x00d40000 64335744
