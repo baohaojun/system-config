@@ -239,7 +239,6 @@
                                     
 (defun my-cscope-find-global-definition ()
   (interactive)
-  (setenv "CSCOPE_STARTING_DIR" (expand-file-name default-directory))
   (nodup-ring-insert cscope-marker-ring (point-marker))
   (call-interactively 'cscope-find-global-definition))
 
@@ -496,7 +495,7 @@
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
  '(indent-tabs-mode nil)
- '(ispell-program-name "aspell")
+ '(ispell-program-name "aspell" t)
  '(keyboard-coding-system (quote cp936))
  '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
@@ -516,6 +515,7 @@
  '(shell-file-name "/bin/bash")
  '(show-paren-mode t nil (paren))
  '(show-paren-style (quote parenthesis))
+ '(split-width-threshold 800)
  '(starttls-use-gnutls t)
  '(text-mode-hook (quote (text-mode-hook-identify)))
  '(tooltip-mode nil)
