@@ -63,6 +63,7 @@
 
 (bind-keys global-keymap "Super-k" (lambda () (system "emacsclient -n ~/doc/work.txt&")))
 (bind-keys global-keymap "Super-Control-n" (lambda () (system "emacsclient -n ~/.notes&")))
+(bind-keys global-keymap "Super-Control-o" (lambda () (system "emacsclient -n ~/doc/notes.org&")))
 
 
 (bind-keys global-keymap "Super-d"

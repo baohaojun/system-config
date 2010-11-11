@@ -1,0 +1,51 @@
+* TODO add ignore file for EventHub
+
+* Android
+** init
+
+* Reading source code
+
+** DONE When grepping or tag-searching, the result should be re-ordered so that the matching item closer to the starting directory should come first.
+   
+This can be done easilly with the perl String::Approx module, you just
+install libstring-approx-perl in debian/ubuntu. No need to use cpan.
+
+However, the .emacs requires some hacking, since the cscope.el won't
+tell the cscope-program where did the tag-searching start: it will
+start the program in the directory where the database file is found;
+not the directory of the file in which user called the EMACS cscope-xxx
+command. Anyway, I choose to pass the info in using one of simplest
+IPC: environment variable:-)
+
+
+
+* Run dialog
+
+The Windows run dialog is so poor, that I've implemented my own RunBhjRun dialog. Features include: 
+
+** Cygwin support
+
+You can specify pathnames using both cygwin or windows style, such as:
+/c/windows/notepad.exe or c:\windows\notepad.exe, and the notepad.exe
+application will be started.
+
+Of course, cygwin is required to be installed. What, you are not using it already? G...
+
+** Emacs style key binding, auto completion, history
+
+I want to avoid the Mouse as much as possible, so the above items are
+essential to me. You can get the easy ones pretty easilly (that's why
+they are called easy:-): C-b for bach-char, C-f for forward-char, etc.
+
+*** Auto completion: 
+    
+OK, I think it's something better. It's skeleton completion, which
+means to complete A_VERY_LONG_WORD, you don't need to type from the
+beginning, which Windows Run Dialog does, instead, you can start
+anywhere, for e.g., you can type 
+
+    very long
+
+and the history entry containing A_VERY_LONG_WORD will pop-up, you can
+press C-n (to move onto that entry) and Enter (to exec it).
+

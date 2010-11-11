@@ -239,6 +239,7 @@
                                     
 (defun my-cscope-find-global-definition ()
   (interactive)
+  (setenv "CSCOPE_STARTING_DIR" (expand-file-name default-directory))
   (nodup-ring-insert cscope-marker-ring (point-marker))
   (call-interactively 'cscope-find-global-definition))
 

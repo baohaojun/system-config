@@ -26,7 +26,7 @@ else
 fi
 
 longest_token=`get_longest_token "$@"`
-for x in "$beagle_dir" `cat $beagle_dir/../.beagle-brothers`
+for x in "$beagle_dir" `cat $beagle_dir/../.beagle-brothers 2>/dev/null`
 do 
     beagle-static-query \
         --add-static-backend "$x" \
