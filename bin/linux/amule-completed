@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "$@" >> ~/.amule-completed.log
+mv -n -- "$@" ~/.aMule/Incoming/new/ 
