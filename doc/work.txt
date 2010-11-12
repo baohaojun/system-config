@@ -606,9 +606,27 @@ setprop dhcp.usb0.dns1 192.168.0.1
 setprop dhcp.usb0.dns2 192.168.0.1
 
 how to flash system using blob: 
-nanderase -z 0x00d40000 0x08000000
+
 arp
 setip
-
+tftp system.img
+nanderase -z 0x00d40000 0x08000000
 Note: the last must be replaced as the actual system.img size!
 nandwrite -y 0x80800000 0x00d40000 64335744
+
+how to flash kernel zImage:
+arp
+setip
+nanderase -z 0x00a40000 0x280000
+tftp zImage
+nandwrite -z 0x80800000 0x00a40000 xxxx
+
+how to flash blob via blob:
+
+nanderase -z 0x80000 0x80000
+nandwrite -z 0x80800000 0x80000 0x80000
+
+how to flash ramdisk:
+
+nanderase -z 0xcc0000 0x80000
+nandwrite -z 0x80800000 0xcc0000 0x80000

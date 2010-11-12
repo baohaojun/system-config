@@ -38,7 +38,6 @@
 
 (define-abbrev-table 'c-mode-abbrev-table
   '(
-    ("bpk" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("cpk" "printk(KERN_WARNING \"for continue %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 25)
     ("ld" "LOGD(\"%s: %d\\n\", __FUNCTION__, __LINE__);" nil 6)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
@@ -46,7 +45,7 @@
     ("nk" "NvOsDebugPrintf(\"hello world %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 3)
     ("pe" "printk(KERN_WARNING \"hello error: %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("pf" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 173)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 172)
     ("pkh" "#include <linux/types.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>
