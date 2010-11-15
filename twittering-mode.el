@@ -4410,18 +4410,11 @@ been initialized yet."
 				     (status . ,status)))
 	    (message "No username specified")))
 	 (t
-	  (let ((as-reply
-		 (and reply-to-id
-		      (string-match
-		       (concat "\\`@" username "\\(?:[\n\r \t]+\\)*")
-		       status))))
-	    ;; Add in_reply_to_status_id only when a posting status
-	    ;; begins with @username.
+	  (when reply-to-id
 	    (twittering-call-api
 	     'update-status
 	     `((status . ,status)
-	       ,@(when as-reply
-		   `((in-reply-to-status-id . ,(format "%s" reply-to-id)))))))))
+	       (in-reply-to-status-id . ,(format "%s" reply-to-id)))))))
 	(twittering-edit-close))))))
 
 (defun twittering-edit-cancel-status ()
