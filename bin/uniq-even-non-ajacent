@@ -1,0 +1,13 @@
+#!/usr/bin/env perl
+
+while (<>)
+{
+    if (not exists $file{$_}) {
+        $file{$_} = 1;
+        push @file, $_;
+    }
+}
+
+for (@file) {
+    print $_;
+}
