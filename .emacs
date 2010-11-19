@@ -276,6 +276,16 @@
                       (call-process "bash" nil nil nil "googleemacs.sh" search-string)
                       ))))
 
+(defun wiki-local-bhj ()
+  (interactive)
+  (let 
+      ((search-string (current-word))) 
+    (progn     
+      (setq search-string
+            (read-string (format "search local wiki with [%s]: " search-string) nil nil search-string))
+      (call-process "bash" nil nil nil "local-wiki.sh" search-string)
+      )))
+
 (standard-display-ascii ?\221 "\`")
 (standard-display-ascii ?\222 "\'")
 (standard-display-ascii ?\223 "\"")
