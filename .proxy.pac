@@ -16,14 +16,14 @@
          'zh.wikisource.org', 'wikilivres.info', 'wretch.cc',
          'twbbs.org', 'video.google.com', 'groups.google.',
          'book.kanunu.org', 'markmail.org', 'tolchz.net',
-         'blog.varunkumar.me'];
+         'blog.varunkumar.me', 'webupd8.org',];
     
     var regexp = new RegExp(blocked_site.join('|'));
     
     FindProxyForURL = function(url, host) {
         try {
             if (url.search(regexp) != -1) {
-                return 'SOCKS5 localhost:8080';
+                return 'SOCKS5 127.0.0.1:8080';
             }
         } catch (e) {
             return 'DIRECT';
