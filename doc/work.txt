@@ -631,4 +631,23 @@ how to flash ramdisk:
 nanderase -z 0xcc0000 0x80000
 nandwrite -z 0x80800000 0xcc0000 0x80000
 perl -ne 'BEGIN{$ln = 0} print STDERR "$ln\n" if (++$ln % 10000 == 0); $pos = 0; $line = $_; for (1..9) {$pos = index($line, "0x", $pos) + 1;}  $pos = index($line, " ", $pos) + 1; print substr($line, $pos)' enwiki-latest-pages-articles.idx >enwiki-latest-pages-articles.title
+
 perl -ne 'print unless m/^Media:|^Special:|^Talk:|^User:|^User talk:|^Wikipedia:|^Wikipedia talk:|^File:|^File talk:|^MediaWiki:|^MediaWiki talk:|^Template:|^Template talk:|^Help:|^Help talk:|^Category:|^Category talk:|^Portal:|^Portal talk:|^Book:|^Book talk:/' *.title  > enwiki-latest-pages-articles.pn
+
+perl -ne 'BEGIN{
+    $l = 1;
+    $lines = 1000;
+}
+if ($l++ % $lines == 0 or not $file) {
+   print "$l\n";
+    $f = int($l/$lines);
+    $fn = sprintf("%08x", $f);
+    $fn = join("", reverse split (//, $fn));
+    system("mkdir", "-p", substr($fn, 0, 2));
+    substr($fn, 2, 0) = "/";
+    print "fn is $fn\n";
+    close $file if $file;
+    open($file, ">", $fn) or die "Error: open $fn failed";
+}
+print $file $_;
+' /home/bhj/wikipedia/enwiki-latest-pages-articles.title
