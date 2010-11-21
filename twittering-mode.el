@@ -4410,11 +4410,11 @@ been initialized yet."
 				     (status . ,status)))
 	    (message "No username specified")))
 	 (t
-	  (when reply-to-id
-	    (twittering-call-api
-	     'update-status
-	     `((status . ,status)
-	       (in-reply-to-status-id . ,(format "%s" reply-to-id)))))))
+	  (twittering-call-api
+	   'update-status
+	   `((status . ,status)
+	     ,@(when reply-to-id
+		 `((in-reply-to-status-id . ,(format "%s" reply-to-id))))))))
 	(twittering-edit-close))))))
 
 (defun twittering-edit-cancel-status ()
