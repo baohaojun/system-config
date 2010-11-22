@@ -28,6 +28,8 @@ repo sync
 cd /git/android-nvidia/linux-2.6.git
 git config remote.origin.url git://android.git.kernel.org/kernel/common.git
 git fetch origin 
+git config remote.origin.url git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
+git fetch origin
 
 #vendor/nvidia and hardware/tegra, we can do nothing, their git is maintained by us.
 
