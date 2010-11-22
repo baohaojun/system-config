@@ -652,3 +652,5 @@ if ($l++ % $lines == 0 or not $file) {
 }
 print $file $_;
 ' && mkbeagleidx 
+
+sudo htpasswd -b /etc/vsftpd/passwd user pass
