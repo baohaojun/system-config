@@ -654,3 +654,16 @@ print $file $_;
 ' && mkbeagleidx 
 
 sudo htpasswd -b /etc/vsftpd/passwd user pass
+
+find . -type f |perl -ne '
+BEGIN {
+    open($file, "<", "sha1sum.txt") or die "Error open sha1sum.txt"; 
+    while (<$file>) {
+      chomp;
+      $exist{substr($_, 42)} = 1;
+    }
+    close($file)
+}
+chomp;
+system("sha1sum", $_) if $exist{$_} != 1;
+'

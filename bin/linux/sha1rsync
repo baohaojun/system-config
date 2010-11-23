@@ -38,6 +38,8 @@ while(<$f2>) {
 foreach (keys(%sha1_1)) {
     if (exists($sha1_2{$_})) {
         printf("file in set1: `%s' sha1 eq to file in set2 `%s'\n", $sha1_1{$_}, $sha1_2{$_});
+    } else {
+        printf("file in set1 not found in set2: %s\n", $sha1_1{$_});
     }
 }
 
