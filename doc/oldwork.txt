@@ -3884,7 +3884,7 @@ http://www.winehq.org/download/deb
 代码:wget http://www.kegel.com/wine/winetricks
 代码:sh winetricks msxml3 gdiplus riched20 riched30 ie6 vcrun6 vcrun2005sp1 flash
 如果在安装msxml3时abord了然后就退出了可以尝试安装msxml6
-代码:sh winetricks msxml6 gdiplus riched20 riched30 ie6 vcrun6 vcrun2005sp1 flash
+代码:sh winetricks msxml6 gdiplus riched20 riched30 ie6 vcrun6 vcrun2005sp1 flash wenquanyi
 然后
 从XP或Vista、Win7里复制一个宋体（SimSun.ttf）过来，放到~/.wine/dosdevices/c:/windows/Fonts下
 字体也可以在我的网盘上下载http://u.115.com/file/t7b413aeb
