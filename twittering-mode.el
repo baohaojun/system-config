@@ -7086,14 +7086,11 @@ managed by `twittering-mode'."
 	    (delete-region (point-min) (point-max))
 	    (insert url)))))))
 
-(defun twittering-retweet (&optional arg)
-  (interactive "P")
-  (let ((use-native-retweet-flag (if arg
-				     (not twittering-use-native-retweet)
-				   twittering-use-native-retweet)))
-    (if use-native-retweet-flag
-	(twittering-native-retweet)
-      (twittering-organic-retweet))))
+(defun twittering-retweet ()
+  (interactive)
+  (if twittering-use-native-retweet
+      (twittering-native-retweet)
+    (twittering-organic-retweet)))
 
 (defun twittering-organic-retweet ()
   (interactive)
