@@ -12,6 +12,8 @@ ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
 (cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver)&
 
 command renew-xauth
+killall syndaemon
+syndaemon -i 1 -d
 while true; do
     if ps aux|grep ssh|grep bhj@216 -q; 
     then
