@@ -1197,3 +1197,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (if (file-remote-p (buffer-file-name))
       (find-alternate-file (replace-regexp-in-string "^/scp:.*?:" "" (buffer-file-name)))    
     (find-alternate-file (concat "/scp:root@localhost:" (buffer-file-name)))))
+
+(global-set-key [(mouse-5)] (lambda () (interactive)))
+(global-set-key [(mouse-4)] (lambda () (interactive)))

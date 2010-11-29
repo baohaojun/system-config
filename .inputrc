@@ -24,6 +24,8 @@ set output-meta on
 # VT
 "\e[1~": beginning-of-line
 "\e[4~": end-of-line
+"\e[B": ""
+"\e[A": ""
 
 # kvt
 "\e[H": beginning-of-line

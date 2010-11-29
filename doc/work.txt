@@ -667,3 +667,8 @@ BEGIN {
 chomp;
 system("sha1sum", $_) if $exist{$_} != 1;
 '
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1               1          13      102400   de  Dell Utility
+Partition 1 does not end on cylinder boundary.
+/dev/sda2   *          13        1926    15360000    7  HPFS/NTFS
+/dev/sda3            1926       14674   102400000    7  HPFS/NTFS
