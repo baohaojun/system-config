@@ -5,10 +5,18 @@ include_directories(
 
 add_subdirectory(core)
 
-QT4_ADD_RESOURCES(snorenotify_DEPS  ${SNORE_RCS})
-automoc4_add_executable( snorenotify main.cpp trayicon.cpp ${snorenotify_DEPS})
+QT4_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
+set(SNORENOTIFY_DEPS ${SNORENOTIFY_DEPS} ${SNORENOTIFY_RCS})
 
-target_link_libraries( snorenotify  snorecore ${QT_QTGUI_LIBRARY} )
+if(WIN32 AND CMAKE_BUILD_TYPE MATCHES Debug)
+  set(WIN32_SPECIFIC)
+else(WIN32 AND CMAKE_BUILD_TYPE MATCHES Debug)
+  set(WIN32_SPECIFIC WIN32)
+endif(WIN32 AND CMAKE_BUILD_TYPE MATCHES Debug)
+
+automoc4_add_executable( snorenotify ${WIN32_SPECIFIC}  main.cpp trayicon.cpp ${SNORENOTIFY_DEPS})
+
+target_link_libraries( snorenotify snorecore ${QT_QTGUI_LIBRARY} )
 add_dependencies(snorenotify snorecore)
 
 install(TARGETS snorenotify RUNTIME DESTINATION bin
