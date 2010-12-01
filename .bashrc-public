@@ -157,6 +157,6 @@ rbranch()
 }
 stty -ixon -ixoff >/dev/null 2>&1
 
-if test -n "$BASH_VERSION" -a "$BASH" = /bin/bash; then
+if [ -n "$BASH_VERSION" ]; then
     . ~/.bashrc-public-bash
 fi

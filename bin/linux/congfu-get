@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e
+export confhome=~/confluence/
+
+function congfu() {
+    confluence.sh --user hjbao --server http://bear/confluence --space "~hjbao"  --password `cat ~/.confpass` "$@"
+}
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+function congfu-get() {
+    cd $confhome || die "Error, I can't switch to $confhome";
+    congfu -a getPageList|perl -ne 'print if (2..0xffff and m/^\S+$/)'|xargs -d '\n' touch
+    for x in *; do 
+        congfu -a getSource --title "$x" > "$x"
+    done
+}
+
+congfu-get
