@@ -672,3 +672,9 @@ system("sha1sum", $_) if $exist{$_} != 1;
 Partition 1 does not end on cylinder boundary.
 /dev/sda2   *          13        1926    15360000    7  HPFS/NTFS
 /dev/sda3            1926       14674   102400000    7  HPFS/NTFS
+
+#如果是用ttf，则应该给出ttf文件的名字，否则应该给出fontconfig的名字。好像那些带空格的名字会有点问题。
+
+mplayer -font simsun 
+or 
+mplayer -font simsun.ttf
