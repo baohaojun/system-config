@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo rmmod brcm80211
+sudo modprobe brcm80211
