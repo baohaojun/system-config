@@ -257,14 +257,14 @@ public class CandidateView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int mOldWidth = mMeasuredWidth;
-        int mOldHeight = mMeasuredHeight;
+        int mOldWidth = getMeasuredWidth();
+        int mOldHeight = getMeasuredHeight();
 
         setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(),
                 widthMeasureSpec), getDefaultSize(getSuggestedMinimumHeight(),
                 heightMeasureSpec));
 
-        if (mOldWidth != mMeasuredWidth || mOldHeight != mMeasuredHeight) {
+        if (mOldWidth != getMeasuredWidth() || mOldHeight != getMeasuredHeight()) {
             onSizeChanged();
         }
     }
@@ -361,8 +361,8 @@ public class CandidateView extends View {
     }
 
     private void onSizeChanged() {
-        mContentWidth = mMeasuredWidth - mPaddingLeft - mPaddingRight;
-        mContentHeight = (int) ((mMeasuredHeight - mPaddingTop - mPaddingBottom) * 0.95f);
+        mContentWidth = getMeasuredWidth() - mPaddingLeft - mPaddingRight;
+        mContentHeight = (int) ((getMeasuredHeight() - mPaddingTop - mPaddingBottom) * 0.95f);
         /**
          * How to decide the font size if the height for display is given?
          * Now it is implemented in a stupid way.
@@ -409,8 +409,8 @@ public class CandidateView extends View {
     private boolean calculatePage(int pageNo) {
         if (pageNo == mPageNoCalculated) return true;
 
-        mContentWidth = mMeasuredWidth - mPaddingLeft - mPaddingRight;
-        mContentHeight = (int) ((mMeasuredHeight - mPaddingTop - mPaddingBottom) * 0.95f);
+        mContentWidth = getMeasuredWidth() - mPaddingLeft - mPaddingRight;
+        mContentHeight = (int) ((getMeasuredHeight() - mPaddingTop - mPaddingBottom) * 0.95f);
 
         if (mContentWidth <= 0 || mContentHeight <= 0) return false;
 
