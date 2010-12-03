@@ -678,3 +678,9 @@ Partition 1 does not end on cylinder boundary.
 mplayer -font simsun 
 or 
 mplayer -font simsun.ttf
+
+debian console caps->ctrl:
+
+sudo perl -npe 's/XKBOPTIONS=".*"/XKBOPTIONS="ctrl:nocaps"/g' /etc/default/keyboard
+
+

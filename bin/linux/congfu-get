@@ -3,7 +3,39 @@ set -e
 export confhome=~/confluence/
 
 function congfu() {
-    confluence.sh --user hjbao --server http://bear/confluence --space "~hjbao"  --password `cat ~/.confpass` "$@"
+    local user=hjbao
+    local server=http://bear/confluence
+    local space='~hjbao'
+    local password=`cat ~/.confpass`
+    local args=()
+    
+    while true; do 
+        arg=$1
+        shift || break
+        
+        case arg in 
+            --user)
+                user=$1
+                shift
+                ;;
+            --server)
+                server=$1
+                shift
+                ;;
+            --space)
+                space=$1
+                shift
+                ;;
+            --password)
+                password=$1
+                shift
+                ;;
+            *)
+                args=("$args[@]" $1)
+                shift
+                ;;
+
+    confluence.sh --user hjbao --server http://bear/confluence --space "~hjbao"  --password `cat ~/.confpass` "${args[@]}"
 }
 
 function die() {
@@ -13,10 +45,33 @@ function die() {
 
 function congfu-get() {
     cd $confhome || die "Error, I can't switch to $confhome";
+    git st -s | grep -q . && die "Error, git repo is not clean";
     congfu -a getPageList|perl -ne 'print if (2..0xffff and m/^\S+$/)'|xargs -d '\n' touch
     for x in *; do 
-        congfu -a getSource --title "$x" > "$x"
+        congfu -a getSource --title "$x"|perl -ne 'print unless(1..1)' > "$x"
     done
 }
 
-congfu-get
+function congfu-put() {
+    cd $confhome || die "Error, I can't switch to $confhome";
+    git st -s | grep -q . || die "Error, git repo is clean, nothing to commit";
+
+    git st -s | perl -ne \
+'chomp(); 
+$_ = substr($_, 3); 
+if (m/^"/) { 
+    $_ = eval($_);
+}
+print $_ . "\n";
+' | xargs -d '\n' bash -c \
+'. '`basename $0`';
+for x in "$@"; do 
+    congfu -a storePage --title "$x" --content "$(cat "$x")"
+    git add "$x"
+    done ' xx
+}
+
+if test "$BASH_SOURCE" = "$0"; then
+    "`basename $0`" "$@"
+fi
+
