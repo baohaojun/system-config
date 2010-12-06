@@ -84,7 +84,7 @@
       br-class "Firefox|Iceweasel|Epiphany" ;; br = browser
       dc-class "OpenOffice|Acroread|Evince|Gnumeric" ;; dc = doc
       mg-class "Meld|Gimp|Gitk" ;; mg = meld/gimp
-      fm-class "Nautilus" ;; fm = file manager
+      fm-class "Nautilus|File-roller" ;; fm = file manager
       cycle-groups (list im-class
                      br-class
                      dc-class))

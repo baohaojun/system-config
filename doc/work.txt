@@ -225,6 +225,7 @@ clean http://ppa.launchpad.net/ubuntu-wine
 for x in `git branch -r`; do git diff $x 2>&1|grep diff -q || echo $x; done
 (cd .repo/../flashing && sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go)
 (cd .repo/../flashing && sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go)
+(cd .repo/../flashing && sudo ./nvflash --bl bootloader.bin --download 8 system.img --go)
 
 (find-file
  (let ((file 
@@ -684,3 +685,4 @@ debian console caps->ctrl:
 sudo perl -npe 's/XKBOPTIONS=".*"/XKBOPTIONS="ctrl:nocaps"/g' /etc/default/keyboard
 
 
+(cd .repo/.. && out/host/linux-x86/bin/mkbootimg  --kernel out/target/product/ventana/kernel --ramdisk out/target/product/ventana/ramdisk.img --output out/target/product/ventana/boot.img)
