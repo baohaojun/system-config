@@ -2,16 +2,13 @@
 use File::Path;
 use File::Basename;
 
-@site =(
-    "http://mirrors.kernel.org/sourceware/cygwin/"
-    );
-for (@site) {
-    s!/*$!!;
-}
+$site = "http://mirrors.kernel.org/sourceware/cygwin/";
+
+my $site_prefix = "mirrors.kernel.org/sourceware/cygwin/";
 
 $ini = "setup.ini";
 
-system "wget -N $site[0]/$ini";
+system "wget -N $site/$ini";
 
 open($ini_fh, $ini);
 my @ini_content;
@@ -37,12 +34,11 @@ my $bytes_to_download = 0;
 foreach (@ini_content) {
     (undef, $path, $size, $md5) = split;
     next if $paths{$path};
-    if (-s $path == $size) {
-        if (1 or md5sum($path) eq $md5) {
+    $full_path = $site_prefix . $path;
+    if (-s $full_path == $size) {
+        if (1 or md5sum($full_path) eq $md5) {
             next;
         } else {
-            print STDERR "$path md5sum mismatch!\n";
-
             $bytes_to_download += $size;
         }
     } else {
@@ -55,12 +51,7 @@ foreach (@ini_content) {
 }
 
 @paths = sort keys %paths;
-for (@paths) {
-    print STDERR "$_ need redownload\n";
-}
-
-print STDERR "\nneed to download $bytes_to_download bytes...\n";
 
 foreach $path (@paths) {
-    print "$site[$0]/$path\n";
+    print "$site/$path\n";
 }
