@@ -29,6 +29,7 @@ for x in `git tag`; do git branch tagbr-$x $x; done
 mkdir /data/debugfs
 mount -t debugfs null /data/debugfs
 cat /data/debugfs/gpio
+
 (cd .repo/.. && export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT)
 M-: (modify-syntax-entry ?_ "w")
 
@@ -686,3 +687,11 @@ sudo perl -npe 's/XKBOPTIONS=".*"/XKBOPTIONS="ctrl:nocaps"/g' /etc/default/keybo
 
 
 (cd .repo/.. && out/host/linux-x86/bin/mkbootimg  --kernel out/target/product/ventana/kernel --ramdisk out/target/product/ventana/ramdisk.img --output out/target/product/ventana/boot.img)
+
+firefox chm中文件的名字不应该有 `&#39;`, 这个东西会导致无法用ffchm.sh打开chm文件。
+
+
+#include <linux/types.h>
+#include <linux/module.h>
+#include <linux/proc_fs.h>
+#include <linux/kernel.h>

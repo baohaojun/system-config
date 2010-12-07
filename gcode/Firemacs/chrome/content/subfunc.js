@@ -207,15 +207,23 @@ Firemacs.SubFunc = {
         } else {
             re = /prev|<|上一/i;
         }
+        var re_exclude = /<.*>|>.*</;
         var links = doc.links;
         for (i = 0; i < links.length; ++i) {
-            if (links[i].textContent && links[i].textContent.search(re) != -1 &&
-                links[i].href) {
+            if (links[i].textContent && 
+                links[i].textContent.search(re) != -1 && 
+                links[i].textContent.search(re_exclude) == -1 &&
+                links[i].href
+               ) {
                 loadURI(links[i].href);
                 return;
             }
             imgElems = links[i].getElementsByTagName("img"); // Is it an image tag?
-            if (imgElems.length > 0 && imgElems[0].src && imgElems[0].src.search(re) != -1 && links[i].href) {
+            if (imgElems.length > 0 && 
+                imgElems[0].src && 
+                imgElems[0].src.search(re) != -1 && 
+                imgElems[0].src.search(re_exclude) == -1 &&
+                links[i].href) {
                 loadURI(links[i].href);
                 return;
             }

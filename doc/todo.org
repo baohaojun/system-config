@@ -148,3 +148,7 @@ git clone git://github.com/baohaojun/windows-config.git
 
 4. 如果你因为beagle-grep太快而产生头晕、恶心、呕吐等类似于坐过山车的症
    状，本人概不负责。相反，请考虑支付本人相当于欢乐谷门票的钱;-)
+
+* nvidia project
+
+** TODO acore process force close report to nvidia

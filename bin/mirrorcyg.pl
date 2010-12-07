@@ -1,4 +1,4 @@
-#!/bin/perl
+#!/usr/bin/env perl
 use File::Path;
 use File::Basename;
 
@@ -11,12 +11,7 @@ for (@site) {
 
 $ini = "setup.ini";
 
-$dir="/cygdrive/d/tools/cygwin/repo";
-mkpath $dir;
-chdir $dir or die "can't chdir into $dir";
-
-unlink $ini;
-system "wget $site[0]/$ini";
+system "wget -N $site[0]/$ini";
 
 open($ini_fh, $ini);
 my @ini_content;
@@ -46,7 +41,7 @@ foreach (@ini_content) {
         if (1 or md5sum($path) eq $md5) {
             next;
         } else {
-            print "$path md5sum mismatch!\n";
+            print STDERR "$path md5sum mismatch!\n";
 
             $bytes_to_download += $size;
         }
@@ -61,24 +56,11 @@ foreach (@ini_content) {
 
 @paths = sort keys %paths;
 for (@paths) {
-    print "$_ need redownload\n";
+    print STDERR "$_ need redownload\n";
 }
 
-print "\nneed to download $bytes_to_download bytes...\n";
-if (not $ARGV[0]) {
-    exit;
-}
-
-$n_sites = $#site;
-
-open(my $handle, "|lftp");
-
-$i= int(rand ($n_sites + 0.5));
-print "Download from site $i $site[$i]...\n";
-system("sleep 3");
+print STDERR "\nneed to download $bytes_to_download bytes...\n";
 
 foreach $path (@paths) {
-    mkpath (dirname $path);
-    print $handle "get -c $site[$i]/$path -o $path\n";
+    print "$site[$0]/$path\n";
 }
-close $handle;
