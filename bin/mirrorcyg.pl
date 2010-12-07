@@ -37,6 +37,7 @@ foreach (@ini_content) {
     $full_path = $site_prefix . $path;
     if (-s $full_path == $size) {
         if (1 or md5sum($full_path) eq $md5) {
+            print STDERR "$full_path is up to date!\n";
             next;
         } else {
             $bytes_to_download += $size;
