@@ -695,3 +695,8 @@ firefox chm中文件的名字不应该有 `&#39;`, 这个东西会导致无法�
 #include <linux/module.h>
 #include <linux/proc_fs.h>
 #include <linux/kernel.h>
+
+sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
+sudo /sbin/iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+sudo /sbin/iptables -A FORWARD -i wlan0 -o vboxnet0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo /sbin/iptables -A FORWARD -i vboxnet0 -o wlan0 -j ACCEPT
