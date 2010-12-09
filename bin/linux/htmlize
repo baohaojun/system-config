@@ -1,0 +1,28 @@
+#!/bin/bash
+set -e
+
+mode=${1:-fundamental}
+
+cat > /tmp/htmlize.$$
+tf=/tmp/htmlize.$$ # temp file
+
+emacsclient -e '
+ (progn
+  (save-excursion
+    (find-file "'$tf'") 
+    ('$mode'-mode)
+    (htmlize-buffer)
+    (let ((old-buf (current-buffer)))
+      (switch-to-buffer 
+        (concat 
+          (buffer-name (current-buffer)) 
+          ".html"))
+      (write-file "'$tf'")
+      (kill-buffer (current-buffer))
+      (kill-buffer old-buf))))'
+
+cat $tf|tee ~/1.html
+if test -n DEBUG; then
+    firefox ~/1.html
+fi
+rm $tf

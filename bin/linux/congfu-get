@@ -116,8 +116,11 @@ for x in "$@"; do
 function congfu-test() {
     CONGFU_FILES=- congfu-put "$@"
     congfu "$@" -a render --title -.$$.bak |perl -ne 'print unless (1..1)' > ~/1.html
-    congfu "$@" -a removePage --title -.$$.bak
     of ~/1.html
+
+    read -p "Press enter to remove the temp page: "
+    congfu "$@" -a removePage --title -.$$.bak
+
 }
 
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(which "$0")" )"; then
