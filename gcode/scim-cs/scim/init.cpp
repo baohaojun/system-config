@@ -30,6 +30,7 @@ GetSystemTimeAsUINT64()
 static bool InitImeGlobalData(HINSTANCE hInstance)
 {
 	g_ui_private = new ui_private_t; //this is a hack, if g_ui_private is not dynamic, it seems its dtor will be called too ealy. I don't know why.
+	init_ime_socket();
 
 	TCHAR szChiChar[4] = {0x9999, 0};
 
