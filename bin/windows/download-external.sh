@@ -53,9 +53,7 @@ function emacs-site-lisps()
     y=0
     for x in "${source_list[@]}"; do 
         ((y++))
-        mv Sources.bz2.$y Sources.bz2 || lftp -c "pget -n 10 $x"
-        wget -N $x
-        mv Sources.bz2 Sources.bz2.$y
+        test -e Sources.bz2.$y || ( lftp -c "pget -n 10 $x" && mv Sources.bz2 Sources.bz2.$y )
     done
 
     file_list=(
@@ -67,7 +65,7 @@ function emacs-site-lisps()
     )
     for x in "${file_list[@]}"; do
         if ! [[ -f "$(basename "$x")" ]]; then
-            wget "$x"
+            lftp -c "pget $x"
         fi
     done
     
