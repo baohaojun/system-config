@@ -101,14 +101,14 @@ print $_ . "\n";
 '. '$0';
 eval "CONGFU_ARGS=( $CONGFU_ARGSTR )";
 for x in "$@"; do 
-    congfu "${CONGFU_ARGS[@]}" -a storePage --title "$x" --content "$(cat -- "$x")"
+    congfu "${CONGFU_ARGS[@]}" -a storePage --title "$x" --content "$(cat -- "$x"|confluence-htmlize)"
     git add -- "$x"
     done ' xx
     for x in *.$$.bak; do 
         test -e "$x" || break
         git rm --cached -- "$x";
         rm -- "$x"
-        # 不要这这里删除这个页面，我们还有用呢！
+        # 不要在这里删除这个页面，我们还有用呢！
         # congfu "$@" -a removePage --title "$x"
     done
 }
