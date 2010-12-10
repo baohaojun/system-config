@@ -5858,8 +5858,8 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	(twittering-for-each-property-region
 	 'need-to-be-updated
 	 (lambda (beg end value)
-	   ;; `beg' and `end' may be changed unexpected when `func' inserts some
-	   ;; texts at front, so store marker here.
+	   ;; `beg' and `end' may be changed unexpectedly when `func' inserts
+	   ;; some texts at front, so store marker here.
 	   (setq beg (copy-marker beg)
 		 end (copy-marker end))
 
@@ -6155,13 +6155,14 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		  (goto-char (twittering-get-current-status-head))
 		  (goto-char (line-end-position))
 		  (let ((buffer-read-only nil))
-		    (insert (twittering-make-replied-status-string 
-			     nil nil (cdr (assq 'in-reply-to-status-id
-						(twittering-find-status base-id))))))))
+		    (insert
+		     (twittering-make-replied-status-string 
+		      nil nil base-id (cdr (assq 'in-reply-to-status-id
+						 (twittering-find-status base-id))))))))
 	    (message "This status does not seem having a replied status.")))
 	nil))))
 
-(defun twittering-make-replied-status-string (beg end replied-id &optional tries)
+(defun twittering-make-replied-status-string (beg end id replied-id &optional tries)
   (let ((text "")
 	(tries (or tries 1)))
     (cond 
@@ -6172,11 +6173,15 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
      ((< tries twittering-url-request-retry-limit)
       (twittering-call-api 'show `((id . ,replied-id)))
       (setq text (make-string (- twittering-url-request-retry-limit tries) ?.))
-      (put-text-property 0 (length text)
-			 'need-to-be-updated
-			 `(twittering-make-replied-status-string
-			   ,replied-id ,(1+ tries))
-			 text)))
+      (add-text-properties 0 (length text)
+			   `(need-to-be-updated
+			     (twittering-make-replied-status-string
+			      ,id ,replied-id ,(1+ tries))
+			     ;; common properties, See
+			     ;; `twittering-generate-format-status-function'.
+			     ;; TODO: maybe more to add.
+			     id ,id)
+			   text)))
     text))
 
 (defun twittering-hide-replied-statuses (&optional interactive)
