@@ -238,17 +238,6 @@ function get-putty()
 
 test "$DOWN" == yes && (gcc-switch.sh 3; get-putty; gcc-switch.sh 4)
 
-function fstab-q()
-{
-    FSTAB=/etc/fstab
-    if grep '^q:' $FSTAB -iq; 
-    then
-        echo 'q: is already mounted case-sensitive'
-    else
-        echo 'q: /q some_fs binary 0 0' >> $FSTAB
-    fi
-}
-
 function get-cscope()
 {
     if ! test -d /c/download/cscope/cscope; then
@@ -258,5 +247,3 @@ function get-cscope()
         cvs -z3 -d:pserver:anonymous@cscope.cvs.sourceforge.net:/cvsroot/cscope co -P cscope
     fi
 }
-
-test "$DOWN" == yes && fstab-q
