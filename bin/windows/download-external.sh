@@ -42,13 +42,23 @@ function emacs-site-lisps()
     cd ~/tools/emacs-site-lisp/
     rm ./*/ -rf
     cp /usr/share/emacs/site-lisp/subdirs.el . 
+    
+
+    source_list=(
+        http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2 
+        http://ftp.us.debian.org/debian/dists/sid/contrib/source/Sources.bz2 
+        http://ftp.us.debian.org/debian/dists/sid/non-free/source/Sources.bz2
+    )
+
+    y=0
+    for x in "${source_list[@]}"; do 
+        ((y++))
+        mv Sources.bz2.$y Sources.bz2 || lftp -c "pget -n 10 $x"
+        wget -N $x
+        mv Sources.bz2 Sources.bz2.$y
+    done
 
     file_list=(
-        `wget -N \
-        http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2 \
-        http://ftp.us.debian.org/debian/dists/sid/contrib/source/Sources.bz2 \
-        http://ftp.us.debian.org/debian/dists/sid/non-free/source/Sources.bz2 1>&2`
-
         http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
         `get-deb-src-dir emacs-goodies-el`
         `get-deb-src-dir cscope`
