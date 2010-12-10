@@ -121,7 +121,7 @@ static void start_ime_server()
 
 	wstring w_str = to_wstring(c_str);
 	wchar_t buff[1024] = {0};
-	memcpy(buff, w_str.c_str(), sizeof wchar_t * w_str.size());
+	memcpy(buff, w_str.c_str(), sizeof (wchar_t) * w_str.size());
 
     ret = CreateProcess(
 		NULL,
