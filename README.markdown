@@ -1,6 +1,8 @@
 xwl's fork
 ----------
 
+* Fetch replied statues on request.
+
 * Format tweets sent by myself specially: Inspired by "Twitter for iPhone",
   currently an ad-hoc implementation, screenshot:
   http://xwl.appspot.com/images/twitter_my_tweet.png

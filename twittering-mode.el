@@ -693,8 +693,11 @@ StatusNet Service.")
 	 (twittering-http-post twittering-api-host
 			       (twittering-api-path "direct_messages/new")
 			       parameters)))
-      (t
-       nil))))
+      
+      ;; Tweet Methods
+      ((show)
+       (twittering-http-get twittering-api-host
+			    (twittering-api-path "statuses/show/" id))))))
 
 ;;;
 ;;; Proxy setting / functions
@@ -5230,7 +5233,7 @@ QUERY-PARAMETERS is a list of cons pair of name and value such as
 	      (twittering-render-timeline buffer t new-statuses))
 	    (twittering-add-timeline-history spec-string)))
 	(if (and (not noninteractive) twittering-notify-successful-http-get)
-	    (if suc-msg suc-msg (format "Success: Get %s." spec-string))
+	    (if suc-msg suc-msg (format "Success: Get %s." (or spec-string "tweet")))
 	  nil)))
      (t
       (let ((error-mes (twittering-get-error-message (process-buffer proc))))
@@ -5751,6 +5754,10 @@ BUFFER may be a buffer or the name of an existing buffer."
 
 	 ((eq 'statuses (caar xmltree))
 	  (cddr (car xmltree)))
+
+	 ((eq 'status (caar xmltree))	; `statues/show', replied statuses
+	  xmltree)
+
 	 (t ;; unknown format?
 	  nil)))
 
@@ -5851,6 +5858,11 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	(twittering-for-each-property-region
 	 'need-to-be-updated
 	 (lambda (beg end value)
+	   ;; `beg' and `end' may be changed unexpected when `func' inserts some
+	   ;; texts at front, so store marker here.
+	   (setq beg (copy-marker beg)
+		 end (copy-marker end))
+
 	   (let* ((func (car value))
 		  (args (cdr value))
 		  (current-str (buffer-substring beg end))
@@ -6138,9 +6150,34 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	      t))
 	(when interactive
 	  (if (twittering-have-replied-statuses-p base-id)
-	      (message "The replied statuses does not fetched yet.")
+	      (when (y-or-n-p "The replied statuses were not fetched yet.  Fetch it now? ")
+		(save-excursion
+		  (goto-char (twittering-get-current-status-head))
+		  (goto-char (line-end-position))
+		  (let ((buffer-read-only nil))
+		    (insert (twittering-make-replied-status-string 
+			     nil nil (cdr (assq 'in-reply-to-status-id
+						(twittering-find-status base-id))))))))
 	    (message "This status does not seem having a replied status.")))
 	nil))))
+
+(defun twittering-make-replied-status-string (beg end replied-id &optional tries)
+  (let ((text "")
+	(tries (or tries 1)))
+    (cond 
+     ((twittering-find-status replied-id)
+      (save-excursion
+	(goto-char beg)
+	(twittering-show-replied-statuses)))
+     ((< tries twittering-url-request-retry-limit)
+      (twittering-call-api 'show `((id . ,replied-id)))
+      (setq text (make-string (- twittering-url-request-retry-limit tries) ?.))
+      (put-text-property 0 (length text)
+			 'need-to-be-updated
+			 `(twittering-make-replied-status-string
+			   ,replied-id ,(1+ tries))
+			 text)))
+    text))
 
 (defun twittering-hide-replied-statuses (&optional interactive)
   (interactive)
