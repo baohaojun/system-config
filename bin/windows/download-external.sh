@@ -19,7 +19,7 @@ function download-all()
 
     for x in "${file_list[@]}"; do
         if ! [[ -f `basename "$x"` ]]; then
-            wget "$x"
+            wget -N "$x"
         fi
     done
             
@@ -40,14 +40,14 @@ function emacs-site-lisps()
 {
     mkdir -p ~/tools/emacs-site-lisp/
     cd ~/tools/emacs-site-lisp/
-    rm ./* -rf
+    rm ./*/ -rf
     cp /usr/share/emacs/site-lisp/subdirs.el . 
 
     file_list=(
-        `wget \
+        `wget -N \
         http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2 \
         http://ftp.us.debian.org/debian/dists/sid/contrib/source/Sources.bz2 \
-        http://ftp.us.debian.org/debian/dists/sid/non-free/source/Sources.bz2 >/dev/null 2>&1`
+        http://ftp.us.debian.org/debian/dists/sid/non-free/source/Sources.bz2 1>&2`
 
         http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
         `get-deb-src-dir emacs-goodies-el`
