@@ -36,7 +36,7 @@ while (<>) {
                         print $code_end_line;
                         print "end of code -->\n";
 
-                        print "<div style=\"padding: 10px; border: 2px solid #ff2222; max-height: 400px; margin: 10px; color: $color; background-color: $bkcolor\">\n";
+                        print "<div style=\"padding: 10px; border: 2px solid #ff2222; overflow: auto; max-height: 400px; margin: 10px; color: $color; background-color: $bkcolor\">\n";
                     } elsif (m/$html_end/) {
                         print "</div>\n{html}\n";
                     } else {
