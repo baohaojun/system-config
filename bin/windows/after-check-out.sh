@@ -71,5 +71,5 @@ fc-cache
 cd ~/doc
 regedit /s caps_lock_to_control.reg
 regedit /s putty.reg
-
+echo -n "c:/python31/python.exe" \"$(cygpath -aml ~/windows-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
 echo "After check out success!"
