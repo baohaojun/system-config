@@ -152,3 +152,7 @@ git clone git://github.com/baohaojun/windows-config.git
 * nvidia project
 
 ** TODO acore process force close report to nvidia
+
+* sawfish ifind, write it like my Windows version
+
+* sawfish "run bhj run", write it like my Windows version

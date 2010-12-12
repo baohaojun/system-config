@@ -2,9 +2,6 @@
 set -e
 
 mode=${1:-fundamental}
-if test "$mode" = none; then
-    mode=fundamental
-fi
 
 cat > /tmp/htmlize.$$
 tf=/tmp/htmlize.$$ # temp file
@@ -25,7 +22,7 @@ emacsclient -e '
       (kill-buffer old-buf))))'
 
 cat $tf|tee ~/1.html
-if test -n "$DEBUG"; then
+if test -n DEBUG; then
     firefox ~/1.html
 fi
 rm $tf

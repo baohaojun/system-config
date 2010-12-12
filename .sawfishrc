@@ -4,7 +4,6 @@
 
 
 (bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/linux/screenshot&")))
-(bind-keys global-keymap "Super-r" (lambda () (system "grun&")))
 (bind-keys window-keymap "Super-i" (lambda () (display-message (concat "Window class is: " (window-class (input-focus))))))
 (bind-keys global-keymap "Super-SPC" (lambda() 
                                        (mapc (lambda (window)
@@ -41,6 +40,7 @@
                   (find-window-or-exec wclass wcommand)))))
  '(
    ("Super-e" "Emacs" "emacs.bhj")
+   ("Super-r" "GRun" "grun")
    ("Super-p" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
    ("Super-l" "hello world no such thing" "/usr/bin/gnome-screensaver-command -a -l")
    ("Super-x" "XCalc" "xcalc")

@@ -718,14 +718,4 @@ sudo /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo /sbin/iptables -A FORWARD -i eth0 -o vboxnet0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 sudo /sbin/iptables -A FORWARD -i vboxnet0 -o eth0 -j ACCEPT
 
-sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
-sudo /sbin/iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
-sudo /sbin/iptables -A FORWARD -i wlan0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo /sbin/iptables -A FORWARD -i eth0 -o wlan0 -j ACCEPT
-
-ywb ime的一些问题：
-
-1. lucida console字体一定要换成doc底下的那个，这样ywb和putty里的字体才能好看一点
-
-2. python ime server如果终端关掉的话，它会在打印log的时候抛出异常，然后
-这个线程就死掉了，窗口也会挂住。这时候只好把python3.1关掉重来了。
+smbnetfs: must change the file attribute of ~/.smb/*!
