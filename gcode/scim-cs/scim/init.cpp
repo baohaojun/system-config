@@ -74,7 +74,7 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 
 	wcWndCls.hCursor = NULL;
 
-	wcWndCls.hbrBackground = GetStockObject(NULL_BRUSH);
+	wcWndCls.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
 
 	wcWndCls.lpszMenuName = (LPTSTR) NULL;
 
@@ -95,7 +95,7 @@ void PASCAL RegisterImeClass(HINSTANCE hInstance, HINSTANCE hInstL)
 
 	wcWndCls.style = CS_IME | CS_HREDRAW | CS_VREDRAW;
 
-	wcWndCls.hbrBackground = GetStockObject(WHITE_BRUSH);
+	wcWndCls.hbrBackground = (HBRUSH) GetStockObject(WHITE_BRUSH);
 
 	if (!GetClassInfoEx(hInstance, get_comp_class_name().c_str(), &wcWndCls)) {
 		wcWndCls.lpfnWndProc = CompWndProc;

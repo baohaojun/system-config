@@ -63,10 +63,22 @@ function congfu-get() {
     done
 }
 
+function congfu-ls-new() {
+    cd $confhome || die "Error, I can't switch to $confhome";  
+    git st -s | perl -ne \
+'chomp(); 
+$_ = substr($_, 3); 
+if (m/^"/) { 
+    $_ = eval($_);
+}
+print $_ . "\n";
+' 
+}
+
 function congfu-put() {
+    # we will get what files to push to the server from STDIN! 
     cd $confhome || die "Error, I can't switch to $confhome";
     
-    test -n "$CONGFU_FILES" || git st -s | grep -q . || die "Error, git repo is clean, nothing to commit";
 
     CONGFU_ARGS=("$@")
     
@@ -80,50 +92,40 @@ function congfu-put() {
     # 好吧，就用环境变量吧。如果没有设置文件变量，那么我们需要处理的文件就看git status的结果，把每个有改动的文件都放到服务器上。
     # 如果有设过环境变量，那么我们就把环境变量里的每个文件都放到服务器上。环境变量里应该还可以支持使用标准输入。
 
-    if test -z "$CONGFU_FILES"
-        then
-        
-        git st -s | perl -ne \
-'chomp(); 
-$_ = substr($_, 3); 
-if (m/^"/) { 
-    $_ = eval($_);
-}
-print $_ . "\n";
-' 
+    if tty >/dev/null
+    then
+        echo "using /dev/tty, will only update git new files"  1>&2
+        congfu-ls-new
     else 
-        eval "CONGFU_FILESARR=( $CONGFU_FILES )";
-        for x in "${CONGFU_FILESARR[@]}"; do 
-            cat -- "$x" > "$x".$$.bak
-            echo "$x".$$.bak
-        done
+        cat
     fi| xargs -d '\n' bash -c \
 '. '$0';
 eval "CONGFU_ARGS=( $CONGFU_ARGSTR )";
 for x in "$@"; do 
-    congfu "${CONGFU_ARGS[@]}" -a storePage --title "$x" --content "$(cat -- "$x")"
+    congfu "${CONGFU_ARGS[@]}" -a storePage --title "$x" --content "$(cat -- "$x"|confluence-htmlize)"
     git add -- "$x"
     done ' xx
     for x in *.$$.bak; do 
         test -e "$x" || break
         git rm --cached -- "$x";
         rm -- "$x"
-        # 不要这这里删除这个页面，我们还有用呢！
+        # 不要在这里删除这个页面，我们还有用呢！
         # congfu "$@" -a removePage --title "$x"
     done
 }
 
 function congfu-test() {
-    CONGFU_FILES=- congfu-put "$@"
-    congfu "$@" -a render --title -.$$.bak |perl -ne 'print unless (1..1)' > ~/1.html
+    cat > congfu-test.$$.bak
+    
+    echo congfu-test.$$.bak|congfu-put "$@"
+    congfu "$@" -a render --title congfu-test.$$.bak |perl -ne 'print unless (1..1)' > ~/1.html
     of ~/1.html
 
-    read -p "Press enter to remove the temp page: "
-    congfu "$@" -a removePage --title -.$$.bak
+    read -p "Press enter to remove the temp page: " < /dev/tty
+    congfu "$@" -a removePage --title congfu-test.$$.bak
 
 }
 
 if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(which "$0")" )"; then
     "`basename $0`" "$@"
 fi
-

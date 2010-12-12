@@ -1,0 +1,56 @@
+#!/usr/bin/env perl
+use strict;
+
+my $htmlize_mode = "fundamental";
+my $tmp_file; 
+my $tmp_filename = "/tmp/confluence-htmlize.$$";
+
+my $code_start = qr(^\s*\{\s*code\s*:\s*(.*?)\s*\}\s*$);
+my $code_end = qr(^\s*\{\s*code\s*\}$);
+
+my $code_start_line; 
+my $code_end_line;
+while (<>) {
+    if (m/$code_start/ .. m/$code_end/) {
+        # do something, we need change this to htmlized code
+        # and allow it to be converted back! 
+        if (m/$code_start/) {
+            $code_start_line = $_;
+            $htmlize_mode = $1;
+            open($tmp_file, ">", $tmp_filename) or die "Error open $tmp_file";
+        } elsif (m/$code_end/) {
+            $code_end_line = $_;
+            close($tmp_file);
+            open(my $htmlize_pipe, "-|", "htmlize $htmlize_mode < $tmp_filename");
+            while(<$htmlize_pipe>) {
+                my $html_start = qr(<body\s*text="(.*)" bgcolor="(.*)">);
+                my $html_end = qr(</body>);
+                if (m/$html_start/ .. m/$html_end/) {
+                    if (m/$html_start/) {
+                        my $color = $1;
+                        my $bkcolor = $2;
+
+                        print "{html}<!-- start of code\n";
+                        print $code_start_line;
+                        system("cat $tmp_filename");
+                        print $code_end_line;
+                        print "end of code -->\n";
+
+                        print "<div style=\"padding: 10px; border: 2px solid #ff2222; overflow: auto; max-height: 400px; margin: 10px; color: $color; background-color: $bkcolor\">\n";
+                    } elsif (m/$html_end/) {
+                        print "</div>\n{html}\n";
+                    } else {
+                        print ;
+                    }
+                }
+            }
+            close($htmlize_pipe);
+        } else {
+            print $tmp_file $_;
+        }            
+    } else {
+        print;
+    }
+}
+    
+system("rm $tmp_filename");

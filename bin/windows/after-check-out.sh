@@ -6,10 +6,14 @@ THIS=$(readlink -f "$THIS")
 echo "we are executing $THIS"
 BIN_WINDOWS=$(dirname "$THIS")
 
-#strlen("/bin/windows") is 12
-if test "${BIN_WINDOWS:0-12}" != "/bin/windows"
+# strlen("windows-config/bin/windows") is 26, and -26 means the last
+# 26 chars, but we can't simply write -26, because that's another
+# expansion syntax. We must write 0-26, and it's arithmetic, which is
+# allowed.
+
+if test "${BIN_WINDOWS:0-26}" != "windows-config/bin/windows"
 then
-    echo 'startup.sh is not in ~/bin/windows!'
+    echo 'startup.sh is not in ~/windows-config/bin/windows!'
     #pause and exit, it's all blowed up!
     cat
     exit
@@ -18,14 +22,22 @@ fi
 cd -P "$BIN_WINDOWS"/../../..
 export HOME2=`pwd`
 
-if test "$HOME2" != /q -a "$HOME2" != /cygdrive/q; then 
-    subst /d q: || true #delete it first. FIXME, what if q: is a real drive?
-    subst q: $(cygpath -sma "$HOME2") #if it is already /q, we will have problem here, so we put this in a conditional
+function die() {
+    echo "$@" 1>&2
+    false
+}
+
+if test -e /q -a ! -L /q; then
+    die "Error, the /q exist and is not a symlink";
 fi
-export HOME=/cygdrive/q
+
+rm -f /q; 
+ln -s "$HOME2" /q
+export HOME=/q
+
 ~/windows-config/bin/after-co-ln-s.sh
 . ~/.bashrc-windows
-export HOME=/cygdrive/q 
+export HOME=/q 
 cd ~/bin/windows/Imap4Monitor/
 function report_error()
 {
@@ -59,5 +71,5 @@ fc-cache
 cd ~/doc
 regedit /s caps_lock_to_control.reg
 regedit /s putty.reg
-
+echo -n "c:/python31/python.exe" \"$(cygpath -aml ~/windows-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
 echo "After check out success!"
