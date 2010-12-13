@@ -27,22 +27,21 @@
 
 ;;; utilities
 
-  ;; type used to encapsulate a vertically stacked set of strings, the
+  ;; type used to encapsulate a vertically stacked set of string, the
   ;; font used to draw them, and the screen space they would take when
   ;; drawn
   (define-record-type :text-item
-    (make-text-item-1 strings font width height)
+    (make-text-item-1 string font width height)
     ;; [no predicate]
-    (strings ti-strings)
+    (string ti-string)
     (font ti-font)
     (width ti-width)
     (height ti-height))
 
-  (define (make-text-item strings font)
-    (make-text-item-1 strings font
-		      (apply max (mapcar (lambda (s)
-					   (text-width s font)) strings))
-		      (* (length strings) (font-height font))))
+  (define (make-text-item string font)
+    (make-text-item-1 string font
+		      (text-width string font)
+		      (font-height font)))
 
   ;; Calculates where to put an info window associated with W with size
   ;; DIMS
@@ -56,11 +55,11 @@
 	(cons (quotient (- (screen-width) (car dims)) 2)
 	      (quotient (- (screen-height) (cdr dims)) 2)))))
 
-  ;; Returns a list of strings describing window W in some way
+  ;; Returns a list of string describing window W in some way
   (define (window-info w)
-    (list (concat (and (window-get w 'iconified) ?[)
+    (concat (and (window-get w 'iconified) ?[)
 		  (window-name w)
-		  (and (window-get w 'iconified) ?]))))
+		  (and (window-get w 'iconified) ?])))
 
 ;;; entry point
 
@@ -149,13 +148,14 @@ This relation should hold: START <= ACTIVE < START + MAX-DISPLAY"
 		   (x (+ (* 2 x-margin) (car icon-size))))
 
                (let* ((rest texts)
-                      (y (+ (font-ascent (ti-font (car rest)))
+                      (y (+ y-margin
+                            (font-ascent (ti-font (car rest)))
                             (quotient (- line-height
                                          (ti-height (car rest))) 2))))
                  (while rest
                    (x-draw-string xw gc (cons x y)
                                   (if (car rest)
-                                      (car (ti-strings (car rest)))
+                                      (car (ti-string (car rest)))
                                     "") (ti-font (car rest)))
                    (setq rest (cdr rest)
                          y (+ y line-height))))

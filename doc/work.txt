@@ -732,3 +732,4 @@ ywb ime的一些问题：
 这个线程就死掉了，窗口也会挂住。这时候只好把python3.1关掉重来了。
 
 sawfish 调试：load-file，require
+gitosis-init < /tmp/id_rsa.pub
