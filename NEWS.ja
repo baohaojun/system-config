@@ -67,6 +67,43 @@
   (setq twittering-api-prefix "api/")
   (setq twittering-search-api-method "api/search")
   (setq twittering-web-path-prefix "")
+* "C-<mouse-3>"でtweetをコピー
+  Thanks to Faried Nawaz.
+* wgetによるtweet取得に対応
+  Twitterサーバとの通信に外部プログラムwgetを使えるようになりました。
+  下記の設定でwgetが優先して使われるようになります。
+  (setq twittering-connection-type-order '(wget curl native))
+* 現在の通信方法(connection method)をモードライン上に表示
+  デフォルトで現在の通信方法(connection method)がモードライン上に表示
+  されます。下記の設定で表示しないようにもできます。
+  (setq twittering-display-connection-method nil)
+* アイコン取得時の情報表示をデフォルトで抑制
+  `twittering-url-show-status'のデフォルト値がnilに変更されました。
+  デフォルトではアイコン取得時の情報は表示されなくなります。
+* urlライブラリによるtweet取得に対応
+  通信方法(connection method)として`urllib-http'と`urllib-https'を追加
+  しました。`native'とは異なりHTTP redirectionもサポートしていますが
+  動作は遅く、また不安定になる場合もあるようです。他のmethodが利用できる
+  場合にはそちらを用いることを推奨します。
+  `urllib-http',`urllib-https'を用いてのBASIC認証,xAuthで間違ったアカウ
+  ント情報を与えるとurlライブラリの機能で再入力を求められますが、再入力
+  した情報で通信を続行することはできません。再入力を求められたときはC-g
+  でキャンセルし、改めてM-x twitを実行してください。
+* ユーザからの入力待ち状態になってから再描画
+  時刻やアイコン画像の表示のためのtweetの再描画を、Emacsがユーザからの
+  入力待ち状態(idle状態)に入り、その状態が一定時間継続してから行うように
+  しました。待ち時間は変数`twittering-timer-interval-for-redisplaying'で
+  指定できます。デフォルトの待ち時間は1秒です。
+* curlやwgetでのアイコン画像取得に対応
+  アイコン画像の取得にtweet取得と同じ通信方法(connection method)が使える
+  ようになりました。各methodの優先順位はtweet取得と同じく変数
+  `twittering-connection-type-order'で決定されます。
+* アイコン画像変更プログラムの遅延呼び出し
+  アイコン画像を指定されたサイズに変更するためのプログラム(convert)実行
+  をEmacsがユーザからの入力待ち状態(idle状態)になって一定時間が経過して
+  から行うようにしました。待ち時間は変数
+  `twittering-url-request-sentinel-delay'で指定できます。デフォルトの
+  待ち時間は1秒です。
 * ...
 
 ### バグ修正
@@ -76,6 +113,16 @@
 * Native retweetをさらにretweetできるよう修正
   オリジナルのtweetへのretweet扱いになります。
 * アカウント認証時に発生する可能性のあった競合状態が起こらないよう修正
+* 返信先として表示されているtweetへの返信を正しく扱うよう修正
+  `twittering-show-replied-statuses'で返信先として表示されているtweetに
+  対して`twittering-enter'で返信したときに、カーソル下のtweetに対する
+  返信となるよう修正しました。
+  Thanks to Naohiro Aota.
+* 書式指定子"%L"の振舞いを修正
+  `twittering-status-format'のdocstringの通りに空白が挿入されるように
+  なりました。
+  Thanks to Tom X. Tobin.
+* アイコン画像取得の際に同一sentinelを複数回登録していたのを修正
 * ...
 
  1.0.0: 2010-06-05

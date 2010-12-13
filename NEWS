@@ -63,6 +63,45 @@
   (setq twittering-api-prefix "api/")
   (setq twittering-search-api-method "api/search")
   (setq twittering-web-path-prefix "")
+* Copy tweets by "C-<mouse-3>".
+  Thanks to Faried Nawaz.
+* Support for `wget'.
+  The external program `wget' can be used for communicating with Twitter
+  as well as `curl'. You can give priority to `wget' by the below
+  configuration.
+  (setq twittering-connection-type-order '(wget curl native))
+* Display of the current connection method on the mode-line.
+  By default, the current connection method is displayed on the mode-line.
+  You can disable it by "(setq twittering-display-connection-method nil)".
+* Silent retrieval of icons.
+  The default value of `twittering-url-show-status' is changed to nil.
+  So, icons are retrieved silently by default.
+* New connection methods, `urllib-http' and `urllib-https'.
+  New connection methods are added, which are implemented by using `url'
+  library. The library supports HTTP redirection, but it may be slow and
+  unstable. This method is not recommended if you can use other methods.
+  If you give incorrect account information on BASIC authentication or
+  xAuth with this new methods, you will be asked to input account
+  information again. This behavior is a function of the url library, but
+  twittering-mode cannot use account information given on the second try.
+  When you are asked to input it again, cancel it by 'C-g' and do
+  'M-x twit'.
+* Redisplaying tweets with idle timer.
+  Twittering-mode waits for Emacs to become idle before it redisplays
+  tweets for time and icon image. Tweets are redisplayed each time Emacs
+  remains idle for a certain time specified by the variable
+  `twittering-timer-interval-for-redisplaying', which is 1 second by
+  default.
+* Retrieval of icon images by `curl' and `wget'.
+  Icon images can be retrieved by the same connection method as that used
+  for retrieving tweets. The priority of methods is similarly determined
+  by `twittering-connection-type-order'.
+* Lazy invocation of `convert'.
+  The program `convert' for converting the size of icon images is invoked
+  after Emacs remains idle a certain time. The delay will prevent Emacs
+  from stucking on inputting characters on other buffer. The delay time is
+  specified by the new variable `twittering-url-request-sentinel-delay',
+  which is 1 second by default.
 * ...
 
 ### Bug fixes
@@ -73,6 +112,10 @@
 * Fix of a race condition on abnormal exit of a process for verification.
 * Fix of replying to tweets displayed as replied tweets.
   Thanks to Naohiro Aota.
+* Fix of rendering the format specifier "%L".
+  The specifier "%L" is correctly rendered with a preceding whitespace.
+  Thanks to Tom X. Tobin.
+* Fix of repeatedly registering a sentinel for retrieving an image.
 * ...
 
  1.0.0: 2010-06-05
