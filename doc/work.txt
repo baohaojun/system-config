@@ -733,3 +733,5 @@ ywb ime的一些问题：
 
 sawfish 调试：load-file，require
 gitosis-init < /tmp/id_rsa.pub
+
+xset b off

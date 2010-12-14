@@ -66,23 +66,10 @@
 
 ;; Use the following to customize the look of the menu.
 
-(defvar iswitch-font default-font
-  "Font for iswitch-window popup")
-
-(defvar iswitch-background-color "white"
-  "Background color for iswitch-window popup")
-
-(defvar iswitch-foreground-color "black"
-  "Foreground color for iswitch-window popup")
-
-(defvar iswitch-show-window-class nil
-  "Display WM_CLASS of windows in the iswitch menu.")
-
-(defvar iswitch-show-window-machine t
-  "Display WM_CLIENT_MACHINE of windows in the iswitch menu.")
-
 (defvar iswitch-filter-out-window-name-regexp-list
   '("^\.gnome-desktop$"
+    "^x-nautilus-desktop$"
+    "^Top Expanded Edge Panel$"
     "^gmc$"
     "^panel$"))
 
@@ -95,87 +82,6 @@
   (if elem
       (append (memq elem lst) (reverse (cdr (memq elem (reverse lst)))))
     lst))
-
-; find next window matching input string
-(defun iswitch-rotate-to-next-match (input wlist &optional previous)
-  (setq wlist
-        (iswitch-rotate-from
-         (catch 'iswitch-found
-           (mapc (lambda (w)
-                   (when (string-match input (window-name w) 0 t)
-                     (throw 'iswitch-found w)))
-                 (if previous
-                     (reverse (cdr wlist))
-                   (cdr wlist))))
-         wlist)))
-
-(defun iswitch-update-match (input wlist)
-  (filter (lambda (w) (string-match input (window-name w) 0 t))
-		 wlist))
-
-(setq iswitch-visibility-alist
-      '((unobscured	    . "+")
-	(partially-obscured . "%")
-	(fully-obscured	    . "@")))
-
-(setq iswitch-viewport-direction-alist
-      '(((1  . 0)  . ">")
-	((-1 . 0)  . "<")
-	((0  . 1)  . "v")
-	((0  . -1) . "^")
-	((1  . 1)  . ".")
-	((-1 . 1)  . ",")
-	((-1 . -1) . "`")
-	((1  . -1) . "'")))
-
-(defun sign (num)
-  (cond ((> num 0)
-	 1)
-	((zerop num)
-	 0)
-	((< num 0)
-	 -1)))
-
-(defun iswitch-viewport-direction (wv cv)
-  (let ((wvx (car wv))
-	(wvy (cdr wv))
-	(cvx (car cv))
-	(cvy (cdr cv)))
-    (cdr (assoc (cons (sign (- wvx cvx)) (sign (- wvy cvy)))
-		iswitch-viewport-direction-alist))))
-
-(defun iswitch-window-line (w)
-    (concat
-     (cond ((window-get w 'iconified)
-	    "i")
-	   ((window-get w 'sticky)
-	    "=")
-	   ((not (window-in-workspace-p w current-workspace))
-	    "X")
-	   ((window-outside-viewport-p w)
-	    (iswitch-viewport-direction (window-viewport w) (screen-viewport)))
-	   ((window-get w 'shaded)
-	    "s")
-	   ((cdr (assoc (window-visibility w)
-			iswitch-visibility-alist))))
-     " "
-     (window-name w)
-     (let ((class-name (get-x-text-property w 'WM_CLASS)))
-       (if (and iswitch-show-window-class class-name)
-           (concat "  <" 
-                   (aref class-name 1)
-                   ">")))
-     (let ((machine-name (get-x-text-property w 'WM_CLIENT_MACHINE)))
-       (if (and iswitch-show-window-machine machine-name)
-	   (concat " ["
-		   (aref machine-name 0)
-		   "]")))
-     "\n"))
-
-; format user input and window list for display-message
-(defun iswitch-display-format (input wlist)
-  (concat "  " input "_\n\n"
-          (apply concat (mapcar iswitch-window-line wlist))))
 
 (defun iswitch-filter-wlist-func (window)
   (let loop ((fow-nrl iswitch-filter-out-window-name-regexp-list))
@@ -191,6 +97,8 @@
         (let* ((override-keymap '(keymap))
 	      (input "")
 	      (key "")
+              (active 0)
+              (active-win nil)
 	      (init-wlist (filter iswitch-filter-wlist-func (window-order nil t t)))
 	      (focused-window (car init-wlist))
 	      wlist)
@@ -199,10 +107,7 @@
           (add-hook 'unbound-key-hook iswitch-read-event)
           (catch 'exit-iswitch
             (while t
-              (display-message (iswitch-display-format input wlist)
-                               `((font . ,iswitch-font)
-                                 (background . ,iswitch-background-color)
-                                 (foreground . ,iswitch-foreground-color)))
+              (setq active-win (bhj-draw-wininfo init-wlist nil input active))
               (setq key
                     (catch 'iswitch-read
                       (recursive-edit)))
@@ -213,24 +118,26 @@
                     ((or (equal key "C-u")
 			 (equal key "A-u"))
 		     (setq input ""
-			   wlist (iswitch-update-match input init-wlist)))
+                           active 0))
                     ((equal key "BS")
                      (when (> (length input) 0)
-			 (setq input (substring input 0 (1- (length input)))))
-		     (setq wlist (iswitch-update-match input init-wlist)))
+			 (setq input (substring input 0 (1- (length input)))
+                               active 0)))
 		    ((or (equal key "C-s")
 			 (equal key "A-s")
+                         (equal key "C-n")
                          (equal key "TAB"))
-		     (setq wlist (iswitch-rotate-to-next-match input wlist)))
+                     (setq active (1+ active)))
 		    ((or (equal key "C-r")
+                         (equal key "C-p")
 			 (equal key "A-r")
                          (equal key "M-TAB"))
-		     (setq wlist (iswitch-rotate-to-next-match input wlist t)))
+                     (setq active (1- active)))
 		    ((equal key "SPC")
 		     (setq input (concat input " ")
-			   wlist (iswitch-update-match input init-wlist)))
+                           active 0))
 		    ((equal key "RET")
-		     (throw 'exit-iswitch (car wlist)))
+		     (throw 'exit-iswitch active-win))
 		    ((or (equal key "C-z")
                          (equal key "A-z"))
 		     (let ((w (car wlist)))
@@ -242,9 +149,9 @@
 		     (toggle-window-shaded (car wlist)))
 		    ((= 1 (length key))
 		     (setq input (concat input key)
-			   wlist (iswitch-update-match input wlist)))))))
+                           active 0))))))
       (remove-hook 'unbound-key-hook iswitch-read-event)
-      (display-message nil)
+      (bhj-draw-wininfo (window-order) t)
       (ungrab-keyboard))))
 
 (defun iswitch-window ()
@@ -264,7 +171,3 @@
 	(act old))
       (display-window new))))
 
-(defun iswitch-swap-top-two ()
-  "Flip between the top two windows in the iswitch-window list."
-  (interactive)
-  (display-window (cadr (filter iswitch-filter-wlist-func (window-order nil t t)))))

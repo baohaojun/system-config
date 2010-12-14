@@ -1,4 +1,6 @@
 (require 'sawfish.wm.util.keymap)
+(load-file "~/.sawfish/bhj-draw-wininfo.jl")
+(require 'bhj-draw-wininfo)
 (load-file "~/.sawfish/iswitch-window.jl")
 (bind-keys global-keymap "Super-s" 'iswitch-window)
 
