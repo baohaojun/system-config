@@ -25,6 +25,7 @@
 
   ;; window currently displayed, or nil
   (define info-window nil)
+  (define Kill-image (make-image "~/.sawfish/Kill.png"))
 
 ;;; utilities
 
@@ -59,7 +60,8 @@
            (wi (make-window-info-1 w ; window
                                    text ; text
                                    (let ((i (window-icon-image w)))
-                                     (and i (scale-image i icon-size icon-size))) ; icon
+                                     (or (and i (scale-image i icon-size icon-size))
+                                         Kill-image)) ; icon
                                    nil ; selected
                                    (+ 4 (max icon-size (font-height font))) ; height
                                    (+ (* 3 x-margin)
@@ -138,7 +140,7 @@ the active window ACTIVE should be highlighted"
       (setq wi-list (cons (make-window-info-1
                            nil 
                            "no more matching windows!" 
-                           nil
+                           Kill-image
                            nil 
                            line-height 
                            (+ (* 3 x-margin) icon-size (text-width "no more matching windows!" default-font))
@@ -220,10 +222,15 @@ the active window ACTIVE should be highlighted"
                                       (function . ,'xor)))))
                (x-fill-rectangle xw 
                                  gc 
-                                 (cons 0 (+ 2y-margin
+                                 (cons (+ 2x-margin icon-size) (+ 2y-margin
                                             line-height
                                             (* active line-height)))
-                                 (cons (car win-size) line-height))
+                                 (cons (- (car win-size)
+                                          2x-margin
+                                          x-margin
+                                          icon-size
+                                          ) 
+                                       line-height))
                (x-destroy-gc gc))
 
              )))
