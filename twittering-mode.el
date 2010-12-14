@@ -5141,7 +5141,7 @@ icon mode; otherwise, turn off icon mode."
 	    (< 0 (prefix-numeric-value arg))))
     (unless (eq prev-mode twittering-icon-mode)
       (twittering-update-mode-line)
-      (twittering-render-timeline (current-buffer) nil nil t))))
+      (twittering-render-timeline (current-buffer)))))
 
 (defvar twittering-icon-prop-hash (make-hash-table :test 'equal)
   "Hash table for storing display properties of icon. The key is the size of
@@ -8159,7 +8159,7 @@ browser right away."
   (when (twittering-buffer-p)
     (let ((spec (twittering-current-timeline-spec)))
       (twittering-remove-timeline-data spec) ;; clear current timeline.
-      (twittering-render-timeline (current-buffer) nil) ;; clear buffer.
+      (twittering-render-timeline (current-buffer)) ;; clear buffer.
       (twittering-get-and-render-timeline))))
 
 ;;;; Cursor motion
