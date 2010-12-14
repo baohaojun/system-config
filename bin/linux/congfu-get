@@ -13,7 +13,7 @@ function quote-array() {
 
 function congfu() {
     local user=hjbao
-    local server=http://bear/confluence
+    local server=`cat ~/.confserv`
     local space='~hjbao'
     local password=`cat ~/.confpass`
     local args=()
