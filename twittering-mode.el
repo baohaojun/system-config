@@ -7979,6 +7979,28 @@ string.")
 	  (message "Cannot retweet your own tweet"))
       (message "No status selected"))))
 
+(defun twittering-generate-organic-retweet ()
+  (let ((username (get-text-property (point) 'username))
+	(text (get-text-property (point) 'text))
+	(id (get-text-property (point) 'id))
+	(retweet-time (current-time))
+	(format-str (or twittering-retweet-format "RT: %t (via @%s)")))
+    (when username
+      (let ((prefix "%")
+	    (replace-table
+	     `(("%" . "%")
+	       ("s" . ,username)
+	       ("t" . ,text)
+	       ("#" . ,id)
+	       ("C{\\([^}]*\\)}" .
+		(lambda (context)
+		  (let ((str (cdr (assq 'following-string context)))
+			(match-data (cdr (assq 'match-data context))))
+		    (store-match-data match-data)
+		    (format-time-string (match-string 1 str) ',retweet-time))))
+	       )))
+	(twittering-format-string format-str prefix replace-table)))))
+
 ;;;; Commands for browsing information related to a status
 
 (defun twittering-click ()
