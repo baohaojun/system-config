@@ -156,3 +156,20 @@ pmu之外的外部电源用的是哪个gpio
             ...
             {
     =>          Ext_TPS72012PmuSupply_LDO,
+
+****************
+Nvidia 自带了用gpio模拟i2c的代码，回头电源代码可以用这个来试一下。
+
+    /home/bhj/src/rayzerlink-ventana/kernel/arch/arm/mach-tegra/nvrm/io/common/nvrm_i2c.c:539:     if ((Transaction[0].Flags & NVRM_I2C_SOFTWARE_CONTROLLER) ||
+        NvError NvRmI2cTransaction(
+            NvRmI2cHandle hI2c,
+            NvU32 I2cPinMap,
+            NvU32 WaitTimeoutInMilliSeconds,
+            NvU32 ClockSpeedKHz,
+            NvU8 *Data,
+            NvU32 DataLength,
+            NvRmI2cTransactionInfo * Transaction,
+            NvU32 NumOfTransactions)
+        {
+            ...
+    =>      if ((Transaction[0].Flags & NVRM_I2C_SOFTWARE_CONTROLLER) ||
