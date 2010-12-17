@@ -144,7 +144,7 @@ _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will
 
 git()
 {
-    if test "`pwd`" = "`readlink -f ~`" -a "$1" != clone
+    if test "`pwd`" = "`readlink -f ~`"
     then
         (cd ~/windows-config/; command git "$@")
     else

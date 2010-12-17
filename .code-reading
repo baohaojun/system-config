@@ -158,18 +158,19 @@ pmu之外的外部电源用的是哪个gpio
     =>          Ext_TPS72012PmuSupply_LDO,
 
 ****************
-Nvidia 自带了用gpio模拟i2c的代码，回头电源代码可以用这个来试一下。
+注册中断的方法：
 
-    /home/bhj/src/rayzerlink-ventana/kernel/arch/arm/mach-tegra/nvrm/io/common/nvrm_i2c.c:539:     if ((Transaction[0].Flags & NVRM_I2C_SOFTWARE_CONTROLLER) ||
-        NvError NvRmI2cTransaction(
-            NvRmI2cHandle hI2c,
-            NvU32 I2cPinMap,
-            NvU32 WaitTimeoutInMilliSeconds,
-            NvU32 ClockSpeedKHz,
-            NvU8 *Data,
-            NvU32 DataLength,
-            NvRmI2cTransactionInfo * Transaction,
-            NvU32 NumOfTransactions)
+    /home/bhj/src/rayzerlink-ventana/kernel/arch/arm/mach-tegra/odm_kit/platform/accelerometer/nvodm_accelerometer_kxtf9.c:385:     if (NvOdmGpioInterruptRegister(hDevice->hGpioINT,
+        static NvBool ConfigInterrupt(NvOdmAccelHandle hDevice)
         {
             ...
-    =>      if ((Transaction[0].Flags & NVRM_I2C_SOFTWARE_CONTROLLER) ||
+    =>      if (NvOdmGpioInterruptRegister(hDevice->hGpioINT,
+
+****************
+这里应该是每个i2c上选的哪个pinmux配置？
+
+    /home/bhj/src/rayzerlink-ventana/hardware/tegra/odm/ventana/odm_kit/query/nvodm_query_pinmux.c:43: static const NvU32 s_NvOdmPinMuxConfig_I2c[] = {
+        static const NvU32 s_NvOdmPinMuxConfig_Twc[] = {
+            0
+        ...
+    =>  static const NvU32 s_NvOdmPinMuxConfig_I2c[] = {

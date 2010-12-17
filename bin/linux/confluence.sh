@@ -1,1 +1,0 @@
-./ext/confluence-cli-1.5.0/confluence.sh

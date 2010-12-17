@@ -151,28 +151,37 @@ git clone git://github.com/baohaojun/windows-config.git
 
 * nvidia project
 
+** TODO LCD screen is inverted, we are viewing the normal position with the worst viewpoint
+
 ** TODO acore process force close report to nvidia
 
-** gsensor died root cause
+** TODO touch dies
 
-Basically gsensor is just an i2c device + an interupt gpio. Now in our
-nvidia code, gsensor will die randomly and it's very difficult to
-reproduce. But it happens. The root cause, I think, has been
-located. It's because I cleared the gpio level before I re-enabled the
-interupt. This must be reversed, since I'm using Interupt_Falling_Edge. 
+** TODO power sleep 
 
-See, when using Interupt_Falling_Edge, after I clear the gpio state,
-and before I re-enable the interupt, there could happen another
-Falling_Edge, which should have interupted the CPU, but got missed,
-because the interupt is not re-enabled yet! And then, since we never
-pull the gpio up unless we are interupted, and interupt will not
-happen unless the gpio is pulled up (and fall down, thus the name
-``Interupt_Falling_Edge''), we got into a dead lock. 
+** TODO power off the pad ( the power key should get a dialog )
 
-The fix should be to reverse ``re-enable interupt'' and ``clear gpio state''.
+** TODO accelerometor dies
 
-Touch will also die occasionaly, I wonder if it's the same logic error.
+./wi2cb.sh 0x3 0xf 0x1b 0xc7
 
+# the following will clean the interupt pin.
+./ri2cb.sh 0x3 0xf 0x1a 1
+nvgpio n 4 = 108
+
+The above seems to put it back into work. 
+
+** TODO compass HAL integrate
+
+** TODO battery driver
+The I2C can be scanned now. We need change the i2c-2 default config to config2, not the default config1.
+** DONE remove the mouse cursor
+
+** TODO BT
+
+Holman 建议bt需要先make discoverable，再发送文件就能成功，我已经验证过，必须先discoverable，再disable discovery，然后就能接收文件。
+
+** TODO WIFI unstable
 
 * sawfish ifind, write it like my Windows version
 
