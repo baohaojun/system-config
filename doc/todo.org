@@ -183,6 +183,27 @@ Holman 建议bt需要先make discoverable，再发送文件就能成功，我已
 
 ** TODO WIFI unstable
 
+** gsensor died root cause
+
+Basically gsensor is just an i2c device + an interupt gpio. Now in our
+nvidia code, gsensor will die randomly and it's very difficult to
+reproduce. But it happens. The root cause, I think, has been
+located. It's because I cleared the gpio level before I re-enabled the
+interupt. This must be reversed, since I'm using Interupt_Falling_Edge. 
+
+See, when using Interupt_Falling_Edge, after I clear the gpio state,
+and before I re-enable the interupt, there could happen another
+Falling_Edge, which should have interupted the CPU, but got missed,
+because the interupt is not re-enabled yet! And then, since we never
+pull the gpio up unless we are interupted, and interupt will not
+happen unless the gpio is pulled up (and fall down, thus the name
+``Interupt_Falling_Edge''), we got into a dead lock. 
+
+The fix should be to reverse ``re-enable interupt'' and ``clear gpio state''.
+
+Touch will also die occasionaly, I wonder if it's the same logic error.
+
+
 * sawfish ifind, write it like my Windows version
 
 * sawfish "run bhj run", write it like my Windows version

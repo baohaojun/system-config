@@ -1,9 +1,18 @@
 #!/usr/bin/env perl
 
 use strict;
+use Getopt::Long;
+
+my $nthreads = 3;
+
+GetOptions(
+    "n=i" => \$nthreads,
+    );
+
+die "Error: wrong number of threads: must >= 1" if $nthreads < 1;
 my @childrens = ();
 my %config = (
-    nthreads => 3,
+    nthreads => $nthreads,
     var_path => '.',
     limit_rate  => '100m',
     );
