@@ -13,7 +13,7 @@ function quote-array() {
 
 function congfu() {
     local user=hjbao
-    local server=`cat ~/.confserv`
+    local server=`cat ~/.confserv 2>/dev/null||echo http://bear/wiki/`
     local space='~hjbao'
     local password=`cat ~/.confpass`
     local args=()
@@ -102,7 +102,9 @@ function congfu-put() {
 '. '$0';
 eval "CONGFU_ARGS=( $CONGFU_ARGSTR )";
 for x in "$@"; do 
-    congfu "${CONGFU_ARGS[@]}" -a storePage --title "$x" --content "$(cat -- "$x"|confluence-htmlize)"
+    cat -- "$x"|confluence-htmlize > "$x".$$
+    congfu "${CONGFU_ARGS[@]}" -a storePage --title "$x" --encoding UTF-8 --file "$(readlink -f "$x".$$)"
+    rm "$x".$$
     git add -- "$x"
     done ' xx
     for x in *.$$.bak; do 

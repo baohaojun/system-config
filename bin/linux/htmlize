@@ -24,8 +24,8 @@ emacsclient -e '
       (kill-buffer (current-buffer))
       (kill-buffer old-buf))))'
 
-cat $tf|tee ~/1.html
+cat $tf|tee $tf.html
 if test -n "$DEBUG"; then
-    firefox ~/1.html
+    firefox $tf.html
 fi
-rm $tf
+rm $tf $tf.html

@@ -32,7 +32,11 @@ while (<>) {
 
                         print "{html}<!-- start of code\n";
                         print $code_start_line;
-                        system("cat $tmp_filename");
+                        open(my $tmp_fh, "<", $tmp_filename) or die "Error: can't open $tmp_filename";
+                        while (<$tmp_fh>) {
+                            print;
+                        }
+                        close($tmp_fh);
                         print $code_end_line;
                         print "end of code -->\n";
 
