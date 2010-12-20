@@ -1,8 +1,8 @@
 [color]
 	ui = auto
 [user]
-	name = bhj
-	email = baohaojun@gmail.com
+	name = hjbao
+	email = hjbao@eee168.com
 [core]
 	excludesfile = ~/.gitexcludefile
 [alias]

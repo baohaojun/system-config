@@ -20,6 +20,7 @@ function bi2c() {
 
 (lcd ../.repo/../flashing && sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go)
 (lcd ../.repo/../flashing && sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go)
+(cd ./.repo/.. && cd flashing/ && ./theater-flash.sh)
 
 git config --add remote.origin.pushurl `git config remote.origin.url|perl -npe "s,.*//.*?/,bhj\@192.168.0.46:/,"`
 sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'

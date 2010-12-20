@@ -151,6 +151,8 @@ git clone git://github.com/baohaojun/windows-config.git
 
 * nvidia project
 
+** TODO 让近锋装两个不带电池的pad，多买一些15V AC charger。
+** TODO 让人找替换料，让舒璟琳或者赵炎到中关村去买。
 ** TODO LCD screen is inverted, we are viewing the normal position with the worst viewpoint
 
 ** TODO acore process force close report to nvidia
@@ -159,6 +161,7 @@ git clone git://github.com/baohaojun/windows-config.git
 
 ** TODO power sleep 
 
+** TODO power button will require a resistor to work, but that resistor is prone to be destroyed when plugging battery connector.    
 ** TODO power off the pad ( the power key should get a dialog )
 
 ** TODO accelerometor dies
@@ -207,3 +210,4 @@ Touch will also die occasionaly, I wonder if it's the same logic error.
 * sawfish ifind, write it like my Windows version
 
 * sawfish "run bhj run", write it like my Windows version
+

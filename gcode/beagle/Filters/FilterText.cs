@@ -47,6 +47,7 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-perl"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ruby"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-designer"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/html"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/plain"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-authors"));
