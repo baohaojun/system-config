@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo 'http://cgi.music.soso.com/fcgi-bin/fcg_download_lrc.q?song='$1'&singer='$2'&down=1'|b52gb-in-utf8|iconv -f utf8 -t gbk|xargs wget -O $1.$2.lrc.bak
+iconv -f gbk -t utf8 $1.$2.lrc.bak > $1.$2.lrc && rm $1.$2.lrc.bak
+

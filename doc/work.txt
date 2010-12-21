@@ -744,3 +744,7 @@ congfu -a getPageList|grep .bak|xargs bash -c 'for x in "$@"; do congfu -a remov
 adobe linux reader ssl error: 
 
 http://blogs.adobe.com/acroread/2009/04/24/ssl_error_on_linux_reader_reso/
+
+
+for x in *.ps; do perl -ne 'print unless m/^mark currentfile eexec$/ .. m/^cleartomark$/;' -i $x; done
+for x in *; do y=`echo $x|perl -npe 's/.*?\.(.*)\..*/$1/'`; echo $y; done|xargs -d '\n' bash -c 'for x in "$@"; do getlrc "$x" 许冠杰; done ' xx

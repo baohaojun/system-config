@@ -161,7 +161,7 @@ git clone git://github.com/baohaojun/windows-config.git
 
 ** TODO power sleep 
 
-** TODO power button will require a resistor to work, but that resistor is prone to be destroyed when plugging battery connector.    
+** TODO power button will require a resistor to work, but that resistor is prone to be destroyed when plugging battery connector. 
 ** TODO power off the pad ( the power key should get a dialog )
 
 ** TODO accelerometor dies
