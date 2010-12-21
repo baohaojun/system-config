@@ -1,8 +1,8 @@
 set(SNORE_RCS ${SNORE_RCS} ../data/snore.qrc PARENT_SCOPE)
 
 if(WIN32)
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/zzz.rc "IDI_ICON1        ICON        DISCARDABLE    \"zzz.ico\"\n")
   if(MINGW)
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/zzz.rc "IDI_ICON1        ICON        DISCARDABLE    \"zzz.ico\"\n")
     find_program(WINDRES_EXECUTABLE NAMES windres)
     if(WINDRES_EXECUTABLE)
       exec_program(windres
