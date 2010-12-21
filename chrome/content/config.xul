@@ -112,6 +112,14 @@
             <description value="scrolls a line down" />
           </row>
           <row>
+            <textbox id="ViScrollLineLeft" value="H" />
+            <description value="scrolls a line left" />
+          </row>
+          <row>
+            <textbox id="ViScrollLineRight" value="L" />
+            <description value="scrolls a line right" />
+          </row>
+          <row>
             <textbox id="ViPreviousTab" value="h" />
             <description value="moves to the previous tab" />
           </row>

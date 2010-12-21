@@ -97,6 +97,20 @@ body: goDoCommand('cmd_scrollLineDown');
 desc: scrolls a line down
 type: 
 -
+name: ViScrollLeft
+case: View
+keyx: H
+body: goDoCommand('cmd_scrollLeft');
+desc: scrolls left
+type: 
+-
+name: ViScrollRight
+case: View
+keyx: L
+body: goDoCommand('cmd_scrollRight');
+desc: scrolls right
+type: 
+-
 name: ViPreviousTab
 case: View
 keyx: h

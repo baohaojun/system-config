@@ -13,6 +13,8 @@ FmxConfig._names = [
   'NextTab',
   'ViScrollLineUp',
   'ViScrollLineDown',
+  'ViScrollLineLeft',
+  'ViScrollLineRight',
   'ViPreviousTab',
   'ViNextTab',
   'ViScrollPageUp',
