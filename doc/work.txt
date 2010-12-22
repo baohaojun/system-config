@@ -99,9 +99,9 @@ mount -t yaffs2 /dev/block/mtdblock7 /opl
 export DO_SERVICE=true; exec /init2
 
 replace init.rc
-(cd .repo/..; export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh; time make -j 8 )
-(cd .repo/..; export TARGET_PRODUCT=ventana; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh; time make -j 8 )
-(cd .repo/.. && export TARGET_PRODUCT=ventana; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT)
+(cd .repo/..; export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh; time make -j8 )
+(cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 )
+(cd .repo/.. && export TARGET_PRODUCT=ventana; . build/envsetup.sh ; for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT)
 /mnt/mysql /var/lib/mysql none bind 0 0
 ssh -C2qN -D 8080 bhj@216.194.70.6
 
@@ -738,7 +738,9 @@ gitosis-init < /tmp/id_rsa.pub
 xset b off
 
 openoffice: 输入一长串数字不想让它给写成1.2E5这种科学表达式的形式，可以选Table->Number Format。
+
 ./wi2cb.sh 0x0 0x5c 0x37 3
+./wi2cb.sh 0x0 0x41 0xcc 3
 congfu -a getPageList|grep .bak|xargs bash -c 'for x in "$@"; do congfu -a removePage --title $x; done'
 
 adobe linux reader ssl error: 
@@ -748,3 +750,4 @@ http://blogs.adobe.com/acroread/2009/04/24/ssl_error_on_linux_reader_reso/
 
 for x in *.ps; do perl -ne 'print unless m/^mark currentfile eexec$/ .. m/^cleartomark$/;' -i $x; done
 for x in *; do y=`echo $x|perl -npe 's/.*?\.(.*)\..*/$1/'`; echo $y; done|xargs -d '\n' bash -c 'for x in "$@"; do getlrc "$x" 许冠杰; done ' xx
+cat /proc/kmsg

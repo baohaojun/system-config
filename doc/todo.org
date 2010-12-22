@@ -150,7 +150,7 @@ git clone git://github.com/baohaojun/windows-config.git
    状，本人概不负责。相反，请考虑支付本人相当于欢乐谷门票的钱;-)
 
 * nvidia project
-
+  
 ** TODO 让近锋装两个不带电池的pad，多买一些15V AC charger。
 ** TODO 让人找替换料，让舒璟琳或者赵炎到中关村去买。
 ** TODO LCD screen is inverted, we are viewing the normal position with the worst viewpoint
@@ -160,6 +160,8 @@ git clone git://github.com/baohaojun/windows-config.git
 ** TODO touch dies
 
 ** TODO power sleep 
+   
+   Can not fully sleep. Speaker will clicker, clicker... It's quite annoying
 
 ** TODO power button will require a resistor to work, but that resistor is prone to be destroyed when plugging battery connector. 
 ** TODO power off the pad ( the power key should get a dialog )
