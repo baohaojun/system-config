@@ -18,9 +18,12 @@ function bi2c() {
          echo read adap 3 addr 0x4 block 10 > /proc/i2c_rw
 }
 
-(cd ./.repo/.. && cd flashing/ && sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go)
-(cd ./.repo/.. && cd flashing/ && sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go)
-(cd ./.repo/.. && cd flashing/ && ./theater-flash.sh)
+(cd .repo/.. && cd flashing/ && sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go)
+(cd .repo/.. && cd flashing/ && sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go)
+(cd .repo/.. && cd flashing && sudo ./nvflash --bl bootloader.bin --download 8 system.img --go)
+(cd .repo/.. && cd rayzerlink-tools/proc_i2c && ../run.sh)
+
+(cd .repo/.. && cd flashing/ && ./theater-flash.sh)
 
 git config --add remote.origin.pushurl `git config remote.origin.url|perl -npe "s,.*//.*?/,bhj\@192.168.0.46:/,"`
 sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'
@@ -225,9 +228,6 @@ clean http://ftp.us.debian.org/debian
 clean http://ppa.launchpad.net/ubuntu-wine
 
 for x in `git branch -r`; do git diff $x 2>&1|grep diff -q || echo $x; done
-(cd .repo/../flashing && sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go)
-(cd .repo/../flashing && sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go)
-(cd .repo/../flashing && sudo ./nvflash --bl bootloader.bin --download 8 system.img --go)
 
 (find-file
  (let ((file 
@@ -751,3 +751,14 @@ http://blogs.adobe.com/acroread/2009/04/24/ssl_error_on_linux_reader_reso/
 for x in *.ps; do perl -ne 'print unless m/^mark currentfile eexec$/ .. m/^cleartomark$/;' -i $x; done
 for x in *; do y=`echo $x|perl -npe 's/.*?\.(.*)\..*/$1/'`; echo $y; done|xargs -d '\n' bash -c 'for x in "$@"; do getlrc "$x" 许冠杰; done ' xx
 cat /proc/kmsg
+
+imapsync --host1 imap.gmail.com --port1 993 --ssl1 --authmech1 LOGIN --user1 baohaojun@gmail.com --passfile1 ~/.gmailpass --host2 localhost --port2 993 --authmech2 LOGIN --ssl2 --user2 bhj --passfile2 ~/.localpass --exclude 'All Mail|Trash|Spam'
+
+
+gmail search options: after:2008/11/1 before:2010/11/2 (from gmail search help)
+
+gnus: some email is gone, but the header will still display, you just can't open it. Fixed by: 
+
+    rm /home/bhj/News/agent/nnimap/localhost/Inbox
+
+while true; do echo -n -e '|'; sleep .2; echo -n -e '\b/'; sleep .2; echo -n -e '\b-'; sleep .2; echo -n -e '\b\'; sleep .2; echo -n -e '\b'; done

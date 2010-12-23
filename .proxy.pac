@@ -17,7 +17,7 @@
          'twbbs.org', 'video.google.com', 'groups.google.',
          'book.kanunu.org', 'markmail.org', 'tolchz.net',
          'blog.varunkumar.me', 'webupd8.org', 'www.emacsblog.org',
-         'windows-commandline.com',];
+         'windows-commandline.com', 'picturesofmymother.com',];
     
     var regexp = new RegExp(blocked_site.join('|'));
     
