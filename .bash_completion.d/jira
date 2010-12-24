@@ -7,6 +7,28 @@ _jira_compgen_options()
     COMPREPLY=( $(skeleton_compgen_word.pl -- "$( echo ${options[@]} )" "$cur") )
 }
 
+_jira_components()
+{
+    local components=(
+        Unknown Apps-3rd 
+        Apps-Backup Apps-Browser Apps-Calc 
+        Apps-Calendar Apps-Clock Apps-Contact 
+        Apps-Ebook Apps-EMail Apps-FileManager 
+        Apps-Gallery Apps-Home Apps-InputMethod 
+        Apps-News Apps-Search Apps-Setting 
+        Apps-Update Apps-Widget Boot 
+        Connectivity-Bluetooth Connectivity-Ethernet/ADSL Connectivity-GPS 
+        Connectivity-Wifi Framework Framework-GUI 
+        GMS Hardware Multimedia 
+        OS OS-FileSystem OS-PowerManagement 
+        OS-Sensor OS-Update Service-Search 
+        Service-Update Telephony Tools 
+        Vendor
+    )
+
+    COMPREPLY=( $(skeleton_compgen_word.pl -- "$( echo ${components[@]} )" "$cur") )
+}
+
 _jira_issue_types()
 {
     local IFS=$'\t\n'
@@ -56,6 +78,14 @@ _jira()
             ;;
         --project)
             _jira_file_list ~/jira-projects/
+            return 0
+            ;;
+        --assignee)
+            _jira_file_list ~/jira-users/
+            return 0
+            ;;
+        --components)
+            _jira_components
             return 0
             ;;
         --type)
