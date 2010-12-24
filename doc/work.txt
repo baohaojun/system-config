@@ -753,6 +753,7 @@ for x in *; do y=`echo $x|perl -npe 's/.*?\.(.*)\..*/$1/'`; echo $y; done|xargs 
 cat /proc/kmsg
 
 imapsync --host1 imap.gmail.com --port1 993 --ssl1 --authmech1 LOGIN --user1 baohaojun@gmail.com --passfile1 ~/.gmailpass --host2 localhost --port2 993 --authmech2 LOGIN --ssl2 --user2 bhj --passfile2 ~/.localpass --exclude 'All Mail|Trash|Spam'
+imapsync --host1 imap.gmail.com --port1 993 --ssl1 --authmech1 LOGIN --user1 hjbao@adsnexus.com --passfile1 ~/.gmailpass --host2 localhost --port2 993 --authmech2 LOGIN --ssl2 --user2 bhj --passfile2 ~/.localpass --exclude 'All Mail|Trash|Spam' --allowsizemismatch
 
 
 gmail search options: after:2008/11/1 before:2010/11/2 (from gmail search help)
