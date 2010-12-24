@@ -32,5 +32,4 @@ export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
 export USE_CCACHE=1
 alias hir='history -r'
-alias jira='jira.sh -s http://bear/jira -u hjbao -p `cat ~/.confpass`'
 export PATH=`echo -n $PATH|perl -a -F: -ne 'for (@F) {print "$_\n"}'|uniq-even-non-ajacent |perl -ne 'chomp; print ":" unless (1..1); print $_'`
