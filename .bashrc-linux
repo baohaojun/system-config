@@ -21,3 +21,4 @@ if [ -n "$BASH_VERSION" -a "$BASH" = /bin/bash ]; then
     . ~/.bashrc-linux-bash
 fi
     
+. ~/.bash_completion.d/jira

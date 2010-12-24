@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for x in "$@"; do 
+    test "$x" = "--help" && jira-help.pl $(for x in "$@"; do echo $x; done|uniq-even-non-ajacent) && exit
+done
+
+jira.sh -s http://bear/jira -u hjbao -p `cat ~/.confpass` "$@"

@@ -7,6 +7,28 @@ _jira_compgen_options()
     COMPREPLY=( $(skeleton_compgen_word.pl -- "$( echo ${options[@]} )" "$cur") )
 }
 
+_jira_issue_types()
+{
+    local IFS=$'\t\n'
+    local types=(
+        Bug
+        "New Feature"
+        Task
+        Improvement
+        Epic
+        Story
+        "Test Task"
+    )
+    
+    COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(for x in ${types[@]}; do echo $x; done)" "$cur") )
+}
+
+_jira_file_list()
+{
+    local IFS=$'\t\n'
+    COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(cd "$1"; 'ls')" "$cur") )
+}
+
 _jira_actions()
 {
         
@@ -28,6 +50,18 @@ _jira()
             _jira_actions
             return 0
             ;;
+        --issue)
+            _jira_file_list ~/jira-issues/
+            return 0
+            ;;
+        --project)
+            _jira_file_list ~/jira-projects/
+            return 0
+            ;;
+        --type)
+            _jira_issue_types
+            return 0
+            ;;
     esac
 
     case $cur in
@@ -39,7 +73,7 @@ _jira()
 
     return 0
 }
-complete -o filenames -F _jira jira
+complete -o filenames -F _jira jira jira-help.pl
 
 # Local variables:
 # mode: shell-script

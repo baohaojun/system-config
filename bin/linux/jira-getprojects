@@ -1,0 +1,7 @@
+#!/bin/bash
+
+issues=$(jira -a getProjectList|perl -ne 'print unless (1..2)'|awk -F, '{print $1}')
+
+for x in ${issues[@]}; do 
+    touch $x
+done 
