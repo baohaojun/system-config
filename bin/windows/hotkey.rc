@@ -59,7 +59,7 @@ KeyToGrab(PLUS),        WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(MINUS),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(frontop.exe bot)
 KeyToGrab(Delete),      WithModifier(LWin),      WithAction(ExecCommand), DoThis(taskmgr)
 KeyToGrab(Pause),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(control.exe sysdm.cpl)
-KeyToGrab(D),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(showdesk.scf)
+KeyToGrab(D),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(cmd /c start showdesk.scf)
 KeyToGrab(L),           WithModifier(LWin),      WithAction(LockWorkStation)
 KeyToGrab(S),           WithModifier(LWin),      WithAction(ifinds)
 KeyToGrab(O),           WithModifier(LWin),      WithAction(ifindo)
