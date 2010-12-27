@@ -26,3 +26,5 @@ renew-xauth()
 {
     . ~/.new-xauth
 }
+
+. ~/.bash_completion.d/jira
