@@ -8006,12 +8006,14 @@ string.")
       (with-current-buffer (twittering-get-managed-buffer 
 			    (or (get-text-property 0 'goto-spec timeline-spec)
 				timeline-spec))
-	(rename-buffer (substring-no-properties timeline-spec))
+	(let ((name (substring-no-properties timeline-spec))
+	      (suffix (format "@%S" twittering-service-method)))
+	  (unless (string-match suffix name)
+	    (setq name (concat name suffix)))
+	  (rename-buffer name))
 	(switch-to-buffer (current-buffer)))))
    (t
     (message "No connection methods are available.")
-	  (switch-to-buffer (current-buffer))
-	  
     nil)))
 
 (defun twittering-friends-timeline ()
