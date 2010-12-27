@@ -1198,3 +1198,10 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (if (file-remote-p (buffer-file-name))
       (find-alternate-file (replace-regexp-in-string "^/scp:.*?:" "" (buffer-file-name)))    
     (find-alternate-file (concat "/scp:root@localhost:" (buffer-file-name)))))
+
+(defun gnus-gmail-search-subject ()
+  (interactive)
+  (shell-command (concat 
+                  "search-gmail "
+                  (shell-quote-argument (gnus-summary-article-subject))
+                  "&")))

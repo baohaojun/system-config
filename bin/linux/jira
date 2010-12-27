@@ -13,7 +13,10 @@ sub uniq {
     return @uniq;
 }
 
-grep(m/^--help$/, @ARGV) and system("jira-help.pl", uniq(@ARGV));
+if (grep(m/^--help$/, @ARGV)) {
+    system("jira-help.pl", uniq(@ARGV));
+    exit 0;
+}
 
 my $remove_colon = 0;
 for (@ARGV) {

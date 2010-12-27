@@ -763,3 +763,5 @@ gnus: some email is gone, but the header will still display, you just can't open
     rm /home/bhj/News/agent/nnimap/localhost/Inbox
 
 while true; do echo -n -e '|'; sleep .2; echo -n -e '\b/'; sleep .2; echo -n -e '\b-'; sleep .2; echo -n -e '\b\'; sleep .2; echo -n -e '\b'; done
+
+sawfish-client -e '(mapcar (lambda (w) (and (string-match "腾讯网新闻" (window-name w)) (delete-window-safely w)))  (window-order))'
