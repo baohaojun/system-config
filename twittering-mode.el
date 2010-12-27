@@ -2486,7 +2486,7 @@ The zebra face is decided by looking at adjacent face. "
 	 (zebra-face (if (and pos
 			      (memq twittering-zebra-1-face
 				    (let ((faces (get-text-property pos 'face)))
-                                      (if (listp faces) faces (lsit faces)))))
+                                      (if (listp faces) faces (list faces)))))
 			 twittering-zebra-2-face
 		       twittering-zebra-1-face)))
     (while (setq end (next-single-property-change start 'face object))
@@ -8231,11 +8231,22 @@ string.")
 
 ;;;; Commands for retweet
 
-(defun twittering-retweet ()
-  (interactive)
-  (if twittering-use-native-retweet
-      (twittering-native-retweet)
-    (twittering-organic-retweet)))
+;; TODO: cross-retweeting not working (xwl)
+(defun twittering-retweet (&optional ask)
+  (interactive "P")
+  (let ((service twittering-service-method))
+    (when ask
+      (setq service
+	    (intern 
+	     (ido-completing-read
+	      "Post to: " 
+	      `(,@(mapcar 'symbol-name twittering-enabled-services) "all")))))
+    (mapc (lambda (s)
+	    (let ((twittering-service-method s))
+	      (if twittering-use-native-retweet
+		  (twittering-native-retweet)
+		(twittering-organic-retweet))))
+	  (if (eq service 'all) twittering-enabled-services (list service)))))
 
 (defun twittering-organic-retweet ()
   (interactive)
