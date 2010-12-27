@@ -570,14 +570,14 @@ Following methods are supported:
       ""))
 
 (defun twittering-lookup-oauth-access-token-alist ()
-  (cadr (assq twittering-service-method
-	     twittering-oauth-access-token-alist)))
+  (cdr (assq twittering-service-method
+	      twittering-oauth-access-token-alist)))
 
 (defun twittering-update-oauth-access-token-alist (alist)
   (setq twittering-oauth-access-token-alist
-	`((,twittering-service-method ,alist)
+	`((,twittering-service-method ,@alist)
 	  ,@(assq-delete-all twittering-service-method
-			    twittering-oauth-access-token-alist))))
+			     twittering-oauth-access-token-alist))))
 
 (defcustom twittering-accounts '()
   "((service-method 
@@ -7874,7 +7874,7 @@ string.")
 		    '("followers" "following" "favorites"))
 	    )))
 	 (spec-string (twittering-completing-read 
-			       prompt dummy-hist nil nil initial 'dummy-hist))
+		       prompt dummy-hist nil nil initial 'dummy-hist))
 	 (spec-string
 	  (cond
 	   ((string-match "^\\([a-zA-Z0-9_-]+\\)/$" spec-string)
@@ -7893,8 +7893,8 @@ string.")
 	 
 	 (spec (if (stringp spec-string)
 		   (condition-case error-str
-		       ;; (twittering-string-to-timeline-spec spec-string)
-		        (get-text-property 0 'goto-spec spec-string)
+		       (or (get-text-property 0 'goto-spec spec-string)
+			   (twittering-string-to-timeline-spec spec-string))
 		     (error
 		      (message "Invalid timeline spec: %s" error-str)
 		      nil))
@@ -8004,7 +8004,8 @@ string.")
 	     "timeline: " initial t)))
     (when timeline-spec
       (with-current-buffer (twittering-get-managed-buffer 
-			    (get-text-property 0 'goto-spec timeline-spec))
+			    (or (get-text-property 0 'goto-spec timeline-spec)
+				timeline-spec))
 	(rename-buffer (substring-no-properties timeline-spec))
 	(switch-to-buffer (current-buffer)))))
    (t
