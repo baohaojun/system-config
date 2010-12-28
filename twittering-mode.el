@@ -4805,9 +4805,12 @@ If `twittering-password' is nil, read it from the minibuffer."
       ;; Decide whether it is necessary to show retweeter's comment.
       (let ((orig-text (twittering-decode-html-entities (assq-get 'text s))))
 	(if (and text
-		 (not (or (let ((s (replace-regexp-in-string 
-				    (format "^RT @%s: \\|[.]+$" user-screen-name) "" text)))
-			    (string= s (substring orig-text 0 (length s))))
+		 (not (or (string-match 
+			   (regexp-opt
+			    (list 
+			     (replace-regexp-in-string 
+			      (format "^RT @%s: \\|[.]+$" user-screen-name) "" text)))
+			   orig-text)
 			  (string= text "×ª·¢Î¢²©"))))
 	    (setq text (format "%s\n\n    \"%s\"" orig-text text))
 	  (setq text orig-text)))
@@ -6167,12 +6170,14 @@ following symbols;
     ("S" . (cdr (assq 'user-name ,status-sym)))
     ("s" . (cdr (assq 'user-screen-name ,status-sym)))
     ("T" . 
-     (if (and twittering-icon-mode window-system)
-     	 (let ((thumbnail-pic (assqref 'thumbnail-pic ,status-sym))
-     	       (bmiddle-pic (assqref 'bmiddle-pic ,status-sym)))
-     	   (when thumbnail-pic
-     	     (concat "\n" (twittering-toggle-thumbnail thumbnail-pic bmiddle-pic t))))
-       (concat "\n" (assqref 'original-pic ,status-sym))))
+     (let ((s (if (and twittering-icon-mode window-system)
+		  (let ((thumbnail-pic (assqref 'thumbnail-pic ,status-sym))
+			(bmiddle-pic (assqref 'bmiddle-pic ,status-sym)))
+		    (when thumbnail-pic
+		      (twittering-toggle-thumbnail thumbnail-pic bmiddle-pic t)))
+		(assqref 'original-pic ,status-sym))))
+       (when s
+	 (concat "\n" s))))
     ("t" . (assqref 'text ,status-sym))
     ("u" . (assqref 'user-url ,status-sym))))
 
