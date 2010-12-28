@@ -4806,8 +4806,9 @@ If `twittering-password' is nil, read it from the minibuffer."
       (let ((orig-text (twittering-decode-html-entities (assq-get 'text s))))
 	(if (and text
 		 (not (or (string-match
-			   (replace-regexp-in-string 
-			    (format "^RT @%s: \\|[ .]+$" user-screen-name) "" text)
+			   (regexp-opt
+			    (list (replace-regexp-in-string 
+				   (format "^RT @%s: \\|[ .]+$" user-screen-name) "" text)))
 			   orig-text)
 			  (string= text "×ª·¢Î¢²©"))
 			  ))
@@ -6169,11 +6170,12 @@ following symbols;
     ("S" . (cdr (assq 'user-name ,status-sym)))
     ("s" . (cdr (assq 'user-screen-name ,status-sym)))
     ("T" . 
-     (when (and twittering-icon-mode window-system)
-       (let ((thumbnail-pic (assqref 'thumbnail-pic ,status-sym))
-             (bmiddle-pic (assqref 'bmiddle-pic ,status-sym)))
-         (when thumbnail-pic
-           (concat "\n" (twittering-toggle-thumbnail thumbnail-pic bmiddle-pic t))))))
+     (if (and twittering-icon-mode window-system)
+     	 (let ((thumbnail-pic (assqref 'thumbnail-pic ,status-sym))
+     	       (bmiddle-pic (assqref 'bmiddle-pic ,status-sym)))
+     	   (when thumbnail-pic
+     	     (concat "\n" (twittering-toggle-thumbnail thumbnail-pic bmiddle-pic t))))
+       (concat "\n" (assqref 'original-pic ,status-sym))))
     ("t" . (assqref 'text ,status-sym))
     ("u" . (assqref 'user-url ,status-sym))))
 
