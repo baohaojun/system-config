@@ -4805,13 +4805,10 @@ If `twittering-password' is nil, read it from the minibuffer."
       ;; Decide whether it is necessary to show retweeter's comment.
       (let ((orig-text (twittering-decode-html-entities (assq-get 'text s))))
 	(if (and text
-		 (not (or (string-match
-			   (regexp-opt
-			    (list (replace-regexp-in-string 
-				   (format "^RT @%s: \\|[ .]+$" user-screen-name) "" text)))
-			   orig-text)
-			  (string= text "转发微博"))
-			  ))
+		 (not (or (let ((s (replace-regexp-in-string 
+				    (format "^RT @%s: \\|[.]+$" user-screen-name) "" text)))
+			    (string= s (substring orig-text 0 (length s))))
+			  (string= text "转发微博"))))
 	    (setq text (format "%s\n\n    \"%s\"" orig-text text))
 	  (setq text orig-text)))
 
