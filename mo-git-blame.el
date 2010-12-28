@@ -37,7 +37,6 @@
 
 (require 'cl)
 (require 'easymenu)
-(require 'scroll-all)
 
 (defvar mo-git-blame-vars nil
   "Buffer-local plist that stores various variables needed for
@@ -557,20 +556,22 @@ from elisp.
       (replace-match ")" nil nil)))
   (toggle-read-only t)
   (goto-char (point-min))
-  (scroll-all-mode 1))
+  (set (make-local-variable 'line-move-visual) nil))
 
 (defun mo-git-blame-init-content-buffer ()
-  (rename-buffer (concat "*mo-git-blame:" (file-name-nondirectory (plist-get mo-git-blame-vars :full-file-name)) ":" (plist-get mo-git-blame-vars :current-revision) "*"))
-  (setq buffer-file-name (file-name-nondirectory (plist-get mo-git-blame-vars :full-file-name))
-        default-directory (plist-get mo-git-blame-vars :top-dir))
-  (mo-git-blame-run "cat-file" "blob" (concat (plist-get mo-git-blame-vars :current-revision) ":" (plist-get mo-git-blame-vars :file-name)))
-  (normal-mode)
-  (use-local-map mo-git-blame-content-mode-map)
-  (font-lock-fontify-buffer)
-  (toggle-read-only t)
-  (set-buffer-modified-p nil)
-  (scroll-all-mode 1)
-  (setq truncate-lines t))
+  (let ((vars mo-git-blame-vars))
+    (rename-buffer (concat "*mo-git-blame:" (file-name-nondirectory (plist-get vars :full-file-name)) ":" (plist-get vars :current-revision) "*"))
+    (setq buffer-file-name (file-name-nondirectory (plist-get vars :full-file-name))
+          default-directory (plist-get vars :top-dir))
+    (mo-git-blame-run "cat-file" "blob" (concat (plist-get vars :current-revision) ":" (plist-get vars :file-name)))
+    (normal-mode)
+    (use-local-map mo-git-blame-content-mode-map)
+    (font-lock-fontify-buffer)
+    (toggle-read-only t)
+    (set-buffer-modified-p nil)
+    (setq truncate-lines t)
+    (set (make-local-variable 'mo-git-blame-vars) vars)
+    (set (make-local-variable 'line-move-visual) nil)))
 
 (defun mo-git-blame-read-file-name ()
   "Calls `read-file-name' or `ido-read-file-name' depending on
@@ -657,8 +658,7 @@ blamed."
                    :blame-buffer blame-buffer
                    :blame-window blame-window
                    :content-buffer content-buffer
-                   :content-window content-window))
-        (set (make-local-variable 'line-move-visual) nil)))
+                   :content-window content-window))))
     (with-current-buffer content-buffer
       (mo-git-blame-init-content-buffer))
     (when lines-to-blame
@@ -668,12 +668,46 @@ blamed."
     (with-current-buffer blame-buffer
       (mo-git-blame-mode)
       (mo-git-blame-init-blame-buffer start-line lines-to-blame))
-    (mo-git-blame-goto-line line-to-go-to)))
+    (mo-git-blame-goto-line line-to-go-to)
+    (add-to-list 'window-scroll-functions 'mo-git-blame-window-scrolled)))
+
+(defvar mo-git-blame-scroll-info
+  nil
+  "Information which window to scroll and where to scroll to.")
+
+(defun mo-git-blame-window-scrolled (window new-start-pos)
+  (if (and window
+           (eq window (selected-window))
+           (local-variable-p 'mo-git-blame-vars))
+      (let* ((vars (with-current-buffer (window-buffer window) mo-git-blame-vars))
+             (start-line (line-number-at-pos new-start-pos))
+             (point-line (line-number-at-pos (window-point window)))
+             (window-to-scroll (if (eq window (plist-get vars :blame-window))
+                                   (plist-get vars :content-window)
+                                 (plist-get vars :blame-window))))
+        (message "yeah scrolled")
+        (setq mo-git-blame-scroll-info (list :window-to-scroll window-to-scroll
+                                             :start-line start-line
+                                             :point-line point-line))
+        (run-at-time "0 sec" nil 'mo-git-blame-update-other-window-after-scrolling))))
+
+(defun mo-git-blame-update-other-window-after-scrolling ()
+  (if mo-git-blame-scroll-info
+      (let ((window (plist-get mo-git-blame-scroll-info :window-to-scroll))
+            new-start-pos)
+        (with-selected-window window
+          (with-current-buffer (window-buffer window)
+            (goto-char (point-min))
+            (setq new-start-pos (line-beginning-position (plist-get mo-git-blame-scroll-info :start-line)))
+            (goto-char (point-min))
+            (goto-char (line-beginning-position (plist-get mo-git-blame-scroll-info :point-line)))
+            (set-window-start window new-start-pos)))
+        (setq mo-git-blame-scroll-info nil))))
 
 (defun mo-git-blame-quit ()
   "Kill the mo-git-blame buffers."
   (interactive)
-  (scroll-all-mode 0)
+  (setq window-scroll-functions (remq 'mo-git-blame-window-scrolled window-scroll-functions))
   (let ((buffer))
     (dolist (buffer (buffer-list))
       (if (string-match-p "^\\*mo-git-blame" (buffer-name buffer))
