@@ -2455,7 +2455,7 @@ For keys and values that are already unibyte, the
 
 (defun twittering-build-unique-prefix (str-list)
   "Create an unique shortest prefix to identify each element of STR-LIST.
-e.g.,
+The sequence of STR-LIST is not changed.  e.g.,
   '(\"abcdef\" \"ab\" \"c\" \"def\")
        => '(\"abc\" \"ab\" \"c\" \"d\")
 
@@ -4811,9 +4811,10 @@ If `twittering-password' is nil, read it from the minibuffer."
 			   (regexp-opt
 			    (list 
 			     (replace-regexp-in-string 
-			      (format "^RT @%s: \\|[.]+$" user-screen-name) "" text)))
+			      (format "^RT @%s: \\|[.[:blank:]]+$" user-screen-name) "" text)))
 			   orig-text)
-			  (string= text "转发微博"))))
+			  (string= text "转发微博")
+			  (string= text "转发微博。"))))
 	    (setq text (format "%s\n\n    \"%s\"" orig-text text))
 	  (setq text orig-text)))
 
@@ -6998,42 +6999,32 @@ means the number of statuses retrieved after the last visiting of the buffer.")
        twittering-logo
        (mapconcat
         'identity
-        (remove
-         nil
-         (let* ((tw-buffers (twittering-get-active-buffer-list))
-		(tw-buffer-names (mapcar (lambda (entry)
-					    (replace-regexp-in-string
-					     "\\`:\\|/\\'" "" (buffer-name entry)))
-					 tw-buffers))
-		(service-prefix (mapcar* (lambda (service prefix)
-					   `(,service . ,prefix))
-					 twittering-enabled-services
-					 (twittering-build-unique-prefix 
-					  (mapcar 'symbol-name twittering-enabled-services))))
-		(name-prefix (apply 'append
-				    (mapcar (lambda (service)
-					      (mapcar (lambda (n)
-							(concat n (format "@") (assqref service service-prefix)))
-						      (twittering-build-unique-prefix
-						       (remove nil
-							       (mapcar (lambda (name)
-									 (when (string-match (format "@%S" service) name)
-									   name))
-								       tw-buffer-names)))))
-					    twittering-enabled-services))))
-           (mapcar (lambda (buf-unread)
-                     (some (lambda (pre)
-			     (let ((b (find-if
-				       (lambda (buf) 
-					 (every 'string-match
-						(split-string pre "@")
-						(split-string (buffer-name buf) "@")))
-				       tw-buffers)))
-			       (when (eq (car buf-unread) b)
-				 (twittering-decorate-unread-status-notifier
-				  b (format "%s:%d" pre (cadr buf-unread))))))
-			   name-prefix))
-                   twittering-unread-status-info)))
+	(let* ((buffers (twittering-get-active-buffer-list))
+	       (partitioned-buffers 
+		(mapcar (lambda (sv)
+			  (remove-if-not (lambda (b)
+					   (with-current-buffer b
+					     (eq twittering-service-method sv)))
+					 buffers))
+			twittering-enabled-services))
+	       (partitioned-buffer-prefixes 
+		(mapcar* (lambda (sv lst)
+			   (mapcar (lambda (p)
+				     (concat p "@" sv))
+				   (twittering-build-unique-prefix 
+				    (mapcar 'buffer-name lst))))
+			 (twittering-build-unique-prefix
+			  (mapcar 'symbol-name twittering-enabled-services))
+			 partitioned-buffers)))
+
+	  (mapcar (lambda (b-u)
+		    (some (lambda (b p)
+			    (when (eq (car b-u) b)
+			      (twittering-decorate-unread-status-notifier
+			       b (format "%s:%d" p (cadr b-u)))))
+			  (apply 'append partitioned-buffers)
+			  (apply 'append partitioned-buffer-prefixes)))
+		  twittering-unread-status-info))
         ",")))))
 
 (defun twittering-update-unread-status-info ()
