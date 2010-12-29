@@ -1,4 +1,5 @@
 #!/bin/bash
+cd ~/jira-issues/
 
 issues=$(jira -a getIssueList --filter NV-open|perl -ne 'print unless (1..2)'|awk -F, '{print $1}')
 
