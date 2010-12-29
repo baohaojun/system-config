@@ -1,4 +1,4 @@
-;;; -*- indent-tabs-mode: t; tab-width: 8 -*-
+;;; -*- indent-tabs-mode: t; tab-width: 8; coding: utf-8 -*-
 ;;;
 ;;; twittering-mode.el --- Major mode for Twitter
 
@@ -3897,7 +3897,8 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
   "Generate status URL for Sina."
   (format "http://%s/%s" 
 	  (twittering-lookup-service-method-table 'web) 
-	  (cdr (assq 'user-id status))))
+	  ;;(cdr (assq 'user-id status))
+	  username))
 
 (defun twittering-get-search-url (query-string)
   "Generate a URL for searching QUERY-STRING."
@@ -4206,7 +4207,7 @@ send-direct-message -- Send a direct message.
 		 (let ((username (elt (cdr spec) 1)))
 		   (if (and (eq twittering-service-method 'sina)
 			    ;; TODO: make use of <domain> tag. (xwl)
-			    (string-match "[0-9]+" username))
+			    (string-match "^[0-9]+$" username))
 		       (progn
 			 (setq parameters `(,@parameters ("user_id" . ,username)))
 			 (twittering-api-path "statuses/user_timeline"))
@@ -4737,9 +4738,12 @@ If `twittering-password' is nil, read it from the minibuffer."
 	   next-cursor
 	   regex-index
 	   (retweeted-status-data (cddr (assq 'retweeted_status s)))
+
 	   original-created-at ;; need not export
 	   original-user-name
 	   original-user-screen-name
+	   original-user-id
+	   
 	   (recipient-screen-name
 	    (assq-get 'recipient_screen_name s))
 	   recipient_screen_name
@@ -4753,7 +4757,10 @@ If `twittering-password' is nil, read it from the minibuffer."
        (retweeted-status-data
 	(setq original-user-screen-name (twittering-decode-html-entities (assq-get 'screen_name u))
 	      original-user-name (twittering-decode-html-entities (assq-get 'name u))
-	      original-created-at (assq-get 'created_at s))
+	      original-user-id (assq-get 'id u))
+
+	(setq original-created-at (assq-get 'created_at s))
+	      
 
 	;; use id and created-at issued when retweeted.
 	(setq id         (assq-get 'id         s))
@@ -4813,8 +4820,8 @@ If `twittering-password' is nil, read it from the minibuffer."
 			     (replace-regexp-in-string 
 			      (format "^RT @%s: \\|[.[:blank:]]+$" user-screen-name) "" text)))
 			   orig-text)
-			  (string= text "◊™∑¢Œ¢≤©")
-			  (string= text "◊™∑¢Œ¢≤©°£"))))
+			  (string= text "ËΩ¨ÂèëÂæÆÂçö")
+			  (string= text "ËΩ¨ÂèëÂæÆÂçö„ÄÇ"))))
 	    (setq text (format "%s\n\n    \"%s\"" orig-text text))
 	  (setq text orig-text)))
 
@@ -4844,6 +4851,7 @@ If `twittering-password' is nil, read it from the minibuffer."
 		     next-cursor
 		     original-user-name
 		     original-user-screen-name
+		     original-user-id
 		     recipient-screen-name
 
 		     original)))))))
@@ -4866,7 +4874,8 @@ If `twittering-password' is nil, read it from the minibuffer."
 	(user-url                  (assqref 'user-url                  status))
 	(user-protected            (assqref 'user-protected            status))
 	(original-user-name        (assqref 'original-user-name        status))
-	(original-user-screen-name (assqref 'original-user-screen-name status)))
+	(original-user-screen-name (assqref 'original-user-screen-name status))
+	(original-user-id          (assqref 'original-user-id          status)))
           
     ;; make user names clickable
     (mapc (lambda (id-names)
@@ -4882,11 +4891,14 @@ If `twittering-password' is nil, read it from the minibuffer."
 		       face twittering-username-face)
 		     name))
 		  (cdr id-names)))
-	  `((,(if (eq twittering-service-method 'sina) user-id user-screen-name)
+	  `((,(if (eq twittering-service-method 'sina) 
+		  user-id 
+		user-screen-name)
 	     . (,user-name ,user-screen-name))
-	    ,@(when original-user-screen-name ; TODO, handle original user id.
+
+	    ,@(when original-user-screen-name
 		`((,(if (eq twittering-service-method 'sina) 
-			(cdr (assq 'user-id (assq 'original status)))
+			original-user-id 
 		      original-user-screen-name)
 		   . (,original-user-name ,original-user-screen-name))))))
 
@@ -5063,7 +5075,6 @@ If `twittering-password' is nil, read it from the minibuffer."
 			      xmltree))))
 
 (defun twittering-decode-html-entities (encoded-str)
-  ;; sina: (source nil "\n      " (a ((href . "http://t.sina.com.cn/mobile/msg.php")) "Áü≠‰ø°") "\n    ") 
   (if (consp encoded-str)
       encoded-str
     (if encoded-str
@@ -8377,7 +8388,7 @@ Non-nil optional REMOVE will do the opposite, unfollow. "
 	prompt-format method args) 
     (when (string= "" user-or-list)
       (error "No user or list selected"))
-    (set-text-properties 0 (length user-or-list) nil user-or-list)
+    ;; (set-text-properties 0 (length user-or-list) nil user-or-list)
     (if (string-match "/" user-or-list)
 	(let ((spec (twittering-string-to-timeline-spec user-or-list)))
 	  (setq prompt-format (if remove "Unfollowing list `%s'? " 
