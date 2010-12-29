@@ -115,9 +115,9 @@ buffers."
   :type 'string
   :group 'twittering)
 
-(defcustom twittering-status-format "%i %s,  %@:\n%FILL{  %T // from %f%L%r%R}\n "
+(defcustom twittering-status-format "%i %s,  %@:\n%FILL{  %t // from %f%L%r%R}\n "
   "Format string for rendering statuses.
-Ex. \"%i %s,  %@:\\n%FILL{  %T // from %f%L%r%R}\n \"
+Ex. \"%i %s,  %@:\\n%FILL{  %t // from %f%L%r%R}\n \"
 
 Items:
  %s - screen_name
@@ -4554,7 +4554,7 @@ If `twittering-password' is nil, read it from the minibuffer."
 	       (clean-up-sentinel
 		. twittering-http-get-verify-credentials-clean-up-sentinel))
 	     `((username . ,(car account-info))
-	       (password . ,(car account-info))))))
+	       (password . ,(cdr account-info))))))
       (cond
        ((null proc)
 	(twittering-update-account-authorization nil)
