@@ -3542,7 +3542,7 @@ Return cons of the spec and the rest string."
 
      ;; TODO: (sina service) Ignore chinese unless it is possible to get url by
      ;; screen name, alone.
-     ((string-match "\\cc+" str)
+     ((eq twittering-service-method 'sina)
       nil)
 
      (t
@@ -4204,7 +4204,9 @@ send-direct-message -- Send a direct message.
 	       (cond
 		((eq spec-type 'user)
 		 (let ((username (elt (cdr spec) 1)))
-		   (if (eq twittering-service-method 'sina)
+		   (if (and (eq twittering-service-method 'sina)
+			    ;; TODO: make use of <domain> tag. (xwl)
+			    (string-match "[0-9]+" username))
 		       (progn
 			 (setq parameters `(,@parameters ("user_id" . ,username)))
 			 (twittering-api-path "statuses/user_timeline"))
@@ -4896,7 +4898,7 @@ If `twittering-password' is nil, read it from the minibuffer."
 		   "\\([a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+\\)\\|"
 		   twittering-regexp-atmark
 		   (if (eq twittering-service-method 'sina)
-		       "\\([^:]*[a-zA-Z0-9_-]+[^:]+\\):\\|"
+		       "\\([^: \t]+\\)\\|"
 		     "\\([a-zA-Z0-9_-]+\\)\\|")
 		   twittering-regexp-uri)))
       (while
@@ -6982,38 +6984,57 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 (defun twittering-make-unread-status-notifier-string ()
   "Generate a string that displays unread statuses."
   (setq twittering-unread-status-info
-	(remove nil
-		(mapcar (lambda (entry)
-			  (when (and (buffer-live-p (car entry))
-				     (not (zerop (cadr entry))))
-			    entry))
-			twittering-unread-status-info)))
+        (remove nil
+                (mapcar (lambda (entry)
+                          (when (and (buffer-live-p (car entry))
+                                     (not (zerop (cadr entry))))
+                            entry))
+                        twittering-unread-status-info)))
   (let ((sum (apply '+ (mapcar 'cadr twittering-unread-status-info))))
     (if (zerop sum)
-	""
+        ""
       (format
        "%s(%s)"
        twittering-logo
        (mapconcat
-	'identity
-	(remove
-	 nil
-	 (let ((tw-buffers (twittering-get-active-buffer-list)))
-	   (mapcar (lambda (buf-unread)
-		     (some (lambda (buf pre)
-			     (when (eq (car buf-unread) buf)
-			       (twittering-decorate-unread-status-notifier
-				buf (format "%s:%d" pre (cadr buf-unread)))))
-			   tw-buffers
-			   (twittering-build-unique-prefix
-			    (mapcar (lambda (entry)
-				      (replace-regexp-in-string
-				       ".+/" "" 
-				       (replace-regexp-in-string
-					"\\`:\\|/\\'" "" (buffer-name entry))))
-				    tw-buffers))))
-		   twittering-unread-status-info)))
-	",")))))
+        'identity
+        (remove
+         nil
+         (let* ((tw-buffers (twittering-get-active-buffer-list))
+		(tw-buffer-names (mapcar (lambda (entry)
+					    (replace-regexp-in-string
+					     "\\`:\\|/\\'" "" (buffer-name entry)))
+					 tw-buffers))
+		(service-prefix (mapcar* (lambda (service prefix)
+					   `(,service . ,prefix))
+					 twittering-enabled-services
+					 (twittering-build-unique-prefix 
+					  (mapcar 'symbol-name twittering-enabled-services))))
+		(name-prefix (apply 'append
+				    (mapcar (lambda (service)
+					      (mapcar (lambda (n)
+							(concat n (format "@") (assqref service service-prefix)))
+						      (twittering-build-unique-prefix
+						       (remove nil
+							       (mapcar (lambda (name)
+									 (when (string-match (format "@%S" service) name)
+									   name))
+								       tw-buffer-names)))))
+					    twittering-enabled-services))))
+           (mapcar (lambda (buf-unread)
+                     (some (lambda (pre)
+			     (let ((b (find-if
+				       (lambda (buf) 
+					 (every 'string-match
+						(split-string pre "@")
+						(split-string (buffer-name buf) "@")))
+				       tw-buffers)))
+			       (when (eq (car buf-unread) b)
+				 (twittering-decorate-unread-status-notifier
+				  b (format "%s:%d" pre (cadr buf-unread))))))
+			   name-prefix))
+                   twittering-unread-status-info)))
+        ",")))))
 
 (defun twittering-update-unread-status-info ()
   "Update `twittering-unread-status-info' with new tweets."
@@ -8007,15 +8028,18 @@ string.")
 	    (twittering-read-timeline-spec-with-completion
 	     "timeline: " initial t)))
     (when timeline-spec
-      (with-current-buffer (twittering-get-managed-buffer 
-			    (or (get-text-property 0 'goto-spec timeline-spec)
-				timeline-spec))
-	(let ((name (substring-no-properties timeline-spec))
-	      (suffix (format "@%S" twittering-service-method)))
-	  (unless (string-match suffix name)
-	    (setq name (concat name suffix)))
-	  (rename-buffer name))
-	(switch-to-buffer (current-buffer)))))
+      (let* ((service twittering-service-method)
+	     (suffix (format "@%S" service)))
+	(with-current-buffer (twittering-get-managed-buffer 
+			      (or (get-text-property 0 'goto-spec timeline-spec)
+				  (if (string-match "@" timeline-spec)
+				      timeline-spec
+				    (concat timeline-spec suffix))))
+	  (let ((name (substring-no-properties timeline-spec)))
+	    (unless (string-match "@" name)
+	      (setq name (concat name suffix)))
+	    (rename-buffer name))
+	  (switch-to-buffer (current-buffer))))))
    (t
     (message "No connection methods are available.")
     nil)))
