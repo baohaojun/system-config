@@ -10,9 +10,9 @@ _jira_compgen_options()
 _jira_components()
 {
     local components=(
-        Unknown Apps-3rd 
+        Unknown Apps-3rd "HW debug"
         Apps-Backup Apps-Browser Apps-Calc 
-        Apps-Calendar Apps-Clock Apps-Contact 
+        Apps-Calendar Apps-Clock Apps-Contact
         Apps-Ebook Apps-EMail Apps-FileManager 
         Apps-Gallery Apps-Home Apps-InputMethod 
         Apps-News Apps-Search Apps-Setting 
@@ -45,6 +45,13 @@ _jira_issue_types()
     COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(for x in ${types[@]}; do echo $x; done)" "$cur") )
 }
 
+_jira_complete_these_words()
+{
+    local IFS=$'\t\n'
+
+    COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(for x in "$@"; do echo $x; done)" "$cur") )
+}
+
 _jira_file_list()
 {
     local IFS=$'\t\n'
@@ -57,6 +64,32 @@ _jira_actions()
     local actions=(login logout getServerInfo createProject deleteProject getProjectList addVersion addComponent deleteComponent copyComponents createIssue updateIssue linkIssue addComment addAttachment progressIssue getIssue getFieldValue setFieldValue getAvailableSteps getIssueList getCommentList getComments getAttachment getAttachmentList addUser addUserWithFile removeUser removeUserWithFile addGroup removeGroup addUserToGroup addUserToGroupWithFile removeUserFromGroup removeUserFromGroupWithFile getUserList getPluginList getPluginDownload)
     
     COMPREPLY=( $(skeleton_compgen_word.pl -- "$( echo ${actions[@]} )" "$cur") )
+}
+
+_jira_issue_list()
+{
+
+    local cur prev IFS=$' \t\n'
+
+    COMPREPLY=()
+    _get_comp_words_by_ref cur prev
+    _jira_file_list ~/jira-issues/
+    return 0
+}
+
+_jira_add_comment()
+{
+
+    local cur prev IFS=$' \t\n'
+
+    COMPREPLY=()
+    _get_comp_words_by_ref cur prev
+    case $COMP_CWORD in
+        1)
+            _jira_file_list ~/jira-issues/
+            ;;
+    esac
+    return 0
 }
 
 _jira()
@@ -92,6 +125,10 @@ _jira()
             _jira_issue_types
             return 0
             ;;
+        --resolution)
+            _jira_complete_these_words "Fixed" "Won't Fix" "Duplicate" "Incomplete" "Cannot Reproduce" "Not a Bug"
+            return 0
+            ;;            
     esac
 
     case $cur in
@@ -103,7 +140,11 @@ _jira()
 
     return 0
 }
+
+
 complete -o filenames -F _jira jira jira-help.pl
+complete -o filenames -F _jira_issue_list jira-comments
+complete -o filenames -F _jira_add_comment jira-add-comment
 
 # Local variables:
 # mode: shell-script
