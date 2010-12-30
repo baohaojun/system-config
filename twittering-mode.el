@@ -8037,7 +8037,7 @@ string.")
 	     (suffix (format "@%S" service))
 	     (buf (twittering-get-managed-buffer 
 		   (if (stringp timeline-spec)
-		       (if (string-match suffix timeline-spec)
+		       (if (string-match "@" timeline-spec)
 			   timeline-spec
 			 (concat timeline-spec suffix))
 		     timeline-spec))))
