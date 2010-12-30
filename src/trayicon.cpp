@@ -30,7 +30,7 @@ TrayIcon::TrayIcon(QSystemTrayIcon *trayIcon, SnoreServer *snore ):
 void TrayIcon::initConextMenu(){
 
     _trayMenu = new QMenu("SnoreNotify");
-    _trayMenu->addAction("SnoreNotify");
+    _trayMenu->addAction(QString("SnoreNotify ").append(SNORE_VERSION));
     _trayMenu->addSeparator();
     foreach(Notification_Backend *back,_snore->primaryNotificationBackends()){
         QAction *b=  new QAction(back->name(),this);
