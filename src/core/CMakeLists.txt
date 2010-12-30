@@ -1,7 +1,7 @@
-set ( SnoreNotify_SRCS	
-	notification.cpp
-	snoreserver.cpp
-	application.cpp
+set ( SnoreNotify_SRCS
+        notification.cpp
+        snoreserver.cpp
+        application.cpp
         interface.cpp
         utils.cpp
         trayiconnotifer.cpp
@@ -19,7 +19,7 @@ set ( SnoreNotify_HDR
         )
 
 automoc4_add_library( snorecore  SHARED ${SnoreNotify_SRCS})
-set_target_properties( snorecore PROPERTIES OUTPUT_NAME "snore" COMPILE_FLAGS "-DSNORECORE_DLL" )
+set_target_properties( snorecore PROPERTIES OUTPUT_NAME "snore" DEFINE_SYMBOL "SNORECORE_DLL" )
 target_link_libraries ( snorecore ${QT_QTCORE_LIBRARY}  ${QT_QTGUI_LIBRARY}  )
 
 

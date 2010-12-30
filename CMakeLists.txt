@@ -12,7 +12,7 @@ include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}  ${CMAKE_CURRENT_BINARY_DIR}
         ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
         ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR} 
-		${CMAKE_SOURCE_DIR}/3party/gntp-send/headers)
+        ${CMAKE_SOURCE_DIR}/3party/gntp-send/headers)
 
 
 if (CMAKE_COMPILER_IS_GNUCXX)
@@ -39,7 +39,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 if(MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  /Zc:wchar_t-")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  /Zc:wchar_t-")
 endif(MSVC)
 
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
