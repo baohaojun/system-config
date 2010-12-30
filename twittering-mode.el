@@ -3540,11 +3540,12 @@ Return cons of the spec and the rest string."
           ;; the opening parenthesis `('.
           nil)))
 
-     ;; TODO: (sina service) Ignore chinese unless it is possible to get url by
-     ;; screen name, alone.
-     ((eq twittering-service-method 'sina)
-      nil)
-
+     ;; (sina) Treat all chinese string as USER. Put this match at back.
+     ((string-match (concat "^\\([^@]+\\)" re) str)
+      (let ((user (match-string 1 str))
+	    (service (intern (match-string 2 str)))
+	    (rest (substring str (match-end 0))))
+	`(((,service) user ,user) . ,rest)))
      (t
       (error "\"%s\" is invalid as a timeline spec" str)))))
 
@@ -4205,11 +4206,9 @@ send-direct-message -- Send a direct message.
 	       (cond
 		((eq spec-type 'user)
 		 (let ((username (elt (cdr spec) 1)))
-		   (if (and (eq twittering-service-method 'sina)
-			    ;; TODO: make use of <domain> tag. (xwl)
-			    (string-match "^[0-9]+$" username))
+		   (if (eq twittering-service-method 'sina)
 		       (progn
-			 (setq parameters `(,@parameters ("user_id" . ,username)))
+			 (setq parameters `(,@parameters ("id" . ,username)))
 			 (twittering-api-path "statuses/user_timeline"))
 		     (twittering-api-path "statuses/user_timeline/" username))))
 		((eq spec-type 'list)
@@ -4911,7 +4910,7 @@ If `twittering-password' is nil, read it from the minibuffer."
 		   "\\([a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+\\)\\|"
 		   twittering-regexp-atmark
 		   (if (eq twittering-service-method 'sina)
-		       "\\([^: \t]+\\)\\|"
+		       "\\([^:[:space:]@]+\\)\\|"
 		     "\\([a-zA-Z0-9_-]+\\)\\|")
 		   twittering-regexp-uri)))
       (while
@@ -4956,8 +4955,12 @@ If `twittering-password' is nil, read it from the minibuffer."
 			   prop `(mouse-face
 				  highlight
 				  keymap ,twittering-mode-on-uri-map
-				  uri ,(twittering-get-status-url
-					screenname nil status)
+				  uri ,(if (eq twittering-service-method 'sina)
+					   ;; TODO: maybe we can get its user_id
+					   ;; at background.
+					   (concat "http://t.sina.com.cn/search/user.php?search="
+						   screenname)
+					 (twittering-get-status-url screenname nil status))
 				  screen-name-in-text ,screenname
 				  goto-spec
 				  ,(twittering-string-to-timeline-spec
@@ -8031,17 +8034,14 @@ string.")
 	     "timeline: " initial t)))
     (when timeline-spec
       (let* ((service twittering-service-method)
-	     (suffix (format "@%S" service)))
-	(with-current-buffer (twittering-get-managed-buffer 
-			      (or (get-text-property 0 'goto-spec timeline-spec)
-				  (if (string-match "@" timeline-spec)
-				      timeline-spec
-				    (concat timeline-spec suffix))))
-	  (let ((name (substring-no-properties timeline-spec)))
-	    (unless (string-match "@" name)
-	      (setq name (concat name suffix)))
-	    (rename-buffer name))
-	  (switch-to-buffer (current-buffer))))))
+	     (suffix (format "@%S" service))
+	     (buf (twittering-get-managed-buffer 
+		   (if (stringp timeline-spec)
+		       (if (string-match suffix timeline-spec)
+			   timeline-spec
+			 (concat timeline-spec suffix))
+		     timeline-spec))))
+	(switch-to-buffer buf))))
    (t
     (message "No connection methods are available.")
     nil)))
@@ -8076,23 +8076,17 @@ string.")
 
 (defun twittering-other-user-timeline ()
   (interactive)
-  ;; (let* ((username (get-text-property (point) 'username))
-  ;; 	 (goto-spec (get-text-property (point) 'goto-spec))
-  ;; 	 (screen-name-in-text
-  ;; 	  (get-text-property (point) 'screen-name-in-text))
-  ;; 	 (spec 
-  ;;         (if (eq twittering-service-method 'sina)
-  ;;             (or goto-spec
-  ;;                 (get-text-property 0 'goto-spec username)
-  ;;                 (get-text-property 0 'goto-spec screen-name-in-text))
-  ;;           (cond (goto-spec goto-spec)
-  ;;                 (screen-name-in-text `(user ,screen-name-in-text))
-  ;;                 (username `(user ,username))
-  ;;                 (t nil)))))
-  ;;   (if spec
-  ;; 	(twittering-visit-timeline spec)
-  ;;     (message "No user selected"))))
-  (twittering-visit-timeline (twittering-get-username-at-pos (point))))
+  (let* ((username (get-text-property (point) 'username))
+  	 (goto-spec (get-text-property (point) 'goto-spec))
+  	 (screen-name-in-text
+  	  (get-text-property (point) 'screen-name-in-text))
+  	 (spec ;; Sequence is important.
+  	  (cond (screen-name-in-text `((,twittering-service-method) user ,screen-name-in-text))
+		(goto-spec goto-spec)
+		(username `((,twittering-service-method) user ,username)))))
+    (if spec
+  	(twittering-visit-timeline spec)
+      (message "No user selected"))))
 
 (defun twittering-other-user-timeline-interactive ()
   (interactive)
@@ -8822,32 +8816,33 @@ this function does nothing."
        (twittering-mode)))
    twittering-enabled-services))
 
-                  (progn  (when  (
-                   boundp  (  intern (
-                    mapconcat 'identity '
-                    ("twittering" "oauth"
-                      "consumer" "key" ) "-"
-                       )  )  )   (eval  ` (
-                        setq ,(intern (mapconcat
-                         (quote identity) (quote
-                          ("twittering"    "oauth"
-                           "consumer" "key")  )"-"
-                           ))  (base64-decode-string
-                         (apply  'string  (mapcar   '1-
-                        (quote (83 88 75 114 88 73 79 117
-                      101 109 109 105 82 123 75 120 78 73 
-                     105 122 83 69 67 78   98 49 75 109 101 
-                   120 62 62))))))))(       when ( boundp  (
-                  intern (mapconcat '      identity'("twittering"
-                 "oauth" "consumer"         "secret") "-")))(eval `
-                (setq  ,(intern   (         mapconcat 'identity '(
-               "twittering" "oauth"          "consumer" "secret") "-"))
-              (base64-decode-string          (apply 'string (mapcar '1-
-             (quote   (91   70                    113 87 83 123 75 112
-            87 123 75 117 87 50                109 50  102  85 83 91 101
-           49 87 116 100 73 101                  106 82 107 67 113  90 49
-          75 68  99  52  79 120                   80 89  91  51  79 85 71
-         110 101  110 91  49                      100 49   58  71)))))) )))
+;; TOREMOVE
+         ;;          (progn  (when  (
+         ;;           boundp  (  intern (
+         ;;            mapconcat 'identity '
+         ;;            ("twittering" "oauth"
+         ;;              "consumer" "key" ) "-"
+         ;;               )  )  )   (eval  ` (
+         ;;                setq ,(intern (mapconcat
+         ;;                 (quote identity) (quote
+         ;;                  ("twittering"    "oauth"
+         ;;                   "consumer" "key")  )"-"
+         ;;                   ))  (base64-decode-string
+         ;;                 (apply  'string  (mapcar   '1-
+         ;;                (quote (83 88 75 114 88 73 79 117
+         ;;              101 109 109 105 82 123 75 120 78 73 
+         ;;             105 122 83 69 67 78   98 49 75 109 101 
+         ;;           120 62 62))))))))(       when ( boundp  (
+         ;;          intern (mapconcat '      identity'("twittering"
+         ;;         "oauth" "consumer"         "secret") "-")))(eval `
+         ;;        (setq  ,(intern   (         mapconcat 'identity '(
+         ;;       "twittering" "oauth"          "consumer" "secret") "-"))
+         ;;      (base64-decode-string          (apply 'string (mapcar '1-
+         ;;     (quote   (91   70                    113 87 83 123 75 112
+         ;;    87 123 75 117 87 50                109 50  102  85 83 91 101
+         ;;   49 87 116 100 73 101                  106 82 107 67 113  90 49
+         ;;  75 68  99  52  79 120                   80 89  91  51  79 85 71
+         ;; 110 101  110 91  49                      100 49   58  71)))))) )))
 
 
 (provide 'twittering-mode)
