@@ -36,8 +36,8 @@ private:
     static QAbstractEventDispatcher::EventFilter originalEventFilter;
 
 
-    QHash<QString,Snarl::SnarlInterface*> _applications;
-    Snarl::SnarlInterface* _defautSnarlinetrface;
+    QHash<QString,Snarl::V41::SnarlInterface*> _applications;
+    Snarl::V41::SnarlInterface* _defautSnarlinetrface;
 
 public slots:
     void registerApplication(Application *application);
