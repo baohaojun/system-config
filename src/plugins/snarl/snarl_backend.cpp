@@ -28,7 +28,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 
-#define SNORENOTIFIER_MESSAGE_ID 0x4532
+#define SNORENOTIFIER_MESSAGE_ID  WM_USER + 238
 
 using namespace Snarl::V41;
 
@@ -40,7 +40,6 @@ Notification_Backend("SnarlBackend",snore)
 	activeNotifications = new QHash<int,QSharedPointer<Notification> > ;
 	winIDWidget = new SnarlWidget(this);
 	SnarlInterface *snarlInterface = new SnarlInterface();
-	qDebug()<<"WinID:"<<winIDWidget->winId();
 	snarlInterface->RegisterApp("SnoreNotify","SnoreNotify",NULL,winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
 	_applications.insert("SnoreNotify",snarlInterface);
 	qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
@@ -62,15 +61,12 @@ void Snarl_Backend::registerApplication(Application *application){
 	SnarlInterface *snarlInterface = new SnarlInterface();
 	_applications.insert(application->name(),snarlInterface);
 
-	const char *appName = strdup(application->name().toUtf8().constData());
-	const char *icon = strdup(application->icon().toUtf8().constData());
-	snarlInterface->RegisterApp(appName,appName,icon,winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
+	qDebug()<<"Register with Snarl"<<application->name()<<application->icon();
+	snarlInterface->RegisterApp(application->name().toUtf8().constData(),application->name().toUtf8().constData(),application->icon().toUtf8().constData(),winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
 
 	foreach(Alert *alert,application->alerts()){
-		snarlInterface->AddClass(appName,alert->name().toUtf8().constData());
+		snarlInterface->AddClass(application->name().toUtf8().constData(),alert->name().toUtf8().constData());
 	}
-	delete [] appName;
-	delete [] icon;
 }
 
 void Snarl_Backend::unregisterApplication(Application *application){
@@ -88,24 +84,21 @@ int Snarl_Backend::notify(QSharedPointer<Notification>notification){
 		snarlInterface = _defautSnarlinetrface;
 
 	int id = notification->id();
-	const char *alert = strdup(notification->alert().toUtf8().constData());
-	const char *title = strdup(Notification::toPlainText(notification->title()).toUtf8().constData());
-	const char *text =  strdup(Notification::toPlainText(notification->text()).toUtf8().constData());
-	const char *icon =  strdup(notification->icon().toUtf8().constData());
-
-	qDebug()<<"Calling SnarlMessage:"<<notification->id()<<"Title:"<<title<<"Text:"<<text<<"Timeout:"<<QString::number(notification->timeout())<<"Icon:"<<icon;
 	if(notification->id()==0){
-		id = snarlInterface->EZNotify(alert,title,text,notification->timeout(), icon);
+		id = snarlInterface->EZNotify(notification->alert().toUtf8().constData(),
+			Notification::toPlainText(notification->title()).toUtf8().constData(),
+			Notification::toPlainText(notification->text()).toUtf8().constData(),
+			notification->timeout(),
+			notification->icon().toUtf8().constData());
 		activeNotifications->insert(id,notification);
 	}else{
 		//update message
-		snarlInterface->EZUpdate(notification->id(),title, text,notification->timeout(),icon);
+		snarlInterface->EZUpdate(notification->id(),
+			Notification::toPlainText(notification->title()).toUtf8().constData(),
+			Notification::toPlainText(notification->text()).toUtf8().constData(),
+			notification->timeout(),
+			notification->icon().toUtf8().constData());
 	}
-
-	delete[] alert;
-	delete[] title;
-	delete[] text;
-	delete[] icon;
 	return id;
 }
 
@@ -124,7 +117,6 @@ _snarl(snarl)
 
 }
 bool SnarlWidget::winEvent(MSG * msg, long * result){
-	qDebug()<<"Event loop"<<msg->message<<SNORENOTIFIER_MESSAGE_ID;
 	if(msg->message == SNORENOTIFIER_MESSAGE_ID){
 		int action = msg->wParam;
 		int notificationID = msg->lParam;
