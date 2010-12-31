@@ -24,6 +24,7 @@ class SnoreNotify:public QObject
     Q_OBJECT
 public:
     SnoreNotify();
+	~SnoreNotify();
 	void load();
 	void save();
 
@@ -31,7 +32,7 @@ private:
 	class TrayIcon *_trayIcon;
 	class SnoreServer *_snore;
 
-public slots:
+private slots:
     void exit();
 };
 

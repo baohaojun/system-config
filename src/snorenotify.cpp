@@ -58,6 +58,11 @@ SnoreNotify::SnoreNotify()
 	connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(exit()));
 }
 
+SnoreNotify::~SnoreNotify(){
+	delete _snore;
+	delete _trayIcon;
+}
+
 void SnoreNotify::load(){
 	QDomDocument doc( "Settings" );
     QFile file( PROFILEPATH + "settings.xml" );
