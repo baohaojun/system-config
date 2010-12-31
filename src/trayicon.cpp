@@ -21,13 +21,14 @@
 #include <QMenu>
 #include <QAction>
 
-TrayIcon::TrayIcon(QSystemTrayIcon *trayIcon, SnoreServer *snore ):
-        _trayIcon(trayIcon),
-        _snore(snore)
-{
+TrayIcon::TrayIcon()        
+{	
+	_trayIcon = new QSystemTrayIcon(QIcon(":/root/zzz.png"));
 }
 
-void TrayIcon::initConextMenu(){
+void TrayIcon::initConextMenu(SnoreServer *snore){
+	_snore = snore;
+    _trayIcon->setVisible(true);
 
     _trayMenu = new QMenu("SnoreNotify");
     _trayMenu->addAction(QString("SnoreNotify ").append(_snore->version()));
@@ -42,6 +43,14 @@ void TrayIcon::initConextMenu(){
 
 
     _trayIcon->setContextMenu(_trayMenu);
+}
+
+void TrayIcon::hide(){
+    _trayIcon->setVisible(false);
+}
+
+QSystemTrayIcon* TrayIcon::trayIcon(){
+	return _trayIcon;
 }
 
 void TrayIcon::setPrimaryBackend(){

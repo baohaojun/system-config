@@ -23,8 +23,10 @@ class TrayIcon:public QObject
 {
     Q_OBJECT
 public:
-    TrayIcon(class QSystemTrayIcon *trayIcon,class SnoreServer *snore);
-    void initConextMenu();
+    TrayIcon();
+    void initConextMenu(class SnoreServer *snore);
+	void hide();
+	class QSystemTrayIcon* trayIcon();
 
 private:
     class QSystemTrayIcon *_trayIcon;

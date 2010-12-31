@@ -202,7 +202,11 @@ void SnoreServer::setPrimaryNotificationBackend ( Notification_Backend *backend 
     if(!backend->isPrimaryNotificationBackend())
         return;
     qDebug()<<"Setting Notification Backend to:"<<backend->name();
-    _notificationBackend=backend;
+    _notificationBackend = backend;
+}
+
+Notification_Backend * SnoreServer::primaryNotificationBackend(){
+	return _notificationBackend;
 }
 
 SnoreNotificationInstance * SnoreServer::defaultNotificationInterface()
