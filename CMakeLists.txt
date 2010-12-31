@@ -42,8 +42,6 @@ if(MSVC)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  /Zc:wchar_t-")
 endif(MSVC)
 
-add_definitions("-DSNORE_VERSION=\"0.2\"")
-
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 

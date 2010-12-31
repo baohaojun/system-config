@@ -62,10 +62,14 @@ void Snarl_Backend::registerApplication(Application *application){
 	_applications.insert(application->name(),snarlInterface);
 
 	qDebug()<<"Register with Snarl"<<application->name()<<application->icon();
-	snarlInterface->RegisterApp(application->name().toUtf8().constData(),application->name().toUtf8().constData(),application->icon().toUtf8().constData(),winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
+	snarlInterface->RegisterApp(application->name().toUtf8().constData(),
+		application->name().toUtf8().constData(),
+		application->icon().toUtf8().constData(),
+		winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
 
 	foreach(Alert *alert,application->alerts()){
-		snarlInterface->AddClass(application->name().toUtf8().constData(),alert->name().toUtf8().constData());
+		snarlInterface->AddClass(application->name().toUtf8().constData(),
+			alert->name().toUtf8().constData());
 	}
 }
 
@@ -142,8 +146,8 @@ bool SnarlWidget::winEvent(MSG * msg, long * result){
 			qDebug()<<"Unknown snarl action found!!";
 			return false;
 		}
-			_snarl->snore()->notificationActionInvoked(notification);
-			return true;
+		_snarl->snore()->notificationActionInvoked(notification);
+		return true;
 	}
 	return false;
 }

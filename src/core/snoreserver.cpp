@@ -26,10 +26,17 @@
 #include <QDir>
 #include <QSystemTrayIcon>
 
-QString const SnoreServer::snoreTMP = QDir::temp().path() +"/SnoreNotify/";
+QString const SnoreServer::version(){
+	return "0.2";
+}
+
+QString const SnoreServer::snoreTMP(){
+	static const QString tmp = QDir::temp().path() +"/SnoreNotify/";
+	return tmp;
+}
 
 void SnoreServer::cleanupTMP(){
-    QDir home ( snoreTMP );
+    QDir home ( snoreTMP() );
     if ( home.exists() )
     {
         QStringList filetypes;

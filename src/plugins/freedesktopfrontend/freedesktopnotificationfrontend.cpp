@@ -64,7 +64,7 @@ void FreedesktopNotification_Frontend::notificationClosed(QSharedPointer<Notific
 }
 
 QString FreedesktopNotification_Frontend::getImagefromHint(const FreedesktopImageHint &img){
-    QString filename=QString(SnoreServer::snoreTMP).append(img.hash()).append(".png");
+    QString filename=QString(SnoreServer::snoreTMP()).append(img.hash()).append(".png");
     if(QFile::exists(filename))
         return filename;
     img.toQImage().save(filename,"PNG");
