@@ -19,8 +19,9 @@
 #include "core/interface.h"
 #include "SnarlInterface.h"
 
+#include <QWidget>
 
-#include <QAbstractEventDispatcher>
+class SnarlWidget;
 
 class Snarl_Backend:public Notification_Backend
 {
@@ -30,11 +31,10 @@ public:
     Snarl_Backend(class SnoreServer *snore=0);
     ~Snarl_Backend();
     bool isPrimaryNotificationBackend();
+	QHash<int,QSharedPointer<Notification> >* activeNotifications;
 
-private:   
-    static bool eventFilter(void *message);
-    static QAbstractEventDispatcher::EventFilter originalEventFilter;
-
+private:
+	SnarlWidget* winIDWidget;
 
     QHash<QString,Snarl::V41::SnarlInterface*> _applications;
     Snarl::V41::SnarlInterface* _defautSnarlinetrface;
@@ -44,6 +44,18 @@ public slots:
     void unregisterApplication(class Application *application);
     int notify(QSharedPointer<Notification>notification);
     void closeNotification(QSharedPointer<Notification> notification);
+
+};
+
+class SnarlWidget:public QWidget
+{
+	Q_OBJECT
+public:
+	SnarlWidget(Snarl_Backend* snarl);
+	bool winEvent( MSG * message, long * result );
+
+private:
+	Snarl_Backend* _snarl;
 
 };
 

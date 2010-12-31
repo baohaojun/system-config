@@ -27,6 +27,7 @@
 #include <QSystemTrayIcon>
 
 QString const SnoreServer::snoreTMP = QDir::temp().path() +"/SnoreNotify/";
+
 void SnoreServer::cleanupTMP(){
     QDir home ( snoreTMP );
     if ( home.exists() )
