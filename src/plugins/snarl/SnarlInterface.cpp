@@ -50,20 +50,13 @@
 namespace Snarl {
 namespace V41 {
 
-// workaround for mingw
+
+
+// workaround for mingw-w64 bug
 #ifdef __GNUC__
 inline errno_t strncat_s( char *strDest,  size_t bufferSizeInBytes,  const char *strSource,  size_t count){
     strncat(strDest,strSource,count);
     return 0;
-}
-
-inline errno_t _itoa_s(  int value,  char *buffer,  size_t sizeInCharacters,  int radix = 10){
-    itoa(value,buffer,radix);
-    return 0;
-}
-
-inline int _vsnprintf_s(  char *buffer,  size_t sizeOfBuffer,  size_t count,  const char *format,  va_list argptr ){
-return vsnprintf(buffer, sizeOfBuffer, format, argptr);
 }
 #endif //__GNUC__
 
@@ -289,7 +282,7 @@ LONG32 SnarlInterface::EZUpdate(LONG32 msgToken, LPCSTR title /* = NULL */, LPCS
 	}
 	if (timeout != -1) {
 		char tmp[32];
-		_itoa_s(timeout, tmp, 10);
+		_itoa_s(timeout, tmp, 32, 10);
 		
 		err |= strncat_s(pData, SnarlPacketDataSize, (pData[0] != NULL) ? "#?timeout::" : "timeout::", _TRUNCATE);
 		err |= strncat_s(pData, SnarlPacketDataSize, tmp, _TRUNCATE);

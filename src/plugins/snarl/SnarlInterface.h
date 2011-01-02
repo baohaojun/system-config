@@ -1,6 +1,8 @@
 ﻿#ifndef SNARL_INTERFACE_V41
 #define SNARL_INTERFACE_V41
 
+#define MINGW_HAS_SECURE_API
+
 #include <tchar.h>
 #include <windows.h>
 #include <cstdio>
