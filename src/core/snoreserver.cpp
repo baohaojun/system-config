@@ -27,7 +27,7 @@
 #include <QSystemTrayIcon>
 
 QString const SnoreServer::version(){
-	return "0.2.5";
+	return "0.1";
 }
 
 QString const SnoreServer::snoreTMP(){
