@@ -95,6 +95,7 @@ void SnarlNetworkFrontend::handleMessages(){
 }
 
 void SnarlNetworkFrontend::callback(const SnarlNotification &sn,QString msg){
+	qDebug()<<"SnarlNetwork callback:"<<sn.notification->id();
     notifications.remove(sn.notification->id());
     if(sn.clientSocket!=NULL&&!msg.isEmpty()){
         msg+=QString::number(sn.notification->id());
