@@ -50,6 +50,23 @@
 namespace Snarl {
 namespace V41 {
 
+// workaround for mingw
+#ifdef __GNUC__
+inline errno_t strncat_s( char *strDest,  size_t bufferSizeInBytes,  const char *strSource,  size_t count){
+    strncat(strDest,strSource,count);
+    return 0;
+}
+
+inline errno_t _itoa_s(  int value,  char *buffer,  size_t sizeInCharacters,  int radix = 10){
+    itoa(value,buffer,radix);
+    return 0;
+}
+
+inline int _vsnprintf_s(  char *buffer,  size_t sizeOfBuffer,  size_t count,  const char *format,  va_list argptr ){
+return vsnprintf(buffer, sizeOfBuffer, format, argptr);
+}
+#endif //__GNUC__
+
 //-----------------------------------------------------------------------------
 // Constructor/Destructor
 //-----------------------------------------------------------------------------

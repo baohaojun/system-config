@@ -99,7 +99,7 @@ void SnarlNetworkFrontend::callback(const SnarlNotification &sn,QString msg){
     if(sn.clientSocket!=NULL&&!msg.isEmpty()){
         msg+=QString::number(sn.notification->id());
         qDebug()<<msg;
-        sn.clientSocket->write(msg.toAscii()+"\n");
+        sn.clientSocket->write(msg.toAscii()+"\r\n");
         sn.clientSocket->flush();
 
         if(sn.httpClient){
