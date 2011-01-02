@@ -31,6 +31,7 @@ public:
 private:
     class QSystemTrayIcon *_trayIcon;
     class QMenu *_trayMenu;
+	class QList<class QAction*> _backendActions;
     class SnoreServer *_snore;
 
 

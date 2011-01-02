@@ -36,6 +36,10 @@ void TrayIcon::initConextMenu(SnoreServer *snore){
     foreach(Notification_Backend *back,_snore->primaryNotificationBackends()){
         QAction *b=  new QAction(back->name(),this);
         connect(b,SIGNAL(triggered()),this,SLOT(setPrimaryBackend()));
+		b->setCheckable(true);
+		if(back->name() == _snore->primaryNotificationBackend()->name())
+			b->setChecked(true);
+		_backendActions.append(b);
         _trayMenu->addAction(b);
     }
     _trayMenu->addSeparator();
@@ -56,6 +60,12 @@ QSystemTrayIcon* TrayIcon::trayIcon(){
 void TrayIcon::setPrimaryBackend(){
     QAction *a= dynamic_cast<QAction*>(sender());
     _snore->setPrimaryNotificationBackend(_snore->primaryNotificationBackends().value(a->text()));
+	
+	foreach(QAction *action,_backendActions){
+		action->setChecked(false);
+	}
+	a->setChecked(true);
+	
 }
 
 

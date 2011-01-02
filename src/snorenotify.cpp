@@ -52,9 +52,10 @@ SnoreNotify::SnoreNotify()
     }
 
 
+	load();
+
     _trayIcon->initConextMenu(_snore);
 
-	load();
 	connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(exit()));
 }
 
