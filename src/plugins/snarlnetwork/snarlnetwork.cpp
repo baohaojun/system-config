@@ -74,17 +74,17 @@ void SnarlNetworkFrontend::handleMessages(){
         if(s == "")
             continue;
         SnarlNotification noti=parser->parse(s,client);
-        notifications.insert(noti.notification->id(),noti);
         if(!noti.vailid)
             continue;
         if(noti.notification->isNotification()){
             snore()->broadcastNotification(noti.notification);
             if(noti.notification->id()!=0){
-                out+="/"+QString::number(noti.notification->id())+"\r\n";
+                out+="/"+QString::number(noti.notification->id());			
+				notifications.insert(noti.notification->id(),noti);
             }
-        }else{
-            out+="\r\n";
         }
+        out+="\r\n";
+        
         client->write(out.toLatin1());
         if(noti.httpClient){
             client->disconnectFromHost();
@@ -95,7 +95,6 @@ void SnarlNetworkFrontend::handleMessages(){
 }
 
 void SnarlNetworkFrontend::callback(const SnarlNotification &sn,QString msg){
-	qDebug()<<"SnarlNetwork callback:"<<sn.notification->id();
     notifications.remove(sn.notification->id());
     if(sn.clientSocket!=NULL&&!msg.isEmpty()){
         msg+=QString::number(sn.notification->id());
