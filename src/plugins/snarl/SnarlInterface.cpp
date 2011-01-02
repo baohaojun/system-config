@@ -47,18 +47,16 @@
 #include "SnarlInterface.h"
 
 
-namespace Snarl {
-namespace V41 {
-
-
 
 // workaround for mingw-w64 bug
-#ifdef __GNUC__
-inline errno_t strncat_s( char *strDest,  size_t bufferSizeInBytes,  const char *strSource,  size_t count){
-    strncat(strDest,strSource,count);
-    return 0;
-}
-#endif //__GNUC__
+#ifdef __MINGW64_VERSION_MAJOR
+    extern "C" {
+        __declspec(dllimport) errno_t __cdecl strncat_s(char *_Dst,size_t _DstSizeInChars,const char *_Src,size_t _MaxCount);
+    }
+#endif //__MINGW64_VERSION_MAJOR
+
+namespace Snarl {
+namespace V41 {
 
 //-----------------------------------------------------------------------------
 // Constructor/Destructor
