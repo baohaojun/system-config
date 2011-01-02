@@ -27,12 +27,12 @@
 #include <QSystemTrayIcon>
 
 QString const SnoreServer::version(){
-	return "0.1";
+    return "0.1";
 }
 
 QString const SnoreServer::snoreTMP(){
-	static const QString tmp = QDir::temp().path() +"/SnoreNotify/";
-	return tmp;
+    static const QString tmp = QDir::temp().path() +"/SnoreNotify/";
+    return tmp;
 }
 
 void SnoreServer::cleanupTMP(){
@@ -206,7 +206,7 @@ void SnoreServer::setPrimaryNotificationBackend ( Notification_Backend *backend 
 }
 
 Notification_Backend * SnoreServer::primaryNotificationBackend(){
-	return _notificationBackend;
+    return _notificationBackend;
 }
 
 SnoreNotificationInstance * SnoreServer::defaultNotificationInterface()

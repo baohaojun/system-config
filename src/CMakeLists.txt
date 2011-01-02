@@ -27,6 +27,4 @@ install(TARGETS snorenotify RUNTIME DESTINATION bin
                           LIBRARY DESTINATION lib
                           ARCHIVE DESTINATION lib)
 
-
-#add_subdirectory(webinterface)
 add_subdirectory(plugins)

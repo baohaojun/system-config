@@ -79,8 +79,8 @@ void SnarlNetworkFrontend::handleMessages(){
         if(noti.notification->isNotification()){
             snore()->broadcastNotification(noti.notification);
             if(noti.notification->id()!=0){
-                out+="/"+QString::number(noti.notification->id());			
-				notifications.insert(noti.notification->id(),noti);
+                out+="/"+QString::number(noti.notification->id());
+                notifications.insert(noti.notification->id(),noti);
             }
         }
         out+="\r\n";
