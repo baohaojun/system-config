@@ -8,8 +8,5 @@ if(QT_QTDBUS_FOUND AND NOT WITH_FREEDESKTOP_FRONTEND AND UNIX AND NOT APPLE)
     target_link_libraries(freedesktop_backend  snorecore  ${QT_QTGUI_LIBRARY} ${QT_QTDBUS_LIBRARY} )
 
     install(TARGETS freedesktop_backend ${PLUGIN_INSTALL_PATH})
-
-else(QT_QTDBUS_FOUND AND NOT WITH_FREEDESKTOP_FRONTEND AND UNIX AND NOT APPLE)
-    message(STATUS "Adding Freedesktop notification backend.... ")
 endif(QT_QTDBUS_FOUND AND NOT WITH_FREEDESKTOP_FRONTEND AND UNIX AND NOT APPLE)
 

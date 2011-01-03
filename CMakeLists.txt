@@ -48,6 +48,8 @@ option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 set(PLUGIN_INSTALL_PATH  LIBRARY DESTINATION bin/snoreplugins)
 
 add_subdirectory(data)
+add_subdirectory(share)
 add_subdirectory(3party)
 add_subdirectory(src)
+
 

@@ -6,4 +6,4 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service
 			  DESTINATION share/dbus-1/services/)
 		
 
-install(FILES share/FindLibsnore.cmake DESTINATION share/apps/cmake/modules)
+install(FILES FindLibsnore.cmake DESTINATION share/apps/cmake/modules)
