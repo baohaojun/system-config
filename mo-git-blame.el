@@ -685,7 +685,6 @@ blamed."
              (window-to-scroll (if (eq window (plist-get vars :blame-window))
                                    (plist-get vars :content-window)
                                  (plist-get vars :blame-window))))
-        (message "yeah scrolled")
         (setq mo-git-blame-scroll-info (list :window-to-scroll window-to-scroll
                                              :start-line start-line
                                              :point-line point-line))
