@@ -27,4 +27,6 @@ renew-xauth()
     . ~/.new-xauth
 }
 
-. ~/.bash_completion.d/jira
+for x in ~/.bash_completion.d/*; do 
+    . "$x"
+done
