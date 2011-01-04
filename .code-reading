@@ -63,7 +63,7 @@
 ****************
 这个地方应该是nv里配置哪个uart使用相关的代码。
 
-    /home/bhj/src/android-byd/hardware/tegra/core/utils/nvos/aos/nvap/aos_uart.c:76:         TRISTATE_UART(B,UAA);
+    /home/bhj/src/theatre/hardware/tegra/core/utils/nvos/aos/nvap/aos_uart.c:76:         TRISTATE_UART(B,UAA);
         static NvError aos_EnableUartA(NvU32 configuration)
         {
             ...
@@ -191,3 +191,44 @@ Nvidia 自带了用gpio模拟i2c的代码，回头电源代码可以用这个来
             ...
     =>      if ((Transaction[0].Flags & NVRM_I2C_SOFTWARE_CONTROLLER) ||
 
+
+****************
+这里是battery太低的时候，系统会关机的code所在的地方。
+
+    /home/bhj/src/theatre/frameworks/base/services/java/com/android/server/BatteryService.java:187:             Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+        /**
+         * <p>BatteryService monitors the charging status, and charge level of the device
+         * battery.  When these values change this service broadcasts the new values
+         * to all {@link android.content.BroadcastReceiver IntentReceivers} that are
+         * watching the {@link android.content.Intent#ACTION_BATTERY_CHANGED
+         * BATTERY_CHANGED} action.</p>
+         * <p>The new values are stored in the Intent data and can be retrieved by
+         * calling {@link android.content.Intent#getExtra Intent.getExtra} with the
+         * following keys:</p>
+         * <p>&quot;scale&quot; - int, the maximum value for the charge level</p>
+         * <p>&quot;level&quot; - int, charge level, from 0 through &quot;scale&quot; inclusive</p>
+         * <p>&quot;status&quot; - String, the current charging status.<br />
+         * <p>&quot;health&quot; - String, the current battery health.<br />
+         * <p>&quot;present&quot; - boolean, true if the battery is present<br />
+         * <p>&quot;icon-small&quot; - int, suggested small icon to use for this state</p>
+         * <p>&quot;plugged&quot; - int, 0 if the device is not plugged in; 1 if plugged
+         * into an AC power adapter; 2 if plugged in via USB.</p>
+         * <p>&quot;voltage&quot; - int, current battery voltage in millivolts</p>
+         * <p>&quot;temperature&quot; - int, current battery temperature in tenths of
+         * a degree Centigrade</p>
+         * <p>&quot;technology&quot; - String, the type of battery installed, e.g. "Li-ion"</p>
+         */
+        class BatteryService extends Binder {
+            ...
+            private final void shutdownIfNoPower() {
+                ...
+                if (mBatteryLevel == 0 && !isPowered() && ActivityManagerNative.isSystemReady()) {
+    =>              Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+
+****************
+这个gpio就是ventana代码里控制充电enable/disable的位置。
+
+    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query_gpio.c:162:     {NVODM_PORT('r'), 6, NvOdmGpioPinActiveState_Low},
+        static const NvOdmGpioPinInfo s_Battery[] = {
+            ...
+    =>      {NVODM_PORT('r'), 6, NvOdmGpioPinActiveState_Low},

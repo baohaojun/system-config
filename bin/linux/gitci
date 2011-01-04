@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e
+
+die() {
+    echo "$@"
+    false
+}
+
+test $# -lt 1 && die "Error: must have a ticket, such as CINEMA-44. See http://bear/jira"
+
+ticket="${1%:*}"
+shift
+
+test $# -lt 1 && die "Error: at least 1 reviewer"
+
+reviewer=()
+while test $# -gt 0; do 
+    reviewer=("${reviewer[@]}" "${1%:*}")
+    shift
+done
+
+echo "$(cat <<EOF
+`cat|perl -npe 'BEGIN{$head1 = "Description: "; $head2 = " " x length($head1)} if(1..1) {s/^/$head1/} else {s/^/$head2/}'`
+
+Issue: $ticket
+
+Reviewed-by: ${reviewer[@]}
+EOF
+)"
