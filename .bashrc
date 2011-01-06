@@ -16,7 +16,7 @@ export HISTSIZE=2000
 export HISTFILESIZE=100000
 . ~/.bashrc-public
 
-if test `uname` = CYGWIN_NT-5.1
+if test `uname` = CYGWIN_NT-5.1 -o `uname` = CYGWIN_NT-6.1
 then
     . ~/.bashrc-windows
 else
