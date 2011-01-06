@@ -129,6 +129,10 @@ _jira()
             _jira_complete_these_words "Fixed" "Won't Fix" "Duplicate" "Incomplete" "Cannot Reproduce" "Not a Bug"
             return 0
             ;;            
+        --priority)
+            _jira_complete_these_words Blocker Critical Major Minor Trivial
+            return 0
+            ;;
     esac
 
     case $cur in

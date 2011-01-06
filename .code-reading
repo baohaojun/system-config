@@ -232,3 +232,42 @@ Nvidia 自带了用gpio模拟i2c的代码，回头电源代码可以用这个来
         static const NvOdmGpioPinInfo s_Battery[] = {
             ...
     =>      {NVODM_PORT('r'), 6, NvOdmGpioPinActiveState_Low},
+
+
+****************
+
+这里是配哪个是中断唤醒源的地方，NV的工程师建议把所有的NV_TRUE都改成
+NV_FALSE试一试。
+
+    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query.c:63:     {NV_TRUE,  8, NvOdmWakeupPadPolarity_Low}, // Wake Event  8 - gmi_wp_n (MICRO SD_CD)
+        #define BOARD_ID_VENTANA 0x024B
+        // Wake Events
+        static NvOdmWakeupPadInfo s_NvOdmWakeupPadInfo[] =
+        {
+            ...
+    =>      {NV_TRUE,  8, NvOdmWakeupPadPolarity_Low}, // Wake Event  8 - gmi_wp_n (MICRO SD_CD)
+
+****************
+这个是配置哪个gpio是中断源，上面那个是配置哪个中断源有效，以及有效电平
+
+    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/board-nvodm.c:1528:         gpio_to_irq(TEGRA_GPIO_PC7), gpio_to_irq(TEGRA_GPIO_PS2),
+        static void __init tegra_setup_suspend(void)
+        {
+        #ifdef CONFIG_ARCH_TEGRA_2x_SOC
+            const int wakepad_irq[] = {
+                ...
+    =>          gpio_to_irq(TEGRA_GPIO_PC7), gpio_to_irq(TEGRA_GPIO_PS2),
+
+****************
+maverick或下一个版本的usb-creator已经可以在debian上做dpkg-buildpackage并安装使用了，但是需要改一个地方：
+
+    /usr/lib/pymodules/python2.6/usbcreator/install.py:256:                     contents = f.readline().split()
+        class install(Thread):
+            ...
+            def mangle_syslinux(self):
+                ...
+                for filename in glob.iglob(os.path.join(self.target, 'syslinux', '*.cfg')):
+                    ...
+                    if os.path.exists(os.path.join(self.target, '.disk', 'info')):
+                        with open(os.path.join(self.target, '.disk', 'info'),'r') as f:
+    =>                      contents = f.readline().split()

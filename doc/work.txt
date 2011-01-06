@@ -772,3 +772,9 @@ sawfish-client -e '(mapcar (lambda (w) (and (string-match "腾讯网新闻" (win
 （例如：
 local options=(--help --action --file --debug --verbose --server --user --password password --login --service --loginFromStandardInput --project --toProject --name --description description --url --lead --after --issue --toIssue --parent --summary --priority priority --reporter --assignee --environment environment --components --affectsVersions --fixVersions --custom --field --date date --dateFormat --type --resolution --step --comment --filter --link --values --count --outputFormat --plugin plugin --version --role --group --defaultGroup --userId --userFullName userFullName --userEmail --userPassword --permissionScheme --notificationScheme notificationScheme --issueSecurityScheme --findReplace --autoVersion --autoComponent --autoGroup --asVersion --asComponent) 
 ）
+
+sawfish-client -e '(mapcar (lambda (w) (and (string-match "腾讯网新闻" (window-name w)) (delete-window-safely w)))  (window-order))'
+
+bzr branch  lp:usb-creator  
+
+rfa 'git diff --name-status $REPO_LREV|grep . && pwd && echo'
