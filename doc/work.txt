@@ -782,3 +782,11 @@ rfa 'git diff --name-status $REPO_LREV|grep . && pwd && echo'
 shift + space怎么改掉：
 
     or 'HKEY_CURRENT_USER\Control Panel\Input Method\Hot Keys\00000011'
+
+怎么让Linux底下的acroread能打开nvidia加密的文档：
+
+1. 用firefox访问https://docsec.nvidia.com
+
+2. 点击右下角的小锁图标，查看证书详情。把所有证书全部export到文件
+
+3. for x in ~/Downloads/GeoTrust* ; do  acroread -installCertificate -PEM  $x; done
