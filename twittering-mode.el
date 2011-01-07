@@ -115,7 +115,7 @@ buffers."
   :type 'string
   :group 'twittering)
 
-(defcustom twittering-status-format "%i %s,  %@:\n%FILL{  %t // from %f%L%r%R}\n "
+(defcustom twittering-status-format "%i %s,  %@:\n%FILL{  %t %m // from %f%L%r%R}\n "
   "Format string for rendering statuses.
 Ex. \"%i %s,  %@:\\n%FILL{  %t // from %f%L%r%R}\n \"
 
@@ -126,6 +126,7 @@ Items:
  %d - description
  %l - location
  %L - \" [location]\"
+ %m - (sina) comment and retweet count, if any.
  %r - \" sent to user\" (use on direct_messages{,_sent})
  %r - \" in reply to user\" (use on other standard timeline)
  %R - \" (retweeted by user)\"
@@ -2151,8 +2152,8 @@ the server when the HTTP status code equals to 400 or 403."
 ;(("200")
       (debug-printf "connection-info=%s" connection-info)
       (twittering-html-decode-buffer)
-      (let* ((spec (cdr (assq 'timeline-spec connection-info)))
-	     (spec-string (cdr (assq 'timeline-spec-string connection-info)))
+      (let* ((spec (assqref 'timeline-spec connection-info))
+	     (spec-string (assqref 'timeline-spec-string connection-info))
 	     (twittering-service-method (caar spec))
 	     (statuses
 	      (let ((xmltree
@@ -3441,7 +3442,7 @@ Return cons of the spec and the rest string."
              (rest (substring str (match-end 0))))
         `(((,service) search ,query) . ,rest)))
 
-     ((string-match (concat "^:\\([a-z_-]+\\)" re) str)
+     ((string-match (concat "^:\\([a-z_/-]+\\)" re) str)
       (let ((type (match-string 1 str))
             (service (intern (match-string 2 str)))
             (following (substring str (match-end 0)))
@@ -3459,33 +3460,33 @@ Return cons of the spec and the rest string."
          ((assoc type alist)
           (let ((first-spec (cdr (assoc type alist))))
             `(((,service) ,@first-spec) . ,following)))
-         ((string= type "search")
-          (if (string-match (concat "^:search/\\(\\(.*?[^\\]\\)??\\(\\\\\\\\\\)*\\)??/" re)
-                            str)
-              (let* ((escaped-query (or (match-string 1 str) ""))
-                     (service (intern (match-string 3 str)))
-                     (query (replace-regexp-in-string
-                             "\\\\/" "/" escaped-query nil t))
-                     (rest (substring str (match-end 0))))
-                (if (not (string= "" escaped-query))
-                    `(((,service) search ,query) . ,rest)
-                  (error "\"%s\" has no valid regexp" str)
-                  nil))))
-         ((string= type "filter")
-          (if (string-match (concat "^:filter/\\(\\(.*?[^\\]\\)??\\(\\\\\\\\\\)*\\)??/" re)
-                            str)
-              (let* ((escaped-regexp (or (match-string 1 str) ""))
-                     (service (intern (match-string 3 str)))
-                     (regexp (replace-regexp-in-string
-                              "\\\\/" "/" escaped-regexp nil t))
-                     (following (substring str (match-end 0)))
-                     (pair (twittering-extract-timeline-spec
-                            following unresolved-aliases))
-                     (spec (car pair))
-                     (rest (cdr pair)))
-                `(((,service) filter ,regexp ,spec) . ,rest))
-            (error "\"%s\" has no valid regexp" str)
-            nil))
+	 ((string-match (concat ;; "^:search/\\(\\(.*?[^\\]\\)??\\(\\\\\\\\\\)*\\)??/"
+			 "^:search/\\([^/]+\\)/"
+			 re)
+			str)
+	  (let* ((escaped-query (or (match-string 1 str) ""))
+		 (service (intern (match-string 2 str)))
+		 (query (replace-regexp-in-string
+			 "\\\\/" "/" escaped-query nil t))
+		 (rest (substring str (match-end 0))))
+	    (if (not (string= "" escaped-query))
+		`(((,service) search ,query) . ,rest)
+	      (error "\"%s\" has no valid regexp" str)
+	      nil)))
+	 ((string-match (concat "^:filter/\\(\\(.*?[^\\]\\)??\\(\\\\\\\\\\)*\\)??/" re)
+			str)
+	  (let* ((escaped-regexp (or (match-string 1 str) ""))
+		 (service (intern (match-string 3 str)))
+		 (regexp (replace-regexp-in-string
+			  "\\\\/" "/" escaped-regexp nil t))
+		 (following (substring str (match-end 0)))
+		 (pair (twittering-extract-timeline-spec
+			following unresolved-aliases))
+		 (spec (car pair))
+		 (rest (cdr pair)))
+	    `(((,service) filter ,regexp ,spec) . ,rest)))
+	 ;; (error "\"%s\" has no valid regexp" str)
+	 ;; nil))
          (t
           (error "\"%s\" is invalid as a timeline spec" str)
           nil))))
@@ -3707,8 +3708,7 @@ Statuses are stored in ascending-order with respect to their IDs."
 	(and (if (numberp count)
 		 (<= 0 (setq count (1- count)))
 	       t)
-	     (let ((replied-id (or (cdr (assq 'in-reply-to-status-id status))
-				   "")))
+	     (let ((replied-id (or (assqref 'in-reply-to-status-id status) "")))
 	       (unless (string= "" replied-id)
 		 (let ((replied-status (twittering-find-status replied-id)))
 		   (when replied-status
@@ -3720,7 +3720,7 @@ Statuses are stored in ascending-order with respect to their IDs."
 (defun twittering-have-replied-statuses-p (id)
   (let ((status (twittering-find-status id)))
     (when status
-      (let ((replied-id (cdr (assq 'in-reply-to-status-id status))))
+      (let ((replied-id (assqref 'in-reply-to-status-id status)))
 	(and replied-id (not (string= "" replied-id)))))))
 
 (defun twittering-add-statuses-to-timeline-data (statuses &optional spec)
@@ -4136,7 +4136,8 @@ send-direct-message -- Send a direct message.
   (let ((spec (cdr (assq 'timeline-spec args-alist)))
 	(id (cdr (assq 'id args-alist)))
 	(username (cdr (assq 'username args-alist)))
-	(sentinel (cdr (assq 'sentinel args-alist))))
+	(sentinel (cdr (assq 'sentinel args-alist)))
+	(sina? (eq twittering-service-method 'sina)))
     (case command
       ((retrieve-timeline)
        ;; Retrieve a timeline.
@@ -4310,16 +4311,18 @@ send-direct-message -- Send a direct message.
       ((update-status)
        ;; Post a tweet.
        (let* ((status (cdr (assq 'status args-alist)))
-	      (id (cdr (assq 'in-reply-to-status-id args-alist)))
-	      (parameters
-	       `(("status" . ,status)
-		 ,@(when (eq (twittering-get-accounts 'auth) 'basic)
-		     '(("source" . "twmode")))
-		 ,@(when id `(("in_reply_to_status_id" . ,id))))))
-	 (twittering-http-post (twittering-lookup-service-method-table 'api)
-			       (twittering-api-path "statuses/update")
-			       parameters
-			       nil additional-info)))
+              (id (cdr (assq 'in-reply-to-status-id args-alist)))
+              (parameters
+               `((,(if sina? "comment" "status") . ,status)
+                 ,@(when (eq (twittering-get-accounts 'auth) 'basic)
+                     '(("source" . "twmode")))
+                 ,@(when id `((,(if sina? "id" "in_reply_to_status_id")
+                               . ,id))))))
+         (twittering-http-post (twittering-lookup-service-method-table 'api)
+                               (twittering-api-path
+                                "statuses/" (if sina? "comment" "update"))
+                               parameters
+                               nil additional-info)))
       ((destroy-status)
        (twittering-http-post (twittering-lookup-service-method-table 'api)
 			     (twittering-api-path "statuses/destroy" id)
@@ -4359,7 +4362,18 @@ send-direct-message -- Send a direct message.
       ((show)
        (twittering-http-get (twittering-lookup-service-method-table 'api)
 			    (twittering-api-path "statuses/show/" id)
-			    nil nil additional-info)))))
+			    nil nil additional-info))
+
+      ;; sina specific methods
+      ((counts)
+       (twittering-http-get (twittering-lookup-service-method-table 'api)
+			    (twittering-api-path "statuses/counts")
+			    ;; USERNAME treated as IDS here
+			    `(("ids" . ,username))
+			    nil
+			    additional-info
+			    sentinel))
+      )))
 
 ;;;;
 ;;;; Account authorization
@@ -4749,11 +4763,15 @@ If `twittering-password' is nil, read it from the minibuffer."
 	   source-id
 	   source-created-at
 
-	   original)
+	   original
+	   retweeted-status)
 
       ;; 1. save original status and adjust data if status was retweeted
       (cond
        (retweeted-status-data
+	(setq retweeted-status (twittering-status-to-status-datum
+				retweeted-status-data))
+
 	(setq original-user-screen-name (twittering-decode-html-entities (assq-get 'screen_name u))
 	      original-user-name (twittering-decode-html-entities (assq-get 'name u))
 	      original-user-id (assq-get 'id u))
@@ -4812,7 +4830,7 @@ If `twittering-password' is nil, read it from the minibuffer."
 
       ;; Decide whether it is necessary to show retweeter's comment.
       (let ((orig-text (twittering-decode-html-entities (assq-get 'text s))))
-	(if (and text
+	(if (and text			; We have a retweet.
 		 (not (or (string-match 
 			   (regexp-opt
 			    (list 
@@ -4821,8 +4839,28 @@ If `twittering-password' is nil, read it from the minibuffer."
 			   orig-text)
 			  (string= text "转发微博")
 			  (string= text "转发微博。"))))
-	    (setq text (format "%s\n\n    \"%s\"" orig-text text))
-	  (setq text orig-text)))
+	    (setq text (format "%s%s\n\n    \"%s%s\"" 
+			       orig-text
+			       ;; No interest in comments to retweeted status by
+			       ;; others.
+			       ;; (if (eq twittering-service-method 'sina)
+			       ;; 	   (concat "  "
+			       ;; 		   (twittering-get-simple nil nil (assq-get 'id s) 'counts))
+			       ;; 	 "")
+			       ""
+			       text
+			       ;; (if (eq twittering-service-method 'sina)
+			       ;; 	   (concat "  "
+			       ;; 		   (twittering-get-simple nil nil id 'counts))
+			       ;; 	 "")
+			       ""
+			       ))
+	  (setq text (concat orig-text
+			     ;; (if (eq twittering-service-method 'sina)
+			     ;; 	 (concat "  "
+			     ;; 		 (twittering-get-simple nil nil id 'counts))
+			     ;;   "")
+			     ))))
 
       (twittering-make-clickable-status-datum
        (remove 
@@ -4853,7 +4891,8 @@ If `twittering-password' is nil, read it from the minibuffer."
 		     original-user-id
 		     recipient-screen-name
 
-		     original)))))))
+		     original
+		     retweeted-status)))))))
 
 (defun twittering-make-clickable-status-datum (status)
   (let ((user-name                 (assqref 'user-name                 status))
@@ -5471,7 +5510,8 @@ available and `twittering-use-convert' is non-nil."
 	    `(xpm . ,converted-data)
 	  twittering-error-icon-data-pair)))
      (t
-      twittering-error-icon-data-pair))))
+      ;; twittering-error-icon-data-pair
+      image-pair))))
 
 (defun twittering-register-image-data (image-url image-data)
   (let ((image-pair (twittering-create-image-pair image-data)))
@@ -5608,7 +5648,8 @@ image are displayed."
 	     (twittering-xml-parse-region (point-min) (point-max))))
 	(when xmltree
 	  (case (caar xmltree)
-	    ((relationship)		; show-friendships
+	    ;; show-friendships
+	    ((relationship)
 	     (let ((checker
 		    (lambda (tag) 
 		      (string= (car
@@ -5630,8 +5671,12 @@ image are displayed."
 			(and (consp node) (eq 'list (car node)) node))
 		      (cdr-safe
 		       (assq 'lists (assq 'lists_list xmltree)))))
-		    " "))))
-	  (puthash (list (cdr (assoc 'username args)) (cdr (assoc 'method args)))
+		    " ")))
+	    ((counts)			; Assume just one ID.
+	     (setq ret `(,(remove nil (assq 'comments (assqref 'count (car xmltree))))
+			 ,(remove nil (assq 'rt       (assqref 'count (car xmltree))))))))
+
+	  (puthash `(,(assqref 'username args) ,(assqref 'method args))
 		   (or ret "")
 		   twittering-simple-hash))))
      (t
@@ -6152,7 +6197,10 @@ following symbols;
      (let ((location (or (cdr (assq 'user-location ,status-sym)) "")))
        (unless (string= "" location)
 	 (concat "[" location "]"))))
-    ("l" . (cdr (assq 'user-location ,status-sym)))
+    ("l" . (cdr (assq 'user-location ,status-sym)))   
+    ;; FIXME: why "C" turns into timestamp?? (xwl)
+    ("m" . (when (eq twittering-service-method 'sina) ; comment counts.
+	     (twittering-get-simple nil nil (assqref 'id ,status-sym) 'counts)))
     ("p" . (when (string= "true" (cdr (assq 'user-protected ,status-sym)))
 	     "[x]"))
     ("r" .
@@ -6307,10 +6355,10 @@ following symbols;
     (cond
      ((null rest)
       `(lambda (status prefix)
-	 (let* ((username  (cdr (assq 'user-screen-name status)))
-		(id	   (cdr (assq 'id status)))
-		(source-id (cdr (assq 'source-id status)))
-		(text	   (cdr (assq 'text status)))
+	 (let* ((username  (assqref 'user-screen-name status))
+		(id	   (assqref 'id status))
+		(source-id (assqref 'source-id status))
+		(text	   (assqref 'text status))
 		(common-properties (twittering-make-common-properties status))
 		(col (and (twittering-my-status-p status) twittering-my-fill-column))
 		(str
@@ -6882,7 +6930,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	      (goto-char beg)
 	      (mapc
 	       (lambda (status)
-		 (let ((id (cdr (assq 'id status)))
+		 (let ((id (assqref 'id status))
 		       (formatted-status (twittering-format-status status
 								   prefix)))
 		   (add-text-properties 0 (length formatted-status)
@@ -6902,8 +6950,8 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		  (let ((buffer-read-only nil))
 		    (insert
 		     (twittering-make-replied-status-string 
-		      nil nil base-id (cdr (assq 'in-reply-to-status-id
-						 (twittering-find-status base-id))))))))
+		      nil nil base-id (assqref 'in-reply-to-status-id
+					       (twittering-find-status base-id)))))))
 	    (message "This status does not seem having a replied status.")))
 	nil))))
 
@@ -7764,21 +7812,22 @@ When SPEC-STRING is non-nil, just save lastest status for SPEC-STRING. "
 
 (defvar twittering-simple-hash (make-hash-table :test 'equal)
   "Hash table for storing results retrieved by `twittering-get-simple'.
-The key is a list of username and method(such as get-list-index), the value is
+The key is a list of username/id and method(such as get-list-index), the value is
 string.")
 
 (defun twittering-get-simple (beg end username method)
   (let ((ret (gethash (list username method) twittering-simple-hash))
-	(s "..."))			; hold 'need-to-be-updated
+	(s "."))			; hold 'need-to-be-updated
     (cond 
      (ret
       (remove-text-properties 0 (length s) '(need-to-be-updated nil) s)
       (case method
 	((show-friendships)
-	 (concat (or (when (cdr (assq 'following ret)) " <") " ")
+	 (concat (or (when (assqref 'following ret) " <") " ")
 		 "--"
-		 (or (when (cdr (assq 'followed-by ret)) ">") "")
+		 (or (when (assqref 'followed-by ret) ">") "")
 		 " you"))
+
 	((get-list-index get-list-subscriptions get-list-memberships)
 	 (mapconcat (lambda (l) (concat "@" (twittering-decorate-listname l)))
 		    (split-string ret)
@@ -7786,6 +7835,22 @@ string.")
 				  (twittering-calculate-list-info-prefix-width 
 				   username)
 				  ? ))))
+
+	((counts)
+	 (let ((cm (car (assqref 'comments ret)))
+	       (rt (car (assqref 'rt ret))))
+	   (if (and (string= cm "0") (string= rt "0"))
+	       ""
+	     (concat "["
+		     (mapconcat (lambda (s-id)
+				  (let ((s (car s-id)))
+				    (put-text-property 0 (length s) (cdr s-id) username s)
+				    s))
+				`((,(concat "cm " cm) . comment-base-id)
+				  (,(concat "rt " cm) . retweet-base-id))
+				", ")
+		     "]"))))
+
 	(t
 	 ret)))
      (t 
@@ -8081,9 +8146,12 @@ string.")
   	 (screen-name-in-text
   	  (get-text-property (point) 'screen-name-in-text))
   	 (spec ;; Sequence is important.
-  	  (cond (screen-name-in-text `((,twittering-service-method) user ,screen-name-in-text))
-		(goto-spec goto-spec)
-		(username `((,twittering-service-method) user ,username)))))
+  	  (cond (goto-spec
+		 goto-spec)	 ; FIXME: better get name for "retweeted by XXX"
+		(screen-name-in-text
+		 `((,twittering-service-method) user ,screen-name-in-text))
+		(username
+		 `((,twittering-service-method) user ,username)))))
     (if spec
   	(twittering-visit-timeline spec)
       (message "No user selected"))))
@@ -8208,13 +8276,33 @@ string.")
   (let* ((username (get-text-property (point) 'username))
 	 (id (get-text-property (point) 'id))
 	 (spec (get-text-property (point) 'belongs-spec))
+	 (status (twittering-find-status id))
+	 (reply-to-source nil)	 
 	 (init-str (if quote 
 		       (twittering-generate-organic-retweet)
 		     (concat "@" username " "))))
+
+    (when (eq twittering-service-method 'sina)
+      (when (assqref 'retweeted-status status)
+	(setq username 
+	      (ido-completing-read "Reply to: " 
+				   `(,(assqref 'original-user-name status)
+				     ,(assqref 'user-name status))))
+	(when (string= username (assqref 'user-name status))
+	  (setq reply-to-source t
+		id (assqref 'id (assqref 'retweeted-status status)))))
+
+      (setq init-str (concat " // @" username)) 
+      (unless reply-to-source 
+	;; (sina) Quote by default.
+	(let ((s (substring-no-properties
+		  (assqref 'text (or (assqref 'original status) status)))))
+	  (setq init-str (concat init-str " " s)))))
+
     (if username
 	(progn
 	  (funcall twittering-update-status-function init-str id username spec)
-	  (when quote 
+	  (when (or quote (eq twittering-service-method 'sina))
 	    (goto-char (line-beginning-position))))
       (message "No user selected"))))
 
