@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ex
 . ~/.bashrc
 cd /home/git/android
 
@@ -41,3 +42,4 @@ for x in `git tag`; do git branch tagbr-$x $x; done
 #git clone --mirror --bare  git://android.git.kernel.org/tools/repo.git
 cd /android/repo.git
 git fetch
+echo ok, repo update complete

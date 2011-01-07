@@ -778,3 +778,7 @@ sawfish-client -e '(mapcar (lambda (w) (and (string-match "腾讯网新闻" (win
 bzr branch  lp:usb-creator  
 
 rfa 'git diff --name-status $REPO_LREV|grep . && pwd && echo'
+
+shift + space怎么改掉：
+
+    or 'HKEY_CURRENT_USER\Control Panel\Input Method\Hot Keys\00000011'
