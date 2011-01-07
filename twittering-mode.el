@@ -542,6 +542,7 @@ Following methods are supported:
 
     (sina (api "api.t.sina.com.cn")
           (web "t.sina.com.cn")
+	  ;; search is not restricted by sina..
 
           (oauth-request-token-url-without-scheme
            "://api.t.sina.com.cn/oauth/request_token")
@@ -4313,14 +4314,14 @@ send-direct-message -- Send a direct message.
        (let* ((status (cdr (assq 'status args-alist)))
               (id (cdr (assq 'in-reply-to-status-id args-alist)))
               (parameters
-               `((,(if sina? "comment" "status") . ,status)
+               `((,(if (and sina? id) "comment" "status") . ,status)
                  ,@(when (eq (twittering-get-accounts 'auth) 'basic)
                      '(("source" . "twmode")))
                  ,@(when id `((,(if sina? "id" "in_reply_to_status_id")
                                . ,id))))))
          (twittering-http-post (twittering-lookup-service-method-table 'api)
                                (twittering-api-path
-                                "statuses/" (if sina? "comment" "update"))
+                                "statuses/" (if (and sina? id) "comment" "update"))
                                parameters
                                nil additional-info)))
       ((destroy-status)
