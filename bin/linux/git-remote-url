@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+. ~/.bash_profile
+test $# == 0 && set -- origin
+
+git config remote.$1.url|tee /dev/tty|putclip

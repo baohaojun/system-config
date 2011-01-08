@@ -42,21 +42,12 @@ _repo-switch() {
                     echo git://android.git.kernel.org/platform/manifest.git;
                     echo git@www.rayzertrack.com:ggl/pxa935/platform/manifest;
                     echo git@www.rayzertrack.com:nv/android/manifest
+                    echo ssh://bearr/android/platform/manifest.git
                     cat ~/.remotes 2>/dev/null
                 ) |sort -u
             )
             ;;
     esac
-    COMPREPLY=( $( compgen -W "$br_list" -- "$cur" ) )
-    return 0
-}
-
-_remote_branches() {
-    local br_list
-    COMPREPLY=()
-    cur=${COMP_WORDS[COMP_CWORD]}
-    
-    br_list=$( git branch -r |perl -npe 's,.*/,,')
     COMPREPLY=( $( compgen -W "$br_list" -- "$cur" ) )
     return 0
 }
@@ -72,7 +63,6 @@ _git_tags() {
 }
     
 complete -F _repo-switch repo-switch
-complete -F _remote_branches git-track
 complete -F _git_tags git-track-tag
 
 _mail() {

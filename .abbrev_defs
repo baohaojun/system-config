@@ -253,6 +253,14 @@ else
     cd `pwd`/`dirname $0`;
 fi
 " nil 0)
+    ("shmode" "# Local variables:
+# mode: shell-script
+# sh-basic-offset: 4
+# sh-indent-comment: t
+# indent-tabs-mode: nil
+# End:
+# ex: ts=4 sw=4 et filetype=sh
+" nil 0)
    ))
 
 (define-abbrev-table 'shell-mode-abbrev-table '())

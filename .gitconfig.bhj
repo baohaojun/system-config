@@ -12,3 +12,5 @@
         dt = difftool -t meld
 [review "www.rayzertrack.com:8080"]
 	username = bhj
+[difftool "bhj"]
+	cmd = args-debug
