@@ -787,3 +787,12 @@ shift + space怎么改掉：
 rfa 'set -x; command git co -b gingerbread-tegra origin/`tbranch`'
 
 xmlstarlet sel -t -m //project -v @path -n default.xml 
+
+怎么让Linux底下的acroread能打开nvidia加密的文档：
+
+1. 用firefox访问https://docsec.nvidia.com
+
+2. 点击右下角的小锁图标，查看证书详情。把所有证书全部export到文件
+
+3. for x in ~/Downloads/GeoTrust* ; do  acroread -installCertificate -PEM  $x; done
+
