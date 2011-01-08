@@ -21,6 +21,7 @@
 #include <QTcpSocket>
 #include <Qt>
 #include <QTextDocumentFragment>
+#include <QTextDocument>
 
 
 
@@ -29,7 +30,9 @@ int Notification::DefaultTimeout=10;
 
 QString Notification::toPlainText ( const QString &string )
 {
-    return QTextDocumentFragment::fromHtml(string).toPlainText();
+    if( Qt::mightBeRichText(string))
+        return QTextDocumentFragment::fromHtml(string).toPlainText();
+    return QString(string);
 }
 
 Notification::Notification ( uint id ) :
