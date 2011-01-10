@@ -271,3 +271,12 @@ maverick或下一个版本的usb-creator已经可以在debian上做dpkg-buildpac
                     if os.path.exists(os.path.join(self.target, '.disk', 'info')):
                         with open(os.path.join(self.target, '.disk', 'info'),'r') as f:
     =>                      contents = f.readline().split()
+
+****************
+<6>[    7.097367] mmcblk3: mmc2:0001 SEM08G 7.37 GiB 
+
+    /home/bhj/src/theatre/kernel/drivers/mmc/card/block.c:643:     printk(KERN_INFO "%s: %s %s %s %s\n",
+        static int mmc_blk_probe(struct mmc_card *card)
+        {
+            ...
+    =>      printk(KERN_INFO "%s: %s %s %s %s\n",
