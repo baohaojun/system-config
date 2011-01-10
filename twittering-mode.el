@@ -115,7 +115,7 @@ buffers."
   :type 'string
   :group 'twittering)
 
-(defcustom twittering-status-format "%i %s,  %@:\n%FILL{  %t %m // from %f%L%r%R}\n "
+(defcustom twittering-status-format "%FACE[twittering-zebra-1-face,twittering-zebra-2-face]{%i %s,  %@:\n%FILL{  %t %m // from %f%L%r%R}}\n "
   "Format string for rendering statuses.
 Ex. \"%i %s,  %@:\\n%FILL{  %t // from %f%L%r%R}\n \"
 
@@ -141,7 +141,9 @@ Items:
  %T - (sina) thumbnail picture in a tweet
  %t - text filled as one paragraph
  %' - truncated
- %FACE[face-name]{...} - strings decorated with the specified face.
+ %FACE[face-name]{...} - strings decorated with the specified face. You can
+                      provide two faces, separated by colon, to create a
+                      zebra-like background.
  %FILL[prefix]{...} - strings filled as a paragraph. The prefix is optional.
                       You can use any other specifiers in braces.
  %FOLD[prefix]{...} - strings folded within the frame width.
@@ -2478,27 +2480,29 @@ Duplicated elements should not exist in STR-LIST."
        (substring pre 2)))
    str-list))
 
-(defun twittering-decorate-background (object)
+(defun twittering-decorate-zebra-background (object face1 face2)
   "Append zebra background to OBJECT.
 The zebra face is decided by looking at adjacent face. "
   (let* ((start 0)
-	 (other-faces (get-text-property start 'face object))
-	 end
-	 (pos (twittering-get-current-status-head))
-	 (zebra-face (if (and pos
-			      (memq twittering-zebra-1-face
-				    (let ((faces (get-text-property pos 'face)))
+  	 (other-faces (get-text-property start 'face object))
+  	 (end nil)
+  	 (pos (twittering-get-current-status-head))
+  	 (zebra-face (if (and pos
+			      face2
+  			      (memq face1
+  				    (let ((faces (get-text-property pos 'face)))
                                       (if (listp faces) faces (list faces)))))
-			 twittering-zebra-2-face
-		       twittering-zebra-1-face)))
+  			 face2
+  		       face1)))
     (while (setq end (next-single-property-change start 'face object))
       (put-text-property start end 'face (if (listp other-faces)
-					     (cons zebra-face other-faces)
-					   (list zebra-face other-faces))
-			 object)
+  					     (cons zebra-face other-faces)
+  					   (list zebra-face other-faces))
+  			 object)
       (setq start end
-	    other-faces (get-text-property start 'face object)))
-    (put-text-property start (length object) 'face zebra-face object)))
+  	    other-faces (get-text-property start 'face object)))
+    (put-text-property start (length object) 'face zebra-face object)
+    object))
 
 (defun twittering-decorate-uri (object)
   "Decorate uri contained in OBJECT."
@@ -6098,7 +6102,7 @@ of format. The common properties follows:
 		   (let ((value (get-text-property pos prop)))
 		     (when value
 		       `(,prop ,value))))
-		 '(id original-id source-id source-spec text username))))
+		 '(id original-id source-id source-spec text username face))))
 
 (defun twittering-format-string (string prefix replacement-table)
   "Format STRING according to PREFIX and REPLACEMENT-TABLE.
@@ -6287,15 +6291,19 @@ following symbols;
 				      (parse-time-string created-at-str))))
 	      (format-time-string ,time-format created-at))
 	    . ,rest)))
-       ((string-match "\\`FACE\\[\\([a-zA-Z0-9:-]+\\)\\]{" following)
-	(let* ((face-name-str (match-string 1 following))
+       ((string-match "\\`FACE\\[\\([a-zA-Z0-9:-]+\\)\\(, *\\([a-zA-Z0-9:-]+\\)\\)?\\]{" following)
+	(let* ((face-name-str-1 (match-string 1 following))
+	       (face-sym-1 (intern face-name-str-1))
+	       (face-name-str-2 (match-string 3 following))
+	       (face-sym-2 (and face-name-str-2 (intern face-name-str-2)))
 	       (str-after-brace (substring following (match-end 0)))
-	       (face-sym (intern face-name-str))
 	       (pair (twittering-generate-formater-for-current-level
 		      str-after-brace status-sym prefix-sym))
 	       (braced-body (car pair))
 	       (rest (cdr pair)))
-	  `((propertize (concat ,@braced-body) 'face ',face-sym)
+	  `((twittering-decorate-zebra-background (concat ,@braced-body) 
+						  ,face-sym-1
+						  ,face-sym-2)
 	    . ,rest)))
        ((string-match "\\`\\(FILL\\|FOLD\\)\\(\\[\\([^]]*\\)\\]\\)?{"
 		      following)
@@ -6575,7 +6583,6 @@ variable `twittering-status-format'."
 				    `(belongs-spec ,spec)
 				    formatted-status)
 	       (goto-char (funcall get-insert-point))
-	       (twittering-decorate-background formatted-status)
 	       (cond
 		((eobp)
 		 ;; Insert a status after the current position.
@@ -6874,8 +6881,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		 ;; the point becomes outside of the window by the effect of
 		 ;; `set-window-start'.
 		 (setq result beg))
-	       (let ((common-properties
-		      (twittering-get-common-properties beg)))
+	       (let ((common-properties (twittering-get-common-properties beg)))
 		 ;; Restore common properties.
 		 (delete-region beg end)
 		 (goto-char beg)
@@ -7817,29 +7823,29 @@ The key is a list of username/id and method(such as get-list-index), the value i
 string.")
 
 (defun twittering-get-simple (beg end username method)
-  (let ((ret (gethash (list username method) twittering-simple-hash))
+  (let ((retrieved (gethash (list username method) twittering-simple-hash))
 	(s "."))			; hold 'need-to-be-updated
     (cond 
-     (ret
+     (retrieved
       (remove-text-properties 0 (length s) '(need-to-be-updated nil) s)
       (case method
 	((show-friendships)
-	 (concat (or (when (assqref 'following ret) " <") " ")
+	 (concat (or (when (assqref 'following retrieved) " <") " ")
 		 "--"
-		 (or (when (assqref 'followed-by ret) ">") "")
+		 (or (when (assqref 'followed-by retrieved) ">") "")
 		 " you"))
 
 	((get-list-index get-list-subscriptions get-list-memberships)
 	 (mapconcat (lambda (l) (concat "@" (twittering-decorate-listname l)))
-		    (split-string ret)
+		    (split-string retrieved)
 		    (concat "\n" (make-string
 				  (twittering-calculate-list-info-prefix-width 
 				   username)
 				  ? ))))
 
 	((counts)
-	 (let ((cm (car (assqref 'comments ret)))
-	       (rt (car (assqref 'rt ret))))
+	 (let ((cm (car (assqref 'comments retrieved)))
+	       (rt (car (assqref 'rt retrieved))))
 	   (if (and (string= cm "0") (string= rt "0"))
 	       ""
 	     (concat "["
@@ -7851,9 +7857,8 @@ string.")
 				  (,(concat "rt " cm) . retweet-base-id))
 				", ")
 		     "]"))))
-
 	(t
-	 ret)))
+	 retrieved)))
      (t 
       (put-text-property 0 (length s)
 			 'need-to-be-updated
