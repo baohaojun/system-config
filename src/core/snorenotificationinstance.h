@@ -20,8 +20,9 @@
 #include "snore_exports.h"
 #include "snoreserver.h"
 #include "application.h"
+#include "interface.h"
 
-class SNORE_EXPORT  SnoreNotificationInstance:public QObject
+class SNORE_EXPORT  SnoreNotificationInstance:public Notification_Frontend
 {
     Q_OBJECT
 public:
@@ -31,6 +32,12 @@ public:
     void registerWithBackends();
     void unregisterWithBackends();
     int notify ( const QString &alert,const QString &title,const QString &text,const QString &icon = 0,int timeout = 10 );
+    void actionInvoked ( QSharedPointer<Notification> notification );
+    void notificationClosed ( QSharedPointer<Notification> notification );
+
+signals:
+    void notificationActionInvoked ( QSharedPointer<Notification> notification );
+
 private:
     SnoreNotificationInstance();
     Application *_app;

@@ -18,11 +18,8 @@
 
 #include <QDebug>
 
-SnoreNotificationInstance::SnoreNotificationInstance()
-{
-}
-
 SnoreNotificationInstance::SnoreNotificationInstance ( const QString &appname, SnoreServer *parent,const QString &icon ) :
+        Notification_Frontend(appname,parent),
         _app ( new Application ( appname ,icon) ),
         _snore ( parent )
 {
@@ -55,7 +52,15 @@ void SnoreNotificationInstance::unregisterWithBackends()
 
 int SnoreNotificationInstance::notify ( const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout )
 {
-    return _snore->broadcastNotification ( QSharedPointer<Notification> ( new Notification ( NULL,_app->name(),alert,title,text,icon,timeout ) ) );
+    return _snore->broadcastNotification ( QSharedPointer<Notification> ( new Notification ( this,_app->name(),alert,title,text,icon,timeout ) ) );
+}
+
+void SnoreNotificationInstance::actionInvoked ( QSharedPointer<Notification> notification ){
+    emit notificationActionInvoked(notification);
+}
+
+void SnoreNotificationInstance::notificationClosed ( QSharedPointer<Notification> notification ){
+
 }
 
 #include "snorenotificationinstance.moc"

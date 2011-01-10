@@ -107,7 +107,7 @@ void SnoreNotify::save(){
     file.open(QFile::WriteOnly);
 
     QTextStream ts( &file );
-    ts << doc.toString();
+    doc.save(ts,4);
     file.close();
 }
 
