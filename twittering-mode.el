@@ -6376,13 +6376,17 @@ following symbols;
 		(str
 		 (if col
 		     (progn
+		       ;; Padding spaces before icon placed at right.
 		       ;; FIXME: matching against `:' is too ad-hoc.
 		       (string-match "\\(\\`.*:\\)" str)
-		       (replace-match (format (format "%%-%ds" col)
-					      (match-string 1 str))
-				      nil
-				      nil
-				      str))
+		       (let ((p (text-properties-at 0 str))
+			     (s (replace-match (format (format "%%-%ds" col)
+						 (match-string 1 str))
+					 nil
+					 nil
+					 str)))
+			 (add-text-properties 0 (length s) p s)
+			 s))
 		   str))
 		(str (if prefix
 			 (replace-regexp-in-string "^" prefix str)
