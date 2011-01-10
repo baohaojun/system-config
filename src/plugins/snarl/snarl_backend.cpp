@@ -40,7 +40,6 @@ Notification_Backend("SnarlBackend",snore)
 	activeNotifications = new QHash<int,QSharedPointer<Notification> > ;
 	winIDWidget = new SnarlWidget(this);
 	SnarlInterface *snarlInterface = new SnarlInterface();
-	snarlInterface->RegisterApp("SnoreNotify","SnoreNotify",NULL,winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
 	_applications.insert("SnoreNotify",snarlInterface);
 	qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
 	_defautSnarlinetrface = new SnarlInterface();
@@ -58,9 +57,13 @@ Snarl_Backend::~Snarl_Backend()
 }
 
 void Snarl_Backend::registerApplication(Application *application){
-	SnarlInterface *snarlInterface = new SnarlInterface();
-	_applications.insert(application->name(),snarlInterface);
-
+	SnarlInterface *snarlInterface = NULL;
+	if(_applications.contains(application->name())){
+		snarlInterface = _applications.value(application->name());
+	}else{
+		snarlInterface = new SnarlInterface();
+		_applications.insert(application->name(),snarlInterface);
+	}
 	qDebug()<<"Register with Snarl"<<application->name()<<application->icon();
 	snarlInterface->RegisterApp(application->name().toUtf8().constData(),
 		application->name().toUtf8().constData(),
@@ -118,10 +121,19 @@ bool Snarl_Backend::isPrimaryNotificationBackend(){
 SnarlWidget::SnarlWidget(Snarl_Backend * snarl):
 _snarl(snarl)
 {
-
+	SNARL_GLOBAL_MESSAGE = SnarlInterface::Broadcast();
 }
+
 bool SnarlWidget::winEvent(MSG * msg, long * result){
-	if(msg->message == SNORENOTIFIER_MESSAGE_ID){
+	if(msg->message == SNARL_GLOBAL_MESSAGE){
+		int action = msg->wParam;
+		if(action == SnarlEnums::SnarlLaunched){
+			foreach(Application *a,_snarl->snore()->aplications()){
+				_snarl->registerApplication(a);
+			}
+		}
+
+	}else if(msg->message == SNORENOTIFIER_MESSAGE_ID){
 		int action = msg->wParam;
 		int notificationID = msg->lParam;
 		QSharedPointer<Notification> notification = _snarl->activeNotifications->value(notificationID);

@@ -55,6 +55,7 @@ public:
 	bool winEvent( MSG * message, long * result );
 
 private:
+	uint SNARL_GLOBAL_MESSAGE;
 	Snarl_Backend* _snarl;
 
 };
