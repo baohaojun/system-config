@@ -6379,14 +6379,11 @@ following symbols;
 		       ;; Padding spaces before icon placed at right.
 		       ;; FIXME: matching against `:' is too ad-hoc.
 		       (string-match "\\(\\`.*:\\)" str)
-		       (let ((p (text-properties-at 0 str))
-			     (s (replace-match (format (format "%%-%ds" col)
-						 (match-string 1 str))
-					 nil
-					 nil
-					 str)))
-			 (add-text-properties 0 (length s) p s)
-			 s))
+		       (let ((f (get-text-property 0 'face str))
+			     (m (format (format "%%-%ds" col) (match-string 1 str))))
+			 ;; face is not yet included in common properties.
+			 (put-text-property 0 (length m) 'face f m)
+			 (replace-match m nil nil str)))
 		   str))
 		(str (if prefix
 			 (replace-regexp-in-string "^" prefix str)
