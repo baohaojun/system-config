@@ -231,27 +231,12 @@
 
 (put 'narrow-to-region 'disabled nil)
 
-(add-hook 'cscope-list-entry-hook 
-          (lambda ()
-            (setq next-error-function 'cscope-next-error-bhj
-                  next-error-last-buffer (current-buffer))))
-          
                                     
-(defun my-cscope-find-global-definition ()
-  (interactive)
-  (setenv "CSCOPE_STARTING_DIR" (expand-file-name default-directory))
-  (nodup-ring-insert cscope-marker-ring (point-marker))
-  (call-interactively 'cscope-find-global-definition))
 
-(define-key global-map [(meta .)] 'my-cscope-find-global-definition)
 (require 'js)
 (define-key js-mode-map [(meta .)] 'my-cscope-find-global-definition)
 (define-key global-map [(meta control ,)] 'cscope-pop-mark)
 (define-key global-map [(meta control .)] 'cscope-pop-mark-back)
-
-(eval-after-load "gtags" '(progn 
-                            (define-key gtags-mode-map [(meta *)] 'cscope-pop-mark)
-                            (define-key gtags-select-mode-map [(meta *)] 'cscope-pop-mark)))
 
 (prefer-coding-system 'gbk)
 (prefer-coding-system 'utf-8-unix)
@@ -375,6 +360,18 @@
                     (nodup-ring-insert cscope-marker-ring (point-marker))
                     (call-interactively 'grep)
                     (setq grep-rgrep-history grep-history))))
+
+(defvar grep-gtags-history nil)
+(global-set-key [(meta .)]
+                (lambda ()
+                  (interactive)
+                  (let ((grep-history grep-gtags-history)
+                        (my-grep-command "grep-gtags -e pat")
+                        (current-prefix-arg 4))
+                    (nodup-ring-insert cscope-marker-ring (point-marker))
+                    (call-interactively 'grep)
+                    (setq grep-gtags-history grep-history))))
+
 (defun grep-tag-default-path ()
   (or (and transient-mark-mode mark-active
 	   (/= (point) (mark))
@@ -487,9 +484,6 @@
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
- '(cscope-display-cscope-buffer t)
- '(cscope-do-not-update-database t)
- '(cscope-program "gtags-cscope-bhj")
  '(delete-old-versions t)
  '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
  '(dictem-server "localhost")
@@ -532,6 +526,7 @@
  '(text-mode-hook (quote (text-mode-hook-identify)))
  '(tooltip-mode nil)
  '(tooltip-use-echo-area t)
+ '(tramp-remote-path (quote (tramp-own-remote-path tramp-default-remote-path "/usr/sbin" "/usr/local/bin" "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin" "/usr/pkg/bin" "/usr/contrib/bin")))
  '(tramp-syntax (quote ftp))
  '(tramp-verbose 0)
  '(transient-mark-mode t)
@@ -763,25 +758,30 @@
 (defun cscope-search-directory-hierarchy (directory)
   "Look for a cscope database in the directory hierarchy.
 Starting from DIRECTORY, look upwards for a cscope database."
-  (let (this-directory database-dir)
+  (let* ((saved-directory directory)
+         (remote-prefix (or (file-remote-p directory) ""))
+         (directory (or (file-remote-p directory 'localname) directory))
+         this-directory database-dir)
+
+
+
+
     (catch 'done
-      (if (file-regular-p directory)
-	  (throw 'done directory))
+      (if (file-regular-p saved-directory)
+	  (throw 'done saved-directory))
       (setq directory (concat (getenv "HOME") "/tmp/for-code-reading/" (cscope-canonicalize-directory directory))
 	    this-directory directory)
       (while this-directory
-	(if (or (file-exists-p (concat this-directory cscope-database-file))
-		(file-exists-p (concat this-directory cscope-index-file)))
-	    (progn
-	      (setq database-dir (substring
-                                  this-directory 
-                                  (length
-                                   (concat (getenv "HOME") "/tmp/for-code-reading/"))))
-	      (throw 'done database-dir)
-	      )
-          )
-	(if (string-match "^\\(/\\|[A-Za-z]:[\\/]\\)$" this-directory)
-            (throw 'done (expand-file-name "~/.gtags-dir/")))
+	(when (or (file-exists-p (concat remote-prefix this-directory cscope-database-file))
+                  (file-exists-p (concat remote-prefix this-directory cscope-index-file)))
+          (progn
+            (setq database-dir (substring
+                                this-directory 
+                                (length
+                                 (concat (getenv "HOME") "/tmp/for-code-reading/"))))
+            (throw 'done (concat "" database-dir))))
+	(when (string-match "^\\(/\\|[A-Za-z]:[\\/]\\)$" this-directory)
+            (throw 'done (concat "" (expand-file-name "~/.gtags-dir/"))))
 	(setq this-directory (file-name-as-directory
 			      (file-name-directory
 			       (directory-file-name this-directory))))
