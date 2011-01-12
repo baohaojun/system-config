@@ -586,14 +586,16 @@ Following methods are supported:
 			     twittering-oauth-access-token-alist))))
 
 (defcustom twittering-accounts '()
-  "((service-method 
-      (username \"FOO\")
-      (password \"PASSWORD\")
-      (auth basic))
-      ...)
+  "Account settings service by service.
 
-auth could be... 
-TODO: add more. "
+    ((service-method 
+         (username \"FOO\")
+         (password \"PASSWORD\")
+
+         ;; optional
+         (auth basic)      ; oauth
+         (retweet organic) ; native
+         ...))"
   :type 'list
   :group 'twittering-mode)
 
