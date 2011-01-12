@@ -30,16 +30,7 @@ while (<>) {
                         my $color = $1;
                         my $bkcolor = $2;
 
-                        print "{html}<!-- start of code\n";
-                        print $code_start_line;
-                        open(my $tmp_fh, "<", $tmp_filename) or die "Error: can't open $tmp_filename";
-                        while (<$tmp_fh>) {
-                            print;
-                        }
-                        close($tmp_fh);
-                        print $code_end_line;
-                        print "end of code -->\n";
-
+                        print "{html}\n";
                         print "<div style=\"padding: 10px; border: 2px solid #ff2222; overflow: auto; max-height: 400px; margin: 10px; color: $color; background-color: $bkcolor\">\n";
                     } elsif (m/$html_end/) {
                         print "</div>\n{html}\n";
