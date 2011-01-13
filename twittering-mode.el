@@ -126,7 +126,8 @@ Items:
  %d - description
  %l - location
  %L - \" [location]\"
- %m - (sina) comment and retweet count, if any.
+ %m - (sina) comment and retweet count, if any. (FIXME: this needs to be updated
+      quite often to record correct value.)
  %r - \" sent to user\" (use on direct_messages{,_sent})
  %r - \" in reply to user\" (use on other standard timeline)
  %R - \" (retweeted by user)\"
@@ -571,13 +572,12 @@ Following methods are supported:
 
 (defun twittering-lookup-service-method-table (attr)
   "Lookup ATTR value for `twittering-service-method'."
-  (or (cadr (assq attr (cdr (assq twittering-service-method
-                                  twittering-service-method-table))))
+  (or (cadr (assq attr (assqref twittering-service-method
+				twittering-service-method-table)))
       ""))
 
 (defun twittering-lookup-oauth-access-token-alist ()
-  (cdr (assq twittering-service-method
-	      twittering-oauth-access-token-alist)))
+  (assqref twittering-service-method twittering-oauth-access-token-alist))
 
 (defun twittering-update-oauth-access-token-alist (alist)
   (setq twittering-oauth-access-token-alist
@@ -606,8 +606,7 @@ Following methods are supported:
 
 (defun twittering-get-accounts (attr)
   (cadr (assq attr
-	      (cdr (assq twittering-service-method 
-			 twittering-accounts)))))
+	      (assqref twittering-service-method twittering-accounts))))
 
 ;;;;
 ;;;; Macro and small utility function
@@ -878,12 +877,12 @@ The server name is a string and the port number is an integer."
 			 (lambda (entry)
 			   (when (member scheme (car entry))
 			     (let ((info (cdr entry)))
-			       (when (and (cdr (assq 'server info))
-					  (cdr (assq 'port info)))
+			       (when (and (assqref 'server info)
+					  (assqref 'port info))
 				 info))))
 			 info-list)))))
       (if item
-	  (cdr (assq item info))
+	  (assqref item info)
 	info))))
 
 (defun twittering-url-proxy-services ()
@@ -1089,16 +1088,16 @@ the function returns
     (while (and rest (null result))
       (let* ((candidate (car rest))
 	     (entry (cons `(symbol . ,candidate)
-			  (cdr (assq candidate table))))
+			  (assqref candidate table)))
 	     (entry (if (assq 'display-name entry)
 			entry
 		      (cons `(display-name . ,(symbol-name candidate))
 			    entry)))
 	     (validate (lambda (item)
-			 (let ((v (cdr (assq item entry))))
+			 (let ((v (assqref item entry)))
 			   (or (null v) (eq t v) (functionp v)))))
 	     (confirm (lambda (item)
-			(let ((v (cdr (assq item entry))))
+			(let ((v (assqref item entry)))
 			  (cond
 			   ((null v) nil)
 			   ((eq t v) t)
@@ -1121,13 +1120,13 @@ the function returns
   "Return a name of the preferred connection method.
 If USE-SSL is non-nil, return a connection method for HTTPS.
 If USE-SSL is nil, return a connection method for HTTP."
-  (cdr (assq 'display-name (twittering-lookup-connection-type use-ssl))))
+  (assqref 'display-name (twittering-lookup-connection-type use-ssl)))
 
 (defun twittering-lookup-http-start-function (&optional order table)
   "Decide a connection method from currently available methods."
   (let ((entry
 	 (twittering-lookup-connection-type twittering-use-ssl order table)))
-    (cdr (assq 'send-http-request entry))))
+    (assqref 'send-http-request entry)))
 
 (defun twittering-ensure-connection-method (&optional order table)
   "Ensure a connection method with a compromise.
@@ -1296,22 +1295,22 @@ If POST-BODY is nil, no body is posted."
 		(path . ,(aref parsed-url 5))))
 	     (t
 	      nil))))
-	 (path (let ((path (cdr (assq 'path parts-alist))))
+	 (path (let ((path (assqref 'path parts-alist)))
 		 (if (string-match "\\`\\(.*\\)\\?" path)
 		     (match-string 1 path)
 		   path)))
-	 (query-string (let ((path (cdr (assq 'path parts-alist))))
+	 (query-string (let ((path (assqref 'path parts-alist)))
 			 (if (string-match "\\?\\(.*\\)\\'" path)
 			     (match-string 1 path)
 			   nil))))
     (twittering-make-http-request method header-list
-				  (cdr (assq 'host parts-alist))
-				  (cdr (assq 'port parts-alist))
+				  (assqref 'host parts-alist)
+				  (assqref 'port parts-alist)
 				  path
 				  query-string
 				  post-body
 				  (string= "https"
-					   (cdr (assq 'scheme parts-alist))))))
+					   (assqref 'scheme parts-alist)))))
 
 (defun twittering-make-connection-info (request &optional additional order table)
   "Make an alist specifying the information of connection for REQUEST.
@@ -1339,7 +1338,7 @@ The parameter symbols are following:
   request: an alist specifying a HTTP request."
   (let* ((order (or order twittering-connection-type-order))
 	 (table (or table twittering-connection-type-table))
-	 (scheme (cdr (assq 'scheme request)))
+	 (scheme (assqref 'scheme request))
 	 (use-ssl (string= "https" scheme))
 	 (entry (twittering-lookup-connection-type use-ssl order table)))
     `((use-ssl . ,use-ssl)
@@ -1413,7 +1412,7 @@ If TABLE is nil, `twittering-connection-type-table' is used in place of TABLE.
 	 (connection-info
 	  (twittering-make-connection-info request additional-info
 					   order table))
-	 (func (cdr (assq 'send-http-request connection-info)))
+	 (func (assqref 'send-http-request connection-info))
 	 (temp-buffer (generate-new-buffer "*twmode-http-buffer*")))
     (when (and func (functionp func))
       (funcall func "*twmode-generic*" temp-buffer
@@ -1470,7 +1469,7 @@ The method to perform the request is determined from
 			   (t 1)))
 	     (command (process-command proc))
 	     (pre-process-func
-	      (cdr (assq 'pre-process-buffer connection-info)))
+	      (assqref 'pre-process-buffer connection-info))
 	     (mes nil))
 	 (unwind-protect
 	     (setq mes
@@ -1552,24 +1551,24 @@ The method to perform the request is determined from
 
 ;; TODO: proxy
 (defun twittering-send-http-request-native (name buffer connection-info sentinel)
-  (let* ((request (cdr (assq 'request connection-info)))
-	 (method (cdr (assq 'method request)))
-	 (scheme (cdr (assq 'scheme request)))
-	 (host (cdr (assq 'host request)))
-	 (port (cdr (assq 'port request)))
-	 (path (cdr (assq 'path request)))
-	 (query-string (cdr (assq 'query-string request)))
-	 (header-list (cdr (assq 'header-list request)))
-	 (post-body (cdr (assq 'post-body request)))
-	 (use-proxy (cdr (assq 'use-proxy connection-info)))
-	 (proxy-server (cdr (assq 'proxy-server connection-info)))
-	 (proxy-port (cdr (assq 'proxy-port connection-info)))
-	 (proxy-user (cdr (assq 'proxy-user connection-info)))
-	 (proxy-password (cdr (assq 'proxy-password connection-info)))
-	 (use-ssl (cdr (assq 'use-ssl connection-info)))
+  (let* ((request (assqref 'request connection-info))
+	 (method (assqref 'method request))
+	 (scheme (assqref 'scheme request))
+	 (host (assqref 'host request))
+	 (port (assqref 'port request))
+	 (path (assqref 'path request))
+	 (query-string (assqref 'query-string request))
+	 (header-list (assqref 'header-list request))
+	 (post-body (assqref 'post-body request))
+	 (use-proxy (assqref 'use-proxy connection-info))
+	 (proxy-server (assqref 'proxy-server connection-info))
+	 (proxy-port (assqref 'proxy-port connection-info))
+	 (proxy-user (assqref 'proxy-user connection-info))
+	 (proxy-password (assqref 'proxy-password connection-info))
+	 (use-ssl (assqref 'use-ssl connection-info))
 	 (allow-insecure-server-cert
-	  (cdr (assq 'allow-insecure-server-cert connection-info)))
-	 (cacert-fullpath (cdr (assq 'cacert-fullpath connection-info)))
+	  (assqref 'allow-insecure-server-cert connection-info))
+	 (cacert-fullpath (assqref 'cacert-fullpath connection-info))
 	 (cacert-dir (when cacert-fullpath
 		       (file-name-directory cacert-fullpath)))
 	 (cacert-filename (when cacert-fullpath
@@ -1578,10 +1577,10 @@ The method to perform the request is determined from
 	  (when twittering-proxy-use
 	    (twittering-proxy-info scheme)))
 	 (connect-host (if proxy-info
-			   (cdr (assq 'server proxy-info))
+			   (assqref 'server proxy-info)
 			 host))
 	 (connect-port (if proxy-info
-			   (cdr (assq 'port proxy-info))
+			   (assqref 'port proxy-info)
 			 port))
 	 (request-str
 	  (format "%s %s%s HTTP/1.1\r\n%s\r\n\r\n%s\r\n"
@@ -1609,7 +1608,7 @@ The method to perform the request is determined from
       proc)))
 
 (defun twittering-pre-process-buffer-native (proc buffer connection-info)
-  (let ((use-ssl (cdr (assq 'use-ssl connection-info)))
+  (let ((use-ssl (assqref 'use-ssl connection-info))
 	(args (process-command proc)))
     (cond
      ((and use-ssl args
@@ -1682,20 +1681,20 @@ The method to perform the request is determined from
     (eq twittering-curl-program-https-capability 'capable)))
 
 (defun twittering-send-http-request-curl (name buffer connection-info sentinel)
-  (let* ((request (cdr (assq 'request connection-info)))
-	 (method (cdr (assq 'method request)))
-	 (uri (cdr (assq 'uri request)))
-	 (header-list (cdr (assq 'header-list request)))
-	 (post-body (cdr (assq 'post-body request)))
-	 (use-proxy (cdr (assq 'use-proxy connection-info)))
-	 (proxy-server (cdr (assq 'proxy-server connection-info)))
-	 (proxy-port (cdr (assq 'proxy-port connection-info)))
-	 (proxy-user (cdr (assq 'proxy-user connection-info)))
-	 (proxy-password (cdr (assq 'proxy-password connection-info)))
-	 (use-ssl (cdr (assq 'use-ssl connection-info)))
+  (let* ((request        (assqref 'request        connection-info))
+	 (method         (assqref 'method         request))
+	 (uri            (assqref 'uri            request))
+	 (header-list    (assqref 'header-list    request))
+	 (post-body      (assqref 'post-body      request))
+	 (use-proxy      (assqref 'use-proxy      connection-info))
+	 (proxy-server   (assqref 'proxy-server   connection-info))
+	 (proxy-port     (assqref 'proxy-port     connection-info))
+	 (proxy-user     (assqref 'proxy-user     connection-info))
+	 (proxy-password (assqref 'proxy-password connection-info))
+	 (use-ssl        (assqref 'use-ssl        connection-info))
 	 (allow-insecure-server-cert
-	  (cdr (assq 'allow-insecure-server-cert connection-info)))
-	 (cacert-fullpath (cdr (assq 'cacert-fullpath connection-info)))
+	  (assqref 'allow-insecure-server-cert connection-info))
+	 (cacert-fullpath (assqref 'cacert-fullpath connection-info))
 	 (cacert-dir (when cacert-fullpath
 		       (file-name-directory cacert-fullpath)))
 	 (cacert-filename (when cacert-fullpath
@@ -1766,8 +1765,8 @@ The method to perform the request is determined from
     proc))
 
 (defun twittering-pre-process-buffer-curl (proc buffer connection-info)
-  (let ((use-ssl (cdr (assq 'use-ssl connection-info)))
-	(use-proxy (cdr (assq 'use-proxy connection-info))))
+  (let ((use-ssl (assqref 'use-ssl connection-info))
+	(use-proxy (assqref 'use-proxy connection-info)))
     (when (and use-ssl use-proxy)
       ;; When using SSL via a proxy with CONNECT method,
       ;; omit a successful HTTP response and headers if they seem to be
@@ -1802,21 +1801,21 @@ The method to perform the request is determined from
   (not (null twittering-wget-program)))
 
 (defun twittering-send-http-request-wget (name buffer connection-info sentinel)
-  (let* ((request (cdr (assq 'request connection-info)))
-	 (method (cdr (assq 'method request)))
-	 (scheme (cdr (assq 'scheme request)))
-	 (uri (cdr (assq 'uri request)))
-	 (header-list (cdr (assq 'header-list request)))
-	 (post-body (cdr (assq 'post-body request)))
-	 (use-proxy (cdr (assq 'use-proxy connection-info)))
-	 (proxy-server (cdr (assq 'proxy-server connection-info)))
-	 (proxy-port (cdr (assq 'proxy-port connection-info)))
-	 (proxy-user (cdr (assq 'proxy-user connection-info)))
-	 (proxy-password (cdr (assq 'proxy-password connection-info)))
-	 (use-ssl (cdr (assq 'use-ssl connection-info)))
+  (let* ((request (assqref 'request connection-info))
+	 (method (assqref 'method request))
+	 (scheme (assqref 'scheme request))
+	 (uri (assqref 'uri request))
+	 (header-list (assqref 'header-list request))
+	 (post-body (assqref 'post-body request))
+	 (use-proxy (assqref 'use-proxy connection-info))
+	 (proxy-server (assqref 'proxy-server connection-info))
+	 (proxy-port (assqref 'proxy-port connection-info))
+	 (proxy-user (assqref 'proxy-user connection-info))
+	 (proxy-password (assqref 'proxy-password connection-info))
+	 (use-ssl (assqref 'use-ssl connection-info))
 	 (allow-insecure-server-cert
-	  (cdr (assq 'allow-insecure-server-cert connection-info)))
-	 (cacert-fullpath (cdr (assq 'cacert-fullpath connection-info)))
+	  (assqref 'allow-insecure-server-cert connection-info))
+	 (cacert-fullpath (assqref 'cacert-fullpath connection-info))
 	 (cacert-dir (when cacert-fullpath
 		       (file-name-directory cacert-fullpath)))
 	 (cacert-filename (when cacert-fullpath
@@ -1926,15 +1925,15 @@ The method to perform the request is determined from
 	 nil))))
 
 (defun twittering-send-http-request-urllib (name buffer connection-info sentinel)
-  (let* ((request (cdr (assq 'request connection-info)))
-	 (method (cdr (assq 'method request)))
-	 (scheme (cdr (assq 'scheme request)))
-	 (uri (cdr (assq 'uri request)))
-	 (header-list (cdr (assq 'header-list request)))
-	 (post-body (cdr (assq 'post-body request)))
-	 (use-proxy (cdr (assq 'use-proxy connection-info)))
-	 (proxy-server (cdr (assq 'proxy-server connection-info)))
-	 (proxy-port (cdr (assq 'proxy-port connection-info)))
+  (let* ((request (assqref 'request connection-info))
+	 (method (assqref 'method request))
+	 (scheme (assqref 'scheme request))
+	 (uri (assqref 'uri request))
+	 (header-list (assqref 'header-list request))
+	 (post-body (assqref 'post-body request))
+	 (use-proxy (assqref 'use-proxy connection-info))
+	 (proxy-server (assqref 'proxy-server connection-info))
+	 (proxy-port (assqref 'proxy-port connection-info))
 	 (coding-system-for-read 'binary)
 	 (coding-system-for-write 'binary)
 	 (url-proxy-services
@@ -2074,7 +2073,7 @@ The method to perform the request is determined from
     ))
 
 (defun twittering-add-application-header-to-http-request (request)
-  (let* ((method (cdr (assq 'method request)))
+  (let* ((method (assqref 'method request))
 	 (auth-str
 	  (cond
 	   ((eq (twittering-get-accounts 'auth) 'basic)
@@ -2084,15 +2083,13 @@ The method to perform the request is determined from
 			     ":" (twittering-get-accounts 'password)))))
 	   ((memq (twittering-get-accounts 'auth) '(oauth xauth))
 	    (let ((access-token
-		   (cdr (assoc "oauth_token"
-			       (twittering-lookup-oauth-access-token-alist))))
+		   (assocref "oauth_token" (twittering-lookup-oauth-access-token-alist)))
 		  (access-token-secret
-		   (cdr (assoc "oauth_token_secret"
-			       (twittering-lookup-oauth-access-token-alist)))))
+		   (assocref "oauth_token_secret" (twittering-lookup-oauth-access-token-alist))))
 	      (twittering-oauth-auth-str-access
 	       method
-	       (cdr (assq 'uri-without-query request))
-	       (cdr (assq 'encoded-query-alist request))
+	       (assqref 'uri-without-query request)
+	       (assqref 'encoded-query-alist request)
 	       (twittering-lookup-service-method-table 'oauth-consumer-key)
 	       (twittering-lookup-service-method-table 'oauth-consumer-secret)
 	       access-token
@@ -2114,8 +2111,8 @@ The method to perform the request is determined from
 HEADER-INFO must be an alist generated by `twittering-get-response-header'.
 BUFFER must be a HTTP response body, which includes error messages from
 the server when the HTTP status code equals to 400 or 403."
-  (let ((status-line (cdr (assq 'status-line header-info)))
-	(status-code (cdr (assq 'status-code header-info))))
+  (let ((status-line (assqref 'status-line header-info))
+	(status-code (assqref 'status-code header-info)))
     (cond
      ((and (buffer-live-p buffer)
 	   (member status-code '("400" "403")))
@@ -2151,8 +2148,8 @@ the server when the HTTP status code equals to 400 or 403."
 				  sentinel clean-up-sentinel)))
 
 (defun twittering-http-get-default-sentinel (proc status connection-info header-info)
-  (let ((status-line (cdr (assq 'status-line header-info)))
-	(status-code (cdr (assq 'status-code header-info))))
+  (let ((status-line (assqref 'status-line header-info))
+	(status-code (assqref 'status-code header-info)))
 ;    (case-string
     (cond 
      ((string= status-code "200")
@@ -2192,8 +2189,8 @@ the server when the HTTP status code equals to 400 or 403."
 	      (twittering-get-error-message header-info (current-buffer)))))))
 
 (defun twittering-http-get-list-index-sentinel (proc status connection-info header-info)
-  (let ((status-line (cdr (assq 'status-line header-info)))
-	(status-code (cdr (assq 'status-code header-info)))
+  (let ((status-line (assqref 'status-line header-info))
+	(status-code (assqref 'status-code header-info))
 	(indexes nil)
 	(mes nil))
     (case-string
@@ -2251,8 +2248,8 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
 				  sentinel clean-up-sentinel)))
 
 (defun twittering-http-post-default-sentinel (proc status connection-info header-info)
-  (let ((status-line (cdr (assq 'status-line header-info)))
-	(status-code (cdr (assq 'status-code header-info))))
+  (let ((status-line (assqref 'status-line header-info))
+	(status-code (assqref 'status-code header-info)))
     (case-string
      status-code
      (("200")
@@ -2581,12 +2578,12 @@ must be encoded into the same as they will be sent."
 (defun twittering-my-status-p (status)
   "Is STATUS sent by myself? "
   (or (string= (twittering-get-accounts 'username)
-	       (cdr (assq 'user-screen-name status)))
-      (string= (cdr (assoc "user_id" (twittering-lookup-oauth-access-token-alist)))
-	       (cdr (assq 'user-id status)))))
+	       (assqref 'user-screen-name status))
+      (string= (assocref "user_id" (twittering-lookup-oauth-access-token-alist))
+	       (assqref 'user-id status))))
 
 (defun twittering-is-replies-p (status)
-  (string= (twittering-get-accounts 'username) (cdr (assq 'in-reply-to-screen-name status))))
+  (string= (twittering-get-accounts 'username) (assqref 'in-reply-to-screen-name status)))
 
 (defun twittering-take (n lst)
   "Take first N elements from LST."
@@ -2743,8 +2740,8 @@ function."
       (twittering-send-http-request
        request nil
        (lambda (proc status connection-info header-info)
-	 (let ((status-line (cdr (assq 'status-line header-info)))
-	       (status-code (cdr (assq 'status-code header-info))))
+	 (let ((status-line (assqref 'status-line header-info))
+	       (status-code (assqref 'status-code header-info)))
 	   (case-string
 	    status-code
 	    (("200")
@@ -2807,9 +2804,9 @@ like following:
   (let* ((request-token-alist
 	  (twittering-oauth-get-request-token
 	   request-token-url consumer-key consumer-secret))
-	 (request-token (cdr (assoc "oauth_token" request-token-alist)))
+	 (request-token (assocref "oauth_token" request-token-alist))
 	 (request-token-secret
-	  (cdr (assoc "oauth_token_secret" request-token-alist)))
+	  (assocref "oauth_token_secret" request-token-alist))
 	 (authorize-url (funcall authorize-url-func request-token))
 	 (str
 	  (concat
@@ -3087,9 +3084,9 @@ this variable specifies. The unit is second.")
 	 'twittering-url-retrieve-async-clean-up-sentinel)))))
 
 (defun twittering-url-retrieve-async-sentinel (proc status connection-info header-info)
-  (let ((status-line (cdr (assq 'status-line header-info)))
-	(status-code (cdr (assq 'status-code header-info)))
-	(uri (cdr (assq 'uri (assq 'request connection-info)))))
+  (let ((status-line (assqref 'status-line header-info))
+	(status-code (assqref 'status-code header-info))
+	(uri (assqref 'uri (assq 'request connection-info))))
     (when (string= status-code "200")
       (let ((body (string-as-unibyte (buffer-string))))
 	(puthash uri body twittering-url-data-hash)
@@ -3114,7 +3111,7 @@ this variable specifies. The unit is second.")
 
 (defun twittering-url-retrieve-async-clean-up-sentinel (proc status connection-info)
   (when (memq status '(exit signal closed failed))
-    (let* ((uri (cdr (assq 'uri connection-info)))
+    (let* ((uri (assqref 'uri connection-info))
 	   (current (gethash uri twittering-url-data-hash)))
       (when (or (null current) (integerp current))
 	;; Increment the counter on failure and then retry retrieval.
@@ -3260,8 +3257,7 @@ BEG and END mean a region that had been modified."
 
 (defun twittering-tinyurl-get (longurl)
   "Tinyfy LONGURL."
-  (let ((api (cdr (assoc twittering-tinyurl-service
-			 twittering-tinyurl-services-map))))
+  (let ((api (assocref twittering-tinyurl-service twittering-tinyurl-services-map)))
     (unless api
       (error "Invalid `twittering-tinyurl-service'. try one of %s"
 	     (mapconcat (lambda (x)
@@ -3467,7 +3463,7 @@ Return cons of the spec and the rest string."
                      ("retweets_of_me"       retweets_of_me))))
         (cond
          ((assoc type alist)
-          (let ((first-spec (cdr (assoc type alist))))
+          (let ((first-spec (assocref type alist)))
             `(((,service) ,@first-spec) . ,following)))
 	 ((string-match (concat ;; "^:search/\\(\\(.*?[^\\]\\)??\\(\\\\\\\\\\)*\\)??/"
 			 "^:search/\\([^/]+\\)/"
@@ -3745,7 +3741,7 @@ Statuses are stored in ascending-order with respect to their IDs."
 	   (remove nil
 		   (mapcar
 		    (lambda (status)
-		      (let ((id (cdr (assq 'id status)))
+		      (let ((id (assqref 'id status))
 			    (source-id (cdr-safe (assq 'source-id status))))
 			(unless (or (not source-id)
 				    (gethash source-id referring-id-table))
@@ -3768,8 +3764,8 @@ Statuses are stored in ascending-order with respect to their IDs."
 		 twittering-timeline-data-table)
 	(when (twittering-jojo-mode-p spec)
 	  (mapc (lambda (status)
-		  (twittering-update-jojo (cdr (assq 'user-screen-name status))
-					  (cdr (assq 'text status))))
+		  (twittering-update-jojo (assqref 'user-screen-name status)
+					  (assqref 'text status)))
 		new-statuses))
 	(let* ((twittering-new-tweets-spec spec)
 	       (twittering-new-tweets-statuses new-statuses)
@@ -3783,9 +3779,9 @@ Statuses are stored in ascending-order with respect to their IDs."
 	    (let ((latest 
 		   (if (twittering-timeline-spec-user-methods-p spec)
 		       (substring-no-properties 
-			(cdr (assq 'user-screen-name (car statuses))))
+			(assqref 'user-screen-name (car statuses)))
 		     (substring-no-properties 
-		      (cdr (assq 'id (car new-statuses)))))))
+		      (assqref 'id (car new-statuses))))))
 	      (setq twittering-cache-lastest-statuses
 		    `((,spec-string . ,latest)
 		      ,@(remove-if (lambda (entry) (equal spec-string (car entry)))
@@ -3808,8 +3804,8 @@ Statuses are stored in ascending-order with respect to their IDs."
      nil
      (mapcar
       (lambda (status)
-	(let ((id (cdr (assq 'id status)))
-	      (source-id (cdr (assq 'source-id status))))
+	(let ((id (assqref 'id status))
+	      (source-id (assqref 'source-id status)))
 	  (cond
 	   ((twittering-timeline-spec-user-methods-p spec)
 	    status)
@@ -3838,7 +3834,7 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
 		      (twittering-get-current-status-head
 		       (if twittering-reverse-mode (point-min) (point-max)))
 		      'id))
-	     (id (cdr (assq 'id status))))
+	     (id (assqref 'id status)))
 	(and buf-id (twittering-status-id< id buf-id))))))
 
 (defun twittering-is-unread-status-p (status &optional spec)
@@ -3855,8 +3851,8 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
       nil)
      ((member spec-string twittering-cache-spec-strings)
       (twittering-status-id<
-       (cdr (assoc spec-string twittering-cache-lastest-statuses))
-       (cdr (assq 'id status))))
+       (assocref spec-string twittering-cache-lastest-statuses)
+       (assqref 'id status)))
      (t 
       t))))
 
@@ -3867,14 +3863,14 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
 	       (get-text-property (twittering-get-current-status-head) 'username))
 	     (let ((spec-string (twittering-timeline-spec-to-string spec)))
 	       (when (member spec-string twittering-cache-spec-strings)
-		 (cdr (assoc spec-string twittering-cache-lastest-statuses)))))))
+		 (assocref spec-string twittering-cache-lastest-statuses))))))
     (if (not latest-username)
 	(length new-statuses)
       (let ((statuses new-statuses)
 	    (count 0))
 	(while (and statuses
 		    (not (string= latest-username
-				  (cdr (assq 'user-screen-name (car statuses))))))
+				  (assqref 'user-screen-name (car statuses)))))
 	  (setq count (1+ count)
 		statuses (cdr statuses)))
 	count))))
@@ -3907,7 +3903,7 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
   "Generate status URL for Sina."
   (format "http://%s/%s" 
 	  (twittering-lookup-service-method-table 'web) 
-	  ;;(cdr (assq 'user-id status))
+	  ;;(assqref 'user-id status)
 	  username))
 
 (defun twittering-get-search-url (query-string)
@@ -4039,8 +4035,8 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
 	    (ratelimit-reset . "X-RateLimit-Reset")))
 	 (numeral-field '(ratelimit-remaining ratelimit-limit))
 	 (unix-epoch-time-field '(ratelimit-reset))
-	 (field-name (cdr (assq field table)))
-	 (field-value (cdr (assoc field-name twittering-server-info-alist))))
+	 (field-name (assqref field table))
+	 (field-value (assocref field-name twittering-server-info-alist)))
     (when (and field-name field-value)
       (cond
        ((memq field numeral-field)
@@ -4142,22 +4138,22 @@ send-direct-message -- Send a direct message.
   	  `((timeline-spec . ,(twittering-current-timeline-spec))
   	    (timeline-spec-string . ,(twittering-current-timeline-spec-string)))))
 
-  (let ((spec (cdr (assq 'timeline-spec args-alist)))
-	(id (cdr (assq 'id args-alist)))
-	(username (cdr (assq 'username args-alist)))
-	(sentinel (cdr (assq 'sentinel args-alist)))
+  (let ((spec (assqref 'timeline-spec args-alist))
+	(id (assqref 'id args-alist))
+	(username (assqref 'username args-alist))
+	(sentinel (assqref 'sentinel args-alist))
 	(sina? (eq twittering-service-method 'sina)))
     (case command
       ((retrieve-timeline)
        ;; Retrieve a timeline.
-       (let* ((spec-string (cdr (assq 'timeline-spec-string args-alist)))
+       (let* ((spec-string (assqref 'timeline-spec-string args-alist))
 	      (spec-type (cadr spec))
 	      (max-number (if (eq 'search spec-type)
 			      100 ;; FIXME: refer to defconst.
 			    twittering-max-number-of-tweets-on-retrieval))
 	      (number
 	       (let ((number
-		      (or (cdr (assq 'number args-alist))
+		      (or (assqref 'number args-alist)
 			  (let* ((default-number 20)
 				 (n twittering-number-of-tweets-on-retrieval))
 			    (cond
@@ -4166,9 +4162,9 @@ send-direct-message -- Send a direct message.
 			     (t default-number))))))
 		 (min (max 1 number) max-number)))
 	      (number-str (number-to-string number))
-	      (max_id (cdr (assq 'max_id args-alist)))
-	      (since_id (cdr (assq 'since_id args-alist)))
-	      (cursor (cdr (assq 'cursor args-alist)))
+	      (max_id (assqref 'max_id args-alist))
+	      (since_id (assqref 'since_id args-alist))
+	      (cursor (assqref 'cursor args-alist))
 	      (word (when (eq 'search spec-type)
 		      (caddr spec)))
 	      (parameters
@@ -4233,9 +4229,9 @@ send-direct-message -- Send a direct message.
 		((eq spec-type 'search)
 		 (twittering-lookup-service-method-table 'search-method))
 		((assq spec-type simple-spec-list)
-		 (twittering-api-path (cdr (assq spec-type simple-spec-list))))
+		 (twittering-api-path (assqref spec-type simple-spec-list)))
 		(t nil)))
-	      (clean-up-sentinel (cdr (assq 'clean-up-sentinel args-alist))))
+	      (clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
 	 (if (and host method)
 	     ;; TODO (twittering-http-get host method noninteractive parameters format)
 	     (twittering-http-get host method parameters format
@@ -4244,7 +4240,7 @@ send-direct-message -- Send a direct message.
 
       ;; List methods
       ((get-list-index)			; Get list names.
-       (let ((clean-up-sentinel (cdr (assq 'clean-up-sentinel args-alist))))
+       (let ((clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
 	 (twittering-http-get (twittering-lookup-service-method-table 'api)
 			      (twittering-api-path username "/lists")
 			      t nil additional-info sentinel clean-up-sentinel)))
@@ -4319,8 +4315,8 @@ send-direct-message -- Send a direct message.
 
       ((update-status)
        ;; Post a tweet.
-       (let* ((status (cdr (assq 'status args-alist)))
-              (id (cdr (assq 'in-reply-to-status-id args-alist)))
+       (let* ((status (assqref 'status args-alist))
+              (id (assqref 'in-reply-to-status-id args-alist))
 	      (st (twittering-find-status id))
 	      (in-reply-to-status (assqref 'in-reply-to-status st))
 	      (original-id (assqref 'id in-reply-to-status))
@@ -4360,13 +4356,13 @@ send-direct-message -- Send a direct message.
 
       ;; Account Resources
       ((verify-credentials)		; Verify the account.
-       (let ((clean-up-sentinel (cdr (assq 'clean-up-sentinel args-alist))))
+       (let ((clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
 	 (twittering-http-get (twittering-lookup-service-method-table 'api)
 			      (twittering-api-path "account/verify_credentials")
 			      nil nil additional-info sentinel clean-up-sentinel)))
 
       ((update-profile-image)
-       (let* ((image (cdr (assq 'image args-alist)))
+       (let* ((image (assqref 'image args-alist))
 	      (image-type (image-type-from-file-header image)))
 	 (twittering-http-post (twittering-lookup-service-method-table 'api)
 			       (twittering-api-path "account/update_profile_image")  
@@ -4376,8 +4372,8 @@ send-direct-message -- Send a direct message.
       ((send-direct-message)
        ;; Send a direct message.
        (let ((parameters
-	      `(("screen_name" . ,(cdr (assq 'username args-alist)))
-		("text" . ,(cdr (assq 'status args-alist))))))
+	      `(("screen_name" . ,(assqref 'username args-alist))
+		("text" . ,(assqref 'status args-alist)))))
 	 (twittering-http-post (twittering-lookup-service-method-table 'api)
 			       (twittering-api-path "direct_messages/new")
 			       parameters
@@ -4428,7 +4424,7 @@ If `twittering-password' is nil, read it from the minibuffer."
   (let ((required-entries '("oauth_token" "oauth_token_secret"))
 	 (any-entries '("user_id" "screen_name"))
 	 (pred (lambda (key)
-		 (cdr (assoc key (twittering-lookup-oauth-access-token-alist))))))
+		 (assocref key (twittering-lookup-oauth-access-token-alist)))))
     (and (every pred required-entries) (some pred any-entries))))
 
 (defvar twittering-private-info-file-loaded-p nil)
@@ -4467,10 +4463,8 @@ If `twittering-password' is nil, read it from the minibuffer."
 		    (clean-up-sentinel
 		     . twittering-http-get-verify-credentials-clean-up-sentinel))
 		  `(,(if (eq twittering-service-method 'sina)
-			`(user_id . ,(cdr (assoc "user_id"
-						 (twittering-lookup-oauth-access-token-alist))))
-		      `(username . ,(cdr (assoc "screen_name"
-						(twittering-lookup-oauth-access-token-alist)))))
+			`(user_id . ,(assocref "user_id" (twittering-lookup-oauth-access-token-alist)))
+		      `(username . ,(assocref "screen_name" (twittering-lookup-oauth-access-token-alist))))
 		    (password . nil)))))
 	    (cond
 	     ((null proc)
@@ -4612,17 +4606,17 @@ If `twittering-password' is nil, read it from the minibuffer."
   (twittering-account-authorized-p))
 
 (defun twittering-http-get-verify-credentials-sentinel (proc status connection-info header-info)
-  (let ((status-line (cdr (assq 'status-line header-info)))
-	(status-code (cdr (assq 'status-code header-info))))
+  (let ((status-line (assqref 'status-line header-info))
+	(status-code (assqref 'status-code header-info)))
     (case-string
      status-code
      (("200")
       (cond
        ((eq (twittering-get-accounts 'auth) 'basic)
-	(setq twittering-username (cdr (assq 'username connection-info)))
-	(setq twittering-password (cdr (assq 'password connection-info))))
+	(setq twittering-username (assqref 'username connection-info))
+	(setq twittering-password (assqref 'password connection-info)))
        (t
-	(setq twittering-username (cdr (assq 'username connection-info)))))
+	(setq twittering-username (assqref 'username connection-info))))
       (twittering-update-account-authorization 'authorized)
       (twittering-start)
       (format "Authorization for the account \"%s\" succeeded."
@@ -4720,10 +4714,10 @@ If `twittering-password' is nil, read it from the minibuffer."
 		      ((and (eq twittering-service-method 'statusnet)
 			    (member '(rel . "related") item))
 		       ;; StatusNet
-		       (cdr (assq 'href item)))
+		       (assqref 'href item))
 		      ((member '(rel . "image") item)
 		       ;; Twitter (default)
-		       (cdr (assq 'href item)))
+		       (assqref 'href item))
 		      (t
 		       nil)))
 		   link-items)))
@@ -5675,8 +5669,8 @@ image are displayed."
 						 ;; TODO
 						 ;; (proc header-info  noninteractive
 						 &optional args suc-msg)
-  (let ((status-line (cdr (assq 'status-line header-info)))
-	(status-code (cdr (assq 'status-code header-info)))
+  (let ((status-line (assqref 'status-line header-info))
+	(status-code (assqref 'status-code header-info))
 	ret mes)
     ;; TODO, case-string
     (cond 
@@ -6119,7 +6113,7 @@ static char * twitter_xpm[] = {
 	 (mapcar (lambda (entry)
 		   (let ((prop-sym (if (consp entry) (car entry) entry))
 			 (status-sym (if (consp entry) (cdr entry) entry)))
-		     (list prop-sym (cdr (assq status-sym status)))))
+		     (list prop-sym (assqref status-sym status))))
 		 '(id source-id source-spec
 		      (username . user-screen-name) text))))
 
@@ -6202,8 +6196,8 @@ following symbols;
 (defun twittering-generate-format-table (status-sym prefix-sym)
   `(("%" . "%")
     ("}" . "}")
-    ("#" . (cdr (assq 'id ,status-sym)))
-    ("'" . (when (string= "true" (cdr (assq 'truncated ,status-sym)))
+    ("#" . (assqref 'id ,status-sym))
+    ("'" . (when (string= "true" (assqref 'truncated ,status-sym))
 	     "..."))
     ("c" . (assqref 'created-at       ,status-sym))
     ("d" . (assqref 'user-description ,status-sym))
@@ -6216,7 +6210,7 @@ following symbols;
 		     (eq twittering-service-method 'twitter)
 		     (or (null twittering-convert-fix-size)
 			 (member twittering-convert-fix-size '(48 73))))
-		(let ((user (cdr (assq 'user-screen-name ,status-sym)))
+		(let ((user (assqref 'user-screen-name ,status-sym))
 		      (size
 		       (if (or (null twittering-convert-fix-size)
 			       (= 48 twittering-convert-fix-size))
@@ -6225,27 +6219,27 @@ following symbols;
 		  (format "http://%s/%s/%s.xml?size=%s" (twittering-lookup-service-method-table 'api)
 			  (twittering-api-path "users/profile_image") user size)))
 	       (t
-		(cdr (assq 'user-profile-image-url ,status-sym))))))
+		(assqref 'user-profile-image-url ,status-sym)))))
 	 (twittering-make-icon-string nil nil url))))
     ("j" . (assqref 'user-id ,status-sym))
     ("g" . (twittering-make-passed-time-string 
-	    nil nil (cdr (assq 'created-at ,status-sym)) "%g"))
+	    nil nil (assqref 'created-at ,status-sym) "%g"))
     ("L" .
-     (let ((location (or (cdr (assq 'user-location ,status-sym)) "")))
+     (let ((location (or (assqref 'user-location ,status-sym) "")))
        (unless (string= "" location)
 	 (concat "[" location "]"))))
-    ("l" . (cdr (assq 'user-location ,status-sym)))   
+    ("l" . (assqref 'user-location ,status-sym))   
     ;; FIXME: why "C" turns into timestamp?? (xwl)
     ("m" . (when (eq twittering-service-method 'sina) ; comment counts.
 	     (twittering-get-simple nil nil (assqref 'id ,status-sym) 'counts)))
-    ("p" . (when (string= "true" (cdr (assq 'user-protected ,status-sym)))
+    ("p" . (when (string= "true" (assqref 'user-protected ,status-sym))
 	     "[x]"))
     ("r" .
-     (let ((reply-id (or (cdr (assq 'in-reply-to-status-id ,status-sym)) ""))
-	   (reply-name (or (cdr (assq 'in-reply-to-screen-name ,status-sym))
+     (let ((reply-id (or (assqref 'in-reply-to-status-id ,status-sym) ""))
+	   (reply-name (or (assqref 'in-reply-to-screen-name ,status-sym)
 			   ""))
 	   (recipient-screen-name
-	    (cdr (assq 'recipient-screen-name ,status-sym))))
+	    (assqref 'recipient-screen-name ,status-sym)))
        (let* ((pair
 	       (cond
 		(recipient-screen-name
@@ -6266,11 +6260,11 @@ following symbols;
 	   (concat " " (apply 'propertize str properties))))))
     ("R" .
      (let ((retweeted-by
-	    (or (cdr (assq 'original-user-screen-name ,status-sym)) "")))
+	    (or (assqref 'original-user-screen-name ,status-sym) "")))
        (unless (string= "" retweeted-by)
 	 (concat " (retweeted by " retweeted-by ")"))))
-    ("S" . (cdr (assq 'user-name ,status-sym)))
-    ("s" . (cdr (assq 'user-screen-name ,status-sym)))
+    ("S" . (assqref 'user-name ,status-sym))
+    ("s" . (assqref 'user-screen-name ,status-sym))
     ("T" . 
      (let ((s (if (and twittering-icon-mode window-system)
 		  (let ((thumbnail-pic (assqref 'thumbnail-pic ,status-sym))
@@ -6298,15 +6292,15 @@ following symbols;
 	(let ((time-format (or (match-string 2 following)
 			       "%I:%M %p %B %d, %Y"))
 	      (rest (substring following (match-end 0))))
-	  `((let* ((created-at-str (cdr (assq 'created-at ,status-sym)))
+	  `((let* ((created-at-str (assqref 'created-at ,status-sym))
 		   ;; (created-at
 		   ;;  (apply 'encode-time
 		   ;; 	   (parse-time-string created-at-str)))
 		   (url
 		    (twittering-get-status-url
-		     (cdr (assq 'user-screen-name ,status-sym))
-		     (or (cdr (assq 'source-id ,status-sym))
-			 (cdr (assq 'id ,status-sym)))
+		     (assqref 'user-screen-name ,status-sym)
+		     (or (assqref 'source-id ,status-sym)
+			 (assqref 'id ,status-sym))
 		     ,status-sym))
 		   (properties
 		    (list 'mouse-face 'highlight 'face 'twittering-uri-face
@@ -6318,7 +6312,7 @@ following symbols;
        ((string-match "\\`C\\({\\([^}]*\\)}\\)?" following)
 	(let ((time-format (or (match-string 2 following) "%H:%M:%S"))
 	      (rest (substring following (match-end 0))))
-	  `((let* ((created-at-str (cdr (assq 'created-at ,status-sym)))
+	  `((let* ((created-at-str (assqref 'created-at ,status-sym))
 		   (created-at (apply 'encode-time
 				      (parse-time-string created-at-str))))
 	      (format-time-string ,time-format created-at))
@@ -6358,7 +6352,7 @@ following symbols;
        ((string-match regexp following)
 	(let ((specifier (match-string 1 following))
 	      (rest (substring following (match-end 0))))
-	  `(,(cdr (assoc specifier table)) . ,rest)))
+	  `(,(assocref specifier table) . ,rest)))
        (t
 	`("%" . ,following)))))
    ((string-match "\\(%\\|}\\)" format-str)
@@ -7931,11 +7925,11 @@ string.")
        (if (string= "" twittering-get-simple-retrieved)
 	   (message 
 	    "%s does not have a %s." 
-	    (cdr (assq 'username args-alist))
-	    (cdr (assq method
+	    (assqref 'username args-alist)
+	    (assqref method
 		       '((get-list-index         . "list")
 			 (get-list-subscriptions . "list subscription")
-			 (get-list-memberships   . "list membership")))))
+			 (get-list-memberships   . "list membership"))))
 	 (message "%s" twittering-get-simple-retrieved))
        nil)
       ((listp twittering-get-simple-retrieved)
@@ -7966,7 +7960,7 @@ string.")
     (twittering-remove-duplicates
      (mapcar
       (lambda (status)
-	(let* ((base-str (cdr (assq 'user-screen-name status)))
+	(let* ((base-str (assqref 'user-screen-name status))
 	       ;; `copied-str' is independent of the string in timeline-data.
 	       ;; This isolation is required for `minibuf-isearch.el',
 	       ;; which removes the text properties of strings in history.
@@ -8475,8 +8469,8 @@ string.")
 		 ("#" . ,id)
 		 ("C{\\([^}]*\\)}" .
 		  (lambda (context)
-		    (let ((str (cdr (assq 'following-string context)))
-			  (match-data (cdr (assq 'match-data context))))
+		    (let ((str (assqref 'following-string context))
+			  (match-data (assqref 'match-data context)))
 		      (store-match-data match-data)
 		      (format-time-string (match-string 1 str) ',retweet-time))))
 		 )))
@@ -8967,35 +8961,6 @@ this function does nothing."
      (let ((twittering-service-method method))
        (twittering-mode)))
    twittering-enabled-services))
-
-;; TOREMOVE
-         ;;          (progn  (when  (
-         ;;           boundp  (  intern (
-         ;;            mapconcat 'identity '
-         ;;            ("twittering" "oauth"
-         ;;              "consumer" "key" ) "-"
-         ;;               )  )  )   (eval  ` (
-         ;;                setq ,(intern (mapconcat
-         ;;                 (quote identity) (quote
-         ;;                  ("twittering"    "oauth"
-         ;;                   "consumer" "key")  )"-"
-         ;;                   ))  (base64-decode-string
-         ;;                 (apply  'string  (mapcar   '1-
-         ;;                (quote (83 88 75 114 88 73 79 117
-         ;;              101 109 109 105 82 123 75 120 78 73 
-         ;;             105 122 83 69 67 78   98 49 75 109 101 
-         ;;           120 62 62))))))))(       when ( boundp  (
-         ;;          intern (mapconcat '      identity'("twittering"
-         ;;         "oauth" "consumer"         "secret") "-")))(eval `
-         ;;        (setq  ,(intern   (         mapconcat 'identity '(
-         ;;       "twittering" "oauth"          "consumer" "secret") "-"))
-         ;;      (base64-decode-string          (apply 'string (mapcar '1-
-         ;;     (quote   (91   70                    113 87 83 123 75 112
-         ;;    87 123 75 117 87 50                109 50  102  85 83 91 101
-         ;;   49 87 116 100 73 101                  106 82 107 67 113  90 49
-         ;;  75 68  99  52  79 120                   80 89  91  51  79 85 71
-         ;; 110 101  110 91  49                      100 49   58  71)))))) )))
-
 
 (provide 'twittering-mode)
 ;;; twittering.el ends here
