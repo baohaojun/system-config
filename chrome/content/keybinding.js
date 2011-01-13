@@ -24,10 +24,10 @@ Firemacs.Commands.View = {
     ViScrollLineDown: function(e) {
         goDoCommand('cmd_scrollLineDown');
     },
-    ViScrollLineLeft: function(e) {
+    ViScrollLeft: function(e) {
         goDoCommand('cmd_scrollLeft');
     },
-    ViScrollLineRight: function(e) {
+    ViScrollRight: function(e) {
         goDoCommand('cmd_scrollRight');
     },
     ViPreviousTab: function(e) {
@@ -215,6 +215,9 @@ Firemacs.Commands.Common = {
     },
     MapSearch: function(e) {
         this._sfun.mapSearch(e);
+    },
+    SavePage: function(e) {
+        this._sfun.pageSave(e);
     }
 };
 
@@ -247,8 +250,8 @@ Firemacs.CmdKey.View = {
     NextTab: 'C-f',
     ViScrollLineUp: 'k',
     ViScrollLineDown: 'j',
-    ViScrollLineLeft: 'H',
-    ViScrollLineRight: 'L',
+    ViScrollLeft: 'H',
+    ViScrollRight: 'L',
     ViPreviousTab: 'h',
     ViNextTab: 'l',
     ViScrollPageUp: 'b',
@@ -313,8 +316,9 @@ Firemacs.CmdKey.Common = {
     CopyUrl: 'C-M-u',
     CopyTitle: 'C-M-t',
     CopyTitleAndUrl: 'C-M-b',
-    WebSearch: 'C-xC-s',
-    MapSearch: 'C-xC-a'
+    WebSearch: 'C-xC-e',
+    MapSearch: 'C-xC-a',
+    SavePage: 'C-xC-s'
 };
 
 Firemacs.CmdKey.Menu = {

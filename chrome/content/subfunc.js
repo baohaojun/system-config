@@ -409,7 +409,11 @@ Firemacs.SubFunc = {
 	    form.value = s;
 	    func(form, KeyEvent.DOM_VK_RETURN);
 	}, 1000);
-    }
+    },
+
+   pageSave: function(e) {
+       document.getElementById("Browser:SavePage").doCommand();
+   }
 };
 
 ////////////////////////////////////////////////////////////////
