@@ -1,5 +1,6 @@
 module Make where
 
+import Control.Applicative hiding (many)
 import Data.List
 import Text.Parsec
 import Text.Parsec.String
@@ -27,8 +28,7 @@ header = "////////////////////////////////////////////////////////////////\n"
 
 main :: IO ()
 main = do
-    cs <- readFile input
-    let lst = parseYml cs
+    lst <- parseYml <$> readFile input
     msg output1
     makeFile1 output1 lst
     done
@@ -42,16 +42,6 @@ main = do
   where
     msg file = putStr $ "Generating \"" ++ file ++ "\"... "
     done = putStrLn "done"
-
-----------------------------------------------------------------
-
-type DATA = (String, String, String, String, String, String)
-
-isBool :: DATA -> Bool
-isBool tup = dtype tup == "boolean"
-
-jsArray :: [String] -> String
-jsArray lst = concat (intersperse ",\n" lst) ++ "\n"
 
 ----------------------------------------------------------------
 
@@ -145,12 +135,13 @@ getOpts lot = concatMap keyVal lot
     repl c   = [c]
 
 dtag :: String -> [(String, String)] -> String -> String
-dtag name opts cont = open ++ indent cont ++ close
+dtag nm opts cont = open ++ indent cont ++ close
     where
-      open  = "<" ++ name ++ (getOpts opts) ++ ">\n"
-      close = "</" ++ name ++ ">\n"
+      open  = "<" ++ nm ++ (getOpts opts) ++ ">\n"
+      close = "</" ++ nm ++ ">\n"
+
 stag :: String -> [(String, String)] -> String
-stag name opts = "<" ++ name ++ (getOpts opts) ++ " />\n"
+stag nm opts = "<" ++ nm ++ (getOpts opts) ++ " />\n"
 
 makeContents3 :: [DATA] -> String
 makeContents3 lst = tabpanels
@@ -182,15 +173,23 @@ makeContents3 lst = tabpanels
     description ent = stag "description" [("value",desc ent)]
 
 ----------------------------------------------------------------
--- getter
 
-name,grp,key,body,desc,dtype :: DATA -> String
-name  (a, b, c, d, e, f) = a
-grp   (a, b, c, d, e, f) = b
-key   (a, b, c, d, e, f) = c
-body  (a, b, c, d, e, f) = d
-desc  (a, b, c, d, e, f) = e
-dtype (a, b, c, d, e, f) = f
+jsArray :: [String] -> String
+jsArray lst = concat (intersperse ",\n" lst) ++ "\n"
+
+----------------------------------------------------------------
+
+data DATA = DATA {
+    name :: String
+  , grp  :: String
+  , key  :: String
+  , body :: String
+  , desc :: String
+  , dtype :: String
+  }
+
+isBool :: DATA -> Bool
+isBool dat = dtype dat == "boolean"
 
 ----------------------------------------------------------------
 
@@ -203,25 +202,16 @@ yml :: Parser [DATA]
 yml = many block
 
 block :: Parser DATA
-block = do
-    separator
-    vals <- many keyval
-    return $ lst2tuple vals
+block = separator >> (lst2tuple <$> many keyval)
   where
-    lst2tuple [a, b, c, d, e, f] = (a, b, c, d, e, f)
+    lst2tuple [a, b, c, d, e, f] = DATA a b c d e f
     lst2tuple _ = error "lst2tuple"
 
 separator :: Parser ()
 separator = char '-' >> eol
 
 keyval :: Parser String
-keyval = do
-    many1 letter
-    char ':'
-    char ' '
-    val <- many (noneOf "\n")
-    eol
-    return val
+keyval = (many1 letter >> string ": ") *> (many (noneOf "\n") <* eol)
 
 eol :: Parser ()
-eol = char '\n' >> return ()
+eol = () <$ char '\n'
