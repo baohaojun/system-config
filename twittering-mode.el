@@ -4317,11 +4317,12 @@ send-direct-message -- Send a direct message.
        ;; Post a tweet.
        (let* ((status (assqref 'status args-alist))
               (id (assqref 'in-reply-to-status-id args-alist))
+              (retweeting? (assqref 'retweeting? args-alist))
 	      (st (twittering-find-status id))
 	      (in-reply-to-status (assqref 'in-reply-to-status st))
 	      (original-id (assqref 'id in-reply-to-status))
 	      (retweeted-status  (assqref 'retweeted-status st))
-	      (comment? (and sina? id (not retweeted-status)))
+	      (comment? (and sina? id (not retweeting?)))
               (parameters
                `((,(if comment? "comment" "status") . ,status)
                  ,@(when (eq (twittering-get-accounts 'auth) 'basic)
@@ -4332,7 +4333,7 @@ send-direct-message -- Send a direct message.
 			  (original-id	; comment to comment
 			   `(("id" . ,original-id)
 			     ("cid" . ,id)))
-			  (retweeted-status ; retweet with comments
+			  (retweeting? ; retweet with comments
 			   `(("in_reply_to_status_id" . ,id)))
 			  (t		; comment
 			   `(("id" . ,id))))
@@ -7590,7 +7591,7 @@ been initialized yet."
 
 (defvar twittering-reply-recipient nil)
 
-(defun twittering-update-status-from-pop-up-buffer (&optional init-str reply-to-id username spec)
+(defun twittering-update-status-from-pop-up-buffer (&optional init-str reply-to-id username spec retweeting?)
   (interactive)
   (let ((buf (get-buffer twittering-edit-buffer))
 	(service twittering-service-method))
@@ -7606,13 +7607,14 @@ been initialized yet."
       	     twittering-current-hashtag
       	     (setq init-str (format " #%s " twittering-current-hashtag))))
       (setq twittering-service-method (or (caar spec) service))
-      (message "Post to %S: C-c C-c to send, C-c C-k to cancel" 
+      (message "%s to %S: C-c C-c to send, C-c C-k to cancel" 
+	       (if retweeting? "Retweet" "Post")
 	       twittering-service-method)
       (when init-str
       	(insert init-str)
       	(set-buffer-modified-p nil))
       (make-local-variable 'twittering-reply-recipient)
-      (setq twittering-reply-recipient `(,reply-to-id ,username ,spec)))))
+      (setq twittering-reply-recipient `(,reply-to-id ,username ,spec ,retweeting?)))))
 
 (defun twittering-edit-post-status ()
   (interactive)
@@ -7624,7 +7626,8 @@ been initialized yet."
 	(reply-to-id (nth 0 twittering-reply-recipient))
 	(username (nth 1 twittering-reply-recipient))
 	(spec (or (nth 2 twittering-reply-recipient) 
-		  `((,twittering-service-method)))))
+		  `((,twittering-service-method))))
+	(retweeting? (nth 3 twittering-reply-recipient)))
     (cond
      ((not (twittering-status-not-blank-p status))
       (message "Empty tweet!"))
@@ -7654,7 +7657,8 @@ been initialized yet."
 		`((status . ,status)
 		  ,@(when reply-to-id
 		      `((in-reply-to-status-id 
-			 . ,(format "%s" reply-to-id))))))))))
+			 . ,(format "%s" reply-to-id))))
+		  (retweeting? . ,retweeting?)))))))
 	 (if (equal spec '((all))) twittering-enabled-services (car spec)))
 	(twittering-edit-close))))))
 
@@ -7677,7 +7681,7 @@ been initialized yet."
       (erase-buffer)
       (insert (nth twittering-edit-local-history-idx
 		   twittering-edit-local-history))
-      (twittering-edit-setup-help)
+      ;; (twittering-edit-setup-help)
       (goto-char (point-min)))))
 
 (defun twittering-edit-previous-history ()
@@ -7692,7 +7696,7 @@ been initialized yet."
       (erase-buffer)
       (insert (nth twittering-edit-local-history-idx
 		   twittering-edit-local-history))
-      (twittering-edit-setup-help)
+      ;; (twittering-edit-setup-help)
       (goto-char (point-min))))
   )
 
@@ -8418,7 +8422,10 @@ string.")
   (interactive)
   (funcall twittering-update-status-function 
 	   (twittering-generate-organic-retweet)
-	   (get-text-property (point) 'id))
+	   (get-text-property (point) 'id)
+	   nil
+	   nil
+	   t)
   (goto-char (line-beginning-position)))
 
 (defun twittering-native-retweet ()
@@ -8458,9 +8465,10 @@ string.")
     (when username
       (if (eq twittering-service-method 'sina)
 	  ;; use sina's format.
-	  (format " // @%s:%s"
-		  (assqref 'user-screen-name (assqref 'original status))
-		  (assqref 'text (assqref 'original status)))
+	  (when (assqref 'original status)
+	    (format " // @%s:%s"
+		    (assqref 'user-screen-name (assqref 'original status))
+		    (assqref 'text (assqref 'original status))))
 	(let ((prefix "%")
 	      (replace-table
 	       `(("%" . "%")
@@ -8472,8 +8480,7 @@ string.")
 		    (let ((str (assqref 'following-string context))
 			  (match-data (assqref 'match-data context)))
 		      (store-match-data match-data)
-		      (format-time-string (match-string 1 str) ',retweet-time))))
-		 )))
+		      (format-time-string (match-string 1 str) ',retweet-time)))))))
 	  (twittering-format-string format-str prefix replace-table))))))
 
 ;;;; Commands for browsing information related to a status
