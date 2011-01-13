@@ -241,7 +241,7 @@ Firemacs.SubFunc = {
 		height === '0' || height === '0px') {
 		    return;
 	    }
-	    if (node.localName === 'TEXTAREA' || node.localName === 'INPUT') {
+	    if (this._localNameIs(node, 'textarea') || this._localNameIs(node, 'input')) {
 		var type = node.getAttribute('type');
 		if ((type === null) || // 'text' or textarea
 		    (type === 'text') ||
@@ -258,10 +258,10 @@ Firemacs.SubFunc = {
 			   (type === 'image')) {
 		    this._walkTreeSubmit(node);
 	        }
-	    } else if (node.localName === 'BUTTON') {
+	    } else if (this._localNameIs(node, 'button')) {
 		this._walkTreeSubmit(node);
 	    }
-	    if (node.localName === 'FRAME' || node.localName === 'IFRAME') {
+	    if (this._localNameIs(node, 'frame') || this._localNameIs(node, 'iframe')) {
 		node = node.contentDocument;
 		doc = node;
 	    }
@@ -274,6 +274,11 @@ Firemacs.SubFunc = {
 		}
 	    }
 	}
+    },
+
+    _localNameIs: function(node, str) {
+        var regex = new RegExp('^' + str + '$', 'i');
+	return (node.localName.search(regex) != -1);
     },
 
     ////////////////////////////////////////////////////////////////
