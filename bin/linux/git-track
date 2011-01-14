@@ -3,6 +3,12 @@ set -e
 . ~/.bash_profile
 test $# == 0 && set -- `tbranch`
 
+die()
+{
+    echo "$@"
+    false
+}
+
 if test $# == 1; then
     remote=`git branch -r|pn 1|grep '/\b'$1'\b$'`
     remote=`echo "$remote"|perl -npe 's,/.*,,'|sort -u`

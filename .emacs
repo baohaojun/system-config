@@ -1193,14 +1193,11 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key [(ctrl x) ? ] 'switch-buffer-same-filename)
 (global-set-key [(ctrl x) ?\S- ] 'switch-buffer-same-filename-rev)
 
-(defcustom remote-sudo-prefix "/scp:root@localhost:"
-  "The prefix for visiting a file's remote counterpart or with sudo permission")
-
 (defun sudoedit ()
   (interactive)
   (if (file-remote-p (buffer-file-name))
       (find-alternate-file (replace-regexp-in-string "^/scp:.*?:" "" (buffer-file-name)))    
-    (find-alternate-file (concat remote-sudo-prefix (buffer-file-name)))))
+    (find-alternate-file (concat "/scp:root@localhost:" (buffer-file-name)))))
 
 (defun gnus-gmail-search-subject ()
   (interactive)
