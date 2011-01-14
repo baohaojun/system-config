@@ -11,8 +11,6 @@ ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
 
 (cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver)&
 
-sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'
-
 command renew-xauth
 killall syndaemon
 syndaemon -i 1 -d
