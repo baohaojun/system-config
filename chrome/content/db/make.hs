@@ -71,7 +71,7 @@ keyGroup :: [String]
 keyGroup = ["View", "Edit", "Common", "Menu"]
 
 allGroup :: [String]
-allGroup  = ["Option"] ++ keyGroup
+allGroup  = "Option" : keyGroup
 
 makeContents2 :: [DATA] -> String
 makeContents2 lst = header
@@ -104,7 +104,7 @@ cmdKey allgroup lst = concatMap eachGroup allgroup
                ++ jsArray (map jsHash l)
                ++ "};\n"
                ++ "\n"
-        jsHash ent = "    " ++ (name ent) ++ ": " ++ (jsKey $ key ent)
+        jsHash ent = "    " ++ name ent ++ ": " ++ jsKey (key ent)
         jsKey "true"  = "true"
         jsKey "false" = "false"
         jsKey str     = "'" ++ str ++ "'"
@@ -114,7 +114,7 @@ cmdKey allgroup lst = concatMap eachGroup allgroup
 makeFile3 :: FilePath -> String -> [DATA] -> IO ()
 makeFile3 file tmp lst = writeFile file . replace . makeContents3 $ lst
   where
-    replace r = unlines . concat . map repl . lines $ tmp
+    replace r = unlines . concatMap repl . lines $ tmp
       where
         repl "$tabpanels$" = lines r
         repl str = [str]
@@ -128,7 +128,7 @@ indent = indentWith "  "
 getOpts :: [(String, String)] -> String
 getOpts lot = concatMap keyVal lot
   where
-    keyVal (k, v) = " " ++ k ++ "=\"" ++ (escape v) ++ "\""
+    keyVal (k, v) = " " ++ k ++ "=\"" ++ escape v ++ "\""
     escape value = concatMap repl value
     repl '<' = "&lt;"
     repl '>' = "&gt;"
@@ -137,11 +137,11 @@ getOpts lot = concatMap keyVal lot
 dtag :: String -> [(String, String)] -> String -> String
 dtag nm opts cont = open ++ indent cont ++ close
     where
-      open  = "<" ++ nm ++ (getOpts opts) ++ ">\n"
+      open  = "<" ++ nm ++ getOpts opts ++ ">\n"
       close = "</" ++ nm ++ ">\n"
 
 stag :: String -> [(String, String)] -> String
-stag nm opts = "<" ++ nm ++ (getOpts opts) ++ " />\n"
+stag nm opts = "<" ++ nm ++ getOpts opts ++ " />\n"
 
 makeContents3 :: [DATA] -> String
 makeContents3 lst = tabpanels
@@ -164,7 +164,7 @@ makeContents3 lst = tabpanels
     column = stag "column" []
 
     rows slst = dtag "rows" [] $ concatMap row slst
-    row ent = dtag "row" [] $ (box ent ++ description ent)
+    row ent = dtag "row" [] $ box ent ++ description ent
     box ent = if isBool ent
               then checkbox ent
               else textbox ent
