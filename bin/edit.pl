@@ -1,25 +1,48 @@
 #!/usr/bin/env perl
 use String::ShellQuote;
-($myname, $myip, $remote_ip, $myfile) = (@ENV{WHOAMI, LOCALIP, REMOTEIP}, $ARGV[0]);
+use strict;
+my ($myname, $myip, $remote_ip, $myfile) = (@ENV{"WHOAMI", "LOCALIP", "REMOTEIP"}, $ARGV[0]);
 
-$ssh_cmd = "/scp:$myname\@$myip:$myfile";
-$ssh_cmd = shell_quote($ssh_cmd);
+sub edit_1($)
+{
+  my $file=$_[0];
+  $file =~ s,.*file://,,;
+  if (-e $file) {
+    $file = shell_quote($file);
+    chomp($file = qx(readlink -f $file));
+    return ('emacsclient', '-n', $file);
+  } else {
+    # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’  
+    $file =~ m,^[a|b]/, and $file = substr($file, 2); # for git diff output
+    $file =~ m,:$, and chop($file);
 
-if ($remote_ip eq 'localhost') {
-    $ssh_cmd = <<EOC;
-emacsclient -n $ssh_cmd
-EOC
+    my $line=1;
+    $file =~ s,:([0-9]+)$,, and $line = $1;
 
-} else {
-    $ssh_cmd = <<EOC;
-psexec.exe -sid "\$(cygpath -alw "\$(which findexec)")" -t emacs@
-emacsclient -n $ssh_cmd
-EOC
+    my $x=0;
+    while (not -e $file and $x ++ < 10) {
+      $file = "../$file";            
+    }
+    $file = shell_quote($file);
+    chomp($file = qx(readlink -f $file));
+    return ('emacsclient', '-n', "+$line", $file);
+  }
 }
 
-$ssh_cmd =~ s/\n/;/g;
-$ssh_cmd = shell_quote($ssh_cmd);
+if ($remote_ip) {
+  my $ssh_cmd = "/scp:$myname\@$myip:$myfile";
+  $ssh_cmd = shell_quote($ssh_cmd);
 
-print "ssh $remote_ip $ssh_cmd\n";
-system("ssh $remote_ip $ssh_cmd");
+  $ssh_cmd = <<EOC;
+if test `uname` != Linux; then
+    psexec.exe -sid "\$(cygpath -alw "\$(which findexec)")" -t emacs@
+fi
+emacsclient -n $ssh_cmd
+EOC
+  $ssh_cmd = shell_quote($ssh_cmd);
 
+  system("ssh $remote_ip $ssh_cmd");
+
+} else {
+  system(edit_1($myfile));
+}
