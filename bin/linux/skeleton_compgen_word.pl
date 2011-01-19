@@ -41,6 +41,6 @@ for (@words) {
     if ($match == 1) {
         print $_ . "\n";
     } else {
-        printf "%02d: %s\n", $count++, $_;
+        printf "%d: %s\n", $count++, $_;
     }    
 }
