@@ -60,6 +60,8 @@ function congfu-get() {
     congfu "$@" -a getPageList|perl -ne 'print if (2..0xffff and m/^\S+$/)'|xargs -d '\n' touch
     for x in *; do 
         congfu "$@" -a getSource --title "$x"|perl -ne 'print unless(1..1)' > "$x"
+        confluence-unhtmlize "$x" | perl -ne 'BEGIN{$begin=0}; print $x if $begin == 1; $x = $_; $begin = 1' > "$x".bak
+        mv "$x".bak "$x"
     done
 }
 

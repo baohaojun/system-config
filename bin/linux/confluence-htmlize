@@ -30,7 +30,19 @@ while (<>) {
                         my $color = $1;
                         my $bkcolor = $2;
 
-                        print "{html}\n";
+                        print "{html}<!-- start of code\n";
+                        $code_start_line =~ s/(.)/sprintf "%%%02x", ord($1)/ge;
+                        print $code_start_line;
+                        open(my $tmp_fh, "<", $tmp_filename) or die "Error: can't open $tmp_filename";
+                        while (<$tmp_fh>) {
+                            $_ =~ s/(.)/sprintf "%%%02x", ord($1)/ge;
+                            print;
+                        }
+                        close($tmp_fh);
+                        $code_end_line =~ s/(.)/sprintf "%%%02x", ord($1)/ge;
+                        print $code_end_line;
+                        print "end of code -->\n";
+
                         print "<div style=\"padding: 10px; border: 2px solid #ff2222; overflow: auto; max-height: 400px; margin: 10px; color: $color; background-color: $bkcolor\">\n";
                     } elsif (m/$html_end/) {
                         print "</div>\n{html}\n";

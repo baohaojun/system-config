@@ -807,3 +807,6 @@ Python:
         empty_entry = struct.pack('=4sIII', *empty_entry_tuple)
 
 (cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make pdk pdk_docs)
+
+s/(.)/sprintf "%%%02x", ord($1)/ge;
+s/%(..)/chr(eval("0x$1"))/ge
