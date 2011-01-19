@@ -1,27 +1,47 @@
-#!/bin/bash
+#!/usr/bin/env perl
+use String::ShellQuote;
+use strict;
+my ($myname, $myip, $remote_ip, $myfile) = (@ENV{"WHOAMI", "LOCALIP", "REMOTEIP"}, $ARGV[0]);
 
-function edit_1()
+sub edit_1($)
 {
-    local file=$1
-    file=${file##*file://}
-    if test -e "$file"; then
-        emacsclient -n "$(readlink -f "$file")"
-    else # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
-        [[ "$file" =~ ^[a|b]/ ]] && file=${file:2}
+  my $file=$_[0];
+  $file =~ s,.*file://,,;
+  if (-e $file) {
+    $file = shell_quote($file);
+    chomp($file = qx(readlink -f $file));
+    return ('emacsclient', '-n', $file);
+  } else {
+    # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’  
+    $file =~ m,^[a|b]/, and $file = substr($file, 2); # for git diff output
+    $file =~ m,:$, and chop($file);
 
-        [[ "$file" =~ :$ ]] && file=${file:0:${#file}-1}
-        [[ "$file" =~ : ]] && local line=${file##*:}
-        file=${file%:*}
-        local x=0
-        while test ! -e "$file" && ((x++ < 10)); do
-            file=../"$file"
-        done
-        emacsclient -n +"${line:-1}" "$(readlink -f "$file")"
-    fi
+    my $line=1;
+    $file =~ s,:([0-9]+)$,, and $line = $1;
+
+    my $x=0;
+    while (not -e $file and $x ++ < 10) {
+      $file = "../$file";            
+    }
+    $file = shell_quote($file);
+    chomp($file = qx(readlink -f $file));
+    return ('emacsclient', '-n', "+$line", $file);
+  }
 }
 
-if test x$IN_EMACS != x; then
-    edit_1 "$@" >/dev/null 2>&1 &
-else 
-    edit_1 "$@"
+if ($remote_ip) {
+  my $ssh_cmd = "/scp:$myname\@$myip:$myfile";
+  $ssh_cmd = shell_quote($ssh_cmd);
+
+  $ssh_cmd = <<EOC;
+if test `uname` != Linux; then
+    psexec.exe -sid "\$(cygpath -alw "\$(which findexec)")" -t emacs@
 fi
+emacsclient -n $ssh_cmd
+EOC
+  $ssh_cmd = shell_quote($ssh_cmd);
+  system("ssh $remote_ip $ssh_cmd");
+
+} else {
+    system(edit_1($myfile));
+}

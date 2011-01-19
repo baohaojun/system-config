@@ -13,25 +13,6 @@ else
     export DISPLAY=${DISPLAY:-$REMOTEIP:0.0}
     export PS1HostName=`hostname`
     export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m)\n\$'
-
-    edit()
-    {
-        if [[ $WHOAMI == root ]] && [[ -f "$1" ]]; then
-            echo using root to do edit, won\'t check read permission
-        else
-            if ! [[ -r "$1" ]]; then
-                echo Error: "$1" is not readable
-                return 1
-            fi
-            if ! [[ -w "$1" ]]; then
-                echo Warning: "$1" is not writable
-            fi
-        fi    
-
-        local file=$( readlink -f "$1" )
-        ~/bin/edit.pl "$file"
-    }
-
     alias sudoedit='WHOAMI=root edit'
 
 fi

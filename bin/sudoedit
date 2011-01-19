@@ -1,4 +1,10 @@
 #!/bin/bash
+if test -z "$SSH_CLIENT"; then
+    export LOCALIP=localhost
+    export LOCALPORT=22
+    export REMOTEIP=localhost
+fi
+
 function sudoedit()
 {
     if [[ $WHOAMI == root ]] && [[ -f "$1" ]]; then
