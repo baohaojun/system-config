@@ -37,10 +37,24 @@ if (0 <= $which and $which < @words) {
     exit;
 }
 
+my @sorted = sort (@words);
+my ($first, @sorted) = @sorted;
+my $is_prefix = 1;
+for(@sorted) {
+  if ($first ne substr($_, 0, length($first))) {
+    $is_prefix = 0;
+    last
+  }
+}
+
 for (@words) {
-    if ($match == 1) {
-        print $_ . "\n";
+  if ($match == 1) {
+    print $_ . "\n";
+  } else {
+    if ($is_prefix) {
+      print "$_\n";
     } else {
-        printf "%d: %s\n", $count++, $_;
-    }    
+      printf "%d: %s\n", $count++, $_;
+    }
+  }    
 }
