@@ -21,6 +21,25 @@ if ($use_skeleton_re) {
     $skeleton = ".*" . join(".*", split(//, $skeleton)) . ".*";
 }
 
+my $which = -1;
+if ($skeleton =~ s/:(\d+)$//) {
+    $which = $1;
+}
+
+my $count = 0;
+
+@words = grep(m/$skeleton/i, @words);
+my $match = @words;
+
+if (0 <= $which and $which < @words) {
+    print $words[$which] . "\n";
+    exit;
+}
+
 for (@words) {
-    print $_ . "\n" if m/$skeleton/i;
+    if ($match == 1) {
+        print $_ . "\n";
+    } else {
+        print $count++ . ": $_\n";
+    }    
 }
