@@ -280,3 +280,38 @@ maverick或下一个版本的usb-creator已经可以在debian上做dpkg-buildpac
         {
             ...
     =>      printk(KERN_INFO "%s: %s %s %s %s\n",
+
+****************
+这个位置很有意思，为什么tegra-10.9.7会把原来i2c bus3上面的东西，变成了bus4？因为在bus1上多了一种config！
+也就是多了一条bus出来了啦。
+
+    /scp:bhj@192.168.15.131:/home/bhj/src/theatre/kernel/drivers/i2c/busses/i2c-tegra.c:256:         i2c_bus->pinmux = plat->bus_mux[i];
+        static int tegra_i2c_probe(struct platform_device *pdev)
+        {
+            ...
+            for (i=0; i<nbus; i++) {
+                ...
+    =>          i2c_bus->pinmux = plat->bus_mux[i];
+
+****************
+下面的python *empty_entry_tuple用法看这篇文章，
+file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-positional_arguments
+
+到5.3.4. Calls. 这个用法出现在参数列表里，我们就去看一下参数列表的BNF。
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/vendor/nvidia/scripts/ota/patch.py:463:         empty_entry = struct.pack('=4sIII', *empty_entry_tuple)
+            # Create updater-script
+        #    print 'Generate updater-script'
+            ...
+            if number > 0:
+                ...
+    =>          empty_entry = struct.pack('=4sIII', *empty_entry_tuple)
+
+****************
+扫描分区？
+
+    /home/bhj/src/theatre/kernel/fs/partitions/check.c:544:     if (bdev->bd_part_count)
+        int rescan_partitions(struct gendisk *disk, struct block_device *bdev)
+        {
+            ...
+    =>      if (bdev->bd_part_count)
