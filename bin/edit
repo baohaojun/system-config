@@ -30,14 +30,17 @@ sub edit_1($)
 }
 
 if ($remote_ip) {
-  my $ssh_cmd = "/scp:$myname\@$myip:$myfile";
-  $ssh_cmd = shell_quote($ssh_cmd);
+  my @cmd = edit_1($myfile);
+  my $ssh_cmd = "/scp:$myname\@$myip:"; 
+  $cmd[-1] = shell_quote($ssh_cmd . $cmd[-1]);
+
+  $ssh_cmd = join(" ", @cmd);
 
   $ssh_cmd = <<EOC;
 if test `uname` != Linux; then
     psexec.exe -sid "\$(cygpath -alw "\$(which findexec)")" -t emacs@
 fi
-emacsclient -n $ssh_cmd
+$ssh_cmd
 EOC
   $ssh_cmd = shell_quote($ssh_cmd);
   system("ssh $remote_ip $ssh_cmd");
