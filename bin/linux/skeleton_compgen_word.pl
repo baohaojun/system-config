@@ -22,7 +22,8 @@ if ($use_skeleton_re) {
 }
 
 my $which = -1;
-if ($skeleton =~ s/:(\d+)$//) {
+
+if ($skeleton =~ s/\.(\d+)$//) {
     $which = $1;
 }
 
@@ -40,6 +41,6 @@ for (@words) {
     if ($match == 1) {
         print $_ . "\n";
     } else {
-        print $count++ . ": $_\n";
+        printf "%02d: %s\n", $count++, $_;
     }    
 }
