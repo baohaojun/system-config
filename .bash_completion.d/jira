@@ -2,6 +2,7 @@
 
 _jira_compgen_options()
 {
+    local IFS=$'\t\n'
     local options=(--help --action --file --debug --verbose --server --user --password password --login --service --loginFromStandardInput --project --toProject --name --description description --url --lead --after --issue --toIssue --parent --summary --priority priority --reporter --assignee --environment environment --components --affectsVersions --fixVersions --custom --field --date date --dateFormat --type --resolution --step --comment --filter --link --values --count --outputFormat --plugin plugin --version --role --group --defaultGroup --userId --userFullName userFullName --userEmail --userPassword --permissionScheme --notificationScheme notificationScheme --issueSecurityScheme --findReplace --autoVersion --autoComponent --autoGroup --asVersion --asComponent)
 
     COMPREPLY=( $(skeleton_compgen_word.pl -- "$( echo ${options[@]} )" "$cur") )
