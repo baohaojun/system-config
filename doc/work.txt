@@ -810,3 +810,4 @@ Python:
 
 s/(.)/sprintf "%%%02x", ord($1)/ge;
 s/%(..)/chr(eval("0x$1"))/ge
+for x in `seq 6 35`; do ((y=x-5)); jira -a getComments --issue CINEMA-$x|perl -npe "s/^/p1-$y: /"; echo ; echo ; done |tee state.txt
