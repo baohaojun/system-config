@@ -9,6 +9,6 @@ for x in ${issues[@]}; do
         continue;
     fi
     jira -a getIssue --issue $x > "./$x"
-    sum=$(perl -ne 'print if /^Summary.*?: /' $x|perl -npe 's/.*: //')
+    sum=$(perl -ne 'print if /^Summary.*?: /' $x|perl -npe 's/.*: //; s!(/|%)!sprintf "%%%02x", ord($1)!ge')
     mv $x $x:"$sum" -v
 done 

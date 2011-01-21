@@ -1,5 +1,6 @@
 #!/bin/bash
 sleep 1
-scrot -s ~/x.png
-of ~/x.png
-wp ~/x.png
+now=`now`
+scrot -s ~/"$now".png
+of ~/"$now".png
+up ~/"$now".png

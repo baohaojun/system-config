@@ -239,18 +239,18 @@ Nvidia 自带了用gpio模拟i2c的代码，回头电源代码可以用这个来
 这里是配哪个是中断唤醒源的地方，NV的工程师建议把所有的NV_TRUE都改成
 NV_FALSE试一试。
 
-    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query.c:63:     {NV_TRUE,  8, NvOdmWakeupPadPolarity_Low}, // Wake Event  8 - gmi_wp_n (MICRO SD_CD)
+    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query.c:45:     {NV_FALSE,  2, NvOdmWakeupPadPolarity_High},    // Wake Event  2 - dvi_d3
         #define BOARD_ID_VENTANA 0x024B
         // Wake Events
         static NvOdmWakeupPadInfo s_NvOdmWakeupPadInfo[] =
         {
             ...
-    =>      {NV_TRUE,  8, NvOdmWakeupPadPolarity_Low}, // Wake Event  8 - gmi_wp_n (MICRO SD_CD)
+    =>      {NV_FALSE,  2, NvOdmWakeupPadPolarity_High},    // Wake Event  2 - dvi_d3
 
 ****************
 这个是配置哪个gpio是中断源，上面那个是配置哪个中断源有效，以及有效电平
 
-    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/board-nvodm.c:1528:         gpio_to_irq(TEGRA_GPIO_PC7), gpio_to_irq(TEGRA_GPIO_PS2),
+    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/board-nvodm.c:1581:         gpio_to_irq(TEGRA_GPIO_PC7), gpio_to_irq(TEGRA_GPIO_PS2),
         static void __init tegra_setup_suspend(void)
         {
         #ifdef CONFIG_ARCH_TEGRA_2x_SOC
@@ -315,3 +315,38 @@ file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-po
         {
             ...
     =>      if (bdev->bd_part_count)
+
+****************
+
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/hardware/tegra/core/system/fastboot/linux_cmdline.c:324:     /* Remain -= Idx; */
+        /*  Creates the command line, and adds it to the TAG list */
+        void FastbootCommandLine(
+            NvAbootHandle hAboot,
+            const PartitionNameMap *PartitionList,
+            NvU32 NumPartitions,
+            NvU32 SecondaryBootDevice,
+            NvBool HasInitRamDisk,
+            const unsigned char *ProductName)
+        {
+            ...
+    =>      /* Remain -= Idx; */
+
+****************
+	/* NvOsSnprintf(ptr, Remain, "%s ", "no_console_suspend"); */
+	/* Idx = NvOsStrlen(ptr); */
+	/* ptr += Idx; */
+    	/* Remain -= Idx; */
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/hardware/tegra/core/system/fastboot/linux_cmdline.c:324:     /* Remain -= Idx; */
+        /*  Creates the command line, and adds it to the TAG list */
+        void FastbootCommandLine(
+            NvAbootHandle hAboot,
+            const PartitionNameMap *PartitionList,
+            NvU32 NumPartitions,
+            NvU32 SecondaryBootDevice,
+            NvBool HasInitRamDisk,
+            const unsigned char *ProductName)
+        {
+            ...
+    =>      /* Remain -= Idx; */
