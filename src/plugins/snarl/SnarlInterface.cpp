@@ -372,7 +372,7 @@ LONG32 SnarlInterface::GetVersion()
 	}
 
 	HANDLE hProp = GetProp(hWnd, _T("_version"));
-	return reinterpret_cast<int>(hProp);
+	return static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(hProp));
 }
 
 // static
@@ -477,7 +477,7 @@ LONG32 SnarlInterface::Send(SnarlMessage msg)
 
 	// return result and cache LastError
 	HANDLE hProp = GetProp(hWnd, _T("last_error"));
-	localError = static_cast<SnarlEnums::SnarlStatus>(reinterpret_cast<int>(hProp));
+	localError = static_cast<SnarlEnums::SnarlStatus>(static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(hProp)));
 
 	return nReturn;
 }
