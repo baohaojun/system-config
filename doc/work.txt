@@ -811,3 +811,15 @@ Python:
 s/(.)/sprintf "%%%02x", ord($1)/ge;
 s/%(..)/chr(eval("0x$1"))/ge
 for x in `seq 6 35`; do ((y=x-5)); jira -a getComments --issue CINEMA-$x|perl -npe "s/^/p1-$y: /"; echo ; echo ; done |tee state.txt
+
+sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
+/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+/sbin/iptables -A FORWARD -i eth0 -o usb0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+/sbin/iptables -A FORWARD -i usb0 -o eth0 -j ACCEPT
+adb shell setprop dhcp.eth0.dns1 192.168.11.1
+adb shell setprop net.dns1 192.168.11.1
+adb shell setprop dhcp.eth0.dns2 192.168.11.1
+adb shell setprop dhcp.eth0.dns3 192.168.11.1
+adb shell setprop dhcp.eth0.dns4 192.168.11.1
+adb shell setprop dhcp.eth0.gateway 192.168.56.1
+adb shell busybox route add default gw 192.168.56.1
