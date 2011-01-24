@@ -65,7 +65,7 @@ lcd()
 
     if [[ "$1" =~ ^\\\\|^//|^smb:// && `uname` = Linux ]]; then
         chmod 600 ~/.smb/*
-        smbnetfs -o allow_root ~/smb >/dev/null 2>&1
+        smbnetfs ~/smb >/dev/null 2>&1
         builtin cd ~/smb/"$(host-hosts "$1")"
         history -s cd "`pwd`"
         history -s cd "$1"
