@@ -828,3 +828,4 @@ adb shell setprop dhcp.eth0.dns4 192.168.11.1
 adb shell setprop dhcp.eth0.gateway 192.168.56.1
 adb shell busybox route add default gw 192.168.56.1
 
+dpkg --get-selections |grep virtualbox|perl -npe 's/install$/hold/'
