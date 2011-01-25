@@ -35,6 +35,7 @@ function ainstall() {
         if test "x$DO_START" = "xno"; then
             echo no start
         else
+            echo adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n $main_activity
             adb shell am start  -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n $main_activity
         fi
     else
