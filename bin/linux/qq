@@ -1,0 +1,3 @@
+#!/bin/bash
+
+TZ="Etc/GMT-8" wine /home/bhj/bin/linux/ext/QQ/Bin/QQ.exe >/dev/null 2>&1 &

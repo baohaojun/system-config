@@ -16,7 +16,7 @@ function sudoedit()
     fi    
 
     local file=$( readlink -f "$1" )
-    WHOAMI=root ~/bin/edit.pl "$file"
+    WHOAMI=root ~/bin/edit "$file"
 }
 
 sudoedit "$@"

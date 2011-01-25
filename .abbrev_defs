@@ -212,6 +212,10 @@
   '(
    ))
 
+(define-abbrev-table 'ps-mode-abbrev-table '())
+
+(define-abbrev-table 'ps-run-mode-abbrev-table '())
+
 (define-abbrev-table 'python-mode-abbrev-table
   '(
     ("false" "False" nil 2)
@@ -275,7 +279,7 @@ fi
     ("fanfan" "Dong Guiwei ‘¶­‘¹ó‘Íþ <guiwei.dong@borqs.com>
 Cc: rui li <rui.li@borqs.com>, \"Gao Shujun ‘¸ß‘Êç‘¾ü\" <shujun.gao@borqs.com>, \"'jianli.zhang'\" <jianli.zhang@borqs.com>" nil 1)
     ("nvteam" "Roy <yru@eee168.com>
-Cc: Coco Wang <kwang@eee168.com>,  Hong Liang <hliang@eee168.com>,  Hui Li <hli@eee168.com>,  hjbao@eee168.com,  Fei Liu <fliu@adsnexus.com>,  Zhongjie Zhu <zjzhu@adsnexus.com>,  Tide Yin <tyin@hzwowpad.com>,  Vincent Ying <vying@eee168.com>,  Leo Yao <lyao@eee168.com>,  ybai <ybai@eee168.com>, Ming Shi <mshi@adsnexus.com>,  hlren <hlren@eee168.com>" nil 0)
+Cc: Coco Wang <kwang@eee168.com>,  Hong Liang <hliang@eee168.com>,  Hui Li <hli@eee168.com>,  hjbao@eee168.com,  Fei Liu <fliu@adsnexus.com>,  Zhongjie Zhu <zjzhu@adsnexus.com>,  Tide Yin <tyin@hzwowpad.com>,  Vincent Ying <vying@eee168.com>,  Leo Yao <lyao@eee168.com>,  ybai <ybai@eee168.com>, Ming Shi <mshi@adsnexus.com>,  hlren <hlren@eee168.com>, cyma <cyma@eee168.com>" nil 0)
     ("telteam" "Anle Zhou <anle.zhou@gmail.com>
 Cc: Kimber <haijun.ji@borqs.com>,  Tide Yin Gmail <tideyin@gmail.com>,  Vincent Ying <vincent.ying@borqs.com>,  \"kevin.yan\" <kevin.yan@borqs.com>,  Anle Zhou <anle.zhou@borqs.com>,  Cheng Liao <cheng.liao@borqs.com>,  Damon Zheng <qiang.zheng@borqs.com>,  Derek Hong <mingsong.hong@borqs.com>,  Eric Lu <eric.lu@borqs.com>,  Harold Shi <harold.shi@borqs.com>,  HL Ren <hailin.ren@borqs.com>,  Hong Liang <hong.liang@borqs.com>,  Hui Li <hui.li@borqs.com>,  JG Ma <junguo.ma@borqs.com>,  Jing Xu <jing.xu@borqs.com>,  JM Zhou <jianmin.zhou@borqs.com>,  Jun Wei <jun.wei@borqs.com>,  KB Chen <kaibing.chen@borqs.com>,  Leo Yao <shihong.yao@borqs.com>,  MQ Ren <mingqi.ren@borqs.com>,  Ping Xiao <ping.xiao@borqs.com>,  Ray Fan <ray.fan@borqs.com>,  Shawn Bow <shawn.bow@borqs.com>,  Stone Zhang <stone.zhang@borqs.com>,  Tide Yin <tide.yin@borqs.com>,  Wei Liang <wei.liang@borqs.com>,  XF Wang <xianfeng.wang@borqs.com>,  XY Chen <xiaoyi.chen@borqs.com>,  YM Liang <yumin.liang@borqs.com>,  Yu Bai <yu.bai@borqs.com>,  Yu Wang <yu.wang@borqs.com>,  ZD Zhang <zhaodong.zhang@borqs.com>,  ZH Qi <zhiheng.qi@borqs.com>" nil 2)
     ("toolsg" "Tide Yin ‘£¨‘Òü‘ÌÎ‘£© <tide.yin@borqs.com>
