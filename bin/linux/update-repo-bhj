@@ -14,7 +14,6 @@ repo-switch -u git://nv-tegra.nvidia.com/android/manifest.git -b eclair-tegra
 repo sync
 repo-switch -u git://nv-tegra.nvidia.com/android/manifest.git -b froyo-tegra
 repo sync
-repo forall -c 'for x in `git tag`; do git branch tagbr-$x $x; done'
 
 repo-switch -u git://android.git.kernel.org/platform/manifest.git -b cupcake
 repo sync
@@ -31,11 +30,9 @@ git config remote.origin.url git://git.kernel.org/pub/scm/linux/kernel/git/torva
 git fetch origin
 git config remote.origin.url git://android.git.kernel.org/kernel/common.git
 git fetch origin 
-for x in `git tag`; do git branch tagbr-$x $x; done
 
 cd /home/git/android/3rdparty/atheros.git
 git fetch origin
-for x in `git tag`; do git branch tagbr-$x $x; done
 
 #vendor/nvidia and hardware/tegra, we can do nothing, their git is maintained by us.
 
