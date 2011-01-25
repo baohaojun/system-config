@@ -13,6 +13,19 @@ function smb_wp()
     echo -n "$FILE"|tee /dev/tty|putclip
 }
 
+function sp()
+{
+    FILE=${1:-`pwd`}
+    FILE=`lookup_file "$FILE"`
+    
+    if [[ "$FILE" =~ ~/smb/ ]]; then
+        FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,smb://,g'`
+    else
+        FILE=z:$FILE
+    fi
+    echo -n "$FILE"|tee /dev/tty|putclip
+}
+
 function wp()
 {
     FILE=${1:-`pwd`}

@@ -350,3 +350,14 @@ file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-po
         {
             ...
     =>      /* Remain -= Idx; */
+
+****************
+
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/virtualbox/virtualbox-ose-3.2.10-dfsg/src/VBox/Devices/Graphics/BIOS/vbetables-gen.c:31: { 1024, 600, 16                        , 0x114},
+        { 320, 200, 24                        , 0x10F},
+        { 640, 480, 15                       , 0x110},
+        { 640, 480, 16                        , 0x111},
+        { 640, 480, 24                        , 0x112},
+        ...
+    =>  { 1024, 600, 16                        , 0x114},
