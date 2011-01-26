@@ -1,6 +1,6 @@
 #!/bin/bash
 sleep 1
-now=`now`
+now=`now|perl -npe 's/:/./g'`
 scrot -s ~/"$now".png
 of ~/"$now".png
 up ~/"$now".png
