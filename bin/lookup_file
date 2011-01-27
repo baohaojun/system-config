@@ -1,12 +1,11 @@
 #!/bin/bash
 
-file="$1"
+file=$1
+old=$1
 x=0
 
 test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 while test ! -e "$file" && ((x++ < 10)); do
     file=../"$file";
 done
-readlink -f "$file"
-
-
+readlink -f "$file" || echo $old
