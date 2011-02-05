@@ -551,3 +551,8 @@ keyx: C-n
 body: this._sfun.NextCompletion(e);
 desc: moves to the next line
 type: 
+-
+name: SelectAll
+case: Common
+keyx: C-xh
+body: goDoCommand('cmd_selectAll')
