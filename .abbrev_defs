@@ -171,6 +171,7 @@
   '(
     ("le" "Log.e(TAG, \"" nil 17)
     ("lv" "Slog.v(TAG, String.format(\"" nil 1)
+    ("pk" "Log.i(\"Bhj\", \"hello world\");" nil 1)
     ("string" "String" nil 18)
     ("sv" "System.out.print(String.format(\"" nil 0)
    ))

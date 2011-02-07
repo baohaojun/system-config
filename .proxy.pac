@@ -10,7 +10,7 @@
          'q=cache:', 'tumblr.com', 'imagevenue.com',
          'skneo2.com', 'dailymotion.com', 'wikipedia.org',
          'wikimedia.org', 'feedburner.com', 'newsgator.com',
-         'feedproxy.google.com', 'linuxconsulting.ro', 'www.android-x86.org',
+         'feedproxy.google.com', 'linuxconsulting.ro', 'android-x86.org',
          'docs.google.com', 'google.com/appsstatus', 'sites.google.com',
          'pdk.android.com', 'photobucket.com', 'www.ccthere.com',
          'zh.wikisource.org', 'wikilivres.info', 'wretch.cc',
@@ -18,7 +18,7 @@
          'book.kanunu.org', 'markmail.org', 'tolchz.net',
          'blog.varunkumar.me', 'webupd8.org', 'www.emacsblog.org',
          'windows-commandline.com', 'vaig.be', 'picturesofmymother.com',
-         'xmages.net',];
+         'xmages.net', 'iphone-dev.org',];
     
     var regexp = new RegExp(blocked_site.join('|'));
     
