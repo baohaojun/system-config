@@ -77,7 +77,8 @@ FmxConfig._names = [
   'MapSearch',
   'SavePage',
   'PreviousCompletion',
-  'NextCompletion'
+  'NextCompletion',
+  'SelectAll'
 ];
 
 FmxConfig._boolNames = [

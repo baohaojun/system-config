@@ -556,3 +556,5 @@ name: SelectAll
 case: Common
 keyx: C-xh
 body: goDoCommand('cmd_selectAll')
+desc: selects all
+type: 

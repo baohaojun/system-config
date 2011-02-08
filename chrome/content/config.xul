@@ -407,6 +407,10 @@
             <textbox id="SavePage" value="C-xC-s" />
             <description value="save page" />
           </row>
+          <row>
+            <textbox id="SelectAll" value="C-xh" />
+            <description value="selects all" />
+          </row>
         </rows>
       </grid>
     </tabpanel>

@@ -218,6 +218,9 @@ Firemacs.Commands.Common = {
     },
     SavePage: function(e) {
         this._sfun.pageSave(e);
+    },
+    SelectAll: function(e) {
+        goDoCommand('cmd_selectAll')
     }
 };
 
@@ -318,7 +321,8 @@ Firemacs.CmdKey.Common = {
     CopyTitleAndUrl: 'C-M-b',
     WebSearch: 'C-xC-e',
     MapSearch: 'C-xC-a',
-    SavePage: 'C-xC-s'
+    SavePage: 'C-xC-s',
+    SelectAll: 'C-xh'
 };
 
 Firemacs.CmdKey.Menu = {
