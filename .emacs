@@ -369,12 +369,7 @@
                         (my-grep-command "grep-gtags -e pat")
                         (current-prefix-arg 4))
                     (nodup-ring-insert cscope-marker-ring (point-marker))
-                    (let ((file (buffer-file-name (current-buffer))))
-                      (if (file-remote-p file)
-                          (let ((process-environment tramp-remote-process-environment))
-                            (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
-                            (setq tramp-remote-process-environment process-environment))
-                        (setenv "GTAGS_START_FILE" file)))
+                    (setenv "GTAGS_START_FILE" (buffer-file-name (current-buffer)))
                     (call-interactively 'grep)
                     (setq grep-gtags-history grep-history))))
 
@@ -661,7 +656,7 @@
 (global-set-key [f5] 'devenv-debug)
 
 
-(setenv "EMACS" "t")
+(setenv "IN_EMACS" "true")
 (define-key weblogger-entry-mode-map "\C-c\C-k" 'ido-kill-buffer)
 
 (defun poor-mans-csharp-mode ()
