@@ -6,11 +6,9 @@
 // ==/UserScript==
 
 var re = new RegExp("^http://developer.android.com/");
-for (var x in document.links) { 
-    var y = document.links[x].href; 
-    if (! y) 
-        continue; 
+var y = document.URL;
+y = y.replace(re, "file:///home/bhj/bin/linux/ext/android-sdk-linux_86/docs/");
+alert(y);
+location.replace(y);
 
-    y = y.replace(re, "file:///home/bhj/external/bin/linux/ext/android-sdk-linux_86/docs/");
-    document.links[x].href = y;
-}
+
