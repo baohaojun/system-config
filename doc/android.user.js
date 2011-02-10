@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name          Fix Offline Wiki Links
+// @name          Fix android sdk manual too slow
 // @namespace     http://github.com/baohaojun/windows-config
-// @description   Fix offline wikipedia page links
+// @description   Fix android sdk manual too slow
 // @include       http://developer.android.com/*
 // ==/UserScript==
 
