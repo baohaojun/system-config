@@ -5,7 +5,7 @@ $@
 EOF
 fi
 
-if test "$IN_EMACS" = true; then
+if test "$EMACS" = t; then
     rm-last-nl > /tmp/$$.putclip
     export FILE=/tmp/$$.putclip
     (
