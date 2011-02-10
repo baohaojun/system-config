@@ -4,7 +4,9 @@ use Getopt::Long;
 use strict;
 use String::ShellQuote;
 
-print "gtags-cscope-bhj ";
+print "$0 ";
+
+my @ARGV_save = @ARGV;
 foreach my $x (@ARGV) {
     $x = shell_quote($x);
     print "$x ";
@@ -41,8 +43,9 @@ GetOptions(
 sub do_cscope($$$$) {
     my ($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp) = @_;
     chdir ($pwd) or die "Error chdir $pwd";
-    my $start_dir = substr($pwd, length("$ENV{HOME}/tmp/for-code-reading"));
-    $start_dir =~ s,/+,/,g;
+    my $gtags_dir = $pwd;
+    my $code_dir = substr($pwd, length("$ENV{HOME}/tmp/for-code-reading"));
+    $code_dir =~ s,/+,/,g;
     open(my $grep, "-|", "echo $lookup_type$lookup_needle|gtags-cscope");
 
     my @matches;
@@ -52,7 +55,7 @@ sub do_cscope($$$$) {
         s/^>>.*//;
         my $file=$_;
         $file =~ s/ .*//;
-        if (not -e "$start_dir/$file") {
+        if (not -e "$code_dir/$file") {
             next;
         }
         if ($lookup_restrict_regexp && not m/$lookup_restrict_regexp/i) {
@@ -63,9 +66,18 @@ sub do_cscope($$$$) {
 
     use String::Approx 'adistr';
     our $approx_dir;
+    my $redo_gtags_done = 0;
+
+    if (not @matches) {
+        system("grep-gtags-private-ok", @ARGV_save);
+    }
     for (sort {adistr($b, $approx_dir) <=> adistr($a, $approx_dir)} @matches) {
         m/(.*?) (.*?) (.*?) (.*)/;
-        print "$start_dir/$1:$3: $4\n";
+        print "$code_dir/$1:$3: $4\n";
+        if (not $redo_gtags_done and -M "$code_dir/$1" < -M "$gtags_dir/cscope.files") {
+            system("cd `dirname $code_dir/$1`; mkgtags -i >/dev/null 2>&1");
+            $redo_gtags_done = 1;
+        }        
     }
 }
 
