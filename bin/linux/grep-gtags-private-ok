@@ -33,10 +33,11 @@ $approx_dir = substr($approx_dir, length($pwd));
 my $lookup_type = 1;
 my $lookup_needle = "hello_world";
 my $lookup_restrict_regexp;
-
+my $local_private_only = 0;
 GetOptions(
-           "e=s" => \$lookup_needle,
-          );
+    "e=s" => \$lookup_needle,
+    "o!" => \$local_private_only,
+    );
 
 my $GTAGS_START_FILE = $ENV{"GTAGS_START_FILE"};
 
@@ -48,6 +49,9 @@ while(<$javaParserOut>) {
     chomp;
     my @F = split;
     if ($lookup_needle eq $F[1]) {
-        print $F[3] . ":" . $F[2] . ": " . $F[4] . " " . $F[5] . "\n";
+        $, = ' ';
+        print $F[3] . ":" . $F[2] . ": ";
+        print @F[4..@F];
+        print "\n";
     }
 }

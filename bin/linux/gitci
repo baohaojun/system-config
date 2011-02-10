@@ -20,7 +20,7 @@ while test $# -gt 0; do
 done
 
 git commit -m "$(cat <<EOF
-`cat; echo`
+`cat|perl -npe 'BEGIN{$head1 = "Description: "; $head2 = " " x length($head1)} if(1..1) {s/^/$head1/} else {s/^/$head2/}'`
 
 Issue: $ticket
 

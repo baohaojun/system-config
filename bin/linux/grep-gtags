@@ -35,10 +35,12 @@ $approx_dir = substr($approx_dir, length($pwd));
 my $lookup_type = 1;
 my $lookup_needle = "hello_world";
 my $lookup_restrict_regexp;
+my $local_private_only = 0;
 
 GetOptions(
-           "e=s" => \$lookup_needle,
-          );
+    "e=s" => \$lookup_needle,
+    "o!" => \$local_private_only,
+    );
 
 sub do_cscope($$$$) {
     my ($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp) = @_;
@@ -68,8 +70,9 @@ sub do_cscope($$$$) {
     our $approx_dir;
     my $redo_gtags_done = 0;
 
-    if (not @matches) {
+    if (not @matches or $local_private_only) {
         system("grep-gtags-private-ok", @ARGV_save);
+        exit if $local_private_only;
     }
     for (sort {adistr($b, $approx_dir) <=> adistr($a, $approx_dir)} @matches) {
         m/(.*?) (.*?) (.*?) (.*)/;
