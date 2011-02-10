@@ -11,6 +11,6 @@ for (var x in document.links) {
     if (! y) 
         continue; 
 
-    y = y.replace(re, "file:///home/bhj/bin/linux/ext/android-sdk-linux_86/docs/");
+    y = y.replace(re, "file:///home/bhj/external/bin/linux/ext/android-sdk-linux_86/docs/");
     document.links[x].href = y;
 }
