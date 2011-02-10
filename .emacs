@@ -369,7 +369,6 @@
                         (my-grep-command "grep-gtags -e pat")
                         (current-prefix-arg 4))
                     (nodup-ring-insert cscope-marker-ring (point-marker))
-                    (setenv "GTAGS_START_FILE" (buffer-file-name (current-buffer)))
                     (call-interactively 'grep)
                     (setq grep-gtags-history grep-history))))
 

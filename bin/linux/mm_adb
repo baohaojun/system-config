@@ -5,7 +5,7 @@ if tty; then
     mm 2>&1|tee /tmp/$LOG
     adb_files=($(cat /tmp/$LOG|grep '^Install: '|perl -npe 's/.*: //'))
 else 
-    adb_files=($(cat |grep "${1:-^Copy:}"|perl -npe 's/'"${1:-^Copy}"': //'))
+    adb_files=($(cat |grep -v '.ogg$'|grep "${1:-^Copy:}"|perl -npe 's/'"${1:-^Copy}"': //'))
 fi
 for x in ${adb_files[@]}; do
     y=`echo $x|perl -npe 's,out/target/product/.*?/,/,'`

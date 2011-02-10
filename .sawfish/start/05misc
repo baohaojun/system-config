@@ -6,7 +6,7 @@ xmodmap ~/.bhj-Xmodmap
 if test -f ~/.offlineimaprc; then
     python2.6 ~/bin/windows/Imap4Monitor/Imap4Monitor.py&
 fi
-qq
+wine /home/bhj/bin/linux/ext/QQ/Bin/QQ.exe >/dev/null 2>&1 &
 ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
 
 (cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver)&

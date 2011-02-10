@@ -11,14 +11,7 @@ done
 if test "$SrcReadingDir" != "" -a "$SrcReadingDir" != ~/tmp/for-code-reading/"`pwd`";
 then
     UpSrcDir=${SrcReadingDir#~/tmp/for-code-reading/}
-
-    if tty >/dev/null && test "$IN_EMACS" != true
-    then
-        read -p "Do you want update code reading for $UpSrcDir? (Y/n): " ans
-    else
-        ans=Y
-    fi
-
+    read -p "Do you want update code reading for $UpSrcDir? (Y/n): " ans
     if test "$ans" = n -o "$ans" = N; then
         SrcReadingDir=~/tmp/for-code-reading/"`pwd`"
     else

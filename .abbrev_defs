@@ -29,7 +29,6 @@
     ("cs" "cstring" nil 35)
     ("dcs" "c_str()" nil 10)
     ("ld" "LOGD(\"%s: %d\", __FUNCTION__, __LINE__);" nil 0)
-    ("lk" "LOGW(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
     ("lw" "LOGW(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("mcs" "const CString&" nil 16)
     ("ms" "CString" nil 7)
@@ -41,18 +40,13 @@
   '(
     ("bpk" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("cpk" "printk(KERN_WARNING \"for continue %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 25)
-    ("ipk" "#include <linux/types.h>
-#include <linux/module.h>
-#include <linux/proc_fs.h>
-#include <linux/kernel.h>
-" nil 1)
     ("ld" "LOGD(\"%s: %d\\n\", __FUNCTION__, __LINE__);" nil 6)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
     ("ne" "NvOsDebugPrintf(\"Error: %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
     ("nk" "NvOsDebugPrintf(\"hello world %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 3)
     ("pe" "printk(KERN_WARNING \"hello error: %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("pf" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 177)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 173)
     ("pkh" "#include <linux/types.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>
@@ -131,10 +125,6 @@
 
 (define-abbrev-table 'fundamental-mode-abbrev-table
   '(
-    ("ch" "{toc:type=flat|separator=pipe|maxLevel=3}
-
-{numberedheadings}
-{numberedheadings}" nil 0)
     ("xdef" "^#def.*" nil 3)
     ("xfun" "^[a-zA-Z_].*" nil 0)
    ))
@@ -171,7 +161,6 @@
   '(
     ("le" "Log.e(TAG, \"" nil 17)
     ("lv" "Slog.v(TAG, String.format(\"" nil 1)
-    ("pk" "Log.i(\"Bhj\", \"hello world\");" nil 1)
     ("string" "String" nil 18)
     ("sv" "System.out.print(String.format(\"" nil 0)
    ))
