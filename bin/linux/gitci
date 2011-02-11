@@ -24,7 +24,7 @@ git commit -m "$(cat <<EOF
 
 Issue: $ticket
 
-Reviewed-by: ${reviewer[@]}
+`for x in ${reviewer[@]}; do echo  Reviewed-by: $x; done`
 EOF
 )"
 git log -1|jira-add-comment $ticket

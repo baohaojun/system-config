@@ -4,6 +4,12 @@ use strict;
 my ($myfile) = ($ARGV[0]);
 my $remote_ip = $ENV{"REMOTEIP"};
 
+my @emacsclient = ('emacsclient', '-n');
+
+if ($0 =~ m,/?edit-wait$,) {
+    @emacsclient = ('emacsclient');
+}
+
 sub get_smb_file($$) {
   my ($remote, $file) = @_;
 
@@ -52,11 +58,11 @@ sub edit_1($)
 
       $file = shell_quote($file);
       chomp($file = qx(readlink -f $file));
-      return ('emacsclient', '-n', get_emacs_file_name($file));
+      return (@emacsclient, get_emacs_file_name($file));
 
     } elsif ($file =~ m,smb://(.*?)(/.*),) {
 
-      return 'emacsclient', '-n', get_smb_file($1, $2);
+      return @emacsclient, get_smb_file($1, $2);
 
     } else {
 
@@ -73,7 +79,7 @@ sub edit_1($)
       }
       $file = shell_quote($file);
       chomp($file = qx(readlink -f $file));
-      return ('emacsclient', '-n', "+$line", get_emacs_file_name($file));
+      return (@emacsclient, "+$line", get_emacs_file_name($file));
     }
   }
 
