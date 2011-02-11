@@ -4,7 +4,7 @@ issue=$1
 shift
 
 if test "$#" = 0; then
-   jira --action addComment --issue "$issue" --comment "`cat`"
+   jira --action addComment --issue "$issue" --comment "`get-stdin`"
 else 
     jira --action addComment --issue "$issue" --comment "$(echo "$@")"
 fi

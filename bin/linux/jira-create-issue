@@ -12,7 +12,7 @@ shift
 tmp=/tmp/`basename $0`.$$
 
 if test "$#" = 0; then
-    jira_create_issue_prefix "$summary" --description "`cat`"
+    jira_create_issue_prefix "$summary" --description "`get-stdin`"
 else 
     jira_create_issue_prefix "$summary" --description "$(echo "$@")"
 fi > $tmp
