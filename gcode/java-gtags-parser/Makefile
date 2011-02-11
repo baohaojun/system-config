@@ -2,6 +2,9 @@ all: gtagsAntlrJavaParser.class JavaLexer.class JavaParser.class private_ok/Java
 	jar cf ~/bin/linux/ext/`uname -m`/gtagsAntlrJavaParser.jar *.class
 	cd private_ok && jar cf ~/bin/linux/ext/`uname -m`/gtagsAntlrJavaParserPrivateOk.jar *.class
 
+clean:
+	git clean -xfd
+
 JavaLexer.java JavaParser.java : Java.g
 	java org.antlr.Tool Java.g
 
