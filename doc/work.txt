@@ -831,3 +831,4 @@ adb shell busybox route add default gw 192.168.56.1
 dpkg --get-selections |grep virtualbox|perl -npe 's/install$/hold/'
 
 insmod /system/lib/hw/wlan/bcm4329.ko "firmware_path=/system/lib/hw/wlan/fw_bcm4329.bin nvram_path=/system/lib/hw/wlan/nvram.txt iface_name=wlan"
+adb shell am start -a android.intent.action.MAIN -n com.letou.autotest/.app.LcdTest
