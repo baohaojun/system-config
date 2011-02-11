@@ -27,3 +27,4 @@ Issue: $ticket
 Reviewed-by: ${reviewer[@]}
 EOF
 )"
+git log -1|jira-add-comment $ticket
