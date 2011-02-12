@@ -20,7 +20,7 @@ while test $# -gt 0; do
 done
 
 git commit -m "$(cat <<EOF
-`cat; echo`
+`get-stdin; echo`
 
 Issue: $ticket
 
