@@ -832,3 +832,18 @@ dpkg --get-selections |grep virtualbox|perl -npe 's/install$/hold/'
 
 insmod /system/lib/hw/wlan/bcm4329.ko "firmware_path=/system/lib/hw/wlan/fw_bcm4329.bin nvram_path=/system/lib/hw/wlan/nvram.txt iface_name=wlan"
 adb shell am start -a android.intent.action.MAIN -n com.letou.autotest/.app.LcdTest
+
+while true; do adb shell date -s 20090325.123456 ; adb shell date -s 20110325.123456 ; 
+busybox usleep 300000;
+TZ='GST-0' adb shell i2cdump -y -r 0xc6-0xca 4 0x34 b|tail -n 1|perl -ne '
+BEGIN {
+    $re="([0-9a-f][0-9a-f]) " x 5;
+} 
+if (m/^c0:\s*$re/) {
+    $sec = eval("0x$1$2$3$4$5")/1024; 
+    use POSIX; 
+    print "i2c: " . ctime($sec + mktime(0, 0, 8, 1, 0, 109, 0, 0, 0));
+}'|tee 1.txt; (echo -n 'adb: '; adb shell date|sed -e 's/CST //')|tee 2.txt; for x in {1,2}.txt; do perl -npe 's/^.*?://' -i $x; done
+dos2unix *.txt
+diff 1.txt 2.txt ||break;
+done
