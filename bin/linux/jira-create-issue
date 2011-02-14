@@ -19,5 +19,5 @@ fi > $tmp
 cd ~/jira-issues/
 
 cat $tmp
-touch `cat $tmp|pn 2`\:"$summary"
+touch `cat $tmp|pn 2`\:"$(echo "$summary"|perl -npe 's/.*: //; s:(/|%):sprintf "%%%02x", ord($1):ge')"
 
