@@ -361,3 +361,19 @@ file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-po
         { 640, 480, 24                        , 0x112},
         ...
     =>  { 1024, 600, 16                        , 0x114},
+
+****************
+下面这个值是odmdata里的，跟bct也有关系。
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query.c:763:         PowerStateInfo.LowestPowerState =  ((LPStateSelection != TEGRA_DEVKIT_BCT_CUSTOPT_0_LPSTATE_LP1)?
+        /**
+         * Gets the lowest soc power state supported by the hardware
+         *
+         * @returns information about the SocPowerState
+         */
+        const NvOdmSocPowerStateInfo* NvOdmQueryLowestSocPowerState(void)
+        {
+            ...
+            {
+                ...
+    =>          PowerStateInfo.LowestPowerState =  ((LPStateSelection != TEGRA_DEVKIT_BCT_CUSTOPT_0_LPSTATE_LP1)?
