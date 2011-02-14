@@ -198,13 +198,13 @@ function _adb()
             ;;
         pull|push|shell)
             COMPREPLY=( $(
-                    adb shell bash -c "compgen -f ""$(printf %q "${cur}")"
+                    (IFS=$'\t\n'; for x in `adb shell adbcompgen.sh "${cur}"|tr -d '\r'`; do if test -e "$x"; then true; else echo "$x"; fi; done)
                     compgen -f "${cur}") )
             return 0
             ;;            
     esac
 }
-complete -o default -F _adb adb
+complete -o default -o filenames -o nospace -F _adb adb
 
 function _fastboot()
 {
