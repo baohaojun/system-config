@@ -6456,7 +6456,7 @@ following symbols;
 		       ;; Padding spaces before icon placed at right.
 		       ;; FIXME: matching against `:' is too ad-hoc.
 		       (string-match "\\(\\`.*:\\)" str)
-		       (let ((face (get-text-property 0 'face str))
+		       (let ((face (get-text-property (1- (length str)) 'face str))
 			     (repl (format (format "%%-%ds" col) (match-string 1 str))))
 			 (twittering-decorate-zebra-background 
 			  (replace-match repl nil nil str) face nil)))
