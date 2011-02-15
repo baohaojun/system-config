@@ -3879,32 +3879,41 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
 ;;;; URIs related to a tweet
 ;;;;
 
-;; TODO: (xwl) cleanup this.
-(defun twittering-get-status-url (username &optional id status)
+;; TODO: (xwl) cleanup this, remove optional STATUS argument.
+(defun twittering-get-status-url (username &optional id)
   "Generate a URL of a user or a specific status."
-  (funcall (twittering-lookup-service-method-table 'status-url)
-	   username
-	   id
-	   status))
+  (funcall (twittering-lookup-service-method-table 'status-url) username id))
 
-(defun twittering-get-status-url-twitter (username &optional id status)
+(defun twittering-get-status-url-twitter (username &optional id)
   "Generate status URL for Twitter."
   (if id
       (format "http://%s/%s/status/%s" (twittering-lookup-service-method-table 'web) username id)
     (format "http://%s/%s" (twittering-lookup-service-method-table 'web) username)))
 
-(defun twittering-get-status-url-statusnet (username &optional id status)
+(defun twittering-get-status-url-statusnet (username &optional id)
   "Generate status URL for StatusNet."
   (if id
-      (format "http://%s/%s/notice/%s" (twittering-lookup-service-method-table 'web) (twittering-lookup-service-method-table 'web-prefix) id)
-    (format "http://%s/%s/%s" (twittering-lookup-service-method-table 'web) (twittering-lookup-service-method-table 'web-prefix) username)))
+      (format "http://%s/%s/notice/%s" 
+	      (twittering-lookup-service-method-table 'web)
+	      (twittering-lookup-service-method-table 'web-prefix)
+	      id)
+    (format "http://%s/%s/%s"
+	    (twittering-lookup-service-method-table 'web)
+	    (twittering-lookup-service-method-table 'web-prefix)
+	    username)))
 
-(defun twittering-get-status-url-sina (username &optional id status)
+(defun twittering-get-status-url-sina (username &optional id)
   "Generate status URL for Sina."
-  (format "http://%s/%s" 
-	  (twittering-lookup-service-method-table 'web) 
-	  ;;(assqref 'user-id status)
-	  username))
+  (if id
+      ;; (twittering-get-simple-sync 'query-mid
+      ;; 				  `((username . ,username)
+      ;; 				    (id . ,id)))
+      (format "http://api.t.sina.com.cn/%s/statuses/%s?s=6cm7D0"
+	      username
+	      id)
+    (format "http://%s/%s" 
+	    (twittering-lookup-service-method-table 'web) 
+	    username)))
 
 (defun twittering-get-search-url (query-string)
   "Generate a URL for searching QUERY-STRING."
@@ -4396,6 +4405,38 @@ send-direct-message -- Send a direct message.
 			    nil
 			    additional-info
 			    sentinel))
+      ;; mid<->id
+      ;;   http://api.t.sina.com.cn/queryid.json?mid=5KD0TZiyL24&isBase62=1&type=1
+      ;;   http://api.t.sina.com.cn/querymid.json?id=6401236707&type=1
+      ;; the other way (id->mid) 
+      ;;   http://api.t.sina.com.cn/$uid/statuses/$tid?s=6cm7D0"
+
+      ;; ((get-tweet-url)			; FIXME: doesn't work??
+      ;;  (twittering-http-get (twittering-lookup-service-method-table 'api)
+      ;; 			    (twittering-api-path username "/statuses/" id)
+      ;; 			    nil 
+      ;; 			    nil 
+      ;; 			    additional-info 
+      ;; 			    sentinel))
+
+      ;; ((query-mid)
+      ;;  (twittering-http-get (twittering-lookup-service-method-table 'api)
+      ;; 			    (twittering-api-path "querymid")
+      ;; 			    `(("id" . ,id)
+      ;; 			      ("type" . "1"))
+      ;; 			    nil 
+      ;; 			    additional-info 
+      ;; 			    sentinel))
+      ;; ((query-id)
+      ;;  (twittering-http-get (twittering-lookup-service-method-table 'api)
+      ;; 			    (twittering-api-path "id")
+      ;; 			    `(("id" . ,id)
+      ;; 			      ("type" . "1")
+      ;; 			      ("isBase62" . "1"))
+      ;; 			    nil 
+      ;; 			    additional-info 
+      ;; 			    sentinel))
+
       )))
 
 ;;;;
@@ -4955,7 +4996,7 @@ If `twittering-password' is nil, read it from the minibuffer."
 		     `(mouse-face 
 		       highlight
 		       keymap ,twittering-mode-on-uri-map
-		       uri ,(twittering-get-status-url (car id-names) nil status)
+		       uri ,(twittering-get-status-url (car id-names))
 		       screen-name-in-text ,user-screen-name
 		       goto-spec ,(twittering-string-to-timeline-spec (car id-names))
 		       face twittering-username-face)
@@ -5020,8 +5061,7 @@ If `twittering-password' is nil, read it from the minibuffer."
 			   prop `(mouse-face
 				  highlight
 				  keymap ,twittering-mode-on-uri-map
-				  uri ,(twittering-get-status-url 
-					listname nil status)
+				  uri ,(twittering-get-status-url listname)
 				  goto-spec
 				  ,(twittering-string-to-timeline-spec
 				    listname)
@@ -5037,7 +5077,7 @@ If `twittering-password' is nil, read it from the minibuffer."
 					   ;; at background.
 					   (concat "http://t.sina.com.cn/search/user.php?search="
 						   screenname)
-					 (twittering-get-status-url screenname nil status))
+					 (twittering-get-status-url screenname))
 				  screen-name-in-text ,screenname
 				  goto-spec
 				  ,(twittering-string-to-timeline-spec
@@ -5712,7 +5752,12 @@ image are displayed."
 		    " ")))
 	    ((counts)			; Assume just one ID.
 	     (setq ret `(,(remove nil (assq 'comments (assqref 'count (car xmltree))))
-			 ,(remove nil (assq 'rt       (assqref 'count (car xmltree))))))))
+			 ,(remove nil (assq 'rt       (assqref 'count (car xmltree)))))))
+
+	    ;; ((query-mid)
+	    ;;  (setq ret (assqref 'mid (car xmltree))))
+
+	    )
 
 	  (puthash `(,(assqref 'username args) ,(assqref 'method args))
 		   (or ret "")
@@ -6229,8 +6274,6 @@ following symbols;
 		(assqref 'user-profile-image-url ,status-sym)))))
 	 (twittering-make-icon-string nil nil url))))
     ("j" . (assqref 'user-id ,status-sym))
-    ("g" . (twittering-make-passed-time-string 
-	    nil nil (assqref 'created-at ,status-sym) "%g"))
     ("L" .
      (let ((location (or (assqref 'user-location ,status-sym) "")))
        (unless (string= "" location)
@@ -6251,11 +6294,11 @@ following symbols;
 	       (cond
 		(recipient-screen-name
 		 (cons (format "sent to %s" recipient-screen-name)
-		       (twittering-get-status-url recipient-screen-name nil ,status-sym)))
+		       (twittering-get-status-url recipient-screen-name)))
 		((and (not (string= "" reply-id))
 		      (not (string= "" reply-name)))
 		 (cons (format "in reply to %s" reply-name)
-		       (twittering-get-status-url reply-name reply-id ,status-sym)))
+		       (twittering-get-status-url reply-name reply-id)))
 		(t nil)))
 	      (str (car pair))
 	      (url (cdr pair))
@@ -6295,9 +6338,11 @@ following symbols;
 	   (regexp (concat "\\`\\(" (mapconcat 'car table "\\|") "\\)"))
 	   (case-fold-search nil))
       (cond
-       ((string-match "\\`@\\({\\([^}]*\\)}\\)?" following)
-	(let ((time-format (or (match-string 2 following)
-			       "%I:%M %p %B %d, %Y"))
+       ((string-match "\\`\\(@\\|g\\)\\({\\([^}]*\\)}\\)?" following)
+	(let ((time-format (if (string= (match-string 1 following) "g")
+			       "%g"
+			     (or (match-string 3 following)
+				 "%I:%M %p %B %d, %Y")))
 	      (rest (substring following (match-end 0))))
 	  `((let* ((created-at-str (assqref 'created-at ,status-sym))
 		   ;; (created-at
@@ -6305,10 +6350,9 @@ following symbols;
 		   ;; 	   (parse-time-string created-at-str)))
 		   (url
 		    (twittering-get-status-url
-		     (assqref 'user-screen-name ,status-sym)
+		     (assqref 'user-id ,status-sym)
 		     (or (assqref 'source-id ,status-sym)
-			 (assqref 'id ,status-sym))
-		     ,status-sym))
+			 (assqref 'id ,status-sym))))
 		   (properties
 		    (list 'mouse-face 'highlight 'face 'twittering-uri-face
 			  'keymap twittering-mode-on-uri-map
