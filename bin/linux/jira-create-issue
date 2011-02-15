@@ -4,7 +4,7 @@ set -e
 summary=$1
 
 function jira_create_issue_prefix() {
-    jira -a createIssue --type Bug --assignee hjbao\:\ Haojun\ Bao  --project CINEMA --summary "$@"
+    jira -a createIssue --type Bug --assignee hjbao\:\ Haojun\ Bao  --project CINEMA --components OS --summary "$@"
 }
 
 shift

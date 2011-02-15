@@ -204,7 +204,20 @@ function _adb()
             ;;            
     esac
 }
+
 complete -o default -o filenames -o nospace -F _adb adb
+
+function _adb_push()
+{
+    local cur
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    COMPREPLY=( $(
+            (IFS=$'\t\n'; for x in `adb shell adbcompgen.sh "${cur}"|tr -d '\r'`; do if test -e "$x"; then true; else echo "$x"; fi; done)
+            compgen -f "${cur}") )
+    return 0
+}
+
+complete -o default -o filenames -o nospace -F _adb_push adb_push
 
 function _fastboot()
 {
