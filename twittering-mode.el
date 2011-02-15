@@ -4976,12 +4976,18 @@ If `twittering-password' is nil, read it from the minibuffer."
     (let ((pos 0)
 	  (regexp-str
 	   (concat twittering-regexp-hash 
-		   "\\([a-zA-Z0-9_-]+\\)\\|"
+		   (if (eq twittering-service-method 'sina)
+		       (format "\\([^[:space:]%s]+%s\\)\\|" 
+			       twittering-regexp-hash
+			       twittering-regexp-hash)
+		     "\\([a-zA-Z0-9_-]+\\)\\|")
 		   twittering-regexp-atmark
 		   "\\([a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+\\)\\|"
 		   twittering-regexp-atmark
 		   (if (eq twittering-service-method 'sina)
-		       "\\([^:[:space:]@]+\\)\\|"
+		       ;; Exclude some common chinese punctuations.
+		       (format "\\([^:,.?!：)）、，。？！…[:space:]%s]+\\)\\|"
+			       twittering-regexp-atmark)
 		     "\\([a-zA-Z0-9_-]+\\)\\|")
 		   twittering-regexp-uri)))
       (while
