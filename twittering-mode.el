@@ -5170,6 +5170,8 @@ If `twittering-password' is nil, read it from the minibuffer."
 
     ;; `((text . ,text)
     ;;   ,@(assq-delete-all 'text status))
+
+    status
     ))
 
 (defvar twittering-emotions-phrase-url-alist nil)
@@ -6502,15 +6504,10 @@ following symbols;
     (cond
      ((null rest)
       `(lambda (status prefix)
-	 (let* ((username  (assqref 'user-screen-name status))
-		(id	   (assqref 'id status))
-		(source-id (assqref 'source-id status))
-		(text	   (assqref 'text status))
-		(common-properties (twittering-make-common-properties status))
+	 (let* ((common-properties (twittering-make-common-properties status))
 		(col (and (twittering-my-status-p status) twittering-my-fill-column))
-		(str
-		 (let ((twittering-fill-column (or col twittering-fill-column)))
-		   (concat ,@body)))
+		(str (let ((twittering-fill-column (or col twittering-fill-column)))
+		       (concat ,@body)))
 		(str
 		 (if col
 		     (progn
@@ -6522,9 +6519,7 @@ following symbols;
 			 (twittering-decorate-zebra-background 
 			  (replace-match repl nil nil str) face nil)))
 		   str))
-		(str (if prefix
-			 (replace-regexp-in-string "^" prefix str)
-		       str))
+		(str (if prefix (replace-regexp-in-string "^" prefix str) str))
 		(next (next-single-property-change 0 'need-to-be-updated str))
 		(need-to-be-updated
 		 (or (get-text-property 0 'need-to-be-updated str)
