@@ -6587,7 +6587,9 @@ variable `twittering-status-format'."
 	 (time-string
 	  (cond
 	   ((string= time-format "%g")
-	    (require 'gnus-util)
+	    (if (< emacs-major-version 24)
+		(require 'gnus-util)
+	      (require 'gnus-sum))
 	    (gnus-user-date created-at-str))
 
 	   ((< secs 5) "less than 5 seconds ago")
