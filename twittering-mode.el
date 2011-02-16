@@ -518,8 +518,6 @@ Following methods are supported:
   'twitter   -- http://www.twitter.com
   'statusnet -- http://status.net
   'sina      -- http://t.sina.com.cn")
-;; TODO+ maybe better put it in a function.
-(make-variable-buffer-local 'twittering-service-method)
 
 (defcustom twittering-service-method-table
   `((twitter (api "api.twitter.com")
@@ -3074,8 +3072,8 @@ this variable specifies. The unit is second.")
     (if (null twittering-internal-url-queue)
 	(setq twittering-url-request-resolving-p nil)
       (let* ((url (car twittering-internal-url-queue))
-	     (coding-system-for-read 'binary) ; TODO, delete ok?
-	     (require-final-newline nil)      ; TODO, delete ok?
+	     ;; (coding-system-for-read 'binary) ; TODO, delete ok?
+	     ;; (require-final-newline nil)      ; TODO, delete ok?
 	     (request (twittering-make-http-request-from-uri "GET" nil url))
 	     (additional-info `((uri . ,url))))
 	(twittering-send-http-request
@@ -3435,7 +3433,8 @@ Return cons of the spec and the rest string."
             (rest (substring str (match-end 0))))
         `(((,service) home) . ,rest)))
 
-     ;; TODO: disable this? (xwl)
+     ;; Disable this as @ is used for separating timeline name and service
+     ;; name. (xwl)
      ;; ((string-match (concat "^" twittering-regexp-atmark) str)
      ;;  `((replies) . ,(substring str (match-end 0))))
 
@@ -3879,7 +3878,6 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
 ;;;; URIs related to a tweet
 ;;;;
 
-;; TODO: (xwl) cleanup this, remove optional STATUS argument.
 (defun twittering-get-status-url (username &optional id)
   "Generate a URL of a user or a specific status."
   (funcall (twittering-lookup-service-method-table 'status-url) username id))
@@ -4147,7 +4145,8 @@ send-direct-message -- Send a direct message.
   	  `((timeline-spec . ,(twittering-current-timeline-spec))
   	    (timeline-spec-string . ,(twittering-current-timeline-spec-string)))))
 
-  (let ((spec (assqref 'timeline-spec args-alist))
+  (let ((api-host (twittering-lookup-service-method-table 'api))
+	(spec (assqref 'timeline-spec args-alist))
 	(id (assqref 'id args-alist))
 	(username (assqref 'username args-alist))
 	(sentinel (assqref 'sentinel args-alist))
@@ -4216,7 +4215,7 @@ send-direct-message -- Send a direct message.
 		 
 		 (search . "search")))
 	      (host (cond ((eq spec-type 'search) (twittering-lookup-service-method-table 'search))
-			  (t (twittering-lookup-service-method-table 'api))))
+			  (t api-host)))
 	      (method
 	       (cond
 		((eq spec-type 'user)
@@ -4250,34 +4249,34 @@ send-direct-message -- Send a direct message.
       ;; List methods
       ((get-list-index)			; Get list names.
        (let ((clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
-	 (twittering-http-get (twittering-lookup-service-method-table 'api)
+	 (twittering-http-get api-host
 			      (twittering-api-path username "/lists")
 			      t nil additional-info sentinel clean-up-sentinel)))
       ((get-list-subscriptions)	
-       (twittering-http-get (twittering-lookup-service-method-table 'api)
+       (twittering-http-get api-host
 			    (twittering-api-path username "/lists/subscriptions")
 			    t nil additional-info sentinel))
 
       ((get-list-memberships)	
-       (twittering-http-get (twittering-lookup-service-method-table 'api)
+       (twittering-http-get api-host
 			    (twittering-api-path username "/lists/memberships")
 			    t nil additional-info sentinel)) 
 
       ;; Friendship Methods
       ((create-friendships)
-       (twittering-http-post (twittering-lookup-service-method-table 'api)
+       (twittering-http-post api-host
 			     (twittering-api-path "friendships/create")
 			     `(("screen_name" . ,username))
 			     nil
 			     additional-info))
       ((destroy-friendships)
-       (twittering-http-post (twittering-lookup-service-method-table 'api)
+       (twittering-http-post api-host
 			     (twittering-api-path "friendships/destroy")
 			     `(("screen_name" . ,username))
 			     nil
 			     additional-info))
       ((show-friendships)
-       (twittering-http-get (twittering-lookup-service-method-table 'api)
+       (twittering-http-get api-host
 			    (twittering-api-path "friendships/show")
 			    `(("target_screen_name" . ,username))
 			    nil
@@ -4286,22 +4285,22 @@ send-direct-message -- Send a direct message.
        
       ;; Favorite Methods
       ((create-favorites)
-       (twittering-http-post (twittering-lookup-service-method-table 'api)
+       (twittering-http-post api-host
 			     (twittering-api-path "favorites/create/" id)
 			     nil nil additional-info))
       ((destroy-favorites)
-       (twittering-http-post (twittering-lookup-service-method-table 'api)
+       (twittering-http-post api-host
 			     (twittering-api-path "favorites/destroy/" id)
 			     nil nil additional-info))
 
       ;; List Subscribers Methods
       ((subscribe-list)
-       (twittering-http-post (twittering-lookup-service-method-table 'api)
+       (twittering-http-post api-host
 			     (twittering-api-path 
 			      (apply 'format "%s/%s/subscribers" (cddr spec)))
 			     nil nil additional-info))
       ((unsubscribe-list)
-       (twittering-http-post (twittering-lookup-service-method-table 'api)
+       (twittering-http-post api-host
 			     (twittering-api-path 
 			      (apply 'format "%s/%s/subscribers" (cddr spec)))
 			     '(("_method" . "DELETE"))
@@ -4309,13 +4308,13 @@ send-direct-message -- Send a direct message.
 
       ;; List Members Methods
       ((add-list-members)
-       (twittering-http-post (twittering-lookup-service-method-table 'api) 
+       (twittering-http-post api-host 
 			     (twittering-api-path 
 			      (apply 'format "%s/%s/members" (cddr spec)))
 			     `(("id" . ,id))
 			     nil additional-info))
       ((delete-list-members)
-       (twittering-http-post (twittering-lookup-service-method-table 'api) 
+       (twittering-http-post api-host 
 			     (twittering-api-path 
 			      (apply 'format "%s/%s/members" (cddr spec)))
 			     `(("id" . ,id)
@@ -4347,18 +4346,18 @@ send-direct-message -- Send a direct message.
 			  (t		; comment
 			   `(("id" . ,id))))
 		       `(("in_reply_to_status_id" . ,id)))))))
-         (twittering-http-post (twittering-lookup-service-method-table 'api)
+         (twittering-http-post api-host
                                (twittering-api-path "statuses/" 
 						    (if comment? "comment" "update"))
                                parameters
                                nil 
 			       additional-info)))
       ((destroy-status)
-       (twittering-http-post (twittering-lookup-service-method-table 'api)
+       (twittering-http-post api-host
 			     (twittering-api-path "statuses/destroy" id)
 			     nil nil additional-info))
       ((retweet)
-       (twittering-http-post (twittering-lookup-service-method-table 'api)
+       (twittering-http-post api-host
 			     (twittering-api-path "statuses/retweet/" id)
 			     nil 
 			     nil
@@ -4367,14 +4366,14 @@ send-direct-message -- Send a direct message.
       ;; Account Resources
       ((verify-credentials)		; Verify the account.
        (let ((clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
-	 (twittering-http-get (twittering-lookup-service-method-table 'api)
+	 (twittering-http-get api-host
 			      (twittering-api-path "account/verify_credentials")
 			      nil nil additional-info sentinel clean-up-sentinel)))
 
       ((update-profile-image)
        (let* ((image (assqref 'image args-alist))
 	      (image-type (image-type-from-file-header image)))
-	 (twittering-http-post (twittering-lookup-service-method-table 'api)
+	 (twittering-http-post api-host
 			       (twittering-api-path "account/update_profile_image")  
 			       `(("image" . ,(format "@%s;type=image/%s" image image-type)))
 			       nil additional-info)))
@@ -4384,7 +4383,7 @@ send-direct-message -- Send a direct message.
        (let ((parameters
 	      `(("screen_name" . ,(assqref 'username args-alist))
 		("text" . ,(assqref 'status args-alist)))))
-	 (twittering-http-post (twittering-lookup-service-method-table 'api)
+	 (twittering-http-post api-host
 			       (twittering-api-path "direct_messages/new")
 			       parameters
 			       nil 
@@ -4392,19 +4391,28 @@ send-direct-message -- Send a direct message.
       
       ;; Tweet Methods
       ((show)
-       (twittering-http-get (twittering-lookup-service-method-table 'api)
+       (twittering-http-get api-host
 			    (twittering-api-path "statuses/show/" id)
 			    nil nil additional-info))
 
       ;; sina specific methods
       ((counts)
-       (twittering-http-get (twittering-lookup-service-method-table 'api)
+       (twittering-http-get api-host
 			    (twittering-api-path "statuses/counts")
 			    ;; USERNAME treated as IDS here
 			    `(("ids" . ,username))
 			    nil
 			    additional-info
 			    sentinel))
+
+      ((emotions)
+       (twittering-http-get api-host
+			    (twittering-api-path "emotions")
+			    nil
+			    nil 
+			    additional-info 
+			    sentinel))
+
       ;; mid<->id
       ;;   http://api.t.sina.com.cn/queryid.json?mid=5KD0TZiyL24&isBase62=1&type=1
       ;;   http://api.t.sina.com.cn/querymid.json?id=6401236707&type=1
@@ -4933,6 +4941,15 @@ If `twittering-password' is nil, read it from the minibuffer."
 			     ;;   "")
 			     ))))
 
+      ;; (let ((str (if twittering-icon-mode
+      ;; 		     (let ((thumbnail-pic (assqref 'thumbnail-pic s))
+      ;; 			   (bmiddle-pic (assqref 'bmiddle-pic s)))
+      ;; 		       (when thumbnail-pic
+      ;; 			 (twittering-toggle-thumbnail thumbnail-pic bmiddle-pic t)))
+      ;; 		   (assqref 'original-pic s))))
+      ;; 	(when str
+      ;; 	  (setq text (concat text "\n" str))))
+
       (twittering-make-clickable-status-datum
        (remove 
 	nil
@@ -5121,7 +5138,41 @@ If `twittering-password' is nil, read it from the minibuffer."
 			source ,source)
 	   source)
 	  (add-to-list 'status (cons 'source source)))))
-    status))
+
+    ;; (sina) show emoticons
+
+    ;; TODO, add need-to-be-updated to 'text, we need a way to check and run
+    ;; those properties inside the string.
+    ;; (let ((start 0))
+    ;;   (while (string-match "\\(\\[\\cc+\\]\\)" text 0)
+    ;; 	(when (and (eq twittering-service-method 'sina)
+    ;; 		   (not twittering-emotions-phrase-url-alist))
+    ;; 	  (twittering-get-simple-sync 'emotions nil))
+    ;; 	(put-text-property (match-beginning 1) 
+    ;; 			   (match-end 1)
+    ;; 			   'need-to-be-updated
+    ;; 			   `(twittering-make-original-icon-string
+    ;; 			     ,(assocref (match-string 1 text)
+    ;; 					twittering-emotions-phrase-url-alist))
+    ;; 			   text)
+    ;; 	(setq start (match-end 1))))
+
+    status
+
+    ;;   (setq text
+    ;; 	    (replace-match (twittering-make-original-icon-string 
+    ;; 			    nil nil (assocref 
+    ;; 				     (match-string 1 text)
+    ;; 				     twittering-emotions-phrase-url-alist))
+    ;; 			   nil
+    ;; 			   nil
+    ;; 			   text)))
+
+    ;; `((text . ,text)
+    ;;   ,@(assq-delete-all 'text status))
+    ))
+
+(defvar twittering-emotions-phrase-url-alist nil)
 
 (defun twittering-xmltree-to-status (xmltree)
   (let ((type (caar xmltree)))
@@ -5719,7 +5770,7 @@ image are displayed."
   (let ((status-line (assqref 'status-line header-info))
 	(status-code (assqref 'status-code header-info))
 	ret mes)
-    ;; TODO, case-string
+    (twittering-html-decode-buffer)
     (cond 
      ((string= status-code "200")
       (let ((xmltree
@@ -5753,6 +5804,16 @@ image are displayed."
 	    ((counts)			; Assume just one ID.
 	     (setq ret `(,(remove nil (assq 'comments (assqref 'count (car xmltree))))
 			 ,(remove nil (assq 'rt       (assqref 'count (car xmltree)))))))
+
+	    ((emotions)
+	     (setq ret
+		   (remove nil
+			   (mapcar
+			    (lambda (e)
+			      (when (and (consp e) (eq 'emotion (car e)))
+				`(,(car (last (assq 'phrase e))) 
+				  . ,(car (last (assq 'url e))))))
+			    (car xmltree)))))
 
 	    ;; ((query-mid)
 	    ;;  (setq ret (assqref 'mid (car xmltree))))
@@ -7505,7 +7566,7 @@ been initialized yet."
   (make-local-variable 'font-lock-global-modes)
   (setq font-lock-global-modes '(not twittering-mode))
 
-  ;; (make-local-variable 'twittering-service-method)
+  (make-local-variable 'twittering-service-method)
   (make-local-variable 'twittering-timeline-spec)
   (make-local-variable 'twittering-timeline-spec-string)
   (make-local-variable 'twittering-active-mode)
@@ -7961,6 +8022,7 @@ string.")
     s))
 
 (defun twittering-get-simple-sync (method args-alist)
+  (message "Getting %S..." method)
   (setq twittering-get-simple-retrieved nil)
   (let ((proc (twittering-get-simple-1 method args-alist)))
     (when proc
@@ -7969,11 +8031,12 @@ string.")
 		    (not (memq (process-status proc)
 			       '(exit signal closed failed nil)))
 		    ;; Wait just for 3 seconds. FIXME: why it would fail sometimes?
-		    (< (cadr (time-subtract (current-time) start)) 3))
+		    (< (cadr (time-subtract (current-time) start)) 30)
+		    )
 	  (sit-for 0.1)))))
   (unless twittering-get-simple-retrieved
-    (message "twittering-get-simple-sync failed")
-    (setq twittering-get-simple-retrieved 'error))
+    (setq twittering-get-simple-retrieved 'error)
+    (error "twittering-get-simple-sync failed"))
   (case method
     ((get-list-index get-list-subscriptions get-list-memberships)
      (cond
@@ -7991,7 +8054,13 @@ string.")
       ((listp twittering-get-simple-retrieved)
        twittering-get-simple-retrieved)))
     ((show-friendships)
-     twittering-get-simple-retrieved)))
+     twittering-get-simple-retrieved)
+    ((emotions)
+     (setq twittering-emotions-phrase-url-alist
+	   twittering-get-simple-retrieved))
+    (t
+     twittering-get-simple-retrieved)
+    (message "Getting %S...done" method)))
 
 (defun twittering-get-simple-1 (method args-alist)
   (twittering-call-api
