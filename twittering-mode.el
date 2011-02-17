@@ -5143,11 +5143,13 @@ If `twittering-password' is nil, read it from the minibuffer."
 
     ;; TODO, add need-to-be-updated to 'text, we need a way to check and run
     ;; those properties inside the string.
+
     ;; (let ((start 0))
     ;;   (while (string-match "\\(\\[\\cc+\\]\\)" text 0)
     ;; 	(when (and (eq twittering-service-method 'sina)
     ;; 		   (not twittering-emotions-phrase-url-alist))
-    ;; 	  (twittering-get-simple-sync 'emotions nil))
+    ;; 	  (let ((twittering-service-method 'sina))
+    ;; 	    (twittering-get-simple-sync 'emotions nil)))
     ;; 	(put-text-property (match-beginning 1) 
     ;; 			   (match-end 1)
     ;; 			   'need-to-be-updated
@@ -5157,16 +5159,14 @@ If `twittering-password' is nil, read it from the minibuffer."
     ;; 			   text)
     ;; 	(setq start (match-end 1))))
 
-    status
-
-    ;;   (setq text
-    ;; 	    (replace-match (twittering-make-original-icon-string 
-    ;; 			    nil nil (assocref 
-    ;; 				     (match-string 1 text)
-    ;; 				     twittering-emotions-phrase-url-alist))
-    ;; 			   nil
-    ;; 			   nil
-    ;; 			   text)))
+    ;; (setq text
+    ;; 	  (replace-match (twittering-make-original-icon-string 
+    ;; 			  nil nil (assocref 
+    ;; 				   (match-string 1 text)
+    ;; 				   twittering-emotions-phrase-url-alist))
+    ;; 			 nil
+    ;; 			 nil
+    ;; 			 text))
 
     ;; `((text . ,text)
     ;;   ,@(assq-delete-all 'text status))
@@ -6411,11 +6411,12 @@ following symbols;
 		   ;; (created-at
 		   ;;  (apply 'encode-time
 		   ;; 	   (parse-time-string created-at-str)))
+		   (in-reply-to-status (assqref 'in-reply-to-status ,status-sym))
 		   (url
 		    (twittering-get-status-url
-		     (assqref 'user-id ,status-sym)
+		     (assqref 'user-id (or in-reply-to-status ,status-sym))
 		     (or (assqref 'source-id ,status-sym)
-			 (assqref 'id ,status-sym))))
+			 (assqref 'id (or in-reply-to-status ,status-sym)))))
 		   (properties
 		    (list 'mouse-face 'highlight 'face 'twittering-uri-face
 			  'keymap twittering-mode-on-uri-map
