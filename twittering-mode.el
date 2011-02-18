@@ -5139,40 +5139,18 @@ If `twittering-password' is nil, read it from the minibuffer."
 	   source)
 	  (add-to-list 'status (cons 'source source)))))
 
-    ;; (sina) show emoticons
-
-    ;; TODO, add need-to-be-updated to 'text, we need a way to check and run
-    ;; those properties inside the string.
-
-    ;; (let ((start 0))
-    ;;   (while (string-match "\\(\\[\\cc+\\]\\)" text 0)
-    ;; 	(when (and (eq twittering-service-method 'sina)
-    ;; 		   (not twittering-emotions-phrase-url-alist))
-    ;; 	  (let ((twittering-service-method 'sina))
-    ;; 	    (twittering-get-simple-sync 'emotions nil)))
-    ;; 	(put-text-property (match-beginning 1) 
-    ;; 			   (match-end 1)
-    ;; 			   'need-to-be-updated
-    ;; 			   `(twittering-make-original-icon-string
-    ;; 			     ,(assocref (match-string 1 text)
-    ;; 					twittering-emotions-phrase-url-alist))
-    ;; 			   text)
-    ;; 	(setq start (match-end 1))))
-
-    ;; (setq text
-    ;; 	  (replace-match (twittering-make-original-icon-string 
-    ;; 			  nil nil (assocref 
-    ;; 				   (match-string 1 text)
-    ;; 				   twittering-emotions-phrase-url-alist))
-    ;; 			 nil
-    ;; 			 nil
-    ;; 			 text))
-
-    ;; `((text . ,text)
-    ;;   ,@(assq-delete-all 'text status))
-
-    status
-    ))
+    ;; (sina) Recognize and mark emotions, we will show them in
+    ;; twittering-redisplay-status-on-each-buffer.
+    (let ((start 0))
+      (while (string-match "[^[]\\(\\[\\cc+\\]\\)[^]]" text start)
+    	(when (and (eq twittering-service-method 'sina)
+    		   (not twittering-emotions-phrase-url-alist))
+    	  (save-match-data
+    	    (twittering-get-simple-sync 'emotions nil)))
+	(setq text (replace-match "[\\1]" nil nil text))))
+    
+    `(,@(assq-delete-all 'text status)
+      (text . ,text))))
 
 (defvar twittering-emotions-phrase-url-alist nil)
 
@@ -7025,7 +7003,17 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 		 (insert updated-str))
 	       (twittering-restore-window-config-after-modification
 		config beg end))))
-	 buffer))
+	 buffer)
+
+	;; (sina) Display emotions.
+	(goto-char (point-min))
+	(while (re-search-forward "\\(\\[\\(\\[\\cc+\\]\\)\\]\\)" nil t 1)
+	  (let ((url (assocref (match-string 2)
+			       twittering-emotions-phrase-url-alist)))
+	    (when url
+	      (let ((inhibit-read-only t))
+		(replace-match (twittering-make-original-icon-string nil nil url)))))))
+
       (set-marker marker nil)
       (when (and result (eq (window-buffer) buffer))
 	(let ((win (selected-window)))
