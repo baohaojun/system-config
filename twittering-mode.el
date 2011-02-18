@@ -5008,26 +5008,21 @@ If `twittering-password' is nil, read it from the minibuffer."
     ;; make user names clickable
     (mapc (lambda (id-names)
 	    (mapc (lambda (name)
-		    (add-text-properties
-		     0 (length name)
-		     `(mouse-face 
-		       highlight
-		       keymap ,twittering-mode-on-uri-map
-		       uri ,(twittering-get-status-url (car id-names))
-		       screen-name-in-text ,user-screen-name
-		       goto-spec ,(twittering-string-to-timeline-spec (car id-names))
-		       face twittering-username-face)
-		     name))
+		    (let ((id (car id-names)))
+		      (add-text-properties
+		       0 (length name)
+		       `(mouse-face 
+			 highlight
+			 keymap ,twittering-mode-on-uri-map
+			 uri ,(twittering-get-status-url id)
+			 screen-name-in-text ,id
+			 goto-spec ,(twittering-string-to-timeline-spec id)
+			 face twittering-username-face)
+		       name)))
 		  (cdr id-names)))
-	  `((,(if (eq twittering-service-method 'sina) 
-		  user-id 
-		user-screen-name)
-	     . (,user-name ,user-screen-name))
-
+	  `((,user-screen-name . (,user-name ,user-screen-name))
 	    ,@(when original-user-screen-name
-		`((,(if (eq twittering-service-method 'sina) 
-			original-user-id 
-		      original-user-screen-name)
+		`((,original-user-screen-name
 		   . (,original-user-name ,original-user-screen-name))))))
 
     ;; make hashtag, listname, screenname, and URI in text clickable
@@ -7011,8 +7006,11 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	  (let ((url (assocref (match-string 2)
 			       twittering-emotions-phrase-url-alist)))
 	    (when url
-	      (let ((inhibit-read-only t))
-		(replace-match (twittering-make-original-icon-string nil nil url)))))))
+	      (let ((inhibit-read-only t)
+		    (common-properties (twittering-get-common-properties (point)))
+		    (repl (twittering-make-original-icon-string nil nil url)))
+		(add-text-properties 0 (length repl) common-properties repl)
+		(replace-match repl))))))
 
       (set-marker marker nil)
       (when (and result (eq (window-buffer) buffer))
