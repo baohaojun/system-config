@@ -847,3 +847,4 @@ if (m/^c0:\s*$re/) {
 dos2unix *.txt
 diff 1.txt 2.txt ||break;
 done
+adb shell i2cset  -y 0 0x5c 0x37 3
