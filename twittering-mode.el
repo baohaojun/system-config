@@ -5006,23 +5006,31 @@ If `twittering-password' is nil, read it from the minibuffer."
 	(original-user-id          (assqref 'original-user-id          status)))
           
     ;; make user names clickable
-    (mapc (lambda (id-names)
-	    (mapc (lambda (name)
-		    (let ((id (car id-names)))
+    (mapc (lambda (real-fake)
+	    (mapc (lambda (fake)
+		    (let* ((real (car real-fake))
+			   (real-name (car real))
+			   (real-id (cadr real)))
+
 		      (add-text-properties
-		       0 (length name)
+		       0 (length fake)
 		       `(mouse-face 
 			 highlight
 			 keymap ,twittering-mode-on-uri-map
-			 uri ,(twittering-get-status-url id)
-			 screen-name-in-text ,id
-			 goto-spec ,(twittering-string-to-timeline-spec id)
+			 uri ,(twittering-get-status-url 
+			       (if (eq twittering-service-method 'sina)
+				   real-id
+				 real-name))
+			 screen-name-in-text ,real-name
+			 goto-spec ,(twittering-string-to-timeline-spec real-name)
 			 face twittering-username-face)
-		       name)))
-		  (cdr id-names)))
-	  `((,user-screen-name . (,user-name ,user-screen-name))
+		       fake)))
+
+		  (cdr real-fake)))
+
+	  `(((,user-screen-name ,user-id) . (,user-name ,user-screen-name))
 	    ,@(when original-user-screen-name
-		`((,original-user-screen-name
+		`(((,original-user-screen-name ,original-user-id)
 		   . (,original-user-name ,original-user-screen-name))))))
 
     ;; make hashtag, listname, screenname, and URI in text clickable
