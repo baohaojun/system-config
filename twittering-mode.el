@@ -5673,7 +5673,7 @@ image are displayed."
 	`(display (,image-spec ,slice-spec))
       `(display ,image-spec))))
 
-(defun twittering-make-icon-string (beg end image-url)
+(defun twittering-make-icon-string (beg end image-url &optional sync)
   (let ((display-spec (twittering-get-display-spec-for-icon image-url))
 	(image-data (gethash image-url twittering-url-data-hash))
 	(properties (and beg (text-properties-at beg)))
@@ -5706,12 +5706,24 @@ image are displayed."
 			       (apply 'twittering-make-icon-string 
 				      (append args (list ,image-url))))))
 			 icon-string)
-      (twittering-url-retrieve-async image-url 'twittering-register-image-data)
-      icon-string))))
+      (if sync 
+	  (let* ((buf (twittering-url-retrieve-synchronously image-url))
+		 (header-info (twittering-make-header-info-alist 
+			       (twittering-get-response-header buf)))
+		 (status-code (assqref 'status-code header-info)))
+	    (when (string= status-code "200")
+	      (with-current-buffer buf
+		(goto-char (point-min))
+		(when (search-forward-regexp "\r?\n\r?\n" nil t)
+		  (twittering-register-image-data image-url
+						  (buffer-substring (match-end 0) (point-max)))
+		  (twittering-make-icon-string beg end image-url sync)))))
+	(twittering-url-retrieve-async image-url 'twittering-register-image-data)
+	icon-string)))))
 
-(defun twittering-make-original-icon-string (beg end image-url)
+(defun twittering-make-original-icon-string (beg end image-url &optional sync)
   (let ((twittering-convert-fix-size nil))
-    (twittering-make-icon-string beg end image-url)))
+    (twittering-make-icon-string beg end image-url sync)))
 
 (defun twittering-toggle-thumbnail (thumbnail-pic bmiddle-pic &optional initial)
   (let ((uri (get-text-property (point) 'uri))
@@ -5724,7 +5736,7 @@ image are displayed."
             (setq next-uri thumbnail-pic)
           (setq next-uri bmiddle-pic)))
 
-      (let ((s (twittering-make-original-icon-string nil nil uri)))
+      (let ((s (twittering-make-original-icon-string nil nil uri t)))
         (add-text-properties 0 (length s)
                              `(mouse-face 
                                highlight 
