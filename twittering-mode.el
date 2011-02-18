@@ -9082,6 +9082,16 @@ this function does nothing."
   (interactive)
   (switch-to-buffer (other-buffer)))
 
+;;;; Other Commands
+
+(defun twittering-refresh ()
+  "Refresh current buffer.
+
+This will invoke `twittering-redisplay-status-on-each-buffer' immediately on
+current buffer."
+  (interactive)
+  (twittering-redisplay-status-on-each-buffer (current-buffer)))
+
 ;;;###autoload
 (defun twit ()
   "Start twittering-mode."
@@ -9093,4 +9103,5 @@ this function does nothing."
    twittering-enabled-services))
 
 (provide 'twittering-mode)
+
 ;;; twittering.el ends here
