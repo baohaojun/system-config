@@ -5144,7 +5144,7 @@ If `twittering-password' is nil, read it from the minibuffer."
     (let ((start 0))
       (while (string-match "[^[]\\(\\[\\cc+\\]\\)[^]]" text start)
     	(when (and (eq twittering-service-method 'sina)
-    		   (not twittering-emotions-phrase-url-alist))
+    		   (not (consp twittering-emotions-phrase-url-alist)))
     	  (save-match-data
     	    (twittering-get-simple-sync 'emotions nil)))
 	(setq text (replace-match "[\\1]" nil nil text))))
