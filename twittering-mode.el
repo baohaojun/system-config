@@ -4877,10 +4877,17 @@ If `twittering-password' is nil, read it from the minibuffer."
 	(setq created-at (assq-get 'created_at s))))
         
       ;; 2.1 status data
-      (setq source                  (twittering-decode-html-entities (assq-get 'source                  s))
-	    in-reply-to-status-id   (twittering-decode-html-entities (assq-get 'in_reply_to_status_id   s))
-	    in-reply-to-screen-name (twittering-decode-html-entities (assq-get 'in_reply_to_screen_name s)))
+      (setq source                  (assq-get 'source                  s)
+	    in-reply-to-status-id   (assq-get 'in_reply_to_status_id   s)
+	    in-reply-to-screen-name (assq-get 'in_reply_to_screen_name s))
       
+      (when source 
+	(setq source (twittering-decode-html-entities source)))
+      (when in-reply-to-status-id 
+	(setq in-reply-to-status-id (twittering-decode-html-entities in-reply-to-status-id)))
+      (when in-reply-to-screen-name 
+	(setq in-reply-to-screen-name (twittering-decode-html-entities in-reply-to-screen-name)))
+
       (setq truncated     (assq-get 'truncated     s)
 	    thumbnail-pic (assq-get 'thumbnail_pic s)
 	    bmiddle-pic   (assq-get 'bmiddle_pic   s)
@@ -4912,33 +4919,42 @@ If `twittering-password' is nil, read it from the minibuffer."
       (setq next-cursor            (assq-get 'next_cursor       u))
 
       ;; Decide whether it is necessary to show retweeter's comment.
-      (let ((orig-text (twittering-decode-html-entities (assq-get 'text s))))
-	(if (and text			; We have a retweet.
-		 (not (or (string-match 
-			   (regexp-opt
-			    (list 
-			     (replace-regexp-in-string 
-			      (format "^RT @%s: \\|[.[:blank:]]+$" user-screen-name) "" text)))
-			   orig-text)
-			  (string= text "转发微博")
-			  (string= text "转发微博。"))))
-	    (setq text (format "%s%s\n\n    \"%s%s\"" 
-			       orig-text
-			       ;; No interest in comments to retweeted status by
-			       ;; others.
-			       ;; (if (eq twittering-service-method 'sina)
-			       ;; 	   (concat "  "
-			       ;; 		   (twittering-get-simple nil nil (assq-get 'id s) 'counts))
-			       ;; 	 "")
-			       ""
-			       text
-			       ;; (if (eq twittering-service-method 'sina)
-			       ;; 	   (concat "  "
-			       ;; 		   (twittering-get-simple nil nil id 'counts))
-			       ;; 	 "")
-			       ""
-			       ))
-	  (setq text (concat orig-text
+      (let* ((retweeted-text (twittering-decode-html-entities (assq-get 'text s)))
+	     (status (or in-reply-to-comment in-reply-to-status))
+	     (in-reply-to-text 
+	      (and status (twittering-decode-html-entities (assqref 'text status)))))
+	
+	(if (or (and text		; We are retweeting.
+		     (not (or (string-match 
+			       (regexp-opt
+				(list 
+				 (replace-regexp-in-string 
+				  (format "^RT @%s: \\|[.[:blank:]]+$" user-screen-name) "" text)))
+			       retweeted-text)
+			      (string= text "转发微博")
+			      (string= text "转发微博。"))))
+		in-reply-to-text)
+	    (setq text (apply 'format "『%s』%s\n\n    %s%s" 
+			      (if text
+				  (list
+				   retweeted-text
+				   ;; No interest in comments to retweeted status by
+				   ;; others.
+				   ;; (if (eq twittering-service-method 'sina)
+				   ;; 	   (concat "  "
+				   ;; 		   (twittering-get-simple nil nil (assq-get 'id s) 'counts))
+				   ;; 	 "")
+				   ""
+				   text
+				   ;; (if (eq twittering-service-method 'sina)
+				   ;; 	   (concat "  "
+				   ;; 		   (twittering-get-simple nil nil id 'counts))
+				   ;; 	 "")
+				   ""
+				   )
+				(list in-reply-to-text "" retweeted-text ""))
+				 ))
+	  (setq text (concat retweeted-text
 			     ;; (if (eq twittering-service-method 'sina)
 			     ;; 	 (concat "  "
 			     ;; 		 (twittering-get-simple nil nil id 'counts))
@@ -6341,11 +6357,23 @@ following symbols;
     ("p" . (when (string= "true" (assqref 'user-protected ,status-sym))
 	     "[x]"))
     ("r" .
-     (let ((reply-id (or (assqref 'in-reply-to-status-id ,status-sym) ""))
+     (let ((reply-id (or (assqref 'in-reply-to-status-id ,status-sym)
+			 (assqref 'id
+				  (or 
+				   (assqref 'in-reply-to-comment ,status-sym)
+				   (assqref 'in-reply-to-status ,status-sym)))
+			 ""))
+
 	   (reply-name (or (assqref 'in-reply-to-screen-name ,status-sym)
+			   (assqref 'user-screen-name
+				    (or 
+				     (assqref 'in-reply-to-comment ,status-sym)
+				     (assqref 'in-reply-to-status ,status-sym)))
 			   ""))
+
 	   (recipient-screen-name
 	    (assqref 'recipient-screen-name ,status-sym)))
+
        (let* ((pair
 	       (cond
 		(recipient-screen-name
