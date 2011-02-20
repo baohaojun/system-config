@@ -3554,6 +3554,10 @@ Return cons of the spec and the rest string."
      (t
       (error "\"%s\" is invalid as a timeline spec" str)))))
 
+(defun twittering-extract-service (spec-str)
+  (when (string-match "@\\(.+\\)" spec-str)
+    (intern (match-string 1 spec-str))))
+
 (defun twittering-string-to-timeline-spec (spec-str)
   "Convert SPEC-STR into a timeline spec.
 Return nil if SPEC-STR is invalid as a timeline spec."
@@ -5144,7 +5148,7 @@ If `twittering-password' is nil, read it from the minibuffer."
 
     ;; (sina) Recognize and mark emotions, we will show them in
     ;; twittering-redisplay-status-on-each-buffer.
-    (while (string-match "\\([^[]\\|^\\)\\(\\[[^][]+\\]\\)\\([^]]\\|$\\)" text 0)
+    (while (string-match "\\([^[]\\|^\\)\\(\\[[^][]+\\]\\)\\([^]]\\|$\\)" text)
       (unless twittering-is-getting-emotions-p
 	(setq twittering-is-getting-emotions-p t)
 	(let ((twittering-service-method 'sina))
@@ -5493,12 +5497,7 @@ SPEC may be a timeline spec or a timeline spec string."
 		;; If `buffer' is the first managed buffer,
 		;; call `twittering-start' to start timers.
 		(twittering-start))
-	      (unless (and start-timer twittering-active-mode)
-		;; If `buffer' is active and the first managed buffer,
-		;; `twittering-start' invokes
-		;; `twittering-get-and-render-timeline' indirectly.
-		;; Otherwise, `twittering-get-and-render-timeline' should be
-		;; invoked here.
+	      (when twittering-active-mode
 		(twittering-get-and-render-timeline))))
 	  buffer)))))
 
@@ -7398,24 +7397,24 @@ FUNC is called as (apply FUNC ARGS)."
 (defun twittering-update-active-buffers (&optional noninteractive)
   "Invoke `twittering-get-and-render-timeline' for each active buffer
 managed by `twittering-mode'."
-  (when (twittering-account-authorized-p)
-    (mapc
-     (lambda (buffer)
-       (let ((spec (twittering-get-timeline-spec-for-buffer buffer)))
-	 (when (or (twittering-timeline-spec-most-active-p spec)
-		   ;; first run
-		   (not (member (twittering-timeline-spec-to-string spec)
-				twittering-timeline-history))
-		   ;; hourly TODO: make it customizable? (xwl)
-		   (let ((min-and-sec
-			  (+ (* (string-to-number
-				 (format-time-string "%M" (current-time))) 60)
-			     (string-to-number
-			      (format-time-string "%S" (current-time))))))
-		     (<= min-and-sec twittering-timer-interval)))
-	   (with-current-buffer buffer
-	     (twittering-get-and-render-timeline t)))))
-     (twittering-get-active-buffer-list))))
+  (mapc
+   (lambda (buffer)
+     (let ((spec (twittering-get-timeline-spec-for-buffer buffer)))
+       (when (or (twittering-timeline-spec-most-active-p spec)
+		 ;; first run
+		 (not (member (twittering-timeline-spec-to-string spec)
+			      twittering-timeline-history))
+		 ;; hourly TODO: make it customizable? (xwl)
+		 (let ((min-and-sec
+			(+ (* (string-to-number
+			       (format-time-string "%M" (current-time))) 60)
+			   (string-to-number
+			    (format-time-string "%S" (current-time))))))
+		   (<= min-and-sec twittering-timer-interval)))
+	 (with-current-buffer buffer
+	   (when (twittering-account-authorized-p)
+	     (twittering-get-and-render-timeline t))))))
+   (twittering-get-active-buffer-list)))
 
 ;;;;
 ;;;; Keymap
@@ -7577,7 +7576,8 @@ been initialized yet."
   (make-local-variable 'twittering-jojo-mode)
   (make-local-variable 'twittering-reverse-mode)
   (make-local-variable 'twittering-scroll-mode)
-  
+
+  (setq twittering-service-method (twittering-extract-service spec-string))
   (setq twittering-timeline-spec-string spec-string)
   (setq twittering-timeline-spec
 	(twittering-string-to-timeline-spec spec-string))
@@ -8255,10 +8255,8 @@ string.")
 (defun twittering-visit-timeline (&optional timeline-spec initial)
   (interactive)
   (let ((twittering-service-method 
-	 (if (and timeline-spec
-		  (stringp timeline-spec)
-		  (string-match "@\\(.+\\)" timeline-spec))
-	     (intern (match-string 1 timeline-spec))
+	 (if (and timeline-spec (stringp timeline-spec))
+	     (twittering-extract-service timeline-spec)
 	   twittering-service-method)))
     (cond
      ((twittering-ensure-connection-method)
