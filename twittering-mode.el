@@ -8255,7 +8255,9 @@ string.")
 (defun twittering-visit-timeline (&optional timeline-spec initial)
   (interactive)
   (let ((twittering-service-method 
-	 (if (and timeline-spec (string-match "@\\(.+\\)" timeline-spec))
+	 (if (and timeline-spec
+		  (stringp timeline-spec)
+		  (string-match "@\\(.+\\)" timeline-spec))
 	     (intern (match-string 1 timeline-spec))
 	   twittering-service-method)))
     (cond
