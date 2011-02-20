@@ -5144,7 +5144,7 @@ If `twittering-password' is nil, read it from the minibuffer."
 
     ;; (sina) Recognize and mark emotions, we will show them in
     ;; twittering-redisplay-status-on-each-buffer.
-    (while (string-match "\\([^[]\\|^\\)\\(\\[\\cc+\\]\\)\\([^]]\\|$\\)" text 0)
+    (while (string-match "\\([^[]\\|^\\)\\(\\[[^][]+\\]\\)\\([^]]\\|$\\)" text 0)
       (unless twittering-is-getting-emotions-p
 	(setq twittering-is-getting-emotions-p t)
 	(let ((twittering-service-method 'sina))
@@ -7023,7 +7023,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 
 	;; (sina) Display emotions.
 	(goto-char (point-min))
-	(while (re-search-forward "\\(\\[\\(\\[\\cc+\\]\\)\\]\\)" nil t 1)
+	(while (re-search-forward "\\(\\[\\(\\[[^][]+\\]\\)\\]\\)" nil t 1)
 	  (let ((url (assocref (match-string 2)
 			       twittering-emotions-phrase-url-alist)))
 	    (when url
