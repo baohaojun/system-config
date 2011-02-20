@@ -108,7 +108,7 @@ dangerous."
   :type 'string
   :group 'twittering)
 
-(defcustom twittering-initial-timeline-spec-string ":home"
+(defcustom twittering-initial-timeline-spec-string ":home@twitter"
   "*The initial timeline spec string. If the value of the variable is a
 list of timeline spec strings, the timelines are rendered on their own
 buffers."
@@ -5144,18 +5144,18 @@ If `twittering-password' is nil, read it from the minibuffer."
 
     ;; (sina) Recognize and mark emotions, we will show them in
     ;; twittering-redisplay-status-on-each-buffer.
-    (let ((start 0))
-      (while (string-match "[^[]\\(\\[\\cc+\\]\\)[^]]" text start)
-    	(when (and (eq twittering-service-method 'sina)
-    		   (not (consp twittering-emotions-phrase-url-alist)))
-    	  (save-match-data
-    	    (twittering-get-simple-sync 'emotions nil)))
-	(setq text (replace-match "[\\1]" nil nil text))))
+    (while (string-match "\\([^[]\\|^\\)\\(\\[\\cc+\\]\\)\\([^]]\\|$\\)" text 0)
+      (unless twittering-is-getting-emotions-p
+	(setq twittering-is-getting-emotions-p t)
+	(let ((twittering-service-method 'sina))
+	  (twittering-get-simple nil nil id 'emotions)))
+      (setq text (replace-match "[\\2]" nil nil text)))
     
     `(,@(assq-delete-all 'text status)
       (text . ,text))))
 
 (defvar twittering-emotions-phrase-url-alist nil)
+(defvar twittering-is-getting-emotions-p nil)
 
 (defun twittering-xmltree-to-status (xmltree)
   (let ((type (caar xmltree)))
@@ -5808,7 +5808,8 @@ image are displayed."
 			      (when (and (consp e) (eq 'emotion (car e)))
 				`(,(car (last (assq 'phrase e))) 
 				  . ,(car (last (assq 'url e))))))
-			    (car xmltree)))))
+			    (car xmltree))))
+	     (setq twittering-emotions-phrase-url-alist ret))
 
 	    ;; ((query-mid)
 	    ;;  (setq ret (assqref 'mid (car xmltree))))
@@ -7594,16 +7595,10 @@ been initialized yet."
 \\{twittering-mode-map}"
   (interactive)
   (twittering-cache-load)
-  (let ((timeline-spec-list
-	 (mapcar (lambda (spec)
-		   (format "%s@%S" spec twittering-service-method))
-		   ;; spec)
-		 (if (listp twittering-initial-timeline-spec-string)
-		     twittering-initial-timeline-spec-string
-		   (list twittering-initial-timeline-spec-string)))))
-    (twittering-visit-timeline (car timeline-spec-list))
-    (when (twittering-account-authorized-p)
-      (mapc 'twittering-visit-timeline (cdr timeline-spec-list)))))
+  (mapc 'twittering-visit-timeline
+	(if (listp twittering-initial-timeline-spec-string)
+	    twittering-initial-timeline-spec-string
+	  (list twittering-initial-timeline-spec-string))))
 
 ;;;;
 ;;;; Sign
@@ -8036,33 +8031,33 @@ string.")
 		    (< (cadr (time-subtract (current-time) start)) 30)
 		    )
 	  (sit-for 0.1)))))
-  (unless twittering-get-simple-retrieved
-    (setq twittering-get-simple-retrieved 'error)
-    (error "twittering-get-simple-sync failed"))
-  (case method
-    ((get-list-index get-list-subscriptions get-list-memberships)
-     (cond
-      ((stringp twittering-get-simple-retrieved)
-       (if (string= "" twittering-get-simple-retrieved)
-	   (message 
-	    "%s does not have a %s." 
-	    (assqref 'username args-alist)
-	    (assqref method
+  (if (not twittering-get-simple-retrieved)
+      (progn
+	(setq twittering-get-simple-retrieved 'error)
+	(message "twittering-get-simple-sync failed"))
+    (case method
+      ((get-list-index get-list-subscriptions get-list-memberships)
+       (cond
+	((stringp twittering-get-simple-retrieved)
+	 (if (string= "" twittering-get-simple-retrieved)
+	     (message 
+	      "%s does not have a %s." 
+	      (assqref 'username args-alist)
+	      (assqref method
 		       '((get-list-index         . "list")
 			 (get-list-subscriptions . "list subscription")
 			 (get-list-memberships   . "list membership"))))
-	 (message "%s" twittering-get-simple-retrieved))
-       nil)
-      ((listp twittering-get-simple-retrieved)
-       twittering-get-simple-retrieved)))
-    ((show-friendships)
-     twittering-get-simple-retrieved)
-    ((emotions)
-     (setq twittering-emotions-phrase-url-alist
-	   twittering-get-simple-retrieved))
-    (t
-     twittering-get-simple-retrieved)
-    (message "Getting %S...done" method)))
+	   (message "%s" twittering-get-simple-retrieved))
+	 nil)
+	((listp twittering-get-simple-retrieved)
+	 twittering-get-simple-retrieved)))
+      ((show-friendships)
+       twittering-get-simple-retrieved)
+      ((emotions)
+       (setq twittering-emotions-phrase-url-alist
+	     twittering-get-simple-retrieved))
+      (t
+       twittering-get-simple-retrieved))))
 
 (defun twittering-get-simple-1 (method args-alist)
   (twittering-call-api
@@ -8259,27 +8254,31 @@ string.")
 ;;;; Commands for visiting a timeline
 (defun twittering-visit-timeline (&optional timeline-spec initial)
   (interactive)
-  (cond
-   ((twittering-ensure-connection-method)
-    (twittering-initialize-global-variables-if-necessary)
-    (twittering-verify-credentials)
-    (unless timeline-spec
-      (setq timeline-spec
-	    (twittering-read-timeline-spec-with-completion
-	     "timeline: " initial t)))
-    (when timeline-spec
-      (let* ((service twittering-service-method)
-	     (suffix (format "@%S" service))
-	     (buf (twittering-get-managed-buffer 
-		   (if (stringp timeline-spec)
-		       (if (string-match "@" timeline-spec)
-			   timeline-spec
-			 (concat timeline-spec suffix))
-		     timeline-spec))))
-	(switch-to-buffer buf))))
-   (t
-    (message "No connection methods are available.")
-    nil)))
+  (let ((twittering-service-method 
+	 (if (and timeline-spec (string-match "@\\(.+\\)" timeline-spec))
+	     (intern (match-string 1 timeline-spec))
+	   twittering-service-method)))
+    (cond
+     ((twittering-ensure-connection-method)
+      (twittering-initialize-global-variables-if-necessary)
+      (twittering-verify-credentials)
+      (unless timeline-spec
+	(setq timeline-spec
+	      (twittering-read-timeline-spec-with-completion
+	       "timeline: " initial t)))
+      (when timeline-spec
+	(let* ((service twittering-service-method)
+	       (suffix (format "@%S" service))
+	       (buf (twittering-get-managed-buffer 
+		     (if (stringp timeline-spec)
+			 (if (string-match "@" timeline-spec)
+			     timeline-spec
+			   (concat timeline-spec suffix))
+		       timeline-spec))))
+	  (switch-to-buffer buf))))
+     (t
+      (message "No connection methods are available.")
+      nil))))
 
 (defun twittering-friends-timeline ()
   (interactive)
@@ -9096,11 +9095,7 @@ current buffer."
 (defun twit ()
   "Start twittering-mode."
   (interactive)
-  (mapc
-   (lambda (method)
-     (let ((twittering-service-method method))
-       (twittering-mode)))
-   twittering-enabled-services))
+  (twittering-mode))
 
 (provide 'twittering-mode)
 
