@@ -19,13 +19,17 @@
   (activate-window window))
 
 
-(defun find-window-or-exec (wclass #!optional wcommand)
+(defun find-window-or-exec (wclass-or-lambda #!optional wcommand)
   (if (eq (catch 'wFound
             (mapc (lambda (window)
-                    (if (string-match wclass (window-class window) 0 t)
-                        (progn 
+                    (when (if (stringp wclass-or-lambda)
+                              (string-match wclass-or-lambda (window-class window) 0 t)
+                            (when functionp wclass-or-lambda
+                                  (write (stderr-file) "hello world\n")
+                                  (apply (closure-function wclass-or-lambda) '(window))))
+
                           (bhj-activate-window window)
-                          (throw 'wFound 'wFound))))
+                          (throw 'wFound 'wFound)))
                   (stacking-order)))
           'wFound)
       nil
@@ -44,6 +48,7 @@
    ("Super-e" "Emacs" "emacs.bhj")
    ("Super-r" "GRun" "grun")
    ("Super-p" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
+   ("Super-C-d" (make-closure (lambda (w) t)) "gnome-terminal --hide-menubar -e ~/bin/linux/my-dict")
    ("Super-l" "hello world no such thing" "/usr/bin/gnome-screensaver-command -a -l")
    ("Super-x" "XCalc" "xcalc")
    ("F12" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
