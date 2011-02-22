@@ -5746,9 +5746,11 @@ image are displayed."
             (setq next-uri thumbnail-pic)
           (setq next-uri bmiddle-pic)))
 
-      (let ((s (twittering-make-original-icon-string nil nil uri t)))
+      (let ((s (twittering-make-original-icon-string nil nil uri t))
+	    (common-properties (twittering-get-common-properties (point))))
         (add-text-properties 0 (length s)
-                             `(mouse-face 
+                             `(,@common-properties
+			       mouse-face 
                                highlight 
                                uri ,next-uri
                                keymap
