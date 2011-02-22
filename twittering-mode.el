@@ -7051,16 +7051,20 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	  (unless twittering-is-getting-emotions-p
 	    (setq twittering-is-getting-emotions-p t)
 	    (let ((twittering-service-method 'sina))
-	      (twittering-get-simple nil nil id 'emotions)))
+	      (save-match-data
+		(twittering-get-simple nil nil id 'emotions))))
 
-	  (let ((url (assocref (match-string 2)
-			       twittering-emotions-phrase-url-alist)))
-	    (when url
-	      (let ((inhibit-read-only t)
-		    (common-properties (twittering-get-common-properties (point)))
-		    (repl (twittering-make-original-icon-string nil nil url)))
-		(add-text-properties 0 (length repl) common-properties repl)
-		(replace-match repl))))))
+	  (let* ((str (match-string 2))
+		 (url (assocref str twittering-emotions-phrase-url-alist))
+		 (inhibit-read-only t)
+		 (common-properties (twittering-get-common-properties (point)))
+		 (repl (if url 
+			   (twittering-make-original-icon-string nil nil url)
+			 str)))		; Not a emotion, restore. 
+
+	    (when (consp twittering-emotions-phrase-url-alist)
+	      (add-text-properties 0 (length repl) common-properties repl)
+	      (replace-match repl)))))
 
       (set-marker marker nil)
       (when (and result (eq (window-buffer) buffer))
