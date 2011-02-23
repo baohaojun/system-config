@@ -213,7 +213,7 @@ function _adb_push()
     cur="${COMP_WORDS[COMP_CWORD]}"
     COMPREPLY=( $(
             (IFS=$'\t\n'; for x in `adb shell adbcompgen.sh "${cur}"|tr -d '\r'`; do if test -e "$x"; then true; else echo "$x"; fi; done)
-            compgen -f "${cur}") )
+            compgen -f -- "${cur}") )
     return 0
 }
 

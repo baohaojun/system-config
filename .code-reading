@@ -377,3 +377,40 @@ file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-po
             {
                 ...
     =>          PowerStateInfo.LowestPowerState =  ((LPStateSelection != TEGRA_DEVKIT_BCT_CUSTOPT_0_LPSTATE_LP1)?
+
+****************
+在哪里定义en_wifi_pwr
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/hardware/tegra/odm/ventana/odm_kit/query/subboards/nvodm_query_discovery_pm275_addresses.h:222:     { NvOdmIoModule_Gpio, 'p'-'a', 0, 0 },
+        static const NvOdmIoAddress s_Vddio_Wifi_En[] = {
+    =>      { NvOdmIoModule_Gpio, 'p'-'a', 0, 0 },
+
+****************
+pinmux group怎么定义
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/pinmux-t2-tables.c:851:     PINGROUP(DAP3,  BB,    DAP3,      RSVD,      RSVD,      RSVD,          DAP3,      0x14, 9,  0x88, 24, 0xA0, 14),
+        static const struct tegra_pingroup_desc pingroups[TEGRA_MAX_PINGROUP] = {
+            ...
+    =>      PINGROUP(DAP3,  BB,    DAP3,      RSVD,      RSVD,      RSVD,          DAP3,      0x14, 9,  0x88, 24, 0xA0, 14),
+
+****************
+
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/include/mach/pinmux.h:26: typedef enum {
+        #if defined(CONFIG_ARCH_TEGRA_2x_SOC)
+        #include "pinmux-t2.h"
+        #else
+        #error "Undefined Tegra architecture"
+        ...
+    =>  typedef enum {
+
+****************
+
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/include/mach/pinmux-t2.h:147:             TEGRA_MUX_ ## f0,           \
+        #define PINGROUP(pg_name, vdd, f0, f1, f2, f3, f_safe,      \
+            ...
+            [TEGRA_PINGROUP_ ## pg_name] = {            \
+                ...
+                .funcs = {                  \
+    =>              TEGRA_MUX_ ## f0,           \

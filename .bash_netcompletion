@@ -48,7 +48,10 @@ _repo-switch() {
             )
             ;;
     esac
-    COMPREPLY=( $( compgen -W "$br_list" -- "$cur" ) )
+    COMPREPLY=( 
+        $( compgen -W "$br_list" -- "$cur" ) 
+        $( compgen -f -- "$cur" )
+    )
     return 0
 }
 
