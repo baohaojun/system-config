@@ -104,6 +104,57 @@
   から行うようにしました。待ち時間は変数
   `twittering-url-request-sentinel-delay'で指定できます。デフォルトの
   待ち時間は1秒です。
+* 「お気に入り」に対応
+  「お気に入り」一覧を表示するtimeline specとして":favorites"と
+  ":favorites/USER"を追加しました。":favorites/USER"で指定したユーザの
+  「お気に入り」を見ることができます。`twittering-visit-timeline'(デフォ
+  ルトでは"V"にbindされています)に対して":favorites/"と入力してEnter
+  すると、続いてユーザ名を補完入力できます。「お気に入り」は元々のtweetの
+  投稿時刻の順に表示されるので注意してください。これは「お気に入り」に
+  登録した時刻を取得する方法がないためです。また、取得できる「お気に入
+  り」は最大20件です。より過去にさかのぼっての取得は未対応です。
+* 新たにいくつかの短縮URL生成サービスに対応
+  新たに`bit.ly', `goo.gl', `is.gd', `j.mp'に対応しました。下記のような
+  設定で有効にできます。
+  (setq twittering-tinyurl-service 'bit.ly) ;; bit.lyの場合
+  (setq twittering-tinyurl-service 'goo.gl) ;; goo.glの場合
+  (setq twittering-tinyurl-service 'is.gd)  ;; is.gdの場合
+  (setq twittering-tinyurl-service 'j.mp)   ;; j.mpの場合
+  `bit.ly'や`j.mp'を使うにはお持ちのアカウントに応じて下記のように
+  `twittering-bitly-login'と`twittering-bitly-api-key'を設定しておく必要が
+  あります。
+  (setq twittering-bitly-login "YOUR-LOGIN-NAME")
+  (setq twittering-bitly-api-key "YOUR-API-KEY")
+  Thanks to Michael Kohl and Lars Gregori.
+* 公式ReTweetについての書式指定子"%c","%C","%@"の意味を変更
+  公式ReTweetの`created_at'は、retweetした時刻ではなくオリジナルの
+  tweetを投稿した時刻を意味するようになりました。
+* spam送信者報告機能
+  関数`twittering-block-and-report-as-spammer'を追加しました。tweet上で
+  この関数を呼び出すと、その投稿者をブロックし、さらにspam送信者として
+  報告できます。
+* ブロック機能
+  関数`twittering-block'を追加しました。tweet上でこの関数を呼び出すと、
+  その投稿者をブロックできます。
+* アイコン画像保存機能
+  "(setq twittering-use-icon-storage t)"とすることで一度取得・サイズ変
+  更したアイコン画像を専用のファイルに保存しておけるようになりました。
+  この機能はデフォルトでは無効です。次回以降は専用ファイルに格納された
+  画像が優先的に使われますのでアイコン取得・サイズ変更にかかる時間が省
+  けます。
+  デフォルトでは直近に描画されたアイコンを最大500個まで保存します。保
+  存されるアイコンの個数は変数`twittering-icon-storage-limit'で変更で
+  きます。この変数をnilに設定すると全てのアイコンが保存されます。
+  アイコンを保存するファイルはデフォルトでは
+  `~/.twittering-mode-icons.gz'ですが`twittering-icon-storage-file'と
+  いう変数で変更できます。あるバージョンのEmacsで生成したアイコン保存
+  ファイルは別のバージョンでは使えない恐れがあるので注意してください。
+* 新しい書式指定子"%RT{...}"
+  `twittering-status-format'で使える書式指定子として"%RT{...}"が追加さ
+  れました。これは対象となるtweetが公式RTのときだけ描画されます。括弧
+  の中には任意の文字列と書式指定子を入れることができ、括弧内の書式指定
+  子はRTされたtweetではなくそのRT自身の情報を使って描画されます。例え
+  ば、"%RT{%s}"はRTしたユーザのscreen_nameとなります。
 * ...
 
 ### バグ修正
