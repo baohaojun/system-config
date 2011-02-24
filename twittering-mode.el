@@ -1048,6 +1048,23 @@ SCHEME must be \"http\" or \"https\"."
           ad-do-it)
       ad-do-it)))
 
+(defun twittering-url-wrapper (func &rest args)
+  (let ((url-proxy-services
+	 (when twittering-proxy-use
+	   (twittering-url-proxy-services)))
+	(url-show-status twittering-url-show-status))
+    (if (eq func 'url-retrieve)
+	(let ((buffer (apply func args)))
+	  (when (buffer-live-p buffer)
+	    (with-current-buffer buffer
+	      (set (make-local-variable 'url-show-status)
+		   twittering-url-show-status)))
+	  buffer)
+      (apply func args))))
+
+(defun twittering-url-retrieve-synchronously (url)
+  (twittering-url-wrapper 'url-retrieve-synchronously url))
+
 ;;;;
 ;;;; CA certificate
 ;;;;
@@ -6585,8 +6602,8 @@ following symbols;
 		     (assqref 'in-reply-to-status ,status-sym))
 		 (let* ((status (assqref 'author-status ,status-sym))
 			(name (assqref 'user-screen-name status)))
-		   `(,(format " (replied by %s)"
-			      (twittering-make-string-with-user-name-property name status)))))
+		   (list (format " (replied by %s)"
+				 (twittering-make-string-with-user-name-property name status)))))
 
                 (recipient-screen-name
                  (cons (format " sent to %s" recipient-screen-name)
