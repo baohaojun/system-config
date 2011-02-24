@@ -7347,7 +7347,7 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
 	    (setq twittering-is-getting-emotions-p t)
 	    (let ((twittering-service-method 'sina))
 	      (save-match-data
-		(twittering-get-simple nil nil id 'emotions))))
+		(twittering-get-simple nil nil nil 'emotions))))
 
 	  (let* ((str (match-string 2))
 		 (url (assocref str twittering-emotions-phrase-url-alist))
