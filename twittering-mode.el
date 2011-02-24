@@ -4955,19 +4955,6 @@ If `twittering-password' is nil, read it from the minibuffer."
     (mapcar 'twittering-atom-xmltree-to-status-datum
             entry-list)))
 
-(defun twittering-make-clickable-status-datum (status)
-  ;; (sina) Recognize and mark emotions, we will show them in
-  ;; twittering-redisplay-status-on-each-buffer.
-  (while (string-match "\\([^[]\\|^\\)\\(\\[[^][]+\\]\\)\\([^]]\\|$\\)" text)
-    (unless twittering-is-getting-emotions-p
-      (setq twittering-is-getting-emotions-p t)
-      (let ((twittering-service-method 'sina))
-        (twittering-get-simple nil nil id 'emotions)))
-    (setq text (replace-match "[\\2]" nil nil text)))
-
-  `(,@(assq-delete-all 'text status)
-    (text . ,text)))
-
 (defvar twittering-emotions-phrase-url-alist nil)
 (defvar twittering-is-getting-emotions-p nil)
 
@@ -5762,10 +5749,12 @@ image are displayed."
             (setq next-uri thumbnail-pic)
           (setq next-uri bmiddle-pic)))
 
-      (let ((s (twittering-make-original-icon-string nil nil uri t)))
+      (let ((s (twittering-make-original-icon-string nil nil uri t))
+	    (common-properties (twittering-get-common-properties (point))))
         (add-text-properties 0 (length s)
-                             `(mouse-face
-                               highlight
+                             `(,@common-properties
+			       mouse-face 
+                               highlight 
                                uri ,next-uri
                                keymap
                                ,(let ((map (make-sparse-keymap))
@@ -7312,56 +7301,65 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
         (result nil))
     (with-current-buffer buffer
       (save-excursion
-        (twittering-for-each-property-region
-         'need-to-be-updated
-         (lambda (beg end value)
-           ;; `beg' and `end' may be changed unexpectedly when `func' inserts
-           ;; some texts at front, so store marker here.
-           (setq beg (copy-marker beg)
-                 end (copy-marker end))
+	(twittering-for-each-property-region
+	 'need-to-be-updated
+	 (lambda (beg end value)
+	   ;; `beg' and `end' may be changed unexpectedly when `func' inserts
+	   ;; some texts at front, so store marker here.
+	   (setq beg (copy-marker beg)
+		 end (copy-marker end))
 
-           (let* ((func (car value))
-                  (args (cdr value))
-                  (current-str (buffer-substring beg end))
-                  (updated-str (apply func beg end args))
-                  (config (twittering-current-window-config window-list))
-                  (buffer-read-only nil))
-             ;; Replace `current-str' if it differs to `updated-str' with
-             ;; ignoring properties. This is an ad-hoc solution.
-             ;; `current-str' is a part of the displayed status, but it has
-             ;; properties which are determined by the whole status.
-             ;; (For example, the `id' property.)
-             ;; Therefore, we cannot compare the strings with their
-             ;; properties.
-             (unless (string= current-str updated-str)
-               ;; If the region to be modified includes the current position,
-               ;; the point moves to the beginning of the region.
-               (when (and (< beg marker) (< marker end))
-                 ;; This is required because the point moves to the center if
-                 ;; the point becomes outside of the window by the effect of
-                 ;; `set-window-start'.
-                 (setq result beg))
-               (let ((common-properties (twittering-get-common-properties beg)))
-                 ;; Restore common properties.
-                 (delete-region beg end)
-                 (goto-char beg)
-                 (add-text-properties 0 (length updated-str) common-properties updated-str)
-                 (insert updated-str))
-               (twittering-restore-window-config-after-modification
-                config beg end))))
-         buffer)
+	   (let* ((func (car value))
+		  (args (cdr value))
+		  (current-str (buffer-substring beg end))
+		  (updated-str (apply func beg end args))
+		  (config (twittering-current-window-config window-list))
+		  (buffer-read-only nil))
+	     ;; Replace `current-str' if it differs to `updated-str' with
+	     ;; ignoring properties. This is an ad-hoc solution.
+	     ;; `current-str' is a part of the displayed status, but it has
+	     ;; properties which are determined by the whole status.
+	     ;; (For example, the `id' property.)
+	     ;; Therefore, we cannot compare the strings with their
+	     ;; properties.
+	     (unless (string= current-str updated-str)
+	       ;; If the region to be modified includes the current position,
+	       ;; the point moves to the beginning of the region.
+	       (when (and (< beg marker) (< marker end))
+		 ;; This is required because the point moves to the center if
+		 ;; the point becomes outside of the window by the effect of
+		 ;; `set-window-start'.
+		 (setq result beg))
+	       (let ((common-properties (twittering-get-common-properties beg)))
+		 ;; Restore common properties.
+		 (delete-region beg end)
+		 (goto-char beg)
+		 (add-text-properties 0 (length updated-str) common-properties updated-str)
+		 (insert updated-str))
+	       (twittering-restore-window-config-after-modification
+		config beg end))))
+	 buffer)
 
-        ;; (sina) Display emotions.
-        (goto-char (point-min))
-        (while (re-search-forward "\\(\\[\\(\\[[^][]+\\]\\)\\]\\)" nil t 1)
-          (let ((url (assocref (match-string 2)
-                               twittering-emotions-phrase-url-alist)))
-            (when url
-              (let ((inhibit-read-only t)
-                    (common-properties (twittering-get-common-properties (point)))
-                    (repl (twittering-make-original-icon-string nil nil url)))
-                (add-text-properties 0 (length repl) common-properties repl)
-                (replace-match repl))))))
+	;; (sina) Display emotions.
+	(goto-char (point-min))
+	(while (re-search-forward "\\(\\[\\(\\[[^][]+\\]\\)\\]\\)" nil t 1)
+	  (unless twittering-is-getting-emotions-p
+	    (setq twittering-is-getting-emotions-p t)
+	    (let ((twittering-service-method 'sina))
+	      (save-match-data
+		(twittering-get-simple nil nil id 'emotions))))
+
+	  (let* ((str (match-string 2))
+		 (url (assocref str twittering-emotions-phrase-url-alist))
+		 (inhibit-read-only t)
+		 (common-properties (twittering-get-common-properties (point)))
+		 (repl (if url 
+			   (twittering-make-original-icon-string nil nil url)
+			 str)))		; Not a emotion, restore. 
+
+	    (when (consp twittering-emotions-phrase-url-alist)
+	      (add-text-properties 0 (length repl) common-properties repl)
+	      (replace-match repl)))))
 
       (set-marker marker nil)
       (when (and result (eq (window-buffer) buffer))
