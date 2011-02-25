@@ -35,8 +35,6 @@
 
 ;;; Feature Request:
 
-;; URL : http://twitter.com/d00dle/statuses/577876082
-;; * Status Input from Popup buffer and C-cC-c to POST.
 ;; URL : http://code.nanigac.com/source/view/419
 ;; * update status for region
 
@@ -2219,43 +2217,41 @@ the server when the HTTP status code equals to 400 or 403."
 (defun twittering-http-get-default-sentinel (proc status connection-info header-info)
   (let ((status-line (assqref 'status-line header-info))
         (status-code (assqref 'status-code header-info)))
-;    (case-string
-    (cond
-     ((string= status-code "200")
-;(("200")
+    (case-string
+     status-code
+     (("200")
       (debug-printf "connection-info=%s" connection-info)
       (twittering-html-decode-buffer)
       (let* ((spec (assqref 'timeline-spec connection-info))
-             (spec-string (assqref 'timeline-spec-string connection-info))
-             (twittering-service-method (caar spec))
-             (statuses
-              (let ((xmltree
-                     (twittering-xml-parse-region (point-min) (point-max))))
-                (cond
-                 ((null xmltree)
-                  nil)
-                 ((eq 'search (cadr spec))
-                  (twittering-atom-xmltree-to-status xmltree))
-                 (t
-                  (twittering-xmltree-to-status xmltree))))))
-        (when statuses
-          (let ((new-statuses
-                 (twittering-add-statuses-to-timeline-data statuses spec))
-                (buffer (twittering-get-buffer-from-spec spec)))
-            ;; FIXME: We should retrieve un-retrieved statuses until
-            ;; statuses is nil. twitter server returns nil as
-            ;; xmltree with HTTP status-code is "200" when we
-            ;; retrieved all un-retrieved statuses.
-            (when (and new-statuses buffer)
-              (twittering-render-timeline buffer t new-statuses))))
-        (twittering-add-timeline-history spec-string)
-        ;; TODO: (if (and (not noninteractive) twittering-notify-successful-http-get)
-        (if twittering-notify-successful-http-get
-            (format "Fetching %s.  Success." spec-string)
-          nil)))
+	     (spec-string (assqref 'timeline-spec-string connection-info))
+	     (twittering-service-method (caar spec))
+	     (statuses
+	      (let ((xmltree
+		     (twittering-xml-parse-region (point-min) (point-max))))
+		(cond
+		 ((null xmltree)
+		  nil)
+		 ((eq 'search (cadr spec))
+		  (twittering-atom-xmltree-to-status xmltree))
+		 (t
+		  (twittering-xmltree-to-status xmltree))))))
+	(when statuses
+	  (let ((new-statuses
+		 (twittering-add-statuses-to-timeline-data statuses spec))
+		(buffer (twittering-get-buffer-from-spec spec)))
+	    ;; FIXME: We should retrieve un-retrieved statuses until
+	    ;; statuses is nil. twitter server returns nil as
+	    ;; xmltree with HTTP status-code is "200" when we
+	    ;; retrieved all un-retrieved statuses.
+	    (when (and new-statuses buffer)
+	      (twittering-render-timeline buffer t new-statuses))))
+	(twittering-add-timeline-history spec-string)
+	(when (and twittering-notify-successful-http-get
+		   (not (assqref 'noninteractive connection-info)))
+	  (format "Fetching %s.  Success." spec-string))))
      (t
       (format "Response: %s"
-              (twittering-get-error-message header-info (current-buffer)))))))
+	      (twittering-get-error-message header-info (current-buffer)))))))
 
 (defun twittering-http-get-list-index-sentinel (proc status connection-info header-info)
   (let ((status-line (assqref 'status-line header-info))
@@ -4203,7 +4199,7 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
   (mapconcat 'identity `(,(twittering-lookup-service-method-table 'api-prefix)
                          ,@params) ""))
 
-(defun twittering-call-api (command args-alist &optional additional-info noninteractive)
+(defun twittering-call-api (command args-alist &optional additional-info)
   "Call Twitter API and return the process object for the request.
 COMMAND is a symbol specifying API. ARGS-ALIST is an alist specifying
 arguments for the API corresponding to COMMAND. Each key of ARGS-ALIST is a
@@ -4389,7 +4385,6 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                 (t nil)))
               (clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
          (if (and host method)
-             ;; TODO (twittering-http-get host method noninteractive parameters format)
              (twittering-http-get host method parameters format
                                   additional-info nil clean-up-sentinel)
            (error "Invalid timeline spec"))))
@@ -5773,10 +5768,8 @@ image are displayed."
               (insert s))))))))
 
 (defun twittering-http-get-simple-sentinel (proc status connection-info
-                                                 header-info
-                                                 ;; TODO
-                                                 ;; (proc header-info  noninteractive
-                                                 &optional args suc-msg)
+						 header-info 
+						 &optional args suc-msg)
   (let ((status-line (assqref 'status-line header-info))
         (status-code (assqref 'status-code header-info))
         ret mes)
