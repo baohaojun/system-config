@@ -7097,7 +7097,9 @@ rendered at POS, return nil."
                  "\n"
                (concat "\n"
                        (twittering-fill-string
-                        (twittering-decorate-uri user-description))
+			(if user-description 
+			    (twittering-decorate-uri user-description)
+			  ""))
                        "\n\n"))
 
              ;; location, web
