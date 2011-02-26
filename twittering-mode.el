@@ -646,9 +646,11 @@ Following methods are supported:
          (password \"PASSWORD\")
 
          ;; optional
-         (auth basic)      ; oauth
-         (retweet organic) ; native
-         ...))"
+         (auth basic)      ; Authentication method: `oauth', `basic'.
+         (retweet organic) ; Default Retweet style: `native', `organic'.
+         (use-proxy t))    ; Enable proxy: `nil', `t'.
+
+     ...)"
   :type 'list
   :group 'twittering-mode)
 
@@ -782,7 +784,6 @@ as a list of a string on Emacs21."
 ;;;; Proxy setting / functions
 ;;;;
 
-(defvar twittering-proxy-use nil)
 (defvar twittering-proxy-server nil
   "*Proxy server for `twittering-mode'.
 If both `twittering-proxy-server' and `twittering-proxy-port' are
@@ -1014,21 +1015,21 @@ SCHEME must be \"http\" or \"https\"."
     (let ((info (twittering-find-proxy "https")))
       (setq twittering-https-proxy-server (car-safe info))
       (setq twittering-https-proxy-port (cdr-safe info))))
-  (if (and twittering-proxy-use
+  (if (and (twittering-get-accounts 'use-proxy)
            (null (twittering-proxy-info "http"))
            (null (twittering-proxy-info "https")))
       (progn
-        (message "Disabling proxy due to lack of configuration.")
-        (setq twittering-proxy-use nil))
+        (error "Proxy enabled, but lack of configuration"))
     t))
 
 (defun twittering-toggle-proxy ()
   (interactive)
-  (setq twittering-proxy-use
-        (not twittering-proxy-use))
-  (if (twittering-setup-proxy)
-      (message (if twittering-proxy-use "Use Proxy:on" "Use Proxy:off")))
-  (twittering-update-mode-line))
+  ;; (setq twittering-proxy-use
+  ;;       (not twittering-proxy-use))
+  ;; (if (twittering-setup-proxy)
+  ;;     (message (if twittering-proxy-use "Use Proxy:on" "Use Proxy:off")))
+  ;; (twittering-update-mode-line)
+  (error "Not implemented yet"))
 
 ;;;;
 ;;;; Functions for URL library
@@ -1048,7 +1049,7 @@ SCHEME must be \"http\" or \"https\"."
 
 (defun twittering-url-wrapper (func &rest args)
   (let ((url-proxy-services
-	 (when twittering-proxy-use
+	 (when (twittering-get-accounts 'use-proxy)
 	   (twittering-url-proxy-services)))
 	(url-show-status twittering-url-show-status))
     (if (eq func 'url-retrieve)
@@ -1413,8 +1414,8 @@ The parameter symbols are following:
        . ,twittering-allow-insecure-server-cert)
       (cacert-fullpath
        . ,(when use-ssl (twittering-ensure-ca-cert)))
-      (use-proxy . ,twittering-proxy-use)
-      ,@(when twittering-proxy-use
+      (use-proxy . ,(twittering-get-accounts 'use-proxy))
+      ,@(when (twittering-get-accounts 'use-proxy)
           `((proxy-server . ,(twittering-proxy-info scheme 'server))
             (proxy-port . ,(twittering-proxy-info scheme 'port))
             (proxy-user . ,(if use-ssl
@@ -1589,7 +1590,7 @@ The method to perform the request is determined from
 
 (eval-when-compile (require 'tls nil t))
 (defun twittering-start-http-session-native-tls-p ()
-  (when (and (not twittering-proxy-use)
+  (when (and (not (twittering-get-accounts 'use-proxy))
              (require 'tls nil t))
     (unless twittering-tls-program
       (let ((programs
@@ -1641,7 +1642,7 @@ The method to perform the request is determined from
          (cacert-filename (when cacert-fullpath
                             (file-name-nondirectory cacert-fullpath)))
          (proxy-info
-          (when twittering-proxy-use
+          (when (twittering-get-accounts 'use-proxy)
             (twittering-proxy-info scheme)))
          (connect-host (if proxy-info
                            (assqref 'server proxy-info)
@@ -1963,7 +1964,7 @@ The method to perform the request is determined from
 
 (defun twittering-start-http-session-urllib-https-p ()
   "Return t if url library can be used for HTTPS, otherwise nil."
-  (and (not twittering-proxy-use)
+  (and (not (twittering-get-accounts 'use-proxy))
        (require 'url nil t)
        (cond
         ((<= 22 emacs-major-version)
@@ -2122,7 +2123,7 @@ The method to perform the request is determined from
     ;; (when (string= "POST" method)
     ;;   (push (cons "Content-Length" "0") headers)
     ;;   (push (cons "Content-Type" "text/plain") headers))
-    (when twittering-proxy-use
+    (when (twittering-get-accounts 'use-proxy)
       (let* ((scheme (if twittering-use-ssl "https" "http"))
              (keep-alive (twittering-proxy-info scheme 'keep-alive))
              (user (twittering-proxy-info scheme 'user))
@@ -2602,14 +2603,6 @@ The zebra face is decided by looking at adjacent face. "
                          face twittering-username-face)
                        display-string)
   display-string)
-
-(defun twittering-current-window-config (window-list)
-  "Return window parameters of WINDOW-LIST."
-  (mapcar (lambda (win)
-            (let ((start (window-start win))
-                  (point (window-point win)))
-              `(,win ,start ,point)))
-          window-list))
 
 (defun twittering-oauth-auth-str (method base-url query-parameters oauth-parameters key)
   "Generate the value for HTTP Authorization header on OAuth.
@@ -4684,7 +4677,8 @@ If `twittering-password' is nil, read it from the minibuffer."
                   `(,(if (eq twittering-service-method 'sina)
                         `(user_id . ,(assocref "user_id" (twittering-lookup-oauth-access-token-alist)))
                       `(username . ,(assocref "screen_name" (twittering-lookup-oauth-access-token-alist))))
-                    (password . nil)))))
+                    (password . nil)
+		    (service . ,twittering-service-method)))))
             (cond
              ((null proc)
               (twittering-update-account-authorization nil)
@@ -4807,7 +4801,8 @@ If `twittering-password' is nil, read it from the minibuffer."
                (clean-up-sentinel
                 . twittering-http-get-verify-credentials-clean-up-sentinel))
              `((username . ,(car account-info))
-               (password . ,(cdr account-info))))))
+               (password . ,(cdr account-info))
+	       (service . ,twittering-service-method)))))
       (cond
        ((null proc)
         (twittering-update-account-authorization nil)
@@ -4826,7 +4821,8 @@ If `twittering-password' is nil, read it from the minibuffer."
 
 (defun twittering-http-get-verify-credentials-sentinel (proc status connection-info header-info)
   (let ((status-line (assqref 'status-line header-info))
-        (status-code (assqref 'status-code header-info)))
+        (status-code (assqref 'status-code header-info))
+	(twittering-service-method (assqref 'service connection-info)))
     (case-string
      status-code
      (("200")
@@ -6287,7 +6283,7 @@ static char * twitter_xpm[] = {
            ,@(when twittering-icon-mode '("icon"))
            ,@(when twittering-reverse-mode '("reverse"))
            ,@(when twittering-scroll-mode '("scroll"))
-           ,@(when twittering-proxy-use '("proxy")))))
+           ,@(when (twittering-get-accounts 'use-proxy) '("proxy")))))
     (concat active-mode-indicator
             (when twittering-display-remaining
               (format " %d/%d"
@@ -8807,7 +8803,7 @@ string.")
                        (get-text-property (point) 'username)
                        'twittering-user-history)))
         (spec (or (get-text-property (point) 'source-spec)
-                  '(direct_messages))))
+                  `((,twittering-service-method) direct_messages))))
     (if (string= "" username)
         (message "No user selected")
       (funcall twittering-update-status-function
