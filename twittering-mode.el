@@ -7742,19 +7742,19 @@ FUNC is called as (apply FUNC ARGS)."
 managed by `twittering-mode'."
   (mapc
    (lambda (buffer)
-     (let ((spec (twittering-get-timeline-spec-for-buffer buffer)))
-       (when (or (twittering-timeline-spec-most-active-p spec)
-                 ;; first run
-                 (not (member (twittering-timeline-spec-to-string spec)
-                              twittering-timeline-history))
-                 ;; hourly TODO: make it customizable? (xwl)
-                 (let ((min-and-sec
-                        (+ (* (string-to-number
-                               (format-time-string "%M" (current-time))) 60)
-                           (string-to-number
-                            (format-time-string "%S" (current-time))))))
-                   (<= min-and-sec twittering-timer-interval)))
-         (with-current-buffer buffer
+     (with-current-buffer buffer
+       (let ((spec (twittering-get-timeline-spec-for-buffer buffer)))
+	 (when (or (twittering-timeline-spec-most-active-p spec)
+		   ;; first run
+		   (not (member (twittering-timeline-spec-to-string spec)
+				twittering-timeline-history))
+		   ;; hourly TODO: make it customizable? (xwl)
+		   (let ((min-and-sec
+			  (+ (* (string-to-number
+				 (format-time-string "%M" (current-time))) 60)
+			     (string-to-number
+			      (format-time-string "%S" (current-time))))))
+		     (<= min-and-sec twittering-timer-interval)))
            (when (twittering-account-authorized-p)
              (twittering-get-and-render-timeline t))))))
    (twittering-get-active-buffer-list)))
