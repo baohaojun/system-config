@@ -34,6 +34,7 @@ typedef struct {
 } CONVERT;
 
 void set_encode_chars(const unsigned char *);
+void set_print0();
 char *decode_path(const unsigned char *);
 CONVERT *convert_open(int, int, const char *, const char *, const char *, FILE *);
 void convert_put(CONVERT *, const char *);

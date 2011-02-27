@@ -1,11 +1,10 @@
 (require 'sawfish.wm.util.keymap)
-(load-file "~/.sawfish/bhj-draw-wininfo.jl")
-(require 'bhj-draw-wininfo)
 (load-file "~/.sawfish/iswitch-window.jl")
 (bind-keys global-keymap "Super-s" 'iswitch-window)
 
 
 (bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/linux/screenshot&")))
+(bind-keys global-keymap "Super-r" (lambda () (system "grun&")))
 (bind-keys window-keymap "Super-i" (lambda () (display-message (concat "Window class is: " (window-class (input-focus))))))
 (bind-keys global-keymap "Super-SPC" (lambda() 
                                        (mapc (lambda (window)
@@ -19,17 +18,13 @@
   (activate-window window))
 
 
-(defun find-window-or-exec (wclass-or-lambda #!optional wcommand)
+(defun find-window-or-exec (wclass #!optional wcommand)
   (if (eq (catch 'wFound
             (mapc (lambda (window)
-                    (when (if (stringp wclass-or-lambda)
-                              (string-match wclass-or-lambda (window-class window) 0 t)
-                            (when functionp wclass-or-lambda
-                                  (write (stderr-file) "hello world\n")
-                                  (wclass-or-lambda window)))
-
+                    (if (string-match wclass (window-class window) 0 t)
+                        (progn 
                           (bhj-activate-window window)
-                          (throw 'wFound 'wFound)))
+                          (throw 'wFound 'wFound))))
                   (stacking-order)))
           'wFound)
       nil
@@ -43,15 +38,14 @@
          (wcommand (caddr args)))
      (bind-keys global-keymap key
                 (lambda ()
-                  (find-window-or-exec (eval wclass) wcommand)))))
+                  (find-window-or-exec wclass wcommand)))))
  '(
    ("Super-e" "Emacs" "emacs.bhj")
-   ("Super-r" "GRun" "grun")
    ("Super-p" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
-   ("Super-C-d" (lambda (w) (string-match "my-dict" (window-name w) 0 t)) "gnome-terminal -t my-dict --hide-menubar -e ~/bin/linux/my-dict")
-   ("Super-l" "hello world no such thing" "/usr/bin/gnome-screensaver-command -a -l")
-   ("Super-x" "XCalc" "xcalc")
-   ("F12" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
+   ("Super-a" "Acroread\|Evince" "acroread")
+   ("Super-n" "Firefox\|Chromium\|Conkeror" "firefox")
+   ("Super-w" "Nautilus" "nautilus")
+   ("Super-g" "Gimp" "gimp")
    ))
 
 (mapc 
@@ -69,9 +63,7 @@
                         (find-window-or-exec wclass)))))))
  '(0 1 2 3 4 5 6 7 8 9))
 
-(bind-keys global-keymap "Super-k" (lambda () (system "emacsclient -n ~/doc/work.txt&")))
-(bind-keys global-keymap "Super-Control-n" (lambda () (system "emacsclient -n ~/.notes&")))
-(bind-keys global-keymap "Super-Control-o" (lambda () (system "emacsclient -n ~/doc/notes.org&")))
+(bind-keys global-keymap "Super-k" (lambda () (system "emacsclient.emacs-snapshot -n ~/doc/work.txt&")))
 
 
 (bind-keys global-keymap "Super-d"
@@ -80,67 +72,26 @@
                  (show-desktop)
                (hide-desktop))))
 
-(when (or (string-equal (getenv "DISPLAY") ":0.0")
-        (string-equal (getenv "DISPLAY") ":0"))
+(setenv "XMODIFIERS" "@im=SCIM")
+(setenv "XIM" "SCIM")
+(setenv "GTK_IM_MODULE" "scim")
+(setenv "TZ" "Asia/Shanghai")
+(setenv "LANG" "en_US.UTF-8")
+(setenv "LC_ALL" "en_US.UTF-8")
+(setenv "PATH" (concat 
+                (getenv "HOME") "/bin:" 
+                (getenv "HOME") "/bin/linux:" 
+                (getenv "HOME") "/bin/linux/ext:" 
+                (getenv "HOME") "/bin/linux/ext/android-sdk-linux_86/tools:"
+                (getenv "PATH")))
+(setenv "CLASSPATH" (concat
+                     "/usr/local/jdk1.5/lib:"
+                     (getenv "HOME") "/bin/linux/ext/stringtemplate.jar:"
+                     (getenv "HOME") "/bin/linux/ext/antlr3.jar:"
+                     (getenv "HOME") "/bin/linux/ext/antlrworks.jar:."))
+
+
+(if (or  (boundp 'ProgramsStarted) (not (string-equal (getenv "DISPLAY") ":0.0")))
+      nil ;; Sawfish has already started those Programs
   (setq ProgramsStarted t)
   (system "for x in ~/.sawfish/start/*; do ($x&); done&"))
-
-(require 'sawfish.wm.commands.x-cycle)
-
-(setq im-class "Eva|Pidgin|Wine" ;; im = instant messanger
-      br-class "Firefox|Iceweasel|Epiphany" ;; br = browser
-      dc-class "OpenOffice|Acroread|Evince|Gnumeric" ;; dc = doc
-      mg-class "Meld|Gimp|Gitk" ;; mg = meld/gimp
-      fm-class "Nautilus|File-roller" ;; fm = file manager
-      cycle-groups (list im-class
-                     br-class
-                     dc-class))
-
-(define-cycle-command-pair
-  'cycle-class-bhj 'cycle-class-bhj-backwards
-  (lambda (w)
-    (let ((class (window-class w)))
-      (delete-if-not window-in-cycle-p
-                     (filter-windows
-                      (let ((grps cycle-groups) (matched nil) grp)
-                        (while (and grps (not matched))
-                          (setq grp (car grps)
-                                grps (cdr grps))
-                          (if (string-match grp class)
-                                (setq grps nil matched t)))
-                        (if matched
-                            (lambda (x) (string-match grp (window-class x)))
-                          (lambda (x) (equal (window-class x) class))))
-                      (window-order)))))
-  #:spec "%W")
-
-(define-cycle-command-pair
-  'cycle-im-window 'cycle-im-windows-backwards
-  (lambda () (filter-windows 
-              (lambda (x) (string-match im-class (window-class x)))
-              (stacking-order))))
-
-(define-cycle-command-pair
-  'cycle-br-window 'cycle-br-window-backwards
-  (lambda () (filter-windows 
-              (lambda (x) (string-match br-class (window-class x)))
-              (stacking-order))))
-
-(define-cycle-command-pair
-  'cycle-dc-window 'cycle-dc-window-backwards
-  (lambda () (filter-windows 
-              (lambda (x) (string-match dc-class (window-class x)))
-              (stacking-order))))
-
-(define-cycle-command-pair
-  'cycle-mg-window 'cycle-mg-window-backwards
-  (lambda () (filter-windows 
-              (lambda (x) (string-match mg-class (window-class x)))
-              (stacking-order))))
-
-(define-cycle-command-pair
-  'cycle-fm-window 'cycle-fm-window-backwards
-  (lambda () (filter-windows
-              (lambda (x) (and (string-match fm-class (window-class x))
-                               (not (string-match "x-nautilus-desktop" (window-name x)))))
-              (stacking-order))))

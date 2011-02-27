@@ -194,7 +194,7 @@ class DumpIndexTool {
 		reader = IndexReader.Open (driver.PrimaryStore);
 
 		TermEnum term_enum;
-		term_enum = reader.Terms (new Term("", ""));
+		term_enum = reader.Terms (new Term ("Text", ""));
 
 		int distinct_term_count = 0;
 		int term_count = 0;
@@ -203,14 +203,7 @@ class DumpIndexTool {
 		// Terms are sorted first by field, then by text
 		// so all terms with a given field are adjacent in enumerations.
 		if (term_enum.Term () != null) {
-			while (true) {
-				Console.WriteLine("fieldname: {0}, text: {1}", term_enum.Term().Field(), term_enum.Term().Text());
-				if (term_enum.Term().Field() != "Text") {
-					if (!term_enum.Next ()) {
-						break;
-					}
-					continue;
-				}
+			while (term_enum.Term().Field() == "Text") {
 				int freq;
 				freq = term_enum.DocFreq ();
 

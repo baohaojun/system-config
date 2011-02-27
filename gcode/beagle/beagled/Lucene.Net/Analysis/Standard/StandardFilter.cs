@@ -32,6 +32,9 @@ namespace Lucene.Net.Analysis.Standard
         {
         }
 		
+        private static readonly System.String APOSTROPHE_TYPE = Lucene.Net.Analysis.Standard.StandardTokenizerImpl.TOKEN_TYPES[Lucene.Net.Analysis.Standard.StandardTokenizerImpl.APOSTROPHE];
+        private static readonly System.String ACRONYM_TYPE = Lucene.Net.Analysis.Standard.StandardTokenizerImpl.TOKEN_TYPES[Lucene.Net.Analysis.Standard.StandardTokenizerImpl.ACRONYM];
+		
         /// <summary>Returns the next token in the stream, or null at EOS.
         /// <p>Removes <tt>'s</tt> from the end of words.
         /// <p>Removes dots from acronyms.
@@ -43,7 +46,29 @@ namespace Lucene.Net.Analysis.Standard
             if (t == null)
                 return null;
 			
-	    return t;
+            System.String text = t.TermText();
+            System.String type = t.Type();
+			
+            if (type == APOSTROPHE_TYPE && (text.EndsWith("'s") || text.EndsWith("'S")))
+            {
+                return new Lucene.Net.Analysis.Token(text.Substring(0, (text.Length - 2) - (0)), t.StartOffset(), t.EndOffset(), type);
+            }
+            else if (type == ACRONYM_TYPE)
+            {
+                // remove dots
+                System.Text.StringBuilder trimmed = new System.Text.StringBuilder();
+                for (int i = 0; i < text.Length; i++)
+                {
+                    char c = text[i];
+                    if (c != '.')
+                        trimmed.Append(c);
+                }
+                return new Lucene.Net.Analysis.Token(trimmed.ToString(), t.StartOffset(), t.EndOffset(), type);
+            }
+            else
+            {
+                return t;
+            }
         }
     }
 }

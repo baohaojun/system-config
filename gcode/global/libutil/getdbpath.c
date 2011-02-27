@@ -140,6 +140,7 @@ int
 gtagsexist(const char *candidate, char *dbpath, int size, int verbose)
 {
 	char path[MAXPATHLEN];
+	const char *candidate_without_slash;
 
 	/*
 	 * setup makeobjdir and makeobjdirprefix (only first time).
@@ -147,7 +148,11 @@ gtagsexist(const char *candidate, char *dbpath, int size, int verbose)
 	if (makeobjdir == NULL)
 		setupvariables(verbose);
 
-	snprintf(path, sizeof(path), "%s/%s", candidate, dbname(GTAGS));
+	if (strcmp(candidate, "/") == 0)
+		candidate_without_slash = "";
+	else
+		candidate_without_slash = candidate;
+	snprintf(path, sizeof(path), "%s/%s", candidate_without_slash, dbname(GTAGS));
 	if (verbose)
 		fprintf(stderr, "checking %s\n", path);
 	if (test("fr", path)) {
@@ -157,24 +162,24 @@ gtagsexist(const char *candidate, char *dbpath, int size, int verbose)
 		return 1;
 	}
 	snprintf(path, sizeof(path),
-		"%s/%s/%s", candidate, makeobjdir, dbname(GTAGS));
+		"%s/%s/%s", candidate_without_slash, makeobjdir, dbname(GTAGS));
 	if (verbose)
 		fprintf(stderr, "checking %s\n", path);
 	if (test("fr", path)) {
 		if (verbose)
 			fprintf(stderr, "GTAGS found at '%s'.\n", path);
-		snprintf(dbpath, size, "%s/%s", candidate, makeobjdir);
+		snprintf(dbpath, size, "%s/%s", candidate_without_slash, makeobjdir);
 		return 1;
 	}
 #if !defined(_WIN32) && !defined(__DJGPP__)
 	snprintf(path, sizeof(path),
-		"%s%s/%s", makeobjdirprefix, candidate, dbname(GTAGS));
+		"%s%s/%s", makeobjdirprefix, candidate_without_slash, dbname(GTAGS));
 	if (verbose)
 		fprintf(stderr, "checking %s\n", path);
 	if (test("fr", path)) {
 		if (verbose)
 			fprintf(stderr, "GTAGS found at '%s'.\n", path);
-		snprintf(dbpath, size, "%s%s", makeobjdirprefix, candidate);
+		snprintf(dbpath, size, "%s%s", makeobjdirprefix, candidate_without_slash);
 		return 1;
 	}
 #endif
@@ -305,12 +310,12 @@ setupdbpath(int verbose)
 				if (verbose)
 					fprintf(stderr, "'%s' ignored because it doesn't include existent directory name.\n", path);
 			} else {
+				char buf[MAXPATHLEN];
+
 				if (verbose)
 					fprintf(stderr, "GTAGSROOT found at '%s'.\n", path);
-				if (!isabspath(s)) {
-					char buf[MAXPATHLEN];
+				if (!isabspath(s))
 					s = realpath(makepath(root, s, NULL), buf);
-				}
 				strlimcpy(root, s, MAXPATHLEN);
 			}
 			fclose(fp);

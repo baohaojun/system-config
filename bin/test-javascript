@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if test $# == 0
-then 
-    (echo '<script>'; getclip; echo '</script>') > ~/1.html
-    getclip > ~/2.html
-fi
-of ~/1.html
-of ~/2.html

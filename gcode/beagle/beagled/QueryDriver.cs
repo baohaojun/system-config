@@ -603,6 +603,30 @@ namespace Beagle.Daemon {
 			QueryEachQueryable (query, result);
 		}
 
+#if ENABLE_RDF_ADAPTER
+		static public ArrayList DoRDFQuery (RDFQuery query)
+		{
+			ArrayList all_results = new ArrayList ();
+
+			try {
+				iqueryable_lock.AcquireReaderLock (System.Threading.Timeout.Infinite);
+
+				foreach (Queryable q in Queryables) {
+					if (! q.AcceptQuery (query))
+						continue;
+
+					ICollection results = q.DoRDFQuery (query);
+					if (results == null || results.Count == 0)
+						continue;
+					all_results.AddRange (results);
+				}
+			} finally {
+				iqueryable_lock.ReleaseReaderLock ();
+			}
+
+			return all_results;
+		}
+#endif
 
 		////////////////////////////////////////////////////////
 

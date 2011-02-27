@@ -9,9 +9,11 @@
 #umask 022
 
 # if running bash
+if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
-if [ -f "$HOME/.bashrc" ]; then
-    . "$HOME/.bashrc"
+    if [ -f "$HOME/.bashrc" ]; then
+	. "$HOME/.bashrc"
+    fi
 fi
 
 # set PATH so it includes user's private bin if it exists
@@ -22,7 +24,3 @@ fi
 export XMODIFIERS="@im=SCIM"
 export XIM=SCIM
 export GTK_IM_MODULE=scim
-export TZ="Asia/Shanghai"
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-

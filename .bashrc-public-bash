@@ -1,4 +1,0 @@
-svn-info-clip()
-{
-    svn info "$1" |grep '^URL:'|sed -e 's/^URL: //; s/^https/http/'|tr -d '\r\n' | putclip
-}

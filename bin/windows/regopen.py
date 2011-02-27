@@ -52,7 +52,7 @@ for x in regAbrevMap:
         keyToOpen = regAbrevMap[x] + keyToOpen[len(x):] 
         break
 
-keyToOpen = '\\'+keyToOpen
+keyToOpen = 'My Computer\\'+keyToOpen
 print 'keyToOpen is', keyToOpen
 
 regEditKey = RegOpenKeyEx(HKEY_CURRENT_USER, 

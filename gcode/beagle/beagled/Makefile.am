@@ -3,6 +3,39 @@ autostart_DATA = beagled-autostart.desktop
 
 ############################################################
 
+WEBINTERFACE_FILES =				\
+	$(srcdir)/webinterface/default.js	\
+	$(srcdir)/webinterface/propname-table.js\
+	$(srcdir)/webinterface/help.html	\
+	$(srcdir)/webinterface/mappings.xml	\
+	$(srcdir)/webinterface/opensearch.xml	\
+	$(srcdir)/webinterface/index.xsl	\
+	$(srcdir)/webinterface/hitresult.xsl	\
+	$(srcdir)/webinterface/statusresult.xsl	\
+	$(srcdir)/webinterface/default.css
+
+WEBINTERFACE_INDEX_XML_IN=$(srcdir)/webinterface/index.xml.in
+WEBINTERFACE_INDEX_XML=$(srcdir)/webinterface/index.xml
+
+webinterfacedir = $(datadir)/beagle/webinterface
+webinterface_DATA =				\
+	$(WEBINTERFACE_INDEX_XML)		\
+	$(WEBINTERFACE_FILES)
+
+webinterfaceimagesdir = $(webinterfacedir)/images
+webinterfaceimages_DATA =					\
+	$(srcdir)/webinterface/images/beagle-logo.png		\
+	$(srcdir)/webinterface/images/busy-animation.gif	\
+	$(srcdir)/webinterface/images/favicon.png		\
+	$(srcdir)/webinterface/images/system-search.png		\
+	$(srcdir)/webinterface/images/title_bg.png
+
+$(WEBINTERFACE_INDEX_XML): $(WEBINTERFACE_INDEX_XML_IN) $(WEBINTERFACE_FILES)
+	sed 	-e "s|\@VERSION\@|$(VERSION)|"			\
+		-e "s|\@LAST_TIME\@|$(shell date +'%x %X')|"	\
+		< $(WEBINTERFACE_INDEX_XML_IN) > $@
+
+
 ############################################################
 
 # Warnings we don't want to see.
@@ -60,6 +93,32 @@ LUCENE_CSFILES = $(LUCENE_2_1_CSFILES)
 
 ############################################################
 
+snowballdir = $(srcdir)/Snowball.Net
+
+SNOWBALL_CSFILES =							\
+	$(snowballdir)/Lucene.Net/Analysis/Snowball/SnowballAnalyzer.cs	\
+	$(snowballdir)/Lucene.Net/Analysis/Snowball/SnowballFilter.cs	\
+	$(snowballdir)/SF/Snowball/Ext/ItalianStemmer.cs		\
+	$(snowballdir)/SF/Snowball/Ext/RussianStemmer.cs		\
+	$(snowballdir)/SF/Snowball/Ext/NorwegianStemmer.cs		\
+	$(snowballdir)/SF/Snowball/Ext/EnglishStemmer.cs		\
+	$(snowballdir)/SF/Snowball/Ext/German2Stemmer.cs		\
+	$(snowballdir)/SF/Snowball/Ext/FinnishStemmer.cs		\
+	$(snowballdir)/SF/Snowball/Ext/PortugueseStemmer.cs		\
+	$(snowballdir)/SF/Snowball/Ext/SpanishStemmer.cs		\
+	$(snowballdir)/SF/Snowball/Ext/FrenchStemmer.cs			\
+	$(snowballdir)/SF/Snowball/Ext/DanishStemmer.cs			\
+	$(snowballdir)/SF/Snowball/Ext/SwedishStemmer.cs		\
+	$(snowballdir)/SF/Snowball/Ext/DutchStemmer.cs			\
+	$(snowballdir)/SF/Snowball/Ext/GermanStemmer.cs			\
+	$(snowballdir)/SF/Snowball/Ext/LovinsStemmer.cs			\
+	$(snowballdir)/SF/Snowball/Ext/KpStemmer.cs			\
+	$(snowballdir)/SF/Snowball/Ext/PorterStemmer.cs			\
+	$(snowballdir)/SF/Snowball/Among.cs				\
+	$(snowballdir)/SF/Snowball/SnowballProgram.cs
+
+############################################################
+
 DAEMON_DLL_TARGET = BeagleDaemonLib.dll
 
 DAEMON_DLL_CSFLAGS = -target:library $(BEAGLE_DEFINES)
@@ -81,9 +140,93 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 
 
 
+pidginqueryable = $(srcdir)/PidginQueryable
+PIDGIN_QUERYABLE_CSFILES =					\
+	$(pidginqueryable)/PidginIndexableGenerator.cs		\
+	$(pidginqueryable)/PidginQueryable.cs
+
+tomboyqueryable = $(srcdir)/TomboyQueryable
+TOMBOY_QUERYABLE_CSFILES =					\
+	$(tomboyqueryable)/TomboyQueryable.cs
+
+labyrinthqueryable = $(srcdir)/LabyrinthQueryable
+LABYRINTH_QUERYABLE_CSFILES =					\
+	$(labyrinthqueryable)/LabyrinthQueryable.cs
+
+kmailqueryable = $(srcdir)/KMailQueryable
+KMAIL_QUERYABLE_CSFILES =					\
+	$(kmailqueryable)/KMailQueryable.cs			\
+	$(kmailqueryable)/KMailIndexableGenerator.cs		\
+	$(kmailqueryable)/KMailIndexer.cs
+
+blamqueryable = $(srcdir)/BlamQueryable
+BLAM_QUERYABLE_CSFILES =					\
+	$(blamqueryable)/BlamQueryable.cs
+
+lifereaqueryable = $(srcdir)/LifereaQueryable
+LIFEREA_QUERYABLE_CSFILES =					\
+	$(lifereaqueryable)/LifereaQueryable.cs
+
+akregatorqueryable = $(srcdir)/AkregatorQueryable
+AKREGATOR_QUERYABLE_CSFILES =					\
+	$(akregatorqueryable)/AkregatorQueryable.cs
+
+konqhistoryqueryable = $(srcdir)/KonqHistoryQueryable
+KONQHISTORY_QUERYABLE_CSFILES =					\
+	$(konqhistoryqueryable)/KonqQueryable.cs
+
+konqbookmarkqueryable = $(srcdir)/KonqBookmarkQueryable
+KONQBOOKMARK_QUERYABLE_CSFILES =				\
+	$(konqbookmarkqueryable)/KonqBookmarkQueryable.cs
+
+kopetequeryable = $(srcdir)/KopeteQueryable
+KOPETE_QUERYABLE_CSFILES =					\
+	$(kopetequeryable)/KopeteQueryable.cs 	 		\
+	$(kopetequeryable)/KopeteCrawler.cs
+
+empathyqueryable = $(srcdir)/EmpathyQueryable
+EMPATHY_QUERYABLE_CSFILES =					\
+	$(empathyqueryable)/EmpathyQueryable.cs 	 		\
+	$(empathyqueryable)/EmpathyCrawler.cs
+
+knotesqueryable = $(srcdir)/KNotesQueryable
+KNOTES_QUERYABLE_CSFILES =					\
+	$(knotesqueryable)/KNotesQueryable.cs
+
+korganizerqueryable = $(srcdir)/KOrganizerQueryable
+KORGANIZER_QUERYABLE_CSFILES =					\
+	$(korganizerqueryable)/KOrganizerQueryable.cs
+
+kabcqueryable = $(srcdir)/KAddressBookQueryable
+KABC_QUERYABLE_CSFILES =					\
+	$(kabcqueryable)/KabcQueryable.cs
+
+konversationqueryable = $(srcdir)/KonversationQueryable
+KONVERSATION_QUERYABLE_CSFILES =				\
+	$(konversationqueryable)/KonversationQueryable.cs
+
 indexingservicequeryable = $(srcdir)/IndexingServiceQueryable
 INDEXING_SERVICE_QUERYABLE_CSFILES =				\
 	$(indexingservicequeryable)/IndexingServiceQueryable.cs
+
+operaqueryable = $(srcdir)/OperaQueryable
+OPERA_QUERYABLE_CSFILES =					\
+	$(operaqueryable)/OperaIndexableGenerator.cs		\
+	$(operaqueryable)/OperaIndexer.cs			\
+	$(operaqueryable)/OperaQueryable.cs
+
+nautilusqueryable = $(srcdir)/NautilusMetadataQueryable
+NAUTILUS_QUERYABLE_CSFILES =					\
+	$(nautilusqueryable)/NautilusMetadataQueryable.cs
+
+networkservicesqueryable = $(srcdir)/NetworkServicesQueryable
+NETWORK_SERVICES_QUERYABLE_CSFILES =				\
+	$(networkservicesqueryable)/NetworkServicesQueryable.cs	\
+	$(networkservicesqueryable)/HttpTransport.cs
+
+locatequeryable = $(srcdir)/LocateQueryable
+LOCATE_QUERYABLE_CSFILES = 					\
+	$(locatequeryable)/LocateDriver.cs
 
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
@@ -132,6 +275,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/LuceneQueryingDriver.cs			\
 	$(srcdir)/LuceneFileQueryable.cs			\
 	$(srcdir)/LuceneQueryable.cs				\
+	$(srcdir)/NoiseFilter.cs				\
 	$(srcdir)/PropertyKeywordFu.cs				\
 	$(srcdir)/QueryDriver.cs				\
 	$(srcdir)/QueryExecutor.cs				\
@@ -164,9 +308,12 @@ DAEMON_DLL_ASSEMBLIES = 					\
 	-r:Mono.Data.Sqlite					\
 	-r:Mono.Posix
 
-
-############################################################
-
+if ENABLE_AVAHI
+DAEMON_DLL_CSFLAGS += -define:ENABLE_AVAHI
+DAEMON_DLL_ASSEMBLIES += $(AVAHI_SHARP_LIBS)
+DAEMON_DLL_CSFILES +=						\
+	$(srcdir)/Zeroconf.cs
+endif
 
 $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DAEMON_DLL_CSFLAGS) $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_ASSEMBLIES)
@@ -187,6 +334,107 @@ BACKEND_ASSEMBLIES =				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(BACKEND_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix
+
+############################################################
+
+###
+### Evolution backend
+###
+
+edsqueryable = $(srcdir)/EvolutionDataServerQueryable
+EDS_QUERYABLE_CSFILES =                                 \
+	$(edsqueryable)/BookContainer.cs		\
+	$(edsqueryable)/CalContainer.cs			\
+	$(edsqueryable)/Container.cs			\
+	$(edsqueryable)/EvolutionDataServerQueryable.cs	\
+	$(edsqueryable)/SchedulingIndexableGenerator.cs	\
+	$(edsqueryable)/SourcesHandler.cs
+
+evomailqueryable = $(srcdir)/EvolutionMailQueryable
+EVO_MAIL_QUERYABLE_CSFILES =					\
+	$(evomailqueryable)/EvolutionMailQueryable.cs		\
+	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs	\
+	$(evomailqueryable)/EvolutionSummaryTracker.cs		\
+	$(evomailqueryable)/GConfThreadHelper.cs		\
+	$(evomailqueryable)/MailCrawler.cs
+
+EVO_DLL_TARGET = EvolutionBackends.dll
+EVO_DLL_CSFLAGS = $(BACKEND_CSFLAGS)
+EVO_DLL_CSFILES = 					\
+	$(srcdir)/EvolutionBackendsAssemblyInfo.cs 	\
+	$(EDS_QUERYABLE_CSFILES) 			\
+	$(EVO_MAIL_QUERYABLE_CSFILES)
+EVO_DLL_ASSEMBLIES = 			\
+	$(BACKEND_ASSEMBLIES)		\
+	$(EVO_LIBS)			\
+	-r:Mono.Data.Sqlite
+
+$(EVO_DLL_TARGET): $(EVO_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES) $(DAEMON_DLL_TARGET)
+	$(CSC) -out:$@ $(EVO_DLL_CSFLAGS) $(EVO_DLL_CSFILES) $(EVO_DLL_ASSEMBLIES)
+
+############################################################
+
+###
+### Thunderbird backend
+###
+
+THUNDERBIRD_DIR = $(srcdir)/ThunderbirdQueryable
+
+THUNDERBIRD_TARGET = ThunderbirdBackends.dll
+
+THUNDERBIRD_CSFLAGS = $(BACKEND_CSFLAGS)
+
+THUNDERBIRD_CSFILES =						\
+	$(THUNDERBIRD_DIR)/ThunderbirdQueryable.cs
+
+THUNDERBIRD_LOCAL_ASSEMBLIES =					\
+	../Util/Util.dll					\
+	../BeagleClient/Beagle.dll				\
+	./BeagleDaemonLib.dll
+
+THUNDERBIRD_ASSEMBLIES =					\
+	-r:Mono.Posix						\
+	$(BEAGLED_LIBS)                 			\
+	$(THUNDERBIRD_LOCAL_ASSEMBLIES:%=-r:%)
+
+
+$(THUNDERBIRD_TARGET): $(THUNDERBIRD_CSFILES) $(THUNDERBIRD_LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(THUNDERBIRD_CSFLAGS) $(THUNDERBIRD_CSFILES) $(THUNDERBIRD_ASSEMBLIES)
+
+############################################################
+
+### GMail and other Google backends
+
+XEMAIL_DIR = $(srcdir)/xemail-net/src
+
+XEMAIL_CSFILES = 				\
+	$(XEMAIL_DIR)/Attachment.cs		\
+	$(XEMAIL_DIR)/AttachmentCollections.cs	\
+	$(XEMAIL_DIR)/Flag.cs			\
+	$(XEMAIL_DIR)/FlagCollection.cs		\
+	$(XEMAIL_DIR)/HMACMD5.cs		\
+	$(XEMAIL_DIR)/ImapClient.cs		\
+	$(XEMAIL_DIR)/Mail.cs			\
+	$(XEMAIL_DIR)/MailCollection.cs		\
+	$(XEMAIL_DIR)/Mailbox.cs		\
+	$(XEMAIL_DIR)/MailboxCollection.cs	\
+	$(XEMAIL_DIR)/MessageSet.cs		\
+	$(XEMAIL_DIR)/Namespace.cs		\
+	$(XEMAIL_DIR)/Quota.cs
+
+XEMAIL_ASSEMBLIES = -r:System.Web -r:Mono.Security
+
+XEMAIL_CSFLAGS = -d:MONO
+
+GOOGLE_BACKEND_TARGET = GoogleBackends.dll
+
+googlebackends = $(srcdir)/GoogleBackends
+GOOGLE_BACKEND_LOCAL_CSFILES = $(googlebackends)/GMailSearchDriver.cs
+
+GOOGLE_BACKEND_CSFILES = $(GOOGLE_BACKEND_LOCAL_CSFILES) $(XEMAIL_CSFILES)
+
+$(GOOGLE_BACKEND_TARGET): $(GOOGLE_BACKEND_CSFILES)  $(BACKEND_LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(GOOGLE_BACKEND_CSFILES) $(XEMAIL_CSFLAGS) $(BEAGLE_DEFINES) $(XEMAIL_ASSEMBLIES) $(BACKEND_CSFLAGS) $(BACKEND_ASSEMBLIES) $(BEAGLED_LIBS)
 
 ############################################################
 
@@ -219,6 +467,10 @@ DAEMON_ASSEMBLIES =				\
 	$(NDESK_DBUS_GLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix
+
+if ENABLE_AVAHI
+DAEMON_CSFLAGS += -define:ENABLE_AVAHI
+endif
 
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
@@ -278,7 +530,8 @@ EXTRACT_CONTENT_CSFLAGS = \
 	$(BEAGLE_DEFINES)
 
 EXTRACT_CONTENT_CSFILES = \
-	$(srcdir)/ExtractContent.cs
+	$(srcdir)/ExtractContent.cs		\
+	$(srcdir)/NoiseFilter.cs
 
 EXTRACT_CONTENT_LOCAL_ASSEMBLIES = \
 	../Util/Util.dll			\
@@ -509,6 +762,19 @@ ALL_TARGETS = 				\
 	$(REMOVABLE_INDEX_WRAPPER)	\
 	$(WEBINTERFACE_INDEX_XML)
 
+if ENABLE_THUNDERBIRD
+ALL_TARGETS += $(THUNDERBIRD_TARGET)
+endif
+
+if ENABLE_EVOLUTION
+ALL_TARGETS +=				\
+	$(EVO_DLL_TARGET)
+endif
+
+if ENABLE_GOOGLEBACKENDS
+ALL_TARGETS += $(GOOGLE_BACKEND_TARGET)
+endif
+
 man_MANS = 				\
 	beagled.1			\
 	beagle-build-index.8		\
@@ -564,8 +830,28 @@ endif
 	$(INSTALL_DATA) $(MANAGE_INDEX_TARGET).mdb       $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(REMOVABLE_INDEX_TARGET)            $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(REMOVABLE_INDEX_TARGET).mdb        $(DESTDIR)$(pkglibdir)
+if ENABLE_THUNDERBIRD
+	$(INSTALL_DATA) $(THUNDERBIRD_TARGET)                 $(DESTDIR)$(BACKENDDIR)
+	$(INSTALL_DATA) $(THUNDERBIRD_TARGET).mdb             $(DESTDIR)$(BACKENDDIR)
+endif
+if ENABLE_GOOGLEBACKENDS
+	$(INSTALL_DATA) $(GOOGLE_BACKEND_TARGET) $(GOOGLE_BACKEND_TARGET).mdb $(DESTDIR)$(BACKENDDIR)
+endif
 
 uninstall-local:
+if ENABLE_THUNDERBIRD
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(THUNDERBIRD_TARGET)
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(THUNDERBIRD_TARGET).mdb
+endif
+if ENABLE_EVOLUTION
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET)
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET).mdb
+endif
+if ENABLE_GOOGLEBACKENDS
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(GOOGLE_BACKEND_TARGET)
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(GOOGLE_BACKEND_TARGET).mdb
+endif
+
 	@for i in $(BIN_WRAPPERS); do				\
 		echo "rm -f $(DESTDIR)$(bindir)/$$i";		\
 		rm -f $(DESTDIR)$(bindir)/$$i || exit 1;	\
@@ -669,4 +955,9 @@ CLEANFILES = \
 	$(BUILD_INDEX_WRAPPER)			\
 	$(REMOVABLE_INDEX_TARGET)			\
 	$(REMOVABLE_INDEX_TARGET).mdb		\
-	$(REMOVABLE_INDEX_WRAPPER)			
+	$(REMOVABLE_INDEX_WRAPPER)			\
+	$(THUNDERBIRD_TARGET)			\
+	$(THUNDERBIRD_TARGET).mdb		\
+	$(GOOGLE_BACKEND_TARGET)		\
+	$(GOOGLE_BACKEND_TARGET).mdb		\
+	$(WEBINTERFACE_INDEX_XML)

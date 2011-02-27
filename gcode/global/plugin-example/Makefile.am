@@ -11,12 +11,9 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
 plugindir = ${libdir}/gtags
-plugin_LTLIBRARIES = exuberant-ctags.la gtags-antlr-java.la
+plugin_LTLIBRARIES = exuberant-ctags.la
 
 exuberant_ctags_la_SOURCES = exuberant-ctags.c
 exuberant_ctags_la_LDFLAGS = -module -avoid-version
-
-gtags_antlr_java_la_SOURCES = gtags-antlr-java.c
-gtags_antlr_java_la_LDFLAGS = -module -avoid-version 
 
 INCLUDES = @INCLUDES@

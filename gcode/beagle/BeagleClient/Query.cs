@@ -251,6 +251,84 @@ namespace Beagle {
 		}
 	}
 
+#if ENABLE_RDF_ADAPTER
+	public class RDFQuery : Query {
+
+		[XmlIgnore]
+		public Uri Subject {
+			get {
+				if (SubjectString == String.Empty)
+					return null;
+				return UriFu.EscapedStringToUri (SubjectString);
+			}
+
+			set {
+				if (value == null)
+					SubjectString = String.Empty;
+				else
+					SubjectString =  UriFu.UriToEscapedString (value);
+			}
+		}
+
+		[XmlElement ("Subject")]
+		public string SubjectString = String.Empty;
+
+		public string Predicate;
+		public PropertyType PredicateType;
+
+		public string Object;
+
+		public RDFQuery ()
+		{
+			// RDFQuery is a sync message
+			this.UnregisterAsyncResponseHandler (typeof (HitsAddedResponse));
+			this.UnregisterAsyncResponseHandler (typeof (HitsSubtractedResponse));
+			this.UnregisterAsyncResponseHandler (typeof (FinishedResponse));
+			this.UnregisterAsyncResponseHandler (typeof (ErrorResponse));
+			this.UnregisterAsyncResponseHandler (typeof (SearchTermResponse));
+
+			Keepalive = false;
+		}
+
+		public RDFQuery (Uri subject, string predicate, string _object) : this ()
+		{
+			// extract the property type from the property, and remove the prop:?: prefix
+			// e.g. from prop:k:beagle:MimeType
+			PropertyType ptype = PropertyType.Internal;
+			
+			if (predicate != null) {
+				if ((predicate.Length > 7) && predicate.StartsWith ("prop:")) {
+					switch (predicate [5]) {
+						case 't': ptype = PropertyType.Text; break;
+						case 'k': ptype = PropertyType.Keyword; break;
+						case 'd': ptype = PropertyType.Date; break;
+					}
+					// remove the prop:?:, which will be added by beagle later
+					predicate = predicate.Substring (7);
+				}
+			}
+
+			this.Subject = subject;
+			this.Predicate = (predicate == null ? String.Empty : predicate);
+			this.PredicateType = ptype;
+			this.Object = (_object == null ? String.Empty : _object);
+						
+			// FIXME: the query contains a dummy part that will make the query
+			// pass even if it is empty. Empty queries are not handled by default.
+			//
+			QueryPart_Text dummy = new QueryPart_Text ();
+			dummy.Logic = QueryPartLogic.Prohibited;
+			dummy.Text = "XXXXXXXXXXXXXXXXXXXXXXXXX";
+			AddPart (dummy);
+		}
+	}
+
+	public class RDFQueryResult : ResponseMessage {
+		[XmlArray (ElementName="Hits")]
+		[XmlArrayItem (ElementName="Hit", Type=typeof (Hit))]
+		public ArrayList Hits = new ArrayList ();
+	}
+#endif
 
 	// Synchronous query to return the number of matches
 	public class CountMatchQuery : Query {

@@ -50,6 +50,9 @@ using Beagle.Daemon;
 	typeof (InformationalMessagesRequestExecutor),
 	typeof (OptimizeIndexesExecutor),
 	typeof (QueryExecutor),
+#if ENABLE_RDF_ADAPTER
+	typeof (RDFQueryExecutor),
+#endif
 	typeof (ReloadConfigExecutor),
 	typeof (RemovableIndexExecutor),
 	typeof (ShutdownExecutor),
@@ -58,7 +61,26 @@ using Beagle.Daemon;
 
 // All backends in this assembly must be registered here.
 [assembly: IQueryableTypes (
+	typeof (Beagle.Daemon.AkregatorQueryable.AkregatorQueryable),
+	typeof (Beagle.Daemon.BlamQueryable.BlamQueryable),
 	typeof (Beagle.Daemon.FileSystemQueryable.FileSystemQueryable),
 	typeof (Beagle.Daemon.IndexingServiceQueryable.IndexingServiceQueryable),
-	typeof (Beagle.Daemon.StaticQueryable)
+	typeof (Beagle.Daemon.KBookmarkQueryable.KonqBookmarkQueryable),
+	typeof (Beagle.Daemon.KMailQueryable.KMailQueryable),
+	typeof (Beagle.Daemon.KNotesQueryable.KNotesQueryable),
+	typeof (Beagle.Daemon.KOrganizerQueryable.KOrganizerQueryable),
+	typeof (Beagle.Daemon.KabcQueryable.KabcQueryable),
+	typeof (Beagle.Daemon.KonqQueryable.KonqQueryable),
+	typeof (Beagle.Daemon.KonversationQueryable.KonversationQueryable),
+	typeof (Beagle.Daemon.KopeteQueryable.KopeteQueryable),
+	typeof (Beagle.Daemon.LabyrinthQueryable.LabyrinthQueryable),
+	typeof (Beagle.Daemon.LifereaQueryable.LifereaQueryable),
+	typeof (Beagle.Daemon.NautilusMetadataQueryable.NautilusMetadataQueryable),
+	typeof (Beagle.Daemon.NetworkServicesQueryable.NetworkServicesQueryable),
+	typeof (Beagle.Daemon.OperaQueryable.OperaQueryable),
+	typeof (Beagle.Daemon.PidginQueryable.PidginQueryable),
+	typeof (Beagle.Daemon.StaticQueryable),
+	typeof (Beagle.Daemon.TomboyQueryable.TomboyQueryable),
+	typeof (Beagle.Daemon.EmpathyQueryable.EmpathyQueryable),
+	typeof (Beagle.Daemon.LocateQueryable.LocateDriver)
 )]

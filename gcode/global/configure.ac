@@ -20,7 +20,7 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with this program.  If not, see <http://www.gnu.org/licenses/>.
 dnl
-AC_INIT([GNU GLOBAL],[5.9])
+AC_INIT([GNU GLOBAL],[5.9.3])
 AC_CONFIG_SRCDIR(global/global.c)
 AC_CONFIG_HEADERS([config.h:config-h.in])
 AC_PREREQ(2.59)
@@ -199,7 +199,7 @@ AC_MSG_CHECKING(for exuberant ctags program)
 AC_ARG_WITH(exuberant-ctags,
 [  --with-exuberant-ctags=PROGRAM  specify Exuberant Ctags program ],
 [ EXUBERANT_CTAGS="$withval" ],
-[ EXUBERANT_CTAGS=/usr/bin/ctags-exuberant ])
+[ EXUBERANT_CTAGS=/usr/local/bin/ctags-exuberant ])
 AC_DEFINE_UNQUOTED(EXUBERANT_CTAGS, "$EXUBERANT_CTAGS", [Exuberant Ctags program.])
 AC_MSG_RESULT("$EXUBERANT_CTAGS")
 AC_SUBST(EXUBERANT_CTAGS)
@@ -255,6 +255,7 @@ AC_CONFIG_FILES([Makefile
 	doc/Makefile
 	icons/Makefile
 	jquery/Makefile
+	jquery/images/Makefile
 	libparser/Makefile
 	plugin-example/Makefile
 	libltdl/Makefile

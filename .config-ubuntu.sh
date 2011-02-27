@@ -7,10 +7,21 @@ if test `whoami` = root; then
 fi
 
 sudo bash -c "cat <<EOF > /etc/apt/sources.list
-deb http://192.168.0.46/ubuntu/ lucid main restricted universe multiverse
-deb-src http://192.168.0.46/ubuntu/ lucid main restricted universe multiverse
-deb http://192.168.0.46/ubuntu/ lucid-updates main restricted universe multiverse
-deb http://security.ubuntu.com/ubuntu lucid-security main restricted universe multiverse
+deb http://192.168.0.46/ubuntu/ lucid main restricted
+deb-src http://192.168.0.46/ubuntu/ lucid main restricted
+deb http://192.168.0.46/ubuntu/ lucid-updates main restricted
+deb-src http://192.168.0.46/ubuntu/ lucid-updates main restricted
+deb http://192.168.0.46/ubuntu/ lucid universe
+deb-src http://192.168.0.46/ubuntu/ lucid universe
+deb http://192.168.0.46/ubuntu/ lucid-updates universe
+deb-src http://192.168.0.46/ubuntu/ lucid-updates universe
+deb http://192.168.0.46/ubuntu/ lucid multiverse
+deb-src http://192.168.0.46/ubuntu/ lucid multiverse
+deb http://192.168.0.46/ubuntu/ lucid-updates multiverse
+deb-src http://192.168.0.46/ubuntu/ lucid-updates multiverse
+deb http://security.ubuntu.com/ubuntu lucid-security main restricted
+deb http://security.ubuntu.com/ubuntu lucid-security universe
+deb http://security.ubuntu.com/ubuntu lucid-security multiverse
 EOF"
 
 sudo apt-get update
@@ -22,6 +33,9 @@ git clone git://192.168.0.46/git/windows-config.git || (cd ~/windows-config && g
 cd ~/windows-config
 git checkout -- . 
 ./bin/after-co-ln-s.sh
+wget http://192.168.0.46/jdk-1_5_0_22-linux-amd64.bin
+sudo sh ./jdk-1_5_0_22-linux-amd64.bin
+sudo mv jdk1.5.0_22 /usr/local/jdk1.5
 sudo apt-get install -y lftp
 mkdir -p ~/external
 ln -sf ~/external ~/bin/linux/ext

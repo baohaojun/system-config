@@ -1,37 +1,9 @@
 #!/bin/bash
 
-Filter=${Filter:-~/.my-beagle-filter-android}
-SrcReadingDir=~/tmp/for-code-reading/"`pwd`"
-SrcDir=`pwd`
-SrcRelDir=.
-while test "$SrcReadingDir" != "" -a ! -f "$SrcReadingDir"/cscope.files; do
-    SrcReadingDir=${SrcReadingDir%/*}
-done
+Filter=${1:-~/.my-beagle-filter-android}
 
-if test "$SrcReadingDir" != "" -a "$SrcReadingDir" != ~/tmp/for-code-reading/"`pwd`";
-then
-    UpSrcDir=${SrcReadingDir#~/tmp/for-code-reading/}
-
-    if tty >/dev/null && test "$IN_EMACS" != true
-    then
-        read -p "Do you want update code reading for $UpSrcDir? (Y/n): " ans
-    else
-        ans=Y
-    fi
-
-    if test "$ans" = n -o "$ans" = N; then
-        SrcReadingDir=~/tmp/for-code-reading/"`pwd`"
-    else
-        DoUpDir=true
-        SrcRelDir=${SrcDir/#$UpSrcDir/.}
-        cd $UpSrcDir
-    fi
-else 
-    SrcReadingDir=~/tmp/for-code-reading/"`pwd`"
-fi
-
-function mkcscope_files() {
-    find $SrcRelDir \( '-path' '*/CVS' \
+function mkgtags() {
+    find \( '-path' '*/CVS' \
         '-o' '-path' '*/.svn' \
         '-o' '-path' '*/autom4te.cache' \
         '-o' '-path' '*/{arch}' \
@@ -42,58 +14,34 @@ function mkcscope_files() {
         '-o' '-path' '*~*' \
         '-o' '-path' '*#' \
         '-o' '-path' '*/TAGS' \
-        '-o' '-path' '*/tags' \
-        '-o' '-path' '*/semantic.cache' \
+        '-o' '-path' '*/tags'\
+    '-o' '-path' '*/semantic.cache' \
         '-o' '-path' './out' \
-        '-o' '-iname' '*.o' \
-        '-o' '-iname' '*.class' \
-        '-o' '-iname' '*.obj' \
-        '-o' '-iname' '*.pyc' \
-        '-o' '-iname' '*.elc' \
-        '-o' '-path' '*/.ignore' \
-        '-o' '-path' '*/.repo' \
-        '-o' '-iname' "cscope.files" \
-        -o -iname "cscope.out" \
-        -o -ipath "*/.beagle" \
-        \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter >> "$SrcReadingDir"/cscope.files2
-        cat "$SrcReadingDir"/cscope.files >> "$SrcReadingDir"/cscope.files2 2>/dev/null
-        sort -u "$SrcReadingDir"/cscope.files2 |tee "$SrcReadingDir"/cscope.files
-}
-
-function _mk_help_dir() {
-    mkdir -p "$SrcReadingDir"
-}
-
-function mkgtags() {
-    _mk_help_dir
-    mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@" "$SrcReadingDir"
-}
-
-function mkgtags-filter() {
-    gtags --gtagslabel=plugin-example -f - "$@" "$SrcReadingDir"
+        '-o' '-iname' '*.o'\
+    '-o' '-iname' '*.class' \
+        '-o' '-iname' '*.obj'\
+    '-o' '-iname' '*.pyc'\
+    '-o' '-iname' '*.elc'\
+    '-o' '-path' '*/.ignore'\
+    '-o' '-path' '*/.repo'\
+    '-o' '-iname' "cscope.files"\
+    -o -iname "cscope.out"\
+    -o -ipath "*/.beagle"\
+    \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter > cscope.files
+       
+        gtags -f cscope.files
 }
 
 function mkbeagleidx() {
-    mkdir -p "$SrcReadingDir"/.beagle
-
-    beagle-build-index --recursive \
-        --deny-directory-pattern `pwd`/out \
-        --enable-deletion \
-        --target "$SrcReadingDir"/.beagle/ \
-        "$SrcRelDir" 2>&1 \
-        |tee -a "$SrcReadingDir"/.beagle-build-log
-
-    cat "$SrcReadingDir"/.beagle-build-log |grep "No filter for" \
-        |sort -u > "$SrcReadingDir"/.beagle-build-log2
-
-    mv "$SrcReadingDir"/.beagle-build-log2 "$SrcReadingDir"/.beagle-build-log
-
-    ln $Filter "$SrcReadingDir"/.beagle-filter -sf
+    mkdir -p ~/tmp/`pwd`/.beagle
+    beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target ~/tmp/`pwd`/.beagle/ .
+    ln $Filter .beagle-filter -sf
+    ln -sf ~/tmp/`pwd`/.beagle ./
 }
 
 function for-code-reading() {
-    mkgtags "$@"&
-    mkbeagleidx "$@"&
+    mkgtags&
+    mkbeagleidx&
 }
 
-`basename $0` "$@"
+`basename $0`

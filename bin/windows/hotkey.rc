@@ -5,14 +5,11 @@
 KeyToGrab(ESCAPE),          WithModifier(LWin),      WithAction(MaximizeWindow)
 KeyToGrab(F1),          WithModifier(LWin),      WithAction(MaximizeWindow)
 KeyToGrab(F2),          WithModifier(LWin),      WithAction(MaximizeVertical)
-KeyToGrab(F12),          WithModifier(),      WithAction(NoSwitchRAltLWin)
-KeyToGrab(F11),          WithModifier(),      WithAction(SwitchRAltLWin)
-
 KeyToGrab(Y),           WithModifier(LWin),      WithAction(RestoreWindow)
 KeyToGrab(Z),           WithModifier(LWin),      WithAction(MinimizeWindow)
 KeyToGrab(Q),           WithModifier(LAlt+LWin+LCtrl),      WithAction(Quit)
 
-KeyToGrab(R),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p runbhjrun runbhjrun.exe)
+KeyToGrab(R),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p runbhjrun runbhjrun.exe.lnk)
 
 # Extern commands:
 KeyToGrab(1),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(mg.exe -1)
@@ -59,7 +56,7 @@ KeyToGrab(PLUS),        WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(MINUS),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(frontop.exe bot)
 KeyToGrab(Delete),      WithModifier(LWin),      WithAction(ExecCommand), DoThis(taskmgr)
 KeyToGrab(Pause),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(control.exe sysdm.cpl)
-KeyToGrab(D),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(cmd /c start showdesk.scf)
+KeyToGrab(D),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(showdesk.scf)
 KeyToGrab(L),           WithModifier(LWin),      WithAction(LockWorkStation)
 KeyToGrab(S),           WithModifier(LWin),      WithAction(ifinds)
 KeyToGrab(O),           WithModifier(LWin),      WithAction(ifindo)

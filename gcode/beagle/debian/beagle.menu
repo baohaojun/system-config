@@ -1,0 +1,2 @@
+?package(beagle):needs="X11" section="Applications/File Management"\
+  title="Beagle Search" command="/usr/bin/beagle-search" icon="/usr/share/pixmaps/system-search.png"

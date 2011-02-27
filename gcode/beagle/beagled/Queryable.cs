@@ -83,6 +83,12 @@ namespace Beagle.Daemon {
 			}
 		}
 
+#if ENABLE_RDF_ADAPTER
+		public ICollection DoRDFQuery (Query query)
+		{
+			return iqueryable.DoRDFQuery (query);
+		}
+#endif
 
 		public int DoCountMatchQuery (Query query)
 		{

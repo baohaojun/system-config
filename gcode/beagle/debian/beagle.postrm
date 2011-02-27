@@ -1,0 +1,27 @@
+#!/bin/sh
+# postrm file for beagle package.
+ 
+set -e
+
+case "$1" in 
+   purge)
+  
+   if getent passwd beagleindex > /dev/null; then \
+      deluser --system --remove-home beagleindex >/dev/null 1>&2 || true ;
+   fi
+
+   rm -rf /var/cache/beagle
+   ;;
+
+   remove)
+   # as these are index files generated from data in the computer, it doesn't
+   # has any sense to keep it once package has been removed.
+
+   rm -rf /var/cache/beagle
+   ;;
+
+esac
+
+#DEBHELPER#
+
+exit 0

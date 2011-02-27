@@ -1,0 +1,16 @@
+7ZIP_CSFILES = \
+	$(srcdir)/7zip/Common/CommandLineParser.cs \
+	$(srcdir)/7zip/Common/CRC.cs \
+	$(srcdir)/7zip/Common/InBuffer.cs \
+	$(srcdir)/7zip/Common/OutBuffer.cs \
+	$(srcdir)/7zip/Compress/LZMA/LzmaBase.cs \
+	$(srcdir)/7zip/Compress/LZMA/LzmaDecoder.cs \
+	$(srcdir)/7zip/Compress/LZMA/LzmaEncoder.cs \
+	$(srcdir)/7zip/Compress/LZ/IMatchFinder.cs \
+	$(srcdir)/7zip/Compress/LZ/LzBinTree.cs \
+	$(srcdir)/7zip/Compress/LZ/LzInWindow.cs \
+	$(srcdir)/7zip/Compress/LZ/LzOutWindow.cs \
+	$(srcdir)/7zip/Compress/RangeCoder/RangeCoder.cs \
+	$(srcdir)/7zip/Compress/RangeCoder/RangeCoderBit.cs \
+	$(srcdir)/7zip/Compress/RangeCoder/RangeCoderBitTree.cs \
+	$(srcdir)/7zip/ICoder.cs

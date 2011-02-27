@@ -1,0 +1,31 @@
+#!/bin/sh
+# postinst file for beagle package.
+ 
+set -e
+
+case "$1" in 
+   configure)
+
+   getent passwd beagleindex > /dev/null || \
+       adduser --system --home /var/cache/beagle beagleindex
+
+   # We have to assure system indexes are world readable.
+   mkdir -p /var/cache/beagle/indexes
+   chmod 0755 /var/cache/beagle
+   chown beagleindex /var/cache/beagle/indexes/
+
+   ;;
+
+   abort-upgrade|abort-remove|abort-deconfigure)
+   ;;
+
+   *)
+   echo "postinst called with unknown argument \`$1'" >&2
+   exit 1
+   ;;
+
+esac
+
+#DEBHELPER#
+
+exit 0

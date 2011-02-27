@@ -1,1 +1,1 @@
-../../helpEmacs.py
+/q/bin/windows/helpEmacs.py

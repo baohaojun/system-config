@@ -98,6 +98,15 @@ extern const char *empty_element;
 extern const char *noframes_begin;
 extern const char *noframes_end;
 
+extern const char *tree_control;
+extern const char *tree_begin;
+extern const char *tree_begin_using;
+extern const char *tree_end;
+extern const char *dir_begin;
+extern const char *dir_end;
+extern const char *file_begin;
+extern const char *file_end;
+
 int fputs_nl(const char *, FILE *);
 void setup_xhtml(void);
 void save_current_path(const char *);

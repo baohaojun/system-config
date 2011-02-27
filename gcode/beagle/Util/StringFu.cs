@@ -237,6 +237,69 @@ namespace Beagle.Util {
 		}
 
 		/// <summary>
+		///  Here we:
+		/// (1) Replace non-alphanumeric characters with spaces
+		/// (2) Inject whitespace between lowercase-to-uppercase
+		///     transitions (so "FooBar" becomes "Foo Bar")
+		///     and transitions between letters and numbers
+		///     (so "cvs2svn" becomes "cvs 2 svn")
+		/// </summary>
+		/// <param name="line">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.String"/>
+		/// </returns>
+		static public string FuzzyDivide (string line)
+		{
+			// Allocate a space slightly bigger than the
+			// original string.
+			StringBuilder builder;
+			builder = new StringBuilder (line.Length + 4);
+
+			int prev_case = 0;
+			bool last_was_space = true; // don't start w/ a space
+			for (int i = 0; i < line.Length; ++i) {
+				char c = line [i];
+				int this_case = 0;
+				if (Char.IsLetterOrDigit (c)) {
+					if (Char.IsUpper (c))
+						this_case = +1;
+					else if (Char.IsLower (c))
+						this_case = -1;
+					if (this_case != prev_case
+					    && !(this_case == -1 && prev_case == +1)) {
+						if (! last_was_space) {
+							builder.Append (' ');
+							last_was_space = true;
+						}
+					}
+					
+					if (c != ' ' || !last_was_space) {
+						builder.Append (c);
+						last_was_space = (c == ' ');
+					}
+
+					prev_case = this_case;
+				} else {
+					if (! last_was_space) {
+						builder.Append (' ');
+						last_was_space = true;
+					}
+					prev_case = 0;
+				}
+			}
+
+			return builder.ToString ();
+		}
+
+		public static string UrlFuzzyDivide (string url)
+		{
+			int protocol_index = url.IndexOf ("://");
+			return FuzzyDivide (url.Substring (protocol_index + 3));
+		}
+		
+		/// <summary>
 		/// 	 Match strings against patterns that are allowed to contain
 		///	 glob-style * and ? wildcards.
 		/// </summary>

@@ -1,13 +1,8 @@
-! The Alt_R is now right Windows key
-keysym Super_L = Super_R
-keycode 108 = Super_L
-
-! The "Caps Lock" is now Control_L
+! The "Caps Lock" key generates Control_L, and the Control modifier
+keycode 108 = Super_R
 keycode 66 = Control_L
-
-! The scroll_clok is now caps_lock
-keycode 78 = Caps_Lock
-
+keycode 37 = Caps_Lock
+keysym Super_L = Super_R
 
 clear lock
 clear mod1
@@ -20,4 +15,3 @@ add lock = Caps_Lock
 add mod4 = Super_R
 ! This is to make sawfish happy. Seems it will constantly do weird thing with Hyper/Super
 keysym Super_R = Super_L
-keysym Meta_L = Alt_L

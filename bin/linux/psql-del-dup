@@ -1,8 +1,0 @@
-#!/bin/bash
-
-echo "
-DELETE FROM $1
-	WHERE 	ctid NOT IN
-	(SELECT 	MAX(dt.ctid)
-        FROM   		$1 As dt
-        GROUP BY 	dt.$2);"

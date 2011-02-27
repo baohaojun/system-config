@@ -12,17 +12,158 @@ sudo apt-get install -y postfix
 
 #all the other packages
 
+packages='
+ant
+ascii
+automake1.9
+bash-doc
+binutils
+binutils-dev
+binutils-doc
+binutils-static
+bison
+build-essential
+conkeror
+cramfsprogs
+cscope
+curl
+dialog
+dictionary-el
+dict-jargon
+dict-moby-thesaurus
+dict-web1913
+dict-wn
+dovecot-imapd
+eclipse
+eclipse-jdt
+eclipse-pde
+eclipse-platform
+eclipse-platform-data
+eclipse-plugin-cvs
+eclipse-rcp
+emacs-goodies-el
+emacs-snapshot
+expect
+exuberant-ctags
+fakeroot
+flashplugin-installer
+flex
+fontforge
+gcc-4.4-doc
+gcc-multilib
+git-core
+gitk
+git-svn
+glibc-doc
+global
+g++-multilib
+gnupg
+gperf
+grub2
+grun
+hibernate
+htop
+imagemagick
+iotop
+language-pack-en
+language-pack-zh
+libcurses-perl
+libcurses-ruby
+libcurses-ui-perl
+libcurses-widgets-perl
+libesd0-dev
+libexpect-perl
+libltdl7
+libncurses5-dev
+libncursesw5-dev
+libruby1.8
+libsdl-dev
+libtool
+libwxgtk2.6-dev
+libx11-dev
+libz-dev
+lynx
+make-doc
+manpages
+manpages-dev
+markdown
+meld
+minicom
+mplayer
+msn-pecan
+msttcorefonts
+muse-el
+ncurses-dev
+ncurses-hexedit
+ncurses-term
+nmap
+offlineimap
+openjdk-6-doc
+openssh-server
+p7zip
+p7zip-full
+pbzip2
+pidgin
+postfix
+python2.6-doc
+python3.1
+python-html2text
+python-qt4
+python-soappy
+python-svn
+rep
+samba
+sawfish
+screen
+scim
+sharutils
+smbnetfs
+ssh
+subversion
+subversion-tools
+sysv-rc-conf
+tkdiff
+traceroute
+ttf-wqy-microhei
+ttf-wqy-zenhei
+ubuntu-desktop
+unrar
+unzip
+valgrind
+vim
+w3m-el-snapshot
+wget
+wmctrl
+wmii
+x11proto-core-dev
+xchm
+xclip
+xfonts-wqy
+xmlstarlet
+youtube-dl
+zip
+zlib1g-dev
+'
+
+x86_64_packages='
+ia32-libs
+lib32ncurses5-dev
+lib32readline5-dev
+lib32z-dev
+libc6-dev-i386
+'
+#lunar-applet
+
 sudo apt-get update
 sudo apt-get dist-upgrade -y
-
-~/bin/linux/config/install-pkgs
-sudo update-command-not-found
-sudo apt-get build-dep -y scim-pinyin sawfish librep rep-gtk
+sudo apt-get install -y $packages || for x in $packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
+sudo apt-get install -y $x86_64_packages || for x in $x86_64_packages; do sudo apt-get install -y $x; done || (echo 'Some packages failed to install!'; sleep 3)
+sudo apt-get build-dep -y beagle scim-pinyin sawfish librep rep-gtk
 
 #把一些软件默认的版本换掉
-sudo update-alternatives --set emacs /usr/bin/emacs23 || true
-sudo update-alternatives --set emacsclient /usr/bin/emacsclient.emacs23 || true
-sudo update-alternatives --set etags /usr/bin/etags.emacs23 || true
+sudo update-alternatives --set emacs /usr/bin/emacs-snapshot
+sudo update-alternatives --set emacsclient /usr/bin/emacsclient.emacs-snapshot 
+sudo update-alternatives --set etags /usr/bin/etags.emacs-snapshot 
 
 #我们用的桌面系统是gnome，但是窗口管理器要换一个，gnome自带的是metacity，我们要用sawfish
 gconftool-2 -s /desktop/gnome/applications/window_manager/default --type string /usr/bin/sawfish
@@ -39,5 +180,5 @@ sudo cpan String::ShellQuote
 
 #设置gmail邮件
 test `whoami` = bhj && . config_email || true
-test `whoami` = bhj && sudo apt-get install texlive-full || true
+test `whoami` = bhj && sudo apt-get install texlive-full vnc4server pyvnc2swf xtightvncviewer || true
 test `whoami` = bhj && crontab ~/.crontab

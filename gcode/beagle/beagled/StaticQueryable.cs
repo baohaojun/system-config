@@ -141,6 +141,11 @@ namespace Beagle.Daemon {
 			FileAttributesStore.Dispose ();
 		}
 
+#if ENABLE_RDF_ADAPTER
+		protected override TextCache TextCache {
+			get { return text_cache; }
+		}
+#endif
 
 		override public ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text, int ctx_length, int snp_length) 
 		{

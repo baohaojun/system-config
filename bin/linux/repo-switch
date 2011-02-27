@@ -1,8 +1,0 @@
-#!/bin/bash
-set -e
-. ~/.bash_profile
-cd `lookup_file .repo/manifests`
-git co HEAD^
-for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
-
-repo init "$@"

@@ -19,7 +19,7 @@ function download-all()
 
     for x in "${file_list[@]}"; do
         if ! [[ -f `basename "$x"` ]]; then
-            wget -N "$x"
+            wget "$x"
         fi
     done
             
@@ -40,32 +40,19 @@ function emacs-site-lisps()
 {
     mkdir -p ~/tools/emacs-site-lisp/
     cd ~/tools/emacs-site-lisp/
-    rm ./*/ -rf
+    rm ./* -rf
     cp /usr/share/emacs/site-lisp/subdirs.el . 
-    
-
-    source_list=(
-        http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2 
-        http://ftp.us.debian.org/debian/dists/sid/contrib/source/Sources.bz2 
-        http://ftp.us.debian.org/debian/dists/sid/non-free/source/Sources.bz2
-    )
-
-    y=0
-    for x in "${source_list[@]}"; do 
-        ((y++))
-        test -e Sources.bz2.$y || ( lftp -c "pget -n 10 $x" && mv Sources.bz2 Sources.bz2.$y )
-    done
 
     file_list=(
         http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
-        `get-deb-src-dir emacs-goodies-el`
-        `get-deb-src-dir cscope`
-        `get-deb-src-dir muse-el`
-        `get-deb-src-dir w3m-el-snapshot`
+        http://cvs.savannah.gnu.org/viewvc/*checkout*/emacsweblogs/weblogger/lisp/xml-rpc.el
+        http://debian.cn99.com/debian/pool/main/e/emacs-goodies-el/emacs-goodies-el_31.4.tar.gz
+        http://mwolson.org/static/dist/muse-latest.tar.gz
+        http://debian.cn99.com/debian/pool/main/w/w3m-el-snapshot/w3m-el-snapshot_1.4.364+0.20090802.orig.tar.gz
     )
     for x in "${file_list[@]}"; do
         if ! [[ -f "$(basename "$x")" ]]; then
-            lftp -c "pget $x"
+            wget "$x"
         fi
     done
     
@@ -75,7 +62,6 @@ function emacs-site-lisps()
             tar zxfv "$(basename "$x")"; 
         fi
     done    
-    cd emacs-goodies-el*/elisp/emacs-goodies-el/ && mkdir themes
 }
 
 test "$DOWN" == yes && emacs-site-lisps
@@ -99,19 +85,6 @@ function manual-download()
     )
     for x in "${page_list[@]}"; do 
         cygstart "$x";
-    done
-}
-
-function get-ms-addons()
-{
-    cd /c/download/
-    addon_list=(
-        http://download.microsoft.com/download/5/6/7/567758a3-759e-473e-bf8f-52154438565a/dotnetfx.exe
-        http://download.microsoft.com/download/0/6/1/061F001C-8752-4600-A198-53214C69B51F/dotnetfx35setup.exe
-    )
-    for x in "${page_list[@]}"; do 
-        wget -c "$x";
-        `basename "$x"` /q
     done
 }
 
@@ -238,6 +211,17 @@ function get-putty()
 
 test "$DOWN" == yes && (gcc-switch.sh 3; get-putty; gcc-switch.sh 4)
 
+function fstab-q()
+{
+    FSTAB=/etc/fstab
+    if grep '^q:' $FSTAB -iq; 
+    then
+        echo 'q: is already mounted case-sensitive'
+    else
+        echo 'q: /q some_fs binary 0 0' >> $FSTAB
+    fi
+}
+
 function get-cscope()
 {
     if ! test -d /c/download/cscope/cscope; then
@@ -247,3 +231,5 @@ function get-cscope()
         cvs -z3 -d:pserver:anonymous@cscope.cvs.sourceforge.net:/cvsroot/cscope co -P cscope
     fi
 }
+
+test "$DOWN" == yes && fstab-q

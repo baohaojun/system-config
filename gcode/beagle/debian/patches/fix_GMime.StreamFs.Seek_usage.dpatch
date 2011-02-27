@@ -1,0 +1,19 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## fix_GMime.StreamFs.Seek_usage.dpatch by Mirco Bauer <meebey@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad beagle-0.2.18~/beagled/EvolutionMailQueryable/EvolutionMailIndexableGenerator.cs beagle-0.2.18/beagled/EvolutionMailQueryable/EvolutionMailIndexableGenerator.cs
+--- beagle-0.2.18~/beagled/EvolutionMailQueryable/EvolutionMailIndexableGenerator.cs	2007-09-22 14:44:23.000000000 +0200
++++ beagle-0.2.18/beagled/EvolutionMailQueryable/EvolutionMailIndexableGenerator.cs	2007-09-22 14:44:40.000000000 +0200
+@@ -225,7 +225,7 @@
+ 				}
+ 
+ 				this.mbox_stream = new GMime.StreamFs (this.mbox_fd);
+-				this.mbox_stream.Seek ((int) this.MboxLastOffset);
++				this.mbox_stream.Seek (this.MboxLastOffset);
+ 				this.mbox_parser = new GMime.Parser (this.mbox_stream);
+ 				this.mbox_parser.ScanFrom = true;
+ 

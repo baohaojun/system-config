@@ -1,50 +1,13 @@
 #!/bin/bash
-
-function smb_wp()
-{
-    FILE=${1:-`pwd`}
-    FILE=`lookup_file "$FILE"`
-
-    if [[ "$FILE" =~ ~/smb/ ]]; then
-        FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
-    else
-        FILE=z:$FILE
-    fi
-    echo -n "$FILE"|tee /dev/tty|putclip
-}
-
-function sp()
-{
-    FILE=${1:-`pwd`}
-    FILE=`lookup_file "$FILE"`
-    
-    if [[ "$FILE" =~ ~/smb/ ]]; then
-        FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,smb://,g'`
-    else
-        FILE=z:$FILE
-    fi
-    echo -n "$FILE"|tee /dev/tty|putclip
-}
-
 function wp()
 {
     FILE=${1:-`pwd`}
-    FILE=`lookup_file "$FILE"`
+    FILE=`readlink -f "$FILE"`
 
-    FILE=z:$FILE
-    echo -n "$FILE"|perl -npe 's,/,\\,g'|tee /dev/tty|putclip
-    history -s wp "$FILE"
-}
-
-function up()
-{
-    FILE=${1:-`pwd`}
-    FILE=`lookup_file "$FILE"`
-
+    if [[ "$FILE" =~ ^/media/smb/ ]]; then
+        FILE=`echo "$FILE"|sed -e 's,^/media/smb/,\\\\\\\\,; s,/,\\\\,g'`
+    fi
     echo -n "$FILE"|tee /dev/tty|putclip
-    history -s up "$FILE"
 }
 
-if test "$BASH_SOURCE" = "$0"; then
-    "`basename $0`" "$@"
-fi
+wp "$@"

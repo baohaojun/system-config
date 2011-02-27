@@ -43,6 +43,9 @@ namespace Beagle.Daemon {
 			      IQueryResult result,
 			      IQueryableChangeData data);
 
+#if ENABLE_RDF_ADAPTER
+		ICollection DoRDFQuery (Query query);
+#endif
 		// Just return the number of matches
 		int DoCountMatchQuery (Query query);
 

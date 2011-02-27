@@ -1,9 +1,8 @@
 #!/bin/bash
-start_dir=~/tmp/for-code-reading/`pwd`
-echo Starting at $start_dir 1>&2
+start_dir=`pwd`
 while test ! -d "$start_dir"/.beagle -a "$start_dir" != /
 do
-    start_dir=${start_dir%/*}
+    start_dir=`readlink -f "$start_dir"/..`
 done
 
 if test "$start_dir" = / -o "$start_dir" = $HOME
@@ -21,16 +20,13 @@ if test -f "$start_dir"/.beagle-filter
 then
     beagle_filter="$start_dir"/.beagle-filter
 else
-    echo 'Warning: you have no .beagle-filter at $start_dir! You will probablly see lots of noise' 1>&2
+    echo 'Warning: you have no .beagle-filter! You will probablly see lots of noise' 1>&2
     beagle_filter=cat
 fi
 
 longest_token=`get_longest_token "$@"`
-for x in "$beagle_dir" `cat $beagle_dir/../.beagle-brothers 2>/dev/null`
-do 
-    beagle-static-query \
-        --add-static-backend "$x" \
-        --backend none --max-hits 100000 "$longest_token" | \
-        unurl.pl|grep -v '#'|sort -u|$beagle_filter
-done
+beagle-static-query \
+    --add-static-backend "$beagle_dir" \
+    --backend none --max-hits 100000 "$longest_token"\
+|unurl.pl|grep -v '#'|sort -u|$beagle_filter
 echo /dev/null

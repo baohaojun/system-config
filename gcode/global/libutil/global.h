@@ -23,6 +23,7 @@
 
 #include "gparam.h"
 #include "abs2rel.h"
+#include "args.h"
 #include "char.h"
 #include "checkalloc.h"
 #include "compress.h"

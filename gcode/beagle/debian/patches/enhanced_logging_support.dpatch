@@ -1,0 +1,81 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## set_log_level_to_warn.dpatch by Mirco Bauer <meebey@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad beagle-0.3.2~/beagled/BeagleDaemon.cs beagle-0.3.2/beagled/BeagleDaemon.cs
+--- beagle-0.3.2~/beagled/BeagleDaemon.cs	2007-12-28 19:29:15.000000000 +0100
++++ beagle-0.3.2/beagled/BeagleDaemon.cs	2007-12-28 19:31:04.000000000 +0100
+@@ -451,11 +451,7 @@
+ 
+ 			MainLoopThread = Thread.CurrentThread;
+ 
+-			// FIXME: We always turn on full debugging output!  We are still
+-			// debugging this code, after all...
+-			// arg_debug ? LogLevel.Debug : LogLevel.Warn
+-			
+-			Log.Initialize (PathFinder.LogDir, "Beagle", LogLevel.Debug, arg_fg);
++			Log.Initialize (PathFinder.LogDir, "Beagle", arg_debug ? LogLevel.Debug : LogLevel.Warn, arg_fg);
+ 			Log.Always ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
+ 			Log.Always ("Running on {0}", SystemInformation.MonoRuntimeVersion);
+ 			Log.Always ("Command Line: {0}",
+diff -urNad beagle-0.3.2~/beagled/IndexHelper/IndexHelper.cs beagle-0.3.2/beagled/IndexHelper/IndexHelper.cs
+--- beagle-0.3.2~/beagled/IndexHelper/IndexHelper.cs	2007-12-28 19:29:15.000000000 +0100
++++ beagle-0.3.2/beagled/IndexHelper/IndexHelper.cs	2007-12-28 19:29:19.000000000 +0100
+@@ -84,22 +84,18 @@
+ 
+ 			bool run_by_hand = (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") != null);
+ 			bool log_in_fg = (Environment.GetEnvironmentVariable ("BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE") != null);
++			bool debug = (Environment.GetEnvironmentVariable ("BEAGLE_DEBUG_FLAG_IS_SET") != null);
+ 
+ 			if (args.Length == 1 && args [0] == "--disable-text-cache")
+ 				disable_textcache = true;
+ 			else
+ 				disable_textcache = false;
+-			
+-			// FIXME: We always turn on full debugging output!  We are still
+-			// debugging this code, after all...
+-			//bool debug = (Environment.GetEnvironmentVariable ("BEAGLE_DEBUG_FLAG_IS_SET") != null);
+ 
+ 			last_activity = DateTime.Now;
+ 
+ 			Log.Initialize (PathFinder.LogDir,
+ 					"IndexHelper",
+-					//debug ? LogLevel.Debug : LogLevel.Warn,
+-					LogLevel.Debug,
++					debug ? LogLevel.Debug : LogLevel.Warn,
+ 					run_by_hand || log_in_fg);
+ 
+ 			Log.Always ("Starting Index Helper process (version {0})", ExternalStringsHack.Version);
+diff -urNad beagle-0.3.2~/beagled/beagled.in beagle-0.3.2/beagled/beagled.in
+--- beagle-0.3.2~/beagled/beagled.in	2007-12-28 19:29:19.000000000 +0100
++++ beagle-0.3.2/beagled/beagled.in	2007-12-28 19:29:19.000000000 +0100
+@@ -21,6 +21,7 @@
+ heap_buddy=0
+ heap_shot=0
+ mono_debug=0
++debug=0
+ mdb=0
+ 
+ BEAGLED_ARGS="$*"
+@@ -33,6 +34,7 @@
+     --heap-shot ) heap_shot=1 ;;
+     --mdb ) mdb=1 ;;
+     --mono-debug ) mono_debug=1 ;;
++    --debug ) debug=1 ;;
+     esac
+ done
+ 
+@@ -53,6 +55,10 @@
+     unset BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE
+ fi
+ 
++if [ $debug -eq 1 ]; then
++   export BEAGLE_DEBUG_FLAG_IS_SET=1
++fi
++   
+ if [ $heap_buddy -eq 1 ]; then
+    export _GET_ON_THE_HEAP_BUDDY_BANDWAGON=1
+    if [ -z "$BEAGLE_HEAP_BUDDY_DIR" ]; then

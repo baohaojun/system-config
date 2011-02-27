@@ -1,1 +1,0 @@
-/cygdrive/c/Program Files/Microsoft Visual Studio 10.0/Common7/IDE/devenv.com

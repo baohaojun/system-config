@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://beagle/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://beagle/locale/beagle.dtd">
+
+<overlay id="BeagleOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+         
+<stringbundleset id="stringbundleset">
+    <stringbundle id="beagleStrings"
+            src="chrome://beagle/locale/beagle.properties"/>
+</stringbundleset>
+
+
+
+<!-- jslib sources used for executing beagle -->
+<script type="text/javascript">
+    var JS_LIB_DEBUG = false;
+</script>
+<script type="text/javascript" src="jslib/jslib.js"/>
+<script type="text/javascript" src="jslib/io/file.js"/>
+<script type="text/javascript" src="jslib/io/fileUtils.js"/>
+<script type="text/javascript" src="jslib/io/dir.js"/>
+<script type="text/javascript" src="jslib/io/dirUtils.js"/>
+
+<script type="text/javascript" src="utils.js" />
+<script type="text/javascript" src="i18n.js"/>
+<script type="text/javascript" src="md5.js" />
+<script type="text/javascript" src="json.js" />
+<script type="text/javascript" src="beaglePrefs.js" />
+<script type="text/javascript" src="beagleOverlay.js" />
+<script type="text/javascript">
+    var loader =  Cc["@mozilla.org/moz/jssubscript-loader;1"]
+		    .getService(Components.interfaces.mozIJSSubScriptLoader);
+    try{ 
+        Cc["@mozilla.org/browser/nav-bookmarks-service;1"]
+        .getService (Components.interfaces.nsINavBookmarksService);
+        //For firefox 3
+        loader.loadSubScript("chrome://beagle/content/indexBookmark3.js");    
+    }
+    catch(e){
+        loader.loadSubScript("chrome://beagle/content/indexBookmark.js");    
+    }
+</script>
+
+<commandset id="mainCommandSet">
+    <command id="IndexThisCmd" label="&beagle.run.index.this.label;" 
+        oncommand="beagle.indexThisPage();"/>
+    <command id="AlwaysIndexThisSiteCmd" label="&beagle.run.always.index.label;"  
+        oncommand="beagle.quickAddRule(document.getElementById('content').selectedBrowser.contentDocument,beaglePref.RULE_INCLUDE)"/>
+    <command id="NeverIndexThisSiteCmd" label="&beagle.run.never.index.label;" 
+        oncommand="beagle.quickAddRule(document.getElementById('content').selectedBrowser.contentDocument,beaglePref.RULE_EXCLUDE)"/>
+    <command id="ShowPrefsCmd" label="&beagle.run.preferences.label;" 
+            oncommand="beagle.showPrefs()"/>
+    <command id="IndexThisLinkCmd" label="&beagle.run.index.link.label;" 
+        oncommand="beagle.indexLink()"/>
+    <command id="IndexThisImageCmd" label="&beagle.run.index.image.label;" 
+        oncommand="beagle.indexImage()"/>
+    <command id="SearchLinkCmd" label="&beagle.context.search.link.label;"
+        oncommand="beagle.search(gContextMenu.linkURL);"/>
+    <command id="SearchPageCmd" label="&beagle.context.search.page.label;"
+        oncommand="beagle.search(getWebNavigation().currentURI.spec);"/>
+    <command id="SearchTextCmd" 
+        oncommand="beagle.search(getBrowserSelection());"/>
+    <!--
+    <command id="IndexAllBookmarksCmd" label="&beagle.bookmark.index.all.label;"
+        oncommand="BookmarkIndexer.indexAll();"/>
+    -->
+    <command id="IndexModifiedBookmarkCmd" label="&beagle.bookmark.index.modified.label;"
+        oncommand="bookmarkIndexer.indexModified(true);"/>
+</commandset>
+
+<!-- toolbar is not necessary -->
+<!--
+<toolbarpalette id="BrowserToolbarPalette">
+    <toolbarbutton id="beagle-button" type="menu-button"
+                   class="toolbarbutton-1 chromeclass-toolbar-additional"
+                   context="beagle-toolbar-popup"
+                   tooltiptext="&beagle.run.index.this.label;"
+                   label="beagle">
+        <menupopup id="beagle-toolbar-popup" >
+            <menuitem  command="IndexThisCmd"/>
+            <menuseparator />
+            <menuitem  command="AlwaysIndexThisSiteCmd"/> 
+            <menuitem  command="NeverIndexThisSiteCmd"/> 
+            <menuseparator />
+            <menuitem  command="ShowPrefsCmd"/> 
+        </menupopup>
+    </toolbarbutton>
+</toolbarpalette>
+-->
+
+<!--  Add  Index Bookmark menuitem in Bookmarks Menu -->
+<!--  position=4 to place item after Bookmark Manager which is normally 3 with Firefox 1.5-->
+<menupopup id="menu_BookmarksPopup" contextmenu='bookmarks-context-menu'>
+    <menuitem id="beagle-index-modified-bookmarks"
+	command="IndexModifiedBookmarkCmd"/>
+</menupopup>
+
+<menupopup id="bookmarksMenuPopup">
+    <menuitem id="beagle-index-modified-bookmarks"
+        command="IndexModifiedBookmarkCmd"
+        insertbefore="organizeBookmarksSeparator"
+        />
+</menupopup>
+
+<popup id="contentAreaContextMenu">
+    <menuseparator />
+    <menu label="&beagle.run.context.menu.label;">
+        <menupopup id="beagle-content-popup">
+            <menuitem  id="beagle-context-index-this-link" command="IndexThisLinkCmd"/>
+            <menuitem  id="beagle-context-index-this-image" command="IndexThisImageCmd"/>
+            <menuitem  id="beagle-context-index-this" command="IndexThisCmd"/>
+            <menuseparator />
+            <menuitem id="beagle-context-search-link" command="SearchLinkCmd"/>
+            <menuitem id="beagle-context-search-text" command="SearchTextCmd"/>
+            <menuitem id="beagle-context-search-page" command="SearchPageCmd"/>
+            <menuseparator />
+            <menuitem command="AlwaysIndexThisSiteCmd"/> 
+            <menuitem command="NeverIndexThisSiteCmd"/> 
+            <menuseparator />
+            <menuitem command="ShowPrefsCmd"/> 
+        </menupopup>
+    </menu>
+
+</popup>
+
+<statusbar id="status-bar">
+    <statusbarpanel
+        class="statusbarpanel-menu-iconic"
+        id="beagle-notifier-status"
+        context='beagle-status-popup'
+        status="000"
+        >
+    </statusbarpanel> 
+    <menupopup id="beagle-status-popup" position="before_end">
+        <menuitem command="IndexThisCmd"/>
+        <menuseparator />
+        <menuitem command="AlwaysIndexThisSiteCmd"/> 
+        <menuitem command="NeverIndexThisSiteCmd"/> 
+        <menuseparator />
+        <menuitem command="ShowPrefsCmd"/> 
+   </menupopup>
+</statusbar> 
+
+<!-- Beagle Search History sidebar -->
+<menupopup id="viewSidebarMenu">
+    <menuitem key="key-view-sidebar" observes="ViewSidebar"  />
+</menupopup>
+<keyset id="mainKeyset">
+    <key
+	id="key-view-sidebar"
+	command="ViewSidebar"
+	key="&beagle.sidebar.commandkey;" 
+	modifiers="&beagle.sidebar.modifierskey;" />
+</keyset>
+<broadcasterset id="mainBroadcasterSet"> 
+    <broadcaster
+	id="ViewSidebar" 
+        label="&beagle.sidebar.title;"
+        autoCheck="false"
+        type="checkbox"
+        group="sidebar"
+        sidebarurl="chrome://beagle/content/sidebar.xul"
+        sidebartitle="&beagle.sidebar.title;"
+        oncommand="toggleSidebar('ViewSidebar');" />
+</broadcasterset>
+</overlay>

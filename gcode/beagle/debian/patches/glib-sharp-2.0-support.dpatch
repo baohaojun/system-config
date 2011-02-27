@@ -1,0 +1,62 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## glib-sharp-2.0-support.dpatch by Luca Falavigna <dktrkranz@ubuntu.com>
+## DP: Add /glib-sharp-2.0 support, fix FTBFS.
+
+@DPATCH@
+diff -urNad beagle-0.3.3~/configure beagle-0.3.3/configure
+--- beagle-0.3.3~/configure	2008-01-02 08:59:06.000000000 +0100
++++ beagle-0.3.3/configure	2008-03-18 10:50:24.000000000 +0100
+@@ -25746,12 +25746,14 @@
+                   gmime-sharp >= \$GMIME_SHARP_REQUIRED\"") >&5
+   ($PKG_CONFIG --exists --print-errors "evolution-sharp >= $EVOLUTION_SHARP_REQUIRED 	\
+                   gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED	\
++                  glib-sharp-2.0 >= $GTK_SHARP_REQUIRED		\
+                   gmime-sharp >= $GMIME_SHARP_REQUIRED") 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; then
+   pkg_cv_EVO_CFLAGS=`$PKG_CONFIG --cflags "evolution-sharp >= $EVOLUTION_SHARP_REQUIRED 	\
+                   gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED	\
++                  glib-sharp-2.0 >= $GTK_SHARP_REQUIRED		\
+                   gmime-sharp >= $GMIME_SHARP_REQUIRED" 2>/dev/null`
+ else
+   pkg_failed=yes
+@@ -25770,12 +25772,14 @@
+                   gmime-sharp >= \$GMIME_SHARP_REQUIRED\"") >&5
+   ($PKG_CONFIG --exists --print-errors "evolution-sharp >= $EVOLUTION_SHARP_REQUIRED 	\
+                   gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED	\
++                  glib-sharp-2.0 >= $GTK_SHARP_REQUIRED		\
+                   gmime-sharp >= $GMIME_SHARP_REQUIRED") 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; then
+   pkg_cv_EVO_LIBS=`$PKG_CONFIG --libs "evolution-sharp >= $EVOLUTION_SHARP_REQUIRED 	\
+                   gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED	\
++                  glib-sharp-2.0 >= $GTK_SHARP_REQUIRED		\
+                   gmime-sharp >= $GMIME_SHARP_REQUIRED" 2>/dev/null`
+ else
+   pkg_failed=yes
+@@ -25797,10 +25801,12 @@
+         if test $_pkg_short_errors_supported = yes; then
+ 	        EVO_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "evolution-sharp >= $EVOLUTION_SHARP_REQUIRED 	\
+                   gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED	\
++                  glib-sharp-2.0 >= $GTK_SHARP_REQUIRED		\
+                   gmime-sharp >= $GMIME_SHARP_REQUIRED"`
+         else
+ 	        EVO_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "evolution-sharp >= $EVOLUTION_SHARP_REQUIRED 	\
+                   gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED	\
++                  glib-sharp-2.0 >= $GTK_SHARP_REQUIRED		\
+                   gmime-sharp >= $GMIME_SHARP_REQUIRED"`
+         fi
+ 	# Put the nasty error message in config.log where it belongs
+diff -urNad beagle-0.3.3~/configure.in beagle-0.3.3/configure.in
+--- beagle-0.3.3~/configure.in	2008-01-02 08:14:48.000000000 +0100
++++ beagle-0.3.3/configure.in	2008-03-18 10:43:43.000000000 +0100
+@@ -251,6 +251,7 @@
+ PKG_CHECK_MODULES(EVO,
+                   evolution-sharp >= $EVOLUTION_SHARP_REQUIRED 	\
+                   gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED	\
++                  glib-sharp-2.0 >= $GTK_SHARP_REQUIRED		\
+                   gmime-sharp >= $GMIME_SHARP_REQUIRED,
+                   have_evo_dependencies=yes, have_evo_dependencies=no)
+ AC_SUBST(EVO_LIBS)

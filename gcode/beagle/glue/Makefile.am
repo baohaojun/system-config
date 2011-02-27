@@ -1,5 +1,9 @@
 INCLUDES = $(MONO_CFLAGS)
 
+if ENABLE_GUI
+INCLUDES += $(UIGLUE_CFLAGS)
+endif
+
 EXTRA_GLUE_SOURCES =
 EXTRA_GLUE_LIBADD =
 
@@ -32,6 +36,12 @@ if ENABLE_LIBXSS
 SYSINFO_GLUE_LIBADD += $(SYSTEMINFO_GLUE_X_LIBS)
 endif
 
+KEY_GLUE_SOURCES =	 	\
+	tomboykeybinder.c	\
+	tomboykeybinder.h	\
+	eggaccelerators.c	\
+	eggaccelerators.h
+
 XDGMIME_GLUE_SOURCES =		\
 	xdgmime/xdgmime.c	\
 	xdgmime/xdgmime.h	\
@@ -47,6 +57,20 @@ XDGMIME_GLUE_SOURCES =		\
 	xdgmime/xdgmimeparent.h	\
 	xdgmime/xdgmimecache.c	\
 	xdgmime/xdgmimecache.h
+
+UI_GLUE_SOURCES =		\
+	search-entry.c		\
+	search-entry.h		\
+	search-entry-watermark.h\
+	ui-glue.c
+UI_GLUE_LIBADD = $(UIGLUE_LIBS)
+
+search-entry.c: search-entry-watermark.h
+
+search-entry-watermark.h: search-entry-watermark.svg
+	echo '#define SEARCH_ENTRY_WATERMARK_SVG "\' > $@; \
+	sed -e 's/"/\\"/g' -e 's/$$/\\/' -e 's/#000000/#%s/g' $< >> $@; \
+	echo '"' >> $@
 
 if ENABLE_WV1
 INCLUDES += \
@@ -70,9 +94,21 @@ libbeagleglue_la_LIBADD =	\
 	$(SYSINFO_GLUE_LIBADD)	\
 	$(EXTRA_GLUE_LIBADD)
 
+libbeagleuiglue_la_SOURCES =	\
+	$(KEY_GLUE_SOURCES)	\
+	$(UI_GLUE_SOURCES)
+
+libbeagleuiglue_la_LIBADD =	\
+	$(UI_GLUE_LIBADD)
+
 gluelibdir = $(pkglibdir)
 gluelib_LTLIBRARIES = 		\
 	libbeagleglue.la
+
+if ENABLE_GUI
+gluelib_LTLIBRARIES +=		\
+	libbeagleuiglue.la
+endif
 
 COND_SOURCES = 			\
 	wv1-glue.c		\

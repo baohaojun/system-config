@@ -1,1 +1,1 @@
-../../FuzzyClock.sh
+/cygdrive/q/bin/windows/FuzzyClock.sh

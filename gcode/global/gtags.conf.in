@@ -45,7 +45,7 @@ plugin-example|Example of function layer plugin parser:\
 	:tc=common:extractmethod:\
 	:langmap=@DEFAULTLANGMAP_QUOTED@:\
 	:langmap=fortran\:.f.for.f77.f90.f95,pascal\:.p.pas,c#\:.cs,lisp\:.l.el.lisp,scheme\:.scm:\
-	:langmap=awk\:.awk,ruby\:.rb,perl\:.pl,python\:.py,vim\:.vim,javascript\:.js,sh\:.sh:\
+	:langmap=awk\:.awk,ruby\:.rb,perl\:.pl,python\:.py,vim\:.vim,sh\:.sh:\
 	:gtags_parser=c\:@prefix@/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=yacc\:@prefix@/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=asm\:@prefix@/lib/gtags/exuberant-ctags.la:\
@@ -56,7 +56,6 @@ plugin-example|Example of function layer plugin parser:\
 	:gtags_parser=pascal\:@prefix@/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=c#\:@prefix@/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=lisp\:@prefix@/lib/gtags/exuberant-ctags.la:\
-        :gtags_parser=javascript\:@prefix@/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=scheme\:@prefix@/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=awk\:@prefix@/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=ruby\:@prefix@/lib/gtags/exuberant-ctags.la:\

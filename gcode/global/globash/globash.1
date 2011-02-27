@@ -1,0 +1,44 @@
+.\" This file is generated automatically by convert.pl from globash/manual.in.
+.TH GLOBASH 1 "May 2010" "GNU Project"
+.SH NAME
+globash \- a special shell for GLOBAL using GNU bash.
+.SH SYNOPSIS
+\fBblobash\fP
+.br
+.SH DESCRIPTION
+\fBGlobash\fP is a special shell for GLOBAL using GNU bash.
+You can use a lot of function to ease reading source code
+like tag stack, tag mark and cookie.
+At first, you should make tag files using \fBgtags\fP and
+invoke this command in the project.
+Please refer to the help (type 'ghelp'<ENTER>) about a detailed usage.
+.SH FILES
+.TP
+\'GTAGS\'
+Tag file for object definitions.
+.TP
+\'GRTAGS\'
+Tag file for object references.
+.TP
+\'GPATH\'
+Tag file for path of source files.
+.TP
+\'~/.globashrc\'
+The personal initialization file, executed for globash.
+.SH ENVIRONMENT
+The following environment variables affect the execution of \fBglobash\fP:
+.TP
+\fBEDITOR\fP
+The editor used by the show command.
+.SH "SEE ALSO"
+\fBgtags\fP(1),
+\fBhtags\fP(1),
+\fBless\fP(1).
+.PP
+GNU GLOBAL source code tag system
+.br
+(http://www.gnu.org/software/global/).
+.SH AUTHOR
+Shigio YAMAGUCHI.
+.SH HISTORY
+The \fBglobal\fP command appeared in GLOBAL-4.1(2001).

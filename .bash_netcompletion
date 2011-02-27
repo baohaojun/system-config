@@ -1,4 +1,3 @@
-#!/bin/bash
 _ping() {
         local HOST_LIST
 
@@ -17,56 +16,6 @@ complete -F _ping telnet
 complete -F _ping ssh
 complete -F _ping slin
 
-_repo-switch() {
-    local cur prev cmd br_list
-    COMPREPLY=()
-    COMP_WORDBREAKS=${COMP_WORDBREAKS//:}
-
-    type _get_comp_words_by_ref &>/dev/null && {
-        _get_comp_words_by_ref -n: cur prev
-    } || {
-        cur=$(_get_cword ":")
-        prev=${COMP_WORDS[$COMP_CWORD-1]}
-    }
-    cmd=${COMP_WORDS[1]}
-
-    case "$prev" in
-        -b)
-            br_list=$( cd `lookup_file .repo/manifests` >/dev/null 2>&1; git branch -r |perl -npe 's,.*/,,')
-            ;;
-        -u)
-            br_list=$(
-                (
-                    echo git://android-x86.git.sf.net/gitroot/android-x86/manifest.git;
-                    echo git://nv-tegra.nvidia.com/android/manifest.git;
-                    echo git://android.git.kernel.org/platform/manifest.git;
-                    echo git@www.rayzertrack.com:ggl/pxa935/platform/manifest;
-                    echo git@www.rayzertrack.com:nv/android/manifest
-                    echo ssh://bearr/android/platform/manifest.git
-                    cat ~/.remotes 2>/dev/null
-                ) |sort -u
-            )
-            ;;
-    esac
-    COMPREPLY=( 
-        $( compgen -W "$br_list" -- "$cur" ) 
-        $( compgen -f -- "$cur" )
-    )
-    return 0
-}
-
-_git_tags() {
-    local br_list
-    COMPREPLY=()
-    cur=${COMP_WORDS[COMP_CWORD]}
-    
-    br_list=$( git tag)
-    COMPREPLY=( $( compgen -W "$br_list" -- "$cur" ) )
-    return 0
-}
-    
-complete -F _repo-switch repo-switch
-complete -F _git_tags git-track-tag
 
 _mail() {
     COMPREPLY=()

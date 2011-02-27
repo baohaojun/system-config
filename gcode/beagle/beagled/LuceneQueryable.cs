@@ -274,6 +274,16 @@ namespace Beagle.Daemon {
 			public ICollection RemovedUris;
 		}
 
+#if ENABLE_RDF_ADAPTER
+		protected virtual TextCache TextCache {
+			get { return TextCache.UserCache; }
+		}
+
+		public ICollection DoRDFQuery (Query query)
+		{
+			return Driver.DoRDFQuery (query, TextCache);
+		}
+#endif
 
 		public void DoQuery (Query                query,
 				     IQueryResult         query_result,

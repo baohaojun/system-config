@@ -1,2 +1,0 @@
-#!/bin/bash
-rfa . 'echo $REPO_RREV'

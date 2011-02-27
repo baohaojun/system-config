@@ -1,10 +1,9 @@
 #!/bin/bash
 exec >/dev/null
 . ~/.bashrc
-export PATH=/usr/local/bin:$PATH
 function do_it() {
-    mkbeagleidx 
-    mkgtags -i
+    mkbeagleidx
+    mkgtags
 }
 
 for x in `locate .for-code-reading`; do 

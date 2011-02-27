@@ -449,9 +449,19 @@ namespace Beagle.Daemon {
 			return UpdateCharsAdded (1);
 		}
 
+#if ENABLE_RDF_ADAPTER
+		private IList<string> links_list = new List<string> ();
+
+		public IList<string> Links {
+			get { return links_list; }
+		}
+#endif
 
 		public void AddLink (string link)
 		{
+#if ENABLE_RDF_ADAPTER
+			links_list.Add (link);
+#endif
 		}
 
 		//private bool NeedsWhiteSpace (ArrayList array)

@@ -3,6 +3,7 @@
 #include "bhjdebug.h" 
 #include <assert.h>
 #include <string.h>
+#include <direct.h>
 
 //global vars
 char *g_app_name = "hotkey_hook";
@@ -216,7 +217,7 @@ LRESULT CALLBACK KbdHookProc(int nCode, WPARAM wParam, LPARAM lParam)
     if (vkCodeInvalid(vkCode))
         goto out;
     
-    if (g_switch_ralt_lwin && MapKeys(wParam, hook_struct)) {
+    if (MapKeys(wParam, hook_struct)) {
         return 1;
     }
     

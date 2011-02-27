@@ -23,6 +23,6 @@ man_MANS = $(bin_SCRIPTS).1
 gtagsdir = ${datadir}/gtags
 gtags_DATA = globash.rc
 
-EXTRA_DIST = $(man_MANS) $(bin_SCRIPTS).in $(gtags_DATA)
+EXTRA_DIST = $(man_MANS) $(bin_SCRIPTS).in $(gtags_DATA) manual.in
 
 CLEANFILES = $(bin_SCRIPTS)

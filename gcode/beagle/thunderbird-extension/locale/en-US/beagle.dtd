@@ -1,0 +1,50 @@
+<!ENTITY beaglemain.settings "Beagle indexing settings">
+<!ENTITY beagleprefs.title "Beagle indexing settings">
+<!ENTITY beagleprefs.indexing "Indexing">
+<!ENTITY beagleprefs.privacy "Privacy">
+<!ENTITY beagleprefs.sourcescaption "Sources">
+<!ENTITY beagleprefs.contentcaption "Content">
+<!ENTITY beagleprefs.enabled "Enable indexing">
+<!ENTITY beagleprefs.destdir "Destination directory">
+<!ENTITY beagleprefs.batchcount "Batch count">
+<!ENTITY beagleprefs.delay "Batch delay">
+<!ENTITY beagleprefs.local "Local account">
+<!ENTITY beagleprefs.imap "IMAP accounts">
+<!ENTITY beagleprefs.pop "POP3 accounts">
+<!ENTITY beagleprefs.mailspool "Mailspool accounts">
+<!ENTITY beagleprefs.news "Newsgroup accounts">
+<!ENTITY beagleprefs.rss "RSS feeds">
+<!ENTITY beagleprefs.contentdesc "To empty index, press the button">
+<!ENTITY beagleprefs.delindex "Drop everything">
+<!ENTITY beagleprefs.unindex "Reset index status">
+<!ENTITY beagleprefs.speedcaption "Indexing speed">
+<!ENTITY beagleprefs.recommended "(Recommended)">
+<!ENTITY beagleprefs.notrecommended "(Not recommended)">
+<!ENTITY beagleprefs.veryslow "Very slow">
+<!ENTITY beagleprefs.slow "Slow">
+<!ENTITY beagleprefs.normal "Normal">
+<!ENTITY beagleprefs.fast "Fast">
+<!ENTITY beagleprefs.veryfast "Very fast">
+<!ENTITY beagleprefs.instant "Instant">
+<!ENTITY beagleprefs.custom "Custom">
+<!ENTITY beagleprefs.customcaption "Custom settings">
+<!ENTITY beagleprefs.status "Status">
+<!ENTITY beagleprefs.queuecount "Queue count">
+<!ENTITY beagleprefs.stats "Statistics">
+<!ENTITY beagleprefs.indexingstatus "Indexing status:">
+<!ENTITY beagleprefs.itemsadded "Items added:">
+<!ENTITY beagleprefs.itemsremoved "Items removed:">
+<!ENTITY beagleprefs.itemsqueued "Items queued:">
+<!ENTITY beagleprefs.refresh "Refresh">
+<!ENTITY beagleunindex.title "Processing index data">
+<!ENTITY beagleunindex.topic "Data is is currently being processed. Please wait...">
+<!ENTITY beagleunindex.currentItem "Processing:">
+<!ENTITY beagleunindex.preparing "Preparing data...">
+<!ENTITY beagleunindex.folderdesc "Folders:">
+<!ENTITY beagleunindex.messagedesc "Messages:">
+<!ENTITY beagleunindex.cancel "Cancel">
+<!ENTITY beaglefoldertree.removefolder "Remove folder from index">
+<!ENTITY beaglefoldertree.removefolderrecursive "Recursively remove folder from index">
+<!ENTITY beaglefoldertree.noindexing "Never index this folder">
+<!ENTITY beaglemessageview.removemessage "Remove message from index">
+<!ENTITY beaglemessageview.noindexing "Never index this message">

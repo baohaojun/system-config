@@ -1,0 +1,30 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## no_mozilla_extension.dpatch by Chris Coulson <chris.coulson@canonical.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad beagle-0.3.9~/Makefile.am beagle-0.3.9/Makefile.am
+--- beagle-0.3.9~/Makefile.am	2008-04-25 20:26:19.000000000 +0100
++++ beagle-0.3.9/Makefile.am	2010-04-07 18:22:26.022201645 +0100
+@@ -30,7 +30,6 @@
+ endif
+ 
+ SUBDIRS +=			\
+-	firefox-extension	\
+ 	tools			\
+ 	conf-data
+ 
+diff -urNad beagle-0.3.9~/configure.in beagle-0.3.9/configure.in
+--- beagle-0.3.9~/configure.in	2008-07-19 12:20:19.000000000 +0100
++++ beagle-0.3.9/configure.in	2010-04-07 18:21:54.479701202 +0100
+@@ -674,7 +674,7 @@
+ 	wv1?			  ${enable_wv1}
+ 	libchm?			  ${has_libchm} 
+ 
+-	Firefox Extension?	  yes
++	Firefox Extension?	  no
+ 	Epiphany Extension?	  ${enable_epiphany_extension}
+ 	Thunderbird Extension? 	  ${enable_tbird}
+ 	Google Backends?          ${enable_google}

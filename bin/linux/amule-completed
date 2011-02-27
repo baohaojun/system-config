@@ -1,5 +1,0 @@
-#!/bin/bash
-echo "$@" >> ~/.amule-completed.log
-cd ~/.aMule/Incoming
-find . -maxdepth 1 -type f -exec mv '{}' ./new \;
-
