@@ -325,7 +325,11 @@ main(int argc, char **argv)
 			const char *flag = is_gpath ? dbop_getflag(dbop) : "";
 
 			if (*flag)
-				printf("%s\t%s\t%s\n", dbop->lastkey, dat, flag);
+				if (is_gpath) {
+					time_t t = gpath_mtime(dbop, dbop->lastkey);
+					printf("%s\t%s\t%s\t%s\n", dbop->lastkey, dat, flag, ctime(&t));
+				} else
+					printf("%s\t%s\t%s\n", dbop->lastkey, dat, flag);
 			else
 				printf("%s\t%s\n", dbop->lastkey, dat);
 		}
@@ -504,7 +508,6 @@ incremental(const char *dbpath, const char *root)
 {
 	STATISTICS_TIME *tim;
 	struct stat statp;
-	time_t gtags_mtime;
 	STRBUF *addlist = strbuf_open(0);
 	STRBUF *deletelist = strbuf_open(0);
 	STRBUF *addlist_other = strbuf_open(0);
@@ -522,9 +525,6 @@ incremental(const char *dbpath, const char *root)
 	 * get modified time of GTAGS.
 	 */
 	path = makepath(dbpath, dbname(GTAGS), NULL);
-	if (stat(path, &statp) < 0)
-		die("stat failed '%s'.", path);
-	gtags_mtime = statp.st_mtime;
 
 	if (gpath_open(dbpath, 0) < 0)
 		die("GPATH not found.");
@@ -594,7 +594,7 @@ normal_update:
 				if (fid == NULL) {
 					strbuf_puts0(addlist, path);
 					total++;
-				} else if (gtags_mtime < statp.st_mtime) {
+				} else if (gpath_mtime(NULL, fid) < statp.st_mtime) {
 					strbuf_puts0(addlist, path);
 					total++;
 					idset_add(deleteset, n_fid);
