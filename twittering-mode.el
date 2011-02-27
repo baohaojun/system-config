@@ -8190,12 +8190,12 @@ been initialized yet."
          (lambda (service)
            (let ((twittering-service-method service))
              (cond
-              ((twittering-timeline-spec-direct-messages-p spec)
-               (if username
-                   (twittering-call-api 'send-direct-message
-                                        `((username . ,username)
-                                          (status . ,status)))
-                 (message "No username specified")))
+              ;; ((twittering-timeline-spec-direct-messages-p spec)
+              ;;  (if username
+              ;;      (twittering-call-api 'send-direct-message
+              ;;                           `((username . ,username)
+              ;;                             (status . ,status)))
+              ;;    (message "No username specified")))
               (t
                (twittering-call-api
                 'update-status
