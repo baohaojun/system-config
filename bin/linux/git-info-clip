@@ -1,0 +1,9 @@
+#!/bin/bash
+# http://github.com/baohaojun/windows-config/raw/master/bin/linux/
+. ~/.bashrc-public
+
+lcd "$1"
+git_dir=$(dirname $(lookup_file .git))
+lookup_file "$1" |perl -npe 's,'$git_dir',http://github.com/baohaojun/windows-config/raw/master,'|tr -d '\r\n'|tee /dev/tty|putclip
+
+

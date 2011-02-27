@@ -26,11 +26,10 @@ for (@ARGV) {
 
 $max_token = (sort {length($a) <=> length($b)} @tokens)[-1];
 
-#去掉开头和结尾的_字符
+use String::ShellQuote;
+$max_token = shell_quote($max_token);
 
-$max_token =~ s/^_+|_+$//g;
-
-my $tokens = qx/beagle-break.exe "$max_token"/;
+my $tokens = qx/beagle-break.sh $max_token/;
 $tokens =~ tr/\n/ /;
 print "$tokens\n";
 

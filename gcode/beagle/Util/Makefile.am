@@ -8,9 +8,6 @@ CSFLAGS = -target:library
 UTIL_TARGET = Util.dll
 UTIL_TARGET_CONFIG = $(UTIL_TARGET).config
 
-UI_UTIL_TARGET = UiUtil.dll
-UI_UTIL_TARGET_CONFIG = $(UI_UTIL_TARGET).config
-
 if OS_LINUX
 CSFLAGS += -define:OS_LINUX
 endif
@@ -33,63 +30,30 @@ $(EXTSTR): $(EXTSTR_IN)
 		-e "s|\@SQLITE_MAJ_VER\@|$(SQLITE_MAJ_VER)|g"	\
 		< $(EXTSTR_IN) > $@
 
-F_SPOT_FILES =						\
-	$(srcdir)/F-Spot/Imaging/Bim.cs			\
-	$(srcdir)/F-Spot/Imaging/Ciff.cs		\
-	$(srcdir)/F-Spot/Imaging/DCRawFile.cs		\
-	$(srcdir)/F-Spot/Imaging/Exif.cs		\
-	$(srcdir)/F-Spot/Imaging/ImageFile.cs		\
-	$(srcdir)/F-Spot/Imaging/IptcFile.cs		\
-	$(srcdir)/F-Spot/Imaging/JpegFile.cs		\
-	$(srcdir)/F-Spot/Imaging/JpegHeader.cs		\
-	$(srcdir)/F-Spot/Imaging/MrwFile.cs		\
-	$(srcdir)/F-Spot/Imaging/OrderedWriter.cs	\
-	$(srcdir)/F-Spot/Imaging/PngFile.cs		\
-	$(srcdir)/F-Spot/Imaging/PnmFile.cs		\
-	$(srcdir)/F-Spot/Imaging/RafFile.cs		\
-	$(srcdir)/F-Spot/Imaging/SvgFile.cs		\
-	$(srcdir)/F-Spot/Imaging/Tiff.cs		\
-	$(srcdir)/F-Spot/Imaging/X3fFile.cs		\
-	$(srcdir)/F-Spot/Imaging/XmpFile.cs		\
-	$(srcdir)/F-Spot/BitConverter.cs		\
-	$(srcdir)/F-Spot/MetadataStore.cs		\
-	$(srcdir)/F-Spot/PixbufUtils.cs
-
 UTIL_CSFILES = 			        	\
-	$(F_SPOT_FILES)				\
 	$(srcdir)/ArrayFu.cs              	\
 	$(srcdir)/BatteryMonitor.cs		\
 	$(srcdir)/BetterBitArray.cs		\
-	$(srcdir)/camel.cs              	\
 	$(srcdir)/Config.cs			\
 	$(srcdir)/DateTimeUtil.cs		\
 	$(srcdir)/Debug.cs			\
 	$(srcdir)/DelayedTextWriter.cs		\
-	$(srcdir)/DigikamTags.cs		\
 	$(srcdir)/DirectoryWalker.cs		\
-	$(srcdir)/Evolution.cs			\
 	$(srcdir)/ExceptionHandlingThread.cs	\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileAdvise.cs			\
 	$(srcdir)/FileNameMarshaler.cs		\
 	$(srcdir)/FileSystem.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
-	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GuidFu.cs			\
 	$(srcdir)/HtmlRemovingReader.cs		\
-	$(srcdir)/ICalParser.cs              	\
-	$(srcdir)/ImBuddy.cs              	\
 	$(srcdir)/Inotify.cs			\
-	$(srcdir)/KdeUtils.cs			\
-	$(srcdir)/KonqHistoryUtil.cs		\
 	$(srcdir)/LineReader.cs			\
 	$(srcdir)/Log.cs			\
 	$(srcdir)/Logger.cs             	\
 	$(srcdir)/MultiReader.cs        	\
-	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/NetworkService.cs		\
 	$(srcdir)/Note.cs               	\
-	$(srcdir)/OperaHistory.cs		\
 	$(srcdir)/Password.cs			\
 	$(srcdir)/PathFinder.cs			\
 	$(srcdir)/PullingReader.cs      	\
@@ -136,42 +100,9 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/Hal/SystemPowerManagement.cs	\
 	$(srcdir)/Hal/Volume.cs			\
 	$(srcdir)/Hal/VolumeCrypto.cs		\
-	$(srcdir)/SemWeb/NamespaceManager.cs    \
-	$(srcdir)/SemWeb/Util.cs                \
-	$(srcdir)/SemWeb/UriMap.cs              \
-	$(srcdir)/SemWeb/Resource.cs            \
-	$(srcdir)/SemWeb/Statement.cs           \
-	$(srcdir)/SemWeb/Interfaces.cs		\
-	$(srcdir)/SemWeb/Store.cs               \
-	$(srcdir)/SemWeb/MemoryStore.cs         \
-	$(srcdir)/SemWeb/RdfReader.cs           \
-	$(srcdir)/SemWeb/RdfXmlReader.cs        \
-	$(srcdir)/SemWeb/N3Reader.cs            \
-	$(srcdir)/SemWeb/RdfWriter.cs           \
-	$(srcdir)/SemWeb/RdfXmlWriter.cs        \
-	$(srcdir)/SemWeb/N3Writer.cs            \
-	$(srcdir)/SemWeb/Query.cs	        \
-	$(srcdir)/SemWeb/LiteralFilters.cs      \
-	$(srcdir)/SemWeb/Query.cs               \
-	$(srcdir)/SemWeb/GraphMatch.cs		\
-	$(srcdir)/SemWeb/LiteralFilters.cs	\
-	$(srcdir)/SemWeb/Inference.cs           \
-	$(srcdir)/SemWeb/RDFS.cs                \
-	$(srcdir)/SemWeb/SpecialRelations.cs	\
-	$(srcdir)/SemWeb/Algos.cs               \
-	$(srcdir)/SemWeb/SparqlClient.cs	\
-	$(srcdir)/SemWeb/XPathSemWebNavigator.cs\
 	$(srcdir)/QueryKeywordMapping.cs
 
-if ENABLE_RDF_ADAPTER
-UTIL_CSFILES +=					\
-	$(srcdir)/SemWeb/Euler.cs
-endif
-
 # To reduce dependencies and other reasons, we don't build this
-IGNORED_SEMWEB_CSFILES =			\
-	$(srcdir)/SemWeb/AssemblyInfo.cs	\
-	$(srcdir)/SemWeb/SQLStore.cs
 
 # Semweb compile flag
 CSFLAGS += -define:DOTNET2
@@ -182,23 +113,6 @@ UTIL_ASSEMBLIES =				\
 	-r:Mono.Data.Sqlite			\
 	-r:Mono.Posix				\
 	-r:ICSharpCode.SharpZipLib
-
-if ENABLE_THUNDERBIRD
-UTIL_CSFILES +=					\
-	$(srcdir)/Thunderbird.cs
-endif
-
-if ENABLE_AVAHI
-CSFLAGS += -define:ENABLE_AVAHI
-UTIL_CSFILES += 				\
-	$(srcdir)/AvahiBrowser.cs
-UTIL_ASSEMBLIES += $(AVAHI_SHARP_LIBS)
-endif
-
-if HAS_LIBCHM 
-UTIL_CSFILES +=					\
-	$(srcdir)/ChmFile.cs
-endif
 
 if ENABLE_INOTIFY
 INOTIFY_EXE = Inotify.exe
@@ -211,28 +125,6 @@ UTIL_TARGET_FILES = $(UTIL_CSFILES) $(EXTSTR)
 
 $(UTIL_TARGET): $(UTIL_TARGET_FILES)
 	$(CSC) -unsafe -out:$@ $(CSFLAGS) $^ $(UTIL_ASSEMBLIES)
-
-UI_UTIL_CSFILES =				\
-	$(srcdir)/CompatFileChooser.cs		\
-	$(srcdir)/GnomeFu.cs              	\
-	$(srcdir)/GtkUtils.cs			\
-	$(srcdir)/HigMessageDialog.cs		\
-	$(srcdir)/XKeybinder.cs
-
-UI_UTIL_ASSEMBLIES =				\
-	$(BEAGLE_UI_LIBS)			\
-	-r:Util.dll
-
-if ENABLE_GALAGO
-UI_UTIL_CSFILES +=				\
-	$(srcdir)/Galago.cs
-
-UI_UTIL_ASSEMBLIES += 				\
-	$(GALAGO_LIBS)
-endif
-
-$(UI_UTIL_TARGET): $(UI_UTIL_CSFILES) $(UTIL_TARGET)
-	$(CSC) -unsafe -out:$@ $(CSFLAGS) $(UI_UTIL_CSFILES) $(UI_UTIL_ASSEMBLIES)
 
 INOTIFY_TEST_CSFILES =				\
 	$(srcdir)/Inotify.cs			\
@@ -252,18 +144,11 @@ ALL_TARGETS =			\
 	$(UTIL_TARGET)		\
 	$(INOTIFY_EXE)
 
-if ENABLE_GUI
-ALL_TARGETS += $(UI_UTIL_TARGET)
-endif
-
 all: $(ALL_TARGETS)
 
 install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(UTIL_TARGET) $(UTIL_TARGET).mdb $(srcdir)/$(UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
-if ENABLE_GUI
-	$(INSTALL_DATA) $(UI_UTIL_TARGET) $(UI_UTIL_TARGET).mdb $(srcdir)/$(UI_UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
-endif
 
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET) $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET).mdb $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET_CONFIG)
@@ -271,19 +156,14 @@ uninstall-local:
 
 
 COND_CS_FILES =				\
-	$(srcdir)/AvahiBrowser.cs	\
-	$(srcdir)/ChmFile.cs		\
 	$(srcdir)/SemWeb/Euler.cs	\
 	$(srcdir)/Galago.cs		\
 	$(srcdir)/Thunderbird.cs
 
 EXTRA_DIST =					\
-	$(IGNORED_SEMWEB_CSFILES)		\
 	$(EXTSTR_IN)				\
 	$(UTIL_CSFILES)				\
-	$(UI_UTIL_CSFILES)			\
 	$(COND_CS_FILES)			\
-	$(srcdir)/$(UI_UTIL_TARGET_CONFIG)	\
 	$(srcdir)/$(UTIL_TARGET_CONFIG)		\
 	inotify-test
 
@@ -291,8 +171,6 @@ CLEANFILES =			\
 	$(EXTSTR)		\
 	$(UTIL_TARGET)		\
 	$(UTIL_TARGET).mdb	\
-	$(UI_UTIL_TARGET)	\
-	$(UI_UTIL_TARGET).mdb	\
 	Inotify.exe		\
 	Inotify.exe.mdb
 

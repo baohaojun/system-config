@@ -1,4 +1,8 @@
 #!/bin/bash
 sleep 1
-import ~/x.png
-of ~/x.png
+now=`now|perl -npe 's/:/./g'`
+mkdir -p ~/shots
+now=shots/"$now"
+scrot -s ~/"$now".png
+of ~/"$now".png
+up ~/"$now".png

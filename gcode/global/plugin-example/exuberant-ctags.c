@@ -40,6 +40,7 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#include <fcntl.h>
 
 #include "parser.h"
 
@@ -117,6 +118,22 @@ start_ctags(const struct parser_param *param)
 	free(argv[1]);
 	close(opipe[0]);
 	close(ipipe[1]);
+
+	ipipe[1] = opipe[1]; //this is a hack!
+
+	int i=0; 
+	for (; i < 2; i++) {
+		int flags;
+		flags = fcntl(ipipe[i], F_GETFD);
+		if (flags == -1) {
+			param->die("fcntl failed.");
+		}
+		flags |= FD_CLOEXEC;
+		if (fcntl(ipipe[i], F_SETFD, flags) == -1) {
+			param->die("fcntl failed.");
+		}
+	}
+
 	ip = fdopen(ipipe[0], "r");
 	op = fdopen(opipe[1], "w");
 	if (ip == NULL || op == NULL)

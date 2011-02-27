@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
-test $# = 2 || exit
+if test $# = 2; then
 LINE=$1
 FILE=$2
+elif test $# = 1; then
+    LINE=${1#*:}
+    FILE=${1%:*}
+else
+    exit
+fi
+
 perl -ne 'if ($. != '$LINE') {print}' -i $FILE

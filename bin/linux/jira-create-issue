@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+summary=$1
+
+function jira_create_issue_prefix() {
+    jira -a createIssue --type Bug --assignee hjbao\:\ Haojun\ Bao  --project CINEMA --components OS --summary "$@"
+}
+
+shift
+
+tmp=/tmp/`basename $0`.$$
+
+if test "$#" = 0; then
+    jira_create_issue_prefix "$summary" --description "`get-stdin`"
+else 
+    jira_create_issue_prefix "$summary" --description "$(echo "$@")"
+fi > $tmp
+cd ~/jira-issues/
+
+cat $tmp
+touch `cat $tmp|pn 2`\:"$(echo "$summary"|perl -npe 's/.*: //; s:(/|%):sprintf "%%%02x", ord($1):ge')"
+

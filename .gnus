@@ -4,8 +4,8 @@
  user-full-name "Haojun Bao"
  nnml-directory "~/private/mail/"
  message-default-charset 'utf-8
- gnus-select-method '(nnimap "bhj2"
-                             (nnimap-address "bhj2")
+ gnus-select-method '(nnimap "localhost"
+                             (nnimap-address "localhost")
                              (nnimap-server-port 143)
                              (nnimap-stream network))
  gnus-signature-limit 500
@@ -27,8 +27,8 @@
 
 (setq message-send-mail-function 'smtpmail-send-it
       user-mail-address "baohaojun@gmail.com"
-      smtpmail-default-smtp-server "bhj2"
-      smtpmail-smtp-server "bhj2"
+      smtpmail-default-smtp-server "localhost"
+      smtpmail-smtp-server "localhost"
       smtpmail-smtp-service 25
       mail-default-reply-to "haojun.bao@borqs.com"
       smtpmail-local-domain "borqs.com")

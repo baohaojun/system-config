@@ -1,0 +1,7 @@
+#!/usr/bin/env perl
+use URI::Escape;
+
+print (uri_escape("@ARGV"));
+$, = " ";
+system("firefox", "https://mail.google.com/mail/#search/" . uri_escape("@ARGV"));
+

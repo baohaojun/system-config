@@ -17,7 +17,6 @@ LUCENE_2_1_CSFILES =						\
 	$(lucenedir)/Analysis/TokenFilter.cs			\
 	$(lucenedir)/Analysis/WhitespaceTokenizer.cs		\
 	$(lucenedir)/Analysis/ISOLatin1AccentFilter.cs		\
-	$(lucenedir)/Analysis/LengthFilter.cs			\
 	$(lucenedir)/Analysis/KeywordAnalyzer.cs		\
 	$(lucenedir)/Analysis/LetterTokenizer.cs		\
 	$(lucenedir)/Analysis/LowerCaseFilter.cs		\

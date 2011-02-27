@@ -1,0 +1,2 @@
+#!/bin/bash
+echo "export XAUTHORITY=$XAUTHORITY; export DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS" >~/.new-xauth

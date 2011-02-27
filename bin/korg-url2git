@@ -1,0 +1,2 @@
+#!/bin/bash
+perl -npe 's,.*?=,git://android.git.kernel.org/,; s/;.*//;'

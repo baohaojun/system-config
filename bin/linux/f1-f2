@@ -1,0 +1,19 @@
+#!/usr/bin/env perl
+
+use String::ShellQuote;
+$arg1 = shell_quote($ARGV[0]);
+$arg2 = shell_quote($ARGV[1]);
+
+@arg1 = split(/\n/, qx/cat $arg1/);
+@arg2 = split(/\n/, qx/cat $arg2/);
+
+for (@arg2) {
+    $arg2{$_} = 1;
+}
+
+for (@arg1) {
+    $arg1{$_} = 1 unless $arg2{$_} == 1;
+}
+
+$,="\n";
+print keys %arg1;

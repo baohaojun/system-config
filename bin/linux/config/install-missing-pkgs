@@ -1,0 +1,28 @@
+#!/bin/bash
+packages=$(find ~/bin/linux/config/pkgs/ -type f|perl -npe 's,.*/,,')
+err_packages=""
+
+while ! aptitude show $packages >/dev/null 2>&1; do
+    err_packages=$(echo $err_packages; aptitude show $packages 2>&1|grep 'E: Unable to locate package '|perl -npe 'chomp; s/.*E: Unable to locate package//');
+    packages=$(arg1-arg2 "$packages" "$err_packages")
+done
+echo "err_packages are $err_packages"
+
+missing_packages=$(arg1-arg2 "$packages" "$(aptitude show $packages |perl -ne '
+chomp;
+if (m/^Package: (.*)$/) {
+    $pkg = $1;
+    while (<>) {
+        chomp;
+        if (m/^State: (.*)$|^$/) {
+            print $pkg . "\n" if $1 eq "installed";
+            last;
+        }
+    }
+}')")
+
+echo "missing_packages are $missing_packages"
+
+for x in $missing_packages; do 
+    sudo apt-get install -y $x || true
+done

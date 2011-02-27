@@ -1,25 +1,103 @@
-#!/bin/bash
+#!/usr/bin/env perl
+use String::ShellQuote;
+use strict;
+my ($myfile) = ($ARGV[0]);
+my $remote_ip = $ENV{"REMOTEIP"};
 
-function edit_1()
-{
-    local file=$1
-    if test -e "$file"; then
-        emacsclient -n "$file"
-    else # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’
+my @emacsclient = ('emacsclient', '-n');
 
-        [[ "$file" =~ :$ ]] && file=${file:0:${#file}-1}
-        [[ "$file" =~ : ]] && local line=${file##*:}
-        file=${file%:*}
-        local x=0
-        while test ! -e "$file" && ((x++ < 10)); do
-            file=../"$file"
-        done
-        emacsclient -n +"${line:-1}" "$file"
-    fi
+if ($0 =~ m,/?edit-wait$,) {
+    @emacsclient = ('emacsclient');
 }
 
-if test x$IN_EMACS != x; then
-    edit_1 "$@" >/dev/null 2>&1 &
-else 
-    edit_1 "$@"
+sub get_smb_file($$) {
+  my ($remote, $file) = @_;
+
+  open(my $f, "<", glob("~/.smb/smbnetfs.conf")) or die "Error: can't open ~/.smb/smbnetfs.conf";
+  my $login = "";
+  while (<$f>) {
+    if (m/^\s*auth\s+$remote\s+(\S+)/) {
+      $login = $1;
+      print STDERR "login is $login\n";
+      last;
+    }
+  }
+  close $f;
+
+  if ($login) {
+    return "/smb:$login\@$remote:$file";
+  } else {
+    return "/smb:$remote:$file";
+  }
+}
+
+sub get_emacs_file_name($) {
+  my ($file) = @_;
+  my $smb = glob("~/smb");
+
+  if ($file =~ m,$smb/(.*?)(/.*),) {
+    #/smb:samba@dog:/protected
+    my $remote = $1;
+    $file = $2;
+    return get_smb_file($remote, $file);
+
+  } elsif ($ENV{"REMOTEIP"}) {
+    my ($myname, $myip, $remote_ip) = @ENV{"WHOAMI", "LOCALIP", "REMOTEIP"};
+    return "/scp:$myname\@$myip:$file"; 
+  } else {
+    return $file;
+  }
+}
+
+sub edit_1($)
+  {
+    my $file=$_[0];
+    $file =~ s,.*file://,,;
+
+    if (-e $file) {
+
+      $file = shell_quote($file);
+      chomp($file = qx(readlink -f $file));
+      return (@emacsclient, get_emacs_file_name($file));
+
+    } elsif ($file =~ m,smb://(.*?)(/.*),) {
+
+      return @emacsclient, get_smb_file($1, $2);
+
+    } else {
+
+      # external/opencore/android/mediascanner.cpp:622: error: invalid conversion from ‘const char*’ to ‘char*’  
+      $file =~ m,^[a|b]/, and $file = substr($file, 2); # for git diff output
+      $file =~ m,:$, and chop($file);
+
+      my $line=1;
+      $file =~ s,:([0-9]+)$,, and $line = $1;
+
+      my $x=0;
+      while (not -e $file and $x ++ < 10) {
+        $file = "../$file";            
+      }
+      $file = shell_quote($file);
+      chomp($file = qx(readlink -f $file));
+      return (@emacsclient, "+$line", get_emacs_file_name($file));
+    }
+  }
+
+if ($remote_ip) {
+  my @cmd = edit_1($myfile);
+  $cmd[-1] = shell_quote($cmd[-1]);
+
+  my $ssh_cmd = join(" ", @cmd);
+
+  $ssh_cmd = <<EOC;
+if test `uname` != Linux; then
+    psexec.exe -sid "\$(cygpath -alw "\$(which findexec)")" -t emacs@
 fi
+$ssh_cmd
+EOC
+  $ssh_cmd = shell_quote($ssh_cmd);
+  system("ssh $remote_ip $ssh_cmd");
+
+} else {
+  system(edit_1($myfile));
+}

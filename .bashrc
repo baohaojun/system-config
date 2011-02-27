@@ -4,7 +4,7 @@ shopt -s histappend
 export HISTCONTROL="ignoredups"
 export HISTIGNORE="bg:fg:exit"
 export PROMPT_COMMAND="history -a"
-alias ls='ls -hF --color=tty --show-control-chars'                 # classify files in colour
+alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
 alias dir='ls --color=auto --format=vertical --show-control-chars'
 alias vdir='ls --color=auto --format=long --show-control-chars'
 alias ll='ls -l --show-control-chars'                              # long list
@@ -14,17 +14,14 @@ alias vi=vim
 export EDITOR=vim
 export HISTSIZE=2000
 export HISTFILESIZE=100000
-if [[ `uname` == CYGWIN_NT-5.1 ]]; 
+. ~/.bashrc-public
+
+if test `uname` = CYGWIN_NT-5.1 -o `uname` = CYGWIN_NT-6.1
 then
-    if . ~/.bashrc-windows; then
-        true #nothing
-    else #remote login
-        return
-    fi
+    . ~/.bashrc-windows
 else
     . ~/.bashrc-linux
 fi
-. ~/.bashrc-public
 
 case $- in
     *i*) . ~/.bashrc-interactive;;
@@ -33,3 +30,6 @@ esac
 alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
 export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
+export USE_CCACHE=1
+alias hir='history -r'
+export PATH=`echo -n $PATH|perl -a -F: -ne 'for (@F) {print "$_\n"}'|uniq-even-non-ajacent |perl -ne 'chomp; print ":" unless (1..1); print $_'`

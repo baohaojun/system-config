@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+packages=$(find ~/bin/linux/config/pkgs/ -type f|perl -npe 's,.*/,,')
+#zh-autoconvert
+export LC_ALL=C
+export LANG=C
+while ! sudo apt-get install -y $packages; do
+    packages=$(arg1-arg2 "$packages" "$(sudo apt-get install -y $packages 2>&1)");
+done
+
+~/bin/linux/config/install-missing-pkgs

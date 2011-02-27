@@ -1,0 +1,4 @@
+#!/bin/bash
+which=$1
+shift
+awk "$@" '{print $'$which'}'

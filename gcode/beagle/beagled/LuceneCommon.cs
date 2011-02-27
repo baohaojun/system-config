@@ -36,15 +36,11 @@ using System.Xml;
 using System.Xml.Serialization;
 
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using LNS = Lucene.Net.Search;
-
-using SF.Snowball.Ext;
-using SnowballProgram = SF.Snowball.SnowballProgram;
 
 using Beagle.Util;
 
@@ -487,19 +483,9 @@ namespace Beagle.Daemon {
 		// FIXME: This assumes everything being indexed is in English!
 		public class BeagleAnalyzer : StandardAnalyzer {
 
-			const string DEFAULT_STEMMER_LANGUAGE = "English";
 			private char [] buffer = new char [2];
 			private bool strip_extra_property_info = false;
 			private bool tokenize_email_hostname = false;
-
-			private NoiseEmailHostFilter.LinkCallback add_link = null;
-
-			public NoiseEmailHostFilter.LinkCallback AddLink {
-				set {
-				    lock (this)
-					    add_link = value;
-				}
-			}
 
 			public BeagleAnalyzer (bool is_indexing_analyzer)
 			{
@@ -554,23 +540,6 @@ namespace Beagle.Daemon {
 
 				TokenStream outstream;
 				outstream = base.TokenStream (fieldName, reader);
-
-				NoiseEmailHostFilter.LinkCallback add_link_callback = null;
-				lock (this) {
-					if (fieldName == "Text")
-						add_link_callback = add_link;
-				}
-
-				if (fieldName == "Text"
-				    || fieldName == "HotText"
-				    || fieldName == "PropertyText"
-				    || is_text_prop) {
-					outstream = new NoiseEmailHostFilter (outstream, tokenize_email_hostname, add_link_callback);
-					// Sharing Stemmer is not thread safe.
-					// Currently our underlying lucene indexing is not done in multiple threads.
-					StemmerInfo stemmer_info = GetStemmer (DEFAULT_STEMMER_LANGUAGE);
-					outstream = new SnowballFilter (outstream, stemmer_info.Stemmer, stemmer_info.StemMethod);
-				}
 
 				return outstream;
 			}
@@ -892,62 +861,8 @@ namespace Beagle.Daemon {
 					
 				AddPropertyToDocument (prop, target_doc);
 			}
-#if ENABLE_RDF_ADAPTER
-
-			// Now add the whitespace separated list of links extracted from the document of the text
-			// Add the property to the primary document. Why primary ?
-			// Because it stays with the "Text" property
-			Fieldable links_field = new LinksField (indexable.Links);
-			primary_doc.Add (links_field);
-
-			// Finally add a field containing a whitespace separated list of other fields in the document
-			AddFieldProperies (primary_doc);
-			if (secondary_doc != null)
-				AddFieldProperies (secondary_doc);
-#endif
 		}
 
-#if ENABLE_RDF_ADAPTER
-		private class LinksField : Fieldable {
-			IList<string> links;
-			internal LinksField (IList<string> links)
-			{
-				this.links = links;
-			}
-
-			public void  SetBoost(float boost) { }
-			public float GetBoost() { return 1.0f; }
-			public System.String Name() { return "TextLinks"; }
-
-			public System.String StringValue()
-			{
-				if (links == null)
-					return String.Empty;
-
-				StringBuilder sb = new StringBuilder ();
-				foreach (string link in links) {
-					sb.Append (link);
-					sb.Append (" ");
-				}
-
-				return sb.ToString ();
-			}
-
-			public System.IO.TextReader ReaderValue() { return null; }
-			public byte[] BinaryValue() { return null; }
-			public bool IsStored() { return false; }
-			public bool IsIndexed() { return true; }
-			public bool IsTokenized() { return true; }
-			public bool IsCompressed() { return false; }
-			public bool IsTermVectorStored() { return false; }
-			public bool IsStoreOffsetWithTermVector() { return false; }
-			public bool IsStorePositionWithTermVector() { return false; }
-			public bool IsBinary() { return false; }
-			public bool GetOmitNorms() { return true; }
-			public void  SetOmitNorms(bool omitNorms) { }
-			public bool IsLazy() { return false; }
-		}
-#endif
 
 		static private Document CreateSecondaryDocument (Uri uri, Uri parent_uri)
 		{
@@ -1019,9 +934,6 @@ namespace Beagle.Daemon {
 				}
 			}
 
-#if ENABLE_RDF_ADAPTER
-			AddFieldProperies (new_doc);
-#endif
 			return new_doc;
 		}
 
@@ -1043,9 +955,6 @@ namespace Beagle.Daemon {
 				}
 			}
 
-#if ENABLE_RDF_ADAPTER
-			AddFieldProperies (doc);
-#endif
 			return doc;
 		}
 
@@ -1160,45 +1069,9 @@ namespace Beagle.Daemon {
 		// Access to the stemmer and list of stop words
 		//
 
-		private static Dictionary<string, StemmerInfo> stemmer_table = new Dictionary<string, StemmerInfo> ();
-
-		class StemmerInfo {
-			internal SnowballProgram Stemmer;
-			internal System.Reflection.MethodInfo StemMethod;
-		}
-
-		private static StemmerInfo GetStemmer (System.String name)
-		{
-			if (! stemmer_table.ContainsKey (name)) {
-				StemmerInfo stemmer_info = new StemmerInfo ();
-
-				// Taken from Snowball/SnowballFilter.cs
-				System.Type stemClass = System.Type.GetType ("SF.Snowball.Ext." + name + "Stemmer", true);
-				SnowballProgram stemmer = (SnowballProgram) System.Activator.CreateInstance (stemClass);
-				// why doesn't the SnowballProgram class have an (abstract?) stem method?
-				System.Reflection.MethodInfo stemMethod = stemClass.GetMethod ("Stem", (new System.Type [0] == null) ? new System.Type [0] : (System.Type []) new System.Type [0]);
-
-				stemmer_info.Stemmer = stemmer;
-				stemmer_info.StemMethod = stemMethod;
-				stemmer_table [name] = stemmer_info;
-			}
-
-			return stemmer_table [name];
-		}
-
-		private static SF.Snowball.Ext.EnglishStemmer default_stemmer = new SF.Snowball.Ext.EnglishStemmer ();
-
 		static public string Stem (string str)
 		{
-			string stemmed_str;
-
-			lock (default_stemmer) {
-				default_stemmer.SetCurrent (str);
-				default_stemmer.Stem ();
-				stemmed_str = default_stemmer.GetCurrent ();
-			}
-
-			return stemmed_str;
+			return str;
 		}
 
 		public static bool IsStopWord (string stemmed_word)
@@ -2012,108 +1885,6 @@ namespace Beagle.Daemon {
 			ReleaseReader (reader);
 		}
 
-		///////////////////////////////////////////////////////////////////////////////////
-
-		//
-		// Various ways to grab lots of hits at once.
-		// These should never be used for querying, only for utility
-		// functions.
-		//
-
-		public int GetBlockOfHits (int cookie,
-					   Hit [] block_of_hits)
-		{
-			IndexReader primary_reader;
-			IndexReader secondary_reader;
-			primary_reader = GetReader (PrimaryStore);
-			secondary_reader = GetReader (SecondaryStore);
-
-			int request_size;
-			request_size = block_of_hits.Length;
-			if (request_size > primary_reader.NumDocs ())
-				request_size = primary_reader.NumDocs ();
-
-			int max_doc;
-			max_doc = primary_reader.MaxDoc ();
-
-			if (cookie < 0) {
-				Random random;
-				random = new Random ();
-				cookie = random.Next (max_doc);
-			}
-
-			int original_cookie;
-			original_cookie = cookie;
-
-			Hashtable primary_docs, secondary_docs;
-			primary_docs = UriFu.NewHashtable ();
-			secondary_docs = UriFu.NewHashtable ();
-
-			// Load the primary documents
-			for (int i = 0; i < request_size; ++i) {
-				
-				if (! primary_reader.IsDeleted (cookie)) {
-					Document doc;
-					doc = primary_reader.Document (cookie);
-					primary_docs [GetUriFromDocument (doc)] = doc;
-				}
-				
-				++cookie;
-				if (cookie >= max_doc) // wrap around
-					cookie = 0;
-
-				// If we somehow end up back where we started,
-				// give up.
-				if (cookie == original_cookie)
-					break;
-			}
-
-			// If necessary, load the secondary documents
-			if (secondary_reader != null) {
-				LNS.IndexSearcher searcher;
-				searcher = new LNS.IndexSearcher (secondary_reader);
-				
-				LNS.Query uri_query;
-				uri_query = UriQuery ("Uri", primary_docs.Keys);
-				
-				LNS.Hits hits;
-				hits = searcher.Search (uri_query);
-				for (int i = 0; i < hits.Length (); ++i) {
-					Document doc;
-					doc = hits.Doc (i);
-					secondary_docs [GetUriFromDocument (doc)] = doc;
-				}
-				
-				searcher.Close ();
-			}
-
-			ReleaseReader (primary_reader);
-			ReleaseReader (secondary_reader);
-
-			// Now assemble the hits
-			int j = 0;
-			foreach (Uri uri in primary_docs.Keys) {
-				Document primary_doc, secondary_doc;
-				primary_doc = primary_docs [uri] as Document;
-				secondary_doc = secondary_docs [uri] as Document;
-
-				Hit hit;
-				hit = DocumentToHit (primary_doc);
-				if (secondary_doc != null)
-					AddPropertiesToHit (hit, secondary_doc, false);
-				
-				block_of_hits [j] = hit;
-				++j;
-			}
-
-			// null-pad the array, if necessary
-			for (; j < block_of_hits.Length; ++j)
-				block_of_hits [j] = null;
-
-
-			// Return the new cookie
-			return cookie;
-		}
 
 		// For a large index, this will be very slow and will consume
 		// a lot of memory.  Don't call it without a good reason!

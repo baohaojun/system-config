@@ -251,8 +251,24 @@ tags when using the Blogger API."
   :group 'weblogger
   :type 'hook)
 
+(defcustom weblogger-pre-setup-headers-hook nil
+  "Hook to run just before the message header is set up."
+  :group 'weblogger
+  :type 'hook)
+
+(defcustom weblogger-post-setup-headers-hook nil
+  "Hook to run just after the message header is set up."
+  :group 'weblogger
+  :type 'hook)
+
 (defcustom weblogger-pre-struct-hook nil
   "Hook to run just before the buffer is converted to a struct to
+send to the server."
+  :group 'weblogger
+  :type 'hook)
+
+(defcustom weblogger-post-struct-hook nil
+  "Hook to run after the buffer is converted to a struct to
 send to the server."
   :group 'weblogger
   :type 'hook)
@@ -742,8 +758,7 @@ available."
   "Send but not publish the current entry.  With optional
 argument, prompts for the weblog to use."
   (interactive)
-  (weblogger-save-entry nil arg)
-  (bury-buffer))
+  (weblogger-save-entry nil arg))
 
 (defun weblogger-publish-entry (&optional arg)
   "Publish the current entry.  With optional argument, prompts
@@ -791,8 +806,10 @@ argument, prompts for the weblog to use."
 		    (weblogger-api-send-edits entry publishp)
 		    (set-buffer-modified-p nil))
 		   (t
+                    (run-hooks 'weblogger-post-setup-headers-hook) 
 		    (weblogger-entry-setup-headers
-		     (weblogger-api-new-entry entry publishp)))))
+		     (weblogger-api-new-entry entry publishp))
+                    (run-hooks 'weblogger-pre-setup-headers-hook))))
 	    (t (message "Nothing to post."))))))
 
 (defun weblogger-update-ring (entry)
@@ -1258,13 +1275,16 @@ Otherwise, open a new entry."
   (message-fetch-field "Keywords")
   (message-goto-keywords) ;; Create Keywords field in new entries
   (set-buffer-modified-p nil)
+
+  (if (message-fetch-field "Subject")
+      (message-goto-body) ;; If Subject exists, move cursor to message body
+    (message-goto-subject)) ;; Else, drop cursor on Subject header
+
   (run-hooks 'weblogger-start-edit-entry-hook) ; Force hooks to clear
                                         ; the modified flag
                                         ; themselves if they
                                         ; want to.
-  (if (message-fetch-field "Subject")
-      (message-goto-body) ;; If Subject exists, move cursor to message body
-    (message-goto-subject)) ;; Else, drop cursor on Subject header
+
   (pop-to-buffer *weblogger-entry*))
 
 (unless (fboundp 'assoc-string)
@@ -1443,45 +1463,47 @@ internally).  If BUFFER is not given, use the current buffer."
   (save-excursion
     (run-hooks 'weblogger-pre-struct-hook)
     (set-buffer buffer)
-    (delq nil
-	  (list
-	   (cons "authorName"   (message-fetch-field "From"))
-	   (cons "dateCreated"
-                 (list :datetime (date-to-time
-                                  (message-fetch-field "Date"))))
-	   (cons "texttype"      (message-fetch-field "X-TextType"))
-	   (cons "url"           (message-fetch-field "X-Url"))
-	   (cons "title"     (or (message-fetch-field "Subject")
-				 weblogger-default-title))
-           (cons "categories" (car (list (or (message-tokenize-header
-                                              (message-fetch-field "Keywords") ", ")
-                                             weblogger-default-categories))))
-	   (cons "mt_keywords" (message-fetch-field "Summary"))
+    (prog1
+        (delq nil
+              (list
+               (cons "authorName"   (message-fetch-field "From"))
+               (cons "dateCreated"
+                     (list :datetime (date-to-time
+                                      (message-fetch-field "Date"))))
+               (cons "texttype"      (message-fetch-field "X-TextType"))
+               (cons "url"           (message-fetch-field "X-Url"))
+               (cons "title"     (or (message-fetch-field "Subject")
+                                     weblogger-default-title))
+               (cons "categories" (car (list (or (message-tokenize-header
+                                                  (message-fetch-field "Keywords") ", ")
+                                                 weblogger-default-categories))))
+               (cons "mt_keywords" (message-fetch-field "Summary"))
 
-	   (when (message-fetch-field "In-Reply-To")
-             (cons "trackbacks"
-                   (or (message-tokenize-header
-                        (message-fetch-field "In-Reply-To") ", ")
-                       weblogger-default-categories)))
-	   (when (and weblogger-ring-index
-                      (> (ring-length weblogger-entry-ring) 0))
-             (cons "entry-id"
-                   (let ((msgid (message-fetch-field "Message-ID")))
-                     (if (and msgid (string-match "<\\([0-9]+\\)/" msgid))
-                         (match-string 1 msgid)
-                       (cdr (assoc "entry-id"
-                                   (ring-ref
-                                    weblogger-entry-ring
-                                    weblogger-ring-index)))))))
-	   (cons "content"
-		 (progn
-		   (message-goto-body)
-		   (if encode
-		       (url-insert-entities-in-string
-			(buffer-substring-no-properties
-                         (point) (point-max)))
-                     (buffer-substring-no-properties
-                      (point) (point-max)))))))))
+               (when (message-fetch-field "In-Reply-To")
+                 (cons "trackbacks"
+                       (or (message-tokenize-header
+                            (message-fetch-field "In-Reply-To") ", ")
+                           weblogger-default-categories)))
+               (when (and weblogger-ring-index
+                          (> (ring-length weblogger-entry-ring) 0))
+                 (cons "entry-id"
+                       (let ((msgid (message-fetch-field "Message-ID")))
+                         (if (and msgid (string-match "<\\([0-9]+\\)/" msgid))
+                             (match-string 1 msgid)
+                           (cdr (assoc "entry-id"
+                                       (ring-ref
+                                        weblogger-entry-ring
+                                        weblogger-ring-index)))))))
+               (cons "content"
+                     (progn
+                       (message-goto-body)
+                       (if encode
+                           (url-insert-entities-in-string
+                            (buffer-substring-no-properties
+                             (point) (point-max)))
+                         (buffer-substring-no-properties
+                          (point) (point-max)))))))
+      (run-hooks 'weblogger-post-struct-hook))))
 
 (defun weblogger-toggle-edit-body ()
   "Toggle between editing the body and editing the headers"

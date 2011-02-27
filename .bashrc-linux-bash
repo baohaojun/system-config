@@ -1,0 +1,32 @@
+#!/bin/bash
+apt-get()
+{
+    if test "$1" = source; then
+        command apt-get "$@";
+    else
+        sudo apt-get "$@"
+    fi
+}
+
+for x in host traceroute telnet
+do 
+    eval "function $x()
+    {
+        if test \$# = 1; then
+            local h=\`echo \"\$1\"|perl -npe 's!.*//(.*?)/.*!\$1!'\`
+            command $x \$h
+        else
+            command $x "\$@"
+        fi
+    }"
+done
+. `which wp`
+
+renew-xauth()
+{
+    . ~/.new-xauth
+}
+
+for x in ~/.bash_completion.d/*; do 
+    . "$x"
+done

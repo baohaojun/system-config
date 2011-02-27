@@ -6,25 +6,38 @@ THIS=$(readlink -f "$THIS")
 echo "we are executing $THIS"
 BIN_WINDOWS=$(dirname "$THIS")
 
-#strlen("/bin/windows") is 12
-if test "${BIN_WINDOWS:0-12}" != "/bin/windows"
+# strlen("windows-config/bin/windows") is 26, and -26 means the last
+# 26 chars, but we can't simply write -26, because that's another
+# expansion syntax. We must write 0-26, and it's arithmetic, which is
+# allowed.
+
+if test "${BIN_WINDOWS:0-26}" != "windows-config/bin/windows"
 then
-    echo 'startup.sh is not in ~/bin/windows!'
+    echo 'startup.sh is not in ~/windows-config/bin/windows!'
     #pause and exit, it's all blowed up!
     cat
     exit
 fi
 
-cd -P "$BIN_WINDOWS"/../..
+cd -P "$BIN_WINDOWS"/../../..
 export HOME2=`pwd`
 
-if test "$HOME2" != /q -a "$HOME2" != /cygdrive/q; then 
-    subst /d q: || true #delete it first. FIXME, what if q: is a real drive?
-    subst q: $(cygpath -sma "$HOME2") #if it is already /q, we will have problem here, so we put this in a conditional
+function die() {
+    echo "$@" 1>&2
+    false
+}
+
+if test -e /q -a ! -L /q; then
+    die "Error, the /q exist and is not a symlink";
 fi
-export HOME=/cygdrive/q
+
+rm -f /q; 
+ln -s "$HOME2" /q
+export HOME=/q
+
+~/windows-config/bin/after-co-ln-s.sh
 . ~/.bashrc-windows
-export HOME=/cygdrive/q 
+export HOME=/q 
 cd ~/bin/windows/Imap4Monitor/
 function report_error()
 {
@@ -41,21 +54,21 @@ function mkdir () #so that mkdir won't fail if it is already there.
 
 cd ~/bin/windows/
 mkdir  ~/bin/windows/lnks
+for x in {c..z}; do test -e /$x || (rm -f /$x; ln -s /cygdrive/$x /); done
 DOWN=yes ./download-external.sh
 find . -type l -exec relink.sh '{}' \;
 
 ~/bin/windows/redirect.sh
 
 cd ~/bin/windows
-./update-password.sh
+cpan String::ShellQuote
 echo 'after check out update success!'
 ln -sf ~/'Application Data/Microsoft/Internet Explorer/Quick Launch' ~/SendTo/ || report_error "Error: you are not doing it from $HOMEPATH"
 mkdir -p ~/.fonts
 cp ~/doc/monaco-linux.ttf /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windows/fonts/cour.ttf ~/.fonts || true
 fc-cache
-for x in {c..z}; do test -e /$x || (rm -f /$x; ln -s /cygdrive/$x /); done
 cd ~/doc
 regedit /s caps_lock_to_control.reg
 regedit /s putty.reg
-
+echo -n "c:/python31/python.exe" \"$(cygpath -aml ~/windows-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
 echo "After check out success!"

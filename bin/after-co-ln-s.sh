@@ -12,9 +12,9 @@ do
         echo "Error: ~/$x already exist and it's not softlink to ~/windows-config/$x"
         mv ~/$x ~/$x.bak
         ln -s ~/windows-config/$x ~/
-    elif ! test -h ~/$x;
+    elif ! test -e ~/$x;
     then
-        ln -s ~/windows-config/$x ~/
+        ln -sf ~/windows-config/$x ~/
     fi
 done
 

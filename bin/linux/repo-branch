@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+. ~/.bash_profile
+cd `lookup_file .repo/manifests`
+for x in `git branch -r|grep -v -e '->'|perl -npe 's,.*/,,'`; do git diff origin/$x 2>&1|grep diff -q || echo $x; done

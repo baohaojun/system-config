@@ -478,6 +478,9 @@ gtags_put_using(GTOP *gtop, const char *tag, int lno, const char *fid, const cha
 	} else {
 		key = tag;
 	}
+	if (!strcmp(key, "")) { //fix a bug in .el, where ?. will cause memory leak
+		key = tag; 
+	}
 	strbuf_reset(gtop->sb);
 	strbuf_puts(gtop->sb, fid);
 	strbuf_putc(gtop->sb, ' ');

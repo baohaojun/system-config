@@ -1,0 +1,14 @@
+#!/bin/bash
+cd ~/jira-issues/
+
+issues=$(jira -a getIssueList --filter NV-open|perl -ne 'print unless (1..2)'|awk -F, '{print $1}')
+
+for x in ${issues[@]}; do 
+    if test -e "$x"\:*; then
+        echo "Already exist:" "$x"\:* 
+        continue;
+    fi
+    jira -a getIssue --issue $x > "./$x"
+    sum=$(perl -ne 'print if /^Summary.*?: /' $x|perl -npe 's/.*: //; s!(/|%)!sprintf "%%%02x", ord($1)!ge')
+    mv $x $x:"$sum" -v
+done 

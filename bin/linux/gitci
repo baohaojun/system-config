@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+die() {
+    echo "$@"
+    false
+}
+
+test $# -lt 1 && die "Error: must have a ticket, such as CINEMA-44. See http://bear/jira"
+
+ticket="${1%:*}"
+shift
+
+test $# -lt 1 && die "Error: at least 1 reviewer"
+
+reviewer=()
+while test $# -gt 0; do 
+    reviewer=("${reviewer[@]}" "${1%:*}")
+    shift
+done
+
+git commit -m "$(cat <<EOF
+`get-stdin; echo`
+
+Issue: $ticket
+
+`for x in ${reviewer[@]}; do echo  Reviewed-by: $x; done`
+EOF
+)"
+git log -1|jira-add-comment $ticket

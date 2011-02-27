@@ -1,0 +1,2 @@
+#!/bin/bash
+for x in `git branch -r|perl -npe 's/.*->//; s/\s+//;'|sort -u`; do git diff HEAD $x 2>&1|grep diff -q || echo $x; done

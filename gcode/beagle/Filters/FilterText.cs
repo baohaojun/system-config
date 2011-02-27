@@ -47,6 +47,7 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-perl"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ruby"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-designer"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/html"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/plain"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-authors"));
@@ -82,7 +83,57 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-xslt"));
-
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-shellscript"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xslt+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-php"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".sci"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sh"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/svg+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".svg"));
+			AddSupportedFlavor(FilterFlavor.NewFromMimeType ("application/x-tex"));
+			AddSupportedFlavor(FilterFlavor.NewFromMimeType ("application/x-latex"));	
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/docbook+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".docbook"));
+			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/doc/*",              ".xml", null, 0));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".js"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff-man"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".m"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".ini"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.mozilla.xul+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xml-dtd"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/css"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++hdr"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-dsrc"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-idl"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-makefile"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-matlab"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-ms-regedit"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-objcsrc"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-rpm-spec"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-mm"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-vhdl"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/atom+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/rdf+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/rss+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xml-dtd"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-wine-extension-inf"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-csh"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/mbox"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-awk"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-mozilla-bookmarks"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/rfc822"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/css"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-dsrc"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-gettext-translation"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-makefile"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-matlab"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-ocaml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sql"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-vhdl"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("addsapplication/xspf+xml"));
 		}
 
 		const long LENGTH_CUTOFF = 5 * 1024 * 1024; // 5 Mb

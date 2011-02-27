@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+
+use strict;
+
+sub uniq {
+    my %uniq;
+    my @uniq;
+    for (@_) {
+        next if $uniq{$_};
+        $uniq{$_} = 1;
+        push @uniq, $_;
+    }
+    return @uniq;
+}
+
+if (grep(m/^--help$/, @ARGV)) {
+    system("jira-help.pl", uniq(@ARGV));
+    exit 0;
+}
+
+my $remove_colon = 0;
+for (@ARGV) {
+    if ($_ eq "--assignee" or $_ eq "--issue") {
+        $remove_colon = 1;
+        next;
+    }
+    if ($remove_colon == 1) {
+        $_ =~ s/:.*//;
+        $remove_colon = 0;
+        next;
+    }
+}
+
+system("jira.sh", "-s", "http://bear/jira", "-u", "hjbao", "-p", `cat ~/.confpass`, @ARGV);

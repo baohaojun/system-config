@@ -1,0 +1,53 @@
+#!/usr/bin/env perl
+
+use strict;
+
+my $currect;
+my %text1; 
+my %text2;
+
+my $state = "before head";
+while (<>)
+{
+    if (1..1) {
+        die 'didn\'t see ^<<<<<<< HEAD on the first line' unless m/^<<<<<<< HEAD/;
+        $state = "in head";
+        next;
+    }
+    next if m/^\s*(#.*)?$/;
+
+    if ($state eq "in head") {
+        if (m/^=======$/) {
+            $state = "in tail";
+            next;
+        }
+
+        die "pattern err on $.: $_" unless m/^\s*(.*?)\s*:=\s*(.*?)\s*$/;
+        $text1{$1} = $2;
+    } elsif($state eq "in tail") {
+        if (m/^>>>>>>> /) {
+            $state = "out";
+            last;
+        }
+
+        die "pattern err on $.: $_" unless m/^\s*(.*?)\s*:=\s*(.*?)\s*$/;
+        $text2{$1} = $2;
+    }
+}
+    
+for my $x1 (keys %text1) {
+    if ($text1{$x1} eq $text2{$x1}) {
+        delete $text2{$x1};
+        next;
+    }
+    if (exists($text2{$x1})) {
+        printf("1: $x1=%s, 2: $x1=%s\n", $text1{$x1}, $text2{$x1});
+    } else {
+        printf("1: $x1=%s\n", $text1{$x1});
+    }
+    delete $text2{$x1};
+}
+
+for my $x2 (keys %text2) {
+    printf("2: $x2=%s\n", $text2{$x2});
+}

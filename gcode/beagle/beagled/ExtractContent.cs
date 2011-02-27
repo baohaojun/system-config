@@ -37,7 +37,6 @@ using Beagle.Util;
 using Beagle.Daemon;
 
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Analysis.Standard;
 
 [assembly: AssemblyTitle ("beagle-extract-content")]
@@ -279,15 +278,6 @@ class ExtractContentTool {
 		Console.WriteLine ();
 		Console.WriteLine ("Text extracted in {0}", watch);
 
-#if ENABLE_RDF_ADAPTER
-		IList<string> links = indexable.Links;
-		if (links != null && links.Count != 0) {
-			Console.WriteLine ("Links:");
-			foreach (string link in links)
-				Console.WriteLine (link);
-			Console.WriteLine ();
-		}
-#endif
 
 		foreach (Indexable gi in generated_indexables)
 			Display (gi);
@@ -417,8 +407,6 @@ class ExtractContentTool {
 		{
 			TokenStream outstream;
 			outstream = base.TokenStream (fieldName, reader);
-			outstream = new NoiseEmailHostFilter (outstream, true);
-			outstream = new SnowballFilter (outstream, "English");
 
 			return outstream;
 		}

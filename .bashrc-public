@@ -1,6 +1,7 @@
 #!/bin/bash
-export PATH=~/bin/:$PATH
+export PATH=/home/bhj/external/bin/linux/ext/android-sdk-linux_86/tools/ndk/android-ndk-r4b:$HOME/bin/:$PATH:/home/bhj/bin/linux/ext/arm-eabi-4.4.0/bin:/home/bhj/external/bin/linux/ext/arm-2010q1/bin:/home/bhj/external/bin/linux/ext/arm-linux-4.1.1/bin
 export PROMPT_COMMAND="history -a"
+export EDITOR=edit-wait
 
 if test -z "$SSH_CLIENT"; then
     HOSTNAME=`hostname`
@@ -13,45 +14,68 @@ else
     export DISPLAY=${DISPLAY:-$REMOTEIP:0.0}
     export PS1HostName=`hostname`
     export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m)\n\$'
-
-    function edit()
-    {
-        if [[ $WHOAMI == root ]] && [[ -f "$1" ]]; then
-            echo using root to do edit, won\'t check read permission
-        else
-            if ! [[ -r "$1" ]]; then
-                echo Error: "$1" is not readable
-                return 1
-            fi
-            if ! [[ -w "$1" ]]; then
-                echo Warning: "$1" is not writable
-            fi
-        fi    
-
-        local file=$( readlink -f "$1" )
-        ~/bin/edit.pl "$file"
-    }
-
     alias sudoedit='WHOAMI=root edit'
 
 fi
 
 alias rm='rm -i'
-function svn-info-clip()
+alias mkgtags='mkgtags -i -v'
+alias bcd=cd_beagle
+
+
+cd_beagle() 
 {
-    svn info "$1" |grep '^URL:'|sed -e 's/^URL: //; s/^https/http/'|tr -d '\r\n' | putclip
+    dest=~/tmp/for-code-reading/`pwd`
+    while test ! -d "$dest"/.beagle -a "$dest" != / -a "$dest" != ""; do
+        dest=${dest%/*};
+    done
+    if test "$dest" = / -o "$dest" = ""; then
+        echo 'You have not run for-code-reading yet, please run it first!'
+        return 1;
+    else
+        cd_ok "$dest"
+        return 0
+    fi
 }
 
-function lcd()
+cd_ok()
+{
+    builtin cd "$@"
+    history -s cd "$PWD"
+    return 0
+}
+
+cd_record()
+{
+    history -s cd "`pwd`"
+   (flock -x ~/.where.lock -c where&)
+}
+
+lcd()
 {
     if test $# != 1; then
         return 1
-    fi
-
-    if test "${1:0:2}" = '\\' -a `uname` = Linux; then
-        smbnetfs ~/smb >/dev/null 2>&1
-        builtin cd ~/smb/$(echo "$1"|perl -npe 's,\\,/,g')
+    elif test "$1" = -; then
+        cd_ok -
         return 0
+    elif test "$1" = .beagle; then
+        cd_beagle;
+        return 0;
+    fi
+    
+
+    if [[ "$1" =~ ^\\\\|^//|^smb:// && `uname` = Linux ]]; then
+        chmod 600 ~/.smb/*
+        smbnetfs -o allow_root ~/smb|grep -v '^fuse: mountpoint is not empty$'|grep -v "^fuse: if you are sure this is safe, use the 'nonempty' mount option$"
+        builtin cd ~/smb/"$(host-hosts "$1")"
+        history -s cd "`pwd`"
+        history -s cd "$1"
+        return 0
+    fi
+    
+    if [[ `pwd` =~ ^$HOME/smb/ ]]; then
+        _ucd $1
+        return $?
     fi
 
     local ori=$1
@@ -70,39 +94,39 @@ function lcd()
             link=`readshortcut "$link"`
     fi
     if test -d "$link"; then
-        if test "$link" = `pwd`; then
+        if test "$link" = "`pwd`"; then
             return 1;
         fi
         builtin cd "$link"
-        (flock -x ~/.where.lock -c where&)
+        cd_record
         return $?
     else
         builtin cd "$(dirname "$link")"
-        (flock -x ~/.where.lock -c where&)
+        cd_record
         return $?
     fi
 }
 
-function _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will go to /home, 
+_ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will go to /home, 
 {
     local x=0
-    dir=`dirname $(pwd)`
-    dir_basename=`basename $dir`
+    dir=`dirname "$(pwd)"`
+    dir_basename=`basename "$dir"`
     while ! echo $dir_basename|grep -e $1 -i -q && ((x++ < 10)); do
-        dir=`dirname $dir`
-        dir_basename=`basename $dir`
+        dir=`dirname "$dir"`
+        dir_basename=`basename "$dir"`
     done
-    if test x$dir = x/; then #obviously, we very not likely want to go to / with this complex setup
+    if test x"$dir" = x/; then #obviously, we very not likely want to go to / with this complex setup
         return 1;
     fi
-    builtin cd $dir
-    (flock -x ~/.where.lock -c where&)
+    builtin cd "$dir"
+    cd_record
     return $?
 }
 
-function git()
+git()
 {
-    if test `pwd` = ~
+    if test "`pwd`" = "`readlink -f ~`" -a "$1" != clone
     then
         (cd ~/windows-config/; command git "$@")
     else
@@ -110,4 +134,12 @@ function git()
     fi            
 }
 
+rbranch()
+{
+    repo forall . -c 'echo $REPO_RREV'
+}
 stty -ixon -ixoff >/dev/null 2>&1
+
+if test -n "$BASH_VERSION" -a "$BASH" = /bin/bash; then
+    . ~/.bashrc-public-bash
+fi

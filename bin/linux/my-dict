@@ -1,0 +1,23 @@
+#!/bin/bash
+dict "`getclip`" | less
+
+while true;
+do 
+   read -p "dict: " word
+   if test "$word" = q; 
+   then
+       exit
+   elif test "$word" = x; 
+   then
+       dict "`xclip -o`"|less
+   elif test "$word" = c;
+   then
+       dict "`getclip`" | less
+   elif test "$word" = "";
+   then
+       continue;
+   else
+       dict "$word"
+   fi
+done
+   

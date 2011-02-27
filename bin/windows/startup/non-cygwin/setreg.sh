@@ -1,1 +1,1 @@
-/cygdrive/q/bin/windows/setreg.sh
+../../setreg.sh

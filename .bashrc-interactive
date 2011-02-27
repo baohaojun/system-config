@@ -3,13 +3,35 @@
 . /etc/bash_completion
 . ~/.bash_netcompletion
 
-function cd_bhj () {
+function cd_bhj () 
+{
+    history -s cd "$@"
+    local oldpwd=`pwd`
+    local ok=1 # 1 means not ok
     lcd "$@" && return $?
-    builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@"
-    (flock -x ~/.where.lock -c where&)
+
+    test $# == 1 -o $# == 0 && builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@" && ok=0 # 0 means ok
+    test "`pwd`" != "$oldpwd" && cd_record 
+    return $ok
 }
 
-function cd_failed() {
+function my_select() 
+{
+    local y=1
+    for x in "$@"; do 
+        echo $y\) "$x" >/dev/tty;
+        ((y++))
+    done
+
+    read -p "#?" NUM
+    if [[ x"$NUM" = x || ! "$NUM" =~ ^[1-9][0-9]*$ ]] || (( "$NUM" > $# )); then
+        NUM=1
+    fi
+    echo $NUM
+}
+
+function cd_failed() 
+{
     local IFS=$'\n'
     dirs=( $(where "$@") )
     if test ${#dirs[@]} = 0; then
@@ -18,8 +40,43 @@ function cd_failed() {
     elif test ${#dirs[@]} = 1; then
         builtin cd ${dirs[0]}
     else 
-        select dir in ${dirs[@]}; do builtin cd $dir; history -s cd $dir; break; done
+        NUM=`my_select "${dirs[@]}"`
+        ((NUM--))
+        builtin cd "${dirs[$NUM]}"
+        cd_record
+        history -s cd "$@"
     fi
+    return 0
 }
 
+function fcd() 
+{
+    local IFS=$'\n'
+    dirs=( $(find . -type d -name "*$1*") )
+    if test ${#dirs[@]} = 0; then
+        echo 'Error: no such file or directory'
+        return 1
+    elif test ${#dirs[@]} = 1; then
+        builtin cd ${dirs[0]}
+    else 
+        NUM=`my_select "${dirs[@]}"`
+        ((NUM--))
+        builtin cd "${dirs[$NUM]}"
+        history -s cd "$@"
+    fi
+    cd_record
+}
+
+function rbcd()
+{
+    dirs=(`repo branches|perl -npe 's/.* in\b.//; s/,/ /g; s/ /\n/g'|sort -u`);
+    NUM=`my_select "${dirs[@]}"`
+    ((NUM--))
+    cd_bhj "${dirs[$NUM]}"
+}
 alias cd=cd_bhj
+alias rcd='cd .repo/manifests'
+if test "$DISPLAY" = :0.0; then
+    . ~/.new-xauth
+fi
+alias rs="rfa 'git diff \$REPO_LREV|cat; git st -s|grep . && echo \`pwd\`'"
