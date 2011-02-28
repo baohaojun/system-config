@@ -8985,7 +8985,7 @@ string.")
            (twittering-generate-organic-retweet)
            (get-text-property (point) 'id)
            nil
-           nil
+           (twittering-current-timeline-spec)
            t)
   (goto-char (line-beginning-position)))
 
