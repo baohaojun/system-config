@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 1999, 2000, 2001, 2002, 2005, 2010
+ * Copyright (c) 1998, 1999, 2000, 2001, 2002, 2005
  *	Tama Communications Corporation
  *
  * This file is part of GNU GLOBAL.
@@ -223,8 +223,6 @@ configpath(void)
 		strbuf_puts(sb, DEBIANCONF);
 	else if (test("r", OLD_DEBIANCONF))
 		strbuf_puts(sb, OLD_DEBIANCONF);
-	else if (test("r", makepath(SYSCONFDIR, "gtags.conf", NULL)))
-		strbuf_puts(sb, makepath(SYSCONFDIR, "gtags.conf", NULL));
 	else
 		return NULL;
 	return strbuf_value(sb);
@@ -405,12 +403,6 @@ getconfs(const char *name, STRBUF *sb)
 #else
 			strbuf_puts(sb, DATADIR);
 #endif
-			exist = 1;
-		} else if (!strcmp(name, "localstatedir")) {
-			strbuf_puts(sb, LOCALSTATEDIR);
-			exist = 1;
-		} else if (!strcmp(name, "sysconfdir")) {
-			strbuf_puts(sb, SYSCONFDIR);
 			exist = 1;
 		}
 	}

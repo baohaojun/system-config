@@ -10,8 +10,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
-jquery_DATA = jquery.js jquery.suggest.css jquery.suggest.js \
-	jquery.treeview.css jquery.treeview.js
+jquery_DATA = jquery.js jquery.suggest.css jquery.suggest.js
 
 jquerydir = ${datadir}/gtags/jquery
 

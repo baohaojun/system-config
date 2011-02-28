@@ -14,8 +14,6 @@ repo-switch -u git://nv-tegra.nvidia.com/android/manifest.git -b eclair-tegra
 repo sync
 repo-switch -u git://nv-tegra.nvidia.com/android/manifest.git -b froyo-tegra
 repo sync
-repo-switch -u git://nv-tegra.nvidia.com/android/manifest.git -b gingerbread-tegra
-repo sync
 
 repo-switch -u git://android.git.kernel.org/platform/manifest.git -b cupcake
 repo sync
@@ -24,8 +22,6 @@ repo sync
 repo-switch -u git://android.git.kernel.org/platform/manifest.git -b eclair
 repo sync
 repo-switch -u git://android.git.kernel.org/platform/manifest.git -b froyo
-repo sync
-repo-switch -u git://android.git.kernel.org/platform/manifest.git -b gingerbread
 repo sync
 repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre
 repo sync

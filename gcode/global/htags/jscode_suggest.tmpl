@@ -1,5 +1,6 @@
-<link rel='stylesheet' type='text/css' href='js/jquery.suggest.css' />
-<script type='text/javascript' src='js/jquery.suggest.js'></script>
+<link rel='stylesheet' type='text/css' href='jquery.suggest.css' />
+<script type='text/javascript' src='jquery.js'></script>
+<script type='text/javascript' src='jquery.suggest.js'></script>
 <script type='text/javascript'>
 function getType() {
 	return $('input:radio[name=type]:checked').val();
@@ -11,7 +12,7 @@ $(function() {
 	$('#pattern').suggest('@completion_action@',{
 		extraParams : {
 			type:  function() { return getType(); },
-			id:  '@sitekey@',
+			id:  '@id@',
 			limit: '@limit@',
 			icase: function() { return getCheck('icase'); },
 			other: function() { return getCheck('other'); },

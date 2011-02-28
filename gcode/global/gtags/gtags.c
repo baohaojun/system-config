@@ -325,11 +325,7 @@ main(int argc, char **argv)
 			const char *flag = is_gpath ? dbop_getflag(dbop) : "";
 
 			if (*flag)
-				if (is_gpath) {
-					time_t t = gpath_mtime(dbop, dbop->lastkey);
-					printf("%s\t%s\t%s\t%s\n", dbop->lastkey, dat, flag, ctime(&t));
-				} else
-					printf("%s\t%s\t%s\n", dbop->lastkey, dat, flag);
+				printf("%s\t%s\t%s\n", dbop->lastkey, dat, flag);
 			else
 				printf("%s\t%s\n", dbop->lastkey, dat);
 		}
@@ -432,10 +428,6 @@ main(int argc, char **argv)
 	if (vflag && file_list)
 		fprintf(stderr, " Using '%s' as a file list.\n", file_list);
 	/*
-	 * Start statistics.
-	 */
-	init_statistics();
-	/*
 	 * incremental update.
 	 */
 	if (iflag) {
@@ -453,9 +445,9 @@ main(int argc, char **argv)
 		if (!test("f", makepath(dbpath, dbname(GPATH), NULL)))
 			die("Old version tag file found. Please remake it.");
 		(void)incremental(dbpath, cwd);
-		print_statistics(statistics);
 		exit(0);
 	}
+	init_statistics();
 	/*
 	 * create GTAGS and GRTAGS
 	 */
@@ -471,7 +463,6 @@ main(int argc, char **argv)
 		strbuf_puts(sb, "mkid");
 		if (vflag)
 			strbuf_puts(sb, " -v");
-		strbuf_sprintf(sb, " --file='%s/ID'", dbpath);
 		if (vflag) {
 #ifdef __DJGPP__
 			if (is_unixy())	/* test for 4DOS as well? */
@@ -506,8 +497,8 @@ main(int argc, char **argv)
 int
 incremental(const char *dbpath, const char *root)
 {
-	STATISTICS_TIME *tim;
 	struct stat statp;
+	time_t gtags_mtime;
 	STRBUF *addlist = strbuf_open(0);
 	STRBUF *deletelist = strbuf_open(0);
 	STRBUF *addlist_other = strbuf_open(0);
@@ -516,7 +507,6 @@ incremental(const char *dbpath, const char *root)
 	const char *path;
 	unsigned int id, limit;
 
-	tim = statistics_time_start("Time of inspecting %s and %s.", dbname(GTAGS), dbname(GRTAGS));
 	if (vflag) {
 		fprintf(stderr, " Tag found in '%s'.\n", dbpath);
 		fprintf(stderr, " Incremental updating.\n");
@@ -525,6 +515,9 @@ incremental(const char *dbpath, const char *root)
 	 * get modified time of GTAGS.
 	 */
 	path = makepath(dbpath, dbname(GTAGS), NULL);
+	if (stat(path, &statp) < 0)
+		die("stat failed '%s'.", path);
+	gtags_mtime = statp.st_mtime;
 
 	if (gpath_open(dbpath, 0) < 0)
 		die("GPATH not found.");
@@ -594,7 +587,7 @@ normal_update:
 				if (fid == NULL) {
 					strbuf_puts0(addlist, path);
 					total++;
-				} else if (gpath_mtime(NULL, fid) < statp.st_mtime) {
+				} else if (gtags_mtime < statp.st_mtime) {
 					strbuf_puts0(addlist, path);
 					total++;
 					idset_add(deleteset, n_fid);
@@ -633,48 +626,44 @@ normal_update:
 		}
 	}
 	gpath_close();
-	statistics_time_end(tim);
 	/*
 	 * execute updating.
 	 */
-	if ((!idset_empty(deleteset) || strbuf_getlen(addlist) > 0) ||
-	    (strbuf_getlen(deletelist) + strbuf_getlen(addlist_other) > 0))
-	{
-		int db;
-
+	if (!idset_empty(deleteset) || strbuf_getlen(addlist) > 0) {
+		updatetags(dbpath, root, deleteset, addlist);
 		updated = 1;
-		tim = statistics_time_start("Time of updating %s and %s.", dbname(GTAGS), dbname(GRTAGS));
-		if (!idset_empty(deleteset) || strbuf_getlen(addlist) > 0)
-			updatetags(dbpath, root, deleteset, addlist);
-		if (strbuf_getlen(deletelist) + strbuf_getlen(addlist_other) > 0) {
-			const char *start, *end, *p;
+	}
+	if (strbuf_getlen(deletelist) + strbuf_getlen(addlist_other) > 0) {
+		const char *start, *end, *p;
 
-			if (vflag)
-				fprintf(stderr, "[%s] Updating '%s'.\n", now(), dbname(GPATH));
-			gpath_open(dbpath, 2);
-			if (strbuf_getlen(deletelist) > 0) {
-				start = strbuf_value(deletelist);
-				end = start + strbuf_getlen(deletelist);
+		if (vflag)
+			fprintf(stderr, "[%s] Updating '%s'.\n", now(), dbname(GPATH));
+		gpath_open(dbpath, 2);
+		if (strbuf_getlen(deletelist) > 0) {
+			start = strbuf_value(deletelist);
+			end = start + strbuf_getlen(deletelist);
 
-				for (p = start; p < end; p += strlen(p) + 1)
-					gpath_delete(p);
-			}
-			if (strbuf_getlen(addlist_other) > 0) {
-				start = strbuf_value(addlist_other);
-				end = start + strbuf_getlen(addlist_other);
-
-				for (p = start; p < end; p += strlen(p) + 1)
-					gpath_put(p, GPATH_OTHER);
-			}
-			gpath_close();
+			for (p = start; p < end; p += strlen(p) + 1)
+				gpath_delete(p);
 		}
+		if (strbuf_getlen(addlist_other) > 0) {
+			start = strbuf_value(addlist_other);
+			end = start + strbuf_getlen(addlist_other);
+
+			for (p = start; p < end; p += strlen(p) + 1)
+				gpath_put(p, GPATH_OTHER);
+		}
+		gpath_close();
+		updated = 1;
+	}
+	if (updated) {
+		int db;
 		/*
 		 * Update modification time of tag files
 		 * because they may have no definitions.
 		 */
 		for (db = GTAGS; db < GTAGLIM; db++)
 			utime(makepath(dbpath, dbname(db), NULL), NULL);
-		statistics_time_end(tim);
 	}
 	if (vflag) {
 		if (updated)

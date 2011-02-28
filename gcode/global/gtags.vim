@@ -1,11 +1,11 @@
 " File: gtags.vim
 " Author: Tama Communications Corporation
-" Version: 0.3.2
-" Last Modified: Nov 2, 2010
+" Version: 0.3.1
+" Last Modified: Mar 9, 2008
 "
 " Copyright and licence
 " ---------------------
-" Copyright (c) 2004, 2008, 2010 Tama Communications Corporation
+" Copyright (c) 2004, 2008 Tama Communications Corporation
 "
 " This file is part of GNU GLOBAL.
 "
@@ -386,11 +386,10 @@ function! s:RunGlobal(line)
 
     " If no pattern supplied then get it from user.
     if pattern == '' && option !~ 'P'
-        let g:option = option
         if option =~ 'f'
-            let line = input("Gtags for file: ", expand('%'), 'file')
+            let line = input("Gtags for file: ", expand('%'))
         else
-            let line = input("Gtags for pattern: ", expand('<cword>'), 'custom,CandidateCore')
+            let line = input("Gtags for pattern: ", expand('<cword>'))
         endif
         let pattern = s:Extract(line, 'pattern')
         if pattern == ''
@@ -424,21 +423,17 @@ endfunction
 " Custom completion.
 "
 function Candidate(lead, line, pos)
-    let g:option = s:Extract(a:line, 'option')
-    return CandidateCore(a:lead, a:line, a:pos)
-endfunction
-
-function CandidateCore(lead, line, pos)
-    if g:option =~ 'P' || g:option =~ 'f'
+    let option = s:Extract(a:line, 'option')
+    if option =~ 'P' || option =~ 'f'
         let opt = '-P'
-        if g:option =~ 'O'
+        if option =~ 'O'
             let opt = opt . 'O'
-        elseif g:option =~ 'o'
+        elseif option =~ 'o'
             let opt = opt . 'o'
         endif
-    elseif g:option =~ 's'
+    elseif option =~ 's'
         let opt = '-cs'
-    elseif g:option =~ 'g'
+    elseif option =~ 'g'
         return ''
     else
         let opt = '-c'

@@ -25,7 +25,7 @@
 @HEADER	HTAGS,1,July 2010,GNU Project
 @NAME	htags - generate a hypertext from a set of source files.
 @SYNOPSIS
-	@name{htags} [-acDfFghInosTvwx][-d @arg{dbpath}][-m @arg{name}][-t @arg{title}][@arg{dir}]
+	@name{htags} [-acDfFghInosTvwx][-d @arg{dbpath}][-m @arg{name}][-S @arg{key}][-t @arg{title}][@arg{dir}]
 @DESCRIPTION
 	@name{Htags} generates a hypertext from a set of source files of
 	C, C++, Yacc, Java, PHP and Assembly.
@@ -103,8 +103,6 @@
 		The default position is @arg{after}.
 	@item{@option{--html}}
 		Generate HTML hypertext instead of XHTML.
-	@item{@option{--html-header} @arg{file}}
-		Insert header records derived from @arg{file} into the HTML header.
 	@item{@option{-I}, @option{--icon}}
 		Use icons instead of text for some links.
 	@item{@option{--insert-footer} @arg{file}}
@@ -129,12 +127,11 @@
 	@item{@option{-o}, @option{--other}}
 		Pick up not only source files but also other files in the file index.
 	@item{@option{--overwrite-key}}
-		Allow the same key as the parameter of the @option{--system-cgi} option.
-	@item{@option{--system-cgi} @arg{key}}
-		Use the system CGI script. The @arg{key} must be a unique key in your site.
-		At the first time, you should (1) copy the CGI script written by this command
-		into the system CGI directory, and (2) execute bless.sh script at the HTML directory
-		as a root user.
+		Allow the same key as the parameter of the @option{-S} option.
+	@item{@option{-S}, @option{--secure-cgi} @arg{key}}
+		Use the center CGI script. The @arg{key} must be a unique key in your site.
+		At the first time, you should copy the CGI script written by this command
+		into the center CGI directory.
 	@item{@option{-s}, @option{--symbol}}
 		Make anchors not only for object definitions and references but also other symbols.
 	@item{@option{--show-position}}
@@ -143,11 +140,7 @@
 		Print statistics information.
 	@item{@option{--suggest}}
 		@name{Htags} chooses popular options on behalf of beginners.
-                It is equivalent to '-aghInosTxv --show-position' now.
-	@item{@option{--suggest2}}
-		@name{Htags} chooses popular options on behalf of beginners.
-		This option enables frame, AJAX and CGI facility in addition
-		to the facilities by the @option{--suggest} option.
+                It is equivalent to '-afghInosTxv --show-position' now.
 	@item{@option{-T}, @option{--table-flist}[=@arg{rows}]}
 		Use <table> tag to display the file index.
 		You can optionally specify the number of rows. The default is 5.
@@ -156,9 +149,6 @@
 		The default is the last component of the path of the current directory.
 	@item{@option{--table-list}}
 		Use <table> tag to display the tag list.
-	@item{@option{--tree-view}[=@arg{type}]}
-		Use treeview for the file index.
-		Please note that this function requires javascript language in your browser.
 	@item{@option{-v}, @option{--verbose}}
 		Verbose mode.
 	@item{@option{-w}, @option{--warning}}
@@ -193,7 +183,7 @@
 		Tag file for object references.
 	@item{@file{GPATH}}
 		Tag file for files.
-	@item{@file{$HOME/.globalrc}, @file{/etc/gtags.conf}, @file{[sysconfdir]/gtags.conf}}
+	@item{@file{/etc/gtags.conf}, @file{$HOME/.globalrc}}
 		Configuration file.
 	@item{@file{HTML/index.html}}
 		Startup file.
@@ -281,7 +271,7 @@
 	@item{@code{reserved_end}(string)}
 		End tag for reserved word. The default is '</b>'.
 	@item{@code{script_alias}(string)}
-		Script alias for system cgi script (@option{--system-cgi}).
+		Script alias for safe cgi script (@option{-S}).
 	@item{@code{sharp_begin}(string)}
 		Begin tag for 'define'. The default is '<font color=darkred>'.
 	@item{@code{sharp_end}(string)}
