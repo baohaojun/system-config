@@ -19,6 +19,58 @@ ___________________________________
 
 ChangeLog about GNU GLOBAL
 
+August 30 2010, Shigio YAMAGUCHI
+
+	Renamed the style sheet file in the source package from style.css to
+	style.css.tmpl, because to follow the custom of naming of other templates.
+
+August 12 2010, Shigio YAMAGUCHI
+
+	Modification of the -S option.
+
+	o Renamed from '-S(--secure-cgi)' to '--system-cgi' because the
+	  parameter is changed.
+	o Changed the site key directory from 'datadir' to 'localstatedir'
+	  because 'datadir' is for read-only data.
+	o Changed the permission of the site key directory from 773 to 775.
+
+June 27 2010, Shigo YAMAGUCHI
+
+	Modification of the -S option.
+
+	1. New htags requires a unique key as the parameter of the -S option.
+	   (It is a incompatible change.)
+	2. Htags makes a file whose name is the key in shared area, and
+	   put the path of the HTML directory in it.
+	3. To make the file name unique, a key that already exists
+	   is not allowed without --over-write option.
+
+	[in /var/src]
+	$ htags ... -S key1
+		       ====
+			 |
+			 +----------------+-----+
+					  v     |               
+	[/usr/local/share/gtags/sitekeys/key1]  |
+	+--------------------------------       |
+	|/var/src/HTML                          |     ... (2)
+						|
+	[/var/src/HTML/index.html]              |
+	+--------------------------------       |
+	|...                                    v
+	|<input type='hidden' name='id' value='key1'> ... (1)
+					       ====
+
+	The center CGI script can know the path of the HTML directory by the following
+	method.
+
+	(1) get a unique key from the variable 'id'
+		=> 'key1'
+	(2) read directory name from '/usr/local/share/gtags/sitekeys/' + 'key1'
+		=> '/var/src/HTML'
+
+	This mechanism conceals the real path name of the HTML directory.
+
 May 21 2010, Shigo YAMAGUCHI
 
 	* Removed support for command layer plug-in parser(gtags-parser/).

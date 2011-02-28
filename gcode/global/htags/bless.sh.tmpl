@@ -10,18 +10,14 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
-# Bless.sh: rewrite id's value of html for centralised cgi script.
-#
 # Usage:
-#       $ htags -fS key1        <- works well at generated place.
-#       $ cd ..
-#       $ mv src /var/tmp       <- move to another place. It doesn't work.
-#       $ cd /var/tmp/src/HTML
-#       $ sh bless.sh           <- OK. It will work well!
+#       $ sh bless.sh
 #
-datadir=/usr/local/share
-if [ ! -f sitekey -o ! -s sitekey ]; then
-	echo "This hypertext is not made using the -S option."
+if [ ! -f 'bless.sh' ]; then
+	echo "Bless.sh script should be executed as 'sh bless.sh'."
 	exit 1
 fi
-pwd >"$datadir/gtags/sitekeys/`cat sitekey`"
+#
+# Bless the site key.
+#
+pwd >@LOCALSTATEDIR@/gtags/sitekeys/@sitekey@

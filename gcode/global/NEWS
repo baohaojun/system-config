@@ -21,6 +21,92 @@ ___________________________________
 GNU GLOBAL NEWS - User visible changes.
 At least, you had better search '[INCOMPATIBLE CHANGES]' for each version.
 
+Version 5.9.3 - December 6 2010
+
+[CHANGES]
+New facilities:
+o global: New optional files arguments for the -g command.
+o global: New -V(--invert-match) option for the -g command.
+o global: New --print0 option.
+o global: New --file-list=file option.
+o htags: New --html-header option.
+o gtags.vim: Activate input completion also on the prompt 'Gtags for pattern:'.
+
+[FIXED BUGS]
+o global: --from-here option didn't locate definitions in the GTAGSLIBPATH.
+o global: Under Cygwin environment, global blocks for a few seconds if there is no GTAGS.
+o htags: Htags with the -g and -d option didn't work correctly.
+
+[INCOMPATIBLE CHANGES]
+o GLOBAL's commands locates gtags.conf also in the sysconfdir.
+  You can see the path using the following command line:
+
+	$ gtags --config=sysconfdir
+
+  Suggested by Jean-Marc Bourguet.
+
+Version 5.9.2 - August 30 2010
+
+[CHANGES]
+New facilities:
+o gtags.vim: Added -m(--vim) option to the show command.
+             Added new use command.
+
+[INCOMPATIBLE CHANGES]
+o Renamed the -S(--secure-cgi) option to --system-cgi. This is because
+  the parameter of the --secure-cgi was changed in GLOBAL-5.9.1.
+o The site key directory for the --system-cgi option was moved from
+  datadir(/usr/local/share) to localstatedir(/usr/local/var) because
+  datadir should be used for read-only data.
+  By default, you must execute "cd HTML; sh bless.sh" as a root user,
+  since the site key directory can not be written except for root user.
+
+Version 5.9.1 - July 19 2010
+
+[CHANGES]
+New facilities:
+o gtags: New gtags.files file.
+
+  If a file called 'gtags.files' exists in the current directory,
+  gtags(1) treats it as a list of files which are candidates of the target.
+  The following two brings a same result.
+  
+  $ gtags -f files
+  $ gtags -i -f files
+  
+  $ cp files gtags.files
+  $ gtags
+  $ gtags -i
+
+The latter has an advantage that 'global -u' can use the mechanism too.
+
+o htags: New --auto-completion option.
+  Enables completion input method for the search form (requires http server).
+o htags: New --tree-view option.
+  Use tree view for the file index.
+o htags: New --suggest2 option
+  --suggest - use popular options without frame, CGI and javascript.
+  --suggest2 - use frame, CGI and javascript in addition to the --suggest.
+
+The --auto-completion and --tree-view option requires javascript language
+in your browser.  If your browser is one of the followings, it will work.
+
+        * GNOME web browser
+        * firefox
+        * chrome
+
+o global: Allows -I option for the -c command.
+
+[FIXED BUGS]
+o gtags.el: The following commands fail with a message 'Beginning of buffer'
+  when the cursor is at the head of the buffer.
+        gtags-find-tag, gtags-find-rtag, gtags-find-symbol,
+        gtags-find-tag-from-here, gtags-find-with-idutils, gtags-find-with-grep
+
+[INCOMPATIBLE CHANGES]
+o Safe-CGI mechanism was modified.
+  The parameter of the -S option was changed.
+
 Version 5.9 - June 8 2010
 
 			*** Caution ***

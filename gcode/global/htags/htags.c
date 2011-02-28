@@ -70,6 +70,7 @@ int w32 = W32;				/* Windows32 environment	*/
 const char *www = "http://www.gnu.org/software/global/";
 int html_count = 0;
 int sep = '/';
+int need_bless;
 const char *save_config;
 const char *save_argv;
 
@@ -78,12 +79,14 @@ char dbpath[MAXPATHLEN];
 char distpath[MAXPATHLEN];
 char gtagsconf[MAXPATHLEN];
 char datadir[MAXPATHLEN];
+char localstatedir[MAXPATHLEN];
 
 char gtags_path[MAXFILLEN];
 char global_path[MAXFILLEN];
 int gtags_exist[GTAGLIM];
 const char *null_device = NULL_DEVICE;
 const char *tmpdir = "/tmp";
+const char *sitekey = "";
 
 /*
  * Order of items in the top page (This should be customisable variable in the future).
@@ -106,7 +109,7 @@ int Fflag;				/* --frame(-F) option		*/
 int gflag;				/* --gtags(-g) option		*/
 int Iflag;				/* --icon(-I) option		*/
 int nflag;				/* --line-number(-n) option	*/
-int Sflag;				/* --secure-cgi(-S) option	*/
+int Sflag;				/* --system-cgi option		*/
 int qflag;
 int vflag;				/* --verbose(-v) option		*/
 int wflag;				/* --warning(-w) option		*/
@@ -118,7 +121,10 @@ int caution;				/* --caution option		*/
 int dynamic;				/* --dynamic(-D) option		*/
 int symbol;				/* --symbol(-s) option          */
 int suggest;				/* --suggest option		*/
+int suggest2;				/* --suggest2 option		*/
 int auto_completion;			/* --auto-completion		*/
+int tree_view;				/* --tree-view			*/
+const char *tree_view_type;		/* -- type-view=[type]		*/
 char *auto_completion_limit = "0";	/* --auto-completion=limit	*/
 int statistics = STATISTICS_STYLE_NONE;	/* --statistics option		*/
 
@@ -128,9 +134,6 @@ int enable_grep = 1;			/* 1: enable grep		*/
 int enable_idutils = 1;			/* 1: enable idutils		*/
 int enable_xhtml = 1;			/* 1: enable XHTML		*/
 
-const char *action_value;
-const char *id_value;
-const char *cgidir;
 const char *main_func = "main";
 const char *cvsweb_url;
 int use_cvs_module;
@@ -140,6 +143,7 @@ const char *title;
 const char *xhtml_version = "1.0";
 const char *insert_header;		/* --insert-header=<file>	*/
 const char *insert_footer;		/* --insert-footer=<file>	*/
+const char *html_header;		/* --html-header=<file>		*/
 const char *jscode;			/* javascript code		*/
 /*
  * Constant values.
@@ -241,8 +245,6 @@ const char *normal_suffix = "html";	/* suffix of normal html file	*/
 const char *HTML;
 const char *action = "cgi-bin/global.cgi";/* default action		*/
 const char *completion_action = "cgi-bin/completion.cgi";
-const char *id = "";			/* id (default non)		*/
-int nocgi = 0;				/* 1: don't make cgi-bin/	*/
 int definition_header=NO_HEADER;	/* (NO|BEFORE|RIGHT|AFTER)_HEADER */
 const char *htags_options = NULL;
 const char *include_file_suffixes = "h,hxx,hpp,H,inc.php";
@@ -265,7 +267,7 @@ static struct option const long_options[] = {
         {"line-number", optional_argument, NULL, 'n'},
         {"main-func", required_argument, NULL, 'm'},
         {"other", no_argument, NULL, 'o'},
-        {"secure-cgi", required_argument, NULL, 'S'},
+        {"system-cgi", required_argument, NULL, 'S'},
         {"symbol", no_argument, NULL, 's'},
         {"table-flist", optional_argument, NULL, 'T'},
         {"title", required_argument, NULL, 't'},
@@ -283,43 +285,43 @@ static struct option const long_options[] = {
         {"disable-idutils", no_argument, &enable_idutils, 0},
         {"full-path", no_argument, &full_path, 1},
         {"html", no_argument, &enable_xhtml, 0},
-        {"nocgi", no_argument, &nocgi, 1},
         {"no-map-file", no_argument, &map_file, 0},
         {"overwrite-key", no_argument, &overwrite_key, 1},
         {"show-position", no_argument, &show_position, 1},
         {"statistics", no_argument, &statistics, STATISTICS_STYLE_TABLE},
         {"suggest", no_argument, &suggest, 1},
+        {"suggest2", no_argument, &suggest2, 1},
         {"table-list", no_argument, &table_list, 1},
         {"version", no_argument, &show_version, 1},
         {"help", no_argument, &show_help, 1},
 
 	/* accept value */
-#define OPT_ACTION		128
-#define OPT_CVSWEB		129
-#define OPT_CVSWEB_CVSROOT	130
-#define OPT_GTAGSCONF		131
-#define OPT_GTAGSLABEL		132
-#define OPT_NCOL		133
-#define OPT_ID			134
-#define OPT_INSERT_FOOTER	135
-#define OPT_INSERT_HEADER	136
-#define OPT_ITEM_ORDER		137
-#define OPT_TABS		138
-#define OPT_CFLOW		139
-#define OPT_AUTO_COMPLETION	140
-        {"action", required_argument, NULL, OPT_ACTION},
+#define OPT_CVSWEB		128
+#define OPT_CVSWEB_CVSROOT	129
+#define OPT_GTAGSCONF		130
+#define OPT_GTAGSLABEL		131
+#define OPT_NCOL		132
+#define OPT_INSERT_FOOTER	133
+#define OPT_INSERT_HEADER	134
+#define OPT_ITEM_ORDER		135
+#define OPT_TABS		136
+#define OPT_CFLOW		137
+#define OPT_AUTO_COMPLETION	138
+#define OPT_TREE_VIEW		139
+#define OPT_HTML_HEADER		140
         {"auto-completion", optional_argument, NULL, OPT_AUTO_COMPLETION},
         {"cflow", required_argument, NULL, OPT_CFLOW},
         {"cvsweb", required_argument, NULL, OPT_CVSWEB},
         {"cvsweb-cvsroot", required_argument, NULL, OPT_CVSWEB_CVSROOT},
         {"gtagsconf", required_argument, NULL, OPT_GTAGSCONF},
         {"gtagslabel", required_argument, NULL, OPT_GTAGSLABEL},
+        {"html-header", required_argument,NULL, OPT_HTML_HEADER},
         {"ncol", required_argument, NULL, OPT_NCOL},
-        {"id", required_argument, NULL, OPT_ID},
         {"insert-footer", required_argument, NULL, OPT_INSERT_FOOTER},
         {"insert-header", required_argument, NULL, OPT_INSERT_HEADER},
         {"item-order", required_argument, NULL, OPT_ITEM_ORDER},
 	{"tabs", required_argument, NULL, OPT_TABS},
+        {"tree-view",  optional_argument, NULL, OPT_TREE_VIEW},
         { 0 }
 };
 
@@ -411,7 +413,7 @@ make_file_in_distpath(const char *name, const char *data)
 
 	op = fopen(path, "w");
 	if (op) {
-		if (data) {
+		if (data && *data) {
 			fputs(data, op);
 			fputc('\n', op);
 		}
@@ -454,11 +456,12 @@ load_with_replace(const char *file, STRBUF *result, int place)
 		{"@br@", br},
 		{"@HTML@", HTML},
 		{"@DATADIR@", datadir},
+		{"@LOCALSTATEDIR@", localstatedir},
 		{"@action@", action},
 		{"@completion_action@", completion_action},
 		{"@limit@", auto_completion_limit},
+		{"@sitekey@", sitekey},
 		{"@script_alias@", script_alias},
-		{"@id@", id},
 		{"@null_device@", null_device},
 		{"@globalpath@", global_path},
 		{"@gtagspath@", gtags_path},
@@ -696,7 +699,7 @@ makesearchpart(const char *target)
 	}
 	strbuf_puts_nl(sb, gen_form_begin(target));
 	strbuf_puts_nl(sb, gen_input("pattern", NULL, NULL));
-	strbuf_puts_nl(sb, gen_input("id", id, "hidden"));
+	strbuf_puts_nl(sb, gen_input("id", sitekey, "hidden"));
 	strbuf_puts_nl(sb, gen_input(NULL, "Search", "submit"));
 	strbuf_puts(sb, gen_input(NULL, "Reset", "reset"));
 	strbuf_puts_nl(sb, br);
@@ -744,7 +747,6 @@ static void
 makeindex(const char *file, const char *title, const char *index)
 {
 	FILE *op;
-	const char *header_item = auto_completion ? jscode : NULL;
 
 	op = fopen(makepath(distpath, file, NULL), "w");
 	if (!op)
@@ -774,7 +776,7 @@ makeindex(const char *file, const char *title, const char *index)
 		fputs_nl(gen_frameset_end(), op);
 		fputs_nl(gen_page_end(), op);
 	} else {
-		fputs_nl(gen_page_index_begin(title, header_item), op);
+		fputs_nl(gen_page_index_begin(title, jscode), op);
 		fputs_nl(body_begin, op);
 		if (insert_header)
 			fputs(gen_insert_header(TOPDIR), op);
@@ -797,12 +799,11 @@ static void
 makemainindex(const char *file, const char *index)
 {
 	FILE *op;
-	const char *header_item = auto_completion ? jscode : NULL;
 
 	op = fopen(makepath(distpath, file, NULL), "w");
 	if (!op)
 		die("cannot make file '%s'.", file);
-	fputs_nl(gen_page_index_begin(title, header_item), op);
+	fputs_nl(gen_page_index_begin(title, jscode), op);
 	fputs_nl(body_begin, op);
 	if (insert_header)
 		fputs(gen_insert_header(TOPDIR), op);
@@ -823,12 +824,11 @@ static void
 makesearchindex(const char *file)
 {
 	FILE *op;
-	const char *header_item = auto_completion ? jscode : NULL;
 
 	op = fopen(makepath(distpath, file, NULL), "w");
 	if (!op)
 		die("cannot create file '%s'.", file);
-	fputs_nl(gen_page_index_begin("SEARCH", header_item), op);
+	fputs_nl(gen_page_index_begin("SEARCH", jscode), op);
 	fputs_nl(body_begin, op);
 	fputs(makesearchpart("mains"), op);
 	fputs_nl(body_end, op);
@@ -840,7 +840,7 @@ makesearchindex(const char *file)
  * makehtaccess: make .htaccess skeleton file.
  */
 static void
-makehtaccess(const char *file)
+makehtaccess(const char *cgidir, const char *file)
 {
 	FILE *op;
 
@@ -859,7 +859,7 @@ makehtaccess(const char *file)
 	fputs_nl("# |AllowOverride Options FileInfo", op);
 	fputs_nl("#", op);
 	fputs_nl("# Htags was invoked with the -f, -c or -D option.", op);
-	fprintf(op, "# You should start HTTP server so that %s/*.cgi is executed\n", cgidir);
+	fprintf(op, "# You should start http server so that %s/*.cgi is executed\n", cgidir);
 	fputs_nl("# as a CGI script.", op);
 	fputs_nl("#", op);
 	fputs_nl("Options +ExecCGI", op);
@@ -868,7 +868,7 @@ makehtaccess(const char *file)
 		fputs_nl("#", op);
 		fputs_nl("# Htags have made gzipped html files because you specified the -c option.", op);
 		fputs_nl("# If your browser doesn't decompress gzipped files, you should start", op);
-		fputs_nl("# HTTP server so that they are decompressed.", op);
+		fputs_nl("# http server so that they are decompressed.", op);
 		fputs_nl("#", op);
 		fputs_nl("# Please rewrite appropriately the string '/cgi-bin/ghtml.cgi' below, or", op);
 		fputs_nl("# copy the file 'cgi-bin/ghtml.cgi' itself to the system's CGI directory.", op);
@@ -937,14 +937,22 @@ makehtml(int total)
 /*
  * Load file.
  */
-static char *
-loadfile(const char *file)
+void
+loadfile_asis(const char *file, STRBUF *result)
 {
-	STATIC_STRBUF(result);
-
-	strbuf_reset(result);
+	STRBUF *sb = strbuf_open(0);
+	FILE *ip = fopen(file, "r");
+	if (!ip)
+		die("file '%s' not found.", file);
+	while (strbuf_fgets(sb, ip, STRBUF_NOCRLF) != NULL)
+		strbuf_puts_nl(result, strbuf_value(sb));
+	fclose(ip);
+	strbuf_close(sb);
+}
+void
+loadfile(const char *file, STRBUF *result)
+{
 	load_with_replace(file, result, 0);
-	return strbuf_value(result);
 }
 /*
  * copy file.
@@ -1093,12 +1101,17 @@ makecommonpart(const char *title, const char *defines, const char *files)
 				strbuf_puts(sb, header_begin);
 				strbuf_puts(sb, title_file_index);
 				strbuf_puts_nl(sb, header_end);
-				if (table_flist)
+				if (tree_view) {
+					strbuf_puts_nl(sb, tree_control);
+					strbuf_puts_nl(sb, tree_begin);
+				} else if (table_flist)
 					strbuf_puts_nl(sb, flist_begin);
 				else if (!no_order_list)
 					strbuf_puts_nl(sb, list_begin);
 				strbuf_puts(sb, files);
-				if (table_flist)
+				if (tree_view)
+					strbuf_puts_nl(sb, tree_end);
+				else if (table_flist)
 					strbuf_puts_nl(sb, flist_end);
 				else if (!no_order_list)
 					strbuf_puts_nl(sb, list_end);
@@ -1202,6 +1215,10 @@ configuration(int argc, char *const *argv)
 	if (!getconfs("datadir", sb))
 		die("cannot get datadir directory name.");
 	strlimcpy(datadir, strbuf_value(sb), sizeof(datadir));
+	strbuf_reset(sb);
+	if (!getconfs("localstatedir", sb))
+		die("cannot get localstatedir directory name.");
+	strlimcpy(localstatedir, strbuf_value(sb), sizeof(localstatedir));
 	if (getconfn("ncol", &n)) {
 		if (n < 1 || n > 10)
 			warning("parameter 'ncol' ignored because the value (=%d) is too large or too small.", n);
@@ -1512,13 +1529,10 @@ main(int argc, char **argv)
 	if (htags_options)
 		argv = append_options(&argc, argv);
 
-	while ((optchar = getopt_long(argc, argv, "acd:DfFghIm:noqsS:t:Tvwx", long_options, &option_index)) != EOF) {
+	while ((optchar = getopt_long(argc, argv, "acd:DfFghIm:noqst:Tvwx", long_options, &option_index)) != EOF) {
 		switch (optchar) {
 		case 0:
 			/* already flags set */
-			break;
-		case OPT_ACTION:
-			action_value = optarg;
 			break;
 		case OPT_AUTO_COMPLETION:
 			auto_completion = 1;
@@ -1541,14 +1555,20 @@ main(int argc, char **argv)
 		case OPT_GTAGSCONF:	/* --gtagsconf is estimated only once. */
 		case OPT_GTAGSLABEL:	/* --gtagslabel is estimated only once. */
 			break;
-		case OPT_ID:
-			id_value = optarg;
-			break;
 		case OPT_INSERT_FOOTER:
 			insert_footer = optarg;
 			break;
 		case OPT_INSERT_HEADER:
 			insert_header = optarg;
+			break;
+		case OPT_HTML_HEADER:
+			{
+				STATIC_STRBUF(sb);
+				if (!test("r", optarg))
+					die("file '%s' not found.", optarg);
+				loadfile_asis(optarg, sb);
+				html_header = strbuf_value(sb);
+			}
 			break;
 		case OPT_ITEM_ORDER:
 			item_order = optarg;
@@ -1559,6 +1579,11 @@ main(int argc, char **argv)
 			else
 				die("--tabs option requires numeric value.");
                         break;
+		case OPT_TREE_VIEW:
+			tree_view = 1;
+			if (optarg)
+				tree_view_type = optarg;
+			break;
                 case 'a':
                         aflag++;
                         break;
@@ -1616,7 +1641,7 @@ main(int argc, char **argv)
                         break;
                 case 'S':
 			Sflag++;
-			id = optarg;
+			sitekey = optarg;
                         break;
                 case 'T':
 			table_flist = 1;
@@ -1656,18 +1681,17 @@ main(int argc, char **argv)
 	}
 	/*
 	 * Leaving everything to htags.
-	 * Htags selects the most popular options for you.
-	 * Htags likes busy screen but dislikes frameed screen.
-	 * You may want to invoke htags with "htags --leave --frame".
-	 * Htags also make tag files if not found.
+	 * Htags selects popular options for you.
 	 */
+	if (suggest2)
+		suggest = 1;
 	if (suggest) {
 		int gtags_not_found = 0;
 
-		aflag = fflag = Iflag = nflag = vflag = 1;
+		aflag = Iflag = nflag = vflag = 1;
 		setverbose();
 		definition_header = AFTER_HEADER;
-		other_files = symbol = enable_xhtml = show_position = table_flist = 1;
+		other_files = symbol = show_position = table_flist = 1;
 		if (arg_dbpath[0]) {
 			if (!test("f", makepath(arg_dbpath, dbname(GTAGS), NULL)))
 				gtags_not_found = 1;
@@ -1677,6 +1701,11 @@ main(int argc, char **argv)
 		}
 		if (gtags_not_found)
 			gflag = 1;
+	}
+	if (suggest2) {
+		Fflag = 1;				/* uses frame */
+		cflag = fflag = dynamic = 1;		/* needs a HTTP server */
+		auto_completion = tree_view = 1;	/* needs javascript */
 	}
 	if (cflow_file && !test("fr", cflow_file))
 		die("cflow file not found. '%s'", cflow_file);
@@ -1698,6 +1727,8 @@ main(int argc, char **argv)
                 setquiet();
 		vflag = 0;
 	}
+	if (!cflag && !fflag && !dynamic)
+		Sflag = 0;
 	/*
 	 * If the --xhtml option is specified then all HTML tags which
 	 * are defined in configuration file are ignored. Instead, you can
@@ -1709,7 +1740,9 @@ main(int argc, char **argv)
                 version(av, vflag);
         if (show_help)
                 help();
-
+	/*
+	 * Invokes gtags beforehand.
+	 */
 	if (gflag) {
 		STRBUF *sb = strbuf_open(0);
 
@@ -1731,14 +1764,15 @@ main(int argc, char **argv)
 	/*
 	 * get dbpath.
 	 */
-	setupdbpath(0);				/* for parsers */
 	if (!getcwd(cwdpath, sizeof(cwdpath)))
 		die("cannot get current directory.");
-	if (arg_dbpath[0])
+	if (arg_dbpath[0]) {
 		strlimcpy(dbpath, arg_dbpath, sizeof(dbpath));
-	else
+		set_env("GTAGSROOT", cwdpath);
+		set_env("GTAGSDBPATH", dbpath);
+	} else
 		strlimcpy(dbpath, cwdpath, sizeof(dbpath));
-
+	setupdbpath(0);				/* for parsers */
 	if (cflag && !usable("gzip")) {
 		warning("'gzip' command not found. -c option ignored.");
 		cflag = 0;
@@ -1767,48 +1801,65 @@ main(int argc, char **argv)
 	} else {
 		snprintf(distpath, sizeof(distpath), "%s/HTML", cwdpath);
 	}
+	/*
+	 * Site key management for center CGI.
+	 */
 	if (Sflag) {
+		STRBUF *sb = strbuf_open(0);
 		static char saction[MAXBUFLEN];
 		static char completion_saction[MAXBUFLEN];
 		char path[MAXBUFLEN];
-		char *name = "sitekeys";
-		int fd;
+		int try_writing = 0;
 
 		snprintf(saction, sizeof(saction), "%s/global.cgi", script_alias);
 		action = saction;
 		snprintf(completion_saction, sizeof(completion_saction), "%s/completion.cgi", script_alias);
 		completion_action = completion_saction;
-		snprintf(path, sizeof(path), "%s/gtags", datadir);
-		if (!test("d", makepath(path, name, NULL))) {
+		snprintf(path, sizeof(path), "%s/gtags/%s", localstatedir, SITEKEYDIRNAME);
+		if (!test("d", path)) {
 			setverbose();
-			message("htags: cannot make sitekey file.");
+			message("htags: directory '%s' not found.", path);
 			message("\n[Information]\n");
-			message("Htags was invoked with the -S option. It is required a special site key directory.");
-			message("Please make it by the following command line:");
-			message(" $ mkdir %s/%s", path, name);
-			message(" $ chmod 773 %s/%s", path, name);
-			message("");
-			message("Thank you for your cooperation.");
+			message("It seems that GLOBAL is not install correctly. Please reinstall.");
 			exit(0);
 		}
-		snprintf(path, sizeof(path), "%s/gtags/%s/%s", datadir, name, id);
-		if (test("f", path) && overwrite_key == 0)
-			die("key '%s' is not unique. please change key or use --overwrite-key option.", id);
-		fd = creat(path, 644);
-		if (fd < 0)
-			die("cannot create file '%s'.", path);
-		write(fd, distpath, strlen(distpath));
-		write(fd, "\n", 1);
-		if (fchmod(fd, 0644) < 0)
-			die("cannot chmod file '%s'(errono = %d).", path, errno);
-		close(fd);
-	}
-	/* --action, --id overwrite Sflag's value. */
-	if (action_value) {
-		action = action_value;
-	}
-	if (id_value) {
-		id = id_value;
+		/*
+		 * Load the sitekey if it exists.
+		 */
+		snprintf(path, sizeof(path), "%s/gtags/%s/%s", localstatedir, SITEKEYDIRNAME, sitekey);
+		if (test("f", path)) {
+			FILE *ip = fopen(path, "r");
+
+			if (ip == NULL)
+				die("cannot open file '%s'.", path);
+			strbuf_fgets(sb, ip, STRBUF_NOCRLF);
+			fclose(ip);
+		}
+		if (!test("f", path))
+			try_writing = 1;
+		else if (!strcmp(distpath, strbuf_value(sb)))
+			; /* nothing to do */
+		else if (overwrite_key == 0)
+			die("The site key '%s' is not unique. please change it or use --overwrite-key option.", sitekey);
+		else	/* New key value without --overwrite-key option */
+			try_writing = 1;
+		/*
+		 * In almost case, the following procedures are done
+		 * using bless.sh script by the root user.
+		 */
+		if (try_writing) {
+			FILE *op = fopen(path, "w");
+			
+			if (op == NULL)
+				need_bless = 1;
+			else {
+				fprintf(op, "%s\n", distpath);
+				fclose(op);
+				if (chmod(path, 0644) < 0)
+					die("cannot chmod file '%s'(errno = %d).", path, errno);
+			}
+		}
+		strbuf_close(sb);
 	}
 	/*
 	 * Existence check of tag files.
@@ -1860,17 +1911,6 @@ main(int argc, char **argv)
 	set_env("GTAGSROOT", cwdpath);
 	set_env("GTAGSDBPATH", dbpath);
 	set_env("GTAGSLIBPATH", "");
-	/*
-	 * check directories
-	 */
-	if (fflag || cflag || dynamic) {
-		static char buf[MAXPATHLEN];
-		snprintf(buf, sizeof(buf), "%s/cgi-bin", distpath);
-		cgidir = buf;
-	} else {
-		Sflag = 0;
-		cgidir = NULL;
-	}
 	/*------------------------------------------------------------------
 	 * MAKE FILES
 	 *------------------------------------------------------------------
@@ -1911,8 +1951,16 @@ main(int argc, char **argv)
 	if (!w32) {
 		/* UNDER CONSTRUCTION */
 	}
-	if (auto_completion)
-		jscode = loadfile("jscode_suggest");
+	if (auto_completion || tree_view) {
+		STATIC_STRBUF(sb);
+		strbuf_clear(sb);
+		strbuf_puts_nl(sb, "<script type='text/javascript' src='js/jquery.js'></script>");
+		if (auto_completion)
+			loadfile("jscode_suggest", sb);
+		if (tree_view)
+			loadfile("jscode_treeview", sb);
+		jscode = strbuf_value(sb);
+	}
 	/*
 	 * (0) make directories
 	 */
@@ -1925,46 +1973,53 @@ main(int argc, char **argv)
 	make_directory_in_distpath(SRCS);
 	make_directory_in_distpath(INCS);
 	make_directory_in_distpath(INCREFS);
-	make_file_in_distpath("sitekey", id);
+	/*
+	 * 'sitekey' file will be removed in near future, because it is not used.
+	 */
+	make_file_in_distpath("sitekey", sitekey);
 	if (!dynamic) {
 		make_directory_in_distpath(DEFS);
 		make_directory_in_distpath(REFS);
 		if (symbol)
 			make_directory_in_distpath(SYMS);
 	}
-	if (!nocgi && (fflag || cflag || dynamic))
+	if (fflag || cflag || dynamic)
 		make_directory_in_distpath("cgi-bin");
 	if (Iflag)
 		make_directory_in_distpath("icons");
+	if (auto_completion || tree_view)
+		 make_directory_in_distpath("js");
 	/*
 	 * (1) make CGI program
 	 */
-	if (!nocgi && (fflag || cflag || dynamic)) {
+	if (fflag || cflag || dynamic) {
+		char cgidir[MAXPATHLEN];
+		int perm;
+
+		snprintf(cgidir, sizeof(cgidir), "%s/cgi-bin", distpath);
 		message("[%s] (1) making CGI program ...", now());
-		if (cgidir) {
-			/*
-			 * If the Sflag is specified, CGI script is invalidated.
-			 */
-			int perm = Sflag ? 0644 : 0755;
-			if (fflag || dynamic) {
-				makeprogram(cgidir, "global.cgi");
-				if (chmod(makepath(cgidir, "global.cgi", NULL), perm) < 0)
-					die("cannot chmod CGI program.");
-			}
-			if (auto_completion) {
-				makeprogram(cgidir, "completion.cgi");
-				if (chmod(makepath(cgidir, "completion.cgi", NULL), perm) < 0)
-					die("cannot chmod CGI program.");
-			}
-			if (cflag) {
-				makeghtml(cgidir, "ghtml.cgi");
-				if (chmod(makepath(cgidir, "ghtml.cgi", NULL), perm) < 0)
-					die("cannot chmod unzip script.");
-			}
-			makehtaccess(".htaccess");
-			if (chmod(makepath(distpath, ".htaccess", NULL), 0644) < 0)
-				die("cannot chmod .htaccess skeleton.");
+		/*
+		 * If the Sflag is specified, CGI script is invalidated.
+		 */
+		perm = Sflag ? 0644 : 0755;
+		if (fflag || dynamic) {
+			makeprogram(cgidir, "global.cgi");
+			if (chmod(makepath(cgidir, "global.cgi", NULL), perm) < 0)
+				die("cannot chmod CGI program.");
 		}
+		if (auto_completion) {
+			makeprogram(cgidir, "completion.cgi");
+			if (chmod(makepath(cgidir, "completion.cgi", NULL), perm) < 0)
+				die("cannot chmod CGI program.");
+		}
+		if (cflag) {
+			makeghtml(cgidir, "ghtml.cgi");
+			if (chmod(makepath(cgidir, "ghtml.cgi", NULL), perm) < 0)
+				die("cannot chmod unzip script.");
+		}
+		makehtaccess(cgidir, ".htaccess");
+		if (chmod(makepath(distpath, ".htaccess", NULL), 0644) < 0)
+			die("cannot chmod .htaccess skeleton.");
 		/*
 		 * Always make bless.sh.
 		 * Don't grant execute permission to bless script.
@@ -1978,13 +2033,15 @@ main(int argc, char **argv)
 	/*
 	 * Save the suffix of compress format for the safe CGI script.
 	 */
-	if (cflag) {
+	{
 		const char *path = makepath(distpath, "compress", NULL);
 		FILE *op = fopen(path, "w");
 		if (op == NULL)
 			die("cannot make file '%s'.", path);
-		fputs(HTML, op);
-		fputc('\n', op);
+		if (cflag) {
+			fputs(HTML, op);
+			fputc('\n', op);
+		}
 		fclose(op);
 	}
 	if (av) {
@@ -2104,47 +2161,43 @@ main(int argc, char **argv)
 	 * (11) style sheet file (style.css)
 	 */
 	if (enable_xhtml) {
-		char src[MAXPATHLEN], dst[MAXPATHLEN];
-		snprintf(src, sizeof(src), "%s/gtags/style.css", datadir);
-		snprintf(dst, sizeof(dst), "%s/style.css", distpath);
-		copyfile(src, dst);
+		char com[MAXPATHLEN*2+32];
+		snprintf(com, sizeof(com), "cp %s/gtags/style.css.tmpl %s/style.css", datadir, distpath);
+		system(com);
 	}
-	if (auto_completion) {
-		const char *files[] = {"jquery.js", "jquery.suggest.js", "jquery.suggest.css"};
-		int i, count = sizeof(files) / sizeof(char *);
-		char src[MAXPATHLEN], dst[MAXPATHLEN];
-		
-		for (i = 0; i < count; i++) {
-			snprintf(src, sizeof(src), "%s/gtags/jquery/%s", datadir, files[i]);
-			snprintf(dst, sizeof(dst), "%s/%s", distpath, files[i]);
-			copyfile(src, dst);
-		}
+	if (auto_completion || tree_view) {
+		char com[MAXPATHLEN*2+32];
+		snprintf(com, sizeof(com), "cp -r %s/gtags/jquery/* %s/js", datadir, distpath);
+		system(com);
 	}
 	message("[%s] Done.", now());
-	if (vflag && !nocgi && (cflag || fflag || dynamic)) {
+	if (vflag && (cflag || fflag || dynamic || auto_completion)) {
 		message("\n[Information]\n");
-		if (fflag || cflag || dynamic) {
-			message(" o Htags was invoked with the -f, -c or -D option. You should start HTTP");
-			message("   server so that cgi-bin/*.cgi is executed as a CGI script.");
-		}
+		message(" o Htags was invoked with the -f, -c, -D or --auto-completion option. You should");
+		message("   start http server so that cgi-bin/*.cgi is executed as a CGI script.");
 		if (cflag) {
-			message(" o Htags was invoked with the -c option. You should start HTTP server to");
+			message(" o Htags was invoked with the -c option. You should start a http server to");
 			message("   decompress *.%s files.", gzipped_suffix);
 		}
- 		message(" If you are using Apache, 'HTML/.htaccess' might be helpful for you.\n");
+		if (Sflag && need_bless) {
+			char path[MAXBUFLEN];
+			snprintf(path, sizeof(path), "%s/gtags/%s/%s", localstatedir, SITEKEYDIRNAME, sitekey);
+
+			message(" o Though htags was invoked with the --system-cgi option with a unique key '%s',", sitekey);
+			message("   you don't have the permission to create file '%s'.", path);
+			message("   You should ask the root user to bless the hypertext by executing");
+			message("   like follows:");
+			message("       # cd HTML");
+			message("       # sh bless.sh");
+		}
+ 		message("\n If you are using Apache, 'HTML/.htaccess' might be helpful for you.\n");
 		message(" Good luck!\n");
 	}
 	if (Iflag) {
-		char src[MAXPATHLEN], dst[MAXPATHLEN];
-		int i, count = sizeof(icon_files) / sizeof(char *);
+		char com[MAXPATHLEN*2+32];
 
-		for (i = 0; i < count; i++) {
-			snprintf(src, sizeof(src), "%s/gtags/icons/%s.%s", datadir, icon_files[i], icon_suffix);
-			snprintf(dst, sizeof(dst), "%s/icons/%s.%s", distpath, icon_files[i], icon_suffix);
-			if (!test("f", src))
-				die("Icon file '%s' not found.", src);
-			copyfile(src, dst);
-		}
+		snprintf(com, sizeof(com), "cp -r %s/gtags/icons %s", datadir, distpath);
+		system(com);
 	}
 	gpath_close();
 	/*

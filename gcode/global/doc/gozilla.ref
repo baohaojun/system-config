@@ -1,0 +1,103 @@
+@c This file is generated automatically by convert.pl from gozilla/manual.in.
+@unnumberedsubsec NAME
+gozilla - force mozilla to display specified part of a source file.
+@unnumberedsubsec SYNOPSIS
+@noindent
+@quotation
+gozilla [-b browser][-p][+no] file@*
+gozilla [-b browser][-p] -d name@*
+@end quotation
+@unnumberedsubsec DESCRIPTION
+Gozilla forces mozilla to display specified part of a source file.
+Gozilla can be used with other browsers like firefox and epiphany.
+
+In advance of using this command, you must execute gtags(1)
+and htags(1) at the root directory of a project to make tag files.
+Then you can execute this command anywhere in the project.
+
+First form:@*
+You can specify a source file and optional line number.
+This syntax is similar to vi(1) and emacs(1).
+
+Second form:@*
+You can specify a definition name directly. The definition name should
+exist in @file{GTAGS}.
+
+Some browsers require you to load it before executing gozilla.
+@unnumberedsubsec OPTIONS
+The following options are available:
+@table @asis
+@item @samp{+no}
+Line number.
+@item @samp{-b} browser
+Browser to use. By default, it is assumed mozilla.
+@item @samp{-d} name
+Print object definitions.
+@item @samp{--help}
+Show help.
+@item @samp{-p}
+Print just a generated URL instead of displaying it.
+@item file
+File name or alias name.
+@item @samp{-q}, @samp{--quiet}
+Quiet mode.
+@item @samp{-v}, @samp{--verbose}
+Verbose mode.
+@item @samp{--version}
+Show version number.
+@end table
+@unnumberedsubsec FILES
+@table @asis
+@item @file{HTML/}
+Hypertext of source code.
+@item @file{GTAGS/}
+Tag file for object definitions.
+@item @file{$HOME/.gozillarc}
+Alias file. Please read source code for the detail.
+@end table
+@unnumberedsubsec ENVIRONMENT
+@table @asis
+@item @var{GTAGSROOT}
+The root directory of the project.
+@item @var{GTAGSDBPATH}
+The directory on which tag files exist.
+This value is ignored when GTAGSROOT is not defined.
+@item @var{BROWSER}
+Browser to use. By default, it is assumed mozilla.
+@end table
+@unnumberedsubsec EXAMPLES
+@example
+	$ gtags
+	$ htags
+	$ global -x main
+	main              82 ctags.c          main(argc, argv)
+	$ mozilla &
+	$ gozilla +82 ctags.c
+	$ gozilla -d main
+
+	$ firefox &
+	$ gozilla -b firefox +82 ctags.c
+
+@end example
+@unnumberedsubsec DIAGNOSTICS
+Gozilla exits with a non 0 value if an error occurred, 0 otherwise.
+@unnumberedsubsec SEE ALSO
+global(1),
+gtags(1),
+htags(1),
+firefox(1),
+epiphany(1),
+mozilla(1).
+
+GNU GLOBAL source code tag system@*
+(http://www.gnu.org/software/global/).
+@unnumberedsubsec NOTES
+Gozilla means 'Global for mozilla'.
+@unnumberedsubsec BUGS
+Gozilla can accept not only source files but also text files,
+directories, HTML files and even URLs, because it is omnivorous.
+@unnumberedsubsec AUTHORS
+Shigio YAMAGUCHI.
+@unnumberedsubsec HISTORY
+The gozilla command appeared in FreeBSD 2.2.2 but did not
+installed by default.

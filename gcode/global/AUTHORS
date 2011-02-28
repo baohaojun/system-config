@@ -129,12 +129,16 @@ o Icon files by GNOME Foundation.
 	icons/n_right.png	stock_right_arrow.png
 	icons/n_top.png		stock_top.png
 
-o jQuery and Suggest plugin.
+o jQuery, Suggest plugin and TreeView plugin
   jQuery is due to John Resig and the Dojo Foundation.
   Suggest plugin is due to Peter Vulgaris, Joern Zaefferer and Stefan Petre.
+  TreeView plugin is due to Joern Zaefferer.
 
-	htags/jquery.js
-	htags/jquery.suggest.js
-	htags/jquery.suggest.css
+	jquery/jquery.js
+	jquery/jquery.suggest.js
+	jquery/jquery.suggest.css
+	jquery/jquery.treeview.js
+	jquery/jquery.treeview.css
+	jquery/images/*.gif
 
 they are considered a separate package, not part of GLOBAL proper.

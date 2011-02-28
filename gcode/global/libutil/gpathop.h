@@ -52,6 +52,7 @@ int gpath_open(const char *, int);
 const char *gpath_path2fid(const char *, int *);
 const char *gpath_fid2path(const char *, int *);
 void gpath_put(const char *, int);
+time_t gpath_mtime(DBOP*, const char*);
 void gpath_delete(const char *);
 void gpath_close(void);
 int gpath_nextkey(void);

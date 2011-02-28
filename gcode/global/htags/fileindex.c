@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005,
- *		2006
+ *		2006, 2010
  *	Tama Communications Corporation
  *
  * This file is part of GNU GLOBAL.
@@ -327,9 +327,10 @@ int src_count;
  * it appears in some places.
  */
 #define PUT(s) do {						\
-		if (level == 0)					\
-			 strbuf_puts(files, s);			\
-		 else						\
+		if (level == 0)	{				\
+			if (tree_view == 0)			\
+				strbuf_puts(files, s);		\
+		} else						\
 			 fputs(s, op);				\
 } while (0)
 
@@ -349,6 +350,16 @@ print_directory(int level, char *basedir)
 		fileop = open_output_file(name, cflag);
 		op = get_descripter(fileop);
 		print_directory_header(op, level, basedir);
+		if (tree_view) {
+			char *target = (Fflag) ? "mains" : "_top";
+
+			strbuf_puts(files, dir_begin);
+			strbuf_puts(files, gen_href_begin_with_title_target("files", path2fid(basedir), HTML, NULL, NULL, target));
+			strbuf_puts(files, full_path ? removedotslash(basedir) : lastpart(basedir));
+			strbuf_puts(files, gen_href_end());
+			strbuf_puts(files, dir_end);
+			strbuf_puts(files, "\n<ul>\n");
+		}
 	}
 	while ((path = getpath()) != NULL) {
 		const char *p, *local = localpath(path, basedir);
@@ -405,7 +416,27 @@ print_directory(int level, char *basedir)
 			 * Print file.
 			 */
 			else {
-				PUT(print_file_name(level, path));
+				const char *file_name = print_file_name(level, path);
+
+				if (tree_view) {
+					int size = filesize(path);
+					char *target = (Fflag) ? "mains" : "_top";
+					char tips[80];
+
+					if (size > 1)
+						snprintf(tips, sizeof(tips), "%s bytes", insert_comma(size));
+					else
+						snprintf(tips, sizeof(tips), "%s byte", insert_comma(size));
+					strbuf_sprintf(files, "%s%s%s%s%s\n",
+						file_begin,
+						gen_href_begin_with_title_target(SRCS, path2fid(path), HTML, NULL, tips, target),
+						full_path ? removedotslash(path) : lastpart(path),
+						gen_href_end(),
+						file_end);
+				}
+				PUT(file_name);
+				if (map_file)
+					fprintf(FILEMAP, "%s\t%s/%s.%s\n", removedotslash(path), SRCS, path2fid(path), HTML);
 				count++;
 			}
 			if (table_flist && flist_items % flist_fields == 0)
@@ -417,6 +448,8 @@ print_directory(int level, char *basedir)
 	if (level > 0) {
 		print_directory_footer(op, level, basedir);
 		close_file(fileop);
+		if (tree_view)
+			strbuf_puts(files, "</ul>\n");
 	}
 	html_count++;
 	return count;
@@ -592,8 +625,6 @@ print_file_name(int level, const char *path)
 	else
 		strbuf_puts(sb, br);
 	strbuf_putc(sb, '\n');
-	if (map_file)
-		fprintf(FILEMAP, "%s\t%s/%s.%s\n", removedotslash(path), SRCS, path2fid(path), HTML);
 	return (const char *)strbuf_value(sb);
 }
 /*
@@ -690,18 +721,25 @@ makefileindex(const char *file, STRBUF *a_files)
 	 */
 	if ((filesop = fopen(makepath(distpath, file, NULL), "w")) == NULL)
 		die("cannot open file '%s'.", file);
-	fputs_nl(gen_page_begin(title_file_index, TOPDIR), filesop);
+	fputs_nl(gen_page_index_begin(title_file_index, jscode), filesop);
 	fputs_nl(body_begin, filesop);
 	fputs(header_begin, filesop);
 	fputs(gen_href_begin(NULL, "files", normal_suffix, NULL), filesop);
 	fputs(title_file_index, filesop);
 	fputs(gen_href_end(), filesop);
 	fputs_nl(header_end, filesop);
-	if (table_flist) {
+	if (tree_view) {
+		fputs_nl(tree_control, filesop);
+		if (tree_view_type) {
+			fprintf(filesop, tree_begin_using, tree_view_type);
+			fputc('\n', filesop);
+		} else {
+			fputs_nl(tree_begin, filesop);
+		}
+	} else if (table_flist)
 		fputs_nl(flist_begin, filesop);
-	} else if (!no_order_list) {
+	else if (!no_order_list)
 		fputs_nl(list_begin, filesop);
-	}
 	FILEMAP = NULL;
 	if (map_file) {
 		if (!(FILEMAP = fopen(makepath(distpath, "FILEMAP", NULL), "w")))
@@ -712,7 +750,10 @@ makefileindex(const char *file, STRBUF *a_files)
 	 */
 	files = a_files;
 	strcpy(basedir, ".");
+
 	(void)print_directory(0, basedir);
+	if (tree_view)
+		strbuf_puts(files, tree_end);
 
 	if (map_file)
 		fclose(FILEMAP);
@@ -720,12 +761,12 @@ makefileindex(const char *file, STRBUF *a_files)
 	regfree(&is_include_file);
 
 	fputs(strbuf_value(files), filesop);
-	if (table_flist)
+	if (tree_view)
+		fputs_nl(tree_end, filesop);
+	else if (table_flist)
 		fputs_nl(flist_end, filesop);
 	else if (!no_order_list)
 		fputs_nl(list_end, filesop);
-	else
-		fputs_nl(br, filesop);
 	fputs_nl(body_end, filesop);
 	fputs_nl(gen_page_end(), filesop);
 	fclose(filesop);

@@ -1,0 +1,78 @@
+.\" This file is generated automatically by convert.pl from gtags-cscope/manual.in.
+.TH GTAGS-CSCOPE 1 "May 2006" "GNU Project"
+.SH NAME
+gtags\-cscope - pseudo cscope which implements the line-oriented interface
+.SH SYNOPSIS
+\fBgtags-cscope\fP [-Cqv]
+.br
+.SH DESCRIPTION
+\fBGtags-cscope\fP is a pseudo cscope which implements the
+line-oriented interface of \fBcscope\fP(1).
+You can use this command for various clients instead of true cscope.
+.PP
+Since \fBgtags-cscope\fP is intended to make GLOBAL available
+through cscope interface, the output is not necessarily the same
+as cscope.
+.PP
+Command 2 is not available.
+This command is used as a internal command for context search.
+.SH OPTIONS
+The following options are available:
+.TP
+\fB-C\fP, \fB--ignore-case\fP
+Ignore letter case when searching.
+.TP
+\fB-q\fP, \fB--quiet\fP
+Quiet mode.
+.TP
+\fB-v\fP, \fB--verbose\fP
+Verbose mode.
+.SH EXAMPLES
+.nf
+	$ gtags-cscope
+	>> help
+	0<arg>: Find this C symbol
+	1<arg>: Find this definition
+	2<arg>: <NA>(This command is used by gtags-cscope.vim internally)
+	3<arg>: Find functions calling this function
+	4<arg>: Find this text string
+	6<arg>: Find this egrep pattern
+	7<arg>: Find this file
+	8<arg>: Find files #including this file
+	c: Toggle ignore/use letter case
+	r: Rebuild the database
+	q: Quit the session
+	h: Show help
+	>> 1main
+	cscope: 9 lines
+	global/global.c main 158 main(int argc, char **argv)
+	gozilla/gozilla.c main 155 main(int argc, char **argv)
+	gtags-parser/gctags.c main 158 main(int argc, char **argv)
+	gtags-cscope/gtags-cscope.c main 115 main(int argc, char **argv)
+	gtags/gtags.c main 150 main(int argc, char **argv)
+	htags-refkit/htags_path2url.c main 281 main(int argc, char **argv)
+	htags/htags.c main 1400 main(int argc, char **argv)
+	libglibc/getopt.c main 704 main (argc, argv)
+	libglibc/getopt1.c main 93 main (argc, argv)
+	>> q
+	$ _
+.fi
+.SH DIAGNOSTICS
+\fBGtags-cscope\fP exits with a non 0 value if an error occurred, 0 otherwise.
+.SH "SEE ALSO"
+\fBcscope\fP(1),
+\fBgtags\fP(1),
+\fBglobal\fP(1),
+\fBhtags\fP(1).
+.PP
+GNU GLOBAL source code tag system
+.br
+(http://www.gnu.org/software/global/).
+.SH BUG
+The second field of the output is almost <unknown> since
+GLOBAL doesn't recognize it.
+Command 2 (Find functions called by this function) is not implemented.
+.SH AUTHOR
+Shigio YAMAGUCHI.
+.SH HISTORY
+The \fBgtags-cscope\fP command appeared in 2006.

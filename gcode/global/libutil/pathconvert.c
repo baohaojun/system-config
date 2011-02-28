@@ -42,6 +42,7 @@
 
 static unsigned char encode[256];
 static int encoding;
+static int newline = '\n';
 
 #define required_encode(c) encode[(unsigned char)c]
 /*
@@ -62,6 +63,14 @@ set_encode_chars(const unsigned char *chars)
 	}
 	/* '%' is always encoded when encode is enable. */
 	encode['%'] = 1;
+}
+/*
+ * set_print0: change newline to '\0'.
+ */
+void
+set_print0()
+{
+	newline = '\0';
 }
 #define outofrange(c)	(c < '0' || c > 'f')
 #define h2int(c) (c >= 'a' ? c - 'a' : c - '0')
@@ -322,7 +331,7 @@ convert_put(CONVERT *cv, const char *ctags_x)
 	default:
 		die("unknown format type.");
 	}
-	(void)fputc('\n', cv->op);
+	(void)fputc(newline, cv->op);
 }
 /*
  * convert_put_path: convert path into relative or absolute and print.
@@ -336,7 +345,7 @@ convert_put_path(CONVERT *cv, const char *path)
 	if (cv->format != FORMAT_PATH)
 		die("convert_put_path: internal error.");
 	fputs(convert_pathname(cv, path), cv->op);
-	(void)fputc('\n', cv->op);
+	(void)fputc(newline, cv->op);
 }
 /*
  * convert_put_using: convert path into relative or absolute and print.
@@ -396,7 +405,7 @@ convert_put_using(CONVERT *cv, const char *tag, const char *path, int lineno, co
 	default:
 		die("unknown format type.");
 	}
-	(void)fputc('\n', cv->op);
+	(void)fputc(newline, cv->op);
 }
 void
 convert_close(CONVERT *cv)
