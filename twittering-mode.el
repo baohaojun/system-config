@@ -7711,7 +7711,8 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 
 (defun twittering-is-uploading-file-p (parameters)
   "Check whether there is a pair '(\"image\" . \"@...\") in PARAMETERS."
-  (string-match "image=\\`@\\([^;&]+\\)" parameters))
+  (when parameters
+    (string-match "image=\\`@\\([^;&]+\\)" parameters)))
 
   ;; (some (lambda (pair)
   ;;         (and (string= (car pair) "image")
