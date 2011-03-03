@@ -9067,21 +9067,20 @@ string.")
         (uri (get-text-property (point) 'uri))
         (spec (get-text-property (point) 'source-spec))
         (screen-name-in-text
-         (get-text-property (point) 'screen-name-in-text)))
+         (get-text-property (point) 'screen-name-in-text))
+	(send-message (lambda (name)
+			(funcall twittering-update-status-function
+				 (if (twittering-timeline-spec-direct-messages-p spec)
+				     (concat "d " name " ")
+				   (concat "@" name " "))
+				 id name spec))))
+			
     (cond (screen-name-in-text
-           (funcall twittering-update-status-function
-                    (if (twittering-timeline-spec-direct-messages-p spec)
-                        nil
-                      (concat "@" screen-name-in-text " "))
-                    id screen-name-in-text spec))
+	   (funcall send-message screen-name-in-text))
           (uri
            (browse-url uri))
           (username
-           (funcall twittering-update-status-function
-                    (if (twittering-timeline-spec-direct-messages-p spec)
-                        nil
-                      (concat "@" username " "))
-                    id username spec)))))
+	   (funcall send-message username)))))
 
 (defun twittering-view-user-page ()
   (interactive)
