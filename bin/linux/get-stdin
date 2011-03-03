@@ -5,6 +5,7 @@ test $# = 0
 
 if tty >/dev/null 2>&1; then
     tmp=/tmp/`basename $0`.$$
+    touch $tmp
     edit-wait $tmp >/dev/null 2>&1
     cat $tmp
     rm $tmp

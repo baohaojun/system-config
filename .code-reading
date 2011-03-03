@@ -414,19 +414,3 @@ pinmux group怎么定义
                 ...
                 .funcs = {                  \
     =>              TEGRA_MUX_ ## f0,           \
-
-****************
-这个好像会把所有硬件模块的pinmux都设一遍。可能也包括kbc。需要查一下
-
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/common/nvrm_pinmux.c:239:             (p->pfnSetPinMuxCtl)(hDevice, *ModulePrograms, *OdmConfigs);
-        static void NvRmPrivApplyAllModuleTypePinMuxes(
-            NvRmDeviceHandle hDevice,
-            NvU32 Module,
-            NvBool ApplyReset,
-            NvBool ApplyActual)
-        {
-            ...
-            {
-                ...
-                {
-    =>              (p->pfnSetPinMuxCtl)(hDevice, *ModulePrograms, *OdmConfigs);

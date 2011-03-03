@@ -27,4 +27,4 @@ Issue: $ticket
 `for x in ${reviewer[@]}; do echo  Reviewed-by: $x; done`
 EOF
 )"
-git log -1|jira-add-comment $ticket
+(echo In repo: `rfa . 'echo $REPO_PATH'`; echo; git log -1)|jira-add-comment $ticket
