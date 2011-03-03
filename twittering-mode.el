@@ -5798,6 +5798,10 @@ image are displayed."
   (let ((twittering-convert-fix-size nil))
     (twittering-make-icon-string beg end image-url sync)))
 
+(defvar twittering-image-height-threshold 40
+  "For images whose height is bigger than this, we will show it in a separate
+image buffer during `twittering-toggle-thumbnail'. ")
+
 (defun twittering-toggle-thumbnail (thumbnail-pic bmiddle-pic &optional initial)
   (let ((uri (get-text-property (point) 'uri))
         next-uri)
@@ -5809,28 +5813,39 @@ image are displayed."
             (setq next-uri thumbnail-pic)
           (setq next-uri bmiddle-pic)))
 
-      (let ((s (twittering-make-original-icon-string nil nil uri (not initial)))
-	    (common-properties (twittering-get-common-properties (point))))
-        (add-text-properties 0 (length s)
-                             `(,@common-properties
-			       mouse-face 
-                               highlight 
-                               uri ,next-uri
-                               keymap
-                               ,(let ((map (make-sparse-keymap))
-                                      (func `(lambda ()
-                                               (interactive)
-                                               (twittering-toggle-thumbnail ,uri ,next-uri))))
-                                  (define-key map (kbd "<mouse-1>") func)
-                                  (define-key map (kbd "RET") func)
-                                  map))
-                             s)
-        (if initial
-            s
-          (let ((inhibit-read-only t))
-            (save-excursion
-              (delete-char (length s))
-              (insert s))))))))
+      (let* ((s (twittering-make-original-icon-string nil nil uri (not initial)))
+             (image (and s (get-text-property 0 'display s)))
+             (height (and image (cdr (image-size image))))
+             (common-properties (twittering-get-common-properties (point))))
+        (if (and height (> height twittering-image-height-threshold))
+            (progn
+              (switch-to-buffer "*twmode-image*")
+              (let ((inhibit-read-only t))
+                (erase-buffer)
+                (insert s)
+                (unless (eq major-mode 'image-mode)
+                  (image-mode)))
+              (setq buffer-read-only t))
+          (add-text-properties 0 (length s)
+                               `(,@common-properties
+                                 mouse-face 
+                                 highlight 
+                                 uri ,next-uri
+                                 keymap
+                                 ,(let ((map (make-sparse-keymap))
+                                        (func `(lambda ()
+                                                 (interactive)
+                                                 (twittering-toggle-thumbnail ,uri ,next-uri))))
+                                    (define-key map (kbd "<mouse-1>") func)
+                                    (define-key map (kbd "RET") func)
+                                    map))
+                               s)
+          (if initial
+              s
+            (let ((inhibit-read-only t))
+              (save-excursion
+                (delete-char (length s))
+                (insert s)))))))))
 
 (defun twittering-http-get-simple-sentinel (proc status connection-info
 						 header-info 
