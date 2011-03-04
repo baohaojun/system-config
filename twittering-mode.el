@@ -6699,9 +6699,9 @@ following symbols;
     ("T" .
      (let ((s (if (and twittering-icon-mode window-system)
                   (let ((thumbnail-pic (assqref 'thumbnail-pic ,status-sym))
-                        (bmiddle-pic (assqref 'bmiddle-pic ,status-sym)))
+                        (original-pic (assqref 'original-pic ,status-sym)))
                     (when thumbnail-pic
-                      (twittering-toggle-thumbnail thumbnail-pic bmiddle-pic t)))
+                      (twittering-toggle-thumbnail thumbnail-pic original-pic t)))
                 (assqref 'original-pic ,status-sym))))
        (when s
          (twittering-make-fontified-tweet-text
