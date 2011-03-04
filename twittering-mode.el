@@ -304,8 +304,8 @@ nil -- The account have not been authorized yet.
 queried -- The authorization has been queried, but not finished yet.
 authorized -- The account has been authorized.")
 
-(defun twittering-get-account-authorization ()
-  (cadr (assq (twittering-extract-service)
+(defun twittering-get-account-authorization (&optional service)
+  (cadr (assq (or service (twittering-extract-service))
 	      twittering-account-authorization)))
 
 (defun twittering-update-account-authorization (auth)
@@ -2999,7 +2999,8 @@ like following:
                 sym)
                (t
                 nil)))))
-        loaded-alist)))))
+        loaded-alist)))
+    (message "The authorized token is loaded.")))
 
 (defun twittering-load-private-info-with-guide ()
   (let ((str (concat
@@ -3017,7 +3018,8 @@ like following:
                                (/ str-height 2)))))
         (insert (make-string height ?\n) str)
         (set-buffer-modified-p nil)
-        (twittering-load-private-info)))))
+        (twittering-load-private-info)))
+    (setq twittering-private-info-file-loaded-p t)))
 
 (defun twittering-save-private-info ()
   (let* ((obj (mapcar (lambda (sym)
@@ -4700,182 +4702,164 @@ If `twittering-password' is nil, read it from the minibuffer."
 (defvar twittering-private-info-file-loaded-p nil)
 
 (defun twittering-verify-credentials ()
-  (cond
-   ((or (twittering-account-authorized-p)
-        (twittering-account-authorization-queried-p))
-    nil)
-   ((and (memq (twittering-get-accounts 'auth) '(oauth xauth))
-         (or (null (twittering-lookup-service-method-table 'oauth-consumer-key))
-             (null (twittering-lookup-service-method-table 'oauth-consumer-secret))))
-    (message "Consumer for OAuth is not specified.")
-    nil)
-   ((and twittering-use-master-password
-         (not (twittering-capable-of-encryption-p)))
-    (message "You need GnuPG and (EasyPG or alpaca.el) for master password!")
-    nil)
+  (let ((service (twittering-extract-service)))
+    (cond
+     ((or (twittering-account-authorized-p)
+	  (twittering-account-authorization-queried-p))
+      nil)
+     ((and (memq (twittering-get-accounts 'auth) '(oauth xauth))
+	   (or (null (twittering-lookup-service-method-table 'oauth-consumer-key))
+	       (null (twittering-lookup-service-method-table 'oauth-consumer-secret))))
+      (message "Consumer for OAuth is not specified."))
+     ((and twittering-use-master-password
+	   (not (twittering-capable-of-encryption-p)))
+      (message "You need GnuPG and (EasyPG or alpaca.el) for master password!"))
 
-   ((memq (twittering-get-accounts 'auth) '(oauth xauth))
-    (let ((ok nil))
-      (when (and (not twittering-private-info-file-loaded-p) ; file not yet loaded
-                 twittering-use-master-password
-                 (twittering-capable-of-encryption-p)
-                 (file-exists-p twittering-private-info-file))
-        (setq twittering-private-info-file-loaded-p t)
-        (when (and (twittering-load-private-info-with-guide)
-                   (twittering-has-oauth-access-token-p))
-          (message "The authorized token is loaded.")
-          (twittering-update-account-authorization 'queried)
-          (let ((proc
-                 (twittering-call-api
-                  'verify-credentials
-                  `((sentinel
-                     . twittering-http-get-verify-credentials-sentinel)
-                    (clean-up-sentinel
-                     . twittering-http-get-verify-credentials-clean-up-sentinel))
-                  `(,(if (eq (twittering-extract-service) 'sina)
-                        `(user_id . ,(assocref "user_id" (twittering-lookup-oauth-access-token-alist)))
-                      `(username . ,(assocref "screen_name" (twittering-lookup-oauth-access-token-alist))))
-                    (password . nil)
-		    (service . ,(twittering-extract-service))))))
-            (cond
-             ((null proc)
-              (twittering-update-account-authorization nil)
-              (message "Authorization failed. Type M-x twit to retry.")
-              (twittering-update-oauth-access-token-alist '()))
-             (t
-              ;; wait for verification to finish.
-              (while (twittering-account-authorization-queried-p)
-                (sit-for 0.1))
-              (setq ok t))))))
+     (t
+      (case (twittering-get-accounts 'auth)
+	((oauth xauth)
+	 (let ((ok nil))
+	   (when (and twittering-use-master-password
+		      (twittering-capable-of-encryption-p)
+		      (not twittering-private-info-file-loaded-p)
+		      (file-exists-p twittering-private-info-file)
+		      (twittering-load-private-info-with-guide)
+		      (twittering-has-oauth-access-token-p))
+	     (twittering-update-account-authorization 'queried)
+	     (let* ((oauth-alist (twittering-lookup-oauth-access-token-alist))
+		    (proc
+		     (twittering-call-api
+		      'verify-credentials
+		      `((sentinel
+			 . twittering-http-get-verify-credentials-sentinel)
+			(clean-up-sentinel
+			 . twittering-http-get-verify-credentials-clean-up-sentinel))
+		      `(,(if (eq service 'sina)
+			     `(user_id . ,(assocref "user_id" oauth-alist))
+			   `(username . ,(assocref "screen_name" oauth-alist)))
+			(password . nil)
+			(service . ,service)))))
+	       (cond
+		((null proc)
+		 (twittering-update-account-authorization nil)
+		 (twittering-update-oauth-access-token-alist '())
+		 (message "Authorization failed. Type M-x twit to retry."))
+		(t
+		 ;; wait for verification to finish.
+		 (while (twittering-account-authorization-queried-p)
+		   (sit-for 0.1))
+		 (setq ok t)))))
 
-      (unless ok
-        ;; (message "Failed to load an authorized token from \"%s\".  Renewing token..."
-        ;;          twittering-private-info-file)
-        ;; (sit-for 0.5))
-        (setq ok (twittering-has-oauth-access-token-p))
-        (cond
-         ((eq (twittering-get-accounts 'auth) 'oauth)
-          (unless ok
-            (let* ((scheme (if twittering-oauth-use-ssl
-                               "https"
-                             "http"))
-                   (request-token-url
-                    (concat scheme (twittering-lookup-service-method-table
-                                    'oauth-request-token-url-without-scheme)))
-                   (access-token-url
-                    (concat scheme (twittering-lookup-service-method-table
-                                    'oauth-access-token-url-without-scheme)))
-                   (token-alist
-                    (twittering-oauth-get-access-token
-                     request-token-url
-                     (lambda (token)
-                       (concat scheme
-                               (twittering-lookup-service-method-table
-                                'oauth-authorization-url-base-without-scheme)
-                               token))
-                     access-token-url
-                     (twittering-lookup-service-method-table 'oauth-consumer-key)
-                     (twittering-lookup-service-method-table 'oauth-consumer-secret)
-                     "twittering-mode")))
-              (cond
-               ((and (assoc "oauth_token" token-alist)
-                     (assoc "oauth_token_secret" token-alist)
-                     (or (assoc "screen_name" token-alist)
-                         (assoc "user_id" token-alist)))
-                (let ((username (cdr (or (assoc "screen_name" token-alist)
-                                         (assoc "user_id" token-alist)))))
-                  (twittering-update-oauth-access-token-alist token-alist)
-                  (setq twittering-username username)
-                  ;; (twittering-update-account-authorization 'authorized)
-                  ;; (twittering-start)
-                  (setq ok t)
-                  (message "Authorization for the account \"%s\" succeeded."
-                           username)
-                  (when (and twittering-use-master-password
-                             (twittering-capable-of-encryption-p))
-                    ;; Only save when we authenticate all enabled services.
-                    (when (>= (length twittering-oauth-access-token-alist)
-                              (length twittering-enabled-services))
-                      ;; (when (and (file-exists-p twittering-private-info-file)
-                      ;;                  (not (y-or-n-p (format "Delete previous `%s' first? "
-                      ;;                                         twittering-private-info-file))))
-                      ;;         (error "File `%s' already exists, try removing it first"
-                      ;;                twittering-private-info-file))
-                      (twittering-save-private-info-with-guide)))))
-               (t
-                (message "Authorization via OAuth failed. Type M-x twit to retry.")))))
+	   (unless ok
+	     ;; (message "Failed to load an authorized token from \"%s\".  Renewing token..."
+	     ;;          twittering-private-info-file)
+	     ;; (sit-for 0.5))
+	     (setq ok (twittering-has-oauth-access-token-p))
+	     (let* ((scheme (if twittering-oauth-use-ssl "https" "http"))
+		    (access-token-url (concat scheme 
+					      (twittering-lookup-service-method-table
+					       'oauth-access-token-url-without-scheme)))
+		    (consumer-key (twittering-lookup-service-method-table
+				   'oauth-consumer-key))
+		    (consumer-secret (twittering-lookup-service-method-table
+				      'oauth-consumer-secret)))
 
-          (when ok
-            (twittering-update-account-authorization 'authorized)
-            (twittering-start)))
+	       (unless ok
+		 (case (twittering-get-accounts 'auth)
+		   ((oauth)
+		    (let* ((request-token-url (concat scheme
+						      (twittering-lookup-service-method-table
+						       'oauth-request-token-url-without-scheme)))
+			   (token-alist (twittering-oauth-get-access-token
+					 request-token-url
+					 (lambda (token)
+					   (concat scheme
+						   (twittering-lookup-service-method-table
+						    'oauth-authorization-url-base-without-scheme)
+						   token))
+					 access-token-url
+					 consumer-key
+					 consumer-secret
+					 "twittering-mode")))
+		      (when (and (assoc "oauth_token"        token-alist)
+				 (assoc "oauth_token_secret" token-alist)
+				 (or (assoc "screen_name" token-alist)
+				     (assoc "user_id" token-alist)))
+			(twittering-update-oauth-access-token-alist token-alist)
+			(setq ok t))))
 
-         ;; TODO, handle you later (xwl)
-         ((eq (twittering-get-accounts 'auth) 'xauth)
-          (let* ((account-info (twittering-prepare-account-info))
-                 (scheme (if twittering-oauth-use-ssl
-                             "https"
-                           "http"))
-                 (access-token-url
-                  (concat scheme (twittering-lookup-service-method-table
-                                  'oauth-access-token-url-without-scheme)))
-                 (token-alist
-                  (twittering-xauth-get-access-token
-                   access-token-url
-                   (twittering-lookup-service-method-table 'oauth-consumer-key) (twittering-lookup-service-method-table 'oauth-consumer-secret)
-                   (car account-info)
-                   (cdr account-info))))
-            ;; Dispose of password as recommended by Twitter.
-            ;; http://dev.twitter.com/pages/xauth
-            (setcdr account-info nil)
-            (cond
-             ((and token-alist
-                   (assoc "oauth_token" token-alist)
-                   (assoc "oauth_token_secret" token-alist))
-              ;; set `twittering-username' only if the account is valid.
-              (setq twittering-username (car account-info))
-              (twittering-update-oauth-access-token-alist token-alist)
-              (twittering-update-account-authorization 'authorized)
-              (message "Authorization for the account \"%s\" succeeded."
-                       (twittering-get-accounts 'username))
-              (when (and twittering-use-master-password
-                         (twittering-capable-of-encryption-p)
-                         (not (file-exists-p twittering-private-info-file)))
-                (twittering-save-private-info-with-guide))
-              (twittering-start))
-             (t
-              (message "Authorization via xAuth failed. Type M-x twit to retry.")))))))))
+		   ((xauth)
+		    (let* ((account-info (twittering-prepare-account-info))
+			   (token-alist (twittering-xauth-get-access-token
+					 access-token-url
+					 consumer-key
+					 consumer-secret
+					 (car account-info)
+					 (cdr account-info))))
+		      ;; Dispose of password as recommended by Twitter.
+		      ;; http://dev.twitter.com/pages/xauth
+		      (setcdr account-info nil)
+		      (when (and token-alist
+				 (assoc "oauth_token" token-alist)
+				 (assoc "oauth_token_secret" token-alist))
+			(twittering-update-oauth-access-token-alist token-alist)
+			(setq ok t))))))
 
-   ((eq (twittering-get-accounts 'auth) 'basic)
-    (twittering-update-account-authorization 'queried)
-    (let* ((account-info (twittering-prepare-account-info))
-           ;; Bind account information locally to ensure that
-           ;; the variables are reset when the verification fails.
-           (twittering-username (car account-info))
-           (twittering-password (cdr account-info))
-           (proc
-            (twittering-call-api
-             'verify-credentials
-             `((sentinel . twittering-http-get-verify-credentials-sentinel)
-               (clean-up-sentinel
-                . twittering-http-get-verify-credentials-clean-up-sentinel))
-             `((username . ,(car account-info))
-               (password . ,(cdr account-info))
-	       (service . ,(twittering-extract-service))))))
-      (cond
-       ((null proc)
-        (twittering-update-account-authorization nil)
-        (message "Authorization for the account \"%s\" failed. Type M-x twit to retry."
-                 (car account-info))
-        (setq twittering-username nil)
-        (setq twittering-password nil))
-       (t
-        ;; wait for verification to finish.
-        (while (twittering-account-authorization-queried-p)
-          (sit-for 0.1))))))
-   (t
-    (message "%s is invalid as an authorization method."
-             (twittering-get-accounts 'auth))))
-  (twittering-account-authorized-p))
+	       (if (not ok)
+		   (message "Authorization `%s' via OAuth failed. Type M-x twit to retry."
+			    service)
+		 (twittering-update-account-authorization 'authorized)
+		 (message "Authorization for \"%s\" succeeded." service)
+
+		 ;; Only save when we authenticate all enabled services and have updated
+		 ;; anyone of them.
+		 (when (and twittering-use-master-password
+			    (twittering-capable-of-encryption-p)
+			    (>= (length twittering-oauth-access-token-alist)
+				(length twittering-enabled-services))
+			    (every (lambda (service)
+				     (eq (twittering-get-account-authorization service)
+					 'authorized))
+				   (remove nil
+					   (mapcar (lambda (account)
+						     (when (memq (car (assqref 'auth (cdr account)))
+								 '(oauth xauth))
+						       (car account)))
+						   twittering-accounts))))
+
+		   ;; (when (and (file-exists-p twittering-private-info-file)
+		   ;;                  (not (y-or-n-p (format "Delete previous `%s' first? "
+		   ;;                                         twittering-private-info-file))))
+		   ;;         (error "File `%s' already exists, try removing it first"
+		   ;;                twittering-private-info-file))
+		   (twittering-save-private-info-with-guide))
+	    
+		 (twittering-start))))))
+
+	((basic)
+	 (twittering-update-account-authorization 'queried)
+	 (let* ((account-info (twittering-prepare-account-info))
+		(proc
+		 (twittering-call-api
+		  'verify-credentials
+		  `((sentinel . twittering-http-get-verify-credentials-sentinel)
+		    (clean-up-sentinel
+		     . twittering-http-get-verify-credentials-clean-up-sentinel))
+		  `((username . ,(car account-info))
+		    (password . ,(cdr account-info))
+		    (service  . ,service)))))
+	   (cond
+	    ((null proc)
+	     (twittering-update-account-authorization nil)
+	     (message "Authorization for \"%s\" failed. Type M-x twit to retry."
+		      service))
+	    (t
+	     ;; wait for verification to finish.
+	     (while (twittering-account-authorization-queried-p)
+	       (sit-for 0.1))))))
+	(t
+	 (message "%s is invalid as an authorization method."
+		  (twittering-get-accounts 'auth))))))))
 
 (defun twittering-http-get-verify-credentials-sentinel (proc status connection-info header-info)
   (let ((status-line (assqref 'status-line header-info))
@@ -7139,18 +7123,19 @@ rendered at POS, return nil."
 
     (let* ((status (or (assqref 'author-status (car timeline-data))
                        (car timeline-data)))
-           (user-name                  (assqref 'user-name             status))
-           (user-screen-name          (assqref 'user-screen-name      status))
-           (user-id                  (assqref 'user-id               status))
-           (user-description          (assqref 'user-description      status))
-           (user-location          (assqref 'user-location         status))
-           (user-url                  (assqref 'user-url              status))
-           (user-followers-count  (assqref 'user-followers-count  status))
-           (user-friends-count          (assqref 'user-friends-count    status))
-           (user-statuses-count          (assqref 'user-statuses-count   status))
-           (user-favourites-count (assqref 'user-favourites-count status))
-           (user-created-at          (assqref 'user-created-at       status))
 
+	   (user-name             (assqref 'user-name             status))
+	   (user-screen-name      (assqref 'user-screen-name      status))
+	   (user-id               (assqref 'user-id               status))
+	   (user-description      (assqref 'user-description      status))
+	   (user-location         (assqref 'user-location         status))
+	   (user-url              (assqref 'user-url              status))
+	   (user-followers-count  (assqref 'user-followers-count  status))
+	   (user-friends-count    (assqref 'user-friends-count    status))
+	   (user-statuses-count   (assqref 'user-statuses-count   status))
+	   (user-favourites-count (assqref 'user-favourites-count status))
+	   (user-created-at       (assqref 'user-created-at       status))
+           
            (u (substring-no-properties
                (if (eq (twittering-extract-service) 'sina) user-id user-screen-name)))
 
@@ -7238,8 +7223,8 @@ rendered at POS, return nil."
              (format "\nJoined on %s.\n"
                      (mapconcat (lambda (i)
                                   (aref (timezone-parse-date user-created-at) i))
-                              '(0 1 2)
-                              "-"))))
+				'(0 1 2)
+				"-"))))
 
            ;; Note, twitter provides two sizes of icon:
            ;;   1) 48x48 avatar
