@@ -5782,9 +5782,16 @@ image are displayed."
   (let ((twittering-convert-fix-size nil))
     (twittering-make-icon-string beg end image-url sync)))
 
-(defvar twittering-image-height-threshold 40
+(defcustom twittering-image-height-threshold 40
   "For images whose height is bigger than this, we will show it in a separate
-image buffer during `twittering-toggle-thumbnail'. ")
+image buffer during `twittering-toggle-thumbnail'. "
+  :type 'integer
+  :group 'twittering)
+
+(defcustom twittering-image-external-viewer-command ""
+  "External command for viewing image. "
+  :type 'string
+  :group 'twittering)
 
 (defun twittering-toggle-thumbnail (thumbnail-pic bmiddle-pic &optional initial)
   (let ((uri (get-text-property (point) 'uri))
@@ -5800,16 +5807,24 @@ image buffer during `twittering-toggle-thumbnail'. ")
       (let* ((s (twittering-make-original-icon-string nil nil uri (not initial)))
              (image (and s (get-text-property 0 'display s)))
              (height (and image (cdr (image-size image))))
+	     (image-data (and image (plist-get (cdr image) :data)))
              (common-properties (twittering-get-common-properties (point))))
         (if (and height (> height twittering-image-height-threshold))
-            (progn
-              (switch-to-buffer "*twmode-image*")
-              (let ((inhibit-read-only t))
-                (erase-buffer)
-                (insert s)
-                (unless (eq major-mode 'image-mode)
-                  (image-mode)))
-              (setq buffer-read-only t))
+	    (if (and twittering-image-external-viewer-command
+		     (not (string= twittering-image-external-viewer-command "")))
+		(let ((f "~/.emacs.d/twmode-image")
+		      (coding-system-for-write 'raw-text))
+		  (with-temp-file f
+		    (insert image-data))
+		  (let ((cmd (format "%s %s" twittering-image-external-viewer-command f)))
+		    (start-process-shell-command cmd nil cmd)))
+	      (switch-to-buffer "*twmode-image*")
+	      (let ((inhibit-read-only t))
+		(erase-buffer)
+		(insert image-data)
+		(unless (eq major-mode 'image-mode)
+		  (image-mode)))
+	      (setq buffer-read-only t))
           (add-text-properties 0 (length s)
                                `(,@common-properties
                                  mouse-face 
