@@ -3987,20 +3987,15 @@ Statuses are stored in ascending-order with respect to their IDs."
      (mapcar
       (lambda (status)
         (let ((id (assqref 'id status))
+	      (is-retweeting (assqref 'is-retweeting status))
               (retweeted-id (assqref 'retweeted-id status)))
-          (cond
-           ((twittering-timeline-spec-user-methods-p spec)
-            status)
-           ((not retweeted-id)
-            ;; `status' is not a retweet.
-            status)
-           ((and retweeted-id
-                 (twittering-status-id=
-                  id (gethash retweeted-id referring-id-table)))
-            ;; `status' is the first retweet.
-            status)
-           (t
-            nil))))
+	  (when (or (twittering-timeline-spec-user-methods-p spec)
+		    (if is-retweeting
+			(and (twittering-status-id=
+			      id (gethash retweeted-id referring-id-table)))
+		      t)
+		    (eq (twittering-extract-service spec) 'sina))
+            status)))
       timeline-data))))
 
 (defun twittering-timeline-data-is-previous-p (timeline-data)
