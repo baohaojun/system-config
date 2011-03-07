@@ -1,4 +1,4 @@
-0,59/5 * * * * offlineimap >/dev/null 2>&1
+0,59/5 * * * * offlineimap
 0 0 * * * ~/bin/linux/cron-code-reading
 0 * * * * ~/bin/linux/backup_where
 
