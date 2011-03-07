@@ -3044,7 +3044,8 @@ like following:
                                (/ str-height 2)))))
         (insert (make-string height ?\n) str)
         (set-buffer-modified-p nil)
-        (twittering-save-private-info)))))
+        (twittering-save-private-info))))
+  (setq twittering-private-info-file-dirty nil))
 
 (defun twittering-capable-of-encryption-p ()
   (and (or (require 'epa nil t) (require 'alpaca nil t))
@@ -4695,6 +4696,7 @@ If `twittering-password' is nil, read it from the minibuffer."
     (and (every pred required-entries) (some pred any-entries))))
 
 (defvar twittering-private-info-file-loaded-p nil)
+(defvar twittering-private-info-file-dirty nil)
 
 (defun twittering-verify-credentials ()
   (let ((service (twittering-extract-service)))
@@ -4714,6 +4716,7 @@ If `twittering-password' is nil, read it from the minibuffer."
       (case (twittering-get-accounts 'auth)
 	((oauth xauth)
 	 (let ((ok nil))
+	   ;; 1. Read token from saved file
 	   (when (and twittering-use-master-password
 		      (twittering-capable-of-encryption-p)
 		      (not twittering-private-info-file-loaded-p)
@@ -4738,18 +4741,19 @@ If `twittering-password' is nil, read it from the minibuffer."
 		((null proc)
 		 (twittering-update-account-authorization nil)
 		 (twittering-update-oauth-access-token-alist '())
-		 (message "Authorization failed. Type M-x twit to retry."))
+		 (message "Authorization via saved auth info failed. "))
 		(t
 		 ;; wait for verification to finish.
 		 (while (twittering-account-authorization-queried-p)
 		   (sit-for 0.1))
 		 (setq ok t)))))
 
+	   ;; 2. Maybe info file has already been read. 
+	   (unless ok		       
+	     (setq ok (twittering-has-oauth-access-token-p)))
+
+	   ;; 3. Get/Renew token
 	   (unless ok
-	     ;; (message "Failed to load an authorized token from \"%s\".  Renewing token..."
-	     ;;          twittering-private-info-file)
-	     ;; (sit-for 0.5))
-	     (setq ok (twittering-has-oauth-access-token-p))
 	     (let* ((scheme (if twittering-oauth-use-ssl "https" "http"))
 		    (access-token-url (concat scheme 
 					      (twittering-lookup-service-method-table
@@ -4759,77 +4763,73 @@ If `twittering-password' is nil, read it from the minibuffer."
 		    (consumer-secret (twittering-lookup-service-method-table
 				      'oauth-consumer-secret)))
 
-	       (unless ok
-		 (case (twittering-get-accounts 'auth)
-		   ((oauth)
-		    (let* ((request-token-url (concat scheme
-						      (twittering-lookup-service-method-table
-						       'oauth-request-token-url-without-scheme)))
-			   (token-alist (twittering-oauth-get-access-token
-					 request-token-url
-					 (lambda (token)
-					   (concat scheme
-						   (twittering-lookup-service-method-table
-						    'oauth-authorization-url-base-without-scheme)
-						   token))
-					 access-token-url
-					 consumer-key
-					 consumer-secret
-					 "twittering-mode")))
-		      (when (and (assoc "oauth_token"        token-alist)
-				 (assoc "oauth_token_secret" token-alist)
-				 (or (assoc "screen_name" token-alist)
-				     (assoc "user_id" token-alist)))
-			(twittering-update-oauth-access-token-alist token-alist)
-			(setq ok t))))
+	       (case (twittering-get-accounts 'auth)
+		 ((oauth)
+		  (let* ((request-token-url (concat scheme
+						    (twittering-lookup-service-method-table
+						     'oauth-request-token-url-without-scheme)))
+			 (token-alist (twittering-oauth-get-access-token
+				       request-token-url
+				       (lambda (token)
+					 (concat scheme
+						 (twittering-lookup-service-method-table
+						  'oauth-authorization-url-base-without-scheme)
+						 token))
+				       access-token-url
+				       consumer-key
+				       consumer-secret
+				       "twittering-mode")))
+		    (when (and (assoc "oauth_token"        token-alist)
+			       (assoc "oauth_token_secret" token-alist)
+			       (or (assoc "screen_name" token-alist)
+				   (assoc "user_id" token-alist)))
+		      (twittering-update-oauth-access-token-alist token-alist)
+		      (setq ok t))))
 
-		   ((xauth)
-		    (let* ((account-info (twittering-prepare-account-info))
-			   (token-alist (twittering-xauth-get-access-token
-					 access-token-url
-					 consumer-key
-					 consumer-secret
-					 (car account-info)
-					 (cdr account-info))))
-		      ;; Dispose of password as recommended by Twitter.
-		      ;; http://dev.twitter.com/pages/xauth
-		      (setcdr account-info nil)
-		      (when (and token-alist
-				 (assoc "oauth_token" token-alist)
-				 (assoc "oauth_token_secret" token-alist))
-			(twittering-update-oauth-access-token-alist token-alist)
-			(setq ok t))))))
+		 ((xauth)
+		  (let* ((account-info (twittering-prepare-account-info))
+			 (token-alist (twittering-xauth-get-access-token
+				       access-token-url
+				       consumer-key
+				       consumer-secret
+				       (car account-info)
+				       (cdr account-info))))
+		    ;; Dispose of password as recommended by Twitter.
+		    ;; http://dev.twitter.com/pages/xauth
+		    (setcdr account-info nil)
+		    (when (and token-alist
+			       (assoc "oauth_token" token-alist)
+			       (assoc "oauth_token_secret" token-alist))
+		      (twittering-update-oauth-access-token-alist token-alist)
+		      (setq ok t))))))
 
-	       (if (not ok)
-		   (message "Authorization `%s' via OAuth failed. Type M-x twit to retry."
-			    service)
-		 (twittering-update-account-authorization 'authorized)
-		 (message "Authorization for \"%s\" succeeded." service)
+	     (setq twittering-private-info-file-dirty t))
 
-		 ;; Only save when we authenticate all enabled services and have updated
-		 ;; anyone of them.
-		 (when (and twittering-use-master-password
-			    (twittering-capable-of-encryption-p)
-			    (>= (length twittering-oauth-access-token-alist)
-				(length twittering-enabled-services))
-			    (every (lambda (service)
-				     (eq (twittering-get-account-authorization service)
-					 'authorized))
-				   (remove nil
-					   (mapcar (lambda (account)
-						     (when (memq (car (assqref 'auth (cdr account)))
-								 '(oauth xauth))
-						       (car account)))
-						   twittering-accounts))))
-
-		   ;; (when (and (file-exists-p twittering-private-info-file)
-		   ;;                  (not (y-or-n-p (format "Delete previous `%s' first? "
-		   ;;                                         twittering-private-info-file))))
-		   ;;         (error "File `%s' already exists, try removing it first"
-		   ;;                twittering-private-info-file))
-		   (twittering-save-private-info-with-guide))
+	   ;; 4. Error, update info file or do nothing.
+	   (if (not ok)
+	       (error "Authorization `%s' via OAuth failed. Type M-x twit to retry."
+		      service)
+	     (twittering-update-account-authorization 'authorized)
+	     (message "Authorization for \"%s\" succeeded." service)
+	     ;; Only save when we authenticate all enabled services and have updated
+	     ;; anyone of them.
+	     (when (and twittering-use-master-password
+			(twittering-capable-of-encryption-p)
+			twittering-private-info-file-dirty
+			(>= (length twittering-oauth-access-token-alist)
+			    (length twittering-enabled-services))
+			(every (lambda (service)
+				 (eq (twittering-get-account-authorization service)
+				     'authorized))
+			       (remove nil
+				       (mapcar (lambda (account)
+						 (when (memq (car (assqref 'auth (cdr account)))
+							     '(oauth xauth))
+						   (car account)))
+					       twittering-accounts))))
+	       (twittering-save-private-info-with-guide))
 	    
-		 (twittering-start))))))
+	     (twittering-start))))
 
 	((basic)
 	 (twittering-update-account-authorization 'queried)
@@ -5807,8 +5807,10 @@ image buffer during `twittering-toggle-thumbnail'. "
         (if (and height (> height twittering-image-height-threshold))
 	    (if (and twittering-image-external-viewer-command
 		     (not (string= twittering-image-external-viewer-command "")))
-		(let ((f "~/.emacs.d/twmode-image")
-		      (coding-system-for-write 'raw-text))
+		(let ((f (file-truename "~/.emacs.d/twmode-image"))
+		      (coding-system-for-write 'binary))
+		  (when (eq system-type 'windows-nt)
+		    (setq f (format "%s.%S" f (plist-get (cdr image) :type))))
 		  (with-temp-file f
 		    (insert image-data))
 		  (let ((cmd (format "%s %s" twittering-image-external-viewer-command f)))
