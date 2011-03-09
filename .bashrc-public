@@ -22,7 +22,6 @@ alias rm='rm -i'
 alias mkgtags='mkgtags -i -v'
 alias bcd=cd_beagle
 
-
 cd_beagle() 
 {
     dest=~/tmp/for-code-reading/`pwd`
