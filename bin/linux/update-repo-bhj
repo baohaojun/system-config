@@ -29,6 +29,10 @@ repo-switch -u git://android.git.kernel.org/platform/manifest.git -b gingerbread
 repo sync
 repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre
 repo sync
+repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre-p2
+repo sync
+repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre-gb-p2
+repo sync
 
 cd /home/git/android/linux-2.6.git
 git fetch origin 
