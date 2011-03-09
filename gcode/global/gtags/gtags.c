@@ -76,6 +76,7 @@ int show_config;
 char *gtagsconf;
 char *gtagslabel;
 int debug;
+int remove_lost;
 const char *config_name;
 const char *file_list;
 const char *dump_target;
@@ -133,6 +134,7 @@ static struct option const long_options[] = {
 	 */
 	/* flag value */
 	{"debug", no_argument, &debug, 1},
+	{"remove-lost", no_argument, &remove_lost, 1},
 	{"statistics", no_argument, &statistics, STATISTICS_STYLE_TABLE},
 	{"version", no_argument, &show_version, 1},
 	{"help", no_argument, &show_help, 1},
@@ -605,7 +607,11 @@ normal_update:
 		/*
 		 * make delete list.
 		 */
-		limit = gpath_nextkey();
+		if (remove_lost) {
+			limit = gpath_nextkey();
+		} else {
+			limit = 0;
+		}
 		for (id = 1; id < limit; id++) {
 			char fid[MAXFIDLEN];
 			int type;
