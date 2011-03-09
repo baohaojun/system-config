@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 . ~/.bashrc
-cd /home/git/android
+cd /android
 
 repo-switch -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b donut-x86
 repo sync
