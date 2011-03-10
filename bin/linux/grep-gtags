@@ -87,7 +87,7 @@ sub do_cscope($$$$) {
         chomp(my $last_gtags_time = `gtags --dump $gpath_path:./$_`);
         chomp(my $last_modify_time = `stat -c %Y ./$_`);
         if ($last_modify_time > $last_gtags_time or not $last_gtags_time) {
-            system("echo $_|gtags -i -f - $gtags_dir");
+            system("echo $_|gtags --gtagslabel=plugin-example -i -f - $gtags_dir");
         }
     }
 }
