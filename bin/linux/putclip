@@ -11,19 +11,21 @@ if test "$EMACS" = t; then
     (
         if test "$REMOTEIP" = ""; then
             prefix=""
+            arg_handler=echo
         else
             prefix="ssh $REMOTEIP"
+            arg_handler="printf %q"
             scp $FILE $REMOTEIP:$FILE
             rm $FILE
         fi
 
-        $prefix emacsclient --eval "$(printf %q "
+        $prefix emacsclient --eval "$($arg_handler "
 (let ((default-directory \"/tmp/\"))
 (view-file \"$FILE\")
 (kill-new (filter-buffer-substring (point-min) (point-max)))
 (View-quit))" )"
         $prefix rm $FILE
-    ) >/dev/null 2>&1
+    ) >/dev/null 2>&1&
 else 
     rm-last-nl|xclip -i -selection clipboard
     xclip -o -selection clipboard|xclip -i

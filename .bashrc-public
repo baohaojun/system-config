@@ -25,7 +25,7 @@ alias bcd=cd_beagle
 cd_beagle() 
 {
     dest=~/tmp/for-code-reading/`pwd`
-    while test ! -d "$dest"/.beagle -a "$dest" != / -a "$dest" != ""; do
+    while test ! -d "$dest"/.beagle -a ! -e "$dest"/GPATH -a "$dest" != / -a "$dest" != ""; do
         dest=${dest%/*};
     done
     if test "$dest" = / -o "$dest" = ""; then

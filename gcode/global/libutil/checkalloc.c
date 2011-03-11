@@ -25,6 +25,12 @@
 
 #include "checkalloc.h"
 #include "die.h"
+#ifdef DEBUG
+#include <assert.h>
+#else
+#define assert(e)
+#endif
+
 /*
  * Functions which allocate memory with check.
 */
@@ -75,4 +81,10 @@ check_strdup(const char *string)
 	char *p = check_malloc(strlen(string) + 1);
 	strcpy(p, string);
 	return p;
+}
+
+extern void check_free(void *const ptr)
+{
+	assert (ptr != NULL);
+	free (ptr);
 }

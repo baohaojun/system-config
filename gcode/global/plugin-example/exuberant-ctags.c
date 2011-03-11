@@ -248,6 +248,7 @@ parser(const struct parser_param *param)
 	/* Read output of ctags command. */
 	for (;;) {
 		ctags_x = get_line(param);
+		message("got ctags: %s", ctags_x);
 		if (ctags_x == NULL)
 			param->die("unexpected EOF.");
 		if (strcmp(ctags_x, TERMINATOR) == 0)

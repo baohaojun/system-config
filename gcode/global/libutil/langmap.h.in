@@ -27,6 +27,7 @@
 
 void setup_langmap(const char *);
 const char *decide_lang(const char *);
+const char *decide_lang_exuberant(const char *, const char*);
 void make_suffixes(const char *, STRBUF *);
 
 #endif

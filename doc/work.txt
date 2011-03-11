@@ -872,3 +872,5 @@ smbnetfs.conf: 必须加上workgroup的名字。
 	auth r889 WORKGROUP/bhj	password
 
 mirrorcyg.pl|mf-download.pl
+
+Tel. 010-64981756 ext. 849
