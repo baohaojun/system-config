@@ -369,7 +369,7 @@
                         (my-grep-command "grep-gtags -e pat")
                         (current-prefix-arg 4))
                     (nodup-ring-insert cscope-marker-ring (point-marker))
-                    (let ((file (buffer-file-name (current-buffer))))
+                    (let ((file (my-buffer-file-name (current-buffer))))
                       (if (file-remote-p file)
                           (let ((process-environment tramp-remote-process-environment))
                             (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))

@@ -68,19 +68,27 @@ sub do_cscope($$$$) {
 
     use String::Approx 'adistr';
     our $approx_dir;
-    my $redo_gtags_done = 0;
 
     if (not @matches or $local_private_only) {
         system("grep-gtags-private-ok", @ARGV_save);
         exit if $local_private_only;
     }
+
+    my $gpath_path = "$gtags_dir/GPATH";
+    my %update_path;
     for (sort {adistr($b, $approx_dir) <=> adistr($a, $approx_dir)} @matches) {
         m/(.*?) (.*?) (.*?) (.*)/;
         print "$code_dir/$1:$3: $4\n";
-        if (not $redo_gtags_done and -M "$code_dir/$1" < -M "$gtags_dir/cscope.files") {
-            system("cd `dirname $code_dir/$1`; mkgtags -i >/dev/null 2>&1");
-            $redo_gtags_done = 1;
-        }        
+        
+        $update_path{$1} = 1;
+    }
+    chdir ($code_dir) or die "Can not change to $code_dir";
+    for (keys %update_path) {
+        chomp(my $last_gtags_time = `gtags --dump $gpath_path:./$_`);
+        chomp(my $last_modify_time = `stat -c %Y ./$_`);
+        if ($last_modify_time > $last_gtags_time or not $last_gtags_time) {
+            system("echo $_|gtags --gtagslabel=plugin-example -i -f - $gtags_dir");
+        }
     }
 }
 
