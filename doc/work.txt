@@ -847,7 +847,8 @@ if (m/^c0:\s*$re/) {
 dos2unix *.txt
 diff 1.txt 2.txt ||break;
 done
-adb shell i2cset  -y 0 0x5c 0x37 3
+adb shell i2cset -y 0x0 0x5c 0x37 3
+adb shell i2cset -y 0x0 0x41 0xcc 3
 
 git difftool -x kc_diff tegra-10.9.7 ./arch/arm/configs/tegra_ventana_android_defconfig|less
 (cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && kconfig tegra_ventana_android_defconfig && krebuild -j8 -l8)

@@ -314,18 +314,8 @@ main(int argc, char **argv)
 		const char *dat = 0;
 		int is_gpath = 0;
 
-		char* target_file = NULL;
-		if (!test("f", dump_target)) {
-			target_file = strchr(dump_target, ':');
-			if (target_file == NULL) 
-				die("file '%s' not found", dump_target);
-
-			*target_file++ = 0; //move to the next char, which starts the target file.
-			if (!test("f", dump_target)) {
-				die("file '%s' not found.", dump_target);
-			}
-		}
-
+		if (!test("f", dump_target))
+			die("file '%s' not found.", dump_target);
 		if ((dbop = dbop_open(dump_target, 0, 0, DBOP_RAW)) == NULL)
 			die("file '%s' is not a tag file.", dump_target);
 		/*
@@ -333,31 +323,17 @@ main(int argc, char **argv)
 		 */
 		if (dbop_get(dbop, NEXTKEY))
 			is_gpath = 1;
+		for (dat = dbop_first(dbop, NULL, NULL, 0); dat != NULL; dat = dbop_next(dbop)) {
+			const char *flag = is_gpath ? dbop_getflag(dbop) : "";
 
-		if (target_file && !is_gpath) {
-			die("dump target_file can only be used with GPATH");
-		}
-
-		if (target_file) {
-			dat = dbop_get(dbop, target_file);
-			if (dat == NULL) {
-				die("target_file %s not found in GPATH", target_file);
-			}
-			time_t t = gpath_mtime(dbop, target_file);
-			printf("%d\n", t);
-		} else {
-			for (dat = dbop_first(dbop, NULL, NULL, 0); dat != NULL; dat = dbop_next(dbop)) {
-				const char *flag = is_gpath ? dbop_getflag(dbop) : "";
-
-				if (*flag)
-					if (is_gpath) {
-						time_t t = gpath_mtime(dbop, dbop->lastkey);
-						printf("%s\t%s\t%s\t%s\n", dbop->lastkey, dat, flag, ctime(&t));
-					} else
-						printf("%s\t%s\t%s\n", dbop->lastkey, dat, flag);
-				else
-					printf("%s\t%s\n", dbop->lastkey, dat);
-			}
+			if (*flag)
+				if (is_gpath) {
+					time_t t = gpath_mtime(dbop, dbop->lastkey);
+					printf("%s\t%s\t%s\t%s\n", dbop->lastkey, dat, flag, ctime(&t));
+				} else
+					printf("%s\t%s\t%s\n", dbop->lastkey, dat, flag);
+			else
+				printf("%s\t%s\n", dbop->lastkey, dat);
 		}
 		dbop_close(dbop);
 		exit(0);
