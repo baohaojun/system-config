@@ -874,3 +874,4 @@ smbnetfs.conf: 必须加上workgroup的名字。
 mirrorcyg.pl|mf-download.pl
 
 Tel. 010-64981756 ext. 849
+find . -name "Kconfig"|perl -npe 's,^.,./kernel,'|mkgtags

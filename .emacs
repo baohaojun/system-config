@@ -174,6 +174,8 @@
   (setq indent-tabs-mode t)
   (setq c-basic-offset 4))
 
+(define-key java-mode-map [?\C-\M-a] 'bhj-c-beginning-of-defun)
+
 (setq auto-mode-alist (cons '(".*\\.[c]$" . linux-c-mode)
                             auto-mode-alist))
 (setq auto-mode-alist (cons '(".*\\.cpp$" . linux-c++-mode)
@@ -186,10 +188,6 @@
 (put 'set-goal-column 'disabled nil)
 (put 'downcase-region 'disabled nil)
 (put 'LaTeX-hide-environment 'disabled nil)
-
-
-
-
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
@@ -466,7 +464,7 @@
     (with-temp-buffer
       (insert word)
       (kill-ring-save (point-min) (point-max)))
-    (beginning-of-indent col-indent)
+    (bhj-c-beginning-of-defun)
     (call-interactively 'bhj-isearch-yank)))
 
 (global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
@@ -1139,43 +1137,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (defvar boe-default-indent-col 0)
 (make-variable-buffer-local 'boe-default-indent-col)
-
-(defun beginning-of-indent (&optional col-indent)
-  (interactive "p")
-  (goto-so-much-indent -1 col-indent))
-                
-(defun end-of-indent (&optional col-indent)
-  (interactive "p")
-  (goto-so-much-indent 1 col-indent))
-               
-(defun goto-so-much-indent (dir col-indent)
-  (push-mark)
-  (if current-prefix-arg
-      (setq boe-default-indent-col col-indent)
-    (setq col-indent boe-default-indent-col))
-  (back-to-indentation)
-  (setq col-indent (min col-indent (current-column)))
-  (when (< col-indent 0)
-    (setq col-indent (max 0 (1- (current-column)))))
-  (let (done not-same-block)
-    (while (not done)
-      (forward-line dir)
-      (if (< dir 0)
-          (beginning-of-line)
-        (end-of-line))
-      (if (or (eobp) (bobp))
-        (setq done t)
-        (if (string-match "^\\s *$" (buffer-substring-no-properties (line-beginning-position)
-                                                                        (line-end-position)))
-            (setq not-same-block t)
-          (back-to-indentation)
-          (and (not not-same-block) (/= (current-column) col-indent)
-               (setq not-same-block t))
-          (and (<= (current-column) col-indent) not-same-block
-            (setq done t)))))))
-
-(global-set-key [(meta shift a)] 'beginning-of-indent)
-(global-set-key [(meta shift e)] 'end-of-indent)
 
 (defun indent-same-space-as-prev-line ()
   (interactive)
