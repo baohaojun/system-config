@@ -135,11 +135,12 @@
 
 (global-set-key [(meta ?/)] 'hippie-expand)
 
-(defun bhj-c-beginning-of-defun ()
-  (interactive)
+(defun bhj-c-beginning-of-defun (&optional arg)
+  (interactive "^p")
   (progn
-    (push-mark)
-    (c-beginning-of-defun)))
+    (unless mark-active
+      (push-mark))
+    (ctags-beginning-of-defun arg)))
 
 (defun bhj-c-end-of-defun ()
   (interactive)
@@ -884,7 +885,69 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (beginning-of-buffer)
   (forward-line)
   (waw-mode))
-  
+
+(defconst emacs-mode-ctags-lang-map
+  '(("emacs-lisp" . "lisp")))
+
+(defconst emacs-mode-ctags-tag-filter
+  '(("c" . "| perl -ne '@f = split; print unless $f[1] =~ m/^member$/'")))
+
+
+(defun tag-this-file (&optional output-buf)
+  (interactive)
+  (save-excursion
+    (save-window-excursion
+      (shell-command-on-region
+       1 (buffer-size)
+       (let ((mode-name-minus-mode 
+              (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
+         (concat "ctags-exuberant --language-force="
+                 (shell-quote-argument 
+                  (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
+                      mode-name-minus-mode))
+                 " -xu "
+                 (shell-quote-argument (format "%s" (my-buffer-file-name (current-buffer))))
+                 (cdr (assoc mode-name-minus-mode emacs-mode-ctags-tag-filter))))
+       output-buf))))
+
+(defun code-line-number-from-tag-line (line)
+  (goto-line line)
+  (string-to-number (caddr (split-string (current-line-string)))))
+
+(defun ctags-beginning-of-defun (&optional arg)
+  (interactive "^p")
+  (goto-line 
+   (save-excursion
+     (let (deactivate-mark) ;;see the help of save-excursion
+       (tag-this-file (get-buffer-create "*ctags-beginning-of-defun*"))
+       (let ((old-buffer (current-buffer))
+             (old-code-line (line-number-at-pos))
+             (last-code-line (line-number-at-pos (buffer-end 1)))
+             (last-def-line 1))
+         (with-current-buffer "*ctags-beginning-of-defun*"
+           (goto-char (point-max))
+           (insert (concat "hello function "
+                           (number-to-string last-code-line)
+                           " hello world"))
+           (let* ((min 1)
+                  (max (line-number-at-pos (buffer-end 1)))
+                  (mid (/ (+ min max) 2))
+                  (mid-code-line (code-line-number-from-tag-line mid))
+                  (mid+1-codeline (code-line-number-from-tag-line (1+ mid))))
+             (while (and 
+                     (not (and 
+                           (< mid-code-line old-code-line)
+                           (>= mid+1-codeline old-code-line)))
+                     (< min max))
+               (if (>= mid-code-line old-code-line)
+                   (setq max (1- mid))
+                 (setq min (1+ mid)))
+               (setq mid (/ (+ min max) 2)
+                     mid-code-line (code-line-number-from-tag-line mid)
+                     mid+1-codeline (code-line-number-from-tag-line (1+ mid))))
+             (code-line-number-from-tag-line (- mid -1 (or arg 1))))))))))
+                    
+                                     
 (global-set-key [(control x) (w)] 'where-are-we)
 
 (defvar code-reading-file "~/.code-reading")

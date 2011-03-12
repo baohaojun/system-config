@@ -1,0 +1,3 @@
+--langdef=kconfig
+--langmap=kconfig:(Kconfig)
+--regex-kconfig=/^(menu)?config[ \t]*([a-zA-Z0-9_]+)/CONFIG_\2/d,definition/
