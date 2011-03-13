@@ -273,8 +273,8 @@ tweets."
 ;;;
 
 (defvar twittering-account-authorization '()
-  "State of account authorization for `twittering-username' and
-`twittering-password'.  The value is one of the following symbols:
+  "Alist of state of account authorization for each service.
+The value is one of the following symbols:
 nil -- The account have not been authorized yet.
 queried -- The authorization has been queried, but not finished yet.
 authorized -- The account has been authorized.")
@@ -359,11 +359,11 @@ as a shortened URL.")
 (defvar twittering-mode-menu-on-uri-map (make-sparse-keymap "Twittering Mode"))
 (defvar twittering-mode-on-uri-map (make-sparse-keymap))
 
-(defvar twittering-tweet-history nil)
-(defvar twittering-user-history nil)
+(defvar twittering-tweet-history    nil)
+(defvar twittering-user-history     nil)
 (defvar twittering-timeline-history nil)
-(defvar twittering-hashtag-history nil)
-(defvar twittering-search-history nil)
+(defvar twittering-hashtag-history  nil)
+(defvar twittering-search-history   nil)
 
 (defvar twittering-current-hashtag nil
   "A hash tag string currently set. You can set it by calling
@@ -645,8 +645,6 @@ requires an external command `curl' or another command included in
 (defun twittering-get-accounts (attr)
   (cadr (assq attr
               (assqref (twittering-extract-service) twittering-accounts))))
-
-;;;;
 
 ;;; Macros
 
@@ -3996,9 +3994,8 @@ been initialized yet."
   (eq (twittering-get-account-authorization) 'queried))
 
 (defun twittering-prepare-account-info ()
-  "Return a pair of username and password.
-If `twittering-username' is nil, read it from the minibuffer.
-If `twittering-password' is nil, read it from the minibuffer."
+  "Return a pair of username and password from `twittering-accounts'.
+If nil, read it from the minibuffer."
   (let* ((username (or (twittering-get-accounts 'username)
                        (read-string "your twitter username: ")))
          (password (or (twittering-get-accounts 'password)
@@ -4181,12 +4178,6 @@ If `twittering-password' is nil, read it from the minibuffer."
     (case-string
      status-code
      (("200")
-      (cond
-       ((eq (twittering-get-accounts 'auth) 'basic)
-        (setq twittering-username (assqref 'username connection-info))
-        (setq twittering-password (assqref 'password connection-info)))
-       (t
-        (setq twittering-username (assqref 'username connection-info))))
       (twittering-update-account-authorization 'authorized)
       (twittering-start)
       (format "Authorization for the account \"%s\" succeeded."
@@ -4199,9 +4190,7 @@ If `twittering-password' is nil, read it from the minibuffer."
         (cond
          ((memq (twittering-get-accounts 'auth) '(oauth xauth))
           (twittering-update-oauth-access-token-alist nil))
-         ((eq (twittering-get-accounts 'auth) 'basic)
-          (setq twittering-username nil)
-          (setq twittering-password nil)))
+         ((eq (twittering-get-accounts 'auth) 'basic)))
         error-mes)))))
 
 (defun twittering-http-get-verify-credentials-clean-up-sentinel (proc status connection-info)
@@ -4209,9 +4198,7 @@ If `twittering-password' is nil, read it from the minibuffer."
     (when (and (memq status '(exit signal closed failed))
                (eq (twittering-get-account-authorization) 'queried))
       (twittering-update-account-authorization nil)
-      (message "Authorization failed. Type M-x twit to retry.")
-      (setq twittering-username nil)
-      (setq twittering-password nil))))
+      (message "Authorization failed. Type M-x twit to retry."))))
 
 ;;;; Start/Stop 
 ;;;
@@ -6068,9 +6055,10 @@ following symbols;
                    ;; (created-at
                    ;;  (apply 'encode-time
                    ;;            (parse-time-string created-at-str)))
-                   (url (twittering-get-status-url
-                         (assqref 'id (assqref 'user ,status-sym))
-                         (assqref 'id ,status-sym)))
+                   (st (or (assqref 'status ,status-sym) ,status-sym))
+                   (url (twittering-get-status-url 
+                         (assqref 'id (assqref 'user st))
+                         (assqref 'id st)))
                    (properties
                     (list 'mouse-face 'highlight 'face 'twittering-uri-face
                           'keymap twittering-mode-on-uri-map
