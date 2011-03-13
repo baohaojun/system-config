@@ -142,11 +142,12 @@
       (push-mark))
     (ctags-beginning-of-defun arg)))
 
-(defun bhj-c-end-of-defun ()
-  (interactive)
+(defun bhj-c-end-of-defun (&optional arg)
+  (interactive "^p")
   (progn
-    (push-mark)
-    (c-end-of-defun)))
+    (unless mark-active
+      (push-mark))
+    (ctags-beginning-of-defun (- arg))))
 
 (defun linux-c-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
@@ -175,6 +176,7 @@
   (setq c-basic-offset 4))
 
 (define-key java-mode-map [?\C-\M-a] 'bhj-c-beginning-of-defun)
+(define-key java-mode-map [?\C-\M-e] 'bhj-c-end-of-defun)
 
 (setq auto-mode-alist (cons '(".*\\.[c]$" . linux-c-mode)
                             auto-mode-alist))
