@@ -2870,24 +2870,12 @@ BUFFER must be a HTTP response body, which includes error messages from
 the server when the HTTP status code equals to 400 or 403."
   (let ((status-line (assqref 'status-line header-info))
         (status-code (assqref 'status-code header-info)))
-    (cond
-     ((and (buffer-live-p buffer)
-           (member status-code '("400" "403")))
-      ;; Twitter returns an error message as a HTTP response body if
-      ;; HTTP status is "400 Bad Request" or "403 Forbidden".
-      ;; See "HTTP Response Codes and Errors | dev.twitter.com"
-      ;; http://dev.twitter.com/pages/responses_errors .
-      (let* ((xmltree
-              (with-current-buffer buffer
-                (twittering-xml-parse-region (point-min) (point-max))))
-             (error-mes
-              (car (cddr (assq 'error (or (assq 'errors xmltree)
-                                          (assq 'hash xmltree)))))))
-        (if error-mes
-            (format "%s (%s)" status-line error-mes)
-          status-line)))
-     (t
-      status-line))))
+    ;; http://dev.twitter.com/pages/responses_errors
+    (when (buffer-live-p buffer)
+      (let ((error-msg (ignore-errors (assqref 'error (twittering-json-read)))))
+        (if error-msg
+            (format "%s (%s)" status-line error-msg)
+          status-line)))))
 
 (defun twittering-http-get (host method &optional parameters format additional-info sentinel clean-up-sentinel)
   (let* ((format (or format "json"))
@@ -9335,26 +9323,6 @@ SPEC may be a timeline spec or a timeline spec string."
 
 (defun twittering-status-id= (id1 id2)
   (equal id1 id2))
-
-;;; (xwl) to remove
-
-(defun twittering-xml-parse-region (&rest args)
-  "Wrapped `xml-parse-region' in order to avoid decoding errors.
-After activating the advice `twittering-add-fail-over-to-decode-char',
-`xml-parse-region' is called. This prevents `xml-parse-region' from
-exiting abnormally by decoding unknown numeric character reference."
-  (let ((activated (ad-is-active 'decode-char)))
-    (ad-enable-advice
-     'decode-char 'after 'twittering-add-fail-over-to-decode-char)
-    (ad-activate 'decode-char)
-    (unwind-protect
-        (apply 'xml-parse-region args)
-      (ad-disable-advice 'decode-char 'after
-                         'twittering-add-fail-over-to-decode-char)
-      (if activated
-          (ad-activate 'decode-char)
-        (ad-deactivate 'decode-char)))))
-
 
 (provide 'twittering-mode)
 
