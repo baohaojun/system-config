@@ -5795,36 +5795,30 @@ following symbols;
                     'uri uri))
     ""))
 
-(defun twittering-make-fontified-tweet-text-with-quote (status)
-  (let* ((text (assqref 'text status))
-         (quoted-status (or (assqref 'retweeted-status status)
-                            (assqref 'reply-comment status)
-                            (assqref 'status status)))
-         (quoted-text (assqref 'text quoted-status)))
-    ;; Show quotes
-    (when quoted-text
-      (if (or (string-match (regexp-opt
-                             `(,(replace-regexp-in-string
-                                 (format "^RT @%s: \\|[.[:blank:]]+$"
-                                         (assqref 'screen-name (assqref 'user quoted-status)))
-                                 ""
-                                 text)))
-                            quoted-text)
-              (string= text "转发微博")
-              (string= text "转发微博。"))
-          (setq text quoted-text)
-        (setq text (apply 'format "『%s』\n\n    %s" (list quoted-text text)))))
-    
-    ;; (sina) Recognize and mark emotions, we will show them in
-    ;; twittering-redisplay-status-on-each-buffer.
-    (when (eq (twittering-extract-service) 'sina)
-      (setq text (replace-regexp-in-string "\\(\\[[^][]+\\]\\)" "[\\1]" text)))
-
-    (twittering-make-fontified-tweet-text text)))
+(defun twittering-format-tweet-text-with-quote (quoted-text text status)
+  (let ((quoted-status (twittering-status-has-quotation? status)))
+    (if quoted-text
+        (if (or (string-match (regexp-opt
+                               `(,(replace-regexp-in-string
+                                   (format "^RT @%s: \\|[.[:blank:]]+$"
+                                           (assqref 'screen-name (assqref 'user quoted-status)))
+                                   ""
+                                   text)))
+                              quoted-text)
+                (string= text "转发微博")
+                (string= text "转发微博。"))
+            quoted-text
+          (apply 'format "『%s』\n\n    %s" (list quoted-text text)))
+      text)))
 
 (defun twittering-make-fontified-tweet-text (str)
+  ;; (sina) Recognize and mark emotions, we will show them in
+  ;; twittering-redisplay-status-on-each-buffer.
+  (when (eq (twittering-extract-service) 'sina)
+    (setq str (replace-regexp-in-string "\\(\\[[^][]+\\]\\)" "[\\1]" str)))
+
   (let* ((regexp-list
-          `(;; Hashtag
+          `( ;; Hashtag
             (hashtag . ,(concat twittering-regexp-hash
                                 (if (eq (twittering-extract-service) 'sina)
                                     (format "\\([^%s]+%s\\)"
@@ -6016,11 +6010,23 @@ following symbols;
        (when s
          (twittering-make-fontified-tweet-text
           (concat "\n" s)))))
-    ("t" .                              ; (xwl) handle retweets quoting here.
-     (twittering-make-fontified-tweet-text-with-quote ,status-sym))
+    ("t" . 
+     (twittering-make-fontified-tweet-text 
+      (funcall twittering-format-tweet-text-function
+               (assqref 'text (twittering-status-has-quotation? ,status-sym))
+               (assqref 'text ,status-sym)
+               ,status-sym)))
     ;; (twittering-make-fontified-tweet-text
     ;;  (assqref 'text ,status-sym)))
     ("u" . (assqref 'url (assqref 'user ,status-sym)))))
+
+(defvar twittering-format-tweet-text-function 'twittering-format-tweet-text-with-quote
+  "Function to format a tweet text.
+It takes three arguments: 
+
+  quoted-text -- retweeted or replied text
+  text        -- current text
+  status      -- the tweet")
 
 (defun twittering-generate-formater-for-first-spec (format-str status-sym prefix-sym)
   (cond
