@@ -52,7 +52,7 @@ function emacs-site-lisps()
 
     y=0
     for x in "${source_list[@]}"; do 
-        ((y++)) || true
+        ((y++))
         test -e Sources.bz2.$y || ( lftp -c "pget -n 10 $x" && mv Sources.bz2 Sources.bz2.$y )
     done
 

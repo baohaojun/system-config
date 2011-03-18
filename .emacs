@@ -906,7 +906,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
                   (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
                       mode-name-minus-mode))
                  " -xu "
-                 (shell-quote-argument (format "%s" (my-buffer-file-name (current-buffer))))
+                 (shell-quote-argument (format "%s" (my-buffer-file-name-local (current-buffer))))
                  (cdr (assoc mode-name-minus-mode emacs-mode-ctags-tag-filter))))
        output-buf))))
 
@@ -1189,6 +1189,11 @@ Starting from DIRECTORY, look upwards for a cscope database."
         (replace-regexp-in-string "/*$" "" default-directory)
       (or (buffer-file-name buf)
           ""))))
+
+(defun my-buffer-file-name-local (buf)
+  (let ((name (my-buffer-file-name buf)))
+    (or (file-remote-p name 'localname)
+        name)))
 
 
 (defun switch-buffer-same-filename (&optional reverse)

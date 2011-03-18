@@ -17,8 +17,9 @@ syndaemon -i 1 -d
 while true; do
     if ps aux|grep ssh|grep bhj@216 -q; 
     then
-        break
+        true;
     else
-        ssh -C2qN -D 8080 bhj@216.194.70.6; sleep 2; 
+        ssh -C2qN -D 8080 bhj@216.194.70.6; 
     fi
+    sleep 2; 
 done
