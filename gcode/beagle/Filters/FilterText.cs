@@ -124,7 +124,6 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-awk"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-mozilla-bookmarks"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/rfc822"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/news"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/css"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-dsrc"));
