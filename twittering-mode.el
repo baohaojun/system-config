@@ -2895,14 +2895,15 @@ the server when the HTTP status code equals to 400 or 403."
         (status-code (assqref 'status-code header-info)))
     ;; http://dev.twitter.com/pages/responses_errors
     (when (buffer-live-p buffer)
-      (let ((error-msg (ignore-errors (assqref 'error (twittering-json-read)))))
+      (let ((error-msg (ignore-errors (assqref 'error (twittering-construct-statuses)))))
         (if error-msg
             (format "%s (%s)" status-line error-msg)
           status-line)))))
 
 (defun twittering-http-get (host method &optional parameters format additional-info sentinel clean-up-sentinel)
   (let* ((sentinel (or sentinel 'twittering-http-get-default-sentinel))
-         (path (concat "/" method (if format (concat "." format) "")))
+         (path (concat "/" method (if (and (stringp format) (string= format "")) ; douban
+                                      "" ".json")))
          (headers nil)
          (port nil)
          (post-body "")
@@ -2925,7 +2926,7 @@ the server when the HTTP status code equals to 400 or 403."
       (let* ((spec (assqref 'timeline-spec connection-info))
              (spec-string (assqref 'timeline-spec-string connection-info))
              (twittering-service-method (caar spec))
-             (statuses (twittering-json-read)))
+             (statuses (twittering-construct-statuses)))
         (when statuses
           (let ((new-statuses
                  (twittering-add-statuses-to-timeline-data statuses spec))
@@ -5059,7 +5060,7 @@ image buffer during `twittering-toggle-thumbnail'. "
     (twittering-html-decode-buffer)
     (cond
      ((string= status-code "200")
-      (let ((json-data (twittering-json-read)))
+      (let ((json-data (twittering-construct-statuses)))
         (when json-data
           (setq ret json-data)
           (case (assqref 'method args)
@@ -6907,18 +6908,17 @@ rendered at POS, return nil."
                    (twittering-get-simple nil nil nil 'emotions))))
 
              (let* ((str (match-string 2))
-                    (url (some (lambda (i)
-                                 (when (string= (assqref 'phrase i) str)
-                                   (assqref 'url i)))
-                               twittering-emotions-phrase-url-alist))
                     (inhibit-read-only t)
-                    (common-properties (twittering-get-common-properties (point)))
-                    (repl (if url 
-                              (twittering-make-original-icon-string nil nil url)
-                            str)))      ; Not a emotion, restore. 
-
+                    (repl str)) ; original string, restore it when not a emotion. 
+               (save-match-data
+                 (let ((url (some (lambda (i) (when (string= (assqref 'phrase i) str)
+                                                (assqref 'url i)))
+                                  twittering-emotions-phrase-url-alist))
+                       (common-properties (twittering-get-common-properties (point))))
+                   (when url
+                     (setq repl (twittering-make-original-icon-string nil nil url)))
+                   (add-text-properties 0 (length repl) common-properties repl)))
                (when (consp twittering-emotions-phrase-url-alist)
-                 (add-text-properties 0 (length repl) common-properties repl)
                  (replace-match repl)))))
 
           ;; Show details.
@@ -7676,8 +7676,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                      
                  ))
               (format (cond ((eq spec-type 'search) "atom")
-                            (douban? nil)
-                            (t "json")))
+                            (douban? "")))
               (simple-spec-list
                `((direct_messages      . "direct_messages")
                  (direct_messages_sent . "direct_messages/sent")
@@ -8172,18 +8171,6 @@ string.")
 
 ;;; ============================================= Douban details
 
-(defun twittering-douban-lookup (str alist)
-  "Lookup in json ALIST that matches:
-      (((@name . STR)
-        ($t . ret))
-       ...)
-
-Return ret."
-  (some (lambda (i)
-          (when (string= (assqref '@name i) value)
-            (assqref '$t i)))
-        alist))
-
 (defun twittering-make-douban-detail-string (beg end detail-url prefix)
   (let* ((detail-data (gethash detail-url twittering-url-data-hash))
          (properties (and beg (text-properties-at beg)))
@@ -8192,60 +8179,58 @@ Return ret."
     ;;      (add-text-properties 0 (length detail) properties detail))
     (cond                               
      (detail-data
-      (let ((service (twittering-extract-service)))
-        (with-temp-buffer
-          (insert detail-data)
-          (goto-char (point-min))
-          (let* ((twittering-service-method service)
-                 (json (twittering-json-read-1))
-                 (type (when (string-match
-                              (regexp-opt 
-                               '("photo" "note" "book" "movie" "music" "review"
-                                 "collection" "event" "recommendation"))
-                              detail-url)
-                         (intern (match-string 0 detail-url)))))
-            (case type
-              ((photo)
-               (let ((cm (some (lambda (i) (when (string= (assqref '@name i) "comment")
-                                             (assqref '$t i)))
-                               (assqref 'db:attribute json))))
-                 (setq detail (concat cm " -- no photo api?"))))
-              ((note)
-               (setq detail (assqref 'summary json)))
-              ((event)
-               (setq detail
-                     (apply 'format "时间：%s ~ %s\n地点：%s\n参数人数：%s"
-                            `(,@(mapcar (lambda (i)
-                                          (format-time-string
-                                           "%Y-%m-%d %H:%M" 
-                                           ;; douban timezone bug?
-                                           (date-to-time (replace-regexp-in-string 
-                                                          "+08:00" "+0800" i))))
-                                        (let ((date (assqref 'gd:when json)))
-                                          `(,(symbol-name (car date)) ,(cdr date))))
-                              ,(assqref 'gd:where json)
-                              ,(assqref 'participants (assqref 'db:attribute json))))))
-              ((movie)
-               (let ((db:attribute (assqref 'db:attribute json)))
-                 (setq detail 
-                       (format "片名：%s\n评分：%s\n导演：%s\n主演：%s / ...\n上映日期：%s"
-                               (assqref 'title db:attribute)
-                               (nth 1 (assqref 'gd:rating json))
-                               (assqref 'director db:attribute)
-                               (mapconcat 'cdr 
-                                          (twittering-take 
-                                           3
-                                           (remove-if-not (lambda (i) (eq (car i) 'cast))
-                                                          db:attribute))
-                                          " / ")
-                               (assqref 'pubdate db:attribute)))))
+      (with-temp-buffer
+        (insert detail-data)
+        (goto-char (point-min))
+        (let ((json (twittering-json-read t))
+              (type (when (string-match
+                           (regexp-opt 
+                            '("photo" "note" "book" "movie" "music" "review"
+                              "collection" "event" "recommendation"))
+                           detail-url)
+                      (intern (match-string 0 detail-url)))))
+          (case type
+            ((photo)
+             (let ((cm (some (lambda (i) (when (string= (assqref '@name i) "comment")
+                                           (assqref '$t i)))
+                             (assqref 'db:attribute json))))
+               (setq detail (concat cm " -- no photo api?"))))
+            ((note)
+             (setq detail (assqref 'summary json)))
+            ((event)
+             (setq detail
+                   (apply 'format "时间：%s ~ %s\n地点：%s\n参数人数：%s"
+                          `(,@(mapcar (lambda (i)
+                                        (format-time-string
+                                         "%Y-%m-%d %H:%M" 
+                                         ;; douban timezone bug?
+                                         (date-to-time (replace-regexp-in-string 
+                                                        "+08:00" "+0800" i))))
+                                      (let ((date (assqref 'gd:when json)))
+                                        `(,(symbol-name (car date)) ,(cdr date))))
+                            ,(assqref 'gd:where json)
+                            ,(assqref 'participants (assqref 'db:attribute json))))))
+            ((movie)
+             (let ((db:attribute (assqref 'db:attribute json)))
+               (setq detail 
+                     (format "片名：%s\n评分：%s\n导演：%s\n主演：%s / ...\n上映日期：%s"
+                             (assqref 'title db:attribute)
+                             (nth 1 (assqref 'gd:rating json))
+                             (assqref 'director db:attribute)
+                             (mapconcat 'cdr 
+                                        (twittering-take 
+                                         3
+                                         (remove-if-not (lambda (i) (eq (car i) 'cast))
+                                                        db:attribute))
+                                        " / ")
+                             (assqref 'pubdate db:attribute)))))
 
-              ((book music review collection)
-               (setq detail (assqref 'summary json))
-               (unless detail           ; sounds like douban's bug.
-                 (setq detail (car (assqref 'summary json)))))
-              (t
-               (setq detail ""))))))
+            ((book music review collection)
+             (setq detail (assqref 'summary json))
+             (unless detail             ; sounds like douban's bug.
+               (setq detail (car (assqref 'summary json)))))
+            (t
+             (setq detail "")))))
 
       (unless (string= detail "")
         (setq detail (replace-regexp-in-string "" "" detail)
@@ -9269,8 +9254,11 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
                           (twittering-wash-json rear))))))
 
           ((consp front)
-           (cons (twittering-wash-json front)
-                 (twittering-wash-json rear))))))
+           ;; FIXME: too deep lisp.
+           (mapcar 'twittering-wash-json tree)
+           ;; (cons (twittering-wash-json front)
+           ;;    (twittering-wash-json rear))
+           ))))
 
 ;;;;
 ;;;; Buffer info
@@ -9503,21 +9491,24 @@ SPEC may be a timeline spec or a timeline spec string."
 (defun twittering-get-status-at-pos ()
   (twittering-find-status (twittering-get-id-at)))
 
-(defun twittering-json-read-1 ()
+(defun twittering-json-read (&optional wash-twice)
   (let ((json-array-type 'list)
         ret)
     (twittering-html-decode-buffer)
     (setq ret (twittering-wash-json (json-read)))
-    (when (eq (twittering-extract-service) 'douban)
+    (when wash-twice
       ;;   1. ("http://.." str) => (symbol . "http://..") 
       ;;   2. (symbol/str str) => (symbol . str)
       (setq ret (twittering-wash-json ret)))
     ret))
 
-(defun twittering-json-read ()
-  (let ((statuses (twittering-json-read-1)))
+(defun twittering-construct-statuses ()
+  (let ((statuses (twittering-json-read))
+        (has (lambda (symbol)
+               (find-if (lambda (i) (eq (car i) symbol)) statuses))))
     (cond 
-     ((eq (twittering-extract-service) 'douban)
+     ((funcall has 'entry)         ; douban.com
+      (setq statuses (twittering-wash-json statuses))
       (setq statuses
             (mapcar
              (lambda (i)
@@ -9542,10 +9533,10 @@ SPEC may be a timeline spec or a timeline spec string."
                                   (assqref 'related link))))))
              (assqref 'entry statuses))))
 
-     ((assqref 'user statuses)          ; show
+     ((funcall has 'user)               ; show
       (list statuses))
 
-     ((assq 'users statuses)            ; followers
+     ((funcall has 'users)              ; followers
       (let ((followers (assqref 'users statuses))
             (cursors (assq-delete-all 'users statuses)))
         (mapcar (lambda (follower)
