@@ -1,7 +1,7 @@
 -
 name: UseEscape
 case: Option
-keyx: false
+keyx: true
 body: 
 desc: use ESC as 'M-'
 type: boolean
@@ -29,7 +29,7 @@ type:
 -
 name: AccessRegex
 case: Option
-keyx: 
+keyx: wiki
 body: 
 desc: URL regex to disable access keys
 type: 
@@ -97,44 +97,58 @@ body: goDoCommand('cmd_scrollLineDown');
 desc: scrolls a line down
 type: 
 -
+name: ViScrollLeft
+case: View
+keyx: H
+body: goDoCommand('cmd_scrollLeft');
+desc: scrolls left
+type: 
+-
+name: ViScrollRight
+case: View
+keyx: L
+body: goDoCommand('cmd_scrollRight');
+desc: scrolls right
+type: 
+-
 name: ViPreviousTab
 case: View
-keyx: p
+keyx: h
 body: this._sfun.moveTab(-1);
 desc: moves to the previous tab
 type: 
 -
 name: ViNextTab
 case: View
-keyx: n
+keyx: l
 body: this._sfun.moveTab(1);
 desc: moves to the next tab
 type: 
 -
 name: ViScrollPageUp
 case: View
-keyx: DEL
-body: this._sfun.subPageUp(e);
+keyx: b
+body: goDoCommand('cmd_scrollPageUp');
 desc: scrolls a page up
 type: 
 -
 name: ViScrollPageDown
 case: View
-keyx: SPC
-body: this._sfun.subPageDown(e);
+keyx: u
+body: goDoCommand('cmd_scrollPageDown');
 desc: scrolls a page down
 type: 
 -
 name: PreviousPage
 case: View
-keyx: l
+keyx: B
 body: if (typeof(BrowserBack) == 'function') { BrowserBack(); }
 desc: moves to the previous page
 type: 
 -
 name: NextPage
 case: View
-keyx: r
+keyx: F
 body: if (typeof(BrowserForward) == 'function') { BrowserForward(); }
 desc: moves to the next page
 type: 
@@ -302,7 +316,7 @@ type:
 -
 name: Undo
 case: Edit
-keyx: C-/
+keyx: C-xu
 body: goDoCommand('cmd_undo');
 desc: executes undo
 type: 
@@ -421,14 +435,14 @@ type:
 -
 name: CmPreviousTab
 case: Common
-keyx: p
+keyx: C-M-b
 body: this._sfun.moveTab(-1);
 desc: moves to the previous tab
 type: 
 -
 name: CmNextTab
 case: Common
-keyx: n
+keyx: C-M-f
 body: this._sfun.moveTab(1);
 desc: moves to the next tab
 type: 
@@ -505,7 +519,7 @@ type:
 -
 name: WebSearch
 case: Common
-keyx: C-xC-s
+keyx: C-xC-e
 body: this._sfun.webSearch(e);
 desc: web search
 type: 
@@ -515,6 +529,13 @@ case: Common
 keyx: C-xC-a
 body: this._sfun.mapSearch(e);
 desc: map search
+type: 
+-
+name: SavePage
+case: Common
+keyx: C-xC-s
+body: this._sfun.pageSave(e);
+desc: save page
 type: 
 -
 name: PreviousCompletion
@@ -529,4 +550,11 @@ case: Menu
 keyx: C-n
 body: this._sfun.NextCompletion(e);
 desc: moves to the next line
+type: 
+-
+name: SelectAll
+case: Common
+keyx: C-xh
+body: goDoCommand('cmd_selectAll')
+desc: selects all
 type: 

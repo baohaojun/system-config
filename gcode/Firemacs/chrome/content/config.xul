@@ -46,7 +46,7 @@
         </columns>
         <rows>
           <row>
-            <checkbox id="UseEscape" checked="false" />
+            <checkbox id="UseEscape" checked="true" />
             <description value="use ESC as 'M-'" />
           </row>
           <row>
@@ -62,7 +62,7 @@
             <description value="is the prefix key" />
           </row>
           <row>
-            <textbox id="AccessRegex" value="" />
+            <textbox id="AccessRegex" value="wiki" />
             <description value="URL regex to disable access keys" />
           </row>
           <row>
@@ -112,32 +112,32 @@
             <description value="scrolls a line down" />
           </row>
           <row>
-            <textbox id="ViPreviousTab" value="p" />
+            <textbox id="ViScrollLeft" value="H" />
+            <description value="scrolls left" />
+          </row>
+          <row>
+            <textbox id="ViScrollRight" value="L" />
+            <description value="scrolls right" />
+          </row>
+          <row>
+            <textbox id="ViPreviousTab" value="h" />
             <description value="moves to the previous tab" />
           </row>
           <row>
-            <textbox id="ViNextTab" value="n" />
+            <textbox id="ViNextTab" value="l" />
             <description value="moves to the next tab" />
           </row>
           <row>
-            <textbox id="ViScrollPageUp" value="DEL" />
+            <textbox id="ViScrollPageUp" value="b" />
             <description value="scrolls a page up" />
           </row>
           <row>
-            <textbox id="ViScrollPageDown" value="SPC" />
+            <textbox id="ViScrollPageDown" value="u" />
             <description value="scrolls a page down" />
           </row>
           <row>
-            <textbox id="PreviousPage" value="l" />
+            <textbox id="PreviousPage" value="B" />
             <description value="moves to the previous page" />
-          </row>
-          <row>
-            <textbox id="NextPage" value="r" />
-            <description value="moves to the next page" />
-          </row>
-          <row>
-            <textbox id="ReloadPage" value="R" />
-            <description value="reloads the page" />
           </row>
         </rows>
       </grid>
@@ -147,6 +147,14 @@
           <column />
         </columns>
         <rows>
+          <row>
+            <textbox id="NextPage" value="F" />
+            <description value="moves to the next page" />
+          </row>
+          <row>
+            <textbox id="ReloadPage" value="R" />
+            <description value="reloads the page" />
+          </row>
           <row>
             <textbox id="ViScrollTop" value="&lt;" />
             <description value="scrolls to the top" />
@@ -254,7 +262,7 @@
             <description value="deletes the previous char" />
           </row>
           <row>
-            <textbox id="Undo" value="C-/" />
+            <textbox id="Undo" value="C-xu" />
             <description value="executes undo" />
           </row>
           <row>
@@ -332,11 +340,11 @@
             <description value="moves to the first button" />
           </row>
           <row>
-            <textbox id="CmPreviousTab" value="p" />
+            <textbox id="CmPreviousTab" value="C-M-b" />
             <description value="moves to the previous tab" />
           </row>
           <row>
-            <textbox id="CmNextTab" value="n" />
+            <textbox id="CmNextTab" value="C-M-f" />
             <description value="moves to the next tab" />
           </row>
           <row>
@@ -388,12 +396,20 @@
             <description value="copy title and url" />
           </row>
           <row>
-            <textbox id="WebSearch" value="C-xC-s" />
+            <textbox id="WebSearch" value="C-xC-e" />
             <description value="web search" />
           </row>
           <row>
             <textbox id="MapSearch" value="C-xC-a" />
             <description value="map search" />
+          </row>
+          <row>
+            <textbox id="SavePage" value="C-xC-s" />
+            <description value="save page" />
+          </row>
+          <row>
+            <textbox id="SelectAll" value="C-xh" />
+            <description value="selects all" />
           </row>
         </rows>
       </grid>
