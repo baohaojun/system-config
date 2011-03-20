@@ -5822,7 +5822,7 @@ following symbols;
 (defun twittering-make-string-with-source-property (str status)
   (if (stringp str)
       (let ((caption str)
-            (uri ""))
+            (uri (if (string= str "douban") "www.douban.com" "")))
         (when (string-match "<a href=\"\\(.*?\\)\".*?>\\(.*\\)</a>" str)
           (setq uri (match-string 1 str)
                 caption (match-string 2 str)))
@@ -6106,9 +6106,6 @@ It takes three arguments:
                                  "%I:%M %p %B %d, %Y")))
               (rest (substring following (match-end 0))))
           `((let* ((created-at-str (assqref 'created-at ,status-sym))
-                   ;; (created-at
-                   ;;  (apply 'encode-time
-                   ;;            (parse-time-string created-at-str)))
                    (st (or (assqref 'status ,status-sym) ,status-sym))
                    (url (twittering-get-status-url 
                          (assqref 'id (assqref 'user st))
@@ -8160,9 +8157,11 @@ string.")
             username)))
 
 (defun twittering-get-status-url-douban (username &optional id)
-  (format "http://%s/people/%s"
-          (twittering-lookup-service-method-table 'web)
-          username))
+  (if id 
+      (concat "http://" (twittering-lookup-service-method-table 'web))
+    (format "http://%s/people/%s"
+            (twittering-lookup-service-method-table 'web)
+            username)))
 
 (defun twittering-get-search-url (query-string)
   "Generate a URL for searching QUERY-STRING."
@@ -9540,6 +9539,7 @@ SPEC may be a timeline spec or a timeline spec string."
                                    "+08:00" "+0800" (assqref 'published i)))
                    (text . ,(cdr (assqref 'content i)))
                    (thumbnail-pic . ,(assqref 'image link))
+                   (source . "douban")
                    (user 
                     ,@(let ((author (assqref 'author i)))
                         `((id . ,(car (last (split-string (assqref 'uri author) "/"))))
