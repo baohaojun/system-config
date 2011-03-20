@@ -9543,9 +9543,9 @@ SPEC may be a timeline spec or a timeline spec string."
                    (user 
                     ,@(let ((author (assqref 'author i)))
                         `((id . ,(car (last (split-string (assqref 'uri author) "/"))))
-                          (name . ,(assqref 'name author))
-                          (screen-name . ,(let ((s (assqref 'alternate (assqref 'link author))))
-                                            (nth 1 (reverse (split-string s "/")))))
+                          (name . ,(let ((s (assqref 'alternate (assqref 'link author))))
+                                     (nth 1 (reverse (split-string s "/")))))
+                          (screen-name . ,(assqref 'name author))
                           (profile-image-url . ,(assqref 'icon (assqref 'link author))))))
                    ;; douban specific
                    (detail . ,(or (assqref 'objective link)
