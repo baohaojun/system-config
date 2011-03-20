@@ -7692,9 +7692,11 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
 
                  ;; douban
                  ,@(when start-index `(("start-index" . ,start-index)))
-                 ,@(when douban? '(("alt" . "json")))
-                     
-                 ))
+                 ,@(when douban?
+                     `(("alt" . "json")
+                       ("apikey"
+                        . ,(twittering-lookup-service-method-table 'oauth-consumer-key))))))
+
               (format (cond ((eq spec-type 'search) "atom")
                             (douban? "")))
               (simple-spec-list
