@@ -3672,6 +3672,27 @@ current buffer."
   (interactive)
   (twittering-redisplay-status-on-each-buffer (current-buffer)))
 
+(defun twittering-toggle-thumbnail ()
+  (interactive)
+  (let ((limit (twittering-get-next-status-head))
+        (find-func (lambda ()
+                     (let ((func-args (find-if
+                                       (lambda (i)
+                                         (and (consp i)
+                                              (eq (car i) 'twittering-toggle-thumbnail-1)))
+                                       (cadr (get-text-property (point) 'keymap)))))
+             (when func-args
+               (apply (car func-args) (cdr func-args))
+               (setq found-pos (point))))))
+        found-pos)
+    (unless (funcall find-func)         ; FIXME: no do-while in elisp? (xwl)
+      (save-excursion 
+        (while (let ((next (twittering-goto-next-thing)))
+                 (and (not found-pos) next (or (not limit) (< next limit))))
+          (funcall find-func))))
+    (when found-pos
+      (goto-char found-pos))))
+
 ;;;###autoload
 (defun twit ()
   "Start twittering-mode."
@@ -4987,7 +5008,7 @@ image are displayed."
 
 (defcustom twittering-image-height-threshold 40
   "For images whose height is bigger than this, we will show it in a separate
-image buffer during `twittering-toggle-thumbnail'. "
+image buffer during `twittering-toggle-thumbnail-1'. "
   :type 'integer
   :group 'twittering)
 
@@ -4996,7 +5017,7 @@ image buffer during `twittering-toggle-thumbnail'. "
   :type 'string
   :group 'twittering)
 
-(defun twittering-toggle-thumbnail (thumbnail-pic bmiddle-pic &optional initial)
+(defun twittering-toggle-thumbnail-1 (thumbnail-pic bmiddle-pic &optional initial)
   (let ((uri (get-text-property (point) 'uri))
         next-uri)
     (when (or uri initial)
@@ -5032,14 +5053,13 @@ image buffer during `twittering-toggle-thumbnail'. "
               (setq buffer-read-only t))
           (add-text-properties 0 (length s)
                                `(,@common-properties
-                                 mouse-face 
-                                 highlight 
+                                 mouse-face highlight 
                                  uri ,next-uri
                                  keymap
                                  ,(let ((map (make-sparse-keymap))
                                         (func `(lambda ()
                                                  (interactive)
-                                                 (twittering-toggle-thumbnail ,uri ,next-uri))))
+                                                 (twittering-toggle-thumbnail-1 ,uri ,next-uri))))
                                     (define-key map (kbd "<mouse-1>") func)
                                     (define-key map (kbd "RET") func)
                                     map))
@@ -6044,7 +6064,7 @@ following symbols;
                          (original-pic (assqref 'original-pic st)))
                      (when thumbnail-pic
                       (if original-pic
-                          (twittering-toggle-thumbnail thumbnail-pic original-pic t)
+                          (twittering-toggle-thumbnail-1 thumbnail-pic original-pic t)
                         (twittering-make-original-icon-string nil nil thumbnail-pic))))
                  (assqref 'original-pic st))))
        (when s
@@ -8755,19 +8775,18 @@ Otherwise, return a positive integer less than POS."
   (let* ((property-change-f (if backward
                                 'previous-single-property-change
                               'next-single-property-change))
-         (pos (funcall property-change-f (point) 'face)))
+         (pos (funcall property-change-f (point) 'mouse-face)))
     (while (and pos
                 (not
-                 (let* ((current-face (get-text-property pos 'face))
+                 (let* ((current-face (get-text-property pos 'mouse-face))
                         (face-pred
                          (lambda (face)
                            (cond
                             ((listp current-face) (memq face current-face))
                             ((symbolp current-face) (eq face current-face))
                             (t nil)))))
-                   (remove nil (mapcar face-pred '(twittering-username-face
-                                                   twittering-uri-face))))))
-      (setq pos (funcall property-change-f pos 'face)))
+                   (remove nil (mapcar face-pred '(highlight))))))
+      (setq pos (funcall property-change-f pos 'mouse-face)))
     (when pos
       (goto-char pos))))
 
