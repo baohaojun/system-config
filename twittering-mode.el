@@ -8208,20 +8208,20 @@ string.")
                             ,(assqref 'gd:where json)
                             ,(assqref 'participants (assqref 'db:attribute json))))))
             ((movie)
-             (let ((db:attribute (assqref 'db:attribute json)))
+             (let* ((db:attribute (assqref 'db:attribute json))
+                    (take (lambda (symbol) 
+                               (mapconcat
+                                'cdr
+                                (remove-if-not (lambda (i) (eq (car i) symbol))
+                                               db:attribute)
+                                " / "))))
                (setq detail 
-                     (format "片名：%s\n评分：%s\n导演：%s\n主演：%s / ...\n上映日期：%s"
+                     (format "片名：%s\n评分：%s\n导演：%s\n主演：%s\n上映日期：%s"
                              (assqref 'title db:attribute)
                              (nth 1 (assqref 'gd:rating json))
-                             (assqref 'director db:attribute)
-                             (mapconcat 'cdr 
-                                        (twittering-take 
-                                         3
-                                         (remove-if-not (lambda (i) (eq (car i) 'cast))
-                                                        db:attribute))
-                                        " / ")
+                             (funcall take 'director)
+                             (funcall take 'cast)
                              (assqref 'pubdate db:attribute)))))
-
             ((book music review collection)
              (setq detail (assqref 'summary json))
              (unless detail             ; sounds like douban's bug.
@@ -8231,7 +8231,8 @@ string.")
 
       (unless (string= detail "")
         (setq detail (replace-regexp-in-string "" "" detail)
-              detail (replace-regexp-in-string "\n" (concat "\n" prefix) detail)
+              detail (twittering-fill-string detail nil prefix t)
+              detail (substring detail (length prefix))
               detail (apply 'propertize detail properties))
         (remove-text-properties 0 (length detail)
                                 '(need-to-be-updated nil)
