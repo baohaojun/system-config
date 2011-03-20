@@ -6662,15 +6662,14 @@ rendered at POS, return nil."
                 (timeline-spec-string . ,spec-string)
                 (number . ,number)
                 ,@(when (and max-id (not (twittering-timeline-spec-user-methods-p spec)))
-                    `(,(if (eq (twittering-extract-service spec) 'douban)
-                           `(max-results . ,max-id)
-                         `(max_id . ,max-id))))
+                    `((max_id . ,max-id)))
                 ,@(cond
                    (is-search-spec `((word . ,word)))
                    ((twittering-timeline-spec-user-methods-p spec) `((cursor . ,cursor)))
                    ((and since_id (null max-id)) 
                     `(,(if (eq (twittering-extract-service spec) 'douban)
-                           `(start-index . ,since_id)
+                           ;; `(start-index . ,since_id)
+                           '()          ; TODO: douban buggy.
                          `(since_id . ,since_id))))
                    (t nil))
                 
@@ -7666,12 +7665,13 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                     ((memq spec-type '(user friends mentions public))
                      `(("count" . ,number-str)
                        ("include_rts" . "true")))
+                    (douban? 
+                     `(("max-results" . ,number-str)))
                     (t
                      `(("count" . ,number-str))))
 
                  ;; douban
                  ,@(when start-index `(("start-index" . ,start-index)))
-                 ,@(when max-results `(("max-results" . ,max-results)))
                  ,@(when douban? '(("alt" . "json")))
                      
                  ))
@@ -7699,10 +7699,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                (cond
                 (douban?
                  (format "people/%s/miniblog/contacts" 
-                         (assqref 'douban-user-id args-alist)
-                         ;; "xwl"
-                         ))
-
+                         (assqref 'douban-user-id args-alist)))
                 ((eq spec-type 'user)
                  (let ((username (elt (cdr spec) 1)))
                    (if (eq (twittering-extract-service) 'sina)
