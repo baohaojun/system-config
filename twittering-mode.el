@@ -976,8 +976,8 @@ must be encoded into the same as they will be sent."
                ("oauth_timestamp" . ,(format-time-string "%s"))
                ("oauth_version" . "1.0")
                ("oauth_token" . ,request-token)
-               ,@((unless (eq (twittering-extract-service) 'douban))
-                  ("oauth_verifier" . ,verifier))))))
+               ,@(unless (string-match "douban.com" url)
+                   `(("oauth_verifier" . ,verifier)))))))
     (twittering-oauth-auth-str "POST" url query-parameters oauth-params key)))
 
 (defun twittering-oauth-auth-str-access (method url query-parameters consumer-key consumer-secret access-token access-token-secret &optional oauth-parameters)
@@ -1199,12 +1199,15 @@ like following:
             (when (y-or-n-p "Open authorization URL with browser? (using `browse-url')")
               (browse-url authorize-url)))
           (let* ((pin
-                  (block pin-input-block
-                    (while t
-                      (let ((pin-input (read-string "Input PIN code: ")))
-                        (when (string-match "^\\s-*\\([0-9]+\\)\\s-*$" pin-input)
-                          (return-from pin-input-block
-                            (match-string 1 pin-input)))))))
+                  (if (string-match "douban.com" access-token-url)
+                      (unless (y-or-n-p "Have you allowed twittering-mode to access douban? ")
+                        (error "Access request rejected"))
+                    (block pin-input-block
+                      (while t
+                        (let ((pin-input (read-string "Input PIN code: ")))
+                          (when (string-match "^\\s-*\\([0-9]+\\)\\s-*$" pin-input)
+                            (return-from pin-input-block
+                              (match-string 1 pin-input))))))))
                  (verifier pin))
             (twittering-oauth-exchange-request-token
              access-token-url
@@ -9522,7 +9525,7 @@ SPEC may be a timeline spec or a timeline spec string."
 
 (defun twittering-construct-statuses ()
   (let ((statuses (twittering-json-read))
-        (has (lambda (symbol)
+         (has (lambda (symbol)
                (find-if (lambda (i) (eq (car i) symbol)) statuses))))
     (cond 
      ((funcall has 'entry)         ; douban.com
