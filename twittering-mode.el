@@ -530,7 +530,7 @@ do not display unread notifier on mode line.")
 (defvar twittering-use-master-password nil
   "*Wheter to store private information encrypted with a master password.")
 (defvar twittering-private-info-file
-  (expand-file-name "~/.twittering-mode.gpg")
+  (expand-file-name "~/.emacs.d/twittering/.twittering.gpg")
   "*File for storing encrypted private information when
 `twittering-use-master-password' is non-nil.")
 (defvar twittering-variables-stored-with-encryption
@@ -3693,9 +3693,8 @@ current buffer."
         (while (let ((next (twittering-goto-next-thing)))
                  (and (not found-pos) next (or (not limit) (< next limit))))
           (funcall find-func))))
-    ;; (when found-pos
-    ;;   (goto-char found-pos))
-    (recenter-top-bottom 'top)))
+    (when found-pos
+      (recenter-top-bottom 'top))))
 
 ;;;###autoload
 (defun twit ()
@@ -3875,7 +3874,7 @@ current buffer."
 ;;;; Cache
 ;;;
 
-(defcustom twittering-cache-file "~/.twittering_cache"
+(defcustom twittering-cache-file "~/.emacs.d/twittering/cache"
   "Filename for caching latest statu for `twittering-cache-spec-strings'."
   :type 'string
   :group 'twittering)
@@ -4012,6 +4011,8 @@ been initialized yet."
   "Major mode for Twitter.
 \\{twittering-mode-map}"
   (interactive)
+  (unless (file-exists-p "~/.emacs.d/twittering")
+    (mkdir "~/.emacs.d/twittering" t))
   (twittering-cache-load)
   (mapc 'twittering-visit-timeline
         (if (listp twittering-initial-timeline-spec-string)
@@ -5025,6 +5026,8 @@ handler. "
   :type 'string
   :group 'twittering)
 
+(defvar twittering-tmp-image "~/.emacs.d/twittering/twmode-image")
+
 (defun twittering-toggle-thumbnail-1 (thumbnail-pic bmiddle-pic &optional initial)
   (let ((uri (get-text-property (point) 'uri))
         next-uri)
@@ -5043,7 +5046,7 @@ handler. "
              (common-properties (twittering-get-common-properties (point))))
         (if (and height (> height twittering-image-height-threshold))
             (if twittering-image-external-viewer-command
-                (let ((f (file-truename "~/.emacs.d/twmode-image"))
+                (let ((f (file-truename twittering-tmp-image))
                       (coding-system-for-write 'binary))
                   (when (eq system-type 'windows-nt)
                     (setq f (format "%s.%S" f (plist-get (cdr image) :type))))
@@ -7044,7 +7047,10 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
       (apply func args))))
 
 (defun twittering-url-retrieve-synchronously (url)
-  (twittering-url-wrapper 'url-retrieve-synchronously url))
+  (message "Retrieving `%s'..." url)
+  (prog1
+      (twittering-url-wrapper 'url-retrieve-synchronously url)
+    (message "Retrieving `%s'...done" url)))
 
 ;; (let ((request (twittering-make-http-request-from-uri
 ;; 		  "GET" nil url))
