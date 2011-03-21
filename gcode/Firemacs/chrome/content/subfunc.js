@@ -203,9 +203,9 @@ Firemacs.SubFunc = {
     _followLink: function(dir, wnd, doc) {
         var re;
         if (dir > 0) {
-            re = /next|>|下一/i;
+            re = /buttonright|next|>|下一/i;
         } else {
-            re = /prev|<|上一/i;
+            re = /buttonleft|prev|<|上一/i;
         }
         var re_exclude = /<.*>|>.*</;
         var links = doc.links;
