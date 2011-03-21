@@ -5084,7 +5084,6 @@ handler. "
   (let ((status-line (assqref 'status-line header-info))
         (status-code (assqref 'status-code header-info))
         ret mes)
-    (twittering-html-decode-buffer)
     (cond
      ((string= status-code "200")
       (let ((json-data (twittering-construct-statuses)))
@@ -8209,7 +8208,7 @@ string.")
       (with-temp-buffer
         (insert detail-data)
         (goto-char (point-min))
-        (let ((json (twittering-json-read t))
+        (let ((json (twittering-wash-json-douban (twittering-json-read)))
               (type (when (string-match
                            (regexp-opt 
                             '("photo" "note" "book" "movie" "music" "review"
@@ -9261,52 +9260,65 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
                        (intern (replace-regexp-in-string
                                 "_" "-" (symbol-name symbol)))
                      symbol))))
-      (cond ((null tree)
-             '())
-            ((atom front)
-             (when (and (consp rear) (= (length rear) 1))
-               (setq rear (car rear)))
-             (when (and (atom rear) (stringp front))
-               (when (string-match "\\`https?://" front)
-                 (let ((tmp front))
-                   (setq front rear
-                         rear tmp)))
-               (when (stringp front)
-                 (setq front (intern front))))
-           
-             ;; wash douban json
-             (cond ((and (symbolp front) 
-                         (string-match "\\`\\(@\\|\\$\\)" (symbol-name front)))
-                    rear)
-                   ;; ("http://.." str) => (symbol . "http://..") 
+      (cond
+       ((atom front)
+        ;; wash douban json
+        (cond ((and (symbolp front) 
+                    (string-match "\\`\\(@\\|\\$\\)" (symbol-name front)))
+               rear)
+              (t
+               (cons (case front        ; direct-message
+                       ((sender) 'user)
+                       ((recipient-id) 'in-reply-to-user-id)
+                       (t
+                        (funcall listy front)))
 
-                   (t
-                    (cons (case front   ; direct-message
-                            ((sender) 'user)
-                            ((recipient-id) 'in-reply-to-user-id)
-                            (t
-                             (funcall listy front)))
+                     (if (atom rear)
+                         (cond ((and (eq front 'id) (numberp rear))
+                                ;; sina passes big integer. 应该學 twitter 用科学记数法。
+                                (replace-regexp-in-string "\\.0$" "" (number-to-string rear)))
+                               ((or (null rear) 
+                                    (and (stringp rear) (string= rear ""))
+                                    (eq rear ':json-false))
+                                '())
+                               ((eq rear ':json-true)
+                                t)
+                               ((stringp rear) rear)
+                               (t (format "%S" rear)))
+                       (twittering-wash-json rear))))))
 
-                          (if (atom rear)
-                              (cond ((and (eq front 'id) (numberp rear))
-                                     ;; sina passes big integer. 应该學 twitter 用科学记数法。
-                                     (replace-regexp-in-string "\\.0$" "" (number-to-string rear)))
-                                    ((or (null rear) 
-                                         (and (stringp rear) (string= rear ""))
-                                         (eq rear ':json-false))
-                                     '())
-                                    ((eq rear ':json-true)
-                                     t)
-                                    ((stringp rear) rear)
-                                    (t (format "%S" rear)))
-                            (twittering-wash-json rear))))))
+       ((consp front)
+        ;; FIXME: too deep lisp.
+        (mapcar 'twittering-wash-json tree)
+        ;; (cons (twittering-wash-json front)
+        ;;    (twittering-wash-json rear))
+        )))))
 
-            ((consp front)
-             ;; FIXME: too deep lisp.
-             (mapcar 'twittering-wash-json tree)
-             ;; (cons (twittering-wash-json front)
-             ;;    (twittering-wash-json rear))
-             )))))
+(defun twittering-wash-json-douban (tree)
+  "(a (b)) => (a b)"
+  (cond
+   ((atom tree)
+    tree)
+   (t 
+    (let ((front (car tree))
+          (rear (cdr tree)))
+      (cond 
+       ((atom front)
+        (when (and (consp rear) (= (length rear) 1))
+          (setq rear (car rear)))
+        (when (and (atom rear) (stringp front))
+          (when (string-match "\\`https?://" front)
+            (let ((tmp front))
+              (setq front rear
+                    rear tmp)))
+          (when (stringp front)
+            (setq front (intern front))))
+        
+        (cons front (if (atom rear) 
+                        rear
+                      (twittering-wash-json-douban rear))))
+       (t
+        (mapcar 'twittering-wash-json-douban tree)))))))
 
 ;;;;
 ;;;; Buffer info
@@ -9539,16 +9551,10 @@ SPEC may be a timeline spec or a timeline spec string."
 (defun twittering-get-status-at-pos ()
   (twittering-find-status (twittering-get-id-at)))
 
-(defun twittering-json-read (&optional wash-twice)
-  (let ((json-array-type 'list)
-        ret)
-    (twittering-html-decode-buffer)
-    (setq ret (twittering-wash-json (json-read)))
-    (when wash-twice
-      ;;   1. ("http://.." str) => (symbol . "http://..") 
-      ;;   2. (symbol/str str) => (symbol . str)
-      (setq ret (twittering-wash-json ret)))
-    ret))
+(defun twittering-json-read ()
+  (twittering-html-decode-buffer)
+  (let ((json-array-type 'list))
+    (twittering-wash-json (json-read))))
 
 (defun twittering-construct-statuses ()
   (let ((statuses (twittering-json-read))
@@ -9556,7 +9562,7 @@ SPEC may be a timeline spec or a timeline spec string."
                (find-if (lambda (i) (eq (car i) symbol)) statuses))))
     (cond 
      ((funcall has 'entry)         ; douban.com
-      (setq statuses (twittering-wash-json statuses))
+      (setq statuses (twittering-wash-json-douban statuses))
       (setq statuses
             (mapcar
              (lambda (i)
