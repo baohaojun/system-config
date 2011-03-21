@@ -28,6 +28,34 @@ for (0..8) {
     die "invalid input: repeated digit" if $col[$_] =~ m/([0-9]).*\1/;
 }
 
+for $area (0..8) {
+    $arow = int($area/3);
+    $acol = int($area%3);
+    my $area_str = "";
+    for $i (0..8) {
+        $irow = $arow*3 + int($i/3);
+        $icol = $acol*3 + int($i%3);
+        $area_str .= $m[$irow][$icol];
+    }
+    die "invalid input: repeated digit in area[$area]: $area_str" if $area_str =~ m/([0-9]).*\1/;
+}
+
+sub area_contains ($$$$)
+{
+    my ($m, $r, $c, $try) = @_;
+    $r = int($r/3) * 3;
+    $c = int($c/3) * 3;
+
+    for $ar (0..2) {
+        for $ac (0..2) {
+            if ($m->[$r+$ar][$c+$ac] == $try) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
 sub fill_one_cell ($) {
     my ($m) = @_;
     my @dup;
@@ -58,6 +86,11 @@ sub fill_one_cell ($) {
             } else {
                 
             }
+        }
+
+        if (area_contains($m, $br, $bc, $try)) {
+            print "area at $br $bc contains $try\n";
+            $go = 0;
         }
 
         if ($go == 0 and $try == 9) {
