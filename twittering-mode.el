@@ -3693,8 +3693,9 @@ current buffer."
         (while (let ((next (twittering-goto-next-thing)))
                  (and (not found-pos) next (or (not limit) (< next limit))))
           (funcall find-func))))
-    (when found-pos
-      (goto-char found-pos))))
+    ;; (when found-pos
+    ;;   (goto-char found-pos))
+    ))
 
 ;;;###autoload
 (defun twit ()
@@ -5015,8 +5016,10 @@ image buffer during `twittering-toggle-thumbnail-1'. "
   :type 'integer
   :group 'twittering)
 
-(defcustom twittering-image-external-viewer-command ""
-  "External command for viewing image. "
+(defcustom twittering-image-external-viewer-command nil
+  "External command for viewing image. 
+You can set it to \"\" on some OS like Windows, leaving the OS to call a proper
+handler. "
   :type 'string
   :group 'twittering)
 
@@ -5037,15 +5040,14 @@ image buffer during `twittering-toggle-thumbnail-1'. "
              (image-data (and image (plist-get (cdr image) :data)))
              (common-properties (twittering-get-common-properties (point))))
         (if (and height (> height twittering-image-height-threshold))
-            (if (and twittering-image-external-viewer-command
-                     (not (string= twittering-image-external-viewer-command "")))
+            (if twittering-image-external-viewer-command
                 (let ((f (file-truename "~/.emacs.d/twmode-image"))
                       (coding-system-for-write 'binary))
                   (when (eq system-type 'windows-nt)
                     (setq f (format "%s.%S" f (plist-get (cdr image) :type))))
                   (with-temp-file f
                     (insert image-data))
-                  (let ((cmd (format "%s %s" twittering-image-external-viewer-command f)))
+                  (let ((cmd (format "%s \"%s\"" twittering-image-external-viewer-command f)))
                     (start-process-shell-command cmd nil cmd)))
               (switch-to-buffer "*twmode-image*")
               (let ((inhibit-read-only t))
