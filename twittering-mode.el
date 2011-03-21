@@ -3684,9 +3684,9 @@ current buffer."
                                          (and (consp i)
                                               (eq (car i) 'twittering-toggle-thumbnail-1)))
                                        (cadr (get-text-property (point) 'keymap)))))
-             (when func-args
-               (apply (car func-args) (cdr func-args))
-               (setq found-pos (point))))))
+                       (when func-args
+                         (apply (car func-args) (cdr func-args))
+                         (setq found-pos (point))))))
         found-pos)
     (unless (funcall find-func)         ; FIXME: no do-while in elisp? (xwl)
       (save-excursion 
@@ -3695,7 +3695,7 @@ current buffer."
           (funcall find-func))))
     ;; (when found-pos
     ;;   (goto-char found-pos))
-    ))
+    (recenter-top-bottom 'top)))
 
 ;;;###autoload
 (defun twit ()
@@ -6951,13 +6951,15 @@ rendered at POS, return nil."
              (while (re-search-forward re nil t 1)
                (let* ((beg (match-beginning 0))
                       (end (match-end 0))
+                      (url (concat
+                            (match-string 0)
+                            "?alt=json&apikey=" 
+                            (twittering-lookup-service-method-table 'oauth-consumer-key)))
+                      (prefix (save-excursion
+                                (goto-char beg)
+                                (make-string (current-column) ? )))
                       (repl (save-match-data
-                              (twittering-make-douban-detail-string
-                               beg end
-                               (concat (match-string 0) "?alt=json") 
-                               (save-excursion
-                                 (goto-char beg)
-                                 (make-string (current-column) ? ))))))
+                              (twittering-make-douban-detail-string beg end url prefix))))
                  (replace-match repl))))))
       
       )                                 ; save-excursion ends here
@@ -9218,70 +9220,72 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
 
 (defun twittering-wash-json (tree)
   "Convert symbols like `a_b' to `a-b', and stringfy cdr values."
-  (when (consp (car tree))
-    (when (and (assqref 'id_str tree)
-               (assqref 'id tree))
-      (setq tree `(,@(assq-delete-all 'id tree)
-                   (id . ,(assqref 'id_str tree)))))
+  (if (atom tree)
+      tree
+    (when (consp (car tree))
+      (when (and (assqref 'id_str tree)
+                 (assqref 'id tree))
+        (setq tree `(,@(assq-delete-all 'id tree)
+                     (id . ,(assqref 'id_str tree)))))
 
-    (when (and (assqref 'in_reply_to_status_id_str tree)
-               (assqref 'in_reply_to_status_id tree))
-      (setq tree `(,@(assq-delete-all 'in_reply_to_status_id tree)
-                   (in_reply_to_status_id . ,(assqref 'in_reply_to_status_id_str tree))))))
+      (when (and (assqref 'in_reply_to_status_id_str tree)
+                 (assqref 'in_reply_to_status_id tree))
+        (setq tree `(,@(assq-delete-all 'in_reply_to_status_id tree)
+                     (in_reply_to_status_id . ,(assqref 'in_reply_to_status_id_str tree))))))
 
-  (let ((front (car tree))
-        (rear (cdr tree))
-        (listy (lambda (symbol)
-                 (if (symbolp symbol)
-                     (intern (replace-regexp-in-string
-                              "_" "-" (symbol-name symbol)))
-                   symbol))))
-    (cond ((null tree)
-           '())
-          ((atom front)
-           (when (and (consp rear) (= (length rear) 1))
-             (setq rear (car rear)))
-           (when (and (atom rear) (stringp front))
-             (when (string-match "\\`https?://" front)
-               (let ((tmp front))
-                 (setq front rear
-                       rear tmp)))
-             (when (stringp front)
-               (setq front (intern front))))
+    (let ((front (car tree))
+          (rear (cdr tree))
+          (listy (lambda (symbol)
+                   (if (symbolp symbol)
+                       (intern (replace-regexp-in-string
+                                "_" "-" (symbol-name symbol)))
+                     symbol))))
+      (cond ((null tree)
+             '())
+            ((atom front)
+             (when (and (consp rear) (= (length rear) 1))
+               (setq rear (car rear)))
+             (when (and (atom rear) (stringp front))
+               (when (string-match "\\`https?://" front)
+                 (let ((tmp front))
+                   (setq front rear
+                         rear tmp)))
+               (when (stringp front)
+                 (setq front (intern front))))
            
-           ;; wash douban json
-           (cond ((and (symbolp front) 
-                       (string-match "\\`\\(@\\|\\$\\)" (symbol-name front)))
-                  rear)
-                 ;; ("http://.." str) => (symbol . "http://..") 
+             ;; wash douban json
+             (cond ((and (symbolp front) 
+                         (string-match "\\`\\(@\\|\\$\\)" (symbol-name front)))
+                    rear)
+                   ;; ("http://.." str) => (symbol . "http://..") 
 
-                 (t
-                  (cons (case front     ; direct-message
-                          ((sender) 'user)
-                          ((recipient-id) 'in-reply-to-user-id)
-                          (t
-                           (funcall listy front)))
+                   (t
+                    (cons (case front   ; direct-message
+                            ((sender) 'user)
+                            ((recipient-id) 'in-reply-to-user-id)
+                            (t
+                             (funcall listy front)))
 
-                        (if (atom rear)
-                            (cond ((and (eq front 'id) (numberp rear))
-                                   ;; sina passes big integer. 应该學 twitter 用科学记数法。
-                                   (replace-regexp-in-string "\\.0$" "" (number-to-string rear)))
-                                  ((or (null rear) 
-                                       (and (stringp rear) (string= rear ""))
-                                       (eq rear ':json-false))
-                                   '())
-                                  ((eq rear ':json-true)
-                                   t)
-                                  ((stringp rear) rear)
-                                  (t (format "%S" rear)))
-                          (twittering-wash-json rear))))))
+                          (if (atom rear)
+                              (cond ((and (eq front 'id) (numberp rear))
+                                     ;; sina passes big integer. 应该學 twitter 用科学记数法。
+                                     (replace-regexp-in-string "\\.0$" "" (number-to-string rear)))
+                                    ((or (null rear) 
+                                         (and (stringp rear) (string= rear ""))
+                                         (eq rear ':json-false))
+                                     '())
+                                    ((eq rear ':json-true)
+                                     t)
+                                    ((stringp rear) rear)
+                                    (t (format "%S" rear)))
+                            (twittering-wash-json rear))))))
 
-          ((consp front)
-           ;; FIXME: too deep lisp.
-           (mapcar 'twittering-wash-json tree)
-           ;; (cons (twittering-wash-json front)
-           ;;    (twittering-wash-json rear))
-           ))))
+            ((consp front)
+             ;; FIXME: too deep lisp.
+             (mapcar 'twittering-wash-json tree)
+             ;; (cons (twittering-wash-json front)
+             ;;    (twittering-wash-json rear))
+             )))))
 
 ;;;;
 ;;;; Buffer info
