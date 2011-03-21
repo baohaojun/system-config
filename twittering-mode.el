@@ -7887,9 +7887,9 @@ string.")
               ((show-friendships)
                (let ((target (or (assqref 'target retrieved)
                                  (assqref 'target (assqref 'relationship retrieved)))))
-                 (concat (if (assqref 'following target) " <" " ")
+                 (concat (if (assqref 'followed-by target) " <" " ")
                          "--"
-                         (if (assqref 'followed-by target) ">" "")
+                         (if (assqref 'following target) ">" "")
                          " you")))
 
               ((get-list-index get-list-subscriptions get-list-memberships)
