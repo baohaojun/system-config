@@ -4036,7 +4036,10 @@ If nil, read it from the minibuffer."
                        (read-string "your twitter username: ")))
          (password (or (twittering-get-accounts 'password)
                        (read-passwd (format "%s's twitter password: "
-                                            username)))))
+                                            username))))
+         (token-alist `(,@(twittering-lookup-oauth-access-token-alist)
+                        ("password" .  ,password))))
+    (twittering-update-oauth-access-token-alist token-alist)
     `(,username . ,password)))
 
 (defun twittering-has-oauth-access-token-p ()
@@ -4044,7 +4047,11 @@ If nil, read it from the minibuffer."
         (any-entries '("user_id" "screen_name" "douban_user_id"))
         (pred (lambda (key)
                 (assocref key (twittering-lookup-oauth-access-token-alist)))))
-    (and (every pred required-entries) (some pred any-entries))))
+    (and (every pred required-entries) 
+         (some pred any-entries)
+         (if (eq (twittering-get-accounts 'auth) 'basic)
+             (assocref "password" (twittering-lookup-oauth-access-token-alist))
+           t))))
 
 (defvar twittering-private-info-file-loaded-p nil)
 (defvar twittering-private-info-file-dirty nil)
@@ -4195,12 +4202,7 @@ If nil, read it from the minibuffer."
                      (every (lambda (service)
                               (eq (twittering-get-account-authorization service)
                                   'authorized))
-                            (remove nil
-                                    (mapcar (lambda (account)
-                                              (when (memq (car (assqref 'auth (cdr account)))
-                                                          '(oauth xauth))
-                                                (car account)))
-                                            twittering-accounts))))
+                            (mapcar 'car twittering-accounts)))
             (twittering-save-private-info-with-guide))
              
           (twittering-start))))
