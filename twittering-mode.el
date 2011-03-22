@@ -8283,7 +8283,26 @@ string.")
                                   ("出版者"   ,publisher))
                                 "\n"))))
 
-            ((book review collection)
+            ((book)
+             (let* ((db:attribute (assqref 'db:attribute json))
+                    (title (assqref 'title db:attribute))
+                    (author (assqref 'author db:attribute))
+                    (score (nth 1 (assqref 'gd:rating json)))
+                    (publisher (assqref 'publisher db:attribute))
+                    (pubdate (assqref 'pubdate db:attribute)))
+               ;; too few people, TODO: handle other possible empty item.
+               (unless (stringp score)
+                 (setq score ""))
+               (setq detail 
+                     (mapconcat (lambda (i) (mapconcat 'identity i "："))
+                                `(("书名"    ,title)
+                                  ("作者"   ,author)
+                                  ("评分"     ,score)
+                                  ("发行时间" ,pubdate)
+                                  ("出版者"   ,publisher))
+                                "\n"))))
+               
+            ((review collection)
              (setq detail (assqref 'summary json))
              (unless detail             ; sounds like douban's bug.
                (setq detail (car (assqref 'summary json)))))
