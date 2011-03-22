@@ -897,8 +897,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive)
   (save-excursion
     (save-window-excursion
-      (shell-command-on-region
-       1 (buffer-size)
+      (shell-command
        (let ((mode-name-minus-mode 
               (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
          (concat "ctags-exuberant --language-force="
