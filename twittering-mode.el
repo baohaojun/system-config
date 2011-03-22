@@ -5884,6 +5884,12 @@ following symbols;
     ((douban)
      (setq str (twittering-make-string-with-uri-property str))))
 
+  ;; Wash html tags
+  (with-temp-buffer
+    (insert str)
+    (html2text)
+    (setq str (buffer-string)))
+  
   (let* ((regexp-list
           `( ;; Hashtag
             (hashtag . ,(concat twittering-regexp-hash
