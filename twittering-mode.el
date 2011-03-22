@@ -9586,7 +9586,12 @@ SPEC may be a timeline spec or a timeline spec string."
                  `((id . ,(car (last (split-string (assqref 'id i) "/"))))
                    (created-at . ,(replace-regexp-in-string 
                                    "+08:00" "+0800" (assqref 'published i)))
-                   (text . ,(cdr (assqref 'content i)))
+                   (text . ,(concat (cdr (assqref 'content i))
+                                    (let ((rating (ignore-errors 
+                                                    (assqref 'rating (assqref 'db:attribute i)))))
+                                      (when rating
+                                        (concat "  评分：" 
+                                                (number-to-string (* (string-to-number rating) 2)))))))
                    (thumbnail-pic . ,(assqref 'image link))
                    (source . "douban")
                    (user 
