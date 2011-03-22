@@ -5817,6 +5817,12 @@ following symbols;
   (when (eq (twittering-extract-service) 'sina)
     (setq str (replace-regexp-in-string "\\(\\[[^][]+\\]\\)" "[\\1]" str)))
 
+  ;; Wash html tags
+  (with-temp-buffer
+    (insert str)
+    (html2text)
+    (setq str (buffer-string)))
+  
   (let* ((regexp-list
           `( ;; Hashtag
             (hashtag . ,(concat twittering-regexp-hash
