@@ -655,10 +655,7 @@ requires an external command `curl' or another command included in
   :type 'list
   :group 'twittering-mode)
 
-(defcustom twittering-enabled-services '(twitter)
-  "See `twittering-service-method-table' for supported services."
-  :type 'list
-  :group 'twittering-mode)
+(defvar twittering-enabled-services nil)
 
 (defun twittering-get-accounts (attr)
   (or (cadr (assq attr (assqref (twittering-extract-service) 
@@ -3073,6 +3070,10 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
                 "timeline: " initial t)))
 
   (let ((twittering-service-method (twittering-extract-service spec)))
+    (unless (memq twittering-service-method twittering-enabled-services)
+      (setq twittering-enabled-services `(,@twittering-enabled-services
+                                          ,twittering-service-method)))
+
     (cond
      ((stringp spec)
       (unless (string-match "@" spec)
