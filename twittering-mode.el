@@ -1731,6 +1731,11 @@ Statuses are stored in ascending-order with respect to their IDs."
               (twittering-take twittering-new-tweets-count statuses)
             new-statuses))))))
 
+(defcustom twittering-status-filter nil
+  "Filter for whether to show a status in timeline or not.
+It will be called with one argument -- `status', only when it returns t, will
+the status be shown. ")
+
 (defun twittering-timeline-data-collect (&optional spec timeline-data)
   "Collect visible statuses for `twittering-render-timeline'."
   (let* ((spec (or spec (twittering-current-timeline-spec)))
@@ -1745,12 +1750,14 @@ Statuses are stored in ascending-order with respect to their IDs."
         (let ((id (assqref 'id status))
               (is-retweeting (twittering-status-has-quotation? status))
               (retweeted-id (assqref 'id (assqref 'retweeted-status status))))
-          (when (or (twittering-timeline-spec-user-methods-p spec)
-                    (if is-retweeting
-                        (and (twittering-status-id=
-                              id (gethash retweeted-id referring-id-table)))
-                      t)
-                    (eq (twittering-extract-service spec) 'sina))
+          (when (and (or (twittering-timeline-spec-user-methods-p spec)
+                         (if is-retweeting
+                             (and (twittering-status-id=
+                                   id (gethash retweeted-id referring-id-table)))
+                           t)
+                         (eq (twittering-extract-service spec) 'sina))
+                     (or (not twittering-status-filter)
+                         (funcall twittering-status-filter status)))
             status)))
       timeline-data))))
 
