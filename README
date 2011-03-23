@@ -75,10 +75,7 @@ skin	firemacs	classic/1.0	chrome/skin/
     and "config.xul".
 
   "make.hs" is written by Haskell. You need to install Haskell
-  Platform. And the Parsec library is necessary. To install Parsec,
-  type:
-
-	% cabal install parsec3
+  Platform.
 
   To compile and run "make.hs", type in the "chrome/content/db"
   directory:
