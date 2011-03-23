@@ -99,7 +99,7 @@ buffers."
   :type 'string
   :group 'twittering)
 
-(defcustom twittering-status-format "%FACE[twittering-zebra-1-face,twittering-zebra-2-face]{%i %s,  %@:\n%FILL{  %t %m // from %f%L%r%R}}\n "
+(defcustom twittering-status-format "%FACE[twittering-zebra-1-face,twittering-zebra-2-face]{%i %s,  %@:\n%FILL{  %t // from %f%L%r%R}}\n "
   "Format string for rendering statuses.
 Ex. \"%i %s,  %@:\\n%FILL{  %t // from %f%L%r%R}\n \"
 
@@ -128,7 +128,7 @@ Items:
       latest statuses for more than a week)
  %C{time-format-str} - created_at (formatted with time-format-str)
  %@ - X seconds ago
- %T - (sina) thumbnail picture in a tweet
+ %T - thumbnail picture in a tweet
  %t - text filled as one paragraph
  %' - truncated
  %FACE[face-name]{...} - strings decorated with the specified face. You can
@@ -530,7 +530,7 @@ do not display unread notifier on mode line.")
 (defvar twittering-use-master-password nil
   "*Wheter to store private information encrypted with a master password.")
 (defvar twittering-private-info-file
-  (expand-file-name "~/.twittering-mode.gpg")
+  (expand-file-name "~/.emacs.d/twittering/.twittering.gpg")
   "*File for storing encrypted private information when
 `twittering-use-master-password' is non-nil.")
 (defvar twittering-variables-stored-with-encryption
@@ -592,6 +592,24 @@ Following methods are supported:
           (status-url twittering-get-status-url-sina)
           (search-url twittering-get-search-url-twitter))
 
+    (douban (api "api.douban.com")
+            (web "www.douban.com")
+            
+            ,@(mapcar
+               (lambda (i)
+                 `(,(car i) ,(concat "://www.douban.com/service/auth/" (cadr i))))
+               '((oauth-request-token-url-without-scheme "request_token")
+                 (oauth-authorization-url-base-without-scheme "authorize?oauth_token=")
+                 (oauth-access-token-url-without-scheme "access_token")))
+
+            (oauth-consumer-key
+             ,(base64-decode-string "MDNhYjJiM2JiYjY1YWExYTBiMDE4MWIzMzIzMGZlNGU="))
+            (oauth-consumer-secret
+             ,(base64-decode-string "MjE4OWUxYTdmYmE4ZTkxYw=="))
+
+            (status-url twittering-get-status-url-douban)
+            (search-url twittering-get-search-url-twitter))
+
     (statusnet (status-url twittering-get-status-url-statusnet)
                (search-url twittering-get-search-url-statusnet)))
   "A list of alist of service methods."
@@ -637,14 +655,12 @@ requires an external command `curl' or another command included in
   :type 'list
   :group 'twittering-mode)
 
-(defcustom twittering-enabled-services '(twitter)
-  "See `twittering-service-method-table' for supported services."
-  :type 'list
-  :group 'twittering-mode)
+(defvar twittering-enabled-services nil)
 
 (defun twittering-get-accounts (attr)
-  (cadr (assq attr
-              (assqref (twittering-extract-service) twittering-accounts))))
+  (or (cadr (assq attr (assqref (twittering-extract-service) 
+                                twittering-accounts)))
+      (assocref "password" (twittering-lookup-oauth-access-token-alist))))
 
 ;;; Macros
 
@@ -929,7 +945,9 @@ must be encoded into the same as they will be sent."
      (mapconcat
       (lambda (entry)
         (concat (car entry) "=\"" (cdr entry) "\""))
-      oauth-parameters
+      ;; TODO, what to set? (xwl)
+      `(("realm" . ,(twittering-oauth-url-encode "http://127.0.0.1/"))
+        ,@oauth-parameters)
       ",")
      ",oauth_signature=\"" (twittering-oauth-url-encode signature) "\"")))
 
@@ -955,7 +973,8 @@ must be encoded into the same as they will be sent."
                ("oauth_timestamp" . ,(format-time-string "%s"))
                ("oauth_version" . "1.0")
                ("oauth_token" . ,request-token)
-               ("oauth_verifier" . ,verifier)))))
+               ,@(unless (string-match "douban.com" url)
+                   `(("oauth_verifier" . ,verifier)))))))
     (twittering-oauth-auth-str "POST" url query-parameters oauth-params key)))
 
 (defun twittering-oauth-auth-str-access (method url query-parameters consumer-key consumer-secret access-token access-token-secret &optional oauth-parameters)
@@ -1177,12 +1196,15 @@ like following:
             (when (y-or-n-p "Open authorization URL with browser? (using `browse-url')")
               (browse-url authorize-url)))
           (let* ((pin
-                  (block pin-input-block
-                    (while t
-                      (let ((pin-input (read-string "Input PIN code: ")))
-                        (when (string-match "^\\s-*\\([0-9]+\\)\\s-*$" pin-input)
-                          (return-from pin-input-block
-                            (match-string 1 pin-input)))))))
+                  (if (string-match "douban.com" access-token-url)
+                      (unless (y-or-n-p "Have you allowed twittering-mode to access douban? ")
+                        (error "Access request rejected"))
+                    (block pin-input-block
+                      (while t
+                        (let ((pin-input (read-string "Input PIN code: ")))
+                          (when (string-match "^\\s-*\\([0-9]+\\)\\s-*$" pin-input)
+                            (return-from pin-input-block
+                              (match-string 1 pin-input))))))))
                  (verifier pin))
             (twittering-oauth-exchange-request-token
              access-token-url
@@ -2524,6 +2546,7 @@ The method to perform the request is determined from
              default-directory))
          (proc (apply 'start-process name buffer
                       twittering-curl-program curl-args)))
+    (debug-printf "curl args: %S" curl-args)
     (when (and proc (functionp sentinel))
       (set-process-sentinel proc sentinel))
     proc))
@@ -2879,15 +2902,15 @@ the server when the HTTP status code equals to 400 or 403."
         (status-code (assqref 'status-code header-info)))
     ;; http://dev.twitter.com/pages/responses_errors
     (when (buffer-live-p buffer)
-      (let ((error-msg (ignore-errors (assqref 'error (twittering-json-read)))))
+      (let ((error-msg (ignore-errors (assqref 'error (twittering-construct-statuses)))))
         (if error-msg
             (format "%s (%s)" status-line error-msg)
           status-line)))))
 
 (defun twittering-http-get (host method &optional parameters format additional-info sentinel clean-up-sentinel)
-  (let* ((format (or format "json"))
-         (sentinel (or sentinel 'twittering-http-get-default-sentinel))
-         (path (concat "/" method "." format))
+  (let* ((sentinel (or sentinel 'twittering-http-get-default-sentinel))
+         (path (concat "/" method (if (and (stringp format) (string= format "")) ; douban
+                                      "" ".json")))
          (headers nil)
          (port nil)
          (post-body "")
@@ -2910,7 +2933,7 @@ the server when the HTTP status code equals to 400 or 403."
       (let* ((spec (assqref 'timeline-spec connection-info))
              (spec-string (assqref 'timeline-spec-string connection-info))
              (twittering-service-method (caar spec))
-             (statuses (twittering-json-read)))
+             (statuses (twittering-construct-statuses)))
         (when statuses
           (let ((new-statuses
                  (twittering-add-statuses-to-timeline-data statuses spec))
@@ -3054,6 +3077,10 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
                 "timeline: " initial t)))
 
   (let ((twittering-service-method (twittering-extract-service spec)))
+    (unless (memq twittering-service-method twittering-enabled-services)
+      (setq twittering-enabled-services `(,@twittering-enabled-services
+                                          ,twittering-service-method)))
+
     (cond
      ((stringp spec)
       (unless (string-match "@" spec)
@@ -3307,10 +3334,10 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
 
 ;;;; Commands for retweet
 
-;; TODO: cross-retweeting not working (xwl)
 (defun twittering-retweet (&optional ask)
   (interactive "P")
-  (let ((service (twittering-extract-service)))
+  (let* ((orig-service (twittering-extract-service))
+         (service orig-service))
     (when ask
       (setq service
             (intern
@@ -3318,28 +3345,30 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
               "Post to: "
               `(,@(mapcar 'symbol-name twittering-enabled-services) "all")))))
     (mapc (lambda (s)
-            (let* ((twittering-service-method s)
-                   (style (twittering-get-accounts 'retweet)))
-              (case style
-                ((native)
-                 (twittering-native-retweet))
-                ((organic)
-                 (twittering-organic-retweet))
-                (t
-                 (if twittering-use-native-retweet
-                     (twittering-native-retweet)
-                   (twittering-organic-retweet))))))
-          (if (eq service 'all) twittering-enabled-services (list service)))))
+            (if (eq s orig-service)
+                (let ((twittering-service-method s))
+                  (if twittering-use-native-retweet
+                      (twittering-native-retweet)
+                    (twittering-organic-retweet)))
+              (twittering-organic-retweet `((,s)))))
+          (if (eq service 'all) twittering-enabled-services `(,service)))))
 
-(defun twittering-organic-retweet ()
+(defun twittering-organic-retweet (&optional spec)
   (interactive)
   (twittering-ensure-retweeting-allowed)
-  (funcall twittering-update-status-function
-           (twittering-generate-organic-retweet)
-           (get-text-property (point) 'id)
-           nil
-           (twittering-current-timeline-spec)
-           t)
+  (if spec 
+      (funcall twittering-update-status-function
+               (format "[%s] %s" (symbol-name (twittering-extract-service))
+                       (twittering-generate-organic-retweet))
+               nil
+               nil
+               spec)
+    (funcall twittering-update-status-function
+             (twittering-generate-organic-retweet)
+             (get-text-property (point) 'id)
+             nil
+             (twittering-current-timeline-spec)
+             t))
   (goto-char (line-beginning-position)))
 
 (defun twittering-native-retweet ()
@@ -3365,7 +3394,11 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
                                     "...")
                                  text))))
               (if (y-or-n-p mes)
-                  (twittering-call-api 'retweet `((id . ,id)))
+                  (if (eq (twittering-extract-service) service)
+                      (twittering-call-api 'retweet `((id . ,id)))
+                    ;; cross retweet
+                    (funcall twittering-update-status-function
+                             text nil nil `((,service))))
                 (message "Request canceled")))
           (message "Cannot retweet your own tweet"))
       (message "No status selected"))))
@@ -3656,6 +3689,27 @@ current buffer."
   (interactive)
   (twittering-redisplay-status-on-each-buffer (current-buffer)))
 
+(defun twittering-toggle-thumbnail ()
+  (interactive)
+  (let ((limit (twittering-get-next-status-head))
+        (find-func (lambda ()
+                     (let ((func-args (find-if
+                                       (lambda (i)
+                                         (and (consp i)
+                                              (eq (car i) 'twittering-toggle-thumbnail-1)))
+                                       (cadr (get-text-property (point) 'keymap)))))
+                       (when func-args
+                         (apply (car func-args) (cdr func-args))
+                         (setq found-pos (point))))))
+        found-pos)
+    (unless (funcall find-func)         ; FIXME: no do-while in elisp? (xwl)
+      (save-excursion 
+        (while (let ((next (twittering-goto-next-thing)))
+                 (and (not found-pos) next (or (not limit) (< next limit))))
+          (funcall find-func))))
+    (when found-pos
+      (recenter-top-bottom 'top))))
+
 ;;;###autoload
 (defun twit ()
   "Start twittering-mode."
@@ -3834,7 +3888,7 @@ current buffer."
 ;;;; Cache
 ;;;
 
-(defcustom twittering-cache-file "~/.twittering_cache"
+(defcustom twittering-cache-file "~/.emacs.d/twittering/cache"
   "Filename for caching latest statu for `twittering-cache-spec-strings'."
   :type 'string
   :group 'twittering)
@@ -3971,6 +4025,8 @@ been initialized yet."
   "Major mode for Twitter.
 \\{twittering-mode-map}"
   (interactive)
+  (unless (file-exists-p "~/.emacs.d/twittering")
+    (mkdir "~/.emacs.d/twittering" t))
   (twittering-cache-load)
   (mapc 'twittering-visit-timeline
         (if (listp twittering-initial-timeline-spec-string)
@@ -3995,15 +4051,21 @@ If nil, read it from the minibuffer."
                        (read-string "your twitter username: ")))
          (password (or (twittering-get-accounts 'password)
                        (read-passwd (format "%s's twitter password: "
-                                            username)))))
+                                            username))))
+         (token-alist `(,@(twittering-lookup-oauth-access-token-alist)
+                        ("password" .  ,password))))
+    (twittering-update-oauth-access-token-alist token-alist)
     `(,username . ,password)))
 
 (defun twittering-has-oauth-access-token-p ()
-  (let ((required-entries '("oauth_token" "oauth_token_secret"))
-        (any-entries '("user_id" "screen_name"))
-        (pred (lambda (key)
-                (assocref key (twittering-lookup-oauth-access-token-alist)))))
-    (and (every pred required-entries) (some pred any-entries))))
+  (if (eq (twittering-get-accounts 'auth) 'basic)
+      (assocref "password" (twittering-lookup-oauth-access-token-alist))
+    (let ((required-entries '("oauth_token" "oauth_token_secret"))
+          (any-entries '("user_id" "screen_name" "douban_user_id"))
+          (pred (lambda (key)
+                  (assocref key (twittering-lookup-oauth-access-token-alist)))))
+      (and (every pred required-entries) 
+           (some pred any-entries)))))
 
 (defvar twittering-private-info-file-loaded-p nil)
 (defvar twittering-private-info-file-dirty nil)
@@ -4022,149 +4084,145 @@ If nil, read it from the minibuffer."
            (not (twittering-capable-of-encryption-p)))
       (message "You need GnuPG and (EasyPG or alpaca.el) for master password!"))
 
-     (t
-      (case (twittering-get-accounts 'auth)
-        ((oauth xauth)
-         (let ((ok nil))
-           ;; 1. Read token from saved file
-           (when (and twittering-use-master-password
-                      (twittering-capable-of-encryption-p)
-                      (not twittering-private-info-file-loaded-p)
-                      (file-exists-p twittering-private-info-file)
-                      (twittering-load-private-info-with-guide)
-                      (twittering-has-oauth-access-token-p))
-             (twittering-update-account-authorization 'queried)
-             (let* ((oauth-alist (twittering-lookup-oauth-access-token-alist))
-                    (proc
-                     (twittering-call-api
-                      'verify-credentials
-                      `((sentinel
-                         . twittering-http-get-verify-credentials-sentinel)
-                        (clean-up-sentinel
-                         . twittering-http-get-verify-credentials-clean-up-sentinel))
-                      `(,(if (eq service 'sina)
-                             `(user_id . ,(assocref "user_id" oauth-alist))
-                           `(username . ,(assocref "screen_name" oauth-alist)))
-                        (password . nil)
-                        (service . ,service)))))
-               (cond
-                ((null proc)
-                 (twittering-update-account-authorization nil)
-                 (twittering-update-oauth-access-token-alist '())
-                 (message "Authorization via saved auth info failed. "))
-                (t
-                 ;; wait for verification to finish.
-                 (while (twittering-account-authorization-queried-p)
-                   (sit-for 0.1))
-                 (setq ok t)))))
+     ((memq (twittering-get-accounts 'auth) '(oauth xauth basic))
+      (let ((ok nil))
+        ;; 1. Read token from saved file
+        (when (and twittering-use-master-password
+                   (twittering-capable-of-encryption-p)
+                   (not twittering-private-info-file-loaded-p)
+                   (file-exists-p twittering-private-info-file)
+                   (twittering-load-private-info-with-guide)
+                   (twittering-has-oauth-access-token-p))
+          (twittering-update-account-authorization 'queried)
+          (setq ok (twittering-has-oauth-access-token-p))
+          (if ok
+              (twittering-update-account-authorization 'authorized)
+            (unless (eq (twittering-get-accounts 'auth) 'basic)
+              (let* ((oauth-alist (twittering-lookup-oauth-access-token-alist))
+                     (proc
+                      (twittering-call-api
+                       'verify-credentials
+                       `((sentinel
+                          . twittering-http-get-verify-credentials-sentinel)
+                         (clean-up-sentinel
+                          . twittering-http-get-verify-credentials-clean-up-sentinel))
+                       `(,(case service 
+                            ((sina)
+                             `(user_id . ,(assocref "user_id" oauth-alist)))
+                            ((douban)
+                             `(user_id . ,(assocref "douban_user_id" oauth-alist)))
+                            (t
+                             `(username . ,(assocref "screen_name" oauth-alist))))
+                         (password . nil)
+                         (service . ,service)))))
+                (cond
+                 ((null proc)
+                  (twittering-update-account-authorization nil)
+                  (twittering-update-oauth-access-token-alist '())
+                  (message "Authorization via saved auth info failed. "))
+                 (t
+                  ;; wait for verification to finish.
+                  (while (twittering-account-authorization-queried-p)
+                    (sit-for 0.1))
+                  (setq ok t)))))))
 
-           ;; 2. Maybe info file has already been read. 
-           (unless ok		       
-             (setq ok (twittering-has-oauth-access-token-p)))
+        ;; 2. Maybe info file has already been read when loading other accounts. 
+        (unless ok		       
+          (setq ok (twittering-has-oauth-access-token-p)))
+        
+        ;; 3. Get/Renew token
+        (unless ok
+          (let* ((scheme (if twittering-oauth-use-ssl "https" "http"))
+                 (access-token-url (concat scheme 
+                                           (twittering-lookup-service-method-table
+                                            'oauth-access-token-url-without-scheme)))
+                 (consumer-key (twittering-lookup-service-method-table
+                                'oauth-consumer-key))
+                 (consumer-secret (twittering-lookup-service-method-table
+                                   'oauth-consumer-secret)))
 
-           ;; 3. Get/Renew token
-           (unless ok
-             (let* ((scheme (if twittering-oauth-use-ssl "https" "http"))
-                    (access-token-url (concat scheme 
-                                              (twittering-lookup-service-method-table
-                                               'oauth-access-token-url-without-scheme)))
-                    (consumer-key (twittering-lookup-service-method-table
-                                   'oauth-consumer-key))
-                    (consumer-secret (twittering-lookup-service-method-table
-                                      'oauth-consumer-secret)))
-
-               (case (twittering-get-accounts 'auth)
-                 ((oauth)
-                  (let* ((request-token-url (concat scheme
-                                                    (twittering-lookup-service-method-table
-                                                     'oauth-request-token-url-without-scheme)))
-                         (token-alist (twittering-oauth-get-access-token
-                                       request-token-url
-                                       (lambda (token)
-                                         (concat scheme
+            (case (twittering-get-accounts 'auth)
+              ((oauth)
+               (let* ((request-token-url (concat scheme
                                                  (twittering-lookup-service-method-table
-                                                  'oauth-authorization-url-base-without-scheme)
-                                                 token))
-                                       access-token-url
-                                       consumer-key
-                                       consumer-secret
-                                       "twittering-mode")))
-                    (when (and (assoc "oauth_token"        token-alist)
-                               (assoc "oauth_token_secret" token-alist)
-                               (or (assoc "screen_name" token-alist)
-                                   (assoc "user_id" token-alist)))
-                      (twittering-update-oauth-access-token-alist token-alist)
-                      (setq ok t))))
+                                                  'oauth-request-token-url-without-scheme)))
+                      (token-alist (twittering-oauth-get-access-token
+                                    request-token-url
+                                    (lambda (token)
+                                      (concat scheme
+                                              (twittering-lookup-service-method-table
+                                               'oauth-authorization-url-base-without-scheme)
+                                              token))
+                                    access-token-url
+                                    consumer-key
+                                    consumer-secret
+                                    "twittering-mode")))
+                 (when (and (assoc "oauth_token"        token-alist)
+                            (assoc "oauth_token_secret" token-alist)
+                            (or (assoc "screen_name" token-alist)
+                                (assoc "user_id" token-alist)
+                                (assoc "douban_user_id" token-alist)))
+                   (twittering-update-oauth-access-token-alist token-alist)
+                   (setq ok t))))
 
-                 ((xauth)
-                  (let* ((account-info (twittering-prepare-account-info))
-                         (token-alist (twittering-xauth-get-access-token
-                                       access-token-url
-                                       consumer-key
-                                       consumer-secret
-                                       (car account-info)
-                                       (cdr account-info))))
-                    ;; Dispose of password as recommended by Twitter.
-                    ;; http://dev.twitter.com/pages/xauth
-                    (setcdr account-info nil)
-                    (when (and token-alist
-                               (assoc "oauth_token" token-alist)
-                               (assoc "oauth_token_secret" token-alist))
-                      (twittering-update-oauth-access-token-alist token-alist)
-                      (setq ok t))))))
+              ((xauth)
+               (let* ((account-info (twittering-prepare-account-info))
+                      (token-alist (twittering-xauth-get-access-token
+                                    access-token-url
+                                    consumer-key
+                                    consumer-secret
+                                    (car account-info)
+                                    (cdr account-info))))
+                 ;; Dispose of password as recommended by Twitter.
+                 ;; http://dev.twitter.com/pages/xauth
+                 (setcdr account-info nil)
+                 (when (and token-alist
+                            (assoc "oauth_token" token-alist)
+                            (assoc "oauth_token_secret" token-alist))
+                   (twittering-update-oauth-access-token-alist token-alist)
+                   (setq ok t))))
 
-             (setq twittering-private-info-file-dirty t))
+              ((basic)
+               (let* ((account-info (twittering-prepare-account-info))
+                      (proc
+                       (twittering-call-api
+                        'verify-credentials
+                        `((sentinel . twittering-http-get-verify-credentials-sentinel)
+                          (clean-up-sentinel
+                           . twittering-http-get-verify-credentials-clean-up-sentinel))
+                        `((username . ,(car account-info))
+                          (password . ,(cdr account-info))
+                          (service  . ,service)))))
+                 (when proc
+                   (while (twittering-account-authorization-queried-p)
+                     (sit-for 0.1))
+                   (setq ok t))))))
 
-           ;; 4. Error, update info file or do nothing.
-           (if (not ok)
-               (error "Authorization `%s' via OAuth failed. Type M-x twit to retry."
-                      service)
-             (twittering-update-account-authorization 'authorized)
-             (message "Authorization for \"%s\" succeeded." service)
-             ;; Only save when we authenticate all enabled services and have updated
-             ;; anyone of them.
-             (when (and twittering-use-master-password
-                        (twittering-capable-of-encryption-p)
-                        twittering-private-info-file-dirty
-                        (>= (length twittering-oauth-access-token-alist)
-                            (length twittering-enabled-services))
-                        (every (lambda (service)
-                                 (eq (twittering-get-account-authorization service)
-                                     'authorized))
-                               (remove nil
-                                       (mapcar (lambda (account)
-                                                 (when (memq (car (assqref 'auth (cdr account)))
-                                                             '(oauth xauth))
-                                                   (car account)))
-                                               twittering-accounts))))
-               (twittering-save-private-info-with-guide))
+          (setq twittering-private-info-file-dirty t))
+
+        ;; 4. Update info file when changed.
+        (if (not ok)
+            (error "Authorization `%s' via OAuth failed. Type M-x twit to retry."
+                   service)
+          (twittering-update-account-authorization 'authorized)
+          (message "Authorization for \"%s\" succeeded." service)
+          ;; Only save when we authenticate all enabled services and have updated
+          ;; anyone of them.
+          (when (and twittering-use-master-password
+                     (twittering-capable-of-encryption-p)
+                     twittering-private-info-file-dirty
+                     (>= (length twittering-oauth-access-token-alist)
+                         (length twittering-enabled-services))
+                     (every (lambda (service)
+                              (eq (twittering-get-account-authorization service)
+                                  'authorized))
+                            (mapcar 'car twittering-accounts)))
+            (twittering-save-private-info-with-guide))
              
-             (twittering-start))))
-
-        ((basic)
-         (twittering-update-account-authorization 'queried)
-         (let* ((account-info (twittering-prepare-account-info))
-                (proc
-                 (twittering-call-api
-                  'verify-credentials
-                  `((sentinel . twittering-http-get-verify-credentials-sentinel)
-                    (clean-up-sentinel
-                     . twittering-http-get-verify-credentials-clean-up-sentinel))
-                  `((username . ,(car account-info))
-                    (password . ,(cdr account-info))
-                    (service  . ,service)))))
-           (cond
-            ((null proc)
-             (twittering-update-account-authorization nil)
-             (message "Authorization for \"%s\" failed. Type M-x twit to retry."
-                      service))
-            (t
-             ;; wait for verification to finish.
-             (while (twittering-account-authorization-queried-p)
-               (sit-for 0.1))))))
-        (t
-         (message "%s is invalid as an authorization method."
-                  (twittering-get-accounts 'auth))))))))
+          (twittering-start))))
+     (t
+      (message "%s is invalid as an authorization method."
+               (twittering-get-accounts 'auth))))))
 
 (defun twittering-http-get-verify-credentials-sentinel (proc status connection-info header-info)
   (let ((status-line (assqref 'status-line header-info))
@@ -4970,16 +5028,20 @@ image are displayed."
 
 (defcustom twittering-image-height-threshold 40
   "For images whose height is bigger than this, we will show it in a separate
-image buffer during `twittering-toggle-thumbnail'. "
+image buffer during `twittering-toggle-thumbnail-1'. "
   :type 'integer
   :group 'twittering)
 
-(defcustom twittering-image-external-viewer-command ""
-  "External command for viewing image. "
+(defcustom twittering-image-external-viewer-command nil
+  "External command for viewing image. 
+You can set it to \"\" on some OS like Windows, leaving the OS to call a proper
+handler. "
   :type 'string
   :group 'twittering)
 
-(defun twittering-toggle-thumbnail (thumbnail-pic bmiddle-pic &optional initial)
+(defvar twittering-tmp-image "~/.emacs.d/twittering/twmode-image")
+
+(defun twittering-toggle-thumbnail-1 (thumbnail-pic bmiddle-pic &optional initial)
   (let ((uri (get-text-property (point) 'uri))
         next-uri)
     (when (or uri initial)
@@ -4996,15 +5058,14 @@ image buffer during `twittering-toggle-thumbnail'. "
              (image-data (and image (plist-get (cdr image) :data)))
              (common-properties (twittering-get-common-properties (point))))
         (if (and height (> height twittering-image-height-threshold))
-            (if (and twittering-image-external-viewer-command
-                     (not (string= twittering-image-external-viewer-command "")))
-                (let ((f (file-truename "~/.emacs.d/twmode-image"))
+            (if twittering-image-external-viewer-command
+                (let ((f (file-truename twittering-tmp-image))
                       (coding-system-for-write 'binary))
                   (when (eq system-type 'windows-nt)
                     (setq f (format "%s.%S" f (plist-get (cdr image) :type))))
                   (with-temp-file f
                     (insert image-data))
-                  (let ((cmd (format "%s %s" twittering-image-external-viewer-command f)))
+                  (let ((cmd (format "%s \"%s\"" twittering-image-external-viewer-command f)))
                     (start-process-shell-command cmd nil cmd)))
               (switch-to-buffer "*twmode-image*")
               (let ((inhibit-read-only t))
@@ -5015,14 +5076,13 @@ image buffer during `twittering-toggle-thumbnail'. "
               (setq buffer-read-only t))
           (add-text-properties 0 (length s)
                                `(,@common-properties
-                                 mouse-face 
-                                 highlight 
+                                 mouse-face highlight 
                                  uri ,next-uri
                                  keymap
                                  ,(let ((map (make-sparse-keymap))
                                         (func `(lambda ()
                                                  (interactive)
-                                                 (twittering-toggle-thumbnail ,uri ,next-uri))))
+                                                 (twittering-toggle-thumbnail-1 ,uri ,next-uri))))
                                     (define-key map (kbd "<mouse-1>") func)
                                     (define-key map (kbd "RET") func)
                                     map))
@@ -5040,10 +5100,9 @@ image buffer during `twittering-toggle-thumbnail'. "
   (let ((status-line (assqref 'status-line header-info))
         (status-code (assqref 'status-code header-info))
         ret mes)
-    (twittering-html-decode-buffer)
     (cond
      ((string= status-code "200")
-      (let ((json-data (twittering-json-read)))
+      (let ((json-data (twittering-construct-statuses)))
         (when json-data
           (setq ret json-data)
           (case (assqref 'method args)
@@ -5672,11 +5731,6 @@ means the number of statuses retrieved after the last visiting of the buffer.")
 ;;;; Format of a status
 ;;;;
 
-(defun twittering-created-at-to-seconds (created-at)
-  (let ((encoded-time (apply 'encode-time (parse-time-string created-at))))
-    (+ (* (car encoded-time) 65536)
-       (cadr encoded-time))))
-
 (defun twittering-make-common-properties (status)
   "Generate a property list that tweets should have irrespective of format."
   `(field 
@@ -5790,7 +5844,7 @@ following symbols;
 (defun twittering-make-string-with-source-property (str status)
   (if (stringp str)
       (let ((caption str)
-            (uri ""))
+            (uri (if (string= str "douban") "www.douban.com" "")))
         (when (string-match "<a href=\"\\(.*?\\)\".*?>\\(.*\\)</a>" str)
           (setq uri (match-string 1 str)
                 caption (match-string 2 str)))
@@ -5802,27 +5856,46 @@ following symbols;
                     'uri uri))
     ""))
 
+(defun twittering-make-string-with-uri-property (str)
+  (when (stringp str)
+    (while (string-match "<a href=\"\\(.*?\\)\".*?>\\([^>]*\\)</a>" str)
+      (setq str (replace-match (propertize (match-string 2 str)
+                                           'mouse-face 'highlight
+                                           'keymap twittering-mode-on-uri-map
+                                           'face 'twittering-uri-face
+                                           'uri (match-string 1 str)) 
+                               nil nil str)))
+    str))
+
 (defun twittering-format-tweet-text-with-quote (quoted-text text status)
-  (let ((quoted-status (twittering-status-has-quotation? status)))
-    (if quoted-text
-        (if (or (string-match (regexp-opt
-                               `(,(replace-regexp-in-string
-                                   (format "^RT @%s: \\|[.[:blank:]]+$"
-                                           (assqref 'screen-name (assqref 'user quoted-status)))
-                                   ""
-                                   text)))
-                              quoted-text)
-                (string= text "转发微博")
-                (string= text "转发微博。"))
-            quoted-text
-          (apply 'format "『%s』\n\n    %s" (list quoted-text text)))
-      text)))
+  (let ((quoted-status (twittering-status-has-quotation? status))
+        (detail (assqref 'detail status)))
+    (cond 
+     (quoted-text
+      (if (or (string-match (regexp-opt
+                             `(,(replace-regexp-in-string
+                                 (format "^RT @%s: \\|[.[:blank:]]+$"
+                                         (assqref 'screen-name (assqref 'user quoted-status)))
+                                 ""
+                                 text)))
+                            quoted-text)
+              (string= text "转发微博")
+              (string= text "转发微博。"))
+          quoted-text
+        (format "『%s』\n\n    %s" quoted-text text)))
+     (detail
+      (format "%s\n\n    %s" text detail))
+     (t
+      text))))
 
 (defun twittering-make-fontified-tweet-text (str)
   ;; (sina) Recognize and mark emotions, we will show them in
   ;; twittering-redisplay-status-on-each-buffer.
-  (when (eq (twittering-extract-service) 'sina)
-    (setq str (replace-regexp-in-string "\\(\\[[^][]+\\]\\)" "[\\1]" str)))
+  (case (twittering-extract-service)
+    ((sina)
+     (setq str (replace-regexp-in-string "\\(\\[[^][]+\\]\\)" "[\\1]" str)))
+    ((douban)
+     (setq str (twittering-make-string-with-uri-property str))))
 
   ;; Wash html tags
   (with-temp-buffer
@@ -6018,7 +6091,9 @@ following symbols;
                    (let ((thumbnail-pic (assqref 'thumbnail-pic st))
                          (original-pic (assqref 'original-pic st)))
                      (when thumbnail-pic
-                       (twittering-toggle-thumbnail thumbnail-pic original-pic t)))
+                      (if original-pic
+                          (twittering-toggle-thumbnail-1 thumbnail-pic original-pic t)
+                        (twittering-make-original-icon-string nil nil thumbnail-pic))))
                  (assqref 'original-pic st))))
        (when s
          (twittering-make-fontified-tweet-text
@@ -6059,9 +6134,6 @@ It takes three arguments:
                                  "%I:%M %p %B %d, %Y")))
               (rest (substring following (match-end 0))))
           `((let* ((created-at-str (assqref 'created-at ,status-sym))
-                   ;; (created-at
-                   ;;  (apply 'encode-time
-                   ;;            (parse-time-string created-at-str)))
                    (st (or (assqref 'status ,status-sym) ,status-sym))
                    (url (twittering-get-status-url 
                          (assqref 'id (assqref 'user st))
@@ -6077,8 +6149,7 @@ It takes three arguments:
         (let ((time-format (or (match-string 2 following) "%H:%M:%S"))
               (rest (substring following (match-end 0))))
           `((let* ((created-at-str (assqref 'created-at ,status-sym))
-                   (created-at (apply 'encode-time
-                                      (parse-time-string created-at-str))))
+                   (created-at (date-to-time created-at-str)))
               (format-time-string ,time-format created-at))
             . ,rest)))
        ((string-match "\\`FACE\\[\\([a-zA-Z0-9:-]+\\)\\(, *\\([a-zA-Z0-9:-]+\\)\\)?\\]{" following)
@@ -6353,8 +6424,8 @@ rendered at POS, return nil."
 
 (defun twittering-make-passed-time-string
   (beg end created-at-str time-format &optional additional-properties)
-  (let* ((secs (time-to-seconds (time-since created-at-str)))
-         (encoded (apply 'encode-time (parse-time-string created-at-str)))
+  (let* ((encoded (date-to-time created-at-str))
+         (secs (time-to-seconds (time-since encoded)))
          (time-string
           (cond
            ((string= time-format "%g")
@@ -6625,11 +6696,10 @@ rendered at POS, return nil."
                        (string-to-number number 10))
                       (t default-number)))
              (number (min (max 1 number) max-number))
-             (latest-status
-              ;; Assume that a list which was returned by
-              ;; `twittering-current-timeline-data' is sorted.
-              (car (twittering-current-timeline-data spec)))
-             (since_id (cdr-safe (assq 'id latest-status)))
+             ;; Assume that a list which was returned by
+             ;; `twittering-current-timeline-data' is sorted.
+             (latest-status (car (twittering-current-timeline-data spec)))
+             (since_id (assqref 'id latest-status))
              (cursor (or (assqref max-id latest-status) "-1"))
              (word (when is-search-spec (caddr spec)))
              (args
@@ -6641,8 +6711,18 @@ rendered at POS, return nil."
                 ,@(cond
                    (is-search-spec `((word . ,word)))
                    ((twittering-timeline-spec-user-methods-p spec) `((cursor . ,cursor)))
-                   ((and since_id (null max-id)) `((since_id . ,since_id)))
+                   ((and since_id (null max-id)) 
+                    `(,(if (eq (twittering-extract-service spec) 'douban)
+                           ;; `(start-index . ,since_id)
+                           '()          ; TODO: douban buggy.
+                         `(since_id . ,since_id))))
                    (t nil))
+                
+                ,@(when (eq (twittering-extract-service spec) 'douban)
+                    `((douban-user-id 
+                       . ,(assocref "douban_user_id" 
+                                    (twittering-lookup-oauth-access-token-alist)))))
+
                 (clean-up-sentinel
                  . ,(lambda (proc status connection-info)
                       (when (memq status '(exit signal closed failed))
@@ -6860,30 +6940,54 @@ rendered at POS, return nil."
                 config beg end))))
          buffer)
 
-        ;; (sina) Display emotions.
-        (goto-char (point-min))
-        (while (re-search-forward "\\(\\[\\(\\[[^][]+\\]\\)\\]\\)" nil t 1)
-          (unless twittering-is-getting-emotions-p
-            (setq twittering-is-getting-emotions-p t)
-            (let ((twittering-service-method 'sina))
-              (save-match-data
-                (twittering-get-simple nil nil nil 'emotions))))
+        (case (twittering-extract-service)
+          ;; Display emotions.
+          ((sina)                       
+           (goto-char (point-min))
+           (while (re-search-forward "\\(\\[\\(\\[[^][]+\\]\\)\\]\\)" nil t 1)
+             (unless twittering-is-getting-emotions-p
+               (setq twittering-is-getting-emotions-p t)
+               (let ((twittering-service-method 'sina))
+                 (save-match-data
+                   (twittering-get-simple nil nil nil 'emotions))))
 
-          (let* ((str (match-string 2))
-                 (url (some (lambda (i)
-                              (when (string= (assqref 'phrase i) str)
-                                (assqref 'url i)))
-                            twittering-emotions-phrase-url-alist))
-                 (inhibit-read-only t)
-                 (common-properties (twittering-get-common-properties (point)))
-                 (repl (if url 
-                           (twittering-make-original-icon-string nil nil url)
-                         str)))             ; Not a emotion, restore. 
+             (let* ((str (match-string 2))
+                    (inhibit-read-only t)
+                    (repl str)) ; original string, restore it when not a emotion. 
+               (save-match-data
+                 (let ((url (some (lambda (i) (when (string= (assqref 'phrase i) str)
+                                                (assqref 'url i)))
+                                  twittering-emotions-phrase-url-alist))
+                       (common-properties (twittering-get-common-properties (point))))
+                   (when url
+                     (setq repl (twittering-make-original-icon-string nil nil url)))
+                   (add-text-properties 0 (length repl) common-properties repl)))
+               (when (consp twittering-emotions-phrase-url-alist)
+                 (replace-match repl)))))
 
-            (when (consp twittering-emotions-phrase-url-alist)
-              (add-text-properties 0 (length repl) common-properties repl)
-              (replace-match repl)))))
-
+          ;; Show details.
+          ((douban)
+           (goto-char (point-min))
+           (let ((re (format "\\(https?://%s/[-_.!~*'()a-zA-Z0-9;/?:@&=+$,%%#]+\\)"
+                             (twittering-lookup-service-method-table 'api)))
+                 (inhibit-read-only t))
+             (while (re-search-forward re nil t 1)
+               (let* ((beg (match-beginning 0))
+                      (end (match-end 0))
+                      (url (concat
+                            (match-string 0)
+                            "?alt=json&apikey=" 
+                            (twittering-lookup-service-method-table 'oauth-consumer-key)))
+                      (prefix (save-excursion
+                                (goto-char beg)
+                                (make-string (current-column) ? )))
+                      (repl (save-match-data
+                              (twittering-make-douban-detail-string beg end url prefix))))
+                 (replace-match repl))))))
+      
+      )                                 ; save-excursion ends here
+      
+      ;; (xwl) consider remove following
       (set-marker marker nil)
       (when (and result (eq (window-buffer) buffer))
         (let ((win (selected-window)))
@@ -6962,7 +7066,10 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
       (apply func args))))
 
 (defun twittering-url-retrieve-synchronously (url)
-  (twittering-url-wrapper 'url-retrieve-synchronously url))
+  (message "Retrieving `%s'..." url)
+  (prog1
+      (twittering-url-wrapper 'url-retrieve-synchronously url)
+    (message "Retrieving `%s'...done" url)))
 
 ;; (let ((request (twittering-make-http-request-from-uri
 ;; 		  "GET" nil url))
@@ -7560,7 +7667,8 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
         (id (assqref 'id args-alist))
         (username (assqref 'username args-alist))
         (sentinel (assqref 'sentinel args-alist))
-        (sina? (eq (twittering-extract-service) 'sina)))
+        (sina? (eq (twittering-extract-service) 'sina))
+        (douban? (eq (twittering-extract-service) 'douban)))
     (case command
       ((retrieve-timeline)
        ;; Retrieve a timeline.
@@ -7585,6 +7693,10 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
               (cursor (assqref 'cursor args-alist))
               (word (when (eq 'search spec-type)
                       (caddr spec)))
+
+              (start-index (assqref 'start-index args-alist))
+              (max-results (assqref 'max-results args-alist))
+
               (parameters
                `(,@(when max_id `(("max_id" . ,max_id)))
                  ,@(when since_id `(("since_id" . ,since_id)))
@@ -7603,11 +7715,20 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                     ((memq spec-type '(user friends mentions public))
                      `(("count" . ,number-str)
                        ("include_rts" . "true")))
+                    (douban? 
+                     `(("max-results" . ,number-str)))
                     (t
-                     `(("count" . ,number-str))))))
-              (format (if (eq spec-type 'search)
-                          "atom"
-                        "json"))
+                     `(("count" . ,number-str))))
+
+                 ;; douban
+                 ,@(when start-index `(("start-index" . ,start-index)))
+                 ,@(when douban?
+                     `(("alt" . "json")
+                       ("apikey"
+                        . ,(twittering-lookup-service-method-table 'oauth-consumer-key))))))
+
+              (format (cond ((eq spec-type 'search) "atom")
+                            (douban? "")))
               (simple-spec-list
                `((direct_messages      . "direct_messages")
                  (direct_messages_sent . "direct_messages/sent")
@@ -7628,6 +7749,9 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                           (t api-host)))
               (method
                (cond
+                (douban?
+                 (format "people/%s/miniblog/contacts" 
+                         (assqref 'douban-user-id args-alist)))
                 ((eq spec-type 'user)
                  (let ((username (elt (cdr spec) 1)))
                    (if (eq (twittering-extract-service) 'sina)
@@ -8065,6 +8189,13 @@ string.")
             (twittering-lookup-service-method-table 'web)
             username)))
 
+(defun twittering-get-status-url-douban (username &optional id)
+  (if id 
+      (concat "http://" (twittering-lookup-service-method-table 'web))
+    (format "http://%s/people/%s"
+            (twittering-lookup-service-method-table 'web)
+            username)))
+
 (defun twittering-get-search-url (query-string)
   "Generate a URL for searching QUERY-STRING."
   (funcall (twittering-lookup-service-method-table 'search-url)
@@ -8087,6 +8218,126 @@ string.")
   (interactive)
   (when twittering-unread-status-info
     (switch-to-buffer (caar twittering-unread-status-info))))
+
+
+;;; ============================================= Douban details
+
+(defun twittering-make-douban-detail-string (beg end detail-url prefix)
+  (let* ((detail-data (gethash detail-url twittering-url-data-hash))
+         (properties (and beg (text-properties-at beg)))
+         (detail (apply 'propertize "." properties)))
+    ;;    (when properties
+    ;;      (add-text-properties 0 (length detail) properties detail))
+    (cond                               
+     (detail-data
+      (with-temp-buffer
+        (insert detail-data)
+        (goto-char (point-min))
+        (let ((json (twittering-wash-json-douban (twittering-json-read)))
+              (type (when (string-match
+                           (regexp-opt 
+                            '("photo" "note" "book" "movie" "music" "review"
+                              "collection" "event" "recommendation"))
+                           detail-url)
+                      (intern (match-string 0 detail-url)))))
+          (case type
+            ((photo)
+             (let ((cm (some (lambda (i) (when (string= (assqref '@name i) "comment")
+                                           (assqref '$t i)))
+                             (assqref 'db:attribute json))))
+               (setq detail (concat cm " -- no photo api?"))))
+            ((note)
+             (setq detail (assqref 'summary json)))
+            ((event)
+             (setq detail
+                   (apply 'format "时间：%s ~ %s\n地点：%s\n参数人数：%s"
+                          `(,@(mapcar (lambda (i)
+                                        (format-time-string
+                                         "%Y-%m-%d %H:%M" 
+                                         ;; douban timezone bug?
+                                         (date-to-time (replace-regexp-in-string 
+                                                        "+08:00" "+0800" i))))
+                                      (let ((date (assqref 'gd:when json)))
+                                        `(,(symbol-name (car date)) ,(cdr date))))
+                            ,(assqref 'gd:where json)
+                            ,(assqref 'participants (assqref 'db:attribute json))))))
+            ((movie)
+             (let* ((db:attribute (assqref 'db:attribute json))
+                    (take (lambda (symbol) 
+                               (mapconcat
+                                'cdr
+                                (remove-if-not (lambda (i) (eq (car i) symbol))
+                                               db:attribute)
+                                " / "))))
+               (setq detail 
+                     (format "片名：%s\n评分：%s\n导演：%s\n主演：%s\n上映日期：%s"
+                             (assqref 'title db:attribute)
+                             (nth 1 (assqref 'gd:rating json))
+                             (funcall take 'director)
+                             (funcall take 'cast)
+                             (assqref 'pubdate db:attribute)))))
+            
+            ((music)
+             (let* ((db:attribute (assqref 'db:attribute json))
+                    (title (assqref 'title db:attribute))
+                    (singer (assqref 'singer db:attribute))
+                    (score (nth 1 (assqref 'gd:rating json)))
+                    (version (assqref 'version db:attribute))
+                    (publisher (assqref 'publisher db:attribute))
+                    (pubdate (assqref 'pubdate db:attribute)))
+               (setq detail 
+                     (mapconcat (lambda (i) (mapconcat 'identity i "："))
+                                `(("曲名"    ,title)
+                                  ("表演者"   ,singer)
+                                  ("评分"     ,score)
+                                  ("版本特性" ,version)
+                                  ("发行时间" ,pubdate)
+                                  ("出版者"   ,publisher))
+                                "\n"))))
+
+            ((book)
+             (let* ((db:attribute (assqref 'db:attribute json))
+                    (title (assqref 'title db:attribute))
+                    (author (assqref 'author db:attribute))
+                    (score (nth 1 (assqref 'gd:rating json)))
+                    (publisher (assqref 'publisher db:attribute))
+                    (pubdate (assqref 'pubdate db:attribute)))
+               ;; too few people, TODO: handle other possible empty item.
+               (unless (stringp score)
+                 (setq score ""))
+               (setq detail 
+                     (mapconcat (lambda (i) (mapconcat 'identity i "："))
+                                `(("书名"    ,title)
+                                  ("作者"   ,author)
+                                  ("评分"     ,score)
+                                  ("发行时间" ,pubdate)
+                                  ("出版者"   ,publisher))
+                                "\n"))))
+               
+            ((review collection)
+             (setq detail (assqref 'summary json))
+             (unless detail             ; sounds like douban's bug.
+               (setq detail (car (assqref 'summary json)))))
+            (t
+             (setq detail "")))))
+
+      (unless (string= detail "")
+        (setq detail (replace-regexp-in-string "" "" detail)
+              detail (twittering-fill-string detail nil prefix t)
+              detail (substring detail (length prefix))
+              detail (apply 'propertize detail properties))
+        (remove-text-properties 0 (length detail)
+                                '(need-to-be-updated nil)
+                                detail))
+
+      detail)
+     (t
+      (put-text-property 0 (length detail)
+                         'need-to-be-updated
+                         `(twittering-make-douban-detail-string ,detail-url ,prefix)
+                         detail)
+      (twittering-url-retrieve-async detail-url)
+      detail))))
 
 ;;; ============================================= misc 
 ;;;;
@@ -8596,19 +8847,18 @@ Otherwise, return a positive integer less than POS."
   (let* ((property-change-f (if backward
                                 'previous-single-property-change
                               'next-single-property-change))
-         (pos (funcall property-change-f (point) 'face)))
+         (pos (funcall property-change-f (point) 'mouse-face)))
     (while (and pos
                 (not
-                 (let* ((current-face (get-text-property pos 'face))
+                 (let* ((current-face (get-text-property pos 'mouse-face))
                         (face-pred
                          (lambda (face)
                            (cond
                             ((listp current-face) (memq face current-face))
                             ((symbolp current-face) (eq face current-face))
                             (t nil)))))
-                   (remove nil (mapcar face-pred '(twittering-username-face
-                                                   twittering-uri-face))))))
-      (setq pos (funcall property-change-f pos 'face)))
+                   (remove nil (mapcar face-pred '(highlight))))))
+      (setq pos (funcall property-change-f pos 'mouse-face)))
     (when pos
       (goto-char pos))))
 
@@ -9032,53 +9282,87 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
           (apply 'concat (nreverse result)))
       "")))
 
-(defun twittering-json-to-status (tree)
+(defun twittering-wash-json (tree)
   "Convert symbols like `a_b' to `a-b', and stringfy cdr values."
-  (when (consp (cdr tree))
-    (when (and (assqref 'id_str tree)
-               (assqref 'id tree))
-      (setq tree `(,@(assq-delete-all 'id tree)
-                   (id . ,(assqref 'id_str tree)))))
+  (if (atom tree)
+      tree
+    (when (consp (car tree))
+      (when (and (assqref 'id_str tree)
+                 (assqref 'id tree))
+        (setq tree `(,@(assq-delete-all 'id tree)
+                     (id . ,(assqref 'id_str tree)))))
 
-    (when (and (assqref 'in_reply_to_status_id_str tree)
-               (assqref 'in_reply_to_status_id tree))
-      (setq tree `(,@(assq-delete-all 'in_reply_to_status_id tree)
-                   (in_reply_to_status_id . ,(assqref 'in_reply_to_status_id_str tree))))))
+      (when (and (assqref 'in_reply_to_status_id_str tree)
+                 (assqref 'in_reply_to_status_id tree))
+        (setq tree `(,@(assq-delete-all 'in_reply_to_status_id tree)
+                     (in_reply_to_status_id . ,(assqref 'in_reply_to_status_id_str tree))))))
 
-  (let ((front (car tree))
-        (rear (cdr tree))
-        (listy (lambda (symbol)
-                 (if (symbolp symbol)
-                     (intern (replace-regexp-in-string
-                              "_" "-" (symbol-name symbol)))
-                   symbol))))
-    (cond ((null tree)
-           '())
-          ((atom front)
-           (cons (case front            ; direct-message
-                   ((sender) 'user)
-                   ((recipient-id) 'in-reply-to-user-id)
-                   (t
-                    (funcall listy front)))
+    (let ((front (car tree))
+          (rear (cdr tree))
+          (listy (lambda (symbol)
+                   (if (symbolp symbol)
+                       (intern (replace-regexp-in-string
+                                "_" "-" (symbol-name symbol)))
+                     symbol))))
+      (cond
+       ((atom front)
+        ;; wash douban json
+        (cond ((and (symbolp front) 
+                    (string-match "\\`\\(@\\|\\$\\)" (symbol-name front)))
+               rear)
+              (t
+               (cons (case front        ; direct-message
+                       ((sender) 'user)
+                       ((recipient-id) 'in-reply-to-user-id)
+                       (t
+                        (funcall listy front)))
 
-                 (if (atom rear)
-                     (cond 
-                      ;; sina passes big integer. 应该學 twitter 用科学记数法。
-                      ((and (eq front 'id) (numberp rear))
-                       (replace-regexp-in-string "\\.0$" "" (number-to-string rear)))
-                      ((or (null rear) 
-                           (and (stringp rear) (string= rear ""))
-                           (eq rear ':json-false))
-                       '())
-                      ((eq rear ':json-true)
-                       t)
-                      ((stringp rear) rear)
-                      (t (format "%S" rear)))
-                   (twittering-json-to-status rear))))
+                     (if (atom rear)
+                         (cond ((and (eq front 'id) (numberp rear))
+                                ;; sina passes big integer. 应该學 twitter 用科学记数法。
+                                (replace-regexp-in-string "\\.0$" "" (number-to-string rear)))
+                               ((or (null rear) 
+                                    (and (stringp rear) (string= rear ""))
+                                    (eq rear ':json-false))
+                                '())
+                               ((eq rear ':json-true)
+                                t)
+                               ((stringp rear) rear)
+                               (t (format "%S" rear)))
+                       (twittering-wash-json rear))))))
 
-          ((consp front)
-           (cons (twittering-json-to-status front)
-                 (twittering-json-to-status rear))))))
+       ((consp front)
+        ;; FIXME: too deep lisp.
+        (mapcar 'twittering-wash-json tree)
+        ;; (cons (twittering-wash-json front)
+        ;;    (twittering-wash-json rear))
+        )))))
+
+(defun twittering-wash-json-douban (tree)
+  "(a (b)) => (a b)"
+  (cond
+   ((atom tree)
+    tree)
+   (t 
+    (let ((front (car tree))
+          (rear (cdr tree)))
+      (cond 
+       ((atom front)
+        (when (and (consp rear) (= (length rear) 1))
+          (setq rear (car rear)))
+        (when (and (atom rear) (stringp front))
+          (when (string-match "\\`https?://" front)
+            (let ((tmp front))
+              (setq front rear
+                    rear tmp)))
+          (when (stringp front)
+            (setq front (intern front))))
+        
+        (cons front (if (atom rear) 
+                        rear
+                      (twittering-wash-json-douban rear))))
+       (t
+        (mapcar 'twittering-wash-json-douban tree)))))))
 
 ;;;;
 ;;;; Buffer info
@@ -9312,25 +9596,62 @@ SPEC may be a timeline spec or a timeline spec string."
   (twittering-find-status (twittering-get-id-at)))
 
 (defun twittering-json-read ()
-  (let ((statuses (let ((json-array-type 'list))
-                    (json-read))))
-    (cond 
-     ((assqref 'user statuses)          ; show
-      (setq statuses (list statuses)))
+  (twittering-html-decode-buffer)
+  (let ((json-array-type 'list))
+    (twittering-wash-json (json-read))))
 
-     ((assq 'users statuses)            ; followers
+(defun twittering-construct-statuses ()
+  (let ((statuses (twittering-json-read))
+         (has (lambda (symbol)
+               (find-if (lambda (i) (eq (car i) symbol)) statuses))))
+    (cond 
+     ((funcall has 'entry)         ; douban.com
+      (setq statuses (twittering-wash-json-douban statuses))
+      (setq statuses
+            (mapcar
+             (lambda (i)
+               (let ((link (assqref 'link i)))
+                 (unless (consp (cdr link))
+                   (setq link `(,link)))
+
+                 `((id . ,(car (last (split-string (assqref 'id i) "/"))))
+                   (created-at . ,(replace-regexp-in-string 
+                                   "+08:00" "+0800" (assqref 'published i)))
+                   (text . ,(concat (cdr (assqref 'content i))
+                                    (let ((rating (ignore-errors 
+                                                    (assqref 'rating (assqref 'db:attribute i)))))
+                                      (when rating
+                                        (concat "  评分：" 
+                                                (number-to-string (* (string-to-number rating) 2)))))))
+                   (thumbnail-pic . ,(assqref 'image link))
+                   (source . "douban")
+                   (user 
+                    ,@(let ((author (assqref 'author i)))
+                        `((id . ,(car (last (split-string (assqref 'uri author) "/"))))
+                          (name . ,(let ((s (assqref 'alternate (assqref 'link author))))
+                                     (nth 1 (reverse (split-string s "/")))))
+                          (screen-name . ,(assqref 'name author))
+                          (profile-image-url . ,(assqref 'icon (assqref 'link author))))))
+                   ;; douban specific
+                   (detail . ,(or (assqref 'objective link)
+                                  (assqref 'related link))))))
+             (assqref 'entry statuses))))
+
+     ((funcall has 'user)               ; show
+      (list statuses))
+
+     ((funcall has 'users)              ; followers
       (let ((followers (assqref 'users statuses))
             (cursors (assq-delete-all 'users statuses)))
-        (setq statuses
-              (mapcar (lambda (follower)
-                        (let ((status (assqref 'status follower))
-                              (user (assq-delete-all 'status follower)))
-                          (unless status ;; he/she has zero tweets..
-                            (setq status `(,@user (text . " "))))
-                          `((user ,@user) ,@status ,@cursors)))
-                      followers)))))
-
-    (mapcar 'twittering-json-to-status statuses)))
+        (mapcar (lambda (follower)
+                  (let ((status (assqref 'status follower))
+                        (user (assq-delete-all 'status follower)))
+                    (unless status ;; he/she has zero tweets..
+                      (setq status `(,@user (text . " "))))
+                    `((user ,@user) ,@status ,@cursors)))
+                followers)))
+     (t 
+      statuses))))
 
 (defun twittering-status-id< (id1 id2)
   (let ((len1 (length id1))
