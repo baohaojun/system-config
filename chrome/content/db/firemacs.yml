@@ -499,7 +499,7 @@ type:
 name: CopyUrl
 case: Common
 keyx: C-M-u
-body: this._sfun.copyText(getBrowser().contentDocument.URL); this._sfun._displayMessage('URL copied', 2000);
+body: this._sfun.copyText(getBrowser().contentDocument.location.href); this._sfun._displayMessage('URL copied', 2000);
 desc: copy url
 type: 
 -

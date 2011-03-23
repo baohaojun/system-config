@@ -202,7 +202,7 @@ Firemacs.Commands.Common = {
         if (e.originalTarget.parentNode.parentNode == this._sfun.SearchField()) { this._sfun.SearchUnhilite(); this._sfun.SearchClose(); } else { this._sfun.generateKey(e, KeyEvent.DOM_VK_RETURN);}
     },
     CopyUrl: function(e) {
-        this._sfun.copyText(getBrowser().contentDocument.URL); this._sfun._displayMessage('URL copied', 2000);
+        this._sfun.copyText(getBrowser().contentDocument.location.href); this._sfun._displayMessage('URL copied', 2000);
     },
     CopyTitle: function(e) {
         this._sfun.copyText(getBrowser().contentDocument.title); this._sfun._displayMessage('Title copied', 2000);
