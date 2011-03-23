@@ -3327,10 +3327,10 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
 
 ;;;; Commands for retweet
 
-;; TODO: cross-retweeting not working (xwl)
 (defun twittering-retweet (&optional ask)
   (interactive "P")
-  (let ((service (twittering-extract-service)))
+  (let* ((orig-service (twittering-extract-service))
+         (service orig-service))
     (when ask
       (setq service
             (intern
@@ -3338,28 +3338,30 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
               "Post to: "
               `(,@(mapcar 'symbol-name twittering-enabled-services) "all")))))
     (mapc (lambda (s)
-            (let* ((twittering-service-method s)
-                   (style (twittering-get-accounts 'retweet)))
-              (case style
-                ((native)
-                 (twittering-native-retweet))
-                ((organic)
-                 (twittering-organic-retweet))
-                (t
-                 (if twittering-use-native-retweet
-                     (twittering-native-retweet)
-                   (twittering-organic-retweet))))))
-          (if (eq service 'all) twittering-enabled-services (list service)))))
+            (if (eq s orig-service)
+                (let ((twittering-service-method s))
+                  (if twittering-use-native-retweet
+                      (twittering-native-retweet)
+                    (twittering-organic-retweet)))
+              (twittering-organic-retweet `((,s)))))
+          (if (eq service 'all) twittering-enabled-services `(,service)))))
 
-(defun twittering-organic-retweet ()
+(defun twittering-organic-retweet (&optional spec)
   (interactive)
   (twittering-ensure-retweeting-allowed)
-  (funcall twittering-update-status-function
-           (twittering-generate-organic-retweet)
-           (get-text-property (point) 'id)
-           nil
-           (twittering-current-timeline-spec)
-           t)
+  (if spec 
+      (funcall twittering-update-status-function
+               (format "[%s] %s" (symbol-name (twittering-extract-service))
+                       (twittering-generate-organic-retweet))
+               nil
+               nil
+               spec)
+    (funcall twittering-update-status-function
+             (twittering-generate-organic-retweet)
+             (get-text-property (point) 'id)
+             nil
+             (twittering-current-timeline-spec)
+             t))
   (goto-char (line-beginning-position)))
 
 (defun twittering-native-retweet ()
@@ -3385,7 +3387,11 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
                                     "...")
                                  text))))
               (if (y-or-n-p mes)
-                  (twittering-call-api 'retweet `((id . ,id)))
+                  (if (eq (twittering-extract-service) service)
+                      (twittering-call-api 'retweet `((id . ,id)))
+                    ;; cross retweet
+                    (funcall twittering-update-status-function
+                             text nil nil `((,service))))
                 (message "Request canceled")))
           (message "Cannot retweet your own tweet"))
       (message "No status selected"))))
