@@ -456,18 +456,13 @@
 (fset 'bhj-preview-markdown
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 49 67108896 3 2 134217848 98 104 106 45 109 105 109 101 tab return 3 return 80 24 111 67108911 24 111] 0 "%d")) arg)))
 
-(fset 'bhj-isearch-yank
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("\371" 0 "%d")) arg)))
-
 (defun bhj-isearch-from-bod (&optional col-indent)
   (interactive "p")
   (let ((word (current-word)))
     (push-mark)
-    (with-temp-buffer
-      (insert word)
-      (kill-ring-save (point-min) (point-max)))
     (bhj-c-beginning-of-defun)
-    (call-interactively 'bhj-isearch-yank)))
+    (setq regexp-search-ring (cons (concat "\\b" word "\\b") regexp-search-ring))
+    (search-forward-regexp (concat "\\b" word "\\b"))))
 
 (global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
 
