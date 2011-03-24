@@ -4909,7 +4909,7 @@ available and `twittering-use-convert' is non-nil."
              (converted-data
               (twittering-convert-image-data image-data dest-type image-type)))
         (if converted-data
-            `(xpm . ,converted-data)
+            `(,dest-type . ,converted-data)
           twittering-error-icon-data-pair)))
      (t
       ;; twittering-error-icon-data-pair
