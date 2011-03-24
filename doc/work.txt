@@ -875,3 +875,8 @@ mirrorcyg.pl|mf-download.pl
 
 Tel. 010-64981756 ext. 849
 find . -name "Kconfig"|perl -npe 's,^.,./kernel,'|mkgtags
+
+sudo ifconfig eth0:0 192.168.88.8; ssh r137 sudo ifconfig eth0:0 192.168.88.9
+
+(cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && setpaths&& lunch ventana-eng && time make -j8 -l8 -k )
+(cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && setpaths&& lunch ventana-eng && ksetup tegra_defconfig && krebuild -j8 -l8 -k)
