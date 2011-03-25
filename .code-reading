@@ -445,3 +445,14 @@ pinmux group怎么定义
             ...
             {
     =>          if (! Tps6586xWriteVoltageReg(hDevice, vddRail, MilliVolts, pSettleMicroSeconds))
+
+****************
+
+
+    /home/bhj/src/gb-p2/vendor/nvidia/tegra/hal/liboverlay/overlay.cpp:195:         case OVERLAY_FORMAT_RGBA_8888:
+        static overlay_t* overlay_createOverlay(struct overlay_control_device_t *dev,
+                 uint32_t w, uint32_t h, int32_t format)
+        {
+            ...
+            switch (format) {
+    =>          case OVERLAY_FORMAT_RGBA_8888:
