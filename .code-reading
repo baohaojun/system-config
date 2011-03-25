@@ -456,3 +456,17 @@ pinmux group怎么定义
             ...
             switch (format) {
     =>          case OVERLAY_FORMAT_RGBA_8888:
+
+****************
+
+
+    /home/bhj/src/gb-p2/hardware/libhardware/modules/gralloc/framebuffer.cpp:355:             const_cast<int&>(dev->device.format) = HAL_PIXEL_FORMAT_RGB_565;
+        int fb_device_open(hw_module_t const* module, const char* name,
+                hw_device_t** device)
+        {
+            ...
+            if (!strcmp(name, GRALLOC_HARDWARE_FB0)) {
+                ...
+                if (status >= 0) {
+                    ...
+    =>              const_cast<int&>(dev->device.format) = HAL_PIXEL_FORMAT_RGB_565;
