@@ -136,10 +136,18 @@ Items:
                       zebra-like background.
  %FILL[prefix]{...} - strings filled as a paragraph. The prefix is optional.
                       You can use any other specifiers in braces.
+
+                      NOTE: don't include more than one specifier that has
+                      'need-to-be-updated property, such as %t, %i, %T, etc.
+
  %FOLD[prefix]{...} - strings folded within the frame width.
                       The prefix is optional. This keeps newlines and does not
                       squeeze a series of white spaces.
                       You can use any other specifiers in braces.
+
+                      NOTE: don't include more than one specifier that has
+                      'need-to-be-updated property, such as %t, %i, %T, etc.
+
  %f - source
  %# - id
 "
