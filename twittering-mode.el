@@ -1063,47 +1063,17 @@ function."
           (message "Response: %s" status-line)
           nil))))))
 
-(defun twittering-oauth-get-token-alist-url (url auth-str post-body)
-  (let* ((url-request-method "POST")
-         (url-request-extra-headers
-          `(("Authorization" . ,auth-str)
-            ("Accept-Charset" . "us-ascii")
-            ("Content-Type" . "application/x-www-form-urlencoded")
-            ("Content-Length" . ,(format "%d" (length post-body)))))
-         (url-request-data post-body)
-         (coding-system-for-read 'utf-8-unix))
-    (lexical-let ((result 'queried))
-      (let ((buffer
-             (url-retrieve
-              url
-              (lambda (&rest args)
-                (let* ((status (if (< 21 emacs-major-version)
-                                   (car args)
-                                 nil))
-                       (callback-args (if (< 21 emacs-major-version)
-                                          (cdr args)
-                                        args))
-                       (response-buffer (current-buffer)))
-                  (setq result
-                        (twittering-oauth-get-response-alist response-buffer))
-                  )))))
-        (while (eq result 'queried)
-          (sit-for 0.1))
-        (unless twittering-debug-mode
-          (kill-buffer buffer))
-        result))))
-
 (defun twittering-oauth-get-token-alist (url auth-str &optional post-body)
-  (let ((request
-         (twittering-make-http-request-from-uri
-          "POST"
-          `(("Authorization" . ,auth-str)
-            ("Accept-Charset" . "us-ascii")
-            ("Content-Type" . "application/x-www-form-urlencoded"))
-          url post-body)))
-    (lexical-let ((result 'queried))
+  (let ((additional-info '((sync . t)))
+        (request (twittering-make-http-request-from-uri
+                  "POST"
+                  `(("Authorization" . ,auth-str)
+                    ("Accept-Charset" . "us-ascii")
+                    ("Content-Type" . "application/x-www-form-urlencoded"))
+                  url post-body)))
+    (let (result)
       (twittering-send-http-request
-       request nil
+       request additional-info
        (lambda (proc status connection-info header-info)
          (let ((status-line (assqref 'status-line header-info))
                (status-code (assqref 'status-code header-info)))
@@ -1118,14 +1088,7 @@ function."
                    (twittering-oauth-make-response-alist (buffer-string)))
              nil)
             (t
-             (setq result nil)
-             (format "Response: %s" status-line)))))
-       (lambda (proc status connection-info)
-         (when (and (memq status '(nil closed exit failed signal))
-                    (eq result 'queried))
-           (setq result nil))))
-      (while (eq result 'queried)
-        (sit-for 0.1))
+             (format "Response: %s" status-line))))))
       result)))
 
 (defun twittering-oauth-get-request-token (url consumer-key consumer-secret)
@@ -2247,9 +2210,10 @@ The method to perform the request is determined from
   (lexical-let ((func func)
                 (clean-up-func clean-up-func)
                 (twittering-service-method twittering-service-method)
-                (sync? (assqref 'sync additional-info)))
+                (sync? (assqref 'sync additional-info))
+                (info "(twmode) Retrieving..."))
     (when sync?
-      (message "Retrieving..."))
+      (message info))
     (twittering-send-http-request-internal
      request additional-info
      (lambda (proc status-code-or-str connection-info)
@@ -2260,7 +2224,8 @@ The method to perform the request is determined from
                       (t nil)))
              (pre-process-func (assqref 'pre-process-buffer connection-info))
              (buffer (if sync? (current-buffer) (process-buffer proc)))
-             (mes 'unset))
+             (mes 'unset)
+             (error? t))
          (unwind-protect
              (progn
                (unless sync?
@@ -2288,6 +2253,7 @@ The method to perform the request is determined from
                           (t mes)))))   ; Leave it unchanged
            
                (when (or sync? (eq mes 'unset))
+                 (setq error? nil)
                  (when (functionp pre-process-func)
                    ;; Pre-process buffer.
                    (funcall pre-process-func proc buffer connection-info))
@@ -2300,20 +2266,21 @@ The method to perform the request is determined from
                        (delete-region (point-min) (match-end 0)))
                      (setq mes (apply func proc status connection-info header-info nil))))))
            ;; unwind-forms
-           (when (and mes (stringp mes) (or (twittering-buffer-related-p)
-                                            ;; (twittering-account-authorization-queried-p)
-                                            ))
+           (when (not error?)
+             (when (and sync? (not (stringp mes)))
+               (setq mes (concat info "done")))
              ;; CLEAN-UP-FUNC can overwrite a message from the return value
              ;; of FUNC.
-             (message "%s" mes))
-           (when sync?
-             (message "Retrieving...done"))
+             (when (stringp mes)
+               (message "%s" mes)))
            (when (functionp clean-up-func)
              (funcall clean-up-func proc status connection-info))
            (when (and (memq status '(exit signal closed failed))
                       (buffer-live-p buffer)
                       (not twittering-debug-mode))
-             (kill-buffer buffer))))))))
+             (kill-buffer buffer))
+           (when error?
+             (error "%s" mes))))))))
 
 ;;;;
 ;;;; Basic HTTP functions with tls and Emacs builtins.
@@ -3005,7 +2972,6 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
          ;; TODO
          ;; "POST" url (and (not (twittering-is-uploading-file-p parameters))
          ;;                  parameters))))
-
          (request
           (twittering-add-application-header-to-http-request
            (twittering-make-http-request "POST" headers host port path
@@ -5265,53 +5231,27 @@ If INTERRUPT is non-nil, the iteration is stopped if FUNC returns nil."
           ad-do-it)
       ad-do-it)))
 
-(defun twittering-url-wrapper (func &rest args)
-  (let ((url-proxy-services
-         (when (twittering-proxy-use-match (car args))
-           (twittering-url-proxy-services)))
-        (url-show-status twittering-url-show-status))
-    (if (eq func 'url-retrieve)
-        (let ((buffer (apply func args)))
-          (when (buffer-live-p buffer)
-            (with-current-buffer buffer
-              (set (make-local-variable 'url-show-status)
-                   twittering-url-show-status)))
-          buffer)
-      (apply func args))))
-
 (defun twittering-url-retrieve-synchronously (url)
-  (message "Retrieving `%s'..." url)
-  (prog1
-      (twittering-url-wrapper 'url-retrieve-synchronously url)
-    (message "Retrieving `%s'...done" url)))
-
-;; (let ((request (twittering-make-http-request-from-uri
-;; 		  "GET" nil url))
-;; 	(additional-info `((url . ,url))))
-;;   (lexical-let ((result 'queried))
-;;     (twittering-send-http-request
-;;      request additional-info
-;;      (lambda (proc status connection-info header-info)
-;; 	 (let ((status-line (cdr (assq 'status-line header-info)))
-;; 	       (status-code (cdr (assq 'status-code header-info))))
-;; 	   (case-string
-;; 	    status-code
-;; 	    (("200")
-;; 	     (setq result (buffer-string))
-;; 	     nil)
-;; 	    (t
-;; 	     (setq result nil)
-;; 	     (format "Response: %s" status-line)))))
-;;      (lambda (proc status connection-info)
-;; 	 (when (and (memq status '(nil closed exit failed signal))
-;; 		    (eq result 'queried))
-;; 	   (setq result nil))))
-;;     (while (eq result 'queried)
-;; 	(sit-for 0.1))
-;;     (if result
-;; 	  result
-;; 	(error "Failed to retrieve `%s'" url)
-;; 	nil))))
+  (let ((request (twittering-make-http-request-from-uri
+                  "GET" nil url))
+        (additional-info `((url . ,url) (sync . t)))
+        result)
+    (twittering-send-http-request
+     request additional-info
+     (lambda (proc status connection-info header-info)
+       (let ((status-line (assqref 'status-line header-info))
+             (status-code (assqref 'status-code header-info)))
+         (case-string
+          status-code
+          (("200")
+           (setq result (buffer-string))
+           nil)
+          (t
+           (setq result nil)
+           (format "Response: %s" status-line))))))
+    (unless result
+      (error "Failed to retrieve `%s'" url))
+    result))
 
 ;;;; Proxy setting / functions
 ;;;;
@@ -5603,19 +5543,19 @@ SCHEME must be \"http\" or \"https\"."
                    (mapconcat (lambda (x) (symbol-name (car x)))
                               twittering-tinyurl-services-map ", "))
             nil)))
-         (additional-info `((longurl . ,longurl))))
+         (additional-info `((longurl . ,longurl) (sync . t))))
     (cond
      ((null request)
       (error "Failed to generate a HTTP request for shortening %s with %s"
              longurl (symbol-name service))
       nil)
      (t
-      (lexical-let ((result 'queried))
+      (let (result)
         (twittering-send-http-request
          request additional-info
          (lambda (proc status connection-info header-info)
-           (let ((status-line (cdr (assq 'status-line header-info)))
-                 (status-code (cdr (assq 'status-code header-info))))
+           (let ((status-line (assqref 'status-line header-info))
+                 (status-code (assqref 'status-code header-info)))
              (case-string
               status-code
               (("200")
@@ -5623,13 +5563,7 @@ SCHEME must be \"http\" or \"https\"."
                nil)
               (t
                (setq result nil)
-               (format "Response: %s" status-line)))))
-         (lambda (proc status connection-info)
-           (when (and (memq status '(nil closed exit failed signal))
-                      (eq result 'queried))
-             (setq result nil))))
-        (while (eq result 'queried)
-          (sit-for 0.1))
+               (format "Response: %s" status-line))))))
         (let ((processed-result (if (and result (functionp post-process))
                                     (funcall post-process service result)
                                   result)))
@@ -6287,18 +6221,8 @@ string.")
     s))
 
 (defun twittering-get-simple-sync (method args-alist)
-  (message "Getting %S..." method)
   (setq twittering-get-simple-retrieved nil)
-  (let ((proc (twittering-get-simple-1 method args-alist)))
-    (when proc
-      (let ((start (current-time)))
-        (while (and (not twittering-get-simple-retrieved)
-                    (not (memq (process-status proc)
-                               '(exit signal closed failed nil)))
-                    ;; Wait just for 3 seconds. FIXME: why it would fail sometimes?
-                    (< (cadr (time-subtract (current-time) start)) 30)
-                    )
-          (sit-for 0.1)))))
+  (twittering-get-simple-1 method args-alist '((sync . t)))
   (if (not twittering-get-simple-retrieved)
       (progn
         (setq twittering-get-simple-retrieved 'error)
@@ -6308,7 +6232,7 @@ string.")
        (cond
         ((stringp twittering-get-simple-retrieved)
          (if (string= "" twittering-get-simple-retrieved)
-             (message
+             (error
               "%s does not have a %s."
               (assqref 'username args-alist)
               (assqref method
@@ -6327,14 +6251,15 @@ string.")
       (t
        twittering-get-simple-retrieved))))
 
-(defun twittering-get-simple-1 (method args-alist)
+(defun twittering-get-simple-1 (method args-alist &optional additional-info)
   (twittering-call-api
    method
    `(,@args-alist
      (sentinel . (lambda (&rest args)
                    (apply 'twittering-http-get-simple-sentinel
                           (append args '(((method . ,method)
-                                          ,@args-alist)))))))))
+                                          ,@args-alist)))))))
+   additional-info))
 
 (defun twittering-followed-by-p (username)
   (twittering-get-simple-sync 'show-friendships `((username . ,username)))
@@ -6744,33 +6669,23 @@ If nil, read it from the minibuffer."
           (if ok
               (twittering-update-account-authorization 'authorized)
             (unless (eq (twittering-get-accounts 'auth) 'basic)
-              (let* ((oauth-alist (twittering-lookup-oauth-access-token-alist))
-                     (proc
-                      (twittering-call-api
-                       'verify-credentials
-                       `((sentinel
-                          . twittering-http-get-verify-credentials-sentinel)
-                         (clean-up-sentinel
-                          . twittering-http-get-verify-credentials-clean-up-sentinel))
-                       `(,(case service 
-                            ((sina)
-                             `(user_id . ,(assocref "user_id" oauth-alist)))
-                            ((douban)
-                             `(user_id . ,(assocref "douban_user_id" oauth-alist)))
-                            (t
-                             `(username . ,(assocref "screen_name" oauth-alist))))
-                         (password . nil)
-                         (service . ,service)))))
-                (cond
-                 ((null proc)
-                  (twittering-update-account-authorization nil)
-                  (twittering-update-oauth-access-token-alist '())
-                  (message "Authorization via saved auth info failed. "))
-                 (t
-                  ;; wait for verification to finish.
-                  (while (twittering-account-authorization-queried-p)
-                    (sit-for 0.1))
-                  (setq ok t)))))))
+              (let ((oauth-alist (twittering-lookup-oauth-access-token-alist)))
+                (twittering-call-api 'verify-credentials
+                                     `((sentinel
+                                        . twittering-http-get-verify-credentials-sentinel)
+                                       (clean-up-sentinel
+                                        . twittering-http-get-verify-credentials-clean-up-sentinel))
+                                     `(,(case service 
+                                          ((sina)
+                                           `(user_id . ,(assocref "user_id" oauth-alist)))
+                                          ((douban)
+                                           `(user_id . ,(assocref "douban_user_id" oauth-alist)))
+                                          (t
+                                           `(username . ,(assocref "screen_name" oauth-alist))))
+                                       (password . nil)
+                                       (service . ,service)
+                                       (sync . t)))
+                (setq ok t)))))
 
         ;; 2. Maybe info file has already been read when loading other accounts. 
         (unless ok		       
@@ -6829,20 +6744,16 @@ If nil, read it from the minibuffer."
                    (setq ok t))))
 
               ((basic)
-               (let* ((account-info (twittering-prepare-account-info))
-                      (proc
-                       (twittering-call-api
-                        'verify-credentials
-                        `((sentinel . twittering-http-get-verify-credentials-sentinel)
-                          (clean-up-sentinel
-                           . twittering-http-get-verify-credentials-clean-up-sentinel))
-                        `((username . ,(car account-info))
-                          (password . ,(cdr account-info))
-                          (service  . ,service)))))
-                 (when proc
-                   (while (twittering-account-authorization-queried-p)
-                     (sit-for 0.1))
-                   (setq ok t))))))
+               (let ((account-info (twittering-prepare-account-info)))
+                 (twittering-call-api 'verify-credentials
+                                      `((sentinel . twittering-http-get-verify-credentials-sentinel)
+                                        (clean-up-sentinel
+                                         . twittering-http-get-verify-credentials-clean-up-sentinel))
+                                      `((username . ,(car account-info))
+                                        (password . ,(cdr account-info))
+                                        (service  . ,service)
+                                        (sync . t)))
+                 (setq ok t)))))
 
           (setq twittering-private-info-file-dirty t))
 
@@ -7644,26 +7555,12 @@ image are displayed."
                                (apply 'twittering-make-icon-string
                                       (append args (list ,image-url))))))
                          icon-string)
-      ;; (if sync
-      ;; 	  (progn
-      ;; 	    (let ((result (twittering-url-retrieve-synchronously image-url)))
-      ;; 	      (twittering-register-image-data image-url result)
-      ;; 	      (twittering-make-icon-string beg end image-url)))
-      ;;   (twittering-url-retrieve-async image-url 'twittering-register-image-data)
-      ;;   icon-string)))))
-
       (if sync
-          (let* ((buf (twittering-url-retrieve-synchronously image-url))
-                 (header-info (twittering-make-header-info-alist
-                               (twittering-get-response-header buf)))
-                 (status-code (assqref 'status-code header-info)))
-            (when (string= status-code "200")
-              (with-current-buffer buf
-                (goto-char (point-min))
-                (when (search-forward-regexp "\r?\n\r?\n" nil t)
-                  (twittering-register-image-data image-url
-                                                  (buffer-substring (match-end 0) (point-max)))
-                  (twittering-make-icon-string beg end image-url sync)))))
+          (progn
+            (twittering-register-image-data
+             image-url (string-as-unibyte 
+                        (twittering-url-retrieve-synchronously image-url)))
+            (twittering-make-icon-string beg end image-url sync))
         (twittering-url-retrieve-async image-url 'twittering-register-image-data)
         icon-string)))))
 
@@ -9696,6 +9593,7 @@ SPEC may be a timeline spec or a timeline spec string."
 
 (defun twittering-status-id= (id1 id2)
   (equal id1 id2))
+
 
 (provide 'twittering-mode)
 
