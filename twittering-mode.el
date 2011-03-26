@@ -2246,62 +2246,68 @@ The method to perform the request is determined from
 `twittering-connection-type-order'."
   (lexical-let ((func func)
                 (clean-up-func clean-up-func)
-                (twittering-service-method twittering-service-method))
+                (twittering-service-method twittering-service-method)
+                (sync? (assqref 'sync additional-info)))
+    (when sync?
+      (message "Retrieving..."))
     (twittering-send-http-request-internal
      request additional-info
-     (lambda (proc status-str connection-info)
+     (lambda (proc status-code-or-str connection-info)
        (let ((status (cond
-                      ((string= status-str "urllib-finished") 'exit)
+                      (sync? status-code-or-str)
+                      ((string= status-code-or-str "urllib-finished") 'exit)
                       ((processp proc) (process-status proc))
                       (t nil)))
-             (buffer (process-buffer proc))
-             (exit-status (cond
-                           ((string= status-str "urllib-finished") 0)
-                           ((processp proc) (process-exit-status proc))
-                           (t 1)))
-             (command (process-command proc))
-             (pre-process-func
-              (assqref 'pre-process-buffer connection-info))
-             (mes nil))
+             (pre-process-func (assqref 'pre-process-buffer connection-info))
+             (buffer (if sync? (current-buffer) (process-buffer proc)))
+             (mes 'unset))
          (unwind-protect
-             (setq mes
-                   (cond
-                    ((null status)
-                     (format "Failure: process %s does not exist." proc))
-                    ((or (memq status '(run stop open listen connect))
-                         (not (memq status '(exit signal closed failed))))
-                     ;; If the process is running, FUNC is not called.
-                     nil)
-                    ((and command
-                          (not (= 0 exit-status)))
-                     ;; If the process abnormally exited,
-                     (format "Failure: %s exited abnormally (exit-status=%s)."
-                             (car command) exit-status))
-                    ((not (buffer-live-p buffer))
-                     (format "Failure: the buffer for %s is already killed."
-                             proc))
-                    (t
-                     (when (functionp pre-process-func)
-                       ;; Pre-process buffer.
-                       (funcall pre-process-func proc buffer connection-info))
-                     (let* ((header (twittering-get-response-header buffer))
-                            (header-info
-                             (and header
-                                  (twittering-update-server-info header))))
-                       (with-current-buffer buffer
-                         (goto-char (point-min))
-                         (when (search-forward-regexp "\r?\n\r?\n" nil t)
-                           ;; delete HTTP headers.
-                           (delete-region (point-min) (match-end 0)))
-                         (apply func proc status connection-info
-                                header-info nil))))))
+             (progn
+               (unless sync?
+                 (let ((exit-status (cond
+                                     ((string= status-code-or-str "urllib-finished") 0)
+                                     ((processp proc) (process-exit-status proc))
+                                     (t 1)))
+                       (command (process-command proc)))
+                   (setq mes
+                         (cond
+                          ((null status)
+                           (format "Failure: process %s does not exist." proc))
+                          ((or (memq status '(run stop open listen connect))
+                               (not (memq status '(exit signal closed failed))))
+                           ;; If the process is running, FUNC is not called.
+                           nil)
+                          ((and command
+                                (not (= 0 exit-status)))
+                           ;; If the process abnormally exited,
+                           (format "Failure: %s exited abnormally (exit-status=%s)."
+                                   (car command) exit-status))
+                          ((not (buffer-live-p buffer))
+                           (format "Failure: the buffer for %s is already killed."
+                                   proc))
+                          (t mes)))))   ; Leave it unchanged
+           
+               (when (or sync? (eq mes 'unset))
+                 (when (functionp pre-process-func)
+                   ;; Pre-process buffer.
+                   (funcall pre-process-func proc buffer connection-info))
+                 (let* ((header (twittering-get-response-header buffer))
+                        (header-info (and header (twittering-update-server-info header))))
+                   (with-current-buffer buffer
+                     (goto-char (point-min))
+                     (when (search-forward-regexp "\r?\n\r?\n" nil t)
+                       ;; delete HTTP headers.
+                       (delete-region (point-min) (match-end 0)))
+                     (setq mes (apply func proc status connection-info header-info nil))))))
            ;; unwind-forms
-           (when (and mes (or (twittering-buffer-related-p)
-                              ;; (twittering-account-authorization-queried-p)
-                              ))
+           (when (and mes (stringp mes) (or (twittering-buffer-related-p)
+                                            ;; (twittering-account-authorization-queried-p)
+                                            ))
              ;; CLEAN-UP-FUNC can overwrite a message from the return value
              ;; of FUNC.
              (message "%s" mes))
+           (when sync?
+             (message "Retrieving...done"))
            (when (functionp clean-up-func)
              (funcall clean-up-func proc status connection-info))
            (when (and (memq status '(exit signal closed failed))
@@ -2398,6 +2404,11 @@ The method to perform the request is determined from
       (set-process-buffer proc buffer)
       (set-process-sentinel proc sentinel)
       (process-send-string proc request-str)
+      (when (assqref 'sync connection-info)
+        (while (let ((status (process-status proc)))
+                 (and (memq status '(run stop open listen connect))
+                      (not (memq status '(exit signal closed failed)))))
+          (sit-for 0.1)))
       proc)))
 
 (defun twittering-pre-process-buffer-native (proc buffer connection-info)
@@ -2552,12 +2563,20 @@ The method to perform the request is determined from
            (if use-ssl
                cacert-dir
              default-directory))
-         (proc (apply 'start-process name buffer
-                      twittering-curl-program curl-args)))
+         proc)
     (debug-printf "curl args: %S" curl-args)
-    (when (and proc (functionp sentinel))
-      (set-process-sentinel proc sentinel))
-    proc))
+
+    (if (assqref 'sync connection-info) 
+        (with-current-buffer buffer 
+          (let ((status 
+                 (apply 'call-process twittering-curl-program nil t nil curl-args)))
+            (when sentinel
+              (funcall sentinel nil status))))
+      (setq proc (apply 'start-process name buffer 
+                        twittering-curl-program curl-args))
+      (when (and proc (functionp sentinel))
+        (set-process-sentinel proc sentinel))
+      proc)))
 
 (defun twittering-pre-process-buffer-curl (proc buffer connection-info)
   (let ((use-ssl (assqref 'use-ssl connection-info))
@@ -2659,11 +2678,18 @@ The method to perform the request is determined from
                 `(,(format "%s_proxy=%s://%s:%s/" scheme
                            scheme proxy-server proxy-port)))
             ,@process-environment))
-         (proc
-          (apply 'start-process name buffer twittering-wget-program args)))
-    (when (and proc (functionp sentinel))
-      (set-process-sentinel proc sentinel))
-    proc))
+         proc)
+    (if (assqref 'sync connection-info) 
+        (with-current-buffer buffer 
+          (let ((status 
+                 (apply 'call-process twittering-wget-program nil t nil args)))
+            (when sentinel
+              (funcall sentinel nil status))))
+      (setq proc (apply 'start-process name buffer 
+                        twittering-wget-program args))
+      (when (and proc (functionp sentinel))
+        (set-process-sentinel proc sentinel))
+      proc)))
 
 (defun twittering-pre-process-buffer-wget (proc buffer connection-info)
   (with-current-buffer buffer
@@ -2755,54 +2781,58 @@ The method to perform the request is determined from
          (coding-system-for-write 'binary))
     (lexical-let ((sentinel sentinel)
                   (buffer buffer))
-      (let ((result-buffer
-             (url-retrieve
-              uri
-              (lambda (&rest args)
-                (let ((proc url-http-process)
-                      (url-buffer (current-buffer))
-                      (status-str
-                       (if (and (< emacs-major-version 22)
-                                (boundp 'url-http-end-of-headers)
-                                url-http-end-of-headers)
-                           "urllib-finished"
-                         "finished")))
-                  ;; Callback may be called multiple times.
-                  ;; (as filter and sentinel?)
-                  (unless (local-variable-if-set-p 'twittering-retrieved)
-                    (set (make-local-variable 'twittering-retrieved)
-                         'not-completed)
-                    (with-current-buffer buffer
-                      (set-buffer-multibyte nil)
-                      (insert-buffer-substring url-buffer))
-                    (set-process-buffer proc buffer)
-                    (unwind-protect
-                        (apply sentinel proc status-str nil)
-                      (set-process-buffer proc url-buffer)
-                      (if (eq twittering-retrieved 'exited)
-                          (url-mark-buffer-as-dead url-buffer)
-                        (setq twittering-retrieved 'completed))))
-                  (when (memq (process-status proc)
-                              '(nil closed exit failed signal))
-                    ;; Mark `url-buffer' as dead when the process exited
-                    ;; and `sentinel' is completed.
-                    ;; If this `lambda' is evaluated via a filter, the
-                    ;; process may exit before it is finished to evaluate
-                    ;; `(apply sentinel ...)'. In the case, `buffer' should
-                    ;; not be killed. It should be killed after the
-                    ;; evaluation of `sentinel'.
-                    (if (eq twittering-retrieved 'completed)
-                        (url-mark-buffer-as-dead url-buffer)
-                      (setq twittering-retrieved 'exited))))))))
-        (when (buffer-live-p result-buffer)
-          (with-current-buffer result-buffer
-            (set (make-local-variable 'url-show-status)
-                 twittering-url-show-status)
-            ;; Make `url-http-attempt-keepalives' buffer-local
-            ;; in order to send the current value of the variable
-            ;; to the sentinel invoked for HTTP redirection,
-            (make-local-variable 'url-http-attempt-keepalives))
-          (get-buffer-process result-buffer))))))
+      (let ((callback
+             (lambda (&rest args)
+               (let ((proc url-http-process)
+                     (url-buffer (current-buffer))
+                     (status-str
+                      (if (and (< emacs-major-version 22)
+                               (boundp 'url-http-end-of-headers)
+                               url-http-end-of-headers)
+                          "urllib-finished"
+                        "finished")))
+                 ;; Callback may be called multiple times.
+                 ;; (as filter and sentinel?)
+                 (unless (local-variable-if-set-p 'twittering-retrieved)
+                   (set (make-local-variable 'twittering-retrieved)
+                        'not-completed)
+                   (with-current-buffer buffer
+                     (set-buffer-multibyte nil)
+                     (insert-buffer-substring url-buffer))
+                   (set-process-buffer proc buffer)
+                   (unwind-protect
+                       (apply sentinel proc status-str nil)
+                     (set-process-buffer proc url-buffer)
+                     (if (eq twittering-retrieved 'exited)
+                         (url-mark-buffer-as-dead url-buffer)
+                       (setq twittering-retrieved 'completed))))
+                 (when (memq (process-status proc)
+                             '(nil closed exit failed signal))
+                   ;; Mark `url-buffer' as dead when the process exited
+                   ;; and `sentinel' is completed.
+                   ;; If this `lambda' is evaluated via a filter, the
+                   ;; process may exit before it is finished to evaluate
+                   ;; `(apply sentinel ...)'. In the case, `buffer' should
+                   ;; not be killed. It should be killed after the
+                   ;; evaluation of `sentinel'.
+                   (if (eq twittering-retrieved 'completed)
+                       (url-mark-buffer-as-dead url-buffer)
+                     (setq twittering-retrieved 'exited))))))
+            result-buffer)
+        (if (assqref 'sync? connection-info)
+            (with-current-buffer (url-retrieve-synchronously uri)
+              (when sentinel
+                (funcall sentinel nil 'exit)))
+          (url-retrieve uri callback)
+          (when (buffer-live-p result-buffer)
+            (with-current-buffer result-buffer
+              (set (make-local-variable 'url-show-status)
+                   twittering-url-show-status)
+              ;; Make `url-http-attempt-keepalives' buffer-local
+              ;; in order to send the current value of the variable
+              ;; to the sentinel invoked for HTTP redirection,
+              (make-local-variable 'url-http-attempt-keepalives))
+            (get-buffer-process result-buffer)))))))
 
 (defun twittering-pre-process-buffer-urllib (proc buffer connection-info)
   (with-current-buffer buffer
@@ -2933,11 +2963,9 @@ the server when the HTTP status code equals to 400 or 403."
 (defun twittering-http-get-default-sentinel (proc status connection-info header-info)
   (let ((status-line (assqref 'status-line header-info))
         (status-code (assqref 'status-code header-info)))
-    (case-string
-     status-code
-     (("200")
+    (cond
+     ((string= status-code "200")
       (debug-printf "connection-info=%s" connection-info)
-      (twittering-html-decode-buffer)
       (let* ((spec (assqref 'timeline-spec connection-info))
              (spec-string (assqref 'timeline-spec-string connection-info))
              (twittering-service-method (caar spec))
@@ -5010,39 +5038,13 @@ rendered at POS, return nil."
         (when interactive
           (if (twittering-have-replied-statuses-p base-id)
               (if (y-or-n-p "The replied statuses were not fetched yet.  Fetch it now? ")
-                  (save-excursion
-                    (goto-char (twittering-get-current-status-head))
-                    (move-end-of-line 1) 
-                    (let ((buffer-read-only nil))
-                      (insert
-                       (twittering-make-replied-status-string
-                        nil nil base-id (assqref 'in-reply-to-status-id
-                                                 (twittering-find-status base-id))))))
+                  (let ((replied-id (assqref 'in-reply-to-status-id
+                                             (twittering-find-status base-id))))
+                    (twittering-call-api 'show `((id . ,replied-id)) '((sync . t)))
+                    (twittering-show-replied-statuses))
                 (message "The status this replies to has not been fetched yet."))
             (message "This status is not a reply.")))
         nil))))
-
-(defun twittering-make-replied-status-string (beg end id replied-id &optional tries)
-  (let ((text "")
-        (tries (or tries 1)))
-    (cond
-     ((twittering-find-status replied-id)
-      (save-excursion
-        (goto-char beg)
-        (twittering-show-replied-statuses)))
-     ((< tries twittering-url-request-retry-limit)
-      (twittering-call-api 'show `((id . ,replied-id)))
-      (setq text (make-string (- twittering-url-request-retry-limit tries) ?.))
-      (add-text-properties 0 (length text)
-                           `(need-to-be-updated
-                             (twittering-make-replied-status-string
-                              ,id ,replied-id ,(1+ tries))
-                             ;; common properties, See
-                             ;; `twittering-generate-format-status-function'.
-                             ;; TODO: maybe more to add.
-                             id ,id)
-                           text)))
-    text))
 
 (defun twittering-hide-replied-statuses (&optional interactive)
   (interactive)
@@ -5870,10 +5872,12 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
     username -- the username who will be blocked.
   This command requires either of the above key. If both are given, `user-id'
   will be used in REST API."
-  (unless additional-info
-    (setq additional-info
-          `((timeline-spec . ,(twittering-current-timeline-spec))
-            (timeline-spec-string . ,(twittering-current-timeline-spec-string)))))
+  (unless (assqref 'timeline-spec additional-info)
+    (add-to-list 'additional-info 
+                 `(timeline-spec . ,(twittering-current-timeline-spec))))
+  (unless (assqref 'timeline-spec-string additional-info)
+    (add-to-list 'additional-info
+                 `(timeline-spec-string . ,(twittering-current-timeline-spec-string))))
 
   (let ((api-host (twittering-lookup-service-method-table 'api))
         (spec (assqref 'timeline-spec args-alist))
