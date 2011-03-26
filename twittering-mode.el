@@ -5772,8 +5772,9 @@ The retrieved data can be referred as (gethash URL twittering-url-data-hash)."
       nil)
      (t
       ;; URL has been already retrieved.
-      (twittering-run-on-idle twittering-url-request-sentinel-delay
-                              sentinel url data)
+      (when sentinel
+        (twittering-run-on-idle twittering-url-request-sentinel-delay
+                                sentinel url data))
       data))))
 
 ;;; ============================================= API interface
@@ -6434,7 +6435,7 @@ string.")
 
 ;;; ============================================= Douban details
 
-(defun twittering-make-douban-detail-string (beg end detail-url prefix)
+(defun twittering-make-douban-detail-string (beg end detail-url prefix &optional html)
   (let* ((detail-data (gethash detail-url twittering-url-data-hash))
          (properties (and beg (text-properties-at beg)))
          (detail (apply 'propertize "." properties)))
@@ -6442,107 +6443,129 @@ string.")
     ;;      (add-text-properties 0 (length detail) properties detail))
     (cond                               
      (detail-data
-      (with-temp-buffer
-        (insert detail-data)
-        (goto-char (point-min))
-        (let ((json (twittering-wash-json-douban (twittering-json-read)))
-              (type (when (string-match
-                           (regexp-opt 
-                            '("photo" "note" "book" "movie" "music" "review"
-                              "collection" "event" "recommendation"))
-                           detail-url)
-                      (intern (match-string 0 detail-url)))))
-          (case type
-            ((photo)
-             (let ((cm (some (lambda (i) (when (string= (assqref '@name i) "comment")
-                                           (assqref '$t i)))
-                             (assqref 'db:attribute json))))
-               (setq detail (concat cm " -- no photo api?"))))
-            ((note)
-             (setq detail (assqref 'summary json)))
-            ((event)
-             (setq detail
-                   (apply 'format "时间：%s ~ %s\n地点：%s\n参数人数：%s"
-                          `(,@(mapcar (lambda (i)
-                                        (format-time-string
-                                         "%Y-%m-%d %H:%M" 
-                                         ;; douban timezone bug?
-                                         (date-to-time (replace-regexp-in-string 
-                                                        "+08:00" "+0800" i))))
-                                      (let ((date (assqref 'gd:when json)))
-                                        `(,(symbol-name (car date)) ,(cdr date))))
-                            ,(assqref 'gd:where json)
-                            ,(assqref 'participants (assqref 'db:attribute json))))))
-            ((movie)
-             (let* ((db:attribute (assqref 'db:attribute json))
-                    (take (lambda (symbol) 
-                               (mapconcat
-                                'cdr
-                                (remove-if-not (lambda (i) (eq (car i) symbol))
-                                               db:attribute)
-                                " / "))))
-               (setq detail 
-                     (format "片名：%s\n评分：%s\n导演：%s\n主演：%s\n上映日期：%s"
-                             (assqref 'title db:attribute)
-                             (nth 1 (assqref 'gd:rating json))
-                             (funcall take 'director)
-                             (funcall take 'cast)
-                             (assqref 'pubdate db:attribute)))))
+      (let (json
+            html-url
+            get-photo)
+        (with-temp-buffer
+          (insert detail-data)
+          (goto-char (point-min))
+          (if html
+              (when (re-search-forward "\\(http://img3.douban.com/view/photo/thumb/public/p[0-9]+\\.[^\"]+\\)\""
+                                       nil t 1)
+                (setq html-url (match-string 1)))
+            (setq json (twittering-wash-json-douban (twittering-json-read)))))
+
+        (if html 
+            (if html-url
+                (twittering-make-original-icon-string beg end html-url)
+              "")
+          (let ((type (when (string-match (regexp-opt 
+                                           '("note" "book" "movie" "music" "review"
+                                             "collection" "event" "recommendation"))
+                                          detail-url)
+                        (intern (match-string 0 detail-url)))))
+            (case type
+              ((recommendation)
+               (let* ((status (twittering-get-status-at-pos beg))
+                      (text (assqref 'text status))
+                      url)
+                 (if (not (string-match "<a href=\"\\(http://www.douban.com/photos/album/[0-9]+/\\)\">"
+                                        text))
+                     (setq detail "")
+                   (setq url (match-string 1 text))
+                   (setq detail (concat detail detail)) ; should be different.
+                   (put-text-property 0 (length detail)
+                                      'need-to-be-updated
+                                      `(twittering-make-douban-detail-string ,url ,prefix t)
+                                      detail)
+                   (twittering-url-retrieve-async url)
+                   (setq get-photo t))))
+              ((note)
+               (setq detail (assqref 'summary json)))
+              ((event)
+               (setq detail
+                     (apply 'format "时间：%s ~ %s\n地点：%s\n参数人数：%s"
+                            `(,@(mapcar (lambda (i)
+                                          (format-time-string
+                                           "%Y-%m-%d %H:%M" 
+                                           ;; douban timezone bug?
+                                           (date-to-time (replace-regexp-in-string 
+                                                          "+08:00" "+0800" i))))
+                                        (let ((date (assqref 'gd:when json)))
+                                          `(,(symbol-name (car date)) ,(cdr date))))
+                              ,(assqref 'gd:where json)
+                              ,(assqref 'participants (assqref 'db:attribute json))))))
+              ((movie)
+               (let* ((db:attribute (assqref 'db:attribute json))
+                      (take (lambda (symbol) 
+                              (mapconcat
+                               'cdr
+                               (remove-if-not (lambda (i) (eq (car i) symbol))
+                                              db:attribute)
+                               " / "))))
+                 (setq detail 
+                       (format "片名：%s\n评分：%s\n导演：%s\n主演：%s\n上映日期：%s"
+                               (assqref 'title db:attribute)
+                               (nth 1 (assqref 'gd:rating json))
+                               (funcall take 'director)
+                               (funcall take 'cast)
+                               (assqref 'pubdate db:attribute)))))
             
-            ((music)
-             (let* ((db:attribute (assqref 'db:attribute json))
-                    (title (assqref 'title db:attribute))
-                    (singer (assqref 'singer db:attribute))
-                    (score (nth 1 (assqref 'gd:rating json)))
-                    (version (assqref 'version db:attribute))
-                    (publisher (assqref 'publisher db:attribute))
-                    (pubdate (assqref 'pubdate db:attribute)))
-               (setq detail 
-                     (mapconcat (lambda (i) (mapconcat 'identity i "："))
-                                `(("曲名"    ,title)
-                                  ("表演者"   ,singer)
-                                  ("评分"     ,score)
-                                  ("版本特性" ,version)
-                                  ("发行时间" ,pubdate)
-                                  ("出版者"   ,publisher))
-                                "\n"))))
+              ((music)
+               (let* ((db:attribute (assqref 'db:attribute json))
+                      (title (assqref 'title db:attribute))
+                      (singer (assqref 'singer db:attribute))
+                      (score (nth 1 (assqref 'gd:rating json)))
+                      (version (assqref 'version db:attribute))
+                      (publisher (assqref 'publisher db:attribute))
+                      (pubdate (assqref 'pubdate db:attribute)))
+                 (setq detail 
+                       (mapconcat (lambda (i) (mapconcat 'identity i "："))
+                                  `(("曲名"    ,title)
+                                    ("表演者"   ,singer)
+                                    ("评分"     ,score)
+                                    ("版本特性" ,version)
+                                    ("发行时间" ,pubdate)
+                                    ("出版者"   ,publisher))
+                                  "\n"))))
 
-            ((book)
-             (let* ((db:attribute (assqref 'db:attribute json))
-                    (title (assqref 'title db:attribute))
-                    (author (assqref 'author db:attribute))
-                    (score (nth 1 (assqref 'gd:rating json)))
-                    (publisher (assqref 'publisher db:attribute))
-                    (pubdate (assqref 'pubdate db:attribute)))
-               ;; too few people, TODO: handle other possible empty item.
-               (unless (stringp score)
-                 (setq score ""))
-               (setq detail 
-                     (mapconcat (lambda (i) (mapconcat 'identity i "："))
-                                `(("书名"    ,title)
-                                  ("作者"   ,author)
-                                  ("评分"     ,score)
-                                  ("发行时间" ,pubdate)
-                                  ("出版者"   ,publisher))
-                                "\n"))))
+              ((book)
+               (let* ((db:attribute (assqref 'db:attribute json))
+                      (title (assqref 'title db:attribute))
+                      (author (assqref 'author db:attribute))
+                      (score (nth 1 (assqref 'gd:rating json)))
+                      (publisher (assqref 'publisher db:attribute))
+                      (pubdate (assqref 'pubdate db:attribute)))
+                 ;; too few people, TODO: handle other possible empty item.
+                 (unless (stringp score)
+                   (setq score ""))
+                 (setq detail 
+                       (mapconcat (lambda (i) (mapconcat 'identity i "："))
+                                  `(("书名"    ,title)
+                                    ("作者"   ,author)
+                                    ("评分"     ,score)
+                                    ("发行时间" ,pubdate)
+                                    ("出版者"   ,publisher))
+                                  "\n"))))
                
-            ((review collection)
-             (setq detail (assqref 'summary json))
-             (unless detail             ; sounds like douban's bug.
-               (setq detail (car (assqref 'summary json)))))
-            (t
-             (setq detail "")))))
+              ((review collection)
+               (setq detail (assqref 'summary json))
+               (unless detail           ; sounds like douban's bug.
+                 (setq detail (car (assqref 'summary json)))))
+              (t
+               (setq detail "")))
 
-      (unless (string= detail "")
-        (setq detail (replace-regexp-in-string "" "" detail)
-              detail (twittering-fill-string detail nil prefix t)
-              detail (substring detail (length prefix))
-              detail (apply 'propertize detail properties))
-        (remove-text-properties 0 (length detail)
-                                '(need-to-be-updated nil)
-                                detail))
+            (unless get-photo
+              (unless (string= detail "")
+                (setq detail (replace-regexp-in-string "" "" detail)
+                      detail (twittering-fill-string detail nil prefix t)
+                      detail (substring detail (length prefix))
+                      detail (apply 'propertize detail properties))
+                (remove-text-properties 0 (length detail)
+                                        '(need-to-be-updated nil)
+                                        detail)))
 
-      detail)
+            detail))))
      (t
       (put-text-property 0 (length detail)
                          'need-to-be-updated
@@ -9599,8 +9622,8 @@ SPEC may be a timeline spec or a timeline spec string."
   "Return Tweet sign string."
   (funcall twittering-sign-string-function))
 
-(defun twittering-get-status-at-pos ()
-  (twittering-find-status (twittering-get-id-at)))
+(defun twittering-get-status-at-pos (&optional pos)
+  (twittering-find-status (twittering-get-id-at pos)))
 
 (defun twittering-json-read ()
   (twittering-html-decode-buffer)
