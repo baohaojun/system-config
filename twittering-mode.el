@@ -5012,7 +5012,7 @@ rendered at POS, return nil."
               (if (y-or-n-p "The replied statuses were not fetched yet.  Fetch it now? ")
                   (save-excursion
                     (goto-char (twittering-get-current-status-head))
-                    (goto-char (line-end-position))
+                    (move-end-of-line 1) 
                     (let ((buffer-read-only nil))
                       (insert
                        (twittering-make-replied-status-string
