@@ -6243,8 +6243,7 @@ string.")
                          " you")))
 
               ((get-list-index get-list-subscriptions get-list-memberships)
-               (mapconcat (lambda (l) (concat "@" (twittering-decorate-listname
-                                                   (substring l 1))))
+               (mapconcat (lambda (l) (concat "@" (twittering-decorate-listname l)))
                           retrieved
                           (concat "\n" (make-string
                                         (twittering-calculate-list-info-prefix-width
