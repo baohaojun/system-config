@@ -2275,12 +2275,12 @@ The method to perform the request is determined from
                (message "%s" mes)))
            (when (functionp clean-up-func)
              (funcall clean-up-func proc status connection-info))
-           (when (and (memq status '(exit signal closed failed))
+           (when error?
+             (error "%s" mes))
+           (when (and (or sync? (memq status '(exit signal closed failed)))
                       (buffer-live-p buffer)
                       (not twittering-debug-mode))
-             (kill-buffer buffer))
-           (when error?
-             (error "%s" mes))))))))
+             (kill-buffer buffer))))))))
 
 ;;;;
 ;;;; Basic HTTP functions with tls and Emacs builtins.
@@ -3415,8 +3415,9 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
          (format-str (or twittering-retweet-format "RT: %t (via @%s)")))
     (when username
       (if (eq (twittering-extract-service) 'sina)
-          ;; use sina's format.
-          (format " // @%s:%s" username (assqref 'text status))
+          (if (twittering-status-has-quotation? status)
+              (format " // @%s:%s" username (assqref 'text status))
+            "")
         (let ((prefix "%")
               (replace-table
                `(("%" . "%")
