@@ -1,6 +1,8 @@
 xwl's fork
 ----------
 
+* Add http://www.douban.com support.
+
 * Add http://t.sina.com.cn backend support; add login multiple services
   simultaneously support, e.g, both twitter and sina.
 
