@@ -46,7 +46,13 @@ cd_ok()
 
 cd_record()
 {
-    history -s cd "`pwd`"
+    if [[ "$PWD" =~ ^$HOME/smb/ ]]; then
+        local pat=$HOME/smb/
+        local rep=smb://
+        history -s cd "${PWD/$pat/$rep}"
+    else
+        history -s cd "`pwd`"
+    fi
    (flock -x ~/.where.lock -c where&)
 }
 
