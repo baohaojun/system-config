@@ -470,15 +470,3 @@ pinmux group怎么定义
                 if (status >= 0) {
                     ...
     =>              const_cast<int&>(dev->device.format) = HAL_PIXEL_FORMAT_RGB_565;
-
-****************
-看看能不能直接进recovery模式，而不需要按recovery键。
-
-    /home/bhj/src/theatre/hardware/tegra/core/system/nvaboot/nvaboot.c:469:     RecoveryMode = NvBlQueryGetNv3pServerFlag();
-        NvError NvAbootOpen(
-            NvAbootHandle *phAboot,
-            NvU32 *EnterNv3pServer,
-            NvU32 *Boot)
-        {
-            ...
-    =>      RecoveryMode = NvBlQueryGetNv3pServerFlag();
