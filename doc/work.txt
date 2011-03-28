@@ -880,7 +880,3 @@ sudo ifconfig eth0:0 192.168.88.8; ssh r137 sudo ifconfig eth0:0 192.168.88.9
 
 (cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && setpaths&& lunch ventana-eng && time make -j8 -l8 -k )
 (cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && setpaths&& lunch ventana-eng && ksetup tegra_defconfig && krebuild -j8 -l8 -k)
-
-
-make: *** No rule to make target `out/target/product/imx51_aster7/system/bin/busybox', needed by `prebuilt'.  Stop.
-make: *** Waiting for unfinished jobs....
