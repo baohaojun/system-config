@@ -89,7 +89,7 @@
 
 (setq im-class "Eva|Pidgin|Wine" ;; im = instant messanger
       br-class "Firefox|Iceweasel|Epiphany" ;; br = browser
-      dc-class "OpenOffice|Acroread|Evince|Gnumeric" ;; dc = doc
+      dc-class "libreoffice|OpenOffice|Acroread|Evince|Gnumeric" ;; dc = doc
       mg-class "Meld|Gimp|Gitk" ;; mg = meld/gimp
       fm-class "Nautilus|File-roller" ;; fm = file manager
       cycle-groups (list im-class
