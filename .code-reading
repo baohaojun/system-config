@@ -493,3 +493,17 @@ pinmux group怎么定义
         #define NV_RELOCATION_TABLE_PTR_OFFSET 64
         ...
     =>  #define NV_RELOCATION_TABLE_INIT \
+
+****************
+
+
+    /home/bhj/src/theatre/hardware/tegra/core/system/fastboot/recovery_utils.c:769:                 NvOsStrncpy(partName, "CAC", NvOsStrlen("CAC"));
+        NvError UpdateDevice(NvAbootHandle hAboot, CommandType *Command)
+        {
+            ...
+            {
+                ...
+                {
+                    ...
+                    {
+    =>                  NvOsStrncpy(partName, "CAC", NvOsStrlen("CAC"));
