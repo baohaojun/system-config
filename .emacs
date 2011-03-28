@@ -569,6 +569,35 @@
 
 ;;(add-hook 'message-send-hook 'bhj-mimedown)
 
+(defun bhj-set-reply ()
+  (interactive)
+  (save-excursion
+    (let ((receivers
+           (concat
+            (save-restriction (message-narrow-to-headers)
+                              (message-fetch-field "to"))
+            ", "
+            (save-restriction (message-narrow-to-headers)
+                              (message-fetch-field "cc"))
+            ", "
+            (save-restriction (message-narrow-to-headers)
+                              (message-fetch-field "bcc"))))
+          (all-letou t)
+          (start-pos 0))
+
+      (while (and all-letou (string-match "@" receivers start-pos))
+        (setq start-pos (match-end 0))
+        (unless (string-match "@adsnexus.com\\|@eee168.com" receivers (1- start-pos))
+          (setq all-letou nil)))
+
+      (when all-letou
+        (save-excursion
+          (message-goto-from)
+          (message-beginning-of-line)
+          (kill-line)
+          (insert "Bao Haojun at Letou <hjbao@eee168.com>"))))))
+
+(add-hook 'message-send-hook 'bhj-set-reply)
 
 (defun message-display-abbrev ()
   "Display the next possible abbrev for the text before point."
@@ -672,9 +701,8 @@
 
 (setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
 			      auto-mode-alist))
-(desktop-save-mode 1)
 (require 'saveplace)
-(setq-default save-place t)
+
 (require 'color-theme)
 (condition-case nil
     (progn
