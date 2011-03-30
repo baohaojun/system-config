@@ -4114,7 +4114,7 @@ following symbols;
           `( ;; Hashtag
             (hashtag . ,(concat twittering-regexp-hash
                                 (if (eq (twittering-extract-service) 'sina)
-                                    (format "\\([^%s]+%s\\)"
+                                    (format "\\([^%s\n]+%s\\)"
                                             twittering-regexp-hash
                                             twittering-regexp-hash)
                                   "\\([a-zA-Z0-9_-]+\\)")))
