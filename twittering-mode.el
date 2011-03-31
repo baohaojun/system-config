@@ -4159,17 +4159,18 @@ following symbols;
              (properties
               (cond
                ((eq sym 'hashtag)
-                (let* ((hashtag matched-str)
-                       (spec
-                        (twittering-string-to-timeline-spec
-                         (concat "#" hashtag)))
-                       (url (twittering-get-search-url (concat "#" hashtag))))
-                  (list
-                   'mouse-face 'highlight
-                   'keymap twittering-mode-on-uri-map
-                   'uri url
-                   'goto-spec spec
-                   'face 'twittering-username-face)))
+                (ignore-errors
+                  (let* ((hashtag matched-str)
+                         (spec
+                          (twittering-string-to-timeline-spec
+                           (concat "#" hashtag)))
+                         (url (twittering-get-search-url (concat "#" hashtag))))
+                    (list
+                     'mouse-face 'highlight
+                     'keymap twittering-mode-on-uri-map
+                     'uri url
+                     'goto-spec spec
+                     'face 'twittering-username-face))))
                ((eq sym 'list-name)
                 (let ((list-name matched-str))
                   (list
