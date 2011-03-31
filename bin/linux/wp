@@ -10,7 +10,7 @@ function smb_wp()
     else
         FILE=z:$FILE
     fi
-    echo -n "$FILE"|tee /dev/tty|putclip
+    printf %q "$FILE"|tee /dev/tty|putclip
 }
 
 function sp()

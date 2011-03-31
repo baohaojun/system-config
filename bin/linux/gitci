@@ -6,6 +6,8 @@ die() {
     false
 }
 
+git status -s|grep -v '^ '|grep -v '^?'|grep . -q || die "Error, nothing to commit"
+
 test $# -lt 1 && die "Error: must have a ticket, such as CINEMA-44. See http://bear/jira"
 
 ticket="${1%:*}"

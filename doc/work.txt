@@ -30,7 +30,9 @@ sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'
 sudo aptitude purge ~ilinux-image-2.*\(\!`uname -r`\)
 for x in `git tag`; do git branch tagbr-$x $x; done
 
-adb shell 'mkdir /data/debugfs; mount -t debugfs null /data/debugfs; cat /data/debugfs/gpio'
+mkdir /data/debugfs
+mount -t debugfs null /data/debugfs
+cat /data/debugfs/gpio
 
 (cd .repo/.. && export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT)
 M-: (modify-syntax-entry ?_ "w")
@@ -712,10 +714,10 @@ HCQ9D-TVCWX-X9QRG-J4B2Y-GR2TT
 211.103.252.242 bear2
 60.28.209.148 wowpad.ee168.cn
 
-(sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
+sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
 sudo /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo /sbin/iptables -A FORWARD -i eth0 -o vboxnet0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo /sbin/iptables -A FORWARD -i vboxnet0 -o eth0 -j ACCEPT)
+sudo /sbin/iptables -A FORWARD -i vboxnet0 -o eth0 -j ACCEPT
 
 smbnetfs: must change the file attribute of ~/.smb/*!
 sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
