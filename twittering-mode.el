@@ -6383,7 +6383,8 @@ string.")
               (when (re-search-forward "\\(http://img3.douban.com/view/photo/thumb/public/p[0-9]+\\.[^\"]+\\)\""
                                        nil t 1)
                 (setq html-url (match-string 1)))
-            (setq json (twittering-wash-json-douban (twittering-json-read)))))
+            (setq json (twittering-wash-json-douban
+                        (ignore-errors (twittering-json-read))))))
 
         (if html 
             (if html-url
