@@ -599,28 +599,6 @@
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
-(defun message-display-abbrev ()
-  "Display the next possible abbrev for the text before point."
-  (interactive)
-  (when (and (memq (char-after (point-at-bol)) '(?C ?T ?\t ? ))
-	     (message-point-in-header-p)
-	     (save-excursion
-	       (beginning-of-line)
-	       (while (and (memq (char-after) '(?\t ? ))
-			   (zerop (forward-line -1))))
-	       (looking-at "To:\\|Cc:")))
-    (let* ((end (point))
-	   (start (save-excursion
-		    (and (re-search-backward "\\(,\\s +\\|^To: \\|^Cc: \\|^\t\\)" nil t)
-			 (+ (point) (length (match-string 1))))))
-	   (word (when start (buffer-substring start end)))
-	   (match (when (and word
-			     (not (zerop (length word))))
-		    (ecomplete-display-matches 'mail word t))))
-      (when match
-	(delete-region start end)
-	(insert match)))))
-
 (require 'electric-complete)
 
 (require 'xcscope)
