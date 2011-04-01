@@ -6508,7 +6508,8 @@ string.")
 (defun twittering-make-rating-string (rating)
   (when (stringp rating)
     (setq rating (string-to-number rating)))
-  (make-string (ceiling (/ rating 2.0)) ?*))
+  (concat (make-string (ceiling (/ rating 2.0)) ?★)
+          (make-string (- 5 (ceiling (/ rating 2.0))) ?☆)))
 
 ;;; ============================================= Mode
 
