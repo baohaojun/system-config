@@ -6383,7 +6383,8 @@ string.")
               (when (re-search-forward "\\(http://img3.douban.com/view/photo/thumb/public/p[0-9]+\\.[^\"]+\\)\""
                                        nil t 1)
                 (setq html-url (match-string 1)))
-            (setq json (twittering-wash-json-douban (twittering-json-read)))))
+            (setq json (twittering-wash-json-douban 
+                        (ignore-errors (twittering-json-read))))))
 
         (if html 
             (if html-url
@@ -6507,7 +6508,8 @@ string.")
 (defun twittering-make-rating-string (rating)
   (when (stringp rating)
     (setq rating (string-to-number rating)))
-  (make-string (ceiling (/ rating 2.0)) ?*))
+  (concat (make-string (ceiling (/ rating 2.0)) ?★)
+          (make-string (- 5 (ceiling (/ rating 2.0))) ?☆)))
 
 ;;; ============================================= Mode
 
