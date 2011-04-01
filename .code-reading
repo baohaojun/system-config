@@ -515,3 +515,24 @@ pinmux group怎么定义
         #define DO_DISPATCH(DAEMON)                                     \
                 ...
     =>          NV_DAEMON_MODULES(DO_DISPATCH)
+
+****************
+这个地方是会调到nv的display manager的入口
+
+    /home/bhj/src/theatre/hardware/tegra/core/drivers/nvdispmgr/client/dispmgr_local.h:81:     NvDispMgrEntry(Client, InSize, In, OutSize);
+        //===========================================================================
+        // NvDispMgrCall()
+        //===========================================================================
+        static NV_INLINE NvError NvDispMgrCall(
+                                    NvDispMgrClientHandle    Client,
+                                    NvDispMgrCmd             Command,
+                                    NvU32                    Id,
+                                    NvU32                    Flags,
+                                    NvU32                    InSize,
+                                    NvDispMgrCommonInParams  *In,
+                                    NvU32                    OutSize,
+                                    NvDispMgrCommonOutParams *Out,
+                                    NvDispMgrStateSequence   *StateSequenceNumber)
+        {
+            ...
+    =>      NvDispMgrEntry(Client, InSize, In, OutSize);
