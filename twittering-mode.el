@@ -2480,7 +2480,8 @@ The method to perform the request is determined from
             ;; http://www.escafrace.co.jp/blog/09/10/16/1008
             ("Expect" . "")))
          (curl-args
-          `("--include" "--silent"
+          `("--include" 
+            ,(if twittering-debug-mode "--verbose" "--silent")
             ,@(apply 'append
                      (mapcar
                       (lambda (pair)
@@ -2842,7 +2843,11 @@ The method to perform the request is determined from
       (push (cons "Accept-Charset" "utf-8;q=0.7,*;q=0.7")
             headers))
     (when (string= "POST" method)
-      (push (cons "Content-Type" "text/plain") headers))
+      (push (cons "Content-Type" 
+                  (if (eq (twittering-extract-service) 'douban)
+                      "application/atom+xml"
+                    "text/plain"))
+            headers))
     ;; This makes update-profile-image fail.
     ;; (when (string= "POST" method)
     ;;   (push (cons "Content-Length" "0") headers)
@@ -2963,19 +2968,26 @@ METHOD must be one of Twitter API method classes
 PARAMETERS is alist of URI parameters.
  ex) ((\"mode\" . \"view\") (\"page\" . \"6\")) => <URI>?mode=view&page=6
 FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
-  (let* ((format (or format "json"))
+  (let* ((format (if (and (stringp format) (string= format "")) ; douban
+                     "" ".json"))
          (sentinel (or sentinel 'twittering-http-post-default-sentinel))
-         (path (concat "/" method "." format))
+         (path (concat "/" method format))
          (headers nil)
          (port nil)
-         (post-body "")
+         (post-body (if (eq (twittering-extract-service) 'douban)
+                        (format 
+                         "<?xml version='1.0' encoding='UTF-8'?>
+<entry xmlns:ns0=\"http://www.w3.org/2005/Atom\" xmlns:db=\"http://www.douban.com/xmlns/\">
+<content>%s</content></entry>" (assocref "status" parameters))
+                      ""))
          ;; TODO
          ;; "POST" url (and (not (twittering-is-uploading-file-p parameters))
          ;;                  parameters))))
          (request
           (twittering-add-application-header-to-http-request
            (twittering-make-http-request "POST" headers host port path
-                                         parameters post-body
+                                         (unless (eq (twittering-extract-service) 'douban) parameters)
+                                         post-body
                                          twittering-use-ssl))))
     (twittering-send-http-request request additional-info
                                   sentinel clean-up-sentinel)))
@@ -5815,13 +5827,14 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
     (add-to-list 'additional-info
                  `(timeline-spec-string . ,(twittering-current-timeline-spec-string))))
 
-  (let ((api-host (twittering-lookup-service-method-table 'api))
-        (spec (assqref 'timeline-spec args-alist))
-        (id (assqref 'id args-alist))
-        (username (assqref 'username args-alist))
-        (sentinel (assqref 'sentinel args-alist))
-        (sina? (eq (twittering-extract-service) 'sina))
-        (douban? (eq (twittering-extract-service) 'douban)))
+  (let* ((api-host (twittering-lookup-service-method-table 'api))
+         (spec (assqref 'timeline-spec args-alist))
+         (id (assqref 'id args-alist))
+         (username (assqref 'username args-alist))
+         (sentinel (assqref 'sentinel args-alist))
+         (service (twittering-extract-service))
+         (sina? (eq service 'sina))
+         (douban? (eq service 'douban)))
     (case command
       ((retrieve-timeline)
        ;; Retrieve a timeline.
@@ -6008,7 +6021,6 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                              nil additional-info))
 
       ((update-status)
-       ;; Post a tweet.
        (let* ((status (assqref 'status args-alist))
               (id (assqref 'in-reply-to-status-id args-alist))
               (retweeting? (assqref 'retweeting? args-alist))
@@ -6024,19 +6036,21 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                  ,@(when id
                      (if sina?
                          (cond
-                          (quoted-id        ; comment to comment
+                          (quoted-id    ; comment to comment
                            `(("id" . ,quoted-id)
                              ("cid" . ,id)))
-                          (retweeting? ; retweet with comments
+                          (retweeting?  ; retweet with comments
                            `(("in_reply_to_status_id" . ,id)))
-                          (t                ; comment
+                          (t            ; comment
                            `(("id" . ,id))))
                        `(("in_reply_to_status_id" . ,id)))))))
          (twittering-http-post api-host
-                               (twittering-api-path "statuses/"
-                                                    (if comment? "comment" "update"))
+                               (twittering-api-path
+                                (if douban? 
+                                    "miniblog/saying"
+                                  (concat "statuses/" (if comment? "comment" "update"))))
                                parameters
-                               nil
+                               (if douban? "" nil)
                                additional-info)))
       ((destroy-status)
        (twittering-http-post api-host
