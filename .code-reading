@@ -507,3 +507,11 @@ pinmux group怎么定义
                     ...
                     {
     =>                  NvOsStrncpy(partName, "CAC", NvOsStrlen("CAC"));
+
+****************
+这段代码是nvidia软件的核心
+
+    /home/bhj/src/theatre/hardware/tegra/core/mobile_linux/daemons/nvrm/app/server.c:502:         NV_DAEMON_MODULES(DO_DISPATCH)
+        #define DO_DISPATCH(DAEMON)                                     \
+                ...
+    =>          NV_DAEMON_MODULES(DO_DISPATCH)
