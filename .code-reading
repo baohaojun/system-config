@@ -536,3 +536,23 @@ pinmux group怎么定义
         {
             ...
     =>      NvDispMgrEntry(Client, InSize, In, OutSize);
+
+****************
+这个地方说我们用的是支持32位的？
+
+    /home/bhj/src/theatre/hardware/tegra/hal/libgralloc/nvgrfb.c:266:         int ModeFormat = HAL_PIXEL_FORMAT_RGBA_8888;
+            dev->Base.common.tag          = HARDWARE_DEVICE_TAG;
+            dev->Base.common.version      = 0;
+            dev->Base.common.module       = &mod->Base.common;
+            dev->Base.common.close        = NvGrFbDevClose;
+            dev->Base.setSwapInterval     = NvGrSetSwapInterval;
+            dev->Base.setUpdateRect       = NULL; //NvGrSetUpdateRect;
+            dev->Base.compositionComplete = NvGrCompositionComplete;
+            dev->Base.post                = NvGrPost;
+        #ifdef GRALLOC_FB_READ_SUPPORTED    
+            dev->Base.read                = NvGrFbRead;
+        #endif
+            ...
+            {
+                ...
+    =>          int ModeFormat = HAL_PIXEL_FORMAT_RGBA_8888;
