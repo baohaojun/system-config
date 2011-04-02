@@ -4047,9 +4047,9 @@ following symbols;
   (if str
       (let* ((screen-name (assqref 'screen-name (assqref 'user status)))
              (uri (twittering-get-status-url
-                   (if (eq (twittering-extract-service) 'sina)
-                       (assqref 'id (assqref 'user status))
-                     screen-name)))
+                   (if (eq (twittering-extract-service) 'twitter)
+                       screen-name
+                     (assqref 'id (assqref 'user status)))))
              (spec (twittering-string-to-timeline-spec screen-name)))
         (propertize str
                     'mouse-face 'highlight
