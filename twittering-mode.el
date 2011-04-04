@@ -4204,7 +4204,7 @@ following symbols;
                           (twittering-get-status-url screen-name))
                    'screen-name-in-text screen-name
                    'goto-spec (twittering-string-to-timeline-spec screen-name)
-                   'face 'twittering-uri-face)))
+                   'face 'twittering-username-face)))
                ((eq sym 'uri)
                 (let ((uri matched-str))
                   (list
@@ -6548,7 +6548,7 @@ string.")
 been initialized yet."
   (unless twittering-initialized
     (defface twittering-username-face
-      `((t ,(append '(:underline t)
+      `((t ,(append ;; '(:underline t)
                     (face-attr-construct
                      (if (facep 'font-lock-string-face)
                          'font-lock-string-face
