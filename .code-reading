@@ -556,3 +556,11 @@ pinmux group怎么定义
             {
                 ...
     =>          int ModeFormat = HAL_PIXEL_FORMAT_RGBA_8888;
+
+****************
+mmc_cid_show: 这个函数用ctags不能查到，因为它是在一个宏里被定义的：
+
+    /home/bhj/src/theatre/kernel/drivers/mmc/core/mmc.c:275: MMC_DEV_ATTR(cid, "%08x%08x%08x%08x\n", card->raw_cid[0], card->raw_cid[1],
+            return err;
+        ...
+    =>  MMC_DEV_ATTR(cid, "%08x%08x%08x%08x\n", card->raw_cid[0], card->raw_cid[1],
