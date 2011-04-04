@@ -4077,7 +4077,7 @@ following symbols;
 
 (defun twittering-make-string-with-uri-property (str)
   (when (stringp str)
-    (while (string-match "<a href=\"\\(.*?\\)\".*?>\\([^<]*\\).*</a>" str)
+    (while (string-match "<a href=\"\\([^>]+\\)\">\\([^<]+\\)</a>" str)
       (setq str (replace-match (propertize (match-string 2 str)
                                            'mouse-face 'highlight
                                            'keymap twittering-mode-on-uri-map
