@@ -1750,7 +1750,8 @@ the status be shown. ")
                            t)
                          (eq (twittering-extract-service spec) 'sina))
                      (or (not twittering-status-filter)
-                         (funcall twittering-status-filter status)))
+                         (funcall twittering-status-filter status))
+                     (not (assqref 'is-reply-reference status)))
             status)))
       timeline-data))))
 
@@ -4983,12 +4984,9 @@ rendered at POS, return nil."
       (when interactive
         (message "The replied statuses were already showed."))
     (let* ((base-id (twittering-get-id-at))
-           (statuses (twittering-get-replied-statuses base-id
-                                                      (if (numberp count)
-                                                          count)))
-           (statuses (if twittering-reverse-mode
-                         statuses
-                       (reverse statuses))))
+           (statuses (twittering-get-replied-statuses 
+                      base-id (when (numberp count) count)))
+           (statuses (if twittering-reverse-mode statuses (reverse statuses))))
       (if statuses
           (let ((beg (if twittering-reverse-mode
                          (twittering-get-current-status-head)
@@ -5002,10 +5000,8 @@ rendered at POS, return nil."
               (mapc
                (lambda (status)
                  (let ((id (assqref 'id status))
-                       (formatted-status (twittering-format-status status
-                                                                   prefix))
-                       ;; Overwrite field property.
-                       (field-properties
+                       (formatted-status (twittering-format-status status prefix))
+                       (field-properties ; Overwrite field property.
                         (twittering-make-field-properties-of-popped-ancestors
                          status base-id)))
                    (add-text-properties 0 (length formatted-status)
@@ -5013,8 +5009,7 @@ rendered at POS, return nil."
                    (if twittering-reverse-mode
                        (insert-before-markers formatted-status separator)
                      (insert formatted-status separator))))
-               statuses)
-              t))
+               statuses)))
         (when interactive
           (if (twittering-have-replied-statuses-p base-id)
               (if (y-or-n-p "The replied statuses were not fetched yet.  Fetch it now? ")
@@ -9591,8 +9586,8 @@ SPEC may be a timeline spec or a timeline spec string."
                                   (assqref 'related link))))))
              (assqref 'entry statuses))))
 
-     ((funcall has 'user)               ; show
-      (list statuses))
+     ((funcall has 'user)               ; `show' a single tweet
+      `((,@statuses (is-reply-reference . t))))
 
      ((funcall has 'users)              ; followers
       (let ((followers (assqref 'users statuses))
