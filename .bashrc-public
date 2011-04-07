@@ -13,7 +13,7 @@ else
     export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
     export DISPLAY=${DISPLAY:-$REMOTEIP:0.0}
     export PS1HostName=`hostname`
-    export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m)\n\$'
+    export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m )\n\$'
     alias sudoedit='WHOAMI=root edit'
 
 fi
