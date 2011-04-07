@@ -303,6 +303,9 @@ authorized -- The account has been authorized.")
 (defconst twittering-max-number-of-tweets-on-retrieval 200
   "The maximum number of `twittering-number-of-tweets-on-retrieval'.")
 
+(defconst twittering-max-number-of-tweets-on-search 100
+  "The maximum number for search API: http://search.twitter.com/api/")
+
 (defvar twittering-tinyurl-service 'tinyurl
   "*The service to shorten URI.
 This must be one of key symbols of `twittering-tinyurl-services-map'.
@@ -4899,74 +4902,47 @@ rendered at POS, return nil."
 (defun twittering-get-and-render-timeline (&optional noninteractive max-id)
   (let* ((spec (twittering-current-timeline-spec))
          (spec-string (twittering-current-timeline-spec-string))
-         (twittering-service-method (caar spec)))
+         (service (twittering-extract-service)))
+    (unless (twittering-account-authorized-p)
+      (error "No account for `%s' has been authorized" service))
     (cond
-     ((not (twittering-account-authorized-p))
-      ;; ignore any requests if the account has not been authorized.
-      (message "No account for Twitter has been authorized.")
-      t)
      ((and noninteractive (twittering-process-active-p spec))
-      ;; ignore non-interactive request if a process is waiting for responses.
-      t)
+      (messsage "a process is still waiting for responses"))
      ((twittering-timeline-spec-primary-p spec)
-      (let* ((is-search-spec (eq 'search (car (cdr spec))))
-             (default-number 20)
-             (max-number (if is-search-spec
-                             100 ;; FIXME: refer to defconst.
-                           twittering-max-number-of-tweets-on-retrieval))
-             (number twittering-number-of-tweets-on-retrieval)
-             (number (cond
-                      ((integerp number) number)
-                      ((string-match "^[0-9]+$" number)
-                       (string-to-number number 10))
-                      (t default-number)))
-             (number (min (max 1 number) max-number))
-             ;; Assume that a list which was returned by
-             ;; `twittering-current-timeline-data' is sorted.
+      (let* ((is-search-spec (eq 'search (cadr spec)))
+             ;; Assume the list returned by `twittering-current-timeline-data' is sorted.
              (latest-status (car (twittering-current-timeline-data spec)))
-             (since_id (assqref 'id latest-status))
-             (cursor (or (assqref max-id latest-status) "-1"))
-             (word (when is-search-spec (caddr spec)))
+             (since-id (assqref 'id latest-status))
              (args
-              `((timeline-spec . ,spec)
+              `((timeline-spec        . ,spec)
                 (timeline-spec-string . ,spec-string)
-                (number . ,number)
-                ,@(when (and max-id (not (twittering-timeline-spec-user-methods-p spec)))
-                    `((max_id . ,max-id)))
-                ,@(cond
-                   (is-search-spec `((word . ,word)))
-                   ((twittering-timeline-spec-user-methods-p spec) `((cursor . ,cursor)))
-                   ((and since_id (null max-id)) 
-                    `(,(if (eq (twittering-extract-service spec) 'douban)
-                           ;; `(start-index . ,since_id)
-                           '()          ; TODO: douban buggy.
-                         `(since_id . ,since_id))))
-                   (t nil))
-                
-                ,@(when (eq (twittering-extract-service spec) 'douban)
-                    `((douban-user-id 
-                       . ,(assocref "douban_user_id" 
-                                    (twittering-lookup-oauth-access-token-alist)))))
+                (since-id             . ,since-id)
 
-                (clean-up-sentinel
-                 . ,(lambda (proc status connection-info)
-                      (when (memq status '(exit signal closed failed))
-                        (twittering-release-process proc))))))
+                ,@(when is-search-spec
+                    `((word . ,(caddr spec))))
+                ,@(when (twittering-timeline-spec-user-methods-p spec)
+                    `((cursor . ,(or (assqref max-id latest-status) "-1"))))
+                ,@(when (and max-id (not (twittering-timeline-spec-user-methods-p spec)))
+                    `((max-id . ,max-id)))
+                ,@(when (eq service 'douban)
+                    `((douban-user-id . ,(assocref "douban_user_id" 
+                                                   (twittering-lookup-oauth-access-token-alist)))))
+
+                (clean-up-sentinel . ,(lambda (proc status connection-info)
+                                        (when (memq status '(exit signal closed failed))
+                                          (twittering-release-process proc))))))
              (additional-info
-              `((noninteractive . ,noninteractive)
-                (timeline-spec . ,spec)
+              `((noninteractive       . ,noninteractive)
+                (timeline-spec        . ,spec)
                 (timeline-spec-string . ,spec-string)))
              (proc
               (twittering-call-api 'retrieve-timeline args additional-info)))
         (when proc
           (twittering-register-process proc spec spec-string))))
      (t
-      (let ((type (car spec)))
-        (error "%s has not been supported yet" type))))))
-
+      (error "%s has not been supported yet" spec)))))
 
 ;;;; Display replied statuses
-;;;;
 
 (defun twittering-replied-statuses-visible-p ()
   (let* ((pos (twittering-get-current-status-head))
@@ -5754,8 +5730,8 @@ retrieve-timeline -- Retrieve a timeline.
       The maximum for search timeline is 100, and that for other timelines is
       `twittering-max-number-of-tweets-on-retrieval'.
       If the given number exceeds the maximum, the maximum is used instead.
-    max_id -- (optional) the maximum ID of retrieved tweets.
-    since_id -- (optional) the minimum ID of retrieved tweets.
+    max-id -- (optional) the maximum ID of retrieved tweets.
+    since-id -- (optional) the minimum ID of retrieved tweets.
     clean-up-sentinel -- (optional) the clean-up sentinel that post-processes
       the buffer associated to the process. This is used as an argument
       CLEAN-UP-SENTINEL of `twittering-send-http-request' via
@@ -5827,70 +5803,54 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                  `(timeline-spec-string . ,(twittering-current-timeline-spec-string))))
 
   (let* ((api-host (twittering-lookup-service-method-table 'api))
-         (spec (assqref 'timeline-spec args-alist))
-         (id (assqref 'id args-alist))
-         (username (assqref 'username args-alist))
-         (sentinel (assqref 'sentinel args-alist))
-         (service (twittering-extract-service))
+         (spec     (assqref 'timeline-spec args-alist))
+         (id       (assqref 'id            args-alist))
+         (username (assqref 'username      args-alist))
+         (sentinel (assqref 'sentinel      args-alist))
+         (service  (twittering-extract-service))
          (sina? (eq service 'sina))
          (douban? (eq service 'douban)))
     (case command
       ((retrieve-timeline)
-       ;; Retrieve a timeline.
        (let* ((spec-string (assqref 'timeline-spec-string args-alist))
               (spec-type (cadr spec))
-              (max-number (if (eq 'search spec-type)
-                              100 ;; FIXME: refer to defconst.
+              (max-number (if (eq spec-type 'search)
+                              twittering-max-number-of-tweets-on-search
                             twittering-max-number-of-tweets-on-retrieval))
-              (number
-               (let ((number
-                      (or (assqref 'number args-alist)
-                          (let* ((default-number 20)
-                                 (n twittering-number-of-tweets-on-retrieval))
-                            (cond
-                             ((integerp n) n)
-                             ((string-match "^[0-9]+$" n) (string-to-number n 10))
-                             (t default-number))))))
-                 (min (max 1 number) max-number)))
-              (number-str (number-to-string number))
-              (max_id (assqref 'max_id args-alist))
-              (since_id (assqref 'since_id args-alist))
-              (cursor (assqref 'cursor args-alist))
-              (word (when (eq 'search spec-type)
-                      (caddr spec)))
-
-              (start-index (assqref 'start-index args-alist))
-              (max-results (assqref 'max-results args-alist))
-
+              ;; common parameters
+              (count (number-to-string 
+                      (min twittering-number-of-tweets-on-retrieval max-number)))
+              (since-id (assqref 'since-id args-alist))
+                            
               (parameters
-               `(,@(when max_id `(("max_id" . ,max_id)))
-                 ,@(when since_id `(("since_id" . ,since_id)))
-                 ,@(when cursor `(("cursor" . ,cursor)))
-                 ,@(cond
-                    ((eq spec-type 'search)
-                     `(("q" . ,word)
-                       ("rpp" . ,number-str)))
-                    ((eq spec-type 'list)
-                     (let ((username (elt (cdr spec) 1))
-                           (list-name (elt (cdr spec) 2)))
-                       (if (member list-name '("following" "followers"))
-                           `(("count" . ,number-str)
-                             ("screen_name" . ,username))
-                         `(("per_page" . ,number-str)))))
-                    ((memq spec-type '(user friends mentions public))
-                     `(("count" . ,number-str)
-                       ("include_rts" . "true")))
-                    (douban? 
-                     `(("max-results" . ,number-str)))
-                    (t
-                     `(("count" . ,number-str))))
-
-                 ;; douban
-                 ,@(when start-index `(("start-index" . ,start-index)))
-                 ,@(when douban?
-                     `(("alt" . "json")
-                       ("apikey"
-                        . ,(twittering-lookup-service-method-table 'oauth-consumer-key))))))
+               (remove-if 
+                (lambda (el) (null (cdr el)))
+                (case service
+                  ((douban)
+                   `(("max-results" . ,count)
+                     ("start-index" . ,since-id)
+                     ("alt"         . "json")
+                     ("apikey"      . ,(twittering-lookup-service-method-table 'oauth-consumer-key))))
+                  (t
+                   `(("max_id"   . ,(assqref 'max-id args-alist))
+                     ("since_id" . ,since-id)
+                     ("cursor"   . ,(assqref 'cursor args-alist))
+                     ,@(case spec-type
+                         ((search)
+                          `(("q" . ,(assqref 'word args-alist))
+                            ("rpp" . ,count)))
+                         ((list) 
+                          (let ((username (elt (cdr spec) 1))
+                                (list-name (elt (cdr spec) 2)))
+                            (if (member list-name '("following" "followers"))
+                                `(("count" . ,count)
+                                  ("screen_name" . ,username))
+                              `(("per_page" . ,count)))))
+                         ((user friends mentions public)
+                          `(("count" . ,count)
+                            ("include_rts" . "true")))
+                         (t
+                          `(("count" . ,count)))))))))
 
               (format (cond ((eq spec-type 'search) "atom")
                             (douban? "")))
@@ -5902,7 +5862,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                  (home            . "statuses/home_timeline")
                  (mentions        . "statuses/mentions")
                  (public          . "statuses/public_timeline")
-                 (replies         . ,(if (eq (twittering-extract-service) 'sina)
+                 (replies         . ,(if sina?
                                          "statuses/comments_timeline"
                                        "statuses/replies"))
                  (retweeted_by_me . "statuses/retweeted_by_me")
@@ -6117,7 +6077,6 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                                parameters
                                nil
                                additional-info)))
-
 
       ;; Sina Weibo Specific Methods
       ;; ---------------------------
