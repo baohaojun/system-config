@@ -666,9 +666,13 @@ requires an external command `curl' or another command included in
 (defvar twittering-enabled-services nil)
 
 (defun twittering-get-accounts (attr)
-  (or (cadr (assq attr (assqref (twittering-extract-service) 
-                                twittering-accounts)))
-      (assocref "password" (twittering-lookup-oauth-access-token-alist))))
+  (let ((token-alist (twittering-lookup-oauth-access-token-alist)))
+    (or (cadr (assq attr (assqref (twittering-extract-service) twittering-accounts)))
+        (case attr
+          ((auth) 'oauth)
+          ((username) (or (assocref "user_id" token-alist) 
+                          (assocref "douban_user_id" token-alist)))
+          ((password) (assocref "password" token-alist))))))
 
 ;;; Macros
 
