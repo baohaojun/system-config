@@ -9434,6 +9434,18 @@ to the current one."
   (let ((buffer (or buffer (current-buffer))))
     (twittering-set-active-flag-for-buffer buffer nil)))
 
+(defun twittering-activate ()
+  (interactive)
+  (mapc (lambda (buffer)
+          (twittering-set-active-flag-for-buffer buffer t))
+        twittering-buffer-info-list))
+
+(defun twittering-deactivate ()
+  (interactive)
+  (mapc (lambda (buffer)
+          (twittering-set-active-flag-for-buffer buffer nil))
+        twittering-buffer-info-list))
+
 (defun twittering-kill-buffer (&optional buffer)
   "Kill BUFFER managed by `twittering-mode'."
   (interactive)
