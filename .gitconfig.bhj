@@ -5,6 +5,7 @@
 	email = hjbao@eee168.com
 [core]
 	excludesfile = ~/.gitexcludefile
+	pager = 
 [alias]
 	st = status
 	co = checkout

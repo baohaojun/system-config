@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function smb_wp()
+function swp()
 {
     FILE=${1:-`pwd`}
     FILE=`lookup_file "$FILE"`
@@ -11,9 +11,10 @@ function smb_wp()
         FILE=z:$FILE
     fi
     echo -n "$FILE"|tee /dev/tty|putclip
+    history -s swp "$(printf %q "$FILE")"
 }
 
-function sp()
+function sup()
 {
     FILE=${1:-`pwd`}
     FILE=`lookup_file "$FILE"`
@@ -24,6 +25,7 @@ function sp()
         FILE=z:$FILE
     fi
     printf %q "$FILE"|tee /dev/tty|putclip
+    history -s sup "$(printf %q "$FILE")"
 }
 
 function wp()
@@ -33,7 +35,7 @@ function wp()
 
     FILE=z:$FILE
     echo -n "$FILE"|perl -npe 's,/,\\,g'|tee /dev/tty|putclip
-    history -s wp "$FILE"
+    history -s wp "$(printf %q "$FILE")"
 }
 
 function up()
@@ -42,7 +44,16 @@ function up()
     FILE=`lookup_file "$FILE"`
 
     printf %q "$FILE"|tee /dev/tty|putclip
-    history -s up "$FILE"
+    history -s up "$(printf %q "$FILE")"
+}
+
+function mp() #mail path
+{
+    FILE=${1:-`pwd`}
+    FILE=`lookup_file "$FILE"`
+
+    echo -n "$FILE"|tee /dev/tty|putclip
+    history -s mp "$(printf %q "$FILE")"
 }
 
 if test "$BASH_SOURCE" = "$0"; then
