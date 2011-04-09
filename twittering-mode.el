@@ -3381,7 +3381,7 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
   (if spec 
       (funcall twittering-update-status-function
                (format "[%s] %s" (symbol-name (twittering-extract-service))
-                       (twittering-generate-organic-retweet))
+                       (twittering-generate-organic-retweet t))
                nil
                nil
                spec)
@@ -3425,32 +3425,36 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
           (message "Cannot retweet your own tweet"))
       (message "No status selected"))))
 
-(defun twittering-generate-organic-retweet ()
+(defun twittering-generate-organic-retweet (&optional cross-retweet)
   (let* ((id (get-text-property (point) 'id))
          (status (twittering-find-status id))
          (username (assqref 'screen-name (assqref 'user status)))
          ;; (get-text-property (point) 'username))
          (text (get-text-property (point) 'text))
          (retweet-time (current-time))
+         (service (twittering-extract-service))
          (format-str (or twittering-retweet-format "RT: %t (via @%s)")))
     (when username
-      (if (eq (twittering-extract-service) 'sina)
+      (if (and (not cross-retweet) (eq service 'sina))
           (if (twittering-status-has-quotation? status)
               (format " // @%s:%s" username (assqref 'text status))
             "")
-        (let ((prefix "%")
-              (replace-table
-               `(("%" . "%")
-                 ("s" . ,username)
-                 ("t" . ,text)
-                 ("#" . ,id)
-                 ("C{\\([^}]*\\)}" .
-                  (lambda (context)
-                    (let ((str (assqref 'following-string context))
-                          (match-data (assqref 'match-data context)))
-                      (store-match-data match-data)
-                      (format-time-string (match-string 1 str) ',retweet-time)))))))
-          (twittering-format-string format-str prefix replace-table))))))
+        (let* ((prefix "%")
+               (replace-table
+                `(("%" . "%")
+                  ("s" . ,username)
+                  ("t" . ,text)
+                  ("#" . ,id)
+                  ("C{\\([^}]*\\)}" .
+                   (lambda (context)
+                     (let ((str (assqref 'following-string context))
+                           (match-data (assqref 'match-data context)))
+                       (store-match-data match-data)
+                       (format-time-string (match-string 1 str) ',retweet-time))))))
+               (ret (twittering-format-string format-str prefix replace-table)))
+          (when (and (eq service 'sina) (assqref 'original-pic status))
+            (setq ret (concat ret " " (assqref 'original-pic status))))
+          ret)))))
 
 (defun twittering-ensure-retweeting-allowed ()
   (let* ((id (twittering-get-id-at))
