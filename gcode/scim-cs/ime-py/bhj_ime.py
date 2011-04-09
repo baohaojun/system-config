@@ -310,10 +310,6 @@ class ime:
         else:
             self.__reply('no')
 
-    def __return(self):
-        self.commitstr += self.compstr
-        self.compstr = ''
-
     def __keyed_when_no_comp(self, key):
         comp = key.name
         if _g_ime_quail.has_quail(comp) or key.isalpha() or key == ';':
@@ -322,15 +318,6 @@ class ime:
             self.compstr += key.name
         else: 
             self.commitstr += key.name
-
-    def __space(self):
-        self.__commit_cand()
-
-    def __backspace(self):
-        pass
-
-    def __digit(self, key):
-        pass
 
     def keyed_when_comp(self, key):
         if self.compstr[-1] in '?_*^!(){}$:<>"' and key == 'S space':
