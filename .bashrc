@@ -33,7 +33,7 @@ export USER=`whoami`
 export USE_CCACHE=1
 alias hir='history -r'
 export PATH=`echo -n $PATH|perl -a -F: -ne 'for (@F) {print "$_\n"}'|uniq-even-non-ajacent |perl -ne 'chomp; print ":" unless (1..1); print $_'`
-if test "$EMACS" = t; then
+if test "$TERM" = dumb; then
     . ~/.bashrc-in-emacs
 else
     . ~/.bashrc-no-emacs
