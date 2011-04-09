@@ -1715,15 +1715,14 @@ Statuses are stored in ascending-order with respect to their IDs."
                     (twittering-count-unread-for-user-methods spec statuses)
                   (count-if (lambda (st) (twittering-is-unread-status-p st spec))
                             new-statuses))))
-          (when (member spec-string twittering-cache-spec-strings)
-            (let ((latest
-                   (if (twittering-timeline-spec-user-methods-p spec)
-                       (assqref 'screen-name (assqref 'user (car statuses)))
-                     (assqref 'id (car new-statuses)))))
-              (setq twittering-cache-lastest-statuses
-                    `((,spec-string . ,latest)
-                      ,@(remove-if (lambda (entry) (equal spec-string (car entry)))
-                                   twittering-cache-lastest-statuses)))))
+          (let ((latest
+                 (if (twittering-timeline-spec-user-methods-p spec)
+                     (assqref 'screen-name (assqref 'user (car statuses)))
+                   (assqref 'id (car new-statuses)))))
+            (setq twittering-cache-lastest-statuses
+                  `((,spec-string . ,latest)
+                    ,@(remove-if (lambda (entry) (equal spec-string (car entry)))
+                                 twittering-cache-lastest-statuses))))
           (run-hooks 'twittering-new-tweets-hook)
           (if (and (twittering-timeline-spec-user-methods-p spec)
                    ;; Insert all when buffer is empty.
@@ -1790,12 +1789,10 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
                (equal spec '(home))
                (twittering-is-replies-p status)))
       nil)
-     ((member spec-string twittering-cache-spec-strings)
+     (t
       (twittering-status-id<
        (assocref spec-string twittering-cache-lastest-statuses)
-       (assqref 'id status)))
-     (t
-      t))))
+       (assqref 'id status))))))
 
 (defun twittering-count-unread-for-user-methods (spec new-statuses)
   (let ((latest-username
@@ -1803,8 +1800,7 @@ This is done by comparing statues in current buffer with TIMELINE-DATA."
                (goto-char (funcall (if twittering-reverse-mode 'point-max 'point-min)))
                (get-text-property (twittering-get-current-status-head) 'username))
              (let ((spec-string (twittering-timeline-spec-to-string spec)))
-               (when (member spec-string twittering-cache-spec-strings)
-                 (assocref spec-string twittering-cache-lastest-statuses))))))
+               (assocref spec-string twittering-cache-lastest-statuses)))))
     (if (not latest-username)
         (length new-statuses)
       (let ((statuses new-statuses)
@@ -3916,13 +3912,8 @@ current buffer."
 ;;;
 
 (defcustom twittering-cache-file "~/.emacs.d/twittering/cache"
-  "Filename for caching latest statu for `twittering-cache-spec-strings'."
+  "File name for caching latest status for each spec."
   :type 'string
-  :group 'twittering)
-
-(defcustom twittering-cache-spec-strings '()
-  "Spec string list whose latest status will be cached."
-  :type 'list
   :group 'twittering)
 
 ;; '((spec latest-status-id)...)
@@ -8141,8 +8132,7 @@ means the number of statuses retrieved after the last visiting of the buffer.")
           (twittering-get-timeline-spec-string-for-buffer buffer)))
     (when (and (zerop number)
                (or (not (= number current))
-                   (not (zerop twittering-new-tweets-count)))
-               (member spec-string twittering-cache-spec-strings))
+                   (not (zerop twittering-new-tweets-count))))
       (twittering-cache-save spec-string))
     (unless (= number current)
       (setq twittering-unread-status-info
