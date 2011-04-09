@@ -15557,4 +15557,6 @@ g_trans_map = {
 'zzon' : 'g',
 'zzu' : 'aino',
 'zzua' : 'n',
+'{' : ' ',
+'}' : ' ',
 }
