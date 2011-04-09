@@ -2486,7 +2486,7 @@ The method to perform the request is determined from
             ("Expect" . "")))
          (curl-args
           `("--include" 
-            ,(if twittering-debug-mode "--verbose" "--silent")
+            "--silent"
             ,@(apply 'append
                      (mapcar
                       (lambda (pair)
@@ -5830,7 +5830,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                 (case service
                   ((douban)
                    `(("max-results" . ,count)
-                     ("start-index" . ,since-id)
+                     ;; ("start-index" . ,since-id) ; buggy douban.
                      ("alt"         . "json")
                      ("apikey"      . ,(twittering-lookup-service-method-table 'oauth-consumer-key))))
                   (t
@@ -6480,10 +6480,11 @@ string.")
       detail))))
 
 (defun twittering-make-rating-string (rating)
-  (when (stringp rating)
-    (setq rating (string-to-number rating)))
-  (concat (make-string (ceiling (/ rating 2.0)) ?★)
-          (make-string (- 5 (ceiling (/ rating 2.0))) ?☆)))
+  (when rating
+    (when (stringp rating)
+      (setq rating (string-to-number rating)))
+    (concat (make-string (ceiling (/ rating 2.0)) ?★)
+            (make-string (- 5 (ceiling (/ rating 2.0))) ?☆))))
 
 ;;; ============================================= Mode
 
