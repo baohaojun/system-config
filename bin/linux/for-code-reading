@@ -31,7 +31,7 @@ else
 fi
 
 function mkcscope_files() {
-    if tty >/dev/null; then
+    if tty 1>&2; then
         find $relativeSrcDir \( '-path' '*/CVS' \
             '-o' '-path' '*/.svn' \
             '-o' '-path' '*/autom4te.cache' \
@@ -94,8 +94,8 @@ function mkbeagleidx() {
 }
 
 function for-code-reading() {
-    mkgtags "$@"&
     mkbeagleidx "$@"&
+    mkgtags "$@" #must not put background, the tty(1) depends on this
 }
 
 `basename $0` "$@"
