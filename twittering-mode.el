@@ -673,7 +673,8 @@ requires an external command `curl' or another command included in
     (or (cadr (assq attr (assqref (twittering-extract-service) twittering-accounts)))
         (case attr
           ((auth) 'oauth)
-          ((username) (or (assocref "user_id" token-alist) 
+          ((username) (or (assocref "screen_name" token-alist)
+                          (assocref "user_id" token-alist) 
                           (assocref "douban_user_id" token-alist)))
           ((password) (assocref "password" token-alist))))))
 
@@ -3093,12 +3094,7 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
   (unless spec 
     (setq spec (twittering-read-timeline-spec-with-completion
                 "timeline: " initial t)))
-
   (let ((twittering-service-method (twittering-extract-service spec)))
-    (unless (memq twittering-service-method twittering-enabled-services)
-      (setq twittering-enabled-services `(,@twittering-enabled-services
-                                          ,twittering-service-method)))
-
     (cond
      ((stringp spec)
       (unless (string-match "@" spec)
@@ -3732,6 +3728,17 @@ current buffer."
           (funcall find-func))))
     (when found-pos
       (recenter-top-bottom 'top))))
+
+(defun twittering-restart ()
+  (interactive)
+  (mapc 'kill-buffer twittering-buffer-info-list)
+  (setq twittering-account-authorization nil
+        twittering-oauth-access-token-alist nil
+        twittering-enabled-services nil
+
+        twittering-private-info-file-loaded-p nil
+        twittering-private-info-file-dirty nil)
+  (twit))
 
 ;;;###autoload
 (defun twit ()
@@ -6575,6 +6582,11 @@ been initialized yet."
   (unless (file-exists-p "~/.emacs.d/twittering")
     (mkdir "~/.emacs.d/twittering" t))
   (twittering-cache-load)
+  ;; Initial twittering-enabled-services first.
+  (mapc (lambda (spec)
+          (add-to-list 'twittering-enabled-services
+                       (twittering-extract-service spec)))
+        twittering-initial-timeline-spec-string)
   (mapc 'twittering-visit-timeline
         (if (listp twittering-initial-timeline-spec-string)
             twittering-initial-timeline-spec-string
@@ -6597,9 +6609,9 @@ If nil, read it from the minibuffer."
   (let* ((username (or (twittering-get-accounts 'username)
                        (read-string "your twitter username: ")))
          (password (or (twittering-get-accounts 'password)
-                       (read-passwd (format "%s's twitter password: "
-                                            username))))
+                       (read-passwd (format "%s's twitter password: " username))))
          (token-alist `(,@(twittering-lookup-oauth-access-token-alist)
+                        ("screen_name" . ,username)
                         ("password" .  ,password))))
     (twittering-update-oauth-access-token-alist token-alist)
     `(,username . ,password)))
