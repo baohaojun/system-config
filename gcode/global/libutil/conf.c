@@ -317,6 +317,7 @@ openconf(void)
 	strbuf_unputc(sb, ':');
 	strbuf_putc(sb, ':');
 	confline = check_strdup(strbuf_value(sb));
+	message("confline: %s\n", confline);
 	strbuf_close(sb);
 	trim(confline);
 	return;
