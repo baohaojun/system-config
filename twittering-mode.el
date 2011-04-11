@@ -5822,8 +5822,9 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
               ;; common parameters
               (count (number-to-string 
                       (min twittering-number-of-tweets-on-retrieval max-number)))
+              (max-id (assqref 'max-id args-alist)) 
               (since-id (assqref 'since-id args-alist))
-                            
+
               (parameters
                (remove-if 
                 (lambda (el) (null (cdr el)))
@@ -5834,9 +5835,10 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                      ("alt"         . "json")
                      ("apikey"      . ,(twittering-lookup-service-method-table 'oauth-consumer-key))))
                   (t
-                   `(("max_id"   . ,(assqref 'max-id args-alist))
-                     ("since_id" . ,since-id)
-                     ("cursor"   . ,(assqref 'cursor args-alist))
+                   `(,(if max-id        ; max-id and since-id can't coexist.
+                          `("max_id" . ,max-id)
+                        `("since_id" . ,since-id))
+                     ("cursor" . ,(assqref 'cursor args-alist))
                      ,@(case spec-type
                          ((search)
                           `(("q" . ,(assqref 'word args-alist))
