@@ -9,7 +9,7 @@
 [alias]
 	st = status
 	co = checkout
-	ci = commit -a
+	ci = commit
         dt = difftool -t meld
 [review "www.rayzertrack.com:8080"]
 	username = bhj

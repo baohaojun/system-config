@@ -58,7 +58,6 @@ class ime_history:
                 if idx != 0:
                     self.rules[comp] = OrderedSet()
                 else:
-                    debug("idx is 0, no need to set_history")
                     return
 
             set_ = OrderedSet((idx,))
