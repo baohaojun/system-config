@@ -87,7 +87,7 @@
 
 (require 'sawfish.wm.commands.x-cycle)
 
-(setq im-class "Eva|Pidgin|Wine" ;; im = instant messanger
+(setq im-class "Eva|Pidgin|Wine|Kopete" ;; im = instant messanger
       br-class "Firefox|Iceweasel|Epiphany" ;; br = browser
       dc-class "libreoffice|OpenOffice|Acroread|Evince|Gnumeric" ;; dc = doc
       mg-class "Meld|Gimp|Gitk" ;; mg = meld/gimp
