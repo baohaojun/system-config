@@ -2,10 +2,12 @@
 
 ;; Copyright (C) 2007, 2009, 2010 Yuto Hayamizu.
 ;;               2008 Tsuyoshi CHO
+;;               2010, 2011 William Xu
 
 ;; Author: Y. Hayamizu <y.hayamizu@gmail.com>
 ;;         Tsuyoshi CHO <Tsuyoshi.CHO+develop@Gmail.com>
 ;;         Alberto Garcia  <agarcia@igalia.com>
+;;         William Xu <william.xwl@gmail.com>
 ;; Created: Sep 4, 2007
 ;; Version: HEAD
 ;; Keywords: twitter web
