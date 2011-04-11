@@ -4,7 +4,7 @@ from __future__ import with_statement
 import os, sys, re, traceback
 from ime_ascii import *
 from contextlib import contextmanager, closing
-import threading, special_keys
+import threading, special_keys, pickle
 from OrderedSet import OrderedSet
 
 def debug(*args):
@@ -45,15 +45,34 @@ class ime_history:
         self.lock = threading.RLock()
         with autolock(self.lock):
             self.rules = {}
+            try:
+                os.mkdir(os.path.expanduser("~/.sdim/"))
+                os.mkdir(os.path.expanduser("~/.sdim/history/"))
+            except:
+                pass
 
     def set_history(self, comp, idx):
         with autolock(self.lock):
-            self.rules[comp] = idx
+            
+            if comp not in self.rules:
+                if idx != 0:
+                    self.rules[comp] = OrderedSet()
+                else:
+                    debug("idx is 0, no need to set_history")
+                    return
+
+            set_ = OrderedSet((idx,))
+            self.rules[comp] = set_ | self.rules[comp]
+            try:
+                file_ = open(os.path.expanduser("~/.sdim/history/" + comp), "wb")
+                pickle.dump(self.rules[comp], file_)
+            except:
+                pass
 
     def get_history(self, comp):
         with autolock(self.lock):
             if comp in self.rules:
-                return self.rules[comp]
+                return next(iter(self.rules[comp]))
             else:
                 return 0
 
@@ -393,7 +412,7 @@ class ime:
         
 
     def __english_mode(self, key):
-        if self.compstr == ';' and key == 'space':
+        if self.compstr == '; ' and key == 'space':
             self.commitstr += '；'
             self.compstr = ''
         elif key.isprint():
