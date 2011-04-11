@@ -41,9 +41,6 @@
 (defvar sdim-answer-ready nil "答案是否已经到达")
 (defvar sdim-overlay nil "显示当前选择词条的overlay")
 
-(defvar sdim-use-tooltip t)
-(defvar sdim-tooltip-timeout 15)
-
 (defun sdim-im-key-event ()
   (interactive))
 (defvar sdim-mode-map
@@ -145,15 +142,6 @@
 (defun sdim-inactivate ()
   (interactive)
   (mapc 'kill-local-variable sdim-local-variable-list))
-
-(defun sdim-terminate-translation ()
-  "Terminate the translation of the current key."
-  (setq sdim-translating nil)
-  (sdim-delete-region)
-  (setq sdim-current-choices nil)
-  (setq sdim-hint-str "")
-  (when sdim-use-tooltip
-    (x-hide-tip)))
 
 (defun sdim-translate (char)
   (if (functionp sdim-translate-function)
@@ -258,12 +246,17 @@
   (if (or buffer-read-only
           overriding-terminal-local-map
           overriding-local-map)
-      (list key)
+      (progn
+        (message "key not translated: %s" key)
+        (list key))
     (sdim-setup-overlays)
     (let ((modified-p (buffer-modified-p))
-          (inhibit-modification-hooks t))
+          (inhibit-modification-hooks t)
+          (unwind-indicator nil))
       (unwind-protect
           (sdim-start-translation key)
+        (unless unwind-indicator
+          (message "sdim translation failed"))
         (sdim-delete-overlays)
         (set-buffer-modified-p modified-p)
         ;; Run this hook only when the current input method doesn't
@@ -339,5 +332,6 @@ Return the input string."
             (setq sdim-answer-ready nil sdim-server-answer "")
             (process-send-string sdim-ime-connection keyed-str)
             (while (not sdim-answer-ready)
-              (accept-process-output sdim-ime-connection)))))))
+              (accept-process-output sdim-ime-connection))
+            (setq unwind-indicator t))))))
 
