@@ -4880,8 +4880,15 @@ rendered at POS, return nil."
            ;; be named `foo_normal.jpg'."
            (icon-string
             (if (and twittering-icon-mode window-system)
-                (let* ((url (cdr-safe (assq 'profile-image-url (assqref 'user status))))
-                       (orig-url (replace-regexp-in-string "_normal\\." "." url))
+                (let* ((service (twittering-extract-service))
+                       (url (cdr-safe (assq 'profile-image-url (assqref 'user status))))
+                       (orig-url (case service
+                                   ((twitter)
+                                    (replace-regexp-in-string "_normal\\." "." url))
+                                   ((sina)
+                                    (replace-regexp-in-string "/50/" "/180/" url))
+                                   (t
+                                    url)))
                        (s (let ((twittering-convert-fix-size nil))
                             (twittering-make-icon-string nil nil orig-url))))
                   (add-text-properties 0 (length s)
