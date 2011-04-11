@@ -172,10 +172,11 @@ class ime_keyboard:
 class ime:
     comp_empty_wanted_keys = ('C g', 'C q', 'C +')
     mcpp = 10 #max cands per page
-    def __init__(self, sock):
+    def __init__(self, in_, out_):
         self.special_keys = special_keys.special_keys
         self.__on = False
-        self.__sock = sock
+        self.__in = in_
+        self.__out = out_
         self.compstr = ''
         self.cand_index = 0
         self.commitstr = ''
@@ -248,7 +249,7 @@ class ime:
         self.__hintstr = value
 
     def __write(self, str_):
-        self.__sock.write(bytes(str_, 'utf-8'))
+        self.__out.write(bytes(str_, 'utf-8'))
 
     def __qa_end(self):
         self.__write('end:\n')
@@ -267,7 +268,7 @@ class ime:
 
     def handle(self):
         while True:
-            line = self.__sock.readline()
+            line = self.__in.readline()
             if not line:
                 return
             line = line.decode('utf-8')
@@ -475,3 +476,5 @@ def init():
     sys.stdout.flush()
 if __name__ == '__main__':
     init()
+    ime_ = ime(open("/dev/stdin", "rb", 0), open("/dev/stdout", "wb", 0))
+    ime_.handle()
