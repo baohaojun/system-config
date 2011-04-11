@@ -1265,15 +1265,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
       erc-log-write-after-send t
       erc-log-write-after-insert t)
 
-(setq erc-hide-list '("MODE"))
-(defun erc-ignore-unimportant (msg)
-  (if (or (string-match "*** localhost has changed mode for &bitlbee to" msg)
-          (string-match "Account already online" msg)
-          (string-match "You're already logged in" msg)
-          (string-match "Unknown error while loading configuration" msg))
-      (setq erc-insert-this nil)))
-(add-hook 'erc-insert-pre-hook 'erc-ignore-unimportant)
-
 (defvar bitlbee-password (auth-source-user-or-password "password" "localhost" 6667))
 (defun bitlbee-identify ()
   "If we're on the bitlbee server, send the identify command to the
@@ -1291,9 +1282,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (when (get-buffer "&bitlbee")
       (switch-to-buffer "&bitlbee")
       (erc-message "PRIVMSG" (concat (erc-default-target) " identify " bitlbee-password))
-      (erc-message "PRIVMSG" (concat (erc-default-target) " account on 0")
-      (erc-message "PRIVMSG" (concat (erc-default-target) " account on 1"))))))
-(setq bitlbee-reconnect-timer (run-with-timer 0 60 'bitlbee-connect))
+      (erc-message "PRIVMSG" (concat (erc-default-target) " set private off"))
+      (erc-message "PRIVMSG" (concat (erc-default-target) " account on 0"))
+      (erc-message "PRIVMSG" (concat (erc-default-target) " account on 1")))))
 
 (setq erc-keywords '((".*Online.*" (:foreground "green"))
                      (".*Busy" (:foreground "red"))
@@ -1306,16 +1297,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
       (shell-command (concat "notify-send \"" msg "\""))))
 (add-hook 'erc-insert-pre-hook 'erc-notify-on-msg)
 
-(setq bitlbee-target "")
-(defun bitlbee-update-target (msg)
-  (if (string-match "\\([^:]*: \\)" msg)
-      (setq bitlbee-target (match-string 1 msg))
-    (if (not (or
-              (string-match "account" msg)
-              (string-match "help" msg)
-              (string-match "identify" msg)
-              (string-match "blist" msg)))
-        (setq str (concat bitlbee-target msg)))))
-(add-hook 'erc-send-pre-hook 'bitlbee-update-target)
-
 (erc :server "localhost" :port "6667" :nick "bhj" :password bitlbee-password)
+(bitlbee-connect)
+
