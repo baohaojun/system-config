@@ -1,8 +1,8 @@
 [color]
 	ui = auto
 [user]
-	name = hjbao
-	email = hjbao@eee168.com
+	name = baohaojun
+	email = baohaojun@gmail.com
 [core]
 	excludesfile = ~/.gitexcludefile
 	pager = 

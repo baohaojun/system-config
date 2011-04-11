@@ -886,3 +886,4 @@ ssh r889 gnome-terminal --hide-menubar -e myscr
 
 nvtest dfs_stress -total_sec 300 
 nvtest dfs_monitor 
+64.50.233.100 ftp.us.debian.org
