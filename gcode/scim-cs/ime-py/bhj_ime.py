@@ -32,6 +32,20 @@ class ime_trans:
                 return True
             else:
                 return False
+
+    def build_trans(self, comp):
+        with autolock(self.lock):
+            for i in range(1, len(comp)):
+                prefix = comp[0:i]
+                if prefix not in self.rules:
+                    self.rules[prefix] = comp[i]
+                    continue
+                if comp[i] not in self.rules[prefix]:
+                    trans = list(self.rules[prefix])
+                    trans.append(comp[i])
+                    trans.sort()
+                    self.rules[prefix] = ''.join(trans)
+
     
     def get_trans(self, prefix):
         with autolock(self.lock):
@@ -43,17 +57,12 @@ class ime_trans:
 class ime_history:
     def __init__(self):
         self.lock = threading.RLock()
+        assert _g_ime_quail, "quail must be inited before history"
         with autolock(self.lock):
             self.rules = {}
-            try:
-                os.mkdir(os.path.expanduser("~/.sdim/"))
-                os.mkdir(os.path.expanduser("~/.sdim/history/"))
-            except:
-                pass
 
     def set_history(self, comp, idx):
         with autolock(self.lock):
-            
             if comp not in self.rules:
                 if idx != 0:
                     self.rules[comp] = OrderedSet()
@@ -62,11 +71,8 @@ class ime_history:
 
             set_ = OrderedSet((idx,))
             self.rules[comp] = set_ | self.rules[comp]
-            try:
-                file_ = open(os.path.expanduser("~/.sdim/history/" + comp), "wb")
-                pickle.dump(self.rules[comp], file_)
-            except:
-                pass
+            _g_ime_quail.adjust_history(comp, list(self.rules[comp]))
+            del self.rules[comp] 
 
     def get_history(self, comp):
         with autolock(self.lock):
@@ -78,8 +84,25 @@ class ime_history:
 class ime_quail:
     def __init__(self):
         import wubi86
+        assert _g_ime_trans, "trans must be inited before quail"
         self.lock = threading.RLock()
         self.rules = wubi86.g_quail_map
+        self.__save_path = os.path.expanduser("~/.sdim/cands")
+        os.system("mkdir -p ~/.sdim/cands")
+
+        for t in os.walk(self.__save_path):
+            for x in t[2]:
+                f = os.path.join(t[0], x)
+                try:
+                    comp = os.path.basename(f)
+                    cands = pickle.load(open(f, "rb"))
+                    if comp not in self.rules:
+                        _g_ime_trans.build_trans(comp)
+                    self.rules[comp] = cands
+                except:
+                    exc_info = sys.exc_info()
+                    traceback.print_stack()
+                    sys.stderr.flush()
 
 
     def has_quail(self, comp):
@@ -95,6 +118,38 @@ class ime_quail:
                 return self.rules[comp]
             else:
                 return ()
+
+    def add_cand(self, comps, cand):
+        with autolock(self.lock):
+            for comp in comps:
+                if self.has_quail(comp) and cand in self.rules[comp]:
+                    continue
+                if self.has_quail(comp):
+                    self.rules[comp] = list(self.rules[comp])
+                    self.rules[comp].append(cand)
+                else:
+                    self.rules[comp] = (cand,)
+
+                self.__save_comp(comp)
+
+    def adjust_history(self, comp, history):
+        with autolock(self.lock):
+            cands = OrderedSet()
+            for h in history:
+                cands.add(self.rules[comp][h])
+            cands |= OrderedSet(self.rules[comp])
+            self.rules[comp] = tuple(cands)
+            self.__save_comp(comp)
+            
+    def __save_comp(self, comp):
+        try:
+            file_ = open(os.path.expanduser("~/.sdim/cands/" + comp), "wb")
+            pickle.dump(self.rules[comp], file_)
+        except:
+            exc_info = sys.exc_info()
+            traceback.print_stack()
+            sys.stderr.flush()
+
 
 class ime_reverse:
     def __init__(self):
@@ -274,7 +329,7 @@ class ime:
 
     def __error(self):
         exc_info = sys.exc_info()
-        traceback.print_tb(exc_info[2])
+        traceback.print_stack()
         sys.stderr.flush()
         debug("%s: %s\n" % (repr(exc_info[0]), repr(exc_info[1])))
         self.__write("%s: %s\n" % (repr(exc_info[0]), repr(exc_info[1])))
@@ -382,7 +437,46 @@ class ime:
         else:
             self.beepstr = 'y'
             
+    def dump_comp(self, comp):
+            if _g_ime_quail.has_quail(comp):
+                debug("rules[" + comp + "]: " + repr(_g_ime_quail.get_cands(comp)))
 
+    def add_cand(self, cand):
+        if len(cand) < 2:
+            debug("len(cand) must > 2")
+            return
+        if len(cand) == 2:
+            code0 = _g_ime_reverse.get_reverse(cand[0])
+            code1 = _g_ime_reverse.get_reverse(cand[1])
+            if code0 and code1:
+                comps = []
+                for c0 in code0:
+                    for c1 in code1:
+                        comps.append(c0 + c1)
+                _g_ime_quail.add_cand(comps, cand)
+        if len(cand) == 3:
+            code0 = _g_ime_reverse.get_reverse(cand[0])
+            code1 = _g_ime_reverse.get_reverse(cand[1])
+            code2 = _g_ime_reverse.get_reverse(cand[2])
+            if code0 and code1 and code2:
+                comps = []
+                for c0 in code0:
+                    for c1 in code1:
+                        for c2 in code2:
+                            comps.append(c0[0] + c1[0] + c2)
+                _g_ime_quail.add_cand(comps, cand)
+        if len(cand) > 3:
+            code0 = _g_ime_reverse.get_reverse(cand[0])
+            code1 = _g_ime_reverse.get_reverse(cand[1])
+            code2 = _g_ime_reverse.get_reverse(cand[2])
+            code3 = _g_ime_reverse.get_reverse(cand[-1])
+            if code0 and code1 and code2 and code3:
+                for c0 in code0:
+                    for c1 in code1:
+                        for c2 in code2:
+                            for c3 in code3:
+                                comps.append(c0[0] + c1[0] + c2[0] + c3[0])
+                _g_ime_quail.add_cand(comps, cand)
 
     def keyed(self, arg):
         debug('keyed args:', arg)
@@ -479,14 +573,14 @@ class ime:
             self.compstr = ''
 
 def init():
+    global _g_ime_reverse
+    _g_ime_reverse = ime_reverse()
+
     global _g_ime_trans
     _g_ime_trans = ime_trans()
 
     global _g_ime_quail
     _g_ime_quail = ime_quail()
-
-    global _g_ime_reverse
-    _g_ime_reverse = ime_reverse()
 
     global _g_ime_history
     _g_ime_history = ime_history()
