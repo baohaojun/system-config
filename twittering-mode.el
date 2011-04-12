@@ -2924,20 +2924,16 @@ the server when the HTTP status code equals to 400 or 403."
             (format "%s (%s)" status-line error-msg)
           status-line)))))
 
-(defun twittering-http-get (host method &optional parameters format additional-info sentinel clean-up-sentinel)
-  (let* ((sentinel (or sentinel 'twittering-http-get-default-sentinel))
-         (path (concat "/" method (if (and (stringp format) (string= format "")) ; douban
-                                      "" ".json")))
-         (headers nil)
-         (port nil)
-         (post-body "")
+(defun twittering-http-get (host method &optional parameters additional-info sentinel clean-up-sentinel)
+  (let* ((service (twittering-extract-service))
+         (sentinel (or sentinel 'twittering-http-get-default-sentinel))
+         (path (concat "/" method (if (eq service 'douban) "" ".json")))
          (request
           (twittering-add-application-header-to-http-request
-           (twittering-make-http-request "GET" headers host port path
-                                         parameters post-body
-                                         twittering-use-ssl))))
-    (twittering-send-http-request request additional-info
-                                  sentinel clean-up-sentinel)))
+           (twittering-make-http-request
+            "GET" nil host nil path parameters "" twittering-use-ssl))))
+    (twittering-send-http-request
+     request additional-info sentinel clean-up-sentinel)))
 
 (defun twittering-http-get-default-sentinel (proc status connection-info header-info)
   (let ((status-line (assqref 'status-line header-info))
@@ -2967,21 +2963,18 @@ the server when the HTTP status code equals to 400 or 403."
       (format "Response: %s"
               (twittering-get-error-message header-info (current-buffer)))))))
 
-(defun twittering-http-post (host method &optional parameters format additional-info sentinel clean-up-sentinel)
+(defun twittering-http-post (host method &optional parameters additional-info sentinel clean-up-sentinel)
   "Send HTTP POST request to api.twitter.com (or search.twitter.com)
 HOST is hostname of remote side, api.twitter.com (or search.twitter.com).
 METHOD must be one of Twitter API method classes
  (statuses, users or direct_messages).
 PARAMETERS is alist of URI parameters.
  ex) ((\"mode\" . \"view\") (\"page\" . \"6\")) => <URI>?mode=view&page=6
-FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
-  (let* ((format (if (and (stringp format) (string= format "")) ; douban
-                     "" ".json"))
+"
+  (let* ((service (twittering-extract-service))
          (sentinel (or sentinel 'twittering-http-post-default-sentinel))
-         (path (concat "/" method format))
-         (headers nil)
-         (port nil)
-         (post-body (if (eq (twittering-extract-service) 'douban)
+         (path (concat "/" method (if (eq service 'douban) "" ".json")))
+         (post-body (if (eq service 'douban)
                         (format 
                          "<?xml version='1.0' encoding='UTF-8'?>
 <entry xmlns:ns0=\"http://www.w3.org/2005/Atom\" xmlns:db=\"http://www.douban.com/xmlns/\">
@@ -2992,7 +2985,7 @@ FORMAT is a response data format (\"xml\", \"atom\", \"json\")"
          ;;                  parameters))))
          (request
           (twittering-add-application-header-to-http-request
-           (twittering-make-http-request "POST" headers host port path
+           (twittering-make-http-request "POST" nil host nil path
                                          (unless (eq (twittering-extract-service) 'douban) parameters)
                                          post-body
                                          twittering-use-ssl))))
@@ -5865,8 +5858,6 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                          (t
                           `(("count" . ,count)))))))))
 
-              (format (cond ((eq spec-type 'search) "atom")
-                            (douban? "")))
               (simple-spec-list
                `((direct_messages      . "direct_messages")
                  (direct_messages_sent . "direct_messages/sent")
@@ -5913,8 +5904,8 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                 (t nil)))
               (clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
          (if (and host method)
-             (twittering-http-get host method parameters format
-                                  additional-info nil clean-up-sentinel)
+             (twittering-http-get 
+              host method parameters additional-info nil clean-up-sentinel)
            (error "Invalid timeline spec"))))
 
       ;; List methods
@@ -5922,35 +5913,32 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
        (let ((clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
          (twittering-http-get api-host
                               (twittering-api-path username "/lists")
-                              t nil additional-info sentinel clean-up-sentinel)))
+                              nil additional-info sentinel clean-up-sentinel)))
       ((get-list-subscriptions)
        (twittering-http-get api-host
                             (twittering-api-path username "/lists/subscriptions")
-                            t nil additional-info sentinel))
+                            nil additional-info sentinel))
 
       ((get-list-memberships)
        (twittering-http-get api-host
                             (twittering-api-path username "/lists/memberships")
-                            t nil additional-info sentinel))
+                            nil additional-info sentinel))
 
       ;; Friendship Methods
       ((create-friendships)
        (twittering-http-post api-host
                              (twittering-api-path "friendships/create")
                              `(("screen_name" . ,username))
-                             nil
                              additional-info))
       ((destroy-friendships)
        (twittering-http-post api-host
                              (twittering-api-path "friendships/destroy")
                              `(("screen_name" . ,username))
-                             nil
                              additional-info))
       ((show-friendships)
        (twittering-http-get api-host
                             (twittering-api-path "friendships/show")
                             `(("target_screen_name" . ,username))
-                            nil
                             additional-info
                             sentinel))
 
@@ -5958,24 +5946,24 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
       ((create-favorites)
        (twittering-http-post api-host
                              (twittering-api-path "favorites/create/" id)
-                             nil nil additional-info))
+                             nil additional-info))
       ((destroy-favorites)
        (twittering-http-post api-host
                              (twittering-api-path "favorites/destroy/" id)
-                             nil nil additional-info))
+                             nil additional-info))
 
       ;; List Subscribers Methods
       ((subscribe-list)
        (twittering-http-post api-host
                              (twittering-api-path
                               (apply 'format "%s/%s/subscribers" (cddr spec)))
-                             nil nil additional-info))
+                             nil additional-info))
       ((unsubscribe-list)
        (twittering-http-post api-host
                              (twittering-api-path
                               (apply 'format "%s/%s/subscribers" (cddr spec)))
                              '(("_method" . "DELETE"))
-                             nil additional-info))
+                             additional-info))
 
       ;; List Members Methods
       ((add-list-members)
@@ -5983,14 +5971,14 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                              (twittering-api-path
                               (apply 'format "%s/%s/members" (cddr spec)))
                              `(("id" . ,id))
-                             nil additional-info))
+                             additional-info))
       ((delete-list-members)
        (twittering-http-post api-host
                              (twittering-api-path
                               (apply 'format "%s/%s/members" (cddr spec)))
                              `(("id" . ,id)
                                ("_method" . "DELETE"))
-                             nil additional-info))
+                             additional-info))
 
       ((update-status)
        (let* ((status (assqref 'status args-alist))
@@ -6022,16 +6010,15 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                                     "miniblog/saying"
                                   (concat "statuses/" (if comment? "comment" "update"))))
                                parameters
-                               (if douban? "" nil)
                                additional-info)))
       ((destroy-status)
        (twittering-http-post api-host
                              (twittering-api-path "statuses/destroy" id)
-                             nil nil additional-info))
+                             nil
+                             additional-info))
       ((retweet)
        (twittering-http-post api-host
                              (twittering-api-path "statuses/retweet/" id)
-                             nil
                              nil
                              additional-info))
 
@@ -6040,7 +6027,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
        (let ((clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
          (twittering-http-get api-host
                               (twittering-api-path "account/verify_credentials")
-                              nil nil additional-info sentinel clean-up-sentinel)))
+                              nil additional-info sentinel clean-up-sentinel)))
 
       ((update-profile-image)
        (let* ((image (assqref 'image args-alist))
@@ -6048,7 +6035,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
          (twittering-http-post api-host
                                (twittering-api-path "account/update_profile_image")
                                `(("image" . ,(format "@%s;type=image/%s" image image-type)))
-                               nil additional-info)))
+                               additional-info)))
 
       ((send-direct-message)
        ;; Send a direct message.
@@ -6058,14 +6045,13 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
          (twittering-http-post api-host
                                (twittering-api-path "direct_messages/new")
                                parameters
-                               nil
                                additional-info)))
 
       ;; Tweet Methods
       ((show)
        (twittering-http-get api-host
                             (twittering-api-path "statuses/show/" id)
-                            nil nil additional-info))
+                            nil additional-info))
 
       ((block)
        ;; Block a user.
@@ -6076,7 +6062,6 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
          (twittering-http-post api-host
                                (twittering-api-path "blocks/create")
                                parameters
-                               nil
                                additional-info)))
 
       ((block-and-report-as-spammer)
@@ -6088,7 +6073,6 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
          (twittering-http-post api-host
                                (twittering-api-path "report_spam")
                                parameters
-                               nil
                                additional-info)))
 
       ;; Sina Weibo Specific Methods
@@ -6098,14 +6082,12 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                             (twittering-api-path "statuses/counts")
                             ;; USERNAME treated as IDS here
                             `(("ids" . ,username))
-                            nil
                             additional-info
                             sentinel))
 
       ((emotions)
        (twittering-http-get api-host
                             (twittering-api-path "emotions")
-                            nil
                             nil
                             additional-info
                             sentinel))
@@ -6120,7 +6102,6 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
       ;;  (twittering-http-get (twittering-lookup-service-method-table 'api)
       ;;                             (twittering-api-path username "/statuses/" id)
       ;;                             nil
-      ;;                             nil
       ;;                             additional-info
       ;;                             sentinel))
 
@@ -6129,7 +6110,6 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
       ;;                             (twittering-api-path "querymid")
       ;;                             `(("id" . ,id)
       ;;                               ("type" . "1"))
-      ;;                             nil
       ;;                             additional-info
       ;;                             sentinel))
       ;; ((query-id)
@@ -6138,7 +6118,6 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
       ;;                             `(("id" . ,id)
       ;;                               ("type" . "1")
       ;;                               ("isBase62" . "1"))
-      ;;                             nil
       ;;                             additional-info
       ;;                             sentinel))
 
