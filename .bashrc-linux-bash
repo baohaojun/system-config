@@ -22,9 +22,12 @@ do
 done
 . `which wp`
 
-renew-xauth()
-{
-    . ~/.new-xauth
+function renew-xauth() {
+    if test -z "$SSH_CLIENT"; then
+        . ~/.new-xauth
+    else
+        export $(cat /proc/`ps -o comm=  -o pid= -A|grep gnome-terminal|pn 2`/environ|perl -npe 's/\x00/\n/g'|grep '^DISPLAY=')
+    fi
 }
 
 for x in ~/.bash_completion.d/*; do 
