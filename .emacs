@@ -56,6 +56,17 @@
 (require 'grep-buffers)
 (require 'htmlize)
 
+(require 'muse-mode)     ; load authoring mode
+(require 'muse-html)     ; load publishing styles I use
+(require 'muse-project)
+(setq muse-project-alist
+      '(("Website" ("~/Pages" :default "index")
+         (:base "html" :path "/scp:bhj@192.168.0.46:/var/www/rayzer_doc"))))
+
+(setq muse-project-alist
+      '(("rayzer_doc" ("~/rayzer_doc" :default "index")
+         (:base "html" :path "/scp:bhj@192.168.0.46:/var/www/rayzer_doc"))))
+
 (setq-default abbrev-mode t)                                                                   
 (read-abbrev-file "~/.abbrev_defs")
 (setq save-abbrevs t)   
@@ -500,6 +511,8 @@
  '(message-dont-reply-to-names (quote (".*haojun.*")))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
+ '(muse-html-charset-default "utf-8")
+ '(muse-publish-date-format "%m/%e/%Y")
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
  '(require-final-newline t)
