@@ -1,6 +1,16 @@
 xwl's fork
 ----------
 
+* (twitter) Add Stream API support.
+
+  To use,
+
+  1. USERSTREAM: Go to `:home@twitter':
+       M-x twittering-stream-mode
+  
+  2. STREAM: Go to `:public@twitter':
+       M-x twittering-stream-mode
+  
 * Add http://www.douban.com support.
 
 * Add http://t.sina.com.cn backend support; add login multiple services
