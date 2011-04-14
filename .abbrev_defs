@@ -50,10 +50,10 @@
     ("ld" "LOGD(\"%s: %d\\n\", __FUNCTION__, __LINE__);" nil 6)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
     ("ne" "NvOsDebugPrintf(\"Error: %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
-    ("nk" "NvOsDebugPrintf(\"hello world %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 4)
+    ("nk" "NvOsDebugPrintf(\"hello world %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 7)
     ("pe" "printk(KERN_WARNING \"hello error: %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("pf" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 193)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 195)
     ("pkh" "#include <linux/types.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>
@@ -170,10 +170,10 @@
 
 (define-abbrev-table 'java-mode-abbrev-table
   '(
-    ("le" "Log.e(TAG, \"" nil 17)
+    ("le" "Log.e(\"bhj\", \"" nil 0)
     ("lv" "Slog.v(TAG, String.format(\"" nil 1)
     ("pk" "Log.i(\"Bhj\", \"hello world\");" nil 1)
-    ("string" "String" nil 18)
+    ("string" "String" nil 19)
     ("sv" "System.out.print(String.format(\"" nil 0)
    ))
 
