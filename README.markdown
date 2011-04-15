@@ -1,15 +1,9 @@
 xwl's fork
 ----------
 
-* (twitter) Add Stream API support.
-
-  To use,
-
-  1. USERSTREAM: Go to `:home@twitter':
-       M-x twittering-stream-mode
-  
-  2. STREAM: Go to `:public@twitter':
-       M-x twittering-stream-mode
+* (twitter) Add Stream API support.  To use,
+  * USERSTREAM: Go to `:home@twitter': M-x twittering-stream-mode
+  * STREAM: Go to `:public@twitter':   M-x twittering-stream-mode
   
 * Add http://www.douban.com support.
 
