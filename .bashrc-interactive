@@ -5,7 +5,12 @@
 
 function cd_bhj () 
 {
-    history -s cd "$@"
+    if test $# = 1; then
+        history -s cd "$(printf %q "$1")"
+    else
+        history -s cd "$@"
+    fi
+
     local oldpwd=`pwd`
     local ok=1 # 1 means not ok
     lcd "$@" && return $?
@@ -44,7 +49,11 @@ function cd_failed()
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
         cd_record
-        history -s cd "$@"
+        if test $# = 1; then
+            history -s cd "$(printf %q "$1")"
+        else
+            history -s cd "$@"
+        fi
     fi
     return 0
 }
@@ -62,7 +71,11 @@ function fcd()
         NUM=`my_select "${dirs[@]}"`
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
-        history -s cd "$@"
+        if test $# = 1; then
+            history -s cd "$(printf %q "$1")"
+        else
+            history -s cd "$@"
+        fi
     fi
     cd_record
 }
