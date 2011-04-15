@@ -9473,7 +9473,7 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
 (defun twittering-construct-statuses ()
   (let ((statuses (twittering-construct-statuses-1)))
     (mapcar (lambda (st)
-              (if (assqref 'id-str st)
+              (if (ignore-errors (assqref 'id-str st))
                   `(,@(remove-if (lambda (i) (eq (car i) 'id)) st)
                     (id . ,(assqref 'id-str st)))
                 st))
