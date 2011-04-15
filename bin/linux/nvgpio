@@ -1,6 +1,6 @@
 #!/bin/bash
 
-grp=0x`ascii $1|grep -o 'hex ..'|grep -o '..$'`
+grp=0x`ascii $1|grep prints\ as|grep -o 'hex ..'|grep -o '..$'`
 start=0x61
 ((num = ($grp - $start) * 8 + $2))
 echo $num
