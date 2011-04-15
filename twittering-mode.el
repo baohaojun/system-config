@@ -101,7 +101,12 @@ buffers."
   :type 'string
   :group 'twittering)
 
-(defcustom twittering-status-format "%FACE[twittering-zebra-1-face,twittering-zebra-2-face]{%i %s,  %@:\n%FILL{  %t // from %f%L%r%R}}\n "
+(defcustom twittering-status-format 
+  (let ((text-prefix (make-string 8 ? ))
+        ;; put image near center, 20 -- approximately width of image
+        (image-prefix (make-string (- (/ 100 2) 20) ? )))
+    (concat "%FACE[twittering-zebra-1-face,twittering-zebra-2-face]{%i %g %s, from %f%L%r%R:\n%FOLD["
+            text-prefix "]{%t}"  "%FOLD[" image-prefix "]{%T}\n}"))
   "Format string for rendering statuses.
 Ex. \"%i %s,  %@:\\n%FILL{  %t // from %f%L%r%R}\n \"
 
