@@ -887,3 +887,7 @@ ssh r889 gnome-terminal --hide-menubar -e myscr
 nvtest dfs_stress -total_sec 300 
 nvtest dfs_monitor 
 64.50.233.100 ftp.us.debian.org
+
+rfa . 'br=tegra-10.9.9; git fetch letou refs/tags/$br:refs/tags/$br >/dev/null 2>&1 || pwd'
+for x in `find . -name "*.git" -type d`; do (br=tegra-10.9.9; cd $x && if git tag|grep "^$br$" -q; then echo $x && git push letou $br:$br; fi); done
+
