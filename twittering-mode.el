@@ -571,6 +571,8 @@ Following methods are supported:
   `((twitter (api "api.twitter.com")
              (search "search.twitter.com")
              (web "twitter.com")
+             (stream "stream.twitter.com")
+             (userstream "userstream.twitter.com")
 
              (api-prefix "1/")
              (search-method "search")
@@ -3767,6 +3769,7 @@ current buffer."
   (setq twittering-account-authorization nil
         twittering-oauth-access-token-alist nil
         twittering-enabled-services nil
+        twittering-url-request-resolving-p nil
 
         twittering-private-info-file-loaded-p nil
         twittering-private-info-file-dirty nil)
@@ -6115,7 +6118,8 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
       ((userstream)
        (let ((twittering-use-ssl t))    ; FIXME: why??
          (twittering-http-get 
-          "userstream.twitter.com" "2/user" nil `(,@additional-info (stream . t)))))
+          (twittering-lookup-service-method-table 'userstream)
+          "2/user" nil `(,@additional-info (stream . t)))))
 
       ((stream)
        (let ((twittering-use-ssl nil)   ; FIXME: why??
@@ -6132,7 +6136,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                       (setq value `((,p . ,(read-string (format "Set `%s' to: " p))))))
                     (setq value (remove-if (lambda (i) (equal (cdr i) "")) value))))
                 value)))
-         (twittering-http-post "stream.twitter.com" 
+         (twittering-http-post (twittering-lookup-service-method-table 'stream)
                                "1/statuses/filter" 
                                predicates
                                `(,@additional-info (stream . t)))))
