@@ -623,6 +623,9 @@ Following methods are supported:
             (status-url twittering-get-status-url-douban)
             (search-url twittering-get-search-url-twitter))
 
+    (socialcast (status-url twittering-get-status-url-socialcast)
+                (search-url twittering-get-search-url-twitter))
+
     (statusnet (status-url twittering-get-status-url-statusnet)
                (search-url twittering-get-search-url-statusnet)))
   "A list of alist of service methods."
@@ -4084,9 +4087,11 @@ following symbols;
   (if str
       (let* ((screen-name (assqref 'screen-name (assqref 'user status)))
              (uri (twittering-get-status-url
-                   (if (eq (twittering-extract-service) 'twitter)
-                       screen-name
-                     (assqref 'id (assqref 'user status)))))
+                   (case (twittering-extract-service)
+                     ((twitter socialcast)
+                      screen-name)
+                     (t
+                      (assqref 'id (assqref 'user status))))))
              (spec (twittering-string-to-timeline-spec screen-name)))
         (propertize str
                     'mouse-face 'highlight
@@ -4101,9 +4106,12 @@ following symbols;
   (if (stringp str)
       (let ((caption str)
             (uri (if (string= str "douban") "www.douban.com" "")))
-        (when (string-match "<a href=\"\\(.*?\\)\".*?>\\(.*\\)</a>" str)
+        (cond 
+         ((string-match "<a href=\"\\(.*?\\)\".*?>\\(.*\\)</a>" str)
           (setq uri (match-string 1 str)
                 caption (match-string 2 str)))
+         ((assqref 'source-uri status)
+          (setq uri (assqref 'source-uri status))))
         (propertize caption
                     'mouse-face 'highlight
                     'keymap twittering-mode-on-uri-map
@@ -5833,6 +5841,15 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                      ;; ("start-index" . ,since-id) ; buggy douban.
                      ("alt"         . "json")
                      ("apikey"      . ,(twittering-lookup-service-method-table 'oauth-consumer-key))))
+
+                  ((socialcast)
+                   `(("since"    . ,since-id)
+                     ("per_page" . ,count)
+
+                     ("comments_limit"      . "0")
+                     ("likes_limit"         . "0")
+                     ("comment_likes_limit" . "0")))
+
                   (t
                    `(,(if max-id        ; max-id and since-id can't coexist.
                           `("max_id" . ,max-id)
@@ -5854,56 +5871,45 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                             ("include_rts" . "true")))
                          (t
                           `(("count" . ,count)))))))))
+              
+              (host (if (eq spec-type 'search)
+                        (twittering-lookup-service-method-table 'search)
+                      api-host))
 
-              (simple-spec-list
-               `((direct_messages      . "direct_messages")
-                 (direct_messages_sent . "direct_messages/sent")
+              (method 
+               (case service
+                 ((douban)
+                  (format "people/%s/miniblog/contacts" 
+                          (assqref 'douban-user-id args-alist)))
+                 (t
+                  (case spec-type
+                    ((user)
+                     (let ((username (elt (cdr spec) 1)))
+                       (if (eq service 'sina)
+                           (progn
+                             (setq parameters `(,@parameters ("id" . ,username)))
+                             (twittering-api-path "statuses/user_timeline"))
+                         (twittering-api-path "statuses/user_timeline/" username))))
+                    ((list)
+                     (let ((u (elt (cdr spec) 1))
+                           (l (elt (cdr spec) 2)))
+                       (twittering-api-path
+                        (cond
+                         ((string= l "followers") "statuses/followers")
+                         ((string= l "following") "statuses/friends")
+                         ((string= l "favorites") (concat "favorites/" u))
+                         (t (concat "" u "/lists/" l "/statuses"))))))
+                    ((search)
+                     (twittering-lookup-service-method-table 'search-method))
+                    (t
+                     (when (twittering-get-simple-spec-method spec)
+                       (twittering-api-path (twittering-get-simple-spec-method spec))))))))
 
-                 (friends         . "statuses/friends_timeline")
-                 (home            . "statuses/home_timeline")
-                 (mentions        . "statuses/mentions")
-                 (public          . "statuses/public_timeline")
-                 (replies         . ,(if sina?
-                                         "statuses/comments_timeline"
-                                       "statuses/replies"))
-                 (retweeted_by_me . "statuses/retweeted_by_me")
-                 (retweeted_to_me . "statuses/retweeted_to_me")
-                 (retweets_of_me  . "statuses/retweets_of_me")
-
-                 (search . "search")))
-              (host (cond ((eq spec-type 'search) (twittering-lookup-service-method-table 'search))
-                          (t api-host)))
-              (method
-               (cond
-                (douban?
-                 (format "people/%s/miniblog/contacts" 
-                         (assqref 'douban-user-id args-alist)))
-                ((eq spec-type 'user)
-                 (let ((username (elt (cdr spec) 1)))
-                   (if (eq (twittering-extract-service) 'sina)
-                       (progn
-                         (setq parameters `(,@parameters ("id" . ,username)))
-                         (twittering-api-path "statuses/user_timeline"))
-                     (twittering-api-path "statuses/user_timeline/" username))))
-                ((eq spec-type 'list)
-                 (let ((u (elt (cdr spec) 1))
-                       (l (elt (cdr spec) 2)))
-                   (twittering-api-path
-                    (cond
-                     ((string= l "followers") "statuses/followers")
-                     ((string= l "following") "statuses/friends")
-                     ((string= l "favorites") (concat "favorites/" u))
-                     (t (concat "" u "/lists/" l "/statuses"))))))
-                ((eq spec-type 'search)
-                 (twittering-lookup-service-method-table 'search-method))
-                ((assq spec-type simple-spec-list)
-                 (twittering-api-path (assqref spec-type simple-spec-list)))
-                (t nil)))
               (clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
          (if (and host method)
              (twittering-http-get 
               host method parameters additional-info nil clean-up-sentinel)
-           (error "Invalid timeline spec"))))
+           (error "Invalid timeline spec: %S" spec))))
 
       ;; List methods
       ((get-list-index)                        ; Get list names.
@@ -6020,11 +6026,19 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                              additional-info))
 
       ;; Account Resources
-      ((verify-credentials)                ; Verify the account.
+      ((verify-credentials)
        (let ((clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
-         (twittering-http-get api-host
-                              (twittering-api-path "account/verify_credentials")
-                              nil additional-info sentinel clean-up-sentinel)))
+         (case service
+           ((socialcast)
+            (twittering-http-post api-host
+                                  (twittering-api-path "authentication")
+                                  `(("email"    . ,(twittering-get-accounts 'username))
+                                    ("password" . ,(twittering-get-accounts 'password)))
+                                  additional-info sentinel clean-up-sentinel))
+           (t
+            (twittering-http-get api-host 
+                                 (twittering-api-path "account/verify_credentials")
+                                 nil additional-info sentinel clean-up-sentinel)))))
 
       ((update-profile-image)
        (let* ((image (assqref 'image args-alist))
@@ -6146,6 +6160,34 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
       ;;                             sentinel))
 
       )))
+
+(defun twittering-get-simple-spec-method (spec)
+  (let ((service (twittering-extract-service spec))
+        (spec-type (cadr spec)))
+    (assqref 
+     spec-type
+     (case service
+       ((socialcast)
+        '((home        . "messages")
+          (mentions    . "streams/to_me/messages")
+          (public      . "streams/company/messages")
+          (recommended . "streams/recommended/messages")))
+       (t
+        `((direct_messages      . "direct_messages")
+          (direct_messages_sent . "direct_messages/sent")
+
+          (friends         . "statuses/friends_timeline")
+          (home            . "statuses/home_timeline")
+          (mentions        . "statuses/mentions")
+          (public          . "statuses/public_timeline")
+          (replies         . ,(if (eq service 'sina)
+                                  "statuses/comments_timeline"
+                                "statuses/replies"))
+          (retweeted_by_me . "statuses/retweeted_by_me")
+          (retweeted_to_me . "statuses/retweeted_to_me")
+          (retweets_of_me  . "statuses/retweets_of_me")
+
+          (search . "search")))))))
 
 ;;;; Other API methods
 
@@ -6365,6 +6407,14 @@ string.")
     (format "http://%s/people/%s"
             (twittering-lookup-service-method-table 'web)
             username)))
+
+(defun twittering-get-status-url-socialcast (username &optional id)
+  (let ((scheme (if twittering-use-ssl "https" "http")))
+    (if id 
+        (format "%s://%s" scheme (twittering-lookup-service-method-table 'web))
+      (format "%s://%s/users/%s" scheme
+              (twittering-lookup-service-method-table 'web)
+              username))))
 
 (defun twittering-get-search-url (query-string)
   "Generate a URL for searching QUERY-STRING."
@@ -9553,6 +9603,27 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
                       (setq status `(,@user (text . " "))))
                     `((user ,@user) ,@status ,@cursors)))
                 followers)))
+
+     ((funcall has 'messages)           ; socialcast
+      (setq statuses
+            (mapcar
+             (lambda (i)
+               `((id         . ,(assqref 'id i))
+                 (created-at . ,(assqref 'created-at i))
+                 (text       . ,(if (assqref 'title i)
+                                    (concat (assqref 'title i) "\n\n" (assqref 'body i))
+                                  (assqref 'body i)))
+                 (source     . ,(assqref 'formal-name (assqref 'source i)))
+                 (source-uri . ,(assqref 'url (assqref 'source i)))
+                 (user
+                  ,@(let ((u (assqref 'user i)))
+                      `((id                . ,(assqref 'id u))
+                        (name              . ,(assqref 'name u))
+                        (screen-name       . ,(assqref 'username u))
+                        (profile-image-url . ,(replace-regexp-in-string
+                                               ":443/" "/"
+                                               (assqref 'square45 (assqref 'avatars u)))))))))
+             (assqref 'messages statuses))))
      (t 
       statuses))))
 
