@@ -2307,10 +2307,8 @@ The method to perform the request is determined from
            (when (functionp clean-up-func)
              (funcall clean-up-func proc status connection-info))
            (when error?
-             (unless (and (assqref 'stream connection-info)
-                          (eq status 'signal) ; sent by kill-process
-                          (not twittering-debug-mode))
-               (error "%s" mes)))
+             (unless (assqref 'stream connection-info)
+                (error "%s" mes)))
            (when (and (or sync? (memq status '(exit signal closed failed)))
                       (buffer-live-p buffer)
                       (not twittering-debug-mode))
