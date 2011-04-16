@@ -187,7 +187,6 @@ options {backtrack=true; memoize=true;}
 compilationUnit
         scope {
             /** List of symbols defined within this block */
-            boolean is_private;
             boolean is_local_var;
             String interface_field_identifier;
             int interface_field_line;
@@ -195,7 +194,6 @@ compilationUnit
 
         @init {
             // initialize symbol list
-            $compilationUnit::is_private = false;
             $compilationUnit::is_local_var = false;
         }
     :   annotations
@@ -231,14 +229,8 @@ classOrInterfaceDeclaration
     ;
     
 classOrInterfaceModifiers
-    :   {$compilationUnit::is_private = false;} 
-        (classOrInterfaceModifier
-            {
-                if ($classOrInterfaceModifier.text.equals("private")) {
-                    $compilationUnit::is_private = true;
-                }
-    }
-        )* 
+    :    
+        (classOrInterfaceModifier)* 
     ;
 
 classOrInterfaceModifier
@@ -254,14 +246,7 @@ classOrInterfaceModifier
 
 modifiers
     :  
-    {
-            $compilationUnit::is_private = false;
-        }
-        (modifier {
-                if ($modifier.text.equals("private")) {
-                    $compilationUnit::is_private = true;
-                }
-    }
+        (modifier 
         )*
     ;
 
@@ -273,13 +258,11 @@ classDeclaration
 normalClassDeclaration
     :   'class' Identifier 
         {
-            if (!$compilationUnit::is_private) {
                 System.out.print(String.format("def \%s \%d \%s class \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                fileName,
                                                $Identifier.text));
-            }
         }
         typeParameters?
         ('extends' type)?
@@ -302,13 +285,11 @@ typeBound
 enumDeclaration
     :   ENUM Identifier 
         {
-            if (!$compilationUnit::is_private) {
                 System.out.print(String.format("def \%s \%d \%s enum \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                fileName,
                                                $Identifier.text));
-            }
         }
         ('implements' typeList)? enumBody
     ;
@@ -324,13 +305,12 @@ enumConstants
 enumConstant
     :   annotations? Identifier 
         {
-            if (!$compilationUnit::is_private) {
+            
                 System.out.print(String.format("def \%s \%d \%s enum constant \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                fileName,
                                                $Identifier.text));
-            }
         }
         arguments? classBody?
     ;
@@ -347,13 +327,11 @@ interfaceDeclaration
 normalInterfaceDeclaration
     :   'interface' Identifier 
         {
-            if (!$compilationUnit::is_private) {
                 System.out.print(String.format("def \%s \%d \%s interface \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                fileName,
                                                $Identifier.text));
-            }
         }
         typeParameters? ('extends' typeList)? interfaceBody
     ;
@@ -381,24 +359,20 @@ memberDecl
     |   memberDeclaration
     |   'void' Identifier
         {
-            if (!$compilationUnit::is_private) {
                 System.out.print(String.format("def \%s \%d \%s void method \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                fileName,
                                                $Identifier.text));
-            }
         }
         voidMethodDeclaratorRest
     |   Identifier
         {
-            if (!$compilationUnit::is_private) {
                 System.out.print(String.format("def \%s \%d \%s constructor \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                fileName,
                                                $Identifier.text));
-            }
         }
         constructorDeclaratorRest
     |   interfaceDeclaration
@@ -416,24 +390,20 @@ genericMethodOrConstructorDecl
 genericMethodOrConstructorRest
     :   (type | 'void') Identifier 
         {
-            if (!$compilationUnit::is_private) {
                 System.out.print(String.format("def \%s \%d \%s generic method \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                fileName,
                                                $Identifier.text));
-            }
         }
         methodDeclaratorRest
     |   Identifier 
         {
-            if (!$compilationUnit::is_private) {
                 System.out.print(String.format("def \%s \%d \%s constructor \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                fileName,
                                                $Identifier.text));
-            }
         }
         constructorDeclaratorRest
     ;
@@ -441,13 +411,11 @@ genericMethodOrConstructorRest
 methodDeclaration
     :   Identifier
         {
-            if (!$compilationUnit::is_private) {
                 System.out.print(String.format("def \%s \%d \%s method \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                fileName,
                                                $Identifier.text));
-            }
         }
         methodDeclaratorRest
     ;
@@ -464,7 +432,16 @@ interfaceBodyDeclaration
 interfaceMemberDecl
     :   interfaceMethodOrFieldDecl
     |   interfaceGenericMethodDecl
-    |   'void' Identifier voidInterfaceMethodDeclaratorRest
+    |   'void' Identifier {
+            $compilationUnit::interface_field_identifier = $Identifier.text;
+            $compilationUnit::interface_field_line = $Identifier.line;
+        } voidInterfaceMethodDeclaratorRest {
+             System.out.print(String.format("def \%s \%d \%s method (interface) \%s\n",  
+                                               $compilationUnit::interface_field_identifier,
+                                               $compilationUnit::interface_field_line,
+                                               fileName,
+                                               $compilationUnit::interface_field_identifier));
+    }
     |   interfaceDeclaration
     |   classDeclaration
     ;
@@ -484,7 +461,13 @@ interfaceMethodOrFieldRest
                                                fileName,
                                                $compilationUnit::interface_field_identifier));
             } ';'
-    |   interfaceMethodDeclaratorRest
+    |   interfaceMethodDeclaratorRest {
+             System.out.print(String.format("def \%s \%d \%s method (interface) \%s\n",  
+                                               $compilationUnit::interface_field_identifier,
+                                               $compilationUnit::interface_field_line,
+                                               fileName,
+                                               $compilationUnit::interface_field_identifier));
+    }
     ;
     
 methodDeclaratorRest
@@ -507,7 +490,10 @@ interfaceMethodDeclaratorRest
     ;
     
 interfaceGenericMethodDecl
-    :   typeParameters (type | 'void') Identifier
+    :   typeParameters (type | 'void') Identifier {
+            $compilationUnit::interface_field_identifier = $Identifier.text;
+            $compilationUnit::interface_field_line = $Identifier.line;
+        }
         interfaceMethodDeclaratorRest
     ;
     
@@ -551,7 +537,7 @@ constantDeclaratorRest
 variableDeclaratorId
     :   Identifier
         {
-            if (!$compilationUnit::is_private && !$compilationUnit::is_local_var) {
+            if (!$compilationUnit::is_local_var) {
                 System.out.print(String.format("def \%s \%d \%s field \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
@@ -728,13 +714,11 @@ elementValueArrayInitializer
 annotationTypeDeclaration
     :   '@' 'interface' Identifier 
         {
-            if (!$compilationUnit::is_private) {
                 System.out.print(String.format("def \%s \%d \%s interface \%s\n",  
                                                $Identifier.text,
                                                $Identifier.line,
                                                fileName,
                                                $Identifier.text));
-            }
         } annotationTypeBody
     ;
     
