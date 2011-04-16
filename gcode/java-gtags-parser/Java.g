@@ -189,6 +189,8 @@ compilationUnit
             /** List of symbols defined within this block */
             boolean is_private;
             boolean is_local_var;
+            String interface_field_identifier;
+            int interface_field_line;
         }
 
         @init {
@@ -468,11 +470,20 @@ interfaceMemberDecl
     ;
     
 interfaceMethodOrFieldDecl
-    :   type Identifier interfaceMethodOrFieldRest
+    :   type Identifier {
+            $compilationUnit::interface_field_identifier = $Identifier.text;
+            $compilationUnit::interface_field_line = $Identifier.line;
+        } interfaceMethodOrFieldRest
     ;
     
 interfaceMethodOrFieldRest
-    :   constantDeclaratorsRest ';'
+    :   constantDeclaratorsRest {
+                System.out.print(String.format("def \%s \%d \%s field (interface) \%s\n",  
+                                               $compilationUnit::interface_field_identifier,
+                                               $compilationUnit::interface_field_line,
+                                               fileName,
+                                               $compilationUnit::interface_field_identifier));
+            } ';'
     |   interfaceMethodDeclaratorRest
     ;
     
@@ -509,7 +520,10 @@ constructorDeclaratorRest
     ;
 
 constantDeclarator
-    :   Identifier constantDeclaratorRest
+    :   Identifier {
+            $compilationUnit::interface_field_identifier = $Identifier.text;
+            $compilationUnit::interface_field_line = $Identifier.line;
+        } constantDeclaratorRest
     ;
     
 variableDeclarators
@@ -521,7 +535,13 @@ variableDeclarator
     ;
     
 constantDeclaratorsRest
-    :   constantDeclaratorRest (',' constantDeclarator)*
+    :   constantDeclaratorRest (',' {
+                System.out.print(String.format("def \%s \%d \%s field (interface) \%s\n",  
+                                               $compilationUnit::interface_field_identifier,
+                                               $compilationUnit::interface_field_line,
+                                               fileName,
+                                               $compilationUnit::interface_field_identifier));
+            } constantDeclarator)*
     ;
 
 constantDeclaratorRest
