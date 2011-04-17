@@ -1188,8 +1188,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
             error-line-number error-line-str grep-output temp-buffer
             msg mk end-mk)
           (save-excursion
-            (beginning-of-line)
-            (search-forward "(")
+            (end-of-line)
+            (search-backward "(")
+            (search-backward ".")
             (setq msg (point-marker))
             (end-of-line)
             (setq grep-output (shell-command-to-string (concat "java-trace-grep " (shell-quote-argument (current-line-string))))))
