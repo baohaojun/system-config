@@ -101,12 +101,13 @@ buffers."
   :type 'string
   :group 'twittering)
 
+(defcustom twittering-format-thumbnail-prefix "                          "
+  "Thumbnail (like in sina weibo) prefix."
+  :type 'string
+  :group 'twittering)
+
 (defcustom twittering-status-format 
-  (let ((text-prefix (make-string 8 ? ))
-        ;; put image near center, 20 -- approximately width of image
-        (image-prefix (make-string (- (/ 100 2) 20) ? )))
-    (concat "%FACE[twittering-zebra-1-face,twittering-zebra-2-face]{%i %g %s, from %f%L%r%R:\n%FOLD["
-            text-prefix "]{%t}"  "%FOLD[" image-prefix "]{%T}\n}"))
+  "%FACE[twittering-zebra-1-face,twittering-zebra-2-face]{%i %g %s, from %f%L%r%R:\n%FOLD[      ]{%t}\n}"
   "Format string for rendering statuses.
 Ex. \"%i %s,  %@:\\n%FILL{  %t // from %f%L%r%R}\n \"
 
@@ -117,8 +118,6 @@ Items:
  %d - description
  %l - location
  %L - \" [location]\"
- %m - (sina) comment and retweet count, if any. (FIXME: this needs to be updated
-      quite often to record correct value.)
  %r - \" sent to user\" (use on direct_messages{,_sent})
  %r - \" in reply to user\" (use on other standard timeline)
  %R - \" (retweeted by user)\"
@@ -135,33 +134,27 @@ Items:
       latest statuses for more than a week)
  %C{time-format-str} - created_at (formatted with time-format-str)
  %@ - X seconds ago
- %T - thumbnail picture in a tweet
  %t - text filled as one paragraph
  %' - truncated
  %FACE[face-name]{...} - strings decorated with the specified face. You can
                       provide two faces, separated by colon, to create a
                       zebra-like background.
+
  %FILL[prefix]{...} - strings filled as a paragraph. The prefix is optional.
                       You can use any other specifiers in braces.
-
-                      NOTE: don't include more than one specifier that has
-                      'need-to-be-updated property, such as %t, %i, %T, etc.
 
  %FOLD[prefix]{...} - strings folded within the frame width.
                       The prefix is optional. This keeps newlines and does not
                       squeeze a series of white spaces.
                       You can use any other specifiers in braces.
-
-                      NOTE: don't include more than one specifier that has
-                      'need-to-be-updated property, such as %t, %i, %T, etc.
-
  %f - source
  %# - id
 "
   :type 'string
   :group 'twittering)
 
-(defcustom twittering-my-status-format nil
+(defcustom twittering-my-status-format 
+  "%FACE[twittering-zebra-1-face,twittering-zebra-2-face]{%g %s, from %f%L%r%R: %i\n%FOLD[]{%t}\n}"
   "Specific format for my posts.
 See `twittering-status-format'. "
   :type 'string
@@ -4021,7 +4014,7 @@ of format. The common properties follows:
                      (when value
                        `(,prop ,value))))
                  '(field id rendered-as retweeted-id source-spec
-                         text username face))))
+                         text username))))
 
 (defun twittering-format-string (string prefix replacement-table)
   "Format STRING according to PREFIX and REPLACEMENT-TABLE.
@@ -4150,7 +4143,7 @@ following symbols;
      (t
       text))))
 
-(defun twittering-make-fontified-tweet-text (str)
+(defun twittering-make-fontified-tweet-text (str status prefix)
   ;; (sina) Recognize and mark emotions, we will show them in
   ;; twittering-redisplay-status-on-each-buffer.
   (case (twittering-extract-service)
@@ -4164,7 +4157,7 @@ following symbols;
     (insert str)
     (html2text)
     (setq str (buffer-string)))
-  
+
   (let* ((regexp-list
           `( ;; Hashtag
             (hashtag . ,(concat twittering-regexp-hash
@@ -4187,8 +4180,7 @@ following symbols;
             ;; URI
             (uri . ,twittering-regexp-uri)))
          (regexp-str (mapconcat 'cdr regexp-list "\\|"))
-         (pos 0)
-         (str (copy-sequence str)))
+         (pos 0))
     (while (string-match regexp-str str pos)
       (let* ((entry
               ;; Find matched entries.
@@ -4256,8 +4248,28 @@ following symbols;
                    'uri uri
                    'face 'twittering-uri-face))))))
         (add-text-properties beg end properties str)
-        (setq pos end)))
-    str))
+        (setq pos end))))
+
+  ;; thumbnail picture
+  (let* ((st (or (twittering-status-has-quotation? status) status))
+         (s (if (and twittering-icon-mode window-system)
+                (let ((thumbnail-pic (assqref 'thumbnail-pic st))
+                      (original-pic (assqref 'original-pic st)))
+                  (when thumbnail-pic
+                    (if original-pic
+                        (twittering-toggle-thumbnail-1 thumbnail-pic original-pic t)
+                      (twittering-make-original-icon-string nil nil thumbnail-pic))))
+              (assqref 'original-pic st))))
+    (when s
+      (setq str (concat str "\n" twittering-format-thumbnail-prefix s))))
+
+  ;; comment/retweet counts
+  (when (eq (twittering-extract-service) 'sina)
+    (setq str (concat str "\n"
+                      (format (format "%%%ds" (- (twittering-calculate-fill-column (length prefix))
+                                                 18)) ; length for counts string.
+                              (twittering-get-simple nil nil nil 'counts)))))
+  str)
 
 (defun twittering-generate-format-table (status-sym prefix-sym)
   `(("%" . "%")
@@ -4295,8 +4307,6 @@ following symbols;
        (unless (string= "" location)
          (concat "[" location "]"))))
     ("l" . (assqref 'location (assqref 'user ,status-sym)))
-    ("m" . (when (eq (twittering-extract-service) 'sina) ; comment counts.
-             (twittering-get-simple nil nil (assqref 'id ,status-sym) 'counts)))
     ("p" . (when (string-match "true" (assqref 'protected (assqref 'user ,status-sym))) "[x]"))
     ("r" .
      (let* ((replied-status (or (assqref 'reply-comment ,status-sym)
@@ -4347,27 +4357,14 @@ following symbols;
      (let ((st (or (twittering-status-has-quotation? ,status-sym) ,status-sym)))
        (twittering-make-string-with-user-name-property
         (assqref 'screen-name (assqref 'user st)) st)))
-    ("T" .
-     (let* ((st (or (twittering-status-has-quotation? ,status-sym) ,status-sym))
-            (s (if (and twittering-icon-mode window-system)
-                   (let ((thumbnail-pic (assqref 'thumbnail-pic st))
-                         (original-pic (assqref 'original-pic st)))
-                     (when thumbnail-pic
-                      (if original-pic
-                          (twittering-toggle-thumbnail-1 thumbnail-pic original-pic t)
-                        (twittering-make-original-icon-string nil nil thumbnail-pic))))
-                 (assqref 'original-pic st))))
-       (when s
-         (twittering-make-fontified-tweet-text
-          (concat "\n" s)))))
     ("t" . 
      (twittering-make-fontified-tweet-text 
       (funcall twittering-format-tweet-text-function
                (assqref 'text (twittering-status-has-quotation? ,status-sym))
                (assqref 'text ,status-sym)
-               ,status-sym)))
-    ;; (twittering-make-fontified-tweet-text
-    ;;  (assqref 'text ,status-sym)))
+               ,status-sym)
+      ,status-sym
+      ,prefix-sym))
     ("u" . (assqref 'url (assqref 'user ,status-sym)))))
 
 (defvar twittering-format-tweet-text-function 'twittering-format-tweet-text-with-quote
@@ -4625,7 +4622,7 @@ rendered at POS, return nil."
   (let ((pos (or pos (point))))
     (cdr (assq 'ancestor-of (get-text-property pos 'rendered-as)))))
 
-(defun twittering-fill-string (str &optional adjustment prefix keep-newline)
+(defun twittering-calculate-fill-column (adjustment)
   (when (and (not (boundp 'kinsoku-limit))
              enable-kinsoku)
     ;; `kinsoku-limit' is defined on loading "international/kinsoku.el".
@@ -4649,40 +4646,29 @@ rendered at POS, return nil."
                           (get-buffer-window-list (current-buffer) nil t))
                   ;; Use `(frame-width)' if no windows display
                   ;; the current buffer.
-                  `(,(frame-width)))))
-         (temporary-fill-column (- (or twittering-fill-column (1- min-width))
-                                   adjustment)))
-    (with-temp-buffer
-      (let ((fill-column temporary-fill-column)
-            (fill-prefix (or prefix fill-prefix))
-            (adaptive-fill-regexp ""))
-        (if keep-newline
-            (let* ((hard-newline (propertize "\n" 'hard t))
-                   (str (mapconcat 'identity (split-string str "\n")
-                                   (concat hard-newline fill-prefix))))
-              (use-hard-newlines)
-              (insert (concat prefix str))
-              (fill-region (point-min) (point-max) nil t)
-              (remove-text-properties (point-min) (point-max) '(hard nil)))
-          (insert (concat prefix str))
-          (fill-region-as-paragraph (point-min) (point-max)))
-        (buffer-substring (point-min) (point-max))))))
+                  `(,(frame-width))))))
+    (- (or twittering-fill-column (1- min-width)) adjustment)))
+
+(defun twittering-fill-string (str &optional adjustment prefix keep-newline)
+  (with-temp-buffer
+    (let ((fill-column (twittering-calculate-fill-column adjustment))
+          (fill-prefix (or prefix fill-prefix))
+          (adaptive-fill-regexp ""))
+      (if keep-newline
+          (let* ((hard-newline (propertize "\n" 'hard t))
+                 (str (mapconcat 'identity (split-string str "\n")
+                                 (concat hard-newline fill-prefix))))
+            (use-hard-newlines)
+            (insert (concat prefix str))
+            (fill-region (point-min) (point-max) nil t)
+            (remove-text-properties (point-min) (point-max) '(hard nil)))
+        (insert (concat prefix str))
+        (fill-region-as-paragraph (point-min) (point-max)))
+      (buffer-substring (point-min) (point-max)))))
 
 (defun twittering-update-filled-string (beg end formater status prefix local-prefix &optional keep-newline)
-  (let* ((str (twittering-fill-string (funcall formater status prefix)
-                                      (length prefix) local-prefix
-                                      keep-newline))
-         (next (next-single-property-change 0 'need-to-be-updated str)))
-    (if (or (get-text-property 0 'need-to-be-updated str)
-            (and next (< next (length str))))
-        (put-text-property 0 (length str) 'need-to-be-updated
-                           `(twittering-update-filled-string
-                             ,formater ,status ,prefix ,local-prefix
-                             ,keep-newline)
-                           str)
-      ;; Remove the property required no longer.
-      (remove-text-properties 0 (length str) '(need-to-be-updated nil) str))
-    str))
+  (twittering-fill-string
+   (funcall formater status prefix) (length prefix) local-prefix keep-newline))
 
 (defun twittering-make-passed-time-string
   (beg end created-at-str time-format &optional additional-properties)
@@ -5140,11 +5126,13 @@ rendered at POS, return nil."
                  ;; the point becomes outside of the window by the effect of
                  ;; `set-window-start'.
                  (setq result beg))
-               (let ((common-properties (twittering-get-common-properties beg)))
+               (let ((common-properties (twittering-get-common-properties beg))
+                     (faces (get-text-property beg 'face)))
                  ;; Restore common properties.
                  (delete-region beg end)
                  (goto-char beg)
                  (add-text-properties 0 (length updated-str) common-properties updated-str)
+                 (twittering-decorate-zebra-background updated-str faces)
                  (insert updated-str))
                (twittering-restore-window-config-after-modification
                 config beg end))))
@@ -5168,10 +5156,12 @@ rendered at POS, return nil."
                  (let ((url (some (lambda (i) (when (string= (assqref 'phrase i) str)
                                                 (assqref 'url i)))
                                   twittering-emotions-phrase-url-alist))
-                       (common-properties (twittering-get-common-properties (point))))
+                       (common-properties (twittering-get-common-properties (point)))
+                       (faces (get-text-property (point) 'face)))
                    (when url
                      (setq repl (twittering-make-original-icon-string nil nil url)))
-                   (add-text-properties 0 (length repl) common-properties repl)))
+                   (add-text-properties 0 (length repl) common-properties repl)
+                   (twittering-decorate-zebra-background repl faces)))
                (when (consp twittering-emotions-phrase-url-alist)
                  (replace-match repl)))))
 
@@ -5194,8 +5184,7 @@ rendered at POS, return nil."
                       (repl (save-match-data
                               (twittering-make-douban-detail-string beg end url prefix))))
                  (replace-match repl))))))
-      
-      )                                 ; save-excursion ends here
+        )                                 ; save-excursion ends here
       
       ;; (xwl) consider remove following
       (set-marker marker nil)
@@ -6138,14 +6127,14 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                                "1/statuses/filter" 
                                predicates
                                `(,@additional-info (stream . t)))))
-                
+      
       ;; Sina Weibo Specific Methods
       ;; ---------------------------
       ((counts)
        (twittering-http-get api-host
                             (twittering-api-path "statuses/counts")
                             ;; USERNAME treated as IDS here
-                            `(("ids" . ,username))
+                            `(("ids" . ,(assqref 'ids args-alist)))
                             additional-info
                             sentinel))
 
@@ -6194,60 +6183,97 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
 The key is a list of username/id and method(such as get-list-index), the value is
 string.")
 
+(defvar twittering-counts-request-list nil)
+(defconst twittering-counts-request-max 100
+  "Max counts that could be retrieved in one api call.")
+(defvar twittering-counts-last-timestamp nil)
+
 (defun twittering-get-simple (beg end username method)
   (let ((retrieved (gethash (list username method) twittering-simple-hash))
-        (s "."))                        ; hold 'need-to-be-updated
+        (s (if (and (eq method 'counts) beg end)
+               (buffer-substring beg end)
+             ".")))                     ; hold 'need-to-be-updated
     (cond
      (retrieved
       (remove-text-properties 0 (length s) '(need-to-be-updated nil) s)
-      (setq s
-            (case method
-              ((show-friendships)
-               (let ((target (or (assqref 'target retrieved)
-                                 (assqref 'target (assqref 'relationship retrieved)))))
-                 (concat (if (assqref 'followed-by target) " <" " ")
-                         "--"
-                         (if (assqref 'following target) ">" "")
-                         " you")))
+      (case method
+        ((show-friendships)
+         (let ((target (or (assqref 'target retrieved)
+                           (assqref 'target (assqref 'relationship retrieved)))))
+           (setq s (concat (if (assqref 'followed-by target) " <" " ")
+                           "--"
+                           (if (assqref 'following target) ">" "")
+                           " you"))))
 
-              ((get-list-index get-list-subscriptions get-list-memberships)
-               (mapconcat (lambda (l) (concat "@" (twittering-decorate-listname l)))
-                          retrieved
-                          (concat "\n" (make-string
-                                        (twittering-calculate-list-info-prefix-width
-                                         username)
-                                        ? ))))
+        ((get-list-index get-list-subscriptions get-list-memberships)
+         (setq s (mapconcat (lambda (l) (concat "@" (twittering-decorate-listname l)))
+                            retrieved
+                            (concat "\n" (make-string
+                                          (twittering-calculate-list-info-prefix-width
+                                           username)
+                                          ? )))))
 
-              ((counts)
-               (let ((cm (car (assqref 'comments retrieved)))
-                     (rt (car (assqref 'rt retrieved))))
-                 (if (and (string= cm "0") (string= rt "0"))
-                     ""
-                   (concat "["
-                           (mapconcat (lambda (s-id)
-                                        (let ((s (car s-id)))
-                                          (put-text-property 0 (length s) (cdr s-id) username s)
-                                          s))
-                                      `((,(concat "cm " cm) . comment-base-id)
-                                        (,(concat "rt " cm) . retweet-base-id))
-                                      ", ")
-                           "]"))))
-              (t
-               retrieved)))
-      ;; (when (eq method 'counts)
-      ;;         (put-text-property 0 (length s)
-      ;;                            'need-to-be-updated
-      ;;                            `(twittering-get-simple ,username ,method)
-      ;;                            s)
-      ;;         (twittering-get-simple-1 method `((username . ,username))))
-      )
+        ((counts)
+         (unless (eq retrieved 'doing)  ; counts retrieving in the progress
+           (let* ((id (twittering-get-id-at beg))
+                  (st (twittering-find-status id))
+                  (pred (lambda (i) (equal (assqref 'id i) id)))
+                  (count (find-if pred retrieved)))
+             (when id
+               (add-to-list 'twittering-counts-request-list id t))
+             (when count
+               (let* ((rt (assqref 'rt count))
+                      (cm (assqref 'comments count))
+                      (rt-str (if (equal rt "0") "" (concat "(" rt ")")))
+                      (cm-str (if (equal cm "0") "" (concat "(" cm ")"))))
+                 (puthash `(,username ,method) (remove-if pred retrieved)
+                          twittering-simple-hash)
+                 (setq s (concat 
+                          (format "轉發%s " rt-str)
+                          (propertize (format "評論%s" cm-str)
+                                      'mouse-face 'highlight
+                                      'face 'twittering-uri-face
+                                      'keymap twittering-mode-on-uri-map
+                                      'uri (twittering-get-status-url 
+                                            (assqref 'id (assqref 'user st))
+                                            (assqref 'id st)))))))
+
+             (when (and twittering-counts-last-timestamp
+                        (> (time-to-seconds (time-since twittering-counts-last-timestamp))
+                           twittering-timer-interval))
+               (puthash `(,username ,method) nil twittering-simple-hash))))
+
+         (setq s (propertize s 'need-to-be-updated 
+                             `(twittering-get-simple ,username ,method))))
+        (t 
+         (setq s retrieved))))
 
      (t
-      (put-text-property 0 (length s)
-                         'need-to-be-updated
-                         `(twittering-get-simple ,username ,method)
-                         s)
-      (twittering-get-simple-1 method `((username . ,username)))))
+      (setq s (propertize s 'need-to-be-updated 
+                          `(twittering-get-simple ,username ,method)))
+
+      (if (eq method 'counts)
+          (let ((id (twittering-get-id-at beg)))
+            (when id
+              (add-to-list 'twittering-counts-request-list id t))
+            (when (and (if twittering-counts-last-timestamp
+                           (> (time-to-seconds (time-since twittering-counts-last-timestamp))
+                              twittering-timer-interval)
+                         ;; initial
+                         (>= (length twittering-counts-request-list)
+                             twittering-number-of-tweets-on-retrieval))
+                       (not (null twittering-counts-request-list)))
+              (setq twittering-counts-last-timestamp (current-time))
+              (puthash `(,username ,method) 'doing twittering-simple-hash)
+              (let (ids)
+                (dotimes (i (min twittering-counts-request-max 
+                                 (length twittering-counts-request-list)))
+                  (setq ids (cons (elt twittering-counts-request-list i) ids)))
+                (setq ids (mapconcat 'identity ids ","))
+                (twittering-get-simple-1 method `((username . ,username)
+                                                  (ids . ,ids))))))
+        (twittering-get-simple-1 method `((username . ,username))))))
+
     s))
 
 (defun twittering-get-simple-sync (method args-alist)
@@ -6469,7 +6495,7 @@ string.")
                                (funcall take 'director)
                                (funcall take 'cast)
                                (assqref 'pubdate db:attribute)))))
-            
+              
               ((music)
                (let* ((db:attribute (assqref 'db:attribute json))
                       (title (assqref 'title db:attribute))
@@ -6506,7 +6532,7 @@ string.")
                                     ("发行时间" ,pubdate)
                                     ("出版者"   ,publisher))
                                   "\n"))))
-               
+              
               ((review collection)
                (setq detail (assqref 'summary json))
                (unless detail           ; sounds like douban's bug.
@@ -6564,10 +6590,10 @@ been initialized yet."
   (unless twittering-initialized
     (defface twittering-username-face
       `((t ,(append ;; '(:underline t)
-                    (face-attr-construct
-                     (if (facep 'font-lock-string-face)
-                         'font-lock-string-face
-                       'bold)))))
+             (face-attr-construct
+              (if (facep 'font-lock-string-face)
+                  'font-lock-string-face
+                'bold)))))
       "" :group 'faces)
     (defface twittering-uri-face `((t (:underline t))) "" :group 'faces)
     (twittering-update-status-format)
@@ -6819,7 +6845,7 @@ If nil, read it from the minibuffer."
                                   'authorized))
                             twittering-enabled-services))
             (twittering-save-private-info-with-guide))
-             
+          
           (twittering-start))))
      (t
       (message "%s is invalid as an authorization method."
@@ -7644,7 +7670,8 @@ handler. "
              (image (and s (get-text-property 0 'display s)))
              (height (and image (cdr (image-size image))))
              (image-data (and image (plist-get (cdr image) :data)))
-             (common-properties (twittering-get-common-properties (point))))
+             (common-properties (twittering-get-common-properties (point)))
+             (faces (get-text-property (point) 'face)))
         (if (and height (> height twittering-image-height-threshold))
             (if twittering-image-external-viewer-command
                 (let ((f (file-truename twittering-tmp-image))
@@ -7675,6 +7702,7 @@ handler. "
                                     (define-key map (kbd "RET") func)
                                     map))
                                s)
+          (twittering-decorate-zebra-background s faces)
           (if initial
               s
             (let ((inhibit-read-only t))
@@ -7694,10 +7722,6 @@ handler. "
         (when json-data
           (setq ret json-data)
           (case (assqref 'method args)
-            ((counts)                   ; Assume just one ID.
-             (setq ret `(,(remove nil (assq 'comments (assqref 'count (car json-data))))
-                         ,(remove nil (assq 'rt       (assqref 'count (car json-data)))))))
-
             ((emotions)
              (setq twittering-emotions-phrase-url-alist ret))
 
@@ -8336,7 +8360,7 @@ DATA includes:
           `(,@(remove-if (lambda (i) (equal (car i) spec)) 
                          twittering-stream-data-alist)
             ,cache))))
-  
+
 (defun twittering-stream-filter (proc output)
   (let ((spec (twittering-get-timeline-spec-from-process proc)))
     (unless (twittering-get-buffer-from-spec spec)
@@ -8536,7 +8560,7 @@ Duplicated elements should not exist in STR-LIST."
        (substring pre 2)))
    str-list))
 
-(defun twittering-decorate-zebra-background (object face1 face2)
+(defun twittering-decorate-zebra-background (object face1 &optional face2)
   "Append zebra background to OBJECT.
 The zebra face is decided by looking at adjacent face. "
   (let* ((start 0)
@@ -8550,10 +8574,15 @@ The zebra face is decided by looking at adjacent face. "
                                       (if (listp faces) faces (list faces)))))
                          face2
                        face1)))
+    (when (and zebra-face (atom zebra-face))
+      (setq zebra-face `(,zebra-face)))
     (while (setq end (next-single-property-change start 'face object))
-      (put-text-property start end 'face (if (listp other-faces)
-                                             (cons zebra-face other-faces)
-                                           (list zebra-face other-faces))
+      (put-text-property start end
+                         'face (append zebra-face 
+                                       (when other-faces
+                                         (if (listp other-faces)
+                                             other-faces
+                                           `(,other-faces))))
                          object)
       (setq start end
             other-faces (get-text-property start 'face object)))
@@ -9488,7 +9517,7 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
 
 (defun twittering-construct-statuses-1 ()
   (let ((statuses (twittering-json-read))
-         (has (lambda (symbol)
+        (has (lambda (symbol)
                (find-if (lambda (i) (eq (car i) symbol)) statuses))))
     (cond 
      ((funcall has 'entry)         ; douban.com
@@ -9526,7 +9555,7 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
 
      ((funcall has 'user)               ; `show' a single tweet
       `((,@statuses 
-         ; TODO: handle replies
+                                        ; TODO: handle replies
          ;; (is-reply-reference . t)
          )))
 
@@ -9805,6 +9834,16 @@ SPEC may be a timeline spec or a timeline spec string."
 (defun twittering-status-id= (id1 id2)
   (equal id1 id2))
 
+(defun twittering-extract-face-property (properties)
+  (when (memq 'face properties)
+    (let ((lst properties)
+          ret)
+      (while lst
+        (if (eq (car lst) 'face)
+            (setq ret (cadr lst)
+                  lst nil)
+          (setq lst (cdr lst))))
+      ret)))
 
 (provide 'twittering-mode)
 
