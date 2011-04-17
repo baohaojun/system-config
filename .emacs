@@ -1159,6 +1159,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (defvar java-bt-mode-map nil
   "Keymap for java-bt-mode.")
 
+(defvar java-bt-tag-alist nil
+  "backtrace/code tag alist.")
+
 (defun java-bt-next-error (&optional argp reset)
   (interactive "p")
   (with-current-buffer
@@ -1193,7 +1196,10 @@ Starting from DIRECTORY, look upwards for a cscope database."
             (search-backward ".")
             (setq msg (point-marker))
             (end-of-line)
-            (setq grep-output (shell-command-to-string (concat "java-trace-grep " (shell-quote-argument (current-line-string))))))
+            (setq grep-output (cdr (assoc-string start-line-str java-bt-tag-alist)))
+            (unless grep-output
+              (setq grep-output (shell-command-to-string (concat "java-trace-grep " (shell-quote-argument (current-line-string)))))
+              (setq java-bt-tag-alist (cons (cons start-line-str grep-output) java-bt-tag-alist))))
 
         (when (string-match "^\\(.*\\):\\([0-9]+\\):" grep-output)
           (setq target-file (match-string 1 grep-output)
@@ -1222,6 +1228,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive)
   (kill-all-local-variables)
   (use-local-map java-bt-mode-map)
+  (make-local-variable 'java-bt-tag-alist)
   (setq major-mode 'java-bt-mode-map)
   (setq mode-name "java-bt")
   (setq next-error-function 'java-bt-next-error)
