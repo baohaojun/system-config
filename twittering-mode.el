@@ -4280,10 +4280,12 @@ following symbols;
 
   ;; comment/retweet counts
   (when (eq (twittering-extract-service) 'sina)
-    (setq str (concat str "\n"
-                      (format (format "%%%ds" (- (twittering-calculate-fill-column (length prefix))
-                                                 18)) ; length for counts string.
-                              (twittering-get-simple nil nil nil 'counts)))))
+    (let ((spec-string (twittering-current-timeline-spec-string)))
+      (unless (equal spec-string ":replies@sina")
+        (let ((n (- (twittering-calculate-fill-column (length prefix))
+                    18))                ; length for counts string.
+              (s (twittering-get-simple nil nil nil 'counts)))
+          (setq str (concat str "\n" (format (format "%%%ds" n) s)))))))
 
   str)
 
