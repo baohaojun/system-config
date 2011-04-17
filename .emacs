@@ -375,10 +375,22 @@
       (save-excursion
         (let* ((re "[^-a-zA-Z0-9._/]")
                (p1 (progn (search-backward-regexp re)
-                          (1+ (point))))
-              (p2 (progn (forward-char)
-                         (search-forward-regexp re)
-                         (1- (point)))))
+                          (if (looking-at "(")
+                              (progn
+                                (search-backward-regexp "\\." (line-beginning-position))
+                                (prog1
+                                    (1+ (point))
+                                  (search-forward-regexp "(")))
+                            (1+ (point)))))
+               (p2 (progn (forward-char)
+                          (search-forward-regexp re)
+                          (backward-char)
+                          (if (looking-at ":[0-9]+")
+                              (progn
+                                (forward-char)
+                                (search-forward-regexp "[^0-9]")
+                                (1- (point)))
+                            (point)))))
           (buffer-substring-no-properties p1 p2)))))
 
 (global-set-key [(meta s) ?p] 
