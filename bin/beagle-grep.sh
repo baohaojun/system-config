@@ -97,7 +97,8 @@ if ($find_file_only || 1) {
         my $files = qx(grep-gtags -e $file_tag|perl -ne "if (m/:[0-9]+:/) {s/:[0-9]+:.*//; print}"|sort -u);
         my @files = split("\n", $files);
         for (@files) {
-            print "$_:$file_default_line: [01;31m****************![0m\n" if $set{$_};
+            print "$_:$file_default_line: [01;31m****************![0m\n" 
+                if $set{$_} and m,/$pat_save$,; # the `and' part is to make file name match totally
         }
     } else {
         for (@beagle_files) {
