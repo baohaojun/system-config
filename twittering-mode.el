@@ -2993,7 +2993,8 @@ PARAMETERS is alist of URI parameters.
                         (format 
                          "<?xml version='1.0' encoding='UTF-8'?>
 <entry xmlns:ns0=\"http://www.w3.org/2005/Atom\" xmlns:db=\"http://www.douban.com/xmlns/\">
-<content>%s</content></entry>" (assocref "status" parameters))
+<content>%s</content></entry>" 
+                         (assocref "status" parameters))
                       ""))
          ;; TODO
          ;; "POST" url (and (not (twittering-is-uploading-file-p parameters))
@@ -4123,8 +4124,7 @@ following symbols;
     str))
 
 (defun twittering-format-tweet-text-with-quote (quoted-text text status)
-  (let ((quoted-status (twittering-status-has-quotation? status))
-        (detail (assqref 'detail status)))
+  (let ((quoted-status (twittering-status-has-quotation? status)))
     (cond 
      (quoted-text
       (if (or (string-match (regexp-opt
@@ -4138,17 +4138,21 @@ following symbols;
               (string= text "转发微博。"))
           quoted-text
         (format "『%s』\n\n    %s" quoted-text text)))
-     (detail
-      (format "%s\n\n    %s" text detail))
      (t
       text))))
 
 (defun twittering-make-fontified-tweet-text (str status prefix)
-  ;; (sina) Recognize and mark emotions, we will show them in
-  ;; twittering-redisplay-status-on-each-buffer.
   (case (twittering-extract-service)
     ((sina)
-     (setq str (replace-regexp-in-string "\\(\\[[^][]+\\]\\)" "[\\1]" str)))
+     ;; emotions
+     (unless twittering-is-getting-emotions-p
+       (setq twittering-is-getting-emotions-p t)
+       (twittering-get-simple nil nil nil 'emotions))
+     (while (string-match "\\(\\[[^][]+\\]\\)" str)
+       (let ((repl (twittering-make-emotions-string 
+                    nil nil (match-string 1 str))))
+         (setq str (replace-match repl nil nil str)))))
+
     ((douban)
      (setq str (twittering-make-string-with-uri-property str))))
 
@@ -4158,6 +4162,7 @@ following symbols;
     (html2text)
     (setq str (buffer-string)))
 
+  ;; tag, username, uri 
   (let* ((regexp-list
           `( ;; Hashtag
             (hashtag . ,(concat twittering-regexp-hash
@@ -4250,6 +4255,16 @@ following symbols;
         (add-text-properties beg end properties str)
         (setq pos end))))
 
+  ;; (douban) details
+  (let ((detail (assqref 'detail status)))
+    (when detail
+      (setq detail (concat detail
+                           "?alt=json&apikey=" 
+                           (twittering-lookup-service-method-table
+                            'oauth-consumer-key)))
+      (let ((s (twittering-make-douban-detail-string nil nil detail "")))
+        (setq str (format "%s\n\n%s" str s)))))
+
   ;; thumbnail picture
   (let* ((st (or (twittering-status-has-quotation? status) status))
          (s (if (and twittering-icon-mode window-system)
@@ -4269,6 +4284,7 @@ following symbols;
                       (format (format "%%%ds" (- (twittering-calculate-fill-column (length prefix))
                                                  18)) ; length for counts string.
                               (twittering-get-simple nil nil nil 'counts)))))
+
   str)
 
 (defun twittering-generate-format-table (status-sym prefix-sym)
@@ -5136,63 +5152,16 @@ rendered at POS, return nil."
                  (insert updated-str))
                (twittering-restore-window-config-after-modification
                 config beg end))))
-         buffer)
-
-        (case (twittering-extract-service)
-          ;; Display emotions.
-          ((sina)                       
-           (goto-char (point-min))
-           (while (re-search-forward "\\(\\[\\(\\[[^][]+\\]\\)\\]\\)" nil t 1)
-             (unless twittering-is-getting-emotions-p
-               (setq twittering-is-getting-emotions-p t)
-               (let ((twittering-service-method 'sina))
-                 (save-match-data
-                   (twittering-get-simple nil nil nil 'emotions))))
-
-             (let* ((str (match-string 2))
-                    (inhibit-read-only t)
-                    (repl str)) ; original string, restore it when not a emotion. 
-               (save-match-data
-                 (let ((url (some (lambda (i) (when (string= (assqref 'phrase i) str)
-                                                (assqref 'url i)))
-                                  twittering-emotions-phrase-url-alist))
-                       (common-properties (twittering-get-common-properties (point)))
-                       (faces (get-text-property (point) 'face)))
-                   (when url
-                     (setq repl (twittering-make-original-icon-string nil nil url)))
-                   (add-text-properties 0 (length repl) common-properties repl)
-                   (twittering-decorate-zebra-background repl faces)))
-               (when (consp twittering-emotions-phrase-url-alist)
-                 (replace-match repl)))))
-
-          ;; Show details.
-          ((douban)
-           (goto-char (point-min))
-           (let ((re (format "\\(https?://%s/[-_.!~*'()a-zA-Z0-9;/?:@&=+$,%%#]+\\)"
-                             (twittering-lookup-service-method-table 'api)))
-                 (inhibit-read-only t))
-             (while (re-search-forward re nil t 1)
-               (let* ((beg (match-beginning 0))
-                      (end (match-end 0))
-                      (url (concat
-                            (match-string 0)
-                            "?alt=json&apikey=" 
-                            (twittering-lookup-service-method-table 'oauth-consumer-key)))
-                      (prefix (save-excursion
-                                (goto-char beg)
-                                (make-string (current-column) ? )))
-                      (repl (save-match-data
-                              (twittering-make-douban-detail-string beg end url prefix))))
-                 (replace-match repl))))))
-        )                                 ; save-excursion ends here
+         buffer))
       
       ;; (xwl) consider remove following
-      (set-marker marker nil)
-      (when (and result (eq (window-buffer) buffer))
-        (let ((win (selected-window)))
-          (when (< result (window-start win))
-            (set-window-start win result))
-          (set-window-point win result))))))
+      ;; (set-marker marker nil)
+      ;; (when (and result (eq (window-buffer) buffer))
+      ;;   (let ((win (selected-window)))
+      ;;     (when (< result (window-start win))
+      ;;       (set-window-start win result))
+      ;;     (set-window-point win result)))
+      )))
 
 (defun twittering-for-each-property-region (prop func &optional buffer interrupt)
   "Apply FUNC to each region, where property PROP is non-nil, on BUFFER.
@@ -6220,7 +6189,8 @@ string.")
                   (pred (lambda (i) (equal (assqref 'id i) id)))
                   (count (find-if pred retrieved)))
              (when id
-               (add-to-list 'twittering-counts-request-list id t))
+               (setq twittering-counts-request-list
+                     `(,@(remove id twittering-counts-request-list) ,id)))
              (when count
                (let* ((rt (assqref 'rt count))
                       (cm (assqref 'comments count))
@@ -6236,12 +6206,12 @@ string.")
                                       'keymap twittering-mode-on-uri-map
                                       'uri (twittering-get-status-url 
                                             (assqref 'id (assqref 'user st))
-                                            (assqref 'id st)))))))
+                                            (assqref 'id st))))))))
 
-             (when (and twittering-counts-last-timestamp
-                        (> (time-to-seconds (time-since twittering-counts-last-timestamp))
-                           twittering-timer-interval))
-               (puthash `(,username ,method) nil twittering-simple-hash))))
+           (when (and twittering-counts-last-timestamp
+                      (> (time-to-seconds (time-since twittering-counts-last-timestamp))
+                         twittering-timer-interval))
+             (puthash `(,username ,method) nil twittering-simple-hash)))
 
          (setq s (propertize s 'need-to-be-updated 
                              `(twittering-get-simple ,username ,method))))
@@ -6255,7 +6225,8 @@ string.")
       (if (eq method 'counts)
           (let ((id (twittering-get-id-at beg)))
             (when id
-              (add-to-list 'twittering-counts-request-list id t))
+              (setq twittering-counts-request-list
+                    `(,id ,@(remove id twittering-counts-request-list))))
             (when (and (if twittering-counts-last-timestamp
                            (> (time-to-seconds (time-since twittering-counts-last-timestamp))
                               twittering-timer-interval)
@@ -7635,10 +7606,23 @@ image are displayed."
         (twittering-url-retrieve-async image-url 'twittering-register-image-data)
         icon-string)))))
 
-
 (defun twittering-make-original-icon-string (beg end image-url &optional sync)
   (let ((twittering-convert-fix-size nil))
     (twittering-make-icon-string beg end image-url sync)))
+
+(defun twittering-make-emotions-string (beg end emotion)
+  (let ((ret (if (and beg end) (buffer-substring-no-properties beg end) ".")))
+    (if (consp twittering-emotions-phrase-url-alist)
+        (let ((url (some (lambda (i)
+                           (when (string= (assqref 'phrase i) emotion)
+                             (assqref 'url i)))
+                         twittering-emotions-phrase-url-alist)))
+          (when url
+            (setq ret (twittering-make-original-icon-string nil nil url))))
+      (setq ret (propertize ret
+                            'need-to-be-updated 
+                            `(twittering-make-emotions-string ,emotion))))
+    ret))
 
 (defcustom twittering-image-height-threshold 40
   "For images whose height is bigger than this, we will show it in a separate
@@ -9386,8 +9370,6 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
 
 (defvar twittering-emotions-phrase-url-alist nil)
 (defvar twittering-is-getting-emotions-p nil)
-
-
 
 (defun twittering-decode-html-entities (encoded-str)
   (if (consp encoded-str)
