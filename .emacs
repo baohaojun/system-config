@@ -586,7 +586,11 @@
 
       (while (and all-letou (string-match "@" receivers start-pos))
         (setq start-pos (match-end 0))
-        (unless (string-match "@adsnexus.com\\|@eee168.com\\|@rayzerlink.com\\|@hzwowpad.com" receivers (1- start-pos))
+        (unless (= (string-match 
+                    "@adsnexus.com\\|@eee168.com\\|@rayzerlink.com\\|@hzwowpad.com" 
+                    receivers 
+                    (1- start-pos))
+                   (1- start-pos))
           (setq all-letou nil)))
 
       (when all-letou
