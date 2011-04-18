@@ -4270,7 +4270,7 @@ following symbols;
                            "?alt=json&apikey=" 
                            (twittering-lookup-service-method-table
                             'oauth-consumer-key)))
-      (let ((s (twittering-make-douban-detail-string nil nil detail "")))
+      (let ((s (twittering-make-douban-detail-string nil nil detail)))
         (setq str (format "%s\n\n%s" str s)))))
 
   ;; thumbnail picture
@@ -6443,7 +6443,7 @@ string.")
 
 ;;; ============================================= Douban details
 
-(defun twittering-make-douban-detail-string (beg end detail-url prefix &optional html)
+(defun twittering-make-douban-detail-string (beg end detail-url &optional html)  
   (let* ((detail-data (gethash detail-url twittering-url-data-hash))
          (properties (and beg (text-properties-at beg)))
          (detail (apply 'propertize "." properties)))
@@ -6485,7 +6485,7 @@ string.")
                    (setq detail (concat detail detail)) ; should be different.
                    (put-text-property 0 (length detail)
                                       'need-to-be-updated
-                                      `(twittering-make-douban-detail-string ,url ,prefix t)
+                                      `(twittering-make-douban-detail-string ,url t)
                                       detail)
                    (twittering-url-retrieve-async url)
                    (setq get-photo t))))
@@ -6566,22 +6566,27 @@ string.")
 
             (unless get-photo
               (unless (string= detail "")
-                (setq detail (replace-regexp-in-string "" "" detail)
-                      detail (twittering-fill-string detail nil prefix t)
-                      detail (substring detail (length prefix))
-                      detail (apply 'propertize detail properties))
-                (remove-text-properties 0 (length detail)
-                                        '(need-to-be-updated nil)
-                                        detail)))
-
-            detail))))
+                (let ((prefix ""))
+                  (when beg
+                    (setq prefix (make-string 
+                                  (save-excursion (goto-char beg) (current-column)) ? )))
+                  (setq prefix (concat prefix "    ") ; indent
+                        detail (concat "    " detail))
+                  (setq detail (replace-regexp-in-string "" "" detail)
+                        detail (twittering-fill-string detail nil prefix t)
+                        detail (substring detail (length prefix))
+                        detail (apply 'propertize detail properties))
+                  (remove-text-properties 0 (length detail)
+                                          '(need-to-be-updated nil)
+                                          detail))))))))
      (t
       (put-text-property 0 (length detail)
                          'need-to-be-updated
-                         `(twittering-make-douban-detail-string ,detail-url ,prefix)
+                         `(twittering-make-douban-detail-string ,detail-url)
                          detail)
-      (twittering-url-retrieve-async detail-url)
-      detail))))
+      (twittering-url-retrieve-async detail-url)))
+    
+    detail))
 
 (defun twittering-make-rating-string (rating)
   (when rating
