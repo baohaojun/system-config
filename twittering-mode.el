@@ -6250,7 +6250,7 @@ string.")
                                           (assqref 'id (assqref 'user st))
                                           (assqref 'id st))))))))
          ;; Do it forcefully when timer expires, since some status may be
-         ;; deleted before it updates twittering-counts-request-list.
+         ;; deleted before it updates twittering-simple-hash.
          (when (and twittering-counts-last-timestamp
                     (> (time-to-seconds (time-since twittering-counts-last-timestamp))
                        twittering-timer-interval))
@@ -6279,16 +6279,14 @@ string.")
               (setq twittering-counts-last-timestamp (current-time))
               (setq twittering-counts-request-list
                     (remove-if-not 'twittering-find-status twittering-counts-request-list))
-              (let ((size (min twittering-counts-request-max 
-                               (length twittering-counts-request-list)))
-                    ids)
-                (dotimes (i size)
+              (let (ids)
+                (dotimes (i (min twittering-counts-request-max 
+                                 (length twittering-counts-request-list)))
                   (setq ids (cons (elt twittering-counts-request-list i) ids)))
                 ;; Place IDS in the end now
                 (setq twittering-counts-request-list 
                       (append 
-                       (member (elt twittering-counts-request-list (1- size))
-                               twittering-counts-request-list)
+                       (twittering-drop (length ids) twittering-counts-request-list)
                        (reverse ids)))
                 (twittering-get-simple-1 method `((username . ,username)
                                                   (ids . ,(mapconcat 'identity ids ",")))))))
@@ -7768,9 +7766,10 @@ handler. "
         (when json-data
           (setq ret json-data)
           (case (assqref 'method args)
+            ((counts)
+             (setq twittering-counts-last-timestamp (current-time)))
             ((emotions)
              (setq twittering-emotions-phrase-url-alist ret))
-
             ((get-list-index get-list-subscriptions get-list-memberships)
              (setq ret (mapcar (lambda (i) (substring (assqref 'full-name i) 1))
                                (assqref 'lists ret))))
@@ -8536,6 +8535,11 @@ DATA includes:
   (and (> n 0)
        (car lst)
        (cons (car lst) (twittering-take (1- n) (cdr lst)))))
+
+(defun twittering-drop (n lst)
+  (if (= n 1)
+      (cdr lst)
+    (twittering-drop (1- n) (cdr lst))))
 
 (defun twittering-remove-duplicates (list)
   "Return a copy of LIST with all duplicate elements removed.
