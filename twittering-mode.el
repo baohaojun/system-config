@@ -107,7 +107,7 @@ buffers."
   :group 'twittering)
 
 (defcustom twittering-status-format 
-  "%FACE[twittering-zebra-1-face,twittering-zebra-2-face]{%i %g %s, from %f%L%r%R:\n%FOLD[      ]{%t}\n}"
+  "%FACE[twittering-zebra-1-face,twittering-zebra-2-face]{%i %g %s, from %f%L%r%R:\n%FOLD[       ]{%t}\n}"
   "Format string for rendering statuses.
 Ex. \"%i %s,  %@:\\n%FILL{  %t // from %f%L%r%R}\n \"
 
