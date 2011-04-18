@@ -6227,30 +6227,28 @@ string.")
                                           ? )))))
 
         ((counts)
-         (unless (eq retrieved 'doing)  ; counts retrieving in the progress
-           (let* ((id (twittering-get-id-at beg))
-                  (st (twittering-find-status id))
-                  (pred (lambda (i) (equal (assqref 'id i) id)))
-                  (count (find-if pred retrieved)))
-             (when id
-               (setq twittering-counts-request-list
-                     `(,@(remove id twittering-counts-request-list) ,id)))
-             (when count
-               (let* ((rt (assqref 'rt count))
-                      (cm (assqref 'comments count))
-                      (rt-str (if (equal rt "0") "" (concat "(" rt ")")))
-                      (cm-str (if (equal cm "0") "" (concat "(" cm ")"))))
-                 (puthash `(,username ,method) (remove-if pred retrieved)
-                          twittering-simple-hash)
-                 (setq s (concat 
-                          (format "轉發%s " rt-str)
-                          (propertize (format "評論%s" cm-str)
-                                      'mouse-face 'highlight
-                                      'face 'twittering-uri-face
-                                      'keymap twittering-mode-on-uri-map
-                                      'uri (twittering-get-status-url 
-                                            (assqref 'id (assqref 'user st))
-                                            (assqref 'id st)))))))))
+         (let* ((id (twittering-get-id-at beg))
+                (st (twittering-find-status id))
+                (pred (lambda (i) (equal (assqref 'id i) id)))
+                (count (find-if pred retrieved)))
+           (when id
+             (add-to-list 'twittering-counts-request-list id))
+           (when count
+             (let* ((rt (assqref 'rt count))
+                    (cm (assqref 'comments count))
+                    (rt-str (if (equal rt "0") "" (concat "(" rt ")")))
+                    (cm-str (if (equal cm "0") "" (concat "(" cm ")"))))
+               (puthash `(,username ,method) (remove-if pred retrieved)
+                        twittering-simple-hash)
+               (setq s (concat 
+                        (format "轉發%s " rt-str)
+                        (propertize (format "評論%s" cm-str)
+                                    'mouse-face 'highlight
+                                    'face 'twittering-uri-face
+                                    'keymap twittering-mode-on-uri-map
+                                    'uri (twittering-get-status-url 
+                                          (assqref 'id (assqref 'user st))
+                                          (assqref 'id st))))))))
          ;; Do it forcefully when timer expires, since some status may be
          ;; deleted before it updates twittering-counts-request-list.
          (when (and twittering-counts-last-timestamp
@@ -6270,8 +6268,7 @@ string.")
       (if (eq method 'counts)
           (let ((id (twittering-get-id-at beg)))
             (when id
-              (setq twittering-counts-request-list
-                    `(,id ,@(remove id twittering-counts-request-list))))
+              (add-to-list 'twittering-counts-request-list id))
             (when (and (if twittering-counts-last-timestamp
                            (> (time-to-seconds (time-since twittering-counts-last-timestamp))
                               twittering-timer-interval)
@@ -6280,14 +6277,21 @@ string.")
                              twittering-number-of-tweets-on-retrieval))
                        (not (null twittering-counts-request-list)))
               (setq twittering-counts-last-timestamp (current-time))
-              (puthash `(,username ,method) 'doing twittering-simple-hash)
-              (let (ids)
-                (dotimes (i (min twittering-counts-request-max 
-                                 (length twittering-counts-request-list)))
+              (setq twittering-counts-request-list
+                    (remove-if-not 'twittering-find-status twittering-counts-request-list))
+              (let ((size (min twittering-counts-request-max 
+                               (length twittering-counts-request-list)))
+                    ids)
+                (dotimes (i size)
                   (setq ids (cons (elt twittering-counts-request-list i) ids)))
-                (setq ids (mapconcat 'identity ids ","))
+                ;; Place IDS in the end now
+                (setq twittering-counts-request-list 
+                      (append 
+                       (member (elt twittering-counts-request-list (1- size))
+                               twittering-counts-request-list)
+                       (reverse ids)))
                 (twittering-get-simple-1 method `((username . ,username)
-                                                  (ids . ,ids))))))
+                                                  (ids . ,(mapconcat 'identity ids ",")))))))
         (twittering-get-simple-1 method `((username . ,username))))))
 
     s))
