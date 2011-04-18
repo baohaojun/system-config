@@ -6250,12 +6250,13 @@ string.")
                                       'keymap twittering-mode-on-uri-map
                                       'uri (twittering-get-status-url 
                                             (assqref 'id (assqref 'user st))
-                                            (assqref 'id st))))))))
-
-           (when (and twittering-counts-last-timestamp
-                      (> (time-to-seconds (time-since twittering-counts-last-timestamp))
-                         twittering-timer-interval))
-             (puthash `(,username ,method) nil twittering-simple-hash)))
+                                            (assqref 'id st)))))))))
+         ;; Do it forcefully when timer expires, since some status may be
+         ;; deleted before it updates twittering-counts-request-list.
+         (when (and twittering-counts-last-timestamp
+                    (> (time-to-seconds (time-since twittering-counts-last-timestamp))
+                       twittering-timer-interval))
+           (puthash `(,username ,method) nil twittering-simple-hash))
 
          (setq s (propertize s 'need-to-be-updated 
                              `(twittering-get-simple ,username ,method))))
