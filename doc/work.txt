@@ -772,6 +772,7 @@ local options=(--help --action --file --debug --verbose --server --user --passwo
 ）
 
 sawfish-client -e '(mapcar (lambda (w) (and (string-match "腾讯网新闻" (window-name w)) (delete-window-safely w)))  (window-order))'
+sawfish-client -e '(mapcar (lambda (w) (and (string-match "File-roller" (window-class w)) (delete-window-safely w)))  (window-order))'
 
 bzr branch  lp:usb-creator  
 
@@ -890,4 +891,7 @@ nvtest dfs_monitor
 
 rfa . 'br=tegra-10.9.9; git fetch letou refs/tags/$br:refs/tags/$br >/dev/null 2>&1 || pwd'
 for x in `find . -name "*.git" -type d`; do (br=tegra-10.9.9; cd $x && if git tag|grep "^$br$" -q; then echo $x && git push letou $br:$br; fi); done
+echo 10 > /sys/class/gpio/export; echo 22 > /sys/class/gpio/export; x=`cat /proc/interrupts|grep 320:|awk '{print $2}'`; while true; do y=`cat /proc/interrupts|grep 320:|awk '{print $2}'`; if test $x != $y; then echo yes; x=$y; (cd /sys/class/gpio/gpio22; echo 1 > value; cd /sys/class/gpio/gpio10; echo 1 > value; ); else (cd /sys/class/gpio/gpio22; echo 0 > value;  cd /sys/class/gpio/gpio10; echo 0 > value); fi; sleep 3; done
+
+(export CLASSPATH=/usr/local/jdk1.5/lib:.; export JAVA_HOME=/usr/local/jdk1.5; export ANDROID_JAVA_HOME=$JAVA_HOME; cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 -l8 )
 

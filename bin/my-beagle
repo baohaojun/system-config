@@ -1,6 +1,6 @@
 #!/bin/bash
 start_dir=~/tmp/for-code-reading/`pwd`
-echo Starting at $start_dir 1>&2
+# echo Starting at $start_dir 1>&2
 while test ! -d "$start_dir"/.beagle -a "$start_dir" != /
 do
     start_dir=${start_dir%/*}
@@ -15,7 +15,7 @@ else
 fi
 
 beagle_dir=$start_dir/.beagle
-echo Beagle index found at "$beagle_dir" 1>&2
+# echo Beagle index found at "$beagle_dir" 1>&2
 
 if test -f "$start_dir"/.beagle-filter
 then

@@ -375,10 +375,22 @@
       (save-excursion
         (let* ((re "[^-a-zA-Z0-9._/]")
                (p1 (progn (search-backward-regexp re)
-                          (1+ (point))))
-              (p2 (progn (forward-char)
-                         (search-forward-regexp re)
-                         (1- (point)))))
+                          (if (looking-at "(")
+                              (progn
+                                (search-backward-regexp "\\." (line-beginning-position))
+                                (prog1
+                                    (1+ (point))
+                                  (search-forward-regexp "(")))
+                            (1+ (point)))))
+               (p2 (progn (forward-char)
+                          (search-forward-regexp re)
+                          (backward-char)
+                          (if (looking-at ":[0-9]+")
+                              (progn
+                                (forward-char)
+                                (search-forward-regexp "[^0-9]")
+                                (1- (point)))
+                            (point)))))
           (buffer-substring-no-properties p1 p2)))))
 
 (global-set-key [(meta s) ?p] 
@@ -988,11 +1000,25 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (defun waw-find-match (n search message)
   (if (not n) (setq n 1))
-  (let ((r))
+  (while (> n 0)
+    (or (funcall search)
+        (error message))
+    (setq n (1- n))))
+
+(defun java-bt-find-match (n search message)
+  (if (not n) (setq n 1))
     (while (> n 0)
       (or (funcall search)
           (error message))
-      (setq n (1- n)))))
+      (setq n (1- n))))
+
+(defun java-bt-search-prev ()
+  (beginning-of-line)
+  (search-backward-regexp "(.*:[0-9]+)$"))
+
+(defun java-bt-search-next ()
+  (end-of-line)
+  (search-forward-regexp "(.*:[0-9]+)$"))
 
 (defun waw-search-prev ()
   (beginning-of-line)
@@ -1061,7 +1087,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
           (setq target-file (match-string 1 error-line-str)
                 target-line (match-string 2 error-line-str)))
 
-
         (when (equal start-line-number error-line-number)
           (search-forward "=>")
           (forward-line))
@@ -1074,6 +1099,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
         
         (setq new-line-number (line-number-at-pos))
         (forward-line -1)
+
         (while (> new-line-number error-line-number)
           (if (string-match "^\\s *\\.\\.\\.$" (current-line-string))
               (progn
@@ -1127,6 +1153,90 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (setq mode-name "Where-are-we")
   (setq next-error-function 'waw-next-error)
   (run-mode-hooks 'waw-mode-hook))
+
+(defun java-bt-ret-key ()
+  (interactive)
+  (let ((start-line-str (current-line-string)))
+    (if (string-match "(.*:[0-9]+)" start-line-str)
+        (next-error 0))))
+
+(defvar java-bt-mode-map nil
+  "Keymap for java-bt-mode.")
+
+(defvar java-bt-tag-alist nil
+  "backtrace/code tag alist.")
+
+(defun java-bt-next-error (&optional argp reset)
+  (interactive "p")
+  (with-current-buffer
+      (if (next-error-buffer-p (current-buffer))
+          (current-buffer)
+        (next-error-find-buffer nil nil
+                                (lambda()
+                                  (eq major-mode 'java-bt-mode))))
+    
+    (message "point is at %d" (point))
+    (goto-char (cond (reset (point-min))
+                     ((< argp 0) (line-beginning-position))
+                     ((> argp 0) (line-end-position))
+                     ((point))))
+    (java-bt-find-match
+     (abs argp)
+     (if (> argp 0)
+         #'java-bt-search-next
+       #'java-bt-search-prev)
+     "No more matches")
+    (message "point is at %d" (point))
+
+    (catch 'done
+      (let ((start-line-number (line-number-at-pos))
+            (start-line-str (current-line-string))
+            new-line-number target-file target-line 
+            error-line-number error-line-str grep-output temp-buffer
+            msg mk end-mk)
+          (save-excursion
+            (end-of-line)
+            (search-backward "(")
+            (search-backward ".")
+            (setq msg (point-marker))
+            (end-of-line)
+            (setq grep-output (cdr (assoc-string start-line-str java-bt-tag-alist)))
+            (unless grep-output
+              (setq grep-output (shell-command-to-string (concat "java-trace-grep " (shell-quote-argument (current-line-string)))))
+              (setq java-bt-tag-alist (cons (cons start-line-str grep-output) java-bt-tag-alist))))
+
+        (when (string-match "^\\(.*\\):\\([0-9]+\\):" grep-output)
+          (setq target-file (match-string 1 grep-output)
+                target-line (match-string 2 grep-output))
+          (save-excursion
+            (with-current-buffer (find-file-noselect target-file)
+              (goto-line (read target-line))
+              (beginning-of-line)
+              (setq mk (point-marker) end-mk (line-end-position)))))
+
+        (compilation-goto-locus msg mk end-mk))
+      
+      (throw 'done nil))))
+
+(setq java-bt-mode-map
+      (let ((map (make-sparse-keymap)))
+        (define-key map "\C-m" 'java-bt-ret-key)
+        (define-key map [(return)] 'java-bt-ret-key)
+        (define-key map [(meta p)] 'previous-error-no-select)
+        (define-key map [(meta n)] 'next-error-no-select)
+        map))
+
+(put 'java-bt-mode 'mode-class 'special)
+(defun java-bt-mode ()
+  "Major mode for output from java back trace."
+  (interactive)
+  (kill-all-local-variables)
+  (use-local-map java-bt-mode-map)
+  (make-local-variable 'java-bt-tag-alist)
+  (setq major-mode 'java-bt-mode-map)
+  (setq mode-name "java-bt")
+  (setq next-error-function 'java-bt-next-error)
+  (run-mode-hooks 'java-bt-mode-hook))
 
 (defvar boe-default-indent-col 0)
 (make-variable-buffer-local 'boe-default-indent-col)
