@@ -586,11 +586,7 @@
 
       (while (and all-letou (string-match "@" receivers start-pos))
         (setq start-pos (match-end 0))
-        (unless (= (string-match 
-                    "@adsnexus.com\\|@eee168.com\\|@rayzerlink.com\\|@hzwowpad.com" 
-                    receivers 
-                    (1- start-pos))
-                   (1- start-pos))
+        (unless (string-match "@adsnexus.com\\|@eee168.com\\|@rayzerlink.com\\|@hzwowpad.com" receivers (1- start-pos))
           (setq all-letou nil)))
 
       (when all-letou
@@ -1202,11 +1198,14 @@ Starting from DIRECTORY, look upwards for a cscope database."
             (end-of-line)
             (setq grep-output (cdr (assoc-string start-line-str java-bt-tag-alist)))
             (unless grep-output
-              (setq grep-output (shell-command-to-string (concat "java-trace-grep " (shell-quote-argument (current-line-string)))))
+              (setq grep-output (progn
+                                  (shell-command (concat "java-trace-grep " (shell-quote-argument (current-line-string))))
+                                  (with-current-buffer "*Shell Command Output*"
+                                    (buffer-substring-no-properties (point-min) (point-max)))))
               (setq java-bt-tag-alist (cons (cons start-line-str grep-output) java-bt-tag-alist))))
 
         (when (string-match "^\\(.*\\):\\([0-9]+\\):" grep-output)
-          (setq target-file (match-string 1 grep-output)
+          (setq target-file (concat (file-remote-p (buffer-file-name (current-buffer))) (match-string 1 grep-output))
                 target-line (match-string 2 grep-output))
           (save-excursion
             (with-current-buffer (find-file-noselect target-file)
