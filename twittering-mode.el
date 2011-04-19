@@ -4305,7 +4305,8 @@ following symbols;
                            (assqref 'likes-count status)
                            (assqref 'comments-count status)))))
 
-        (setq str (concat str "\n" (format fmt s))))))
+        (when s
+          (setq str (concat str "\n" (format fmt s)))))))
 
   str)
 
