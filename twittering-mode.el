@@ -2510,7 +2510,7 @@ The method to perform the request is determined from
             ;; http://www.escafrace.co.jp/blog/09/10/16/1008
             ("Expect" . "")))
          (curl-args
-          `("--include" "--silent" "--location"
+          `("--include" "--silent" "--location" "--request" ,method
             ,@(apply 'append
                      (mapcar
                       (lambda (pair)
@@ -3312,7 +3312,7 @@ PARAMETERS is alist of URI parameters.
                      (concat "@" username " ")))
          (quoted-status (twittering-status-has-quotation? status)))
 
-    (when (eq (twittering-extract-service) 'sina)
+    (when (memq (twittering-extract-service) '(sina socialcast))
       (when quoted-status
         (setq username
               (ido-completing-read
@@ -5991,29 +5991,43 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
               (in-reply-to-status (assqref 'status st))
               (quoted-id (assqref 'id in-reply-to-status))
               (retweeted-status  (assqref 'retweeted-status st))
-              (comment? (and sina? id (not retweeting?)))
-              (parameters
-               `((,(if comment? "comment" "status") . ,status)
-                 ,@(when (eq (twittering-get-accounts 'auth) 'basic)
-                     '(("source" . "twmode")))
-                 ,@(when id
-                     (if sina?
-                         (cond
-                          (quoted-id    ; comment to comment
-                           `(("id" . ,quoted-id)
-                             ("cid" . ,id)))
-                          (retweeting?  ; retweet with comments
-                           `(("in_reply_to_status_id" . ,id)))
-                          (t            ; comment
-                           `(("id" . ,id))))
-                       `(("in_reply_to_status_id" . ,id)))))))
-         (twittering-http-post api-host
-                               (twittering-api-path
-                                (if douban? 
-                                    "miniblog/saying"
-                                  (concat "statuses/" (if comment? "comment" "update"))))
-                               parameters
-                               additional-info)))
+              comment? method parameters)
+
+         (case service 
+           ((sina)
+            (setq comment? (and id (not retweeting?)))
+            (setq method (if comment? "statuses/comment" "statuses/update"))
+            (setq parameters
+                  `((,(if comment? "comment" "status") . ,status)
+                    (cond
+                     (quoted-id         ; comment to comment
+                      `(("id" . ,quoted-id)
+                        ("cid" . ,id)))
+                     (retweeting?       ; retweet with comments
+                      `(("in_reply_to_status_id" . ,id)))
+                     (t                 ; comment
+                      `(("id" . ,id)))))))
+            
+           ((socialcast)
+            (setq comment? id)
+            (setq method (if comment? (format "messages/%s/comments" id) "messages"))
+            (setq parameters `((,(if comment? "comment[text]" "message[title]") . ,status))))
+           
+           ((douban)
+            (setq method "miniblog/saying")
+            (setq parameters `(("status" . ,status))))
+           
+           ((twitter)
+            (setq method "status")
+            (setq parameters `(("status" . ,status)
+                               ,@(when id
+                                   `(("in_reply_to_status_id" . ,id)))
+                               ,@(when (eq (twittering-get-accounts 'auth) 'basic)
+                                   '(("source" . "twmode")))))))
+         
+         (setq method (twittering-api-path method))
+         (twittering-http-post api-host method parameters additional-info)))
+
       ((destroy-status)
        (twittering-http-post api-host
                              (twittering-api-path "statuses/destroy" id)
