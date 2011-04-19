@@ -6004,14 +6004,14 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
             (setq method (if comment? "statuses/comment" "statuses/update"))
             (setq parameters
                   `((,(if comment? "comment" "status") . ,status)
-                    (cond
-                     (quoted-id         ; comment to comment
-                      `(("id" . ,quoted-id)
-                        ("cid" . ,id)))
-                     (retweeting?       ; retweet with comments
-                      `(("in_reply_to_status_id" . ,id)))
-                     (t                 ; comment
-                      `(("id" . ,id)))))))
+                    ,@(cond
+                       (quoted-id       ; comment to comment
+                        `(("id" . ,quoted-id)
+                          ("cid" . ,id)))
+                       (retweeting?     ; retweet with comments
+                        `(("in_reply_to_status_id" . ,id)))
+                       (t               ; comment
+                        `(("id" . ,id)))))))
             
            ((socialcast)
             (setq comment? id)
