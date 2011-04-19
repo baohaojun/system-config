@@ -4287,13 +4287,25 @@ following symbols;
       (setq str (concat str "\n" twittering-format-thumbnail-prefix s))))
 
   ;; comment/retweet counts
-  (when (eq (twittering-extract-service) 'sina)
-    (let ((spec-string (twittering-current-timeline-spec-string)))
-      (unless (equal spec-string ":replies@sina")
-        (let ((n (- (twittering-calculate-fill-column (length prefix))
-                    18))                ; length for counts string.
-              (s (twittering-get-simple nil nil nil 'counts)))
-          (setq str (concat str "\n" (format (format "%%%ds" n) s)))))))
+  (let ((service (twittering-extract-service)))
+    (when (memq service '(sina socialcast))
+      (let* ((n (- (twittering-calculate-fill-column (length prefix))
+                   ;; space for counts string.
+                   (if (eq service 'sina) 18 8)))
+             (fmt (format "%%%ds" n))
+             s)
+        (case service 
+          ((sina)
+           (let ((spec-string (twittering-current-timeline-spec-string)))
+             (unless (equal spec-string ":replies@sina")
+               (setq s (twittering-get-simple nil nil nil 'counts)))))
+
+          ((socialcast)
+           (setq s (format "     Likes(%s) Comments(%s)" 
+                           (assqref 'likes-count status)
+                           (assqref 'comments-count status)))))
+
+        (setq str (concat str "\n" (format fmt s))))))
 
   str)
 
@@ -5152,9 +5164,11 @@ rendered at POS, return nil."
                  ;; the point becomes outside of the window by the effect of
                  ;; `set-window-start'.
                  (setq result beg))
-               (let ((common-properties (twittering-get-common-properties beg))
+               (let ((common-properties (twittering-remove-property
+                                         (text-properties-at beg) 
+                                         'need-to-be-updated))
                      (faces (get-text-property beg 'face)))
-                 ;; Restore common properties.
+                 ;; Restore properties.
                  (delete-region beg end)
                  (goto-char beg)
                  (add-text-properties 0 (length updated-str) common-properties updated-str)
@@ -5162,16 +5176,7 @@ rendered at POS, return nil."
                  (insert updated-str))
                (twittering-restore-window-config-after-modification
                 config beg end))))
-         buffer))
-      
-      ;; (xwl) consider remove following
-      ;; (set-marker marker nil)
-      ;; (when (and result (eq (window-buffer) buffer))
-      ;;   (let ((win (selected-window)))
-      ;;     (when (< result (window-start win))
-      ;;       (set-window-start win result))
-      ;;     (set-window-point win result)))
-      )))
+         buffer)))))
 
 (defun twittering-for-each-property-region (prop func &optional buffer interrupt)
   "Apply FUNC to each region, where property PROP is non-nil, on BUFFER.
@@ -6010,9 +6015,19 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
             
            ((socialcast)
             (setq comment? id)
-            (setq method (if comment? (format "messages/%s/comments" id) "messages"))
-            (setq parameters `((,(if comment? "comment[text]" "message[title]") . ,status))))
-           
+            (if comment?
+                (setq method (format "messages/%s/comments" id)
+                      parameters `(("comment[text]" . ,status)))
+              (setq method "messages" ;; TITLE\n\nBODY
+                    parameters (let* ((s (split-string status "\n\n"))
+                                      (title "")
+                                      (body status))
+                                 (when (> (length s) 1)
+                                   (setq title (car s)
+                                         body (mapconcat 'identity ,(cdr s) "\n\n")))
+                                 `(("message[title]" . ,title)
+                                   ("message[body]" . ,body))))))
+
            ((douban)
             (setq method "miniblog/saying")
             (setq parameters `(("status" . ,status))))
@@ -6299,9 +6314,7 @@ string.")
                   (setq ids (cons (elt twittering-counts-request-list i) ids)))
                 ;; Place IDS in the end now
                 (setq twittering-counts-request-list 
-                      (append 
-                       (twittering-drop (length ids) twittering-counts-request-list)
-                       (reverse ids)))
+                      (append (twittering-drop (length ids) twittering-counts-request-list) ids))
                 (twittering-get-simple-1 method `((username . ,username)
                                                   (ids . ,(mapconcat 'identity ids ",")))))))
         (twittering-get-simple-1 method `((username . ,username))))))
@@ -6362,10 +6375,10 @@ string.")
 
 (defun twittering-my-status-p (status)
   "Is STATUS sent by myself? "
-  (or (string= (twittering-get-accounts 'username)
-               (assqref 'screen-name (assqref 'user status)))
-      (string= (assocref "user_id" (twittering-lookup-oauth-access-token-alist))
-               (assqref 'id (assqref 'user status)))))
+  (or (equal (twittering-get-accounts 'username)
+             (assqref 'screen-name (assqref 'user status)))
+      (equal (assocref "user_id" (twittering-lookup-oauth-access-token-alist))
+             (assqref 'id (assqref 'user status)))))
 
 (defun twittering-is-replies-p (status)
   (or (assqref 'reply-comment status)
@@ -6428,7 +6441,7 @@ string.")
 (defun twittering-get-status-url-socialcast (username &optional id)
   (let ((scheme (if twittering-use-ssl "https" "http")))
     (if id 
-        (format "%s://%s" scheme (twittering-lookup-service-method-table 'web))
+        (format "%s://%s/messages/%s" scheme (twittering-lookup-service-method-table 'web) id)
       (format "%s://%s/users/%s" scheme
               (twittering-lookup-service-method-table 'web)
               username))))
@@ -8546,9 +8559,9 @@ DATA includes:
 
 (defun twittering-take (n lst)
   "Take first N elements from LST."
-  (and (> n 0)
-       (car lst)
-       (cons (car lst) (twittering-take (1- n) (cdr lst)))))
+  (if (= n 1)
+      `(,(car lst))
+    `(,(car lst) ,@(twittering-take (1- n) (cdr lst)))))
 
 (defun twittering-drop (n lst)
   (if (= n 1)
@@ -9638,11 +9651,20 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
              (lambda (i)
                `((id         . ,(assqref 'id i))
                  (created-at . ,(assqref 'created-at i))
-                 (text       . ,(if (assqref 'title i)
-                                    (concat (assqref 'title i) "\n\n" (assqref 'body i))
-                                  (assqref 'body i)))
+                 (text       . ,(or (mapconcat 'identity
+                                               (remove 
+                                                nil
+                                                `(,(or (assqref 'title i) (assqref 'action i))
+                                                  ,(assqref 'body i)))
+                                               "\n\n")
+                                    "FIXME"))
+                 ,@(when (assqref 'thumbnail-url i)
+                     `((thumbnail-pic . ,(replace-regexp-in-string ":443/" "/" (assqref 'thumbnail-url i)))
+                       (original-pic . ,(replace-regexp-in-string ":443/" "/" (assqref 'url (car (assqref 'media-files i)))))))
                  (source     . ,(assqref 'formal-name (assqref 'source i)))
                  (source-uri . ,(assqref 'url (assqref 'source i)))
+                 (likes-count . ,(assqref 'likes-count i))
+                 (comments-count . ,(assqref 'comments-count i))
                  (user
                   ,@(let ((u (assqref 'user i)))
                       `((id                . ,(assqref 'id u))
@@ -9927,6 +9949,13 @@ SPEC may be a timeline spec or a timeline spec string."
                   lst nil)
           (setq lst (cdr lst))))
       ret)))
+
+(defun twittering-remove-property (properties prop)
+  "Delete PROP and its value from PROPERTIES. "
+  (let ((match (memq prop properties)))
+    (append (twittering-take (- (length properties) (length match))
+                             properties)
+            (cddr match))))
 
 (provide 'twittering-mode)
 
