@@ -6226,7 +6226,6 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
 The key is a list of username/id and method(such as get-list-index), the value is
 string.")
 
-(defvar twittering-counts-request-list nil)
 (defconst twittering-counts-request-max 100
   "Max counts that could be retrieved in one api call.")
 (defvar twittering-counts-last-timestamp nil)
@@ -6261,8 +6260,6 @@ string.")
                 (st (twittering-find-status id))
                 (pred (lambda (i) (equal (assqref 'id i) id)))
                 (count (find-if pred retrieved)))
-           (when id
-             (add-to-list 'twittering-counts-request-list id))
            (when count
              (let* ((rt (assqref 'rt count))
                     (cm (assqref 'comments count))
@@ -6296,26 +6293,36 @@ string.")
                           `(twittering-get-simple ,username ,method)))
 
       (if (eq method 'counts)
-          (let ((id (twittering-get-id-at beg)))
-            (when id
-              (add-to-list 'twittering-counts-request-list id))
-            (when (and (if twittering-counts-last-timestamp
-                           (> (time-to-seconds (time-since twittering-counts-last-timestamp))
-                              twittering-timer-interval)
-                         ;; initial
-                         (>= (length twittering-counts-request-list)
-                             twittering-number-of-tweets-on-retrieval))
-                       (not (null twittering-counts-request-list)))
-              (setq twittering-counts-last-timestamp (current-time))
-              (setq twittering-counts-request-list
-                    (remove-if-not 'twittering-find-status twittering-counts-request-list))
-              (let (ids)
-                (dotimes (i (min twittering-counts-request-max 
-                                 (length twittering-counts-request-list)))
-                  (setq ids (cons (elt twittering-counts-request-list i) ids)))
-                ;; Place IDS in the end now
-                (setq twittering-counts-request-list 
-                      (append (twittering-drop (length ids) twittering-counts-request-list) ids))
+          (when (or (not twittering-counts-last-timestamp)
+                    (> (time-to-seconds (time-since twittering-counts-last-timestamp))
+                       twittering-timer-interval))
+            (setq twittering-counts-last-timestamp (current-time))
+            (let (ids)
+              ;; Collect visible statuses' ids.
+              (mapc (lambda (buf)         
+                      (with-current-buffer buf
+                        (save-excursion
+                          (goto-char (point-min))
+                          (when (twittering-get-id-at)
+                            (add-to-list 'ids (twittering-get-id-at)))
+                          (while (twittering-get-next-status-head)
+                            (goto-char (twittering-get-next-status-head))
+                            (add-to-list 'ids (twittering-get-id-at))))))
+                    (remove-if-not (lambda (buf)
+                                     (with-current-buffer buf
+                                       (eq (twittering-extract-service) 'sina)))
+                                   (twittering-get-active-buffer-list)))
+              ;; Process 80% latest, 20% random old.
+              (when ids
+                (setq ids (sort ids 'twittering-status-id>))
+                (let* ((len (length ids))
+                       (n (min len (round (* twittering-counts-request-max 0.8))))
+                       (new (twittering-take n ids))
+                       (m (- (min len twittering-counts-request-max) n))
+                       old)
+                  (dotimes (i m)
+                    (setq old `(,(elt ids (+ (random (- m i)) n)) ,@old)))
+                  (setq ids `(,@new ,@old)))
                 (twittering-get-simple-1 method `((username . ,username)
                                                   (ids . ,(mapconcat 'identity ids ",")))))))
         (twittering-get-simple-1 method `((username . ,username))))))
@@ -8560,14 +8567,14 @@ DATA includes:
 
 (defun twittering-take (n lst)
   "Take first N elements from LST."
-  (if (= n 1)
-      `(,(car lst))
-    `(,(car lst) ,@(twittering-take (1- n) (cdr lst)))))
+  (let (ret)
+    (dotimes (i n ret)
+      (setq ret `(,@ret ,(elt lst i))))))
 
 (defun twittering-drop (n lst)
-  (if (= n 1)
-      (cdr lst)
-    (twittering-drop (1- n) (cdr lst))))
+  (let (ret)
+    (dotimes (i n ret)
+      (setq ret (cdr lst)))))
 
 (defun twittering-remove-duplicates (list)
   "Return a copy of LIST with all duplicate elements removed.
@@ -9936,6 +9943,10 @@ SPEC may be a timeline spec or a timeline spec string."
      ((= len1 len2) (string< id1 id2))
      ((< len1 len2) t)
      (t nil))))
+
+(defun twittering-status-id> (id1 id2)
+  (not (or (twittering-status-id= id1 id2)
+           (twittering-status-id< id1 id2))))
 
 (defun twittering-status-id= (id1 id2)
   (equal id1 id2))
