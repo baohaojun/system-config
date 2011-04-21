@@ -6035,7 +6035,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
             (setq parameters `(("status" . ,status))))
            
            ((twitter)
-            (setq method "status")
+            (setq method "statuses/update")
             (setq parameters `(("status" . ,status)
                                ,@(when id
                                    `(("in_reply_to_status_id" . ,id)))
