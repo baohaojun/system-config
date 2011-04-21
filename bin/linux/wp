@@ -56,6 +56,15 @@ function mp() #mail path
     history -s mp "$(printf %q "$FILE")"
 }
 
+function tmp() #tramp mail path
+{
+    FILE=${1:-`pwd`}
+    FILE=`lookup_file "$FILE"`
+
+    echo -n "/scp:`whoami`@$LOCALIP:$FILE"|tee /dev/tty|putclip
+    history -s tmp "$(printf %q "$FILE")"
+}
+
 if test "$BASH_SOURCE" = "$0"; then
     "`basename $0`" "$@"
 fi

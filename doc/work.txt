@@ -24,7 +24,6 @@ function bi2c() {
 (cd .repo/.. && cd rayzerlink-tools/proc_i2c && ../run.sh)
 
 (cd .repo/.. && cd flashing/ && ./theater-flash.sh)
-(cd .repo/.. && cd flashing/ && ./theater-full-flash.sh)
 
 git config --add remote.origin.pushurl `git config remote.origin.url|perl -npe "s,.*//.*?/,bhj\@192.168.0.46:/,"`
 sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'
@@ -873,7 +872,7 @@ smbnetfs.conf: 必须加上workgroup的名字。
 
 mirrorcyg.pl|mf-download.pl
 
-Tel. 010-64981756 ext. 849 会议室 863
+Tel. 010-64981756 ext. 849
 find . -name "Kconfig"|perl -npe 's,^.,./kernel,'|mkgtags
 
 sudo ifconfig eth0:0 192.168.88.8; ssh r137 sudo ifconfig eth0:0 192.168.88.9
@@ -894,5 +893,5 @@ rfa . 'br=tegra-10.9.9; git fetch letou refs/tags/$br:refs/tags/$br >/dev/null 2
 for x in `find . -name "*.git" -type d`; do (br=tegra-10.9.9; cd $x && if git tag|grep "^$br$" -q; then echo $x && git push letou $br:$br; fi); done
 echo 10 > /sys/class/gpio/export; echo 22 > /sys/class/gpio/export; x=`cat /proc/interrupts|grep 320:|awk '{print $2}'`; while true; do y=`cat /proc/interrupts|grep 320:|awk '{print $2}'`; if test $x != $y; then echo yes; x=$y; (cd /sys/class/gpio/gpio22; echo 1 > value; cd /sys/class/gpio/gpio10; echo 1 > value; ); else (cd /sys/class/gpio/gpio22; echo 0 > value;  cd /sys/class/gpio/gpio10; echo 0 > value); fi; sleep 3; done
 
-(export PATH=/usr/local/jdk1.5/bin:$PATH; export CLASSPATH=/usr/local/jdk1.5/lib:.; export JAVA_HOME=/usr/local/jdk1.5; export ANDROID_JAVA_HOME=$JAVA_HOME; cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 -l8 )
+(export CLASSPATH=/usr/local/jdk1.5/lib:.; export JAVA_HOME=/usr/local/jdk1.5; export ANDROID_JAVA_HOME=$JAVA_HOME; cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 -l8 )
 
