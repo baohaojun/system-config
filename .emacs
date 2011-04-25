@@ -460,7 +460,7 @@
 (defun bhj-isearch-from-bod (&optional col-indent)
   (interactive "p")
   (let ((word (current-word)))
-    (push-mark)
+    (nodup-ring-insert cscope-marker-ring (point-marker))
     (bhj-c-beginning-of-defun)
     (setq regexp-search-ring (cons (concat "\\b" word "\\b") regexp-search-ring))
     (search-forward-regexp (concat "\\b" word "\\b"))))
