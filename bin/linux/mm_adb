@@ -1,6 +1,10 @@
 #!/bin/bash
 LOG=mm.$$
-mm 2>&1|tee /tmp/$LOG
+if tty; then
+    mm 2>&1|tee /tmp/$LOG
+else
+    cat|tee /tmp/$LOG
+fi
 install_files=($(cat /tmp/$LOG|grep '^Install: '|perl -npe 's/.*: //'))
 copy_files=($(cat /tmp/$LOG|grep -v '.ogg$'|grep "${1:-^Copy:}"|perl -npe 's/'"${1:-^Copy}"': //'))
 
