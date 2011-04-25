@@ -1209,7 +1209,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
               (setq java-bt-tag-alist (cons (cons start-line-str grep-output) java-bt-tag-alist))))
 
         (when (string-match "^\\(.*\\):\\([0-9]+\\):" grep-output)
-          (setq target-file (concat (file-remote-p (buffer-file-name (current-buffer))) (match-string 1 grep-output))
+          (setq target-file (concat (file-remote-p (or (buffer-file-name (current-buffer)) default-directory)) (match-string 1 grep-output))
                 target-line (match-string 2 grep-output))
           (save-excursion
             (with-current-buffer (find-file-noselect target-file)
