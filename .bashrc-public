@@ -15,7 +15,9 @@ else
     export PS1HostName=`hostname`
     export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m )\n\$'
     alias sudoedit='WHOAMI=root edit'
-
+    if test "$TERM" = dumb; then
+        export PS1='\$'
+    fi
 fi
 
 alias rm='rm -i'
