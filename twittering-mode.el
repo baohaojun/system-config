@@ -6760,10 +6760,11 @@ been initialized yet."
 (defun twittering-prepare-account-info ()
   "Return a pair of username and password from `twittering-accounts'.
 If nil, read it from the minibuffer."
-  (let* ((username (or (twittering-get-accounts 'username)
-                       (read-string "your twitter username: ")))
+  (let* ((service (twittering-extract-service))
+         (username (or (twittering-get-accounts 'username)
+                       (read-string (format "your %S username: " service))))
          (password (or (twittering-get-accounts 'password)
-                       (read-passwd (format "%s's twitter password: " username))))
+                       (read-passwd (format "%s's %S password: " username service))))
          (token-alist `(,@(twittering-lookup-oauth-access-token-alist)
                         ("screen_name" . ,username)
                         ("password" .  ,password))))
@@ -7161,9 +7162,11 @@ managed by `twittering-mode'."
         (and (null init-str)
              twittering-current-hashtag
              (setq init-str (format " #%s " twittering-current-hashtag))))
-      (message "%s to %S: C-c C-c to send, C-c C-k to cancel"
-               (if retweeting? "Retweet" "Post")
-               (twittering-extract-service spec))
+      (message "%s to `%s': C-c C-c to send, C-c C-k to cancel"
+               (cond (retweeting? "Retweet")
+                     (username "Reply")
+                     (t "Post"))
+               (or username (symbol-name (twittering-extract-service spec))))
       (when init-str
         (insert init-str)
         (set-buffer-modified-p nil))
