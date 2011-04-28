@@ -896,3 +896,6 @@ echo 10 > /sys/class/gpio/export; echo 22 > /sys/class/gpio/export; x=`cat /proc
 
 (export PATH=/usr/local/jdk1.5/bin:$PATH; export CLASSPATH=/usr/local/jdk1.5/lib:.; export JAVA_HOME=/usr/local/jdk1.5; export ANDROID_JAVA_HOME=$JAVA_HOME; cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 -l8 )
 
+adb shell i2cdetect -r -y 0x0 
+
+modify sshd_config and /etc/motd for emacs tramp remote grep
