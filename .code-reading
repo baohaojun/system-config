@@ -588,3 +588,31 @@ mmc_cid_show: 这个函数用ctags不能查到，因为它是在一个宏里被�
                                             } else {
                                                 ...
     =>                                          System.arraycopy(ms.mNextData, 0,
+
+****************
+这里是分发nv daemon消息的地方。这里会根据不同的消息进行打印。
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/hardware/tegra/core/drivers/nvdispmgr/server/nvdispmgr.c:592:                 A(DisplaySetAttrs)
+        #define NV_DISP_MGR_LOG_COMMANDS 0
+        #if NV_DISP_MGR_LOG_COMMANDS
+            {
+                ...
+                {
+                    ...
+                    NvOsDebugPrintf(
+                        ...
+    =>                  A(DisplaySetAttrs)
+
+****************
+这个是NV的消息处理函数定义的地方，比如 DisplaySetAttrs 会被定义出一个 NvDispMgrDisplaySetAttrsImpl 的函数。
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/hardware/tegra/core/drivers/nvdispmgr/server/nvdispmgr.c:2691:         cmd->InOutWords[1] = isvar?0:(sizeof(NvDispMgr##name##Out)/4)
+        //===========================================================================
+        // NvDispMgrInitFunctionTable() - initialize pointers to each function
+        //===========================================================================
+        void NvDispMgrInitFunctionTable(NvDispMgr *dm)
+        {
+            ...
+            #define DM_FUNC(name,isvar) \
+                ...
+    =>          cmd->InOutWords[1] = isvar?0:(sizeof(NvDispMgr##name##Out)/4)
