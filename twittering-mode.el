@@ -212,13 +212,6 @@ when it conflict with your input method (such as AquaSKK, etc.)"
   :type 'symbol
   :group 'twittering)
 
-(defcustom twittering-use-ssl t
-  "Use SSL connection if this variable is non-nil.
-
-SSL connections use 'curl' command as a backend."
-  :type 'symbol
-  :group 'twittering)
-
 (defcustom twittering-timeline-most-active-spec-strings '(":home" ":replies")
   "See `twittering-timeline-spec-most-active-p'."
   :type 'list
@@ -547,9 +540,6 @@ do not display unread notifier on mode line.")
 (defvar twittering-variables-stored-with-encryption
   '(twittering-oauth-access-token-alist))
 
-(defvar twittering-oauth-use-ssl t
-  "*Whether to use SSL on authentication via OAuth. Twitter requires SSL
-on authorization via OAuth.")
 (defvar twittering-oauth-access-token-alist '())
 
 ;; buffer local, internal use.
@@ -658,8 +648,8 @@ Following services are supported:
          (password \"PASSWORD\")
 
          ;; optional
-         (auth basic)       ; Authentication method: `oauth', `basic'.
-
+         (auth basic)       ; Authentication method: `oauth'(default), `basic'.
+         (ssl t)            ; Use SSL connection: `nil'(default), `t'.
      ...)
 
 How To Choose Authentication Methods
@@ -1891,22 +1881,19 @@ If USE-SSL is nil, return a connection method for HTTP."
 (defun twittering-lookup-http-start-function (&optional order table)
   "Decide a connection method from currently available methods."
   (let ((entry
-         (twittering-lookup-connection-type twittering-use-ssl order table)))
+         (twittering-lookup-connection-type (twittering-get-accounts 'ssl) order table)))
     (assqref 'send-http-request entry)))
 
 (defun twittering-ensure-connection-method (&optional order table)
   "Ensure a connection method with a compromise.
 Return nil if no connection methods are available with a compromise."
-  (let* ((use-ssl (or twittering-use-ssl twittering-oauth-use-ssl))
+  (let* ((use-ssl (twittering-get-accounts 'ssl))
          (entry (twittering-lookup-connection-type use-ssl order table)))
     (cond
      (entry
       t)
      ((and (null entry) use-ssl
            (yes-or-no-p "HTTPS(SSL) is unavailable. Use HTTP instead? "))
-      ;; Fall back on connection without SSL.
-      (setq twittering-use-ssl nil)
-      (setq twittering-oauth-use-ssl nil)
       (twittering-update-mode-line)
       (twittering-ensure-connection-method order table)
       t)
@@ -2891,7 +2878,7 @@ The method to perform the request is determined from
     ;;   (push (cons "Content-Length" "0") headers)
     ;;   (push (cons "Content-Type" "text/plain") headers))
     (when twittering-proxy-use
-      (let* ((scheme (if twittering-use-ssl "https" "http"))
+      (let* ((scheme (if (twittering-get-accounts 'ssl) "https" "http"))
              (keep-alive (twittering-proxy-info scheme 'keep-alive))
              (user (twittering-proxy-info scheme 'user))
              (password (twittering-proxy-info scheme 'password)))
@@ -2962,7 +2949,7 @@ the server when the HTTP status code equals to 400 or 403."
          (request
           (twittering-add-application-header-to-http-request
            (twittering-make-http-request
-            "GET" nil host nil path parameters "" twittering-use-ssl))))
+            "GET" nil host nil path parameters "" (twittering-get-accounts 'ssl)))))
     (twittering-send-http-request
      request additional-info sentinel clean-up-sentinel)))
 
@@ -3010,7 +2997,7 @@ PARAMETERS is alist of URI parameters.
            (twittering-make-http-request "POST" nil host nil path
                                          (unless (eq (twittering-extract-service) 'douban) parameters)
                                          post-body
-                                         twittering-use-ssl))))
+                                         (twittering-get-accounts 'ssl)))))
     (twittering-send-http-request request additional-info
                                   sentinel clean-up-sentinel)))
 
@@ -3772,6 +3759,11 @@ current buffer."
         twittering-private-info-file-loaded-p nil
         twittering-private-info-file-dirty nil)
   (twit))
+
+(defun twittering-switch-to-unread-timeline ()
+  (interactive)
+  (when twittering-unread-status-info
+    (switch-to-buffer (caar twittering-unread-status-info))))
 
 ;;;###autoload
 (defun twit ()
@@ -6122,14 +6114,28 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
       ;; Twitter Stream API
       ;; ------------------
       ((userstream)
-       (let ((twittering-use-ssl t))    ; FIXME: why??
-         (twittering-http-get
+       (let ((twittering-accounts       ; FIXME: why twitter enforce ssl for stream?
+              `((twitter
+                 ,@(remove-if (lambda (i) (eq (car i) 'ssl))
+                              (assqref 'twitter twittering-accounts))
+                 (ssl t))
+
+                ,@(remove-if (lambda (i) (eq (car i) 'twitter)) twittering-accounts))))
+         (twittering-http-get 
           (twittering-lookup-service-method-table 'userstream)
           "2/user" nil `(,@additional-info (stream . t)))))
 
       ((stream)
-       (let ((twittering-use-ssl nil)   ; FIXME: why??
-             (predicates
+       (let ((twittering-accounts   ; FIXME: why twitter enforce ssl for stream?
+              `((twitter
+                 ,@(remove-if (lambda (i) (eq (car i) 'ssl))
+                              (assqref 'twitter twittering-accounts))
+                 (ssl nil))
+
+                ,@(remove-if (lambda (i) (eq (car i) 'twitter))
+                             twittering-accounts)))
+
+             (predicates 
               (let (value)
                 (while (not value)
                   (let* ((parameters '("follow" "track" "locations" "annotations"))
@@ -6410,77 +6416,71 @@ string.")
 
 (defun twittering-get-status-url (username &optional id)
   "Generate a URL of a user or a specific status."
-  (funcall (twittering-lookup-service-method-table 'status-url) username id))
+  (let ((scheme (if (twittering-get-accounts 'ssl) "https" "http"))
+        (path (funcall (twittering-lookup-service-method-table 'status-url) 
+                       username id)))
+    (concat scheme "://" path)))
 
 (defun twittering-get-status-url-twitter (username &optional id)
   "Generate status URL for Twitter."
-  (if id
-      (format "http://%s/%s/status/%s" (twittering-lookup-service-method-table 'web) username id)
-    (format "http://%s/%s" (twittering-lookup-service-method-table 'web) username)))
+  (let ((web (twittering-lookup-service-method-table 'web)))
+    (if id
+        (format "%s/%s/status/%s" web username id)
+      (format "%s/%s" web username))))
 
 (defun twittering-get-status-url-statusnet (username &optional id)
   "Generate status URL for StatusNet."
-  (if id
-      (format "http://%s/%s/notice/%s"
-              (twittering-lookup-service-method-table 'web)
-              (twittering-lookup-service-method-table 'web-prefix)
-              id)
-    (format "http://%s/%s/%s"
-            (twittering-lookup-service-method-table 'web)
-            (twittering-lookup-service-method-table 'web-prefix)
-            username)))
+  (let ((web (twittering-lookup-service-method-table 'web))
+        (web-prefix (twittering-lookup-service-method-table 'web-prefix)))
+    (if id 
+        (format "%s/%s/notice/%s" web web-prefix id)
+      (format "%s/%s/%s" web web-prefix username))))
 
 (defun twittering-get-status-url-sina (username &optional id)
   "Generate status URL for Sina."
-  (if id
-      ;; (twittering-get-simple-sync 'query-mid
-      ;;                                   `((username . ,username)
-      ;;                                     (id . ,id)))
-      (format "http://api.t.sina.com.cn/%s/statuses/%s?s=6cm7D0"
-              username
-              id)
-    (format "http://%s/%s"
-            (twittering-lookup-service-method-table 'web)
-            username)))
+  (let ((web (twittering-lookup-service-method-table 'web))
+        (api (twittering-lookup-service-method-table 'api)))
+    (if id
+        ;; (twittering-get-simple-sync 'query-mid
+        ;;                                   `((username . ,username)
+        ;;                                     (id . ,id)))
+        (format "%s/%s/statuses/%s?s=6cm7D0" api username id)
+      (format "%s/%s" web username))))
 
 (defun twittering-get-status-url-douban (username &optional id)
-  (if id
-      (concat "http://" (twittering-lookup-service-method-table 'web))
-    (format "http://%s/people/%s"
-            (twittering-lookup-service-method-table 'web)
-            username)))
+  (let ((web (twittering-lookup-service-method-table 'web)))
+    (if id 
+        web
+      (format "%s/people/%s" web username))))
 
 (defun twittering-get-status-url-socialcast (username &optional id)
-  (let ((scheme (if twittering-use-ssl "https" "http")))
-    (if id
-        (format "%s://%s/messages/%s" scheme (twittering-lookup-service-method-table 'web) id)
-      (format "%s://%s/users/%s" scheme
-              (twittering-lookup-service-method-table 'web)
-              username))))
+  (let ((web (twittering-lookup-service-method-table 'web)))
+    (if id 
+        (format "%s/messages/%s" web id)
+      (format "%s/users/%s" web username))))
 
 (defun twittering-get-search-url (query-string)
   "Generate a URL for searching QUERY-STRING."
-  (funcall (twittering-lookup-service-method-table 'search-url)
-           query-string))
-
+  (let ((scheme (if (twittering-get-accounts 'ssl) "https" "http"))
+        (path (funcall (twittering-lookup-service-method-table 'search-url)
+                       query-string)))
+    (concat scheme "://" path)))
+    
 (defun twittering-get-search-url-twitter (query-string)
-  (format "http://%s/search?q=%s"
-          (twittering-lookup-service-method-table 'web) (twittering-percent-encode query-string)))
+  (format "%s/search?q=%s"
+          (twittering-lookup-service-method-table 'web)
+          (twittering-percent-encode query-string)))
 
 (defun twittering-get-search-url-statusnet (query-string)
-  (if (string-match "^#\\(.+\\)" query-string)
-      (format "http://%s/%s/tag/%s"
-              (twittering-lookup-service-method-table 'web)
-              (twittering-lookup-service-method-table 'web-prefix)
-              (twittering-percent-encode (match-string 1 query-string)))
-    (format "http://%s/search?q=%s"
-            (twittering-lookup-service-method-table 'web) (twittering-percent-encode query-string))))
-
-(defun twittering-switch-to-unread-timeline ()
-  (interactive)
-  (when twittering-unread-status-info
-    (switch-to-buffer (caar twittering-unread-status-info))))
-
+  (let ((web (twittering-lookup-service-method-table 'web))
+        (web-prefix (twittering-lookup-service-method-table 'web-prefix)))
+    (if (string-match "^#\\(.+\\)" query-string)
+        (format "%s/%s/tag/%s"
+                web
+                web-prefix
+                (twittering-percent-encode (match-string 1 query-string)))
+      (format "%s/search?q=%s"
+              web (twittering-percent-encode query-string)))))
 
 ;;; ============================================= Douban details
 
@@ -6834,8 +6834,8 @@ If nil, read it from the minibuffer."
 
         ;; 3. Get/Renew token
         (unless ok
-          (let* ((scheme (if twittering-oauth-use-ssl "https" "http"))
-                 (access-token-url (concat scheme
+          (let* ((scheme (if (twittering-get-accounts 'ssl) "https" "http"))
+                 (access-token-url (concat scheme 
                                            (twittering-lookup-service-method-table
                                             'oauth-access-token-url-without-scheme)))
                  (consumer-key (twittering-lookup-service-method-table
@@ -8273,9 +8273,9 @@ static char * twitter_xpm[] = {
         (enabled-options
          `(,(if twittering-display-connection-method
                 (concat
-                 (when twittering-use-ssl (concat twittering-modeline-ssl ":"))
-                 (twittering-get-connection-method-name twittering-use-ssl))
-              (when twittering-use-ssl twittering-modeline-ssl))
+                 (when (twittering-get-accounts 'ssl) (concat twittering-modeline-ssl ":"))
+                 (twittering-get-connection-method-name (twittering-get-accounts 'ssl)))
+              (when (twittering-get-accounts 'ssl) twittering-modeline-ssl))
            ,@(when twittering-jojo-mode '("jojo"))
            ,@(when twittering-icon-mode '("icon"))
            ,@(when twittering-reverse-mode '("reverse"))
