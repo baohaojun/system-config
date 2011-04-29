@@ -899,6 +899,3 @@ echo 10 > /sys/class/gpio/export; echo 22 > /sys/class/gpio/export; x=`cat /proc
 adb shell i2cdetect -r -y 0x0 
 
 modify sshd_config and /etc/motd for emacs tramp remote grep
-
-adb shell bash -c "echo fastboot|tr '\n' '\000'|dd bs=1 seek=4096 of=/dev/block/mmcblk3p3; reboot"
-dd bs=1 skip=4096 if=/dev/block/mmcblk3p3 count=9
