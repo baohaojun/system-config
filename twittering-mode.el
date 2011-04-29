@@ -574,12 +574,10 @@ on authorization via OAuth.")
 
              (oauth-consumer-key
               ,(base64-decode-string
-                ;; "RWJqWHNtdllhQzJwMHhyRDBMa0Jldw=="
-                "RWJqWHNtdllhQzJwMHhyRDBMa0Jldw=="))
+                "bzY1aXZsUXdoeUdQVmdCODVHVFln"))
              (oauth-consumer-secret
               ,(base64-decode-string
-                 ;; "ZEpVRzJoVzJtV1l1eTRZd0VscHdiQjBpY0JCb3NwOXZ2NTFmdmZ0c09F"
-                 "ZEpVRzJoVzJtV1l1eTRZd0VscHdiQjBpY0JCb3NwOXZ2NTFmdmZ0c09F"))
+                "VjJBYldtYVN0ajFTejB5Q1NBWnBnSVdFOUNFOWtEb1MyaE16a294UVdN"))
 
              (status-url twittering-get-status-url-twitter)
              (search-url twittering-get-search-url-twitter))
@@ -589,7 +587,7 @@ on authorization via OAuth.")
 
     (sina (api "api.t.sina.com.cn")
           (web "t.sina.com.cn")
-          ;; search is not restricted by sina..
+          ;; search is restricted by sina..
 
           (oauth-request-token-url-without-scheme
            "://api.t.sina.com.cn/oauth/request_token")
