@@ -3,5 +3,5 @@ use URI::Escape;
 
 print (uri_escape("@ARGV"));
 $, = " ";
-system("firefox", "https://mail.google.com/mail/?hl=zh-CN&shva=1#search/" . uri_escape("@ARGV"));
+system("firefox", "https://mail.google.com/mail/?hl=zh-CN&shva=1&labs=0#search/" . uri_escape("@ARGV"));
 

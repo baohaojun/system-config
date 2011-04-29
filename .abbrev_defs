@@ -173,7 +173,7 @@
     ("le" "Log.e(\"bhj\", \"" nil 4)
     ("lv" "Slog.v(TAG, String.format(\"" nil 1)
     ("pk" "Log.i(\"Bhj\", \"hello world\");" nil 1)
-    ("sle" "Slog.e(\"bhj\", \" hello world\", new Exception());" nil 1)
+    ("sle" "Slog.e(\"bhj\", \"" nil 0)
     ("string" "String" nil 19)
     ("sv" "System.out.print(String.format(\"" nil 0)
    ))
