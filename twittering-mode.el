@@ -6896,7 +6896,7 @@ If nil, read it from the minibuffer."
                                         (password . ,(cdr account-info))
                                         (service  . ,service)
                                         (sync . t)))
-                 (setq ok t)))))
+                 (setq ok (twittering-get-account-authorization))))))
 
           (setq twittering-private-info-file-dirty t))
 
