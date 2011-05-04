@@ -84,7 +84,7 @@ desc: moves to the next tab
 type: 
 -
 name: AllTabs
-case: View
+case: Common
 keyx: C-xb
 body: this._sfun.allTabs();
 desc: tabs overview with filter
