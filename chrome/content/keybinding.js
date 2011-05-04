@@ -18,9 +18,6 @@ Firemacs.Commands.View = {
     NextTab: function(e) {
         this._sfun.moveTab(1);
     },
-    AllTabs: function(e) {
-        this._sfun.allTabs();
-    },
     ViScrollLineUp: function(e) {
         goDoCommand('cmd_scrollLineUp');
     },
@@ -147,6 +144,9 @@ Firemacs.Commands.Edit = {
 };
 
 Firemacs.Commands.Common = {
+    AllTabs: function(e) {
+        this._sfun.allTabs();
+    },
     SearchForward: function(e) {
         this._sfun.SearchOpen(); var findField = this._sfun.SearchField(); if (findField && findField.value && findField.value !== '') { this._sfun.SearchForward(); }
     },
@@ -254,7 +254,6 @@ Firemacs.CmdKey.View = {
     ScrollLineDown: 'C-n',
     PreviousTab: 'C-b',
     NextTab: 'C-f',
-    AllTabs: 'C-xb',
     ViScrollLineUp: 'k',
     ViScrollLineDown: 'j',
     ViScrollLeft: 'H',
@@ -301,6 +300,7 @@ Firemacs.CmdKey.Edit = {
 };
 
 Firemacs.CmdKey.Common = {
+    AllTabs: 'C-xb',
     SearchForward: 'C-s',
     SearchBackword: 'C-r',
     ScrollPageUp: 'M-v',
