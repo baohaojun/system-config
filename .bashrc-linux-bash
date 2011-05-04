@@ -27,6 +27,7 @@ function renew-xauth() {
         . ~/.new-xauth
     else
         export $(cat /proc/`ps -o comm=  -o pid= -A|grep gnome-terminal|pn 2`/environ|perl -npe 's/\x00/\n/g'|grep '^DISPLAY=')
+        export $(cat /proc/`ps -o comm=  -o pid= -A|grep gnome-terminal|pn 2`/environ|perl -npe 's/\x00/\n/g'|grep '^REMOTEIP=')
     fi
 }
 
