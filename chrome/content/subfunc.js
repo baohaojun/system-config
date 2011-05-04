@@ -1,3 +1,10 @@
+var myDump = function(aMessage) {
+  var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
+                                 .getService(Components.interfaces.nsIConsoleService);
+  consoleService.logStringMessage("My component: " + aMessage);
+}
+
+
 Firemacs.SubFunc = {
     initialize: function(version) {
 	this._context = {};
@@ -153,6 +160,19 @@ Firemacs.SubFunc = {
         new_event.initKeyEvent('keypress', true, true, null, false, false,
                                false, false, key, 0);
         target.dispatchEvent(new_event);
+    },
+
+    ////////////////////////////////////////////////////////////////
+    //
+    // tabs overview with filter (similar to ido-switch-buffer)
+    //
+
+    allTabs: function() {
+        if (typeof(allTabs) != 'object') {
+            return;
+        }
+
+        allTabs.open(); // opens tabs preview and sets focus to filter input 
     },
 
     ////////////////////////////////////////////////////////////////
