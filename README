@@ -135,17 +135,16 @@ You can reach me via email at Moritz Bunkus <moritz@bunkus.org>. I'm
 always grateful for bug reports and usually open to feature
 suggestions as far as my time permits.
 
-You can also file bug reports in my Bugzilla. I actively use Bugzilla
-and prefer this method to direct emails. Bugzilla can be found at
+You can also file an issue on github's issue tracker:
 
-https://www.bunkus.org/bugzilla/
+https://github.com/mbunkus/mo-git-blame/issues
 
 Patches, source code
 --------------------
 
 The latest version can always be retrieved from my Git repository:
 
-git clone git://git.bunkus.org/mo-git-blame.git
+git clone git://github.com/mbunkus/mo-git-blame.git
 
 If you want to send patches: Yes! By all means! Please do so! Please
 note that I'm using wide windows and do not like forced wrapping
