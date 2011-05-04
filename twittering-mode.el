@@ -3001,7 +3001,8 @@ PARAMETERS is alist of URI parameters.
                          "<?xml version='1.0' encoding='UTF-8'?>
 <entry xmlns:ns0=\"http://www.w3.org/2005/Atom\" xmlns:db=\"http://www.douban.com/xmlns/\">
 <content>%s</content></entry>"
-                         (assocref "status" parameters))
+                         (encode-coding-string
+                          (assocref "status" parameters) 'utf-8))
                       ""))
          ;; TODO
          ;; "POST" url (and (not (twittering-is-uploading-file-p parameters))
