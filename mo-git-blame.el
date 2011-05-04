@@ -274,7 +274,7 @@ git is already/still running."
                  )
 
                 (t (setq matched nil)))
-          (next-line))))))
+          (forward-line 1))))))
 
 (defun mo-git-blame-run* (&rest args)
   (message "Running 'git blame'...")
