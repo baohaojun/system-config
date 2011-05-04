@@ -18,6 +18,9 @@ Firemacs.Commands.View = {
     NextTab: function(e) {
         this._sfun.moveTab(1);
     },
+    AllTabs: function(e) {
+        this._sfun.allTabs();
+    },
     ViScrollLineUp: function(e) {
         goDoCommand('cmd_scrollLineUp');
     },
@@ -251,6 +254,7 @@ Firemacs.CmdKey.View = {
     ScrollLineDown: 'C-n',
     PreviousTab: 'C-b',
     NextTab: 'C-f',
+    AllTabs: 'C-xb',
     ViScrollLineUp: 'k',
     ViScrollLineDown: 'j',
     ViScrollLeft: 'H',

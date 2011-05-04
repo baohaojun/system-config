@@ -104,6 +104,10 @@
             <description value="moves to the next tab" />
           </row>
           <row>
+            <textbox id="AllTabs" value="C-xb" />
+            <description value="tabs overview with filter" />
+          </row>
+          <row>
             <textbox id="ViScrollLineUp" value="k" />
             <description value="scrolls a line up" />
           </row>
@@ -135,10 +139,6 @@
             <textbox id="ViScrollPageDown" value="u" />
             <description value="scrolls a page down" />
           </row>
-          <row>
-            <textbox id="PreviousPage" value="B" />
-            <description value="moves to the previous page" />
-          </row>
         </rows>
       </grid>
       <grid flex="1">
@@ -147,6 +147,10 @@
           <column />
         </columns>
         <rows>
+          <row>
+            <textbox id="PreviousPage" value="B" />
+            <description value="moves to the previous page" />
+          </row>
           <row>
             <textbox id="NextPage" value="F" />
             <description value="moves to the next page" />
