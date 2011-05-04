@@ -1,10 +1,3 @@
-var myDump = function(aMessage) {
-  var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-                                 .getService(Components.interfaces.nsIConsoleService);
-  consoleService.logStringMessage("My component: " + aMessage);
-}
-
-
 Firemacs.SubFunc = {
     initialize: function(version) {
 	this._context = {};
