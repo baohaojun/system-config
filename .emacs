@@ -467,10 +467,35 @@
 
 (global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
 
+(defun bhj-w3m-scroll-up-or-next-url ()
+  (interactive)
+  (if (pos-visible-in-window-p (point-max))
+      (save-excursion
+        (end-of-buffer)
+        (search-backward-regexp "下一|还看了")
+        (if (w3m-url-valid (w3m-anchor))
+            (call-interactively 'w3m-view-this-url)
+          (call-interactively 'w3m-next-anchor)
+          (call-interactively 'w3m-view-this-url)))
+    (call-interactively 'w3m-scroll-up-or-next-url)))
+
+(defun bhj-w3m-scroll-down-or-previous-url ()
+  (interactive)
+  (if (pos-visible-in-window-p (point-min))
+      (save-excursion
+        (end-of-buffer)
+         (search-backward-regexp "上一")
+         (call-interactively 'w3m-view-this-url))
+    (call-interactively 'w3m-scroll-down-or-previous-url)))
+
+
+
 (add-hook 'w3m-mode-hook 
           (lambda () 
             (local-set-key [(left)] 'backward-char)
             (local-set-key [(right)] 'forward-char)
+            (local-set-key [(\ )] 'bhj-w3m-scroll-up-or-next-url)
+            (local-set-key [(backspace)] 'bhj-w3m-scroll-down-or-previous-url)
             (local-set-key [(down)] 'next-line)
             (local-set-key [(up)] 'previous-line)
             (local-set-key [(n)] 'next-line)
@@ -533,6 +558,7 @@
  '(transient-mark-mode t)
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
+ '(w3m-default-display-inline-images t)
  '(weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("csdn" "http://blog.csdn.net/flowermonk/services/MetaBlogApi.aspx" "flowermonk" "" "814038"))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
@@ -1347,6 +1373,16 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive)
   (shell-command (concat 
                   "search-gmail "
-                  (shell-quote-argument (gnus-summary-article-subject))
+                  (shell-quote-argument (case major-mode 
+                                          ('gnus-summary-mode
+                                           (gnus-summary-article-subject))
+                                          ('gnus-article-mode
+                                           (save-excursion
+                                             (beginning-of-buffer)
+                                             (search-forward-regexp "^Subject: ")
+                                             (buffer-substring-no-properties (point) (line-end-position))))))
                   "&")))
+
+
+(setq w3m-fill-column 100)
 

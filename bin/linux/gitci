@@ -1,21 +1,6 @@
 #!/bin/bash
 set -e
 
-function add-jira-comment() {
-    if test -z "$ticket"; then
-        ticket=`git log -1|grep Issue: |perl -npe 's/.*: //'`
-    fi
-    if test $# = 0; then
-        set -- git commit --amend
-    fi
-    (echo "$@": In repo: `rfa . 'echo $REPO_PATH'`; echo; git log -1)|jira-add-comment $ticket
-}
-
-if test "`basename $0`" = add-jira-comment; then
-    add-jira-comment "$@"
-    exit
-fi
-
 die() {
     echo "$@"
     false
@@ -51,6 +36,10 @@ EOF
 function gitci-amend() {
     git commit --amend
     add-jira-comment git commit --amend
+}
+
+function add-jira-comment() {
+    (echo "$@": In repo: `rfa . 'echo $REPO_PATH'`; echo; git log -1)|jira-add-comment $ticket
 }
 
 `basename $0` "$@"
