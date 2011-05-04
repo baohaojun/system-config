@@ -1,0 +1,14 @@
+2011-05-04  Moritz Bunkus  <moritz@bunkus.org>
+
+	* mo-git-blame.el (mo-git-blame-process-filter): Avoid hanging
+	Emacs if `truncate-partial-width-windows' is set to nil. Fixes
+	issue #1.
+
+2010-12-28  Moritz Bunkus  <moritz@bunkus.org>
+
+	* mo-git-blame.el: Scroll both mo-git-blame buffers automatically
+	after one of them changes its position. Uses
+	`window-scroll-functions' instead of `scroll-all-mode' which
+	scrolls too many buffers and doesn't work with e.g. searching.
+
+
