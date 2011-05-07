@@ -472,7 +472,7 @@
   (if (pos-visible-in-window-p (point-max))
       (save-excursion
         (end-of-buffer)
-        (search-backward-regexp "下一|还看了")
+        (search-backward-regexp "下一\\|还看了")
         (if (w3m-url-valid (w3m-anchor))
             (call-interactively 'w3m-view-this-url)
           (call-interactively 'w3m-next-anchor)
