@@ -3302,7 +3302,7 @@ PARAMETERS is alist of URI parameters.
                      (concat "@" username " ")))
          (quoted-status (twittering-status-has-quotation? status)))
 
-    (when (memq (twittering-extract-service) '(sina socialcast))
+    (when (memq (twittering-extract-service) '(sina socialcast douban))
       (when quoted-status
         (setq username
               (ido-completing-read
@@ -6026,7 +6026,16 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                                    ("message[body]" . ,body))))))
 
            ((douban)
-            (setq method "miniblog/saying")
+            (setq method (if id
+                             (let ((detail (assqref 'detail st)))
+                               (cond
+                                ((not detail)
+                                 (format "miniblog/%s/comments" id))
+                                ((string-match "/\\(recommendation/[0-9]+\\)" detail)
+                                 (concat (match-string 1 detail) "/comments" ))
+                                (t
+                                 (error "Can not comment"))))
+                           "miniblog/saying"))
             (setq parameters `(("status" . ,status))))
 
            ((twitter)
@@ -6121,7 +6130,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                  (ssl t))
 
                 ,@(remove-if (lambda (i) (eq (car i) 'twitter)) twittering-accounts))))
-         (twittering-http-get 
+         (twittering-http-get
           (twittering-lookup-service-method-table 'userstream)
           "2/user" nil `(,@additional-info (stream . t)))))
 
@@ -6135,7 +6144,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                 ,@(remove-if (lambda (i) (eq (car i) 'twitter))
                              twittering-accounts)))
 
-             (predicates 
+             (predicates
               (let (value)
                 (while (not value)
                   (let* ((parameters '("follow" "track" "locations" "annotations"))
@@ -6417,7 +6426,7 @@ string.")
 (defun twittering-get-status-url (username &optional id)
   "Generate a URL of a user or a specific status."
   (let ((scheme (if (twittering-get-accounts 'ssl) "https" "http"))
-        (path (funcall (twittering-lookup-service-method-table 'status-url) 
+        (path (funcall (twittering-lookup-service-method-table 'status-url)
                        username id)))
     (concat scheme "://" path)))
 
@@ -6432,7 +6441,7 @@ string.")
   "Generate status URL for StatusNet."
   (let ((web (twittering-lookup-service-method-table 'web))
         (web-prefix (twittering-lookup-service-method-table 'web-prefix)))
-    (if id 
+    (if id
         (format "%s/%s/notice/%s" web web-prefix id)
       (format "%s/%s/%s" web web-prefix username))))
 
@@ -6449,13 +6458,13 @@ string.")
 
 (defun twittering-get-status-url-douban (username &optional id)
   (let ((web (twittering-lookup-service-method-table 'web)))
-    (if id 
+    (if id
         web
       (format "%s/people/%s" web username))))
 
 (defun twittering-get-status-url-socialcast (username &optional id)
   (let ((web (twittering-lookup-service-method-table 'web)))
-    (if id 
+    (if id
         (format "%s/messages/%s" web id)
       (format "%s/users/%s" web username))))
 
@@ -6465,7 +6474,7 @@ string.")
         (path (funcall (twittering-lookup-service-method-table 'search-url)
                        query-string)))
     (concat scheme "://" path)))
-    
+
 (defun twittering-get-search-url-twitter (query-string)
   (format "%s/search?q=%s"
           (twittering-lookup-service-method-table 'web)
@@ -6506,9 +6515,10 @@ string.")
                         (ignore-errors (twittering-json-read))))))
 
         (if html
-            (if html-url
-                (twittering-make-original-icon-string beg end html-url)
-              "")
+            (setq detail
+                  (if html-url
+                      (twittering-make-original-icon-string beg end html-url)
+                    ""))
           (let ((type (when (string-match (regexp-opt
                                            '("note" "book" "movie" "music" "review"
                                              "collection" "event" "recommendation"))
@@ -6519,17 +6529,22 @@ string.")
                (let* ((status (twittering-get-status-at-pos beg))
                       (text (assqref 'text status))
                       url)
-                 (if (not (string-match "<a href=\"\\(http://www.douban.com/photos/album/[0-9]+/\\)\">"
-                                        text))
-                     (setq detail "")
-                   (setq url (match-string 1 text))
-                   (setq detail (concat detail detail)) ; should be different.
+                 (if text
+                     (if (not (string-match "<a href=\"\\(http://www.douban.com/photos/album/[0-9]+/\\)\">"
+                                            text))
+                         (setq detail "")
+                       (setq url (match-string 1 text))
+                       (setq detail (concat detail detail)) ; should be different.
+                       (put-text-property 0 (length detail)
+                                          'need-to-be-updated
+                                          `(twittering-make-douban-detail-string ,url t)
+                                          detail)
+                       (twittering-url-retrieve-async url)
+                       (setq get-photo t))
                    (put-text-property 0 (length detail)
                                       'need-to-be-updated
-                                      `(twittering-make-douban-detail-string ,url t)
-                                      detail)
-                   (twittering-url-retrieve-async url)
-                   (setq get-photo t))))
+                                      `(twittering-make-douban-detail-string ,detail-url)
+                                      detail))))
               ((note)
                (setq detail (assqref 'summary json)))
               ((event)
@@ -6835,7 +6850,7 @@ If nil, read it from the minibuffer."
         ;; 3. Get/Renew token
         (unless ok
           (let* ((scheme (if (twittering-get-accounts 'ssl) "https" "http"))
-                 (access-token-url (concat scheme 
+                 (access-token-url (concat scheme
                                            (twittering-lookup-service-method-table
                                             'oauth-access-token-url-without-scheme)))
                  (consumer-key (twittering-lookup-service-method-table
