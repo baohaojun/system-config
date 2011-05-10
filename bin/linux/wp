@@ -33,9 +33,10 @@ function wp()
     FILE=${1:-`pwd`}
     FILE=`lookup_file "$FILE"`
 
+    HFILE=$FILE
     FILE=z:$FILE
     echo -n "$FILE"|perl -npe 's,/,\\,g'|tee /dev/tty|putclip
-    history -s wp "$(printf %q "$FILE")"
+    history -s wp "$(printf %q "$HFILE")"
 }
 
 function up()
