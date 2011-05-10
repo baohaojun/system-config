@@ -5,13 +5,15 @@ function swp()
     FILE=${1:-`pwd`}
     FILE=`lookup_file "$FILE"`
 
+    HFILE=$FILE
+
     if [[ "$FILE" =~ ~/smb/ ]]; then
         FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
     else
         FILE=z:$FILE
     fi
     echo -n "$FILE"|tee /dev/tty|putclip
-    history -s swp "$(printf %q "$FILE")"
+    history -s swp "$(printf %q "$HFILE")"
 }
 
 function sup()
@@ -19,13 +21,15 @@ function sup()
     FILE=${1:-`pwd`}
     FILE=`lookup_file "$FILE"`
     
+    HFILE=$FILE
+    
     if [[ "$FILE" =~ ~/smb/ ]]; then
         FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,smb://,g'`
     else
         FILE=z:$FILE
     fi
     printf %q "$FILE"|tee /dev/tty|putclip
-    history -s sup "$(printf %q "$FILE")"
+    history -s sup "$(printf %q "$HFILE")"
 }
 
 function wp()
