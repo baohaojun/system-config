@@ -459,8 +459,8 @@ If nil, this is initialized with a list of valied entries extracted from
 `tls-program'.")
 
 (defvar twittering-connection-type-order
-  '(curl wget urllib-http native urllib-https))
-"*A list of connection methods in the preferred order."
+  '(curl wget urllib-http native urllib-https)
+  "*A list of connection methods in the preferred order.")
 
 (defvar twittering-connection-type-table
   '((native (check . t)
@@ -2775,12 +2775,14 @@ The method to perform the request is determined from
              (lambda (&rest args)
                (let ((proc url-http-process)
                      (url-buffer (current-buffer))
-                     (status-str
-                      (if (and (< emacs-major-version 22)
-                               (boundp 'url-http-end-of-headers)
-                               url-http-end-of-headers)
-                          "urllib-finished"
-                        "finished")))
+                     (status-str "urllib-finished")
+                     ;; TODO: necessary?
+                     ;; (if (and (< emacs-major-version 22)
+                     ;;          (boundp 'url-http-end-of-headers)
+                     ;;          url-http-end-of-headers)
+                     ;;     "urllib-finished"
+                     ;;   "finished")
+                     )
                  ;; Callback may be called multiple times.
                  ;; (as filter and sentinel?)
                  (unless (local-variable-if-set-p 'twittering-retrieved)
@@ -2809,7 +2811,7 @@ The method to perform the request is determined from
                        (url-mark-buffer-as-dead url-buffer)
                      (setq twittering-retrieved 'exited))))))
             result-buffer)
-        (if (assqref 'sync? connection-info)
+        (if (assqref 'sync connection-info)
             (with-current-buffer (url-retrieve-synchronously uri)
               (when sentinel
                 (funcall sentinel nil 'exit)))
