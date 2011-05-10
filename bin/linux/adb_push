@@ -1,9 +1,12 @@
 #!/usr/bin/env perl
+use String::ShellQuote;
 system("adb shell sync; echo adb shell mount -o remount rw /system; adb shell mount -o remount rw /system");
 $dest = pop( @ARGV);
+
 for (@ARGV) {
-  chomp($file=qx/lookup_file $_/);
-  
-  system("adb push $file $dest");
+    $_ = shell_quote($_);
+    chomp($file=qx/lookup_file $_/);
+    system("adb",  "push", "$file", "$dest");
 }
+
 system("adb shell sync; echo adb shell mount -o remount ro /system; adb shell mount -o remount ro /system");
