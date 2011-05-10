@@ -24,7 +24,7 @@ function bi2c() {
 (cd .repo/.. && cd rayzerlink-tools/proc_i2c && ../run.sh)
 
 (cd .repo/.. && cd flashing/ && ./theater-flash.sh)
-(test -e ./theater-full-flash.sh && { ./theater-full-flash.sh; exit; }  || cd .repo/.. && cd flashing/ && ./theater-full-flash.sh)
+(cd .repo/.. && cd flashing/ && ./theater-full-flash.sh)
 
 git config --add remote.origin.pushurl `git config remote.origin.url|perl -npe "s,.*//.*?/,bhj\@192.168.0.46:/,"`
 sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'

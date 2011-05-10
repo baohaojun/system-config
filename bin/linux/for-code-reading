@@ -4,7 +4,7 @@ Filter=${Filter:-~/.my-beagle-filter-android}
 outDir=~/tmp/for-code-reading/"`pwd`"
 srcDir=`pwd`
 relativeSrcDir=.
-while test "$outDir" != "" -a ! -d "$outDir"/.beagle; do
+while test "$outDir" != "" -a ! -f "$outDir"/cscope.files; do
     outDir=${outDir%/*}
 done
 
