@@ -34,40 +34,6 @@ EOF
     sudo postmap sasl_passwd
     sudo postfix reload
 
-#config dovecot
-#先把这些配置内容放到我自己有写权限的文件里去，下面再用sudo bash -c搞到/etc/dovecot/dovecot.conf里。
-#上面的postfix/main.cf也是这样做的。
-
-cat <<EOF > ~/.dovecot
-protocols = imap imaps
-log_timestamp = "%Y-%m-%d %H:%M:%S "
-   mail_location = maildir:~/Maildir
-mail_privileged_group = mail
-protocol imap {
-}
-  
-protocol pop3 {
-  pop3_uidl_format = %08Xu%08Xv
-}
-protocol managesieve {
-}
-auth default {
-  mechanisms = plain
-  passdb pam {
-  }
-  userdb passwd {
-  }
-  user = root
-}
-dict {
-}
-plugin {
-}
-EOF
-
-    sudo bash -c "cat $HOME/.dovecot > /etc/dovecot/dovecot.conf"
-
-
 # 配置offlineimap
     read -s -p "Please input your password of this PC: " lpass
     cat <<EOF > ~/.offlineimaprc

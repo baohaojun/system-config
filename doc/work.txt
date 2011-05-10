@@ -24,7 +24,7 @@ function bi2c() {
 (cd .repo/.. && cd rayzerlink-tools/proc_i2c && ../run.sh)
 
 (cd .repo/.. && cd flashing/ && ./theater-flash.sh)
-(cd .repo/.. && cd flashing/ && ./theater-full-flash.sh)
+(test -e ./theater-full-flash.sh && { ./theater-full-flash.sh; exit; }  || cd .repo/.. && cd flashing/ && ./theater-full-flash.sh)
 
 git config --add remote.origin.pushurl `git config remote.origin.url|perl -npe "s,.*//.*?/,bhj\@192.168.0.46:/,"`
 sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'
@@ -102,7 +102,7 @@ export DO_SERVICE=true; exec /init2
 
 replace init.rc
 (cd .repo/..; export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh; time make -j8 )
-(cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 )
+(cd .repo/.. &&  export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 )
 (cd .repo/.. && export TARGET_PRODUCT=ventana; . build/envsetup.sh ; for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT)
 /mnt/mysql /var/lib/mysql none bind 0 0
 ssh -C2qN -D 8080 bhj@216.194.70.6
@@ -806,7 +806,7 @@ export ARCH=arm; export CROSS_COMPILE=`readlink -f ./prebuilt/linux-x86/toolchai
 Python:
         empty_entry = struct.pack('=4sIII', *empty_entry_tuple)
 
-(cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make pdk pdk_docs)
+(cd .repo/.. &&  export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make pdk pdk_docs)
 (cd .repo/.. && time make iso_img -l8 -j8 -k)
 
 
@@ -895,7 +895,7 @@ rfa . 'br=tegra-10.9.9; git fetch letou refs/tags/$br:refs/tags/$br >/dev/null 2
 for x in `find . -name "*.git" -type d`; do (br=tegra-10.9.9; cd $x && if git tag|grep "^$br$" -q; then echo $x && git push letou $br:$br; fi); done
 echo 10 > /sys/class/gpio/export; echo 22 > /sys/class/gpio/export; x=`cat /proc/interrupts|grep 320:|awk '{print $2}'`; while true; do y=`cat /proc/interrupts|grep 320:|awk '{print $2}'`; if test $x != $y; then echo yes; x=$y; (cd /sys/class/gpio/gpio22; echo 1 > value; cd /sys/class/gpio/gpio10; echo 1 > value; ); else (cd /sys/class/gpio/gpio22; echo 0 > value;  cd /sys/class/gpio/gpio10; echo 0 > value); fi; sleep 3; done
 
-(export PATH=/usr/local/jdk1.5/bin:$PATH; export CLASSPATH=/usr/local/jdk1.5/lib:.; export JAVA_HOME=/usr/local/jdk1.5; export ANDROID_JAVA_HOME=$JAVA_HOME; cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 -l8 )
+(export PATH=/usr/local/jdk1.5/bin:$PATH; export CLASSPATH=/usr/local/jdk1.5/lib:.; export JAVA_HOME=/usr/local/jdk1.5; export ANDROID_JAVA_HOME=$JAVA_HOME; cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 -l8 )
 
 adb shell i2cdetect -r -y 0x0 
 
@@ -905,3 +905,5 @@ adb shell bash -c "echo fastboot|tr '\n' '\000'|dd bs=1 seek=4096 of=/dev/block/
 dd bs=1 skip=4096 if=/dev/block/mmcblk3p3 count=9
 
 sudo ifconfig eth0:0 10.6.188.8; ssh r137 sudo ifconfig eth0:0 10.6.188.9; ssh r889 sshfs r888:Downloads/ ~/Downloads/ -o nonempty; ssh r889 sshfs r888:Documents/ ~/Documents/ -o nonempty
+
+长途：96446

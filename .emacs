@@ -472,7 +472,7 @@
   (if (pos-visible-in-window-p (point-max))
       (save-excursion
         (end-of-buffer)
-        (search-backward-regexp "下一|还看了")
+        (search-backward-regexp "下一\\|还看了")
         (if (w3m-url-valid (w3m-anchor))
             (call-interactively 'w3m-view-this-url)
           (call-interactively 'w3m-next-anchor)
@@ -624,7 +624,18 @@
           (message-goto-from)
           (message-beginning-of-line)
           (kill-line)
-          (insert "Bao Haojun at Letou <hjbao@eee168.com>"))))))
+          (insert "Bao Haojun at Letou <hjbao@eee168.com>")))
+      ;; clean up things like: Cc: "Jinfeng Lv\"\" <jflv@xx.com>, \"Haixiang Zhang <hxzhang@xx.com>
+      (save-excursion
+        (message-goto-to)
+        (message-beginning-of-line)
+        (while (search-forward-regexp "\\\\\\|\"" (line-end-position) t)
+          (delete-backward-char 1)))
+      (save-excursion
+        (message-goto-cc)
+        (message-beginning-of-line)
+        (while (search-forward-regexp "\\\\\\|\"" (line-end-position) t)
+          (delete-backward-char 1))))))
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
