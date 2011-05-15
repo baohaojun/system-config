@@ -1,36 +1,21 @@
 xwl's fork
 ----------
 
+* Quick startup:
+  http://www.cnblogs.com/william9/archive/2011/04/17/william9.html
+
+* Add login multiple services simultaneously support, e.g, both twitter and
+  sina. http://xwl.appspot.com/images/twitter-weibo-douban.png
+
+* New backends:
+  * http://www.socialcast.com
+  * http://www.douban.com
+  * http://t.sina.com.cn
+
 * (twitter) Add Stream API support.  To use,
   * USERSTREAM: Go to `:home@twitter': M-x twittering-stream-mode
   * STREAM: Go to `:public@twitter':   M-x twittering-stream-mode
-  
-* Add http://www.douban.com support.
 
-* Add http://t.sina.com.cn backend support; add login multiple services
-  simultaneously support, e.g, both twitter and sina.
-
-* Fetch replied statues on request.
-
-* Format tweets sent by myself specially: Inspired by "Twitter for iPhone",
-  currently an ad-hoc implementation, screenshot:
-  http://xwl.appspot.com/images/twitter_my_tweet.png
-
-* Render user profile: When visiting user timeline, we will place user profile
-  info near its most recent tweet.  Currently, including big image, basic, bio,
-  location, web, following status, lists, etc.  Screenshot:
-  http://xwl.appspot.com/images/twittering_user_profile.png
-
-* Decorate tweets with zebra like background.
-    Screenshot: http://xwl.appspot.com/images/twitter.png
-
-* new specs/API
-  * User Methods: followers, following
-  * Friendship Methods: show-friendships
-  * List methods: get-list-subscriptions, get-list-memberships
-  * List Subscribers Methods: subscribe-list, unsubscribe-list
-  * List Members Methods: add-list-members, delete-list-members
-  
 * unread tweets
   * Show unread tweets for different buffers in a way similar to
     erc-track-mode.
@@ -43,11 +28,19 @@ xwl's fork
     twittering-mode, unread count could be up-to-date.
 
 * misc
-  * (twittering-erase-all): New func, binded to "C-c C-w".
+  * Fetch replied statues on request.
+  * Format tweets sent by myself specially: Inspired by "Twitter for iPhone",
+    currently an ad-hoc implementation, screenshot:
+    http://xwl.appspot.com/images/twitter_my_tweet.png
+  * Render user profile: When visiting user timeline, we will place user profile
+    info near its most recent tweet.  Currently, including big image, basic, bio,
+    location, web, following status, lists, etc.  Screenshot:
+    http://xwl.appspot.com/images/twittering_user_profile.png
+  * Decorate tweets with zebra like background.
+    Screenshot: http://xwl.appspot.com/images/twitter.png
   * (twittering-mode-setup): Short mode-name to just "twittering"
   * Use defcustom to separate user customizable variables and internal
     variables.
-  * %g: New format specifier, to format time string using `gnus-user-date'.  
 
  Twittering-mode: a Twitter client for Emacs
 =============================================
