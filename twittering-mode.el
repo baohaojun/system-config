@@ -2291,13 +2291,13 @@ The method to perform the request is determined from
                (message "%s" mes)))
            (when (functionp clean-up-func)
              (funcall clean-up-func proc status connection-info))
-           (when error?
-             (unless (assqref 'stream connection-info)
-                (error "%s" mes)))
            (when (and (or sync? (memq status '(exit signal closed failed)))
                       (buffer-live-p buffer)
                       (not twittering-debug-mode))
-             (kill-buffer buffer))))))))
+             (kill-buffer buffer))
+           (when error?
+             (unless (assqref 'stream connection-info)
+                (error "%s" mes)))))))))
 
 ;;;;
 ;;;; Basic HTTP functions with tls and Emacs builtins.
