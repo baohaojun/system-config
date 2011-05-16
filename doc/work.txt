@@ -907,13 +907,3 @@ dd bs=1 skip=4096 if=/dev/block/mmcblk3p3 count=9
 sudo ifconfig eth0:0 10.6.188.8; ssh r137 sudo ifconfig eth0:0 10.6.188.9; ssh r889 sshfs r888:Downloads/ ~/Downloads/ -o nonempty; ssh r889 sshfs r888:Documents/ ~/Documents/ -o nonempty
 
 长途：96446
-adb shell am start http://news.sohu.com
-adb shell am start -a android.intent.action.VIEW -d 'http://218.60.38.58:80/work/71972/119/9.mp4?xx=yy' -t 'video/*'
-adb shell bash -c "mkdir /cache/recovery; echo --wipe_data > /cache/recovery/command; reboot recovery"
-
-({ test -f nvflash || { cd .repo/.. && cd flashing/; } ; } && sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go)
-
-perl -ne 'BEGIN{$oldtime=0; } if (m/^......(\d\d):(\d\d):(\d\d)\.(\d\d\d)(.*)/) {$h=int($1); $m=int($2); $s=int($3); $ms=int($4); $time=($h*3600 + $m* 60 + $s) + $ms/1000; $diff = $time - $oldtime; printf("%08.3f %s\n", $diff, $5); $oldtime=$time}'
-
-北京市朝阳区安苑路15号邮电新闻大厦西办公楼6层
-邮编：100029

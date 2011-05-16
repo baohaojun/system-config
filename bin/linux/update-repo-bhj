@@ -5,9 +5,9 @@ cd /android
 
 repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre
 repo sync
-repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre_p2_22.xml
+repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre-p2
 repo sync
-repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre_p2_23.xml
+repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre-gb-p2
 repo sync
 
 repo-switch -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b donut-x86

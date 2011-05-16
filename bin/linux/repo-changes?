@@ -1,2 +1,0 @@
-#!/bin/bash
-rfa "$@" 'git diff $REPO_LREV --quiet || pwd'
