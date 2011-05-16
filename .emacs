@@ -138,40 +138,38 @@
       (push-mark))
     (ctags-beginning-of-defun (- arg))))
 
+(mapcar (lambda (x) (add-hook x (lambda ()
+                    (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
+                    (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
+                    (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
+                    (c-set-offset 'innamespace 0))))
+        (list 'c-mode-hook 'c++-mode-hook))
+        
+
 (defun linux-c-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
   (c-mode) 
-  (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
-  (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
-  (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "k&r")
-  (setq tab-width 4)
+  (setq tab-width 8)
   (setq indent-tabs-mode t)
-  (c-set-offset 'innamespace 0)
-  (setq c-basic-offset 4))
+  (setq c-basic-offset 8))
 
 (defun linux-c++-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
   (c++-mode) 
-  (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
-  (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
-  (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "k&r")
   (setq tab-width 4)
-  (c-set-offset 'innamespace 0)
-  (setq indent-tabs-mode t)
+  (setq indent-tabs-mode nil)
   (setq c-basic-offset 4))
 
 (define-key java-mode-map [?\C-\M-a] 'bhj-c-beginning-of-defun)
 (define-key java-mode-map [?\C-\M-e] 'bhj-c-end-of-defun)
 
-(setq auto-mode-alist (cons '(".*\\.[c]$" . linux-c-mode)
+(setq auto-mode-alist (cons '(".*/kernel.*\\.[ch]$" . linux-c-mode)
                             auto-mode-alist))
 (setq auto-mode-alist (cons '(".*\\.cpp$" . linux-c++-mode)
-                            auto-mode-alist))
-(setq auto-mode-alist (cons '(".*\\.h$" . linux-c++-mode)
                             auto-mode-alist))
 
 (setq frame-title-format "emacs@%b")
@@ -472,7 +470,7 @@
   (if (pos-visible-in-window-p (point-max))
       (save-excursion
         (end-of-buffer)
-        (search-backward-regexp "下一\\|还看了")
+        (search-backward-regexp "下一\\|后一\\|还看了")
         (if (w3m-url-valid (w3m-anchor))
             (call-interactively 'w3m-view-this-url)
           (call-interactively 'w3m-next-anchor)
@@ -624,18 +622,7 @@
           (message-goto-from)
           (message-beginning-of-line)
           (kill-line)
-          (insert "Bao Haojun at Letou <hjbao@eee168.com>")))
-      ;; clean up things like: Cc: "Jinfeng Lv\"\" <jflv@xx.com>, \"Haixiang Zhang <hxzhang@xx.com>
-      (save-excursion
-        (message-goto-to)
-        (message-beginning-of-line)
-        (while (search-forward-regexp "\\\\\\|\"" (line-end-position) t)
-          (delete-backward-char 1)))
-      (save-excursion
-        (message-goto-cc)
-        (message-beginning-of-line)
-        (while (search-forward-regexp "\\\\\\|\"" (line-end-position) t)
-          (delete-backward-char 1))))))
+          (insert "Bao Haojun at Letou <hjbao@eee168.com>"))))))
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
