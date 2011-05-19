@@ -2,10 +2,13 @@
 . ~/.bashrc
 set -e
 
-for x in `locate -b -r '^\.repo$'|grep src`; do 
+if test $# == 0; then
+    set -- `locate -b -r '^\.repo$'|grep src`
+fi
 
+for x in "$@"; do 
     cd $x
-    cd ..
+    cd `lookup_file .repo/..`
     repo sync -n
     repo-changes\? >changes.log 2>&1
     rfa 'git merge `repo-remote`/`tbranch`' >merge.log 2>&1

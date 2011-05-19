@@ -12,7 +12,7 @@ function swp()
     else
         FILE=z:$FILE
     fi
-    echo -n "$FILE"|tee /dev/tty|putclip
+    echo -n "$FILE"
     history -s swp "$(printf %q "$HFILE")"
 }
 
@@ -28,7 +28,7 @@ function sup()
     else
         FILE=z:$FILE
     fi
-    printf %q "$FILE"|tee /dev/tty|putclip
+    printf %q "$FILE"
     history -s sup "$(printf %q "$HFILE")"
 }
 
@@ -39,8 +39,10 @@ function wp()
 
     HFILE=$FILE
     FILE=z:$FILE
-    echo -n "$FILE"|perl -npe 's,/,\\,g'|tee /dev/tty|putclip
-    history -s wp "$(printf %q "$HFILE")"
+    echo -n "$FILE"|perl -npe 's,/,\\,g'
+    case $- in
+        *i*) history -s wp "$(printf %q "$HFILE")"
+    esac
 }
 
 function up()
@@ -48,7 +50,7 @@ function up()
     FILE=${1:-`pwd`}
     FILE=`lookup_file "$FILE"`
 
-    printf %q "$FILE"|tee /dev/tty|putclip
+    printf %q "$FILE"
     history -s up "$(printf %q "$FILE")"
 }
 
@@ -57,7 +59,7 @@ function mp() #mail path
     FILE=${1:-`pwd`}
     FILE=`lookup_file "$FILE"`
 
-    echo -n "$FILE"|tee /dev/tty|putclip
+    echo -n "$FILE"
     history -s mp "$(printf %q "$FILE")"
 }
 
@@ -66,10 +68,10 @@ function tmp() #tramp mail path
     FILE=${1:-`pwd`}
     FILE=`lookup_file "$FILE"`
 
-    echo -n "/scp:`whoami`@$LOCALIP:$FILE"|tee /dev/tty|putclip
+    echo -n "/scp:`whoami`@$LOCALIP:$FILE"
     history -s tmp "$(printf %q "$FILE")"
 }
 
-if test "$BASH_SOURCE" = "$0"; then
-    "`basename $0`" "$@"
+if test "$(basename "$BASH_SOURCE")" = "$0"; then
+    "`basename $0`" "$@"|putclip
 fi
