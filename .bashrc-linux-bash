@@ -20,6 +20,7 @@ do
         fi
     }"
 done
+. `which wp`
 
 function renew-xauth() {
     if test -z "$SSH_CLIENT"; then

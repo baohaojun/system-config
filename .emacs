@@ -1383,4 +1383,4 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 
 (setq w3m-fill-column 100)
-
+(require 'guess-offset)

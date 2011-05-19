@@ -1,77 +1,79 @@
 #!/bin/bash
 
-function swp()
-{
-    FILE=${1:-`pwd`}
-    FILE=`lookup_file "$FILE"`
-
-    HFILE=$FILE
-
-    if [[ "$FILE" =~ ~/smb/ ]]; then
-        FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
-    else
-        FILE=z:$FILE
-    fi
-    echo -n "$FILE"
-    history -s swp "$(printf %q "$HFILE")"
-}
-
-function sup()
-{
-    FILE=${1:-`pwd`}
-    FILE=`lookup_file "$FILE"`
-    
-    HFILE=$FILE
-    
-    if [[ "$FILE" =~ ~/smb/ ]]; then
-        FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,smb://,g'`
-    else
-        FILE=z:$FILE
-    fi
-    printf %q "$FILE"
-    history -s sup "$(printf %q "$HFILE")"
-}
-
-function wp()
-{
-    FILE=${1:-`pwd`}
-    FILE=`lookup_file "$FILE"`
-
-    HFILE=$FILE
-    FILE=z:$FILE
-    echo -n "$FILE"|perl -npe 's,/,\\,g'
-    case $- in
-        *i*) history -s wp "$(printf %q "$HFILE")"
-    esac
-}
-
-function up()
-{
-    FILE=${1:-`pwd`}
-    FILE=`lookup_file "$FILE"`
-
-    printf %q "$FILE"
-    history -s up "$(printf %q "$FILE")"
-}
-
-function mp() #mail path
-{
-    FILE=${1:-`pwd`}
-    FILE=`lookup_file "$FILE"`
-
-    echo -n "$FILE"
-    history -s mp "$(printf %q "$FILE")"
-}
-
-function tmp() #tramp mail path
-{
-    FILE=${1:-`pwd`}
-    FILE=`lookup_file "$FILE"`
-
-    echo -n "/scp:`whoami`@$LOCALIP:$FILE"
-    history -s tmp "$(printf %q "$FILE")"
-}
 
 if test "$(basename "$BASH_SOURCE")" = "$(basename "$0")"; then
+    function swp()
+    {
+        FILE=${1:-`pwd`}
+        FILE=`lookup_file "$FILE"`
+
+        HFILE=$FILE
+
+        if [[ "$FILE" =~ ~/smb/ ]]; then
+            FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
+        else
+            FILE=z:$FILE
+        fi
+        echo -n "$FILE"
+    }
+
+    function sup()
+    {
+        FILE=${1:-`pwd`}
+        FILE=`lookup_file "$FILE"`
+        
+        HFILE=$FILE
+        
+        if [[ "$FILE" =~ ~/smb/ ]]; then
+            FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,smb://,g'`
+        else
+            FILE=z:$FILE
+        fi
+        printf %q "$FILE"
+    }
+
+    function wp()
+    {
+        FILE=${1:-`pwd`}
+        FILE=`lookup_file "$FILE"`
+
+        HFILE=$FILE
+        FILE=z:$FILE
+        echo -n "$FILE"|perl -npe 's,/,\\,g'
+    }
+
+    function up()
+    {
+        FILE=${1:-`pwd`}
+        FILE=`lookup_file "$FILE"`
+
+        printf %q "$FILE"
+    }
+
+    function mp() #mail path
+    {
+        FILE=${1:-`pwd`}
+        FILE=`lookup_file "$FILE"`
+
+        echo -n "$FILE"
+    }
+
+    function tmp() #tramp mail path
+    {
+        FILE=${1:-`pwd`}
+        FILE=`lookup_file "$FILE"`
+
+        echo -n "/scp:`whoami`@$LOCALIP:$FILE"
+    }
+
     "`basename $0`" "$@"|putclip
+else
+    for x in swp sup wp up mp tmp; do 
+        eval 'function '$x'() {
+            command '$x' "$@"
+            FILE=${1:-`pwd`}
+            FILE=`lookup_file "$FILE"`
+            history -s '$x' "$(printf %q "$FILE")"
+        }'
+    done
 fi
