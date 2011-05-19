@@ -1,0 +1,13 @@
+#!/bin/bash
+. ~/.bashrc
+set -e
+
+for x in `locate -b -r '^\.repo$'|grep src`; do 
+
+    cd $x
+    cd ..
+    repo sync -n
+    repo-changes\? >changes.log 2>&1
+    rfa 'git merge `repo-remote`/`tbranch`' >merge.log 2>&1
+    test -e buildspec.mk && time make -j4 -l4 -k > build.log 2>&1
+done

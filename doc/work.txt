@@ -917,3 +917,5 @@ perl -ne 'BEGIN{$oldtime=0; } if (m/^......(\d\d):(\d\d):(\d\d)\.(\d\d\d)(.*)/) 
 
 北京市朝阳区安苑路15号邮电新闻大厦西办公楼6层
 邮编：100029
+
+(cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make -j8 -l8 -k )
