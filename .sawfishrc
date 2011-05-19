@@ -104,15 +104,7 @@
     (let ((class (bhj-window-class w)))
       (delete-if-not window-in-cycle-p
                      (filter-windows
-                      (let ((grps cycle-groups) (matched nil) grp)
-                        (while (and grps (not matched))
-                          (setq grp (car grps)
-                                grps (cdr grps))
-                          (if (string-match grp class)
-                                (setq grps nil matched t)))
-                        (if matched
-                            (lambda (x) (string-match grp (bhj-window-class x)))
-                          (lambda (x) (equal (bhj-window-class x) class))))
+                      (lambda (x) (equal (bhj-window-class x) class))
                       (window-order)))))
   #:spec "%W")
 

@@ -72,6 +72,6 @@ function tmp() #tramp mail path
     history -s tmp "$(printf %q "$FILE")"
 }
 
-if test "$(basename "$BASH_SOURCE")" = "$0"; then
+if test "$(basename "$BASH_SOURCE")" = "$(basename "$0")"; then
     "`basename $0`" "$@"|putclip
 fi
