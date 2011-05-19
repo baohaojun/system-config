@@ -10,9 +10,11 @@ for x in "$@"; do
         set -e
         cd $x
         cd `lookup_file .repo/..`
-        repo sync -n
-        repo-changes\? >changes.log 2>&1
-        rfa 'git merge `repo-remote`/`tbranch`' >merge.log 2>&1
-        test -e buildspec.mk && time make -j4 -l4 -k > build.log 2>&1
+        repo sync -n -j4
+        repo-changes\? >changes.log
+        for x in `cat changes.log`; do 
+            rfa $x 'git merge `repo-remote`/`tbranch`' 
+        done >merge.log 2>&1
+        (test -e buildspec.mk && time make -j4 -l4 -k && echo OK..) > build.log 2>&1
     )
 done
