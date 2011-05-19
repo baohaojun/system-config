@@ -774,6 +774,7 @@ local options=(--help --action --file --debug --verbose --server --user --passwo
 
 sawfish-client -e '(mapcar (lambda (w) (and (string-match "腾讯网新闻" (window-name w)) (delete-window-safely w)))  (window-order))'
 sawfish-client -e '(mapcar (lambda (w) (and (string-match "File-roller" (window-class w)) (delete-window-safely w)))  (window-order))'
+sawfish-client -e '(mapcar (lambda (w) (and (string-match "Terminal" (window-name w)) (x-kill-client w)))  (window-order))'
 
 bzr branch  lp:usb-creator  
 
@@ -923,3 +924,5 @@ sawfish-client -e '(mapcar (lambda (w) (and 1 (or (get-x-property w (quote WM_CL
 
 ((STRING 8 "emacs\000Emacs\000") (STRING 8 "gnome-terminal\000Gnome-terminal\000") (STRING 8 "Navigator\000Iceweasel\000") (STRING 8 "QQ.exe\000Wine\000") (STRING 8 "gnome-panel\000Gnome-panel\000") (STRING 8 "QQ.exe\000Wine\000") (STRING 8 "kopete\000Kopete\000") (STRING 8 "AcroRd32.exe\000Wine\000") (STRING 8 "gnome-terminal\000Gnome-terminal\000") (STRING 8 "Navigator\000Iceweasel\000") (STRING 8 "desktop_window\000Nautilus\000"))
 
+ssh r137 sshfs '$REMOTEIP':Downloads/ ~/Downloads/ -o nonempty,allow_other; ssh r137 sshfs '$REMOTEIP':Documents/ ~/Documents/ -o nonempty,allow_other
+killall -9 sshfs ; sudo umount Downloads ; sudo umount Documents
