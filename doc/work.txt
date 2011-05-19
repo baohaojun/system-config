@@ -919,3 +919,7 @@ perl -ne 'BEGIN{$oldtime=0; } if (m/^......(\d\d):(\d\d):(\d\d)\.(\d\d\d)(.*)/) 
 邮编：100029
 
 (cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make -j8 -l8 -k )
+sawfish-client -e '(mapcar (lambda (w) (and 1 (or (get-x-property w (quote WM_CLASS)) (window-name w))))  (window-order nil t t))' =>
+
+((STRING 8 "emacs\000Emacs\000") (STRING 8 "gnome-terminal\000Gnome-terminal\000") (STRING 8 "Navigator\000Iceweasel\000") (STRING 8 "QQ.exe\000Wine\000") (STRING 8 "gnome-panel\000Gnome-panel\000") (STRING 8 "QQ.exe\000Wine\000") (STRING 8 "kopete\000Kopete\000") (STRING 8 "AcroRd32.exe\000Wine\000") (STRING 8 "gnome-terminal\000Gnome-terminal\000") (STRING 8 "Navigator\000Iceweasel\000") (STRING 8 "desktop_window\000Nautilus\000"))
+
