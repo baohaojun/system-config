@@ -1,16 +1,18 @@
 #!/bin/bash
 . ~/.bashrc
-set -e
 
 if test $# == 0; then
     set -- `locate -b -r '^\.repo$'|grep src`
 fi
 
 for x in "$@"; do 
-    cd $x
-    cd `lookup_file .repo/..`
-    repo sync -n
-    repo-changes\? >changes.log 2>&1
-    rfa 'git merge `repo-remote`/`tbranch`' >merge.log 2>&1
-    test -e buildspec.mk && time make -j4 -l4 -k > build.log 2>&1
+    (
+        set -e
+        cd $x
+        cd `lookup_file .repo/..`
+        repo sync -n
+        repo-changes\? >changes.log 2>&1
+        rfa 'git merge `repo-remote`/`tbranch`' >merge.log 2>&1
+        test -e buildspec.mk && time make -j4 -l4 -k > build.log 2>&1
+    )
 done
