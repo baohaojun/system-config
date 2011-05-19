@@ -4,9 +4,11 @@
 (load-file "~/.sawfish/iswitch-window.jl")
 (bind-keys global-keymap "Super-s" 'iswitch-window)
 
+(defun bhj-window-class (window)
+  (caddr (get-x-property window 'WM_CLASS)))
 
 (bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/linux/screenshot&")))
-(bind-keys window-keymap "Super-i" (lambda () (display-message (concat "Window class is: " (window-class (input-focus))))))
+(bind-keys window-keymap "Super-i" (lambda () (display-message (concat "Window class is: " (caddr (get-x-property (input-focus) (quote WM_CLASS)))))))
 (bind-keys global-keymap "Super-SPC" (lambda() 
                                        (mapc (lambda (window)
                                                (window-put window 'depth 0))
@@ -23,7 +25,7 @@
   (if (eq (catch 'wFound
             (mapc (lambda (window)
                     (when (if (stringp wclass-or-lambda)
-                              (string-match wclass-or-lambda (window-class window) 0 t)
+                              (string-match wclass-or-lambda (bhj-window-class window) 0 t)
                             (when functionp wclass-or-lambda
                                   (write (stderr-file) "hello world\n")
                                   (wclass-or-lambda window)))
@@ -45,13 +47,13 @@
                 (lambda ()
                   (find-window-or-exec (eval wclass) wcommand)))))
  '(
-   ("Super-e" "Emacs" "emacs.bhj")
-   ("Super-r" "GRun" "grun")
-   ("Super-p" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
+   ("Super-e" "emacs" "emacs.bhj")
+   ("Super-r" "grun" "grun")
+   ("Super-p" "gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
    ("Super-C-d" (lambda (w) (string-match "my-dict" (window-name w) 0 t)) "gnome-terminal -t my-dict --hide-menubar -e ~/bin/linux/my-dict")
    ("Super-l" "hello world no such thing" "/usr/bin/gnome-screensaver-command -a -l")
-   ("Super-x" "XCalc" "xcalc")
-   ("F12" "Gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
+   ("Super-x" "xcalc" "xcalc")
+   ("F12" "gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
    ))
 
 (mapc 
@@ -60,7 +62,7 @@
      (bind-keys global-keymap (concat "C-M-" (format nil "%d" arg))
                 (lambda ()
                   (setq wmark (input-focus))
-                  (setq wclass (window-class (input-focus)))))
+                  (setq wclass (bhj-window-class (input-focus)))))
      (bind-keys global-keymap (concat "Super-" (format nil "%d" arg))
                 (lambda ()
                   (if (and  (windowp wmark) (window-mapped-p wmark))
@@ -87,11 +89,11 @@
 
 (require 'sawfish.wm.commands.x-cycle)
 
-(setq im-class "Eva|Pidgin|Wine|Kopete" ;; im = instant messanger
-      br-class "Firefox|Iceweasel|Epiphany" ;; br = browser
-      dc-class "libreoffice|OpenOffice|Acroread|Evince|Gnumeric" ;; dc = doc
-      mg-class "Meld|Gimp|Gitk" ;; mg = meld/gimp
-      fm-class "Nautilus|File-roller" ;; fm = file manager
+(setq im-class "QQ.exe|kopete" ;; im = instant messanger
+      br-class "Navigator|epiphany-browser" ;; br = browser
+      dc-class "libreoffice|openoffice|AcroRd32.exe|acroread|evince|gnumeric" ;; dc = doc
+      mg-class "meld|gimp|gitk" ;; mg = meld/gimp
+      fm-class "nautilus|file-roller" ;; fm = file manager
       cycle-groups (list im-class
                      br-class
                      dc-class))
@@ -99,7 +101,7 @@
 (define-cycle-command-pair
   'cycle-class-bhj 'cycle-class-bhj-backwards
   (lambda (w)
-    (let ((class (window-class w)))
+    (let ((class (bhj-window-class w)))
       (delete-if-not window-in-cycle-p
                      (filter-windows
                       (let ((grps cycle-groups) (matched nil) grp)
@@ -109,38 +111,38 @@
                           (if (string-match grp class)
                                 (setq grps nil matched t)))
                         (if matched
-                            (lambda (x) (string-match grp (window-class x)))
-                          (lambda (x) (equal (window-class x) class))))
+                            (lambda (x) (string-match grp (bhj-window-class x)))
+                          (lambda (x) (equal (bhj-window-class x) class))))
                       (window-order)))))
   #:spec "%W")
 
 (define-cycle-command-pair
   'cycle-im-window 'cycle-im-windows-backwards
   (lambda () (filter-windows 
-              (lambda (x) (string-match im-class (window-class x)))
+              (lambda (x) (string-match im-class (bhj-window-class x)))
               (stacking-order))))
 
 (define-cycle-command-pair
   'cycle-br-window 'cycle-br-window-backwards
   (lambda () (filter-windows 
-              (lambda (x) (string-match br-class (window-class x)))
+              (lambda (x) (string-match br-class (bhj-window-class x)))
               (stacking-order))))
 
 (define-cycle-command-pair
   'cycle-dc-window 'cycle-dc-window-backwards
   (lambda () (filter-windows 
-              (lambda (x) (string-match dc-class (window-class x)))
+              (lambda (x) (string-match dc-class (bhj-window-class x)))
               (stacking-order))))
 
 (define-cycle-command-pair
   'cycle-mg-window 'cycle-mg-window-backwards
   (lambda () (filter-windows 
-              (lambda (x) (string-match mg-class (window-class x)))
+              (lambda (x) (string-match mg-class (bhj-window-class x)))
               (stacking-order))))
 
 (define-cycle-command-pair
   'cycle-fm-window 'cycle-fm-window-backwards
   (lambda () (filter-windows
-              (lambda (x) (and (string-match fm-class (window-class x))
+              (lambda (x) (and (string-match fm-class (bhj-window-class x))
                                (not (string-match "x-nautilus-desktop" (window-name x)))))
               (stacking-order))))
