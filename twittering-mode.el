@@ -5372,7 +5372,7 @@ variables `twittering-http-proxy-*' or `twittering-https-proxy-*'
 regardless of HTTP or HTTPS.")
 
 (defcustom twittering-uri-regexp-to-proxy ".*"
-  "Matched uri this will be retrieved via proxy.
+  "Matched uri will be retrieved via proxy.
 See also `twittering-proxy-use', `twittering-proxy-server' and
 `twittering-proxy-port'."
   :type 'string
@@ -6917,7 +6917,7 @@ If nil, read it from the minibuffer."
 
         ;; 4. Update info file when changed.
         (if (not ok)
-            (error "Authorization `%s' via OAuth failed. Type M-x twit to retry."
+            (error "Authorization `%s' via OAuth failed. Type M-x twittering-restart to retry."
                    service)
           (twittering-update-account-authorization 'authorized)
           (message "Authorization for \"%s\" succeeded." service)
@@ -6953,7 +6953,7 @@ If nil, read it from the minibuffer."
      (t
       (twittering-update-account-authorization nil)
       (let ((error-mes
-             (format "Authorization for the account \"%s\" failed. Type M-x twit to retry."
+             (format "Authorization for the account \"%s\" failed. Type M-x twittering-restart to retry."
                      (twittering-get-accounts 'username))))
         (cond
          ((memq (twittering-get-accounts 'auth) '(oauth xauth))
@@ -6966,7 +6966,7 @@ If nil, read it from the minibuffer."
     (when (and (memq status '(exit signal closed failed))
                (eq (twittering-get-account-authorization) 'queried))
       (twittering-update-account-authorization nil)
-      (message "Authorization failed. Type M-x twit to retry."))))
+      (message "Authorization failed. Type M-x twittering-restart to retry."))))
 
 ;;;; Start/Stop
 ;;;
