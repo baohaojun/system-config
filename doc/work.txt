@@ -852,7 +852,7 @@ adb shell i2cset -f -y 0x0 0x5c 0x37 3
 adb shell i2cset -f -y 0x0 0x41 0xcc 3
 
 git difftool -x kc_diff tegra-10.9.7 ./arch/arm/configs/tegra_ventana_android_defconfig|less
-(cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && kconfig tegra_ventana_android_defconfig && krebuild -j8 -l8)
+(cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && kconfig tegra_cinema_android_defconfig && krebuild -j8 -l8)
 
 samba smb.conf symlink:
 

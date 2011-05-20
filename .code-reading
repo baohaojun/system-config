@@ -616,3 +616,12 @@ mmc_cid_show: 这个函数用ctags不能查到，因为它是在一个宏里被�
             #define DM_FUNC(name,isvar) \
                 ...
     =>          cmd->InOutWords[1] = isvar?0:(sizeof(NvDispMgr##name##Out)/4)
+
+****************
+2.6.36在reboot时和NV用的方法不一样
+
+    /scp:bhj@10.6.3.178:/home/bhj/src/theatre-p2/kernel/arch/arm/mach-tegra/include/mach/system.h:39:         while(1);
+        static inline void arch_reset(char mode, const char *cmd)
+        {
+                ...
+    =>          while(1);
