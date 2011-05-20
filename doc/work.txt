@@ -874,8 +874,9 @@ smbnetfs.conf: 必须加上workgroup的名字。
 
 mirrorcyg.pl|mf-download.pl
 
-Tel. 010-64981756 ext. 849 会议室 863
-Tel. 010-64981756 ext. 863
+Tel. 010-64987605 ext. 849 会议室 863
+Tel. 010-64987605 ext. 863
+Tel. 010-64987605 ext. 862 
 find . -name "Kconfig"|perl -npe 's,^.,./kernel,'|mkgtags
 
 sudo ifconfig eth0:0 192.168.88.8; ssh r137 sudo ifconfig eth0:0 192.168.88.9
@@ -926,3 +927,6 @@ sawfish-client -e '(mapcar (lambda (w) (and 1 (or (get-x-property w (quote WM_CL
 
 ssh r137 sshfs '$REMOTEIP':Downloads/ ~/Downloads/ -o nonempty,allow_other; ssh r137 sshfs '$REMOTEIP':Documents/ ~/Documents/ -o nonempty,allow_other
 killall -9 sshfs ; sudo umount Downloads ; sudo umount Documents
+
+dd if=/dev/zero of=/mnt/sdcard/1.txt count=2000000; dd if=/dev/zero of=/mnt/sdcard/2.txt count=2000000; dd if=/mnt/sdcard/1.txt of=/dev/null
+dd if=/dev/zero of=/data/1.txt count=2000000; dd if=/dev/zero of=/data/2.txt count=2000000; dd if=/data/1.txt of=/dev/null
