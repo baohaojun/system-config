@@ -73,7 +73,9 @@ lcd()
 
     if [[ "$1" =~ ^\\\\|^//|^smb:// && `uname` = Linux ]]; then
         chmod 600 ~/.smb/*
-        smbnetfs -o allow_root ~/smb|grep -v '^fuse: mountpoint is not empty$'|grep -v "^fuse: if you are sure this is safe, use the 'nonempty' mount option$"
+        mkdir -p ~/smb ~/smb-rw
+        smbnetfs -o allow_root,ro ~/smb|grep -v '^fuse: mountpoint is not empty$'|grep -v "^fuse: if you are sure this is safe, use the 'nonempty' mount option$"
+        smbnetfs -o allow_root ~/smb-rw|grep -v '^fuse: mountpoint is not empty$'|grep -v "^fuse: if you are sure this is safe, use the 'nonempty' mount option$"
         builtin cd ~/smb/"$(host-hosts "$1")"
         history -s cd "$(printf %q "`pwd`")"
         history -s cd "$(printf %q "$1")"

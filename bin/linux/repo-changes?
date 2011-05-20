@@ -1,6 +1,2 @@
 #!/bin/bash
-test $# == 0 && set -- ""
-
-for x in "$@"; do 
-    rfa $x 'git diff $REPO_LREV --quiet || pwd'
-done
+rfa "$@" 'git diff $REPO_LREV --quiet || pwd'
