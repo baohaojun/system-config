@@ -1687,8 +1687,7 @@ Statuses are stored in ascending-order with respect to their IDs."
                           ;; Store the id of the first observed tweet
                           ;; that refers `retweeted-id'.
                           (puthash retweeted-id id referring-id-table))
-                        (if (gethash id id-table)
-                            nil
+                        (unless (gethash id id-table)
                           (puthash id status id-table)
                           (puthash id id referring-id-table)
                           `((source-spec . ,spec)
@@ -1756,7 +1755,7 @@ the status be shown. ")
                          (eq (twittering-extract-service spec) 'sina))
                      (or (not twittering-status-filter)
                          (funcall twittering-status-filter status))
-                     (not (assqref 'is-reply-reference status)))
+                     (not (assqref 'twittering-reply? status)))
             status)))
       timeline-data))))
 
@@ -2964,6 +2963,11 @@ the server when the HTTP status code equals to 400 or 403."
       (let* ((spec (assqref 'timeline-spec connection-info))
              (spec-string (assqref 'timeline-spec-string connection-info))
              (statuses (twittering-construct-statuses)))
+        ;; Are we are fetching replies?
+        (when (eq (assqref 'command connection-info) 'show)
+          (setq statuses
+                (mapcar (lambda (st) `(,@st (twittering-reply? . t)))
+                        statuses)))
         (twittering-update-timeline statuses spec)
         (when (and twittering-notify-successful-http-get
                    (not (assqref 'noninteractive connection-info)))
@@ -6099,7 +6103,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
       ((show)
        (twittering-http-get api-host
                             (twittering-api-path "statuses/show/" id)
-                            nil additional-info))
+                            nil `(,@additional-info (command . show))))
 
       ((block)
        ;; Block a user.
@@ -9660,10 +9664,7 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
              (assqref 'entry statuses))))
 
      ((funcall has 'user)               ; `show' a single tweet
-      `((,@statuses
-                                        ; TODO: handle replies
-         ;; (is-reply-reference . t)
-         )))
+      `((,@statuses)))
 
      ((funcall has 'users)              ; followers
       (let ((followers (assqref 'users statuses))
