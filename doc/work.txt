@@ -938,3 +938,4 @@ dd if=/dev/zero of=/data/1.txt count=2000000; dd if=/dev/zero of=/data/2.txt cou
         
 
 wget -r -l1 -k --page-requisites -c http://www.suimeng.com/files/article/html/4/4704/index.html
+ifconfig eth0 |grep -P 'inet addr:.*?\s' -o 
