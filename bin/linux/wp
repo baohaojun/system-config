@@ -66,7 +66,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then
 else
     for x in swp sup wp up mp tmp gitp; do 
         eval 'function '$x'() {
-            command '$x' "$@"
+            command '$x' "$@" || { renew-xauth; command '$x' "$@"; }
             FILE=${1:-`pwd`}
             FILE=`lookup_file "$FILE"`
             history -s '$x' "$(printf %q "$FILE")"
