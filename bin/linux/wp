@@ -62,11 +62,18 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then
     }
     export FILE=${1:-`pwd`}
     export FILE=`lookup_file "$FILE"`
-    "`basename -- $0`" "$@"|putclip
+    if test "$NO_PUTCLIP" = true; then
+        "`basename -- $0`" "$@"
+    else
+        "`basename -- $0`" "$@"|putclip
+    fi
 else
     for x in swp sup wp up mp tmp gitp; do 
         eval 'function '$x'() {
             command '$x' "$@"
+            if test "$NO_PUTCLIP" = true; then
+                return
+            fi
             FILE=${1:-`pwd`}
             FILE=`lookup_file "$FILE"`
             history -s '$x' "$(printf %q "$FILE")"
