@@ -3,4 +3,4 @@
 . `which wp`
 NO_PUTCLIP=true
 export NO_PUTCLIP
-wine start "$(wp "$@")" >/dev/null 2>&1
+wine start "$(wp "$@")"

@@ -2,6 +2,10 @@
 
 if test -d "$1"; then
     repo forall "$1" -c "$2"
-else 
+elif test -f "$1"; then
+    for x in `cat $1`; do 
+        repo forall $x -c "$2"
+    done
+else
     repo forall -c "$1"
 fi
