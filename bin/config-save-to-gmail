@@ -1,7 +1,0 @@
-#!/bin/bash
-set -e
-
-cd ~/windows-config/
-if ! git diff --quiet origin/master; then
-    git diff origin/master |mailx -s config-save-gmail baohaojun@gmail.com
-fi
