@@ -930,14 +930,3 @@ killall -9 sshfs ; sudo umount Downloads ; sudo umount Documents
 
 dd if=/dev/zero of=/mnt/sdcard/1.txt count=2000000; dd if=/dev/zero of=/mnt/sdcard/2.txt count=2000000; dd if=/mnt/sdcard/1.txt of=/dev/null
 dd if=/dev/zero of=/data/1.txt count=2000000; dd if=/dev/zero of=/data/2.txt count=2000000; dd if=/data/1.txt of=/dev/null
-
-make error: no rule to make
-
-(find-file
- (let ((file 
-        (replace-regexp-in-string "/src/.*?/" "/src/theatre/" (my-buffer-file-name (current-buffer)))))
-        file))
-        
-
-wget -r -l1 -k --page-requisites -c http://www.suimeng.com/files/article/html/4/4704/index.html
-ifconfig eth0 |grep -P 'inet addr:.*?\s' -o 

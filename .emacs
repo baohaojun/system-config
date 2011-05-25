@@ -142,8 +142,7 @@
                     (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
                     (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
                     (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
-                    (c-set-offset 'innamespace 0)
-                    (c-set-offset 'substatement-open 0))))
+                    (c-set-offset 'innamespace 0))))
         (list 'c-mode-hook 'c++-mode-hook))
         
 

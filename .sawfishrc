@@ -91,7 +91,7 @@
 
 (setq im-class "QQ.exe|kopete" ;; im = instant messanger
       br-class "Navigator|epiphany-browser" ;; br = browser
-      dc-class "libreoffice|DocumentWindow|openoffice|AcroRd32.exe|acroread|evince|Gnumeric" ;; dc = doc
+      dc-class "libreoffice|openoffice|AcroRd32.exe|acroread|evince|Gnumeric" ;; dc = doc
       mg-class "meld|gimp|gitk" ;; mg = meld/gimp
       fm-class "nautilus|file-roller" ;; fm = file manager
       cycle-groups (list im-class
