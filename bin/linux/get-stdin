@@ -7,6 +7,10 @@ if tty >/dev/null 2>&1; then
     tmp=/tmp/`basename $0`.$$
     touch $tmp
     edit-wait $tmp >/dev/null 2>&1
+    if "`cat $tmp | wc -c`" == 0; then
+        echo Error: input can not be empty 1>&2
+        exec get-stdin
+    fi
     cat $tmp
     rm $tmp
 else
