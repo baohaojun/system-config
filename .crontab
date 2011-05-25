@@ -3,3 +3,4 @@
 0 * * * * ~/bin/linux/backup_where
 0 * * * * ~/bin/linux/jira-getissues
 30 22 * * * bash -c ". ~/.bashrc; ~/bin/linux/update-repo-bhj"
+0 * * * * ~/bin/config-save-to-gmail
