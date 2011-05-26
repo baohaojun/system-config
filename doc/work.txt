@@ -808,6 +808,7 @@ Python:
         empty_entry = struct.pack('=4sIII', *empty_entry_tuple)
 
 (cd .repo/.. &&  export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make pdk pdk_docs)
+~/bin/linux/ext/google_appengine/dev_appserver.py --port=8888 --address 0.0.0.0 ~/src/theatre-p2/out/target/common/docs
 (cd .repo/.. && time make iso_img -l8 -j8 -k)
 
 
