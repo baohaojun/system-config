@@ -4,6 +4,8 @@ while True:
       line = sys.stdin.readline()
       if not line:
             break
+      if "/theatre-doc/" in line:
+            continue
       if "cscope.files" in line:
             continue
       if "/1.xml" in line:
