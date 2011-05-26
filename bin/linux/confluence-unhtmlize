@@ -25,7 +25,7 @@ while (<>) {
         
     }
   } else {
-      s,{html}<!-- start of tt (.*) end of tt --><tt>.*?</tt>{html},"{{" . my_unquote_str($1) . "}}",ge;
+      s,{html}<!-- start of tt (.*?) end of tt --><tt>.*?</tt>{html},"{{" . my_unquote_str($1) . "}}",ge;
       print;
   }
 }
