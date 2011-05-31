@@ -1,0 +1,20 @@
+#!/usr/bin/env python3.1
+#-*- mode: python -*-
+
+import os, sys, pickle
+
+sys.path.append(os.path.expanduser("~/windows-config/gcode/scim-cs/ime-py"))
+
+from wubi86 import g_quail_map
+
+__save_path = os.path.expanduser("~/.sdim/cands")
+os.system("mkdir -p ~/.sdim/cands")
+
+for t in os.walk(__save_path):
+    for x in t[2]:
+        f = os.path.join(t[0], x)
+        comp = os.path.basename(f)
+        cands = pickle.load(open(f, "rb"))
+        for cand in list(cands):
+            if comp not in g_quail_map or cand not in g_quail_map[comp]:
+                print("sdim_add_comp", cand)
