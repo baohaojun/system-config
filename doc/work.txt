@@ -944,3 +944,7 @@ wget -r -l1 -k --page-requisites -c http://www.suimeng.com/files/article/html/4/
 ifconfig eth0 |grep -P 'inet addr:.*?\s' -o 
 while true; do adb wait-for-device && adb shell 'echo 1 > /sys/power/wake_lock' &&  adb shell ls /dev/tegra*; (trap echo shit SIGINT;  adb logcat -v time); adb shell; done
 tar czfv ~/Downloads/flashing-`today`.tgz . --exclude=*.tar --exclude=*.zip --exclude=symbols --exclude=*.txt --exclude=*.xml
+
+1) sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/jdk1.5.0_22/bin/javadoc 100
+2) sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
+3) sudo update-alternatives --set javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
