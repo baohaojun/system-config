@@ -289,12 +289,10 @@
 (defun bhj-insert-pwdu ()
   (interactive)
   (insert "'")
-  (if (eq system-type 'cygwin)
-      (insert 
-       (replace-regexp-in-string
-        "^/.?scp:.*?@.*?:" "" 
-        (expand-file-name default-directory)))
-    (insert (expand-file-name default-directory)))
+  (insert 
+   (replace-regexp-in-string
+    "^/.?scp:.*?@.*?:" "" 
+    (expand-file-name default-directory)))
   (insert "'"))
 
 ;; old time motorola usage
