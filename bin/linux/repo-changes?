@@ -1,5 +1,5 @@
 #!/bin/bash
 test $# = 0 && set -- ""
 for x in "$@"; do 
-    rfa $x 'git diff $REPO_LREV --quiet || pwd'
+    rfa $x 'git diff $REPO_LREV --quiet || (pwd; false)'
 done
