@@ -947,3 +947,8 @@ tar czfv ~/Downloads/flashing-`today`.tgz . --exclude=*.tar --exclude=*.zip --ex
 
 
 rfa 'export TAG=tegra-10.9.7; git tag|grep -q -e "^"$TAG"\$" && (git diff --quiet $TAG || (mkdir -p ~/`today`/$REPO_PATH && git diff --binary tegra-10.9.7 > ~/`today`/$REPO_PATH/letou_patch))'
+
+1) sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/jdk1.5.0_22/bin/javadoc 100
+2) sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
+3) sudo update-alternatives --set javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
+
