@@ -15,7 +15,7 @@ function cd_bhj ()
     local ok=1 # 1 means not ok
     lcd "$@" && return $?
 
-    test $# == 1 -o $# == 0 && builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@" && ok=0 # 0 means ok
+    test $# == 1 -o $# == 0 && builtin cd "$@" >/dev/null 2>&1 || cd_failed "$@" && ok=0 # 0 means ok
     test "`pwd`" != "$oldpwd" && cd_record 
     return $ok
 }

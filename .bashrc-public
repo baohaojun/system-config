@@ -96,7 +96,6 @@ lcd()
         return $?
     fi
 
-    link=$(readlink -f "$1")
     if test -f "$link" && echo "${link##*.}"|grep -i '^lnk$' -q; then 
             link=`readshortcut "$link"`
     fi
