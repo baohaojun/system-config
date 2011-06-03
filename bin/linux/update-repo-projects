@@ -18,10 +18,10 @@ for x in "$@"; do
         repo sync -n -j4
         mkdir -p out
         mv out/changes.log out/changes.log-backup-`today` || true
-        repo-changes\? >out/changes.log
+        repo-changes\? 2>&1|tee out/changes.log
         for x in `cat out/changes.log`; do 
             rfa $x 'git merge `repo-remote`/`tbranch`' 
-        done >out/merge.log 2>&1
+        done 2>&1|tee out/merge.log
         (test -e buildspec.mk && time make -j4 -l4 -k && echo OK..) > out/build.log 2>&1
     )
 done
