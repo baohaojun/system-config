@@ -807,7 +807,7 @@ export ARCH=arm; export CROSS_COMPILE=`readlink -f ./prebuilt/linux-x86/toolchai
 Python:
         empty_entry = struct.pack('=4sIII', *empty_entry_tuple)
 
-(cd .repo/.. &&  ln -sf /usr/local/jdk/bin/javadoc ./ && export PATH=`pwd`:$PATH && time make pdk pdk_docs)
+(cd .repo/.. &&  export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make pdk pdk_docs)
 ~/bin/linux/ext/google_appengine/dev_appserver.py --port=8888 --address 0.0.0.0 ~/src/theatre-p2/out/target/common/docs
 (cd .repo/.. && time make iso_img -l8 -j8 -k)
 
