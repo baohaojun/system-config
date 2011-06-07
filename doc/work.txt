@@ -959,3 +959,4 @@ rfa 'export TAG=tegra-10.9.7; git tag|grep -q -e "^"$TAG"\$" && (git diff --quie
 2) sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
 3) sudo update-alternatives --set javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
 
+echo 'C:\PROGRA~1\MICROS~4\VC98\LIB;C:\PROGRA~1\MICROS~4\VC98\MFC\LIB;'|perl -a -F\; -ne 'for(@F) {chomp; system("cygpath", "-alw", $_)}'|xargs.exe -d '\n' bash -c 'for x in "$@"; do ln -s "$(cygpath -au "$x")" z`printf %02d $y``basename "$x"`; ((y++)); done' xx
