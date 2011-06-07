@@ -869,6 +869,13 @@ samba smb.conf symlink:
     
     #### Networking ####
 
+[Guest Share]
+        comment = Guest access share
+        path = /home/bhj/Downloads/tddownload/
+        browseable = yes
+        read only = no
+        guest ok = yes
+
 smbnetfs.conf: 必须加上workgroup的名字。    
 	auth 192.168.88.9 WORKGROUP/bhj	password
 	auth r889 WORKGROUP/bhj	password
