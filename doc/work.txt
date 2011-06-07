@@ -960,3 +960,38 @@ rfa 'export TAG=tegra-10.9.7; git tag|grep -q -e "^"$TAG"\$" && (git diff --quie
 3) sudo update-alternatives --set javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
 
 echo 'C:\PROGRA~1\MICROS~4\VC98\LIB;C:\PROGRA~1\MICROS~4\VC98\MFC\LIB;'|perl -a -F\; -ne 'for(@F) {chomp; system("cygpath", "-alw", $_)}'|xargs.exe -d '\n' bash -c 'for x in "$@"; do ln -s "$(cygpath -au "$x")" z`printf %02d $y``basename "$x"`; ((y++)); done' xx
+
+cat /proc/registry/HKEY_CURRENT_USER/Software/Microsoft/DevStudio/6.0/Build\ System/Components/Platforms/Win32\ \(x86\)/Directories/Library\ Dirs
+
+
+
+boost and stlport:
+
+1. vc6:
+
+  a. download stlport and boost, which version can be seen from: {{ls -l ~/vc6/inc}}
+
+  b. download and install vs6sp6, download and install platform sdk
+
+  c. compile stlport, cmd.exe; configure.bat msvc6; cd build/lib; nmake /fmsvc.mak install
+
+  d. compile boost: 
+
+    i. cd build/jam/src, compile, copy bjam.exe to /c/windows/system32
+    ii. bjam -sBOOST_ROOT=. -sTOOLS=msvc "-sBUILD=debug release static/dynamic" 
+
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.1.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.2.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.3.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.4.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.5.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.6.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.7.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.8.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.9.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.10.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.11.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.12.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.13.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.bat
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/Extract.exe
