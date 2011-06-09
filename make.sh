@@ -24,42 +24,9 @@ components/firemacs-service.js
 install.rdf
 "
 
-CHROME="
-content/config-name.js
-content/config.js
-content/config.xul
-content/firemacs.js
-content/firemacs.xul
-content/init.js
-content/keybinder.js
-content/keybinding.js
-content/keyhandler.js
-content/status.js
-content/statusbar.xul
-content/subfunc.js
-skin/config.css
-skin/icon16.png
-skin/icon16gray.png
-skin/icon32.png
-"
-
-FMX="
-chrome.manifest
-chrome/firemacs.jar
-components/firemacs-service.js
-install.rdf
-"
-
 rm -rf work
 mkdir work
-tar cf - $FILES | (cd work; tar xvf -)
-cd work/chrome
-zip firemacs.jar $CHROME
-rm -rf content
-rm -rf skin
-cd ..
-zip firemacs-$version.xpi $FMX
-rm -rf $FMX chrome components
+zip work/firemacs-$version.xpi $FILES
 
 #
 # End
