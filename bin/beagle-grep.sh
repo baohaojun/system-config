@@ -16,6 +16,9 @@ my $find_file_only = 0;
 my $file_default_line = 1;
 my $file_tag = "";
 
+open(my $log, ">>", glob("~/.beagle-grep.log")) or die "Error openning log";
+print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
+
 GetOptions(
            "e=s" => \$pat,
            "p=s" => \$pathpat,
