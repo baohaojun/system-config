@@ -99,5 +99,7 @@ EOC
   system("ssh $remote_ip $ssh_cmd");
 
 } else {
-  system(edit_1($myfile));
+    my @cmd = edit_1($myfile);
+    print "@cmd\n";
+    system(@cmd);
 }
