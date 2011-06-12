@@ -57,7 +57,7 @@ sub edit_1($)
     if (-e $file) {
 
       $file = shell_quote($file);
-      chomp($file = qx(readlink -f $file));
+      chomp($file = qx(lookup_file $file));
       return (@emacsclient, get_emacs_file_name($file));
 
     } elsif ($file =~ m,smb://(.*?)(/.*),) {
@@ -73,12 +73,8 @@ sub edit_1($)
       my $line=1;
       $file =~ s,:([0-9]+)$,, and $line = $1;
 
-      my $x=0;
-      while (not -e $file and $x ++ < 10) {
-        $file = "../$file";            
-      }
       $file = shell_quote($file);
-      chomp($file = qx(readlink -f $file));
+      chomp($file = qx(lookup_file $file));
       return (@emacsclient, "+$line", get_emacs_file_name($file));
     }
   }
@@ -99,7 +95,5 @@ EOC
   system("ssh $remote_ip $ssh_cmd");
 
 } else {
-    my @cmd = edit_1($myfile);
-    print "@cmd\n";
-    system(@cmd);
+  system(edit_1($myfile));
 }

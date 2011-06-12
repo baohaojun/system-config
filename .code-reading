@@ -625,15 +625,3 @@ mmc_cid_show: 这个函数用ctags不能查到，因为它是在一个宏里被�
         {
                 ...
     =>          while(1);
-
-****************
-
-
-    /home/bhj/src/theatre/hardware/tegra/odm/ventana/odm_kit/query/nvodm_query.c:456:         { NV_FALSE,  0, NV_FALSE, 0x4, NvOdmQuerySdioSlotUsage_Boot  },
-        const NvOdmQuerySdioInterfaceProperty* NvOdmQueryGetSdioInterfaceProperty(
-            NvU32 Instance)
-        {
-            ...
-            {
-                ...
-    =>          { NV_FALSE,  0, NV_FALSE, 0x4, NvOdmQuerySdioSlotUsage_Boot  },

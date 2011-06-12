@@ -16,9 +16,6 @@ my $find_file_only = 0;
 my $file_default_line = 1;
 my $file_tag = "";
 
-open(my $log, ">>", glob("~/.beagle-grep.log")) or die "Error openning log";
-print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
-
 GetOptions(
            "e=s" => \$pat,
            "p=s" => \$pathpat,
@@ -94,7 +91,7 @@ if (!$find_file_only) {
 if ($find_file_only || 1) {
     my %set;
     for (@beagle_files) {
-        $set{$_} = 1 if m/$pat_save/i and m/$pathpat/i;
+        $set{$_} = 1 if m/$pat_save/ and m/$pathpat/;
     }
     if ($find_file_only && keys %set > 1 && $file_tag) {
         my $files = qx(grep-gtags -e $file_tag|perl -ne "if (m/:[0-9]+:/) {s/:[0-9]+:.*//; print}"|sort -u);
