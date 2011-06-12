@@ -4,6 +4,9 @@ use Getopt::Long;
 use strict;
 use String::ShellQuote;
 
+open(my $log, ">>", glob("~/.beagle-grep.log")) or die "Error openning log";
+print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
+
 print "$0 ";
 
 my @ARGV_save = @ARGV;

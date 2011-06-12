@@ -4,6 +4,7 @@ q=`cygpath -alw ~`
 regAddPaths '\HKEY_CURRENT_USER\Software\Microsoft\DevStudio\6.0\Build System\Components\Platforms\Win32 (x86)\Directories\Include Dirs' ~/vc6/inc
 regAddPaths '\HKEY_CURRENT_USER\Software\Microsoft\DevStudio\6.0\Build System\Components\Platforms\Win32 (x86)\Directories\Library Dirs' ~/vc6/lib
 
+
 regSetVal -s set '\HKEY_CLASSES_ROOT\.sh\' 'sh_auto_file'
 regSetVal -s set '\HKEY_CLASSES_ROOT\sh_auto_file\shell\open\command\' "$(qq_cmdout cygpath -alw "$BASH"; echo -n ' --rcfile ~/.bashrc-windows -i "%1" %*')"
 regSetVal -s set '\HKEY_CLASSES_ROOT\*\shell\emacsedit\command\' "$q"'\windows-config\bin\windows\redirect_vc6\emacsedit.exe -n "%1"'

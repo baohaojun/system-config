@@ -108,6 +108,10 @@ lcd()
         builtin cd "$link"
         cd_record
         return $?
+    elif test -L "$link" -a -f "$link"; then
+        builtin cd "$(dirname "$(readlink -f "$link")")"
+        cd_record
+        return $?
     else
         builtin cd "$(dirname "$link")"
         cd_record
@@ -134,7 +138,7 @@ _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will
 
 git()
 {
-    if test "`pwd`" = "`readlink -f ~`" -a "$1" != clone
+    if test "`readlink -f .`" = "`readlink -f ~`" -a "$1" != clone
     then
         (cd ~/windows-config/; command git "$@")
     else
