@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env /usr/bin/python
 import sys
 while True:
       line = sys.stdin.readline()

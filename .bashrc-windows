@@ -15,6 +15,7 @@ function SetPath()
         ~/bin/windows
         ~/bin/windows/redirect_vc6
         ~/bin/windows/redirect_cyg
+        ~/bin/linux
         /usr/local/bin
         /usr/X11R6/bin
         /usr/bin
