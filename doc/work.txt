@@ -995,3 +995,34 @@ http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/37
 http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.13.cab
 http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.bat
 http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/Extract.exe
+
+cygwin path from dos to unix 
+
+perl -a -F\; -ne 'use String::ShellQuote; 
+for (@F) {
+    chomp; 
+    $_ = shell_quote($_); 
+    $_ = `cygpath -alw $_ 2>/dev/null`; 
+    chomp;
+    $_ = shell_quote($_);
+    $_ = `cygpath -au $_ 2>/dev/null`;
+    chomp;
+    -d $_ and print $_ . ":";
+}'
+
+
+cygwin path from unix to dos
+
+perl -a -F':' -ne 'use String::ShellQuote; 
+for (@F) {
+    chomp;
+    if (not -d $_) {
+        print STDERR "error: not dir: $_\n";
+        next;
+    }
+    $_ = shell_quote($_); 
+    $_ = `cygpath -asw $_ 2>/dev/null`; 
+    chomp;
+    -d $_ and print $_ . ";";
+}'
+
