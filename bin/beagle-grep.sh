@@ -94,7 +94,7 @@ if (!$find_file_only) {
 if ($find_file_only || 1) {
     my %set;
     for (@beagle_files) {
-        $set{$_} = 1 if m/$pat_save/ and m/$pathpat/;
+        $set{$_} = 1 if m/$pat_save/i and m/$pathpat/i;
     }
     if ($find_file_only && keys %set > 1 && $file_tag) {
         my $files = qx(grep-gtags -e $file_tag|perl -ne "if (m/:[0-9]+:/) {s/:[0-9]+:.*//; print}"|sort -u);
