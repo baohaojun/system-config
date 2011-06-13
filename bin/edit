@@ -57,7 +57,7 @@ sub edit_1($)
     if (-e $file) {
 
       $file = shell_quote($file);
-      chomp($file = qx(readlink -f $file));
+      chomp($file = qx(lookup_file $file));
       return (@emacsclient, get_emacs_file_name($file));
 
     } elsif ($file =~ m,smb://(.*?)(/.*),) {
@@ -79,12 +79,8 @@ sub edit_1($)
           chomp($file);
       }
 
-      my $x=0;
-      while (not -e $file and $x ++ < 10) {
-        $file = "../$file";            
-      }
       $file = shell_quote($file);
-      chomp($file = qx(readlink -f $file));
+      chomp($file = qx(lookup_file $file));
       return (@emacsclient, "+$line", get_emacs_file_name($file));
     }
   }

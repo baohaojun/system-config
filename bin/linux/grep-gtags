@@ -22,7 +22,7 @@ print "\n";
 my $pwd;
 
 
-chomp($pwd = `pwd`);
+chomp($pwd = $ENV{PWD});
 
 $pwd = "$ENV{HOME}/tmp/for-code-reading$pwd";
 our $approx_dir = $pwd;
