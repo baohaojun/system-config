@@ -42,8 +42,8 @@ sub get_emacs_file_name($) {
     return get_smb_file($remote, $file);
 
   } elsif ($ENV{"REMOTEIP"}) {
-    my ($myname, $myip, $remote_ip) = @ENV{"WHOAMI", "LOCALIP", "REMOTEIP"};
-    return "/scp:$myname\@$myip:$file"; 
+    my ($myname, $myip, $myport, $remote_ip) = @ENV{"WHOAMI", "LOCALIP", "LOCALPORT", "REMOTEIP"};
+    return "/scp:$myname\@$myip#$myport:$file"; 
   } else {
     return $file;
   }
