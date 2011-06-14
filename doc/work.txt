@@ -1026,3 +1026,4 @@ for (@F) {
     -d $_ and print $_ . ";";
 }'
 
+sudo route add 192.168.56.88 gw r137
