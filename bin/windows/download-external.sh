@@ -45,36 +45,54 @@ function emacs-site-lisps()
     
 
     source_list=(
-        http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2 
-        http://ftp.us.debian.org/debian/dists/sid/contrib/source/Sources.bz2 
-        http://ftp.us.debian.org/debian/dists/sid/non-free/source/Sources.bz2
+        ftp.us.debian.org/debian/dists/testing/main/source/Sources.bz2 
+        ftp.us.debian.org/debian/dists/testing/contrib/source/Sources.bz2 
+        ftp.us.debian.org/debian/dists/testing/non-free/source/Sources.bz2
     )
 
     y=0
     for x in "${source_list[@]}"; do 
         ((y++)) || true
-        test -e Sources.bz2.$y || ( lftp -c "pget -n 10 $x" && mv Sources.bz2 Sources.bz2.$y )
+        ( builtin cd ../ && wget -N -r http://$x )
+        ln -sf ../$x Sources.bz2.$y
     done
 
     file_list=(
-        http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
+        `get-deb-src-dir dictionary-el`
         `get-deb-src-dir emacs-goodies-el`
         `get-deb-src-dir cscope`
         `get-deb-src-dir muse-el`
         `get-deb-src-dir w3m-el-snapshot`
+        `get-deb-src-dir exuberant-ctags`
+        `get-deb-src-dir python3.1`
     )
+    
     for x in "${file_list[@]}"; do
-        if ! [[ -f "$(basename "$x")" ]]; then
-            lftp -c "pget $x"
-        fi
+        wget -N "$x"
+        tar zxfv "$(basename "$x")"
     done
     
-    for x in *.tar.gz *.tgz; do
-        if [[ -f "$x" ]] ;
-        then 
-            tar zxfv "$(basename "$x")"; 
-        fi
-    done    
+    (builtin cd *ctags*/ && ./configure && make -j8 install && ln -sf /usr/local/bin/ctags.exe /usr/bin/ctags-exuberant)
+    (builtin cd ~/gcode/global && sh reconf.sh && ./configure && make -j8 install && git clean -xfd)
+    (
+        set -e; 
+        builtin cd *python*/;
+        patch -p1 <<EOF
+diff --git a/Modules/main.c b/Modules/main.c
+index 4dcc32d..2e6548f 100644
+--- a/Modules/main.c
++++ b/Modules/main.c
+@@ -14,7 +14,6 @@
+ #include <windows.h>
+ #ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
+-#define PATH_MAX MAXPATHLEN
+ #endif
+ #endif
+EOF
+        ./configure;
+        make -j8 install)
+
     cd emacs-goodies-el*/elisp/emacs-goodies-el/ && mkdir themes
 }
 

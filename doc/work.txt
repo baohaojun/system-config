@@ -1027,3 +1027,12 @@ for (@F) {
 }'
 
 sudo route add 192.168.56.88 gw r137
+
+(
+mkdir -p ~/bin/linux/dist
+cd ~/bin/linux/dist
+lftp -c 'mirror http://androidscreencast.googlecode.com/svn/trunk/AndroidScreencast/dist/ . '
+for x in *.jar; do export CLASSPATH=`pwd`/$x:$CLASSPATH ; done
+echo $CLASSPATH 
+java net.srcz.android.screencast.Main
+)

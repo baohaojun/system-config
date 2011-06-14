@@ -19,6 +19,7 @@ while (<$file>) {
                 $_ = <$file>;
                 chomp;
                 $name = (split)[2];
+            } elsif (m/^\s*$/) {
                 $path = "http://ftp.us.debian.org/debian/$dir/$name";
                 print $path;
                 last;
