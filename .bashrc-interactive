@@ -1,9 +1,7 @@
 #!/bin/bash
 
-if test "$EMACS" != t; then
-    . /etc/bash_completion
-    . ~/.bash_netcompletion
-fi
+. /etc/bash_completion
+. ~/.bash_netcompletion
 
 function cd_bhj () 
 {
