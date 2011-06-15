@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 
-system("backup_bash_history");
-open($file, "<", glob("~/.bash_history.bak"));
+open($file, "<", glob("~/.bash_history"));
 %hist_words;
 @hist_words;
 
