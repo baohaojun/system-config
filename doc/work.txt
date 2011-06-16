@@ -1037,3 +1037,14 @@ echo $CLASSPATH
 java net.srcz.android.screencast.Main
 )
 http://download.microsoft.com/download/f/c/a/fca6767b-9ed9-45a6-b352-839afb2a2679/TweakUiPowertoySetup.exe
+
+awk '
+BEGIN{
+    printf("%02x:%02x:%02x:%02x:%02x:%02x", 
+           int(rand() * 256), 
+           int(rand() * 256), 
+           int(rand() * 256),
+           int(rand() * 256),
+           int(rand() * 256),
+           int(rand() * 256));
+}'
