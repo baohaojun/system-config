@@ -3071,8 +3071,10 @@ PARAMETERS is alist of URI parameters.
               (not twittering-reverse-mode)
             (< 0 (prefix-numeric-value arg))))
     (unless (eq prev-mode twittering-reverse-mode)
-      (twittering-update-mode-line)
-      (twittering-render-timeline (current-buffer)))))
+      (let ((id (twittering-get-id-at)))
+        (twittering-update-mode-line)
+        (twittering-render-timeline (current-buffer))
+        (twittering-restore-point id)))))
 
 (defun twittering-set-current-hashtag (&optional tag)
   (interactive)
@@ -5008,6 +5010,19 @@ rendered at POS, return nil."
           (twittering-register-process proc spec spec-string))))
      (t
       (error "%s has not been supported yet" spec)))))
+
+(defun twittering-restore-point (id)
+  (goto-char (point-min))
+  (let ((pos (point))
+        done)
+    (unless (string= id (get-text-property pos 'id))
+      (while (and (setq pos (next-single-property-change pos 'id))
+                  (not done))
+        (if (string= id (get-text-property pos 'id))
+            (setq done pos)
+          (goto-char pos)))
+      (when done
+        (goto-char done)))))
 
 ;;;; Display replied statuses
 
@@ -7497,8 +7512,10 @@ icon mode; otherwise, turn off icon mode."
               (not twittering-icon-mode)
             (< 0 (prefix-numeric-value arg))))
     (unless (eq prev-mode twittering-icon-mode)
-      (twittering-update-mode-line)
-      (twittering-render-timeline (current-buffer)))))
+      (let ((id (twittering-get-id-at)))
+        (twittering-update-mode-line)
+        (twittering-render-timeline (current-buffer))
+        (twittering-restore-point id)))))
 
 (defvar twittering-icon-prop-hash (make-hash-table :test 'equal)
   "Hash table for storing display properties of icon. The key is the size of
