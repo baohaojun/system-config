@@ -91,7 +91,9 @@ index 4dcc32d..2e6548f 100644
  #endif
 EOF
         ./configure;
-        make -j8 install)
+        make -j8
+        make install
+    )
 
     cd emacs-goodies-el*/elisp/emacs-goodies-el/ && mkdir themes
 }
@@ -331,4 +333,18 @@ EOF
     (
         cd boost_1_34_1
     )
+    (
+        mkdir python2.5
+        cd python2.5
+        wget -N http://python.org/ftp/python/2.7.2/python-2.7.2.msi
+        chmod +x *.msi
+        cygstart *.msi
+    )
+    (
+        mkdir python3.1
+        cd python3.1
+        wget -N http://python.org/ftp/python/3.1.3/python-3.1.3.msi
+        chmod +x *.msi
+        cygstart *.msi
+    )        
 }
