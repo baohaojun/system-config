@@ -260,9 +260,9 @@ test "$DOWN" == yes && (gcc-switch.sh 3; get-putty; gcc-switch.sh 4)
 
 function get-stlport-and-boost()
 {
-    mkdir /d/bhj -p
+    mkdir -p /d/bhj
     cd /d/bhj
-    mkdir -p STLport-5.2.1/lib boost_1_34_1/stage/lib STLport-5.2.1/stlport
+    mkdir -p -p STLport-5.2.1/lib boost_1_34_1/stage/lib STLport-5.2.1/stlport
     wget -N http://sourceforge.net/projects/stlport/files/STLport/STLport-5.2.1/STLport-5.2.1.tar.bz2
     tar jxfv STLport-5.2.1.tar.bz2
     wget -N http://sourceforge.net/projects/boost/files/boost/1.34.1/boost_1_34_1.tar.bz2
@@ -272,7 +272,7 @@ function get-stlport-and-boost()
     export LIB=`for x in ~/vc6/lib/*; do readlink -f "$x"; done|u2dpath`
     
     (
-        mkdir vcrun2010
+        mkdir -p vcrun2010
         cd vcrun2010
         wget -N http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe
         chmod +x vcredist_x86.exe
@@ -280,7 +280,7 @@ function get-stlport-and-boost()
     )
 
     (
-        mkdir psdk
+        mkdir -p psdk
         cd psdk
         wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.1.cab
         wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.2.cab
@@ -301,7 +301,8 @@ function get-stlport-and-boost()
     )
 
     (
-        mkdir vc6
+        mkdir -p vc6
+        cd vc6
         wget -N http://download.microsoft.com/download/1/9/f/19fe4660-5792-4683-99e0-8d48c22eed74/Vs6sp6.exe
     )
 
@@ -334,14 +335,14 @@ EOF
         cd boost_1_34_1
     )
     (
-        mkdir python2.5
+        mkdir -p python2.5
         cd python2.5
         wget -N http://python.org/ftp/python/2.7.2/python-2.7.2.msi
         chmod +x *.msi
         cygstart *.msi
     )
     (
-        mkdir python3.1
+        mkdir -p python3.1
         cd python3.1
         wget -N http://python.org/ftp/python/3.1.3/python-3.1.3.msi
         chmod +x *.msi
