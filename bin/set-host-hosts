@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 BEGIN 
 {
+    %hosts = {};
     open($file, "<", "/etc/hosts");
     while (<$file>) {
         next if m/^\s*#/;
