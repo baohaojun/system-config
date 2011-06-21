@@ -264,10 +264,11 @@ function get-stlport-and-boost()
     cd /d/bhj
     mkdir -p -p STLport-5.2.1/lib boost_1_34_1/stage/lib STLport-5.2.1/stlport
     wget -N http://sourceforge.net/projects/stlport/files/STLport/STLport-5.2.1/STLport-5.2.1.tar.bz2
-    tar jxfv STLport-5.2.1.tar.bz2
+
     wget -N http://sourceforge.net/projects/boost/files/boost/1.34.1/boost_1_34_1.tar.bz2
-    tar jxfv boost_1_34_1.tar.bz2
-    for x in ~/vc6/path/*; do export PATH=`readlink -m "$x"`:$PATH; done
+    unset PATHVC
+    for x in ~/vc6/path/*; do export PATHVC=$PATHVC:`readlink -m "$x"`; done
+    export PATH=~/bin/:$PATHVC:$PATH
     export INCLUDE=`for x in ~/vc6/inc/*; do readlink -f "$x"; done|u2dpath`
     export LIB=`for x in ~/vc6/lib/*; do readlink -f "$x"; done|u2dpath`
     
@@ -309,6 +310,7 @@ function get-stlport-and-boost()
     read -p "Make sure you have setup vc6/sp6/psdk! Press any key to continue..."
 
     (
+        tar jxfv ./STLport-5.2.1.tar.bz2
         cd STLport-5.2.1
         patch -p1 <<EOF
 diff --git a/stlport/stl/config/user_config.h b/stlport/stl/config/user_config.h
@@ -332,7 +334,9 @@ EOF
     )
 
     (
+        tar jxfv boost_1_34_1.tar.bz2
         cd boost_1_34_1
+
     )
     (
         mkdir -p python2.5
