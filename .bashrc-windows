@@ -35,7 +35,6 @@ function SetPath()
         export PATH="$PATH":"$x"
     done
     PATH="${PATH:1}" #remove the beginning `:'
-    unset SetPath
 
     #set up CLASSPATH
     unset CLASSPATH
@@ -139,6 +138,12 @@ alias repo='PATH=/bin:$PATH repo'
 alias wp="winpath.sh"
 alias up="unipath.sh"
 
-SetPath
+if test -e ~/.bash_path; then
+    . ~/.bash_path
+else
+    SetPath
+    unset SetPath
+fi
+
 return 0
 
