@@ -1,0 +1,25 @@
+#!/usr/bin/env perl
+BEGIN 
+{
+    %hosts = {};
+    open($file, "<", "/etc/hosts");
+    while (<$file>) {
+        next if m/^\s*#/;
+        next if m/^\s*$/;
+        @line = split;
+        $ip = shift @line;
+        for (@line) {
+            $hosts{$_} = $ip;
+        }
+    }
+}
+
+$host = $ARGV[0];
+$ip = $ARGV[1];
+
+$hosts{$host} = $ip;
+
+for (sort keys %hosts) {
+    $ip = $hosts{$_};
+    print "$ip $_\n";
+}

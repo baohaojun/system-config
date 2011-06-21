@@ -950,7 +950,7 @@ make error: no rule to make
 wget -r -l1 -k --page-requisites -c http://www.suimeng.com/files/article/html/4/4704/index.html
 ifconfig eth0 |grep -P 'inet addr:.*?\s' -o 
 while true; do adb wait-for-device && adb shell 'echo 1 > /sys/power/wake_lock' &&  adb shell ls /dev/tegra*; (trap echo shit SIGINT;  adb logcat -v time); adb shell; done
-tar czfv ~/Downloads/flashing-`today`.tgz . --exclude=*.tar --exclude=*.zip --exclude=symbols --exclude=*.txt --exclude=*.xml
+tar czfv ~/Downloads/flashing-`today`.tgz . --exclude=*.tar --exclude=*.zip --exclude=symbols --exclude=*.txt --exclude=*.xml --exclude-vcs -H
 
 
 rfa 'export TAG=tegra-10.9.7; git tag|grep -q -e "^"$TAG"\$" && (git diff --quiet $TAG || (mkdir -p ~/`today`/$REPO_PATH && git diff --binary tegra-10.9.7 > ~/`today`/$REPO_PATH/letou_patch))'
@@ -1048,3 +1048,5 @@ BEGIN{
            int(rand() * 256),
            int(rand() * 256));
 }'
+
+git log letou/master |grep factool -B 5|grep '^commit'|pn 2|reverse |xargs bash -c 'for x in "$@"; do git cherry-pick $x; done' xx
