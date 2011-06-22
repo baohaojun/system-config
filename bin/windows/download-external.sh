@@ -333,10 +333,13 @@ EOF
         cmd.exe /c configure.bat msvc6; cd build/lib; nmake /fmsvc.mak install
     )
 
+    read -t 5 -p "Note: boost build will not work on remote login! Press any key or wait 5 seconds..."
     (
         tar jxfv boost_1_34_1.tar.bz2
-        cd boost_1_34_1
-
+        cd boost_1_34_1/tools/jam/src
+        cmd.exe /c build.bat msvc
+        cp bin.ntx86/bjam.exe /c/windows/system32/
+        bjam -sBOOST_ROOT=. -sTOOLS=msvc "-sBUILD=debug release static/dynamic"
     )
     (
         mkdir -p python2.5
@@ -345,6 +348,15 @@ EOF
         chmod +x *.msi
         cygstart *.msi
     )
+    read -p "Press any key to download pywin32..."
+    (
+        mkdir -p pywin32
+        cd pywin32
+        wget -N http://sourceforge.net/projects/pywin32/files/pywin32/Build216/pywin32-216.win32-py2.7.exe
+        chmod +x *.exe
+        cygstart *.exe
+    )
+    read -p "Press any key to install python3.1..."
     (
         mkdir -p python3.1
         cd python3.1
