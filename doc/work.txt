@@ -1052,3 +1052,25 @@ BEGIN{
 
 git log letou/master |grep factool -B 5|grep '^commit'|pn 2|reverse |xargs bash -c 'for x in "$@"; do git cherry-pick $x; done' xx
 ssh r889 bash -c "$(printf %q "set-host-hosts lab `host-hosts lab` > /tmp/hosts; sudo bash -c \"cat /tmp/hosts > /etc/hosts\"")"
+
+on winxp: 
+cat >/c/ywb.txt <<EOF
+[RegionalSettings]
+InputLocale = 0804:e0350804
+EOF
+
+Control intl.cpl,,/f:"C:\ywb.txt"
+
+on win7: 
+cat > /c/ywb.xml <<EOF
+<gs:GlobalizationServices xmlns:gs="urn:longhornGlobalizationUnattend">
+  <gs:UserList>
+    <gs:User UserID="Current" CopySettingsToDefaultUserAcct="true" CopySettingsToSystemAcct="true" /> 
+  </gs:UserList>
+  <gs:InputPreferences>
+    <gs:InputLanguageID Action="add" ID="0804:{E429B25A-E5D3-4D1F-9BE3-0C608477E3A1}{EF63706D-31C4-490E-9DBB-BD150ADC454B}" />
+  </gs:InputPreferences>
+</gs:GlobalizationServices>
+EOF
+
+Control intl.cpl,,/f:"C:\ywb.xml"
