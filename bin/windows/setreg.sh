@@ -1,9 +1,16 @@
 #!/bin/bash
 . regfuncs.sh
 q=`cygpath -alw ~`
-regAddPaths '\HKEY_CURRENT_USER\Software\Microsoft\DevStudio\6.0\Build System\Components\Platforms\Win32 (x86)\Directories\Include Dirs' ~/vc6/inc
-regAddPaths '\HKEY_CURRENT_USER\Software\Microsoft\DevStudio\6.0\Build System\Components\Platforms\Win32 (x86)\Directories\Library Dirs' ~/vc6/lib
 
+cat >/c/vc.reg <<EOF
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Microsoft\Devstudio\6.0\Build System\Components\Platforms\Win32 (x86)\Directories]
+"Include Dirs"="`for x in ~/vc6/inc/*; do readlink -f "$x"; done|u2dpath|perl -npe 's/\\\\/\\\\\\\\/g'`"
+"Library Dirs"="`for x in ~/vc6/lib/*; do readlink -f "$x"; done|u2dpath|perl -npe 's/\\\\/\\\\\\\\/g'`"
+EOF
+
+regedit /s 'c:\vc.reg'
 
 regSetVal -s set '\HKEY_CLASSES_ROOT\.sh\' 'sh_auto_file'
 regSetVal -s set '\HKEY_CLASSES_ROOT\sh_auto_file\shell\open\command\' "$(qq_cmdout cygpath -alw "$BASH"; echo -n ' --rcfile ~/.bashrc-windows -i "%1" %*')"

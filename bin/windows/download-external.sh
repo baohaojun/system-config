@@ -262,10 +262,11 @@ function get-stlport-and-boost()
 {
     mkdir -p /d/bhj
     cd /d/bhj
-    mkdir -p -p STLport-5.2.1/lib boost_1_34_1/stage/lib STLport-5.2.1/stlport
-    wget -N http://sourceforge.net/projects/stlport/files/STLport/STLport-5.2.1/STLport-5.2.1.tar.bz2
+    mkdir -p STLport-5.2.1/lib STLport-5.2.1/stlport boost_1_34_1/stage/lib 
 
+    wget -N http://sourceforge.net/projects/stlport/files/STLport/STLport-5.2.1/STLport-5.2.1.tar.bz2
     wget -N http://sourceforge.net/projects/boost/files/boost/1.34.1/boost_1_34_1.tar.bz2
+
     unset PATHVC
     for x in ~/vc6/path/*; do export PATHVC=$PATHVC:`readlink -m "$x"`; done
     export PATH=~/bin/:$PATHVC:$PATH
@@ -335,12 +336,25 @@ EOF
 
     read -t 5 -p "Note: boost build will not work on remote login! Press any key or wait 5 seconds..."
     (
+        rm -rf boost_1_34_1/
         tar jxfv boost_1_34_1.tar.bz2
-        cd boost_1_34_1/tools/jam/src
-        cmd.exe /c build.bat msvc
-        cp bin.ntx86/bjam.exe /c/windows/system32/
-        bjam -sBOOST_ROOT=. -sTOOLS=msvc "-sBUILD=debug release static/dynamic"
+        mkdir -p boost_1_34_1/stage/lib
+
+        (
+            cd boost_1_34_1/tools/jam/src
+            cmd.exe /c build.bat msvc
+            cp bin.ntx86/bjam.exe /c/windows/system32/
+        )
+        cd boost_1_34_1/
+        cp /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT.bak
+        echo -n > /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT
+        bjam -sBOOST_ROOT=. -sTOOLS=msvc 2>&1|tee build.log
+        find . -name "*.dll" -o -name "*.lib" > files.txt
+        cp `cat files.txt` ./stage/lib
+        cd ./stage/lib
+        mv libboost_regex-vc6-mt-1_34_1.lib libboost_regex-vc6-mt-p-1_34_1.lib 
     )
+
     (
         mkdir -p python2.5
         cd python2.5
