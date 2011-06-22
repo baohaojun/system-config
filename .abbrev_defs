@@ -29,8 +29,9 @@
     ("cs" "cstring" nil 35)
     ("dcs" "c_str()" nil 10)
     ("ld" "LOGD(\"%s: %d\", __FUNCTION__, __LINE__);" nil 0)
-    ("le" "LOGE(\"Error: %s %d\\n\", __FUNCTION__, __LINE__);" nil 1)
+    ("le" "LOGE(\"Error: %s %d\\n\", __FUNCTION__, __LINE__);" nil 5)
     ("lk" "LOGW(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
+    ("lvv" "LOGVV(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("lw" "LOGW(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("mcs" "const CString&" nil 16)
     ("ms" "CString" nil 7)
@@ -54,7 +55,7 @@
     ("nk" "NvOsDebugPrintf(\"hello world %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 8)
     ("pe" "printk(KERN_WARNING \"hello error: %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("pf" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 203)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 204)
     ("pkh" "#include <linux/types.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>
