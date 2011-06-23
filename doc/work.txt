@@ -1074,15 +1074,3 @@ cat > /c/ywb.xml <<EOF
 EOF
 
 Control intl.cpl,,/f:"C:\ywb.xml"
-
-windows xp多个用户logon: 
-Click Start, then “Run…”, type “regedit” (without quotes) and press ENTER;
-navigate in the Windows Registry Tree to reach this path:
-HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\Licensing Core;
-click with right mouse button on blank space in the right part of the registry window, choose “New” > DWORD, name the new key “EnableConcurrentSessions” (without quotes), then edit it and set its value to 1;
-close the editor.
-
-STEP 5
-Click Start, then “Run…”, type “gpedit.msc” (without quotes) and press ENTER;
-open Computer Configuration > Administrative Templates > Windows Components > Terminal Services;
-double click “Limit number of connections”, choose “Enabled” and set the maximum number of concurrent connections you want to allow (2 or more), then Restart Windows in normal mode.

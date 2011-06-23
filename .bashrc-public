@@ -158,3 +158,9 @@ fi
 if test -n "$BASH_VERSION" -a "$BASH" = /bin/bash; then
     . ~/.bashrc-public-bash
 fi
+
+scd()
+{
+    history -s scd "$@"
+    cd "$(readlink -f "${2:-.}"|perl -npe "$1")"
+}
