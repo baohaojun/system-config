@@ -439,11 +439,10 @@ make_suffixes(const char *langmap, STRBUF *sb)
 		 * "c:.c.h,java:.java,cpp:.C.H"
 		 */
 		if (*p == '(') {
-			while (*p && *p++ != ')')
+			while (*++p && *p != ')')
 				;
 			if (!*p)
 				break;
-                        p--;
                         continue;
 		}
 		if ((onsuffix == 0 && *p == ',') || (onsuffix == 1 && *p == ':'))
