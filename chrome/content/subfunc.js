@@ -164,7 +164,12 @@ Firemacs.SubFunc = {
 	if (typeof(gBrowser) != 'object') {
 	    return;
 	}
-	var tabs = gBrowser.tabContainer.childNodes;
+	var tabs;
+	if (gBrowser.visibleTabs) {
+	    tabs = gBrowser.visibleTabs;
+	} else {
+	    tabs = gBrowser.tabContainer.childNodes;
+	}
 	var len = tabs.length;
 	var cTab = gBrowser.selectedTab;
 
