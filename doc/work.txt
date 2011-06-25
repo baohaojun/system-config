@@ -1086,3 +1086,6 @@ STEP 5
 Click Start, then “Run…”, type “gpedit.msc” (without quotes) and press ENTER;
 open Computer Configuration > Administrative Templates > Windows Components > Terminal Services;
 double click “Limit number of connections”, choose “Enabled” and set the maximum number of concurrent connections you want to allow (2 or more), then Restart Windows in normal mode.
+
+xrandr --output CRT1 --same-as LVDS --auto 
+xrandr --output LVDS --mode 1280x728
