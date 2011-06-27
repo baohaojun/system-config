@@ -1089,3 +1089,6 @@ double click “Limit number of connections”, choose “Enabled” and set the
 
 xrandr --output CRT1 --same-as LVDS --auto 
 xrandr --output LVDS --mode 1280x728
+
+bzr launchpad-login baohaojun
+bzr branch lp:usb-creator

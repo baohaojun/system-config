@@ -261,7 +261,7 @@ NV_FALSE试一试。
 ****************
 maverick或下一个版本的usb-creator已经可以在debian上做dpkg-buildpackage并安装使用了，但是需要改一个地方：
 
-    /usr/lib/pymodules/python2.6/usbcreator/install.py:256:                     contents = f.readline().split()
+    /usr/share/pyshared/usbcreator/install.py:256:                     contents = f.readline().split()
         class install(Thread):
             ...
             def mangle_syslinux(self):
