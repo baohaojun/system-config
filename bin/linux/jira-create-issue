@@ -8,7 +8,7 @@ eval set -- "$TEMP"
 
 while true; do
     case "$1" in
-        --project) PROJECT=$2; shift 2 ;;
+        -p|--project) PROJECT=$2; shift 2 ;;
         --) shift; break ;;
         *) echo "Internal error!" ; exit 1 ;;
     esac
