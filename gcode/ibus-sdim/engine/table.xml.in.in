@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- filename: table.xml -->
+<component>
+    <name>org.freedesktop.IBus.Table</name>
+    <description>Table Component</description>
+    <exec>${libexecdir}/ibus-engine-table --ibus</exec>
+    <version>@VERSION@</version>
+    <author>Yuwei Yu &lt;acevery@gmail.com&gt;</author>
+    <license>LGPL</license>
+    <homepage>http://code.google.com/p/ibus</homepage>
+    <textdomain>ibus-table</textdomain>
+    <observed-paths>
+        <path>${pkgdatadir}/tables/</path>
+    </observed-paths>
+    <engines exec='${libexecdir}/ibus-engine-table --xml'/>
+</component>
