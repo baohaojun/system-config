@@ -1,0 +1,89 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Yu Yuwei <acevery@gmail.com>
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: http://code.google.com/p/ibus/issues/entry\n"
+"POT-Creation-Date: 2010-01-11 10:36+1000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: engine/table.py:985
+msgid "CN"
+msgstr ""
+
+#: engine/table.py:989
+msgid "Switch to English mode"
+msgstr ""
+
+#: engine/table.py:992
+msgid "EN"
+msgstr ""
+
+#: engine/table.py:993 engine/table.py:1011
+msgid "Switch to Table mode"
+msgstr ""
+
+#: engine/table.py:997
+msgid "Switch to half letter"
+msgstr ""
+
+#: engine/table.py:1000
+msgid "Switch to full letter"
+msgstr ""
+
+#: engine/table.py:1004
+msgid "Switch to half punction"
+msgstr ""
+
+#: engine/table.py:1007
+msgid "Switch to full punction"
+msgstr ""
+
+#: engine/table.py:1015
+msgid "Switch to PinYin mode"
+msgstr ""
+
+#: engine/table.py:1019
+msgid "Switch to phrase mode"
+msgstr ""
+
+#: engine/table.py:1022
+msgid "Switch to single char mode"
+msgstr ""
+
+#: engine/table.py:1025
+msgid "Switch to normal commit mode, which use space to commit"
+msgstr ""
+
+#: engine/table.py:1028
+msgid "Switch to direct commit mode"
+msgstr ""
+
+#: engine/table.py:1034
+msgid "Switch to Traditional Chinese mode"
+msgstr ""
+
+#: engine/table.py:1038
+msgid "Switch to Simplify Chinese first Big Charset Mode"
+msgstr ""
+
+#: engine/table.py:1042
+msgid "Switch to Traditional Chinese first Big Charset Mode"
+msgstr ""
+
+#: engine/table.py:1046
+msgid "Switch to Big Charset Mode"
+msgstr ""
+
+#: engine/table.py:1050
+msgid "Switch to Simplify Chinese Mode"
+msgstr ""
