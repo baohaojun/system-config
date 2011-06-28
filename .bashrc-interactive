@@ -91,7 +91,4 @@ function rbcd()
 }
 alias cd=cd_bhj
 alias rcd='cd .repo/manifests'
-if test "$DISPLAY" = :0.0; then
-    . ~/.new-xauth
-fi
 alias rs="rfa 'git diff \$REPO_LREV|cat; git st -s|grep . && echo \`pwd\`'"

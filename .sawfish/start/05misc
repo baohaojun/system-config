@@ -1,6 +1,5 @@
 #!/bin/bash
 echo sawfish starting sub programs
-scim -d&
 python3.1 ~/gcode/scim-cs/ime-py/ime-server.py&
 xmodmap ~/.bhj-Xmodmap
 if test -f ~/.offlineimaprc; then

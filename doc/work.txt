@@ -32,6 +32,7 @@ sudo aptitude purge ~ilinux-image-2.*\(\!`uname -r`\)
 for x in `git tag`; do git branch tagbr-$x $x; done
 
 adb shell 'mkdir /data/debugfs; mount -t debugfs null /data/debugfs; cat /data/debugfs/gpio'
+mkdir /data/debugfs; mount -t debugfs null /data/debugfs; cat /data/debugfs/gpio
 
 (cd .repo/.. && export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT)
 M-: (modify-syntax-entry ?_ "w")

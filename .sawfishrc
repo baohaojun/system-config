@@ -89,7 +89,7 @@
 
 (require 'sawfish.wm.commands.x-cycle)
 
-(setq im-class "QQ.exe|kopete" ;; im = instant messanger
+(setq im-class "QQ.exe|kopete|Pidgin" ;; im = instant messanger
       br-class "Navigator|epiphany-browser" ;; br = browser
       dc-class "libreoffice|DocumentWindow|VCLSalFrame|openoffice|AcroRd32.exe|acroread|evince|Gnumeric" ;; dc = doc
       mg-class "meld|gimp|gitk" ;; mg = meld/gimp
