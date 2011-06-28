@@ -2,6 +2,9 @@
 
 #system("rm Sources.bz2");
 #system("wget http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2");
+#http://cn.archive.ubuntu.com/ubuntu/dists/maverick/main/source/Sources.bz2
+#perl -npe 's,http://ftp.us.debian.org/debian,http://cn.archive.ubuntu.com/ubuntu,'
+
 
 open($file, "-|", "bzcat Sources.bz2*");
 

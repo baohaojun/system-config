@@ -8,6 +8,10 @@ while test "$outDir" != "" -a ! -d "$outDir"/.beagle; do
     outDir=${outDir%/*}
 done
 
+if test "$outDir" = "`readlink -f ~`"; then
+    outDir=""
+fi
+
 if test "$outDir" != "" -a "$outDir" != ~/tmp/for-code-reading/"`pwd`";
 then
     higherSrcDir=${outDir#~/tmp/for-code-reading/}
