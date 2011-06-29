@@ -38,7 +38,7 @@ from gettext import dgettext
 _  = lambda a : dgettext ("ibus-table", a)
 N_ = lambda a : a
 
-engine_base_path = "/com/redhat/IBus/engines/table/%s/engine/"
+engine_base_path = "/com/redhat/IBus/engines/sdim/%s/engine/"
 
 
 class EngineFactory (ibus.EngineFactoryBase):
