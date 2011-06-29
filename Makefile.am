@@ -1,6 +1,6 @@
 # vim:set noet ts=4
 #
-# ibus-sdim - The Table engine for IBus
+# ibus-sdim - The Sdim engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -26,8 +26,6 @@ SUBDIRS = \
 	engine \
 	icons \
 	m4 \
-	sdims \
-	data \
 	po \
 	$(NULL)
 

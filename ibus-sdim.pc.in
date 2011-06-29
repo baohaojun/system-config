@@ -11,8 +11,8 @@ enginedir=@datadir@/ibus/engine
 
 ibus_table_version=@PACKAGE_VERSION@
 
-Name: IBus-Table
-Description: Table Based Input Method Framework for Intelligent Input Bus for Linux / Unix OS
+Name: IBus-Sdim
+Description: Sdim Based Input Method Framework for Intelligent Input Bus for Linux / Unix OS
 Version: @PACKAGE_VERSION@
 Requires: 
 Libs: 

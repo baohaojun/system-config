@@ -29,7 +29,7 @@ msgid "EN"
 msgstr ""
 
 #: engine/table.py:993 engine/table.py:1011
-msgid "Switch to Table mode"
+msgid "Switch to Sdim mode"
 msgstr ""
 
 #: engine/table.py:997

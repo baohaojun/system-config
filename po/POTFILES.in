@@ -1,6 +1,3 @@
 ./engine/table.py
 ./engine/main.py
-./engine/tabsqlitedb.py
-./engine/tabcreatedb.py
 ./engine/factory.py
-./engine/tabdict.py
