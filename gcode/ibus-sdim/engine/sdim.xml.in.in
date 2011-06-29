@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<!-- filename: table.xml -->
+<!-- filename: sdim.xml -->
 <component>
     <name>org.freedesktop.IBus.Table</name>
     <description>Table Component</description>

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 Filter=${Filter:-~/.my-beagle-filter-android}
+cd -P . 
 outDir=~/tmp/for-code-reading/"`pwd`"
 srcDir=`pwd`
 relativeSrcDir=.
