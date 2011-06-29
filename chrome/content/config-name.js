@@ -11,6 +11,7 @@ FmxConfig._names = [
   'ScrollLineDown',
   'PreviousTab',
   'NextTab',
+  'AllTabs',
   'ViScrollLineUp',
   'ViScrollLineDown',
   'ViScrollLeft',

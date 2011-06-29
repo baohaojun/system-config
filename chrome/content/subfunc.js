@@ -157,6 +157,19 @@ Firemacs.SubFunc = {
 
     ////////////////////////////////////////////////////////////////
     //
+    // tabs overview with filter (similar to ido-switch-buffer)
+    //
+
+    allTabs: function() {
+        if (typeof(allTabs) != 'object') {
+            return;
+        }
+
+        allTabs.open(); // opens tabs preview and sets focus to filter input
+    },
+
+    ////////////////////////////////////////////////////////////////
+    //
     // Moving tab
     //
 

@@ -144,6 +144,9 @@ Firemacs.Commands.Edit = {
 };
 
 Firemacs.Commands.Common = {
+    AllTabs: function(e) {
+        this._sfun.allTabs();
+    },
     SearchForward: function(e) {
         this._sfun.SearchOpen(); var findField = this._sfun.SearchField(); if (findField && findField.value && findField.value !== '') { this._sfun.SearchForward(); }
     },
@@ -297,6 +300,7 @@ Firemacs.CmdKey.Edit = {
 };
 
 Firemacs.CmdKey.Common = {
+    AllTabs: 'C-xb',
     SearchForward: 'C-s',
     SearchBackword: 'C-r',
     ScrollPageUp: 'M-v',

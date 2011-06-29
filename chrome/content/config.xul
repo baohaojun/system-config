@@ -300,6 +300,10 @@
         </columns>
         <rows>
           <row>
+            <textbox id="AllTabs" value="C-xb" />
+            <description value="tabs overview with filter" />
+          </row>
+          <row>
             <textbox id="SearchForward" value="C-s" />
             <description value="searches forward" />
           </row>
@@ -347,10 +351,6 @@
             <textbox id="CmNextTab" value="C-M-f" />
             <description value="moves to the next tab" />
           </row>
-          <row>
-            <textbox id="CloseTab" value="C-xk" />
-            <description value="closes the tab" />
-          </row>
         </rows>
       </grid>
       <grid flex="1">
@@ -359,6 +359,10 @@
           <column />
         </columns>
         <rows>
+          <row>
+            <textbox id="CloseTab" value="C-xk" />
+            <description value="closes the tab" />
+          </row>
           <row>
             <textbox id="OpenFile" value="C-xC-f" />
             <description value="opens a file" />
@@ -407,6 +411,14 @@
             <textbox id="SavePage" value="C-xC-s" />
             <description value="save page" />
           </row>
+        </rows>
+      </grid>
+      <grid flex="1">
+        <columns>
+          <column />
+          <column />
+        </columns>
+        <rows>
           <row>
             <textbox id="SelectAll" value="C-xh" />
             <description value="selects all" />
