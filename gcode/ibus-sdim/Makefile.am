@@ -26,7 +26,7 @@ SUBDIRS = \
 	engine \
 	icons \
 	m4 \
-	tables \
+	sdims \
 	data \
 	po \
 	$(NULL)

@@ -3,7 +3,7 @@ config.log
 config.status
 data/Makefile
 engine/Makefile
-engine/ibus-engine-table
+engine/ibus-engine-sdim
 engine/ibus-sdim-createdb
 engine/sdim.xml
 ibus-sdim.pc

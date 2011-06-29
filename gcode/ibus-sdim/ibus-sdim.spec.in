@@ -75,7 +75,7 @@ ibus-sdim-createdb -i -n %{_datadir}/ibus-sdim/tables/additional/latex.db
 %{_datadir}/ibus-sdim/icons/tc-mode.svg
 %{_datadir}/ibus-sdim/icons/tcb-mode.svg
 %dir %{_datadir}/ibus-sdim/icons
-%{_bindir}/ibus-engine-table
+%{_bindir}/ibus-engine-sdim
 %{_bindir}/ibus-sdim-createdb
 
 %files additional

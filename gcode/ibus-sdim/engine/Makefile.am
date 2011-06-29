@@ -33,21 +33,21 @@ engine_tabledir = $(datadir)/ibus-sdim/engine
 
 bin_SCRIPTS = ibus-sdim-createdb 
 
-libexec_SCRIPTS = ibus-engine-table
+libexec_SCRIPTS = ibus-engine-sdim
 
 engine_DATA = sdim.xml
 enginedir = $(datadir)/ibus/component
 
 EXTRA_DIST = \
 	ibus-sdim-createdb.in \
-	ibus-engine-table.in \
+	ibus-engine-sdim.in \
 	sdim.xml.in \
 	$(NULL)
 
 CLEANFILES = \
 	*.pyc \
 	*.pyo \
-	ibus-engine-table \
+	ibus-engine-sdim \
 	ibus-sdim-createdb \
 	sdim.xml \
 	$(NULL)

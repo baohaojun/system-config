@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 # vim:set et ts=4:
 #
-# ibus-sdim - The Tables engine for IBus
+# ibus-sdim - The Sdims engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -61,20 +61,20 @@ AC_ARG_ENABLE([additional],
         [Don't generate additional Engine])], ,
     [enable_additional=yes])
 
-AM_CONDITIONAL([IBUS_TABLE_BUILD_ADDITIONAL],[test x"$enable_additional" = x"yes"])
+AM_CONDITIONAL([IBUS_SDIM_BUILD_ADDITIONAL],[test x"$enable_additional" = x"yes"])
 
 # OUTPUT files
 AC_CONFIG_FILES([po/Makefile.in
     Makefile
     engine/Makefile
-    engine/ibus-engine-table
+    engine/ibus-engine-sdim
     engine/ibus-sdim-createdb
     engine/sdim.xml.in
     data/Makefile
     icons/Makefile
     icons/additional/Makefile
-    tables/Makefile
-    tables/additional/Makefile
+    sdims/Makefile
+    sdims/additional/Makefile
     m4/Makefile
     ibus-sdim.spec
     ibus-sdim.pc]

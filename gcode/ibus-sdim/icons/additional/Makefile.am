@@ -22,7 +22,7 @@
 
 icons_DATA = 
 
-if IBUS_TABLE_BUILD_ADDITIONAL
+if IBUS_SDIM_BUILD_ADDITIONAL
 icons_DATA += latex.svg compose.svg
 endif
 
