@@ -1,6 +1,6 @@
 # vim:set noet ts=4
 #
-# ibus-sdim - The Tables engine for IBus
+# ibus-sdim - The Sdims engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -27,17 +27,17 @@ createdb = \
 createdb_index = \
 	$(PYTHON) $(abs_top_srcdir)/engine/tabcreatedb.py -i
 
-tables_DATA =
+sdims_DATA =
 
-if IBUS_TABLE_BUILD_ADDITIONAL
-tables_DATA += compose.db \
+if IBUS_SDIM_BUILD_ADDITIONAL
+sdims_DATA += compose.db \
 	latex.db 
 endif
 
-tables_DATA += $(NULL)
+sdims_DATA += $(NULL)
 
 
-tablesdir = $(pkgdatadir)/tables
+sdimsdir = $(pkgdatadir)/sdims
 
 EXTRA_DIST = \
 	compose.txt \
@@ -62,8 +62,8 @@ MAINTAINERCLEANFILES = \
 
 install-data-hook:
 	@(if test x"$$NO_INDEX" = x""; then \
-		cd $(DESTDIR)$(tablesdir); \
-		for db in ${tables_DATA}; do \
+		cd $(DESTDIR)$(sdimsdir); \
+		for db in ${sdims_DATA}; do \
 		echo "Create Index for $$db"; \
 			$(createdb_index) -n $$db; \
 		done \
