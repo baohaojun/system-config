@@ -165,7 +165,7 @@ Firemacs.SubFunc = {
             return;
         }
 
-        allTabs.open(); // opens tabs preview and sets focus to filter input 
+        allTabs.open(); // opens tabs preview and sets focus to filter input
     },
 
     ////////////////////////////////////////////////////////////////
