@@ -244,7 +244,7 @@ class ime_keyboard:
 
 class ime:
     comp_empty_wanted_keys = ('C g', 'C q', 'C +')
-    mcpp = 10 #max cands per page
+    page_size = 10 #max cands per page
     def __init__(self, in_, out_):
         self.special_keys = special_keys.special_keys
         self.__on = False
@@ -281,8 +281,8 @@ class ime:
                 self.cand_index = 0
                 self.beepstr = 'Y'
 
-            min_cand = self.cand_index // ime.mcpp * ime.mcpp
-            max_cand_p1 = min (min_cand + ime.mcpp, num_cands)
+            min_cand = self.cand_index // ime.page_size * ime.page_size
+            max_cand_p1 = min (min_cand + ime.page_size, num_cands)
             self.__cands = _g_ime_quail.get_cands(self.compstr)[min_cand : max_cand_p1]
         else:
             self.__cands = ()
@@ -424,9 +424,9 @@ class ime:
             self.__commit_cand()
             self.__keyed_when_no_comp(key)
         elif key == 'C n':
-            self.cand_index += ime.mcpp
+            self.cand_index += ime.page_size
         elif key == 'C p':
-            self.cand_index -= ime.mcpp
+            self.cand_index -= ime.page_size
         elif key == 'C f':
             self.cand_index += 1
         elif key == 'C b':
@@ -520,7 +520,7 @@ class ime:
             self.compstr = ''
 
     def __commit_cand(self):
-        cand_index = self.cand_index % ime.mcpp
+        cand_index = self.cand_index % ime.page_size
         self.commitstr = self.__cands[cand_index]
         _g_ime_history.set_history(self.compstr, self.cand_index)
         self.compstr = ''
@@ -540,6 +540,15 @@ class ime:
             self.__reply('hint: ' + self.hintstr)
 
     def reply_comp(self, arg=''):
+        if self.__cands:
+            comp = ''
+            try:
+                bytes(self.__cands[self.cand_index % ime.page_size], 'utf-8')
+                comp = self.__cands[self.cand_index % ime.page_size]
+            except:
+                comp = '?'
+            self.__reply('comp: ' + comp)
+            return
         if self.compstr:
             self.__reply('comp: ' + self.compstr)
             
