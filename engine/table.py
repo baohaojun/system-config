@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim:et sts=4 sw=4
 #
-# ibus-table - The Tables engine for IBus
+# ibus-sdim - The Tables engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -38,7 +38,7 @@ from ibus import ascii
 import re
 
 from gettext import dgettext
-_  = lambda a : dgettext ("ibus-table", a)
+_  = lambda a : dgettext ("ibus-sdim", a)
 N_ = lambda a : a
 
 import dbus

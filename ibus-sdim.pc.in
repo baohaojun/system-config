@@ -4,9 +4,9 @@ datarootdir=@datarootdir@
 libdir=@datadir@
 datadir=@datadir@
 
-extradatadir=@datadir@/ibus-table/data
-tabledir=@datadir@/ibus-table/tables
-icondir=@datadir@/ibus-table/icons
+extradatadir=@datadir@/ibus-sdim/data
+tabledir=@datadir@/ibus-sdim/tables
+icondir=@datadir@/ibus-sdim/icons
 enginedir=@datadir@/ibus/engine
 
 ibus_table_version=@PACKAGE_VERSION@

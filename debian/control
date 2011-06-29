@@ -1,4 +1,4 @@
-Source: ibus-table
+Source: ibus-sdim
 Section: utils
 Priority: optional
 Maintainer: IME Packaging Team <pkg-ime-devel@lists.alioth.debian.org>
@@ -11,10 +11,10 @@ Build-Depends:
  libibus-dev (>= 1.2)
 Standards-Version: 3.9.1
 Homepage: http://code.google.com/p/ibus
-Vcs-Bzr: lp:~pkg-ime/ibus/debian-ibus-table
-Vcs-Browser: https://code.launchpad.net/~pkg-ime/ibus/debian-ibus-table
+Vcs-Bzr: lp:~pkg-ime/ibus/debian-ibus-sdim
+Vcs-Browser: https://code.launchpad.net/~pkg-ime/ibus/debian-ibus-sdim
 
-Package: ibus-table
+Package: ibus-sdim
 Architecture: all
 Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, ibus (>= 1.3)
 Description: table engine for IBus
@@ -24,5 +24,5 @@ Description: table engine for IBus
  This package provide the table engine framework and one input method:
    * Compose: input special character by compose letter and diacritical mark
  .
- More input method based on ibus-table can be installed from
- ibus-table-cangjie, ibus-table-wubi, ...
+ More input method based on ibus-sdim can be installed from
+ ibus-sdim-cangjie, ibus-sdim-wubi, ...

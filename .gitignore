@@ -4,9 +4,9 @@ config.status
 data/Makefile
 engine/Makefile
 engine/ibus-engine-table
-engine/ibus-table-createdb
+engine/ibus-sdim-createdb
 engine/table.xml
-ibus-table.pc
+ibus-sdim.pc
 icons/Makefile
 icons/additional/Makefile
 m4/Makefile

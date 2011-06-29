@@ -47,7 +47,7 @@ install: build
 	dh_testroot
 	dh_prep
 	dh_installdirs
-	$(MAKE) DESTDIR=$(CURDIR)/debian/ibus-table install
+	$(MAKE) DESTDIR=$(CURDIR)/debian/ibus-sdim install
 
 binary-arch: build install
 

@@ -1,6 +1,6 @@
 # vim:set noet ts=4
 #
-# ibus-table - The Tables engine for IBus
+# ibus-sdim - The Tables engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -29,7 +29,7 @@ template_DATA = \
 	template.txt \
 	$(NULL)
 
-templatedir = $(datadir)/ibus-table/tables
+templatedir = $(datadir)/ibus-sdim/tables
 
 EXTRA_DIST = \
 	template.txt \

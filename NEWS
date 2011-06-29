@@ -8,7 +8,7 @@ May 26, 2009:
 
 May 1, 2009:
     allow the create_engine to fail, so that ibus won't hang due to
-    ibus-table failure.
+    ibus-sdim failure.
 
 Apr 30, 2009:
     add sigterm handler to sync userdb
@@ -23,5 +23,5 @@ Apr 24, 2009:
 Apr 22, 2009:
     add id key in db to allow better phrase ordering.
     #####################################################################
-    # Users need to regenerate the .db files. by recompile ibus-table-* #
+    # Users need to regenerate the .db files. by recompile ibus-sdim-* #
     #####################################################################

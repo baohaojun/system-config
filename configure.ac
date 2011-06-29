@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 # vim:set et ts=4:
 #
-# ibus-table - The Tables engine for IBus
+# ibus-sdim - The Tables engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -21,7 +21,7 @@
 #
 
 # if not 1, append datestamp to the version number.
-m4_define([package_name], [ibus-table])
+m4_define([package_name], [ibus-sdim])
 m4_define([ibus_released], [0])
 m4_define([ibus_major_version], [1])
 m4_define([ibus_minor_version], [3])
@@ -47,7 +47,7 @@ AM_PATH_PYTHON([2.5])
 PKG_CHECK_MODULES([IBUS],[ibus-1.0 >= 1.1.0])
 
 # define GETTEXT_* variables
-GETTEXT_PACKAGE=ibus-table
+GETTEXT_PACKAGE=ibus-sdim
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Define to the read-only architecture-independent data directory.])
 
@@ -68,7 +68,7 @@ AC_CONFIG_FILES([po/Makefile.in
     Makefile
     engine/Makefile
     engine/ibus-engine-table
-    engine/ibus-table-createdb
+    engine/ibus-sdim-createdb
     engine/table.xml.in
     data/Makefile
     icons/Makefile
@@ -76,8 +76,8 @@ AC_CONFIG_FILES([po/Makefile.in
     tables/Makefile
     tables/additional/Makefile
     m4/Makefile
-    ibus-table.spec
-    ibus-table.pc]
+    ibus-sdim.spec
+    ibus-sdim.pc]
 )
 
 AC_OUTPUT
