@@ -1,7 +1,7 @@
 Name:       @PACKAGE_NAME@
 Version:    @PACKAGE_VERSION@
 Release:    1%{?dist}
-Summary:    The Table engine for IBus platform
+Summary:    The Sdim engine for IBus platform
 License:    LGPLv2+
 Group:      System Environment/Libraries
 URL:        http://code.google.com/p/ibus/
@@ -15,7 +15,7 @@ BuildRequires:  gettext-devel
 Requires:   ibus
 
 %description
-The package contains general Table engine for IBus platform.
+The package contains general Sdim engine for IBus platform.
 
 %package additional
 Summary:    Additional tables for general table engine of IBus.
@@ -43,10 +43,6 @@ make DESTDIR=${RPM_BUILD_ROOT} NO_INDEX=true install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%post additional
-ibus-sdim-createdb -i -n %{_datadir}/ibus-sdim/tables/additional/compose.db
-ibus-sdim-createdb -i -n %{_datadir}/ibus-sdim/tables/additional/latex.db
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
@@ -76,7 +72,6 @@ ibus-sdim-createdb -i -n %{_datadir}/ibus-sdim/tables/additional/latex.db
 %{_datadir}/ibus-sdim/icons/tcb-mode.svg
 %dir %{_datadir}/ibus-sdim/icons
 %{_bindir}/ibus-engine-sdim
-%{_bindir}/ibus-sdim-createdb
 
 %files additional
 %defattr(-,root,root,-)

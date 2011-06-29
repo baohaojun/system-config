@@ -25,6 +25,7 @@ SUBDIRS = \
 
 icons_DATA = \
 	ibus-sdim.svg \
+	sdim.svg \
 	full-letter.svg \
 	half-letter.svg \
 	full-punct.svg \

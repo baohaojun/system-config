@@ -101,7 +101,7 @@ class tabengine (ibus.EngineBase):
 
     _page_size = 10
 
-    def __init__ (self, bus, obj_path, db):
+    def __init__ (self, bus, obj_path):
         print 'obj_path is', obj_path
         super(tabengine,self).__init__ (bus,obj_path)
         self._bus = bus
@@ -119,6 +119,7 @@ class tabengine (ibus.EngineBase):
         
         # config module
         self._config = self._bus.get_config ()
+        self._on = True
         self.reset ()
 
     def clear_data(self):
@@ -141,8 +142,8 @@ class tabengine (ibus.EngineBase):
     def _update_preedit (self):
         '''Update Preedit String in UI'''
         _str = self._preedit_str
-        if _str == u'':
-            super(tabengine, self).update_preedit_text(ibus.Text(u'',None), 0, False)
+        if _str == '':
+            super(tabengine, self).update_preedit_text(ibus.Text('',None), 0, False)
         else:
             attrs = ibus.AttrList()
             attrs.append( ibus.AttributeForeground(0x1b3f03,0,len(_str)) )
@@ -151,20 +152,20 @@ class tabengine (ibus.EngineBase):
             attrs.append(ibus.AttributeUnderline(ibus.ATTR_UNDERLINE_SINGLE, 0, len(_str)))
 
 
-            super(tabengine, self).update_preedit_text(ibus.Text(_str, attrs), len(_str), True)
+            super(tabengine, self).update_preedit_text(ibus.Text(_str.decode('utf-8'), attrs), len(_str), True)
     
     def _update_aux (self):
         '''Update Aux String in UI'''
         _aux = self._aux_str
         if _aux:
             attrs = ibus.AttrList([ ibus.AttributeForeground(0x9515b5, 0, len(_aux)) ])
-            super(tabengine, self).update_auxiliary_text(ibus.Text(_aux, attrs), True)
+            super(tabengine, self).update_auxiliary_text(ibus.Text(_aux.decode('utf-8'), attrs), True)
         else:
             self.hide_auxiliary_text()
 
 
     def _update_lookup_table (self):
-        '''Update Lookup Table in UI'''
+        '''Update Lookup Sdim in UI'''
         if self._cands_str == '':
             self.hide_lookup_table()
             return
@@ -175,7 +176,7 @@ class tabengine (ibus.EngineBase):
         self._lookup_table.clean()
 
         for cand in _cands:
-            self._lookup_table.append_candidate(ibus.Text(cand, None))
+            self._lookup_table.append_candidate(ibus.Text(cand.decode('utf-8'), None))
 
         index = int(self._cand_idx) % 10
         self._lookup_table.set_cursor_pos_in_current_page(index)
@@ -189,19 +190,12 @@ class tabengine (ibus.EngineBase):
         self._update_aux ()
         self.commit_string()
 
-    #def add_string_len(self, astring):
-    #    if self._sm_on:
-    #        try:
-    #            self._sm.Accumulate(len(astring))
-    #        except:
-    #            pass
-    
     def commit_string (self):
         if self._commit_str == '':
             return
         commit = self._commit_str
         self._commit_str = ''
-        super(tabengine,self).commit_text(ibus.Text(commit))
+        super(tabengine,self).commit_text(ibus.Text(commit.decode('utf-8')))
 
     def process_key_event(self, keyval, keycode, state):
         '''Process Key Events
@@ -223,6 +217,7 @@ class tabengine (ibus.EngineBase):
         if self._preedit_str == '' and len(key) != 1:
             return False
         self._really_process_key(key)
+        self._update_ui()
         return True
 
     def _really_process_key (self, key):
@@ -258,9 +253,6 @@ class tabengine (ibus.EngineBase):
             else:
                 self._aux_str = line
                 
-            self._update_ui()
-
-
     def focus_in (self):
         if self._on:
             self._update_ui ()

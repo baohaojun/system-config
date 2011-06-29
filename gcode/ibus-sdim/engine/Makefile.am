@@ -23,15 +23,10 @@ engine_table_PYTHON = \
 	factory.py \
 	main.py \
 	table.py \
-	tabcreatedb.py \
-	tabdict.py \
-	tabsqlitedb.py \
 	$(NULL)
 engine_table_DATA = \
 	$(NULL)
 engine_tabledir = $(datadir)/ibus-sdim/engine
-
-bin_SCRIPTS = ibus-sdim-createdb 
 
 libexec_SCRIPTS = ibus-engine-sdim
 
@@ -39,7 +34,6 @@ engine_DATA = sdim.xml
 enginedir = $(datadir)/ibus/component
 
 EXTRA_DIST = \
-	ibus-sdim-createdb.in \
 	ibus-engine-sdim.in \
 	sdim.xml.in \
 	$(NULL)

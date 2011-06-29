@@ -1,7 +1,7 @@
 == Introduction ==
-IBus-Table is the IM Engine framework for table-based input methods, such as
+IBus-Sdim is the IM Engine framework for table-based input methods, such as
 ZhengMa, WuBi, ErBi, CangJie and so on.
-The aim of IBus-Table is to make the users of table-based input methods
+The aim of IBus-Sdim is to make the users of table-based input methods
 can enjoy the typing on Linux environment.
 Definitly, it is far from perfect, so if you have any wish or any
 suggestion, please file a issue on http://code.google.com/p/ibus/issues
@@ -20,11 +20,11 @@ from you :)
 
 Space               commit inputted string.
 Shift_L             when no key inputted: shift the input mode between
-                        English and Table mode.
+                        English and Sdim mode.
                     during input: commit the first candidate into
                         preedit string.
 Shift_R             shift between PinYin mode and Normal mode under
-                        Table mode.
+                        Sdim mode.
 
 Shift_L/Shift_R + 1 input tunes under PinYin mode. the tunes display in
                   2     aux string area as ↑1, ↑2, ↑3, ↑4, ↑5. 

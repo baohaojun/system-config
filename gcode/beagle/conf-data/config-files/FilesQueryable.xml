@@ -33,7 +33,6 @@
 	<Value>*.m4</Value>
 	<Value>*.pc</Value>
 	<Value>*.pc.in</Value>
-	<Value>*.in.in</Value>
 	<Value>*.omf</Value>
 	<Value>*.aux</Value>
 	<Value>*.tmp</Value>

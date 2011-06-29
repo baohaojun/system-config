@@ -24,6 +24,8 @@ prefix=@prefix@
 datarootdir=@datarootdir@
 datadir=@datadir@
 export IBUS_TABLE_LOCATION=@datarootdir@/ibus-sdim
+mkdir -p ~/.ibus/sdims/
+echo "$@" at `date` >> ~/.ibus/sdims/start.log
 
 for arg in $@; do
 	case $arg in
