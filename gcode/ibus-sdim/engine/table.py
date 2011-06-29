@@ -25,6 +25,10 @@ __all__ = (
     "tabengine",
 )
 
+def _str_percent_decode(str):
+    return str.replace("%20", " ").replace("%25", "%")
+
+
 import os
 import ibus
 #from ibus import Property
@@ -34,8 +38,6 @@ from ibus import ascii
 #import tabsqlitedb
 import tabdict
 import re
-patt_edit = re.compile (r'(.*)###(.*)###(.*)')
-patt_uncommit = re.compile (r'(.*)@@@(.*)')
 
 from gettext import dgettext
 _  = lambda a : dgettext ("ibus-table", a)
@@ -874,7 +876,7 @@ class tabengine (ibus.EngineBase):
 #    _new_phrase_color         = 0xffffff
 
     # lookup table page size
-    _page_size = 6
+    _page_size = 10
 
     def __init__ (self, bus, obj_path, db ):
         print 'obj_path is', obj_path
@@ -885,14 +887,7 @@ class tabengine (ibus.EngineBase):
         self.sock.connect(("localhost", 12345))
         self.sock = self.sock.makefile("rwb", 0)
 
-        self._compstr = ''
-        self._cands = []
-        self._hint = ''
-        self._commit = ''
-        self._candsstr = ''
-        self._cand_idx = ''
-        self._active = ''
-
+        self.clear_data()
         self._lookup_table = ibus.LookupTable (tabengine._page_size)
         # this is the backend sql db we need for our IME
         # we receive this db from IMEngineFactory
@@ -993,6 +988,15 @@ class tabengine (ibus.EngineBase):
         #self._sm_on = False
         self._on = False
         self.reset ()
+
+    def clear_data(self):
+        self._preedit_str = ''
+        self._cands = []
+        self._aux_str = ''
+        self._commit_str = ''
+        self._cands_str = ''
+        self._cand_idx = '0'
+        self._active = ''
 
     def reset (self):
         self._editor.clear ()
@@ -1165,65 +1169,54 @@ class tabengine (ibus.EngineBase):
     
     def _update_preedit (self):
         '''Update Preedit String in UI'''
-        _str = self._editor.get_preedit_strings ()
+        _str = self._preedit_str
         if _str == u'':
             super(tabengine, self).update_preedit_text(ibus.Text(u'',None), 0, False)
         else:
             attrs = ibus.AttrList()
-            res = patt_edit.match (_str)
-            if res:
-                _str = u''
-                ures = patt_uncommit.match (res.group(1))
-                if ures:
-                    _str=u''.join (ures.groups())
-                    lc = len (ures.group(1) )
-                    lu = len (ures.group(2) )
-                    attrs.append (ibus.AttributeForeground(0x1b3f03,0,lc) )
-                    attrs.append (ibus.AttributeForeground(0x0895a2,lc,lu) )
-                    lg1 = len (_str)
-                else:
-                    _str += res.group (1)
-                    lg1 = len ( res.group(1) )
-                    attrs.append (ibus.AttributeForeground(0x1b3f03,0,lg1) )
-                _str += res.group(2)
-                _str += res.group(3)
-                lg2 = len ( res.group(2) )
-                lg3 = len ( res.group(3) )
-                attrs.append( ibus.AttributeForeground(0x0e0ea0,lg1,lg2) )
-                attrs.append( ibus.AttributeForeground(0x1b3f03,lg1+lg2,lg3) )
-            else:
-                attrs.append( ibus.AttributeForeground(0x1b3f03,0,len(_str)) )
+            attrs.append( ibus.AttributeForeground(0x1b3f03,0,len(_str)) )
             # because ibus now can only insert preedit into txt, so...
             attrs = ibus.AttrList()
             attrs.append(ibus.AttributeUnderline(ibus.ATTR_UNDERLINE_SINGLE, 0, len(_str)))
 
 
-            super(tabengine, self).update_preedit_text(ibus.Text(_str, attrs), self._editor.get_caret(), True)
+            super(tabengine, self).update_preedit_text(ibus.Text(_str, attrs), len(_str), True)
     
     def _update_aux (self):
         '''Update Aux String in UI'''
-        _ic = self._editor.get_aux_strings ()
-        if _ic:
-            attrs = ibus.AttrList([ ibus.AttributeForeground(0x9515b5,0, len(_ic)) ])
-            #attrs = [ scim.Attribute(0,len(_ic),scim.ATTR_FOREGROUND,0x5540c1)]
-
-            super(tabengine, self).update_auxiliary_text(ibus.Text(_ic, attrs), True)
+        _aux = self._aux_str
+        if _aux:
+            attrs = ibus.AttrList([ ibus.AttributeForeground(0x9515b5,0, len(_aux)) ])
+            super(tabengine, self).update_auxiliary_text(ibus.Text(_aux, attrs), True)
         else:
             self.hide_auxiliary_text()
-            #self.update_aux_string (u'', None, False)
+
 
     def _update_lookup_table (self):
         '''Update Lookup Table in UI'''
-        if self._editor.is_empty ():
+        if self._cands_str == '':
             self.hide_lookup_table()
             return
-        self.update_lookup_table ( self._editor.get_lookup_table(), True, True )    
+
+        _cands = self._cands_str.split()
+        _cands = [_str_percent_decode(str) for str in _cands]
+        
+        self._lookup_table.clean()
+
+        for cand in _cands:
+            self._lookup_table.append_candidate(ibus.Text(cand, None))
+
+        index = int(self._cand_idx) % 10
+        self._lookup_table.set_cursor_pos_in_current_page(index)
+        self._lookup_table.show_cursor(True)
+        self.update_lookup_table ( self._lookup_table, True, True )    
 
     def _update_ui (self):
         '''Update User Interface'''
         self._update_lookup_table ()
         self._update_preedit ()
         self._update_aux ()
+        self.commit_string()
 
     #def add_string_len(self, astring):
     #    if self._sm_on:
@@ -1232,11 +1225,11 @@ class tabengine (ibus.EngineBase):
     #        except:
     #            pass
     
-    def commit_string (self,string):
-        self._editor.clear ()
-        self._update_ui ()
-        super(tabengine,self).commit_text ( ibus.Text(string) )
-        self._prev_char = string[-1]
+    def commit_string (self):
+        if self._commit_str == '':
+            return
+        commit = self._commit_str
+        super(tabengine,self).commit_text ( ibus.Text(commit) )
 
     def _convert_to_full_width (self, c):
         '''convert half width character to full width'''
@@ -1302,31 +1295,33 @@ class tabengine (ibus.EngineBase):
     def _process_key_event (self, key):
         '''Internal method to process key event'''
         key = str(key)
-        print "keyed", key
         if key == '':
             return False
-        if self._compstr == '' and len(key) != 1:
+        if self._preedit_str == '' and len(key) != 1:
             return False
+        self._really_process_key(key)
+        return True
 
+    def _really_process_key (self, key):
         self.sock.write("keyed " + key + "\n")
+        self.clear_data()
         while True:
             line = self.sock.readline()
             if not line:
                 break
             line = line[:-1]
-            print line, "\n"
             
             if line.find('commit: ') == 0:
-                self._commit = line[len('commit: '):]
+                self._commit_str = line[len('commit: '):]
             
             elif line.find('hint: ') == 0:
-                self._hint = line[len('hint: '):]
+                self._aux_str = line[len('hint: '):]
             
             elif line.find('comp: ') == 0:
-                self._compstr = line[len('comp: '):]
+                self._preedit_str = line[len('comp: '):]
 
             elif line.find('cands: ') == 0:
-                self._candsstr = line[len('cands: '):]
+                self._cands_str = line[len('cands: '):]
 
             elif line.find('cand_index: ') == 0:
                 self._cand_idx = line[len('cand_index: '):]
@@ -1338,7 +1333,10 @@ class tabengine (ibus.EngineBase):
                 break
             
             else:
-                self._hint = line
+                self._aux_str = line
+                
+            self._update_ui()
+
 
     def focus_in (self):
         if self._on:
