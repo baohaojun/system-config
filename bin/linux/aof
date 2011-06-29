@@ -1,6 +1,6 @@
 #!/bin/bash
-TMPD=/tmp/archive_of
-mkdir -p $TMPD/"$1"
-file-roller -e $TMPD/"$1" "$1"
-of $TMPD/"$1"
+dir=./"$1".unzip.$$
+mkdir -p "$dir"
+file-roller -e "$dir" "$1"
+of "$dir"
 
