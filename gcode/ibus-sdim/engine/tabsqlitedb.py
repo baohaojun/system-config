@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim:et sts=4 sw=4
 #
-# ibus-table - The Tables engine for IBus
+# ibus-sdim - The Tables engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -81,7 +81,7 @@ class tabsqlitedb:
                       'author':'somebody', 
                       'uuid':'%s' % uuid.uuid4(),
                       'serial_number':'%s' % time.strftime('%Y%m%d'),
-                      'icon':'ibus-table.svg',
+                      'icon':'ibus-sdim.svg',
                       'license':'LGPL',
                       'languages':'',
                       'valid_input_chars':'abcdefghijklmnopqrstuvwxyz',

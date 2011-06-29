@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # vim:et sw=4 sts=4 sw=4
 #
-# ibus-table - The Tables engine for IBus
+# ibus-sdim - The Tables engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -35,7 +35,7 @@ import traceback
 path_patt = re_compile(r'[^a-zA-Z0-9_/]')
 
 from gettext import dgettext
-_  = lambda a : dgettext ("ibus-table", a)
+_  = lambda a : dgettext ("ibus-sdim", a)
 N_ = lambda a : a
 
 engine_base_path = "/com/redhat/IBus/engines/sdim/%s/engine/"
@@ -89,7 +89,7 @@ class EngineFactory (ibus.EngineFactoryBase):
                     try:
                         db_dir = os.path.join (os.getenv('IBUS_TABLE_LOCATION'),'tables')
                     except:
-                        db_dir = "/usr/share/ibus-table/tables"
+                        db_dir = "/usr/share/ibus-sdim/tables"
                     db = os.path.join (db_dir,name+'.db')
                     udb = name+'-user.db'
                     _sq_db = tabsqlitedb.tabsqlitedb( name = db,user_db = udb )

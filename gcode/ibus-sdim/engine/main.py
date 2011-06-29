@@ -1,6 +1,6 @@
 # vim:et sts=4 sw=4
 #
-# ibus-table - The Tables engine for IBus
+# ibus-sdim - The Tables engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -36,8 +36,8 @@ try:
     db_dir = os.path.join (os.getenv('IBUS_TABLE_LOCATION'),'tables')
     icon_dir = os.path.join (os.getenv('IBUS_TABLE_LOCATION'),'icons')
 except:
-    db_dir = "/usr/share/ibus-table/tables"
-    icon_dir = "/usr/share/ibus-table/icons"
+    db_dir = "/usr/share/ibus-sdim/tables"
+    icon_dir = "/usr/share/ibus-sdim/icons"
 
 
 opt = optparse.OptionParser()

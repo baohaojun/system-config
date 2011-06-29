@@ -1,6 +1,6 @@
 # vim:set noet ts=4
 #
-# ibus-table - The Tables engine for IBus
+# ibus-sdim - The Tables engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -29,9 +29,9 @@ engine_table_PYTHON = \
 	$(NULL)
 engine_table_DATA = \
 	$(NULL)
-engine_tabledir = $(datadir)/ibus-table/engine
+engine_tabledir = $(datadir)/ibus-sdim/engine
 
-bin_SCRIPTS = ibus-table-createdb 
+bin_SCRIPTS = ibus-sdim-createdb 
 
 libexec_SCRIPTS = ibus-engine-table
 
@@ -39,7 +39,7 @@ engine_DATA = table.xml
 enginedir = $(datadir)/ibus/component
 
 EXTRA_DIST = \
-	ibus-table-createdb.in \
+	ibus-sdim-createdb.in \
 	ibus-engine-table.in \
 	table.xml.in \
 	$(NULL)
@@ -48,7 +48,7 @@ CLEANFILES = \
 	*.pyc \
 	*.pyo \
 	ibus-engine-table \
-	ibus-table-createdb \
+	ibus-sdim-createdb \
 	table.xml \
 	$(NULL)
 

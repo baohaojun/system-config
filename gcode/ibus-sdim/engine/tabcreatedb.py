@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # vim:et sts=4 sw=4
 #
-# ibus-table - The Tables engine for IBus
+# ibus-sdim - The Tables engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -47,7 +47,7 @@ opt_parser.add_option( '-e', '--extra',
         help = 'tell me which file is the extra words file for IME, default is %default')
 
 opt_parser.add_option( '-p', '--pinyin',
-        action = 'store', dest='pinyin', default = '/usr/share/ibus-table/data/pinyin_table.txt.bz2',
+        action = 'store', dest='pinyin', default = '/usr/share/ibus-sdim/data/pinyin_table.txt.bz2',
         help = 'tell me which file is the source file of pinyin, default is %default')
 
 opt_parser.add_option( '-o', '--no-create-index',

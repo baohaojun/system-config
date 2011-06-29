@@ -45,45 +45,45 @@ make DESTDIR=${RPM_BUILD_ROOT} NO_INDEX=true install
 rm -rf $RPM_BUILD_ROOT
 
 %post additional
-ibus-table-createdb -i -n %{_datadir}/ibus-table/tables/additional/compose.db
-ibus-table-createdb -i -n %{_datadir}/ibus-table/tables/additional/latex.db
+ibus-sdim-createdb -i -n %{_datadir}/ibus-sdim/tables/additional/compose.db
+ibus-sdim-createdb -i -n %{_datadir}/ibus-sdim/tables/additional/latex.db
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING README
-%{_libdir}/pkgconfig/ibus-table.pc
-%{_datadir}/ibus-table/engine
-%{_datadir}/ibus-table/data
-%{_datadir}/ibus-table/tables/template.txt
-%dir %{_datadir}/ibus-table/tables
-%{_datadir}/ibus-table/icons/ibus-table.svg
-%{_datadir}/ibus-table/icons/full-letter.svg
-%{_datadir}/ibus-table/icons/full-punct.svg
-%{_datadir}/ibus-table/icons/half-letter.svg
-%{_datadir}/ibus-table/icons/half-punct.svg
-%{_datadir}/ibus-table/icons/onechar.svg
-%{_datadir}/ibus-table/icons/phrase.svg
-%{_datadir}/ibus-table/icons/py-mode.svg
-%{_datadir}/ibus-table/icons/tab-mode.svg
-%{_datadir}/ibus-table/icons/chinese.svg
-%{_datadir}/ibus-table/icons/dcommit.svg
-%{_datadir}/ibus-table/icons/english.svg
-%{_datadir}/ibus-table/icons/ncommit.svg
-%{_datadir}/ibus-table/icons/cb-mode.svg
-%{_datadir}/ibus-table/icons/sc-mode.svg
-%{_datadir}/ibus-table/icons/scb-mode.svg
-%{_datadir}/ibus-table/icons/tc-mode.svg
-%{_datadir}/ibus-table/icons/tcb-mode.svg
-%dir %{_datadir}/ibus-table/icons
+%{_libdir}/pkgconfig/ibus-sdim.pc
+%{_datadir}/ibus-sdim/engine
+%{_datadir}/ibus-sdim/data
+%{_datadir}/ibus-sdim/tables/template.txt
+%dir %{_datadir}/ibus-sdim/tables
+%{_datadir}/ibus-sdim/icons/ibus-sdim.svg
+%{_datadir}/ibus-sdim/icons/full-letter.svg
+%{_datadir}/ibus-sdim/icons/full-punct.svg
+%{_datadir}/ibus-sdim/icons/half-letter.svg
+%{_datadir}/ibus-sdim/icons/half-punct.svg
+%{_datadir}/ibus-sdim/icons/onechar.svg
+%{_datadir}/ibus-sdim/icons/phrase.svg
+%{_datadir}/ibus-sdim/icons/py-mode.svg
+%{_datadir}/ibus-sdim/icons/tab-mode.svg
+%{_datadir}/ibus-sdim/icons/chinese.svg
+%{_datadir}/ibus-sdim/icons/dcommit.svg
+%{_datadir}/ibus-sdim/icons/english.svg
+%{_datadir}/ibus-sdim/icons/ncommit.svg
+%{_datadir}/ibus-sdim/icons/cb-mode.svg
+%{_datadir}/ibus-sdim/icons/sc-mode.svg
+%{_datadir}/ibus-sdim/icons/scb-mode.svg
+%{_datadir}/ibus-sdim/icons/tc-mode.svg
+%{_datadir}/ibus-sdim/icons/tcb-mode.svg
+%dir %{_datadir}/ibus-sdim/icons
 %{_bindir}/ibus-engine-table
-%{_bindir}/ibus-table-createdb
+%{_bindir}/ibus-sdim-createdb
 
 %files additional
 %defattr(-,root,root,-)
-%{_datadir}/ibus-table/tables/compose.db
-%{_datadir}/ibus-table/tables/latex.db
-%{_datadir}/ibus-table/icons/compose.svg
-%{_datadir}/ibus-table/icons/latex.svg
+%{_datadir}/ibus-sdim/tables/compose.db
+%{_datadir}/ibus-sdim/tables/latex.db
+%{_datadir}/ibus-sdim/icons/compose.svg
+%{_datadir}/ibus-sdim/icons/latex.svg
 %{_datadir}/ibus/engine/compose.engine
 %{_datadir}/ibus/engine/latex.engine
 

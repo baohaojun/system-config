@@ -8,7 +8,7 @@
     <author>Yuwei Yu &lt;acevery@gmail.com&gt;</author>
     <license>LGPL</license>
     <homepage>http://code.google.com/p/ibus</homepage>
-    <textdomain>ibus-table</textdomain>
+    <textdomain>ibus-sdim</textdomain>
     <observed-paths>
         <path>${pkgdatadir}/tables/</path>
     </observed-paths>

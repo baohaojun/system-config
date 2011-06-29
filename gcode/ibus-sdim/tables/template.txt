@@ -25,7 +25,7 @@ SERIAL_NUMBER = 20090218
 
 ### ICON can be any format as long as your pygtk can recognized
 ### the most widely ones are "png" and "svg", letter one is recommended
-ICON = ibus-table.svg
+ICON = ibus-sdim.svg
 
 ### The default name of this table, this is needed
 NAME = Table
@@ -94,7 +94,7 @@ DYNAMIC_ADJUST = TRUE
 ### Each rule separate via ";". 
 ### Example below is a complete rule-set, 
 ### becuase [2,2] ∩ [3,3] ∩ [4,+∞] = [2,+∞], which is the range of length
-### of phrase. This have to be satisfied if you need ibus-table to build up
+### of phrase. This have to be satisfied if you need ibus-sdim to build up
 ### your own inputed phrase via your daily using.
 RULES = ce2:p11+p12+p21+p22;ce3:p11+p21+p22+p31;ca4:p11+p21+p31+p41
 
@@ -118,7 +118,7 @@ END_TABlE
 ### phrase-building code for the given character), the format of every entry is
 ### "character\tgoucima\n". 
 ### For the input method which just use the full code as word-building code
-### just skip this field. The ibus-table will build the codes needed from
+### just skip this field. The ibus-sdim will build the codes needed from
 ### above TABLE.
 ### if you don't need different word-building code, please comment out the
 ### next few lines with ###, just like these lines you are look at now.

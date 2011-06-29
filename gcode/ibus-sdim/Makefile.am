@@ -1,6 +1,6 @@
 # vim:set noet ts=4
 #
-# ibus-table - The Table engine for IBus
+# ibus-sdim - The Table engine for IBus
 #
 # Copyright (c) 2008-2009 Yu Yuwei <acevery@gmail.com>
 #
@@ -34,7 +34,7 @@ SUBDIRS = \
 ACLOCAL_AMFLAGS = -I m4
 
 pkgconfig_DATA = \
-	ibus-table.pc \
+	ibus-sdim.pc \
 	$(NULL)
 
 pkgconfigdir = $(libdir)/pkgconfig
