@@ -5,7 +5,7 @@ data/Makefile
 engine/Makefile
 engine/ibus-engine-table
 engine/ibus-sdim-createdb
-engine/table.xml
+engine/sdim.xml
 ibus-sdim.pc
 icons/Makefile
 icons/additional/Makefile

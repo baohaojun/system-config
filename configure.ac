@@ -69,7 +69,7 @@ AC_CONFIG_FILES([po/Makefile.in
     engine/Makefile
     engine/ibus-engine-table
     engine/ibus-sdim-createdb
-    engine/table.xml.in
+    engine/sdim.xml.in
     data/Makefile
     icons/Makefile
     icons/additional/Makefile

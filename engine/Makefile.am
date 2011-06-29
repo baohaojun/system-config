@@ -35,13 +35,13 @@ bin_SCRIPTS = ibus-sdim-createdb
 
 libexec_SCRIPTS = ibus-engine-table
 
-engine_DATA = table.xml
+engine_DATA = sdim.xml
 enginedir = $(datadir)/ibus/component
 
 EXTRA_DIST = \
 	ibus-sdim-createdb.in \
 	ibus-engine-table.in \
-	table.xml.in \
+	sdim.xml.in \
 	$(NULL)
 
 CLEANFILES = \
@@ -49,14 +49,14 @@ CLEANFILES = \
 	*.pyo \
 	ibus-engine-table \
 	ibus-sdim-createdb \
-	table.xml \
+	sdim.xml \
 	$(NULL)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in \
 	$(NULL)
 
-table.xml: table.xml.in
+sdim.xml: sdim.xml.in
 	( \
 		libexecdir=${libexecdir}; \
 		pkgdatadir=${pkgdatadir}; \
