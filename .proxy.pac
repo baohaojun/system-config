@@ -20,7 +20,7 @@
             'blog.varunkumar.me', 'webupd8.org', 'www.emacsblog.org',
             'windows-commandline.com', 'vaig.be', 'picturesofmymother.com',
             'xmages.net', 'iphone-dev.org', 'osdir.com', 'www.scribd.com',
-            'google.com.hk', 'old.nabble.com',
+            'google.com.hk', 'old.nabble.com', 'wikitionary.org',
         ];
     
     var regexp = new RegExp(blocked_site.join('|'));
