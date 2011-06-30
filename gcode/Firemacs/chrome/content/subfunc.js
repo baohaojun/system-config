@@ -197,6 +197,56 @@ Firemacs.SubFunc = {
 	    }
 	}
     },
+    
+    subPageDown: function(e) {
+        var doc = e.target.ownerDocument;
+        var wnd = doc.defaultView;
+        if (wnd.pageYOffset + wnd.innerHeight >= doc.height) {
+            this._followLink(1, wnd, doc);
+        } else {
+            goDoCommand('cmd_scrollPageDown');
+        }
+    },
+
+    subPageUp: function(e) {
+        var doc = e.target.ownerDocument;
+        var wnd = doc.defaultView;
+        if (wnd.pageYOffset == 0) {
+            this._followLink(-1, wnd, doc);
+        } else {
+            goDoCommand('cmd_scrollPageUp');
+        }
+    },
+
+    _followLink: function(dir, wnd, doc) {
+        var re;
+        if (dir > 0) {
+            re = /buttonright|next|>|下一|下页/i;
+        } else {
+            re = /buttonleft|prev|<|上一|上页/i;
+        }
+        var re_exclude = /<.*>|>.*</;
+        var links = doc.links;
+        for (i = 0; i < links.length; ++i) {
+            if (links[i].textContent && 
+                links[i].textContent.search(re) != -1 && 
+                links[i].textContent.search(re_exclude) == -1 &&
+                links[i].href
+               ) {
+                loadURI(links[i].href);
+                return;
+            }
+            imgElems = links[i].getElementsByTagName("img"); // Is it an image tag?
+            if (imgElems.length > 0 && 
+                imgElems[0].src && 
+                imgElems[0].src.search(re) != -1 && 
+                imgElems[0].src.search(re_exclude) == -1 &&
+                links[i].href) {
+                loadURI(links[i].href);
+                return;
+            }
+        }
+    },
 
     ////////////////////////////////////////////////////////////////
     //

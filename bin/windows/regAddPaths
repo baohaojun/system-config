@@ -7,8 +7,7 @@ chomp($pathVal = `regtool.exe -s get "$regEntry"`);
 
 @paths = split(';', $pathVal);
 for $entry2Add (@ARGV) {
-    chomp ($entry2Add = `readlink -f "$entry2Add"`);
-    chomp ($entry2Add = `cygpath -alw "$entry2Add"`);
+    chomp ($entry2Add = `cd "$entry2Add" >/dev/null 2>&1 && cygpath -alw "$entry2Add"`);
     if (grep {uc $entry2Add eq uc $_ } @paths) {
         print "entry $entry2Add already in path\n";
     } else {

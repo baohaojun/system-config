@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+cd ~/Downloads
+mkdir `today`
+rm -f today
+ln -sf `today` today

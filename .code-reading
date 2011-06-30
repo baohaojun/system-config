@@ -2,7 +2,7 @@
 ****************
 这个东西实际上是external clock的pinmux
 
-    /home/bhj/src/rayzerlink-pad/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/ap15/ap15rm_pinmux_tables.c:794:     &g_Ap15MuxCdev[0],
+    /scp:bhj@r889:/home/bhj/src/rayzerlink-pad/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/ap15/ap15rm_pinmux_tables.c:794:     &g_Ap15MuxCdev[0],
         /*  Array of all the controller types in the system, pointing to the array of
          *  instances of each controller.  Indexed using the NvRmIoModule value.
          */
@@ -13,7 +13,7 @@
 ****************
 这个函数就是 pfnGetExtClockFreq 是怎么实现的，根据ap的版本不同有可能会调用不同的版本。
 
-    /home/bhj/src/rayzerlink-pad/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/common/nvrm_pinmux.c:136:         NvRmPrivAp15GetExternalClockSourceFreq,
+    /scp:bhj@r889:/home/bhj/src/rayzerlink-pad/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/common/nvrm_pinmux.c:136:         NvRmPrivAp15GetExternalClockSourceFreq,
         static NvPinmuxPrivMethods* NvRmPrivGetPinmuxMethods(NvRmDeviceHandle hDevice)
         {
             ...
@@ -23,7 +23,7 @@
 
 ****************
 
-    /home/bhj/src/android-nv-froyo/hardware/tegra/core/utils/nvos/aos/aos_semihost.h:44:     void (*SemiDebugString)( const char *msg );
+    /scp:bhj@r889:/home/bhj/src/android-nv-froyo/hardware/tegra/core/utils/nvos/aos/aos_semihost.h:44:     void (*SemiDebugString)( const char *msg );
         /**
          * AOS supports several file i/o (semihosting) implementations.
          */
@@ -34,7 +34,7 @@
 
 ****************
 
-    /home/bhj/src/android-nv-froyo/frameworks/base/include/ui/KeycodeLabels.h:28:     { "HOME", 3 },
+    /scp:bhj@r889:/home/bhj/src/android-nv-froyo/frameworks/base/include/ui/KeycodeLabels.h:28:     { "HOME", 3 },
         static const KeycodeLabel KEYCODES[] = {
             ...
     =>      { "HOME", 3 },
@@ -63,7 +63,7 @@
 ****************
 这个地方应该是nv里配置哪个uart使用相关的代码。
 
-    /home/bhj/src/theatre/hardware/tegra/core/utils/nvos/aos/nvap/aos_uart.c:76:         TRISTATE_UART(B,UAA);
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/hardware/tegra/core/utils/nvos/aos/nvap/aos_uart.c:76:         TRISTATE_UART(B,UAA);
         static NvError aos_EnableUartA(NvU32 configuration)
         {
             ...
@@ -74,7 +74,7 @@
 这段代码很奇怪，(0?x)在C语言里根本不合法呀，到底是什么意思呢？
 但是仔细看了一下，原来如果x也是一个宏的话，比如18:17，那么就又有意义了。
 
-    /home/bhj/src/android-byd/hardware/tegra/core/include/nvrm_drf.h:55: #define NV_FIELD_SHIFT(x)       ((0?x)%32)
+    /scp:bhj@r889:/home/bhj/src/android-byd/hardware/tegra/core/include/nvrm_drf.h:55: #define NV_FIELD_SHIFT(x)       ((0?x)%32)
         /*
          * The NV_FIELD_* macros are helper macros for the public NV_DRF_* macros.
          */
@@ -97,7 +97,7 @@
 ****************
 在这里设置用哪个终端出log
 
-    /home/bhj/src/android-byd/hardware/tegra/odm/harmony/odm_kit/query/nvodm_query.c:330:     return NvOdmDebugConsole_UartD;
+    /scp:bhj@r889:/home/bhj/src/android-byd/hardware/tegra/odm/harmony/odm_kit/query/nvodm_query.c:330:     return NvOdmDebugConsole_UartD;
         NvOdmDebugConsole
         NvOdmQueryDebugConsole(void)
         {
@@ -106,7 +106,7 @@
 ****************
 
 
-    /home/bhj/src/rayzerlink-ventana/hardware/tegra/core/drivers/nvdispmgr/server/nvdispmgr.c:2322:     pOut->TotalCount = 0;
+    /scp:bhj@r889:/home/bhj/src/rayzerlink-ventana/hardware/tegra/core/drivers/nvdispmgr/server/nvdispmgr.c:2322:     pOut->TotalCount = 0;
         //===========================================================================
         // NvDispMgrDisplayListModesImpl() - list the modes for a display
         //===========================================================================
@@ -122,7 +122,7 @@
 ****************
 
 
-    /home/bhj/src/rayzerlink-ventana/hardware/tegra/core/drivers/nvdispmgr/server/nvdispmgr.c:2680:     DM_FUNC(DisplayListModes,1);       // NvDispMgrDisplayListModesImpl()
+    /scp:bhj@r889:/home/bhj/src/rayzerlink-ventana/hardware/tegra/core/drivers/nvdispmgr/server/nvdispmgr.c:2680:     DM_FUNC(DisplayListModes,1);       // NvDispMgrDisplayListModesImpl()
         //===========================================================================
         // NvDispMgrInitFunctionTable() - initialize pointers to each function
         //===========================================================================
@@ -134,7 +134,7 @@
 ****************
 i2c是在这里配置的：
 
-    /home/bhj/src/rayzerlink-ventana/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/ap20/ap20rm_pinmux_tables.c:200:     CONFIG(A,G,PTA,I2C2),CONFIGEND(),
+    /scp:bhj@r889:/home/bhj/src/rayzerlink-ventana/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/ap20/ap20rm_pinmux_tables.c:200:     CONFIG(A,G,PTA,I2C2),CONFIGEND(),
         static const NvU32 g_Ap20Mux_I2c2[] = {
             ...
     =>      CONFIG(A,G,PTA,I2C2),CONFIGEND(),
@@ -142,14 +142,14 @@ i2c是在这里配置的：
 ****************
 pmu之外的外部电源用的是哪个gpio
 
-    /home/bhj/src/rayzerlink-ventana/hardware/tegra/odm/ventana/odm_kit/query/subboards/nvodm_query_discovery_pm275_addresses.h:218:     { NvOdmIoModule_Gpio, 'v'-'a', 5, 0 },
+    /scp:bhj@r889:/home/bhj/src/rayzerlink-ventana/hardware/tegra/odm/ventana/odm_kit/query/subboards/nvodm_query_discovery_pm275_addresses.h:218:     { NvOdmIoModule_Gpio, 'v'-'a', 5, 0 },
         static const NvOdmIoAddress s_Vddio_Vid_En[] = {
     =>      { NvOdmIoModule_Gpio, 'v'-'a', 5, 0 },
 
 ****************
 这个pmu上还有一些gpio，可以控制输出电压？
 
-    /home/bhj/src/rayzerlink-ventana/hardware/tegra/odm/template/odm_kit/adaptations/pmu/tps6586x/nvodm_pmu_tps6586x.c:536:         Ext_TPS72012PmuSupply_LDO,
+    /scp:bhj@r889:/home/bhj/src/rayzerlink-ventana/hardware/tegra/odm/template/odm_kit/adaptations/pmu/tps6586x/nvodm_pmu_tps6586x.c:536:         Ext_TPS72012PmuSupply_LDO,
         /* FIXME: Change getVoltage/setVoltage according to your fuse */
         static const TPS6586xPmuSupplyInfo tps6586xSupplyInfoTable[] =
         {
@@ -160,7 +160,7 @@ pmu之外的外部电源用的是哪个gpio
 ****************
 注册中断的方法：
 
-    /home/bhj/src/rayzerlink-ventana/kernel/arch/arm/mach-tegra/odm_kit/platform/accelerometer/nvodm_accelerometer_kxtf9.c:385:     if (NvOdmGpioInterruptRegister(hDevice->hGpioINT,
+    /scp:bhj@r889:/home/bhj/src/rayzerlink-ventana/kernel/arch/arm/mach-tegra/odm_kit/platform/accelerometer/nvodm_accelerometer_kxtf9.c:385:     if (NvOdmGpioInterruptRegister(hDevice->hGpioINT,
         static NvBool ConfigInterrupt(NvOdmAccelHandle hDevice)
         {
             ...
@@ -169,7 +169,7 @@ pmu之外的外部电源用的是哪个gpio
 ****************
 这里应该是每个i2c上选的哪个pinmux配置？
 
-    /home/bhj/src/rayzerlink-ventana/hardware/tegra/odm/ventana/odm_kit/query/nvodm_query_pinmux.c:43: static const NvU32 s_NvOdmPinMuxConfig_I2c[] = {
+    /scp:bhj@r889:/home/bhj/src/rayzerlink-ventana/hardware/tegra/odm/ventana/odm_kit/query/nvodm_query_pinmux.c:43: static const NvU32 s_NvOdmPinMuxConfig_I2c[] = {
         static const NvU32 s_NvOdmPinMuxConfig_Twc[] = {
             0
         ...
@@ -177,7 +177,7 @@ pmu之外的外部电源用的是哪个gpio
 
 Nvidia 自带了用gpio模拟i2c的代码，回头电源代码可以用这个来试一下。
 
-    /home/bhj/src/rayzerlink-ventana/kernel/arch/arm/mach-tegra/nvrm/io/common/nvrm_i2c.c:539:     if ((Transaction[0].Flags & NVRM_I2C_SOFTWARE_CONTROLLER) ||
+    /scp:bhj@r889:/home/bhj/src/rayzerlink-ventana/kernel/arch/arm/mach-tegra/nvrm/io/common/nvrm_i2c.c:539:     if ((Transaction[0].Flags & NVRM_I2C_SOFTWARE_CONTROLLER) ||
         NvError NvRmI2cTransaction(
             NvRmI2cHandle hI2c,
             NvU32 I2cPinMap,
@@ -195,7 +195,7 @@ Nvidia 自带了用gpio模拟i2c的代码，回头电源代码可以用这个来
 ****************
 这里是battery太低的时候，系统会关机的code所在的地方。
 
-    /home/bhj/src/theatre/frameworks/base/services/java/com/android/server/BatteryService.java:187:             Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/frameworks/base/services/java/com/android/server/BatteryService.java:187:             Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
         /**
          * <p>BatteryService monitors the charging status, and charge level of the device
          * battery.  When these values change this service broadcasts the new values
@@ -228,7 +228,7 @@ Nvidia 自带了用gpio模拟i2c的代码，回头电源代码可以用这个来
 ****************
 这个gpio就是ventana代码里控制充电enable/disable的位置。
 
-    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query_gpio.c:162:     {NVODM_PORT('r'), 6, NvOdmGpioPinActiveState_Low},
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query_gpio.c:162:     {NVODM_PORT('r'), 6, NvOdmGpioPinActiveState_Low},
         static const NvOdmGpioPinInfo s_Battery[] = {
             ...
     =>      {NVODM_PORT('r'), 6, NvOdmGpioPinActiveState_Low},
@@ -239,7 +239,7 @@ Nvidia 自带了用gpio模拟i2c的代码，回头电源代码可以用这个来
 这里是配哪个是中断唤醒源的地方，NV的工程师建议把所有的NV_TRUE都改成
 NV_FALSE试一试。
 
-    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query.c:45:     {NV_FALSE,  2, NvOdmWakeupPadPolarity_High},    // Wake Event  2 - dvi_d3
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query.c:45:     {NV_FALSE,  2, NvOdmWakeupPadPolarity_High},    // Wake Event  2 - dvi_d3
         #define BOARD_ID_VENTANA 0x024B
         // Wake Events
         static NvOdmWakeupPadInfo s_NvOdmWakeupPadInfo[] =
@@ -250,7 +250,7 @@ NV_FALSE试一试。
 ****************
 这个是配置哪个gpio是中断源，上面那个是配置哪个中断源有效，以及有效电平
 
-    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/board-nvodm.c:1581:         gpio_to_irq(TEGRA_GPIO_PC7), gpio_to_irq(TEGRA_GPIO_PS2),
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/kernel/arch/arm/mach-tegra/board-nvodm.c:1581:         gpio_to_irq(TEGRA_GPIO_PC7), gpio_to_irq(TEGRA_GPIO_PS2),
         static void __init tegra_setup_suspend(void)
         {
         #ifdef CONFIG_ARCH_TEGRA_2x_SOC
@@ -261,7 +261,7 @@ NV_FALSE试一试。
 ****************
 maverick或下一个版本的usb-creator已经可以在debian上做dpkg-buildpackage并安装使用了，但是需要改一个地方：
 
-    /usr/lib/pymodules/python2.6/usbcreator/install.py:256:                     contents = f.readline().split()
+    /usr/share/pyshared/usbcreator/install.py:256:                     contents = f.readline().split()
         class install(Thread):
             ...
             def mangle_syslinux(self):
@@ -275,7 +275,7 @@ maverick或下一个版本的usb-creator已经可以在debian上做dpkg-buildpac
 ****************
 <6>[    7.097367] mmcblk3: mmc2:0001 SEM08G 7.37 GiB 
 
-    /home/bhj/src/theatre/kernel/drivers/mmc/card/block.c:643:     printk(KERN_INFO "%s: %s %s %s %s\n",
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/kernel/drivers/mmc/card/block.c:643:     printk(KERN_INFO "%s: %s %s %s %s\n",
         static int mmc_blk_probe(struct mmc_card *card)
         {
             ...
@@ -285,7 +285,7 @@ maverick或下一个版本的usb-creator已经可以在debian上做dpkg-buildpac
 这个位置很有意思，为什么tegra-10.9.7会把原来i2c bus3上面的东西，变成了bus4？因为在bus1上多了一种config！
 也就是多了一条bus出来了啦。
 
-    /scp:bhj@192.168.15.131:/home/bhj/src/theatre/kernel/drivers/i2c/busses/i2c-tegra.c:256:         i2c_bus->pinmux = plat->bus_mux[i];
+    /scp:bhj@192.168.15.131:/home/bhj/src/theatre-p2/kernel/drivers/i2c/busses/i2c-tegra.c:256:         i2c_bus->pinmux = plat->bus_mux[i];
         static int tegra_i2c_probe(struct platform_device *pdev)
         {
             ...
@@ -299,7 +299,7 @@ file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-po
 
 到5.3.4. Calls. 这个用法出现在参数列表里，我们就去看一下参数列表的BNF。
 
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/vendor/nvidia/scripts/ota/patch.py:463:         empty_entry = struct.pack('=4sIII', *empty_entry_tuple)
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/vendor/nvidia/scripts/ota/patch.py:463:         empty_entry = struct.pack('=4sIII', *empty_entry_tuple)
             # Create updater-script
         #    print 'Generate updater-script'
             ...
@@ -310,7 +310,7 @@ file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-po
 ****************
 扫描分区？
 
-    /home/bhj/src/theatre/kernel/fs/partitions/check.c:544:     if (bdev->bd_part_count)
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/kernel/fs/partitions/check.c:544:     if (bdev->bd_part_count)
         int rescan_partitions(struct gendisk *disk, struct block_device *bdev)
         {
             ...
@@ -319,7 +319,7 @@ file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-po
 ****************
 
 
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/hardware/tegra/core/system/fastboot/linux_cmdline.c:324:     /* Remain -= Idx; */
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/hardware/tegra/core/system/fastboot/linux_cmdline.c:324:     /* Remain -= Idx; */
         /*  Creates the command line, and adds it to the TAG list */
         void FastbootCommandLine(
             NvAbootHandle hAboot,
@@ -338,7 +338,7 @@ file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-po
 	/* ptr += Idx; */
     	/* Remain -= Idx; */
 
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/hardware/tegra/core/system/fastboot/linux_cmdline.c:324:     /* Remain -= Idx; */
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/hardware/tegra/core/system/fastboot/linux_cmdline.c:324:     /* Remain -= Idx; */
         /*  Creates the command line, and adds it to the TAG list */
         void FastbootCommandLine(
             NvAbootHandle hAboot,
@@ -365,7 +365,7 @@ file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-po
 ****************
 下面这个值是odmdata里的，跟bct也有关系。
 
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query.c:763:         PowerStateInfo.LowestPowerState =  ((LPStateSelection != TEGRA_DEVKIT_BCT_CUSTOPT_0_LPSTATE_LP1)?
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/nvodm_query.c:763:         PowerStateInfo.LowestPowerState =  ((LPStateSelection != TEGRA_DEVKIT_BCT_CUSTOPT_0_LPSTATE_LP1)?
         /**
          * Gets the lowest soc power state supported by the hardware
          *
@@ -381,14 +381,14 @@ file:///usr/share/doc/python2.6/html/reference/expressions.html#grammar-token-po
 ****************
 在哪里定义en_wifi_pwr
 
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/hardware/tegra/odm/ventana/odm_kit/query/subboards/nvodm_query_discovery_pm275_addresses.h:222:     { NvOdmIoModule_Gpio, 'p'-'a', 0, 0 },
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/hardware/tegra/odm/ventana/odm_kit/query/subboards/nvodm_query_discovery_pm275_addresses.h:222:     { NvOdmIoModule_Gpio, 'p'-'a', 0, 0 },
         static const NvOdmIoAddress s_Vddio_Wifi_En[] = {
     =>      { NvOdmIoModule_Gpio, 'p'-'a', 0, 0 },
 
 ****************
 pinmux group怎么定义
 
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/pinmux-t2-tables.c:851:     PINGROUP(DAP3,  BB,    DAP3,      RSVD,      RSVD,      RSVD,          DAP3,      0x14, 9,  0x88, 24, 0xA0, 14),
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/kernel/arch/arm/mach-tegra/pinmux-t2-tables.c:851:     PINGROUP(DAP3,  BB,    DAP3,      RSVD,      RSVD,      RSVD,          DAP3,      0x14, 9,  0x88, 24, 0xA0, 14),
         static const struct tegra_pingroup_desc pingroups[TEGRA_MAX_PINGROUP] = {
             ...
     =>      PINGROUP(DAP3,  BB,    DAP3,      RSVD,      RSVD,      RSVD,          DAP3,      0x14, 9,  0x88, 24, 0xA0, 14),
@@ -396,7 +396,7 @@ pinmux group怎么定义
 ****************
 
 
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/include/mach/pinmux.h:26: typedef enum {
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/kernel/arch/arm/mach-tegra/include/mach/pinmux.h:26: typedef enum {
         #if defined(CONFIG_ARCH_TEGRA_2x_SOC)
         #include "pinmux-t2.h"
         #else
@@ -407,7 +407,7 @@ pinmux group怎么定义
 ****************
 
 
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/include/mach/pinmux-t2.h:147:             TEGRA_MUX_ ## f0,           \
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/kernel/arch/arm/mach-tegra/include/mach/pinmux-t2.h:147:             TEGRA_MUX_ ## f0,           \
         #define PINGROUP(pg_name, vdd, f0, f1, f2, f3, f_safe,      \
             ...
             [TEGRA_PINGROUP_ ## pg_name] = {            \
@@ -418,7 +418,7 @@ pinmux group怎么定义
 ****************
 这个好像会把所有硬件模块的pinmux都设一遍。可能也包括kbc。需要查一下
 
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/common/nvrm_pinmux.c:239:             (p->pfnSetPinMuxCtl)(hDevice, *ModulePrograms, *OdmConfigs);
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/common/nvrm_pinmux.c:239:             (p->pfnSetPinMuxCtl)(hDevice, *ModulePrograms, *OdmConfigs);
         static void NvRmPrivApplyAllModuleTypePinMuxes(
             NvRmDeviceHandle hDevice,
             NvU32 Module,
@@ -434,7 +434,7 @@ pinmux group怎么定义
 ****************
 设置电压
 
-    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/hardware/tegra/odm/template/odm_kit/adaptations/pmu/tps6586x/nvodm_pmu_tps6586x.c:1320:         if (! Tps6586xWriteVoltageReg(hDevice, vddRail, MilliVolts, pSettleMicroSeconds))
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/hardware/tegra/odm/template/odm_kit/adaptations/pmu/tps6586x/nvodm_pmu_tps6586x.c:1320:         if (! Tps6586xWriteVoltageReg(hDevice, vddRail, MilliVolts, pSettleMicroSeconds))
         NvBool
         Tps6586xSetVoltage(
             NvOdmPmuDeviceHandle hDevice,
@@ -445,3 +445,195 @@ pinmux group怎么定义
             ...
             {
     =>          if (! Tps6586xWriteVoltageReg(hDevice, vddRail, MilliVolts, pSettleMicroSeconds))
+
+****************
+
+
+    /scp:bhj@r889:/home/bhj/src/gb-p2/vendor/nvidia/tegra/hal/liboverlay/overlay.cpp:195:         case OVERLAY_FORMAT_RGBA_8888:
+        static overlay_t* overlay_createOverlay(struct overlay_control_device_t *dev,
+                 uint32_t w, uint32_t h, int32_t format)
+        {
+            ...
+            switch (format) {
+    =>          case OVERLAY_FORMAT_RGBA_8888:
+
+****************
+
+
+    /scp:bhj@r889:/home/bhj/src/gb-p2/hardware/libhardware/modules/gralloc/framebuffer.cpp:355:             const_cast<int&>(dev->device.format) = HAL_PIXEL_FORMAT_RGB_565;
+        int fb_device_open(hw_module_t const* module, const char* name,
+                hw_device_t** device)
+        {
+            ...
+            if (!strcmp(name, GRALLOC_HARDWARE_FB0)) {
+                ...
+                if (status >= 0) {
+                    ...
+    =>              const_cast<int&>(dev->device.format) = HAL_PIXEL_FORMAT_RGB_565;
+
+****************
+看看能不能直接进recovery模式，而不需要按recovery键。
+
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/hardware/tegra/core/system/nvaboot/nvaboot.c:469:     RecoveryMode = NvBlQueryGetNv3pServerFlag();
+        NvError NvAbootOpen(
+            NvAbootHandle *phAboot,
+            NvU32 *EnterNv3pServer,
+            NvU32 *Boot)
+        {
+            ...
+    =>      RecoveryMode = NvBlQueryGetNv3pServerFlag();
+
+****************
+
+
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/kernel/arch/arm/mach-tegra/include/ap20/project_relocation_table.h:459: #define NV_RELOCATION_TABLE_INIT \
+        //    relocation table data (stored in boot rom)
+        // ------------------------------------------------------------
+        // relocation table pointer stored at NV_RELOCATION_TABLE_OFFSET
+        #define NV_RELOCATION_TABLE_PTR_OFFSET 64
+        ...
+    =>  #define NV_RELOCATION_TABLE_INIT \
+
+****************
+
+
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/hardware/tegra/core/system/fastboot/recovery_utils.c:769:                 NvOsStrncpy(partName, "CAC", NvOsStrlen("CAC"));
+        NvError UpdateDevice(NvAbootHandle hAboot, CommandType *Command)
+        {
+            ...
+            {
+                ...
+                {
+                    ...
+                    {
+    =>                  NvOsStrncpy(partName, "CAC", NvOsStrlen("CAC"));
+
+****************
+这段代码是nvidia软件的核心
+
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/hardware/tegra/core/mobile_linux/daemons/nvrm/app/server.c:502:         NV_DAEMON_MODULES(DO_DISPATCH)
+        #define DO_DISPATCH(DAEMON)                                     \
+                ...
+    =>          NV_DAEMON_MODULES(DO_DISPATCH)
+
+****************
+这个地方是会调到nv的display manager的入口
+
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/hardware/tegra/core/drivers/nvdispmgr/client/dispmgr_local.h:81:     NvDispMgrEntry(Client, InSize, In, OutSize);
+        //===========================================================================
+        // NvDispMgrCall()
+        //===========================================================================
+        static NV_INLINE NvError NvDispMgrCall(
+                                    NvDispMgrClientHandle    Client,
+                                    NvDispMgrCmd             Command,
+                                    NvU32                    Id,
+                                    NvU32                    Flags,
+                                    NvU32                    InSize,
+                                    NvDispMgrCommonInParams  *In,
+                                    NvU32                    OutSize,
+                                    NvDispMgrCommonOutParams *Out,
+                                    NvDispMgrStateSequence   *StateSequenceNumber)
+        {
+            ...
+    =>      NvDispMgrEntry(Client, InSize, In, OutSize);
+
+****************
+这个地方说我们用的是支持32位的？
+
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/hardware/tegra/hal/libgralloc/nvgrfb.c:266:         int ModeFormat = HAL_PIXEL_FORMAT_RGBA_8888;
+            dev->Base.common.tag          = HARDWARE_DEVICE_TAG;
+            dev->Base.common.version      = 0;
+            dev->Base.common.module       = &mod->Base.common;
+            dev->Base.common.close        = NvGrFbDevClose;
+            dev->Base.setSwapInterval     = NvGrSetSwapInterval;
+            dev->Base.setUpdateRect       = NULL; //NvGrSetUpdateRect;
+            dev->Base.compositionComplete = NvGrCompositionComplete;
+            dev->Base.post                = NvGrPost;
+        #ifdef GRALLOC_FB_READ_SUPPORTED    
+            dev->Base.read                = NvGrFbRead;
+        #endif
+            ...
+            {
+                ...
+    =>          int ModeFormat = HAL_PIXEL_FORMAT_RGBA_8888;
+
+****************
+mmc_cid_show: 这个函数用ctags不能查到，因为它是在一个宏里被定义的：
+
+    /scp:bhj@r889:/home/bhj/src/theatre-p2/kernel/drivers/mmc/core/mmc.c:275: MMC_DEV_ATTR(cid, "%08x%08x%08x%08x\n", card->raw_cid[0], card->raw_cid[1],
+            return err;
+        ...
+    =>  MMC_DEV_ATTR(cid, "%08x%08x%08x%08x\n", card->raw_cid[0], card->raw_cid[1],
+
+****************
+
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/frameworks/base/services/java/com/android/server/KeyInputQueue.java:980:                                         System.arraycopy(ms.mNextData, 0,
+        public abstract class KeyInputQueue {
+            ...
+            Thread mThread = new Thread("InputDeviceReader") {
+                public void run() {
+                    ...
+                    while (true) {
+                        try {
+                            ...
+                            synchronized (mFirst) {
+                                ...
+                                } else if (send || (ev.type == RawInputEvent.EV_SYN
+                                    ...
+                                    if (mDisplay != null) {
+                                        ...
+                                        if (ms.changed) {
+                                            ...
+                                            } else {
+                                                ...
+    =>                                          System.arraycopy(ms.mNextData, 0,
+
+****************
+这里是分发nv daemon消息的地方。这里会根据不同的消息进行打印。
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/hardware/tegra/core/drivers/nvdispmgr/server/nvdispmgr.c:592:                 A(DisplaySetAttrs)
+        #define NV_DISP_MGR_LOG_COMMANDS 0
+        #if NV_DISP_MGR_LOG_COMMANDS
+            {
+                ...
+                {
+                    ...
+                    NvOsDebugPrintf(
+                        ...
+    =>                  A(DisplaySetAttrs)
+
+****************
+这个是NV的消息处理函数定义的地方，比如 DisplaySetAttrs 会被定义出一个 NvDispMgrDisplaySetAttrsImpl 的函数。
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre-p2/hardware/tegra/core/drivers/nvdispmgr/server/nvdispmgr.c:2691:         cmd->InOutWords[1] = isvar?0:(sizeof(NvDispMgr##name##Out)/4)
+        //===========================================================================
+        // NvDispMgrInitFunctionTable() - initialize pointers to each function
+        //===========================================================================
+        void NvDispMgrInitFunctionTable(NvDispMgr *dm)
+        {
+            ...
+            #define DM_FUNC(name,isvar) \
+                ...
+    =>          cmd->InOutWords[1] = isvar?0:(sizeof(NvDispMgr##name##Out)/4)
+
+****************
+2.6.36在reboot时和NV用的方法不一样
+
+    /scp:bhj@10.6.3.178:/home/bhj/src/theatre-p2/kernel/arch/arm/mach-tegra/include/mach/system.h:39:         while(1);
+        static inline void arch_reset(char mode, const char *cmd)
+        {
+                ...
+    =>          while(1);
+
+****************
+
+
+    /home/bhj/src/theatre/hardware/tegra/odm/ventana/odm_kit/query/nvodm_query.c:456:         { NV_FALSE,  0, NV_FALSE, 0x4, NvOdmQuerySdioSlotUsage_Boot  },
+        const NvOdmQuerySdioInterfaceProperty* NvOdmQueryGetSdioInterfaceProperty(
+            NvU32 Instance)
+        {
+            ...
+            {
+                ...
+    =>          { NV_FALSE,  0, NV_FALSE, 0x4, NvOdmQuerySdioSlotUsage_Boot  },

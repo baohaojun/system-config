@@ -56,17 +56,6 @@
 (require 'grep-buffers)
 (require 'htmlize)
 
-(require 'muse-mode)     ; load authoring mode
-(require 'muse-html)     ; load publishing styles I use
-(require 'muse-project)
-(setq muse-project-alist
-      '(("Website" ("~/Pages" :default "index")
-         (:base "html" :path "/scp:bhj@192.168.0.46:/var/www/rayzer_doc"))))
-
-(setq muse-project-alist
-      '(("rayzer_doc" ("~/rayzer_doc" :default "index")
-         (:base "html" :path "/scp:bhj@192.168.0.46:/var/www/rayzer_doc"))))
-
 (setq-default abbrev-mode t)                                                                   
 (read-abbrev-file "~/.abbrev_defs")
 (setq save-abbrevs t)   
@@ -149,40 +138,39 @@
       (push-mark))
     (ctags-beginning-of-defun (- arg))))
 
+(mapcar (lambda (x) (add-hook x (lambda ()
+                    (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
+                    (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
+                    (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
+                    (c-set-offset 'innamespace 0)
+                    (c-set-offset 'substatement-open 0))))
+        (list 'c-mode-hook 'c++-mode-hook))
+        
+
 (defun linux-c-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
   (c-mode) 
-  (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
-  (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
-  (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "k&r")
-  (setq tab-width 4)
+  (setq tab-width 8)
   (setq indent-tabs-mode t)
-  (c-set-offset 'innamespace 0)
-  (setq c-basic-offset 4))
+  (setq c-basic-offset 8))
 
 (defun linux-c++-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
   (c++-mode) 
-  (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
-  (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
-  (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "k&r")
   (setq tab-width 4)
-  (c-set-offset 'innamespace 0)
-  (setq indent-tabs-mode t)
+  (setq indent-tabs-mode nil)
   (setq c-basic-offset 4))
 
 (define-key java-mode-map [?\C-\M-a] 'bhj-c-beginning-of-defun)
 (define-key java-mode-map [?\C-\M-e] 'bhj-c-end-of-defun)
 
-(setq auto-mode-alist (cons '(".*\\.[c]$" . linux-c-mode)
+(setq auto-mode-alist (cons '(".*/kernel.*\\.[ch]$" . linux-c-mode)
                             auto-mode-alist))
 (setq auto-mode-alist (cons '(".*\\.cpp$" . linux-c++-mode)
-                            auto-mode-alist))
-(setq auto-mode-alist (cons '(".*\\.h$" . linux-c++-mode)
                             auto-mode-alist))
 
 (setq frame-title-format "emacs@%b")
@@ -301,12 +289,10 @@
 (defun bhj-insert-pwdu ()
   (interactive)
   (insert "'")
-  (if (eq system-type 'cygwin)
-      (insert 
-       (replace-regexp-in-string
-        "^/.?scp:.*?@.*?:" "" 
-        (expand-file-name default-directory)))
-    (insert (expand-file-name default-directory)))
+  (insert 
+   (replace-regexp-in-string
+    "^/.?scp:.*?@.*?:" "" 
+    (expand-file-name default-directory)))
   (insert "'"))
 
 ;; old time motorola usage
@@ -386,10 +372,22 @@
       (save-excursion
         (let* ((re "[^-a-zA-Z0-9._/]")
                (p1 (progn (search-backward-regexp re)
-                          (1+ (point))))
-              (p2 (progn (forward-char)
-                         (search-forward-regexp re)
-                         (1- (point)))))
+                          (if (looking-at "(")
+                              (progn
+                                (search-backward-regexp "\\." (line-beginning-position))
+                                (prog1
+                                    (1+ (point))
+                                  (search-forward-regexp "(")))
+                            (1+ (point)))))
+               (p2 (progn (forward-char)
+                          (search-forward-regexp re)
+                          (backward-char)
+                          (if (looking-at ":[0-9]+")
+                              (progn
+                                (forward-char)
+                                (search-forward-regexp "[^0-9]")
+                                (1- (point)))
+                            (point)))))
           (buffer-substring-no-properties p1 p2)))))
 
 (global-set-key [(meta s) ?p] 
@@ -456,25 +454,45 @@
 (fset 'bhj-preview-markdown
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 49 67108896 3 2 134217848 98 104 106 45 109 105 109 101 tab return 3 return 80 24 111 67108911 24 111] 0 "%d")) arg)))
 
-(fset 'bhj-isearch-yank
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("\371" 0 "%d")) arg)))
-
 (defun bhj-isearch-from-bod (&optional col-indent)
   (interactive "p")
   (let ((word (current-word)))
-    (push-mark)
-    (with-temp-buffer
-      (insert word)
-      (kill-ring-save (point-min) (point-max)))
+    (nodup-ring-insert cscope-marker-ring (point-marker))
     (bhj-c-beginning-of-defun)
-    (call-interactively 'bhj-isearch-yank)))
+    (setq regexp-search-ring (cons (concat "\\b" word "\\b") regexp-search-ring))
+    (search-forward-regexp (concat "\\b" word "\\b"))))
 
 (global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
+
+(defun bhj-w3m-scroll-up-or-next-url ()
+  (interactive)
+  (if (pos-visible-in-window-p (point-max))
+      (save-excursion
+        (end-of-buffer)
+        (search-backward-regexp "下一\\|后一\\|还看了")
+        (if (w3m-url-valid (w3m-anchor))
+            (call-interactively 'w3m-view-this-url)
+          (call-interactively 'w3m-next-anchor)
+          (call-interactively 'w3m-view-this-url)))
+    (call-interactively 'w3m-scroll-up-or-next-url)))
+
+(defun bhj-w3m-scroll-down-or-previous-url ()
+  (interactive)
+  (if (pos-visible-in-window-p (point-min))
+      (save-excursion
+        (end-of-buffer)
+         (search-backward-regexp "上一")
+         (call-interactively 'w3m-view-this-url))
+    (call-interactively 'w3m-scroll-down-or-previous-url)))
+
+
 
 (add-hook 'w3m-mode-hook 
           (lambda () 
             (local-set-key [(left)] 'backward-char)
             (local-set-key [(right)] 'forward-char)
+            (local-set-key [(\ )] 'bhj-w3m-scroll-up-or-next-url)
+            (local-set-key [(backspace)] 'bhj-w3m-scroll-down-or-previous-url)
             (local-set-key [(down)] 'next-line)
             (local-set-key [(up)] 'previous-line)
             (local-set-key [(n)] 'next-line)
@@ -516,8 +534,6 @@
  '(message-dont-reply-to-names (quote (".*haojun.*")))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
- '(muse-html-charset-default "utf-8")
- '(muse-publish-date-format "%m/%e/%Y")
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
  '(require-final-newline t)
@@ -539,6 +555,7 @@
  '(transient-mark-mode t)
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
+ '(w3m-default-display-inline-images t)
  '(weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("csdn" "http://blog.csdn.net/flowermonk/services/MetaBlogApi.aspx" "flowermonk" "" "814038"))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
@@ -574,28 +591,39 @@
 
 ;;(add-hook 'message-send-hook 'bhj-mimedown)
 
-
-(defun message-display-abbrev ()
-  "Display the next possible abbrev for the text before point."
+(defun bhj-set-reply ()
   (interactive)
-  (when (and (memq (char-after (point-at-bol)) '(?C ?T ?\t ? ))
-	     (message-point-in-header-p)
-	     (save-excursion
-	       (beginning-of-line)
-	       (while (and (memq (char-after) '(?\t ? ))
-			   (zerop (forward-line -1))))
-	       (looking-at "To:\\|Cc:")))
-    (let* ((end (point))
-	   (start (save-excursion
-		    (and (re-search-backward "\\(,\\s +\\|^To: \\|^Cc: \\|^\t\\)" nil t)
-			 (+ (point) (length (match-string 1))))))
-	   (word (when start (buffer-substring start end)))
-	   (match (when (and word
-			     (not (zerop (length word))))
-		    (ecomplete-display-matches 'mail word t))))
-      (when match
-	(delete-region start end)
-	(insert match)))))
+  (save-excursion
+    (let ((receivers
+           (concat
+            (save-restriction (message-narrow-to-headers)
+                              (message-fetch-field "to"))
+            ", "
+            (save-restriction (message-narrow-to-headers)
+                              (message-fetch-field "cc"))
+            ", "
+            (save-restriction (message-narrow-to-headers)
+                              (message-fetch-field "bcc"))))
+          (all-letou t)
+          (start-pos 0))
+
+      (while (and all-letou (string-match "@" receivers start-pos))
+        (setq start-pos (match-end 0))
+        (unless (equal (string-match 
+                    "@adsnexus.com\\|@eee168.com\\|@rayzerlink.com\\|@hzwowpad.com" 
+                    receivers 
+                    (1- start-pos))
+                   (1- start-pos))
+          (setq all-letou nil)))
+
+      (when all-letou
+        (save-excursion
+          (message-goto-from)
+          (message-beginning-of-line)
+          (kill-line)
+          (insert "Bao Haojun at Letou <hjbao@eee168.com>"))))))
+
+(add-hook 'message-send-hook 'bhj-set-reply)
 
 (require 'electric-complete)
 
@@ -677,9 +705,8 @@
 
 (setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
 			      auto-mode-alist))
-(desktop-save-mode 1)
 (require 'saveplace)
-(setq-default save-place t)
+
 (require 'color-theme)
 (condition-case nil
     (progn
@@ -897,8 +924,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive)
   (save-excursion
     (save-window-excursion
-      (shell-command-on-region
-       1 (buffer-size)
+      (shell-command
        (let ((mode-name-minus-mode 
               (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
          (concat "ctags-exuberant --language-force="
@@ -997,11 +1023,25 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (defun waw-find-match (n search message)
   (if (not n) (setq n 1))
-  (let ((r))
+  (while (> n 0)
+    (or (funcall search)
+        (error message))
+    (setq n (1- n))))
+
+(defun java-bt-find-match (n search message)
+  (if (not n) (setq n 1))
     (while (> n 0)
       (or (funcall search)
           (error message))
-      (setq n (1- n)))))
+      (setq n (1- n))))
+
+(defun java-bt-search-prev ()
+  (beginning-of-line)
+  (search-backward-regexp "(.*:[0-9]+)$"))
+
+(defun java-bt-search-next ()
+  (end-of-line)
+  (search-forward-regexp "(.*:[0-9]+)$"))
 
 (defun waw-search-prev ()
   (beginning-of-line)
@@ -1070,7 +1110,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
           (setq target-file (match-string 1 error-line-str)
                 target-line (match-string 2 error-line-str)))
 
-
         (when (equal start-line-number error-line-number)
           (search-forward "=>")
           (forward-line))
@@ -1083,6 +1122,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
         
         (setq new-line-number (line-number-at-pos))
         (forward-line -1)
+
         (while (> new-line-number error-line-number)
           (if (string-match "^\\s *\\.\\.\\.$" (current-line-string))
               (progn
@@ -1136,6 +1176,93 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (setq mode-name "Where-are-we")
   (setq next-error-function 'waw-next-error)
   (run-mode-hooks 'waw-mode-hook))
+
+(defun java-bt-ret-key ()
+  (interactive)
+  (let ((start-line-str (current-line-string)))
+    (if (string-match "(.*:[0-9]+)" start-line-str)
+        (next-error 0))))
+
+(defvar java-bt-mode-map nil
+  "Keymap for java-bt-mode.")
+
+(defvar java-bt-tag-alist nil
+  "backtrace/code tag alist.")
+
+(defun java-bt-next-error (&optional argp reset)
+  (interactive "p")
+  (with-current-buffer
+      (if (next-error-buffer-p (current-buffer))
+          (current-buffer)
+        (next-error-find-buffer nil nil
+                                (lambda()
+                                  (eq major-mode 'java-bt-mode))))
+    
+    (message "point is at %d" (point))
+    (goto-char (cond (reset (point-min))
+                     ((< argp 0) (line-beginning-position))
+                     ((> argp 0) (line-end-position))
+                     ((point))))
+    (java-bt-find-match
+     (abs argp)
+     (if (> argp 0)
+         #'java-bt-search-next
+       #'java-bt-search-prev)
+     "No more matches")
+    (message "point is at %d" (point))
+
+    (catch 'done
+      (let ((start-line-number (line-number-at-pos))
+            (start-line-str (current-line-string))
+            new-line-number target-file target-line 
+            error-line-number error-line-str grep-output temp-buffer
+            msg mk end-mk)
+          (save-excursion
+            (end-of-line)
+            (search-backward "(")
+            (search-backward ".")
+            (setq msg (point-marker))
+            (end-of-line)
+            (setq grep-output (cdr (assoc-string start-line-str java-bt-tag-alist)))
+            (unless grep-output
+              (setq grep-output (progn
+                                  (shell-command (concat "java-trace-grep " (shell-quote-argument (current-line-string))))
+                                  (with-current-buffer "*Shell Command Output*"
+                                    (buffer-substring-no-properties (point-min) (point-max)))))
+              (setq java-bt-tag-alist (cons (cons start-line-str grep-output) java-bt-tag-alist))))
+
+        (when (string-match "^\\(.*\\):\\([0-9]+\\):" grep-output)
+          (setq target-file (concat (file-remote-p (or (buffer-file-name (current-buffer)) default-directory)) (match-string 1 grep-output))
+                target-line (match-string 2 grep-output))
+          (save-excursion
+            (with-current-buffer (find-file-noselect target-file)
+              (goto-line (read target-line))
+              (beginning-of-line)
+              (setq mk (point-marker) end-mk (line-end-position)))))
+
+        (compilation-goto-locus msg mk end-mk))
+      
+      (throw 'done nil))))
+
+(setq java-bt-mode-map
+      (let ((map (make-sparse-keymap)))
+        (define-key map "\C-m" 'java-bt-ret-key)
+        (define-key map [(return)] 'java-bt-ret-key)
+        (define-key map [(meta p)] 'previous-error-no-select)
+        (define-key map [(meta n)] 'next-error-no-select)
+        map))
+
+(put 'java-bt-mode 'mode-class 'special)
+(defun java-bt-mode ()
+  "Major mode for output from java back trace."
+  (interactive)
+  (kill-all-local-variables)
+  (use-local-map java-bt-mode-map)
+  (make-local-variable 'java-bt-tag-alist)
+  (setq major-mode 'java-bt-mode-map)
+  (setq mode-name "java-bt")
+  (setq next-error-function 'java-bt-next-error)
+  (run-mode-hooks 'java-bt-mode-hook))
 
 (defvar boe-default-indent-col 0)
 (make-variable-buffer-local 'boe-default-indent-col)
@@ -1243,5 +1370,16 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive)
   (shell-command (concat 
                   "search-gmail "
-                  (shell-quote-argument (gnus-summary-article-subject))
+                  (shell-quote-argument (case major-mode 
+                                          ('gnus-summary-mode
+                                           (gnus-summary-article-subject))
+                                          ('gnus-article-mode
+                                           (save-excursion
+                                             (beginning-of-buffer)
+                                             (search-forward-regexp "^Subject: ")
+                                             (buffer-substring-no-properties (point) (line-end-position))))))
                   "&")))
+
+
+(setq w3m-fill-column 100)
+(require 'guess-offset)

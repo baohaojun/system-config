@@ -1,1 +1,1 @@
-./ext/confluence-cli-1.5.0/confluence.sh
+./confluence-cli-1.6.0/confluence.sh

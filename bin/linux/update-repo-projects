@@ -1,0 +1,27 @@
+#!/bin/bash
+. ~/.bashrc
+
+if test "`basename $0`" == repo-update-x -a $# == 0; then
+    set -- . 
+fi
+
+if test $# == 0; then
+    set -- `locate -b -r '^\.repo$'|grep src`
+fi
+
+
+for x in "$@"; do 
+    (
+        set -e
+        cd $x
+        cd `lookup_file .repo/..`
+        repo sync -n -j4
+        mkdir -p out
+        mv out/changes.log out/changes.log-backup-`today` || true
+        repo-changes\? 2>&1|tee out/changes.log
+        for x in `cat out/changes.log`; do 
+            rfa $x 'git merge `repo-remote`/`tbranch`' 
+        done 2>&1|tee out/merge.log
+        (test -e buildspec.mk && time make -j4 -l4 -k && echo OK..) > out/build.log 2>&1
+    )
+done

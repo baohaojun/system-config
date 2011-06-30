@@ -1,14 +1,14 @@
 [color]
 	ui = auto
 [user]
-	name = hjbao
-	email = hjbao@eee168.com
+	name = baohaojun
+	email = baohaojun@gmail.com
 [core]
 	excludesfile = ~/.gitexcludefile
+	pager = 
 [alias]
 	st = status
 	co = checkout
-	ci = commit -a
         dt = difftool -t meld
 [review "www.rayzertrack.com:8080"]
 	username = bhj

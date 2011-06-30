@@ -44,8 +44,8 @@ gtags:\
 plugin-example|Example of function layer plugin parser:\
 	:tc=common:extractmethod:\
 	:langmap=c\:.c,yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H.h,php\:.php.php3.phtml:\
-	:langmap=fortran\:.f.for.f77.f90.f95,pascal\:.p.pas,c#\:.cs,lisp\:.l.el.lisp.jl(.emacs),kconfig\:(Kconfig),scheme\:.scm:\
-	:langmap=awk\:.awk,ruby\:.rb,perl\:.pl,python\:.py,make\:(*.am).mk.make,vim\:.vim,javascript\:.js,matlab\:.m,sh\:(.bashrc*).sh:\
+	:langmap=fortran\:.f.for.f77.f90.f95,pascal\:.p.pas,c#\:.cs,lisp\:.l.el.lisp.jl(.emacs),kconfig\:(Kconfig*),scheme\:.scm:\
+	:langmap=awk\:.awk,ruby\:.rb,perl\:.pl,python\:.py,make\:(*.am)([mM]akefile).mk.make,vim\:.vim,javascript\:.js,matlab\:.m,sh\:(.bashrc*).sh:\
 	:gtags_parser=c\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=yacc\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=asm\:/usr/local/lib/gtags/exuberant-ctags.la:\

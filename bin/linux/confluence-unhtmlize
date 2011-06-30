@@ -7,6 +7,13 @@ my $html_end = qr(^{html}$);
 my $code_start = $html_start;
 my $code_end = qr(^end of code -->);
 
+sub my_unquote_str($)
+{
+    my ($str) = @_;
+    $str =~ s/%(..)/chr(eval("0x$1"))/ge;
+    return $str;
+}
+
 while (<>) {
   if (m/$html_start/ .. m/$html_end/) {
     if (m/$code_start/ .. m/$code_end/) {
@@ -18,6 +25,7 @@ while (<>) {
         
     }
   } else {
-    print;
+      s,{html}<!-- start of tt (.*?) end of tt --><tt>.*?</tt>{html},"{{" . my_unquote_str($1) . "}}",ge;
+      print;
   }
 }

@@ -42,8 +42,12 @@ sub get_emacs_file_name($) {
     return get_smb_file($remote, $file);
 
   } elsif ($ENV{"REMOTEIP"}) {
-    my ($myname, $myip, $remote_ip) = @ENV{"WHOAMI", "LOCALIP", "REMOTEIP"};
-    return "/scp:$myname\@$myip:$file"; 
+    my ($myname, $myip, $myport, $remote_ip) = @ENV{"WHOAMI", "LOCALIP", "LOCALPORT", "REMOTEIP"};
+    if ($myport eq "22") {
+        return "/scp:$myname\@$myip:$file"; 
+    } else {
+        return "/scp:$myname\@$myip#$myport:$file"; 
+    }
   } else {
     return $file;
   }
@@ -57,7 +61,7 @@ sub edit_1($)
     if (-e $file) {
 
       $file = shell_quote($file);
-      chomp($file = qx(readlink -f $file));
+      chomp($file = qx(lookup_file $file));
       return (@emacsclient, get_emacs_file_name($file));
 
     } elsif ($file =~ m,smb://(.*?)(/.*),) {
@@ -73,12 +77,14 @@ sub edit_1($)
       my $line=1;
       $file =~ s,:([0-9]+)$,, and $line = $1;
 
-      my $x=0;
-      while (not -e $file and $x ++ < 10) {
-        $file = "../$file";            
+      if (`uname` =~ m/cygwin/i) {
+          $file = shell_quote($file);
+          $file = `cygpath -au $file`;
+          chomp($file);
       }
+
       $file = shell_quote($file);
-      chomp($file = qx(readlink -f $file));
+      chomp($file = qx(lookup_file $file));
       return (@emacsclient, "+$line", get_emacs_file_name($file));
     }
   }
@@ -96,8 +102,11 @@ fi
 $ssh_cmd
 EOC
   $ssh_cmd = shell_quote($ssh_cmd);
+  print "ssh $remote_ip $ssh_cmd";
   system("ssh $remote_ip $ssh_cmd");
 
 } else {
-  system(edit_1($myfile));
+    my @cmd = edit_1($myfile);
+    print "@cmd\n";
+    system(@cmd);
 }

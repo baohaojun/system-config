@@ -24,15 +24,15 @@ function bi2c() {
 (cd .repo/.. && cd rayzerlink-tools/proc_i2c && ../run.sh)
 
 (cd .repo/.. && cd flashing/ && ./theater-flash.sh)
+(test -e ./theater-full-flash.sh && { ./theater-full-flash.sh; exit; }  || cd .repo/.. && cd flashing/ && ./theater-full-flash.sh)
 
 git config --add remote.origin.pushurl `git config remote.origin.url|perl -npe "s,.*//.*?/,bhj\@192.168.0.46:/,"`
 sudo bash -c 'echo 0 >/proc/sys/net/ipv4/tcp_timestamps'
 sudo aptitude purge ~ilinux-image-2.*\(\!`uname -r`\)
 for x in `git tag`; do git branch tagbr-$x $x; done
 
-mkdir /data/debugfs
-mount -t debugfs null /data/debugfs
-cat /data/debugfs/gpio
+adb shell 'mkdir /data/debugfs; mount -t debugfs null /data/debugfs; cat /data/debugfs/gpio'
+mkdir /data/debugfs; mount -t debugfs null /data/debugfs; cat /data/debugfs/gpio
 
 (cd .repo/.. && export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT)
 M-: (modify-syntax-entry ?_ "w")
@@ -103,7 +103,7 @@ export DO_SERVICE=true; exec /init2
 
 replace init.rc
 (cd .repo/..; export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh; time make -j8 )
-(cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 )
+(cd .repo/.. &&  export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 )
 (cd .repo/.. && export TARGET_PRODUCT=ventana; . build/envsetup.sh ; for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT)
 /mnt/mysql /var/lib/mysql none bind 0 0
 ssh -C2qN -D 8080 bhj@216.194.70.6
@@ -714,10 +714,10 @@ HCQ9D-TVCWX-X9QRG-J4B2Y-GR2TT
 211.103.252.242 bear2
 60.28.209.148 wowpad.ee168.cn
 
-sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
+(sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
 sudo /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 sudo /sbin/iptables -A FORWARD -i eth0 -o vboxnet0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo /sbin/iptables -A FORWARD -i vboxnet0 -o eth0 -j ACCEPT
+sudo /sbin/iptables -A FORWARD -i vboxnet0 -o eth0 -j ACCEPT)
 
 smbnetfs: must change the file attribute of ~/.smb/*!
 sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
@@ -774,6 +774,8 @@ local options=(--help --action --file --debug --verbose --server --user --passwo
 ）
 
 sawfish-client -e '(mapcar (lambda (w) (and (string-match "腾讯网新闻" (window-name w)) (delete-window-safely w)))  (window-order))'
+sawfish-client -e '(mapcar (lambda (w) (and (string-match "File-roller" (window-class w)) (delete-window-safely w)))  (window-order))'
+sawfish-client -e '(mapcar (lambda (w) (and (string-match "Terminal" (window-name w)) (x-kill-client w)))  (window-order))'
 
 bzr branch  lp:usb-creator  
 
@@ -806,7 +808,8 @@ export ARCH=arm; export CROSS_COMPILE=`readlink -f ./prebuilt/linux-x86/toolchai
 Python:
         empty_entry = struct.pack('=4sIII', *empty_entry_tuple)
 
-(cd .repo/.. && cd system/wlan/broadcom && git clean -xfd && cd - && export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make pdk pdk_docs)
+(cd .repo/.. &&  ln -sf /usr/local/jdk/bin/javadoc ./ && export PATH=`pwd`:$PATH && time make pdk pdk_docs)
+~/bin/linux/ext/google_appengine/dev_appserver.py --port=8888 --address 0.0.0.0 ~/src/theatre-p2/out/target/common/docs
 (cd .repo/.. && time make iso_img -l8 -j8 -k)
 
 
@@ -847,11 +850,11 @@ if (m/^c0:\s*$re/) {
 dos2unix *.txt
 diff 1.txt 2.txt ||break;
 done
-adb shell i2cset -y 0x0 0x5c 0x37 3
-adb shell i2cset -y 0x0 0x41 0xcc 3
+adb shell i2cset -f -y 0x0 0x5c 0x37 3
+adb shell i2cset -f -y 0x0 0x41 0xcc 3
 
 git difftool -x kc_diff tegra-10.9.7 ./arch/arm/configs/tegra_ventana_android_defconfig|less
-(cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && kconfig tegra_ventana_android_defconfig && krebuild -j8 -l8)
+(cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && kconfig tegra_cinema_android_defconfig && krebuild -j8 -l8)
 
 samba smb.conf symlink:
 
@@ -867,11 +870,226 @@ samba smb.conf symlink:
     
     #### Networking ####
 
+[Guest Share]
+        comment = Guest access share
+        path = /home/bhj/Downloads/tddownload/
+        browseable = yes
+        read only = no
+        guest ok = yes
+
 smbnetfs.conf: 必须加上workgroup的名字。    
 	auth 192.168.88.9 WORKGROUP/bhj	password
 	auth r889 WORKGROUP/bhj	password
 
 mirrorcyg.pl|mf-download.pl
 
-Tel. 010-64981756 ext. 849
+Tel. 010-64987605 ext. 849 会议室 863
+Tel. 010-64987605 ext. 863
+Tel. 010-64987605 ext. 862 
 find . -name "Kconfig"|perl -npe 's,^.,./kernel,'|mkgtags
+
+sudo ifconfig eth0:0 192.168.88.8; ssh r137 sudo ifconfig eth0:0 192.168.88.9
+
+(cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && setpaths&& lunch ventana-eng && time make -j8 -l8 -k )
+(cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && setpaths&& lunch ventana-eng && ksetup tegra_defconfig && time krebuild -j8 -l8 -k)
+
+
+make: *** No rule to make target `out/target/product/imx51_aster7/system/bin/busybox', needed by `prebuilt'.  Stop.
+make: *** Waiting for unfinished jobs....
+ssh r889 gnome-terminal --hide-menubar -e myscr
+
+nvtest dfs_stress -total_sec 300 
+nvtest dfs_monitor 
+64.50.233.100 ftp.us.debian.org
+
+rfa . 'br=tegra-10.9.9; git fetch letou refs/tags/$br:refs/tags/$br >/dev/null 2>&1 || pwd'
+for x in `find . -name "*.git" -type d`; do (br=tegra-10.9.9; cd $x && if git tag|grep "^$br$" -q; then echo $x && git push letou $br:$br; fi); done
+echo 10 > /sys/class/gpio/export; echo 22 > /sys/class/gpio/export; x=`cat /proc/interrupts|grep 320:|awk '{print $2}'`; while true; do y=`cat /proc/interrupts|grep 320:|awk '{print $2}'`; if test $x != $y; then echo yes; x=$y; (cd /sys/class/gpio/gpio22; echo 1 > value; cd /sys/class/gpio/gpio10; echo 1 > value; ); else (cd /sys/class/gpio/gpio22; echo 0 > value;  cd /sys/class/gpio/gpio10; echo 0 > value); fi; sleep 3; done
+
+(export PATH=/usr/local/jdk1.5/bin:$PATH; export CLASSPATH=/usr/local/jdk1.5/lib:.; export JAVA_HOME=/usr/local/jdk1.5; export ANDROID_JAVA_HOME=$JAVA_HOME; cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && time make -j8 -l8 )
+
+adb shell i2cdetect -r -y 0x0 
+
+modify sshd_config and /etc/motd for emacs tramp remote grep
+
+adb shell bash -c "echo fastboot|tr '\n' '\000'|dd bs=1 seek=4096 of=/dev/block/mmcblk3p3; reboot"
+dd bs=1 skip=4096 if=/dev/block/mmcblk3p3 count=9
+
+sudo ifconfig eth0:0 10.6.188.8; ssh r137 sudo ifconfig eth0:0 10.6.188.9; ssh r889 sshfs r888:Downloads/ ~/Downloads/ -o nonempty; ssh r889 sshfs r888:Documents/ ~/Documents/ -o nonempty
+
+长途：96446
+adb shell am start http://news.sohu.com
+adb shell am start -a android.intent.action.VIEW -d 'http://218.60.38.58:80/work/71972/119/9.mp4?xx=yy' -t 'video/*'
+adb shell bash -c "mkdir /cache/recovery; echo --wipe_data > /cache/recovery/command; reboot recovery"
+
+({ test -f nvflash || { cd .repo/.. && cd flashing/; } ; } && sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go)
+
+perl -ne 'BEGIN{$oldtime=0; } if (m/^......(\d\d):(\d\d):(\d\d)\.(\d\d\d)(.*)/) {$h=int($1); $m=int($2); $s=int($3); $ms=int($4); $time=($h*3600 + $m* 60 + $s) + $ms/1000; $diff = $time - $oldtime; printf("%08.3f %s\n", $diff, $5); $oldtime=$time}'
+
+北京市朝阳区安苑路15号邮电新闻大厦西办公楼6层
+邮编：100029
+
+(cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make -j8 -l8 -k )
+sawfish-client -e '(mapcar (lambda (w) (and 1 (or (get-x-property w (quote WM_CLASS)) (window-name w))))  (window-order nil t t))' =>
+
+((STRING 8 "emacs\000Emacs\000") (STRING 8 "gnome-terminal\000Gnome-terminal\000") (STRING 8 "Navigator\000Iceweasel\000") (STRING 8 "QQ.exe\000Wine\000") (STRING 8 "gnome-panel\000Gnome-panel\000") (STRING 8 "QQ.exe\000Wine\000") (STRING 8 "kopete\000Kopete\000") (STRING 8 "AcroRd32.exe\000Wine\000") (STRING 8 "gnome-terminal\000Gnome-terminal\000") (STRING 8 "Navigator\000Iceweasel\000") (STRING 8 "desktop_window\000Nautilus\000"))
+
+ssh r137 sshfs '$REMOTEIP':Downloads/ ~/Downloads/ -o nonempty,allow_other; ssh r137 sshfs '$REMOTEIP':Documents/ ~/Documents/ -o nonempty,allow_other
+killall -9 sshfs ; sudo umount Downloads ; sudo umount Documents
+
+dd if=/dev/zero of=/mnt/sdcard/1.txt count=2000000; dd if=/dev/zero of=/mnt/sdcard/2.txt count=2000000; dd if=/mnt/sdcard/1.txt of=/dev/null
+dd if=/dev/zero of=/data/1.txt count=2000000; dd if=/dev/zero of=/data/2.txt count=2000000; dd if=/data/1.txt of=/dev/null
+
+make error: no rule to make
+
+(find-file
+ (let ((file 
+        (replace-regexp-in-string "/src/.*?/" "/src/theatre/" (my-buffer-file-name (current-buffer)))))
+        file))
+        
+
+wget -r -l1 -k --page-requisites -c http://www.suimeng.com/files/article/html/4/4704/index.html
+ifconfig eth0 |grep -P 'inet addr:.*?\s' -o 
+while true; do adb wait-for-device && adb shell 'echo 1 > /sys/power/wake_lock' &&  adb shell ls /dev/tegra*; (trap echo shit SIGINT;  adb logcat -v time); adb shell; done
+tar czfv ~/Downloads/flashing-`today`.tgz . --exclude=*.tar --exclude=*.zip --exclude=symbols --exclude=*.txt --exclude=*.xml --exclude-vcs -H
+
+
+rfa 'export TAG=tegra-10.9.7; git tag|grep -q -e "^"$TAG"\$" && (git diff --quiet $TAG || (mkdir -p ~/`today`/$REPO_PATH && git diff --binary tegra-10.9.7 > ~/`today`/$REPO_PATH/letou_patch))'
+
+1) sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/jdk1.5.0_22/bin/javadoc 100
+2) sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
+3) sudo update-alternatives --set javadoc /usr/local/jdk1.5.0_22/bin/javadoc 
+
+echo 'C:\PROGRA~1\MICROS~4\VC98\LIB;C:\PROGRA~1\MICROS~4\VC98\MFC\LIB;'|perl -a -F\; -ne 'for(@F) {chomp; system("cygpath", "-alw", $_)}'|xargs.exe -d '\n' bash -c 'for x in "$@"; do ln -s "$(cygpath -au "$x")" z`printf %02d $y``basename "$x"`; ((y++)); done' xx
+
+cat /proc/registry/HKEY_CURRENT_USER/Software/Microsoft/DevStudio/6.0/Build\ System/Components/Platforms/Win32\ \(x86\)/Directories/Library\ Dirs
+
+
+
+boost and stlport:
+
+1. vc6:
+
+  a. download stlport and boost, which version can be seen from: {{ls -l ~/vc6/inc}}
+
+  b. download and install vs6sp6, download and install platform sdk
+
+  c. compile stlport, cmd.exe; configure.bat msvc6; cd build/lib; nmake /fmsvc.mak install
+
+  d. compile boost: 
+
+    i. cd build/jam/src, compile, copy bjam.exe to /c/windows/system32
+    ii. bjam -sBOOST_ROOT=. -sTOOLS=msvc "-sBUILD=debug release static/dynamic" 
+
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.1.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.2.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.3.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.4.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.5.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.6.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.7.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.8.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.9.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.10.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.11.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.12.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.13.cab
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.bat
+http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/Extract.exe
+
+cygwin path from dos to unix 
+
+perl -a -F\; -ne 'use String::ShellQuote; 
+for (@F) {
+    chomp; 
+    $_ = shell_quote($_); 
+    $_ = `cygpath -alw $_ 2>/dev/null`; 
+    chomp;
+    $_ = shell_quote($_);
+    $_ = `cygpath -au $_ 2>/dev/null`;
+    chomp;
+    -d $_ and print $_ . ":";
+}'
+
+
+cygwin path from unix to dos
+
+perl -a -F':' -ne 'use String::ShellQuote; 
+for (@F) {
+    chomp;
+    if (not -d $_) {
+        print STDERR "error: not dir: $_\n";
+        next;
+    }
+    $_ = shell_quote($_); 
+    $_ = `cygpath -asw $_ 2>/dev/null`; 
+    chomp;
+    -d $_ and print $_ . ";";
+}'
+
+sudo route add 192.168.56.88 gw r137
+
+(
+mkdir -p ~/bin/linux/ext/android-screen
+cd ~/bin/linux/ext/android-screen
+lftp -c 'mirror http://androidscreencast.googlecode.com/svn/trunk/AndroidScreencast/dist/ . '
+for x in *.jar; do export CLASSPATH=`pwd`/$x:$CLASSPATH ; done
+echo $CLASSPATH 
+java net.srcz.android.screencast.Main
+)
+
+http://download.microsoft.com/download/f/c/a/fca6767b-9ed9-45a6-b352-839afb2a2679/TweakUiPowertoySetup.exe
+
+awk '
+BEGIN{
+    printf("%02x:%02x:%02x:%02x:%02x:%02x", 
+           int(rand() * 256), 
+           int(rand() * 256), 
+           int(rand() * 256),
+           int(rand() * 256),
+           int(rand() * 256),
+           int(rand() * 256));
+}'
+
+git log letou/master |grep factool -B 5|grep '^commit'|pn 2|reverse |xargs bash -c 'for x in "$@"; do git cherry-pick $x; done' xx
+ssh r889 bash -c "$(printf %q "set-host-hosts lab `host-hosts lab` > /tmp/hosts; sudo bash -c \"cat /tmp/hosts > /etc/hosts\"")"
+
+on winxp: 
+cat >/c/ywb.txt <<EOF
+[RegionalSettings]
+InputLocale = 0804:e0350804
+EOF
+
+Control intl.cpl,,/f:"C:\ywb.txt"
+
+on win7: 
+cat > /c/ywb.xml <<EOF
+<gs:GlobalizationServices xmlns:gs="urn:longhornGlobalizationUnattend">
+  <gs:UserList>
+    <gs:User UserID="Current" CopySettingsToDefaultUserAcct="true" CopySettingsToSystemAcct="true" /> 
+  </gs:UserList>
+  <gs:InputPreferences>
+    <gs:InputLanguageID Action="add" ID="0804:{E429B25A-E5D3-4D1F-9BE3-0C608477E3A1}{EF63706D-31C4-490E-9DBB-BD150ADC454B}" />
+  </gs:InputPreferences>
+</gs:GlobalizationServices>
+EOF
+
+Control intl.cpl,,/f:"C:\ywb.xml"
+
+windows xp多个用户logon: 
+Click Start, then “Run…”, type “regedit” (without quotes) and press ENTER;
+navigate in the Windows Registry Tree to reach this path:
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\Licensing Core;
+click with right mouse button on blank space in the right part of the registry window, choose “New” > DWORD, name the new key “EnableConcurrentSessions” (without quotes), then edit it and set its value to 1;
+close the editor.
+
+STEP 5
+Click Start, then “Run…”, type “gpedit.msc” (without quotes) and press ENTER;
+open Computer Configuration > Administrative Templates > Windows Components > Terminal Services;
+double click “Limit number of connections”, choose “Enabled” and set the maximum number of concurrent connections you want to allow (2 or more), then Restart Windows in normal mode.
+
+xrandr --output CRT1 --same-as LVDS --auto 
+xrandr --output LVDS --mode 1280x728
+
+bzr launchpad-login baohaojun
+bzr branch lp:usb-creator

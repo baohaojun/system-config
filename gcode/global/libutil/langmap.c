@@ -438,6 +438,13 @@ make_suffixes(const char *langmap, STRBUF *sb)
 		/*
 		 * "c:.c.h,java:.java,cpp:.C.H"
 		 */
+		if (*p == '(') {
+			while (*++p && *p != ')')
+				;
+			if (!*p)
+				break;
+                        continue;
+		}
 		if ((onsuffix == 0 && *p == ',') || (onsuffix == 1 && *p == ':'))
 			die_with_code(2, "syntax error in langmap '%s'.", langmap);
 		if (*p == ':')

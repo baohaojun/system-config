@@ -43,7 +43,7 @@ function ainstall() {
         File=`lookup_file out/target/product/$target_device/symbols/system/bin/$exe`
         if test ! -f "$File"; then
             echo 'Error: exe file is empty'
-            exit -1
+            return 1
         fi
         adb push $File /data
         adb shell chmod 777 /data/`basename $File`
@@ -60,4 +60,4 @@ function apkwhich() {
     fi
 }
 
-`basename $0` "$@"
+`basename $0` "$@" || true

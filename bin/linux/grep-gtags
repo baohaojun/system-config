@@ -4,6 +4,9 @@ use Getopt::Long;
 use strict;
 use String::ShellQuote;
 
+open(my $log, ">>", glob("~/.beagle-grep.log")) or die "Error openning log";
+print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
+
 print "$0 ";
 
 my @ARGV_save = @ARGV;
@@ -19,7 +22,7 @@ print "\n";
 my $pwd;
 
 
-chomp($pwd = `pwd`);
+chomp($pwd = $ENV{PWD});
 
 $pwd = "$ENV{HOME}/tmp/for-code-reading$pwd";
 our $approx_dir = $pwd;
@@ -35,11 +38,9 @@ $approx_dir = substr($approx_dir, length($pwd));
 my $lookup_type = 1;
 my $lookup_needle = "hello_world";
 my $lookup_restrict_regexp;
-my $local_private_only = 0;
 
 GetOptions(
     "e=s" => \$lookup_needle,
-    "o!" => \$local_private_only,
     );
 
 sub do_cscope($$$$) {
@@ -68,11 +69,6 @@ sub do_cscope($$$$) {
 
     use String::Approx 'adistr';
     our $approx_dir;
-
-    if (not @matches or $local_private_only) {
-        system("grep-gtags-private-ok", @ARGV_save);
-        exit if $local_private_only;
-    }
 
     my $gpath_path = "$gtags_dir/GPATH";
     my %update_path;

@@ -17,7 +17,7 @@ sudo apt-get dist-upgrade -y
 
 ~/bin/linux/config/install-pkgs
 sudo update-command-not-found
-sudo apt-get build-dep -y scim-pinyin sawfish librep rep-gtk
+sudo apt-get build-dep -y scim-pinyin sawfish librep rep-gtk ibus-table
 
 #把一些软件默认的版本换掉
 sudo update-alternatives --set emacs /usr/bin/emacs23 || true
