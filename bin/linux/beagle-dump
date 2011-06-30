@@ -1,0 +1,5 @@
+#!/bin/bash
+
+. ~/.bashrc
+cd_beagle
+beagle-dump-index --indexdir=`pwd`/.beagle --term-frequencies

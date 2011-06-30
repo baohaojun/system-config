@@ -914,7 +914,8 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (waw-mode))
 
 (defconst emacs-mode-ctags-lang-map
-  '(("emacs-lisp" . "lisp")))
+  '(("emacs-lisp" . "lisp")
+    ("csharp" . "C#")))
 
 (defconst emacs-mode-ctags-tag-filter
   '(("c" . "| perl -ne '@f = split; print unless $f[1] =~ m/^member$/'")))

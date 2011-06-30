@@ -2,5 +2,5 @@
 dir=./"$1".unzip.$$
 mkdir -p "$dir"
 file-roller -e "$dir" "$1"
-of "$dir"
+up "$dir"
 
