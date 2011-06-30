@@ -315,7 +315,7 @@ namespace Lucene.Net.Analysis.Standard
 
 		public static readonly String [] TOKEN_TYPES = StandardTokenizer.TOKEN_TYPES;
 
-		public readonly int yychar()
+		public int yychar()
 	
 		{
 			return yychar_field;
@@ -324,7 +324,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Fills Lucene token with the current token text.
 		 */
-		readonly void getText(Token t) 
+		void getText(Token t) 
 		{
 			t.setTermBuffer(zzBuffer, zzStartRead, zzMarkedPos-zzStartRead);
 		}
@@ -332,7 +332,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Fills TermAttribute with the current token text.
 		 */
-		readonly void getText(TermAttribute t) 
+		void getText(TermAttribute t) 
 		{
 			t.setTermBuffer(zzBuffer, zzStartRead, zzMarkedPos-zzStartRead);
 		}
@@ -446,7 +446,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Closes the input stream.
 		 */
-		public readonly void yyclose()
+		public void yyclose()
 		{
 			zzAtEOF = true;            /* indicate end of file */
 			zzEndRead = zzStartRead;  /* invalidate buffer    */
@@ -466,7 +466,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *
 		 * @param reader   the new input stream 
 		 */
-		public readonly void yyreset(System.IO.TextReader reader) 
+		public void yyreset(System.IO.TextReader reader) 
 		{
 			zzReader = reader;
 			zzAtBOL  = true;
@@ -482,7 +482,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Returns the current lexical state.
 		 */
-		public readonly int yystate() 
+		public int yystate() 
 		{
 			return zzLexicalState;
 		}
@@ -493,7 +493,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *
 		 * @param newState the new lexical state
 		 */
-		public readonly void yybegin(int newState) 
+		public void yybegin(int newState) 
 		{
 			zzLexicalState = newState;
 		}
@@ -502,7 +502,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Returns the text matched by the current regular expression.
 		 */
-		public readonly String yytext() 
+		public String yytext() 
 		{
 			return new String( zzBuffer, zzStartRead, zzMarkedPos-zzStartRead );
 		}
@@ -519,7 +519,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *
 		 * @return the character at position pos
 		 */
-		public readonly char yycharat(int pos) 
+		public char yycharat(int pos) 
 		{
 			return zzBuffer[zzStartRead+pos];
 		}
@@ -528,7 +528,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Returns the length of the matched text region.
 		 */
-		public readonly int yylength() 
+		public int yylength() 
 		{
 			return zzMarkedPos-zzStartRead;
 		}
