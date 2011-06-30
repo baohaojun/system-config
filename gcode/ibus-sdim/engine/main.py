@@ -86,7 +86,7 @@ class IMApp:
             language = 'zh'
             license = 'LGPL'
             author = 'Bao Haojun <baohaojun@gmail.com>'
-            icon = icon_dir + "/sdim.svg"
+            icon = icon_dir + "/sdim.png"
             if icon:
                 icon = os.path.join (icon_dir, icon)
                 if not os.access( icon, os.F_OK):
@@ -154,7 +154,7 @@ def main():
         <description>Shadow Dance Input Method</description>
     </engine>
 </engines>
-""" % (icon_dir + "/sdim.svg")
+""" % (icon_dir + "/sdim.png")
         return 0
 
     if options.daemon :

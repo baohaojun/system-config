@@ -19,30 +19,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
-SUBDIRS = \
-	additional \
-	$(NULL)
-
 icons_DATA = \
-	ibus-sdim.svg \
-	sdim.svg \
-	full-letter.svg \
-	half-letter.svg \
-	full-punct.svg \
-	half-punct.svg \
-	tab-mode.svg \
-	py-mode.svg \
-	onechar.svg \
-	phrase.svg \
-	chinese.svg \
-	english.svg \
-	acommit.svg \
-	ncommit.svg \
-	cb-mode.svg \
-	sc-mode.svg \
-	tc-mode.svg \
-	scb-mode.svg \
-	tcb-mode.svg \
+	sdim.png \
 	$(NULL)
 
 iconsdir = $(pkgdatadir)/icons

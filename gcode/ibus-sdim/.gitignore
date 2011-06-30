@@ -7,15 +7,10 @@ engine/ibus-engine-sdim
 engine/sdim.xml
 ibus-sdim.pc
 icons/Makefile
-icons/additional/Makefile
 m4/Makefile
 po/Makefile
 po/Makefile.in
 po/POTFILES
-tables/Makefile
-tables/additional/Makefile
-tables/additional/compose.db
-tables/additional/latex.db
 Makefile.in
 aclocal.m4
 autom4te.cache/

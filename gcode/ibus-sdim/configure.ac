@@ -70,7 +70,6 @@ AC_CONFIG_FILES([po/Makefile.in
     engine/ibus-engine-sdim
     engine/sdim.xml.in
     icons/Makefile
-    icons/additional/Makefile
     m4/Makefile
     ibus-sdim.spec
     ibus-sdim.pc]
