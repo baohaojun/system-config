@@ -1,3 +1,0 @@
-This is test content, content coming from a file.  
-
-The end

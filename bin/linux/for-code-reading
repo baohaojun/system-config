@@ -1,17 +1,12 @@
 #!/bin/bash
 
 Filter=${Filter:-~/.my-beagle-filter-android}
-cd -P . 
 outDir=~/tmp/for-code-reading/"`pwd`"
 srcDir=`pwd`
 relativeSrcDir=.
-while test "$outDir" != "" -a ! -d "$outDir"/.beagle; do
+while test "$outDir" != "" -a ! -f "$outDir"/cscope.files; do
     outDir=${outDir%/*}
 done
-
-if test "$outDir" = "`readlink -f ~`"; then
-    outDir=""
-fi
 
 if test "$outDir" != "" -a "$outDir" != ~/tmp/for-code-reading/"`pwd`";
 then
@@ -36,7 +31,7 @@ else
 fi
 
 function mkcscope_files() {
-    if tty 1>&2; then
+    if tty >/dev/null; then
         find $relativeSrcDir \( '-path' '*/CVS' \
             '-o' '-path' '*/.svn' \
             '-o' '-path' '*/autom4te.cache' \
@@ -99,8 +94,8 @@ function mkbeagleidx() {
 }
 
 function for-code-reading() {
+    mkgtags "$@"&
     mkbeagleidx "$@"&
-    mkgtags "$@" #must not put background, the tty(1) depends on this
 }
 
 `basename $0` "$@"

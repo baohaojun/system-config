@@ -1,6 +1,5 @@
 #!/usr/bin/env perl
 use strict;
-use HTML::Entities;
 
 my $htmlize_mode = "fundamental";
 my $tmp_file; 
@@ -11,14 +10,6 @@ my $code_end = qr(^\s*\{\s*code\s*\}$);
 
 my $code_start_line; 
 my $code_end_line;
-
-sub my_quote_str($)
-{
-    my ($str) = @_;
-    $str =~ s/(.)/sprintf "%%%02x", ord($1)/ge;
-    return $str;    
-}
-
 while (<>) {
     if (m/$code_start/ .. m/$code_end/) {
         # do something, we need change this to htmlized code
@@ -65,7 +56,6 @@ while (<>) {
             print $tmp_file $_;
         }            
     } else {
-        s,{{(.*?)}},"{html}<!-- start of tt " . my_quote_str($1) . " end of tt --><tt>" . encode_entities($1) . "</tt>{html}",ge;
         print;
     }
 }

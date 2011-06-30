@@ -1,7 +1,7 @@
 -
 name: UseEscape
 case: Option
-keyx: false
+keyx: true
 body: 
 desc: use ESC as 'M-'
 type: boolean
@@ -29,7 +29,7 @@ type:
 -
 name: AccessRegex
 case: Option
-keyx: 
+keyx: wiki
 body: 
 desc: URL regex to disable access keys
 type: 
@@ -83,6 +83,13 @@ body: this._sfun.moveTab(1);
 desc: moves to the next tab
 type: 
 -
+name: AllTabs
+case: Common
+keyx: C-xb
+body: this._sfun.allTabs();
+desc: tabs overview with filter
+type: 
+-
 name: ViScrollLineUp
 case: View
 keyx: k
@@ -113,42 +120,42 @@ type:
 -
 name: ViPreviousTab
 case: View
-keyx: p
+keyx: h
 body: this._sfun.moveTab(-1);
 desc: moves to the previous tab
 type: 
 -
 name: ViNextTab
 case: View
-keyx: n
+keyx: l
 body: this._sfun.moveTab(1);
 desc: moves to the next tab
 type: 
 -
 name: ViScrollPageUp
 case: View
-keyx: DEL
-body: this._sfun.subPageUp(e);
+keyx: b
+body: goDoCommand('cmd_scrollPageUp');
 desc: scrolls a page up
 type: 
 -
 name: ViScrollPageDown
 case: View
-keyx: SPC
-body: this._sfun.subPageDown(e);
+keyx: u
+body: goDoCommand('cmd_scrollPageDown');
 desc: scrolls a page down
 type: 
 -
 name: PreviousPage
 case: View
-keyx: l
+keyx: B
 body: if (typeof(BrowserBack) == 'function') { BrowserBack(); }
 desc: moves to the previous page
 type: 
 -
 name: NextPage
 case: View
-keyx: r
+keyx: F
 body: if (typeof(BrowserForward) == 'function') { BrowserForward(); }
 desc: moves to the next page
 type: 
@@ -316,7 +323,7 @@ type:
 -
 name: Undo
 case: Edit
-keyx: C-/
+keyx: C-xu
 body: goDoCommand('cmd_undo');
 desc: executes undo
 type: 
@@ -435,14 +442,14 @@ type:
 -
 name: CmPreviousTab
 case: Common
-keyx: p
+keyx: C-M-b
 body: this._sfun.moveTab(-1);
 desc: moves to the previous tab
 type: 
 -
 name: CmNextTab
 case: Common
-keyx: n
+keyx: C-M-f
 body: this._sfun.moveTab(1);
 desc: moves to the next tab
 type: 
@@ -499,7 +506,7 @@ type:
 name: CopyUrl
 case: Common
 keyx: C-M-u
-body: this._sfun.copyText(getBrowser().contentDocument.URL); this._sfun._displayMessage('URL copied', 2000);
+body: this._sfun.copyText(getBrowser().contentDocument.location.href); this._sfun._displayMessage('URL copied', 2000);
 desc: copy url
 type: 
 -

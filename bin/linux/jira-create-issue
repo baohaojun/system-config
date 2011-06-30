@@ -1,23 +1,10 @@
 #!/bin/bash
 set -e
 
-PROJECT=CINEMA
-
-TEMP=`getopt -o p: --long project: -n jira-create-issue -- "$@"`
-eval set -- "$TEMP"
-
-while true; do
-    case "$1" in
-        -p|--project) PROJECT=$2; shift 2 ;;
-        --) shift; break ;;
-        *) echo "Internal error!" ; exit 1 ;;
-    esac
-done
-
 summary=$1
 
 function jira_create_issue_prefix() {
-    jira -a createIssue --type Bug --assignee hjbao\:\ Haojun\ Bao  --project "$PROJECT" --components OS --summary "$@"
+    jira -a createIssue --type Bug --assignee hjbao\:\ Haojun\ Bao  --project CINEMA --components OS --summary "$@"
 }
 
 shift

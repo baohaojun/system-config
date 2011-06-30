@@ -67,16 +67,6 @@
           (mm-coding-system-priorities
            '(iso-8859-1 gbk utf-8))))
        gnus-parameters))
-
-(setq gnus-message-archive-group
-      '((cond
-         ((message-news-p)
-          ;; News
-          "sent-messages")
-         ((message-mail-p)
-          ;; Mail
-          "nnimap+localhost:INBOX.Sent Items")))) 
-
 ;;Local Variables: ***
 ;;coding: utf-8 ***
 ;;End: ***

@@ -1,7 +1,11 @@
 #!/bin/bash
 
 export PATH=$HOME/bin/linux/:$HOME/bin/linux/ext/`uname -m`:$HOME/bin/linux/ext:$PATH:$HOME/bin/linux/ext/android-sdk-linux_86/tools:/sbin:/usr/sbin:/usr/local/sbin
-export CLASSPATH=$HOME/bin/linux/ext/stringtemplate.jar:$HOME/bin/linux/ext/antlr3.jar:$HOME/bin/linux/ext/antlrworks.jar:.
+export CLASSPATH=/usr/local/jdk1.5/lib:$HOME/bin/linux/ext/stringtemplate.jar:$HOME/bin/linux/ext/antlr3.jar:$HOME/bin/linux/ext/antlrworks.jar:.
+
+export XMODIFIERS="@im=SCIM"
+export XIM=SCIM
+export GTK_IM_MODULE=scim
 
 alias aptitude='sudo aptitude'
 alias sudo='sudo env PATH=$PATH'

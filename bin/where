@@ -14,7 +14,7 @@ from OrderedSet import *
 import sys
 
 def where_pushd():
-    pwd = os.environ['PWD']
+    pwd = os.getcwd()
     if '/tmp/for-code-reading' in pwd or '/smb/' in pwd:
         return
     dir_history = open(os.environ['HOME'] + '/.where').read().split('\n');

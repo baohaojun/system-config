@@ -1,5 +1,0 @@
-#!/bin/bash
-test $# = 0 && set -- ""
-for x in "$@"; do 
-    rfa $x 'git merge `repo-remote`/`tbranch`'
-done

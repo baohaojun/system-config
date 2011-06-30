@@ -1,5 +1,6 @@
 #!/bin/bash
 echo sawfish starting sub programs
+scim -d&
 python3.1 ~/gcode/scim-cs/ime-py/ime-server.py&
 xmodmap ~/.bhj-Xmodmap
 if test -f ~/.offlineimaprc; then
@@ -8,7 +9,7 @@ fi
 qq
 ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
 
-(cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver --noreload)&
+(cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver)&
 
 command renew-xauth
 killall syndaemon

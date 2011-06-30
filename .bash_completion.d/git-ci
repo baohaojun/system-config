@@ -25,7 +25,6 @@ _git_ci()
 
 
 complete -o filenames -F _git_ci gitci
-complete -o filenames -F _git_ci gitci-amend
 
 # Local variables:
 # mode: shell-script

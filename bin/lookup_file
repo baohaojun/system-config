@@ -6,11 +6,6 @@ x=0
 
 test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 while test ! -e "$file" && ((x++ < 10)); do
-    builtin cd ..
+    file=../"$file";
 done
-
-if test ${file:0:1} = /; then
-    echo "$file"
-else
-    echo "$PWD"/"$file"
-fi
+readlink -f "$file" || echo $old

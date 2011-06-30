@@ -1,23 +1,16 @@
 #!/bin/bash
 
-if test "$EMACS" != t; then
-    . /etc/bash_completion
-    . ~/.bash_netcompletion
-fi
+. /etc/bash_completion
+. ~/.bash_netcompletion
 
 function cd_bhj () 
 {
-    if test $# = 1; then
-        history -s cd "$(printf %q "$1")"
-    else
-        history -s cd "$@"
-    fi
-
+    history -s cd "$@"
     local oldpwd=`pwd`
     local ok=1 # 1 means not ok
     lcd "$@" && return $?
 
-    test $# == 1 -o $# == 0 && builtin cd "$@" >/dev/null 2>&1 || cd_failed "$@" && ok=0 # 0 means ok
+    test $# == 1 -o $# == 0 && builtin cd -P "$@" >/dev/null 2>&1 || cd_failed "$@" && ok=0 # 0 means ok
     test "`pwd`" != "$oldpwd" && cd_record 
     return $ok
 }
@@ -51,11 +44,7 @@ function cd_failed()
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
         cd_record
-        if test $# = 1; then
-            history -s cd "$(printf %q "$1")"
-        else
-            history -s cd "$@"
-        fi
+        history -s cd "$@"
     fi
     return 0
 }
@@ -73,11 +62,7 @@ function fcd()
         NUM=`my_select "${dirs[@]}"`
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
-        if test $# = 1; then
-            history -s cd "$(printf %q "$1")"
-        else
-            history -s cd "$@"
-        fi
+        history -s cd "$@"
     fi
     cd_record
 }
@@ -91,4 +76,7 @@ function rbcd()
 }
 alias cd=cd_bhj
 alias rcd='cd .repo/manifests'
+if test "$DISPLAY" = :0.0; then
+    . ~/.new-xauth
+fi
 alias rs="rfa 'git diff \$REPO_LREV|cat; git st -s|grep . && echo \`pwd\`'"

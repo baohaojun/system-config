@@ -1,27 +1,10 @@
 #!/bin/bash
 set -e
 
-function add-jira-comment() {
-    if test -z "$ticket"; then
-        ticket=`git log -1|grep Issue: |perl -npe 's/.*: //'`
-    fi
-    if test $# = 0; then
-        set -- git commit --amend
-    fi
-    (echo "$@": In repo: `rfa . 'echo $REPO_PATH'`; echo; git log -1)|jira-add-comment $ticket
-}
-
-if test "`basename $0`" = add-jira-comment; then
-    add-jira-comment "$@"
-    exit
-fi
-
 die() {
     echo "$@"
     false
 }
-
-git status -s|grep -v '^ '|grep -v '^?'|grep . -q || die "Error, nothing to commit"
 
 test $# -lt 1 && die "Error: must have a ticket, such as CINEMA-44. See http://bear/jira"
 
@@ -36,8 +19,7 @@ while test $# -gt 0; do
     shift
 done
 
-function gitci() {
-    git commit -m "$(cat <<EOF
+git commit -m "$(cat <<EOF
 `get-stdin; echo`
 
 Issue: $ticket
@@ -45,12 +27,4 @@ Issue: $ticket
 `for x in ${reviewer[@]}; do echo  Reviewed-by: $x; done`
 EOF
 )"
-   add-jira-comment git commit
-}
-
-function gitci-amend() {
-    git commit --amend
-    add-jira-comment git commit --amend
-}
-
-`basename $0` "$@"
+(echo In repo: `rfa . 'echo $REPO_PATH'`; echo; git log -1)|jira-add-comment $ticket

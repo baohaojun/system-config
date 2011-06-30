@@ -1,2 +1,0 @@
-#!/bin/bash
-echo add_cand "$@" > /dev/tcp/localhost/12345

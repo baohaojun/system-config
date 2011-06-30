@@ -28,15 +28,6 @@ function compile_fcitx() {
     git clean -xfd
 }
 
-function compile_ibus_sdim() {
-    cd ~/gcode/ibus-sdim/
-    ./autogen.sh
-    ./configure --prefix=/usr
-    make
-    sudo make install
-    git clean -xfd
-}
-
 function compile_gtags() {
     cd ~/gcode/global/
     sh reconf.sh

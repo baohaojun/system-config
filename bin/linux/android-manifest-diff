@@ -7,7 +7,7 @@ my $f2 = shift @ARGV;
 my %f1;
 my %f2;
 
-open(my $F1, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@path -n $f1") or die "Error opening $f1\n";
+open(my $F1, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@name -n $f1") or die "Error opening $f1\n";
 
 while (<$F1>) {
     next unless m/^(.*?)\s*=\s*(.*)\s*$/;
@@ -15,7 +15,7 @@ while (<$F1>) {
 }
 close $F1;
 
-open(my $F2, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@path -n $f2") or die "Error opening $f2\n";
+open(my $F2, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@name -n $f2") or die "Error opening $f2\n";
 while (<$F2>) {
     next unless m/^(.*?)\s*=\s*(.*)\s*$/;
     $f2{$1} = $2;

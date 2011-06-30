@@ -1,6 +1,0 @@
-#!/bin/bash
-
-. `which wp`
-NO_PUTCLIP=true
-export NO_PUTCLIP
-wine start "$(wp "$@")"

@@ -1,2 +1,0 @@
-#!/bin/bash
-repo forall . -c 'echo $REPO_REMOTE'

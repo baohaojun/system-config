@@ -5,7 +5,7 @@ import os, sys, bhj_ime
 
 def ime_handler(sock):
     sock = sock.makefile("rwb", 0)
-    ime = bhj_ime.ime(sock, sock)
+    ime = bhj_ime.ime(sock)
     ime.handle()
 
 ime_listen_sock = socket(AF_INET, SOCK_STREAM);

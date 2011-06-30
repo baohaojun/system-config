@@ -3,13 +3,6 @@ set -ex
 . ~/.bashrc
 cd /android
 
-repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre
-repo sync
-repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre_p2_22.xml
-repo sync
-repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre_p2_23.xml
-repo sync
-
 repo-switch -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b donut-x86
 repo sync
 repo-switch -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b eclair-x86
@@ -33,6 +26,12 @@ repo sync
 repo-switch -u git://android.git.kernel.org/platform/manifest.git -b froyo
 repo sync
 repo-switch -u git://android.git.kernel.org/platform/manifest.git -b gingerbread
+repo sync
+repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre
+repo sync
+repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre-p2
+repo sync
+repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre-gb-p2
 repo sync
 
 cd /home/git/android/linux-2.6.git

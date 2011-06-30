@@ -13,17 +13,14 @@ else
     export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
     export DISPLAY=${DISPLAY:-$REMOTEIP:0.0}
     export PS1HostName=`hostname`
-    export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m )\n\$'
+    export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m)\n\$'
     alias sudoedit='WHOAMI=root edit'
-    if test "$TERM" = dumb; then
-        export PS1='\$'
-    fi
+
 fi
 
 alias rm='rm -i'
 alias mkgtags='mkgtags -i -v'
 alias bcd=cd_beagle
-alias pcd='builtin cd -P'
 
 cd_beagle() 
 {
@@ -49,13 +46,7 @@ cd_ok()
 
 cd_record()
 {
-    if [[ "$PWD" =~ ^$HOME/smb/ ]]; then
-        local pat=$HOME/smb/
-        local rep=smb://
-        history -s cd "${PWD/$pat/$rep}"
-    else
-        history -s cd "$(printf %q "`pwd`")"
-    fi
+    history -s cd "`pwd`"
    (flock -x ~/.where.lock -c where&)
 }
 
@@ -74,10 +65,10 @@ lcd()
 
     if [[ "$1" =~ ^\\\\|^//|^smb:// && `uname` = Linux ]]; then
         chmod 600 ~/.smb/*
-        smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"
+        smbnetfs -o allow_root ~/smb|grep -v '^fuse: mountpoint is not empty$'|grep -v "^fuse: if you are sure this is safe, use the 'nonempty' mount option$"
         builtin cd ~/smb/"$(host-hosts "$1")"
-        history -s cd "$(printf %q "`pwd`")"
-        history -s cd "$(printf %q "$1")"
+        history -s cd "`pwd`"
+        history -s cd "$1"
         return 0
     fi
     
@@ -97,7 +88,7 @@ lcd()
         return $?
     fi
 
-    link=$1
+    link=$(readlink -f "$1")
     if test -f "$link" && echo "${link##*.}"|grep -i '^lnk$' -q; then 
             link=`readshortcut "$link"`
     fi
@@ -106,10 +97,6 @@ lcd()
             return 1;
         fi
         builtin cd "$link"
-        cd_record
-        return $?
-    elif test -L "$link" -a -f "$link"; then
-        builtin cd "$(dirname "$(readlink -f "$link")")"
         cd_record
         return $?
     else
@@ -138,7 +125,7 @@ _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will
 
 git()
 {
-    if test "`readlink -f .`" = "`readlink -f ~`" -a "$1" != clone
+    if test "`pwd`" = "`readlink -f ~`" -a "$1" != clone
     then
         (cd ~/windows-config/; command git "$@")
     else
@@ -150,17 +137,8 @@ rbranch()
 {
     repo forall . -c 'echo $REPO_RREV'
 }
-
-if tty -s; then
-    stty -ixon -ixoff >/dev/null 2>&1
-fi
+stty -ixon -ixoff >/dev/null 2>&1
 
 if test -n "$BASH_VERSION" -a "$BASH" = /bin/bash; then
     . ~/.bashrc-public-bash
 fi
-
-scd()
-{
-    history -s scd "$@"
-    cd "$(readlink -f "${2:-.}"|perl -npe "$1")"
-}

@@ -22,17 +22,9 @@ do
 done
 . `which wp`
 
-function renew-xauth() {
-    if test -z "$SSH_CLIENT"; then
-        . ~/.new-xauth
-    else
-        if test `ps -o comm=  -o pid= -A|grep gnome-terminal|wc -l` != 1; then
-            echo 'you have more that 1 gnome-terminal running, can not renew xauth!'
-            return 1
-        fi
-        export $(cat /proc/`ps -o comm=  -o pid= -A|grep gnome-terminal|pn 2`/environ|perl -npe 's/\x00/\n/g'|grep '^DISPLAY=')
-        export $(cat /proc/`ps -o comm=  -o pid= -A|grep gnome-terminal|pn 2`/environ|perl -npe 's/\x00/\n/g'|grep '^REMOTEIP=')
-    fi
+renew-xauth()
+{
+    . ~/.new-xauth
 }
 
 for x in ~/.bash_completion.d/*; do 
