@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Standard
 		/** 
 		 * Translates characters to character classes
 		 */
-		private static readonly String ZZ_CMAP_PACKED = 
+		private const String ZZ_CMAP_PACKED = 
 			"\x0009\x0000\x0001\x0000\x0001\x0004\x0001\x0000\x0001\x0000\x0001\x0003\x0012\x0000\x0001\x0000" + 
 			"\x000f\x0000\x000a\x0001\x0007\x0000\x001a\x0001\x0006\x0000\x001a\x0001\x002f\x0000\x0001\x0001" + 
 			"\x000a\x0000\x0001\x0001\x0004\x0000\x0001\x0001\x0005\x0000\x0017\x0001\x0001\x0000\x001f\x0001" + 
@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Standard
 		 */
 		private static readonly int [] ZZ_ACTION = zzUnpackAction();
 
-		private static readonly String ZZ_ACTION_PACKED_0 =
+		private const String ZZ_ACTION_PACKED_0 =
 			"\x0001\x0000\x0001\x0001\x0001\x0002\x0001\x0003\x0001\x0001";
 
 		private static int [] zzUnpackAction() 
@@ -129,15 +129,22 @@ namespace Lucene.Net.Analysis.Standard
 
 		private static int zzUnpackAction(String packed, int offset, int [] result) 
 		{
-			Console.WriteLine("hello world");
+			Console.WriteLine("hello world 1");
 			int i = 0;       /* index in packed string  */
+			Console.WriteLine("hello world 2");
 			int j = offset;  /* index in unpacked array */
+			Console.WriteLine("hello world 3");
 			int l = packed.Length;
+			Console.WriteLine("hello world 4");
 			while (i < l) 
 				{
+					Console.WriteLine("hello world 5");
 					int count = packed[i++];
-					int value = packed[i++];
-					do result[j++] = value; while (--count > 0);
+					Console.WriteLine("hello world 6");
+					int value_rename = packed[i++];
+					Console.WriteLine("hello world 7");
+					do result[j++] = value_rename; while (--count > 0);
+					Console.WriteLine("hello world 8");
 				}
 			return j;
 		}
@@ -148,7 +155,7 @@ namespace Lucene.Net.Analysis.Standard
 		 */
 		private static readonly int [] ZZ_ROWMAP = zzUnpackRowMap();
 
-		private static readonly String ZZ_ROWMAP_PACKED_0 =
+		private const String ZZ_ROWMAP_PACKED_0 =
 			"\x0000\x0000\x0000\x0005\x0000\x000a\x0000\x0005\x0000\x000f";
 
 		private static int [] zzUnpackRowMap() 
@@ -177,7 +184,7 @@ namespace Lucene.Net.Analysis.Standard
 		 */
 		private static readonly int [] ZZ_TRANS = zzUnpackTrans();
 
-		private static readonly String ZZ_TRANS_PACKED_0 =
+		private const String ZZ_TRANS_PACKED_0 =
 			"\x0001\x0002\x0001\x0003\x0001\x0004\x0001\x0005\x0001\x0002\x0006\x0000\x0001\x0003\x0007\x0000" + 
 			"\x0001\x0002";
 
@@ -197,9 +204,9 @@ namespace Lucene.Net.Analysis.Standard
 			while (i < l) 
 				{
 					int count = packed[i++];
-					int value = packed[i++];
-					value--;
-					do result[j++] = value; while (--count > 0);
+					int value_rename = packed[i++];
+					value_rename--;
+					do result[j++] = value_rename; while (--count > 0);
 				}
 			return j;
 		}
@@ -215,7 +222,7 @@ namespace Lucene.Net.Analysis.Standard
 			{
 				"Unkown internal scanner error",
 				"Error: could not match input",
-				"Error: pushback value was too large"
+				"Error: pushback value_rename was too large"
 			};
 
 		/**
@@ -223,7 +230,7 @@ namespace Lucene.Net.Analysis.Standard
 		 */
 		private static readonly int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
-		private static readonly String ZZ_ATTRIBUTE_PACKED_0 =
+		private const String ZZ_ATTRIBUTE_PACKED_0 =
 			"\x0001\x0000\x0001\x0009\x0001\x0001\x0001\x0009\x0001\x0001";
 
 		private static int [] zzUnpackAttribute() 
@@ -242,8 +249,8 @@ namespace Lucene.Net.Analysis.Standard
 			while (i < l) 
 				{
 					int count = packed[i++];
-					int value = packed[i++];
-					do result[j++] = value; while (--count > 0);
+					int value_rename = packed[i++];
+					do result[j++] = value_rename; while (--count > 0);
 				}
 			return j;
 		}
@@ -372,8 +379,8 @@ namespace Lucene.Net.Analysis.Standard
 			while (i < 1214) 
 				{
 					int  count = packed[i++];
-					char value = packed[i++];
-					do map[j++] = value; while (--count > 0);
+					char value_rename = packed[i++];
+					do map[j++] = value_rename; while (--count > 0);
 				}
 			return map;
 		}
@@ -512,7 +519,7 @@ namespace Lucene.Net.Analysis.Standard
 		 * It is equivalent to yytext()[pos], but faster
 		 *
 		 * @param pos the position of the character to fetch. 
-		 *            A value from 0 to yylength()-1.
+		 *            A value_rename from 0 to yylength()-1.
 		 *
 		 * @return the character at position pos
 		 */
@@ -587,6 +594,7 @@ namespace Lucene.Net.Analysis.Standard
 		 */
 		public int GetNextToken() 
 		{
+			Console.WriteLine("hello world 9");
 			int zzInput;
 			int zzAction;
 
@@ -603,6 +611,7 @@ namespace Lucene.Net.Analysis.Standard
 
 			while (true) 
 				{
+					Console.WriteLine("hello world 10");
 					zzMarkedPosL = zzMarkedPos;
 
 					yychar_field += zzMarkedPosL-zzStartRead;
@@ -614,16 +623,18 @@ namespace Lucene.Net.Analysis.Standard
 					zzState = ZZ_LEXSTATE[zzLexicalState];
 
 
-					zzForAction: 
+					
 					{
 						while (true) 
 							{
+								Console.WriteLine("hello world 9");
     
 								if (zzCurrentPosL < zzEndReadL)
 									zzInput = zzBufferL[zzCurrentPosL++];
 								else if (zzAtEOF) 
 									{
 										zzInput = YYEOF;
+										Console.WriteLine("hello world 12");
 										goto zzForAction;
 									}
 								else 
@@ -640,6 +651,7 @@ namespace Lucene.Net.Analysis.Standard
 										if (eof) 
 											{
 												zzInput = YYEOF;
+												Console.WriteLine("hello world 11");
 												goto zzForAction;
 											}
 										else 
@@ -648,7 +660,11 @@ namespace Lucene.Net.Analysis.Standard
 											}
 									}
 								int zzNext = zzTransL[ zzRowMapL[zzState] + zzCMapL[zzInput] ];
-								if (zzNext == -1) goto zzForAction;
+								if (zzNext == -1)  
+									{
+										Console.WriteLine("hello world 13");
+										goto zzForAction;
+									}
 								zzState = zzNext;
 
 								int zzAttributes = zzAttrL[zzState];
@@ -656,11 +672,16 @@ namespace Lucene.Net.Analysis.Standard
 									{
 										zzAction = zzState;
 										zzMarkedPosL = zzCurrentPosL;
-										if ( (zzAttributes & 8) == 8 ) goto zzForAction;
+										if ( (zzAttributes & 8) == 8 ) 
+											{
+												Console.WriteLine("hello world 14");
+												goto zzForAction;
+											}
 									}
 
 							}
 					}
+zzForAction: ;
 
 					// store back cached position
 					zzMarkedPos = zzMarkedPosL;
@@ -676,6 +697,7 @@ namespace Lucene.Net.Analysis.Standard
         
 							{ /* ignore */
 							}
+							break;
 						case 5: break;
 						case 2: 
         
@@ -692,6 +714,7 @@ namespace Lucene.Net.Analysis.Standard
 								{
 									zzScanError(ZZ_NO_MATCH);
 								}
+							break;
 						}
 				}
 		}

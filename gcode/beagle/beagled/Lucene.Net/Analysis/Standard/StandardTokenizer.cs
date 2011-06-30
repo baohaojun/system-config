@@ -64,7 +64,9 @@ namespace Lucene.Net.Analysis.Standard
         /// </summary>
         public override Lucene.Net.Analysis.Token Next()
         {
+		Console.WriteLine("hello before token");
 	    int tokenType = scanner.GetNextToken();
+		Console.WriteLine("hello after token");
 
 	    if (tokenType == StandardTokenizerImpl.YYEOF) {
 	        return null;
