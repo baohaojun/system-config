@@ -389,7 +389,7 @@ namespace Lucene.Net.Analysis.Standard
 		 * 
 		 * @exception   java.io.IOException  if any I/O-Error occurs
 		 */
-		private bool zzRefill() throws java.io.IOException 
+		private bool zzRefill()
 		{
 
 			/* first: make room (if you can) */
@@ -446,7 +446,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Closes the input stream.
 		 */
-		public readonly void yyclose() throws java.io.IOException 
+		public readonly void yyclose()
 		{
 			zzAtEOF = true;            /* indicate end of file */
 			zzEndRead = zzStartRead;  /* invalidate buffer    */
@@ -588,7 +588,7 @@ namespace Lucene.Net.Analysis.Standard
 		 * @return      the next token
 		 * @exception   java.io.IOException  if any I/O-Error occurs
 		 */
-		public int getNextToken() throws java.io.IOException 
+		public int getNextToken()
 		{
 			int zzInput;
 			int zzAction;
