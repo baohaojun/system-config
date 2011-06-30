@@ -135,8 +135,8 @@ namespace Lucene.Net.Analysis.Standard
 			while (i < l) 
 				{
 					int count = packed[i++];
-					int value = packed[i++];
-					do result[j++] = value; while (--count > 0);
+					int value_rename = packed[i++];
+					do result[j++] = value_rename; while (--count > 0);
 				}
 			return j;
 		}
@@ -196,9 +196,9 @@ namespace Lucene.Net.Analysis.Standard
 			while (i < l) 
 				{
 					int count = packed[i++];
-					int value = packed[i++];
-					value--;
-					do result[j++] = value; while (--count > 0);
+					int value_rename = packed[i++];
+					value_rename--;
+					do result[j++] = value_rename; while (--count > 0);
 				}
 			return j;
 		}
@@ -214,7 +214,7 @@ namespace Lucene.Net.Analysis.Standard
 			{
 				"Unkown internal scanner error",
 				"Error: could not match input",
-				"Error: pushback value was too large"
+				"Error: pushback value_rename was too large"
 			};
 
 		/**
@@ -241,8 +241,8 @@ namespace Lucene.Net.Analysis.Standard
 			while (i < l) 
 				{
 					int count = packed[i++];
-					int value = packed[i++];
-					do result[j++] = value; while (--count > 0);
+					int value_rename = packed[i++];
+					do result[j++] = value_rename; while (--count > 0);
 				}
 			return j;
 		}
@@ -375,8 +375,8 @@ namespace Lucene.Net.Analysis.Standard
 			while (i < 1214) 
 				{
 					int  count = packed[i++];
-					char value = packed[i++];
-					do map[j++] = value; while (--count > 0);
+					char value_rename = packed[i++];
+					do map[j++] = value_rename; while (--count > 0);
 				}
 			return map;
 		}
@@ -515,7 +515,7 @@ namespace Lucene.Net.Analysis.Standard
 		 * It is equivalent to yytext()[pos], but faster
 		 *
 		 * @param pos the position of the character to fetch. 
-		 *            A value from 0 to yylength()-1.
+		 *            A value_rename from 0 to yylength()-1.
 		 *
 		 * @return the character at position pos
 		 */
