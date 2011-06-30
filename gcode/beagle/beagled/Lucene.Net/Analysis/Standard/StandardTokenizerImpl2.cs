@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Token = Lucene.Net.Analysis.Token;
 namespace Lucene.Net.Analysis.Standard
 {
@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *                  at the beginning of a line
 		 * l is of the form l = 2*k, k a non negative integer
 		 */
-		private static readonly int [] ZZ_LEXSTATE = 
+		private static readonly int ZZ_LEXSTATE[] = 
 			{ 
 				0, 0
 			};
@@ -129,10 +129,9 @@ namespace Lucene.Net.Analysis.Standard
 
 		private static int zzUnpackAction(String packed, int offset, int [] result) 
 		{
-			Console.WriteLine("hello world");
 			int i = 0;       /* index in packed string  */
 			int j = offset;  /* index in unpacked array */
-			int l = packed.Length;
+			int l = packed.length();
 			while (i < l) 
 				{
 					int count = packed[i++];
@@ -163,7 +162,7 @@ namespace Lucene.Net.Analysis.Standard
 		{
 			int i = 0;  /* index in packed string  */
 			int j = offset;  /* index in unpacked array */
-			int l = packed.Length;
+			int l = packed.length();
 			while (i < l) 
 				{
 					int high = packed[i++] << 16;
@@ -193,7 +192,7 @@ namespace Lucene.Net.Analysis.Standard
 		{
 			int i = 0;       /* index in packed string  */
 			int j = offset;  /* index in unpacked array */
-			int l = packed.Length;
+			int l = packed.length();
 			while (i < l) 
 				{
 					int count = packed[i++];
@@ -211,7 +210,7 @@ namespace Lucene.Net.Analysis.Standard
 		private static readonly int ZZ_PUSHBACK_2BIG = 2;
 
 		/* error messages for the codes above */
-		private static readonly String [] ZZ_ERROR_MSG = 
+		private static readonly String ZZ_ERROR_MSG[] = 
 			{
 				"Unkown internal scanner error",
 				"Error: could not match input",
@@ -238,7 +237,7 @@ namespace Lucene.Net.Analysis.Standard
 		{
 			int i = 0;       /* index in packed string  */
 			int j = offset;  /* index in unpacked array */
-			int l = packed.Length;
+			int l = packed.length();
 			while (i < l) 
 				{
 					int count = packed[i++];
@@ -249,7 +248,7 @@ namespace Lucene.Net.Analysis.Standard
 		}
 
 		/** the input device */
-		private System.IO.TextReader zzReader;
+		private java.io.Reader zzReader;
 
 		/** the current state of the DFA */
 		private int zzState;
@@ -259,7 +258,7 @@ namespace Lucene.Net.Analysis.Standard
 
 		/** this buffer contains the current text to be matched and is
 		    the source of the yytext() string */
-		private char [] zzBuffer = new char[ZZ_BUFFERSIZE];
+		private char zzBuffer[] = new char[ZZ_BUFFERSIZE];
 
 		/** the textposition at the last accepting state */
 		private int zzMarkedPos;
@@ -278,7 +277,7 @@ namespace Lucene.Net.Analysis.Standard
 		private int yyline;
 
 		/** the number of characters up to the start of the matched text */
-		private int yychar_field;
+		private int yychar;
 
 		/**
 		 * the number of characters from the last newline up to the start of the 
@@ -289,13 +288,13 @@ namespace Lucene.Net.Analysis.Standard
 		/** 
 		 * zzAtBOL == true <=> the scanner is currently at the beginning of a line
 		 */
-		private bool zzAtBOL = true;
+		private boolean zzAtBOL = true;
 
 		/** zzAtEOF == true <=> the scanner is at the EOF */
-		private bool zzAtEOF;
+		private boolean zzAtEOF;
 
 		/** denotes if the user-EOF-code has already been executed */
-		private bool zzEOFDone;
+		private boolean zzEOFDone;
 
 		/* user code: */
 
@@ -313,13 +312,32 @@ namespace Lucene.Net.Analysis.Standard
 		 *             release.
 		 */
 		public static readonly int ACRONYM_DEP       = StandardTokenizer.ACRONYM_DEP;
-		public static readonly String[] TOKEN_TYPES = new System.String[]{"<ALPHANUM>", "<APOSTROPHE>", "<ACRONYM>", "<COMPANY>", "<EMAIL>", "<HOST>", "<NUM>", "<CJ>", "<ACRONYM_DEP>"};
+
+		public static readonly String [] TOKEN_TYPES = StandardTokenizer.TOKEN_TYPES;
 
 		public int yychar()
   
 		{
-			return yychar_field;
+			return yychar;
 		}
+
+		/**
+		 * Fills Lucene token with the current token text.
+		 */
+		void getText(Token t) 
+		{
+			t.setTermBuffer(zzBuffer, zzStartRead, zzMarkedPos-zzStartRead);
+		}
+
+		/**
+		 * Fills TermAttribute with the current token text.
+		 */
+		void getText(TermAttribute t) 
+		{
+			t.setTermBuffer(zzBuffer, zzStartRead, zzMarkedPos-zzStartRead);
+		}
+
+
 
 		/**
 		 * Creates a new scanner
@@ -327,36 +345,21 @@ namespace Lucene.Net.Analysis.Standard
 		 *
 		 * @param   in  the java.io.Reader to read input from.
 		 */
-		internal StandardTokenizerImpl(System.IO.TextReader in_Renamed)
+		StandardTokenizerImpl(java.io.Reader in) 
 		{
-			this.zzReader = in_Renamed;
+			this.zzReader = in;
 		}
-		
+
 		/**
 		 * Creates a new scanner.
 		 * There is also java.io.Reader version of this constructor.
 		 *
 		 * @param   in  the java.io.Inputstream to read input from.
 		 */
-		internal StandardTokenizerImpl(System.IO.Stream in_Renamed):this(new System.IO.StreamReader(in_Renamed, System.Text.Encoding.Default))
+		StandardTokenizerImpl(java.io.InputStream in) 
 		{
+			this(new java.io.InputStreamReader(in));
 		}
-
-		internal static StandardTokenizerImpl GetStandardTokenizerImpl(System.IO.TextReader reader)
-		{
-			if (impl==null)
-				{
-					impl = new StandardTokenizerImpl(reader);
-				}
-			else
-				{
-					impl.yyreset(reader);
-				}
-
-			return impl;
-		}
-
-		private static StandardTokenizerImpl impl = null;
 
 		/** 
 		 * Unpacks the compressed character translation table.
@@ -386,13 +389,13 @@ namespace Lucene.Net.Analysis.Standard
 		 * 
 		 * @exception   java.io.IOException  if any I/O-Error occurs
 		 */
-		private bool zzRefill() 
+		private boolean zzRefill() 
 		{
 
 			/* first: make room (if you can) */
 			if (zzStartRead > 0) 
 				{
-					Array.Copy(zzBuffer, zzStartRead,
+					System.arraycopy(zzBuffer, zzStartRead,
 							 zzBuffer, 0,
 							 zzEndRead-zzStartRead);
 
@@ -404,17 +407,17 @@ namespace Lucene.Net.Analysis.Standard
 				}
 
 			/* is the buffer big enough? */
-			if (zzCurrentPos >= zzBuffer.Length) 
+			if (zzCurrentPos >= zzBuffer.length) 
 				{
 					/* if not: blow it up */
-					char [] newBuffer = new char[zzCurrentPos*2];
-					Array.Copy(zzBuffer, 0, newBuffer, 0, zzBuffer.Length);
+					char newBuffer[] = new char[zzCurrentPos*2];
+					System.arraycopy(zzBuffer, 0, newBuffer, 0, zzBuffer.length);
 					zzBuffer = newBuffer;
 				}
 
 			/* readonlyly: fill the buffer with new input */
-			int numRead = zzReader.Read(zzBuffer, zzEndRead,
-						    zzBuffer.Length-zzEndRead);
+			int numRead = zzReader.read(zzBuffer, zzEndRead,
+						    zzBuffer.length-zzEndRead);
 
 			if (numRead > 0) 
 				{
@@ -424,7 +427,7 @@ namespace Lucene.Net.Analysis.Standard
 			// unlikely but not impossible: read 0 characters, but not at end of stream    
 			if (numRead == 0) 
 				{
-					int c = zzReader.Read();
+					int c = zzReader.read();
 					if (c == -1) 
 						{
 							return true;
@@ -449,7 +452,7 @@ namespace Lucene.Net.Analysis.Standard
 			zzEndRead = zzStartRead;  /* invalidate buffer    */
 
 			if (zzReader != null)
-				zzReader.Close();
+				zzReader.close();
 		}
 
 
@@ -463,7 +466,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *
 		 * @param reader   the new input stream 
 		 */
-		public void yyreset(System.IO.TextReader reader) 
+		public void yyreset(java.io.Reader reader) 
 		{
 			zzReader = reader;
 			zzAtBOL  = true;
@@ -471,7 +474,7 @@ namespace Lucene.Net.Analysis.Standard
 			zzEOFDone = false;
 			zzEndRead = zzStartRead = 0;
 			zzCurrentPos = zzMarkedPos = 0;
-			yyline = yychar_field = yycolumn = 0;
+			yyline = yychar = yycolumn = 0;
 			zzLexicalState = YYINITIAL;
 		}
 
@@ -552,12 +555,12 @@ namespace Lucene.Net.Analysis.Standard
 				{
 					message = ZZ_ERROR_MSG[errorCode];
 				}
-			catch (System.IndexOutOfRangeException e) 
+			catch (ArrayIndexOutOfBoundsException e) 
 				{
 					message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
 				}
 
-			throw new System.ApplicationException(message);
+			throw new Error(message);
 		} 
 
 
@@ -585,7 +588,7 @@ namespace Lucene.Net.Analysis.Standard
 		 * @return      the next token
 		 * @exception   java.io.IOException  if any I/O-Error occurs
 		 */
-		public int GetNextToken() 
+		public int getNextToken() 
 		{
 			int zzInput;
 			int zzAction;
@@ -605,7 +608,7 @@ namespace Lucene.Net.Analysis.Standard
 				{
 					zzMarkedPosL = zzMarkedPos;
 
-					yychar_field += zzMarkedPosL-zzStartRead;
+					yychar+= zzMarkedPosL-zzStartRead;
 
 					zzAction = -1;
 
@@ -631,7 +634,7 @@ namespace Lucene.Net.Analysis.Standard
 										// store back cached positions
 										zzCurrentPos  = zzCurrentPosL;
 										zzMarkedPos   = zzMarkedPosL;
-										bool eof = zzRefill();
+										boolean eof = zzRefill();
 										// get translated positions and possibly new buffer
 										zzCurrentPosL  = zzCurrentPos;
 										zzMarkedPosL   = zzMarkedPos;
