@@ -288,13 +288,13 @@ namespace Lucene.Net.Analysis.Standard
 		/** 
 		 * zzAtBOL == true <=> the scanner is currently at the beginning of a line
 		 */
-		private boolean zzAtBOL = true;
+		private bool zzAtBOL = true;
 
 		/** zzAtEOF == true <=> the scanner is at the EOF */
-		private boolean zzAtEOF;
+		private bool zzAtEOF;
 
 		/** denotes if the user-EOF-code has already been executed */
-		private boolean zzEOFDone;
+		private bool zzEOFDone;
 
 		/* user code: */
 
@@ -389,7 +389,7 @@ namespace Lucene.Net.Analysis.Standard
 		 * 
 		 * @exception   java.io.IOException  if any I/O-Error occurs
 		 */
-		private boolean zzRefill() throws java.io.IOException 
+		private bool zzRefill() throws java.io.IOException 
 		{
 
 			/* first: make room (if you can) */
@@ -634,7 +634,7 @@ namespace Lucene.Net.Analysis.Standard
 										// store back cached positions
 										zzCurrentPos  = zzCurrentPosL;
 										zzMarkedPos   = zzMarkedPosL;
-										boolean eof = zzRefill();
+										bool eof = zzRefill();
 										// get translated positions and possibly new buffer
 										zzCurrentPosL  = zzCurrentPos;
 										zzMarkedPosL   = zzMarkedPos;
