@@ -85,42 +85,6 @@ THAI       = [\u0E00-\u0E59]
 // basic word: a sequence of digits & letters (includes Thai to enable ThaiAnalyzer to function)
 ALPHANUM   = ({LETTER}|{THAI}|[:digit:])+
 
-// internal apostrophes: O'Reilly, you're, O'Reilly's
-// use a post-filter to remove possessives
-APOSTROPHE =  {ALPHA} ("'" {ALPHA})+
-
-// acronyms: U.S.A., I.B.M., etc.
-// use a post-filter to remove dots
-ACRONYM    =  {LETTER} "." ({LETTER} ".")+
-
-ACRONYM_DEP	= {ALPHANUM} "." ({ALPHANUM} ".")+
-
-// company names like AT&T and Excite@Home.
-COMPANY    =  {ALPHA} ("&"|"@") {ALPHA}
-
-// email addresses
-EMAIL      =  {ALPHANUM} (("."|"-"|"_") {ALPHANUM})* "@" {ALPHANUM} (("."|"-") {ALPHANUM})+
-
-// hostname
-HOST       =  {ALPHANUM} ((".") {ALPHANUM})+
-
-// floating point, serial, model numbers, ip addresses, etc.
-// every other segment must have at least one digit
-NUM        = ({ALPHANUM} {P} {HAS_DIGIT}
-           | {HAS_DIGIT} {P} {ALPHANUM}
-           | {ALPHANUM} ({P} {HAS_DIGIT} {P} {ALPHANUM})+
-           | {HAS_DIGIT} ({P} {ALPHANUM} {P} {HAS_DIGIT})+
-           | {ALPHANUM} {P} {HAS_DIGIT} ({P} {ALPHANUM} {P} {HAS_DIGIT})+
-           | {HAS_DIGIT} {P} {ALPHANUM} ({P} {HAS_DIGIT} {P} {ALPHANUM})+)
-
-// punctuation
-P	         = ("_"|"-"|"/"|"."|",")
-
-// at least one digit
-HAS_DIGIT  = ({LETTER}|[:digit:])* [:digit:] ({LETTER}|[:digit:])*
-
-ALPHA      = ({LETTER})+
-
 // From the JFlex manual: "the expression that matches everything of <a> not matched by <b> is !(!<a>|<b>)"
 LETTER     = !(![:letter:]|{CJ})
 
@@ -132,14 +96,7 @@ WHITESPACE = \r\n | [ \r\n\t\f]
 %%
 
 {ALPHANUM}                                                     { return ALPHANUM; }
-{APOSTROPHE}                                                   { return APOSTROPHE; }
-{ACRONYM}                                                      { return ACRONYM; }
-{COMPANY}                                                      { return COMPANY; }
-{EMAIL}                                                        { return EMAIL; }
-{HOST}                                                         { return HOST; }
-{NUM}                                                          { return NUM; }
 {CJ}                                                           { return CJ; }
-{ACRONYM_DEP}                                                  { return ACRONYM_DEP; }
 
 /** Ignore the rest */
 . | {WHITESPACE}                                               { /* ignore */ }
