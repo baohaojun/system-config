@@ -129,22 +129,14 @@ namespace Lucene.Net.Analysis.Standard
 
 		private static int zzUnpackAction(String packed, int offset, int [] result) 
 		{
-			Console.WriteLine("hello world 1");
 			int i = 0;       /* index in packed string  */
-			Console.WriteLine("hello world 2");
 			int j = offset;  /* index in unpacked array */
-			Console.WriteLine("hello world 3");
 			int l = packed.Length;
-			Console.WriteLine("hello world 4");
 			while (i < l) 
 				{
-					Console.WriteLine("hello world 5");
 					int count = packed[i++];
-					Console.WriteLine("hello world 6");
 					int value_rename = packed[i++];
-					Console.WriteLine("hello world 7");
 					do result[j++] = value_rename; while (--count > 0);
-					Console.WriteLine("hello world 8");
 				}
 			return j;
 		}
@@ -594,7 +586,6 @@ namespace Lucene.Net.Analysis.Standard
 		 */
 		public int GetNextToken() 
 		{
-			Console.WriteLine("hello world 9");
 			int zzInput;
 			int zzAction;
 
@@ -611,7 +602,6 @@ namespace Lucene.Net.Analysis.Standard
 
 			while (true) 
 				{
-					Console.WriteLine("hello world 10");
 					zzMarkedPosL = zzMarkedPos;
 
 					yychar_field += zzMarkedPosL-zzStartRead;
@@ -627,14 +617,12 @@ namespace Lucene.Net.Analysis.Standard
 					{
 						while (true) 
 							{
-								Console.WriteLine("hello world 9");
     
 								if (zzCurrentPosL < zzEndReadL)
 									zzInput = zzBufferL[zzCurrentPosL++];
 								else if (zzAtEOF) 
 									{
 										zzInput = YYEOF;
-										Console.WriteLine("hello world 12");
 										goto zzForAction;
 									}
 								else 
@@ -651,7 +639,6 @@ namespace Lucene.Net.Analysis.Standard
 										if (eof) 
 											{
 												zzInput = YYEOF;
-												Console.WriteLine("hello world 11");
 												goto zzForAction;
 											}
 										else 
@@ -662,7 +649,6 @@ namespace Lucene.Net.Analysis.Standard
 								int zzNext = zzTransL[ zzRowMapL[zzState] + zzCMapL[zzInput] ];
 								if (zzNext == -1)  
 									{
-										Console.WriteLine("hello world 13");
 										goto zzForAction;
 									}
 								zzState = zzNext;
@@ -674,7 +660,6 @@ namespace Lucene.Net.Analysis.Standard
 										zzMarkedPosL = zzCurrentPosL;
 										if ( (zzAttributes & 8) == 8 ) 
 											{
-												Console.WriteLine("hello world 14");
 												goto zzForAction;
 											}
 									}
