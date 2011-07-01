@@ -9,6 +9,7 @@ qq
 ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
 
 while true; do (cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver --noreload >>~/.offline-wiki.log 2>&1); sleep 2; done& 
+download-today
 
 command renew-xauth
 killall syndaemon
