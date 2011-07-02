@@ -74,6 +74,11 @@ class ConfigDlg (QDialog):
 
         self.connect(self.okButton, SIGNAL("clicked()"), self.onOK)
         self.connect(self.cancelButton, SIGNAL("clicked()"), self.onExit)
+        self.timer = QTimer(self)
+        self.timer.setSingleShot(True)
+        self.connect(self.timer, SIGNAL("timeout()"), self.onOK)
+        self.timer.start(10)
+
 
     def onExit(self):
         self.close()
@@ -143,6 +148,5 @@ class ConfigDlg (QDialog):
 
 
 config = ConfigDlg()
-config.show()
 app.exec_()
 
