@@ -23,9 +23,9 @@ class ConfigDlg (QDialog):
         settings = QSettings()
         layout = QGridLayout()
         
-        self.host = settings.value("host", QVariant("bhj2")).toString()
+        self.host = settings.value("host", QVariant("localhost")).toString()
         self.port = settings.value("port", QVariant("993")).toString()
-        self.mailbox = settings.value("mailbox", QVariant("[Gmail].All Mail")).toString()
+        self.mailbox = settings.value("mailbox", QVariant("Inbox/LetouWork")).toString()
         self.username = settings.value("username", QVariant("bhj")).toString()
 
         label = QLabel("Host:")
