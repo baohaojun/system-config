@@ -133,6 +133,7 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-matlab"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-ocaml"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sql"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-uri"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-vhdl"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("addsapplication/xspf+xml"));
 		}
