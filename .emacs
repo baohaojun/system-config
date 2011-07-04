@@ -524,7 +524,6 @@
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
- '(indent-tabs-mode nil)
  '(ispell-program-name "aspell" t)
  '(jira-url "http://192.168.11.11/jira/rpc/xmlrc")
  '(keyboard-coding-system (quote cp936))
