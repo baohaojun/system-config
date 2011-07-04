@@ -366,6 +366,7 @@ it if a reliable guess could be made."
 (defvar guess-offset-hooks
  (list 'c-mode-hook
        'c++-mode-hook
+       'php-mode-hook
        (if (featurep 'jde)
 	      'jde-mode-hook
 	    'java-mode-hook)))
