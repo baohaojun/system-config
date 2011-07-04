@@ -15,9 +15,9 @@ BEGIN
 }
 
 $arg = $ARGV[0];
-$arg =~ s,^(?:\\|/|smb://)*(.*?)(\\|/|$),$2,;
+$arg =~ s,^(?:\\|/)*(.*?)(\\|/|$),$2,;
 $host = $1;
-$arg =~ s,\\,/,g;
+$arg =~ s,\\,/,;
 $ip = $hosts{$host};
 $ip = $host unless $ip;
 print "$ip$arg";

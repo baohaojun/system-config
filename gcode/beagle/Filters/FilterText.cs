@@ -47,7 +47,6 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-perl"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ruby"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-designer"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/html"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/plain"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-authors"));
@@ -124,7 +123,6 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-awk"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-mozilla-bookmarks"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/rfc822"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/news"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/css"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-dsrc"));
@@ -133,7 +131,6 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-matlab"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-ocaml"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sql"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-uri"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-vhdl"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("addsapplication/xspf+xml"));
 		}

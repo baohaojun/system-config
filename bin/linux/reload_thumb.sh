@@ -1,1 +1,0 @@
-../../gcode/offline.wikipedia/reload_thumb.sh

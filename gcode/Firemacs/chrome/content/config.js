@@ -5,7 +5,7 @@
 
 var FmxConfig = {
     _prefix: 'firemacs2',
-    _pref: null,
+    _pref: Components.classes['@mozilla.org/preferences;1'].getService(Components.interfaces.nsIPrefBranch),
     save: function() {
 	this._save(this._names, this._pref.setCharPref, 'value');
 	this._save(this._boolNames, this._pref.setBoolPref, 'checked');
@@ -21,7 +21,6 @@ var FmxConfig = {
     },
     onload: function() {
 	try {
-	    this._pref = Components.classes['@mozilla.org/preferences;1'].getService(Components.interfaces.nsIPrefBranch);
 	    this._load(this._names, this._pref.getCharPref, 'value');
 	    this._load(this._boolNames, this._pref.getBoolPref, 'checked');
 	} catch (error) {

@@ -1,10 +1,6 @@
 #!/bin/bash
 
-mkdir -p ~/external/bin/linux/ext/`uname -m` \
-    ~/external/bin/linux/ext/media-wiki-templates/ \
-    ~/external/bin/linux/ext/media-wiki-images \
-    ~/external/bin/linux/ext/media-wiki-thumb \
-    ~/external/bin/linux/ext/media-wiki-math
+mkdir -p ~/external/bin/linux/ext/`uname -m`
 function download_antlr() {
     mkdir -p ~/external/bin/linux/ext
     ln -sf  ~/external/bin/linux/ext ~/bin/linux/

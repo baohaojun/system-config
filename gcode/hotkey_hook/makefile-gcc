@@ -27,7 +27,7 @@ clean:
 # --------------------------------------------------------------------
 CC      = gcc.exe
 CP      = g++.exe
-CFLAGS  = -Os -Wall -fno-rtti -fno-exceptions -c $(DEFINES)
+CFLAGS  = -Os -Wall -fno-rtti -fno-exceptions -c $(DEFINES) -I/d/Profiles/zch07g_cc_albd/include/
 LFLAGS  = -mwindows -s
 LIBS    = -lversion -lole32 -luuid -lcomctl32 -lcomdlg32 -lshell32 \
 	-ladvapi32 -lstdc++

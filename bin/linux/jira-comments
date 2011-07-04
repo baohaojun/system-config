@@ -1,3 +1,0 @@
-#!/bin/bash
-
-jira -a getComments --issue "$@"

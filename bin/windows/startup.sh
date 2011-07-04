@@ -38,18 +38,13 @@ if test "$(stat -c %i $OLDHOME/)" != "$(stat -c %i "$HOME2"/)"; then
 fi
 unset OLDHOME
 
-function die() {
-    echo "$@" 1>&2
-    false
-}
 
-if test -e /q -a ! -L /q; then
-    die "Error, the /q exist and is not a symlink";
+#so that I can write /q/ anywhere I want to write "$HOME" in .sh; it'll get worse in .emacs!
+if test "$HOME2" != /q -a "$HOME2" != /cygdrive/q; then 
+    subst /d q: || true #delete it first FIXME, what if q: is a real drive?
+    subst q: $(cygpath -sma "$HOME2") #if it is already /q, we will have problem here, so we put this in a conditional
 fi
-
-rm -f /q
-ln -s "$HOME2" /q
-export HOME=/q
+export HOME=/cygdrive/q
 
 
 #so that C-SPC will not toggle IME, because it's used by emacs set-mark-command
@@ -72,14 +67,3 @@ startup_dir=`regtool.exe -s get '\HKEY_CURRENT_USER\Software\Microsoft\Windows\C
 startup_dir=`cygpath -au "$startup_dir"`
 ln -sf "$HOME2"/bin/windows/startup.sh "$startup_dir"
 
-cat >/c/ywb.txt <<EOF
-[RegionalSettings]
-InputLocale = 0804:e0350804
-EOF
-
-cat >/c/ywb.bat <<"EOF"
-control intl.cpl,,/f:"C:\ywb.txt"
-EOF
-
-cd /c
-cmd.exe /c ywb.bat

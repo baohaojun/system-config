@@ -112,14 +112,6 @@
             <description value="scrolls a line down" />
           </row>
           <row>
-            <textbox id="ViScrollLeft" value="H" />
-            <description value="scrolls left" />
-          </row>
-          <row>
-            <textbox id="ViScrollRight" value="L" />
-            <description value="scrolls right" />
-          </row>
-          <row>
             <textbox id="ViPreviousTab" value="p" />
             <description value="moves to the previous tab" />
           </row>
@@ -155,14 +147,6 @@
           <column />
         </columns>
         <rows>
-          <row>
-            <textbox id="NextPage" value="F" />
-            <description value="moves to the next page" />
-          </row>
-          <row>
-            <textbox id="ReloadPage" value="R" />
-            <description value="reloads the page" />
-          </row>
           <row>
             <textbox id="ViScrollTop" value="&lt;" />
             <description value="scrolls to the top" />
@@ -308,10 +292,6 @@
         </columns>
         <rows>
           <row>
-            <textbox id="AllTabs" value="C-xb" />
-            <description value="tabs overview with filter" />
-          </row>
-          <row>
             <textbox id="SearchForward" value="C-s" />
             <description value="searches forward" />
           </row>
@@ -359,6 +339,10 @@
             <textbox id="CmNextTab" value="n" />
             <description value="moves to the next tab" />
           </row>
+          <row>
+            <textbox id="CloseTab" value="C-xk" />
+            <description value="closes the tab" />
+          </row>
         </rows>
       </grid>
       <grid flex="1">
@@ -367,10 +351,6 @@
           <column />
         </columns>
         <rows>
-          <row>
-            <textbox id="CloseTab" value="C-xk" />
-            <description value="closes the tab" />
-          </row>
           <row>
             <textbox id="OpenFile" value="C-xC-f" />
             <description value="opens a file" />
@@ -408,28 +388,12 @@
             <description value="copy title and url" />
           </row>
           <row>
-            <textbox id="WebSearch" value="C-xC-e" />
+            <textbox id="WebSearch" value="C-xC-s" />
             <description value="web search" />
           </row>
           <row>
             <textbox id="MapSearch" value="C-xC-a" />
             <description value="map search" />
-          </row>
-          <row>
-            <textbox id="SavePage" value="C-xC-s" />
-            <description value="save page" />
-          </row>
-        </rows>
-      </grid>
-      <grid flex="1">
-        <columns>
-          <column />
-          <column />
-        </columns>
-        <rows>
-          <row>
-            <textbox id="SelectAll" value="C-xh" />
-            <description value="selects all" />
           </row>
         </rows>
       </grid>

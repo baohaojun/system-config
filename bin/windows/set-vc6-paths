@@ -1,9 +1,0 @@
-#!/bin/bash
-
-cd ~/vc6/inc
-find "$(readlink -f ".")" -maxdepth 1 -ipath "*/.svn" -prune  -o \( -xtype d -print0 \)|xargs -0 bash -c 'echo -n set INCLUDE=; for x in "$@"; do cygpath -ad "$(readlink -f "$x")" |tr -d "\r\n"; echo -n \;; done' xx
-
-echo
-
-cd ~/vc6/lib
-find "$(readlink -f ".")" -maxdepth 1 -ipath "*/.svn" -prune  -o \( -xtype d -print0 \)|xargs -0 bash -c 'echo -n set LIB=; for x in "$@"; do cygpath -ad "$(readlink -f "$x")" |tr -d "\r\n"; echo -n \;; done' xx

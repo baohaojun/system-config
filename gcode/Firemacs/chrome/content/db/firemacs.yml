@@ -83,13 +83,6 @@ body: this._sfun.moveTab(1);
 desc: moves to the next tab
 type: 
 -
-name: AllTabs
-case: Common
-keyx: C-xb
-body: this._sfun.allTabs();
-desc: tabs overview with filter
-type: 
--
 name: ViScrollLineUp
 case: View
 keyx: k
@@ -102,20 +95,6 @@ case: View
 keyx: j
 body: goDoCommand('cmd_scrollLineDown');
 desc: scrolls a line down
-type: 
--
-name: ViScrollLeft
-case: View
-keyx: H
-body: goDoCommand('cmd_scrollLeft');
-desc: scrolls left
-type: 
--
-name: ViScrollRight
-case: View
-keyx: L
-body: goDoCommand('cmd_scrollRight');
-desc: scrolls right
 type: 
 -
 name: ViPreviousTab
@@ -506,7 +485,7 @@ type:
 name: CopyUrl
 case: Common
 keyx: C-M-u
-body: this._sfun.copyText(getBrowser().contentDocument.location.href); this._sfun._displayMessage('URL copied', 2000);
+body: this._sfun.copyText(getBrowser().contentDocument.URL); this._sfun._displayMessage('URL copied', 2000);
 desc: copy url
 type: 
 -
@@ -526,7 +505,7 @@ type:
 -
 name: WebSearch
 case: Common
-keyx: C-xC-e
+keyx: C-xC-s
 body: this._sfun.webSearch(e);
 desc: web search
 type: 
@@ -536,13 +515,6 @@ case: Common
 keyx: C-xC-a
 body: this._sfun.mapSearch(e);
 desc: map search
-type: 
--
-name: SavePage
-case: Common
-keyx: C-xC-s
-body: this._sfun.pageSave(e);
-desc: save page
 type: 
 -
 name: PreviousCompletion
@@ -557,11 +529,4 @@ case: Menu
 keyx: C-n
 body: this._sfun.NextCompletion(e);
 desc: moves to the next line
-type: 
--
-name: SelectAll
-case: Common
-keyx: C-xh
-body: goDoCommand('cmd_selectAll')
-desc: selects all
 type: 

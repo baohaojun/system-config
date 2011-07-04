@@ -11,11 +11,8 @@ FmxConfig._names = [
   'ScrollLineDown',
   'PreviousTab',
   'NextTab',
-  'AllTabs',
   'ViScrollLineUp',
   'ViScrollLineDown',
-  'ViScrollLeft',
-  'ViScrollRight',
   'ViPreviousTab',
   'ViNextTab',
   'ViScrollPageUp',
@@ -76,10 +73,8 @@ FmxConfig._names = [
   'CopyTitleAndUrl',
   'WebSearch',
   'MapSearch',
-  'SavePage',
   'PreviousCompletion',
-  'NextCompletion',
-  'SelectAll'
+  'NextCompletion'
 ];
 
 FmxConfig._boolNames = [

@@ -333,11 +333,7 @@ skipthisfile(const char *path)
 			fprintf(stderr, "skipthisfile(1): %s\n", path);
 #endif
 /* fprintf(stderr, "skipthisfile: skip %s\n", path);*/
-		const char * suffix;
-		const char * lang;
-
-		suffix = locatestring(path, ".", MATCH_LAST);
-		return decide_lang_exuberant(suffix, path) == NULL;
+		return 1;
 	}
 	/*
 	 * list check.
@@ -540,10 +536,6 @@ find_read(void)
  *
  *	r)		path
  */
-typedef int langType;
-langType getPatternLanguage (const char *const fileName);
-extern const char *baseFilename (const char *const filePath);
-#define LANG_IGNORE (-2)
 char *
 find_read_traverse(void)
 {
@@ -595,8 +587,6 @@ find_read_traverse(void)
 				 */
 				if (regexec(suff, path, 0, 0, 0) == 0) {
 					/* source file */
-					strlimcpy(val, path, sizeof(val));
-				} else if (getPatternLanguage(path) != LANG_IGNORE) {
 					strlimcpy(val, path, sizeof(val));
 				} else {
 					/* other file like 'Makefile' */
@@ -708,7 +698,7 @@ find_read_filelist(void)
 		 * A blank at the head of path means
 		 * other than source file.
 		 */
-		if (regexec(suff, path, 0, 0, 0) != 0 && getPatternLanguage(path) == LANG_IGNORE)
+		if (regexec(suff, path, 0, 0, 0) != 0)
 			*--path = ' ';
 		return path;
 	}

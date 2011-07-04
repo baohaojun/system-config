@@ -1,3 +1,0 @@
-#!/bin/bash
-
-cat ~/doc/pinmux.csv|grep $@ -i  |awk -F, '{printf("%s %s %s\n", $3, $4, $9)}'

@@ -1,5 +1,0 @@
-#!/bin/bash -i
-set -e
-set -x
-
-cd .repo/.. && test -e buildspec.mk && time make -j8 -l8 -k "$@"

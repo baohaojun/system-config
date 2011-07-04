@@ -1,8 +1,5 @@
-all: gtagsAntlrJavaParser.class JavaLexer.class JavaParser.class 
+all: gtagsAntlrJavaParser.class JavaLexer.class JavaParser.class
 	jar cf ~/bin/linux/ext/`uname -m`/gtagsAntlrJavaParser.jar *.class
-
-clean:
-	git clean -xfd
 
 JavaLexer.java JavaParser.java : Java.g
 	java org.antlr.Tool Java.g
@@ -17,4 +14,3 @@ clean:
 
 test: all
 	for x in *.java; do echo $$x; done | ~/bin/linux/gtagsAntlrJavaParser
-

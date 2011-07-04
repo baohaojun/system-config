@@ -50,7 +50,6 @@ The author of Firemacs is Kazu YAMAMOTO <kazu@Mew.org>
   5.4) Create the "chrome.manifest" file whose contents are:
 
 ----
-overlay	chrome://browser/content/browser.xul	chrome://firemacs/content/firemacs.xul application={ec8030f7-c20a-464f-9b0e-13a3a9e97384} appversion>=4.0
 overlay	chrome://browser/content/browser.xul	chrome://firemacs/content/statusbar.xul
 content	firemacs	chrome/content/
 skin	firemacs	classic/1.0	chrome/skin/
@@ -74,11 +73,8 @@ skin	firemacs	classic/1.0	chrome/skin/
   - "make.hs" will create these three files above from "firemacs.yml"
     and "config.xul".
 
-  "make.hs" is written by Haskell. You need to install Haskell
-  Platform.
-
-  To compile and run "make.hs", type in the "chrome/content/db"
-  directory:
+  "make.hs" is written by Haskell. To compile and run it, type in the
+  "chrome/content/db" directory:
 
 	% runghc make.hs
 	Generating "../config-name.js"... done

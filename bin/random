@@ -1,2 +1,0 @@
-#!/bin/bash
-awk 'BEGIN{srand(); printf("%d\n", int(rand() * '"${1-10}"'))}'

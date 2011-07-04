@@ -1,8 +1,5 @@
-0-59/15 *  * * * . ~/.bash_path; offlineimap -l ~/.offlineimap.log.$$
-0       0  * * * . ~/.bash_path; ~/bin/linux/cron-code-reading
-0       *  * * * . ~/.bash_path;  ~/bin/linux/backup_where
-0       *  * * * . ~/.bash_path; ~/bin/linux/jira-getissues
-30      22 * * * . ~/.bash_path; ~/bin/linux/update-repo-bhj
-0       20 * * * . ~/.bash_path; ~/bin/config-save-to-gmail
-1       1  * * * . ~/.bash_path; ~/bin/linux/download-today
-0       0  * * * . ~/.bash_path; ~/bin/linux/update-repo-projects; ~/bin/linux/cron-code-reading
+0,59/15 * * * * offlineimap >/dev/null 2>&1
+13 * * * * ps aux|grep offlineimap|grep python|awk '{print $2}'|xargs kill >/dev/null 2>&1
+0 0 * * * ~/bin/linux/cron-code-reading
+0 * * * * ~/bin/linux/backup_where
+

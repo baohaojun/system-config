@@ -31,10 +31,6 @@
 #include <strings.h>
 #endif
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include "checkalloc.h"
 #include "die.h"
 #include "dbop.h"
@@ -85,8 +81,8 @@ static int created;
  *      ./aaa.c\0       11\0
  *      ./README\0      12\0o\0         <=== 'o' means other files.
  */
-static int support_version = 3;	/* acceptable format version   */
-static int create_version = 3;	/* format version of newly created tag file */
+static int support_version = 2;	/* acceptable format version   */
+static int create_version = 2;	/* format version of newly created tag file */
 /*
  * gpath_open: open gpath tag file
  *
@@ -152,20 +148,12 @@ gpath_put(const char *path, int type)
 	assert(opened > 0);
 	if (_mode == 1 && created)
 		return;
-	
-	char* p;
-	int key;
-
-	if ((p = dbop_get(dbop, path)) != NULL) {
-		key = atoi(p);
-		printf("path %s already has key %d\n", path, key);
-	} else {
-		/*
-		 * generate new file id for the path.
-		 */
-		key = _nextkey++;
-	}
-	snprintf(fid, sizeof(fid), "%d", key);
+	if (dbop_get(dbop, path) != NULL)
+		return;
+	/*
+	 * generate new file id for the path.
+	 */
+	snprintf(fid, sizeof(fid), "%d", _nextkey++);
 	/*
 	 * path => fid mapping.
 	 */
@@ -173,16 +161,6 @@ gpath_put(const char *path, int type)
 	strbuf_puts0(sb, fid);
 	if (type == GPATH_OTHER)
 		strbuf_puts0(sb, "o");
-	else
-		strbuf_puts0(sb, "s");
-
-	struct stat st;
-	memset(&st, 0, sizeof st);
-	stat(path, &st);
-	char mtime[32];
-	snprintf(mtime, sizeof mtime, "0x%x", st.st_mtime);
-	strbuf_puts0(sb, mtime);	
-	
 	dbop_put_withlen(dbop, path, strbuf_value(sb), strbuf_getlen(sb));
 	/*
 	 * fid => path mapping.
@@ -191,38 +169,7 @@ gpath_put(const char *path, int type)
 	strbuf_puts0(sb, path);
 	if (type == GPATH_OTHER)
 		strbuf_puts0(sb, "o");
-	else
-		strbuf_puts0(sb, "s");
-	strbuf_puts0(sb, mtime);
-
 	dbop_put_withlen(dbop, fid, strbuf_value(sb), strbuf_getlen(sb));
-}
-
-time_t
-gpath_mtime(DBOP* dbop_x, const char* key)
-{
-	if (!dbop_x) {
-		dbop_x = dbop;
-		assert(dbop);
-	}
-	const char *p;
-	if ((p = dbop_get(dbop_x, key)) == NULL)
-		return 0;
-	
-	
-	size_t dlen = strlen(p); //data
-	if (dbop_x->lastsize <= dlen + 1)
-		die("illegal format (gpath_mtime).");
-	
-	p += dlen + 1;
-
-	size_t flen = strlen(p); //flag
-	if (dbop_x->lastsize <= dlen + flen + 2)
-		die("illegal format (gpath_mtime).");
-	
-	p += flen + 1;
-
-	return (time_t) strtol(p, NULL, 0);
 }
 /*
  * gpath_path2fid: convert path into id

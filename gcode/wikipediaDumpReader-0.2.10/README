@@ -1,0 +1,90 @@
+A Wikipedia-Dump Reader.
+
+This Reader displays the text-only archives of wikipedia, which can be
+downloaded from :
+	http://download.wikimedia.org/backup-index.html
+and are usually named like :
+	pages-articles.xml.bz2
+
+It requires Python, Qt and PyQt. Altough only Qt4/PyQt4 is supported now, the
+old Qt3/PyQt3 code is still included and should still work.
+It also assumes you have basic tools like gzip, zcat and zgrep, tail, head...
+
+(Optional) You will need the command line applications "texvc" and "latex" in
+order to render math expressions. (texvc is provided with this application)
+
+This reader is not yet complete although fairly useable in its current form.
+
+Usage
+-----
+1. on the commandline, run:
+	python dumpReader.py
+   or just click on it from your favorite file manager
+
+2. Browse and select the archive (some file probably named *.xml.bz2)
+
+3. If it's the first time, an index is created, which can take a lot of time.
+   The english dumps currently need more than an hour. Note that if you
+   abort during the index creation, it will be useable, altough obviously
+   incomplete. (Useful for users who want to quicktest the program ;)
+   Currently, the program need write permission on the same directory.
+
+4. The main windows contains the article title area (top), main text area
+   (left) and article history (right). You can go to an article by typing
+   its name then click the "Go" button, or by clicking a link from the main
+   text area. By default, clicking a link load the article in the background.
+   The search-box area allows to keyword search among the articles' title.
+   You can also go to a random article by clicking "Go" with an empty entry.
+
+*  You will need the command line application "Texvc" and in order to
+   render math expressions. This tool requires "Latex". Note that it
+   will use a directory (usually /tmp/wikipediaDumpReader_texvm/) to
+   render the images, which is cleared at the restart of the application.
+
+FAQ
+---
+Q. Can i get my dump quickly up-to-date while i'm online ?
+A. No. As far as i know, there is no way to "update" your currently downloaded
+   xml.bz2 dump to sync it. The only way to get up-to-date is to delete the old 
+   dump (and also generated indexes files) and to fully re-download a new one.
+
+Q. I don't like the background-loading behaviour. Can i change it ?
+A. If you want to immediately see the content of clicked links, you have to
+   manually modify the program : Edit the "dumpReader.py" file, go to the line
+   which says "self.loadTabInBackground = True" and change "True" to "False".
+
+Q. Can i disable the graphical rendering of the maths ? ("latex rendering")
+A. Yes, but you will have to manually modify the program : Edit the
+   "dumpReader.py" file, go to the line which says "self.latexRendering = True"
+   and change "True" to "False"
+
+Q. Can i change the text size ?
+A. Font Size can now be changed, altough you will have to manually modify
+   the program : Edit the "dumpReader.py" file, go to the line which says
+   "fontSize = 9" and change "9" to whatever point size fits you best.
+   This will only change the font size of the text area.
+
+Q. Can i edit the User Interface to change more settings ?
+A. If you have the Qt4 "designer" program, shipped with Qt-tools, you
+   can edit "form3.ui" to fit your needs
+
+Q. What is the "debug" button ?
+A. This is needed only for developers. When toggle-on, each newly-loaded
+   article is also copied on the upper area. When pressing "apply regex",
+   it's filtered to the lower area.
+
+Q. The program says : RuntimeWarning: Python C API version mismatch for
+   module bz2: This Python has API version 1013, module bz2 has version 1012.
+A. This can be safely ignored. This occurs because i provides a precompiled
+   binary bz2.so module. You are welcome to recompile your own if you want
+   from the src/ directory. Warning : this is NOT the standard bz2.so python
+   module, it's a static copy with some changes.
+
+Q. How can I delete entries from the dump-selection initial dialog box ?
+A. There is no other way than editing the file ".wikipediadumpreaderrc" from
+   your home directory and removing the lines you don't want. You may need
+   to check "display hidden files" on your file manager to find this file.
+
+--
+Benjamin Thyreau - 7/2009
+wikireader@decideur.info

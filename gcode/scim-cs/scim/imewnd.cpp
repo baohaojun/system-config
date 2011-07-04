@@ -247,7 +247,7 @@ hdc_with_font::hdc_with_font(HDC hdc, wstring fnt_family, int size)
 	LOGFONT lfFont;
 	ZeroMemory(&lfFont, sizeof(lfFont));
 	m_dc = hdc;
-	m_old_font = (HFONT) GetCurrentObject(hdc, OBJ_FONT);
+	m_old_font = GetCurrentObject(hdc, OBJ_FONT);
 	lfFont.lfHeight = -MulDiv(size, GetDeviceCaps(hdc, LOGPIXELSY), 72);
 	lfFont.lfCharSet = DEFAULT_CHARSET;
 	lstrcpy(lfFont.lfFaceName, fnt_family.c_str());

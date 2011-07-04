@@ -3,8 +3,8 @@
 $arg1 = $ARGV[0];
 $arg2 = $ARGV[1];
 
-@arg1 = split(/\s|'|:/, $arg1);
-@arg2 = split(/\s|'|:/, $arg2);
+@arg1 = split(/\s|'/, $arg1);
+@arg2 = split(/\s|'/, $arg2);
 
 for (@arg2) {
     $arg2{$_} = 1;
