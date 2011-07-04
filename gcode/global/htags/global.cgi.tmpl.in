@@ -37,20 +37,29 @@ sub error {
 sub message {
 	"@message_begin@" . $_[0] . "@message_end@\n";
 }
-$basedir = "..";
-$url = $ENV{'HTTP_REFERER'};
-if (!$url) {
-	print header();
-	print error();
-	print message("Your browser doesn't send HTTP_REFERER. Please use another one.");
-	print tailer();
-	exit 0;
+@pairs = split (/&/, $ENV{'QUERY_STRING'});
+foreach $p (@pairs) {
+	($name, $value) = split(/=/, $p);
+	$value =~ tr/+/ /;
+	$value =~ s/%([\dA-Fa-f][\dA-Fa-f])/pack("C", hex($1))/eg;
+	$form{$name} = $value;
 }
-$basedir = $url;
-$basedir =~ s!/[^\/]+$!!;		# remove file name.
-$basedir =~ s!/defines$!!;
-$basedir =~ s!/S$!!;
-$basedir =~ s!/$!!;
+$basedir = "..";
+if ($form{'id'}) {
+	$url = $ENV{'HTTP_REFERER'};
+	if (!$url) {
+		print header();
+		print error();
+		print message("Your browser doesn't send HTTP_REFERER. Please use another one.");
+		print tailer();
+		exit 0;
+	}
+	$basedir = $url;
+	$basedir =~ s!/[^\/]+$!!;		# remove file name.
+	$basedir =~ s!/defines$!!;
+	$basedir =~ s!/S$!!;
+	$basedir =~ s!/$!!;
+}
 sub error_and_exit {
 	print header();
 	print error();
@@ -60,13 +69,6 @@ sub error_and_exit {
 }
 if (! -x '@globalpath@') {
 	error_and_exit("Server side command not found.");
-}
-@pairs = split (/&/, $ENV{'QUERY_STRING'});
-foreach $p (@pairs) {
-	($name, $value) = split(/=/, $p);
-	$value =~ tr/+/ /;
-	$value =~ s/%([\dA-Fa-f][\dA-Fa-f])/pack("C", hex($1))/eg;
-	$form{$name} = $value;
 }
 if ($form{'pattern'} eq '') {
 	error_and_exit("Pattern not specified.");
@@ -99,7 +101,7 @@ if ($form{'other'} && ($flag eq 'g' || $flag eq 'P')) {
 	$oflag = 'o';
 }
 if ($form{'id'}) {
-	$sitekeys = "@DATADIR@/gtags/sitekeys/" . $form{'id'};
+	$sitekeys = "@LOCALSTATEDIR@/gtags/sitekeys/" . $form{'id'};
 	if (-f $sitekeys && open(KEY, $sitekeys)) {
 		$distpath = <KEY>;
 		chop($distpath);
@@ -110,16 +112,6 @@ if ($form{'id'}) {
 	chdir("$distpath/cgi-bin");
 	if ($?) {
 		error_and_exit("Couldn't find tag directory in secure mode.");
-	}
-	if (-s "../sitekey" && open(KEY, "../sitekey")) {
-		$sitekey = <KEY>;
-		chop($sitekey);
-		close(KEY);
-	} else {
-		error_and_exit("Couldn't open unique key file(2).");
-	}
-	unless ($sitekey eq $form{'id'}) {
-		error_and_exit("Site key is not corresponding.");
 	}
 }
 $html = (-s "../compress") ? 'ghtml' : 'html';

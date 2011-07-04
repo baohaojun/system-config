@@ -1,0 +1,61 @@
+== Introduction ==
+IBus-Sdim is the IM Engine framework for table-based input methods, such as
+ZhengMa, WuBi, ErBi, CangJie and so on.
+The aim of IBus-Sdim is to make the users of table-based input methods
+can enjoy the typing on Linux environment.
+Definitly, it is far from perfect, so if you have any wish or any
+suggestion, please file a issue on http://code.google.com/p/ibus/issues
+or send me an email <acevery@gmail.com>, I would be very please to hear
+from you :)
+
+== Key Bindings ==
+    Notice: Ctrl is "Control Key", Shift_L is the left "Shift Key",
+            Shift_R is the right "Shift Key", Alt is the "Alt Key",
+            Arrow_Left is the "Arrow Key" point to left, Arrow_Right is
+            the "Arrow Key" point to right, similarly as  Arrow_Up and
+            Arrow_Down.
+            Cursor is the one in preedit string.
+            [Num1~Num9] means one key in Num1, Num2, Num3, ... ,
+                Num9
+
+Space               commit inputted string.
+Shift_L             when no key inputted: shift the input mode between
+                        English and Sdim mode.
+                    during input: commit the first candidate into
+                        preedit string.
+Shift_R             shift between PinYin mode and Normal mode under
+                        Sdim mode.
+
+Shift_L/Shift_R + 1 input tunes under PinYin mode. the tunes display in
+                  2     aux string area as ↑1, ↑2, ↑3, ↑4, ↑5. 
+                  3     1 is YinPin, 2 is YangPin, 3 is ShangSheng,
+                  4     4 is QuSheng, 5 is QingSheng
+                  5
+
+Arrow_Left          move cursor one character left in preedit string.
+Arrow_Right         move cursor one character right in preedit string.
+Backspace           remove the last input key or last character in
+                        preeidt string.
+Delete              remove one character after the cursor in preedit
+                        string.
+Ctrl + Arrow_Lelf   move the cursor to the front of preedit string.
+Ctrl + Arrow_Right  move the cursor to the end of preedit string.
+Ctrl + Backspace    delete from cursor to the front of preedit string.
+Ctrl + Delete       delete from cursor to the end of preedit string.
+Arrow_Down          mext candidate.
+Arrow_Up            previous candidate.
+Esc                 reset the input method.
+Num1 ~ Num9         select the correspondent candidate and commit
+                        inputted string
+Ctrl + [Num1~Num9]  select the correspondent candidate and commit it
+                        into preedit string
+Alt + [Num1~Num9]   remove the correspondent user-defined phrase.
+Page_Up/Page_Down   page up/down the lookup table of candidates.
+-/+                 when not been used as valid input keys, the same as
+                        Page_Up and Page_Down.
+Ctrl + ,            open/close Single Character Mode, only show single
+                        character not phrases.
+Ctrl + .            shift between full/half punctuation.
+Ctrl + /            shift between direct/normal commit mode.
+Ctrl + ;            shift between different SubCharset in Chinese
+Ctrl + '            show/hide speedmeter

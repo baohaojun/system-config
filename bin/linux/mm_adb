@@ -1,10 +1,17 @@
 #!/bin/bash
+set -o pipefail
 LOG=mm.$$
-#set -e -o pipefail
-mm 2>&1|tee /tmp/$LOG
-adb_files=($(cat /tmp/$LOG|grep '^Install: '|perl -npe 's/.*: //'))
-for x in ${adb_files[@]}; do
+if tty; then
+    mm 2>&1|tee /tmp/$LOG || exit -1
+else
+    cat|tee /tmp/$LOG
+fi
+install_files=($(cat /tmp/$LOG|grep '^Install: '|perl -npe 's/.*: //'))
+copy_files=($(cat /tmp/$LOG|grep -v '.ogg$'|grep "${1:-^Copy:}"|perl -npe 's/'"${1:-^Copy}"': //'))
+
+for x in ${install_files[@]} ${copy_files[@]}; do
     y=`echo $x|perl -npe 's,out/target/product/.*?/,/,'`
+    echo push $x '->' $y
     adb_push $x $y
 done
 

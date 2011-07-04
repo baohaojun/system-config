@@ -16,7 +16,7 @@ export HISTSIZE=2000
 export HISTFILESIZE=100000
 . ~/.bashrc-public
 
-if test `uname` = CYGWIN_NT-5.1
+if test `uname` = CYGWIN_NT-5.1 -o `uname` = CYGWIN_NT-6.1
 then
     . ~/.bashrc-windows
 else
@@ -30,3 +30,16 @@ esac
 alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
 export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
+export USE_CCACHE=1
+alias hir='history -r'
+if test -e ~/.bash_path; then
+    . ~/.bash_path
+else
+    export PATH=`echo -n $PATH|perl -a -F: -ne 'for (@F) {print "$_\n"}'|uniq-even-non-ajacent |perl -ne 'chomp; print ":" unless (1..1); print $_'`
+    printf 'export PATH=%q' "$PATH" > ~/.bash_path
+fi
+if test "$TERM" = dumb; then
+    . ~/.bashrc-in-emacs
+else
+    . ~/.bashrc-no-emacs
+fi

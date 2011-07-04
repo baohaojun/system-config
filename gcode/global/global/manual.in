@@ -27,10 +27,10 @@
 @SYNOPSIS
 	@name{global} [-aGilnqrstTvx][-e] @arg{pattern}
 	@name{global} -c[iIqsv] @arg{prefix}
-	@name{global} -f[anqrstvx] @arg{files}
-	@name{global} -g[aGilnoOqtvx][-e] @arg{pattern}
+	@name{global} -f[anqrstvx][-L file-list] @arg{files}
+	@name{global} -g[aGilnoOqtvVx][-L file-list][-e] @arg{pattern} [@arg{files}]
 	@name{global} -I[ailnqtvx][-e] @arg{pattern}
-	@name{global} -P[aGilnoOqtvx][-e] @arg{pattern}
+	@name{global} -P[aGilnoOqtvVx][-e] @arg{pattern}
 	@name{global} -p[qrv]
 	@name{global} -u[qv]
 @DESCRIPTION
@@ -63,8 +63,9 @@
 	@item{@option{-f}, @option{--file} @arg{files}}
 		Print all objects in the @arg{files}.
 		This option implies the @option{-x} option.
-	@item{@option{-g}, @option{--grep} @arg{pattern}}
+	@item{@option{-g}, @option{--grep} @arg{pattern} [@arg{files}]}
 		Print all lines which match to the @arg{pattern}.
+		If @arg{files} is specified, this command searchs in the files.
 	@item{@option{--help}}
 		Show help.
 	@item{@option{-I}, @option{--idutils} @arg{pattern}}
@@ -111,6 +112,8 @@
 		Ignore case distinctions in the pattern.
 	@item{@option{-l}, @option{--local}}
 		Print only objects which exist under the current directory.
+	@item{@option{-L}, @option{--file-list} @arg{file-list}}
+		Obtain files from @arg{file-list} in addition to the arguments.
 	@item{@option{-n}, @option{--nofilter}}
 		Suppress sort filter and path conversion filter.
 	@item{@option{-O}, @option{--only-other}}
@@ -121,6 +124,8 @@
 		Treat not only source files but also text files other than source code
 		like @file{README}.
 		This option is valid only with the @option{-g} or @option{-P} command.
+	@item{@option{--print0}}
+		Print each record followed by a null character instead of a newline.
 	@item{@option{-q}, @option{--quiet}}
 		Quiet mode.
 	@item{@option{-r}, @option{--reference}, @option{--rootdir}}
@@ -144,6 +149,9 @@
 		Use standard ctags format.
 	@item{@option{-v}, @option{--verbose}}
 		Verbose mode.
+	@item{@option{-V}, @option{--invert-match}}
+		Invert the sense of matching, to select non-matching lines.
+		This option is valid in the @option{-g} and @option{-P} command.
 	@item{@option{-x}, @option{--cxref}}
 		Use standard ctags cxref (with the @arg{-x}) format.
 	@end_itemize
@@ -188,7 +196,7 @@
 		If environment variable @var{GTAGSROOT} is not set
 		and file @file{GTAGSROOT} exists in the same directory with @file{GTAGS}
 		then @name{global} set the @var{GTAGSROOT} to the content of the file.
-	@item{@file{/etc/gtags.conf}, @file{$HOME/.globalrc}}
+	@item{@file{$HOME/.globalrc}, @file{/etc/gtags.conf}, @file{[sysconfdir]/gtags.conf}}
 		Configuration file.
 	@end_itemize
 @ENVIRONMENT

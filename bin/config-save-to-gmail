@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+ip=`ifconfig |grep -P 'inet addr:.*?\s' -o |perl -ne 'print if 1..1'`
+cd ~/windows-config/
+git add .
+
+if git diff --quiet origin/master; then
+    exit
+fi
+
+git diff --binary origin/master > ~/.new_config_diff
+touch ~/.old_config_diff
+
+if ! diff ~/.new_config_diff ~/.old_config_diff; then
+    mailx -s "config-save-gmail from $ip" baohaojun@gmail.com -a ~/.new_config_diff
+    mv ~/.new_config_diff ~/.old_config_diff
+else
+    echo old and new diff is the same
+fi
+

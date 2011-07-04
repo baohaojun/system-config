@@ -1,0 +1,3 @@
+version=3
+opts=downloadurlmangle=s#.*(ibus-sdim-([\d.]+)\.tar\.gz).*#http://ibus.googlecode.com/files/$1#,filenamemangle=s#.*(ibus-sdim-([\d.]+)\.tar\.gz).*#$1# \
+    http://code.google.com/p/ibus/downloads/list ^.*detail\?name=ibus-sdim-([\d.]+)\.tar\.gz.*

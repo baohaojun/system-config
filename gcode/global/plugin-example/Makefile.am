@@ -14,9 +14,9 @@ plugindir = ${libdir}/gtags
 plugin_LTLIBRARIES = exuberant-ctags.la gtags-antlr-java.la
 
 exuberant_ctags_la_SOURCES = exuberant-ctags.c
-exuberant_ctags_la_LDFLAGS = -module -avoid-version
+exuberant_ctags_la_LDFLAGS = -module -avoid-version -no-undefined -version-info 0:0:0
 
 gtags_antlr_java_la_SOURCES = gtags-antlr-java.c
-gtags_antlr_java_la_LDFLAGS = -module -avoid-version 
+gtags_antlr_java_la_LDFLAGS = -module -avoid-version -no-undefined -version-info 0:0:0
 
 INCLUDES = @INCLUDES@

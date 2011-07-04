@@ -1,0 +1,13 @@
+#!/bin/bash
+
+perl -a -F\; -ne 'use String::ShellQuote; 
+for (@F) {
+    chomp; 
+    $_ = shell_quote($_); 
+    $_ = `cygpath -alw $_ 2>/dev/null`; 
+    chomp;
+    $_ = shell_quote($_);
+    $_ = `cygpath -au $_ 2>/dev/null`;
+    chomp;
+    -d $_ and print $_ . ":";
+}'

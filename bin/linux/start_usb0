@@ -1,0 +1,4 @@
+#!/bin/bash
+sudo ifconfig usb0 192.168.100.1
+sudo killall -9 adb 
+sudo bash -c "ADB_HOST=192.168.100.2 ADBHOST=192.168.100.2 `which adb` devices"

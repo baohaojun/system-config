@@ -56,17 +56,6 @@
 (require 'grep-buffers)
 (require 'htmlize)
 
-(require 'muse-mode)     ; load authoring mode
-(require 'muse-html)     ; load publishing styles I use
-(require 'muse-project)
-(setq muse-project-alist
-      '(("Website" ("~/Pages" :default "index")
-         (:base "html" :path "/scp:bhj@192.168.0.46:/var/www/rayzer_doc"))))
-
-(setq muse-project-alist
-      '(("rayzer_doc" ("~/rayzer_doc" :default "index")
-         (:base "html" :path "/scp:bhj@192.168.0.46:/var/www/rayzer_doc"))))
-
 (setq-default abbrev-mode t)                                                                   
 (read-abbrev-file "~/.abbrev_defs")
 (setq save-abbrevs t)   
@@ -135,49 +124,53 @@
 
 (global-set-key [(meta ?/)] 'hippie-expand)
 
-(defun bhj-c-beginning-of-defun ()
-  (interactive)
+(defun bhj-c-beginning-of-defun (&optional arg)
+  (interactive "^p")
   (progn
-    (push-mark)
-    (c-beginning-of-defun)))
+    (unless mark-active
+      (push-mark))
+    (ctags-beginning-of-defun arg)))
 
-(defun bhj-c-end-of-defun ()
-  (interactive)
+(defun bhj-c-end-of-defun (&optional arg)
+  (interactive "^p")
   (progn
-    (push-mark)
-    (c-end-of-defun)))
+    (unless mark-active
+      (push-mark))
+    (ctags-beginning-of-defun (- arg))))
+
+(mapcar (lambda (x) (add-hook x (lambda ()
+                    (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
+                    (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
+                    (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
+                    (c-set-offset 'innamespace 0)
+                    (c-set-offset 'substatement-open 0))))
+        (list 'c-mode-hook 'c++-mode-hook))
+        
 
 (defun linux-c-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
   (c-mode) 
-  (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
-  (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
-  (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "k&r")
-  (setq tab-width 4)
+  (setq tab-width 8)
   (setq indent-tabs-mode t)
-  (c-set-offset 'innamespace 0)
-  (setq c-basic-offset 4))
+  (setq c-basic-offset 8))
 
 (defun linux-c++-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
   (c++-mode) 
-  (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
-  (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
-  (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
   (c-set-style "k&r")
   (setq tab-width 4)
-  (c-set-offset 'innamespace 0)
-  (setq indent-tabs-mode t)
+  (setq indent-tabs-mode nil)
   (setq c-basic-offset 4))
 
-(setq auto-mode-alist (cons '(".*\\.[c]$" . linux-c-mode)
+(define-key java-mode-map [?\C-\M-a] 'bhj-c-beginning-of-defun)
+(define-key java-mode-map [?\C-\M-e] 'bhj-c-end-of-defun)
+
+(setq auto-mode-alist (cons '(".*/kernel.*\\.[ch]$" . linux-c-mode)
                             auto-mode-alist))
 (setq auto-mode-alist (cons '(".*\\.cpp$" . linux-c++-mode)
-                            auto-mode-alist))
-(setq auto-mode-alist (cons '(".*\\.h$" . linux-c++-mode)
                             auto-mode-alist))
 
 (setq frame-title-format "emacs@%b")
@@ -185,10 +178,6 @@
 (put 'set-goal-column 'disabled nil)
 (put 'downcase-region 'disabled nil)
 (put 'LaTeX-hide-environment 'disabled nil)
-
-
-
-
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
@@ -231,26 +220,12 @@
 
 (put 'narrow-to-region 'disabled nil)
 
-(add-hook 'cscope-list-entry-hook 
-          (lambda ()
-            (setq next-error-function 'cscope-next-error-bhj
-                  next-error-last-buffer (current-buffer))))
-          
                                     
-(defun my-cscope-find-global-definition ()
-  (interactive)
-  (nodup-ring-insert cscope-marker-ring (point-marker))
-  (call-interactively 'cscope-find-global-definition))
 
-(define-key global-map [(meta .)] 'my-cscope-find-global-definition)
 (require 'js)
 (define-key js-mode-map [(meta .)] 'my-cscope-find-global-definition)
 (define-key global-map [(meta control ,)] 'cscope-pop-mark)
 (define-key global-map [(meta control .)] 'cscope-pop-mark-back)
-
-(eval-after-load "gtags" '(progn 
-                            (define-key gtags-mode-map [(meta *)] 'cscope-pop-mark)
-                            (define-key gtags-select-mode-map [(meta *)] 'cscope-pop-mark)))
 
 (prefer-coding-system 'gbk)
 (prefer-coding-system 'utf-8-unix)
@@ -274,6 +249,16 @@
                             (read-string (format "search google with [%s]: " search-string) nil nil search-string))
                       (call-process "bash" nil nil nil "googleemacs.sh" search-string)
                       ))))
+
+(defun wiki-local-bhj ()
+  (interactive)
+  (let 
+      ((search-string (current-word))) 
+    (progn     
+      (setq search-string
+            (read-string (format "search local wiki with [%s]: " search-string) nil nil search-string))
+      (call-process "bash" nil nil nil "local-wiki.sh" search-string)
+      )))
 
 (standard-display-ascii ?\221 "\`")
 (standard-display-ascii ?\222 "\'")
@@ -304,12 +289,10 @@
 (defun bhj-insert-pwdu ()
   (interactive)
   (insert "'")
-  (if (eq system-type 'cygwin)
-      (insert 
-       (replace-regexp-in-string
-        "^/.?scp:.*?@.*?:" "" 
-        (expand-file-name default-directory)))
-    (insert (expand-file-name default-directory)))
+  (insert 
+   (replace-regexp-in-string
+    "^/.?scp:.*?@.*?:" "" 
+    (expand-file-name default-directory)))
   (insert "'"))
 
 ;; old time motorola usage
@@ -365,15 +348,58 @@
                     (call-interactively 'grep)
                     (setq grep-rgrep-history grep-history))))
 
+(defvar grep-gtags-history nil)
+(global-set-key [(meta .)]
+                (lambda ()
+                  (interactive)
+                  (let ((grep-history grep-gtags-history)
+                        (my-grep-command "grep-gtags -e pat")
+                        (current-prefix-arg 4))
+                    (nodup-ring-insert cscope-marker-ring (point-marker))
+                    (let ((file (my-buffer-file-name (current-buffer))))
+                      (if (file-remote-p file)
+                          (let ((process-environment tramp-remote-process-environment))
+                            (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
+                            (setq tramp-remote-process-environment process-environment))
+                        (setenv "GTAGS_START_FILE" file)))
+                    (call-interactively 'grep)
+                    (setq grep-gtags-history grep-history))))
+
+(defun grep-tag-default-path ()
+  (or (and transient-mark-mode mark-active
+	   (/= (point) (mark))
+	   (buffer-substring-no-properties (point) (mark)))
+      (save-excursion
+        (let* ((re "[^-a-zA-Z0-9._/]")
+               (p1 (progn (search-backward-regexp re)
+                          (if (looking-at "(")
+                              (progn
+                                (search-backward-regexp "\\." (line-beginning-position))
+                                (prog1
+                                    (1+ (point))
+                                  (search-forward-regexp "(")))
+                            (1+ (point)))))
+               (p2 (progn (forward-char)
+                          (search-forward-regexp re)
+                          (backward-char)
+                          (if (looking-at ":[0-9]+")
+                              (progn
+                                (forward-char)
+                                (search-forward-regexp "[^0-9]")
+                                (1- (point)))
+                            (point)))))
+          (buffer-substring-no-properties p1 p2)))))
+
 (global-set-key [(meta s) ?p] 
                 (lambda ()
                   (interactive)
                   (let ((grep-history grep-find-file-history)
                         (my-grep-command "beagle-grep.sh -f -e pat")
                         (current-prefix-arg 4))
-                    (nodup-ring-insert cscope-marker-ring (point-marker))
-                    (call-interactively 'grep)
-                    (setq grep-find-file-history grep-history))))
+                    (flet ((grep-tag-default () (grep-tag-default-path)))
+                      (nodup-ring-insert cscope-marker-ring (point-marker))
+                      (call-interactively 'grep)
+                      (setq grep-find-file-history grep-history)))))
                     
 
 (global-set-key [(control meta o)] 'bhj-occur)
@@ -428,25 +454,45 @@
 (fset 'bhj-preview-markdown
    (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([24 49 67108896 3 2 134217848 98 104 106 45 109 105 109 101 tab return 3 return 80 24 111 67108911 24 111] 0 "%d")) arg)))
 
-(fset 'bhj-isearch-yank
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("\371" 0 "%d")) arg)))
-
 (defun bhj-isearch-from-bod (&optional col-indent)
   (interactive "p")
   (let ((word (current-word)))
-    (push-mark)
-    (with-temp-buffer
-      (insert word)
-      (kill-ring-save (point-min) (point-max)))
-    (beginning-of-indent col-indent)
-    (call-interactively 'bhj-isearch-yank)))
+    (nodup-ring-insert cscope-marker-ring (point-marker))
+    (bhj-c-beginning-of-defun)
+    (setq regexp-search-ring (cons (concat "\\b" word "\\b") regexp-search-ring))
+    (search-forward-regexp (concat "\\b" word "\\b"))))
 
 (global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
+
+(defun bhj-w3m-scroll-up-or-next-url ()
+  (interactive)
+  (if (pos-visible-in-window-p (point-max))
+      (save-excursion
+        (end-of-buffer)
+        (search-backward-regexp "下一\\|后一\\|还看了")
+        (if (w3m-url-valid (w3m-anchor))
+            (call-interactively 'w3m-view-this-url)
+          (call-interactively 'w3m-next-anchor)
+          (call-interactively 'w3m-view-this-url)))
+    (call-interactively 'w3m-scroll-up-or-next-url)))
+
+(defun bhj-w3m-scroll-down-or-previous-url ()
+  (interactive)
+  (if (pos-visible-in-window-p (point-min))
+      (save-excursion
+        (end-of-buffer)
+         (search-backward-regexp "上一")
+         (call-interactively 'w3m-view-this-url))
+    (call-interactively 'w3m-scroll-down-or-previous-url)))
+
+
 
 (add-hook 'w3m-mode-hook 
           (lambda () 
             (local-set-key [(left)] 'backward-char)
             (local-set-key [(right)] 'forward-char)
+            (local-set-key [(\ )] 'bhj-w3m-scroll-up-or-next-url)
+            (local-set-key [(backspace)] 'bhj-w3m-scroll-down-or-previous-url)
             (local-set-key [(down)] 'next-line)
             (local-set-key [(up)] 'previous-line)
             (local-set-key [(n)] 'next-line)
@@ -463,9 +509,6 @@
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
- '(cscope-display-cscope-buffer t)
- '(cscope-do-not-update-database t)
- '(cscope-program "gtags-cscope-bhj")
  '(delete-old-versions t)
  '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
  '(dictem-server "localhost")
@@ -482,7 +525,8 @@
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
  '(indent-tabs-mode nil)
- '(ispell-program-name "aspell")
+ '(ispell-program-name "aspell" t)
+ '(jira-url "http://192.168.11.11/jira/rpc/xmlrc")
  '(keyboard-coding-system (quote cp936))
  '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
@@ -490,8 +534,6 @@
  '(message-dont-reply-to-names (quote (".*haojun.*")))
  '(message-mail-alias-type (quote ecomplete))
  '(mm-text-html-renderer (quote w3m))
- '(muse-html-charset-default "utf-8")
- '(muse-publish-date-format "%m/%e/%Y")
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
  '(require-final-newline t)
@@ -502,15 +544,18 @@
  '(shell-file-name "/bin/bash")
  '(show-paren-mode t nil (paren))
  '(show-paren-style (quote parenthesis))
+ '(split-width-threshold 800)
  '(starttls-use-gnutls t)
  '(text-mode-hook (quote (text-mode-hook-identify)))
  '(tooltip-mode nil)
  '(tooltip-use-echo-area t)
+ '(tramp-remote-path (quote (tramp-own-remote-path tramp-default-remote-path "/usr/sbin" "/usr/local/bin" "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin" "/usr/pkg/bin" "/usr/contrib/bin")))
  '(tramp-syntax (quote ftp))
  '(tramp-verbose 0)
  '(transient-mark-mode t)
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
+ '(w3m-default-display-inline-images t)
  '(weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("csdn" "http://blog.csdn.net/flowermonk/services/MetaBlogApi.aspx" "flowermonk" "" "814038"))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
@@ -546,28 +591,39 @@
 
 ;;(add-hook 'message-send-hook 'bhj-mimedown)
 
-
-(defun message-display-abbrev ()
-  "Display the next possible abbrev for the text before point."
+(defun bhj-set-reply ()
   (interactive)
-  (when (and (memq (char-after (point-at-bol)) '(?C ?T ?\t ? ))
-	     (message-point-in-header-p)
-	     (save-excursion
-	       (beginning-of-line)
-	       (while (and (memq (char-after) '(?\t ? ))
-			   (zerop (forward-line -1))))
-	       (looking-at "To:\\|Cc:")))
-    (let* ((end (point))
-	   (start (save-excursion
-		    (and (re-search-backward "\\(,\\s +\\|^To: \\|^Cc: \\|^\t\\)" nil t)
-			 (+ (point) (length (match-string 1))))))
-	   (word (when start (buffer-substring start end)))
-	   (match (when (and word
-			     (not (zerop (length word))))
-		    (ecomplete-display-matches 'mail word t))))
-      (when match
-	(delete-region start end)
-	(insert match)))))
+  (save-excursion
+    (let ((receivers
+           (concat
+            (save-restriction (message-narrow-to-headers)
+                              (message-fetch-field "to"))
+            ", "
+            (save-restriction (message-narrow-to-headers)
+                              (message-fetch-field "cc"))
+            ", "
+            (save-restriction (message-narrow-to-headers)
+                              (message-fetch-field "bcc"))))
+          (all-letou t)
+          (start-pos 0))
+
+      (while (and all-letou (string-match "@" receivers start-pos))
+        (setq start-pos (match-end 0))
+        (unless (equal (string-match 
+                    "@adsnexus.com\\|@eee168.com\\|@rayzerlink.com\\|@hzwowpad.com" 
+                    receivers 
+                    (1- start-pos))
+                   (1- start-pos))
+          (setq all-letou nil)))
+
+      (when all-letou
+        (save-excursion
+          (message-goto-from)
+          (message-beginning-of-line)
+          (kill-line)
+          (insert "Bao Haojun at Letou <hjbao@eee168.com>"))))))
+
+(add-hook 'message-send-hook 'bhj-set-reply)
 
 (require 'electric-complete)
 
@@ -634,7 +690,7 @@
 (global-set-key [f5] 'devenv-debug)
 
 
-(setenv "IN_EMACS" "true")
+(setenv "EMACS" "t")
 (define-key weblogger-entry-mode-map "\C-c\C-k" 'ido-kill-buffer)
 
 (defun poor-mans-csharp-mode ()
@@ -649,9 +705,8 @@
 
 (setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
 			      auto-mode-alist))
-(desktop-save-mode 1)
 (require 'saveplace)
-(setq-default save-place t)
+
 (require 'color-theme)
 (condition-case nil
     (progn
@@ -737,25 +792,30 @@
 (defun cscope-search-directory-hierarchy (directory)
   "Look for a cscope database in the directory hierarchy.
 Starting from DIRECTORY, look upwards for a cscope database."
-  (let (this-directory database-dir)
+  (let* ((saved-directory directory)
+         (remote-prefix (or (file-remote-p directory) ""))
+         (directory (or (file-remote-p directory 'localname) directory))
+         this-directory database-dir)
+
+
+
+
     (catch 'done
-      (if (file-regular-p directory)
-	  (throw 'done directory))
+      (if (file-regular-p saved-directory)
+	  (throw 'done saved-directory))
       (setq directory (concat (getenv "HOME") "/tmp/for-code-reading/" (cscope-canonicalize-directory directory))
 	    this-directory directory)
       (while this-directory
-	(if (or (file-exists-p (concat this-directory cscope-database-file))
-		(file-exists-p (concat this-directory cscope-index-file)))
-	    (progn
-	      (setq database-dir (substring
-                                  this-directory 
-                                  (length
-                                   (concat (getenv "HOME") "/tmp/for-code-reading/"))))
-	      (throw 'done database-dir)
-	      )
-          )
-	(if (string-match "^\\(/\\|[A-Za-z]:[\\/]\\)$" this-directory)
-            (throw 'done (expand-file-name "~/.gtags-dir/")))
+	(when (or (file-exists-p (concat remote-prefix this-directory cscope-database-file))
+                  (file-exists-p (concat remote-prefix this-directory cscope-index-file)))
+          (progn
+            (setq database-dir (substring
+                                this-directory 
+                                (length
+                                 (concat (getenv "HOME") "/tmp/for-code-reading/"))))
+            (throw 'done (concat "" database-dir))))
+	(when (string-match "^\\(/\\|[A-Za-z]:[\\/]\\)$" this-directory)
+            (throw 'done (concat "" (expand-file-name "~/.gtags-dir/"))))
 	(setq this-directory (file-name-as-directory
 			      (file-name-directory
 			       (directory-file-name this-directory))))
@@ -852,7 +912,69 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (beginning-of-buffer)
   (forward-line)
   (waw-mode))
-  
+
+(defconst emacs-mode-ctags-lang-map
+  '(("emacs-lisp" . "lisp")
+    ("csharp" . "C#")))
+
+(defconst emacs-mode-ctags-tag-filter
+  '(("c" . "| perl -ne '@f = split; print unless $f[1] =~ m/^member$/'")))
+
+
+(defun tag-this-file (&optional output-buf)
+  (interactive)
+  (save-excursion
+    (save-window-excursion
+      (shell-command
+       (let ((mode-name-minus-mode 
+              (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
+         (concat "ctags-exuberant --language-force="
+                 (shell-quote-argument 
+                  (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
+                      mode-name-minus-mode))
+                 " -xu "
+                 (shell-quote-argument (format "%s" (my-buffer-file-name-local (current-buffer))))
+                 (cdr (assoc mode-name-minus-mode emacs-mode-ctags-tag-filter))))
+       output-buf))))
+
+(defun code-line-number-from-tag-line (line)
+  (goto-line line)
+  (string-to-number (caddr (split-string (current-line-string)))))
+
+(defun ctags-beginning-of-defun (&optional arg)
+  (interactive "^p")
+  (goto-line 
+   (save-excursion
+     (let (deactivate-mark) ;;see the help of save-excursion
+       (tag-this-file (get-buffer-create "*ctags-beginning-of-defun*"))
+       (let ((old-buffer (current-buffer))
+             (old-code-line (line-number-at-pos))
+             (last-code-line (line-number-at-pos (buffer-end 1)))
+             (last-def-line 1))
+         (with-current-buffer "*ctags-beginning-of-defun*"
+           (goto-char (point-max))
+           (insert (concat "hello function "
+                           (number-to-string last-code-line)
+                           " hello world"))
+           (let* ((min 1)
+                  (max (line-number-at-pos (buffer-end 1)))
+                  (mid (/ (+ min max) 2))
+                  (mid-code-line (code-line-number-from-tag-line mid))
+                  (mid+1-codeline (code-line-number-from-tag-line (1+ mid))))
+             (while (and 
+                     (not (and 
+                           (< mid-code-line old-code-line)
+                           (>= mid+1-codeline old-code-line)))
+                     (< min max))
+               (if (>= mid-code-line old-code-line)
+                   (setq max (1- mid))
+                 (setq min (1+ mid)))
+               (setq mid (/ (+ min max) 2)
+                     mid-code-line (code-line-number-from-tag-line mid)
+                     mid+1-codeline (code-line-number-from-tag-line (1+ mid))))
+             (code-line-number-from-tag-line (- mid -1 (or arg 1))))))))))
+                    
+                                     
 (global-set-key [(control x) (w)] 'where-are-we)
 
 (defvar code-reading-file "~/.code-reading")
@@ -902,11 +1024,25 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (defun waw-find-match (n search message)
   (if (not n) (setq n 1))
-  (let ((r))
+  (while (> n 0)
+    (or (funcall search)
+        (error message))
+    (setq n (1- n))))
+
+(defun java-bt-find-match (n search message)
+  (if (not n) (setq n 1))
     (while (> n 0)
       (or (funcall search)
           (error message))
-      (setq n (1- n)))))
+      (setq n (1- n))))
+
+(defun java-bt-search-prev ()
+  (beginning-of-line)
+  (search-backward-regexp "(.*:[0-9]+)$"))
+
+(defun java-bt-search-next ()
+  (end-of-line)
+  (search-forward-regexp "(.*:[0-9]+)$"))
 
 (defun waw-search-prev ()
   (beginning-of-line)
@@ -975,7 +1111,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
           (setq target-file (match-string 1 error-line-str)
                 target-line (match-string 2 error-line-str)))
 
-
         (when (equal start-line-number error-line-number)
           (search-forward "=>")
           (forward-line))
@@ -988,6 +1123,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
         
         (setq new-line-number (line-number-at-pos))
         (forward-line -1)
+
         (while (> new-line-number error-line-number)
           (if (string-match "^\\s *\\.\\.\\.$" (current-line-string))
               (progn
@@ -1042,45 +1178,95 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (setq next-error-function 'waw-next-error)
   (run-mode-hooks 'waw-mode-hook))
 
+(defun java-bt-ret-key ()
+  (interactive)
+  (let ((start-line-str (current-line-string)))
+    (if (string-match "(.*:[0-9]+)" start-line-str)
+        (next-error 0))))
+
+(defvar java-bt-mode-map nil
+  "Keymap for java-bt-mode.")
+
+(defvar java-bt-tag-alist nil
+  "backtrace/code tag alist.")
+
+(defun java-bt-next-error (&optional argp reset)
+  (interactive "p")
+  (with-current-buffer
+      (if (next-error-buffer-p (current-buffer))
+          (current-buffer)
+        (next-error-find-buffer nil nil
+                                (lambda()
+                                  (eq major-mode 'java-bt-mode))))
+    
+    (message "point is at %d" (point))
+    (goto-char (cond (reset (point-min))
+                     ((< argp 0) (line-beginning-position))
+                     ((> argp 0) (line-end-position))
+                     ((point))))
+    (java-bt-find-match
+     (abs argp)
+     (if (> argp 0)
+         #'java-bt-search-next
+       #'java-bt-search-prev)
+     "No more matches")
+    (message "point is at %d" (point))
+
+    (catch 'done
+      (let ((start-line-number (line-number-at-pos))
+            (start-line-str (current-line-string))
+            new-line-number target-file target-line 
+            error-line-number error-line-str grep-output temp-buffer
+            msg mk end-mk)
+          (save-excursion
+            (end-of-line)
+            (search-backward "(")
+            (search-backward ".")
+            (setq msg (point-marker))
+            (end-of-line)
+            (setq grep-output (cdr (assoc-string start-line-str java-bt-tag-alist)))
+            (unless grep-output
+              (setq grep-output (progn
+                                  (shell-command (concat "java-trace-grep " (shell-quote-argument (current-line-string))))
+                                  (with-current-buffer "*Shell Command Output*"
+                                    (buffer-substring-no-properties (point-min) (point-max)))))
+              (setq java-bt-tag-alist (cons (cons start-line-str grep-output) java-bt-tag-alist))))
+
+        (when (string-match "^\\(.*\\):\\([0-9]+\\):" grep-output)
+          (setq target-file (concat (file-remote-p (or (buffer-file-name (current-buffer)) default-directory)) (match-string 1 grep-output))
+                target-line (match-string 2 grep-output))
+          (save-excursion
+            (with-current-buffer (find-file-noselect target-file)
+              (goto-line (read target-line))
+              (beginning-of-line)
+              (setq mk (point-marker) end-mk (line-end-position)))))
+
+        (compilation-goto-locus msg mk end-mk))
+      
+      (throw 'done nil))))
+
+(setq java-bt-mode-map
+      (let ((map (make-sparse-keymap)))
+        (define-key map "\C-m" 'java-bt-ret-key)
+        (define-key map [(return)] 'java-bt-ret-key)
+        (define-key map [(meta p)] 'previous-error-no-select)
+        (define-key map [(meta n)] 'next-error-no-select)
+        map))
+
+(put 'java-bt-mode 'mode-class 'special)
+(defun java-bt-mode ()
+  "Major mode for output from java back trace."
+  (interactive)
+  (kill-all-local-variables)
+  (use-local-map java-bt-mode-map)
+  (make-local-variable 'java-bt-tag-alist)
+  (setq major-mode 'java-bt-mode-map)
+  (setq mode-name "java-bt")
+  (setq next-error-function 'java-bt-next-error)
+  (run-mode-hooks 'java-bt-mode-hook))
+
 (defvar boe-default-indent-col 0)
 (make-variable-buffer-local 'boe-default-indent-col)
-
-(defun beginning-of-indent (&optional col-indent)
-  (interactive "p")
-  (goto-so-much-indent -1 col-indent))
-                
-(defun end-of-indent (&optional col-indent)
-  (interactive "p")
-  (goto-so-much-indent 1 col-indent))
-               
-(defun goto-so-much-indent (dir col-indent)
-  (push-mark)
-  (if current-prefix-arg
-      (setq boe-default-indent-col col-indent)
-    (setq col-indent boe-default-indent-col))
-  (back-to-indentation)
-  (setq col-indent (min col-indent (current-column)))
-  (when (< col-indent 0)
-    (setq col-indent (max 0 (1- (current-column)))))
-  (let (done not-same-block)
-    (while (not done)
-      (forward-line dir)
-      (if (< dir 0)
-          (beginning-of-line)
-        (end-of-line))
-      (if (or (eobp) (bobp))
-        (setq done t)
-        (if (string-match "^\\s *$" (buffer-substring-no-properties (line-beginning-position)
-                                                                        (line-end-position)))
-            (setq not-same-block t)
-          (back-to-indentation)
-          (and (not not-same-block) (/= (current-column) col-indent)
-               (setq not-same-block t))
-          (and (<= (current-column) col-indent) not-same-block
-            (setq done t)))))))
-
-(global-set-key [(meta shift a)] 'beginning-of-indent)
-(global-set-key [(meta shift e)] 'end-of-indent)
 
 (defun indent-same-space-as-prev-line ()
   (interactive)
@@ -1132,6 +1318,11 @@ Starting from DIRECTORY, look upwards for a cscope database."
       (or (buffer-file-name buf)
           ""))))
 
+(defun my-buffer-file-name-local (buf)
+  (let ((name (my-buffer-file-name buf)))
+    (or (file-remote-p name 'localname)
+        name)))
+
 
 (defun switch-buffer-same-filename (&optional reverse)
   (interactive)
@@ -1167,8 +1358,29 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key [(ctrl x) ? ] 'switch-buffer-same-filename)
 (global-set-key [(ctrl x) ?\S- ] 'switch-buffer-same-filename-rev)
 
+(defcustom remote-sudo-prefix "/scp:root@localhost:"
+  "The prefix for visiting a file's remote counterpart or with sudo permission")
+
 (defun sudoedit ()
   (interactive)
   (if (file-remote-p (buffer-file-name))
       (find-alternate-file (replace-regexp-in-string "^/scp:.*?:" "" (buffer-file-name)))    
-    (find-alternate-file (concat "/scp:root@localhost:" (buffer-file-name)))))
+    (find-alternate-file (concat remote-sudo-prefix (buffer-file-name)))))
+
+(defun gnus-gmail-search-subject ()
+  (interactive)
+  (shell-command (concat 
+                  "search-gmail "
+                  (shell-quote-argument (case major-mode 
+                                          ('gnus-summary-mode
+                                           (gnus-summary-article-subject))
+                                          ('gnus-article-mode
+                                           (save-excursion
+                                             (beginning-of-buffer)
+                                             (search-forward-regexp "^Subject: ")
+                                             (buffer-substring-no-properties (point) (line-end-position))))))
+                  "&")))
+
+
+(setq w3m-fill-column 100)
+(require 'guess-offset)

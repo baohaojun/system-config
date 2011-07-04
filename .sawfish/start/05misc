@@ -1,20 +1,25 @@
 #!/bin/bash
 echo sawfish starting sub programs
-scim -d&
 python3.1 ~/gcode/scim-cs/ime-py/ime-server.py&
 xmodmap ~/.bhj-Xmodmap
 if test -f ~/.offlineimaprc; then
     python2.6 ~/bin/windows/Imap4Monitor/Imap4Monitor.py&
 fi
-wine /home/bhj/bin/linux/ext/QQ/Bin/QQ.exe >/dev/null&
+qq
 ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
 
+while true; do (cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver --noreload >>~/.offline-wiki.log 2>&1); sleep 2; done& 
+download-today
+
 command renew-xauth
+killall syndaemon
+syndaemon -i 1 -d
 while true; do
     if ps aux|grep ssh|grep bhj@216 -q; 
     then
-        break
+        true;
     else
-        ssh -C2qN -D 8080 bhj@216.194.70.6; sleep 2; 
+        ssh -C2qN -D 8080 bhj@216.194.70.6; 
     fi
+    sleep 2; 
 done

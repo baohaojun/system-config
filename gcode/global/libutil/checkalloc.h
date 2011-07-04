@@ -25,5 +25,10 @@ void *check_malloc(size_t);
 void *check_calloc(size_t, size_t);
 void *check_realloc(void *, size_t);
 char *check_strdup(const char *);
+void check_free(void *const ptr);
+#define xMalloc(n,Type)    (Type *)check_malloc((size_t)(n) * sizeof (Type))
+#define xCalloc(n,Type)    (Type *)check_calloc((size_t)(n), sizeof (Type))
+#define xRealloc(p,n,Type) (Type *)check_realloc((p), (n) * sizeof (Type))
+
 
 #endif /* _CHECKALLOC_H */

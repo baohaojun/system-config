@@ -52,7 +52,7 @@ sub print_blob
         $print_header = 0;
     }
         
-    printf("0x%08x\@0x%08x(%s)\\\n", 
+    printf("0x%08x\@0x%08x(%s),\\\n", 
            $entry->{size},
            $entry->{start},
            $entry->{name});
@@ -169,6 +169,26 @@ sub do_read_blob
     }
 }
 
+sub do_read_dmesg
+{
+    while(<>) {
+        chomp();
+        while (m/(0x.*?)-(0x.*?) : "(.*?)"/g) {
+            my %entry = 
+                ( "name"   => $3, 
+                  "file_name"    => "unknown",
+                  "start"        => eval($1),  # so that such as "0x1024" can be recognized
+                  "size"         => eval($2) - eval($1),
+                  "end"          => eval($2),
+                  "pretty_start" => pretty(eval($1)),
+                  "pretty_size"  => pretty(eval($2) - eval($1)),
+                );
+
+            push @entry_arr, \%entry;
+        }
+    }
+}
+
 sub do_read_kernel
 {
     my ($name, $offset, $size);
@@ -201,7 +221,7 @@ sub Usage
 {
     die "Error: Usage: $0 -f from_format -t to_format -c check_errors  -m max_address\n" . 
         "\n" . 
-        "    Available formats: blob, map, human, kernel\n" . 
+        "    Available formats: blob, map, human, kernel, dmesg\n" . 
         "    max_address should be 128M/256M/512M\n";
 
     
@@ -223,6 +243,8 @@ if ($from eq 'human') {
     do_read_memmap();
 } elsif ($from eq 'blob') {
     do_read_blob();
+} elsif ($from eq 'dmesg') {
+    do_read_dmesg();
 } elsif ($from eq "kernel") {
     do_read_kernel();
 } else {
@@ -272,7 +294,7 @@ if (1) {
             } elsif ($check =~ m/enlarge/) {
                 if ($last_start + $last_size < $start) {
                     $last_entry->{size} = $start - ($last_start + $last_size);
-                    $last_entry->{file_name} .= "-enlaged";
+                    $last_entry->{file_name} .= "-enlarged";
                 } else {
                     $entry->{start} = $last_start + $last_size;
                 }

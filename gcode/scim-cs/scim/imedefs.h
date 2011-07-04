@@ -1,5 +1,8 @@
 #ifndef __IMEDEFS_H__
 #define __IMEDEFS_H__
+#ifndef WIN32
+#define WIN32
+#endif
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
 #define NATIVE_CHARSET          GB2312_CHARSET

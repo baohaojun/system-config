@@ -373,7 +373,7 @@ put_anchor(char *name, int type, int lineno)
 				strbuf_puts(sb, quote_amp);
 				if (Sflag) {
 					strbuf_puts(sb, "id=");
-					strbuf_puts(sb, id);
+					strbuf_puts(sb, sitekey);
 					strbuf_puts(sb, quote_amp);
 				}
 				strbuf_puts(sb, "type=");

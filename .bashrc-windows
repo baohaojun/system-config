@@ -15,6 +15,7 @@ function SetPath()
         ~/bin/windows
         ~/bin/windows/redirect_vc6
         ~/bin/windows/redirect_cyg
+        ~/bin/linux
         /usr/local/bin
         /usr/X11R6/bin
         /usr/bin
@@ -31,10 +32,9 @@ function SetPath()
     for x in "${paths[@]}"; do
         #cygwin-1.7 will behave weirdly if /h is mounted but the
         #texlive disk is not inserted
-        [[ -e "$x" ]] && export PATH="$PATH":"$x"
+        export PATH="$PATH":"$x"
     done
     PATH="${PATH:1}" #remove the beginning `:'
-    unset SetPath
 
     #set up CLASSPATH
     unset CLASSPATH
@@ -104,39 +104,6 @@ function llocate() {
     locateEmacs.sh "$@"|sed -e 's/^/"/; s/$/"/'
 }
 
-function edit_1()
-{
-    local file=$(cygpath -au "$1")
-    local file=$(readlink -f "$file")
-    local line=${file##*:}
-    file=${file%:*}
-
-    if test "$line" = "$file"
-    then
-        line=
-    fi
-        
-
-    if ! [[ -r "$file" ]]; then
-        echo Error: "$file" is not readable
-        return 1
-    fi
-
-    if ! [[ -w "$1" ]]; then
-        echo Warning: "$1" is not writable
-    fi
-    
-    (cd ~ && emacsedit.exe -n +${line:-1} "$file")
-
-}
-
-function edit()
-{
-    for x in "$@"; do 
-        edit_1 "$x"
-    done
-}
-
 function ccd()
 {
     local dir=`getclip`
@@ -171,6 +138,12 @@ alias repo='PATH=/bin:$PATH repo'
 alias wp="winpath.sh"
 alias up="unipath.sh"
 
-SetPath
+if test -e ~/.bash_path; then
+    . ~/.bash_path
+else
+    SetPath
+    unset SetPath
+fi
+
 return 0
 

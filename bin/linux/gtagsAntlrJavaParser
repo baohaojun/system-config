@@ -1,2 +1,2 @@
 #!/bin/bash
-java -cp ~/bin/linux/ext/gtagsAntlrJavaParser.jar:$CLASSPATH gtagsAntlrJavaParser
+java -cp ~/bin/linux/ext/`uname -m`/gtagsAntlrJavaParser.jar:$CLASSPATH gtagsAntlrJavaParser

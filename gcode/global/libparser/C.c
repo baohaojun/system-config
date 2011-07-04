@@ -475,7 +475,7 @@ C_family(const struct parser_param *param, int type)
 					if (c == EOF)
 						warning("unexpected eof. [+%d %s]", lineno, curfile);
 					else if (level != typedef_savelevel)
-						warning("() block unmatched. (last at level %d.)[+%d %s]", level, lineno, curfile);
+						warning("unmatched () block. (last at level %d.)[+%d %s]", level, lineno, curfile);
 				}
 			}
 			break;
@@ -489,9 +489,9 @@ C_family(const struct parser_param *param, int type)
 	strbuf_close(sb);
 	if (param->flags & PARSER_WARNING) {
 		if (level != 0)
-			warning("{} block unmatched. (last at level %d.)[+%d %s]", level, lineno, curfile);
+			warning("unmatched {} block. (last at level %d.)[+%d %s]", level, lineno, curfile);
 		if (piflevel != 0)
-			warning("#if block unmatched. (last at level %d.)[+%d %s]", piflevel, lineno, curfile);
+			warning("unmatched #if block. (last at level %d.)[+%d %s]", piflevel, lineno, curfile);
 	}
 	closetoken();
 }
@@ -647,7 +647,7 @@ condition_macro(const struct parser_param *param, int cc)
 		DBG_PRINT(piflevel, "#endif");
 		if (minus) {
 			if (param->flags & PARSER_WARNING)
-				warning("#if block unmatched. reseted. [+%d %s]", lineno, curfile);
+				warning("unmatched #if block. reseted. [+%d %s]", lineno, curfile);
 		} else {
 			if (cur->if0only)
 				level = cur->start;

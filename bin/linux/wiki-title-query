@@ -1,4 +1,1 @@
-#!/bin/bash
-set -e
-cd ~/windows-config/gcode/offline.wikipedia
-python ~/gcode/wikipediaDumpReader-0.2.10/get_article.py $(./quickstartsearch db "$@"|perl -npe 's/.*\[//; s/.*?\t//; s/\].*//')
+../../gcode/offline.wikipedia/wiki-title-query

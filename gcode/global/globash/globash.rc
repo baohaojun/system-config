@@ -732,6 +732,7 @@ show()	{
 		-v|-vi)		local EDITOR=vi; shift;;
 		-l|-less)	local EDITOR=less; shift;;
 		-e|-emacs)	local EDITOR='emacsclient --no-wait'; shift;;
+		-m|-vim)	local EDITOR='vim --remote'; shift;;
 		-g|-gozilla)	local EDITOR=gozilla; shift;;
 		-n|-noedit)	local EDITOR=noedit; shift;;
 		*)		echo "invalid option $1."
@@ -743,6 +744,23 @@ show()	{
 	next|prev)
 		__gtags_view_tag $1 $2;;
 	*)	__gtags_view_tag $1;;
+	esac
+}
+use()	{
+	case $1 in
+	-*)
+		case $1 in
+		-v|-vi)		export EDITOR=vi;;
+		-l|-less)	export EDITOR=less;;
+		-e|-emacs)	export EDITOR='emacsclient --no-wait';;
+		-m|-vim)	export EDITOR='vim --remote';;
+		-g|-gozilla)	export EDITOR=gozilla;;
+		-n|-noedit)	export EDITOR=noedit;;
+		*)		echo "invalid option $1."
+				return 1;;
+		esac
+		;;
+	'')	unset EDITOR;;
 	esac
 }
 ###########################################################################
@@ -790,8 +808,10 @@ ghelp() {
 	echo "	You can specify a editor statically by EDITOR environment"
 	echo "	variable or temporarily by option."
 	echo "	(-l: less, -v: vi, -e: emacs, -g:gozilla, -n: no editor)"
-	echo "	show [-l|-v|-e|-g|-n][<no>|first|last]"
+	echo "	show [-l|-v|-e|-m|-g|-n][<no>|first|last]"
 	echo "			- view specified (default=current) tag."
+	echo "	use [-l|-v|-e|-m|-g|-n]"
+	echo "			- select specified viewer (default=unselect)."
 	echo "	first [-l|-v|-e|-g|-n]"
 	echo "			- view the first tag."
 	echo "	last  [-l|-v|-e|-g|-n]"

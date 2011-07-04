@@ -19,7 +19,7 @@ function download-all()
 
     for x in "${file_list[@]}"; do
         if ! [[ -f `basename "$x"` ]]; then
-            wget "$x"
+            wget -N "$x"
         fi
     done
             
@@ -40,33 +40,61 @@ function emacs-site-lisps()
 {
     mkdir -p ~/tools/emacs-site-lisp/
     cd ~/tools/emacs-site-lisp/
-    rm ./* -rf
+    rm ./*/ -rf
     cp /usr/share/emacs/site-lisp/subdirs.el . 
+    
+
+    source_list=(
+        ftp.us.debian.org/debian/dists/testing/main/source/Sources.bz2 
+        ftp.us.debian.org/debian/dists/testing/contrib/source/Sources.bz2 
+        ftp.us.debian.org/debian/dists/testing/non-free/source/Sources.bz2
+    )
+
+    y=0
+    for x in "${source_list[@]}"; do 
+        ((y++)) || true
+        ( builtin cd ../ && wget -N -r http://$x )
+        ln -sf ../$x Sources.bz2.$y
+    done
 
     file_list=(
-        `wget \
-        http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2 \
-        http://ftp.us.debian.org/debian/dists/sid/contrib/source/Sources.bz2 \
-        http://ftp.us.debian.org/debian/dists/sid/non-free/source/Sources.bz2 >/dev/null 2>&1`
-
-        http://me.in-berlin.de/~myrkr/dictionary/dictionary-1.8.7.tar.gz
+        `get-deb-src-dir dictionary-el`
         `get-deb-src-dir emacs-goodies-el`
         `get-deb-src-dir cscope`
         `get-deb-src-dir muse-el`
         `get-deb-src-dir w3m-el-snapshot`
+        `get-deb-src-dir exuberant-ctags`
+        `get-deb-src-dir python3.1`
     )
+    
     for x in "${file_list[@]}"; do
-        if ! [[ -f "$(basename "$x")" ]]; then
-            wget "$x"
-        fi
+        wget -N "$x"
+        tar zxfv "$(basename "$x")"
     done
     
-    for x in *.tar.gz *.tgz; do
-        if [[ -f "$x" ]] ;
-        then 
-            tar zxfv "$(basename "$x")"; 
-        fi
-    done    
+    (builtin cd *ctags*/ && ./configure && make -j8 install && ln -sf /usr/local/bin/ctags.exe /usr/bin/ctags-exuberant)
+    (builtin cd ~/gcode/global && sh reconf.sh && ./configure && make -j8 install && git clean -xfd)
+    (
+        set -e; 
+        builtin cd *python*/;
+        patch -p1 <<EOF
+diff --git a/Modules/main.c b/Modules/main.c
+index 4dcc32d..2e6548f 100644
+--- a/Modules/main.c
++++ b/Modules/main.c
+@@ -14,7 +14,6 @@
+ #include <windows.h>
+ #ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
+-#define PATH_MAX MAXPATHLEN
+ #endif
+ #endif
+EOF
+        ./configure;
+        make -j8
+        make install
+    )
+
     cd emacs-goodies-el*/elisp/emacs-goodies-el/ && mkdir themes
 }
 
@@ -230,25 +258,124 @@ function get-putty()
 
 test "$DOWN" == yes && (gcc-switch.sh 3; get-putty; gcc-switch.sh 4)
 
-function fstab-q()
+function get-stlport-and-boost()
 {
-    FSTAB=/etc/fstab
-    if grep '^q:' $FSTAB -iq; 
-    then
-        echo 'q: is already mounted case-sensitive'
-    else
-        echo 'q: /q some_fs binary 0 0' >> $FSTAB
-    fi
-}
+    mkdir -p /d/bhj
+    cd /d/bhj
+    mkdir -p STLport-5.2.1/lib STLport-5.2.1/stlport boost_1_34_1/stage/lib 
 
-function get-cscope()
-{
-    if ! test -d /c/download/cscope/cscope; then
-        mkdir -p /c/download/cscope
-        cd /c/download/cscope
-        cvs -d:pserver:anonymous@cscope.cvs.sourceforge.net:/cvsroot/cscope login
-        cvs -z3 -d:pserver:anonymous@cscope.cvs.sourceforge.net:/cvsroot/cscope co -P cscope
-    fi
-}
+    wget -N http://sourceforge.net/projects/stlport/files/STLport/STLport-5.2.1/STLport-5.2.1.tar.bz2
+    wget -N http://sourceforge.net/projects/boost/files/boost/1.34.1/boost_1_34_1.tar.bz2
 
-test "$DOWN" == yes && fstab-q
+    unset PATHVC
+    for x in ~/vc6/path/*; do export PATHVC=$PATHVC:`readlink -m "$x"`; done
+    export PATH=~/bin/:$PATHVC:$PATH
+    export INCLUDE=`for x in ~/vc6/inc/*; do readlink -f "$x"; done|u2dpath`
+    export LIB=`for x in ~/vc6/lib/*; do readlink -f "$x"; done|u2dpath`
+    
+    (
+        mkdir -p vcrun2010
+        cd vcrun2010
+        wget -N http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe
+        chmod +x vcredist_x86.exe
+        cygstart vcredist_x86.exe
+    )
+
+    (
+        mkdir -p psdk
+        cd psdk
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.1.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.2.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.3.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.4.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.5.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.6.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.7.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.8.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.9.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.10.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.11.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.12.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.13.cab
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.bat
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/Extract.exe
+        wget -N http://www.avantbrowser.cn/release/absetup.exe
+    )
+
+    (
+        mkdir -p vc6
+        cd vc6
+        wget -N http://download.microsoft.com/download/1/9/f/19fe4660-5792-4683-99e0-8d48c22eed74/Vs6sp6.exe
+    )
+
+    read -p "Make sure you have setup vc6/sp6/psdk! Press any key to continue..."
+
+    (
+        tar jxfv ./STLport-5.2.1.tar.bz2
+        cd STLport-5.2.1
+        patch -p1 <<EOF
+diff --git a/stlport/stl/config/user_config.h b/stlport/stl/config/user_config.h
+index 4efd727..06317c7 100644
+--- a/stlport/stl/config/user_config.h
++++ b/stlport/stl/config/user_config.h
+@@ -194,9 +194,9 @@
+  * If you are using new PSDK with VC++ 6.0 or lower,
+  * please define this to get correct prototypes for InterlockedXXX functions
+  */
+-/*
++
+ #define _STLP_NEW_PLATFORM_SDK 1
+-*/
++
+ 
+ /*
+  * For the same reason as the one above we are not able to detect easily use
+EOF
+        cmd.exe /c configure.bat msvc6; cd build/lib; nmake /fmsvc.mak install
+    )
+
+    read -t 5 -p "Note: boost build will not work on remote login! Press any key or wait 5 seconds..."
+    (
+        rm -rf boost_1_34_1/
+        tar jxfv boost_1_34_1.tar.bz2
+        mkdir -p boost_1_34_1/stage/lib
+
+        (
+            cd boost_1_34_1/tools/jam/src
+            cmd.exe /c build.bat msvc
+            cp bin.ntx86/bjam.exe /c/windows/system32/
+        )
+        cd boost_1_34_1/
+        cp /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT.bak
+        echo -n > /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT
+        bjam -sBOOST_ROOT=. -sTOOLS=msvc 2>&1|tee build.log
+        find . -name "*.dll" -o -name "*.lib" > files.txt
+        cp `cat files.txt` ./stage/lib
+        cd ./stage/lib
+        mv libboost_regex-vc6-mt-1_34_1.lib libboost_regex-vc6-mt-p-1_34_1.lib 
+    )
+
+    (
+        mkdir -p python2.5
+        cd python2.5
+        wget -N http://python.org/ftp/python/2.7.2/python-2.7.2.msi
+        chmod +x *.msi
+        cygstart *.msi
+    )
+    read -p "Press any key to download pywin32..."
+    (
+        mkdir -p pywin32
+        cd pywin32
+        wget -N http://sourceforge.net/projects/pywin32/files/pywin32/Build216/pywin32-216.win32-py2.7.exe
+        chmod +x *.exe
+        cygstart *.exe
+    )
+    read -p "Press any key to install python3.1..."
+    (
+        mkdir -p python3.1
+        cd python3.1
+        wget -N http://python.org/ftp/python/3.1.3/python-3.1.3.msi
+        chmod +x *.msi
+        cygstart *.msi
+    )        
+}

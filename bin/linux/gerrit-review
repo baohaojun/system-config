@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
+export REMOTE=$(git config remote.`repo-remote`.url)
+git push letou HEAD:refs/for/`tbranch` 2>&1|perl -npe '
+    if (m,http://bear/gerrit/(\d+),) {
+        system("putclip", "git", "pull", $ENV{REMOTE}, 
+               "refs/changes/" . substr($1, -2) . "/$1/1");
+    }'

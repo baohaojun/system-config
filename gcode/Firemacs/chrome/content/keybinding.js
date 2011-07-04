@@ -24,6 +24,12 @@ Firemacs.Commands.View = {
     ViScrollLineDown: function(e) {
         goDoCommand('cmd_scrollLineDown');
     },
+    ViScrollLeft: function(e) {
+        goDoCommand('cmd_scrollLeft');
+    },
+    ViScrollRight: function(e) {
+        goDoCommand('cmd_scrollRight');
+    },
     ViPreviousTab: function(e) {
         this._sfun.moveTab(-1);
     },
@@ -138,6 +144,9 @@ Firemacs.Commands.Edit = {
 };
 
 Firemacs.Commands.Common = {
+    AllTabs: function(e) {
+        this._sfun.allTabs();
+    },
     SearchForward: function(e) {
         this._sfun.SearchOpen(); var findField = this._sfun.SearchField(); if (findField && findField.value && findField.value !== '') { this._sfun.SearchForward(); }
     },
@@ -196,7 +205,7 @@ Firemacs.Commands.Common = {
         if (e.originalTarget.parentNode.parentNode == this._sfun.SearchField()) { this._sfun.SearchUnhilite(); this._sfun.SearchClose(); } else { this._sfun.generateKey(e, KeyEvent.DOM_VK_RETURN);}
     },
     CopyUrl: function(e) {
-        this._sfun.copyText(getBrowser().contentDocument.URL); this._sfun._displayMessage('URL copied', 2000);
+        this._sfun.copyText(getBrowser().contentDocument.location.href); this._sfun._displayMessage('URL copied', 2000);
     },
     CopyTitle: function(e) {
         this._sfun.copyText(getBrowser().contentDocument.title); this._sfun._displayMessage('Title copied', 2000);
@@ -209,6 +218,12 @@ Firemacs.Commands.Common = {
     },
     MapSearch: function(e) {
         this._sfun.mapSearch(e);
+    },
+    SavePage: function(e) {
+        this._sfun.pageSave(e);
+    },
+    SelectAll: function(e) {
+        goDoCommand('cmd_selectAll')
     }
 };
 
@@ -241,6 +256,8 @@ Firemacs.CmdKey.View = {
     NextTab: 'C-f',
     ViScrollLineUp: 'k',
     ViScrollLineDown: 'j',
+    ViScrollLeft: 'H',
+    ViScrollRight: 'L',
     ViPreviousTab: 'p',
     ViNextTab: 'n',
     ViScrollPageUp: 'DEL',
@@ -283,6 +300,7 @@ Firemacs.CmdKey.Edit = {
 };
 
 Firemacs.CmdKey.Common = {
+    AllTabs: 'C-xb',
     SearchForward: 'C-s',
     SearchBackword: 'C-r',
     ScrollPageUp: 'M-v',
@@ -305,8 +323,10 @@ Firemacs.CmdKey.Common = {
     CopyUrl: 'C-M-u',
     CopyTitle: 'C-M-t',
     CopyTitleAndUrl: 'C-M-b',
-    WebSearch: 'C-xC-s',
-    MapSearch: 'C-xC-a'
+    WebSearch: 'C-xC-e',
+    MapSearch: 'C-xC-a',
+    SavePage: 'C-xC-s',
+    SelectAll: 'C-xh'
 };
 
 Firemacs.CmdKey.Menu = {

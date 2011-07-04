@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+while (<>) {
+      push @lines, $_;
+}
+
+while (@lines) {
+      print pop(@lines);
+}

@@ -1,0 +1,28 @@
+@c This file is generated automatically by convert.pl from a set of manual.in.
+@menu
+* global::         global - print locations of the specified object.
+* gtags::          gtags - create tag files for global.
+* htags::          htags - generate a hypertext from a set of source files.
+* gozilla::        gozilla - force mozilla to display specified part of a source file.
+* gtags-cscope::   gtags-cscope - pseudo cscope which implements the line-oriented interface
+* globash::        globash - a special shell for GLOBAL using GNU bash.
+@end menu
+
+@node global
+@section global - print locations of the specified object.
+@include global.ref
+@node gtags
+@section gtags - create tag files for global.
+@include gtags.ref
+@node htags
+@section htags - generate a hypertext from a set of source files.
+@include htags.ref
+@node gozilla
+@section gozilla - force mozilla to display specified part of a source file.
+@include gozilla.ref
+@node gtags-cscope
+@section gtags-cscope - pseudo cscope which implements the line-oriented interface
+@include gtags-cscope.ref
+@node globash
+@section globash - a special shell for GLOBAL using GNU bash.
+@include globash.ref

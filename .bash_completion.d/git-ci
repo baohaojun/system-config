@@ -1,0 +1,36 @@
+# jira(1) completion
+
+
+_git_ci()
+{
+    local cmd cur prev skinsdir IFS=$' \t\n' i j k=0
+
+    COMPREPLY=()
+    cmd=${COMP_WORDS[0]}
+    _get_comp_words_by_ref cur prev
+
+    case $COMP_CWORD in
+        1)
+            _jira_file_list ~/jira-issues/
+            return 0
+            ;;
+        *)
+            _jira_file_list ~/jira-users/
+            return 0
+            ;;
+    esac
+
+    return 0
+}
+
+
+complete -o filenames -F _git_ci gitci
+complete -o filenames -F _git_ci gitci-amend
+
+# Local variables:
+# mode: shell-script
+# sh-basic-offset: 4
+# sh-indent-comment: t
+# indent-tabs-mode: nil
+# End:
+# ex: ts=4 sw=4 et filetype=sh

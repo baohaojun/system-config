@@ -1,0 +1,10 @@
+#!/usr/bin/env perl
+
+while (<>) {
+    push @list, $_;
+}
+
+while (@list) {
+    $x = pop @list;
+    print $x;
+}

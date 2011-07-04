@@ -115,7 +115,7 @@
 		Tag file for object references.
 	@item{@file{GPATH}}
 		Tag file for path of source files.
-	@item{@file{/etc/gtags.conf}, @file{$HOME/.globalrc}}
+	@item{@file{$HOME/.globalrc}, @file{/etc/gtags.conf}, @file{[sysconfdir]/gtags.conf}}
 		Configuration file.
 	@item{@file{gtags.files}}
 		The list of candidates of target files.

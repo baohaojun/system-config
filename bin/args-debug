@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo args-debug called with: "$@"
+
+echo "env are: local=$LOCAL, remote=$REMOTE"
+

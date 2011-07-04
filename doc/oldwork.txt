@@ -3884,7 +3884,7 @@ http://www.winehq.org/download/deb
 代码:wget http://www.kegel.com/wine/winetricks
 代码:sh winetricks msxml3 gdiplus riched20 riched30 ie6 vcrun6 vcrun2005sp1 flash
 如果在安装msxml3时abord了然后就退出了可以尝试安装msxml6
-代码:sh winetricks msxml6 gdiplus riched20 riched30 ie6 vcrun6 vcrun2005sp1 flash
+代码:sh winetricks msxml6 gdiplus riched20 riched30 ie6 vcrun6 vcrun2005sp1 flash wenquanyi
 然后
 从XP或Vista、Win7里复制一个宋体（SimSun.ttf）过来，放到~/.wine/dosdevices/c:/windows/Fonts下
 字体也可以在我的网盘上下载http://u.115.com/file/t7b413aeb
@@ -3893,6 +3893,8 @@ http://www.winehq.org/download/deb
       MS Shell Dlg = SimSun
       MS Shell Dlg 2 = SimSun
       Tahoma = SimSun （这个没有手动新建字符串）
+
+or WenQuanYi Micro 
 最后下载改版的QQ2009 sp6.可以在绿色软件联盟下载到.
 http://www.xdowns.com/soft/40/62/2006/Soft_31579.html
 下载回来后解压.先运行config进行设置.再进入bin目录打开QQ.exe即可.刚打开可能会弹出错误但不影响运行.

@@ -1,0 +1,135 @@
+#!/bin/bash
+set -e
+export confhome=~/confluence/
+
+function quote-array() {
+        printf "$(
+            for x in $(seq 1 "$#"); 
+            do
+                echo -n "%q "
+            done
+        )" "$@"
+}
+
+function congfu() {
+    local user=hjbao
+    local server=`cat ~/.confserv 2>/dev/null||echo http://bear/wiki/`
+    local space='~hjbao'
+    local password=`cat ~/.confpass`
+    local args=()
+    
+    while true; do 
+        arg=$1
+        shift || break
+        
+        case "$arg" in 
+            --user)
+                user=$1
+                shift
+                ;;
+            --server)
+                server=$1
+                shift
+                ;;
+            --space)
+                space=$1
+                shift
+                ;;
+            --password)
+                password=$1
+                shift
+                ;;
+            *)
+                args=("${args[@]}" "$arg" "$1")
+                shift
+                ;;
+        esac
+    done
+    
+    confluence.sh --user "$user" --server "$server" --space "$space" --password "$password" "${args[@]}" 2>&1
+}
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+function congfu-get() {
+    cd $confhome || die "Error, I can't switch to $confhome";
+    git st -s | grep -q . && die "Error, git repo is not clean";
+    congfu "$@" -a getPageList|perl -ne 'print if (2..0xffff and m/^\S+$/)'|xargs -d '\n' touch
+    for x in *; do 
+        congfu "$@" -a getSource --title "$x"|perl -ne 'print unless(1..1)' > "$x"
+        confluence-unhtmlize "$x" | perl -ne 'BEGIN{$begin=0}; print $x if $begin == 1; $x = $_; $begin = 1' > "$x".bak
+        mv "$x".bak "$x"
+    done
+}
+
+function congfu-ls-new() {
+    cd $confhome || die "Error, I can't switch to $confhome";  
+    git st -s | perl -ne \
+'chomp(); 
+$_ = substr($_, 3); 
+if (m/^"/) { 
+    $_ = eval($_);
+}
+print $_ . "\n";
+' 
+}
+
+function congfu-put() {
+    # we will get what files to push to the server from STDIN! 
+    cd $confhome || die "Error, I can't switch to $confhome";
+    
+
+    CONGFU_ARGS=("$@")
+    
+    export CONGFU_ARGSTR=$(
+        quote-array "${CONGFU_ARGS[@]}"
+    )
+    
+    # 最好是在这里也处理参数，但是我们已经有一个函数在处理参数了，所以好像没有这个必要了。
+    # 可是那文件参数该怎么处理呢？
+
+    # 好吧，就用环境变量吧。如果没有设置文件变量，那么我们需要处理的文件就看git status的结果，把每个有改动的文件都放到服务器上。
+    # 如果有设过环境变量，那么我们就把环境变量里的每个文件都放到服务器上。环境变量里应该还可以支持使用标准输入。
+
+    if tty >/dev/null
+    then
+        echo "using /dev/tty, will only update git new files"  1>&2
+        congfu-ls-new
+    else 
+        cat
+    fi| xargs -d '\n' bash -c \
+'. '$0';
+eval "CONGFU_ARGS=( $CONGFU_ARGSTR )";
+for x in "$@"; do 
+    cat -- "$x"|confluence-htmlize > "$x".$$
+    congfu "${CONGFU_ARGS[@]}" -a storePage --title "$x" --encoding UTF-8 --file "$(readlink -f "$x".$$)"
+    rm "$x".$$
+    git add -- "$x"
+    done ' xx
+    for x in *.$$.bak; do 
+        test -e "$x" || break
+        git rm --cached -- "$x";
+        rm -- "$x"
+        # 不要在这里删除这个页面，我们还有用呢！
+        # congfu "$@" -a removePage --title "$x"
+    done
+}
+
+function congfu-test() {
+    cat > congfu-test.$$.bak
+    
+    echo congfu-test.$$.bak|congfu-put "$@"
+    congfu "$@" -a render --title congfu-test.$$.bak |perl -ne 'print unless (1..1)' > ~/1.html
+    of ~/1.html
+
+    read -p "Press enter to remove the temp page: " < /dev/tty
+    congfu "$@" -a removePage --title congfu-test.$$.bak
+
+}
+
+if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(which "$0")" )"; then
+    "`basename $0`" "$@"
+fi

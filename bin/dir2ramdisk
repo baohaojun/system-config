@@ -7,7 +7,7 @@ if (-d ".git") {
 
 open($file, "-|", "mkbootfs .|gzip");
 
-$final_size = 4 * 1024 * 1024;
+$final_size = 512 * 1024;
 while(read($file, $cont, $final_size) > 0) {
     $ramdisk .= $cont;
 }

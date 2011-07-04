@@ -323,7 +323,7 @@ parse_file(const char *path, int flags, PARSER_CALLBACK put, void *arg)
 	suffix = locatestring(path, ".", MATCH_LAST);
 	if (suffix == NULL)
 		return;
-	lang = decide_lang(suffix);
+	lang = decide_lang_exuberant(suffix, path);
 	if (lang == NULL)
 		return;
 	if (flags & PARSER_VERBOSE)

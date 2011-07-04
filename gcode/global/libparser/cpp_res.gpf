@@ -1,0 +1,221 @@
+%{
+#include "strmake.h"
+#define START_VARIABLE	1001
+#define START_WORD	2001
+#define START_SHARP	3001
+#define START_YACC	4001
+#define IS_RESERVED_WORD(a)	((a) >= START_WORD)
+#define IS_RESERVED_VARIABLE(a)	((a) >= START_VARIABLE && (a) < START_WORD)
+#define IS_RESERVED_SHARP(a)	((a) >= START_SHARP && (a) < START_YACC)
+#define IS_RESERVED_YACC(a)	((a) >= START_YACC)
+
+#define CPP_WCOLON	2001
+#define CPP___P	2002
+#define CPP___ATTRIBUTE__	2003
+#define CPP___EXTENSION__	2004
+#define CPP___THREAD	2005
+#define CPP_ASM	2006
+#define CPP_CONST	2007
+#define CPP_INLINE	2008
+#define CPP_SIGNED	2009
+#define CPP_VOLATILE	2010
+#define CPP_AUTO	2011
+#define CPP_BOOL	2012
+#define CPP_BREAK	2013
+#define CPP_CASE	2014
+#define CPP_CATCH	2015
+#define CPP_CHAR	2016
+#define CPP_CLASS	2017
+#define CPP_CONST_CAST	2018
+#define CPP_CONTINUE	2019
+#define CPP_DEFAULT	2020
+#define CPP_DELETE	2021
+#define CPP_DO	2022
+#define CPP_DOUBLE	2023
+#define CPP_DYNAMIC_CAST	2024
+#define CPP_ELSE	2025
+#define CPP_ENUM	2026
+#define CPP_EXPLICIT	2027
+#define CPP_EXPORT	2028
+#define CPP_EXTERN	2029
+#define CPP_FALSE	2030
+#define CPP_FLOAT	2031
+#define CPP_FOR	2032
+#define CPP_FRIEND	2033
+#define CPP_GOTO	2034
+#define CPP_IF	2035
+#define CPP_INT	2036
+#define CPP_LONG	2037
+#define CPP_MUTABLE	2038
+#define CPP_NAMESPACE	2039
+#define CPP_NEW	2040
+#define CPP_OPERATOR	2041
+#define CPP_PRIVATE	2042
+#define CPP_PROTECTED	2043
+#define CPP_PUBLIC	2044
+#define CPP_REGISTER	2045
+#define CPP_REINTERPRET_CAST	2046
+#define CPP_RETURN	2047
+#define CPP_SHORT	2048
+#define CPP_SIZEOF	2049
+#define CPP_STATIC	2050
+#define CPP_STATIC_CAST	2051
+#define CPP_STRUCT	2052
+#define CPP_SWITCH	2053
+#define CPP_TEMPLATE	2054
+#define CPP_THIS	2055
+#define CPP_THROW	2056
+#define CPP_TRUE	2057
+#define CPP_TRY	2058
+#define CPP_TYPEDEF	2059
+#define CPP_TYPENAME	2060
+#define CPP_TYPEID	2061
+#define CPP_UNION	2062
+#define CPP_UNSIGNED	2063
+#define CPP_USING	2064
+#define CPP_VIRTUAL	2065
+#define CPP_VOID	2066
+#define CPP_WCHAR_T	2067
+#define CPP_WHILE	2068
+#define SHARP_SHARP	3001
+#define SHARP_ASSERT	3002
+#define SHARP_DEFINE	3003
+#define SHARP_ELIF	3004
+#define SHARP_ELSE	3005
+#define SHARP_ENDIF	3006
+#define SHARP_ERROR	3007
+#define SHARP_IDENT	3008
+#define SHARP_IF	3009
+#define SHARP_IFDEF	3010
+#define SHARP_IFNDEF	3011
+#define SHARP_IMPORT	3012
+#define SHARP_INCLUDE	3013
+#define SHARP_INCLUDE_NEXT	3014
+#define SHARP_LINE	3015
+#define SHARP_PRAGMA	3016
+#define SHARP_SCCS	3017
+#define SHARP_UNASSERT	3018
+#define SHARP_UNDEF	3019
+#define SHARP_WARNING	3020
+%}
+struct keyword { char *name; int token; }
+%%
+::, CPP_WCOLON
+__P, CPP___P
+__attribute__, CPP___ATTRIBUTE__
+__attribute, CPP___ATTRIBUTE__
+__extension__, CPP___EXTENSION__
+__thread, CPP___THREAD
+asm, CPP_ASM
+__asm, CPP_ASM
+__asm__, CPP_ASM
+const, CPP_CONST
+__const, CPP_CONST
+__const__, CPP_CONST
+inline, CPP_INLINE
+__inline, CPP_INLINE
+__inline__, CPP_INLINE
+signed, CPP_SIGNED
+__signed, CPP_SIGNED
+__signed__, CPP_SIGNED
+volatile, CPP_VOLATILE
+__volatile, CPP_VOLATILE
+__volatile__, CPP_VOLATILE
+auto, CPP_AUTO
+bool, CPP_BOOL
+break, CPP_BREAK
+case, CPP_CASE
+catch, CPP_CATCH
+char, CPP_CHAR
+class, CPP_CLASS
+const_cast, CPP_CONST_CAST
+continue, CPP_CONTINUE
+default, CPP_DEFAULT
+delete, CPP_DELETE
+do, CPP_DO
+double, CPP_DOUBLE
+dynamic_cast, CPP_DYNAMIC_CAST
+else, CPP_ELSE
+enum, CPP_ENUM
+explicit, CPP_EXPLICIT
+export, CPP_EXPORT
+extern, CPP_EXTERN
+false, CPP_FALSE
+float, CPP_FLOAT
+for, CPP_FOR
+friend, CPP_FRIEND
+goto, CPP_GOTO
+if, CPP_IF
+int, CPP_INT
+long, CPP_LONG
+mutable, CPP_MUTABLE
+namespace, CPP_NAMESPACE
+new, CPP_NEW
+operator, CPP_OPERATOR
+private, CPP_PRIVATE
+protected, CPP_PROTECTED
+public, CPP_PUBLIC
+register, CPP_REGISTER
+reinterpret_cast, CPP_REINTERPRET_CAST
+return, CPP_RETURN
+short, CPP_SHORT
+sizeof, CPP_SIZEOF
+static, CPP_STATIC
+static_cast, CPP_STATIC_CAST
+struct, CPP_STRUCT
+switch, CPP_SWITCH
+template, CPP_TEMPLATE
+this, CPP_THIS
+throw, CPP_THROW
+true, CPP_TRUE
+try, CPP_TRY
+typedef, CPP_TYPEDEF
+typename, CPP_TYPENAME
+typeid, CPP_TYPEID
+union, CPP_UNION
+unsigned, CPP_UNSIGNED
+using, CPP_USING
+virtual, CPP_VIRTUAL
+void, CPP_VOID
+wchar_t, CPP_WCHAR_T
+while, CPP_WHILE
+"##", SHARP_SHARP
+"#assert", SHARP_ASSERT
+"#define", SHARP_DEFINE
+"#elif", SHARP_ELIF
+"#else", SHARP_ELSE
+"#endif", SHARP_ENDIF
+"#error", SHARP_ERROR
+"#ident", SHARP_IDENT
+"#if", SHARP_IF
+"#ifdef", SHARP_IFDEF
+"#ifndef", SHARP_IFNDEF
+"#import", SHARP_IMPORT
+"#include", SHARP_INCLUDE
+"#include_next", SHARP_INCLUDE_NEXT
+"#line", SHARP_LINE
+"#pragma", SHARP_PRAGMA
+"#sccs", SHARP_SCCS
+"#unassert", SHARP_UNASSERT
+"#undef", SHARP_UNDEF
+"#warning", SHARP_WARNING
+%%
+int
+cpp_reserved_word(const char *str, int len)
+{
+	struct keyword *keyword;
+
+	keyword = cpp_lookup(str, len);
+	return (keyword && IS_RESERVED_WORD(keyword->token)) ? keyword->token : 0;
+}
+int
+cpp_reserved_sharp(const char *str, int len)
+{
+	struct keyword *keyword;
+
+	/* Delete blanks. Ex. ' # define ' => '#define' */
+	str = strtrim(str, TRIM_ALL, &len);
+
+	keyword = cpp_lookup(str, len);
+	return (keyword && IS_RESERVED_SHARP(keyword->token)) ? keyword->token : 0;
+}
