@@ -917,7 +917,8 @@ Starting from DIRECTORY, look upwards for a cscope database."
     ("csharp" . "C#")))
 
 (defconst emacs-mode-ctags-tag-filter
-  '(("c" . "| perl -ne '@f = split; print unless $f[1] =~ m/^member$/'")))
+  '(("c" . "| perl -ne '@f = split; print unless $f[1] =~ m/^member$/'")
+    ("php" . "| perl -ne '@f = split; print unless $f[1] =~ m/^variable$/'")))
 
 
 (defun tag-this-file (&optional output-buf)
