@@ -1,0 +1,2 @@
+#!/bin/bash
+iconv -f utf-8 -t gbk|autob5|iconv -f big-5 -t utf-8
