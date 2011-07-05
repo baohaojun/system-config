@@ -169,7 +169,8 @@
 (define-key java-mode-map [?\C-\M-e] 'bhj-c-end-of-defun)
 
 (setq auto-mode-alist (cons '(".*/kernel.*\\.[ch]$" . linux-c-mode)
-                            auto-mode-alist))
+			    (cons '("logcat.log.*" . fundamental-mode)
+				  auto-mode-alist)))
 (setq auto-mode-alist (cons '(".*\\.cpp$" . linux-c++-mode)
                             auto-mode-alist))
 
