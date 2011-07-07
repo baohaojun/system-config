@@ -55,7 +55,7 @@
     ("nk" "NvOsDebugPrintf(\"hello world %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 8)
     ("pe" "printk(KERN_WARNING \"hello error: %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("pf" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 204)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 205)
     ("pkh" "#include <linux/types.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>
@@ -126,6 +126,8 @@
 
 (define-abbrev-table 'docTeX-mode-abbrev-table '())
 
+(define-abbrev-table 'doctex-mode-abbrev-table '())
+
 (define-abbrev-table 'edebug-eval-mode-abbrev-table '())
 
 (define-abbrev-table 'emacs-lisp-mode-abbrev-table '())
@@ -184,6 +186,8 @@
 
 (define-abbrev-table 'jython-mode-abbrev-table '())
 
+(define-abbrev-table 'latex-mode-abbrev-table '())
+
 (define-abbrev-table 'ld-script-mode-abbrev-table '())
 
 (define-abbrev-table 'lisp-mode-abbrev-table '())
@@ -208,6 +212,8 @@
 
 (define-abbrev-table 'muse-mode-abbrev-table '())
 
+(define-abbrev-table 'nroff-mode-abbrev-table '())
+
 (define-abbrev-table 'objc-mode-abbrev-table
   '(
    ))
@@ -220,12 +226,14 @@
 
 (define-abbrev-table 'php-mode-abbrev-table
   '(
-    ("wpk" "wfDebugLog('bhj', __FUNCTION__ . \" hello bhj\\n\");" nil 0)
+    ("wpk" "wfDebugLog('bhj', __METHOD__ );" nil 2)
    ))
 
 (define-abbrev-table 'pike-mode-abbrev-table
   '(
    ))
+
+(define-abbrev-table 'plain-tex-mode-abbrev-table '())
 
 (define-abbrev-table 'ps-mode-abbrev-table '())
 
@@ -284,9 +292,15 @@ fi
 
 (define-abbrev-table 'shell-mode-abbrev-table '())
 
+(define-abbrev-table 'slitex-mode-abbrev-table '())
+
 (define-abbrev-table 'special-mode-abbrev-table '())
 
 (define-abbrev-table 'sql-mode-abbrev-table '())
+
+(define-abbrev-table 'tex-mode-abbrev-table '())
+
+(define-abbrev-table 'tex-shell-abbrev-table '())
 
 (define-abbrev-table 'text-mode-abbrev-table
   '(

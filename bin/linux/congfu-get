@@ -57,7 +57,7 @@ function die() {
 function congfu-get() {
     cd $confhome || die "Error, I can't switch to $confhome";
     git st -s | grep -q . && die "Error, git repo is not clean";
-    congfu "$@" -a getPageList|perl -ne 'print if (2..0xffff and m/^\S+$/)'|xargs -d '\n' touch
+    congfu "$@" -a getPageList|perl -ne 'print unless (1..1 or m/^\s+$/)'|tee ~/.congfu-get.log|xargs -d '\n' touch
     for x in *; do 
         congfu "$@" -a getSource --title "$x"|perl -ne 'print unless(1..1)' > "$x"
         confluence-unhtmlize "$x" | perl -ne 'BEGIN{$begin=0}; print $x if $begin == 1; $x = $_; $begin = 1' > "$x".bak
