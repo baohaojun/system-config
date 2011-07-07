@@ -48,15 +48,6 @@ XDGMIME_GLUE_SOURCES =		\
 	xdgmime/xdgmimecache.c	\
 	xdgmime/xdgmimecache.h
 
-if ENABLE_WV1
-INCLUDES += \
-	$(WV1_CFLAGS)
-EXTRA_GLUE_SOURCES +=	\
-	wv1-glue.c
-EXTRA_GLUE_LIBADD +=	\
-	$(WV1_LIBS)
-endif
-
 libbeagleglue_la_SOURCES = 		\
 	$(BEAGLED_GLUE_SOURCES)		\
 	$(IOPRIO_GLUE_SOURCES)		\
@@ -75,7 +66,6 @@ gluelib_LTLIBRARIES = 		\
 	libbeagleglue.la
 
 COND_SOURCES = 			\
-	wv1-glue.c		\
 	inotify-glue.c
 
 EXTRA_DIST =			\

@@ -4,4 +4,4 @@ set -o pipefail
 tf1=/tmp/b52gb.$$.1
 tf2=/tmp/b52gb.$$.2
 cat >$tf1
-( (cat $tf1 | iconv -f utf8 -t big5 2>/dev/null|autogb|iconv -f gbk -t utf8 > $tf2 && cat $tf2) || cat $tf1 ) | tee /dev/tty
+( (cat $tf1 | iconv -f utf8 -t big5 2>/dev/null|autogb|iconv -f gbk -t utf8 > $tf2 && cat $tf2) || cat $tf1 )
