@@ -38,3 +38,9 @@ function renew-xauth() {
 for x in ~/.bash_completion.d/*; do 
     . "$x"
 done
+
+function tcd() {
+    builtin cd -P ~/today
+    cd `today "$@"`
+    cd_record
+}
