@@ -1,2 +1,4 @@
 #!/bin/bash
-date +%Y-%m-%d
+
+set -- ${1:-0}
+date +%Y-%m-%d -d "$1 days"

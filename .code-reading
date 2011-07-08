@@ -637,3 +637,16 @@ mmc_cid_show: 这个函数用ctags不能查到，因为它是在一个宏里被�
             {
                 ...
     =>          { NV_FALSE,  0, NV_FALSE, 0x4, NvOdmQuerySdioSlotUsage_Boot  },
+
+****************
+这个地方在设所有的东东的clock？
+
+    /home/bhj/src/arena/hardware/tegra/core/drivers/nvrm/nvrmkernel/core/ap15/ap15rm_clock_misc.c:192:                 CLK_RST_CONTROLLER_CLK_SOURCE_##ClkModule##_0, reg); \
+        #define NVRM_SET_OSC_CLOCK(ClkModule, RstModule, H_L) \
+        do\
+        {\
+            ...
+            {\
+                ...
+                NV_REGW(rm, NVRM_MODULE_ID( NvRmPrivModuleID_ClockAndReset, 0 ), \
+    =>                  CLK_RST_CONTROLLER_CLK_SOURCE_##ClkModule##_0, reg); \
