@@ -1,6 +1,7 @@
 ! The Alt_R is now right Windows key
 keysym Super_L = Super_R
 keycode 135 = Super_L
+keycode 108 = Alt_R
 
 clear mod4
 
