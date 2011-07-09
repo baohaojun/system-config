@@ -1093,3 +1093,4 @@ xrandr --output LVDS --mode 1280x728
 
 bzr launchpad-login baohaojun
 bzr branch lp:usb-creator
+when you are using dvorak keyboard layout, make sure gnome status bar is not showing the keyboard layuot icon.
