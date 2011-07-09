@@ -1,0 +1,10 @@
+! The Alt_R is now right Windows key
+keysym Super_L = Super_R
+keycode 135 = Super_L
+
+clear mod4
+
+add mod4 = Super_R
+! This is to make sawfish happy. Seems it will constantly do weird thing with Hyper/Super
+keysym Super_R = Super_L
+
