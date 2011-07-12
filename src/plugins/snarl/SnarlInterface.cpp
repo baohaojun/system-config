@@ -1,7 +1,11 @@
-﻿/// <summary>
-///  Snarl C++ interface implementation
+/// <summary>
+/// Snarl C++ interface implementation
+/// API version 42
 ///
-///  Written and maintained by Toke Noer Nøttrup (toke@noer.it)
+/// http://sourceforge.net/apps/mediawiki/snarlwin/index.php?title=Windows_API
+/// https://sourceforge.net/apps/mediawiki/snarlwin/index.php?title=Generic_API
+///
+/// Written and maintained by Toke Noer Nøttrup (toke@noer.it)
 ///
 ///  Please note the following changes compared to the VB6 (official API) dokumentation:
 ///  - Function names doesn't have the prefix "sn". Naming of constants and variables are
@@ -17,380 +21,139 @@
 ///    parameter, but you can get the last message token calling GetLastMsgToken();
 ///    Example: snarl.Hide(snarl.GetLastMsgToken());
 ///
-///  The functions in SnarlInterface both have ANSI(UTF8) and UNICODE versions.
-///  If the LPCWSTR (unicode) version of the functions are called, the strings
-///  are converted to UTF8 by SnarlInterface before sent to Snarl. So using the
-///  ANSI/UTF8/LPCSTR versions of the functions are faster!
+/// The functions in SnarlInterface both have ANSI(UTF8) and UNICODE versions.
+/// If the LPCWSTR (unicode) version of the functions are called, the strings
+/// are converted to UTF8 by SnarlInterface before sent to Snarl. So using the
+/// ANSI/UTF8/LPCSTR versions of the functions are faster!
 ///
-///  Funtions special to C++ V41 API compared to VB version:
-///    GetLastMsgToken()
-///    GetAppPath()
-///    GetIconsPath()
+/// See https://sourceforge.net/apps/mediawiki/snarlwin/index.php?title=Windows_API#C.2B.2B
+/// for example code etc.
 /// </summary>
 ///----------------------------------------------------------------------------
-/// <example>
-/// SnarlInterface snarl;
-/// snarl.RegisterApp(_T("CppTest"), _T("C++ test app"), NULL);
-/// snarl.AddClass(_T("Class1"), _T("Class 1"));
-/// snarl.EZNotify(_T("Class1"), _T("C++ example 1"), _T("Some text"), 10);
-/// snarl.UnregisterApp();
-///
-/// Please see the SimpleTest.cpp and SnarlV41Test.cpp for more example code.
-/// </example>
-///----------------------------------------------------------------------------
 /// <VersionHistory>
-///  2010-08-13 : First release of V41 Snarl API implementation
+///  2011-07-07 : Some changes to compile under VS2008
+///                 - Changed vector iterators to begin/end instead of cbegin/cend
+///                 - Removed const in PairType
+///  2011-02-09 : Fix for wrong parameters in AddClass
+///  2011-02-06 : Updated to rev. 3 of the wiki documentation
+///  2011-02-02 : First release of V42 Snarl API implementation
 /// </VersionHistory>
+///
+/// <Todo>
+/// </Todo>
+
 
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "SnarlInterface.h"
 
 
+namespace Snarl {
+namespace V42 {
+
 
 // workaround for mingw-w64 bug
 #ifdef __MINGW64_VERSION_MAJOR
-    extern "C" {
-        __declspec(dllimport) errno_t __cdecl strncat_s(char *_Dst,size_t _DstSizeInChars,const char *_Src,size_t _MaxCount);
-    }
+	extern "C" {
+                __declspec(dllimport) errno_t __cdecl strcpy_s(char * _Dst, size_t _SizeInBytes, const char *_Src);
+                __declspec(dllimport) errno_t __cdecl wcscpy_s(wchar_t * _Dst, size_t _SizeInBytes, const wchar_t *_Src);
+		__declspec(dllimport) errno_t __cdecl strncat_s(char *_Dst, size_t _DstSizeInChars, const char *_Src, size_t _MaxCount);
+	}
 #endif //__MINGW64_VERSION_MAJOR
 
-namespace Snarl {
-namespace V41 {
-
-//-----------------------------------------------------------------------------
-// Constructor/Destructor
-//-----------------------------------------------------------------------------
-SnarlInterface::SnarlInterface()
-	: appToken(0), lastMsgToken(0), localError(SnarlEnums::Success)
-{
-}
-
-SnarlInterface::~SnarlInterface()
-{
-}
 
 // ----------------------------------------------------------------------------
+// Static Snarl interface functions
+// ----------------------------------------------------------------------------
 
-LONG32 SnarlInterface::RegisterApp(LPCSTR signature, LPCSTR title, LPCSTR icon, HWND hWndReply /* = NULL */, LONG32 msgReply /* = 0 */, SnarlEnums::AppFlags flags /* = SnarlEnums::AppDefault */)
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::RegisterApp;
-	msg.Token = 0;
-	PackData(msg.PacketData, 
-		"id::%s#?title::%s#?icon::%s#?hwnd::%d#?umsg::%d#?flags::%d", 
-		signature, title, icon, hWndReply, msgReply, flags);
-
-	appToken = Send(msg);
-	lastMsgToken = 0;
-
-	return appToken;
-}
-
-LONG32 SnarlInterface::RegisterApp(LPCWSTR signature, LPCWSTR title, LPCWSTR icon, HWND hWndReply /* = NULL */, LONG32 msgReply /* = 0 */, SnarlEnums::AppFlags flags /* = SnarlEnums::AppDefault */)
-{
-	LPCSTR szParam1 = WideToUTF8(signature);
-	LPCSTR szParam2 = WideToUTF8(title);
-	LPCSTR szParam3 = WideToUTF8(icon);
-	
-	LONG32 result = RegisterApp(szParam1, szParam2, szParam3, hWndReply, msgReply, flags);
-	
-	delete [] szParam1;
-	delete [] szParam2;
-	delete [] szParam3;
-
-	return result;
-}
-
-LONG32 SnarlInterface::UnregisterApp()
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::UnregisterApp;
-	msg.Token = appToken;
-	PackData(msg.PacketData, NULL);
-
-	appToken = 0;
-	lastMsgToken = 0;
-
-	return Send(msg);
-}
-
-LONG32 SnarlInterface::UpdateApp(LPCSTR title /* = NULL */, LPCSTR icon /* = NULL */)
-{
-	if (title == NULL && icon == NULL)
-		return 0;
-
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::UpdateApp;
-	msg.Token = appToken;
-	
-	// TODO: Uckly code ahead
-	if (title != NULL && title[0] != 0 && icon != NULL && icon[0] != 0)
-		PackData(msg.PacketData, "title::%s#?icon::%s", title, icon);
-	else if (title != NULL && title[0] != 0)
-		PackData(msg.PacketData, "title::%s", title);
-	else if (icon != NULL && icon[0] != 0)
-		PackData(msg.PacketData, "icon::%s", icon);
-	
-	return Send(msg);
-}
-
-LONG32 SnarlInterface::UpdateApp(LPCWSTR title /* = NULL */, LPCWSTR icon /* = NULL */)
-{
-	LPCSTR szParam1 = WideToUTF8(title);
-	LPCSTR szParam2 = WideToUTF8(icon);
-	
-	LONG32 result = UpdateApp(szParam1, szParam2);
-	
-	delete [] szParam1;
-	delete [] szParam2;
-
-	return result;
-}
-
-LONG32 SnarlInterface::AddClass(LPCSTR className, LPCSTR description, bool enabled /* = true */)
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::AddClass;
-	msg.Token = appToken;
-	PackData(msg.PacketData, "id::%s#?name::%s#?enabled::%d", className, description, (enabled ? 1 : 0));
-
-	return Send(msg);
-}
-
-LONG32 SnarlInterface::AddClass(LPCWSTR className, LPCWSTR description, bool enabled /* = true */)
-{
-	LPCSTR szParam1 = WideToUTF8(className);
-	LPCSTR szParam2 = WideToUTF8(description);
-	
-	LONG32 result = AddClass(szParam1, szParam2, enabled);
-	
-	delete [] szParam1;
-	delete [] szParam2;
-
-	return result;
-}
-
-LONG32 SnarlInterface::RemoveClass(LPCSTR className, bool forgetSettings /* = false */)
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::RemoveClass;
-	msg.Token = appToken;
-	PackData(msg.PacketData, "id::%s#?forget::%d", className, (forgetSettings ? 1 : 0));
-
-	return Send(msg);
-}
-
-LONG32 SnarlInterface::RemoveClass(LPCWSTR className, bool forgetSettings /* = false */)
-{
-	LPCSTR szParam1 = WideToUTF8(className);
-	
-	LONG32 result = RemoveClass(szParam1, forgetSettings);
-	
-	delete [] szParam1;
-
-	return result;
-}
-
-LONG32 SnarlInterface::RemoveAllClasses(bool forgetSettings /* = false */)
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::RemoveClass;
-	msg.Token = appToken;
-	PackData(msg.PacketData, "all::1#?forget::%d", (forgetSettings ? 1 : 0));
-
-	return Send(msg);
-}
-
-LONG32 SnarlInterface::EZNotify(LPCSTR className, LPCSTR title, LPCSTR text, LONG32 timeout /* = -1 */, LPCSTR icon /* = NULL */, LONG32 priority /* = 0 */, LPCSTR acknowledge /* = NULL */, LPCSTR value /* = NULL */)
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::Notify;
-	msg.Token = appToken;
-	PackData(msg.PacketData,
-		"id::%s#?title::%s#?text::%s#?timeout::%d#?icon::%s#?priority::%d#?ack::%s#?value::%s",
-		className, title, text, timeout, (icon ? icon : ""), priority, (acknowledge ? acknowledge : ""), (value ? value : ""));
-
-	lastMsgToken = Send(msg);
-	return lastMsgToken;
-}
-
-LONG32 SnarlInterface::EZNotify(LPCWSTR className, LPCWSTR title, LPCWSTR text, LONG32 timeout /* = -1 */, LPCWSTR icon /* = NULL */, LONG32 priority /* = 0 */, LPCWSTR acknowledge /* = NULL */, LPCWSTR value /* = NULL */)
-{
-	LPCSTR szParam1 = WideToUTF8(className);
-	LPCSTR szParam2 = WideToUTF8(title);
-	LPCSTR szParam3 = WideToUTF8(text);
-	LPCSTR szParam4 = WideToUTF8(icon);
-	LPCSTR szParam5 = WideToUTF8(acknowledge);
-	LPCSTR szParam6 = WideToUTF8(value);
-	
-	LONG32 result = EZNotify(szParam1, szParam2, szParam3, timeout, szParam4, priority, szParam5, szParam6);
-	
-	delete [] szParam1; delete [] szParam2; delete [] szParam3;
-	delete [] szParam4; delete [] szParam5; delete [] szParam6;
-
-	return result;
-}
-
-LONG32 SnarlInterface::Notify(LPCSTR className, LPCSTR packetData)
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::Notify;
-	msg.Token = appToken;
-	PackData(msg.PacketData, "id::%s#?%s", className, packetData);
-
-	lastMsgToken = Send(msg);
-	return lastMsgToken;
-}
-
-LONG32 SnarlInterface::Notify(LPCWSTR className, LPCWSTR packetData)
-{
-	LPCSTR szParam1 = WideToUTF8(className);
-	LPCSTR szParam2 = WideToUTF8(packetData);
-
-	LONG32 result = Notify(szParam1, szParam2);
-	
-	delete [] szParam1; delete [] szParam2;
-	
-	return result;
-}
-
-LONG32 SnarlInterface::EZUpdate(LONG32 msgToken, LPCSTR title /* = NULL */, LPCSTR text /* = NULL */, LONG32 timeout /* = -1 */, LPCSTR icon /* = NULL */)
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::UpdateNotification;
-	msg.Token = msgToken;
-	
-	// Create packed data
-	errno_t err = 0;
-	ZeroMemory(msg.PacketData, sizeof(msg.PacketData));
-	char* pData = reinterpret_cast<char*>(msg.PacketData);
-
-	if (title != NULL) {
-		err |= strncat_s(pData, SnarlPacketDataSize, (pData[0] != NULL) ? "#?title::" : "title::", _TRUNCATE); //StringCbCat(tmp, SnarlPacketDataSize, "title::%s");
-		err |= strncat_s(pData, SnarlPacketDataSize, title, _TRUNCATE);
-	}
-	if (text != NULL) {
-		err |= strncat_s(pData, SnarlPacketDataSize, (pData[0] != NULL) ? "#?text::" : "text::", _TRUNCATE);
-		err |= strncat_s(pData, SnarlPacketDataSize, text, _TRUNCATE);
-	}
-	if (icon != NULL) {
-		err |= strncat_s(pData, SnarlPacketDataSize, (pData[0] != NULL) ? "#?icon::" : "icon::", _TRUNCATE);
-		err |= strncat_s(pData, SnarlPacketDataSize, icon, _TRUNCATE);
-	}
-	if (timeout != -1) {
-		char tmp[32];
-		_itoa_s(timeout, tmp, 32, 10);
-		
-		err |= strncat_s(pData, SnarlPacketDataSize, (pData[0] != NULL) ? "#?timeout::" : "timeout::", _TRUNCATE);
-		err |= strncat_s(pData, SnarlPacketDataSize, tmp, _TRUNCATE);
-	}
-	
-	// Check for strcat errors and exit on error
-	if (err != 0) {
-		localError = SnarlEnums::ErrorFailed;
-		return 0;
-	}
-
-	return Send(msg);
-}
-
-LONG32 SnarlInterface::EZUpdate(LONG32 msgToken, LPCWSTR title /* = NULL */, LPCWSTR text /* = NULL */, LONG32 timeout /* = -1 */, LPCWSTR icon /* = NULL */)
-{
-	LPCSTR szParam1 = WideToUTF8(title);
-	LPCSTR szParam2 = WideToUTF8(text);
-	LPCSTR szParam3 = WideToUTF8(icon);
-
-	LONG32 result = EZUpdate(msgToken, szParam1, szParam2, timeout, szParam3);
-	
-	delete [] szParam1; delete [] szParam2; delete [] szParam3;
-	
-	return result;
-}
-
-LONG32 SnarlInterface::Update(LONG32 msgToken, LPCSTR packetData)
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::UpdateNotification;
-	msg.Token = msgToken;
-	PackData(msg.PacketData, packetData);
-
-	return Send(msg);
-}
-
-LONG32 SnarlInterface::Update(LONG32 msgToken, LPCWSTR packetData)
-{
-	LPCSTR szParam1 = WideToUTF8(packetData);
-
-	LONG32 result = Update(msgToken, szParam1);
-	
-	delete [] szParam1;
-	
-	return result;
-}
-
-LONG32 SnarlInterface::Hide(LONG32 msgToken)
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::HideNotification;
-	msg.Token = msgToken;
-	PackData(msg.PacketData, NULL);
-
-	return Send(msg);
-}
-
-LONG32 SnarlInterface::IsVisible(LONG32 msgToken)
-{
-	SnarlMessage msg;
-	msg.Command = SnarlEnums::IsNotificationVisible;
-	msg.Token = msgToken;
-	PackData(msg.PacketData, NULL);
-
-	return Send(msg);
-}
-
-SnarlEnums::SnarlStatus SnarlInterface::GetLastError()
-{
-	return localError;
-}
-
-// static
-BOOL SnarlInterface::IsSnarlRunning()
-{
-	return IsWindow(GetSnarlWindow());
-}
-
-LONG32 SnarlInterface::GetVersion()
-{
-	localError = SnarlEnums::Success;
-
-	HWND hWnd = GetSnarlWindow();
-	if (!IsWindow(hWnd))
-	{
-		localError = SnarlEnums::ErrorNotRunning;
-		return 0;
-	}
-
-	HANDLE hProp = GetProp(hWnd, _T("_version"));
-	return static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(hProp));
-}
-
-// static
-UINT SnarlInterface::Broadcast()
-{
-	return RegisterWindowMessage(SnarlGlobalMsg);
-}
-
-// static
 UINT SnarlInterface::AppMsg()
 {
 	return RegisterWindowMessage(SnarlAppMsg);
 }
 
-// static
-HWND SnarlInterface::GetSnarlWindow()
+UINT SnarlInterface::Broadcast()
 {
-	return FindWindow(SnarlWindowClass, SnarlWindowTitle);;
+	return RegisterWindowMessage(SnarlGlobalMsg);
+}
+
+LONG32 SnarlInterface::DoRequest(LPCSTR request, UINT replyTimeout)
+{
+	DWORD_PTR nResult = 0;
+
+	HWND hWnd = GetSnarlWindow();
+	if (!IsWindow(hWnd))
+		return -SnarlEnums::ErrorNotRunning;
+
+	// Create COPYDATASTRUCT
+	COPYDATASTRUCT cds;
+	cds.dwData = 0x534E4C03;           // "SNL",3
+	cds.cbData = (DWORD)strlen(request);      // No knowledge of max string lenght
+	cds.lpData = const_cast<char*>(request);
+
+	// Send message
+	if (SendMessageTimeout(hWnd, WM_COPYDATA, (WPARAM)GetCurrentProcessId(), (LPARAM)&cds, SMTO_ABORTIFHUNG | SMTO_NOTIMEOUTIFNOTHUNG, replyTimeout, &nResult) == 0)
+	{
+		DWORD nError = GetLastError();
+		if (nError == ERROR_TIMEOUT)
+			nResult = -SnarlEnums::ErrorTimedOut;
+		else
+			nResult = -SnarlEnums::ErrorFailed;
+	}
+
+	return (LONG32)nResult;
+}
+
+LONG32 SnarlInterface::DoRequest(LPCWSTR request, UINT replyTimeout)
+{
+	LONG32 nResult = 0;
+
+	// Convert to UTF8
+	LPSTR utf8Request = WideToUTF8(request);
+	if (utf8Request == NULL)
+		return -SnarlEnums::ErrorCppInterface;
+
+	nResult = DoRequest(utf8Request, replyTimeout);
+
+	// Cleanup and return result
+	FreeString(utf8Request);
+	return nResult;
+}
+
+
+std::basic_string<char>& SnarlInterface::Escape(std::basic_string<char>& str)
+{
+	std::basic_string<char>::size_type strLength = str.length();
+	for (std::basic_string<char>::size_type i = 0; i < strLength; ++i)
+	{
+		if (str.at(i) == '=') {
+			str.insert(++i, "=");
+			++strLength;
+		}
+		else if (str[i] == '&') {
+			str.insert(++i, "&");
+			++strLength;
+		}
+	}
+
+	return str;
+}
+
+std::basic_string<wchar_t>& SnarlInterface::Escape(std::basic_string<wchar_t>& str)
+{
+	std::basic_string<wchar_t>::size_type strLength = str.length();
+	for (std::basic_string<wchar_t>::size_type i = 0; i < strLength; ++i)
+	{
+		if (str.at(i) == L'=') {
+			str.insert(++i, L"=");
+			++strLength;
+		}
+		else if (str[i] == L'&') {
+			str.insert(++i, L"&");
+			++strLength;
+		}
+	}
+
+	return str;
 }
 
 LPCTSTR SnarlInterface::GetAppPath()
@@ -423,7 +186,6 @@ LPCTSTR SnarlInterface::GetIconsPath()
 		return NULL;
 
 	size_t nLen = 0;
-	// TODO: _tcsnlen MAX_PATH
 	if (nLen = _tcsnlen(szPath, MAX_PATH))
 	{
 		nLen += 10 + 1; // etc\\icons\\ + NULL
@@ -438,54 +200,446 @@ LPCTSTR SnarlInterface::GetIconsPath()
 	return szIconPath;
 }
 
+HWND SnarlInterface::GetSnarlWindow()
+{
+	return FindWindow(SnarlWindowClass, SnarlWindowTitle);;
+}
+
+LONG32 SnarlInterface::GetVersion()
+{
+	return DoRequest(Requests::VersionA());
+}
+
+BOOL SnarlInterface::IsSnarlRunning()
+{
+	return IsWindow(GetSnarlWindow());
+}
+
+
+// --------------------------------------------------------------------------------------------
+// SnarlInterface member functions
+// --------------------------------------------------------------------------------------------
+
+SnarlInterface::SnarlInterface()
+	: appToken(0), lastMsgToken(0), szPasswordA(NULL), szPasswordW(NULL)
+{
+}
+
+SnarlInterface::~SnarlInterface()
+{
+	delete [] szPasswordA;
+	delete [] szPasswordW;
+}
+
+//---------------------------------------------------------------------------------------------
+
+LONG32 SnarlInterface::AddAction(LONG32 msgToken, LPCSTR label, LPCSTR cmd)
+{
+	// addaction?[token=<notification token>|app-sig=<signature>&uid=<uid>][&password=<password>]&label=<label>&cmd=<command>
+
+	SnarlParameterList<char> spl(4);
+	spl.Add("token", msgToken);
+	spl.Add("password", szPasswordA);
+	
+	spl.Add("label", label);
+	spl.Add("cmd", cmd);
+
+	return DoRequest(Requests::AddActionA(), spl);
+}
+
+LONG32 SnarlInterface::AddAction(LONG32 msgToken, LPCWSTR label, LPCWSTR cmd)
+{
+	SnarlParameterList<wchar_t> spl(4);
+	spl.Add(L"token", msgToken);
+	spl.Add(L"password", szPasswordW);
+	
+	spl.Add(L"label", label);
+	spl.Add(L"cmd", cmd);
+
+	return DoRequest(Requests::AddActionW(), spl);
+}
+
+
+LONG32 SnarlInterface::AddClass(LPCSTR classId, LPCSTR name, LPCSTR title, LPCSTR text, LPCSTR icon, LPCSTR sound, LONG32 duration, LPCSTR callback, bool enabled)
+{
+	// addclass?[app-sig=<signature>|token=<application token>][&password=<password>]&id=<class identifier>&name=<class name>[&enabled=<0|1>][&callback=<callback>]
+    //          [&title=<title>][&text=<text>][&icon=<icon>][&sound=<sound>][&duration=<duration>]
+
+	SnarlParameterList<char> spl(11);
+	spl.Add("token", appToken);
+	spl.Add("password", szPasswordA);
+
+	spl.Add("id", classId);
+	spl.Add("name", name);
+	spl.Add("enabled", enabled);
+	spl.Add("callback", callback);
+	spl.Add("title", title);
+	spl.Add("text", text);
+	spl.Add("icon", icon);
+	spl.Add("sound", sound);
+	if (duration != -1) spl.Add("duration", duration);
+
+	return DoRequest(Requests::AddClassA(), spl);
+}
+
+LONG32 SnarlInterface::AddClass(LPCWSTR classId, LPCWSTR name, LPCWSTR title, LPCWSTR text, LPCWSTR icon, LPCWSTR sound, LONG32 duration, LPCWSTR callback, bool enabled)
+{
+	SnarlParameterList<wchar_t> spl(11);
+	spl.Add(L"token", appToken);
+	spl.Add(L"password", szPasswordW);
+	
+	spl.Add(L"id", classId);
+	spl.Add(L"name", name);
+	spl.Add(L"enabled", enabled);
+	spl.Add(L"callback", callback);
+	spl.Add(L"title", title);
+	spl.Add(L"text", text);
+	spl.Add(L"icon", icon);
+	spl.Add(L"sound", sound);
+	if (duration != -1)	spl.Add(L"duration", duration);
+
+	return DoRequest(Requests::AddClassW(), spl);
+}
+
+
+LONG32 SnarlInterface::ClearActions(LONG32 msgToken)
+{
+	// clearactions?[token=<notification token>|app-sig=<app-sig>&uid=<uid>][&password=<password>]
+
+	SnarlParameterList<char> spl(2);
+	spl.Add("token", msgToken);
+	spl.Add("password", szPasswordA);
+
+	return DoRequest(Requests::ClearActionsA(), spl);
+}
+
+
+LONG32 SnarlInterface::ClearClasses()
+{
+	// clearclasses?[token=app-sig=<signature>|token=<application token>][&password=<password>]
+
+	SnarlParameterList<char> spl(2);
+	spl.Add("token", appToken);
+	spl.Add("password", szPasswordA);
+
+	return DoRequest(Requests::ClearClassesA(), spl);
+}
+
+
 LONG32 SnarlInterface::GetLastMsgToken() const
 {
 	return lastMsgToken;
 }
 
 
+LONG32 SnarlInterface::Hide(LONG32 msgToken)
+{
+	// hide?[token=<notification token>|app-sig=<app-sig>&uid=<uid>][&password=<password>]
+
+	SnarlParameterList<char> spl(2);
+	spl.Add("token", msgToken);
+	spl.Add("password", szPasswordA);
+
+	return DoRequest(Requests::HideA(), spl);
+}
+
+
+LONG32 SnarlInterface::IsVisible(LONG32 msgToken)
+{
+	// isvisible?[token=<notification token>|app-sig=<app-sig>&uid=<uid>][&password=<password>]
+
+	SnarlParameterList<char> spl(2);
+	spl.Add("token", msgToken);
+	spl.Add("password", szPasswordA);
+
+	return DoRequest(Requests::IsVisibleA(), spl);
+}
+
+
+LONG32 SnarlInterface::Notify(LPCSTR classId, LPCSTR title, LPCSTR text, LONG32 timeout, LPCSTR iconPath, LPCSTR iconBase64, LONG32 priority, LPCSTR ack, LPCSTR callback, LPCSTR value)
+{
+	// notify?[app-sig=<signature>|token=<application token>][&password=<password>][&id=<class identifier>]
+	//        [&title=<title>][&text=<text>][&timeout=<timeout>][&icon=<icon path>][&icon-base64=<MIME data>][&callback=<default callback>]
+	//        [&priority=<priority>][&uid=<notification uid>][&value=<value>]
+
+	//  LPCSTR iconData
+
+	SnarlParameterList<char> spl(12);
+	spl.Add("token", appToken);
+	spl.Add("password", szPasswordA);
+	
+	spl.Add("id", classId);
+	spl.Add("title", title);
+	spl.Add("text", text);
+	spl.Add("icon", iconPath);
+	spl.Add("icon-base64", iconBase64);
+	spl.Add("ack", ack);
+	spl.Add("callback", callback);
+	spl.Add("value", value);
+	if (timeout != -1)  spl.Add("timeout", timeout);
+	if (priority != -2) spl.Add("priority", priority); // -1 is a legal priority
+
+	LONG32 request = DoRequest(Requests::NotifyA(), spl);
+	lastMsgToken = (request > 0) ? request : 0;
+
+	return request;
+}
+
+LONG32 SnarlInterface::Notify(LPCWSTR classId, LPCWSTR title, LPCWSTR text, LONG32 timeout, LPCWSTR iconPath, LPCWSTR iconBase64, LONG32 priority, LPCWSTR ack, LPCWSTR callback, LPCWSTR value)
+{
+	SnarlParameterList<wchar_t> spl(12);
+	spl.Add(L"token", appToken);
+	spl.Add(L"password", szPasswordW);
+
+	spl.Add(L"id", classId);
+	spl.Add(L"title", title);
+	spl.Add(L"text", text);
+	spl.Add(L"icon", iconPath);
+	spl.Add(L"icon-base64", iconBase64);
+	spl.Add(L"ack", ack);
+	spl.Add(L"callback", callback);
+	spl.Add(L"value", value);
+	if (timeout != -1)  spl.Add(L"timeout", timeout);
+	if (priority != -2) spl.Add(L"priority", priority); // -1 is a legal priority	
+
+	LONG32 request = DoRequest(Requests::NotifyW(), spl);
+	lastMsgToken = (request > 0) ? request : 0;
+
+	return request;
+}
+
+
+LONG32 SnarlInterface::Register(LPCSTR signature, LPCSTR title, LPCSTR icon, LPCSTR password, HWND hWndReplyTo, LONG32 msgReply)
+{
+	// register?app-sig=<signature>&title=<title>[&icon=<icon>][&password=<password>][&reply-to=<reply window>][&reply=<reply message>]
+
+	SnarlParameterList<char> spl(6);
+	spl.Add("app-sig", signature);
+	spl.Add("title", title);
+	spl.Add("icon", icon);
+	spl.Add("password", password);
+	spl.Add("reply-to", hWndReplyTo);
+	spl.Add("reply", msgReply);
+
+	// If password was given, save and use in all other functions requiring password
+	if (password != NULL && strlen(password) > 0)
+		SetPassword(password);
+
+	LONG32 request = DoRequest(Requests::RegisterA(), spl);
+	if (request > 0)
+		appToken = request;
+
+	return request;
+}
+
+LONG32 SnarlInterface::Register(LPCWSTR signature, LPCWSTR name, LPCWSTR icon, LPCWSTR password, HWND hWndReplyTo, LONG32 msgReply)
+{
+	SnarlParameterList<wchar_t> spl(7);
+	spl.Add(L"app-sig", signature);
+	spl.Add(L"title", name);
+	spl.Add(L"icon", icon);
+	spl.Add(L"password", password);
+	spl.Add(L"reply-to", hWndReplyTo);
+	spl.Add(L"reply", msgReply);
+
+	// If password was given, save and use in all other functions requiring password
+	if (password != NULL && wcslen(password) > 0)
+		SetPassword(password);
+
+	LONG32 request = DoRequest(Requests::RegisterW(), spl);
+	if (request > 0)
+		appToken = request;
+
+	return request;
+}
+
+
+LONG32 SnarlInterface::RemoveClass(LPCSTR classId)
+{
+	// remclass?[app-sig=<signature>|token=<application token>][&password=<password>][&id=<class identifier>|&all=<0|1>]
+
+	SnarlParameterList<char> spl(3);
+	spl.Add("token", appToken);
+	spl.Add("password", szPasswordA);
+	
+	spl.Add("id", classId);
+	// instead of all, use ClearClasses
+
+	return DoRequest(Requests::RemoveClassA(), spl);
+}
+
+LONG32 SnarlInterface::RemoveClass(LPCWSTR classId)
+{
+	SnarlParameterList<wchar_t> spl(3);
+	spl.Add(L"token", appToken);
+	spl.Add(L"password", szPasswordW);
+	
+	spl.Add(L"id", classId);
+
+	return DoRequest(Requests::RemoveClassW(), spl);
+}
+
+
+LONG32 SnarlInterface::Unregister(LPCSTR signature)
+{
+	// unregister?[app-sig=<signature>|token=<application token>][&password=<password>]
+
+	SnarlParameterList<char> spl(2);
+	spl.Add("app-sig", signature);
+	spl.Add("password", szPasswordA);
+
+	appToken = 0;
+	lastMsgToken = 0;
+	ClearPassword();
+
+	return DoRequest(Requests::UnregisterA(), spl);
+}
+
+LONG32 SnarlInterface::Unregister(LPCWSTR signature)
+{
+	SnarlParameterList<wchar_t> spl(2);
+	spl.Add(L"app-sig", signature);
+	spl.Add(L"password", szPasswordW);
+
+	appToken = 0;
+	lastMsgToken = 0;
+	ClearPassword();
+
+	return DoRequest(Requests::UnregisterW(), spl);
+}
+
+LONG32 SnarlInterface::Update(LONG32 msgToken, LPCSTR classId, LPCSTR title, LPCSTR text, LONG32 timeout, LPCSTR iconPath, LPCSTR iconBase64, LONG32 priority, LPCSTR ack, LPCSTR callback, LPCSTR value)
+{
+	// Made from best guess - no documentation available yet
+	SnarlParameterList<char> spl(12);
+	spl.Add("token", msgToken);
+	spl.Add("password", szPasswordA);
+
+	spl.Add("id", classId);
+	spl.Add("title", title);
+	spl.Add("text", text);
+	spl.Add("icon", iconPath);
+	spl.Add("icon-base64", iconBase64);
+	spl.Add("ack", ack);
+	spl.Add("callback", callback);
+	spl.Add("value", value);
+	if (timeout != -1)  spl.Add("timeout", timeout);
+	if (priority != -2) spl.Add("priority", priority); // -1 is a legal priority
+
+	return DoRequest(Requests::UpdateA(), spl);
+}
+
+LONG32 SnarlInterface::Update(LONG32 msgToken, LPCWSTR classId, LPCWSTR title, LPCWSTR text, LONG32 timeout, LPCWSTR iconPath, LPCWSTR iconBase64, LONG32 priority, LPCWSTR ack, LPCWSTR callback, LPCWSTR value)
+{
+	// Made from best guess - no documentation available yet
+	SnarlParameterList<wchar_t> spl(12);
+	spl.Add(L"token", msgToken);
+	spl.Add(L"password", szPasswordW);
+
+	spl.Add(L"id", classId);
+	spl.Add(L"title", title);
+	spl.Add(L"text", text);
+	spl.Add(L"icon", iconPath);
+	spl.Add(L"icon-base64", iconBase64);
+	spl.Add(L"ack", ack);
+	spl.Add(L"callback", callback);
+	spl.Add(L"value", value);
+	if (timeout != -1)  spl.Add(L"timeout", timeout);
+	if (priority != -2) spl.Add(L"priority", priority); // -1 is a legal priority	
+
+	return DoRequest(Requests::UpdateW(), spl);
+}
+
+/*
+// Update app should not be used at this time, according to wiki
+LONG32 SnarlInterface::UpdateApp(LPCSTR title, LPCSTR icon)
+{
+	SnarlParameterList<char> spl(3);
+	spl.Add("token", appToken);
+	spl.Add("title", title);
+	spl.Add("icon", icon);
+
+	return DoRequest(Requests::UpdateAppA(), spl);
+}
+
+LONG32 SnarlInterface::UpdateApp(LPCWSTR title, LPCWSTR icon)
+{
+	SnarlParameterList<wchar_t> spl(2);
+	spl.Add(L"token", appToken);
+	spl.Add(L"title", title);
+	spl.Add(L"icon", icon);
+
+	return DoRequest(Requests::UpdateAppW(), spl);
+}*/
+
+
 //-----------------------------------------------------------------------------
 // Private functions 
 //-----------------------------------------------------------------------------
 
-LONG32 SnarlInterface::Send(SnarlMessage msg)
+LONG32 SnarlInterface::DoRequest(LPCSTR request, SnarlParameterList<char>& spl, UINT replyTimeout)
 {
-	DWORD_PTR nReturn = 0; // Failure
+	// <action>[?<data>=<value>[&<data>=<value>]]
+	const std::vector<SnarlParameterList<char>::PairType>&list = spl.GetList();
 
-	HWND hWnd = GetSnarlWindow();
-	if (!IsWindow(hWnd))
+	if (list.size() > 0)
 	{
-		localError = SnarlEnums::ErrorNotRunning;
-		return 0;
+		std::string requestStr = request;
+		requestStr.append("?");
+
+		std::vector<SnarlParameterList<char>::PairType>::const_iterator listEnd = list.end(); // cend();
+		for (std::vector<SnarlParameterList<char>::PairType>::const_iterator iter = list.begin(); // cbegin();
+			iter != listEnd; ++iter)
+		{
+			SnarlParameterList<char>::PairType pair = *iter;
+
+			if (iter->second.length() > 0)
+			{
+				std::basic_string<char>& value = const_cast<std::basic_string<char>&>(iter->second);
+				requestStr.append(iter->first).append("=").append(Escape(value));
+				requestStr.append("&");
+			}
+		}
+		// Delete last &
+		requestStr.erase(requestStr.size() - 1);
+
+		return DoRequest(requestStr.c_str(), replyTimeout);
 	}
-
-	COPYDATASTRUCT cds;
-	cds.dwData = 0x534E4C02; // "SNL",2;
-	cds.cbData = sizeof(SnarlMessage);
-	cds.lpData = &msg;
-
-	if (SendMessageTimeout(hWnd, WM_COPYDATA, (WPARAM)GetCurrentProcessId(), (LPARAM)&cds, SMTO_ABORTIFHUNG | SMTO_NOTIMEOUTIFNOTHUNG, 500, &nReturn) == 0)
-	{
-		// return zero on failure
-		if (GetLastError() == ERROR_TIMEOUT)
-			localError = SnarlEnums::ErrorTimedOut;
-		else
-			localError = SnarlEnums::ErrorFailed;
-		
-		return 0;
-	}
-
-	// return result and cache LastError
-	HANDLE hProp = GetProp(hWnd, _T("last_error"));
-	localError = static_cast<SnarlEnums::SnarlStatus>(static_cast<LONG32>(reinterpret_cast<DWORD_PTR>(hProp)));
-
-	return nReturn;
+	else
+		return DoRequest(request, replyTimeout);
 }
 
-//-----------------------------------------------------------------------------
+LONG32 SnarlInterface::DoRequest(LPCWSTR request, SnarlParameterList<wchar_t>& spl, UINT replyTimeout)
+{
+	// <action>[?<data>=<value>[&<data>=<value>]]
+	const std::vector<SnarlParameterList<wchar_t>::PairType>&list = spl.GetList();
+
+	if (list.size() > 0)
+	{
+		std::basic_string<wchar_t> requestStr = request;
+		requestStr.append(L"?");
+
+		std::vector<SnarlParameterList<wchar_t>::PairType>::const_iterator listEnd = list.end(); // cend();
+		for (std::vector<SnarlParameterList<wchar_t>::PairType>::const_iterator iter = list.begin(); // cbegin();
+			iter != listEnd; ++iter)
+		{
+			if (iter->second.length() > 0)
+			{
+				std::basic_string<wchar_t>& value = const_cast<std::basic_string<wchar_t>&>(iter->second);
+				requestStr.append(iter->first).append(L"=").append(Escape(value));
+				requestStr.append(L"&");
+			}
+		}
+		// Delete last &
+		requestStr.erase(requestStr.size() - 1);
+
+		return DoRequest(requestStr.c_str(), replyTimeout);
+	}
+	else
+		return DoRequest(request, replyTimeout);
+}
 
 // Remember to delete [] returned string
-inline
 LPSTR SnarlInterface::WideToUTF8(LPCWSTR szWideStr)
 {
 	if (szWideStr == NULL)
@@ -498,28 +652,49 @@ LPSTR SnarlInterface::WideToUTF8(LPCWSTR szWideStr)
 	return szUTF8;
 }
 
-void SnarlInterface::PackData(BYTE* data, LPCSTR format, ...)
+void SnarlInterface::SetPassword(LPCSTR password)
 {
-	// Always zero array - Used to clear the array in member functions
-	ZeroMemory(data, SnarlPacketDataSize);
+	ClearPassword();
 
-	// Return if format string is empty
-	if (format == NULL || format[0] == 0)
-		return;
+	if (password != NULL)
+	{
+		int bufSize = (int)strlen(password) + 1;
+		szPasswordA = new char[bufSize];
+		szPasswordW = new wchar_t[bufSize];
 
-	int cchStrTextLen = 0;
-	va_list args;
-	va_start(args, format);
-	
-	// Get size of buffer
-	cchStrTextLen = _vscprintf(format, args) + 1; // + NULL
-	if (cchStrTextLen <= 1)
-		return;
+		// Copy ansi string
+		strcpy_s(szPasswordA, bufSize, password);
 
-	// Create formated string - _TRUNCATE will ensure zero terminated
-	_vsnprintf_s((char*)data, SnarlPacketDataSize, _TRUNCATE, format, args);
-
-	va_end(args);
+		// Copy wide string
+		MultiByteToWideChar(CP_ACP, 0, password, bufSize, szPasswordW, bufSize);
+	}
 }
 
-}} // namespace Snarl::V41
+void SnarlInterface::SetPassword(LPCWSTR password)
+{
+	ClearPassword();
+
+	if (password != NULL)
+	{
+		size_t bufSize = wcslen(password) + 1;
+		szPasswordW = new wchar_t[bufSize];
+
+		// Copy wide string
+		wcscpy_s(szPasswordW, bufSize, password);
+
+		// Copy ansi string
+		szPasswordA = WideToUTF8(password);
+	}
+}
+
+void SnarlInterface::ClearPassword()
+{
+	// Safe to delete NULL
+	delete [] szPasswordA;
+	delete [] szPasswordW;
+	szPasswordA = NULL;
+	szPasswordW = NULL;
+}
+
+
+}} // namespace Snarl::V42

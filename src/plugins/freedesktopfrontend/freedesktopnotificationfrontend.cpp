@@ -76,6 +76,7 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
                                               const QStringList &actions, const QVariantMap &hints, int timeout)
 {
     qDebug()<<app_name<<summary<<body<<app_icon;
+	qDebug()<<"Hints:"<<hints;
     QString icon;
 
     if(hints.contains("image_data")){

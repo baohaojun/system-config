@@ -30,7 +30,7 @@
 
 #define SNORENOTIFIER_MESSAGE_ID  WM_USER + 238
 
-using namespace Snarl::V41;
+using namespace Snarl::V42;
 
 Q_EXPORT_PLUGIN2(snarl_backend,Snarl_Backend);
 
@@ -65,10 +65,10 @@ void Snarl_Backend::registerApplication(Application *application){
 		_applications.insert(application->name(),snarlInterface);
 	}
 	qDebug()<<"Register with Snarl"<<application->name()<<application->icon();
-	snarlInterface->RegisterApp(application->name().toUtf8().constData(),
+	snarlInterface->Register(application->name().toUtf8().constData(),
 		application->name().toUtf8().constData(),
 		application->icon().toUtf8().constData(),
-		winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
+		0,winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
 
 	foreach(Alert *alert,application->alerts()){
 		snarlInterface->AddClass(application->name().toUtf8().constData(),
@@ -80,7 +80,7 @@ void Snarl_Backend::unregisterApplication(Application *application){
 	SnarlInterface *snarlInterface = _applications.take(application->name());
 	if(snarlInterface == NULL)
 		return;
-	snarlInterface->UnregisterApp();
+	snarlInterface->Unregister(application->name().toUtf8().constData());
 	delete snarlInterface;
 }
 
@@ -92,15 +92,17 @@ int Snarl_Backend::notify(QSharedPointer<Notification>notification){
 
 	int id = notification->id();
 	if(notification->id()==0){
-		id = snarlInterface->EZNotify(notification->alert().toUtf8().constData(),
+		id = snarlInterface->Notify(notification->alert().toUtf8().constData(),
 			Notification::toPlainText(notification->title()).toUtf8().constData(),
 			Notification::toPlainText(notification->text()).toUtf8().constData(),
 			notification->timeout(),
 			notification->icon().toUtf8().constData());
+		//add ack stuff
 		activeNotifications->insert(id,notification);
 	}else{
 		//update message
-		snarlInterface->EZUpdate(notification->id(),
+		snarlInterface->Update(notification->id(),
+			notification->alert().toUtf8().constData(),
 			Notification::toPlainText(notification->title()).toUtf8().constData(),
 			Notification::toPlainText(notification->text()).toUtf8().constData(),
 			notification->timeout(),
@@ -139,19 +141,19 @@ bool SnarlWidget::winEvent(MSG * msg, long * result){
 		QSharedPointer<Notification> notification = _snarl->activeNotifications->value(notificationID);
 		qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action;
 		switch(action){
-		case SnarlEnums::NotificationAck:
+		case SnarlEnums::NotifyInvoked:
 			notification->setActionInvoked(Notification::ACTION_1); 
 			break;
-		case SnarlEnums::NotificationClicked:
-			notification->setActionInvoked(Notification::ACTION_2); 
-			break;
-		case SnarlEnums::NotificationMiddleButton:
-			notification->setActionInvoked(Notification::ACTION_3); 
-			break;
-		case SnarlEnums::NotificationClosed:
+		//case SnarlEnums::NotificationClicked:
+		//	notification->setActionInvoked(Notification::ACTION_2); 
+		//	break;
+		//case SnarlEnums::NotificationMiddleButton:
+		//	notification->setActionInvoked(Notification::ACTION_3); 
+		//	break;
+		case SnarlEnums::CallbackClosed:
 			notification->setActionInvoked(Notification::CLOSED); 
 			break;
-		case SnarlEnums::NotificationTimedOut:
+		case SnarlEnums::CallbackTimedOut:
 			notification->setActionInvoked(Notification::TIMED_OUT); 
 			break;
 		default:
