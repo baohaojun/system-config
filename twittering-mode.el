@@ -269,6 +269,12 @@ tweets."
   :type 'boolean
   :group 'twittering)
 
+(defcustom twittering-need-to-be-updated-indicator " "
+  "A string indicating it is being updated.
+The string should not be empty.  "
+  :type 'string
+  :group 'twittering)
+
 ;;;
 ;;; Internal Variables
 ;;;
@@ -6274,7 +6280,7 @@ string.")
   (let ((retrieved (gethash (list username method) twittering-simple-hash))
         (s (if (and (eq method 'counts) beg end)
                (buffer-substring beg end)
-             ".")))                     ; hold 'need-to-be-updated
+             (copy-sequence twittering-need-to-be-updated-indicator))))
     (cond
      (retrieved
       (remove-text-properties 0 (length s) '(need-to-be-updated nil) s)
@@ -6517,7 +6523,10 @@ string.")
 (defun twittering-make-douban-detail-string (beg end detail-url &optional html)
   (let* ((detail-data (gethash detail-url twittering-url-data-hash))
          (properties (and beg (text-properties-at beg)))
-         (detail (apply 'propertize "." properties)))
+         (detail (apply 'propertize
+                        (copy-sequence twittering-need-to-be-updated-indicator)
+                        properties)))
+
     ;;    (when properties
     ;;      (add-text-properties 0 (length detail) properties detail))
     (cond
@@ -7710,7 +7719,7 @@ image are displayed."
   (let ((display-spec (twittering-get-display-spec-for-icon image-url))
         (image-data (gethash image-url twittering-url-data-hash))
         (properties (and beg (text-properties-at beg)))
-        (icon-string (copy-sequence ".")))
+        (icon-string (copy-sequence twittering-need-to-be-updated-indicator)))
     (when properties
       (add-text-properties 0 (length icon-string) properties icon-string))
     (cond
@@ -7753,7 +7762,9 @@ image are displayed."
     (twittering-make-icon-string beg end image-url sync)))
 
 (defun twittering-make-emotions-string (beg end emotion)
-  (let ((ret (if (and beg end) (buffer-substring-no-properties beg end) ".")))
+  (let ((ret (if (and beg end)
+                 (buffer-substring-no-properties beg end)
+               (copy-sequence twittering-need-to-be-updated-indicator))))
     (if (consp twittering-emotions-phrase-url-alist)
         (let ((url (some (lambda (i)
                            (when (string= (assqref 'phrase i) emotion)
@@ -7765,6 +7776,28 @@ image are displayed."
                             'need-to-be-updated
                             `(twittering-make-emotions-string ,emotion))))
     ret))
+
+(defun twittering-insert-emotion (phrase)
+  (interactive
+   (progn
+     (unless twittering-is-getting-emotions-p
+       (setq twittering-is-getting-emotions-p t)
+       (twittering-get-simple nil nil nil 'emotions))
+     `(,(ido-completing-read
+         "Select emotion: "
+         (mapcar (lambda (e)
+                   (apply 'propertize
+                          (assqref 'phrase e)
+                          (twittering-get-display-spec-for-icon
+                           (assqref 'url e))))
+                 twittering-emotions-phrase-url-alist)))))
+  (let ((url (some (lambda (e)
+                     (equal (assqref 'phrase e) phrase)
+                     (assqref 'url e))
+                   twittering-emotions-phrase-url-alist)))
+    (insert (apply 'propertize
+                   phrase
+                   (twittering-get-display-spec-for-icon url)))))
 
 (defcustom twittering-image-height-threshold 40
   "For images whose height is bigger than this, we will show it in a separate
@@ -7850,8 +7883,14 @@ handler. "
           (case (assqref 'method args)
             ((counts)
              (setq twittering-counts-last-timestamp (current-time)))
+
             ((emotions)
-             (setq twittering-emotions-phrase-url-alist ret))
+             (setq twittering-emotions-phrase-url-alist ret)
+             (mapc (lambda (e)
+                     (twittering-make-original-icon-string
+                      nil nil (assqref 'url e)))
+                   twittering-emotions-phrase-url-alist))
+
             ((get-list-index get-list-subscriptions get-list-memberships)
              (setq ret (mapcar (lambda (i) (substring (assqref 'full-name i) 1))
                                (assqref 'lists ret))))
