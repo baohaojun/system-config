@@ -1094,3 +1094,31 @@ xrandr --output LVDS --mode 1280x728
 bzr launchpad-login baohaojun
 bzr branch lp:usb-creator
 when you are using dvorak keyboard layout, make sure gnome status bar is not showing the keyboard layuot icon.
+
+字型的字根口诀是：
+
+ A 工戈草头右框七
+ B 子耳了也乃框皮
+ C 又巴牛入马失蹄
+ D 大犬戊其古石厂
+ E 月用力豸毛衣臼
+ F 土干十寸未甘雨，不要忘了革字底
+ G 王旁青头五夫一
+ H 目上卜止虎具头
+ I 水族三点鳖头小
+ J 日早两竖与虫依
+ K 口流川，码元稀
+ L 田甲方框四车里
+ M 山由贝骨下框集
+ N 已类左框心尸羽
+ O 火业广鹿四点米
+ P 之字宝盖补示衣
+ Q 金夕鸟儿犭边鱼
+ R 白斤气丘叉手提
+ S 木丁西甫
+ T 禾竹反文双人立
+ U 立辛六羊病门里
+ V 女刀九良山西倒
+ W 人八登头单人几
+ X 幺母贯头弓和匕
+ Y 言文方点谁人去
