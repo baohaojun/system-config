@@ -1,7 +1,7 @@
 xwl's fork
 ----------
 
-* Quick startup:
+* Quick start:
   http://www.cnblogs.com/william9/archive/2011/04/17/william9.html
 
 * Add login multiple services simultaneously support, e.g, both twitter and
