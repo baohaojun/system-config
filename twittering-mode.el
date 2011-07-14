@@ -1052,28 +1052,6 @@ function."
        `(,name . ,value)))
    (split-string str "&")))
 
-(defun twittering-oauth-get-response-alist (buffer)
-  (with-current-buffer buffer
-    (goto-char (point-min))
-    (when (search-forward-regexp
-           "\\`\\(\\(HTTP/1\.[01]\\) \\([0-9][0-9][0-9]\\) \\(.*?\\)\\)\r?\n"
-           nil t)
-      (let ((status-line (match-string 1))
-            (http-version (match-string 2))
-            (status-code (match-string 3))
-            (reason-phrase (match-string 4)))
-        (cond
-         ((not (string-match "2[0-9][0-9]" status-code))
-          (message "Response: %s" status-line)
-          nil)
-         ((search-forward-regexp "\r?\n\r?\n" nil t)
-          (let ((beg (match-end 0))
-                (end (point-max)))
-            (twittering-oauth-make-response-alist (buffer-substring beg end))))
-         (t
-          (message "Response: %s" status-line)
-          nil))))))
-
 (defun twittering-oauth-get-token-alist (url auth-str &optional post-body)
   (let ((additional-info '((sync . t)))
         (request (twittering-make-http-request-from-uri
@@ -2962,13 +2940,13 @@ the server when the HTTP status code equals to 400 or 403."
 
 (defun twittering-http-get-default-sentinel (proc status connection-info header-info)
   (let ((status-line (assqref 'status-line header-info))
-        (status-code (assqref 'status-code header-info)))
+        (status-code (assqref 'status-code header-info))
+        (spec (assqref 'timeline-spec connection-info))
+        (spec-string (assqref 'timeline-spec-string connection-info)))
     (cond
      ((string= status-code "200")
       (debug-printf "connection-info=%s" connection-info)
-      (let* ((spec (assqref 'timeline-spec connection-info))
-             (spec-string (assqref 'timeline-spec-string connection-info))
-             (statuses (twittering-construct-statuses)))
+      (let ((statuses (twittering-construct-statuses)))
         ;; Are we are fetching replies?
         (when (eq (assqref 'command connection-info) 'show)
           (setq statuses
@@ -2979,7 +2957,8 @@ the server when the HTTP status code equals to 400 or 403."
                    (not (assqref 'noninteractive connection-info)))
           (format "Fetching %s.  Success." spec-string))))
      (t
-      (format "Response: %s"
+      (format "Response from `%s': %s"
+              spec-string
               (twittering-get-error-message header-info (current-buffer)))))))
 
 (defun twittering-http-post (host method &optional parameters additional-info sentinel clean-up-sentinel)
@@ -3021,7 +3000,8 @@ PARAMETERS is alist of URI parameters.
      (("200")
       "Success: Post.")
      (t
-      (format "Response: %s"
+      (format "Response from `%s': %s"
+              (assqref 'timeline-spec-string connection-info)
               (twittering-get-error-message header-info (current-buffer)))))))
 
 (defun twittering-update-timeline (statuses spec)
@@ -3462,7 +3442,7 @@ PARAMETERS is alist of URI parameters.
     (when username
       (if (and (not cross-retweet) (eq service 'sina))
           (if (twittering-status-has-quotation? status)
-              (format " // @%s:%s" username (assqref 'text status))
+              (format " //@%s:%s" username (assqref 'text status))
             "")
         (let* ((prefix "%")
                (replace-table
