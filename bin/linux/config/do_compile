@@ -57,6 +57,7 @@ function do_compile() {
     compile_uncomment_java "$@"
     compile_fcitx "$@"
     compile_gtags "$@"
+    compile_ibus_sdim "$@"
 }
 
 `basename $0` "$@"
