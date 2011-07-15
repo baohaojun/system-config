@@ -15,7 +15,7 @@
 \phone{13693578957}
 
     
-\webpage{http://windows-config.googlecode.com}
+\webpage{http://github.com/baohaojun}
 
   
 
@@ -34,54 +34,79 @@
 
 \section{Experience}
 
-\affiliation[Senior Software Engineer]
+\affiliation[Technican Manager]
+{Letou (\url{http://www.eee168.com/})}
+{March 2010-Now}
+\vskip .5em
+
+Worked in the System team of Letou, a startup focusing on Android
+based pad products. Worked on system softwares for a product using
+Nvidia Tegra 2 platform.
+
+\vskip .5em
+\begin{compactitem} 
+
+\item Kernel bring up in early development. Including LCD, touch
+  panel, battery, wifi, g-sensor, HAL, etc.
+
+\item Designed factory testing tool used in factory production
+  testing. 
+
+\item Designed factory tool 
+\item Work on company development process
+
+\affiliation[Staff Software Engineer]
             {Borqs (\url{http://www.borqs.com})}
-            {November 2008-present}
+            {November 2008-March 2010}
+
+\vskip .5em
+
+Worked in the Tools team of Borqs, a mobile device software company
+that developped the OMS for China Mobile, a mobile platform derived
+from Android.
+
+\vskip .5em
 
 \begin{compactitem}
 
-	\item Worked with the Tools team of Borqs, a mobile device
-          software company that developped the OMS, based on Google
-          Android. \par
+        \item C/C++ \par
+          
+          \begin{compactitem}
 
-	\item Created Borqs Engineering Tool in C++ (VC6, MFC). It
-          provides scriptable access to testing commands of the
-          phone. Main features include: batch testing, auto
-          connection, connecting through either usblan or ADB, phone
-          screen framebuffer capture. The GUI of this tool has a
-          keybinding that mimics Emacs/GNU readline, with a command
-          history like Bash. \par
+          \item Developed Borqs Flashing Tool, which is used to flash
+            the system image onto the device. \par
+            
+          \item Developed Borqs Engineering Tool, which serve as a
+            testing environment for hardware and low level system
+            software. \par
 
-        \item Created fb2bmp in C (arm-linux-gcc). It captures the
-          phone frame buffer, and save it as a .bmp file. It's
-          integrated into the Borqs Engineering Tool. \par
+          \item Developed Borqs Engineering Tool Library, which
+            enabled partners and customers to develop their own
+            tools. \par
 
-        \item Created Engineering Tool Library. So that our customers
-          can develop their own tools based on this library. \par
+          \item Developed Borqs Service Tool for repair centers. \par
 
-        \item Created Service Tool. It's a tool for the repair center
-          of Borqs partners. Based on Engineering Tool Library. \par
+          \item Other misc tools including frame buffer capturing,
+            serial port passthrough, etc. \par
 
-        \item Created SerialPort Usblan Passthrough Tool in Python. It
-          provides access to phone internal UART through usblan. Open
-          source project ``com0com'' and ``PySerial'' is used. Has a
-          GUI implemented in PyQt. \par
+          \end{compactitem}
 
-        \item Worked on Flashing Tool (VC++) and Release Tool (Bash
-          script, Python). Enable developper to flash software onto
-          the phone with ``one click'' away. Completely rewrote Flashing
-          Tool to fix its multithread bugs and provide more user
-          friendly usage.
+        \item Python \& PyQt\par
 
-        \item Mentored junior software engineers of their software
-          development, open source tools usage. Mentored an intern to
-          use Python and PyQt to develop platform independent version
-          of Borqs Engineering Tool.
+          \begin{compactitem}
+            
+          \item Used Python \& PyQt to develop the GUI part in most of
+            the projects I worked on. \par
+            
+          \end{compactitem}
+
       
 \end{compactitem}
 
-\affiliation[Software Engineer]
-            {Mobile Device/Global Software Group, Motorola \par}
+\vskip .5em
+
+\affiliation[Senior Software Engineer]
+            {Mobile Device/Global Software Group, Motorola}
             {September 2005-September 2008}
 
 \begin{compactitem}
@@ -93,56 +118,59 @@
 
 \end{compactitem}
 
+\vskip .5em
+
 \affiliation[Software Engineer]
-            {Qilin Software \par}
+            {Qilin Software}
             {October 2004-September 2005}
 \begin{compactitem}
   \item Worked on CRM software testing
 \end{compactitem}
 
-\affiliation[Open Source Project]
-            {Win32, Cygwin, GNU/Linux \par (\url{http://windows-config.googlecode.com})}
+\vskip .5em
+
+\affiliation[Open Source Developer]
+            {Open Source Projects (\url{http://github.com/baohaojun})}
             {May 2005-Now}
             
 \begin{compactitem}
-  \item Created ``scim-fcitx'' (C++, GNU/Linux), a GNU/Linux input method
-    based on scim and fcitx. \par
 
-  \item Created ``sdim'' (C++, Python, Win32), a Win32 input
-    method. First wrote it in C++ completely; then refactored it into
-    C++ + Python with a client/server model, to improve modularity and
-    debugging easiness. \par
+  \item Input Method (C/C++/Python) \par
 
-  \item Created ``personal windows manager'' (C++, Python), a win32
-    windows manager extension, inspired by Sawfish, BlackBox, BB4Win. \par
+    \begin{compactitem}
+      
+    \item Ported ``scim-fcitx'' and contributed it to the open source
+      community. \par
 
-  \item Created ``regtools'' (Python, pywin32), tools to manipulate
-    win32 registry with regular expression search and replace. \par
+    \item Developed my own input method ``sdim'' on all platforms that I
+      used: Win32, Emacs and Linux (both on scim and ibus). \par
 
-  \item Created ``RunBhjRun'' (C++), a win32 ``run dialog''
-    replacement. Mimics Emacs key-binding, better completion, better
-    history. \par
+    \end{compactitem}
 
-  \item Created ``grepall.py'', a Python script using ``find(1)'' and
-    ``grep(1)'', for easier and quicker source code browsing. \par
-
-  \item Created ``ImapMonitor'' (Python, PyQt), a script to monitor my
-    Email. Inspired by xmailbox.\par
-
-  \item Other small scripts/programs, all in \url{http://windows-config.googlecode.com}. \par
-
-  
     
+  \item Mono (C\#) \par
+
+    \begin{compactitem}
+      
+    \item Worked on beagle, a search system for Linux. Rewrote its
+      lexical rules to make it suitable for searching source code. \par
+
+    \end{compactitem}
+      
+  \item Other interesting projects that I worked on, including but not
+    limited to: gtags, ctags-exuberant, offline-wikipedia, etc.
 
 \end{compactitem}
 
+\vskip .5em
 
 \section{Skills}
 
 
 \begin{compactitem}
 
-      \item Programming in languages including C++, C, Python, Bash, a little Perl and a little Emacs Lisp. \par
+      \item Programming in languages including C++, C, Python, Bash,
+        Perl, PHP, Javascript, Java and Emacs Lisp. \par
 
       \item Emacs. \par
 
