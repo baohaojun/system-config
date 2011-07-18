@@ -32,10 +32,10 @@ public:
 	_timeout ( 10 ),
 	_source ( NULL ),
 	_closeReason(Notification::NONE),
-	_priority(0)
+	_priority(Notification::NORMAL)
 	  {};
 
-	NotificationData ( Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout,uint id,int priority ):
+	NotificationData ( Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout,uint id,Notification::prioritys priority ):
 	  	_id ( id ),
 	_timeout ( timeout ),
 	_source ( source ),
@@ -62,7 +62,7 @@ public:
 	QString _title;
 	QString _text;
 	QString _icon;
-	int _priority;
+	Notification::prioritys _priority;
 	Notification::closeReasons _closeReason;
 	QMap<int,Action*> _actions;
 	QVariantHash _hints;
@@ -83,7 +83,7 @@ Notification::Notification ( uint id )
 	d = QSharedPointer<NotificationData>(new NotificationData(id));
 }
 
-Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id, int priority ) 
+Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id, Notification::prioritys priority ) 
 {
 	d = QSharedPointer<NotificationData>(new  NotificationData(source,application,alert,title,text,icon,timeout,id,priority));
 }
@@ -168,7 +168,7 @@ const QString &Notification::alert() const
 	return d->_alert;
 }
 
-const int &Notification::priority() const
+const Notification::prioritys &Notification::priority() const
 {
 	return d->_priority;
 }

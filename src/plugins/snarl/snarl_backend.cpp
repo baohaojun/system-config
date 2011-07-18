@@ -85,7 +85,7 @@ void Snarl_Backend::unregisterApplication(Application *application){
 
 int Snarl_Backend::notify(Notification notification){
 	SnarlInterface *snarlInterface = _applications.value(notification.application());
-	qDebug()<<notification.application();
+	qDebug()<<"Snarl using the notification instance of:"<<notification.application();
 	if(snarlInterface == NULL){
 		qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
 		qDebug()<<_applications.keys();
@@ -98,7 +98,7 @@ int Snarl_Backend::notify(Notification notification){
 			Notification::toPlainText(notification.text()).toUtf8().constData(),
 			notification.timeout(),
 			notification.icon().isEmpty()?0:notification.icon().toUtf8().constData(),
-			0,notification.priority()-2);
+			0,notification.priority());
 			
 		foreach(const Action *a, notification.actions()){
 			qDebug()<<"snarl add action"<<a->id<<a->name;
@@ -114,7 +114,7 @@ int Snarl_Backend::notify(Notification notification){
 			Notification::toPlainText(notification.text()).toUtf8().constData(),
 			notification.timeout(),
 			notification.icon().toUtf8().constData(),
-			0,notification.priority()-2);
+			0,notification.priority());
 	}
 	return id;
 }

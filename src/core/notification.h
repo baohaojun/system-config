@@ -37,6 +37,11 @@ class SNORE_EXPORT Notification
 public:
     static int DefaultTimeout;
     static QString toPlainText ( const QString &string );
+	enum prioritys{
+		LOW=-1,
+		NORMAL,
+		HIGH
+	};
 	enum closeReason
     {
 		NONE,
@@ -47,7 +52,7 @@ public:
 	Q_DECLARE_FLAGS(closeReasons, closeReason)
 public:
     Notification ( uint id=0 );
-    Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0, int priority = 0 );
+	Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0, Notification::prioritys priority = Notification::NORMAL );
 	Notification ( const Notification &other );
 	~Notification();
 	Notification &operator=(const Notification& other);
@@ -68,7 +73,7 @@ public:
     const QString &text() const;
     const QString &icon() const;
     const QString &alert() const;
-	const int &priority() const;
+	const prioritys &priority() const;
 	const QMap<int,Action*> &actions() const;
 	void addAction(Action *a);
 	const closeReasons &closeReason();
