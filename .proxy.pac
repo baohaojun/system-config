@@ -21,6 +21,7 @@
             'windows-commandline.com', 'vaig.be', 'picturesofmymother.com',
             'xmages.net', 'iphone-dev.org', 'osdir.com', 'www.scribd.com',
             'google.com.hk', 'old.nabble.com', 'wikitionary.org',
+	    'www.dwheeler.com',
         ];
     
     var regexp = new RegExp(blocked_site.join('|'));
