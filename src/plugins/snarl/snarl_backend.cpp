@@ -37,7 +37,6 @@ Q_EXPORT_PLUGIN2(snarl_backend,Snarl_Backend);
 Snarl_Backend::Snarl_Backend(SnoreServer *snore):
 Notification_Backend("SnarlBackend",snore)
 {
-	activeNotifications = new QHash<uint,Notification > ;
 	winIDWidget = new SnarlWidget(this);
 	SnarlInterface *snarlInterface = new SnarlInterface();
 	_applications.insert("SnoreNotify",snarlInterface);
@@ -53,7 +52,6 @@ Snarl_Backend::~Snarl_Backend()
 		unregisterApplication(a);
 	}
 	delete _defautSnarlinetrface;
-	delete activeNotifications;
 }
 
 void Snarl_Backend::registerApplication(Application *application){
@@ -105,7 +103,7 @@ int Snarl_Backend::notify(Notification notification){
 			snarlInterface->AddAction(id,a->name.toUtf8().constData(),QString("@").append(QString::number(a->id)).toUtf8().constData());
 		}
 		//add ack stuff
-		activeNotifications->insert(id,notification);
+		activeNotifications[id] = notification;
 	}else{
 		//update message
 		snarlInterface->Update(notification.id(),
@@ -120,7 +118,7 @@ int Snarl_Backend::notify(Notification notification){
 
 void Snarl_Backend::closeNotification(Notification notification){
 	_defautSnarlinetrface->Hide(notification.id());
-	activeNotifications->remove(notification.id());
+	activeNotifications.remove(notification.id());
 }
 
 bool Snarl_Backend::isPrimaryNotificationBackend(){
@@ -146,16 +144,20 @@ bool SnarlWidget::winEvent(MSG * msg, long * result){
 		int action = msg->wParam & 0xffff;
 		int data = (msg->wParam & 0xffffffff) >> 16;
 		uint notificationID = msg->lParam;
-		qDebug()<<_snarl->activeNotifications->keys();
-		Notification notification = _snarl->activeNotifications->value(notificationID);
+		qDebug()<<_snarl->activeNotifications.keys();
+		Notification notification(_snarl->activeNotifications[notificationID]);
 		qDebug()<<"arg"<<notification.toString();
 			qDebug()<<notification.id();
 		qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action;
 		qDebug()<<"data:"<<data;
 		Notification::closeReasons reason = Notification::NONE;
 		switch(action){
-		case SnarlEnums::NotifyInvoked:
-			reason = Notification::CLOSED; 
+		case SnarlEnums::CallbackInvoked:
+			reason = Notification::CLOSED;
+			break;
+		case SnarlEnums::CallbackMenuSelected:
+			reason = Notification::CLOSED;
+			notification.setActionInvoked(data);
 			_snarl->snore()->notificationActionInvoked(notification);
 			break;
 		case SnarlEnums::CallbackClosed:

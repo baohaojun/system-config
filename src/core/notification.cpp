@@ -24,16 +24,9 @@
 #include <QTextDocument>
 
 
-class Notification::NotificationData:public QSharedData
+class Notification::NotificationData
 {
 public:
-	NotificationData():
-	  _id ( 0),
-	_timeout ( 10 ),
-	_source ( NULL ),
-	_closeReason(Notification::NONE),
-	_notification( false ){};
-
 	NotificationData ( uint id=0 ):
 	  _id ( id ),
 	_timeout ( 10 ),
@@ -90,12 +83,12 @@ QString Notification::toPlainText ( const QString &string )
 
 Notification::Notification ( uint id ) 
 {
-	d = new NotificationData(id);
+	d = QSharedPointer<NotificationData>(new NotificationData(id));
 }
 
 Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id ) 
 {
-	d = new NotificationData(source,application,alert,title,text,icon,timeout,id);
+	d = QSharedPointer<NotificationData>(new  NotificationData(source,application,alert,title,text,icon,timeout,id));
 }
 
 Notification::Notification ( const Notification &other ):
@@ -156,6 +149,11 @@ const Action *Notification::actionInvoked() const
 void Notification::setActionInvoked ( Action *action )
 {
 	d->_actionInvoked = action;
+}
+
+void Notification::setActionInvoked ( const int &id)
+{
+	d->_actionInvoked = d->_actions[id];
 }
 
 Notification_Frontend *Notification::source() const

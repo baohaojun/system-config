@@ -21,7 +21,7 @@
 
 
 #include <QVariant>
-#include <QtCore/QSharedDataPointer>
+#include <QSharedPointer>
 
 class Action
 {
@@ -39,10 +39,10 @@ public:
     static QString toPlainText ( const QString &string );
 	enum closeReason
     {
-		NONE=0,
-		TIMED_OUT=1,
-		DISMISSED=2,
-		CLOSED=3
+		NONE,
+		TIMED_OUT,
+		DISMISSED,
+		CLOSED
     };
 	Q_DECLARE_FLAGS(closeReasons, closeReason)
 public:
@@ -50,7 +50,7 @@ public:
     Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0 );
 	Notification ( const Notification &other );
 	~Notification();
-	Notification& operator=(const Notification& other);
+	Notification &operator=(const Notification& other);
 
     QString toString() const;
     bool isNotification();
@@ -61,6 +61,7 @@ public:
     const int &timeout() const;
 	//void setActionInvoked ( const Notification::defaultActions &action );
 	void setActionInvoked ( Action *action );
+	void setActionInvoked ( const int &actionID);
 	//const Notification::defaultActions &actionInvoked() const;
 	const Action* actionInvoked() const;
 	class Notification_Frontend *source() const;
@@ -80,7 +81,7 @@ public:
 
 private:
 	class NotificationData;
-	QSharedDataPointer<NotificationData> d;
+	QSharedPointer<NotificationData> d;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Notification::closeReasons)
