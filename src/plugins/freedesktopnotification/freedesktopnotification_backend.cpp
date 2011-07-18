@@ -31,7 +31,7 @@ void FreedesktopNotification_Backend::unregisterApplication ( Application *appli
     Q_UNUSED ( application );
 }
 
-int  FreedesktopNotification_Backend::notify ( QSharedPointer<Notification> noti )
+int  FreedesktopNotification_Backend::notify ( Notification noti )
 {
     fNotification *n = new fNotification ( noti );
     qDebug()<<"Sending Notification wit Freedesktop_Backend"<<noti->title()<<noti->text();
@@ -40,7 +40,7 @@ int  FreedesktopNotification_Backend::notify ( QSharedPointer<Notification> noti
     return out;
 }
 
-void FreedesktopNotification_Backend::closeNotification ( QSharedPointer<Notification> notification )
+void FreedesktopNotification_Backend::closeNotification ( Notification notification )
 {
     //TODO: fix
     fNotification *fn = new fNotification ( notification);

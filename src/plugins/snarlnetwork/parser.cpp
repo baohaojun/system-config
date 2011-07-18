@@ -109,7 +109,7 @@ SnarlNotification Parser::parse(QString &msg,QTcpSocket* client){
         }
     }
 
-    sNotification.notification=QSharedPointer<Notification>(new Notification(snarl,app,alert,title,text,icon,timeout));
+    sNotification.notification=Notification(new Notification(snarl,app,alert,title,text,icon,timeout));
     sNotification.notification->setIsNotification(false);
     sNotification.notification->insertHint("SnarlIcon",sntpIcon);
 

@@ -40,27 +40,14 @@ FreedesktopNotification_Frontend::~FreedesktopNotification_Frontend(){
     dbus.unregisterService( "org.freedesktop.Notifications" );
 }
 
-void FreedesktopNotification_Frontend::actionInvoked(QSharedPointer<Notification>notification){
-    emit ActionInvoked(notification->id(),QString::number(notification->actionInvoked()));
+void FreedesktopNotification_Frontend::actionInvoked(Notification notification) {
+	emit ActionInvoked(notification.id(),QString::number(notification.actionInvoked()->id));
 }
 
-void FreedesktopNotification_Frontend::notificationClosed(QSharedPointer<Notification>notification){
-    uint reason;
-    switch(notification->actionInvoked()){
-    case Notification::TIMED_OUT:
-        reason=1;
-        break;
-    case Notification::ACTION_1:
-    case Notification::ACTION_2:
-    case Notification::ACTION_3:
-        reason=2;
-        break;
-    default:
-        reason=4;
-    }
+void FreedesktopNotification_Frontend::notificationClosed(Notification notification) {
 
-    qDebug()<<"Closinf Dbus notification"<<QString::number(notification->id());
-    emit NotificationClosed(notification->id(),reason);
+    qDebug()<<"Closing Dbus notification"<<notification.id()<<"reason:"<<notification.closeReason();
+    emit NotificationClosed(notification.id(),notification.closeReason());
 }
 
 QString FreedesktopNotification_Frontend::getImagefromHint(const FreedesktopImageHint &img){
@@ -90,15 +77,21 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
         snore()->addApplication(a);
         snore()->applicationIsInitialized(a);
     }
-    QSharedPointer<Notification> noti(new Notification(this,app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id));
+    Notification noti(this,app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id);
+	qDebug()<<"Actions"<<actions;
+	
+	for(int i = 0;i < actions.length(); i+=2){
+		noti.addAction(new Action(actions.at(i).toInt(),actions.at(i+1)));
+	}
     return snore()->broadcastNotification(noti);
 }
 
 
 
 void FreedesktopNotification_Frontend::CloseNotification(uint id){
-    QSharedPointer<Notification> n(new Notification(id));
-    snore()->closeNotification(n);
+    //TODO: do something usefull here
+	Notification n(id);
+	snore()->closeNotification(n,Notification::NONE);
 }
 
 QStringList FreedesktopNotification_Frontend::GetCapabilities()

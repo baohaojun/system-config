@@ -32,11 +32,11 @@ public:
     void registerWithBackends();
     void unregisterWithBackends();
     int notify ( const QString &alert,const QString &title,const QString &text,const QString &icon = 0,int timeout = 10 );
-    void actionInvoked ( QSharedPointer<Notification> notification );
-    void notificationClosed ( QSharedPointer<Notification> notification );
+    void actionInvoked ( Notification notification );
+    void notificationClosed ( Notification notification );
 
 signals:
-    void notificationActionInvoked ( QSharedPointer<Notification> notification );
+    void notificationActionInvoked ( const Notification &notification );
 
 private:
     SnoreNotificationInstance();

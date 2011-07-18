@@ -34,8 +34,8 @@ private:
 public slots:
     void registerApplication(Application *application);
     void unregisterApplication(class Application *application);
-    int notify(QSharedPointer<Notification>notification);
-    void closeNotification(QSharedPointer<Notification> notification);
+    int notify(Notification notification);
+    void closeNotification(Notification notification);
 };
 
 

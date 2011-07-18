@@ -26,6 +26,7 @@
 #include <QDir>
 #include <QSystemTrayIcon>
 
+
 QString const SnoreServer::version(){
     return "0.1";
 }
@@ -127,42 +128,44 @@ void SnoreServer::publicatePlugin ( SnorePlugin *plugin )
         }
         else
         {
-            connect ( this,SIGNAL ( notify ( QSharedPointer<Notification> ) ),nb,SLOT ( notify ( QSharedPointer<Notification> ) ) );
+            connect ( this,SIGNAL ( notify (Notification) ),nb,SLOT ( notify ( Notification ) ) );
         }
         _notyfier.insert ( pluginName,nb );
 
-        connect ( this,SIGNAL ( closeNotify ( QSharedPointer<Notification> ) ),nb,SLOT ( closeNotification ( QSharedPointer<Notification> ) ) );
+        connect ( this,SIGNAL ( closeNotify ( Notification ) ),nb,SLOT ( closeNotification ( Notification) ) );
         connect ( this,SIGNAL ( applicationInitialized ( Application* ) ),nb,SLOT ( registerApplication ( Application* ) ) );
         connect ( this,SIGNAL ( applicationRemoved ( Application* ) ),nb,SLOT ( unregisterApplication ( Application* ) ) );
     }
 }
 
-int SnoreServer::broadcastNotification ( QSharedPointer<Notification> notification )
+int SnoreServer::broadcastNotification ( Notification notification )
 {
     emit notify ( notification );
     if ( _notificationBackend!=NULL )
     {
         qDebug()<<"Broadcasting";
-        notification->_id = _notificationBackend->notify ( notification );
-        std::cout<<"Notification ID: "<<QString::number ( notification->_id ).toLatin1().data() <<std::endl;
-        return  notification->_id;
+        notification.setId(_notificationBackend->notify ( notification ));
+        qDebug()<<"Notification ID: "<<notification.id();
+        return  notification.id();
     }
     return -1;
 }
 
-void SnoreServer::closeNotification ( QSharedPointer<Notification> notification )
+void SnoreServer::closeNotification ( Notification notification,const Notification::closeReasons &reason )
 {
+	qDebug()<<"closing notification"<<notification.id()<<"reason"<<reason;
+	notification.setCloseReason(reason);
     emit closeNotify ( notification );
-    Notification_Frontend *nf= notification->_source;
-    if ( nf!=0 )
+    Notification_Frontend *nf= notification.source();
+    if ( nf != 0 )
     {
         nf->notificationClosed ( notification );
     }
 }
 
-void SnoreServer::notificationActionInvoked ( QSharedPointer<Notification> notification )
+void SnoreServer::notificationActionInvoked ( Notification notification )
 {
-    Notification_Frontend *nf= notification->_source;
+    Notification_Frontend *nf= notification.source();
     if ( nf!=0 )
     {
         nf->actionInvoked ( notification );

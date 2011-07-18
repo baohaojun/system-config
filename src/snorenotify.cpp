@@ -42,7 +42,7 @@
 SnoreNotify::SnoreNotify()
 {
 	_trayIcon = new TrayIcon();
-    _snore = new SnoreServer(_trayIcon->trayIcon());
+	_snore = new SnoreServer(_trayIcon->trayIcon());
     _snore->cleanupTMP();
 
     QDir pluginsDir ( qApp->applicationDirPath() +"/snoreplugins" );

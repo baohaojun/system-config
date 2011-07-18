@@ -18,7 +18,7 @@ public slots:
     void registerApplication ( Application *application );
     void unregisterApplication ( Application *application );
     int notify ( QSharedPointer<class Notification>notification );
-    void closeNotification ( QSharedPointer<Notification> notification );
+    void closeNotification ( Notification notification );
 
 };
 
@@ -35,16 +35,16 @@ private:
     static QString vendor;
 
 public:
-    fNotification ( QSharedPointer<Notification> notification);
+    fNotification ( Notification notification);
     uint send();
-    QSharedPointer<Notification> notification();
+    Notification notification();
 
 
 private:
     Notification_Backend* parent;
     QString getVendor();
     QTimer *selfdistruct;
-    QSharedPointer<Notification> _notification;
+    Notification _notification;
 
 private slots:
     void action ( const uint &id, const QString &action_key );

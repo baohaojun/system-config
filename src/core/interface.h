@@ -19,8 +19,6 @@
 #include "snore_exports.h"
 #include "notification.h"
 
-#include <QSharedPointer>
-
 
 class SNORE_EXPORT SnorePlugin:public QObject
 {
@@ -50,8 +48,8 @@ public:
 public slots:
     virtual void registerApplication ( class Application *application ) =0;
     virtual void unregisterApplication ( class Application *application ) =0;
-    virtual int notify ( QSharedPointer<Notification> notification ) =0;
-    virtual void closeNotification ( QSharedPointer<Notification> notification ) =0;
+    virtual int notify ( Notification notification ) =0;
+    virtual void closeNotification (Notification notification ) =0;
 
     //    virtual void update
 
@@ -64,8 +62,8 @@ class SNORE_EXPORT Notification_Frontend:public SnorePlugin
 public:
     Notification_Frontend ( QString name,class SnoreServer *snore=0 );
     virtual ~Notification_Frontend();
-    virtual void actionInvoked ( QSharedPointer<Notification> notification ) =0;
-    virtual void notificationClosed ( QSharedPointer<Notification> notification ) =0;
+    virtual void actionInvoked (Notification notification )=0;
+    virtual void notificationClosed ( Notification notification )=0;
 };
 
 

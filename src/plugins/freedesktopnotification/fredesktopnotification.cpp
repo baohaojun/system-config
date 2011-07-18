@@ -26,7 +26,7 @@ FreedesktopNotification::FreedesktopNotification()
     registerTypes();
 }
 
-FreedesktopNotification::FreedesktopNotification(QSharedPointer< Notification > noti):
+FreedesktopNotification::FreedesktopNotification(Notification noti):
         notification(noti)
 {
     registerTypes();
@@ -39,17 +39,17 @@ void FreedesktopNotification::registerTypes() {
 
 QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i) {
     //   Q_ASSERT(!i.notification.isNull());
-    qDebug()<<i.notification->toString();
-    a<<i.notification->application();
+    qDebug()<<i.notification.toString();
+    a<<i.notification.application();
     a<<uint(0);
-    a<<i.notification->icon();
-    a<<i.notification->title();
-    a<<i.notification->text();
+    a<<i.notification.icon();
+    a<<i.notification.title();
+    a<<i.notification.text();
     QStringList actions;
     actions<<"1"<<" "<<"2"<<" ";
     a<<actions;
     a.beginMap();
-    QImage img(i.notification->icon());
+    QImage img(i.notification.icon());
     if (!img.isNull()) {
         img=img.scaledToWidth(50,Qt::FastTransformation);
         a.beginMapEntry();
@@ -59,7 +59,7 @@ QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i) {
         a.endMapEntry();
     }
     a.endMap();
-    a<<i.notification->timeout()*1000;
+    a<<i.notification.timeout()*1000;
     return a;
 }
 

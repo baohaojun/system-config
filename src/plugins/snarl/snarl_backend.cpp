@@ -37,7 +37,7 @@ Q_EXPORT_PLUGIN2(snarl_backend,Snarl_Backend);
 Snarl_Backend::Snarl_Backend(SnoreServer *snore):
 Notification_Backend("SnarlBackend",snore)
 {
-	activeNotifications = new QHash<int,QSharedPointer<Notification> > ;
+	activeNotifications = new QHash<uint,Notification > ;
 	winIDWidget = new SnarlWidget(this);
 	SnarlInterface *snarlInterface = new SnarlInterface();
 	_applications.insert("SnoreNotify",snarlInterface);
@@ -84,36 +84,43 @@ void Snarl_Backend::unregisterApplication(Application *application){
 	delete snarlInterface;
 }
 
-int Snarl_Backend::notify(QSharedPointer<Notification>notification){
-	SnarlInterface *snarlInterface = _applications.value(notification->application());
-	qDebug()<<notification->application();
-	if(snarlInterface == NULL)
+int Snarl_Backend::notify(Notification notification){
+	SnarlInterface *snarlInterface = _applications.value(notification.application());
+	qDebug()<<notification.application();
+	if(snarlInterface == NULL){
+		qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
+		qDebug()<<_applications.keys();
 		snarlInterface = _defautSnarlinetrface;
-
-	int id = notification->id();
-	if(notification->id()==0){
-		id = snarlInterface->Notify(notification->alert().toUtf8().constData(),
-			Notification::toPlainText(notification->title()).toUtf8().constData(),
-			Notification::toPlainText(notification->text()).toUtf8().constData(),
-			notification->timeout(),
-			notification->icon().toUtf8().constData());
+	}
+	uint id = notification.id();
+	if(id == 0){
+		id = snarlInterface->Notify(notification.alert().toUtf8().constData(),
+			Notification::toPlainText(notification.title()).toUtf8().constData(),
+			Notification::toPlainText(notification.text()).toUtf8().constData(),
+			notification.timeout(),
+			notification.icon().toUtf8().constData());
+			
+		foreach(const Action *a, notification.actions()){
+			qDebug()<<"snarl add action"<<a->id<<a->name;
+			snarlInterface->AddAction(id,a->name.toUtf8().constData(),QString("@").append(QString::number(a->id)).toUtf8().constData());
+		}
 		//add ack stuff
 		activeNotifications->insert(id,notification);
 	}else{
 		//update message
-		snarlInterface->Update(notification->id(),
-			notification->alert().toUtf8().constData(),
-			Notification::toPlainText(notification->title()).toUtf8().constData(),
-			Notification::toPlainText(notification->text()).toUtf8().constData(),
-			notification->timeout(),
-			notification->icon().toUtf8().constData());
+		snarlInterface->Update(notification.id(),
+			notification.alert().toUtf8().constData(),
+			Notification::toPlainText(notification.title()).toUtf8().constData(),
+			Notification::toPlainText(notification.text()).toUtf8().constData(),
+			notification.timeout(),
+			notification.icon().toUtf8().constData());
 	}
 	return id;
 }
 
-void Snarl_Backend::closeNotification(QSharedPointer<Notification> notification){
-	_defautSnarlinetrface->Hide(notification->id());
-	activeNotifications->remove(notification->id());
+void Snarl_Backend::closeNotification(Notification notification){
+	_defautSnarlinetrface->Hide(notification.id());
+	activeNotifications->remove(notification.id());
 }
 
 bool Snarl_Backend::isPrimaryNotificationBackend(){
@@ -136,31 +143,32 @@ bool SnarlWidget::winEvent(MSG * msg, long * result){
 		}
 
 	}else if(msg->message == SNORENOTIFIER_MESSAGE_ID){
-		int action = msg->wParam;
-		int notificationID = msg->lParam;
-		QSharedPointer<Notification> notification = _snarl->activeNotifications->value(notificationID);
+		int action = msg->wParam & 0xffff;
+		int data = (msg->wParam & 0xffffffff) >> 16;
+		uint notificationID = msg->lParam;
+		qDebug()<<_snarl->activeNotifications->keys();
+		Notification notification = _snarl->activeNotifications->value(notificationID);
+		qDebug()<<"arg"<<notification.toString();
+			qDebug()<<notification.id();
 		qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action;
+		qDebug()<<"data:"<<data;
+		Notification::closeReasons reason = Notification::NONE;
 		switch(action){
 		case SnarlEnums::NotifyInvoked:
-			notification->setActionInvoked(Notification::ACTION_1); 
+			reason = Notification::CLOSED; 
+			_snarl->snore()->notificationActionInvoked(notification);
 			break;
-		//case SnarlEnums::NotificationClicked:
-		//	notification->setActionInvoked(Notification::ACTION_2); 
-		//	break;
-		//case SnarlEnums::NotificationMiddleButton:
-		//	notification->setActionInvoked(Notification::ACTION_3); 
-		//	break;
 		case SnarlEnums::CallbackClosed:
-			notification->setActionInvoked(Notification::CLOSED); 
+			 reason = Notification::DISMISSED; 
 			break;
 		case SnarlEnums::CallbackTimedOut:
-			notification->setActionInvoked(Notification::TIMED_OUT); 
+			reason = Notification::TIMED_OUT; 
 			break;
 		default:
 			qDebug()<<"Unknown snarl action found!!";
 			return false;
 		}
-		_snarl->snore()->notificationActionInvoked(notification);
+		_snarl->snore()->closeNotification(notification,reason);
 		return true;
 	}
 	return false;

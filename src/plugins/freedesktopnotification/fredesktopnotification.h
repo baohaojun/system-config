@@ -31,9 +31,9 @@ public:
 
 public:
     FreedesktopNotification();
-    FreedesktopNotification(QSharedPointer<Notification> noti);
+    FreedesktopNotification(Notification noti);
     
-    QSharedPointer<Notification> notification;
+    Notification notification;
 };
 
 Q_DECLARE_METATYPE(FreedesktopNotification);

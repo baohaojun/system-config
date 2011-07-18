@@ -15,12 +15,12 @@ public:
 public slots:
     void registerApplication ( Application *application );
     void unregisterApplication ( class Application *application );
-    int notify ( QSharedPointer<Notification> notification );
-    void closeNotification ( QSharedPointer<Notification> notification );
+    int notify ( Notification notification );
+    void closeNotification ( Notification notification );
 
 private:
     class QSystemTrayIcon *_trayIcon;
-    QList<QSharedPointer<Notification> > _notificationQue;
+    QList<Notification > _notificationQue;
     bool _noNotificationDisplayed;
     int _id;
 

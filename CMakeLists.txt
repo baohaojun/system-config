@@ -16,7 +16,6 @@ include_directories(
 
 
 if (CMAKE_COMPILER_IS_GNUCXX)
-   add_definitions( -Wall )
    set (KDE4_ENABLE_EXCEPTIONS -fexceptions)
    # Select flags.
    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")

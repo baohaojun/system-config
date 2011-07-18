@@ -64,19 +64,19 @@ void Growl_Backend::unregisterApplication(Application *application){
     delete growl;
 }
 
-int Growl_Backend::notify(QSharedPointer<Notification> notification){
-    Growl *growl = _applications.value(notification->application());
+int Growl_Backend::notify(Notification notification){
+    Growl *growl = _applications.value(notification.application());
     if(growl == NULL)
         return -1;
 
-    QString title=Notification::toPlainText(notification->title());
-    QString text=Notification::toPlainText(notification->text());
-    qDebug()<<"Notify Growl:"<<notification->application()<<title;
-    growl->Notify(notification->alert().toUtf8().constData(),title.toUtf8().constData(),text.toUtf8().constData(),"",notification->icon().toUtf8().constData());
+    QString title=Notification::toPlainText(notification.title());
+    QString text=Notification::toPlainText(notification.text());
+    qDebug()<<"Notify Growl:"<<notification.application()<<title;
+    growl->Notify(notification.alert().toUtf8().constData(),title.toUtf8().constData(),text.toUtf8().constData(),"",notification.icon().toUtf8().constData());
     return ++id;
 }
 
-void Growl_Backend::closeNotification(QSharedPointer<Notification> notification){
+void Growl_Backend::closeNotification(Notification notification){
     Q_UNUSED(notification);
 }
 

@@ -32,14 +32,14 @@ public:
 
 
 public:
-    SnoreServer ( class QSystemTrayIcon *trayIcon=0 );
+	 SnoreServer ( class QSystemTrayIcon *trayIcon=0 );
     void publicatePlugin ( const QString &fileName );
     void publicatePlugin ( SnorePlugin *plugin );
 
 
-    int broadcastNotification ( QSharedPointer<Notification> notification );
-    void closeNotification ( QSharedPointer<Notification> notification );
-    void notificationActionInvoked ( QSharedPointer<Notification> notification );
+    int broadcastNotification ( Notification notification );
+    void closeNotification ( Notification notification, const Notification::closeReasons &reason );
+    void notificationActionInvoked ( Notification notification );
 
     void addApplication ( Application *application );
     void applicationIsInitialized ( Application* application );
@@ -69,8 +69,8 @@ private:
 signals:
     void applicationInitialized ( Application* );
     void applicationRemoved ( Application* );
-    void notify ( QSharedPointer<Notification> noti );
-    void closeNotify ( QSharedPointer<Notification> );
+    void notify ( Notification noti );
+    void closeNotify ( Notification );
 
 };
 

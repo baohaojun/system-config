@@ -1,5 +1,6 @@
 set ( SnoreNotify_SRCS
         notification.cpp
+  #      notificationdata.cpp
         snoreserver.cpp
         application.cpp
         interface.cpp

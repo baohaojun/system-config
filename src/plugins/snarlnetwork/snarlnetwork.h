@@ -39,8 +39,8 @@ public:
 public:
     SnarlNetworkFrontend(class SnoreServer *snore=0);
     ~SnarlNetworkFrontend();
-    void actionInvoked(QSharedPointer<Notification>notification);
-    void notificationClosed(QSharedPointer<Notification>notification);
+    void actionInvoked(Notificationnotification);
+    void notificationClosed(Notificationnotification);
 
 private slots:
     void handleConnection();

@@ -31,7 +31,7 @@ public:
     Snarl_Backend(class SnoreServer *snore=0);
     ~Snarl_Backend();
     bool isPrimaryNotificationBackend();
-	QHash<int,QSharedPointer<Notification> >* activeNotifications;
+	QHash<uint,Notification>* activeNotifications;
 
 private:
 	SnarlWidget* winIDWidget;
@@ -42,8 +42,8 @@ private:
 public slots:
     void registerApplication(Application *application);
     void unregisterApplication(class Application *application);
-    int notify(QSharedPointer<Notification>notification);
-    void closeNotification(QSharedPointer<Notification> notification);
+    int notify(Notification notification);
+    void closeNotification(Notification notification);
 
 };
 

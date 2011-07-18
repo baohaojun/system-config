@@ -1,18 +1,18 @@
 /****************************************************************************************
- * Copyright (c) 2010 Patrick von Reth <patrick.vonreth@gmail.com>                      *
- *                                                                                      *
- * This program is free software; you can redistribute it and/or modify it under        *
- * the terms of the GNU General Public License as published by the Free Software        *
- * Foundation; either version 2 of the License, or (at your option) any later           *
- * version.                                                                             *
- *                                                                                      *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY      *
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A      *
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.             *
- *                                                                                      *
- * You should have received a copy of the GNU General Public License along with         *
- * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
- ****************************************************************************************/
+* Copyright (c) 2010 Patrick von Reth <patrick.vonreth@gmail.com>                      *
+*                                                                                      *
+* This program is free software; you can redistribute it and/or modify it under        *
+* the terms of the GNU General Public License as published by the Free Software        *
+* Foundation; either version 2 of the License, or (at your option) any later           *
+* version.                                                                             *
+*                                                                                      *
+* This program is distributed in the hope that it will be useful, but WITHOUT ANY      *
+* WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A      *
+* PARTICULAR PURPOSE. See the GNU General Public License for more details.             *
+*                                                                                      *
+* You should have received a copy of the GNU General Public License along with         *
+* this program.  If not, see <http://www.gnu.org/licenses/>.                           *
+****************************************************************************************/
 
 #include "notification.h"
 #include "snoreserver.h"
@@ -24,119 +24,210 @@
 #include <QTextDocument>
 
 
+class Notification::NotificationData:public QSharedData
+{
+public:
+	NotificationData():
+	  _id ( 0),
+	_timeout ( 10 ),
+	_source ( NULL ),
+	_closeReason(Notification::NONE),
+	_notification( false ){};
+
+	NotificationData ( uint id=0 ):
+	  _id ( id ),
+	_timeout ( 10 ),
+	_source ( NULL ),
+	_closeReason(Notification::NONE),
+	_notification( true )
+	  {};
+
+	NotificationData ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0 ):
+	  	_id ( id ),
+	_timeout ( timeout ),
+	_source ( source ),
+	_application ( application ),
+	_alert ( alert ),
+	_title ( title ),
+	_text ( text ),
+	_icon ( icon ),
+	_closeReason(Notification::NONE),
+	_notification( true )
+		{};
+
+
+	~NotificationData(){
+		//delete _actionInvoked;
+	};
+
+	uint _id;
+	int _timeout;
+	Action *_actionInvoked;
+	Notification_Frontend *_source;
+	QString _application;
+	QString _alert;
+	QString _title;
+	QString _text;
+	QString _icon;
+	Notification::closeReasons _closeReason;
+	QMap<int,Action*> _actions;
+	QVariantHash _hints;
+
+	bool _notification;
+
+
+};
 
 
 int Notification::DefaultTimeout=10;
 
 QString Notification::toPlainText ( const QString &string )
 {
-    if( Qt::mightBeRichText(string))
-        return QTextDocumentFragment::fromHtml(string).toPlainText();
-    return QString(string);
+	if( Qt::mightBeRichText(string))
+		return QTextDocumentFragment::fromHtml(string).toPlainText();
+	return QString(string);
 }
 
-Notification::Notification ( uint id ) :
-        _id ( id ),
-        _timeout ( 10 ),
-        _source ( NULL ),
-        _notification ( true )
-{}
+Notification::Notification ( uint id ) 
+{
+	d = new NotificationData(id);
+}
 
-Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id ) :
-        _id ( id ),
-        _timeout ( timeout ),
-        _source ( source ),
-        _application ( application ),
-        _alert ( alert ),
-        _title ( title ),
-        _text ( text ),
-        _icon ( icon ),
-        _notification ( true )
-{}
+Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id ) 
+{
+	d = new NotificationData(source,application,alert,title,text,icon,timeout,id);
+}
+
+Notification::Notification ( const Notification &other ):
+d(other.d)
+{
+}
+
+Notification::~Notification(){
+}
+
+Notification &Notification::operator=(const Notification& other)
+{
+    d = other.d;
+    return *this;
+}
 
 QString Notification::toString() const
 {
-    return QString ( "Title: "+_title+"\nText: "+_text );
+	return QString ( "Title: "+d->_title+"\nText: "+d->_text );
 }
+
 
 bool Notification::isNotification()
 {
-    return _notification;
+	return d->_notification;
 }
 
 void Notification::setIsNotification ( bool b )
 {
-    _notification=b;
+	d->_notification=b;
 }
 const uint &Notification::id() const
 {
-    return _id;
+	return d->_id;
+}
+
+void Notification::setId(const uint &id) 
+{
+	qDebug()<<"setting notification id:"<<id;
+	d->_id = id;
 }
 
 const QString &Notification::icon() const
 {
-    return _icon;
+	return d->_icon;
 }
 
 const int &Notification::timeout() const
 {
-    return _timeout;
+	return d->_timeout;
 }
 
-const Notification::actions &Notification::actionInvoked() const
+const Action *Notification::actionInvoked() const
 {
-    return _actionInvoked;
+	return d->_actionInvoked;
 }
 
-void Notification::setActionInvoked ( const Notification::actions &action )
+void Notification::setActionInvoked ( Action *action )
 {
-    _actionInvoked = action;
+	d->_actionInvoked = action;
 }
 
-const Notification_Frontend *Notification::source() const
+Notification_Frontend *Notification::source() const
 {
-    return _source;
+	return d->_source;
 }
 
 const QString &Notification::application() const
 {
-    return _application;
+	return d->_application;
 }
 
 const QString &Notification::title() const
 {
-    return _title;
+	return d->_title;
 }
 
 const QString &Notification::text() const
 {
-    return _text;
+	return d->_text;
 }
 
 const QString &Notification::alert() const
 {
-    return _alert;
+	return d->_alert;
+}
+
+void Notification::addAction(Action *a) 
+{
+	qDebug()<<"Added notification"<<a->id<<a->name;
+	d->_actions.insert(a->id,a);
+}
+
+
+const QMap<int,Action*> &Notification::actions() const
+{
+	return d->_actions;
+}
+
+const Notification::closeReasons &Notification::closeReason(){
+	return d->_closeReason;
+}
+
+void Notification::setCloseReason(const Notification::closeReasons &r){
+	d->_closeReason = r;
 }
 
 const QVariant Notification::hint ( const QString &key ) const
 {
-    return _hints.value ( key );
+	return d->_hints.value ( key );
 }
 
 bool Notification::hintExists ( const QString &key )
 {
-    return _hints.contains ( key );
+	return d->_hints.contains ( key );
 }
 
 void Notification::insertHint ( const QString &key, const QVariant &val )
 {
-    _hints.insert ( key,val );
+	d->_hints.insert ( key,val );
 }
 
 QDataStream & operator<< ( QDataStream &stream, const Notification &noti )
 {
-    stream<<noti.toString();
-    return stream;
+	stream<<noti.toString();
+	return stream;
 }
 
-#include "notification.moc"
+QDataStream & operator<< ( QDataStream &stream, const Action &a)
+{
+	stream<<a.id<<a.id;
+	return stream;
+}
+
+

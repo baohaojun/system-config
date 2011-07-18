@@ -43,7 +43,7 @@ SnarlNetworkFrontend::~SnarlNetworkFrontend(){
 }
 
 
-void SnarlNetworkFrontend::actionInvoked(QSharedPointer<Notification>notification){
+void SnarlNetworkFrontend::actionInvoked(Notificationnotification){
     //TODO:fix callback
     SnarlNotification sn=notifications.value(notification->id());
     if(notification->actionInvoked()==1)
@@ -51,7 +51,7 @@ void SnarlNetworkFrontend::actionInvoked(QSharedPointer<Notification>notificatio
     else if(notification->actionInvoked()==2)
         callback(sn,"SNP/1.1/302/Notification cancelled/");
 }
-void SnarlNetworkFrontend::notificationClosed(QSharedPointer<Notification>notification){
+void SnarlNetworkFrontend::notificationClosed(Notificationnotification){
     SnarlNotification sn=notifications.value(notification->id());
     if(notification->actionInvoked()==Notification::TIMED_OUT)
         callback(sn,"SNP/1.1/303/Notification timed out/");
