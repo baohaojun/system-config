@@ -47,14 +47,12 @@ public:
 	Q_DECLARE_FLAGS(closeReasons, closeReason)
 public:
     Notification ( uint id=0 );
-    Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0 );
+    Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0, int priority = 0 );
 	Notification ( const Notification &other );
 	~Notification();
 	Notification &operator=(const Notification& other);
 
     QString toString() const;
-    bool isNotification();
-    void setIsNotification ( bool b );
 
     const uint &id() const;
 	void setId(const uint &id);
@@ -70,6 +68,7 @@ public:
     const QString &text() const;
     const QString &icon() const;
     const QString &alert() const;
+	const int &priority() const;
 	const QMap<int,Action*> &actions() const;
 	void addAction(Action *a);
 	const closeReasons &closeReason();

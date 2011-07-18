@@ -70,7 +70,8 @@ void Snarl_Backend::registerApplication(Application *application){
 
 	foreach(Alert *alert,application->alerts()){
 		snarlInterface->AddClass(application->name().toUtf8().constData(),
-			alert->name().toUtf8().constData());
+			alert->name().toUtf8().constData(),
+			0,0,alert->icon().toUtf8().constData());
 	}
 }
 
@@ -96,7 +97,8 @@ int Snarl_Backend::notify(Notification notification){
 			Notification::toPlainText(notification.title()).toUtf8().constData(),
 			Notification::toPlainText(notification.text()).toUtf8().constData(),
 			notification.timeout(),
-			notification.icon().toUtf8().constData());
+			notification.icon().isEmpty()?0:notification.icon().toUtf8().constData(),
+			0,notification.priority()-2);
 			
 		foreach(const Action *a, notification.actions()){
 			qDebug()<<"snarl add action"<<a->id<<a->name;
@@ -111,7 +113,8 @@ int Snarl_Backend::notify(Notification notification){
 			Notification::toPlainText(notification.title()).toUtf8().constData(),
 			Notification::toPlainText(notification.text()).toUtf8().constData(),
 			notification.timeout(),
-			notification.icon().toUtf8().constData());
+			notification.icon().toUtf8().constData(),
+			0,notification.priority()-2);
 	}
 	return id;
 }

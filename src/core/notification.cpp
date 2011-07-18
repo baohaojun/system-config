@@ -32,10 +32,10 @@ public:
 	_timeout ( 10 ),
 	_source ( NULL ),
 	_closeReason(Notification::NONE),
-	_notification( true )
+	_priority(0)
 	  {};
 
-	NotificationData ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0 ):
+	NotificationData ( Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout,uint id,int priority ):
 	  	_id ( id ),
 	_timeout ( timeout ),
 	_source ( source ),
@@ -44,8 +44,8 @@ public:
 	_title ( title ),
 	_text ( text ),
 	_icon ( icon ),
-	_closeReason(Notification::NONE),
-	_notification( true )
+	_priority(priority),
+	_closeReason(Notification::NONE)
 		{};
 
 
@@ -62,13 +62,10 @@ public:
 	QString _title;
 	QString _text;
 	QString _icon;
+	int _priority;
 	Notification::closeReasons _closeReason;
 	QMap<int,Action*> _actions;
 	QVariantHash _hints;
-
-	bool _notification;
-
-
 };
 
 
@@ -86,9 +83,9 @@ Notification::Notification ( uint id )
 	d = QSharedPointer<NotificationData>(new NotificationData(id));
 }
 
-Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id ) 
+Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id, int priority ) 
 {
-	d = QSharedPointer<NotificationData>(new  NotificationData(source,application,alert,title,text,icon,timeout,id));
+	d = QSharedPointer<NotificationData>(new  NotificationData(source,application,alert,title,text,icon,timeout,id,priority));
 }
 
 Notification::Notification ( const Notification &other ):
@@ -110,16 +107,6 @@ QString Notification::toString() const
 	return QString ( "Title: "+d->_title+"\nText: "+d->_text );
 }
 
-
-bool Notification::isNotification()
-{
-	return d->_notification;
-}
-
-void Notification::setIsNotification ( bool b )
-{
-	d->_notification=b;
-}
 const uint &Notification::id() const
 {
 	return d->_id;
@@ -179,6 +166,11 @@ const QString &Notification::text() const
 const QString &Notification::alert() const
 {
 	return d->_alert;
+}
+
+const int &Notification::priority() const
+{
+	return d->_priority;
 }
 
 void Notification::addAction(Action *a) 
