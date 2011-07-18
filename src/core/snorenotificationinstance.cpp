@@ -50,9 +50,9 @@ void SnoreNotificationInstance::unregisterWithBackends()
     _snore->removeApplication ( _app->name() );
 }
 
-int SnoreNotificationInstance::notify ( const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout )
+int SnoreNotificationInstance::notify ( const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout,Notification::prioritys priority )
 {
-    return _snore->broadcastNotification (  Notification( this,_app->name(),alert,title,text,icon,timeout ) );
+    return _snore->broadcastNotification (  Notification( this,_app->name(),alert,title,text,icon,timeout,0,priority ) );
 }
 
 void SnoreNotificationInstance::actionInvoked ( Notification notification ){
