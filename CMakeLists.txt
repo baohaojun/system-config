@@ -6,6 +6,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package( Qt4 REQUIRED )
 find_package( Automoc4 REQUIRED)
+find_package( CryptoPP )
+find_package( Boost COMPONENTS system )
 
 include( ${QT_USE_FILE} )
 include_directories(
@@ -48,7 +50,6 @@ set(PLUGIN_INSTALL_PATH  LIBRARY DESTINATION bin/snoreplugins)
 
 add_subdirectory(data)
 add_subdirectory(share)
-add_subdirectory(3party)
 add_subdirectory(src)
 
 

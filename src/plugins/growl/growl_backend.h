@@ -30,7 +30,7 @@ public:
     bool isPrimaryNotificationBackend(){return true;}
 private:
     uint id;
-    QHash<QString,class Growl*> _applications;
+    QHash<QString,class gntp*> _applications;
 public slots:
     void registerApplication(Application *application);
     void unregisterApplication(class Application *application);

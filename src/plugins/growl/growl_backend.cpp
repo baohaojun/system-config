@@ -15,10 +15,10 @@
  ****************************************************************************************/
 
 #include "growl_backend.h"
+#include "gntp.h"
 
 #include "core/snoreserver.h"
 
-#include <growl++.hpp>
 
 #include <QtCore>
 
@@ -28,8 +28,8 @@ Growl_Backend::Growl_Backend(SnoreServer *snore):
 Notification_Backend("Growl",snore),
 id(0)
 {
-    const char *n[1] = { "Default Alert"};
-    Growl *growl = new Growl(GROWL_TCP,NULL,"SnoreNotify",n,1);
+	gntp *growl = new gntp("SnoreNotify");
+	growl->regist("Default Alert");
     _applications.insert("SnoreNotify",growl);
 
 }
@@ -37,42 +37,35 @@ Growl_Backend::~Growl_Backend(){
     foreach(Application *a,this->snore()->aplications().values()){
         unregisterApplication(a);
     }
+	qDebug()<<"Growl_Backend bye bye";
+
 }
 
 void Growl_Backend::registerApplication(Application *application){
-    QList<Alert*> aList = application->alerts().values();
-    int alertCount = application->alerts().count();
-    char **n = new char*[alertCount];
-    for (int i = 0 ; i < alertCount; ++i){
-        QString name = aList.at(i)->name();
-        n[i] = new char[name.length()+1];
-        strcpy(n[i],name.toUtf8().constData());
-    }
-
-    _applications.insert(application->name(),new Growl(GROWL_TCP,NULL,application->name().toUtf8().constData(),(const char**)n,application->alerts().count()));
-
-    for (int i = 0 ; i < alertCount; ++i){
-        delete [] n[i];
-    }
-    delete [] n;
+	gntp *growl =  new gntp(application->name().toUtf8().constData());
+	foreach(Alert *a,application->alerts()){
+		growl->regist(a->name().toUtf8().constData());
+	}
+    _applications.insert(application->name(),growl);
 }
 
 void Growl_Backend::unregisterApplication(Application *application){
-    Growl *growl = _applications.take(application->name());
+    gntp *growl = _applications.take(application->name());
     if(growl == NULL)
         return;
     delete growl;
 }
 
 int Growl_Backend::notify(Notification notification){
-    Growl *growl = _applications.value(notification.application());
+    gntp *growl = _applications.value(notification.application());
     if(growl == NULL)
         return -1;
 
-    QString title=Notification::toPlainText(notification.title());
-    QString text=Notification::toPlainText(notification.text());
-    qDebug()<<"Notify Growl:"<<notification.application()<<title;
-    growl->Notify(notification.alert().toUtf8().constData(),title.toUtf8().constData(),text.toUtf8().constData(),"",notification.icon().toUtf8().constData());
+	//qDebug()<<"Notify Growl:"<<notification.application()<<Notification.toPlainText(notification.title());
+	growl->notify(notification.alert().toUtf8().constData(),
+		Notification::toPlainText(notification.title()).toUtf8().constData(),
+		Notification::toPlainText(notification.text()).toUtf8().constData(),
+		notification.icon().isEmpty()?NULL:notification.icon().toUtf8().constData());
     return ++id;
 }
 
