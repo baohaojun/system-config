@@ -31,7 +31,7 @@ public:
     void addAlert ( const QString &name,const QString &title = 0, const QString &icon="" );
     void registerWithBackends();
     void unregisterWithBackends();
-	int notify ( const QString &alert,const QString &title,const QString &text,const QString &icon = 0,int timeout = 10, Notification::prioritys priority = Notification::NORMAL);
+	int notify ( const QString &alert,const QString &title,const QString &text,const QString &icon = 0,int timeout = 10, Notification::prioritys priority = Notification::NORMAL,const QList<Action*> *actions = NULL);
     void actionInvoked ( Notification notification );
     void notificationClosed ( Notification notification );
 
