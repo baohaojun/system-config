@@ -35,6 +35,9 @@ public:
     QStringList GetCapabilities();
     QString GetServerInformation(QString& vendor, QString& version, QString& specVersion);
 
+private:
+	QHash<uint,Notification> activeNotifications;
+
 signals:
     void NotificationClosed( uint id, uint reason );
     void ActionInvoked( uint id, const QString& actionKey );

@@ -1,6 +1,6 @@
 if( WITH_GROWL_BACKEND )
 	if(CRYPTOPP_LIBRARIES AND Boost_SYSTEM_LIBRARY)
-		message( STATUS "Found libgrowl, adding libgrowl backend" )
+		message( STATUS "Found Boost and Cryptopp, adding libgrowl backend" )
 		set( GROWL__SRC
 			growl_backend.cpp
 			)

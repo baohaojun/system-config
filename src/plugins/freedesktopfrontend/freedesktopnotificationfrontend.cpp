@@ -47,6 +47,7 @@ void FreedesktopNotification_Frontend::actionInvoked(Notification notification) 
 void FreedesktopNotification_Frontend::notificationClosed(Notification notification) {
 
 	qDebug()<<"Closing Dbus notification"<<notification.id()<<"reason:"<<(int)notification.closeReason();
+	activeNotifications.take(notification.id());
     emit NotificationClosed(notification.id(),notification.closeReason());
 }
 
@@ -63,7 +64,6 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
                                               const QStringList &actions, const QVariantMap &hints, int timeout)
 {
     qDebug()<<app_name<<summary<<body<<app_icon;
-	qDebug()<<"Hints:"<<hints;
     QString icon;
 
     if(hints.contains("image_data")){
@@ -83,15 +83,17 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
 	for(int i = 0;i < actions.length(); i+=2){
 		noti.addAction(new Action(actions.at(i).toInt(),actions.at(i+1)));
 	}
-    return snore()->broadcastNotification(noti);
+
+	snore()->broadcastNotification(noti);
+	activeNotifications[noti.id()] = noti;
+    return noti.id();
 }
 
 
 
 void FreedesktopNotification_Frontend::CloseNotification(uint id){
-    //TODO: do something usefull here
-	Notification n(id);
-	snore()->closeNotification(n,Notification::NONE);
+	Notification noti = activeNotifications.take(id);
+	snore()->closeNotification(noti,Notification::TIMED_OUT);
 }
 
 QStringList FreedesktopNotification_Frontend::GetCapabilities()

@@ -28,7 +28,7 @@
 
 
 QString const SnoreServer::version(){
-    return "0.1";
+    return "0.1.5";
 }
 
 QString const SnoreServer::snoreTMP(){
@@ -143,9 +143,7 @@ int SnoreServer::broadcastNotification ( Notification notification )
     emit notify ( notification );
     if ( _notificationBackend!=NULL )
     {
-        qDebug()<<"Broadcasting";
         notification.setId(_notificationBackend->notify ( notification ));
-        qDebug()<<"Notification ID: "<<notification.id();
         return  notification.id();
     }
     return -1;

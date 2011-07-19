@@ -8,19 +8,20 @@ add_subdirectory(core)
 QT4_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
 set(SNORENOTIFY_DEPS ${SNORENOTIFY_DEPS} ${SNORENOTIFY_RCS})
 
-#if(WIN32)
-#  set(WIN32_SPECIFIC WIN32)
-#else(WIN32)
+if(WIN32)
+  set(WIN32_SPECIFIC WIN32)
+else(WIN32)
   set(WIN32_SPECIFIC)
-#endif(WIN32)
+endif(WIN32)
 
 automoc4_add_executable( snorenotify ${WIN32_SPECIFIC}  main.cpp snorenotify.cpp trayicon.cpp ${SNORENOTIFY_DEPS})
 
 target_link_libraries( snorenotify snorecore ${QT_QTGUI_LIBRARY} ${QT_QTXML_LIBRARY} )
 
 if(MSVC)
-set_target_properties(snorenotify PROPERTIES   LINK_FLAGS "/ENTRY:\"mainCRTStartup\"")
+	set_target_properties(snorenotify PROPERTIES   LINK_FLAGS "/ENTRY:\"mainCRTStartup\"")
 endif(MSVC)
+
 add_dependencies(snorenotify snorecore)
 
 install(TARGETS snorenotify RUNTIME DESTINATION bin

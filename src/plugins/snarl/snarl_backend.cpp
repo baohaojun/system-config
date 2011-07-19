@@ -63,7 +63,9 @@ void Snarl_Backend::registerApplication(Application *application){
 		_applications.insert(application->name(),snarlInterface);
 	}
 	qDebug()<<"Register with Snarl"<<application->name()<<application->icon();
-	snarlInterface->Register(application->name().toUtf8().constData(),
+	QString appName = application->name();
+	appName = appName.replace(" ","_");//app sig must not contain spaces
+	snarlInterface->Register(appName.toUtf8().constData(),
 		application->name().toUtf8().constData(),
 		application->icon().toUtf8().constData(),
 		0,winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
@@ -149,16 +151,13 @@ bool SnarlWidget::winEvent(MSG * msg, long * result){
 		uint notificationID = msg->lParam;
 		qDebug()<<_snarl->activeNotifications.keys();
 		Notification notification(_snarl->activeNotifications[notificationID]);
-		qDebug()<<"arg"<<notification.toString();
-			qDebug()<<notification.id();
-		qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action;
-		qDebug()<<"data:"<<data;
+		qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action<<"data:"<<data;
 		Notification::closeReasons reason = Notification::NONE;
 		switch(action){
 		case SnarlEnums::CallbackInvoked:
 			reason = Notification::CLOSED;
 			break;
-		case SnarlEnums::CallbackMenuSelected:
+		case SnarlEnums::NotifyAction:
 			reason = Notification::CLOSED;
 			notification.setActionInvoked(data);
 			_snarl->snore()->notificationActionInvoked(notification);
