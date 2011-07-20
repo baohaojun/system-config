@@ -99,10 +99,10 @@ int Snarl_Backend::notify(Notification notification){
 			Notification::toPlainText(notification.title()).toUtf8().constData(),
 			Notification::toPlainText(notification.text()).toUtf8().constData(),
 			notification.timeout(),
-			notification.icon().isEmpty()?0:notification.icon().toUtf8().constData(),
+			notification.icon().localUrl().isEmpty()?0:notification.icon().localUrl().toUtf8().constData(),
 			0,notification.priority());
 			
-		foreach(const Action *a, notification.actions()){
+		foreach(const Notification::Action *a, notification.actions()){
 			qDebug()<<"snarl add action"<<a->id<<a->name;
 			snarlInterface->AddAction(id,a->name.toUtf8().constData(),QString("@").append(QString::number(a->id)).toUtf8().constData());
 		}
@@ -115,7 +115,7 @@ int Snarl_Backend::notify(Notification notification){
 			Notification::toPlainText(notification.title()).toUtf8().constData(),
 			Notification::toPlainText(notification.text()).toUtf8().constData(),
 			notification.timeout(),
-			notification.icon().toUtf8().constData(),
+			notification.icon().localUrl().toUtf8().constData(),
 			0,notification.priority());
 	}
 	return id;
@@ -152,21 +152,21 @@ bool SnarlWidget::winEvent(MSG * msg, long * result){
 		qDebug()<<_snarl->activeNotifications.keys();
 		Notification notification(_snarl->activeNotifications[notificationID]);
 		qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action<<"data:"<<data;
-		Notification::closeReasons reason = Notification::NONE;
+		NotificationEnums::CloseReasons::closeReasons reason = NotificationEnums::CloseReasons::NONE;
 		switch(action){
 		case SnarlEnums::CallbackInvoked:
-			reason = Notification::CLOSED;
+			reason = NotificationEnums::CloseReasons::CLOSED;
 			break;
 		case SnarlEnums::NotifyAction:
-			reason = Notification::CLOSED;
+			reason = NotificationEnums::CloseReasons::CLOSED;
 			notification.setActionInvoked(data);
 			_snarl->snore()->notificationActionInvoked(notification);
 			break;
 		case SnarlEnums::CallbackClosed:
-			 reason = Notification::DISMISSED; 
+			 reason = NotificationEnums::CloseReasons::DISMISSED; 
 			break;
 		case SnarlEnums::CallbackTimedOut:
-			reason = Notification::TIMED_OUT; 
+			reason = NotificationEnums::CloseReasons::TIMED_OUT; 
 			break;
 		default:
 			qDebug()<<"Unknown snarl action found!!";

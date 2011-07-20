@@ -15,9 +15,8 @@
  ****************************************************************************************/
 
 #include "snoreserver.h"
-#include "notification.h"
+#include "notification/notification.h"
 #include "trayiconnotifer.h"
-#include "snorenotificationinstance.h"
 
 #include <iostream>
 
@@ -62,11 +61,6 @@ SnoreServer::SnoreServer ( QSystemTrayIcon *trayIcon ) :
         _trayIcon ( trayIcon )
 {
     qDebug() <<"Inititalized";
-
-
-
-    _defaultNotificationInterface = new SnoreNotificationInstance ( "Snore",this );
-
 
     if ( trayIcon!=NULL )
     {
@@ -149,7 +143,7 @@ int SnoreServer::broadcastNotification ( Notification notification )
     return -1;
 }
 
-void SnoreServer::closeNotification ( Notification notification,const Notification::closeReasons &reason )
+void SnoreServer::closeNotification ( Notification notification,const NotificationEnums::CloseReasons::closeReasons &reason )
 {
 	qDebug()<<"closing notification"<<notification.id()<<"reason"<<reason;
 	notification.setCloseReason(reason);
@@ -210,9 +204,5 @@ Notification_Backend * SnoreServer::primaryNotificationBackend(){
     return _notificationBackend;
 }
 
-SnoreNotificationInstance * SnoreServer::defaultNotificationInterface()
-{
-    return _defaultNotificationInterface;
-}
 
 #include "snoreserver.moc"

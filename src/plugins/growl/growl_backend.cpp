@@ -44,7 +44,10 @@ Growl_Backend::~Growl_Backend(){
 void Growl_Backend::registerApplication(Application *application){
 	gntp *growl =  new gntp(application->name().toUtf8().constData());
 	foreach(Alert *a,application->alerts()){
-		growl->regist(a->name().toUtf8().constData());
+		try{
+			growl->regist(a->name().toUtf8().constData());
+		}catch(const std::exception& e){
+		}
 	}
     _applications.insert(application->name(),growl);
 }
@@ -62,10 +65,13 @@ int Growl_Backend::notify(Notification notification){
         return -1;
 
 	//qDebug()<<"Notify Growl:"<<notification.application()<<Notification.toPlainText(notification.title());
-	growl->notify(notification.alert().toUtf8().constData(),
-		Notification::toPlainText(notification.title()).toUtf8().constData(),
-		Notification::toPlainText(notification.text()).toUtf8().constData(),
-		notification.icon().isEmpty()?NULL:notification.icon().toUtf8().constData());
+	try{
+		growl->notify(notification.alert().toUtf8().constData(),
+			Notification::toPlainText(notification.title()).toUtf8().constData(),
+			Notification::toPlainText(notification.text()).toUtf8().constData(),
+			notification.icon().localUrl().isEmpty()?NULL:notification.icon().localUrl().toUtf8().constData());
+	}catch(const std::exception& e){
+	}
     return ++id;
 }
 

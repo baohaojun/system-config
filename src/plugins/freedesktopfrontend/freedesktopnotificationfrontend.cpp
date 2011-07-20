@@ -51,25 +51,17 @@ void FreedesktopNotification_Frontend::notificationClosed(Notification notificat
     emit NotificationClosed(notification.id(),notification.closeReason());
 }
 
-QString FreedesktopNotification_Frontend::getImagefromHint(const FreedesktopImageHint &img){
-    QString filename=QString(SnoreServer::snoreTMP()).append(img.hash()).append(".png");
-    if(QFile::exists(filename))
-        return filename;
-    img.toQImage().save(filename,"PNG");
-    return filename;
-}
-
 uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint replaces_id,
                                               const QString &app_icon, const QString &summary, const QString &body,
                                               const QStringList &actions, const QVariantMap &hints, int timeout)
 {
     qDebug()<<app_name<<summary<<body<<app_icon;
-    QString icon;
+	NotificationIcon icon;
 
     if(hints.contains("image_data")){
         FreedesktopImageHint image;
         hints["image_data"].value<QDBusArgument>()>>image;
-        icon=getImagefromHint(image);
+        icon = NotificationIcon(image.toQImage());
     }
     if(!snore()->aplications().contains(app_name)){
         Application *a = new Application(app_name,app_icon);
@@ -81,7 +73,7 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
 	qDebug()<<"Actions"<<actions;
 	
 	for(int i = 0;i < actions.length(); i+=2){
-		noti.addAction(new Action(actions.at(i).toInt(),actions.at(i+1)));
+		noti.addAction(new Notification::Action(actions.at(i).toInt(),actions.at(i+1)));
 	}
 
 	snore()->broadcastNotification(noti);
@@ -93,7 +85,7 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
 
 void FreedesktopNotification_Frontend::CloseNotification(uint id){
 	Notification noti = activeNotifications.take(id);
-	snore()->closeNotification(noti,Notification::TIMED_OUT);
+	snore()->closeNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
 }
 
 QStringList FreedesktopNotification_Frontend::GetCapabilities()

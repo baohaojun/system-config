@@ -16,12 +16,15 @@
 
 #include "notification.h"
 #include "snoreserver.h"
+#include "notification\icon.h"
 
 #include <QDebug>
 #include <QTcpSocket>
 #include <Qt>
 #include <QTextDocumentFragment>
 #include <QTextDocument>
+
+
 
 
 class Notification::NotificationData
@@ -31,11 +34,11 @@ public:
 	  _id ( id ),
 	_timeout ( 10 ),
 	_source ( NULL ),
-	_closeReason(Notification::NONE),
-	_priority(Notification::NORMAL)
+	_closeReason(NotificationEnums::CloseReasons::NONE),
+	_priority(NotificationEnums::Prioritys::NORMAL)
 	  {};
 
-	NotificationData ( Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout,uint id,Notification::prioritys priority ):
+	NotificationData ( Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const NotificationIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
 	  	_id ( id ),
 	_timeout ( timeout ),
 	_source ( source ),
@@ -45,7 +48,7 @@ public:
 	_text ( text ),
 	_icon ( icon ),
 	_priority(priority),
-	_closeReason(Notification::NONE)
+	_closeReason(NotificationEnums::CloseReasons::NONE)
 		{};
 
 
@@ -55,16 +58,16 @@ public:
 
 	uint _id;
 	int _timeout;
-	Action *_actionInvoked;
+	Notification::Action *_actionInvoked;
 	Notification_Frontend *_source;
 	QString _application;
 	QString _alert;
 	QString _title;
 	QString _text;
-	QString _icon;
-	Notification::prioritys _priority;
-	Notification::closeReasons _closeReason;
-	QMap<int,Action*> _actions;
+	NotificationIcon _icon;
+	NotificationEnums::Prioritys::prioritys _priority;
+	NotificationEnums::CloseReasons::closeReasons _closeReason;
+	QMap<int,Notification::Action*> _actions;
 	QVariantHash _hints;
 };
 
@@ -83,7 +86,7 @@ Notification::Notification ( uint id )
 	d = QSharedPointer<NotificationData>(new NotificationData(id));
 }
 
-Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const QString &icon, int timeout, uint id, Notification::prioritys priority ) 
+Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const NotificationIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority ) 
 {
 	d = QSharedPointer<NotificationData>(new  NotificationData(source,application,alert,title,text,icon,timeout,id,priority));
 }
@@ -118,7 +121,7 @@ void Notification::setId(const uint &id)
 	d->_id = id;
 }
 
-const QString &Notification::icon() const
+const NotificationIcon &Notification::icon() const
 {
 	return d->_icon;
 }
@@ -128,7 +131,7 @@ const int &Notification::timeout() const
 	return d->_timeout;
 }
 
-const Action *Notification::actionInvoked() const
+const Notification::Action *Notification::actionInvoked() const
 {
 	return d->_actionInvoked;
 }
@@ -168,28 +171,28 @@ const QString &Notification::alert() const
 	return d->_alert;
 }
 
-const Notification::prioritys &Notification::priority() const
+const NotificationEnums::Prioritys::prioritys &Notification::priority() const
 {
 	return d->_priority;
 }
 
-void Notification::addAction(Action *a) 
+void Notification::addAction(Notification::Action *a) 
 {
 	qDebug()<<"Added notification"<<a->id<<a->name;
 	d->_actions.insert(a->id,a);
 }
 
 
-const QMap<int,Action*> &Notification::actions() const
+const QMap<int,Notification::Action*> &Notification::actions() const
 {
 	return d->_actions;
 }
 
-const Notification::closeReasons &Notification::closeReason(){
+const NotificationEnums::CloseReasons::closeReasons &Notification::closeReason(){
 	return d->_closeReason;
 }
 
-void Notification::setCloseReason(const Notification::closeReasons &r){
+void Notification::setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r){
 	d->_closeReason = r;
 }
 
@@ -214,7 +217,7 @@ QDataStream & operator<< ( QDataStream &stream, const Notification &noti )
 	return stream;
 }
 
-QDataStream & operator<< ( QDataStream &stream, const Action &a)
+QDataStream & operator<< ( QDataStream &stream, const Notification::Action &a)
 {
 	stream<<a.id<<a.id;
 	return stream;

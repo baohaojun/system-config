@@ -17,7 +17,7 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 #include "snore_exports.h"
-#include "notification.h"
+#include "notification/notification.h"
 
 
 class SNORE_EXPORT SnorePlugin:public QObject

@@ -17,7 +17,7 @@
 #ifndef FreedesktopNotification_H
 #define FreedesktopNotification_H
 
-#include "core/notification.h"
+#include "core/notification/notification.h"
 
 #include <QtDBus>
 #include <QMetaType>
@@ -43,13 +43,10 @@ const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotificati
 
 class FreedesktopImageHint
 {
-public:
-    static QHash<QString,void*> hasedImages;
 public:    
     FreedesktopImageHint();
     FreedesktopImageHint(const QImage &img);
     QString hash()const;
-    QString computeHash();
 
     QImage toQImage()const;
 

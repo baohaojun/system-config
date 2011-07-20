@@ -16,32 +16,23 @@
 
 #ifndef NOTIFICATION_H
 #define NOTIFICATION_H
-#include "snore_exports.h"
-#include "application.h"
-
+#include "../snore_exports.h"
+#include "../application.h"
+#include "icon.h"
 
 #include <QVariant>
 #include <QSharedPointer>
 
-class Action
-{
-public:
-	Action(int id,QString name):id(id),name(name){}
-	int id;
-	QString name;
-};
+namespace NotificationEnums{
 
-
-class SNORE_EXPORT Notification
-{
-public:
-    static int DefaultTimeout;
-    static QString toPlainText ( const QString &string );
+namespace Prioritys{
 	enum prioritys{
 		LOW=-1,
 		NORMAL,
 		HIGH
 	};
+}
+namespace CloseReasons{
 	enum closeReason
     {
 		NONE,
@@ -50,9 +41,27 @@ public:
 		CLOSED
     };
 	Q_DECLARE_FLAGS(closeReasons, closeReason)
+	Q_DECLARE_OPERATORS_FOR_FLAGS(closeReasons)
+}
+}
+
+class SNORE_EXPORT Notification
+{
+public:
+    static int DefaultTimeout;
+    static QString toPlainText ( const QString &string );
+
+	class Action
+	{
+	public:
+		Action(int id,QString name):id(id),name(name){}
+		int id;
+		QString name;
+	};
+
 public:
     Notification ( uint id=0 );
-	Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const QString &icon,int timeout=10,uint id=0, Notification::prioritys priority = Notification::NORMAL );
+	Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const NotificationIcon &icon,int timeout=10,uint id=0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
 	Notification ( const Notification &other );
 	~Notification();
 	Notification &operator=(const Notification& other);
@@ -71,13 +80,13 @@ public:
     const QString &application() const;
     const QString &title() const;
     const QString &text() const;
-    const QString &icon() const;
+	const NotificationIcon &icon() const;
     const QString &alert() const;
-	const prioritys &priority() const;
+	const NotificationEnums::Prioritys::prioritys &priority() const;
 	const QMap<int,Action*> &actions() const;
 	void addAction(Action *a);
-	const closeReasons &closeReason();
-	void setCloseReason(const closeReasons &r);
+	const NotificationEnums::CloseReasons::closeReasons &closeReason();
+	void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
 	const QVariant hint ( const QString &key ) const;
     bool hintExists ( const QString &key );
     void insertHint ( const QString &key,const QVariant &val );
@@ -88,8 +97,8 @@ private:
 	QSharedPointer<NotificationData> d;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Notification::closeReasons)
+
 QDataStream & operator<< ( QDataStream & stream, const Notification & noti );
-QDataStream & operator<< ( QDataStream & stream, const Action & action);
+QDataStream & operator<< ( QDataStream & stream, const Notification::Action & action);
 
 #endif // NOTIFICATION_H

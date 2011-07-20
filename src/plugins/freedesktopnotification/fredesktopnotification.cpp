@@ -42,14 +42,14 @@ QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i) {
     qDebug()<<i.notification.toString();
     a<<i.notification.application();
     a<<uint(0);
-    a<<i.notification.icon();
+	a<<i.notification.icon().image();
     a<<i.notification.title();
     a<<i.notification.text();
     QStringList actions;
     actions<<"1"<<" "<<"2"<<" ";
     a<<actions;
     a.beginMap();
-    QImage img(i.notification.icon());
+	QImage img(i.notification.icon().image());
     if (!img.isNull()) {
         img=img.scaledToWidth(50,Qt::FastTransformation);
         a.beginMapEntry();
@@ -69,13 +69,12 @@ const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotificati
 }
 
 
-QHash<QString,void*> FreedesktopImageHint::hasedImages;
+
 
 FreedesktopImageHint::FreedesktopImageHint()
 {
     FreedesktopNotification::registerTypes();
 }
-
 
 
 FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
@@ -90,20 +89,6 @@ FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
     channels =image.isGrayscale()?1:hasAlpha?4:3;
     bitsPerSample=image.depth()/channels;
 
-}
-
-QString FreedesktopImageHint::computeHash(){
-    if(this->_hash.isEmpty()){
-        Q_ASSERT(!imageData.isEmpty());
-        QCryptographicHash h(QCryptographicHash::Md5);
-        h.addData(imageData);
-        this->_hash = h.result().toHex();
-    }
-    return this->_hash;
-}
-QString FreedesktopImageHint::hash()const{
-    Q_ASSERT(!_hash.isEmpty());
-    return _hash;
 }
 
 
@@ -122,6 +107,5 @@ const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopImageHint 
     a.beginStructure();    
     a >> i.width>> i.height>> i.rowstride>> i.hasAlpha>> i.bitsPerSample>> i.channels>> i.imageData;
     a.endStructure();
-    FreedesktopImageHint::hasedImages.insert(i.computeHash(),NULL);
     return a;
 }

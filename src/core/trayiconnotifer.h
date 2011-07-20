@@ -2,7 +2,7 @@
 #define TRAYICONNOTIFER_H
 
 #include "interface.h"
-#include "notification.h"
+#include "notification/notification.h"
 
 class TrayIconNotifer:public Notification_Backend
 {

@@ -38,7 +38,7 @@ public:
 
 
     int broadcastNotification ( Notification notification );
-    void closeNotification ( Notification notification, const Notification::closeReasons &reason );
+	void closeNotification ( Notification notification, const NotificationEnums::CloseReasons::closeReasons &reason );
     void notificationActionInvoked ( Notification notification );
 
     void addApplication ( Application *application );
@@ -50,13 +50,10 @@ public:
     void setPrimaryNotificationBackend ( Notification_Backend *backend );
 	Notification_Backend* primaryNotificationBackend();
 
-    class SnoreNotificationInstance *defaultNotificationInterface();
-
     QHash<QString,SnorePlugin*> plugins;
 
 private:
     ApplicationsList _applications;
-    class SnoreNotificationInstance *_defaultNotificationInterface;
 
 
     QHash<QString,Notification_Backend*> _notyfier;
