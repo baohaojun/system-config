@@ -628,8 +628,13 @@
 (require 'electric-complete)
 
 (require 'xcscope)
-(global-set-key [(control z)] 'keyboard-quit)
 (global-set-key [(control x) (control z)] 'keyboard-quit)
+(global-set-key (kbd "C-h") ctl-x-map)
+(global-set-key (kbd "C-x C-h") help-map)
+(global-set-key [?\C-.] 'execute-extended-command)
+(global-set-key [?\C-,] (lookup-key global-map [?\C-x]))
+(global-set-key [?\C-'] 'hippie-expand)
+(global-set-key (kbd "C-l") 'previous-line)
 (require 'moinmoin-mode)
 
 (defun bhj-jdk-help (jdk-word)
