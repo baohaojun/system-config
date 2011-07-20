@@ -2,9 +2,144 @@
 
 _jira_compgen_options()
 {
+    local options=(
+        --help
+        --action
+        --file
+        --debug
+        --verbose
+        --server
+        --user
+        --password
+        password
+        --login
+        --service
+        --loginFromStandardInput
+        --project
+        --toProject
+        --name
+        --description
+        description
+        --url
+        --lead
+        --after
+        --issue
+        --toIssue
+        --parent
+        --summary
+        --priority
+        priority
+        --reporter
+        --assignee
+        --environment
+        environment
+        --components
+        --affectsVersions
+        --fixVersions
+        --custom
+        --field
+        --date
+        date
+        --dateFormat
+        --type
+        --resolution
+        --step
+        --comment
+        --filter
+        --link
+        --values
+        --count
+        --outputFormat
+        --plugin
+        plugin
+        --version
+        --role
+        --group
+        --defaultGroup
+        --userId
+        --userFullName
+        userFullName
+        --userEmail
+        --userPassword
+        --permissionScheme
+        --notificationScheme
+        notificationScheme
+        --issueSecurityScheme
+        --findReplace
+        --autoVersion
+        --autoComponent
+        --autoGroup
+        --asVersion
+        --asComponent
+    )
     local IFS=$'\t\n'
-    local options=(--help --action --file --debug --verbose --server --user --password password --login --service --loginFromStandardInput --project --toProject --name --description description --url --lead --after --issue --toIssue --parent --summary --priority priority --reporter --assignee --environment environment --components --affectsVersions --fixVersions --custom --field --date date --dateFormat --type --resolution --step --comment --filter --link --values --count --outputFormat --plugin plugin --version --role --group --defaultGroup --userId --userFullName userFullName --userEmail --userPassword --permissionScheme --notificationScheme notificationScheme --issueSecurityScheme --findReplace --autoVersion --autoComponent --autoGroup --asVersion --asComponent)
+    COMPREPLY=( $(skeleton_compgen_word.pl -- "$( echo ${options[@]} )" "$cur") )
+}
 
+_confluence_compgen_options()
+{
+    local IFS=$'\t\n'
+    local options=(
+        --help
+        --action
+        --file
+        --encoding
+        --debug
+        --verbose
+        --sql
+        --driver
+        --url
+        --host
+        --port
+        --database
+        --continue
+        --server
+        --user
+        --password
+        --login
+        --service
+        --loginFromStandardInput
+        --title
+        --content
+        --comment
+        --parent
+        --name
+        --labels
+        --newTitle
+        --space
+        --newSpace
+        --targetServer
+        --permissions
+        --plugin
+        --version
+        --dateFormat
+        --dayOfMonth
+        --count
+        --id
+        --exportType
+        --mime
+        --findReplace
+        --outputFormat
+        --group
+        --defaultGroup
+        --userId
+        --userFullName
+        --userEmail
+        --userPassword
+        --news
+        --exportAttachments
+        --mostPopular
+        --recentlyUsed
+        --ancestors
+        --descendents
+        --children
+        --replace
+        --copyAttachments
+        --copyComments
+        --copyLabels
+        --autoGroup
+    )
+    
     COMPREPLY=( $(skeleton_compgen_word.pl -- "$( echo ${options[@]} )" "$cur") )
 }
 
@@ -61,10 +196,120 @@ _jira_file_list()
 
 _jira_actions()
 {
-        
-    local actions=(login logout getServerInfo createProject deleteProject getProjectList addVersion addComponent deleteComponent copyComponents createIssue updateIssue linkIssue addComment addAttachment progressIssue getIssue getFieldValue setFieldValue getAvailableSteps getIssueList getCommentList getComments getAttachment getAttachmentList addUser addUserWithFile removeUser removeUserWithFile addGroup removeGroup addUserToGroup addUserToGroupWithFile removeUserFromGroup removeUserFromGroupWithFile getUserList getPluginList getPluginDownload)
+    local IFS=$'\t\n'
+    local actions=(
+        login
+        logout
+        getServerInfo
+        createProject
+        deleteProject
+        getProjectList
+        addVersion
+        addComponent
+        deleteComponent
+        copyComponents
+        createIssue
+        updateIssue
+        linkIssue
+        addComment
+        addAttachment
+        progressIssue
+        getIssue
+        getFieldValue
+        setFieldValue
+        getAvailableSteps
+        getIssueList
+        getCommentList
+        getComments
+        getAttachment
+        getAttachmentList
+        addUser
+        addUserWithFile
+        removeUser
+        removeUserWithFile
+        addGroup
+        removeGroup
+        addUserToGroup
+        addUserToGroupWithFile
+        removeUserFromGroup
+        removeUserFromGroupWithFile
+        getUserList
+        getPluginList
+        getPluginDownload
+    )
     
-    COMPREPLY=( $(skeleton_compgen_word.pl -- "$( echo ${actions[@]} )" "$cur") )
+    COMPREPLY=( $(skeleton_compgen_word.pl -- "$( for x in ${actions[@]}; do echo $x; done )" "$cur") )
+}
+
+_confluence_actions()
+{
+    local actions=(
+        login
+        logout
+        run
+        run
+        getServerInfo
+        removeTrash
+        addPage
+        storePage
+        removePage
+        copyPage
+        movePage
+        renamePage
+        getSource
+        render
+        watchPage
+        watchPage
+        addAttachment
+        getAttachment
+        removeAttachment
+        copyAttachments
+        addComment
+        copyComments
+        getComments
+        addLabels
+        removeLabels
+        addNews
+        storeNews
+        removeNews
+        getNewsSource
+        renderNews
+        addUser
+        addUserWithFile
+        removeUser
+        removeUserWithFile
+        addGroup
+        removeGroup
+        addUserToGroup
+        addUserToGroupWithFile
+        removeUserFromGroup
+        removeUserFromGroupWithFile
+        addPermissions
+        removePermissions
+        copyPermissions
+        removeAllPermissionsForGroup
+        addSpace
+        removeSpace
+        copySpace
+        getSpace
+        getSpaceList
+        getPageList
+        getNewsList
+        getCommentList
+        getLabelList
+        getPermissionList
+        getUserList
+        getGroupList
+        getPluginList
+        getPluginDownload
+        installPlugin
+        checkPlugin
+        exportSpace
+        exportSite
+        loadFiles
+    )
+    local IFS=$'\t\n'
+    COMPREPLY=( $(skeleton_compgen_word.pl -- "$( for x in ${actions[@]}; do echo $x; done )" "$cur") )
 }
 
 _jira_issue_list()
@@ -146,8 +391,37 @@ _jira()
     return 0
 }
 
+_confluence()
+{
+    local cmd cur prev skinsdir IFS=$' \t\n' i j k=0
+
+    COMPREPLY=()
+    cmd=${COMP_WORDS[0]}
+    _get_comp_words_by_ref cur prev
+
+    case $prev in
+        -a|--action)
+            _confluence_actions
+            return 0
+            ;;
+        --title)
+            _jira_file_list ~/confluence/
+            return 0
+            ;;
+    esac
+
+    case $cur in
+        -*)
+            _confluence_compgen_options
+            return 0
+            ;;
+    esac
+
+    return 0
+}
 
 complete -o filenames -F _jira jira jira-help.pl
+complete -o filenames -F _confluence confluence confluence-help.pl congfu
 complete -o filenames -F _jira_issue_list jira-comments
 complete -o filenames -F _jira_add_comment jira-add-comment
 

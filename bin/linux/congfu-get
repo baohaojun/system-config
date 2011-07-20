@@ -12,41 +12,7 @@ function quote-array() {
 }
 
 function congfu() {
-    local user=hjbao
-    local server=`cat ~/.confserv 2>/dev/null||echo http://bear/wiki/`
-    local space='~hjbao'
-    local password=`cat ~/.confpass`
-    local args=()
-    
-    while true; do 
-        arg=$1
-        shift || break
-        
-        case "$arg" in 
-            --user)
-                user=$1
-                shift
-                ;;
-            --server)
-                server=$1
-                shift
-                ;;
-            --space)
-                space=$1
-                shift
-                ;;
-            --password)
-                password=$1
-                shift
-                ;;
-            *)
-                args=("${args[@]}" "$arg" "$1")
-                shift
-                ;;
-        esac
-    done
-    
-    confluence.sh --user "$user" --server "$server" --space "$space" --password "$password" "${args[@]}" 2>&1
+    confluence "$@" 2>&1
 }
 
 function die() {
