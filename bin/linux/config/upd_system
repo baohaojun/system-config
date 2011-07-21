@@ -35,7 +35,6 @@ cp ~/doc/monaco-linux.ttf ~/.fonts
 fc-cache -v
 
 #String::ShellQuote is needed by beagle-grep.sh/edit
-sudo cpan String::ShellQuote
 
 #设置gmail邮件
 test `whoami` = bhj && . config_email || true
