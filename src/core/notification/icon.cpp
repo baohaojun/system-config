@@ -75,7 +75,7 @@ SnoreIcon::~SnoreIcon()
 const QString &SnoreIcon::hash() const{
     if(d->_hash.isEmpty()){
         QCryptographicHash h(QCryptographicHash::Md5);
-        h.addData(QByteArray((const char*)d->_img.bits()));
+        h.addData(imageData());
         d->_hash = h.result().toHex();
     }
     return d->_hash;
@@ -98,7 +98,9 @@ const QString &SnoreIcon::localUrl()const{
 
 const QByteArray &SnoreIcon::imageData() const{
     if(d->_data.isEmpty()){
-        d->_data = QByteArray((const char*)d->_img.bits());
+        QBuffer buffer( &d->_data );
+        buffer.open( QBuffer::WriteOnly );
+        d->_img.save( &buffer, "PNG" );
     }
     return d->_data;
 }
