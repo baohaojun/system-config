@@ -23,7 +23,7 @@ for x in "$@"; do
 	if ! diff .new_config_diff~ .old_config_diff~; then
 	    mailx -s "git-to-gmail $x from $ip" -a .new_config_diff~ baohaojun@gmail.com </dev/null
 	    mv .new_config_diff~ .old_config_diff~
-	    git commit -m 'git-to-gmail auto commit'
+	    git commit -m 'git-to-gmail auto commit' || true
 	    git log -1|head -n 1|pn 2 > .old_version~
 	else
 	    echo old and new diff is the same
