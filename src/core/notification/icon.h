@@ -20,7 +20,7 @@
 
 
 #include <QImage>
-
+#include <QSharedPointer>
 
 
 class SNORE_EXPORT NotificationIcon
@@ -29,18 +29,23 @@ public:
 	NotificationIcon();
     NotificationIcon(const QImage &img);
 	NotificationIcon(const QByteArray &img);
+	NotificationIcon(const NotificationIcon &other);
 
 	const QImage &image() const;
 	const QString &localUrl() const;
+	const QByteArray &imageData() const;
+	const bool isLocalFile() const;
 
 
 private:
 	static QHash<QString,QString> hasedImages;
 private:
-	QImage _img;
-	QByteArray *_data;
-	QString _hash;
-	void computeHash();
+	class NotificationIconData;
+	QSharedPointer<NotificationIconData> d;
+
+	const QString &hash() const;
+
+
 
 
 };

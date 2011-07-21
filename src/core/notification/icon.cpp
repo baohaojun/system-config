@@ -20,52 +20,91 @@
 #include <QCryptographichash>
 #include <QBuffer>
 #include <QHash>
+#include <QDebug>
 
 
 QHash<QString,QString> NotificationIcon::hasedImages;
 
-
-NotificationIcon::NotificationIcon():
-_data(NULL)
+class NotificationIcon::NotificationIconData
 {
+public:
+	NotificationIconData():
+	  _isLocalFile(false)
+	  {	};
+
+	  NotificationIconData(const QImage &img):
+	  _img(img),
+		  _isLocalFile(false)
+	  {};
+
+	  ~NotificationIconData()
+	  {	};
+
+
+	  QImage _img;
+	  QByteArray _data;
+	  QString _hash;
+	  bool _isLocalFile;
+
+private:
+	NotificationIconData(const NotificationIconData &other)
+	  {	};
+
+
+};
+
+
+NotificationIcon::NotificationIcon()
+{
+	d = QSharedPointer<NotificationIconData>(new NotificationIconData());
 }
 
-NotificationIcon::NotificationIcon(const QImage &img):
-_img(img)
+NotificationIcon::NotificationIcon(const QImage &img)
 {    
-    QBuffer buffer( _data );
-    buffer.open( QBuffer::WriteOnly );
-    img.save( &buffer, "PNG" );
-	computeHash();
+	d = QSharedPointer<NotificationIconData>(new NotificationIconData(img));
 }
 
-NotificationIcon::NotificationIcon(const QByteArray &img)
-{
-	computeHash();
-}
+NotificationIcon::NotificationIcon(const NotificationIcon &other):
+d(other.d)
+{    }
 
-void NotificationIcon::computeHash(){
-	if(_hash.isEmpty()){
-        QCryptographicHash h(QCryptographicHash::Md5);
-		h.addData(*_data);
-        _hash = h.result().toHex();
-    }
+const QString &NotificationIcon::hash() const{
+	if(d->_hash.isEmpty()){
+		QCryptographicHash h(QCryptographicHash::Md5);
+		h.addData(imageData());
+		d->_hash = h.result().toHex();
+	}
+	return d->_hash;
 }
 
 const QImage &NotificationIcon::image() const{
-	return _img;
+	return d->_img;
 }
 
 const QString &NotificationIcon::localUrl()const{
-	if(hasedImages.contains(_hash))
-		return hasedImages[_hash];
+	QString h = hash();
+	if(hasedImages.contains(h))
+		return hasedImages[h];
 	QString fp = SnoreServer::snoreTMP();
-	fp = fp.append("/").append(_hash).append(".png");
-	_img.save(fp,"PNG");
-	hasedImages[_hash] = fp;
-	return hasedImages[_hash];
+	fp = fp.append("/").append(h).append(".png");
+	d->_img.save(fp,"PNG");
+	hasedImages[h] = fp;
+	return hasedImages[h];
 }
 
+const QByteArray &NotificationIcon::imageData() const{
+	if(d->_data.isEmpty()){
+		QBuffer buffer( &d->_data );
+		buffer.open( QBuffer::WriteOnly );
+		d->_img.save( &buffer, "PNG" );
+	}
+	return d->_data;
+}
+
+const bool NotificationIcon::isLocalFile() const
+{
+	return d->_isLocalFile;
+}
 
 
 #include "icon.moc"

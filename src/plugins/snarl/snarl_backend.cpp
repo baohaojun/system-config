@@ -94,13 +94,16 @@ int Snarl_Backend::notify(Notification notification){
 		snarlInterface = _defautSnarlinetrface;
 	}
 	uint id = notification.id();
+
+	qDebug()<<"Snarl is localfile"<<notification.icon().isLocalFile();
 	if(id == 0){
 		id = snarlInterface->Notify(notification.alert().toUtf8().constData(),
 			Notification::toPlainText(notification.title()).toUtf8().constData(),
 			Notification::toPlainText(notification.text()).toUtf8().constData(),
 			notification.timeout(),
-			notification.icon().localUrl().isEmpty()?0:notification.icon().localUrl().toUtf8().constData(),
-			0,notification.priority());
+			notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
+			!notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
+			notification.priority());
 			
 		foreach(const Notification::Action *a, notification.actions()){
 			qDebug()<<"snarl add action"<<a->id<<a->name;
@@ -115,8 +118,9 @@ int Snarl_Backend::notify(Notification notification){
 			Notification::toPlainText(notification.title()).toUtf8().constData(),
 			Notification::toPlainText(notification.text()).toUtf8().constData(),
 			notification.timeout(),
-			notification.icon().localUrl().toUtf8().constData(),
-			0,notification.priority());
+			notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
+			!notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
+			notification.priority());
 	}
 	return id;
 }

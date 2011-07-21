@@ -28,10 +28,6 @@ Growl_Backend::Growl_Backend(SnoreServer *snore):
 Notification_Backend("Growl",snore),
 id(0)
 {
-	gntp *growl = new gntp("SnoreNotify");
-	growl->regist("Default Alert");
-    _applications.insert("SnoreNotify",growl);
-
 }
 Growl_Backend::~Growl_Backend(){
     foreach(Application *a,this->snore()->aplications().values()){
@@ -47,6 +43,7 @@ void Growl_Backend::registerApplication(Application *application){
 		try{
 			growl->regist(a->name().toUtf8().constData());
 		}catch(const std::exception& e){
+			qDebug()<<"Growl:"<<e.what();
 		}
 	}
     _applications.insert(application->name(),growl);
