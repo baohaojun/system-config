@@ -62,12 +62,12 @@ void Snarl_Backend::registerApplication(Application *application){
 		snarlInterface = new SnarlInterface();
 		_applications.insert(application->name(),snarlInterface);
 	}
-	qDebug()<<"Register with Snarl"<<application->name()<<application->icon();
+	qDebug()<<"Register with Snarl"<<application->name();
 	QString appName = application->name();
 	appName = appName.replace(" ","_");//app sig must not contain spaces
 	snarlInterface->Register(appName.toUtf8().constData(),
 		application->name().toUtf8().constData(),
-		application->icon().toUtf8().constData(),
+		application->icon().localUrl().toUtf8().constData(),
 		0,winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
 
 	foreach(Alert *alert,application->alerts()){

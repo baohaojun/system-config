@@ -17,7 +17,7 @@
 #include "application.h"
 
 
-Application::Application (const QString &name, const QString &icon) :
+Application::Application (const QString &name, const SnoreIcon &icon) :
         _name ( name ),
         _icon(icon),
         _initialized ( false )
@@ -47,7 +47,7 @@ const QString &Application::name() const
     return _name;
 }
 
-const QString &Application::icon()const
+const SnoreIcon &Application::icon()const
 {
     return _icon;
 }

@@ -36,9 +36,9 @@ public:
 	_source ( NULL ),
 	_closeReason(NotificationEnums::CloseReasons::NONE),
 	_priority(NotificationEnums::Prioritys::NORMAL)
-	  {};
+          {}
 
-	NotificationData ( Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const NotificationIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
+	NotificationData ( Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
 	  	_id ( id ),
 	_timeout ( timeout ),
 	_source ( source ),
@@ -49,12 +49,12 @@ public:
 	_icon ( icon ),
 	_priority(priority),
 	_closeReason(NotificationEnums::CloseReasons::NONE)
-		{};
+                {}
 
 
 	~NotificationData(){
 		//delete _actionInvoked;
-	};
+        }
 
 	uint _id;
 	int _timeout;
@@ -64,7 +64,7 @@ public:
 	QString _alert;
 	QString _title;
 	QString _text;
-	NotificationIcon _icon;
+	SnoreIcon _icon;
 	NotificationEnums::Prioritys::prioritys _priority;
 	NotificationEnums::CloseReasons::closeReasons _closeReason;
 	QMap<int,Notification::Action*> _actions;
@@ -86,7 +86,7 @@ Notification::Notification ( uint id )
 	d = QSharedPointer<NotificationData>(new NotificationData(id));
 }
 
-Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const NotificationIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority ) 
+Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority ) 
 {
 	d = QSharedPointer<NotificationData>(new  NotificationData(source,application,alert,title,text,icon,timeout,id,priority));
 }
@@ -121,7 +121,7 @@ void Notification::setId(const uint &id)
 	d->_id = id;
 }
 
-const NotificationIcon &Notification::icon() const
+const SnoreIcon &Notification::icon() const
 {
 	return d->_icon;
 }

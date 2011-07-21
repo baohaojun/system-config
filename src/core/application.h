@@ -17,6 +17,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 #include "snore_exports.h"
+#include "notification/icon.h"
 
 #include <QHash>
 
@@ -27,12 +28,12 @@ class SNORE_EXPORT Application:public QObject
 {
     Q_OBJECT
 public:
-    Application ( const QString &name, const QString &icon = "" );
+    Application ( const QString &name, const SnoreIcon &icon = SnoreIcon(QImage(":/root/zzz.png")));
     Application();
     ~Application();
     void addAlert ( Alert *alert );
     const QString &name() const;
-    const QString &icon() const;
+    const SnoreIcon &icon() const;
     const AlertList &alerts() const;
     bool isInitialized();
     void setInitialized ( bool b );
@@ -40,7 +41,7 @@ public:
 
 private:
     QString _name;
-    QString _icon;
+    SnoreIcon _icon;
     AlertList _alerts;
     bool _initialized;
 

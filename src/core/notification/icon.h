@@ -23,13 +23,14 @@
 #include <QSharedPointer>
 
 
-class SNORE_EXPORT NotificationIcon
+class SNORE_EXPORT SnoreIcon
 {
 public:
-	NotificationIcon();
-    NotificationIcon(const QImage &img);
-	NotificationIcon(const QByteArray &img);
-	NotificationIcon(const NotificationIcon &other);
+        SnoreIcon();
+    SnoreIcon(const QImage &img);
+        SnoreIcon(const QByteArray &img);
+        SnoreIcon(const SnoreIcon &other);
+        ~SnoreIcon();
 
 	const QImage &image() const;
 	const QString &localUrl() const;
@@ -40,8 +41,8 @@ public:
 private:
 	static QHash<QString,QString> hasedImages;
 private:
-	class NotificationIconData;
-	QSharedPointer<NotificationIconData> d;
+        class SnoreIconData;
+        QSharedPointer<SnoreIconData> d;
 
 	const QString &hash() const;
 

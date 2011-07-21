@@ -61,7 +61,7 @@ public:
 
 public:
     Notification ( uint id=0 );
-	Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const NotificationIcon &icon,int timeout=10,uint id=0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+	Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10,uint id=0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
 	Notification ( const Notification &other );
 	~Notification();
 	Notification &operator=(const Notification& other);
@@ -80,7 +80,7 @@ public:
     const QString &application() const;
     const QString &title() const;
     const QString &text() const;
-	const NotificationIcon &icon() const;
+	const SnoreIcon &icon() const;
     const QString &alert() const;
 	const NotificationEnums::Prioritys::prioritys &priority() const;
 	const QMap<int,Action*> &actions() const;

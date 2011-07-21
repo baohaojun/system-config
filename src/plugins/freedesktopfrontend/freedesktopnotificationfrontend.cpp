@@ -56,15 +56,15 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
                                               const QStringList &actions, const QVariantMap &hints, int timeout)
 {
     qDebug()<<app_name<<summary<<body<<app_icon;
-	NotificationIcon icon;
+	SnoreIcon icon;
 
     if(hints.contains("image_data")){
         FreedesktopImageHint image;
         hints["image_data"].value<QDBusArgument>()>>image;
-        icon = NotificationIcon(image.toQImage());
+        icon = SnoreIcon(image.toQImage());
     }
     if(!snore()->aplications().contains(app_name)){
-        Application *a = new Application(app_name,app_icon);
+		Application *a = new Application(app_name,SnoreIcon(QImage(":/root/images/freedesktop-dbus.png")));
         a->addAlert(new Alert("DBus Alert","DBus Alert",app_icon));
         snore()->addApplication(a);
         snore()->applicationIsInitialized(a);

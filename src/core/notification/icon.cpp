@@ -23,22 +23,22 @@
 #include <QDebug>
 
 
-QHash<QString,QString> NotificationIcon::hasedImages;
+QHash<QString,QString> SnoreIcon::hasedImages;
 
-class NotificationIcon::NotificationIconData
+class SnoreIcon::SnoreIconData
 {
 public:
-	NotificationIconData():
+        SnoreIconData():
 	  _isLocalFile(false)
-	  {	};
+          {	}
 
-	  NotificationIconData(const QImage &img):
+          SnoreIconData(const QImage &img):
 	  _img(img),
 		  _isLocalFile(false)
-	  {};
+          {}
 
-	  ~NotificationIconData()
-	  {	};
+          ~SnoreIconData()
+          {	}
 
 
 	  QImage _img;
@@ -47,28 +47,32 @@ public:
 	  bool _isLocalFile;
 
 private:
-	NotificationIconData(const NotificationIconData &other)
-	  {	};
+        SnoreIconData(const SnoreIconData &other)
+          {	}
 
 
 };
 
 
-NotificationIcon::NotificationIcon()
+SnoreIcon::SnoreIcon()
 {
-	d = QSharedPointer<NotificationIconData>(new NotificationIconData());
+        d = QSharedPointer<SnoreIconData>(new SnoreIconData());
 }
 
-NotificationIcon::NotificationIcon(const QImage &img)
+SnoreIcon::SnoreIcon(const QImage &img)
 {    
-	d = QSharedPointer<NotificationIconData>(new NotificationIconData(img));
+        d = QSharedPointer<SnoreIconData>(new SnoreIconData(img));
 }
 
-NotificationIcon::NotificationIcon(const NotificationIcon &other):
+SnoreIcon::SnoreIcon(const SnoreIcon &other):
 d(other.d)
 {    }
 
-const QString &NotificationIcon::hash() const{
+SnoreIcon::~SnoreIcon()
+{    }
+
+
+const QString &SnoreIcon::hash() const{
 	if(d->_hash.isEmpty()){
 		QCryptographicHash h(QCryptographicHash::Md5);
 		h.addData(imageData());
@@ -77,11 +81,11 @@ const QString &NotificationIcon::hash() const{
 	return d->_hash;
 }
 
-const QImage &NotificationIcon::image() const{
+const QImage &SnoreIcon::image() const{
 	return d->_img;
 }
 
-const QString &NotificationIcon::localUrl()const{
+const QString &SnoreIcon::localUrl()const{
 	QString h = hash();
 	if(hasedImages.contains(h))
 		return hasedImages[h];
@@ -92,7 +96,7 @@ const QString &NotificationIcon::localUrl()const{
 	return hasedImages[h];
 }
 
-const QByteArray &NotificationIcon::imageData() const{
+const QByteArray &SnoreIcon::imageData() const{
 	if(d->_data.isEmpty()){
 		QBuffer buffer( &d->_data );
 		buffer.open( QBuffer::WriteOnly );
@@ -101,7 +105,7 @@ const QByteArray &NotificationIcon::imageData() const{
 	return d->_data;
 }
 
-const bool NotificationIcon::isLocalFile() const
+const bool SnoreIcon::isLocalFile() const
 {
 	return d->_isLocalFile;
 }
