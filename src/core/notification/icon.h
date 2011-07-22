@@ -26,25 +26,25 @@
 class SNORE_EXPORT SnoreIcon
 {
 public:
-        SnoreIcon();
+    SnoreIcon();
     SnoreIcon(const QImage &img);
-        SnoreIcon(const QByteArray &img);
-        SnoreIcon(const SnoreIcon &other);
-        ~SnoreIcon();
+    SnoreIcon(const class QString &url);
+    SnoreIcon(const SnoreIcon &other);
+    ~SnoreIcon();
 
-	const QImage &image() const;
-	const QString &localUrl() const;
-	const QByteArray &imageData() const;
-	const bool isLocalFile() const;
+    const QImage &image() const;
+    const QString &localUrl() const;
+    const QByteArray &imageData() const;
+    const QString &hash() const;
+    const bool isLocalFile() const;
 
 
 private:
-	static QHash<QString,QString> hasedImages;
+    static QHash<QString,QString> hasedImages;
 private:
-        class SnoreIconData;
-        QSharedPointer<SnoreIconData> d;
+    class SnoreIconData;
+    QSharedPointer<SnoreIconData> d;
 
-	const QString &hash() const;
 
 
 
