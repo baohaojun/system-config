@@ -404,6 +404,7 @@
                     
 
 (global-set-key [(control meta o)] 'bhj-occur)
+(global-set-key (kbd "M-g o") 'bhj-occur)
 
 (defun bhj-occur ()
   (interactive)
@@ -635,6 +636,9 @@
 (global-set-key [?\C-,] (lookup-key global-map [?\C-x]))
 (global-set-key [?\C-'] 'hippie-expand)
 (global-set-key (kbd "C-l") 'previous-line)
+(global-set-key (kbd "C-z") 'move-beginning-of-line)
+(global-set-key (kbd "M-z") 'move-end-of-line)
+(global-set-key (kbd "C-h C-h") 'exchange-point-and-mark)
 
 (require 'moinmoin-mode)
 
@@ -1393,3 +1397,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (require 'guess-offset)
 (setq org-agenda-files '( "~/notes"))
 (setq org-log-done 'note)
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
