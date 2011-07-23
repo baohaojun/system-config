@@ -88,7 +88,8 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
 
 
 
-	Notification noti(this,app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id,priotity);
+	Notification noti(app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id,priotity);
+	noti.setSource(this);
 	qDebug()<<"Actions"<<actions;
 
 	for(int i = 0;i < actions.length(); i+=2){

@@ -38,10 +38,10 @@ public:
 	_priority(NotificationEnums::Prioritys::NORMAL)
           {}
 
-	NotificationData ( Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
+	NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
 	  	_id ( id ),
 	_timeout ( timeout ),
-	_source ( source ),
+	_source ( NULL),
 	_application ( application ),
 	_alert ( alert ),
 	_title ( title ),
@@ -86,9 +86,9 @@ Notification::Notification ( uint id )
 	d = QSharedPointer<NotificationData>(new NotificationData(id));
 }
 
-Notification::Notification ( Notification_Frontend *source, const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority ) 
+Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority ) 
 {
-	d = QSharedPointer<NotificationData>(new  NotificationData(source,application,alert,title,text,icon,timeout,id,priority));
+	d = QSharedPointer<NotificationData>(new  NotificationData(application,alert,title,text,icon,timeout,id,priority));
 }
 
 Notification::Notification ( const Notification &other ):
@@ -144,6 +144,10 @@ void Notification::setActionInvoked ( Action *action )
 void Notification::setActionInvoked ( const int &id)
 {
 	d->_actionInvoked = d->_actions[id];
+}
+
+void Notification::setSource(Notification_Frontend *source) const{
+	d->_source = source;
 }
 
 Notification_Frontend *Notification::source() const

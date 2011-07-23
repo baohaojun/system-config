@@ -63,7 +63,7 @@ public:
 
 public:
     Notification ( uint id=0 );
-	Notification ( class Notification_Frontend *source,const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10,uint id=0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+	Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10,uint id=0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
 	Notification ( const Notification &other );
 	~Notification();
 	Notification &operator=(const Notification& other);
@@ -78,6 +78,7 @@ public:
 	void setActionInvoked ( const int &actionID);
 	//const Notification::defaultActions &actionInvoked() const;
 	const Action* actionInvoked() const;
+	void setSource(class Notification_Frontend *source)const;
 	class Notification_Frontend *source() const;
     const QString &application() const;
     const QString &title() const;
