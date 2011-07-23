@@ -55,8 +55,8 @@ namespace V42 {
 // workaround for mingw-w64 bug
 #ifdef __MINGW64_VERSION_MAJOR
 	extern "C" {
-                __declspec(dllimport) errno_t __cdecl strcpy_s(char * _Dst, size_t _SizeInBytes, const char *_Src);
-                __declspec(dllimport) errno_t __cdecl wcscpy_s(wchar_t * _Dst, size_t _SizeInBytes, const wchar_t *_Src);
+        __declspec(dllimport) errno_t __cdecl strcpy_s(char * _Dst, size_t _SizeInBytes, const char *_Src);
+        __declspec(dllimport) errno_t __cdecl wcscpy_s(wchar_t * _Dst, size_t _SizeInBytes, const wchar_t *_Src);
 		__declspec(dllimport) errno_t __cdecl strncat_s(char *_Dst, size_t _DstSizeInChars, const char *_Src, size_t _MaxCount);
 	}
 #endif //__MINGW64_VERSION_MAJOR

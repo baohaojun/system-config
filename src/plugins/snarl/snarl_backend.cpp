@@ -73,7 +73,7 @@ void Snarl_Backend::registerApplication(Application *application){
 	foreach(Alert *alert,application->alerts()){
 		snarlInterface->AddClass(application->name().toUtf8().constData(),
 			alert->name().toUtf8().constData(),
-			0,0,alert->icon().toUtf8().constData());
+			0,0,alert->icon().localUrl().toUtf8().constData());
 	}
 }
 

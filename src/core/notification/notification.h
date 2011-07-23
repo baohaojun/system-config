@@ -26,11 +26,13 @@
 namespace NotificationEnums{
 
 namespace Prioritys{
-	enum prioritys{
+	enum priority{
 		LOW=-1,
 		NORMAL,
 		HIGH
 	};
+	Q_DECLARE_FLAGS(prioritys, priority)
+	Q_DECLARE_OPERATORS_FOR_FLAGS(prioritys)
 }
 namespace CloseReasons{
 	enum closeReason

@@ -3,7 +3,7 @@
 
 #ifdef __MINGW32__
 	#define MINGW_HAS_SECURE_API
-#endif 
+#endif
 
 #include <tchar.h>
 #include <windows.h>
@@ -15,7 +15,6 @@
 #ifndef SMTO_NOTIMEOUTIFNOTHUNG
 	#define SMTO_NOTIMEOUTIFNOTHUNG 8
 #endif
-
 
 namespace Snarl {
 	namespace V42 {

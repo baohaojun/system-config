@@ -11,6 +11,9 @@ if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
     automoc4_add_library(freedesktop_frontend MODULE  ${FREEDESKTOP_NOTIFICATION_FRONTEND_SRC} )
     target_link_libraries(freedesktop_frontend  snorecore ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY} )
 
+	if(KDE4_FOUND)
+		target_link_libraries(freedesktop_frontend   ${KDE4_KDEUI_LIBRARY})
+	endif(KDE4_FOUND)
 
     install(TARGETS freedesktop_frontend ${PLUGIN_INSTALL_PATH})
 endif(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)

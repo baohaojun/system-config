@@ -42,10 +42,13 @@ public:
         if(QFile(url).exists()){
             _isLocalFile = true;
             _localFileName = url;
-        }
+		}else if(url.startsWith(":/")){
+			_img = QImage(url);
+			_isLocalFile = false;
+		}
     }
     ~SnoreIconData()
-    {	}
+    {/*nothing to do*/	}
 
 
     QImage _img;

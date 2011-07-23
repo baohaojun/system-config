@@ -67,7 +67,7 @@ void Application::setInitialized ( bool b )
     _initialized = b;
 }
 
-Alert::Alert (const QString &name, const QString &title, const QString &icon, bool active) :
+Alert::Alert (const QString &name, const QString &title, const SnoreIcon &icon, bool active) :
         _name ( name ),
         _title ( title ),
         _icon(icon),
@@ -89,7 +89,7 @@ const QString &Alert::title() const
     return _title;
 }
 
-const QString &Alert::icon() const
+const SnoreIcon &Alert::icon() const
 {
     return _icon;
 }
