@@ -29,8 +29,13 @@ our $approx_dir = $pwd;
 while ( not -f "$pwd/GTAGS" and not "$pwd" eq "/") {
     chomp($pwd = `dirname "$pwd"`);
 }
-if ($pwd eq "/") {
-    chomp($pwd = `readlink -f ~/.gtags-dir`)
+
+if ($pwd eq "/" or $pwd eq glob("~")) {
+    chomp($pwd = `readlink ~/.gtags-dir`);
+    print "pwd is read from ~/.gtags-dir at $pwd\n";
+	
+} else {
+    system("ln", '-sf', $pwd, glob("~/.gtags-dir"));
 }
 
 $approx_dir = substr($approx_dir, length($pwd));

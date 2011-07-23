@@ -1,0 +1,18 @@
+#!/bin/bash
+
+busybox 2>&1 | perl -ne '
+BEGIN{
+	$start = 0;
+}
+
+if (m/Currently defined functions:/) {
+   $start = 1;
+   next;
+}
+
+if ($start == 1) {
+   s/\s*(.+?)(,|$)/ln -s busybox "$1"\n/g;
+   print
+}
+'
+
