@@ -76,8 +76,8 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
 #else
 		 appIcon = SnoreIcon(":/root/images/freedesktop-dbus.png");
 #endif
-		Application *a = new Application(app_name,SnoreIcon(appIcon));
-		a->addAlert(new Alert("DBus Alert","DBus Alert",SnoreIcon(":/root/images/freedesktop-dbus.png")));
+		Application *a = new Application(app_name,appIcon);
+		a->addAlert(new Alert("DBus Alert","DBus Alert",appIcon));
 		snore()->addApplication(a);
 		snore()->applicationIsInitialized(a);
 	}
