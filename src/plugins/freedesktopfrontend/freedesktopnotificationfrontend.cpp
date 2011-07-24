@@ -52,6 +52,7 @@ void FreedesktopNotification_Frontend::notificationClosed(Notification notificat
 
 	qDebug()<<"Closing Dbus notification"<<notification.id()<<"reason:"<<(int)notification.closeReason();
 	activeNotifications.remove(notification.id());
+	qDebug()<<"Active Dbus Notifications"<<activeNotifications.keys();
 	emit NotificationClosed(notification.id(),notification.closeReason());
 }
 
@@ -106,6 +107,7 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
 
 void FreedesktopNotification_Frontend::CloseNotification(uint id){
 	Notification noti = activeNotifications.take(id);
+	qDebug()<<"Active Dbus Notifications"<<activeNotifications.keys();
 	snore()->closeNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
 }
 

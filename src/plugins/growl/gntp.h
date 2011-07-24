@@ -184,6 +184,19 @@ public:
     send("REGISTER", stm);
   }
 
+  void regist(const std::vector<std::string> names) throw (std::runtime_error) {
+    std::stringstream stm;
+    stm << "Application-Name: " << sanitize_text(application_) << "\r\n";
+	stm << "Application-Icon: " << sanitize_text(icon_) <<"\r\n";
+    stm << "Notifications-Count: " << names.size() << "\r\n";
+    stm << "\r\n";
+    std::vector<std::string>::const_iterator it;
+    for (it = names.begin(); it != names.end(); it++) {
+      make_regist(stm, it->c_str());
+    }
+    send("REGISTER", stm);
+  }
+
   template<class CIPHER_TYPE, class HASH_TYPE>
   void regist(const char* name) throw (std::runtime_error) {
     std::stringstream stm;
@@ -199,6 +212,7 @@ public:
   void regist(const std::vector<std::string> names) throw (std::runtime_error) {
     std::stringstream stm;
     stm << "Application-Name: " << sanitize_text(application_) << "\r\n";
+	stm << "Application-Icon: " << sanitize_text(icon_) <<"\r\n";
     stm << "Notifications-Count: " << names.size() << "\r\n";
     stm << "\r\n";
     std::vector<std::string>::const_iterator it;
