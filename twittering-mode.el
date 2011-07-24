@@ -2482,7 +2482,8 @@ The method to perform the request is determined from
             ;; http://www.escafrace.co.jp/blog/09/10/16/1008
             ("Expect" . "")))
          (curl-args
-          `("--include" "--silent" "--location" "--request" ,method
+          `("--include" "--location" "--request" ,method
+            ,(unless twittering-debug-curl "--silent")
             ,@(apply 'append
                      (mapcar
                       (lambda (pair)
@@ -2535,8 +2536,10 @@ The method to perform the request is determined from
          proc)
     (debug-printf "curl args: %S" curl-args)
 
-    (if (assqref 'sync connection-info)
+    (if (or (assqref 'sync connection-info) twittering-debug-curl)
         (with-current-buffer buffer
+          (when twittering-debug-curl
+            (switch-to-buffer buffer))
           (let ((status
                  (apply 'call-process twittering-curl-program nil t nil curl-args)))
             (when sentinel
@@ -9257,6 +9260,8 @@ this function does nothing."
 
 (defvar twittering-debug-mode nil)
 (defvar twittering-debug-buffer "*debug*")
+
+(defvar twittering-debug-curl nil)
 
 (defun twittering-get-or-generate-buffer (buffer)
   (if (bufferp buffer)
