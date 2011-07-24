@@ -27,7 +27,7 @@
 
 
 QString const SnoreServer::version(){
-    return "0.1.5";
+    return "0.15";
 }
 
 QString const SnoreServer::snoreTMP(){

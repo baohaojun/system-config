@@ -163,18 +163,21 @@ private:
   std::string hostname_;
   std::string port_;
   std::string password_;
+  std::string icon_;
   CryptoPP::AutoSeededRandomPool rng;
 public:
-  gntp(std::string application = "gntp-send", std::string password = "",
+  gntp(std::string application = "gntp-send", std::string icon = "" ,std::string password = "",
       std::string hostname = "localhost", std::string port = "23053") :
     application_(application),
     password_(password),
     hostname_(hostname),
-    port_(port) { }
+    port_(port),
+	icon_(icon){ }
 
   void regist(const char* name) throw (std::runtime_error) {
     std::stringstream stm;
     stm << "Application-Name: " << sanitize_text(application_) << "\r\n";
+	stm << "Application-Icon: " << sanitize_text(icon_) <<"\r\n";
     stm << "Notifications-Count: 1\r\n";
     stm << "\r\n";
     make_regist(stm, name);
@@ -185,6 +188,7 @@ public:
   void regist(const char* name) throw (std::runtime_error) {
     std::stringstream stm;
     stm << "Application-Name: " << sanitize_text(application_) << "\r\n";
+	stm << "Application-Icon: " << sanitize_text(icon_) <<"\r\n";
     stm << "Notifications-Count: 1\r\n";
     stm << "\r\n";
     make_regist(stm, name);

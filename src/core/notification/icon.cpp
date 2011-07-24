@@ -40,11 +40,9 @@ public:
 
     SnoreIconData(const QString &url){
         if(url.startsWith(":/")){
-			qDebug()<<url<<"is resource";
 			_img = QImage(url);
 			_isLocalFile = false;
 		}else if(QFile(url).exists()){
-			qDebug()<<url<<"is local File icon";
             _isLocalFile = true;
             _localFileName = url;
 		}

@@ -38,7 +38,7 @@ Growl_Backend::~Growl_Backend(){
 }
 
 void Growl_Backend::registerApplication(Application *application){
-	gntp *growl =  new gntp(application->name().toUtf8().constData());
+	gntp *growl =  new gntp(application->name().toUtf8().constData(),application->icon().localUrl().toUtf8().constData());
 	foreach(Alert *a,application->alerts()){
 		try{
 			growl->regist(a->name().toUtf8().constData());
