@@ -18,7 +18,7 @@
 #define GROWL_BACKEND_H
 #include "core/interface.h"
 
-
+#include <string>
 
 class Growl_Backend:public Notification_Backend
 {
@@ -28,16 +28,19 @@ public:
     Growl_Backend(class SnoreServer *snore=0);
     ~Growl_Backend();
     bool isPrimaryNotificationBackend(){return true;}
+	static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
 private:
-    uint id;
+	//a static instance for the static callback methode
+	static Growl_Backend *instance;
+    uint _id;
     QHash<QString,class gntp*> _applications;
+
 public slots:
     void registerApplication(Application *application);
     void unregisterApplication(class Application *application);
     int notify(Notification notification);
     void closeNotification(Notification notification);
 };
-
 
 
 #endif // GROWL_BACKEND_H

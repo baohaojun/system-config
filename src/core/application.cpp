@@ -22,7 +22,6 @@ Application::Application (const QString &name, const SnoreIcon &icon) :
         _icon(icon),
         _initialized ( false )
 {
-    _alerts.insert ( "",new Alert ( "Default Alert","Default Alert" ) );
 }
 
 Application::Application() :

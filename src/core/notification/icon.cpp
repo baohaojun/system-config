@@ -23,9 +23,6 @@
 #include <QFile>
 #include <QDebug>
 
-
-QHash<QString,QString> SnoreIcon::hasedImages;
-
 class SnoreIcon::SnoreIconData
 {
 public:
@@ -64,6 +61,8 @@ private:
 
 };
 
+
+QHash<QString,QString> SnoreIcon::hasedImages;
 
 SnoreIcon::SnoreIcon()
 {

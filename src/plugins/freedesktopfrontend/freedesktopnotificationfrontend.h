@@ -32,10 +32,7 @@ public:
     void CloseNotification( uint id );
 
     QStringList GetCapabilities();
-    QString GetServerInformation(QString& vendor, QString& version, QString& specVersion);
-
-private:
-	QHash<uint,Notification> activeNotifications;
+    QString GetServerInformation(QString& vendor, QString& version, QString& specVersion);	
 
 signals:
     void NotificationClosed( uint id, uint reason );

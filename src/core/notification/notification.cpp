@@ -24,8 +24,7 @@
 #include <QTextDocumentFragment>
 #include <QTextDocument>
 
-
-
+static int metaid = qRegisterMetaType<Notification>();
 
 class Notification::NotificationData
 {
@@ -72,7 +71,7 @@ public:
 };
 
 
-int Notification::DefaultTimeout=10;
+int Notification::DefaultTimeout = 10;
 
 QString Notification::toPlainText ( const QString &string )
 {

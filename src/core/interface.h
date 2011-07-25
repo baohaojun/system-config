@@ -45,6 +45,9 @@ public:
     virtual ~Notification_Backend();
     virtual bool isPrimaryNotificationBackend() =0;
 
+protected:
+	QHash<uint,Notification> activeNotifications;
+
 public slots:
     virtual void registerApplication ( class Application *application ) =0;
     virtual void unregisterApplication ( class Application *application ) =0;
@@ -64,6 +67,9 @@ public:
     virtual ~Notification_Frontend();
     virtual void actionInvoked (Notification notification )=0;
     virtual void notificationClosed ( Notification notification )=0;
+
+protected:
+	QHash<uint,Notification> activeNotifications;
 };
 
 

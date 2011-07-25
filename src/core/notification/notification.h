@@ -72,6 +72,7 @@ public:
 
     const uint &id() const;
 	void setId(const uint &id);
+	//timeout in seconds
     const int &timeout() const;
 	//void setActionInvoked ( const Notification::defaultActions &action );
 	void setActionInvoked ( Action *action );
@@ -100,6 +101,7 @@ private:
 	QSharedPointer<NotificationData> d;
 };
 
+ Q_DECLARE_METATYPE(Notification)
 
 QDataStream & operator<< ( QDataStream & stream, const Notification & noti );
 QDataStream & operator<< ( QDataStream & stream, const Notification::Action & action);

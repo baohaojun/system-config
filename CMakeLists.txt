@@ -15,7 +15,7 @@ endif(KDE4_FOUND)
 
 
 find_package( CryptoPP )
-find_package( Boost COMPONENTS system )
+find_package( Boost COMPONENTS system thread)
 
 
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)

@@ -27,11 +27,11 @@ class Snarl_Backend:public Notification_Backend
 {
     Q_OBJECT
     Q_INTERFACES(Notification_Backend)
+	friend class SnarlWidget;
 public:
     Snarl_Backend(class SnoreServer *snore=0);
     ~Snarl_Backend();
     bool isPrimaryNotificationBackend();
-	QHash<uint,Notification> activeNotifications;
 
 private:
 	SnarlWidget* winIDWidget;

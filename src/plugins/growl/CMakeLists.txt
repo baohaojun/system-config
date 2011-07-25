@@ -6,7 +6,7 @@ if( WITH_GROWL_BACKEND )
 			)
 
 		automoc4_add_library(growl_backend MODULE  ${GROWL__SRC} )
-		target_link_libraries(growl_backend snorecore ${QT_QTCORE_LIBRARY} ${CRYPTOPP_LIBRARIES} ${Boost_SYSTEM_LIBRARY} wsock32 ws2_32)
+		target_link_libraries(growl_backend snorecore ${QT_QTCORE_LIBRARY} ${CRYPTOPP_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY} wsock32 ws2_32)
 
 		install(TARGETS growl_backend ${PLUGIN_INSTALL_PATH})
 	else(CRYPTOPP_LIBRARIES AND Boost_SYSTEM_LIBRARY)
