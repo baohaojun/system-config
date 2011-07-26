@@ -1,0 +1,4 @@
+#!/bin/bash
+
+adb shell touch /wowconfig/do_factory_test
+adb shell reboot
