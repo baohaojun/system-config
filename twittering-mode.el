@@ -515,6 +515,11 @@ If nil, this is initialized with a list of valied entries extracted from
 (defface twittering-zebra-1-face `((t (:background "#e6e6fa"))) "" :group 'faces)
 (defface twittering-zebra-2-face `((t (:background "#ffe4e1"))) "" :group 'faces)
 
+(defvar twittering-verify-face 'twittering-verify-face)
+(defface twittering-verify-face `((t (:inherit 'font-lock-variable-name-face)))
+  "Face for decorating the V symbol used by weibo.com.  "
+  :group 'faces)
+
 (defvar twittering-use-native-retweet nil
   "Post retweets using native retweets if this variable is non-nil.
 This is default value, you can also set it separately for each service in
@@ -4076,7 +4081,8 @@ following symbols;
     ))
 
 (defun twittering-make-string-with-user-name-property (str status)
-  (if str
+  (let ((ret ""))
+    (when str
       (let* ((screen-name (assqref 'screen-name (assqref 'user status)))
              (uri (twittering-get-status-url
                    (case (twittering-extract-service)
@@ -4085,14 +4091,25 @@ following symbols;
                      (t
                       (assqref 'id (assqref 'user status))))))
              (spec (twittering-string-to-timeline-spec screen-name)))
-        (propertize str
-                    'mouse-face 'highlight
-                    'keymap twittering-mode-on-uri-map
-                    'uri uri
-                    'screen-name-in-text screen-name
-                    'goto-spec spec
-                    'face 'twittering-username-face))
-    ""))
+        (setq ret (propertize str
+                              'mouse-face 'highlight
+                              'keymap twittering-mode-on-uri-map
+                              'uri uri
+                              'screen-name-in-text screen-name
+                              'goto-spec spec
+                              'face 'twittering-username-face))
+
+        (when (and (eq (twittering-extract-service) 'sina)
+                   (equal (assqref 'verified (assqref 'user status)) "t"))
+          (setq ret (concat ret
+                            (propertize "V"
+                                        'mouse-face 'highlight
+                                        'keymap twittering-mode-on-uri-map
+                                        'uri uri
+                                        'screen-name-in-text screen-name
+                                        'goto-spec spec
+                                        'face 'twittering-verify-face))))))
+    ret))
 
 (defun twittering-make-string-with-source-property (str status)
   (if (stringp str)
