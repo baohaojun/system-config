@@ -408,6 +408,14 @@ _confluence()
             _jira_file_list ~/confluence/
             return 0
             ;;
+        --file)
+            IFS=$'\t\n'
+            COMPREPLY=( $(
+                    compgen -f "${cur}"
+                )
+            )
+            return 0
+            ;;
     esac
 
     case $cur in
