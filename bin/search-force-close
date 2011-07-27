@@ -1,0 +1,4 @@
+#!/bin/bash
+
+find . -type f | xargs bash -c 'for x in "$@"; do perl -npe "s/\x00//g" -i "$x"; done' xx
+rgrep 'Force finishing' . -n

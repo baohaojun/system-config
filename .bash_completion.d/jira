@@ -379,6 +379,14 @@ _jira()
             _jira_complete_these_words Blocker Critical Major Minor Trivial
             return 0
             ;;
+        --file)
+            IFS=$'\t\n'
+            COMPREPLY=( $(
+                    compgen -f "${cur}"
+                )
+            )
+            return 0
+            ;;
     esac
 
     case $cur in
