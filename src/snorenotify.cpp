@@ -88,7 +88,7 @@ void SnoreNotify::load(){
     QDomElement root = doc.documentElement();
     QDomElement backend = root.elementsByTagName("notificationBackend").item(0).toElement();
 	if(!backend.isNull())        
-		_snore->setPrimaryNotificationBackend(_snore->primaryNotificationBackends().value(backend.text()));
+                _snore->setPrimaryNotificationBackend(backend.text());
 }
 
 void SnoreNotify::save(){
@@ -96,7 +96,7 @@ void SnoreNotify::save(){
     QDomElement root = doc.createElement( "SnoreNotifyProfile" );
     doc.appendChild(root);
     QDomElement backend = doc.createElement( "notificationBackend");
-    backend.appendChild(doc.createTextNode(_snore->primaryNotificationBackend()->name()));
+    backend.appendChild(doc.createTextNode(_snore->primaryNotificationBackend()));
     root.appendChild(backend);
 
 

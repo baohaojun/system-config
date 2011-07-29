@@ -23,7 +23,7 @@
 class Growl_Backend:public Notification_Backend
 {
     Q_OBJECT
-    Q_INTERFACES(Notification_Backend);
+    Q_INTERFACES(Notification_Backend)
 public:
     Growl_Backend(class SnoreServer *snore=0);
     ~Growl_Backend();

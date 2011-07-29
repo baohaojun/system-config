@@ -21,6 +21,7 @@
 #include "application.h"
 #include "interface.h"
 
+#include <QStringList>
 
 class SNORE_EXPORT SnoreServer:public QObject
 {
@@ -46,19 +47,20 @@ public:
     void removeApplication ( const QString& appName );
     const ApplicationsList &aplications() const;
 
-    const QHash<QString,Notification_Backend*> &primaryNotificationBackends() const;
-    void setPrimaryNotificationBackend ( Notification_Backend *backend );
-	Notification_Backend* primaryNotificationBackend();
+    const QStringList &primaryNotificationBackends() const;
+    void setPrimaryNotificationBackend ( const QString &backend );
+    const QString &primaryNotificationBackend();
 
-    QHash<QString,SnorePlugin*> plugins;
+
 
 private:
     ApplicationsList _applications;
 
 
     QHash<QString,Notification_Backend*> _notyfier;
-    QHash<QString,Notification_Backend*> _primaryNotificationBackends;
+    QStringList _primaryNotificationBackends;
     Notification_Backend * _notificationBackend;
+    QHash<QString,SnorePlugin*> plugins;
 
     class QSystemTrayIcon *_trayIcon;
 

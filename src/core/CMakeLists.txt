@@ -5,7 +5,6 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         snoreserver.cpp
         application.cpp
         interface.cpp
-        utils.cpp
         trayiconnotifer.cpp
         )
 
@@ -14,7 +13,6 @@ set ( SnoreNotify_HDR ${SnoreNotify_HDR}
         application.h
         interface.h
         snore_exports.h
-        utils.h
         )
 
 automoc4_add_library( snorecore  SHARED ${SnoreNotify_SRCS})

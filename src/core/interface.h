@@ -37,9 +37,13 @@ private:
 
 };
 
+Q_DECLARE_INTERFACE ( SnorePlugin,
+                      "org.Snore.SnorePlugin/1.0" )
+
 class SNORE_EXPORT Notification_Backend:public SnorePlugin
 {
     Q_OBJECT
+    Q_INTERFACES(SnorePlugin)
 public:
     Notification_Backend ( QString name,class SnoreServer *snore=0 );
     virtual ~Notification_Backend();
@@ -62,6 +66,7 @@ public slots:
 class SNORE_EXPORT Notification_Frontend:public SnorePlugin
 {
     Q_OBJECT
+    Q_INTERFACES(SnorePlugin)
 public:
     Notification_Frontend ( QString name,class SnoreServer *snore=0 );
     virtual ~Notification_Frontend();
@@ -74,8 +79,7 @@ protected:
 
 
 
-Q_DECLARE_INTERFACE ( SnorePlugin,
-                      "org.Snore.SnorePlugin/1.0" )
+
 Q_DECLARE_INTERFACE ( Notification_Frontend,
                       "org.Snore.NotificationFrontend/1.0" )
 Q_DECLARE_INTERFACE ( Notification_Backend,
