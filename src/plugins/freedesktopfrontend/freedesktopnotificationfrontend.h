@@ -34,11 +34,15 @@ public:
     QStringList GetCapabilities();
     QString GetServerInformation(QString& vendor, QString& version, QString& specVersion);	
 
+private:
+    QList<uint> timeout_notifications;
+
 signals:
     void NotificationClosed( uint id, uint reason );
     void ActionInvoked( uint id, const QString& actionKey );
 
-
+private slots:
+    void timeoutClose();
 
 };
 

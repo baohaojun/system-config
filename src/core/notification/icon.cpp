@@ -37,15 +37,16 @@ public:
 
     SnoreIconData(const QString &url){
         if(url.startsWith(":/")){
-			_img = QImage(url);
-			_isLocalFile = false;
-		}else if(QFile(url).exists()){
+            _img = QImage(url);
+            _isLocalFile = false;
+        }else if(QFile(url).exists()){
             _isLocalFile = true;
             _localFileName = url;
-		}
+        }
     }
+
     ~SnoreIconData()
-    {/*nothing to do*/	}
+    {}
 
 
     QImage _img;
@@ -53,11 +54,6 @@ public:
     QString _localFileName;
     QString _hash;
     bool _isLocalFile;
-
-private:
-    SnoreIconData(const SnoreIconData &other)
-    {	}
-
 
 };
 
