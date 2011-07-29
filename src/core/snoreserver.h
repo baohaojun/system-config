@@ -38,7 +38,7 @@ public:
 
 
     int broadcastNotification ( Notification notification );
-	void closeNotification ( Notification notification, const NotificationEnums::CloseReasons::closeReasons &reason );
+    void closeNotification ( Notification notification, const NotificationEnums::CloseReasons::closeReasons &reason );
     void notificationActionInvoked ( Notification notification );
 
     void addApplication ( Application *application );
@@ -67,6 +67,7 @@ signals:
     void applicationInitialized ( Application* );
     void applicationRemoved ( Application* );
     void notify ( Notification noti );
+    void actionInvoked( Notification );
     void closeNotify ( Notification );
 
 };

@@ -105,8 +105,7 @@ int Snarl_Backend::notify(Notification notification){
 			!notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
 			notification.priority());
 			
-		foreach(const Notification::Action *a, notification.actions()){
-			qDebug()<<"snarl add action"<<a->id<<a->name;
+                foreach(const Notification::Action *a, notification.actions()){
 			snarlInterface->AddAction(id,a->name.toUtf8().constData(),QString("@").append(QString::number(a->id)).toUtf8().constData());
 		}
 		//add ack stuff
@@ -164,6 +163,7 @@ bool SnarlWidget::winEvent(MSG * msg, long * result){
 		case SnarlEnums::NotifyAction:
 			reason = NotificationEnums::CloseReasons::CLOSED;
 			notification.setActionInvoked(data);
+                        qDebug()<<"_snarl->snore()->notificationActionInvoked(notification);";
 			_snarl->snore()->notificationActionInvoked(notification);
 			break;
 		case SnarlEnums::CallbackClosed:

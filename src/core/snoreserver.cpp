@@ -145,11 +145,10 @@ int SnoreServer::broadcastNotification ( Notification notification )
 
 void SnoreServer::closeNotification ( Notification notification,const NotificationEnums::CloseReasons::closeReasons &reason )
 {
-	qDebug()<<"closing notification"<<notification.id()<<"reason"<<reason;
-	notification.setCloseReason(reason);
+    notification.setCloseReason(reason);
     emit closeNotify ( notification );
     Notification_Frontend *nf= notification.source();
-    if ( nf != 0 )
+    if ( nf != NULL )
     {
         nf->notificationClosed ( notification );
     }
@@ -157,8 +156,9 @@ void SnoreServer::closeNotification ( Notification notification,const Notificati
 
 void SnoreServer::notificationActionInvoked ( Notification notification )
 {
+    emit actionInvoked(notification);
     Notification_Frontend *nf= notification.source();
-    if ( nf!=0 )
+    if ( nf != NULL )
     {
         nf->actionInvoked ( notification );
     }
