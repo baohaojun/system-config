@@ -51,7 +51,7 @@
    ("Super-r" "grun" "grun")
    ("Super-p" "gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
    ("Super-C-d" (lambda (w) (string-match "my-dict" (window-name w) 0 t)) "gnome-terminal -t my-dict --hide-menubar -e ~/bin/linux/my-dict")
-   ("Super-l" "hello world no such thing" "/usr/bin/gnome-screensaver-command -a -l")
+   ("Super-Scroll_Lock" "hello world no such thing" "/usr/bin/gnome-screensaver-command -a -l")
    ("Super-x" "xcalc" "xcalc")
    ("F12" "gnome-terminal" "gnome-terminal --hide-menubar -e ~/bin/myscr")
    ))
