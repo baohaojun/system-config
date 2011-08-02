@@ -35,25 +35,12 @@ QString const SnoreServer::snoreTMP(){
     return tmp;
 }
 
-void SnoreServer::cleanupTMP(){
+void SnoreServer::initTMP(){
     QDir home ( snoreTMP() );
-    if ( home.exists() )
-    {
-        QStringList filetypes;
-        filetypes<<"*.png"<<"*.jpg";
-        QStringList toDell;
-        toDell=home.entryList ( filetypes );
-        foreach ( QString s,toDell )
-        {
-            home.remove ( s );
-        }
-
-    }
-    else{
+    if ( !home.exists() ){
         home.cdUp();
         home.mkdir("SnoreNotify");
     }
-
 }
 
 SnoreServer::SnoreServer ( QSystemTrayIcon *trayIcon ) :

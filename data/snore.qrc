@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/root">
-        <file>zzz.png</file>
+        <file>snore.png</file>
     </qresource>
     <qresource prefix="/root/images">
         <file>freedesktop-dbus.png</file>

@@ -7,7 +7,7 @@
 #include <QDebug>
 
 TrayIconNotifer::TrayIconNotifer ( SnoreServer *snore, QSystemTrayIcon *icon ) :
-    Notification_Backend ( "TrayiconNotifer",snore ),
+    Notification_Backend ( "SystemTray",snore ),
     _trayIcon ( icon ),
     _id ( 0 ),
     _displayed(-1)

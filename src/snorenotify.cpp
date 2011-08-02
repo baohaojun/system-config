@@ -31,19 +31,19 @@
 #include <iostream>
 
 #ifdef Q_WS_WIN
-	#define PROFILEPATH qgetenv("APPDATA") + "\\snorenotify\\"
+#define PROFILEPATH qgetenv("APPDATA") + "\\snorenotify\\"
 #elif defined(Q_OS_LINUX)
-	#define PROFILEPATH qgetenv("HOME") + "/.snorenotify/"
+#define PROFILEPATH qgetenv("HOME") + "/.snorenotify/"
 #endif
-	
+
 
 
 
 SnoreNotify::SnoreNotify()
 {
-	_trayIcon = new TrayIcon();
-	_snore = new SnoreServer(_trayIcon->trayIcon());
-    _snore->cleanupTMP();
+    _trayIcon = new TrayIcon();
+    _snore = new SnoreServer(_trayIcon->trayIcon());
+    _snore->initTMP();
 
     QDir pluginsDir ( qApp->applicationDirPath() +"/snoreplugins" );
     foreach ( QString fileName, pluginsDir.entryList ( QDir::Files ) )
@@ -52,20 +52,20 @@ SnoreNotify::SnoreNotify()
     }
 
 
-	load();
+    load();
 
     _trayIcon->initConextMenu(_snore);
 
-	connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(exit()));
+    connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(exit()));
 }
 
 SnoreNotify::~SnoreNotify(){
-	delete _snore;
-	delete _trayIcon;
+    delete _snore;
+    delete _trayIcon;
 }
 
 void SnoreNotify::load(){
-	QDomDocument doc( "Settings" );
+    QDomDocument doc( "Settings" );
     QFile file( PROFILEPATH + "settings.xml" );
     if(!file.open( QFile::ReadOnly )){
         std::cout<<"Failed openeing settings file: "<<QString(PROFILEPATH).toLatin1().data()<<"settings.xml"<<std::endl;
@@ -79,7 +79,7 @@ void SnoreNotify::load(){
     if(!doc.setContent(&file,&errorMessage,&errorLine, &errorCulumn )){
         std::cout<<"Failed parsing settings file: "<<QString(PROFILEPATH).toLatin1().data()<<"settings.xml\n"
                 <<"Error: "<<errorMessage.toLatin1().data()<<" line: "
-                <<QString::number(errorLine).toLatin1().data()<<" collumn: "<<QString::number(errorCulumn).toLatin1().data()<<std::endl;
+               <<QString::number(errorLine).toLatin1().data()<<" collumn: "<<QString::number(errorCulumn).toLatin1().data()<<std::endl;
         file.close();
         return;
     }
@@ -87,12 +87,12 @@ void SnoreNotify::load(){
 
     QDomElement root = doc.documentElement();
     QDomElement backend = root.elementsByTagName("notificationBackend").item(0).toElement();
-	if(!backend.isNull())        
-                _snore->setPrimaryNotificationBackend(backend.text());
+    if(!backend.isNull())
+        _snore->setPrimaryNotificationBackend(backend.text());
 }
 
 void SnoreNotify::save(){
-	 QDomDocument doc("Settings");
+    QDomDocument doc("Settings");
     QDomElement root = doc.createElement( "SnoreNotifyProfile" );
     doc.appendChild(root);
     QDomElement backend = doc.createElement( "notificationBackend");
@@ -112,9 +112,9 @@ void SnoreNotify::save(){
 }
 
 void SnoreNotify::exit(){
-	qDebug()<<"Saving snore settings";
-	save();
-	_trayIcon->hide();
+    qDebug()<<"Saving snore settings";
+    save();
+    _trayIcon->hide();
 
 }
 

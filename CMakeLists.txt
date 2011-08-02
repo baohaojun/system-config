@@ -6,6 +6,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(KDE4)
 
+  if(MINGW)
+    SET (CMAKE_RC_COMPILER_INIT windres)
+    ENABLE_LANGUAGE (RC)
+    SET (CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff -i <SOURCE> -o <OBJECT>")
+  endif(MINGW)
+
 if(KDE4_FOUND)
 	add_definitions(-DHAVE_KDE ${KDE4_DEFINITIONS} -D_UNICODE)
 	include_directories(${KDE4_INCLUDES})

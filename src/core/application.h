@@ -28,7 +28,7 @@ class SNORE_EXPORT Application:public QObject
 {
     Q_OBJECT
 public:
-    Application ( const QString &name, const SnoreIcon &icon = SnoreIcon(":/root/zzz.png"));
+    Application ( const QString &name, const SnoreIcon &icon = SnoreIcon(":/root/snore.png"));
     Application();
     ~Application();
     void addAlert ( Alert *alert );
@@ -51,7 +51,7 @@ class SNORE_EXPORT Alert:public QObject
 {
     Q_OBJECT
 public:
-    Alert ( const QString &name,const QString &title="",const SnoreIcon &icon = SnoreIcon(":/root/zzz.png"),bool active=true );
+    Alert ( const QString &name,const QString &title="",const SnoreIcon &icon = SnoreIcon(":/root/snore.png"),bool active=true );
     Alert();
 
     const QString &name() const;

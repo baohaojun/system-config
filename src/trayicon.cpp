@@ -23,7 +23,7 @@
 
 TrayIcon::TrayIcon()        
 {	
-	_trayIcon = new QSystemTrayIcon(QIcon(":/root/zzz.png"));
+        _trayIcon = new QSystemTrayIcon(QIcon(":/root/snore.png"));
 }
 
 void TrayIcon::initConextMenu(SnoreServer *snore){
