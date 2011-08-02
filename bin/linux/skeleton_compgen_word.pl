@@ -29,7 +29,16 @@ if ($skeleton =~ s/\.(\d+)$//) {
 
 my $count = 0;
 
-@words = grep(m/$skeleton/i, @words);
+if ($skeleton =~ m/\s+/) {
+    $skeleton =~ s/\\//g;
+    for my $x (split(/\s+/, $skeleton)) {
+	#print STDERR "\nskeleton is $x\n";
+	@words = grep(m/$x/i, @words);
+	#print STDERR "\nwords are @words\n";
+    }
+} else {
+    @words = grep(m/$skeleton/i, @words);
+}
 my $match = @words;
 
 if (0 <= $which and $which < @words) {
