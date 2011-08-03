@@ -1,16 +1,48 @@
 #!/bin/bash
 
 file=$1
-old=$1
 x=0
 
 test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
-while test ! -e "$file" && ((x++ < 10)); do
-    builtin cd ..
-done
 
-if test ${file:0:1} = /; then
-    echo "$file"
-else
-    echo "$PWD"/"$file"
-fi
+(
+    while true; do
+
+	if [[ `pwd` =~ ^$HOME/smb/[^/]+$ ]]; then
+	    if test "$(dirname "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
+		break;
+	    else
+		cd ../..
+		continue
+	    fi
+	fi
+
+	test -e "$file" && break
+
+	if test $PWD = /; then
+	    exit -1
+	fi
+	builtin cd ..
+    done
+
+    if test ${file:0:1} = /; then
+	echo "$file"
+    else
+	echo "$PWD"/"$file"
+    fi
+) || (
+    dir=`dirname "$file"`
+    base=`basename "$file"`
+
+    while true; do
+	if find "$dir" -maxdepth 1 -iname "*$base*"|grep -q .; then
+	    find $PWD/"$dir" -maxdepth 1 -iname "*$base*"
+	    exit
+	fi
+
+	if test $PWD = /; then
+	    exit -1
+	fi
+	builtin cd ..
+    done
+)

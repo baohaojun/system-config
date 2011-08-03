@@ -40,7 +40,28 @@ for x in ~/.bash_completion.d/*; do
 done
 
 function tcd() {
-    builtin cd -P ~/today
-    cd `today "$@"`
-    cd_record
+
+    local IFS=$'\n'
+    local dirs=( 
+	$(lookup_file `today "$@"`; lookup_file `today-- "$@"`) 
+	$(pcd ~/today && { lookup_file `today "$@"`;  lookup_file `today-- "$@"`; })
+    )
+
+    if test ${#dirs[@]} = 0; then
+        echo 'Error: no such file or directory'
+        return 1
+    elif test ${#dirs[@]} = 1; then
+        builtin cd ${dirs[0]}
+    else 
+        NUM=`my_select "${dirs[@]}"`
+        ((NUM--))
+        builtin cd "${dirs[$NUM]}"
+        cd_record
+        if test $# = 1; then
+            history -s cd "$(printf %q "$1")"
+        else
+            history -s cd "$@"
+        fi
+    fi
+
 }

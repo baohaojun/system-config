@@ -81,7 +81,11 @@ lcd()
         return 0
     fi
     
-    if [[ `pwd` =~ ^$HOME/smb/ ]]; then
+    if [[ `pwd` =~ ^$HOME/smb/[^/]+$ ]]; then
+	if test "$(dirname "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
+	    cd_ok "$1"
+	    return $?
+	fi
         _ucd $1
         return $?
     fi
@@ -127,6 +131,9 @@ _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will
     while ! echo $dir_basename|grep -e $1 -i -q && ((x++ < 10)); do
         dir=`dirname "$dir"`
         dir_basename=`basename "$dir"`
+	if test x"$dir" = x/; then
+	    break
+	fi
     done
     if test x"$dir" = x/; then #obviously, we very not likely want to go to / with this complex setup
         return 1;
