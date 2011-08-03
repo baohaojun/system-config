@@ -35,7 +35,7 @@ using namespace Snarl::V42;
 Q_EXPORT_PLUGIN2(snarl_backend,Snarl_Backend);
 
 Snarl_Backend::Snarl_Backend(SnoreServer *snore):
-Notification_Backend("SnarlBackend",snore)
+Notification_Backend("Snarl",snore)
 {
 	winIDWidget = new SnarlWidget(this);
 	SnarlInterface *snarlInterface = new SnarlInterface();

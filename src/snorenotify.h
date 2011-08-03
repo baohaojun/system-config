@@ -31,6 +31,7 @@ public:
 private:
 	class TrayIcon *_trayIcon;
 	class SnoreServer *_snore;
+        class QSettings _settings;
 
 private slots:
     void exit();

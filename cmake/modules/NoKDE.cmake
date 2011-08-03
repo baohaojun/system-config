@@ -6,8 +6,6 @@ include_directories(
         ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
         ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR})
 
-
-
 include( ${QT_USE_FILE} )
 
 if (CMAKE_COMPILER_IS_GNUCXX)

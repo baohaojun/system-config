@@ -35,19 +35,16 @@ QString const SnoreServer::snoreTMP(){
     return tmp;
 }
 
-void SnoreServer::initTMP(){
+
+SnoreServer::SnoreServer ( QSystemTrayIcon *trayIcon ) :
+        _notificationBackend ( NULL ),
+        _trayIcon ( trayIcon )
+{    
     QDir home ( snoreTMP() );
     if ( !home.exists() ){
         home.cdUp();
         home.mkdir("SnoreNotify");
     }
-}
-
-SnoreServer::SnoreServer ( QSystemTrayIcon *trayIcon ) :
-        _notificationBackend ( NULL ),
-        _trayIcon ( trayIcon )
-{
-    qDebug() <<"Inititalized";
 
     if ( trayIcon!=NULL )
     {

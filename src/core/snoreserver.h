@@ -29,8 +29,6 @@ class SNORE_EXPORT SnoreServer:public QObject
 public:
 	static const QString version();
     static const QString snoreTMP();
-    static void initTMP();
-
 
 public:
 	 SnoreServer ( class QSystemTrayIcon *trayIcon=0 );
