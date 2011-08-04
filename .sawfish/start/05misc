@@ -2,9 +2,11 @@
 echo sawfish starting sub programs
 python3.1 ~/gcode/scim-cs/ime-py/ime-server.py&
 
-if test -f ~/.offlineimaprc; then
-    python2.6 ~/bin/windows/Imap4Monitor/Imap4Monitor.py&
-fi
+(
+    cd ~/gcode/gmail-notify-1.6.1.1;
+    GA_LABEL=LetouWork  ./notifier.py& 
+    ./notifier.py&
+)
 qq
 ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
 

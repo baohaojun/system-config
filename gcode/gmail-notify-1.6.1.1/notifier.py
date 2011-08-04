@@ -208,15 +208,18 @@ class GmailNotify:
 		self.eventbox.remove(self.imageicon)
 		self.imageicon = gtk.Image()
 
+		def escape(x):
+			return x.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&#39;')
+
 		if attrs[1]>0:
 			print str(attrs[1])+" new messages"
 			sender = attrs[2]
 			subject= attrs[3]
 			snippet= attrs[4]
 			if len(snippet)>0:
-				self.default_label="<span size='large' ><u><i>"+self.lang.get_string(17)+sender[0:24]+"</i></u></span>\n"+shortenstring(subject,20)+"\n\n"+snippet+"..."
+				self.default_label="<span size='large' ><u><i>"+self.lang.get_string(17)+escape(sender[0:24])+"</i></u></span>\n"+escape(shortenstring(subject,20))+"\n\n"+escape(snippet)+"..."
 			else:
-				self.default_label="<span size='large' ><u><i>"+self.lang.get_string(17)+sender[0:24]+"</i></u></span>\n"+shortenstring(subject,20)+"\n\n"+snippet+"..."
+				self.default_label="<span size='large' ><u><i>"+self.lang.get_string(17)+escape(sender[0:24])+"</i></u></span>\n"+escape(shortenstring(subject,20))+"\n\n"+escape(snippet)+"..."
 			self.show_popup()
 		if attrs[0]>0:
 			print str(attrs[0])+" unread messages"
@@ -230,8 +233,7 @@ class GmailNotify:
 			self._tooltip.set_tip(self.tray,self.lang.get_string(18))	
 			pixbuf = gtk.gdk.pixbuf_new_from_file( ICON_PATH )
 		
-		p = re.compile('&')
-		self.label.set_markup(p.sub('&amp;', self.default_label))
+		self.label.set_markup(self.default_label)
 		scaled_buf = pixbuf.scale_simple(24,24,gtk.gdk.INTERP_BILINEAR)
 		self.imageicon.set_from_pixbuf(scaled_buf)
 		self.eventbox.add(self.imageicon)
