@@ -74,20 +74,20 @@ lcd()
 
     if [[ "$1" =~ ^\\\\|^//|^smb:// && `uname` = Linux ]]; then
         chmod 600 ~/.smb/*
-        smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"
+        if smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"|grep -q . ; then
+	    sudo umount -l ~/smb
+	    smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"
+	fi
         builtin cd ~/smb/"$(host-hosts "$1")"
         history -s cd "$(printf %q "`pwd`")"
         history -s cd "$(printf %q "$1")"
         return 0
     fi
     
-    if [[ `pwd` =~ ^$HOME/smb/[^/]+$ ]]; then
-	if test "$(dirname "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
-	    cd_ok "$1"
+    if [[ `pwd` =~ ^$HOME/smb ]]; then
+        if _ucd $1; then
 	    return $?
 	fi
-        _ucd $1
-        return $?
     fi
 
     local ori=$1

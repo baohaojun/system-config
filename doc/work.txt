@@ -779,6 +779,14 @@ sawfish-client -e '(mapcar (lambda (w) (and (string-match "Terminal" (window-nam
 
 bzr branch  lp:usb-creator  
 
+need get the version used by maverick (not sure, just watch out for the right version)
+search for: 
+            if os.path.exists(os.path.join(self.target, '.disk', 'info')):
+                with open(os.path.join(self.target, '.disk', 'info'),'r') as f:
+                    contents = f.readline().split()
+                if len(contents) > 2:
+                    target_os_ver = debian_support.Version(contents[2]) # change this to 2
+
 rfa 'git diff --name-status $REPO_LREV|grep . && pwd && echo'
 
 shift + space怎么改掉：

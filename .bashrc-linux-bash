@@ -39,12 +39,11 @@ for x in ~/.bash_completion.d/*; do
     . "$x"
 done
 
-function tcd() {
+function _select_cd() {
 
     local IFS=$'\n'
     local dirs=( 
-	$(lookup_file `today "$@"`; lookup_file `today-- "$@"`) 
-	$(pcd ~/today && { lookup_file `today "$@"`;  lookup_file `today-- "$@"`; })
+	"$@"
     )
 
     if test ${#dirs[@]} = 0; then
@@ -63,5 +62,14 @@ function tcd() {
             history -s cd "$@"
         fi
     fi
+}
 
+function tcd() {
+    local IFS=$'\n'
+    _select_cd $(lookup_file `today "$@"`; lookup_file `today-- "$@"`) $(pcd ~/today && { lookup_file `today "$@"`;  lookup_file `today-- "$@"`; })
+}
+
+function mcd() {
+    local IFS=$'\n'
+    _select_cd $(lookup_file "$@")
 }
