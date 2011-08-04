@@ -1,0 +1,9 @@
+*.py* usr/lib/gmail-notify/
+*.xml usr/share/apps/gmail-notify/
+notifier.conf.sample usr/share/doc/gmail-notify 
+debian/scripts/gmail-notify usr/bin/
+debian/extras/* usr/share/apps/gmail-notify/
+*.png usr/share/apps/gmail-notify/
+*.jpg usr/share/apps/gmail-notify/
+debian/gmail-notify.desktop usr/share/applications/
+gmail-notify-icon.png usr/share/pixmaps/

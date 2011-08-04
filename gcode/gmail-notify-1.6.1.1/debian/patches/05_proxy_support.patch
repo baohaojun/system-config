@@ -1,0 +1,232 @@
+diff -Nur gmail-notify-1.6.1/gmailatom.py gmail-notify-1.6.1.new/gmailatom.py
+--- gmail-notify-1.6.1/gmailatom.py	2007-06-09 13:41:13.000000000 +0200
++++ gmail-notify-1.6.1.new/gmailatom.py	2007-06-09 18:32:24.000000000 +0200
+@@ -116,12 +116,17 @@
+ 	host = "https://mail.google.com"
+ 	url = host + "/mail/feed/atom"
+ 
+-	def __init__(self, user, pswd):
++	def __init__(self, user, pswd, proxy=None):
+ 		self.m = MailHandler()
+ 		# initialize authorization handler
+ 		auth_handler = urllib2.HTTPBasicAuthHandler()
+ 		auth_handler.add_password( self.realm, self.host, user, pswd)
+-		opener = urllib2.build_opener(auth_handler)
++		# manage proxy
++		if proxy:
++			proxy_handler = urllib2.ProxyHandler({'http': proxy})
++			opener = urllib2.build_opener(proxy_handler, auth_handler)
++		else:
++			opener = urllib2.build_opener(auth_handler)
+ 		urllib2.install_opener(opener)
+ 
+ 	def sendRequest(self):
+diff -Nur gmail-notify-1.6.1/GmailConfig.py gmail-notify-1.6.1.new/GmailConfig.py
+--- gmail-notify-1.6.1/GmailConfig.py	2007-06-09 18:32:08.000000000 +0200
++++ gmail-notify-1.6.1.new/GmailConfig.py	2007-06-09 18:32:09.000000000 +0200
+@@ -18,8 +18,8 @@
+ 	configElements = None 
+ 
+ 	# Declare global variables for configuration as dictionary
+-	options = { "gmailusername":None, "gmailpassword":None, "browserpath":"www-browser", "lang":"English",   
+-				"voffset":0, "hoffset":0, "checkinterval":20000, 
++	options = { "gmailusername":None, "gmailpassword":None, "browserpath":"www-browser", "proxy":None,
++				"lang":"English", "voffset":0, "hoffset":0, "checkinterval":20000, 
+ 				"animationdelay":15, "popuptimespan":5000}
+ 					
+ 	config = ConfigParser.RawConfigParser()
+@@ -49,6 +49,7 @@
+ 						["gmailusername",2,None,None],
+ 						["gmailpassword",22,None,None],
+ 						["browserpath",3,None,None],
++						["proxy",36,None,None],
+ 						["voffset",28,None,None],
+ 						["hoffset",27,None,None],
+ 						["checkinterval",31,None,None],
+@@ -57,7 +58,7 @@
+ 					]
+ 
+ 		# Create table and attach to window
+-		table = gtk.Table( rows=11, columns=2, homogeneous=gtk.FALSE )
++		table = gtk.Table( rows=12, columns=2, homogeneous=gtk.FALSE )
+ 
+ 		self.window.add(table)
+ 
+@@ -114,7 +115,7 @@
+ 			self.savePassword.set_active( gtk.FALSE )
+ 			
+ 		self.savePassword.show()
+-		table.attach( alignment, 0, 2, 9, 10 )
++		table.attach( alignment, 0, 2, 10, 11 )
+ 		alignment.show()
+ 
+ 		# Add combobox to select language 
+@@ -129,14 +130,14 @@
+                                 self.cbo_langs.append_text( one_lang.get_name())
+ 		self.cbo_langs.set_active(0)
+ 		# Attach combobox and label
+-		table.attach( self.lbl_langs, 0, 1, 8, 9 )
++		table.attach( self.lbl_langs, 0, 1, 9, 10 )
+ 		self.lbl_langs.show()
+-		table.attach( self.cbo_langs, 1, 2, 8, 9, xpadding=5, ypadding=5 )
++		table.attach( self.cbo_langs, 1, 2, 9, 10, xpadding=5, ypadding=5 )
+ 		self.cbo_langs.show()
+ 		
+ 		# Add 'Close' button
+ 		button = gtk.Button( stock=gtk.STOCK_OK )
+-		table.attach( button, 0, 2, 10, 11, xpadding=2, ypadding=2 )
++		table.attach( button, 0, 2, 11, 12, xpadding=2, ypadding=2 )
+ 		button.connect( "clicked", self.onOkay )
+ 		button.show()
+ 
+@@ -222,7 +223,7 @@
+ 
+ 		# Before writing, check for bad values
+ 		try:
+-			tempLogin = gmailatom.GmailAtom( self.options["gmailusername"], self.options["gmailpassword"] )
++			tempLogin = gmailatom.GmailAtom( self.options["gmailusername"], self.options["gmailpassword"], self.options["proxy"])
+ 			tempLogin.refreshInfo()
+ 		except:
+ 			print "Unexpected error:", sys.exc_info()[0]
+diff -Nur gmail-notify-1.6.1/notifier.py gmail-notify-1.6.1.new/notifier.py
+--- gmail-notify-1.6.1/notifier.py	2007-06-09 18:32:08.000000000 +0200
++++ gmail-notify-1.6.1.new/notifier.py	2007-06-09 18:32:09.000000000 +0200
+@@ -163,7 +163,7 @@
+ 			gtk.main_iteration( gtk.TRUE)
+ 		# Attemp connection
+ 		try:
+-			self.connection=gmailatom.GmailAtom(self.options['gmailusername'],self.options['gmailpassword'])
++			self.connection=gmailatom.GmailAtom(self.options['gmailusername'],self.options['gmailpassword'],self.options['proxy'])
+ 			self.connection.refreshInfo()
+ 			print "connection successful... continuing"
+ 			self._tooltip.set_tip(self.tray,self.lang.get_string(14))
+@@ -383,6 +383,6 @@
+ 		self.maintimer = gtk.timeout_add(self.options["checkinterval"], self.mail_check )
+ 
+ 		# Update user/pass
+-		self.connection=gmailatom.GmailAtom(self.options["gmailusername"],self.options["gmailpassword"])
++		self.connection=gmailatom.GmailAtom(self.options["gmailusername"],self.options["gmailpassword"],self.options['proxy'])
+ 		self.connect()
+ 		self.mail_check()
+diff -Nur gmail-notify-1.6.1/langs.xml gmail-notify-1.6.1.new/langs.xml
+--- gmail-notify-1.6.1/langs.xml	2005-09-25 19:41:01.000000000 +0200
++++ gmail-notify-1.6.1.new/langs.xml	2007-06-09 18:32:09.000000000 +0200
+@@ -34,6 +34,7 @@
+ 		<string id="33">Some value is missing</string>
+ 		<string id="34">Save username and password</string>
+ 		<string id="35">s</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Español">
+ 		<string id="1" >Configuración de Gmail Notifier</string>
+@@ -69,6 +70,7 @@
+ 		<string id="33">Falta completar algún valor</string>
+ 		<string id="34">Guardar nombre de usuario y contraseña</string>
+ 		<string id="35">s</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Svenska">
+ 		<string id="1" >Gmail Notifier - konfiguration</string>
+@@ -104,6 +106,7 @@
+ 		<string id="33">Några värden fattas</string>
+ 		<string id="34">Spara användarnamn och lösenord</string>
+ 		<string id="35">n</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Italiano">
+ 		<string id="1">Gmail Notifier Configurazione</string>
+@@ -139,6 +142,7 @@
+ 		<string id="33">Mancano dei valori</string>
+ 		<string id="34">Salva nome utente e password</string>
+ 		<string id="35">s</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Nederlands">
+ 		<string id="1" >Gmail Notifier Instellingen</string>
+@@ -174,6 +178,7 @@
+ 		<string id="33">Enkele invoer niet aanwezig</string>
+ 		<string id="34">Opslaan gebruikersnaam en wachtwoord</string>
+ 		<string id="35">s</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Deutsch">
+ 		<string id="1">Gmail Notifier - Einstellungen</string>
+@@ -209,6 +214,7 @@
+ 		<string id="33">Ein Wert fehlt</string>
+ 		<string id="34">Nutzername und Passwort speichern</string>
+ 		<string id="35">en</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Portuguese (Brazil)">
+ 		<string id="1" >Configuração do Gmail Notifier</string>
+@@ -244,6 +250,7 @@
+ 		<string id="33">Algum valor precisa ser preenchido</string>
+ 		<string id="34">Lembrar meu login e senha</string>
+ 		<string id="35">s</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Français">
+ 		<string id="1" >Configuration de Gmail Notifier</string>
+@@ -279,6 +286,7 @@
+ 		<string id="33">Il manque certaines valeurs</string>
+ 		<string id="34">Enregistrer mon utilisateur et mot de passe</string>
+ 		<string id="35">s</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Česky">
+ 		<string id="1">Nastavení Gmail oznamovatele</string>
+@@ -314,6 +322,7 @@
+ 		<string id="33">Některá hodnota chybí</string>
+ 		<string id="34">Uložit uživatelské jméno a heslo</string>
+ 		<string id="35">y</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Russian">
+ 		<string id="1" >Настройка Gmail Notifier</string>
+@@ -349,6 +358,7 @@
+ 		<string id="33">Некоторые значения потеряны</string>
+ 		<string id="34">Сохранить имя пользователя и пароль</string>
+ 		<string id="35"></string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Polish">
+ 		<string id="1">Konfiguracja Gmail Notifier</string>
+@@ -384,6 +394,7 @@
+ 		<string id="33">Brakuje jakiś danych</string>
+ 		<string id="34">Zachowan nazwę użytkownika i hasło</string>
+ 		<string id="35"></string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Latviešu">
+ 		<string id="1" >Gmail Notifier Uzskaņošana</string>
+@@ -419,6 +430,7 @@
+ 		<string id="33">Kāda no vērtībām nav ievadīta</string>
+ 		<string id="34">Saglabāt lietotājvārdu un paroli</string>
+ 		<string id="35">s</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Arabic">
+ 		<string id="1" >Gmail Notifier إعداد</string>
+@@ -454,6 +466,7 @@
+ 		<string id="33">لم تملئ كل الخانات</string>
+ 		<string id="34">تذكر اسم المستخدم وكلمة السر</string>
+ 		<string id="35"></string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Japanese - 日本語">
+ 		<string id="1" >Gmail Notifier 設定</string>
+@@ -489,6 +502,7 @@
+ 		<string id="33">値が見つかりません</string>
+ 		<string id="34">ユーザ名とパスワードを保存する</string>
+ 		<string id="35"></string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ 	<lang name="Esperanto">
+ 		<string id="1" >Agordoj de Gmail Notifier</string>
+@@ -524,5 +538,6 @@
+ 		<string id="33">Valoro mankas</string>
+ 		<string id="34">Konservu nomon k pasvorton</string>
+ 		<string id="35">j</string>
++		<string id="36">Proxy</string>
+ 	</lang>
+ </langs>

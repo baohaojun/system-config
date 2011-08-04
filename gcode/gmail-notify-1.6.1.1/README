@@ -1,0 +1,115 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+GMAIL NOTIFIER 1.6.1.1 README
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+DESCRIPTION:
+
+Gmail Notifier is a MSN Messenger like popup for Linux written in Python that pops up
+an alert when new mail is received to your Gmail account.
+
+WHAT'S NEW:
+
+1.6.1.1:
+
+In the last two years many people have contributed with the project by sending to me
+translations that I have never posted. The development of Gmail Notifier 1.7 is now
+starting, so I'm releasing this version just to include those translations and to
+say thank you to all the people that have supported the project.
+
+1.6.1:
+
+Gmail-notify is not using libgmail anymore. A new interface has been developed that
+retrieves the information from Gmail Atom service, making the notifier more stable
+and reliable.
+
+1.6:
+
+Many, many new enhanements have been added that improve the notifiers performance and
+usabilty. Configuration can now completely be done from within the program, quota can
+be checked and it has multilanguage support. You can exit the program gracefully and
+it is faster and more reliable. 
+
+THANKS!
+
+A big thanks to Juan Grande for his large amount of development work. This application
+is proof of his excellent coding skills. 
+
+Thankyou also to Richard Viney and Japostoles for their very helpful code contributions
+and testing.
+
+Thanks to all the people that uses gmail-notify, and special thanks to the ones that sent
+new languages files to the team!
+
+REQUIREMENTS:
+
+Python 		(version 2.4 or higher)
+PyGTK 		(version 2.0 or higher)
+GTK		(version 2.4 or higher)
+
+libgmail is not used any more. 
+
+INSTALLATION:
+
+Once you have the required libraries installed, open the notifier.conf file in your favourite
+text editor and edit the configuration options to match your system. Below is an
+explanation of each option:
+
+gmailusername - fairly self explanatory, must be without the @gmail.com at the end
+gmailpassword - obvious
+
+browserpath - this is the full path to the browser that you want Gmail Notifier to
+open when you click the popup to goto your Gmail inbox
+
+voffset - this is the amount (in pixels) the popup will be displaced from the bottom of 
+the screen, it will almost definately need changing to suit your system, ideally,
+you want it to look like it came out of the bar along the bottom of the screen the 
+best way to adjust it is to run it initially with the default value and then add/remove 
+from it then test again. Higher values result in the popup appearing higher up the screen.
+
+hoffset - same as above only this is the amount the popup will be displaced from the side
+of the screen. Higher values will displace it more to the left of the screen.
+
+checkinterval - this is how often Gmail Notifier will check for new mail (in ms), do NOT set it 
+lower than 20000 (20 seconds), or the libgmail library will not keep up, causing many strange
+side effects. If you need to check your mail more than once every 20 seconds, then chances 
+are your famous and don't have time to read your mail anyway.
+
+animationdelay - this is the amount of time (in ms) that Gmail Notifier will wait before moving
+the popup up one step, when the popup is popping up, to high values will cause the animation to 
+be jerky, to low values will cause tearing at the bottom of the popup. 15ms seems about right.
+Only small adjustments are necercery, best thing is to leave it alone.
+
+popuptimespan - this is the amount of time before the popup will dissappear again after popping up
+you can set this to  whatever you want
+
+
+RUNNING:
+
+For testing purposes, you can just run it from an X console by going into the working directory and
+typing ./notifier.py it will tell you in the console what the popup is doing. 
+Long term, you will want the notifier to start when X windows starts, there are a number of ways
+to bring this about, the best way is probably to use your window manager (eg. kde,gnome,icewm etc)
+
+Instructions for running it on startup of KDE are given below:
+
+Start a Konqueror window, click 'Go' and then 'Autostart' then right click and click 
+Create New->File->Link to application... Type a name for the Link eg. gmail-notify 
+on the window that comes up, then click on the Application tab and in the 'Command' box,
+type PATH_TO_GMAIL_NOTIFIER_DIRECTORY/notifier.py > /tmp/gmailnotify.log
+replacing PATH_TO_GMAIL_NOTIFIER_DIRECTORY with the path to the place you untarred your
+Gmail Notifier to. Then, in the 'Work Path', put just the path to the place you untarred your
+Gmail Notifier to. Then click 'Advanced Options...' and uncheck the 'Enable launch feedback'
+checkbox, that way you won't get an annoying hourglass the bottom of the screen while the 
+notifier launches.
+
+For autostarting the Notifier on other windows managers, consult the window managers documentation
+
+That should be it, when new mail arrives, a popup will come up notifying you. If you have questions 
+or comments, please email me on wintersoft@gmail.com 
+If you make modifications that you find are 
+useful, please let me know as well, and perhaps we could migrate them into future releases. 
+
+Thankyou for using Gmail Notifier.
+
+John Winter
+wintersoft@gmail.com

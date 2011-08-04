@@ -1,0 +1,33 @@
+diff -Nurw gmail-notify-dist/GmailConfig.py gmail-notify/GmailConfig.py
+--- gmail-notify-dist/GmailConfig.py	2006-09-23 15:57:39.000000000 -0500
++++ gmail-notify/GmailConfig.py	2006-09-23 16:05:55.000000000 -0500
+@@ -263,9 +263,13 @@
+ 	def get_lang( self ):
+ 		return self.lang
+ 			
++	def no_username_or_password( self ):
++		return ( self.options["gmailusername"] == None or self.options["gmailpassword"] == None )
++			
+ 	def main( self ):
+ 		gtk.main()
+ 		
++		
+ if __name__ == "__main__":
+ 	config = GmailConfigWindow()
+ 	config.update_labels();
+diff -Nurw gmail-notify-dist/notifier.py gmail-notify/notifier.py
+--- gmail-notify-dist/notifier.py	2006-09-23 15:57:39.000000000 -0500
++++ gmail-notify/notifier.py	2006-09-23 16:08:42.000000000 -0500
+@@ -56,8 +56,11 @@
+         	# Reference to global options
+ 	        self.options = self.configWindow.options
+                 # Check if there is a user and password, if not, load config window
+-                while ( self.options["gmailusername"] == None or self.options["gmailpassword"] == None ):
++                if self.configWindow.no_username_or_password():
+                         self.configWindow.show()
++                        # If there's still not a username or password, just exit.
++                        if self.configWindow.no_username_or_password():
++                                sys.exit(0)
+ 		# Load selected language
+ 		self.lang = self.configWindow.get_lang()
+ 		print "selected language: "+self.lang.get_name()

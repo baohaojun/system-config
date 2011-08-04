@@ -1,0 +1,11 @@
+--- GmailConfig.py	2005-09-25 11:12:11.000000000 -0600
++++ GmailConfig2.py	2006-09-22 19:01:21.000000000 -0600
+@@ -18,7 +18,7 @@
+ 	configElements = None 
+ 
+ 	# Declare global variables for configuration as dictionary
+-	options = { "gmailusername":None, "gmailpassword":None, "browserpath":"firefox", "lang":"English",   
++	options = { "gmailusername":None, "gmailpassword":None, "browserpath":"www-browser", "lang":"English",   
+ 				"voffset":0, "hoffset":0, "checkinterval":20000, 
+ 				"animationdelay":15, "popuptimespan":5000}
+ 					

@@ -1,0 +1,20 @@
+--- notifier.py.orig	2009-09-13 12:12:38.000000000 +0100
++++ notifier.py	2009-09-13 12:17:08.000000000 +0100
+@@ -15,6 +15,7 @@
+ import GmailConfig
+ import GmailPopupMenu
+ import gmailatom
++import re
+ 
+ BKG_PATH="/usr/share/apps/gmail-notify/background.jpg"
+ ICON_PATH="/usr/share/apps/gmail-notify/icon.png"
+@@ -229,7 +230,8 @@
+ 			self._tooltip.set_tip(self.tray,self.lang.get_string(18))	
+ 			pixbuf = gtk.gdk.pixbuf_new_from_file( ICON_PATH )
+ 		
+-		self.label.set_markup(self.default_label)
++		p = re.compile('&')
++		self.label.set_markup(p.sub('&amp;', self.default_label))
+ 		scaled_buf = pixbuf.scale_simple(24,24,gtk.gdk.INTERP_BILINEAR)
+ 		self.imageicon.set_from_pixbuf(scaled_buf)
+ 		self.eventbox.add(self.imageicon)

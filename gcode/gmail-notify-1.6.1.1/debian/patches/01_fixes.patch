@@ -1,0 +1,51 @@
+--- gmail-notify-1.6.1/GmailConfig.py.old	2005-10-08 17:25:08.422002680 +0200
++++ gmail-notify-1.6.1/GmailConfig.py	2005-10-08 17:26:05.778283200 +0200
+@@ -9,8 +9,8 @@
+ import xmllangs
+ import sys
+ 
+-LANGSXML_PATH=sys.path[0]+"/langs.xml"
+-ICON_PATH=sys.path[0]+"/gmail-notify-icon.png"
++LANGSXML_PATH="/usr/share/apps/gmail-notify/langs.xml"
++ICON_PATH="/usr/share/apps/gmail-notify/gmail-notify-icon.png"
+ 
+ class GmailConfigWindow:
+ 
+@@ -131,12 +131,12 @@
+ 		# Attach combobox and label
+ 		table.attach( self.lbl_langs, 0, 1, 8, 9 )
+ 		self.lbl_langs.show()
+-		table.attach( self.cbo_langs, 1, 2, 8, 9, ypadding=5 )
++		table.attach( self.cbo_langs, 1, 2, 8, 9, xpadding=5, ypadding=5 )
+ 		self.cbo_langs.show()
+ 		
+ 		# Add 'Close' button
+ 		button = gtk.Button( stock=gtk.STOCK_OK )
+-		table.attach( button, 0, 2, 10, 11, ypadding=2 )
++		table.attach( button, 0, 2, 10, 11, xpadding=2, ypadding=2 )
+ 		button.connect( "clicked", self.onOkay )
+ 		button.show()
+ 
+--- gmail-notify-1.6.1/notifier.py.old	2005-10-08 17:26:24.603421344 +0200
++++ gmail-notify-1.6.1/notifier.py	2005-10-08 17:27:34.491796696 +0200
+@@ -8,6 +8,7 @@
+ import os
+ import pytrayicon
+ import sys
++sys.path.insert (0, "/usr/lib/gmail-notify/")
+ import warnings
+ import ConfigParser
+ import xmllangs
+@@ -15,9 +16,9 @@
+ import GmailPopupMenu
+ import gmailatom
+ 
+-BKG_PATH=sys.path[0]+"/background.jpg"
+-ICON_PATH=sys.path[0]+"/icon.png"
+-ICON2_PATH=sys.path[0]+"/icon2.png"
++BKG_PATH="/usr/share/apps/gmail-notify/background.jpg"
++ICON_PATH="/usr/share/apps/gmail-notify/icon.png"
++ICON2_PATH="/usr/share/apps/gmail-notify/icon2.png"
+ 
+ def removetags(text):
+ 	raw=text.split("<b>")

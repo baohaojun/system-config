@@ -1,0 +1,49 @@
+gmail-notify (1.6.1.1-1) unstable; urgency=medium
+
+  * Acknowledge my own NMU(!) (Closes: #546464)
+  * Team maintained, python-apps-team
+  * Set VCS control fields for new SVN home
+  * Adopt the package and set the maintainer field accordingly
+    (Closes: #547725, #548239)
+  * Medium urgency, one of the bugs is RC
+  * Drop deprecated dh_desktop call
+  * Bump standards to 3.8.3 (No changes)
+  * Add dependency on XB-Python-version
+  * debian/compat: use 7 now instead
+  * Build using python-central now
+
+ -- Alan Woodland <awoodland@debian.org>  Fri, 25 Sep 2009 20:37:37 +0100
+
+gmail-notify (1.6.1.1-0.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * New upstream release 1.6.1.1, (Closes: #457748)
+  * Depend on python-eggtrayicon instead of python-gnome2-extras (Closes: #485318)
+  * Changed gmail.google.com to mail.google.com (Closes: #503740)
+  * Applied patch for proxy support from Luca Falavigna (Closes: #428260)
+  * Applied preference window patch from Ubuntu (Closes: #432676)
+  * Replace & with &amp; in popups (Closes: #420871)
+  * Add debian/watch
+
+ -- Alan Woodland <awoodland@debian.org>  Sun, 13 Sep 2009 11:31:01 +0100
+
+gmail-notify (1.6.1-3) unstable; urgency=low
+
+  * Chance default x-www-browser to www-browser (closes: #389532) 
+
+ -- Joseph Smidt <jsmidt@byu.edu>  Thu, 28 Sep 2006 19:59:36 -0600
+
+gmail-notify (1.6.1-2) unstable; urgency=low
+
+  *Add x-www-browser as default web browser
+   change arch: any to arch all
+   Update dependency on python2.4* to python* since python2.4 is default 
+
+ -- Joseph Smidt <jsmidt@byu.edu>  Fri, 22 Sep 2006 18:52:03 -0600
+
+gmail-notify (1.6.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #369625)  
+
+ -- Joseph Smidt <jsmidt@byu.edu>  Mon,  3 Jul 2006 10:43:33 -0600
+

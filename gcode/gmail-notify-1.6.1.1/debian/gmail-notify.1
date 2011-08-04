@@ -1,0 +1,40 @@
+.TH gmail-notify 1 "May 31, 2006"
+.
+.SH NAME
+gmail-notify \- A Gmail Notifier
+.
+.SH SYNOPSIS
+.B gmail-notify
+.
+.SH DESCRIPTION
+.B gmail-notify
+Gmail Notifier is a Linux alternative for the notifier program released
+by Google, it is written in Python and provides an attractive and
+simple way to check for new mail messages.
+
+Open the notifier.conf file in your favourite text editor and edit the configuration options to match your system. Below is an explanation of each option: (See notifer.conf.sample located in the /usr/share/doc/gmail-notify directory for a helpful example)
+
+gmailusername - fairly self explanatory, must be without the @gmail.com at the end
+
+gmailpassword - obvious
+
+browserpath - this is the full path to the browser that you want Gmail Notifier to open when you click the popup to goto your Gmail inbox
+
+voffset - this is the amount (in pixels) the popup will be displaced from the bottom of the screen, it will almost definately need changing to suit your system, ideally, you want it to look like it came out of the bar along the bottom of the screen the best way to adjust it is to run it initially with the default value and then add/remove from it then test again. Higher values result in the popup appearing higher up the screen.
+
+hoffset - same as above only this is the amount the popup will be displaced from the side of the screen. Higher values will displace it more to the left of the screen.
+
+checkinterval - this is how often Gmail Notifier will check for new mail (in ms), do NOT set it lower than 20000 (20 seconds), or the libgmail library will not keep up, causing many strange side effects. If you need to check your mail more than once every 20 seconds, then chances are your famous and don't have time to read your mail anyway.
+
+animationdelay - this is the amount of time (in ms) that Gmail Notifier will wait before moving the popup up one step, when the popup is popping up, to high values will cause the animation to be jerky, to low values will cause tearing at the bottom of the popup. 15ms seems about right. Only small adjustments are necercery, best thing is to leave it alone.
+
+popuptimespan - this is the amount of time before the popup will dissappear again after popping up you can set this to  whatever you want
+
+.
+.SH Web Page
+http://gmail-notify.sourceforge.net/
+.
+.SH AUTHOR
+John Winter <wintersoft@gmail.com>
+.
+.\" EOF

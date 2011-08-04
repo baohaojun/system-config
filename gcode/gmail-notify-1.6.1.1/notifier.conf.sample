@@ -1,0 +1,24 @@
+#MAKE SURE YOU CHANGE THE BELOW OPTIONS TO SUIT YOUR SYSTEM
+#THE README FILE EXPLAINS EACH OPTION
+
+[options]
+
+lang = English
+browserpath = your_browser_path
+
+# account information
+gmailusername = your_gmail_username
+gmailpassword = your_gmail_password
+
+# popup position
+voffset = 25
+hoffset = 10
+
+# all values below are in in milliseconds
+
+# you should not set this lower than 20000 (20 seconds)
+checkinterval = 60000
+# you shouldn't need to change this one
+animationdelay = 15
+# change to whatever you like
+popuptimespan = 5000

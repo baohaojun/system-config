@@ -1,0 +1,20 @@
+Source: gmail-notify
+Section: mail
+Priority: optional
+Maintainer: Python Applications Packaging Team <python-apps-team@lists.alioth.debian.org>
+Uploaders: Alan Woodland <awoodland@debian.org> 
+Build-Depends: cdbs (>= 0.4.49), debhelper (>= 7), patchutils (>= 0.2.25), python, python-all-dev (>= 2.3.5-11), python-central (>= 0.5.6)
+Standards-Version: 3.8.3
+XS-Python-Version: all
+Vcs-Browser: http://svn.debian.org/viewsvn/python-apps/packages/gmail-notify/trunk/  
+Vcs-Svn: svn://svn.debian.org/python-apps/packages/gmail-notify/trunk/      
+
+Package: gmail-notify
+Architecture: all 
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-gtk2, python-eggtrayicon
+Recommends: www-browser
+XB-Python-Version: ${python:Versions}
+Description: A Gmail Notifier
+ Gmail Notifier is a Linux alternative for the notifier program released
+ by Google, it is written in Python and provides an attractive and
+ simple way to check for new mail messages.

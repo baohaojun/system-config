@@ -1,0 +1,4 @@
+?package(gmail-notify):needs="X11" section="Applications/Network/Communication" title="GMail Notifier" \
+        command="/usr/bin/gmail-notify" \
+	        icon="/usr/share/apps/gmail-notify/icon.xpm"
+

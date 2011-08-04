@@ -1,0 +1,13 @@
+--- notifier.py.orig	2009-09-13 11:59:53.000000000 +0100
++++ notifier.py	2009-09-13 12:00:10.000000000 +0100
+@@ -352,8 +352,8 @@
+ 
+ 	def gotourl( self, wg=None):
+ 		print "----------"
+-		print "launching browser "+self.options['browserpath']+" http://gmail.google.com"
+-		os.system(self.options['browserpath']+" http://gmail.google.com &")	
++		print "launching browser "+self.options['browserpath']+" http://mail.google.com"
++		os.system(self.options['browserpath']+" http://mail.google.com &")	
+ 
+ 	def show_quota_info( self, event):
+ 		print "Not available"
