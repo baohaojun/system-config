@@ -8,13 +8,9 @@ sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
 if (not sc)
 {
-    if (sls)
+    if (sls or srs)
     {
-        Send {Blind}{LShift up}{$3 DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{$3 DownTemp}{RShift Down}  ;
+        Send {Blind}{$3 DownTemp}
     }
     else
     {
@@ -33,7 +29,7 @@ else
     }
     else
     {
-        Send {Blind}{$3 DownTemp}  ;
+        Send {Blind}{Shift Down}{$3 DownTemp}{Shift Up} ;
     }
 }
 return
@@ -45,13 +41,9 @@ sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
 if (not sc)
 {
-    if (sls)
+    if (sls or srs)
     {
-        Send {Blind}{LShift up}{$3 Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{$3 Up}{RShift Down}  ;
+        Send {Blind}{$3 Up}
     }
     else
     {
@@ -70,7 +62,7 @@ else
     }
     else
     {
-        Send {Blind}{$3 Up}  ;
+        Send {Blind}{Shift Down}{$3 Up}{Shift Up} ;
     }
 }
 return

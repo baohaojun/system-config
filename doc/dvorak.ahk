@@ -9,7 +9,8 @@ Menu, Tray, Icon, main.cpl, 8
 EOF
 
 gen-dvorak-programmer.sh \` \$ \~
-gen-dvorak-programmer.sh 1 \& SC029
+gen-dvorak-programmer.sh SC028 - _
+gen-dvorak-programmer-shift3.sh 1 \& 5 # by 5 we mean %
 gen-dvorak-programmer.sh 2 \[ \7
 gen-dvorak-programmer.sh 3 \{ \5
 gen-dvorak-programmer.sh 4 \} \3
@@ -49,7 +50,6 @@ j::h
 k::t
 l::n
 SC027::s
-SC028::-
 
 z::SC028
 x::q
