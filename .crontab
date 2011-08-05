@@ -7,3 +7,5 @@
 0       20 * * * . ~/.bash_path; ~/bin/git-to-gmail ~/notes
 1       1  * * * . ~/.bash_path; ~/bin/linux/download-today
 0       0  * * * . ~/.bash_path; ~/bin/linux/update-repo-projects; ~/bin/linux/cron-code-reading
+0       20 * * * . ~/.bash_path; back-to-gmail ~/.ecompleterc ~/.bash_history ~/.bash_path
+

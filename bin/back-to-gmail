@@ -1,5 +1,5 @@
 #!/bin/bash
 
 for x in "$@"; do
-    mailx -s "$x" -a "$x" baohaojun@gmail.com </dev/null
+    mailx -s "back-to-gmail $x" -a "$x" baohaojun@gmail.com </dev/null
 done
