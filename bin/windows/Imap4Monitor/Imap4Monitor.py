@@ -124,6 +124,7 @@ class ConfigDlg (QDialog):
                     break
             else:
                 self.trayIcon.setIcon(QIcon(":/no-mail.png"))
+                os.system("offlineimap&")
                 self.timer.start(300000)
         except:
             type_, value_ = sys.exc_info()[:2]

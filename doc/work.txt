@@ -1130,3 +1130,5 @@ when you are using dvorak keyboard layout, make sure gnome status bar is not sho
  W 人八登头单人几
  X 幺母贯头弓和匕
  Y 言文方点谁人去
+
+({ test -e ./theater-full-flash.sh || { cd .repo/.. && cd flashing/; }; } && ./theater-full-flash.sh)

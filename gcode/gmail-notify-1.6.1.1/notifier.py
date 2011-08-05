@@ -7,6 +7,7 @@ import gtk
 import time
 import os
 from egg.trayicon import TrayIcon
+import traceback
 import sys
 sys.path.insert (0, "/usr/lib/gmail-notify/")
 import warnings
@@ -252,6 +253,7 @@ class GmailNotify:
 			unreadmsgcount=self.connection.getUnreadMsgCount()
 		except:
 			# If an error ocurred, cancel mail check
+			traceback.print_exc()
 			print "getUnreadMsgCount() failed, will try again soon"
 			return (-1,)
 
