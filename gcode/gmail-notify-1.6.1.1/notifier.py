@@ -9,7 +9,6 @@ import os
 from egg.trayicon import TrayIcon
 import traceback
 import sys
-sys.path.insert (0, "/usr/lib/gmail-notify/")
 import warnings
 import ConfigParser
 import xmllangs
@@ -18,9 +17,9 @@ import GmailPopupMenu
 import gmailatom
 import re
 
-BKG_PATH="/usr/share/apps/gmail-notify/background.jpg"
-ICON_PATH="/usr/share/apps/gmail-notify/icon.png"
-ICON2_PATH="/usr/share/apps/gmail-notify/icon2.png"
+BKG_PATH=sys.path[0]+"/background.jpg"
+ICON_PATH=sys.path[0]+"/icon.png"
+ICON2_PATH=sys.path[0]+"/icon2.png"
 
 def removetags(text):
 	raw=text.split("<b>")

@@ -9,8 +9,8 @@ import gmailatom
 import xmllangs
 import sys
 
-LANGSXML_PATH="/usr/share/apps/gmail-notify/langs.xml"
-ICON_PATH="/usr/share/apps/gmail-notify/gmail-notify-icon.png"
+LANGSXML_PATH=sys.path[0]+"/langs.xml"
+ICON_PATH=sys.path[0]+"/gmail-notify-icon.png"
 
 class GmailConfigWindow:
 
