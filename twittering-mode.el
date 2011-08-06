@@ -2488,7 +2488,7 @@ The method to perform the request is determined from
             ("Expect" . "")))
          (curl-args
           `("--include" "--location" "--request" ,method
-            ,(unless twittering-debug-curl "--silent")
+            ,@(unless twittering-debug-curl '("--silent"))
             ,@(apply 'append
                      (mapcar
                       (lambda (pair)
