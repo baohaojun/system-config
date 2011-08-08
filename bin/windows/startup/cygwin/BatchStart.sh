@@ -11,6 +11,7 @@ regedit /s ime-noctrlshift-noaltshift.reg
 # myxwin.sh&
 startxwin&
 net start sshd&
+cygstart ~/doc/dvorak.ahk&
 ~/gcode/scim-cs/ime-py/ime-server.py&
 
 
