@@ -9,7 +9,6 @@ regedit /s ime-noctrlshift-noaltshift.reg
 # (echo "#!/bin/bash -l"; grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p'|grep -v checkX) > $MYXWINSH
 # chmod +x $MYXWINSH
 # myxwin.sh&
-startxwin&
 net start sshd&
 cygstart ~/doc/dvorak.ahk&
 ~/gcode/scim-cs/ime-py/ime-server.py&
