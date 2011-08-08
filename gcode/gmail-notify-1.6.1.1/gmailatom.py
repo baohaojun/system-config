@@ -119,9 +119,16 @@ class GmailAtom:
 
 	def __init__(self, user, pswd, proxy=None):
 		self.m = MailHandler()
+		self.user = user
+		self.pswd = pswd
+		self.proxy = proxy
+
+	def sendRequest(self):
 		# initialize authorization handler
+		
 		auth_handler = urllib2.HTTPBasicAuthHandler()
-		auth_handler.add_password( self.realm, self.host, user, pswd)
+		auth_handler.add_password( self.realm, self.host, self.user, self.pswd)
+		proxy = self.proxy
 		# manage proxy
 		if proxy:
 			proxy_handler = urllib2.ProxyHandler({'http': proxy})
@@ -130,7 +137,6 @@ class GmailAtom:
 			opener = urllib2.build_opener(auth_handler)
 		urllib2.install_opener(opener)
 
-	def sendRequest(self):
 		return urllib2.urlopen(self.url)
 
 	def refreshInfo(self):

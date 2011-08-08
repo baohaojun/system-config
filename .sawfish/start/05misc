@@ -7,7 +7,7 @@ fi
 
 (
     cd ~/gcode/gmail-notify-1.6.1.1;
-    GA_LABEL=BigOne  ./notifier.py& 
+    GA_LABEL=/BigOne  ./notifier.py& 
 )
 qq
 ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
