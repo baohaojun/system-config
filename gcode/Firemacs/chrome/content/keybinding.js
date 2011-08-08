@@ -242,7 +242,7 @@ Firemacs.CmdKey.Option = {
     UseEscape: false,
     UseAlt: true,
     UseMeta: false,
-    XPrefix: 'C-x',
+    XPrefix: 'C-h',
     AccessRegex: '',
     TurnoffRegex: '',
     WalkForm: true,
@@ -267,8 +267,8 @@ Firemacs.CmdKey.View = {
     ReloadPage: 'R',
     ViScrollTop: '<',
     ViScrollBottom: '>',
-    ScrollTop: 'M-<',
-    ScrollBottom: 'M->'
+    ScrollTop: 'C-{',
+    ScrollBottom: 'C-}'
 };
 
 Firemacs.CmdKey.Edit = {
@@ -289,7 +289,7 @@ Firemacs.CmdKey.Edit = {
     KillLineBackward: 'C-u',
     Paste: 'C-y',
     DeleteCharForward: 'C-d',
-    DeleteCharBackward: 'C-h',
+    DeleteCharBackward: 'C-x',
     Undo: 'C-/',
     NextWord: 'M-f',
     PreviousWord: 'M-b',
@@ -300,21 +300,21 @@ Firemacs.CmdKey.Edit = {
 };
 
 Firemacs.CmdKey.Common = {
-    AllTabs: 'C-xb',
+    AllTabs: 'C-hb',
     SearchForward: 'C-s',
     SearchBackword: 'C-r',
     ScrollPageUp: 'M-v',
     ScrollPageDown: 'C-v',
     ResetMark: 'C-g',
-    JumpURLBar: 'C-xl',
-    JumpSearchBar: 'C-xg',
-    FocusBody: 'C-x.',
-    JumpInput: 'C-xt',
-    JumpSubmit: 'C-xs',
+    JumpURLBar: 'C-hl',
+    JumpSearchBar: 'C-hg',
+    FocusBody: 'C-h.',
+    JumpInput: 'C-ht',
+    JumpSubmit: 'C-hs',
     CmPreviousTab: 'p',
     CmNextTab: 'n',
-    CloseTab: 'C-xk',
-    OpenFile: 'C-xC-f',
+    CloseTab: 'C-hk',
+    OpenFile: 'C-hC-f',
     Copy: 'M-w',
     NextButton: 'M-n',
     PreviousButton: 'M-p',
@@ -323,10 +323,10 @@ Firemacs.CmdKey.Common = {
     CopyUrl: 'C-M-u',
     CopyTitle: 'C-M-t',
     CopyTitleAndUrl: 'C-M-b',
-    WebSearch: 'C-xC-e',
-    MapSearch: 'C-xC-a',
-    SavePage: 'C-xC-s',
-    SelectAll: 'C-xh'
+    WebSearch: 'C-hC-e',
+    MapSearch: 'C-hC-a',
+    SavePage: 'C-hC-s',
+    SelectAll: 'C-hh'
 };
 
 Firemacs.CmdKey.Menu = {
