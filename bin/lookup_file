@@ -37,7 +37,7 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
     while true; do
 	if find "$dir" -maxdepth 1 -iname "*$base*"|grep -q .; then
 	    find $PWD/"$dir" -maxdepth 1 -iname "*$base*"
-	    exit
+	    exit 0
 	fi
 
 	if test $PWD = /; then
@@ -45,4 +45,6 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 	fi
 	builtin cd ..
     done
+) || (
+    which "$file" 2>/dev/null
 )
