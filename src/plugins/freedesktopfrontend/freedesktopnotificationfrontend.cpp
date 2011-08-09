@@ -89,7 +89,7 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
 
 
 
-    Notification noti(app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id,priotity);
+    Notification noti(app_name,"DBus Alert",summary,body,icon,timeout==-1?-1:timeout/1000,replaces_id,priotity);
     noti.setSource(this);
     qDebug()<<"Actions"<<actions;
 
@@ -100,8 +100,7 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
 
     snore()->broadcastNotification(noti);
     activeNotifications[noti.id()] = noti;
-    timeout_notifications.append(noti.id());
-    QTimer::singleShot(timeout==-1?Notification::DefaultTimeout*1000:timeout,this,SLOT(timeoutClose()));
+    startTimeout(noti.id(),noti.timeout());
     return noti.id();
 }
 
@@ -131,15 +130,5 @@ QString FreedesktopNotification_Frontend::GetServerInformation(QString& vendor, 
     specVersion = "0";
     return "Snore";
 }
-
-void FreedesktopNotification_Frontend::timeoutClose(){
-    uint id = timeout_notifications.takeFirst();
-    if(activeNotifications.contains(id)){
-        Notification noti = activeNotifications[id];
-        noti.setCloseReason(NotificationEnums::CloseReasons::TIMED_OUT);
-        notificationClosed(noti);
-    }
-}
-
 
 #include "freedesktopnotificationfrontend.moc"

@@ -29,16 +29,16 @@ static int metaid = qRegisterMetaType<Notification>();
 class Notification::NotificationData
 {
 public:
-	NotificationData ( uint id=0 ):
-	  _id ( id ),
+    NotificationData ( uint id=0 ):
+        _id ( id ),
 	_timeout ( 10 ),
 	_source ( NULL ),
 	_closeReason(NotificationEnums::CloseReasons::NONE),
 	_priority(NotificationEnums::Prioritys::NORMAL)
-          {}
+    {}
 
-	NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
-	  	_id ( id ),
+    NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
+        _id ( id ),
 	_timeout ( timeout ),
 	_source ( NULL),
 	_application ( application ),
@@ -48,26 +48,26 @@ public:
 	_icon ( icon ),
 	_priority(priority),
 	_closeReason(NotificationEnums::CloseReasons::NONE)
-                {}
+    {}
 
 
-	~NotificationData(){
-		//delete _actionInvoked;
-        }
+    ~NotificationData(){
+        //delete _actionInvoked;
+    }
 
-	uint _id;
-	int _timeout;
-	Notification::Action *_actionInvoked;
-	Notification_Frontend *_source;
-	QString _application;
-	QString _alert;
-	QString _title;
-	QString _text;
-	SnoreIcon _icon;
-	NotificationEnums::Prioritys::prioritys _priority;
-	NotificationEnums::CloseReasons::closeReasons _closeReason;
-	QMap<int,Notification::Action*> _actions;
-	QVariantHash _hints;
+    uint _id;
+    int _timeout;
+    Notification::Action *_actionInvoked;
+    Notification_Frontend *_source;
+    QString _application;
+    QString _alert;
+    QString _title;
+    QString _text;
+    SnoreIcon _icon;
+    NotificationEnums::Prioritys::prioritys _priority;
+    NotificationEnums::CloseReasons::closeReasons _closeReason;
+    QMap<int,Notification::Action*> _actions;
+    QVariantHash _hints;
 };
 
 
@@ -75,23 +75,23 @@ int Notification::DefaultTimeout = 10;
 
 QString Notification::toPlainText ( const QString &string )
 {
-	if( Qt::mightBeRichText(string))
-		return QTextDocumentFragment::fromHtml(string).toPlainText();
-	return QString(string);
+    if( Qt::mightBeRichText(string))
+        return QTextDocumentFragment::fromHtml(string).toPlainText();
+    return QString(string);
 }
 
 Notification::Notification ( uint id ) 
 {
-	d = QSharedPointer<NotificationData>(new NotificationData(id));
+    d = QSharedPointer<NotificationData>(new NotificationData(id));
 }
 
 Notification::Notification ( const QString &application, const QString &alert, const QString &title, const QString &text, const SnoreIcon &icon, int timeout, uint id, NotificationEnums::Prioritys::prioritys priority ) 
 {
-	d = QSharedPointer<NotificationData>(new  NotificationData(application,alert,title,text,icon,timeout,id,priority));
+    d = QSharedPointer<NotificationData>(new  NotificationData(application,alert,title,text,icon,timeout,id,priority));
 }
 
 Notification::Notification ( const Notification &other ):
-d(other.d)
+    d(other.d)
 {
 }
 
@@ -106,124 +106,135 @@ Notification &Notification::operator=(const Notification& other)
 
 QString Notification::toString() const
 {
-	return QString ( "Title: "+d->_title+"\nText: "+d->_text );
+    return QString ( "Title: "+d->_title+"\nText: "+d->_text );
 }
 
 const uint &Notification::id() const
 {
-	return d->_id;
+    return d->_id;
 }
 
 void Notification::setId(const uint &id) 
 {
-	qDebug()<<"setting notification id:"<<id;
-	d->_id = id;
+    qDebug()<<"setting notification id:"<<id;
+    d->_id = id;
 }
 
 const SnoreIcon &Notification::icon() const
 {
-	return d->_icon;
+    return d->_icon;
 }
 
 const int &Notification::timeout() const
 {
-	return d->_timeout;
+    return d->_timeout;
 }
 
 const Notification::Action *Notification::actionInvoked() const
 {
-	return d->_actionInvoked;
+    return d->_actionInvoked;
 }
 
 void Notification::setActionInvoked ( Action *action )
 {
-	d->_actionInvoked = action;
+    d->_actionInvoked = action;
 }
 
 void Notification::setActionInvoked ( const int &id)
 {
-	d->_actionInvoked = d->_actions[id];
+    d->_actionInvoked = d->_actions[id];
 }
 
 void Notification::setSource(Notification_Frontend *source) const{
-	d->_source = source;
+    d->_source = source;
 }
 
 Notification_Frontend *Notification::source() const
 {
-	return d->_source;
+    return d->_source;
 }
 
 const QString &Notification::application() const
 {
-	return d->_application;
+    return d->_application;
 }
 
 const QString &Notification::title() const
 {
-	return d->_title;
+    return d->_title;
 }
 
 const QString &Notification::text() const
 {
-	return d->_text;
+    return d->_text;
 }
 
 const QString &Notification::alert() const
 {
-	return d->_alert;
+    return d->_alert;
 }
+
+const bool Notification::sticky() const
+{
+    return d->_timeout == -1;
+}
+
+void Notification::setSticky()
+{
+    d->_timeout = -1;
+}
+
 
 const NotificationEnums::Prioritys::prioritys &Notification::priority() const
 {
-	return d->_priority;
+    return d->_priority;
 }
 
 void Notification::addAction(Notification::Action *a) 
 {
-	qDebug()<<"Added notification"<<a->id<<a->name;
-	d->_actions.insert(a->id,a);
+    qDebug()<<"Added notification"<<a->id<<a->name;
+    d->_actions.insert(a->id,a);
 }
 
 
 const QMap<int,Notification::Action*> &Notification::actions() const
 {
-	return d->_actions;
+    return d->_actions;
 }
 
 const NotificationEnums::CloseReasons::closeReasons &Notification::closeReason(){
-	return d->_closeReason;
+    return d->_closeReason;
 }
 
 void Notification::setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r){
-	d->_closeReason = r;
+    d->_closeReason = r;
 }
 
 const QVariant Notification::hint ( const QString &key ) const
 {
-	return d->_hints.value ( key );
+    return d->_hints.value ( key );
 }
 
 bool Notification::hintExists ( const QString &key )
 {
-	return d->_hints.contains ( key );
+    return d->_hints.contains ( key );
 }
 
 void Notification::insertHint ( const QString &key, const QVariant &val )
 {
-	d->_hints.insert ( key,val );
+    d->_hints.insert ( key,val );
 }
 
 QDataStream & operator<< ( QDataStream &stream, const Notification &noti )
 {
-	stream<<noti.toString();
-	return stream;
+    stream<<noti.toString();
+    return stream;
 }
 
 QDataStream & operator<< ( QDataStream &stream, const Notification::Action &a)
 {
-	stream<<a.id<<a.id;
-	return stream;
+    stream<<a.id<<a.id;
+    return stream;
 }
 
 

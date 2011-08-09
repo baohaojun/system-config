@@ -103,6 +103,11 @@ void SnoreServer::publicatePlugin ( SnorePlugin *plugin )
         connect ( this,SIGNAL ( closeNotify ( Notification ) ),nb,SLOT ( closeNotification ( Notification) ) );
         connect ( this,SIGNAL ( applicationInitialized ( Application* ) ),nb,SLOT ( registerApplication ( Application* ) ) );
         connect ( this,SIGNAL ( applicationRemoved ( Application* ) ),nb,SLOT ( unregisterApplication ( Application* ) ) );
+    }else{
+         Notification_Frontend * nf=qobject_cast<Notification_Frontend*> ( plugin );
+         if(nf != NULL){
+             connect ( this,SIGNAL ( closeNotify ( Notification ) ),nf,SLOT ( notificationClosed( Notification) ) );
+         }
     }
 }
 
@@ -121,11 +126,6 @@ void SnoreServer::closeNotification ( Notification notification,const Notificati
 {
     notification.setCloseReason(reason);
     emit closeNotify ( notification );
-    Notification_Frontend *nf= notification.source();
-    if ( nf != NULL )
-    {
-        nf->notificationClosed ( notification );
-    }
 }
 
 void SnoreServer::notificationActionInvoked ( Notification notification )

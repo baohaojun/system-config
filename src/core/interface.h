@@ -29,10 +29,19 @@ public:
     virtual void setSnore ( class SnoreServer* snore );
     virtual class SnoreServer* snore();
     const QString &name() const;
+
+protected:
+        QHash<uint,Notification> activeNotifications;
+        void startTimeout(uint id,int timeout);
+private slots:
+        void notificationTimedOut();
+
 private:
     SnorePlugin() {}
     QString _name;
     class SnoreServer *_snore;
+    QHash<uint,QTimer*> timeouts;
+    QList<uint> timeout_order;
 
 
 };
@@ -49,8 +58,7 @@ public:
     virtual ~Notification_Backend();
     virtual bool isPrimaryNotificationBackend() =0;
 
-protected:
-	QHash<uint,Notification> activeNotifications;
+
 
 public slots:
     virtual void registerApplication ( class Application *application ) =0;
@@ -70,11 +78,10 @@ class SNORE_EXPORT Notification_Frontend:public SnorePlugin
 public:
     Notification_Frontend ( QString name,class SnoreServer *snore=0 );
     virtual ~Notification_Frontend();
+
+public slots:
     virtual void actionInvoked (Notification notification )=0;
     virtual void notificationClosed ( Notification notification )=0;
-
-protected:
-	QHash<uint,Notification> activeNotifications;
 };
 
 

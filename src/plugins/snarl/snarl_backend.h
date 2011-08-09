@@ -27,17 +27,17 @@ class Snarl_Backend:public Notification_Backend
 {
     Q_OBJECT
     Q_INTERFACES(Notification_Backend)
-	friend class SnarlWidget;
+    friend class SnarlWidget;
 public:
     Snarl_Backend(class SnoreServer *snore=0);
     ~Snarl_Backend();
     bool isPrimaryNotificationBackend();
 
 private:
-	SnarlWidget* winIDWidget;
-
+    SnarlWidget* winIDWidget;
     QHash<QString,Snarl::V42::SnarlInterface*> _applications;
     Snarl::V42::SnarlInterface* _defautSnarlinetrface;
+    bool _away;
 
 public slots:
     void registerApplication(Application *application);
@@ -49,14 +49,14 @@ public slots:
 
 class SnarlWidget:public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	SnarlWidget(Snarl_Backend* snarl);
-	bool winEvent( MSG * message, long * result );
+    SnarlWidget(Snarl_Backend* snarl);
+    bool winEvent( MSG * message, long * result );
 
 private:
-	uint SNARL_GLOBAL_MESSAGE;
-	Snarl_Backend* _snarl;
+    uint SNARL_GLOBAL_MESSAGE;
+    Snarl_Backend* _snarl;
 
 };
 

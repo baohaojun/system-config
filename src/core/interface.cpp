@@ -17,6 +17,8 @@
 #include "interface.h"
 #include "snoreserver.h"
 
+#include <QTimer>
+
 SnorePlugin::SnorePlugin ( QString name,SnoreServer *snore ) :
         _name ( name ),
         _snore ( snore )
@@ -40,6 +42,33 @@ SnoreServer* SnorePlugin::snore()
 const QString &SnorePlugin::name() const
 {
     return _name;
+}
+
+void SnorePlugin::startTimeout(uint id,int timeout){
+    if(timeout==-1)//sticky
+        return;
+    if(timeouts.contains(id)){
+        QTimer *t = timeouts.take(id);
+        t->stop();
+        t->deleteLater();
+        timeout_order.removeOne(id);
+    }
+    QTimer *timer= new QTimer(this);
+    timer->setInterval(timeout*1000);
+    timer->setSingleShot(true);
+    timeouts.insert(id,timer);
+    timeout_order.append(id);
+    connect(timer,SIGNAL(timeout()),this,SLOT(notificationTimedOut()));
+    timer->start();
+}
+
+void SnorePlugin::notificationTimedOut(){
+    uint id = timeout_order.takeFirst();
+    timeouts.remove(id);
+    if(activeNotifications.contains(id)){
+        Notification n = activeNotifications.take(id);
+        snore()->closeNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
+    }
 }
 
 Notification_Backend::Notification_Backend ( QString name, SnoreServer *snore ) :

@@ -71,21 +71,19 @@ void Growl_Backend::unregisterApplication(Application *application){
 int Growl_Backend::notify(Notification notification){
 	gntp *growl = _applications.value(notification.application());
 	if(growl == NULL)
-		return -1;
-	uint id = ++_id;
-
-	//qDebug()<<"Notify Growl:"<<notification.application()<<Notification.toPlainText(notification.title());
+		return -1;        
+        //qDebug()<<"Notify Growl:"<<notification.application()<<Notification.toPlainText(notification.title());
 	try{
-		growl->notify(notification.alert().toUtf8().constData(),id,
+                growl->notify(notification.alert().toUtf8().constData(),_id,
 			Notification::toPlainText(notification.title()).toUtf8().constData(),
 			Notification::toPlainText(notification.text()).toUtf8().constData(),
 			notification.icon().localUrl().isEmpty()?NULL:notification.icon().localUrl().toUtf8().constData(),NULL,"1");
-		activeNotifications.insert(id,notification);
+                activeNotifications.insert(_id,notification);
 
 	}catch(const std::exception& e){
 		qDebug()<<"Growl:"<<e.what();
 	}
-	return id;
+        return _id++;
 }
 
 void Growl_Backend::closeNotification(Notification notification){

@@ -26,24 +26,24 @@
 namespace NotificationEnums{
 
 namespace Prioritys{
-	enum priority{
-		LOW=-1,
-		NORMAL,
-		HIGH
-	};
-	Q_DECLARE_FLAGS(prioritys, priority)
-	Q_DECLARE_OPERATORS_FOR_FLAGS(prioritys)
+enum priority{
+    LOW=-1,
+    NORMAL,
+    HIGH
+};
+Q_DECLARE_FLAGS(prioritys, priority)
+Q_DECLARE_OPERATORS_FOR_FLAGS(prioritys)
 }
 namespace CloseReasons{
-	enum closeReason
-    {
-		NONE,
-		TIMED_OUT,
-		DISMISSED,
-		CLOSED
-    };
-	Q_DECLARE_FLAGS(closeReasons, closeReason)
-	Q_DECLARE_OPERATORS_FOR_FLAGS(closeReasons)
+enum closeReason
+{
+    NONE,
+    TIMED_OUT,
+    DISMISSED,
+    CLOSED
+};
+Q_DECLARE_FLAGS(closeReasons, closeReason)
+Q_DECLARE_OPERATORS_FOR_FLAGS(closeReasons)
 }
 }
 
@@ -53,55 +53,56 @@ public:
     static int DefaultTimeout;
     static QString toPlainText ( const QString &string );
 
-	class Action
-	{
-	public:
-		Action(int id,QString name):id(id),name(name){}
-		int id;
-		QString name;
-	};
+    class Action
+    {
+    public:
+        Action(int id,QString name):id(id),name(name){}
+        int id;
+        QString name;
+    };
 
 public:
     Notification ( uint id=0 );
-	Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10,uint id=0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
-	Notification ( const Notification &other );
-	~Notification();
-	Notification &operator=(const Notification& other);
+    Notification (const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout=10,uint id=0, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL );
+    Notification ( const Notification &other );
+    ~Notification();
+    Notification &operator=(const Notification& other);
 
     QString toString() const;
 
     const uint &id() const;
-	void setId(const uint &id);
-	//timeout in seconds
+    void setId(const uint &id);
+    //timeout in seconds
+    //-1 means sticky
     const int &timeout() const;
-	//void setActionInvoked ( const Notification::defaultActions &action );
-	void setActionInvoked ( Action *action );
-	void setActionInvoked ( const int &actionID);
-	//const Notification::defaultActions &actionInvoked() const;
-	const Action* actionInvoked() const;
-	void setSource(class Notification_Frontend *source)const;
-	class Notification_Frontend *source() const;
+    void setActionInvoked ( Action *action );
+    void setActionInvoked ( const int &actionID);
+    const Action* actionInvoked() const;
+    void setSource(class Notification_Frontend *source)const;
+    class Notification_Frontend *source() const;
     const QString &application() const;
     const QString &title() const;
     const QString &text() const;
-	const SnoreIcon &icon() const;
+    const SnoreIcon &icon() const;
     const QString &alert() const;
-	const NotificationEnums::Prioritys::prioritys &priority() const;
-	const QMap<int,Action*> &actions() const;
-	void addAction(Action *a);
-	const NotificationEnums::CloseReasons::closeReasons &closeReason();
-	void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
-	const QVariant hint ( const QString &key ) const;
+    void setSticky();
+    const bool sticky() const;
+    const NotificationEnums::Prioritys::prioritys &priority() const;
+    const QMap<int,Action*> &actions() const;
+    void addAction(Action *a);
+    const NotificationEnums::CloseReasons::closeReasons &closeReason();
+    void setCloseReason(const NotificationEnums::CloseReasons::closeReasons &r);
+    const QVariant hint ( const QString &key ) const;
     bool hintExists ( const QString &key );
     void insertHint ( const QString &key,const QVariant &val );
 
 
 private:
-	class NotificationData;
-	QSharedPointer<NotificationData> d;
+    class NotificationData;
+    QSharedPointer<NotificationData> d;
 };
 
- Q_DECLARE_METATYPE(Notification)
+Q_DECLARE_METATYPE(Notification)
 
 QDataStream & operator<< ( QDataStream & stream, const Notification & noti );
 QDataStream & operator<< ( QDataStream & stream, const Notification::Action & action);
