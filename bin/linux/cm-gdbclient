@@ -1,0 +1,14 @@
+#!/bin/bash
+set -- `readlink -f "$1" ` $2
+OUT_ROOT=/tmp
+OUT_SYMBOLS="$1"
+OUT_SO_SYMBOLS="$1"/system/lib
+PORT=:5039
+
+echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
+echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS"
+echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
+echo >>"$OUT_ROOT/gdbclient.cmds" ""
+
+arm-eabi-gdb -x "$OUT_ROOT/gdbclient.cmds" "$1/system/bin/$2"
+

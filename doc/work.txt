@@ -37,7 +37,7 @@ mkdir /data/debugfs; mount -t debugfs null /data/debugfs; cat /data/debugfs/gpio
 (cd .repo/.. && export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do echo export $x=`eval echo \\$$x`; done >TARGET_PRODUCT)
 M-: (modify-syntax-entry ?_ "w")
 
-(. build/envsetup.sh ; adb forward tcp:5039 tcp:5039; export PATH=`pwd`/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:$PATH; gdbclient sensor-daemon)
+(. build/envsetup.sh ; adb forward tcp:5039 tcp:5039; gdbclient sensor-daemon)
 (export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/; . build/envsetup.sh ; adb forward tcp:5039 tcp:5039; export PATH=`pwd`/prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:$PATH; gdbclient sensor-daemon)
 gdbserver :5039 /system/bin/test-sensor
 gdbserver --attach :5039 `pidof sensor-daemon`
