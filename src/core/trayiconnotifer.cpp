@@ -24,7 +24,7 @@ void TrayIconNotifer::unregisterApplication ( Application *application )
     Q_UNUSED ( application )
 }
 
-int TrayIconNotifer::notify ( Notification notification )
+uint TrayIconNotifer::notify ( Notification notification )
 {
     _notificationQue.append(notification);
     if(_lastNotify.elapsed()> Notification::DefaultTimeout * 1000){

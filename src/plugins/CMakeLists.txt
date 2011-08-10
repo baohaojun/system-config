@@ -4,5 +4,3 @@ add_subdirectory(freedesktopfrontend)
 add_subdirectory(snarlnetwork)
 add_subdirectory(snarl)
 add_subdirectory(growl)
-
-

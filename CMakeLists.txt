@@ -4,7 +4,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules ${C
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(KDE4)
+find_package(KDE4 REQUIRED)
 
 if(MINGW)
 SET (CMAKE_RC_COMPILER_INIT windres)

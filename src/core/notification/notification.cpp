@@ -16,7 +16,7 @@
 
 #include "notification.h"
 #include "snoreserver.h"
-#include "notification\icon.h"
+#include "notification/icon.h"
 
 #include <QDebug>
 #include <QTcpSocket>
@@ -174,7 +174,7 @@ const QString &Notification::alert() const
     return d->_alert;
 }
 
-const bool Notification::sticky() const
+bool Notification::sticky() const
 {
     return d->_timeout == -1;
 }

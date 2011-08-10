@@ -2,7 +2,7 @@
 
 #include <QtGlobal>
 #include <QDebug>
-#include "core/notification.h"
+#include "core/notification/notification.h"
 #include <QtCore>
 #include <QImage>
 #include "fredesktopnotification.h"
@@ -11,9 +11,18 @@
 
 Q_EXPORT_PLUGIN2 ( freedesktopnotificationbackend,FreedesktopNotification_Backend )
 
+static const char dbusServiceName[] = "org.freedesktop.Notifications";
+static const char dbusInterfaceName[] = "org.freedesktop.Notifications";
+static const char dbusPath[] = "/org/freedesktop/Notifications";
+
+
 FreedesktopNotification_Backend::FreedesktopNotification_Backend ( SnoreServer *snore ) :
-        Notification_Backend ( "FreedesktopNotification_Backend",snore )
+    Notification_Backend ( "FreedesktopNotification_Backend",snore )
 {
+    QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","ActionInvoked",this,SLOT ( actionInvoked( uint,QString ) ) );
+    //    if ( getVendor() =="GNOME" )
+    QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","NotificationClosed",this,SLOT ( closed ( uint,uint ) ) );
+
 }
 
 bool FreedesktopNotification_Backend::isPrimaryNotificationBackend()
@@ -31,106 +40,90 @@ void FreedesktopNotification_Backend::unregisterApplication ( Application *appli
     Q_UNUSED ( application );
 }
 
-int  FreedesktopNotification_Backend::notify ( Notification noti )
-{
-    fNotification *n = new fNotification ( noti );
-    qDebug()<<"Sending Notification wit Freedesktop_Backend"<<noti->title()<<noti->text();
-    uint out = n->send();
-    n->deleteLater();
-    return out;
+uint  FreedesktopNotification_Backend::notify ( Notification noti )
+{    
+    QDBusMessage message = QDBusMessage::createMethodCall(dbusServiceName, dbusPath, dbusInterfaceName,  "Notify");
+    QVariantList args;
+
+    args<<noti.application() ; // app_name
+    args<<noti.id() ; // replaces_id
+    args<<"" ; // app_icon
+    args<<noti.title() ; // summary
+    args<<noti.text() ; // body
+
+    QStringList actions;
+    foreach(int k,noti.actions().keys()){
+        actions<<QString::number(k)<<noti.actions()[k]->name;
+    }
+    args<<actions;
+
+    if(!noti.icon().isEmpty()){
+        QVariantMap image_data;
+        QVariant img = QVariant::fromValue(FreedesktopImageHint(noti.icon().image().scaledToWidth(50,Qt::FastTransformation)));
+        image_data.insert(QString("image_data"),img);
+        args<<image_data;
+    }
+
+    args<<noti.timeout()*1000;
+
+    message.setArguments(args);
+
+    QDBusMessage replyMsg = QDBusConnection::sessionBus().call(message);
+    uint id = replyMsg.arguments().last().toInt();
+    activeNotifications[id] = noti;
+    startTimeout(id,noti.timeout());
+    return id;
+}
+void FreedesktopNotification_Backend::actionInvoked(const uint &id, const QString &actionID){
+    Notification noti = activeNotifications[id];
+    qDebug() <<"Action"<<id<<"|"<<actionID ;
+    noti.setActionInvoked ( actionID == "default"?1:actionID.toInt() );
+    snore()->notificationActionInvoked ( noti );
+    snore()->closeNotification(noti,NotificationEnums::CloseReasons::CLOSED);
+
 }
 
 void FreedesktopNotification_Backend::closeNotification ( Notification notification )
 {
-    //TODO: fix
-    fNotification *fn = new fNotification ( notification);
-    fn->close();
+    activeNotifications.remove(notification.id());
+    QDBusMessage message = QDBusMessage::createMethodCall(dbusServiceName, dbusPath, dbusInterfaceName,"CloseNotification");
+    QVariantList args;
+    args<<notification.id();
+    message.setArguments(args);
+    QDBusConnection::sessionBus().send(message);
 }
 
 
-QString fNotification::vendor ( "" );
-
-QDBusInterface fNotification::notificationInterface ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications" );
-
-fNotification::fNotification(QSharedPointer< Notification > notification):
-        QObject(notification.data()),
-        _notification(notification)
-{}
+//QString fNotification::vendor ( "" );
 
 
 
-uint fNotification::send()
+
+void FreedesktopNotification_Backend::closed ( const uint &id,const uint &reason )
 {
-    Q_ASSERT(!_notification.isNull());
-    QVariant n = QVariant::fromValue ( FreedesktopNotification( _notification ));
-    QDBusMessage recive = notificationInterface.call ( "Notify", n );
-    uint id=recive.arguments().last().toInt();
-    selfdistruct = new QTimer(this );
-    selfdistruct->setSingleShot ( true );
-    connect ( selfdistruct, SIGNAL ( timeout() ), this, SLOT ( close() ) );
-    selfdistruct->start ( _notification->timeout() *1000 );
-    QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","ActionInvoked",this,SLOT ( action ( uint,QString ) ) );
-    if ( getVendor() =="GNOME" )
-        QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","NotificationClosed",this,SLOT ( closed ( uint,uint ) ) );
-    return id;
-}
-
-void fNotification::action ( const uint &id, const QString &action_key )
-{
-    if ( id!=_notification->id() ) return;
-    close();
-    qDebug() <<id<<"|"<<action_key ;
-
-    notificationInterface.call ( QDBus::AutoDetect,"CloseNotification",id );
-    //default is only working on gnome
-
-
-    _notification->setActionInvoked ( action_key=="default"?Notification::ACTION_1:Notification::actions ( action_key.toInt() ) );
-    parent->snore()->notificationActionInvoked ( _notification );
-    selfDelete();
-}
-
-void fNotification::closed ( const uint &id,const uint &reason )
-{
-    qDebug() <<id<<"|"<<reason;;
-    if ( id!=_notification->id() ) return;
-    close();
+    Notification noti =  activeNotifications[id];
+    qDebug() <<"Closed"<<id<<"|"<<reason;
+    NotificationEnums::CloseReasons::closeReasons r = NotificationEnums::CloseReasons::NONE;
     if ( reason==1 )
-        _notification->setActionInvoked ( Notification::TIMED_OUT );
-    if ( reason==2 )
-        _notification->setActionInvoked ( Notification::CLOSED );
-    parent->snore()->closeNotification ( _notification );
-    selfDelete();
+        r = NotificationEnums::CloseReasons::TIMED_OUT;
+    else if ( reason==2 )
+        r = NotificationEnums::CloseReasons::DISMISSED;
+    snore()->closeNotification ( noti ,r);
 }
+
+//QString fNotification::getVendor()
+//{
+//    if ( vendor == "" )
+//    {
+//        QDBusMessage recive =  notificationInterface.call ( QDBus::AutoDetect,"GetServerInformation" );
+//        vendor=recive.arguments() [1].toString();
+//        qDebug() <<recive.arguments();
+//    }
+//    return vendor;
+//}
 
 
 
-void fNotification::close()
-{
-    blockSignals ( true );
-    if ( !selfdistruct->isActive() )
-    {
-        _notification->setActionInvoked ( Notification::TIMED_OUT );
-        parent->snore()->closeNotification ( _notification );
-        selfDelete();
-    }
-    selfdistruct->stop();
-}
-
-QString fNotification::getVendor()
-{
-    if ( vendor == "" )
-    {
-        QDBusMessage recive =  notificationInterface.call ( QDBus::AutoDetect,"GetServerInformation" );
-        vendor=recive.arguments() [1].toString();
-        qDebug() <<recive.arguments();
-    }
-    return vendor;
-}
-void fNotification::selfDelete()
-{
-    _notification.clear();
-}
 
 
 

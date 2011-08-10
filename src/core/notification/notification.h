@@ -86,7 +86,7 @@ public:
     const SnoreIcon &icon() const;
     const QString &alert() const;
     void setSticky();
-    const bool sticky() const;
+    bool sticky() const;
     const NotificationEnums::Prioritys::prioritys &priority() const;
     const QMap<int,Action*> &actions() const;
     void addAction(Action *a);

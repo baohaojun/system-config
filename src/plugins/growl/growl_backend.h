@@ -38,7 +38,7 @@ private:
 public slots:
     void registerApplication(Application *application);
     void unregisterApplication(class Application *application);
-    int notify(Notification notification);
+    uint notify(Notification notification);
     void closeNotification(Notification notification);
 };
 

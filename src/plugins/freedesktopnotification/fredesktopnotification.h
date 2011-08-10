@@ -23,24 +23,6 @@
 #include <QMetaType>
 
 
-class FreedesktopImageHint;
-
-class FreedesktopNotification{
-public:
-    static void registerTypes();
-
-public:
-    FreedesktopNotification();
-    FreedesktopNotification(Notification noti);
-    
-    Notification notification;
-};
-
-Q_DECLARE_METATYPE(FreedesktopNotification);
-
-QDBusArgument &operator<<(QDBusArgument &a,const FreedesktopNotification &i);
-const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotification &i) ;
-
 class FreedesktopImageHint
 {
 public:    

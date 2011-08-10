@@ -36,7 +36,7 @@ public:
     void publicatePlugin ( SnorePlugin *plugin );
 
 
-    int broadcastNotification ( Notification notification );
+    uint broadcastNotification ( Notification notification );
     void closeNotification ( Notification notification, const NotificationEnums::CloseReasons::closeReasons &reason );
     void notificationActionInvoked ( Notification notification );
 

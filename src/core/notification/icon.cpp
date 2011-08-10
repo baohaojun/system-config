@@ -17,7 +17,7 @@
 #include "icon.h"
 #include "../snoreserver.h"
 
-#include <QCryptographichash>
+#include <QCryptographicHash>
 #include <QBuffer>
 #include <QHash>
 #include <QFile>
@@ -121,10 +121,13 @@ const QString &SnoreIcon::hash() const{
     return d->_hash;
 }
 
-const bool SnoreIcon::isLocalFile() const
+bool SnoreIcon::isLocalFile() const
 {
     return d->_isLocalFile;
 }
 
+bool SnoreIcon::isEmpty() const{
+    return d->_hash.isEmpty() && d->_img.isNull() && d->_localFileName.isEmpty();
+}
 
 #include "icon.moc"

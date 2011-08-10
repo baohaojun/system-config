@@ -68,7 +68,7 @@ void Growl_Backend::unregisterApplication(Application *application){
 	delete growl;
 }
 
-int Growl_Backend::notify(Notification notification){
+uint Growl_Backend::notify(Notification notification){
 	gntp *growl = _applications.value(notification.application());
 	if(growl == NULL)
 		return -1;        

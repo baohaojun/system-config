@@ -63,7 +63,7 @@ public:
 public slots:
     virtual void registerApplication ( class Application *application ) =0;
     virtual void unregisterApplication ( class Application *application ) =0;
-    virtual int notify ( Notification notification ) =0;
+    virtual uint notify ( Notification notification ) =0;
     virtual void closeNotification (Notification notification ) =0;
 
     //    virtual void update

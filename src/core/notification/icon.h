@@ -36,7 +36,8 @@ public:
     const QString &localUrl() const;
     const QByteArray &imageData() const;
     const QString &hash() const;
-    const bool isLocalFile() const;
+    bool isLocalFile() const;
+    bool isEmpty() const;
 
 
 private:

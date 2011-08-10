@@ -111,7 +111,7 @@ void SnoreServer::publicatePlugin ( SnorePlugin *plugin )
     }
 }
 
-int SnoreServer::broadcastNotification ( Notification notification )
+uint SnoreServer::broadcastNotification ( Notification notification )
 {
     emit notify ( notification );
     if ( _notificationBackend!=NULL )

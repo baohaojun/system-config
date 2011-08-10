@@ -19,67 +19,17 @@
 #include <QImage>
 #include <QtGlobal>
 
-#include <iostream>
 
-FreedesktopNotification::FreedesktopNotification()
-{
-    registerTypes();
+
+static int imageHintID = qDBusRegisterMetaType<FreedesktopImageHint>();
+
+
+FreedesktopImageHint::FreedesktopImageHint(){
+
 }
-
-FreedesktopNotification::FreedesktopNotification(Notification noti):
-        notification(noti)
-{
-    registerTypes();
-}
-
-void FreedesktopNotification::registerTypes() {
-    qDBusRegisterMetaType<FreedesktopImageHint>();
-    qDBusRegisterMetaType<FreedesktopNotification>();
-}
-
-QDBusArgument &operator<<(QDBusArgument &a, const FreedesktopNotification &i) {
-    //   Q_ASSERT(!i.notification.isNull());
-    qDebug()<<i.notification.toString();
-    a<<i.notification.application();
-    a<<uint(0);
-	a<<i.notification.icon().image();
-    a<<i.notification.title();
-    a<<i.notification.text();
-    QStringList actions;
-    actions<<"1"<<" "<<"2"<<" ";
-    a<<actions;
-    a.beginMap();
-	QImage img(i.notification.icon().image());
-    if (!img.isNull()) {
-        img=img.scaledToWidth(50,Qt::FastTransformation);
-        a.beginMapEntry();
-        a<<"image_data";
-        FreedesktopImageHint fh(img);
-        a<<fh;
-        a.endMapEntry();
-    }
-    a.endMap();
-    a<<i.notification.timeout()*1000;
-    return a;
-}
-
-const QDBusArgument & operator >>(const QDBusArgument &a,  FreedesktopNotification &) {
-    //not supported
-    return a;
-}
-
-
-
-
-FreedesktopImageHint::FreedesktopImageHint()
-{
-    FreedesktopNotification::registerTypes();
-}
-
 
 FreedesktopImageHint::FreedesktopImageHint(const QImage &img)
 {
-    FreedesktopNotification::registerTypes();
     QImage image(img.convertToFormat(QImage::Format_ARGB32));
     this->imageData.append((char*)image.rgbSwapped().bits(),image.numBytes());
     width=image.width();
