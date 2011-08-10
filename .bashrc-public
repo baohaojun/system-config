@@ -83,17 +83,15 @@ lcd()
         history -s cd "$(printf %q "$1")"
         return 0
     fi
-    
-    if [[ `pwd` =~ ^$HOME/smb ]]; then
-        if _ucd $1; then
-	    return $?
-	fi
-    fi
-
+   
     local ori=$1
+    local start=$PWD
+    local looking=$PWD
     local x=0
-    while ! test -e "$1" >/dev/null && ((x++ < 10)); do 
+    while ! test -e "$1" >/dev/null || { [[ "$looking" =~ ^$HOME/smb(/[^/]+)?$ ]] && test "$looking" != "$start"; }; do # [[..]] because test -e not work in smbnetfs top levels
         set -- ../"$1";
+	looking=`dirname $looking`
+	test "$looking" = / && break
     done
 
     if ! test -e "$1" >/dev/null; then
