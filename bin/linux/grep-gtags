@@ -79,9 +79,10 @@ sub do_cscope($$$$) {
     my %update_path;
     for (sort {adistr($b, $approx_dir) <=> adistr($a, $approx_dir)} @matches) {
         m/(.*?) (.*?) (.*?) (.*)/;
-        print "$code_dir/$1:$3: $4\n";
+	my ($file, $line, $str) = ($1, $3, $4);
+        print "$code_dir/$file:$line: $str\n" unless $str =~ m/^#undef/;
         
-        $update_path{$1} = 1;
+        $update_path{$file} = 1;
     }
     chdir ($code_dir) or die "Can not change to $code_dir";
     for (keys %update_path) {
