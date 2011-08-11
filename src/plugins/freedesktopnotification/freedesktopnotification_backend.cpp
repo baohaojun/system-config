@@ -69,9 +69,13 @@ uint  FreedesktopNotification_Backend::notify ( Notification noti )
     message.setArguments(args);
 
     QDBusMessage replyMsg = QDBusConnection::sessionBus().call(message);
-    uint id = replyMsg.arguments().last().toInt();
-    activeNotifications[id] = noti;
-    startTimeout(id,noti.timeout());
+    uint id ;
+    if(replyMsg.type() == QDBusMessage::ReplyMessage){
+        id= replyMsg.arguments().at(0).toUInt();
+        qDebug()<<"DBUS_ID"<<id;
+        activeNotifications[id] = noti;
+        startTimeout(id,noti.timeout());
+    }
     return id;
 }
 void FreedesktopNotification_Backend::actionInvoked(const uint &id, const QString &actionID){
@@ -79,8 +83,6 @@ void FreedesktopNotification_Backend::actionInvoked(const uint &id, const QStrin
     qDebug() <<"Action"<<id<<"|"<<actionID ;
     noti.setActionInvoked ( actionID == "default"?1:actionID.toInt() );
     snore()->notificationActionInvoked ( noti );
-    snore()->closeNotification(noti,NotificationEnums::CloseReasons::CLOSED);
-
 }
 
 void FreedesktopNotification_Backend::closeNotification ( Notification notification )
@@ -94,21 +96,14 @@ void FreedesktopNotification_Backend::closeNotification ( Notification notificat
 }
 
 
-//QString fNotification::vendor ( "" );
-
-
-
 
 void FreedesktopNotification_Backend::closed ( const uint &id,const uint &reason )
 {
-    Notification noti =  activeNotifications[id];
     qDebug() <<"Closed"<<id<<"|"<<reason;
-    NotificationEnums::CloseReasons::closeReasons r = NotificationEnums::CloseReasons::NONE;
-    if ( reason==1 )
-        r = NotificationEnums::CloseReasons::TIMED_OUT;
-    else if ( reason==2 )
-        r = NotificationEnums::CloseReasons::DISMISSED;
-    snore()->closeNotification ( noti ,r);
+    if(id == 0)
+        return;
+    Notification noti =  activeNotifications.take(id);
+    snore()->closeNotification ( noti ,QFlag(reason));
 }
 
 //QString fNotification::getVendor()
