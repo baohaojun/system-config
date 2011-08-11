@@ -86,7 +86,7 @@ void Snarl_Backend::unregisterApplication(Application *application){
     delete snarlInterface;
 }
 
-int Snarl_Backend::notify(Notification notification){
+uint Snarl_Backend::notify(Notification notification){
     SnarlInterface *snarlInterface = _applications.value(notification.application());
     qDebug()<<"Snarl using the notification instance of:"<<notification.application();
     if(snarlInterface == NULL){
