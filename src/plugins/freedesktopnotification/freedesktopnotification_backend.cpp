@@ -74,12 +74,13 @@ uint  FreedesktopNotification_Backend::notify ( Notification noti )
         id= replyMsg.arguments().at(0).toUInt();
         qDebug()<<"DBUS_ID"<<id;
         activeNotifications[id] = noti;
-        startTimeout(id,noti.timeout());
     }
     return id;
 }
 void FreedesktopNotification_Backend::actionInvoked(const uint &id, const QString &actionID){
     Notification noti = activeNotifications[id];
+    if(noti.id() == 0)
+        return;
     qDebug() <<"Action"<<id<<"|"<<actionID ;
     noti.setActionInvoked ( actionID == "default"?1:actionID.toInt() );
     snore()->notificationActionInvoked ( noti );
