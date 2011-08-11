@@ -31,7 +31,7 @@ lcd()
     local x=0
     while ! test -e "$1" >/dev/null || { [[ "$looking" =~ ^$HOME/smb(/[^/]+)?$ ]] && test "$looking" != "$start"; }; do # [[..]] because test -e not work in smbnetfs top levels
         set -- ../"$1";
-	looking=`dirname $looking`
+	looking=`dirname "$looking"`
 	test "$looking" = / && break
     done
 
