@@ -11,9 +11,18 @@ if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
     automoc4_add_library(freedesktop_frontend MODULE  ${FREEDESKTOP_NOTIFICATION_FRONTEND_SRC} )
     target_link_libraries(freedesktop_frontend  snorecore ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY} )
 
-	if(KDE4_FOUND)
-		target_link_libraries(freedesktop_frontend   ${KDE4_KDEUI_LIBRARY})
-	endif(KDE4_FOUND)
+    if(KDE4_FOUND)
+            target_link_libraries(freedesktop_frontend   ${KDE4_KDEUI_LIBRARY})
+    endif(KDE4_FOUND)
+
+
+    #install the dbus interface
+    set(SNORE_LOCATION ${CMAKE_INSTALL_PREFIX}/bin/snorenotify)
+
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/org.freedesktop.Notifications.service.cmake ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service)
+
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service
+                              DESTINATION share/dbus-1/services/)
 
     install(TARGETS freedesktop_frontend ${PLUGIN_INSTALL_PATH})
 endif(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)

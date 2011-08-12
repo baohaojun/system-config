@@ -152,6 +152,7 @@ void SnoreServer::applicationIsInitialized ( Application *application )
 
 void SnoreServer::removeApplication ( const QString& appName )
 {
+    qDebug()<<"Remove Application"<<appName;
     emit applicationRemoved ( _applications.value ( appName ) );
     _applications.take ( appName )->deleteLater();
 }

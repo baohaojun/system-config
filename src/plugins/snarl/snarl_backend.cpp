@@ -96,7 +96,6 @@ uint Snarl_Backend::notify(Notification notification){
     }
     uint id = notification.id();
 
-    qDebug()<<"Snarl is localfile"<<notification.icon().isLocalFile();
     if(id == 0){
         id = snarlInterface->Notify(notification.alert().toUtf8().constData(),
                                     Notification::toPlainText(notification.title()).toUtf8().constData(),
