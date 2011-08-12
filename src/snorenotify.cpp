@@ -65,9 +65,11 @@ void SnoreNotify::save(){
 
 void SnoreNotify::exit(){
     qDebug()<<"Saving snore settings";
+    foreach(Application *a,_snore->aplications()){
+        _snore->removeApplication(a->name());
+    }
     save();
     _trayIcon->hide();
-
 }
 
 

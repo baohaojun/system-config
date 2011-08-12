@@ -113,8 +113,9 @@ void SnoreServer::publicatePlugin ( SnorePlugin *plugin )
 
 uint SnoreServer::broadcastNotification ( Notification notification )
 {
+    qDebug()<<"Broadcasting"<<notification.title()<<notification.timeout();
     emit notify ( notification );
-    if ( _notificationBackend!=NULL )
+    if ( _notificationBackend != NULL )
     {
         notification.setId(_notificationBackend->notify ( notification ));
         return  notification.id();

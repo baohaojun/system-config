@@ -87,16 +87,11 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
         priotity =  NotificationEnums::Prioritys::prioritys(hints["urgency"].toInt()-1);
     }
 
-
-
-    Notification noti(app_name,"DBus Alert",summary,body,icon,timeout==-1?-1:timeout/1000,replaces_id,priotity);
+    Notification noti(app_name,"DBus Alert",summary,body,icon,timeout==-1?Notification::DefaultTimeout:timeout/1000,replaces_id,priotity);
     noti.setSource(this);
-    qDebug()<<"Actions"<<actions;
-
     for(int i = 0;i < actions.length(); i+=2){
         noti.addAction(new Notification::Action(actions.at(i).toInt(),actions.at(i+1)));
     }
-
 
     snore()->broadcastNotification(noti);
     activeNotifications[noti.id()] = noti;

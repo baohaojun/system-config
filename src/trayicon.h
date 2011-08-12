@@ -25,13 +25,13 @@ class TrayIcon:public QObject
 public:
     TrayIcon();
     void initConextMenu(class SnoreServer *snore);
-	void hide();
-	class QSystemTrayIcon* trayIcon();
+    void hide();
+    class QSystemTrayIcon* trayIcon();
 
 private:
     class QSystemTrayIcon *_trayIcon;
     class QMenu *_trayMenu;
-	class QList<class QAction*> _backendActions;
+    class QList<class QAction*> _backendActions;
     class SnoreServer *_snore;
 
 

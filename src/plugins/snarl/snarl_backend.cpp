@@ -101,7 +101,7 @@ uint Snarl_Backend::notify(Notification notification){
         id = snarlInterface->Notify(notification.alert().toUtf8().constData(),
                                     Notification::toPlainText(notification.title()).toUtf8().constData(),
                                     Notification::toPlainText(notification.text()).toUtf8().constData(),
-                                    notification.timeout()+1,//+1 make a sticke snarl sticky and doesnt matter for the rest
+                                    notification.timeout(),
                                     notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
                                     !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
                                     notification.priority());
@@ -118,7 +118,7 @@ uint Snarl_Backend::notify(Notification notification){
                                notification.alert().toUtf8().constData(),
                                Notification::toPlainText(notification.title()).toUtf8().constData(),
                                Notification::toPlainText(notification.text()).toUtf8().constData(),
-                               notification.timeout()+1,
+                               notification.timeout(),
                                notification.icon().isLocalFile()?notification.icon().localUrl().toUtf8().constData():0,
                                !notification.icon().isLocalFile()?notification.icon().imageData().toBase64().constData():0,
                                notification.priority());

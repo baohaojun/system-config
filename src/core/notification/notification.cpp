@@ -176,14 +176,13 @@ const QString &Notification::alert() const
 
 bool Notification::sticky() const
 {
-    return d->_timeout == -1;
+    return d->_timeout == 0;
 }
 
 void Notification::setSticky()
 {
-    d->_timeout = -1;
+    d->_timeout = 0;
 }
-
 
 const NotificationEnums::Prioritys::prioritys &Notification::priority() const
 {
