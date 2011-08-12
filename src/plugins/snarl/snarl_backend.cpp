@@ -82,7 +82,9 @@ void Snarl_Backend::unregisterApplication(Application *application){
     SnarlInterface *snarlInterface = _applications.take(application->name());
     if(snarlInterface == NULL)
         return;
-    snarlInterface->Unregister(application->name().toUtf8().constData());
+    QString appName = application->name();
+    appName = appName.replace(" ","_");//app sig must not contain spaces
+    snarlInterface->Unregister(appName.toUtf8().constData());
     delete snarlInterface;
 }
 
