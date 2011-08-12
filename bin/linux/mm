@@ -13,6 +13,5 @@ cd -
 
 lcd `lookup_file Android.mk` >/dev/null 2>&1
 mm "$@" 2>&1|grep -v '^Copy: out/target/product/.*/system/media/audi'|perl -ne 'print unless /unmappable character for encoding ascii/'
-ainstall
 
 echo OK
