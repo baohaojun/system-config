@@ -4,10 +4,4 @@ for x in ~/.mozilla/firefox/*/; do
     rm -rf "$dir"
     mkdir -p "$dir"
     ln -sf ~/gcode/Firemacs/* "$dir"
-    rm "$dir"/chrome.manifest
-    cat <<End >"$dir"/chrome.manifest
-overlay	chrome://browser/content/browser.xul	chrome://firemacs/content/statusbar.xul
-content	firemacs	chrome/content/
-skin	firemacs	classic/1.0	chrome/skin/
-End
 done
