@@ -323,7 +323,7 @@
     (ring-insert ring obj)))
 ;; (defcustom bhj-grep-default-directory "/pscp:a22242@10.194.131.91:/"
 ;;   "the default directory in which to run grep")
-(keydef "C-M-g" (progn
+(keydef "M-s g" (progn
                   (let ((current-prefix-arg 4)
                         ;; (default-directory (eval bhj-grep-default-directory))
                         (grep-use-null-device nil))
