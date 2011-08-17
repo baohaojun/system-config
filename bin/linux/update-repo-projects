@@ -9,7 +9,7 @@ if test $# == 0; then
     set -- `locate -b -r '^\.repo$'|grep src`
 fi
 
-
+echo will update: "$@"
 for x in "$@"; do 
     (
         set -e

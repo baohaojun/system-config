@@ -5,6 +5,7 @@ export PATH=/usr/local/bin:$PATH
 function do_it() {
     mkbeagleidx 
     mkgtags -i
+    touch .for-code-reading
 }
 
 for x in `locate .for-code-reading`; do 

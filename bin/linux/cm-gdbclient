@@ -1,6 +1,10 @@
 #!/bin/bash
 set -- `readlink -f "$1" ` $2
 OUT_ROOT=/tmp
+if ! test -e "$1/system/bin/$2" -a -e "$1"/buildspec.mk; then
+    . build/envsetup.sh
+    set -- $(get_abs_build_var TARGET_OUT_EXECUTABLES_UNSTRIPPED)/../.. $2
+fi
 OUT_SYMBOLS="$1"
 OUT_SO_SYMBOLS="$1"/system/lib
 PORT=:5039

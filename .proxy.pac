@@ -22,7 +22,7 @@
             'xmages.net', 'iphone-dev.org', 'osdir.com', 'www.scribd.com',
             'google.com.hk', 'old.nabble.com', 'wikitionary.org',
 	    'www.dwheeler.com', 'plus.google.com', 'trhall.org',
-	    'archivum.info',
+	    'archivum.info', 'vtap.com',
         ];
     
     var regexp = new RegExp(blocked_site.join('|'));

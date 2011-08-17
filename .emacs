@@ -323,7 +323,7 @@
     (ring-insert ring obj)))
 ;; (defcustom bhj-grep-default-directory "/pscp:a22242@10.194.131.91:/"
 ;;   "the default directory in which to run grep")
-(keydef "M-s g" (progn
+(keydef "M-g r" (progn
                   (let ((current-prefix-arg 4)
                         ;; (default-directory (eval bhj-grep-default-directory))
                         (grep-use-null-device nil))
@@ -1417,6 +1417,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key (kbd "s-h") help-map)
 (global-set-key (kbd "C-{") 'beginning-of-buffer)
 (global-set-key (kbd "C-}") 'end-of-buffer)
+(global-set-key (kbd "M-.") 'gtags-grep)
 (global-set-key (kbd "C-.") 'gtags-grep)
 (global-set-key (kbd "M-s f") 'grep-func-call)
 ;(global-set-key [?\C-,] (lookup-key global-map [?\C-x]))
