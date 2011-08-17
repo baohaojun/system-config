@@ -35,7 +35,7 @@ if ($pwd eq "/" or $pwd eq glob("~")) {
     print "pwd is read from ~/.gtags-dir at $pwd\n";
 	
 } else {
-    system("rm", glob("~/.gtags_dir"));
+    system("rm", "-f", glob("~/.gtags_dir"));
     system("ln", '-sf', $pwd, glob("~/.gtags-dir"));
 }
 
