@@ -1421,6 +1421,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key (kbd "C-.") 'gtags-grep)
 (global-set-key (kbd "M-s f") 'grep-func-call)
 ;(global-set-key [?\C-,] (lookup-key global-map [?\C-x]))
+(define-key diff-mode-map (kbd "M-g") (lookup-key global-map (kbd "M-g")))
 (global-set-key [?\C-'] 'hippie-expand)
 (keyboard-translate ?\C-x ?\C-h)
 (keyboard-translate ?\C-h ?\C-x)
