@@ -533,7 +533,7 @@
  '(longlines-auto-wrap nil)
  '(makefile-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(message-dont-reply-to-names (quote (".*haojun.*")))
- '(message-mail-alias-type (quote ecomplete))
+ '(message-mail-alias-type nil)
  '(mm-text-html-renderer (quote w3m))
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
@@ -542,6 +542,7 @@
  '(save-place t nil (saveplace))
  '(senator-minor-mode-hook (quote (ignore)))
  '(session-initialize (quote (de-saveplace session places keys menus)) nil (session))
+ '(session-use-package t nil (session))
  '(shell-file-name "/bin/bash")
  '(show-paren-mode t nil (paren))
  '(show-paren-style (quote parenthesis))
@@ -1421,8 +1422,59 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key (kbd "C-.") 'gtags-grep)
 (global-set-key (kbd "M-s f") 'grep-func-call)
 ;(global-set-key [?\C-,] (lookup-key global-map [?\C-x]))
-(define-key diff-mode-map (kbd "M-g") (lookup-key global-map (kbd "M-g")))
 (global-set-key [?\C-'] 'hippie-expand)
 (keyboard-translate ?\C-x ?\C-h)
 (keyboard-translate ?\C-h ?\C-x)
 ;(global-set-key (kbd "C-h") 'execute-extended-command)
+
+(require 'bbdb-autoloads)
+(require 'bbdb)
+(load "bbdb-com" t)
+(bbdb-initialize 'gnus 'message)
+(bbdb-insinuate-message)
+;; (bbdb-insinuate-sc)
+(setq bbdb-north-american-phone-numbers nil)
+(add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+(setq bbdb-auto-notes-alist
+      (quote (("To"
+	       ("w3o" . "w3o")
+	       ("plug" . "plug")
+	       ("linux" . "linux")
+	       ("emacs-commit" . "emacs commit")
+	       ("emacs" . "emacs")
+	       ("pinoyjug" . "pinoyjug")
+	       ("digitalfilipino" . "digitalfilipino")
+	       ("sacha" . "personal mail"))
+	      ("From"
+	       ("admu" company "Ateneo de Manila University")
+	       ("Organization" (".*" company 0 nil))
+	       ))))
+(setq bbdb-auto-notes-ignore 
+      (quote 
+       (("Organization" . "^Gatewayed from\\\\|^Source only"))))
+(setq bbdb-auto-notes-ignore-all nil)
+(setq bbdb-check-zip-codes-p nil)
+(setq bbdb-default-area-code 632)
+(setq bbdb-default-country "Philippines")
+(setq bbdb-ignore-some-messages-alist 
+      (quote 
+       (("From" . "hotmail")
+	("To" . "handhelds")
+	("From" . "yahoo.com")
+	("From" . "gwene.org")
+	("From" . "gerrit2@bear.eee168.com"))))
+(setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
+(setq bbdb/mail-auto-create-p t)
+(setq bbdb/news-auto-create-p (quote bbdb-ignore-some-messages-hook))
+
+(setq bbdb-always-add-addresses 'bbdb-ignore-some-messages-hook)
+
+;; (defun bbdb-bhj-unify-eee168 (record)
+;;   (bbdb-record-putprop record 'net (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net)))
+
+ (setq bbdb-canonicalize-net-hook
+       '(lambda (addr)
+	  (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr)))
+
+
+;; (setq bbdb-create-hook '(bbdb-creation-date-hook bbdb-bhj-unify-eee168))
