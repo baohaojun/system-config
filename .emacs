@@ -1454,20 +1454,17 @@ Starting from DIRECTORY, look upwards for a cscope database."
        (("Organization" . "^Gatewayed from\\\\|^Source only"))))
 (setq bbdb-auto-notes-ignore-all nil)
 (setq bbdb-check-zip-codes-p nil)
-(setq bbdb-default-area-code 632)
-(setq bbdb-default-country "Philippines")
 (setq bbdb-ignore-some-messages-alist 
       (quote 
        (("From" . "hotmail")
 	("To" . "handhelds")
 	("From" . "yahoo.com")
 	("From" . "gwene.org")
+	("From" . "linkedin.com")
 	("From" . "gerrit2@bear.eee168.com"))))
 (setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
-(setq bbdb/mail-auto-create-p t)
+(setq bbdb/mail-auto-create-p (quote bbdb-ignore-some-messages-hook))
 (setq bbdb/news-auto-create-p (quote bbdb-ignore-some-messages-hook))
-
-(setq bbdb-always-add-addresses 'bbdb-ignore-some-messages-hook)
 
 ;; (defun bbdb-bhj-unify-eee168 (record)
 ;;   (bbdb-record-putprop record 'net (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net)))
