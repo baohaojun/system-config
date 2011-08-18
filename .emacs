@@ -1422,7 +1422,8 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key (kbd "C-.") 'gtags-grep)
 (global-set-key (kbd "M-s f") 'grep-func-call)
 ;(global-set-key [?\C-,] (lookup-key global-map [?\C-x]))
-(define-key diff-mode-map (kbd "M-g") (lookup-key global-map (kbd "M-g")))
+(eval-after-load "diff-mode"
+  '(define-key diff-mode-map (kbd "M-g") (lookup-key global-map (kbd "M-g"))))
 (global-set-key [?\C-'] 'hippie-expand)
 (keyboard-translate ?\C-x ?\C-h)
 (keyboard-translate ?\C-h ?\C-x)
@@ -1476,3 +1477,60 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 
 ;; (setq bbdb-create-hook '(bbdb-creation-date-hook bbdb-bhj-unify-eee168))
+(defun bbdb-skeleton-complete-name (&optional start-pos)
+  (interactive)
+  (letf* ((old-all-completions (symbol-function 'all-completions))
+	  (old-try-completion (symbol-function 'try-completion)))
+    (flet
+	((all-completions 
+	  (STRING COLLECTION &optional PREDICATE)
+	  (let* ((fragments (mapcar 'regexp-quote (split-string STRING))))
+	    (while fragments
+	      (setq COLLECTION (mapcan 
+				(lambda (x) 
+				  (if (string-match (car fragments) (cond
+								     ((symbolp x) (symbol-name x))
+								     (t "")))
+				      (if (cdr fragments)
+					  (list x)
+					(and (when (functionp PREDICATE)
+					       (funcall PREDICATE x))
+					     (list x)))
+				    nil))
+				COLLECTION)
+		    fragments (cdr fragments)))
+	    COLLECTION))
+
+	 (try-completion
+	  (STRING COLLECTION &optional PREDICATE)
+	  (let* ((fragments (mapcar 'regexp-quote (split-string STRING)))
+		 (final (car (reverse (split-string STRING))))
+		 res)
+	    (while fragments
+	      (setq COLLECTION (mapcan
+				(lambda (x) 
+				  (if (string-match (car fragments) x)
+				      (if (cdr fragments)
+					  (list x)
+					(list (substring x (match-beginning 0))))
+				    nil))
+				(funcall old-all-completions "" COLLECTION))
+		    fragments (cdr fragments)))
+	    (message "COLLECTION is %s\n" COLLECTION)
+	    (setq res (funcall old-try-completion final COLLECTION PREDICATE))
+	    (message "res is %s; final is %s\n" res final)
+	    (if (and (stringp res) (string-match final res))
+		(concat STRING (substring res (match-end 0)))
+	      res))))
+      (bbdb-complete-name start-pos))))
+			 
+
+(defun string-skeleton-match (target source)
+  (let* ((fragments (mapcar 'regexp-quote (split-string target)))
+	 (res t))
+    (while fragments
+      (unless (string-match (car fragments) source)
+	(setq res nil
+	      fragments nil))
+      (setq fragments (cdr fragments)))
+    res))
