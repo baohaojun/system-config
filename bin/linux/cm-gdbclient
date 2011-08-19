@@ -18,5 +18,11 @@ if test -n "$EMACS"; then
     annotate=--annotate=3
 fi
 
+if test "$3" = gui; then
+    annotate=--annotate=3
+elif test "$3" = text; then
+    annotate=--fullname
+fi
+
 exec arm-eabi-gdb $annotate -x "$OUT_ROOT/gdbclient.cmds" "$1/system/bin/$2"
 
