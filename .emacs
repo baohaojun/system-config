@@ -1457,9 +1457,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (setq bbdb-auto-notes-ignore-all nil)
 (setq bbdb-check-zip-codes-p nil)
 (setq bbdb-ignore-some-messages-alist 
-      (quote 
+      '(
 	("From" . "linkedin.com")
-	("From" . "gerrit2@bear.eee168.com"))))
+	("From" . "gerrit2@bear.eee168.com")))
 (setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
 (setq bbdb/mail-auto-create-p (quote bbdb-ignore-some-messages-hook))
 (setq bbdb/news-auto-create-p nil)
