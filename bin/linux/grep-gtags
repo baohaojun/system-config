@@ -26,6 +26,7 @@ chomp($pwd = $ENV{PWD});
 
 $pwd = "$ENV{HOME}/tmp/for-code-reading$pwd";
 our $approx_dir = $pwd;
+
 while ( not -f "$pwd/GTAGS" and not "$pwd" eq "/") {
     chomp($pwd = `dirname "$pwd"`);
 }
@@ -40,7 +41,7 @@ if ($pwd eq "/" or $pwd eq glob("~")) {
 }
 
 $approx_dir = substr($approx_dir, length($pwd));
-
+print "approx_dir is $approx_dir\n";
 my $lookup_type = 1;
 my $lookup_needle = "hello_world";
 my $lookup_restrict_regexp;
@@ -79,6 +80,7 @@ sub do_cscope($$$$) {
     my $gpath_path = "$gtags_dir/GPATH";
     my %update_path;
     for (sort {adistr($b, $approx_dir) <=> adistr($a, $approx_dir)} @matches) {
+	print "dist between $_ and $approx_dir is " . adistr($_, $approx_dir) . "\n";
         m/(.*?) (.*?) (.*?) (.*)/;
 	my ($file, $line, $str) = ($1, $3, $4);
         print "$code_dir/$file:$line: $str\n" unless $str =~ m/^#undef/ or $file =~ m,external/kernel-headers,;
