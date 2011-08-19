@@ -14,5 +14,9 @@ echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS"
 echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
 echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
-arm-eabi-gdb -x "$OUT_ROOT/gdbclient.cmds" "$1/system/bin/$2"
+if test -n "$EMACS"; then
+    annotate=--annotate=3
+fi
+
+exec arm-eabi-gdb $annotate -x "$OUT_ROOT/gdbclient.cmds" "$1/system/bin/$2"
 
