@@ -25,7 +25,7 @@ my $pwd;
 chomp($pwd = $ENV{PWD});
 
 $pwd = "$ENV{HOME}/tmp/for-code-reading$pwd";
-our $approx_dir = $pwd;
+our $approx_dir = "ENV{HOME}/tmp/for-code-reading$ENV{GTAGS_START_FILE}";
 
 while ( not -f "$pwd/GTAGS" and not "$pwd" eq "/") {
     chomp($pwd = `dirname "$pwd"`);
@@ -85,9 +85,10 @@ sub do_cscope($$$$) {
 
     my $gpath_path = "$gtags_dir/GPATH";
     my %update_path;
-    for (sort {adistr($matches{$b}->[0], $approx_dir) <=> adistr($matches{$a}->[0], $approx_dir)} @matches) {
+    for (sort {abs(adistr($matches{$a}->[0], $approx_dir)) <=> abs(adistr($matches{$b}->[0], $approx_dir))} @matches) {
+	# print 'dist between "' . $matches{$_}->[0] . '" and "' . $approx_dir . '" is ' . abs(adistr($matches{$_}->[0], $approx_dir)) . "\n";
 	my ($file, $line, $str) = ($matches{$_}->[0], $matches{$_}->[2], $matches{$_}->[3]);
-        print "$code_dir/$file:$line: $str\n" unless $str =~ m/^#undef|^EXPORT_SYMBOL/ or $file =~ m,external/kernel-headers,;
+        print "$code_dir/$file:$line: $str\n" unless $str =~ m/^#undef|^EXPORT_SYMBOL/ or $file =~ m,external/kernel-headers, or $file =~ m,android-[2-7]/arch-,;
         
         $update_path{$file} = 1;
     }

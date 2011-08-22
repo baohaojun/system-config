@@ -4,7 +4,7 @@ exec >/dev/null
 export PATH=/usr/local/bin:$PATH
 function do_it() {
     mkbeagleidx 
-    mkgtags -i
+    mkgtags -i > .for-code-reading 2>&1
     touch .for-code-reading
 }
 
