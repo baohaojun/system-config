@@ -41,7 +41,7 @@ if ($pwd eq "/" or $pwd eq glob("~")) {
 }
 
 $approx_dir = substr($approx_dir, length($pwd));
-print "approx_dir is $approx_dir\n";
+
 my $lookup_type = 1;
 my $lookup_needle = "hello_world";
 my $lookup_restrict_regexp;
