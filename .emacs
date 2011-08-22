@@ -1487,27 +1487,24 @@ Starting from DIRECTORY, look upwards for a cscope database."
       
       (setq COLLECTION (mapcan 
 			(lambda (x)
-			  (let ((oldx x))
-			    (if (symbolp x)
-				(setq x (format "%s" (symbol-value x)))
-			      (setq x ""))
+			  (let ((tmp (if (symbolp x)
+					 (format "%s" (symbol-value x))
+				       (format "%s" x))))
 
-			    ;; (if (string-match "bao" (format "%s" oldx))
-			    ;; 	(message "(string-match \"%s\" \"%s\") x is %s\n" (car fragments) x oldx))
-			    (if (string-match "@.*@" x)
-			      (setq x ""))
+			    ; (if (string-match "haojun.bao@ray" tmp)
+			    ;   (message "'%s' : '%s'" x tmp))
 
-			    (if (string-match (car fragments) x)
+			    (if (string-match (car fragments) tmp)
 				(progn ;(message "(string-match \"%s\" \"%s\") x is %s\n" (car fragments) x oldx)
 				       (if (cdr fragments)
-					   (list oldx)
+					   (list x)
 					 (and (when (functionp PREDICATE)
-						(funcall PREDICATE oldx))
-					      (list oldx))))
+						(funcall PREDICATE x))
+					      (list x))))
 			      nil)))
 			COLLECTION)
 	    fragments (cdr fragments))
-      ;; (message "COLLECTION is %s\n" COLLECTION)
+      ;; (message "COLLECTION all- is %s\n" COLLECTION)
       )
     COLLECTION))
 
@@ -1518,21 +1515,20 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (while fragments
       (setq COLLECTION (mapcan
 			(lambda (x) 
-			  (when (symbolp x)
-			    (setq x (symbol-name x)))
-			  (if (and (stringp x) (string-match (car fragments) x))
-			      (if (cdr fragments)
-				  (list x)
-				(list (substring x (match-beginning 0))))
-			    nil))
+			  (let ((tmp
+				 (if (symbolp x)
+				     (format "%s" (symbol-value x))
+				   (format "%s" x))))
+			    (if (string-match (car fragments) tmp)
+				    (list x)
+			      nil)))
 			COLLECTION)
 	    fragments (cdr fragments))
       )
-    (setq res (try-completion final COLLECTION PREDICATE))
-    ;; (message "res is %s; final is %s\n" res final)
-    (if (and (stringp res) (string-match final res))
-	(concat STRING (substring res (match-end 0)))
-      res)))
+    ;; (message "COLLECTION is %s\n" COLLECTION)
+    (if (and COLLECTION (not (cdr COLLECTION)))
+	t
+      nil)))
 
 (defun string-skeleton-match (target source)
   (let* ((fragments (mapcar 'regexp-quote (split-string target)))
@@ -1733,38 +1729,7 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
 		      akas (mapcar 'downcase (bbdb-record-aka rec)))
 		(while nets
 		  (setq net (car nets))
-		  (when (cond
-			 ;; primary
-			 ((and (member bbdb-completion-type
-				       '(primary primary-or-name))
-			       (member (intern-soft (downcase net) ht)
-				       all-the-completions))
-			  (setq nets nil)
-			  t)
-			 ;; name
-			 ((and name (member bbdb-completion-type
-					    '(nil name primary-or-name))
-			       (let ((cname (symbol-name sym)))
-				 (or (string= cname name)
-				     (string= cname lfname)
-				     (member cname akas))))
-			  (setq name nil)
-			  t)
-			 ;; net
-			 ((and (member bbdb-completion-type
-				       '(nil net))
-			       (member (intern-soft (downcase net) ht)
-				       all-the-completions)))
-			 ;; (name-or-)primary
-			 ((and (member bbdb-completion-type
-				       '(name-or-primary))
-			       (let ((cname (symbol-name sym)))
-				 (or (string= cname name)
-				     (string= cname lfname)
-				     (member cname akas))))
-			  (setq nets nil)
-			  t)
-			 )
+		  (when (string-skeleton-match pattern (format "%s %s %s" name (format "%s" akas) net))
 		    (setq dwim-completions
 			  (cons (bbdb-dwim-net-address rec net)
 				dwim-completions))
