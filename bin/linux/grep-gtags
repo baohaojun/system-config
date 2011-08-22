@@ -87,7 +87,7 @@ sub do_cscope($$$$) {
     my %update_path;
     for (sort {adistr($matches{$b}->[0], $approx_dir) <=> adistr($matches{$a}->[0], $approx_dir)} @matches) {
 	my ($file, $line, $str) = ($matches{$_}->[0], $matches{$_}->[2], $matches{$_}->[3]);
-        print "$code_dir/$file:$line: $str\n" unless $str =~ m/^#undef/ or $file =~ m,external/kernel-headers,;
+        print "$code_dir/$file:$line: $str\n" unless $str =~ m/^#undef|^EXPORT_SYMBOL/ or $file =~ m,external/kernel-headers,;
         
         $update_path{$file} = 1;
     }

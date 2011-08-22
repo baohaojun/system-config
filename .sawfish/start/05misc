@@ -11,7 +11,7 @@ while true; do
 	GA_LABEL=/BigOne  ./notifier.py;
 	sleep 5;
     )
-done&
+done >~/.gmail-notifier.log 2>&1 &
 qq
 ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
 
