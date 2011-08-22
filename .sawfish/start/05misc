@@ -5,10 +5,13 @@ if test -f ~/.offlineimaprc; then
     python2.6 ~/bin/windows/Imap4Monitor/Imap4Monitor.py&
 fi
 
-(
-    cd ~/gcode/gmail-notify-1.6.1.1;
-    GA_LABEL=/BigOne  ./notifier.py& 
-)
+while true; do
+    (
+	cd ~/gcode/gmail-notify-1.6.1.1;
+	GA_LABEL=/BigOne  ./notifier.py;
+	sleep 5;
+    )
+done&
 qq
 ps aux|grep gnome-sess|awk '{print $11}'|grep gnome-session || gnome-session&
 
