@@ -13,7 +13,7 @@ lcd()
     fi
     
 
-    if [[ "$1" =~ ^\\\\|^//|^smb:// && `uname` = Linux ]]; then
+    if [[ "$1" =~ ^\\\\|^//|^smb://|/smb/ && `uname` = Linux ]]; then
         chmod 600 ~/.smb/*
         if smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"|grep -q . ; then
 	    sudo umount -l ~/smb

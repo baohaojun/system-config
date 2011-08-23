@@ -15,7 +15,8 @@ BEGIN
 }
 
 $arg = $ARGV[0];
-$arg =~ s,^(?:\\|/|smb://)*(.*?)(\\|/|$),$2,;
+$home = $ENV{'HOME'};
+$arg =~ s,^(?:\\\\|//|smb://|$home/smb/)*(.*?)(\\|/|$),$2,;
 $host = $1;
 $arg =~ s,\\,/,g;
 $ip = $hosts{$host};
