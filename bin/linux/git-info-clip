@@ -2,7 +2,9 @@
 # http://github.com/baohaojun/windows-config/raw/master/bin/linux/
 . ~/.bashrc-public
 
+set -e
 lcd "$1"
+cd -P .
 git_dir=$(dirname $(lookup_file .git))
 lookup_file "$1" |perl -npe 's,'$git_dir',http://github.com/baohaojun/windows-config/raw/master,'|tr -d '\r\n'|tee /dev/tty|putclip
 

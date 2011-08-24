@@ -24,5 +24,12 @@ elif test "$3" = text; then
     annotate=--fullname
 fi
 
-exec arm-eabi-gdb $annotate -x "$OUT_ROOT/gdbclient.cmds" "$1/system/bin/$2"
+exec_file="$1/system/bin/$2"
+
+if ! test -e $exec_file && test "$2" = init;
+then
+    exec_file="$1/init"
+fi
+
+exec arm-eabi-gdb $annotate -x "$OUT_ROOT/gdbclient.cmds" $exec_file
 
