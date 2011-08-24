@@ -23,6 +23,7 @@
             'google.com.hk', 'old.nabble.com', 'wikitionary.org',
 	    'www.dwheeler.com', 'plus.google.com', 'trhall.org',
 	    'archivum.info', 'vtap.com', 'meinian.cn',
+	    'feedproxy.google.com',
         ];
     
     var regexp = new RegExp(blocked_site.join('|'));

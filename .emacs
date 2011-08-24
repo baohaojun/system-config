@@ -1460,6 +1460,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
       '(
 	("From" . "gwene.org")
 	("From" . "gmane.org")
+	("From" . "@newsmth.net-spam.no")
 	("From" . "linkedin.com")
 	("From" . "gerrit2@bear.eee168.com")
 	))
