@@ -22,6 +22,7 @@
 (defvar regexp-completion-history nil)
 
 (global-set-key [(meta return)] 'easy-regexp-display-abbrev)
+(global-set-key "\M-\r" 'easy-regexp-display-abbrev)
 
 (defun easy-regexp-display-abbrev ()
   "Simplify writing the regexp. Some thing like \"sthe.\" will be generated as 
