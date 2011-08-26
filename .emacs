@@ -1458,17 +1458,19 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (setq bbdb-check-zip-codes-p nil)
 (setq bbdb-ignore-some-messages-alist 
       '(
-	("From" . "gwene.org")
-	("From" . "gmane.org")
-	("From" . "@newsmth.net-spam.no")
 	("From" . "linkedin.com")
 	("From" . "gerrit2@bear.eee168.com")
 	))
 (setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
 (setq bbdb/mail-auto-create-p t)
-(setq bbdb/news-auto-create-p (quote bbdb-ignore-some-messages-hook))
+
 (setq bbdb-file "~/windows-config/.bbdb")
 (setq bbdb-always-add-addresses nil)
+(add-hook 'gnus-select-group-hook
+	  (lambda ()
+	    (if (string-match "^\\*Summary nntp" (buffer-name))
+		(setq bbdb/news-auto-create-p nil)
+	      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-alist))))
 ;; (defun bbdb-bhj-unify-eee168 (record)
 ;;   (bbdb-record-putprop record 'net (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net)))
 
