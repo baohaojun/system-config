@@ -7792,8 +7792,8 @@ image are displayed."
                            (assqref 'url e))))
                  twittering-emotions-phrase-url-alist)))))
   (let ((url (some (lambda (e)
-                     (equal (assqref 'phrase e) phrase)
-                     (assqref 'url e))
+                     (when (equal (assqref 'phrase e) phrase)
+                       (assqref 'url e)))
                    twittering-emotions-phrase-url-alist)))
     (insert (apply 'propertize
                    phrase
