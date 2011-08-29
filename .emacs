@@ -1462,7 +1462,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 	("From" . "gerrit2@bear.eee168.com")
 	))
 (setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
-(setq bbdb/mail-auto-create-p t)
+(setq bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-alist)
 
 (setq bbdb-file "~/windows-config/.bbdb")
 (add-hook 'gnus-select-group-hook
