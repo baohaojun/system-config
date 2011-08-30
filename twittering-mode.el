@@ -7509,7 +7509,7 @@ managed by `twittering-mode'."
 ;;;; Icon mode
 ;;;;
 
-(defvar twittering-icon-mode nil
+(defvar twittering-icon-mode t
   "You MUST NOT CHANGE this variable directly.
 You should change through function `twittering-icon-mode'.")
 
