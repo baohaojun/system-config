@@ -1462,14 +1462,13 @@ Starting from DIRECTORY, look upwards for a cscope database."
 	("From" . "gerrit2@bear.eee168.com")
 	))
 (setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
-(setq bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook)
 
 (setq bbdb-file "~/windows-config/.bbdb")
 (add-hook 'gnus-select-group-hook
 	  (lambda ()
 	    (if (string-match "^\\*Summary nntp" (buffer-name))
-		(setq bbdb/news-auto-create-p nil)
-	      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook))))
+		(setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
+	      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook))))
 ;; (defun bbdb-bhj-unify-eee168 (record)
 ;;   (bbdb-record-putprop record 'net (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net)))
 
