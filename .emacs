@@ -1459,7 +1459,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (setq bbdb-ignore-some-messages-alist 
       '(
 	("From" . "linkedin.com")
-	("From" . "gerrit2@bear.eee168.com")
+	("From" . "bear.eee168.com")
 	))
 (setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
 
@@ -1472,6 +1472,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
 ;; (defun bbdb-bhj-unify-eee168 (record)
 ;;   (bbdb-record-putprop record 'net (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net)))
 
+(setq bbdb/gnus-update-records-mode '(if (and (boundp 'auto-create-p) (null auto-create-p))
+				    'searching
+				  'annotating))
  (setq bbdb-canonicalize-net-hook
        '(lambda (addr)
 	  (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr)))
