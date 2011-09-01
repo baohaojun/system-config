@@ -597,10 +597,10 @@ do not display unread notifier on mode line.")
           (oauth-access-token-url-without-scheme
            "://api.t.sina.com.cn/oauth/access_token")
           (oauth-consumer-key
-           ,(base64-decode-string "Mzk0NDQ3MzYyOA=="))
+           ,(base64-decode-string "MTg4MjM3MzM0NQ=="))
           (oauth-consumer-secret
            ,(base64-decode-string
-             "NzM0YzFkNDlmMGM2MjJhZGY1NTFiNDljNjIzOGU5ODI="))
+             "ZTYxOTM3NWI5N2MzOGFmMGNlZWUxMTg2MzNlODc5ZTM="))
 
           (status-url twittering-get-status-url-sina)
           (search-url twittering-get-search-url-twitter))
