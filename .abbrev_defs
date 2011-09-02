@@ -51,11 +51,12 @@
 " nil 1)
     ("ld" "LOGD(\"%s: %d\\n\", __FUNCTION__, __LINE__);" nil 6)
     ("ndb" "NvOsDebugPrintf(\"hello world %s %d\\r\\n\", __FUNCTION__, __LINE__);" nil 44)
-    ("ne" "NvOsDebugPrintf(\"Error: %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
+    ("ne" "NvOsDebugPrintf(\"Error: %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 4)
     ("nk" "NvOsDebugPrintf(\"hello world %s %s %d\\r\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 8)
-    ("pe" "printk(KERN_WARNING \"hello error: %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
-    ("pf" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
-    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 205)
+    ("pe" "printk(KERN_WARNING \"hello error: %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 1)
+    ("pf" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 4)
+    ("pfe" "printf(\"hello error %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
+    ("pk" "printk(KERN_WARNING \"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 206)
     ("pkh" "#include <linux/types.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>

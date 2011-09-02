@@ -307,7 +307,7 @@
 
 (define-key minibuffer-local-map [(control meta f)] 'bhj-clt-insert-file-name)
 
-(define-key minibuffer-local-shell-command-map [(control meta d )] 'bhj-insert-pwdu)
+(define-key minibuffer-local-map [(control meta d )] 'bhj-insert-pwdu)
 
 (defvar last-grep-marker nil)
 
@@ -1466,6 +1466,8 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (setq bbdb-file "~/windows-config/.bbdb")
 (add-hook 'gnus-select-group-hook
 	  (lambda ()
+	    (make-local-variable 'bbdb/news-auto-create-p)
+	    (make-local-variable 'bbdb/mail-auto-create-p)
 	    (if (string-match "^\\*Summary nntp" (buffer-name))
 		(setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
 	      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook))))

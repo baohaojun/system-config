@@ -1,5 +1,17 @@
 #!/bin/bash
+
+CORE=''
+if test $# = 4; then
+    CORE=-core\ $4
+    set -- $1 $2 $3
+fi
+
+if test $# = 3; then
+    cd $(echo $3|tr -d \')
+fi
 set -- `readlink -f "$1" ` $2
+
+lookup_file .repo/.. && cd $(lookup_file .repo/..)
 OUT_ROOT=/tmp
 if ! test -e "$1/system/bin/$2" && test -e "$1"/buildspec.mk; then
     . build/envsetup.sh
@@ -11,7 +23,10 @@ PORT=:5039
 adb forward tcp:5039 tcp:5039
 echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
 echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS"
+if test x$CORE = x; then
 echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
+fi
+echo >>"$OUT_ROOT/gdbclient.cmds" "dir $PWD"
 echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
 if test -n "$EMACS"; then
@@ -24,12 +39,13 @@ elif test "$3" = text; then
     annotate=--fullname
 fi
 
-exec_file="$1/system/bin/$2"
-
-if ! test -e $exec_file && test "$2" = init;
-then
-    exec_file="$1/init"
+if test -e "$1/$2"; then
+    exec_file="$1/$2"
+elif test -e "$1/system/bin/$2"; then
+    exec_file="$1/system/bin/$2"
+else
+    echo Usage: $0 symbol_dir exec_file '[source_dir]' '[core_file]'
+    exit
 fi
-
-exec arm-eabi-gdb $annotate -x "$OUT_ROOT/gdbclient.cmds" $exec_file
+exec arm-eabi-gdb $annotate -x "$OUT_ROOT/gdbclient.cmds" $CORE $exec_file
 

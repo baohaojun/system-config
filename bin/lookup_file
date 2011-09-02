@@ -3,6 +3,10 @@
 file=$1
 x=0
 
+function find() {
+    command find 2>/dev/null "$@"
+}
+
 test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 
 (
