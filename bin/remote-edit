@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if test $# = 2; then
+    emacsclient -n /scp:bhj@"$1":"$2"
+elif test $# = 3; then
+    emacsclient -n /scp:"$1"@"$2":"$3"
+else
+    echo Usage: $0 [user] host file
+fi
+
