@@ -41,28 +41,29 @@ EOF
 accounts = Gmail
 maxsyncaccounts = 1
 
-ui = Noninteractive.Basic, Noninteractive.Quiet
+ui = Noninteractive.Basic
 
 [Account Gmail]
 localrepository = Local
 remoterepository = Remote
+maxsize = 500000
 
 [Repository Local]
 type = IMAP
 remotehost = localhost
 port = 143
-remoteuser = `whoami`
+remoteuser = $USER
 remotepass = $lpass
 
 [Repository Remote]
-type = IMAP
-remotehost = imap.gmail.com
+type = Gmail
+remotehost = imap.googlemail.com
 remoteuser = $Gmail
 remotepass = $Gpass
 ssl = yes
-maxconnections = 1
+maxconnections = 6
 realdelete = no
-folderfilter = lambda foldername: all([x.lower() not in foldername.lower() for x in ('all mail', 'spam', 'trash')])
+folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in ('inbox', 'letouwork', 'linked-in')])
 
 EOF
 
