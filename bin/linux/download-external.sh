@@ -7,7 +7,6 @@ mkdir -p ~/external/bin/linux/ext/`uname -m` \
     ~/external/bin/linux/ext/media-wiki-math
 function download_antlr() {
     mkdir -p ~/external/bin/linux/ext
-    ln -sf  ~/external/bin/linux/ext ~/bin/linux/
     builtin cd ~/bin/linux/ext/
     wget http://android.git.kernel.org/repo
     chmod +x repo

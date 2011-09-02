@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #下载一些软件，比如antlr
+touch ~/.where ~/.where.lock
 . ~/bin/linux/download-external.sh
 download_external >/dev/null 2>&1 &
 

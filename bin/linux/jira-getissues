@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ~/jira-issues/
+cd ~/jira-issues/ || exit
 
 mkdir -p backup
 mv * ./backup

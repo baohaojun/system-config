@@ -1,3 +1,5 @@
 #!/bin/bash
 
-LANG=zh_CN.gbk LC_ALL=zh_CN.gbk "$@"
+export LANG=zh_CN.GBK 
+export LC_ALL=zh_CN.GBK 
+"$@"

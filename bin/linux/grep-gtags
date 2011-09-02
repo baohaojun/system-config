@@ -40,8 +40,6 @@ if ($pwd eq "/" or $pwd eq glob("~")) {
     system("ln", '-sf', $pwd, glob("~/.gtags-dir"));
 }
 
-$approx_dir = substr($approx_dir, length($pwd));
-
 my $lookup_type = 1;
 my $lookup_needle = "hello_world";
 my $lookup_restrict_regexp;
@@ -49,6 +47,8 @@ my $lookup_restrict_regexp;
 GetOptions(
     "e=s" => \$lookup_needle,
     );
+
+$approx_dir = substr($approx_dir, length($pwd));
 
 sub do_cscope($$$$) {
     my ($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp) = @_;
@@ -77,6 +77,9 @@ sub do_cscope($$$$) {
 	    push @matches, $_;
 	    m/(.*?) (.*?) (.*?) (.*)/;
 	    $matches{$_} = [$1, $2, $3, $4];
+	    my $x = $1;
+	    $x =~ s,.*/,,;
+	    $matches{$_}->[4] = $x;
 	}
     }
 
@@ -85,7 +88,11 @@ sub do_cscope($$$$) {
 
     my $gpath_path = "$gtags_dir/GPATH";
     my %update_path;
-    for (sort {abs(adistr($matches{$a}->[0], $approx_dir)) <=> abs(adistr($matches{$b}->[0], $approx_dir))} @matches) {
+    for (sort {
+	abs(adistr($matches{$a}->[0], $approx_dir)) + abs(adistr($matches{$a}->[4], $lookup_needle))
+	    <=> 
+	    abs(adistr($matches{$b}->[0], $approx_dir)) + abs(adistr($matches{$b}->[4], $lookup_needle))
+	 } @matches) {
 	# print 'dist between "' . $matches{$_}->[0] . '" and "' . $approx_dir . '" is ' . abs(adistr($matches{$_}->[0], $approx_dir)) . "\n";
 	my ($file, $line, $str) = ($matches{$_}->[0], $matches{$_}->[2], $matches{$_}->[3]);
         print "$code_dir/$file:$line: $str\n" unless $str =~ m/^#undef|^EXPORT_SYMBOL/ or $file =~ m,external/kernel-headers, or $file =~ m,android-[2-7]/arch-,;

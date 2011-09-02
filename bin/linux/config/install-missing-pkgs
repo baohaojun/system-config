@@ -1,4 +1,7 @@
 #!/bin/bash
+apt-get install aptitude
+export LANG=C
+exprot LC_ALL=C
 packages=$(find ~/bin/linux/config/pkgs/ -type f|perl -npe 's,.*/,,')
 err_packages=""
 
