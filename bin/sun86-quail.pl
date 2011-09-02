@@ -2,7 +2,7 @@
 use Encode;
 use utf8;
 
-open($fwubi, "<", "wubi.txt") or die $!;
+open($fwubi_hf_src, "<", "wubi.txt") or die $!;
 open($fpy, "<", "py.txt") or die $!;
 open($freverse, ">", "wubi86_reverse.py") or die $!;
 open($fquail, ">", "wubi86.py") or die $!;
@@ -30,11 +30,11 @@ $el_head = <<EOC;
 EOC
 #`
 
- print $fquail_el $el_head;
+ print $fquail_el encode_utf8($el_head);
 
 ################ build data structure from wubi.txt ################
 $line = 0;
-while (<$fwubi>) {
+while (<$fwubi_hf_src>) {
     $line += 1;
     chomp;
     $_ = decode_utf8($_);
@@ -44,7 +44,7 @@ while (<$fwubi>) {
     $chinese = encode_utf8 $1;
 
     for $key (@keys) {
-        if (length(decode_utf8 $key) < 3) {
+        if (length(decode_utf8 $key) < 3) { #这是一个单字，我们希望取
             next if $done{$key};
             $done{$key} = 1;
         }
@@ -85,7 +85,7 @@ EOC
         $" = qq(", ");
         print $freverse qq/"$key" : ("@{$reverse_hash{$key}}",),/, "\n";
     }
-    print $freverse $tail;
+    print $freverse encode_utf8($tail);
 }
 
 sub print_quail()
@@ -107,6 +107,47 @@ g_quail_map = {
 EOC
 
     $tail = <<EOC;
+". " : ("。",),
+", " : ("，",),
+"? " : ("？",),
+"``" : ("“",),
+"`` " : ("“",),
+"''" : ("”",),
+"'' " : ("”",),
+": " : ("：",),
+":`` " : ("：“",),
+":``" : ("：“",),
+"` " : ("‘",),
+"' " : ("’",),
+"< " : ("《",),
+"> " : ("》",),
+"<<" : ("《",),
+">>" : ("》",),
+"\\\\ " : ("、",),
+"! " : ("！",),
+"\$ " : ("￥",),
+"^ " : ("…",),
+"^^ " : ("……",),
+"^^" : ("……",),
+"* " : ("·",),
+"**" : ("×",),
+"** " : ("×",),
+"_ " : ("—",),
+"__" : ("——",),
+"( " : ("（",),
+") " : ("）",),
+"{ " : ("｛",),
+"} " : ("｝",),
+"[ " : ("［",),
+"] " : ("］",),
+".\\" " : ("。”",),
+":\\" " : ("：“",),
+".'' " : ("。”",),
+".''" : ("。”",),
+",'' " : ("，”",),
+",''" : ("，”",),
+"'', " : ("”，",),
+"''. " : ("”。",),
 }
 EOC
 
@@ -131,7 +172,7 @@ EOC
         $" = qq(" ");
         print $fquail_el qq/("$key" ["@py_data"])/, "\n";
     }
-    print $fquail $tail;
+    print $fquail encode_utf8($tail);
     print $fquail_el ")\n";
 }
 

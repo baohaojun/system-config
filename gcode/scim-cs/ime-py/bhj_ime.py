@@ -126,7 +126,7 @@ class ime_quail:
                     continue
                 if self.has_quail(comp):
                     self.rules[comp] = list(self.rules[comp])
-                    self.rules[comp].append(cand)
+                    self.rules[comp][:0] = [cand]
                 else:
                     self.rules[comp] = (cand,)
 

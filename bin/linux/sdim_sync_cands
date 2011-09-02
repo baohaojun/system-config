@@ -17,4 +17,5 @@ for t in os.walk(__save_path):
         cands = pickle.load(open(f, "rb"))
         for cand in list(cands):
             if comp not in g_quail_map or cand not in g_quail_map[comp]:
-                print("sdim_add_cand", cand)
+                if len(cand) > 1:
+                    print("sdim_add_cand", cand)
