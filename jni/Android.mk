@@ -27,5 +27,6 @@ LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
 LOCAL_LDLIBS += -lpthread
 LOCAL_MODULE := libjni_pinyinime
 LOCAL_SHARED_LIBRARIES := libcutils libutils
+LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_SHARED_LIBRARY)
