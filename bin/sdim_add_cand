@@ -1,2 +1,5 @@
 #!/bin/bash
+if test $# = 0; then
+    set -- `cat`
+fi
 echo add_cand "$@" > /dev/tcp/localhost/12345
