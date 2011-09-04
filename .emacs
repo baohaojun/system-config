@@ -471,7 +471,7 @@
   (if (pos-visible-in-window-p (point-max))
       (save-excursion
         (end-of-buffer)
-        (search-backward-regexp "下一\\|后一\\|还看了")
+        (search-backward-regexp "下一\\|下章\\|后一\\|还看了")
         (if (w3m-url-valid (w3m-anchor))
             (call-interactively 'w3m-view-this-url)
           (call-interactively 'w3m-next-anchor)
@@ -483,7 +483,7 @@
   (if (pos-visible-in-window-p (point-min))
       (save-excursion
         (end-of-buffer)
-         (search-backward-regexp "上一")
+         (search-backward-regexp "上一\\|上章")
          (call-interactively 'w3m-view-this-url))
     (call-interactively 'w3m-scroll-down-or-previous-url)))
 
