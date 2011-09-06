@@ -221,9 +221,9 @@ Firemacs.SubFunc = {
     _followLink: function(dir, wnd, doc) {
         var re;
         if (dir > 0) {
-            re = /buttonright|next|>|下一|下页/i;
+            re = /buttonright|next|>|下一|下页|→/i;
         } else {
-            re = /buttonleft|prev|<|上一|上页/i;
+            re = /buttonleft|prev|<|上一|上页|←/i;
         }
         var re_exclude = /<.*>|>.*</;
         var links = doc.links;
