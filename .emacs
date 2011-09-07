@@ -1764,3 +1764,14 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
 	       arg)))
 	  (or (eq (selected-window) (minibuffer-window))
 	      (message "Making completion list...done"))))))))
+
+
+(setq org-publish-project-alist
+      '(("notes"
+	 :base-directory "~/notes/"
+	 :publishing-directory "~/notes_html"
+	 :section-numbers t
+	 :table-of-contents t
+	 :style "<link rel=\"stylesheet\"
+                     href=\"../other/mystyle.css\"
+                     type=\"text/css\"/>")))

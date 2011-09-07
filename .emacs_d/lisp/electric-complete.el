@@ -1,8 +1,6 @@
 (provide 'electric-complete)
 (require 'ecomplete)
-(global-set-key [(control meta /)] 'skeleton-display-abbrev)
-(global-set-key [(control return)] 'skeleton-display-abbrev)
-
+(global-set-key [(meta g)(return)] 'skeleton-display-abbrev)
 
 (defun skeleton-display-abbrev ()
   "Display the next possible abbrev for the text before point."
@@ -21,8 +19,7 @@
 
 (defvar regexp-completion-history nil)
 
-(global-set-key [(meta return)] 'easy-regexp-display-abbrev)
-(global-set-key "\M-\r" 'easy-regexp-display-abbrev)
+(global-set-key [(meta s) (return)] 'easy-regexp-display-abbrev)
 
 (defun easy-regexp-display-abbrev ()
   "Simplify writing the regexp. Some thing like \"sthe.\" will be generated as 
