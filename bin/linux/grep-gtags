@@ -34,9 +34,9 @@ while ( not -f "$pwd/GTAGS" and not "$pwd" eq "/") {
 if ($pwd eq "/" or $pwd eq glob("~")) {
     chomp($pwd = `readlink ~/.gtags-dir`);
     print "pwd is read from ~/.gtags-dir at $pwd\n";
-	
 } else {
-    system("rm", "-f", glob("~/.gtags_dir"));
+    print "link $pwd to ~/gtags-dir\n";
+    system("rm", "-f", glob("~/.gtags-dir"));
     system("ln", '-sf', $pwd, glob("~/.gtags-dir"));
 }
 
