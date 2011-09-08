@@ -50,7 +50,6 @@ function mkcscope_files() {
             '-o' '-path' '*/TAGS' \
             '-o' '-path' '*/tags' \
             '-o' '-path' '*/semantic.cache' \
-            '-o' '-path' './out' \
             '-o' '-iname' '*.o' \
             '-o' '-iname' '*.class' \
             '-o' '-iname' '*.obj' \
@@ -61,7 +60,7 @@ function mkcscope_files() {
             '-o' '-iname' "cscope.files" \
             -o -iname "cscope.out" \
             -o -ipath "*/.beagle" \
-            \) -prune -o -type f -print0|xargs -0 grep . -Il|$Filter | tee "$outDir"/cscope.files
+            \) -prune -o -type f -print|$Filter | tee "$outDir"/cscope.files
     else
         cat
     fi
@@ -84,7 +83,7 @@ function mkbeagleidx() {
     mkdir -p "$outDir"/.beagle
 
     beagle-build-index --recursive \
-        --deny-directory-pattern `pwd`/out \
+        --deny-directory-pattern `pwd`/outx \
         --enable-deletion \
         --target "$outDir"/.beagle/ \
         "$relativeSrcDir" 2>&1 \

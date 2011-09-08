@@ -8,10 +8,7 @@ done
 
 if test "$start_dir" = / -o "$start_dir" = $HOME
 then
-    start_dir=`readlink -f ~/.my_beagle_oldi`
-else
-    rm ~/.my_beagle_oldi -f
-    ln -sf "$start_dir" ~/.my_beagle_oldi
+    start_dir=`readlink -f ~/.gtags-dir`
 fi
 
 beagle_dir=$start_dir/.beagle

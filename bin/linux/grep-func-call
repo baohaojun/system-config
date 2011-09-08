@@ -13,19 +13,21 @@ $func_location_map{1} = "******";
 while(<$out>) {
     m/(\S*?)\s+(\S*?)\s+(\S*?)\s+(.*)/ or next;
     my ($func, $type, $line) = ($1, $2, $3);
-    $func_location_map{$line} = $func if $type eq "function";
+    $func_location_map{$line} = $func if $type eq "function" or $type eq "method";
 }
 
 @func_lines = sort { $a <=> $b } keys %func_location_map;
 open(my $file, "<", $ENV{GTAGS_START_FILE}) or die "Error: open source file";
 my $target = $ARGV[1]; #argv.0 is -e
 
+my $last_match_line = 1;
 while(<$file>) {
     if (m/$target/) {
 	my $last = 1;
 	for (@func_lines) {
 	    if ($. < $_) {
-		print $ENV{GTAGS_START_FILE} . ":$last: " . $func_location_map{$last} . "\n";
+		print $ENV{GTAGS_START_FILE} . ":$last: " . $func_location_map{$last} . "\n" unless $last == $last_match_line;
+		$last_match_line = $last;
 		last;
 	    }
 	    $last = $_;
