@@ -964,7 +964,11 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (defun code-line-number-from-tag-line (line)
   (goto-line line)
-  (string-to-number (caddr (split-string (current-line-string)))))
+  (let ((subs (split-string (current-line-string))))
+    (string-to-number
+     (if (string-equal (car subs) "operator")
+	 (cadddr subs) ;operator +=      function    183 /home...
+       (caddr subs))))) ;region_iterator  struct      189 /home...
 
 (defun ctags-beginning-of-defun (&optional arg)
   (interactive "^p")
