@@ -9607,8 +9607,8 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
         (when (consp (car tree))
           (when (and (assqref 'id_str tree)
                      (assqref 'id tree))
-            (setq tree `(,@(assq-delete-all 'id tree)
-                         (id . ,(assqref 'id_str tree)))))
+              (setq tree `(,@(assq-delete-all 'id tree)
+                           (id . ,(assqref 'id_str tree)))))
 
           (when (and (assqref 'in_reply_to_status_id_str tree)
                      (assqref 'in_reply_to_status_id tree))
@@ -9632,8 +9632,7 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
 
                          (if (atom rear)
                              (cond ((and (eq front 'id) (numberp rear))
-                                    ;; sina passes big integer. 应该學 twitter 用科学记数法。
-                                    (replace-regexp-in-string "\\.0$" "" (number-to-string rear)))
+                                    (twittering-number-to-string rear))
                                    ((or (null rear)
                                         (and (stringp rear) (string= rear ""))
                                         (eq rear ':json-false))
@@ -10053,6 +10052,26 @@ SPEC may be a timeline spec or a timeline spec string."
     (append (twittering-take (- (length properties) (length match))
                              properties)
             (cddr match))))
+
+(defun twittering-number-to-string (number)
+  "Also remove scientific notation, compared with `number-to-string'.
+e.g.,
+  (number-to-string 3.35730918340096e+015)
+=> \"3.35730918340096e+015\"
+
+  (twittering-number-to-string 3.35730918340096e+015)
+=> \"335730918340096\""
+  (let ((str (replace-regexp-in-string "\\.0$" "" (number-to-string number))))
+    (when (string-match "\\([0-9]\\)\\.\\([0-9]*\\)e\\([-+]\\)\\([0-9]+\\)" str)
+      (let* ((m1 (match-string 1 str))
+             (m2 (match-string 2 str))
+             (m3 (match-string 3 str))
+             (m4 (match-string 4 str))
+             (n (string-to-number m4)))
+        (if (string= m3 "+")
+            (setq str (concat m1 m2 (make-string (- n -1 (length m1) (length m2)) ?0)))
+          (setq str (concat "0." (make-string (1- n) ?0) m1 m2)))))
+    str))
 
 (provide 'twittering-mode)
 
