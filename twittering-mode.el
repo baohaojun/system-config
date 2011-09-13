@@ -10022,12 +10022,12 @@ SPEC may be a timeline spec or a timeline spec string."
        (ignore-errors (json-read))))))
 
 (defun twittering-status-id< (id1 id2)
-  ;; id1, id2 may be using scientific notation.
-  (when (stringp id1)
-    (setq id1 (string-to-number id1)))
-  (when (stringp id2)
-    (setq id2 (string-to-number id2)))
-  (< id1 id2))
+  (let ((len1 (length id1))
+        (len2 (length id2)))
+    (cond
+     ((= len1 len2) (string< id1 id2))
+     ((< len1 len2) t)
+     (t nil))))
 
 (defun twittering-status-id> (id1 id2)
   (not (or (twittering-status-id= id1 id2)
