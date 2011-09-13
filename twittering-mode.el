@@ -10060,7 +10060,7 @@ e.g.,
 => \"3.35730918340096e+015\"
 
   (twittering-number-to-string 3.35730918340096e+015)
-=> \"335730918340096\""
+=> \"3357309183400960\""
   (let ((str (replace-regexp-in-string "\\.0$" "" (number-to-string number))))
     (when (string-match "\\([0-9]\\)\\.\\([0-9]*\\)e\\([-+]\\)\\([0-9]+\\)" str)
       (let* ((m1 (match-string 1 str))
