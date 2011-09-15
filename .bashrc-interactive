@@ -82,6 +82,32 @@ function fcd()
     cd_record
 }
 
+function fedit() 
+{
+    local IFS=$'\n'
+    local line=1
+    if [[ "$1" =~ :[0-9]+:?$ ]]; then
+	line=$(echo "$1"|perl -npe 's/.*:(\d+):?$/$1/')
+	set -- "$(echo "$1"|perl -npe 's/:(\d+):?$//')"
+    fi
+    dirs=( $(find . -iname "*$1*") )
+    if test ${#dirs[@]} = 0; then
+        echo 'Error: no such file or directory'
+        return 1
+    elif test ${#dirs[@]} = 1; then
+        edit ${dirs[0]}:$line
+    else 
+        NUM=`my_select "${dirs[@]}"`
+        ((NUM--))
+        edit "${dirs[$NUM]}":$line
+        if test $# = 1; then
+            history -s edit "$(printf %q "$1")":$line
+        else
+            history -s edit "$@":$line
+        fi
+    fi
+}
+
 function rbcd()
 {
     dirs=(`repo branches|perl -npe 's/.* in\b.//; s/,/ /g; s/ /\n/g'|sort -u`);
