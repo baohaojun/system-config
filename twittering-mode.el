@@ -2279,7 +2279,8 @@ The method to perform the request is determined from
                (message "%s" mes)))
            (when (functionp clean-up-func)
              (funcall clean-up-func proc status connection-info))
-           (when (and (or sync? (memq status '(exit signal closed failed)))
+           (when (and (or sync?
+                          (memq status '(exit signal closed failed)))
                       (buffer-live-p buffer)
                       (not twittering-debug-mode))
              (kill-buffer buffer))
@@ -3732,15 +3733,17 @@ current buffer."
 (defun twittering-toggle-thumbnail ()
   (interactive)
   (let ((limit (twittering-get-next-status-head))
-        (find-func (lambda ()
-                     (let ((func-args (find-if
-                                       (lambda (i)
-                                         (and (consp i)
-                                              (eq (car i) 'twittering-toggle-thumbnail-1)))
-                                       (cadr (get-text-property (point) 'keymap)))))
-                       (when func-args
-                         (apply (car func-args) (cdr func-args))
-                         (setq found-pos (point))))))
+        (find-func
+         (lambda ()
+           (let ((func-args
+                  (find-if
+                   (lambda (i)
+                     (and (consp i)
+                          (eq (car i) 'twittering-toggle-thumbnail-1)))
+                   (cadr (get-text-property (point) 'keymap)))))
+             (when func-args
+               (apply (car func-args) (cdr func-args))
+               (setq found-pos (point))))))
         found-pos)
     (unless (funcall find-func)         ; FIXME: no do-while in elisp? (xwl)
       (save-excursion
@@ -3749,6 +3752,40 @@ current buffer."
           (funcall find-func))))
     (when found-pos
       (recenter-top-bottom 'top))))
+
+(defun twittering-open-url-externally (&optional next-nth)
+  "Select and open url inside tweet.
+Optionally you may provide a number -- NEXT-NTH(starting from 1),
+we will open NEXT-NTH url directly. "
+  (interactive)
+  (let ((limit (or (twittering-get-next-status-head) (point-max)))
+        (urls '())
+        (start nil)
+        (end (point)))
+    (save-excursion
+      (while (and end (< end limit))
+        (goto-char end)
+        (setq start (when (get-text-property end 'uri)
+                      end)
+              end (next-single-property-change end 'uri))
+        (if (and start end)
+            (if (get-text-property start 'display)
+                (setq urls
+                      (cons
+                       (propertize "IMAGE" 'uri (get-text-property start 'uri))
+                       urls))
+              (setq urls (cons
+                          (replace-regexp-in-string
+                           " *\n *" "" (buffer-substring start end))
+                          urls)))
+          (setq start end))))
+    (setq urls (remove-duplicates urls :test 'equal))
+    (browse-url
+     (get-text-property
+      0 'uri
+      (if next-nth
+          (nth (1- next-nth) (reverse urls))
+        (completing-read "Open url externally: " (reverse urls)))))))
 
 (defun twittering-restart ()
   (interactive)
@@ -7471,6 +7508,7 @@ managed by `twittering-mode'."
     (define-key km (kbd "C-c C-p") 'twittering-toggle-proxy)
     (define-key km (kbd "q") 'twittering-kill-buffer)
     (define-key km (kbd "C-c C-q") 'twittering-search)
+    (define-key km (kbd "o") 'twittering-open-url-externally)
     km))
 
 (let ((km twittering-mode-menu-on-uri-map))
