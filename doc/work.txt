@@ -1133,3 +1133,19 @@ when you are using dvorak keyboard layout, make sure gnome status bar is not sho
 
 ({ test -e ./theater-full-flash.sh || { cd .repo/.. && cd flashing/; }; } && ./theater-full-flash.sh)
 199.6.1.173 android.git.kernel.org
+
+keymaps 0-127 #dumpkey | head -1
+keycode 56 = Control
+keycode 29 = Alt
+keycode 100 = Control
+keycode 97 = Alt
+
+use showkey, not showkey -s, to see keycode 100 and 97
+
+(
+dumpkey | head -1
+echo keycode 56 = Control
+echo keycode 29 = Alt
+echo keycode 100 = Control
+echo keycode 97 = Alt
+) | sudo loadkeys
