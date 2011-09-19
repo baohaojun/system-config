@@ -1,0 +1,8 @@
+#!/bin/bash
+(
+    dumpkeys | head -1
+    echo keycode 56 = Control
+    echo keycode 29 = Alt
+    echo keycode 100 = Control
+    echo keycode 97 = Alt
+) | sudo loadkeys
