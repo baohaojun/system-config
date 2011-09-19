@@ -3,4 +3,4 @@ set -e
 cd $1
 git add . 
 git commit -m mf ||true
-git push origin HEAD:`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'``hostname`
+git push origin HEAD:`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`
