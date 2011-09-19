@@ -1,0 +1,5 @@
+#!/bin/bash
+
+git add . 
+git commit -m mf
+git push origin HEAD:`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g;'`

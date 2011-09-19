@@ -717,6 +717,17 @@
 (color-theme-arjen)
 (server-start)
 ;(w32-register-hot-key [A-tab])
+(setq org-publish-project-alist
+      '(("org"
+         :base-directory "~/windows-config/org/"
+         :publishing-directory "~/public_html"
+         :section-numbers nil
+         :table-of-contents nil
+         :style "<link rel=\"stylesheet\"
+                     href=\"mystyle.css\"
+                     type=\"text/css\">")))
+
+
 
 (defun markdown-nobreak-p ()
   "Returns nil if it is ok for fill-paragraph to insert a line
@@ -1768,11 +1779,4 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
 	 :table-of-contents t
 	 :style "<link rel=\"stylesheet\"
                      href=\"../other/mystyle.css\"
-                     type=\"text/css\"/>")
-
-	("org"
-         :base-directory "~/windows-config/org/"
-         :publishing-directory "~/public_html"
-         :section-numbers nil
-         :table-of-contents nil)))
-
+                     type=\"text/css\"/>")))

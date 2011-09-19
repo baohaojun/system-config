@@ -82,6 +82,28 @@ function fcd()
     cd_record
 }
 
+function wcd() 
+{
+    local IFS=$'\n'
+    dirs=( "$@" )
+    if test ${#dirs[@]} = 0; then
+        echo 'Error: no such file or directory'
+        return 1
+    elif test ${#dirs[@]} = 1; then
+        cd_bhj ${dirs[0]}
+    else 
+        NUM=`my_select "${dirs[@]}"`
+        ((NUM--))
+        cd_bhj "${dirs[$NUM]}"
+        if test $# = 1; then
+            history -s cd "$(printf %q "$1")"
+        else
+            history -s cd "$@"
+        fi
+    fi
+    cd_record
+}
+
 function fedit() 
 {
     local IFS=$'\n'
@@ -118,7 +140,3 @@ function rbcd()
 alias cd=cd_bhj
 alias rcd='cd .repo/manifests'
 alias rs="rfa 'git diff \$REPO_LREV|cat; git st -s|grep . && echo \`pwd\`'"
-
-if [[ "$(tty 2>/dev/null)" =~ /dev/tty[0-9]+ ]]; then
-    swap-control-alt
-fi
