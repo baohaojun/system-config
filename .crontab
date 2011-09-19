@@ -3,7 +3,7 @@
 0       *  * * * . ~/.bash_path;  ~/bin/linux/backup_where
 0       *  * * * . ~/.bash_path; ~/bin/linux/jira-getissues
 30      22 * * * . ~/.bash_path; ~/bin/linux/update-repo-bhj
-0       20 * * * . ~/.bash_path; ~/bin/config-save-to-gmail
+0       20 * * * . ~/.bash_path; ~/bin/git-mac-branch ~/windows-config/
 0       20 * * * . ~/.bash_path; ~/bin/git-to-gmail ~/notes
 1       1  * * * . ~/.bash_path; ~/bin/linux/download-today
 0       0  * * * . ~/.bash_path; ~/bin/linux/update-repo-projects; ~/bin/linux/cron-code-reading
