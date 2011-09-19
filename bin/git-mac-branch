@@ -4,4 +4,4 @@ cd $1
 git add . 
 git commit -m mf ||true
 rb=`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`
-git diff -q origin/$rb || git push origin HEAD:$rb
+git diff --quiet origin/$rb || git push origin HEAD:$rb
