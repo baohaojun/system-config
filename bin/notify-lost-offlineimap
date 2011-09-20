@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if ps-uptime-gt offlineimap 1200; then
+    notify-send offlineimap "It's been running for $(ps-uptime offlineimap) seconds"
+fi
