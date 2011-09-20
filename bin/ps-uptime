@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ps -eo pid,etime,cmd|grep $1|grep -v -e "grep $1"|grep -v -P "^\s*$$\b"
