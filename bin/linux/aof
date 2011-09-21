@@ -1,5 +1,5 @@
 #!/bin/bash
-dir=./"$(basename $1)".unzip.$$
+dir=./"$(basename "$1")".unzip.$$
 mkdir -p "$dir"
 file-roller -e "$dir" "$1"
 up "$dir"
