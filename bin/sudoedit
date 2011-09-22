@@ -16,7 +16,13 @@ function sudoedit()
     fi    
 
     local file=$( readlink -f "$1" )
-    WHOAMI=root ~/bin/edit "$file"
+    WHOAMI=root $EDITOR "$file"
 }
+
+export EDITOR=~/bin/edit
+
+if test $(basename $0) = sudoedit-wait; then
+    export EDITOR=~/bin/edit-wait
+fi
 
 sudoedit "$@"
