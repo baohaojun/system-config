@@ -1,0 +1,5 @@
+#!/bin/bash
+
+edit-wait ~/.offlineimaprc
+edit-wait ~/.notifier.conf
+emacsclient /scp:root@localhost:/etc/postfix/sasl_passwd

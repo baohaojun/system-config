@@ -406,14 +406,16 @@
 (global-set-key [(control meta o)] 'bhj-occur)
 (global-set-key (kbd "M-g o") 'bhj-occur)
 
+(defvar bhj-occur-regexp nil)
 (defun bhj-occur ()
   (interactive)
   
   (let 
-      ((regexp (if mark-active 
-                   (buffer-substring-no-properties (region-beginning)
-                                                   (region-end))
-                 (current-word))))
+      ((regexp (or bhj-occur-regexp
+		   (if mark-active 
+		       (buffer-substring-no-properties (region-beginning)
+						       (region-end))
+		     (current-word)))))
     (progn     
       (nodup-ring-insert cscope-marker-ring (point-marker))
       (when (or (equal regexp "")
@@ -424,13 +426,21 @@
                  (back-to-indentation)
                  (point))
                (line-end-position))))
-      (setq regexp (replace-regexp-in-string "\\([][^$*?\\\\.+]\\)" "\\\\\\1" regexp))
+
+      (unless bhj-occur-regexp
+	(setq regexp (replace-regexp-in-string "\\([][^$*?\\\\.+]\\)" "\\\\\\1" regexp)))
+
       (setq regexp 
-            (read-shell-command "List lines matching regexp: " regexp))
+	    (read-shell-command "List lines matching regexp: " regexp))
       (if (eq major-mode 'antlr-mode)
           (let ((occur-excluded-properties t))
             (occur regexp))
         (occur regexp)))))
+
+(defun bhj-occur-make-errors ()
+  (interactive)
+  (let ((bhj-occur-regexp "no rule to\\|failed\\|error:"))
+    (call-interactively 'bhj-occur)))
 
 
 (setq hippie-expand-try-functions-list 
@@ -1415,6 +1425,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key (kbd "M-.") 'gtags-grep)
 (global-set-key (kbd "C-.") 'gtags-grep)
 (global-set-key (kbd "M-s f") 'grep-func-call)
+(global-set-key (kbd "M-s e") 'bhj-occur-make-errors)
 ;(global-set-key [?\C-,] (lookup-key global-map [?\C-x]))
 (eval-after-load "diff-mode"
   '(define-key diff-mode-map (kbd "M-g") (lookup-key global-map (kbd "M-g"))))
