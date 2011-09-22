@@ -17,6 +17,10 @@ die "Error: we take exactly 2 arguments after the options: WORDS, SKELETON" unle
 my @words = split($split_re, shift @ARGV);
 my $skeleton = shift @ARGV;
 
+#for (@words) {
+#    print STDERR "\nwords are $_\n";
+#}
+
 if ($use_skeleton_re) {
     $skeleton = ".*" . join(".*", split(//, $skeleton)) . ".*";
 }
