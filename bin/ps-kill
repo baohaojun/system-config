@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if test $# = 1; then
+    set -- "0: $1"
+fi
+
+for x in "$@"; do
+    kill $(echo $x|pn 2)
+done
