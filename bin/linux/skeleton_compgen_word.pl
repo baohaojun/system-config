@@ -67,7 +67,7 @@ for (@words) {
     if ($is_prefix) {
       print "$_\n";
     } else {
-      printf "%d: %s\n", $count++, $_;
+	printf "%d: %s\n", $count++, $_;
     }
   }    
 }
