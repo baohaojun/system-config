@@ -1,0 +1,11 @@
+#!/bin/bash
+
+chm=$(readlink -f "$1")
+dir=~/tmp/for-code-reading/chm/"$chm"
+
+if ! test -e "$dir"; then
+    extract_chmLib "$chm" "$dir"
+fi
+
+firefox "$dir" &
+
