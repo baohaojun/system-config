@@ -43,6 +43,7 @@ _repo-switch() {
                     echo git@www.rayzertrack.com:ggl/pxa935/platform/manifest;
                     echo git@www.rayzertrack.com:nv/android/manifest
                     echo ssh://bearr/android/platform/manifest.git
+		    echo file:///android/manifest.git
                     cat ~/.remotes 2>/dev/null
                 ) |sort -u
             )
