@@ -4,8 +4,15 @@ chm=$(readlink -f "$1")
 dir=~/tmp/for-code-reading/chm/"$chm"
 
 if ! test -e "$dir"; then
-    extract_chmLib "$chm" "$dir"
+    archmage -x "$chm" "$dir" || (
+	rm -rf "$dir"; 
+	extract_chmLib "$chm" "$dir"
+    )
 fi
 
-firefox "$dir" &
+if test -e "$dir"/index.html; then
+    firefox "$dir"/index.html&
+else
+    firefox "$dir" &
+fi
 
