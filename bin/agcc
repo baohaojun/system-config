@@ -32,18 +32,17 @@ use strict;
 
 # Dance around to find the actual android toolchain path (it's very
 # deep, so links on $PATH are going to be common.
-my $GCC = `lookup_file prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-gcc`;
+my $GCC = `lookup_file prebuilt/linux-x86/toolchain/arm-eabi-4.2.1/bin/arm-eabi-gcc`;
 chomp($GCC);
-$GCC = qx(readlink -f $GCC);
-chomp $GCC;
 die "bad arm-eabi-gcc path" if $GCC !~ /(.*)\/prebuilt\//;
 my $DROID = $1;
 
-print "droid is $DROID\n";
-my $ALIB = qx(readlink "$DROID/target_out_symlink");
+my $ALIB = qx(readlink -f "$DROID/target_out_symlink");
 chomp($ALIB);
+$ALIB .= "/obj/lib";
 
-my $TOOLCHAIN = "$DROID/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3";
+my $TOOLCHAIN = "$DROID/prebuilt/linux-x86/toolchain/arm-eabi-4.2.1";
+$ENV{"PATH"} = $TOOLCHAIN . "/bin:" . $ENV{"PATH"};
 
 my @include_paths = (
     "-I$DROID/system/core/include",
