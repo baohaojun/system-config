@@ -3,3 +3,5 @@
 edit-wait ~/.offlineimaprc
 edit-wait ~/.notifier.conf
 sudoedit-wait /etc/postfix/sasl_passwd
+sudo postmap /etc/postfix/sasl_passwd
+sudo postfix reload
