@@ -4,7 +4,11 @@ chm=$(readlink -f "$1")
 dir=~/tmp/for-code-reading/chm/"$chm"
 
 if ! test -e "$dir"; then
-    archmage -x "$chm" "$dir" || (
+    (
+	archmage -x "$chm" /tmp/archmage-ffchm.$$ &&
+	mkdir -p "$(dirname "$dir")" &&
+	mv /tmp/archmage-ffchm.$$ "$dir" 
+    ) || (
 	rm -rf "$dir"; 
 	extract_chmLib "$chm" "$dir"
     )
