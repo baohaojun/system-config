@@ -27,6 +27,12 @@ alias pcd='builtin cd -P'
 
 cd_beagle() 
 {
+    if test $# = 1; then
+	dir=$(readlink -f "$1")
+	cd ~/tmp/for-code-reading/chm/"$dir"
+	return
+    fi
+
     dest=~/tmp/for-code-reading/`pwd`
     while test ! -d "$dest"/.beagle -a ! -e "$dest"/GPATH -a "$dest" != / -a "$dest" != ""; do
         dest=${dest%/*};
