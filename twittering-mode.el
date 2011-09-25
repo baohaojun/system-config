@@ -7808,8 +7808,9 @@ image are displayed."
                            (when (string= (assqref 'phrase i) emotion)
                              (assqref 'url i)))
                          twittering-emotions-phrase-url-alist)))
-          (when url
-            (setq ret (twittering-make-original-icon-string nil nil url))))
+          (if url
+              (setq ret (twittering-make-original-icon-string nil nil url))
+            (setq ret emotion)))
       (setq ret (propertize ret
                             'need-to-be-updated
                             `(twittering-make-emotions-string ,emotion))))
@@ -7883,8 +7884,7 @@ handler. "
               (let ((inhibit-read-only t))
                 (erase-buffer)
                 (insert image-data)
-                (unless (eq major-mode 'image-mode)
-                  (image-mode)))
+                (image-mode))
               (setq buffer-read-only t))
           (add-text-properties 0 (length s)
                                `(,@common-properties
