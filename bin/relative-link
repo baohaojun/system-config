@@ -1,19 +1,8 @@
 #!/bin/bash
 
 function calc_relative() {
-    local source=$1
-    local target=$2/
-
-    source=$(echo "$source"|perl -npe 's,/+,/,g')
-    source=$(lookup_file "$source")
-
-    while [[ "$source" =~ /./ ]]; do
-	source=$(echo "$source" | perl -npe 's,/\./,/,g')
-    done
-
-    while [[ "$source" =~ /../ ]]; do
-	source=$(echo "$source" | perl -npe 's,(^|[^/]+)/\.\./,/,g')
-    done
+    local source=$(formal-path "$1")
+    local target=$2
 
     perl -e '
 ($s, $t)  = @ARGV;
@@ -47,6 +36,7 @@ function die() {
     exit -1
 }
 
+target_file=''
 if test $# = 1; then
     set -- "$@" .
 fi
@@ -57,18 +47,22 @@ n_targets=$#
 
 target=${args[$#-1]}
 
-target=$(readlink -f "$target")
 if (($# > 2)) && test ! -d "$target"; then
     die "ln: target \`Android.mk' is not a directory"
 fi
 
-test -f "$target" && target=$(dirname "$target")
+if test $# = 2 && test ! -d "$target"; then
+    { target_file=$(basename "$target"); target=$(dirname "$target"); }
+fi
+
+target=$(formal-path "$target")
+
 test -e "$target" || die "ln: target \`$target does not exist"
 
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
     relative_source=$(calc_relative "$source" "$target")
     echo 1>&2 "$relative_source" =\> "$source"
-    ln -s -- "$relative_source" "$target"/
+    ln -s -- "$relative_source" "$target"/"$target_file"
 done
     
