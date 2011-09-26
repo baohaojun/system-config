@@ -37,6 +37,9 @@ function die() {
 }
 
 target_file=''
+
+test $# = 0 && die "ln: missing file operand"
+
 if test $# = 1; then
     set -- "$@" .
 fi
@@ -46,13 +49,14 @@ n_targets=$#
 ((n_targets--))
 
 target=${args[$#-1]}
+old_target=$target
 
 if (($# > 2)) && test ! -d "$target"; then
-    die "ln: target \`Android.mk' is not a directory"
+    die "ln: target \`$target' is not a directory"
 fi
 
 if test $# = 2 && test ! -d "$target"; then
-    { target_file=$(basename "$target"); target=$(dirname "$target"); }
+    { target_file=$(basename "$target"); target=$(dirname "$target"); old_target=$(dirname "$old_target"); }
 fi
 
 target=$(formal-path "$target"|perl -npe 's,/*$,,')
@@ -62,7 +66,11 @@ test -e "$target" || die "ln: target \`$target does not exist"
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
     relative_source=$(calc_relative "$source" "$target"/"$target_file")
-    echo 1>&2 "$relative_source" =\> "$source"
+    if test -z "target_file"; then
+	echo 1>&2 "$old_target"/"$(basename "$relative_source")" =\> "$relative_source"
+    else
+	echo 1>&2 "$old_target"/"$target_file" =\> "$relative_source"
+    fi
     ln -s -- "$relative_source" "$target"/"$target_file"
 done
     
