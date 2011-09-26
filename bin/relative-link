@@ -68,6 +68,7 @@ test -e "$last_arg" || die "ln: target \`$last_arg does not exist"
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
     relative_source=$(calc_relative "$source" "$last_arg")
+    echo 1>&2 "$source" =\> "$relative_source"
     ln -s -- "$relative_source" "$last_arg"/
 done
     
