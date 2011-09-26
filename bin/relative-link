@@ -34,7 +34,14 @@ $n = 0;
 $last_slash = 0;
 while (@s and @t) {
     if ($s[0] eq $t[0]) {
-        
+        $n ++;
+        $last_slash = $n if $s[0] eq "/";
+        shift @s;
+        shift @t;
+    } else {
+        last;
+    }
+}
     source=$(lookup_file "$source")
     test -e "$source" || { echo "ln: source \`$source does not exist" 1>&2; return 1; }
 }
