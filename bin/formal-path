@@ -9,7 +9,7 @@ while [[ "$source" =~ /./ ]]; do
 done
 
 while [[ "$source" =~ /../ ]]; do
-    source=$(echo "$source" | perl -npe 's,(^|[^/]+)/\.\./,/,g')
+    source=$(echo "$source" | perl -npe 's,(^|(?!\.\./)[^/]+)/\.\./,/,g')
 done
 
 echo "$source"
