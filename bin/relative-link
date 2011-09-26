@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if test $# = 1; then
+    set -- "$@" .
+fi
+
+args=("$@")
+n_targets=$#
+((n_targets--))
+
+last_arg=${args[$#-1]}
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+if (($# > 2)) && test ! -d "$last_arg"; then
+    die "ln: target \`Android.mk' is not a directory"
+fi
+
+
+for x in $(seq 1 $n_targets); do
+    ln -s -- "${args[$x-1]}" "$last_arg"
+done
+    
