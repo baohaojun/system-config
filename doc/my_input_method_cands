@@ -5,6 +5,7 @@ sdim_add_cand 两名
 sdim_add_cand 两块
 sdim_add_cand 产线
 sdim_add_cand 伤者
+sdim_add_cand 低电
 sdim_add_cand 佟波
 sdim_add_cand 倒坍
 sdim_add_cand 傻屄
@@ -29,6 +30,9 @@ sdim_add_cand 开裂
 sdim_add_cand 微博
 sdim_add_cand 恒流
 sdim_add_cand 恶搞
+sdim_add_cand 慈禧
+sdim_add_cand 戊戌
+sdim_add_cand 户部
 sdim_add_cand 拉低
 sdim_add_cand 挚爱
 sdim_add_cand 掉电
@@ -38,7 +42,9 @@ sdim_add_cand 晶振
 sdim_add_cand 有多
 sdim_add_cand 有够
 sdim_add_cand 望京
+sdim_add_cand 李鸿章
 sdim_add_cand 浙大
+sdim_add_cand 游街
 sdim_add_cand 炫富
 sdim_add_cand 热议
 sdim_add_cand 爆红
