@@ -55,13 +55,13 @@ if test $# = 2 && test ! -d "$target"; then
     { target_file=$(basename "$target"); target=$(dirname "$target"); }
 fi
 
-target=$(formal-path "$target")
+target=$(formal-path "$target"|perl -npe 's,/*$,,')
 
 test -e "$target" || die "ln: target \`$target does not exist"
 
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
-    relative_source=$(calc_relative "$source" "$target")
+    relative_source=$(calc_relative "$source" "$target"/"$target_file")
     echo 1>&2 "$relative_source" =\> "$source"
     ln -s -- "$relative_source" "$target"/"$target_file"
 done
