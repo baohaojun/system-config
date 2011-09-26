@@ -1,3 +1,12 @@
 #!/bin/bash
 
+. ~/.bashrc
+build_env=`lookup_file build/envsetup.sh`
+top_dir=`dirname $build_env`
+top_dir=`readlink -f $top_dir/..`
+target_device=$(cd $top_dir >/dev/null 2>&1; . build/envsetup.sh >/dev/null 2>&1; get_build_var TARGET_DEVICE)
+
+set -- $(readlink -f $1)
+
+(cd $top_dir; javac -J-Xmx512M -target 1.5 -Xmaxerrs 9999999 -encoding ascii -g  -bootclasspath out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar -classpath out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/core-junit_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/ext_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/classes.jar  -extdirs "" $1)
 
