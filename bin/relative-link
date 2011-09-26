@@ -48,29 +48,29 @@ args=("$@")
 n_targets=$#
 ((n_targets--))
 
-target=${args[$#-1]}
-old_target=$target
+target_dir=${args[$#-1]}
 
-if (($# > 2)) && test ! -d "$target"; then
-    die "ln: target \`$target' is not a directory"
+if (($# > 2)) && test ! -d "$target_dir"; then
+    die "ln: target_dir \`$target_dir' is not a directory"
 fi
 
-if test $# = 2 && test ! -d "$target"; then
-    { target_file=$(basename "$target"); target=$(dirname "$target"); old_target=$(dirname "$old_target"); }
+if test $# = 2 && test ! -d "$target_dir"; then
+    { target_file=$(basename "$target_dir"); target_dir=$(dirname "$target_dir"); }
 fi
 
-target=$(formal-path "$target"|perl -npe 's,/*$,,')
+test -e "$target_dir" || die "ln: target_dir \`$target_dir does not exist"
 
-test -e "$target" || die "ln: target \`$target does not exist"
+old_target_dir=$target_dir;
+target_dir=$(formal-path "$target_dir"|perl -npe 's,/*$,,')
 
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
-    relative_source=$(calc_relative "$source" "$target"/"$target_file")
+    relative_source=$(calc_relative "$source" "$target_dir"/"$target_file")
     if test -z "target_file"; then
-	echo 1>&2 "$old_target"/"$(basename "$relative_source")" =\> "$relative_source"
+	echo 1>&2 "$old_target_dir"/"$(basename "$relative_source")" =\> "$relative_source"
     else
-	echo 1>&2 "$old_target"/"$target_file" =\> "$relative_source"
+	echo 1>&2 "$old_target_dir"/"$target_file" =\> "$relative_source"
     fi
-    ln -s -- "$relative_source" "$target"/"$target_file"
+    ln -s -- "$relative_source" "$target_dir"/"$target_file"
 done
     
