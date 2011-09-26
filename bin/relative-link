@@ -16,6 +16,30 @@ function die() {
 }
 
 function calc_relative() {
+    source=$1
+    target=$2
+
+    source=$(echo "$source"|perl -npe 's,/+,/,g')
+
+    while [[ "$source" =~ /../ ]]; do
+	source=$(echo "$source" | perl -npe 's,(^|[^/]+)/\.\./,/,g')
+    done
+
+    perl -e '
+($s, $t)  = @ARGV;
+@s = split('', $s);
+@t = split('', $t);
+
+$n = 0;
+$last_slash = 0;
+while (@s and @t) {
+    if ($s[0] eq $t[0]) {
+        
+    source=$(lookup_file "$source")
+    test -e "$source" || { echo "ln: source \`$source does not exist" 1>&2; return 1; }
+}
+
+
     
 if (($# > 2)) && test ! -d "$last_arg"; then
     die "ln: target \`Android.mk' is not a directory"
@@ -28,11 +52,6 @@ test -e "$last_arg" || die "ln: target \`$last_arg does not exist"
 
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
-    source=$(echo "$source"|perl -npe 's,/+,/,g')
-
-    source=$(lookup_file "$source")
-    test -e "$source" || { echo "ln: source \`$source does not exist"; continue; }
-
     relative_source=$(calc_relative "$source" "last_arg")
     ln -s -- "$relative_source" "$last_arg"
 done
