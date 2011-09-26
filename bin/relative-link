@@ -56,19 +56,18 @@ $relative_s = "../" x $remaining_t . $relative_s;
 print "$relative_s";
 ' "$source" "$target"
 }
-    
+
+last_arg=$(readlink -f "$last_arg")
 if (($# > 2)) && test ! -d "$last_arg"; then
     die "ln: target \`Android.mk' is not a directory"
 fi
 
 test -f "$last_arg" && last_arg=$(dirname "$last_arg")
-
-last_arg=$(readlink -f "$last_arg")
 test -e "$last_arg" || die "ln: target \`$last_arg does not exist"
 
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
     relative_source=$(calc_relative "$source" "$last_arg")
-    echo ln -s -- "$relative_source" "$last_arg"
+    ln -s -- "$relative_source" "$last_arg"/
 done
     
