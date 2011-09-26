@@ -17,9 +17,14 @@ function die() {
 
 function calc_relative() {
     source=$1
-    target=$2
+    target=$2/
 
     source=$(echo "$source"|perl -npe 's,/+,/,g')
+    source=$(lookup_file "$source")
+
+    while [[ "$source" =~ /./ ]]; do
+	source=$(echo "$source" | perl -npe 's,/\./,/,g')
+    done
 
     while [[ "$source" =~ /../ ]]; do
 	source=$(echo "$source" | perl -npe 's,(^|[^/]+)/\.\./,/,g')
@@ -27,8 +32,8 @@ function calc_relative() {
 
     perl -e '
 ($s, $t)  = @ARGV;
-@s = split('', $s);
-@t = split('', $t);
+@s = split("", $s);
+@t = split("", $t);
 
 $n = 0;
 $last_slash = 0;
@@ -42,11 +47,15 @@ while (@s and @t) {
         last;
     }
 }
-    source=$(lookup_file "$source")
-    test -e "$source" || { echo "ln: source \`$source does not exist" 1>&2; return 1; }
+
+$relative_s = substr($s, $last_slash);
+$remaining_t = substr($t, $last_slash);
+
+$remaining_t = grep(m:/:, split("", $remaining_t));
+$relative_s = "../" x $remaining_t . $relative_s;
+print "$relative_s";
+' "$source" "$target"
 }
-
-
     
 if (($# > 2)) && test ! -d "$last_arg"; then
     die "ln: target \`Android.mk' is not a directory"
@@ -54,12 +63,12 @@ fi
 
 test -f "$last_arg" && last_arg=$(dirname "$last_arg")
 
-last_arg=$(readlink -f "last_arg")
+last_arg=$(readlink -f "$last_arg")
 test -e "$last_arg" || die "ln: target \`$last_arg does not exist"
 
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
-    relative_source=$(calc_relative "$source" "last_arg")
-    ln -s -- "$relative_source" "$last_arg"
+    relative_source=$(calc_relative "$source" "$last_arg")
+    echo ln -s -- "$relative_source" "$last_arg"
 done
     
