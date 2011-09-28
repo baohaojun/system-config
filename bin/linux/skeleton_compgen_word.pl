@@ -6,7 +6,7 @@ use Getopt::Long;
 open(my $log_, ">", glob("~/.skeleton_comp2.log")) or die "Error open log file";
 
 {
-    local $, = "' '";
+    local $" = "' '";
     print $log_ "args are '@ARGV'\n";
 }
 
@@ -44,8 +44,12 @@ if ($skeleton =~ m/\s+/) {
     $skeleton =~ s/\\//g;
     for my $x (split(/\s+/, $skeleton)) {
 	#print STDERR "\nskeleton is $x\n";
+	print $log_ "\nskeleton is $x\n";
 	@words = grep(m/$x/i, @words);
-	#print STDERR "\nwords are @words\n";
+	{
+	    local $" = "'\n'";
+	    print $log_ "\nwords are '@words'\n";
+	}
     }
 } else {
     @words = grep(m/$skeleton/i, @words);
@@ -62,6 +66,7 @@ my ($first, @sorted) = @sorted;
 my $is_prefix = 1;
 for(@sorted) {
   if ($first ne substr($_, 0, length($first))) {
+    print $log_ "is_prefix is false\n";
     $is_prefix = 0;
     last
   }
@@ -74,6 +79,7 @@ for (@words) {
     if ($is_prefix) {
       print "$_\n";
     } else {
+	print $log_ "is_prefix not true\n";
 	printf "%d: %s\n", $count++, $_;
     }
   }    
