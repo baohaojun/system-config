@@ -40,8 +40,8 @@ if ($skeleton =~ s/\.(\d+)$//) {
 
 my $count = 0;
 
-if ($skeleton =~ m/\s+/) {
-    $skeleton =~ s/\\//g;
+if ($skeleton =~ m/\./) {
+    $skeleton =~ s/\./ /g;
     for my $x (split(/\s+/, $skeleton)) {
 	#print STDERR "\nskeleton is $x\n";
 	print $log_ "\nskeleton is $x\n";
