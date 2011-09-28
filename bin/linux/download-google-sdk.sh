@@ -26,4 +26,4 @@ xmlstarlet sel -N\
      sdk="http://schemas.android.com/sdk/android/repository/3"\
      -B -t -m "//sdk:archive" -v "sdk:url" -o ':' -v "sdk:checksum"\
      -n repository.xml |\
-perl -npe 's!(.*):(.*)!test `shasum </dev/null $1|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1;  lftp -c "pget -c -n 10 https://dl-ssl.google.com/android/repository/$1")!g'|bash -x
+perl -npe 's!(.*):(.*)!test `shasum </dev/null $1|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1;  lftp -c "pget -c -n 10 http://dl.google.com/android/repository/$1")!g'|bash -x

@@ -3,6 +3,13 @@
 use strict;
 use Getopt::Long;
 
+open(my $log_, ">", glob("~/.skeleton_comp2.log")) or die "Error open log file";
+
+{
+    local $, = "' '";
+    print $log_ "args are '@ARGV'\n";
+}
+
 my $split_re = '\s+';
 my $use_skeleton_re = 0;
 GetOptions(
