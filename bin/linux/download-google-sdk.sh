@@ -13,15 +13,22 @@ while true; do
     ((x++))
 done&
 
-x=6
-while true; do
-    wget -N http://dl.google.com/android/ndk/android-ndk-r$x-linux-x86.tar.bz2 || break
-    wget -N http://dl.google.com/android/ndk/android-ndk-r$x-darwin-x86.tar.bz2
-    wget -N http://dl.google.com/android/ndk/android-ndk-r$x-windows.zip
-    ((x++))
-done&
+(
+    x=6
+    while true; do
+	wget -N http://dl.google.com/android/ndk/android-ndk-r$x-linux-x86.tar.bz2 || break
+	wget -N http://dl.google.com/android/ndk/android-ndk-r$x-darwin-x86.tar.bz2
+	wget -N http://dl.google.com/android/ndk/android-ndk-r$x-windows.zip
+	((x++))
+    done
 
-((x--))
+    ((x--))
+    for r in f e d c b; do
+	wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-linux-x86.tar.bz2 || continue
+	wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-darwin-x86.tar.bz2 || continue
+	if wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-windows.zip; then break; fi
+    done
+)&
 
 wget -N https://dl-ssl.google.com/android/repository/repository.xml
 
