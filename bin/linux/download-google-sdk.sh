@@ -5,7 +5,7 @@ set -ex
 mkdir ~/external/bin/linux/ext/android-sdk-linux_86/google -p
 cd ~/external/bin/linux/ext/android-sdk-linux_86/google
 
-x=11
+x=13
 while true; do
     wget -N http://dl.google.com/android/android-sdk_r$x-linux_x86.tgz || break
     wget -N http://dl.google.com/android/installer_r$x-windows.exe || break
