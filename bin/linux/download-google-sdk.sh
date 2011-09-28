@@ -13,12 +13,15 @@ while true; do
     ((x++))
 done&
 
+x=6
 while true; do
-    wget -N http://dl.google.com/android/ndk/android-ndk-r4-linux-x86.zip
-    wget -N http://dl.google.com/android/ndk/android-ndk-r4-darwin-x86.zip
-    wget -N http://dl.google.com/android/ndk/android-ndk-r4-windows.zip
-    break
+    wget -N http://dl.google.com/android/ndk/android-ndk-r$x-linux-x86.tar.bz2 || break
+    wget -N http://dl.google.com/android/ndk/android-ndk-r$x-darwin-x86.tar.bz2
+    wget -N http://dl.google.com/android/ndk/android-ndk-r$x-windows.zip
+    ((x++))
 done&
+
+((x--))
 
 wget -N https://dl-ssl.google.com/android/repository/repository.xml
 
