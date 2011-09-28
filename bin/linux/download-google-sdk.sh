@@ -10,11 +10,15 @@ while true; do
     wget -N http://dl.google.com/android/android-sdk_r$x-linux_x86.tgz || break
     wget -N http://dl.google.com/android/installer_r$x-windows.exe || break
     wget -N http://dl.google.com/android/android-sdk_r$x-mac_x86.zip || break
-done
+    ((x++))
+done&
 
-wget -N http://dl.google.com/android/ndk/android-ndk-r4b-linux-x86.zip
-wget -N http://dl.google.com/android/ndk/android-ndk-r4b-darwin-x86.zip
-wget -N http://dl.google.com/android/ndk/android-ndk-r4b-windows.zip
+while true; do
+    wget -N http://dl.google.com/android/ndk/android-ndk-r4-linux-x86.zip
+    wget -N http://dl.google.com/android/ndk/android-ndk-r4-darwin-x86.zip
+    wget -N http://dl.google.com/android/ndk/android-ndk-r4-windows.zip
+    break
+done&
 
 wget -N https://dl-ssl.google.com/android/repository/repository.xml
 
