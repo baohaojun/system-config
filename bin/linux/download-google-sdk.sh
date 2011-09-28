@@ -4,11 +4,13 @@ set -ex
 
 mkdir ~/external/bin/linux/ext/android-sdk-linux_86/google -p
 cd ~/external/bin/linux/ext/android-sdk-linux_86/google
-wget -N http://www.crystax.net/data/android-ndk-r4-linux-x86-crystax-4.tar.bz2
 
-wget -N http://dl.google.com/android/android-sdk_r11-linux_x86.tgz
-wget -N http://dl.google.com/android/installer_r11-windows.exe
-wget -N http://dl.google.com/android/android-sdk_r11-mac_x86.zip
+x=11
+while true; do
+    wget -N http://dl.google.com/android/android-sdk_r$x-linux_x86.tgz || break
+    wget -N http://dl.google.com/android/installer_r$x-windows.exe || break
+    wget -N http://dl.google.com/android/android-sdk_r$x-mac_x86.zip || break
+done
 
 wget -N http://dl.google.com/android/ndk/android-ndk-r4b-linux-x86.zip
 wget -N http://dl.google.com/android/ndk/android-ndk-r4b-darwin-x86.zip
