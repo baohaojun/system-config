@@ -53,7 +53,7 @@ press C-n (to move onto that entry) and Enter (to exec it).
 * Android Factory Testing
 
 
-* beagle-grep 简介
+* beagrep 简介
 
 ** 为什么用grep
 
@@ -78,7 +78,7 @@ press C-n (to move onto that entry) and Enter (to exec it).
 书的名字叫《Linux Device Driver》，第一版，作者说：“这本书是我花了很多
 小时仔细grep内核代码写出来的成果。”
 
-** 为什么用beagle-grep
+** 为什么用beagrep
 
 因为它是打了兴奋剂的grep:-)
 
@@ -86,7 +86,7 @@ press C-n (to move onto that entry) and Enter (to exec it).
 
 为什么？因为时代变了，以前用4M的机器就够，现在要处理的信息量更大了，所以我们要4G的。
 
-这还不够，我们还需要把软件也升一下级，比如grep，升级成beagle-grep。
+这还不够，我们还需要把软件也升一下级，比如grep，升级成beagrep。
 
 ** 原理
 
@@ -129,7 +129,7 @@ git clone git://github.com/baohaojun/windows-config.git
 
 运行结束后，可以在代码的任意子目录下运行：
 
-    beagle-grep.sh -e "hello world"
+    beagrep -e "hello world"
 
 加`-l'参数可以列出哪些文件其内容包含相应的单词，加`-p'参数可以列出哪些
 文件其文件名包含相应的单词。
@@ -144,9 +144,9 @@ git clone git://github.com/baohaojun/windows-config.git
 2. 最后一个命令会做很多事情，包括编译我的版本的beagle，而在ubuntu上是编
    不过的，有一个文件会出错，你需要用git恢复这个文件到它的上一个版本。
 
-3. 如果你因为使用beagle-grep从一个文艺青年变成文本青年，本人概不负责。
+3. 如果你因为使用beagrep从一个文艺青年变成文本青年，本人概不负责。
 
-4. 如果你因为beagle-grep太快而产生头晕、恶心、呕吐等类似于坐过山车的症
+4. 如果你因为beagrep太快而产生头晕、恶心、呕吐等类似于坐过山车的症
    状，本人概不负责。相反，请考虑支付本人相当于欢乐谷门票的钱;-)
 
 * nvidia project

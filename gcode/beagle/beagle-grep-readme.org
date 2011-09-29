@@ -1,4 +1,4 @@
-* Introduction
+* Introducing beagrep, beast-like grep
   
   I just found out about the beagle project couple of months ago, I'm
   totally excited by it. It's the missing brick that I longed for to
@@ -13,14 +13,14 @@
   project. I once searched for =readlink= in android source tree, it
   took me >30 minutes!
 
-  With beagle combined with grep, I can grep it for less than 2 seconds!
+  With beagrep (beagle combined with grep), I can grep it for less than 2 seconds!
 
 
 * Why is it possible
 
 When you grep for reading source code's sake, you often don't need
 complex regexp power: when you search =readlink=, you =grep readlink=,
-not =grep r.*e.*a.*d.*l.*i.*n.*k=, that just does not make sense!
+not =grep r.*e.*a.*d.*l.*i.*n.*k=, that just does not make any sense!
 
 IOW, you 99.9% times search only for /whole words/ like =readlink=,
 which is a kind of simple regexp, and unlike complex regexps (such as
@@ -29,8 +29,8 @@ perfectly.
 
 * How is it done
 
-It is very simple idea, when you want to grep a target repexp, do the
-following: 
+It is really a very simple idea, when you want to grep a target
+repexp, do the following:
 
   1. Break the target regexp into /whole words/, for e.g., =grep -e
      some.*fun.*stuff= should be broken into "some fun stuff".
@@ -73,18 +73,25 @@ following:
 
     1. Build a static index at the top level dir of the souce code:
        
-       =mkbeagleidx=
+       #+BEGIN_EXAMPLE
+       mkbeagleidx
+       #+END_EXAMPLE
        
-    3. Use beagle-grep.sh in any directory in the source tree:
+       
+    3. Use beagrep in any directory in the source tree:
 
-         ~/bin/beagle-grep.sh -e "ENGLISH_STOP_WORDS" 
+       #+BEGIN_EXAMPLE
+       ~/bin/beagrep -e "ENGLISH_STOP_WORDS" 
+       #+END_EXAMPLE
 
        The output is like the following:
 
-         beagle query argument `ENGLISH STOP WORDS'
-         /src/beagle/beagled/LuceneCommon.cs:1206: ...ENGLISH_STOP_WORDS...
-         ...
-         ...
+       #+BEGIN_EXAMPLE
+       beagle query argument `ENGLISH STOP WORDS'
+       /src/beagle/beagled/LuceneCommon.cs:1206: ...ENGLISH_STOP_WORDS...
+       ...
+       ...
+       #+END_EXAMPLE
    
        Note: ENGLISH_STOP_WORDS is broken into 3 words before beagle
        is queried.
@@ -93,7 +100,7 @@ following:
 
   I have put the source code at [[http://github.com/baohaojun/windows-config/tree/master/][github]].
 
-  If you checkout the source code, you can find the beagle-grep.sh and
+  If you checkout the source code, you can find the beagrep and
   its helper scripts under [[http://github.com/baohaojun/windows-config/tree/master/bin/][windows-config/bin]].
 
   The beagle source code I modified is under [[http://github.com/baohaojun/windows-config/tree/master/gcode/beagle/][windows-config/gcode/beagle]].
@@ -101,3 +108,9 @@ following:
   The c# program which breakes =ENGLISH_STOP_WORDS= to =ENGLISH STOP
   WORDS= is under [[http://github.com/baohaojun/windows-config/tree/master/gcode/BeagleTokenizer/][windows-config/gcode/BeagleTokenizer]].
 
+  The simplest way to set things up is to run
+  : ~/windows-config/bin/after-co-ln-s.sh
+  and then
+  : ~/windows-config/bin/linux/after-check-out.sh
+
+  For more details, please RTFS using beagrep!

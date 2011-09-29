@@ -34,8 +34,6 @@ mkdir -p ~/.fonts
 cp ~/doc/monaco-linux.ttf ~/.fonts
 fc-cache -v
 
-#String::ShellQuote is needed by beagle-grep.sh/edit
-
 #设置gmail邮件
 test `whoami` = bhj && . config_email || true
 test `whoami` = bhj && sudo apt-get install texlive-full || true

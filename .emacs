@@ -337,7 +337,7 @@
 (global-set-key [(meta n)] 'next-error)
 (global-set-key [(meta p)] 'previous-error)
 
-(setq my-grep-command "beagle-grep.sh -e pat") ;; should not put it into custom, the custom will be read every time and so the `(let ((grep-command ..' scheme will fail
+(setq my-grep-command "beagrep -e pat") ;; should not put it into custom, the custom will be read every time and so the `(let ((grep-command ..' scheme will fail
 
 (global-set-key [(meta s) ?r] 
                 (lambda ()
@@ -396,7 +396,7 @@
 (defun grep-find-file ()
   (interactive)
   (let ((grep-history grep-find-file-history)
-	(my-grep-command "beagle-grep.sh -f -e pat")
+	(my-grep-command "beagrep -f -e pat")
 	(current-prefix-arg 4))
     (flet ((grep-tag-default () (grep-tag-default-path)))
       (nodup-ring-insert cscope-marker-ring (point-marker))

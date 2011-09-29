@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-#beagle-grep.sh和my-beagle的辅助代码
+#beagrep和my-beagle的辅助代码
 
 #beagle分词是在StandardTokenizerImpl.java里实现的，这个文件又是从StandardTokenizerImpl.jflex生成的
 

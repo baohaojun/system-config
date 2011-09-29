@@ -12,6 +12,6 @@ beagle-static-query --add-static-backend ${tmpd:-`pwd`}/.beagle --backend none -
 beagle-extract-content $txt_file
 cd $tmpd
 mkbeagleidx >/dev/null
-beagle-grep.sh -e "${TBNAME:-1.cs}"
+beagrep -e "${TBNAME:-1.cs}"
 #rm $tmpd -rf
 #my-beagle "$@"

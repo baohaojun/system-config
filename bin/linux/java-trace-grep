@@ -12,7 +12,7 @@ sub handle_1_trace($) {
             chop($pat); #get rid of the last ')'
             $pat = shell_quote($pat);
             $save = $_;
-            for (split "\n", qx(beagle-grep.sh -f -e $pat|perl -ne "print if m/:[0-9]+:/")) {
+            for (split "\n", qx(beagrep -f -e $pat|perl -ne "print if m/:[0-9]+:/")) {
                 chomp;
                 s/(:[0-9]+:).*/$1 /;
                 print "$_\n\t$save\n";
