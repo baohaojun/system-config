@@ -228,12 +228,10 @@
 (setq load-path (cons "~/.emacs_d/org2blog/" load-path))
 (require 'org2blog-autoloads)
 
-(setq blog (netrc-machine (netrc-parse "~/.authinfo") "myblog" t))
 (setq org2blog/wp-blog-alist
-      '(("my-blog"
-         :url "http://username.server.com/xmlrpc.php"
-         :username (netrc-get blog "login")
-         :password (netrc-get blog "password"))))
+      '(("wordpress"
+	 :url "http://baohaojun.wordpress.com/xmlrpc.php"
+	 :username "baohaojun")))
 
 (define-key js-mode-map [(meta .)] 'my-cscope-find-global-definition)
 (define-key global-map [(meta control ,)] 'cscope-pop-mark)
