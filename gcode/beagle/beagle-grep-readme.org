@@ -91,22 +91,13 @@ following:
 
 * Where to find everything
 
-  I have put the source code at:
-
-   git://github.com/baohaojun/windows-config.git
+  I have put the source code at [[http://github.com/baohaojun/windows-config/tree/master/][github]].
 
   If you checkout the source code, you can find the beagle-grep.sh and
-  its helper scripts under:
+  its helper scripts under [[http://github.com/baohaojun/windows-config/tree/master/bin/][windows-config/bin]].
 
-     windows-config
-     windows-config/bin
-     windows-config/bin/linux
+  The beagle source code I modified is under [[http://github.com/baohaojun/windows-config/tree/master/gcode/beagle/][windows-config/gcode/beagle]].
 
-  The beagle source code I modified is under
-    
-     windows-config/gcode/beagle
-
-  The c# program which breakes =ENGLISH_STOP_WORDS= to =ENGLISH STOP WORDS= is under:
- 
-     windows-config/gcode/BeagleTokenizer
+  The c# program which breakes =ENGLISH_STOP_WORDS= to =ENGLISH STOP
+  WORDS= is under [[http://github.com/baohaojun/windows-config/tree/master/gcode/BeagleTokenizer/][windows-config/gcode/BeagleTokenizer]].
 
