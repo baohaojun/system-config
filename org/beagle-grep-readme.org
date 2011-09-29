@@ -32,8 +32,8 @@ perfectly.
 It is really a very simple idea, when you want to grep a target
 repexp, do the following:
 
-  1. Break the target regexp into /whole words/, for e.g., =grep -e
-     some.*fun.*stuff= should be broken into "some fun stuff".
+  1. Break the target regexp into /whole words/, for e.g., =grep -e some.*fun.*stuff= 
+     should be broken into "some fun stuff".
 
   2. Query beagle with the whole words, beagle answers with which
      files in the repository contais these words. These files are the
