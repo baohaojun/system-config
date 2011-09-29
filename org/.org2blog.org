@@ -1,8 +1,14 @@
 
 * Posts
-** [[file:/home/bhj/windows-config/org/my-programmer-dvorak.org][No Title]]
+** [[file:/home/bhj/windows-config/org/beagle-grep-readme.org][Introducing beagrep, the beast like grep]]
+   :PROPERTIES:
+   :POSTID:   46
+   :POST_DATE: 20110929T08:05:52+0000
+   :Published: Yes
+   :END:
+** [[file:/home/bhj/windows-config/org/my-programmer-dvorak.org][Switched to USA Pragrammer Dvorak Keyboard]]
    :PROPERTIES:
    :POSTID:   44
-   :POST_DATE: 20110929T07:58:28+0000
+   :POST_DATE: 20110929T07:58:00+0000
    :Published: Yes
    :END:

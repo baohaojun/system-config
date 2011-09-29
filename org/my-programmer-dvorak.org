@@ -1,4 +1,6 @@
-* Switched to USA Pragrammer Dvorak Keyboard
+#+POSTID: 44
+#+DATE: [2011-09-29 Thu 15:58]
+#+TITLE: Switched to USA Pragrammer Dvorak Keyboard
 
 After reading [[http://xahlee.org/index.html][xahlee]]'s articles on keyboards, I recently made 2 big
 changes (and many other small changes because of the 2 big ones) to

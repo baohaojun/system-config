@@ -1,4 +1,6 @@
-* Introducing beagrep, the beast like grep
+#+POSTID: 46
+#+DATE: [2011-09-29 Thu 16:05]
+#+TITLE: Introducing beagrep, the beast like grep
   
   I just found out about the beagle project couple of months ago, I'm
   totally excited by it. It's the missing brick that I longed for to

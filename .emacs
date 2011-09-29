@@ -556,6 +556,8 @@
  '(mm-text-html-renderer (quote w3m))
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
+ '(org2blog/wp-confirm-post t)
+ '(org2blog/wp-use-tags-as-categories t)
  '(require-final-newline t)
  '(safe-local-variable-values (quote ((c-style . whitesmith) (major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
  '(save-place t nil (saveplace))
