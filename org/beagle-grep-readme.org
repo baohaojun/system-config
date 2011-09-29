@@ -1,4 +1,4 @@
-* Introducing beagrep, beast-like grep
+* Introducing beagrep, the beast like grep
   
   I just found out about the beagle project couple of months ago, I'm
   totally excited by it. It's the missing brick that I longed for to
@@ -56,11 +56,11 @@ repexp, do the following:
        too common and uninteresting in java source files).
 
     2. Remove some restricts. For e.g., only the first 100000 tokens
-       in a file will be indexed, which is undesirable for my
+       in a file would be indexed, which is undesirable for my
        purpose. Also, I enlarged the memory threshold by 10 times,
        since I found it causing problems with some large xml files.
 
-    3. Remove more restricts. Basically, I `unremoved' anything the
+    3. Remove more restricts. Basically, I unremoved anything the
        NoiseFilter will remove. Also, another filter will remove
        common English words, I unremoved those as well.
 
@@ -93,7 +93,7 @@ repexp, do the following:
        ...
        #+END_EXAMPLE
    
-       Note: ENGLISH_STOP_WORDS is broken into 3 words before beagle
+       Note: =ENGLISH_STOP_WORDS= is broken into 3 words before beagle
        is queried.
 
 * Where to find everything
