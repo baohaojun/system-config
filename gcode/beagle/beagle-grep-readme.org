@@ -9,8 +9,9 @@
   finding cscope insufficient (because some files are not source code,
   and even cscope's fuzzy syntax parser can not parse them). On the
   other hand, with large projects, such as Linux Kernel, or the even
-  larger Android system, grepping can be very slooow on the whole
-  project.
+  larger Android system, grepping can be very slow on the whole
+  project. I once searched for =readlink= in android source tree, it
+  took me >30 minutes!
 
   The idea is very simple, whatever I want to grep, I ask beagle first
   which files might contain the thing that I want, then use grep on
