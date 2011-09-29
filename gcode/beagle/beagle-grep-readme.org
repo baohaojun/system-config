@@ -13,13 +13,20 @@
   project. I once searched for =readlink= in android source tree, it
   took me >30 minutes!
 
-  The idea is very simple, whatever I want to grep, I ask beagle first
-  which files might contain the thing that I want, then use grep on
-  beagle's answer only, instead of on the whole repository.
+  With beagle combined with grep, I can grep it for less than 2 seconds!
 
-  I have put the source code at:
 
-   git://github.com/baohaojun/windows-config.git
+* Why is it possible
+
+When you grep for reading source code's sake, you often don't need
+complex regexp power: when you search =readlink=, you =grep readlink=,
+not =grep r.*e.*a.*d.*l.*i.*n.*k=, that just does not make sense!
+
+IOW, you 99.9% times search only for /whole words/ like =readlink=,
+which is a kind of simple regexp, and unlike complex regexps (such as
+=r.*e.*a.*d.*l.*i.*n.*k=), is something search engines can deal with
+perfectly.
+
 
 * Modifications to beagle
 
@@ -82,6 +89,10 @@
        respect that:-)
 
 * Where to find everything
+
+  I have put the source code at:
+
+   git://github.com/baohaojun/windows-config.git
 
   If you checkout the source code, you can find the beagle-grep.sh and
   its helper scripts under:
