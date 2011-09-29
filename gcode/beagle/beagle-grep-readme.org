@@ -27,16 +27,33 @@ which is a kind of simple regexp, and unlike complex regexps (such as
 =r.*e.*a.*d.*l.*i.*n.*k=), is something search engines can deal with
 perfectly.
 
+* How is it done
+
+It is very simple idea, when you want to grep a target repexp, do the
+following: 
+
+  1. Break the target regexp into /whole words/, for e.g., =grep -e
+     some.*fun.*stuff= should be broken into "some fun stuff".
+
+  2. Query beagle with the whole words, beagle answers with which
+     files in the repository contais these words. These files are the
+     possibe matching files.
+
+  3. Grep the target regexp in those possible files (which often is
+     only a very small part of the whole repository, thus grep can
+     finish in a blink of the eyes).
 
 * Modifications to beagle
 
-  Here's the details of how I changed beagle to satisfy my need:
+  Here's the details of how I changed beagle to satisfy my need
+  (warning: boring stuff ahead):
 
     1. Change all beagle built in filters to FilterText. This is
        because I don't want those keywords filtered by those
        SourceCode filters. This way, I can beagle-query `extends
        CFunny' to see which classes are inheriting from `CFunny' in
-       Java.
+       Java (The default Java filter will remoke =extends= since it is
+       too common and uninteresting in java source files).
 
     2. Remove some restricts. For e.g., only the first 100000 tokens
        in a file will be indexed, which is undesirable for my
@@ -47,46 +64,30 @@ perfectly.
        NoiseFilter will remove. Also, another filter will remove
        common English words, I unremoved those as well.
 
-    4. Added an option to beagle-build-index,
-       --deny-directory-patterns, so that I can deny some directories
-       from being indexed.
+    4. Added support for indexing Chinese characters (This is because
+       I'm a Chinese).
 
 * Usage
 
   Here's how I use it:
 
     1. Build a static index at the top level dir of the souce code:
-
-         mkdir .beagle; 
-         beagle-build-index --recursive\
-                            --deny-directory-pattern `pwd`/out\
-                            --enable-deletion\
-                            --target .beagle/ .
-
-    2. Prepare another filter so that I can discard files I'm not
-       interested later when I grep. For e.g., with:
-   
-         ln ~/.my-beagle-filter-kernel-x86-no64 .beagle-filter
-   
-       I can ignore all other arches except x86 when I'm reading Linux
-       Kernel source code.
-        
+       
+       =mkbeagleidx=
+       
     3. Use beagle-grep.sh in any directory in the source tree:
 
          ~/bin/beagle-grep.sh -e "ENGLISH_STOP_WORDS" 
 
        The output is like the following:
 
-         beagle query argument `ENGLISH STOP WORDS' <== Note this
+         beagle query argument `ENGLISH STOP WORDS'
          /src/beagle/beagled/LuceneCommon.cs:1206: ...ENGLISH_STOP_WORDS...
          ...
          ...
    
-       Note: althogh beagle-grep.sh's argument contains underscores, I
-       removed them using a separate simple c# program (which uses
-       beagle's StandardTokenizerImpl) on the argument. Beagle has its
-       own special rules treating non-alphanum characters, and we must
-       respect that:-)
+       Note: ENGLISH_STOP_WORDS is broken into 3 words before beagle
+       is queried.
 
 * Where to find everything
 
@@ -105,8 +106,7 @@ perfectly.
     
      windows-config/gcode/beagle
 
-  The above mentioned simple c# program which breakes
-  ENGLISH_STOP_WORDS to `ENGLISH STOP WORDS' is under:
+  The c# program which breakes =ENGLISH_STOP_WORDS= to =ENGLISH STOP WORDS= is under:
  
      windows-config/gcode/BeagleTokenizer
 
