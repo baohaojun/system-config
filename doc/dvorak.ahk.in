@@ -21,6 +21,9 @@ gen-dvorak-programmer.sh 8 \) \2
 gen-dvorak-programmer.sh 9 \+ \4
 gen-dvorak-programmer.sh 0 \] \6
 gen-dvorak-programmer.sh - \! \8
+gen-dvorak-programmer.sh \] \@ \^
+gen-dvorak-programmer.sh \= \# \`
+
 
 
 
@@ -37,7 +40,6 @@ i::c
 o::r
 p::l
 [::/
-]::=
 ;\::\ ;no change
 
 ;a::a ;no change

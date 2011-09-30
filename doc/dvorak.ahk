@@ -945,6 +945,152 @@ else
     }
 }
 return
+*]::
+sls := GetKeyState("LShift", "P")
+srs := GetKeyState("RShift", "P")
+sc := GetKeyState("CapsLock", "T")
+SetKeyDelay -1   ;
+if (not sc)
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{^ DownTemp}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{^ DownTemp}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{@ DownTemp}  ;
+    }
+} 
+else
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{@ DownTemp}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{@ DownTemp}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{^ DownTemp}  ;
+    }
+}
+return
+
+*] up::
+sls := GetKeyState("LShift", "P")
+srs := GetKeyState("RShift", "P")
+sc := GetKeyState("CapsLock", "T")
+SetKeyDelay -1   ;
+if (not sc)
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{^ Up}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{^ Up}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{@ Up}  ;
+    }
+} 
+else
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{@ Up}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{@ Up}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{^ Up}  ;
+    }
+}
+return
+*=::
+sls := GetKeyState("LShift", "P")
+srs := GetKeyState("RShift", "P")
+sc := GetKeyState("CapsLock", "T")
+SetKeyDelay -1   ;
+if (not sc)
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{` DownTemp}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{` DownTemp}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{# DownTemp}  ;
+    }
+} 
+else
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{# DownTemp}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{# DownTemp}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{` DownTemp}  ;
+    }
+}
+return
+
+*= up::
+sls := GetKeyState("LShift", "P")
+srs := GetKeyState("RShift", "P")
+sc := GetKeyState("CapsLock", "T")
+SetKeyDelay -1   ;
+if (not sc)
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{` Up}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{` Up}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{# Up}  ;
+    }
+} 
+else
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{# Up}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{# Up}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{` Up}  ;
+    }
+}
+return
 
 q::SC027
 w::,
@@ -957,7 +1103,6 @@ i::c
 o::r
 p::l
 [::/
-]::=
 ;\::\ ;no change
 
 ;a::a ;no change
