@@ -6,31 +6,13 @@ sls := GetKeyState("LShift", "P")
 srs := GetKeyState("RShift", "P")
 sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
-if (not sc)
+if (sls or srs)
 {
-    if (sls or srs)
-    {
-        Send {Blind}{$3 DownTemp}
-    }
-    else
-    {
-        Send {Blind}{$2 DownTemp}  ;
-    }
-} 
+    Send {Blind}{$3 DownTemp}
+}
 else
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{$2 DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{$2 DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{Shift Down}{$3 DownTemp}{Shift Up} ;
-    }
+    Send {Blind}{$2 DownTemp}  ;
 }
 return
 
@@ -39,31 +21,13 @@ sls := GetKeyState("LShift", "P")
 srs := GetKeyState("RShift", "P")
 sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
-if (not sc)
+if (sls or srs)
 {
-    if (sls or srs)
-    {
-        Send {Blind}{$3 Up}
-    }
-    else
-    {
-        Send {Blind}{$2 Up}  ;
-    }
-} 
+    Send {Blind}{$3 Up}
+}
 else
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{$2 Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{$2 Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{Shift Down}{$3 Up}{Shift Up} ;
-    }
+    Send {Blind}{$2 Up}  ;
 }
 return
 EOF

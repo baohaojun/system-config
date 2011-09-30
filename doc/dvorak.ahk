@@ -9,35 +9,17 @@ sls := GetKeyState("LShift", "P")
 srs := GetKeyState("RShift", "P")
 sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
-if (not sc)
+if (sls)
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{$ DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{$ DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{~ DownTemp}  ;
-    }
-} 
+    Send {Blind}{LShift up}{~ DownTemp}{LShift Down}  ;
+}
+else if (srs)
+{
+    Send {Blind}{RShift up}{~ DownTemp}{RShift Down}  ;
+}
 else
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{~ DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{~ DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{$ DownTemp}  ;
-    }
+    Send {Blind}{$ DownTemp}  ;
 }
 return
 
@@ -46,35 +28,17 @@ sls := GetKeyState("LShift", "P")
 srs := GetKeyState("RShift", "P")
 sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
-if (not sc)
+if (sls)
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{$ Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{$ Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{~ Up}  ;
-    }
-} 
+    Send {Blind}{LShift up}{~ Up}{LShift Down}  ;
+}
+else if (srs)
+{
+    Send {Blind}{RShift up}{~ Up}{RShift Down}  ;
+}
 else
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{~ Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{~ Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{$ Up}  ;
-    }
+    Send {Blind}{$ Up}  ;
 }
 return
 *SC028::
@@ -155,31 +119,13 @@ sls := GetKeyState("LShift", "P")
 srs := GetKeyState("RShift", "P")
 sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
-if (not sc)
+if (sls or srs)
 {
-    if (sls or srs)
-    {
-        Send {Blind}{5 DownTemp}
-    }
-    else
-    {
-        Send {Blind}{& DownTemp}  ;
-    }
-} 
+    Send {Blind}{5 DownTemp}
+}
 else
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{& DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{& DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{Shift Down}{5 DownTemp}{Shift Up} ;
-    }
+    Send {Blind}{& DownTemp}  ;
 }
 return
 
@@ -188,31 +134,13 @@ sls := GetKeyState("LShift", "P")
 srs := GetKeyState("RShift", "P")
 sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
-if (not sc)
+if (sls or srs)
 {
-    if (sls or srs)
-    {
-        Send {Blind}{5 Up}
-    }
-    else
-    {
-        Send {Blind}{& Up}  ;
-    }
-} 
+    Send {Blind}{5 Up}
+}
 else
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{& Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{& Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{Shift Down}{5 Up}{Shift Up} ;
-    }
+    Send {Blind}{& Up}  ;
 }
 return
 *2::
@@ -950,35 +878,17 @@ sls := GetKeyState("LShift", "P")
 srs := GetKeyState("RShift", "P")
 sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
-if (not sc)
+if (sls)
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{@ DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{@ DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{^ DownTemp}  ;
-    }
-} 
+    Send {Blind}{LShift up}{^ DownTemp}{LShift Down}  ;
+}
+else if (srs)
+{
+    Send {Blind}{RShift up}{^ DownTemp}{RShift Down}  ;
+}
 else
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{^ DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{^ DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{@ DownTemp}  ;
-    }
+    Send {Blind}{@ DownTemp}  ;
 }
 return
 
@@ -987,35 +897,17 @@ sls := GetKeyState("LShift", "P")
 srs := GetKeyState("RShift", "P")
 sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
-if (not sc)
+if (sls)
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{@ Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{@ Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{^ Up}  ;
-    }
-} 
+    Send {Blind}{LShift up}{^ Up}{LShift Down}  ;
+}
+else if (srs)
+{
+    Send {Blind}{RShift up}{^ Up}{RShift Down}  ;
+}
 else
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{^ Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{^ Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{@ Up}  ;
-    }
+    Send {Blind}{@ Up}  ;
 }
 return
 *=::
@@ -1023,35 +915,17 @@ sls := GetKeyState("LShift", "P")
 srs := GetKeyState("RShift", "P")
 sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
-if (not sc)
+if (sls)
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{# DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{# DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{SC029 DownTemp}  ;
-    }
-} 
+    Send {Blind}{LShift up}{SC029 DownTemp}{LShift Down}  ;
+}
+else if (srs)
+{
+    Send {Blind}{RShift up}{SC029 DownTemp}{RShift Down}  ;
+}
 else
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{SC029 DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{SC029 DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{# DownTemp}  ;
-    }
+    Send {Blind}{# DownTemp}  ;
 }
 return
 
@@ -1060,35 +934,17 @@ sls := GetKeyState("LShift", "P")
 srs := GetKeyState("RShift", "P")
 sc := GetKeyState("CapsLock", "T")
 SetKeyDelay -1   ;
-if (not sc)
+if (sls)
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{# Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{# Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{SC029 Up}  ;
-    }
-} 
+    Send {Blind}{LShift up}{SC029 Up}{LShift Down}  ;
+}
+else if (srs)
+{
+    Send {Blind}{RShift up}{SC029 Up}{RShift Down}  ;
+}
 else
 {
-    if (sls)
-    {
-        Send {Blind}{LShift up}{SC029 Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{SC029 Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{# Up}  ;
-    }
+    Send {Blind}{# Up}  ;
 }
 return
 
