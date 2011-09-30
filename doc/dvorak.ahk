@@ -13,21 +13,6 @@ if (not sc)
 {
     if (sls)
     {
-        Send {Blind}{LShift up}{~ DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{~ DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{$ DownTemp}  ;
-    }
-} 
-else
-{
-    if (sls)
-    {
         Send {Blind}{LShift up}{$ DownTemp}{LShift Down}  ;
     }
     else if (srs)
@@ -37,6 +22,21 @@ else
     else
     {
         Send {Blind}{~ DownTemp}  ;
+    }
+} 
+else
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{~ DownTemp}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{~ DownTemp}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{$ DownTemp}  ;
     }
 }
 return
@@ -50,21 +50,6 @@ if (not sc)
 {
     if (sls)
     {
-        Send {Blind}{LShift up}{~ Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{~ Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{$ Up}  ;
-    }
-} 
-else
-{
-    if (sls)
-    {
         Send {Blind}{LShift up}{$ Up}{LShift Down}  ;
     }
     else if (srs)
@@ -74,6 +59,21 @@ else
     else
     {
         Send {Blind}{~ Up}  ;
+    }
+} 
+else
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{~ Up}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{~ Up}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{$ Up}  ;
     }
 }
 return
@@ -954,21 +954,6 @@ if (not sc)
 {
     if (sls)
     {
-        Send {Blind}{LShift up}{^ DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{^ DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{@ DownTemp}  ;
-    }
-} 
-else
-{
-    if (sls)
-    {
         Send {Blind}{LShift up}{@ DownTemp}{LShift Down}  ;
     }
     else if (srs)
@@ -978,6 +963,21 @@ else
     else
     {
         Send {Blind}{^ DownTemp}  ;
+    }
+} 
+else
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{^ DownTemp}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{^ DownTemp}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{@ DownTemp}  ;
     }
 }
 return
@@ -991,21 +991,6 @@ if (not sc)
 {
     if (sls)
     {
-        Send {Blind}{LShift up}{^ Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{^ Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{@ Up}  ;
-    }
-} 
-else
-{
-    if (sls)
-    {
         Send {Blind}{LShift up}{@ Up}{LShift Down}  ;
     }
     else if (srs)
@@ -1015,6 +1000,21 @@ else
     else
     {
         Send {Blind}{^ Up}  ;
+    }
+} 
+else
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{^ Up}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{^ Up}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{@ Up}  ;
     }
 }
 return
@@ -1027,21 +1027,6 @@ if (not sc)
 {
     if (sls)
     {
-        Send {Blind}{LShift up}{` DownTemp}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{` DownTemp}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{# DownTemp}  ;
-    }
-} 
-else
-{
-    if (sls)
-    {
         Send {Blind}{LShift up}{# DownTemp}{LShift Down}  ;
     }
     else if (srs)
@@ -1050,7 +1035,22 @@ else
     }
     else
     {
-        Send {Blind}{` DownTemp}  ;
+        Send {Blind}{SC029 DownTemp}  ;
+    }
+} 
+else
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{SC029 DownTemp}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{SC029 DownTemp}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{# DownTemp}  ;
     }
 }
 return
@@ -1064,21 +1064,6 @@ if (not sc)
 {
     if (sls)
     {
-        Send {Blind}{LShift up}{` Up}{LShift Down}  ;
-    }
-    else if (srs)
-    {
-        Send {Blind}{RShift up}{` Up}{RShift Down}  ;
-    }
-    else
-    {
-        Send {Blind}{# Up}  ;
-    }
-} 
-else
-{
-    if (sls)
-    {
         Send {Blind}{LShift up}{# Up}{LShift Down}  ;
     }
     else if (srs)
@@ -1087,7 +1072,22 @@ else
     }
     else
     {
-        Send {Blind}{` Up}  ;
+        Send {Blind}{SC029 Up}  ;
+    }
+} 
+else
+{
+    if (sls)
+    {
+        Send {Blind}{LShift up}{SC029 Up}{LShift Down}  ;
+    }
+    else if (srs)
+    {
+        Send {Blind}{RShift up}{SC029 Up}{RShift Down}  ;
+    }
+    else
+    {
+        Send {Blind}{# Up}  ;
     }
 }
 return

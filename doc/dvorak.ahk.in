@@ -1,3 +1,6 @@
+#!/bin/bash
+# see http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html#ss1.4 for some scan code ref.
+# also see wikipedia, the scancode page
 
 cat << "EOF"
 SendMode Input
@@ -8,7 +11,7 @@ Menu, Tray, Icon, main.cpl, 8
 
 EOF
 
-gen-dvorak-programmer.sh \` \$ \~
+gen-dvorak-programmer-no-caps.sh \` \$ \~
 gen-dvorak-programmer.sh SC028 - _
 gen-dvorak-programmer-shift3.sh 1 \& 5 # by 5 we mean %
 gen-dvorak-programmer.sh 2 \[ \7
@@ -21,8 +24,8 @@ gen-dvorak-programmer.sh 8 \) \2
 gen-dvorak-programmer.sh 9 \+ \4
 gen-dvorak-programmer.sh 0 \] \6
 gen-dvorak-programmer.sh - \! \8
-gen-dvorak-programmer.sh \] \@ \^
-gen-dvorak-programmer.sh \= \# \`
+gen-dvorak-programmer-no-caps.sh \] \@ \^
+gen-dvorak-programmer-no-caps.sh \= \# SC029
 
 
 
