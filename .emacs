@@ -1493,9 +1493,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (setq bbdb/gnus-update-records-mode '(if (and (boundp 'auto-create-p) (null auto-create-p))
 				    'searching
 				  'annotating))
- (setq bbdb-canonicalize-net-hook
-       '(lambda (addr)
-	  (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr)))
+(setq bbdb-canonicalize-net-hook
+      '(lambda (addr)
+	 (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr)))
 
 
 ;; (setq bbdb-create-hook '(bbdb-creation-date-hook bbdb-bhj-unify-eee168))
