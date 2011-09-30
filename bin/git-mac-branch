@@ -18,16 +18,19 @@ chomp;
 $time = $time < $_ ? $_ : $time; 
 END{
     use POSIX; 
+    print "time is $time\n";
     if (time() - $time > 3600) {
         exit(0);
     } else {
         exit(-1);
     }
 }'; then
+    echo 'your changes are made 1 hour ago, should commit now'
+else
     if tty >/dev/null 2>&1; then
-	echo commiting even though you made changes only recently
+	echo commiting even though you made changes only recently, as you wish
     else
-	echo not commiting because you made changes only recently
+	echo not commiting because you made changes only recently, and we are not on any console
 	exit
     fi
 fi
