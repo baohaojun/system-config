@@ -1487,14 +1487,23 @@ Starting from DIRECTORY, look upwards for a cscope database."
 	    (if (string-match "^\\*Summary nntp" (buffer-name))
 		(setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
 	      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook))))
+
+(add-hook 'gnus-article-mode-hook
+	  (lambda ()
+	    (make-local-variable 'bbdb/news-auto-create-p)
+	    (make-local-variable 'bbdb/mail-auto-create-p)
+	    (if (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary))
+		(setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
+	      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook))))
 ;; (defun bbdb-bhj-unify-eee168 (record)
 ;;   (bbdb-record-putprop record 'net (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net)))
 
 (setq bbdb/gnus-update-records-mode '(if (and (boundp 'auto-create-p) (null auto-create-p))
-					 (progn
-					   (message "hello searching")
+					 (if (and (boundp 'gnus-article-current-summary)
+						    (with-current-buffer gnus-article-current-summary
+						      bbdb/news-auto-create-p))
+					     'annotating
 					   'searching)
-				       (message "hello annotating")
 				       'annotating))
 
 (defun my-bbdb-canonicalize (addr)
