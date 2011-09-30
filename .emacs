@@ -1488,23 +1488,33 @@ Starting from DIRECTORY, look upwards for a cscope database."
 		(setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
 	      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook))))
 
-(add-hook 'gnus-article-mode-hook
+(defun my-gnus-article-prepare-bbdb ()
+  (make-local-variable 'bbdb/news-auto-create-p)
+  (make-local-variable 'bbdb/mail-auto-create-p)
+  ;(message "hello my-gnus-article-prepare-bbdb %s %s" (buffer-name gnus-article-current-summary) (buffer-name))
+  (if (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary))
+      (setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
+    (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook)))
+
+(add-hook 'gnus-startup-hook
 	  (lambda ()
-	    (make-local-variable 'bbdb/news-auto-create-p)
-	    (make-local-variable 'bbdb/mail-auto-create-p)
-	    (if (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary))
-		(setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
-	      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook))))
+	    (add-hook 'gnus-article-prepare-hook
+		      'my-gnus-article-prepare-bbdb))
+	  t) ;; make sure our article prepare hook is run before bbdb hook
+
 ;; (defun bbdb-bhj-unify-eee168 (record)
 ;;   (bbdb-record-putprop record 'net (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net)))
 
-(setq bbdb/gnus-update-records-mode '(if (and (boundp 'auto-create-p) (null auto-create-p))
-					 (if (and (boundp 'gnus-article-current-summary)
-						    (with-current-buffer gnus-article-current-summary
-						      bbdb/news-auto-create-p))
-					     'annotating
-					   'searching)
-				       'annotating))
+(defun my-bbdb/gnus-update-records-mode ()
+  (progn
+    ;(message "hello bbdb/gnus-update-records-mode: %s %s %s" (buffer-name gnus-article-current-summary) (buffer-name) bbdb/news-auto-create-p)
+    (if (and (boundp 'auto-create-p) (null auto-create-p))
+	(if (and (boundp 'gnus-article-current-summary)
+		 (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary)))
+	    'annotating
+	  'searching)
+      'annotating)))
+(setq bbdb/gnus-update-records-mode '(my-bbdb/gnus-update-records-mode))
 
 (defun my-bbdb-canonicalize (addr)
   (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net))
