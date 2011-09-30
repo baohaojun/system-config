@@ -1,5 +1,11 @@
 
 * Posts
+** [[file:/home/bhj/org/combining-cli-and-gui.org][Using CLI and GUI Together Seemlessly]]
+   :PROPERTIES:
+   :POSTID:   47
+   :POST_DATE: 20110930T03:12:49+0000
+   :Published: Yes
+   :END:
 ** [[file:/home/bhj/windows-config/org/beagle-grep-readme.org][Introducing beagrep, the beast like grep]]
    :PROPERTIES:
    :POSTID:   46
