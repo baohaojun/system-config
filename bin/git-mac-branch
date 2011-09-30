@@ -12,7 +12,7 @@ cd ${1:-~/windows-config}
 
 if git status -s|
     pn 2|
-    xargs stat . -c %Y|
+    xargs -I %s stat -c %Y %s|
     perl -ne '
 chomp; 
 $time = $time < $_ ? $_ : $time; 
