@@ -1491,8 +1491,11 @@ Starting from DIRECTORY, look upwards for a cscope database."
 ;;   (bbdb-record-putprop record 'net (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net)))
 
 (setq bbdb/gnus-update-records-mode '(if (and (boundp 'auto-create-p) (null auto-create-p))
-				    'searching
-				  'annotating))
+					 (progn
+					   (message "hello searching")
+					   'searching)
+				       (message "hello annotating")
+				       'annotating))
 
 (defun my-bbdb-canonicalize (addr)
   (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net))
