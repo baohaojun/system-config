@@ -418,33 +418,35 @@
 (defvar bhj-occur-regexp nil)
 (defun bhj-occur ()
   (interactive)
-  
-  (let 
-      ((regexp (or bhj-occur-regexp
-		   (if mark-active 
-		       (buffer-substring-no-properties (region-beginning)
-						       (region-end))
-		     (current-word)))))
-    (progn     
-      (nodup-ring-insert cscope-marker-ring (point-marker))
-      (when (or (equal regexp "")
-                (not regexp))
-        (setq regexp 
-              (buffer-substring-no-properties
-               (save-excursion 
-                 (back-to-indentation)
-                 (point))
-               (line-end-position))))
+  (with-syntax-table (let ((new-table (make-syntax-table (syntax-table))))
+		       (modify-syntax-entry ?_ "w" new-table)
+		       new-table)
+    (let 
+	((regexp (or bhj-occur-regexp
+		     (if mark-active 
+			 (buffer-substring-no-properties (region-beginning)
+							 (region-end))
+		       (current-word)))))
+      (progn     
+	(nodup-ring-insert cscope-marker-ring (point-marker))
+	(when (or (equal regexp "")
+		  (not regexp))
+	  (setq regexp 
+		(buffer-substring-no-properties
+		 (save-excursion 
+		   (back-to-indentation)
+		   (point))
+		 (line-end-position))))
 
-      (unless bhj-occur-regexp
-	(setq regexp (replace-regexp-in-string "\\([][^$*?\\\\.+]\\)" "\\\\\\1" regexp)))
+	(unless bhj-occur-regexp
+	  (setq regexp (concat "\\b" (replace-regexp-in-string "\\([][^$*?\\\\.+]\\)" "\\\\\\1" regexp) "\\b")))
 
-      (setq regexp 
-	    (read-shell-command "List lines matching regexp: " regexp))
-      (if (eq major-mode 'antlr-mode)
-          (let ((occur-excluded-properties t))
-            (occur regexp))
-        (occur regexp)))))
+	(setq regexp 
+	      (read-shell-command "List lines matching regexp: " regexp))
+	(if (eq major-mode 'antlr-mode)
+	    (let ((occur-excluded-properties t))
+	      (occur regexp))
+	  (occur regexp))))))
 
 (defun bhj-occur-make-errors ()
   (interactive)
