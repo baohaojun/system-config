@@ -1,7 +1,9 @@
-
+(require 'weibo-user)
 (defconst weibo-api-status-public-timeline "statuses/public_timeline")
 (defconst weibo-api-status-friends-timeline "statuses/friends_timeline")
 (defconst weibo-status-buffer-name "*weibo-%s-timeline*")
+
+(defvar weibo-status-data nil "Buffer local variable that holds status data")
 
 ;; created_at: 创建时间
 ;; id: 微博ID
@@ -31,7 +33,7 @@
   (switch-to-buffer (format weibo-status-buffer-name type))
   (erase-buffer)
   (mapc '(lambda (node)
-	   (insert (concat (weibo-get-node-text node 'id) ": " (weibo-get-node-text node 'text) "\n========================\n"))) node-list)
+	   (insert (concat (weibo-get-node-text (weibo-get-node node 'user) 'screen_name) ": " (weibo-get-node-text node 'text) "\n========================\n"))) node-list)
   (goto-char (point-min)))
 
 (provide 'weibo-status)
