@@ -44,8 +44,11 @@
 	    (kill-this-buffer)))
   weibo-token)
 
+(defun weibo-get-node (pnode tag)
+  (car (xml-get-children pnode tag)))
+
 (defun weibo-get-node-text (node tag)
-  (car (xml-node-children (car (xml-get-children node tag)))))
+  (car (xml-node-children (weibo-get-node node tag))))
 
 (defun weibo-get-raw-result (item &optional param)
   (with-current-buffer (oauth-fetch-url (weibo-get-token) (concat (format "%s%s.xml" weibo-api-url item) param))
