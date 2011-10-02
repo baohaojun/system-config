@@ -1,16 +1,22 @@
 (require 'oauth)
 (require 'weibo-status)
+(require 'weibo-user)
+(require 'weibo-image)
 
 (defconst weibo-request-url "http://api.t.sina.com.cn/oauth/request_token" "Request the unauthorized token")
 (defconst weibo-authorized-url "http://api.t.sina.com.cn/oauth/authorize" "Redirect the user to this url")
 (defconst weibo-access-url "http://api.t.sina.com.cn/oauth/access_token" "Request an access token")
 (defconst weibo-api-url "http://api.t.sina.com.cn/" "API base url")
 
-
-(defvar weibo-token-file "~/.t.weibo.emacs")
+(defvar weibo-directory "~/.t.weibo.emacs.d/")
 (defvar weibo-consumer-key "214135744")
 (defvar weibo-consumer-secret "1e0487b02bae1e0df794ebb665d12cf6")
 (defvar weibo-token nil)
+
+(defun weibo-get-token-file ()
+  (unless (file-exists-p weibo-directory)
+    (make-directory weibo-directory t))
+  (concat weibo-directory "token"))
 
 (defun weibo-get-token ()
   (unless weibo-token
@@ -18,10 +24,10 @@
   weibo-token)
 
 (defun weibo-authorize (&optional reauthorize)
-  (if (file-exists-p weibo-token-file)
+  (if (file-exists-p (weibo-get-token-file))
       (progn
 	(save-excursion
-	  (find-file weibo-token-file)
+	  (find-file (weibo-get-token-file))
 	  (let ((str (buffer-substring-no-properties (point-min) (point-max))))
 	    (if (string-match "\\([^:]*\\):\\(.*\\)" str)
 		(setq weibo-token (make-oauth-access-token
@@ -35,7 +41,7 @@
   (if (or reauthorize (not weibo-token))
     (setq weibo-token (oauth-authorize-app weibo-consumer-key weibo-consumer-secret weibo-request-url weibo-access-url weibo-authorized-url))
 	  (save-excursion
-	    (find-file weibo-token-file)
+	    (find-file (weibo-get-token-file))
 	    (let ((token (oauth-access-token-auth-t weibo-token)))
 	      (insert (format "%s:%s\n"
 			      (oauth-t-token token)

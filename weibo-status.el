@@ -1,4 +1,3 @@
-(require 'weibo-user)
 (require 'ewoc)
 
 (defconst weibo-api-status-public-timeline "statuses/public_timeline")
@@ -36,6 +35,8 @@
   (make-weibo-status
    :id (weibo-get-node-text node 'id)
    :text (weibo-get-node-text node 'text)
+   :thumbnail_pic (weibo-get-node-text node 'thumbnail_pic)
+   :bmiddle_pic (weibo-get-node-text node 'bmiddle_pic)   
    :created_at (weibo-get-node-text node 'created_at)
    :user (weibo-make-user (weibo-get-node node 'user))))
 
@@ -55,17 +56,28 @@
   (when status
     (insert-text-button
      (weibo-user-profile_image_url (weibo-status-user status))
-     'action (lambda (b) (browse-url (button-label b))))
+     'action (lambda (b) (find-file (weibo-get-image-file (button-label b)))))
     (insert (concat " "
 		    (weibo-user-screen_name (weibo-status-user status)) ": "
-		    (weibo-status-text status) "\n"))))
+		    (weibo-status-text status) "\n"))
+    (let ((pic (weibo-status-bmiddle_pic status)))
+      (when pic
+	(insert-text-button pic	 
+	 'action (lambda (b) (find-file (weibo-get-image-file (button-label b)))))))    
+    (insert "\n")))
 
 (defun weibo-test-friends-timeline ()
   (interactive)
   (switch-to-buffer (format weibo-status-buffer-name "friends-timeline"))
+  (goto-char (point-min))
   (make-local-variable 'weibo-status-data)
   (unless weibo-status-data
     (setq weibo-status-data (ewoc-create 'weibo-status-pretty-printer)))
-  (weibo-get-raw-result weibo-api-status-friends-timeline 'weibo-parse-statuses nil t nil))
+  (let* ((first (ewoc-data (ewoc-nth weibo-status-data 0)))
+	 (id (when first (weibo-status-id first)))
+	 (param (when id (format "?since_id=%s" id))))
+    (weibo-get-raw-result weibo-api-status-friends-timeline
+			  'weibo-parse-statuses param
+			  t nil)))
 
 (provide 'weibo-status)
