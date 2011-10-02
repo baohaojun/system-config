@@ -38,16 +38,16 @@
 					    :token-secret (match-string 2 str))))))
 	  (save-buffer)
 	  (kill-this-buffer))))
-  (if (or reauthorize (not weibo-token))
-    (setq weibo-token (oauth-authorize-app weibo-consumer-key weibo-consumer-secret weibo-request-url weibo-access-url weibo-authorized-url))
-	  (save-excursion
-	    (find-file (weibo-get-token-file))
-	    (let ((token (oauth-access-token-auth-t weibo-token)))
-	      (insert (format "%s:%s\n"
-			      (oauth-t-token token)
-			      (oauth-t-token-secret token))))
-	    (save-buffer)
-	    (kill-this-buffer)))
+  (when (or reauthorize (not weibo-token))
+    (setq weibo-token (oauth-authorize-app weibo-consumer-key weibo-consumer-secret weibo-request-url weibo-access-url weibo-authorized-url)))
+  (save-excursion
+    (find-file (weibo-get-token-file))
+    (let ((token (oauth-access-token-auth-t weibo-token)))
+      (insert (format "%s:%s\n"
+		      (oauth-t-token token)
+		      (oauth-t-token-secret token))))
+    (save-buffer)
+    (kill-this-buffer))  
   weibo-token)
 
 (defun weibo-get-node (pnode tag)
