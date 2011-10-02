@@ -19,7 +19,7 @@
 (defstruct weibo-user id screen_name name
   province city location description url
   profile_image_url domain gender
-  followers_count friend_count statuses_count favorites_count
+  followers_count friends_count statuses_count favorites_count
   created_at following verified)
 
 (defun weibo-make-user (node)
