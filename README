@@ -1,0 +1,17 @@
+This is a Weibo client for EMACS.
+
+Initialization:
+
+1. Put .el files into a directory.
+
+2. Make sure that directory is part of "load-path":
+    (add-to-list 'load-path "path to directory")
+
+Usage:
+1. Load the weibo library:
+    (require 'weibo)
+    
+2. Check your timeline:
+   - Friends timeline
+     M-x weibo-friends-timeline
+   - More features are being developed
