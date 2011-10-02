@@ -1,3 +1,4 @@
+(require 'hex-util)
 (require 'oauth)
 (require 'weibo-status)
 (require 'weibo-user)
