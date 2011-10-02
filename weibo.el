@@ -50,23 +50,13 @@
 (defun weibo-get-node-text (node tag)
   (car (xml-node-children (weibo-get-node node tag))))
 
-(defun weibo-get-raw-result (item &optional param)
-  (with-current-buffer (oauth-fetch-url (weibo-get-token) (concat (format "%s%s.xml" weibo-api-url item) param))
-	(buffer-string)))
-
-(defun weibo-parse-result (result type)
-  (let* ((root
-	  (car (with-temp-buffer
-		 (insert result)
-		 (goto-char (point-min))
-		 (goto-char (search-forward "\r\n\r\n"))
-		 (xml-parse-region (point) (point-max)))))
-	 (root-name (xml-node-name root))
-	 (node-list (xml-node-children root)))
-    (eval (list (read (format "weibo-parse-%s" (prin1-to-string root-name))) 'node-list type))))
-
-(defun weibo-test ()
-  (interactive)
-  (weibo-parse-result (weibo-get-raw-result weibo-api-status-friends-timeline) "friends"))
+(defun weibo-get-raw-result (item callback &optional param &rest cbdata)
+  (let ((root (car (with-current-buffer
+		       (oauth-fetch-url (weibo-get-token) (concat (format "%s%s.xml" weibo-api-url item) param))
+		     (goto-char (point-min))
+		     (let ((start (search-forward "\r\n\r\n" nil t)))
+		       (when start
+			 (xml-parse-region start (point-max))))))))
+      (apply callback (cons root cbdata))))
 
 (provide 'weibo)
