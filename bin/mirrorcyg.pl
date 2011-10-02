@@ -2,9 +2,9 @@
 use File::Path;
 use File::Basename;
 
-$site = "http://mirrors.kernel.org/sourceware/cygwin/";
+$site = "http://mirrors.xmission.com/cygwin/";
 
-my $site_prefix = "mirrors.kernel.org/sourceware/cygwin/";
+my $site_prefix = "mirrors.xmission.com/cygwin/";
 
 $ini = "setup.ini";
 
