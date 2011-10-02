@@ -54,17 +54,20 @@
 
 (defun weibo-status-pretty-printer (status)
   (when status
-    (insert-text-button
-     (weibo-user-profile_image_url (weibo-status-user status))
-     'action (lambda (b) (find-file (weibo-get-image-file (button-label b)))))
-    (insert (concat " "
-		    (weibo-user-screen_name (weibo-status-user status)) ": "
+    (insert-image (create-image (weibo-get-image-file (weibo-user-profile_image_url (weibo-status-user status)))) nil)
+    (insert (concat " " (weibo-user-screen_name (weibo-status-user status)) ": \n"
 		    (weibo-status-text status) "\n"))
-    (let ((pic (weibo-status-bmiddle_pic status)))
-      (when pic
-	(insert-text-button pic	 
-	 'action (lambda (b) (find-file (weibo-get-image-file (button-label b)))))))    
-    (insert "\n")))
+    (let ((thumb_pic (weibo-status-thumbnail_pic status))
+	  (mid_pic (weibo-status-bmiddle_pic status)))
+      (when thumb_pic
+	(insert "\t")
+	(insert-image (create-image (weibo-get-image-file thumb_pic)) nil)
+	(insert "\n"))
+      (when mid_pic
+	(insert-text-button mid_pic	 
+	 'action (lambda (b) (find-file (weibo-get-image-file (button-label b)))))
+	(insert "\n")))
+    (insert (weibo-status-created_at status) "\n=================================================\n")))
 
 (defun weibo-test-friends-timeline ()
   (interactive)
@@ -73,7 +76,8 @@
   (make-local-variable 'weibo-status-data)
   (unless weibo-status-data
     (setq weibo-status-data (ewoc-create 'weibo-status-pretty-printer)))
-  (let* ((first (ewoc-data (ewoc-nth weibo-status-data 0)))
+  (let* ((node (ewoc-nth weibo-status-data 0))
+	 (first (when node (ewoc-data node)))
 	 (id (when first (weibo-status-id first)))
 	 (param (when id (format "?since_id=%s" id))))
     (weibo-get-raw-result weibo-api-status-friends-timeline

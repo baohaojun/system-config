@@ -1,5 +1,5 @@
 (defun weibo-get-image-directory ()
-  (let ((image-directory (concat weibo-directory "cache/")))
+  (let ((image-directory (expand-file-name "cache" weibo-directory)))
     (unless (file-exists-p image-directory)
       (make-directory image-directory t))
     image-directory))

@@ -8,15 +8,15 @@
 (defconst weibo-access-url "http://api.t.sina.com.cn/oauth/access_token" "Request an access token")
 (defconst weibo-api-url "http://api.t.sina.com.cn/" "API base url")
 
-(defvar weibo-directory "~/.t.weibo.emacs.d/")
+(defvar weibo-directory "~/.t.weibo.emacs.d")
 (defvar weibo-consumer-key "214135744")
 (defvar weibo-consumer-secret "1e0487b02bae1e0df794ebb665d12cf6")
 (defvar weibo-token nil)
 
 (defun weibo-get-token-file ()
-  (unless (file-exists-p weibo-directory)
-    (make-directory weibo-directory t))
-  (concat weibo-directory "token"))
+  (unless (file-exists-p (expand-file-name weibo-directory))
+    (make-directory (expand-file-name weibo-directory) t))
+  (expand-file-name "token" weibo-directory))
 
 (defun weibo-get-token ()
   (unless weibo-token

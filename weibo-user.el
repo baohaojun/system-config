@@ -26,6 +26,14 @@
   (make-weibo-user
    :id (weibo-get-node-text node 'id)
    :screen_name (weibo-get-node-text node 'screen_name)
+   :gender (weibo-get-node-text node 'gender)
+   :location (weibo-get-node-text node 'location)
+   :description (weibo-get-node-text node 'description)
+   :followers_count (weibo-get-node-text node 'followers_count)
+   :friends_count (weibo-get-node-text node 'friends_count)
+   :statuses_count (weibo-get-node-text node 'statuses_count)
+   :favorites_count (weibo-get-node-text node 'favorites_count)   
+   :verified (weibo-get-node-text node 'verified)
    :profile_image_url (weibo-get-node-text node 'profile_image_url)))
 
 (provide 'weibo-user)
