@@ -5,7 +5,7 @@
     image-directory))
 
 (defun weibo-make-image-file-name (url)
-  (concat (weibo-get-image-directory) (md5 url)))
+  (expand-file-name (md5 url) (weibo-get-image-directory)))
 
 (defun weibo-get-image-file (url)
   (let ((image-file (weibo-make-image-file-name url)))
@@ -14,8 +14,16 @@
 	(goto-char (point-min))
 	(let ((end (search-forward "\n\n" nil t)))
 	  (when end
-	    (delete-region (point-min) end)))
-	(write-file image-file)))
-    image-file))
+	    (delete-region (point-min) end)
+	    (write-file image-file)))))
+    (if (file-exists-p image-file) image-file nil)))
+
+(defun weibo-insert-image (image-file)
+  (condition-case err
+      (insert-image (create-image image-file))
+    (error
+     (when (file-exists-p image-file)
+       (delete-file image-file))
+     (insert "no image"))))
 
 (provide 'weibo-image)
