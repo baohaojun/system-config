@@ -445,11 +445,11 @@ class ime:
         if len(cand) < 2:
             debug("len(cand) must > 2")
             return
+        comps = []
         if len(cand) == 2:
             code0 = _g_ime_reverse.get_reverse(cand[0])
             code1 = _g_ime_reverse.get_reverse(cand[1])
             if code0 and code1:
-                comps = []
                 for c0 in code0:
                     for c1 in code1:
                         comps.append(c0 + c1)
@@ -459,7 +459,6 @@ class ime:
             code1 = _g_ime_reverse.get_reverse(cand[1])
             code2 = _g_ime_reverse.get_reverse(cand[2])
             if code0 and code1 and code2:
-                comps = []
                 for c0 in code0:
                     for c1 in code1:
                         for c2 in code2:
