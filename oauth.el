@@ -320,7 +320,9 @@ For example: http://example.com?param=1 returns http://example.com"
       (when linebreak
         (delete-region (point-min) linebreak)))
     (goto-char (point-max))
-    (delete-region (point-min) (+ (search-backward "\r\n") 2))
+    (condition-case err
+	(delete-region (point-min) (+ (search-backward "\r\n") 2))
+      (error nil))
     (loop for pair in (mapcar (lambda (str) (split-string str "="))
                               (split-string 
                                (buffer-substring (point-min) (point-max)) "&")) 

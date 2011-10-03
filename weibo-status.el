@@ -58,9 +58,8 @@
    :user (weibo-make-user (weibo-get-node node 'user))))
 
 (defun weibo-parse-statuses (root front_t replace_t)
-  (when root
-    (when (string= (xml-node-name root) "statuses")
-      (weibo-parse-status (xml-node-children root) front_t replace_t))))
+  (and root (string= (xml-node-name root) "statuses")
+       (weibo-parse-status (xml-node-children root) front_t replace_t)))
 
 (defun weibo-parse-status (node-list front_t replace_t)
   (let ((proc_func (if front_t 'ewoc-enter-first 'ewoc-enter-last)))
@@ -81,7 +80,7 @@
 	(insert weibo-retweeted-status-separator "\n")
 	(insert " 提到：" indent)) 
       (weibo-insert-image (weibo-get-image-file (weibo-user-profile_image_url (weibo-status-user status))))
-      (insert (weibo-user-screen_name (weibo-status-user status)) "：\n")
+      (insert " " (weibo-user-screen_name (weibo-status-user status)) "：\n")
       (let ((pos-begin (point)))
 	(insert indent " " (weibo-status-text status) "\n")
 	(fill-region pos-begin (- (point) 1)))
@@ -107,9 +106,9 @@
   (let* ((pos (if new 0 -1))
 	 (keyword (if new "since_id" "max_id"))
 	 (node (ewoc-nth weibo-status-data pos))
-	 (node-data (when node (ewoc-data node)))
-	 (id (when node-data (weibo-status-id node-data)))
-	 (param (when id (format "?%s=%s" keyword id))))
+	 (node-data (and node (ewoc-data node)))
+	 (id (and node-data (weibo-status-id node-data)))
+	 (param (and id (format "?%s=%s" keyword id))))
     (with-temp-message (concat "获取消息 " param "...")
       (weibo-get-raw-result weibo-api-status-friends-timeline
 			    'weibo-parse-statuses param

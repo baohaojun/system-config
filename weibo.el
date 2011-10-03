@@ -55,13 +55,16 @@
   (car (xml-get-children pnode tag)))
 
 (defun weibo-get-node-text (node tag)
-  (car (xml-node-children (weibo-get-node node tag))))
+  (let ((str (car (xml-node-children (weibo-get-node node tag)))))
+    (and str (mm-decode-coding-string str 'utf-8))))
 
 (defun weibo-get-raw-result (item callback &optional param &rest cbdata)
   (let ((root (car (with-current-buffer
 		       (oauth-fetch-url (weibo-get-token) (concat (format "%s%s.xml" weibo-api-url item) param))
 		     (goto-char (point-min))
-		     (let ((start (search-forward "\r\n\r\n" nil t)))
+		     (let ((start
+			    (or (search-forward "\r\n\r\n" nil t)
+				(search-forward "\n\n" nil t))))
 		       (when start
 			 (xml-parse-region start (point-max))))))))
       (apply callback (cons root cbdata))))

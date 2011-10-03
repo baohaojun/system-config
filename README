@@ -10,8 +10,18 @@ Initialization:
 Usage:
 1. Load the weibo library:
     (require 'weibo)
+
+2. To use the EMACS built-in url-retrieve instead of curl:
+    (setq oauth-use-curl nil)
+
+3. Authorization:
+   - The first time you use the client(e.g., check the time line), you
+     will be redirected to the Sina authorization page, where you can
+     authorize this client and see a pin number.     
+   - Input that pin number into the echo area in EMACS
     
-2. Check your timeline:
+4. Check your timeline:
    - Friends timeline
      M-x weibo-friends-timeline
    - More features are being developed
+
