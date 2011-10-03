@@ -89,12 +89,12 @@
 	    (mid_pic (weibo-status-bmiddle_pic status)))
 	(when thumb_pic
 	  (insert indent "\t")
-	  (weibo-insert-image (weibo-get-image-file thumb_pic))
-	  (insert "\n"))
-	(when mid_pic
-	  (insert indent " ")
-	  (insert-text-button mid_pic	 
-			      'action (lambda (b) (find-file-other-window (weibo-get-image-file (button-label b)))))
+	  (let ((begin_pos (point)))
+	    (weibo-insert-image (weibo-get-image-file thumb_pic) mid_pic)	    
+	    (when mid_pic
+	      (make-text-button begin_pos (point)
+				'face 'default
+				'action (lambda (b) (weibo-show-image (button-label b))))))
 	  (insert "\n")))
       (unless retweeted
 	(let ((retweeted_status (weibo-status-retweeted_status status)))
@@ -151,13 +151,13 @@
     (define-key map "p" 'previous-line)
     (define-key map "f" 'forward-char)
     (define-key map "b" 'backward-char)
-    (define-key map "q" 'bury-buffer)
+    (define-key map "q" 'weibo-bury-close-window)
     (define-key map "i" 'weibo-status-inspect)
     map)
   "Keymap for weibo-status-mode")
 
 (define-derived-mode weibo-status-mode fundamental-mode "Weibo-Status"
-  "Major mode for display weibo status"
+  "Major mode for displaying weibo status"
   (use-local-map weibo-status-mode-map)
   (setq buffer-read-only t)
   (setq fill-column 70)

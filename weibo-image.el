@@ -20,10 +20,10 @@
 	    (write-file image-file)))))
     (if (file-exists-p image-file) image-file nil)))
 
-(defun weibo-insert-image (image-file)
+(defun weibo-insert-image (image-file &optional url)
   (condition-case err
       (progn
-	(insert-image (create-image image-file))
+	(insert-image (create-image image-file) url)
 	t)
     (error
      (when (file-exists-p image-file)
@@ -31,9 +31,25 @@
      nil)))
 
 (defun weibo-show-image (url)
-  (switch-to-buffer-other-window weibo-image-buffer-name)
-  (erase-buffer)
-  (unless (weibo-insert-image (weibo-get-image-file url))
-    (weibo-close-image)))
+  (let ((init_t (not (get-buffer weibo-image-buffer-name))))
+    (switch-to-buffer weibo-image-buffer-name)
+    (setq buffer-read-only nil)
+    (erase-buffer)
+    (when init_t
+      (weibo-image-mode))
+    (unless (weibo-insert-image (weibo-get-image-file url))
+      (weibo-bury-close-window)
+      (message "无法打开图片！"))
+    (setq buffer-read-only t)))
+
+(defvar weibo-image-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "q" 'weibo-bury-close-window)
+    map)
+  "Keymap for weibo-image-mode")
+
+(define-derived-mode weibo-image-mode fundamental-mode "Weibo-Image"
+  "Major mode for displaying weibo image"
+  (use-local-map weibo-image-mode-map))
 
 (provide 'weibo-image)

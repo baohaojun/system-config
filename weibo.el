@@ -66,4 +66,11 @@
 			 (xml-parse-region start (point-max))))))))
       (apply callback (cons root cbdata))))
 
+(defun weibo-bury-close-window ()
+  (interactive)
+  (bury-buffer)
+  (condition-case err
+      (delete-window)
+    (error nil)))
+
 (provide 'weibo)
