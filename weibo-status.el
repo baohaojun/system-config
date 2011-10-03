@@ -42,7 +42,7 @@
   (make-weibo-status
    :id (weibo-get-node-text node 'id)
    :text (weibo-get-node-text node 'text)
-   :source (nth 3 (weibo-get-node node 'source))
+   :source (nth 2 (weibo-get-node node 'source))
    :favorited (weibo-get-node-text node 'favorited)
    :truncated (weibo-get-node-text node 'truncated)
    :in_reply_to_status_id (weibo-get-node-text node 'in_reply_to_status_id)
