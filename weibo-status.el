@@ -5,8 +5,12 @@
 
 (defconst weibo-status-buffer-name "*weibo-status-%s*")
 
-(defconst weibo-status-headline "Press 'g' to fetch new status, 'q' to exit")
-(defconst weibo-status-footline "Press 'o' to fetch older status")
+(defconst weibo-status-headline "按g键获取新消息，按q键退出")
+(defconst weibo-status-footline "按o键获取较早前消息")
+(defconst weibo-status-separator
+  "=====================================================================")
+(defconst weibo-retweeted-status-separator
+  "---------------------------------------------------------------------")
 
 (defvar weibo-status-data nil "Buffer local variable that holds status data")
 
@@ -38,8 +42,18 @@
   (make-weibo-status
    :id (weibo-get-node-text node 'id)
    :text (weibo-get-node-text node 'text)
+   :source (weibo-get-node-text node 'source)
+   :favorited (weibo-get-node-text node 'favorited)
+   :truncated (weibo-get-node-text node 'truncated)
+   :in_reply_to_status_id (weibo-get-node-text node 'in_reply_to_status_id)
+   :in_reply_to_user_id (weibo-get-node-text node 'in_reply_to_user_id)
+   :in_reply_to_screen_name (weibo-get-node-text node 'in_reply_to_screen_name)   
    :thumbnail_pic (weibo-get-node-text node 'thumbnail_pic)
-   :bmiddle_pic (weibo-get-node-text node 'bmiddle_pic)   
+   :bmiddle_pic (weibo-get-node-text node 'bmiddle_pic)
+   :original_pic (weibo-get-node-text node 'original_pic)
+   :retweeted_status (let ((retweeted (weibo-get-node node 'retweeted_status)))
+		       (when retweeted
+			 (weibo-make-status retweeted)))
    :created_at (weibo-get-node-text node 'created_at)
    :user (weibo-make-user (weibo-get-node node 'user))))
 
@@ -56,21 +70,38 @@
 	  (if front_t (reverse node-list) (cdr node-list)))))
 
 (defun weibo-status-pretty-printer (status)
+  (weibo-insert-status status nil))
+
+(defun weibo-insert-status (status retweeted)
   (when status
-    (weibo-insert-image (weibo-get-image-file (weibo-user-profile_image_url (weibo-status-user status))))
-    (insert (concat " " (weibo-user-screen_name (weibo-status-user status)) ": \n"
-		    (weibo-status-text status) "\n"))
-    (let ((thumb_pic (weibo-status-thumbnail_pic status))
-	  (mid_pic (weibo-status-bmiddle_pic status)))
-      (when thumb_pic
-	(insert "\t")
-	(weibo-insert-image (weibo-get-image-file thumb_pic))
-	(insert "\n"))
-      (when mid_pic
-	(insert-text-button mid_pic	 
-	 'action (lambda (b) (find-file (weibo-get-image-file (button-label b)))))
-	(insert "\n")))
-    (insert (weibo-status-created_at status) "\n=================================================\n")))
+    (let ((indent (if retweeted "\t" "")))
+      (unless retweeted
+	(insert weibo-status-separator "\n"))
+      (when retweeted
+	(insert weibo-retweeted-status-separator "\n")
+	(insert " 提到：" indent)) 
+      (weibo-insert-image (weibo-get-image-file (weibo-user-profile_image_url (weibo-status-user status))))
+      (insert (weibo-user-screen_name (weibo-status-user status)) "：\n")
+      (let ((pos-begin (point)))
+	(insert indent " " (weibo-status-text status) "\n")
+	(fill-region pos-begin (- (point) 1)))
+      (let ((thumb_pic (weibo-status-thumbnail_pic status))
+	    (mid_pic (weibo-status-bmiddle_pic status)))
+	(when thumb_pic
+	  (insert indent "\t")
+	  (weibo-insert-image (weibo-get-image-file thumb_pic))
+	  (insert "\n"))
+	(when mid_pic
+	  (insert indent " ")
+	  (insert-text-button mid_pic	 
+			      'action (lambda (b) (find-file-other-window (weibo-get-image-file (button-label b)))))
+	  (insert "\n")))
+      (unless retweeted
+	(let ((retweeted_status (weibo-status-retweeted_status status)))
+	  (weibo-insert-status retweeted_status t)))
+      (insert indent "  创建于：" (weibo-status-created_at status) "\n")
+      (when retweeted
+	(insert weibo-retweeted-status-separator "\n")))))
 
 (defun weibo-status-pull (new)
   (let* ((pos (if new 0 -1))
@@ -79,30 +110,49 @@
 	 (node-data (when node (ewoc-data node)))
 	 (id (when node-data (weibo-status-id node-data)))
 	 (param (when id (format "?%s=%s" keyword id))))
-    (with-temp-message (concat "Fetching weibo status " param "...")
+    (with-temp-message (concat "获取消息 " param "...")
       (weibo-get-raw-result weibo-api-status-friends-timeline
 			    'weibo-parse-statuses param
 			    new nil))))
 
 (defun weibo-status-pull-new ()
+  (interactive)  
   (weibo-status-pull t)
   (goto-char (point-min)))
 
 (defun weibo-status-pull-old ()
+  (interactive)  
   (let ((p (point)))
     (weibo-status-pull nil)
     (goto-char p)))
 
+(defun weibo-status-inspect ()
+  (interactive)
+  (let ((node (ewoc-locate weibo-status-data)))
+    (when node
+      (print (ewoc-data node))
+      (ewoc-invalidate weibo-status-data node))))
+
+(defun weibo-status-move-next ()
+  (interactive)  
+  (let ((node (ewoc-locate weibo-status-data)))
+    (when node
+      (goto-char (ewoc-location (ewoc-next weibo-status-data node)))
+      (recenter-top-bottom 0))))
+
 (defvar weibo-status-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map "g" (lambda () (interactive) (weibo-status-pull-new)))
-    (define-key map "o" (lambda () (interactive) (weibo-status-pull-old)))
+    (define-key map "g" 'weibo-status-pull-new)
+    (define-key map "o" 'weibo-status-pull-old)
     (define-key map "t" 'beginning-of-buffer)
     (define-key map "b" 'end-of-buffer)
-    (define-key map " " 'scroll-up)
+    (define-key map " " 'weibo-status-move-next)
     (define-key map "n" 'next-line)
     (define-key map "p" 'previous-line)
+    (define-key map "f" 'forward-char)
+    (define-key map "b" 'backward-char)
     (define-key map "q" 'bury-buffer)
+    (define-key map "i" 'weibo-status-inspect)
     map)
   "Keymap for weibo-status-mode")
 
@@ -110,6 +160,7 @@
   "Major mode for display weibo status"
   (use-local-map weibo-status-mode-map)
   (setq buffer-read-only t)
+  (setq fill-column 70)
   (make-local-variable 'weibo-status-data)
   (unless (ewoc-p weibo-status-data)
     (setq weibo-status-data (ewoc-create 'weibo-status-pretty-printer weibo-status-headline weibo-status-footline))))

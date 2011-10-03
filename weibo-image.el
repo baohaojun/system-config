@@ -1,3 +1,5 @@
+(defconst weibo-image-buffer-name "*weibo-image*")
+
 (defun weibo-get-image-directory ()
   (let ((image-directory (expand-file-name "cache" weibo-directory)))
     (unless (file-exists-p image-directory)
@@ -20,10 +22,18 @@
 
 (defun weibo-insert-image (image-file)
   (condition-case err
-      (insert-image (create-image image-file))
+      (progn
+	(insert-image (create-image image-file))
+	t)
     (error
      (when (file-exists-p image-file)
        (delete-file image-file))
-     (insert "no image"))))
+     nil)))
+
+(defun weibo-show-image (url)
+  (switch-to-buffer-other-window weibo-image-buffer-name)
+  (erase-buffer)
+  (unless (weibo-insert-image (weibo-get-image-file url))
+    (weibo-close-image)))
 
 (provide 'weibo-image)
