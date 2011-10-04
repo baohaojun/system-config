@@ -399,10 +399,11 @@ be consumed by `url-request-extra-headers'."
       "Authorization"
       (apply 'concat "OAuth realm=\"\""
              (mapcar
-              (lambda (pair) 
-                (format ", %s=\"%s\"" 
+              (lambda (pair)
+		(unless (assoc (car pair) oauth-post-vars-alist)
+		  (format ", %s=\"%s\"" 
                         (car pair) 
-                        (oauth-hexify-string (cdr pair))))
+                        (oauth-hexify-string (cdr pair)))))
               (sort params
                     (lambda (a b) (string< (car a) (car b))))))) '())))
 

@@ -3,6 +3,7 @@
 (require 'weibo-status)
 (require 'weibo-user)
 (require 'weibo-image)
+(require 'weibo-update)
 
 (defconst weibo-request-url "http://api.t.sina.com.cn/oauth/request_token" "Request the unauthorized token")
 (defconst weibo-authorized-url "http://api.t.sina.com.cn/oauth/authorize" "Redirect the user to this url")
@@ -44,11 +45,12 @@
   (save-excursion
     (find-file (weibo-get-token-file))
     (let ((token (oauth-access-token-auth-t weibo-token)))
+      (erase-buffer)
       (insert (format "%s:%s\n"
 		      (oauth-t-token token)
 		      (oauth-t-token-secret token))))
     (save-buffer)
-    (kill-this-buffer))  
+    (kill-this-buffer)) 
   weibo-token)
 
 (defun weibo-get-node (pnode tag)
@@ -78,7 +80,7 @@
   (let ((root (car (with-current-buffer
 		       (oauth-post-url
 			(weibo-get-token)
-			(concat (format "%s.%s.xml" weibo-api-url item) param) vars)
+			(concat (format "%s%s.xml" weibo-api-url item) param) vars)
 		     (weibo-get-body)))))
     (apply callback (cons root cbdata))))
 
