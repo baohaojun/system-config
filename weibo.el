@@ -58,16 +58,29 @@
   (let ((str (car (xml-node-children (weibo-get-node node tag)))))
     (and str (mm-decode-coding-string str 'utf-8))))
 
-(defun weibo-get-raw-result (item callback &optional param &rest cbdata)
+(defun weibo-get-body ()
+  (goto-char (point-min))
+  (let ((start
+	 (or (search-forward "\r\n\r\n" nil t)
+	     (search-forward "\n\n" nil t))))
+    (when start
+      (xml-parse-region start (point-max)))))
+
+(defun weibo-get-data (item callback &optional param &rest cbdata)
   (let ((root (car (with-current-buffer
-		       (oauth-fetch-url (weibo-get-token) (concat (format "%s%s.xml" weibo-api-url item) param))
-		     (goto-char (point-min))
-		     (let ((start
-			    (or (search-forward "\r\n\r\n" nil t)
-				(search-forward "\n\n" nil t))))
-		       (when start
-			 (xml-parse-region start (point-max))))))))
-      (apply callback (cons root cbdata))))
+		       (oauth-fetch-url
+			(weibo-get-token)
+			(concat (format "%s%s.xml" weibo-api-url item) param))
+		     (weibo-get-body)))))
+    (apply callback (cons root cbdata))))
+
+(defun weibo-post-data (item callback vars &optional param &rest cbdata)
+  (let ((root (car (with-current-buffer
+		       (oauth-post-url
+			(weibo-get-token)
+			(concat (format "%s.%s.xml" weibo-api-url item) param) vars)
+		     (weibo-get-body)))))
+    (apply callback (cons root cbdata))))
 
 (defun weibo-bury-close-window ()
   (interactive)

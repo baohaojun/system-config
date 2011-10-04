@@ -36,4 +36,12 @@
    :verified (weibo-get-node-text node 'verified)
    :profile_image_url (weibo-get-node-text node 'profile_image_url)))
 
+(defun weibo-insert-user (user details_t)
+  (when user
+    (weibo-insert-image (weibo-get-image-file (weibo-user-profile_image_url user)))
+    (insert " " (weibo-user-screen_name user)
+	    " (" (if (string= (weibo-user-gender user) "m") "男" "女") ","
+	    " " (weibo-user-location user) ") "
+	    " 说道：\n")))
+
 (provide 'weibo-user)

@@ -46,7 +46,7 @@
   (make-weibo-status
    :id (weibo-get-node-text node 'id)
    :text (weibo-get-node-text node 'text)
-   :source (nth 2 (weibo-get-node node 'source))
+   :source (nth 2 (nth 2 (weibo-get-node node 'source)))
    :favorited (weibo-get-node-text node 'favorited)
    :truncated (weibo-get-node-text node 'truncated)
    :in_reply_to_status_id (weibo-get-node-text node 'in_reply_to_status_id)
@@ -81,29 +81,34 @@
 	(insert weibo-status-separator "\n"))
       (when retweeted
 	(insert weibo-retweeted-status-separator "\n")
-	(insert " 提到：" indent)) 
-      (weibo-insert-image (weibo-get-image-file (weibo-user-profile_image_url (weibo-status-user status))))
-      (insert " " (weibo-user-screen_name (weibo-status-user status)) "：\n")
-      (let ((pos-begin (point)))
-	(insert indent " " (weibo-status-text status) "\n")
-	(fill-region pos-begin (- (point) 1)))
-      (let ((thumb_pic (weibo-status-thumbnail_pic status))
-	    (mid_pic (weibo-status-bmiddle_pic status)))
-	(when thumb_pic
-	  (insert indent "\t")
-	  (let ((begin_pos (point)))
-	    (weibo-insert-image (weibo-get-image-file thumb_pic) mid_pic)	    
-	    (when mid_pic
-	      (make-text-button begin_pos (point)
-				'face 'default
-				'action (lambda (b) (weibo-show-image (button-label b))))))
-	  (insert "\n")))
+	(insert " 提到：" indent))
+      (weibo-insert-user (weibo-status-user status) nil)
+      (insert indent)
+      (weibo-insert-text (weibo-status-text status))
+      (insert indent)
+      (weibo-insert-picture (weibo-status-thumbnail_pic status) (weibo-status-bmiddle_pic status))
       (unless retweeted
 	(let ((retweeted_status (weibo-status-retweeted_status status)))
 	  (weibo-insert-status retweeted_status t)))
-      (insert indent "  创建于：" (weibo-status-created_at status) "\n")
+      (insert indent "  来自：" (weibo-status-source status) "  创建于：" (weibo-status-created_at status) "\n")
       (when retweeted
 	(insert weibo-retweeted-status-separator "\n")))))
+
+(defun weibo-insert-text (text)
+  (let ((pos-begin (point)))
+    (insert " " text "\n")
+    (fill-region pos-begin (- (point) 1))))
+
+(defun weibo-insert-picture (thumb_pic mid_pic)
+  (when thumb_pic
+    (insert "\t")
+    (let ((begin_pos (point)))
+      (weibo-insert-image (weibo-get-image-file thumb_pic) mid_pic)	    
+      (when mid_pic
+	(make-text-button begin_pos (point)
+			  'face 'default
+			  'action (lambda (b) (weibo-show-image (button-label b))))))
+    (insert "\n")))
 
 (defun weibo-status-pull (new &optional type)
   (let* ((pos (if new 0 -1))
@@ -114,9 +119,9 @@
 	 (param (and id (format "?%s=%s" keyword id))))
     (with-temp-message (concat "获取消息 " param "...")
       (when type (setq weibo-status-timeline type))
-      (weibo-get-raw-result weibo-status-timeline
-			    'weibo-parse-statuses param
-			    new))))
+      (weibo-get-data weibo-status-timeline
+		      'weibo-parse-statuses param
+		      new))))
 
 (defun weibo-status-pull-new (&optional type)
   (interactive)  
@@ -173,7 +178,7 @@
     (define-key map "a" 'weibo-friends-timeline)
     (define-key map "@" 'weibo-mention-timeline)
     (define-key map "i" 'weibo-user-timeline)
-    (define-key map "f" 'weibo-refresh-timeline)
+    (define-key map "r" 'weibo-refresh-timeline)
     (define-key map "g" 'weibo-status-pull-new)
     (define-key map "m" 'weibo-status-pull-old)
     (define-key map "t" 'beginning-of-buffer)
