@@ -21,7 +21,7 @@ Usage:
    - Input that pin number into the echo area in EMACS
     
 4. Check your timeline:
-   - Friends timeline
-     M-x weibo-friends-timeline
-   - More features are being developed
+     M-x weibo-timeline
+     
+More features are being developed
 
