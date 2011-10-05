@@ -2,7 +2,7 @@
 set -o pipefail
 LOG=mm.$$
 if tty; then
-    mm 2>&1|tee /tmp/$LOG || exit -1
+    mm "$@" 2>&1|tee /tmp/$LOG || exit -1
 else
     cat|tee /tmp/$LOG
 fi
