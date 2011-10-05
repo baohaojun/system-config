@@ -203,12 +203,21 @@ oauth headers."
                                          (append url-request-extra-headers 
                                                  (oauth-request-to-header req))
                                        (oauth-request-to-header req)))
-          (url-request-method (oauth-request-http-method req)))
+          (url-request-method (oauth-request-http-method req))
+	  (url-request-data (oauth-request-post-data oauth-post-vars-alist)))
       (cond 
        (async-callback (url-retrieve (oauth-request-url req)
                                      async-callback cb-data))
        (oauth-use-curl (oauth-curl-retrieve (oauth-request-url req)))
        (t (url-retrieve-synchronously (oauth-request-url req)))))))
+
+(defun oauth-request-post-data (post_vars)
+  (when post_vars
+    (mapconcat
+     (lambda (pair)
+       (concat (car pair) "="
+	       (oauth-hexify-string (cdr pair))))
+     post_vars "&")))
     
 (defun oauth-fetch-url (access-token url)
   "Wrapper around url-retrieve-synchronously using the the authorized-token

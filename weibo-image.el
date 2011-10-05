@@ -17,7 +17,8 @@
 	(let ((end (search-forward "\n\n" nil t)))
 	  (when end
 	    (delete-region (point-min) end)
-	    (write-file image-file)))))
+	    (write-file image-file)))
+	(kill-buffer)))
     (if (file-exists-p image-file) image-file nil)))
 
 (defun weibo-insert-image (image-file &optional url)
