@@ -15,6 +15,8 @@
 (defvar weibo-consumer-secret "1e0487b02bae1e0df794ebb665d12cf6")
 (defvar weibo-token nil)
 
+(setq oauth-use-curl nil)
+
 (defun weibo-get-token-file ()
   (unless (file-exists-p (expand-file-name weibo-directory))
     (make-directory (expand-file-name weibo-directory) t))

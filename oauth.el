@@ -234,6 +234,7 @@ to authenticate.
 This is intended for simple post reqests.
 Returns a buffer of the response."
   (let ((url-request-method "POST")
+	(url-request-extra-headers '(("Content-type" . "application/x-www-form-urlencoded")))
         (oauth-post-vars-alist post-vars-alist))
     (oauth-url-retrieve access-token url)))
 
@@ -325,13 +326,12 @@ For example: http://example.com?param=1 returns http://example.com"
   (let ((token (make-oauth-t)))
     (set-buffer (oauth-do-request req))
     (goto-char (point-min))
-    (let ((linebreak (search-forward "\n\n" nil t nil)))
+    (let ((linebreak
+	   (or (search-forward "\n\n" nil t nil)
+	       (search-forward "\r\n\r\n" nil t nil))))
       (when linebreak
         (delete-region (point-min) linebreak)))
     (goto-char (point-max))
-    (condition-case err
-	(delete-region (point-min) (+ (search-backward "\r\n") 2))
-      (error nil))
     (loop for pair in (mapcar (lambda (str) (split-string str "="))
                               (split-string 
                                (buffer-substring (point-min) (point-max)) "&")) 

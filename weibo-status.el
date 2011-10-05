@@ -46,7 +46,7 @@
   (make-weibo-status
    :id (weibo-get-node-text node 'id)
    :text (weibo-get-node-text node 'text)
-   :source (nth 2 (nth 2 (weibo-get-node node 'source)))
+   :source (mm-decode-coding-string (nth 2 (nth 2 (weibo-get-node node 'source))) 'utf-8)
    :favorited (weibo-get-node-text node 'favorited)
    :truncated (weibo-get-node-text node 'truncated)
    :in_reply_to_status_id (weibo-get-node-text node 'in_reply_to_status_id)
@@ -143,9 +143,11 @@
 
 (defun weibo-status-move-next ()
   (interactive)  
-  (let ((node (ewoc-locate weibo-status-data)))
-    (when node
-      (goto-char (ewoc-location (ewoc-next weibo-status-data node)))
+  (let* ((node (ewoc-locate weibo-status-data))
+	 (ewoc_node (and node (ewoc-next weibo-status-data node))))
+    (if (not ewoc_node)
+	(weibo-status-pull-old)
+      (goto-char (ewoc-location ewoc_node))
       (recenter-top-bottom 0))))
 
 (defun weibo-retweet-status ()
