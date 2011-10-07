@@ -1149,3 +1149,8 @@ echo keycode 29 = Alt
 echo keycode 100 = Control
 echo keycode 97 = Alt
 ) | sudo loadkeys
+
+中文xp service pack 3
+http://www.microsoft.com/downloads/zh-cn/details.aspx?FamilyID=5b33b5a8-5e76-401f-be08-1e1555d4f3d4
+
+第一步：从语言的本源入手。打开注册表，找到hkey_local_machine\system\controlset001\control\nls\language，把“default”和“installlanguage”的的值“0804”改为“0409” （见图）。“0804”是简体中文的语言代号，“0409”是英文的语言代号。 
