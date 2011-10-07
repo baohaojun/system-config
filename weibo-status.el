@@ -64,27 +64,14 @@
    :created_at (weibo-get-node-text node 'created_at)
    :user (weibo-make-user (weibo-get-node node 'user))))
 
-(defun weibo-parse-statuses (root front_t data)
-  (and root (string= (xml-node-name root) "statuses")
-       (weibo-parse-status (xml-node-children root) front_t data)))
-
-(defun weibo-parse-status (node-list front_t data)
-  (let ((proc_func (if front_t 'ewoc-enter-first 'ewoc-enter-last)))
-    (mapc '(lambda (node)
-	     (apply proc_func (list (symbol-value data) (weibo-make-status node))))
-	  (if front_t (reverse node-list) (cdr node-list)))))
-
-(defun weibo-pull-status (data new type)
-  (let* ((pos (if new 0 -1))
-	 (keyword (if new "since_id" "max_id"))
-	 (node (ewoc-nth (symbol-value data) pos))
-	 (node-data (and node (ewoc-data node)))
+(defun weibo-pull-status (node parse-func new type)
+  (let* ((keyword (if new "since_id" "max_id"))
 	 (id (and node-data (weibo-status-id node-data)))
 	 (param (and id (format "?%s=%s" keyword id))))
-    (with-temp-message (concat "获取消息 " param "...")
+    (with-temp-message (concat "获取微博 " param "...")
       (weibo-get-data type
-		      'weibo-parse-statuses param
-		      new data))))
+		      parse-func param
+		      "statuses" new))))
 
 (defun weibo-status-pretty-printer (status &optional p)
   (weibo-insert-status status nil))
@@ -141,6 +128,7 @@
   (make-weibo-timeline-provider
    :key key
    :name name
+   :make-function 'weibo-make-status
    :pretty-printer-function 'weibo-status-pretty-printer
    :pull-function 'weibo-pull-status
    :post-function 'weibo-post-status

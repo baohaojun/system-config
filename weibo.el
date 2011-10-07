@@ -20,6 +20,7 @@
 (require 'weibo-user)
 (require 'weibo-image)
 (require 'weibo-post)
+(require 'weibo-comment)
 
 (defconst weibo-request-url "http://api.t.sina.com.cn/oauth/request_token" "Request the unauthorized token")
 (defconst weibo-authorized-url "http://api.t.sina.com.cn/oauth/authorize" "Redirect the user to this url")
@@ -113,5 +114,7 @@
 (weibo-timeline-register-provider (weibo-user-timeline-provider))
 (weibo-timeline-register-provider (weibo-mention-timeline-provider))
 (weibo-timeline-register-provider (weibo-public-timeline-provider))
+(weibo-timeline-register-provider (weibo-comments-by-me-timeline-provider))
+(weibo-timeline-register-provider (weibo-comments-to-me-timeline-provider))
 
 (provide 'weibo)
