@@ -68,7 +68,7 @@
   (interactive)
   (let ((version-string
          (format "twittering-mode-v%s" twittering-mode-version)))
-    (if (interactive-p)
+    (if (called-interactively-p 'interactive)
         (message "%s" version-string)
       version-string)))
 
@@ -3582,33 +3582,6 @@ a list. "
   (interactive)
   (twittering-add-list-members t))
 
-(defun twittering-native-retweet ()
-  (interactive)
-  (let ((id (or (get-text-property (point) 'retweeted-id)
-                (get-text-property (point) 'id)))
-        (text (copy-sequence (get-text-property (point) 'text)))
-        (user (get-text-property (point) 'username))
-        (width (max 40 ;; XXX
-                    (- (frame-width)
-                       1 ;; margin for wide characters
-                       12 ;; == (length (concat "Retweet \"" "\"? "))
-                       9) ;; == (length "(y or n) ")
-                    )))
-    (set-text-properties 0 (length text) nil text)
-    (if id
-        (if (not (string= user (twittering-get-accounts 'username)))
-            (let ((mes (format "Retweet \"%s\"? "
-                               (if (< width (string-width text))
-                                   (concat
-                                    (truncate-string-to-width text (- width 3))
-                                    "...")
-                                 text))))
-              (if (y-or-n-p mes)
-                  (twittering-call-api 'retweet `((id . ,id)))
-                (message "Request canceled")))
-          (message "Cannot retweet your own tweet"))
-      (message "No status selected"))))
-
 (defun twittering-favorite (&optional remove)
   (interactive "P")
   (let ((id (get-text-property (point) 'id))
@@ -6695,7 +6668,8 @@ string.")
                                   (save-excursion (goto-char beg) (current-column)) ? )))
                   (setq prefix (concat prefix "    ") ; indent
                         detail (concat "    " detail))
-                  (setq detail (replace-regexp-in-string "" "" detail)
+                  (setq detail (replace-regexp-in-string "
+" "" detail)
                         detail (twittering-fill-string detail nil prefix t)
                         detail (substring detail (length prefix))
                         detail (apply 'propertize detail properties))
@@ -6828,9 +6802,6 @@ been initialized yet."
 
 ;;;; Account authorization
 ;;;;
-
-(defun twittering-get-username ()
-  twittering-username)
 
 (defun twittering-account-authorized-p ()
   (eq (twittering-get-account-authorization) 'authorized))
