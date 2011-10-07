@@ -1,22 +1,25 @@
-(require 'ewoc)
+;; Copyright (C) 2011 Austin<austiny.cn@gmail.com>
+          
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of
+;; the License, or (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (defconst weibo-api-status-public-timeline "statuses/public_timeline")
 (defconst weibo-api-status-friends-timeline "statuses/friends_timeline")
 (defconst weibo-api-status-user-timeline "statuses/user_timeline")
 (defconst weibo-api-status-mention-timeline "statuses/mentions")
 
-(defconst weibo-status-buffer-name "*weibo-timeline*")
-(defconst weibo-status-mode-name "微博时间线")
-
-(defconst weibo-status-headline "微博：谁在说(w) 关注的(a) 提到我的(@) 我的微博(i)\n命令：发表微博(P) 转发(T) 新消息(g) 刷新(r) 下一条（空格) 帮助(h) 退出(q)")
-(defconst weibo-status-footline "提示：获取更多较早前消息(m)")
-(defconst weibo-status-separator
-  "=====================================================================")
-(defconst weibo-retweeted-status-separator
-  "---------------------------------------------------------------------")
-
-(defvar weibo-status-data nil "Buffer local variable that holds status data")
-(defvar weibo-status-timeline weibo-api-status-friends-timeline)
+(defconst weibo-api-status-update "statuses/update")
+(defconst weibo-api-status-repost "statuses/repost")
 
 ;; created_at: 创建时间
 ;; id: 微博ID
@@ -61,179 +64,99 @@
    :created_at (weibo-get-node-text node 'created_at)
    :user (weibo-make-user (weibo-get-node node 'user))))
 
-(defun weibo-parse-statuses (root front_t)
+(defun weibo-parse-statuses (root front_t data)
   (and root (string= (xml-node-name root) "statuses")
-       (weibo-parse-status (xml-node-children root) front_t)))
+       (weibo-parse-status (xml-node-children root) front_t data)))
 
-(defun weibo-parse-status (node-list front_t)
+(defun weibo-parse-status (node-list front_t data)
   (let ((proc_func (if front_t 'ewoc-enter-first 'ewoc-enter-last)))
     (mapc '(lambda (node)
-	     (apply proc_func (list weibo-status-data (weibo-make-status node))))
+	     (apply proc_func (list (symbol-value data) (weibo-make-status node))))
 	  (if front_t (reverse node-list) (cdr node-list)))))
 
-(defun weibo-status-pretty-printer (status)
+(defun weibo-pull-status (data new type)
+  (let* ((pos (if new 0 -1))
+	 (keyword (if new "since_id" "max_id"))
+	 (node (ewoc-nth (symbol-value data) pos))
+	 (node-data (and node (ewoc-data node)))
+	 (id (and node-data (weibo-status-id node-data)))
+	 (param (and id (format "?%s=%s" keyword id))))
+    (with-temp-message (concat "获取消息 " param "...")
+      (weibo-get-data type
+		      'weibo-parse-statuses param
+		      new data))))
+
+(defun weibo-status-pretty-printer (status &optional p)
   (weibo-insert-status status nil))
 
 (defun weibo-insert-status (status retweeted)
   (when status
     (let ((indent (if retweeted "\t" "")))
       (unless retweeted
-	(insert weibo-status-separator "\n"))
+	(insert weibo-timeline-separator "\n"))
       (when retweeted
-	(insert weibo-retweeted-status-separator "\n")
+	(insert weibo-timeline-sub-separator "\n")
 	(insert " 提到：" indent))
       (weibo-insert-user (weibo-status-user status) nil)
       (insert indent)
-      (weibo-insert-text (weibo-status-text status))
+      (weibo-timeline-insert-text (weibo-status-text status))
       (when (weibo-status-thumbnail_pic status) (insert indent))
-      (weibo-insert-picture (weibo-status-thumbnail_pic status) (weibo-status-bmiddle_pic status))
+      (weibo-timeline-insert-picture (weibo-status-thumbnail_pic status) (weibo-status-bmiddle_pic status))
       (unless retweeted
 	(let ((retweeted_status (weibo-status-retweeted_status status)))
 	  (weibo-insert-status retweeted_status t)))
       (insert indent "  来自：" (weibo-status-source status) "  发表于：" (weibo-status-created_at status) "\n")
       (when retweeted
-	(insert weibo-retweeted-status-separator "\n")))))
+	(insert weibo-timeline-sub-separator "\n")))))
 
-(defun weibo-insert-text (text)
-  (let ((pos-begin (point)))
-    (insert " " text "\n")
-    (fill-region pos-begin (- (point) 1))))
+(defun weibo-post-status (&rest p)
+  (weibo-create-post "" "发表微博" 'weibo-send-status))
 
-(defun weibo-insert-picture (thumb_pic mid_pic)
-  (when thumb_pic
-    (insert "\t")
-    (let ((begin_pos (point)))
-      (weibo-insert-image (weibo-get-image-file thumb_pic) mid_pic)	    
-      (when mid_pic
-	(make-text-button begin_pos (point)
-			  'face 'default
-			  'action (lambda (b) (weibo-show-image (button-label b))))))
-    (insert "\n")))
+;; reply-to-id t weibo-api-status-repost
+;; reply-to-id 0 text t weibo-api-status-update
+;; reply-to-id 0 text 0 message
+(defun weibo-send-status (text &optional reply-to-id)
+  (let ((data nil)
+	(api weibo-api-status-update))
+    (cond
+     ((= (length text) 0) (message "不能发表空消息"))
+     ((> (length text) 140) (message "消息长度须小于140字"))
+     (t
+      (add-to-list 'data `("status" . ,text))
+      (when reply-to-id
+	(add-to-list 'data `("id" . ,reply-to-id))
+	(setq api weibo-api-status-repost))
+      (weibo-post-data api 'print data nil nil)))))
 
-(defun weibo-status-pull (new &optional type)
-  (let* ((pos (if new 0 -1))
-	 (keyword (if new "since_id" "max_id"))
-	 (node (ewoc-nth weibo-status-data pos))
-	 (node-data (and node (ewoc-data node)))
-	 (id (and node-data (weibo-status-id node-data)))
-	 (param (and id (format "?%s=%s" keyword id))))
-    (with-temp-message (concat "获取消息 " param "...")
-      (when type (setq weibo-status-timeline type))
-      (weibo-get-data weibo-status-timeline
-		      'weibo-parse-statuses param
-		      new))))
-
-(defun weibo-status-pull-new (&optional type)
-  (interactive)  
-  (weibo-status-pull t type)
-  (goto-char (point-min)))
-
-(defun weibo-status-pull-old ()
-  (interactive)  
-  (let ((p (point)))
-    (weibo-status-pull nil)
-    (goto-char p)))
-
-(defun weibo-status-inspect ()
+(defun weibo-retweet-status (data &rest p)
   (interactive)
-  (let ((node (ewoc-locate weibo-status-data)))
-    (when node
-      (print (ewoc-data node))
-      (ewoc-invalidate weibo-status-data node))))
-
-(defun weibo-status-move-next ()
-  (interactive)  
-  (let* ((node (ewoc-locate weibo-status-data))
-	 (ewoc_node (and node (ewoc-next weibo-status-data node))))
-    (if (not ewoc_node)
-	(weibo-status-pull-old)
-      (goto-char (ewoc-location ewoc_node))
-      (recenter-top-bottom 0))))
-
-(defun weibo-retweet-status ()
-  (interactive)
-  (let* ((node (ewoc-locate weibo-status-data))
-	 (data (and node (ewoc-data node)))
-	 (id (and data (weibo-status-id data)))
+  (let* ((id (and data (weibo-status-id data)))
 	 (retweeted (and data (weibo-status-retweeted_status data)))
 	 (user_name (and retweeted (weibo-user-screen_name (weibo-status-user data))))
 	 (user_name_text (and user_name (concat "//@" user_name "：")))
 	 (text (and retweeted (weibo-status-text data))))
-    (weibo-update-status (concat user_name_text text) id)))
+    (weibo-create-post (concat user_name_text text) "转发微博" id)))
 
-(defun weibo-refresh-timeline ()
-  (interactive)
-  (weibo-timeline t))
+(defun weibo-status-timeline-provider (key name data)
+  (make-weibo-timeline-provider
+   :key key
+   :name name
+   :pretty-printer-function 'weibo-status-pretty-printer
+   :pull-function 'weibo-pull-status
+   :post-function 'weibo-post-status
+   :retweet-function 'weibo-retweet-status
+   :comment-function nil
+   :data data))
 
-(defun weibo-friends-timeline ()
-  (interactive)
-  (setq mode-name (concat weibo-status-mode-name " 关注的"))  
-  (weibo-timeline t weibo-api-status-friends-timeline))
+(defun weibo-friends-timeline-provider ()
+  (weibo-status-timeline-provider "a" "我的关注" weibo-api-status-friends-timeline))
 
-(defun weibo-user-timeline ()
-  (interactive)
-  (setq mode-name (concat weibo-status-mode-name " 我的微博"))  
-  (weibo-timeline t weibo-api-status-user-timeline))
+(defun weibo-user-timeline-provider ()
+  (weibo-status-timeline-provider "i" "我的微博" weibo-api-status-user-timeline))
 
-(defun weibo-mention-timeline ()
-  (interactive)
-  (setq mode-name (concat weibo-status-mode-name " 提到我的"))  
-  (weibo-timeline t weibo-api-status-mention-timeline))
+(defun weibo-mention-timeline-provider ()
+  (weibo-status-timeline-provider "@" "提到我的" weibo-api-status-mention-timeline))
 
-(defun weibo-public-timeline ()
-  (interactive)
-  (setq mode-name (concat weibo-status-mode-name " 谁在说"))  
-  (weibo-timeline t weibo-api-status-public-timeline))
-
-(defvar weibo-status-mode-map
-  nil
-  "Keymap for weibo-status-mode")
-
-(setq weibo-status-mode-map
-      (let ((map (make-sparse-keymap)))
-	(define-key map "w" 'weibo-public-timeline)    
-	(define-key map "a" 'weibo-friends-timeline)
-	(define-key map "@" 'weibo-mention-timeline)
-	(define-key map "i" 'weibo-user-timeline)
-	(define-key map "r" 'weibo-refresh-timeline)
-	(define-key map "g" 'weibo-status-pull-new)
-	(define-key map "m" 'weibo-status-pull-old)
-	(define-key map "t" 'beginning-of-buffer)
-	(define-key map "d" 'end-of-buffer)
-	(define-key map " " 'weibo-status-move-next)
-	(define-key map "n" 'next-line)
-	(define-key map "p" 'previous-line)
-	(define-key map "f" 'forward-char)
-	(define-key map "b" 'backward-char)
-	(define-key map "q" 'weibo-bury-close-window)
-	(define-key map "s" 'weibo-status-inspect)
-	(define-key map "P" 'weibo-update-status)
-	(define-key map "T" 'weibo-retweet-status)
-	map))
-
-(define-derived-mode weibo-status-mode fundamental-mode (concat weibo-status-mode-name " 关注的") 
-  "Major mode for displaying weibo status"
-  (use-local-map weibo-status-mode-map)
-  (setq buffer-read-only t)
-  (setq fill-column 70)
-  (make-local-variable 'weibo-status-data)
-  (make-local-variable 'weibo-status-timeline)
-  (unless (ewoc-p weibo-status-data)
-    (setq weibo-status-data (ewoc-create 'weibo-status-pretty-printer weibo-status-headline weibo-status-footline))))
-
-(defun weibo-timeline (&optional refresh type)
-  (interactive)
-  (let* ((buffer-name weibo-status-buffer-name)
-	 (init-t (not (get-buffer buffer-name))))
-    (switch-to-buffer buffer-name)
-    (when init-t
-      (weibo-status-mode))
-    (when refresh
-      (setq buffer-read-only nil)
-      (erase-buffer)
-      (setq buffer-read-only t)
-      (setq weibo-status-data (ewoc-create 'weibo-status-pretty-printer weibo-status-headline weibo-status-footline)))
-    (when (or refresh init-t)
-      (weibo-status-pull-new type))))
-
+(defun weibo-public-timeline-provider ()
+  (weibo-status-timeline-provider "w" "谁在说" weibo-api-status-public-timeline))
 (provide 'weibo-status)

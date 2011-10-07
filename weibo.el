@@ -1,9 +1,25 @@
+;; Copyright (C) 2011 Austin<austiny.cn@gmail.com>
+          
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of
+;; the License, or (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 (require 'hex-util)
 (require 'oauth)
+(require 'weibo-timeline)
 (require 'weibo-status)
 (require 'weibo-user)
 (require 'weibo-image)
-(require 'weibo-update)
+(require 'weibo-post)
 
 (defconst weibo-request-url "http://api.t.sina.com.cn/oauth/request_token" "Request the unauthorized token")
 (defconst weibo-authorized-url "http://api.t.sina.com.cn/oauth/authorize" "Redirect the user to this url")
@@ -92,5 +108,10 @@
   (condition-case err
       (delete-window)
     (error nil)))
+
+(weibo-timeline-register-provider (weibo-friends-timeline-provider))
+(weibo-timeline-register-provider (weibo-user-timeline-provider))
+(weibo-timeline-register-provider (weibo-mention-timeline-provider))
+(weibo-timeline-register-provider (weibo-public-timeline-provider))
 
 (provide 'weibo)
