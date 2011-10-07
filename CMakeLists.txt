@@ -2,9 +2,12 @@ project( SnoreNotify )
 cmake_minimum_required( VERSION 2.8 )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_PREFIX_PATH}/share/apps/cmake/modules)
 
+option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
+option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(KDE4 REQUIRED)
+find_package(KDE4)
 
 if(MINGW)
 SET (CMAKE_RC_COMPILER_INIT windres)
@@ -22,10 +25,6 @@ endif(KDE4_FOUND)
 
 find_package( CryptoPP )
 find_package( Boost COMPONENTS system thread)
-
-
-option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
-option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
 
 set(PLUGIN_INSTALL_PATH  LIBRARY DESTINATION bin/snoreplugins)
 

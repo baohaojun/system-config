@@ -1,10 +1,12 @@
 find_package( Qt4 REQUIRED )
 find_package( Automoc4 REQUIRED)
 
-include_directories(
-        ${CMAKE_CURRENT_SOURCE_DIR}  ${CMAKE_CURRENT_BINARY_DIR}
-        ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
-        ${QT_QTNETWORK_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR})
+include_directories( ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
+                    ${QT_QTNETWORK_INCLUDE_DIR})
+
+if (WITH_FREEDESKTOP_FRONTEND)
+    include_directories(${QT_QTDBUS_INCLUDE_DIR})
+endif (WITH_FREEDESKTOP_FRONTEND)
 
 include( ${QT_USE_FILE} )
 
