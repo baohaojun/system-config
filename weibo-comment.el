@@ -59,7 +59,24 @@
 
 (defun weibo-insert-comment (comment)
   (when comment
-    (weibo-insert-user (weibo-comment-user comment) nil)))
+    (insert weibo-timeline-separator "\n")
+    (weibo-insert-user (weibo-comment-user comment) nil)
+    (insert "评论道：\n")
+    (weibo-timeline-insert-text (weibo-comment-text comment))
+    (let ((status (weibo-comment-status comment))
+	  (reply_comment (weibo-comment-reply_comment comment)))
+      (when reply_comment
+	(let ((text (weibo-comment-text reply_comment)))
+	  (insert weibo-timeline-sub-separator "\n")
+	  (weibo-timeline-insert-text
+	   (concat "回复" (weibo-user-screen_name
+			   (weibo-comment-user reply_comment))
+		   "的评论："
+		   (if (< (length text) 23) text
+		     (concat (substring text 0 20) "。。。"))))))
+      (when status
+	(weibo-insert-status status t))
+      (insert "  来自：" (weibo-comment-source comment) "  发表于：" (weibo-comment-created_at comment) "\n"))))
 
 (defun weibo-comment-timeline-provider (key name data)
   (make-weibo-timeline-provider

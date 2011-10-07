@@ -58,7 +58,6 @@
 	    " (" (cond ((string= (weibo-user-gender user) "m") "男")
 		       ((string= (weibo-user-gender user) "f") "女")
 		       (t "未知")) ","
-	    " " (weibo-user-location user) ") "
-	    " 说道：\n")))
+	    " " (weibo-user-location user) ") ")))
 
 (provide 'weibo-user)

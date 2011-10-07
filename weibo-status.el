@@ -85,6 +85,7 @@
 	(insert weibo-timeline-sub-separator "\n")
 	(insert " 提到：" indent))
       (weibo-insert-user (weibo-status-user status) nil)
+      (insert "说道：\n")
       (insert indent)
       (weibo-timeline-insert-text (weibo-status-text status))
       (when (weibo-status-thumbnail_pic status) (insert indent))
