@@ -3,8 +3,8 @@ use File::Path;
 use File::Basename;
 
 $site = "http://mirrors.kernel.org/sourceware/cygwin/";
-
-my $site_prefix = "mirrors.kernel.org/sourceware/cygwin/";
+$site = "http://mirrors.163.com/cygwin/";
+my $site_prefix = substr($site, length("http://"));
 
 $ini = "setup.ini";
 
