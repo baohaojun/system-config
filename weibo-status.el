@@ -110,8 +110,8 @@
   (let ((data nil)
 	(api weibo-api-status-update))
     (cond
-     ((= (length text) 0) (message "不能发表空消息"))
-     ((> (length text) 140) (message "消息长度须小于140字"))
+     ((= (length text) 0) (message "不能发表空消息") nil)
+     ((> (length text) 140) (message "消息长度须小于140字") nil)
      (t
       (add-to-list 'data `("status" . ,text))
       (when reply-to-id
@@ -125,7 +125,11 @@
 	 (user_name (and retweeted (weibo-user-screen_name (weibo-status-user data))))
 	 (user_name_text (and user_name (concat "//@" user_name "：")))
 	 (text (and retweeted (weibo-status-text data))))
-    (weibo-create-post (concat user_name_text text) "转发微博" id)))
+    (weibo-create-post (concat user_name_text text) "转发微博" 'weibo-send-status id)))
+
+(defun weibo-do-comment-status (status &rest p)
+  (let* ((id (and status (weibo-status-id status))))
+    (weibo-create-post "" "评论微博" 'weibo-send-comment id)))
 
 (defun weibo-status-timeline-provider (key name data)
   (make-weibo-timeline-provider
@@ -137,7 +141,7 @@
    :post-function 'weibo-post-status
    :look-function 'weibo-look-status
    :retweet-function 'weibo-retweet-status
-   :comment-function nil
+   :comment-function 'weibo-do-comment-status
    :reply-function nil
    :header-function nil
    :data data))

@@ -13,7 +13,7 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+(defconst weibo-api-send-comment "statuses/comment")
 (defconst weibo-api-comments-by-me-timeline "statuses/comments_by_me")
 (defconst weibo-api-comments-to-me-timeline "statuses/comments_to_me")
 
@@ -86,6 +86,17 @@
 
 (defun weibo-reply-comment (data &rest p)
   )
+
+(defun weibo-send-comment (text comment-id)
+  (let ((data nil)
+	(api weibo-api-send-comment))
+    (cond
+     ((= (length text) 0) (message "不能发表空评论") nil)
+     ((> (length text) 140) (message "评论长度须小于140字") nil)
+     (t
+      (add-to-list 'data `("comment" . ,text))
+      (add-to-list 'data `("id" . ,comment-id))
+      (weibo-post-data api 'print data nil nil)))))
 
 (defun weibo-comment-timeline-provider (key name data)
   (make-weibo-timeline-provider

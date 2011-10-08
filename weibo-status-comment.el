@@ -31,6 +31,10 @@
     (weibo-insert-status status nil)
     (buffer-string)))
 
+(defun weibo-comment-status-comments (comment status)
+  (let* ((id (and status (weibo-status-id status))))
+    (weibo-create-post "" "评论微博" 'weibo-send-comment id)))
+
 (defun weibo-status-comments-timeline-provider (status)
   (make-weibo-timeline-provider
    :key nil
@@ -40,7 +44,7 @@
    :pull-function 'weibo-pull-status-comments
    :post-function 'weibo-post-status
    :retweet-function nil
-   :comment-function nil
+   :comment-function 'weibo-comment-status-comments
    :reply-function nil
    :header-function 'weibo-status-comments-header
    :data status))

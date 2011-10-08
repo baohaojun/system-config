@@ -44,6 +44,7 @@
 
 (defun weibo-send-post ()
   (interactive)
-  (apply weibo-post-send-func (cons (buffer-string) weibo-post-data)))
+  (when (apply weibo-post-send-func (cons (buffer-string) weibo-post-data))
+    (weibo-discard-post)))
 
 (provide 'weibo-post)

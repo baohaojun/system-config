@@ -149,6 +149,17 @@
 			 (list data
 			       (weibo-timeline-provider-data weibo-timeline-current-provider))))))))
 
+(defun weibo-timeline-comment ()
+  (interactive)
+  (let* ((node (ewoc-locate weibo-timeline-data))
+	 (data (and node (ewoc-data node))))
+    (when (weibo-timeline-provider-p weibo-timeline-current-provider)
+      (let ((func (weibo-timeline-provider-comment-function
+		   weibo-timeline-current-provider)))
+	(and func (apply func
+			 (list data
+			       (weibo-timeline-provider-data weibo-timeline-current-provider))))))))
+
 (defun weibo-timeline-reply ()
   (interactive))
 
