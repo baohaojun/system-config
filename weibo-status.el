@@ -100,6 +100,9 @@
 (defun weibo-post-status (&rest p)
   (weibo-create-post "" "发表微博" 'weibo-send-status))
 
+(defun weibo-look-status (data &rest p)
+  (weibo-timeline-set-provider (weibo-status-comments-timeline-provider data)))
+
 ;; reply-to-id t weibo-api-status-repost
 ;; reply-to-id 0 text t weibo-api-status-update
 ;; reply-to-id 0 text 0 message
@@ -117,7 +120,6 @@
       (weibo-post-data api 'print data nil nil)))))
 
 (defun weibo-retweet-status (data &rest p)
-  (interactive)
   (let* ((id (and data (weibo-status-id data)))
 	 (retweeted (and data (weibo-status-retweeted_status data)))
 	 (user_name (and retweeted (weibo-user-screen_name (weibo-status-user data))))
@@ -133,8 +135,11 @@
    :pretty-printer-function 'weibo-status-pretty-printer
    :pull-function 'weibo-pull-status
    :post-function 'weibo-post-status
+   :look-function 'weibo-look-status
    :retweet-function 'weibo-retweet-status
    :comment-function nil
+   :reply-function nil
+   :header-function nil
    :data data))
 
 (defun weibo-friends-timeline-provider ()

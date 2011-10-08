@@ -21,6 +21,7 @@
 (require 'weibo-image)
 (require 'weibo-post)
 (require 'weibo-comment)
+(require 'weibo-status-comment)
 
 (defconst weibo-request-url "http://api.t.sina.com.cn/oauth/request_token" "Request the unauthorized token")
 (defconst weibo-authorized-url "http://api.t.sina.com.cn/oauth/authorize" "Redirect the user to this url")

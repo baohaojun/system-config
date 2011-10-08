@@ -37,14 +37,15 @@
     (if (file-exists-p image-file) image-file nil)))
 
 (defun weibo-insert-image (image-file &optional url)
-  (condition-case err
-      (progn
-	(insert-image (create-image image-file) url)
-	t)
-    (error
+  (when image-file
+    (condition-case err
+	(progn
+	  (insert-image (create-image image-file) url)
+	  t)
+      (error
      (when (file-exists-p image-file)
        (delete-file image-file))
-     nil)))
+     nil))))
 
 (defun weibo-show-image (url)
   (let ((init_t (not (get-buffer weibo-image-buffer-name))))

@@ -13,6 +13,7 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 (defconst weibo-api-comments-by-me-timeline "statuses/comments_by_me")
 (defconst weibo-api-comments-to-me-timeline "statuses/comments_to_me")
 
@@ -55,28 +56,36 @@
 		      "comments" new))))
 
 (defun weibo-comment-pretty-printer (comment &optional p)
-  (weibo-insert-comment comment))
+  (weibo-insert-comment comment t))
 
-(defun weibo-insert-comment (comment)
+(defun weibo-insert-comment (comment with-retweet)
   (when comment
     (insert weibo-timeline-separator "\n")
+    (unless with-retweet (insert "\t"))
     (weibo-insert-user (weibo-comment-user comment) nil)
     (insert "评论道：\n")
+    (unless with-retweet (insert "\t"))
     (weibo-timeline-insert-text (weibo-comment-text comment))
     (let ((status (weibo-comment-status comment))
 	  (reply_comment (weibo-comment-reply_comment comment)))
       (when reply_comment
 	(let ((text (weibo-comment-text reply_comment)))
 	  (insert weibo-timeline-sub-separator "\n")
+	  (unless with-retweet (insert "\t"))
 	  (weibo-timeline-insert-text
 	   (concat "回复" (weibo-user-screen_name
 			   (weibo-comment-user reply_comment))
 		   "的评论："
 		   (if (< (length text) 23) text
 		     (concat (substring text 0 20) "。。。"))))))
-      (when status
-	(weibo-insert-status status t))
+      (when with-retweet
+	(when status
+	  (weibo-insert-status status t)))
+      (unless with-retweet (insert "\t"))      
       (insert "  来自：" (weibo-comment-source comment) "  发表于：" (weibo-comment-created_at comment) "\n"))))
+
+(defun weibo-reply-comment (data &rest p)
+  )
 
 (defun weibo-comment-timeline-provider (key name data)
   (make-weibo-timeline-provider
@@ -85,9 +94,11 @@
    :make-function 'weibo-make-comment
    :pretty-printer-function 'weibo-comment-pretty-printer
    :pull-function 'weibo-pull-comment
-   :post-function nil
+   :post-function 'weibo-post-status
    :retweet-function nil
    :comment-function nil
+   :reply-function 'weibo-reply-comment
+   :header-function nil
    :data data))
 
 (defun weibo-comments-by-me-timeline-provider ()

@@ -18,7 +18,13 @@
 (defconst weibo-timeline-buffer-name "*weibo-timeline*")
 (defconst weibo-timeline-mode-name "微博时间线")
 
-(defconst weibo-timeline-headline "微博：%s\n命令：发表微博(P) 转发(T) 新消息(g) 刷新(r) 下一条（空格) 帮助(h) 退出(q)")
+(defconst weibo-timeline-headline "微博：%s\n命令：%s\n操作：新消息(g) 刷新(r) 下一条（空格) 帮助(h) 退出(q)")
+(defconst weibo-timeline-post-caption "发表微博(P) ")
+(defconst weibo-timeline-look-caption "察看(L) ")
+(defconst weibo-timeline-retweet-caption "转发(T) ")
+(defconst weibo-timeline-comment-caption "评论(C) ")
+(defconst weibo-timeline-reply-caption "回复(R) ")
+
 (defconst weibo-timeline-footline "提示：获取更多较早前消息(m)")
 
 (defconst weibo-timeline-separator (make-string 70 ?=))
@@ -37,8 +43,11 @@
   pretty-printer-function
   pull-function
   post-function
+  look-function
   retweet-function
   comment-function
+  reply-function
+  header-function
   data)
 
 (defun weibo-timeline-register-provider (reg-data &optional current)
@@ -56,6 +65,10 @@
     (when provider
       (setq weibo-timeline-current-provider provider)
       (weibo-timeline-refresh))))
+
+(defun weibo-timeline-set-provider (provider)
+  (setq weibo-timeline-current-provider provider)
+  (weibo-timeline-refresh))
 
 (defun weibo-timeline-pretty-printer (item)
   (when (weibo-timeline-provider-p weibo-timeline-current-provider)
@@ -79,7 +92,8 @@
 			  'action (lambda (b) (weibo-show-image (button-label b))))))
     (insert "\n")))
 
-(defun weibo-timeline-parse-root (root root-name front-t)
+(defun weibo-timeline-parse-root (root root-name front-t &optional clear-t)
+  (when clear-t (ewoc-filter weibo-timeline-data (lambda (data) nil)))
   (and root (string= (xml-node-name root) root-name)
        (weibo-timeline-parse-nodes (xml-node-children root) front-t)))
 
@@ -129,9 +143,11 @@
   (let* ((node (ewoc-locate weibo-timeline-data))
 	 (data (and node (ewoc-data node))))
     (when (weibo-timeline-provider-p weibo-timeline-current-provider)
-      (apply (weibo-timeline-provider-retweet-function weibo-timeline-current-provider)
-	     (list data
-		   (weibo-timeline-provider-data weibo-timeline-current-provider))))))
+      (let ((func (weibo-timeline-provider-retweet-function
+		   weibo-timeline-current-provider)))
+	(and func (apply func
+			 (list data
+			       (weibo-timeline-provider-data weibo-timeline-current-provider))))))))
 
 (defun weibo-timeline-reply ()
   (interactive))
@@ -139,9 +155,21 @@
 (defun weibo-timeline-post ()
   (interactive)
   (when (weibo-timeline-provider-p weibo-timeline-current-provider)
-    (apply (weibo-timeline-provider-post-function weibo-timeline-current-provider)
-	   (list 'weibo-timeline-data
-		 (weibo-timeline-provider-data weibo-timeline-current-provider)))))
+    (let ((func (weibo-timeline-provider-post-function
+		   weibo-timeline-current-provider)))
+      (and func (apply func
+		       (list (weibo-timeline-provider-data weibo-timeline-current-provider)))))))
+
+(defun weibo-timeline-look ()
+  (interactive)
+  (let* ((node (ewoc-locate weibo-timeline-data))
+	 (data (and node (ewoc-data node))))
+    (when (weibo-timeline-provider-p weibo-timeline-current-provider)
+      (let ((func (weibo-timeline-provider-look-function
+		   weibo-timeline-current-provider)))
+	(and func (apply func
+			 (list data
+			       (weibo-timeline-provider-data weibo-timeline-current-provider))))))))
 
 (defun weibo-timeline-inspect ()
   (interactive)
@@ -157,14 +185,37 @@
 			    (weibo-timeline-provider-name
 			     weibo-timeline-current-provider)))
     (ewoc-set-hf weibo-timeline-data
-		 (format weibo-timeline-headline
+		 (concat (format weibo-timeline-headline
 			 (mapconcat
 			  (lambda (item)
 			    (let ((provider (cdr item)))
 			      (concat
 			       (weibo-timeline-provider-name provider) "("
 			       (weibo-timeline-provider-key provider) ")")))
-			  weibo-timeline-providers " "))
+			  weibo-timeline-providers " ")
+			 (concat
+			  (when (weibo-timeline-provider-post-function
+				 weibo-timeline-current-provider)
+			    weibo-timeline-post-caption)
+			  (when (weibo-timeline-provider-look-function
+				 weibo-timeline-current-provider)
+			    weibo-timeline-look-caption)		       
+			  (when (weibo-timeline-provider-retweet-function
+				 weibo-timeline-current-provider)
+			    weibo-timeline-retweet-caption)
+			  (when (weibo-timeline-provider-comment-function
+				 weibo-timeline-current-provider)
+			    weibo-timeline-comment-caption)
+			  (when (weibo-timeline-provider-reply-function
+				 weibo-timeline-current-provider)
+			    weibo-timeline-reply-caption)))
+			 (let ((header-func
+				(weibo-timeline-provider-header-function
+				 weibo-timeline-current-provider)))
+			   (when header-func
+			     (apply header-func
+				    (list (weibo-timeline-provider-data
+					   weibo-timeline-current-provider))))))
 		 weibo-timeline-footline)
     (ewoc-filter weibo-timeline-data (lambda (data) nil))
     (weibo-timeline-pull-new)))
@@ -181,8 +232,12 @@
 	(define-key map " " 'weibo-timeline-move-next)
 	(define-key map "r" 'weibo-timeline-refresh)
 	(define-key map "s" 'weibo-timeline-inspect)
+	
 	(define-key map "P" 'weibo-timeline-post)
+	(define-key map "L" 'weibo-timeline-look)	
 	(define-key map "T" 'weibo-timeline-retweet)
+	(define-key map "C" 'weibo-timeline-comment)
+	(define-key map "R" 'weibo-timeline-reply)
 
 	(define-key map "t" 'beginning-of-buffer)
 	(define-key map "d" 'end-of-buffer)	
