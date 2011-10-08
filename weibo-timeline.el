@@ -266,6 +266,7 @@
 	(define-key map "b" 'backward-char)
 	
 	(define-key map "q" 'weibo-bury-close-window)
+	(define-key map "Q" 'weibo-kill-close-window)
 	map))
 
 (define-derived-mode weibo-timeline-mode fundamental-mode weibo-timeline-mode-name
