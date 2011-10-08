@@ -10,5 +10,5 @@
 1       1  * * * . ~/.bash_path; ~/bin/linux/download-today
 0       0  * * * . ~/.bash_path; ~/bin/linux/update-repo-projects; ~/bin/linux/cron-code-reading
 0       20 * * * . ~/.bash_path; back-to-gmail ~/.ecompleterc ~/.bash_history ~/.bash_path
-11      20 * * * . ~/.bash_path; cd ~/cygwin && mirrorcyg.pl | mf-download.pl -n 3
+0       11 * * * . ~/.bash_path; { cd ~/cygwin || cd "$(cat ~/.cygwin-dir)"; } && mirrorcyg.pl | mf-download.pl -n 3
 

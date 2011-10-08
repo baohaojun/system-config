@@ -1519,7 +1519,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (setq bbdb/gnus-update-records-mode '(my-bbdb/gnus-update-records-mode))
 
 (defun my-bbdb-canonicalize (addr)
-  (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net))
+  (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr))
 (setq bbdb-canonicalize-net-hook
       'my-bbdb-canonicalize)
 

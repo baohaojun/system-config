@@ -8,12 +8,12 @@ $site = "http://mirrors.163.com/cygwin/";
 $site =~ s,/*$,,g;
 
 $dl_dir = lc(uri_escape($site));
-
-system("mkdir -p $dl_dir") == 0 or die "mkdir failed";
 my $site_prefix = substr($site, length("http://"));
-
 system("mkdir -p `dirname $site_prefix`") == 0 or die "mkdir failed";
-system("ln -sf `pwd`/$dl_dir $site_prefix") == 0 or die "ln -s failed";
+
+if (system("mkdir -p $dl_dir") == 0) {
+    system("ln -sf `pwd`/$dl_dir $site_prefix") == 0 or die "ln -s failed";
+}
 
 $site = $site . "/";
 $site_prefix = $site_prefix . "/";
