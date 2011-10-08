@@ -24,7 +24,7 @@
 (defvar weibo-post-data nil)
 (defvar weibo-post-send-func nil)
 
-(defun weibo-create-post (initial-text mode-text
+(defun weibo-create-post (initial-text mode-text move-begin
 				       post-send-func
 				       &rest data)
   (interactive)
@@ -35,12 +35,11 @@
   (set (make-local-variable 'weibo-post-data) data)
   (when mode-text (setq mode-name mode-text))
   (insert (concat initial-text))
-  (goto-char (point-min)))
+  (when move-begin (goto-char (point-min))))
 
 (defun weibo-discard-post ()
   (interactive)
-  (kill-buffer)
-  (delete-window))
+  (weibo-kill-close-window))
 
 (defun weibo-send-post ()
   (interactive)

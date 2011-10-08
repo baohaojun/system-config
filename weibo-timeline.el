@@ -161,7 +161,15 @@
 			       (weibo-timeline-provider-data weibo-timeline-current-provider))))))))
 
 (defun weibo-timeline-reply ()
-  (interactive))
+  (interactive)
+  (let* ((node (ewoc-locate weibo-timeline-data))
+	 (data (and node (ewoc-data node))))
+    (when (weibo-timeline-provider-p weibo-timeline-current-provider)
+      (let ((func (weibo-timeline-provider-reply-function
+		   weibo-timeline-current-provider)))
+	(and func (apply func
+			 (list data
+			       (weibo-timeline-provider-data weibo-timeline-current-provider))))))))
 
 (defun weibo-timeline-post ()
   (interactive)
@@ -257,7 +265,7 @@
 	(define-key map "f" 'forward-char)
 	(define-key map "b" 'backward-char)
 	
-	(define-key map "q" 'weibo-bury-close-window)	
+	(define-key map "q" 'weibo-bury-close-window)
 	map))
 
 (define-derived-mode weibo-timeline-mode fundamental-mode weibo-timeline-mode-name

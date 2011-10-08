@@ -14,6 +14,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (defconst weibo-api-send-comment "statuses/comment")
+(defconst weibo-api-send-reply "statuses/reply")
 (defconst weibo-api-comments-by-me-timeline "statuses/comments_by_me")
 (defconst weibo-api-comments-to-me-timeline "statuses/comments_to_me")
 
@@ -84,8 +85,24 @@
       (unless with-retweet (insert "\t"))      
       (insert "  来自：" (weibo-comment-source comment) "  发表于：" (weibo-comment-created_at comment) "\n"))))
 
-(defun weibo-reply-comment (data &rest p)
-  )
+(defun weibo-reply-comment (comment &rest p)
+  (when comment
+    (let ((cid (weibo-comment-id comment))
+	   (id (weibo-status-id (weibo-comment-status comment)))
+	   (user_name (weibo-user-screen_name (weibo-comment-user comment))))
+      (weibo-create-post (format "回复@%s:" user_name) "回复评论" nil 'weibo-send-reply cid id))))
+
+(defun weibo-send-reply (text cid id)
+  (let ((data nil)
+	(api weibo-api-send-reply))
+    (cond
+     ((= (length text) 0) (message "不能发表空回复") nil)
+     ((> (length text) 140) (message "回复长度须小于140字") nil)
+     (t
+      (add-to-list 'data `("comment" . ,text))
+      (add-to-list 'data `("id" . ,id))
+      (add-to-list 'data `("cid" . ,cid))
+      (weibo-post-data api 'print data nil nil)))))
 
 (defun weibo-send-comment (text comment-id)
   (let ((data nil)

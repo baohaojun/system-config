@@ -98,7 +98,7 @@
 	(insert weibo-timeline-sub-separator "\n")))))
 
 (defun weibo-post-status (&rest p)
-  (weibo-create-post "" "发表微博" 'weibo-send-status))
+  (weibo-create-post "" "发表微博" nil 'weibo-send-status))
 
 (defun weibo-look-status (data &rest p)
   (weibo-timeline-set-provider (weibo-status-comments-timeline-provider data)))
@@ -125,11 +125,11 @@
 	 (user_name (and retweeted (weibo-user-screen_name (weibo-status-user data))))
 	 (user_name_text (and user_name (concat "//@" user_name "：")))
 	 (text (and retweeted (weibo-status-text data))))
-    (weibo-create-post (concat user_name_text text) "转发微博" 'weibo-send-status id)))
+    (weibo-create-post (concat user_name_text text) "转发微博" t 'weibo-send-status id)))
 
 (defun weibo-do-comment-status (status &rest p)
   (let* ((id (and status (weibo-status-id status))))
-    (weibo-create-post "" "评论微博" 'weibo-send-comment id)))
+    (weibo-create-post "" "评论微博" nil 'weibo-send-comment id)))
 
 (defun weibo-status-timeline-provider (key name data)
   (make-weibo-timeline-provider

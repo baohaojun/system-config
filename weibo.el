@@ -111,6 +111,13 @@
       (delete-window)
     (error nil)))
 
+(defun weibo-kill-close-window ()
+  (interactive)
+  (kill-buffer)
+  (condition-case err
+      (delete-window)
+    (error nil)))
+
 (weibo-timeline-register-provider (weibo-friends-timeline-provider))
 (weibo-timeline-register-provider (weibo-user-timeline-provider))
 (weibo-timeline-register-provider (weibo-mention-timeline-provider))
