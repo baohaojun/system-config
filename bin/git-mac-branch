@@ -1,11 +1,13 @@
 #!/bin/bash
 set -e
 
+hold_up=1
 if test -e ~/.git-mac-no; then
     if tty >/dev/null 2>&1; then
 	rm ~/.git-mac-no
     else
-	exit
+	exec </dev/null
+	hold_up=5
     fi
 fi
 cd ${1:-~/windows-config}
@@ -19,13 +21,13 @@ $time = $time < $_ ? $_ : $time;
 END{
     use POSIX; 
     print "time is $time\n";
-    if (time() - $time > 3600) {
+    if (time() - $time > '$hold_up' * 3600) {
         exit(0);
     } else {
         exit(-1);
     }
 }'; then
-    echo 'your changes are made 1 hour ago, should commit now'
+    echo "your changes are made $hold_up hour ago, should commit now"
 else
     if tty >/dev/null 2>&1; then
 	echo commiting even though you made changes only recently, as you wish
