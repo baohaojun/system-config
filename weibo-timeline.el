@@ -81,6 +81,7 @@
 (defun weibo-timeline-insert-text (text)
   (let ((pos-begin (point)))
     (insert " " text "\n")
+    (fill-region pos-begin (- (point) 1))
     (let ((pos-end (point)))
       (goto-char pos-begin)
       (while (search-forward-regexp "http://[0-9a-zA-Z\.\?&/]+" pos-end t)
@@ -92,8 +93,7 @@
 	(make-text-button (match-beginning 0) (match-end 0)
 			  'action (lambda (b) (weibo-show-user (button-label b)))
 			  'follow-link t))
-      (goto-char pos-end))
-    (fill-region pos-begin (- (point) 1))))
+      (goto-char pos-end))))
 
 (defun weibo-timeline-insert-picture (thumb_pic mid_pic)
   (when thumb_pic
@@ -280,6 +280,7 @@
 	(define-key map "p" 'previous-line)
 	(define-key map "f" 'forward-char)
 	(define-key map "b" 'backward-char)
+	(define-key map (kbd "TAB") 'forward-button)
 	
 	(define-key map "q" 'weibo-bury-close-window)
 	(define-key map "Q" 'weibo-kill-close-window)
