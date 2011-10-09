@@ -89,3 +89,12 @@ svn-info-clip()
 
 alias for-code-reading='for-code-reading -i -v'
 
+function hir() {
+    if test $# = 0; then
+	history -r
+    else
+	command hil "$@"
+    fi
+}
+
+alias hil=hir
