@@ -117,7 +117,7 @@
       (when reply-to-id
 	(add-to-list 'data `("id" . ,reply-to-id))
 	(setq api weibo-api-status-repost))
-      (weibo-post-data api 'print data nil nil)))))
+      (weibo-post-data api 'weibo-parse-data-result data nil nil)))))
 
 (defun weibo-retweet-status (data &rest p)
   (let* ((id (and data (weibo-status-id data)))

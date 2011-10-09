@@ -77,13 +77,14 @@
 	   (concat "回复" (weibo-user-screen_name
 			   (weibo-comment-user reply_comment))
 		   "的评论："
-		   (if (< (length text) 23) text
-		     (concat (substring text 0 20) "。。。"))))))
+		   (if (< (length text) 30) text
+		     (concat (substring text 0 27) "。。。"))))))
       (when with-retweet
 	(when status
 	  (weibo-insert-status status t)))
       (unless with-retweet (insert "\t"))      
-      (insert "  来自：" (weibo-comment-source comment) "  发表于：" (weibo-comment-created_at comment) "\n"))))
+      (insert "  来自：" (weibo-comment-source comment)
+	      "  发表于：" (weibo-comment-created_at comment) "\n"))))
 
 (defun weibo-reply-comment (comment &rest p)
   (when comment
@@ -102,7 +103,7 @@
       (add-to-list 'data `("comment" . ,text))
       (add-to-list 'data `("id" . ,id))
       (add-to-list 'data `("cid" . ,cid))
-      (weibo-post-data api 'print data nil nil)))))
+      (weibo-post-data api 'weibo-parse-data-result data nil nil)))))
 
 (defun weibo-send-comment (text comment-id)
   (let ((data nil)

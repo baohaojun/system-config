@@ -52,12 +52,29 @@
    :profile_image_url (weibo-get-node-text node 'profile_image_url)))
 
 (defun weibo-insert-user (user details_t)
+  (if details_t
+      (weibo-insert-user-detail user)
+    (weibo-insert-user-simple user)))
+
+(defun weibo-insert-user-detail (user)
+  (insert "Not implemented"))
+
+(defun weibo-insert-user-simple (user)
   (when user
     (weibo-insert-image (weibo-get-image-file (weibo-user-profile_image_url user)))
-    (insert " " (weibo-user-screen_name user)
-	    " (" (cond ((string= (weibo-user-gender user) "m") "男")
-		       ((string= (weibo-user-gender user) "f") "女")
-		       (t "未知")) ","
-	    " " (weibo-user-location user) ") ")))
+    (insert " ")
+    (insert-text-button (weibo-user-screen_name user)
+			'action (lambda (b) (weibo-show-user (button-label b)))
+			'follow-link t)
+    (when (string= (weibo-user-verified user) "true")
+      (insert " V"))
+    (insert " (" 
+	    (cond ((string= (weibo-user-gender user) "m") "男")
+		  ((string= (weibo-user-gender user) "f") "女")
+		  (t "未知"))
+	    ", " (weibo-user-location user) ") ")))
+
+(defun weibo-show-user (screen-name &optional id)
+  (message screen-name))
 
 (provide 'weibo-user)

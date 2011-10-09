@@ -104,6 +104,14 @@
 		     (weibo-get-body)))))
     (apply callback (cons root cbdata))))
 
+(defun weibo-parse-data-result (root &rest data)
+  (when root
+    (let ((root-name (xml-node-name root)))
+      (cond
+       ((string= root-name "hash")
+	(print root) nil)
+       (t)))))
+
 (defun weibo-bury-close-window ()
   (interactive)
   (bury-buffer)

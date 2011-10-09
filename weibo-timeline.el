@@ -79,6 +79,18 @@
 (defun weibo-timeline-insert-text (text)
   (let ((pos-begin (point)))
     (insert " " text "\n")
+    (let ((pos-end (point)))
+      (goto-char pos-begin)
+      (while (search-forward-regexp "http://[0-9a-zA-Z\.\?&/]+" pos-end t)
+	(make-text-button (match-beginning 0) (match-end 0)
+			  'action (lambda (b) (browse-url (button-label b)))
+			  'follow-link t))
+      (goto-char pos-begin)
+      (while (search-forward-regexp "@\\(\\w\\|_\\)+" pos-end t)
+	(make-text-button (match-beginning 0) (match-end 0)
+			  'action (lambda (b) (weibo-show-user (button-label b)))
+			  'follow-link t))
+      (goto-char pos-end))
     (fill-region pos-begin (- (point) 1))))
 
 (defun weibo-timeline-insert-picture (thumb_pic mid_pic)
@@ -89,7 +101,8 @@
       (when mid_pic
 	(make-text-button begin_pos (point)
 			  'face 'default
-			  'action (lambda (b) (weibo-show-image (button-label b))))))
+			  'action (lambda (b) (weibo-show-image (button-label b)))
+			  'follow-link t)))
     (insert "\n")))
 
 (defun weibo-timeline-parse-root (root root-name front-t &optional clear-t)
@@ -253,7 +266,8 @@
 	(define-key map "s" 'weibo-timeline-inspect)
 	
 	(define-key map "P" 'weibo-timeline-post)
-	(define-key map "L" 'weibo-timeline-look)	
+	(define-key map "L" 'weibo-timeline-look)
+	(define-key map (kbd "RET") 'weibo-timeline-look)
 	(define-key map "T" 'weibo-timeline-retweet)
 	(define-key map "C" 'weibo-timeline-comment)
 	(define-key map "R" 'weibo-timeline-reply)
