@@ -1,4 +1,5 @@
 #!/bin/bash
+test $(uname) = Linux || exit
 (
     dumpkeys | head -1
     echo keycode 56 = Control

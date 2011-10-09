@@ -10,7 +10,18 @@ regedit /s ime-noctrlshift-noaltshift.reg
 # chmod +x $MYXWINSH
 # myxwin.sh&
 net start sshd&
-cygstart ~/doc/dvorak.ahk&
+
+if test -e ~/.swap-alt-control; then
+    cp ~/doc/dvorak.ahk ~/dvorak.ahk
+    cat >> ~/dvorak.ahk <<EOF
+Control::Alt
+Alt::Control
+EOF
+    cygstart ~/dvorak.ahk
+else
+    cygstart ~/doc/dvorak.ahk
+fi&
+
 ~/gcode/scim-cs/ime-py/ime-server.py&
 
 
