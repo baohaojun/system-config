@@ -4,11 +4,11 @@ source=$1
 source=$(echo "$source"|perl -npe 's,/+,/,g')
 source=$(lookup_file "$source")
 
-while [[ "$source" =~ /./ ]]; do
+while [[ "$source" =~ /\./ ]]; do
     source=$(echo "$source" | perl -npe 's,/\./,/,g')
 done
 
-while [[ "$source" =~ /../ ]]; do
+while [[ "$source" =~ /\.\./ ]]; do
     source=$(echo "$source" | perl -npe 's,(^|/(?!\.\./)[^/]+)/\.\./,/,g')
 done
 

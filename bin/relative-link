@@ -66,7 +66,8 @@ target_dir=$(formal-path "$target_dir"|perl -npe 's,/*$,,')
 echo -n > ~/.failed-rln
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
-    relative_source=$(calc_relative "$source" "$target_dir"/"$target_file")
+    normal_target=$(formal-path "$target_dir"/"$target_file")
+    relative_source=$(calc_relative "$source" "$normal_target")
     # if test -z "target_file"; then
     # 	echo 1>&2 "$old_target_dir"/"$(basename "$relative_source")" =\> "$relative_source"
     # else
