@@ -1,7 +1,8 @@
 0-59/15 *  * * * . ~/.bash_path; offlineimap
 0       0  * * * . ~/.bash_path; ~/bin/linux/cron-code-reading
-0       *  * * * . ~/.bash_path;  ~/bin/linux/backup_where
-0       *  * * * . ~/.bash_path;  ~/bin/linux/download-google-sdk.sh
+0       *  * * * . ~/.bash_path; ~/bin/linux/backup_where
+0       *  * * * . ~/.bash_path; bash ~/doc/my_input_method_cands; sdim_sync_cands | sort -u > ~/doc/my_input_method_cands
+0       *  * * * . ~/.bash_path; ~/bin/linux/download-google-sdk.sh
 0       *  * * * . ~/.bash_path; ~/bin/linux/jira-getissues
 30      22 * * * . ~/.bash_path; ~/bin/linux/update-repo-bhj
 0-59/15 *  * * * . ~/.bash_path; ~/bin/git-mac-branch ~/windows-config/
