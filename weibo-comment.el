@@ -114,7 +114,7 @@
      (t
       (add-to-list 'data `("comment" . ,text))
       (add-to-list 'data `("id" . ,comment-id))
-      (weibo-post-data api 'print data nil nil)))))
+      (weibo-post-data api 'weibo-parse-data-result data nil nil)))))
 
 (defun weibo-comment-timeline-provider (key name data)
   (make-weibo-timeline-provider

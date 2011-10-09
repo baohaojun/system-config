@@ -30,6 +30,8 @@
 (defconst weibo-timeline-separator (make-string 70 ?=))
 (defconst weibo-timeline-sub-separator (make-string 70 ?-))
 
+(defconst weibo-timeline-name-regexp "@\\(\\w\\|_\\|-\\)+")
+
 (defvar weibo-timeline-data nil "Buffer local variable that holds timeline data")
 (defvar weibo-timeline-current-provider nil
   "Buffer local variable that holds current timeline provider")
@@ -86,7 +88,7 @@
 			  'action (lambda (b) (browse-url (button-label b)))
 			  'follow-link t))
       (goto-char pos-begin)
-      (while (search-forward-regexp "@\\(\\w\\|_\\)+" pos-end t)
+      (while (search-forward-regexp weibo-timeline-name-regexp pos-end t)
 	(make-text-button (match-beginning 0) (match-end 0)
 			  'action (lambda (b) (weibo-show-user (button-label b)))
 			  'follow-link t))
@@ -283,6 +285,10 @@
 	(define-key map "Q" 'weibo-kill-close-window)
 	map))
 
+(defun weibo-timeline-name-nobreak-p ()
+  (or (looking-back weibo-timeline-name-regexp)
+      (looking-back "@")))
+
 (define-derived-mode weibo-timeline-mode fundamental-mode weibo-timeline-mode-name
   "Major mode for displaying weibo timeline"
   (use-local-map weibo-timeline-mode-map)
@@ -290,6 +296,7 @@
   (setq fill-column 70)
   (make-local-variable 'weibo-timeline-data)
   (make-local-variable 'weibo-timeline-current-provider)
+  (set (make-local-variable 'fill-nobreak-predicate) 'weibo-timeline-name-nobreak-p)
   (unless (ewoc-p weibo-timeline-data)
     (setq weibo-timeline-data
 	  (ewoc-create 'weibo-timeline-pretty-printer
