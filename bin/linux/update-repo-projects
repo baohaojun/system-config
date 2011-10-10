@@ -25,3 +25,7 @@ for x in "$@"; do
         (test -e buildspec.mk && time make -j4 -l4 -k && echo OK..) > build.log 2>&1
     )
 done
+
+if test $# != 1; then
+    ~/bin/linux/cron-code-reading
+fi

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+
+run_dir=$(basename $1)
+run_time=$2
+
+logdir=~/.cron-log/$run_dir
+mkdir -p $logdir
+
+exec > $logdir/bhj-cron-runner 2>&1
+set -e
+set -x
+
+run_time=$(echo $run_time|perl -ne '
+chomp; 
+if (m/^(\d+)(h|m)$/) {
+    print ($1 * ($2 eq "h" ? 3600 : 60));
+    exit(0);
+}
+print "0";
+exit(0);
+')
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+test "$run_time" = 0 -o -z "$run_time" && die "error, run_time must not be 0"
+cd ~/etc/cron.d/$run_dir
+cmds=($(find . -type f -o -type l))
+n_cmds=${#cmds[@]}
+
+((run_time /= n_cmds))
+for x in ${cmds[@]}; do
+    chmod +x $x
+    ($x || bhj-notify cron-runner "$x failed" &) >> $logdir/$x.log 2>&1 
+    sleep $run_time
+done&

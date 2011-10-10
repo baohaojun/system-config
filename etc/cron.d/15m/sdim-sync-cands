@@ -1,0 +1,4 @@
+#!/bin/bash
+bash ~/doc/my_input_method_cands
+sdim_sync_cands | sort -u > ~/my_input_method_cands
+mv ~/my_input_method_cands ~/doc/my_input_method_cands
