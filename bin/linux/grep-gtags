@@ -48,6 +48,7 @@ GetOptions(
     "e=s" => \$lookup_needle,
     );
 
+$lookup_needle =~ s/\+.*//;
 $approx_dir = substr($approx_dir, length($pwd));
 
 sub do_cscope($$$$) {
