@@ -6,6 +6,7 @@ sdim_add_cand 两块
 sdim_add_cand 严词
 sdim_add_cand 乔布斯
 sdim_add_cand 产线
+sdim_add_cand 仁人志士
 sdim_add_cand 伤者
 sdim_add_cand 低电
 sdim_add_cand 佟波
@@ -24,6 +25,7 @@ sdim_add_cand 卡座
 sdim_add_cand 反推
 sdim_add_cand 叫停
 sdim_add_cand 史蒂夫
+sdim_add_cand 合作者
 sdim_add_cand 后壳
 sdim_add_cand 后盖
 sdim_add_cand 命令行
