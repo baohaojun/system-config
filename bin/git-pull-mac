@@ -1,9 +1,13 @@
 #!/bin/bash
 
-set -e
+set -ex
+crontab -l > ~/.crontab.tmp
+user_cron=true
+diff ~/.crontab.tmp ~/.crontab && user_cron=false
 test $PWD = ~ && cd ~/windows-config/
 for x in $(git branch -a |grep from-mac); do
     remote=$(echo $x|awk -F/ '{print $2}')
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
     git pull $remote $branch
 done
+test $user_cron = false && { diff ~/.crontab.tmp ~/.crontab || crontab ~/.crontab; }
