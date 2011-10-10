@@ -6,6 +6,8 @@ export CLASSPATH=$HOME/bin/linux/ext/stringtemplate.jar:$HOME/bin/linux/ext/antl
 alias aptitude='sudo aptitude'
 alias sudo='sudo env PATH=$PATH'
 alias umount='sudo umount'
+alias mount='sudo mount'
+
 
 alias minicom='minicom -w -D /dev/ttyUSB*'
 if [ -n "$BASH_VERSION" -a "$BASH" = /bin/bash ]; then

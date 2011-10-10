@@ -25,6 +25,9 @@ git status -s|grep -v '^ '|grep -v '^?'|grep . -q || die "Error, nothing to comm
 
 test $# -lt 1 && die "Error: must have a ticket, such as CINEMA-44. See http://bear/jira"
 
+msg=/tmp/gitci-msg.$$
+echo "$1" > $msg
+
 ticket="${1%:*}"
 shift
 
@@ -38,7 +41,7 @@ done
 
 function gitci() {
     git commit -m "$(cat <<EOF
-`get-stdin; echo`
+`get-stdin $msg; echo`
 
 Issue: $ticket
 
