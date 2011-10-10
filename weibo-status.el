@@ -20,6 +20,7 @@
 
 (defconst weibo-api-status-update "statuses/update")
 (defconst weibo-api-status-repost "statuses/repost")
+(defconst weibo-api-status-counts "statuses/counts")
 
 ;; created_at: 创建时间
 ;; id: 微博ID
@@ -94,8 +95,24 @@
 	(let ((retweeted_status (weibo-status-retweeted_status status)))
 	  (weibo-insert-status retweeted_status t)))
       (insert indent "  来自：" (weibo-status-source status) "  发表于：" (weibo-status-created_at status) "\n")
+      (insert indent)
+      (weibo-insert-status-counts status)
       (when retweeted
 	(insert weibo-timeline-sub-separator "\n")))))
+
+(defun weibo-insert-status-counts (status)
+  (when status
+    (let ((id (weibo-status-id status)))
+      (weibo-get-data weibo-api-status-counts
+		      'weibo-parse-insert-status-counts (format "?ids=%s" id)))))
+
+(defun weibo-parse-insert-status-counts (root)
+  (when (string= (xml-node-name root) "counts")
+      (let* ((node (car (xml-node-children root)))
+	     (comments (and node (weibo-get-node-text node 'comments)))
+	     (rt (and node (weibo-get-node-text node 'rt))))
+	(when comments
+	  (insert (format "  转贴(%s)  评论(%s)\n" rt comments))))))
 
 (defun weibo-post-status (&rest p)
   (weibo-create-post "" "发表微博" nil 'weibo-send-status))

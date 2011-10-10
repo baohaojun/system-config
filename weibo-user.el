@@ -138,7 +138,7 @@
 	  (close-t nil)
 	  (name (if (string-match "@" screen-name) (substring screen-name 1)
 		  screen-name)))
-      (switch-to-buffer weibo-user-buffer-name)
+      (switch-to-buffer-other-window weibo-user-buffer-name)
     (setq buffer-read-only nil)
     (erase-buffer)
     (when init-t
