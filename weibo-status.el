@@ -148,8 +148,25 @@
 (defun weibo-post-status (&rest p)
   (weibo-create-post "" "发表微博" nil 'weibo-send-status))
 
-(defun weibo-look-status (data &rest p)
-  (weibo-timeline-set-provider (weibo-status-comments-timeline-provider data)))
+(defun weibo-look-status (status &rest p)
+  (when status
+    (weibo-timeline-set-provider (weibo-status-comments-timeline-provider
+				  (let ((rt-status (weibo-status-retweeted_status status))
+					(pos-begin (save-excursion
+						     (search-backward weibo-timeline-separator nil t)))
+					(pos-end (save-excursion
+						   (search-forward weibo-timeline-separator nil t))))
+				    (if rt-status
+					(if (and
+					     (save-excursion
+					       (search-backward
+						weibo-timeline-sub-separator pos-begin t))
+					     (save-excursion
+					       (search-forward
+						weibo-timeline-sub-separator pos-end t)))
+					    rt-status
+					  status)
+				      status))))))
 
 ;; reply-to-id t weibo-api-status-repost
 ;; reply-to-id 0 text t weibo-api-status-update
