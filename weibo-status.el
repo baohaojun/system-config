@@ -75,7 +75,9 @@
     (with-temp-message (concat "获取微博 " param "...")
       (weibo-get-data type
 		      parse-func param
-		      "statuses" new))))
+		      "statuses" new)
+      (when (and new (string= type weibo-api-status-mention-timeline))
+	(weibo-timeline-reset-count "1")))))
 
 (defun weibo-status-pretty-printer (status &optional p)
   (weibo-insert-status status nil))
@@ -99,12 +101,12 @@
 	  (weibo-insert-status retweeted_status t)))
       (insert indent "  来自：" (weibo-status-source status) "  发表于：" (weibo-status-created_at status) "\n")
       (insert indent (format "  转贴(%s)  评论(%s)\n"
-			     (weibo-status-comments status)
-			     (weibo-status-rt status)))      
+			     (weibo-status-rt status)
+			     (weibo-status-comments status)))      
       (when retweeted
 	(insert weibo-timeline-sub-separator "\n")))))
 
-(defun weibo-update-status (status-list)
+(defun weibo-update-status (status-list type)
   (when status-list
     (let ((ids (mapconcat (lambda (status)
 			    (concat (weibo-status-id status)
@@ -112,11 +114,14 @@
 				      (when rtstatus (concat "," (weibo-status-id rtstatus))))))
 			  status-list ",")))
       (weibo-get-data weibo-api-status-counts
-		      'weibo-parse-update-status (format "?ids=%s" ids) status-list))))
+		      'weibo-parse-update-status (format "?ids=%s" ids) status-list type))))
 
-(defun weibo-parse-update-status (root status-list)
+(defun weibo-parse-update-status (root status-list type)
   (when (string= (xml-node-name root) "counts")
-      (let ((node-list (xml-node-children root))
+      (let* ((node-list (xml-node-children root))
+	    (first-status (and (string= type weibo-api-status-friends-timeline)
+			       (car status-list)))
+	    (since-id (and first-status (weibo-status-id first-status)))
 	    (status-alist (mapcar (lambda (status)
 				    `(,(weibo-status-id status) . ,status))
 				  status-list))
@@ -137,8 +142,8 @@
 				     (weibo-status-rt status) rt))
 		  (when rtstatus (setf (weibo-status-comments rtstatus) comments
 				     (weibo-status-rt rtstatus) rt))))
-	      node-list))
-      `("" . ,status-list)))
+	      node-list)
+	`(,since-id . ,status-list))))
 
 (defun weibo-post-status (&rest p)
   (weibo-create-post "" "发表微博" nil 'weibo-send-status))

@@ -70,7 +70,7 @@
 		      (oauth-t-token token)
 		      (oauth-t-token-secret token))))
     (save-buffer)
-    (kill-this-buffer)) 
+    (kill-this-buffer))
   weibo-token)
 
 (defun weibo-get-node (pnode tag)
@@ -129,8 +129,8 @@
 (weibo-timeline-register-provider (weibo-friends-timeline-provider))
 (weibo-timeline-register-provider (weibo-user-timeline-provider))
 (weibo-timeline-register-provider (weibo-mention-timeline-provider))
-(weibo-timeline-register-provider (weibo-public-timeline-provider))
 (weibo-timeline-register-provider (weibo-comments-by-me-timeline-provider))
 (weibo-timeline-register-provider (weibo-comments-to-me-timeline-provider))
+(weibo-timeline-register-provider (weibo-public-timeline-provider))
 
 (provide 'weibo)

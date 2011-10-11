@@ -54,7 +54,8 @@
     (with-temp-message (concat "获取评论 " param "...")
       (weibo-get-data type
 		      parse-func param
-		      "comments" new))))
+		      "comments" new)
+      (weibo-timeline-reset-count "1"))))
 
 (defun weibo-comment-pretty-printer (comment &optional p)
   (weibo-insert-comment comment t))

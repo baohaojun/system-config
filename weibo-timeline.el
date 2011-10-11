@@ -41,32 +41,38 @@
 (defvar weibo-timeline-timer nil)
 
 (defconst weibo-api-status-unread "statuses/unread")
+(defconst weibo-api-reset-count "statuses/reset_count")
 
-(defun weibo-timeline-get-unread ()
-  (weibo-get-data weibo-api-status-unread 'weibo-timeline-parse-unread))
+(defun weibo-timeline-get-unread (&optional param)
+  (weibo-get-data weibo-api-status-unread 'weibo-timeline-parse-unread param))
 
 (defun weibo-timeline-parse-unread (root)
   (when (string= (xml-node-name root) "count")
     (let ((followers (weibo-get-node-text root 'followers))
 	  (dm (weibo-get-node-text root 'dm))
 	  (mentions (weibo-get-node-text root 'mentions))
-	  (comments (weibo-get-node-text root 'comments)))
+	  (comments (weibo-get-node-text root 'comments))
+	  (new-status (weibo-get-node-text root 'new_status)))
       (unless (= 0 (string-to-number
 		    (concat followers
 			    dm mentions
-			    comments)))
+			    comments
+			    new-status)))
 	(concat
-	  "\n"
-	  weibo-timeline-separator
-	  "\n微博提示："
-	  (unless (string= followers "0")
-	    (format "新粉丝(%s) " followers))
-	  (unless (string= dm "0")
-	    (format "新私信(%s) " dm))
-	  (unless (string= mentions "0")
-	    (format "新@我(%s) " mentions))
-	  (unless (string= comments "0")
-	    (format "新评论(%s) " comments)))))))
+	 (unless (string= new-status "0")
+	   (format "新微博(%s) " new-status))
+	 (unless (string= followers "0")
+	   (format "新粉丝(%s) " followers))
+	 (unless (string= dm "0")
+	   (format "新私信(%s) " dm))
+	 (unless (string= mentions "0")
+	   (format "新@我(%s) " mentions))
+	 (unless (string= comments "0")
+	   (format "新评论(%s) " comments)))))))
+
+(defun weibo-timeline-reset-count (type)
+  (weibo-post-data weibo-api-reset-count (lambda (root))
+		   `(("type" . ,type))))
 
 (defstruct weibo-timeline-provider
   key
@@ -277,7 +283,11 @@
 			   (apply header-func
 				  (list (weibo-timeline-provider-data
 					 weibo-timeline-current-provider)))))
-		       msg)
+		       (when (> (length msg) 0)
+			 (concat "\n"
+				 weibo-timeline-separator
+				 "\n微博提示："
+				 msg)))
 	       weibo-timeline-footline))
 
 (defun weibo-timeline-refresh ()
@@ -293,19 +303,23 @@
 (defun weibo-timeline-update ()
   (interactive)
   (when (weibo-timeline-provider-p weibo-timeline-current-provider)
-    (let* ((data-list (ewoc-collect weibo-timeline-data (lambda (obj) t)))
-	  (func (weibo-timeline-provider-update-function
-		 weibo-timeline-current-provider))
-	  (result (and func
-			    (apply func (list data-list))))
-	  (result-list (cdr result))
-	  (msg (car result))
-	  (unread (weibo-timeline-get-unread)))
+    (let* ((old-point (point))
+	   (data-list (ewoc-collect weibo-timeline-data (lambda (obj) t)))
+	   (func (weibo-timeline-provider-update-function
+		  weibo-timeline-current-provider))
+	   (result (and func
+			(apply func (list data-list
+					  (weibo-timeline-provider-data weibo-timeline-current-provider)))))
+	   (result-list (and result (cdr result)))
+	   (since-id (and result (car result)))
+	   (unread (weibo-timeline-get-unread
+		   (when since-id (format "?with_new_status=1&since_id=%s" since-id)))))
       (when result-list
 	(ewoc-filter weibo-timeline-data (lambda (data) nil))
 	(mapc (lambda (data)
 		(ewoc-enter-last weibo-timeline-data data)) result-list))
-      (weibo-timeline-update-header (concat unread msg)))))
+      (weibo-timeline-update-header unread)
+      (goto-char old-point))))
 
 (defconst weibo-timeline-help-content
   "* 简介
@@ -456,8 +470,8 @@
       (weibo-timeline-mode)
       (weibo-timeline-refresh)
       (unless (timerp weibo-timeline-timer)
-	(setq weibo-timeline-timer (run-at-time "15 seconds" 60
-						'weibo-timeline-update))))
+	(setq weibo-timeline-timer (run-with-idle-timer 60 t
+							'weibo-timeline-update))))
     (current-buffer)))
 
 (defun weibo-timeline ()
