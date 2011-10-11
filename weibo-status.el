@@ -44,7 +44,8 @@
   thumbnail_pic
   bmiddle_pic
   original_pic
-  user retweeted_status)
+  user retweeted_status
+  comments rt)
 
 (defun weibo-make-status (node)
   (make-weibo-status
@@ -63,7 +64,9 @@
 		       (when retweeted
 			 (weibo-make-status retweeted)))
    :created_at (weibo-get-node-text node 'created_at)
-   :user (weibo-make-user (weibo-get-node node 'user))))
+   :user (weibo-make-user (weibo-get-node node 'user))
+   :comments 0
+   :rt 0))
 
 (defun weibo-pull-status (node parse-func new type)
   (let* ((keyword (if new "since_id" "max_id"))
@@ -95,24 +98,47 @@
 	(let ((retweeted_status (weibo-status-retweeted_status status)))
 	  (weibo-insert-status retweeted_status t)))
       (insert indent "  来自：" (weibo-status-source status) "  发表于：" (weibo-status-created_at status) "\n")
-      (insert indent)
-      (weibo-insert-status-counts status)
+      (insert indent (format "  转贴(%s)  评论(%s)\n"
+			     (weibo-status-comments status)
+			     (weibo-status-rt status)))      
       (when retweeted
 	(insert weibo-timeline-sub-separator "\n")))))
 
-(defun weibo-insert-status-counts (status)
-  (when status
-    (let ((id (weibo-status-id status)))
+(defun weibo-update-status (status-list)
+  (when status-list
+    (let ((ids (mapconcat (lambda (status)
+			    (concat (weibo-status-id status)
+				    (let ((rtstatus (weibo-status-retweeted_status status)))
+				      (when rtstatus (concat "," (weibo-status-id rtstatus))))))
+			  status-list ",")))
       (weibo-get-data weibo-api-status-counts
-		      'weibo-parse-insert-status-counts (format "?ids=%s" id)))))
+		      'weibo-parse-update-status (format "?ids=%s" ids) status-list))))
 
-(defun weibo-parse-insert-status-counts (root)
+(defun weibo-parse-update-status (root status-list)
   (when (string= (xml-node-name root) "counts")
-      (let* ((node (car (xml-node-children root)))
-	     (comments (and node (weibo-get-node-text node 'comments)))
-	     (rt (and node (weibo-get-node-text node 'rt))))
-	(when comments
-	  (insert (format "  转贴(%s)  评论(%s)\n" rt comments))))))
+      (let ((node-list (xml-node-children root))
+	    (status-alist (mapcar (lambda (status)
+				    `(,(weibo-status-id status) . ,status))
+				  status-list))
+	    (rtstatus-alist (mapcar (lambda (status)
+				      (let ((rtstatus (weibo-status-retweeted_status status)))
+					(when rtstatus
+					  `(,(weibo-status-id rtstatus) . ,rtstatus))))
+				    status-list)))
+	(mapc (lambda (node)
+		(let* ((id (weibo-get-node-text node 'id))
+		      (comments (weibo-get-node-text node 'comments))
+		      (rt (weibo-get-node-text node 'rt))
+		      (astatus (assoc id status-alist))
+		      (status (and astatus (cdr astatus)))
+		      (artstatus (assoc id rtstatus-alist))
+		      (rtstatus (and artstatus (cdr artstatus))))
+		  (when status (setf (weibo-status-comments status) comments
+				     (weibo-status-rt status) rt))
+		  (when rtstatus (setf (weibo-status-comments rtstatus) comments
+				     (weibo-status-rt rtstatus) rt))))
+	      node-list))
+      `("" . ,status-list)))
 
 (defun weibo-post-status (&rest p)
   (weibo-create-post "" "发表微博" nil 'weibo-send-status))
@@ -161,6 +187,7 @@
    :comment-function 'weibo-do-comment-status
    :reply-function nil
    :header-function nil
+   :update-function 'weibo-update-status
    :data data))
 
 (defun weibo-friends-timeline-provider ()
