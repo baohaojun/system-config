@@ -1,0 +1,12 @@
+#!/bin/bash
+
+args=()
+while test $# -gt 1; do
+      args=("${args[@]}" "$1");
+      shift
+done
+
+set -- "${args[@]}" "$(lookup_file "$1")"
+
+"$@"
+
