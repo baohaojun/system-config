@@ -1,3 +1,5 @@
 #!/bin/bash
 . ~/.new-xauth
-notify-send "$@"
+label=$1
+shift
+notify-send "$label" "$(echo At $(date):; echo "$@")"
