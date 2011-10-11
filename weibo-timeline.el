@@ -410,6 +410,7 @@
 	(define-key map "m" 'weibo-timeline-pull-old)
 	(define-key map " " 'weibo-timeline-move-next)
 	(define-key map "r" 'weibo-timeline-refresh)
+	(define-key map "u" 'weibo-timeline-update)	
 	(define-key map "s" 'weibo-timeline-inspect)
 	(define-key map "h" 'weibo-timeline-help)
 	

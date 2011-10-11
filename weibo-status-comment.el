@@ -50,6 +50,7 @@
    :pretty-printer-function 'weibo-status-comments-pretty-printer
    :pull-function 'weibo-pull-status-comments
    :post-function 'weibo-post-status
+   :look-function nil
    :retweet-function nil
    :comment-function 'weibo-comment-status-comments
    :reply-function 'weibo-reply-status-comments

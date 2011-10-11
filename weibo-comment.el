@@ -82,7 +82,7 @@
 		     (concat (substring text 0 27) "。。。"))))))
       (when with-retweet
 	(when status
-	  (weibo-insert-status status t)))
+	  (weibo-insert-status (weibo-update-status-counts status) t)))
       (unless with-retweet (insert "\t"))      
       (insert "  来自：" (weibo-comment-source comment)
 	      "  发表于：" (weibo-comment-created_at comment) "\n"))))
@@ -117,6 +117,11 @@
       (add-to-list 'data `("id" . ,comment-id))
       (weibo-post-data api 'weibo-parse-data-result data nil nil)))))
 
+(defun weibo-look-comment-status (comment &rest p)
+  (when comment
+    (weibo-timeline-set-provider (weibo-status-comments-timeline-provider
+				  (weibo-comment-status comment)))))
+
 (defun weibo-comment-timeline-provider (key name data)
   (make-weibo-timeline-provider
    :key key
@@ -125,6 +130,7 @@
    :pretty-printer-function 'weibo-comment-pretty-printer
    :pull-function 'weibo-pull-comment
    :post-function 'weibo-post-status
+   :look-function 'weibo-look-comment-status
    :retweet-function nil
    :comment-function nil
    :reply-function 'weibo-reply-comment

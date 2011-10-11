@@ -106,6 +106,21 @@
       (when retweeted
 	(insert weibo-timeline-sub-separator "\n")))))
 
+(defun weibo-update-status-counts (status)
+  (when status
+    (let ((id (weibo-status-id status)))
+      (weibo-get-data weibo-api-status-counts
+		      (lambda (root status)
+			(when (string= (xml-node-name root) "counts")
+			  (let* ((node (car (xml-node-children root)))
+				 (comments (and node (weibo-get-node-text node 'comments)))
+				 (rt (and node (weibo-get-node-text node 'rt))))
+			    (when comments
+			      (setf (weibo-status-comments status) comments)
+			      (setf (weibo-status-rt status) rt))))
+			status)
+		      (format "?ids=%s" id) status))))
+
 (defun weibo-update-status (status-list type)
   (when status-list
     (let ((ids (mapconcat (lambda (status)
