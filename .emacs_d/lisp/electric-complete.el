@@ -54,7 +54,7 @@ and the original pattern should be looked for backwards with \\w and \\."
         (setq char (car re-list)
               re-list (cdr re-list))
 
-        (when (and (> nth 0) (<= nth len1))
+        (when  (> nth 0)
           (setq new-re-list (append (nreverse (string-to-list ".*?")) new-re-list)))
         
         (if (eq char ?.)

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. ~/.bashrc
+build_env=`lookup_file build/envsetup.sh`
+top_dir=`dirname $build_env`
+top_dir=`readlink -f $top_dir/..`
+
+cd $top_dir || exit
+. build/envsetup.sh >/dev/null 2>&1
+
+cd - >/dev/null
+
+"$@"

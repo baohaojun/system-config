@@ -929,6 +929,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (defconst emacs-mode-ctags-lang-map
   '(("emacs-lisp" . "lisp")
     ("c" . "c++")
+    ("makefile-gmake" . "make")
     ("csharp" . "C#")))
 
 (defconst emacs-mode-ctags-tag-filter
