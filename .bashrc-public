@@ -97,5 +97,5 @@ scd()
     basedir=$(dirname "$dir")
     stem=$(basename "$dir")
 
-    cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)/,$1'$stem'/,')"
+    cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')"
 }
