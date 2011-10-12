@@ -92,6 +92,10 @@ fi
 
 scd()
 {
-    history -s scd "$@"
-    cd "$(readlink -f "${2:-.}"|perl -npe "$1")"
+    dir=$(lookup_file "$1"|tee /dev/stderr|head -n 1)
+    dir=$(formal-path "$dir")
+    basedir=$(dirname "$dir")
+    stem=$(basename "$dir")
+
+    cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)/,$1'$stem'/,')"
 }

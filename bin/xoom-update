@@ -1,0 +1,145 @@
+#!/usr/bin/perl
+use strict;
+sub symlink_($@) {
+    my ($source, @targets) = @_;
+    for (@targets) {
+	system("echo ln -s $source '$_'");
+    }
+}
+
+sub set_perm_recursive($$$$$)
+{
+    #0, 0, 0755, 0644, "/system"
+    my ($uid, $gid, $dmask, $fmask, $path) = @_;
+    print "chown $uid:$gid -R $path\n";
+    printf "find $path -type d | xargs chmod 0%o\n", $dmask;
+    printf "find $path -type f | xargs chmod 0%o\n", $fmask;
+}
+
+sub set_perm($$$$) {
+    my ($uid, $gid, $fmask, $path) = @_;
+    print "chown $uid:$gid -R $path\n";
+    printf "echo $path | xargs chmod 0%o\n", $fmask;
+}
+
+#0, 0, 04755, "/system/bin/pppd"
+print "mkdir -p /system/vendor/firmware\n";    
+print "cp -av /home/bhj/src/honeycomb/out/target/product/ventana/system/vendor/firmware/* /system/vendor/firmware/\n";
+print "cp -av /home/bhj/src/honeycomb/out/target/product/ventana/system/vendor/firmware/* /system/etc/firmware/\n";
+print "cp -av /home/bhj/src/honeycomb/out/target/product/ventana/system/etc/vold.fstab /system/etc/vold.fstab\n";
+print "cp -av /home/bhj/src/honeycomb/out/target/product/ventana/system/lib/libhardware_legacy.so /system/lib\n";
+print "rm /system/lib/hw/* -rf\n";
+print "cp -av /home/bhj/src/honeycomb/out/target/product/ventana/system/lib/hw/* /system/lib/hw/\n";
+print "cp -av /home/bhj/src/honeycomb/out/target/product/ventana/system/usr/idc/pixcir_touch.idc /system/usr/idc/pixcir_touch.idc\n";
+print "perl -npe 'next if m/drm.service.enabled/' -i /system/build.prop\n";
+
+symlink_("busybox", "/system/xbin/[", "/system/xbin/[[",
+        "/system/xbin/arp", "/system/xbin/ash", "/system/xbin/awk",
+        "/system/xbin/basename", "/system/xbin/bbconfig", "/system/xbin/brctl",
+        "/system/xbin/bunzip2", "/system/xbin/bzcat", "/system/xbin/bzip2",
+        "/system/xbin/cal", "/system/xbin/cat", "/system/xbin/catv",
+        "/system/xbin/chgrp", "/system/xbin/chmod", "/system/xbin/chown",
+        "/system/xbin/chroot", "/system/xbin/cksum", "/system/xbin/clear",
+        "/system/xbin/cmp", "/system/xbin/cp", "/system/xbin/cpio",
+        "/system/xbin/cut", "/system/xbin/date", "/system/xbin/dc",
+        "/system/xbin/dd", "/system/xbin/depmod", "/system/xbin/devmem",
+        "/system/xbin/df", "/system/xbin/diff", "/system/xbin/dirname",
+        "/system/xbin/dmesg", "/system/xbin/dnsd", "/system/xbin/dos2unix",
+        "/system/xbin/du", "/system/xbin/echo", "/system/xbin/ed",
+        "/system/xbin/egrep", "/system/xbin/env", "/system/xbin/expr",
+        "/system/xbin/false", "/system/xbin/fdisk", "/system/xbin/fgrep",
+        "/system/xbin/find", "/system/xbin/fold", "/system/xbin/free",
+        "/system/xbin/freeramdisk", "/system/xbin/fuser", "/system/xbin/getopt",
+        "/system/xbin/grep", "/system/xbin/gunzip", "/system/xbin/gzip",
+        "/system/xbin/head", "/system/xbin/hexdump", "/system/xbin/id",
+        "/system/xbin/ifconfig", "/system/xbin/insmod", "/system/xbin/install",
+        "/system/xbin/ip", "/system/xbin/kill", "/system/xbin/killall",
+        "/system/xbin/killall5", "/system/xbin/length", "/system/xbin/less",
+        "/system/xbin/ln", "/system/xbin/losetup", "/system/xbin/ls",
+        "/system/xbin/lsmod", "/system/xbin/lspci", "/system/xbin/lsusb",
+        "/system/xbin/lzop", "/system/xbin/lzopcat", "/system/xbin/md5sum",
+        "/system/xbin/mkdir", "/system/xbin/mke2fs", "/system/xbin/mkfifo",
+        "/system/xbin/mkfs.ext2", "/system/xbin/mknod", "/system/xbin/mkswap",
+        "/system/xbin/mktemp", "/system/xbin/modprobe", "/system/xbin/more",
+        "/system/xbin/mount", "/system/xbin/mountpoint", "/system/xbin/mv",
+        "/system/xbin/netstat", "/system/xbin/nice", "/system/xbin/nohup",
+        "/system/xbin/nslookup", "/system/xbin/ntpd", "/system/xbin/od",
+        "/system/xbin/patch", "/system/xbin/pgrep", "/system/xbin/pidof",
+        "/system/xbin/ping", "/system/xbin/pkill", "/system/xbin/printenv",
+        "/system/xbin/printf", "/system/xbin/ps", "/system/xbin/pwd",
+        "/system/xbin/rdev", "/system/xbin/readlink", "/system/xbin/realpath",
+        "/system/xbin/renice", "/system/xbin/reset", "/system/xbin/rm",
+        "/system/xbin/rmdir", "/system/xbin/rmmod", "/system/xbin/route",
+        "/system/xbin/run-parts", "/system/xbin/sed", "/system/xbin/seq",
+        "/system/xbin/setsid", "/system/xbin/sh", "/system/xbin/sha1sum",
+        "/system/xbin/sha256sum", "/system/xbin/sha512sum",
+        "/system/xbin/sleep", "/system/xbin/sort", "/system/xbin/split",
+        "/system/xbin/stat", "/system/xbin/strings", "/system/xbin/stty",
+        "/system/xbin/swapoff", "/system/xbin/swapon", "/system/xbin/sync",
+        "/system/xbin/sysctl", "/system/xbin/tac", "/system/xbin/tail",
+        "/system/xbin/tar", "/system/xbin/tee", "/system/xbin/telnet",
+        "/system/xbin/test", "/system/xbin/tftp", "/system/xbin/time",
+        "/system/xbin/top", "/system/xbin/touch", "/system/xbin/tr",
+        "/system/xbin/traceroute", "/system/xbin/true", "/system/xbin/tty",
+        "/system/xbin/tune2fs", "/system/xbin/umount", "/system/xbin/uname",
+        "/system/xbin/uniq", "/system/xbin/unix2dos", "/system/xbin/unlzop",
+        "/system/xbin/unzip", "/system/xbin/uptime", "/system/xbin/usleep",
+        "/system/xbin/uudecode", "/system/xbin/uuencode", "/system/xbin/vi",
+        "/system/xbin/watch", "/system/xbin/wc", "/system/xbin/wget",
+        "/system/xbin/which", "/system/xbin/whoami", "/system/xbin/xargs",
+        "/system/xbin/yes",
+        "/system/xbin/zcat");
+
+symlink_("iwmulticall", "/system/xbin/iwconfig", "/system/xbin/iwgetid",
+        "/system/xbin/iwlist", "/system/xbin/iwpriv",
+        "/system/xbin/iwspy");
+
+symlink_("toolbox", "/system/bin/cat", "/system/bin/chmod", "/system/bin/chown",
+    "/system/bin/chownto", "/system/bin/ionice", "/system/bin/nandread",
+    "/system/bin/cmp", "/system/bin/date", "/system/bin/dd",
+    "/system/bin/df", "/system/bin/dmesg", "/system/bin/getevent",
+    "/system/bin/getprop", "/system/bin/hd", "/system/bin/id",
+    "/system/bin/ifconfig", "/system/bin/iftop", "/system/bin/insmod",
+    "/system/bin/ioctl", "/system/bin/kill", "/system/bin/ln",
+    "/system/bin/log", "/system/bin/ls", "/system/bin/lsmod",
+    "/system/bin/mkdir", "/system/bin/mount", "/system/bin/mv",
+    "/system/bin/netstat", "/system/bin/newfs_msdos", "/system/bin/notify",
+    "/system/bin/printenv", "/system/bin/ps", "/system/bin/renice",
+    "/system/bin/rm", "/system/bin/rmdir", "/system/bin/rmmod",
+    "/system/bin/route", "/system/bin/schedtop", "/system/bin/sendevent",
+    "/system/bin/setconsole", "/system/bin/setprop", "/system/bin/sleep",
+    "/system/bin/smd", "/system/bin/start", "/system/bin/stop",
+    "/system/bin/sync", "/system/bin/top", "/system/bin/umount",
+    "/system/bin/vmstat", "/system/bin/watchprops", "/system/bin/wipe");
+
+symlink_("OpenSLES.so", "/system/lib/libOpenSLES.so");
+set_perm_recursive(0, 0, 0755, 0644, "/system");
+set_perm_recursive(0, 2000, 0755, 0755, "/system/bin");
+set_perm(0, 0, 04755, "/system/bin/pppd");
+set_perm(0, 0, 00755, "/system/bin/rild");
+set_perm(0, 0, 00755, "/system/bin/rild.run");
+set_perm(0, 3003, 02750, "/system/bin/netcfg");
+set_perm(0, 3004, 02755, "/system/bin/ping");
+set_perm(0, 2000, 06750, "/system/bin/run-as");
+set_perm_recursive(1002, 1002, 0755, 0440, "/system/etc/bluetooth");
+set_perm(0, 0, 0755, "/system/etc/bluetooth");
+set_perm(1000, 1000, 0640, "/system/etc/bluetooth/auto_pairing.conf");
+set_perm(3002, 3002, 0444, "/system/etc/bluetooth/blacklist.conf");
+set_perm(1002, 1002, 0440, "/system/etc/dbus.conf");
+set_perm(1014, 2000, 0550, "/system/etc/dhcpcd/dhcpcd-run-hooks");
+set_perm(0, 2000, 0550, "/system/etc/init.goldfish.sh");
+set_perm_recursive(0, 0, 0755, 0555, "/system/etc/ppp");
+set_perm_recursive(0, 2000, 0755, 0644, "/system/vendor");
+set_perm_recursive(0, 0, 0755, 0644, "/system/vendor/firmware");
+set_perm(0, 2000, 0755, "/system/vendor/firmware");
+set_perm_recursive(0, 2000, 0755, 0755, "/system/xbin");
+set_perm(0, 0, 04755, "/system/bin/ash");
+set_perm_recursive(0, 2000, 0755, 06755, "/system/xbin");
+set_perm(0, 2000, 0755, "/system/xbin/sqlite3");
+set_perm(0, 2000, 0755, "/system/xbin/dexdump");
+set_perm_recursive(0, 0, 0755, 0555, "/system/etc/ppp");
+
+set_perm_recursive(0, 2000, 0755, 0750, "/system/etc/init.d");
+set_perm(0, 0, 0755, "/system/etc/init.d");
+
+
