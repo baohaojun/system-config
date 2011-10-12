@@ -12,16 +12,25 @@ open(my $log_, ">", glob("~/.skeleton_comp2.log")) or die "Error open log file";
 
 my $split_re = '\s+';
 my $use_skeleton_re = 0;
+my $words_file = "";
 GetOptions(
     "d=s" => \$split_re,
     "s!" => \$use_skeleton_re,
+    "f=s" => \$words_file,
     );
 
 $split_re = qr($split_re);
+my @words;
+if (not $words_file) {
+    die "Error: we take exactly 2 arguments after the options: WORDS, SKELETON" unless @ARGV == 2;
+    @words = split($split_re, shift @ARGV);
+} else {
+    die "Error: wrong number of args" unless @ARGV == 1;
+    my $cmd = "cat " . glob($words_file);
+    @words = split($split_re, qx($cmd));
+}
 
-die "Error: we take exactly 2 arguments after the options: WORDS, SKELETON" unless @ARGV == 2;
 
-my @words = split($split_re, shift @ARGV);
 my $skeleton = shift @ARGV;
 
 #for (@words) {

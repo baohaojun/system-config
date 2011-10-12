@@ -2,7 +2,7 @@ export PATH=/bin:"$PATH"
 shopt -s nocaseglob
 shopt -s histappend
 export HISTCONTROL="ignoredups"
-export HISTIGNORE="bg:fg:exit"
+export HISTIGNORE="re *:bg:fg:exit"
 export PROMPT_COMMAND="history -a"
 alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
 alias dir='ls --color=auto --format=vertical --show-control-chars'

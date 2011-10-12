@@ -1,0 +1,19 @@
+#!/bin/bash
+
+function _re()
+{
+    local cur prev
+    local IFS=$'\n'
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    
+    COMPREPLY=( $(skeleton_compgen_word.pl \
+	-d '\n' -f ~/.bash_history.bak \
+	-- "$cur")
+    )
+    return 0
+}
+
+complete -o default -F _re re
+	    
