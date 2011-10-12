@@ -13,6 +13,7 @@ sdim_add_cand 低电
 sdim_add_cand 住建委
 sdim_add_cand 佟波
 sdim_add_cand 使命感
+sdim_add_cand 便车
 sdim_add_cand 倒坍
 sdim_add_cand 傻屄
 sdim_add_cand 充电器
@@ -34,6 +35,7 @@ sdim_add_cand 后盖
 sdim_add_cand 命令行
 sdim_add_cand 哼唧
 sdim_add_cand 固话
+sdim_add_cand 地级市
 sdim_add_cand 均价
 sdim_add_cand 城镇化
 sdim_add_cand 官网
@@ -54,7 +56,11 @@ sdim_add_cand 戊戌
 sdim_add_cand 成就感
 sdim_add_cand 户部
 sdim_add_cand 房产税
+<<<<<<< HEAD
+sdim_add_cand 抽资
+=======
 sdim_add_cand 房源
+>>>>>>> f56e4b60c280ff939540bd48c06b3ee02062b8e6
 sdim_add_cand 拉低
 sdim_add_cand 拿着
 sdim_add_cand 挚爱
@@ -90,6 +96,7 @@ sdim_add_cand 筑底
 sdim_add_cand 线序
 sdim_add_cand 绅商
 sdim_add_cand 美剧
+sdim_add_cand 群体性
 sdim_add_cand 胰腺癌
 sdim_add_cand 脏活
 sdim_add_cand 虚焊
@@ -100,7 +107,9 @@ sdim_add_cand 读卡器
 sdim_add_cand 谷歌
 sdim_add_cand 豁口
 sdim_add_cand 贡生
+sdim_add_cand 资金链
 sdim_add_cand 起机
+sdim_add_cand 跑路
 sdim_add_cand 还贷
 sdim_add_cand 追尾
 sdim_add_cand 追责

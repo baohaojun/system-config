@@ -5,6 +5,7 @@ crontab -l > ~/.crontab.tmp
 user_cron=true
 diff ~/.crontab.tmp ~/.crontab && user_cron=false
 test $PWD = ~ && cd ~/windows-config/
+git fetch origin
 for x in $(git branch -a |grep from-mac); do
     remote=$(echo $x|awk -F/ '{print $2}')
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
