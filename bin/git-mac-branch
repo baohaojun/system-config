@@ -32,8 +32,9 @@ else
     if tty >/dev/null 2>&1; then
 	echo commiting even though you made changes only recently, as you wish
     else
-	. ~/.new-xauth
-	 notify-send git-mac-branch "not commiting because you made changes only recently, and we are not on any console"
+	if test $(date +%H) -gt 20; then #if it's late in the night, we may be at home, so lets reminder it
+	    bhj-notify git-mac-branch "not commiting because you made changes only recently, and we are not on any console"
+	fi
 	exit
     fi
 fi
