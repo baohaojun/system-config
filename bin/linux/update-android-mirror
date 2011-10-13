@@ -5,6 +5,10 @@ set -ex
 cd /home/git/android/linux-2.6.git
 git config remote.origin.url git://nv-tegra.nvidia.com/linux-2.6.git
 git fetch origin 
+git config remote.origin.url git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
+git fetch origin
+git config remote.origin.url git://android.git.kernel.org/kernel/common.git
+git fetch origin 
 
 cd /android
 
@@ -39,13 +43,6 @@ repo-switch -u git://android.git.kernel.org/platform/manifest.git -b froyo
 repo sync
 repo-switch -u git://android.git.kernel.org/platform/manifest.git -b gingerbread
 repo sync
-
-cd /home/git/android/linux-2.6.git
-git fetch origin 
-git config remote.origin.url git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
-git fetch origin
-git config remote.origin.url git://android.git.kernel.org/kernel/common.git
-git fetch origin 
 
 cd /home/git/android/3rdparty/atheros.git
 git fetch origin
