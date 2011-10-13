@@ -1,0 +1,10 @@
+#!/bin/bash
+exec >/dev/null 2>&1
+
+dir=$(lookup_file "$1"|tee /dev/stderr|head -n 1)
+dir=$(formal-path "$dir")
+basedir=$(dirname "$dir")
+stem=$(basename "$dir")
+
+edit "$(lookup_file "$2" | head -n 1 | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')"&
+

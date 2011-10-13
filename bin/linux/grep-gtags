@@ -101,13 +101,8 @@ sub do_cscope($$$$) {
         $update_path{$file} = 1;
     }
     chdir ($code_dir) or die "Can not change to $code_dir";
-    for (keys %update_path) {
-        chomp(my $last_gtags_time = `gtags --dump $gpath_path:./$_`);
-        chomp(my $last_modify_time = `stat -c %Y ./$_`);
-        if ($last_modify_time > $last_gtags_time or not $last_gtags_time) {
-            system("echo $_|gtags --gtagslabel=plugin-example -i -f - $gtags_dir");
-        }
-    }
+    my @update_path = keys %update_path; 
+    system("echo @update_path | gtags --gtagslabel=plugin-example -i -f - $gtags_dir");
 }
 
 do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
