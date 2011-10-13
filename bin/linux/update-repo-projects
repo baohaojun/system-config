@@ -22,8 +22,7 @@ for x in "$@"; do
         for x in `cat out/changes.log`; do 
             rfa $x 'git merge `repo-remote`/`tbranch`' 
         done 2>&1|tee out/merge.log
-	
-	android-full-build > build.log 2>&1
+        (test -e buildspec.mk && time make -j4 -l4 -k && echo OK..) > build.log 2>&1
     )
 done
 

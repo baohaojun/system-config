@@ -1,1 +1,0 @@
-/usr/share/libtool/libltdl/lt_error.c
