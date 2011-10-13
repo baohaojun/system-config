@@ -1,6 +1,11 @@
 #!/bin/bash
 set -ex
 . ~/.bashrc
+
+cd /home/git/android/linux-2.6.git
+git config remote.origin.url git://nv-tegra.nvidia.com/linux-2.6.git
+git fetch origin 
+
 cd /android
 
 repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre
@@ -10,18 +15,18 @@ repo sync
 repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre_p2_23.xml
 repo sync
 
-repo-switch -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b donut-x86
-repo sync
-repo-switch -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b eclair-x86
-repo sync
-repo-switch -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b froyo-x86
-repo sync
-
 repo-switch -u git://nv-tegra.nvidia.com/android/manifest.git -b eclair-tegra
 repo sync
 repo-switch -u git://nv-tegra.nvidia.com/android/manifest.git -b froyo-tegra
 repo sync
 repo-switch -u git://nv-tegra.nvidia.com/android/manifest.git -b gingerbread-tegra
+repo sync
+
+repo-switch -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b donut-x86
+repo sync
+repo-switch -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b eclair-x86
+repo sync
+repo-switch -u git://android-x86.git.sf.net/gitroot/android-x86/manifest.git -b froyo-x86
 repo sync
 
 repo-switch -u git://android.git.kernel.org/platform/manifest.git -b cupcake
