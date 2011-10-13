@@ -65,8 +65,8 @@
 			 (weibo-make-status retweeted)))
    :created_at (weibo-get-node-text node 'created_at)
    :user (weibo-make-user (weibo-get-node node 'user))
-   :comments 0
-   :rt 0))
+   :comments "0"
+   :rt "0"))
 
 (defun weibo-pull-status (node parse-func new type)
   (let* ((keyword (if new "since_id" "max_id"))
@@ -77,7 +77,7 @@
 		      parse-func param
 		      "statuses" new)
       (when (and new (string= type weibo-api-status-mention-timeline))
-	(weibo-timeline-reset-count "1")))))
+	(weibo-timeline-reset-count "2")))))
 
 (defun weibo-status-pretty-printer (status &optional p)
   (weibo-insert-status status nil))

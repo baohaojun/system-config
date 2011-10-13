@@ -59,7 +59,7 @@
 			    comments
 			    new-status)))
 	(concat
-	 (unless (string= new-status "0")
+	 (unless (or (not new-status) (string= new-status "0"))
 	   (format "新微博(%s) " new-status))
 	 (unless (string= followers "0")
 	   (format "新粉丝(%s) " followers))
