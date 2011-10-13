@@ -82,7 +82,7 @@
 		     (concat (substring text 0 27) "。。。"))))))
       (when with-retweet
 	(when status
-	  (weibo-insert-status (weibo-update-status-counts status) t)))
+	  (weibo-insert-status status t)))
       (unless with-retweet (insert "\t"))      
       (insert "  来自：" (weibo-comment-source comment)
 	      "  发表于：" (weibo-comment-created_at comment) "\n"))))
@@ -122,6 +122,31 @@
     (weibo-timeline-set-provider (weibo-status-comments-timeline-provider
 				  (weibo-comment-status comment)))))
 
+(defun weibo-comment-update-status (comment-list type)
+  (when comment-list
+    (let ((ids (mapconcat (lambda (comment)
+			    (weibo-status-id (weibo-comment-status comment)))
+			  comment-list ",")))
+      (weibo-get-data weibo-api-status-counts
+		      'weibo-comment-parse-update-status (format "?ids=%s" ids) comment-list type))))
+
+(defun weibo-comment-parse-update-status (root comment-list type)
+  (when (string= (xml-node-name root) "counts")
+    (let ((node-list (xml-node-children root))
+	  (comment-alist (mapcar (lambda (comment)
+				  `(,(weibo-status-id (weibo-comment-status comment))
+				    . ,comment)) comment-list)))
+      (mapc (lambda (node)
+	      (let* ((id (weibo-get-node-text node 'id))
+		     (comments (weibo-get-node-text node 'comments))
+		     (rt (weibo-get-node-text node 'rt))
+		     (acomment (assoc id comment-alist))
+		     (comment (and acomment (cdr acomment))))
+		(when comment (setf (weibo-status-comments (weibo-comment-status comment)) comments
+				    (weibo-status-rt (weibo-comment-status comment)) rt))))
+	    node-list))
+    `(nil . ,comment-list)))
+
 (defun weibo-comment-timeline-provider (key name data)
   (make-weibo-timeline-provider
    :key key
@@ -135,10 +160,11 @@
    :comment-function nil
    :reply-function 'weibo-reply-comment
    :header-function nil
+   :update-function 'weibo-comment-update-status
    :data data))
 
 (defun weibo-comments-by-me-timeline-provider ()
-  (weibo-comment-timeline-provider "o" "我的评论" weibo-api-comments-by-me-timeline))
+  (weibo-comment-timeline-provider "o" "发出评论" weibo-api-comments-by-me-timeline))
 
 (defun weibo-comments-to-me-timeline-provider ()
   (weibo-comment-timeline-provider "c" "收到评论" weibo-api-comments-to-me-timeline))
