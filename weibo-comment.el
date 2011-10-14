@@ -84,8 +84,7 @@
 	(when status
 	  (weibo-insert-status status t)))
       (unless with-retweet (insert "\t"))      
-      (insert "  来自：" (weibo-comment-source comment)
-	      "  发表于：" (weibo-comment-created_at comment) "\n"))))
+      (insert "  " (weibo-parse-status-time (weibo-comment-created_at comment)) "  来自：" (weibo-comment-source comment) "\n"))))
 
 (defun weibo-reply-comment (comment &rest p)
   (when comment

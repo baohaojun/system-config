@@ -99,27 +99,25 @@
       (unless retweeted
 	(let ((retweeted_status (weibo-status-retweeted_status status)))
 	  (weibo-insert-status retweeted_status t)))
-      (insert indent "  来自：" (weibo-status-source status) "  发表于：" (weibo-status-created_at status) "\n")
-      (insert indent (format "  转贴(%s)  评论(%s)\n"
+      (insert indent "  " (weibo-parse-status-time (weibo-status-created_at status)) "  来自：" (weibo-status-source status) (format "  转贴(%s)  评论(%s)\n"
 			     (weibo-status-rt status)
-			     (weibo-status-comments status)))      
+			     (weibo-status-comments status)))
       (when retweeted
 	(insert weibo-timeline-sub-separator "\n")))))
 
-(defun weibo-update-status-counts (status)
-  (when status
-    (let ((id (weibo-status-id status)))
-      (weibo-get-data weibo-api-status-counts
-		      (lambda (root status)
-			(when (string= (xml-node-name root) "counts")
-			  (let* ((node (car (xml-node-children root)))
-				 (comments (and node (weibo-get-node-text node 'comments)))
-				 (rt (and node (weibo-get-node-text node 'rt))))
-			    (when comments
-			      (setf (weibo-status-comments status) comments)
-			      (setf (weibo-status-rt status) rt))))
-			status)
-		      (format "?ids=%s" id) status))))
+(defun weibo-parse-status-time (time-string)
+  (let ((now (current-time-string)))
+    (if (< 0 (days-between now time-string))
+      (if (= (nth 5 (parse-time-string now)) (nth 5 (parse-time-string time-string)))
+	  (format-time-string "%m月%d日 %H:%M" (date-to-time time-string))
+	(format-time-string "%Y年%m月%d日 %H:%M" (date-to-time time-string)))
+      (let* ((seconds (floor (time-to-seconds (time-since time-string))))
+	     (hours (/ seconds 3600))
+	     (minutes (/ (% seconds 3600) 60)))
+	(cond
+	 ((< 0 hours) (format-time-string "今天%H:%M" (date-to-time time-string)))
+	 ((< 0 minutes) (format "%d分钟前" minutes))
+	 (t (format "%d秒前" seconds)))))))
 
 (defun weibo-update-status (status-list type)
   (when status-list
