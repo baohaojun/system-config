@@ -52,12 +52,13 @@
     (switch-to-buffer weibo-image-buffer-name)
     (setq buffer-read-only nil)
     (erase-buffer)
-    (when init_t
-      (weibo-image-mode))
-    (unless (weibo-insert-image (weibo-get-image-file url))
+    (weibo-image-mode)
+    (if (weibo-insert-image (weibo-get-image-file url))
+	(goto-char (point-min))
       (weibo-bury-close-window)
       (message "无法打开图片！"))
-    (setq buffer-read-only t)))
+    (setq buffer-read-only t)
+    (image-mode)))
 
 (defvar weibo-image-mode-map
   (let ((map (make-sparse-keymap)))
