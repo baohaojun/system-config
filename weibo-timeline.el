@@ -441,8 +441,9 @@
   (weibo-kill-close-window))
 
 (defun weibo-timeline-name-nobreak-p ()
-  (or (looking-back weibo-timeline-name-regexp)
-      (looking-back "@")))
+  (and (not (eq (char-after (point)) ?\@))
+       (or (looking-back weibo-timeline-name-regexp)
+	   (looking-back "@"))))
 
 (define-derived-mode weibo-timeline-mode fundamental-mode weibo-timeline-mode-name
   "Major mode for displaying weibo timeline"
