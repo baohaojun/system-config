@@ -92,6 +92,7 @@ alias for-code-reading='for-code-reading -i -v'
 function hir() {
     if test $# = 0; then
 	history -r
+	backup_bash_history
     else
 	command hil "$@"
     fi

@@ -1,3 +1,4 @@
 #!/bin/bash
-(cat ~/.bash_history.bak ~/.bash_history | perl -ne 'print if (length($_) < 1024 and not m/^\s*hi[lr]\s+/)' | uniq-even-non-ajacent > ~/.bash_history.bak2) 2>/dev/null
-mv ~/.bash_history.bak2 ~/.bash_history.bak
+tmp=~/.bash_history.$$
+(cat ~/.bash_history.bak ~/.bash_history | perl -ne 'print if (length($_) < 1024 and not m/^\s*(hi[lr]|re)\s+/)' | uniq-even-non-ajacent > $tmp) 2>/dev/null
+mv $tmp ~/.bash_history.bak

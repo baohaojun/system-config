@@ -13,7 +13,9 @@ open(my $log_, ">", glob("~/.skeleton_comp2.log")) or die "Error open log file";
 my $split_re = '\s+';
 my $use_skeleton_re = 0;
 my $words_file = "";
+my $print_prefix = "";
 GetOptions(
+    "p=s" => \$print_prefix,
     "d=s" => \$split_re,
     "s!" => \$use_skeleton_re,
     "f=s" => \$words_file,
@@ -22,16 +24,16 @@ GetOptions(
 $split_re = qr($split_re);
 my @words;
 if (not $words_file) {
-    die "Error: we take exactly 2 arguments after the options: WORDS, SKELETON" unless @ARGV == 2;
+    die "Error: we take at least 2 arguments after the options: WORDS, SKELETON..." unless @ARGV >= 2;
     @words = split($split_re, shift @ARGV);
 } else {
-    die "Error: wrong number of args" unless @ARGV == 1;
+    die "Error: wrong number of args" unless @ARGV >= 1;
     my $cmd = "cat " . glob($words_file);
     @words = split($split_re, qx($cmd));
 }
 
 
-my $skeleton = shift @ARGV;
+my $skeleton = join(".", @ARGV);
 
 #for (@words) {
 #    print STDERR "\nwords are $_\n";
@@ -83,7 +85,7 @@ for(@sorted) {
 
 for (@words) {
   if ($match == 1) {
-    print $_ . "\n";
+    print $print_prefix . $_ . "\n";
   } else {
     if ($is_prefix) {
       print "$_\n";
