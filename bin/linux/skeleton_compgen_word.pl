@@ -68,7 +68,7 @@ if ($skeleton =~ m/\./) {
 my $match = @words;
 
 if (0 <= $which and $which < @words) {
-    print $words[$which] . "\n";
+    print "$print_prefix" . $words[$which] . "\n";
     exit;
 }
 
