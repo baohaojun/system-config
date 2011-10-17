@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for x in $(find ~/windows-config/etc/at -type f; find ~/external/etc/at -type f); do
+    cat $x|at $(basename $x)
+done
