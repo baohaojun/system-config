@@ -88,7 +88,8 @@ for (@words) {
     print $print_prefix . $_ . "\n";
   } else {
     if ($is_prefix) {
-      print "$_\n";
+      s/\s+/./g;
+      printf "%s: %d\n", $_, $count++;
     } else {
 	print $log_ "is_prefix not true\n";
 	printf "%d: %s\n", $count++, $_;
