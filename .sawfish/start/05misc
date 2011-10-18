@@ -14,7 +14,6 @@ while true; do
     )
 done >~/.gmail-notifier.log 2>&1 &
 qq
-gnome-panel&
 
 while true; do (cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver --noreload >>~/.offline-wiki.log 2>&1); sleep 2; done& 
 download-today
