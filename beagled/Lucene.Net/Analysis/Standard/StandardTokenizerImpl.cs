@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *                  at the beginning of a line
 		 * l is of the form l = 2*k, k a non negative integer
 		 */
-		private static readonly int ZZ_LEXSTATE[] = 
+		private static readonly int [] ZZ_LEXSTATE = 
 			{ 
 				0, 0
 			};
@@ -210,7 +210,7 @@ namespace Lucene.Net.Analysis.Standard
 		private static readonly int ZZ_PUSHBACK_2BIG = 2;
 
 		/* error messages for the codes above */
-		private static readonly String ZZ_ERROR_MSG[] = 
+		private static readonly String [] ZZ_ERROR_MSG = 
 			{
 				"Unkown internal scanner error",
 				"Error: could not match input",
@@ -258,7 +258,7 @@ namespace Lucene.Net.Analysis.Standard
 
 		/** this buffer contains the current text to be matched and is
 		    the source of the yytext() string */
-		private char zzBuffer[] = new char[ZZ_BUFFERSIZE];
+		private char [] zzBuffer = new char[ZZ_BUFFERSIZE];
 
 		/** the textposition at the last accepting state */
 		private int zzMarkedPos;
@@ -410,7 +410,7 @@ namespace Lucene.Net.Analysis.Standard
 			if (zzCurrentPos >= zzBuffer.length) 
 				{
 					/* if not: blow it up */
-					char newBuffer[] = new char[zzCurrentPos*2];
+					char [] newBuffer = new char[zzCurrentPos*2];
 					System.arraycopy(zzBuffer, 0, newBuffer, 0, zzBuffer.length);
 					zzBuffer = newBuffer;
 				}
