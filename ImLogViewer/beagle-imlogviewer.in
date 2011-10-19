@@ -1,0 +1,18 @@
+#!@bash@
+
+# This line will be automatically uncommented when you "make install"
+#installed=1
+
+if [ -z $installed ] ; then
+    echo "*** Running uninstalled @target@ ***"
+    THIS_PATH="../Util:../images:../Lucene.Net"
+    THIS_EXE="./@target@"
+    export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+else
+    THIS_PATH="@pkglibdir@"
+    THIS_EXE="@pkglibdir@/@target@"
+    export LD_LIBRARY_PATH="@pkglibdir@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+fi
+
+MONO_PATH="$THIS_PATH${MONO_PATH+:$MONO_PATH}" exec -a beagle-imlogviewer mono $MONO_EXTRA_ARGS --debug $THIS_EXE "$@"
+

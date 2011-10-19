@@ -1,0 +1,1599 @@
+# Beagle translation to Serbian
+# This file is distributed under the same license as the Beagle package.
+# Filip Miletic <filmil at gmail dot com>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle 0.2.10\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-12-26 16:44+0100\n"
+"PO-Revision-Date: 2006-12-26 16:59+0100\n"
+"Last-Translator: Филип Милетић <filmil at gmail dot com>\n"
+"Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3;    plural=n%10==1 && n%100!=11 ? 0 :    n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+
+#: ../glue/eggtrayicon.c:127
+msgid "Orientation"
+msgstr "Усмерење"
+
+#: ../glue/eggtrayicon.c:128
+msgid "The orientation of the tray."
+msgstr "Усмерење алатне траке."
+
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Отвори..."
+
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Крај"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "О програму"
+
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Контакти"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr "Приказано име"
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Главна ел. адреса"
+
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Друга ел. адреса"
+
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Надимак"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+"Није могуће отворити радну базу података:\n"
+"\n"
+" {0}"
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr "Задати идентификатор не постоји у овој бази података!"
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgid_plural "Added {0} contacts"
+msgstr[0] "Додат {0} контакт"
+msgstr[1] "Додата {0} контакта"
+msgstr[2] "Додато {0} контаката "
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr "Преглед: {0}"
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr "Изаберите име радне базе података"
+
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Главна ел. адреса:"
+
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid "Screen name:"
+msgstr "Екранско име:"
+
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Кућни тел.:"
+
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "Мобилни тел.:"
+
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "Мрежна страна:"
+
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "Слање ел. поште"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Детаљи..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "Није могуће пронаћи исправну ел. адресу!"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr "<b>Произвољна поља</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:2
+msgid "<b>Home</b>"
+msgstr "<b>Дом</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Интернет</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Име</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Белешке</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Телефони</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Посао</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "Додатна ел. адреса:"
+
+#: ../ContactViewer/contactviewer.glade.h:9
+msgid "Address"
+msgstr "Адреса"
+
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "Адреса:"
+
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Место:"
+
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Контакт"
+
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Преглед контаката"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "Држава:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr "Произвољно 1:"
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr "Произвољно 2:"
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr "Произвољно 3:"
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr "Произвољно 4:"
+
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Одељење:"
+
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Детаљан преглед"
+
+#. This is Display name
+#: ../ContactViewer/contactviewer.glade.h:22
+msgid "Display:"
+msgstr "Приказ:"
+
+#: ../ContactViewer/contactviewer.glade.h:23 ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "Ел. пошта:"
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "Fax:"
+msgstr "Факс:"
+
+#. This is First name
+#: ../ContactViewer/contactviewer.glade.h:26
+msgid "First:"
+msgstr "Први:"
+
+#. This is Home phone number
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Home:"
+msgstr "Кућа:"
+
+#. This is Last name
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Last:"
+msgstr "Последњи:"
+
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Mobile:"
+msgstr "Мобилни:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Nickname:"
+msgstr "Надимак:"
+
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Organization:"
+msgstr "Установа:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "Other"
+msgstr "Остало"
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "Pager:"
+msgstr "Пејџер:"
+
+#: ../ContactViewer/contactviewer.glade.h:36
+msgid "Preferred format:"
+msgstr "Жељени формат:"
+
+#: ../ContactViewer/contactviewer.glade.h:38
+msgid "State/Province"
+msgstr "Држава/покрајина"
+
+#: ../ContactViewer/contactviewer.glade.h:39
+msgid "State/Province:"
+msgstr "Држава/покрајина:"
+
+#: ../ContactViewer/contactviewer.glade.h:40
+#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
+#: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
+msgid "Title:"
+msgstr "Наслов:"
+
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+"Непознато\n"
+"текст\n"
+"хтмл"
+
+#: ../ContactViewer/contactviewer.glade.h:44
+msgid "Web Page:"
+msgstr "Мрежна страна:"
+
+#. This is Work phone number
+#: ../ContactViewer/contactviewer.glade.h:46
+msgid "Work:"
+msgstr "Посао:"
+
+#: ../ContactViewer/contactviewer.glade.h:47
+msgid "ZIP/Postal Code"
+msgstr "Поштански број"
+
+#: ../ContactViewer/contactviewer.glade.h:48
+msgid "ZIP/Postal Code:"
+msgstr "Поштански број:"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Историјат разговора</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "Преглед брзих порука"
+
+#: ../ImLogViewer/ImLogWindow.cs:102
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Разговори: {0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:109
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Разговор: {0}"
+
+#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:22
+msgid "Search"
+msgstr "Тражи"
+
+#: ../search/beagle-search.desktop.in.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Претрага података у радном окружењу"
+
+#: ../search/Category.cs:132
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} погодак"
+msgstr[1] "{0} поготка"
+msgstr[2] "{0} погодака"
+
+#: ../search/Category.cs:134
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} од {2}"
+
+#: ../search/Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "Није пронађен ниједан погодак."
+
+#: ../search/Pages/NoMatch.cs:20
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr ""
+"Претрага са кључним речима „{0}‟ не одговара ниједној датотеци у скупу који "
+"се претражује."
+
+#: ../search/Pages/NoMatch.cs:24
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+"Можете да промените опсег претраге употребом менија „Тражи‟. Проширење "
+"опсега може да има више погодака."
+
+#: ../search/Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr "Проверите да сте сигурно исправно записали све кључне речи."
+
+#: ../search/Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+"Потребно је да користите одговарајућа мала и велика слова. Мала и велика "
+"слова се разликују у претрази."
+
+#: ../search/Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr ""
+"Користите везник „OR‟ за опционе речи. На пример: <b>Ивица OR Марица</b>"
+
+#: ../search/Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+"Да искључите речи из претраге користите знак минус, попут: <b>-мачке</b>"
+
+#: ../search/Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+"Када тражите фразу, уоквирите је наводницима: <b>\"Змају немој сад да кинеш "
+"иначе одосмо на месец\"</b>"
+
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
+msgid "Quick Tips"
+msgstr "Брза помоћ"
+
+#: ../search/Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "Администратор не може да покрене Бигла"
+
+#: ../search/Pages/RootUser.cs:13
+msgid ""
+"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"regular user."
+msgstr ""
+"Из безбедносних разлога администратор не може да покреће Бигла.  Потребно је "
+"да програм покренете као обичан корисник."
+
+#: ../search/Pages/StartDaemon.cs:19
+msgid "Search service not running"
+msgstr "Претрага није покренута"
+
+#: ../search/Pages/StartDaemon.cs:21
+msgid "Start search service"
+msgstr "Покрени претрагу"
+
+#: ../search/Search.cs:138 ../search/Tray/TrayIcon.cs:32
+msgid "Desktop Search"
+msgstr "Претрага радне површине"
+
+#: ../search/Search.cs:157
+msgid "_Find:"
+msgstr "_Нађи:"
+
+#: ../search/Search.cs:178
+msgid "Find Now"
+msgstr "Нађи"
+
+#: ../search/Search.cs:237
+msgid "Type in search terms"
+msgstr "Унесите кључне речи за тражење"
+
+#: ../search/Search.cs:238
+msgid "Start searching"
+msgstr "Тражи"
+
+#: ../search/Search.cs:264
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Претрага радне површи: {0}"
+
+# bug: plural-forms
+#: ../search/Search.cs:280
+#, csharp-format
+msgid "Showing all {0} matches"
+msgstr "Приказује свих {0} погодака"
+
+#: ../search/Search.cs:282
+#, csharp-format
+msgid "Showing the top {0} of {1} total matches"
+msgstr "Приказује првих {0} од укупно {1} погодака"
+
+#: ../search/Search.cs:555
+msgid "Your data is being indexed"
+msgstr "Ваши подаци се индексирају"
+
+#: ../search/Search.cs:556
+msgid ""
+"The search service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr "Услуга претраге тренутно индексира ваше податке. Док се не заврши индексирање, резултати претраге могу бити непотпуни."
+
+#: ../search/Tiles/ArchivedFile.cs:39
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr "Унутар архиве {0}"
+
+#: ../search/Tiles/ArchivedFile.cs:77
+msgid "File Name:"
+msgstr "Име датотеке:"
+
+#. Substring to move past the initial #
+#: ../search/Tiles/ArchivedFile.cs:78
+msgid "Inside File:"
+msgstr "Унутар датотеке:"
+
+#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:144
+msgid "Author:"
+msgstr "Аутор:"
+
+#: ../search/Tiles/Calendar.cs:54
+msgid "Description:"
+msgstr "Опис:"
+
+#: ../search/Tiles/Calendar.cs:57
+msgid "Location:"
+msgstr "Место:"
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Attendees:"
+msgstr "Присутни:"
+
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Слање поште"
+
+#: ../search/Tiles/Contact.cs:70
+msgid "Mobile Phone:"
+msgstr "Мобилни тел.:"
+
+#: ../search/Tiles/Contact.cs:72
+msgid "Work Phone:"
+msgstr "Тел. на послу:"
+
+#: ../search/Tiles/Contact.cs:74
+msgid "Home Phone:"
+msgstr "Кућни тел.:"
+
+#: ../search/Tiles/File.cs:34
+msgid "Reveal in Folder"
+msgstr "Откриј у фасцикли"
+
+#: ../search/Tiles/File.cs:35
+msgid "E-Mail"
+msgstr "Ел. пошта"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Премести у смеће"
+
+#: ../search/Tiles/File.cs:141 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:63
+msgid "Last Edited:"
+msgstr "Последња измена:"
+
+#: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:80
+msgid "Full Path:"
+msgstr "Пуна стаза:"
+
+#: ../search/Tiles/Folder.cs:31
+msgid "Empty"
+msgstr "Празно"
+
+#: ../search/Tiles/Folder.cs:33
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Садржи {0} ставку"
+msgstr[1] "Садржи {0} ставке"
+msgstr[2] "Садржи {0} ставки"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Постави као позадину"
+
+#: ../search/Tiles/Image.cs:79
+msgid "Modified:"
+msgstr "Измена:"
+
+#: ../search/Tiles/IMLog.cs:30
+msgid "IM Conversation"
+msgstr "Разговор"
+
+#: ../search/Tiles/IMLog.cs:92
+msgid "Name:"
+msgstr "Име:"
+
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:105
+msgid "Date Received:"
+msgstr "Датум пријема:"
+
+#: ../search/Tiles/IMLog.cs:97
+msgid "Status:"
+msgstr "Стање:"
+
+#: ../search/Tiles/IMLog.cs:112
+msgid "Idle"
+msgstr "Беспослен"
+
+#: ../search/Tiles/IMLog.cs:119
+msgid "Away"
+msgstr "Одсутан"
+
+#: ../search/Tiles/IMLog.cs:122
+msgid "Offline"
+msgstr "Искључен"
+
+#: ../search/Tiles/IMLog.cs:125
+msgid "Available"
+msgstr "Доступан"
+
+#: ../search/Tiles/MailAttachment.cs:45
+msgid "Mail attachment"
+msgstr "Прилог ел. поруци"
+
+#: ../search/Tiles/MailMessage.cs:58
+msgid "(untitled)"
+msgstr "(без наслова)"
+
+#: ../search/Tiles/MailMessage.cs:68
+msgid "Send in Mail"
+msgstr "Пошаљи поштом"
+
+#: ../search/Tiles/MailMessage.cs:100
+msgid "Subject:"
+msgstr "Тема:"
+
+#: ../search/Tiles/MailMessage.cs:102
+msgid "To:"
+msgstr "Прима:"
+
+#: ../search/Tiles/MailMessage.cs:102
+msgid "From:"
+msgstr "Шаље:"
+
+#: ../search/Tiles/MailMessage.cs:105
+msgid "Date Sent:"
+msgstr "Датум слања:"
+
+#: ../search/Tiles/MailMessage.cs:111
+msgid "Folder:"
+msgstr "Директоријум:"
+
+#: ../search/Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Отвори помоћу"
+
+#: ../search/Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} слајд"
+msgstr[1] "{0} слајда"
+msgstr[2] "{0} слајдова"
+
+#: ../search/Tiles/RSSFeed.cs:49
+msgid "Site:"
+msgstr "Место:"
+
+#: ../search/Tiles/RSSFeed.cs:50
+msgid "Date Viewed:"
+msgstr "Датум прегледа:"
+
+#: ../search/Tiles/TextDocument.cs:37
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} страна"
+msgstr[1] "{0} стране"
+msgstr[2] "{0} страна"
+
+#: ../search/Tiles/Tile.cs:179
+msgid "Open"
+msgstr "Отвори"
+
+#: ../search/Tiles/Utils.cs:24
+msgid "Applications"
+msgstr "Програми"
+
+#: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr "Догађаји из календара"
+
+#: ../search/Tiles/Utils.cs:30
+msgid "Folders"
+msgstr "Фасцикле"
+
+#: ../search/Tiles/Utils.cs:32
+msgid "Images"
+msgstr "Слике"
+
+#: ../search/Tiles/Utils.cs:34
+msgid "Audio"
+msgstr "Звук"
+
+#: ../search/Tiles/Utils.cs:36
+msgid "Video"
+msgstr "Видео"
+
+#: ../search/Tiles/Utils.cs:38
+msgid "Documents"
+msgstr "Документи"
+
+#: ../search/Tiles/Utils.cs:40
+msgid "Conversations"
+msgstr "Разговори"
+
+#: ../search/Tiles/Utils.cs:42
+msgid "Websites"
+msgstr "Ел. места"
+
+#: ../search/Tiles/Utils.cs:44
+msgid "News Feeds"
+msgstr "Доводи за вести"
+
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
+msgstr "Архиве"
+
+#: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
+#: ../Util/StringFu.cs:106
+msgid "Yesterday"
+msgstr "Јуче"
+
+#: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
+#: ../Util/StringFu.cs:104
+msgid "Today"
+msgstr "Данас"
+
+#: ../search/Tiles/Utils.cs:137 ../search/Tiles/Utils.cs:219
+msgid "Tomorrow"
+msgstr "Сутра"
+
+#: ../search/Tiles/Utils.cs:235
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "пре {0} недељу"
+msgstr[1] "пре {0} недеље"
+msgstr[2] "пре {0} недеља"
+
+#: ../search/Tiles/Utils.cs:237
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "За {0} недељу"
+msgstr[1] "За {0} недеље"
+msgstr[2] "За {0} недеља"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:239
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "{0} месец"
+msgstr[1] "{0} месеца"
+msgstr[2] "{0} месеци"
+
+#: ../search/Tiles/Utils.cs:241
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "за {0} месец"
+msgstr[1] "за {0} месеца"
+msgstr[2] "за {0} месеци"
+
+#: ../search/Tiles/Utils.cs:243
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "пре {0} годину"
+msgstr[1] "пре {0} године"
+msgstr[2] "пре {0} година"
+
+#: ../search/Tiles/Utils.cs:245
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "За {0} годину"
+msgstr[1] "За {0} године"
+msgstr[2] "За {0} година"
+
+#. FIXME: We need filters for video in Beagle.
+#. They should land soon when entagged-sharp gets video support.
+#: ../search/Tiles/Video.cs:27
+msgid "Unknown duration"
+msgstr "Непозната дужина"
+
+#: ../search/Tiles/WebHistory.cs:54
+msgid "URL:"
+msgstr "УРЛ:"
+
+#: ../search/Tiles/WebHistory.cs:55
+msgid "Accessed:"
+msgstr "Приступано:"
+
+#: ../search/Tray/TrayIcon.cs:57
+msgid "No Recent Searches"
+msgstr "Нема скорашњих претрага"
+
+#: ../search/Tray/TrayIcon.cs:62
+msgid "Recent Searches"
+msgstr "Скорашње претраге"
+
+#: ../search/Tray/TrayIcon.cs:78
+msgid "Clear"
+msgstr "Очисти"
+
+#. Translators: the strings in TypeFilter.cs are for when the user
+#. * wants to limit search results to a specific type. You don't need
+#. * to give an exact translation of the exact same set of English
+#. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
+#: ../search/TypeFilter.cs:36
+msgid ""
+"file\n"
+"files"
+msgstr ""
+"датотека\n"
+"датотеке"
+
+#: ../search/TypeFilter.cs:37
+msgid ""
+"mail\n"
+"email\n"
+"e-mail"
+msgstr ""
+"епошта\n"
+"ел.пошта\n"
+"ел.порука\n"
+"епорука"
+
+#: ../search/TypeFilter.cs:38
+msgid ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+msgstr ""
+"брза-порука\n"
+"брзе-поруке\n"
+"инстант-поруке\n"
+"месенџер"
+
+#: ../search/TypeFilter.cs:39
+msgid ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+msgstr ""
+"презентација\n"
+"презентације\n"
+"слајд\n"
+"слајдови\n"
+"пауерпоинт\n"
+"powerpoint"
+
+#: ../search/TypeFilter.cs:41
+msgid ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+msgstr ""
+"апликација\n"
+"програм\n"
+"апликације\n"
+"програми"
+
+#: ../search/TypeFilter.cs:42
+msgid ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+msgstr ""
+"контакти\n"
+"контакт\n"
+"визиткарта\n"
+"визитка\n"
+"визиткарте\n"
+"визитке"
+
+#: ../search/TypeFilter.cs:43
+msgid ""
+"folder\n"
+"folders"
+msgstr ""
+"фасцикла\n"
+"фасцикле\n"
+"директоријум\n"
+"директоријуми\n"
+"дир\n"
+"дирови"
+
+#: ../search/TypeFilter.cs:44
+msgid ""
+"image\n"
+"images\n"
+"img"
+msgstr ""
+"слика\n"
+"слике"
+
+#: ../search/TypeFilter.cs:45
+msgid "audio"
+msgstr "аудио"
+
+#: ../search/TypeFilter.cs:46
+msgid "video"
+msgstr ""
+"видео\n"
+"филм"
+
+#: ../search/TypeFilter.cs:47
+msgid "media"
+msgstr ""
+"медијум\n"
+"медији\n"
+"медиа\n"
+"медиј"
+
+#: ../search/TypeFilter.cs:48
+msgid ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+msgstr ""
+"документ\n"
+"документи\n"
+"office"
+
+#: ../search/TypeFilter.cs:49
+msgid ""
+"conversation\n"
+"conversations"
+msgstr ""
+"разговори\n"
+"разговор\n"
+"пошта"
+
+#: ../search/TypeFilter.cs:50
+msgid ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+msgstr ""
+"веб\n"
+"сајт\n"
+"еместо\n"
+"ел.место\n"
+"еместа\n"
+"сајтови\n"
+"ел.места"
+
+#: ../search/TypeFilter.cs:51
+msgid ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+msgstr ""
+"довод\n"
+"рсс\n"
+"блог\n"
+"њуз\n"
+"фид"
+
+#: ../search/TypeFilter.cs:52
+msgid ""
+"archive\n"
+"archives"
+msgstr ""
+"архива\n"
+"архиве"
+
+#: ../search/TypeFilter.cs:53
+msgid ""
+"person\n"
+"people"
+msgstr ""
+"особа\n"
+"човек\n"
+"људи"
+
+#: ../search/UIManager.cs:50
+msgid "Close Desktop Search"
+msgstr "Затвори претрагу"
+
+#: ../search/UIManager.cs:55 ../search/UIManager.cs:80
+msgid "Exit Desktop Search"
+msgstr "Угаси претрагу"
+
+#: ../search/UIManager.cs:62
+msgid "_Search"
+msgstr "_Тражи"
+
+#: ../search/UIManager.cs:65
+msgid "Show _Categories"
+msgstr "Прикажи _категорије"
+
+#: ../search/UIManager.cs:68
+msgid "_Actions"
+msgstr "_Дејства"
+
+#: ../search/UIManager.cs:71
+msgid "_View"
+msgstr "П_реглед"
+
+#: ../search/UIManager.cs:74
+msgid "_Help"
+msgstr "_Помоћ"
+
+#: ../search/UIManager.cs:83
+msgid "_Contents"
+msgstr "_Садржај"
+
+#: ../search/UIManager.cs:85
+msgid "Help - Table of Contents"
+msgstr "Помоћ - Садржај"
+
+#: ../search/UIManager.cs:89
+msgid "About Desktop Search"
+msgstr "О претрази"
+
+#: ../search/UIManager.cs:111
+msgid "_All"
+msgstr "_Све"
+
+#: ../search/UIManager.cs:121
+msgid "_None"
+msgstr "_Ништа"
+
+#: ../search/UIManager.cs:135
+msgid "A_pplications"
+msgstr "_Програми"
+
+#: ../search/UIManager.cs:137
+msgid "Search applications"
+msgstr "Претрага програма"
+
+#: ../search/UIManager.cs:141
+msgid "_Contacts"
+msgstr "_Контакти"
+
+#: ../search/UIManager.cs:143
+msgid "Search contacts"
+msgstr "Претрага контаката"
+
+#: ../search/UIManager.cs:147
+msgid "Ca_lendar events"
+msgstr "_Догађаји"
+
+#: ../search/UIManager.cs:149
+msgid "Search calendar events"
+msgstr "Претрага роковника"
+
+#: ../search/UIManager.cs:153
+msgid "_Documents"
+msgstr "_Документи"
+
+#: ../search/UIManager.cs:155
+msgid "Search documents"
+msgstr "Претрага докумената"
+
+#: ../search/UIManager.cs:159
+msgid "Conve_rsations"
+msgstr "_Разговори"
+
+#: ../search/UIManager.cs:161
+msgid "Search E-Mail and Instant Messaging logs"
+msgstr "Претрага ел. поште и дневника брзих порука"
+
+#: ../search/UIManager.cs:165
+msgid "_Images"
+msgstr "_Слике"
+
+#: ../search/UIManager.cs:167
+msgid "Search images"
+msgstr "Претрага слика"
+
+#: ../search/UIManager.cs:171
+msgid "_Media"
+msgstr "_Медији"
+
+#: ../search/UIManager.cs:173
+msgid "Search sound and video files"
+msgstr "Претрага музике, звукова и филмова"
+
+#: ../search/UIManager.cs:177
+msgid "_Folders"
+msgstr "_Фасцикле"
+
+#: ../search/UIManager.cs:179
+msgid "Search for folder names"
+msgstr "Претражи по именима фасцикли"
+
+#: ../search/UIManager.cs:183
+msgid "_Websites"
+msgstr "_Веб стране"
+
+#: ../search/UIManager.cs:185
+msgid "Search website history"
+msgstr "Претражи историјат веб страна"
+
+#: ../search/UIManager.cs:189
+msgid "_News Feeds"
+msgstr "_Доводи за вести"
+
+#: ../search/UIManager.cs:191
+msgid "Search news feeds"
+msgstr "Претражи доводе за вести"
+
+#: ../search/UIManager.cs:195
+msgid "A_rchives"
+msgstr "Ар_хиве"
+
+#: ../search/UIManager.cs:197
+msgid "Search files in Archives"
+msgstr "Претражи датотеке у архивама"
+
+#: ../search/UIManager.cs:205
+msgid "Sort by Date _Modified"
+msgstr "Поређај по датуму _измене"
+
+#: ../search/UIManager.cs:206
+msgid "Sort the most-recently-modified matches first"
+msgstr "Погоци који су најскорије мењани стављају се на прво место"
+
+#: ../search/UIManager.cs:209
+msgid "Sort by _Name"
+msgstr "Поређај по _имену"
+
+#: ../search/UIManager.cs:210
+msgid "Sort matches by name"
+msgstr "Погоци се уређују по имену"
+
+#: ../search/UIManager.cs:213
+msgid "Sort by _Relevance"
+msgstr "Поређај по _важности"
+
+#: ../search/UIManager.cs:214
+msgid "Sort the best matches first"
+msgstr "Најбољи погоци су први на списку"
+
+#: ../search/UIManager.cs:221
+msgid "Show Details"
+msgstr "Прикажи детаље"
+
+#: ../search/UIManager.cs:354
+msgid "Couldn't launch web browser"
+msgstr "Није могуће покренути читач веба"
+
+#: ../tools/Settings.cs:166
+msgid "Reload configuration"
+msgstr "Поново учитај подешавања"
+
+#: ../tools/Settings.cs:167
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"Неки други програм је изменио датотеку са подешавањима. Да ли желите да "
+"одбаците тренутно приказане вредности и поново учитате подешавања са диска?"
+
+#: ../tools/Settings.cs:305
+msgid "Select Path"
+msgstr "Избор стазе"
+
+#: ../tools/Settings.cs:324
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "Изабрана стаза је већ одређена за претрагу и зато није додата."
+
+#: ../tools/Settings.cs:327
+msgid ""
+"The selected path wasn't added. The list contains items that supersedes it "
+"and the data is already being indexed."
+msgstr "Изабрана путања није додата. Списак садржи ставке које је чине застарелом што значи да се подаци већ убацују у индекс."
+
+#: ../tools/Settings.cs:338
+msgid "Path not added"
+msgstr "Стаза није додата"
+
+#: ../tools/Settings.cs:347
+msgid "Remove obsolete paths"
+msgstr "Уклони застареле стазе"
+
+#: ../tools/Settings.cs:348
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Додавање ове стазе ће застарети стазе које су већ укључене. Резултат ће бити "
+"уклањање застарелих стаза. Да ли и даље желите да је додате?"
+
+#: ../tools/Settings.cs:374
+msgid "Remove path"
+msgstr "Уклони стазу"
+
+#: ../tools/Settings.cs:375
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Да ли сигурно желите да уклоните ову стазу из списка фасцикли које се "
+"претражују?"
+
+#: ../tools/Settings.cs:404
+msgid "Remove item"
+msgstr "Уклони ставку"
+
+#: ../tools/Settings.cs:405
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Да ли сигурно желите да уклоните ову ставку из списка података за "
+"индексирање?"
+
+#: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
+#: ../tools/Settings.cs:970
+msgid "Name"
+msgstr "Име"
+
+#: ../tools/Settings.cs:538
+msgid "Type"
+msgstr "Врста"
+
+#: ../tools/Settings.cs:591
+msgid "Path:"
+msgstr "Стаза:"
+
+#: ../tools/Settings.cs:594
+msgid "Pattern:"
+msgstr "Образац:"
+
+#: ../tools/Settings.cs:597
+msgid "Mail folder:"
+msgstr "Фасцикла са ел. поштом:"
+
+#: ../tools/Settings.cs:878
+msgid "Select Folder"
+msgstr "Избор фасцикле"
+
+#: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
+msgid "P_ath:"
+msgstr "_Стаза:"
+
+#: ../tools/Settings.cs:909
+msgid "M_ail folder:"
+msgstr "Ел. _пошта:"
+
+#: ../tools/Settings.cs:914
+msgid "P_attern:"
+msgstr "_Образац:"
+
+#: ../tools/Settings.cs:938
+msgid "Error adding path"
+msgstr "Грешка при додавању стазе"
+
+#: ../tools/Settings.cs:939
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"Изабрана стаза није пронађена и зато се не може додати у списак ресурса који "
+"се искључују из индексирања."
+
+#: ../tools/Settings.cs:969
+msgid "Show"
+msgstr "Приказ"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Administration</b>"
+msgstr "<b>Администрација</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Display</b>"
+msgstr "<b>Приказ</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Искључивање ресурса</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>General</b>"
+msgstr "<b>Опште</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Privacy</b>"
+msgstr "<b>Приватност</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>Избор фасцикле са поштом</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>User Interface</b>"
+msgstr "<b>Корисничко сучеље</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "Add any additional paths to be included for indexing."
+msgstr "Додајте још стаза које желите да индексирате."
+
+#: ../tools/settings.glade.h:9
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Подесите које врсте резултата треба да су видљиве и у ком редоследу треба да "
+"се приказују када се групишу према врсти."
+
+#: ../tools/settings.glade.h:10
+msgid "Alt"
+msgstr "Алт"
+
+#: ../tools/settings.glade.h:11
+msgid "Automatically s_tart searching after the user has stopped typing"
+msgstr "Сам почни са _тражењем када корисник заврши са куцањем"
+
+#: ../tools/settings.glade.h:12
+msgid "Ctrl"
+msgstr "Ктрл"
+
+#: ../tools/settings.glade.h:13
+msgid "Display the search window by pressing:"
+msgstr "Приказивање прозора за претрагу притиском на:"
+
+#: ../tools/settings.glade.h:14
+msgid "Exclude Resource"
+msgstr "Искључи ресурс"
+
+#: ../tools/settings.glade.h:15
+msgid "Filename _pattern"
+msgstr "Образац за име _датотеке"
+
+#: ../tools/settings.glade.h:16
+msgid "I_ndex my home directory"
+msgstr "_Индексирај мој директоријум"
+
+#: ../tools/settings.glade.h:17
+msgid "Index data while on _battery power"
+msgstr "Индексирај и када рачунар ради на _батерије"
+
+#: ../tools/settings.glade.h:18
+msgid "Indexing"
+msgstr "Индексирање"
+
+#: ../tools/settings.glade.h:20
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Молимо да унесете име ресурса кога желите да искључите из индексирања."
+
+#: ../tools/settings.glade.h:21
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr ""
+"Молимо да изаберете директоријум са поштом ког желите да искључите из "
+"индексирања."
+
+#: ../tools/settings.glade.h:23
+msgid "Search Preferences"
+msgstr "Поставке претраге"
+
+#: ../tools/settings.glade.h:24
+msgid "Select Mail Folder"
+msgstr "Избор фасцикле са поштом"
+
+#: ../tools/settings.glade.h:25
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Унесите све ресурсе, попут стаза, образаца, фасцикли са поштом или врсте "
+"објекта које не желите да индексирате."
+
+#: ../tools/settings.glade.h:26
+msgid "Type:"
+msgstr "Врста:"
+
+#: ../tools/settings.glade.h:27
+msgid "_Allow Beagle to be run as root"
+msgstr "_Дозволи администратору да покреће Бигл"
+
+#: ../tools/settings.glade.h:28
+msgid "_Browse..."
+msgstr "_Разгледај..."
+
+#: ../tools/settings.glade.h:29
+msgid "_Folder path"
+msgstr "_Стаза за фасцикле"
+
+#: ../tools/settings.glade.h:30
+msgid "_Mail folder"
+msgstr "Фасцикла за _пошту"
+
+#: ../tools/settings.glade.h:31
+msgid "_Start search & indexing services automatically "
+msgstr "_Аутоматски покрени претрагу и индексирање"
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search & Indexing"
+msgstr "Подешавање претраге и индексирања радног окружења"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Configure search & indexing properties"
+msgstr "Подешавање поставки претраге и индексирања"
+
+#: ../tools/beagle-settings.desktop.in.in.h:3
+msgid "Search & Indexing"
+msgstr "Претрага и индексирање"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "На овом рачунару"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "Фасцикла са сликама"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "Фасцикла са сличицама"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "Фасцикла са ексиф подацима"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "ГПС фасцикла"
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr "Фасцикла за удружени рад"
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "Непозната фасцикла"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:109
+msgid "MMM d"
+msgstr "d MMM"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:112
+msgid "MMM d, yyyy"
+msgstr "d MMM, yyyy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:115
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:121
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:138
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Данас, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:141
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Јуче, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:144
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "пре дана: {0}, {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:149
+msgid "MMMM d, h:mm tt"
+msgstr "d MMMM, h:mm tt"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:154
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "d MMMM yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:164
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} сат"
+msgstr[1] "{0} сата"
+msgstr[2] "{0} сати"
+
+#: ../Util/StringFu.cs:171
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} минут"
+msgstr[1] "{0} минута"
+msgstr[2] "{0} минута"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:205
+#, csharp-format
+msgid "{0} bytes"
+msgstr "бајтова: {0}"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:209
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:212
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+
+#~ msgid "DisplayName"
+#~ msgstr "ПриказаноИме"
+
+#~ msgid "FirstName"
+#~ msgstr "Име"
+
+#~ msgid "NickName"
+#~ msgstr "Надимак"
+
+#~ msgid "LastName"
+#~ msgstr "Презиме"
+
+#~ msgid "PrimaryEmail"
+#~ msgstr "ГлавнаЕлАдреса"
+
+#~ msgid "_AimScreenName"
+#~ msgstr "Име на _АИМу"
+
+#~ msgid "HomePhone"
+#~ msgstr "КућниTел"
+
+#~ msgid "CellularNumber"
+#~ msgstr "МобилниТел"
+
+#~ msgid "WebPage2"
+#~ msgstr "ДругаСтрана"
+
+#~ msgid "Sor_t"
+#~ msgstr "По_редак"
+
+#~ msgid "_Everywhere"
+#~ msgstr "_Свуда"
+
+#~ msgid "Search everywhere"
+#~ msgstr "Претрага свуда"
+
+#~ msgid "_Applications"
+#~ msgstr "_Програми"
+
+#~ msgid "Invalid host entry"
+#~ msgstr "Неисправно име рачунара"
+
+#~ msgid "Remote host already present in the list."
+#~ msgstr "Удаљени рачунар је већ присутан у списку."
+
+#~ msgid "Netbeagle Node not added"
+#~ msgstr "НетБиглов чвор није додат"
+
+#~ msgid "Remove host"
+#~ msgstr "Уклони рачунар"
+
+#~ msgid "Are you sure you wish to remove this host from the list?"
+#~ msgstr "Да ли сигурно желите да уклоните овај рачунар са списка?"
+
+#~ msgid "Select path"
+#~ msgstr "Избор стазе"
+
+#~ msgid "The selected path is already configured for external access."
+#~ msgstr "Изабраној стази се већ може екстерно приступити"
+
+#~ msgid "Remove public path"
+#~ msgstr "Уклони јавну стазу"
+
+#~ msgid ""
+#~ "Are you sure you wish to remove this entry from the list of public paths?"
+#~ msgstr "Да ли сигурно желите да уклоните ову стазу из списка јавних стаза?"
+
+#~ msgid "<b>Add Remote Host</b>"
+#~ msgstr "<b>Add Remote Host</b>"
+
+#~ msgid "<b>Networking</b>"
+#~ msgstr "<b>Мрежа</b>"
+
+#~ msgid "Add Remote Host"
+#~ msgstr "Додавање удаљеног рачунара"
+
+#~ msgid ""
+#~ "Add a remote search-enabled host you wish \n"
+#~ "to network with."
+#~ msgstr ""
+#~ "Унесите рачунар који подржава спољашњу претрагу\n"
+#~ "са којим желите да се повежете."
+
+#~ msgid "Add any remote search-enabled hosts you wish to network with."
+#~ msgstr "Додајте све удаљене рачунаре са којима желите да се повежете."
+
+#~ msgid "Allow _external access to local search services"
+#~ msgstr "Дозволи _екстерни приступ локалној претрази"
+
+#~ msgid "Networking"
+#~ msgstr "Мрежа"
+
+#~ msgid "Specify paths that should be available for external access."
+#~ msgstr "Унесите стазе које ће бити доступне за екстерни приступ."
+
+#~ msgid "_Address:"
+#~ msgstr "_Адреса:"
+
+#~ msgid "_Maximum number of results displayed:"
+#~ msgstr "_Највећи број приказаних резултата:"

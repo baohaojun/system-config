@@ -1,0 +1,38 @@
+#!@bash@
+
+# This line will be automatically uncommented when you "make install"
+#installed=1
+
+if [ -z $installed ] ; then
+    echo "*** Running uninstalled @target@ ***" >&2
+
+    if [ -n "$BEAGLE_TOOL_PATH" ]; then
+	TOOLDIR="$PWD/$BEAGLE_TOOL_PATH"
+    else
+	TOOLDIR="."
+    fi
+
+    THIS_LIB_DIR="$TOOLDIR/../glue/.libs"
+    THIS_PATH="$TOOLDIR/../Util:$TOOLDIR/../BeagleClient:$TOOLDIR/../beagled:$TOOLDIR/../images"
+    THIS_EXE="$TOOLDIR/@target@"
+    THIS_FILTERS="$TOOLDIR/../Filters"
+    THIS_BACKENDS="$TOOLDIR/../beagled"
+
+    if [ -z $BEAGLE_CONF_DIR ]; then
+	    export BEAGLE_CONF_DIR="../conf-data"
+    fi
+
+else
+    THIS_LIB_DIR="@pkglibdir@:@libdir@"
+    THIS_PATH="@pkglibdir@:@libdir@"
+    THIS_EXE="@pkglibdir@/@target@"
+fi
+
+if [ -z "$BEAGLE_MONO_RUNTIME" ]; then
+   export BEAGLE_MONO_RUNTIME="mono"
+else
+   echo "*** Using mono runtime at $BEAGLE_MONO_RUNTIME ***" >&2
+fi
+
+LD_LIBRARY_PATH="$THIS_LIB_DIR${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}" MONO_PATH="$THIS_PATH${MONO_PATH+:$MONO_PATH}" BEAGLE_FILTER_PATH="$BEAGLE_FILTER_PATH${THIS_FILTERS+:$THIS_FILTERS}" BEAGLE_BACKEND_PATH="$BEAGLE_BACKEND_PATH${THIS_BACKENDS+:$THIS_BACKENDS}" exec $BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $THIS_EXE "$@"
+

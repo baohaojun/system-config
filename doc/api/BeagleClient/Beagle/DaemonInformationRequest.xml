@@ -1,0 +1,88 @@
+<Type Name="DaemonInformationRequest" FullName="Beagle.DaemonInformationRequest">
+  <TypeSignature Language="C#" Value="public class DaemonInformationRequest : Beagle.RequestMessage" />
+  <AssemblyInfo>
+    <AssemblyName>Beagle</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Beagle.RequestMessage</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DaemonInformationRequest ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DaemonInformationRequest (bool get_version, bool get_scheduler_info, bool get_index_status, bool get_is_indexing);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="get_version" Type="System.Boolean" />
+        <Parameter Name="get_scheduler_info" Type="System.Boolean" />
+        <Parameter Name="get_index_status" Type="System.Boolean" />
+        <Parameter Name="get_is_indexing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="get_version">To be added.</param>
+        <param name="get_scheduler_info">To be added.</param>
+        <param name="get_index_status">To be added.</param>
+        <param name="get_is_indexing">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetIndexStatus">
+      <MemberSignature Language="C#" Value="public bool GetIndexStatus;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetIsIndexing">
+      <MemberSignature Language="C#" Value="public bool GetIsIndexing;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSchedInfo">
+      <MemberSignature Language="C#" Value="public bool GetSchedInfo;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetVersion">
+      <MemberSignature Language="C#" Value="public bool GetVersion;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

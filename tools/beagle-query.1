@@ -1,0 +1,69 @@
+.\" beagle-query(1) manpage
+.\"
+.\" Copyright (C) 2005 Novell, Inc.
+.\" Copyright (C) 2008 D Bera <dbera.web@gmail.com>
+.\"
+.TH BEAGLE-QUERY "1" "July 2008" "beagle" "Linux User's Manual"
+.SH NAME
+beagle-query \- search your personal information space
+.SH SYNOPSIS
+.B beagle-query
+[\fIoptions\fR] \fIquery\fR
+.SH DESCRIPTION
+.BR beagle-query
+is used to search your personal information space via Beagle, on the command
+line.  It is a command-line form of the beagle-search GNOME program.
+.SH OPTIONS
+.SS Search options
+.TP
+.B --max-hits
+Reduce the number of search results returned per backend. The default is 100.
+Increasing this will slow down overall search speed.
+.TP
+.B --verbose 
+Print detailed information about each hit.
+.TP
+.B --cache
+Show the entire cached text for each result. Only works with \fI--verbose\fR.
+.br
+Note that for large documents this will produce extremely large output,
+so use this with uri queries or queries returning only a few results
+Not recommended for live-queries or stats-only queries.
+.TP
+.B --live-query 
+Enable live queries. This argument keeps beagle-query running, continuously
+feeding new matching hits as the system gets aware of them.
+.TP
+.B --stats-only
+Show only statistics on the number of search results and how long it took to
+get them, and not the results themselves.
+.SS Other options
+.TP
+.B --keywords
+Lists the keywords allowed in \fIquery\fR. Keyword queries can be specified as
+.I keywordname:value e.g. ext:jpg
+.TP
+.B --help
+Print the usage message.
+.TP
+.B --version
+Print the version information.
+.SH QUERY
+You can query for a word, several words or a quoted phrase. When several words
+are searched, only documents which contain all the words are matched. To specify
+a phrase, enclose it in shell-escaped quotes (\\"search term\\").
+.PP
+Besides these beagle supports an advanced query syntax. See http://beagle-project.org/Searching_Data#Search_Syntax for more information.
+.SH AUTHOR
+Novell, Inc.
+.SH "REPORTING BUGS"
+Report bugs to <dashboard-hackers@gnome.org>.
+.SH COPYRIGHT
+Copyright \(co 2005 Novell, Inc., \(co 2008 D Bera
+.sp
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+.BR beagled (1),
+.BR beagle-shutdown (1),
+.BR beagle-status (1),

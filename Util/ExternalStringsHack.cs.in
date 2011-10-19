@@ -1,0 +1,48 @@
+//
+// ExternalStringsHack.cs is generated from ExternalStringsHack.cs.in
+//
+
+using System;
+
+namespace Beagle.Util {
+
+	  public class ExternalStringsHack {
+
+		static public string Version {
+		       get { return "@VERSION@"; }
+		}
+
+		static public string Prefix {
+			get { return "@prefix@"; }
+		}
+
+		static public string SysConfDir {
+			get { return "@sysconfdir@"; }
+		}
+
+		static public string PkgLibDir {
+			get { return "@pkglibdir@"; }
+		}
+
+		static public string PkgDataDir {
+			get { return "@pkgdatadir@"; }
+		}
+
+		static public string LocalStateDir {
+			get { return "@localstatedir@"; }
+		}
+
+		static public string DataDir {
+			get { return "@datadir@"; }
+		}
+
+		static public string LocaleDir {
+		       get { return "@prefix@/share/locale"; }
+		}
+
+		/* Still need this since we directly do not use KDE C# bindings */
+		static public string KdePrefix {
+			get { return "@KDE_PREFIX@"; }
+		}
+	}
+}

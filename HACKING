@@ -1,0 +1,306 @@
+
+Subversion
+----------
+
+Beagle's source repository is in GNOME subversion, in the module 'beagle'.
+
+For information on GNOME svn, see:
+http://developer.gnome.org/tools/svn.html.
+
+
+Patches
+-------
+
+If you have a patch you'd like to submit, please open a tracking bug on
+bugzilla.gnome.org (product 'beagle').  Attach the patch (and any additional
+required files) to the bug.  The core developers are all on the beagle-bugs
+mailing list, so we'll see that it is there.  We will review it, but if people
+are busy it might not happen right away.  
+
+In the past we'd been doing patch review on the mailing list, but that hasn't
+always worked very well.  Sometimes patches get lost in the shuffle.
+
+
+Organization
+------------
+
+Code that parses files or otherwise interacts w/ low-level details from
+third-party apps (i.e. parsing gaim logs, undocumented nautilus metafiles and
+stuff from .gnome2/epiphany, etc.) should probably be broken out into small
+chunks of semi-independent code and placed in Beagle/Util.  That kind of code
+is just ugly by nature, and I want to keep it from getting mixed into the
+beagle code as much as possible.
+
+Anything in Util that requires gtk+ or gnome should be added to the UiUtil.dll
+assembly.  Otherwise, add it to the Util.dll assembly.
+
+
+Coding Style
+------------
+
+Beagle attempts to follow the Mono coding conventions.  The following
+description of those conventions was shamelessly stolen from Dashboard's
+HACKING file.
+
+* Tagging buggy code
+
+        If there is a bug in your implementation tag the problem by using
+        the word "FIXME" in the code, together with a description of the 
+        problem.
+
+        Do not use XXX or TODO or obscure descriptions, because
+        otherwise people will not be able to understand what you mean.
+
+
+* Basic code formatting
+
+        In order to keep the code consistent, please use the following
+        conventions.  From here on `good' and `bad' are used to attribute
+        things that would make the coding style match, or not match.  It is not
+        a judgement call on your coding abilities, but more of a style and 
+        look call.  Please follow these guidelines to ensure prettiness.
+
+        Use 8 space tabs for writing your code.
+
+        Since we are using 8-space tabs, you might want to consider the Linus
+        Torvalds trick to reduce code nesting.  Many times in a loop, you will
+        find yourself doing a test, and if the test is true, you will
+        nest.  Many times this can be changed.  Example:
+
+
+                for (i = 0; i < 10; i++) {
+                        if (Something (i)) {
+                                DoMore ();
+                        }
+                }
+
+        This take precious space, instead write it like this:
+
+                for (i = 0; i < 10; i++) {
+                        if (! Something (i))
+                                continue;
+                        DoMore ();
+                }
+
+        A few guidelines:
+
+                * Use a space before an opening parenthesis when calling
+                  functions, or indexing, like this:
+
+                        Method (a);
+                        b [10];
+
+                * Do not put a space after the opening parenthesis and the 
+                  closing one, ie:
+
+                        good: Method (a);       array [10];
+
+                        bad:  Method ( a );     array[ 10 ];
+
+                * Inside a code block, put the opening brace on the same line
+                  as the statement:
+
+                        good:
+                                if (a) {
+                                        Code ();
+                                        Code ();
+                                }
+
+                        bad:
+                                if (a) 
+                                {
+                                        Code ();
+                                        Code ();
+                                }
+
+                * Avoid using unnecessary open/close braces, vertical space
+                  is usually limited:
+
+                        good:
+                                if (a)
+                                        Code ();
+
+                        bad:
+                                if (a) {
+                                        Code ();
+                                }
+
+		* However, when defining loops where the subpart could be
+		  considered one statement, use open/close braces for
+		  clarity.  For example:
+
+			good:
+				while (true) {
+					if (a)
+					        foo = true;
+				}
+
+			bad:
+				while (true)
+					if (a)
+					        foo = true;
+
+
+                * When defining a method, use the C style for brace placement, 
+                  that means, use a new line for the brace, like this:
+
+                        good:
+                                void Method ()
+                                {
+                                }
+
+                        bad:
+                                void Method () {
+                                }
+
+                * Properties and indexers are an exception, keep the
+                  brace on the same line as the property declaration.
+                  Rationale: this makes it visually
+                  simple to distinguish them.
+
+                        good:
+                                int Property {
+                                        get {
+                                                return value;
+                                        }
+                                }
+
+                        bad:
+                                int Property 
+                                {
+                                        get {
+                                                return value;
+                                        }
+                                }
+
+                  Notice how the accessor "get" also keeps its brace on the same
+                  line.
+
+                  For very small properties, you can compress things:
+
+                        ok:
+                                int Property {
+                                        get { return value; }
+                                        set { x = value; }
+                                }
+
+                * Use white space in expressions liberally, except in the presence
+                  of parenthesis:
+
+                        good:
+
+                                if (a + 5 > Method (Blah () + 4))
+
+                        bad:
+                                if (a+5>Method(Blah()+4))
+
+		* This also applies for "for" loops:
+
+			good:
+				for (int i = 0; i < 100; i++)
+
+			bad:
+				for (int i=0;i<100;i++)
+
+		* Please also use spaces and clear language (capitalization,
+                  punctuation) in comments:
+
+			good:
+				// It's going to crash if we're not careful.
+
+			bad:
+				//its going to crash if were not careful
+
+                * For any new files, please use a descriptive introduction, like
+                  this:
+
+                        //
+                        // System.Comment.cs: Handles comments in System files.
+                        //
+                        // Copyright (C) 2002 Address, Inc. (http://www.address.com)
+                        //
+
+		* Also remember to include the license in comments at the top of
+                  the file.  Cut-and-paste this out of other source files in the
+                  tree.
+
+                * Switch statements have the case at the same indentation as the
+                  switch:
+
+                        switch (x) {
+                        case 'a':
+                                ...
+                        case 'b':
+                                ...
+                        }
+
+		* Large switch statements should have blank lines
+		  between case statements:
+			 
+			 switch (x) {
+
+			 case 'a':
+				large code chunk;
+
+			 case 'b':
+				another code chunk;
+
+			 default:
+				another code chunk;
+			 }
+
+		* All method names and properties should be StudlyCapped.
+
+		* Private variable members of a class and function
+		  local variable names should be under_scored (no
+		  camelCase please).
+
+		* C# is a pretty verbose and heavily-nested language.  Don't
+                  worry about trying to fit everything into 80 columns.
+                  However, don't be afraid to use multiple lines, especially
+                  with function arguments when it may be easier to read or
+                  more aesthetic to do so.
+		  
+		  If you are splitting a function declaration into multiple
+		  lines, the arguments should be aligned to match the
+		  opening brace:
+
+			void Function (int arg1, bool arg2,
+				       bool arg3)
+			{
+			}
+
+		  If you are splitting a function invokation, the overflowed
+		  lines begin at the next tabbed position:
+
+			MyFunction ("Very long argument 1",
+				"Next argument begins at next tab",
+				"And so on");
+
+* Best practices
+
+	* Use String.Empty instead of "" for any comparisons.  This is
+	  because using "" will cause a new string to be allocated,
+	  whereas String.Empty is an interned reference.
+
+	* Instead of comparing strings against both null and "" or
+	  String.Empty, use String.IsNullOrEmpty().  This function
+	  was added in .NET 2.0, so large portions of the code
+	  don't use this yet.
+
+If you are using Emacs, you might want to put something like this
+in your .emacs file:
+
+(defun poor-mans-csharp-mode ()
+  (java-mode)
+  (setq mode-name "C#")
+  (set-variable 'tab-width 8)
+  (set-variable 'indent-tabs-mode t)
+  (set-variable 'c-basic-offset 8)
+  (c-set-offset 'inline-open 0)
+  (c-set-offset 'case-label 0)
+)
+
+(setq auto-mode-alist (append '(("\\.cs\\'" . poor-mans-csharp-mode))
+			      auto-mode-alist))
+

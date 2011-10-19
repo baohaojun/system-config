@@ -1,0 +1,42 @@
+<!ENTITY beagle.context.search.link.label           "Hitta referenser till denna länk">
+<!ENTITY beagle.context.search.page.label           "Hitta referenser till denna sida">
+
+<!ENTITY beagle.pref.label                          "Inställningar för Beagle">
+<!ENTITY beagle.pref.security.active.label          "Indexera sidor med säkert innehåll">
+<!ENTITY beagle.pref.bookmark.active.label          "Indexera bokmärken när fönstret stängs">
+<!ENTITY beagle.pref.prompt.keywords.active.label   "Fråga efter nyckelord när indexering vid behov">
+<!ENTITY beagle.pref.default.action.label           "Standardåtgärd">
+<!ENTITY beagle.pref.default.action.tooltip         "Vad göra när URL:en inte matchar någon regel">
+<!ENTITY beagle.pref.conflict.action.label          "Konfliktåtgärd">
+<!ENTITY beagle.pref.conflict.action.tooltip        "Vad göra när URL:en matchar båda reglerna i inkludering- och exkluderingslistan">
+<!ENTITY beagle.pref.action.index.label             "Index">
+<!ENTITY beagle.pref.action.noindex.label           "Inget index">
+<!ENTITY beagle.pref.groupbox.general.label         "Allmänt">
+<!ENTITY beagle.pref.groupbox.include.label         "Inkludera">
+<!ENTITY beagle.pref.groupbox.exclude.label         "Exkludera">
+<!ENTITY beagle.pref.filter.name.label              "Namn">
+<!ENTITY beagle.pref.filter.pattern.label           "Mönster">
+<!ENTITY beagle.pref.filter.patterntype.label       "Mönstertyp">
+<!ENTITY beagle.pref.filter.add.label		        "Lägg till">
+<!ENTITY beagle.pref.filter.remove.label            "Ta bort">
+<!ENTITY beagle.pref.filter.add.dlg.title           "Lägg till regel">
+<!ENTITY beagle.pref.help.label                     "Hjälp">
+<!ENTITY beagle.pref.save.label                     "Spara">
+<!ENTITY beagle.pref.cancel.label                   "Avbryt">
+
+<!ENTITY beagle.run.index.this.label                "Indexera denna sida">
+<!ENTITY beagle.run.always.index.label              "Indexera alltid denna webbplats">
+<!ENTITY beagle.run.never.index.label               "Indexera aldrig denna webbplats">
+<!ENTITY beagle.run.preferences.label               "Inställningar">
+<!ENTITY beagle.run.context.menu.label              "Beagle">
+<!ENTITY beagle.run.index.link.label                "Indexera denna länk">
+<!ENTITY beagle.run.index.image.label               "Indexera denna bild">
+<!ENTITY beagle.index.link.start.label              "Starta">
+<!ENTITY beagle.index.link.stop.label               "Stoppa">
+
+<!ENTITY beagle.bookmark.index.modified.label       "Indexera ändrade bokmärken">
+
+<!ENTITY beagle.sidebar.title "Sökhistorik för Beagle">
+<!ENTITY beagle.sidebar.commandkey "B">
+<!ENTITY beagle.sidebar.modifierskey "shift accel">
+

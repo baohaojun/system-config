@@ -1,0 +1,46 @@
+<Type Name="IndexableType" FullName="Beagle.IndexableType">
+  <TypeSignature Language="C#" Value="public enum IndexableType" />
+  <AssemblyInfo>
+    <AssemblyName>Beagle</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Members>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="Add" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Beagle.IndexableType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PropertyChange">
+      <MemberSignature Language="C#" Value="PropertyChange" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Beagle.IndexableType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="Remove" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Beagle.IndexableType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

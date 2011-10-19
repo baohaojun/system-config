@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type"text/css" ?>
+<?xml-stylesheet href="chrome://beagle/skin/sidebar.css" type"text/css" ?>
+<!DOCTYPE page SYSTEM "chrome://beagle/locale/beagle.dtd">
+
+<page
+    id="beagle-sidebar-page"
+    title="&beagle.sidebar.title;"
+    onload="init();"
+    onunload="cleanup();"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    >
+    <script src="chrome://beagle/content/beagleSearch.js" />
+    <vbox flex="1">
+	<textbox id="searchinput" />
+	<html:div id="resultlist" />
+    </vbox>
+</page>

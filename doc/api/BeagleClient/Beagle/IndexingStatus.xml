@@ -1,0 +1,36 @@
+<Type Name="IndexingStatus" FullName="Beagle.IndexingStatus">
+  <TypeSignature Language="C#" Value="public enum IndexingStatus" />
+  <AssemblyInfo>
+    <AssemblyName>Beagle</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Members>
+    <Member MemberName="NotRunning">
+      <MemberSignature Language="C#" Value="NotRunning" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Beagle.IndexingStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Running">
+      <MemberSignature Language="C#" Value="Running" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Beagle.IndexingStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

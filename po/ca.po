@@ -1,0 +1,2332 @@
+#
+# Copyright (C) 2005-2008 Jordi Mas i Hernàndez, jmas@softcatala.org
+# Traducció del Beagle al català
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Beagle\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-10-26 00:55+0530\n"
+"PO-Revision-Date: 2008-10-28 00:30+0530\n"
+"Last-Translator: <Jordi Mas> jmas@softcatala.org\n"
+"Language-Team: tradgnome@softcatala.net\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Historial de converses</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "Visualitzador de MI"
+
+#: ../ImLogViewer/ImLogWindow.cs:108 ../ImLogViewer/ImLogWindow.cs:120
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Converses a {0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:111
+#, csharp-format
+msgid "Conversations in {0} ({1})"
+msgstr "Converses a {0} ({1})"
+
+#: ../ImLogViewer/ImLogWindow.cs:127
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Converses amb {0}"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "En aquest ordinador"
+
+#: ../Util/StringFu.cs:125 ../search/Beagle.Search.Tiles/Utils.cs:134
+#: ../search/Beagle.Search.Tiles/Utils.cs:216
+msgid "Today"
+msgstr "Avui"
+
+#: ../Util/StringFu.cs:127 ../search/Beagle.Search.Tiles/Utils.cs:132
+#: ../search/Beagle.Search.Tiles/Utils.cs:214
+msgid "Yesterday"
+msgstr "Ahir"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:130
+msgid "MMM d"
+msgstr "MMM d"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:133
+msgid "MMM d, yyyy"
+msgstr "MMM d, yyyy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:136
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:142
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:159
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Avui, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:162
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Ahir, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:167
+#, csharp-format
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "fa {0} dia, {1}"
+msgstr[1] "fa {0} dies, {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:173
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:178
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "MMMM d yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:188
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} hora"
+msgstr[1] "{0} hores"
+
+#: ../Util/StringFu.cs:195
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minut"
+msgstr[1] "{0} minuts"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:229
+#, csharp-format
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} byte"
+msgstr[1] "{0} bytes"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:233
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} kB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:236
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+
+#: ../epiphany-extension/beagle.py.in:167
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "El Beagle està indexant %s"
+
+#: ../epiphany-extension/beagle.py.in:187
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "El Beagle està indexant l'enllaç %s"
+
+#: ../epiphany-extension/beagle.py.in:232
+msgid "Index This Page"
+msgstr "Indexa aquesta pàgina"
+
+#: ../epiphany-extension/beagle.py.in:239
+msgid "Index Link"
+msgstr "Indexa l'enllaç"
+
+#: ../epiphany-extension/beagle.py.in:246
+msgid "Reload Config File"
+msgstr "Torna a carregar el fitxer de configuració"
+
+#: ../epiphany-extension/beagle.py.in:255
+msgid "Auto Index"
+msgstr "Índex automàtic"
+
+#: ../epiphany-extension/beagle.py.in:262
+msgid "Prompt key words when index on demand"
+msgstr "Sol·licita les paraules claus a l'indexar sota demanda"
+
+#: ../epiphany-extension/beagle.py.in:289
+msgid "Extra keywords to index"
+msgstr "Paraules claus extres per a indexar"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:27
+msgid "Index Information"
+msgstr "Informació de l'índex"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:30
+msgid "Number of items currently indexed:"
+msgstr "Nombre d'elements indexats:"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:45
+msgid "<i>NOTE: The search service is still indexing new data.</i>"
+msgstr "<i>NOTA: El servei de cerca encara està indexant dades noves.</i>"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "No s'ha trobat cap resultat."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:21
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr "Cap fitxer de l'ordinador no conté la cerca «{0}»"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:24
+msgid "You can select \"Find in: All\" to search everywhere."
+msgstr "Podeu seleccionar «Cerca a: Tots» per cercar a tots els llocs."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+"Assegureu-vos que heu escrit correctament les paraules de la cerca i que "
+"accidentalment no hàgiu comès cap error tipogràfic."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:28
+msgid ""
+"If you are searching for GMail emails, select \"Global\" Search Domain using "
+"the \"Search\" menu."
+msgstr ""
+"Si esteu cercant correus electrònics del GMail, seleccioneu «Global» en el domini de cerca utilitzant el menú «Cerca»."
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+"Podeu emprar majúscules i minúscules; la cerca no diferencia entre "
+"majúscules i minúscules."
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr ""
+"Per a cercar per termes opcionals, useu OR. P. ex.: <b>Jordi OR Carme</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+"Per a excloure termes de la cerca, useu el signe menys. P. ex.: <b>-gats</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+"Quan cerqueu una frase, useu les cometes. P. ex.: <b>\"Hi ha dragons\"</b> "
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:14
+msgid ""
+"Specify the extension to search among files with that extension. ex: <b>bean "
+"soup .html</b>"
+msgstr ""
+"Especifiqueu la extensió de cerca entre els fitxers amb aquesta extensió. Per exemple, <b>sopa d'all.html</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:20
+#: ../search/Beagle.Search/UIManager.cs:106
+msgid "Quick Tips"
+msgstr "Consells ràpids"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "El Beagle no es pot executar com a usuari primari"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:14
+msgid ""
+"For security reasons, Beagle cannot be run as root. You should restart as a "
+"regular user."
+msgstr ""
+"Per raons de seguretat, el Beagle no es pot executar com a usuari primari. "
+"És recomanable reiniciar com a usuari normal."
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:17
+msgid "Search service not running"
+msgstr "El servei de cerca no s'està executant"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:19
+msgid ""
+"The search service does not appear to be running. You can start it by "
+"clicking the button below."
+msgstr ""
+"No sembla que el servei de cerca estigui funcionant. Podeu iniciar-lo fent "
+"clic al botó de baix."
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:22
+msgid "Start search service"
+msgstr "Inicia el servei de cerca"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr "Dins de l'arxiu {0}"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/File.cs:164
+msgid "File:"
+msgstr "Fitxer:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:81
+#: ../search/Beagle.Search.Tiles/Calendar.cs:44
+#: ../search/Beagle.Search.Tiles/File.cs:168
+#: ../search/Beagle.Search.Tiles/Note.cs:70
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
+#: ../search/Beagle.Search.Tiles/Task.cs:41
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:59
+msgid "Title:"
+msgstr "Títol:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:83
+msgid "Inside File:"
+msgstr "Dins del fitxer:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:86
+#: ../search/Beagle.Search.Tiles/File.cs:173
+msgid "Author:"
+msgstr "Autor/a:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:44
+msgid "Description:"
+msgstr "Descripció:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "Hora:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:61
+msgid "Location:"
+msgstr "Ubicació:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:65
+msgid "Attendees:"
+msgstr "Assistents:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Envia per correu"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "Adreça electrònica:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:70
+msgid "Mobile Phone:"
+msgstr "Telèfon mòbil:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:72
+msgid "Work Phone:"
+msgstr "Telèfon de la feina:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:74
+msgid "Home Phone:"
+msgstr "Telèfon particular:"
+
+#: ../search/Beagle.Search.Tiles/File.cs:35
+msgid "Reveal in Folder"
+msgstr "Mostra a la carpeta"
+
+#: ../search/Beagle.Search.Tiles/File.cs:36
+msgid "E-Mail"
+msgstr "Correu electrònic"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Beagle.Search.Tiles/File.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Mou a la paperera"
+
+#: ../search/Beagle.Search.Tiles/File.cs:41
+msgid "Find Documents From Same Author"
+msgstr "Cera documents del mateix autor"
+
+#: ../search/Beagle.Search.Tiles/File.cs:170
+#: ../search/Beagle.Search.Tiles/Folder.cs:51
+#: ../search/Beagle.Search.Tiles/Note.cs:71
+msgid "Last Edited:"
+msgstr "Última edició:"
+
+#: ../search/Beagle.Search.Tiles/File.cs:175
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Image.cs:87
+#: ../search/Beagle.Search.Tiles/Video.cs:45
+msgid "Full Path:"
+msgstr "Camí complet:"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:31
+msgid "Empty"
+msgstr "Buit"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:33
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Conté {0} element"
+msgstr[1] "Conté {0} elements"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:30
+msgid "IM Conversation"
+msgstr "Conversa MI"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
+msgid "Name:"
+msgstr "Nom:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:100
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Received:"
+msgstr "Data de rebuda:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:104
+msgid "Status:"
+msgstr "Estat:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:119
+msgid "Idle"
+msgstr "Desocupat"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:126
+msgid "Away"
+msgstr "Absent"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:129
+msgid "Offline"
+msgstr "Desconnectat"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:132
+msgid "Available"
+msgstr "Disponible"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Beagle.Search.Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Defineix com a fons d'escriptori"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:84
+#: ../search/Beagle.Search.Tiles/Note.cs:75
+msgid "Tags:"
+msgstr "Etiquetes:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:86
+#: ../search/Beagle.Search.Tiles/Video.cs:44
+msgid "Modified:"
+msgstr "Modificat:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:96
+msgid "Comment:"
+msgstr "Comentari:"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:45
+msgid "Mail attachment"
+msgstr "Adjunció del correu"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:48
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:70
+msgid "Find Messages From Sender"
+msgstr "Cerca missatges del remitent"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:58
+msgid "(untitled)"
+msgstr "(sense títol)"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:68
+msgid "Send in Mail"
+msgstr "Envia per correu"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:103
+msgid "Subject:"
+msgstr "Assumpte:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "To:"
+msgstr "A:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "From:"
+msgstr "De:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Sent:"
+msgstr "Data d'enviament:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:114
+msgid "Folder:"
+msgstr "Carpeta:"
+
+#: ../search/Beagle.Search.Tiles/Manpage.cs:56
+msgid "Manual page"
+msgstr "Pàgina de manual"
+
+#: ../search/Beagle.Search.Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Obre amb"
+
+#: ../search/Beagle.Search.Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} diapositiva"
+msgstr[1] "{0} diapositives"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
+msgid "Site:"
+msgstr "Títol:"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:61
+msgid "Date Viewed:"
+msgstr "Última visualització:"
+
+#: ../search/Beagle.Search.Tiles/Task.cs:47
+msgid "Date:"
+msgstr "Data:"
+
+#: ../search/Beagle.Search.Tiles/TextDocument.cs:38
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} pàgina"
+msgstr[1] "{0} pàgines"
+
+#. Add the default 'Open' menu item
+#: ../search/Beagle.Search.Tiles/Tile.cs:100
+msgid "Open"
+msgstr "Obre"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:25
+#: ../search/Beagle.Search/SearchWindow.cs:83
+msgid "Applications"
+msgstr "Aplicacions"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:27
+#: ../search/Beagle.Search/SearchWindow.cs:93
+msgid "Contacts"
+msgstr "Contactes"
+
+# FIXME
+#: ../search/Beagle.Search.Tiles/Utils.cs:29
+#: ../search/Beagle.Search/SearchWindow.cs:95
+msgid "Calendar Events"
+msgstr "Esdeveniments del calendari"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:31
+msgid "Folders"
+msgstr "Carpetes"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:33
+msgid "Images"
+msgstr "Imatges"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:35
+msgid "Audio"
+msgstr "Àudio"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:37
+msgid "Video"
+msgstr "Vídeo"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:39
+#: ../search/Beagle.Search/SearchWindow.cs:84
+msgid "Documents"
+msgstr "Documents"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:41
+msgid "Conversations"
+msgstr "Converses"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:43
+#: ../search/Beagle.Search/SearchWindow.cs:91
+msgid "Websites"
+msgstr "Llocs web"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:45
+#: ../search/Beagle.Search/SearchWindow.cs:90
+msgid "News Feeds"
+msgstr "Canals de notícies"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:47
+#: ../search/Beagle.Search/SearchWindow.cs:88
+msgid "Archives"
+msgstr "Arxius"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:136
+#: ../search/Beagle.Search.Tiles/Utils.cs:218
+msgid "Tomorrow"
+msgstr "Demà"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:234
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "Fa {0} setmana"
+msgstr[1] "Fa {0} setmanes"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:236
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "En {0} setmana"
+msgstr[1] "En {0} setmanes"
+
+# csharp-format
+#. Let's say a year and a half to stop saying months
+#: ../search/Beagle.Search.Tiles/Utils.cs:238
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "Fa {0} mes"
+msgstr[1] "Fa {0} mesos"
+
+# csharp-format
+#: ../search/Beagle.Search.Tiles/Utils.cs:240
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "En {0} mes"
+msgstr[1] "En {0} mesos"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:242
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "Fa {0} any"
+msgstr[1] "Fa {0} anys"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:244
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "En {0} any"
+msgstr[1] "En {0} anys"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:60
+msgid "URL:"
+msgstr "URL:"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:61
+msgid "Accessed:"
+msgstr "Darrer accés:"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
+#: ../search/Beagle.Search/SearchWindow.cs:117
+msgid "Desktop Search"
+msgstr "Cerca a l'escriptori"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
+msgid "No Recent Searches"
+msgstr "No hi ha cerques recents"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
+msgid "Recent Searches"
+msgstr "Cerques recents"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
+msgid "Clear"
+msgstr "Neteja"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
+msgid "Quit"
+msgstr "Surt"
+
+#: ../search/Beagle.Search/Category.cs:142
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} resultat"
+msgstr[1] "{0} resultats"
+
+#: ../search/Beagle.Search/Category.cs:144
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} de {2}"
+
+#: ../search/Beagle.Search/Driver.cs:135
+msgid "Session D-Bus not accessible"
+msgstr "La sessió del D-Bus no és accessible"
+
+#: ../search/Beagle.Search/Driver.cs:136
+msgid ""
+"Cannot run with parameter '--icon' when session D-Bus is not accessible."
+msgstr ""
+"No es pot executar amb el paràmetre «--icon» quan la sessió D-Bus no és accessible."
+
+#: ../search/Beagle.Search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "Amaga"
+
+#. Translators: This labels are used in a combo-box to allow
+#. * the user to select which kind of data he wants to search.
+#.
+#: ../search/Beagle.Search/SearchWindow.cs:81
+msgid "All"
+msgstr "Tot"
+
+#. Default search scope. Should be at the first
+#: ../search/Beagle.Search/SearchWindow.cs:82
+msgid "My Files"
+msgstr "Fitxers"
+
+#: ../search/Beagle.Search/SearchWindow.cs:85
+msgid "Pictures"
+msgstr "Fotografies"
+
+#: ../search/Beagle.Search/SearchWindow.cs:86
+msgid "Media"
+msgstr "Elements multimèdia"
+
+#: ../search/Beagle.Search/SearchWindow.cs:87
+msgid "Source Code"
+msgstr "Codi font"
+
+#: ../search/Beagle.Search/SearchWindow.cs:89
+msgid "Emails"
+msgstr "Correus electrònics"
+
+#: ../search/Beagle.Search/SearchWindow.cs:92
+msgid "Chat Logs"
+msgstr "Registres del xat"
+
+#: ../search/Beagle.Search/SearchWindow.cs:94
+msgid "Notes"
+msgstr "Notes"
+
+#: ../search/Beagle.Search/SearchWindow.cs:138
+msgid "_Find in:"
+msgstr "C_erca a:"
+
+#: ../search/Beagle.Search/SearchWindow.cs:175
+msgid "Find Now"
+msgstr "Cerca ara"
+
+#: ../search/Beagle.Search/SearchWindow.cs:237
+msgid "Type in search terms"
+msgstr "Introduïu els termes de la cerca"
+
+#: ../search/Beagle.Search/SearchWindow.cs:238
+msgid "Start searching"
+msgstr "Inicia la cerca"
+
+#: ../search/Beagle.Search/SearchWindow.cs:254
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Cerca a l'escriptori: {0}"
+
+#: ../search/Beagle.Search/SearchWindow.cs:485
+msgid "There are computers near you running Beagle"
+msgstr "Hi ha ordinadors prop vostre executant el Beagle"
+
+#: ../search/Beagle.Search/SearchWindow.cs:486
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr "Podeu escollir la cerca a altres ordinadors des de el menú «Cerca»."
+
+#: ../search/Beagle.Search/SearchWindow.cs:518
+msgid "Search service started"
+msgstr "El servei de cerca s'ha iniciat"
+
+#: ../search/Beagle.Search/SearchWindow.cs:529
+msgid "Starting service failed"
+msgstr "S'ha produït un error en iniciar el servei"
+
+#: ../search/Beagle.Search/SearchWindow.cs:530
+msgid "Service is already running!"
+msgstr "El servei ja s'està executant"
+
+#: ../search/Beagle.Search/SearchWindow.cs:545
+msgid "Stopping service failed"
+msgstr "S'ha produït un error en aturar el servei"
+
+#: ../search/Beagle.Search/SearchWindow.cs:546
+msgid "Service was not running!"
+msgstr "El servei no s'està executant"
+
+#: ../search/Beagle.Search/SearchWindow.cs:560
+msgid "Search service stopped"
+msgstr "S'ha aturat el servei de cerca"
+
+#: ../search/Beagle.Search/SearchWindow.cs:599
+msgid "Your data is being indexed"
+msgstr "S'estan indexant les dades"
+
+#: ../search/Beagle.Search/SearchWindow.cs:600
+msgid ""
+"The search service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr ""
+"El servei de cerca està indexant les dades. Els resultats de la cerca poden "
+"ser incomplets fins que la indexació hagi finalitzat."
+
+#: ../search/Beagle.Search/SearchWindow.cs:626
+#, csharp-format
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "S'està mostrant {0} coincidència"
+msgstr[1] "S'estan mostrant totes les {0} coincidències"
+
+#: ../search/Beagle.Search/SearchWindow.cs:628
+#, csharp-format
+msgid "Too many matches. Showing latest {0} of total {1}"
+msgstr "Massa coincidències. Es mostren {0} d'un total de {1}"
+
+#: ../search/Beagle.Search/UIManager.cs:53
+msgid "Close Desktop Search"
+msgstr "Tanca la cerca a l'escriptori"
+
+#: ../search/Beagle.Search/UIManager.cs:58
+#: ../search/Beagle.Search/UIManager.cs:85
+msgid "Exit Desktop Search"
+msgstr "Surt de la cerca a l'escriptori"
+
+#: ../search/Beagle.Search/UIManager.cs:65
+msgid "_Search"
+msgstr "_Cerca"
+
+#: ../search/Beagle.Search/UIManager.cs:68
+msgid "Search _Domains"
+msgstr "_Dominis de cerca"
+
+#: ../search/Beagle.Search/UIManager.cs:71
+msgid "_Actions"
+msgstr "_Accions"
+
+#: ../search/Beagle.Search/UIManager.cs:74
+msgid "_View"
+msgstr "_Visualitza"
+
+#: ../search/Beagle.Search/UIManager.cs:77
+msgid "Service _Options"
+msgstr "_Opcions del servei"
+
+#: ../search/Beagle.Search/UIManager.cs:80
+msgid "_Help"
+msgstr "A_juda"
+
+#: ../search/Beagle.Search/UIManager.cs:
+msgid "Start service"
+msgstr "Inicia el servei"
+
+#: ../search/Beagle.Search/UIManager.cs:91
+msgid "Stop service"
+msgstr "Atura el servei"
+
+#: ../search/Beagle.Search/UIManager.cs:94
+msgid "Index information"
+msgstr "Informació de l'índex"
+
+#: ../search/Beagle.Search/UIManager.cs:97
+msgid "_Contents"
+msgstr "_Continguts"
+
+#: ../search/Beagle.Search/UIManager.cs:99
+msgid "Help - Table of Contents"
+msgstr "Ajuda - Taula de continguts"
+
+#: ../search/Beagle.Search/UIManager.cs:103
+msgid "About Desktop Search"
+msgstr "Quant a la cerca a l'escriptori"
+
+#: ../search/Beagle.Search/UIManager.cs:125
+msgid "Sort by Date _Modified"
+msgstr "_Ordena per data de modificació"
+
+#: ../search/Beagle.Search/UIManager.cs:126
+msgid "Sort the most-recently-modified matches first"
+msgstr "Ordena primer els resultats modificats recentment"
+
+#: ../search/Beagle.Search/UIManager.cs:129
+msgid "Sort by _Name"
+msgstr "Orde_na per nom"
+
+#: ../search/Beagle.Search/UIManager.cs:130
+msgid "Sort matches by name"
+msgstr "Ordena els resultats per nom"
+
+#: ../search/Beagle.Search/UIManager.cs:133
+msgid "Sort by _Relevance"
+msgstr "Ordena per _rellevància"
+
+#: ../search/Beagle.Search/UIManager.cs:134
+msgid "Sort the best matches first"
+msgstr "Ordena els millors resultats primer"
+
+#: ../search/Beagle.Search/UIManager.cs:141
+msgid "_Local"
+msgstr "_Local"
+
+#: ../search/Beagle.Search/UIManager.cs:143
+msgid "Search in personal data in this computer"
+msgstr "Cerca només en les dades personals d'aquest ordinador"
+
+#: ../search/Beagle.Search/UIManager.cs:147
+msgid "_System"
+msgstr "_Sistema"
+
+#: ../search/Beagle.Search/UIManager.cs:149
+msgid "Search in system data on this computer"
+msgstr "Cerca en les dades del sistema d'aquest ordinador"
+
+#: ../search/Beagle.Search/UIManager.cs:153
+msgid "_Global"
+msgstr "_Global"
+
+#: ../search/Beagle.Search/UIManager.cs:155
+msgid "Search in internet services"
+msgstr "Cerca als serveis d'Internet"
+
+#: ../search/Beagle.Search/UIManager.cs:159
+msgid "_Neighborhood"
+msgstr "_Entorn"
+
+#: ../search/Beagle.Search/UIManager.cs:161
+msgid "Search on computers near me"
+msgstr "Cerca a ordinadors prop meu"
+
+#: ../search/Beagle.Search/UIManager.cs:169
+msgid "Show Details"
+msgstr "Mostra els detalls"
+
+#: ../search/Beagle.Search/UIManager.cs:276
+msgid "Couldn't launch web browser"
+msgstr "No s'ha pogut iniciar el navegador web"
+
+#: ../search/beagle-search.desktop.in.in.h:1
+msgid "Search"
+msgstr "Cerca"
+
+#: ../search/beagle-search.desktop.in.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Cerca dades al vostre escriptori"
+
+#: ../tools/Settings.cs:57
+msgid "An error occurred"
+msgstr "S'ha produït un error"
+
+#: ../tools/Settings.cs:233 ../tools/Settings.cs:711
+#,csharp-format
+msgid "Display the search window by pressing {0}"
+msgstr "Mostra la finestra de cerca en prémer {0}"
+
+#: ../tools/Settings.cs:363
+msgid "Reload configuration"
+msgstr "Actualitza la configuració"
+
+#: ../tools/Settings.cs:364
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"El fitxer de configuració ha estat modificat per una altra aplicació. Voleu "
+"descartar els valors actuals i llegir la configuració del disc?"
+
+#: ../tools/Settings.cs:498
+msgid "Select Path"
+msgstr "Seleccioneu un camí"
+
+#: ../tools/Settings.cs:517
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr ""
+"El camí seleccionat ja està seleccionat per a ser indexat i no s'ha afegit."
+
+#: ../tools/Settings.cs:520
+msgid ""
+"The selected path wasn't added. The list contains items that supersedes it "
+"and the data is already being indexed."
+msgstr ""
+"El camí seleccionat no s'ha afegit. La llista conté elements que excedeixen "
+"la seva capacitat i les dades ja s'estan indexant."
+
+#: ../tools/Settings.cs:531
+msgid "Path not added"
+msgstr "El camí no s'ha afegit"
+
+#: ../tools/Settings.cs:540
+msgid "Remove obsolete paths"
+msgstr "Elimina els camins obsolets"
+
+#: ../tools/Settings.cs:541
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Si afegiu aquest camí, alguns dels camins d'inclusió existents quedaran "
+"obsolets, i això causarà l'eliminació dels antics camins obsolets. Esteu "
+"segur que el voleu afegir?"
+
+#: ../tools/Settings.cs:567
+msgid "Remove path"
+msgstr "Elimina el camí"
+
+#: ../tools/Settings.cs:568
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Esteu segur que voleu eliminar aquest camí de la llista de directoris que "
+"s'inclouran a la indexació?"
+
+#: ../tools/Settings.cs:597
+msgid "Remove item"
+msgstr "Elimina l'element"
+
+#: ../tools/Settings.cs:598
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Esteu segur que voleu eliminar aquest element de la llista de dades que "
+"s'exclouran de la indexació?"
+
+#: ../tools/Settings.cs:645
+msgid "Remote host already present in the list."
+msgstr "L'ordinador remot ja és a la llista."
+
+#: ../tools/Settings.cs:655
+msgid "Remote beagle host not added"
+msgstr "No s'ha afegit l'ordinador remot del Beagle"
+
+#: ../tools/Settings.cs:670
+msgid "Remove host"
+msgstr "Elimina l'ordinador"
+
+#: ../tools/Settings.cs:671
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "Esteu segur que voleu eliminar aquest ordinador de la llista?"
+
+#: ../tools/Settings.cs:774 ../tools/Settings.cs:863 ../tools/Settings.cs:944
+#: ../tools/Settings.cs:1049 ../tools/Settings.cs:1771
+msgid "Name"
+msgstr "Nom"
+
+#: ../tools/Settings.cs:857
+msgid "Type"
+msgstr "Tipus"
+
+#: ../tools/Settings.cs:910
+msgid "Path:"
+msgstr "Camí:"
+
+#: ../tools/Settings.cs:913
+msgid "Pattern:"
+msgstr "Patró:"
+
+#: ../tools/Settings.cs:916
+msgid "Mail folder:"
+msgstr "Carpeta de correu:"
+
+#: ../tools/Settings.cs:951
+msgid "Address"
+msgstr "Adreça"
+
+#: ../tools/Settings.cs:1296
+msgid "Select Folder"
+msgstr "Seleccioneu una carpeta"
+
+#: ../tools/Settings.cs:1322 ../tools/settings.glade.h:36
+msgid "P_ath:"
+msgstr "_Camí:"
+
+#: ../tools/Settings.cs:1327
+msgid "M_ail folder:"
+msgstr "Ca_rpeta de correu:"
+
+#: ../tools/Settings.cs:1332
+msgid "P_attern:"
+msgstr "P_atró:"
+
+#: ../tools/Settings.cs:1356
+msgid "Error adding path"
+msgstr "S'ha produït un error en afegir el camí"
+
+#: ../tools/Settings.cs:1357
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"El camí indicat no s'ha pogut trobar i per tant no s'ha pogut afegir a la "
+"llista de recursos exclosos de la indexació."
+
+#: ../tools/Settings.cs:1395
+#, csharp-format
+msgid "Connecting to {0}"
+msgstr "S'està connectant amb {0}"
+
+#: ../tools/Settings.cs:1731
+msgid "Evolution's mail."
+msgstr "Correu de l'Evolution."
+
+#: ../tools/Settings.cs:1732
+msgid "Evolution's address book, memos and tasks."
+msgstr "Adreces d'interès, llistes d'anotacions i tasques de l'Evolution."
+
+#: ../tools/Settings.cs:1733
+msgid "Thunderbird's email."
+msgstr "Correu electrònic del Thunderbird."
+
+#: ../tools/Settings.cs:1734
+msgid "RSS feeds from Akregator."
+msgstr "Canals RSS de l'Akregator."
+
+#: ../tools/Settings.cs:1735
+msgid "RSS feeds from Blam."
+msgstr "Canals RSS del Blam."
+
+#: ../tools/Settings.cs:1736
+msgid "Files and folders on the local file system."
+msgstr "Fitxers i carpetes en el sistema de fitxers local."
+
+#: ../tools/Settings.cs:1737
+msgid "Mail messages from KMail."
+msgstr "Missatges de correu electrònic del KMail."
+
+#: ../tools/Settings.cs:1738
+msgid "Notes from KNotes."
+msgstr "Notes del KNotes."
+
+#: ../tools/Settings.cs:1739
+msgid "Agenda from KOrganizer."
+msgstr "Agenda del KOrganizer."
+
+#: ../tools/Settings.cs:1740
+msgid "Contacts from KAddressBook."
+msgstr "Contactes del KAddressBook."
+
+#: ../tools/Settings.cs:1741
+msgid "Konqueror's bookmarks."
+msgstr "Adreces d'interès del Konqueror."
+
+#: ../tools/Settings.cs:1742
+msgid "Konqueror's history."
+msgstr "Historial del Konqueror."
+
+#: ../tools/Settings.cs:1743
+msgid "IMs and chats from Konversation."
+msgstr "Missatgeria instantània i xats del Konversation."
+
+#: ../tools/Settings.cs:1744
+msgid "IMs and chats from Kopete"
+msgstr "Missatgeria instantània i xats del Kopete"
+
+#: ../tools/Settings.cs:1745
+msgid "Mind-maps from Labyrinth."
+msgstr "Mapes mentals del Labyrinth."
+
+#: ../tools/Settings.cs:1746
+msgid "RSS feeds from Liferea."
+msgstr "Canals RSS del Lifearea."
+
+# N.T.: Emblems ho traduïm per distintius al Nautilus
+#: ../tools/Settings.cs:1747
+msgid "Nautilus' metadata (emblems, notes, etc.)"
+msgstr "Metadades del Nautilus (distintius, notes, etc.)"
+
+#: ../tools/Settings.cs:1748
+msgid "Search other search services in the network (EXPERIMENTAL)"
+msgstr "Cerca a altres serveis de cerca a la xarxa (experimental)"
+
+#: ../tools/Settings.cs:1749
+msgid "Opera's bookmarks and browsing history."
+msgstr "Adreces d'interès i historial de navegació de l'Opera."
+
+#: ../tools/Settings.cs:1750
+msgid "IMs and chats from Pidgin."
+msgstr "Missatgeria instantània i xats del Pidgin"
+
+#: ../tools/Settings.cs:1751
+msgid "Notes from Tomboy."
+msgstr "Notes del Tomboy."
+
+#. System-wide indexes
+#: ../tools/Settings.cs:1753
+msgid "(System) Applications"
+msgstr "Aplicacions (sistema)"
+
+#: ../tools/Settings.cs:1754
+msgid "(System) Help files"
+msgstr "Fitxers d'ajuda (sistema)"
+
+#: ../tools/Settings.cs:1755
+msgid "(System) Manual pages"
+msgstr "Pàgines de manual (sistema)"
+
+#: ../tools/Settings.cs:1756
+msgid "(System) Supplementary search results using 'locate' command"
+msgstr "Cerques suplementàries utilitzant l'ordre  «locate» (sistema)"
+
+#: ../tools/Settings.cs:1757
+msgid "(System) Mono documentation"
+msgstr "Documentació del Mono (sistema)"
+
+#: ../tools/Settings.cs:1758
+msgid "(System) Files from Windows' partition"
+msgstr "Fitxers de la partició del Windows (sistema)"
+
+#: ../tools/Settings.cs:1772
+msgid "Description"
+msgstr "Descripció"
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search"
+msgstr "Configura la cerca a l'escriptori"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Search & Indexing"
+msgstr "Cerca i indexació"
+
+#: ../tools/keygrabber.py:56
+msgid "Grab key combination"
+msgstr "Captura de la combinació de tecles"
+
+#: ../tools/keygrabber.py:143
+msgid "Please press the new key combination"
+msgstr "Premeu la combinació de tecles noves"
+
+#: ../tools/keygrabber.py:192
+msgid "Disabled"
+msgstr "Inhabilitat"
+
+#: ../tools/settings.glade.h:1
+msgid ":"
+msgstr ":"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Administration</b>"
+msgstr "<b>Administració</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>Mostra</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Exclou un recurs</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>General</b>"
+msgstr "<b>General</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Local and System sources</b>"
+msgstr "<b>Recursos locals i del sistema</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Networking</b>"
+msgstr "<b>Xarxa</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "<b>Privacy</b>"
+msgstr "<b>Privadesa</b>"
+
+#: ../tools/settings.glade.h:9
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>Seleccioneu la carpeta del correu</b>"
+
+#: ../tools/settings.glade.h:10
+msgid "<b>User Interface</b>"
+msgstr "<b>Interfície d'usuari</b>"
+
+#: ../tools/settings.glade.h:11
+msgid "<i>Changes will take effect only after daemon restart.</i>"
+msgstr "<i>Els canvis no tindran efecte fins que es reinicii el domini</i>"
+
+#: ../tools/settings.glade.h:12
+msgid "<i>This setting does not apply while on battery power.</i>"
+msgstr "<i>Aquest paràmetre no s'aplica quan funcioni amb bateries.</i>"
+
+#: ../tools/settings.glade.h:13
+msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Es necessita contrasenya.</span>"
+
+#: ../tools/settings.glade.h:14
+msgid "Add Remote Host"
+msgstr "Afegeix un ordinador remot"
+
+#: ../tools/settings.glade.h:15
+msgid "Add a static host"
+msgstr "Afegeix un ordinador estàtic"
+
+#: ../tools/settings.glade.h:16
+msgid "Add any additional paths to be included for indexing."
+msgstr "Afegiu els camins addicionals a incloure a la indexació."
+
+#: ../tools/settings.glade.h:17
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr ""
+"Afegiu els ordinadors amb la cerca remota habilitada a on us vulgueu "
+"connectar."
+
+#: ../tools/settings.glade.h:18
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Definiu els tipus de resultats que han de ser visibles, i l'ordre en què "
+"s'han de presentar quan s'agrupin per tipus."
+
+#: ../tools/settings.glade.h:19
+msgid "Allow external access to local search services (EXPERIMENTAL)"
+msgstr "Permet l'accés extern als serveis de cerca locals (experimental)"
+
+#: ../tools/settings.glade.h:20
+msgid "Automatically s_tart searching after the user has stopped typing"
+msgstr ""
+"Inic_ia la cerca automàticament després que l'usuari ha deixat de teclejar"
+
+#: ../tools/settings.glade.h:21
+msgid "Change"
+msgstr "Canvia"
+
+#: ../tools/settings.glade.h:22
+msgid "Data sources"
+msgstr "Fonts de dades"
+
+#: ../tools/settings.glade.h:23
+msgid "Display the search window by pressing"
+msgstr "Mostra la finestra de cerca en prémer"
+
+#: ../tools/settings.glade.h:24
+msgid "Enable the data sources that you want to index and search."
+msgstr "Habiliteu les fonts de dades que voleu indexar i cercar."
+
+#: ../tools/settings.glade.h:25
+msgid "Enable web interface for local search service"
+msgstr "Habilita la interfície web per a serveis de cerca locals"
+
+#: ../tools/settings.glade.h:26
+msgid "Exclude Resource"
+msgstr "Exclou recurs"
+
+#: ../tools/settings.glade.h:27
+msgid "Filename _pattern"
+msgstr "Patró de_l nom de fitxer"
+
+#: ../tools/settings.glade.h:28
+msgid "I_ndex my home directory"
+msgstr "Inde_xa el meu directori inicial"
+
+#: ../tools/settings.glade.h:29
+msgid ""
+"In order for you to perform Beagle searches on this computer, you must enter "
+"a password."
+msgstr ""
+"Heu d'introduir una contrasenya per tal de poder fer cerques amb el Beagle "
+"en aquest ordinador."
+
+#: ../tools/settings.glade.h:30
+msgid "Index data while on _battery power"
+msgstr "Indexa dades quan funcioni amb _bateries"
+
+#: ../tools/settings.glade.h:31
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr "Indexa més ràpidament mentre l'estalvi de pantalla està activat"
+
+#: ../tools/settings.glade.h:32
+msgid "Index name:"
+msgstr "Nom de l'índex:"
+
+# N.T.: títol d'una pestanya a les preferències
+#: ../tools/settings.glade.h:33
+msgid "Indexing"
+msgstr "Indexació"
+
+# N.T.: títol d'una pestanya a les preferències
+#: ../tools/settings.glade.h:35
+msgid "Network options"
+msgstr "Opcions de la xarxa"
+
+#: ../tools/settings.glade.h:37
+msgid "Password for {0}"
+msgstr "Contrasenya per a {0}"
+
+#: ../tools/settings.glade.h:38
+msgid "Password:"
+msgstr "Contrasenya:"
+
+#: ../tools/settings.glade.h:39
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Seleccioneu el recurs que vulgueu excloure de la indexació."
+
+#: ../tools/settings.glade.h:40
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Seleccioneu la carpeta de correu que vulgueu excloure de la indexació."
+
+#: ../tools/settings.glade.h:41
+msgid "Require a password to search this computer remotely"
+msgstr ""
+"És necessària una contrasenya per a cercar en aquest ordinador remotament"
+
+#: ../tools/settings.glade.h:42
+msgid "Search Preferences"
+msgstr "Preferències de la cerca"
+
+# N.T.: títol d'una pestanya a les preferències
+#: ../tools/settings.glade.h:43
+msgid "Searching"
+msgstr "Cerca"
+
+#: ../tools/settings.glade.h:44
+msgid "Select Mail Folder"
+msgstr "Seleccioneu la carpeta del correu"
+
+#: ../tools/settings.glade.h:45
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Indiqueu els recursos, com ara camins, patrons, carpetes de correu o tipus "
+"d'objectes que vulgueu excloure de la indexació."
+
+#: ../tools/settings.glade.h:46
+msgid "Type:"
+msgstr "Tipus:"
+
+#: ../tools/settings.glade.h:47
+msgid "_Allow Beagle to be run as root"
+msgstr "_Permet el Beagle executar-se com a usuari primari"
+
+#: ../tools/settings.glade.h:48
+msgid "_Browse..."
+msgstr "_Navega..."
+
+#: ../tools/settings.glade.h:49
+msgid "_Choose from currently available hosts"
+msgstr "_Escolliu d'entre els ordinadors disponibles"
+
+#: ../tools/settings.glade.h:50
+msgid "_Folder path"
+msgstr "_Camí de la carpeta"
+
+#: ../tools/settings.glade.h:51
+msgid "_Hostname:"
+msgstr "_Nom d'ordinador:"
+
+#: ../tools/settings.glade.h:52
+msgid "_Mail folder"
+msgstr "_Carpeta del correu"
+
+#: ../tools/settings.glade.h:53
+msgid "_Password:"
+msgstr "_Contrasenya:"
+
+#: ../tools/settings.glade.h:54
+msgid "_Start search & indexing services automatically "
+msgstr "_Inicia automàticament els serveis de cerca i d'indexació"
+
+#~ msgid ""
+#~ "You can change the scope of your search using the \"Search\" menu. A "
+#~ "broader search scope might produce more results."
+#~ msgstr ""
+#~ "Podeu canviar l'abast de la cerca des del menú «Cerca». Un abast més ampli "
+#~ "de la cerca pot produir més resultats."
+
+#~ msgid "File Name:"
+#~ msgstr "Nom del fitxer:"
+
+#~ msgid "Showing the top {0} of {1} total matches"
+#~ msgid_plural "Showing the top {0} of {1} total matches"
+#~ msgstr[0] "S'està mostrant {0} coincidència més rellevant de les {1} totals"
+#~ msgstr[1] ""
+#~ "S'estan mostrant les {0} coincidències més rellevants de les {1} totals"
+
+#~ msgid ""
+#~ "file\n"
+#~ "files"
+#~ msgstr ""
+#~ "fitxer\n"
+#~ "fitxers"
+
+#~ msgid ""
+#~ "mail\n"
+#~ "email\n"
+#~ "e-mail"
+#~ msgstr ""
+#~ "correu\n"
+#~ "correu electrònic\n"
+#~ "mail"
+
+#~ msgid ""
+#~ "im\n"
+#~ "ims\n"
+#~ "instant message\n"
+#~ "instant messages\n"
+#~ "instant-message\n"
+#~ "instant-messages\n"
+#~ "chat\n"
+#~ "chats"
+#~ msgstr ""
+#~ "mi\n"
+#~ "mis\n"
+#~ "missatge instantani\n"
+#~ "missatges instantanis\n"
+#~ "missatge-instantani\n"
+#~ "missatges-instantanis\n"
+#~ "xat\n"
+#~ "xats"
+
+#~ msgid ""
+#~ "presentation\n"
+#~ "presentations\n"
+#~ "slideshow\n"
+#~ "slideshows\n"
+#~ "slide\n"
+#~ "slides"
+#~ msgstr ""
+#~ "presentació\n"
+#~ "presentacions\n"
+#~ "diapositiva\n"
+#~ "diapositives"
+
+#~ msgid ""
+#~ "application\n"
+#~ "applications\n"
+#~ "app\n"
+#~ "apps"
+#~ msgstr ""
+#~ "aplicació\n"
+#~ "aplicacions\n"
+#~ "app\n"
+#~ "apps"
+
+#~ msgid ""
+#~ "contact\n"
+#~ "contacts\n"
+#~ "vcard\n"
+#~ "vcards"
+#~ msgstr ""
+#~ "contacte\n"
+#~ "contactes\n"
+#~ "vcard\n"
+#~ "vcards"
+
+#~ msgid ""
+#~ "folder\n"
+#~ "folders"
+#~ msgstr ""
+#~ "capeta\n"
+#~ "capetes\n"
+#~ "directori\n"
+#~ "directoris"
+
+#~ msgid ""
+#~ "image\n"
+#~ "images\n"
+#~ "img"
+#~ msgstr ""
+#~ "imatges\n"
+#~ "imatge\n"
+#~ "img"
+
+#~ msgid "audio"
+#~ msgstr "àudio"
+
+#~ msgid "video"
+#~ msgstr "vídeo"
+
+#~ msgid "media"
+#~ msgstr "multimèdia"
+
+#~ msgid ""
+#~ "document\n"
+#~ "documents\n"
+#~ "office document\n"
+#~ "office documents"
+#~ msgstr ""
+#~ "document\n"
+#~ "documents\n"
+#~ "documents ofimàtics\n"
+#~ "document ofimàtic"
+
+#~ msgid ""
+#~ "conversation\n"
+#~ "conversations"
+#~ msgstr ""
+#~ "conversació\n"
+#~ "conversacions"
+
+#~ msgid ""
+#~ "web\n"
+#~ "www\n"
+#~ "website\n"
+#~ "websites"
+#~ msgstr ""
+#~ "web\n"
+#~ "www\n"
+#~ "loc web\n"
+#~ "loc webs"
+
+#~ msgid ""
+#~ "feed\n"
+#~ "news\n"
+#~ "blog\n"
+#~ "rss"
+#~ msgstr ""
+#~ "canal\n"
+#~ "notícies\n"
+#~ "blog\n"
+#~ "bloc\n"
+#~ "rss"
+
+#~ msgid ""
+#~ "archive\n"
+#~ "archives"
+#~ msgstr ""
+#~ "arxiu\n"
+#~ "arxius"
+
+#~ msgid ""
+#~ "person\n"
+#~ "people"
+#~ msgstr ""
+#~ "persona\n"
+#~ "persones\n"
+#~ "gent"
+
+#~ msgid "Show _Categories"
+#~ msgstr "Mostra les _categories"
+
+#~ msgid "A_pplications"
+#~ msgstr "Ap_licacions"
+
+#~ msgid "_Contacts"
+#~ msgstr "_Contactes"
+
+#~ msgid "Search contacts"
+#~ msgstr "Cerca contactes"
+
+#~ msgid "Ca_lendar events"
+#~ msgstr "Esdeveniment_s del calendari"
+
+#~ msgid "Search calendar events"
+#~ msgstr "Cerca esdeveniments al calendari"
+
+#~ msgid "_Documents"
+#~ msgstr "_Documents"
+
+#~ msgid "Search documents"
+#~ msgstr "Cerca documents"
+
+# # Conversació és correcte, però en català "conversa" és més estès (josep)
+#~ msgid "Conve_rsations"
+#~ msgstr "Conve_rses"
+
+#~ msgid "Search E-Mail and Instant Messaging logs"
+#~ msgstr ""
+#~ "Cerca al correu electrònic i al registre de la missatgeria instantània"
+
+#~ msgid "_Images"
+#~ msgstr "_Imatges"
+
+#~ msgid "Search images"
+#~ msgstr "Cerca imatges"
+
+#~ msgid "Search sound and video files"
+#~ msgstr "Cerca als fitxers de so i vídeo"
+
+#~ msgid "_Folders"
+#~ msgstr "_Carpetes"
+
+#~ msgid "Search for folder names"
+#~ msgstr "Cerca per noms de carpetes"
+
+#~ msgid "_Websites"
+#~ msgstr "_Llocs web"
+
+#~ msgid "Search website history"
+#~ msgstr "Cerca a l'historial de llocs webs"
+
+#~ msgid "_News Feeds"
+#~ msgstr "_Canals de notícies"
+
+#~ msgid "Search news feeds"
+#~ msgstr "Cerca als canals de notícies"
+
+#~ msgid "A_rchives"
+#~ msgstr "A_rxius"
+
+#~ msgid "Alt"
+#~ msgstr "Alt"
+
+#~ msgid "Backends"
+#~ msgstr "Interfícies"
+
+#~ msgid "Ctrl"
+#~ msgstr "Ctrl"
+
+#~ msgid "Enable/Disable backends from the indexing and searching process."
+#~ msgstr "Habilita/Inhabilita interfícies des del procés d'indexació i cerca."
+
+#~ msgid "Image Directory"
+#~ msgstr "Directori d'imatges"
+
+#~ msgid "Thumbnail Directory"
+#~ msgstr "Directori de miniatures"
+
+#~ msgid "Exif Directory"
+#~ msgstr "Directori Exif"
+
+#~ msgid "GPS Directory"
+#~ msgstr "Directori GPS"
+
+#~ msgid "InterOperability Directory"
+#~ msgstr "Directori d'interoperabilitat"
+
+#~ msgid "Unknown Directory"
+#~ msgstr "Directori desconegut"
+
+#~ msgid "IPTC Information Interchange Model (IIM) Version number"
+#~ msgstr "Número de versió de l'IPTC Information Interchange Model (IIM)"
+
+#~ msgid "OSI Destination routing information"
+#~ msgstr "Informació de l'enrutament de destí OSI"
+
+#~ msgid "IPTC file format"
+#~ msgstr "Format de fitxer IPTC"
+
+#~ msgid "Identifies the provider and product"
+#~ msgstr "Identifica el proveïdor i el producte"
+
+#~ msgid "A unique number identifying the envelope"
+#~ msgstr "Un número únic que identifica el sobre"
+
+#~ msgid "A unique number"
+#~ msgstr "Un número únic"
+
+#~ msgid ""
+#~ "The envelope handling priority between 1 (most urgent) and 9 (least "
+#~ "urgent)"
+#~ msgstr ""
+#~ "El sobre que gestiona la prioritat entre 1 (més urgent) i 9 (menys urgent)"
+
+#~ msgid "The year month and day (CCYYMMDD) the service sent the material"
+#~ msgstr "L'any, mes i dia (CCYYMMDD) que el servei va enviar el material"
+
+#~ msgid ""
+#~ "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+#~ msgstr ""
+#~ "L'hora, minut i segon (HHMMSS+HHMM) que el servei va enviar el material"
+
+#~ msgid "The character set designation"
+#~ msgstr "Designació del joc de caràcters"
+
+#~ msgid "External globally unique object identifier"
+#~ msgstr "Identificador de l'objecte únic globalment extern"
+
+#~ msgid "Abstract Relationship Method (ARM) identifier"
+#~ msgstr "Identificador del mètode de relació abstracte (ARM)"
+
+#~ msgid "Abstract Relationship Method (ARM) version number."
+#~ msgstr "Número de versió del mètode de relació abstracte (ARM)."
+
+#~ msgid "Number identifying the IIM version this application record uses"
+#~ msgstr ""
+#~ "Número d'identificació de la versió de l'IMM que aquesta aplicació "
+#~ "utilitza"
+
+#~ msgid "Object type reference"
+#~ msgstr "Referència del tipus d'objecte"
+
+#~ msgid "Object attribute reference"
+#~ msgstr "Referència de l'atribut de l'objecte"
+
+#~ msgid "Object name"
+#~ msgstr "Nom de l'objecte"
+
+#~ msgid "Status of the objectdata according to the provider"
+#~ msgstr "Estat de les dades de l'objecte d'acord amb el proveïdor"
+
+#~ msgid "Location within a city or area where the object originates"
+#~ msgstr "Ubicació dins de la ciutat o àrea on l'objecte s'origina"
+
+#~ msgid "Name of the city the content is focussing on"
+#~ msgstr "Nom de la ciutat on es focalitza el contingut"
+
+#~ msgid "Copyright information for"
+#~ msgstr "Informació del copyright per"
+
+#~ msgid "Full name of the country of the focus of the content"
+#~ msgstr "Nom complet del país on es focalitza el contingut"
+
+#~ msgid ""
+#~ "Two or three letter ISO3166 code of the country of the focus of the "
+#~ "content"
+#~ msgstr ""
+#~ "Codi ISO3166 de dues o tres lletres del país on es focalitza el contingut"
+
+#~ msgid "Creator of the content"
+#~ msgstr "Creador del contingut"
+
+#~ msgid "Provider of the object"
+#~ msgstr "Proveïdor de l'objecte"
+
+#~ msgid "The title of the author or creator"
+#~ msgstr "El títol de l'autor o creador"
+
+#~ msgid ""
+#~ "The person involved in writing, editing or correcting the object data or "
+#~ "caption/abstract"
+#~ msgstr ""
+#~ "La persona involucrada en escriure, editar o corregir les dades de "
+#~ "l'objecte o el títol o resum"
+
+#~ msgid "Headline of the content"
+#~ msgstr "Titular del contingut"
+
+#~ msgid ""
+#~ "Instructions from the creator to the receiver not covered by other fields"
+#~ msgstr ""
+#~ "Instruccions del creador o el receptor no cobertes pels altres camps"
+
+#~ msgid "Intellectual genre of the object"
+#~ msgstr "Gènere intel·lectual de l'objecte"
+
+#~ msgid "Unknown IIM DataSet"
+#~ msgstr "Conjunt de dades IIM desconegut"
+
+#~ msgid "Creator"
+#~ msgstr "Creador"
+
+#~ msgid "Title"
+#~ msgstr "Títol"
+
+#~ msgid "Copyright"
+#~ msgstr "Copyright"
+
+#~ msgid "Subject and Keywords"
+#~ msgstr "Assumpte i paraules clau"
+
+#~ msgid "Compression"
+#~ msgstr "Compressió"
+
+#~ msgid "Planar Configuration"
+#~ msgstr "Configuració del Planar"
+
+#~ msgid "Orientation"
+#~ msgstr "Orientació"
+
+#~ msgid "Photometric Interpretation"
+#~ msgstr "Interpretació fotomètrica"
+
+#~ msgid "Resolution Unit"
+#~ msgstr "Unitat de resolució"
+
+#~ msgid "Exposure Program"
+#~ msgstr "Programa d'exposició"
+
+#~ msgid "Metering Mode"
+#~ msgstr "Mode de comptatge"
+
+#~ msgid "Custom Rendered"
+#~ msgstr "Renderització personalitzada"
+
+#~ msgid "Components Configuration"
+#~ msgstr "Configuració dels components"
+
+#~ msgid "Light Source"
+#~ msgstr "Font de la llum"
+
+#~ msgid "Sensing Method"
+#~ msgstr "Mètode de detecció"
+
+#~ msgid "Color Space"
+#~ msgstr "Espai de colors"
+
+#~ msgid "White Balance"
+#~ msgstr "Balanç del blanc"
+
+#~ msgid "Focal Plane Resolution Unit"
+#~ msgstr "Unitat de resolució del pla focal"
+
+#~ msgid "File Source Type"
+#~ msgstr "Tipus de font del fitxer"
+
+#~ msgid "Scene Capture Type"
+#~ msgstr "Tipus de captura de l'escena"
+
+#~ msgid "Gain Control"
+#~ msgstr "Control de guany"
+
+#~ msgid "Contrast"
+#~ msgstr "Contrast"
+
+#~ msgid "Saturation"
+#~ msgstr "Saturació"
+
+#~ msgid "Sharpness"
+#~ msgstr "Nitidesa"
+
+#~ msgid "Scene Type"
+#~ msgstr "Tipus d'escena"
+
+#~ msgid "Unknown duration"
+#~ msgstr "Durada desconeguda"
+
+#~ msgid "Open..."
+#~ msgstr "Obre..."
+
+#~ msgid "About"
+#~ msgstr "Quant a"
+
+#~ msgid "Display name"
+#~ msgstr "Nom a mostrar"
+
+#~ msgid "Primary E-mail"
+#~ msgstr "Adreça electrònica primària"
+
+#~ msgid "Secondary E-mail"
+#~ msgstr "Adreça electrònica secundària"
+
+#~ msgid "Nickname"
+#~ msgstr "Sobrenom"
+
+#~ msgid ""
+#~ "Unable to open mork database:\n"
+#~ "\n"
+#~ " {0}"
+#~ msgstr ""
+#~ "No es pot obrir la base de dades mork:\n"
+#~ "\n"
+#~ " {0}"
+
+#~ msgid "The specified ID does not exist in this database!"
+#~ msgstr "L'identificador especificat no existeix a la base de dades"
+
+#~ msgid "Added {0} contact"
+#~ msgid_plural "Added {0} contacts"
+#~ msgstr[0] "S'ha afegit {0} contacte"
+#~ msgstr[1] "S'han afegit {0} contactes"
+
+#~ msgid "Viewing {0}"
+#~ msgstr "S'està visualitzant {0}"
+
+#~ msgid "Select a mork database file"
+#~ msgstr "Seleccioneu un fitxer de base de dades mork"
+
+#~ msgid "Primary E-Mail:"
+#~ msgstr "Adreça electrònica primària:"
+
+#~ msgid "Screen name:"
+#~ msgstr "Nom en pantalla:"
+
+#~ msgid "Home phone:"
+#~ msgstr "Telèfon particular:"
+
+#~ msgid "Mobile phone:"
+#~ msgstr "Telèfon mòbil:"
+
+#~ msgid "Web page:"
+#~ msgstr "Pàgina web:"
+
+#~ msgid "Send E-Mail"
+#~ msgstr "Envia un correu"
+
+#~ msgid "Details..."
+#~ msgstr "Detalls..."
+
+#~ msgid "Could not find a valid E-mail address!"
+#~ msgstr "No s'ha pogut trobar cap adreça electrònica vàlida"
+
+#~ msgid "<b>Custom fields</b>"
+#~ msgstr "<b>Camps personalitzats</b>"
+
+#~ msgid "<b>Home</b>"
+#~ msgstr "<b>Inici</b>"
+
+#~ msgid "<b>Internet</b>"
+#~ msgstr "<b>Internet</b>"
+
+#~ msgid "<b>Name</b>"
+#~ msgstr "<b>Xarxa</b>"
+
+#~ msgid "<b>Notes</b>"
+#~ msgstr "<b>Notes</b>"
+
+#~ msgid "<b>Phones</b>"
+#~ msgstr "<b>Telèfons</b>"
+
+#~ msgid "<b>Work</b>"
+#~ msgstr "<b>Feina</b>"
+
+#~ msgid "Additional E-Mail:"
+#~ msgstr "Adreça electrònica addicional:"
+
+#~ msgid "Address:"
+#~ msgstr "Adreça:"
+
+#~ msgid "City:"
+#~ msgstr "Ciutat:"
+
+#~ msgid "Contact"
+#~ msgstr "Contacte"
+
+#~ msgid "Contact Viewer"
+#~ msgstr "Visualitzador de contactes"
+
+#~ msgid "Country:"
+#~ msgstr "País:"
+
+#~ msgid "Custom 1:"
+#~ msgstr "Personalitzat 1:"
+
+#~ msgid "Custom 2:"
+#~ msgstr "Personalitzat 2:"
+
+#~ msgid "Custom 3:"
+#~ msgstr "Personalitzat 3:"
+
+#~ msgid "Custom 4:"
+#~ msgstr "Personalitzat 4:"
+
+#~ msgid "Department:"
+#~ msgstr "Departament:"
+
+#~ msgid "Detailed view"
+#~ msgstr "Mostra detallada"
+
+#~ msgid "Display:"
+#~ msgstr "Mostra:"
+
+#~ msgid "Fax:"
+#~ msgstr "Fax."
+
+#~ msgid "First:"
+#~ msgstr "Primer:"
+
+#~ msgid "Home:"
+#~ msgstr "Inici:"
+
+#~ msgid "Last:"
+#~ msgstr "Últim:"
+
+#~ msgid "Mobile:"
+#~ msgstr "Telèfon mòbil:"
+
+#~ msgid "Nickname:"
+#~ msgstr "Sobrenom:"
+
+#~ msgid "Organization:"
+#~ msgstr "Organització:"
+
+#~ msgid "Other"
+#~ msgstr "Altres"
+
+#~ msgid "Pager:"
+#~ msgstr "Cercapersones:"
+
+#~ msgid "Preferred format:"
+#~ msgstr "Format preferit:"
+
+#~ msgid "State/Province"
+#~ msgstr "Estat/Comarca"
+
+#~ msgid "State/Province:"
+#~ msgstr "Estat/Comarca:"
+
+#~ msgid ""
+#~ "Unknown\n"
+#~ "Plain text\n"
+#~ "HTML"
+#~ msgstr ""
+#~ "Desconegut\n"
+#~ "Text pla\n"
+#~ "HTML"
+
+#~ msgid "Web Page:"
+#~ msgstr "Pàgina web:"
+
+#~ msgid "Work:"
+#~ msgstr "Feina:"
+
+#~ msgid "ZIP/Postal Code"
+#~ msgstr "Codi postal"
+
+#~ msgid "ZIP/Postal Code:"
+#~ msgstr "Codi postal:"
+
+#~ msgid "The orientation of the tray."
+#~ msgstr "Orientació de la safata."
+
+#~ msgid "Show"
+#~ msgstr "Mostra"
+
+#~ msgid "Configure Desktop Search & Indexing"
+#~ msgstr "Configura la cerca i la indexació de l'escriptori"
+
+#~ msgid "Configure search & indexing properties"
+#~ msgstr "Configura les propietats de la cerca i de la indexació"
+
+#~ msgid "DisplayName"
+#~ msgstr "Nom a mostrar"
+
+#~ msgid "FirstName"
+#~ msgstr "Nom"
+
+#~ msgid "NickName"
+#~ msgstr "Sobrenom"
+
+#~ msgid "LastName"
+#~ msgstr "Cognom"
+
+#~ msgid "PrimaryEmail"
+#~ msgstr "Adreça electrònica primària"
+
+#~ msgid "_AimScreenName"
+#~ msgstr "Nom a _mostrar per a AIM"
+
+#~ msgid "HomePhone"
+#~ msgstr "Telèfon particular"
+
+#~ msgid "CellularNumber"
+#~ msgstr "Telèfon mòbil"
+
+#~ msgid "WebPage2"
+#~ msgstr "Pàgina web secundària"
+
+#~ msgid "Invalid host entry"
+#~ msgstr "Entrada d'ordinador no vàlida"
+
+#~ msgid "Select path"
+#~ msgstr "Seleccioneu el camí"
+
+#~ msgid "The selected path is already configured for external access."
+#~ msgstr "El camí seleccionat ja està configurat per a accés extern."
+
+#~ msgid "Remove public path"
+#~ msgstr "Elimina el camí públic"
+
+#~ msgid ""
+#~ "Are you sure you wish to remove this entry from the list of public paths?"
+#~ msgstr ""
+#~ "Esteu segur que voleu eliminar aquesta entrada de la llista de camins "
+#~ "públics?"
+
+#~ msgid "<b>Add Remote Host</b>"
+#~ msgstr "<b>Afegeix un ordinador remot</b>"
+
+#~ msgid ""
+#~ "Add a remote search-enabled host you wish \n"
+#~ "to network with."
+#~ msgstr ""
+#~ "Afegiu l'ordinador amb cerca remota habilitada \n"
+#~ "a on us vulgueu connectar."
+
+#~ msgid "Specify paths that should be available for external access."
+#~ msgstr "Indiqueu els camins que han d'estar disponibles a l'accés extern."
+
+#~ msgid "_Address:"
+#~ msgstr "_Adreça:"
+
+#~ msgid "_Maximum number of results displayed:"
+#~ msgstr "_Nombre màxim de resultats mostrats:"
+
+#~ msgid "Sor_t"
+#~ msgstr "_Ordena"
+
+#~ msgid "_Everywhere"
+#~ msgstr "_A tots els llocs"
+
+#~ msgid "Search everywhere"
+#~ msgstr "Cerca a tots els llocs"
+
+#~ msgid "_Applications"
+#~ msgstr "A_plicacions"
+
+#~ msgid "Image"
+#~ msgstr "Imatge"
+
+#~ msgid "Previous {0}"
+#~ msgid_plural "Previous {0}"
+#~ msgstr[0] "{0} anterior"
+#~ msgstr[1] "{0} anteriors"
+
+#~ msgid "Next {0}"
+#~ msgid_plural "Next {0}"
+#~ msgstr[0] "{0} següent"
+#~ msgstr[1] "{0} següents"
+
+#~ msgid "Start the daemon"
+#~ msgstr "Inicia el dimoni"
+
+#~ msgid "Move to trash"
+#~ msgstr "Mou a la paperera"
+
+#~ msgid "Add to Library"
+#~ msgstr "Afegeix a la biblioteca"
+
+#~ msgid "Instant-Message"
+#~ msgstr "Missatgeria instantània"
+
+#~ msgid "Edited:"
+#~ msgstr "Editat:"
+
+#~ msgid "More application results..."
+#~ msgstr "Més resultats en l'aplicació..."
+
+#~ msgid "More contact results..."
+#~ msgstr "Més resultats en contactes..."
+
+#~ msgid "More folder results..."
+#~ msgstr "Més resultats en carpetes..."
+
+#~ msgid "More image results..."
+#~ msgstr "Més resultats d'imatges..."
+
+#~ msgid "More audio results..."
+#~ msgstr "Més resultats d'àudio..."
+
+#~ msgid "More video results..."
+#~ msgstr "Més resultats en vídeos..."
+
+#~ msgid "More document results..."
+#~ msgstr "Més resultats en documents..."
+
+#~ msgid "More conversation results..."
+#~ msgstr "Més resultats en converses..."
+
+#~ msgid "More website results..."
+#~ msgstr "Més resultats en llocs web..."
+
+#~ msgid "More news feed results..."
+#~ msgstr "Més resultats en subscripció a notícies..."
+
+#~ msgid "More archive results..."
+#~ msgstr "Més resultats en arxius..."
+
+#~ msgid "Directory Path"
+#~ msgstr "Camí del directori"
+
+#~ msgid ""
+#~ "You are about to close the search tray. The search tray is automatically "
+#~ "started at login-time. Would you like to disable it for future sessions?"
+#~ msgstr ""
+#~ "Ara tancareu la safata de cerca. La safata de cerca s'inicia "
+#~ "automàticament en entrar. Voleu inhabilitar-la en sessions futures?"
+
+#~ msgid "in Addressbook"
+#~ msgstr "en la llibreta d'adreces"
+
+#~ msgid "in Chats"
+#~ msgstr "en els xats"
+
+#~ msgid "Show More Results"
+#~ msgstr "Mostra més resultats"
+
+#~ msgid "Show Previous Results"
+#~ msgstr "Mostra els resultats anteriors"
+
+#~ msgid "Best <b>{0} results of {1}</b> are shown."
+#~ msgstr "Es mostren els millors <b>{0} resultats de {1}</b>."
+
+#~ msgid "Results <b>{0} through {1} of {2}</b> are shown."
+#~ msgstr "Es mostren els resultats <b>{0} a {1} de {2}</b>"
+
+#~ msgid ""
+#~ "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+#~ "daemon isn't running."
+#~ msgstr ""
+#~ "La consulta per a <i>{0}</i> ha fallat.<br>És probable que sigui perquè "
+#~ "el dimoni beagle no s'està executant."
+
+#~ msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+#~ msgstr "La consulta per a <i>{0}</i> ha fallat amb l'error:<br>{1}<br>"
+
+#~ msgid "Send IM"
+#~ msgstr "Envia un IM"
+
+#~ msgid "Conversation in {0}"
+#~ msgstr "Conversa a {0}"
+
+#~ msgid "Sent"
+#~ msgstr "Enviat"
+
+#~ msgid "Weblog:"
+#~ msgstr "Bloc:"
+
+#~ msgid "by"
+#~ msgstr "per"
+
+#~ msgid "Published:"
+#~ msgstr "Publicat:"
+
+#~ msgid "in folder"
+#~ msgstr "a la carpeta"
+
+#~ msgid "Last modified"
+#~ msgstr "Darrera modificació"
+
+#~ msgid "Send to..."
+#~ msgstr "Envia a..."
+
+#~ msgid "Email subject:"
+#~ msgstr "Assumpte del correu"
+
+#~ msgid "Track"
+#~ msgstr "Pista"
+
+#~ msgid "from"
+#~ msgstr "des de"
+
+#~ msgid "Enqueue"
+#~ msgstr "Posa a la cua"
+
+#~ msgid "Slides:"
+#~ msgstr "Diapositives:"
+
+#~ msgid "from Networked Beagle on host"
+#~ msgstr "des de un Beagle en xarxa a l'ordinador"
+
+#~ msgid "Search Networked Beagle"
+#~ msgstr "Cerca a un Beagle en xarxa"
+
+#~ msgid ""
+#~ "The query for <i>{0}</i> failed.<br>The session bus isn't running.  See "
+#~ "http://beaglewiki.org/index.php/Installing%20Beagle for information on "
+#~ "setting up a session bus."
+#~ msgstr ""
+#~ "La consulta per a <i>{0}</i> ha fallat.<br>El bus de la sessió no s'està "
+#~ "executant. Vegeu http://beaglewiki.org/index.php/Installing%20Beagle per "
+#~ "saber com configurar el bus de la sessió."
+
+#~ msgid "HH:mm"
+#~ msgstr "HH:mm"
+
+#~ msgid "This Week"
+#~ msgstr "Aquesta setmana"
+
+#~ msgid "dddd"
+#~ msgstr "dddd"
+
+#~ msgid "Last Week"
+#~ msgstr "La setmana passada"
+
+#~ msgid "This Month"
+#~ msgstr "Aquest mes"
+
+#~ msgid "This Year"
+#~ msgstr "Enguany"
+
+#~ msgid "yyyy MMM d"
+#~ msgstr "yyyy MMM d"
+
+#~ msgid "*"
+#~ msgstr "*"
+
+#~ msgid "<b>Today, 12:00 PM</b>"
+#~ msgstr "<b>Avui, 12:00 PM</b>"

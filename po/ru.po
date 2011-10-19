@@ -1,0 +1,1555 @@
+# translation of ru.po to
+# Copyright (C) 2006 Free Software Foundataion
+# This file is distributed under the same license as the beagle package.
+#
+# Leonid Kanter <leon@asplinux.ru>, 2006, 2007.
+# Alexander Sigachov <ajvol2@gmail.com>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: ru\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-01-04 13:14+0200\n"
+"PO-Revision-Date: 2007-01-04 13:47+0200\n"
+"Last-Translator: Leonid Kanter <leon@asplinux.ru>\n"
+"Language-Team:  <gnome-cyr@gnome.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: ../glue/eggtrayicon.c:127
+msgid "Orientation"
+msgstr "Расположение"
+
+#: ../glue/eggtrayicon.c:128
+msgid "The orientation of the tray."
+msgstr "Расположение системного лотка."
+
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Открыть..."
+
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+msgid "Quit"
+msgstr "Выход"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "О программе"
+
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+msgid "Contacts"
+msgstr "Контакты"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr "Отображаемое имя"
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Адрес эл. почты"
+
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Второй адрес эл. почты"
+
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Псевдоним"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+"Не удалось открыть базу данных:\n"
+"\n"
+" {0}"
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr "Заданный идентификатор не найден в базе данных!"
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgid_plural "Added {0} contacts"
+msgstr[0] "Добавлен {0} контакт"
+msgstr[1] "Добавлено {0} контакта"
+msgstr[2] "Добавлено {0} контактов"
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr "Просмотр {0}"
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr "Выбрать файл базы данных"
+
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Эл. почта:"
+
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid "Screen name:"
+msgstr "Имя в Aim:"
+
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Домашний телефон:"
+
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "Мобильный телефон:"
+
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "Веб-страница:"
+
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "Отправить сообщение"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Подробнее..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "Не удалось найти корректный адрес эл. почты!"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr "<b>Дополнительно</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:2
+msgid "<b>Home</b>"
+msgstr "<b>Дом</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Сеть</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Имя</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Заметки</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Телефоны</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Работа</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "Дополнительный адрес эл. почты"
+
+#: ../ContactViewer/contactviewer.glade.h:9
+msgid "Address"
+msgstr "Адрес"
+
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "Адрес:"
+
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Город:"
+
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Контакт"
+
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Просмотр контакта"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "Страна:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr "Дополнительно 1:"
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr "Дополнительно 2:"
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr "Дополнительно 3:"
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr "Дополнительно 4:"
+
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Отдел:"
+
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Подробности"
+
+#. This is Display name
+#: ../ContactViewer/contactviewer.glade.h:22
+msgid "Display:"
+msgstr "Отображение:"
+
+#: ../ContactViewer/contactviewer.glade.h:23 ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "Эл. почта:"
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "Fax:"
+msgstr "Факс:"
+
+#. This is First name
+#: ../ContactViewer/contactviewer.glade.h:26
+msgid "First:"
+msgstr "Имя:"
+
+#. This is Home phone number
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Home:"
+msgstr "Домашний:"
+
+#. This is Last name
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Last:"
+msgstr "Фамилия:"
+
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Mobile:"
+msgstr "Мобильный:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Nickname:"
+msgstr "Псевдоним:"
+
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Organization:"
+msgstr "Организация:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "Other"
+msgstr "Другой"
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "Pager:"
+msgstr "Пейджер:"
+
+#: ../ContactViewer/contactviewer.glade.h:36
+msgid "Preferred format:"
+msgstr "Предпочитаемый формат:"
+
+#: ../ContactViewer/contactviewer.glade.h:38
+msgid "State/Province"
+msgstr "Область, край"
+
+#: ../ContactViewer/contactviewer.glade.h:39
+msgid "State/Province:"
+msgstr "Область, край:"
+
+#: ../ContactViewer/contactviewer.glade.h:40
+#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
+#: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
+msgid "Title:"
+msgstr "Заголовок:"
+
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+"Неизвестно\n"
+"Текст\n"
+"HTML"
+
+#: ../ContactViewer/contactviewer.glade.h:44
+msgid "Web Page:"
+msgstr "Веб-страница:"
+
+#. This is Work phone number
+#: ../ContactViewer/contactviewer.glade.h:46
+msgid "Work:"
+msgstr "Рабочий телефон:"
+
+#: ../ContactViewer/contactviewer.glade.h:47
+msgid "ZIP/Postal Code"
+msgstr "Почтовый индекс"
+
+#: ../ContactViewer/contactviewer.glade.h:48
+msgid "ZIP/Postal Code:"
+msgstr "Почтовый индекс:"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>История бесед</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "Интернет-пейджер"
+
+#: ../ImLogViewer/ImLogWindow.cs:102
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Беседы в {0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:109
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Беседы с {0}"
+
+#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:22
+msgid "Search"
+msgstr "Поиск"
+
+#: ../search/beagle-search.desktop.in.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Поиск данных на вашем компьютере"
+
+#: ../search/Category.cs:132
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} байт"
+msgstr[1] "{0} байта"
+msgstr[2] "{0} байтов"
+
+#: ../search/Category.cs:134
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}—{1} из {2}"
+
+#: ../search/Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "Ничего не найдено."
+
+#: ../search/Pages/NoMatch.cs:20
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr "Ни один из файлов на вашем компьютере не соответствует критерию поиска «{0}»."
+
+#: ../search/Pages/NoMatch.cs:24
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+"Область поиска может быть изменена из меню «Поиск». Расширенная область "
+"поиска может привести к большему количеству совпадений."
+
+#: ../search/Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+"Проверьте правильность написания вашего запроса на предмет случайных "
+"опечаток в словах."
+
+#: ../search/Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+"Можно использовать как прописные, так и заглавные буквы — поиск не "
+"чувствителен к регистру."
+
+#: ../search/Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr "Для нестрогого поиска используйте «OR», например: <b>Джордж OR Ринго</b>"
+
+#: ../search/Pages/QuickTips.cs:12
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+"Чтобы исключить слова из поиска, поставьте перед ними знак минуса, например: "
+"<b>-кошки</b>"
+
+#: ../search/Pages/QuickTips.cs:13
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr "При поиске фразы добавляйте кавычки, например: <b>\"да будет свет\"</b>"
+
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
+msgid "Quick Tips"
+msgstr "Подсказки"
+
+#: ../search/Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "Beagle не может быть запущен от имени суперпользователя"
+
+#: ../search/Pages/RootUser.cs:13
+msgid ""
+"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"regular user."
+msgstr ""
+"Из соображений безопасности Beagle не может быть запущен от имени "
+"суперпользователя. Перезапустите программу как обычный пользователь."
+
+#: ../search/Pages/StartDaemon.cs:19
+msgid "Search service not running"
+msgstr "Служба поиска не запущена"
+
+#: ../search/Pages/StartDaemon.cs:21
+msgid "Start search service"
+msgstr "Запустить службу поиска"
+
+#: ../search/Search.cs:138 ../search/Tray/TrayIcon.cs:32
+msgid "Desktop Search"
+msgstr "Персональная поисковая система"
+
+#: ../search/Search.cs:157
+msgid "_Find:"
+msgstr "_Искать:"
+
+#: ../search/Search.cs:178
+msgid "Find Now"
+msgstr "Найти!"
+
+#: ../search/Search.cs:237
+msgid "Type in search terms"
+msgstr "Введите условия поиска"
+
+#: ../search/Search.cs:238
+msgid "Start searching"
+msgstr "Начать поиск"
+
+#: ../search/Search.cs:264
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Персональная поисковая система: {0}"
+
+#: ../search/Search.cs:280
+#, csharp-format
+msgid "Showing all {0} matches"
+msgstr "Отображаются все {0} совпадений"
+
+#: ../search/Search.cs:282
+#, csharp-format
+msgid "Showing the top {0} of {1} total matches"
+msgstr "Отображаются первые {0} из {1} совпадений"
+
+#: ../search/Search.cs:555
+msgid "Your data is being indexed"
+msgstr "Ваши данные индексируются"
+
+#: ../search/Search.cs:556
+msgid ""
+"The search service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr "Идет процесс индексирования данных. Результаты поиска могут быть неполными, пока индексирование не закончено."
+
+#: ../search/Tiles/ArchivedFile.cs:39
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr "Внутри архива {0}"
+
+#: ../search/Tiles/ArchivedFile.cs:77
+msgid "File Name:"
+msgstr "Имя файла:"
+
+#. Substring to move past the initial #
+#: ../search/Tiles/ArchivedFile.cs:78
+msgid "Inside File:"
+msgstr "Внутри файла:"
+
+#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:144
+msgid "Author:"
+msgstr "Автор:"
+
+#: ../search/Tiles/Calendar.cs:54
+msgid "Description:"
+msgstr "Описание:"
+
+#: ../search/Tiles/Calendar.cs:57
+msgid "Location:"
+msgstr "Место:"
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Attendees:"
+msgstr "Участники:"
+
+#: ../search/Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Отправить по почте"
+
+#: ../search/Tiles/Contact.cs:70
+msgid "Mobile Phone:"
+msgstr "Мобильный телефон:"
+
+#: ../search/Tiles/Contact.cs:72
+msgid "Work Phone:"
+msgstr "Рабочий телефон:"
+
+#: ../search/Tiles/Contact.cs:74
+msgid "Home Phone:"
+msgstr "Домашний телефон:"
+
+#: ../search/Tiles/File.cs:34
+msgid "Reveal in Folder"
+msgstr "Показать в папке"
+
+#: ../search/Tiles/File.cs:35
+msgid "E-Mail"
+msgstr "Эл. почта"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Переместить в корзину"
+
+#: ../search/Tiles/File.cs:141 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:63
+msgid "Last Edited:"
+msgstr "Последние изменения:"
+
+#: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:80
+msgid "Full Path:"
+msgstr "Полный путь:"
+
+#: ../search/Tiles/Folder.cs:31
+msgid "Empty"
+msgstr "Пусто"
+
+#: ../search/Tiles/Folder.cs:33
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Содержит {0} элемент"
+msgstr[1] "Содержит {0} элемента"
+msgstr[2] "Содержит {0} элементов"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Установить как фон"
+
+#: ../search/Tiles/Image.cs:79
+msgid "Modified:"
+msgstr "Изменён:"
+
+#: ../search/Tiles/IMLog.cs:30
+msgid "IM Conversation"
+msgstr "Беседа по интернет-пейджеру"
+
+#: ../search/Tiles/IMLog.cs:92
+msgid "Name:"
+msgstr "Имя:"
+
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:105
+msgid "Date Received:"
+msgstr "Получено:"
+
+#: ../search/Tiles/IMLog.cs:97
+msgid "Status:"
+msgstr "Статус:"
+
+#: ../search/Tiles/IMLog.cs:112
+msgid "Idle"
+msgstr "Бездействует"
+
+#: ../search/Tiles/IMLog.cs:119
+msgid "Away"
+msgstr "Отошёл"
+
+#: ../search/Tiles/IMLog.cs:122
+msgid "Offline"
+msgstr "Отключён"
+
+#: ../search/Tiles/IMLog.cs:125
+msgid "Available"
+msgstr "Доступен"
+
+#: ../search/Tiles/MailAttachment.cs:45
+msgid "Mail attachment"
+msgstr "Почтовое вложение"
+
+#: ../search/Tiles/MailMessage.cs:58
+msgid "(untitled)"
+msgstr "(без названия)"
+
+#: ../search/Tiles/MailMessage.cs:68
+msgid "Send in Mail"
+msgstr "Отправить по почте"
+
+#: ../search/Tiles/MailMessage.cs:100
+msgid "Subject:"
+msgstr "Тема:"
+
+#: ../search/Tiles/MailMessage.cs:102
+msgid "To:"
+msgstr "Кому:"
+
+#: ../search/Tiles/MailMessage.cs:102
+msgid "From:"
+msgstr "От кого:"
+
+#: ../search/Tiles/MailMessage.cs:105
+msgid "Date Sent:"
+msgstr "Дата отправки:"
+
+#: ../search/Tiles/MailMessage.cs:111
+msgid "Folder:"
+msgstr "Папка:"
+
+#: ../search/Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Открыть с помощью"
+
+#: ../search/Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} слайд"
+msgstr[1] "{0} слайда"
+msgstr[2] "{0} слайдов"
+
+#: ../search/Tiles/RSSFeed.cs:49
+msgid "Site:"
+msgstr "Сайт:"
+
+#: ../search/Tiles/RSSFeed.cs:50
+msgid "Date Viewed:"
+msgstr "Дата просмотра:"
+
+#: ../search/Tiles/TextDocument.cs:37
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} страница"
+msgstr[1] "{0} страницы"
+msgstr[2] "{0} страниц"
+
+#: ../search/Tiles/Tile.cs:179
+msgid "Open"
+msgstr "Открыть"
+
+#: ../search/Tiles/Utils.cs:24
+msgid "Applications"
+msgstr "Приложения"
+
+#: ../search/Tiles/Utils.cs:28
+msgid "Calendar Events"
+msgstr "События календаря"
+
+#: ../search/Tiles/Utils.cs:30
+msgid "Folders"
+msgstr "Папки"
+
+#: ../search/Tiles/Utils.cs:32
+msgid "Images"
+msgstr "Изображения"
+
+#: ../search/Tiles/Utils.cs:34
+msgid "Audio"
+msgstr "Аудио"
+
+#: ../search/Tiles/Utils.cs:36
+msgid "Video"
+msgstr "Видео"
+
+#: ../search/Tiles/Utils.cs:38
+msgid "Documents"
+msgstr "Документы"
+
+#: ../search/Tiles/Utils.cs:40
+msgid "Conversations"
+msgstr "Беседы"
+
+#: ../search/Tiles/Utils.cs:42
+msgid "Websites"
+msgstr "Веб-сайты"
+
+#: ../search/Tiles/Utils.cs:44
+msgid "News Feeds"
+msgstr "Ленты новостей"
+
+#: ../search/Tiles/Utils.cs:46
+msgid "Archives"
+msgstr "Архивы"
+
+#: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
+#: ../Util/StringFu.cs:106
+msgid "Yesterday"
+msgstr "Вчера"
+
+#: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
+#: ../Util/StringFu.cs:104
+msgid "Today"
+msgstr "Сегодня"
+
+#: ../search/Tiles/Utils.cs:137 ../search/Tiles/Utils.cs:219
+msgid "Tomorrow"
+msgstr "Завтра"
+
+#: ../search/Tiles/Utils.cs:235
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "{0} неделю назад"
+msgstr[1] "{0} недели назад"
+msgstr[2] "{0} недель назад"
+
+#: ../search/Tiles/Utils.cs:237
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "Через {0} неделю"
+msgstr[1] "Через {0} недели"
+msgstr[2] "Через {0} недель"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:239
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "{0} месяц назад"
+msgstr[1] "{0} месяца назад"
+msgstr[2] "{0} месяцев назад"
+
+#: ../search/Tiles/Utils.cs:241
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "Через {0} месяц"
+msgstr[1] "Через {0} месяца"
+msgstr[2] "Через {0} месяцев"
+
+#: ../search/Tiles/Utils.cs:243
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "{0} год назад"
+msgstr[1] "{0} года назад"
+msgstr[2] "{0} лет назад"
+
+#: ../search/Tiles/Utils.cs:245
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "Через {0} год"
+msgstr[1] "Через {0} года"
+msgstr[2] "Через {0} лет"
+
+#. FIXME: We need filters for video in Beagle.
+#. They should land soon when entagged-sharp gets video support.
+#: ../search/Tiles/Video.cs:27
+msgid "Unknown duration"
+msgstr "Продолжительность неизвестна"
+
+#: ../search/Tiles/WebHistory.cs:54
+msgid "URL:"
+msgstr "Адрес:"
+
+#: ../search/Tiles/WebHistory.cs:55
+msgid "Accessed:"
+msgstr "Дата доступа:"
+
+#: ../search/Tray/TrayIcon.cs:57
+msgid "No Recent Searches"
+msgstr "Недавние запросы отсутствуют"
+
+#: ../search/Tray/TrayIcon.cs:62
+msgid "Recent Searches"
+msgstr "Недавние запросы"
+
+#: ../search/Tray/TrayIcon.cs:78
+msgid "Clear"
+msgstr "Очистить"
+
+#. Translators: the strings in TypeFilter.cs are for when the user
+#. * wants to limit search results to a specific type. You don't need
+#. * to give an exact translation of the exact same set of English
+#. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
+#: ../search/TypeFilter.cs:36
+msgid ""
+"file\n"
+"files"
+msgstr ""
+"file\n"
+"files\n"
+"файл\n"
+"файлы"
+
+#: ../search/TypeFilter.cs:37
+msgid ""
+"mail\n"
+"email\n"
+"e-mail"
+msgstr ""
+"mail\n"
+"e-mail\n"
+"почта\n"
+"электронная почта\n"
+"эл. почта\n"
+"эл.почта\n"
+"письмо\n"
+"письма"
+
+#: ../search/TypeFilter.cs:38
+msgid ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+msgstr ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"мгновенные сообщения\n"
+"интернет-пейджер\n"
+"чат\n"
+"чаты"
+
+#: ../search/TypeFilter.cs:39
+msgid ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+msgstr ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides\n"
+"презентация\n"
+"презентации\n"
+"слайдшоу\n"
+"слайд-шоу\n"
+"слайд\n"
+"слайды"
+
+#: ../search/TypeFilter.cs:41
+msgid ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+msgstr ""
+"application\n"
+"applications\n"
+"app\n"
+"apps\n"
+"приложение\n"
+"приложения\n"
+"программа\n"
+"программы\n"
+"прога\n"
+"проги"
+
+#: ../search/TypeFilter.cs:42
+msgid ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+msgstr ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards\n"
+"контакт\n"
+"контакты\n"
+"визитка\n"
+"визитки"
+
+#: ../search/TypeFilter.cs:43
+msgid ""
+"folder\n"
+"folders"
+msgstr ""
+"folder\n"
+"folders\n"
+"папка\n"
+"папки\n"
+"директория\n"
+"директории\n"
+"каталог\n"
+"каталоги"
+
+#: ../search/TypeFilter.cs:44
+msgid ""
+"image\n"
+"images\n"
+"img"
+msgstr ""
+"image\n"
+"images\n"
+"img\n"
+"изображение\n"
+"изображения\n"
+"картинка\n"
+"картинки\n"
+"рисунок\n"
+"рисунки\n"
+"рис"
+
+#: ../search/TypeFilter.cs:45
+msgid "audio"
+msgstr ""
+"audio\n"
+"аудио\n"
+"звук\n"
+"звуки\n"
+"звукозапись\n"
+"звукозаписи\n"
+"музыка"
+
+#: ../search/TypeFilter.cs:46
+msgid "video"
+msgstr ""
+"video\n"
+"видео\n"
+"кино\n"
+"фильм\n"
+"фильмы"
+
+#: ../search/TypeFilter.cs:47
+msgid "media"
+msgstr ""
+"media\n"
+"медиа\n"
+"мультимедиа"
+
+#: ../search/TypeFilter.cs:48
+msgid ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+msgstr ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents\n"
+"документ\n"
+"документы\n"
+"офисный документ\n"
+"офисные документы"
+
+#: ../search/TypeFilter.cs:49
+msgid ""
+"conversation\n"
+"conversations"
+msgstr ""
+"conversation\n"
+"conversations\n"
+"беседа\n"
+"беседы"
+
+#: ../search/TypeFilter.cs:50
+msgid ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+msgstr ""
+"web\n"
+"www\n"
+"website\n"
+"websites\n"
+"веб\n"
+"веб-сайт\n"
+"веб-сайты\n"
+"сайт\n"
+"сайты"
+
+#: ../search/TypeFilter.cs:51
+msgid ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+msgstr ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss\n"
+"канал\n"
+"каналы\n"
+"новость\n"
+"новости\n"
+"блог\n"
+"блоги"
+
+#: ../search/TypeFilter.cs:52
+msgid ""
+"archive\n"
+"archives"
+msgstr ""
+"archive\n"
+"archives\n"
+"архив\n"
+"архивы"
+
+#: ../search/TypeFilter.cs:53
+msgid ""
+"person\n"
+"people"
+msgstr ""
+"person\n"
+"people\n"
+"человек\n"
+"люди"
+
+#: ../search/UIManager.cs:50
+msgid "Close Desktop Search"
+msgstr "Закрыть поисковую систему"
+
+#: ../search/UIManager.cs:55 ../search/UIManager.cs:80
+msgid "Exit Desktop Search"
+msgstr "Выйти из поисковой системы"
+
+#: ../search/UIManager.cs:62
+msgid "_Search"
+msgstr "_Поиск"
+
+#: ../search/UIManager.cs:65
+msgid "Show _Categories"
+msgstr "Отображать _категории"
+
+#: ../search/UIManager.cs:68
+msgid "_Actions"
+msgstr "_Действия"
+
+#: ../search/UIManager.cs:71
+msgid "_View"
+msgstr "_Вид"
+
+#: ../search/UIManager.cs:74
+msgid "_Help"
+msgstr "_Справка"
+
+#: ../search/UIManager.cs:83
+msgid "_Contents"
+msgstr "_Содержание"
+
+#: ../search/UIManager.cs:85
+msgid "Help - Table of Contents"
+msgstr "Справка — Содержание"
+
+#: ../search/UIManager.cs:89
+msgid "About Desktop Search"
+msgstr "О программе"
+
+#: ../search/UIManager.cs:111
+msgid "_All"
+msgstr "_Все"
+
+#: ../search/UIManager.cs:121
+msgid "_None"
+msgstr "_Нет"
+
+#: ../search/UIManager.cs:135
+msgid "A_pplications"
+msgstr "_Приложения"
+
+#: ../search/UIManager.cs:137
+msgid "Search applications"
+msgstr "Искать приложения"
+
+#: ../search/UIManager.cs:141
+msgid "_Contacts"
+msgstr "_Контакты"
+
+#: ../search/UIManager.cs:143
+msgid "Search contacts"
+msgstr "Искать среди контактов"
+
+#: ../search/UIManager.cs:147
+msgid "Ca_lendar events"
+msgstr "События ка_лендаря"
+
+#: ../search/UIManager.cs:149
+msgid "Search calendar events"
+msgstr "Искать среди событий календаря"
+
+#: ../search/UIManager.cs:153
+msgid "_Documents"
+msgstr "_Документы"
+
+#: ../search/UIManager.cs:155
+msgid "Search documents"
+msgstr "Искать документы"
+
+#: ../search/UIManager.cs:159
+msgid "Conve_rsations"
+msgstr "_Беседы"
+
+#: ../search/UIManager.cs:161
+msgid "Search E-Mail and Instant Messaging logs"
+msgstr "Искать в электронной почте и истории мгновенных сообщений"
+
+#: ../search/UIManager.cs:165
+msgid "_Images"
+msgstr "_Изображения"
+
+#: ../search/UIManager.cs:167
+msgid "Search images"
+msgstr "Искать изображения"
+
+#: ../search/UIManager.cs:171
+msgid "_Media"
+msgstr "_Медиа"
+
+#: ../search/UIManager.cs:173
+msgid "Search sound and video files"
+msgstr "Искать звуковые и видеофайлы"
+
+#: ../search/UIManager.cs:177
+msgid "_Folders"
+msgstr "П_апки"
+
+#: ../search/UIManager.cs:179
+msgid "Search for folder names"
+msgstr "Искать среди имен папок"
+
+#: ../search/UIManager.cs:183
+msgid "_Websites"
+msgstr "_Веб-сайты"
+
+#: ../search/UIManager.cs:185
+msgid "Search website history"
+msgstr "Искать в истории посещения веб-сайтов"
+
+#: ../search/UIManager.cs:189
+msgid "_News Feeds"
+msgstr "Ленты _новостей"
+
+#: ../search/UIManager.cs:191
+msgid "Search news feeds"
+msgstr "Искать в новостях"
+
+#: ../search/UIManager.cs:195
+msgid "A_rchives"
+msgstr "_Архивы"
+
+#: ../search/UIManager.cs:197
+msgid "Search files in Archives"
+msgstr "Искать файлы в архивах"
+
+#: ../search/UIManager.cs:205
+msgid "Sort by Date _Modified"
+msgstr "Сортировать по _дате изменения"
+
+#: ../search/UIManager.cs:206
+msgid "Sort the most-recently-modified matches first"
+msgstr "Показывать недавно изменённые элементы первыми"
+
+#: ../search/UIManager.cs:209
+msgid "Sort by _Name"
+msgstr "Сортировать по _имени"
+
+#: ../search/UIManager.cs:210
+msgid "Sort matches by name"
+msgstr "Сортировать результаты по имени"
+
+#: ../search/UIManager.cs:213
+msgid "Sort by _Relevance"
+msgstr "По _значимости"
+
+#: ../search/UIManager.cs:214
+msgid "Sort the best matches first"
+msgstr "Сортировать результаты по степени совпадения с запросом"
+
+#: ../search/UIManager.cs:221
+msgid "Show Details"
+msgstr "Отображать сведения"
+
+#: ../search/UIManager.cs:354
+msgid "Couldn't launch web browser"
+msgstr "Не удаётся запустить веб-браузер"
+
+#: ../tools/Settings.cs:166
+msgid "Reload configuration"
+msgstr "Перечитать конфигурацию"
+
+#: ../tools/Settings.cs:167
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"Файл конфигурации был изменён другим приложением. Хотите сбросить текущие "
+"отображаемые данные и перезагрузить конфигурацию с диска?"
+
+#: ../tools/Settings.cs:305
+msgid "Select Path"
+msgstr "Выбрать путь"
+
+#: ../tools/Settings.cs:324
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "Данный путь уже был ранее выбран для индексирования, поэтому он не добавлен."
+
+#: ../tools/Settings.cs:327
+msgid ""
+"The selected path wasn't added. The list contains items that supersedes it "
+"and the data is already being indexed."
+msgstr ""
+"Выбранный путь не был добавлен. Список уже содержит элементы, которые "
+"включают в себя этот путь, и данные уже проиндексированы."
+
+#: ../tools/Settings.cs:338
+msgid "Path not added"
+msgstr "Путь не добавлен"
+
+#: ../tools/Settings.cs:347
+msgid "Remove obsolete paths"
+msgstr "Удалить устаревшие пути"
+
+#: ../tools/Settings.cs:348
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Добавление этого пути выведет из употребления некоторые существующие пути, "
+"что приведёт к их удалению. Вы действительно хотите добавить этот путь?"
+
+#: ../tools/Settings.cs:374
+msgid "Remove path"
+msgstr "Удалить путь"
+
+#: ../tools/Settings.cs:375
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Вы действительно хотите удалить этот путь из списка папок, исключенных из "
+"индексирования?"
+
+#: ../tools/Settings.cs:404
+msgid "Remove item"
+msgstr "Удалить элемент"
+
+#: ../tools/Settings.cs:405
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Вы действительно хотите удалить этот элемент из списка данных, исключенных "
+"из индексирования?"
+
+#: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
+#: ../tools/Settings.cs:970
+msgid "Name"
+msgstr "Имя"
+
+#: ../tools/Settings.cs:538
+msgid "Type"
+msgstr "Тип"
+
+#: ../tools/Settings.cs:591
+msgid "Path:"
+msgstr "Путь:"
+
+#: ../tools/Settings.cs:594
+msgid "Pattern:"
+msgstr "Шаблон:"
+
+#: ../tools/Settings.cs:597
+msgid "Mail folder:"
+msgstr "Почтовая папка:"
+
+#: ../tools/Settings.cs:878
+msgid "Select Folder"
+msgstr "Выбрать папку"
+
+#: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
+msgid "P_ath:"
+msgstr "П_уть:"
+
+#: ../tools/Settings.cs:909
+msgid "M_ail folder:"
+msgstr "П_очтовая папка:"
+
+#: ../tools/Settings.cs:914
+msgid "P_attern:"
+msgstr "Ш_аблон:"
+
+#: ../tools/Settings.cs:938
+msgid "Error adding path"
+msgstr "Ошибка добавления пути"
+
+#: ../tools/Settings.cs:939
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"Указанный путь не обнаружен и поэтому не может быть добавлен в список "
+"ресурсов исключённых из процесса индексирования."
+
+#: ../tools/Settings.cs:969
+msgid "Show"
+msgstr "Показать"
+
+#: ../tools/settings.glade.h:1
+msgid "<b>Administration</b>"
+msgstr "<b>Администрирование</b>"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Display</b>"
+msgstr "<b>Отображение</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Исключить ресурс</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>General</b>"
+msgstr "<b>Общие</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>Privacy</b>"
+msgstr "<b>Конфиденциальность</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>Выберите почтовую папку</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>User Interface</b>"
+msgstr "<b>Интерфейс пользователя</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "Add any additional paths to be included for indexing."
+msgstr "Добавьте любые дополнительные пути, которые будут индексироваться."
+
+#: ../tools/settings.glade.h:9
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Укажите, какие типы результатов должны быть видимыми, и в каком порядке они "
+"должны отображаться при группировке по типу."
+
+#: ../tools/settings.glade.h:10
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:11
+msgid "Automatically s_tart searching after the user has stopped typing"
+msgstr "Автоматически _запускать поиск, когда пользователь прекратил ввод"
+
+#: ../tools/settings.glade.h:12
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:13
+msgid "Display the search window by pressing:"
+msgstr "Отображать окно поиска после нажатия:"
+
+#: ../tools/settings.glade.h:14
+msgid "Exclude Resource"
+msgstr "Исключение ресурса"
+
+#: ../tools/settings.glade.h:15
+msgid "Filename _pattern"
+msgstr "_Шаблон имени файла"
+
+#: ../tools/settings.glade.h:16
+msgid "I_ndex my home directory"
+msgstr "И_ндексировать мою домашнюю папку"
+
+#: ../tools/settings.glade.h:17
+msgid "Index data while on _battery power"
+msgstr "Индексировать данные при работе от _батареи"
+
+#: ../tools/settings.glade.h:18
+msgid "Indexing"
+msgstr "Индексирование"
+
+#: ../tools/settings.glade.h:20
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Укажите ресурс, который вы хотите исключить из индексирования."
+
+#: ../tools/settings.glade.h:21
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Выберите почтовую папку, которую вы хотите исключить из индексирования. "
+
+#: ../tools/settings.glade.h:23
+msgid "Search Preferences"
+msgstr "Параметры поиска"
+
+#: ../tools/settings.glade.h:24
+msgid "Select Mail Folder"
+msgstr "Выбор почтовой папки"
+
+#: ../tools/settings.glade.h:25
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Укажите любые ресурсы, такие как пути, шаблоны, почтовые папки или типы "
+"объектов, которые вы хотите исключить из индексирования."
+
+#: ../tools/settings.glade.h:26
+msgid "Type:"
+msgstr "Тип:"
+
+#: ../tools/settings.glade.h:27
+msgid "_Allow Beagle to be run as root"
+msgstr "_Разрешить запуск Beagle c правами суперпользователя."
+
+#: ../tools/settings.glade.h:28
+msgid "_Browse..."
+msgstr "_Просмотреть..."
+
+#: ../tools/settings.glade.h:29
+msgid "_Folder path"
+msgstr "_Путь к папке"
+
+#: ../tools/settings.glade.h:30
+msgid "_Mail folder"
+msgstr "_Почтовая папка"
+
+#: ../tools/settings.glade.h:31
+msgid "_Start search & indexing services automatically "
+msgstr "_Запускать службы поиска и индексирования автоматически "
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search & Indexing"
+msgstr "Настройка поиска и индексирования"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Configure search & indexing properties"
+msgstr "Настройка параметров поиска и индексирования"
+
+#: ../tools/beagle-settings.desktop.in.in.h:3
+msgid "Search & Indexing"
+msgstr "Поиск и индексирование"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "На этом компьютере"
+
+#: ../Util/ExifData.cs:226
+msgid "Image Directory"
+msgstr "Папка изображений"
+
+#: ../Util/ExifData.cs:228
+msgid "Thumbnail Directory"
+msgstr "Папка миниатюр"
+
+#: ../Util/ExifData.cs:230
+msgid "Exif Directory"
+msgstr "Папка EXIF"
+
+#: ../Util/ExifData.cs:232
+msgid "GPS Directory"
+msgstr "Папка GPS"
+
+#: ../Util/ExifData.cs:234
+msgid "InterOperability Directory"
+msgstr "Папка InterOperability"
+
+#: ../Util/ExifData.cs:236
+msgid "Unknown Directory"
+msgstr "Неизвестный каталог"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:109
+msgid "MMM d"
+msgstr "d MMM"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:112
+msgid "MMM d, yyyy"
+msgstr "d MMM yyyy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:115
+msgid "h:mm tt"
+msgstr "hh:mm"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:121
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:138
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Сегодня в {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:141
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Вчера в {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:144
+#, csharp-format
+msgid "{0} days ago, {1}"
+msgstr "{0} дней назад, {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:149
+msgid "MMMM d, h:mm tt"
+msgstr "d MMMM, hh:mm"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:154
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "d MMMM yyyy, hh:mm"
+
+#: ../Util/StringFu.cs:164
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} час"
+msgstr[1] "{0} часа"
+msgstr[2] "{0} часов"
+
+#: ../Util/StringFu.cs:171
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} минута"
+msgstr[1] "{0} минуты"
+msgstr[2] "{0} минут"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:205
+#, csharp-format
+msgid "{0} bytes"
+msgstr "{0} байт"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:209
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} КБ"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:212
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} МБ"
+

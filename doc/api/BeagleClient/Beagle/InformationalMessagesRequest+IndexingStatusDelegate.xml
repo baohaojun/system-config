@@ -1,0 +1,21 @@
+<Type Name="InformationalMessagesRequest+IndexingStatusDelegate" FullName="Beagle.InformationalMessagesRequest+IndexingStatusDelegate">
+  <TypeSignature Language="C#" Value="public delegate void InformationalMessagesRequest.IndexingStatusDelegate(IndexingStatus status);" />
+  <AssemblyInfo>
+    <AssemblyName>Beagle</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="status" Type="Beagle.IndexingStatus" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="status">To be added.</param>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

@@ -1,0 +1,39 @@
+<!ENTITY beagle.context.search.link.label           "搜索链接">
+<!ENTITY beagle.context.search.page.label           "搜索本页">
+
+<!ENTITY beagle.pref.label                          "Beagle 选项">
+<!ENTITY beagle.pref.security.active.label          "索引安全内容">
+<!ENTITY beagle.pref.bookmark.active.label          "在窗口关闭时索引书签">
+<!ENTITY beagle.pref.prompt.keywords.active.label   "在按需索引时提示输入关键字">
+<!ENTITY beagle.pref.default.action.label           "默认操作">
+<!ENTITY beagle.pref.default.action.tooltip         "URL不匹配任何规则时的操作">
+<!ENTITY beagle.pref.conflict.action.label          "冲突时的操作">
+<!ENTITY beagle.pref.conflict.action.tooltip        "URL同时匹配排除列表和包含列表中的规则时的操作">
+<!ENTITY beagle.pref.action.index.label             "索引">
+<!ENTITY beagle.pref.action.noindex.label           "不索引">
+<!ENTITY beagle.pref.groupbox.general.label         "通用">
+<!ENTITY beagle.pref.groupbox.include.label         "包含">
+<!ENTITY beagle.pref.groupbox.exclude.label         "排除">
+<!ENTITY beagle.pref.filter.name.label              "名称">
+<!ENTITY beagle.pref.filter.pattern.label           "模板">
+<!ENTITY beagle.pref.filter.patterntype.label       "模板类型">
+<!ENTITY beagle.pref.filter.add.label		        "增加">
+<!ENTITY beagle.pref.filter.remove.label            "移除">
+<!ENTITY beagle.pref.filter.add.dlg.title           "增加规则">
+<!ENTITY beagle.pref.help.label                     "帮助">
+<!ENTITY beagle.pref.save.label                     "保存">
+<!ENTITY beagle.pref.cancel.label                   "取消">
+
+<!ENTITY beagle.run.index.this.label                "索引当前页面">
+<!ENTITY beagle.run.always.index.label              "总是索引这个站点">
+<!ENTITY beagle.run.never.index.label               "从不索引这个站点">
+<!ENTITY beagle.run.preferences.label               "选项">
+<!ENTITY beagle.run.context.menu.label              "Beagle">
+<!ENTITY beagle.run.index.link.label                "索引链接">
+<!ENTITY beagle.run.index.image.label               "索引图片">
+
+<!ENTITY beagle.index.link.start.label              "开始">
+<!ENTITY beagle.index.link.stop.label               "停止">
+
+<!ENTITY beagle.bookmark.index.modified.label       "索引更改过的书签">
+

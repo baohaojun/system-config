@@ -1,0 +1,125 @@
+#!/bin/sh
+
+#
+# beagle-crawl-system
+#
+# Copyright (C) 2005 Novell, Inc.
+#
+
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+
+umask 022
+
+DEBUG=0
+
+if [ ! -x @sbindir@/beagle-build-index ] ; then
+    if [ "$DEBUG" = "1" ]; then
+	echo "$0: @sbindir@/beagle-build-index not found.  Exiting."
+    fi
+    exit 1
+fi
+
+if [ "$1" = "--list" ]; then
+    grep -H CRAWL_ENABLED @sysconfdir@/beagle/crawl-rules/crawl-*
+    exit 0
+fi
+
+CRAWL_USER=beagleindex
+
+export TMPDIR=/tmp
+
+# Mono requires a writable wapi directory
+MONO_SHARED_DIR=`mktemp -d -p $TMPDIR .beagleindexwapi.XXXXXXXXXX`|| ( echo "$0: Can't create wapi directory!" ; exit 1 )
+chown $CRAWL_USER $MONO_SHARED_DIR
+
+if [ "$DEBUG" = "1" ]; then
+    echo "$0: Processing files in @sysconfdir@/beagle/crawl-rules/..."
+fi
+
+for crawl_file in @sysconfdir@/beagle/crawl-rules/crawl-*; do
+    unset CRAWL_ENABLED CRAWL_DISABLE_FILTERING CRAWL_DISABLE_DIRECTORIES CRAWL_DISABLE_ON_BATTERY CRAWL_RECURSIVE CRAWL_CACHE_TEXT CRAWL_ALLOW_PATTERNS CRAWL_DENY_PATTERNS CRAWL_PATHS CRAWL_INDEX_NAME CRAWL_REMOVE_DELETED_FILES
+
+    if [ -f $crawl_file ] ; then
+	if [ "$DEBUG" = "1" ]; then
+	    echo "$0: Processing $crawl_file..."
+	fi
+
+	. $crawl_file
+
+	if [ "$1" != "" ]; then
+	    CRAWL_FILE_NAME=`basename $crawl_file`
+	    [ "$1" = "$CRAWL_FILE_NAME" ] && CRAWL_ENABLED="yes" || CRAWL_ENABLED="no"
+	fi
+
+	if [ -n "$CRAWL_ENABLED" -a "$CRAWL_ENABLED" = "yes" ] ; then
+
+	    OPTIONS="`test -n "$CRAWL_DISABLE_FILTERING" -a "$CRAWL_DISABLE_FILTERING" = "yes" && \
+                     echo --disable-filtering`"
+
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_DISABLE_DIRECTORIES" -a "$CRAWL_DISABLE_DIRECTORIES" = "yes" && \
+                     echo --disable-directories`"
+
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_DISABLE_ON_BATTERY" -a "$CRAWL_DISABLE_ON_BATTERY" = "yes" && \
+                     echo --disable-on-battery`"
+
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_RECURSIVE" -a "$CRAWL_RECURSIVE" = "yes" && \
+                     echo --recursive`"
+
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_CACHE_TEXT" -a "$CRAWL_CACHE_TEXT" = "yes" && \
+                     echo --enable-text-cache`"
+
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_ALLOW_PATTERNS" && \
+                     echo --allow-pattern $CRAWL_ALLOW_PATTERNS`"
+
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_DENY_PATTERNS" && \
+                     echo --deny-pattern $CRAWL_DENY_PATTERNS`"
+	    
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_REMOVE_DELETED_FILES" && \
+                     echo --enable-deletion`"
+	    
+	    IONICE=`which ionice 2>/dev/null`
+            if [ -n "$IONICE" ]; then
+                IONICE="$IONICE -c 3"
+            fi
+
+	    COMMAND="$IONICE su -s /bin/bash $CRAWL_USER -c \"MONO_SHARED_DIR=$MONO_SHARED_DIR @sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\""
+	    
+	    if [ "$DEBUG" = "1" ]; then
+		eval $COMMAND
+	    else
+		eval $COMMAND > /dev/null 2>&1
+	    fi
+
+	    if [ "$DEBUG" = "1" ]; then
+		echo "$0: Finished processing $crawl_file."
+	    fi
+	else
+	    if [ "$DEBUG" = "1" ]; then
+		echo "$0: Crawling is disabled for $crawl_file.  Skipping"
+	    fi
+	fi
+    fi
+done
+
+# delete wapi directory
+rm -rf $MONO_SHARED_DIR
+
+exit 0

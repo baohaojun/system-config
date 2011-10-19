@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE window SYSTEM "chrome://beagle/locale/beagle.dtd">
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<dialog id="beagle-pref"
+    buttons="accept,cancel,help" 
+    onload="beaglePref.init();" 
+    ondialogaccept="beaglePref.onSave();window.close();"
+    ondialoghelp="window.open('http://beagle-project.org/Browser_Extension#Firefox_Extension');"
+    persist="screenX screenY"
+    title="&beagle.pref.label;"
+    flex="1"
+    style="min-width:500px"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <stringbundleset id="stringbundleset">
+        <stringbundle id="beagleStrings"
+                src="chrome://beagle/locale/beagle.properties"/>
+    </stringbundleset>
+
+
+    <!-- jslib sources used for executing beagle -->
+    <script type="text/javascript">
+	var JS_LIB_DEBUG = false;
+    </script>
+    <script type="text/javascript" src="jslib/jslib.js"/>
+    <script type="text/javascript" src="jslib/io/file.js"/>
+    <script type="text/javascript" src="jslib/io/fileUtils.js"/>
+
+    <script type="text/javascript" src="utils.js" />
+
+    <script type="text/javascript" src="json.js" />
+      
+    <script type="text/javascript" src="i18n.js" />
+    
+    <script type="text/javascript" src="beaglePrefs.js" />
+    
+    
+    <groupbox>
+        <caption label="&beagle.pref.groupbox.general.label;" />
+        <!--checkbox 
+          id="beagle.context.active" 
+          label="&beagle.pref.context.active.label;"
+          type="checkbox" 
+        /-->
+
+        <checkbox 
+          id="beagle.security.active" 
+          label="&beagle.pref.security.active.label;"
+          type="checkbox" 
+          />
+        <checkbox 
+          id="beagle.bookmark.active" 
+          label="&beagle.pref.bookmark.active.label;"
+          type="checkbox" 
+          />
+         <checkbox 
+          id="beagle.prompt.keywords.active" 
+          label="&beagle.pref.prompt.keywords.active.label;"
+          type="checkbox" 
+          />
+        <hbox>
+            <label tooltiptext="&beagle.pref.default.action.tooltip;">&beagle.pref.default.action.label;:</label>
+            <radiogroup id="beagle.default.action" orient="horizontal">
+                <radio id="beagle.default.action.noindex" value="0" label="&beagle.pref.action.noindex.label;" />
+                <radio id="beagle.default.action.index" value="1" label="&beagle.pref.action.index.label;"/>
+            </radiogroup>
+        </hbox>
+        <hbox>
+            <label tooltiptext="&beagle.pref.conflict.action.tooltip;">&beagle.pref.conflict.action.label;:</label>
+            <radiogroup id="beagle.conflict.action" orient="horizontal">
+                <radio id="beagle.conflict.action.noindex" value="0" label="&beagle.pref.action.noindex.label;" />
+                <radio id="beagle.conflict.action.index" value="1" label="&beagle.pref.action.index.label;"/>
+            </radiogroup>
+        </hbox>
+
+    </groupbox>
+
+    <!--The Patterns to Include-->		  
+    <groupbox flex="1">
+        <caption label="&beagle.pref.groupbox.include.label;"/>
+        <hbox flex="1">
+        <vbox flex="1">
+        <listbox flex="1" rows="4" id="beagle.include.list">
+        <listhead>
+            <listheader id="includeName" label="&beagle.pref.filter.name.label;" />
+            <listheader id="includePattern" label="&beagle.pref.filter.pattern.label;" />
+            <listheader id="includePatternType" label="&beagle.pref.filter.patterntype.label;" />
+        </listhead>
+        <listcols>
+            <listcol />
+            <listcol flex="2"/>
+            <listcol flex="1"/>
+        </listcols>
+        </listbox>
+        </vbox>
+        <vbox>
+        <button command="AddIncludeFilterCmd" />
+        <button command="RemoveIncludeFilterCmd"  />
+        </vbox>
+        </hbox>
+    </groupbox>
+
+
+    <!--The Patterns to Exclude-->		  
+    <groupbox flex="1">
+        <caption label="&beagle.pref.groupbox.exclude.label;"/>	
+        <hbox flex="1">
+        <vbox flex="1">
+        <listbox flex="1" rows="4" id="beagle.exclude.list">
+        <listhead>
+            <listheader id="excludeName" label="&beagle.pref.filter.name.label;" />
+            <listheader id="excludePattern" label="&beagle.pref.filter.pattern.label;" />
+            <listheader id="excludePatternType" label="&beagle.pref.filter.patterntype.label;" />
+        </listhead>
+        <listcols>
+            <listcol />
+            <listcol flex="2"/>
+            <listcol flex="1"/>
+        </listcols>
+        </listbox>
+        </vbox>
+        <vbox>
+        <button command="AddExcludeFilterCmd" />
+        <button command="RemoveExcludeFilterCmd"  />
+        </vbox>
+        </hbox>
+    </groupbox>
+
+    <commandset>
+        <command id="AddIncludeFilterCmd" label="&beagle.pref.filter.add.label;" 
+            oncommand="beaglePref.onAddFilter('include')"/>
+        <command id="AddExcludeFilterCmd" label="&beagle.pref.filter.add.label;" 
+            oncommand="beaglePref.onAddFilter('exclude')"/>
+        <command id="RemoveIncludeFilterCmd" label="&beagle.pref.filter.remove.label;" 
+            oncommand="beaglePref.onRemoveFilter('include')"/>
+        <command id="RemoveExcludeFilterCmd" label="&beagle.pref.filter.remove.label;" 
+            oncommand="beaglePref.onRemoveFilter('exclude')"/>
+    </commandset>
+</dialog> 
+
+
+

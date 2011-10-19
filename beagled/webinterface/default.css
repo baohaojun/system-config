@@ -1,0 +1,249 @@
+/*
+ * Copyright (2007) Debajyoti Bera
+ * Copyright (2007) Nirbheek Chauhan
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ * 
+ *
+ */
+
+body {
+	color: #444;
+	background: #fff url(images/title_bg.png) 0 -80px repeat-x;
+	position: relative;
+	margin: 30px;
+	font-family: trebuchet ms,luxi sans,sans-serif;
+	font-size: 96%;
+	text-align: center;
+}
+
+/************ header ***************/
+
+#menubar {
+	margin: -30px; /* with respect to body margin */
+	float: right;
+}
+
+#header img {
+	float: left;
+	margin: 0.5em;
+	border: 0px;
+}
+
+#header {
+	text-align: center;
+	padding: 1em;
+}
+
+#header form input {
+	border: 1px solid rgb(153, 51, 0);
+	margin-top: 0.5em;
+	margin-right: 1.2em;
+	margin-bottom: 1.8em;
+}
+
+#querytext {
+	background-image: url('images/system-search.png');
+	background-repeat: no-repeat;
+	padding-left:20px;
+}
+
+#searchoptions {
+	margin-right: 1.2em;
+}
+
+/************ End header; Start status ************/
+
+#status {
+	padding: 0.5em;
+	text-align: center;
+	display: none;
+}
+
+/*********** End status; Start topbar *************/
+
+#topbar {
+	clear: left;
+	height: 1.5em;
+	background-color: #cccccc;
+	border-top: 1px dotted rgb(153, 51, 0);
+	padding-top: 0.25em;
+	padding-bottom: 0.25em;
+	display: none;
+}
+
+#topbar-left {
+	float: left;
+	text-align: center;
+	margin-right: 0.5em;
+	margin-left: 0.5em;
+}
+
+#topbar-left form input {
+	margin: 0.3em;
+	margin-right: 0.5em;
+	margin-left: 0.5em;
+}
+
+#topbar-left a {
+	padding-right: .5em;
+}
+
+#topbar-right{
+	float: right;
+	text-align: center;
+	padding-right: .5em;
+}
+
+[disabled]{
+	color:#933;
+	background-color:gray;
+}
+
+/************ End status; Start result listing ***************/
+#results {
+	clear: left;
+	margin: 0.5em;
+	text-align: left;
+}
+
+#info {
+	clear: left;
+	margin: 0.5em;
+	text-align: left;
+}
+
+#help {
+	clear: left;
+	margin: 0.5em;
+	margin-left: 25%;
+	text-align: left;
+}
+
+#help-topics {
+	clear: left;
+	margin: 0.5em;
+	text-align: left;
+}
+
+.Hit {
+	margin: 0.5em;
+	float: left;
+	overflow: hidden;
+	width: 96%;
+}
+
+.Hits {
+	float: left;
+	overflow: hidden;
+	width: 96%;
+	display: none;
+}
+
+.Hits div h3 {
+	padding: 0.4em;
+	background-color: #cccccc;
+}
+
+.Title {
+	padding: 0.4em;
+	float: left;
+	border-bottom: 1px solid rgb(152, 51, 0);
+	border-left: 1px solid rgb(152, 51, 0);
+	width: 96%;
+}
+
+.Toggler {
+	padding-right: 0.1em;
+	font-weight: bold;
+}
+
+.Uri {
+	float: left;
+	text-align: left;
+	font-weight: bold;
+	overflow: hidden;
+	width: 50%;
+}
+
+.Timestamp .Filesize {
+	color: #808080;
+}
+
+.Timestamp {
+	float: right;
+	text-align: right;
+}
+
+.Data {
+	float: left;
+	margin: 0.5em;
+	margin-bottom: 1.5em;
+}
+
+.Properties {
+	float: left;
+	margin-left: 0.5em;
+}
+
+.Snippet {
+        clear: left;
+	width: 90%;
+	padding-top: 1em;
+	margin-left: 4em;
+	padding-left: 1em;
+	border-left: thin dotted green;
+}
+
+td.SearchProperty a{
+	visibility: hidden;
+	text-decoration: none;
+}
+
+tr.Property:hover td.SearchProperty a {
+	visibility: visible;
+}
+
+td.SearchProperty a img {
+	height: 15px;
+	border: 0px;
+}
+
+.PropertyValue {
+	color: #000066;
+}
+
+.XML {
+	display: none;
+}
+
+/*********** End results; Start footer ************/
+
+#footer {
+	border-top: 1px dotted rgb(153, 51, 0);
+	padding: 0.5em;
+	text-align: center;
+	float: left;
+	width: 100%;
+}
+
+.version-info {
+	font-size: 75%;
+	color: gray;
+}

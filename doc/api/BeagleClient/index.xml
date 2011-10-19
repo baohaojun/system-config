@@ -1,0 +1,100 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Beagle" Version="0.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>Beagle.ResponseMessageTypes(System.Type[])</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>Beagle.RequestMessageTypes(System.Type[])</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>
+    <para>This documentation is part of the <!-- FIXME: add link to beagle project here -->Beagle project.</para>Beagle consists of a service which provides indexing and searching abilities of personal data and exports an interface which can be used to interact with the service. Details of the architecture can be found at <see href="http://beagle-project.org/Development">http://beagle-project.org/Development</see>.</Remarks>
+  <Copyright>Copyright (C) 2007 D Bera</Copyright>
+  <Types>
+    <Namespace Name="Beagle">
+      <Type Name="IIndexableGenerator" />
+      <!-- Ignore <Type Name="ISnippetReader" /> -->
+      <Type Name="Hit" />
+      <!-- Ignore <Type Name="Versioned" /> -->
+      <Type Name="Indexable" />
+      <Type Name="IndexingServiceRequest" />
+      <Type Name="RequestMessage" />
+      <Type Name="Message" />
+      <Type Name="RequestMessage+AsyncResponseHandler" />
+      <Type Name="RequestMessage+Closed" />
+      <Type Name="IndexingStatusResponse" />
+      <Type Name="ResponseMessage" />
+      <Type Name="InformationalMessagesRequest" />
+      <Type Name="InformationalMessagesRequest+IndexingStatusDelegate" />
+      <!-- Ignore <Type Name="RequestMessageExecutor" /> -->
+      <!-- Ignore <Type Name="RequestMessageExecutor+AsyncResponse" /> -->
+      <!-- Ignore <Type Name="RequestMessageAttribute" /> -->
+      <!-- Ignore <Type Name="ResponseWrapper" /> -->
+      <Type Name="EmptyResponse" />
+      <Type Name="ErrorResponse" />
+      <Type Name="ResponseMessageException" />
+      <!-- Ignore <Type Name="RequestMessageTypesAttribute" /> -->
+      <!-- Ignore <Type Name="ResponseMessageTypesAttribute" /> -->
+      <!-- Ignore <Type Name="RequestMessageExecutorTypesAttribute" /> -->
+      <!-- Ignore <Type Name="PropertyList" /> -->
+      <Type Name="Property" />
+      <Type Name="Query" />
+      <Type Name="Query+HitsAdded" />
+      <Type Name="Query+HitsSubtracted" />
+      <Type Name="Query+Finished" />
+      <Type Name="QueryPart" />
+      <Type Name="QueryPart_Text" />
+      <Type Name="QueryPart_Property" />
+      <Type Name="QueryPart_DateRange" />
+      <Type Name="QueryPart_Human" />
+      <Type Name="QueryPart_Wildcard" />
+      <Type Name="QueryPart_Or" />
+      <Type Name="QueryPart_Uri" />
+      <Type Name="HitsAddedResponse" />
+      <Type Name="HitsSubtractedResponse" />
+      <Type Name="FinishedResponse" />
+      <Type Name="SearchTermResponse" />
+      <Type Name="QueryableStatus" />
+      <Type Name="DaemonInformationRequest" />
+      <Type Name="ShutdownRequest" />
+      <Type Name="ReloadConfigRequest" />
+      <Type Name="OptimizeIndexesRequest" />
+      <Type Name="DaemonInformationResponse" />
+      <Type Name="SnippetRequest" />
+      <Type Name="SnippetResponse" />
+      <Type Name="Fragment" />
+      <Type Name="SnippetLine" />
+      <Type Name="SnippetList" />
+      <Type Name="Transport" />
+      <Type Name="Transport+AsyncResponseDelegate" />
+      <Type Name="Transport+ClosedDelegate" />
+      <Type Name="UnixTransport" />
+      <Type Name="IndexableType" />
+      <Type Name="IndexableFiltering" />
+      <Type Name="IndexingStatus" />
+      <Type Name="PropertyType" />
+      <Type Name="QueryDomain" />
+      <Type Name="QueryPartLogic" />
+      <!-- Ignore <Type Name="RequestWrapper" /> -->
+      <Type Name="RequestWrapper" />
+      <Type Name="RequestMessageExecutor" />
+      <Type Name="RequestMessageAttribute" />
+      <Type Name="ResponseWrapper" />
+      <Type Name="RequestMessageTypesAttribute" />
+      <Type Name="ResponseMessageTypesAttribute" />
+      <Type Name="RequestMessageExecutorTypesAttribute" />
+      <Type Name="PropertyList" />
+      <Type Name="ISnippetReader" />
+      <Type Name="Versioned" />
+      <Type Name="RequestMessageExecutor+AsyncResponse" />
+    </Namespace>
+  </Types>
+  <Title>BeagleClient</Title>
+</Overview>

@@ -1,0 +1,1640 @@
+# French translations for beagle.
+# Copyright (C) 2005-2008 Free Software Foundation, Inc.
+# This file is distributed under the same license as the beagle package.
+#
+# Raphaël Slinckx <raphael@slinckx.net>, 2005.
+# Guillaume Ayoub <lize@invox.org>, 2006-2007
+# Christophe Merlet <redfox@redfoxcenter.org>, 2006.
+# Damien Durand <splinux@fedoraproject.org>, 2006.
+# Robert-André Mauchin <zebob.m@gmail.com>, 2006.
+# Stéphane Raimbault <stephane.raimbault@gmail.com>, 2007-2008.
+# Jonathan Ernst <jonathan@ernstfamily.ch>, 2006-2007.
+# Bruno Brouard <annoa.b@gmail.com>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-06-14 11:55+0200\n"
+"PO-Revision-Date: 2008-06-04 11:51+0200\n"
+"Last-Translator: Bruno Brouard <annoa.b@gmail.com>\n"
+"Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Historique des conversations</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "Visionneur de messages instantanés"
+
+#: ../ImLogViewer/ImLogWindow.cs:108 ../ImLogViewer/ImLogWindow.cs:120
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "Conversations dans {0}"
+
+#: ../ImLogViewer/ImLogWindow.cs:111
+#, csharp-format
+msgid "Conversations in {0} ({1})"
+msgstr "Conversations dans {0} ({1})"
+
+#: ../ImLogViewer/ImLogWindow.cs:127
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Conversations avec {0}"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "Sur cet ordinateur"
+
+#: ../Util/StringFu.cs:125 ../search/Beagle.Search.Tiles/Utils.cs:134
+#: ../search/Beagle.Search.Tiles/Utils.cs:216
+msgid "Today"
+msgstr "Aujourd'hui"
+
+#: ../Util/StringFu.cs:127 ../search/Beagle.Search.Tiles/Utils.cs:132
+#: ../search/Beagle.Search.Tiles/Utils.cs:214
+msgid "Yesterday"
+msgstr "Hier"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:130
+msgid "MMM d"
+msgstr "d MMM"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:133
+msgid "MMM d, yyyy"
+msgstr "d MMM yyyy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:136
+msgid "h:mm tt"
+msgstr "H:mm"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:142
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0} à {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:159
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Aujourd'hui à {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:162
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Hier à {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:167
+#, csharp-format
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "Il y a {0} jour, à {1}"
+msgstr[1] "Il y a {0} jours, à {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:173
+msgid "MMMM d, h:mm tt"
+msgstr "d MMMM à H:mm"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:178
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "d MMMM yyyy à H:mm"
+
+#: ../Util/StringFu.cs:188
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} heure"
+msgstr[1] "{0} heures"
+
+#: ../Util/StringFu.cs:195
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minute"
+msgstr[1] "{0} minutes"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:229
+#, csharp-format
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} octet"
+msgstr[1] "{0} octets"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:233
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} Kio"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:236
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} Mio"
+
+#: ../epiphany-extension/beagle.py.in:167
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "beagle indexe %s"
+
+#: ../epiphany-extension/beagle.py.in:187
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "beagle indexe le lien %s"
+
+#: ../epiphany-extension/beagle.py.in:232
+msgid "Index This Page"
+msgstr "Indexer cette page"
+
+#: ../epiphany-extension/beagle.py.in:239
+msgid "Index Link"
+msgstr "Indexer le lien"
+
+#: ../epiphany-extension/beagle.py.in:246
+msgid "Reload Config File"
+msgstr "Recharger le fichier de configuration"
+
+#: ../epiphany-extension/beagle.py.in:255
+msgid "Auto Index"
+msgstr "Auto indexation"
+
+#: ../epiphany-extension/beagle.py.in:262
+msgid "Prompt key words when index on demand"
+msgstr "Saisir les mots-clés de l'indexation à la demande"
+
+#: ../epiphany-extension/beagle.py.in:289
+msgid "Extra keywords to index"
+msgstr "Mots-clés supplémentaires à indexer"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:27
+msgid "Index Information"
+msgstr "Informations sur l'index"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:30
+msgid "Number of items currently indexed:"
+msgstr "Nombre d'éléments actuellement indexés :"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:45
+msgid "<i>NOTE: The search service is still indexing new data.</i>"
+msgstr ""
+"<i>NOTE : l'utilitaire de recherche procède actuellement à l'indexation des "
+"nouvelles données.</i>"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "Aucun résultat n'a été trouvé."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:21
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr ""
+"Aucun fichier correspondant à votre recherche « {0} » n'a été trouvé sur "
+"votre ordinateur."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:24
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+"Vous pouvez changer le champ de votre recherche en utilisant le menu "
+"« Rechercher ». Une recherche plus large pourrait vous apporter plus de "
+"résultats."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+"Vous devriez vérifier l'orthographe des mots recherchés, peut-être avez-vous "
+"accidentellement mal orthographié l'un d'entre eux."
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+"Vous pouvez utiliser des majuscules et des minuscules, la recherche ne tient "
+"pas compte de la casse."
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr ""
+"Pour rechercher des termes optionnels, utilisez OR. Ex : <b>Paul OR "
+"Virginie</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+"Pour exclure des termes de vos recherches, utilisez le symbole « moins » "
+"devant, comme dans <b>-chiens</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+"Quand vous cherchez une phrase, ajoutez des guillemets. Par exemple, <b>\"Il "
+"y a des dragons\"</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:19
+#: ../search/Beagle.Search/UIManager.cs:96
+msgid "Quick Tips"
+msgstr "Petites astuces"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "Beagle ne peut pas être lancé en tant qu'utilisateur root"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:14
+msgid ""
+"For security reasons, Beagle cannot be run as root. You should restart as a "
+"regular user."
+msgstr ""
+"Pour des raisons de sécurité, Beagle ne peut pas être lancé en tant "
+"qu'administrateur (« root »). Vous devriez le redémarrer en tant "
+"qu'utilisateur normal."
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:17
+msgid "Search service not running"
+msgstr "Le service de recherche n'est pas actif"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:19
+msgid ""
+"The search service does not appear to be running. You can start it by "
+"clicking the button below."
+msgstr ""
+"Actuellement, le service de recherche ne semble pas être en cours "
+"d'exécution. Vous pouvez le démarrer en cliquant sur le bouton suivant."
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:22
+msgid "Start search service"
+msgstr "Démarrer le service de recherche"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr "Dans l'archive {0}"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/Calendar.cs:44
+#: ../search/Beagle.Search.Tiles/File.cs:176
+#: ../search/Beagle.Search.Tiles/Note.cs:70
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
+#: ../search/Beagle.Search.Tiles/Task.cs:41
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:59
+msgid "Title:"
+msgstr "Titre :"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:78
+msgid "File Name:"
+msgstr "Nom de fichier :"
+
+#. Substring to move past the initial #
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:79
+msgid "Inside File:"
+msgstr "Dans le fichier :"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:82
+#: ../search/Beagle.Search.Tiles/File.cs:180
+msgid "Author:"
+msgstr "Auteur :"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:44
+msgid "Description:"
+msgstr "Description :"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "Heure :"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:61
+msgid "Location:"
+msgstr "Emplacement :"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:65
+msgid "Attendees:"
+msgstr "Participants :"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Envoyer un courriel"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "Courriel :"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:70
+msgid "Mobile Phone:"
+msgstr "Téléphone portable :"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:72
+msgid "Work Phone:"
+msgstr "Téléphone professionnel :"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:74
+msgid "Home Phone:"
+msgstr "Téléphone personnel :"
+
+#: ../search/Beagle.Search.Tiles/File.cs:35
+msgid "Reveal in Folder"
+msgstr "Afficher dans le dossier"
+
+#: ../search/Beagle.Search.Tiles/File.cs:36
+msgid "E-Mail"
+msgstr "Courriel"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Beagle.Search.Tiles/File.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "Mettre à la corbeille"
+
+#: ../search/Beagle.Search.Tiles/File.cs:41
+msgid "Find Documents From Same Author"
+msgstr "Rechercher des documents du même auteur"
+
+#: ../search/Beagle.Search.Tiles/File.cs:177
+#: ../search/Beagle.Search.Tiles/Folder.cs:51
+#: ../search/Beagle.Search.Tiles/Note.cs:71
+msgid "Last Edited:"
+msgstr "Dernière édition :"
+
+#: ../search/Beagle.Search.Tiles/File.cs:182
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Image.cs:87
+#: ../search/Beagle.Search.Tiles/Video.cs:45
+msgid "Full Path:"
+msgstr "Chemin complet :"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:31
+msgid "Empty"
+msgstr "Vide"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:33
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Contient {0} élément"
+msgstr[1] "Contient {0} éléments"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:30
+msgid "IM Conversation"
+msgstr "Conversation instantanée"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
+msgid "Name:"
+msgstr "Nom :"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:100
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Received:"
+msgstr "Date de réception :"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:104
+msgid "Status:"
+msgstr "Statut :"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:119
+msgid "Idle"
+msgstr "Inactif"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:126
+msgid "Away"
+msgstr "Absent"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:129
+msgid "Offline"
+msgstr "Déconnecté"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:132
+msgid "Available"
+msgstr "Disponible"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Beagle.Search.Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Mettre en fond d'écran"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:84
+#: ../search/Beagle.Search.Tiles/Note.cs:75
+msgid "Tags:"
+msgstr "Étiquettes :"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:86
+#: ../search/Beagle.Search.Tiles/Video.cs:44
+msgid "Modified:"
+msgstr "Modifié :"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:96
+msgid "Comment:"
+msgstr "Commentaire :"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:45
+msgid "Mail attachment"
+msgstr "Pièce jointe"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:48
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:70
+msgid "Find Messages From Sender"
+msgstr "Chercher les messages de l'expéditeur"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:58
+msgid "(untitled)"
+msgstr "(sans titre)"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:68
+msgid "Send in Mail"
+msgstr "Envoyer par courriel"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:103
+msgid "Subject:"
+msgstr "Sujet :"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "To:"
+msgstr "À :"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "From:"
+msgstr "De :"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Sent:"
+msgstr "Date d'envoi :"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:114
+msgid "Folder:"
+msgstr "Dossier :"
+
+#: ../search/Beagle.Search.Tiles/Manpage.cs:56
+msgid "Manual page"
+msgstr "Page de manuel"
+
+#: ../search/Beagle.Search.Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Ouvrir avec"
+
+#: ../search/Beagle.Search.Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} diapositive"
+msgstr[1] "{0} diapositives"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
+msgid "Site:"
+msgstr "Site :"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:61
+msgid "Date Viewed:"
+msgstr "Date d'affichage :"
+
+#: ../search/Beagle.Search.Tiles/Task.cs:47
+msgid "Date:"
+msgstr "Date :"
+
+#: ../search/Beagle.Search.Tiles/TextDocument.cs:38
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} page"
+msgstr[1] "{0} pages"
+
+#. Add the default 'Open' menu item
+#: ../search/Beagle.Search.Tiles/Tile.cs:97
+msgid "Open"
+msgstr "Ouvrir"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:25
+msgid "Applications"
+msgstr "Applications"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:27
+msgid "Contacts"
+msgstr "Contacts"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:29
+msgid "Calendar Events"
+msgstr "Événements de calendrier"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:31
+msgid "Folders"
+msgstr "Dossiers"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:33
+msgid "Images"
+msgstr "Images"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:35
+msgid "Audio"
+msgstr "Audio"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:37
+msgid "Video"
+msgstr "Vidéo"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:39
+msgid "Documents"
+msgstr "Documents"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:41
+msgid "Conversations"
+msgstr "Conversations"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:43
+msgid "Websites"
+msgstr "Sites Web"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:45
+msgid "News Feeds"
+msgstr "Flux RSS"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:47
+msgid "Archives"
+msgstr "Archives"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:136
+#: ../search/Beagle.Search.Tiles/Utils.cs:218
+msgid "Tomorrow"
+msgstr "Demain"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:234
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "Il y a {0} semaine"
+msgstr[1] "Il y a {0} semaines"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:236
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "Dans {0} semaine"
+msgstr[1] "Dans {0} semaines"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Beagle.Search.Tiles/Utils.cs:238
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "Il y a {0} mois"
+msgstr[1] "Il y a {0} mois"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:240
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "Dans {0} mois"
+msgstr[1] "Dans {0} mois"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:242
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "Il y a {0} an"
+msgstr[1] "Il y a {0} ans"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:244
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "Dans {0} an"
+msgstr[1] "Dans {0} ans"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:60
+msgid "URL:"
+msgstr "URL :"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:61
+msgid "Accessed:"
+msgstr "Accédé :"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:33
+#: ../search/Beagle.Search/Search.cs:52
+#: ../search/Beagle.Search/SearchWindow.cs:67
+msgid "Desktop Search"
+msgstr "Outil de recherche"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:69
+msgid "No Recent Searches"
+msgstr "Aucune recherche récente"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:74
+msgid "Recent Searches"
+msgstr "Recherches récentes"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:94
+msgid "Clear"
+msgstr "Effacer"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:102
+msgid "Quit"
+msgstr "Quitter"
+
+#: ../search/Beagle.Search/Category.cs:142
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} résultat"
+msgstr[1] "{0} résultats"
+
+#: ../search/Beagle.Search/Category.cs:144
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} sur {2}"
+
+#: ../search/Beagle.Search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "Masquer"
+
+#: ../search/Beagle.Search/SearchWindow.cs:87
+msgid "_Find:"
+msgstr "_Rechercher :"
+
+#: ../search/Beagle.Search/SearchWindow.cs:109
+msgid "Find Now"
+msgstr "Rechercher maintenant"
+
+#: ../search/Beagle.Search/SearchWindow.cs:172
+msgid "Type in search terms"
+msgstr "Saisir les termes recherchés"
+
+#: ../search/Beagle.Search/SearchWindow.cs:173
+msgid "Start searching"
+msgstr "Lancer la recherche"
+
+#: ../search/Beagle.Search/SearchWindow.cs:188
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Outil de recherche : {0}"
+
+#: ../search/Beagle.Search/SearchWindow.cs:438
+msgid "There are computers near you running Beagle"
+msgstr "Des ordinateurs proches du vôtre exécutent actuellement Beagle"
+
+#: ../search/Beagle.Search/SearchWindow.cs:439
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr ""
+"Vous pouvez choisir d'effectuer une recherche sur un autre ordinateur depuis "
+"le menu « Recherche »."
+
+#: ../search/Beagle.Search/SearchWindow.cs:494
+msgid "Your data is being indexed"
+msgstr "Vos données sont en cours d'indexation"
+
+#: ../search/Beagle.Search/SearchWindow.cs:495
+msgid ""
+"The search service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr ""
+"Le service de recherche indexe actuellement vos données. Le résultat de vos "
+"recherches peut être incomplet tant que l'indexation n'est pas terminée."
+
+#: ../search/Beagle.Search/SearchWindow.cs:521
+#, csharp-format
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "Afficher {0} réponse"
+msgstr[1] "Afficher les {0} réponses"
+
+#: ../search/Beagle.Search/SearchWindow.cs:523
+#, csharp-format
+msgid "Showing the top {0} of {1} total matches"
+msgid_plural "Showing the top {0} of {1} total matches"
+msgstr[0] "Affiche le premier des {1} correspondants"
+msgstr[1] "Affiche les {0} premiers des {1} correspondants"
+
+#. Translators: the strings in TypeFilter.cs are for when the user
+#. * wants to limit search results to a specific type. You don't need
+#. * to give an exact translation of the exact same set of English
+#. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
+#: ../search/Beagle.Search/TypeFilter.cs:39
+msgid ""
+"file\n"
+"files"
+msgstr ""
+"fichier\n"
+"fichiers"
+
+#: ../search/Beagle.Search/TypeFilter.cs:40
+msgid ""
+"mail\n"
+"email\n"
+"e-mail"
+msgstr ""
+"mail\n"
+"email\n"
+"e-mail\n"
+"courriel"
+
+#: ../search/Beagle.Search/TypeFilter.cs:41
+msgid ""
+"im\n"
+"ims\n"
+"instant message\n"
+"instant messages\n"
+"instant-message\n"
+"instant-messages\n"
+"chat\n"
+"chats"
+msgstr ""
+"im\n"
+"ims\n"
+"message\n"
+"messages\n"
+"messagerie\n"
+"messageries\n"
+"messagerie instantanée\n"
+"messageries instantanées\n"
+"message instantané\n"
+"messages instantanés\n"
+"chat\n"
+"chats"
+
+#: ../search/Beagle.Search/TypeFilter.cs:42
+msgid ""
+"presentation\n"
+"presentations\n"
+"slideshow\n"
+"slideshows\n"
+"slide\n"
+"slides"
+msgstr ""
+"présentation\n"
+"présentations\n"
+"diapo\n"
+"diapos\n"
+"diapositive\n"
+"diapositives"
+
+#: ../search/Beagle.Search/TypeFilter.cs:44
+msgid ""
+"application\n"
+"applications\n"
+"app\n"
+"apps"
+msgstr ""
+"application\n"
+"applications\n"
+"appli\n"
+"applis"
+
+#: ../search/Beagle.Search/TypeFilter.cs:45
+msgid ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards"
+msgstr ""
+"contact\n"
+"contacts\n"
+"vcard\n"
+"vcards\n"
+"carnet\n"
+"carnets\n"
+"adresse\n"
+"adresses"
+
+#: ../search/Beagle.Search/TypeFilter.cs:46
+msgid ""
+"folder\n"
+"folders"
+msgstr ""
+"dossier\n"
+"dossiers\n"
+"répertoire\n"
+"répertoires"
+
+#: ../search/Beagle.Search/TypeFilter.cs:47
+msgid ""
+"image\n"
+"images\n"
+"img"
+msgstr ""
+"image\n"
+"images\n"
+"photo\n"
+"photos\n"
+"img"
+
+#: ../search/Beagle.Search/TypeFilter.cs:48
+msgid "audio"
+msgstr ""
+"audio\n"
+"audios\n"
+"musique\n"
+"musiques"
+
+#: ../search/Beagle.Search/TypeFilter.cs:49
+msgid "video"
+msgstr ""
+"vidéo\n"
+"vidéos"
+
+#: ../search/Beagle.Search/TypeFilter.cs:50
+msgid "media"
+msgstr ""
+"média\n"
+"médias"
+
+#: ../search/Beagle.Search/TypeFilter.cs:51
+msgid ""
+"document\n"
+"documents\n"
+"office document\n"
+"office documents"
+msgstr ""
+"document\n"
+"documents"
+
+#: ../search/Beagle.Search/TypeFilter.cs:52
+msgid ""
+"conversation\n"
+"conversations"
+msgstr ""
+"conversation\n"
+"conversations"
+
+#: ../search/Beagle.Search/TypeFilter.cs:53
+msgid ""
+"web\n"
+"www\n"
+"website\n"
+"websites"
+msgstr ""
+"Web\n"
+"www\n"
+"Internet\n"
+"site\n"
+"sites\n"
+"site Web\n"
+"sites Web\n"
+"site Internet\n"
+"sites Internet"
+
+#: ../search/Beagle.Search/TypeFilter.cs:54
+msgid ""
+"feed\n"
+"news\n"
+"blog\n"
+"rss"
+msgstr ""
+"flux\n"
+"news\n"
+"info\n"
+"infos\n"
+"blog\n"
+"rss"
+
+#: ../search/Beagle.Search/TypeFilter.cs:55
+msgid ""
+"archive\n"
+"archives"
+msgstr ""
+"archive\n"
+"archives"
+
+#: ../search/Beagle.Search/TypeFilter.cs:56
+msgid ""
+"person\n"
+"people"
+msgstr ""
+"personne\n"
+"personnes\n"
+"gens\n"
+"contact"
+
+#: ../search/Beagle.Search/UIManager.cs:52
+msgid "Close Desktop Search"
+msgstr "Fermer l'outil de recherche"
+
+#: ../search/Beagle.Search/UIManager.cs:57
+#: ../search/Beagle.Search/UIManager.cs:84
+msgid "Exit Desktop Search"
+msgstr "Quitter l'outil de recherche"
+
+#: ../search/Beagle.Search/UIManager.cs:64
+msgid "_Search"
+msgstr "_Recherche"
+
+#: ../search/Beagle.Search/UIManager.cs:67
+msgid "Show _Categories"
+msgstr "Afficher les _catégories"
+
+#: ../search/Beagle.Search/UIManager.cs:70
+msgid "Search _Domains"
+msgstr "Rechercher les _domaines"
+
+#: ../search/Beagle.Search/UIManager.cs:73
+msgid "_Actions"
+msgstr "_Actions"
+
+#: ../search/Beagle.Search/UIManager.cs:76
+msgid "_View"
+msgstr "_Affichage"
+
+#: ../search/Beagle.Search/UIManager.cs:79
+msgid "_Help"
+msgstr "Aid_e"
+
+#: ../search/Beagle.Search/UIManager.cs:87
+msgid "_Contents"
+msgstr "_Sommaire"
+
+#: ../search/Beagle.Search/UIManager.cs:89
+msgid "Help - Table of Contents"
+msgstr "Aide - Table des matières"
+
+#: ../search/Beagle.Search/UIManager.cs:93
+msgid "About Desktop Search"
+msgstr "À propos de l'outil de recherche"
+
+#: ../search/Beagle.Search/UIManager.cs:99
+msgid "Index information"
+msgstr "Informations sur l'index"
+
+#: ../search/Beagle.Search/UIManager.cs:118
+msgid "_All"
+msgstr "_Toutes"
+
+#: ../search/Beagle.Search/UIManager.cs:128
+msgid "_None"
+msgstr "Aucu_ne"
+
+#: ../search/Beagle.Search/UIManager.cs:142
+msgid "A_pplications"
+msgstr "A_pplications"
+
+#: ../search/Beagle.Search/UIManager.cs:144
+msgid "Search applications"
+msgstr "Rechercher des applications"
+
+#: ../search/Beagle.Search/UIManager.cs:148
+msgid "_Contacts"
+msgstr "_Contacts"
+
+#: ../search/Beagle.Search/UIManager.cs:150
+msgid "Search contacts"
+msgstr "Rechercher des contacts"
+
+#: ../search/Beagle.Search/UIManager.cs:154
+msgid "Ca_lendar events"
+msgstr "Événements du ca_lendrier"
+
+#: ../search/Beagle.Search/UIManager.cs:156
+msgid "Search calendar events"
+msgstr "Rechercher dans les événements du calendrier"
+
+#: ../search/Beagle.Search/UIManager.cs:160
+msgid "_Documents"
+msgstr "_Documents"
+
+#: ../search/Beagle.Search/UIManager.cs:162
+msgid "Search documents"
+msgstr "Rechercher des documents"
+
+#: ../search/Beagle.Search/UIManager.cs:166
+msgid "Conve_rsations"
+msgstr "Conve_rsations"
+
+#: ../search/Beagle.Search/UIManager.cs:168
+msgid "Search E-Mail and Instant Messaging logs"
+msgstr "Rechercher dans les courriels et les archives des messages instantanés"
+
+#: ../search/Beagle.Search/UIManager.cs:172
+msgid "_Images"
+msgstr "_Images"
+
+#: ../search/Beagle.Search/UIManager.cs:174
+msgid "Search images"
+msgstr "Rechercher des images"
+
+#: ../search/Beagle.Search/UIManager.cs:178
+msgid "_Media"
+msgstr "_Médias"
+
+#: ../search/Beagle.Search/UIManager.cs:180
+msgid "Search sound and video files"
+msgstr "Rechercher dans les fichiers son et vidéo"
+
+#: ../search/Beagle.Search/UIManager.cs:184
+msgid "_Folders"
+msgstr "_Dossiers"
+
+#: ../search/Beagle.Search/UIManager.cs:186
+msgid "Search for folder names"
+msgstr "Rechercher dans les noms de dossiers"
+
+#: ../search/Beagle.Search/UIManager.cs:190
+msgid "_Websites"
+msgstr "Sites _Web"
+
+#: ../search/Beagle.Search/UIManager.cs:192
+msgid "Search website history"
+msgstr "Rechercher dans l'historique des sites Web"
+
+#: ../search/Beagle.Search/UIManager.cs:196
+msgid "_News Feeds"
+msgstr "_Flux RSS"
+
+#: ../search/Beagle.Search/UIManager.cs:198
+msgid "Search news feeds"
+msgstr "Rechercher dans les flux RSS"
+
+#: ../search/Beagle.Search/UIManager.cs:202
+msgid "A_rchives"
+msgstr "A_rchives"
+
+#: ../search/Beagle.Search/UIManager.cs:204
+msgid "Search files in Archives"
+msgstr "Rechercher des fichiers dans les archives"
+
+#: ../search/Beagle.Search/UIManager.cs:212
+msgid "Sort by Date _Modified"
+msgstr "Trier par date de _modification"
+
+#: ../search/Beagle.Search/UIManager.cs:213
+msgid "Sort the most-recently-modified matches first"
+msgstr "Trier en premier les fichiers récemment modifiés"
+
+#: ../search/Beagle.Search/UIManager.cs:216
+msgid "Sort by _Name"
+msgstr "Trier par _nom"
+
+#: ../search/Beagle.Search/UIManager.cs:217
+msgid "Sort matches by name"
+msgstr "Trier par nom"
+
+#: ../search/Beagle.Search/UIManager.cs:220
+msgid "Sort by _Relevance"
+msgstr "Trier par pe_rtinence"
+
+#: ../search/Beagle.Search/UIManager.cs:221
+msgid "Sort the best matches first"
+msgstr "Trier en premier les recherches les plus pertinentes"
+
+#: ../search/Beagle.Search/UIManager.cs:228
+msgid "_Local"
+msgstr "_Local"
+
+#: ../search/Beagle.Search/UIManager.cs:230
+msgid "Search in personal data in this computer"
+msgstr "Recherche dans les données personnelles sur cet ordinateur"
+
+#: ../search/Beagle.Search/UIManager.cs:234
+msgid "_System"
+msgstr "_Système"
+
+#: ../search/Beagle.Search/UIManager.cs:236
+msgid "Search in system data on this computer"
+msgstr "Recherche dans les données du système sur cet ordinateur"
+
+#: ../search/Beagle.Search/UIManager.cs:240
+msgid "_Global"
+msgstr "_Global"
+
+#: ../search/Beagle.Search/UIManager.cs:242
+msgid "Search in internet services"
+msgstr "Recherche dans des services Internet"
+
+#: ../search/Beagle.Search/UIManager.cs:246
+msgid "_Neighborhood"
+msgstr "_Voisinage"
+
+#: ../search/Beagle.Search/UIManager.cs:248
+msgid "Search on computers near me"
+msgstr "Recherche sur les ordinateurs à proximité"
+
+#: ../search/Beagle.Search/UIManager.cs:256
+msgid "Show Details"
+msgstr "Afficher les détails"
+
+#: ../search/Beagle.Search/UIManager.cs:378
+msgid "Couldn't launch web browser"
+msgstr "Impossible de lancer le navigateur Web"
+
+#: ../search/beagle-search.desktop.in.in.h:1
+msgid "Search"
+msgstr "Recherche"
+
+# Utilisation de l'infinitif sur les infobulles du Bureau
+#: ../search/beagle-search.desktop.in.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Rechercher des données sur votre bureau"
+
+#: ../tools/Settings.cs:345
+msgid "Reload configuration"
+msgstr "Recharger la configuration"
+
+#: ../tools/Settings.cs:346
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"Le fichier de configuration a été modifié par une autre application. Voulez-"
+"vous supprimer les valeurs affichées et charger la configuration à partir du "
+"disque ?"
+
+#: ../tools/Settings.cs:480
+msgid "Select Path"
+msgstr "Sélectionner un chemin"
+
+#: ../tools/Settings.cs:499
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr ""
+"Le chemin sélectionné est déjà dans la liste d'indexation et n'a pas été "
+"ajouté."
+
+#: ../tools/Settings.cs:502
+msgid ""
+"The selected path wasn't added. The list contains items that supersedes it "
+"and the data is already being indexed."
+msgstr ""
+"Le chemin sélectionné n'a pas été ajouté. La liste contient des éléments qui "
+"l'englobent, les données sont donc déjà indexées."
+
+#: ../tools/Settings.cs:513
+msgid "Path not added"
+msgstr "Chemin non ajouté"
+
+#: ../tools/Settings.cs:522
+msgid "Remove obsolete paths"
+msgstr "Enlever les chemins obsolètes"
+
+#: ../tools/Settings.cs:523
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"Ajouter ce chemin rendra obsolètes certains chemins déjà inclus. En "
+"conséquence, les anciens chemins devenus obsolètes seront retirés. Voulez-"
+"vous tout de même l'ajouter ?"
+
+#: ../tools/Settings.cs:549
+msgid "Remove path"
+msgstr "Enlever le chemin"
+
+#: ../tools/Settings.cs:550
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
+msgstr ""
+"Voulez-vous vraiment enlever ce chemin de la liste des répertoires à "
+"indexer ?"
+
+#: ../tools/Settings.cs:579
+msgid "Remove item"
+msgstr "Enlever l'élément"
+
+#: ../tools/Settings.cs:580
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
+msgstr ""
+"Voulez-vous vraiment enlever cet élément de la liste des données exclues de "
+"l'indexation ?"
+
+#: ../tools/Settings.cs:627
+msgid "Remote host already present in the list."
+msgstr "Hôte distant déjà présent dans la liste."
+
+#: ../tools/Settings.cs:637
+msgid "Remote beagle host not added"
+msgstr "L'hôte Beagle distant n'a pas été ajouté"
+
+#: ../tools/Settings.cs:652
+msgid "Remove host"
+msgstr "Enlever l'hôte"
+
+#: ../tools/Settings.cs:653
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "Voulez-vous vraiment enlever cet hôte de la liste ?"
+
+#: ../tools/Settings.cs:709 ../tools/Settings.cs:798 ../tools/Settings.cs:879
+#: ../tools/Settings.cs:984 ../tools/Settings.cs:1629
+msgid "Name"
+msgstr "Nom"
+
+#: ../tools/Settings.cs:792
+msgid "Type"
+msgstr "Type"
+
+#: ../tools/Settings.cs:845
+msgid "Path:"
+msgstr "Chemin :"
+
+#: ../tools/Settings.cs:848
+msgid "Pattern:"
+msgstr "Modèle :"
+
+#: ../tools/Settings.cs:851
+msgid "Mail folder:"
+msgstr "Dossier de courriels :"
+
+#: ../tools/Settings.cs:886
+msgid "Address"
+msgstr "Adresse"
+
+#: ../tools/Settings.cs:1231
+msgid "Select Folder"
+msgstr "Sélectionner un dossier"
+
+#: ../tools/Settings.cs:1257 ../tools/settings.glade.h:36
+msgid "P_ath:"
+msgstr "C_hemin :"
+
+#: ../tools/Settings.cs:1262
+msgid "M_ail folder:"
+msgstr "Dossier de _courriels :"
+
+#: ../tools/Settings.cs:1267
+msgid "P_attern:"
+msgstr "_Modèle :"
+
+#: ../tools/Settings.cs:1291
+msgid "Error adding path"
+msgstr "Erreur lors de l'ajout du chemin"
+
+#: ../tools/Settings.cs:1292
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"Le chemin indiqué n'a pas été trouvé, il n'a donc pas été ajouté à la liste "
+"des ressources exclues de l'indexation."
+
+#: ../tools/Settings.cs:1330
+#, csharp-format
+msgid "Connecting to {0}"
+msgstr "Connexion à {0}"
+
+#: ../tools/Settings.cs:1589
+msgid "Evolution's mail."
+msgstr "Courriels d'Evolution."
+
+#: ../tools/Settings.cs:1590
+msgid "Evolution's address book, memos and tasks."
+msgstr "Carnet d'adresses, mémos et tâches d'Evolution."
+
+#: ../tools/Settings.cs:1591
+msgid "Thunderbird's email."
+msgstr "Courriels de Thunderbird."
+
+#: ../tools/Settings.cs:1592
+msgid "RSS feeds from Akregator."
+msgstr "Flux RSS en provenance de Akregator."
+
+#: ../tools/Settings.cs:1593
+msgid "RSS feeds from Blam."
+msgstr "Flux RSS en provenance de Blam."
+
+#: ../tools/Settings.cs:1594
+msgid "Files and folders on the local file system."
+msgstr "Fichers et dossiers sur l'ordinateur local."
+
+#: ../tools/Settings.cs:1595
+msgid "Mail messages from KMail."
+msgstr "Courriels en provenance de KMail."
+
+#: ../tools/Settings.cs:1596
+msgid "Notes from KNotes."
+msgstr "Notes en provenance de KNotes."
+
+#: ../tools/Settings.cs:1597
+msgid "Agenda from KOrganizer."
+msgstr "Agenda en provenance de KOrganizer."
+
+#: ../tools/Settings.cs:1598
+msgid "Contacts from KAddressBook."
+msgstr "Contacts en provenance de KAdressBook"
+
+#: ../tools/Settings.cs:1599
+msgid "Konqueror's bookmarks."
+msgstr "Signets de Konqueror."
+
+#: ../tools/Settings.cs:1600
+msgid "Konqueror's history."
+msgstr "Historique de Konqueror."
+
+#: ../tools/Settings.cs:1601
+msgid "IMs and chats from Konversation."
+msgstr "Messages instantanés et discussions en provenance de Konversation."
+
+#: ../tools/Settings.cs:1602
+msgid "IMs and chats from Kopete"
+msgstr "Messages instantanés et discussions en provenance de Kopete."
+
+#: ../tools/Settings.cs:1603
+msgid "Mind-maps from Labyrinth."
+msgstr "Diagrammes en provenance de Labyrinth."
+
+#: ../tools/Settings.cs:1604
+msgid "RSS feeds from Liferea."
+msgstr "Flux RSS en provenance de Liferea."
+
+#: ../tools/Settings.cs:1605
+msgid "Nautilus' metadata (emblems, notes, etc.)"
+msgstr "Métadonnées de Nautilus (emblèmes, notes, etc.)"
+
+#: ../tools/Settings.cs:1606
+msgid "Search other search services in the network (EXPERIMENTAL)"
+msgstr "Recherche d'autres moteurs de recherche sur le réseau (EXPÉRIMENTAL)"
+
+#: ../tools/Settings.cs:1607
+msgid "Opera's bookmarks and browsing history."
+msgstr "Signets et historique de navigation d'Opera."
+
+#: ../tools/Settings.cs:1608
+msgid "IMs and chats from Pidgin."
+msgstr "Messages instantanés et discussions en provenance de Pidgin."
+
+#: ../tools/Settings.cs:1609
+msgid "Notes from Tomboy."
+msgstr "Notes en provenance de Tomboy."
+
+#. System-wide indexes
+#: ../tools/Settings.cs:1611
+msgid "(System) Applications"
+msgstr "Applications (système)"
+
+#: ../tools/Settings.cs:1612
+msgid "(System) Help files"
+msgstr "Fichiers d'aide (système)"
+
+#: ../tools/Settings.cs:1613
+msgid "(System) Manual pages"
+msgstr "Pages de manuel (système)"
+
+#: ../tools/Settings.cs:1614
+msgid "(System) Supplementary search results using 'locate' command"
+msgstr ""
+"Résultats de recherche additionnels en utilisant la commande "
+"« locate » (système)"
+
+#: ../tools/Settings.cs:1615
+msgid "(System) Mono documentation"
+msgstr "Documentation Mono (système)"
+
+#: ../tools/Settings.cs:1616
+msgid "(System) Files from Windows' partition"
+msgstr "Fichiers en provenance d'une partition Windows (système)"
+
+#: ../tools/Settings.cs:1630
+msgid "Description"
+msgstr "Description"
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search"
+msgstr "Configurer l'outil de recherche"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Search & Indexing"
+msgstr "Recherche et indexation"
+
+#: ../tools/settings.glade.h:1
+msgid ":"
+msgstr " :"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Administration</b>"
+msgstr "<b>Administration</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>Affichage</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Ressources à exclure</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>General</b>"
+msgstr "<b>Général</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Networking</b>"
+msgstr "<b>Réseau</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Privacy</b>"
+msgstr "<b>Vie privée</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>Sélection d'un dossier de courriels</b>"
+
+#: ../tools/settings.glade.h:9
+msgid "<b>User Interface</b>"
+msgstr "<b>Interface utilisateur</b>"
+
+#: ../tools/settings.glade.h:10
+msgid "<i>Changes will take effect only after daemon restart.</i>"
+msgstr ""
+"<i>Les changements prendront effet uniquement après le redémarrage du démon."
+"</i>"
+
+#: ../tools/settings.glade.h:11
+msgid "<i>This setting does not apply while on battery power.</i>"
+msgstr ""
+"<i>Ce réglage ne s'applique pas lorsque l'ordinateur est alimenté par la "
+"batterie.</i>"
+
+#: ../tools/settings.glade.h:12
+msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Mot de passe requis.</span>"
+
+#: ../tools/settings.glade.h:13
+msgid "Add Remote Host"
+msgstr "Ajouter un hôte distant"
+
+#: ../tools/settings.glade.h:14
+msgid "Add a static host"
+msgstr "Ajouter un hôte statique"
+
+#: ../tools/settings.glade.h:15
+msgid "Add any additional paths to be included for indexing."
+msgstr "Ajouter des chemins supplémentaires à inclure dans l'indexation."
+
+#: ../tools/settings.glade.h:16
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr ""
+"Ajoutez les hôtes, avec recherche à distance activée, avec lesquels vous "
+"souhaitez vous connecter."
+
+#: ../tools/settings.glade.h:17
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"Ajuster les types de résultats qui doivent être visibles, et dans quel ordre "
+"ils doivent être affichés lorsqu'ils sont groupés par type."
+
+#: ../tools/settings.glade.h:18
+msgid "Allow external access to local search services (EXPERIMENTAL)"
+msgstr ""
+"Autoriser l'accès extérieur aux services de recherche locaux (EXPÉRIMENTAL)"
+
+#: ../tools/settings.glade.h:19
+msgid "Alt"
+msgstr "Alt"
+
+#: ../tools/settings.glade.h:20
+msgid "Automatically s_tart searching after the user has stopped typing"
+msgstr "Démarrer la recherche dès que l'u_tilisateur arrête la saisie"
+
+#: ../tools/settings.glade.h:21
+msgid "Backends"
+msgstr "Moteurs"
+
+#: ../tools/settings.glade.h:22
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: ../tools/settings.glade.h:23
+msgid "Display the search window by pressing:"
+msgstr "Afficher la fenêtre de recherche en appuyant sur :"
+
+#: ../tools/settings.glade.h:24
+msgid "Enable web interface for local search service"
+msgstr ""
+"Activer l'interface Web pour la recherche sur l'ordinateur local"
+
+#: ../tools/settings.glade.h:25
+msgid "Enable/Disable backends from the indexing and searching process."
+msgstr "Active/désactive les moteurs pour l'indexation et la recherche."
+
+#: ../tools/settings.glade.h:26
+msgid "Exclude Resource"
+msgstr "Ressources à exclure"
+
+#: ../tools/settings.glade.h:27
+msgid "Filename _pattern"
+msgstr "Modèle de nom de _fichier"
+
+#: ../tools/settings.glade.h:28
+msgid "I_ndex my home directory"
+msgstr "I_ndexer mon dossier personnel"
+
+#: ../tools/settings.glade.h:29
+msgid ""
+"In order for you to perform Beagle searches on this computer, you must enter "
+"a password."
+msgstr ""
+"Pour effectuer des recherches Beagle sur ce système, vous devez saisir un "
+"mot de passe."
+
+#: ../tools/settings.glade.h:30
+msgid "Index data while on _battery power"
+msgstr "Indexer les données lorsque l'alimentation est sur _batterie"
+
+#: ../tools/settings.glade.h:31
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr "Indexer de façon plus active lorsque l'é_conomiseur d'écran est actif"
+
+#: ../tools/settings.glade.h:32
+msgid "Index name:"
+msgstr "Nom de l'index :"
+
+#: ../tools/settings.glade.h:33
+msgid "Indexing"
+msgstr "Indexation"
+
+#: ../tools/settings.glade.h:35
+msgid "Networking"
+msgstr "Réseau"
+
+#: ../tools/settings.glade.h:37
+msgid "Password for {0}"
+msgstr "Mot de passe pour {0}"
+
+#: ../tools/settings.glade.h:38
+msgid "Password:"
+msgstr "Mot de passe :"
+
+#: ../tools/settings.glade.h:39
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr ""
+"Veuillez sélectionner une ressource que vous voulez exclure de l'indexation."
+
+#: ../tools/settings.glade.h:40
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr ""
+"Sélectionnez le dossier de courriels que vous voulez exclure de "
+"l'indexation. "
+
+#: ../tools/settings.glade.h:41
+msgid "Require a password to search this computer remotely"
+msgstr "Exiger un mot de passe pour rechercher à distance sur cet ordinateur"
+
+#: ../tools/settings.glade.h:42
+msgid "Search Preferences"
+msgstr "Préférences de la recherche"
+
+#: ../tools/settings.glade.h:43
+msgid "Searching"
+msgstr "Recherche"
+
+#: ../tools/settings.glade.h:44
+msgid "Select Mail Folder"
+msgstr "Sélection du dossier de courriels"
+
+#: ../tools/settings.glade.h:45
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"Indiquez les ressources, tels que les chemins, les motifs, les dossiers de "
+"courriels et les types d'objets que vous voulez exclure de l'indexation."
+
+#: ../tools/settings.glade.h:46
+msgid "Type:"
+msgstr "Type :"
+
+#: ../tools/settings.glade.h:47
+msgid "_Allow Beagle to be run as root"
+msgstr "_Autoriser Beagle à être lancé en tant que root"
+
+#: ../tools/settings.glade.h:48
+msgid "_Browse..."
+msgstr "_Parcourir..."
+
+#: ../tools/settings.glade.h:49
+msgid "_Choose from currently available hosts"
+msgstr "_Choisir parmi les hôtes actuellement disponibles"
+
+#: ../tools/settings.glade.h:50
+msgid "_Folder path"
+msgstr "Chemin du _dossier"
+
+#: ../tools/settings.glade.h:51
+msgid "_Hostname:"
+msgstr "_Nom d'hôte :"
+
+#: ../tools/settings.glade.h:52
+msgid "_Mail folder"
+msgstr "Dossier de _courriels"
+
+#: ../tools/settings.glade.h:53
+msgid "_Password:"
+msgstr "_Mot de passe :"
+
+#: ../tools/settings.glade.h:54
+msgid "_Start search & indexing services automatically "
+msgstr "Lancer les _services de recherche et d'indexation automatiquement"
