@@ -341,12 +341,11 @@ namespace Beagle {
 			no_ext = Path.GetFileNameWithoutExtension (name);
 			ext = Path.GetExtension (name).ToLower ();
 			
-			sb.Append (no_ext);
+			sb.Append (name);
 			for (int i = 0; i < sb.Length; ++i)
 				if (! Char.IsLetterOrDigit (sb [i]))
 					sb [i] = ' ';
 			no_punct = sb.ToString ();
-
 
 			Property prop;
 
@@ -366,9 +365,7 @@ namespace Beagle {
 			prop.IsMutable = mutable;
 			yield return prop;
 
-			string str;
-			str = StringFu.FuzzyDivide (no_ext);
-			prop = Property.New (SplitFilenamePropKey, str);
+			prop = Property.New (SplitFilenamePropKey, no_punct);
 			prop.IsMutable = mutable;
 			yield return prop;
 		}

@@ -132,7 +132,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/LuceneQueryingDriver.cs			\
 	$(srcdir)/LuceneFileQueryable.cs			\
 	$(srcdir)/LuceneQueryable.cs				\
-	$(srcdir)/NoiseFilter.cs				\
 	$(srcdir)/PropertyKeywordFu.cs				\
 	$(srcdir)/QueryDriver.cs				\
 	$(srcdir)/QueryExecutor.cs				\
@@ -164,13 +163,6 @@ DAEMON_DLL_ASSEMBLIES = 					\
 	$(NDESK_DBUS_GLIB_LIBS)					\
 	-r:Mono.Data.Sqlite					\
 	-r:Mono.Posix
-
-if ENABLE_AVAHI
-DAEMON_DLL_CSFLAGS += -define:ENABLE_AVAHI
-DAEMON_DLL_ASSEMBLIES += $(AVAHI_SHARP_LIBS)
-DAEMON_DLL_CSFILES +=						\
-	$(srcdir)/Zeroconf.cs
-endif
 
 
 ############################################################
@@ -227,10 +219,6 @@ DAEMON_ASSEMBLIES =				\
 	$(NDESK_DBUS_GLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix
-
-if ENABLE_AVAHI
-DAEMON_CSFLAGS += -define:ENABLE_AVAHI
-endif
 
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
@@ -290,8 +278,7 @@ EXTRACT_CONTENT_CSFLAGS = \
 	$(BEAGLE_DEFINES)
 
 EXTRACT_CONTENT_CSFILES = \
-	$(srcdir)/ExtractContent.cs		\
-	$(srcdir)/NoiseFilter.cs
+	$(srcdir)/ExtractContent.cs
 
 EXTRACT_CONTENT_LOCAL_ASSEMBLIES = \
 	../Util/Util.dll			\

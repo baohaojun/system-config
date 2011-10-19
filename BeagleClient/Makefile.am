@@ -6,10 +6,6 @@ CSFLAGS = 						\
 	-target:library					\
 	$(BEAGLE_DEFINES)
 
-if ENABLE_AVAHI
-CSFLAGS += -define:ENABLE_AVAHI
-endif
-
 CSFILES = 						\
 	$(srcdir)/AssemblyInfo.cs			\
 	$(srcdir)/Hit.cs                		\
