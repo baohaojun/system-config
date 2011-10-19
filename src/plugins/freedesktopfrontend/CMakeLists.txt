@@ -17,8 +17,11 @@ if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
 
 
     #install the dbus interface
-    set(SNORE_LOCATION ${CMAKE_INSTALL_PREFIX}/bin/snorenotify)
-
+	if(WIN32)
+		set(SNORE_LOCATION ../bin/snorenotify)
+	else(WIN32)
+		set(SNORE_LOCATION ${CMAKE_INSTALL_PREFIX}/bin/snorenotify)
+	endif(WIN32)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/org.freedesktop.Notifications.service.cmake ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service)
 
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service
