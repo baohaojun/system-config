@@ -134,8 +134,8 @@ namespace Lucene.Net.Analysis.Standard
 			int l = packed.Length;
 			while (i < l) 
 				{
-					int count = packed.charAt(i++);
-					int value = packed.charAt(i++);
+					int count = packed[i++];
+					int value = packed[i++];
 					do result[j++] = value; while (--count > 0);
 				}
 			return j;
@@ -165,8 +165,8 @@ namespace Lucene.Net.Analysis.Standard
 			int l = packed.Length;
 			while (i < l) 
 				{
-					int high = packed.charAt(i++) << 16;
-					result[j++] = high | packed.charAt(i++);
+					int high = packed[i++] << 16;
+					result[j++] = high | packed[i++];
 				}
 			return j;
 		}
@@ -195,8 +195,8 @@ namespace Lucene.Net.Analysis.Standard
 			int l = packed.Length;
 			while (i < l) 
 				{
-					int count = packed.charAt(i++);
-					int value = packed.charAt(i++);
+					int count = packed[i++];
+					int value = packed[i++];
 					value--;
 					do result[j++] = value; while (--count > 0);
 				}
@@ -240,8 +240,8 @@ namespace Lucene.Net.Analysis.Standard
 			int l = packed.Length;
 			while (i < l) 
 				{
-					int count = packed.charAt(i++);
-					int value = packed.charAt(i++);
+					int count = packed[i++];
+					int value = packed[i++];
 					do result[j++] = value; while (--count > 0);
 				}
 			return j;
@@ -374,8 +374,8 @@ namespace Lucene.Net.Analysis.Standard
 			int j = 0;  /* index in unpacked array */
 			while (i < 1214) 
 				{
-					int  count = packed.charAt(i++);
-					char value = packed.charAt(i++);
+					int  count = packed[i++];
+					char value = packed[i++];
 					do map[j++] = value; while (--count > 0);
 				}
 			return map;
@@ -512,7 +512,7 @@ namespace Lucene.Net.Analysis.Standard
 		 * Returns the character at position <tt>pos</tt> from the 
 		 * matched text. 
 		 * 
-		 * It is equivalent to yytext().charAt(pos), but faster
+		 * It is equivalent to yytext()[pos], but faster
 		 *
 		 * @param pos the position of the character to fetch. 
 		 *            A value from 0 to yylength()-1.
