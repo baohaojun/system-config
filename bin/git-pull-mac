@@ -12,3 +12,5 @@ for x in $(git branch -a |grep from-mac); do
     git pull $remote $branch
 done
 test $user_cron = false && { diff ~/.crontab.tmp ~/.crontab || crontab ~/.crontab; }
+git submodule init
+git submodule update

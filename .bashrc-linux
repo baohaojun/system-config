@@ -13,4 +13,5 @@ alias minicom='minicom -w -D /dev/ttyUSB*'
 if [ -n "$BASH_VERSION" -a "$BASH" = /bin/bash ]; then
     . ~/.bashrc-linux-bash
 fi
-    
+alias quilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
+alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"

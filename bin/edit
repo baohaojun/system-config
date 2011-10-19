@@ -1,6 +1,16 @@
 #!/usr/bin/env perl
 use String::ShellQuote;
 use strict;
+
+open (my $log_, ">>", glob("~/.edit.log")) or die "Can not open log file";
+print $log_ "@ARGV\n";
+
+if ($ARGV[0] =~ m/^\+\d+$/) {
+    my $line = substr($ARGV[0], 1);
+    shift @ARGV;
+    $ARGV[0] .= ":$line";
+}
+
 my ($myfile) = ($ARGV[0]);
 my $remote_ip = $ENV{"REMOTEIP"};
 
