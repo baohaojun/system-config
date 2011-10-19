@@ -82,7 +82,8 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-xslt"));
-
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-shellscript"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sh"));
 		}
 
 		const long LENGTH_CUTOFF = 5 * 1024 * 1024; // 5 Mb
