@@ -14,6 +14,7 @@
 	<Value>*~</Value>
 	<Value>#*#</Value>
 	<Value>*.o</Value>
+	<Value>*.ko</Value>
 	<Value>*.a</Value>
 	<Value>*.la</Value>
 	<Value>*.lo</Value>
@@ -23,15 +24,15 @@
 	<Value>*.dll</Value>
 	<Value>*.mdb</Value>
 	<Value>*.com</Value>
-	<Value>*.csproj</Value>
 	<Value>cscope.files</Value>
 	<Value>cscope.out</Value>
-	<Value>*.dsp</Value>
-	<Value>*.dsw</Value>
+        <Value>GPATH</Value>
+        <Value>GRTAGS</Value>
+        <Value>GSYMS</Value>
+        <Value>GTAGS</Value>
 	<Value>*.m4</Value>
 	<Value>*.pc</Value>
 	<Value>*.pc.in</Value>
-	<Value>*.in.in</Value>
 	<Value>*.omf</Value>
 	<Value>*.aux</Value>
 	<Value>*.tmp</Value>
