@@ -2,7 +2,7 @@
 using Token = Lucene.Net.Analysis.Token;
 namespace Lucene.Net.Analysis.Standard
 {
-	class StandardTokenizerImpl
+	public class StandardTokenizerImpl
 	{
 
 		/** This character denotes the end of file */
