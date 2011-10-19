@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Standard
 		/** 
 		 * Translates characters to character classes
 		 */
-		private static readonly String ZZ_CMAP_PACKED = 
+		private const String ZZ_CMAP_PACKED = 
 			"\x0009\x0000\x0001\x0000\x0001\x0004\x0001\x0000\x0001\x0000\x0001\x0003\x0012\x0000\x0001\x0000" + 
 			"\x000f\x0000\x000a\x0001\x0007\x0000\x001a\x0001\x0006\x0000\x001a\x0001\x002f\x0000\x0001\x0001" + 
 			"\x000a\x0000\x0001\x0001\x0004\x0000\x0001\x0001\x0005\x0000\x0017\x0001\x0001\x0000\x001f\x0001" + 
@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Standard
 		 */
 		private static readonly int [] ZZ_ACTION = zzUnpackAction();
 
-		private static readonly String ZZ_ACTION_PACKED_0 =
+		private const String ZZ_ACTION_PACKED_0 =
 			"\x0001\x0000\x0001\x0001\x0001\x0002\x0001\x0003\x0001\x0001";
 
 		private static int [] zzUnpackAction() 
@@ -147,7 +147,7 @@ namespace Lucene.Net.Analysis.Standard
 		 */
 		private static readonly int [] ZZ_ROWMAP = zzUnpackRowMap();
 
-		private static readonly String ZZ_ROWMAP_PACKED_0 =
+		private const String ZZ_ROWMAP_PACKED_0 =
 			"\x0000\x0000\x0000\x0005\x0000\x000a\x0000\x0005\x0000\x000f";
 
 		private static int [] zzUnpackRowMap() 
@@ -176,7 +176,7 @@ namespace Lucene.Net.Analysis.Standard
 		 */
 		private static readonly int [] ZZ_TRANS = zzUnpackTrans();
 
-		private static readonly String ZZ_TRANS_PACKED_0 =
+		private const String ZZ_TRANS_PACKED_0 =
 			"\x0001\x0002\x0001\x0003\x0001\x0004\x0001\x0005\x0001\x0002\x0006\x0000\x0001\x0003\x0007\x0000" + 
 			"\x0001\x0002";
 
@@ -222,7 +222,7 @@ namespace Lucene.Net.Analysis.Standard
 		 */
 		private static readonly int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
-		private static readonly String ZZ_ATTRIBUTE_PACKED_0 =
+		private const String ZZ_ATTRIBUTE_PACKED_0 =
 			"\x0001\x0000\x0001\x0009\x0001\x0001\x0001\x0009\x0001\x0001";
 
 		private static int [] zzUnpackAttribute() 
