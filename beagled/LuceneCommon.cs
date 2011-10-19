@@ -36,15 +36,11 @@ using System.Xml;
 using System.Xml.Serialization;
 
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using LNS = Lucene.Net.Search;
-
-using SF.Snowball.Ext;
-using SnowballProgram = SF.Snowball.SnowballProgram;
 
 using Beagle.Util;
 
@@ -568,8 +564,6 @@ namespace Beagle.Daemon {
 					outstream = new NoiseEmailHostFilter (outstream, tokenize_email_hostname, add_link_callback);
 					// Sharing Stemmer is not thread safe.
 					// Currently our underlying lucene indexing is not done in multiple threads.
-					StemmerInfo stemmer_info = GetStemmer (DEFAULT_STEMMER_LANGUAGE);
-					outstream = new SnowballFilter (outstream, stemmer_info.Stemmer, stemmer_info.StemMethod);
 				}
 
 				return outstream;
@@ -1160,45 +1154,9 @@ namespace Beagle.Daemon {
 		// Access to the stemmer and list of stop words
 		//
 
-		private static Dictionary<string, StemmerInfo> stemmer_table = new Dictionary<string, StemmerInfo> ();
-
-		class StemmerInfo {
-			internal SnowballProgram Stemmer;
-			internal System.Reflection.MethodInfo StemMethod;
-		}
-
-		private static StemmerInfo GetStemmer (System.String name)
-		{
-			if (! stemmer_table.ContainsKey (name)) {
-				StemmerInfo stemmer_info = new StemmerInfo ();
-
-				// Taken from Snowball/SnowballFilter.cs
-				System.Type stemClass = System.Type.GetType ("SF.Snowball.Ext." + name + "Stemmer", true);
-				SnowballProgram stemmer = (SnowballProgram) System.Activator.CreateInstance (stemClass);
-				// why doesn't the SnowballProgram class have an (abstract?) stem method?
-				System.Reflection.MethodInfo stemMethod = stemClass.GetMethod ("Stem", (new System.Type [0] == null) ? new System.Type [0] : (System.Type []) new System.Type [0]);
-
-				stemmer_info.Stemmer = stemmer;
-				stemmer_info.StemMethod = stemMethod;
-				stemmer_table [name] = stemmer_info;
-			}
-
-			return stemmer_table [name];
-		}
-
-		private static SF.Snowball.Ext.EnglishStemmer default_stemmer = new SF.Snowball.Ext.EnglishStemmer ();
-
 		static public string Stem (string str)
 		{
-			string stemmed_str;
-
-			lock (default_stemmer) {
-				default_stemmer.SetCurrent (str);
-				default_stemmer.Stem ();
-				stemmed_str = default_stemmer.GetCurrent ();
-			}
-
-			return stemmed_str;
+			return str;
 		}
 
 		public static bool IsStopWord (string stemmed_word)
