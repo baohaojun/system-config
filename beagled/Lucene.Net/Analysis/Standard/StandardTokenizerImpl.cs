@@ -277,7 +277,7 @@ namespace Lucene.Net.Analysis.Standard
 		private int yyline;
 
 		/** the number of characters up to the start of the matched text */
-		private int yychar;
+		private int yychar_field;
 
 		/**
 		 * the number of characters from the last newline up to the start of the 
@@ -318,7 +318,7 @@ namespace Lucene.Net.Analysis.Standard
 		public readonly int yychar()
 	
 		{
-			return yychar;
+			return yychar_field;
 		}
 
 		/**
@@ -474,7 +474,7 @@ namespace Lucene.Net.Analysis.Standard
 			zzEOFDone = false;
 			zzEndRead = zzStartRead = 0;
 			zzCurrentPos = zzMarkedPos = 0;
-			yyline = yychar = yycolumn = 0;
+			yyline = yychar_field = yycolumn = 0;
 			zzLexicalState = YYINITIAL;
 		}
 
@@ -608,7 +608,7 @@ namespace Lucene.Net.Analysis.Standard
 				{
 					zzMarkedPosL = zzMarkedPos;
 
-					yychar+= zzMarkedPosL-zzStartRead;
+					yychar_field+= zzMarkedPosL-zzStartRead;
 
 					zzAction = -1;
 
