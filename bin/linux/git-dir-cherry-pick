@@ -1,12 +1,17 @@
 #!/bin/bash
 
-set -e
-git rm -rf .
+set -ex
+
+git rm -rf . >/dev/null 2>&1
 tmp_msg=/tmp/git-dir-cherry-pick.$$
-(cd $1 && git reset --hard $2; git log --pretty=format:%s -1 . > $tmp_msg; (echo; git log -1 -p . |sed -e 's/^/#/') >> $tmp_msg)
-cp $1/. ./ -av
-git add .
-git rm debian/ -rf || true
+(cd $1 && git reset --hard $2; git log --pretty=format:%s -1 . > $tmp_msg; )
+cp $1/. ./ -a
+git add . >/dev/null >/dev/null 2>&1
+git rm debian/ -rf >/dev/null 2>&1 || true
 $3
-git commit -m "$(get-stdin $tmp_msg|perl -ne 'print unless m/^#/')"
+git rm beagle-grep-readme.org -f ||true
+git co HEAD conf-data/config-files/FilesQueryable.xml
+(git st -s |grep '^D'|pn 2|xargs git reset  HEAD >/dev/null; git st -s |grep '^ D'|pn 2|xargs git co HEAD >/dev/null;) || true
+(echo; echo; git diff HEAD --name-status |sed -e 's/^/#/') >> $tmp_msg 
+git diff --quiet HEAD || git commit -m "$(get-stdin $tmp_msg|perl -ne 'print unless m/^#/')"
 
