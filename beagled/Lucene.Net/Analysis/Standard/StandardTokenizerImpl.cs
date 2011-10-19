@@ -6,13 +6,13 @@ namespace Lucene.Net.Analysis.Standard
 	{
 
 		/** This character denotes the end of file */
-		public static final int YYEOF = -1;
+		public static readonly int YYEOF = -1;
 
 		/** initial size of the lookahead buffer */
-		private static final int ZZ_BUFFERSIZE = 16384;
+		private static readonly int ZZ_BUFFERSIZE = 16384;
 
 		/** lexical states */
-		public static final int YYINITIAL = 0;
+		public static readonly int YYINITIAL = 0;
 
 		/**
 		 * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *                  at the beginning of a line
 		 * l is of the form l = 2*k, k a non negative integer
 		 */
-		private static final int ZZ_LEXSTATE[] = 
+		private static readonly int ZZ_LEXSTATE[] = 
 			{ 
 				0, 0
 			};
@@ -28,7 +28,7 @@ namespace Lucene.Net.Analysis.Standard
 		/** 
 		 * Translates characters to character classes
 		 */
-		private static final String ZZ_CMAP_PACKED = 
+		private static readonly String ZZ_CMAP_PACKED = 
 			"\11\0\1\0\1\4\1\0\1\0\1\3\22\0\1\0\17\0\12\1"+
 			"\7\0\32\1\6\0\32\1\57\0\1\1\12\0\1\1\4\0\1\1"+
 			"\5\0\27\1\1\0\37\1\1\0\u013f\1\31\0\162\1\4\0\14\1"+
@@ -94,14 +94,14 @@ namespace Lucene.Net.Analysis.Standard
 		/** 
 		 * Translates characters to character classes
 		 */
-		private static final char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED);
+		private static readonly char [] ZZ_CMAP = zzUnpackCMap(ZZ_CMAP_PACKED);
 
 		/** 
 		 * Translates DFA states to action switch labels.
 		 */
-		private static final int [] ZZ_ACTION = zzUnpackAction();
+		private static readonly int [] ZZ_ACTION = zzUnpackAction();
 
-		private static final String ZZ_ACTION_PACKED_0 =
+		private static readonly String ZZ_ACTION_PACKED_0 =
 			"\1\0\1\1\1\2\1\3\1\1";
 
 		private static int [] zzUnpackAction() 
@@ -130,9 +130,9 @@ namespace Lucene.Net.Analysis.Standard
 		/** 
 		 * Translates a state to a row index in the transition table
 		 */
-		private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
+		private static readonly int [] ZZ_ROWMAP = zzUnpackRowMap();
 
-		private static final String ZZ_ROWMAP_PACKED_0 =
+		private static readonly String ZZ_ROWMAP_PACKED_0 =
 			"\0\0\0\5\0\12\0\5\0\17";
 
 		private static int [] zzUnpackRowMap() 
@@ -159,9 +159,9 @@ namespace Lucene.Net.Analysis.Standard
 		/** 
 		 * The transition table of the DFA
 		 */
-		private static final int [] ZZ_TRANS = zzUnpackTrans();
+		private static readonly int [] ZZ_TRANS = zzUnpackTrans();
 
-		private static final String ZZ_TRANS_PACKED_0 =
+		private static readonly String ZZ_TRANS_PACKED_0 =
 			"\1\2\1\3\1\4\1\5\1\2\6\0\1\3\7\0"+
 			"\1\2";
 
@@ -190,12 +190,12 @@ namespace Lucene.Net.Analysis.Standard
 
 
 		/* error codes */
-		private static final int ZZ_UNKNOWN_ERROR = 0;
-		private static final int ZZ_NO_MATCH = 1;
-		private static final int ZZ_PUSHBACK_2BIG = 2;
+		private static readonly int ZZ_UNKNOWN_ERROR = 0;
+		private static readonly int ZZ_NO_MATCH = 1;
+		private static readonly int ZZ_PUSHBACK_2BIG = 2;
 
 		/* error messages for the codes above */
-		private static final String ZZ_ERROR_MSG[] = 
+		private static readonly String ZZ_ERROR_MSG[] = 
 			{
 				"Unkown internal scanner error",
 				"Error: could not match input",
@@ -205,9 +205,9 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * ZZ_ATTRIBUTE[aState] contains the attributes of state <code>aState</code>
 		 */
-		private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
+		private static readonly int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
-		private static final String ZZ_ATTRIBUTE_PACKED_0 =
+		private static readonly String ZZ_ATTRIBUTE_PACKED_0 =
 			"\1\0\1\11\1\1\1\11\1\1";
 
 		private static int [] zzUnpackAttribute() 
@@ -283,24 +283,24 @@ namespace Lucene.Net.Analysis.Standard
 
 		/* user code: */
 
-		public static final int ALPHANUM          = StandardTokenizer.ALPHANUM;
-		public static final int APOSTROPHE        = StandardTokenizer.APOSTROPHE;
-		public static final int ACRONYM           = StandardTokenizer.ACRONYM;
-		public static final int COMPANY           = StandardTokenizer.COMPANY;
-		public static final int EMAIL             = StandardTokenizer.EMAIL;
-		public static final int HOST              = StandardTokenizer.HOST;
-		public static final int NUM               = StandardTokenizer.NUM;
-		public static final int CJ                = StandardTokenizer.CJ;
+		public static readonly int ALPHANUM          = StandardTokenizer.ALPHANUM;
+		public static readonly int APOSTROPHE        = StandardTokenizer.APOSTROPHE;
+		public static readonly int ACRONYM           = StandardTokenizer.ACRONYM;
+		public static readonly int COMPANY           = StandardTokenizer.COMPANY;
+		public static readonly int EMAIL             = StandardTokenizer.EMAIL;
+		public static readonly int HOST              = StandardTokenizer.HOST;
+		public static readonly int NUM               = StandardTokenizer.NUM;
+		public static readonly int CJ                = StandardTokenizer.CJ;
 		/**
 		 * @deprecated this solves a bug where HOSTs that end with '.' are identified
 		 *             as ACRONYMs. It is deprecated and will be removed in the next
 		 *             release.
 		 */
-		public static final int ACRONYM_DEP       = StandardTokenizer.ACRONYM_DEP;
+		public static readonly int ACRONYM_DEP       = StandardTokenizer.ACRONYM_DEP;
 
-		public static final String [] TOKEN_TYPES = StandardTokenizer.TOKEN_TYPES;
+		public static readonly String [] TOKEN_TYPES = StandardTokenizer.TOKEN_TYPES;
 
-		public final int yychar()
+		public readonly int yychar()
 	
 		{
 			return yychar;
@@ -309,7 +309,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Fills Lucene token with the current token text.
 		 */
-		final void getText(Token t) 
+		readonly void getText(Token t) 
 		{
 			t.setTermBuffer(zzBuffer, zzStartRead, zzMarkedPos-zzStartRead);
 		}
@@ -317,7 +317,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Fills TermAttribute with the current token text.
 		 */
-		final void getText(TermAttribute t) 
+		readonly void getText(TermAttribute t) 
 		{
 			t.setTermBuffer(zzBuffer, zzStartRead, zzMarkedPos-zzStartRead);
 		}
@@ -400,7 +400,7 @@ namespace Lucene.Net.Analysis.Standard
 					zzBuffer = newBuffer;
 				}
 
-			/* finally: fill the buffer with new input */
+			/* readonlyly: fill the buffer with new input */
 			int numRead = zzReader.read(zzBuffer, zzEndRead,
 						    zzBuffer.length-zzEndRead);
 
@@ -431,7 +431,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Closes the input stream.
 		 */
-		public final void yyclose() throws java.io.IOException 
+		public readonly void yyclose() throws java.io.IOException 
 		{
 			zzAtEOF = true;            /* indicate end of file */
 			zzEndRead = zzStartRead;  /* invalidate buffer    */
@@ -451,7 +451,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *
 		 * @param reader   the new input stream 
 		 */
-		public final void yyreset(java.io.Reader reader) 
+		public readonly void yyreset(java.io.Reader reader) 
 		{
 			zzReader = reader;
 			zzAtBOL  = true;
@@ -467,7 +467,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Returns the current lexical state.
 		 */
-		public final int yystate() 
+		public readonly int yystate() 
 		{
 			return zzLexicalState;
 		}
@@ -478,7 +478,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *
 		 * @param newState the new lexical state
 		 */
-		public final void yybegin(int newState) 
+		public readonly void yybegin(int newState) 
 		{
 			zzLexicalState = newState;
 		}
@@ -487,7 +487,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Returns the text matched by the current regular expression.
 		 */
-		public final String yytext() 
+		public readonly String yytext() 
 		{
 			return new String( zzBuffer, zzStartRead, zzMarkedPos-zzStartRead );
 		}
@@ -504,7 +504,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *
 		 * @return the character at position pos
 		 */
-		public final char yycharat(int pos) 
+		public readonly char yycharat(int pos) 
 		{
 			return zzBuffer[zzStartRead+pos];
 		}
@@ -513,7 +513,7 @@ namespace Lucene.Net.Analysis.Standard
 		/**
 		 * Returns the length of the matched text region.
 		 */
-		public final int yylength() 
+		public readonly int yylength() 
 		{
 			return zzMarkedPos-zzStartRead;
 		}
