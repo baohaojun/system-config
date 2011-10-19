@@ -235,6 +235,8 @@ namespace Beagle.Daemon {
 			Token token;
 			while ( (token = token_stream.Next ()) != null) {
                           //Console.WriteLine ("Found token: [{0}]", token.TermText ());
+                          if (ProcessToken (ref token)) {
+                          }
                           return token;
 			}
 			return null;
