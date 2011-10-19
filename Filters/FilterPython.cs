@@ -94,7 +94,7 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-python"));
+
 		}
 
 		override protected void DoPullSetup ()

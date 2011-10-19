@@ -77,10 +77,10 @@ namespace Beagle.Filters {
 		{
 			// Make this a general troff filter.
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff-man"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
 
 			// Compressed man pages
 

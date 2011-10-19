@@ -63,7 +63,7 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-java")); // .class files
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/x-eps"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ole-storage")); // .db files
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-patch")); // patch files
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-patch")); // patch files
 		}
 
 		protected override void DoPullProperties ()

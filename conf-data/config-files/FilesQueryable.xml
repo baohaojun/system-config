@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-16"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Distributions and packagers, DO NOT remove or add any BoolOption, StringOption or ListOption.
      Also do not change the Name, Description, Params and Separator attributes.
  -->
@@ -15,7 +15,6 @@
 	<Value>#*#</Value>
 	<Value>*.o</Value>
 	<Value>*.a</Value>
-	<Value>*.S</Value>
 	<Value>*.la</Value>
 	<Value>*.lo</Value>
 	<Value>*.loT</Value>
@@ -25,6 +24,8 @@
 	<Value>*.mdb</Value>
 	<Value>*.com</Value>
 	<Value>*.csproj</Value>
+	<Value>cscope.files</Value>
+	<Value>cscope.out</Value>
 	<Value>*.dsp</Value>
 	<Value>*.dsw</Value>
 	<Value>*.m4</Value>
@@ -37,8 +38,6 @@
 	<Value>autom4te.cache</Value>
 	<Value>po</Value>
 	<Value>aclocal</Value>
-	<Value>Makefile</Value>
-	<Value>Makefile.am</Value>
 	<Value>Makefile.in</Value>
 	<Value>CVS</Value>
 	<Value>SCCS</Value>

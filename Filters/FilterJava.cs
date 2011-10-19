@@ -117,7 +117,6 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-java"));
 		}
 
 		override protected void DoPullSetup ()

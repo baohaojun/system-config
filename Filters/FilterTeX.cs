@@ -156,8 +156,8 @@ namespace Beagle.Filters {
 
 		override protected void RegisterSupportedTypes()
 		{
-			AddSupportedFlavor(FilterFlavor.NewFromMimeType ("text/x-tex"));
-			AddSupportedFlavor(FilterFlavor.NewFromMimeType ("text/x-latex"));
+//			AddSupportedFlavor(FilterFlavor.NewFromMimeType ("text/x-tex"));
+//			AddSupportedFlavor(FilterFlavor.NewFromMimeType ("text/x-latex"));
 
 			// These two are in my system mimetypes; add them just in case.
 			AddSupportedFlavor(FilterFlavor.NewFromMimeType ("application/x-tex"));

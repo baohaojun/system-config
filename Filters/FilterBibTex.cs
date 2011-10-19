@@ -43,7 +43,7 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (Beagle.Daemon.FilterFlavor.NewFromMimeType ("text/x-bibtex"));
+//			AddSupportedFlavor (Beagle.Daemon.FilterFlavor.NewFromMimeType ("text/x-bibtex"));
 		}
 
 		private static bool bibparse_installed = false;

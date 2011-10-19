@@ -130,7 +130,7 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-php"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-php"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-php"));
 		}
 

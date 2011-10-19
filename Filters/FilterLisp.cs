@@ -140,7 +140,7 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-scheme"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-scheme"));
 		}
 
 		override protected void DoPullSetup ()

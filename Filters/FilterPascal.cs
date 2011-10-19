@@ -123,7 +123,7 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-pascal"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-pascal"));
 		}
 
 		override protected void DoPullSetup ()

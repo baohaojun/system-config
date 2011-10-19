@@ -46,7 +46,7 @@ namespace Beagle.Filters
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-xslt"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-xslt"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xslt+xml"));
 		}
 

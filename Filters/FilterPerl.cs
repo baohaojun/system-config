@@ -126,8 +126,7 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-perl"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-perl"));
+
 		}
 
 		override protected void DoPullSetup ()

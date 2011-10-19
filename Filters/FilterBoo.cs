@@ -138,7 +138,7 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-boo"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-boo"));
 		}
 
 		override protected void DoPullSetup ()

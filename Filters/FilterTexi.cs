@@ -52,7 +52,7 @@ namespace Beagle.Filters {
 		protected override void RegisterSupportedTypes ()
 		{
 			// Make this a general texi filter.
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-texinfo"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-texinfo"));
 		}
 
 		/*

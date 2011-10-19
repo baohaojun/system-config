@@ -42,13 +42,47 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
+			AddSupportedFlavor (Beagle.Daemon.FilterFlavor.NewFromMimeType ("text/x-bibtex"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xhtml+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-perl"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ruby"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/html"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/plain"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-log"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-readme"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-install"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-credits"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-authors"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-boo"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-chdr"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c-header"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-comma-separated-values"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-copying"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-credits"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-csharp"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++src"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-csrc"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-fortran"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-install"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-java"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-latex"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-log"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-pascal"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-patch")); // patch files
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-perl"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-php"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-python"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-readme"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-scheme"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-emacs-lisp"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sun-c-file"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sun-h-file"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-tex"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-texinfo"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-xslt"));
+
 		}
 
 		const long LENGTH_CUTOFF = 5 * 1024 * 1024; // 5 Mb

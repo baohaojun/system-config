@@ -48,11 +48,11 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-gnumeric"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/csv"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/tab-separated-values"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/comma-separated-values"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/csv"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/spreadsheet"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/tab-separated-values"));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-comma-separated-values"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/comma-separated-values"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/csv"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/spreadsheet"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/tab-separated-values"));
+//			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-comma-separated-values"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.ms-excel"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/excel"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-msexcel"));

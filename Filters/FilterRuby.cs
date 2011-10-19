@@ -107,7 +107,7 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ruby"));
+
 		}
 
 		override protected void DoPullSetup ()
