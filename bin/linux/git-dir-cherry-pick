@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+git rm -rf .
+tmp_msg=/tmp/git-dir-cherry-pick.$$
+(cd $1 && git reset --hard $2; git log --pretty=format:%s -1 . > $tmp_msg; (echo; git log -1 -p . |sed -e 's/^/#/') >> $tmp_msg)
+cp $1/. ./ -av
+git add .
+git rm debian/ -rf || true
+$3
+git commit -m "$(get-stdin $tmp_msg|perl -ne 'print unless m/^#/')"
+
