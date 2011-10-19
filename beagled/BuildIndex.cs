@@ -946,7 +946,7 @@ namespace Beagle.Daemon
 		{
 			int vmrss_original = SystemInformation.VmRss;
 
-			const double threshold = 6.0;
+			const double threshold = 60.0;
 			int last_vmrss = 0;
 
 			while (! Shutdown.ShutdownRequested && indexing) {

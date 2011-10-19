@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
 		public static readonly int DEFAULT_MAX_MERGE_DOCS = System.Int32.MaxValue;
 		
 		/// <summary> Default value is 10,000. Change using {@link #SetMaxFieldLength(int)}.</summary>
-		public const int DEFAULT_MAX_FIELD_LENGTH = 10000;
+		public const int DEFAULT_MAX_FIELD_LENGTH = 10000000;
 		
 		/// <summary> Default value is 128. Change using {@link #SetTermIndexInterval(int)}.</summary>
 		public const int DEFAULT_TERM_INDEX_INTERVAL = 128;
