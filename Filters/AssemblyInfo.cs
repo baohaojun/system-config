@@ -33,10 +33,6 @@ using Beagle.Filters;
 	 typeof(FilterApplication),
 #if HAVE_LIBCHM
 #endif
-#if ENABLE_WV1
-#endif
 	 typeof(FilterIgnore),
-#if ENABLE_GSF_SHARP
-#endif
 	 typeof(FilterText)
 )]

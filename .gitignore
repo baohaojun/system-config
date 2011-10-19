@@ -128,8 +128,6 @@ tools/beagle-settings.desktop.in
 tools/beagle-shutdown
 tools/beagle-static-querybeagled/Lucene.Net/Analysis/Standard/1.cs
 beagled/Lucene.Net/Analysis/Standard/2.cs
-glue/wv1-glue.lo
-glue/wv1-glue.o
 tools/DocExtractor.exe.mdb
 tools/beagle-doc-extractor
 beagled/Lucene.Net/Analysis/Standard/1.cs
