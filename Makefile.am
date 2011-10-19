@@ -24,9 +24,6 @@ SUBDIRS +=			\
 
 EXTRA_DIST = 			\
 	HACKING			\
-	intltool-extract.in	\
-	intltool-merge.in	\
-	intltool-update.in	\
 	$(pkgconfig_DATA) 	\
 	beagle.spec
 

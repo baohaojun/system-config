@@ -131,9 +131,6 @@ man_MANS = 			\
 	beagle-shutdown.1	\
 	beagle-status.1
 
-@INTLTOOL_DESKTOP_RULE@
-
-
 all: $(TARGETS) $(WRAPPERS)
 
 install-data-local: $(TARGETS) $(WRAPPERS)

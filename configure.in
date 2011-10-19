@@ -131,12 +131,6 @@ AM_CONDITIONAL(ENABLE_XDG_OPEN, test "x$XDG_OPEN" != "xno")
 # I18N
 #
 
-IT_PROG_INTLTOOL([0.35.0])
-GETTEXT_PACKAGE=beagle
-AC_SUBST(GETTEXT_PACKAGE)
-AM_GLIB_GNU_GETTEXT
-AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Name of the package for translations])
-
 # Many distros don't have a dependency on sqlite for their
 # mono-data-sqlite packages, and the mono build process itself
 # doesn't require it.  But we do, so check for it here.
@@ -476,7 +470,6 @@ beagle-0.0.pc
 beagle-daemon.pc
 beagle-ui-0.0.pc
 beagle.spec
-po/Makefile.in
 ])
 
 echo "
