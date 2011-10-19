@@ -248,7 +248,7 @@ namespace Lucene.Net.Analysis.Standard
 		}
 
 		/** the input device */
-		private java.io.Reader zzReader;
+		private System.IO.TextReader zzReader;
 
 		/** the current state of the DFA */
 		private int zzState;
@@ -343,16 +343,16 @@ namespace Lucene.Net.Analysis.Standard
 		 * Creates a new scanner
 		 * There is also a java.io.InputStream version of this constructor.
 		 *
-		 * @param   in  the java.io.Reader to read input from.
+		 * @param   in  the System.IO.TextReader to read input from.
 		 */
-		StandardTokenizerImpl(java.io.Reader in) 
+		StandardTokenizerImpl(System.IO.TextReader in) 
 		{
 			this.zzReader = in;
 		}
 
 		/**
 		 * Creates a new scanner.
-		 * There is also java.io.Reader version of this constructor.
+		 * There is also System.IO.TextReader version of this constructor.
 		 *
 		 * @param   in  the java.io.Inputstream to read input from.
 		 */
@@ -466,7 +466,7 @@ namespace Lucene.Net.Analysis.Standard
 		 *
 		 * @param reader   the new input stream 
 		 */
-		public readonly void yyreset(java.io.Reader reader) 
+		public readonly void yyreset(System.IO.TextReader reader) 
 		{
 			zzReader = reader;
 			zzAtBOL  = true;
