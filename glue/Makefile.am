@@ -69,7 +69,6 @@ COND_SOURCES = 			\
 	inotify-glue.c
 
 EXTRA_DIST =			\
-	$(COND_SOURCES)		\
-	search-entry-watermark.svg
+	$(COND_SOURCES)
 
 

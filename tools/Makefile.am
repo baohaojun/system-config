@@ -34,17 +34,6 @@ $(CRAWL_WRAPPER): $(CRAWL_WRAPPER_IN)
 
 crondir = $(sysconfdir)/cron.daily
 
-DOC_EXTRACTOR_TARGET  = DocExtractor.exe
-DOC_EXTRACTOR_WRAPPER = beagle-doc-extractor
-DOC_EXTRACTOR_CSFILES = $(srcdir)/DocExtractor.cs
-
-$(DOC_EXTRACTOR_TARGET): $(DOC_EXTRACTOR_CSFILES)
-	$(CSC) -out:$@ $(CSFLAGS) $(DOC_EXTRACTOR_CSFILES) $(ASSEMBLIES)
-
-$(DOC_EXTRACTOR_WRAPPER): $(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(DOC_EXTRACTOR_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(DOC_EXTRACTOR_WRAPPER)
-
 INFO_TARGET  = Info.exe
 INFO_WRAPPER = beagle-info
 INFO_CSFILES = $(srcdir)/Info.cs

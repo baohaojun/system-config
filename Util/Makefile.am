@@ -155,10 +155,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET) $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET).mdb $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET_CONFIG)
 
 
-COND_CS_FILES =				\
-	$(srcdir)/SemWeb/Euler.cs	\
-	$(srcdir)/Galago.cs		\
-	$(srcdir)/Thunderbird.cs
+COND_CS_FILES =	
 
 EXTRA_DIST =					\
 	$(EXTSTR_IN)				\
