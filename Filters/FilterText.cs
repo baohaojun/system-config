@@ -83,7 +83,21 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-xslt"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-shellscript"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xslt+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-php"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".sci"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sh"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/svg+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".svg"));
+			AddSupportedFlavor(FilterFlavor.NewFromMimeType ("application/x-tex"));
+			AddSupportedFlavor(FilterFlavor.NewFromMimeType ("application/x-latex"));	
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/docbook+xml"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".docbook"));
+			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/doc/*",              ".xml", null, 0));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".js"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff-man"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff"));
+			AddSupportedFlavor (FilterFlavor.NewFromExtension (".m"));
 		}
 
 		const long LENGTH_CUTOFF = 5 * 1024 * 1024; // 5 Mb

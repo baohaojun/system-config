@@ -483,7 +483,6 @@ namespace Beagle.Daemon {
 		// FIXME: This assumes everything being indexed is in English!
 		public class BeagleAnalyzer : StandardAnalyzer {
 
-			const string DEFAULT_STEMMER_LANGUAGE = "English";
 			private char [] buffer = new char [2];
 			private bool strip_extra_property_info = false;
 			private bool tokenize_email_hostname = false;
@@ -1970,108 +1969,6 @@ namespace Beagle.Daemon {
 			ReleaseReader (reader);
 		}
 
-		///////////////////////////////////////////////////////////////////////////////////
-
-		//
-		// Various ways to grab lots of hits at once.
-		// These should never be used for querying, only for utility
-		// functions.
-		//
-
-		public int GetBlockOfHits (int cookie,
-					   Hit [] block_of_hits)
-		{
-			IndexReader primary_reader;
-			IndexReader secondary_reader;
-			primary_reader = GetReader (PrimaryStore);
-			secondary_reader = GetReader (SecondaryStore);
-
-			int request_size;
-			request_size = block_of_hits.Length;
-			if (request_size > primary_reader.NumDocs ())
-				request_size = primary_reader.NumDocs ();
-
-			int max_doc;
-			max_doc = primary_reader.MaxDoc ();
-
-			if (cookie < 0) {
-				Random random;
-				random = new Random ();
-				cookie = random.Next (max_doc);
-			}
-
-			int original_cookie;
-			original_cookie = cookie;
-
-			Hashtable primary_docs, secondary_docs;
-			primary_docs = UriFu.NewHashtable ();
-			secondary_docs = UriFu.NewHashtable ();
-
-			// Load the primary documents
-			for (int i = 0; i < request_size; ++i) {
-				
-				if (! primary_reader.IsDeleted (cookie)) {
-					Document doc;
-					doc = primary_reader.Document (cookie);
-					primary_docs [GetUriFromDocument (doc)] = doc;
-				}
-				
-				++cookie;
-				if (cookie >= max_doc) // wrap around
-					cookie = 0;
-
-				// If we somehow end up back where we started,
-				// give up.
-				if (cookie == original_cookie)
-					break;
-			}
-
-			// If necessary, load the secondary documents
-			if (secondary_reader != null) {
-				LNS.IndexSearcher searcher;
-				searcher = new LNS.IndexSearcher (secondary_reader);
-				
-				LNS.Query uri_query;
-				uri_query = UriQuery ("Uri", primary_docs.Keys);
-				
-				LNS.Hits hits;
-				hits = searcher.Search (uri_query);
-				for (int i = 0; i < hits.Length (); ++i) {
-					Document doc;
-					doc = hits.Doc (i);
-					secondary_docs [GetUriFromDocument (doc)] = doc;
-				}
-				
-				searcher.Close ();
-			}
-
-			ReleaseReader (primary_reader);
-			ReleaseReader (secondary_reader);
-
-			// Now assemble the hits
-			int j = 0;
-			foreach (Uri uri in primary_docs.Keys) {
-				Document primary_doc, secondary_doc;
-				primary_doc = primary_docs [uri] as Document;
-				secondary_doc = secondary_docs [uri] as Document;
-
-				Hit hit;
-				hit = DocumentToHit (primary_doc);
-				if (secondary_doc != null)
-					AddPropertiesToHit (hit, secondary_doc, false);
-				
-				block_of_hits [j] = hit;
-				++j;
-			}
-
-			// null-pad the array, if necessary
-			for (; j < block_of_hits.Length; ++j)
-				block_of_hits [j] = null;
-
-
-			// Return the new cookie
-			return cookie;
-		}
 
 		// For a large index, this will be very slow and will consume
 		// a lot of memory.  Don't call it without a good reason!
