@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Standard
 		{
 			int i = 0;       /* index in packed string  */
 			int j = offset;  /* index in unpacked array */
-			int l = packed.length();
+			int l = packed.Length;
 			while (i < l) 
 				{
 					int count = packed.charAt(i++);
@@ -162,7 +162,7 @@ namespace Lucene.Net.Analysis.Standard
 		{
 			int i = 0;  /* index in packed string  */
 			int j = offset;  /* index in unpacked array */
-			int l = packed.length();
+			int l = packed.Length;
 			while (i < l) 
 				{
 					int high = packed.charAt(i++) << 16;
@@ -192,7 +192,7 @@ namespace Lucene.Net.Analysis.Standard
 		{
 			int i = 0;       /* index in packed string  */
 			int j = offset;  /* index in unpacked array */
-			int l = packed.length();
+			int l = packed.Length;
 			while (i < l) 
 				{
 					int count = packed.charAt(i++);
@@ -237,7 +237,7 @@ namespace Lucene.Net.Analysis.Standard
 		{
 			int i = 0;       /* index in packed string  */
 			int j = offset;  /* index in unpacked array */
-			int l = packed.length();
+			int l = packed.Length;
 			while (i < l) 
 				{
 					int count = packed.charAt(i++);
