@@ -140,7 +140,10 @@
 
 (mapcar (lambda (x) (add-hook x (lambda ()
                     (local-set-key [?\C-\M-a] 'bhj-c-beginning-of-defun)
-                    (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun)
+                    (local-set-key [?\C-\M-e] 'bhj-c-end-of-defun))))
+        (list 'c-mode-hook 'c++-mode-hook 'csharp-mode-hook 'java-mode-hook))
+
+(mapcar (lambda (x) (add-hook x (lambda ()
                     (local-set-key [?\C-c ?\C-d] 'c-down-conditional)
                     (c-set-offset 'innamespace 0)
                     (c-set-offset 'substatement-open 0))))
@@ -164,9 +167,6 @@
   (setq tab-width 4)
   (setq indent-tabs-mode nil)
   (setq c-basic-offset 4))
-
-(define-key java-mode-map [?\C-\M-a] 'bhj-c-beginning-of-defun)
-(define-key java-mode-map [?\C-\M-e] 'bhj-c-end-of-defun)
 
 (setq auto-mode-alist (cons '(".*/kernel.*\\.[ch]$" . linux-c-mode)
 			    (cons '("logcat.log.*" . fundamental-mode)

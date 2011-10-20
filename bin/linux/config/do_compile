@@ -55,7 +55,6 @@ function compile_gtags() {
 function do_compile() {
     compile_beagle "$@"
     compile_uncomment_java "$@"
-    compile_fcitx "$@"
     compile_gtags "$@"
     compile_ibus_sdim "$@"
 }

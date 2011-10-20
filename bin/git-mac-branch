@@ -43,4 +43,4 @@ git add .
 git submodule|pn 2|xargs -I %s git reset HEAD %s || true
 git commit -m mf ||true
 rb=from-mac/`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`
-git diff --quiet origin/$rb || git push origin HEAD:$rb
+git diff --quiet origin/$rb || git push origin HEAD:$rb || git push origin-w HEAD:$rb

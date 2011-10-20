@@ -12,13 +12,6 @@ git fetch origin
 
 cd /android
 
-repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre
-repo sync
-repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre_p2_22.xml
-repo sync
-repo-switch -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre_p2_23.xml
-repo sync
-
 repo-switch -u git://nv-tegra.nvidia.com/android/manifest.git -b eclair-tegra
 repo sync
 repo-switch -u git://nv-tegra.nvidia.com/android/manifest.git -b froyo-tegra
