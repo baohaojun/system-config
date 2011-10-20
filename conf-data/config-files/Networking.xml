@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-16"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- Distributions and packagers, DO NOT remove or add any BoolOption, StringOption or ListOption -->
 <BeagleConf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Networking">
     <BoolOption Name="ServiceEnabled" Description="Enable querying over network">false</BoolOption>
