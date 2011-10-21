@@ -12,6 +12,7 @@ if test -e ~/.git-mac-no; then
 fi
 cd ${1:-~/windows-config}
 
+test "$(git config remote.origin.url | cut -b 1-5)" = https && exit 0 
 if git status -s|
     pn 2|
     xargs -I %s stat -c %Y %s|
@@ -39,8 +40,20 @@ else
     fi
 fi
 
+if git submodule foreach 'bash -c "git-push-mac . >/dev/null 2>&1 || echo failed"' | grep failed;
+then
+    exit -1
+else
+    true
+fi
+
 git add . 
-git submodule|pn 2|xargs -I %s git reset HEAD %s || true
+
 git commit -m mf ||true
 rb=from-mac/`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`
-git diff --quiet origin/$rb || git push origin HEAD:$rb || git push origin-w HEAD:$rb
+git diff --quiet origin/$rb || if test "$(git config remote.origin.url | cut -b 1-4)" = git:; then
+    git remote add origin-w $(git config remote.origin.url | perl -npe 's,^git://,git@,; s,/,:,') || true
+    git push origin-w HEAD:$rb
+else
+    git push origin HEAD:$rb
+fi
