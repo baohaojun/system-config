@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo refs/heads/from-mac/`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`

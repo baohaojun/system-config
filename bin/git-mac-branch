@@ -50,10 +50,11 @@ fi
 git add . 
 
 git commit -m mf ||true
-rb=from-mac/`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`
-git diff --quiet origin/$rb || if test "$(git config remote.origin.url | cut -b 1-4)" = git:; then
+rb=$(from-mac)
+git diff --quiet origin/$(echo $rb|perl -npe 's,^refs/heads/,,') || if test "$(git config remote.origin.url | cut -b 1-4)" = git:; then
     git remote add origin-w $(git config remote.origin.url | perl -npe 's,^git://,git@,; s,/,:,') || true
     git push origin-w HEAD:$rb
+    git fetch origin
 else
     git push origin HEAD:$rb
 fi
