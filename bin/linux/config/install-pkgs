@@ -7,12 +7,12 @@ fi
 
 export LC_ALL=C
 export LANG=C
-while ! sudo apt-get install -y $packages; do
-    packages=$(arg1-arg2 "$packages" "$(sudo apt-get install -y $packages 2>&1)");
+while ! sudo apt-get install "$@" -y $packages; do
+    packages=$(arg1-arg2 "$packages" "$(sudo apt-get install "$@" -y $packages 2>&1)");
     echo installing: $packages
 done
 
-~/bin/linux/config/install-missing-pkgs
+~/bin/linux/config/install-missing-pkgs "$@"
 cat /etc/tsocks.conf |grep -e '^server' > /tmp/tsock.conf
 
 if diff ~/etc/tsock.conf /tmp/tsock.conf; then

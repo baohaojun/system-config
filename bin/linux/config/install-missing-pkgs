@@ -27,5 +27,5 @@ if (m/^Package: (.*)$/) {
 echo "missing_packages are $missing_packages"
 
 for x in $missing_packages; do 
-    sudo apt-get install -y $x || true
+    sudo apt-get install "$@" -y $x || true
 done

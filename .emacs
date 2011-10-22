@@ -561,7 +561,7 @@
  '(org2blog/wp-confirm-post t)
  '(org2blog/wp-use-tags-as-categories t)
  '(require-final-newline t)
- '(safe-local-variable-values (quote ((c-style . whitesmith) (major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
+ '(safe-local-variable-values (quote ((sh-indent-comment . t) (c-style . whitesmith) (major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
  '(save-place t nil (saveplace))
  '(senator-minor-mode-hook (quote (ignore)))
  '(session-initialize (quote (de-saveplace session places keys menus)) nil (session))
