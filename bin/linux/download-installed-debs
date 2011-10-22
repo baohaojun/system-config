@@ -28,7 +28,7 @@ for x in "${source_list[@]}"; do
 	dir=lists/"$(echo "$x"|perl -npe 's/[^a-zA-Z0-9.]/_/g')"
 	mkdir -p "$dir"
 	cd "$dir"
-	wget -N "$x"
+	wget -N "$x" >/dev/null 2>&1
     )
 done
 
