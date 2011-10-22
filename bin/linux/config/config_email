@@ -36,6 +36,22 @@ EOF
 
 # 配置offlineimap
     read -s -p "Please input your password of this PC: " lpass
+
+    Guser=$(echo $Gmail|perl -npe 's/@.*//') 
+    cat <<EOF > ~/.notifier.conf
+[options]
+lang = English
+voffset = 25
+gmailusername = $Gmail
+checkinterval = 60000
+gmailpassword = $Gpass
+browserpath = your_browser_path
+popuptimespan = 5000
+proxy = 
+hoffset = 10
+animationdelay = 15
+EOF
+
     cat <<EOF > ~/.offlineimaprc
 [general]
 accounts = Gmail
