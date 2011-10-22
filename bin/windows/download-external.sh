@@ -45,9 +45,9 @@ function emacs-site-lisps()
     
 
     source_list=(
-        ftp.us.debian.org/debian/dists/testing/main/source/Sources.bz2 
-        ftp.us.debian.org/debian/dists/testing/contrib/source/Sources.bz2 
-        ftp.us.debian.org/debian/dists/testing/non-free/source/Sources.bz2
+        mirrors.163.com/debian/dists/testing/main/source/Sources.bz2 
+        mirrors.163.com/debian/dists/testing/contrib/source/Sources.bz2 
+        mirrors.163.com/debian/dists/testing/non-free/source/Sources.bz2
     )
 
     y=0

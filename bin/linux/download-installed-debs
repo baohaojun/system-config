@@ -1,0 +1,45 @@
+#!/bin/bash
+
+set -e
+
+workdir=~/external/installed-pkgs/pkgs
+mkdir -p $workdir
+
+cd $workdir
+grep-status -P -e '.*' -a -FStatus 'install ok installed' -n -s Package|xargs touch
+
+export PACKAGES_DIR=$workdir
+
+cd ..
+mkdir -p downloads
+
+install-pkgs -s --reinstall >pkgs.txt 2>&1 
+
+source_list=(
+    http://mirrors.163.com/debian/dists/testing/main/binary-amd64/Packages.bz2
+    http://mirrors.163.com/debian/dists/testing/contrib/binary-amd64/Packages.bz2
+    http://mirrors.163.com/debian/dists/testing/non-free/binary-amd64/Packages.bz2
+    http://mirrors.163.com/debian/dists/unstable/main/binary-amd64/Packages.bz2
+    http://mirrors.163.com/debian/dists/unstable/contrib/binary-amd64/Packages.bz2
+    http://mirrors.163.com/debian/dists/unstable/non-free/binary-amd64/Packages.bz2
+)
+
+for x in "${source_list[@]}"; do
+    (
+	dir=lists/"$(echo "$x"|perl -npe 's/[^a-zA-Z0-9.]/_/g')"
+	mkdir -p "$dir"
+	cd "$dir"
+	wget -N "$x"
+    )
+done
+
+testing=$(cat pkgs.txt|grep -e '^Inst .*Debian:testing'|pn 2)
+unstable=$(cat pkgs.txt|grep -e '^Inst .*Debian:unstable'|pn 2)
+
+bzcat lists/*testing*/*|get-deb-pkg-path $testing > testing.pkgs
+bzcat lists/*unstable*/*|get-deb-pkg-path $unstable > unstable.pkgs
+
+(
+    cat testing.pkgs; cat testing.pkgs|perl -npe 's/amd64.deb$/i386.deb/';
+    cat unstable.pkgs; cat unstable.pkgs|perl -npe 's/amd64.deb$/i386.deb/';
+) | sort -u | mf-download.pl -n 5

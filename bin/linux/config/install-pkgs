@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
-packages=$(find ~/bin/linux/config/pkgs/ -type f|perl -npe 's,.*/,,')
+
+packages_dir=${PACKAGES_DIR:-~/bin/linux/config/pkgs/}
+packages=$(find "$packages_dir" -type f|perl -npe 's,.*/,,')
 if test "$USER" = bhj; then
     packages="$packages texlive-full"
 fi

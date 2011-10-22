@@ -1,21 +1,30 @@
 #!/usr/bin/env perl
 
 #system("rm Sources.bz2");
-#system("wget http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2");
+#system("wget http://mirrors.163.com/debian/dists/sid/main/source/Sources.bz2");
+#http://cn.archive.ubuntu.com/ubuntu/dists/maverick/main/source/Sources.bz2
+#perl -npe 's,http://mirrors.163.com/debian,http://cn.archive.ubuntu.com/ubuntu,'
 
 
-$package = join("|", @ARGV);
-undef @ARGV;
+
+for (@ARGV) {
+    $pkgs{$_} = 1;
+}
+
+@ARGV = ();
+
 while (<>) {
     chomp;
-    
-    if (m/^Package: ($package)$/) {
+    if (m/^Package: (.*)$/) {
+	next if not $pkgs{$1};
+
         while(<>) {
             chomp;
             if (m/^Filename: (.*)$/) {
-                print "http://ftp.us.debian.org/debian/$1\n";
+                $path = "http://mirrors.163.com/debian/$1";
+                print $path . "\n";
                 last;
-            } 
+            }
         }
     }
 }

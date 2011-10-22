@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
 
 #system("rm Sources.bz2");
-#system("wget http://ftp.us.debian.org/debian/dists/sid/main/source/Sources.bz2");
+#system("wget http://mirrors.163.com/debian/dists/sid/main/source/Sources.bz2");
 #http://cn.archive.ubuntu.com/ubuntu/dists/maverick/main/source/Sources.bz2
-#perl -npe 's,http://ftp.us.debian.org/debian,http://cn.archive.ubuntu.com/ubuntu,'
+#perl -npe 's,http://mirrors.163.com/debian,http://cn.archive.ubuntu.com/ubuntu,'
 
 
 open($file, "-|", "bzcat Sources.bz2*");
@@ -23,7 +23,7 @@ while (<$file>) {
                 chomp;
                 $name = (split)[2];
             } elsif (m/^\s*$/) {
-                $path = "http://ftp.us.debian.org/debian/$dir/$name";
+                $path = "http://mirrors.163.com/debian/$dir/$name";
                 print $path;
                 last;
             }

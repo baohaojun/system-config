@@ -2,7 +2,9 @@
 apt-get install aptitude
 export LANG=C
 export LC_ALL=C
-packages=$(find ~/bin/linux/config/pkgs/ -type f|perl -npe 's,.*/,,')
+
+packages_dir=${PACKAGES_DIR:-~/bin/linux/config/pkgs/}
+packages=$(find "$packages_dir" -type f|perl -npe 's,.*/,,')
 err_packages=""
 
 while ! aptitude show $packages >/dev/null 2>&1; do
