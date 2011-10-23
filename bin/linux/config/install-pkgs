@@ -15,11 +15,3 @@ while ! sudo apt-get install "$@" -y $packages; do
 done
 
 ~/bin/linux/config/install-missing-pkgs "$@"
-cat /etc/tsocks.conf |grep -e '^server' > /tmp/tsock.conf
-
-if diff ~/etc/tsock.conf /tmp/tsock.conf; then
-    true;
-else
-    echo 'Warning! Your /etc/tsock.conf is not configured correctly!'
-    read -p 'Press any key to continue... '
-fi
