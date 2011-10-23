@@ -21,6 +21,13 @@ download-today
 command renew-xauth
 killall syndaemon
 syndaemon -i 1 -d
+
+for x in $(find ~/external/sawfish/start -type f); do
+    (
+	"$x"&
+    )
+done
+
 while true; do
     if ps aux|grep ssh|grep bhj@216 -q; 
     then
@@ -30,3 +37,5 @@ while true; do
     fi
     sleep 2; 
 done
+
+

@@ -1,0 +1,6 @@
+keycode 37 = Super_R
+clear mod1
+add mod1 = Alt_L Alt_R
+
+clear mod4
+add mod4 = Super_R Super_L
