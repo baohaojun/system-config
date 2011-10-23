@@ -730,7 +730,7 @@ ywb ime的一些问题：
 1. lucida console字体一定要换成doc底下的那个，这样ywb和putty里的字体才能好看一点
 
 2. python ime server如果终端关掉的话，它会在打印log的时候抛出异常，然后
-这个线程就死掉了，窗口也会挂住。这时候只好把python3.1关掉重来了。
+这个线程就死掉了，窗口也会挂住。这时候只好把python3关掉重来了。
 
 sawfish 调试：load-file，require
 gitosis-init < /tmp/id_rsa.pub

@@ -64,7 +64,7 @@ function emacs-site-lisps()
         `get-deb-src-dir muse-el`
         `get-deb-src-dir w3m-el-snapshot`
         `get-deb-src-dir exuberant-ctags`
-        `get-deb-src-dir python3.1`
+        `get-deb-src-dir python3`
     )
     
     for x in "${file_list[@]}"; do
@@ -370,7 +370,7 @@ EOF
         chmod +x *.exe
         cygstart *.exe
     )
-    read -p "Press any key to install python3.1..."
+    read -p "Press any key to install python3..."
     (
         mkdir -p python3.1
         cd python3.1
