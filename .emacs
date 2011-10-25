@@ -983,6 +983,52 @@ Starting from DIRECTORY, look upwards for a cscope database."
 	 (cadddr subs) ;operator +=      function    183 /home...
        (caddr subs))))) ;region_iterator  struct      189 /home...
 
+(defun code-def-from-tag-line (line)
+  (goto-line line)
+  (let ((subs (split-string (current-line-string))))
+    (car subs)))
+
+(defun code-indentation-from-tag-line (line)
+  (let ((code-line (code-line-number-from-tag-line line)))
+    (with-current-buffer old-buffer
+      (save-excursion
+	(goto-line code-line)
+	(back-to-indentation)
+	(current-column)))))
+
+(defun ctags-get-fully-qualified-name ()
+  (interactive)
+  (save-excursion
+    (let (deactivate-mark) ;;see the help of save-excursion
+      (tag-this-file (get-buffer-create "*ctags-beginning-of-defun*"))
+      (let ((old-buffer (current-buffer))
+	    (old-code-line (line-number-at-pos))
+	    (last-code-line (line-number-at-pos (buffer-end 1)))
+	    (last-def-line 1)
+	    (fully-qualified-name "")
+	    current-code-line-indent)
+	(with-current-buffer "*ctags-beginning-of-defun*"
+	  (goto-char (point-max))
+	  (insert ( concat "hello function "
+			   (number-to-string last-code-line)
+			   "hello world"))
+	  (while (< old-code-line (code-line-number-from-tag-line (line-number-at-pos)))
+	    (previous-line))
+	  (setq fully-qualified-name (code-def-from-tag-line (line-number-at-pos))
+		current-code-line-indent (code-indentation-from-tag-line (line-number-at-pos)))
+	  (while (and (> current-code-line-indent 0)
+		      (> (line-number-at-pos) 1))
+	    (previous-line)
+	    (if (< (code-indentation-from-tag-line (line-number-at-pos)) current-code-line-indent)
+		(setq fully-qualified-name (concat (code-def-from-tag-line (line-number-at-pos))
+						   "."
+						   fully-qualified-name)
+		      current-code-line-indent (code-indentation-from-tag-line (line-number-at-pos)))))
+	  (message "%s" fully-qualified-name)
+	  (with-temp-buffer
+	    (insert-string fully-qualified-name)
+	    (copy-region-as-kill (point-min) (point-max))))))))
+	  
 (defun ctags-beginning-of-defun (&optional arg)
   (interactive "^p")
   (goto-line 
