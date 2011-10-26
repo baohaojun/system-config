@@ -21,7 +21,7 @@ for x in "$@"; do
 	touch .old_config_diff~
 
 	if ! diff .new_config_diff~ .old_config_diff~; then
-	    mailx -s "git-to-gmail `pwd` from $ip" -a .new_config_diff~ baohaojun@gmail.com </dev/null
+	    mailx -s "git-to-gmail `pwd` $(from-mac)" -a .new_config_diff~ baohaojun@gmail.com </dev/null
 	    mv .new_config_diff~ .old_config_diff~
 	    git commit -m 'git-to-gmail auto commit' || true
 	    git log -1|head -n 1|pn 2 > .old_version~

@@ -2,5 +2,5 @@
 
 test $# = 0 && set -- ~/.ecompleterc ~/.bash_history ~/.bash_path
 for x in "$@"; do
-    mailx -s "git-to-gmail $x" -a "$x" baohaojun@gmail.com </dev/null
+    mailx -s "git-to-gmail $x from $(from-mac)" -a "$x" baohaojun@gmail.com </dev/null
 done
