@@ -102,7 +102,7 @@ sub do_cscope($$$$) {
     }
     chdir ($code_dir) or die "Can not change to $code_dir";
     my @update_path = keys %update_path; 
-    system("echo @update_path | gtags --gtagslabel=plugin-example -i -f - $gtags_dir");
+    system("echo @update_path |tr ' ' '\n'| gtags --gtagslabel=plugin-example -i -f - $gtags_dir");
 }
 
 do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
