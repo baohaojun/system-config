@@ -1,3 +1,3 @@
 #!/bin/bash
 
-{ cd ~/cygwin || cd "$(cat ~/.cygwin-dir)"; } && mirrorcyg.pl | mf-download.pl -n 3
+{ cd ~/external/cygwin || cd "$(cat ~/external/.cygwin-dir)" } && mirrorcyg.pl | mf-download.pl -n 3

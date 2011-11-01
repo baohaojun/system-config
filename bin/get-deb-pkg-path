@@ -8,23 +8,26 @@
 
 
 for (@ARGV) {
-    $pkgs{$_} = 1;
+  $pkgs{$_} = 1;
 }
 
 @ARGV = ();
 
 while (<>) {
-    chomp;
-    if (m/^Package: (.*)$/) {
-	next if not $pkgs{$1};
+  chomp;
+  if (m/^Package: (.*)$/) {
+    next if not $pkgs{$1};
 
-        while(<>) {
-            chomp;
-            if (m/^Filename: (.*)$/) {
-                $path = "http://mirrors.163.com/debian/$1";
-                print $path . "\n";
-                last;
-            }
-        }
+    while (<>) {
+      chomp;
+      if (m/^Filename: (.*)$/) {
+	$path = "mirrors.163.com/debian/$1";
+      } elsif (m/^Size: (.*)$/) {
+	if (-s $path != $1) {
+	  print "http://$path\n";
+	}
+	last;
+      }
     }
+  }
 }

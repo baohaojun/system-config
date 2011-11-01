@@ -14,31 +14,39 @@ cd ..
 
 install-pkgs -s --reinstall >pkgs.txt 2>&1 
 
-source_list=(
-    http://mirrors.163.com/debian/dists/testing/main/binary-amd64/Packages.bz2
-    http://mirrors.163.com/debian/dists/testing/contrib/binary-amd64/Packages.bz2
-    http://mirrors.163.com/debian/dists/testing/non-free/binary-amd64/Packages.bz2
-    http://mirrors.163.com/debian/dists/unstable/main/binary-amd64/Packages.bz2
-    http://mirrors.163.com/debian/dists/unstable/contrib/binary-amd64/Packages.bz2
-    http://mirrors.163.com/debian/dists/unstable/non-free/binary-amd64/Packages.bz2
-)
+sites=mirrors.163.com/debian
+releases=testing\ unstable
+dists=main\ contrib\ non-free
+archs=amd64\ i386
 
-for x in "${source_list[@]}"; do
-    (
-	dir=lists/"$(echo "$x"|perl -npe 's/[^a-zA-Z0-9.]/_/g')"
-	mkdir -p "$dir"
-	cd "$dir"
-	wget -N "$x" >/dev/null 2>&1
-    )
-done
-
+for site in $sites; do
+    for release in $releases; do
+	for dist in $dists; do
+	    for arch in $archs; do
+		echo http://$site/dists/$release/$dist/binary-$arch/Packages.bz2
+	    done
+	done
+    done
+done | mf-download.pl -n 5
+	
+	
 testing=$(cat pkgs.txt|grep -e '^Inst .*Debian:testing'|pn 2)
 unstable=$(cat pkgs.txt|grep -e '^Inst .*Debian:unstable'|pn 2)
 
-bzcat lists/*testing*/*|get-deb-pkg-path $testing > testing.pkgs
-bzcat lists/*unstable*/*|get-deb-pkg-path $unstable > unstable.pkgs
+rm -f testing.pkgs unstable.pkgs
+
+for site in $sites; do
+    export SITE=$site
+    for release in $releases; do
+	for dist in $dists; do
+	    for arch in $archs; do
+		bzcat $site/dists/$release/$dist/binary-$arch/Packages.bz2 | get-deb-pkg-path $(eval echo \$$release) >> $release.pkgs
+	    done
+	done
+    done
+done
 
 (
-    cat testing.pkgs; cat testing.pkgs|perl -npe 's/amd64.deb$/i386.deb/';
-    cat unstable.pkgs; cat unstable.pkgs|perl -npe 's/amd64.deb$/i386.deb/';
+    cat testing.pkgs; 
+    cat unstable.pkgs;
 ) | sort -u | mf-download.pl -n 5
