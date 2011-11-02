@@ -24,9 +24,7 @@ while (<>) {
 	$path = "mirrors.163.com/debian/$1";
       } elsif (m/^Size: (.*)$/) {
 	if (-s $path != $1) {
-	  print "Y: http://$path\n";
-	} else {
-	  print "N: http://$path\n";
+	  print "http://$path\n";
 	}
 	last;
       }
