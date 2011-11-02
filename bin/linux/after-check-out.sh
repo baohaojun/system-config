@@ -4,6 +4,7 @@
 touch ~/.where ~/.where.lock
 
 sudo perl -npe 's/^XKBVARIANT=.*/XKBVARIANT="dvp"/;' -i /etc/default/keyboard
+sudo setupcon
 
 . ~/bin/linux/download-external.sh
 download_external >/dev/null 2>&1 &

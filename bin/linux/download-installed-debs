@@ -49,4 +49,8 @@ done
 (
     cat testing.pkgs; 
     cat unstable.pkgs;
-) | sort -u | mf-download.pl -n 5
+) | grep '^Y: ' | pn 2 | sort -u | mf-download.pl -n 5
+
+mkdir -p debs
+rm debs/*
+echo 'cat *.pkgs | pn 2 | sort -u | xargs -I %s relative-link %s ./debs/'|putclip
