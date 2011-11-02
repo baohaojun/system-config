@@ -83,7 +83,9 @@ folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in 
 
 EOF
 
+    sudo perl -npe 's/#mail_location =.*/mail_location =  maildir:~/Maildir/' -i /etc/dovecot/conf.d/10-mail.conf
     sudo /etc/init.d/dovecot restart
+
     #offlineimap
 #now you should be able to start gnus in Emacs
 }
