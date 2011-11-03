@@ -11,13 +11,15 @@ regedit /s ime-noctrlshift-noaltshift.reg
 # myxwin.sh&
 net start sshd&
 
-if test -e ~/.swap-alt-control; then
-    cp ~/doc/dvorak.ahk ~/dvorak.ahk
-    cat >> ~/dvorak.ahk <<EOF
+cp ~/doc/dvorak.ahk ~/dvorak.ahk
+cat >> ~/dvorak.ahk <<EOF
+AppsKey::LWin
 Control::Alt
 Alt::Control
 EOF
-    cygstart ~/dvorak.ahk
+
+if test -f ~/.dvorak.ahk; then
+	true
 else
     cygstart ~/doc/dvorak.ahk
 fi&

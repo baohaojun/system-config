@@ -45,9 +45,9 @@ function emacs-site-lisps()
     
 
     source_list=(
-        mirrors.163.com/debian/dists/testing/main/source/Sources.bz2 
-        mirrors.163.com/debian/dists/testing/contrib/source/Sources.bz2 
-        mirrors.163.com/debian/dists/testing/non-free/source/Sources.bz2
+        mirrors.163.com/debian/dists/unstable/main/source/Sources.bz2 
+        mirrors.163.com/debian/dists/unstable/contrib/source/Sources.bz2 
+        mirrors.163.com/debian/dists/unstable/non-free/source/Sources.bz2
     )
 
     y=0
@@ -64,7 +64,7 @@ function emacs-site-lisps()
         `get-deb-src-dir muse-el`
         `get-deb-src-dir w3m-el-snapshot`
         `get-deb-src-dir exuberant-ctags`
-        `get-deb-src-dir python3`
+	http://www.python.org/ftp/python/3.1.4/Python-3.1.4.tar.bz2
     )
     
     for x in "${file_list[@]}"; do
