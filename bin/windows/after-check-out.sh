@@ -55,18 +55,21 @@ function mkdir () #so that mkdir won't fail if it is already there.
 cd ~/bin/windows/
 mkdir  ~/bin/windows/lnks
 for x in {c..z}; do test -e /$x || (rm -f /$x; ln -s /cygdrive/$x /); done
-DOWN=${DOWN:-yes} ./download-external.sh
+DOWN=yes ./download-external.sh
 find . -type l -exec relink.sh '{}' \;
 
 ~/bin/windows/redirect.sh
 
 cd ~/bin/windows
 cpan String::ShellQuote
+echo 'after check out update success!'
 ln -sf ~/'Application Data/Microsoft/Internet Explorer/Quick Launch' ~/SendTo/ || report_error "Error: you are not doing it from $HOMEPATH"
 mkdir -p ~/.fonts
 cp ~/doc/monaco-linux.ttf /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windows/fonts/cour.ttf ~/.fonts || true
-fc-cache || true
+fc-cache
 cd ~/doc
+regedit /s caps_lock_to_control.reg
 regedit /s putty.reg
+touch ~/.swap-alt-control
 echo -n "c:/python31/python.exe" \"$(cygpath -aml ~/windows-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
 echo "After check out success!"

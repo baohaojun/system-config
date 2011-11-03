@@ -72,17 +72,14 @@ startup_dir=`regtool.exe -s get '\HKEY_CURRENT_USER\Software\Microsoft\Windows\C
 startup_dir=`cygpath -au "$startup_dir"`
 ln -sf "$HOME2"/bin/windows/startup.sh "$startup_dir"
 
-set -x
-if test $(uname) != CYGWIN_NT-5.1; then
-    cat >/c/ywb.txt <<EOF
+cat >/c/ywb.txt <<EOF
 [RegionalSettings]
 InputLocale = 0804:e0350804
 EOF
 
-    cat >/c/ywb.bat <<"EOF"
+cat >/c/ywb.bat <<"EOF"
 control intl.cpl,,/f:"C:\ywb.txt"
 EOF
 
-    cd /c
-    cmd.exe /c ywb.bat
-fi
+cd /c
+cmd.exe /c ywb.bat
