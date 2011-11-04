@@ -5,14 +5,17 @@
 		   (expand-file-name "~/.emacs_d/lisp/ext"))
 	     load-path))
 
-(when  (eq system-type 'cygwin)
-  (let ((default-directory "~/tools/emacs-site-lisp/")) (load-file "~/tools/emacs-site-lisp/subdirs.el"))
-  (setq load-path
-	(cons "~/tools/emacs-site-lisp/" load-path))
-  ;;press F2 to get MSDN help
-  (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
-  (setq locate-command "locateEmacs.sh")
-)
+(when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
+  (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
+				"~/../tools/emacs-site-lisp/"
+			      "~/tools/emacs-site-lisp/")))
+    (let ((default-directory bhj-lisp-load-path)) 
+      (load-file (concat bhj-lisp-load-path "/subdirs.el")))
+    (setq load-path
+	  (cons bhj-lisp-load-path load-path))
+    ;;press F2 to get MSDN help
+    (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
+    (setq locate-command "locateEmacs.sh")))
 
 (when window-system
   (tool-bar-mode -1)
@@ -641,12 +644,12 @@
                    (1- start-pos))
           (setq all-letou nil)))
 
-      (when t
+      (when all-letou
         (save-excursion
           (message-goto-from)
           (message-beginning-of-line)
           (kill-line)
-          (insert "Bao Haojun at Marvell <hjbao@marvell.com>"))))))
+          (insert "Bao Haojun at Letou <hjbao@eee168.com>"))))))
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
@@ -1494,149 +1497,150 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (keyboard-translate ?\C-h ?\C-x)
 ;(global-set-key (kbd "C-h") 'execute-extended-command)
 
-(require 'bbdb-autoloads)
-(require 'bbdb)
-(load "bbdb-com" t)
-(bbdb-initialize 'gnus 'message)
-(bbdb-insinuate-message)
-;; (bbdb-insinuate-sc)
-(setq bbdb-north-american-phone-numbers nil)
-(add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-(setq bbdb-auto-notes-alist
-      (quote (("To"
-	       ("w3o" . "w3o")
-	       ("plug" . "plug")
-	       ("linux" . "linux")
-	       ("emacs-commit" . "emacs commit")
-	       ("emacs" . "emacs")
-	       ("pinoyjug" . "pinoyjug")
-	       ("digitalfilipino" . "digitalfilipino")
-	       ("sacha" . "personal mail"))
-	      ("From"
-	       ("admu" company "Ateneo de Manila University")
-	       ("Organization" (".*" company 0 nil))
-	       ))))
-(setq bbdb-auto-notes-ignore 
-      (quote 
-       (("Organization" . "^Gatewayed from\\\\|^Source only"))))
-(setq bbdb-auto-notes-ignore-all nil)
-(setq bbdb-check-zip-codes-p nil)
-(setq bbdb-ignore-some-messages-alist 
-      '(
-	("From" . "linkedin.com")
-	("From" . "bear.eee168.com")
-	))
-(setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
+(unless (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
+  (require 'bbdb-autoloads)
+  (require 'bbdb)
+  (load "bbdb-com" t)
+  (bbdb-initialize 'gnus 'message)
+  (bbdb-insinuate-message)
+  ;; (bbdb-insinuate-sc)
+  (setq bbdb-north-american-phone-numbers nil)
+  (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+  (setq bbdb-auto-notes-alist
+	(quote (("To"
+		 ("w3o" . "w3o")
+		 ("plug" . "plug")
+		 ("linux" . "linux")
+		 ("emacs-commit" . "emacs commit")
+		 ("emacs" . "emacs")
+		 ("pinoyjug" . "pinoyjug")
+		 ("digitalfilipino" . "digitalfilipino")
+		 ("sacha" . "personal mail"))
+		("From"
+		 ("admu" company "Ateneo de Manila University")
+		 ("Organization" (".*" company 0 nil))
+		 ))))
+  (setq bbdb-auto-notes-ignore 
+	(quote 
+	 (("Organization" . "^Gatewayed from\\\\|^Source only"))))
+  (setq bbdb-auto-notes-ignore-all nil)
+  (setq bbdb-check-zip-codes-p nil)
+  (setq bbdb-ignore-some-messages-alist 
+	'(
+	  ("From" . "linkedin.com")
+	  ("From" . "bear.eee168.com")
+	  ))
+  (setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
 
-(setq bbdb-file "~/windows-config/.bbdb")
-(add-hook 'gnus-select-group-hook
-	  (lambda ()
-	    (make-local-variable 'bbdb/news-auto-create-p)
-	    (make-local-variable 'bbdb/mail-auto-create-p)
-	    (if (string-match "^\\*Summary nntp" (buffer-name))
-		(setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
-	      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook))))
+  (setq bbdb-file "~/windows-config/.bbdb")
+  (add-hook 'gnus-select-group-hook
+	    (lambda ()
+	      (make-local-variable 'bbdb/news-auto-create-p)
+	      (make-local-variable 'bbdb/mail-auto-create-p)
+	      (if (string-match "^\\*Summary nntp" (buffer-name))
+		  (setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
+		(setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook))))
 
-(defun my-gnus-article-prepare-bbdb ()
-  (make-local-variable 'bbdb/news-auto-create-p)
-  (make-local-variable 'bbdb/mail-auto-create-p)
-  ;(message "hello my-gnus-article-prepare-bbdb %s %s" (buffer-name gnus-article-current-summary) (buffer-name))
-  (if (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary))
-      (setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
-    (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook)))
+  (defun my-gnus-article-prepare-bbdb ()
+    (make-local-variable 'bbdb/news-auto-create-p)
+    (make-local-variable 'bbdb/mail-auto-create-p)
+					;(message "hello my-gnus-article-prepare-bbdb %s %s" (buffer-name gnus-article-current-summary) (buffer-name))
+    (if (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary))
+	(setq bbdb/news-auto-create-p nil bbdb/mail-auto-create-p nil)
+      (setq bbdb/news-auto-create-p 'bbdb-ignore-some-messages-hook bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook)))
 
-(add-hook 'gnus-startup-hook
-	  (lambda ()
-	    (add-hook 'gnus-article-prepare-hook
-		      'my-gnus-article-prepare-bbdb))
-	  t) ;; make sure our article prepare hook is run before bbdb hook
+  (add-hook 'gnus-startup-hook
+	    (lambda ()
+	      (add-hook 'gnus-article-prepare-hook
+			'my-gnus-article-prepare-bbdb))
+	    t) ;; make sure our article prepare hook is run before bbdb hook
 
-;; (defun bbdb-bhj-unify-eee168 (record)
-;;   (bbdb-record-putprop record 'net (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net)))
+  ;; (defun bbdb-bhj-unify-eee168 (record)
+  ;;   (bbdb-record-putprop record 'net (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" net)))
 
-(defun my-bbdb/gnus-update-records-mode ()
-  (progn
-    ;(message "hello bbdb/gnus-update-records-mode: %s %s %s" (buffer-name gnus-article-current-summary) (buffer-name) bbdb/news-auto-create-p)
-    (if (and (boundp 'auto-create-p) (null auto-create-p))
-	(if (and (boundp 'gnus-article-current-summary)
-		 (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary)))
-	    'annotating
-	  'searching)
-      'annotating)))
-(setq bbdb/gnus-update-records-mode '(my-bbdb/gnus-update-records-mode))
+  (defun my-bbdb/gnus-update-records-mode ()
+    (progn
+					;(message "hello bbdb/gnus-update-records-mode: %s %s %s" (buffer-name gnus-article-current-summary) (buffer-name) bbdb/news-auto-create-p)
+      (if (and (boundp 'auto-create-p) (null auto-create-p))
+	  (if (and (boundp 'gnus-article-current-summary)
+		   (string-match "^\\*Summary nntp" (buffer-name gnus-article-current-summary)))
+	      'annotating
+	    'searching)
+	'annotating)))
+  (setq bbdb/gnus-update-records-mode '(my-bbdb/gnus-update-records-mode))
 
-(defun my-bbdb-canonicalize (addr)
-  (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr))
-(setq bbdb-canonicalize-net-hook
-      'my-bbdb-canonicalize)
+  (defun my-bbdb-canonicalize (addr)
+    (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr))
+  (setq bbdb-canonicalize-net-hook
+	'my-bbdb-canonicalize)
 
 
-;; (setq bbdb-create-hook '(bbdb-creation-date-hook bbdb-bhj-unify-eee168))
-;; (letf* ((old-all-completions (symbol-function 'all-completions))
-;; 	  (old-try-completion (symbol-function 'try-completion)))
+  ;; (setq bbdb-create-hook '(bbdb-creation-date-hook bbdb-bhj-unify-eee168))
+  ;; (letf* ((old-all-completions (symbol-function 'all-completions))
+  ;; 	  (old-try-completion (symbol-function 'try-completion)))
 
-(defun all-completions-skeleton
-  (STRING COLLECTION &optional PREDICATE)
-  (let* ((fragments (mapcar 'regexp-quote (split-string STRING))))
-    (while fragments
-      
-      (setq COLLECTION (mapcan 
-			(lambda (x)
-			  (let ((tmp (if (symbolp x)
-					 (format "%s" (symbol-value x))
-				       (format "%s" x))))
+  (defun all-completions-skeleton
+    (STRING COLLECTION &optional PREDICATE)
+    (let* ((fragments (mapcar 'regexp-quote (split-string STRING))))
+      (while fragments
+	
+	(setq COLLECTION (mapcan 
+			  (lambda (x)
+			    (let ((tmp (if (symbolp x)
+					   (format "%s" (symbol-value x))
+					 (format "%s" x))))
 
-			    ; (if (string-match "haojun.bao@ray" tmp)
-			    ;   (message "'%s' : '%s'" x tmp))
+					; (if (string-match "haojun.bao@ray" tmp)
+					;   (message "'%s' : '%s'" x tmp))
 
-			    (if (string-match (car fragments) tmp)
-				(progn ;(message "(string-match \"%s\" \"%s\") x is %s\n" (car fragments) x oldx)
-				       (if (cdr fragments)
-					   (list x)
-					 (and (when (functionp PREDICATE)
-						(funcall PREDICATE x))
-					      (list x))))
-			      nil)))
-			COLLECTION)
-	    fragments (cdr fragments))
-      ;; (message "COLLECTION all- is %s\n" COLLECTION)
-      )
-    COLLECTION))
+			      (if (string-match (car fragments) tmp)
+				  (progn ;(message "(string-match \"%s\" \"%s\") x is %s\n" (car fragments) x oldx)
+				    (if (cdr fragments)
+					(list x)
+				      (and (when (functionp PREDICATE)
+					     (funcall PREDICATE x))
+					   (list x))))
+				nil)))
+			  COLLECTION)
+	      fragments (cdr fragments))
+	;; (message "COLLECTION all- is %s\n" COLLECTION)
+	)
+      COLLECTION))
 
-(defun try-completion-skeleton (STRING COLLECTION &optional PREDICATE)
-  (let* ((fragments (mapcar 'regexp-quote (split-string STRING)))
-	 (final (car (reverse (split-string STRING))))
-	 res)
-    (while fragments
-      (setq COLLECTION (mapcan
-			(lambda (x) 
-			  (let ((tmp
-				 (if (symbolp x)
-				     (format "%s" (symbol-value x))
-				   (format "%s" x))))
-			    (if (string-match (car fragments) tmp)
-				    (list x)
-			      nil)))
-			COLLECTION)
-	    fragments (cdr fragments))
-      )
-    ;; (message "COLLECTION is %s\n" COLLECTION)
-    (if (and COLLECTION (not (cdr COLLECTION)))
-	t
-      nil)))
+  (defun try-completion-skeleton (STRING COLLECTION &optional PREDICATE)
+    (let* ((fragments (mapcar 'regexp-quote (split-string STRING)))
+	   (final (car (reverse (split-string STRING))))
+	   res)
+      (while fragments
+	(setq COLLECTION (mapcan
+			  (lambda (x) 
+			    (let ((tmp
+				   (if (symbolp x)
+				       (format "%s" (symbol-value x))
+				     (format "%s" x))))
+			      (if (string-match (car fragments) tmp)
+				  (list x)
+				nil)))
+			  COLLECTION)
+	      fragments (cdr fragments))
+	)
+      ;; (message "COLLECTION is %s\n" COLLECTION)
+      (if (and COLLECTION (not (cdr COLLECTION)))
+	  t
+	nil)))
 
-(defun string-skeleton-match (target source)
-  (let* ((fragments (mapcar 'regexp-quote (split-string target)))
-	 (res t))
-    (while fragments
-      (unless (string-match (car fragments) source)
-	(setq res nil
-	      fragments nil))
-      (setq fragments (cdr fragments)))
-    res))
+  (defun string-skeleton-match (target source)
+    (let* ((fragments (mapcar 'regexp-quote (split-string target)))
+	   (res t))
+      (while fragments
+	(unless (string-match (car fragments) source)
+	  (setq res nil
+		fragments nil))
+	(setq fragments (cdr fragments)))
+      res))
 
-(defun bbdb-complete-name (&optional start-pos)
-  "Complete the user full-name or net-address before point (up to the
+  (defun bbdb-complete-name (&optional start-pos)
+    "Complete the user full-name or net-address before point (up to the
 preceeding newline, colon, or comma, or the value of START-POS).  If
 what has been typed is unique, insert an entry of the form \"User Name
 <net-addr>\" (although see documentation for
@@ -1649,211 +1653,211 @@ true then cycle through the nets for the matching record.
 When called with a prefix arg then display a list of all nets.
 
 Completion behaviour can be controlled with `bbdb-completion-type'."
-  (interactive)
+    (interactive)
 
-  (let* ((end (point))
-	 (beg (or start-pos
-		  (save-excursion
-		    (re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
-		    (goto-char (match-end 0))
-		    (point))))
-	 (orig (buffer-substring beg end))
-	 (typed (downcase orig))
-	 (pattern (bbdb-string-trim typed))
-	 (ht (bbdb-hashtable))
-	 ;; make a list of possible completion strings
-	 ;; (all-the-completions), and a flag to indicate if there's a
-	 ;; single matching record or not (only-one-p)
-	 (only-one-p t)
-	 (all-the-completions nil)
-	 (pred
-	  (lambda (sym)
-	    (when (bbdb-completion-predicate sym)
-	      (if (and only-one-p
-		       all-the-completions
-		       (or
-			;; not sure about this. more than one record
-			;; attached to the symbol? does that happen?
-			(> (length (symbol-value sym)) 1)
-			;; this is the doozy, though. multiple syms
-			;; which all match the same record
-			(delete t (mapcar (lambda(x)
-					    (equal (symbol-value x)
-						   (symbol-value sym)))
-					  all-the-completions))))
-		  (setq only-one-p nil))
-	      (if (not (memq sym all-the-completions))
-		  (setq all-the-completions (cons sym all-the-completions))))))
-	 (completion (progn (all-completions-skeleton pattern ht pred) (try-completion-skeleton pattern ht)))
-	 (exact-match (eq completion t)))
+    (let* ((end (point))
+	   (beg (or start-pos
+		    (save-excursion
+		      (re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
+		      (goto-char (match-end 0))
+		      (point))))
+	   (orig (buffer-substring beg end))
+	   (typed (downcase orig))
+	   (pattern (bbdb-string-trim typed))
+	   (ht (bbdb-hashtable))
+	   ;; make a list of possible completion strings
+	   ;; (all-the-completions), and a flag to indicate if there's a
+	   ;; single matching record or not (only-one-p)
+	   (only-one-p t)
+	   (all-the-completions nil)
+	   (pred
+	    (lambda (sym)
+	      (when (bbdb-completion-predicate sym)
+		(if (and only-one-p
+			 all-the-completions
+			 (or
+			  ;; not sure about this. more than one record
+			  ;; attached to the symbol? does that happen?
+			  (> (length (symbol-value sym)) 1)
+			  ;; this is the doozy, though. multiple syms
+			  ;; which all match the same record
+			  (delete t (mapcar (lambda(x)
+					      (equal (symbol-value x)
+						     (symbol-value sym)))
+					    all-the-completions))))
+		    (setq only-one-p nil))
+		(if (not (memq sym all-the-completions))
+		    (setq all-the-completions (cons sym all-the-completions))))))
+	   (completion (progn (all-completions-skeleton pattern ht pred) (try-completion-skeleton pattern ht)))
+	   (exact-match (eq completion t)))
 
-    (cond
-     ;; No matches found OR you're trying completion on an
-     ;; already-completed record. In the latter case, we might have to
-     ;; cycle through the nets for that record.
+      (cond
+       ;; No matches found OR you're trying completion on an
+       ;; already-completed record. In the latter case, we might have to
+       ;; cycle through the nets for that record.
 
-     ;; Match for a single record. If cycling is enabled then we don't
-     ;; care too much about the exact-match part.
-     ((and only-one-p (or exact-match bbdb-complete-name-allow-cycling))
-      (let* ((sym (car all-the-completions))
-	     (recs (symbol-value sym))
-	     the-net match-recs lst primary matched)
+       ;; Match for a single record. If cycling is enabled then we don't
+       ;; care too much about the exact-match part.
+       ((and only-one-p (or exact-match bbdb-complete-name-allow-cycling))
+	(let* ((sym (car all-the-completions))
+	       (recs (symbol-value sym))
+	       the-net match-recs lst primary matched)
 
-	(while recs
-	  (when (bbdb-record-net (car recs))
+	  (while recs
+	    (when (bbdb-record-net (car recs))
 
-	    ;; Did we match on name?
-	    (let ((b-r-name (or (bbdb-record-name (car recs)) "")))
-	      (if t
-		  (setq match-recs (cons (car recs) match-recs)
-			matched t)))
+	      ;; Did we match on name?
+	      (let ((b-r-name (or (bbdb-record-name (car recs)) "")))
+		(if t
+		    (setq match-recs (cons (car recs) match-recs)
+			  matched t)))
 
-	    ;; Did we match on lastname?
-	    (let ((b-r-name (or (bbdb-record-lfname (car recs)) "")))
-	      (if (string= pattern
-			   (substring (downcase b-r-name) 0
-				      (min (length b-r-name)
-					   (length pattern))))
-		  (setq match-recs (cons (car recs) match-recs)
-			matched t)))
+	      ;; Did we match on lastname?
+	      (let ((b-r-name (or (bbdb-record-lfname (car recs)) "")))
+		(if (string= pattern
+			     (substring (downcase b-r-name) 0
+					(min (length b-r-name)
+					     (length pattern))))
+		    (setq match-recs (cons (car recs) match-recs)
+			  matched t)))
 
-	    ;; Did we match on aka?
-	    (when (not matched)
-	      (setq lst (bbdb-record-aka (car recs)))
-	      (while lst
-		(if (string= pattern (substring (downcase (car lst)) 0
-						(min (length (downcase
-							      (car
-							       lst)))
-						     (length pattern))))
-		    (setq match-recs (append match-recs (list (car recs)))
-			  matched t
-			  lst '())
-		  (setq lst (cdr lst)))))
-
-	    ;; Name didn't match name so check net matching
-	    (when (not matched)
-	      (setq lst (bbdb-record-net (car recs)))
-	      (setq primary t) ;; primary wins over secondary...
-	      (while lst
-		(if (string= pattern (substring (downcase (car lst))
-						0 (min (length
-							(downcase (car
-								   lst)))
+	      ;; Did we match on aka?
+	      (when (not matched)
+		(setq lst (bbdb-record-aka (car recs)))
+		(while lst
+		  (if (string= pattern (substring (downcase (car lst)) 0
+						  (min (length (downcase
+								(car
+								 lst)))
 						       (length pattern))))
-		    (setq the-net (car lst)
-			  lst     nil
-			  match-recs
-			  (if primary (cons (car recs) match-recs)
-			    (append match-recs (list (car recs))))))
-		(setq lst     (cdr lst)
-		      primary nil))))
+		      (setq match-recs (append match-recs (list (car recs)))
+			    matched t
+			    lst '())
+		    (setq lst (cdr lst)))))
 
-	  ;; loop to next rec
-	  (setq recs    (cdr recs)
-		matched nil))
+	      ;; Name didn't match name so check net matching
+	      (when (not matched)
+		(setq lst (bbdb-record-net (car recs)))
+		(setq primary t) ;; primary wins over secondary...
+		(while lst
+		  (if (string= pattern (substring (downcase (car lst))
+						  0 (min (length
+							  (downcase (car
+								     lst)))
+							 (length pattern))))
+		      (setq the-net (car lst)
+			    lst     nil
+			    match-recs
+			    (if primary (cons (car recs) match-recs)
+			      (append match-recs (list (car recs))))))
+		  (setq lst     (cdr lst)
+			primary nil))))
 
-	(unless match-recs
-	  (error "only exact matching record unhas net field"))
+	    ;; loop to next rec
+	    (setq recs    (cdr recs)
+		  matched nil))
 
-	;; now replace the text with the expansion
+	  (unless match-recs
+	    (error "only exact matching record unhas net field"))
+
+	  ;; now replace the text with the expansion
+	  (delete-region beg end)
+	  (insert (bbdb-dwim-net-address (car match-recs) the-net))
+
+	  ;; if we're past fill-column, wrap at the previous comma.
+	  (if (and
+	       (bbdb-auto-fill-function)
+	       (>= (current-column) fill-column))
+	      (let ((p (point))
+		    bol)
+		(save-excursion
+		  (beginning-of-line)
+		  (setq bol (point))
+		  (goto-char p)
+		  (if (search-backward "," bol t)
+		      (progn
+			(forward-char 1)
+			(insert "\n   "))))))
+
+	  ;; Update the *BBDB* buffer if desired.
+	  (if bbdb-completion-display-record
+	      (let ((bbdb-gag-messages t))
+		(bbdb-display-records-1 match-recs t)))
+	  (bbdb-complete-name-cleanup)
+
+	  ;; call the exact-completion hook
+	  (run-hooks 'bbdb-complete-name-hooks)))
+
+       ;; Partial match
+       ;; note, we can't use the trimmed version of the pattern here or
+       ;; we'll recurse infinitely on e.g. common first names
+       ((and (stringp completion) (not (string= typed completion)))
 	(delete-region beg end)
-	(insert (bbdb-dwim-net-address (car match-recs) the-net))
+	(insert completion)
+	(setq end (point))
+	(let ((last "")
+	      (bbdb-complete-name-allow-cycling nil))
+	  (while (and (stringp completion)
+		      (not (string= completion last))
+		      (setq last completion
+			    pattern (downcase orig)
+			    completion (progn (all-completions-skeleton pattern ht pred) (try-completion-skeleton pattern ht))))
+	    (if (stringp completion)
+		(progn (delete-region beg end)
+		       (insert completion))))
+	  (bbdb-complete-name beg)))
 
-	;; if we're past fill-column, wrap at the previous comma.
-	(if (and
-	     (bbdb-auto-fill-function)
-	     (>= (current-column) fill-column))
-	    (let ((p (point))
-		  bol)
-	      (save-excursion
-		(beginning-of-line)
-		(setq bol (point))
-		(goto-char p)
-		(if (search-backward "," bol t)
-		    (progn
-		      (forward-char 1)
-		      (insert "\n   "))))))
+       ;; Exact match, but more than one record
+       (t
+	(or (eq (selected-window) (minibuffer-window))
+	    (message "Making completion list..."))
 
-	;; Update the *BBDB* buffer if desired.
-	(if bbdb-completion-display-record
-	    (let ((bbdb-gag-messages t))
-	      (bbdb-display-records-1 match-recs t)))
-	(bbdb-complete-name-cleanup)
+	(let (dwim-completions
+	      uniq nets net name lfname akas)
+	  ;; Now collect all the dwim-addresses for each completion, but only
+	  ;; once for each record!  Add it if the net is part of the completions
+	  (bbdb-mapc
+	   (lambda (sym)
+	     (bbdb-mapc
+	      (lambda (rec)
+		(when (not (member rec uniq))
+		  (setq uniq (cons rec uniq)
+			nets (bbdb-record-net rec)
+			name (downcase (or (bbdb-record-name rec) ""))
+			lfname (downcase (or (bbdb-record-lfname rec) ""))
+			akas (mapcar 'downcase (bbdb-record-aka rec)))
+		  (while nets
+		    (setq net (car nets))
+		    (when (string-skeleton-match pattern (format "%s %s %s" name (format "%s" akas) net))
+		      (setq dwim-completions
+			    (cons (bbdb-dwim-net-address rec net)
+				  dwim-completions))
+		      (if exact-match (setq nets nil)))
+		    (setq nets (cdr nets)))))
+	      (symbol-value sym)))
+	   all-the-completions)
 
-	;; call the exact-completion hook
-	(run-hooks 'bbdb-complete-name-hooks)))
-
-     ;; Partial match
-     ;; note, we can't use the trimmed version of the pattern here or
-     ;; we'll recurse infinitely on e.g. common first names
-     ((and (stringp completion) (not (string= typed completion)))
-      (delete-region beg end)
-      (insert completion)
-      (setq end (point))
-      (let ((last "")
-	    (bbdb-complete-name-allow-cycling nil))
-	(while (and (stringp completion)
-		    (not (string= completion last))
-		    (setq last completion
-			  pattern (downcase orig)
-			  completion (progn (all-completions-skeleton pattern ht pred) (try-completion-skeleton pattern ht))))
-	  (if (stringp completion)
-	      (progn (delete-region beg end)
-		     (insert completion))))
-	(bbdb-complete-name beg)))
-
-     ;; Exact match, but more than one record
-     (t
-      (or (eq (selected-window) (minibuffer-window))
-	  (message "Making completion list..."))
-
-      (let (dwim-completions
-	    uniq nets net name lfname akas)
-	;; Now collect all the dwim-addresses for each completion, but only
-	;; once for each record!  Add it if the net is part of the completions
-	(bbdb-mapc
-	 (lambda (sym)
-	   (bbdb-mapc
-	    (lambda (rec)
-	      (when (not (member rec uniq))
-		(setq uniq (cons rec uniq)
-		      nets (bbdb-record-net rec)
-		      name (downcase (or (bbdb-record-name rec) ""))
-		      lfname (downcase (or (bbdb-record-lfname rec) ""))
-		      akas (mapcar 'downcase (bbdb-record-aka rec)))
-		(while nets
-		  (setq net (car nets))
-		  (when (string-skeleton-match pattern (format "%s %s %s" name (format "%s" akas) net))
-		    (setq dwim-completions
-			  (cons (bbdb-dwim-net-address rec net)
-				dwim-completions))
-		    (if exact-match (setq nets nil)))
-		  (setq nets (cdr nets)))))
-	    (symbol-value sym)))
-	 all-the-completions)
-
-	;; if, after all that, we've only got one matching record...
-	(if (and dwim-completions (null (cdr dwim-completions)))
-	    (progn
-	      (delete-region beg end)
-	      (insert (car dwim-completions))
-	      (message ""))
-	  ;; otherwise, pop up a completions window
-	  (if (not (get-buffer-window "*Completions*"))
-	      (setq bbdb-complete-name-saved-window-config
-		    (current-window-configuration)))
-	  (let ((arg (list (current-buffer)
-			   (set-marker (make-marker) beg)
-			   (set-marker (make-marker) end))))
-	    (with-output-to-temp-buffer "*Completions*"
-	      (bbdb-display-completion-list
-	       dwim-completions
-	       'bbdb-complete-clicked-name
-	       arg)))
-	  (or (eq (selected-window) (minibuffer-window))
-	      (message "Making completion list...done"))))))))
-
+	  ;; if, after all that, we've only got one matching record...
+	  (if (and dwim-completions (null (cdr dwim-completions)))
+	      (progn
+		(delete-region beg end)
+		(insert (car dwim-completions))
+		(message ""))
+	    ;; otherwise, pop up a completions window
+	    (if (not (get-buffer-window "*Completions*"))
+		(setq bbdb-complete-name-saved-window-config
+		      (current-window-configuration)))
+	    (let ((arg (list (current-buffer)
+			     (set-marker (make-marker) beg)
+			     (set-marker (make-marker) end))))
+	      (with-output-to-temp-buffer "*Completions*"
+		(bbdb-display-completion-list
+		 dwim-completions
+		 'bbdb-complete-clicked-name
+		 arg)))
+	    (or (eq (selected-window) (minibuffer-window))
+		(message "Making completion list...done"))))))))
+  )
 
 (setq org-publish-project-alist
       '(("notes"

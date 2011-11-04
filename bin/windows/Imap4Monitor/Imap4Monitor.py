@@ -22,8 +22,6 @@ class ConfigDlg (QDialog):
         super(ConfigDlg, self).__init__(parent)
         settings = QSettings()
         layout = QGridLayout()
-
-        self.was_dirty = True
         
         self.host = settings.value("host", QVariant("localhost")).toString()
         self.port = settings.value("port", QVariant("993")).toString()
@@ -123,13 +121,10 @@ class ConfigDlg (QDialog):
                 if '(UNSEEN 0)' not in y[1][0]:
                     self.trayIcon.setIcon(QIcon(":/got-mail.png"))
                     self.timer.start(2000)
-                    self.was_dirty = True
                     break
             else:
                 self.trayIcon.setIcon(QIcon(":/no-mail.png"))
-                if self.was_dirty:
-                    os.system("offlineimap -a Gmail&")
-                self.was_dirty = False
+                os.system("offlineimap&")
                 self.timer.start(300000)
         except:
             type_, value_ = sys.exc_info()[:2]
