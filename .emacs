@@ -17,6 +17,11 @@
     (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
     (setq locate-command "locateEmacs.sh")))
 
+(when (eq system-type 'windows-nt)
+  (require 'cygwin-mount)
+  (cygwin-mount-activate)
+  (require 'w32-symlinks))
+
 (when window-system
   (tool-bar-mode -1)
   (menu-bar-mode -1)
@@ -29,7 +34,7 @@
          (let ((monaco-font (read (current-buffer))))
            (kill-buffer (current-buffer))
            monaco-font)))
-      (set-frame-font "Monaco-10.5"))
+      (set-frame-font "Monaco-11"))
   (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size 16))
   (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size 16))
 

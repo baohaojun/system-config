@@ -24,6 +24,7 @@ else
     cygstart ~/doc/dvorak.ahk
 fi&
 
-~/gcode/scim-cs/ime-py/ime-server.py&
+/c/Python31/python "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-server.py)"&
+
 
 
