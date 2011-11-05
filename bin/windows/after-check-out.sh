@@ -62,6 +62,8 @@ find . -type l -exec relink.sh '{}' \;
 
 cd ~/bin/windows
 cpan String::ShellQuote
+cpan String::Approx
+
 ln -sf ~/'Application Data/Microsoft/Internet Explorer/Quick Launch' ~/SendTo/ || report_error "Error: you are not doing it from $HOMEPATH"
 mkdir -p ~/.fonts
 cp ~/doc/monaco-linux.ttf /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windows/fonts/cour.ttf ~/.fonts || true
