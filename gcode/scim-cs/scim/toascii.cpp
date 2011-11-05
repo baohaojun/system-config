@@ -270,6 +270,55 @@ static char get_ascii(u32 vk, u32 sc, modifier_t mod)
 	return ascii[0];
 }
 
+static char dvorak_charmap(char c)
+{
+    int n = (unsigned char) c;
+    static char dvorak[256];
+    static int inited = 0;
+
+    if (inited) {
+        return dvorak[n];
+    }
+
+    for (int i=0; i < sizeof dvorak; i++) {
+        dvorak[i] = i; //default map to self
+    }
+
+#define map_it(c_querty, c_dvorak) dvorak[(unsigned char) c_querty] = c_dvorak;
+    map_it('`', '$'); map_it('\'', '-'); map_it('"', '_');
+    map_it('1', '&'); map_it('!', '%'); map_it('2', '[');
+    map_it('@', '7'); map_it('3', '{'); map_it('#', '5');
+    map_it('4', '}'); map_it('$', '3'); map_it('5', '(');
+    map_it('%', '1'); map_it('6', '='); map_it('^', '9');
+    map_it('7', '*'); map_it('&', '0'); map_it('8', ')');
+    map_it('*', '2'); map_it('9', '+'); map_it('(', '4');
+    map_it('0', ']'); map_it(')', '6'); map_it('-', '!');
+    map_it('_', '8'); map_it('=', '#'); map_it('+', '`');
+    map_it(']', '@'); map_it('}', '^'); map_it('q', ';');
+    map_it('w', ','); map_it('e', '.'); map_it('r', 'p');
+    map_it('t', 'y'); map_it('y', 'f'); map_it('u', 'g');
+    map_it('i', 'c'); map_it('o', 'r'); map_it('p', 'l');
+    map_it('[', '/'); map_it('s', 'o'); map_it('d', 'e');
+    map_it('f', 'u'); map_it('g', 'i'); map_it('h', 'd');
+    map_it('j', 'h'); map_it('k', 't'); map_it('l', 'n');
+    map_it(';', 's'); map_it('z', '\''); map_it('x', 'q');
+    map_it('c', 'j'); map_it('v', 'k'); map_it('b', 'x');
+    map_it('n', 'b'); map_it(',', 'w'); map_it('.', 'v');
+    map_it('/', 'z'); map_it('Q', ':'); map_it('W', '<');
+    map_it('E', '>'); map_it('R', 'P'); map_it('T', 'Y');
+    map_it('Y', 'F'); map_it('U', 'G'); map_it('I', 'C');
+    map_it('O', 'R'); map_it('P', 'L'); map_it('{', '?');
+    map_it('S', 'O'); map_it('D', 'E'); map_it('F', 'U');
+    map_it('G', 'I'); map_it('H', 'D'); map_it('J', 'H');
+    map_it('K', 'T'); map_it('L', 'N'); map_it(':', 'S');
+    map_it('Z', '"'); map_it('X', 'Q'); map_it('C', 'J');
+    map_it('V', 'K'); map_it('B', 'X'); map_it('N', 'B');
+    map_it('<', 'W'); map_it('>', 'V'); map_it('?', 'Z');
+    
+    inited = 1;
+    return dvorak[n];
+}
+
 static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
 {
 	if (vk > sizeof(special_keys)/sizeof(special_keys[0])) {
@@ -299,7 +348,7 @@ static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
 			char c = get_ascii(vk, sc, mod);
 			if (isgraph(c)) {
 				string ret;
-				ret.push_back(c);
+				ret.push_back(dvorak_charmap(c));
 				return ret;
 			} else {
 				bhjerr(" Error: vk not special, and not graph: %d", vk);
@@ -314,7 +363,7 @@ static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
 			char c = get_ascii(vk, sc, mod);
 			if (isgraph(c)) {
 				string ret;
-				ret.push_back(c);
+				ret.push_back(dvorak_charmap(c));
 				return ret;
 			} else {
 				bhjerr(" Error: shift + vk not special, and not graph: %d", vk);
