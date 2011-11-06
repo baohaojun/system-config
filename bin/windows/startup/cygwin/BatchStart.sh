@@ -10,20 +10,6 @@ regedit /s ime-noctrlshift-noaltshift.reg
 # chmod +x $MYXWINSH
 # myxwin.sh&
 net start sshd&
-
-cp ~/doc/dvorak.ahk ~/dvorak.ahk
-cat >> ~/dvorak.ahk <<EOF
-AppsKey::LWin
-Control::Alt
-Alt::Control
-EOF
-
-if test -f ~/.dvorak.ahk; then
-	true
-else
-    cygstart ~/doc/dvorak.ahk
-fi&
-
 /c/Python31/python "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-server.py)"&
 
 
