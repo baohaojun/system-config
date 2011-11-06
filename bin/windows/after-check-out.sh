@@ -70,7 +70,12 @@ cp ~/doc/monaco-linux.ttf /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windo
 fc-cache || true
 cd ~/doc
 regedit /s no-shift-space-toggle.reg
+regedit /s no-control-period.reg
 regedit /s keymap-win.reg
+
+mkdir /c/etc/ywb/ -p
+touch /c/etc/ywb/disable.rc
+echo emacs.exe >  /c/etc/ywb/disable.rc
 
 echo -n "c:/python31/python.exe" \"$(cygpath -aml ~/windows-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
 echo "After check out success!"
