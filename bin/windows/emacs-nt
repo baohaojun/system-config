@@ -1,4 +1,0 @@
-#!/bin/bash
-
-cd ~/external/emacs-nt/bin
-HOME=~/windows-config/ ./runemacs
