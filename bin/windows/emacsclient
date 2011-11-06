@@ -1,0 +1,11 @@
+#!/bin/bash
+if test -e ~/external/emacs-nt; then
+    if test $# = 1; then
+	set -- "$(readlink -f "$1")"
+    elif test $# = 2 && test -e "$2"; then
+	set -- "$1" "$(readlink -f "$2")"
+    fi
+    HOME=~/windows-config ~/external/emacs-nt/bin/emacsclient "$@"
+else
+    /bin/emacsclient "$@"
+fi

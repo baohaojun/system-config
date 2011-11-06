@@ -62,11 +62,22 @@ find . -type l -exec relink.sh '{}' \;
 
 cd ~/bin/windows
 cpan String::ShellQuote
+cpan String::Approx
+
 ln -sf ~/'Application Data/Microsoft/Internet Explorer/Quick Launch' ~/SendTo/ || report_error "Error: you are not doing it from $HOMEPATH"
 mkdir -p ~/.fonts
 cp ~/doc/monaco-linux.ttf /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windows/fonts/cour.ttf ~/.fonts || true
 fc-cache || true
 cd ~/doc
-regedit /s putty.reg
+regedit /s no-shift-space-toggle.reg
+regedit /s no-control-period.reg
+regedit /s keymap-win.reg
+
+mkdir /c/etc/ywb/ -p
+find ~/etc/ywb/exclude -type f|xargs bash -c 'for x in "$@"; do echo $(basename $x); done' xx > /c/etc/ywb/disable.rc
+rm -f ~/user ~/.mozilla
+ln -s $(cygpath -u "$USERPROFILE") ~/user
+ln -s ~/user/Application\ Data/Mozilla  ~/.mozilla
+
 echo -n "c:/python31/python.exe" \"$(cygpath -aml ~/windows-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
 echo "After check out success!"

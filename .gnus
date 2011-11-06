@@ -29,7 +29,9 @@
       user-mail-address "baohaojun@gmail.com"
       smtpmail-default-smtp-server "localhost"
       smtpmail-smtp-server "localhost"
-      smtpmail-smtp-service 25)
+      smtpmail-smtp-service 25
+      mail-default-reply-to "haojun.bao@borqs.com"
+      smtpmail-local-domain "borqs.com")
 
 (setq gnus-default-charset 'chinese-iso-8bit
       gnus-group-name-charset-group-alist '((".*" . chinese-iso-8bit))

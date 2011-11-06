@@ -3,13 +3,7 @@ echo sawfish starting sub programs
 sudo modprobe -r pcspkr 
 python3 ~/gcode/scim-cs/ime-py/ime-server.py&
 if test -f ~/.offlineimaprc; then
-    (
-	while true; 
-	do 
-	    python2.6 ~/bin/windows/Imap4Monitor/Imap4Monitor.py;
-	    sleep 2; 
-	done
-    )&
+    python2.6 ~/bin/windows/Imap4Monitor/Imap4Monitor.py&
 fi
 
 while true; do
