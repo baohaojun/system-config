@@ -403,18 +403,42 @@ BOOL WINAPI ImeProcessKey(HIMC /*hIMC*/,
 						  CONST LPBYTE kbd_state)
 {
 
+	if (vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU) {
+		return false;
+	}
+
+    BYTE ks[256];
+    GetKeyboardState(ks);
+    if (GetAsyncKeyState(VK_SHIFT) & 0x8000) {
+        ks[VK_SHIFT] = 129;
+    } else {
+        ks[VK_SHIFT] = 0;
+    }
+    SetKeyboardState(ks);
+
+    if (vk < 255) { // always process
+        return true;
+    }
+}
+
+BOOL WINAPI MyImeProcessKey(HIMC /*hIMC*/,
+						  u32 vk, LPARAM scan_code,
+						  CONST LPBYTE kbd_state)
+{
+
 	static bool ime_connected = false;
 
 	if (!ime_connected) {
 		ime_connected = true;
 		connect_ime_server();
 	}
-	// BHJDEBUG(" vk is %x, scan_code is, cnt:%d, sc:0x%02x, ext:%s, prev:%s", 
+	// BHJDEBUG(" vk is %x, state is %s; scan_code is cnt:%d, sc:0x%02x, ext:%s, prev:%s", 
 	// 		 vk, 
+    //          kbd_state[vk & 0xff] ? "down" : "up",
 	// 		 (scan_code&0xffff),
 	// 		 (scan_code & (0xff<<16)) >> 16,
 	// 		 scan_code & (1 << 24) ? "yes" : "no", //extended, e.g., right ctrl/shift/menu
-	// 		 scan_code & (1<<30) ? "up" : "down");
+	// 		 scan_code & (1<<30) ? "down" : "up");
 //#define bhjreturn(ret) BHJDEBUG(" return " #ret); return ret
 #define bhjreturn(ret) return ret
 	vk = LOWORD(vk);
@@ -487,6 +511,147 @@ ime_client get_client_reply()
 	return client;
 }
 
+bool shift_on(CONST LPBYTE kbd_state) 
+{
+    return GetAsyncKeyState(VK_SHIFT) & 0x8000;
+}
+
+bool caps_on(CONST LPBYTE kbd_state)
+{
+    
+    return kbd_state[VK_CAPITAL] & 0x1;
+}
+
+bool shift_caps_on(CONST LPBYTE kbd_state)
+{
+    return shift_on(kbd_state) ^ caps_on(kbd_state);
+}
+
+void wrap_shift_up_down(input_context& ic, u32 vk);
+static void wrap_shift_down_up(input_context& ic, u32 vk)
+{
+    BYTE ks[256];
+    GetKeyboardState(ks);
+    ks[VK_SHIFT] = 129;
+    SetKeyboardState(ks);
+    ic.add_msg(WM_IME_KEYDOWN, vk, 1);
+}
+
+static void wrap_shift_up_down(input_context& ic, u32 vk)
+{
+    BYTE ks[256];
+    GetKeyboardState(ks);
+    ks[VK_SHIFT] = 0;
+    SetKeyboardState(ks);
+    ic.add_msg(WM_IME_KEYDOWN, vk, 1);
+}
+
+static u32 dvorak_handle_key(input_context& ic, u32 vk, u32 scan_code, CONST LPBYTE kbd_state) 
+{
+
+    struct dvo_map_desc {
+        int q_vk;
+        int d_vk;
+        int d_vk_uc;
+        int d_vk_shift;
+        int d_vk_uc_shift;
+        bool caps_shift;
+    };
+
+#define map_it(q, d) {q, d, 0, 0, 0, 0}
+    static struct dvo_map_desc maps[] = {
+        map_it('Q', VK_OEM_1), //;:
+        map_it('W', VK_OEM_COMMA), //,<
+        map_it('E', VK_OEM_PERIOD),
+        map_it('R', 'P'),
+        map_it('T', 'Y'),
+        map_it('Y', 'F'),
+        map_it('U', 'G'),
+        map_it('I', 'C'),
+        map_it('O', 'R'),
+        map_it('P', 'L'),
+        map_it(VK_OEM_4, VK_OEM_2),
+        map_it('S', 'O'),
+        map_it('D', 'E'),
+        map_it('F', 'U'),
+        map_it('G', 'I'),
+        map_it('H', 'D'),
+        map_it('J', 'H'),
+        map_it('K', 'T'),
+        map_it('L', 'N'),
+        map_it(VK_OEM_1, 'S'), //;:
+        map_it('Z', VK_OEM_7), //'"
+        map_it('X', 'Q'),
+        map_it('C', 'J'),
+        map_it('V', 'K'),
+        map_it('B', 'X'),
+        map_it('N', 'B'),
+        map_it(VK_OEM_COMMA, 'W'),
+        map_it(VK_OEM_PERIOD, 'V'),
+        map_it(VK_OEM_2, 'Z'),
+#define map_it_no_caps(q, d, du, ds, dus) {q, d, du, ds, dus, 0}
+        map_it_no_caps(VK_OEM_3, '4', VK_OEM_3, 1, 1), //`~ -> $~
+        map_it_no_caps(VK_OEM_6, '2', '6', 1, 1), //]} -> @^
+        map_it_no_caps(VK_OEM_PLUS, '3', VK_OEM_3, 1, 0), //=+ -> #`
+        map_it_no_caps('1', '7', '5', 1, 1),
+#define map_it_caps(q, d, du, ds, dus) {q, d, du, ds, dus, 1}
+        map_it_caps(VK_OEM_7, VK_OEM_MINUS, VK_OEM_MINUS, 0, 1),
+        map_it_caps('2', VK_OEM_4, '7', 0, 0),
+        map_it_caps('3', VK_OEM_4, '5', 1, 0),
+        map_it_caps('4', VK_OEM_6, '3', 1, 0),
+        map_it_caps('5', '9', '1', 1, 0),
+        map_it_caps('6', VK_OEM_PLUS, '9', 0, 0),
+        map_it_caps('7', '8', '0', 1, 0),
+        map_it_caps('8', '0', '2', 1, 0),
+        map_it_caps('9', VK_OEM_PLUS, '4', 1, 0),
+        map_it_caps('0', VK_OEM_6, '6', 0, 0),
+        map_it_caps(VK_OEM_MINUS, '1', '8', 1, 0),
+    };
+
+    for (int i = 0; i < sizeof (maps) / sizeof (maps[0]); i++) {
+        if (vk == maps[i].q_vk) {
+            if (maps[i].d_vk_uc == 0) {
+                vk = maps[i].d_vk;
+                break;
+            }
+
+            if (maps[i].caps_shift == 0) {
+                if (shift_on(kbd_state)) {
+                    if (maps[i].d_vk_uc_shift) {
+                        wrap_shift_down_up(ic, maps[i].d_vk_uc);
+                    } else {
+                        wrap_shift_up_down(ic, maps[i].d_vk_uc);
+                    }
+                } else {
+                    if (maps[i].d_vk_shift) {
+                        wrap_shift_down_up(ic, maps[i].d_vk);
+                    } else {
+                        wrap_shift_up_down(ic, maps[i].d_vk);
+                    }
+                }
+            } else {
+                if (shift_caps_on(kbd_state)) {
+                    if (maps[i].d_vk_uc_shift) {
+                        wrap_shift_down_up(ic, maps[i].d_vk_uc);
+                    } else {
+                        wrap_shift_up_down(ic, maps[i].d_vk_uc);
+                    }
+                } else {
+                    if (maps[i].d_vk_shift) {
+                        wrap_shift_down_up(ic, maps[i].d_vk);
+                    } else {
+                        wrap_shift_up_down(ic, maps[i].d_vk);
+                    }
+                }
+            }
+            return ic.return_ime_msgs();
+        }
+    }
+
+    ic.add_msg(WM_IME_KEYDOWN, vk, 1);
+    return ic.return_ime_msgs();
+}
+
 u32 WINAPI
 ImeToAsciiEx(u32 vk,
 			 u32 scan_code,
@@ -508,6 +673,10 @@ ImeToAsciiEx(u32 vk,
 		return_ic_msgs(0);
 	}
 
+    if (!MyImeProcessKey(hIMC, vk, scan_code, kbd_state)) {
+        return dvorak_handle_key(ic, vk, scan_code, kbd_state);
+    }
+        
 	const modifier_t mod = get_mod_state();
 
 	string key_desc = get_key_desc(vk, scan_code, mod);
@@ -545,3 +714,173 @@ ImeToAsciiEx(u32 vk,
 
 	return ic.return_ime_msgs();
 }
+
+
+// VK_LBUTTON
+// VK_RBUTTON
+// VK_CANCEL
+// VK_MBUTTON
+// VK_XBUTTON1
+// VK_XBUTTON2
+// VK_BACK
+// VK_TAB
+// VK_CLEAR
+// VK_RETURN
+// VK_SHIFT
+// VK_CONTROL
+// VK_MENU
+// VK_PAUSE
+// VK_CAPITAL
+// VK_KANA
+// VK_HANGEUL
+// VK_HANGUL
+// VK_JUNJA
+// VK_FINAL
+// VK_HANJA
+// VK_KANJI
+// VK_ESCAPE
+// VK_CONVERT
+// VK_NONCONVERT
+// VK_ACCEPT
+// VK_MODECHANGE
+// VK_SPACE
+// VK_PRIOR
+// VK_NEXT
+// VK_END
+// VK_HOME
+// VK_LEFT
+// VK_UP
+// VK_RIGHT
+// VK_DOWN
+// VK_SELECT
+// VK_PRINT
+// VK_EXECUTE
+// VK_SNAPSHOT
+// VK_INSERT
+// VK_DELETE
+// VK_HELP
+// VK_0
+// VK_A
+// VK_LWIN
+// VK_RWIN
+// VK_APPS
+// VK_SLEEP
+// VK_NUMPAD0
+// VK_NUMPAD1
+// VK_NUMPAD2
+// VK_NUMPAD3
+// VK_NUMPAD4
+// VK_NUMPAD5
+// VK_NUMPAD6
+// VK_NUMPAD7
+// VK_NUMPAD8
+// VK_NUMPAD9
+// VK_MULTIPLY
+// VK_ADD
+// VK_SEPARATOR
+// VK_SUBTRACT
+// VK_DECIMAL
+// VK_DIVIDE
+// VK_F1
+// VK_F2
+// VK_F3
+// VK_F4
+// VK_F5
+// VK_F6
+// VK_F7
+// VK_F8
+// VK_F9
+// VK_F10
+// VK_F11
+// VK_F12
+// VK_F13
+// VK_F14
+// VK_F15
+// VK_F16
+// VK_F17
+// VK_F18
+// VK_F19
+// VK_F20
+// VK_F21
+// VK_F22
+// VK_F23
+// VK_F24
+// VK_NUMLOCK
+// VK_SCROLL
+// VK_OEM_NEC_EQUAL
+// VK_OEM_FJ_JISHO
+// VK_OEM_FJ_MASSHOU
+// VK_OEM_FJ_TOUROKU
+// VK_OEM_FJ_LOYA
+// VK_OEM_FJ_ROYA
+// VK_L*
+// VK_LSHIFT
+// VK_RSHIFT
+// VK_LCONTROL
+// VK_RCONTROL
+// VK_LMENU
+// VK_RMENU
+// VK_BROWSER_BACK
+// VK_BROWSER_FORWARD
+// VK_BROWSER_REFRESH
+// VK_BROWSER_STOP
+// VK_BROWSER_SEARCH
+// VK_BROWSER_FAVORITES
+// VK_BROWSER_HOME
+// VK_VOLUME_MUTE
+// VK_VOLUME_DOWN
+// VK_VOLUME_UP
+// VK_MEDIA_NEXT_TRACK
+// VK_MEDIA_PREV_TRACK
+// VK_MEDIA_STOP
+// VK_MEDIA_PLAY_PAUSE
+// VK_LAUNCH_MAIL
+// VK_LAUNCH_MEDIA_SELECT
+// VK_LAUNCH_APP1
+// VK_LAUNCH_APP2
+// VK_OEM_1
+// VK_OEM_PLUS
+// VK_OEM_COMMA
+// VK_OEM_MINUS
+// VK_OEM_PERIOD
+// VK_OEM_2
+// VK_OEM_3
+// VK_OEM_4
+// VK_OEM_5
+// VK_OEM_6
+// VK_OEM_7
+// VK_OEM_8
+// VK_OEM_AX
+// VK_OEM_102
+// VK_ICO_HELP
+// VK_ICO_00
+// VK_PROCESSKEY
+// VK_ICO_CLEAR
+// VK_PACKET
+// VK_OEM_RESET
+// VK_OEM_JUMP
+// VK_OEM_PA1
+// VK_OEM_PA2
+// VK_OEM_PA3
+// VK_OEM_WSCTRL
+// VK_OEM_CUSEL
+// VK_OEM_ATTN
+// VK_OEM_FINISH
+// VK_OEM_COPY
+// VK_OEM_AUTO
+// VK_OEM_ENLW
+// VK_OEM_BACKTAB
+// VK_ATTN
+// VK_CRSEL
+// VK_EXSEL
+// VK_EREOF
+// VK_PLAY
+// VK_ZOOM
+// VK_NONAME
+// VK_PA1
+// VK_OEM_CLEAR
+// MAPVK_VK_TO_VSC
+// MAPVK_VSC_TO_VK
+// MAPVK_VK_TO_CHAR
+// MAPVK_VSC_TO_VK_EX
+// MAPVK_VK_TO_VSC_EX
