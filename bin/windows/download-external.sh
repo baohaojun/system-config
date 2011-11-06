@@ -5,6 +5,12 @@ function download-all()
 {
     mkdir -p /c/download
     cd /c/download
+    wget -N http://www.kaufmann.no/downloads/winnt/kbddvp-1_2_2-i386.exe
+    chmod +x kbddvp-1_2_2-i386.exe
+    cygstart kbddvp-1_2_2-i386.exe
+
+    cygstart http://www.kaufmann.no/roland/dvorak/winxp.html
+
     file_list=( 
         http://download.sysinternals.com/Files/ProcessMonitor.zip
         http://download.sysinternals.com/Files/ProcessExplorer.zip
