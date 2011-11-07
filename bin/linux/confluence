@@ -31,4 +31,9 @@ for (@ARGV) {
     }
 }
 
-system("confluence.sh", "--server", "http://bear/wiki", "--user", "hjbao", "--password", `cat ~/.confpass`, "--space", "~hjbao", @ARGV);
+my $confserv=`cat ~/.confserv`;
+my $confuser=`cat ~/.confuser`;
+chomp($confserv);
+chomp($confuser);
+
+system("confluence.sh", "--server", "http://$confserv/wiki", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", "~$confuser", @ARGV);

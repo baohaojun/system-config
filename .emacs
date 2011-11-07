@@ -650,12 +650,12 @@
                    (1- start-pos))
           (setq all-letou nil)))
 
-      (when all-letou
+      (when t
         (save-excursion
           (message-goto-from)
           (message-beginning-of-line)
           (kill-line)
-          (insert "Bao Haojun at Letou <hjbao@eee168.com>"))))))
+          (insert "Bao Haojun at Marvell <hjbao@marvell.com>"))))))
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
