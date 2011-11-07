@@ -11,6 +11,15 @@ regedit /s ime-noctrlshift-noaltshift.reg
 # myxwin.sh&
 net start sshd&
 /c/Python31/python "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-server.py)"&
+while true; do
+    if ps aux|grep ssh|grep bhj@216 -q; 
+    then
+        true;
+    else
+        ssh -C2qN -D 8080 bhj@216.194.70.6; 
+    fi
+    sleep 2; 
+done&
 while true; do cd ~/bin/windows; hotkey_hook; sleep 2; done&
 
 

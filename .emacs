@@ -53,7 +53,8 @@
 
 (require 'csharp-mode)
 (require 'w3m)
-(require 'tramp)
+(unless (eq system-type 'windows-nt)
+  (require 'tramp))
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)
 (require 'ibuffer)
@@ -649,12 +650,12 @@
                    (1- start-pos))
           (setq all-letou nil)))
 
-      (when t
+      (when all-letou
         (save-excursion
           (message-goto-from)
           (message-beginning-of-line)
           (kill-line)
-          (insert "Bao Haojun at Marvell <hjbao@marvell.com>"))))))
+          (insert "Bao Haojun at Letou <hjbao@eee168.com>"))))))
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
