@@ -28,7 +28,8 @@ static void grow_window(HWND hwnd, bool v);
 static void WS_GrowWindowHeight(HWND hwnd);
 static void WS_GrowWindowWidth(HWND hwnd);
 static void WS_MaximizeWindow(HWND hwnd);
-static void WS_CloseWindow(HWND hwnd);
+static void WS_SwitchRAltLWin(HWND hwnd);
+static void WS_NoSwitchRAltLWin(HWND hwnd);
 static void WS_MinimizeWindow(HWND hwnd);
 static LRESULT send_syscommand(HWND hwnd, UINT SC_XXX);
 static void window_set_pos(HWND hwnd, RECT rc);
@@ -108,9 +109,15 @@ static void WS_MaximizeWindow(HWND hwnd)
     send_syscommand(hwnd, SC_MAXIMIZE);
 }
 
-static void WS_CloseWindow(HWND hwnd)
+bool g_switch_ralt_lwin;
+static void WS_NoSwitchRAltLWin(HWND hwnd)
 {
-    send_syscommand(hwnd, SC_CLOSE);
+    g_switch_ralt_lwin = false;
+}
+
+static void WS_SwitchRAltLWin(HWND hwnd)
+{
+    g_switch_ralt_lwin = true;
 }
 
 static void WS_MinimizeWindow(HWND hwnd)
@@ -136,8 +143,9 @@ bool core_window_cmd(const string& cmd_str)
         char *cmd_name;
         window_cmd_func_t func;
     } window_cmd_map[] = {
-        {"CloseWindow", WS_CloseWindow},
         {"MaximizeWindow", WS_MaximizeWindow},
+	{"SwitchRAltLWin", WS_SwitchRAltLWin},
+	{"NoSwitchRAltLWin", WS_NoSwitchRAltLWin},
         {"MinimizeWindow", WS_MinimizeWindow},
         {"MaximizeVertical", WS_GrowWindowHeight},
         {"MaximizeHorizontal", WS_GrowWindowWidth},

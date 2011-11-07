@@ -31,4 +31,9 @@ for (@ARGV) {
     }
 }
 
-system("jira.sh", "-s", "http://bear/jira", "-u", "hjbao", "-p", `cat ~/.confpass`, @ARGV);
+my $confserv=`cat ~/.confserv`;
+my $confuser=`cat ~/.confuser`;
+chomp($confserv);
+chomp($confuser);
+
+system("jira.sh", "-s", "http://$confserv/jira", "-u", "$confuser", "-p", `get-authinfo $confserv|tr -d '\n'`, @ARGV);

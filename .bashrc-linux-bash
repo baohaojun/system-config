@@ -73,3 +73,7 @@ function mcd() {
     local IFS=$'\n'
     _select_cd $(lookup_file "$@")
 }
+
+function rdesktop() {
+    command rdesktop -K -a 24 -g $(xrandr |grep '\*'|pn 1) $1 -u ${2:-$USER} -p ${3:-123456}
+}

@@ -186,7 +186,6 @@ static bool calling_process_ok()
 			}
 		}
 	}
-    BHJDEBUG(" ok for exe: %s", exe_name.c_str());
 	return true;
 }
 

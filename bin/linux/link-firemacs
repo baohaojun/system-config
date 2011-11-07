@@ -3,12 +3,5 @@ for x in ~/.mozilla/firefox/*/; do
     dir="$x"/"extensions/{e98b7313-167d-48c6-89be-bc514d6de8d9}"
     rm -rf "$dir"
     mkdir -p "$dir"
-    case $(uname) in
-	CYGWIN*)
-	    cp ~/gcode/Firemacs/* "$dir" -av
-	    ;;
-	*)
-	    ln -sf ~/gcode/Firemacs/* "$dir"
-	    ;;
-    esac
+    ln -sf ~/gcode/Firemacs/* "$dir"
 done
