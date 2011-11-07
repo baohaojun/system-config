@@ -1,0 +1,6 @@
+#!/bin/bash
+if tty >/dev/null 2>&1; then
+   echo "$@" | tr -d '\n' | /bin/putclip
+else
+    /bin/putclip
+fi

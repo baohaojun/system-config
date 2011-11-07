@@ -5,12 +5,11 @@
 KeyToGrab(ESCAPE),          WithModifier(LWin),      WithAction(MaximizeWindow)
 KeyToGrab(F1),          WithModifier(LWin),      WithAction(MaximizeWindow)
 KeyToGrab(F2),          WithModifier(LWin),      WithAction(MaximizeVertical)
-KeyToGrab(F12),          WithModifier(),      WithAction(NoSwitchRAltLWin)
-KeyToGrab(F11),          WithModifier(),      WithAction(SwitchRAltLWin)
 
 KeyToGrab(Y),           WithModifier(LWin),      WithAction(RestoreWindow)
+KeyToGrab(F4),           WithModifier(LWin),      WithAction(CloseWindow)
 KeyToGrab(Z),           WithModifier(LWin),      WithAction(MinimizeWindow)
-KeyToGrab(Q),           WithModifier(LAlt+LWin+LCtrl),      WithAction(Quit)
+KeyToGrab(Q),           WithModifier(LWin),      WithAction(Quit)
 
 KeyToGrab(R),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p runbhjrun runbhjrun.exe)
 
@@ -41,7 +40,7 @@ KeyToGrab(E),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(M),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p pucomm -F 1 pucomm -load comm)
 KeyToGrab(X),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs -fe run bash -c eterm-bhj.sh -fe -F 1 emacs.sh)
 KeyToGrab(P),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p powerpnt.exe -F 1 ppt)
-KeyToGrab(P),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p putty -c putty -F 1 start-putty.sh)
+KeyToGrab(P),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p mintty -c mintty -F 1 start-putty.sh)
 KeyToGrab(E),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p excel.exe -F 1 excel)
 KeyToGrab(W),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p winword.exe -F 1 word)
 KeyToGrab(W),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p explorer.exe -c wclass -F 1 "%HOMEDRIVE%%HOMEPATH%\My Documents")

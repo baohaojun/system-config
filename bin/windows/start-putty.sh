@@ -1,3 +1,3 @@
 #!/bin/bash
 
-of putty -cygterm bash -c "myscr first"
+of mintty bash -c "myscr first"

@@ -216,10 +216,6 @@ LRESULT CALLBACK KbdHookProc(int nCode, WPARAM wParam, LPARAM lParam)
     if (vkCodeInvalid(vkCode))
         goto out;
     
-    if (g_switch_ralt_lwin && MapKeys(wParam, hook_struct)) {
-        return 1;
-    }
-    
     if (wParam==WM_KEYDOWN || wParam==WM_SYSKEYDOWN) {
         SetMaskKeyActiveOn(vkCode);
     } else {
