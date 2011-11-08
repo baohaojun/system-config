@@ -75,6 +75,12 @@
           ;; Mail
           "nnimap+localhost:INBOX.Sent Items")))) 
 
+(when (eq system-type 'windows-nt)
+  (setq gnus-select-method
+	'(nnmaildir "Gmail"
+		    (directory "~/../Maildir")
+		    (directory-files nnheader-directory-files-safe) 
+		    (get-new-mail nil))))
 ;;Local Variables: ***
 ;;coding: utf-8 ***
 ;;End: ***

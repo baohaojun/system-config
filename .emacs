@@ -53,7 +53,8 @@
 
 (require 'csharp-mode)
 (require 'w3m)
-(unless (eq system-type 'windows-nt)
+(if  (eq system-type 'windows-nt)
+    (setq ido-enable-tramp-completion nil)
   (require 'tramp))
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)
