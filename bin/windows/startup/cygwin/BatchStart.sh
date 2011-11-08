@@ -31,7 +31,3 @@ while true; do
     command cmd /c hotkey_hook; 
 done&
 
-while true; do
-    sleep 900;
-    offlineimap;
-done&
