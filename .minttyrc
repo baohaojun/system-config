@@ -2,3 +2,4 @@ BoldAsFont=no
 Font=Lucida Console
 FontHeight=12
 CursorType=block
+Scrollbar=none

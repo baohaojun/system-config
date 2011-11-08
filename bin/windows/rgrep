@@ -1,4 +1,3 @@
 #!/bin/sh
 
-exec grep -r "$@"
-
+exec grep -r "$@" 2>/dev/null

@@ -54,9 +54,9 @@ for (glob "$dir/*") {
         link "$file","$dst"
           and print "Added mail in $mb to nnmaildir ticks\n";
       } else {
-        my $dst = "$path/.nnmaildir/marks/tick/$message";
-        unlink "$dst"
-          and print "Removed mail in $mb from nnmaildir ticks\n";
+        # my $dst = "$path/.nnmaildir/marks/tick/$message";
+        # unlink "$dst"
+        #   and print "Removed mail in $mb from nnmaildir ticks\n";
       }
 
       # Sync replied flags
@@ -86,7 +86,7 @@ for (glob "$dir/*") {
       my $new_flags = '';
 
       if (-e "$path/.nnmaildir/marks/tick/$message") {
-        $new_flags = $new_flags . 'F';
+	  # $new_flags = $new_flags . 'F'; davmail can not handle sticky emails
       }
       if (-e "$path/.nnmaildir/marks/reply/$message") {
         $new_flags = $new_flags . 'R';

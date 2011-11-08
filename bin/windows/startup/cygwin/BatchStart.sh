@@ -21,11 +21,14 @@ while true; do
         ssh -C2qN -D 8080 bhj@216.194.70.6; 
     fi
 done&
+
+rm ~/.no-loop
+
 while true; do 
     sleep 2;
     test -e ~/.no-loop && continue;
     cd ~/bin/windows;
-    hotkey_hook; 
+    command cmd /c hotkey_hook; 
 done&
 
 while true; do
