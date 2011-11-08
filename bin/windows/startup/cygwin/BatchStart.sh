@@ -28,3 +28,7 @@ while true; do
     hotkey_hook; 
 done&
 
+while true; do
+    sleep 900;
+    offlineimap;
+done&

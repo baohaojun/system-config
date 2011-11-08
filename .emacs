@@ -34,7 +34,7 @@
          (let ((monaco-font (read (current-buffer))))
            (kill-buffer (current-buffer))
            monaco-font)))
-      (set-frame-font "Monaco-11"))
+      (set-frame-font "Monaco-10.5"))
   (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size 16))
   (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size 16))
 

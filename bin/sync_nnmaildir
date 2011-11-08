@@ -38,7 +38,10 @@ for (glob "$dir/*") {
   for (glob "$mb/cur/*") {
     my $file = $_;
 
-    /(.*)\/cur\/(.*?)!.*2,(.*)$/;
+    if (not /(.*)\/cur\/(.*?)!.*2,(.*)$/) {
+	next;
+    }
+
     my $path = $1;
     my $message = $2;
     my $flags = $3;
