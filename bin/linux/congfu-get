@@ -23,9 +23,9 @@ function die() {
 function congfu-get() {
     cd $confhome || die "Error, I can't switch to $confhome";
     git st -s | grep -q . && die "Error, git repo is not clean";
-    congfu "$@" -a getPageList|perl -ne 'print unless (1..1 or m/^\s+$/)'|tee ~/.congfu-get.log|xargs -d '\n' touch
+    congfu "$@" -- -a getPageList|perl -ne 'print unless (1..1 or m/^\s+$/)'|tee ~/.congfu-get.log|xargs -d '\n' touch
     for x in *; do 
-        congfu "$@" -a getSource --title "$x"|perl -ne 'print unless(1..1)' > "$x"
+        congfu "$@" -- -a getSource --title "$x"|perl -ne 'print unless(1..1)' > "$x"
         confluence-unhtmlize "$x" | perl -ne 'BEGIN{$begin=0}; print $x if $begin == 1; $x = $_; $begin = 1' > "$x".bak
         mv "$x".bak "$x"
     done
@@ -71,7 +71,7 @@ function congfu-put() {
 eval "CONGFU_ARGS=( $CONGFU_ARGSTR )";
 for x in "$@"; do 
     cat -- "$x"|confluence-htmlize > "$x".$$
-    congfu "${CONGFU_ARGS[@]}" -a storePage --title "$x" --encoding UTF-8 --file "$(readlink -f "$x".$$)"
+    congfu "${CONGFU_ARGS[@]}" -- -a storePage --title "$x" --encoding UTF-8 --file "$(readlink -f "$x".$$)"
     rm "$x".$$
     git add -- "$x"
     done ' xx

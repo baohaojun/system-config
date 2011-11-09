@@ -1,8 +1,9 @@
 [color]
 	ui = auto
 [user]
-	name = baohaojun
-	email = baohaojun@gmail.com
+	name = Bao Haojun
+	email = hjbao@marvell.com
+
 [core]
 	excludesfile = ~/.gitexcludefile
 	pager = 
@@ -14,3 +15,7 @@
 	username = bhj
 [difftool "bhj"]
 	cmd = args-debug
+[url "bibler:android/"]
+        insteadOf = "git://android.git.kernel.org/"
+[url "bibler:android"]
+        insteadOf = "ssh://gerrit2@bible/~gerrit2/android"

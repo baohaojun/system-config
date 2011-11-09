@@ -9,7 +9,6 @@ function SetPath()
     local paths
     paths=(
         ~/bin/windows/lnks
-        /c/Python25
         /cygdrive/c/PROGRA~1/Java/JDK16~1.0_1/bin #"/cygdrive/c/Program Files/Java/jdk1.6.0_13/bin/"
         ~/bin
         ~/bin/windows
@@ -26,6 +25,7 @@ function SetPath()
         /cygdrive/c/WINDOWS/System32/Wbem
         /cygdrive/c/WINDOWS/system32
         "/cygdrive/c/Program Files/Intel/IPP/5.1/ia32/bin"
+        /c/Python25
     )
 
     unset PATH

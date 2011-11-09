@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+case $(uname) in
+    CYGWIN*)
+	exit
+	;;
+esac
+
 hold_up=1
 if test -e ~/.git-mac-no; then
     if tty >/dev/null 2>&1; then

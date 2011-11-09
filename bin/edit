@@ -89,12 +89,12 @@ sub edit_1($)
 
       if (`uname` =~ m/cygwin/i) {
           $file = shell_quote($file);
-          $file = `cygpath -au $file`;
+          $file = `cygpath -u $file`;
           chomp($file);
       }
 
       $file = shell_quote($file);
-      chomp($file = qx(lookup_file $file));
+      chomp($file = qx(lookup_file $file|head -n 1));
       return (@emacsclient, "+$line", get_emacs_file_name($file));
     }
   }

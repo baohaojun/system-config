@@ -4,6 +4,8 @@ if test -e ~/external/emacs-nt; then
 	set -- "$(readlink -f "$1")"
     elif test $# = 2 && test -e "$2"; then
 	set -- "$1" "$(readlink -f "$2")"
+    elif test $# = 3 && test -e "$3"; then
+	set -- "$1" "$2" "$(readlink -f "$3")"
     fi
     HOME=~/windows-config ~/external/emacs-nt/bin/emacsclient "$@"
 else
