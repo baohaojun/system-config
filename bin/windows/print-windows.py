@@ -79,7 +79,8 @@ def isTopmost(hwnd):
 
 def _MyCallback(hwnd, extra):
     try:
-        isWindowSwitchable2(hwnd)
+        if IsWindowVisible(hwnd):
+            print "0x%x \"%s\" \"%s\"" % (hwnd, GetClassName(hwnd), getExecFromWnd(hwnd));
         sys.stdout.flush()
     except:
         sys.stdout.flush()
@@ -146,38 +147,5 @@ def debugWnd():
 
 def main(*argv):
     EnumWindows(_MyCallback, (listWindowInfo,))
-    #debugWnd()
-    if len(argv) < 2:
-        print "Error: must take at least one arg, the program to match"
-        Usage()
-        return (-1)
-
-    targetExec_ = argv[1].lower()
-    startExec = targetExec_
-    if targetExec_ in execMap:
-        targetExec_ = execMap[targetExec_]
-
-    reobj = re.compile(targetExec_, re.I)
-
-    if not targetExec_: #we want to cycle through all window with the same exec_
-        cycleSameExecWnds()
-    else:
-        for x in listWindowInfo:
-            thisExec = x['exec'].lower()
-            thisExec = os.path.basename(thisExec)
-
-            if reobj.search(thisExec):
-                ActivateWindow(x['hwnd'])
-                break
-        else:
-            print 'no match'
-            if len(argv) > 2 and argv[2]:
-                os.system('start %s' % argv[2])
-            elif len(argv) > 2:
-                return (-1) #nothing to start
-            else:
-                os.system('start %s' % startExec)
-
-        return (0) #we have found 
 if __name__ == '__main__':
     sys.exit(main(*sys.argv))

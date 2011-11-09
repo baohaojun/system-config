@@ -9,7 +9,7 @@ KeyToGrab(F2),          WithModifier(LWin),      WithAction(MaximizeVertical)
 KeyToGrab(Y),           WithModifier(LWin),      WithAction(RestoreWindow)
 KeyToGrab(F4),           WithModifier(LWin),      WithAction(CloseWindow)
 KeyToGrab(Z),           WithModifier(LWin),      WithAction(MinimizeWindow)
-KeyToGrab(Q),           WithModifier(LWin),      WithAction(Quit)
+KeyToGrab(F12),           WithModifier(LWin),      WithAction(Quit)
 
 KeyToGrab(R),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p runbhjrun runbhjrun.exe)
 
@@ -44,7 +44,7 @@ KeyToGrab(P),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(E),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p excel.exe -F 1 excel)
 KeyToGrab(W),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p winword.exe -F 1 word)
 KeyToGrab(W),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p explorer.exe -c wclass -F 1 "%HOMEDRIVE%%HOMEPATH%\My Documents")
-KeyToGrab(Q),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py dexplore.exe)
+KeyToGrab(Q),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py dexplore.exe|pidgin.exe)
 KeyToGrab(T),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(screen-exchange.sh)
 KeyToGrab(B),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p bash.exe bash --rcfile ~/.bashrc-min -i)
 KeyToGrab(N),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p firefox -F 1 http://www.google.com/calendar/render)
