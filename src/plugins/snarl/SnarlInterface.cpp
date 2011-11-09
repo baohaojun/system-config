@@ -645,7 +645,7 @@ LPSTR SnarlInterface::WideToUTF8(LPCWSTR szWideStr)
 	if (szWideStr == NULL)
 		return NULL;
 
-	int nSize = WideCharToMultiByte(CP_UTF8, 0, szWideStr, -1, NULL, 0, NULL, NULL);
+	int nSize = WideCharToMultiByte(CP_UTF8, 0, szWideStr, -1, NULL,0, NULL, NULL);
 	LPSTR szUTF8 = new char[nSize];
 	WideCharToMultiByte(CP_UTF8, 0, szWideStr, -1, szUTF8, nSize, NULL, NULL);
 	

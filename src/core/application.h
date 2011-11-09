@@ -20,6 +20,8 @@
 #include "notification/icon.h"
 
 #include <QHash>
+namespace Snore{
+
 
 typedef QHash<QString,class Application*> ApplicationsList ;
 typedef QHash<QString,class Alert*> AlertList;
@@ -65,5 +67,7 @@ private:
     bool _active;
 };
 
+
+}
 
 #endif // APPLICATION_H

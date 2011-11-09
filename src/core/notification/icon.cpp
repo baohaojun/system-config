@@ -22,6 +22,7 @@
 #include <QHash>
 #include <QFile>
 #include <QDebug>
+namespace Snore{
 
 class SnoreIcon::SnoreIconData
 {
@@ -130,4 +131,5 @@ bool SnoreIcon::isEmpty() const{
     return d->_hash.isEmpty() && d->_img.isNull() && d->_localFileName.isEmpty();
 }
 
+}
 #include "icon.moc"

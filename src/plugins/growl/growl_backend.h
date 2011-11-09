@@ -20,15 +20,15 @@
 
 #include <string>
 
-class Growl_Backend:public Notification_Backend
+class Growl_Backend:public Snore::Notification_Backend
 {
     Q_OBJECT
-    Q_INTERFACES(Notification_Backend)
+    Q_INTERFACES(Snore::Notification_Backend)
 public:
-    Growl_Backend(class SnoreServer *snore=0);
+    Growl_Backend(class Snore::SnoreServer *snore=0);
     ~Growl_Backend();
     bool isPrimaryNotificationBackend(){return true;}
-	static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
+    static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
 private:
 	//a static instance for the static callback methode
 	static Growl_Backend *instance;
@@ -36,10 +36,10 @@ private:
     QHash<QString,class gntp*> _applications;
 
 public slots:
-    void registerApplication(Application *application);
-    void unregisterApplication(class Application *application);
-    uint notify(Notification notification);
-    void closeNotification(Notification notification);
+    void registerApplication(Snore::Application *application);
+    void unregisterApplication(Snore::Application *application);
+    uint notify(Snore::Notification notification);
+    void closeNotification(Snore::Notification notification);
 };
 
 

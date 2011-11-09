@@ -23,6 +23,10 @@
 
 #include <QStringList>
 
+class QSystemTrayIcon;
+
+namespace Snore{
+
 class SNORE_EXPORT SnoreServer:public QObject
 {
     Q_OBJECT
@@ -31,7 +35,7 @@ public:
     static const QString snoreTMP();
 
 public:
-	 SnoreServer ( class QSystemTrayIcon *trayIcon=0 );
+         SnoreServer (QSystemTrayIcon *trayIcon=0 );
     void publicatePlugin ( const QString &fileName );
     void publicatePlugin ( SnorePlugin *plugin );
 
@@ -72,5 +76,6 @@ signals:
 
 };
 
+}
 
 #endif // SNORESERVER_H

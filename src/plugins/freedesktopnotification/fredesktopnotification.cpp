@@ -20,7 +20,6 @@
 #include <QtGlobal>
 
 
-
 static int imageHintID = qDBusRegisterMetaType<FreedesktopImageHint>();
 
 

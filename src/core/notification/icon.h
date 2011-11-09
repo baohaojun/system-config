@@ -21,6 +21,7 @@
 
 #include <QImage>
 #include <QSharedPointer>
+namespace Snore{
 
 
 class SNORE_EXPORT SnoreIcon
@@ -51,7 +52,7 @@ private:
 
 
 };
-
+}
 
 
 #endif // NOTIFICATION_ICON_H

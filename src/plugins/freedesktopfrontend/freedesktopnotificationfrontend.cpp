@@ -27,6 +27,7 @@
 #ifdef HAVE_KDE
 #include <KIcon>
 #endif
+using namespace Snore;
 
 Q_EXPORT_PLUGIN2(freedesktop_frontend,FreedesktopNotification_Frontend)
 

@@ -6,23 +6,23 @@
 
 #include <QTime>
 
-class TrayIconNotifer:public Notification_Backend
+class TrayIconNotifer:public Snore::Notification_Backend
 {
     Q_OBJECT
-    Q_INTERFACES(Notification_Backend)
+    Q_INTERFACES(Snore::Notification_Backend)
 public:
-    TrayIconNotifer ( class SnoreServer *snore=0,class QSystemTrayIcon *icon=0 );
+    TrayIconNotifer ( class Snore::SnoreServer *snore=0,class QSystemTrayIcon *icon=0 );
     bool isPrimaryNotificationBackend();
 
 public slots:
-    void registerApplication ( Application *application );
-    void unregisterApplication ( class Application *application );
-    uint notify ( Notification notification );
-    void closeNotification ( Notification notification );
+    void registerApplication ( Snore::Application *application );
+    void unregisterApplication ( Snore::Application *application );
+    uint notify ( Snore::Notification notification );
+    void closeNotification ( Snore::Notification notification );
 
 private:
     class QSystemTrayIcon *_trayIcon;
-    QList<Notification > _notificationQue;
+    QList<Snore::Notification > _notificationQue;
     QTime _lastNotify;
     uint _id;
     uint _displayed;

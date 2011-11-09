@@ -25,6 +25,7 @@
 #include <QDir>
 #include <QSystemTrayIcon>
 
+namespace Snore{
 
 QString const SnoreServer::version(){
     return "0.15";
@@ -180,5 +181,6 @@ const QString &SnoreServer::primaryNotificationBackend(){
     return _notificationBackend->name();
 }
 
+}
 
 #include "snoreserver.moc"

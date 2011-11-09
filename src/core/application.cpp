@@ -15,6 +15,7 @@
  ****************************************************************************************/
 
 #include "application.h"
+namespace Snore{
 
 
 Application::Application (const QString &name, const SnoreIcon &icon) :
@@ -98,6 +99,7 @@ bool Alert::isActive() const
     return _active;
 }
 
+}
 #include "application.moc"
 
 

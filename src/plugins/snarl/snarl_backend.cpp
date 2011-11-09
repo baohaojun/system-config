@@ -30,6 +30,7 @@
 
 #define SNORENOTIFIER_MESSAGE_ID  WM_USER + 238
 
+using namespace Snore;
 using namespace Snarl::V42;
 
 Q_EXPORT_PLUGIN2(snarl_backend,Snarl_Backend)

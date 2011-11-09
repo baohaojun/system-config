@@ -26,6 +26,10 @@ endif(KDE4_FOUND)
 find_package( CryptoPP )
 find_package( Boost COMPONENTS system thread)
 
+if(Boost_USE_STATIC_RUNTIME)
+    add_definitions(-DBOOST_THREAD_USE_LIB )
+endif(Boost_USE_STATIC_RUNTIME)
+
 set(PLUGIN_INSTALL_PATH  LIBRARY DESTINATION bin/snoreplugins)
 
 add_subdirectory(data)

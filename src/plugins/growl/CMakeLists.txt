@@ -10,6 +10,12 @@ if( WITH_GROWL_BACKEND )
 
 		automoc4_add_library(growl_backend MODULE  ${GROWL__SRC} )
                 target_link_libraries(growl_backend snorecore ${QT_QTCORE_LIBRARY} ${CRYPTOPP_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY})
+
+                if(MINGW)
+                    #fiexes a multiple defenition error with static boost
+                    SET_TARGET_PROPERTIES(growl_backend PROPERTIES LINK_FLAGS -Wl,--allow-multiple-definition)
+                endif(MINGW)
+
                 if(WIN32)
                     target_link_libraries(growl_backend wsock32 ws2_32)
                 endif(WIN32)

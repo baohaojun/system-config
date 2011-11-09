@@ -23,13 +23,13 @@
 
 class SnarlWidget;
 
-class Snarl_Backend:public Notification_Backend
+class Snarl_Backend:public Snore::Notification_Backend
 {
     Q_OBJECT
-    Q_INTERFACES(Notification_Backend)
+    Q_INTERFACES(Snore::Notification_Backend)
     friend class SnarlWidget;
 public:
-    Snarl_Backend(class SnoreServer *snore=0);
+    Snarl_Backend(class Snore::SnoreServer *snore=0);
     ~Snarl_Backend();
     bool isPrimaryNotificationBackend();
 
@@ -40,10 +40,10 @@ private:
     bool _away;
 
 public slots:
-    void registerApplication(Application *application);
-    void unregisterApplication(class Application *application);
-    uint notify(Notification notification);
-    void closeNotification(Notification notification);
+    void registerApplication(Snore::Application *application);
+    void unregisterApplication(Snore::Application *application);
+    uint notify(Snore::Notification notification);
+    void closeNotification(Snore::Notification notification);
 
 };
 

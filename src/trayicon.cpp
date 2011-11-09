@@ -21,6 +21,8 @@
 #include <QMenu>
 #include <QAction>
 
+using namespace Snore;
+
 TrayIcon::TrayIcon()        
 {	
         _trayIcon = new QSystemTrayIcon(QIcon(":/root/snore.png"));

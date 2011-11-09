@@ -22,7 +22,7 @@
 
 #include <QtCore>
 
-
+using namespace Snore;
 
 Q_EXPORT_PLUGIN2(growl_backend,Growl_Backend)
 

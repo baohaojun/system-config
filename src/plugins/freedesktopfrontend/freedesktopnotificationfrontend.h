@@ -19,15 +19,15 @@
 #include "core/interface.h"
 #include <QtDBus>
 
-class FreedesktopNotification_Frontend:public Notification_Frontend{
+class FreedesktopNotification_Frontend:public Snore::Notification_Frontend{
     Q_OBJECT
-    Q_INTERFACES(Notification_Frontend)
+    Q_INTERFACES(Snore::Notification_Frontend)
 public:
-    FreedesktopNotification_Frontend(class SnoreServer *snore=0);
+    FreedesktopNotification_Frontend(class Snore::SnoreServer *snore=0);
     ~FreedesktopNotification_Frontend();
 
-    void actionInvoked(Notification notification);
-    void notificationClosed(Notification notification);
+    void actionInvoked(Snore::Notification notification);
+    void notificationClosed(Snore::Notification notification);
     uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
     void CloseNotification( uint id );
 

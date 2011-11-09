@@ -22,6 +22,7 @@
 
 #include <QVariant>
 #include <QSharedPointer>
+namespace Snore{
 
 namespace NotificationEnums{
 
@@ -102,9 +103,10 @@ private:
     QSharedPointer<NotificationData> d;
 };
 
-Q_DECLARE_METATYPE(Notification)
+}
 
-QDataStream & operator<< ( QDataStream & stream, const Notification & noti );
-QDataStream & operator<< ( QDataStream & stream, const Notification::Action & action);
+Q_DECLARE_METATYPE(Snore::Notification)
 
+QDataStream & operator<< ( QDataStream & stream, const Snore::Notification & noti );
+QDataStream & operator<< ( QDataStream & stream, const Snore::Notification::Action & action);
 #endif // NOTIFICATION_H

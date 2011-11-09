@@ -5,6 +5,8 @@
 #include <QTimer>
 #include <QTime>
 #include <QDebug>
+using namespace Snore;
+
 
 TrayIconNotifer::TrayIconNotifer ( SnoreServer *snore, QSystemTrayIcon *icon ) :
     Notification_Backend ( "SystemTray",snore ),
@@ -78,5 +80,6 @@ void TrayIconNotifer::actionInvoked(){
     }
 
 }
+
 
 #include "trayiconnotifer.moc"

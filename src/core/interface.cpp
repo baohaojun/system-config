@@ -18,6 +18,7 @@
 #include "snoreserver.h"
 
 #include <QTimer>
+namespace Snore{
 
 SnorePlugin::SnorePlugin ( QString name,SnoreServer *snore ) :
         _name ( name ),
@@ -91,4 +92,5 @@ Notification_Frontend::~Notification_Frontend()
 {
 }
 
+}
 #include "interface.moc"

@@ -28,13 +28,13 @@
 
 #include <iostream>
 
-
+using namespace Snore;
 
 SnoreNotify::SnoreNotify():
     _settings("TheOneRing","SnoreNotify")
 {
     _trayIcon = new TrayIcon();
-    _snore = new SnoreServer(_trayIcon->trayIcon());
+    _snore = new Snore::SnoreServer(_trayIcon->trayIcon());
 
     QDir pluginsDir ( qApp->applicationDirPath() +"/snoreplugins" );
     foreach ( QString fileName, pluginsDir.entryList ( QDir::Files ) )

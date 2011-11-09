@@ -19,6 +19,7 @@
 #include "snore_exports.h"
 #include "notification/notification.h"
 
+namespace Snore{
 
 class SNORE_EXPORT SnorePlugin:public QObject
 {
@@ -46,13 +47,16 @@ private:
 
 };
 
-Q_DECLARE_INTERFACE ( SnorePlugin,
+}
+Q_DECLARE_INTERFACE ( Snore::SnorePlugin,
                       "org.Snore.SnorePlugin/1.0" )
+
+namespace Snore{
 
 class SNORE_EXPORT Notification_Backend:public SnorePlugin
 {
     Q_OBJECT
-    Q_INTERFACES(SnorePlugin)
+    Q_INTERFACES(Snore::SnorePlugin)
 public:
     Notification_Backend ( QString name,class SnoreServer *snore=0 );
     virtual ~Notification_Backend();
@@ -74,7 +78,7 @@ public slots:
 class SNORE_EXPORT Notification_Frontend:public SnorePlugin
 {
     Q_OBJECT
-    Q_INTERFACES(SnorePlugin)
+    Q_INTERFACES(Snore::SnorePlugin)
 public:
     Notification_Frontend ( QString name,class SnoreServer *snore=0 );
     virtual ~Notification_Frontend();
@@ -87,10 +91,12 @@ public slots:
 
 
 
-Q_DECLARE_INTERFACE ( Notification_Frontend,
-                      "org.Snore.NotificationFrontend/1.0" )
-Q_DECLARE_INTERFACE ( Notification_Backend,
-                      "org.Snore.NotificationBackend/1.0" )
 
+}
+
+Q_DECLARE_INTERFACE ( Snore::Notification_Frontend,
+                      "org.Snore.NotificationFrontend/1.0" )
+Q_DECLARE_INTERFACE ( Snore::Notification_Backend,
+                      "org.Snore.NotificationBackend/1.0" )
 
 #endif//INTERFACE_H

@@ -23,19 +23,26 @@
 #include <Qt>
 #include <QTextDocumentFragment>
 #include <QTextDocument>
+namespace Snore{
 
 static int metaid = qRegisterMetaType<Notification>();
+
+static int count = 0;
 
 class Notification::NotificationData
 {
 public:
+    
+
     NotificationData ( uint id=0 ):
         _id ( id ),
 	_timeout ( 10 ),
 	_source ( NULL ),
 	_closeReason(NotificationEnums::CloseReasons::NONE),
 	_priority(NotificationEnums::Prioritys::NORMAL)
-    {}
+    {
+        qDebug()<<"ActiveNotifications"<<++count;
+    }
 
     NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
         _id ( id ),
@@ -48,11 +55,14 @@ public:
 	_icon ( icon ),
 	_priority(priority),
 	_closeReason(NotificationEnums::CloseReasons::NONE)
-    {}
+    {
+        qDebug()<<"ActiveNotifications"<<++count;
+    }
 
 
     ~NotificationData(){
         //delete _actionInvoked;
+        qDebug()<<"ActiveNotifications"<<--count;
     }
 
     uint _id;
@@ -234,6 +244,7 @@ QDataStream & operator<< ( QDataStream &stream, const Notification::Action &a)
 {
     stream<<a.id<<a.id;
     return stream;
+}
 }
 
 
