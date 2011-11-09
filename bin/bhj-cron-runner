@@ -35,5 +35,5 @@ n_cmds=${#cmds[@]}
 for x in ${cmds[@]}; do
     chmod +x $x || true
     ($x || bhj-notify cron-runner "$x failed" &) >> $logdir/$x.log 2>&1 
-    sleep $run_time || true
+    sleep $run_time
 done&

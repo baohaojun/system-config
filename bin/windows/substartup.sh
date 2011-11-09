@@ -26,7 +26,7 @@ for x in $START; do
             ;;
         cygstart)
             for y in $x/*; do 
-                test -e "$y" && cygstart "$y"
+                cygstart "$y"
             done
             ;;
         ALL)

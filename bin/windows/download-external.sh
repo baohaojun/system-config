@@ -65,34 +65,21 @@ function emacs-site-lisps()
 
     file_list=(
         `get-deb-src-dir dictionary-el`
-	`get-deb-src-dir offlineimap`
         `get-deb-src-dir emacs-goodies-el`
         `get-deb-src-dir cscope`
         `get-deb-src-dir muse-el`
         `get-deb-src-dir w3m-el-snapshot`
         `get-deb-src-dir exuberant-ctags`
-	`get-deb-src-dir bbdb`
 	http://www.python.org/ftp/python/3.1.4/Python-3.1.4.tar.bz2
     )
     
     for x in "${file_list[@]}"; do
         wget -N "$x"
-	if [[ $x =~ .gz$ ]]; then
-            tar zxfv "$(basename "$x")"
-	else 
-	    tar jxfv "$(basename "$x")"
-	fi
+        tar zxfv "$(basename "$x")"
     done
     
-    rm  ~/bin/windows/lnks/offlineimap -f
-    relative-link *offlineimap*/offlineimap.py ~/windows-config/bin/windows/lnks/offlineimap
-    test -e /usr/bin/ctags-exuberant || (
-	builtin cd *ctags*/ && ./configure && make -j8 install && ln -sf /usr/local/bin/ctags.exe /usr/bin/ctags-exuberant
-    )
-    test -e /usr/local/bin/global.exe || (
-	builtin cd ~/gcode/global && sh reconf.sh && ./configure && make -j8 install && git clean -xfd
-    )
-    test -e /usr/local/bin/python3 ||
+    (builtin cd *ctags*/ && ./configure && make -j8 install && ln -sf /usr/local/bin/ctags.exe /usr/bin/ctags-exuberant)
+    (builtin cd ~/gcode/global && sh reconf.sh && ./configure && make -j8 install && git clean -xfd)
     (
         set -e; 
         builtin cd *python*/;
@@ -112,24 +99,6 @@ EOF
         ./configure;
         make -j8
         make install
-    )
-
-    (
-	(
-	    mkdir -p ~/external &&
-	    cd ~/external &&
-	    wget -N http://ftp.gnu.org/gnu/emacs/windows/emacs-23.3-bin-i386.zip
-	    of emacs-23.3-bin-i386.zip
-	    read -p "Press any key when you have installed emacs into ~/external/emacs-nt: "
-	    test -e ~/external/emacs-nt/bin/emacs.exe || die "error: can't find emacs anywhere"
-	)
-	    
-	cd *BBDB*
-	./configure --with-emacs=$HOME/external/emacs-nt/bin/emacs --with-gnus-dir=$HOME/external/emacs-nt/lisp/gnus 
-	find . -iname 'makefile'|xargs.exe dos2unix
-	perl -npe 's/`pwd`/`cygpath -alm .`/g' -i lisp/Makefile
-	make -C lisp bbdb-autoloads.el
-	make
     )
 
     cd emacs-goodies-el*/elisp/emacs-goodies-el/ && mkdir themes
@@ -295,13 +264,3 @@ EOF
         cygstart *.msi
     )        
 }
-
-if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; 
-then 
-    if test "$(basename -- "$0")" != download-external.sh; 
-    then
-	set -e
-	set -x
-	`basename $0` "$@"
-    fi
-fi

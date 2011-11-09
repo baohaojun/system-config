@@ -26,10 +26,10 @@
 
 
 (setq message-send-mail-function 'smtpmail-send-it
-      user-mail-address "hjbao@marvell.com"
+      user-mail-address "baohaojun@gmail.com"
       smtpmail-default-smtp-server "localhost"
       smtpmail-smtp-server "localhost"
-      smtpmail-smtp-service 2025) ;set this port in davmail
+      smtpmail-smtp-service 25)
 
 (setq gnus-default-charset 'chinese-iso-8bit
       gnus-group-name-charset-group-alist '((".*" . chinese-iso-8bit))
@@ -73,21 +73,8 @@
           "sent-messages")
          ((message-mail-p)
           ;; Mail
-          "sent-mails")))) 
+          "nnimap+localhost:INBOX.Sent Items")))) 
 
-(when (eq system-type 'windows-nt)
-  (setq gnus-select-method
-	'(nnmaildir "Gmail"
-		    (directory "~/../Maildir")
-		    (directory-files nnheader-directory-files-safe) 
-		    (get-new-mail nil)))
-  (setq smtpmail-auth-credentials 
-    '(("localhost"
-       2025
-       "hjbao@marvell.com"
-       nil)))
-  (setq nntp-authinfo-file "~/../.authinfo"
-	auth-sources '((:source "~/../.authinfo" :host t :protocol t))))
 ;;Local Variables: ***
 ;;coding: utf-8 ***
 ;;End: ***

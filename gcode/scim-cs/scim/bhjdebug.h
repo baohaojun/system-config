@@ -36,27 +36,26 @@
     } while(0)
 
 #define BHJDEBUG(fmt, ...) do {                                         \
-    pthread_t tid = pthread_self();					\
-    char exe[1024] = "";						\
-    GetModuleFileNameA(NULL, exe, 1023);				\
-    FILE *fp = fopen("d:/log.txt", "a");				\
-    if (!fp) {								\
-      fp = fopen("d:/log.txt", "w");					\
-    }									\
-    if (fp) {								\
-      fprintf(fp, "%s:%d: %s() %s %x " fmt "\n",			\
-	      strrchr(__FILE__, PATH_SEP)?				\
-	      strrchr(__FILE__, PATH_SEP)+1:__FILE__,			\
-	      __LINE__, __FUNCTION__, exe, tid,				\
-	      ##__VA_ARGS__);						\
-      fclose(fp);							\
-    }									\
-    if (fmt[0] != 'x')							\
-      fprintf(stderr, "%s:%d: %s() %s %x " fmt "\n", strrchr(__FILE__, PATH_SEP)?strrchr(__FILE__, PATH_SEP)+1:__FILE__, \
-	      __LINE__, __FUNCTION__, exe, tid,				\
-	      ##__VA_ARGS__);						\
-    fflush(stderr);							\
-  } while(0)
+        pthread_t tid = pthread_self();                                 \
+		char exe[1024] = "";											\
+		GetModuleFileNameA(NULL, exe, 1023);							\
+		FILE *fp = fopen("d:/log.txt", "a");							\
+		if (!fp) {														\
+			fp = fopen("d:/log.txt", "w");								\
+		}																\
+		if (fp) {														\
+			fprintf(fp, "%s:%d: %s() %s %x " fmt "\n",					\
+					strrchr(__FILE__, PATH_SEP)?						\
+					strrchr(__FILE__, PATH_SEP)+1:__FILE__,				\
+					__LINE__, __FUNCTION__, exe, tid,					\
+					##__VA_ARGS__);										\
+			fclose(fp);													\
+		}																\
+        fprintf(stderr, "%s:%d: %s() %s %x " fmt "\n", strrchr(__FILE__, PATH_SEP)?strrchr(__FILE__, PATH_SEP)+1:__FILE__, \
+				__LINE__, __FUNCTION__, exe, tid,						\
+				##__VA_ARGS__);											\
+        fflush(stderr);                                                 \
+    } while(0)
 
 #define simple_debug(a, b) BHJDEBUG(#a " is " #b, a)
 #define dsimple_debug(a) simple_debug(a, %d)

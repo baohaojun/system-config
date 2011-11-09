@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 
 use strict;
-use Getopt::Long;
 
 sub uniq {
     my %uniq;
@@ -37,10 +36,4 @@ my $confuser=`cat ~/.confuser`;
 chomp($confserv);
 chomp($confuser);
 
-my $space = "~$confuser";
-
-GetOptions(
-    "space=s" => \$space,
-    );    
-
-system("confluence.sh", "--server", "http://$confserv/wiki", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", $space, @ARGV);
+system("confluence.sh", "--server", "http://$confserv/wiki", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", "~$confuser", @ARGV);

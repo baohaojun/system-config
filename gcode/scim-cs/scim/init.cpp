@@ -186,7 +186,7 @@ static bool calling_process_ok()
 			}
 		}
 	}
-    BHJDEBUG("x ok for exe: %s", exe_name.c_str());
+    BHJDEBUG(" ok for exe: %s", exe_name.c_str());
 	return true;
 }
 
@@ -197,7 +197,7 @@ BOOL CALLBACK DllMain(HINSTANCE hInstance,
 
 	if (fdwReason == DLL_PROCESS_ATTACH) {
 		if (! calling_process_ok()) {
-			BHJDEBUG("x not ok.");
+			BHJDEBUG("not ok.");
 			if (!g_hInst) {
 				g_hInst = hInstance; //hack, so that the class names are unique.
 			}
