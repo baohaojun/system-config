@@ -345,6 +345,7 @@ void LoadHotkeys()
                       {"F12", VK_F12},
                       {"PRTSCN", VK_SNAPSHOT},
                       {"PAUSE", VK_PAUSE},
+                      {"SCRLCK", VK_SCROLL},
                       {"INSERT", VK_INSERT},
                       {"DELETE", VK_DELETE},
                       {"HOME", VK_HOME},

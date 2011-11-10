@@ -12,6 +12,7 @@ function quote-array() {
 }
 
 function congfu() {
+    set -x
     confluence "$@" 2>&1
 }
 
@@ -71,10 +72,10 @@ function congfu-put() {
 eval "CONGFU_ARGS=( $CONGFU_ARGSTR )";
 for x in "$@"; do 
     cat -- "$x"|confluence-htmlize > "$x".$$
-    congfu "${CONGFU_ARGS[@]}" -- -a storePage --title "$x" --encoding UTF-8 --file "$(readlink -f "$x".$$)"
+    congfu "${CONGFU_ARGS[@]}" -- -a storePage --title "$x" --encoding UTF-8 --file "$x".$$
     rm "$x".$$
     git add -- "$x"
-    done ' xx
+    done ' true
     for x in *.$$.bak; do 
         test -e "$x" || break
         git rm --cached -- "$x";

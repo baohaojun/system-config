@@ -174,28 +174,71 @@ function get-ms-addons()
 
 test "$DOWN" == yes && manual-download
 
+function setup-vc6-env() {
+    unset PATHVC
+    for x in ~/vc6/path/*; do export PATHVC=$PATHVC:`readlink -m "$x"`; done
+    export PATH=~/bin/:$PATHVC:$PATH
+    export INCLUDE=`for x in ~/vc6/inc/*; do readlink -f "$x"; done|u2dpath`
+    export LIB=`for x in ~/vc6/lib/*; do readlink -f "$x"; done|u2dpath`
+}
+
+function build-boost() {
+    (
+        rm -rf boost_1_34_1/
+        tar jxfv boost_1_34_1.tar.bz2
+        mkdir -p boost_1_34_1/stage/lib
+
+        (
+            cd boost_1_34_1/tools/jam/src
+	    patch -p1 <<EOF
+diff --git a/build.bat b/build.bat
+index c331d5c..3cd4f42 100755
+--- a/build.bat
++++ b/build.bat
+@@ -413,7 +413,7 @@ rename y.tab.h jamgram.h
+     shift
+     goto Set_Args
+ )
+-.\bootstrap\jam0 -f build.jam --toolset=%BOOST_JAM_TOOLSET% "--toolset-root=%BOOST_JAM_TOOLSET_ROOT% " %args%
++.\bootstrap\jam0 -f build.jam --toolset=%BOOST_JAM_TOOLSET% "--toolset-root=%BOOST_JAM_TOOLSET_ROOT%" %args%
+ :Skip_Jam
+ 
+ :Finish
+
+EOF
+            cmd.exe /c build.bat msvc
+            cp bin.ntx86/bjam.exe /c/windows/system32/
+        )
+        cd boost_1_34_1/
+        cp /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT.bak
+        echo -n > /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT
+        bjam -sBOOST_ROOT=. -sTOOLS=msvc 2>&1|tee build.log
+        find . -name "*.dll" -o -name "*.lib" > files.txt
+        cp `cat files.txt` ./stage/lib
+        cd ./stage/lib
+        mv libboost_regex-vc6-mt-1_34_1.lib libboost_regex-vc6-mt-p-1_34_1.lib 
+    )
+}
+
 function get-stlport-and-boost()
 {
-    mkdir -p /d/bhj
+    mkdir -p ~/external/boost
+    test -e /d/bhj || ln -s ~/external/boost /d/bhj
     cd /d/bhj
     mkdir -p STLport-5.2.1/lib STLport-5.2.1/stlport boost_1_34_1/stage/lib 
 
     wget -N http://sourceforge.net/projects/stlport/files/STLport/STLport-5.2.1/STLport-5.2.1.tar.bz2
     wget -N http://sourceforge.net/projects/boost/files/boost/1.34.1/boost_1_34_1.tar.bz2
 
-    unset PATHVC
-    for x in ~/vc6/path/*; do export PATHVC=$PATHVC:`readlink -m "$x"`; done
-    export PATH=~/bin/:$PATHVC:$PATH
-    export INCLUDE=`for x in ~/vc6/inc/*; do readlink -f "$x"; done|u2dpath`
-    export LIB=`for x in ~/vc6/lib/*; do readlink -f "$x"; done|u2dpath`
-    
+    setup-vc6-env
+    echo start downloading vcrun2010, psdk2003, vc6sp6 in the background
     (
         mkdir -p vcrun2010
         cd vcrun2010
         wget -N http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe
         chmod +x vcredist_x86.exe
         cygstart vcredist_x86.exe
-    )
+    ) >/dev/null 2>&1 &
 
     (
         mkdir -p psdk
@@ -216,15 +259,16 @@ function get-stlport-and-boost()
         wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.bat
         wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/Extract.exe
         wget -N http://www.avantbrowser.cn/release/absetup.exe
-    )
+    ) >/dev/null 2>&1 &
 
     (
         mkdir -p vc6
         cd vc6
         wget -N http://download.microsoft.com/download/1/9/f/19fe4660-5792-4683-99e0-8d48c22eed74/Vs6sp6.exe
-    )
+    ) >/dev/null 2>&1 &
 
     read -p "Make sure you have setup vc6/sp6/psdk! Press any key to continue..."
+    read -t 5 -p "Note: boost build will not work on remote login! Press any key or wait 5 seconds..." || true
 
     (
         tar jxfv ./STLport-5.2.1.tar.bz2
@@ -250,26 +294,7 @@ EOF
         cmd.exe /c configure.bat msvc6; cd build/lib; nmake /fmsvc.mak install
     )
 
-    read -t 5 -p "Note: boost build will not work on remote login! Press any key or wait 5 seconds..."
-    (
-        rm -rf boost_1_34_1/
-        tar jxfv boost_1_34_1.tar.bz2
-        mkdir -p boost_1_34_1/stage/lib
-
-        (
-            cd boost_1_34_1/tools/jam/src
-            cmd.exe /c build.bat msvc
-            cp bin.ntx86/bjam.exe /c/windows/system32/
-        )
-        cd boost_1_34_1/
-        cp /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT.bak
-        echo -n > /c/Program\ Files/Microsoft\ Visual\ Studio/VC98/Bin/VCVARS32.BAT
-        bjam -sBOOST_ROOT=. -sTOOLS=msvc 2>&1|tee build.log
-        find . -name "*.dll" -o -name "*.lib" > files.txt
-        cp `cat files.txt` ./stage/lib
-        cd ./stage/lib
-        mv libboost_regex-vc6-mt-1_34_1.lib libboost_regex-vc6-mt-p-1_34_1.lib 
-    )
+    build-boost
 
     (
         mkdir -p python2.5

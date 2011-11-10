@@ -2,7 +2,7 @@
 _ps_list()
 {
     local IFS=$'\n'
-    COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(ps -u $USER -o pid,cmd|perl -ne 's,\\,/,g; s/^\s*//; s/ +/ /g; s,/,.,g; s/ *$//; print unless 1..1')" "$cur") )
+    COMPREPLY=( $(skeleton_compgen_word.pl -d '\n' -- "$(ps.pl "$cur"|perl -ne 's,\\,/,g; s/^\s*//; s/ +/ /g; s,/,.,g; s/ *$//; print unless 1..1')" "$cur") )
 }
 
 _ps_kill()

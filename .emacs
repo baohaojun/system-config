@@ -1504,6 +1504,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (keyboard-translate ?\C-h ?\C-x)
 ;(global-set-key (kbd "C-h") 'execute-extended-command)
 
+(when (eq system-type 'windows-nt)
+  (setq file-name-coding-system 'gbk)
+  (set-selection-coding-system 'gbk))
 (require 'bbdb-autoloads)
 (require 'bbdb-gnus)
 (require 'bbdb)

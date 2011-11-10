@@ -30,4 +30,5 @@ while true; do
     cd ~/bin/windows;
     command cmd /c hotkey_hook; 
 done&
+close-window '\\osk.exe'
 

@@ -36,7 +36,7 @@ KeyToGrab(0),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(0),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), DoThis(mg.exe +0)
 
 KeyToGrab(E),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -t emacs@ )
-#KeyToGrab(F),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p puemacs -F 1 puemacs -load emacs)
+#KeyToGrab(F),		WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p puemacs -F 1 puemacs -load emacs)
 KeyToGrab(M),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p pucomm -F 1 pucomm -load comm)
 KeyToGrab(X),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs -fe run bash -c eterm-bhj.sh -fe -F 1 emacs.sh)
 KeyToGrab(P),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p powerpnt.exe -F 1 ppt)
@@ -48,7 +48,7 @@ KeyToGrab(Q),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(T),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(screen-exchange.sh)
 KeyToGrab(B),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p bash.exe bash --rcfile ~/.bashrc-min -i)
 KeyToGrab(N),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p firefox -F 1 http://www.google.com/calendar/render)
-#KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c acrobat -F 1 acroread)
+#KeyToGrab(A),		WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c acrobat -F 1 acroread)
 KeyToGrab(A),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py alchemy.exe test.exe.lnk)
 KeyToGrab(C),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py "")
 KeyToGrab(V),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py devenv.exe vc8)
@@ -59,7 +59,7 @@ KeyToGrab(MINUS),       WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(Delete),      WithModifier(LWin),      WithAction(ExecCommand), DoThis(taskmgr)
 KeyToGrab(Pause),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(control.exe sysdm.cpl)
 KeyToGrab(D),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(ToggleDesktop)
-KeyToGrab(L),           WithModifier(LWin),      WithAction(LockWorkStation)
+KeyToGrab(ScrLck), 	WithModifier(LWin),      WithAction(LockWorkStation)
 KeyToGrab(S),           WithModifier(LWin),      WithAction(ifinds)
 KeyToGrab(O),           WithModifier(LWin),      WithAction(ifindo)
 

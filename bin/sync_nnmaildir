@@ -59,18 +59,6 @@ for (glob "$dir/*") {
         #   and print "Removed mail in $mb from nnmaildir ticks\n";
       }
 
-      # Sync replied flags
-      if ($flags =~ /R/) {
-        mkdir "$path/.nnmaildir/marks/reply";
-        my $dst = "$path/.nnmaildir/marks/reply/$message";
-        link "$file","$dst"
-          and print "Added mail in $mb to nnmaildir replies\n";
-      } else {
-        my $dst = "$path/.nnmaildir/marks/reply/$message";
-        unlink "$dst"
-          and print "Removed mail in $mb from nnmaildir replies\n";
-      }
-
       # Sync read flags
       if ($flags =~ /S/) {
         mkdir "$path/.nnmaildir/marks/read";
@@ -89,7 +77,7 @@ for (glob "$dir/*") {
 	  # $new_flags = $new_flags . 'F'; davmail can not handle sticky emails
       }
       if (-e "$path/.nnmaildir/marks/reply/$message") {
-        $new_flags = $new_flags . 'R';
+	  # $new_flags = $new_flags . 'R'; davmail can not handle replied flag (in fact, any flag except 'S')
       }
       if (-e "$path/.nnmaildir/marks/read/$message") {
         $new_flags = $new_flags . 'S';
