@@ -57,6 +57,7 @@ function mkcscope_files() {
             '-o' '-iname' '*.elc' \
             '-o' '-path' '*/.ignore' \
             '-o' '-path' '*/.repo' \
+	    '-o' '-iname' '*.ncb' \
             '-o' '-iname' "cscope.files" \
             -o -iname "cscope.out" \
             -o -ipath "*/.beagle" \
