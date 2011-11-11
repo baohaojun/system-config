@@ -41,10 +41,12 @@ function download-all()
 }
 
 test "$DOWN" == yes && download-all
-function setup-deb-src()
+
+function emacs-site-lisps()
 {
     mkdir -p ~/tools/emacs-site-lisp/
     cd ~/tools/emacs-site-lisp/
+    rm ./*/ -rf
     cp /usr/share/emacs/site-lisp/subdirs.el . 
     
 
@@ -60,33 +62,7 @@ function setup-deb-src()
         ( builtin cd ../ && wget -N -r http://$x )
         ln -sf ../$x Sources.bz2.$y
     done
-}
 
-function get-bbdb()
-{
-    (
-	set -ex
-	setup-deb-src
-	x=$(get-deb-src-dir bbdb)
-	rm *bbdb*/ -rf
-	wget -N "$x"
-	if [[ $x =~ .gz$ ]]; then
-            tar zxfv "$(basename "$x")"
-	else 
-	    tar jxfv "$(basename "$x")"
-	fi
-	builtin cd *BBDB*/
-	./configure --with-emacs=$HOME/external/emacs-nt/bin/emacs --with-gnus-dir=$HOME/external/emacs-nt/lisp/gnus 
-	find . -iname 'makefile'|xargs.exe dos2unix
-	perl -npe 's/`pwd`/`cygpath -alm .`/g' -i lisp/Makefile
-	make -C lisp bbdb-autoloads.el || true
-	make
-    )
-}
-
-function emacs-site-lisps()
-{
-    setup-deb-src
     file_list=(
         `get-deb-src-dir dictionary-el`
 	`get-deb-src-dir offlineimap`
@@ -148,6 +124,12 @@ EOF
 	    test -e ~/external/emacs-nt/bin/emacs.exe || die "error: can't find emacs anywhere"
 	)
 	    
+	cd *BBDB*
+	./configure --with-emacs=$HOME/external/emacs-nt/bin/emacs --with-gnus-dir=$HOME/external/emacs-nt/lisp/gnus 
+	find . -iname 'makefile'|xargs.exe dos2unix
+	perl -npe 's/`pwd`/`cygpath -alm .`/g' -i lisp/Makefile
+	make -C lisp bbdb-autoloads.el
+	make
     )
 
     cd emacs-goodies-el*/elisp/emacs-goodies-el/ && mkdir themes

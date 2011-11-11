@@ -1,8 +1,5 @@
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
-(keyboard-translate ?\C-x ?\C-h)
-(keyboard-translate ?\C-h ?\C-x)
-
 (setq load-path
       (nconc (list (expand-file-name "~/.emacs_d/lisp")
 		   (expand-file-name "~/.emacs_d/lisp/ext"))
@@ -247,7 +244,7 @@
 	 :username "baohaojun")))
 
 (define-key js-mode-map [(meta .)] 'my-cscope-find-global-definition)
-(define-key global-map [(meta control \,)] 'cscope-pop-mark)
+(define-key global-map [(meta control ,)] 'cscope-pop-mark)
 (define-key global-map [(meta control .)] 'cscope-pop-mark-back)
 
 (prefer-coding-system 'gbk)
@@ -751,6 +748,7 @@
       (require 'color-theme-library))
   (error nil))
 (color-theme-arjen)
+(server-start)
 ;(w32-register-hot-key [A-tab])
 
 (defun markdown-nobreak-p ()
@@ -1502,6 +1500,8 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (eval-after-load "diff-mode"
   '(define-key diff-mode-map (kbd "M-g") (lookup-key global-map (kbd "M-g"))))
 (global-set-key [?\C-'] 'hippie-expand)
+(keyboard-translate ?\C-x ?\C-h)
+(keyboard-translate ?\C-h ?\C-x)
 ;(global-set-key (kbd "C-h") 'execute-extended-command)
 
 (when (eq system-type 'windows-nt)
@@ -1582,8 +1582,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (setq bbdb/gnus-update-records-mode '(my-bbdb/gnus-update-records-mode))
 
 (defun my-bbdb-canonicalize (addr)
-  (and (stringp addr)
-       (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr)))
+  (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr))
 (setq bbdb-canonicalize-net-hook
       'my-bbdb-canonicalize)
 
@@ -1888,4 +1887,3 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
          :section-numbers nil
          :table-of-contents nil)))
 
-(server-start)
