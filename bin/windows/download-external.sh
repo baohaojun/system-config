@@ -119,7 +119,7 @@ function emacs-site-lisps()
     test -e /usr/local/bin/python3 ||
     (
         set -e; 
-        builtin cd *python*/;
+        builtin cd *python*/ || builtin cd *Python*/
         patch -p1 <<EOF
 diff --git a/Modules/main.c b/Modules/main.c
 index 4dcc32d..2e6548f 100644
