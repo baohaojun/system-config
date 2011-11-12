@@ -1,0 +1,18 @@
+#!/bin/bash
+
+cd ~/weekly || exit
+year_page=$(date +%Y -d "today")
+week_page=$(date +%Y.%m.%d -d "Last Mon")-$(date +%Y.%m.%d -d "Fri")
+
+congfu --space Weekly -- -a getSource --title $week_page |print -ne 'print unless(1..1)' > $week_page
+congfu --space Weekly -- -a storePage --title $week_page --file $week_page --parent $year_page
+
+tool_page=$(congfu --space Weekly -- -a getPageList --title $week_page --children | grep tool -i)
+test -z "$tool_page" && tool_page=Tool_$(date +%Y%m%d -d "Fri")
+congfu --space Weekly -- -a getSource --title $tool_page |print -ne 'print unless(1..1)' > $tool_page
+congfu --space Weekly -- -a storePage --title $tool_page --file $tool_page --parent $week_page
+
+bhj_page=bhj_$(date +%Y.%m.%d -d "Fri")
+cp 11.11.04_BaoHaojun $bhj_page
+edit-wait $bhj_page
+congfu --space Weekly -- -a storePage --title $bhj_page --file $bhj_page --parent $tool_page
