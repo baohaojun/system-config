@@ -1,0 +1,27 @@
+[general]
+accounts = Marvell
+maxsyncaccounts = 1
+pythonfile = ~/bin/get-credentials.py
+ui = Noninteractive.Basic
+
+
+[Account Marvell]
+localrepository = Local-Mrvl
+remoterepository = Remote-Mrvl
+maildir-windows-compatible = yes
+presynchook = ~/bin/sync_nnmaildir -g
+
+[Repository Remote-Mrvl]
+type = IMAP
+remotehost = localhost
+remoteport = 1143
+remoteuser = hjbao@marvell.com
+remotepasseval = getcred("localhost", "hjbao@marvell.com", 1143)
+nametrans = lambda foldername: "mrvl." + foldername.replace(" ", "_")
+maxconnections = 6
+folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in ('inbox',)])
+
+[Repository Local-Mrvl]
+type = Maildir
+localfolders = ~/Maildir
+
