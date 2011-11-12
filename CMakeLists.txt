@@ -2,8 +2,16 @@ project( SnoreNotify )
 cmake_minimum_required( VERSION 2.8 )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake/modules ${CMAKE_PREFIX_PATH}/share/apps/cmake/modules)
 
+#######################################################################
 option(WITH_FREEDESKTOP_FRONTEND "Build the freedesktop frontend" OFF)
 option(WITH_GROWL_BACKEND "Build the Growl backend" ON)
+#######################################################################
+
+set(SNORE_VERSION_MAJOR 0)
+set(SNORE_VERSION_MINOR 3)
+set(SNORE_VERSION_SUFFIX pre)
+add_definitions(-DSNORE_VERSION_MAJOR="${SNORE_VERSION_MAJOR}" -DSNORE_VERSION_MINOR="${SNORE_VERSION_MINOR}" -DSNORE_VERSION_SUFFIX="${SNORE_VERSION_SUFFIX}") 
+######################################################################
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

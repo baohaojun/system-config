@@ -28,7 +28,7 @@
 namespace Snore{
 
 QString const SnoreServer::version(){
-    return "0.15";
+    return QString(SNORE_VERSION_MAJOR).append(".").append(SNORE_VERSION_MINOR).append(SNORE_VERSION_SUFFIX);
 }
 
 QString const SnoreServer::snoreTMP(){
