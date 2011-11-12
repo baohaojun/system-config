@@ -1,4 +1,15 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+include(GetGitRevisionDescription)
+
+
+set(SNORE_VERSION_MAJOR 0)
+set(SNORE_VERSION_MINOR 3)
+set(SNORE_VERSION_SUFFIX pre)
+get_git_head_revision(GIT_REFSPEC SNORE_REVISION)
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" @ONLY)
+
 add_subdirectory(notification)
 
 set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
@@ -6,6 +17,7 @@ set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         application.cpp
         interface.cpp
         trayiconnotifer.cpp
+		${CMAKE_CURRENT_BINARY_DIR}/version.cpp
         )
 
 set ( SnoreNotify_HDR ${SnoreNotify_HDR}
@@ -13,6 +25,7 @@ set ( SnoreNotify_HDR ${SnoreNotify_HDR}
         application.h
         interface.h
         snore_exports.h
+		version.h
         )
 
 automoc4_add_library( snorecore  SHARED ${SnoreNotify_SRCS})

@@ -17,6 +17,7 @@
 #include "snoreserver.h"
 #include "notification/notification.h"
 #include "trayiconnotifer.h"
+#include "version.h"
 
 #include <iostream>
 
@@ -28,7 +29,7 @@
 namespace Snore{
 
 QString const SnoreServer::version(){
-    return QString(SNORE_VERSION_MAJOR).append(".").append(SNORE_VERSION_MINOR).append(SNORE_VERSION_SUFFIX);
+    return QString().append(Version::major()).append(".").append(Version::minor()).append(Version::suffix());
 }
 
 QString const SnoreServer::snoreTMP(){
