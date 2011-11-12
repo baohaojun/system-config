@@ -22,8 +22,10 @@
 #include <QTcpSocket>
 
 #include <iostream>
+using namespace Snore;
 
 Q_EXPORT_PLUGIN2(snalnetwork,SnarlNetworkFrontend)
+
 
 SnarlNetworkFrontend::SnarlNetworkFrontend(SnoreServer *snore):
 Notification_Frontend("SnarlNetworkFrontend",snore)
@@ -43,17 +45,17 @@ SnarlNetworkFrontend::~SnarlNetworkFrontend(){
 }
 
 
-void SnarlNetworkFrontend::actionInvoked(Notificationnotification){
+void SnarlNetworkFrontend::actionInvoked(Notification notification){
     //TODO:fix callback
-    SnarlNotification sn=notifications.value(notification->id());
-    if(notification->actionInvoked()==1)
+    SnarlNotification sn=notifications.value(notification.id());
+    if(notification.actionInvoked()->id == 1 )
         callback(sn,"SNP/1.1/304/Notification acknowledged/");
-    else if(notification->actionInvoked()==2)
+    else if(notification.actionInvoked()->id == 2)
         callback(sn,"SNP/1.1/302/Notification cancelled/");
 }
-void SnarlNetworkFrontend::notificationClosed(Notificationnotification){
-    SnarlNotification sn=notifications.value(notification->id());
-    if(notification->actionInvoked()==Notification::TIMED_OUT)
+void SnarlNetworkFrontend::notificationClosed(Notification notification){
+    SnarlNotification sn=notifications.value(notification.id());
+    if(notification.closeReason() == NotificationEnums::CloseReasons::TIMED_OUT)
         callback(sn,"SNP/1.1/303/Notification timed out/");
     else
         callback(sn,"SNP/1.1/307/Notification closed/");
@@ -76,16 +78,16 @@ void SnarlNetworkFrontend::handleMessages(){
         SnarlNotification noti=parser->parse(s,client);
         if(!noti.vailid)
             continue;
-        if(noti.notification->isNotification()){
+        if(noti.isNotification){
             snore()->broadcastNotification(noti.notification);
-            if(noti.notification->id()!=0){
-                out+="/"+QString::number(noti.notification->id());
-                notifications.insert(noti.notification->id(),noti);
+            if(noti.notification.id()!=0){
+                out+="/"+QString::number(noti.notification.id());
+                notifications.insert(noti.notification.id(),noti);
             }
         }
         out+="\r\n";
         
-        client->write(out.toLatin1());
+        client->write(out.toUtf8());
         if(noti.httpClient){
             client->disconnectFromHost();
             client->waitForDisconnected();
@@ -95,9 +97,9 @@ void SnarlNetworkFrontend::handleMessages(){
 }
 
 void SnarlNetworkFrontend::callback(const SnarlNotification &sn,QString msg){
-    notifications.remove(sn.notification->id());
+    notifications.remove(sn.notification.id());
     if(sn.clientSocket!=NULL&&!msg.isEmpty()){
-        msg+=QString::number(sn.notification->id());
+        msg+=QString::number(sn.notification.id());
         qDebug()<<msg;
         sn.clientSocket->write(msg.toAscii()+"\r\n");
         sn.clientSocket->flush();

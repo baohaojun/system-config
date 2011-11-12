@@ -21,26 +21,32 @@
 
 #include <QPointer>
 
+namespace Snore{
+    class Notification;
+    class SnoreServer;
+}
+
 struct SnarlNotification{
-    class QSharedPointer<class Notification> notification;
+    Snore::Notification notification;
     QString action;
     bool httpClient;
     bool vailid;
+    bool isNotification;
     QPointer<class QTcpSocket> clientSocket;
 };
 
-class SnarlNetworkFrontend:public Notification_Frontend{
+class SnarlNetworkFrontend:public Snore::Notification_Frontend{
     Q_OBJECT
-    Q_INTERFACES(Notification_Frontend)
+    Q_INTERFACES(Snore::Notification_Frontend)
     friend class Parser;
 public:
     static const int port=9887;
 
 public:
-    SnarlNetworkFrontend(class SnoreServer *snore=0);
+    SnarlNetworkFrontend(Snore::SnoreServer *snore=0);
     ~SnarlNetworkFrontend();
-    void actionInvoked(Notificationnotification);
-    void notificationClosed(Notificationnotification);
+    void actionInvoked(Snore::Notification notification);
+    void notificationClosed(Snore::Notification notification);
 
 private slots:
     void handleConnection();
@@ -49,7 +55,7 @@ private slots:
 private:
     class QTcpServer *tcpServer;
     Parser *parser;
-    QHash<int,SnarlNotification> notifications;
+    QHash<uint,SnarlNotification> notifications;
 
     void callback(const SnarlNotification &sn,QString msg);
 

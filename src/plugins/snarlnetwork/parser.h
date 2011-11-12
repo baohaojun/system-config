@@ -18,10 +18,9 @@
 #define PARSER_H
 #include <QString>
 #include <QHash>
-#include "core/notification.h"
+#include "core/notification/notification.h"
 #include <QSharedPointer>
 #include <QObject>
-
 
 
 
