@@ -1,46 +1,81 @@
 #!/bin/bash
-test "$DOWN" == yes && set -e
+
+function my-read() {
+    echo -- "$@" > my-read.$$.txt
+    notepad my-read.$$.txt || true
+    rm my-read.$$.txt || true
+}
+
+function mkdir() {
+    command mkdir -p "$@"
+}
+
+function get-python() {
+    mkdir ~/external/python
+    cd ~/external/python
+    for x in  ~/etc/python-win/vers/*;
+    do
+	x=$(basename $x)
+        eval "wget -N http://python.org/ftp/python/$x/python-$x.msi&"
+    done
+    wget -N http://sourceforge.net/projects/pywin32/files/pywin32/Build216/pywin32-216.win32-py2.7.exe&
+    wait
+
+    for x in  ~/etc/python-win/vers/*;
+    do
+	x=$(basename $x)
+        chmod +x python-$x.msi
+        cygstart python-$x.msi
+    done
+
+    my-read -p "Press any key to install pywin32..."
+    (
+        chmod +x *.exe
+        cygstart *.exe
+    )
+}
 
 function download-all()
 {
-    mkdir -p /c/download
-    cd /c/download
-    wget -N http://www.kaufmann.no/downloads/winnt/kbddvp-1_2_2-i386.exe
-    chmod +x kbddvp-1_2_2-i386.exe
-    cygstart kbddvp-1_2_2-i386.exe
+    (
+	mkdir -p /c/download
+	cd /c/download
 
-    cygstart http://www.kaufmann.no/roland/dvorak/winxp.html
+	cygstart http://www.kaufmann.no/roland/dvorak/winxp.html
 
-    file_list=( 
-        http://download.sysinternals.com/Files/ProcessMonitor.zip
-        http://download.sysinternals.com/Files/ProcessExplorer.zip
-        http://download.sysinternals.com/Files/PsTools.zip
-        http://download.sysinternals.com/Files/WinObj.zip
-        http://download.sysinternals.com/Files/DebugView.zip
-        http://www.nirsoft.net/utils/resourcesextract.zip
-        http://www.nirsoft.net/utils/iconsext.zip
-        http://www.winterdrache.de/freeware/png2ico/data/png2ico-win-2002-12-08.zip
-        http://download.sysinternals.com/Files/Handle.zip
-    )
+	file_list=( 
+            http://download.sysinternals.com/Files/ProcessMonitor.zip
+            http://download.sysinternals.com/Files/ProcessExplorer.zip
+            http://download.sysinternals.com/Files/PsTools.zip
+            http://download.sysinternals.com/Files/WinObj.zip
+            http://download.sysinternals.com/Files/DebugView.zip
+            http://www.nirsoft.net/utils/resourcesextract.zip
+            http://www.nirsoft.net/utils/iconsext.zip
+            http://www.winterdrache.de/freeware/png2ico/data/png2ico-win-2002-12-08.zip
+	    http://www.kaufmann.no/downloads/winnt/kbddvp-1_2_2-i386.exe
+            http://download.sysinternals.com/Files/Handle.zip
+	)
 
-    for x in "${file_list[@]}"; do
-        if ! [[ -f `basename "$x"` ]]; then
-            wget -N "$x"
-        fi
-    done
-            
+	for x in "${file_list[@]}"; do
+            if ! [[ -f `basename "$x"` ]]; then
+		eval "wget -N $x&"
+            fi
+	done
+        wait
+	chmod +x kbddvp-1_2_2-i386.exe
+	cygstart kbddvp-1_2_2-i386.exe
 
-    cd ~/bin/windows/lnks
-    for x in /c/download/*.zip; do 
-        if [[ -f "$x" ]]; then
-            /bin/unzip -o "$x";
-        fi
-    done
-    mv ./*/* . || true
-    chmod a+x ./* || true
+	cd ~/bin/windows/lnks
+	for x in /c/download/*.zip; do 
+            if [[ -f "$x" ]]; then
+		/bin/unzip -o "$x";
+            fi
+	done
+	mv ./*/* . || true
+	chmod a+x ./* || true
+    )&
 }
 
-test "$DOWN" == yes && download-all
 function setup-deb-src()
 {
     mkdir -p ~/tools/emacs-site-lisp/
@@ -81,7 +116,7 @@ function get-bbdb()
 	perl -npe 's/`pwd`/`cygpath -alm .`/g' -i lisp/Makefile
 	make -C lisp bbdb-autoloads.el || true
 	make
-    )
+    )&
 }
 
 function emacs-site-lisps()
@@ -97,26 +132,44 @@ function emacs-site-lisps()
         `get-deb-src-dir exuberant-ctags`
 	`get-deb-src-dir bbdb`
 	http://www.python.org/ftp/python/3.1.4/Python-3.1.4.tar.bz2
+	http://sourceforge.net/project/ntemacs/ntemacs/20110402/ntemacs24-bin-20110402.7z
     )
     
     for x in "${file_list[@]}"; do
-        wget -N "$x"
+        eval "wget -N $x&"
+    done
+    wait
+
+    (
+	oldd=$(pwd)
+	mkdir -p ~/external/
+	cd ~/external/
+	
+	7z x "$oldd"/ntemacs24-bin-20110402.7z
+	chmod +x ntemacs24/bin/*
+	cd ntemacs24/lisp/gnus
+	rm nnmaildir.elc 
+	patch -p2 < ~/doc/nnmaildir.patch 
+	cd ~
+	my-read "mv ~/external/ntemacs24 ~/external/emacs-nt"
+    )&
+
+    for x in "${file_list[@]}"; do
 	if [[ $x =~ .gz$ ]]; then
             tar zxfv "$(basename "$x")"
 	else 
 	    tar jxfv "$(basename "$x")"
 	fi
     done
-    
+
     rm  ~/bin/windows/lnks/offlineimap -f
     relative-link *offlineimap*/offlineimap.py ~/windows-config/bin/windows/lnks/offlineimap
-    test -e /usr/bin/ctags-exuberant || (
+    (
 	builtin cd *ctags*/ && ./configure && make -j8 install && ln -sf /usr/local/bin/ctags.exe /usr/bin/ctags-exuberant
-    )
-    test -e /usr/local/bin/global.exe || (
+    )&
+    (
 	builtin cd ~/gcode/global && sh reconf.sh && ./configure && make -j8 install && git clean -xfd
-    )
-    test -e /usr/local/bin/python3 ||
+    )&
     (
         set -e; 
         builtin cd *python*/ || builtin cd *Python*/
@@ -136,24 +189,11 @@ EOF
         ./configure;
         make -j8
         make install
-    )
-
-    (
-	(
-	    mkdir -p ~/external &&
-	    cd ~/external &&
-	    wget -N http://ftp.gnu.org/gnu/emacs/windows/emacs-23.3-bin-i386.zip
-	    of emacs-23.3-bin-i386.zip
-	    read -p "Press any key when you have installed emacs into ~/external/emacs-nt: "
-	    test -e ~/external/emacs-nt/bin/emacs.exe || die "error: can't find emacs anywhere"
-	)
-	    
-    )
+    )&
 
     cd emacs-goodies-el*/elisp/emacs-goodies-el/ && mkdir themes
 }
 
-test "$DOWN" == yes && emacs-site-lisps
 
 function manual-download()
 {
@@ -190,8 +230,6 @@ function get-ms-addons()
     done
 }
 
-test "$DOWN" == yes && manual-download
-
 function setup-vc6-env() {
     unset PATHVC
     for x in ~/vc6/path/*; do export PATHVC=$PATHVC:`readlink -m "$x"`; done
@@ -202,6 +240,7 @@ function setup-vc6-env() {
 
 function build-boost() {
     (
+	cd ~/external/boost
         rm -rf boost_1_34_1/
         tar jxfv boost_1_34_1.tar.bz2
         mkdir -p boost_1_34_1/stage/lib
@@ -241,19 +280,18 @@ EOF
 function get-stlport-and-boost()
 {
     mkdir -p ~/external/boost
-    test -e /d/bhj || ln -s ~/external/boost /d/bhj
-    cd /d/bhj
+    cd ~/external/boost
     mkdir -p STLport-5.2.1/lib STLport-5.2.1/stlport boost_1_34_1/stage/lib 
 
-    wget -N http://sourceforge.net/projects/stlport/files/STLport/STLport-5.2.1/STLport-5.2.1.tar.bz2
-    wget -N http://sourceforge.net/projects/boost/files/boost/1.34.1/boost_1_34_1.tar.bz2
+    wget -N http://sourceforge.net/projects/stlport/files/STLport/STLport-5.2.1/STLport-5.2.1.tar.bz2&
+    wget -N http://sourceforge.net/projects/boost/files/boost/1.34.1/boost_1_34_1.tar.bz2&
 
     setup-vc6-env
-    echo start downloading vcrun2010, psdk2003, vc6sp6 in the background
     (
         mkdir -p vcrun2010
         cd vcrun2010
-        wget -N http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe
+        wget -N http://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe&
+	wait
         chmod +x vcredist_x86.exe
         cygstart vcredist_x86.exe
     ) >/dev/null 2>&1 &
@@ -261,22 +299,25 @@ function get-stlport-and-boost()
     (
         mkdir -p psdk
         cd psdk
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.1.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.2.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.3.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.4.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.5.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.6.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.7.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.8.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.9.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.10.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.11.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.12.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.13.cab
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.bat
-        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/Extract.exe
-        wget -N http://www.avantbrowser.cn/release/absetup.exe
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.1.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.2.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.3.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.4.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.5.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.6.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.7.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.8.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.9.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.10.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.11.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.12.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.13.cab&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/PSDK-FULL.bat&
+        wget -N http://download.microsoft.com/download/platformsdk/sdk/update/win98mexp/en-us/3790.0/FULL/Extract.exe&
+        wget -N http://www.avantbrowser.cn/release/absetup.exe&
+	wait
+	cmd.exe /c PSDK-FULL.bat ./ext
+	cygstart ./ext
     ) >/dev/null 2>&1 &
 
     (
@@ -285,8 +326,8 @@ function get-stlport-and-boost()
         wget -N http://download.microsoft.com/download/1/9/f/19fe4660-5792-4683-99e0-8d48c22eed74/Vs6sp6.exe
     ) >/dev/null 2>&1 &
 
-    read -p "Make sure you have setup vc6/sp6/psdk! Press any key to continue..."
-    read -t 5 -p "Note: boost build will not work on remote login! Press any key or wait 5 seconds..." || true
+    my-read -p "Make sure you have setup vc6/sp6/psdk! Press any key to continue..."
+    my-read -t 5 -p "Note: boost build will not work on remote login! Press any key or wait 5 seconds..." || true
 
     (
         tar jxfv ./STLport-5.2.1.tar.bz2
@@ -313,31 +354,8 @@ EOF
     )
 
     build-boost
-
-    (
-        mkdir -p python2.5
-        cd python2.5
-        wget -N http://python.org/ftp/python/2.7.2/python-2.7.2.msi
-        chmod +x *.msi
-        cygstart *.msi
-    )
-    read -p "Press any key to download pywin32..."
-    (
-        mkdir -p pywin32
-        cd pywin32
-        wget -N http://sourceforge.net/projects/pywin32/files/pywin32/Build216/pywin32-216.win32-py2.7.exe
-        chmod +x *.exe
-        cygstart *.exe
-    )
-    read -p "Press any key to install python3..."
-    (
-        mkdir -p python3.1
-        cd python3.1
-        wget -N http://python.org/ftp/python/3.1.3/python-3.1.3.msi
-        chmod +x *.msi
-        cygstart *.msi
-    )        
 }
+
 
 if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; 
 then 
@@ -346,5 +364,16 @@ then
 	set -e
 	set -x
 	`basename $0` "$@"
+    else
+	set -x
+	(get-python)
+	(download-all)
+	(setup-deb-src)
+	(emacs-site-lisps)
+	(get-bbdb)
+	(manual-download)
+	(get-ms-addons)
+	(setup-vc6-env)
+	(get-stlport-and-boost)
     fi
 fi

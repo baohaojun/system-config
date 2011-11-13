@@ -13,9 +13,8 @@ BIN_WINDOWS=$(dirname "$THIS")
 
 if test "${BIN_WINDOWS:0-26}" != "windows-config/bin/windows"
 then
-    echo 'startup.sh is not in ~/windows-config/bin/windows!'
+    read -p 'startup.sh is not in ~/windows-config/bin/windows! Press any key to exit...'
     #pause and exit, it's all blowed up!
-    cat
     exit
 fi
 
@@ -24,7 +23,8 @@ export HOME2=`pwd`
 
 function die() {
     echo "$@" 1>&2
-    false
+    read -p 'Press any key to exit...'
+    exit
 }
 
 if test -e /q -a ! -L /q; then
