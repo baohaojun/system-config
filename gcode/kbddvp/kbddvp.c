@@ -514,7 +514,7 @@ static LDATA DEADKEY deadKeys[] = {
         { MAKELONG( L'o', L'~' ), 0x00F5, 0 },
         { MAKELONG( L'O', L'~' ), 0x00D5, 0 },
         { MAKELONG( L' ', L'~' ), L'~',   0 },
-        // diaeresis: ¨
+        // diaeresis: Â¨
         { MAKELONG( L'a', 0x00a8 ), 0x00E4, 0 },
         { MAKELONG( L'e', 0x00a8 ), 0x00EB, 0 },
         { MAKELONG( L'i', 0x00a8 ), 0x00EF, 0 },
@@ -527,7 +527,7 @@ static LDATA DEADKEY deadKeys[] = {
         { MAKELONG( L'O', 0x00a8 ), 0x00D6, 0 },
         { MAKELONG( L'U', 0x00a8 ), 0x00DC, 0 },
         { MAKELONG( L' ', 0x00a8 ), 0x00A8, 0 },
-        // acute accent: ´
+        // acute accent: Â´
         { MAKELONG( L'a', 0x00b4 ), 0x00E1, 0 },
         { MAKELONG( L'e', 0x00b4 ), 0x00E9, 0 },
         { MAKELONG( L'i', 0x00b4 ), 0x00ED, 0 },
@@ -553,7 +553,7 @@ static LDATA DEADKEY deadKeys[] = {
         { MAKELONG( L'O', L'`' ), 0x00D2, 0 },
         { MAKELONG( L'U', L'`' ), 0x00D9, 0 },
         { MAKELONG( L' ', L'`' ), L'`',   0 },
-        // cedilla: ¸
+        // cedilla: Â¸
         { MAKELONG( L'c', 0x00B8 ), 0x00E7, 0 },
         { MAKELONG( L'C', 0x00B8 ), 0x00C7, 0 },
         { MAKELONG( L'g', 0x00B8 ), 0x0123, 0 },
@@ -703,7 +703,7 @@ static LDATA DEADKEY deadKeys[] = {
         { MAKELONG( L'+', math ), 0x00B1, 0 },  // plus-minus sign
         { MAKELONG( L'=', math ), 0x2248, 0 },  // almost equal to
         { MAKELONG( L'9', math ), 0x2260, 0 },  // not equal to
-        { MAKELONG( L'£', math ), 0x2261, 0 },  // identical to
+        { MAKELONG( L'Â£', math ), 0x2261, 0 },  // identical to
         { MAKELONG( L'2', math ), 0x0000, 0 },  // double arrow down
         { MAKELONG( L'4', math ), 0x0000, 0 },  // double arrow left
         { MAKELONG( L'6', math ), 0x0000, 0 },  // double arrow right
@@ -1062,10 +1062,10 @@ static LDATA VSC_LPWSTR extendedKeyNames[] = {
 // concatenate them with the name
 static LDATA LPWSTR deadKeyNames[] = {
         L"\x007E"       L"Tilde",                       // ~
-        L"\x00A8"       L"Diaeresis",                   // ¨
-        L"\x00B4"       L"Acute Accent",                // ´
+        L"\x00A8"       L"Diaeresis",                   // Â¨
+        L"\x00B4"       L"Acute Accent",                // Â´
         L"\x0060"       L"Grave Accent",                // `
-        L"\x00B8"       L"Cedilla",                     // ¸
+        L"\x00B8"       L"Cedilla",                     // Â¸
         L"\x02C7"       L"Caron",
         L"\x005E"       L"Circumflex Accent",           // ^
         L"\x0001"       L"Greek",

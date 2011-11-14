@@ -5,9 +5,9 @@ clean:
 	-for %a in (32 64) do @for %b in (dll obj lib exp) do @if exist kbddvp%a.%b del kbddvp%a.%b
 	-for %a in (obj exe) do @if exist launcher.%a del launcher.%a
 
-CL32="$(WINDDK)\bin\x86\cl.exe"
+CL32="$(WINDDK)\bin\x86\x86\cl.exe"
 LINK32=link -machine:ix86
-CL64="$(WINDDK)\bin\win64\x86\amd64\cl.exe"
+CL64="$(WINDDK)\bin\x86\amd64\cl.exe"
 LINK64=link -machine:amd64
 
 # http://www.levicki.net/articles/tips/2006/09/29/How_to_build_keyboard_layouts_for_Windows_x64.php
@@ -41,21 +41,21 @@ launcher.obj: launcher.c
 # we don't need to link with libc (or libcmt) since we don't use the CRT!
 launcher.exe: launcher.obj
 	$(LINK32) -nologo -subsystem:windows -opt:nowin98 -release -nodefaultlib -out:$@ \
-		 $** kernel32.lib user32.lib shell32.lib
+		 $** kernel32.lib user32.lib shell32.lib BufferOverflowU.lib
 
 # http://support.microsoft.com/kb/310618
-kbddvp.cab: kbddvp32.dll kbddvp64.dll kbddvp.inf launcher.exe
-	cabarc -m LZX:21 n $@ $**
+# kbddvp.cab: kbddvp32.dll kbddvp64.dll kbddvp.inf launcher.exe
+# 	cabarc -m LZX:21 n $@ $**
 
 # If you want to use makecab instead of cabarc, then use these commands instead;
-# 
-# kbddvp-bin.ddf: kbddvp32.dll kbddvp64.dll kbddvp.inf launcher.exe
-# 	copy /y NUL $@
-# 	for %a in ($**) do echo %a >> $@
-# 
-# # <http://msdn.microsoft.com/en-us/library/bb267310.aspx#microsoftmakecabusersguide>
-# kbddvp.cab: kbddvp-bin.ddf
-# 	makecab /D CabinetNameTemplate=$@ /D CompressionType=LZX /D CompressionMemory=21 /F $**
+
+kbddvp-bin.ddf: kbddvp32.dll kbddvp64.dll kbddvp.inf launcher.exe
+	copy /y NUL $@
+	for %a in ($**) do echo %a >> $@
+
+# <http://msdn.microsoft.com/en-us/library/bb267310.aspx#microsoftmakecabusersguide>
+kbddvp.cab: kbddvp-bin.ddf
+	makecab /D CabinetNameTemplate=$@ /D CompressionType=LZX /D CompressionMemory=21 /F $**
 	
 # http://www.msfn.org/board/SED-INF-DDF-file-format-t49202.html		 
 kbddvp.exe: kbddvp.sed kbddvp.cab
