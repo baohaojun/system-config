@@ -1,0 +1,65 @@
+; <http://msdn2.microsoft.com/en-us/library/ms790223.aspx>
+[version]
+signature="$CHICAGO$"
+
+[DefaultInstall.NTx86]
+AddReg=Reg_Layout, Reg_Uninst
+CopyFiles=Files_Dll_NTx86, Files_Inf
+
+[DefaultInstall.NTAMD64]
+AddReg=Reg_Layout, Reg_Uninst
+CopyFiles=Files_Dll_NTAMD64, Files_Wow_NTAMD64, Files_Inf
+
+[DefaultUninstall.NTx86]
+DelFiles=Files_Dll_NTx86, Files_Inf
+DelReg=Reg_Layout, Reg_Uninst
+
+[DefaultUninstall.NTAMD64]
+DelFiles=Files_Dll_NTAMD64, Files_Wow_NTAMD64, Files_Inf
+DelReg=Reg_Layout, Reg_Uninst
+
+[DestinationDirs]
+Files_Dll_NTx86   = 11	  ; %WinDir%\System32
+Files_Dll_NTAMD64 = 11	  ; %WinDir%\System32
+Files_Wow_NTAMD64 = 16425 ; %WinDir%\SysWOW64
+Files_Inf         = 17	  ; %WinDir%\Inf
+
+[Files_Dll_NTx86]
+%Base%.dll,%Base%32.dll,,0x00004000
+
+[Files_Dll_NTAMD64]
+%Base%.dll,%Base%64.dll,,0x00004000
+
+[Files_Wow_NTAMD64]
+%Base%.dll,%Base%32.dll,,0x00004000
+
+[Files_Inf]
+%Base%.inf
+
+[Reg_Layout]
+HKLM,%CCS%\Keyboard Layouts\%Variant%%CodePage%
+HKLM,%CCS%\Keyboard Layouts\%Variant%%CodePage%,Layout Text,,"%Description%"
+HKLM,%CCS%\Keyboard Layouts\%Variant%%CodePage%,Layout File,,"%Base%.dll"
+HKLM,%CCS%\Keyboard Layouts\%Variant%%CodePage%,Layout Id,,"001C"
+HKLM,%CCS%\Keyboard Layout\DosKeybCodes,%Variant%%CodePage%,,"pd"
+
+[Reg_Uninst]
+HKLM,%Uninstall%\%Base%,,,
+HKLM,%Uninstall%\%Base%,DisplayName,,"%Description% %Revision%"
+HKLM,%Uninstall%\%Base%,UninstallString,,"rundll32.exe setupapi,InstallHinfSection DefaultUninstall 132 %17%\%Base%.INF"
+HKLM,%Uninstall%\%Base%,EstimatedSize,0x00010001,12 ; kilobytes
+HKLM,%Uninstall%\%Base%,NoModify,0x00010001,1
+HKLM,%Uninstall%\%Base%,NoRepair,0x00010001,1
+HKLM,%Cache%\%Base%,,,
+HKLM,%Cache%\%Base%,SlowInfoCache,0x00000004,       ; delete
+HKLM,%Cache%\%Base%,Changed,0x00010001,1
+
+[Strings]
+Description="Programmer Dvorak"
+Revision="1.2.1"
+Base="kbddvp"
+Variant=1936
+CodePage=0409
+CCS="SYSTEM\CurrentControlSet\Control"
+Uninstall="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+Cache="SOFTWARE\Microsoft\Windows\CurrentVersion\App Management\ARPCache"

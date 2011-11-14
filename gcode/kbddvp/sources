@@ -1,0 +1,3 @@
+TARGETNAME=kbddvp
+!INCLUDE ..\sources.inc
+

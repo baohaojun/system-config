@@ -1,0 +1,35 @@
+#include "windows.h"
+#include "ntverp.h"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,2,1,0
+ PRODUCTVERSION 1,2,1,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE VFT_DLL // 0x2L
+ FILESUBTYPE VFT2_DRV_KEYBOARD // 0x3L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "FileDescription", "Programmer Dvorak Keyboard Layout\0"
+            VALUE "CompanyName", "Roland Kaufmann\0"
+            VALUE "FileVersion", "1.2.1\0"
+            VALUE "InternalName", "kbddvp\0"
+            VALUE "LegalCopyright", "Copyright (C) 1997-2008 Roland Kaufmann\0"
+            VALUE "OriginalFilename", "kbddvp.dll\0"
+            VALUE "ProductName", "Programmer Dvorak\0"
+            VALUE "ProductVersion", "1.2.1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
