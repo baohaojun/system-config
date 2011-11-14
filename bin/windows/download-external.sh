@@ -41,8 +41,6 @@ function download-all()
 	mkdir -p /c/download
 	cd /c/download
 
-	cygstart http://www.kaufmann.no/roland/dvorak/winxp.html
-
 	file_list=( 
             http://download.sysinternals.com/Files/ProcessMonitor.zip
             http://download.sysinternals.com/Files/ProcessExplorer.zip
@@ -52,7 +50,6 @@ function download-all()
             http://www.nirsoft.net/utils/resourcesextract.zip
             http://www.nirsoft.net/utils/iconsext.zip
             http://www.winterdrache.de/freeware/png2ico/data/png2ico-win-2002-12-08.zip
-	    http://www.kaufmann.no/downloads/winnt/kbddvp-1_2_2-i386.exe
             http://download.sysinternals.com/Files/Handle.zip
 	)
 
@@ -62,8 +59,7 @@ function download-all()
             fi
 	done
         wait
-	chmod +x kbddvp-1_2_2-i386.exe
-	cygstart kbddvp-1_2_2-i386.exe
+	cygstart ~/bin/windows/bhjdvp/setup.exe
 
 	cd ~/bin/windows/lnks
 	for x in /c/download/*.zip; do 
