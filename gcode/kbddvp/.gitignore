@@ -1,0 +1,14 @@
+disk1/
+kbddvp-bin.ddf
+kbddvp.res
+kbddvp32.dll
+kbddvp32.exp
+kbddvp32.lib
+kbddvp32.obj
+kbddvp64.dll
+kbddvp64.exp
+kbddvp64.lib
+kbddvp64.obj
+launcher.obj
+setup.inf
+setup.rpt
