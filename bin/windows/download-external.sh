@@ -74,10 +74,9 @@ function download-all()
 
 function setup-deb-src()
 {
-    mkdir -p ~/tools/emacs-site-lisp/
-    cd ~/tools/emacs-site-lisp/
-    cp /usr/share/emacs/site-lisp/subdirs.el . 
-    
+    mkdir -p ~/external/emacs-site-lisp/ ~/external/deb-src
+    cp /usr/share/emacs/site-lisp/subdirs.el ~/external/emacs-site-lisp/
+    cd ~/external/deb-src    
 
     source_list=(
         mirrors.163.com/debian/dists/unstable/main/source/Sources.bz2 
@@ -99,12 +98,13 @@ function get-bbdb()
 	set -ex
 	setup-deb-src
 	x=$(get-deb-src-dir bbdb)
-	rm *bbdb*/ -rf
+	rm *bbdb*/ *BBDB* -rf
 	wget -N "$x"
+	cd ~/external/emacs-site-lisp/
 	if [[ $x =~ .gz$ ]]; then
-            tar zxfv "$(basename "$x")"
+            tar zxfv ../deb-src/"$(basename "$x")"
 	else 
-	    tar jxfv "$(basename "$x")"
+	    tar jxfv ../deb-src/"$(basename "$x")"
 	fi
 	builtin cd *BBDB*/
 	./configure --with-emacs=$HOME/external/emacs-nt/bin/emacs --with-gnus-dir=$HOME/external/emacs-nt/lisp/gnus 
@@ -115,18 +115,37 @@ function get-bbdb()
     )&
 }
 
+function get-boost-vc9() {
+    (
+	set -e
+	cd ~/external/deb-src
+	x=http://sourceforge.net/projects/boost/files/boost/1.47.0/boost_1_47_0.7z
+	wget -N $x
+	7z -x $x
+	cd boost_1_47_0
+	my-read make sure that you have installed vc9
+	cd ./tools/build/v2/
+	cmd.exe /c bootstrap.bat
+	cd - 
+	./tools/build/v2/b2.exe --toolset=msvc-9.0 stage
+    )
+}
+
 function emacs-site-lisps()
 {
     setup-deb-src
     file_list=(
         `get-deb-src-dir dictionary-el`
-	`get-deb-src-dir offlineimap`
         `get-deb-src-dir emacs-goodies-el`
         `get-deb-src-dir cscope`
         `get-deb-src-dir muse-el`
         `get-deb-src-dir w3m-el-snapshot`
-        `get-deb-src-dir exuberant-ctags`
 	`get-deb-src-dir bbdb`
+    )
+
+    non_emacs_list=(
+	`get-deb-src-dir offlineimap`
+	`get-deb-src-dir exuberant-ctags`
 	http://www.python.org/ftp/python/3.1.4/Python-3.1.4.tar.bz2
 	http://sourceforge.net/project/ntemacs/ntemacs/20110402/ntemacs24-bin-20110402.7z
     )
@@ -150,13 +169,28 @@ function emacs-site-lisps()
 	my-read "mv ~/external/ntemacs24 ~/external/emacs-nt"
     )&
 
-    for x in "${file_list[@]}"; do
-	if [[ $x =~ .gz$ ]]; then
-            tar zxfv "$(basename "$x")"
-	else 
-	    tar jxfv "$(basename "$x")"
-	fi
-    done
+    (
+	cd ~/external/emacs-site-lisp/
+	for x in "${file_list[@]}"; do
+	    if [[ $x =~ .gz$ ]]; then
+		tar zxfv ../deb-src/"$(basename "$x")"
+	    else 
+		tar jxfv ../deb-src/"$(basename "$x")"
+	    fi
+	done
+	cd emacs-goodies-el*/elisp/emacs-goodies-el/ && mkdir themes
+
+    )&
+
+    (
+	for x in "${non_emacs_list[@]}"; do
+	    if [[ $x =~ .gz$ ]]; then
+		tar zxfv ../deb-src/"$(basename "$x")"
+	    else 
+		tar jxfv ../deb-src/"$(basename "$x")"
+	    fi
+	done
+    )
 
     rm  ~/bin/windows/lnks/offlineimap -f
     relative-link *offlineimap*/offlineimap.py ~/windows-config/bin/windows/lnks/offlineimap
@@ -187,7 +221,6 @@ EOF
         make install
     )&
 
-    cd emacs-goodies-el*/elisp/emacs-goodies-el/ && mkdir themes
 }
 
 

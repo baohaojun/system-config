@@ -10,8 +10,8 @@
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
   (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
-				"~/../tools/emacs-site-lisp/"
-			      "~/tools/emacs-site-lisp/")))
+				"~/../external/emacs-site-lisp/"
+			      "~/external/emacs-site-lisp/")))
     (let ((default-directory bhj-lisp-load-path)) 
       (load-file (concat bhj-lisp-load-path "/subdirs.el")))
     (setq load-path
@@ -536,13 +536,14 @@
             ))
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(Info-additional-directory-list (list "~/tools/emacswin/info/" "/usr/local/share/info" "/usr/share/info"))
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
+ '(bbdb-hashtable-size 10007)
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(delete-old-versions t)
@@ -603,10 +604,10 @@
 
 
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
 
 (set-keyboard-coding-system 'utf-8)
@@ -659,7 +660,7 @@
           (message-goto-from)
           (message-beginning-of-line)
           (kill-line)
-          (insert "Bao Haojun at Marvell <hjbao@marvell.com>"))))))
+          (insert "\"Bao Haojun at Marvell\" <hjbao@marvell.com>"))))))
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
@@ -1538,6 +1539,8 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (setq bbdb-check-zip-codes-p nil)
 (setq bbdb-ignore-some-messages-alist 
       '(
+	("From" . "susanpan@marvell.com")
+	("From" . "chenli@marvell.com")
 	("From" . "linkedin.com")
 	("From" . "bear.eee168.com")
 	))
@@ -1582,10 +1585,15 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (setq bbdb/gnus-update-records-mode '(my-bbdb/gnus-update-records-mode))
 
 (defun my-bbdb-canonicalize (addr)
-  (and (stringp addr)
-       (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr)))
-(setq bbdb-canonicalize-net-hook
+  (if (stringp addr)
+      (replace-regexp-in-string "@adsnexus.com\\|@eee168.com" "@eee168.com" addr)
+    addr))
+(add-hook 'bbdb-canonicalize-net-hook
       'my-bbdb-canonicalize)
+
+;; return value from `run-hook-with-args' is unreliable:
+(defun bbdb-canonicalize-address (net)
+  (my-bbdb-canonicalize net))
 
 
 ;; (setq bbdb-create-hook '(bbdb-creation-date-hook bbdb-bhj-unify-eee168))
