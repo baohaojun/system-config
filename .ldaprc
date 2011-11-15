@@ -1,0 +1,4 @@
+TLS_REQCERT allow
+
+TLS_CERT /var/myca/newcert.pem
+TLS_KEY /var/myca/newreq.pem

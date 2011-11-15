@@ -1,0 +1,21 @@
+#!/bin/bash
+if test $# = 1; then
+    query=$(printf '(|(cn=%s*)(sn=%s*)(mail=%s*))' "$1" "$1" "$1")
+elif test $# = 2; then
+    query='(|'
+    for x in sn cn mail givenName; do
+	for y in sn cn mail givenName; do
+	    test $x = $y && continue;
+	    query=$(printf '%s(&(%s=%s*)(%s=%s*))' "$query" $x $1 $y $2)
+	    done
+	done
+    query=$query')'
+fi
+
+ldapsearch.exe -x -ZZ  -LLL -b "DC=marvell,DC=com"  -h sh4-dc01 -D "marvell\hjbao" -w $(get-authinfo sh4-dc01) "$query" displayName mail 2>&1 | perl -ne '
+chomp;
+if (m/^displayName: (.*)$/) {
+    $cn = $1;
+} elsif (m/^mail: (.*)$/) {
+    print "\"$cn\" <$1>\n";
+}'
