@@ -186,7 +186,7 @@ function emacs-site-lisps()
 	for x in "${non_emacs_list[@]}"; do
 	    if [[ $x =~ .gz$ ]]; then
 		tar zxfv ../deb-src/"$(basename "$x")"
-	    else 
+	    elif [[ $x =~ .bz2$ ]]; then 
 		tar jxfv ../deb-src/"$(basename "$x")"
 	    fi
 	done
