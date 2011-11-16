@@ -1,10 +1,31 @@
 #!/bin/bash
+
+test $# = 0 && { echo "Usage: $(basename $0) match1 [match2] [[--] disp1 disp2 ... ]"; exit; }
+matches=()
+matches_done=false
+disps=()
+
+while test $# != 0; do
+    if test ${#matches[@]} = 2 -o "$1" = --; then
+	matches_done=true
+    fi
+    if test $matches_done = false; then
+	matches=("${matches[@]}" "$1")
+    else
+	test "$1" != -- && disps=("${disps[@]}" "$1")
+    fi
+    shift
+done
+
+set -- "${matches[@]}"
+
 if test $# = 1; then
     query=$(printf '(|(cn=%s*)(sn=%s*)(mail=%s*))' "$1" "$1" "$1")
 elif test $# = 2; then
     query='(|'
-    for x in sn cn mail givenName; do
-	for y in sn cn mail givenName; do
+    f='sn mail givenName'
+    for x in $f; do
+	for y in $f; do
 	    test $x = $y && continue;
 	    query=$(printf '%s(&(%s=%s*)(%s=%s*))' "$query" $x $1 $y $2)
 	    done
@@ -12,10 +33,48 @@ elif test $# = 2; then
     query=$query')'
 fi
 
-ldapsearch.exe -x -ZZ  -LLL -b "DC=marvell,DC=com"  -h sh4-dc01 -D "marvell\hjbao" -w $(get-authinfo sh4-dc01) "$query" displayName mail 2>&1 | perl -ne '
+function get-display() {
+    perl -ne '
+BEGIN{
+    @f = @ARGV;
+    @ARGV=();
+    $str = "";
+    $mail_str = "";
+
+    sub print_it() {
+        if ($mail_str) {
+            print "$mail_str";
+            if ($str) {
+                print ":$str";
+            }
+            print "\n";
+        }
+    }
+}
+
+END {
+    print_it;
+}
+
 chomp;
-if (m/^displayName: (.*)$/) {
-    $cn = $1;
+if (m/^dn: /) { # restart
+    print_it;
+    $str = ""; 
+    $mail_str = "";
+} elsif (m/^displayName: (.*)$/) {
+    $mail_str = "\"$1\" $mail_str";
 } elsif (m/^mail: (.*)$/) {
-    print "\"$cn\" <$1>\n";
-}'
+    $mail_str = "$mail_str<$1>";
+} else {
+    m/(.*?): (.*)/ or next;
+    ($key, $val) = ($1, $2);
+    for $f (@f) {
+        if ($key =~ m/$f/i) {
+            $str = "$str ($key: $val)"
+        }
+    }
+}
+' "${disps[@]}"
+}
+
+ldapsearch.exe -x -ZZ  -LLL -b "DC=marvell,DC=com"  -h sh4-dc01 -D "marvell\hjbao" -w $(get-authinfo sh4-dc01) "$query" | get-display
