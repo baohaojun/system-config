@@ -60,7 +60,7 @@ KeyToGrab(Delete),      WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(Pause),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(control.exe sysdm.cpl)
 KeyToGrab(D),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(ToggleDesktop)
 KeyToGrab(ScrLck), 	WithModifier(LWin),      WithAction(LockWorkStation)
-KeyToGrab(ScrLck), 	WithModifier(),		 WithAction(ExecCommand), DoThis(no-fg-lock.exe)
+KeyToGrab(ScrLck), 	WithModifier(),		 WithAction(ExecCommand), DoThis(cmd.exe /c start no-fg-lock.exe)
 KeyToGrab(S),           WithModifier(LWin),      WithAction(ifinds)
 KeyToGrab(O),           WithModifier(LWin),      WithAction(ifindo)
 

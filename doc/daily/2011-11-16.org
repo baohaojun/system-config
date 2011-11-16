@@ -5,3 +5,6 @@
 * TODO clean up code/files
 
 * TODO change company names etc.
+* DONE find out why my laptop Fn key long press will kill window
+  CLOSED: [2011-11-16 Wed 16:10]
+  - CLOSING NOTE [2011-11-16 Wed 16:10]

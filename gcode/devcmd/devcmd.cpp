@@ -32,11 +32,12 @@ int main(int argc, char* argv[])
 
 	// Translate server ProgID into a CLSID. ClsidFromProgID
 	// gets this information from the registry.
-	CLSID clsid0, clsid1;
+	CLSID clsid0, clsid1, clsid2;
 
 	// Try a couple of possibilities.
-	CLSIDFromProgID(L"VisualStudio.DTE.9.0", &clsid0);
-	CLSIDFromProgID(L"VisualStudio.DTE", &clsid1);
+	CLSIDFromProgID(L"VisualStudio.DTE.10.0", &clsid0);
+	CLSIDFromProgID(L"VisualStudio.DTE.9.0", &clsid1);
+	CLSIDFromProgID(L"VisualStudio.DTE", &clsid2);
 
 	// Get an interface to the running instance, if any..
 	IUnknown *pUnk;
@@ -47,8 +48,12 @@ int main(int argc, char* argv[])
 		hr = GetActiveObject(clsid1, NULL, (IUnknown**)&pUnk);
 		if (hr != 0)
 		{
-			printf("Can't find a running instance of VisualStudio.DTE\n");
-			return 1;
+            hr = GetActiveObject(clsid2, NULL, (IUnknown**)&pUnk);
+            if (hr != 0)
+            {
+                printf("Can't find a running instance of VisualStudio.DTE\n");
+                return 1;
+            }
 		}
 	}
 
