@@ -88,6 +88,12 @@
        nil)))
   (setq nntp-authinfo-file "~/../.authinfo"
 	auth-sources '((:source "~/../.authinfo" :host t :protocol t))))
+(autoload 'bbdb/send-hook "moy-bbdb" 
+  "Function to be added to `message-send-hook' to notice records when sending messages" t)
+ 
+(add-hook 'message-send-hook 'bbdb/send-hook) ; If you use Gnus
+
+(add-hook 'mail-send-hook 'bbdb/send-hook)
 ;;Local Variables: ***
 ;;coding: utf-8 ***
 ;;End: ***

@@ -1,1 +1,10 @@
 *.exe
+../.emacs_d/lisp/moy-bbdb.el
+../bin/do-daily
+../bin/windows/devcmd.exe
+../bin/windows/vc10
+../doc/daily/
+../doc/emacs-vs2010-keybind.PNG
+../doc/visemacs-vc10.reg
+devcmd/Release/
+scim-cs/scim.suo

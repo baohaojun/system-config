@@ -80,7 +80,10 @@ sub doCompile
                 #subprocess.check_call((vcExec, slnFile, '/Project', p, cmd, c) + options)
                 my $cmd = shift @targets_to_compile;
                 $cmd = "/Build" if (not $cmd);
-
+		print "$vc_program " . basename($sln_file) . " /Project \"$p\" $cmd $c @targets_to_compile\n";
+		if ($p =~ m/ /) {
+		    next;
+		}
                 open($vc_out, "-|", $vc_program, basename($sln_file), "/Project", $p, $cmd, $c, @targets_to_compile);
             }
             handleVcOutput($vc_out);

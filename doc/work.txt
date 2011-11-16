@@ -1165,3 +1165,8 @@ mkdir /var/myca; cd /var/myca
 2) openssl req -newkey rsa:1024 -nodes -keyout newreq.pem -out newreq.pem #make sure to choose different CN (common name) with 1)!
 2) /usr/share/ssl/misc/CA.sh -sign
 
+Emacs for vs2010
+Location: D:\cyg\home\bhj\windows-config\bin\windows\redirect_vc6\emacsedit.exe
+Arguments: -n +$(CurLine):$(CurCol) $(ItemPath)
+*note there is a variable button that will help you with the shortcuts like $(CurLine)
+WorkingDirectory: $(ItemDirectory)

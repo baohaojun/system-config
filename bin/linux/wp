@@ -9,7 +9,9 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then
 
         if [[ "$FILE" =~ ~/smb/ ]]; then
             FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
-        else
+        elif [[ "$FILE" =~ ^// ]]; then
+	    FILE=`echo "$FILE"|perl -npe 's,/,\\\\,g'`
+	else
             FILE=z:$FILE
         fi
         echo -n "$FILE"

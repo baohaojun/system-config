@@ -1,0 +1,7 @@
+#!/bin/bash
+
+mkdir -p ~/doc/daily
+cd ~/doc/daily
+
+test -e $(today).org || touch $(today).org
+edit $(today).org

@@ -43,7 +43,7 @@ KeyToGrab(P),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis
 KeyToGrab(P),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p mintty -c mintty -F 1 start-putty.sh)
 KeyToGrab(E),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p excel.exe -F 1 excel)
 KeyToGrab(W),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p winword.exe -F 1 word)
-KeyToGrab(W),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p explorer.exe -c wclass -F 1 "%HOMEDRIVE%%HOMEPATH%\My Documents")
+KeyToGrab(W),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p explorer.exe -c wclass -F 1 run bash open-my-documents.sh)
 KeyToGrab(Q),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py dexplore.exe|pidgin.exe)
 KeyToGrab(T),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(screen-exchange.sh)
 KeyToGrab(B),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p bash.exe bash --rcfile ~/.bashrc-min -i)

@@ -1,0 +1,7 @@
+* DONE email silu about the additional files needed by flashing tool.
+  CLOSED: [2011-11-16 Wed 12:47]
+  - CLOSING NOTE [2011-11-16 Wed 12:47]
+
+* TODO clean up code/files
+
+* TODO change company names etc.
