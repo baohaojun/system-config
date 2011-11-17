@@ -9,7 +9,6 @@ ui = Noninteractive.Basic
 localrepository = Local-Mrvl
 remoterepository = Remote-Mrvl
 maildir-windows-compatible = yes
-presynchook = ~/bin/sync_nnmaildir -g
 
 [Repository Remote-Mrvl]
 type = IMAP

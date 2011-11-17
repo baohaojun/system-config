@@ -16,6 +16,7 @@ function SetPath()
         ~/bin/windows/redirect_cyg
         ~/bin/linux
         /usr/local/bin
+	/usr/local/sbin
         /usr/X11R6/bin
         /usr/bin
         /sbin

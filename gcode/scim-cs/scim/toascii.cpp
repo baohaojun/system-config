@@ -272,7 +272,7 @@ static char get_ascii(u32 vk, u32 sc, modifier_t mod)
 
 static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
 {
-	if (vk >= sizeof(special_keys)/sizeof(special_keys[0])) {
+	if (vk >= sizeof(special_keys)/sizeof(special_keys[0])) { // on thinkpad T420, the Fn key will generate a vk=255.
 		return "";
 	}
 
@@ -301,8 +301,8 @@ static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
 				string ret;
 				ret.push_back(c);
 				return ret;
-			} else if (vk != 255) {
-				bhjerr(" Error: vk not special, and not graph: %d", vk);
+			} else {
+                return "";
 			}
 		}
 	}
@@ -317,7 +317,7 @@ static string get_key_desc(u32 vk, u32 sc, modifier_t mod)
 				ret.push_back(c);
 				return ret;
 			} else {
-				bhjerr(" Error: shift + vk not special, and not graph: %d", vk);
+				return "";
 			}
 		}
 	}
