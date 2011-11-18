@@ -20,7 +20,11 @@ done
 set -- "${matches[@]}"
 
 if test $# = 1; then
-    query=$(printf '(|(cn=%s*)(sn=%s*)(mail=%s*))' "$1" "$1" "$1")
+    if [[ "$1" =~ = ]]; then
+	query=$1
+    else
+	query=$(printf '(|(cn=%s*)(sn=%s*)(mail=%s*))' "$1" "$1" "$1")
+    fi
 elif test $# = 2; then
     query='(|'
     f='sn mail givenName'
@@ -45,7 +49,7 @@ BEGIN{
         if ($mail_str) {
             print "$mail_str";
             if ($str) {
-                print ":$str";
+                print ":$str\n";
             }
             print "\n";
         }
@@ -70,7 +74,7 @@ if (m/^dn: /) { # restart
     ($key, $val) = ($1, $2);
     for $f (@f) {
         if ($key =~ m/$f/i) {
-            $str = "$str ($key: $val)"
+            $str = "$str\n($key: $val)"
         }
     }
 }
