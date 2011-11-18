@@ -1,5 +1,6 @@
 * TODO install leafnode
 * TODO fireworks driver
 * TODO rename fireworks to marslash?
-
-
+* TODO work on beagrep for windows
+* TODO fireworks 包的路径名不能含中文字符
+* TODO fireworks 能否处理reliable data

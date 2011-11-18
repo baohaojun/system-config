@@ -27,6 +27,7 @@ function SetPath()
         /cygdrive/c/WINDOWS/system32
         "/cygdrive/c/Program Files/Intel/IPP/5.1/ia32/bin"
         /c/Python25
+	"/c/PROGRA~1/MONO-2~1.6/bin"
     )
 
     unset PATH
