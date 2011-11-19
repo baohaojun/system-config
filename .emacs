@@ -557,6 +557,7 @@
  '(gdb-same-frame t)
  '(gdb-show-main t)
  '(gnus-ignored-newsgroups "")
+ '(gnus-propagate-marks t)
  '(grep-use-null-device nil)
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
@@ -1895,5 +1896,11 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
          :publishing-directory "~/public_html"
          :section-numbers nil
          :table-of-contents nil)))
-
+(setq gnus-parameters
+      (nconc
+       ;; Some charsets are just examples!
+       '(("\\bcn\\.bbs\\..*" ;; Chinese
+          (mm-coding-system-priorities
+           '(iso-8859-1 gbk utf-8))))
+       gnus-parameters))
 (server-start)

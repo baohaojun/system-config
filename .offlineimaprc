@@ -9,6 +9,7 @@ ui = Noninteractive.Basic
 localrepository = Local-Mrvl
 remoterepository = Remote-Mrvl
 maildir-windows-compatible = yes
+presynchook = ~/bin/sync_nnmaildir -g
 
 [Repository Remote-Mrvl]
 type = IMAP
@@ -28,6 +29,8 @@ localfolders = ~/Maildir
 localrepository = Local-Gmail
 remoterepository = Remote-Gmail
 maildir-windows-compatible = yes
+maxsize = 500000
+presynchook = ~/bin/sync_nnmaildir -g
 
 [Repository Local-Gmail]
 type = Maildir
@@ -39,5 +42,4 @@ remoteuser = baohaojun@gmail.com
 remotepasseval = getcred("gmail", "baohaojun@gmail.com", 993)
 nametrans = lambda foldername: "gmail." + foldername.replace(" ", "_")
 maxconnections = 6
-maxsize = 500000
 folderfilter = lambda foldername: foldername.lower() == 'inbox'

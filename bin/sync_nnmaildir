@@ -79,8 +79,9 @@ for (glob "$dir/*") {
       if (-e "$path/.nnmaildir/marks/reply/$message") {
 	  # $new_flags = $new_flags . 'R'; davmail can not handle replied flag (in fact, any flag except 'S')
       }
-      # if it is in cur/, it is already SEEN, unread mails are kept at new/.
-      $new_flags = $new_flags . 'S';
+      if (-e "$path/.nnmaildir/marks/read/$message") {
+        $new_flags = $new_flags . 'S';
+      }
 
       if ($new_flags ne $flags) {
         rename "$file", "$path/cur/$message!2,$new_flags"
