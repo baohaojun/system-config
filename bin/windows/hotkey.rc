@@ -54,8 +54,8 @@ KeyToGrab(C),           WithModifier(LWin),      WithAction(ExecCommand), DoThis
 KeyToGrab(V),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py devenv.exe vc8)
 KeyToGrab(K),           WithModifier(LWin),      WithAction(ExecCommand), DoThis("%HOMEDRIVE%%HOMEPATH%\doc\work.txt")
 
-KeyToGrab(PLUS),        WithModifier(LWin),      WithAction(ExecCommand), DoThis(frontop.exe top)
-KeyToGrab(MINUS),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(frontop.exe bot)
+KeyToGrab(Up),        WithModifier(LWin),      WithAction(ExecCommand), DoThis(frontop.exe top)
+KeyToGrab(Down),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(frontop.exe bot)
 KeyToGrab(Delete),      WithModifier(LWin),      WithAction(ExecCommand), DoThis(taskmgr)
 KeyToGrab(Pause),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(control.exe sysdm.cpl)
 KeyToGrab(D),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(ToggleDesktop)

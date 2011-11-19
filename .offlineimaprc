@@ -1,6 +1,6 @@
 [general]
-accounts = Marvell
-maxsyncaccounts = 1
+accounts = Marvell, Gmail
+maxsyncaccounts = 2
 pythonfile = ~/bin/get-credentials.py
 ui = Noninteractive.Basic
 
@@ -24,3 +24,20 @@ folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in 
 type = Maildir
 localfolders = ~/Maildir
 
+[Account Gmail]
+localrepository = Local-Gmail
+remoterepository = Remote-Gmail
+maildir-windows-compatible = yes
+
+[Repository Local-Gmail]
+type = Maildir
+localfolders = ~/Maildir
+
+[Repository Remote-Gmail]
+type = Gmail
+remoteuser = baohaojun@gmail.com
+remotepasseval = getcred("gmail", "baohaojun@gmail.com", 993)
+nametrans = lambda foldername: "gmail." + foldername.replace(" ", "_")
+maxconnections = 6
+maxsize = 500000
+folderfilter = lambda foldername: foldername.lower() == 'inbox'

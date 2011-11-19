@@ -14,7 +14,7 @@ net start sshd&
 while true; do
     sleep 2;
     test -e ~/.no-loop && continue;
-    if ps aux|grep ssh|grep bhj@216 -q; 
+    if ps.pl ssh|grep bhj@216 -q; 
     then
         true;
     else
@@ -24,11 +24,19 @@ done&
 
 rm ~/.no-loop
 
-while true; do 
-    sleep 2;
-    test -e ~/.no-loop && continue;
-    cd ~/bin/windows;
-    command cmd /c hotkey_hook; 
-done&
+function loop-start() {
+    local dir=$1
+    shift
+    while true; do 
+	sleep 2;
+	test -e ~/.no-loop && continue;
+	cd "$dir"
+	"$@"
+    done&
+}
+
+loop-start ~/bin/windows/ command cmd /c hotkey_hook
+loop-start ~/bin/windows/Imap4Monitor /c/Python25/python.exe Imap4Monitor.py
+loop-start ~/bin/windows/notification-daemon/ /c/Python25/python.exe notification-daemon.py
 close-window '\\osk.exe'
 

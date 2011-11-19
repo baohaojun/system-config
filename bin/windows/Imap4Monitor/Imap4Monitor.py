@@ -23,11 +23,15 @@ class ConfigDlg (QDialog):
         settings = QSettings()
         layout = QGridLayout()
 
-        self.was_dirty = True
+        self.was_dirty = False
         
         self.host = settings.value("host", QVariant("localhost")).toString()
         self.port = settings.value("port", QVariant("993")).toString()
-        self.mailbox = settings.value("mailbox", QVariant("Inbox/LetouWork")).toString()
+        self.port = int(self.port)
+        self.ssl = False
+        if self.port == 993:
+            self.ssl = True
+        self.mailbox = settings.value("mailbox", QVariant("Inbox")).toString()
         self.username = settings.value("username", QVariant("bhj")).toString()
 
         label = QLabel("Host:")
@@ -89,6 +93,7 @@ class ConfigDlg (QDialog):
     def onOK(self):
         self.host = str(self.hostEdit.text())
         self.port = str(self.portEdit.text())
+        self.port = int(self.port)
         self.mailbox = str(self.mailboxEdit.text())
         self.username = str(self.usernameEdit.text())
 
@@ -113,8 +118,23 @@ class ConfigDlg (QDialog):
         self.checkMail()
 
     def checkMail(self):
+        if int(self.port) == 0:
+            try:
+                if os.system("bash has-new-mail.sh") == 0:
+                    self.trayIcon.setIcon(QIcon(":/got-mail.png"))
+                    if not self.was_dirty:
+                        self.trayIcon.showMessage("Hey!", "You've got mail", 5000)
+                    self.was_dirty = True
+                else:
+                    self.trayIcon.setIcon(QIcon(":/no-mail.png"))
+                    self.was_dirty = False
+                self.timer.start(300000)
+            except:
+                pass
+            return
         try:
-            x=IMAP4_SSL(self.host, int(self.port))
+            func = IMAP4_SSL if self.ssl else IMAP4
+            x=func(self.host, int(self.port))
             x.login(self.username, self.password)
             for mb in self.mailbox.split('/'):
                 y = x.status(mb, '(unseen)')
@@ -122,7 +142,7 @@ class ConfigDlg (QDialog):
                     raise RuntimeError, 'IMAP result not OK'
                 if '(UNSEEN 0)' not in y[1][0]:
                     self.trayIcon.setIcon(QIcon(":/got-mail.png"))
-                    self.timer.start(2000)
+                    self.timer.start(5000)
                     self.was_dirty = True
                     break
             else:
