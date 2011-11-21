@@ -1,3 +1,18 @@
 #!/bin/bash
 
-echo refs/heads/from-mac/`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`
+case $(uname) in
+    CYGWIN*)
+	echo refs/heads/from-mac/$(ifconfig /all | tr -d '\r' | perl -ne 'if (m/eth\d+:\s*$/) 
+{
+    while (<>) {
+        if (m/Physical Address.*:\s*(.*)/) {
+            print lc($1);
+            exit;
+        }
+    }
+}')-$(hostname)-$(uname)
+	;;
+    *)
+	echo refs/heads/from-mac/`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`
+	;;
+esac
