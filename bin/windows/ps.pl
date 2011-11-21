@@ -36,7 +36,14 @@ foreach (@Processes[1..$#Processes]) {
 				       substr($_, $cmd_n + $create_n, $ppid_n),
 				       substr($_, $cmd_n + $create_n + $ppid_n, $pid_n));
     if (@ARGV) {
-      next unless $cmd =~ m/$ARGV[0]/i;
+	my $match = 1;
+	for (@ARGV) {
+	    unless ($cmd =~ m/$_/i) {
+		$match = 0;
+		last;
+	    }
+	}
+	next unless $match;
     }
 
     

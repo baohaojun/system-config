@@ -30,7 +30,9 @@ use String::ShellQuote;
 $max_token = shell_quote($max_token);
 
 my $tokens = qx/beagle-break.sh $max_token/;
-$tokens =~ tr/\n/ /;
+
+$tokens =~ s/\r|\n/ /g;
+
 print "$tokens\n";
 
 

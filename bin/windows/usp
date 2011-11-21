@@ -1,0 +1,6 @@
+#!/bin/bash
+#usp stands for Unix Short Path
+
+cygpath -u $(cygpath -asm "${1:-.}")|tr -d '\n'|tee /tmp/usp.$$
+cat /tmp/usp.$$|putclip
+rm /tmp/usp.$$

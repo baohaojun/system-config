@@ -80,7 +80,7 @@ if ($list_beagle) {
 }
 
 if (!$find_file_only) {
-  open(my $grep, "|xargs grep -H -n -I $ignore_case -e $pat");
+  open(my $grep, "|xargs -d '\\n' grep -H -n -I $ignore_case -e $pat");
 
   for (@beagle_files) {
     next unless m/$pathpat/i;

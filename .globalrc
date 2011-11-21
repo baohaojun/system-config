@@ -49,7 +49,7 @@ plugin-example|Example of function layer plugin parser:\
 	:gtags_parser=c\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=yacc\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=asm\:/usr/local/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=java\:/usr/local/lib/gtags/gtags-antlr-java.la:\
+	:gtags_parser=java\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=cpp\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=php\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=fortran\:/usr/local/lib/gtags/exuberant-ctags.la:\

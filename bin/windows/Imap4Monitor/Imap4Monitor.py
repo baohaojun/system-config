@@ -125,10 +125,11 @@ class ConfigDlg (QDialog):
                     if not self.was_dirty:
                         self.trayIcon.showMessage("Hey!", "You've got mail", 5000)
                     self.was_dirty = True
+                    self.timer.start(5000)
                 else:
                     self.trayIcon.setIcon(QIcon(":/no-mail.png"))
                     self.was_dirty = False
-                self.timer.start(300000)
+                    self.timer.start(30000)
             except:
                 pass
             return

@@ -1,2 +1,2 @@
 #!/bin/bash
-mono `which beagle-break.exe` "$@"
+beagle-break.exe "$@"

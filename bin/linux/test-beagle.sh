@@ -1,12 +1,16 @@
 #!/bin/bash
 
-tmpd=/tmp/$$.test-beagle
+set -e
+tmpd=$(wlp /tmp/$$.test-beagle)
 mkdir $tmpd
 txt_file=$tmpd/${TBNAME:-1.cs}
 
 for x in "$@"; do echo "$x"; done > $txt_file
 
-mkdir $tmpd/.beagle; beagle-build-index --recursive --deny-pattern .beagle --enable-deletion --target $tmpd/.beagle/ $tmpd
+mkdir $tmpd/.beagle; 
+cd $tmpd
+beagle-build-index --recursive --deny-directory-pattern /home/bhj/windows-config/gcode/beagrep/outx --enable-deletion --target $(wlp .beagle) "$(cygpath -alm .)"
+
 beagle-dump-index --indexdir=${tmpd:-`pwd`}/.beagle --term-frequencies
 beagle-static-query --add-static-backend ${tmpd:-`pwd`}/.beagle --backend none --max-hits 100000 "$@"
 beagle-extract-content $txt_file

@@ -1,5 +1,5 @@
 #!/bin/bash
-File=$(cygpath -au "${1:-$(getclip)}")
+File=$(cygpath -au "${1:-.}")
 if test ${File:0:2} = //; then
     cygpath -au "$File"|tr -d '\r\n'|putclip
 else 
