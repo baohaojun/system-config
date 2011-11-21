@@ -34,9 +34,14 @@ function SetPath()
     for x in "${paths[@]}"; do
         #cygwin-1.7 will behave weirdly if /h is mounted but the
         #texlive disk is not inserted
-        export PATH="$PATH":"$x"
+        export PATH=$PATH:$x
     done
-    PATH="${PATH:1}" #remove the beginning `:'
+    for x in $(find ~/bin/windows/paths/ -type f -o -type l) \
+	$(find ~/external/bin/windows/paths/ -type f -o -type l 2>/dev/null)
+    do
+	export PATH=$PATH:$x
+    done
+    PATH=${PATH:1} #remove the beginning `:'
 
     #set up CLASSPATH
     unset CLASSPATH

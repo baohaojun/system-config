@@ -23,13 +23,13 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 
 	test -e "$file" && break
 
-	if test $PWD = /; then
+	if test "$PWD" = /; then
 	    exit -1
 	fi
 	builtin cd ..
     done
 
-    if test ${file:0:1} = /; then
+    if test "${file:0:1}" = /; then
 	echo "$file"
     else
 	echo "$PWD"/"$file"
@@ -40,11 +40,11 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 
     while true; do
 	if find "$dir" -maxdepth 1 -iname "*$base*"|grep -q .; then
-	    find $PWD/"$dir" -maxdepth 1 -iname "*$base*"
+	    find "$PWD"/"$dir" -maxdepth 1 -iname "*$base*"
 	    exit 0
 	fi
 
-	if test $PWD = /; then
+	if test "$PWD" = /; then
 	    exit -1
 	fi
 	builtin cd ..

@@ -85,7 +85,7 @@ sub edit_1($)
       $file =~ m,:$, and chop($file);
 
       my $line=1;
-      $file =~ s,:([0-9]+)$,, and $line = $1;
+      $file =~ s,:(\d+)$,, and $line = $1;
 
       if (`uname` =~ m/cygwin/i) {
           $file = shell_quote($file);
