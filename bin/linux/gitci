@@ -35,7 +35,7 @@ test $# -lt 1 && die "Error: at least 1 reviewer"
 
 reviewer=()
 while test $# -gt 0; do 
-    reviewer=("${reviewer[@]}" "${1%:*}")
+    reviewer=("${reviewer[@]}" "$(echo "${1%@*}"|perl -npe 's/.*<//')")
     shift
 done
 

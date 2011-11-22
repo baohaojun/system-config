@@ -108,10 +108,21 @@ fi
 
 scd()
 {
-    dir=$(lookup_file "$1"|tee /dev/stderr|head -n 1)
-    dir=$(formal-path "$dir")
-    basedir=$(dirname "$dir")
-    stem=$(basename "$dir")
-
-    cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')"
+    if test $# = 1; then
+	dir=$(lookup_file "$1"|tee /dev/stderr|head -n 1)
+	dir=$(formal-path "$dir")
+	basedir=$(dirname "$dir")
+	stem=$(basename "$dir")
+	
+	cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')"
+    else
+	dir=$(lookup_file "$1"|tee /dev/stderr|head -n 1)
+	shift
+	dir=$(cd "$dir"; lookup_file "$1"|tee /dev/stderr|head -n 1)
+	dir=$(formal-path "$dir")
+	basedir=$(dirname "$dir")
+	stem=$(basename "$dir")
+	
+	cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')"
+    fi
 }
