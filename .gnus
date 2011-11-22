@@ -4,10 +4,6 @@
  user-full-name "Haojun Bao"
  nnml-directory "~/private/mail/"
  message-default-charset 'utf-8
- gnus-select-method '(nnimap "localhost"
-                             (nnimap-address "localhost")
-                             (nnimap-server-port 143)
-                             (nnimap-stream network))
  gnus-signature-limit 500
  message-cite-function 'message-cite-original-without-signature
  )
@@ -68,17 +64,20 @@
           ;; Mail
           "sent-mails")))) 
 
+(setq gnus-select-method
+      '(nnmaildir "Gmail"
+		  (directory (if (eq system-type 'windows-nt)
+				 "~/../Maildir"
+			       "~/Maildir"))
+		  (directory-files nnheader-directory-files-safe) 
+		  (get-new-mail nil)))
+(setq smtpmail-auth-credentials 
+      '(("localhost"
+	 2025
+	 "hjbao@marvell.com"
+	 nil)))
 (when (eq system-type 'windows-nt)
-  (setq gnus-select-method
-	'(nnmaildir "Gmail"
-		    (directory "~/../Maildir")
-		    (directory-files nnheader-directory-files-safe) 
-		    (get-new-mail nil)))
-  (setq smtpmail-auth-credentials 
-    '(("localhost"
-       2025
-       "hjbao@marvell.com"
-       nil)))
+
   (setq nntp-authinfo-file "~/../.authinfo"
 	auth-sources '((:source "~/../.authinfo" :host t :protocol t))))
 (autoload 'bbdb/send-hook "moy-bbdb" 

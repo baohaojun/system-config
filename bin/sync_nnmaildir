@@ -19,6 +19,11 @@ use File::Basename;
 use Getopt::Long;
 $Getopt::Long::ignorecase = 0;
 
+my $sep_char = ':';
+if (qx(uname) =~ m/^cygwin/i) {
+    $sep_char = '!';
+}
+
 my $from_gnus = 0;
 my $from_maildir = 0;
 my $dir = "~/Maildir";
@@ -38,7 +43,7 @@ for (glob "$dir/*") {
   for (glob "$mb/cur/*") {
     my $file = $_;
 
-    if (not /(.*)\/cur\/(.*?)!.*2,(.*)$/) {
+    if (not /(.*)\/cur\/(.*?)$sep_char.*2,(.*)$/) {
 	next;
     }
 
@@ -84,7 +89,7 @@ for (glob "$dir/*") {
       }
 
       if ($new_flags ne $flags) {
-        rename "$file", "$path/cur/$message!2,$new_flags"
+        rename "$file", ("$path/cur/$message$sep_char" . "2,$new_flags")
           and print "Marked mail in $mb as $new_flags\n";
       }
     }

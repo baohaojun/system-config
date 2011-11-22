@@ -8,7 +8,6 @@ ui = Noninteractive.Basic
 [Account Marvell]
 localrepository = Local-Mrvl
 remoterepository = Remote-Mrvl
-maildir-windows-compatible = yes
 presynchook = ~/bin/sync_nnmaildir -g
 
 [Repository Remote-Mrvl]
@@ -28,7 +27,6 @@ localfolders = ~/Maildir
 [Account Gmail]
 localrepository = Local-Gmail
 remoterepository = Remote-Gmail
-maildir-windows-compatible = yes
 maxsize = 500000
 presynchook = ~/bin/sync_nnmaildir -g
 
