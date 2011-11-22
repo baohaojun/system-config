@@ -10,6 +10,7 @@ localrepository = Local-Mrvl
 remoterepository = Remote-Mrvl
 maildir-windows-compatible = yes
 presynchook = ~/bin/sync_nnmaildir -g
+postsynchook = ~/bin/sync_nnmaildir -m
 
 [Repository Remote-Mrvl]
 type = IMAP
@@ -31,6 +32,7 @@ remoterepository = Remote-Gmail
 maildir-windows-compatible = yes
 maxsize = 500000
 presynchook = ~/bin/sync_nnmaildir -g
+postsynchook = ~/bin/sync_nnmaildir -m
 
 [Repository Local-Gmail]
 type = Maildir
