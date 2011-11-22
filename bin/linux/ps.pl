@@ -1,6 +1,8 @@
 #!/bin/bash
 export ARGS=$@
 export MY_PID=$$
+echo "  PID  PPID     ELAPSED CMD"
+
 ps -eo pid,ppid,etime,cmd | perl -ne '
 BEGIN{
     @args=split(/\s+/, $ENV{"ARGS"});

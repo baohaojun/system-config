@@ -21,6 +21,11 @@ function got-mail() {
 	if test "$2" = sync; then
 	    sync_nnmaildir -g
 	    offlineimap&
+	    if test -z "$HAS_NEW_MAIL"; then
+		export HAS_NEW_MAIL=true
+		has-new-mail.sh
+		exit $?
+	    fi
 	fi
 	exit 0
     else
