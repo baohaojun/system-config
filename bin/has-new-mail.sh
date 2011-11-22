@@ -14,13 +14,18 @@ for x in */cur */.nnmaildir/marks/read; do
 done
 
 function got-mail() {
+    run_offlineimap=true
     if test "$1" != "$(cat $result)"; then
 	echo $1 > $result
+    else
+	run_offlineimap=false
     fi
     if test $1 = true; then
 	if test "$2" = sync; then
 	    sync_nnmaildir -g
-	    offlineimap&
+	    if test $run_offlineimap = true; then
+		offlineimap
+	    fi&
 	    if test -z "$HAS_NEW_MAIL"; then
 		export HAS_NEW_MAIL=true
 		has-new-mail.sh
