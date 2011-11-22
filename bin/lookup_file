@@ -32,7 +32,11 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
     if test "${file:0:1}" = /; then
 	echo "$file"
     else
-	echo "$PWD"/"$file"
+	if test -e "$PWD"/"$file"; then
+	    echo "$PWD"/"$file"
+	else
+	    echo "$file"
+	fi
     fi
 ) || (
     dir=`dirname "$file"`

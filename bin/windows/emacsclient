@@ -1,11 +1,11 @@
 #!/bin/bash
 if test -e ~/external/emacs-nt; then
     if test $# = 1; then
-	set -- "$(readlink -f "$1")"
+	set -- "$(ulp "$1")"
     elif test $# = 2 && test -e "$2"; then
-	set -- "$1" "$(readlink -f "$2")"
+	set -- "$1" "$(ulp "$2")"
     elif test $# = 3 && test -e "$3"; then
-	set -- "$1" "$2" "$(readlink -f "$3")"
+	set -- "$1" "$2" "$(ulp "$3")"
     fi
     HOME=~/windows-config ~/external/emacs-nt/bin/emacsclient "$@"
 else
