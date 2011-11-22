@@ -1,8 +1,7 @@
 #!/bin/bash
 set -e
 function compile_beagle() {
-    cd ~/gcode/beagrep
-    git co origin/$(uname|perl -npe 's/_.*//')
+    cd ~/gcode/beagle/
     sh ./autogen.sh
     make
     sudo make install

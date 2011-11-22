@@ -86,7 +86,7 @@ function mkbeagleidx() {
     beagle-build-index --recursive \
         --deny-directory-pattern `pwd`/outx \
         --enable-deletion \
-        --target "$(wlp "$outDir"/.beagle/)" \
+        --target "$(cygpath -alw "$outDir"/.beagle/)" \
         "$relativeSrcDir" 2>&1 \
         |tee -a "$outDir"/.beagle-build-log
 
