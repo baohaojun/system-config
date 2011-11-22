@@ -10,9 +10,9 @@ case $(uname) in
             exit;
         }
     }
-}')-$(hostname)-$(uname)
+}')-$(hostname)-$(uname|perl -npe 's/_.*//')
 	;;
     *)
-	echo refs/heads/from-mac/`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`
+	echo refs/heads/from-mac/`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`-$(uname)
 	;;
 esac
