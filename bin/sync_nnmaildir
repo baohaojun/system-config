@@ -84,7 +84,7 @@ for (glob "$dir/*") {
       if (-e "$path/.nnmaildir/marks/reply/$message") {
 	  # $new_flags = $new_flags . 'R'; davmail can not handle replied flag (in fact, any flag except 'S')
       }
-      if (-e "$path/.nnmaildir/marks/read/$message") {
+      if (-e "$path/.nnmaildir/marks/read/$message" or $flags =~ m/S/) { #add Seen flag if either Seen by gnus or the upstream 
         $new_flags = $new_flags . 'S';
       }
 
