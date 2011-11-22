@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PROJECT=CINEMA
+PROJECT=sultan
 
 TEMP=`getopt -o p: --long project: -n jira-create-issue -- "$@"`
 eval set -- "$TEMP"
@@ -17,7 +17,7 @@ done
 summary=$1
 
 function jira_create_issue_prefix() {
-    jira -a createIssue --type Bug --assignee hjbao\:\ Haojun\ Bao  --project "$PROJECT" --components OS --summary "$@"
+    jira -a createIssue --type Bug --assignee hjbao\:\ Haojun\ Bao  --project "$PROJECT" --components Tools --summary "$@"
 }
 
 shift

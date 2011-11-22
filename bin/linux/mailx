@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/bin/mailx -S smtp=localhost:2025 -S smtp-auth-user=hjbao@marvell.com -S smtp-auth-password=$(get-authinfo localhost hjbao@marvell.com) "$@"
