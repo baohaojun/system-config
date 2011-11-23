@@ -1,0 +1,98 @@
+#!/bin/bash
+
+declare -a subject
+declare -a body
+declare -a attach
+declare -a to
+declare -a cc
+declare -a bcc
+
+IFS=$'\n'
+
+prog_name="`basename \"$0\"`"
+
+function check_arg()
+{
+    if [[ -z "$1" ]]
+    then
+        Usage;
+    fi
+}
+
+function Usage()
+{
+    echo "Usage: $prog_name [recipient]... OPTIONS"
+    echo 
+    echo "Main Options:"
+    echo "    -h:                 this little help"
+    echo "    -c cc_recipient:    cc to somebody"
+    echo "    -b bcc_recipient:   bcc to somebody"
+    echo "    -s subject:         subject"
+    echo "    -a file:            attach"
+    exit
+}
+
+while true; do 
+    case "$1" in
+        [^-]*)
+	    to=("${to[@]}" "$1")
+            shift
+            ;;
+        -h)
+            Usage
+            shift
+            ;;
+        -s)
+            check_arg "$2"
+            subject=("$2")
+            shift
+            shift
+            ;;
+        -c)
+            check_arg "$2"
+            cc=("${cc[@]}" "$2")
+            shift
+            shift
+            ;;
+        -b)
+            check_arg "$2"
+            bcc=("${bcc[@]}" "$2")
+            shift
+            shift
+            ;;
+        -a)
+            check_arg "$2"
+            attach=("${attach[@]}" "$(wlp "$2")")
+            shift
+            shift
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if tty >/dev/null 2>&1; then
+    body=("$(get-stdin)")
+else
+    body=("$(cat)")
+fi
+
+test -z "${body[0]}" && body=("=")
+
+(type blat.exe || of http://sourceforge.net/projects/blat/files/) >/dev/null 2>&1
+(
+    printf "blat.exe - -charset gbk -f hjbao@marvell.com -u hjbao@marvell.com -server localhost -port 2025 -pw %q " "$(get-authinfo localhost hjbao@marvell.com)";
+    for y in attach to cc bcc subject body; do
+	eval '
+        if test ${#'$y'[@]} != 0; then
+            printf -- \ -'$y'\ 
+            for x in $(seq 1 "${#'$y'[@]}"); do
+                printf -- "%q" "${'$y'[$x-1]}"
+                if test $x != ${#'$y'[@]}; then
+                    echo -n ,
+                fi
+            done
+        fi'
+    done
+) | bash

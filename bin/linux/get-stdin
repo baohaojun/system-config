@@ -6,7 +6,7 @@ test $# = 0 -o $# = 1
 if tty >/dev/null 2>&1; then
     tmp=/tmp/`basename $0`.$$
     touch $tmp
-    test $# = 1 -a $1 != $tmp && cat $1 > $tmp
+    test $# = 1 -a "$1" != $tmp && cat $1 > $tmp
     edit-wait $tmp >/dev/null 2>&1
     if test "`cat $tmp | wc -c`" == 0; then
         echo Error: input can not be empty 1>&2

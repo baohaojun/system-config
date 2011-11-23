@@ -291,6 +291,7 @@ else
     cd `pwd`/`dirname $0`;
 fi
 " nil 0)
+    ("qq" ">/dev/null 2>&1" nil 0)
     ("shmode" "# Local variables:
 # mode: shell-script
 # sh-basic-offset: 4
