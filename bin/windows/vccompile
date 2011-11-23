@@ -3,6 +3,7 @@
 use strict;
 use File::Glob qw(:globally :nocase);
 use File::Basename;
+use String::ShellQuote;
 
 
 
@@ -27,7 +28,7 @@ sub main
     chomp($cwd = `pwd`);
     die "Can't compile in a UNC directory!\n" if ($cwd =~ m#^//(?!/)#);
     $cwd =~ s#/+#/#g;
-
+    print "cwd is '$cwd'\n";
     getSlnFile();
     $is_proj_vc6 = 1 if ($sln_file =~ m/\.dsw$/i);
     if ($is_proj_vc6) {
@@ -66,6 +67,7 @@ sub main
 
 sub doCompile
 {
+    my $all_ok = 1;
     foreach my $p (@projs_to_compile) {
         print "make: Entering directory ", getProjDir($p), "\n";
         
@@ -80,16 +82,14 @@ sub doCompile
                 #subprocess.check_call((vcExec, slnFile, '/Project', p, cmd, c) + options)
                 my $cmd = shift @targets_to_compile;
                 $cmd = "/Build" if (not $cmd);
-		print "$vc_program " . basename($sln_file) . " /Project \"$p\" $cmd $c @targets_to_compile\n";
-		if ($p =~ m/ /) {
-		    next;
-		}
+		print "$vc_program " . shell_quote(basename($sln_file)) . " /Project " . shell_quote($p) . " $cmd $c @targets_to_compile\n";
                 open($vc_out, "-|", $vc_program, basename($sln_file), "/Project", $p, $cmd, $c, @targets_to_compile);
             }
             handleVcOutput($vc_out);
             close $vc_out;
-            die "child $vc_program exited with $?" if ($?);
+	    $all_ok = 0 if ($?);
         }
+	die "child $vc_program exited with $?" if not $all_ok;
         print "make: Leaving directory ", getProjDir($p), "\n";
     }
 }
@@ -222,8 +222,10 @@ sub getSlnFile
         chdir "..";
     }
 
+    $dsw_slns[0] = shell_quote($dsw_slns[0]);
     chomp($sln_file = `readlink -f $dsw_slns[0]`);
-    chomp($sln_dir = `dirname "$sln_file"`);
+    my $sln_fileq = shell_quote($sln_file);
+    chomp($sln_dir = `dirname $sln_fileq`);
 }
 
 sub getAllSubProjs

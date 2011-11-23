@@ -21,6 +21,7 @@
 #include <string>
 #include <list>
 #include "base64.h"
+#define BOOST_THREAD_USE_DLL
 #include <boost/crc.hpp>
 #include <boost/regex.hpp>
 #include <boost/detail/lightweight_test.hpp>

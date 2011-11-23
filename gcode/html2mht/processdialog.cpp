@@ -112,7 +112,7 @@ void DrawTransparentBitmapSpecial(RECT *rc, HDC hdc, HBITMAP hBitmap, int xSize,
 
 int DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	static frame;
+	static int frame;
 
 	switch(msg)
 	{

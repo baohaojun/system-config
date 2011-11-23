@@ -21,7 +21,7 @@ struct FIELD
 
 		HANDLE hFile=CreateFile(name.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if(hFile==INVALID_HANDLE_VALUE)
-			throw exception("cannot get the length of a file");
+			throw std::exception("cannot get the length of a file");
 		GetFileSizeEx(hFile, (PLARGE_INTEGER)&length);
 
 		char *buffer=new char[(size_t)length];
@@ -139,7 +139,7 @@ inline bool ProcessTag(string val, string *out, char **addfrom, const char *addt
 
 		string filepath=LocationFromPath(val);
 		*addfrom=(char *)newaddfrom;
-
+#pragma warning(disable : 4996)
 		for(FIELDSITERATOR it=fields.begin(); it!=fields.end(); ++it)
 			if(stricmp(it->name.c_str(), val.c_str())==0)
 			{

@@ -117,6 +117,10 @@ EOC
 
 } else {
     my @cmd = edit_1($myfile);
-    print "@cmd\n";
+    print "will run: ";
+    for (@cmd) {
+	print "'$_' ";
+    }
+    print "\n";
     system(@cmd);
 }

@@ -221,6 +221,8 @@
 
 (define-abbrev-table 'nroff-mode-abbrev-table '())
 
+(define-abbrev-table 'nxml-mode-abbrev-table '())
+
 (define-abbrev-table 'objc-mode-abbrev-table
   '(
    ))
@@ -291,7 +293,8 @@ else
     cd `pwd`/`dirname $0`;
 fi
 " nil 0)
-    ("qq" ">/dev/null 2>&1" nil 0)
+    ("qe" "2>/dev/null" nil 1)
+    ("qq" ">/dev/null 2>&1" nil 3)
     ("shmode" "# Local variables:
 # mode: shell-script
 # sh-basic-offset: 4

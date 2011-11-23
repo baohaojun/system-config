@@ -1,3 +1,4 @@
+*.ncb
 .svn
 *.class
 *.pyc
