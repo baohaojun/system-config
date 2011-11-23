@@ -1,10 +1,11 @@
 #!/bin/bash
+mkdir -p ~/jira-issues/
 cd ~/jira-issues/ || exit
 
 mkdir -p backup
 mv * ./backup
 
-issues=$(jira -a getIssueList --filter NV-open|perl -ne 'print unless (1..2)'|awk -F, '{print $1}')
+issues=$(jira -a getIssueList --filter "${1:-my-open}"|perl -ne 'print unless (1..2)'|awk -F, '{print $1}')
 
 for x in ${issues[@]}; do 
     if test -e backup/"$x"\:*; then

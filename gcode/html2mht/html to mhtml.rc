@@ -1,0 +1,152 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_HTMLTOMHTML         ICON                    "html to mhtml.ico"
+IDI_SMALL               ICON                    "small.ico"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (Canada) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENC)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_CAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DLGPROGRESS DIALOGEX 0, 0, 158, 81
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Working..."
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Working, please wait...",IDC_STATIC,7,7,144,8
+    LTEXT           "Static",IDC_CURRENTFILE,7,15,144,37
+    CONTROL         "",IDC_ANIMATION,"Static",SS_BITMAP | SS_CENTERIMAGE | 
+                    SS_REALSIZEIMAGE,7,52,144,22
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_DLGPROGRESS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 151
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 74
+        HORZGUIDE, 15
+        HORZGUIDE, 52
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP                  "Folder_frame_000.bmp"
+IDB_BITMAP2             BITMAP                  "Folder_frame_001.bmp"
+IDB_BITMAP3             BITMAP                  "Folder_frame_002.bmp"
+IDB_BITMAP4             BITMAP                  "Folder_frame_003.bmp"
+IDB_BITMAP5             BITMAP                  "Folder_frame_004.bmp"
+IDB_BITMAP6             BITMAP                  "Folder_frame_005.bmp"
+IDB_BITMAP7             BITMAP                  "Folder_frame_006.bmp"
+IDB_BITMAP8             BITMAP                  "Folder_frame_007.bmp"
+IDB_BITMAP9             BITMAP                  "Folder_frame_008.bmp"
+IDB_BITMAP10            BITMAP                  "Folder_frame_009.bmp"
+IDB_BITMAP11            BITMAP                  "Folder_frame_010.bmp"
+IDB_BITMAP12            BITMAP                  "Folder_frame_011.bmp"
+IDB_BITMAP13            BITMAP                  "Folder_frame_012.bmp"
+IDB_BITMAP14            BITMAP                  "Folder_frame_013.bmp"
+IDB_BITMAP15            BITMAP                  "Folder_frame_014.bmp"
+IDB_BITMAP16            BITMAP                  "Folder_frame_015.bmp"
+IDB_BITMAP17            BITMAP                  "Folder_frame_016.bmp"
+IDB_BITMAP18            BITMAP                  "Folder_frame_017.bmp"
+#endif    // English (Canada) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

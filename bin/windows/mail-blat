@@ -31,11 +31,11 @@ function Usage()
     echo "    -a file:            attach"
     exit
 }
-
+rec_type=to
 while true; do 
     case "$1" in
         [^-]*)
-	    to=("${to[@]}" "$1")
+	    eval $rec_type='("${'$rec_type'[@]}" "$1")'
             shift
             ;;
         -h)
@@ -50,14 +50,12 @@ while true; do
             ;;
         -c)
             check_arg "$2"
-            cc=("${cc[@]}" "$2")
-            shift
+	    rec_type=cc
             shift
             ;;
         -b)
             check_arg "$2"
-            bcc=("${bcc[@]}" "$2")
-            shift
+	    rec_type=bcc
             shift
             ;;
         -a)
@@ -95,4 +93,4 @@ test -z "${body[0]}" && body=("=")
             done
         fi'
     done
-) | bash
+) | bash -x

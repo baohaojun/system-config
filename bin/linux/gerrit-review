@@ -2,8 +2,14 @@
 
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
 export REMOTE=$(git config remote.`repo-remote`.url)
-git push $REMOTE HEAD:refs/for/`tbranch` 2>&1|perl -npe '
+(
+    if tty >/dev/null 2>&1; then
+	git push $REMOTE HEAD:refs/for/`tbranch` 2>&1|perl -npe '
     if (m,http://bear/gerrit/(\d+),) {
         system("putclip", "git", "pull", $ENV{REMOTE}, 
                "refs/changes/" . substr($1, -2) . "/$1/1");
-    }'
+    }' 
+    else
+	cat
+    fi
+) | perl  -npe 's/\033\[./ /g' | tee /dev/tty |tee ~/.logs/gerrit-review.log| mailx -s "Review request: ""$(git log -1|perl -ne 'print if 5..5')" $(git log -1|grep -e 'Reviewed-by:'|pn 2|perl -npe 's/\s+//; s/$/\@marvell.com/; print "\n"')
