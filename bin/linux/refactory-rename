@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+function die() {
+    echo "$@"
+    exit 1
+}
+
+git status
+git st -s | grep . && die "git not clean"
+test -d .git || die "not at git top level"
+git ls-tree -r HEAD |xargs -r 

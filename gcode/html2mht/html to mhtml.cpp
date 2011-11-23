@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "html to mhtml.h"
 #include "processdialog.h"
+#define ENABLE_BHJDEBUG
+#include "bhjdebug.h" 
 
 struct FIELD
 {
@@ -20,8 +22,10 @@ struct FIELD
 		crc_32_type result;
 
 		HANDLE hFile=CreateFile(name.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-		if(hFile==INVALID_HANDLE_VALUE)
+		if(hFile==INVALID_HANDLE_VALUE) {
+            BHJDEBUG(" name is %s", name.c_str());
 			throw std::exception("cannot get the length of a file");
+        }
 		GetFileSizeEx(hFile, (PLARGE_INTEGER)&length);
 
 		char *buffer=new char[(size_t)length];
