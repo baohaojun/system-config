@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by html to mhtml.rc
+// Used by html_to_mhtml.rc
 //
 #define IDC_MYICON                      2
 #define IDD_HTMLTOMHTML_DIALOG          102

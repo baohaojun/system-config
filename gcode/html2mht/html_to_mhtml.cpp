@@ -1,8 +1,8 @@
-// html to mhtml.cpp : Defines the entry point for the application.
+// html_to_mhtml.cpp : Defines the entry point for the application.
 //
 
 #include "stdafx.h"
-#include "html to mhtml.h"
+#include "html_to_mhtml.h"
 #include "processdialog.h"
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 

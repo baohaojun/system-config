@@ -6,6 +6,11 @@ function die() {
 }
 
 git status
-git st -s | grep . && die "git not clean"
-test -d .git || die "not at git top level"
-git ls-tree -r HEAD |xargs -r 
+git st -s . | grep . && die "git not clean"
+
+test $# = 0 && die "must provide at least 2 args"
+tmpf=/tmp/$(basename $0).$$
+git ls-tree --name-only -r HEAD > $tmpf
+cat $tmpf | xargs -d \\n grep -l -e "$1" |xargs -d \\n perl -npe 's,'"$1"','"$2"',g' -i
+cat $tmpf | grep -e "$1" | xargs -d \\n bash -c 'for x in "$@"; do git mv "$x" $(echo "$x"|perl -npe "s,'"$1"','"$2"',g"); done' true
+

@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="html to mhtml"
+	Name="html_to_mhtml"
 	ProjectGUID="{571884D7-E131-4627-AB4C-104E30A1EB5F}"
-	RootNamespace="html to mhtml"
+	RootNamespace="html_to_mhtml"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -63,11 +63,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/html to mhtml.exe"
+				OutputFile="$(OutDir)/html_to_mhtml.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/html to mhtml.pdb"
+				ProgramDatabaseFile="$(OutDir)/html_to_mhtml.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -148,7 +148,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				ShowProgress="0"
-				OutputFile="$(OutDir)/html to mhtml.exe"
+				OutputFile="$(OutDir)/html_to_mhtml.exe"
 				LinkIncremental="1"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
@@ -196,7 +196,7 @@
 				>
 			</File>
 			<File
-				RelativePath="html to mhtml.cpp"
+				RelativePath="html_to_mhtml.cpp"
 				>
 			</File>
 			<File
@@ -237,7 +237,7 @@
 				>
 			</File>
 			<File
-				RelativePath="html to mhtml.h"
+				RelativePath="html_to_mhtml.h"
 				>
 			</File>
 			<File
@@ -326,11 +326,11 @@
 				>
 			</File>
 			<File
-				RelativePath="html to mhtml.ico"
+				RelativePath="html_to_mhtml.ico"
 				>
 			</File>
 			<File
-				RelativePath="html to mhtml.rc"
+				RelativePath="html_to_mhtml.rc"
 				>
 			</File>
 			<File
