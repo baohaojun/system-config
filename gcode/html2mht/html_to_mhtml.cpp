@@ -22,7 +22,7 @@ struct FIELD
 
 		HANDLE hFile=CreateFile(name.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if(hFile==INVALID_HANDLE_VALUE) {
-            BHJDEBUG(" name is %s", name.c_str());
+            bhjerr(" Error: got invalid hFile for %s", name.c_str());
 			throw std::exception("cannot get the length of a file");
         }
 		GetFileSizeEx(hFile, (PLARGE_INTEGER)&length);
@@ -47,10 +47,11 @@ typedef list<FIELD> FIELDS;
 typedef FIELDS::iterator FIELDSITERATOR;
 
 FIELDS fields;
-string path;
+string htm_dir;
 
 const string BOUNDARYDECL="----=_NextPart_000_0076_01C29953.BE473C30";
 const string BOUNDARY="--"+BOUNDARYDECL;
+const string BOUNDARY_END="--"+BOUNDARYDECL+"--\r\n";
 
 string LocationFromPath(string file)
 {
@@ -110,27 +111,28 @@ string ProcessText(const char *file)
 
 inline const char *Convert(char ch)
 {
-	if(ch=='\n')
-		return "=20";
-	else if(ch=='=')
+    if(ch=='=')
 		return "=3D";
-	else
-	{
+	else if (unsigned char (ch) >= 0x80) {
+        static char tmp[4] = {0};
+        _snprintf(tmp, 4, "=%02X", unsigned char(ch));
+        return tmp;
+    } else {
 		static char tmp[2]={0};
 		*tmp=ch;
 		return tmp;
 	}
 }
 
-#define PROCESSTAG {if(stricmp(attr.c_str(), actions[(int)type].attr)==0 && ProcessTag(val, &tmp, &addfrom, &*sm[2].first, &*sm[2].second)) goto __next_tag; else break;}
-
 inline bool ProcessTag(string val, string *out, char **addfrom, const char *addto, const char *newaddfrom)
 {
 	if(PathIsURL(val.c_str()))
 		return true;
 
+    if (val.length() == 0)
+        return true;
 	if(PathIsRelative(val.c_str()))
-		val=path+"\\"+val;
+		val=htm_dir+"\\"+val;
 	if(PathFileExists(val.c_str()))
 	{
 		FIELD f(val);
@@ -270,8 +272,12 @@ string ProcessHTML(const char *file)
 
 				// now loop through the actions and see what's to be done
 				for(int i=0; i<eNumberOfActions; ++i)
-					PROCESSTAG;
-
+                {
+                    if(stricmp(attr.c_str(), actions[(int)type].attr)==0 && ProcessTag(val, &tmp, &addfrom, &*sm[2].first, &*sm[2].second))
+                        goto __next_tag; 
+                    else 
+                        break;
+                }
 				// continue loop
 				it=sm[0].second;
 			}
@@ -370,59 +376,32 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     LPWSTR *argv = CommandLineToArgvW(pWCmdLine, &argc);
 
     if (argc != 2) {
-        BHJDEBUG(" \nUsage: %s html-file", to_string(argv[0]).c_str());
-        exit(1);
+        bhjerr(" \nUsage: %s html-file", to_string(argv[0]).c_str());
     }
 
-    
-    char *thepa
+    string thePath=to_string(argv[1]);
+    string file_out;
+    if (thePath.find_last_of("\\/") == string::npos) {
+        htm_dir = ".";
+        file_out = thePath + ".mht";
+    } else {
+        htm_dir = thePath.substr(0, thePath.find_last_of("\\/"));
+        file_out = thePath.substr(thePath.find_last_of("\\/") + 1) + ".mht";
+    }
 
-	char *thePath=file, *f=file;
-	SetCurrentDirectory(thePath);
-	f+=strlen(f)+1;
-	
-	bool onlyone=false;
-	if(!*f)
-	{
-		path=thePath;
-		path.resize(path.find_last_of('\\'));
-		onlyone=true;
-	}
-	else
-		path=thePath;
+    fields.clear();
+    string out="MIME-version: 1.0\r\nContent-Type: multipart/related;\r\n\tboundary=\""+BOUNDARYDECL+"\";\r\n\ttype=\"text/html\"\r\nX-MimeOLE: Produced By Microsoft MimeOLE V6.00.2800.1106\r\n\r\nThis is a multi-part message in MIME format.\r\n\r\n";
+    FIELD field(thePath);
+    field.CalcAll();
+    fields.push_back(field);
+    for(FIELDSITERATOR it=fields.begin(); it!=fields.end(); ++it)
+        out+=Process(it->name.c_str());
 
-	while(*f||onlyone)
-	{
-		string theFile;
-		if(onlyone)
-			theFile=thePath;
-		else
-			theFile=string(thePath)+"\\"+f;
-		char *file1=strdup(theFile.c_str());
-		PathRenameExtension(file1, ".mht");
+    HANDLE hFile=CreateFile(file_out.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    DWORD written;
+    WriteFile(hFile, out.c_str(), (DWORD)out.size(), &written, NULL);
+    WriteFile(hFile, BOUNDARY_END.c_str(), BOUNDARY_END.size(), &written, NULL);
+    CloseHandle(hFile);
 
-		fields.clear();
-		string out="MIME-version: 1.0\r\nContent-Type: multipart/related;\r\n\tboundary=\""+BOUNDARYDECL+"\";\r\n\ttype=\"text/html\"\r\nX-MimeOLE: Produced By Microsoft MimeOLE V6.00.2800.1106\r\n\r\nThis is a multi-part message in MIME format.\r\n\r\n";
-		FIELD field(theFile);
-		field.CalcAll();
-		fields.push_back(field);
-		for(FIELDSITERATOR it=fields.begin(); it!=fields.end(); ++it)
-			out+=Process(it->name.c_str());
-
-		HANDLE hFile=CreateFile(file1, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-		DWORD written;
-		WriteFile(hFile, out.c_str(), (DWORD)out.size(), &written, NULL);
-		CloseHandle(hFile);
-
-		free(file1);
-
-		if(onlyone)
-			break;
-
-		f+=strlen(f)+1;
-	}
-
-	MessageBox(NULL, "All done.", "html2mht", MB_TASKMODAL);
-
-	return 0;
+	exit(0);
 }

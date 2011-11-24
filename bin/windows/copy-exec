@@ -1,0 +1,9 @@
+#!/bin/bash
+
+tmpf=/tmp/$(basename $0).$$.exe
+
+cp $1 $tmpf
+shift
+$tmpf "$@"&
+sleep 2
+rm $tmpf

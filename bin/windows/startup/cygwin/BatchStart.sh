@@ -10,6 +10,7 @@ regedit /s ime-noctrlshift-noaltshift.reg
 # chmod +x $MYXWINSH
 # myxwin.sh&
 net start sshd&
+net start cron&
 /c/Python31/python "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-server.py)"&
 while true; do
     sleep 2;
