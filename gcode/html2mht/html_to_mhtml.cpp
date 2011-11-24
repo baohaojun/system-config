@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "html_to_mhtml.h"
-#include "processdialog.h"
 #define ENABLE_BHJDEBUG
 #include "bhjdebug.h" 
 
@@ -297,8 +296,6 @@ __next_tag:
 
 string Process(const char *file)
 {
-	SetProcessDialogCurrentFile(file);
-
 	static regex
 		re_html("^.*\\.[sp]?html?$"),
 		re_text("^.*\\.(?:c|cpp|h|hpp|cxx|hxx|txt|inl|ipp|css)$");
@@ -311,24 +308,74 @@ string Process(const char *file)
 		return ProcessFile(file);
 }
 
+wstring to_wstring(const string& str)
+{
+	WCHAR tmp;
+	int n = MultiByteToWideChar(GetACP(), 
+								0,
+								str.c_str(),
+								str.size(), 
+								&tmp, 
+								0);
+
+	if (n == 0) {
+		return L"Error: MultiByteToWideChar";
+	}
+
+	WCHAR* buf = (WCHAR*)malloc((n+1) * sizeof(WCHAR));
+	if (!buf) {
+		return L"";
+	}
+	MultiByteToWideChar(GetACP(), 
+						0,
+						str.c_str(), 
+						str.size(),
+						buf,
+						n+1);
+	buf[n] = 0;
+	wstring wstr = buf;
+	free(buf);
+	return wstr;
+}
+
+string to_string(const wstring& wstr)
+{
+	if (wstr.empty()) {
+		return "";
+	}
+
+	int n = WideCharToMultiByte(GetACP(), 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+	if (n == 0) {
+		return "Error: WideCharToMultiByte";
+	}
+	char *buf = (char*)malloc((n+1) * sizeof(char));
+	if (!buf) {
+		return "Error: malloc";
+	}
+	WideCharToMultiByte(GetACP(), 0, wstr.c_str(), wstr.size(), buf, n+1, NULL, NULL);
+	buf[n] = 0;
+	string str = buf;
+	free(buf);
+	return str;
+}
+
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
                      int       nCmdShow)
 {
-	OPENFILENAME ofn={0};
-	char file[10240]="";
-	ofn.hInstance=hInstance;
-	ofn.lpstrFilter="HTML files\0*.htm;*.html;*.shtm;*.shtml;*.phtml;*.phtm\0All files\0*.*\0";
-	ofn.lpstrFile=file;
-	ofn.lpstrTitle="Choose the html file to be converted.";
-	ofn.lStructSize=sizeof(ofn);
-	ofn.nMaxFile=10240;
-	ofn.Flags=OFN_FILEMUSTEXIST|OFN_ALLOWMULTISELECT|OFN_EXPLORER;
-	if(!GetOpenFileName(&ofn))
-		return 0;
 
-	StartProcessDialog(hInstance);
+    int argc;
+    LPWSTR pWCmdLine=GetCommandLineW();
+    LPWSTR *argv = CommandLineToArgvW(pWCmdLine, &argc);
+
+    if (argc != 2) {
+        BHJDEBUG(" \nUsage: %s html-file", to_string(argv[0]).c_str());
+        exit(1);
+    }
+
+    
+    char *thepa
 
 	char *thePath=file, *f=file;
 	SetCurrentDirectory(thePath);
@@ -374,8 +421,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 		f+=strlen(f)+1;
 	}
-
-	EndProcessDialog();
 
 	MessageBox(NULL, "All done.", "html2mht", MB_TASKMODAL);
 

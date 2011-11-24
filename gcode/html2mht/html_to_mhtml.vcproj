@@ -199,14 +199,7 @@
 				RelativePath="html_to_mhtml.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\processdialog.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\processdialog.h"
-				>
-			</File>
+
 			<File
 				RelativePath="stdafx.cpp"
 				>
