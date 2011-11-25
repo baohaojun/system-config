@@ -43,4 +43,4 @@ GetOptions(
     "space=s" => \$space,
     );    
 
-system("confluence.sh", "--server", "http://$confserv/wiki", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", $space, @ARGV);
+system("confluence.sh", "--server", "http://$confserv", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", $space, @ARGV);

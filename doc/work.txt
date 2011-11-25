@@ -1170,3 +1170,5 @@ Location: D:\cyg\home\bhj\windows-config\bin\windows\redirect_vc6\emacsedit.exe
 Arguments: -n +$(CurLine):$(CurCol) $(ItemPath)
 *note there is a variable button that will help you with the shortcuts like $(CurLine)
 WorkingDirectory: $(ItemDirectory)
+
+confluece remote api: 有两个地方需要配置：一个是system plugins，这个默认是enable的，另一个是general configuration里。

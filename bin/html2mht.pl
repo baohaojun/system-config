@@ -74,28 +74,38 @@ sub convertEqHex($) {
 sub ProcessTagPath($$) {
   my ($dir, $arg) = @_;
 
-  $arg = my_substr($arg, 1, length($arg)-1);
-  if ($arg =~ m,://, and $arg !~ m,^file://,) {
+  $arg = substr_from_to($arg, 1, length($arg)-1);
+  if ($arg =~ m,://, and $arg !~ m,^file://,) { # this seems a non-file url, should not archive it
     return $arg;
   }
 
   my $path = $arg;
   $path =~ s,^file://,,;
   if ($path =~ m,^/[a-z]:/,i) {
-    $path = substr($path, 1)
+    $path = substr($path, 1); #get rid of '/' before D:/ in file:///D:/
   }
 
   my $path_url;
   if ($path =~ m,^/|^[a-zA-Z]:|^\\,) { #this is absolute path
-    return $arg unless (-e $path);
+    return $arg unless -e $path or -e substr_from_to($path, 0, rindex($path, "#")); #in case this is an anchor
+    if (not -e $path and -e substr_from_to($path, 0, rindex($path, "#")) and substr($path, -1) eq "#") {
+      $path =~ s/#*$//;
+    }
     $path_url = locationFromPath($path);
   } else {			#relative path
     $path = "$dir/$path";
     $path = shell_quote($path);
 	
     chomp($path = qx(readlink -f $path));
-    return $arg unless -e $path;
+    return $arg unless -e $path or -e substr_from_to($path, 0, rindex($path, "#"));
+    if (not -e $path and -e substr_from_to($path, 0, rindex($path, "#")) and substr($path, -1) eq "#") {
+      $path =~ s/#*$//;
+    }
     $path_url = locationFromPath($path);
+  }
+
+  if (not -e $path and -e substr_from_to($path, 0, rindex($path, "#"))) {
+    $path = substr_from_to($path, 0, rindex($path, "#"));
   }
   if (not $path_set{$path}) {
     $path_set{$path} = 1;
@@ -103,8 +113,12 @@ sub ProcessTagPath($$) {
   }
   return "'$path_url'";
 }
-sub my_substr($$$) {
+
+sub substr_from_to($$$) {
   my ($str, $beg, $last) = @_;
+  if ($last == -1) {
+    return substr($str, $beg);
+  }
   return substr($str, $beg, $last - $beg);
 }
 
@@ -125,16 +139,16 @@ sub ProcessHtmlContent($$$) {
 
   my $last_beg = 0;
   while ($content =~ m/$tag_re/g) {
-    print convertEqHex(my_substr($content, $last_beg, $-[2]));
-    my $save_print = my_substr($content, $+[2], $+[0]);
+    print convertEqHex(substr_from_to($content, $last_beg, $-[2]));
+    my $save_print = substr_from_to($content, $+[2], $+[0]);
     $last_beg = $+[0];
     if ($tag_attr_map{lc($1)}) {
       my $attrs = $2;
       my $tag = $1;
       my $last_sub_beg = 0;
       while ($attrs =~ m/$sub_re/g) {
-	print convertEqHex(my_substr($attrs, $last_sub_beg, $-[2]));
-	my $save_print = my_substr($attrs, $+[2], $+[0]);
+	print convertEqHex(substr_from_to($attrs, $last_sub_beg, $-[2]));
+	my $save_print = substr_from_to($attrs, $+[2], $+[0]);
 	$last_sub_beg = $+[0];
 	if (lc($1) eq $tag_attr_map{$tag}) {
 		    
@@ -186,7 +200,6 @@ sub ProcessPath($) {
 
 	$path = formal_path($path);
 	return unless is_subdir($path, $start_dir);
-	debug "process dir $path";
 	my $document = do {
 	  local $/;
 	  open my $fh, "-|", "dir2html", $path
@@ -205,7 +218,7 @@ for my $arg (@ARGV) {
   } else {
     $start_dir = formal_path(dirname($arg));
   }
-  $path_set{formal_path $arg} = 2;
+  $path_set{formal_path($arg)} = 2;
   push @path_set, formal_path($arg);
 
   ProcessPath($arg);
@@ -214,7 +227,6 @@ for my $arg (@ARGV) {
     my $all_done = 1;
     for my $key (@path_set) {
       if ($path_set{$key} != 2) {
-	debug "checking $key";
 	ProcessPath($key);
 	$path_set{$key} = 2;
 	$all_done = 0;

@@ -64,15 +64,25 @@ function congfu-put() {
     if tty >/dev/null
     then
         echo "using /dev/tty, will only update git new files"  1>&2
-        congfu-ls-new
+        congfu-ls-new|grep -e '\.org$'
     else 
         cat
     fi| xargs -d '\n' bash -c \
 '. '$0';
 eval "CONGFU_ARGS=( $CONGFU_ARGSTR )";
+function die() {
+    echo "$@"
+    exit 1
+}
 for x in "$@"; do 
-    cat -- "$x"|confluence-htmlize > "$x".$$
-    congfu "${CONGFU_ARGS[@]}" -- -a storePage --title "$x" --encoding UTF-8 --file "$x".$$
+    (
+        bash ~/doc/confluence-head "${x%%.org}"
+        cat -- "$x"
+        cat ~/doc/confluence-tail;
+    ) > "$x".$$
+    congfu "${CONGFU_ARGS[@]}" -- -a storePage --title "${x%%.org}" --encoding UTF-8 --file "$x".$$ || die "Error: see above"
+    congfu "${CONGFU_ARGS[@]}" -- -a removeAttachment  --title "${x%%.org}" --name "${x/%.org/.mht}"
+    congfu "${CONGFU_ARGS[@]}" -- -a addAttachment --title "${x%%.org}" --file "${x/%.org/.mht}" --mime text/html
     rm "$x".$$
     git add -- "$x"
     done ' true
