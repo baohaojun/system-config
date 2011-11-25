@@ -1,6 +1,4 @@
 #!/bin/bash
 #wlp stands for Win32 Long Path
 
-cygpath -alm "${1:-.}"|tr -d '\n'|tee /tmp/usp.$$
-cat /tmp/usp.$$|putclip
-rm /tmp/usp.$$
+cygpath -alm "${1:-.}"|tr -d '\n'

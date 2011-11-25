@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+:root {
+  font-family: sans-serif;
+}
+img {
+  border: 0;
+}
+th {
+  text-align: start;
+  white-space: nowrap;
+}
+th > a {
+  color: inherit;
+}
+table[order] > thead > tr > th {
+  cursor: pointer;
+}
+table[order] > thead > tr > th::after {
+  display: none;
+  width: .8em;
+  -moz-margin-end: -.8em;
+  text-align: end;
+}
+table[order="asc"] > thead > tr > th::after {
+  content: "\2193"; /* DOWNWARDS ARROW (U+2193) */
+}
+table[order="desc"] > thead > tr > th::after {
+  content: "\2191"; /* UPWARDS ARROW (U+2191) */
+}
+table[order][order-by="0"] > thead > tr > th:first-child > a ,
+table[order][order-by="1"] > thead > tr > th:first-child + th > a ,
+table[order][order-by="2"] > thead > tr > th:first-child + th + th > a {
+  text-decoration: underline;
+}
+table[order][order-by="0"] > thead > tr > th:first-child::after ,
+table[order][order-by="1"] > thead > tr > th:first-child + th::after ,
+table[order][order-by="2"] > thead > tr > th:first-child + th + th::after {
+  display: inline-block;
+}
+table.remove-hidden > tbody > tr.hidden-object {
+  display: none;
+}
+td > a {
+  display: inline-block;
+}
+/* name */
+th:first-child {
+  -moz-padding-end: 2em;
+}
+/* size */
+th:first-child + th {
+  -moz-padding-end: 1em;
+}
+td:first-child + td {
+  text-align: end;
+  -moz-padding-end: 1em;
+  white-space: nowrap;
+}
+/* date */
+td:first-child + td + td {
+  -moz-padding-start: 1em;
+  -moz-padding-end: .5em;
+  white-space: nowrap;
+}
+/* time */
+td:last-child {
+  -moz-padding-start: .5em;
+  white-space: nowrap;
+}
+.symlink {
+  font-style: italic;
+}
+.dir ,
+.symlink ,
+.file {
+  -moz-margin-start: 20px;
+}
+.dir::before ,
+.file > img {
+  -moz-margin-end: 4px;
+  -moz-margin-start: -20px;
+  vertical-align: middle;
+}
+.dir::before {
+  content: url(resource://gre/res/html/folder.png);
+}
+:root {
+  background-color: -moz-dialog;
+  color: -moz-dialogtext;
+  font: message-box;
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+body {
+  border: 1px solid ThreeDShadow;
+  border-radius: 10px;
+  padding: 3em;
+  min-width: 30em;
+  max-width: 65em;
+  margin: 4em auto;
+  background-color: -moz-field;
+  color: -moz-fieldtext;
+}
+
+h1 {
+  font-size: 160%;
+  margin: 0 0 .6em;
+  border-bottom: 1px solid ThreeDLightShadow;
+  font-weight: normal;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+p {
+  font-size: 110%;
+}
+
+#UI_goUp {
+  margin-top: 0;
+  float: left;
+}
+
+body[dir="rtl"] #UI_goUp {
+  float: right;
+}
+
+#UI_showHidden {
+  margin-top: 0;
+  float: right;
+}
+
+body[dir="rtl"] #UI_showHidden {
+  float: left;
+}
+
+table {
+  clear: both;
+  width: 90%;
+  margin: 0 auto;
+}
+
+thead {
+  font-size: 130%;
+}
+
+/* last modified */
+th:last-child {
+  text-align: center;
+}
+
+th:hover > a {
+  text-decoration: underline;
+}
+
+tbody > tr:hover {
+  outline: 1px solid ThreeDLightShadow;
+  -moz-outline-radius: .3em;
+}
+
+/* let 'Size' and 'Last Modified' take only as much space as they need and 'Name' all the rest */
+td:not(:first-child) {
+  width: 0;
+}
+
+.up {
+  padding: 0 .5em;
+  -moz-margin-start: 20px;
+}
+
+.up::before {
+  -moz-margin-end: 4px;
+  -moz-margin-start: -20px;
+  vertical-align: middle;
+  content: url(chrome://global/skin/dirListing/up.png);
+}
+
+.dir::before {
+  content: url(chrome://global/skin/dirListing/folder.png);
+}
+</style>
+
+<script type="application/javascript">
+var gTable, gOrderBy, gTBody, gRows, gUI_showHidden;
+document.addEventListener("DOMContentLoaded", function() {
+  gTable = document.getElementsByTagName("table")[0];
+  gTBody = gTable.tBodies[0];
+  if (gTBody.rows.length < 2)
+    return;
+  gUI_showHidden = document.getElementById("UI_showHidden");
+  var headCells = gTable.tHead.rows[0].cells,
+      hiddenObjects = false;
+  function rowAction(i) {
+    return function(event) {
+      event.preventDefault();
+      orderBy(i);
+    }
+  }
+  for (var i = headCells.length - 1; i >= 0; i--) {
+    var anchor = document.createElement("a");
+    anchor.href = "";
+    anchor.appendChild(headCells[i].firstChild);
+    headCells[i].appendChild(anchor);
+    headCells[i].addEventListener("click", rowAction(i), true);
+  }
+  if (gUI_showHidden) {
+    gRows = Array.slice(gTBody.rows);
+    hiddenObjects = gRows.some(function (row) row.className == "hidden-object");
+  }
+  gTable.setAttribute("order", "");
+  if (hiddenObjects) {
+    gUI_showHidden.style.display = "block";
+    updateHidden();
+  }
+}, "false");
+function compareRows(rowA, rowB) {
+  var a = rowA.cells[gOrderBy].getAttribute("sortable-data") || "";
+  var b = rowB.cells[gOrderBy].getAttribute("sortable-data") || "";
+  var intA = +a;
+  var intB = +b;
+  if (a == intA && b == intB) {
+    a = intA;
+    b = intB;
+  } else {
+    a = a.toLowerCase();
+    b = b.toLowerCase();
+  }
+  if (a < b)
+    return -1;
+  if (a > b)
+    return 1;
+  return 0;
+}
+function orderBy(column) {
+  if (!gRows)
+    gRows = Array.slice(gTBody.rows);
+  var order;
+  if (gOrderBy == column) {
+    order = gTable.getAttribute("order") == "asc" ? "desc" : "asc";
+  } else {
+    order = "asc";
+    gOrderBy = column;
+    gTable.setAttribute("order-by", column);
+    gRows.sort(compareRows);
+  }
+  gTable.removeChild(gTBody);
+  gTable.setAttribute("order", order);
+  if (order == "asc")
+    for (var i = 0; i < gRows.length; i++)
+      gTBody.appendChild(gRows[i]);
+  else
+    for (var i = gRows.length - 1; i >= 0; i--)
+      gTBody.appendChild(gRows[i]);
+  gTable.appendChild(gTBody);
+}
+function updateHidden() {
+  gTable.className = gUI_showHidden.getElementsByTagName("input")[0].checked ?
+                     "" :
+                     "remove-hidden";
+}
+</script>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjFJREFUeNqsU8uOElEQPffR3XQ3ONASdBJCSBxHos5%2B3Bg3rvkCv8PElS78gPkO%2FATjQoUdO2ftrJiRh6aneTb9sOpC4weMN6lcuFV16pxDIfI8x12OYIDhcPiu2Wx%2B%2FHF5CW1Z6Jyegt%2FTNEWSJIjjGFEUIQxDrFYrWFSzXC4%2FdLvd95pRKpXKy%2BpRFZ7nwaWo1%2BsGnQG2260BKJfLKJVKGI1GEEJw7ateryd0v993W63WEwjgxfn5obGYzgCbzcaEbdsIggDj8Riu6z6iUk9SYZMSx8W0LMsM%2FSKK75xnJlIq80anQXdbEp0OhcPJ0eiaJnGRMEyyPDsAKKUM9clkYoDo3SZJzzSdp0VSKYmfV1co%2Bz580kw5KDIM8RbRfEnUf1HzxtQyMAGcaGruTKczMzEIaqhKifV6jd%2BzGQQB5llunF%2FM52BizC2K5sYPYvZcu653tjOM9O93wnYc08gmkgg4VAxixfqFUJT36AYBZGd6PJkFCZnnlBxMp38gqIgLpZB0y4Nph18lyWh5FFbrOSxbl3V4G%2BVB7T4ajYYxTyuLtO%2BCvWGgJE1Mc7JNsJEhvgw%2FQV4fo%2F24nbEsX2u1d5sVyn8sJO0ZAQiIYnFh%2BxrfLz%2Fj29cBS%2FO14zg3i8XigW3ZkErDtmKoeM%2BAJGRMnXeEPGKf0nCD1ydvkDzU9Jbc6OpR7WIw6L8lQ%2B4pQ1%2FlPF0RGM9Ns91Wmptk0GfB4EJkt77vXYj%2F8m%2B8y%2FkrwABHbz2H9V68DQAAAABJRU5ErkJggg%3D%3D">
+<title>xxx-replace-this-xxx</title>
+</head>
+<body dir="ltr">
+<h1>xxx-replace-this-xxx</h1>
+<p id="UI_goUp"><a class="up" href="uuu-replace-this-uuu">回到上一层文件夹</a></p>
+<p id="UI_showHidden" style="display: block;"><label><input checked="checked" onchange="updateHidden()" type="checkbox">显示隐藏对象</label></p>
+<table class="" order="">
+ <thead>
+  <tr>
+   <th><a href="">名称</a></th>
+   <th><a href="">大小</a></th>
+   <th colspan="2"><a href="">修改时间</a></th>
+  </tr>
+ </thead>
+ <tbody>

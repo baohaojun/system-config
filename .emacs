@@ -1906,4 +1906,5 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
           (mm-coding-system-priorities
            '(iso-8859-1 gbk utf-8))))
        gnus-parameters))
+(defalias 'perl-mode 'cperl-mode)
 (server-start)
