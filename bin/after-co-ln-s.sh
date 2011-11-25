@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+mkdir ~/.logs -p
 cd ~/windows-config/
 for x in `git ls-tree --name-only HEAD`
 do

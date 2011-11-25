@@ -12,4 +12,4 @@ export REMOTE=$(git config remote.`repo-remote`.url)
     else
 	cat
     fi
-) | perl  -npe 's/\033\[./ /g' | tee /dev/tty |tee ~/.logs/gerrit-review.log| mailx -s "Review request: ""$(git log -1|perl -ne 'print if 5..5')" $(git log -1|grep -e 'Reviewed-by:'|pn 2|perl -npe 's/\s+//; s/$/\@marvell.com/; print "\n"')
+) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty |tee ~/.logs/gerrit-review.log| mailx -s "Review request: ""$(git log -1|perl -ne 'print if 5..5')" $(git log -1|grep -e 'Reviewed-by:'|pn 2|perl -npe 's/\s+//; s/$/\@marvell.com/; print "\n"')
