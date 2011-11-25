@@ -28,6 +28,7 @@ sub debug(@) {
 
 sub relative_url($$) {
   my ($s, $t)  = @_;
+  debug "relative_url for $s and $t";
   my @s = split("", $s);
   my @t = split("", $t);
 
@@ -59,7 +60,8 @@ sub formal_path($) {
 }
   
 sub locationFromPath($) {
-  my $path = shift;
+  my $path = formal_path shift;
+  debug "locationFromPath for $path";
   return relative_url($path, $start_dir);
 }
 
