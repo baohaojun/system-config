@@ -1,0 +1,13 @@
+fisheye --action getRepositoryList   
+fisheye --action getPathList  --file "target/output/fisheyecli/getPathList.txt"   --repository "ACLI"  
+fisheye --action query  --file "target/output/fisheyecli/queryForRevision.txt"   --repository "ACLI"  --query "select revisions"  
+fisheye --action getPathHistoryList  --file "target/output/fisheyecli/getPathHistoryList.txt"   --repository "ACLI"  --path ""  
+fisheye --action getTagList  --file "target/output/fisheyecli/getTagList.txt"   --repository "ACLI"  --path "distribution"  --revision "92704"  
+fisheye --action getChangeSetList  --file "target/output/fisheyecli/getChangeSetList.txt"   --repository "ACLI"  --path "distribution"  
+fisheye --action getChangeSet  --file "target/output/fisheyecli/getChangeSet.txt"   --repository "ACLI"  --path "distribution"  --change "92704"  
+fisheye --action getRevision  --file "target/output/fisheyecli/getRevision.txt"   --repository "ACLI"  --path "distribution"  --revision "92704"  
+fisheye --action query  --file "target/output/fisheyecli/query.txt"   --repository "ACLI"  --query "select revisions where in any open review"  
+fisheye --action run   --file "src/itest/resources/run.txt"  
+fisheye --action runFromSql   --file "src/itest/resources/run.sql"  --host "imac.local"  --driver "postgresql"  --database "test"  
+fisheye --action login  > target/output/fisheyecli/login.txt 
+fisheye --action logout  -l < target/output/fisheyecli/login.txt 

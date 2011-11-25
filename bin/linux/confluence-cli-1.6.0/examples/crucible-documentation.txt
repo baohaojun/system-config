@@ -1,0 +1,60 @@
+{csv:output=wiki}
+Action, Category, Description, Required parameters, Optional parameters, Output formats
+"createReview", "Reviews", "Create a review.", "[#review]", "[#attribute], [#file]", 
+"deleteReview", "Reviews", "Delete a review.", "[#review]", , 
+"getClientInfo", "Info", "Get information about the this client tool.", , , 
+"getReview", "Reviews", "Get review details.", "[#review]", "[#attribute], [#file]", 
+"getReviewList", "Lists", "Get a list of all reviews perhaps restricted by state.", , "[#state], [#file]", 
+"getServerInfo", "Info", "Get information about the Crucible server.", , , 
+"getTransitionList", "Lists", "Get list of valid transitions for a rewiew.", "[#review]", , 
+"run", "Run", "Run script from a file or standard input.", "[#file]", "[#common], [#continue], [#simulate], [#encoding], [#findReplace]", 
+"runFromCsv", "Run", "Run script generated from a CSV file.", "[#file]", "[#common], [#propertyFile], [#continue], [#quiet], [#simulate], [#encoding], [#findReplace]", 
+"runFromSql", "Run", "Run script generated.by SQL provided by the sql parameter, a file, or standard input", "[#sql] or [#file] or standard input", "[#common], [#host], [#driver], [#database], host, [#port], [#url], [#dbUser], [#dbPassword],         	 [#propertyFile], [#continue], [#simulate], [#encoding], [#findReplace]", 
+"transitionReview", "Reviews", "Transition review to a new state.", "[#review]", "[#state]", 
+{csv}
+
+
+h3. Parameters
+{csv:output=wiki}
+Parameter, Short, Value, Description
+"action {anchor:action}", "a", "(/)", 
+"allowReviewersToJoin {anchor:allowReviewersToJoin}", , "(x)", "Allow reviews to join the review."
+"api {anchor:api}", , "(/)", "API version. Some requests produce different results based on the api version used. Use 0 for latest. (default: 0)"
+"attribute {anchor:attribute}", , "(/)", "Review attribute (comments, reviewitems, ...)."
+"author {anchor:author}", , "(/)", "User id for the author of the review."
+"common {anchor:common}", , "(/)", "Common parameter string added to all run actions."
+"continue {anchor:continue}", , "(x)", "Continue processing even after errors are encountered."
+"creator {anchor:creator}", , "(/)", "User id for the creator of the review."
+"database {anchor:database}", , "(/)", "Database name is required for SQL actions."
+"dbPassword {anchor:dbPassword}", , "(/)", "Database user password. Defaults to password."
+"dbUser {anchor:dbUser}", , "(/)", "Database user name. Defaults to user."
+"debug {anchor:debug}", , "(x)", "Requests detail debug output."
+"description {anchor:description}", , "(/)", "Review description."
+"driver {anchor:driver}", , "(/)", "JDBC driver class or predefined value: postgresql, mysql, mssql, oracle, or db2400. Required for SQL actions."
+"encoding {anchor:encoding}", , "(/)", "Character encoding (character set) for text based file content - must be an encoding supported by your JAVA platform."
+"file {anchor:file}", "f", "(/)", "Path to file based content or result output"
+"findReplace {anchor:findReplace}", , "(/)", "Find and replace text. Comma separated list of colon separated pairs. Single quote values containing a delimiter. Embedded         quotes must be doubled."
+"findReplaceRegex {anchor:findReplaceRegex}", , "(/)", "Find and replace text with a regular expression. Comma separated list of colon separated pairs. Single quote values         containing a delimiter. Embedded quotes must be doubled."
+"host {anchor:host}", , "(/)", "Database host server for SQL actions. Not used if url is provided. (default: localhost)"
+"issue {anchor:issue}", , "(/)", "JIRA issue key."
+"login {anchor:login}", , "(/)", "Login token from previous login request."
+"loginFromStandardInput {anchor:loginFromStandardInput}", "l", "(x)", "Get login token from standard input."
+"moderator {anchor:moderator}", , "(/)", "User id for the moderator of the review."
+"name {anchor:name}", , "(/)", "Review name."
+"outputFormat {anchor:outputFormat}", , "(/)", "Specify output format for an action. (default: 1)"
+"password {anchor:password}", "p", "(/)", "User password for remote login."
+"port {anchor:port}", , "(/)", "Database host port for SQL actions. Optional, defaults to database default. Not used if url is provided."
+"project {anchor:project}", , "(/)", "Project key."
+"propertyFile {anchor:propertyFile}", , "(/)", "Property file with mapping information."
+"quiet {anchor:quiet}", , "(x)", "Limit some output messages."
+"review {anchor:review}", , "(/)", "Crucible review."
+"server {anchor:server}", "s", "(/)", "Server URL."
+"service {anchor:service}", , "(/)", "Service address extension. (default: /rest-service)"
+"simulate {anchor:simulate}", , "(x)", "Simulate running actions. Log the action that would be taken."
+"sql {anchor:sql}", , "(/)", "SQL select statement used to generate a run script."
+"state {anchor:state}", , "(/)", "Review state (Draft, Approval, Review, Summarize, Closed, Dead, Rejected, Unknown)."
+"url {anchor:url}", , "(/)", "Action specific setting. Example: Database access url for SQL actions. Optional when host is provided."
+"user {anchor:user}", "u", "(/)", "User name for remote login. (default: automation)"
+"verbose {anchor:verbose}", "v", "(x)", "Requests verbose output to help with problem determination."
+{csv}
+

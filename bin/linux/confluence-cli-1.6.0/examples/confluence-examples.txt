@@ -1,0 +1,166 @@
+confluence --action removeSpace  --space "zconfluencecli"     
+confluence --action addSpace  --space "zconfluencecli"   --title "zconfluencecli"    --comment "GINT test: confluencecli"  
+confluence --action removeSpace  --space "zconfluencecli2"     
+confluence --action addSpace  --space "zconfluencecli2"   --title "zconfluencecli2"    --comment "GINT test: confluencecli"  
+confluence --action removeSpace  --space "zconfluencecliTarget"     
+confluence --action addSpace  --space "zconfluencecliTarget"   --title "zconfluencecli for target"    --comment "GINT test: target"  
+confluence --action removePage  --space "zconfluencecli"   --title "This is title 0"    
+confluence --action addPage  --space "zconfluencecli"   --title "This is title 0"    --content "This is a test page."  --parent "Home"  
+confluence --action removeUser     --userId "testuser1"  
+confluence --action addUser     --userId "testuser1"  --userFullName "Test User1"  --userEmail "testuser1@x.com"  --userPassword "password1"  
+confluence --action removePage  --space "zconfluencecli"   --title "This is title 1"    
+confluence --action storePage  --space "zconfluencecli"   --title "This is title 1"    --content "This is a test page."  
+confluence --action storePage  --space "zconfluencecli"   --title "This is title 1"   --file "src/itest/resources/data.txt"   
+confluence --action storePage  --space "zconfluencecli"   --title "This is title 1"    --content "This is a test page."  --parent "Home"  
+confluence --action getServerInfo     
+confluence --action getClientInfo     
+confluence --action getSpaceList    --file "target/output/confluencecli/getSpaceList.txt"   
+confluence --action addComment  --space "zconfluencecli"   --title "This is title 0"    --comment "Comment 1 
+ * bullet 1"  
+confluence --action getCommentList  --space "zconfluencecli"   --title "This is title 0"   --file "target/output/confluencecli/getCommentList.txt"   
+confluence --action addAttachment  --space "zconfluencecli"   --title "This is title 0"    --content "attachment content"  --name "data.txt"  --comment "attachment comment"  
+confluence --action addLabels  --space "zconfluencecli"   --title "This is title 0"    --labels "testLabel1, testLabel2"  
+confluence --action copyPage  --space "zconfluencecli"   --title "Home"    --newTitle "This is new title 1"  --newSpace "zconfluencecli2"  --parent "Home"  --replace  --descendents  --copyComments  --copyLabels  
+confluence --action getComments  --space "zconfluencecli2"   --title "This is title 0"    --dateFormat "yyyy.MM.dd 'special format' HH:mm:ss z"""  
+confluence --action copyPage  --space "zconfluencecli"   --title "This is title 0"    --targetServer "http://imac2.local:8114"  --newTitle "This is a new title 0"  --newSpace "zconfluencecliTarget"  --replace  --copyAttachments  --copyComments  --copyLabels  --commentPrefix "Creator: @creator@, space: @space@, title: @title@, time: @createdTime@"  --noConvert  --targetUser "automation"  --targetPassword "automation"  
+confluence --action removeComments  --space "zconfluencecli"   --title "This is title 0"    
+confluence --action getCommentList  --space "zconfluencecli"   --title "This is title 0"    
+confluence --action getLabelList  --space "zconfluencecli"    --file "target/output/confluencecli/getLabelList.txt"   --count 1  
+confluence --action getLabelList  --space "zconfluencecli"   --title "This is title 0"   --file "target/output/confluencecli/getLabelListForPage.txt"   
+confluence --action getPermissionList  --space "zconfluencecli"    --file "target/output/confluencecli/getPermissionList.txt"   
+confluence --action getPermissionList  --space "zconfluencecli"   --title "This is title 0"   --file "target/output/confluencecli/getPermissionListForPage.txt"   
+confluence --action removeSpace  --space "~testuser1"     
+confluence --action addSpace   --title "Space name XXX"    --userId "testuser1"  --comment "Space description YYY"  
+confluence --action getSpace  --space "~testuser1"     
+confluence --action removeSpace  --space "~testuser1"     
+confluence --action removeSpace  --space "zconfluencecli3"     
+confluence --action copySpace  --space "zconfluencecli"     --newSpace "zconfluencecli3"  
+confluence --action storePage  --space "zconfluencecli"   --title "Home"    --content "This is a test page. 
+ h3. Children 
+ {children:depth=3}"  
+confluence --action storePage  --space "zconfluencecli2"   --title "Home"    --content "This is a test page. 
+ h3. Children 
+ {children:depth=3}"  
+confluence --action addComment  --space "zconfluencecli"   --title "This is title 0"    --comment "Comment 1 
+ * bullet 1"  
+confluence --action addComment  --space "zconfluencecli"   --title "This is title 0"    --comment "Comment 1 
+ * bullet 1"  --id "34540118"  
+confluence --action removeComment     --id "34540118"  --descendents  
+confluence --action addAttachment  --space "zconfluencecli"   --title "This is title 0"   --file "src/itest/resources/data.txt"   --comment "attachment comment"  
+confluence --action addAttachment  --space "zconfluencecli"   --title "This is title 0"   --file "src/itest/resources/binary.bin"   
+confluence --action addAttachment  --space "zconfluencecli"   --title "This is title 0"   --file "src/itest/resources/large.zip"   
+confluence --action getAttachment  --space "zconfluencecli"   --title "This is title 0"   --file "target/output/confluencecli/getAttachmentWithVersion.txt"   --name "data.txt"  --version 1  
+confluence --action getAttachment  --space "zconfluencecli"   --title "This is title 0"   --file "target/output/confluencecli/binary.bin"   --encoding "xxxx"  
+confluence --action getAttachment  --space "zconfluencecli"   --title "This is title 0"   --file "target/output/confluencecli/large.zip"   
+confluence --action storePage  --space "zconfluencecli"   --title "This is title 1"   --file "src/itest/resources/data.txt"   --content2 "content added after file data"  --comment "automation updated"  --minor  
+confluence --action getPageSource  --space "zconfluencecli"   --title "This is title 1"   --file "target/output/confluencecli/getPageSource.txt"   
+confluence --action storePage  --space "zconfluencecli"   --title "encoding"   --file "src/itest/resources/encoding.txt"   --encoding "UTF-16"  
+confluence --action storePage  --space "zconfluencecli"   --title "encoding2"   --file "src/itest/resources/encoding2.txt"   --encoding "SJIS"  
+confluence --action run
+confluence --action storePage  --space "zconfluencecli"   --title "This is title 2"    --content "This is a test page."  --parent "This is title 1"  
+confluence --action storePage  --space "zconfluencecli"   --title "This is title 3"    --content "This is a test page."  --parent "This is title 2"  
+confluence --action storePage  --space "zconfluencecli"   --title "This is title 1"    --labels "testLabel"  
+confluence --action copyPage  --space "zconfluencecli"   --title "This is title 0"    --newTitle "This is a new title 0"  --parent "Home"  --replace  
+confluence --action renderPage  --space "zconfluencecli"   --title "This is title 0"   --file "target/output/confluencecli/renderPage.txt"   
+confluence --action render  --space "zconfluencecli"   --title "This is title 0"   --file "target/output/confluencecli/render.txt"   
+confluence --action render  --space "zconfluencecli"   --title "This is title 0"    --content "This is a test page."  --clean  
+confluence --action storePage  --space "zconfluencecli2"   --title "This is a new title 2"    --content "This is a test page. 
+ h3. Children 
+ {children:depth=3}"  
+confluence --action copyPageChildren  --space "zconfluencecli"   --title "Home"    --newSpace "zconfluencecli2"  --parent "This is a new title 2"  --replace  --descendents  --copyComments  --copyLabels  
+confluence --action removePage  --space "zconfluencecli"   --title "This is title 6"    
+confluence --action addPage  --space "zconfluencecli"   --title "This is title 6"    --content "This is a test page."  --parent "Home"  
+confluence --action removePage  --space "zconfluencecli"   --title "moved page"    
+confluence --action renamePage  --space "zconfluencecli"   --title "This is title 6"    --newTitle "moved page"  --parent "This is title 1"  
+confluence --action movePage  --space "zconfluencecli"   --title "moved page"    --parent "This is title 1"  
+confluence --action getPageList  --space "zconfluencecli"   --title "This is title 1"    --children  
+confluence --action getPageList  --space "zconfluencecli"   --title "This is title 1"    --children  --labels "not_found , xxxx"  
+confluence --action getPageList  --space "zconfluencecli"     --labels "testLabel"  
+confluence --action getPageList  --space "zconfluencecli"   --title "This is title 1"   --file "target/output/confluencecli/getPageListOutputFormat2.txt"   --children  --outputFormat 2  
+confluence --action removePage  --space "zconfluencecli"   --title "moved page"    
+confluence --action getPageList  --space "zconfluencecli"   --title "This is title 1"    
+confluence --action removeNews  --space "zconfluencecli"   --title "addNews1"    
+confluence --action addNews  --space "zconfluencecli"   --title "addNews1"    --content "This is a test page."  
+confluence --action addAttachment  --space "zconfluencecli"   --title "addNews1"   --file "src/itest/resources/data.txt"   --content "This is a test page."  --news  
+confluence --action storeNews  --space "zconfluencecli"   --title "addNews2"    --content "This is a test page."  --dayOfMonth -1  
+confluence --action getNewsList  --space "zconfluencecli"     
+confluence --action getNewsList  --space "zconfluencecli"     --outputFormat 2  
+confluence --action getNewsSource  --space "zconfluencecli"   --title "addNews1"    
+confluence --action getNewsSource  --space "zconfluencecli"   --title "addNews2"    --dayOfMonth -1  
+confluence --action renderNews  --space "zconfluencecli"   --title "addNews1"   --file "target/output/confluencecli/renderNews.txt"   
+confluence --action removeNews  --space "zconfluencecli"   --title "addNews1"    
+confluence --action removeNews  --space "zconfluencecli"   --title "addNews2"    --dayOfMonth -1  
+confluence --action removePage  --space "zconfluencecli"   --title "children"   --descendents 
+confluence --action run
+confluence --action addPage  --space "zconfluencecli"   --title "child1"    --parent "children"  
+confluence --action addPage  --space "zconfluencecli"   --title "child1-1"    --parent "child1"  
+confluence --action addPage  --space "zconfluencecli"   --title "child2"    --parent "children"  
+confluence --action addPermissions  --space "zconfluencecli"   --title "children"    --permissions "edit"  --userId "automation"  
+confluence --action addPermissions  --space "zconfluencecli"   --title "children"    --permissions "edit"  --descendents  --userId "automation"  
+confluence --action getPermissionList  --space "zconfluencecli"   --title "children"    
+confluence --action addPermissions  --space "zconfluencecli"   --title "children"    --permissions "edit"  --userId "admin"  
+confluence --action getPermissionList  --space "zconfluencecli"   --title "children"   --file "target/output/confluencecli/getPermissionListForChildrenAfterAnotherUser.txt"   
+confluence --action removePermissions  --space "zconfluencecli"   --title "children"    --permissions "edit"  --userId "automation"  
+confluence --action getPermissionList  --space "zconfluencecli"   --title "children"   --file "target/output/confluencecli/getPermissionListForChildrenAfterRemove.txt"   
+confluence --action getAttachmentList  --space "zconfluencecli"     
+confluence --action getAttachmentList  --space "zconfluencecli"   --title "This is title 0"    
+confluence --action getComments  --space "zconfluencecliTarget"   --title "This is a new title 0"    
+confluence --action removeSpace  --space "zconfluencecli3Target"     
+confluence --action copySpace  --space "zconfluencecli"   --title "zconfluencecli3"    --targetServer "http://imac2.local:8114"  --newSpace "zconfluencecli3Target"  --replace  --copyComments  --copyLabels  --noConvert  
+confluence --action getPageList  --space "zconfluencecliTarget"   --title "This is a new title 0"   --file "target/output/confluencecli/getPageListTargetServer.txt"   
+confluence --action exportSpace  --space "zconfluencecli"     --file "target/output/confluencecli/export.xml"  
+confluence --action exportSpace  --space "zconfluencecli"     --file "target/output/confluencecli/export.html"  --exportType "HTML"  
+confluence --action exportSpace  --space "zconfluencecli"     --file "target/output/confluencecli/export.pdf"  --exportType "PDF"  
+confluence --action getUser     --userId "testuser1"  
+confluence --action getUserList    --file "target/output/confluencecli/getUserList.txt"   
+confluence --action getUserList     --outputFormat 2  
+confluence --action addUser     --userId "automation"  --userEmail "testuser1@x.com"  
+confluence --action removeUser     --userId "testuser1"  
+confluence --action removeUser     --userId "testuser2"  
+confluence --action addUser     --userId "testuser2"  --userEmail "testuser1@x.com"  
+confluence --action removeUser     --userId "testuser2"  
+confluence --action removeUser     --userId "BAD"  
+confluence --action removeGroup     --group "testgroup1"  
+confluence --action addGroup     --group "testgroup1"  
+confluence --action removeGroup     --group "testgroup1"  
+confluence --action removeGroup     --group "bad"  
+confluence --action removeUser     --userId "testuser3"  
+confluence --action addUser     --userId "testuser3"  --userEmail "testuser1@x.com"  
+confluence --action removeGroup     --group "testgroup2"  
+confluence --action addUserToGroup     --userId "testuser3"  --group "testgroup2"  --autoGroup  
+confluence --action removeUserFromGroup     --userId "testuser3"  --group "testgroup2"  
+confluence --action removeUser     --userId "testuser3"  
+confluence --action removeGroup     --group "testgroup2"  
+confluence --action removeUserWithFile     --file "src/itest/resources/addUserWithFile.csv"  --autoGroup  
+confluence --action removeUserFromGroupWithFile     --file "src/itest/resources/addUserToGroupWithFile.csv"  --autoGroup  
+confluence --action addUserWithFile     --file "src/itest/resources/addUserWithFile.csv"  --autoGroup  
+confluence --action addUserToGroupWithFile     --file "src/itest/resources/addUserToGroupWithFile.csv"  --autoGroup  
+confluence --action removeUserFromGroupWithFile     --file "src/itest/resources/addUserToGroupWithFile.csv"  --autoGroup  
+confluence --action removeUserWithFile     --file "src/itest/resources/addUserWithFile.csv"  --autoGroup  
+confluence --action renderRequest  --space "zconfluencecli"   --title "Home"   --file " "   
+confluence --action getContentList    --file "target/output/confluencecli/getContentListAll.txt"   --search "Home"  
+confluence --action getContentList    --file "target/output/confluencecli/getContentList1Type.txt"   --search "Home"  --searchTypes "page"  --count 5  
+confluence --action getContentList    --file "target/output/confluencecli/getContentListTypes.txt"   --search "Home"  --searchTypes "comment, page"  --count 5  
+confluence --action getContentList    --file "target/output/confluencecli/getContentListCommaTypes.txt"   --search "Home"  --searchTypes " , , "  --count 1  
+confluence --action getContentList     --search "Home"  --userId "invaldId"  
+confluence --action getContentList    --file "target/output/confluencecli/getContentListByContributor.txt"   --search "Home"  --userId "automation"  
+confluence --action getContentList    --file "target/output/confluencecli/getContentListLastDay.txt"   --search "Home"  --searchModified "LASTDAY"  
+confluence --action getContentList    --file "target/output/confluencecli/getContentListLastWeek.txt"   --search "Home"  --searchModified "LASTMONTH"  
+confluence --action getContentList    --file "target/output/confluencecli/getContentListLastYear.txt"   --search "Home"  --searchModified "LASTYEAR"  
+confluence --action run     --file "src/itest/resources/run.txt"  
+confluence --action run    < src/itest/resources/run.txt 
+confluence --action run     --verbose  
+confluence --action runFromSql     --file "src/itest/resources/run.sql"  --host "imac.local"  --driver "postgresql"  --database "test"  
+confluence --action storePage  --space "zconfluencecli"   --title "This is title 7"    --content "a b c d e,: a b c d e"  --findReplace "a b:x y"  
+confluence --action getPageSource  --space "zconfluencecli"   --title "This is title 7"    
+confluence --action storePage  --space "zconfluencecli"   --title "This is title 7"    --content "a b c d e,: a b c d e"  --findReplace "a b:x y, ',:;', ''':'':''*''', d:z,e:z"  
+confluence --action getPageSource  --space "zconfluencecli"   --title "This is title 7"    
+confluence --action storePage  --space "zconfluencecli"   --title "This is title 7"    --content "a b c d e,: a b c d e"  --findReplaceRegex "[abc]:www"  
+confluence --action getPageSource  --space "zconfluencecli"   --title "This is title 7"    
+confluence --action removeLabels  --space "zconfluencecli"   --title "This is title 0"    --labels "testLabel1, testLabel2"  
+confluence --action removePage  --space "zconfluencecli"   --title "This is title 0"    
+confluence --action removePage  --space "zconfluencecli"   --title "This is title 1"    
+confluence --action loadFiles  --space "zconfluencecli"     --file "src/itest/resources"  --replace  
+confluence --action removePage  --space "zconfluencecli"   --title "This is title 6"    
+confluence --action login    > target/output/confluencecli/login.txt 
+confluence --action logout    -l < target/output/confluencecli/login.txt 

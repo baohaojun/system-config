@@ -1,0 +1,84 @@
+/*
+ * Copyright (c) 2009, 2011 Bob Swift
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Created on Oct 20, 2011 by Bob Swift
+ */
+
+/*
+ * This is a GINT test (https://studio.plugins.atlassian.com/wiki/display/GINT)
+ *
+ * Test all pages within a Confluence space to see if specific text appears on the rendered page.
+ * A specific use case is to look for macro errors on a page.
+ *
+ * Run with something like:
+ *     gant -f macroError.gant -Dverbose -Dspace=myspacekey -Ddatabase=confluence-3.5.13 -Dcli="/sde/atlassian-cli-2.2.0/atlassian confluence-3.5.13"
+ *
+ * -Dspace - space key or space key like clause, % for all (not recommended as it will take a very long time!)
+ * -Ddatabase - name of your Confluence database
+ * -DdatabaseHost - host for your database if not the default localhost
+ * -DdatabaseType - database type if not the default postgresql (mysql, mssql, oracle, db2)
+ * -DdatabaseUser - user name to access the database, default automation
+ * -DdatabasePassword - password, default automation
+ * -Dcli - Confluence CLI used to access your Confluence instance remote API
+ */
+
+@GrabResolver(name='atlassian', root='https://maven.atlassian.com/content/groups/public/')
+@Grab(group='org.swift.tools', module='gint', version='1.2.0')
+
+import org.swift.tools.*
+
+includeTool << GintForConfluence
+includeTool << Helper
+includeTool << SqlHelper
+
+gint.initialize(this) // required
+
+failData = ['Unknown macro:', '<span class="error">'] // this is text that will flag a page as being in error
+
+space = helper.getRequiredParameterValue('space').toUpperCase()
+
+databaseConfig = [
+    database: helper.getParameterValue('database', 'confluence'),
+    host:     helper.getParameterValue('databaseHost', 'localhost'),
+    type:     helper.getParameterValue('databaseType', 'postgresql'),
+    user:     helper.getParameterValue('databaseUser', 'automation'),
+    password: helper.getParameterValue('databasePassword', 'automation'),
+]
+
+def sql = """
+    select
+        'renderPage' as action,
+        s.spaceKey || ':' || c.title as name,
+        s.spaceKey as space,
+        c.title as title,
+        true as file,
+        '[failData: failData]' as output_code
+    from
+        content as c, spaces as s
+    where
+        s.spaceid = c.spaceid
+        and c.content_status = 'current'
+        and c.contentid is not null
+        and c.spaceid is not null
+        and c.title <> ''
+        and upper(s.spaceKey) like '${space}'
+"""
+
+helper.logWithFormat('sql', sql)
+
+connection = sqlHelper.getConnection(databaseConfig)
+gint.add(connection, sql)
+
+gint.finalizeTest() // final preparations for running tests

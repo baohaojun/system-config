@@ -1,0 +1,7 @@
+# Run script that given a space name and title, will download the page, perform a find and replace, then update the page.
+#
+# Run using something like
+# confluence --action run --file replace.txt --findReplace "space:CONF,title:My page title"
+
+--action getPageSource --space @space@ --title "@title@" --file out.txt
+--action storePage --space @space@ --title "@title@" --file out.txt --findReplace "Help:Get Support"

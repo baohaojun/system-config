@@ -1,0 +1,38 @@
+bamboo --action getServerInfo   
+bamboo --action getBuild  --file "target/output/bamboocli/getBuild.txt"   --build "XXX-DEF"  
+bamboo --action executeBuild   --build "XXX-DEF"  --wait  
+bamboo --action getLatestBuildNumber   --build "XXX-DEF"  
+bamboo --action getBuild  --file "target/output/bamboocli/getBuildWithResultName.txt"   --build "XXX-DEF-43"  
+bamboo --action getProjectList  --file "target/output/bamboocli/getProjectList.txt"   
+bamboo --action getProjectList  --file "target/output/bamboocli/getProjectListAttributeName.txt"   --attribute "name"  
+bamboo --action getProjectList  --file "target/output/bamboocli/getProjectListAttributeKey.txt"   --attribute "key"  
+bamboo --action getProjectList  --file "target/output/bamboocli/getProjectListAttributeHref.txt"   --attribute "href"  
+bamboo --action getPlanList  --file "target/output/bamboocli/getPlanList.txt"   
+bamboo --action getPlanList   --favourite  
+bamboo --action getPlanList  --file "target/output/bamboocli/getPlanListAttributeHref.txt"   --attribute "href"  
+bamboo --action getBuildList  --file "target/output/bamboocli/getBuildList.txt"   
+bamboo --action getBuildList  --file "target/output/bamboocli/getBuildListByProject.txt"   --project "YYY"  
+bamboo --action getBuildList   --favourite  
+bamboo --action addLabels   --build "XXX-DEF"  --number -1  --labels "testlabel1 testlabel2"  
+bamboo --action getBuildList   --attribute "key"  --labels "testlabel1,testlabel2"  
+bamboo --action getBuildList   --attribute "href"  --labels "testlabel1,testlabel2"  
+bamboo --action getBuildList  --file "target/output/bamboocli/getBuildListSearchDetail.txt"   --labels "testlabel1,testlabel2"  
+bamboo --action getBuildList   --build "XXX-DEF"  --attribute "key"  --labels "testlabel1,testlabel2"  
+bamboo --action getBuildList   --build "YYY-DEF"  --attribute "key"  --labels "testlabel1,testlabel2"  
+bamboo --action getBuildList   --project "XXX"  --attribute "href"  --labels "testlabel1,testlabel2"  
+bamboo --action getLabelList   --build "XXX-DEF"  --number -1  
+bamboo --action addLabels   --build "XXX-DEF"  --number -1  --labels "testlabel1 testlabel2"  
+bamboo --action addLabels   --labels "morelabel1"  --searchLabels "testlabel1 testlabel2"  
+bamboo --action addLabels   --build "XXX-DEF"  --labels "testlabel1, testlabel2"  
+bamboo --action run   --file "src/itest/resources/run.txt"  
+bamboo --action run  < src/itest/resources/run.txt 
+bamboo --action run   
+bamboo --action runFromSql   --file "src/itest/resources/run.sql"  --host "imac.local"  --driver "postgresql"  --database "test"  
+bamboo --action getProjectList  --file "target/output/bamboocli/getProjectListLegacy.txt"   --api -1  
+bamboo --action getBuildList  --file "target/output/bamboocli/getBuildListLegacy.txt"   --api -1  
+bamboo --action getProject  --file "target/output/bamboocli/getProject.txt"   --project "YYY"  
+bamboo --action getLatestBuildResults  --file "target/output/bamboocli/getLatestBuildResultsByProject.txt"   --project "YYY"  
+bamboo --action getLatestBuildResults  --file "target/output/bamboocli/getLatestBuildResults.txt"   --build "XXX-DEF"  
+bamboo --action executeBuild   --build "XXX-DEF"  
+bamboo --action login  > target/output/bamboocli/login.txt 
+bamboo --action logout  -l < target/output/bamboocli/login.txt 

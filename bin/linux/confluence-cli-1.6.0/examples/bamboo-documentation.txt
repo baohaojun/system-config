@@ -1,0 +1,71 @@
+{csv:output=wiki}
+Action, Category, Description, Required parameters, Optional parameters, Output formats
+"addLabels", "Labels", "Add a comma separated list of labels to a build.", "[#build], [#labels]", "[#number], [#file]", 
+"executeBuild", "Builds", "Run a build by key.", "[#build]", "[#wait], [#timeout]", 
+"getArtifact", "Artifacts", "Download a copy of a build artifact into a file.", "[#build], [#artifact], [#file]", "[#number]", 
+"getBuild", "Builds", "Get build information.", "[#build]", "[#number], [#expand], [#file]", 
+"getBuildList", "Lists", "Get a list of builds.", , "[#file], [#attribute], [#favourite], [#expand], [#labels], [#issues]", 
+"getClientInfo", "Info", "Get information about the this client tool.", , , 
+"getLabelList", "Lists", "Get a list of labels for a build.", "[#build]", "[#number], [#file]", 
+"getLatestBuildNumber", "Builds", "Get the number of the last completed build.", "[#build]", , 
+"getLatestBuildResults", "Builds", "Get build results for a build or project.", "[#build] or [#project]", "[#file]", 
+"getPlanList", "Lists", "Get a list of build plans.", , "[#file], [#attribute], [#expand]", 
+"getProject", "Projects", "Get project details.", "[#project]", "[#file]", 
+"getProjectList", "Lists", "Get a list of projects.", , "[#file], [#attribute], [#expand]", 
+"getServerInfo", "Info", "Get information about the Bamboo server.", , , 
+"login", "Misc", "Login to remote server. Returns login token.", "[#password]", "[#user]", 
+"logout", "Misc", "Logout of remote server.", , , 
+"removeLabels", "Labels", "Remove labels from a build. Labels can be a comma separated list or regex. Either build or search terms         (searchLabels, issues) must be provided", "[#labels]", "[#build], [#number], [#searchLabels], [#issues], [#favourite], [#file]", 
+"run", "Run", "Run script from a file or standard input.", "[#file]", "[#common], [#continue], [#simulate], [#encoding], [#findReplace]", 
+"runFromCsv", "Run", "Run script generated from a CSV file.", "[#file]", "[#common], [#propertyFile], [#continue], [#quiet], [#simulate], [#encoding], [#findReplace]", 
+"runFromSql", "Run", "Run script generated.by SQL provided by the sql parameter, a file, or standard input", "[#sql] or [#file] or standard input", "[#common], [#host], [#driver], [#database], host, [#port], [#url], [#dbUser], [#dbPassword],         	 [#propertyFile], [#continue], [#simulate], [#encoding], [#findReplace]", 
+"triggerBuild", "Builds", "Triggers a build if there are source changes.", "[#build]", , 
+{csv}
+
+
+h3. Parameters
+{csv:output=wiki}
+Parameter, Short, Value, Description
+"action {anchor:action}", "a", "(/)", 
+"api {anchor:api}", , "(/)", "API version. Some requests produce different results based on the api version used. Use 0 for latest. (default: 0)"
+"artifact {anchor:artifact}", , "(/)", "Build artifact name."
+"attribute {anchor:attribute}", , "(/)", "Attribute to list."
+"build {anchor:build}", , "(/)", "Build key. Example: XXX-DEF"
+"common {anchor:common}", , "(/)", "Common parameter string added to all run actions."
+"continue {anchor:continue}", , "(x)", "Continue processing even after errors are encountered."
+"database {anchor:database}", , "(/)", "Database name is required for SQL actions."
+"dbPassword {anchor:dbPassword}", , "(/)", "Database user password. Defaults to password."
+"dbUser {anchor:dbUser}", , "(/)", "Database user name. Defaults to user."
+"debug {anchor:debug}", , "(x)", "Requests detail debug output."
+"driver {anchor:driver}", , "(/)", "JDBC driver class or predefined value: postgresql, mysql, mssql, oracle, or db2400. Required for SQL actions."
+"encoding {anchor:encoding}", , "(/)", "Character encoding (character set) for text based file content - must be an encoding supported by your JAVA platform."
+"expand {anchor:expand}", , "(/)", "Expanded request information to obtain more detailed data on request."
+"favourite {anchor:favourite}", , "(x)", "Subset to favourites."
+"file {anchor:file}", "f", "(/)", "Path to file based content or result output"
+"findReplace {anchor:findReplace}", , "(/)", "Find and replace text. Comma separated list of colon separated pairs. Single quote values containing a delimiter. Embedded         quotes must be doubled."
+"findReplaceRegex {anchor:findReplaceRegex}", , "(/)", "Find and replace text with a regular expression. Comma separated list of colon separated pairs. Single quote values         containing a delimiter. Embedded quotes must be doubled."
+"host {anchor:host}", , "(/)", "Database host server for SQL actions. Not used if url is provided. (default: localhost)"
+"issues {anchor:issues}", , "(/)", "Comma separated list of JIRA issue keys."
+"job {anchor:job}", , "(/)", "Job key (Bamboo 2.7 and higher). Example: JOB1"
+"labels {anchor:labels}", , "(/)", "Comma or blank separated list of labels."
+"login {anchor:login}", , "(/)", "Login token from previous login request."
+"loginFromStandardInput {anchor:loginFromStandardInput}", "l", "(x)", "Get login token from standard input."
+"number {anchor:number}", , "(/)", "Build number. Defaults to latest. (default: 0)"
+"outputFormat {anchor:outputFormat}", , "(/)", "Specify output format for an action. (default: 1)"
+"password {anchor:password}", "p", "(/)", "User password for remote login."
+"port {anchor:port}", , "(/)", "Database host port for SQL actions. Optional, defaults to database default. Not used if url is provided."
+"project {anchor:project}", , "(/)", "Project key. Example: XXX"
+"propertyFile {anchor:propertyFile}", , "(/)", "Property file with mapping information."
+"quiet {anchor:quiet}", , "(x)", "Limit some output messages."
+"searchLabels {anchor:searchLabels}", , "(/)", "Comma or blank separated list of labels used for search."
+"server {anchor:server}", "s", "(/)", "Server URL."
+"service {anchor:service}", , "(/)", "Service address extension. (default: /rest/api)"
+"simulate {anchor:simulate}", , "(x)", "Simulate running actions. Log the action that would be taken."
+"sql {anchor:sql}", , "(/)", "SQL select statement used to generate a run script."
+"timeout {anchor:timeout}", , "(/)", "Wait timeout in seconds. Use -1 to wait forever. (default: -1)"
+"url {anchor:url}", , "(/)", "Action specific setting. Example: Database access url for SQL actions. Optional when host is provided."
+"user {anchor:user}", "u", "(/)", "User name for remote login. (default: automation)"
+"verbose {anchor:verbose}", "v", "(x)", "Requests verbose output to help with problem determination."
+"wait {anchor:wait}", , "(x)", "Wait for action to complete."
+{csv}
+

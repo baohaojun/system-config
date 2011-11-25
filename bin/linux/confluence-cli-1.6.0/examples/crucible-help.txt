@@ -1,0 +1,167 @@
+
+Usage:
+  crucible [--help] (-a|--action) <action> [(-f|--file) <file>] [--encoding <encoding>] [--debug] [-v|--verbose] [--quiet]
+  [--outputFormat <outputFormat>] [--sql <sql>] [--driver <driver>] [--url <url>] [--host <host>] [--port <port>] [--database
+  <database>] [--dbUser <dbUser>] [--dbPassword <dbPassword>] [--propertyFile <propertyFile>] [--common <common>] [--findReplace
+  <findReplace>] [--findReplaceRegex <findReplaceRegex>] [--continue] [--simulate] (-s|--server) <server> (-u|--user) <user>
+  (-p|--password) <password> [--login <login>] [--service <service>] [-l|--loginFromStandardInput] [--api <api>] [--review <review>]
+  [--project <project>] [--name <name>] [--description <description>] [--state <state>] [--attribute <attribute>] [--creator
+  <creator>] [--author <author>] [--moderator <moderator>] [--issue <issue>] [--allowReviewersToJoin]
+
+
+	Provides capability to make requests to a remote server.
+	Required parameters: action, server, password.
+	Optional parameters: user (likely required for your installation).
+	Other required and optional parameters depending on action requested.
+
+
+  [--help]
+        Prints this help message.
+
+  (-a|--action) <action>
+        Requested operation to perform. Valid actions (not case sensitive) are:
+        
+        run - Run script from a file or standard input.
+        	 Required parameters: file
+        	 Optional parameters: common, continue, simulate, encoding, findReplace
+        runFromSql - Run script generated.by SQL provided by the sql parameter, a file, or standard input
+        	 Required parameters: sql or file or standard input
+        	 Optional parameters: common, host, driver, database, host, port, url, dbUser, dbPassword,
+        	 propertyFile, continue, simulate, encoding, findReplace
+        runFromCsv - Run script generated from a CSV file.
+        	 Required parameters: file
+        	 Optional parameters: common, propertyFile, continue, quiet, simulate, encoding, findReplace
+        getClientInfo - Get information about the this client tool.
+        getServerInfo - Get information about the Crucible server.
+        getReviewList - Get a list of all reviews perhaps restricted by state.
+        	 Optional parameters: state, file
+        getReview - Get review details.
+        	 Required parameters: review
+        	 Optional parameters: attribute, file
+        createReview - Create a review.
+        	 Required parameters: review
+        	 Optional parameters: attribute, file
+        deleteReview - Delete a review.
+        	 Required parameters: review
+        transitionReview - Transition review to a new state.
+        	 Required parameters: review
+        	 Optional parameters: state
+        getTransitionList - Get list of valid transitions for a rewiew.
+        	 Required parameters: review
+
+  [(-f|--file) <file>]
+        Path to file based content or result output
+
+  [--encoding <encoding>]
+        Character encoding (character set) for text based file content - must be an encoding supported by your JAVA platform.
+
+  [--debug]
+        Requests detail debug output.
+
+  [-v|--verbose]
+        Requests verbose output to help with problem determination.
+
+  [--quiet]
+        Limit some output messages.
+
+  [--outputFormat <outputFormat>]
+        Specify output format for an action. (default: 1)
+
+  [--sql <sql>]
+        SQL select statement used to generate a run script.
+
+  [--driver <driver>]
+        JDBC driver class or predefined value: postgresql, mysql, mssql, oracle, or db2400. Required for SQL actions.
+
+  [--url <url>]
+        Action specific setting. Example: Database access url for SQL actions. Optional when host is provided.
+
+  [--host <host>]
+        Database host server for SQL actions. Not used if url is provided. (default: localhost)
+
+  [--port <port>]
+        Database host port for SQL actions. Optional, defaults to database default. Not used if url is provided.
+
+  [--database <database>]
+        Database name is required for SQL actions.
+
+  [--dbUser <dbUser>]
+        Database user name. Defaults to user.
+
+  [--dbPassword <dbPassword>]
+        Database user password. Defaults to password.
+
+  [--propertyFile <propertyFile>]
+        Property file with mapping information.
+
+  [--common <common>]
+        Common parameter string added to all run actions.
+
+  [--findReplace <findReplace>]
+        Find and replace text. Comma separated list of colon separated pairs. Single quote values containing a delimiter. Embedded
+        quotes must be doubled.
+
+  [--findReplaceRegex <findReplaceRegex>]
+        Find and replace text with a regular expression. Comma separated list of colon separated pairs. Single quote values
+        containing a delimiter. Embedded quotes must be doubled.
+
+  [--continue]
+        Continue processing even after errors are encountered.
+
+  [--simulate]
+        Simulate running actions. Log the action that would be taken.
+
+  (-s|--server) <server>
+        Server URL.
+
+  (-u|--user) <user>
+        User name for remote login. (default: automation)
+
+  (-p|--password) <password>
+        User password for remote login.
+
+  [--login <login>]
+        Login token from previous login request.
+
+  [--service <service>]
+        Service address extension. (default: /rest-service)
+
+  [-l|--loginFromStandardInput]
+        Get login token from standard input.
+
+  [--api <api>]
+        API version. Some requests produce different results based on the api version used. Use 0 for latest. (default: 0)
+
+  [--review <review>]
+        Crucible review.
+
+  [--project <project>]
+        Project key.
+
+  [--name <name>]
+        Review name.
+
+  [--description <description>]
+        Review description.
+
+  [--state <state>]
+        Review state (Draft, Approval, Review, Summarize, Closed, Dead, Rejected, Unknown).
+
+  [--attribute <attribute>]
+        Review attribute (comments, reviewitems, ...).
+
+  [--creator <creator>]
+        User id for the creator of the review.
+
+  [--author <author>]
+        User id for the author of the review.
+
+  [--moderator <moderator>]
+        User id for the moderator of the review.
+
+  [--issue <issue>]
+        JIRA issue key.
+
+  [--allowReviewersToJoin]
+        Allow reviews to join the review.
+

@@ -1,0 +1,190 @@
+{csv:output=wiki}
+Action, Category, Description, Required parameters, Optional parameters, Output formats
+"addAttachment", "Attachments", "Add an attachment to an issue.", "[#issue], [#file]", "[#findReplace], [#name], [#encoding]", 
+"addComment", "Comments", "Add a comment to an issue.", "[#issue]", "[#comment], [#group], [#role], [#findReplace], [#file], [#encoding]", 
+"addComponent", "Components", "Add component to a project.", "[#project], [#component]", "[#description], [#lead], [#replace], [#api]", 
+"addGroup", "Groups", "Add a new group.", "[#group]", , 
+"addProjectRoleActors", "Projects", "Add users or groups to a project role.", "[#project], [#role], [#userId] or [#group]", , 
+"addUser", "Users", "Add a new user.", "[#userId], [#userEmail]", "[#userFullName], [#userPassword]", 
+"addUserToGroup", "Users", "Add user to a group.", "[#userId], [#group]", "[#autoGroup]", 
+"addUserToGroupWithFile", "Users", "Add users to groups from comma separated file.", "[#file]", "[#autoGroup], [#encoding]", 
+"addUserWithFile", "Users", "Add users from comma separated file.", "[#file]", "[#encoding]", 
+"addVersion", "Versions", "Add a new version to a project.", "[#project], [#version]", "[#after], [#date], [#dateFormat], [#replace]", 
+"addWatchers", "Watches", "Add watchers to an issue.", "[#issue]", "[#userId]", 
+"addWork", "Work", "Add work log entry.", "[#issue], [#timeSpent]", "[#comment], [#date], [#dateFormat], [#estimate], [#role], [#group], [#autoAdjust]", 
+"cloneIssue", "Issues", "Create a new issue by copying an existing issue.", "[#issue]", "[#type], [#summary], [#resolution],         	 [#comment], [#group], role[#priority], [#reporter], [#assignee], [#description], [#components], [#affectsVersions], [#fixVersions], [#environment],         	 [#security], [#field], [#values], [#field2], [#values2], [#asVersion], [#asComponent], [#asCascadeSelect],         	 [#date], [#dateFormat], [#custom], [#autoVersion], au[#toComponent], , [#findReplace], [#file], [#encoding]         	 [#project], [#copyLinks], [#copyAttachments], [#copyComments], [#copyWatchers], [#copySubtasks], [#copySubtaskEstimates], [#useParentVersions],         	 [#propertyPrefix]", 
+"cloneIssues", "Issues", "Clone issues returned from a JQL search.", "[#search]", "[#project], [#type], [#continue],         	 [#copyLinks], [#copyAttachments], [#copyComments], [#copyWatchers], [#copySubtasks], [#copySubtaskEstimates], [#useParentVersions],         	 [#autoVersion], au[#toComponent], [#propertyPrefix]", 
+"cloneProject", "Projects", "Create a new project as a clone of a base project. Optionally copy versions, components, role actors,         	 and issues to new project.         	 Issue cloning requires JIRA Clone Plus Plugin.", "[#project], [#toProject]", "[#name], [#description], [#url], [#permissionScheme], [#notificationScheme], [#issueSecurityScheme]         	 [#search], [#type], [#continue], [#copyVersions], [#copyComponents], [#copyRoleActors], [#cloneIssues],         	 [#copyLinks], [#copyAttachments], [#copyComments], [#copyWatchers], [#copySubtasks], [#copySubtaskEstimates], [#useParentVersions],         	 [#propertyPrefix]", 
+"copyComponent", "Components", "Copy a component from one project to the same project or another project (since JIRA 4.2).", "[#project], [#component]", "[#toProject], [#name], [#description], [#lead], [#replace], [#api]", 
+"copyComponents", "Components", "Copy all or some components from one project to another.", "[#project], [#toProject]", "[#components], [#replace], [#api]", 
+"copyProjectRoleActors", "Projects", "Copy all role actors from a project to another project.", "[#project], [#toProject]", "[#continue]", 
+"copyVersion", "Versions", "Copy a version from one project to the same project or another project.", "[#project], [#version]", "[#toProject], [#name], [#after], [#date], [#dateFormat], [#replace]", 
+"copyVersions", "Versions", "Copy all versions from one project to another project.", "[#project], [#toProject]", "[#continue], [#replace]", 
+"createIssue", "Issues", "Create a new issue for a project.", "[#project], [#type], [#summary]", "[#priority], [#reporter], [#assignee], [#description], [#components], [#affectsVersions], [#fixVersions], [#environment],         	 [#security], [#field], [#values], [#field2], [#values2], [#asVersion], [#asComponent], [#asCascadeSelect],         	 [#date], [#dateFormat], [#custom], [#autoVersion], au[#toComponent], [#comment], [#group], [#role], [#findReplace], [#file], [#encoding]", 
+"createProject", "Projects", "Create a new project with key provided by project parameter.", "[#project], [#lead]", "[#name], [#description], [#url], [#permissionScheme], [#notificationScheme], [#issueSecurityScheme], [#workflowScheme]", 
+"deleteComponent", "Components", "Delete component from a project.", "[#project], [#component]", "[#api]", 
+"deleteIssue", "Issues", "Delete an issue.", "[#issue]", , 
+"deleteLink", "Links", "Remove link to another issue.", "[#issue], [#toIssue], [#link]", , 
+"deleteProject", "Projects", "Delete a project.", "[#project]", , 
+"deleteVersion", "Versions", "Delete a version from a project. Update affects and fix versions for issues by removing version reference         	 or swapping it with versions specified.", "[#project], [#version]", "[#affectsVersions], [#fixVersions], [#autoVersion], [#api]", 
+"getAttachment", "Attachments", "Get lastest attachment by name or id for an issue.", "[#issue], [#file]", "[#name], [#encoding]", 
+"getAttachmentList", "Lists", "List all attachments for an issue.", "[#issue], [#file]", "[#dateFormat], [#encoding]", 
+"getAvailableSteps", "Steps", "Get available workflow steps for issue.", "[#issue]", "[#file], [#encoding]", 
+"getClientInfo", "Info", "Get information about the this client tool.", , , 
+"getCommentList", "Lists", "List of comment information (id, dates, ...) for an issue.", "[#issue]", "[#file], [#dateFormat], [#encoding]", 
+"getComments", "Comments", "Get a formatted string of all comment text for an issue.", "[#issue]", "[#file], [#dateFormat], [#encoding]", 
+"getComponent", "Components", "Get information for a component of a project (since JIRA 4.2).", "[#project], [#component]", "[#file], [#encoding], [#api]", 
+"getComponentList", "Lists", "List components defined for a projects.", "[#project]", "[#file], [#encoding]", 
+"getCustomFieldList", "Lists", "Get information on all custom fields.", , , 
+"getFieldValue", "Fields", "Get field value for an issue.", "[#issue], [#field]", "[#file], [#dateFormat], [#asVersion], [#encoding]", 
+"getIssue", "Issues", "Get information about an existing issue.", "[#issue]", "[#file], [#dateFormat], [#asVersion], [#encoding]", 
+"getIssueList", "Lists", "List issues for a filter or a search.", "[#filter] or [#search]", "[#file], [#dateFormat], [#count], [#outputFormat], [#encoding]", "1 - default\\ 2 or 4 - custom fields\\ 3 or 4 - security level\\ 5 - 4 plus time values"
+"getPluginDownload", "Plugins", "Deprecated. Get url to download the plugin version. Version defaults to the latest version.", "[#plugin]", "[#version]", 
+"getPluginList", "Lists", "Deprecated. Get list of plugins.", , "[#plugin], [#file], [#outputFormat], [#count]", "1 - default\\ 2 - plugin exchange info"
+"getProject", "Projects", "Get project information.", "[#project]", "[#file], [#encoding]", 
+"getProjectList", "Lists", "List defined projects.", , "[#outputFormat], [#file], [#encoding]", "1 - default\\ 2 - scheme info"
+"getProjectRoleActorList", "Lists", "Get users and groups for a project's role.", "[#project], [#role]", , 
+"getProjectRoleList", "Lists", "Get project roles.", , , 
+"getSecurityLevelList", "Lists", "List security levels defined for a projects.", "[#project]", "[#file], [#encoding]", 
+"getServerInfo", "Info", "Get information about the JIRA server.", , , 
+"getUser", "Users", "Get user information. JIRA 4.2 or higher.", "[#userId]", "[#file], endcoding", 
+"getUserList", "Lists", "List users in a group.", "[#group]", "[#file], [#encoding]", 
+"getVersion", "Versions", "Get information for a project version (since JIRA 4.2).", "[#project], [#version]", "[#dateFormat], [#file], [#encoding]", 
+"getVersionList", "Lists", "List versions defined for a projects.", "[#project]", "[#file], [#encoding]", 
+"getWorkList", "Lists", "Get list of a work log entry.", "[#issue]", "[#dateFormat], [#file], [#encoding]", 
+"linkIssue", "Issues", "Link an issue to another issue.", "[#issue], [#toIssue], [#link]", "[#comment]", 
+"login", "Misc", "Login to remote server. Returns login token.", "[#password]", "[#user]", 
+"logout", "Misc", "Logout of remote server.", , , 
+"progressIssue", "Issues", "Progress issue through workflow.", "[#issue], [#step]", "[#type], [#summary], [#resolution],         	 [#priority], [#reporter], [#assignee], [#description], [#components], [#affectsVersions], [#fixVersions], [#environment],         	 [#security], [#field], [#values], [#field2], [#values2], [#asVersion], [#asComponent], [#asCascadeSelect],         	 [#date], [#dateFormat], [#custom], [#autoVersion], au[#toComponent], [#comment], [#group], [#role], [#findReplace], [#file], [#encoding]", 
+"releaseVersion", "Versions", "Release a version for a project. Resets release date if provided. Defaults to current if release date         	 is not set.", "[#project], [#version]", "[#date], [#dateFormat]", 
+"removeGroup", "Groups", "Remove a group.", "[#group]", "[#defaultGroup]", 
+"removeProjectRoleActors", "Projects", "Remove users or groups from a project role.", "[#project], [#role], [#userId] or [#group]", , 
+"removeUser", "Users", "Remove a user.", "[#userId]", , 
+"removeUserFromGroup", "Users", "Remove user from a group.", "[#userId], [#group]", , 
+"removeUserFromGroupWithFile", "Users", "Remove users from groups from comma separated file.", "[#file]", "[#encoding]", 
+"removeUserWithFile", "Users", "Remove users from comma separate file.", "[#file]", "[#encoding]", 
+"removeWatchers", "Watches", "Remove watchers from an issue.", "[#issue]", "[#userId]", 
+"removeWork", "Work", "Remove work log entry.", "[#id]", , 
+"renderRequest", "Render", "Render url based request.", "[#request]", "[#requestParameters], [#issue], [#file], [#encoding]", 
+"run", "Run", "Run script from a file or standard input.", "[#file]", "[#common], [#continue], [#simulate], [#encoding], [#findReplace]", 
+"runFromCsv", "Run", "Run script generated from a CSV file.", "[#file]", "[#common], [#propertyFile], [#continue], [#quiet], [#simulate], [#encoding], [#findReplace]", 
+"runFromSql", "Run", "Run script generated.by SQL provided by the sql parameter, a file, or standard input", "[#sql] or [#file] or standard input", "[#common], [#host], [#driver], [#database], host, [#port], [#url], [#dbUser], [#dbPassword],         	 [#propertyFile], [#continue], [#simulate], [#encoding], [#findReplace]", 
+"setFieldValue", "Fields", "Set custom field value for an issue.", "[#issue], [#field], [#file] or [#values]", "[#field2], [#values2], [#asVersion], [#asComponent], [#asCascadeSelect], [#append], [#appendText], [#encoding], [#dateFormat]", 
+"unreleaseVersion", "Versions", "Unrelease a version for a project, optionally reset release date.", "[#project], [#version]", "[#date], [#dateFormat]", 
+"updateComponent", "Components", "Update component for a project (since JIRA 4.4).", "[#project], [#component]", "[#name], [#description], [#lead], [#api]", 
+"updateIssue", "Issues", "Update an existing issue.", "[#issue]", "[#type], [#summary], [#resolution],         	 [#priority], [#reporter], [#assignee], [#description], [#components], [#affectsVersions], [#fixVersions], [#environment],         	 [#security], [#field], [#values], [#field2], [#values2], [#asVersion], [#asComponent], [#asCascadeSelect],         	 [#date], [#dateFormat], [#custom], [#autoVersion], au[#toComponent], , [#append], [#appendText], [#comment], [#group], [#role], [#findReplace], [#file],         [#encoding]", 
+"updateProject", "Projects", "Update project information.", "[#project]", "[#name], [#description], [#lead], [#url], [#permissionScheme], [#notificationScheme], [#issueSecurityScheme],         [#workflowScheme]", 
+"updateUser", "Users", "Update user information.", "[#userId]", "[#userFullName], [#userEmail]", 
+"updateVersion", "Versions", "Update version for a project.", "[#project], [#version]", "[#name], [#description], [#after], [#date], [#dateFormat], [#autoVersion], [#api]", 
+"updateWork", "Work", "Update work log entry.", "[#id], [#issue]", "[#timeSpent], [#comment], [#date], [#dateFormat], [#estimate], [#role], [#group], [#autoAdjust]", 
+{csv}
+
+
+h3. Parameters
+{csv:output=wiki}
+Parameter, Short, Value, Description
+"action {anchor:action}", "a", "(/)", 
+"affectsVersions {anchor:affectsVersions}", , "(/)", "Affects versions - comma separated names or ids"
+"after {anchor:after}", , "(/)", "Version name or id to add a version after. Defaults to after last version. Use -1 to make it the first version."
+"api {anchor:api}", , "(/)", "API version. Some requests produce different results based on the api version used. Use 0 for latest. (default: 0)"
+"append {anchor:append}", , "(x)", "Append values to existing values for version fields, components field, and custom fields supporting multiple values."
+"appendText {anchor:appendText}", , "(x)", "Append text to existing value text for description, environment, and single and multi-value custom fields."
+"asCascadeSelect {anchor:asCascadeSelect}", , "(x)", "Interpret values parameter as a cascade select value ids."
+"asComponent {anchor:asComponent}", , "(x)", "Interpret values parameter as component values and convert each to the component id."
+"asVersion {anchor:asVersion}", , "(x)", "Interpret values parameter as version values and convert each to the version id."
+"assignee {anchor:assignee}", , "(/)", "Issue assignee user id"
+"autoAdjust {anchor:autoAdjust}", , "(x)", "Auto adjust remaining estimate when adding work entry."
+"autoComponent {anchor:autoComponent}", , "(x)", "Automatically add components used in components parameter."
+"autoGroup {anchor:autoGroup}", , "(x)", "Groups are automatically added when referenced in add user functions."
+"autoVersion {anchor:autoVersion}", , "(x)", "Automatically add versions used in affectsVersions and fixVersions parameters."
+"cloneIssues {anchor:cloneIssues}", , "(x)", "Clone issues when cloning a project."
+"comment {anchor:comment}", , "(/)", "Comment for an issue"
+"common {anchor:common}", , "(/)", "Common parameter string added to all run actions."
+"component {anchor:component}", , "(/)", "Project component name or id"
+"components {anchor:components}", , "(/)", "Project components - comma separated names or ids"
+"continue {anchor:continue}", , "(x)", "Continue processing even after errors are encountered."
+"copyAttachments {anchor:copyAttachments}", , "(x)", "Copy attachments when cloning an issue."
+"copyComments {anchor:copyComments}", , "(x)", "Copy comments when cloning an issue."
+"copyComponents {anchor:copyComponents}", , "(x)", "Copy components when cloning a project."
+"copyLinks {anchor:copyLinks}", , "(x)", "Copy issue links when cloning an issue."
+"copyRoleActors {anchor:copyRoleActors}", , "(x)", "Copy project role actors when cloning a project."
+"copySubtaskEstimates {anchor:copySubtaskEstimates}", , "(x)", "Copy subtask estimates when cloning an issue."
+"copySubtasks {anchor:copySubtasks}", , "(x)", "Copy subtasks when cloning an issue."
+"copyVersions {anchor:copyVersions}", , "(x)", "Copy versions when cloning a project."
+"copyWatchers {anchor:copyWatchers}", , "(x)", "Copy Watchers when cloning an issue."
+"count {anchor:count}", , "(/)", "Maximum number of entries to return. (default: 2147483647)"
+"custom {anchor:custom}", , "(/)", "Custom fields - comma separated key:value pairs. Key can be field name or id. Single quote the key:value pair if it contains         a comma (,) or line breaks."
+"database {anchor:database}", , "(/)", "Database name is required for SQL actions."
+"date {anchor:date}", , "(/)", "Date for version or due date for issue"
+"dateFormat {anchor:dateFormat}", , "(/)", "Format string for date in Java SimpleDateFormat, default is client date format"
+"dbPassword {anchor:dbPassword}", , "(/)", "Database user password. Defaults to password."
+"dbUser {anchor:dbUser}", , "(/)", "Database user name. Defaults to user."
+"debug {anchor:debug}", , "(x)", "Requests detail debug output."
+"defaultGroup {anchor:defaultGroup}", , "(/)", "Default group to move users on removeGroup action."
+"description {anchor:description}", , "(/)", "Description"
+"driver {anchor:driver}", , "(/)", "JDBC driver class or predefined value: postgresql, mysql, mssql, oracle, or db2400. Required for SQL actions."
+"encoding {anchor:encoding}", , "(/)", "Character encoding (character set) for text based file content - must be an encoding supported by your JAVA platform."
+"environment {anchor:environment}", , "(/)", "Issue environment"
+"estimate {anchor:estimate}", , "(/)", "Estimate of time remaining for an issue. Example: 3h 30m"
+"field {anchor:field}", , "(/)", "Field name or id. For some actions, this parameter must be a custom field."
+"field2 {anchor:field2}", , "(/)", "Field name or id for a custom field."
+"file {anchor:file}", "f", "(/)", "Path to file based content or result output"
+"filter {anchor:filter}", , "(/)", "Filter id or favorite filter name."
+"findReplace {anchor:findReplace}", , "(/)", "Find and replace text. Comma separated list of colon separated pairs. Single quote values containing a delimiter. Embedded         quotes must be doubled."
+"findReplaceRegex {anchor:findReplaceRegex}", , "(/)", "Find and replace text with a regular expression. Comma separated list of colon separated pairs. Single quote values         containing a delimiter. Embedded quotes must be doubled."
+"fixVersions {anchor:fixVersions}", , "(/)", "Fix versions - comma separated names or ids"
+"group {anchor:group}", , "(/)", "Group name"
+"host {anchor:host}", , "(/)", "Database host server for SQL actions. Not used if url is provided. (default: localhost)"
+"id {anchor:id}", , "(/)", "Numeric id of an item."
+"issue {anchor:issue}", , "(/)", "Issue key or id"
+"issueSecurityScheme {anchor:issueSecurityScheme}", , "(/)", "Issue security scheme name or id"
+"lead {anchor:lead}", , "(/)", "Project lead user id"
+"link {anchor:link}", , "(/)", "Link description. Examples: 'relates to' or 'is related to'. Link id can also be used for deleteLink."
+"login {anchor:login}", , "(/)", "Login token from previous login request."
+"loginFromStandardInput {anchor:loginFromStandardInput}", "l", "(x)", "Get login token from standard input."
+"name {anchor:name}", , "(/)", "Name"
+"notificationScheme {anchor:notificationScheme}", , "(/)", "Notification scheme name or id"
+"outputFormat {anchor:outputFormat}", , "(/)", "Specify output format for an action. (default: 1)"
+"parent {anchor:parent}", , "(/)", "Parent issue key or id"
+"password {anchor:password}", "p", "(/)", "User password for remote login."
+"permissionScheme {anchor:permissionScheme}", , "(/)", "Permission scheme name or id (default: Default Permission Scheme)"
+"plugin {anchor:plugin}", , "(/)", "Plugin key or partial key for matching."
+"port {anchor:port}", , "(/)", "Database host port for SQL actions. Optional, defaults to database default. Not used if url is provided."
+"priority {anchor:priority}", , "(/)", "Issue priority - name or id"
+"project {anchor:project}", , "(/)", "Project name, key, or id"
+"propertyFile {anchor:propertyFile}", , "(/)", "Property file with mapping information."
+"propertyPrefix {anchor:propertyPrefix}", , "(/)", "Prefix used for accessing properties for custom clone actions."
+"quiet {anchor:quiet}", , "(x)", "Limit some output messages."
+"replace {anchor:replace}", , "(x)", "Replace existing entity."
+"reporter {anchor:reporter}", , "(/)", "Issue reporter user id"
+"request {anchor:request}", , "(/)", "URL fragment for a request."
+"requestParameters {anchor:requestParameters}", , "(/)", "URL request parameters"
+"resolution {anchor:resolution}", , "(/)", "Resolution name or id"
+"role {anchor:role}", , "(/)", "User role in project"
+"search {anchor:search}", , "(/)", "Search JQL query."
+"security {anchor:security}", , "(/)", "Issue security level name or id"
+"server {anchor:server}", "s", "(/)", "Server URL."
+"service {anchor:service}", , "(/)", "Service address extension. (default: /rpc/soap/jirasoapservice-v2)"
+"simulate {anchor:simulate}", , "(x)", "Simulate running actions. Log the action that would be taken."
+"sql {anchor:sql}", , "(/)", "SQL select statement used to generate a run script."
+"step {anchor:step}", , "(/)", "Workflow step - name or id"
+"summary {anchor:summary}", , "(/)", "Summary of issue"
+"timeSpent {anchor:timeSpent}", , "(/)", "Time spent on work using. Example: 3h 30m"
+"toComponent {anchor:toComponent}", , "(/)", "Project component name or id for JIRA 4.4 or higher"
+"toIssue {anchor:toIssue}", , "(/)", "Link destination issue key or id"
+"toProject {anchor:toProject}", , "(/)", "Project name, key, or id to copy to"
+"type {anchor:type}", , "(/)", "Issue type - name or id"
+"url {anchor:url}", , "(/)", "Action specific setting. Example: Database access url for SQL actions. Optional when host is provided."
+"useParentVersions {anchor:useParentVersions}", , "(x)", "Copy parent versions to subtask when cloning an issue."
+"user {anchor:user}", "u", "(/)", "User name for remote login. (default: automation)"
+"userEmail {anchor:userEmail}", , "(/)", "User email for user management actions"
+"userFullName {anchor:userFullName}", , "(/)", "User name for user management actions"
+"userId {anchor:userId}", , "(/)", "User id for user management and other actions"
+"userPassword {anchor:userPassword}", , "(/)", "User password for user management actions"
+"values {anchor:values}", , "(/)", "Comma separated list of field values"
+"values2 {anchor:values2}", , "(/)", "Comma separated list of field values"
+"verbose {anchor:verbose}", "v", "(x)", "Requests verbose output to help with problem determination."
+"version {anchor:version}", , "(/)", "Project version name or id or plugin version"
+"workflowScheme {anchor:workflowScheme}", , "(/)", "Workflow scheme name or id. Use blank for default scheme."
+{csv}
+
