@@ -1,0 +1,9 @@
+#+DATE: [2011-11-26 Sat 20:43]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil TeX:nil
+#+CATEGORY: Uncategorized, Hello
+#+TAGS:
+#+DESCRIPTION:
+#+TITLE: Using dvp under Win32
+
+
+

@@ -596,6 +596,7 @@
  '(tramp-syntax (quote ftp))
  '(tramp-verbose 0)
  '(transient-mark-mode t)
+ '(url-proxy-services (quote (("http" . "localhost:8580"))))
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
  '(w3m-default-display-inline-images t)
