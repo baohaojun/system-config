@@ -1,0 +1,20 @@
+#+POSTID: 51
+#+DATE: [2011-11-26 Sat 22:59]
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil TeX:nil
+#+CATEGORY: beagrep grep win32
+#+TAGS:
+#+DESCRIPTION:
+#+TITLE: beagrep under win32
+
+I have ported beagrep under win32.
+
+I have not made it fit into the configure/make/make install 3-step
+thing yet, but am very close to that. I will probably do it when I
+need to do it on another PC...
+
+#+begin_example
+git clone git://github.com/baohaojun/beagrep.git -b windows
+#+end_example
+
+
+

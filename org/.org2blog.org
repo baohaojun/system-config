@@ -1,5 +1,23 @@
 
 * Posts
+** [[file:d:/cyg/home/bhj/windows-config/org/html2mht.pl and dir2html.pl .org][html2mht.pl and dir2html.pl]]
+   :PROPERTIES:
+   :POSTID:   53
+   :POST_DATE: 20111126T15:09:00+0000
+   :Published: Yes
+   :END:
+** [[file:d:/cyg/home/bhj/windows-config/org/beagrep under win32.org][beagrep under win32]]
+   :PROPERTIES:
+   :POSTID:   51
+   :POST_DATE: 20111126T14:59:00+0000
+   :Published: Yes
+   :END:
+** [[file:d:/cyg/home/bhj/windows-config/org/dvp-win32.org][Using dvp under Win32]]
+   :PROPERTIES:
+   :POSTID:   49
+   :POST_DATE: 20111126T12:43:00+0000
+   :Published: Yes
+   :END:
 ** [[file:/home/bhj/org/combining-cli-and-gui.org][Using CLI and GUI Together Seemlessly]]
    :PROPERTIES:
    :POSTID:   47

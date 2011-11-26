@@ -1,10 +1,17 @@
 #!/bin/bash
 # http://github.com/baohaojun/windows-config/raw/master/bin/linux/
-. ~/.bashrc-public
+. ~/.bashrc-public-bash
 
 set -e
 test $# = 0 && set -- .
-lcd "$1"
+set -- "$(readlink -f "$(lookup_file $1)")"
+
+if test -d "$1"; then
+    cd "$1"
+else
+    cd "$(dirname "$1")"
+fi
+
 cd -P .
 git_dir=$(dirname $(lookup_file .git))
 
