@@ -35,7 +35,6 @@ print $header;
 
 for my $de (@dir_list) {
 
-  debug "$de in $dir";
 # <tr class="hidden-object">
 #  <td sortable-data="2.Xmodmap"><a class="file" href="file:///D:/cyg/home/bhj/.Xmodmap"><img src="1_files/a_026" alt="文件:">.Xmodmap</a></td>
 #  <td sortable-data="80">1 KB</td>

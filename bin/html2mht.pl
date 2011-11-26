@@ -10,6 +10,10 @@ my $start_dir;
 my $boundary_stem="----=_NextPart_000_0076_01C29953.BE473C30";
 my $boundary_beg = "--$boundary_stem";
 my $boundary_end = "$boundary_beg--";
+my $is_cygwin = 0;
+if (qx(uname) =~ m/^cygwin/i) {
+  $is_cygwin = 1;
+}
 
 my %tag_attr_map = (
     "a" => "href",
@@ -53,16 +57,39 @@ sub relative_url($$) {
   return $relative_s;
 }
 
+my %formal_path_cache;
 sub formal_path($) {
-  my $path = shell_quote shift;
+  my $path = shift;
+  my $anchor = "";
+  if (not -e $path and not -e substr_from_to($path, 0, rindex($path, "#"))) {
+    return $path;
+  }
+  if (not -e $path and -e substr_from_to($path, 0, rindex($path, "#"))) {
+    $anchor = substr($path, rindex($path, "#"));
+    $path = substr_from_to($path, 0, rindex($path, "#"));
+    # $anchor = "" if $anchor eq "#"; 
+  }
+
+  if ($formal_path_cache{$path}) {
+    return $formal_path_cache{$path} . $anchor;
+  }
+  my $key = $path;
+
+  debug "do formal_path for '$path'";
+  $path = shell_quote $path;
   chomp($path = qx(wlp $path));
-  return $path;
+
+  return $formal_path_cache{$key} = $path . $anchor;
 }
   
+my %locationCache;
+
 sub locationFromPath($) {
   my $path = formal_path shift;
-  debug "locationFromPath for $path";
-  return relative_url($path, $start_dir);
+  if ($locationCache{$path}) {
+    return $locationCache{$path};
+  }
+  return $locationCache{$path} = relative_url($path, $start_dir);
 }
 
 sub convertEqHex($) {
@@ -86,23 +113,19 @@ sub ProcessTagPath($$) {
   }
 
   my $path_url;
-  if ($path =~ m,^/|^[a-zA-Z]:|^\\,) { #this is absolute path
-    return $arg unless -e $path or -e substr_from_to($path, 0, rindex($path, "#")); #in case this is an anchor
-    if (not -e $path and -e substr_from_to($path, 0, rindex($path, "#")) and substr($path, -1) eq "#") {
-      $path =~ s/#*$//;
-    }
-    $path_url = locationFromPath($path);
-  } else {			#relative path
-    $path = "$dir/$path";
-    $path = shell_quote($path);
-	
-    chomp($path = qx(readlink -f $path));
-    return $arg unless -e $path or -e substr_from_to($path, 0, rindex($path, "#"));
-    if (not -e $path and -e substr_from_to($path, 0, rindex($path, "#")) and substr($path, -1) eq "#") {
-      $path =~ s/#*$//;
-    }
-    $path_url = locationFromPath($path);
+  if ($path !~ m,^/|^[a-zA-Z]:|^\\,) { # !~ the pattern of absolute path
+    $path = formal_path("$dir/$path");
   }
+
+  return $arg unless -e $path or -e substr_from_to($path, 0, rindex($path, "#")); #in case this is an anchor
+  my $anchor = "";
+  if (not -e $path and -e substr_from_to($path, 0, rindex($path, "#"))) {
+    $anchor = substr($path, rindex($path, "#"));
+    $path = substr_from_to($path, 0, rindex($path, "#"));
+    $anchor = "" if $anchor eq "#"; 
+  }
+  $path_url = locationFromPath($path) . $anchor;
+
 
   if (not -e $path and -e substr_from_to($path, 0, rindex($path, "#"))) {
     $path = substr_from_to($path, 0, rindex($path, "#"));
@@ -188,9 +211,9 @@ sub is_subdir($$) {
 
 sub ProcessPath($) {
     my ($path) = @_;
+    debug "processing $path";
     if (-f $path) {
 	my $re_html = qr,\.[sp]?html?$,i;
-	my $re_txt = qr,\.(?:c|cpp|h|hpp|cxx|hxx|txt|inl|ipp|css)$,i;
 	if ($path =~ m/$re_html/) {
 	    ProcessHtml($path);
 	} else {
