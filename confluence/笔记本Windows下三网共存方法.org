@@ -1,0 +1,94 @@
+* 乌龙
+
+（曾经我以为work了，但是后来我从一些其他同事那儿发现juniper vpn程序的路由绑架并不是总是有效，所以见下面的更新）
+
+在Windows下我想同时使用三个网络：内网（用网卡），外网（用wifi），以及VPN。
+
+但是这样会遇到一些问题：
+
+- 网卡一连上后默认路由全部从它出去，因为有线网络一般优于无线，从而导致无法上因特网。
+
+- VPN一连上内网即无法再访问，因为内网的网段是10.21.128.0，而VPN网段是
+  10.0.0.0，并且咱们公司的VPN软件把整个10.*网段的路由全部霸占了，优先级
+  也设成最高的，别人想改一个子网段都不行。
+
+解决方法如下：
+
+- route add支持一个-p选项，意为重启保留，所以我们用下面的命令就可以调整有线和无线的路由优先级（metric和if参数的意义见下面的更新，或者自己看一下route命令的帮助）：
+
+  （另外，注意改的时候在win7下需要用administrator权限，也就是在cmd.exe上按鼠标右键，弹出菜单上选“run as administrator”）。
+
+#+begin_example
+  route -p add 0.0.0.0 mask 0.0.0.0 10.21.128.2 METRIC 30 IF 10
+  route -p add 0.0.0.0 mask 0.0.0.0 192.168.1.1 METRIC 1 IF 11
+#+end_example
+
+
+
+- +设不了内网10.21.128.0子网段的路由，我们就改bible主机的单个ip地址的路由，这个VPN软件不会再绑架了。如果内网还有其他主机需要访问，另做相应处理。+
+
+  这个是不work的，见下面的真正work的方法。
+
+#+begin_example
+  route -p add 10.21.128.223 mask 255.255.255.255 0.0.0.0 IF 10
+#+end_example
+
+
+* 更新
+
+上面说的vpn绑架路由问题这样是无法解决的，我也忘记之前怎么搞的了（现在我知道了，因为juniper的路由绑架逻辑本身有bug，有时会“罢工”）。后来网上查到发现必须打patch：
+
+Hi, all
+
+先看一下你这个文件的md5：
+
+#+begin_example
+md5sum.exe "C:\Program Files\Juniper Networks\Common Files\dsNcService.exe"
+54e2cb6effea0e0180ff07268a0f8b4d *dsNcService.exe
+#+end_example
+
+如果是这个值的话，你可以对它编辑一下这个binary的patch：
+
+#+begin_example
+$bindiff dsNcService.exe.old dsNcService.exe.new
+diff on pos 00015e6f:00015e6f 1:'u' 2:'\x90'
+diff on pos 00015e70:00015e70 1:':' 2:'\x90'
+dsNcService.exe.old has 0 remaining
+dsNcService.exe.new has 0 remaining
+#+end_example
+
+也就是用hex编辑器打开，再把相应位置上的两个char都改成nop指令。注意备份，
+并且改之前必须把相应juniper的系统服务停掉，否则写不了文件。
+
+然后是改一下内网（网卡）和外网（wifi）的路由metric优先级：
+
+#+begin_src sh
+  route -p add 0.0.0.0 mask 0.0.0.0 10.21.128.2 METRIC 30 IF 10
+  route -p add 0.0.0.0 mask 0.0.0.0 192.168.1.1 METRIC 1 IF 11
+  route -p add 10.21.128.0 mask 255.255.255.0 0.0.0.0 METRIC 1 IF 10
+#+end_src
+
+这里-p选项意为重启保留。
+
+注意：IF后面的网络设备号在各自的机器上可能不同，用route print可以看，我的
+是这样的：
+
+#+begin_example
+===========================================================================
+Interface List
+ 12...00 ff 50 50 1b 88 ......Juniper Network Connect Virtual Adapter
+ 11...08 11 96 49 3f 80 ......Intel(R) Centrino(R) Advanced-N 6205
+ 10...00 21 cc 6c b2 73 ......Intel(R) 82579LM Gigabit Network Connection
+ 18...08 00 27 00 a4 5f ......VirtualBox Host-Only Ethernet Adapter
+#+end_example
+
+也就是说11是wifi，10是以太网卡。
+
+做完之后重启就搞定了，不需要每次启动后都执行脚本。
+
+稍后会把我改之前和之后的.exe放到wiki相应页面附件里，如果你的.exe跟我的一
+样的话直接用就好了。
+
+.exe具体怎么改的参见：http://www.digitalinternals.com/124/20090430/workaround-for-juniper-vpn-split-tunneling-restriction/
+
+

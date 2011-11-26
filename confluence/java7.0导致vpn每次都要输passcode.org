@@ -1,0 +1,1 @@
+之前为了装android sdk，要求下载一个java sdk，我一激动装了个7.0最新版本的，过了一阵发现vpn出问题了，每次都要我输入secure auth pin和passcode（我的邮箱里已经N封passcode提示邮件了），并且在这之前会提示我Microsoft JScript Compilation Error，根据这几个关键字google了一下，提示可能跟java版本有关，ft，jscript难道不是java script吗，后者可是跟java没有半毛关系啊。Anyway，把java7卸了之后vpn的这种烦人的症状消失。

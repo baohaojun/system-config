@@ -1,0 +1,66 @@
+* 注意
+
+目前（2011-11-21）我们只支持在Windows下用MarsBurner烧Sultan的手机，以后会加入对DKB、Jasmin等设备的烧机支持。
+
+（因为有些共享文件夹的链接需要在IE下才能打开，所以请考虑在windows IE下浏览此页面，Sorry！）
+
+* 准备工作
+
+需要装vc2008动态运行库、装烧机模式的驱动
+
+** vc2008 redist包安装
+
+第一次运行MarsBurner之前，如果以前没有安装过vc2008的动态库，则需要安装一下，否则双击MarsBurner快捷方式图标后Windows会出如下错误提示：
+
+#+begin_example
+The application has failed to start because its side-by-side configuration is incorrect.
+#+end_example
+
+
+
+可以直接从 [[file://///bible/Public/user/tools-team/vc2008-sp1-redist-x86.exe][这个共享文件]] 安装：
+
+
+如果需要自己下载的话，请访问 [[http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=5582][这个微软网页]] 。
+
+** 进入烧机模式
+
+在Sultan手机上进入烧机模式，需要先按着Vol Down键，再开机。注意如果用插拔电池的方式开机的话，需要先按着Vol Down，再插入电池。
+
+进入烧机模式后，手机会显示绿色背景，上有flashing mode提示，见下图（TBD，补图）：
+
+** 安装烧机驱动
+
+手机进入烧机模式后，用usb线与PC相连，如果以前没有装过烧机驱动，则需要到设备管理器里安装一下这个驱动。
+
+驱动位置在 [[file://///bible/Public/user/tools-team/flashing-usb-driver][这里]] （TBD：以后集成到MarsBurner安装包中）。
+
+* 烧机
+
+** 安装MarsBurner
+
+安装程序在 [[file://///bible/Public/user/tools-team/MarsBurner][这里]] 能找到。如果以前装过较老的版本，则点击安装程序后会自动提示卸载之前版本，不需要专门先卸载再安装。
+
+** 获取CM-release包
+
+ * 比如把 [[file://///bible/cm/release-20111118/sultan-eng.blds.20111118.103634][这个共享文件夹]] 拷贝到自己的PC上。
+
+   这里要注意的是，本地拷贝的全路径中不能含有中文字符。
+
+ * 把 [[file://///bible/Public/user/tools-team/extra-release][这个文件夹]] 下的所有文件拷贝到CM release拷贝的相同文件夹（注意，不是子文件夹）下。
+
+  （TBD：把这些文件放到CM release中去，免去每次都做一遍此拷贝操作）。
+
+
+** 运行MarsBurner
+
+这里需要注意的是在Win7下需要用administrator权限来运行MarsBurner。
+
+启动后点“...”的按钮，选择CM release拷贝文件夹下的pxa910_sultan.blf文件。
+
+手机进入烧机模式，并用usb线连到PC，注意这时MarsBurner上的圆形icon由红色变为绿色，并且“Flash”按钮也由disable变成enable，表示已经检测到烧机模式的手机连上来了。这时就可以点Flash按钮进行烧机了。
+
+烧机成功后会有提示。TBD：补图。
+
+
+

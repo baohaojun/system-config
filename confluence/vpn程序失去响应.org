@@ -1,0 +1,1 @@
+把手机用rndis与PC相连会导致vpn程序启动时失去响应，必须把networks设置里多出来的那个网络设备给disable掉。

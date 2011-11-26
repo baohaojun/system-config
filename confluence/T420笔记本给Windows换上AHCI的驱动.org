@@ -1,0 +1,14 @@
+见：
+http://bak2.beareyes.com.cn/2/lib/200805/25/20080525003_2.htm
+http://support.microsoft.com/kb/922976
+
+我们的T420拿到手后发现硬盘设成了兼容模式，性能上会比AHCI有所下降（并且在
+我的Debian系统下发现找不到光驱，必须打开AHCI才能使用光驱），但是如果直接
+在BIOS里把AHCI打开的话，Windows启动会蓝屏...
+
+解决办法是下载并运行上面微软网页里的Microsoft Fix It，再重启到bios下打
+开AHCI，现在能正常启动到Windows了，但用的是微软提供的通用驱动，所以需要
+从Lenovo的网站上
+http://support.lenovo.com/en_US/detail.page?LegacyDocID=MIGR-74431下载
+并更新一下驱动（我这边需要到Device Manager里手动点update driver并指向程
+序安装的位置）。
