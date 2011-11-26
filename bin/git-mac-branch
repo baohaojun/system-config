@@ -15,7 +15,7 @@ cd ${1:-~/windows-config}
 test "$(git config remote.origin.url | cut -b 1-5)" = https && exit 0 
 if git status -s|
     pn 2|
-    xargs -I %s stat -c %Y %s|
+    xargs -d \\n -I %s stat -c %Y %s|
     perl -ne '
 chomp; 
 $time = $time < $_ ? $_ : $time; 
