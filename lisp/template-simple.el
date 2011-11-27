@@ -76,10 +76,7 @@
   :group 'convenience
   :group 'pde)
 
-(defcustom template-directory-list
-  (append '("~/.templates/")
-          (if (boundp 'auto-insert-directory)
-              (list auto-insert-directory)))
+(defcustom template-directory-list nil
   "*Directory for lookup template files."
   :type '(repeat directory)
   :group 'template-simple)
