@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+tf=/tmp/org-export-$$ # temp file
+(
+    if grep -e '^#+title:' -i "$1" -q; then
+	true;
+    else
+	title=$(echo "$1" | perl -npe 's/_/\\_/g;')
+    cat <<EOF
+#+TITLE: ${title/%.org/}
+EOF
+    fi
+
+    cat "$1"
+) > $tf.org
+
+emacsclient -e '
+(progn
+  (save-excursion
+    (find-file "'$tf.org'") 
+    (org-mode)
+    (save-excursion
+      (org-export-as-html 3)
+      (kill-buffer (current-buffer)))
+    (kill-buffer (current-buffer))))'
+
+cp $tf.html "$1".html
+of "$1".html
+rm $tf.* 
