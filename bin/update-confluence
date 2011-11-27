@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+cd ~/confluence/
+IFS=$'\n'
+for x in $(git-st-s-utf8|grep -e '\.org$'); do
+    org-export "$x"
+    html2mht.pl "$x".html > "$x".mht
+    (
+        bash ~/doc/confluence-head "$x"
+        cat -- "$x"
+        cat ~/doc/confluence-tail;
+    ) > "$x".$$
+
+    congfu -- -a storePage --title "${x%%.org}" --encoding UTF-8 --file "$x".$$ || die "Error: see above"
+    congfu -- -a removeAttachment  --title "${x%%.org}" --name "$x".mht
+    congfu -- -a addAttachment --title "${x%%.org}" --file "$x".mht --mime text/html
+done
+

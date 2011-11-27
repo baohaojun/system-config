@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo " *注意* 这个wiki是用org-mode写的，confluence的wiki系统不支持它的html显示，想看html版本请点[这里|^$1.mht]。这是一个.mht文件，所以如果你用的是firefox，你需要安装[unmht|https://addons.mozilla.org/en-US/firefox/addon/unmht/]插件。另外如果这个wiki页带有附件的话，你能在这个.mht里找到下载链接（而不是在wiki的附件系统里；把页面和附件放在一个.mht文件里让打包很方便）。"
+echo " *注意* 以下显示的是本wiki的source code。看html版本、下载此wiki的附件，请点[此.mht文件|^$1.mht]。。"
 echo
 echo "以下是org-mode的source："
 echo
