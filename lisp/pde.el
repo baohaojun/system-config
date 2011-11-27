@@ -331,8 +331,6 @@ With prefix argument, reflesh the formated manpage."
       (define-key map "\C-c\C-k" 'perlcritic)
       (define-key map "\C-c\C-z" 'run-perl)
       (define-key map "\C-c\C-d" 'perldb-ui))
-    ;; with help-dwim, show prefix key bindings is more helpful
-    (local-set-key "\C-c\C-h" 'describe-prefix-bindings)
     (cperl-lazy-install)
     (setq pde-initialized t))
   
