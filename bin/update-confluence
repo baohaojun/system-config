@@ -3,7 +3,11 @@ set -e
 
 cd ~/confluence/
 IFS=$'\n'
-for x in $(git-st-s-utf8|grep -e '\.org$'); do
+args=("$@")
+if test $# = 0; then
+    args=($(git-st-s-utf8|grep -e '\.org$'))
+fi
+for x in "${args}"; do
     org-export "$x"
     html2mht.pl "$x".html > "$x".mht
     (

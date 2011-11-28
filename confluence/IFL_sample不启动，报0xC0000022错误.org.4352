@@ -1,0 +1,12 @@
+ *注意* 以下显示的是本wiki的source code。看html版本、下载此wiki的附件，请点[此.mht文件|^IFL_sample不启动，报0xC0000022错误.org.mht]。。
+
+以下是org-mode的source：
+
+{code:none}
+ifl\_sample.exe启动时报出这个错误，用procmon工具查看其系统调用，发现是在
+createfile ifl.dll的时候发生permission denied，于是想到我在解压此
+package的时候用的是cygwin下的unzip/unrar，而cygwin版本的这些工具都会拿
+掉所有文件的可执行权限。果然，看了一下.dll文件的权限，都没有x权限，加上
+之后问题消失。
+
+{code}

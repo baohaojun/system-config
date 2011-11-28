@@ -32,10 +32,9 @@ for (@ARGV) {
     }
 }
 
-my $confserv=`cat ~/.confserv`;
-my $confuser=`cat ~/.confuser`;
-chomp($confserv);
-chomp($confuser);
+chomp (my $confserv=`cat ~/.confserv`);
+chomp (my $confuser=`cat ~/.confuser`);
+chomp (my $confpath=`cat ~/.confpath`);
 
 my $space = "~$confuser";
 
@@ -43,4 +42,4 @@ GetOptions(
     "space=s" => \$space,
     );    
 
-system("confluence.sh", "--server", "http://$confserv", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", $space, @ARGV);
+system("confluence.sh", "--server", "http://$confserv$confpath", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", $space, @ARGV);
