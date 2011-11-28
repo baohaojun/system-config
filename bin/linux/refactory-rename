@@ -5,12 +5,77 @@ function die() {
     exit 1
 }
 
+function debug() {
+    echo "$@" 1>&2
+}
+
+IFS=$'\n'
+
 git status
 git st -s . | grep . && die "git not clean"
 
 test $# = 0 && die "must provide at least 2 args"
 tmpf=/tmp/$(basename $0).$$
+perlhash=$tmpf.hash
 git ls-tree --name-only -r HEAD > $tmpf
-cat $tmpf | xargs -d \\n grep -l -e "$1" |xargs -d \\n perl -npe 's,'"$1"','"$2"',g' -i
-cat $tmpf | grep -e "$1" | xargs -d \\n bash -c 'for x in "$@"; do git mv "$x" $(echo "$x"|perl -npe "s,'"$1"','"$2"',g"); done' true
+cat $tmpf | xargs -d \\n grep -l -i -I -e "$1" |xargs -d \\n perl -npe '
+BEGIN{
+    $from = "'"$1"'";
+    $to = "'"$2"'";
+}
 
+$rep_save{$from} = $to;
+$rep_save{lc $from} = lc $to;
+$rep_save{uc $from} = uc $to;
+$rep_save{ucfirst lc $from} = ucfirst lc $to;
+
+while (m#('"$1"')#ig) {
+    if ($rep_save{$1}) {
+        next;
+    } else {
+        system("echo please input your replacement for $1 > /tmp/get-stdin.$$");
+        chomp($rep_save{$1} = qx("get-stdin /tmp/get-stdin.$$"));
+    }
+}
+
+for $key (keys %rep_save) {
+    my ($from, $to) = ($key, $rep_save{$key});
+    s/$from/$to/g;
+}
+
+END {
+    use Storable;
+    store \%rep_save, "'$perlhash'";
+}
+' -i
+        
+
+
+function rename-files() {
+    dir=$1
+    shift
+    (
+	cd "$dir";
+	debug doing $(pwd)
+	for x in $(git ls-tree --name-only HEAD); do
+	    if test -d "$x"; then
+		rename-files "$x" "$@"
+	    fi
+	    if echo "$x"|grep -q -i -e "$1"; then
+		git mv "$x" "$(echo "$x"|perl -npe '
+BEGIN{
+    use Storable;
+    %rep_save = %{retrieve("'$perlhash'")};
+}
+
+for $key (keys %rep_save) {
+    my ($from, $to) = ($key, $rep_save{$key});
+    s/$from/$to/g;
+}
+')"
+	    fi
+	done
+    )
+}
+	    
+rename-files . "$@"
