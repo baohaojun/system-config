@@ -8,8 +8,7 @@ if test $# = 0; then
     args=($(git-st-s-utf8|grep -e '\.org$'))
 fi
 for x in "${args}"; do
-    org-export "$x"
-    html2mht.pl "$x".html > "$x".mht
+    org-to-mht "$x"
     (
         bash ~/doc/confluence-head "$x"
         cat -- "$x"
@@ -19,5 +18,6 @@ for x in "${args}"; do
     congfu -- -a storePage --title "${x%%.org}" --encoding UTF-8 --file "$x".$$ || die "Error: see above"
     congfu -- -a removeAttachment  --title "${x%%.org}" --name "$x".mht
     congfu -- -a addAttachment --title "${x%%.org}" --file "$x".mht --mime text/html
+    rm "$x".$$
 done
 

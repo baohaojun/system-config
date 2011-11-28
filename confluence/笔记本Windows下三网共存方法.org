@@ -29,19 +29,24 @@
   
   解释一下：
 
-    1) 把所有0.0.0.0也就是所谓的默认路由都删掉，因为我们下面要重设它，
-       不删的话，可能重设的路由不能马上失效。
+  1) 把所有0.0.0.0也就是所谓的默认路由都删掉，因为我们下面要重设它，
+     不删的话，可能重设的路由不能马上生效。
 
-    2) 增加一条网关为无线网关（192.168.1.1）、优先级最高（也即metric最
-       小，为1）、网卡为无线网卡（Interface，IF为我的无线网卡IF号
-       11[fn:: 这里不同的机器可能是不同的，在 ~route print~ 命令的顶部会列
-       出你机器上所有的网卡IF]）、重启保留（-p参数）的路由。
+  2) 增加一条网关为无线网关（192.168.1.1）、优先级最高（也即metric最
+     小，为1）、网卡为无线网卡（Interface，IF为我的无线网卡IF号
+     11[fn:: 这里不同的机器可能是不同的，在 ~route print~ 命令的顶部会列
+     出你机器上所有的网卡IF]）、重启保留（-p参数）的路由。
 
-    3) 与2)是类似的，增加一条从有线网络走的默认路由，但是把优先级调成较低（metric 30）。
+  3) 与2)是类似的，增加一条从有线网络走的默认路由，但是把优先级调成较低（metric 30）。
 
-- 关于vpn，问题比较多，也是我出了几次乌龙的原因。
+  另外要注意的是，在改route表的时候，一定要用administrator！在Win7开始
+  菜单里搜到cmd.exe后，点右键选“Run as Administrator”。
 
-** vpn的路由绑架
+  
+
+- 关于vpn，问题比较多，也是我出了几次乌龙的原因：
+
+** 谁动了我的路由?!!
 
 我们的vpn软件，Juniper Network Connect，内建了路由表监测和绑架的功能。
 也就是说，
@@ -64,63 +69,55 @@
 
 ** 解决办法
 
-从 [[http://www.digitalinternals.com/124/20090430/workaround-for-juniper-vpn-split-tunneling-restriction/][这个网页]] 查到，可以对vpn程序打一个binary的patch，把它的路由监测代码逻辑给disable掉，
+从 [[http://www.digitalinternals.com/124/20090430/workaround-for-juniper-vpn-split-tunneling-restriction/][这个网页]] 查到，可以对vpn程序打一个binary的patch，把它的路由监测代码逻辑给disable掉。
 
-* 更新
+我已经把这个patch给打好了，所以你现在需要做的是：
 
-上面说的vpn绑架路由问题这样是无法解决的，我也忘记之前怎么搞的了（现在我知道了，因为juniper的路由绑架逻辑本身有bug，有时会“罢工”）。后来网上查到发现必须打patch：
+1) 从run dialog（按Win + R键唤出），输入services.msc回车打开系统服务，stop掉juniper相关的两条service，因为我们要替换它的.exe文件。
 
-Hi, all
+2) 进入 [[C:/Program%20Files/Juniper%20Networks/Common%20Files][这个文件夹]] ，备份里面的dsNcService.exe文件。
 
-先看一下你这个文件的md5：
+3) 下载 [[./dsNcService.exe][这个文件]]保存到上面的文件夹中，也就是替换掉上面的dsNcService.exe文件。
 
-#+begin_example
-md5sum.exe "C:\Program Files\Juniper Networks\Common Files\dsNcService.exe"
-54e2cb6effea0e0180ff07268a0f8b4d *dsNcService.exe
-#+end_example
+4) 重新启动1)中停掉的两个服务。
 
-如果是这个值的话，你可以对它编辑一下这个binary的patch：
+5) 可能需要手动删除添加一下内网的路由：
 
-#+begin_example
-$bindiff dsNcService.exe.old dsNcService.exe.new
-diff on pos 00015e6f:00015e6f 1:'u' 2:'\x90'
-diff on pos 00015e70:00015e70 1:':' 2:'\x90'
-dsNcService.exe.old has 0 remaining
-dsNcService.exe.new has 0 remaining
-#+end_example
+   #+begin_example
+   route delete 10.21.128.0
+   route add -p 10.21.128.0 mask 255.255.255.0 0.0.0.0 metric 1 IF $eth0 #<==把这个改成你自己的以太网卡IF号。
+   #+end_example
 
-也就是用hex编辑器打开，再把相应位置上的两个char都改成nop指令。注意备份，
-并且改之前必须把相应juniper的系统服务停掉，否则写不了文件。
-
-然后是改一下内网（网卡）和外网（wifi）的路由metric优先级：
-
-#+begin_src sh
-  route -p add 0.0.0.0 mask 0.0.0.0 10.21.128.2 METRIC 30 IF 10
-  route -p add 0.0.0.0 mask 0.0.0.0 192.168.1.1 METRIC 1 IF 11
-  route -p add 10.21.128.0 mask 255.255.255.0 0.0.0.0 METRIC 1 IF 10
-#+end_src
-
-这里-p选项意为重启保留。
-
-注意：IF后面的网络设备号在各自的机器上可能不同，用route print可以看，我的
-是这样的：
+至此，三网同用的办法就说完了，一般重启以后也不需要重设路由表，但是有时
+（可能还是跟juniper vpn的bug有关）你可能还是需要改一下路由，所以建议你
+把自己的路由改动命令保存到一个.bat文件，发现出问题的时候跑一下就好了：
 
 #+begin_example
-===========================================================================
-Interface List
- 12...00 ff 50 50 1b 88 ......Juniper Network Connect Virtual Adapter
- 11...08 11 96 49 3f 80 ......Intel(R) Centrino(R) Advanced-N 6205
- 10...00 21 cc 6c b2 73 ......Intel(R) 82579LM Gigabit Network Connection
- 18...08 00 27 00 a4 5f ......VirtualBox Host-Only Ethernet Adapter
+route delete 0.0.0.0
+route add -p 0.0.0.0 mask 0.0.0.0 192.168.1.1 metric 1 IF 11
+route add -p 0.0.0.0 mask 0.0.0.0 10.21.128.2 metric 30 IF 10
+route delete 10.21.128.0
+route add -p 10.21.128.0 mask 255.255.255.0 0.0.0.0 metric 1 IF 10
 #+end_example
 
-也就是说11是wifi，10是以太网卡。
+注意一定要改成你自己的两种网卡IF号！
 
-做完之后重启就搞定了，不需要每次启动后都执行脚本。
+（保险起见，这是我自己备份的 [[./dsNcService-back.exe][dsNcService.exe文件]]）。
 
-稍后会把我改之前和之后的.exe放到wiki相应页面附件里，如果你的.exe跟我的一
-样的话直接用就好了。
+** 其他问题
 
-.exe具体怎么改的参见：
+- 可以ping通bible，但是浏览器无法访问
 
+  这个不知道为什么会出现，但是一般我换一个浏览器就没有了，或者直接用ip地址也是可以打开bible的主页。
+  
+  几乎可以肯定，这个问题与这个三网同用解决方法无关。
 
+- 无法访问bible的share folder
+
+  这个是安乐反映的，但是我没有看到过，如果有人发现此问题，可以叫我看一下。
+
+- Linux下内外网同时访问
+
+  Linux下也有route命令，看一下man手册吧。我还不知道怎样把Linux下的route改动弄成重启保留的，每次都是发现没法上网才反应过来，还没改路由呢...
+
+  所以如果你知道的话请不吝赐教。

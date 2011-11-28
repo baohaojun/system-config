@@ -31,8 +31,14 @@ sub debug(@) {
 }
 
 sub relative_url($$) {
+
   my ($s, $t)  = @_;
   debug "relative_url for $s and $t";
+
+  if (substr($s, 0, length($t) + 1) eq $t . "/") {
+    return substr($s, length($t) + 1);
+  }
+
   my @s = split("", $s);
   my @t = split("", $t);
 
@@ -98,15 +104,16 @@ sub convertEqHex($) {
     return $arg;
 }
 
-sub ProcessTagPath($$) {
-  my ($dir, $arg) = @_;
+sub ProcessTagPath($$$) {
+  my ($file, $dir, $tag) = @_;
 
-  $arg = substr_from_to($arg, 1, length($arg)-1);
-  if ($arg =~ m,://, and $arg !~ m,^file://,) { # this seems a non-file url, should not archive it
-    return $arg;
+  my $saved_tag = $tag;
+  $tag = substr_from_to($tag, 1, length($tag)-1);
+  if ($tag =~ m,://, and $tag !~ m,^file://,) { # this seems a non-file url, should not archive it
+    return $saved_tag;
   }
 
-  my $path = $arg;
+  my $path = $tag;
   $path =~ s,^file://,,;
   if ($path =~ m,^/[a-z]:/,i) {
     $path = substr($path, 1); #get rid of '/' before D:/ in file:///D:/
@@ -114,10 +121,15 @@ sub ProcessTagPath($$) {
 
   my $path_url;
   if ($path !~ m,^/|^[a-zA-Z]:|^\\,) { # !~ the pattern of absolute path
-    $path = formal_path("$dir/$path");
+    if (substr($path, 0, 1) eq '#') { # this is an anchor in the same page
+      return $saved_tag;
+    } else {
+      $path = formal_path("$dir/$path");
+    }
   }
 
-  return $arg unless -e $path or -e substr_from_to($path, 0, rindex($path, "#")); #in case this is an anchor
+  return $saved_tag unless -e $path or -e substr_from_to($path, 0, rindex($path, "#")); #in case this is an anchor
+  return $saved_tag if not is_subdir($path, $start_dir);
   my $anchor = "";
   if (not -e $path and -e substr_from_to($path, 0, rindex($path, "#"))) {
     $anchor = substr($path, rindex($path, "#"));
@@ -155,10 +167,10 @@ sub ProcessHtml($) {
 }
 
 sub ProcessHtmlContent($$$) {
-  my ($arg, $dir, $content) = @_;
+  my ($file, $dir, $content) = @_;
 
   print "\r\n\r\n$boundary_beg\r\nContent-Type: text/html; \r\nContent-Transfer-Encoding: quoted-printable\r\nContent-Location: "
-    . locationFromPath($arg) . "\r\n\r\n";
+    . locationFromPath($file) . "\r\n\r\n";
 
   my $last_beg = 0;
   while ($content =~ m/$tag_re/g) {
@@ -175,7 +187,7 @@ sub ProcessHtmlContent($$$) {
 	$last_sub_beg = $+[0];
 	if (lc($1) eq $tag_attr_map{$tag}) {
 		    
-	  print convertEqHex(ProcessTagPath($dir, $2));
+	  print convertEqHex(ProcessTagPath($file, $dir, $2));
 	} else {
 	  print convertEqHex($2);
 	}

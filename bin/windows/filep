@@ -2,6 +2,6 @@
 #\\bible\Public\user\tools-team\extra-release
 
 File=${1:-.}
-echo file:///"$(cygpath -alm "$File")"|tr -d '\n\r' |tee /tmp/filep.$$
+echo file:///"$(cygpath -alm "$File" | tr -d '\r\n' | perl -npe 's#([^:/\w\-\.\@])#sprintf("%%%%%2.2x",ord($1))#eg;')"|tr -d '\n\r' |tee /tmp/filep.$$
 cat /tmp/filep.$$ | putclip
 rm /tmp/filep.$$
