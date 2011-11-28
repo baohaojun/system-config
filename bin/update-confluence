@@ -7,7 +7,7 @@ args=("$@")
 if test $# = 0; then
     args=($(git-st-s-utf8|grep -e '\.org$'))
 fi
-for x in "${args}"; do
+for x in "${args[@]}"; do
     org-to-mht "$x"
     (
         bash ~/doc/confluence-head "$x"
@@ -15,7 +15,9 @@ for x in "${args}"; do
         cat ~/doc/confluence-tail;
     ) > "$x".$$
 
-    congfu -- -a storePage --title "${x%%.org}" --encoding UTF-8 --file "$x".$$ || die "Error: see above"
+    logf=~/.logs/$(basename $0)-$$.log
+    congfu -- -a storePage --title "${x%%.org}" --encoding UTF-8 --file "$x".$$ > $logf 2>&1|| die "Error: see above"
+    cat $logf|grep 'Page has id: '|perl -npe 's/.*Page has id: (\d+).*/$1/'|xargs -I %s bash -x -c "of http://$(cat ~/.confserv)$(cat ~/.confpath)/pages/viewpage.action?pageId=%s"
     congfu -- -a removeAttachment  --title "${x%%.org}" --name "$x".mht
     congfu -- -a addAttachment --title "${x%%.org}" --file "$x".mht --mime text/html
     rm "$x".$$

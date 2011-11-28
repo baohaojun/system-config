@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo " *注意* 以下显示的是本wiki的source code。看html版本、下载此wiki的附件，请点[此.mht文件|^$1.mht]。。"
+echo " *注意* 以下显示的是本wiki的source code。看html版本、下载此wiki的附件，请点[此.mht文件|^$1.mht]。点 [这里|why mht] 了解我为什么选择使用mht文件格式。"
 echo
 echo "以下是org-mode的source："
 echo

@@ -6,11 +6,14 @@ excel表格，我可以在一个.mht文件里放进去任意文件。简直就�
 
 另外一个原因，是因为它其实就是html。而html是一种相当相当广泛、标准的标
 记语言。与它相比，公司的wiki系统confluence使用的是它自己的标记语言，虽
-然很简单，可是我已经有自己心仪的标记语言了：org-mode。掌握多于一门的标
+然很简单，可是我已经有非常喜欢的标记语言了：org-mode。掌握多于一门的标
 记语言是一种不必要的痛苦。org-mode可以轻易地输出为html，我再从html生
 成.mht，让发布变得更容易：文档和附件都在一个文件里，下载一次就可以了；
 如果用的是confluence自带的方法，10个附件的话，我就需要下载10次，再记得
 打一个包（虽然有一个选项叫下载所有附件）...
+
+只要有Emacs的地方，我就能用org-mode；可是离开了confluence，它所内建的
+wiki markup syntax就什么都不是了。org-mode是我选择使用.mht文件的真正原因。
 
 * 浏览器支持
 
@@ -18,4 +21,4 @@ excel表格，我可以在一个.mht文件里放进去任意文件。简直就�
 
 - Firefox 需要安装 [[https://addons.mozilla.org/en-US/firefox/addon/unmht/][unmht]] 插件。
 
-另外，一个很有趣的现象是，IE不支持.mht里的javascript和html anchor，所以推荐使用firefox + 插件的方式。
+  另外，一个很有趣的现象是，IE不支持.mht里的javascript和html anchor，所以推荐使用firefox + 插件的方式。

@@ -24,6 +24,7 @@ alias rm='rm -i'
 alias mkgtags='mkgtags -i -v'
 alias bcd=cd_beagle
 alias pcd='builtin cd -P'
+alias mail=mailx
 
 cd_beagle() 
 {
