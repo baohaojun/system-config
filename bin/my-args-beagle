@@ -1,0 +1,9 @@
+#!/bin/bash
+
+function get_longest_token()
+{
+    echo "$@"
+}
+
+export -f get_longest_token
+my-beagle "$@"
