@@ -5,4 +5,4 @@
 * TODO write a document for git process
 * TODO support jasmine flashing
 * TODO support dkb flashing
-
+* TODO read literate programming, 6 pages, by Jon Bentley and Don Knuth
