@@ -1,0 +1,27 @@
+有些厂商发一个datasheet过来，每次打开都需要输入密码，有的打开以后还特别慢。这时候可以用下面这一招来搞定它：
+
+1. 在acroread中打开。如果是Linux下的话，有时候这一步都会有问题。比如Nvidia发布的一些文档。从网上可以看到这是adobe acroread已知的一个bug，但是官网上给的workaround是说在windows上可以把secret key给export出来。这也太麻烦了，我们上哪儿找windows机器啊。
+
+我想了一招，可以直接在Linux下搞定：
+
+a. 用firefox访问https://docsec.nvidia.com
+
+b. 点击右下角的小锁图标，查看证书详情。把所有证书全部export到文件
+
+c. for x in ~/Downloads/GeoTrust* ; do  acroread -installCertificate -PEM  $x; done
+
+
+2. 打印成.ps文件
+
+3. 把ps文件中标志这是一个加过密的pdf转过来的标记给搞掉：
+
+{code:sh}
+for x in *.ps; do perl -ne 'print unless m/^mark currentfile eexec$/ .. m/^cleartomark$/;' -i $x; done
+{code}
+
+4. 把ps文件转回pdf文件
+
+{code:sh}
+ps2pdf input-file.ps
+{code}
+

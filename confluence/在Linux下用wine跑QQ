@@ -1,0 +1,81 @@
+{toc:type=flat|separator=pipe|maxLevel=3}
+
+{numberedheadings}
+
+h1. 装wine1.3
+
+最新的debian系统里已经有wine1.3了，不知道ubuntu里有没有，如果有的话直接跑下一步的apt-get（用系统自带的源还是比这些实验性的源要好一点），如果没有（也就是直接apt-get失败了）的话可以这样：
+
+在系统管理-软件源-其他软件-添加
+
+{code}
+ppa:ubuntu-wine/ppa
+{code}
+
+关闭后打开终端
+
+{code:sh}
+sudo apt-get update
+sudo apt-get dist-upgrade
+apt-get install wine1.3 wine1.3-gecko winetricks
+
+#或者可能还需要多装一些包，最早的时候我是这么跑的，如果哪个包出错装不了的话自己把它拿掉再试试：
+#apt-get install wine wine1.2 wine1.2-dbg wine1.2-dev wine1.3 wine1.3-dbg wine1.3-dev wine1.3-gecko wine-bin wine-dev wine-doc wine-gecko winetricks wine-utils
+{code}
+
+h1. 用winetricks装windows插件：
+
+{code:sh}
+winetricks msxml3 gdiplus riched20 riched30 ie6 vcrun6 vcrun2005sp1 flash msxml6
+{code}
+
+以下是我的系统上已经用winetricks装了的包：
+
+{code}
+comctl32 gdiplus ie6 mfc42 msls31 msxml3 msxml4 pngfilt riched20 riched30 vcrun2003 vcrun2005 vcrun2008 vcrun2010 vcrun6sp6 vcrun6 wenquanyi wininet wsh56vb wsh57
+{code}
+
+h1. 改字体：
+
+先装一个开源的文泉驿字体：
+
+{code:sh}
+winetricks wenquanyi
+{code}
+
+然后把这个[注册表|http://github.com/baohaojun/windows-config/raw/master/doc/wine-font.reg]文件导入到注册表里：
+
+{code:sh}
+wget http://github.com/baohaojun/windows-config/raw/master/doc/wine-font.reg
+regedit /s wine-font.reg
+{code}
+
+h1. 下载并安装QQ
+
+建议用国际版的qq，功能比较全，而又比较稳定（不像qq2011等，经常会要求自动更新，每次更新都会死掉）。
+
+下载下来之后用wine运行安装：
+{code:sh}
+wine QQIntl1.0.exe
+{code}
+
+*更新*（2011-06-10）：新版本的qqintl1.1已经出了，原来的1.0会每次登录都让你输验证码，建议更新到1.1。但是1.1直接在linux下用wine安装会crash，需要先在windows下安装，再把整个安装目录打包拷到linux的相应目录下。
+
+h1. 运行QQ
+
+输入密码的时候千万不要点那个输入区域，程序会退出，必须点旁边的小键盘图标，用鼠标输入密码。这是狗日的腾迅的一个阴谋:-)
+
+一定要选上保存密码和自动登录，否则下次启动QQ输入焦点自动在密码输入区域，每次都马上退出，除非你手很快，能点回到上一行的帐户输入区域。
+
+h2. 怎么运行QQ？
+
+安装完QQ之后，位置是在{{~/.wine/drive_c/Program\ Files/Tencent/QQIntl/Bin}}下，所以你运行的话，需要这样做：
+
+{code:sh}
+cd ~/.wine/drive_c/Program\ Files/Tencent/QQ/Bin
+wine QQ.exe 
+{code}
+
+你可以考虑把上面这个写到一个脚本文件里，然后让桌面启动的时候自动运行这个脚本。至于怎么向桌面系统里添加自动启动的程序，呃，不同的桌面系统有不同的方法，就需要自己上网查一下了。
+
+{numberedheadings}

@@ -1,0 +1,807 @@
+昨天大家很多人听了银平给大家做的搜索引擎的培训，可见大家对搜索引擎技术还是都很感兴趣的。今天我趁热打铁，再跟大家说说，怎么在我们的日常工作中用搜索引擎技术。
+
+呃，搜索引擎啊，我天天用啊，谷歌，百度，还用你来说啊？您别急，听我慢慢道来。希望您听完我的故事之后，能发现android/kernel等等“巨大”的代码项目，不再那么让人望而生畏、遥不可及:-)
+
+h2. 先搜索，再精确定位
+
+我们这里要研究的搜索引擎，是beagle，它是从昨天银平谈到的三个搜索引擎——sphinx、xapian、lucene——中的最后一个，lucene项目衍变来的。
+
+假设我们要在android代码里搜索一个函数，并且希望精确定位，也就是说希望知道在哪个文件中哪一行上使用了这个函数。因为我们可能希望直接跳到那个位置上，开始阅读、修改等操作。
+
+熟悉grep的人知道，这样的任务，用grep最合适了。可是我们的android代码里实在是太庞大了，如果整个代码grep一遍下来，我试过，需要至少一个小时。显然是不实际的。以这样低下的生产效率，想全盘了解android的代码架构，可能需要很十年时间？呃……
+
+这时候搜索引擎技术就能派上用场了。很简单！我们先用beagle确定哪些文件包含这个函数，再用grep去用正则表达式搜索这几个文件。
+
+在Android代码中搜索readlink，出来的结果可能是下面这样的。您可以自己看一下，开始和结束的时间戳，这一次花了7秒钟，这是因为很多文件内容还不在操作系统的cache里。下一次您搜索其他的东西，可能会只需要1秒钟！您再算一下，一小时，变成了一秒，原先您十年（我瞎扯的）搞通android，除以3600，现在只要三天就可以了！
+
+呃，开玩笑的。显然不能这么算。
+
+{code:grep}
+-*- mode: grep; default-directory: "/home/bhj/src/rayzerlink-ventana/" -*-
+Grep started at Sat Dec 18 11:37:06
+
+beagle-grep.sh -e "readlink" 
+pat is: readlink.
+/home/bhj/bin/linux/ext/x86_64/beagle-break.exe
+beagle query argument `readlink '
+Starting at /home/bhj/tmp/for-code-reading//home/bhj/src/rayzerlink-ventana
+Beagle index found at /home/bhj/tmp/for-code-reading//home/bhj/src/rayzerlink-ventana/.beagle
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-arm/syscalls.mk:98:syscall_src += arch-arm/syscalls/readlink.S
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-arm/syscalls/readlink.S:5:    .type readlink, #function
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-arm/syscalls/readlink.S:6:    .globl readlink
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-arm/syscalls/readlink.S:10:readlink:
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-arm/syscalls/readlink.S:13:    ldr     r7, =__NR_readlink
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-sh/syscalls.mk:101:syscall_src += arch-sh/syscalls/readlink.S
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-sh/syscalls/readlink.S:5:    .type readlink, @function
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-sh/syscalls/readlink.S:6:    .globl readlink
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-sh/syscalls/readlink.S:9:readlink:
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-sh/syscalls/readlink.S:17:    bt      __NR_readlink_end
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-sh/syscalls/readlink.S:26:__NR_readlink_end:
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-sh/syscalls/readlink.S:31:0:  .long   __NR_readlink
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-x86/syscalls.mk:101:syscall_src += arch-x86/syscalls/readlink.S
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-x86/syscalls/readlink.S:5:    .type readlink, @function
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-x86/syscalls/readlink.S:6:    .globl readlink
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-x86/syscalls/readlink.S:9:readlink:
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-x86/syscalls/readlink.S:16:    movl    $__NR_readlink, %eax
+/home/bhj/src/rayzerlink-ventana/bionic/libc/bionic/realpath.c:110:			n = readlink(p, resolved, MAXPATHLEN - 1);
+/home/bhj/src/rayzerlink-ventana/bionic/libc/bionic/ssp.c:80:    if ((count = readlink("/proc/self/exe", path, sizeof(path) - 1)) == -1) {
+/home/bhj/src/rayzerlink-ventana/bionic/libc/include/sys/linux-syscalls.h:92:#define __NR_readlink                     (__NR_SYSCALL_BASE + 85)
+/home/bhj/src/rayzerlink-ventana/bionic/libc/include/sys/linux-unistd.h:112:int              readlink (const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/bionic/libc/include/unistd.h:123:extern int readlink(const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/bionic/libc/kernel/arch-arm/asm/unistd.h:104:#define __NR_readlink (__NR_SYSCALL_BASE+ 85)
+/home/bhj/src/rayzerlink-ventana/bionic/libc/kernel/arch-x86/asm/unistd_32.h:100:#define __NR_readlink 85
+/home/bhj/src/rayzerlink-ventana/bionic/libc/kernel/arch-x86/asm/unistd_32.h:320:#define __NR_readlinkat 305
+/home/bhj/src/rayzerlink-ventana/bionic/libc/kernel/common/linux/coda.h:421:struct coda_readlink_in {
+/home/bhj/src/rayzerlink-ventana/bionic/libc/kernel/common/linux/coda.h:426:struct coda_readlink_out {
+/home/bhj/src/rayzerlink-ventana/bionic/libc/kernel/common/linux/coda.h:530: struct coda_readlink_in coda_readlink;
+/home/bhj/src/rayzerlink-ventana/bionic/libc/kernel/common/linux/coda.h:547: struct coda_readlink_out coda_readlink;
+/home/bhj/src/rayzerlink-ventana/bionic/libc/kernel/common/linux/nfs_xdr.h:333:struct nfs_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/bionic/libc/kernel/common/linux/nfs_xdr.h:428:struct nfs3_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/bionic/libc/kernel/common/linux/nfs_xdr.h:512: int (*readlink)(struct inode *, struct page *, unsigned int,
+/home/bhj/src/rayzerlink-ventana/bionic/libc/SYSCALLS.TXT:147:int     readlink(const char *, char *, size_t)  85
+/home/bhj/src/rayzerlink-ventana/bootable/recovery/applypatch/freecache.c:48:      count = readlink(fd_path, link, sizeof(link)-1);
+/home/bhj/src/rayzerlink-ventana/build/libs/host/CopyFile.c:369:    nameLen = readlink(src, linkBuf, sizeof(linkBuf)-1);
+/home/bhj/src/rayzerlink-ventana/build/tools/mktarball.sh:14:fs_get_stats=`readlink -f $1`
+/home/bhj/src/rayzerlink-ventana/build/tools/mktarball.sh:15:start_dir=`readlink -f $2`
+/home/bhj/src/rayzerlink-ventana/build/tools/mktarball.sh:17:target_tar=`readlink -f $4`
+/home/bhj/src/rayzerlink-ventana/build/tools/mktarball.sh:18:target_tarball=`readlink -f $5`
+/home/bhj/src/rayzerlink-ventana/dalvik/libcore/luni/src/main/native/java_io_File.cpp:121:    // We can't know how big a buffer readlink(2) will need, so we need to
+/home/bhj/src/rayzerlink-ventana/dalvik/libcore/luni/src/main/native/java_io_File.cpp:126:        ssize_t len = readlink(&path[0], &buf[0], buf.size() - 1);
+/home/bhj/src/rayzerlink-ventana/dalvik/libcore/luni/src/main/native/java_io_File.cpp:134:            buf[len] = '\0'; // readlink(2) doesn't NUL-terminate.
+/home/bhj/src/rayzerlink-ventana/development/simulator/app/executablepath_linux.cpp:28:    int err = readlink(proc, exe, PATH_MAX);
+/home/bhj/src/rayzerlink-ventana/development/simulator/wrapsim/Globals.h:54:typedef ssize_t (*Func_readlink)(const char*, char*, size_t);
+/home/bhj/src/rayzerlink-ventana/development/simulator/wrapsim/Globals.h:121:EXTERN_FUNC Func_readlink _ws_readlink;
+/home/bhj/src/rayzerlink-ventana/development/simulator/wrapsim/Init.c:65:    _ws_readlink = dlsym(RTLD_NEXT, "readlink");
+/home/bhj/src/rayzerlink-ventana/development/simulator/wrapsim/Intercept.c:79:  readlink(), rename(), rmdir(), stat()/stat64(), statfs/statfs64(),
+/home/bhj/src/rayzerlink-ventana/development/simulator/wrapsim/Intercept.c:198:PASS_THROUGH_DECL(readlink, ssize_t, const char* path, char* buf, size_t bufsiz)
+/home/bhj/src/rayzerlink-ventana/development/simulator/wrapsim/Intercept.c:199:PASS_THROUGH_BODY(readlink, path, buf, bufsiz)
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/bluez/compat/dun.c:106:		int  len = readlink(de->d_name, link, sizeof(link));
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/glib/ChangeLog.pre-2-4:1304:	namespace and to better separate it from readlink(). This is
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/glib/ChangeLog.pre-2-4:1348:	* configure.in: Check for setenv, unsetenv, readlink and symlink.
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/glib/ChangeLog.pre-2-4:1350:	* tests/file-test.c (test_readlink): Test for g_read_link() (only
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/glib/config.h.win32.in:351:/* Define to 1 if you have the `readlink' function. */
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/glib/configure.in:945:AC_CHECK_FUNCS(lstat strerror strsignal memmove vsnprintf stpcpy strcasecmp strncasecmp poll getcwd vasprintf setenv unsetenv getc_unlocked readlink symlink fdwalk)
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/glib/gio/glocalfile.c:1395:  res = readlink (link, symlink_value, sizeof (symlink_value) - 1);
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/glib/gio/glocalfileinfo.c:167:      read_size = readlink (full_name, buffer, size);
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/glib/glib/config.h:319:/* Define to 1 if you have the `readlink' function. */
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/glib/glib/gfileutils.c:1764: * readlink() function.  The returned string is in the encoding used
+/home/bhj/src/rayzerlink-ventana/external/bluetooth/glib/glib/gfileutils.c:1786:      read_size = readlink (filename, buffer, size);
+/home/bhj/src/rayzerlink-ventana/external/busybox/archival/cpio.c:248:				char *lpath = xmalloc_readlink_or_warn(name);
+/home/bhj/src/rayzerlink-ventana/external/busybox/archival/tar.c:301:		char *lpath = xmalloc_readlink_or_warn(fileName);
+/home/bhj/src/rayzerlink-ventana/external/busybox/busybox.links:101:/bin/readlink
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/Config.in:506:	bool "readlink"
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/Config.in:517:	  Enable the readlink option (-f).
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/Kbuild:61:lib-$(CONFIG_READLINK)  += readlink.o
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/ls.c:785:	/* Do readlink early, so that if it fails, error message
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/ls.c:789:			lpath = xmalloc_readlink_or_warn(dn->fullname);
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/readlink.c:3: * Mini readlink implementation for busybox
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/readlink.c:12: * # readlink --version
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/readlink.c:13: * readlink (GNU coreutils) 6.10
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/readlink.c:14: * # readlink --help
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/readlink.c:34:int readlink_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/readlink.c:35:int readlink_main(int argc UNUSED_PARAM, char **argv)
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/readlink.c:54:	/* compat: coreutils readlink reports errors silently via exit code */
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/readlink.c:61:		buf = xmalloc_readlink_or_warn(fname);
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/stat.c:224:			char *linkname = xmalloc_readlink_or_warn(filename);
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/stat.c:607:			linkname = xmalloc_readlink_or_warn(filename);
+/home/bhj/src/rayzerlink-ventana/external/busybox/include/applets.h:314:IF_READLINK(APPLET(readlink, _BB_DIR_USR_BIN, _BB_SUID_DROP))
+/home/bhj/src/rayzerlink-ventana/external/busybox/include/applet_tables.h:112:"readlink" "\0"
+/home/bhj/src/rayzerlink-ventana/external/busybox/include/applet_tables.h:284:readlink_main,
+/home/bhj/src/rayzerlink-ventana/external/busybox/include/libbb.h:358:char *xmalloc_readlink(const char *path) FAST_FUNC RETURNS_MALLOC;
+/home/bhj/src/rayzerlink-ventana/external/busybox/include/libbb.h:359:char *xmalloc_readlink_or_warn(const char *path) FAST_FUNC RETURNS_MALLOC;
+/home/bhj/src/rayzerlink-ventana/external/busybox/include/usage.h:3586:#define readlink_trivial_usage \
+/home/bhj/src/rayzerlink-ventana/external/busybox/include/usage.h:3588:#define readlink_full_usage "\n\n" \
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/appletlib.c:697:		busybox = xmalloc_readlink(bb_busybox_exec_path);
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/copy_file.c:343:		char *lpath = xmalloc_readlink_or_warn(source);
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/find_pid_by_name.c:21: exe: <readlink fails>
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/procps.c:443:			sp->exe = xmalloc_readlink(filename);
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/xreadlink.c:3: * xreadlink.c - safe implementation of readlink.
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/xreadlink.c:15:char* FAST_FUNC xmalloc_readlink(const char *path)
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/xreadlink.c:25:		readsize = readlink(path, buf, bufsize);
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/xreadlink.c:59:		linkpath = xmalloc_readlink(buf);
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/xreadlink.c:89:char* FAST_FUNC xmalloc_readlink_or_warn(const char *path)
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/xreadlink.c:91:	char *buf = xmalloc_readlink(path);
+/home/bhj/src/rayzerlink-ventana/external/busybox/miscutils/devfsd.c:972:			source_len = readlink(sourcepath, source_link, STRING_LENGTH - 1);
+/home/bhj/src/rayzerlink-ventana/external/busybox/miscutils/devfsd.c:974:			 || (dest_len = readlink(destpath, dest_link, STRING_LENGTH - 1)) < 0
+/home/bhj/src/rayzerlink-ventana/external/busybox/miscutils/devfsd.c:1004:			val = readlink(sourcepath, symlink_val, STRING_LENGTH - 1);
+/home/bhj/src/rayzerlink-ventana/external/busybox/modutils/modutils-24.c:3611:	/* WARNING: was using realpath, but replaced by readlink to stop using
+/home/bhj/src/rayzerlink-ventana/external/busybox/modutils/modutils-24.c:3613:	absolute_filename = xmalloc_readlink(filename);
+/home/bhj/src/rayzerlink-ventana/external/busybox/networking/netstat.c:231:	linkname = xmalloc_readlink(fileName);
+/home/bhj/src/rayzerlink-ventana/external/busybox/runit/runsv.c:513:		r = readlink("supervise", buf, sizeof(buf));
+/home/bhj/src/rayzerlink-ventana/external/busybox/runit/runsv.c:516:				fatal2x_cannot("readlink ./supervise", ": name too long");
+/home/bhj/src/rayzerlink-ventana/external/busybox/runit/runsv.c:521:				fatal_cannot("readlink ./supervise");
+/home/bhj/src/rayzerlink-ventana/external/busybox/runit/runsv.c:531:			r = readlink("log/supervise", buf, 256);
+/home/bhj/src/rayzerlink-ventana/external/busybox/runit/runsv.c:534:					fatal2x_cannot("readlink ./log/supervise", ": name too long");
+/home/bhj/src/rayzerlink-ventana/external/busybox/runit/runsv.c:545:					fatal_cannot("readlink ./log/supervise");
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/cp/cp-a-files-to-dir:13:test xfile2 = x`readlink there/link1`
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/cp/cp-a-preserves-links:5:test xfoo = x`readlink baz`
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/cp/cp-d-files-to-dir:11:test xfile2 = x`readlink there/link1`
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/cp/cp-preserves-links:5:test xfoo = x`readlink baz`
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/ln/ln-creates-soft-links:4:test xfile1 = x`readlink link1`
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/ln/ln-force-creates-soft-links:5:test xfile1 = x`readlink link1`
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/mv/mv-files-to-dir:12:test xfile2 = x`readlink there/link1`
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/mv/mv-preserves-links:5:test xfoo = x`readlink baz`
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/mv/mv-refuses-mv-dir-to-subdir:12:test xfile2 = x`readlink there/link1`
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/readlink.tests:9:TESTDIR=readlink_testdir
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/readlink.tests:19:testing "readlink on a file" "readlink ./$TESTFILE" "" "" ""
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/readlink.tests:20:testing "readlink on a link" "readlink ./$TESTLINK" "./$TESTFILE\n" "" ""
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/readlink.tests:24:testing "readlink -f on a file" "readlink -f ./$TESTFILE" "$PWD/$TESTFILE\n" "" ""
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/readlink.tests:25:testing "readlink -f on a link" "readlink -f ./$TESTLINK" "$PWD/$TESTFILE\n" "" ""
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/readlink.tests:26:testing "readlink -f on an invalid link" "readlink -f ./$FAILLINK" "" "" ""
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/readlink.tests:27:testing "readlink -f on a wierd dir" "readlink -f $TESTDIR/../$TESTFILE" "$PWD/$TESTFILE\n" "" ""
+/home/bhj/src/rayzerlink-ventana/external/dhcpcd/mk/sys.mk:12:_LIBNAME_SH=		case `readlink /lib` in "") echo "lib";; *) basename `readlink /lib`;; esac
+/home/bhj/src/rayzerlink-ventana/external/genext2fs/genext2fs.c:757:xreadlink(const char *path)
+/home/bhj/src/rayzerlink-ventana/external/genext2fs/genext2fs.c:766:		readsize = readlink(path, buf, bufsize); /* 1st try */
+/home/bhj/src/rayzerlink-ventana/external/genext2fs/genext2fs.c:1758:					lnk = xreadlink(dent->d_name);
+/home/bhj/src/rayzerlink-ventana/external/icu4c/common/putil.c:51:/* Make sure things like readlink and such functions work.
+/home/bhj/src/rayzerlink-ventana/external/icu4c/common/putil.c:938:        int32_t ret = (int32_t)readlink(TZDEFAULT, gTimeZoneBuffer, sizeof(gTimeZoneBuffer));
+/home/bhj/src/rayzerlink-ventana/external/iproute2/misc/ss.c:250:			n = readlink(name, lnk, sizeof(lnk)-1);
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/asm-arm/unistd.h:113:#define __NR_readlink			(__NR_SYSCALL_BASE+ 85)
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/asm-x86/unistd_32.h:93:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/asm-x86/unistd_32.h:313:#define __NR_readlinkat		305
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/coda.h:572:/* coda_readlink: */
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/coda.h:573:struct coda_readlink_in {
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/coda.h:578:struct coda_readlink_out {
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/coda.h:715:    struct coda_readlink_in coda_readlink;
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/coda.h:732:    struct coda_readlink_out coda_readlink;
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/fs.h:1097:	int (*readlink) (struct dentry *, char __user *,int);
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/fs.h:1757:extern int vfs_readlink(struct dentry *, char __user *, int, const char *);
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/fs.h:1759:extern int page_readlink(struct dentry *, char __user *, int);
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/fs.h:1766:extern int generic_readlink(struct dentry *, char __user *, int);
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/nfs_xdr.h:393:struct nfs_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/nfs_xdr.h:488:struct nfs3_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/nfs_xdr.h:624:struct nfs4_readlink {
+/home/bhj/src/rayzerlink-ventana/external/kernel-headers/original/linux/nfs_xdr.h:780:	int	(*readlink)(struct inode *, struct page *, unsigned int,
+/home/bhj/src/rayzerlink-ventana/external/libpcap/lbl/os-sunos4.h:132:int	readlink(const char *, char *, int);
+/home/bhj/src/rayzerlink-ventana/external/openssl/import_openssl.sh:135:    target=`readlink $i`
+/home/bhj/src/rayzerlink-ventana/external/qemu/android/utils/bufprint.c:83:    len = readlink("/proc/self/exe", path, sizeof(path));
+/home/bhj/src/rayzerlink-ventana/external/qemu/android/utils/timezone.c:114:            int   len = readlink(LOCALTIME_FILE, buff, sizeof(buff));
+/home/bhj/src/rayzerlink-ventana/external/qemu/android/utils/timezone.c:361:            len = readlink( localtime, temp, sizeof(temp)-1 );
+/home/bhj/src/rayzerlink-ventana/external/qemu/distrib/sdl-1.2.12/src/video/x11/SDL_x11video.c:306:	linksize = readlink(procfile, linkfile, sizeof(linkfile)-1);
+/home/bhj/src/rayzerlink-ventana/external/qemu/vl-android.c:4998:        len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+/home/bhj/src/rayzerlink-ventana/external/qemu/vl-android.c:5007:        len = readlink("/proc/curproc/file", buf, sizeof(buf) - 1);
+/home/bhj/src/rayzerlink-ventana/external/qemu/vl.c:4857:        len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+/home/bhj/src/rayzerlink-ventana/external/qemu/vl.c:4866:        len = readlink("/proc/curproc/file", buf, sizeof(buf) - 1);
+/home/bhj/src/rayzerlink-ventana/external/strace/file.c:1803:sys_readlink(tcp)
+/home/bhj/src/rayzerlink-ventana/external/strace/linux/dummy.h:209:#define	sys_readlink		printargs
+/home/bhj/src/rayzerlink-ventana/external/strace/linux/syscallent.h:120:	{ 3,	TF,	sys_readlink,		"readlink"	}, /* 85 */
+/home/bhj/src/rayzerlink-ventana/external/strace/linux/syscall.h:56:int sys_oldselect(), sys_symlink(), sys_oldlstat(), sys_readlink();
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/alpha/syscallent.h:89:	{ 3,	TF,	sys_readlink,		"readlink"		}, /* 58 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/dummy.h:209:#define	sys_readlink		printargs
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/hppa/syscallent.h:93:	{ 3,	TF,	sys_readlink,		"readlink"		}, /* 85 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/ia64/syscallent.h:998:	{ 3,	TF,	sys_readlink,		"readlink"	}, /* 1092 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/mips/syscallent.h:91:	{ 0,	0,	printargs,		"svr4_readlink"	}, /*  090 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/mips/syscallent.h:1117:	{ 0,	0,	printargs,		"sysv_readlink"	}, /* 1116 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/mips/syscallent.h:2059:	{ 0,	0,	printargs,		"bsd43_readlink"	}, /* 2058 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/mips/syscallent.h:3117:	{ 0,	0,	printargs,		"posix_readlink"	}, /* 3116 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/mips/syscallent.h:4086:	{ 3,	TF,	sys_readlink,		"readlink"	}, /* 4085 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/powerpc/syscallent.h:116:	{ 3,	TF,	sys_readlink,		"readlink"		}, /* 85 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/s390/syscallent.h:116:	{ 3,	TF,	sys_readlink,		"readlink"	}, /* 85 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/s390x/syscallent.h:115:	{ 3,	TF,	sys_readlink,		"readlink"	}, /* 85 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sh64/syscallent.h:116:	{ 3,	TF,	sys_readlink,		"readlink"	}, /* 85 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sh/syscallent.h:118:	{ 3,	TF,	sys_readlink,		"readlink"	}, /* 85 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc64/dummy2.h:214:#define solaris_readlink sys_readlink
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc64/syscall1.h:102:#define	SOLARIS_readlink	90
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc64/syscall1.h:288:extern int solaris_readlink();
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc64/syscallent1.h:120:	{ 6,	TF,	solaris_readlink,	"readlink"	}, /* 90 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc64/syscallent2.h:59:	{ 3,	TF,	sys_readlink,	"readlink" },		/* 58 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc64/syscallent.h:59:	{ 3,	TF,	sys_readlink,	"readlink" },		/* 58 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc/dummy2.h:214:#define solaris_readlink sys_readlink
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc/syscall1.h:102:#define	SOLARIS_readlink	90
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc/syscall1.h:288:extern int solaris_readlink();
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc/syscallent1.h:120:	{ 6,	TF,	solaris_readlink,	"readlink"	}, /* 90 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc/syscallent.h:59:	{ 3,	TF,	sys_readlink,	"readlink" },		/* 58 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc/syscall.h:88:int	sys_link(),sys_symlink(),sys_readlink(),sys_rename();
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/sparc/syscall.h.2:55:int sys_oldselect(), sys_symlink(), sys_oldlstat(), sys_readlink();
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/syscallent.h:120:	{ 3,	TF,	sys_readlink,		"readlink"	}, /* 85 */
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/syscall.h:56:int sys_oldselect(), sys_symlink(), sys_oldlstat(), sys_readlink();
+/home/bhj/src/rayzerlink-ventana/external/strace/strace/linux/x86_64/syscallent.h:90:	{ 3,	TF,	sys_readlink,		"readlink"	},  /* 89 */
+/home/bhj/src/rayzerlink-ventana/external/strace/syscall-android.h:178:#define SYS_readlink __NR_readlink
+/home/bhj/src/rayzerlink-ventana/external/tcpdump/lbl/os-sunos4.h:132:int	readlink(const char *, char *, int);
+/home/bhj/src/rayzerlink-ventana/external/tcpdump/print-nfs.c:566:		printf(" readlink");
+/home/bhj/src/rayzerlink-ventana/external/tcpdump/print-nfs.c:1573:		printf(" readlink");
+/home/bhj/src/rayzerlink-ventana/external/tcpdump/tcpdump.1:1935:sushi.6709 > wrl.nfs: 112 readlink fh 21,24/10.73165
+/home/bhj/src/rayzerlink-ventana/external/tcpdump/tcpdump.1:1936:wrl.nfs > sushi.6709: reply ok 40 readlink "../var"
+/home/bhj/src/rayzerlink-ventana/external/tcpdump/tcpdump.1:1950:The operation was a \fIreadlink\fP
+/home/bhj/src/rayzerlink-ventana/external/v8/tools/oprofile/common:9:  shell_exec=`readlink -f "$1"`
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/direct/dtest.c:510:							  if(yaffs_readlink(str,str,100) < 0)
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/direct/dtest.c:557:							  if(yaffs_readlink(str,str,100) < 0)
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/direct/dtest.c:772:	yaffs_readlink("/boot/slink",str,100);
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/direct/yaffsfs.c:1379:int yaffs_readlink(const char *path, char *buf, int bufsiz)
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/direct/yaffsfs.h:204:int yaffs_readlink(const char *path, char *buf, int bufsiz); 
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/utils/mkyaffs2image.c:373:							readlink(full_name,symname,sizeof(symname) -1);
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/utils/mkyaffsimage.c:445:							readlink(full_name,symname,sizeof(symname) -1);
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/yaffs_fs.c:176:static int yaffs_readlink(struct dentry *dentry, char __user * buffer,
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/yaffs_fs.c:208:	.readlink = yaffs_readlink,
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/yaffs_fs.c:257:static int yaffs_readlink(struct dentry *dentry, char __user * buffer,
+/home/bhj/src/rayzerlink-ventana/external/yaffs2/yaffs2/yaffs_fs.c:274:	ret = vfs_readlink(dentry, buffer, buflen, alias);
+/home/bhj/src/rayzerlink-ventana/frameworks/base/cmds/dumpstate/utils.c:386:        size_t len = readlink(path, data, sizeof(data) - 1);
+/home/bhj/src/rayzerlink-ventana/frameworks/base/media/libmediaplayerservice/MediaPlayerService.cpp:563:                            int len = readlink(buffer, linkto, sizeof(linkto));
+/home/bhj/src/rayzerlink-ventana/hardware/tegra/core/utils/nvos/linux/nvos_linux_stub.c:451:    size = readlink(path, buf, buf_size);
+/home/bhj/src/rayzerlink-ventana/kernel/arch/alpha/include/asm/unistd.h:62:#define __NR_readlink		 58
+/home/bhj/src/rayzerlink-ventana/kernel/arch/alpha/include/asm/unistd.h:417:#define __NR_readlinkat			460
+/home/bhj/src/rayzerlink-ventana/kernel/arch/alpha/kernel/systbls.S:71:	.quad sys_readlink
+/home/bhj/src/rayzerlink-ventana/kernel/arch/alpha/kernel/systbls.S:481:	.quad sys_readlinkat			/* 460 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/arm/include/asm/unistd.h:113:#define __NR_readlink			(__NR_SYSCALL_BASE+ 85)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/arm/include/asm/unistd.h:360:#define __NR_readlinkat			(__NR_SYSCALL_BASE+332)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/arm/kernel/calls.S:97:/* 85 */	CALL(sys_readlink)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/arm/kernel/calls.S:344:		CALL(sys_readlinkat)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/avr32/include/asm/unistd.h:100:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/avr32/include/asm/unistd.h:271:#define __NR_readlinkat		253
+/home/bhj/src/rayzerlink-ventana/kernel/arch/avr32/kernel/syscall_table.S:101:	.long	sys_readlink		/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/avr32/kernel/syscall_table.S:269:	.long	sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/blackfin/include/asm/unistd.h:97:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/blackfin/include/asm/unistd.h:318:#define __NR_readlinkat		305
+/home/bhj/src/rayzerlink-ventana/kernel/arch/blackfin/mach-common/entry.S:1318:	.long _sys_readlink	/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/blackfin/mach-common/entry.S:1538:	.long _sys_readlinkat	/* 305 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/cris/arch-v10/kernel/entry.S:690:	.long sys_readlink	/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/cris/arch-v10/kernel/entry.S:910:	.long sys_readlinkat		/* 305 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/cris/arch-v32/kernel/entry.S:613:	.long sys_readlink	/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/cris/arch-v32/kernel/entry.S:833:	.long sys_readlinkat		/* 305 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/cris/include/asm/unistd.h:93:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/cris/include/asm/unistd.h:312:#define __NR_readlinkat		305
+/home/bhj/src/rayzerlink-ventana/kernel/arch/frv/include/asm/unistd.h:93:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/frv/include/asm/unistd.h:314:#define __NR_readlinkat		305
+/home/bhj/src/rayzerlink-ventana/kernel/arch/frv/kernel/entry.S:1277:	.long sys_readlink		/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/frv/kernel/entry.S:1497:	.long sys_readlinkat		/* 305 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/h8300/include/asm/unistd.h:93:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/h8300/include/asm/unistd.h:313:#define __NR_readlinkat		305
+/home/bhj/src/rayzerlink-ventana/kernel/arch/h8300/kernel/syscalls.S:102:	.long SYMBOL_NAME(sys_readlink)		/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/h8300/kernel/syscalls.S:321:	.long SYMBOL_NAME(sys_readlinkat)	/* 305 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/ia64/ia32/ia32_entry.S:266:	data8 sys_readlink	  /* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/ia64/include/asm/unistd.h:83:#define __NR_readlink			1092
+/home/bhj/src/rayzerlink-ventana/kernel/arch/ia64/include/asm/unistd.h:283:#define __NR_readlinkat			1291
+/home/bhj/src/rayzerlink-ventana/kernel/arch/ia64/kernel/entry.S:1579:	data8 sys_readlink
+/home/bhj/src/rayzerlink-ventana/kernel/arch/ia64/kernel/entry.S:1778:	data8 sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/ia64/kernel/fsys.S:821:	data8 0				// readlink
+/home/bhj/src/rayzerlink-ventana/kernel/arch/ia64/kernel/fsys.S:1020:	data8 0				// readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/m32r/include/asm/unistd.h:93:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/m32r/include/asm/unistd.h:313:#define __NR_readlinkat		305
+/home/bhj/src/rayzerlink-ventana/kernel/arch/m32r/kernel/syscall_table.S:87:	.long sys_readlink		/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/m32r/kernel/syscall_table.S:307:	.long sys_readlinkat		/* 305 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/m68k/include/asm/unistd.h:93:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/m68k/include/asm/unistd.h:304:#define __NR_readlinkat		298
+/home/bhj/src/rayzerlink-ventana/kernel/arch/m68k/kernel/entry.S:512:	.long sys_readlink	/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/m68k/kernel/entry.S:725:	.long sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/m68knommu/kernel/syscalltable.S:106:	.long sys_readlink	/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/m68knommu/kernel/syscalltable.S:319:	.long sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/microblaze/include/asm/unistd.h:99:#define __NR_readlink		85 /* obsolete -> sys_readlinkat */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/microblaze/include/asm/unistd.h:320:#define __NR_readlinkat		305 /* ok */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/microblaze/kernel/syscall_table.S:92:	.long sys_readlink		/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/microblaze/kernel/syscall_table.S:312:	.long sys_readlinkat		/* 305 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/include/asm/unistd.h:108:#define __NR_readlink			(__NR_Linux +  85)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/include/asm/unistd.h:321:#define __NR_readlinkat			(__NR_Linux + 298)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/include/asm/unistd.h:462:#define __NR_readlink			(__NR_Linux +  87)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/include/asm/unistd.h:632:#define __NR_readlinkat			(__NR_Linux + 257)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/include/asm/unistd.h:773:#define __NR_readlink			(__NR_Linux +  87)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/include/asm/unistd.h:947:#define __NR_readlinkat			(__NR_Linux + 261)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/kernel/scall32-o32.S:325:	sys	sys_readlink		3	/* 4085 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/kernel/scall32-o32.S:549:	sys	sys_readlinkat		4
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/kernel/scall64-64.S:216:	PTR	sys_readlink
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/kernel/scall64-64.S:386:	PTR	sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/kernel/scall64-n32.S:210:	PTR	sys_readlink
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/kernel/scall64-n32.S:384:	PTR	sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/kernel/scall64-o32.S:291:	PTR	sys_readlink			/* 4085 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mips/kernel/scall64-o32.S:504:	PTR	sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mn10300/include/asm/unistd.h:99:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mn10300/include/asm/unistd.h:319:#define __NR_readlinkat		306
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mn10300/kernel/entry.S:474:	.long sys_readlink	/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/mn10300/kernel/entry.S:695:	.long sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/parisc/hpux/entry_hpux.S:89:	ENTRY_NAME(sys_readlink)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/parisc/hpux/sys_hpux.c:573:	"readlink",              
+/home/bhj/src/rayzerlink-ventana/kernel/arch/parisc/include/asm/unistd.h:69:#define __NR_HPUX_readlink               58
+/home/bhj/src/rayzerlink-ventana/kernel/arch/parisc/include/asm/unistd.h:578:#define __NR_readlink            (__NR_Linux + 85)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/parisc/include/asm/unistd.h:780:#define __NR_readlinkat		(__NR_Linux + 285)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/parisc/kernel/syscall_table.S:161:	ENTRY_SAME(readlink)		/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/parisc/kernel/syscall_table.S:386:	ENTRY_SAME(readlinkat)		/* 285 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/powerpc/include/asm/systbl.h:91:COMPAT_SYS_SPU(readlink)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/powerpc/include/asm/systbl.h:302:SYSCALL_SPU(readlinkat)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/powerpc/include/asm/unistd.h:98:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/powerpc/include/asm/unistd.h:321:#define __NR_readlinkat		296
+/home/bhj/src/rayzerlink-ventana/kernel/arch/powerpc/kernel/sys_ppc32.c:362:asmlinkage long compat_sys_readlink(const char __user * path, char __user * buf, u32 bufsiz)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/powerpc/kernel/sys_ppc32.c:364:	return sys_readlink(path, buf, (int)bufsiz);
+/home/bhj/src/rayzerlink-ventana/kernel/arch/s390/include/asm/unistd.h:71:#define __NR_readlink            85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/s390/include/asm/unistd.h:238:#define __NR_readlinkat		298
+/home/bhj/src/rayzerlink-ventana/kernel/arch/s390/kernel/compat_wrapper.S:365:	.globl	sys32_readlink_wrapper
+/home/bhj/src/rayzerlink-ventana/kernel/arch/s390/kernel/compat_wrapper.S:366:sys32_readlink_wrapper:
+/home/bhj/src/rayzerlink-ventana/kernel/arch/s390/kernel/compat_wrapper.S:370:	jg	sys_readlink		# branch to system call
+/home/bhj/src/rayzerlink-ventana/kernel/arch/s390/kernel/compat_wrapper.S:1563:	.globl sys_readlinkat_wrapper
+/home/bhj/src/rayzerlink-ventana/kernel/arch/s390/kernel/compat_wrapper.S:1564:sys_readlinkat_wrapper:
+/home/bhj/src/rayzerlink-ventana/kernel/arch/s390/kernel/compat_wrapper.S:1569:	jg	sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/s390/kernel/syscalls.S:96:SYSCALL(sys_readlink,sys_readlink,sys32_readlink_wrapper)	/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/s390/kernel/syscalls.S:309:SYSCALL(sys_readlinkat,sys_readlinkat,sys_readlinkat_wrapper)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sh/include/asm/unistd_32.h:97:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sh/include/asm/unistd_32.h:316:#define __NR_readlinkat		305
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sh/include/asm/unistd_64.h:102:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sh/include/asm/unistd_64.h:356:#define __NR_readlinkat		333
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sh/kernel/syscalls_32.S:104:	.long sys_readlink		/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sh/kernel/syscalls_32.S:324:	.long sys_readlinkat		/* 305 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sh/kernel/syscalls_64.S:108:	.long sys_readlink		/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sh/kernel/syscalls_64.S:362:	.long sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sparc/include/asm/unistd.h:92:#define __NR_readlink            58 /* Common                                      */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sparc/include/asm/unistd.h:365:#define __NR_readlinkat		294
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sparc/kernel/sys32.S:107:SIGN1(sys32_readlink, sys_readlink, %o2)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sparc/kernel/systbls_32.S:30:/*55*/	.long sys_reboot, sys_mmap2, sys_symlink, sys_readlink, sys_execve
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sparc/kernel/systbls_32.S:78:/*290*/	.long sys_unlinkat, sys_renameat, sys_linkat, sys_symlinkat, sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sparc/kernel/systbls_64.S:32:	.word sys32_reboot, sys32_mmap2, sys_symlink, sys32_readlink, sys32_execve
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sparc/kernel/systbls_64.S:79:/*290*/	.word sys_unlinkat, sys_renameat, sys_linkat, sys_symlinkat, sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sparc/kernel/systbls_64.S:107:	.word sys_reboot, sys_nis_syscall, sys_symlink, sys_readlink, sys_execve
+/home/bhj/src/rayzerlink-ventana/kernel/arch/sparc/kernel/systbls_64.S:154:/*290*/	.word sys_unlinkat, sys_renameat, sys_linkat, sys_symlinkat, sys_readlinkat
+/home/bhj/src/rayzerlink-ventana/kernel/arch/um/os-Linux/user_syms.c:83:EXPORT_SYMBOL_PROTO(readlink);
+/home/bhj/src/rayzerlink-ventana/kernel/arch/x86/ia32/ia32entry.S:592:	.quad sys_readlink		/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/x86/ia32/ia32entry.S:812:	.quad sys_readlinkat		/* 305 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/x86/include/asm/unistd_32.h:93:#define __NR_readlink		 85
+/home/bhj/src/rayzerlink-ventana/kernel/arch/x86/include/asm/unistd_32.h:313:#define __NR_readlinkat		305
+/home/bhj/src/rayzerlink-ventana/kernel/arch/x86/include/asm/unistd_64.h:204:#define __NR_readlink				89
+/home/bhj/src/rayzerlink-ventana/kernel/arch/x86/include/asm/unistd_64.h:205:__SYSCALL(__NR_readlink, sys_readlink)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/x86/include/asm/unistd_64.h:599:#define __NR_readlinkat				267
+/home/bhj/src/rayzerlink-ventana/kernel/arch/x86/include/asm/unistd_64.h:600:__SYSCALL(__NR_readlinkat, sys_readlinkat)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/x86/kernel/syscall_table_32.S:87:	.long sys_readlink	/* 85 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/x86/kernel/syscall_table_32.S:307:	.long sys_readlinkat		/* 305 */
+/home/bhj/src/rayzerlink-ventana/kernel/arch/xtensa/include/asm/unistd.h:92:#define __NR_readlink 				 35
+/home/bhj/src/rayzerlink-ventana/kernel/arch/xtensa/include/asm/unistd.h:93:__SYSCALL( 35, sys_readlink, 3)
+/home/bhj/src/rayzerlink-ventana/kernel/arch/xtensa/include/asm/unistd.h:659:#define __NR_readlinkat				295
+/home/bhj/src/rayzerlink-ventana/kernel/arch/xtensa/include/asm/unistd.h:660:__SYSCALL(295, sys_readlinkat, 4)
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/ABI/testing/sysfs-dev:13:		$ readlink /sys/dev/block/8:32
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/filesystems/coda.txt:113:     4.14 readlink
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/filesystems/coda.txt:959:                struct cfs_readlink_in {
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/filesystems/coda.txt:961:                } cfs_readlink;
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/filesystems/coda.txt:967:                struct cfs_readlink_out {
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/filesystems/coda.txt:970:                } cfs_readlink;
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/filesystems/Locking:44:	int (*readlink) (struct dentry *, char __user *,int);
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/filesystems/Locking:67:readlink:	no
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/filesystems/porting:211:had ->revalidate()) add calls in ->follow_link()/->readlink().
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/filesystems/vfs.txt:324:	int (*readlink) (struct dentry *, char __user *,int);
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/filesystems/vfs.txt:388:  readlink: called by the readlink(2) system call. Only required if
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/usb/wusb-cbaf:76:hdevs="$(for h in /sys/class/uwb_rc/*/wusbhc; do readlink -f $h; done)"
+/home/bhj/src/rayzerlink-ventana/kernel/Documentation/vm/slabinfo.c:1131:			count = readlink(de->d_name, buffer, sizeof(buffer));
+/home/bhj/src/rayzerlink-ventana/kernel/drivers/staging/pohmelfs/inode.c:965:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/9p/vfs_inode.c:957: * v9fs_readlink - read a symlink's location (internal version)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/9p/vfs_inode.c:964:static int v9fs_readlink(struct dentry *dentry, char *buffer, int buflen)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/9p/vfs_inode.c:1004: * v9fs_vfs_readlink - read a symlink's location
+/home/bhj/src/rayzerlink-ventana/kernel/fs/9p/vfs_inode.c:1011:static int v9fs_vfs_readlink(struct dentry *dentry, char __user * buffer,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/9p/vfs_inode.c:1027:	retval = v9fs_readlink(dentry, link, buflen);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/9p/vfs_inode.c:1058:		len = v9fs_readlink(dentry, link, PATH_MAX);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/9p/vfs_inode.c:1233:	.readlink = v9fs_vfs_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/9p/vfs_inode.c:1256:	.readlink = v9fs_vfs_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/affs/symlink.c:77:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/afs/mntpt.c:37:	.readlink	= page_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/autofs4/symlink.c:23:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/autofs/symlink.c:24:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/bad_inode.c:234:static int bad_inode_readlink(struct dentry *dentry, char __user *buffer,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/bad_inode.c:290:	.readlink	= bad_inode_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/befs/ChangeLog:195:* Fixed befs_readlink() (symlink.c) [Christoph Hellwig].
+/home/bhj/src/rayzerlink-ventana/kernel/fs/befs/linuxvfs.c:83:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/btrfs/inode.c:5925:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/cifs/CHANGES:894:requirement).  Add readlink support for Windows junction points (directory symlinks).
+/home/bhj/src/rayzerlink-ventana/kernel/fs/cifs/CHANGES:1024:Unix extensions (symlink, readlink, hardlink, chmod and some chgrp and chown) implemented
+/home/bhj/src/rayzerlink-ventana/kernel/fs/cifs/CHANGES:1053:8) Started adding the readlink and follow_link code 
+/home/bhj/src/rayzerlink-ventana/kernel/fs/cifs/cifsfs.c:723:	.readlink = generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/cifs/cifsfs.h:101:extern int cifs_readlink(struct dentry *direntry, char __user *buffer,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/cifs/cifssmb.c:2605:		cFYI(1, ("readlink result - %s", symlinkinfo));
+/home/bhj/src/rayzerlink-ventana/kernel/fs/coda/cnode.c:20:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/coda/dir.c:95:/* access routines: lookup, readlink, permission */
+/home/bhj/src/rayzerlink-ventana/kernel/fs/coda/symlink.c:35:	error = venus_readlink(inode->i_sb, &cii->c_fid, p, &len);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/coda/upcall.c:346:int venus_readlink(struct super_block *sb, struct CodaFid *fid, 
+/home/bhj/src/rayzerlink-ventana/kernel/fs/coda/upcall.c:356:		     INSIZE(readlink), OUTSIZE(readlink)+ *length + 1);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/coda/upcall.c:359:        inp->coda_readlink.VFid = *fid;
+/home/bhj/src/rayzerlink-ventana/kernel/fs/coda/upcall.c:363:		retlen = outp->coda_readlink.count;
+/home/bhj/src/rayzerlink-ventana/kernel/fs/coda/upcall.c:367:		result =  (char *)outp + (long)outp->coda_readlink.data;
+/home/bhj/src/rayzerlink-ventana/kernel/fs/configfs/symlink.c:313:	.readlink = generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/debugfs/file.c:55:	.readlink       = generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ecryptfs/inode.c:642:ecryptfs_readlink(struct dentry *dentry, char __user *buf, int bufsiz)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ecryptfs/inode.c:654:	if (!lower_dentry->d_inode->i_op->readlink) {
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ecryptfs/inode.c:678:	rc = lower_dentry->d_inode->i_op->readlink(lower_dentry,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ecryptfs/inode.c:693:		/* Check for bufsiz <= 0 done in sys_readlinkat() */
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ecryptfs/inode.c:723:	rc = dentry->d_inode->i_op->readlink(dentry, (char __user *)buf, len);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ecryptfs/inode.c:1086:	.readlink = ecryptfs_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/exofs/symlink.c:47:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/exofs/symlink.c:53:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ext2/symlink.c:32:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ext2/symlink.c:44:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ext3/symlink.c:34:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ext3/symlink.c:46:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ext4/symlink.c:34:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ext4/symlink.c:46:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/freevxfs/vxfs_immed.c:53:	.readlink =		generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/fuse/dir.c:1595:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/gfs2/ops_inode.c:977: * gfs2_readlinki - return the contents of a symlink
+/home/bhj/src/rayzerlink-ventana/kernel/fs/gfs2/ops_inode.c:988:static int gfs2_readlinki(struct gfs2_inode *ip, char **buf, unsigned int *len)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/gfs2/ops_inode.c:1032: * gfs2_readlink - Read the value of a symlink
+/home/bhj/src/rayzerlink-ventana/kernel/fs/gfs2/ops_inode.c:1040:static int gfs2_readlink(struct dentry *dentry, char __user *user_buf,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/gfs2/ops_inode.c:1048:	error = gfs2_readlinki(ip, &buf, &len);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/gfs2/ops_inode.c:1084:	error = gfs2_readlinki(ip, &buf, &len);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/gfs2/ops_inode.c:1426:	.readlink = gfs2_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/hostfs/hostfs.h:84:extern int hostfs_do_readlink(char *file, char *buf, int size);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/hostfs/hostfs_kern.c:171:		n = hostfs_do_readlink(link, name, len);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/hostfs/hostfs_kern.c:946:	err = hostfs_do_readlink(name, buffer, PAGE_CACHE_SIZE);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/hostfs/hostfs_user.c:380:int hostfs_do_readlink(char *file, char *buf, int size)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/hostfs/hostfs_user.c:384:	n = readlink(file, buf, size);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/hppfs/hppfs.c:646:static int hppfs_readlink(struct dentry *dentry, char __user *buffer,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/hppfs/hppfs.c:652:	return proc_dentry->d_inode->i_op->readlink(proc_dentry, buffer,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/hppfs/hppfs.c:670:	.readlink	= hppfs_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/jffs2/symlink.c:22:	.readlink =	generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/jfs/symlink.c:33:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/minix/inode.c:389:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:62: * the algorithm.  Also, note that <fs>_readlink() is not used in
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:63: * lookup_dentry(): lookup_dentry() on the result of <fs>_readlink()
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:2789:int vfs_readlink(struct dentry *dentry, char __user *buffer, int buflen, const char *link)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:2807: * A helper for ->readlink().  This should be used *ONLY* for symlinks that
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:2811:int generic_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:2822:	res = vfs_readlink(dentry, buffer, buflen, nd_get_link(&nd));
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:2848:int page_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:2852:	int res = vfs_readlink(dentry,buffer,buflen,s);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:2921:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:2935:EXPORT_SYMBOL(page_readlink);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:2951:EXPORT_SYMBOL(vfs_readlink);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/namei.c:2957:EXPORT_SYMBOL(generic_readlink);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ncpfs/inode.c:233:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3proc.c:144:nfsd3_proc_readlink(struct svc_rqst *rqstp, struct nfsd3_readlinkargs *argp,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3proc.c:145:					   struct nfsd3_readlinkres *resp)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3proc.c:154:	nfserr = nfsd_readlink(rqstp, &resp->fh, argp->buffer, &resp->len);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3proc.c:736:		.pc_func = (svc_procfunc) nfsd3_proc_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3proc.c:737:		.pc_decode = (kxdrproc_t) nfs3svc_decode_readlinkargs,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3proc.c:738:		.pc_encode = (kxdrproc_t) nfs3svc_encode_readlinkres,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3proc.c:740:		.pc_argsize = sizeof(struct nfsd3_readlinkargs),
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3proc.c:741:		.pc_ressize = sizeof(struct nfsd3_readlinkres),
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3xdr.c:542:nfs3svc_decode_readlinkargs(struct svc_rqst *rqstp, __be32 *p,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3xdr.c:543:					struct nfsd3_readlinkargs *args)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3xdr.c:686:nfs3svc_encode_readlinkres(struct svc_rqst *rqstp, __be32 *p,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs3xdr.c:687:					struct nfsd3_readlinkres *resp)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs4proc.c:701:nfsd4_readlink(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs4proc.c:702:	       struct nfsd4_readlink *readlink)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs4proc.c:704:	readlink->rl_rqstp = rqstp;
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs4proc.c:705:	readlink->rl_fhp = &cstate->current_fh;
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs4proc.c:1230:		.op_func = (nfsd4op_func)nfsd4_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs4xdr.c:2652:nfsd4_encode_readlink(struct nfsd4_compoundres *resp, __be32 nfserr, struct nfsd4_readlink *readlink)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs4xdr.c:2669:	 * XXX: By default, the ->readlink() VFS op will truncate symlinks
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs4xdr.c:2671:	 * not, one easy fix is: if ->readlink() precisely fills the buffer,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs4xdr.c:2674:	nfserr = nfsd_readlink(readlink->rl_rqstp, readlink->rl_fhp, page, &maxcount);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfs4xdr.c:3107:	[OP_READLINK]		= (nfsd4_enc)nfsd4_encode_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfsproc.c:118:nfsd_proc_readlink(struct svc_rqst *rqstp, struct nfsd_readlinkargs *argp,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfsproc.c:119:					   struct nfsd_readlinkres *resp)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfsproc.c:127:	nfserr = nfsd_readlink(rqstp, &argp->fh, argp->buffer, &resp->len);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfsproc.c:591:		.pc_func = (svc_procfunc) nfsd_proc_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfsproc.c:592:		.pc_decode = (kxdrproc_t) nfssvc_decode_readlinkargs,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfsproc.c:593:		.pc_encode = (kxdrproc_t) nfssvc_encode_readlinkres,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfsproc.c:594:		.pc_argsize = sizeof(struct nfsd_readlinkargs),
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/nfsproc.c:595:		.pc_ressize = sizeof(struct nfsd_readlinkres),
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/vfs.c:1513:nfsd_readlink(struct svc_rqst *rqstp, struct svc_fh *fhp, char *buf, int *lenp)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/vfs.c:1529:	if (!inode->i_op->readlink)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfsd/vfs.c:1538:	host_err = inode->i_op->readlink(dentry, buf, *lenp);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs2xdr.c:47:#define NFS_readlinkargs_sz	(NFS_fhandle_sz)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs2xdr.c:58:#define NFS_readlinkres_sz	(2)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs2xdr.c:577:nfs_xdr_readlinkargs(struct rpc_rqst *req, __be32 *p, struct nfs_readlinkargs *args)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs2xdr.c:586:	replen = (RPC_REPHDRSIZE + auth->au_rslack + NFS_readlinkres_sz) << 2;
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs2xdr.c:595:nfs_xdr_readlinkres(struct rpc_rqst *req, __be32 *p, void *dummy)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs2xdr.c:623:		dprintk("NFS: server cheating in readlink reply: "
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs2xdr.c:740:    PROC(READLINK,	readlinkargs,	readlinkres, 3),
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3proc.c:227:static int nfs3_proc_readlink(struct inode *inode, struct page *page,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3proc.c:231:	struct nfs3_readlinkargs args = {
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3proc.c:244:	dprintk("NFS call  readlink\n");
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3proc.c:248:	dprintk("NFS reply readlink: %d\n", status);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3proc.c:811:	.readlink	= nfs3_proc_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3xdr.c:54:#define NFS3_readlinkargs_sz	(NFS3_fh_sz)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3xdr.c:71:#define NFS3_readlinkres_sz	(1+NFS3_post_op_attr_sz+1)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3xdr.c:804:nfs3_xdr_readlinkargs(struct rpc_rqst *req, __be32 *p, struct nfs3_readlinkargs *args)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3xdr.c:813:	replen = (RPC_REPHDRSIZE + auth->au_rslack + NFS3_readlinkres_sz) << 2;
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3xdr.c:822:nfs3_xdr_readlinkres(struct rpc_rqst *req, __be32 *p, struct nfs_fattr *fattr)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3xdr.c:856:		dprintk("NFS: server cheating in readlink reply: "
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs3xdr.c:1156:  PROC(READLINK,	readlinkargs,	readlinkres, 3),
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4proc.c:2389:static int _nfs4_proc_readlink(struct inode *inode, struct page *page,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4proc.c:2392:	struct nfs4_readlink args = {
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4proc.c:2398:	struct nfs4_readlink_res res;
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4proc.c:2408:static int nfs4_proc_readlink(struct inode *inode, struct page *page,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4proc.c:2415:				_nfs4_proc_readlink(inode, page, pgbase, pglen),
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4proc.c:5059:	.readlink	= nfs4_proc_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:183:#define encode_readlink_maxsz	(op_encode_hdr_maxsz)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:184:#define decode_readlink_maxsz	(op_decode_hdr_maxsz + 1)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:317:#define NFS4_enc_readlink_sz	(compound_encode_hdr_maxsz + \
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:320:				encode_readlink_maxsz)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:321:#define NFS4_dec_readlink_sz	(compound_decode_hdr_maxsz + \
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:324:				decode_readlink_maxsz)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:1351:static void encode_readlink(struct xdr_stream *xdr, const struct nfs4_readlink *readlink, struct rpc_rqst *req, struct compound_hdr *hdr)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:1358:	hdr->replen += decode_readlink_maxsz;
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:1995:static int nfs4_xdr_enc_readlink(struct rpc_rqst *req, __be32 *p, const struct nfs4_readlink *args)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:2006:	encode_readlink(&xdr, args, req, &hdr);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:4167:static int decode_readlink(struct xdr_stream *xdr, struct rpc_rqst *req)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:4193:		dprintk("NFS: server cheating in readlink reply: "
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:5181:static int nfs4_xdr_dec_readlink(struct rpc_rqst *rqstp, __be32 *p,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:5182:				 struct nfs4_readlink_res *res)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:5198:	status = decode_readlink(&xdr, rqstp);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/nfs4xdr.c:5757:  PROC(READLINK,	enc_readlink,	dec_readlink),
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/proc.c:174:static int nfs_proc_readlink(struct inode *inode, struct page *page,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/proc.c:177:	struct nfs_readlinkargs	args = {
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/proc.c:189:	dprintk("NFS call  readlink\n");
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/proc.c:191:	dprintk("NFS reply readlink: %d\n", status);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/proc.c:642:	.readlink	= nfs_proc_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/symlink.c:34:	error = NFS_PROTO(inode)->readlink(inode, page, 0, PAGE_SIZE);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nfs/symlink.c:74:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/nilfs2/namei.c:471:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ocfs2/symlink.c:82:static int ocfs2_readlink(struct dentry *dentry,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ocfs2/symlink.c:103:	ret = vfs_readlink(dentry, buffer, buflen, link);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ocfs2/symlink.c:157:	.readlink	= page_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ocfs2/symlink.c:168:	.readlink	= ocfs2_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/proc/base.c:1395:static int do_proc_readlink(struct path *path, char __user *buffer, int buflen)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/proc/base.c:1419:static int proc_pid_readlink(struct dentry * dentry, char __user * buffer, int buflen)
+/home/bhj/src/rayzerlink-ventana/kernel/fs/proc/base.c:1433:	error = do_proc_readlink(&path, buffer, buflen);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/proc/base.c:1440:	.readlink	= proc_pid_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/proc/base.c:2325:static int proc_self_readlink(struct dentry *dentry, char __user *buffer,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/proc/base.c:2334:	return vfs_readlink(dentry,buffer,buflen,tmp);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/proc/base.c:2349:	.readlink	= proc_self_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/proc/generic.c:394:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/reiserfs/namei.c:1525:	.readlink = generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/romfs/super.c:31: *					  readlink shouldn't iput()
+/home/bhj/src/rayzerlink-ventana/kernel/fs/smbfs/proc.c:3263:	DEBUG1("readlink of %s/%s\n", DENTRY_PATH(d));
+/home/bhj/src/rayzerlink-ventana/kernel/fs/smbfs/symlink.c:65:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/stat.c:284:SYSCALL_DEFINE4(readlinkat, int, dfd, const char __user *, pathname,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/stat.c:298:		if (inode->i_op->readlink) {
+/home/bhj/src/rayzerlink-ventana/kernel/fs/stat.c:299:			error = security_inode_readlink(path.dentry);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/stat.c:302:				error = inode->i_op->readlink(path.dentry,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/stat.c:311:SYSCALL_DEFINE3(readlink, const char __user *, path, char __user *, buf,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/stat.c:314:	return sys_readlinkat(AT_FDCWD, path, buf, bufsiz);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/sysfs/symlink.c:214:	.readlink = generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/sysv/inode.c:160:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/sysv/symlink.c:18:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ubifs/file.c:1576:	.readlink    = generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/ufs/symlink.c:43:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_ioctl32.c:660:		return xfs_readlink_by_handle(filp, &hreq);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_ioctl.c:288: * This is a copy from fs/namei.c:vfs_readlink(), except for removing it's
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_ioctl.c:292:do_readlink(
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_ioctl.c:314:xfs_readlink_by_handle(
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_ioctl.c:347:	error = -xfs_readlink(XFS_I(dentry->d_inode), link);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_ioctl.c:350:	error = do_readlink(hreq->ohandle, olen, link);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_ioctl.c:1279: * byte count indicating success, such as readlink_by_handle.
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_ioctl.c:1397:		return xfs_readlink_by_handle(filp, &hreq);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_ioctl.h:41:xfs_readlink_by_handle(
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_iops.c:451:	error = -xfs_readlink(XFS_I(dentry->d_inode), link);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/linux-2.6/xfs_iops.c:742:	.readlink		= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/xfs_vnodeops.c:518:xfs_readlink_bmap(
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/xfs_vnodeops.c:546:			xfs_ioerror_alert("xfs_readlink",
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/xfs_vnodeops.c:567:xfs_readlink(
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/xfs_vnodeops.c:593:		error = xfs_readlink_bmap(ip, link);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/xfs/xfs_vnodeops.h:23:int xfs_readlink(struct xfs_inode *ip, char *link);
+/home/bhj/src/rayzerlink-ventana/kernel/fs/yaffs2/yaffs_fs.c:262:static int yaffs_readlink(struct dentry *dentry, char __user *buffer,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/yaffs2/yaffs_fs.c:328:	.readlink = yaffs_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/yaffs2/yaffs_fs.c:497:static int yaffs_readlink(struct dentry *dentry, char __user *buffer,
+/home/bhj/src/rayzerlink-ventana/kernel/fs/yaffs2/yaffs_fs.c:514:	ret = vfs_readlink(dentry, buffer, buflen, alias);
+/home/bhj/src/rayzerlink-ventana/kernel/include/asm-generic/audit_read.h:1:__NR_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/include/asm-generic/unistd.h:230:#define __NR_readlinkat 78
+/home/bhj/src/rayzerlink-ventana/kernel/include/asm-generic/unistd.h:231:__SYSCALL(__NR_readlinkat, sys_readlinkat)
+/home/bhj/src/rayzerlink-ventana/kernel/include/asm-generic/unistd.h:660:#define __NR_readlink 1035
+/home/bhj/src/rayzerlink-ventana/kernel/include/asm-generic/unistd.h:661:__SYSCALL(__NR_readlink, sys_readlink)
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/coda.h:533:/* coda_readlink: */
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/coda.h:534:struct coda_readlink_in {
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/coda.h:539:struct coda_readlink_out {
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/coda.h:672:    struct coda_readlink_in coda_readlink;
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/coda.h:689:    struct coda_readlink_out coda_readlink;
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/coda_psdev.h:50:int venus_readlink(struct super_block *sb, struct CodaFid *fid, 
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/fs.h:1522:	int (*readlink) (struct dentry *, char __user *,int);
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/fs.h:2305:extern int vfs_readlink(struct dentry *, char __user *, int, const char *);
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/fs.h:2307:extern int page_readlink(struct dentry *, char __user *, int);
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/fs.h:2314:extern int generic_readlink(struct dentry *, char __user *, int);
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/nfsd/nfsd.h:113:__be32		nfsd_readlink(struct svc_rqst *, struct svc_fh *,
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/nfsd/xdr4.h:289:struct nfsd4_readlink {
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/nfsd/xdr4.h:408:		struct nfsd4_readlink		readlink;
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/nfs_xdr.h:520:struct nfs_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/nfs_xdr.h:615:struct nfs3_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/nfs_xdr.h:782:struct nfs4_readlink {
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/nfs_xdr.h:790:struct nfs4_readlink_res {
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/nfs_xdr.h:1007:	int	(*readlink)(struct inode *, struct page *, unsigned int,
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/security.h:457: * @inode_readlink:
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/security.h:1517:	int (*inode_readlink) (struct dentry *dentry);
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/security.h:1789:int security_inode_readlink(struct dentry *dentry);
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/security.h:2199:static inline int security_inode_readlink(struct dentry *dentry)
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/syscalls.h:581:asmlinkage long sys_readlink(const char __user *path,
+/home/bhj/src/rayzerlink-ventana/kernel/include/linux/syscalls.h:833:asmlinkage long sys_readlinkat(int dfd, const char __user *path, char __user *buf,
+/home/bhj/src/rayzerlink-ventana/kernel/Makefile:994:		asmlink=`readlink include/asm | cut -d '-' -f 2`;          \
+/home/bhj/src/rayzerlink-ventana/kernel/mm/shmem.c:2020:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/mm/shmem.c:2026:	.readlink	= generic_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/net/sunrpc/xprtrdma/rpc_rdma.c:400:	 * the op is one of read, readdir[plus], readlink or NFSv4 getacl.
+/home/bhj/src/rayzerlink-ventana/kernel/scripts/checksyscalls.sh:29:#define __IGNORE_readlink	/* readlinkat */
+/home/bhj/src/rayzerlink-ventana/kernel/scripts/gen_initramfs_list.sh:138:			local target=`readlink "${location}"`
+/home/bhj/src/rayzerlink-ventana/kernel/security/capability.c:198:static int cap_inode_readlink(struct dentry *dentry)
+/home/bhj/src/rayzerlink-ventana/kernel/security/capability.c:954:	set_to_cap_if_null(ops, inode_readlink);
+/home/bhj/src/rayzerlink-ventana/kernel/security/security.c:502:int security_inode_readlink(struct dentry *dentry)
+/home/bhj/src/rayzerlink-ventana/kernel/security/security.c:506:	return security_ops->inode_readlink(dentry);
+/home/bhj/src/rayzerlink-ventana/kernel/security/selinux/hooks.c:2690:static int selinux_inode_readlink(struct dentry *dentry)
+/home/bhj/src/rayzerlink-ventana/kernel/security/selinux/hooks.c:5499:	.inode_readlink =		selinux_inode_readlink,
+/home/bhj/src/rayzerlink-ventana/kernel/tools/perf/util/abspath.c:65:			len = readlink(buf, next_buf, PATH_MAX);
+/home/bhj/src/rayzerlink-ventana/kernel/tools/perf/util/strbuf.c:297:int strbuf_readlink(struct strbuf *sb, const char *path, ssize_t hint)
+/home/bhj/src/rayzerlink-ventana/kernel/tools/perf/util/strbuf.c:308:		len = readlink(path, sb->buf, hint);
+/home/bhj/src/rayzerlink-ventana/kernel/tools/perf/util/strbuf.h:127:extern int strbuf_readlink(struct strbuf *sb, const char *path, ssize_t hint);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/asm/unistd.h:104:#define __NR_readlink (__NR_SYSCALL_BASE+ 85)
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/linux/coda.h:421:struct coda_readlink_in {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/linux/coda.h:426:struct coda_readlink_out {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/linux/coda.h:530: struct coda_readlink_in coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/linux/coda.h:547: struct coda_readlink_out coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/linux/nfs_xdr.h:333:struct nfs_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/linux/nfs_xdr.h:428:struct nfs3_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/linux/nfs_xdr.h:512: int (*readlink)(struct inode *, struct page *, unsigned int,
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/sys/linux-syscalls.h:91:#define __NR_readlink                     (__NR_SYSCALL_BASE + 85)
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/sys/linux-unistd.h:111:int              readlink (const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-3/arch-arm/usr/include/unistd.h:119:extern int readlink(const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/asm/unistd.h:104:#define __NR_readlink (__NR_SYSCALL_BASE+ 85)
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/linux/coda.h:421:struct coda_readlink_in {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/linux/coda.h:426:struct coda_readlink_out {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/linux/coda.h:530: struct coda_readlink_in coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/linux/coda.h:547: struct coda_readlink_out coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/linux/nfs_xdr.h:333:struct nfs_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/linux/nfs_xdr.h:428:struct nfs3_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/linux/nfs_xdr.h:512: int (*readlink)(struct inode *, struct page *, unsigned int,
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/sys/linux-syscalls.h:91:#define __NR_readlink                     (__NR_SYSCALL_BASE + 85)
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/sys/linux-unistd.h:111:int              readlink (const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-4/arch-arm/usr/include/unistd.h:119:extern int readlink(const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/asm/unistd.h:104:#define __NR_readlink (__NR_SYSCALL_BASE+ 85)
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/linux/coda.h:421:struct coda_readlink_in {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/linux/coda.h:426:struct coda_readlink_out {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/linux/coda.h:530: struct coda_readlink_in coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/linux/coda.h:547: struct coda_readlink_out coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/linux/nfs_xdr.h:333:struct nfs_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/linux/nfs_xdr.h:428:struct nfs3_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/linux/nfs_xdr.h:512: int (*readlink)(struct inode *, struct page *, unsigned int,
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/sys/linux-syscalls.h:91:#define __NR_readlink                     (__NR_SYSCALL_BASE + 85)
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/sys/linux-unistd.h:111:int              readlink (const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-arm/usr/include/unistd.h:119:extern int readlink(const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/asm/unistd_32.h:100:#define __NR_readlink 85
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/asm/unistd_32.h:320:#define __NR_readlinkat 305
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/linux/coda.h:421:struct coda_readlink_in {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/linux/coda.h:426:struct coda_readlink_out {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/linux/coda.h:530: struct coda_readlink_in coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/linux/coda.h:547: struct coda_readlink_out coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/linux/nfs_xdr.h:333:struct nfs_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/linux/nfs_xdr.h:428:struct nfs3_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/linux/nfs_xdr.h:512: int (*readlink)(struct inode *, struct page *, unsigned int,
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/sys/linux-syscalls.h:91:#define __NR_readlink                     (__NR_SYSCALL_BASE + 85)
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/sys/linux-unistd.h:111:int              readlink (const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-5/arch-x86/usr/include/unistd.h:119:extern int readlink(const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/asm/unistd.h:104:#define __NR_readlink (__NR_SYSCALL_BASE+ 85)
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/linux/coda.h:421:struct coda_readlink_in {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/linux/coda.h:426:struct coda_readlink_out {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/linux/coda.h:530: struct coda_readlink_in coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/linux/coda.h:547: struct coda_readlink_out coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/linux/nfs_xdr.h:333:struct nfs_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/linux/nfs_xdr.h:428:struct nfs3_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/linux/nfs_xdr.h:512: int (*readlink)(struct inode *, struct page *, unsigned int,
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/sys/linux-syscalls.h:91:#define __NR_readlink                     (__NR_SYSCALL_BASE + 85)
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/sys/linux-unistd.h:111:int              readlink (const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-arm/usr/include/unistd.h:123:extern int readlink(const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/asm/unistd_32.h:100:#define __NR_readlink 85
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/asm/unistd_32.h:320:#define __NR_readlinkat 305
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/linux/coda.h:421:struct coda_readlink_in {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/linux/coda.h:426:struct coda_readlink_out {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/linux/coda.h:530: struct coda_readlink_in coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/linux/coda.h:547: struct coda_readlink_out coda_readlink;
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/linux/nfs_xdr.h:333:struct nfs_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/linux/nfs_xdr.h:428:struct nfs3_readlinkargs {
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/linux/nfs_xdr.h:512: int (*readlink)(struct inode *, struct page *, unsigned int,
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/sys/linux-syscalls.h:91:#define __NR_readlink                     (__NR_SYSCALL_BASE + 85)
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/sys/linux-unistd.h:111:int              readlink (const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/ndk/build/platforms/android-8/arch-x86/usr/include/unistd.h:123:extern int readlink(const char *, char *, size_t);
+/home/bhj/src/rayzerlink-ventana/rayzerlink-tools/run.sh:1:android_dir=`readlink -f ../../`
+/home/bhj/src/rayzerlink-ventana/system/core/adb/file_sync_client.c:277:    len = readlink(path, sbuf->data, SYNC_DATA_MAX-1);
+/home/bhj/src/rayzerlink-ventana/system/core/adb/get_my_path_freebsd.c:32:    int err = readlink(proc, exe, maxLen - 1);
+/home/bhj/src/rayzerlink-ventana/system/core/adb/get_my_path_linux.c:26:    int err = readlink(proc, exe, maxLen - 1);
+/home/bhj/src/rayzerlink-ventana/system/core/cpio/mkbootfs.c:219:        size = readlink(in, buf, 1024);
+/home/bhj/src/rayzerlink-ventana/system/core/fastboot/util_linux.c:43:    int err = readlink(proc, path, PATH_MAX - 1);
+/home/bhj/src/rayzerlink-ventana/system/core/libcutils/dir_hash.c:60:        len = readlink(path, buf, sizeof(buf));
+/home/bhj/src/rayzerlink-ventana/system/core/toolbox/ls.c:183:        len = readlink(path, linkto, 256);
+/home/bhj/src/rayzerlink-ventana/system/vold/Process.cpp:45:    length = readlink(path, link, max- 1);
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-arm/syscalls/readlink.S:1: ****************!
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-sh/syscalls/readlink.S:1: ****************!
+/home/bhj/src/rayzerlink-ventana/bionic/libc/arch-x86/syscalls/readlink.S:1: ****************!
+/home/bhj/src/rayzerlink-ventana/external/busybox/coreutils/readlink.c:1: ****************!
+/home/bhj/src/rayzerlink-ventana/external/busybox/libbb/xreadlink.c:1: ****************!
+/home/bhj/src/rayzerlink-ventana/external/busybox/testsuite/readlink.tests:1: ****************!
+
+Grep finished (matches found) at Sat Dec 18 11:37:14
+{code}
+
+您还可以看到，出来的结果中，不仅把文件内容中包含readlink的给列出来了，在最后的部分，还把文件名字中包含readlink的也给列了出来。这个feature我觉得有用并且加上去，是因为曾经在看android代码的时候发现有些信息你能看到它被使用，但是却找不到任何定义它的地方，比如一种颜色“progress_medium_white”，它在android代码里有一个地方使用，但是没有地方定义了它，如果你只搜索文件内容的话。它是由一个以它为命名的文件来定义的！瀑布汗啊我发现这一点的时候……
+
+{code:grep}
+-*- mode: grep; default-directory: "/home/bhj/src/rayzerlink-ventana/" -*-
+Grep started at Sat Dec 18 13:47:11
+
+beagle-grep.sh -e "progress_medium_white"
+pat is: progress_medium_white.
+/home/bhj/bin/linux/ext/x86_64/beagle-break.exe
+beagle query argument `progress medium white '
+Starting at /home/bhj/tmp/for-code-reading//home/bhj/src/rayzerlink-ventana
+Beagle index found at /home/bhj/tmp/for-code-reading//home/bhj/src/rayzerlink-ventana/.beagle
+/home/bhj/src/rayzerlink-ventana/frameworks/base/core/res/res/values/styles.xml:279:        <item name="android:indeterminateDrawable">@android:drawable/progress_medium_white</item>
+/home/bhj/src/rayzerlink-ventana/frameworks/base/core/res/res/drawable/progress_medium_white.xml:1: ****************!
+
+Grep finished (matches found) at Sat Dec 18 13:47:12
+{code}
+
+h2. 搜索引擎的排序算法
+
+大家可能没有意识到，像很多人平时使用的source insight，或者像另一些人经常使用的cscope、gtags、ctags、exuberant-ctags等等，它们都用到了搜索引擎的一些算法。那就是银平昨天介绍的倒排索引。
+
+所谓的倒排索引，其实很简单，就是说，正向思考的话，你的问题是，某个文件中出现了哪些单词？那么反向思考（也就是倒排的倒的意思了吧）的话，问题就是，某个单词出现在了哪些文件中？
+
+这是题外话，我们就这些代码阅读工具说一下排序算法吧。呃，很遗憾，它们好像都没有内在的排序算法。
+
+所谓排序，意思就是说，当出现多个结果时，我们把这些结果按照一定的规则排列出来，理想的目标是：把最重要的、最相关的、用户最想要的结果排在最前面。
+
+如果你只是在读一个小的代码项目，那很可能不需要怎么排序，因为基本上你要搜索什么东西，要么没有，要么出来只有一两条结果，所以就不需要排序了。
+
+但是，我们在讨论的是android，这可不是个小代码项目呢。
+
+比如我们搜索 {{parse_state}}，会出来6个地方有定义它：
+
+{code:cscope-list-entry}
+Finding global definition: parse_state
+
+Database directory: /home/bhj/src/rayzerlink-ventana/
+-------------------------------------------------------------------------------
+gtags-cscope-bhj -f cscope.out -d -L -1 parse_state 
+
+*** /home/bhj/src/rayzerlink-ventana/external/e2fsprogs/e2fsck/profile.c:
+parse_state[152]               struct parse_state {
+
+*** /home/bhj/src/rayzerlink-ventana/system/core/init/parser.c:
+parse_state[70]                struct parse_state
+
+*** /home/bhj/src/rayzerlink-ventana/external/freetype/include/freetype/internal/psaux.h:
+parse_state[575]               T1_ParseState parse_state;
+
+*** /home/bhj/src/rayzerlink-ventana/external/iptables/extensions/libipt_conntrack.c:
+parse_state[60]                parse_state(const char *state, size_t strlen, struct ipt_conntrack_info *sinfo)
+
+*** /home/bhj/src/rayzerlink-ventana/external/iptables/extensions/libipt_state.c:
+parse_state[32]                parse_state(const char *state, size_t strlen, struct ipt_state_info *sinfo)
+
+*** /home/bhj/src/rayzerlink-ventana/external/iptables/extensions/libip6t_state.c:
+parse_state[32]                parse_state(const char *state, size_t strlen, struct ipt_state_info *sinfo)
+-------------------------------------------------------------------------------
+
+Search complete.  Search time = 0.59 seconds.
+{code}
+
+这种情况我们应该怎么对它进行排序呢？要注意的是，“最重要的、最相关的”这一标准是有可能会发生变化的。如果用户当前在看system init相关的代码，很可能用户希望第二个parse_state出现在最前面，如果用户在看iptables相关的代码，那么很可能需要把4、5、6排在前面。
+
+怎么办呢？我想到了一个很“土”的办法。
+
+把用户开始搜索的时候正在阅读的文件，记为起始文件；把结果文件中的每一个，都跟起始文件计算一下“距离”。距离最短的，就认为是最相关的。
+
+怎么计算距离呢？哈哈，perl有一个module，已经实现了计算两个字符串之间的距离的功能。我们直接拿来用就行了。
+
+假设我们的起始文件是 {{/home/bhj/src/rayzerlink-ventana/system/core/init/init.c}}，在读这个文件代码的时候，我们想查一下 {{parse_state}}，查出来有一条 {{/home/bhj/src/rayzerlink-ventana/system/core/init/parser.c}}，里面包含有这个定义，那它当然应该排在最前面了，因为它距离最短嘛，大家甚至都是在一个目录下的咧……
+
+h2. 搜索引擎的其他应用
+
+Debian/Ubuntu的deb包管理系统，就用了银平老师提到的第二种搜索引擎，Xapian。
+
+我搞过的另外一个项目，“半离线的Wikimedia”，原作者也是使用Xapian的，但是我后来发现太慢了，最后还是回到了beagle+grep的老路上。Hell，在用beagle+grep之前，我用一个内存外的binary search来实现快速检索wikipedia的标题。
+
+这是一个很有意思的项目，感兴趣的话我哪天可以给大家介绍一下。Wikipedia的重要性是不言而喻的，如果你不知道的话就out了。在咱们的特定的网络环境下，做一个offline wikipedia的镜像很有必要，想了解些什么知识的话查一下很方便，也很有效。
+
+同时也是一个很有挑战性的项目，它的纯文本文件的内容压缩过以后是6~7个G，解压后将近30个G，用一般的方法好几天也还没处理完。据说如果把所有的wikipedia的多媒体文件都算上，会有上百个T！
+
+搜索引擎搞到最后，搞到比较大的时候都会碰到这个问题，数据太大、用户太多导致的性能问题……
+
+h2. 结论
+
+我所介绍的这些工具，都可以在[我的配置文件]这篇文章里看到更详细的介绍，包括怎么下载，怎么安装，怎么使用……

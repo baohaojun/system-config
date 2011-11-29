@@ -1,0 +1,11 @@
+尤其是那种带Tap或滚动功能的TouchPad，当你信心满满地飞快地在键盘上盲打，仔细一看，全乱套了，罪魁祸首就是TouchPad容易被手掌碰到而产生误操作。
+
+在Linux下解决办法是启动一下
+
+{code:sh}
+syndaemon -i 1 -d
+{code}
+
+这个办法并不是禁用TouchPad，而是在检测到键盘输入的1秒时间内，不理会TouchPad上产生的输入事件。
+
+Windows下，呃，我想只能禁用TouchPad吧:-)

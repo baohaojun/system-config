@@ -1,0 +1,53 @@
+android的mm命令，能够单独编译一个子项目，有时候编译出来的文件在system.img里，我们不想为几个文件就烧一遍system.img，所以一般可以用adb把相关的文件push上去。
+
+但是这样一般要求你搞明白到底是哪几个文件。换一个子项目就又要重新查、重新记一遍，比较麻烦。
+
+其实需要push的文件，在mm的输出里都已经写得很明白了：
+
+{code:none}
+   make: Entering directory `/home/bhj/src/theatre'
+   target Non-prelinked: libletou-auto-test (out/target/product/ventana/symbols/system/lib/libletou-auto-test.so)
+   Copying: out/target/common/obj/APPS/LetouTerm_intermediates/classes-full-debug.jar
+   Install: out/target/product/ventana/system/app/LetouTerm.apk
+   Copy: out/target/product/ventana/system/bin/adbcompgen.sh
+   target Prebuilt: letou-auto-test.sh (out/target/product/ventana/obj/ETC/letou-auto-test.sh_intermediates/letou-auto-test.sh)
+   Copy: out/target/product/ventana/system/lib/letou-auto-test-configs/Aster7_Freescale_MX51_Board
+   Copy: out/target/product/ventana/system/lib/letou-auto-test-configs/NVIDIA_Ventana_Development_System
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/0-must-pass
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/1-must-fail
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/Bt.sh
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/Gps.sh
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/Wifi.sh
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-3g
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-battery
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-camera
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-charger
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-compass
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-gsensor
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-lcd
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-light
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-spaker
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-touch
+   Copy: out/target/product/ventana/system/lib/letou-auto-test/test-vibrator
+   Install: out/target/product/ventana/system/lib/libletou-auto-test.so
+{code}
+
+所以，我们很容易写一个脚本出来，把以Copy:和Install:开头的文件给grep出来，然后计算出最后在板子上的位置，再一个一个地push上去。
+
+我有几个脚本可以完成这件事情，大家可以研究一下：
+
+# [lookup_file|^lookup_file] 这个有点类似于android系统环境里的gettop，不管你在哪个子目录里，直接{{lookup_file out/target/product/ventana/system/lib/libletou-auto-test.so}}就可以给出那个文件的绝对路径。
+# [adb_push|^adb_push]，自动帮你做lookup_file、remount sysmte分区，push文件的工作。原始版本的adb一次只能push一个文件或目录，用这个adb_push可以一次push多个文件或目录。
+# [mm_adb|^mm_adb]，把mm的输出传给这个脚本，会直接调adb_push，把相应文件push到相应目录下。
+
+用法：
+
+把这三个文件放到PATH中，再跑
+
+   mm|mm_adb
+
+*注意*，adb_push这个脚本是用perl写的，里面用到了一个cpan上的库，你需要跑一下
+
+{code:sh}
+sudo cpan String::ShellQuote
+{code}
