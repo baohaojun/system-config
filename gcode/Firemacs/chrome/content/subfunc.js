@@ -201,21 +201,25 @@ Firemacs.SubFunc = {
     subPageDown: function(e) {
         var doc = e.target.ownerDocument;
         var wnd = doc.defaultView;
-        if (wnd.pageYOffset + wnd.innerHeight >= doc.height) {
-            this._followLink(1, wnd, doc);
-        } else {
-            goDoCommand('cmd_scrollPageDown');
-        }
+        goDoCommand('cmd_scrollPageDown');
     },
 
     subPageUp: function(e) {
         var doc = e.target.ownerDocument;
         var wnd = doc.defaultView;
-        if (wnd.pageYOffset == 0) {
-            this._followLink(-1, wnd, doc);
-        } else {
-            goDoCommand('cmd_scrollPageUp');
-        }
+        goDoCommand('cmd_scrollPageUp');
+    },
+
+    subNextLink: function(e) {
+        var doc = e.target.ownerDocument;
+        var wnd = doc.defaultView;
+        this._followLink(1, wnd, doc);
+    },
+
+    subPrevLink: function(e) {
+        var doc = e.target.ownerDocument;
+        var wnd = doc.defaultView;
+        this._followLink(-1, wnd, doc);
     },
 
     _followLink: function(dir, wnd, doc) {
