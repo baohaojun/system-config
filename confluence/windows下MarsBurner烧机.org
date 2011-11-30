@@ -16,16 +16,13 @@
 The application has failed to start because its side-by-side configuration is incorrect.
 #+end_example
 
+你可以直接从 [[//bible/Public/user/tools-team/vc2008-sp1-redist-x86.exe][这个共享文件]] 安装。
 
-
-可以直接从 [[file://///bible/Public/user/tools-team/vc2008-sp1-redist-x86.exe][这个共享文件]] 安装：
-
-
-如果需要自己下载的话，请访问 [[http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=5582][这个微软网页]] 。
+如果不能访问我们的内部共享目录，请访问 [[http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=5582][这个微软网页]] 。
 
 ** 进入烧机模式
 
-在Sultan手机上进入烧机模式，需要先按着Vol Down键，再开机。注意如果用插拔电池的方式开机的话，需要先按着Vol Down，再插入电池。
+在Sultan手机上进入烧机模式，需要先按着Vol Down键，再开机。*注意*如果用插拔电池的方式开机的话，需要先按着Vol Down，再插入电池。
 
 进入烧机模式后，手机会显示绿色背景，上有flashing mode提示，见下图（TBD，补图）：
 
@@ -33,24 +30,21 @@ The application has failed to start because its side-by-side configuration is in
 
 手机进入烧机模式后，用usb线与PC相连，如果以前没有装过烧机驱动，则需要到设备管理器里安装一下这个驱动。
 
-驱动位置在 [[file://///bible/Public/user/tools-team/flashing-usb-driver][这里]] （TBD：以后集成到MarsBurner安装包中）。
+驱动程序的位置在你的MarsBurner安装目录的drivers子目录下，如果你的MarsBurner安装选的是默认位置，你可以点击 [[C:/Program%20Files/marvell/MarsBurner/drivers][此处]] 直接打开驱动程序所在的目录。
 
 * 烧机
 
 ** 安装MarsBurner
 
-安装程序在 [[file://///bible/Public/user/tools-team/MarsBurner][这里]] 能找到。如果以前装过较老的版本，则点击安装程序后会自动提示卸载之前版本，不需要专门先卸载再安装。
+最新的安装程序在 [[//bible/Public/user/tools-team/MarsBurner][这里]] 能找到。如果以前装过较老的版本，则点击安装程序后会自动提示卸载之前版本，不需要专门先卸载再安装。
 
 ** 获取CM-release包
 
- * 比如把 [[file://///bible/cm/release-20111118/sultan-eng.blds.20111118.103634][这个共享文件夹]] 拷贝到自己的PC上。
+ * 到 [[//bible/cm/][这个共享文件夹]] 下找最新的（或相应版本的）CM release包，拷贝到自己的PC上。
 
-   这里要注意的是，本地拷贝的全路径中不能含有中文字符。
-
- * 把 [[file://///bible/Public/user/tools-team/extra-release][这个文件夹]] 下的所有文件拷贝到CM release拷贝的相同文件夹（注意，不是子文件夹）下。
-
-  （TBD：把这些文件放到CM release中去，免去每次都做一遍此拷贝操作）。
-
+   *注意*：本地拷贝的全路径中不能含有中文字符，因为这样会导致MarsBurner不能正确烧写。
+   
+   
 
 ** 运行MarsBurner
 
@@ -58,7 +52,9 @@ The application has failed to start because its side-by-side configuration is in
 
 启动后点“...”的按钮，选择CM release拷贝文件夹下的pxa910_sultan.blf文件。
 
-手机进入烧机模式，并用usb线连到PC，注意这时MarsBurner上的圆形icon由红色变为绿色，并且“Flash”按钮也由disable变成enable，表示已经检测到烧机模式的手机连上来了。这时就可以点Flash按钮进行烧机了。
+手机进入烧机模式，并用usb线连到PC，注意这时MarsBurner上的usb图标由灰色
+变为绿色，并且“Flash”按钮也由disable变成enable，表示已经检测到烧机模式
+的手机与PC连接。这时就可以点Flash按钮进行烧机了。
 
 烧机成功后会有提示。TBD：补图。
 

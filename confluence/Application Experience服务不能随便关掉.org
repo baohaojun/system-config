@@ -1,0 +1,3 @@
+关掉以后会让visual studio重编译出新问题：无法打开目标.exe文件。
+
+见 [[http://social.msdn.microsoft.com/Forums/da-DK/vcgeneral/thread/fcdde3bc-43a1-4ab6-b0b5-9525fe4e84c8][这个页面]] 的讨论。 

@@ -25,6 +25,7 @@ emacsclient -e '
       (kill-buffer (current-buffer)))
     (kill-buffer (current-buffer))))'
 
+perl -npe 's,\bfile:////([^/]),file://///$1,g' -i $tf.html
 cp $tf.html "$1".html
 of "$1".html
 rm $tf.* 
