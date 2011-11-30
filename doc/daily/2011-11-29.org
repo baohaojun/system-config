@@ -1,8 +1,15 @@
 * TODO write a org page for refactory-rename, send mail to team
 * TODO check whether beagrep support querying "*hello*" in the search engine
-* TODO change icon for MarsBurner, include the program icon and the status icons.
+* DONE change icon for MarsBurner, include the program icon and the status icons.
+  CLOSED: [2011-11-30 Wed 12:33]
+  - CLOSING NOTE [2011-11-30 Wed 12:33]
 * TODO write document of pc tool dev
 * TODO write a document for git process
+
+my way of pushing things, reviewing code, update comments
+
 * TODO support jasmine flashing
 * TODO support dkb flashing
-* TODO read literate programming, 6 pages, by Jon Bentley and Don Knuth
+* DONE read literate programming, 6 pages, by Jon Bentley and Don Knuth
+  CLOSED: [2011-11-30 Wed 12:35]
+  - CLOSING NOTE [2011-11-30 Wed 12:35]

@@ -1,0 +1,5 @@
+* DONE firemacs: pressing SPC to goto the next page does not work reliably, use separate keybinding.
+  CLOSED: [2011-11-30 Wed 10:53]
+  - CLOSING NOTE [2011-11-30 Wed 10:53]
+* TODO check the display of MarsBurner progress bar
+* TODO update MarsBurner UI, remove the setting radio buttons

@@ -1,5 +1,7 @@
 * TODO install leafnode
-* TODO fireworks driver
+* DONE fireworks driver
+  CLOSED: [2011-11-30 Wed 12:34]
+  - CLOSING NOTE [2011-11-30 Wed 12:34]
 * DONE rename fireworks to marslash?
   CLOSED: [2011-11-28 Mon 14:36]
   - CLOSING NOTE [2011-11-28 Mon 14:36] \\

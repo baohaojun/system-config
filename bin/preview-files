@@ -1,0 +1,5 @@
+#!/bin/bash
+td=/tmp/$(basename $0).$$
+mkdir $td
+cp "$@" $td/ -av
+of $td
