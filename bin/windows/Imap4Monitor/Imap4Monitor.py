@@ -106,7 +106,7 @@ class ConfigDlg (QDialog):
 
         for auth in open(os.path.join(os.environ['HOME'], '.authinfo')):
             authList = auth.split()
-            if all((authList[1] == str(self.host),
+            if len(authList) > 7 and all((authList[1] == str(self.host),
                    authList[3] == str(self.username),
                    authList[7] == str(self.port))):
                 self.password = authList[5]
