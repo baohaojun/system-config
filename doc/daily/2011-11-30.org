@@ -11,3 +11,4 @@
 * TODO MarsBurner: remove the logic of the factory install
 * TODO MarsBurner: pop up a warning when OBM is detected in the blf filename.
 * TODO MarsBurner: 在Windows 7下必须用Administrator运行。
+  需要修改release模式，不采取安装方式，而是用.zip包的方式。
