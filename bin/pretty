@@ -11,10 +11,20 @@ GetOptions(
     "u!" => \$un_pretty,
     );
 
-for (@ARGV) {
+if (@ARGV) {
+  for (@ARGV) {
     if ($un_pretty) {
-        printf("%s: %d 0x%08x\n", $_, un_pretty($_), un_pretty($_));
+      printf("%s: %d 0x%08x\n", $_, un_pretty($_), un_pretty($_));
     } else {
-        printf("%d 0x%08x: %s\n", eval($_), eval($_), pretty(eval($_)));
+      printf("%d 0x%08x: %s\n", eval($_), eval($_), pretty(eval($_)));
     }
+  }
+} else {
+  while (<>) {
+    if ($un_pretty) {
+      printf("%s: %d 0x%08x\n", $_, un_pretty($_), un_pretty($_));
+    } else {
+      printf("%d 0x%08x: %s\n", eval($_), eval($_), pretty(eval($_)));
+    }
+  }
 }
