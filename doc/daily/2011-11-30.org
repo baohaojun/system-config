@@ -7,8 +7,15 @@
   CLOSED: [2011-11-30 Wed 13:54]
   - CLOSING NOTE [2011-11-30 Wed 13:55] \\
     http://social.msdn.microsoft.com/Forums/da-DK/vcgeneral/thread/fcdde3bc-43a1-4ab6-b0b5-9525fe4e84c8
-* TODO MarsBurner: remve the logic of the radio buttons
+* DONE MarsBurner: remve the logic of the radio buttons
+  CLOSED: [2011-12-05 Mon 09:28]
+  - CLOSING NOTE [2011-12-05 Mon 09:28] \\
+    done
 * TODO MarsBurner: remove the logic of the factory install
 * TODO MarsBurner: pop up a warning when OBM is detected in the blf filename.
-* TODO MarsBurner: 在Windows 7下必须用Administrator运行。
+* DONE MarsBurner: 在Windows 7下必须用Administrator运行。
+  CLOSED: [2011-12-05 Mon 09:29]
+  - CLOSING NOTE [2011-12-05 Mon 09:30] \\
+    Root cause found. It is because flasher.dll is creating temp files
+    under install folder, which is write protected.
   需要修改release模式，不采取安装方式，而是用.zip包的方式。
