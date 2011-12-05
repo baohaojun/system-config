@@ -1924,4 +1924,7 @@ criteria can be provided via the optional match-string argument "
 
 (load "color-theme-leuven")
 (setq org-src-fontify-natively t)
+(setq org-todo-keywords
+      '((sequence "TODO" "|" "DONE" "CANCELED")))
+
 (server-start)

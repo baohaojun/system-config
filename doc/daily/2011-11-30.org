@@ -16,7 +16,8 @@
 * DONE MarsBurner: remove the logic of the factory install
   CLOSED: [2011-12-05 Mon 11:37]
   - CLOSING NOTE [2011-12-05 Mon 11:37]
-* TODO MarsBurner: pop up a warning when OBM is detected in the blf filename.
+* CANCELED MarsBurner: pop up a warning when OBM is detected in the blf filename.
+  CLOSED: [2011-12-05 Mon 16:00]
 * DONE MarsBurner: 在Windows 7下必须用Administrator运行。
   CLOSED: [2011-12-05 Mon 09:29]
   - CLOSING NOTE [2011-12-05 Mon 09:30] \\

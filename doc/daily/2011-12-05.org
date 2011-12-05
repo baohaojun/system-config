@@ -1,2 +1,3 @@
 * TODO 搞定org-mode的习惯
-* TODO 搞定org-mode里的 cancel
+* DONE 搞定org-mode里的 cancel
+  CLOSED: [2011-12-05 Mon 15:59]

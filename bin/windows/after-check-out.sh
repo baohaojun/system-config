@@ -78,6 +78,7 @@ find ~/etc/ywb/exclude -type f|xargs bash -c 'for x in "$@"; do echo $(basename 
 rm -f ~/user ~/.mozilla
 ln -s "$(cygpath -u "$USERPROFILE")" ~/user
 ln -s ~/user/Application\ Data/Mozilla  ~/.mozilla
+at 15:00 /every:monday,tuesday,wednesday,thursday,friday  "$(wlp $(which 15-00.bat))"
 
 echo -n "c:/python31/python.exe" \"$(cygpath -aml ~/windows-config/gcode/scim-cs/ime-py/ime-server.py)\" > /cygdrive/c/ime-server.rc
 echo "After check out success!"
