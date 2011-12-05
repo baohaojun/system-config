@@ -2,7 +2,9 @@
   CLOSED: [2011-11-30 Wed 10:53]
   - CLOSING NOTE [2011-11-30 Wed 10:53]
 * TODO check the display of MarsBurner progress bar
-* TODO update MarsBurner UI, remove the setting radio buttons
+* DONE update MarsBurner UI, remove the setting radio buttons
+  CLOSED: [2011-12-05 Mon 11:37]
+  - CLOSING NOTE [2011-12-05 Mon 11:37]
 * DONE Google并解决visual studion build无法打开文件的问题。
   CLOSED: [2011-11-30 Wed 13:54]
   - CLOSING NOTE [2011-11-30 Wed 13:55] \\
@@ -11,7 +13,9 @@
   CLOSED: [2011-12-05 Mon 09:28]
   - CLOSING NOTE [2011-12-05 Mon 09:28] \\
     done
-* TODO MarsBurner: remove the logic of the factory install
+* DONE MarsBurner: remove the logic of the factory install
+  CLOSED: [2011-12-05 Mon 11:37]
+  - CLOSING NOTE [2011-12-05 Mon 11:37]
 * TODO MarsBurner: pop up a warning when OBM is detected in the blf filename.
 * DONE MarsBurner: 在Windows 7下必须用Administrator运行。
   CLOSED: [2011-12-05 Mon 09:29]

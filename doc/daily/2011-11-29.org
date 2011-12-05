@@ -1,5 +1,110 @@
 * TODO write a org page for refactory-rename, send mail to team
-* TODO check whether beagrep support querying "*hello*" in the search engine
+
+#+begin_src emacs-lisp
+(when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
+  (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
+				"~/../external/emacs-site-lisp/"
+			      "~/external/emacs-site-lisp/")))
+    (let ((default-directory bhj-lisp-load-path)) 
+      (load-file (concat bhj-lisp-load-path "/subdirs.el")))
+    (setq load-path
+	  (cons bhj-lisp-load-path load-path))
+    ;;press F2 to get MSDN help
+    (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
+    (setq locate-command "locateEmacs.sh")))
+#+end_src
+#+begin_src sh
+#!/bin/bash
+set -e
+function die() {
+    echo "$@"
+    exit 1
+}
+
+function debug() {
+    echo "$@" 1>&2
+}
+
+IFS=$'\n'
+
+git status
+git st -s . | grep . && die "git not clean"
+
+test $# = 0 && die "must provide at least 2 args"
+tmpf=/tmp/$(basename $0).$$
+perlhash=$tmpf.hash
+git ls-tree --name-only -r HEAD > $tmpf
+cat $tmpf | xargs -d \\n grep -l -i -I -e "$1" |xargs -d \\n perl -npe '
+BEGIN{
+    $from = "'"$1"'";
+    $to = "'"$2"'";
+}
+
+$rep_save{$from} = $to;
+$rep_save{lc $from} = lc $to;
+$rep_save{uc $from} = uc $to;
+$rep_save{ucfirst lc $from} = ucfirst lc $to;
+
+while (m#('"$1"')#ig) {
+    if ($rep_save{$1}) {
+        next;
+    } else {
+        system("echo please input your replacement for $1 > /tmp/get-stdin.$$");
+        chomp($rep_save{$1} = qx("get-stdin /tmp/get-stdin.$$"));
+    }
+}
+
+for $key (keys %rep_save) {
+    my ($from, $to) = ($key, $rep_save{$key});
+    s/$from/$to/g;
+}
+
+END {
+    use Storable;
+    store \%rep_save, "'$perlhash'";
+}
+' -i
+        
+
+
+function rename-files() {
+    dir=$1
+    shift
+    (
+	cd "$dir";
+	debug doing $(pwd)
+	for x in $(git ls-tree --name-only HEAD); do
+	    if test -d "$x"; then
+		rename-files "$x" "$@"
+	    fi
+	    if echo "$x"|grep -q -i -e "$1"; then
+		git mv "$x" "$(echo "$x"|perl -npe '
+BEGIN{
+    use Storable;
+    %rep_save = %{retrieve("'$perlhash'")};
+}
+
+for $key (keys %rep_save) {
+    my ($from, $to) = ($key, $rep_save{$key});
+    s/$from/$to/g;
+}
+')"
+	    fi
+	done
+    )
+}
+	    
+rename-files . "$@"
+
+  
+#+end_src
+* DONE check whether beagrep support querying "*hello*" in the search engine
+  CLOSED: [2011-12-05 Mon 12:41]
+  - CLOSING NOTE [2011-12-05 Mon 12:42] \\
+    It is supported.
+    
+    The main reason for it is we want to make sure there are no reference
+    to 3rd parties's name in our code.
 * DONE change icon for MarsBurner, include the program icon and the status icons.
   CLOSED: [2011-11-30 Wed 12:33]
   - CLOSING NOTE [2011-11-30 Wed 12:33]
