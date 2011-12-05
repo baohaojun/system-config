@@ -12,18 +12,31 @@ tf=/tmp/org-export-$$ # temp file
 EOF
     fi
 
-    cat "$1"
+    if test $# = 1; then
+	cat "$1"
+    else
+	perl -ne '
+BEGIN {
+    $start = 0; 
+}
+if (m/^\*.*'"$2"'/) {
+    $start = 1;
+}
+
+if (m/^\*/ and $_ !~ m/'"$2"'/) {
+    exit;
+}
+
+print if $start;
+' < "$1"
+    fi
 ) > $tf.org
 
-emacsclient -e '
-(progn
-  (save-excursion
-    (find-file "'$tf.org'") 
-    (org-mode)
-    (save-excursion
-      (org-export-as-html 3)
-      (kill-buffer (current-buffer)))
-    (kill-buffer (current-buffer))))'
+(cd $(dirname $tf.org)
+	emacs-nt -Q --batch \
+	    --eval "$(org-export.help $(basename $tf.org))"
+)
+
 
 perl -npe 's,\bfile:////([^/]),file://///$1,g' -i $tf.html
 cp $tf.html "$1".html
