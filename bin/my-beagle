@@ -28,6 +28,6 @@ do
     beagle-static-query \
         --add-static-backend "$(wlp "$x")" \
         --backend none --max-hits 100000 "$longest_token" | \
-        unurl.pl|grep -v '#'|sort -u|$beagle_filter
+        unurl.pl|grep -v '#'|sort -u|"$beagle_filter"
 done
 echo /dev/null
