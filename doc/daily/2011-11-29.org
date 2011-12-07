@@ -158,7 +158,10 @@ rename-files . "$@" #递归调用开始的地方是当前目录 “.”。
 
 my way of pushing things, reviewing code, update comments
 
-* TODO support jasmine flashing
+* DONE support jasmine flashing
+  CLOSED: [2011-12-07 Wed 13:12]
+  - CLOSING NOTE [2011-12-07 Wed 13:12] \\
+    Verified with Li Hui, flashing OK.
 * TODO support dkb flashing
 * DONE read literate programming, 6 pages, by Jon Bentley and Don Knuth
   CLOSED: [2011-11-30 Wed 12:35]
