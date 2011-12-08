@@ -36,6 +36,7 @@ function loop-start() {
     done&
 }
 
+bash emacs-nt&
 loop-start ~/bin/windows/ command cmd /c hotkey_hook
 loop-start ~/bin/windows/Imap4Monitor /c/Python25/python.exe Imap4Monitor.py
 loop-start ~/bin/windows/notification-daemon/ /c/Python25/python.exe notification-daemon.py

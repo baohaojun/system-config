@@ -80,10 +80,10 @@ sub doCompile
                 open($vc_out, "-|", $vc_program, basename($sln_file), "/make", "$p - win32 $c", @targets_to_compile);
             } else {
                 #subprocess.check_call((vcExec, slnFile, '/Project', p, cmd, c) + options)
-                my $cmd = shift @targets_to_compile;
+                my $cmd = $targets_to_compile[0];
                 $cmd = "/Build" if (not $cmd);
 		print "$vc_program " . shell_quote(basename($sln_file)) . " /Project " . shell_quote($p) . " $cmd $c @targets_to_compile\n";
-                open($vc_out, "-|", $vc_program, basename($sln_file), "/Project", $p, $cmd, $c, @targets_to_compile);
+                open($vc_out, "-|", $vc_program, basename($sln_file), "/Project", $p, $cmd, $c, @targets_to_compile[1..@targets_to_compile]);
             }
             handleVcOutput($vc_out);
             close $vc_out;

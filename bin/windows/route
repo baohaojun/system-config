@@ -1,0 +1,11 @@
+#!/bin/bash
+wroute=/cygdrive/c/WINDOWS/system32/route
+function route() {
+    if test $# = 0 -o $# = 1 -a "$1" = -n; then
+	$wroute print -4
+    else 
+	$wroute "$@";
+    fi | perl -ne 'print unless m/^\s*224.0.0.0|255\s*255.255.255.255|00 00 00 00 00 00 00 e0|Software Loopback Interface/'
+}
+
+route "$@"
