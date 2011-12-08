@@ -1,4 +1,9 @@
 #!/bin/bash
+set -x
+chmod 777 "$TMP"
+me=$(whoami)
+meg=$(id|perl -npe 's/.*gid=(\d*).*/$1/')
+test "$1" = chown && chown -R $me.$meg $(wlp /|perl -npe 's/^(.):/"\/" . lc $1/e')
 function pause() {
     echo echo "$@"
     echo pause

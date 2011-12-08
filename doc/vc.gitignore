@@ -1,0 +1,11 @@
+*.obj
+*.pdb
+*.pch
+*.res
+*.dep
+vc*.?db
+*.aps
+*proj.*.user
+.exe.*.manifest*
+BuildLog.htm
+
