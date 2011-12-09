@@ -1927,4 +1927,27 @@ criteria can be provided via the optional match-string argument "
 (setq org-todo-keywords
       '((sequence "TODO" "|" "DONE" "CANCELED")))
 
+(defun bhj-do-code-generation ()
+  (interactive)
+  (let (start-of-code end-of-code code-text start-of-text end-of-text)
+    (search-backward "start code-generator")
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-code (point))
+    (search-forward "end code-generator")
+    (previous-line)
+    (move-end-of-line nil)
+    (setq end-of-code (point))
+    (setq code-text (buffer-substring-no-properties start-of-code end-of-code))
+
+    (search-forward "start generated code")
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-text (point))
+    (search-forward "end generated code")
+    (previous-line)
+    (move-end-of-line nil)
+    (setq  end-of-text (point))
+    (shell-command-on-region start-of-text end-of-text code-text nil t)))
+
 (server-start)
