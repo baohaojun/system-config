@@ -1,4 +1,4 @@
 call c:\.bashloc.bat
 
-bash 15-00.sh
+bash -c "15-00.sh >> ~/.logs/15-00.log"
 

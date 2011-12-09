@@ -13,8 +13,9 @@ congfu --space Weekly -- -a getSource --title $tool_page |print -ne 'print unles
 congfu --space Weekly -- -a storePage --title $tool_page --file $tool_page --parent $week_page
 
 bhj_page=bhj_$(date +%Y.%m.%d -d "${1:-Fri}")
-test -e $bhj_page || (
-    cat <<EOF
+if test -e $bhj_page; then
+    yes-or-no "overwrite existing $bhj_page?" && (
+	cat <<EOF
 {color:#ff0000}{*}Red Flag{*}{color}
 
 N/A
@@ -26,23 +27,24 @@ N/A
 {color:#008000}{*}Green Flag{*}{color}
 {code:none}
 EOF
-    emacs-nt -Q --batch --eval "$(bash do-weekly.help $bhj_page.1)" >/dev/null 2>&1 
-    cat $bhj_page.1
-    rm $bhj_page.1
-    cat <<EOF
+	emacs-nt -Q --batch --eval "$(bash do-weekly.help $bhj_page.1)" >/dev/null 2>&1 
+	cat $bhj_page.1
+	rm $bhj_page.1
+	cat <<EOF
 {code}
 
 *Plan for next week*
 
 {code:none}
 EOF
-    emacs-nt -Q --batch --eval "$(bash do-weekly.todo $bhj_page.1)" >/dev/null 2>&1
-    cat $bhj_page.1
-    rm $bhj_page.1
-cat <<EOF
+	emacs-nt -Q --batch --eval "$(bash do-weekly.todo $bhj_page.1)" >/dev/null 2>&1
+	cat $bhj_page.1
+	rm $bhj_page.1
+	cat <<EOF
 {code}
 EOF
-) > $bhj_page
+    ) > $bhj_page
+fi
 
 if tty >/dev/null 2>&1 ; then
     edit-wait $bhj_page
