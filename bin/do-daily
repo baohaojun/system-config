@@ -2,7 +2,6 @@
 
 mkdir -p ~/doc/daily
 cd ~/doc/daily
-today=$(today "$@")
 
-test -e $today.org || touch $today.org
-edit $today.org
+test -e $(today).org || touch $(today).org
+edit $(today).org

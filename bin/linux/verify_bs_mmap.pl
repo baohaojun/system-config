@@ -5,10 +5,6 @@ use Getopt::Long;
 use lib glob("~/bin");
 use pretty;
 
-sub debug(@) {
-  print STDERR "@_\n";
-}
-
 my ($from, $to, $check, $max_addr) = ("", "", "gap", "512M");
 my @entry_arr;
 
@@ -26,7 +22,7 @@ sub print_human
     our $entry;
     printf ("%-17s = %-38s, start: %9s, size: %9s, end: %9s\n",
             $entry->{"name"}, 
-            $entry->{"file_name"}, 
+            $entry->{file_name}, 
             pretty($entry->{"start"}),
             pretty($entry->{"size"}),
             pretty($entry->{start} + $entry->{size}));
@@ -107,7 +103,7 @@ End
 sub do_read_memmap
 {
     while(<>) {
-        chomp(); s/\r//g;
+        chomp();
         if (m/^\s*(.*?)\s*=\s*(.*?)\s*,\s*(.*?)\s*,\s*(.*?)\s*$/) {
             my %entry = 
                 ( "name"   => $1, 
@@ -126,7 +122,7 @@ sub do_read_memmap
 sub do_read_human
 {
     while(<>) {
-        chomp(); s/\r//g;
+        chomp();
         if (m/^\s*(.*?)\s*=\s*(.*?)\s*, \s*start: \s*(.*?), \s*size: \s*(.*?), \s*end: \s*(.*?)$/) {
             my %entry = 
                 ( "name"   => $1, 
@@ -153,63 +149,10 @@ sub do_read_human
     }
 }
 
-sub do_read_blf
-  {
-    my $image_num = -1;
-    my %entry;
-    while (<>) {
-      chomp(); s/\r//g;
-      if (m/(\d+)\s+image/i) {
-	if ($image_num != -1 && $image_num != $1) {
-	  $entry{"pretty_start"} = pretty($entry{"start"});
-	  $entry{"pretty_size"} = pretty($entry{"size"});
-	  my %entry2 = %entry;
-	  push @entry_arr, \%entry2;
-	  %entry = 
-	    ( 
-	     "name"   => "unknown",
-	     "file_name"    => "unknown",
-	     "start"        => -1,
-	     "size"         => 0,
-	     "end"          => -1,
-	     "pretty_start" => "",
-	     "pretty_size"  => "",
-	    );
-	}
-	$image_num = $1;
-      } else {
-	next;
-      }
-
-# 1 Image Image Size To CRC in bytes = 0
-# 1 Image Partition Number = 0
-# 1 Image Erase Size = 
-# 1 Image ID Name = TIMH
-# 1 Image Type = RAW
-# 1 Image Load Address = 0xD100A000
-# 1 Image Flash Entry Address = 0x00000000
-# 1 Image Path = PXA920_NTIM.bin
-# 1 Image Next Image ID = 0x4F424D49
-# 1 Image Image ID = 0x54494D48
-# 1 Image Enable = 1
-      
-      if (m#Image ID Name = (.*)#) {
-	$entry{"name"} = $1;
-      } elsif (m#Image Path = (.*)#) {
-	$entry{"file_name"} = $1;
-      } elsif (m#Image Flash Entry Address = (.*)#) {
-	$entry{"start"} = eval($1);
-      }
-    }
-    $entry{"pretty_start"} = pretty($entry{"start"});
-    $entry{"pretty_size"} = pretty($entry{"size"});
-    my %entry2 = %entry;
-    push @entry_arr, \%entry2;
-  }
 sub do_read_blob
 {
     while(<>) {
-        chomp(); s/\r//g;
+        chomp();
         while (m/(0x.*?)\@(0x.*?)\((.*?)\)/g) {
             my %entry = 
                 ( "name"   => $3, 
@@ -229,7 +172,7 @@ sub do_read_blob
 sub do_read_dmesg
 {
     while(<>) {
-        chomp(); s/\r//g;
+        chomp();
         while (m/(0x.*?)-(0x.*?) : "(.*?)"/g) {
             my %entry = 
                 ( "name"   => $3, 
@@ -250,7 +193,7 @@ sub do_read_kernel
 {
     my ($name, $offset, $size);
     while(<>) {
-        chomp(); s/\r//g;
+        chomp();
 
         if (m/\.name.*?=.*?"(.*)"/) {
             $name = $1;
@@ -295,19 +238,17 @@ $max_addr = un_pretty($max_addr) if ($max_addr =~ m/[mk]/i);
 $max_addr = eval($max_addr);
 
 if ($from eq 'human') {
-  do_read_human();
+    do_read_human();
 } elsif ($from eq 'map') {
-  do_read_memmap();
+    do_read_memmap();
 } elsif ($from eq 'blob') {
-  do_read_blob();
+    do_read_blob();
 } elsif ($from eq 'dmesg') {
-  do_read_dmesg();
+    do_read_dmesg();
 } elsif ($from eq "kernel") {
-  do_read_kernel();
-} elsif ($from eq "blf") {
-  do_read_blf();
+    do_read_kernel();
 } else {
-  Usage();
+    Usage();
 }
 
 @entry_arr = sort {$a->{"start"} <=> $b->{"start"}} @entry_arr;
@@ -353,6 +294,9 @@ if (1) {
             } elsif ($check =~ m/enlarge/) {
                 if ($last_start + $last_size < $start) {
                     $last_entry->{size} = $start - ($last_start + $last_size);
+                    $last_entry->{file_name} .= "-enlarged";
+                } else {
+                    $entry->{start} = $last_start + $last_size;
                 }
             }
         }

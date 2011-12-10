@@ -1,3 +1,0 @@
-* DONE investigate the vpn sharing problem
-  CLOSED: [2011-12-05 Mon 09:32]
-  - CLOSING NOTE [2011-12-05 Mon 09:32]

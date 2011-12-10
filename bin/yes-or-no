@@ -1,7 +1,0 @@
-#!/bin/bash
-tty >/dev/null 2>&1 || exit -1
-read -p "$*? (Yes/No): "
-if echo $REPLY|grep '^yes$' -iq; then
-    exit 0
-fi
-exit -1

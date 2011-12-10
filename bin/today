@@ -6,4 +6,4 @@ if echo "$1"|grep -q -P '^[-+]?\d+$'; then
     date +%Y-%m-%d -d "$1 days"
 else
     date +%Y-%m-%d -d "$1"
-fi | tr -d '\n'
+fi

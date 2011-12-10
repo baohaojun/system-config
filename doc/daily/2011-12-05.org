@@ -1,6 +1,0 @@
-* TODO 搞定org-mode的习惯
-* DONE 搞定org-mode里的 cancel
-  CLOSED: [2011-12-05 Mon 15:59]
-* DONE 搞定自动生成weekly report
-  CLOSED: [2011-12-05 Mon 19:51]
-  - CLOSING NOTE [2011-12-05 Mon 19:51]

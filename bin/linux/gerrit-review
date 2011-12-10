@@ -4,7 +4,7 @@
 export REMOTE=$(git config remote.`repo-remote`.url)
 (
     if tty >/dev/null 2>&1; then
-	git push $REMOTE HEAD:refs/for/`tbranch` 2>&1| grep -v 'x11 forwarding' -i | perl -npe '
+	git push $REMOTE HEAD:refs/for/`tbranch` 2>&1|perl -npe '
     if (m,http://bear/gerrit/(\d+),) {
         system("putclip", "git", "pull", $ENV{REMOTE}, 
                "refs/changes/" . substr($1, -2) . "/$1/1");

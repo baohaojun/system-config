@@ -26,7 +26,7 @@ class ConfigDlg (QDialog):
         self.was_dirty = False
         
         self.host = settings.value("host", QVariant("localhost")).toString()
-        self.port = settings.value("port", QVariant("993")).toString()
+        self.port = settings.value("port", QVariant("0")).toString()
         self.port = int(self.port)
         self.ssl = False
         if self.port == 993:

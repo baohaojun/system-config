@@ -1,11 +1,7 @@
 #!/bin/bash
 
-emacs_dir=~/external/emacs-nt/bin
+cd ~/external/emacs-nt/bin
 if test "$(ps.pl emacs.exe|wc -l)" == 1; then
     rm -f ~/windows-config/.emacs.d/server/server
 fi
-if test $# = 0; then
-    HOME=~/windows-config/ $emacs_dir/runemacs
-else 
-    HOME=~/windows-config/ $emacs_dir/emacs "$@"
-fi
+HOME=~/windows-config/ ./runemacs

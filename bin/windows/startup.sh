@@ -60,9 +60,6 @@ regedit /s console-color.reg
 #setup environment?
 . ~/.bashrc-windows
 
-echo path "$(IFS=$'\n'; for x in  $(echo $PATH|tr ':' '\n'); do test -d "$x" && cygpath -asm "$x"; done|tr '\n' ';')" > /c/.bashloc.bat
-
-
 #so that shellHelper_vc6.exe can find where bash is
 cygpath -alwm `which bash` > /cygdrive/c/.bash-loc
 

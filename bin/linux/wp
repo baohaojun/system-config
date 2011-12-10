@@ -46,14 +46,8 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then
 
     function mp() #mail path
     {
-	case $(uname) in
-	    CYGWIN*)
-		wlp "$FILE"
-		;;
-	    *)
-		echo -n "$FILE"
-		;;
-	esac
+
+        echo -n "$FILE"
     }
 
     function tmp() #tramp mail path
