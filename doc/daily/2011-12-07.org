@@ -1,0 +1,3 @@
+* windows update
+
+the downloaded files are kept at C:\Windows\SoftwareDistribution\Download

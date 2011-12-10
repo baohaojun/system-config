@@ -1,0 +1,2 @@
+#!/bin/bash
+date | cut -b 1-3

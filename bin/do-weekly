@@ -13,6 +13,40 @@ congfu --space Weekly -- -a getSource --title $tool_page |print -ne 'print unles
 congfu --space Weekly -- -a storePage --title $tool_page --file $tool_page --parent $week_page
 
 bhj_page=bhj_$(date +%Y.%m.%d -d "${1:-Fri}")
-cp 11.11.04_BaoHaojun $bhj_page
-edit-wait $bhj_page
-congfu --space Weekly -- -a storePage --title $bhj_page --file $bhj_page --parent $tool_page
+if test -e $bhj_page; then
+    yes-or-no "overwrite existing $bhj_page?" && (
+	cat <<EOF
+{color:#ff0000}{*}Red Flag{*}{color}
+
+N/A
+
+{color:#ffcc00}{*}Yellow Flag{*}{color}
+
+N/A
+
+{color:#008000}{*}Green Flag{*}{color}
+{code:none}
+EOF
+	emacs-nt -Q --batch --eval "$(bash do-weekly.help $bhj_page.1)" >/dev/null 2>&1 
+	cat $bhj_page.1
+	rm $bhj_page.1
+	cat <<EOF
+{code}
+
+*Plan for next week*
+
+{code:none}
+EOF
+	emacs-nt -Q --batch --eval "$(bash do-weekly.todo $bhj_page.1)" >/dev/null 2>&1
+	cat $bhj_page.1
+	rm $bhj_page.1
+	cat <<EOF
+{code}
+EOF
+    ) > $bhj_page
+fi
+
+if tty >/dev/null 2>&1 ; then
+    edit-wait $bhj_page
+fi
+congfu --space Weekly -- -a storePage --title $bhj_page --file $bhj_page --parent $tool_page --encoding UTF-8

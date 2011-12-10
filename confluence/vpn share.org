@@ -1,0 +1,33 @@
+1. Connect to VPN under Win7
+
+2. Install VirtualBox in the same Win7, you can get it at my share
+   folder c1884-baohaojun/tools.
+
+3. In virtualbox, create a new VM with *2* network cards. One is for
+   NAT through the Win7 host, the other will be *bridge* through the
+   Win7 ether network card.
+
+4. No need to install Linux in the VM, only need to start Ubuntu Live
+   CD in the ``try ubuntu'' mode
+
+5. In ubuntu, make network sharing between the 2 network cards: 
+
+   #+begin_example
+   (
+    sudo bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
+    sudo /sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    sudo /sbin/iptables -A FORWARD -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+    sudo /sbin/iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
+   )
+   #+end_example
+
+6. In the developer's Linux PC, set the route table and host name. For
+   e.g., I tried it on Silu's Linux:
+
+   sudo route add -host 10.93.76.20 gw 10.21.128.164 
+
+   (The 1st IP is the webmail.marvell.com, 2nd is the IP of my VM's
+   bridged eth1, we need assign it fixed IP to make it work reliably)
+
+   And try 10.93.76.20 in Silu's Linux browser, the webmail page is
+   displayed!

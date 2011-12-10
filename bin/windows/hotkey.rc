@@ -59,7 +59,8 @@ KeyToGrab(Down),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(
 KeyToGrab(Delete),      WithModifier(LWin),      WithAction(ExecCommand), DoThis(taskmgr)
 KeyToGrab(Pause),       WithModifier(LWin),      WithAction(ExecCommand), DoThis(control.exe sysdm.cpl)
 KeyToGrab(D),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(ToggleDesktop)
-KeyToGrab(ScrLck), 	WithModifier(LWin),      WithAction(LockWorkStation)
+KeyToGrab(ScrLck), 	WithModifier(LAlt),      WithAction(LockWorkStation)
+
 KeyToGrab(ScrLck), 	WithModifier(),		 WithAction(ExecCommand), DoThis(run cmd.exe /c misc-fix.bat)
 KeyToGrab(S),           WithModifier(LWin),      WithAction(ifinds)
 KeyToGrab(O),           WithModifier(LWin),      WithAction(ifindo)

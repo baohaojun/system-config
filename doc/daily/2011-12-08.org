@@ -1,0 +1,26 @@
+* TODO MarsBurner: convert UI to better design
+** DONE study MFC dialog using HTML for presentation.
+   CLOSED: [2011-12-08 Thu 08:40]
+   - CLOSING NOTE [2011-12-08 Thu 08:40]
+
+     This technique should be used when you want to some complex UI
+     with MFC, because the traditional MFC UI is too inflexible.
+** DONE implement progress bar in HTML
+
+   CLOSED: [2011-12-08 Thu 08:47]
+   - CLOSING NOTE [2011-12-08 Thu 08:47]
+* DONE Marvell: help silu to set up vpn sharing
+  CLOSED: [2011-12-08 Thu 17:00]
+  - CLOSING NOTE [2011-12-08 Thu 17:00]
+
+The tricky thing is that the 3 network must co-exist: vpn, lan,
+wan. Sharing can only be done by bridging vm-ubuntu-eth1 throuth lan,
+not working if bridging through wan.
+
+Spent 2 hours on this.
+
+* TODO track how much time I spent on each task.
+* TODO MarsBurner: fix occasional build error
+
+1. 写了个do-rebase.sh，注意需要把cygwin安装目录下所有文件chown为你自己的。
+2. 让date execution protection被disable掉，这个用bcdedit set nx AlwaysOff。

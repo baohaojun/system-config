@@ -1,5 +1,155 @@
-* TODO write a org page for refactory-rename, send mail to team
-* TODO check whether beagrep support querying "*hello*" in the search engine
+* DONE write a org page for refactory-rename, send mail to team
+  CLOSED: [2011-12-05 Mon 15:47]
+  - CLOSING NOTE [2011-12-05 Mon 15:47]
+
+以下是我写的一个重构工具，它的目标是一种非常常见、也是非常重要的重构：重命名。
+
+重构，就是在代码已经work的基础上，对代码进行各种“手术”，以提升代码的质量，主要集中在“可读性”，“可维护性”等方面。
+
+在某些语言中，以Smalltalk为典型，Java其次，它们的IDE会提供非常强大的重
+构支持，可是前提条件是a) 你必须用这种语言，b) 你必须用这个IDE。这是两个
+很难满足的条件，从软件耦合度、依赖关系的角度来看，一个较为普遍的需求
+（代码重构），被强迫依赖在一个较为不普遍的前提条件上（特定语言+特定
+IDE）。这种本末倒置的依赖关系，我觉得像把房子建在流沙上，根基不牢。
+
+相反，从另一个普遍的条件出发，我们可以很容易地满足某些简单而又重要的代
+码重构需求。那个条件就是，所有代码，其实都是文本。
+
+具体到“重命名”这种重构，我粗略地把它定义为：把所有出现 ~FooBar~ 的地方，全部改成 ~HooRay~ 。
+
+要做这个重构的原因，一般是HooRay代表着一个比FooBar更能表达程序员意图的
+名字，比如， ~aVariable~ 就不如 ~numOfStudents~ 更能表达程序员意图。当
+然也有可能FooBar是另一家公司的名字，它对你提出了法律诉求，要你停止在你
+的产品中使用FooBar这个名字（比如一款开源软件Sawfish就因为这个原因被迫从
+Sawmill改名而来）。
+
+根据FooBar出现的地方分类，有两种地方要改：
+
+- 出现在文件内容里
+
+- 出现在文件名里（这是容易被忽视，也更不好处理的情形）
+
+根据大小写分，当用户提出要把 ~FooBar~ 改成 ~HooRay~ 的时候，如果智能一点，应该：
+
+- 把所有 ~FooBar~ 改成 ~HooRay~ ，这是用户直接的需求。
+
+- 把所有 ~FOOBAR~ 改成 ~HOORAY~ ，也就是大写的情况（perl里的uc函数）。
+
+- 把所有 ~foobar~ 改成 ~hooray~ ，也就是小写的情况（perl里的lc函数）。
+
+- 把所有 ~Foobar~ 改成 ~Hooray~ ，也就是首字母大写的情况（perl里的ucfirst函数）。
+
+- 把所有 ~FooBAR~ 改成 ~HooRAY~ ？好像有点智能过头了。
+
+  如果出现这种情况的话，一般说明原作者在大小写问题上有点太过随便了，你
+  怎么处理都不为过，我采取的做法是问用户意见，应该怎么处理（类似于弹一
+  个对话框）。
+
+更多细节，看下面代码和其中的注释。代码最新版本（无注释）在[[http://github.com/baohaojun/windows-config/raw/master/bin/linux/refactory-rename][这里]]。
+
+有一个值得一提的细节是，我的这个工具是依赖于git的，但是我不认为这是一种本末倒置的依赖关系，因为git实在是太普遍了。
+
+#+begin_src sh
+#!/bin/bash
+set -e #正式bash编程的第一条“军规”，出错马上退出
+
+function die() { #从perl里偷师来的die语句
+    echo "$@"
+    exit 1
+}
+
+function debug() { #用专门的debug而不是直接用echo，最后想禁掉全部debug，在这里改一下就好；而不是满世界去找和删echo，有些echo还可能不是调试打印用的！
+    echo "$@" 1>&2
+}
+
+IFS=$'\n' #不想处理文件名中空格的偷懒办法
+
+git status #如果没用git管理，就退出吧（前面set -e了）。连版本管理都没有，还敢用重构？
+#版本管理 != git，但是也差不多了吧，至少对我自己是相当安全的，git那么普遍，不至于出现依赖关系倒置的情况。
+
+git st -s . | grep . && die "git not clean" #git里有东西还没check in，好险...
+
+test "$#" = 0 && die "must provide at least 2 args" #这个逻辑有点松，其实我现在只能支持两个参数
+# 正确的写法应该是：test "$#" != 2 && die "must provide exactly 2 args"，但是我在想以后要不要支持多于一组重命名参数。
+tmpf=/tmp/$(basename $0).$$
+perlhash=$tmpf.hash 
+
+# 下面是在处理文件内容里出现 FooBar 的情形
+git ls-tree --name-only -r HEAD > $tmpf
+cat $tmpf | xargs -d \\n grep -l -i -I -e "$1" |xargs -d \\n perl -npe '
+BEGIN{
+    $from = "'"$1"'"; # 双引号、单引号、双引号，难道我疯了吗，呵呵，不解释...
+    $to = "'"$2"'";
+}
+
+# 这里是在处理大小写的问题
+$rep_save{$from} = $to;
+$rep_save{lc $from} = lc $to;
+$rep_save{uc $from} = uc $to;
+$rep_save{ucfirst lc $from} = ucfirst lc $to; #必须先lc再ucfirst，因为试出来ucfirst("fooBar")真的是只改首字母变成"FooBar"！
+
+while (m#('"$1"')#ig) {
+    if ($rep_save{$1}) {
+        next;
+    } else { #出现了上面提到的FooBAR的情况，要问用户怎么处理了
+        system("echo please input your replacement for $1 > /tmp/get-stdin.$$");
+        chomp($rep_save{$1} = qx("get-stdin /tmp/get-stdin.$$"));
+    }
+}
+
+for $key (keys %rep_save) {
+    my ($from, $to) = ($key, $rep_save{$key});
+    s/$from/$to/g;
+}
+
+END {
+
+    #把大小写处理情况记录下来，下面还要用，一方面避免重复uc/lc/ucfirst的代码，另一方面如果出现FooBAR的话，避免再问用户一次同样的问题
+    use Storable;
+    store \%rep_save, "'$perlhash'";
+}
+' -i
+        
+#下面开始处理文件名中出现FooBar的情况
+
+function rename-files() { #这是一个递归调用的bash函数！
+    dir=$1
+    shift
+    (
+	cd "$dir";
+	debug doing $(pwd)
+	for x in $(git ls-tree --name-only HEAD); do
+	    if test -d "$x"; then
+		rename-files "$x" "$@" #深度优先的递归调用，从最深的子目录/文件改起，避免出现把上层目录名字已经改了，还用老名字去操作它的子目录/文件。
+	    fi
+	    if echo "$x"|grep -q -i -e "$1"; then #真正的改名操作，用git mv和perl的文本替换来实现。
+		git mv "$x" "$(echo "$x"|perl -npe '
+BEGIN{
+    use Storable;
+    %rep_save = %{retrieve("'$perlhash'")};
+}
+
+for $key (keys %rep_save) {
+    my ($from, $to) = ($key, $rep_save{$key});
+    s/$from/$to/g;
+}
+')"
+	    fi
+	done
+    )
+}
+	    
+rename-files . "$@" #递归调用开始的地方是当前目录 “.”。
+
+  
+#+end_src
+* DONE check whether beagrep support querying ~*hello*~ in the search engine
+  CLOSED: [2011-12-05 Mon 12:41]
+  - CLOSING NOTE [2011-12-05 Mon 12:42] \\
+    It is supported.
+    
+    The main reason for it is we want to make sure there are no reference
+    to 3rd parties's name in our code.
 * DONE change icon for MarsBurner, include the program icon and the status icons.
   CLOSED: [2011-11-30 Wed 12:33]
   - CLOSING NOTE [2011-11-30 Wed 12:33]
@@ -8,7 +158,10 @@
 
 my way of pushing things, reviewing code, update comments
 
-* TODO support jasmine flashing
+* DONE support jasmine flashing
+  CLOSED: [2011-12-07 Wed 13:12]
+  - CLOSING NOTE [2011-12-07 Wed 13:12] \\
+    Verified with Li Hui, flashing OK.
 * TODO support dkb flashing
 * DONE read literate programming, 6 pages, by Jon Bentley and Don Knuth
   CLOSED: [2011-11-30 Wed 12:35]

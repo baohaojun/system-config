@@ -1,0 +1,30 @@
+#!/bin/bash
+cat <<EOF
+(progn
+  (setq load-path
+	(nconc (list (expand-file-name "~/.emacs_d/lisp")
+		     (expand-file-name "~/.emacs_d/lisp/ext"))
+	       load-path))
+  (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
+    (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
+				  "~/../external/emacs-site-lisp/"
+				"~/external/emacs-site-lisp/")))
+      (let ((default-directory bhj-lisp-load-path)) 
+	(load-file (concat bhj-lisp-load-path "/subdirs.el")))
+      (setq load-path
+	    (cons bhj-lisp-load-path load-path))
+      ;;press F2 to get MSDN help
+      (global-set-key[(f2)](lambda()(interactive)(call-process "/bin/bash" nil nil nil "/q/bin/windows/ehelp" (current-word))))
+      (setq locate-command "locateEmacs.sh")))
+  
+  (require 'color-theme)
+  (condition-case nil
+      (progn
+	(color-theme-initialize)
+	(require 'color-theme-library))
+    (error nil))
+  (load "color-theme-leuven")
+  (color-theme-leuven)
+  (find-file "$1") 
+  (org-export-as-html 3))
+EOF

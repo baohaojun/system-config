@@ -565,13 +565,13 @@
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
- '(ispell-program-name "aspell" t)
+ '(ispell-program-name "aspell")
  '(jira-url "http://192.168.11.11/jira/rpc/xmlrc")
  '(keyboard-coding-system (quote cp936))
  '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
  '(makefile-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
- '(message-dont-reply-to-names (quote (".*haojun.*")))
+ '(message-dont-reply-to-names (quote (".*haojun.*" "hjbao")))
  '(message-mail-alias-type nil)
  '(mm-text-html-renderer (quote w3m))
  '(nnmail-expiry-wait (quote never))
@@ -1908,4 +1908,47 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
            '(iso-8859-1 gbk utf-8))))
        gnus-parameters))
 (defalias 'perl-mode 'cperl-mode)
+
+(defun bhj-org-tasks-closed-last-week (&optional match-string)
+  "Produces an org agenda tags view list of the tasks completed 
+in the specified month and year. Month parameter expects a number 
+from 1 to 12. Year parameter expects a four digit number. Defaults 
+to the current month when arguments are not provided. Additional search
+criteria can be provided via the optional match-string argument "
+  (interactive)
+  (org-tags-view nil 
+		 (concat
+		  match-string
+		  (format "+CLOSED>=\"[%s]\"" 
+			  (shell-command-to-string "today 'last mon'")))))
+
+(load "color-theme-leuven")
+(setq org-src-fontify-natively t)
+(setq org-todo-keywords
+      '((sequence "TODO" "|" "DONE" "CANCELED")
+	(sequence "PE" "|" "PE-DONE" "PE-CANCELED")))
+
+(defun bhj-do-code-generation ()
+  (interactive)
+  (let (start-of-code end-of-code code-text start-of-text end-of-text)
+    (search-backward "start code-generator")
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-code (point))
+    (search-forward "end code-generator")
+    (previous-line)
+    (move-end-of-line nil)
+    (setq end-of-code (point))
+    (setq code-text (buffer-substring-no-properties start-of-code end-of-code))
+
+    (search-forward "start generated code")
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-text (point))
+    (search-forward "end generated code")
+    (previous-line)
+    (move-end-of-line nil)
+    (setq  end-of-text (point))
+    (shell-command-on-region start-of-text end-of-text code-text nil t)))
+
 (server-start)

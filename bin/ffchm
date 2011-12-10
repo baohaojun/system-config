@@ -15,8 +15,10 @@ if ! test -e "$dir"; then
 fi
 
 if test -e "$dir"/index.html; then
-    firefox "$dir"/index.html&
+    cd "$dir";
+    firefox index.html&
 else
-    firefox "$dir" &
+    cd "$dir"
+    firefox . &
 fi
 
