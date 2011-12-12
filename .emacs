@@ -1926,7 +1926,7 @@ criteria can be provided via the optional match-string argument "
 (setq org-src-fontify-natively t)
 (setq org-todo-keywords
       '((sequence "TODO" "|" "DONE" "CANCELED")
-	(sequence "PE" "|" "PE-DONE" "PE-CANCELED")))
+	(sequence "PE" "|" "PEDONE" "PECANCELED")))
 
 (defun bhj-do-code-generation ()
   (interactive)
