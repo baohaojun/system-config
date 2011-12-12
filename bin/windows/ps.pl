@@ -2,43 +2,76 @@
 
 use POSIX;
 
-$Processes=`wmic.exe path win32_process get CommandLine,CreationDate,ProcessId,ParentProcessId </dev/null`;
+@ps_args_all = split /\r*\n/, `cat ~/doc/.bash_completion_words.ps.pl`;
+
+for (@ps_args_all) {
+  $ps_args_all{$_} = 1;
+}
+
+my @ps_args, @unknown_args, %ps_args;
+$ps_args{"CommandLine"} = 1;
+my $index_CreationDate;
+for (("ProcessId", "ParentProcessId", "CreationDate", @ARGV)) {
+  if ($ps_args_all{$_} and not $ps_args{$_}) {
+    $index_CreationDate = @ps_args if $_ eq "CreationDate";
+    $ps_args{$_} = 1;
+    push @ps_args, $_;
+  } else {
+    push @unknown_args, $_;
+  }
+}
+push @ps_args, "CommandLine";
+
+sub debug(@) {
+  print STDERR "@_\n";
+}
+
+$wmi_arg = join(",", @ps_args);
+$Processes=`wmic.exe path win32_process get $wmi_arg </dev/null`;
 @Processes = split /\r*\n/, $Processes;
 
-$Processes[0] =~ m/^(CommandLine.*)(CreationDate.*)(ParentProcessId.*)(ProcessId.*)$/ or #the order of pid/ppid seems to be random with wmic?
-    die "can't match the first line:\n" . $Processes[0];
+my %max_ps_arg;
+for (@ps_args) {
+  $Processes[0] =~ m/\b$_\s*/ or #the order of pid/ppid seems to be random with wmic?
+    die "can't match the first line for '$_': " . $Processes[0];
 
-$\="\n";
-my ($cmd_n, $create_n, $ppid_n, $pid_n) = map(length, ($1, $2, $3, $4));
+  $start_ps_arg{$_} = $-[0];
+  $end_ps_arg{$_} = $+[0];
+  $size_ps_arg{$_} = $end_ps_arg{$_} - $start_ps_arg{$_};
+  $max_ps_arg{$_} = length($_);
+}
 
 my $width = 12;
-printf "%9s%9s  %$width" . "s  %s\n", "PID", "PPID", "CreationDate", "COMMAND";
-sub my_mktime($) 
-  {
-    my $create= $_[0];
-    my ($year, $mon, $mday, $hour, $min, $sec) = 
-      (
-       substr($create, 0, 4) - 1900,
-       substr($create, 4, 2) - 1,
-       substr($create, 6, 2),
-       substr($create, 8, 2),
-       substr($create, 10, 2),
-       substr($create, 12, 2)
-      );
+sub my_mktime($) {
+  my $create= $_[0];
+  my ($year, $mon, $mday, $hour, $min, $sec) = 
+    (
+     substr($create, 0, 4) - 1900,
+     substr($create, 4, 2) - 1,
+     substr($create, 6, 2),
+     substr($create, 8, 2),
+     substr($create, 10, 2),
+     substr($create, 12, 2)
+    );
 
-    return mktime($sec, $min, $hour, $mday, $mon, $year);
-  }
-  
-foreach (@Processes[1..$#Processes]) {
+  return mktime($sec, $min, $hour, $mday, $mon, $year);
+}
+push @to_print, \@ps_args;  
+for (@Processes[1..$#Processes]) {
     chomp();
-    my ($cmd, $create, $ppid, $pid) = (substr($_, 0, $cmd_n),
-				       substr($_, $cmd_n, $create_n),
-				       substr($_, $cmd_n + $create_n, $ppid_n),
-				       substr($_, $cmd_n + $create_n + $ppid_n, $pid_n));
-    if (@ARGV) {
+    my @ps_fields;
+    my %ps_fields;
+    for $arg (@ps_args) {
+      my $f = substr($_, $start_ps_arg{$arg}, $size_ps_arg{$arg});
+      $f =~ s/(\s*$|^\s*)//g;
+      push @ps_fields, $f;
+      $ps_fields{$arg} = $f;
+    }
+
+    if (@unknown_args) {
 	my $match = 1;
-	for (@ARGV) {
-	    unless ($cmd =~ m/$_/i) {
+	for (@unknown_args) {
+	    unless ($ps_fields{"CommandLine"} =~ m/$_/i) {
 		$match = 0;
 		last;
 	    }
@@ -46,16 +79,32 @@ foreach (@Processes[1..$#Processes]) {
 	next unless $match;
     }
 
-    
-    $cmd =~ s/(\s*$|^\s*)//g;
-    $create =~ s/(\s*$|^\s*)//g;
-    $ppid =~ s/(\s*$|^\s*)//g;
-    $pid =~ s/(\s*$|^\s*)//g;
-    
-    next if $ppid == $$;
-    my $start_second = my_mktime($create);
-    my $now = my_mktime(qx(date +'%Y%m%d%H%M%S'));
+    if ($ps_args{"CreationDate"}) {
+      my $create = $ps_fields{"CreationDate"};
+      my $start_second = my_mktime($create);
+      my $now = my_mktime(qx(date +'%Y%m%d%H%M%S'));
+      $ps_fields{"CreationDate"} = $ps_fields[$index_CreationDate] = $now - $start_second;
+    }
 
-    printf "%9d%9d  %$width" . "s  %-s\n", $pid, $ppid, $now - $start_second, $cmd;
+    for (@ps_args) {
+      if (length($ps_fields{$_}) > $max_ps_arg{$_}) {
+	$max_ps_arg{$_} = length($ps_fields{$_});
+      }
+    }
+
+    next if $ps_fields{"ParentProcessId"} == $$;
+
+    push @to_print, \@ps_fields;
+}
+
+my $format_str;
+for (@ps_args) {
+  $format_str .= "%" . ($max_ps_arg{$_} + 1) . "s";
+}
+
+$format_str =~ s/(.*)%.*s/$1 %-s/;
+debug "format_str is $format_str";
+for (@to_print) {
+  printf "$format_str\n", @{$_};
 }
 
