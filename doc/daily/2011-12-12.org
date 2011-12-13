@@ -6,4 +6,5 @@
   - memory leak
   - write into same folder as program, will cause permission issue under Win7.
   - will cause computer unable to shutdown after pull off usb cable when writing.
-    
+  - can we please do not write temp files into the .blf folder? those folders maybe exist in share-folder  
+  

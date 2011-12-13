@@ -1,0 +1,3 @@
+* PE 把CapsLock换成Alt键？还是Escape键？
+  http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html#ss1.4
+  http://msdn.microsoft.com/en-us/windows/hardware/gg463447
