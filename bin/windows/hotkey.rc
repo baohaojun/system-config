@@ -64,4 +64,5 @@ KeyToGrab(ScrLck), 	WithModifier(LAlt),      WithAction(LockWorkStation)
 KeyToGrab(ScrLck), 	WithModifier(),		 WithAction(ExecCommand), DoThis(run cmd.exe /c misc-fix.bat)
 KeyToGrab(S),           WithModifier(LWin),      WithAction(ifinds)
 KeyToGrab(O),           WithModifier(LWin),      WithAction(ifindo)
-
+KeyToGrab(ESCAPE), 	WithModifier(LCtrl),      WithAction(ExecCommand), DoThis(run cmd.exe /c misc-fix.bat)
+KeyToGrab(ESCAPE), 	WithModifier(RCtrl),      WithAction(ExecCommand), DoThis(run cmd.exe /c misc-fix.bat)

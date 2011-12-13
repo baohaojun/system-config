@@ -245,7 +245,7 @@ Firemacs.Commands.Menu = {
 Firemacs.CmdKey = {};
 
 Firemacs.CmdKey.Option = {
-    UseEscape: false,
+    UseEscape: true,
     UseAlt: true,
     UseMeta: false,
     XPrefix: 'C-h',
