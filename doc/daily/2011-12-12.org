@@ -1,0 +1,9 @@
+* PEDONE do ps.pl, it supports all the win32_process options.
+  CLOSED: [2011-12-12 Mon 19:49]
+  - CLOSING NOTE [2011-12-12 Mon 19:49]
+ 
+* TODO MarsBurner mail qianqi about her dll problems
+  - memory leak
+  - write into same folder as program, will cause permission issue under Win7.
+  - will cause computer unable to shutdown after pull off usb cable when writing.
+    
