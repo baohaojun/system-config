@@ -1,0 +1,1 @@
+* TODO MarsBurner: 烧写分区的拆分、擦除。Do not use Erase All.
