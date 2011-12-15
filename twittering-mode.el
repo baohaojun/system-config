@@ -6678,8 +6678,7 @@ string.")
                                   (save-excursion (goto-char beg) (current-column)) ? )))
                   (setq prefix (concat prefix "    ") ; indent
                         detail (concat "    " detail))
-                  (setq detail (replace-regexp-in-string "
-" "" detail)
+                  (setq detail (replace-regexp-in-string "\r" "" detail)
                         detail (twittering-fill-string detail nil prefix t)
                         detail (substring detail (length prefix))
                         detail (apply 'propertize detail properties))
