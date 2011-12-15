@@ -103,7 +103,6 @@ for (@ps_args) {
 }
 
 $format_str =~ s/(.*)%.*s/$1 %-s/;
-debug "format_str is $format_str";
 for (@to_print) {
   printf "$format_str\n", @{$_};
 }
