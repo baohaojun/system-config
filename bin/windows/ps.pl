@@ -71,7 +71,7 @@ for (@Processes[1..$#Processes]) {
     if (@unknown_args) {
 	my $match = 1;
 	for (@unknown_args) {
-	    unless ($ps_fields{"CommandLine"} =~ m/$_/i) {
+	    unless ($ps_fields{"CommandLine"} =~ m/$_/i or $ps_fields{"ProcessId"} eq $_) {
 		$match = 0;
 		last;
 	    }
