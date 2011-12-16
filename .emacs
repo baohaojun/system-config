@@ -1951,4 +1951,5 @@ criteria can be provided via the optional match-string argument "
     (setq  end-of-text (point))
     (shell-command-on-region start-of-text end-of-text code-text nil t)))
 
+(global-set-key (kbd "M-s g") 'bhj-do-code-generation)
 (server-start)
