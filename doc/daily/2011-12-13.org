@@ -1,5 +1,0 @@
-* PEDONE 把CapsLock换成Alt键？还是Escape键？
-  CLOSED: [2011-12-13 Tue 10:16]
-  - CLOSING NOTE [2011-12-13 Tue 10:16]
-  http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html#ss1.4
-  http://msdn.microsoft.com/en-us/windows/hardware/gg463447

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~/Maildir || exit 1
+cd ~/Maildir;
 result=$(pwd)/mail-check-result
 test -e $result || { touch $result; sleep 1; touch */cur; }
 

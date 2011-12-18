@@ -1,3 +1,2 @@
 #!/bin/bash
-test $# = 0 && exit
 print-windows.py |grep -i -e "$1"|pn 1|xargs.exe post-message.py WM_SYSCOMMAND SC_CLOSE

@@ -19,10 +19,8 @@ not working if bridging through wan.
 
 Spent 2 hours on this.
 
-* PE track how much time I spent on each task.
-* DONE MarsBurner: fix occasional build error because of perl exec error
-  CLOSED: [2011-12-12 Mon 13:08]
-  - CLOSING NOTE [2011-12-12 Mon 13:08]
+* TODO track how much time I spent on each task.
+* TODO MarsBurner: fix occasional build error
 
 1. 写了个do-rebase.sh，注意需要把cygwin安装目录下所有文件chown为你自己的。
 2. 让date execution protection被disable掉，这个用bcdedit set nx AlwaysOff。

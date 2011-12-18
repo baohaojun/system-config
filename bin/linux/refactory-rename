@@ -30,11 +30,11 @@ $rep_save{uc $from} = uc $to;
 $rep_save{ucfirst lc $from} = ucfirst lc $to;
 
 while (m#('"$1"')#ig) {
-    if (defined $rep_save{$1}) {
+    if ($rep_save{$1}) {
         next;
     } else {
-        system("echo please input your replacement for \"$1\" > /tmp/get-stdin.$$");
-        chomp($rep_save{$1} = qx(get-stdin /tmp/get-stdin.$$));
+        system("echo please input your replacement for $1 > /tmp/get-stdin.$$");
+        chomp($rep_save{$1} = qx("get-stdin /tmp/get-stdin.$$"));
     }
 }
 
@@ -62,7 +62,6 @@ function rename-files() {
 		rename-files "$x" "$@"
 	    fi
 	    if echo "$x"|grep -q -i -e "$1"; then
-		debug doing "$x"
 		git mv "$x" "$(echo "$x"|perl -npe '
 BEGIN{
     use Storable;

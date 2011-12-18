@@ -12,11 +12,11 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 (
     while true; do
 
-	if [[ "$PWD" =~ ^$HOME/smb/[^/]+$ || "$PWD" =~ ^//[^/]+$ ]]; then
+	if [[ `pwd` =~ ^$HOME/smb/[^/]+$ ]]; then
 	    if test "$(dirname "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
 		break;
 	    else
-		cd ~
+		cd ../..
 		continue
 	    fi
 	fi
@@ -50,15 +50,6 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 
 	if test "$PWD" = /; then
 	    exit -1
-	fi
-
-	if [[ "$PWD" =~ ^$HOME/smb/[^/]+$ || "$PWD" =~ ^//[^/]+$ ]]; then
-	    if test "$(dirname "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
-		break;
-	    else
-		cd ~
-		continue
-	    fi
 	fi
 	builtin cd ..
     done
