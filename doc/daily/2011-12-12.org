@@ -1,5 +1,6 @@
-* PEDONE do ps.pl, it supports all the win32_process options.
-  CLOSED: [2011-12-12 Mon 19:49]
+* DONE do ps.pl, it supports all the win32_process options.		 :pe:
+  CLOSED: [2011-12-19 Mon 14:48]
+  - CLOSING NOTE [2011-12-19 Mon 14:48]
   - CLOSING NOTE [2011-12-12 Mon 19:49]
  
 * DONE MarsBurner: mail qianqi about her dll problems: 四个问题：

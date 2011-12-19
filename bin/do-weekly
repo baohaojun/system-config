@@ -1,6 +1,10 @@
 #!/bin/bash
 
 cd ~/weekly || exit
+if echo "${1:-Fri}" |grep fri -iqv; then
+    yes-or-no "Warning: you are not doing weekly for a Friday, continue?" || exit;
+fi
+
 year_page=$(date +%Y -d "${1:-today}")
 week_page=$(date +%Y.%m.%d -d "Last Mon")-$(date +%Y.%m.%d -d "${1:-Fri}")
 
@@ -13,9 +17,14 @@ congfu --space Weekly -- -a getSource --title $tool_page |print -ne 'print unles
 congfu --space Weekly -- -a storePage --title $tool_page --file $tool_page --parent $week_page
 
 bhj_page=bhj_$(date +%Y.%m.%d -d "${1:-Fri}")
+set -x
+do_overwrite=false
 if test -e $bhj_page; then
-    yes-or-no "overwrite existing $bhj_page?" && (
-	cat <<EOF
+    yes-or-no "overwrite existing $bhj_page?" && do_overwrite=true
+fi
+
+{ test $do_overwrite = true || ! test -e $bhj_page; }  && (
+    cat <<EOF
 {color:#ff0000}{*}Red Flag{*}{color}
 
 N/A
@@ -27,24 +36,23 @@ N/A
 {color:#008000}{*}Green Flag{*}{color}
 {code:none}
 EOF
-	emacs-nt -Q --batch --eval "$(bash do-weekly.help $bhj_page.1)" >/dev/null 2>&1 
-	cat $bhj_page.1
-	rm $bhj_page.1
-	cat <<EOF
+    emacs-nt -Q --batch --eval "$(bash do-weekly.help $bhj_page.1)" >/dev/null 2>&1 
+    cat $bhj_page.1
+    rm $bhj_page.1
+    cat <<EOF
 {code}
 
 *Plan for next week*
 
 {code:none}
 EOF
-	emacs-nt -Q --batch --eval "$(bash do-weekly.todo $bhj_page.1)" >/dev/null 2>&1
-	cat $bhj_page.1
-	rm $bhj_page.1
-	cat <<EOF
+    emacs-nt -Q --batch --eval "$(bash do-weekly.todo $bhj_page.1)" >/dev/null 2>&1
+    cat $bhj_page.1
+    rm $bhj_page.1
+    cat <<EOF
 {code}
 EOF
-    ) > $bhj_page
-fi
+) > $bhj_page
 
 if tty >/dev/null 2>&1 ; then
     edit-wait $bhj_page

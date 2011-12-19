@@ -25,7 +25,7 @@ cat <<EOF
   (setq org-agenda-files '( "~/doc/daily"))
   (org-tags-view nil 
 		 (concat
-		  (format "+CLOSED>=\"[%s]\"" 
+		  (format "-pe+CLOSED>=\"[%s]\"" 
 			  (shell-command-to-string "today 'last mon'"))))
   (write-file "$1"))
 EOF

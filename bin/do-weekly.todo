@@ -23,6 +23,6 @@ cat <<EOF
     (require 'w32-symlinks))
 
   (setq org-agenda-files '( "~/doc/daily"))
-  (org-tags-view nil (concat "+TODO=\"TODO\""))
+  (org-tags-view nil (concat "-pe+TODO=\"TODO\""))
   (write-file "$1"))
 EOF
