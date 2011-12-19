@@ -756,7 +756,8 @@
       (color-theme-initialize)
       (require 'color-theme-library))
   (error nil))
-(color-theme-arjen)
+;(color-theme-arjen)
+(load-theme 'wheatgrass)
 ;(w32-register-hot-key [A-tab])
 
 (defun markdown-nobreak-p ()
