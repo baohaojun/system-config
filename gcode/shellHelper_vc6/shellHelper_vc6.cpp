@@ -18,10 +18,10 @@ char *strdup_quote(char *res, const char* src)
 	res[0] = '"';
 	int j = 1;
 	for (int i=0; i<src_len; i++) {
-		res[j++] = src[i];
 		if (src[i] == '"' || src[i] == '\\') {
-			res[j++] = src[i];
+			res[j++] = '\\';
 		}
+		res[j++] = src[i];
 	}
 	res[j] = '"';
 	return res+j+1; //always return the next position to write
@@ -78,7 +78,6 @@ int main(int argc, char* argv[])
 
 	char bash_path[1024] = {0};
 
-	
 	FILE * fp = fopen("c:\\.bash-loc", "rb");
 	if (!fp) {
 		fprintf(stderr, "Error: can't open `%s'\n", "c:\\.bash-loc");
@@ -88,14 +87,17 @@ int main(int argc, char* argv[])
 	fgets(bash_path, 1024, fp);
 	chomp(bash_path);
 
-	printf("Bash is found at `%s'\n", bash_path);
+	fprintf(stderr, "Bash is found at `%s'\n", bash_path);
 	
 	char shellHerlperSh[]= "~/bin/windows/shellHelper_vc6.sh";
 
 	int new_cmd_len = strlen(bash_path) + sizeof(shellHerlperSh) + 20; 
+    fprintf(stderr, "command line is %s\n", GetCommandLine());
 	for (int i=0; i<argc; i++) {
 		new_cmd_len += strlen(argv[i])*2 +5;
+        fprintf(stderr, "argv[%d] is '%s'\n", i, argv[i]);
 	}
+
 
 	char *new_cmd_str = (char *)calloc(new_cmd_len, sizeof(char));
 	
@@ -108,8 +110,8 @@ int main(int argc, char* argv[])
 		}
 	}        
 
-	printf("Will run `%s'\n", new_cmd_str);
-	fflush(stdout);
+	fprintf(stderr, "Will run `%s'\n", new_cmd_str);
+	fflush(stderr);
 
 	return system2(new_cmd_str);
 

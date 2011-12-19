@@ -37,7 +37,8 @@ KeyToGrab(0),           WithModifier(LCtrl+LAlt),      WithAction(ExecCommand), 
 
 KeyToGrab(E),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -t emacs@ )
 #KeyToGrab(F),		WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p puemacs -F 1 puemacs -load emacs)
-KeyToGrab(M),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p pucomm -F 1 pucomm -load comm)
+#KeyToGrab(M),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p pucomm -F 1 pucomm -load comm)
+KeyToGrab(M),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(pythonw find_exec.py dllhost.exe)
 KeyToGrab(X),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -c emacs -fe run bash -c eterm-bhj.sh -fe -F 1 emacs.sh)
 KeyToGrab(P),           WithModifier(RAlt),      WithAction(ExecCommand), DoThis(findexec.exe -p powerpnt.exe -F 1 ppt)
 KeyToGrab(P),           WithModifier(LWin),      WithAction(ExecCommand), DoThis(findexec.exe -p mintty -c mintty -F 1 start-putty.sh)
@@ -64,4 +65,5 @@ KeyToGrab(ScrLck), 	WithModifier(LAlt),      WithAction(LockWorkStation)
 KeyToGrab(ScrLck), 	WithModifier(),		 WithAction(ExecCommand), DoThis(run cmd.exe /c misc-fix.bat)
 KeyToGrab(S),           WithModifier(LWin),      WithAction(ifinds)
 KeyToGrab(O),           WithModifier(LWin),      WithAction(ifindo)
-
+KeyToGrab(ESCAPE), 	WithModifier(LCtrl),      WithAction(ExecCommand), DoThis(run cmd.exe /c misc-fix.bat)
+KeyToGrab(ESCAPE), 	WithModifier(RCtrl),      WithAction(ExecCommand), DoThis(run cmd.exe /c misc-fix.bat)

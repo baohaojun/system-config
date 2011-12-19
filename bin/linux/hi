@@ -1,11 +1,21 @@
 #!/usr/bin/env perl
 
+use Getopt::Long;
 system("backup_bash_history");
 open($file, "<", glob("~/.bash_history.bak"));
 %hist_words;
 @hist_words;
 
+sub debug(@) {
+  print STDERR "@_\n";
+}
+
 chomp($cmd = qx/basename $0/);
+
+$ignore_case = 0;
+GetOptions(
+           "i!" => \$ignore_case,
+          );
 
 if ($cmd eq "hi") {
     while(<$file>) {
@@ -36,7 +46,7 @@ if ($cmd eq "hi") {
 foreach $key (@hist_words) {
     $key_matches = 1;
     foreach $arg (@ARGV) {
-        if (index($key, $arg) == -1) {
+        if ($ignore_case and index(lc $key, lc $arg) == -1 or not $ignore_case and index($key, $arg) == -1) {
             $key_matches = 0;
             last;
         }

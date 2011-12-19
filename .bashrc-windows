@@ -151,5 +151,20 @@ else
     unset SetPath
 fi
 
+function complete_skeleton_words() {
+    local cur cmd
+    local IFS=$'\n'
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    cmd="${COMP_WORDS[0]}"
+    COMPREPLY=( $(skeleton_compgen_word.pl \
+		-d '\n' -- \
+		"$(cat ~/doc/.bash_completion_words.$(basename "$cmd"))" \
+		"$cur")
+    )
+}
+
+complete -o default -F complete_skeleton_words ps.pl
 return 0
 
