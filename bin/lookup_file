@@ -66,4 +66,5 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
     which "$file" 2>/dev/null
 ) || (
     echo "$file"
+    exit -1
 )
