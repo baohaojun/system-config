@@ -1914,18 +1914,19 @@ in the specified month and year. Month parameter expects a number
 from 1 to 12. Year parameter expects a four digit number. Defaults 
 to the current month when arguments are not provided. Additional search
 criteria can be provided via the optional match-string argument "
-  (interactive)
+  (interactive "sShow tasks before (default: last mon): ")
+  (if (or (not match-string) 
+	  (and (stringp match-string) (string-equal match-string "")))
+      (setq match-string "last mon"))    
   (org-tags-view nil 
 		 (concat
-		  match-string
 		  (format "+CLOSED>=\"[%s]\"" 
-			  (shell-command-to-string "today 'last mon'")))))
+			  (shell-command-to-string (concat "today '" match-string "'"))))))
 
 (load "color-theme-leuven")
 (setq org-src-fontify-natively t)
 (setq org-todo-keywords
-      '((sequence "TODO" "|" "DONE" "CANCELED")
-	(sequence "PE" "|" "PEDONE" "PECANCELED")))
+      '((sequence "TODO" "|" "DONE" "CANCELED")))
 
 (defun bhj-do-code-generation ()
   (interactive)
