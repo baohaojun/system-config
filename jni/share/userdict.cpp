@@ -48,7 +48,7 @@ static struct timeval _tv_start_, _tv_end_;
                   (_tv_end_.tv_usec - _tv_start_.tv_usec); \
     } while(0)
 #define LOGD_PERF(message) \
-    LOGD("PERFORMANCE[%s] %llu usec.", message, _ellapse_);
+    ALOGD("PERFORMANCE[%s] %llu usec.", message, _ellapse_);
 #else
 #define DEBUG_PERF_BEGIN
 #define DEBUG_PERF_END
