@@ -555,7 +555,7 @@
      (let ((s "Component(s): "))
        (put-text-property 0 (length s) 'face 'jira-issue-info-header-face s)
        (insert s))
-     (let ((s (if (cdr (assoc "components" issue)) (cdr (assoc "components" issue)) "None")))
+     (let ((s (if (cdr (assoc "name" (cdr (assoc "components" issue)))) (cdr (assoc "name" (cdr (assoc "components" issue)))) "None")))
        (put-text-property 0 (length s) 'face 'jira-issue-info-face s)
        (insert s "\n\n"))
 
