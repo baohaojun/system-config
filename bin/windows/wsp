@@ -1,6 +1,4 @@
 #!/bin/bash
 #wsp stands for Win32 Short Path
 
-cygpath -asm "${1:-.}"|tr -d '\n'|tee /tmp/usp.$$
-cat /tmp/usp.$$|putclip
-rm /tmp/usp.$$
+cygpath -asm "${1:-.}"
