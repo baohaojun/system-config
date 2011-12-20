@@ -365,9 +365,6 @@ emacs-lisp"
 (defun jira2-get-comments (key)
   (car (jira2-call "getComments" key)))
 
-(defun jira2-add-comment (key comment)
-  (car (jira2-call "addComment" key `((body . ,comment)))))
-
 (defun jira2-update-issue (key fields)
   (car (jira2-call "updateIssue" key (jira2-make-remote-field-values fields))))
 
@@ -1044,7 +1041,7 @@ Return nil if the field is not found"
 
 (defun jira2-add-comment (issue-key comment)
   "Adds a comment to an issue"
-  (jira2-call 'addComment issue-key comment))
+  (jira2-call 'addComment issue-key `((body . ,comment))))
 
 (defun jira2-create-issue (r-issue-struct)
   "Creates an issue in JIRA2 from a Hashtable object."
