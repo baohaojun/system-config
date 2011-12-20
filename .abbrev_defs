@@ -13,6 +13,8 @@
   '(
    ))
 
+(define-abbrev-table 'bibtex-mode-abbrev-table '())
+
 (define-abbrev-table 'browse-kill-ring-edit-mode-abbrev-table '())
 
 (define-abbrev-table 'browse-kill-ring-mode-abbrev-table '())
@@ -168,6 +170,8 @@
 
 (define-abbrev-table 'gud-mode-abbrev-table '())
 
+(define-abbrev-table 'help-mode-abbrev-table '())
+
 (define-abbrev-table 'html-mode-abbrev-table '())
 
 (define-abbrev-table 'ibuffer-occur-mode-abbrev-table '())
@@ -196,6 +200,8 @@
 (define-abbrev-table 'latex-mode-abbrev-table '())
 
 (define-abbrev-table 'ld-script-mode-abbrev-table '())
+
+(define-abbrev-table 'lisp-interaction-mode-abbrev-table '())
 
 (define-abbrev-table 'lisp-mode-abbrev-table '())
 
@@ -227,6 +233,8 @@
   '(
    ))
 
+(define-abbrev-table 'occur-edit-mode-abbrev-table '())
+
 (define-abbrev-table 'occur-mode-abbrev-table '())
 
 (define-abbrev-table 'org-mode-abbrev-table '())
@@ -245,6 +253,8 @@
    ))
 
 (define-abbrev-table 'plain-tex-mode-abbrev-table '())
+
+(define-abbrev-table 'process-menu-mode-abbrev-table '())
 
 (define-abbrev-table 'prog-mode-abbrev-table '())
 
@@ -326,6 +336,8 @@ fi
 Cc: rui li <rui.li@borqs.com>, \"Gao Shujun 高淑军\" <shujun.gao@borqs.com>, \"'jianli.zhang'\" <jianli.zhang@borqs.com>" nil 1)
     ("lall" "Hong Liang <hliang@adsnexus.com>
 Cc: Haojun Bao <hjbao@adsnexus.com>,  Ningbo Zhou <nbzhou@adsnexus.com>,  Lu Yu <lyu@adsnexus.com>,  Jinsong Li <jsli@adsnexus.com>,  Hui Li <hli@adsnexus.com>,  Yi Ru <yru@adsnexus.com>,  Xinjie Guo <xjguo@adsnexus.com>,  Jinglin Shu <jlshu@adsnexus.com>,  Kaihao Chen <khchen@adsnexus.com>,  Feng Yan <fyan@adsnexus.com>,  Nan Geng <ngeng@adsnexus.com>,  Lei Liao <ll@adsnexus.com>,  Ying Wang <ywang@adsnexus.com>,  Jianhua Xing <jhxing@adsnexus.com>,  Jinfeng Lv <jflv@adsnexus.com>,  Jialiang Geng <jlgeng@adsnexus.com>,  Jiyu Zhou <jyzhou@adsnexus.com>,  Ni Li <nli@adsnexus.com>,  Ping Yin <ping@adsnexus.com>,  Shishi Liu <ssliu@adsnexus.com>,  Wentuo Jiang <wtjiang@adsnexus.com>,  Jie Zhang <jzhang@adsnexus.com>,  Leo Yao <lyao@adsnexus.com>,  Yang Gao <ygao@adsnexus.com>,  Charlie Mu <cmu@adsnexus.com>,  Long Liu <lliu@adsnexus.com>,  Zheng Hu <zhu@adsnexus.com>,  Liang Chen <lchen@adsnexus.com>,  Yan Zhao <yzhao@adsnexus.com>,  Wei Liu <wliu@adsnexus.com>,  Xianglin Deng <xldeng@adsnexus.com>,  Xin Liu <xliu@adsnexus.com>,  Xiaoyi Chen <xchen@adsnexus.com>,  Chaoying Ma <cyma@adsnexus.com>,  Na Li <nali@adsnexus.com>,  Bin Li <libin@adsnexus.com>,  Xiao Wang <xwang@adsnexus.com>,  Yunchao Chen <ycchen@adsnexus.com>,  Cunmin Duan <cmduan@adsnexus.com>,  Jian Sun <jsun@adsnexus.com>,  Yu Bai <ybai@adsnexus.com>,  Ke Wang <kwang@adsnexus.com>,  Shawn Bow <shbow@adsnexus.com>,  Li Chen <lichen@adsnexus.com>,  Zhongjie Zhu <zjzhu@adsnexus.com>,  Weifeng Zhou <wfzhou@adsnexus.com>,  Xianfeng Wang <xfwang@adsnexus.com>,  Vincent Ying <vying@adsnexus.com>,  Yunpeng Gao <ypgao@adsnexus.com>,  Xing Chang <xchang@adsnexus.com>,  Sufen Niu <sfniu@adsnexus.com>,  An Wang <awang@adsnexus.com>,  Yi He <yhe@adsnexus.com>,  Jim Zhou <zzhou@adsnexus.com>,  Kuan Wu <kwu@adsnexus.com>,  Yongning Zhao <ynzhao@adsnexus.com>,  Sunny Zhang <sunnyzhang@adsnexus.com>,  Dong Liu <dliu@adsnexus.com>,  Silu Zhang <slzhang@adsnexus.com>,  John Mu <mzy@adsnexus.com>,  Yang Liu <yliu@adsnexus.com>,  Weixing Liu <wxliu@adsnexus.com>,  Jianhua Zhang <jhzhang@adsnexus.com>,  Xiaoyong Wu <bonderwu@adsnexus.com>,  Anle Zhou <azhou@adsnexus.com>,  Ning Liu <nliu@adsnexus.com>,  Ming Shi <mshi@adsnexus.com>,  Jin Wu <jwu@adsnexus.com>,  \"tyin@hzwowpad.com\" <tyin@hzwowpad.com>,  Tongzhu Liu <tzliu@adsnexus.com>,  Li Yang <lyang@adsnexus.com>,  Lu Jiang <jl@adsnexus.com>,  Hewei Wang <hwwang@adsnexus.com>,  Qin Zhang <qzhang@adsnexus.com>,  Fei Liu <fliu@adsnexus.com>,  Fengwei Sun <fwsun@adsnexus.com>,  Bob Di <bdi@adsnexus.com>,  Pan Wang <pwang@adsnexus.com>,  Bo Tong <btong@adsnexus.com>,  Hailin Ren <hlren@adsnexus.com>,  Hongwei Mi <hwmi@adsnexus.com>,  Yan Guan <yguan@adsnexus.com>" nil 0)
+    ("leaders" "\"Vincent Ying\" <vincenty@marvell.com>
+Cc: \"Anle Zhou\" <anlezhou@marvell.com>,  \"Cheng Liao\" <chengl@marvell.com>,  \"Hong Liang\" <hongl@marvell.com>,  \"Hui Li\" <lih@marvell.com>,  \"Jianmin Zhou\" <jianminz@marvell.com>,  \"Jing Yang\" <jingyang@marvell.com>,  \"Ke Wang\" <kewang@marvell.com>,  \"Kevin Yan\" <kevinyan@marvell.com>,  \"Qiang Li\" <qiangl@marvell.com>,  \"Shihong Yao\" <shihongy@marvell.com>,  \"Tao Yin\" <taoyin@marvell.com>,  \"Xiaoyi Chen\" <xiaoyich@marvell.com>,  \"Xiaoyong Wu\" <wuxy@marvell.com>,  \"Yu Bai\" <yubai@marvell.com>,  \"Zhen Bao\" <zhenbao@marvell.com>" nil 2)
     ("nvteam" "Roy <yru@eee168.com>
 Cc: Coco Wang <kwang@eee168.com>,  Hong Liang <hliang@eee168.com>,  Hui Li <hli@eee168.com>,  hjbao@eee168.com,  Fei Liu <fliu@adsnexus.com>,  Zhongjie Zhu <zjzhu@adsnexus.com>,  Tide Yin <tyin@hzwowpad.com>,  Vincent Ying <vying@eee168.com>,  Leo Yao <lyao@eee168.com>,  ybai <ybai@eee168.com>, Ming Shi <mshi@adsnexus.com>,  hlren <hlren@eee168.com>, cyma <cyma@eee168.com>" nil 0)
     ("telteam" "Anle Zhou <anle.zhou@gmail.com>

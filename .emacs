@@ -566,7 +566,7 @@
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
  '(ispell-program-name "aspell")
- '(jira-url "http://192.168.11.11/jira/rpc/xmlrc")
+ '(jira-url "http://bible/jira/rpc/xmlrpc")
  '(keyboard-coding-system (quote cp936))
  '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)

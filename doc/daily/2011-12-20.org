@@ -1,0 +1,3 @@
+* TODO 集成jira和org-mode						 :pe:
+* TODO 修改bbdb，只对发送的邮件做database collection。			 :pe:
+* TODO 看3gpp 23.038，关于sms						 :pe:
