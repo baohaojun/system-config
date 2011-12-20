@@ -566,6 +566,7 @@
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
  '(ispell-program-name "aspell")
+ '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
  '(keyboard-coding-system (quote cp936))
  '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
@@ -1952,6 +1953,11 @@ criteria can be provided via the optional match-string argument "
     (setq  end-of-text (point))
     (shell-command-on-region start-of-text end-of-text code-text nil t)))
 
+(require 'jira)
+(when (eq system-type 'windows-nt)
+
+  (setq nntp-authinfo-file "~/../.authinfo"
+	auth-sources '((:source "~/../.authinfo" :host t :protocol t))))
 (global-set-key (kbd "M-s g") 'bhj-do-code-generation)
 (global-set-key (kbd "M-s c") (lambda () (interactive) (call-interactively 'compile)))
 (server-start)

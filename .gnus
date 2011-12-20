@@ -76,10 +76,7 @@
 	 2025
 	 "hjbao@marvell.com"
 	 nil)))
-(when (eq system-type 'windows-nt)
 
-  (setq nntp-authinfo-file "~/../.authinfo"
-	auth-sources '((:source "~/../.authinfo" :host t :protocol t))))
 (autoload 'bbdb/send-hook "moy-bbdb" 
   "Function to be added to `message-send-hook' to notice records when sending messages" t)
  

@@ -113,6 +113,12 @@
   :type 'string
   :initialize 'custom-initialize-set)
 
+(defcustom jira-host ""
+  "User customizable host name of the Jira server, will be used to compute jira-url if the latter is not set."
+  :group 'jira
+  :type 'string
+  :initialize 'custom-initialize-set)
+
 (defface jira-issue-info-face
   '((t (:foreground "black" :background "yellow4")))
   "Base face for issue information."
@@ -183,9 +189,14 @@
 
 \\{jira-mode-map}"
   (interactive)
-  (if (or (equal jira-url nil)
-          (equal jira-url ""))
+  (if (and (or (not jira-host)
+	      (equal jira-host ""))
+	   (or (equal jira-url nil)
+	       (equal jira-url "")))
       (message "jira-url not set! Please use 'M-x customize-variable RET jira-url RET'!")
+    (when (or (equal jira-url nil)
+	      (equal jira-url ""))
+      (setq jira-url (concat "http://" jira-host "/jira/rpc/xmlrpc")))
     (progn
       (switch-to-buffer "*Jira*")
       (kill-all-local-variables)
@@ -374,8 +385,20 @@
 
 (defun jira-login (username password)
   "Logs the user into JIRA."
-  (interactive (list (read-string "Username: ")
-                     (read-passwd "Password: ")))
+  (interactive (let ((found (nth 0 (auth-source-search :max 1
+                                           :host jira-host
+                                           :port 80
+                                           :require '(:user :secret)
+                                           :create t)))
+	  user secret)
+      (when found
+	  (setq user (plist-get found :user)
+		secret
+		(let ((sec (plist-get found :secret)))
+		  (if (functionp sec)
+		      (funcall sec)
+		    sec)))
+	  (list user secret))))
   (setq jira-token (jira-call-noauth 'jira1.login username password)))
 
 (defun jira-logout ()
@@ -728,8 +751,21 @@
 (defun jira-ensure-token ()
   "Makes sure that a JIRA token has been set, logging in if necessary."
   (unless jira-token
-    (jira-login (read-string "Username: ")
-                (read-passwd "Password: "))))
+    (let ((found (nth 0 (auth-source-search :max 1
+                                           :host jira-host
+                                           :port 80
+                                           :require '(:user :secret)
+                                           :create t)))
+	  user secret)
+      (when found
+	  (setq user (plist-get found :user)
+		secret
+		(let ((sec (plist-get found :secret)))
+		  (if (functionp sec)
+		      (funcall sec)
+		    sec)))
+	  (jira-login user secret)))))
+
 
 (defun jira-call (method &rest params)
   "Calls an XML-RPC method on the JIRA server (low-level)"
