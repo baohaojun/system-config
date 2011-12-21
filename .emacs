@@ -1965,4 +1965,5 @@ criteria can be provided via the optional match-string argument "
 	auth-sources '((:source "~/../.authinfo" :host t :protocol t))))
 (global-set-key (kbd "M-s g") 'bhj-do-code-generation)
 (global-set-key (kbd "M-s c") (lambda () (interactive) (call-interactively 'compile)))
+(setq org-ditaa-jar-path (expand-file-name "~/bin/ditaa.jar"))
 (server-start)
