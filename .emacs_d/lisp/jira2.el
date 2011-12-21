@@ -359,14 +359,8 @@ emacs-lisp"
 
 ;;;; Wrappers around JIRA methods
 
-(defun jira2-get-issue (key)
-  (car (jira2-call "getIssue" key)))
-
-(defun jira2-get-comments (key)
-  (car (jira2-call "getComments" key)))
-
 (defun jira2-update-issue (key fields)
-  (car (jira2-call "updateIssue" key (jira2-make-remote-field-values fields))))
+  (jira2-call "updateIssue" key (jira2-make-remote-field-values fields)))
 
 (defun jira2-create-issue (fields)
   (car (jira2-call "createIssue" fields)))
@@ -1071,7 +1065,7 @@ Return nil if the field is not found"
   (project-keys search-terms max-num-results)
   "Find issues using a free text search, limited to certain projects"
   (jira2-call 'getIssuesFromTextSearchWithProject
-             project-keys search-terms max-num-results))
+             (apply 'vector project-keys) search-terms max-num-results))
 
 (defun jira2-get-issue-types ()
   "Returns all visible issue types in the system"
@@ -1113,29 +1107,6 @@ Return nil if the field is not found"
 (defun jira2-get-versions (project-key)
   "Returns all versions available in the specified project"
   (jira2-call 'getVersions project-key))
-
-(defun jira2-update-issue (issue-key field-values)
-  "Updates an issue in JIRA2 from a Hashtable object."
-  (jira2-call 'updateIssue issue-key field-values))
-
-(defun jira2-ensure-token ()
-  "Makes sure that a JIRA2 token has been set, logging in if necessary."
-  (unless jira2-token
-    (let ((found (nth 0 (auth-source-search :max 1
-                                           :host jira2-host
-                                           :port 80
-                                           :require '(:user :secret)
-                                           :create t)))
-	  user secret)
-      (when found
-	  (setq user (plist-get found :user)
-		secret
-		(let ((sec (plist-get found :secret)))
-		  (if (functionp sec)
-		      (funcall sec)
-		    sec)))
-	  (jira2-login user secret)))))
-
 
 (defun jira2-strip-cr (string)
   "Removes carriage returns from a string"
