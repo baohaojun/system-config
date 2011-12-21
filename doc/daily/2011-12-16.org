@@ -1,5 +1,7 @@
 * DONE MarsBurner: finish new UI from ZhangQin
   CLOSED: [2011-12-16 Fri 14:08]
   - CLOSING NOTE [2011-12-16 Fri 14:08]
-* TODO 烧写policy
+* TODO 烧写policy: 默认不erase all，不动reliable data/nvm，工厂空phone的情况下会把默认blf进行修改（代码自动处理，非手工），会erase all，用模板初始化RD。
+** TODO 修改.blf
+** TODO 修改marsburner
 * TODO tcmd framework
