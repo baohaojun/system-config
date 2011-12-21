@@ -362,8 +362,6 @@ emacs-lisp"
 (defun jira2-update-issue (key fields)
   (jira2-call "updateIssue" key (jira2-make-remote-field-values fields)))
 
-(defun jira2-create-issue (fields)
-  (car (jira2-call "createIssue" fields)))
 
 (defvar jira2-status-codes-cache nil)
 
@@ -375,7 +373,7 @@ This function will only ask JIRA for the list of codes once, than
 will cache it."
   (unless jira2-status-codes-cache
     (setq jira2-status-codes-cache
-	  (jira2-make-assoc-list (car (jira2-call "getStatuses")) 'id 'name)))
+	  (jira2-make-assoc-list (jira2-call "getStatuses") 'id 'name)))
   jira2-status-codes-cache)
 
 (defvar jira2-issue-types-cache nil)
@@ -388,7 +386,7 @@ This function will only ask JIRA for the list of codes once, than
 will cache it."
   (unless jira2-issue-types-cache
     (setq jira2-issue-types-cache
-	  (jira2-make-assoc-list (car (jira2-call "getIssueTypes")) 'id 'name)))
+	  (jira2-make-assoc-list (jira2-call "getIssueTypes") 'id 'name)))
   jira2-issue-types-cache)
 
 (defvar jira2-priority-codes-cache nil)
@@ -401,7 +399,7 @@ This function will only ask JIRA for the list of codes once, than
 will cache it."
   (unless jira2-priority-codes-cache
     (setq jira2-priority-codes-cache
-	  (jira2-make-assoc-list (car (jira2-call "getPriorities")) 'id 'name)))
+	  (jira2-make-assoc-list (jira2-call "getPriorities") 'id 'name)))
   jira2-priority-codes-cache)
 
 (defvar jira2-resolution-code-cache nil)
@@ -414,7 +412,7 @@ This function will only ask JIRA for the list of codes once, than
 will cache it."
   (unless jira2-resolution-code-cache
     (setq jira2-resolution-code-cache
-	  (jira2-make-assoc-list (car (jira2-call "getResolutions")) 'id 'name)))
+	  (jira2-make-assoc-list (jira2-call "getResolutions") 'id 'name)))
   jira2-resolution-code-cache)
 
 (defvar jira2-issue-regexp nil)
@@ -433,7 +431,7 @@ database.  An issue is assumed to be in the format KEY-NUMBER,
 where KEY is a project key and NUMBER is the issue number."
   (unless jira2-issue-regexp
     (let ((projects (mapcar (lambda (e) (downcase (cdr (assoc 'key e))))
-                            (car (jira2-call 'getProjectsNoSchemes)))))
+                            (jira2-call 'getProjectsNoSchemes))))
       (setq jira2-issue-regexp (concat "\\<" (regexp-opt projects) "-[0-9]+\\>"))))
   jira2-issue-regexp)
 
@@ -445,23 +443,23 @@ might not be possible to find *ALL* the issues that match a
 query." 
   (unless (or limit (numberp limit))
     (setq limit 100))
-  (car (jira2-call "getIssuesFromJqlSearch" jql limit)))
+  (jira2-call "getIssuesFromJqlSearch" jql limit))
 
 (defun jira2-get-available-actions (issue-key)
   "Return the available workflow actions for ISSUE-KEY.
 This runs the getAvailableActions SOAP method."
   (jira2-make-assoc-list 
-   (car (jira2-call "getAvailableActions" issue-key))
+   (jira2-call "getAvailableActions" issue-key)
    'id 'name))
 
 (defun jira2-get-fields-for-action (issue-key action-id)
   "Return the required fields for the ACTION-ID."
   (jira2-make-assoc-list
-   (car (jira2-call "getFieldsForAction" issue-key action-id))
+   (jira2-call "getFieldsForAction" issue-key action-id)
    'id 'name))
 
 (defun jira2-progress-workflow-action (issue-key action-id params)
-  (car (jira2-call "progressWorkflowAction" issue-key action-id params)))
+  (jira2-call "progressWorkflowAction" issue-key action-id params))
 
 (defun jira2-add-worklog-and-autoadjust-remaining-estimate (issue-key start-date time-spent comment)
   "Log time spent on ISSUE-KEY to its worklog.
@@ -473,11 +471,11 @@ START-DATE should be in the format 2010-02-05T14:30:00Z
 
 TIME-SPENT can be in one of the following formats: 10m, 120m
 hours; 10h, 120h days; 10d, 120d weeks."
-  (car (jira2-call "addWorklogAndAutoAdjustRemainingEstimate"
+  (jira2-call "addWorklogAndAutoAdjustRemainingEstimate"
                    issue-key
                    `((startDate . ,start-date)
                      (timeSpent . ,time-spent)
-                     (comment   . ,comment)))))
+                     (comment   . ,comment))))
 
 (defun jira2-link-issue (issue-key link-type other-issue-key)
   "Create a link between ISSUE-KEY and OTHER-ISSUE-KEY.
