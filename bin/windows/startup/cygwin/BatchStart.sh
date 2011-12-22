@@ -4,11 +4,6 @@
 cd ~/doc
 regedit /s ime-noctrlshift-noaltshift.reg
 
-
-# MYXWINSH=~/bin/windows/lnks/myxwin.sh
-# (echo "#!/bin/bash -l"; grep -v xterm /usr/bin/startxwin.sh|sed -ne '/^#.*/d; /^exit$/d; /./p'|grep -v checkX) > $MYXWINSH
-# chmod +x $MYXWINSH
-# myxwin.sh&
 net start sshd&
 net start cron&
 /c/Python31/python "$(cygpath -alw ~/gcode/scim-cs/ime-py/ime-server.py)"&
@@ -43,4 +38,5 @@ loop-start ~/bin/windows/ command cmd /c hotkey_hook
 loop-start ~/bin/windows/Imap4Monitor /c/Python25/python.exe Imap4Monitor.py
 loop-start ~/bin/windows/notification-daemon/ /c/Python25/python.exe notification-daemon.py
 close-window '\\osk.exe'
+~/bin/windows/redirect.sh&
 

@@ -2,6 +2,7 @@
 set -e
 mkdir ~/.logs -p
 cd ~/windows-config/
+mkdir -p ~/external/bin/$(uname|perl -npe 's/_.*//')
 for x in `git ls-tree --name-only HEAD`
 do
     if test $x = . -o $x = .. -o $x = .git; 

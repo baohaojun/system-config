@@ -38,8 +38,8 @@ function get-python() {
 function download-all()
 {
     (
-	mkdir -p /c/download
-	cd /c/download
+	mkdir -p ~/external/download-all
+	cd ~/external/download-all
 
 	file_list=( 
             http://download.sysinternals.com/Files/ProcessMonitor.zip
@@ -61,8 +61,8 @@ function download-all()
         wait
 	cygstart ~/bin/windows/bhjdvp/setup.exe
 
-	cd ~/bin/windows/lnks
-	for x in /c/download/*.zip; do 
+	cd ~/bin/windows/ext
+	for x in ~/external/download-all/*.zip; do 
             if [[ -f "$x" ]]; then
 		/bin/unzip -o "$x";
             fi
@@ -192,8 +192,8 @@ function emacs-site-lisps()
 	done
     )
 
-    rm  ~/bin/windows/lnks/offlineimap -f
-    relative-link *offlineimap*/offlineimap.py ~/windows-config/bin/windows/lnks/offlineimap
+    rm  ~/bin/windows/ext/offlineimap -f
+    relative-link *offlineimap*/offlineimap.py ~/windows-config/bin/windows/ext/offlineimap
     (
 	builtin cd *ctags*/ && ./configure && make -j8 install && ln -sf /usr/local/bin/ctags.exe /usr/bin/ctags-exuberant
     )&
@@ -248,7 +248,7 @@ function manual-download()
 
 function get-ms-addons()
 {
-    cd /c/download/
+    cd ~/external/download-all/
     addon_list=(
         http://download.microsoft.com/download/5/6/7/567758a3-759e-473e-bf8f-52154438565a/dotnetfx.exe
         http://download.microsoft.com/download/0/6/1/061F001C-8752-4600-A198-53214C69B51F/dotnetfx35setup.exe
