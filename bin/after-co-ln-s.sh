@@ -2,6 +2,7 @@
 set -e
 mkdir ~/.logs -p
 cd ~/windows-config/
+mkdir -p ~/external/bin/$(uname|perl -npe 's/_.*//')
 for x in `git ls-tree --name-only HEAD`
 do
     if test $x = . -o $x = .. -o $x = .git; 
@@ -23,4 +24,6 @@ if test `whoami` = bhj; then
     ln -sf ~/.gitconfig.`whoami` ~/.gitconfig
 fi
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
+mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
+
 echo OK

@@ -1,6 +1,12 @@
 * TODO MarsBurner: 烧写分区的拆分、擦除。Do not use Erase All.
 * TODO MarsBurner: 搞定程序图标
 * TODO MarsBurner: 还是有内存泄露问题，让Qianqi查一下。
-* TODO MarsBurner: 继续优化界面
-** TODO 把fileLoc input变更长
-** TODO 把Model一列拿掉
+* DONE MarsBurner: 继续优化界面
+  CLOSED: [2011-12-21 Wed 15:35]
+  - CLOSING NOTE [2011-12-21 Wed 15:35]
+** DONE 把fileLoc input变更长
+   CLOSED: [2011-12-21 Wed 15:35]
+   - CLOSING NOTE [2011-12-21 Wed 15:35]
+** DONE 把Model一列拿掉
+   CLOSED: [2011-12-21 Wed 15:35]
+   - CLOSING NOTE [2011-12-21 Wed 15:35]

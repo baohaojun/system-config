@@ -58,7 +58,6 @@ for x in {c..z}; do test -e /$x || (rm -f /$x; ln -s /cygdrive/$x /); done
 DOWN=${DOWN:-yes} ./download-external.sh
 find . -type l -exec relink.sh '{}' \;
 
-~/bin/windows/redirect.sh
 
 cd ~/bin/windows
 cpan String::ShellQuote

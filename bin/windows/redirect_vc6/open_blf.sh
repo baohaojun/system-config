@@ -9,6 +9,9 @@ if ! touch temp-test.$$ >/dev/null 2>&1 ; then
     find . -maxdepth 1 -type f|grep -v '\.tar$\|\.zip$' | xargs -d \\n bash -c 'cp -nv "$@" '"$there"'' true
     cd "$there"
 fi
-wp *.blf
+blf=$(wp *.blf)
+cd /cygdrive/c/Program\ Files/marvell/MarsBurner/
+./MarsBurner.exe "$blf"
+
 
 
