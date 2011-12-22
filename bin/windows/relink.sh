@@ -55,7 +55,7 @@ if test $# -eq 0; then
 elif test $# -ne 1; then
     echo Error: can take at most 1 argument
 elif test $INPLACE = false; then
-    tgt=~/bin/windows/ext/"$(basename "$1")"
+    tgt=~/bin/windows/lnks/"$(basename "$1")"
 else
     tgt="$1"
 fi

@@ -272,33 +272,6 @@ sub do_read_kernel
     }
 }
 
-#:512k(obm)ro,512K(uboot)ro,256k(ramdisk)ro,256k(imei),7m(arbelbinary)ro,1m(msabinary)ro,4m(kernel)ro,4m(maintenance)ro,5m(recovery),256k(misc),83200k(cache),160m(system),216m(userdata),3840k(logo),256k(kpanic),8m(nvm),8m(telephony),-(reserved)^
-sub do_read_kernel_cmd
-{
-    my ($name, $offset, $size);
-    $offset = 0;
-    while(<>) {
-        chomp(); s/\r//g;
-
-	while (m/(\d+)([km])\((.*?)\)/gi) {
-	  if (lc($2) eq "k") {
-	    $size = $1 * 1024;
-	  } else {
-	    $size = $1 * 1024 * 1024;
-	  }
-	  $name = $3;
-
-	  push @entry_arr, {
-			    "size"       => $size,
-			    "start"      => $offset,
-			    "name" => $name,
-			    "file_name"  => "unknown",
-			   };
-	  $offset += $size;
-	}
-    }
-}
-
 chomp($0 = `basename $0`);
 
 sub Usage
@@ -333,8 +306,6 @@ if ($from eq 'human') {
   do_read_kernel();
 } elsif ($from eq "blf") {
   do_read_blf();
-} elsif ($from eq "kernel-cmd") {
-  do_read_kernel_cmd();
 } else {
   Usage();
 }

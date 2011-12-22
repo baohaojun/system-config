@@ -1,40 +1,13 @@
 #!/bin/bash
 
 wlan0_ip=$(ifconfig wlan0 | perl -ne '
-BEGIN {
-    sub debug(@) {
-        print STDERR "@_\n";
-    }
-}
 chomp;
-if (m/IPv4 Address. . . . . . . . . . . : (\d+)\.(\d+)\.(\d+)\.(\d+)$/) {
-    @ip = ($1, $2, $3, $4);
-}
-
-if (m/Subnet Mask . . . . . . . . . . . : (\d+)\.(\d+)\.(\d+)\.(\d+)$/) {
-    @sm = ($1, $2, $3, $4);
-}
-
-if (m/Default Gateway . . . . . . . . . : (\d+)\.(\d+)\.(\d+)\.(\d+)$/) {
-    do {
-        @gw = ($1, $2, $3, $4);
-        debug "gw is @gw, sm is @sm, ip is @ip";
-        $right_gw = 1;
-        for (0, 1, 2, 3) {
-            debug "gw[$_] & sm[$_] is " . ($gw[$_] & $sm[$_]);
-            debug "ip[$_] & sm[$_] is " . ($ip[$_] & $sm[$_]);
-            if (($gw[$_] & $sm[$_]) != ($ip[$_] & $sm[$_])) {
-                debug "not equal!";
-                $right_gw = 0;
-                last;
-            }
-        }
-        if ($right_gw) {
-            print join(".", @gw);
-            exit;
-        }
+if (s/.*Default Gateway . . . . . . . . . : (.*)/$1/) { 
+    if ($_ eq "0.0.0.0") {
         $_ = <>;
-    } while (m/(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+        s/\s//g;
+    }         
+    print $_;
 }
 ')
 route print -4|perl -ne '
@@ -52,8 +25,8 @@ if (m/^\s*(\d+).*Juniper/) {
 
 END {
     print "route delete 0.0.0.0\n";
-    print "route add -p 0.0.0.0 mask 0.0.0.0 '$wlan0_ip' metric 50 IF $wifi\n";
-    print "route add -p 0.0.0.0 mask 0.0.0.0 10.21.128.2 metric 80 IF $eth0\n";
+    print "route add -p 0.0.0.0 mask 0.0.0.0 '$wlan0_ip' metric 1 IF $wifi\n";
+    print "route add -p 0.0.0.0 mask 0.0.0.0 10.21.128.2 metric 30 IF $eth0\n";
     print "route delete 10.21.128.0\n";
     print "route add -p 10.21.128.0 mask 255.255.255.0 0.0.0.0 metric 1 IF $eth0\n";
 }'

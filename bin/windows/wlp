@@ -1,4 +1,4 @@
 #!/bin/bash
 #wlp stands for Win32 Long Path
 
-cygpath -alm "${1:-.}"
+cygpath -alm "${1:-.}"|tr -d '\n'
