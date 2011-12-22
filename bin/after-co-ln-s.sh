@@ -24,4 +24,6 @@ if test `whoami` = bhj; then
     ln -sf ~/.gitconfig.`whoami` ~/.gitconfig
 fi
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
+mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
+
 echo OK
