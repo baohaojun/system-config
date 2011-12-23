@@ -39,6 +39,9 @@ print if $start;
 
 
 perl -npe 's,\bfile:////([^/]),file://///$1,g' -i $tf.html
+if test -e "$(dirname "$1")"/.no-org.html; then
+    set -- "${1%.org}"
+fi
 cp $tf.html "$1".html
 of "$1".html
 rm $tf.* 
