@@ -4,3 +4,6 @@
 [submodule "gcode/beagrep"]
 	path = gcode/beagrep
 	url = git://github.com/baohaojun/beagrep.git
+[submodule "doc/baohaojun"]
+	path = doc/baohaojun
+	url = git://github.com/baohaojun/baohaojun.github.com.git
