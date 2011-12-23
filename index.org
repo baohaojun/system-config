@@ -2,7 +2,7 @@
 
 * About Me
 
-I am a software engineer. I writes some open source codes, mainly to
+I am a software engineer. I write some open source code, mainly to
 scratch my own back at first, but I also want it to be more useful to
 other people.
 
@@ -12,7 +12,7 @@ myself. Just to show you what a geek I am:-)
 
 * Projects
 
-- beagrep
+- [[file:beagrep.org][beagrep]]
   
   Beagrep is a fork of [[http://en.wikipedia.org/wiki/Beagle_(software)][beagle]], which is a desktop search engine; I
   hacked beagrep to make it more suitable for precise searching, such as code reading.
