@@ -1,0 +1,5 @@
+* About Me
+
+I am a software engineer. I writes some open source codes, mainly to scratch my own back at first, but I also want it to be more useful to other people.
+
+* Projects
