@@ -1035,6 +1035,11 @@ Return nil if the field is not found"
   "Adds a comment to an issue"
   (jira2-call 'addComment issue-key `((body . ,comment))))
 
+(defun jira2-edit-comment (comment-id comment)
+  "Edit the comment body for comment-id"
+  (jira2-call 'editComment `((id . ,comment-id)
+				      (body . ,comment))))
+
 (defun jira2-create-issue (r-issue-struct)
   "Creates an issue in JIRA2 from a Hashtable object."
   (jira2-call 'createIssue r-issue-struct))
