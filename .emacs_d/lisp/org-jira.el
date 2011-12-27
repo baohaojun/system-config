@@ -132,6 +132,7 @@ All the other properties are optional. They over-ride the global variables.
     (define-key org-jira-map (kbd "C-c cn") 'org-jira-new-comment)
     (define-key org-jira-map (kbd "C-c cu") 'org-jira-update-comment)
     org-jira-map))
+(define-key org-mode-map (kbd "C-c tj") 'org-jira-todo-to-jira)
 
 ;;;###autoload
 (define-minor-mode org-jira-mode
@@ -185,7 +186,7 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 		    (org-entry-put (point) "name" (cdr (assoc 'name proj)))
 		    (org-entry-put (point) "key" (cdr (assoc 'key proj)))
 		    (org-entry-put (point) "lead" (cdr (assoc 'lead proj)))
-		    (org-entry-put (point) "id" (cdr (assoc 'id proj)))
+		    (org-entry-put (point) "ID" (cdr (assoc 'id proj)))
 		    (org-entry-put (point) "url" (cdr (assoc 'url proj))))))
 	      oj-projs)))))
 
@@ -213,11 +214,11 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 	 (or (cdr (assoc key issue)) ""))))
 
 
-(defun org-jira-get-issues ()
+(defun org-jira-get-issues (issues)
   "Get list of issues."
-  (interactive)
-  (let* ((issues (jira2-get-issues-from-filter (cdr (assoc "my-open" (jira2-get-filter-alist))))))
-    (mapc (lambda (issue)
+  (interactive
+   (list (jira2-get-issues-from-filter (cdr (assoc "my-open" (jira2-get-filter-alist))))))
+  (mapc (lambda (issue)
 	    (let* ((proj-key (cdr (assoc 'project issue)))
 		   (issue-id (cdr (assoc 'key issue)))
 		   (issue-summary (cdr (assoc 'summary issue)))
@@ -238,7 +239,7 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 		      (unless (looking-at "^")
 			(insert "\n"))
 		      (insert "* "))
-		    (insert (concat "TODO " issue-headline))
+		    (insert (concat "TODO " issue-headline "\n"))
 		    (org-narrow-to-subtree)
 		    (org-change-tag-in-region 
 		     (point-min)
@@ -279,7 +280,7 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 			  '(description))
 		    (org-jira-update-comments-for-current-issue)
 		    )))))
-	  issues)))
+	  issues))
 
 (defun org-jira-update-comment ()
   "update a comment for the current issue"
@@ -304,7 +305,11 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
     (mapc (lambda (comment)
 	    (ensure-on-issue-id issue-id
 	      (let* ((comment-id (cdr (assoc 'id comment)))
-		     (comment-headline (concat "Comment: " comment-id)))
+		     (comment-author (or (car (rassoc 
+					       (cdr (assoc 'author comment))
+					       jira-users))
+					 (cdr (assoc 'author comment))))							  
+		     (comment-headline (format "Comment: %s" comment-author)))
 		(setq p (org-find-entry-with-id comment-id))
 		(if (and p (>= p (point-min))
 			 (<= p (point-max)))
@@ -318,9 +323,6 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 		(insert "** ")
 		(insert comment-headline "\n")
 		(org-narrow-to-subtree)
-		(mapc (lambda (entry)
-			(org-entry-put (point) (symbol-name entry) (cdr (assoc entry comment))))
-		      '(author))
 		(org-entry-put (point) "ID" comment-id)
 		(goto-char (point-max))
 		(insert (or (cdr (assoc 'body comment)) "")))))
@@ -338,6 +340,19 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
     (if issue-id
 	(org-jira-update-issue-details issue-id)
       (error "not on an issue"))))
+
+(defun org-jira-todo-to-jira ()
+  "convert an ordinary todo item to a jira ticket"
+  (interactive)
+  (ensure-on-todo
+   (when (org-jira-parse-issue-id)
+     (error "Already on jira ticket"))
+   (let ((issue (org-jira-create-issue (completing-read "Project: " (jira2-make-list (jira2-get-projects) 'key))
+			  (completing-read "Type: " (mapcar 'cdr (jira2-get-issue-types)))
+			  (org-get-heading t t)
+			  (org-get-entry))))
+     (delete-region (point-min) (point-max))
+     (org-jira-get-issues (list issue)))))
 
 (defun org-jira-create-issue (project type summary description)
   "create an issue"
@@ -444,14 +459,16 @@ ENTRY will vary with regard to the TYPE, if it is a symbol, it will be converted
 (defun org-jira-get-comment-val-from-org (entry)
   "get the jira issue field value for ENTRY of current comment item"
   (ensure-on-comment
-   (org-entry-get (point) (if (symbolp entry)
-			      (symbol-name entry)
-			    entry))))
+   (when (symbolp entry)
+     (setq entry (symbol-name entry)))
+   (when (string= entry "id")
+     (setq entry "ID"))
+   (org-entry-get (point) entry)))
 
 (defun org-jira-get-comment-body (&optional comment-id)
   (ensure-on-comment
    (goto-char (point-min))
-   (org-entry-put (point) "id" comment-id)
+   (org-entry-put (point) "ID" comment-id)
    (search-forward ":END:")
    (forward-line)
    (org-jira-strip-string (buffer-substring-no-properties (point) (point-max)))))
@@ -495,6 +512,22 @@ ENTRY will vary with regard to the TYPE, if it is a symbol, it will be converted
 	 (goto-char p)
 	 (org-narrow-to-subtree)
 	 ,@body))))
+
+(defmacro ensure-on-todo (&rest body)
+  "Make sure we are on an todo heading"
+  `(save-excursion
+     (save-restriction
+       (let ((continue t)
+	     (on-todo nil))
+	 (while continue
+	   (when (org-get-todo-state)
+	     (setq continue nil on-todo t))
+	   (unless (and continue (org-up-heading-safe))
+	     (setq continue nil)))
+	 (if (not on-todo)
+	     (error "TODO not found")
+	   (org-narrow-to-subtree)
+	   ,@body)))))
 
 (defmacro ensure-on-comment (&rest body)
   "Make sure we are on a comment heading"
