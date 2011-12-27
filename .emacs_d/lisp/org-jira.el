@@ -94,9 +94,6 @@ All the other properties are optional. They over-ride the global variables.
 (defvar org-jira-proj-id nil
   "Jira project ID")
 
-(defvar org-jira-entry-mode-map nil
-  "Keymap for blog entry buffer")
-
 (defvar org-jira-logged-in nil
   "Flag whether user is logged-in or not")
 
@@ -209,7 +206,7 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 	((eq key 'type)
 	 (or (cdr (assoc (cdr (assoc 'type issue)) (jira2-get-issue-types))) ""))
 	((eq key 'priority)
-	 (or (cdr (assoc (cdr (assoc 'priority issue)) (jira2-get-priorities))) ""))
+	 (or (cdr (assoc (cdr (assoc 'priority issue)) (jira2-get-prioritys))) ""))
 	(t
 	 (or (cdr (assoc key issue)) ""))))
 
