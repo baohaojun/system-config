@@ -569,9 +569,7 @@
  '(ispell-program-name "aspell")
  '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
- '(jira2-host "bible")
- '(jira2-host-url "http://bible/jira")
- '(jira2-wsdl-descriptor-url "http://bible/jira/rpc/soap/jirasoapservice-v2?wsdl")
+ '(jira2-url "http://bible/jira")
  '(keyboard-coding-system (quote cp936))
  '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
@@ -1958,6 +1956,10 @@ criteria can be provided via the optional match-string argument "
     (shell-command-on-region start-of-text end-of-text code-text nil t)))
 
 (require 'jira2)
+(require 'org-jira)
+(condition-case nil
+    (load "jira-users")
+  (error nil))
 (when (eq system-type 'windows-nt)
 
   (setq nntp-authinfo-file "~/../.authinfo"

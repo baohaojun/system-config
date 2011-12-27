@@ -32,6 +32,7 @@
 
 (require 'cl)
 (require 'soap-client)
+(require 'url-parse)
 
 (defgroup jira2 nil
   "Jira2 customization group."
@@ -41,14 +42,10 @@
   "Faces for displaying Jira2 information."
   :group 'jira2)
 
-(defcustom jira2-url ""
-  "User customizable URL to Jira2 server."
-  :group 'jira2
-  :type 'string
-  :initialize 'custom-initialize-set)
-
 (defcustom jira2-host ""
-  "User customizable host name of the Jira2 server, will be used to compute jira2-url if the latter is not set."
+  "User customizable host name of the Jira2 server, will be used with USERNAME to compute password from .authinfo file.
+
+Will be calculated from jira2-url if not set."
   :group 'jira2
   :type 'string
   :initialize 'custom-initialize-set)
@@ -98,7 +95,7 @@
 (defvar jira2-mode-map nil)
 
 (defcustom jira2-wsdl-descriptor-url
-  "http://bible/jira/rpc/soap/jirasoapservice-v2?wsdl"
+  ""
   "The location for the WSDL descriptor for the JIRA service.
 This is specific to your local JIRA installation.  The URL is
 tipically:
@@ -110,7 +107,7 @@ The default value works if JIRA is located at a hostname named
   :type 'string
   :group 'jira2)
 
-(defcustom jira2-host-url
+(defcustom jira2-url
   "http://bible/jira"
   "The address of the jira host."
   :type 'string
@@ -229,14 +226,18 @@ This is maintained by `jira2-login'.")
 
 (defun jira2-load-wsdl ()
   "Load the JIRA WSDL descriptor."
-  (setq jira2-wsdl (soap-load-wsdl-from-url jira2-wsdl-descriptor-url)))
+  (setq jira2-wsdl (soap-load-wsdl-from-url (if (string-equal jira2-wsdl-descriptor-url "")
+						(concat jira2-url "/rpc/soap/jirasoapservice-v2?wsdl")
+					      jira2-wsdl-descriptor-url))))
 
 (defun jira2-login (username password)
   "Login into JIRA and store the authentication token in `jira2-token'"
   ;; NOTE that we cannot rely on `jira2-call' because `jira2-call' relies on
   ;; us ;-)
   (interactive (let ((found (nth 0 (auth-source-search :max 1
-                                           :host jira2-host
+                                           :host (if (string= jira2-host "")
+						     (url-host (url-generic-parse-url jira2-url))
+						   jira2-host)
                                            :port 80
                                            :require '(:user :secret)
                                            :create t)))
@@ -263,7 +264,7 @@ This is maintained by `jira2-login'.")
   ;; Note that we don't validate the response at all -- not sure how we
   ;; would do it...
   
-  (let ((url (concat jira2-host-url "/secure/Dashboard.jspa?"
+  (let ((url (concat jira2-url "/secure/Dashboard.jspa?"
                      (format "&os_username=%s&os_password=%s&os_cookie=true" 
                              username password))))
     (let ((url-request-method "POST")
@@ -318,7 +319,9 @@ when invoking it through `jira2-call', the call shoulbe be:
 
 
 ;;;; Some utility functions
-
+(defun jira2-make-list (data field)
+  (loop for element in data
+	collect (cdr (assoc field element))))
 (defun jira2-make-assoc-list (data key-field value-field)
   "Create an association list from a SOAP structure array.
 
@@ -391,7 +394,7 @@ will cache it."
 
 (defvar jira2-priority-codes-cache nil)
 
-(defun jira2-get-priorities ()
+(defun jira2-get-prioritys ()
   "Return an assoc list mapping a priority code to its name.
 NOTE: Priority codes are stored as strings, not numbers.
 
@@ -495,7 +498,7 @@ installation can define its own link types."
 
   (let ((issue (jira2-get-issue issue-key))
         (other-issue (jira2-get-issue other-issue-key)))
-    (let ((url (concat jira2-host-url 
+    (let ((url (concat jira2-url 
                        "/secure/LinkExistingIssue.jspa?"
                        (format "linkDesc=%s&linkKey=%s&id=%s&Link=Link" 
                                link-type other-issue-key (cdr (assq 'id issue))))))
@@ -546,54 +549,6 @@ Return nil if the field is not found"
   
 
 
-(if jira2-mode-map
-    nil
-  (progn
-    (setq jira2-mode-map (make-sparse-keymap))
-    (define-key jira2-mode-map "li" 'jira2-list-issues)
-    (define-key jira2-mode-map "lp" 'jira2-list-projects)
-    (define-key jira2-mode-map "lf" 'jira2-list-filters)
-    (define-key jira2-mode-map "si" 'jira2-search-issues)
-    (define-key jira2-mode-map "sp" 'jira2-search-project-issues)
-    (define-key jira2-mode-map "i" 'jira2-show-issue)
-    (define-key jira2-mode-map "c" 'jira2-create-ticket)
-    (define-key jira2-mode-map "o" 'jira2-comment-ticket)
-    (define-key jira2-mode-map "r" 'jira2-refresh-ticket)
-    (define-key jira2-mode-map "a" 'jira2-assign-ticket)
-    (define-key jira2-mode-map "n" 'jira2-next-comment)
-    (define-key jira2-mode-map "p" 'jira2-previous-comment)
-    (define-key jira2-mode-map "jl" 'jira2-login)
-    (define-key jira2-mode-map "jL" 'jira2-logout)
-    (define-key jira2-mode-map "Q" 'jira2-mode-quit)
-    (define-key jira2-mode-map [return] 'jira2-return)))
-
-(defun jira2-mode ()
-  "A mode for working with the Jira2 ticketing system. XMLRPC is used via xmlrpc.el. Things run a bit slow, though sometimes they seems to run faster when doing multiple things at once to the same ticket: i.e. retrieve a ticket, its slow, comment the tickets, its faster, refresh the ticket its faster, wait a while then refresh and its slow again. 
-
-\\{jira2-mode-map}"
-  (interactive)
-  (if (and (or (not jira2-host)
-	      (equal jira2-host ""))
-	   (or (equal jira2-url nil)
-	       (equal jira2-url "")))
-      (message "jira2-url not set! Please use 'M-x customize-variable RET jira2-url RET'!")
-    (when (or (equal jira2-url nil)
-	      (equal jira2-url ""))
-      (setq jira2-url (concat "http://" jira2-host "/jira/rpc/xmlrpc")))
-    (progn
-      (switch-to-buffer "*Jira2*")
-      (kill-all-local-variables)
-      (setq major-mode 'jira2-mode)
-      (setq mode-name "Jira2")
-      (use-local-map jira2-mode-map)
-      (run-hooks 'jira2-mode-hook)
-      (jira2-store-projects)
-      (jira2-store-priorities)
-      (jira2-store-statuses)
-      (jira2-store-types)
-      (insert "Welcome to jira2-mode!")
-      (message "jira2 mode loaded!"))))
-
 (defvar jira2-current-issue nil
   "This holds the currently selected issue.")
 
@@ -603,83 +558,11 @@ Return nil if the field is not found"
 (defvar jira2-types nil
   "This holds a list of issues types.")
 
-(defvar jira2-statuses nil
-  "This holds a list of statuses.")
-
 (defvar jira2-priorities nil
   "This holds a list of priorities.")
 
 (defvar jira2-user-fullnames nil
   "This holds a list of user fullnames.")
-
-(defun jira2-mode-quit ()
-  (interactive)
-  (jira2-logout)
-  (kill-buffer "*Jira2*"))
-
-(defun jira2-create-ticket (project type summary description)
-  (interactive (list (read-string "Project: ")
-                     (read-string "Type: ")
-                     (read-string "Summary: ")
-                     (read-string "Description: ")))
-  (if (or (equal project "")
-          (equal type "")
-          (equal summary "")
-          (equal description ""))
-      (message "Must provide all information!")
-    (progn
-      (setq ticket-alist (list (cons "project" project) 
-                               (cons "type" type) 
-                               (cons "summary" summary) 
-                               (cons "description" description)))
-      (jira2-create-issue ticket-alist))))
-
-(defun jira2-refresh-ticket ()
-  (interactive)
-  (jira2-show-issue jira2-current-issue))
-
-(defun jira2-comment-ticket (comment)
-  (interactive (list (read-string "Comment: ")))
-  (if (equal comment "")
-      (message "Must provide comment!")
-    (progn
-      (jira2-add-comment jira2-current-issue comment)
-      (jira2-refresh-ticket))))
-
-(defun jira2-assign-ticket (assignee)
-  (interactive (list (read-string "Assignee: ")))
-  (if (equal assignee "")
-      (message "Must provide assignee!")
-    (progn
-      (setq ticket-alist (list (cons "assignee" (vector assignee))))
-      (jira2-update-issue jira2-current-issue ticket-alist)
-      (jira2-refresh-ticket))))
-
-(defun jira2-update-ticket-summary (summary)
-  (interactive (list (read-string "Summary: ")))
-  (if (equal summary "")
-      (message "Must provide summary!")
-    (progn
-      (setq ticket-alist (list (cons "summary" (vector summary))))
-      (jira2-update-issue jira2-current-issue ticket-alist)
-      (jira2-refresh-ticket))))
-
-(defun jira2-start-ticket ()
-  (interactive)
-  (setq ticket-alist (list (cons "status" (vector "3"))))
-  (jira2-update-issue jira2-current-issue ticket-alist))
-
-(defun jira2-store-projects ()
-  (setf jira2-projects-list (jira2-get-projects)))
-
-(defun jira2-store-types ()
-  (setf jira2-types (jira2-get-issue-types)))
-
-(defun jira2-store-statuses ()
-  (setf jira2-statuses (jira2-get-statuses)))
-
-(defun jira2-store-priorities ()
-  (setf jira2-priorities (jira2-get-priorities)))
 
 (defun jira2-get-project-name (key)
   (let ((projects jira2-projects-list)
@@ -697,22 +580,6 @@ Return nil if the field is not found"
           (setf name (cdr (assoc 'name type)))))
     name))
 
-(defun jira2-get-status-name (id)
-  (let ((statuses jira2-statuses)
-        (name nil))
-    (dolist (status statuses)
-      (if (equal (cdr (assoc 'id status)) id)
-          (setf name (cdr (assoc 'name status)))))
-    name))
-
-(defun jira2-get-priority-name (id)
-  (let ((priorities jira2-priorities)
-        (name nil))
-    (dolist (priority priorities)
-      (if (equal (cdr (assoc 'id priority)) id)
-          (setf name (cdr (assoc 'name priority)))))
-    (message name)))
-
 (defun jira2-get-user-fullname (username)
   (if (assoc username jira2-user-fullnames)
       (cdr (assoc username jira2-user-fullnames))
@@ -721,259 +588,7 @@ Return nil if the field is not found"
         (setf jira2-user-fullnames (append jira2-user-fullnames (list (cons username (cdr (assoc 'fullname user))))))
         (cdr (assoc 'fullname user))))))
 
-(defun jira2-next-comment ()
-  (interactive)
-  (let ((p (point)))
-    (if (search-forward "Comment #" nil t)
-        (progn
-          (if (equal p (- (point) 9))
-              (search-forward "Comment #" nil t))
-          (recenter 0)
-          (beginning-of-line)))))
 
-(defun jira2-previous-comment ()
-  (interactive)
-  (if (search-backward "Comment #" nil t)
-      (progn
-        (recenter 0)
-        (beginning-of-line))
-    (goto-char 0)))
-
-(defun jira2-return ()
-  (interactive)
-  (if (equal (face-at-point) 'jira2-link-issue-face)
-      (jira2-show-issue (thing-at-point 'sexp)))
-  (if (equal (face-at-point) 'jira2-link-project-face)
-      (jira2-search-project-issues (thing-at-point 'sexp) "" 20))
-  (if (equal (face-at-point) 'jira2-link-filter-face)
-      (jira2-list-issues (thing-at-point 'sexp))))
-
-(defun point-on-issue-p ()
-  (save-excursion
-    (search-backward " ")))
-
-(defun delete-eob-whitespace ()
-  (end-of-buffer)
-  (delete-horizontal-space)
-  (delete-char -1)
-  (beginning-of-buffer))
-
-;; ***********************************
-;; original functions by Dave Benjamin
-;; modifications by Brian Zwahr noted
-;; ***********************************
-
-(defun jira2-logout ()
-  "Logs the user out of JIRA2"
-  (interactive)
-  (jira2-call 'logout)
-  (setq jira2-token nil))
-
-(defun jira2-list-projects ()
-  "Displays a list of all available JIRA2 projects"
-  (interactive)
-  (let ((projects (jira2-get-projects)))
-    (jira2-with-jira2-buffer
-     (insert (number-to-string (length projects)) " JIRA2 projects found:\n\n")
-     (dolist (project projects)
-       (insert (format "%-12s" " "))
-       (beginning-of-line)
-       (add-text-properties
-        (point)
-        (save-excursion
-          (insert 
-           (cdr (assoc 'key project)))
-          (point))
-        '(face jira2-link-project-face))
-       (beginning-of-line)
-       (forward-char 12)
-       (insert (format "%s\n"
-                       (cdr (assoc 'name project)))))))
-  (delete-eob-whitespace))
-
-(defun jira2-list-filters ()
-  "Displays a list of all saved JIRA2 filters"
-  (interactive)
-  (let ((filters (jira2-get-saved-filters)))
-    (jira2-with-jira2-buffer
-     (insert (number-to-string (length filters)) " JIRA2 filters found:\n\n")
-     (dolist (filter filters)
-       (insert (format "%-8s" " "))
-       (beginning-of-line)
-       (add-text-properties
-        (point)
-        (save-excursion
-          (insert (cdr (assoc 'id filter)))
-          (point))
-        '(face jira2-link-filter-face))
-       (beginning-of-line)
-       (forward-char 8)
-       (insert (format " %s\n"
-                       (cdr (assoc 'name filter)))))))
-  (delete-eob-whitespace))
-
-(defun jira2-list-issues (filter-id)
-  "Displays a list of issues matching a filter"
-  (interactive
-   (list (let ((filter-alist (jira2-get-filter-alist)))
-           (cdr (assoc (completing-read "Filter: " filter-alist nil t)
-                filter-alist)))))
-    (when filter-id
-      (let ((filter (jira2-get-filter filter-id))
-            (issues (jira2-get-issues-from-filter filter-id)))
-        (jira2-with-jira2-buffer
-         (insert "Filter:\n" (cdr (assoc 'name filter))
-                 " (" (cdr (assoc 'id filter)) ")\n\n")
-         (when (cdr (assoc 'description filter))
-           (insert "Description:\n")
-           (let ((start (point)))
-             (insert (cdr (assoc 'description filter)) "\n\n")
-             (fill-region start (point))))
-         (jira2-display-issues issues)))))
-
-(defun jira2-search-issues (text)
-  "Displays a list of issues maching a fulltext search"
-  (interactive "sSearch: ")
-  (let ((issues (jira2-get-issues-from-text-search text)))
-    (jira2-with-jira2-buffer
-     (insert "Search: " text "\n\n")
-     (jira2-display-issues issues))))
-
-(defun jira2-search-project-issues (project text max-results)
-  "Displays a list of issues within a project matching a fulltext search"
-  (interactive
-   (let ((project-keys
-          (mapcar (lambda (project)
-                    (cdr (assoc 'key project)))
-                  (jira2-get-projects))))
-     (list
-      (completing-read "Project Key: " project-keys nil t)
-      (read-string "Search: ")
-      (read-number "Max Results: " 20))))
-  (let ((issues (jira2-get-issues-from-text-search-with-project
-                 (list project) (if (equal text "") " " text) max-results)))
-    (jira2-with-jira2-buffer
-     (insert "Project Key: " project "\n"
-             "Search: " text "\n"
-             "Max Results: " (number-to-string max-results) "\n\n")
-     (jira2-display-issues issues))))
-
-; Modified by Brian Zwahr to store issue key and improve layout/readability.
-(defun jira2-show-issue (issue-key)
-  "Displays details about a particular issue."
-  (interactive "sIssue Key: ")
-  (let ((issue (jira2-get-issue issue-key))
-        (comments (jira2-get-comments issue-key)))
-    (setf jira2-current-issue issue-key)
-    (jira2-with-jira2-buffer
-     (setq truncate-lines nil)
-     (let ((s "Project:   "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (jira2-get-project-name (cdr (assoc 'project issue)))))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n"))
-
-     (let ((s "Key:       "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (cdr (assoc 'key issue))))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n"))
-
-     (let ((s "Type:      "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (jira2-get-type-name (cdr (assoc 'type issue)))))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n"))
-
-     (let ((s "Status:    "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (jira2-get-status-name (cdr (assoc 'status issue)))))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n"))
-
-     (let ((s "Priority:  "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (jira2-get-priority-name (cdr (assoc 'priority issue)))))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n"))
-
-     (let ((s "Assignee:  "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (jira2-get-user-fullname (cdr (assoc 'assignee issue)))))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n"))
-
-     (let ((s "Reporter:  "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (jira2-get-user-fullname (cdr (assoc 'reporter issue)))))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n"))
-
-     (let ((s "Created:   "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (cdr (assoc 'created issue))))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n"))
-
-     (let ((s "Updated:   "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (cdr (assoc 'updated issue))))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n"))
-
-     (let ((s "Watchers:  "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s "N/A"))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n\n"))
-
-     (let ((s "Component(s): "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (if (cdr (assoc 'name (cadr (assoc 'components issue)))) (cdr (assoc 'name (cadr (assoc 'components issue)))) "None")))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n\n"))
-
-     (let ((s "Fix Version(s): "))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-header-face s)
-       (insert s))
-     (let ((s (if (cdr (assoc 'fixVersions issue)) (cdr (assoc 'fixVersions issue)) "None")))
-       (put-text-property 0 (length s) 'face 'jira2-issue-info-face s)
-       (insert s "\n\n"))
-
-     (let ((s (cdr (assoc 'summary issue))))
-       (put-text-property 0 (length s) 'face 'jira2-issue-summary-face s)
-       (insert s "\n\n"))
-
-     (insert (concatenate 'string (cdr (assoc 'description issue)) "\n\n"))
-
-     (when comments
-       (let ((count 1))
-         (dolist (comment comments)
-           (insert "Comment #" (int-to-string count) "\n")
-           (let ((s (concatenate 'string (jira2-get-user-fullname (cdr (assoc 'author comment))) " - " (cdr (assoc 'created comment)))))
-             (put-text-property 0 (length s) 'face 'jira2-comment-header-face s)
-             (insert s "\n"))
-           (let ((c (jira2-strip-cr (cdr (assoc 'body comment)))))
-             
-             (put-text-property 0 (length c) 'face 'jira2-comment-face c)
-             (insert c "\n\n"))
-           (setf count (1+ count))))))))
-
-(defun jira2-send-region-as-comment (start end issue-key)
-  "Send the currently selected region as an issue comment"
-  (interactive "r\nsIssue Key: ")
-  (jira2-add-comment issue-key (buffer-substring start end)))
 
 (defun jira2-get-filter (filter-id)
   "Returns a filter given its filter ID."
@@ -987,49 +602,6 @@ Return nil if the field is not found"
             (cons (cdr (assoc 'name filter))
                   (cdr (assoc 'id filter))))
           (jira2-get-saved-filters)))
-
-(defun jira2-get-status-abbrevs ()
-  "Returns an association list of status IDs to abreviated names"
-  (flet ((pair (status)
-               (cons (cdr (assoc 'id status))
-                     (let ((status-name (cdr (assoc 'name status))))
-                       (substring (replace-regexp-in-string
-                                   " *" "" status-name)
-                                  0 (min 3 (length status-name)))))))
-    (mapcar 'pair (jira2-get-statuses))))
-
-(defun jira2-display-issues (issues)
-  "Inserts a list of issues into the current buffer"
-  (let ((status-abbrevs (jira2-get-status-abbrevs))
-        (last-status))
-    (insert (number-to-string (length issues))
-            " JIRA2 issues found:\n")
-    (dolist (issue issues)
-      (let ((status (cdr (assoc 'status issue)))
-            (priority (cdr (assoc 'priority issue))))
-        (when (not (equal last-status status))
-          (setq last-status status)
-          (insert "\n"))
-        (insert (format "%-16s" " "))
-        (beginning-of-line)
-        (add-text-properties
-         (point)
-         (save-excursion
-           (insert 
-            (cdr (assoc 'key issue)))
-           (point))
-         '(face jira2-link-issue-face))
-        (beginning-of-line)
-        (forward-char 16)
-        (insert (format "%-10s %s %5s %s\n"
-                        (cdr (assoc 'assignee issue))
-                        (cdr (assoc status status-abbrevs))
-                        (if priority
-                            (make-string (- 6 (string-to-number priority))
-                                         ?*)
-                          "")
-                        (cdr (assoc 'summary issue)))))))
-  (delete-eob-whitespace))
 
 (defun jira2-add-comment (issue-key comment)
   "Adds a comment to an issue"
@@ -1050,7 +622,7 @@ Return nil if the field is not found"
 
 (defun jira2-get-components (project-key)
   "Returns all components available in the specified project"
-  (jira2-call 'getComponents project-key))
+  (jira2-make-assoc-list (jira2-call 'getComponents project-key) 'id 'name))
 
 (defun jira2-get-issue (issue-key)
   "Gets an issue from a given issue key."
@@ -1070,22 +642,12 @@ Return nil if the field is not found"
   (jira2-call 'getIssuesFromTextSearchWithProject
              (apply 'vector project-keys) search-terms max-num-results))
 
-(defun jira2-get-issue-types ()
-  "Returns all visible issue types in the system"
-  (jira2-call 'getIssueTypes))
-
-(defun jira2-get-priorities ()
-  "Returns all priorities in the system"
-  (jira2-call 'getPriorities))
-
 ;; Modified by Brian Zwahr to use getProjectsNoSchemes instead of getProjects
 (defun jira2-get-projects ()
   "Returns a list of projects available to the user"
-  (jira2-call "getProjectsNoSchemes"))
-
-(defun jira2-get-resolutions ()
-  "Returns all resolutions in the system"
-  (jira2-call 'getResolutions))
+  (if jira2-projects-list
+      jira2-projects-list
+    (setq jira2-projects-list (jira2-call "getProjectsNoSchemes"))))
 
 (defun jira2-get-saved-filters ()
   "Gets all saved filters available for the currently logged in user"
@@ -1094,10 +656,6 @@ Return nil if the field is not found"
 (defun jira2-get-server-info ()
   "Returns the Server information such as baseUrl, version, edition, buildDate, buildNumber."
   (jira2-call 'getServerInfo))
-
-(defun jira2-get-statuses ()
-  "Returns all statuses in the system"
-  (jira2-call 'getStatuses))
 
 (defun jira2-get-sub-task-issue-types ()
   "Returns all visible subtask issue types in the system"
