@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+lang="en" xml:lang="en">
+<head>
+<title>org-jira</title>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2011-12-28 17:18:02 China Standard Time"/>
+<meta name="author" content=""/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">org-jira</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Introduction </a></li>
+<li><a href="#sec-2">2 Features </a>
+<ul>
+<li><a href="#sec-2-1">2.1 Sync Jira tickets into Org-mode todo items in a batch mode. </a></li>
+<li><a href="#sec-2-2">2.2 Update Org-mode new edits back to Jira </a></li>
+<li><a href="#sec-2-3">2.3 Create new Jira issue in org mode </a></li>
+<li><a href="#sec-2-4">2.4 Convert existing org mode TODO item into Jira ticket </a></li>
+<li><a href="#sec-2-5">2.5 Edit existing Jira comments / add new comment </a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Usage </a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction </h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+<a href="http://orgmode.org">Org-mode</a> is the best GTD (get things done) tool I have used. If you
+didn't use it, please consider give it a shot.
+</p>
+<p>
+Jira is, well, a very popular Bug Tracking system. Two companies in a
+row where I worked chose Jira for bug tracking, task management, etc.
+</p>
+<p>
+As an emacs enthusiast, I very much want to be able to use Jira within
+Emacs. Thus I started digging the web for a solution.
+</p>
+<p>
+To use Jira without the browser, you can use a) xmp-rpc, b) soap, c)
+REST. I don't know what the last one is, but their supported degree by
+Jira is in that order. The former 2 protocols has both been supported
+by Emacs plugin: <a href="https://launchpad.net/xml-rpc-el">xml-rpc</a> and <a href="http://code.google.com/p/emacs-soap-client/">soap</a>.
+</p>
+<p>
+For xml-rpc, there is already a <a href="http://www.emacswiki.org/emacs/org-jira.el">jira.el</a>, but it is not satisfactory for me:
+</p>
+<ul>
+<li>xml-rpc is not as well supported as soap by Jira.
+</li>
+<li>jira.el is a stand-alone tool, I want to integrate with org-mode.
+</li>
+</ul>
+
+
+<p>
+Luckily, the emacs-soap-client guy(s) already provided a sample
+jira2.el, so I started hacking by combining jira.el and jira2.el, the
+new jira2.el is <a href="http://github.com/baohaojun/windows-config/raw/master/.emacs_d/org-jira/jira2.el">here</a>.
+</p>
+<p>
+After browsing Jira with jira2.el is implemented, I checked <a href="https://github.com/punchagan/org2blog">org2blog</a>
+for ideas of how to hack on org-mode, and started from his org2blog.el
+and hacked into a new <a href="http://github.com/baohaojun/windows-config/raw/master/.emacs_d/org-jira/org-jira.el">org-jira.el</a>.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Features </h2>
+<div class="outline-text-2" id="text-2">
+
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Sync Jira tickets into Org-mode todo items in a batch mode. </h3>
+<div class="outline-text-3" id="text-2-1">
+
+
+<p>
+Jira ticket attributes such as priority, status, resolution, summary,
+description, etc. are supported. New ones can be added if desired by
+hacking the elisp.
+</p>
+<p>
+See the following example. Jira ticket summary has been used as the
+Org TODO headline; most Jira ticket attributes have been made into Org
+entry; Jira description attribute is made into a separate subtitle
+because unlike most attributes it is multi-line.
+</p>
+
+
+
+<pre class="example">* TODO test summary                                          :SANDBOX_22:
+  :PROPERTIES:
+  :assignee: hjbao
+  :reporter: hjbao
+  :type:     Bug
+  :priority: Major
+  :status:   Open
+  :ID:       SANDBOX-22
+  :END:
+
+** description: SANDBOX-22
+test description
+** Comment: Bao Haojun
+   :PROPERTIES:
+   :ID:       21322
+   :END:
+test comment
+</pre>
+
+
+
+<p>  
+Also note the ID Org entry, both the Jira issue and Jira comment has
+an attribute ideal for this entry. Org-mode has an API for finding
+heading from ID entry.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Update Org-mode new edits back to Jira </h3>
+<div class="outline-text-3" id="text-2-2">
+
+
+<p>
+After you edit the attributes, such as change priority from "Major" to
+"Minor", you can post it back the Jira.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Create new Jira issue in org mode </h3>
+<div class="outline-text-3" id="text-2-3">
+
+
+<p>
+You can create new Jira issue within org mode. You will be prompted
+for Jira ticket information such as create in which project, assign to
+whom, and one-line summary, etc.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Convert existing org mode TODO item into Jira ticket </h3>
+<div class="outline-text-3" id="text-2-4">
+
+
+<p>
+This one is similar to the create-new-issue case, except the existing
+TODO headline can be used for Jira ticket summary.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Edit existing Jira comments / add new comment </h3>
+<div class="outline-text-3" id="text-2-5">
+
+
+<p>
+These are also supported.
+</p>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Usage </h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+To use org-jira.el, you need download all the .el files under <a href="http://github.com/baohaojun/windows-config/tree/master/.emacs_d/org-jira">org-jira</a>.
+</p>
+<p>
+(You can get the soap files from emacs-soap project, but I fixed an
+utf-8 encoding bug in it so that I can post comments in Chinese).
+</p>
+
+
+
+<pre class="src src-emacs-lisp">(setq jira2-url <span style="color: #3AA221;">"http://jira-host"</span>)
+(<span style="color: #ff00ff;">require</span> '<span style="color: #00ffff;">jira2</span>)
+(<span style="color: #ff00ff;">require</span> '<span style="color: #00ffff;">org-jira</span>)
+</pre>
+
+
+
+
+
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2011-12-28 17:18:02 China Standard Time</p>
+<p class="author">Author: </p>
+<p class="creator">Org version 7.7 with Emacs version 24</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

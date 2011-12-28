@@ -19,6 +19,10 @@ myself. Just to show you what a geek I am:-)
 
   It has both Linux and Windows version.
 
+- [[file:org-jira.org][org-jira]]
+
+  Brings org mode and Jira together.
+
 - SDIM
 
   SDIM, or Shadow Dance Input Method, is an input method I develop and
