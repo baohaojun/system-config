@@ -1496,6 +1496,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (setq org-agenda-files `("~/doc/daily" ,(if (eq system-type 'windows-nt)
 					    "~/../.org-jira"
 					  "~/.org-jira")))
+(add-hook 'org-mode-hook (lambda () (org-jira-mode t)))
 (setq org-log-done 'note)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)

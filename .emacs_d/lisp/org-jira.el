@@ -1,4 +1,4 @@
-;;; org-jira.el --- blog from Org mode to wordpress
+;;; org-jira.el --- Syncing between Jira and Org-mode.
 
 ;; Author: Bao Haojun <baohaojun@gmail.com>
 
@@ -128,7 +128,7 @@ All the other properties are optional. They over-ride the global variables.
     (define-key org-jira-map (kbd "C-c ig") 'org-jira-get-issues)
     (define-key org-jira-map (kbd "C-c iu") 'org-jira-update-issue)
     (define-key org-jira-map (kbd "C-c iw") 'org-jira-progress-issue)
-    (define-key org-jira-map (kbd "C-c in") 'org-jira-new-issue)
+    (define-key org-jira-map (kbd "C-c ic") 'org-jira-create-issue)
     (define-key org-jira-map (kbd "C-c cg") 'org-jira-get-comments)
     (define-key org-jira-map (kbd "C-c cn") 'org-jira-new-comment)
     (define-key org-jira-map (kbd "C-c cu") 'org-jira-update-comment)

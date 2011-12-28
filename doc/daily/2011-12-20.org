@@ -1,3 +1,5 @@
-* TODO 集成jira和org-mode						 :pe:
+* DONE 集成jira和org-mode						 :pe:
+  CLOSED: [2011-12-28 Wed 10:56]
+  - CLOSING NOTE [2011-12-28 Wed 10:56]
 * TODO 修改bbdb，只对发送的邮件做database collection。			 :pe:
 * TODO 看3gpp 23.038，关于sms						 :pe:
