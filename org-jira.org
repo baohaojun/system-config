@@ -99,4 +99,4 @@ utf-8 encoding bug in it so that I can post comments in Chinese).
 (require 'org-jira)
 #+end_src
 
-
+(For the latest verion of this page, visit [[http://baohaojun.github.com/org-jira.html][this github page]].
