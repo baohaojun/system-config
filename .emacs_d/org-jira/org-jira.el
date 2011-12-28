@@ -128,6 +128,7 @@ All the other properties are optional. They over-ride the global variables.
     (define-key org-jira-map (kbd "C-c ig") 'org-jira-get-issues)
     (define-key org-jira-map (kbd "C-c iu") 'org-jira-update-issue)
     (define-key org-jira-map (kbd "C-c iw") 'org-jira-progress-issue)
+    (define-key org-jira-map (kbd "C-c ir") 'org-jira-refresh-issue)
     (define-key org-jira-map (kbd "C-c ic") 'org-jira-create-issue)
     (define-key org-jira-map (kbd "C-c cg") 'org-jira-get-comments)
     (define-key org-jira-map (kbd "C-c cn") 'org-jira-new-comment)
@@ -240,7 +241,13 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 		      (unless (looking-at "^")
 			(insert "\n"))
 		      (insert "* "))
-		    (insert (concat "TODO " issue-headline "\n"))
+		    (insert (concat (if (member (org-jira-get-issue-val 'status issue) '("Closed" "Resolved"))
+					"DONE "
+				      "TODO ")
+				    issue-headline))
+		    (save-excursion
+		      (unless (search-forward "\n" (point-max) 1)
+			(insert "\n")))
 		    (org-narrow-to-subtree)
 		    (org-change-tag-in-region 
 		     (point-min)
@@ -445,6 +452,12 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 		     'org-jira-resolution-history)))
     (car (rassoc resolution (jira2-get-resolutions)))))
 
+(defun org-jira-refresh-issue ()
+  "Refresh issue from jira to org"
+  (interactive)
+  (ensure-on-issue
+   (let* ((issue-id (org-jira-id)))
+     (org-jira-get-issues (list (jira2-get-issue issue-id))))))
 
 (defun org-jira-progress-issue ()
   "Progress issue workflow"
@@ -484,7 +497,8 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 					 (split-string org-issue-components ",\\s *"))))
 				(cons 'priority (car (rassoc org-issue-priority (jira2-get-prioritys))))
 				(cons 'description org-issue-description)
-				(cons 'summary (org-jira-get-issue-val-from-org 'summary)))))))
+				(cons 'summary (org-jira-get-issue-val-from-org 'summary))))
+      (org-jira-get-issues (list (jira2-get-issue issue-id))))))
 
 
 (defun org-jira-parse-issue-id ()
