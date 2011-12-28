@@ -33,13 +33,14 @@ else
     if tty >/dev/null 2>&1; then
 	echo commiting even though you made changes only recently, as you wish
     else
-	if test $(date +%H) -gt 20; then #if it's late in the night, we may be at home, so lets reminder it
+	if test $(date +%H) -gt 20 -a "$GITPUSHMACFORCE" = true ; then #if it's late in the night, we may be at home, so lets reminder it
 	    bhj-notify git-mac-branch "not commiting because you made changes only recently, and we are not on any console"
 	fi
 	exit
     fi
 fi
 
+GITPUSHMACFORCE=true
 if git submodule foreach 'bash -c "git-push-mac . >/dev/null 2>&1 || echo failed"' | grep failed;
 then
     exit -1
