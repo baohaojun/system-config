@@ -122,7 +122,6 @@ All the other properties are optional. They over-ride the global variables.
 
 (defvar org-jira-entry-mode-map
   (let ((org-jira-map (make-sparse-keymap)))
-    (set-keymap-parent org-jira-map org-mode-map)
     (define-key org-jira-map (kbd "C-c pg") 'org-jira-get-projects)
     (define-key org-jira-map (kbd "C-c ib") 'org-jira-browse-issue)
     (define-key org-jira-map (kbd "C-c ig") 'org-jira-get-issues)
@@ -219,7 +218,7 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 (defun org-jira-get-issues (issues)
   "Get list of issues."
   (interactive
-   (list (jira2-get-issues-from-filter (cdr (assoc "my-open" (jira2-get-filter-alist))))))
+   (list (jira2-do-jql-search (format "assignee = %s and resolution = unresolved ORDER BY priority DESC, created ASC" jira2-user-login-name))))
   (mapc (lambda (issue)
 	    (let* ((proj-key (cdr (assoc 'project issue)))
 		   (issue-id (cdr (assoc 'key issue)))
@@ -229,6 +228,9 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 		(with-current-buffer (or (find-buffer-visiting project-file)
 					 (find-file project-file))
 		  (org-jira-mode t)
+		  (widen)
+		  (show-all)
+		  (goto-char (point-min))
 		  (setq p (org-find-entry-with-id issue-id))
 		  (save-restriction
 		    (if (and p (>= p (point-min))

@@ -1,6 +1,16 @@
 ;;; jira2.el -- Provide connectivity to JIRA SOAP service
 
-;; Copyright (C) 2009  Alex Harsanyi <AlexHarsanyi@gmail.com>
+;; Copyright (C) 2011 Bao Haojun
+;; original Copyright (C) 2009 Alex Harsanyi
+
+;; Also, used some code from jira.el, which use xml-rpc instead of soap.
+;; Thus Copyright (C) for jira.el related code:
+;; Brian Zwahr <echosa@gmail.com>
+;; Dave Benjamin <dave@ramenlabs.com>
+
+;; Authors: 
+;; Bao Haojun <baohaojun@gmail.com>
+;; Alex Harsanyi <AlexHarsanyi@gmail.com>
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

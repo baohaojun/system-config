@@ -5,6 +5,7 @@
 
 (setq load-path
       (nconc (list (expand-file-name "~/.emacs_d/lisp")
+		   (expand-file-name "~/.emacs_d/org-jira")
 		   (expand-file-name "~/.emacs_d/lisp/ext"))
 	     load-path))
 
