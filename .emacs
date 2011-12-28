@@ -761,7 +761,9 @@
       (require 'color-theme-library))
   (error nil))
 ;(color-theme-arjen)
-(load-theme 'wheatgrass)
+(condition-case nil
+    (load-theme 'wheatgrass)
+  (error (color-theme-arjen)))
 ;(w32-register-hot-key [A-tab])
 
 (defun markdown-nobreak-p ()
