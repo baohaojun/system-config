@@ -462,7 +462,7 @@ This runs the getAvailableActions SOAP method."
    'id 'name))
 
 (defun jira2-progress-workflow-action (issue-key action-id params)
-  (jira2-call "progressWorkflowAction" issue-key action-id params))
+  (jira2-call "progressWorkflowAction" issue-key action-id (jira2-make-remote-field-values params)))
 
 (defun jira2-add-worklog-and-autoadjust-remaining-estimate (issue-key start-date time-spent comment)
   "Log time spent on ISSUE-KEY to its worklog.

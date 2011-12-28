@@ -569,7 +569,7 @@
  '(ispell-program-name "aspell")
  '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
- '(jira2-url "http://bible")
+ '(jira2-url "http://bible/jira")
  '(keyboard-coding-system (quote cp936))
  '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
@@ -1493,7 +1493,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (setq w3m-fill-column 100)
 (require 'guess-offset)
-(setq org-agenda-files '( "~/doc/daily"))
+(setq org-agenda-files `("~/doc/daily" ,(if (eq system-type 'windows-nt)
+					    "~/../.org-jira"
+					  "~/.org-jira")))
 (setq org-log-done 'note)
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)

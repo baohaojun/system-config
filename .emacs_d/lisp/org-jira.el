@@ -127,6 +127,7 @@ All the other properties are optional. They over-ride the global variables.
     (define-key org-jira-map (kbd "C-c ib") 'org-jira-browse-issue)
     (define-key org-jira-map (kbd "C-c ig") 'org-jira-get-issues)
     (define-key org-jira-map (kbd "C-c iu") 'org-jira-update-issue)
+    (define-key org-jira-map (kbd "C-c iw") 'org-jira-progress-issue)
     (define-key org-jira-map (kbd "C-c in") 'org-jira-new-issue)
     (define-key org-jira-map (kbd "C-c cg") 'org-jira-get-comments)
     (define-key org-jira-map (kbd "C-c cn") 'org-jira-new-comment)
@@ -334,7 +335,7 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
   
 
 (defun org-jira-update-issue ()
-  "update or create an issue"
+  "update an issue"
   (interactive)
   (let ((issue-id (org-jira-parse-issue-id)))
     (if issue-id
@@ -347,23 +348,46 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
   (ensure-on-todo
    (when (org-jira-parse-issue-id)
      (error "Already on jira ticket"))
-   (let ((issue (org-jira-create-issue (completing-read "Project: " (jira2-make-list (jira2-get-projects) 'key))
-			  (completing-read "Type: " (mapcar 'cdr (jira2-get-issue-types)))
-			  (org-get-heading t t)
-			  (org-get-entry))))
+   (let ((issue (org-jira-create-issue 
+		 (org-jira-read-project)
+		 (org-jira-read-issue-type)
+		 (org-get-heading t t)
+		 (org-get-entry))))
      (delete-region (point-min) (point-max))
      (org-jira-get-issues (list issue)))))
 
+(defvar org-jira-project-read-history nil)
+(defvar org-jira-type-read-history nil)
+
+(defun org-jira-read-project ()
+  "Read project name"
+  (completing-read 
+   "Project: "
+   (jira2-make-list (jira2-get-projects) 'key)
+   nil
+   t
+   (car org-jira-project-read-history)
+   'org-jira-project-read-history))
+
+(defun org-jira-read-issue-type ()
+  "Read issue type name"
+  (completing-read
+   "Type: "
+   (mapcar 'cdr (jira2-get-issue-types))
+   nil
+   t
+   (car org-jira-type-read-history)
+   'org-jira-type-read-history))
+		   
 (defun org-jira-create-issue (project type summary description)
   "create an issue"
-  (interactive (list (completing-read "Project: " (jira2-make-list (jira2-get-projects) 'key))
-		     (completing-read "Type: " (mapcar 'cdr (jira2-get-issue-types)))
+  (interactive (list (org-jira-read-project)
+		     (org-jira-read-issue-type)
 		     (read-string "Summary: ")
                      (read-string "Description: ")))
   (if (or (equal project "")
           (equal type "")
-          (equal summary "")
-          (equal description ""))
+          (equal summary ""))
       (error "Must provide all information!"))
   (let* ((project-components (jira2-get-components project))
 	 (user (completing-read "Assignee: " (mapcar 'car jira-users))))
@@ -397,6 +421,43 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 	 (or (org-entry-get (point) key)
 	     "")))))
 
+(defvar org-jira-actions-history nil)
+(defun org-jira-read-action (actions)
+  "Read issue workflow progress actions."
+  (let ((action (completing-read
+		 "Action: "
+		 (mapcar 'cdr actions)
+		 nil
+		 t
+		 (car org-jira-actions-history)
+		 'org-jira-actions-history)))
+    (car (rassoc action actions))))
+
+(defvar org-jira-resolution-history nil)
+(defun org-jira-read-resolution ()
+  "Read issue workflow progress resolution."
+  (let ((resolution (completing-read
+		     "Resolution: "
+		     (mapcar 'cdr (jira2-get-resolutions))
+		     nil
+		     t
+		     (car org-jira-resolution-history)
+		     'org-jira-resolution-history)))
+    (car (rassoc resolution (jira2-get-resolutions)))))
+
+
+(defun org-jira-progress-issue ()
+  "Progress issue workflow"
+  (interactive)
+  (ensure-on-issue
+   (let* ((issue-id (org-jira-id))
+	  (actions (jira2-get-available-actions issue-id))
+	  (action (org-jira-read-action actions))
+	  (resolution (org-jira-read-resolution))
+	  (issue (jira2-progress-workflow-action issue-id action `((resolution . ,resolution)))))
+     (org-jira-get-issues (list issue)))))
+     
+     
 (defun org-jira-update-issue-details (issue-id)
   (ensure-on-issue-id 
       issue-id
@@ -405,7 +466,7 @@ Entry to this mode calls the value of `org-jira-mode-hook'."
 	   (org-issue-resolution (org-jira-get-issue-val-from-org 'resolution))
 	   (org-issue-priority (org-jira-get-issue-val-from-org 'priority))
 	   (org-issue-type (org-jira-get-issue-val-from-org 'type))
-	   (org-issue-status (org-jira-get-issue-val-from-org 'status)) ; (jira2-progress-workflow-action "SULTAN-549" "5" [((resolution . "1"))])
+	   (org-issue-status (org-jira-get-issue-val-from-org 'status))
 	   (issue (jira2-get-issue issue-id))
 	   (project (org-jira-get-issue-val 'project issue))
 	   (project-components (jira2-get-components project)))
@@ -481,17 +542,7 @@ ENTRY will vary with regard to the TYPE, if it is a symbol, it will be converted
   "Make sure we are on an issue heading"
 
   `(save-excursion
-     (while (org-up-heading-safe))
-     (let ((org-jira-id (org-jira-id)))
-       (unless (and org-jira-id (string-match (jira2-get-issue-regexp) org-jira-id))
-	 (error "Not on a issue region!")))
-     ,@body))
-
-(defmacro ensure-on-issue (&rest body)
-  "Make sure we are on an issue heading"
-
-  `(save-excursion
-     (while (org-up-heading-safe))
+     (while (org-up-heading-safe)) ; goto the top heading
      (let ((org-jira-id (org-jira-id)))
        (unless (and org-jira-id (string-match (jira2-get-issue-regexp) org-jira-id))
 	 (error "Not on a issue region!")))
