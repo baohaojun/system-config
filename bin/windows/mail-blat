@@ -93,4 +93,4 @@ test -z "${body[0]}" && body=("=")
             done
         fi'
     done
-) | bash -x
+) | bash
