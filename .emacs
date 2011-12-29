@@ -540,10 +540,10 @@
             ))
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
  '(Info-additional-directory-list (list "~/tools/emacswin/info/" "/usr/local/share/info" "/usr/share/info"))
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
@@ -567,7 +567,7 @@
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
- '(ispell-program-name "aspell")
+ '(ispell-program-name "aspell" t)
  '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
  '(jira2-url "http://bible/jira")
@@ -601,6 +601,7 @@
  '(tramp-verbose 0)
  '(transient-mark-mode t)
  '(url-proxy-services (quote (("http" . "localhost:8580") ("no_proxy" . "^[^.]*$\\|sina.com"))))
+ '(user-full-name "Bao Haojun")
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
  '(w3m-default-display-inline-images t)
@@ -613,10 +614,10 @@
 
 
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
  )
 
 (set-keyboard-coding-system 'utf-8)
@@ -761,7 +762,9 @@
       (require 'color-theme-library))
   (error nil))
 ;(color-theme-arjen)
-(load-theme 'wheatgrass)
+(condition-case nil
+    (load-theme 'wheatgrass)
+  (error (color-theme-arjen)))
 ;(w32-register-hot-key [A-tab])
 
 (defun markdown-nobreak-p ()

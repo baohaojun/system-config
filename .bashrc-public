@@ -127,3 +127,4 @@ scd()
 	cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')"
     fi
 }
+export EMAIL=baohaojun@gmail.com
