@@ -41,7 +41,8 @@ function download-all()
 	mkdir -p ~/external/download-all
 	cd ~/external/download-all
 
-	file_list=( 
+	file_list=(
+	    http://www.imagemagick.org/download/binaries/ImageMagick-6.7.4-Q16-windows.zip
             http://download.sysinternals.com/Files/ProcessMonitor.zip
             http://download.sysinternals.com/Files/ProcessExplorer.zip
             http://download.sysinternals.com/Files/PsTools.zip

@@ -600,7 +600,7 @@
  '(tramp-syntax (quote ftp))
  '(tramp-verbose 0)
  '(transient-mark-mode t)
- '(url-proxy-services (quote (("http" . "localhost:8580") ("no_proxy" . "^[^.]*$"))))
+ '(url-proxy-services (quote (("http" . "localhost:8580") ("no_proxy" . "^[^.]*$\\|sina.com"))))
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)
  '(w3m-default-display-inline-images t)
@@ -1971,4 +1971,18 @@ criteria can be provided via the optional match-string argument "
 (global-set-key (kbd "M-s g") 'bhj-do-code-generation)
 (global-set-key (kbd "M-s c") (lambda () (interactive) (call-interactively 'compile)))
 (setq org-ditaa-jar-path (expand-file-name "~/bin/ditaa.jar"))
+
+(require 'twittering-mode)
+(twittering-enable-unread-status-notifier)
+(setq-default twittering-icon-mode t)
+(setq twittering-use-ssl nil
+      twittering-oauth-use-ssl nil)
+(setq twittering-icon-mode 1)
+(setq twittering-enabled-services '(sina))
+(setq twittering-accounts '((sina (username "baohj_zj@hotmail.com")
+				  (auth oauth))))
+
+(setq twittering-initial-timeline-spec-string `(":home@sina"))
+
+
 (server-start)
