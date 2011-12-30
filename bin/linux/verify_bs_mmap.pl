@@ -30,6 +30,9 @@ sub print_human
             pretty($entry->{"start"}),
             pretty($entry->{"size"}),
             pretty($entry->{start} + $entry->{size}));
+    if ($entry->{"erase_size"} && $entry->{"erase_size"} != $entry->{"size"}) {
+      printf("Error: erase size for %s is %s, but size is %s\n", $entry->{name}, pretty($entry->{"erase_size"}), pretty($entry->{"size"}));
+    }
 }
 
 sub print_memmap
@@ -171,6 +174,7 @@ sub do_read_blf
 	     "file_name"    => "unknown",
 	     "start"        => -1,
 	     "size"         => 0,
+	     "erase_size"   => 0,
 	     "end"          => -1,
 	     "pretty_start" => "",
 	     "pretty_size"  => "",
@@ -199,6 +203,8 @@ sub do_read_blf
 	$entry{"file_name"} = $1;
       } elsif (m#Image Flash Entry Address = (.*)#) {
 	$entry{"start"} = eval($1);
+      } elsif (m#Image Erase Size = (.*)#) {
+	$entry{"erase_size"} = eval($1 or "0");
       }
     }
     $entry{"pretty_start"} = pretty($entry{"start"});

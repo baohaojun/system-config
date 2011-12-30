@@ -1,2 +1,2 @@
-bash -c "close-window avira& close-window thunder&"
+bash misc-fix.sh
 start no-fg-lock.exe
