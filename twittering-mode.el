@@ -4175,20 +4175,18 @@ following symbols;
      (unless twittering-is-getting-emotions-p
        (setq twittering-is-getting-emotions-p t)
        (twittering-get-simple nil nil nil 'emotions))
-     (let ((last-match nil)
-           index
+     (let (index
            skip-fake-emotion)
        (while (if skip-fake-emotion
                   (progn
                     (setq skip-fake-emotion nil)
                     (setq index (string-match "\\(\\[[^][]+\\]\\)" str (1+ index))))
                 (setq index (string-match "\\(\\[[^][]+\\]\\)" str)))
-         (when (equal last-match (match-string 1 str))
-           (setq skip-fake-emotion t))
-         (setq last-match (match-string 1 str))
-
-         (let ((repl (twittering-make-emotions-string nil nil last-match)))
-           (setq str (replace-match repl nil nil str))))))
+         (let* ((repl (twittering-make-emotions-string nil nil (match-string 1 str)))
+                (new-str (replace-match repl nil nil str)))
+           (if (equal new-str str)
+               (setq skip-fake-emotion t))
+           (setq str new-str)))))
 
     ((douban)
      (setq str (twittering-make-string-with-uri-property str))))
