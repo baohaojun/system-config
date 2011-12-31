@@ -42,6 +42,7 @@ function download-all()
 	cd ~/external/download-all
 
 	file_list=(
+	    http://mirrors.zerg.biz/stunnel/stunnel-4.50-installer.exe
 	    http://www.imagemagick.org/download/binaries/ImageMagick-6.7.4-Q16-windows.zip
             http://download.sysinternals.com/Files/ProcessMonitor.zip
             http://download.sysinternals.com/Files/ProcessExplorer.zip

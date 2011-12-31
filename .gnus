@@ -84,14 +84,6 @@
 
 (add-hook 'mail-send-hook 'bbdb/send-hook)
 
-(setq gnus-posting-styles '((".*"
-       (signature "Peace and happiness")
-       (organization "What me?")
-       (From "Bao Haojun <baohaojun@gmail.com>"))
-      ("^comp"
-       (signature "Death to everybody"))
-      ("comp.emacs.i-love-it"
-       (organization "Emacs is it"))))
 ;;Local Variables: ***
 ;;coding: utf-8 ***
 ;;End: ***

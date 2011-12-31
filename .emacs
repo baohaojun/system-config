@@ -653,24 +653,62 @@
             ", "
             (save-restriction (message-narrow-to-headers)
                               (message-fetch-field "bcc"))))
-          (all-letou t)
+          (all-marvell t)
           (start-pos 0))
 
-      (while (and all-letou (string-match "@" receivers start-pos))
+      (while (and all-marvell (string-match "@" receivers start-pos))
         (setq start-pos (match-end 0))
         (unless (equal (string-match 
-                    "@adsnexus.com\\|@eee168.com\\|@rayzerlink.com\\|@hzwowpad.com" 
+                    "@marvell.com" 
                     receivers 
                     (1- start-pos))
                    (1- start-pos))
-          (setq all-letou nil)))
+          (setq all-marvell nil)))
 
-      (when t
+      (when all-marvell
         (save-excursion
           (message-goto-from)
           (message-beginning-of-line)
           (kill-line)
-          (insert "\"Bao Haojun at Marvell\" <hjbao@marvell.com>"))))))
+          (insert "\"Bao Haojun\" <hjbao@marvell.com>")))
+      
+      (save-excursion
+	(message-goto-from)
+	(message-beginning-of-line)
+	(when (save-excursion 
+		(search-forward-regexp "@ask.com" (line-end-position) t))
+	  (kill-line)
+	  (insert (completing-read "use account? " '("hjbao@marvell.com" "baohaojun@gmail.com") nil t "baohaojun@gmail.com")))
+	(message-goto-from)
+	(message-beginning-of-line)
+	(cond ((save-excursion (search-forward-regexp "@marvell.com" (line-end-position) t))
+	       (kill-line)
+	       (insert "\"Bao Haojun\" <hjbao@marvell.com>")
+	       (setq smtpmail-auth-credentials 
+		     '(("localhost"
+			2025
+			"baohaojun@gmail.com"
+			nil))
+		     message-send-mail-function 'smtpmail-send-it
+		     user-mail-address "hjbao@marvell.com"
+		     smtpmail-default-smtp-server "localhost"
+		     smtpmail-smtp-server "localhost"
+		     smtpmail-smtp-service 2025))
+	      ((save-excursion (search-forward-regexp "@gmail.com" (line-end-position) t))
+	       (kill-line)
+	       (insert "\"Bao Haojun\" <baohaojun@gmail.com>")
+	       (setq smtpmail-auth-credentials 
+		     '(("localhost"
+			25
+			"baohaojun@gmail.com"
+			nil))
+		     message-send-mail-function 'smtpmail-send-it
+		     user-mail-address "baohaojun@gmail.com"
+		     smtpmail-default-smtp-server "localhost"
+		     smtpmail-smtp-server "localhost"
+		     smtpmail-smtp-service 25))
+	      (t
+	       (error "don't know send as whom")))))))
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
@@ -1987,5 +2025,17 @@ criteria can be provided via the optional match-string argument "
 
 (setq twittering-initial-timeline-spec-string `(":home@sina"))
 
+(setq gnus-posting-styles
+      '(
+	(".*"
+	 ("From" "Ask <ask@ask.com>")
+	 )
+	(".*mrvl.*"
+	 ("From" "Bao Haojun <hjbao@marvell.com>")
+	 )
+	(".*gmail.*"
+	 ("From" "Bao Haojun <baohaojun@gmail.com>")
+	 )
+	))
 
 (server-start)
