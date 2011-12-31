@@ -44,7 +44,6 @@ function gitci() {
 `get-stdin $msg; echo`
 
 Issue: $ticket
-
 `for x in ${reviewer[@]}; do echo  Reviewed-by: $x; done`
 EOF
 )"
