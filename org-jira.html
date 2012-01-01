@@ -7,7 +7,7 @@ lang="en" xml:lang="en">
 <title>org-jira</title>
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-01-01 23:10:47 China Standard Time"/>
+<meta name="generated" content="2012-01-01 23:23:36 China Standard Time"/>
 <meta name="author" content=""/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -290,9 +290,9 @@ These are also supported.
 <div class="outline-text-2" id="text-3">
 
 
-<ol>
-<li>To use org-jira.el, get the .el files from <a href="https://github.com/baohaojun/org-jira">org-jira on github</a>. 
-
+<p>
+To use org-jira.el, get the .el files from <a href="https://github.com/baohaojun/org-jira">org-jira on github</a>. 
+</p>
 
 
 <pre class="example">git clone git://github.com/baohaojun/org-jira.git
@@ -301,13 +301,14 @@ These are also supported.
 
 
 <p>   
-   (In my repository, I have included the emacs-soap files, which you
-   can get from its project, but in my version I fixed an utf-8
-   encoding bug in it so that I can post comments in Chinese).
+(In my repository, I have included the emacs-soap files, which you can
+get from its project, but in my version I fixed an utf-8 encoding bug
+in it so that I can post comments in Chinese).
 </p>
-</li>
-<li>Then put the following in your .emacs, 
 
+<p>
+Then put the following in your .emacs, 
+</p>
 
 
 <pre class="src src-emacs-lisp">(setq jira2-url <span style="color: #3AA221;">"http://jira-host"</span>)
@@ -319,26 +320,23 @@ These are also supported.
 
 
 <p> 
-   If you have a ~/.authinfo file and corresponding entry for
-   jira-host, the username and password will be computed from that; or
-   else you will be prompted for password.
+(If you have a ~/.authinfo file and corresponding entry for jira-host,
+the username and password will be computed from that; or else you will
+be prompted for password).
 </p>
-</li>
-<li>Then start syncing with <code>M-x org-jira-get-issues</code> .
-
+<p>  
+Then start syncing with <code>M-x org-jira-get-issues</code> .
+</p>
 <p>
-   (Currently there is a bug in my code, so that you need to run the above command twice).
-</p></li>
-</ol>
-
-
+(Currently there is a bug in my code, so that you need to run the above command twice).
+</p>
 
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-01-01 23:10:47 China Standard Time</p>
+<p class="date">Date: 2012-01-01 23:23:36 China Standard Time</p>
 <p class="author">Author: </p>
 <p class="creator">Org version 7.7 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

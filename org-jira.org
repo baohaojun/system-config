@@ -96,28 +96,29 @@ These are also supported.
 
 * Usage
 
-1. To use org-jira.el, get the .el files from [[https://github.com/baohaojun/org-jira][org-jira on github]]. 
-   #+begin_example
-   git clone git://github.com/baohaojun/org-jira.git
-   #+end_example
+To use org-jira.el, get the .el files from [[https://github.com/baohaojun/org-jira][org-jira on github]]. 
+#+begin_example
+git clone git://github.com/baohaojun/org-jira.git
+#+end_example
    
-   (In my repository, I have included the emacs-soap files, which you
-   can get from its project, but in my version I fixed an utf-8
-   encoding bug in it so that I can post comments in Chinese).
+(In my repository, I have included the emacs-soap files, which you can
+get from its project, but in my version I fixed an utf-8 encoding bug
+in it so that I can post comments in Chinese).
 
-2. Then put the following in your .emacs, 
-   #+begin_src emacs-lisp
-   (setq jira2-url "http://jira-host")
-   (require 'jira2)
-   (require 'org-jira)
-   #+end_src
+
+Then put the following in your .emacs, 
+#+begin_src emacs-lisp
+(setq jira2-url "http://jira-host")
+(require 'jira2)
+(require 'org-jira)
+#+end_src
  
-   If you have a ~/.authinfo file and corresponding entry for
-   jira-host, the username and password will be computed from that; or
-   else you will be prompted for password.
+(If you have a ~/.authinfo file and corresponding entry for jira-host,
+the username and password will be computed from that; or else you will
+be prompted for password).
   
-3. Then start syncing with ~M-x org-jira-get-issues~ .
+Then start syncing with ~M-x org-jira-get-issues~ .
 
-   (Currently there is a bug in my code, so that you need to run the above command twice).
+(Currently there is a bug in my code, so that you need to run the above command twice).
 
 
