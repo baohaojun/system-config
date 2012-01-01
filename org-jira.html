@@ -7,8 +7,8 @@ lang="en" xml:lang="en">
 <title>org-jira</title>
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2011-12-28 22:35:21 CST"/>
-<meta name="author" content="baohaojun"/>
+<meta name="generated" content="2012-01-01 23:10:47 China Standard Time"/>
+<meta name="author" content=""/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
 <style type="text/css">
@@ -21,6 +21,9 @@ lang="en" xml:lang="en">
   .target { }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
   p.verse { margin-left: 3% }
   pre {
 	border: 1pt solid #AEBDCC;
@@ -31,10 +34,17 @@ lang="en" xml:lang="en">
         overflow:auto;
   }
   table { border-collapse: collapse; }
-  td, th { vertical-align: top; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
   dt { font-weight: bold; }
   div.figure { padding: 0.5em; }
   div.figure p { text-align: center; }
+  textarea { overflow-x: auto; }
   .linenr { font-size:smaller }
   .code-highlighted {background-color:#ffff00;}
   .org-info-js_info-navigation { border-style:none; }
@@ -66,10 +76,15 @@ lang="en" xml:lang="en">
  }
 /*]]>*///-->
 </script>
+
 </head>
 <body>
-<div id="content">
 
+<div id="preamble">
+
+</div>
+
+<div id="content">
 <h1 class="title">org-jira</h1>
 
 
@@ -80,13 +95,12 @@ lang="en" xml:lang="en">
 <li><a href="#sec-1">1 Introduction </a></li>
 <li><a href="#sec-2">2 Features </a>
 <ul>
-<li><a href="#sec-2.1">2.1 Sync Jira tickets into Org-mode todo items in a batch mode. </a></li>
-<li><a href="#sec-2.2">2.2 description: SANDBOX-22</a></li>
-<li><a href="#sec-2.3">2.3 Comment: Bao Haojun</a></li>
-<li><a href="#sec-2.4">2.4 Update Org-mode new edits back to Jira </a></li>
-<li><a href="#sec-2.5">2.5 Create new Jira issue in org mode </a></li>
-<li><a href="#sec-2.6">2.6 Convert existing org mode TODO item into Jira ticket </a></li>
-<li><a href="#sec-2.7">2.7 Edit existing Jira comments / add new comment </a></li>
+<li><a href="#sec-2-1">2.1 Sync Jira tickets into Org-mode todo items in a batch mode </a></li>
+<li><a href="#sec-2-2">2.2 Update Org-mode new edits back to Jira </a></li>
+<li><a href="#sec-2-3">2.3 Progress Jira ticket workflow in Org-mode </a></li>
+<li><a href="#sec-2-4">2.4 Create new Jira issue in org mode </a></li>
+<li><a href="#sec-2-5">2.5 Convert existing org mode TODO item into Jira ticket </a></li>
+<li><a href="#sec-2-6">2.6 Edit existing Jira comments / add new comment </a></li>
 </ul>
 </li>
 <li><a href="#sec-3">3 Usage </a></li>
@@ -99,6 +113,9 @@ lang="en" xml:lang="en">
 <div class="outline-text-2" id="text-1">
 
 
+<p>
+(For the latest verion of this page, visit <a href="http://baohaojun.github.com/org-jira.html">this github page</a>.
+</p>
 <p>
 <a href="http://orgmode.org">Org-mode</a> is the best GTD (get things done) tool I have used. If you
 didn't use it, please consider give it a shot.
@@ -121,24 +138,23 @@ supported by Emacs plugin: <a href="https://launchpad.net/xml-rpc-el">xml-rpc</a
 For xml-rpc, there is already a <a href="http://www.emacswiki.org/emacs/org-jira.el">jira.el</a>, but it is not satisfactory for me:
 </p>
 <ul>
-<li>
-xml-rpc is not as well supported as soap by Jira.
+<li>xml-rpc is not as well supported as soap by Jira.
 </li>
-<li>
-jira.el is a stand-alone tool, while I want to integrate with
-org-mode.
-
+<li>jira.el is a stand-alone tool, while I want to integrate with
+  org-mode.
 </li>
 </ul>
 
-<p>Luckily, the emacs-soap-client guy(s) already provided a sample
+
+<p>
+Luckily, the emacs-soap-client guy(s) already provided a sample
 jira2.el, so I started hacking by combining jira.el and jira2.el, the
-new jira2.el is <a href="http://github.com/baohaojun/windows-config/raw/master/.emacs_d/org-jira/jira2.el">here</a>.
+new jira2.el is <a href="http://github.com/baohaojun/org-jira/raw/master/jira2.el">here</a>.
 </p>
 <p>
 After browsing Jira with jira2.el is implemented, I checked <a href="https://github.com/punchagan/org2blog">org2blog</a>
 for ideas of how to hack on org-mode, and started from his org2blog.el
-and hacked into a new <a href="http://github.com/baohaojun/windows-config/raw/master/.emacs_d/org-jira/org-jira.el">org-jira.el</a>.
+and hacked into a new <a href="http://github.com/baohaojun/org-jira/raw/master/org-jira.el">org-jira.el</a>.
 </p>
 </div>
 
@@ -152,9 +168,9 @@ and hacked into a new <a href="http://github.com/baohaojun/windows-config/raw/ma
 
 </div>
 
-<div id="outline-container-2.1" class="outline-3">
-<h3 id="sec-2.1"><a name="SANDBOX-22" id="SANDBOX-22"></a><span class="section-number-3">2.1</span> Sync Jira tickets into Org-mode todo items in a batch mode. </h3>
-<div class="outline-text-3" id="text-2.1">
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Sync Jira tickets into Org-mode todo items in a batch mode </h3>
+<div class="outline-text-3" id="text-2-1">
 
 
 <p>
@@ -192,8 +208,7 @@ test comment
 
 
 
-
-<p>
+<p>  
 Also note the ID Org entry, both the Jira issue and Jira comment has
 an attribute ideal for this entry. Org-mode has an API for finding
 heading from ID entry.
@@ -202,9 +217,9 @@ heading from ID entry.
 
 </div>
 
-<div id="outline-container-2.2" class="outline-3">
-<h3 id="sec-2.2"><span class="section-number-3">2.2</span> Update Org-mode new edits back to Jira </h3>
-<div class="outline-text-3" id="text-2.2">
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Update Org-mode new edits back to Jira </h3>
+<div class="outline-text-3" id="text-2-2">
 
 
 <p>
@@ -215,9 +230,19 @@ After you edit the attributes, such as change priority from "Major" to
 
 </div>
 
-<div id="outline-container-2.3" class="outline-3">
-<h3 id="sec-2.3"><span class="section-number-3">2.3</span> Create new Jira issue in org mode </h3>
-<div class="outline-text-3" id="text-2.3">
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Progress Jira ticket workflow in Org-mode </h3>
+<div class="outline-text-3" id="text-2-3">
+
+<p>You can Resolve/Close/Reopen the jira ticket and so on, without leaving org-mode!
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Create new Jira issue in org mode </h3>
+<div class="outline-text-3" id="text-2-4">
 
 
 <p>
@@ -229,22 +254,26 @@ whom, and one-line summary, etc.
 
 </div>
 
-<div id="outline-container-2.4" class="outline-3">
-<h3 id="sec-2.4"><span class="section-number-3">2.4</span> Convert existing org mode TODO item into Jira ticket </h3>
-<div class="outline-text-3" id="text-2.4">
+<div id="outline-container-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Convert existing org mode TODO item into Jira ticket </h3>
+<div class="outline-text-3" id="text-2-5">
 
 
 <p>
 This one is similar to the create-new-issue case, except the existing
 TODO headline can be used for Jira ticket summary.
 </p>
+<p>
+The old TODO is deleted. But you will not lose a TODO entry, instead,
+you will trade a normal TODO for a Jira ticket tracked TODO.
+</p>
 </div>
 
 </div>
 
-<div id="outline-container-2.5" class="outline-3">
-<h3 id="sec-2.5"><span class="section-number-3">2.5</span> Edit existing Jira comments / add new comment </h3>
-<div class="outline-text-3" id="text-2.5">
+<div id="outline-container-2-6" class="outline-3">
+<h3 id="sec-2-6"><span class="section-number-3">2.6</span> Edit existing Jira comments / add new comment </h3>
+<div class="outline-text-3" id="text-2-6">
 
 
 <p>
@@ -261,13 +290,23 @@ These are also supported.
 <div class="outline-text-2" id="text-3">
 
 
-<p>
-To use org-jira.el, you need download all the .el files under <a href="http://github.com/baohaojun/windows-config/tree/master/.emacs_d/org-jira">org-jira</a>.
+<ol>
+<li>To use org-jira.el, get the .el files from <a href="https://github.com/baohaojun/org-jira">org-jira on github</a>. 
+
+
+
+<pre class="example">git clone git://github.com/baohaojun/org-jira.git
+</pre>
+
+
+
+<p>   
+   (In my repository, I have included the emacs-soap files, which you
+   can get from its project, but in my version I fixed an utf-8
+   encoding bug in it so that I can post comments in Chinese).
 </p>
-<p>
-(You can get the soap files from emacs-soap project, but I fixed an
-utf-8 encoding bug in it so that I can post comments in Chinese).
-</p>
+</li>
+<li>Then put the following in your .emacs, 
 
 
 
@@ -279,17 +318,31 @@ utf-8 encoding bug in it so that I can post comments in Chinese).
 
 
 
-<p>
-(For the latest verion of this page, visit <a href="http://baohaojun.github.com/org-jira.html">this github page</a>.
-</p></div>
-</div>
-<div id="postamble">
-<p class="author"> Author: baohaojun
-<a href="mailto:baohaojun@gmail.com">&lt;baohaojun@gmail.com&gt;</a>
+<p> 
+   If you have a ~/.authinfo file and corresponding entry for
+   jira-host, the username and password will be computed from that; or
+   else you will be prompted for password.
 </p>
-<p class="date"> Date: 2011-12-28 22:35:21 CST</p>
-<p class="creator">HTML generated by org-mode 6.33x in emacs 23</p>
+</li>
+<li>Then start syncing with <code>M-x org-jira-get-issues</code> .
+
+<p>
+   (Currently there is a bug in my code, so that you need to run the above command twice).
+</p></li>
+</ol>
+
+
+
 </div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2012-01-01 23:10:47 China Standard Time</p>
+<p class="author">Author: </p>
+<p class="creator">Org version 7.7 with Emacs version 24</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
 </div>
 </body>
 </html>
