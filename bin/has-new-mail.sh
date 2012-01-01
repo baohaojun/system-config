@@ -46,14 +46,8 @@ for x in */new; do
     test $(ls $x|wc -l) == 0 || got-mail true
 done
 
-maildir_sep=:
-if uname | grep -i -q cygwin; then
-    maildir_sep=!
-
-fi
-
 for x in */cur; do
-    ls $x|perl -npe 's/.*'"$maildir_sep"'//'|grep -v S && got-mail true sync
+    ls $x|perl -npe 's/.*!//'|grep -v S && got-mail true sync
 done
 
 got-mail false

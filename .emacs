@@ -699,14 +699,14 @@
 	       (insert "\"Bao Haojun\" <baohaojun@gmail.com>")
 	       (setq smtpmail-auth-credentials 
 		     '(("localhost"
-			25
+			3025
 			"baohaojun@gmail.com"
 			nil))
 		     message-send-mail-function 'smtpmail-send-it
 		     user-mail-address "baohaojun@gmail.com"
 		     smtpmail-default-smtp-server "localhost"
 		     smtpmail-smtp-server "localhost"
-		     smtpmail-smtp-service 25))
+		     smtpmail-smtp-service 3025))
 	      (t
 	       (error "don't know send as whom")))))))
 
