@@ -1,7 +1,0 @@
-* DONE 搞定宝宝的生育津贴盖章 						 :pe:
-  CLOSED: [2011-12-12 Mon 13:05]
-  - CLOSING NOTE [2011-12-12 Mon 13:05]
-  - CLOSING NOTE [2011-12-09 Fri 15:37]
-* DONE fix release file copying: do it with a little bit of intelligence.
-  CLOSED: [2011-12-09 Fri 15:37]
-  - CLOSING NOTE [2011-12-09 Fri 15:08]

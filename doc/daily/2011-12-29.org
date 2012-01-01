@@ -1,1 +1,0 @@
-* TODO remove factory mode from Marsburner installer

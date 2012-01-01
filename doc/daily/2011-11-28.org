@@ -1,6 +1,0 @@
-* DONE write refactory-rename, can rename filename and variable name intelligently, like FooBar => HooRay. 
-  CLOSED: [2011-11-29 Tue 10:19]
-  - CLOSING NOTE [2011-11-29 Tue 10:19] \\
-    finished
-
-* TODO upload the PC tool project onto company git repository.

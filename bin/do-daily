@@ -2,7 +2,7 @@
 
 mkdir -p ~/doc/daily
 cd ~/doc/daily
-today=$(today "$@")
+month=$(today "$@"|perl -npe 's/(.*)-.*/$1/')
 
-test -e $today.org || touch $today.org
-edit $today.org
+test -e $month.org || touch $month.org
+edit $month.org

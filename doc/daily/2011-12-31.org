@@ -1,2 +1,0 @@
-* TODO report bug of bin/fix-too-much-inode-maildir
-* TODO send email using different smtp server according to reciepients
