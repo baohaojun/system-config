@@ -14,12 +14,13 @@ fi
 
 cd -P .
 git_dir=$(dirname $(lookup_file .git))
+git_proj_http=$(git config remote.origin.url|perl -npe 's,git@github.com:,http://github.com/,; s,git://,http://,; s,\.git$,,')
 
 stem=/raw/master
 if test -d "$1"; then
     stem=/tree/master
 fi
 
-lookup_file "$1" |perl -npe 's,'$git_dir',http://github.com/baohaojun/windows-config'$stem','|tr -d '\r\n'|tee /dev/tty|putclip
+lookup_file "$1" |perl -npe 's,'$git_dir','$git_proj_http$stem','|tr -d '\r\n'|tee /dev/tty|putclip
 
 
