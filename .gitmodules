@@ -7,3 +7,6 @@
 [submodule "doc/baohaojun"]
 	path = doc/baohaojun
 	url = git://github.com/baohaojun/baohaojun.github.com.git
+[submodule ".emacs_d/org-jira"]
+	path = .emacs_d/org-jira
+	url = git://github.com/baohaojun/org-jira.git
