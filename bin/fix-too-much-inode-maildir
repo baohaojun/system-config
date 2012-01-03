@@ -2,3 +2,4 @@
 set -ex
 cd ~/Maildir
 find . -type f -name '!'|xargs bash -x -c 'for x in "$@"; do rm "$x"; touch "$x"; done' true
+find . -type f -size 0|xargs bash -x -c 'for x in "$@"; do rm "$x"; touch "$x"; done' true
