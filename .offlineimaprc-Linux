@@ -42,4 +42,4 @@ remoteuser = baohaojun@gmail.com
 remotepasseval = getcred("gmail", "baohaojun@gmail.com", 993)
 nametrans = lambda foldername: "gmail." + foldername.replace(" ", "_")
 maxconnections = 6
-folderfilter = lambda foldername: foldername.lower() == 'inbox'
+folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in ('inbox',)])
