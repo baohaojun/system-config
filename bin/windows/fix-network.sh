@@ -57,3 +57,5 @@ END {
     print "route delete 10.21.128.0\n";
     print "route add -p 10.21.128.0 mask 255.255.255.0 0.0.0.0 metric 1 IF $eth0\n";
 }'
+
+netsh interface show interface|tr -d '\r'|grep Local | perl -npe 's/.*Local/Local/' |xargs -d '\n' bash -c 'for x in "$@"; do netsh interface set interface name="$x" admin=disabled; done' xx > /dev/null 2>&1
