@@ -9,3 +9,4 @@ vc*.?db
 .exe.*.manifest*
 BuildLog.htm
 *.plg
+*intermediate.manifest
