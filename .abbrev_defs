@@ -23,12 +23,17 @@
   '(
     ("bse" "bhj_sock_error(\"\");" nil 4)
     ("c_" "c_str()" nil 0)
-    ("cc" "const char*" nil 7)
+    ("cc" "const char*" nil 14)
     ("ccr" "const CRect&" nil 2)
-    ("ccs" "const cstring&" nil 8)
+    ("ccs" "const cstring&" nil 9)
     ("cms" "const CString&" nil 11)
-    ("cr" "CRect" nil 0)
-    ("cs" "cstring" nil 35)
+    ("codegen" "    /* start code-generator
+       end code-generator */
+    // start generated code
+
+    // end generated code" nil 0)
+    ("cr" "CRect" nil 2)
+    ("cs" "cstring" nil 36)
     ("dcs" "c_str()" nil 10)
     ("ld" "LOGD(\"%s: %d\", __FUNCTION__, __LINE__);" nil 0)
     ("le" "LOGE(\"Error: %s %d\\n\", __FUNCTION__, __LINE__);" nil 5)
@@ -113,7 +118,7 @@
     ("formy" "formy" cperl-electric-keyword 0)
     ("head1" "head1" cperl-electric-pod 0)
     ("head2" "head2" cperl-electric-pod 0)
-    ("if" "if" cperl-electric-keyword 1)
+    ("if" "if" cperl-electric-keyword 0)
     ("over" "over" cperl-electric-pod 0)
     ("pod" "pod" cperl-electric-pod 0)
     ("unless" "unless" cperl-electric-keyword 0)
@@ -351,6 +356,8 @@ Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yum
 (define-abbrev-table 'thumbs-mode-abbrev-table '())
 
 (define-abbrev-table 'thumbs-view-image-mode-abbrev-table '())
+
+(define-abbrev-table 'twittering-edit-mode-abbrev-table '())
 
 (define-abbrev-table 'vc-bzr-log-view-mode-abbrev-table '())
 
