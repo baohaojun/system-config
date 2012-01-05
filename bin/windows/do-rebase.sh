@@ -2,8 +2,8 @@
 set -x
 chmod 777 "$TMP"
 me=$(whoami)
-meg=$(id|perl -npe 's/.*gid=(\d*).*/$1/')
-test "$1" = chown && chown -R $me.$meg $(wlp /|perl -npe 's/^(.):/"\/" . lc $1/e')
+meg=$(id|sed -e 's/.*gid=(\d*).*/$1/')
+test "$1" = chown && chown -R $me.$meg $(wlp /|sed -e 's/^(.):/"\/" . lc $1/e')
 function pause() {
     echo echo "$@"
     echo pause
@@ -18,4 +18,4 @@ function pause() {
     pause all done
 ) > /tmp/do-rebase.bat
 chmod +x /tmp/do-rebase.bat
-of /tmp/do-rebase.bat
+cygstart /tmp/do-rebase.bat
