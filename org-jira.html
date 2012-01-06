@@ -7,7 +7,7 @@ lang="en" xml:lang="en">
 <title>org-jira</title>
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-01-01 23:23:36 China Standard Time"/>
+<meta name="generated" content="2012-01-06 23:35:57 China Standard Time"/>
 <meta name="author" content=""/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -101,6 +101,7 @@ lang="en" xml:lang="en">
 <li><a href="#sec-2-4">2.4 Create new Jira issue in org mode </a></li>
 <li><a href="#sec-2-5">2.5 Convert existing org mode TODO item into Jira ticket </a></li>
 <li><a href="#sec-2-6">2.6 Edit existing Jira comments / add new comment </a></li>
+<li><a href="#sec-2-7">2.7 Open current issue in browser </a></li>
 </ul>
 </li>
 <li><a href="#sec-3">3 Usage </a></li>
@@ -149,7 +150,9 @@ For xml-rpc, there is already a <a href="http://www.emacswiki.org/emacs/org-jira
 <p>
 Luckily, the emacs-soap-client guy(s) already provided a sample
 jira2.el, so I started hacking by combining jira.el and jira2.el, the
-new jira2.el is <a href="http://github.com/baohaojun/org-jira/raw/master/jira2.el">here</a>.
+result is jiralib.el <a href="http://github.com/baohaojun/org-jira/raw/master/jiralib.el">here</a> (people suggested jira2.el is not a good
+name, as it can be quite confusing what the 2 means, and I totally
+agree, thus the name jiralib).
 </p>
 <p>
 After browsing Jira with jira2.el is implemented, I checked <a href="https://github.com/punchagan/org2blog">org2blog</a>
@@ -279,7 +282,20 @@ you will trade a normal TODO for a Jira ticket tracked TODO.
 <p>
 These are also supported.
 </p>
+</div>
 
+</div>
+
+<div id="outline-container-2-7" class="outline-3">
+<h3 id="sec-2-7"><span class="section-number-3">2.7</span> Open current issue in browser </h3>
+<div class="outline-text-3" id="text-2-7">
+
+
+<p>
+Last but not least, if you think org-jira can not perform some tasks
+you wanted, you can press a key combination (default "C-c i b") to
+open the current issue in an external browser such as firefox.
+</p>
 </div>
 </div>
 
@@ -311,9 +327,8 @@ Then put the following in your .emacs,
 </p>
 
 
-<pre class="src src-emacs-lisp">(setq jira2-url <span style="color: #3AA221;">"http://jira-host"</span>)
-(<span style="color: #ff00ff;">require</span> '<span style="color: #00ffff;">jira2</span>)
-(<span style="color: #ff00ff;">require</span> '<span style="color: #00ffff;">org-jira</span>)
+<pre class="src src-emacs-lisp">(setq jiralib-url <span style="color: #3AA221;">"http://jira-host"</span>)
+(<span style="color: #ff00ff;">require</span> '<span style="color: #00ffff;">org-jira</span>) <span style="color: #ff0000;">;</span><span style="color: #ff0000; font-style: italic;">jiralib is not explicitly required, since org-jira will load it</span>
 </pre>
 
 
@@ -327,16 +342,14 @@ be prompted for password).
 <p>  
 Then start syncing with <code>M-x org-jira-get-issues</code> .
 </p>
-<p>
-(Currently there is a bug in my code, so that you need to run the above command twice).
-</p>
+
 
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-01-01 23:23:36 China Standard Time</p>
+<p class="date">Date: 2012-01-06 23:35:57 China Standard Time</p>
 <p class="author">Author: </p>
 <p class="creator">Org version 7.7 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

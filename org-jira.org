@@ -24,7 +24,9 @@ For xml-rpc, there is already a [[http://www.emacswiki.org/emacs/org-jira.el][ji
 
 Luckily, the emacs-soap-client guy(s) already provided a sample
 jira2.el, so I started hacking by combining jira.el and jira2.el, the
-new jira2.el is [[http://github.com/baohaojun/org-jira/raw/master/jira2.el][here]].
+result is jiralib.el [[http://github.com/baohaojun/org-jira/raw/master/jiralib.el][here]] (people suggested jira2.el is not a good
+name, as it can be quite confusing what the 2 means, and I totally
+agree, thus the name jiralib).
 
 After browsing Jira with jira2.el is implemented, I checked [[https://github.com/punchagan/org2blog][org2blog]]
 for ideas of how to hack on org-mode, and started from his org2blog.el
@@ -93,6 +95,11 @@ you will trade a normal TODO for a Jira ticket tracked TODO.
 
 These are also supported.
 
+** Open current issue in browser
+
+Last but not least, if you think org-jira can not perform some tasks
+you wanted, you can press a key combination (default "C-c i b") to
+open the current issue in an external browser such as firefox.
 
 * Usage
 
@@ -108,9 +115,8 @@ in it so that I can post comments in Chinese).
 
 Then put the following in your .emacs, 
 #+begin_src emacs-lisp
-(setq jira2-url "http://jira-host")
-(require 'jira2)
-(require 'org-jira)
+(setq jiralib-url "http://jira-host")
+(require 'org-jira) ;jiralib is not explicitly required, since org-jira will load it
 #+end_src
  
 (If you have a ~/.authinfo file and corresponding entry for jira-host,
@@ -119,6 +125,5 @@ be prompted for password).
   
 Then start syncing with ~M-x org-jira-get-issues~ .
 
-(Currently there is a bug in my code, so that you need to run the above command twice).
 
 
