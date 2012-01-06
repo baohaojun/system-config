@@ -2033,6 +2033,7 @@ criteria can be provided via the optional match-string argument "
       '(
 	(".*"
 	 ("From" "Ask <ask@ask.com>")
+	 (signature "All the best\n\n Bao Haojun")
 	 )
 	(".*mrvl.*"
 	 ("From" "Bao Haojun <hjbao@marvell.com>")

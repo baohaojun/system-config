@@ -1,4 +1,6 @@
-* TODO 把bbdb的更新方式改成手动方式，不要自动更新
+* DONE 把bbdb的更新方式改成手动方式，不要自动更新			 :pe:
+  CLOSED: [2012-01-07 Sat 00:13]
+  - CLOSING NOTE [2012-01-07 Sat 00:13]
 
 * DONE 回复jira2.el/jira.el merge邮件					 :pe:
   CLOSED: [2012-01-05 Thu 22:43]
@@ -21,4 +23,8 @@ major mode, and only provided library for (the new) org-jira.el.
 Anyway, I will try to update jira.el and contact the original author to
 see if he agrees.
 
-* TODO merge jira2.el and jira.el					 :pe:
+* CANCELED merge jira2.el and jira.el					 :pe:
+  CLOSED: [2012-01-07 Sat 00:12]
+  - CLOSING NOTE [2012-01-07 Sat 00:12]
+    renamed jira2 to jiralib.
+
