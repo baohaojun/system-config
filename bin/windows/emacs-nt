@@ -1,6 +1,11 @@
 #!/bin/bash
 
-emacs_dir=~/external/emacs-nt/bin
+if test "$(basename -- "$1")" = emacs.exe -o "$(basename -- "$1")" = runemacs.exe; then
+    emacs_dir="$(dirname "$(readlink -f "$1")")"
+    shift
+else
+    emacs_dir=~/external/emacs-nt/bin
+fi
 if test "$(ps.pl emacs.exe|wc -l)" == 1; then
     rm -f ~/windows-config/.emacs.d/server/server
 fi

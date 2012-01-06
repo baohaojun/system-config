@@ -570,7 +570,7 @@
  '(ispell-program-name "aspell" t)
  '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
- '(jira2-url "http://bible/jira")
+ '(jiralib-url "http://localhost")
  '(keyboard-coding-system (quote cp936))
  '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
@@ -2005,7 +2005,6 @@ criteria can be provided via the optional match-string argument "
     (setq  end-of-text (point))
     (shell-command-on-region start-of-text end-of-text code-text nil t)))
 
-(require 'jira2)
 (require 'org-jira)
 (condition-case nil
     (load "jira-users")
