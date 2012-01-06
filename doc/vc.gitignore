@@ -10,3 +10,4 @@ vc*.?db
 BuildLog.htm
 *.plg
 *intermediate.manifest
+*embed.manifest
