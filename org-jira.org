@@ -115,8 +115,15 @@ in it so that I can post comments in Chinese).
 
 Then put the following in your .emacs, 
 #+begin_src emacs-lisp
-(setq jiralib-url "http://jira-host")
-(require 'org-jira) ;jiralib is not explicitly required, since org-jira will load it
+(setq jiralib-url "http://jira-host/jira")
+; you need make sure the jiralib-url is correct. Login your jira
+; server in browser, the home page URL should be like:
+; https://issues.apache.org/jira/secure/Dashboard.jspa
+; remove the "/secure/Dashboard.jspa" part and you get the jiralib-url: 
+; "https://issues.apache.org/jira"
+
+(require 'org-jira) 
+; jiralib is not explicitly required, since org-jira will load it
 #+end_src
  
 (If you have a ~/.authinfo file and corresponding entry for jira-host,

@@ -7,7 +7,7 @@ lang="en" xml:lang="en">
 <title>org-jira</title>
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-01-06 23:35:57 China Standard Time"/>
+<meta name="generated" content="2012-01-07 21:04:03 China Standard Time"/>
 <meta name="author" content=""/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -327,8 +327,15 @@ Then put the following in your .emacs,
 </p>
 
 
-<pre class="src src-emacs-lisp">(setq jiralib-url <span style="color: #3AA221;">"http://jira-host"</span>)
-(<span style="color: #ff00ff;">require</span> '<span style="color: #00ffff;">org-jira</span>) <span style="color: #ff0000;">;</span><span style="color: #ff0000; font-style: italic;">jiralib is not explicitly required, since org-jira will load it</span>
+<pre class="src src-emacs-lisp">(setq jiralib-url <span style="color: #3AA221;">"http://jira-host/jira"</span>)
+<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">you need make sure the jiralib-url is correct. Login your jira</span>
+<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">server in browser, the home page URL should be like:</span>
+<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">https://issues.apache.org/jira/secure/Dashboard.jspa</span>
+<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">remove the "/secure/Dashboard.jspa" part and you get the jiralib-url: </span>
+<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">"https://issues.apache.org/jira"</span>
+
+(<span style="color: #ff00ff;">require</span> '<span style="color: #00ffff;">org-jira</span>) 
+<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">jiralib is not explicitly required, since org-jira will load it</span>
 </pre>
 
 
@@ -349,7 +356,7 @@ Then start syncing with <code>M-x org-jira-get-issues</code> .
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-01-06 23:35:57 China Standard Time</p>
+<p class="date">Date: 2012-01-07 21:04:03 China Standard Time</p>
 <p class="author">Author: </p>
 <p class="creator">Org version 7.7 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
