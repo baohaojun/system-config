@@ -9,13 +9,16 @@ import time, math, random, sys
 import traceback
 import os, re
 import win32con
+import ctypes
 
 def main(*argv):
-    argv1 = argv[1].upper()
-    argv2 = argv[2].upper()
-    assert argv1 in dir(win32con)
-    assert argv2 in dir(win32con)
-    for x in argv[3:]:
-        PostMessage(int(x, 0), eval(argv1), eval(argv2), 0)
+    if argv[1] == "on":
+        SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, -1)
+    elif (argv[1] == "off"):
+        SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_MONITORPOWER, 2)
+        ctypes.windll.user32.LockWorkStation()
+
+    else:
+        print "Usage: monitor-on-off.py on/off"
 if __name__ == '__main__':
     sys.exit(main(*sys.argv))

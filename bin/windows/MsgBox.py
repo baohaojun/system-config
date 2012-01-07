@@ -4,4 +4,8 @@ from win32con import *
 from win32api import *
 import sys
 
-MessageBox(None, sys.argv[1], sys.argv[2], MB_YESNO)
+if MessageBox(None, sys.argv[1], sys.argv[2], MB_YESNO) == IDYES:
+    exit(0)
+else:
+    exit(1)
+
