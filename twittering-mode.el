@@ -7562,7 +7562,7 @@ invoking \"convert\". Otherwise, cropped images are displayed.")
 NOTE: This API is rate limited.")
 
 (defvar twittering-icon-storage-file
-  (expand-file-name "~/.twittering-mode-icons.gz")
+  (expand-file-name "~/.emacs.d/twittering/icons.gz")
   "*The file to which icon images are stored.
 `twittering-icon-storage-limit' determines the number icons stored in the
 file.
@@ -7576,7 +7576,7 @@ by `twittering-icon-storage-file'.")
 (defvar twittering-icon-storage-recent-icons nil
   "List of recently rendered icons.")
 
-(defvar twittering-icon-storage-limit 500
+(defvar twittering-icon-storage-limit nil
   "*How many icons are stored in the persistent storage.
 If `twittering-use-icon-storage' is nil, this variable is ignored.
 If a positive integer N, `twittering-save-icon-properties' saves N icons that
@@ -7770,7 +7770,11 @@ image are displayed."
              image-url (string-as-unibyte
                         (twittering-url-retrieve-synchronously image-url)))
             (twittering-make-icon-string beg end image-url sync))
-        (twittering-url-retrieve-async image-url 'twittering-register-image-data)
+        (twittering-url-retrieve-async
+         image-url
+         `(lambda (&rest args)
+            (let ((twittering-convert-fix-size ,twittering-convert-fix-size))
+              (apply 'twittering-register-image-data args))))
         icon-string)))))
 
 (defun twittering-make-original-icon-string (beg end image-url &optional sync)
@@ -7805,8 +7809,9 @@ image are displayed."
          (mapcar (lambda (e)
                    (apply 'propertize
                           (assqref 'phrase e)
-                          (twittering-get-display-spec-for-icon
-                           (assqref 'url e))))
+                          (let (twittering-convert-fix-size)
+                            (twittering-get-display-spec-for-icon
+                             (assqref 'url e)))))
                  twittering-emotions-phrase-url-alist)))))
   (let ((url (some (lambda (e)
                      (when (equal (assqref 'phrase e) phrase)
@@ -7814,7 +7819,8 @@ image are displayed."
                    twittering-emotions-phrase-url-alist)))
     (insert (apply 'propertize
                    phrase
-                   (twittering-get-display-spec-for-icon url)))))
+                   (let (twittering-convert-fix-size)
+                     (twittering-get-display-spec-for-icon url))))))
 
 (defcustom twittering-image-height-threshold 40
   "For images whose height is bigger than this, we will show it in a separate
@@ -7942,47 +7948,62 @@ handler. "
               (lambda (size hash)
                 (maphash (lambda (url properties)
                            (unless (equal properties dummy-icon-properties)
-                             (setq result (cons (cons size url) result))))
+                             (setq result (cons (list size url) result))))
                          hash))
               twittering-icon-prop-hash)
              result))
           (t
-           (reverse twittering-icon-storage-recent-icons)))))
+           (reverse twittering-icon-storage-recent-icons))))
+        ;; Bind `default-directory' to the temporary directory
+        ;; because it is possible that the directory pointed by
+        ;; `default-directory' has been already removed.
+        (default-directory temporary-file-directory))
     (when (require 'jka-compr nil t)
       (with-auto-compression-mode
-        (with-temp-file filename
-          (insert "( 2 ")
-          (prin1 (cons 'emacs-version emacs-version) (current-buffer))
-          (insert "(icon-list ")
-          (mapc (lambda (entry)
-                  (let* ((size (elt entry 0))
-                         (url (elt entry 1))
-                         (properties
-                          (gethash url
-                                   (gethash size twittering-icon-prop-hash))))
-                    (insert (format "(%d " size))
-                    (prin1 url (current-buffer))
-                    (insert " ")
-                    (prin1 properties (current-buffer))
-                    (insert ")\n")))
-                stored-data)
-          (insert "))"))))))
+        (let ((coding-system-for-write 'binary))
+          (with-temp-file filename
+            (insert "( 2 ")
+            (prin1 (cons 'emacs-version emacs-version) (current-buffer))
+            (insert "(icon-list ")
+            (mapc
+             (lambda (entry)
+               (let* ((size (elt entry 0))
+                      (url (elt entry 1))
+                      (properties
+                       (gethash url
+                                (gethash size twittering-icon-prop-hash))))
+                 (insert (if size
+                             (format "(%d " size)
+                           "(nil "))
+                 (prin1 url (current-buffer))
+                 (insert " ")
+                 (prin1 properties (current-buffer))
+                 (insert ")\n")))
+             stored-data)
+            (insert "))")))))))
 
 (defun twittering-load-icon-properties (&optional filename)
   (let* ((filename (or filename twittering-icon-storage-file))
-         (data
-          (with-temp-buffer
-            (condition-case err
-                (cond
-                 ((and (require 'jka-compr)
-                       (file-exists-p filename))
-                  (with-auto-compression-mode (insert-file-contents filename))
-                  (read (current-buffer)))
-                 (t
-                  nil))
-              (error
-               (message "Failed to load icon images. %s" (cdr err))
-               nil)))))
+	 ;; Bind `default-directory' to the temporary directory
+	 ;; because it is possible that the directory pointed by
+	 ;; `default-directory' has been already removed.
+	 (default-directory temporary-file-directory)
+	 (data
+	  (with-temp-buffer
+	    (condition-case err
+		(cond
+		 ((and (require 'jka-compr)
+		       (file-exists-p filename))
+		  (with-auto-compression-mode
+		    (let ((coding-system-for-read 'binary)
+			  (coding-system-for-write 'binary))
+		      (insert-file-contents filename)))
+		  (read (current-buffer)))
+		 (t
+		  nil))
+	      (error
+	       (message "Failed to load icon images. %s" (cdr err))
+	       nil)))))
     (cond
      ((equal 2 (car data))
       (let ((version (cdr (assq 'emacs-version data))))
