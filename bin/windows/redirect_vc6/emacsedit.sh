@@ -11,5 +11,5 @@ for ((x=0; x<${#argv[@]}; x++)); do
     fi
 done
 
-echo "${argv[@]}" >> ~/emacsedit.log
+echo -- "${argv[@]}" >> ~/emacsedit.log
 emacsclient "${argv[@]}"
