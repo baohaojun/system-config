@@ -570,7 +570,7 @@
  '(ispell-program-name "aspell" t)
  '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
- '(jiralib-url "http://localhost")
+ '(jiralib-url "http://bible/jira")
  '(keyboard-coding-system (quote cp936))
  '(lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(longlines-auto-wrap nil)
