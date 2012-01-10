@@ -10,7 +10,7 @@
 using System;
 using System.Collections;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class Timeline {
 

@@ -1,0 +1,38 @@
+<Type Name="UnixTransport" FullName="Beagrep.UnixTransport">
+  <TypeSignature Language="C#" Value="public class UnixTransport : Beagrep.Transport" />
+  <AssemblyInfo>
+    <AssemblyName>Beagrep</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Beagrep.Transport</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixTransport ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixTransport (string client_name);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="client_name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="client_name">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

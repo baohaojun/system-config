@@ -34,7 +34,7 @@ using System;
 using System.Collections;
 using System.IO;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class StringMatcher {
 

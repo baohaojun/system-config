@@ -27,17 +27,17 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 	
 	public static class SystemPriorities {
 
 		//////////////////////////////////////////////////////////////
 		// IO priorities
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern int set_io_priority_idle ();
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern int set_io_priority_best_effort (int ioprio);
 
 		static public void ReduceIoPriority ()
@@ -74,10 +74,10 @@ namespace Beagle.Util {
 		//////////////////////////////////////////////////////////////
 		// Scheduler policies
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern int set_scheduler_policy_batch ();
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern int set_scheduler_policy_other ();
 
 		static public bool SetSchedulerPolicyBatch ()

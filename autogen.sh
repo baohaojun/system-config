@@ -4,7 +4,7 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-PKG_NAME="beagle"
+PKG_NAME="beagrep"
 REQUIRED_AUTOMAKE_VERSION=1.8
 
 (test -f $srcdir/configure.in \

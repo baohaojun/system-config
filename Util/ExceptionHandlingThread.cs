@@ -30,7 +30,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class ExceptionHandlingThread {
 
@@ -152,7 +152,7 @@ namespace Beagle.Util {
 			}
 		}
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern uint wrap_gettid ();
 	}
 }

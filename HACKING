@@ -2,7 +2,7 @@
 Subversion
 ----------
 
-Beagle's source repository is in GNOME subversion, in the module 'beagle'.
+Beagrep's source repository is in GNOME subversion, in the module 'beagrep'.
 
 For information on GNOME svn, see:
 http://developer.gnome.org/tools/svn.html.
@@ -12,8 +12,8 @@ Patches
 -------
 
 If you have a patch you'd like to submit, please open a tracking bug on
-bugzilla.gnome.org (product 'beagle').  Attach the patch (and any additional
-required files) to the bug.  The core developers are all on the beagle-bugs
+bugzilla.gnome.org (product 'beagrep').  Attach the patch (and any additional
+required files) to the bug.  The core developers are all on the beagrep-bugs
 mailing list, so we'll see that it is there.  We will review it, but if people
 are busy it might not happen right away.  
 
@@ -27,9 +27,9 @@ Organization
 Code that parses files or otherwise interacts w/ low-level details from
 third-party apps (i.e. parsing gaim logs, undocumented nautilus metafiles and
 stuff from .gnome2/epiphany, etc.) should probably be broken out into small
-chunks of semi-independent code and placed in Beagle/Util.  That kind of code
+chunks of semi-independent code and placed in Beagrep/Util.  That kind of code
 is just ugly by nature, and I want to keep it from getting mixed into the
-beagle code as much as possible.
+beagrep code as much as possible.
 
 Anything in Util that requires gtk+ or gnome should be added to the UiUtil.dll
 assembly.  Otherwise, add it to the Util.dll assembly.
@@ -38,7 +38,7 @@ assembly.  Otherwise, add it to the Util.dll assembly.
 Coding Style
 ------------
 
-Beagle attempts to follow the Mono coding conventions.  The following
+Beagrep attempts to follow the Mono coding conventions.  The following
 description of those conventions was shamelessly stolen from Dashboard's
 HACKING file.
 

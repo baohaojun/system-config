@@ -36,7 +36,7 @@ using System.Threading;
 
 using Mono.Unix.Native;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class Inotify {
 
@@ -92,21 +92,21 @@ namespace Beagle.Util {
 			public uint      len;
 		}
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern int inotify_glue_init ();
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern int inotify_glue_watch (int fd, [MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Mono.Unix.Native.FileNameMarshaler))] string filename, EventType mask);
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern int inotify_glue_ignore (int fd, int wd);
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern unsafe void inotify_snarf_events (int fd,
 								out int nr,
 								out IntPtr buffer);
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern void inotify_snarf_cancel ();
 
 		/////////////////////////////////////////////////////////////////////////////////////
@@ -116,12 +116,12 @@ namespace Beagle.Util {
 
 		static Inotify ()
 		{
-			if (Environment.GetEnvironmentVariable ("BEAGLE_DISABLE_INOTIFY") != null) {
-				Logger.Log.Debug ("BEAGLE_DISABLE_INOTIFY is set");
+			if (Environment.GetEnvironmentVariable ("BEAGREP_DISABLE_INOTIFY") != null) {
+				Logger.Log.Debug ("BEAGREP_DISABLE_INOTIFY is set");
 				return;
 			}
 
-			if (Environment.GetEnvironmentVariable ("BEAGLE_INOTIFY_VERBOSE") != null)
+			if (Environment.GetEnvironmentVariable ("BEAGREP_INOTIFY_VERBOSE") != null)
 				Inotify.Verbose = true;
 
 			try {

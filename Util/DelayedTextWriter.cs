@@ -28,7 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	// This allows you to delay instantiating a TextWriter
 	// (and thus e.g. opening a file) until the first

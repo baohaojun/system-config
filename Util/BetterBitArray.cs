@@ -34,7 +34,7 @@
 using System;
 using System.Collections;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 	[Serializable]
 	public class BetterBitArray : ICollection, ICloneable {
 		int [] _array;

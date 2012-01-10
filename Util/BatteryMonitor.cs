@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 using Hal;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public static class BatteryMonitor {
 

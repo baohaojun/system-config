@@ -27,11 +27,11 @@
 using System;
 using System.IO;
 
-using Beagle.Daemon;
+using Beagrep.Daemon;
 
-namespace Beagle.Filters {
+namespace Beagrep.Filters {
 
-	public class FilterText : Beagle.Daemon.Filter {
+	public class FilterText : Beagrep.Daemon.Filter {
 
 		public FilterText ()
 		{
@@ -42,7 +42,7 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (Beagle.Daemon.FilterFlavor.NewFromMimeType ("text/x-bibtex"));
+			AddSupportedFlavor (Beagrep.Daemon.FilterFlavor.NewFromMimeType ("text/x-bibtex"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xhtml+xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-perl"));
@@ -147,7 +147,7 @@ namespace Beagle.Filters {
 			// data files, or other bits of not-particularly-human-readable junk
 			// that will tend to clog up our indexes.
 			if (file.Length > LENGTH_CUTOFF) {
-				Beagle.Util.Logger.Log.Debug ("{0} is too large to filter!", file.FullName);
+				Beagrep.Util.Logger.Log.Debug ("{0} is too large to filter!", file.FullName);
 				Error ();
 				return;
 			}

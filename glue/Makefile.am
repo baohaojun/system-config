@@ -3,8 +3,8 @@ INCLUDES = $(MONO_CFLAGS)
 EXTRA_GLUE_SOURCES =
 EXTRA_GLUE_LIBADD =
 
-BEAGLED_GLUE_SOURCES =		\
-	beagled-utils.c
+BEAGREPD_GLUE_SOURCES =		\
+	beagrepd-utils.c
 
 if ENABLE_INOTIFY
 EXTRA_GLUE_SOURCES +=		\
@@ -48,8 +48,8 @@ XDGMIME_GLUE_SOURCES =		\
 	xdgmime/xdgmimecache.c	\
 	xdgmime/xdgmimecache.h
 
-libbeagleglue_la_SOURCES = 		\
-	$(BEAGLED_GLUE_SOURCES)		\
+libbeagrepglue_la_SOURCES = 		\
+	$(BEAGREPD_GLUE_SOURCES)		\
 	$(IOPRIO_GLUE_SOURCES)		\
 	$(SCHEDULER_GLUE_SOURCES)	\
 	$(SPAWN_GLUE_SOURCES)		\
@@ -57,13 +57,13 @@ libbeagleglue_la_SOURCES = 		\
 	$(XDGMIME_GLUE_SOURCES)		\
 	$(EXTRA_GLUE_SOURCES)
 
-libbeagleglue_la_LIBADD =	\
+libbeagrepglue_la_LIBADD =	\
 	$(SYSINFO_GLUE_LIBADD)	\
 	$(EXTRA_GLUE_LIBADD)
 
 gluelibdir = $(pkglibdir)
 gluelib_LTLIBRARIES = 		\
-	libbeagleglue.la
+	libbeagrepglue.la
 
 COND_SOURCES = 			\
 	inotify-glue.c

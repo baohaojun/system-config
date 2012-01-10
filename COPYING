@@ -1,5 +1,5 @@
 
-Various parts of Beagle are covered by various licenses.  If you want to
+Various parts of Beagrep are covered by various licenses.  If you want to
 incorporate any of this code into your own project, be sure to consult the
 license information in the source code.  Some subprojects instead contain a
 COPYING, LICENSE, or README file which lists the licensing terms.
@@ -20,7 +20,7 @@ Subprojects include:
 
 -----------------------------------------------------------------------------
 
-The core parts of Beagle are under the MIT license (aka the X11 license):
+The core parts of Beagrep are under the MIT license (aka the X11 license):
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

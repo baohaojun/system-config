@@ -27,7 +27,7 @@
 using System;
 using System.Globalization;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class DateTimeUtil {
 

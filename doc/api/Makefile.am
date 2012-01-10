@@ -1,15 +1,15 @@
 ASSEMBLIES = 						\
-	$(top_builddir)/BeagleClient/Beagle.dll
+	$(top_builddir)/BeagrepClient/Beagrep.dll
 
 LOCAL_ASSEMBLIES =					\
 	$(top_builddir)/Util/Util.dll
 
 UPDATE_ASSEMBLIES = $(addprefix -assembly:, $(ASSEMBLIES))
-UPDATER = $(MONODOCER) -delete -path:BeagleClient -name BeagleClient -pretty $(UPDATE_ASSEMBLIES)
+UPDATER = $(MONODOCER) -delete -path:BeagrepClient -name BeagrepClient -pretty $(UPDATE_ASSEMBLIES)
 
 if BUILD_DOCS
 SOURCESDIR=$(prefix)/lib/monodoc/sources
-TARGETS=beagle-docs.zip beagle-docs.tree beagle-docs.source
+TARGETS=beagrep-docs.zip beagrep-docs.tree beagrep-docs.source
 else
 SOURCESDIR=$(datadir)
 TARGETS=
@@ -18,41 +18,41 @@ endif
 monodocdir=$(SOURCESDIR)
 monodoc_DATA=$(TARGETS)
 
-assemble: beagle-docs.zip beagle-docs.tree
+assemble: beagrep-docs.zip beagrep-docs.tree
 
 DOCFILES =						\
-	$(wildcard $(srcdir)/BeagleClient/*.xml)	\
-	$(wildcard $(srcdir)/BeagleClient/Beagle/*.xml)
+	$(wildcard $(srcdir)/BeagrepClient/*.xml)	\
+	$(wildcard $(srcdir)/BeagrepClient/Beagrep/*.xml)
 
-beagle-docs.zip: $(DOCFILES)
-	$(MDASSEMBLER) --ecma $(srcdir)/BeagleClient --out beagle-docs
+beagrep-docs.zip: $(DOCFILES)
+	$(MDASSEMBLER) --ecma $(srcdir)/BeagrepClient --out beagrep-docs
 
-beagle-docs.tree: beagle-docs.zip
+beagrep-docs.tree: beagrep-docs.zip
 
 update:
 	MONO_PATH=$(top_builddir)/Util $(UPDATER)
 
 update-html:
-	if [ -d beagleclient-web-docs ]; then \
-	        rm -rf beagleclient-web-docs; \
+	if [ -d beagrepclient-web-docs ]; then \
+	        rm -rf beagrepclient-web-docs; \
 	fi; \
-	mkdir beagleclient-web-docs; \
-	monodocs2html --source BeagleClient --dest beagleclient-web-docs;
+	mkdir beagrepclient-web-docs; \
+	monodocs2html --source BeagrepClient --dest beagrepclient-web-docs;
 
 update-delete:
 	MONO_PATH=$(top_builddir)/Util $(UPDATER) --delete
 
-CLEANFILES = beagle-docs.zip beagle-docs.tree
+CLEANFILES = beagrep-docs.zip beagrep-docs.tree
 
-EXTRA_DIST = beagle-docs.source
+EXTRA_DIST = beagrep-docs.source
 
-NAMESPACES = Beagle
+NAMESPACES = Beagrep
 
 dist-hook:
-	mkdir -p $(distdir)/BeagleClient
-	cp $(srcdir)/BeagleClient/*.xml $(distdir)/BeagleClient/
+	mkdir -p $(distdir)/BeagrepClient
+	cp $(srcdir)/BeagrepClient/*.xml $(distdir)/BeagrepClient/
 	for i in $(NAMESPACES); do							\
-		mkdir -p $(distdir)/BeagleClient/$$i;					\
-		cp $(srcdir)/BeagleClient/$$i/*.xml $(distdir)/BeagleClient/$$i;	\
+		mkdir -p $(distdir)/BeagrepClient/$$i;					\
+		cp $(srcdir)/BeagrepClient/$$i/*.xml $(distdir)/BeagrepClient/$$i;	\
 	done
 

@@ -2,15 +2,15 @@
 AUTOMAKE_OPTIONS = 1.8
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = beagle-0.0.pc beagle-daemon.pc
+pkgconfig_DATA = beagrep-0.0.pc beagrep-daemon.pc
 
 SUBDIRS =
 
 SUBDIRS +=			\
 	Util			\
 	glue			\
-	BeagleClient            \
-	beagled                 \
+	BeagrepClient            \
+	beagrepd                 \
 	Filters
 
 if BUILD_DOCS
@@ -25,7 +25,7 @@ SUBDIRS +=			\
 EXTRA_DIST = 			\
 	HACKING			\
 	$(pkgconfig_DATA) 	\
-	beagle.spec
+	beagrep.spec
 
 DISTCHECK_CONFIGURE_FLAGS = --disable-epiphany-extension-install --enable-docs
 

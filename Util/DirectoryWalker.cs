@@ -32,7 +32,7 @@ using System.Text;
 
 using Mono.Unix.Native;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class DirectoryWalker {
 
@@ -45,7 +45,7 @@ namespace Beagle.Util {
 		[DllImport ("libc", SetLastError = true)]
 		private static extern int closedir (IntPtr dir);
 
-		[DllImport ("libbeagleglue", EntryPoint = "beagled_utils_readdir", SetLastError = true)]
+		[DllImport ("libbeagrepglue", EntryPoint = "beagrepd_utils_readdir", SetLastError = true)]
 		private static extern int sys_readdir (IntPtr dir, [Out] byte[] buf, int max_len);
 		
 		private static Encoding filename_encoding = Encoding.Default;

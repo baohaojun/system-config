@@ -31,7 +31,7 @@ using System.Text;
 using System.Xml;
 using System.Collections.Generic;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public abstract class Note {
 

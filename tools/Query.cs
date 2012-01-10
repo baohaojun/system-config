@@ -35,13 +35,13 @@ using System.Runtime.InteropServices;
 
 using GLib;
 
-using Beagle;
-using Beagle.Util;
-using Beagle.Daemon;
+using Beagrep;
+using Beagrep.Util;
+using Beagrep.Daemon;
 
 // Assembly information
-[assembly: AssemblyTitle ("beagle-query")]
-[assembly: AssemblyDescription ("Command-line interface to the Beagle search system")]
+[assembly: AssemblyTitle ("beagrep-query")]
+[assembly: AssemblyDescription ("Command-line interface to the Beagrep search system")]
 
 public class QueryTool {
 
@@ -164,7 +164,7 @@ public class QueryTool {
 		VersionFu.PrintHeader ();
 
 		string usage =
-			"Usage: beagle-query [OPTIONS] <query string>\n\n" +
+			"Usage: beagrep-query [OPTIONS] <query string>\n\n" +
 			"Options:\n" +
 			"  --verbose\t\tPrint detailed information about each hit.\n" +
 			"  --cache\t\tShow the entire cached text instead of a snippet\n" +
@@ -189,7 +189,7 @@ public class QueryTool {
 			"  --version\t\tPrint version information.\n" +
 			"\n" +
 			"Query string supports an advanced query syntax.\n" +
-			"For details of the query syntax, please see http://beagle-project.org/Searching_Data\n" +
+			"For details of the query syntax, please see http://beagrep-project.org/Searching_Data\n" +
 			"Note: Quotes (\" or \') need to be shell escaped if used.\n";
 
 		Console.WriteLine (usage);
@@ -219,7 +219,7 @@ public class QueryTool {
 		try {
 			query.SendAsync ();
 		} catch (Exception ex) {
-			Console.WriteLine ("Could not connect to the Beagle daemon.  The daemon probably isn't running.");
+			Console.WriteLine ("Could not connect to the Beagrep daemon.  The daemon probably isn't running.");
 			Console.WriteLine (ex);
 			System.Environment.Exit (-1);
 		}

@@ -31,16 +31,16 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 	public class XdgMime {
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern IntPtr xdg_mime_get_mime_type_from_file_name (string file_name);
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern IntPtr xdg_mime_get_mime_type_for_data ([In] byte[] data, IntPtr len);
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern bool xdg_mime_mime_type_subclass (string subclass, string superclass);
 
 		public static string GetMimeTypeFromFileName (string file_name)

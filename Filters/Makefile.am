@@ -4,7 +4,7 @@ CSC = $(MCS) -debug
 
 TARGET = Filters.dll
 
-CSFLAGS = -target:library $(BEAGLE_DEFINES)
+CSFLAGS = -target:library $(BEAGREP_DEFINES)
 
 # Found at http://sharptoolbox.madgeek.com/
 
@@ -18,11 +18,11 @@ CSFILES = 				\
 
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
-	../BeagleClient/Beagle.dll		\
-	../beagled/BeagleDaemonPlugins.dll
+	../BeagrepClient/Beagrep.dll		\
+	../beagrepd/BeagrepDaemonPlugins.dll
 
 ASSEMBLIES =				\
-	$(BEAGLED_LIBS)			\
+	$(BEAGREPD_LIBS)			\
 	$(SHARPZIPLIB_LIBS)		\
 	$(TAGLIB_SHARP_LIBS)		\
 	-r:Mono.Posix			\

@@ -27,14 +27,14 @@
 
 
 # Get the config directory
-if [ -n "${BEAGLE_HOME}" ]; then
-	CONFDIR="${BEAGLE_HOME}/.beagle/config"
-elif [ -n "${BEAGLE_STORAGE}" ]; then
-	CONFDIR="${BEAGLE_STORAGE}/config"
-elif [ -n "${BEAGLE_CONF_DIR}" ]; then
-	CONFDIR="${BEAGLE_CONF_DIR}"
+if [ -n "${BEAGREP_HOME}" ]; then
+	CONFDIR="${BEAGREP_HOME}/.beagrep/config"
+elif [ -n "${BEAGREP_STORAGE}" ]; then
+	CONFDIR="${BEAGREP_STORAGE}/config"
+elif [ -n "${BEAGREP_CONF_DIR}" ]; then
+	CONFDIR="${BEAGREP_CONF_DIR}"
 else
-	CONFDIR="/etc/beagle"
+	CONFDIR="/etc/beagrep"
 fi
 
 CONFFILE="${CONFDIR}/blocate.conf"
@@ -50,8 +50,8 @@ source "${CONFFILE}"
 print_help() {
 	# Use here-documents for great justice.
 	cat <<-DELIM
-		blocate: Special locate powered by Beagle
-		Web page: http://www.beagle-project.org/
+		blocate: Special locate powered by Beagrep
+		Web page: http://www.beagrep-project.org/
 		Usage: blocate [OPTIONS] <query string>
 
 		Options:
@@ -59,7 +59,7 @@ print_help() {
 		  -d, --database PATH	    query backend given by PATH instead of default
 		  			    Both of the above options can be repeated.
 					    If they are specified then the default backends are ignored.
-					    Default backends are specified in ~/.beagle/config/blocate.conf or /etc/beagle/blocate.conf
+					    Default backends are specified in ~/.beagrep/config/blocate.conf or /etc/beagrep/blocate.conf
 	DELIM
 }
 
@@ -106,5 +106,5 @@ if [ "$ignore_config" != "true" ]; then
 fi
 
 # We add "--backend none" else it'll query all backends if there are no --backend params
-beagle-static-query ${OPTS[@]} --backend none
+beagrep-static-query ${OPTS[@]} --backend none
 

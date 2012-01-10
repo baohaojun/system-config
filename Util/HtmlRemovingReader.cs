@@ -28,7 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	// Light weight textreader to remove HTML tags from the stream
 	// For heavy duty real html-to-text reader, use Filters/FilterHtml

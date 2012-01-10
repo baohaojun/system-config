@@ -26,9 +26,9 @@
 //
 
 using System;
-using Beagle.Daemon;
+using Beagrep.Daemon;
 
-namespace Beagle.Filters {
+namespace Beagrep.Filters {
 
 	// This is a dummy filter which does "nothing" for files which are not handled. This is done to:
 	// * While crawling, if FilterIgnore is set, then do not resubmit the file for indexing. 
@@ -57,7 +57,7 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			// Add mimetypes that beagle surely will not filter
+			// Add mimetypes that beagrep surely will not filter
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-object"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sharedlib"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-java")); // .class files

@@ -27,7 +27,7 @@
 using System;
 using System.IO;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 	
 	public class FileSystem {
 

@@ -27,11 +27,11 @@
 using System;
 using System.Collections;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class TopScores {
 
-		private static bool Debug = Beagle.Util.Debug.Enabled ("TopScores");
+		private static bool Debug = Beagrep.Util.Debug.Enabled ("TopScores");
 
 		private struct Node {
 			public long Score;

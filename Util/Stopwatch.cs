@@ -26,7 +26,7 @@
 
 using System;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class Stopwatch {
 

@@ -28,7 +28,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public abstract class TypeCacheAttribute : Attribute {
 		private Type[] types;

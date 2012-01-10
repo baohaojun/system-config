@@ -29,7 +29,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 	public static class Debug {
 		static Dictionary<string, bool> debug_table = new Dictionary<string, bool> ();
 	
@@ -40,8 +40,8 @@ namespace Beagle.Util {
 	
 		static void SetupDebugTable ()
 		{
-			// User can pass env var "BEAGLE_DEBUG=classname1,classname2,classname3"
-			string debug_str = Environment.GetEnvironmentVariable ("BEAGLE_DEBUG");
+			// User can pass env var "BEAGREP_DEBUG=classname1,classname2,classname3"
+			string debug_str = Environment.GetEnvironmentVariable ("BEAGREP_DEBUG");
 			if (String.IsNullOrEmpty (debug_str))
 				return;
 	

@@ -31,9 +31,9 @@ using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 
-using Beagle.Util;
+using Beagrep.Util;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class FileAdvise {
 

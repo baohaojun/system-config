@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 using Mono.Unix;
 using GLib;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class SafeProcess {
 
@@ -93,7 +93,7 @@ namespace Beagle.Util {
 			set { use_lang_c = value; }
 		}
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		static extern void spawn_async_with_pipes_and_limits (string[] argv,
 								      string[] env,
 								      int cpu_limit,

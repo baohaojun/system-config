@@ -32,26 +32,26 @@ using System.Text;
 using System.Runtime.InteropServices;
 using Mono.Unix.Native;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class ExtendedAttribute {
 
 		// FIXME: Deprecate post 0.3.3
 		private static string AddPrefix (string name)
 		{
-			return "user.Beagle." + name;
+			return "user.Beagrep." + name;
 		}
 
-		private const string AttrName = "user.Beagle";
+		private const string AttrName = "user.Beagrep";
 
 		static Encoding encoding = new UTF8Encoding ();
 
-		// Set a beagle attribute
+		// Set a beagrep attribute
 		public static void Set (string path, string value) {
 			Set (path, AttrName, value);
 		}
 
-		// Set a non-beagle attribute
+		// Set a non-beagrep attribute
 		private static void Set (string path, string name, string value)
 		{
 			if (! FileSystem.Exists (path))
@@ -63,7 +63,7 @@ namespace Beagle.Util {
 				throw new IOException ("Could not set extended attribute on " + path + ": " + Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ()));
 		}
 
-		// Check if a beagle attribute exists
+		// Check if a beagrep attribute exists
 		public static bool Exists (string path)
 		{
 			if (! FileSystem.Exists (path))
@@ -85,13 +85,13 @@ namespace Beagle.Util {
 			return size >= 0;
 		}
 
-		// Get a beagle attribute
+		// Get a beagrep attribute
 		public static string Get (string path)
 		{
 			return Get (path, AttrName);
 		}
 
-		// Get a non-beagle attribute
+		// Get a non-beagrep attribute
 		public static string Get (string path, string name)
 		{
 			if (! FileSystem.Exists (path))
@@ -104,7 +104,7 @@ namespace Beagle.Util {
 			return encoding.GetString (buffer);
 		}
 
-		// Remove a beagle attribute
+		// Remove a beagrep attribute
 		public static void Remove (string path)
 		{
 			if (! FileSystem.Exists (path))
@@ -121,7 +121,7 @@ namespace Beagle.Util {
 			Remove (path, AddPrefix (name));
 		}
 
-		// Remove a non-beagle attribute
+		// Remove a non-beagrep attribute
 		private static void Remove (string path, string name)
 		{
 			if (! FileSystem.Exists (path))
@@ -135,7 +135,7 @@ namespace Beagle.Util {
 		// Check to see if it is possible to get and set attributes on a given file.
 		public static bool Test (string path)
 		{
-			const string test_key = "user.Beagle.__test_key__";
+			const string test_key = "user.Beagrep.__test_key__";
 			const string test_value = "__test_value__";
 
 			try {
@@ -158,8 +158,8 @@ namespace Beagle.Util {
 				if (ea_support_tested)
 					return ea_supported;
 
-				if (Environment.GetEnvironmentVariable ("BEAGLE_DISABLE_XATTR") != null) {
-					Logger.Log.Debug ("BEAGLE_DISABLE_XATTR is set");
+				if (Environment.GetEnvironmentVariable ("BEAGREP_DISABLE_XATTR") != null) {
+					Logger.Log.Debug ("BEAGREP_DISABLE_XATTR is set");
 					ea_supported = false;
 					ea_support_tested = true;
 					return false;

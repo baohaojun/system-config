@@ -4,11 +4,11 @@ CSC = $(MCS) -debug
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
-	../BeagleClient/Beagle.dll	\
-	../beagled/BeagleDaemonLib.dll	
+	../BeagrepClient/Beagrep.dll	\
+	../beagrepd/BeagrepDaemonLib.dll	
 
 ASSEMBLIES =				\
-	$(BEAGLED_LIBS)			\
+	$(BEAGREPD_LIBS)			\
 	-r:Mono.Posix			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
@@ -25,7 +25,7 @@ WRAPPER_SED = sed 					\
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"		\
 	-e "s|\@bash\@|$(BASH)|"
 
-CRAWL_WRAPPER = beagle-crawl-system
+CRAWL_WRAPPER = beagrep-crawl-system
 CRAWL_WRAPPER_IN = $(CRAWL_WRAPPER).in
 
 $(CRAWL_WRAPPER): $(CRAWL_WRAPPER_IN)
@@ -35,9 +35,9 @@ $(CRAWL_WRAPPER): $(CRAWL_WRAPPER_IN)
 crondir = $(sysconfdir)/cron.daily
 
 INFO_TARGET  = Info.exe
-INFO_WRAPPER = beagle-info
+INFO_WRAPPER = beagrep-info
 INFO_CSFILES = $(srcdir)/Info.cs
-INFO_ASSEMBLIES = ../beagled/BeagleDaemonPlugins.dll
+INFO_ASSEMBLIES = ../beagrepd/BeagrepDaemonPlugins.dll
 
 $(INFO_TARGET): $(INFO_CSFILES) $(LOCAL_ASSEMBLIES) $(INFO_ASSEMBLIES)
 	$(CSC) -out:$@ $(CSFLAGS) $(INFO_CSFILES) $(ASSEMBLIES) $(INFO_ASSEMBLIES:%=-r:%)
@@ -47,7 +47,7 @@ $(INFO_WRAPPER): $(WRAPPER_IN)
 	chmod +x $(INFO_WRAPPER)
 
 SHUTDOWN_TARGET  = Shutdown.exe
-SHUTDOWN_WRAPPER = beagle-shutdown
+SHUTDOWN_WRAPPER = beagrep-shutdown
 SHUTDOWN_CSFILES = $(srcdir)/Shutdown.cs
 
 $(SHUTDOWN_TARGET): $(SHUTDOWN_CSFILES) $(LOCAL_ASSEMBLIES)
@@ -58,7 +58,7 @@ $(SHUTDOWN_WRAPPER): $(WRAPPER_IN)
 	chmod +x $(SHUTDOWN_WRAPPER)
 
 QUERY_TARGET  = Query.exe
-QUERY_WRAPPER = beagle-query
+QUERY_WRAPPER = beagrep-query
 QUERY_CSFILES = $(srcdir)/Query.cs
 
 $(QUERY_TARGET): $(QUERY_CSFILES) $(LOCAL_ASSEMBLIES)
@@ -69,7 +69,7 @@ $(QUERY_WRAPPER): $(WRAPPER_IN)
 	chmod +x $(QUERY_WRAPPER)
 
 STATIC_QUERY_TARGET  = StaticQuery.exe
-STATIC_QUERY_WRAPPER = beagle-static-query
+STATIC_QUERY_WRAPPER = beagrep-static-query
 STATIC_QUERY_CSFILES = $(srcdir)/StaticQuery.cs
 
 $(STATIC_QUERY_TARGET): $(STATIC_QUERY_CSFILES) $(LOCAL_ASSEMBLIES)
@@ -80,7 +80,7 @@ $(STATIC_QUERY_WRAPPER): $(WRAPPER_IN)
 	chmod +x $(STATIC_QUERY_WRAPPER)
 
 CONFIG_TARGET = Config.exe
-CONFIG_WRAPPER = beagle-config
+CONFIG_WRAPPER = beagrep-config
 CONFIG_CSFILES = $(srcdir)/Config.cs
 
 $(CONFIG_TARGET): $(CONFIG_CSFILES) $(LOCAL_ASSEMBLIES)
@@ -110,9 +110,9 @@ BUILT_WRAPPERS = 			\
 KEYGRABBER =
 
 PREBUILT_WRAPPERS =		\
-	beagle-index-info	\
-	beagle-ping		\
-	beagle-status		\
+	beagrep-index-info	\
+	beagrep-ping		\
+	beagrep-status		\
 	blocate
 
 BIN_WRAPPERS = $(BUILT_WRAPPERS) $(PREBUILT_WRAPPERS)
@@ -122,14 +122,14 @@ WRAPPERS =			\
 	$(CRAWL_WRAPPER)
 
 man_MANS = 			\
-	beagle-config.1		\
-	beagle-doc-extractor.8	\
-	beagle-index-info.8	\
-	beagle-info.1		\
-	beagle-ping.1		\
-	beagle-query.1		\
-	beagle-shutdown.1	\
-	beagle-status.1
+	beagrep-config.1		\
+	beagrep-doc-extractor.8	\
+	beagrep-index-info.8	\
+	beagrep-info.1		\
+	beagrep-ping.1		\
+	beagrep-query.1		\
+	beagrep-shutdown.1	\
+	beagrep-status.1
 
 all: $(TARGETS) $(WRAPPERS)
 

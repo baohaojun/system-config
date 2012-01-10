@@ -28,7 +28,7 @@ using System;
 using System.Collections;
 using System.Xml.Serialization;
 
-namespace Beagle.Util
+namespace Beagrep.Util
 {
         public class NetworkService
         {

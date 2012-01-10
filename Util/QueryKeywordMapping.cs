@@ -27,7 +27,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	// FIXME handle i18n issues... user might use an i18n-ised string
 	public class QueryKeywordMapping {
@@ -40,7 +40,7 @@ namespace Beagle.Util {
 			set { keyword = value; }
 		}
 
-		[XmlAttribute ("BeagleProperty")]
+		[XmlAttribute ("BeagrepProperty")]
 		public string PropertyName {
 			get { return propertyname; }
 			set { propertyname = value; }

@@ -7,11 +7,11 @@ CRAWL_RULES = \
 	$(srcdir)/crawl-rules/crawl-windows
 
 # FIXME: Per-distribution specific crawl rules
-crawl_rulesdir = $(sysconfdir)/beagle/crawl-rules
+crawl_rulesdir = $(sysconfdir)/beagrep/crawl-rules
 crawl_rules_DATA = $(CRAWL_RULES)
 
 GLOBAL_CONFIG_FILES = \
-	$(srcdir)/config-files/BeagleSearch.xml		\
+	$(srcdir)/config-files/BeagrepSearch.xml		\
 	$(srcdir)/config-files/Daemon.xml		\
 	$(srcdir)/config-files/FilesQueryable.xml	\
 	$(srcdir)/config-files/Networking.xml
@@ -20,10 +20,10 @@ if ENABLE_GOOGLEBACKENDS
 GLOBAL_CONFIG_FILES += $(srcdir)/config-files/GoogleBackends.xml
 endif
 
-global_config_filesdir = $(sysconfdir)/beagle/config-files
+global_config_filesdir = $(sysconfdir)/beagrep/config-files
 global_config_files_DATA = $(GLOBAL_CONFIG_FILES)
 
-confdir = $(sysconfdir)/beagle
+confdir = $(sysconfdir)/beagrep
 conf_DATA = $(srcdir)/blocate.conf			\
 	    $(srcdir)/external-filters.xml.sample	\
 	    $(srcdir)/query-mapping.xml

@@ -35,7 +35,7 @@ using System.Text.RegularExpressions;
 
 using Mono.Unix;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class StringFu {
 
@@ -266,7 +266,7 @@ namespace Beagle.Util {
 		private const char WILDCARD_STRING = '*';
 		
 		/// <summary>
-		/// Copied from beagled/Lucene.Net/Search/WildcardTermEnum.cs
+		/// Copied from beagrepd/Lucene.Net/Search/WildcardTermEnum.cs
 		/// Simple string matching algorithm with wildcards
 		/// '*' matches 0 or more characters
 		/// </summary>

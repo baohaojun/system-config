@@ -35,13 +35,13 @@ using System.Runtime.InteropServices;
 
 using GLib;
 
-using Beagle;
-using Beagle.Util;
-using Beagle.Daemon;
+using Beagrep;
+using Beagrep.Util;
+using Beagrep.Daemon;
 
 // Assembly information
-[assembly: AssemblyTitle ("beagle-static-query")]
-[assembly: AssemblyDescription ("Command-line interface to query the Beagle index")]
+[assembly: AssemblyTitle ("beagrep-static-query")]
+[assembly: AssemblyDescription ("Command-line interface to query the Beagrep index")]
 
 public class QueryTool {
 
@@ -195,7 +195,7 @@ public class QueryTool {
 		VersionFu.PrintHeader ();
 
 		string usage =
-			"Usage: beagle-query [OPTIONS] <query string>\n\n" +
+			"Usage: beagrep-query [OPTIONS] <query string>\n\n" +
 			"Options:\n" +
 			"  --verbose\t\tPrint detailed information about each hit.\n" +
 			"  --cache\t\tShow the entire cached text instead of a snippet\n" +
@@ -215,7 +215,7 @@ public class QueryTool {
 			"  --version\t\tPrint version information.\n" +
 			"\n" +
 			"Query string supports an advanced query syntax.\n" +
-			"For details of the query syntax, please see http://beagle-project.org/Searching_Data\n" +
+			"For details of the query syntax, please see http://beagrep-project.org/Searching_Data\n" +
 			"Note: Quotes (\" or \') need to be shell escaped if used.\n";
 
 		Console.WriteLine (usage);
@@ -231,7 +231,7 @@ public class QueryTool {
 		// Initialize GObject type system
 		g_type_init ();
 
-		Beagle.Util.Log.Level = LogLevel.Always; // shhhh... silence
+		Beagrep.Util.Log.Level = LogLevel.Always; // shhhh... silence
 
 		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1 || Array.IndexOf (args, "--usage") > -1)
 			PrintUsageAndExit ();
@@ -332,7 +332,7 @@ public class QueryTool {
 		}
 
 		if (verbose)
-			Beagle.Util.Log.Level = LogLevel.Debug;
+			Beagrep.Util.Log.Level = LogLevel.Debug;
 
 		if (query_str.Length > 0)
 			query.AddText (query_str.ToString ());
@@ -358,7 +358,7 @@ public class QueryTool {
 		try {
 			string tmp = PathFinder.StorageDir;
 			if (! Directory.Exists (tmp))
-				throw new IOException ("Beagle directory not found");
+				throw new IOException ("Beagrep directory not found");
 		} catch (Exception e) {
 			Console.WriteLine ("Unable to start the daemon: {0}", e.Message);
 			Environment.Exit (-1);
@@ -367,7 +367,7 @@ public class QueryTool {
 		QueryDriver.IndexingDelay = -1;
 
 		if (verbose) {
-			Console.WriteLine ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
+			Console.WriteLine ("Starting Beagrep Daemon (version {0})", ExternalStringsHack.Version);
 			Console.WriteLine ("Running on {0}", SystemInformation.MonoRuntimeVersion);
 		}
 

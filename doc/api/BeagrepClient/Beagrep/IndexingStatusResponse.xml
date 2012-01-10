@@ -1,0 +1,49 @@
+<Type Name="IndexingStatusResponse" FullName="Beagrep.IndexingStatusResponse">
+  <TypeSignature Language="C#" Value="public class IndexingStatusResponse : Beagrep.ResponseMessage" />
+  <AssemblyInfo>
+    <AssemblyName>Beagrep</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Beagrep.ResponseMessage</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public IndexingStatusResponse ();" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public IndexingStatusResponse (Beagrep.IndexingStatus status);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="status" Type="Beagrep.IndexingStatus" />
+      </Parameters>
+      <Docs>
+        <param name="status">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Status">
+      <MemberSignature Language="C#" Value="public Beagrep.IndexingStatus Status;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>Beagrep.IndexingStatus</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

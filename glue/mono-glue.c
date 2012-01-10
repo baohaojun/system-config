@@ -149,6 +149,6 @@ GetObjectPointer (MonoObject *this)
 void
 mono_glue_install_icall (void)
 {
-	mono_add_internal_call ("Beagle.Util.SystemInformation::GetObjectSizeIcall", GetObjectSize);
-	mono_add_internal_call ("Beagle.Util.SystemInformation::GetObjectPointerIcall", GetObjectPointer);
+	mono_add_internal_call ("Beagrep.Util.SystemInformation::GetObjectSizeIcall", GetObjectSize);
+	mono_add_internal_call ("Beagrep.Util.SystemInformation::GetObjectPointerIcall", GetObjectPointer);
 }

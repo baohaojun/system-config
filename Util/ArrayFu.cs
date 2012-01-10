@@ -28,7 +28,7 @@ using System;
 using System.Collections;
 using System.Text;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class ArrayFu {
 

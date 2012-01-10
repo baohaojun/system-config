@@ -26,10 +26,10 @@
 
 using System;
 
-using Beagle.Filters;
+using Beagrep.Filters;
 
 // All (non-abstract) filter types have to be listed here to be loaded.
-[assembly: Beagle.Daemon.FilterTypes (
+[assembly: Beagrep.Daemon.FilterTypes (
 	 typeof(FilterApplication),
 #if HAVE_LIBCHM
 #endif

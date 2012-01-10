@@ -30,7 +30,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public enum LogLevel {
 		Always,
@@ -72,7 +72,7 @@ namespace Beagle.Util {
 			Log.running_in_foreground = running_in_foreground;
 
 			if (! running_in_foreground)
-				Console.WriteLine ("beagled will run in the background.\nUse beagle-status to check progress of beagled.\nFor log files check {0}/current-Beagle.\n", Log.log_directory);
+				Console.WriteLine ("beagrepd will run in the background.\nUse beagrep-status to check progress of beagrepd.\nFor log files check {0}/current-Beagrep.\n", Log.log_directory);
 
 			PruneOldLogs ();
 

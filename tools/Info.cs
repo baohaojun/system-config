@@ -32,13 +32,13 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 
-using Beagle;
-using Beagle.Daemon;
-using Beagle.Util;
+using Beagrep;
+using Beagrep.Daemon;
+using Beagrep.Util;
 
 // Assembly information
-[assembly: AssemblyTitle ("beagle-info")]
-[assembly: AssemblyDescription ("Statistics from the Beagle daemon")]
+[assembly: AssemblyTitle ("beagrep-info")]
+[assembly: AssemblyDescription ("Statistics from the Beagrep daemon")]
 
 public class InfoTool {
 
@@ -47,11 +47,11 @@ public class InfoTool {
 		VersionFu.PrintHeader ();
 
 		string usage =
-			"Usage: beagle-info <OPTIONS>\n\n" +
+			"Usage: beagrep-info <OPTIONS>\n\n" +
 			"Options:\n" +
 			"  --daemon-version\t\tPrint the version of the running daemon.\n" +
 			"  --status\t\t\tDisplay status of the running daemon.\n" +
-			"  --index-info\t\t\tDisplay statistics of the Beagle indexes.\n" +
+			"  --index-info\t\t\tDisplay statistics of the Beagrep indexes.\n" +
 			"  --is-indexing\t\t\tDisplay whether the indexer is currently active.\n" +
 			"  --all-info\t\t\tAll of the above information.\n" +
 			"  --list-backends\t\tList the currently available backends.\n" +
@@ -107,7 +107,7 @@ public class InfoTool {
 
 		try {
 			response = (DaemonInformationResponse) request.Send ();
-		} catch (Beagle.ResponseMessageException) {
+		} catch (Beagrep.ResponseMessageException) {
 			Console.WriteLine ("Could not connect to the daemon.");
 			return 1;
 		}
@@ -131,7 +131,7 @@ public class InfoTool {
 
 	private static void PrintFilterInformation ()
 	{
-		ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_FILTER_PATH", PathFinder.FilterDir, PrintFilterDetails);
+		ReflectionFu.ScanEnvironmentForAssemblies ("BEAGREP_FILTER_PATH", PathFinder.FilterDir, PrintFilterDetails);
 	}
 
 	static void PrintFilterDetails (Assembly assembly)
@@ -174,12 +174,12 @@ public class InfoTool {
 
 	private static void PrintBackendInformation ()
 	{
-		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
+		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGREP_BACKEND_PATH", PathFinder.BackendDir);
 
-		// Add BeagleDaemonLib if it hasn't already been added.
+		// Add BeagrepDaemonLib if it hasn't already been added.
 		bool found_daemon_lib = false;
 		foreach (Assembly assembly in assemblies) {
-			if (assembly.GetName ().Name == "BeagleDaemonLib") {
+			if (assembly.GetName ().Name == "BeagrepDaemonLib") {
 				found_daemon_lib = true;
 				break;
 			}
@@ -187,7 +187,7 @@ public class InfoTool {
 
 		if (!found_daemon_lib) {
 			try {
-				assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
+				assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagrepDaemonLib.dll")));
 			} catch (FileNotFoundException) {
 				Console.WriteLine ("WARNING: Could not find backend list.");
 				Environment.Exit (1);
@@ -196,7 +196,7 @@ public class InfoTool {
 
 		foreach (Assembly assembly in assemblies) {
 			foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (IQueryableTypesAttribute))) {
-				foreach (Beagle.Daemon.QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (Beagle.Daemon.QueryableFlavor))) {
+				foreach (Beagrep.Daemon.QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (Beagrep.Daemon.QueryableFlavor))) {
 					Console.WriteLine ("{0,-20} (" + assembly.Location + ")", flavor.Name);
 				}
 			}

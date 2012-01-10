@@ -31,7 +31,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using Mono.Unix;
 
-using Beagle.Util;
+using Beagrep.Util;
 
 namespace Mono.Unix.Native {
 

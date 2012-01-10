@@ -108,7 +108,7 @@ UTIL_CSFILES = 			        	\
 CSFLAGS += -define:DOTNET2
 
 UTIL_ASSEMBLIES =				\
-	$(BEAGLED_LIBS)				\
+	$(BEAGREPD_LIBS)				\
 	$(NDESK_DBUS_GLIB_LIBS)			\
 	-r:Mono.Data.Sqlite			\
 	-r:Mono.Posix				\

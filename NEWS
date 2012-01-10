@@ -13,15 +13,15 @@ January 26 2009
 
 * Fixes #549549 - don't crash while opening a mimetype without associated application.
 
-* Fixes #546871 - synchronize serialization with libbeagle.
+* Fixes #546871 - synchronize serialization with libbeagrep.
 
-* Fixes #551898 - make sure hotkey changes via beagle-settings is immediately picked up by beagle-search.
+* Fixes #551898 - make sure hotkey changes via beagrep-settings is immediately picked up by beagrep-search.
 
 * Fixes #553159 - use system sys/inotify.h.
 
 * Fixes #561429 - add support for Kopete KDE4.
 
-* Fixes #556002 - make beagle-status FreeBSD compatible.
+* Fixes #556002 - make beagrep-status FreeBSD compatible.
 
 * Fixes #560812 - add translator-credit tab in the About dialog.
 
@@ -29,7 +29,7 @@ January 26 2009
 
 * Do now show duplicate tasks in the list of cancelled tasks.
 
-* Use BEAGLE_DEBUG environment variable to enable/disable debug at runtime for specific classes.
+* Use BEAGREP_DEBUG environment variable to enable/disable debug at runtime for specific classes.
 
 * Fixes #564460 - clean up GLib and GTK+ includes.
 
@@ -56,7 +56,7 @@ Translations:
 Contributors to this release: Debajyoti Bera, Lukas Lipka, Adrian Bunk, Tal Benavidor.
 
 Full set of changes:
-http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_9/beagle/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagrep/tags/BEAGREP_0_3_9/beagrep/ChangeLog?view=markup
 
 -------------------------------------------------------------------------------
 
@@ -67,18 +67,18 @@ Dependencies:
 
 * Update local copy of SemWeb and include it under GPLv3 instead of CC-by-2.0.
 
-* Update beagle-settings-qt requirements: look for either qyoto.pc or qt-dotnet.dll
+* Update beagrep-settings-qt requirements: look for either qyoto.pc or qt-dotnet.dll
 
 * Remove internal taglib-sharp. We now require that taglib-sharp be installed.
 
 * Remove the build dependency of sqlite3-devel, 
 
-* Fix our D-Bus requirements. System D-Bus is an optional requirement for beagled.
-  Session D-Bus is a necessary requirement for "beagle-search --icon". Distributions
-  should make beagle-search depend on something that starts session D-Bus at login
+* Fix our D-Bus requirements. System D-Bus is an optional requirement for beagrepd.
+  Session D-Bus is a necessary requirement for "beagrep-search --icon". Distributions
+  should make beagrep-search depend on something that starts session D-Bus at login
   (e.g. KDE3 does not automatically start D-Bus at login).
 
-* Explicitly use -lX11 to build libbeagleuiglue.so. Fixes #540120.
+* Explicitly use -lX11 to build libbeagrepuiglue.so. Fixes #540120.
 
 * Require gtk+/# >= 2.10.
 
@@ -86,37 +86,37 @@ Dependencies:
 
 Features:
 
-* Add a SemWeb based adapter for querying beagle using RDF.
+* Add a SemWeb based adapter for querying beagrep using RDF.
   Strictly experimental and enabled only with --enable-rdf-adapter.
-  (http://beagle-project.org/RDF)
+  (http://beagrep-project.org/RDF)
 
-* Add the GMail backend related options to beagle-settings-qt.
+* Add the GMail backend related options to beagrep-settings-qt.
 
 * Add a BibTex filter based on the command line program 'bibparse'.
   bibparse is a run-time requirement and can be found in the btparse package.
 
 * Add infrastructure and command-line tools to create and manage
   static indexes for removable sources.
-  (http://beagle-project.org/Static_Indexes#Indexing_Removable_Medium)
+  (http://beagrep-project.org/Static_Indexes#Indexing_Removable_Medium)
 
 * Add a crawl-rule for indexing executables in /usr/bin, /bin etc.
-  Add beagle-crawl-system [--list] [crawl-<name>] options to list the system
+  Add beagrep-crawl-system [--list] [crawl-<name>] options to list the system
   indexes and selectively update only one system index.
 
-* Add support for snippets for remote beagled query.
+* Add support for snippets for remote beagrepd query.
 
 * Add support for KDE4 konqueror history.
 
-* Show a drop-down list in beagle-search to choose search categories.
-  This was previously hidden in the menus. Use BEAGLE_SEARCH_SCOPE
+* Show a drop-down list in beagrep-search to choose search categories.
+  This was previously hidden in the menus. Use BEAGREP_SEARCH_SCOPE
   environment variable to allow users to create custom categories.
 
-* Add menu options to beagle-search to start and stop beagled and
+* Add menu options to beagrep-search to start and stop beagrepd and
   show index statistics.
 
-* Enable the Open-With context-menu in beagle-search results.
+* Enable the Open-With context-menu in beagrep-search results.
 
-* Include a python script to grab shortcut keys from beagle-settings
+* Include a python script to grab shortcut keys from beagrep-settings
   (distributed under GPL3).
 
 Bugfixes:
@@ -124,7 +124,7 @@ Bugfixes:
 * Focus the search entry is there are no results initially. Fixes #529540.
 
 * Fix a regression where searching applications and other system wide indexes
- were disabled by default in beagle-search.
+ were disabled by default in beagrep-search.
 
 * Update Evolution backend for the new Evolution-Sharp API. Fixes #526685.
 
@@ -134,7 +134,7 @@ Bugfixes:
 
 * Fix parsing of Opera history cache. Fixes #533529.
 
-* If the firefox extension does not find ~/.beagle, show the message in the
+* If the firefox extension does not find ~/.beagrep, show the message in the
   icon tooltip instead of showing the disruptive alert. Fixes debian #463922, bnc #385513.
 
 * Handle rogue backends if they start throwing lots of errors. This will
@@ -148,10 +148,10 @@ Bugfixes:
 * Fix the docbook filter to not return unnecessary matches when only
   one docbook section matches the query.
 
-* Show an error dialog if beagle-settings encounters an unhandled exception.
+* Show an error dialog if beagrep-settings encounters an unhandled exception.
   This gives a better feedback to the user. Fixes #541134.
 
-* Always show the filename separately in the beagle-search results. Show the
+* Always show the filename separately in the beagrep-search results. Show the
   filename instead of document title for pdf, odt etc. files whose titles are mostly
   unset or auto-generated.
 
@@ -166,7 +166,7 @@ Bugfixes:
    non-utf8 locale if MONO_EXTERNAL_ENCODINGS is set to the platform encoding.
   Fixes #440458.
 
-* Fix a bug where beagled sometimes returns less than 100 (max-results) results even
+* Fix a bug where beagrepd sometimes returns less than 100 (max-results) results even
   though more results are available.
 
 Translations:
@@ -181,7 +181,7 @@ Translations:
   - Norwegian bokmål (Kjartan Maraas)
 
 Full set of changes:
-http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_8/beagle/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagrep/tags/BEAGREP_0_3_8/beagrep/ChangeLog?view=markup
 
 -------------------------------------------------------------------------------
 
@@ -190,16 +190,16 @@ Version 0.3.7
 
 * Work around a mono feature/bug [1] where mono might hang trying to get a gdb
   backtrace in the event of a native library segmentation fault. This is
-  specially important for the evolution-sharp bug [2] due to which beagled might
+  specially important for the evolution-sharp bug [2] due to which beagrepd might
   crash when the EvolutionDataServer backend is enabled. For some users, the
-  crash resulted in a non-functional but hanged beagled that in turn hanged
-  programs trying to contact beagled like gtkfilechooser.
+  crash resulted in a non-functional but hanged beagrepd that in turn hanged
+  programs trying to contact beagrepd like gtkfilechooser.
 
 * Translations:
  - Japanese (Takeshi AIHANA)
 
 Full set of changes:
-http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_7/beagle/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagrep/tags/BEAGREP_0_3_7/beagrep/ChangeLog?view=markup
 
 [1] https://bugzilla.novell.com/show_bug.cgi?id=381928
 [2] http://bugzilla.gnome.org/show_bug.cgi?id=519284
@@ -211,13 +211,13 @@ Version 0.3.6
 
 * Fix regression in 0.3.4 (content of Tomboy notes were not indexed). For bug-fix backports please merge r4656.
 
-* Use an icon from the Tomboy project for displaying note tiles in beagle-search. Package this icon with beagle-search.
+* Use an icon from the Tomboy project for displaying note tiles in beagrep-search. Package this icon with beagrep-search.
 
-* Add a GMail and Google Apps email live search backend. See http://beagle-project.org/Live_GMail_Search for details. This does not index the emails itself but directly queries GMail. Apart from a limited functionality, this will also submit user queries to Google (note to people concerned with privacy). This backend can be packaged separately by bundling GoogleBackends.xml and GoogleBackends.dll. The backend is disabled by default.
+* Add a GMail and Google Apps email live search backend. See http://beagrep-project.org/Live_GMail_Search for details. This does not index the emails itself but directly queries GMail. Apart from a limited functionality, this will also submit user queries to Google (note to people concerned with privacy). This backend can be packaged separately by bundling GoogleBackends.xml and GoogleBackends.dll. The backend is disabled by default.
 
 * Add option to store and retrieve GMail password from KDE Wallet.
 
-* Show query-domain selection menu in beagle-search. Replace "--network yes|no" with "--domain ..." options in beagle-query for full choice of query domains.
+* Show query-domain selection menu in beagrep-search. Replace "--network yes|no" with "--domain ..." options in beagrep-query for full choice of query domains.
 
 * Update Firefox extension to Firefox 3.0.
 
@@ -225,13 +225,13 @@ Version 0.3.6
 
 * Update F-Spot files from latest F-Spot svn trunk. Update the JPEG filter to use the managed Tiff parser instead of libexif. Drop libexif dependency.
 
-* Display network search related options in beagle-settings.
+* Display network search related options in beagrep-settings.
 
 * Fix the network-service backend.
 
 * Catch the galago dllnotfoundexception and prevent a crash (relevant for Debian libgalago1.0-cil package).
 
-* Add 'blocate' - a 'locate' like tool to query static indexes without running beagled. It is a wrapper to beagle-static-query and can be configured using blocate.conf (globally at /etc/beagle and locally at ~/.beagle/config). blocate and beagle-update-index form the beagle powered replacement for locate and updatedb.
+* Add 'blocate' - a 'locate' like tool to query static indexes without running beagrepd. It is a wrapper to beagrep-static-query and can be configured using blocate.conf (globally at /etc/beagrep and locally at ~/.beagrep/config). blocate and beagrep-update-index form the beagrep powered replacement for locate and updatedb.
 
 * Translations:
  - Japanese (Takeshi AIHANA)
@@ -242,7 +242,7 @@ Version 0.3.6
 Contributors to this release: Debajyoti Bera, Filia Tao, Nirbheek Chauhan
 
 Full set of changes:
-http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_6/beagle/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagrep/tags/BEAGREP_0_3_6/beagrep/ChangeLog?view=markup
 
 -------------------------------------------------------------------------------
 
@@ -253,12 +253,12 @@ Version 0.3.5
 
 * Fix building of Epiphany extension and add support for Epiphany 2.22
 
-* Fix a grey window bug and a crash on pressing shortcut key in beagle-search (debian #473285, gentoo #201093-comment-48).
+* Fix a grey window bug and a crash on pressing shortcut key in beagrep-search (debian #473285, gentoo #201093-comment-48).
 
 Contributors to this release: Arun Raghavan, Debajyoti Bera
 
 Full set of changes:
-http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_5/beagle/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagrep/tags/BEAGREP_0_3_5/beagrep/ChangeLog?view=markup
 
 -------------------------------------------------------------------------------
 
@@ -273,15 +273,15 @@ Version 0.3.4
 
 * Move to Lucene.Net 2.1 (backported a faster analyzer and other improvements).
 
-* Move query mapping (e.g. mappings for ext:, genre:) to a separate user editable /etc/beagle/query-mapping.xml (global) and ~/.beagle/query-mapping.xml (local). beagled needs to be restarted to read the new mappings.
+* Move query mapping (e.g. mappings for ext:, genre:) to a separate user editable /etc/beagrep/query-mapping.xml (global) and ~/.beagrep/query-mapping.xml (local). beagrepd needs to be restarted to read the new mappings.
 
-* Expose a Hide/Show DBus interface for beagle-search.
+* Expose a Hide/Show DBus interface for beagrep-search.
 
-* Firefox search bar plugin to query using beagle's web interface.
+* Firefox search bar plugin to query using beagrep's web interface.
 
-* Add a tool beagle-static-query to query beagle without starting beagled. This is mainly meant for static indexes (like locate with the system index, like mod for a monodoc index).
+* Add a tool beagrep-static-query to query beagrep without starting beagrepd. This is mainly meant for static indexes (like locate with the system index, like mod for a monodoc index).
 
-* Lots of beagle-search beautification.
+* Lots of beagrep-search beautification.
 
 * Add a query mapping "filename:" to query for filenames and words in it (e.g. match My in MyFile.txt and My_File.txt).
 
@@ -289,13 +289,13 @@ Version 0.3.4
 
 * Add a filter for .info files (including gz/bz2/lzma compressed info files). manpages crawl rule now contains /usr/share/info.
 
-* SIGUSR2 will now also print runtime debugging information of beagled.
+* SIGUSR2 will now also print runtime debugging information of beagrepd.
 
-* Use the new Mono.Unix.UnixSignal if built with mono 1.9. This should remove the last of the beagled/index-helper hangs during shutdown.
+* Use the new Mono.Unix.UnixSignal if built with mono 1.9. This should remove the last of the beagrepd/index-helper hangs during shutdown.
 
 * Add the missing files for the firefox extension sidebar.
 
-* Show a better error message if ~/.beagle is not found when the firefox extension is started (should help debian #463922).
+* Show a better error message if ~/.beagrep is not found when the firefox extension is started (should help debian #463922).
 
 * Fixes #514252 (evo backends now explicitly reference glib-sharp)
 
@@ -311,15 +311,15 @@ Version 0.3.4
 
 * Clean up some tmp files which could have left behind during a corner case.
 
-* Fix a startup crash in the Pidgin backend if the Pidgin log directory is absent during beagled startup.
+* Fix a startup crash in the Pidgin backend if the Pidgin log directory is absent during beagrepd startup.
 
 * Check for msgfmt in ./configure before building.
 
-* Fix glib-critical warnings in libbeagle (and python bindings) when snippets with empty fragments were sent by beagled.
+* Fix glib-critical warnings in libbeagrep (and python bindings) when snippets with empty fragments were sent by beagrepd.
 
 * Fix some bugs in snippet due to which valid matches were not included in the snippets.
 
-* Timeout in libbeagle if connection to beagled takes more than 5 secs. This will prevent hangs in konqueror/gtkfilechooser if beagled is hanged for some reason.
+* Timeout in libbeagrep if connection to beagrepd takes more than 5 secs. This will prevent hangs in konqueror/gtkfilechooser if beagrepd is hanged for some reason.
 
 * Do not throw error if scheduler information and index information is empty since they can actually be empty.
 
@@ -343,8 +343,8 @@ Contributors to this release: Debajyoti Bera, Lukas Lipka, Kevin
 Kubasik, Nirbheek Chauhan and Jaikumar Singh.
 
 Full set of changes:
-http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_4/beagle/ChangeLog?view=markup
-http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_4/libbeagle/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagrep/tags/BEAGREP_0_3_4/beagrep/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagrep/tags/BEAGREP_0_3_4/libbeagrep/ChangeLog?view=markup
 
 -------------------------------------------------------------------------------
 
@@ -355,13 +355,13 @@ Version 0.3.3
 
 * Fix a null reference exception in imlogviewer when no buddy alias is set.
 
-* Fix beagle-search to allow filetype: queries.
+* Fix beagrep-search to allow filetype: queries.
 
 * Fix filtering of media files by Totem and MPlayer.
 
 * Fix the URIs in Konqueror web history backend to be of the right form. Also prevent it from flooding the buffer cache during initial crawling.
 
-* Fix autostarting of beagle-search in Gnome (fixes #507786).
+* Fix autostarting of beagrep-search in Gnome (fixes #507786).
 
 * Fix a potential crash in EvolutionMail backend due to an incorrect and obsolete type casting (merge patch from Debian).
 
@@ -369,33 +369,33 @@ Version 0.3.3
 
 * xdgmimecache.c contained a fix for bugs.freedesktop.org #12512 which is not present in the GTK+ copy. Revert the change that removed the fix.
 
-* Add a view in beagle-search to show the current index information.
+* Add a view in beagrep-search to show the current index information.
 
-* Add a new tile in beagle-searcj for manpages. Several fixes to the documentation tile as well. Searching documentation is disabled by default but can be enabled by passing --search-docs to beagle-search.
+* Add a new tile in beagrep-searcj for manpages. Several fixes to the documentation tile as well. Searching documentation is disabled by default but can be enabled by passing --search-docs to beagrep-search.
 
 * Add an LZMA (7zip) based filter for lzma compressed man pages.
 
-* Prevent beagle log manager from printing the same exception repeatedly. Instead only print the first line followed by a "(Repeated)". This will make beagle go easy with the log file size.
+* Prevent beagrep log manager from printing the same exception repeatedly. Instead only print the first line followed by a "(Repeated)". This will make beagrep go easy with the log file size.
 
-* Add a Qt UI for beagle-settings using Qyoto.
+* Add a Qt UI for beagrep-settings using Qyoto.
 
 * Add an advanced query syntax "inuri:" to match data with query word in the uri. The implementation is backend specific and usually relevent for web history and bookmark backends.
 
 * A partial implementation of "inuri:" for the filesystem backend to query for files in a particular directory (not recurive). The option to inuri: could either be a word in the name of the directory or the file:/// uri of the directory. Live queries (where a new directory is created that matches the inuri value) are not supported for inuri queries against the filesystem backend.
 
-* Add a firefox sidebar to the firefox-beagle extension. The sidebar will allow querying in indexed webpages and bookmarks. The sidebar requires the web interface to be enabled (for querying from local machine).
+* Add a firefox sidebar to the firefox-beagrep extension. The sidebar will allow querying in indexed webpages and bookmarks. The sidebar requires the web interface to be enabled (for querying from local machine).
 
 * Use Sqlite prepared statements in textcache and file attribute databases.
 
 * Add configure options to control whether to always use the internal taglib-sharp or an external taglib-sharp. Useful for source based distributions.
 
-* Use "--indexing-delay -1" as an option to start beagled in query only mode.
+* Use "--indexing-delay -1" as an option to start beagrepd in query only mode.
 
-* Add an environment variable BEAGLE_FORCE_GC to do a forceful collection in beagled (disabled by default).
+* Add an environment variable BEAGREP_FORCE_GC to do a forceful collection in beagrepd (disabled by default).
 
 * Enable system-wide manpage index.
 
-* Port beagle to LINGUAS (fixes #510172).
+* Port beagrep to LINGUAS (fixes #510172).
 
 * Translations:
   - Swedish (Daniel Nylander)
@@ -411,7 +411,7 @@ Version 0.3.3
 Contributors to this release: Debajyoti Bera, Lukas Lipka, Kevin Kubasik, Joe Shaw, Nirbheek Chauhan and Enrico Minack.
 
 Full set of changes:
-http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_3/beagle/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagrep/tags/BEAGREP_0_3_3/beagrep/ChangeLog?view=markup
 
 -------------------------------------------------------------------------------
 
@@ -430,27 +430,27 @@ Version 0.3.2
 
 * Fix monodoc and manpages filter. Add support for gzip and bzip2 compressed manpages.
 
-* Fix a bug in beagle-build-index where new files would not be indexed.
+* Fix a bug in beagrep-build-index where new files would not be indexed.
 
-* Fix --enable-deletion in beagle-build-index. Set --enable-deletion for system-wide indexes.
+* Fix --enable-deletion in beagrep-build-index. Set --enable-deletion for system-wide indexes.
 
 * New Empathy backend.
 
 * Store file size for files from the filesystem, in archives and in email attachments.
 
-* Show a larger snippet in the tooltip in beagle-search.
+* Show a larger snippet in the tooltip in beagrep-search.
 
 * Allow users to bookmark webinterface searches.
 
 * Also display the time of recently modified results in the webinterface.
 
-* Add --write-xml and --read-xml options to beagle-config to enable non-C# programs to read and set config options.
+* Add --write-xml and --read-xml options to beagrep-config to enable non-C# programs to read and set config options.
 
-* Show documentation results in beagle-search when started with --search-docs option.
+* Show documentation results in beagrep-search when started with --search-docs option.
 
 * Add system-wide crawl rules for manpages and monodoc files. Keep them disabled by default.
 
-* Show the system-wide indexes in the backend chooser of beagle-settings.
+* Show the system-wide indexes in the backend chooser of beagrep-settings.
 
 * Translations:
   - Swedish (Daniel Nylander)
@@ -461,7 +461,7 @@ Version 0.3.2
 Contributors to this release: Debajyoti Bera, Lukas Lipka, Kevin Kubasik and  Anders Rune Jensen.
 
 Full set of changes:
-http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_2/beagle/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagrep/tags/BEAGREP_0_3_2/beagrep/ChangeLog?view=markup
 
 -------------------------------------------------------------------------------
 
@@ -474,7 +474,7 @@ Version 0.3.1
  the index-helper to take lots of memory and go into an infinite loop
  [bgo #501803].
 
-* Fix a bug in which beagle-settings would grow wide on long directories
+* Fix a bug in which beagrep-settings would grow wide on long directories
  [bgo #469298].
 
 * Hide the Avahi service settings if Avahi was not enabled at configure time.
@@ -484,9 +484,9 @@ Version 0.3.1
 
 * Workaround a crash in mono when hostname is 16 characters or longer.
 
-* Update video tiles layout in beagle-search.
+* Update video tiles layout in beagrep-search.
 
-* Use bash for all our scripts. Makes it possible to run beagle-index-info where
+* Use bash for all our scripts. Makes it possible to run beagrep-index-info where
 /bin/sh is not linked to /bin/bash.
 
 * Translations:
@@ -497,7 +497,7 @@ Version 0.3.1
 Contributors to this release: Debajyoti Bera, Lukas Lipka, Kevin Kubasik.
 
 Full set of changes:
-http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_1/beagle/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagrep/tags/BEAGREP_0_3_1/beagrep/ChangeLog?view=markup
 
 ------------------------------------------------------
 
@@ -514,16 +514,16 @@ Version 0.3.0
   between May 1, 2006 and December 31, 2006.
 
 * Rewritten Thunderbird backend, which uses a Thunderbird extension to
-  send data to be indexed to the Beagle daemon.
+  send data to be indexed to the Beagrep daemon.
 
 * All new Firefox and Epiphany extensions.
 
 * Experimental network searches.  You can search between multiple
-  Beagle daemons, which can be automatically discovered through
+  Beagrep daemons, which can be automatically discovered through
   Avahi.  Daemons can also be manually configured, useful for WAN
   searches.
 
-* Experimental web interface to the Beagle daemon.  An AJAX interface
+* Experimental web interface to the Beagrep daemon.  An AJAX interface
   allows users to search for data through their web browser.
 
 * Support for additional external metadata on previously-indexed
@@ -540,7 +540,7 @@ Version 0.3.0
 * New Opera history backend.
 
 * Individual backends can now be enabled and disabled using the
-  beagle-settings tool.
+  beagrep-settings tool.
 
 * Ignored file patterns (like *.o, *.a, *~, etc.) are no longer
   hardcoded, and can be set through the configuration.
@@ -554,7 +554,7 @@ Version 0.3.0
   this, we now require sqlite3.
 
 * A new configuration system, which allows system administrators to
-  set defaults in /etc/beagle/config-files.  This also makes it easier
+  set defaults in /etc/beagrep/config-files.  This also makes it easier
   for backend and filter authors to add their own configuration
   settings.
 
@@ -571,8 +571,8 @@ Version 0.3.0
 
 * Now store snippets for emails.
 
-* New extended attribute format.  Beagle now uses a single extended
-  attribute, user.Beagle, to store all of its information.  The old
+* New extended attribute format.  Beagrep now uses a single extended
+  attribute, user.Beagrep, to store all of its information.  The old
   format is migrated to the new one as files are reindexed.
 
 * Queries are run serially rather than in parallel, since most of the
@@ -618,10 +618,10 @@ Version 0.3.0
   files are handled in the index helper process, removing a costly
   round trip.
 
-* Redirect crash logs from Mono into the Beagle log files.  They were
+* Redirect crash logs from Mono into the Beagrep log files.  They were
   previously lost and users had to reproduce problems with --fg.
 
-* Add many more keywords to the query language; run beagle-query
+* Add many more keywords to the query language; run beagrep-query
   --keywords to see a full list.
 
 * Lots and lots of indexing and searching bugfixes.  Too many to
@@ -661,9 +661,9 @@ Benavidez, Enrico Minack, JP Rosevear, Jason Kivlighn, and Stephane
 Loeuillet.
 
 Full set of changes:
-http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_3_0/beagle/ChangeLog
-http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_3_0/libbeagle/ChangeLog
-http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_XESAM_0_1/ChangeLog
+http://svn.gnome.org/viewcvs/*checkout*/beagrep/tags/BEAGREP_0_3_0/beagrep/ChangeLog
+http://svn.gnome.org/viewcvs/*checkout*/beagrep/tags/BEAGREP_0_3_0/libbeagrep/ChangeLog
+http://svn.gnome.org/viewcvs/*checkout*/beagrep/tags/BEAGREP_XESAM_0_1/ChangeLog
 
 ------------------------------------------------------
 
@@ -677,16 +677,16 @@ Notable changes:
 * No longer recrawl directories if we can't set up an inotify watch.
   This fixes the looping bug of death when the screensaver kicks in.
 
-* Greatly improve indexing overhead with the beagle-build-index tool.
+* Greatly improve indexing overhead with the beagrep-build-index tool.
 
 * Display a warning in the log if the number of inotify watches runs
   out.
 
-* Fix a problem in which beagle-search wouldn't work after a daemon
+* Fix a problem in which beagrep-search wouldn't work after a daemon
   restart.  [bgo #463803]
 
 * Fix a bug in which processing large numbers of maildir files could
-  cause beagled to run out of file descriptors.  [bgo #466891]
+  cause beagrepd to run out of file descriptors.  [bgo #466891]
 
 * Add support for the ~/.liferea_1.2 directory to the Liferea
   backend.  [bgo #426573]
@@ -706,7 +706,7 @@ Contributors to this release: Joe Shaw, Debajyoti Bera, Lukas Lipka,
 Joseph Benavidez, JP Rosevear.
 
 Full set of changes:
-http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_2_18/ChangeLog
+http://svn.gnome.org/viewcvs/*checkout*/beagrep/tags/BEAGREP_0_2_18/ChangeLog
 
 ------------------------------------------------------
 
@@ -725,11 +725,11 @@ Notable changes:
 * Make the archive filter much more robust. [bgo #415056, bnc #244490
   and #228718]
 
-* Add --disable-on-battery to beagle-build-index, add support for
-  it in beagle-crawl-system, and enable it for the documentation
+* Add --disable-on-battery to beagrep-build-index, add support for
+  it in beagrep-crawl-system, and enable it for the documentation
   index, since it takes a while to build. [bgo #383789]
 
-* Add --disable-text-cache to the Beagle daemon, to disable storing of
+* Add --disable-text-cache to the Beagrep daemon, to disable storing of
   text for snippets.  This saves substantial amounts of disk space at
   the expense of showing snippets in the UI.
 
@@ -751,7 +751,7 @@ Notable changes:
 
 * Fix the CHM filter. [bgo #408047]
 
-* Fix opening of Konversation hits in beagle-search. [bgo #408101]
+* Fix opening of Konversation hits in beagrep-search. [bgo #408101]
 
 * Shut down the daemon sooner if requested in the middle of a large
   batch of files being indexed.
@@ -762,7 +762,7 @@ Notable changes:
   just .Net streams so that Mono crashes are logged and saved
   somewhere useful.
 
-* Lower CPU priority in the Beagle daemon, for instances where we get
+* Lower CPU priority in the Beagrep daemon, for instances where we get
   a little CPU hungry.
 
 * Add a new index verification process if stale lockfiles are left
@@ -780,10 +780,10 @@ Notable changes:
 * Speed up the returning of results by about 10%.
 
 * Remove separate crawling and indexing threads from
-  beagle-build-index, causing it to be slightly faster and use a lot
+  beagrep-build-index, causing it to be slightly faster and use a lot
   less memory.
 
-* Speed up beagle-index-info by returning cached document counts, and
+* Speed up beagrep-index-info by returning cached document counts, and
   not starting up a helper process to get them.
 
 * Fix an infinite loop problem with empty OpenOffice documents. [bgo
@@ -793,11 +793,11 @@ Notable changes:
   pdfinfo. [bgo #425150]
 
 * Display the first Nautilus emblem on file results, and fix an
-  uncommon memory leak in the beagle-search UI.
+  uncommon memory leak in the beagrep-search UI.
 
-* Remove the Mono --debug argument from beagle-search, saving about 2
+* Remove the Mono --debug argument from beagrep-search, saving about 2
   megs RSS and making startup faster.  Also remove it from things like
-  beagle-build-index.
+  beagrep-build-index.
 
 * Fix a bug in which mail attachments which didn't have a file name
   weren't being displayed in the UI.
@@ -816,10 +816,10 @@ Notable changes:
 
 * Fix some file modification date handling issues in the daemon.
 
-* Exit the beagle-crawl-system cronjob if beagle-build-index doesn't
+* Exit the beagrep-crawl-system cronjob if beagrep-build-index doesn't
   exist. [bgo #370943]
 
-* Always set the process name in beagle-extract-content.
+* Always set the process name in beagrep-extract-content.
 
 * Add application/xhtml+xml as a MIME type for the HTML filter.
 
@@ -851,7 +851,7 @@ Roughly 43 GNOME Bugzilla bugs were fixed between 0.2.16 and 0.2.17:
 http://tinyurl.com/3d8aqx
 
 Full set of changes:
-http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_2_17/ChangeLog
+http://svn.gnome.org/viewcvs/*checkout*/beagrep/tags/BEAGREP_0_2_17/ChangeLog
 
 ------------------------------------------------------
 
@@ -868,7 +868,7 @@ Notable changes:
   processes, because running JITted code in a child process sometimes
   causes runtime deadlocks.  [bgo #402065]
 
-* Fix a problem in our Sqlite schema where Beagle could loop crawling
+* Fix a problem in our Sqlite schema where Beagrep could loop crawling
   directories that started with zeros.
 
 * Correctly handle filter versions while indexing, so that if a filter
@@ -886,7 +886,7 @@ Notable changes:
   mailbox.
 
 * Fix an issue with the Konversation backend always reporting that it
-  is indexing, prompting the info box in beagle-search.
+  is indexing, prompting the info box in beagrep-search.
 
 * Many robustness improvements to the Konversation backend.
 
@@ -907,7 +907,7 @@ Notable changes:
 * Fix bugs caused by a change in behavior after switching to the .NET
   2.0 profile, mostly date-related.
 
-* Fixed a problem where beagle-crawl-system was not being properly
+* Fixed a problem where beagrep-crawl-system was not being properly
   generated at configure-time.  [bgo #401504]
 
 * Translations:
@@ -925,7 +925,7 @@ Macdonald, Stephan Hegel, Rick Friedman.
 5 GNOME Bugzilla bugs fixed in this release: http://tinyurl.com/2mjlog
 
 Full set of changes:
-http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_2_16/ChangeLog
+http://svn.gnome.org/viewcvs/*checkout*/beagrep/tags/BEAGREP_0_2_16/ChangeLog
 
 ------------------------------------------------------
 
@@ -934,7 +934,7 @@ Version 0.2.15
 
 Notable changes:
 
-* Beagle now users the .NET 2.0 profile and is compiled with gmcs,
+* Beagrep now users the .NET 2.0 profile and is compiled with gmcs,
   giving us access to generics.
 
 * Support added for Linux's relatively new SCHED_BATCH scheduler
@@ -966,7 +966,7 @@ Notable changes:
 * Removed the rarely-used Google backend, since Google stopped
   providing API keys.
 
-* Install a greatly improved beagle-dump-index tool, for examining the
+* Install a greatly improved beagrep-dump-index tool, for examining the
   data inside indexes.
 
 * Many rendering improvements and bug fixes to the GUI.
@@ -993,7 +993,7 @@ Stephan Binner, Brian J. Murrell, Ed Catmur.
 29 Bugzilla bugs fixed in this release: http://tinyurl.com/2qwuk2
 
 Full set of changes:
-http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_2_15/ChangeLog
+http://svn.gnome.org/viewcvs/*checkout*/beagrep/tags/BEAGREP_0_2_15/ChangeLog
 
 ------------------------------------------------------
 
@@ -1010,7 +1010,7 @@ Daemon/Infrastructure:
 * Add infrastructure to signal clients when we're doing the initial
   index.  (Joe Shaw)
 * Changes to how child indexables are dealt with in the index.  (Bera)
-* Work around a bug in Mono 1.2.1, so that Beagle doesn't incorrectly
+* Work around a bug in Mono 1.2.1, so that Beagrep doesn't incorrectly
   think your home directory is on a remote filesystem like NFS.  (Joe)
 * Use the XDG autostart specification to autostart the daemon, and
   deprecate the old --autostarted flag.  (Joe)
@@ -1048,28 +1048,28 @@ Filters:
 * Turn on snippeting in the man page filter.  (Joe)
 
 Bindings:
-* Fix a logic bug in libbeagle that would cause responses to get lost
+* Fix a logic bug in libbeagrep that would cause responses to get lost
   if different complex messages were sent to the daemon.  (Joe)
-* Print out the response in libbeagle apps if ENABLE_XML_DUMP is
+* Print out the response in libbeagrep apps if ENABLE_XML_DUMP is
   defined.  (Joe)
-* Set the correct time zone info in BeagleTimestamp.  (Bera)
+* Set the correct time zone info in BeagrepTimestamp.  (Bera)
 * Add example code for using the indexing service APIs.  (Bera)
 
 Tools:
-* Only show the timestamp in beagle-extract-content if it's valid.
+* Only show the timestamp in beagrep-extract-content if it's valid.
   (Joe)
 * Fix a problem in which child indexables from archives weren't being
-  cleaned up in beagle-extract-content.  (Bera)
+  cleaned up in beagrep-extract-content.  (Bera)
 * Only show the number of total hits if we're in verbose mode with
-  beagle-query, so that scripts can still easily deal only with URIs.
+  beagrep-query, so that scripts can still easily deal only with URIs.
   (Joe)
-* Add support to beagle-settings to handle autostarting the daemon and
+* Add support to beagrep-settings to handle autostarting the daemon and
   UI with the XDG autostart spec.  (Joe)
-* Show the percentages of progress in beagle-index-info for the
+* Show the percentages of progress in beagrep-index-info for the
   backends that support it.  (Joe)
-* Remove dead webservices code from beagle-settings tool.  (Joe)
+* Remove dead webservices code from beagrep-settings tool.  (Joe)
 * Fix a problem in which passing in --disable-directories to
-  beagle-crawl-system would override --disable-filtering.  (Joe, 
+  beagrep-crawl-system would override --disable-filtering.  (Joe, 
   Pat Double)
 
 UI:
@@ -1089,7 +1089,7 @@ UI:
   handler for the URL.  (Kevin, Joe)
 * Fix a crash on right-click when the "Open With..." menu would have
   been blank.  (Joe)
-* Use the XDG autostart spec to autostart beagle-search, and deprecate
+* Use the XDG autostart spec to autostart beagrep-search, and deprecate
   the old --autostarted method.  (Joe)
 * Fix a potential crash in the image tile in the unlikely event that
   we'd attempt to composite the F-Spot logo on top of a standard MIME
@@ -1151,7 +1151,7 @@ Everything else:
   0.60 version.  (Joe)
 * Fix an issue with the cron scripts not being included in the
   tarball.  (Joe)
-* Only check for gtk-doc if libbeagle is enabled.  (Joe)
+* Only check for gtk-doc if libbeagrep is enabled.  (Joe)
 
 ------------------------------------------------------
 
@@ -1167,7 +1167,7 @@ Daemon/Infrastructure:
 * Fix a bug in which the short circuiting code would cause not all
   results to be found.  (Debajyoti Bera)
 * Fix a bug in remote filesystem index synchronization when home is on
-  a remote filesystem but BEAGLE_STORAGE is set.  (Joe)
+  a remote filesystem but BEAGREP_STORAGE is set.  (Joe)
 * Add means to get the total number of Lucene matches that are found.
 * Fix broken UTC/local time mismatches in C clients.  (Bera)
 * Join threads together when shutting down so that all the outstanding
@@ -1200,9 +1200,9 @@ UI:
 * Fix various i18n issues in the code.  (Gabor Kelemen)
 
 Tools:
-* Use the watch command for beagle-status instead of our own loop in
+* Use the watch command for beagrep-status instead of our own loop in
   the shell script.  (José Carlos García Sogo, Joe)
-* Don't quote the query string in beagle-query, it breaks advanced
+* Don't quote the query string in beagrep-query, it breaks advanced
   query syntax.  (Bera)
 
 Translations:
@@ -1228,12 +1228,12 @@ Version 0.2.12
 1 November 2006
 
 Daemon/Infrastructure:
-* Drastically reduce memory usage of beagled and beagled-index-helper
+* Drastically reduce memory usage of beagrepd and beagrepd-index-helper
   at startup by changing how certain pluggable components are
   detected.  Filter and backend authors, see IMPORTANT NOTE below.
   (Joe Shaw, Debajyoti Bera, Kevin Kubasik)
-* Don't run Beagle in Mono with the --debug flag unless --mono-debug
-  is passed into beagled.  This saves memory and fixes leaks.  (Joe)
+* Don't run Beagrep in Mono with the --debug flag unless --mono-debug
+  is passed into beagrepd.  This saves memory and fixes leaks.  (Joe)
 * Tokenize emails and hostnames when indexing.  (Bera)
 * Add back in Hangul Jamo support to Lucene, which was lost in our
   upgrade to 1.9.1.  (Young-Ho Cha)
@@ -1255,7 +1255,7 @@ Backends:
   filters, since they are handled by the tokenizer now.  (Bera)
 
 Tools:
-* Add --disable-directories to beagle-build-index so that directories
+* Add --disable-directories to beagrep-build-index so that directories
   themselves aren't indexed.  (Joe)
 * Set the default applications and documentation crawl rules to use
   --disable-directories.  (Joe)
@@ -1311,15 +1311,15 @@ UI:
   menu.  (Ryan Probasco)
 * Add bug-buddy support to the search and settings .desktop files.
   (Kevin)
-* Use the looking glass icon for the beagle-settings window.
+* Use the looking glass icon for the beagrep-settings window.
   (Fredrik)
 * Small formatting fix in the IM log viewer.  (Kevin)
 * Fix a UI glitch with border widths.  (Fredrik)
 
 Tools:
 * Allow the user to request multiple pieces of information with the
-  beagle-info tool.  (Bera)
-* Print the timestamp in the beagle-extract-content tool.  (bera)
+  beagrep-info tool.  (Bera)
+* Print the timestamp in the beagrep-extract-content tool.  (bera)
 
 Translations:
 * Added Serbian translation.  (Filip Miletić)
@@ -1388,7 +1388,7 @@ UI:
   mail attachments.  (Kevin)
 
 Bindings:
-* Fix some compile warnings in libbeagle.  (Joe Hargadon)
+* Fix some compile warnings in libbeagrep.  (Joe Hargadon)
 
 Tools:
 * Fix a plural string in the contact viewer for i18n.  (Joe)
@@ -1409,7 +1409,7 @@ Everything else:
 * Add support for Epiphany 2.16.  (Joe)
 * Require stable versions of gtk-sharp (2.4.0) and gmime-sharp
   (2.2.0).  (Joe)
-* Install the beagle-ui.pc pkg-config file only if the UI is built.
+* Install the beagrep-ui.pc pkg-config file only if the UI is built.
   (Bera)
 
 ------------------------------------------------------
@@ -1447,8 +1447,8 @@ UI:
 * Hide and unhide the window properly.  (Arif)
 
 Bindings:
-* Fix some C++ style comments in libbeagle's header files.  (Lukas)
-* Fix a warning in libbeagle about a dangling comma.  (Lukas)
+* Fix some C++ style comments in libbeagrep's header files.  (Lukas)
+* Fix a warning in libbeagrep about a dangling comma.  (Lukas)
 
 Tools:
 * Don't display timeline categories that don't have any logs in the IM
@@ -1534,11 +1534,11 @@ UI:
   the IM log tile.  (Joe)
 
 Bindings:
-* Fix an issue where beagle_util_daemon_is_running() wouldn't work
+* Fix an issue where beagrep_util_daemon_is_running() wouldn't work
   with NFS home directories.  (Joe)
 
 Tools:
-* Make the help button in beagle-settings point to the right Wiki
+* Make the help button in beagrep-settings point to the right Wiki
   page.  (Kevin)
 
 Translations:
@@ -1588,7 +1588,7 @@ Daemon/Infrastructure:
   (Joe)
 * No longer handle SIGQUIT to shut down the daemon; it's used very
   valuably by Mono for debugging purposes.  (Joe)
-* Add a BEAGLE_DISABLE_XATTR environment variable to disable extended
+* Add a BEAGREP_DISABLE_XATTR environment variable to disable extended
   attribute support for testing purposes.  (Joe)
 * Only print out the inotify "Maximum watch limit hit" warning once.
   (Joe)
@@ -1600,7 +1600,7 @@ Daemon/Infrastructure:
   cleaned up.  (Joe)
 * Fix a bug in which properties weren't being sorted and couldn't be
   found.  (Max, Kevin, Bera)
-* Work around a Mono bug so that dangling symlinks in ~/.beagle/Log
+* Work around a Mono bug so that dangling symlinks in ~/.beagrep/Log
   are cleaned up at startup.  (Joe)
 
 Backends:
@@ -1646,12 +1646,12 @@ UI:
 
 
 Tools:
-* Add --enable-deletion to beagle-build-index, which removes deleted
+* Add --enable-deletion to beagrep-build-index, which removes deleted
   files from the index.  (Bera)
 * Add $sharedir/gtk-doc/html and $sharedir/gnome/html to the
   documentation crawl rules.  (Joe)
-* Fix a typo in the beagled manpage.  (Kevin Lamontagne)
-* Fix bugs dealing with shell quoting in beagle-query.  (Max)
+* Fix a typo in the beagrepd manpage.  (Kevin Lamontagne)
+* Fix bugs dealing with shell quoting in beagrep-query.  (Max)
 
 Translations:
 * Updated Brazilian Portuguese translation.  (Raphael Higino)
@@ -1693,7 +1693,7 @@ Backends:
 * Store the date in the indexable's timestamp instead of using a
   dc:date property in the various feed backends.  (Bera)
 * Strip HTML tags from Gaim logs so that they don't show up in
-  beagle-search anymore.  (Bera)
+  beagrep-search anymore.  (Bera)
 * Ignore all special files in the file system backend, not just
   symlinks.  (Joe)
 
@@ -1716,9 +1716,9 @@ UI:
 * Fix an incorrect "From" label in emails that you send.  (Max Wiehle)
 
 Tools:
-* Move the -s argument before the username in beagle-crawl-system to
+* Move the -s argument before the username in beagrep-crawl-system to
   appease some versions of su.  (Joe)
-* Don't hardcode the beagle-settings size, just set a default size.
+* Don't hardcode the beagrep-settings size, just set a default size.
   (Joe)
 
 Bindings:
@@ -1741,15 +1741,15 @@ Daemon/Infrastructure:
 * Unset the DISPLAY variable in the index helper, since it should
   never get an X connection.  (Joe)
 * Enabled and disabled backends can now be saved as part of the
-  configuration, through the beagle-config tool.  (D Bera)
+  configuration, through the beagrep-config tool.  (D Bera)
 * Add a new --backends command-line that gives the user more control
   over what backends are started, given the new configuration.  The
   --allow-backend and --deny-backend options are now deprecated.
   (Bera)
 * Don't allow the daemon to be run from sudo, since its default
-  configuration causes broken permissions in ~/.beagle and ~/.wapi.
+  configuration causes broken permissions in ~/.beagrep and ~/.wapi.
   (Joe)
-* Make sure HOME or BEAGLE_HOME is set before starting the daemon.
+* Make sure HOME or BEAGREP_HOME is set before starting the daemon.
   (Joe)
 * Change to using glib's g_spawn to launch programs, rather than
   .Net's own internal Process class.  (Joe)
@@ -1789,14 +1789,14 @@ UI:
   asked for, scale them down to the appropriate size.  (Joe)
 
 Tools:
-* Explicitly set our .wapi dir in beagle-crawl-system to a temporary
+* Explicitly set our .wapi dir in beagrep-crawl-system to a temporary
   directory, so that it works without a home directory.  (Bera)
 * Add --list-backends and --list-static-indexes options to
-  beagle-info.  (Bera, Joe)
-* If we don't match a filter using beagle-extract-content, don't
+  beagrep-info.  (Bera, Joe)
+* If we don't match a filter using beagrep-extract-content, don't
   assume it's plain text.  (Joe)
-* Display correct values for flags in beagle-dump-index.  (Bera)
-* Don't install the beagle-crawl-system cronjob into libexec.  (Joe)
+* Display correct values for flags in beagrep-dump-index.  (Bera)
+* Don't install the beagrep-crawl-system cronjob into libexec.  (Joe)
 
 Bindings:
 * Use pyexecdir instead of pythondir for installing the python
@@ -1841,7 +1841,7 @@ Filters:
 * New Ebuild filter.  (Pat)
 * Make the new image filters use FilterImage.  (Lukas)
 * Fix parsing of Gaim 2.0 logs.  (Lukas, Zafar)
-* Fix the external filter to look in $sysconfdir/beagle, rather than
+* Fix the external filter to look in $sysconfdir/beagrep, rather than
   $sysconfdir.  (Joe)
 * Fixed up the HTML and PDF filters to not extract more than 40,000
   words.  (Bera)
@@ -1874,23 +1874,23 @@ Tools:
 * Fix the scripts to allow being run uninstalled from the source
   directory, but only from the system directories once installed, in a
   safe manner.  (Joe)
-* GNOME HIG fixes for beagle-settings.  (Dennis Cranston)
-* Add a --list-filters option to beagle-info.  (Bera, Joe)
+* GNOME HIG fixes for beagrep-settings.  (Dennis Cranston)
+* Add a --list-filters option to beagrep-info.  (Bera, Joe)
 * Fix a typo in the crawl-applications rule.  (Lukas)
 * Add /usr/local/share/doc to the crawl-documentations rule.  (Lukas)
 * Allow bludgeon to be disabled at configure time.  (Kevin Kubasik)
-* Install the beagle-extract-content tool.  (Joe)
-* Use cron.daily for beagle-crawl-system, rather than cron.d.  (Joe)
+* Install the beagrep-extract-content tool.  (Joe)
+* Use cron.daily for beagrep-crawl-system, rather than cron.d.  (Joe)
 
 Bindings:
-* Add a beagle_util_daemon_is_running() to libbeagle.  (Lukas)
+* Add a beagrep_util_daemon_is_running() to libbeagrep.  (Lukas)
 
 Everything Else:
 * Check for a newer version of Epiphany.  (Kyle Ambroff, Christian
   Persch)
 * Move some more dependencies only required when building the GUI.
   (Bera)
-* Allow beagle to be built without the X screensaver extension.
+* Allow beagrep to be built without the X screensaver extension.
   (Marijn, Lipka)
 
 Translations:
@@ -1909,7 +1909,7 @@ Version 0.2.3
 March 17, 2006
 
 Daemon/Infrastructure:
-* Allow Beagle to be run as root, although this is still disabled by
+* Allow Beagrep to be run as root, although this is still disabled by
   default and not recommended.  (Joe Shaw)
 * Allow emails, hostnames, and numeric strings to leak through noise
   filter.  (D Bera)
@@ -1953,14 +1953,14 @@ UI:
 * Escape URIs before passing them to apps.  (Daniel, Brandon Hale)
 
 Tools:
-* Fix a crash in beagle-build-index when not using text caches.
+* Fix a crash in beagrep-build-index when not using text caches.
   (Alexander Larsson)
-* Be extra paraoid in beagle-manage-index so that we don't delete any
+* Be extra paraoid in beagrep-manage-index so that we don't delete any
   user data.  (Joe)
 
 Everything Else:
 * Fix a compilation error on some 64-bit machines.  (Joe)
-* Updated Beagle icons in the Firefox extension.  (Garrett LeSage)
+* Updated Beagrep icons in the Firefox extension.  (Garrett LeSage)
 
 Translations:
 * Updated Bulgarian translation.  (Alexander Shopov)
@@ -1987,15 +1987,15 @@ Daemon/Infrastructure:
   wasn't indexed.  (Joe)
 * Exit the daemon with error code 1 if it completely fails to run.
   (Joe)
-* Fix a bug in libbeagle in which some asynchronous requests would
+* Fix a bug in libbeagrep in which some asynchronous requests would
   never return.  (Joe)
 * Bump up priorities of child indexable tasks so that they don't queue
   up for a long time when the daemon is very busy.  (Joe)
 * Fix an occasional but harmless exception on startup, and don't
-  unnecessarily create BeagleConsole log files.  (Joe)
+  unnecessarily create BeagrepConsole log files.  (Joe)
 * Add keyword mappings for querying image comments and tags.  (Bera)
 * Query the screensaver X extension before using it.  (Joe)
-* Exit with an error if an unknown argument is passed into beagled.
+* Exit with an error if an unknown argument is passed into beagrepd.
   (Likas Lipka)
 
 Backends:
@@ -2011,7 +2011,7 @@ Backends:
 * Support new gaim 2.0 log files.  (Joe)
 * Add checks to the Evolution Data Server backend so that having an
   unsupported e-d-s doesn't kill the daemon.  (Joe)
-* Allow loading of backends from BEAGLE_BACKEND_PATH environment
+* Allow loading of backends from BEAGREP_BACKEND_PATH environment
   variable.  (Joe)
 
 Filters:
@@ -2025,7 +2025,7 @@ Filters:
   opening the F-Spot database.  (Joe)
 
 UI/Tools:
-* Fix colors and theming for many themes in beagle-search, including
+* Fix colors and theming for many themes in beagrep-search, including
   gtk-qt, Crux, and others.  (Dan Winship)
 * Fix a crash when the spinner icon isn't available.  (Dan)
 * Improve the UI when displaying many matches at once.  (Dan)
@@ -2035,7 +2035,7 @@ UI/Tools:
   More" mode.  (Dan)
 * Don't display mail attachments as blank mail tiles.  (Dan)
 * Allow results to be sorted by title, timestamp, and score.  (Dan)
-* Fix thumbnailing in beagle-search, and make it asynchronous so that
+* Fix thumbnailing in beagrep-search, and make it asynchronous so that
   it doesn't block the UI.  (Dan)
 * Fix a bug in which tiles would be unselected if a tile was resized
   or re-sorted.  (Dan)
@@ -2051,40 +2051,40 @@ UI/Tools:
 * Don't display blank titles for files with empty title fields.  (Lukas)
 * Make the generated thumbnails bigger in the details pane.  (Lukas)
 * Load the buddy icon for the IM details pane.  (Lukas)
-* Added support to beagle-search for the hide/show keybinding in icon
+* Added support to beagrep-search for the hide/show keybinding in icon
   mode.  (Joe)
-* Added a page to tell root users that Beagle cannot be used as root.
+* Added a page to tell root users that Beagrep cannot be used as root.
   (Joe)
 * Make the creation of tiles easier by sharing much of the details
   code between them.  (Dan)
 * Fix a problem in which the background of the tray icon wasn't
   transparent on KDE panels.  (Dan)
 * Put the right version and copyright information inside the
-  beagle-search about box.  (Dan)
+  beagrep-search about box.  (Dan)
 * Various local time vs. UTC bugs in several tools.  (Dan, Joe)
 * Many other localization fixes.  (Dan, Joe)
 * Fix a file descriptor leak in the IM log viewer.  (Joe)
-* Fix a quoting problem with beagle-query so that quoted phrases are
+* Fix a quoting problem with beagrep-query so that quoted phrases are
   searched properly.  (Joe)
-* Fix beagle-build-index to handle failure conditions better.  (Joe)
+* Fix beagrep-build-index to handle failure conditions better.  (Joe)
 * Be even more paranoid about deleting the target directory in
-  beagle-build-index; refuse to do it if any non-Beagle files or
+  beagrep-build-index; refuse to do it if any non-Beagrep files or
   directories are present.  (Joe)
-* When creating indexes with beagle-build-index, don't make the text
+* When creating indexes with beagrep-build-index, don't make the text
   caches unreadable by default.
-* Use ionice in beagle-crawl-system to set the IO priority to idle.
+* Use ionice in beagrep-crawl-system to set the IO priority to idle.
   (Joe)
-* Add a new option to beagle-dump-index to get information about a
+* Add a new option to beagrep-dump-index to get information about a
   file from the index.  (Bera)
 
 Everything Else:
 * Most processes set their names using prctl(); meaning you can now
-  use pidof or killall when dealing with Beagle processes.  (Joe,
+  use pidof or killall when dealing with Beagrep processes.  (Joe,
   Aaron Bockover)
 * Fix our sqlite version detection in configure.in.  (Daniel)
-* Only install beagle-settings.desktop when ENABLE_GUI is chosen.
+* Only install beagrep-settings.desktop when ENABLE_GUI is chosen.
   (Daniel)
-* Internationalize the beagle-search.desktop file.  (Joe)
+* Internationalize the beagrep-search.desktop file.  (Joe)
 * Install mono's mdb files so that stack traces include additional
   information for easier debugging.  (Joe)
 
@@ -2158,10 +2158,10 @@ UI/Tools:
 * Remove a bunch of unused images from the image assembly.  (Joe)
 * Remove the accidentally used GPL spinner code from Epiphany and
   replace it with a managed, MIT-licensed replacement.  (Dan)
-* Fix the beagle-search desktop file to have the right icon.  (Joe)
+* Fix the beagrep-search desktop file to have the right icon.  (Joe)
 * Install the icon into the system pixmaps directory.  (Joe)
 * Update the IM log viewer to use the new icon.  (Joe)
-* Add some warning text to beagle-build-index about the target
+* Add some warning text to beagrep-build-index about the target
   path.  (Joe)
 
 Translations:
@@ -2185,12 +2185,12 @@ Version 0.2.0
 January 20, 2006
 
 UI/Tools:
-* New user interface, named beagle-search.  (Lukas Lipka, Dan Winship,
+* New user interface, named beagrep-search.  (Lukas Lipka, Dan Winship,
   Fredrik Hedberg, Joe Shaw)
 * Old user interface (Best) removed.  (Dan)
 * Explicitly blacklist the documentation index when searching using
-  beagle-search.  (Joe)
-* Fix up the beagle-extract-content testing tool to clean up after
+  beagrep-search.  (Joe)
+* Fix up the beagrep-extract-content testing tool to clean up after
   tmpfiles.  (Joe)
 * Many fixes to the bludgeon testing tool.  (Joe)
 
@@ -2247,7 +2247,7 @@ Filters:
 * Fix some memory management issues in mail filter.  (Joe)
 
 Bindings:
-* Many libbeagle updates.  (Joe, Bera)
+* Many libbeagrep updates.  (Joe, Bera)
 * Many Python binding updates.  (Bera)
 * Added Python example script.  (Raphael Slinckx)
 
@@ -2272,19 +2272,19 @@ December 21, 2005
 Daemon/Infrastructure:
 * Clean up snippet requesting API to be much simpler for clients.
   (Joe Shaw, Jon Trowbridge)
-* Fix libbeagle to allow snippets to be requested.  (Joe)
-* Fix date range queries in libbeagle.  (D Bera, Joe)
-* Fix filtering by source in libbeagle.  (Joe)
+* Fix libbeagrep to allow snippets to be requested.  (Joe)
+* Fix date range queries in libbeagrep.  (D Bera, Joe)
+* Fix filtering by source in libbeagrep.  (Joe)
 * Fix file extension queries.  ie, "ext:jpg".  (Bera)
 * Pre-initialize the serializer in connection handler.  Removes the slight
   lag in the first response.  (Bera)
-* Added beagle:NoPunctFilename property to files.  (Jon)
+* Added beagrep:NoPunctFilename property to files.  (Jon)
 * Clean up error handling in the message passing code to aid
   debugging.  (Joe)
 * Add unstored properties, so that indexables can send "hints" to
   filters.  (Bera)
 * Fix properties to be both searched and stored by default in
-  libbeagle.  (Joe)
+  libbeagrep.  (Joe)
 * Wait up to a minute for the index helper process to start, as it may
   take longer than the previous 4 seconds to respond to messages.
   (Bera, Joe)
@@ -2317,10 +2317,10 @@ Filters:
 
 UI/Tools:
 * Lots of improvements to Bludgeon.  (Jon)
-* Set the source in beagle-build-index, and allow it to be
+* Set the source in beagrep-build-index, and allow it to be
   configurable.  Fixes a bug where snippets were not returned from
   static queryables that had text caches.  (Joe)
-* Fix a cut-and-paste error beagle-crawl-system to correctly pass in
+* Fix a cut-and-paste error beagrep-crawl-system to correctly pass in
   deny patterns to --deny-pattern.  (Joe)
 
 Translations:
@@ -2333,7 +2333,7 @@ Everything Else:
 * Look for Firefox 1.5 headers in a few different places for best
   compatibility.  (Joe)
 * Get the Evolution library directory from evolution-sharp, and pass
-  it into the beagled script.  (Joe, Ryan Skadberg)
+  it into the beagrepd script.  (Joe, Ryan Skadberg)
 
 ------------------------------------------------------
 
@@ -2373,13 +2373,13 @@ Filters:
 
 UI/Tools:
 * Fixed the blog tile. (Daniel)
-* Fix some problems in the beagle-crawl-system script that would result
+* Fix some problems in the beagrep-crawl-system script that would result
   in TextCaches being created incorrectly, causing problems when
   searching.  (Sylvain Goletto, Joe)
 * Fix a crash of the Epiphany extension on x86-64 machines.  (Stanislav
   Brabec, Joe)
 * Save best window settings even when ran with --no-tray. (Bera)
-* Allow beagle-extract-content to store output in a file. (Bera)
+* Allow beagrep-extract-content to store output in a file. (Bera)
 * Stop live-query when "clear" button is pressed in Best. (Bera)
 
 * Translations:
@@ -2393,7 +2393,7 @@ Everything Else:
   where you couldn't "make" after a "make clean" in the 0.1.2 tarball.
   (Joe)
 * Best can now be built on firefox 1.5. (Daniel)
-* Allow beagle to be built against Mozilla xulrunner.  (Joe)
+* Allow beagrep to be built against Mozilla xulrunner.  (Joe)
 
 ------------------------------------------------------
 
@@ -2404,15 +2404,15 @@ Daemon/Infrastructure:
 * Added date range searches. (Joe Shaw, Jon Trowbridge)
 * Fixed a bug where sending a query to the daemon would cause a helper
   process to start.  (Joe)
-* Fixed a bug in libbeagle to use our query parser rather than plain text.
+* Fixed a bug in libbeagrep to use our query parser rather than plain text.
   (Joe)
-* Added keyword based query support e.g. title:beagle. (D Bera)
+* Added keyword based query support e.g. title:beagrep. (D Bera)
 * Updated pruning of old log files. (Lukas Lipka)
 * Updated to dotLucene 1.9 RC1. (Daniel Drake)
 * Lucene locking bug fix. (Daniel)
 * Small lucene optimizations. (Daniel)
-* Consolidated glue code into two libraries: libbeagleglue and
-  libbeagleuiglue. (Daniel)
+* Consolidated glue code into two libraries: libbeagrepglue and
+  libbeagrepuiglue. (Daniel)
 * Fixed two scheduler-related crashes associated with a null task source.
   (Daniel)
 * New Uri serialization scheme. (Daniel)
@@ -2424,8 +2424,8 @@ Daemon/Infrastructure:
   inotify and scheduler code. (Joe)
 * Fixed a bug in the scheduler's immediate priority throttling code.
   (Joe)
-* Added catch-all exception handlers to beagled, the index helper, and
-  beagle-build-index so that if an unhandled exception happens, the
+* Added catch-all exception handlers to beagrepd, the index helper, and
+  beagrep-build-index so that if an unhandled exception happens, the
   program exits immediately and doesn't leave around a hung process.
   (Joe)
 * Fixed a race in which the user could start a query against an empty
@@ -2445,11 +2445,11 @@ Daemon/Infrastructure:
 * Switched to thread-local static buffers when writing indexables out to
   temporary files.  This avoids a lot of allocations. (Jon)
 * Reuse StringBuilders in the IM Log parser and DirectoryWalker. (Jon)
-* Small improvements to the beagled and index helper wrapper scripts. (Jon)
+* Small improvements to the beagrepd and index helper wrapper scripts. (Jon)
 * Revamped logging. (Jon)
 * Fixed marshaling of C strings to StringBuilders in sys_readdir. (Joe,
   Jon)
-* Relative paths in BEAGLE_HOME and BEAGLE_STORAGE now work. (Jon)
+* Relative paths in BEAGREP_HOME and BEAGREP_STORAGE now work. (Jon)
 * Added --indexing-test-mode to the daemon, which causes it to shut
   down automatically when indexing is complete. (Jon)
 
@@ -2488,21 +2488,21 @@ UI/Tools:
   sessions. (D Bera)
 * Fixed a bug in mail tiles for determining if the hit is a
   mail-attachment. (D Bera)
-* Sanitize beagle-index-url ot our standards. (Lukas)
+* Sanitize beagrep-index-url ot our standards. (Lukas)
 * Show artist in music tile. (Lukas)
 * ImLogViewer tweaks and improvements. (Daniel)
 * Use more gtk-sharp bindings for better GNOME integration. (Daniel)
 * Make the number of items displayed in Best configurable through
-  beagle-settings.  (Mario Manno, Joe)
+  beagrep-settings.  (Mario Manno, Joe)
 * I18nize the .desktop files.  (Gabor Kelemen)
 * Fixed best to start up correctly on AMD64. (Jack Miller)
-* Added beagle-dump-index tool. (Jon)
-* Fixed beagle-extract-content to always report the mime type (even if
+* Added beagrep-dump-index tool. (Jon)
+* Fixed beagrep-extract-content to always report the mime type (even if
   there is no matching filter) and to always sort the properties
   before printing them. (Jon)
 
 Web Services:
-* Enable beagled with web services to support --replace option, and to
+* Enable beagrepd with web services to support --replace option, and to
   shutdown and restart cleanly. (KN Vijay)
 
 Translations:
@@ -2545,9 +2545,9 @@ Filters:
 * Support OOo Draw files in OpenOffice filter. (David Richards)
 
 UI/Tools:
-* Fix an exception that would show up if you used beagle-index-url when
+* Fix an exception that would show up if you used beagrep-index-url when
   the IndexingService backend wasn't enabled.  (Joe)
-* Allow best to start beagled on amd64. (Jack Miller)
+* Allow best to start beagrepd on amd64. (Jack Miller)
 
 Translations:
 * Updated Bulgarian translation. (Alexander Shopov)
@@ -2560,7 +2560,7 @@ Translations:
 Everything Else:
 * Build the Evolution Data Server backend into its own assembly and
   install it into the system backend directory, allowing distributors to
-  package and ship it separately from the main Beagle package.  (Joe)
+  package and ship it separately from the main Beagrep package.  (Joe)
 * All the stuff I forgot. (All of the people I forgot)
 
 ------------------------------------------------------
@@ -2575,7 +2575,7 @@ Daemon/Infrastructure:
     several horrible hacks that had been introduced for the benefit
     of the file system backend.
   + The index is now semi-transactional; we can make now make some
-    guarantees about the index and the beagle-specific filesystem
+    guarantees about the index and the beagrep-specific filesystem
     metadata not getting dangerously out-of-sync in the event of a
     crash.
   + It is now possible to efficiently modify certain index properties.
@@ -2601,11 +2601,11 @@ Daemon/Infrastructure:
   (Daniel)
 * Reduce inotify watch masks when we can. (Daniel)
 * Maintain parent-child relationships when watches are moved. (Daniel)
-* Fix a crasher in libbeagle related to using g_stat(). (Joe)
+* Fix a crasher in libbeagrep related to using g_stat(). (Joe)
 * Update to gtk-sharp 2.x APIs. (Joe, Lluís Pàmies)
 * Add an --enable-xml-dump configure option for debugging message
   passing between components. (Joe)
-* Many fixes to libbeagle to keep it up-to-date with the C# code. (Joe)
+* Many fixes to libbeagrep to keep it up-to-date with the C# code. (Joe)
 * Fixed encoding of keyword property names in Lucene. (Debajyoti Bera)
 * Use gnome-vfs's slow mime sniffing on files with the .xml extension.
   (Chris Lahey)
@@ -2629,7 +2629,7 @@ Backends:
 * The file system backend has been extensively refactored.  It still isn't
   perfect, but has been substantially improved. (Jon, Daniel, Joe, Fredrik) 
 * Allow file system exclude patterns/paths to be set through
-  beagle-config. (Daniel)
+  beagrep-config. (Daniel)
 * Misc filesystem backend fixes to do the right thing when we add/remove
   exclude patterns/paths. (Daniel)
 * Fix removing of file system roots. (Daniel)
@@ -2672,7 +2672,7 @@ UI/Tools:
 * Allow best to launch commands which are 'quoted'. (Daniel)
 * Add a mozilla preference which enables/disables the plugin in a
   persistent way. (Joe)
-* Allow beagle-manage-index to work on versioned indexes. (Daniel)
+* Allow beagrep-manage-index to work on versioned indexes. (Daniel)
 * Flac files are now displayed using the flac tile. (Daniel)
 * Maildir files are now displayed using the mail tile. (Daniel)
 * Don't use evolution to open non-evolution mails in the mail tile. (Daniel)
@@ -2691,14 +2691,14 @@ UI/Tools:
   "BadValue" crashers. (Alex Graveley, Joe)
 * Updated tray icon code from libegg.  This fixes rendering glitches and
   other problems with the best tray icon. (Rodrigo Moya)
-* Set IO priorities in beagle-build-inidex and beagle-manage-index. (Joe)
-* Have beagle-build-index restart itself if it detects its memory usage
+* Set IO priorities in beagrep-build-inidex and beagrep-manage-index. (Joe)
+* Have beagrep-build-index restart itself if it detects its memory usage
   is getting too high, and add a command-line option to disable that
   behavior. (Joe)
 * Fix the Firefox extension from popping up error dialogs left and right
-  if ~/.beagle doesn't exist. (Joe)
-* beagle-extract-content fixes. (Debajyoti)
-* Fixed a security problem in beagle-crawl-system. (Gary Ekker)
+  if ~/.beagrep doesn't exist. (Joe)
+* beagrep-extract-content fixes. (Debajyoti)
+* Fixed a security problem in beagrep-crawl-system. (Gary Ekker)
 * Crawl documentation with the .docbook extension. (Chris)
 * System-wide crawler indexing documentation, windows partitions etc.
   (Fredrik)
@@ -2708,7 +2708,7 @@ Web Services:
 * Improved Web Interface UI including background color for search box and
   drop-down in Web interface. (Vijay KN)
 * Added new option in WebInterface to selectively enable/disable
-  NetworkedBeagle search on per-query basis, when NetworkedBeagle nodes are
+  NetworkedBeagrep search on per-query basis, when NetworkedBeagrep nodes are
   configured.  (Vijay)
 * Support for display of Images in web interface, when hits are images. (Vijay)
 * Hit results returned for external accesses now restricted to File type
@@ -2743,7 +2743,7 @@ Version 0.0.12
 July 11, 2005
 
 Daemon/Infrastructure:
-* Add the libbeagle C API (Imendio, Joe Shaw)
+* Add the libbeagrep C API (Imendio, Joe Shaw)
 * Big changes to the filtering code to make it more flexible (Joe, Fredrik
   Hedberg)
 * Match multiple filters per indexable, use the highest ranking
@@ -2772,9 +2772,9 @@ Daemon/Infrastructure:
 * Fix a bug whereby updates would cause hits to show up multiple times
   by issuing a subtract event before the add event (Joe, Daniel Drake)
 * Friendlier inotify error messages (Daniel)
-* libbeagle: Try BEAGLE_HOME and check that the bus socket exists (Daniel)
+* libbeagrep: Try BEAGREP_HOME and check that the bus socket exists (Daniel)
 * Don't try and discover the file mime-type twice (Daniel)
-* Small fixes to libbeagle (Lukas Lipka)
+* Small fixes to libbeagrep (Lukas Lipka)
 * Better built-in heap-buddy support (Jon)
 * Avoid unnecessary boxing in the message passing code (Jon)
 * Sqlite FileAttributeStore clean-ups (Jon)
@@ -2802,7 +2802,7 @@ Backends:
 * Update the properties in some backends to the be correct (Lukas)
 * Explicitly disable filtering on gaim log indexables, since the stream
   we produce is already filtered (Jon)
-* To ensure that beagle-index-info returns correct information, get
+* To ensure that beagrep-index-info returns correct information, get
   the item count from the IIndexer, not the driver we are using for
   querying (Jon)
 * Fix a problem where we were losing mails from the index if an IMAP
@@ -2819,8 +2819,8 @@ Filters:
 * Added F-Spot metadata support which we now index (Lukas)
 
 UI/Tools:
-* Added beagle-build-index for building static indexes (Fredrik)
-* Added beagle-manage-index for low-level Lucene index management (Fredrik)
+* Added beagrep-build-index for building static indexes (Fredrik)
+* Added beagrep-manage-index for low-level Lucene index management (Fredrik)
 * Configuration UI (Fredrik)
 * Fix a problem with Best whereby the window wasn't being placed in the
   same place when F12 was pressed (Joe)
@@ -2839,9 +2839,9 @@ UI/Tools:
 * Render mail attachments nicely (Lukas)
 
 Web Services:
-* Support for cascaded Beagle Networking (KN Vijay)
-* Configuration of Beagle Web-services and Beagle networking via
-  'beagle-config', with corresponding handlers for real-time update of
+* Support for cascaded Beagrep Networking (KN Vijay)
+* Configuration of Beagrep Web-services and Beagrep networking via
+  'beagrep-config', with corresponding handlers for real-time update of
   configuration changes (Vijay)
 * Added on-demand Prefetching and Caching of snippets for network hits
   (Vijay)
@@ -2911,7 +2911,7 @@ Filters:
 * Scilab filter (Damodharan R)
 
 UI/Tools:
-* beagle-config utility (Daniel)
+* beagrep-config utility (Daniel)
 * Better handling of unchanged hits in Best (Lukas)
 * IM Log Viewer clean-ups (Lukas)
 * Present the Best window instead of just showing it; this should fix
@@ -2920,7 +2920,7 @@ UI/Tools:
   everyone should have seen (Joe)
 
 Web Services:
-* Added new web-services based support for networked beagleds (KN Vijay)
+* Added new web-services based support for networked beagrepds (KN Vijay)
 * Added support for exporting multiple folders for public webservice
   access (Vijay)
 * Fixes to filtering/translating logic for external access to
@@ -2951,7 +2951,7 @@ Daemon/Infrastructure:
   Jon)
 * Delete logs older than 7 days on startup (Lukas Lipka)
 * Bail out eariler if we are run the daemon as root (Lukas)
-* Add --help option to beagled (Lukas)
+* Add --help option to beagrepd (Lukas)
 * Inotify API updates, IsDirectory support and OneShot support (Robert)
 * Inotify event-queue clean-up (Jon)
 * Per-backend index versioning (Fredrik)
@@ -2994,15 +2994,15 @@ UI/Tools:
 * Revamped Best quicksearch menu (Lukas)
 * Pull font settings from gconf and apply them to the style; fixes the
   GIANT FONT PROBLEM people were seeing in non-english locales (Joe)
-* Unify beagle-status, beagle-index-info, and beagle-ping into a single
-  beagle-info program (Joe)
+* Unify beagrep-status, beagrep-index-info, and beagrep-ping into a single
+  beagrep-info program (Joe)
 * Show KDE launcher icons in Best (Daniel)
 * Mouse-over tooltips in Best (Daniel)
 * Fix the TileFolder ranking problem (Fredrik)
 
 Web Services:
-* Added support for Snippets in Beagle Web Interface (KN Vijay)
-* Updated Beagle internal WebServer code to XSP-1.0.9 (Vijay)
+* Added support for Snippets in Beagrep Web Interface (KN Vijay)
+* Updated Beagrep internal WebServer code to XSP-1.0.9 (Vijay)
 * Added External Access filter for Web & Web-service accesses:
   Added check to distinguish between local and external web/web-service
   access, and do basic filtering of hit results for external accesses (Vijay)
@@ -3045,19 +3045,19 @@ Daemon/Infrastructure:
 * Tweaked the types of characters permitted in the snippet code,
   so that certain symbols that were ignored before are allowed (Joe)
 * Updated inotify glue to support the latest inotify code (Robert Love)
-* Added --list-backends option to beagled (Daniel Drake)
+* Added --list-backends option to beagrepd (Daniel Drake)
 * Merged Exif compatibility code from F-Spot to be compatible with
   mono 1.1.5 (Daniel)
-* Do the right thing if Beagle is passed a directory in an environment
+* Do the right thing if Beagrep is passed a directory in an environment
   variable that ends with / (Daniel)
 * Noise filter fixes (Jon Trowbridge)
 
 Backends:
-* Updated beagle-index-url to use FilteredIndexables (Joe)
-* Have beagle-index-url delete content that it is unable to pass
+* Updated beagrep-index-url to use FilteredIndexables (Joe)
+* Have beagrep-index-url delete content that it is unable to pass
   to the daemon (Joe)
-* Fixed up the firefox extension to pass --title into beagle-index-url (Joe)
-* Create temporary files in .beagle/firefox, not /tmp (Joe)
+* Fixed up the firefox extension to pass --title into beagrep-index-url (Joe)
+* Create temporary files in .beagrep/firefox, not /tmp (Joe)
 * Display snippets in web history tiles (Joe)
 * Fixed a bug in the IMAP backend where mails would be indexed twice
   for two separate accounts if the URIs were similar (Joe)
@@ -3090,7 +3090,7 @@ UI/Tools:
 * Display more information about OO.o 2.0 files in the document tile
   (Varadhan)
 * Handle URI escaping when dealing with GNOME Thumbnails (Daniel)
-* Better commandline parsing for beagle-query (Daniel)
+* Better commandline parsing for beagrep-query (Daniel)
 * Folder tile improvements (Fredrik)
 
 Web Services:
@@ -3100,7 +3100,7 @@ Web Services:
 * Updated TokenGenerator to use System.Guid (Vijay)
 * Removed hard-wired paths (Vijay, Jon)
 * Code reorganization and rationalization (Vijay)
-* Allow beagled to run in-place when web services are enabled (Jon)
+* Allow beagrepd to run in-place when web services are enabled (Jon)
 
 Everything else:
 * Web services build fixes (Jon, Vijay)
@@ -3130,13 +3130,13 @@ Version 0.0.8
 March 23, 2005
 
 Daemon/Infrastructure:
-* Added a new web services interface to beagled (KN Vijay)
+* Added a new web services interface to beagrepd (KN Vijay)
 * Better support for Move events in the Inotify bindings (Robert Love)
 * Deal with unmatched Move events (Robert)
 * Properly catch exceptions if we try to watch a directory that
   has just been deleted (Robert)
 * Handle filenames containing funny characters (Daniel Drake)
-* Allow beagled to be started even if X isn't running (Daniel)
+* Allow beagrepd to be started even if X isn't running (Daniel)
 * Better handling of GConf exceptions (Daniel)
 * Check for null URIs in HitRegulator.Subtract() (Veerapuram Varadhan)
 * Lots of snippet fixes and improvements (Fredrik Hedberg)
@@ -3158,7 +3158,7 @@ Daemon/Infrastructure:
   status in a timeout (Jon)
 * Added a new property type: properties that are stored but not
   searched by standard queries (Jon)
-* Don't allow beagled to run as root (Daniel)
+* Don't allow beagrepd to run as root (Daniel)
 
 Backends:
 * Lots of file system backend fixes.  In particular, moving and
@@ -3214,10 +3214,10 @@ UI/tools:
 * Fix F12 so that it works with numlock, caps lock, and whatever other
   crazy modifiers might be on (Joe)
 * Don't crash on non-standard icon themes (Daniel)
-* Allow beagle-query to be run even if X isn't running (Daniel)
+* Allow beagrep-query to be run even if X isn't running (Daniel)
 * Improved command-line argument handling for Best (Lukas)
 * Shut down Best properly in non-tray mode (Lukas)
-* Fixed arguments in beagle-status (Lukas)
+* Fixed arguments in beagrep-status (Lukas)
 * Open Gaim IRC logs in the IM viewer (Lukas)
 * Fixed Buddy List reader error (Lukas)
 * IM viewer clean-ups (Lukas)
@@ -3258,15 +3258,15 @@ Daemon/Infrastructure:
 * More fixes for filenames containing @ (Jon)
 * Fixed logging for helper process (Jon)
 * Don't complain so loudly if we can't set EAs on files (Daniel)
-* Properly handle --fg and --bg in the beagled script (Jon)
+* Properly handle --fg and --bg in the beagrepd script (Jon)
 * Look at VmRSS to decide when to restart the helper, not VmSize (Jon)
 * Set the helper max memory size relative to the initial footprint (Jon)
-* Added environment variables to override where beagle looks for your
+* Added environment variables to override where beagrep looks for your
   files and when it writes its indexes (Jon)
 * TextCache fixes (Jon)
 * Reset the stored path if a file already has attributes but appears to have
   been moved, copied or renamed (Jon)
-* Properly shutdown the helper if the beagled terminates after an add
+* Properly shutdown the helper if the beagrepd terminates after an add
   but before flushing the indexer (Jon)
 * Properly deal with multiple entries for one path in the fallback
   file attributes sqlite db (Jon)
@@ -3285,7 +3285,7 @@ Filters:
 * Lots of misc. clean-up, fixes for compile-time warnings, etc. (Varadhan)
 
 UI:
-* Print out nice error messages on dbus exceptions in beagle-query
+* Print out nice error messages on dbus exceptions in beagrep-query
   (Daniel)
 * If we're unable to launch a process from Best, don't crash (Joe)
 * Show snippets in presentation tiles (Jon)
@@ -3438,7 +3438,7 @@ Daemon:
 * If EAs can't be set on a file, store the information in a
   fallback database (Jon)
 * Expose more information about the indexes via D-BUS (Jon)
-* Added beagle-index-info script (Jon)
+* Added beagrep-index-info script (Jon)
 * Initial lucene optimize operations now threaded for faster
   start-up (Jon)
 
@@ -3488,7 +3488,7 @@ Daemon:
 * Better serialization (Dave, Joe)
 * Relevancy fixes (Joe)
 * Memory Profiling (Jon)
-* Clean shutdown via beagle-shutdown (Dave, Jon)
+* Clean shutdown via beagrep-shutdown (Dave, Jon)
 * D-BUS fixes (Dave, Jon)
 
 
@@ -3531,12 +3531,12 @@ Everything Else:
 * Better wrapper scripts (Chris, Jon, Todd)
 * Build fixes (Everybody)
 * Packaging & snapshots (Chris)
-* Planet Beagle (Robert, Garrett)
+* Planet Beagrep (Robert, Garrett)
 * Kick-ass Logo (Larry, Garrett)
 * Newsletter (Joe G.)
 * Wiki (Joe G.)
 * Website (Garrett, Ben)
-* beagle-query man page (Nat)
+* beagrep-query man page (Nat)
 * Heroic dashboard maintenance (Chris, Joe)
 * All the stuff I forgot (All the people I forgot)
 

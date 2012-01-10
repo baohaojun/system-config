@@ -29,7 +29,7 @@ using System.Text;
 using System.Reflection;
 using System.Collections;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 	
 	public static class VersionFu {
 		
@@ -41,7 +41,7 @@ namespace Beagle.Util {
 			// attributes in the specified assembly (usually the calling one)
 			//
 			// These attributes are defined as following:
-			//  [assembly: AssemblyTitle ("beagle-foo")]
+			//  [assembly: AssemblyTitle ("beagrep-foo")]
 			//  [assembly: AsssemblyDescription ("This is the program that does foo")]
 
 			AssemblyTitleAttribute title = (AssemblyTitleAttribute) Attribute.GetCustomAttribute (a, typeof (AssemblyTitleAttribute));
@@ -53,7 +53,7 @@ namespace Beagle.Util {
 			if (title != null && desc != null)
 				text.AppendFormat ("{0}: {1}.\n", title.Title, desc.Description);
 
-			text.Append ("Web page: http://www.beagle-project.org/\n");
+			text.Append ("Web page: http://www.beagrep-project.org/\n");
 			text.Append (copyright == null ? DefaultCopyright : copyright.Copyright);
 
 			Console.WriteLine (text);
@@ -76,7 +76,7 @@ namespace Beagle.Util {
 
 			PrintHeader (assembly);
 			
-			Console.WriteLine ("Beagle: " + ExternalStringsHack.Version);
+			Console.WriteLine ("Beagrep: " + ExternalStringsHack.Version);
 			Console.WriteLine ("Mono: " + SystemInformation.MonoRuntimeVersion);
 		}
 	}

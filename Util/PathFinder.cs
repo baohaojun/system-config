@@ -28,7 +28,7 @@
 using System;
 using System.IO;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class PathFinder {
 
@@ -58,7 +58,7 @@ namespace Beagle.Util {
 		}
 
 		static public string SystemDir {
-			get { return Path.Combine (Path.Combine (LocalStateDir, "cache"), "beagle"); }
+			get { return Path.Combine (Path.Combine (LocalStateDir, "cache"), "beagrep"); }
 		}
 
 		static public string SystemIndexesDir {
@@ -67,18 +67,18 @@ namespace Beagle.Util {
 
 		// The user's personal files are under this and their dotfiles are in it.
 		// It is usually found via HOME, but that can be overridden by setting
-		// BEAGLE_HOME
+		// BEAGREP_HOME
 		static string home_dir;
 		static object home_dir_lock = new object ();
 		static public string HomeDir {
 			get {
 				lock (home_dir_lock) {
 					if (home_dir == null) {
-						home_dir = Environment.GetEnvironmentVariable ("BEAGLE_HOME");
+						home_dir = Environment.GetEnvironmentVariable ("BEAGREP_HOME");
 						if (home_dir == null)
 							home_dir = Environment.GetEnvironmentVariable ("HOME");
 						if (home_dir == null)
-							throw new Exception ("Couldn't get HOME or BEAGLE_HOME");
+							throw new Exception ("Couldn't get HOME or BEAGREP_HOME");
 						if (home_dir.EndsWith ("/"))
 							home_dir = home_dir.Remove (home_dir.Length - 1, 1);
 						home_dir = Path.GetFullPath (home_dir);
@@ -94,19 +94,19 @@ namespace Beagle.Util {
 			set { lock (home_dir_lock) { home_dir = value; } }
 		}
 
-		// The storage directory is the place where beagle stores its private data.
-		// Fun fact #1: By default this is ~/.beagle
-		// Fun fact #2: It can be overridden by setting BEAGLE_STORAGE
+		// The storage directory is the place where beagrep stores its private data.
+		// Fun fact #1: By default this is ~/.beagrep
+		// Fun fact #2: It can be overridden by setting BEAGREP_STORAGE
 		static string storage_dir;
 		static object storage_dir_lock = new object ();
 		static public string StorageDir {
 			get {
 				lock (storage_dir_lock) {
 					if (storage_dir == null) {
-						storage_dir = Environment.GetEnvironmentVariable ("BEAGLE_STORAGE");
+						storage_dir = Environment.GetEnvironmentVariable ("BEAGREP_STORAGE");
 
 						if (storage_dir == null)
-							storage_dir = Path.Combine (HomeDir, ".beagle");
+							storage_dir = Path.Combine (HomeDir, ".beagrep");
 						else {
 							if (storage_dir.EndsWith ("/"))
 								storage_dir = storage_dir.Remove (storage_dir.Length - 1, 1);
@@ -134,7 +134,7 @@ namespace Beagle.Util {
 				bool index_synchronization = Conf.Daemon.GetOption (Conf.Names.IndexSynchronization, true);
 
 				if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.StorageDir) && index_synchronization) ||
-				    Environment.GetEnvironmentVariable ("BEAGLE_SYNCHRONIZE_LOCALLY") != null) {
+				    Environment.GetEnvironmentVariable ("BEAGREP_SYNCHRONIZE_LOCALLY") != null) {
 					string index_pointer = Path.Combine (StorageDir, "remote_storage_dir");
 
 					if (File.Exists (index_pointer)) {
@@ -149,7 +149,7 @@ namespace Beagle.Util {
 					if (create) {
 						if (remote_storage_dir == null) {
 							do {
-								string p = String.Format ("beagle-{0}-{1}", Environment.GetEnvironmentVariable ("USER"),
+								string p = String.Format ("beagrep-{0}-{1}", Environment.GetEnvironmentVariable ("USER"),
 											  Guid.NewGuid ().ToString ());
 
 								remote_storage_dir = Path.Combine (Path.GetTempPath (), p);
@@ -176,9 +176,9 @@ namespace Beagle.Util {
 			return remote_storage_dir;
 		}
 
-		// The directory where beagle stores its indexes
+		// The directory where beagrep stores its indexes
 		// Fun fact #1: It will be synchronized locally if PathFinder.HomeDir
-		// is on a non-block device, or if BEAGLE_SYNCHRONIZE_LOCALLY is set.
+		// is on a non-block device, or if BEAGREP_SYNCHRONIZE_LOCALLY is set.
 		static string index_dir;
 		static public string IndexDir {
 			get { 
@@ -208,15 +208,15 @@ namespace Beagle.Util {
 		}
 
 		// Location of the global config files.
-		// Once installted, it is Sysconfdir/beagle
-		// Otherwise it is $BEAGLE_CONF_DIR
+		// Once installted, it is Sysconfdir/beagrep
+		// Otherwise it is $BEAGREP_CONF_DIR
 		static string config_data_dir = null;
 		static public string ConfigDataDir {
 			get {
 				if (config_data_dir == null) {
-					config_data_dir = Environment.GetEnvironmentVariable ("BEAGLE_CONF_DIR");
+					config_data_dir = Environment.GetEnvironmentVariable ("BEAGREP_CONF_DIR");
 					if (config_data_dir == null)
-						config_data_dir = Path.Combine (ExternalStringsHack.SysConfDir, "beagle");
+						config_data_dir = Path.Combine (ExternalStringsHack.SysConfDir, "beagrep");
 
 					if (config_data_dir.EndsWith ("/"))
 						config_data_dir = config_data_dir.Remove (config_data_dir.Length - 1, 1);

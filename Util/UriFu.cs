@@ -30,9 +30,9 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
-	/* Beagle URIs : A bunch of hacks
+	/* Beagrep URIs : A bunch of hacks
 	 * ------------------------------
 	 *
 	 * Every indexed document is identified by a URI.
@@ -62,7 +62,7 @@ namespace Beagle.Util {
 	 * to be escaped. Otherwise Uri() will think these are
 	 * special characters!
 	 *
-	 * Note: Beagle internal uris are of the form "uid:xyz".
+	 * Note: Beagrep internal uris are of the form "uid:xyz".
 	 *
 	 */
 
@@ -114,7 +114,7 @@ namespace Beagle.Util {
 				return uri.OriginalString;
 
 			// Do not use uri.ToString(), it actually unescapes certain characters.
-			// uri.AbsoluteUri also returns "uid:xxx" from the beagle internal
+			// uri.AbsoluteUri also returns "uid:xxx" from the beagrep internal
 			// uid:xxx URIs.
 			// If AbsoluteUri is found to skip any information in the URI, then
 			// manually the string needs to be constructed.

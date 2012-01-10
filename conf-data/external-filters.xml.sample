@@ -3,7 +3,7 @@
 
 This file allows you to use external programs to extract text from
 more structured file formats.  For example, you could use pdftotext to
-extract data from PDF files.  (Beagle includes a PDF filter, so this
+extract data from PDF files.  (Beagrep includes a PDF filter, so this
 isn't necessary, but you get the idea.)
 
 There are some limitations to this system: the external programs must

@@ -31,7 +31,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class Scheduler {
 
@@ -39,7 +39,7 @@ namespace Beagle.Util {
 		public delegate void EmptyQueueDelegate ();
 		public event EmptyQueueDelegate EmptyQueueEvent;
 
-		private static bool Debug = Beagle.Util.Debug.Enabled ("Scheduler");
+		private static bool Debug = Beagrep.Util.Debug.Enabled ("Scheduler");
 
 		public enum Priority {
 
@@ -577,10 +577,10 @@ namespace Beagle.Util {
 		static Scheduler ()
 		{
 			string exercise;
-			exercise = Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG");
+			exercise = Environment.GetEnvironmentVariable ("BEAGREP_EXERCISE_THE_DOG");
 
 			if (exercise != null) {
-				Log.Always ("BEAGLE_EXERCISE_THE_DOG is set.");
+				Log.Always ("BEAGREP_EXERCISE_THE_DOG is set.");
 
 				if (exercise.Length > 2 && exercise [0] == 't')
 					global_delay = Double.Parse (exercise.Substring (1));
@@ -1158,7 +1158,7 @@ namespace Beagle.Util {
 				}
 
 				// Add the cancelled tasks to blocked_task list for the time being
-				// This is avoid ABI change in libbeagle
+				// This is avoid ABI change in libbeagrep
 				foreach (string description in cancelled_tasks)
 					current_status.BlockedTasks.Add (description);
 

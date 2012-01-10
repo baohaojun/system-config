@@ -30,7 +30,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 		
 	public class Logger {
 
@@ -46,62 +46,62 @@ namespace Beagle.Util {
 
 		public void Debug (string message, params object [] args)
 		{
-			Beagle.Util.Log.Debug (message, args);
+			Beagrep.Util.Log.Debug (message, args);
 		}
 
 		public void Debug (Exception ex, string message, params object [] args)
 		{
-			Beagle.Util.Log.Debug (ex, message, args);
+			Beagrep.Util.Log.Debug (ex, message, args);
 		}
 
 		public void Debug (Exception ex)
 		{
-			Beagle.Util.Log.Debug (ex);
+			Beagrep.Util.Log.Debug (ex);
 		}
 
 		public void Info (string message, params object [] args)
 		{
-			Beagle.Util.Log.Info (message, args);
+			Beagrep.Util.Log.Info (message, args);
 		}
 
 		public void Info (Exception ex, string message, params object [] args)
 		{
-			Beagle.Util.Log.Info (ex, message, args);
+			Beagrep.Util.Log.Info (ex, message, args);
 		}
 
 		public void Info (Exception ex)
 		{
-			Beagle.Util.Log.Info (ex);
+			Beagrep.Util.Log.Info (ex);
 		}
 
 		public void Warn (string message, params object [] args)
 		{
-			Beagle.Util.Log.Warn (message, args);
+			Beagrep.Util.Log.Warn (message, args);
 		}
 
 		public void Warn (Exception ex, string message, params object [] args)
 		{
-			Beagle.Util.Log.Warn (ex, message, args);
+			Beagrep.Util.Log.Warn (ex, message, args);
 		}
 
 		public void Warn (Exception ex)
 		{
-			Beagle.Util.Log.Warn (ex);
+			Beagrep.Util.Log.Warn (ex);
 		}
 
 		public void Error (string message, params object [] args)
 		{
-			Beagle.Util.Log.Error (message, args);
+			Beagrep.Util.Log.Error (message, args);
 		}
 		
 		public void Error (Exception ex, string message, params object [] args)
 		{
-			Beagle.Util.Log.Error (ex, message, args);
+			Beagrep.Util.Log.Error (ex, message, args);
 		}
 
 		public void Error (Exception ex)
 		{
-			Beagle.Util.Log.Error (ex);
+			Beagrep.Util.Log.Error (ex);
 		}
 	}
 }

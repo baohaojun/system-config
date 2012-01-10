@@ -27,11 +27,11 @@
 using System;
 using System.Reflection;
 
-using Beagle;
-using Beagle.Util;
+using Beagrep;
+using Beagrep.Util;
 
-[assembly: AssemblyTitle ("beagle-shutdown")]
-[assembly: AssemblyDescription ("Tool for shutting down the Beagle daemon")]
+[assembly: AssemblyTitle ("beagrep-shutdown")]
+[assembly: AssemblyDescription ("Tool for shutting down the Beagrep daemon")]
 
 public class Shutdown {
 
@@ -52,7 +52,7 @@ public class Shutdown {
 		try {
 			request.Send ();
 		} catch {
-			Console.WriteLine ("ERROR: The Beagle daemon does not appear to be running");
+			Console.WriteLine ("ERROR: The Beagrep daemon does not appear to be running");
 			return 1;
 		}
 

@@ -28,7 +28,7 @@ using System;
 using System.Text;
 using System.Security.Cryptography;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
         public class Password
         {

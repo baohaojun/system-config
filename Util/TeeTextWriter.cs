@@ -28,7 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class TeeTextWriter : TextWriter {
 

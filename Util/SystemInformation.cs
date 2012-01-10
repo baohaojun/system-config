@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class SystemInformation {
 
@@ -111,14 +111,14 @@ namespace Beagle.Util {
 			External = 2
 		}
 
-		[DllImport ("libbeagleglue.so")]
+		[DllImport ("libbeagrepglue.so")]
 		extern static unsafe int screensaver_glue_init ();
 
 		/// <summary>
-		/// BeagleDaemon needs to monitor screensaver status
+		/// BeagrepDaemon needs to monitor screensaver status
 		/// for faster scheduling when user is idle.
 		/// IndexHelper does not need to monitor screensaver status.
-		/// XssInit is only called from the BeagleDaemon.
+		/// XssInit is only called from the BeagrepDaemon.
 		///
 		/// </summary>
 		/// <returns>
@@ -131,7 +131,7 @@ namespace Beagle.Util {
 			return use_screensaver;
 		}
 
-		[DllImport ("libbeagleglue.so")]
+		[DllImport ("libbeagrepglue.so")]
 		extern static unsafe int screensaver_info (ScreenSaverState *state,
 							   ScreenSaverKind *kind,
 							   ulong *til_or_since,
@@ -191,10 +191,10 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////////////////////////////
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		extern static int get_vmsize ();
 
-		[DllImport ("libbeagleglue")]
+		[DllImport ("libbeagrepglue")]
 		extern static int get_vmrss ();
 
 		public static int VmSize {
@@ -221,7 +221,7 @@ namespace Beagle.Util {
 		// class and initializer function.  Paolo says this is a *HUGE*
 		// unsupported hack and not to be surprised if it doesn't work.
 		public class InternalCallInitializer {
-			[DllImport ("libbeagleglue", EntryPoint="mono_glue_install_icall")]
+			[DllImport ("libbeagrepglue", EntryPoint="mono_glue_install_icall")]
 			public extern static void Init ();
 		}
 

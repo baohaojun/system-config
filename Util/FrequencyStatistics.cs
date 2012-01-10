@@ -28,7 +28,7 @@ using System;
 using System.Collections;
 using System.Threading;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	public class FrequencyStatistics {
 		

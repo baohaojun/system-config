@@ -30,13 +30,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-using Beagle;
-using Beagle.Daemon;
-using Beagle.Util;
+using Beagrep;
+using Beagrep.Daemon;
+using Beagrep.Util;
 
 // Assembly information
-[assembly: AssemblyTitle ("beagle-config")]
-[assembly: AssemblyDescription ("Command-line interface to the Beagle config file")]
+[assembly: AssemblyTitle ("beagrep-config")]
+[assembly: AssemblyDescription ("Command-line interface to the Beagrep config file")]
 
 public static class ConfigTool {
 
@@ -46,22 +46,22 @@ public static class ConfigTool {
 
 		string usage =
 			"Usage: \n" + 
-			"     beagle-config [OPTIONS]\n" +
+			"     beagrep-config [OPTIONS]\n" +
 			" * to list sections:\n" +
-			"     beagle-config --list-sections\n" +
+			"     beagrep-config --list-sections\n" +
 			" * to list options in a section:\n" +
-			"     beagle-config SECTION\n" +
+			"     beagrep-config SECTION\n" +
 			" * to view current values of an option:\n" +
-			"     beagle-config SECTION SECTIONOPTION\n" +
+			"     beagrep-config SECTION SECTIONOPTION\n" +
 			" * to change values of a boolean or a string options:\n" +
-			"     beagle-config SECTION SECTIONOPTION VALUE\n" +
+			"     beagrep-config SECTION SECTIONOPTION VALUE\n" +
 			" * to add values to a list option:\n" +
-			"     beagle-config SECTION SECTIONOPTION PARAMS\n" +
+			"     beagrep-config SECTION SECTIONOPTION PARAMS\n" +
 			" * to remove a value from a list option:\n" +
-			"     beagle-config SECTION SECTIONOPTION - PARAMS\n\n" +
+			"     beagrep-config SECTION SECTIONOPTION - PARAMS\n\n" +
 			"Options:\n" +
 			"  --list-sections\t\tList the available sections.\n" +
-			"  --beagled-reload-config\tAsk the beagle daemon to reload\n" +
+			"  --beagrepd-reload-config\tAsk the beagrep daemon to reload\n" +
 			"                         \tthe configuration file.\n" +
 			"  --list-backends\t\tList the available backends.\n" +
 			"\n" +
@@ -89,12 +89,12 @@ public static class ConfigTool {
 	{
 		ArrayList backends = new ArrayList ();
 
-		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
+		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGREP_BACKEND_PATH", PathFinder.BackendDir);
 
-		// Add BeagleDaemonLib if it hasn't already been added.
+		// Add BeagrepDaemonLib if it hasn't already been added.
 		bool found_daemon_lib = false;
 		foreach (Assembly assembly in assemblies) {
-			if (assembly.GetName ().Name == "BeagleDaemonLib") {
+			if (assembly.GetName ().Name == "BeagrepDaemonLib") {
 				found_daemon_lib = true;
 				break;
 			}
@@ -102,7 +102,7 @@ public static class ConfigTool {
 
 		if (!found_daemon_lib) {
 			try {
-				assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
+				assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagrepDaemonLib.dll")));
 			} catch (FileNotFoundException) {
 				Console.WriteLine ("WARNING: Could not find backend list.");
 				Environment.Exit (1);
@@ -111,7 +111,7 @@ public static class ConfigTool {
 
 		foreach (Assembly assembly in assemblies) {
 			foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (IQueryableTypesAttribute))) {
-				foreach (Beagle.Daemon.QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (Beagle.Daemon.QueryableFlavor)))
+				foreach (Beagrep.Daemon.QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (Beagrep.Daemon.QueryableFlavor)))
 					backends.Add (flavor.Name);
 			}
 		}
@@ -177,7 +177,7 @@ public static class ConfigTool {
 				return;
 
 			case "--reload":
-			case "--beagled-reload-config":
+			case "--beagrepd-reload-config":
 				ReloadConfig ();
 				return;
 
@@ -235,7 +235,7 @@ public static class ConfigTool {
 
 	private static void ListSections ()
 	{
-		string global_dir = Path.Combine (Path.Combine (ExternalStringsHack.SysConfDir, "beagle"), "config-files");
+		string global_dir = Path.Combine (Path.Combine (ExternalStringsHack.SysConfDir, "beagrep"), "config-files");
 		string local_dir = Path.Combine (PathFinder.StorageDir, "config");
 
 		string[] global_configs;

@@ -35,15 +35,15 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace Beagle.Util {
+namespace Beagrep.Util {
 
 	/**
-	 * Manages the configuration files for beagle.
+	 * Manages the configuration files for beagrep.
 	 * Each configuration file is defined by the specific class that needs it and is stored in
 	 * an XML format. The file is a list of Options, where each Option is a BoolOption, a StringOption
 	 * or a ListOption.
 	 *
-	 * Most of beagle components are supposed to read values from the files. The easiest way to do that
+	 * Most of beagrep components are supposed to read values from the files. The easiest way to do that
 	 * is:
 	 * Config config = Conf.Get (<name of config>);
 	 * - To get a bool or a string option:
@@ -84,7 +84,7 @@ namespace Beagle.Util {
 
 			// DO NOT change these 4 names - the names should be same as Config.Name and file names
 			public const string FilesQueryableConfig = "FilesQueryable";
-			public const string BeagleSearchConfig = "BeagleSearch";
+			public const string BeagrepSearchConfig = "BeagrepSearch";
 			public const string DaemonConfig = "Daemon";
 			public const string NetworkingConfig = "Networking";
 
@@ -102,13 +102,13 @@ namespace Beagle.Util {
 			// boolean
 			public const string KeyBinding_Ctrl = "KeyBinding_Ctrl"; // default false
 			public const string KeyBinding_Alt = "KeyBinding_Alt"; // default false
-			public const string BeagleSearchAutoSearch = "BeagleSearchAutoSearch"; // default true
+			public const string BeagrepSearchAutoSearch = "BeagrepSearchAutoSearch"; // default true
 			// string
 			public const string KeyBinding_Key = "KeyBinding_Key"; // default F12
-			public const string BeaglePosX = "BeaglePosX";
-			public const string BeaglePosY = "BeaglePosY";
-			public const string BeagleSearchWidth = "BeagleSearchWidth";
-			public const string BeagleSearchHeight = "BeagleSearchHeight";
+			public const string BeagrepPosX = "BeagrepPosX";
+			public const string BeagrepPosY = "BeagrepPosY";
+			public const string BeagrepSearchWidth = "BeagrepSearchWidth";
+			public const string BeagrepSearchHeight = "BeagrepSearchHeight";
 			// list (1 param)
 			public const string SearchHistory = "SearchHistory";
 
@@ -271,8 +271,8 @@ namespace Beagle.Util {
 			get { return Get (Conf.Names.DaemonConfig); }
 		}
 
-		public static Config BeagleSearch {
-			get { return Get (Conf.Names.BeagleSearchConfig); }
+		public static Config BeagrepSearch {
+			get { return Get (Conf.Names.BeagrepSearchConfig); }
 		}
 
 		public static Config Networking {
@@ -287,7 +287,7 @@ namespace Beagle.Util {
 		public static bool CheckGlobalConfig ()
 		{
 			foreach (string name in new string[] {  Names.FilesQueryableConfig,
-								Names.BeagleSearchConfig,
+								Names.BeagrepSearchConfig,
 								Names.DaemonConfig,
 								Names.NetworkingConfig}) {
 				string filename = (name + ".xml");
@@ -493,7 +493,7 @@ namespace Beagle.Util {
 			foreach (Option option in global_networking_config.Options.Values)
 				option.Global = true;
 
-			Config global_bs_config = LoadFrom (Path.Combine (GlobalConfigDir, Names.BeagleSearchConfig + ".xml"));
+			Config global_bs_config = LoadFrom (Path.Combine (GlobalConfigDir, Names.BeagrepSearchConfig + ".xml"));
 			foreach (Option option in global_bs_config.Options.Values)
 				option.Global = true;
 
@@ -584,11 +584,11 @@ namespace Beagle.Util {
 				global_bs_config.SetOption (Conf.Names.KeyBinding_Ctrl, binding.Ctrl);
 				global_bs_config.SetOption (Conf.Names.KeyBinding_Alt, binding.Alt);
 
-				global_bs_config.SetOption (Conf.Names.BeaglePosX, searching_config.BeaglePosX.ToString ());
-				global_bs_config.SetOption (Conf.Names.BeaglePosY, searching_config.BeaglePosY.ToString ());
-				global_bs_config.SetOption (Conf.Names.BeagleSearchWidth, searching_config.BeagleSearchWidth.ToString ());
-				global_bs_config.SetOption (Conf.Names.BeagleSearchHeight, searching_config.BeagleSearchHeight.ToString ());
-				global_bs_config.SetOption (Conf.Names.BeagleSearchAutoSearch, searching_config.BeagleSearchAutoSearch);
+				global_bs_config.SetOption (Conf.Names.BeagrepPosX, searching_config.BeagrepPosX.ToString ());
+				global_bs_config.SetOption (Conf.Names.BeagrepPosY, searching_config.BeagrepPosY.ToString ());
+				global_bs_config.SetOption (Conf.Names.BeagrepSearchWidth, searching_config.BeagrepSearchWidth.ToString ());
+				global_bs_config.SetOption (Conf.Names.BeagrepSearchHeight, searching_config.BeagrepSearchHeight.ToString ());
+				global_bs_config.SetOption (Conf.Names.BeagrepSearchAutoSearch, searching_config.BeagrepSearchAutoSearch);
 
 				List<string[]> history = new List<string[]> (searching_config.SearchHistory.Count);
 				foreach (string s in searching_config.SearchHistory)
@@ -638,7 +638,7 @@ namespace Beagle.Util {
 		}
 	}
 
-	[XmlRoot ("BeagleConf")]
+	[XmlRoot ("BeagrepConf")]
 	public class Config {
 		[XmlAttribute]
 		public string Name = String.Empty;
@@ -1028,32 +1028,32 @@ namespace Beagle.Util {
 			set { show_search_window_binding = value; }
 		}
 
-		// BeagleSearch window position and dimension
+		// BeagrepSearch window position and dimension
 		// stored as percentage of screen co-ordinates
 		// to deal with change of resolution problem - hints from tberman
 
-		private float beagle_search_pos_x = 0;
-		public float BeaglePosX {
-			get { return beagle_search_pos_x; }
-			set { beagle_search_pos_x = value; }
+		private float beagrep_search_pos_x = 0;
+		public float BeagrepPosX {
+			get { return beagrep_search_pos_x; }
+			set { beagrep_search_pos_x = value; }
 		}
 		
-		private float beagle_search_pos_y = 0;
-		public float BeaglePosY {
-			get { return beagle_search_pos_y; }
-			set { beagle_search_pos_y = value; }
+		private float beagrep_search_pos_y = 0;
+		public float BeagrepPosY {
+			get { return beagrep_search_pos_y; }
+			set { beagrep_search_pos_y = value; }
 		}
 		
-		private float beagle_search_width = 0; 
-		public float BeagleSearchWidth {
-			get { return beagle_search_width; }
-			set { beagle_search_width = value; }
+		private float beagrep_search_width = 0; 
+		public float BeagrepSearchWidth {
+			get { return beagrep_search_width; }
+			set { beagrep_search_width = value; }
 		}
 
-		private float beagle_search_height = 0;
-		public float BeagleSearchHeight {
-			get { return beagle_search_height; }
-			set { beagle_search_height = value; }
+		private float beagrep_search_height = 0;
+		public float BeagrepSearchHeight {
+			get { return beagrep_search_height; }
+			set { beagrep_search_height = value; }
 		}
 
 		// ah!We want a Queue but Queue doesnt serialize *easily*
@@ -1063,10 +1063,10 @@ namespace Beagle.Util {
 			set { search_history = value; }
 		}
 
-		private bool beagle_search_auto_search = true;
-		public bool BeagleSearchAutoSearch {
-			get { return beagle_search_auto_search; }
-			set { beagle_search_auto_search = value; }
+		private bool beagrep_search_auto_search = true;
+		public bool BeagrepSearchAutoSearch {
+			get { return beagrep_search_auto_search; }
+			set { beagrep_search_auto_search = value; }
 		}
 
 	}

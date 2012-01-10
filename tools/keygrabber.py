@@ -198,9 +198,9 @@ def gtk_process_events ():
 
 if __name__ == "__main__":
     if len (sys.argv) == 2:
-	gettext.install ('beagle', sys.argv [1])
+	gettext.install ('beagrep', sys.argv [1])
     else:
-	gettext.install ('beagle')
+	gettext.install ('beagrep')
     window = GrabberWindow ()
     window.main ()
 
