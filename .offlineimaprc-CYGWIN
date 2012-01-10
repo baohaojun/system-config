@@ -20,7 +20,7 @@ remoteuser = hjbao@marvell.com
 remotepasseval = getcred("localhost", "hjbao@marvell.com", 1143)
 nametrans = lambda foldername: "mrvl." + foldername.replace(" ", "_")
 maxconnections = 6
-folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in ('inbox',)])
+folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in ('inbox', 'sent')])
 
 [Repository Local-Mrvl]
 type = Maildir
