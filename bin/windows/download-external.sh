@@ -61,7 +61,7 @@ function download-all()
             fi
 	done
         wait
-	cygstart ~/bin/windows/bhjdvp/setup.exe
+	cygstart ~/bin/windows/kbddvp.exe
 
 	cd ~/bin/windows/ext
 	for x in ~/external/download-all/*.zip; do 
