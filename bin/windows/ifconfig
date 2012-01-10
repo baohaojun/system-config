@@ -8,13 +8,15 @@ fi
 
 ipconfig "$@" | tr -d '\r' |grep -v v6 -i | perl -ne '
 if (m/^\S.*:$/) {
-    print $to_print if $to_print;
     if (m/'"$adapter_name_matcher"'/) {
-        $to_print = $_;
-    } else {
-        $to_print = "";
+        print;
+        <>;
+        print "\n";
+        while(<>) {
+            last if (m/^\s*$/);
+            print;
+        }
+        print "\n";
     }
-} else {
-    $to_print .= $_ if $to_print;
 }
 ' | perl -npe 's/\(Preferred\)//'

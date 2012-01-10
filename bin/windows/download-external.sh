@@ -221,6 +221,7 @@ EOF
         ./configure;
         make -j8
         make install
+	ln -sf /usr/local/bin/python3.1.exe /usr/local/bin/python3
     )&
 
 }
