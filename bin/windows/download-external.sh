@@ -149,7 +149,7 @@ function emacs-site-lisps()
 	`get-deb-src-dir offlineimap`
 	`get-deb-src-dir exuberant-ctags`
 	http://www.python.org/ftp/python/3.1.4/Python-3.1.4.tar.bz2
-	http://sourceforge.net/project/ntemacs/ntemacs/20110402/ntemacs24-bin-20110402.7z
+	http://alpha.gnu.org/gnu/emacs/pretest/windows/emacs-24.0.92-bin-i386.zip
     )
     
     for x in "${file_list[@]}" "${non_emacs_list[@]}"; do
