@@ -152,7 +152,7 @@ function emacs-site-lisps()
 	http://sourceforge.net/project/ntemacs/ntemacs/20110402/ntemacs24-bin-20110402.7z
     )
     
-    for x in "${file_list[@]}"; do
+    for x in "${file_list[@]}" "${non_emacs_list[@]}"; do
         eval "wget -N $x&"
     done
     wait
