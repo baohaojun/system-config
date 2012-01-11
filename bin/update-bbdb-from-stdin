@@ -1,0 +1,13 @@
+#!/bin/bash
+
+(
+    echo -n "(bbdb-update-records '("
+    if tty >/dev/null 2>&1 ; then
+	ls ~/jira-users -1 | grep @ | perl -npe 's,.*/,,'
+    else
+	cat
+    fi | perl -npe 's/^/(authors "From" (/; s/<|>/"/g; s/$/))/'
+    echo -n ') t t)'
+) > /tmp/update-bbdb-from-stdin.el
+
+edit /tmp/update-bbdb-from-stdin.el
