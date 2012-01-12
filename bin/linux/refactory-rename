@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -- "$(printf %q "$1")" "$(printf %q "$2")"
 function die() {
     echo "$@"
     exit 1
