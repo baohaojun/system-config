@@ -1,0 +1,11 @@
+# /etc/default/stunnel
+# Julien LEMOINE <speedblue@debian.org>
+# September 2003
+
+# Change to one to enable stunnel automatic startup
+ENABLED=1
+FILES="/etc/stunnel/*.conf"
+OPTIONS=""
+
+# Change to one to enable ppp restart scripts
+PPP_RESTART=0

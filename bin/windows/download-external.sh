@@ -145,11 +145,12 @@ function emacs-site-lisps()
 	`get-deb-src-dir bbdb`
     )
 
+    emacs_zip=http://alpha.gnu.org/gnu/emacs/pretest/windows/emacs-24.0.92-bin-i386.zip
     non_emacs_list=(
 	`get-deb-src-dir offlineimap`
 	`get-deb-src-dir exuberant-ctags`
 	http://www.python.org/ftp/python/3.1.4/Python-3.1.4.tar.bz2
-	http://alpha.gnu.org/gnu/emacs/pretest/windows/emacs-24.0.92-bin-i386.zip
+	$emacs_zip
     )
     
     for x in "${file_list[@]}" "${non_emacs_list[@]}"; do
@@ -162,13 +163,14 @@ function emacs-site-lisps()
 	mkdir -p ~/external/
 	cd ~/external/
 	
-	7z x "$oldd"/ntemacs24-bin-20110402.7z
-	chmod +x ntemacs24/bin/*
-	cd ntemacs24/lisp/gnus
+	unzip $oldd/$(basename $emacs_zip)
+	rm -rf emacs-nt
+	mv emacs-24*/ emacs-nt
+	chmod +x emacs-nt/bin/*
+	cd emacs-nt/lisp/gnus
 	rm nnmaildir.elc 
 	patch -p2 < ~/doc/nnmaildir.patch 
-	cd ~
-	my-read "mv ~/external/ntemacs24 ~/external/emacs-nt"
+	(get-bbdb)
     )&
 
     (
@@ -195,7 +197,7 @@ function emacs-site-lisps()
     )
 
     rm  ~/bin/windows/ext/offlineimap -f
-    relative-link *offlineimap*/offlineimap.py ~/windows-config/bin/windows/ext/offlineimap
+    ln -sf $(readlink -f *offlineimap*/offlineimap.py) ~/windows-config/bin/windows/ext/offlineimap
     (
 	builtin cd *ctags*/ && ./configure && make -j8 install && ln -sf /usr/local/bin/ctags.exe /usr/bin/ctags-exuberant
     )&
@@ -402,7 +404,6 @@ then
 	(download-all)
 	(setup-deb-src)
 	(emacs-site-lisps)
-	(get-bbdb)
 	(manual-download)
 	(get-ms-addons)
 	(setup-vc6-env)

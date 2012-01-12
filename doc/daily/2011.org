@@ -31,7 +31,9 @@
   - CLOSING NOTE [2011-11-29 Tue 10:19] \\
     finished
 
-* TODO upload the PC tool project onto company git repository.
+* DONE upload the PC tool project onto company git repository.
+  CLOSED: [2012-01-12 Thu 10:57]
+  - CLOSING NOTE [2012-01-12 Thu 10:57]
 * DONE write a org page for refactory-rename, send mail to team
   CLOSED: [2011-12-05 Mon 15:47]
   - CLOSING NOTE [2011-12-05 Mon 15:47]
@@ -196,7 +198,9 @@ my way of pushing things, reviewing code, update comments
   CLOSED: [2011-12-07 Wed 13:12]
   - CLOSING NOTE [2011-12-07 Wed 13:12] \\
     Verified with Li Hui, flashing OK.
-* TODO support dkb flashing
+* DONE support dkb flashing
+  CLOSED: [2012-01-12 Thu 10:57]
+  - CLOSING NOTE [2012-01-12 Thu 10:57]
 * DONE read literate programming, 6 pages, by Jon Bentley and Don Knuth
   CLOSED: [2011-11-30 Wed 12:35]
   - CLOSING NOTE [2011-11-30 Wed 12:35]
@@ -242,7 +246,9 @@ my way of pushing things, reviewing code, update comments
 * windows update
 
 the downloaded files are kept at C:\Windows\SoftwareDistribution\Download
-* TODO MarsBurner: convert UI to better design
+* DONE MarsBurner: convert UI to better design
+  CLOSED: [2012-01-12 Thu 10:56]
+  - CLOSING NOTE [2012-01-12 Thu 10:56]
 ** DONE study MFC dialog using HTML for presentation.
    CLOSED: [2011-12-08 Thu 08:40]
    - CLOSING NOTE [2011-12-08 Thu 08:40]
@@ -298,8 +304,12 @@ Spent 2 hours on this.
   http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html#ss1.4
   http://msdn.microsoft.com/en-us/windows/hardware/gg463447
 
-* TODO MarsBurner: 搞定程序图标
-* TODO MarsBurner: 还是有内存泄露问题，让Qianqi查一下。
+* DONE MarsBurner: 搞定程序图标
+  CLOSED: [2012-01-12 Thu 10:56]
+  - CLOSING NOTE [2012-01-12 Thu 10:56]
+* DONE MarsBurner: 还是有内存泄露问题，让Qianqi查一下。
+  CLOSED: [2012-01-12 Thu 10:56]
+  - CLOSING NOTE [2012-01-12 Thu 10:56]
 * DONE MarsBurner: 继续优化界面
   CLOSED: [2011-12-21 Wed 15:35]
   - CLOSING NOTE [2011-12-21 Wed 15:35]
@@ -312,14 +322,22 @@ Spent 2 hours on this.
 * DONE MarsBurner: finish new UI from ZhangQin
   CLOSED: [2011-12-16 Fri 14:08]
   - CLOSING NOTE [2011-12-16 Fri 14:08]
-* TODO 烧写policy: 默认不erase all，不动reliable data/nvm，工厂空phone的情况下会把默认blf进行修改（代码自动处理，非手工），会erase all，用模板初始化RD。
-** TODO 修改.blf
-** TODO 修改marsburner
+* DONE 烧写policy: 默认不erase all，不动reliable data/nvm，工厂空phone的情况下会把默认blf进行修改（代码自动处理，非手工），会erase all，用模板初始化RD。
+  CLOSED: [2012-01-12 Thu 10:55]
+  - CLOSING NOTE [2012-01-12 Thu 10:55]
+** DONE 修改.blf
+   CLOSED: [2012-01-12 Thu 10:55]
+   - CLOSING NOTE [2012-01-12 Thu 10:55]
+** DONE 修改marsburner
+   CLOSED: [2012-01-12 Thu 10:56]
+   - CLOSING NOTE [2012-01-12 Thu 10:56]
 * TODO tcmd framework
 * DONE 集成jira和org-mode						 :pe:
   CLOSED: [2011-12-28 Wed 10:56]
   - CLOSING NOTE [2011-12-28 Wed 10:56]
-* TODO 修改bbdb，只对发送的邮件做database collection。			 :pe:
+* DONE 修改bbdb，只对发送的邮件做database collection。			 :pe:
+  CLOSED: [2012-01-12 Thu 10:55]
+  - CLOSING NOTE [2012-01-12 Thu 10:55]
 * TODO 看3gpp 23.038，关于sms						 :pe:
 * TODO learn to use artist-mode						 :pe:
 
@@ -343,6 +361,7 @@ Spent 2 hours on this.
                          +----------+
 
 #+END_DITAA
-* TODO remove factory mode from Marsburner installer
-* TODO report bug of bin/fix-too-much-inode-maildir
-* TODO send email using different smtp server according to reciepients
+* DONE send email using different smtp server according to reciepients	 :pe:
+  CLOSED: [2012-01-12 Thu 10:54]
+  - CLOSING NOTE [2012-01-12 Thu 10:54] \\
+    Finished
