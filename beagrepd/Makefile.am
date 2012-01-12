@@ -47,7 +47,6 @@ WRAPPER_SED = sed 					\
 	-e "s|\@prefix\@|$(prefix)|g"			\
 	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
 	-e "s|\@libdir\@|$(libdir)|g"			\
-	-e "s|\@evolibdir\@|$(EVO_LIBDIR)|g"		\
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"		\
 	-e "s|\@bash\@|$(BASH)|"			\
 	-e "s|\@wrapper\@|$@|g"
@@ -88,27 +87,8 @@ INDEXING_SERVICE_QUERYABLE_CSFILES =				\
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
 	$(SNOWBALL_CSFILES)					\
-	$(KMAIL_QUERYABLE_CSFILES)				\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)			\
-	$(PIDGIN_QUERYABLE_CSFILES)				\
 	$(INDEXING_SERVICE_QUERYABLE_CSFILES)			\
-	$(TOMBOY_QUERYABLE_CSFILES)				\
-	$(LABYRINTH_QUERYABLE_CSFILES)				\
-	$(BLAM_QUERYABLE_CSFILES)				\
-	$(LIFEREA_QUERYABLE_CSFILES)				\
-	$(AKREGATOR_QUERYABLE_CSFILES)				\
-	$(KONQHISTORY_QUERYABLE_CSFILES)			\
-	$(KONQBOOKMARK_QUERYABLE_CSFILES)			\
-	$(KNOTES_QUERYABLE_CSFILES)				\
-	$(KORGANIZER_QUERYABLE_CSFILES)				\
-	$(KABC_QUERYABLE_CSFILES)				\
-	$(KOPETE_QUERYABLE_CSFILES)				\
-	$(KONVERSATION_QUERYABLE_CSFILES)			\
-	$(OPERA_QUERYABLE_CSFILES)				\
-	$(NAUTILUS_QUERYABLE_CSFILES)				\
-	$(NETWORK_SERVICES_QUERYABLE_CSFILES)			\
-	$(EMPATHY_QUERYABLE_CSFILES)				\
-	$(LOCATE_QUERYABLE_CSFILES)				\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/ExternalMetadataQueryable.cs			\
 	$(srcdir)/FileAttributes.cs				\
@@ -160,7 +140,6 @@ DAEMON_DLL_ASSEMBLIES = 					\
 	$(BEAGREPD_LIBS)                 			\
 	$(DAEMON_DLL_LOCAL_ASSEMBLIES:%=-r:%)			\
 	$(SHARPZIPLIB_LIBS)					\
-	$(NDESK_DBUS_GLIB_LIBS)					\
 	-r:Mono.Data.Sqlite					\
 	-r:Mono.Posix
 
@@ -190,14 +169,6 @@ BACKEND_ASSEMBLIES =				\
 
 ############################################################
 
-DAEMON_WRAPPER = beagrepd
-DAEMON_WRAPPER_IN = beagrepd.in
-DAEMON_TARGET = BeagrepDaemon.exe
-
-$(DAEMON_WRAPPER): $(srcdir)/$(DAEMON_WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(DAEMON_TARGET)|g" < $(srcdir)/$(DAEMON_WRAPPER_IN) > $@
-	chmod +x $(DAEMON_WRAPPER)
-
 DAEMON_CSFLAGS =				\
 	-target:exe				\
 	$(BEAGREP_DEFINES)
@@ -216,12 +187,8 @@ DAEMON_LOCAL_ASSEMBLIES =			\
 DAEMON_ASSEMBLIES =				\
 	$(BEAGREPD_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
-	$(NDESK_DBUS_GLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix
-
-$(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
 
 ############################################################
 ############################################################
@@ -257,7 +224,6 @@ INDEX_HELPER_ASSEMBLIES = \
 	$(BEAGREPD_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(INDEX_HELPER_LOCAL_ASSEMBLIES:%=-r:%)	\
-	$(NDESK_DBUS_GLIB_LIBS)			\
 	-r:Mono.Posix
 
 $(INDEX_HELPER_TARGET): $(INDEX_HELPER_CSFILES) $(INDEX_HELPER_LOCAL_ASSEMBLIES)
@@ -410,7 +376,6 @@ BUILD_INDEX_LOCAL_ASSEMBLIES = \
 BUILD_INDEX_ASSEMBLIES = \
 	$(BEAGREPD_LIBS)				\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	$(NDESK_DBUS_GLIB_LIBS)			\
 	-r:Mono.Posix
 
 $(BUILD_INDEX_TARGET): $(BUILD_INDEX_CSFILES) $(BUILD_INDEX_LOCAL_ASSEMBLIES)
@@ -489,8 +454,6 @@ $(CRAWL_SYSTEM): $(srcdir)/$(CRAWL_SYSTEM_IN)
 ALL_TARGETS = 				\
 	$(PLUGIN_TARGET)		\
 	$(DAEMON_DLL_TARGET)		\
-	$(DAEMON_TARGET)		\
-	$(DAEMON_WRAPPER)		\
 	$(INDEX_HELPER_TARGET)		\
 	$(INDEX_HELPER_WRAPPER)		\
 	$(BUILD_INDEX_TARGET)		\
@@ -525,9 +488,6 @@ install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
 	$(mkinstalldirs) $(DESTDIR)$(BACKENDDIR)
-if ENABLE_EVOLUTION
-	$(INSTALL_DATA) $(EVO_DLL_TARGET) $(EVO_DLL_TARGET).mdb $(DESTDIR)$(BACKENDDIR)
-endif
 	@for i in $(BIN_WRAPPERS); do						\
 		sed -e "s|\#installed=1|installed=1|" < $$i > $$i.tmp;		\
 		echo "$(INSTALL_SCRIPT) $$i.tmp $(DESTDIR)$(bindir)/$$i";	\
@@ -550,8 +510,6 @@ endif
 	$(INSTALL_DATA) $(PLUGIN_TARGET).mdb             $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET)             $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(DAEMON_DLL_TARGET).mdb         $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(DAEMON_TARGET)                 $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(DAEMON_TARGET).mdb             $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(EXTRACT_CONTENT_TARGET)        $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(EXTRACT_CONTENT_TARGET).mdb    $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(INDEX_HELPER_TARGET)           $(DESTDIR)$(pkglibdir)
@@ -580,8 +538,6 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
@@ -641,8 +597,6 @@ CLEANFILES = \
 	$(PLUGIN_TARGET).mdb   			\
 	$(DAEMON_DLL_TARGET)			\
 	$(DAEMON_DLL_TARGET).mdb		\
-	$(DAEMON_TARGET)       			\
-	$(DAEMON_TARGET).mdb   			\
 	$(DAEMON_WRAPPER)      			\
 	$(EVO_DLL_TARGET)			\
 	$(EVO_DLL_TARGET).mdb			\

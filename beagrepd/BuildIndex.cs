@@ -59,15 +59,10 @@ namespace Beagrep.Daemon
 		static bool arg_recursive, arg_delete, arg_debug;
 		static bool arg_cache_text, arg_disable_filtering;
 		static bool arg_disable_restart, arg_disable_directories;
-		static bool arg_disable_on_battery;
 		static string arg_output, arg_tag, arg_source;
 
 		/////////////////////////////////////////////////////////
 
-		// Removable index related options
-		static bool arg_removable = false;
-		static string mnt_dir = null;
-		static string volume_label = null;
 
 		/////////////////////////////////////////////////////////
 
@@ -181,10 +176,6 @@ namespace Beagrep.Daemon
 					arg_disable_filtering = true;
 					break;
 
-				case "--disable-on-battery":
-					arg_disable_on_battery = true;
-					break;
-
 				case "--allow-pattern":
 					if (next_arg == null)
 						break;
@@ -239,10 +230,6 @@ namespace Beagrep.Daemon
 
 					arg_source = next_arg;
 					++i;
-					break;
-
-				case "--removable":
-					arg_removable = true;
 					break;
 
 				default:
@@ -326,75 +313,16 @@ namespace Beagrep.Daemon
 					Environment.Exit (1);
 				}
 
-				bool prev_removable = static_index_config.GetOption ("Removable", false);
-				if (arg_removable != prev_removable) {
-					Log.Error ("Index previously created for {0}-removable path",
-						   (prev_removable ? "" : "non"));
-					Environment.Exit (1);
-				} else {
-					volume_label = static_index_config.GetOption ("VolumeLabel", null);
-				}
-
 				// If arg_source is not given, and prev_source is present, use prev_source
 				// as the arg_source. This is useful for re-running build-index without
 				// giving --arg_source for already existing static index
 				arg_source = prev_source;
 			}
 
-			// Removable media related options
-			if (arg_removable) {
-				if (pending_files.Count > 0) {
-					Log.Error ("Indexing individual files is not allowed for removable media.");
-					Environment.Exit (1);
-				} else if (pending_directories.Count > 1) {
-					Log.Error ("Indexing multiple root directories is not allowed for removable media.");
-					Environment.Exit (1);
-				}
-
-				mnt_dir = ((DirectoryInfo) pending_directories.Peek ()).FullName;
-				if (mnt_dir.Length != 1)
-					mnt_dir = mnt_dir.TrimEnd ('/');
-
-				// compute volume label
-				// (1) directory name if block.is_volume is false
-				// (2) hal volume.label if set
-				// (3) hal volume.uuid if set
-				Hal.Manager manager = new Hal.Manager (new Hal.Context ());
-				Hal.Device mnt_device = null;
-
-				foreach (Hal.Device device in manager.FindDeviceStringMatch ("volume.mount_point", mnt_dir))
-					mnt_device = device;
-
-				string new_volume_label = null;
-				if (mnt_device != null) {
-					new_volume_label = mnt_device.GetPropertyString ("volume.label");
-
-
-					if (String.IsNullOrEmpty (new_volume_label))
-						new_volume_label = mnt_device.GetPropertyString ("volume.uuid");
-				}
-
-				if (new_volume_label == null)
-					new_volume_label = ((DirectoryInfo) pending_directories.Peek ()).Name;
-
-				// Sanity check
-				// Volume label is part of the URI, so cannot be changed once set
-				if (volume_label == null) {
-					volume_label = new_volume_label;
-				} else if (volume_label != new_volume_label) {
-					Log.Error ("Volume label (earlier '{0}') changed (to '{1}')! You need to create a new index.", volume_label, new_volume_label);
-					Environment.Exit (1);
-				}
-			}
 
 			if (arg_source == null) {
 				DirectoryInfo dir = new DirectoryInfo (StringFu.SanitizePath (arg_output));
 				arg_source = dir.Name;
-			}
-
-			if (! BatteryMonitor.UsingAC && arg_disable_on_battery) {
-				Log.Always ("Indexer is disabled when on battery power (--disable-on-battery)");
-				Environment.Exit (0);
 			}
 
 			string global_files_config = Path.Combine (PathFinder.ConfigDataDir, "config-files");
@@ -481,13 +409,6 @@ namespace Beagrep.Daemon
 				static_index_config.SetOption ("Source", arg_source);
 				static_index_config ["Source"].Description = "Source of the static index";
 
-				if (arg_removable) {
-					static_index_config.SetOption ("VolumeLabel", volume_label);
-					static_index_config ["VolumeLabel"].Description = "Volume label of the removable source";
-
-					static_index_config.SetOption ("Removable", true);
-					static_index_config ["Removable"].Description = "Removable source";
-				}
 
 				Conf.SaveTo (static_index_config, config_file_path);
 			}
@@ -757,11 +678,6 @@ namespace Beagrep.Daemon
 			string dirname = file.DirectoryName;
 			indexable.AddProperty (Property.NewUnsearched (Property.ParentDirUriPropKey, PathToUri (dirname)));
 
-			if (arg_removable) {
-				indexable.AddProperty (Property.NewKeyword ("beagrep:RemovableVolume", volume_label));
-				indexable.ContentUri = UriFu.PathToFileUri (file.FullName);
-			}
-
 			return indexable;
 		}
 
@@ -807,43 +723,17 @@ namespace Beagrep.Daemon
 
 			indexable.AddProperty (Property.NewBool (Property.IsDirectoryPropKey, true));
 
-			if (arg_removable)
-				indexable.AddProperty (Property.NewKeyword ("beagrep:removable", volume_label));
-
 			return indexable;
 		}
 
-		////////////////////////////////////////////////////
-		// Methods to generate the relative path and
-		// uri for removable sources.
-
 		static string PathInIndex (string fullpath)
 		{
-			if (! arg_removable)
-				return fullpath;
-
-			if (fullpath == mnt_dir)
-				return "/";
-
-			if (fullpath.IndexOf (mnt_dir) != 0) {
-				Log.Warn ("Outside mounted directory: {0}", fullpath);
-				return fullpath;
-			}
-
-			return fullpath.Remove (0, mnt_dir.Length);
+			return fullpath;
 		}
 
 		static Uri PathToUri (string fullpath)
 		{
-			if (! arg_removable)
-				return UriFu.PathToFileUri (fullpath);
-
-			fullpath = PathInIndex (fullpath);
-
-			return new Uri (String.Format ("removable{0}{1}{2}",
-							Uri.SchemeDelimiter,
-							volume_label,
-							StringFu.HexEscape (fullpath)), true);
+			return UriFu.PathToFileUri (fullpath);
 		}
 
 		///////////////////////////////////////////////////
@@ -1045,13 +935,6 @@ namespace Beagrep.Daemon
 				"  --deny-pattern [pattern]\tKeep any files that match the pattern from being indexed.\n" + 
 				"  --disable-restart\t\tDon't restart when memory usage gets above a certain threshold.\n" +
 				"  --disable-on-battery\t\tDisable indexer while on battery power.\n";
-
-			usage +="\n" +
-				"Removable media options:\n" +
-				"  --removable\t\t\tCreate a removable media.\n" +
-				"\n" +
-				" * Use --source [name] to specify a name for the removable media.\n" +
-				" * You can specify only one <path>. Paths will be stored relative to <path>.\n";
 
 			Console.WriteLine (usage);
 			Environment.Exit (0);

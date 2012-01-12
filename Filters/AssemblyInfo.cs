@@ -31,8 +31,6 @@ using Beagrep.Filters;
 // All (non-abstract) filter types have to be listed here to be loaded.
 [assembly: Beagrep.Daemon.FilterTypes (
 	 typeof(FilterApplication),
-#if HAVE_LIBCHM
-#endif
 	 typeof(FilterIgnore),
 	 typeof(FilterText)
 )]

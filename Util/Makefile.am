@@ -32,7 +32,6 @@ $(EXTSTR): $(EXTSTR_IN)
 
 UTIL_CSFILES = 			        	\
 	$(srcdir)/ArrayFu.cs              	\
-	$(srcdir)/BatteryMonitor.cs		\
 	$(srcdir)/BetterBitArray.cs		\
 	$(srcdir)/Config.cs			\
 	$(srcdir)/DateTimeUtil.cs		\
@@ -76,30 +75,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/VersionFu.cs			\
 	$(srcdir)/XdgMime.cs			\
 	$(srcdir)/XmlFu.cs			\
-	$(srcdir)/Hal/AccessControl.cs		\
-	$(srcdir)/Hal/CPUFreq.cs		\
-	$(srcdir)/Hal/Context.cs		\
-	$(srcdir)/Hal/Device.cs			\
-	$(srcdir)/Hal/IAccessControl.cs		\
-	$(srcdir)/Hal/ICPUFreq.cs		\
-	$(srcdir)/Hal/IDevice.cs		\
-	$(srcdir)/Hal/IKillSwitch.cs		\
-	$(srcdir)/Hal/ILaptopPanel.cs		\
-	$(srcdir)/Hal/ILightSensor.cs		\
-	$(srcdir)/Hal/IManager.cs		\
-	$(srcdir)/Hal/IStorage.cs		\
-	$(srcdir)/Hal/ISystemPowerManagement.cs	\
-	$(srcdir)/Hal/IVolume.cs		\
-	$(srcdir)/Hal/IVolumeCrypto.cs		\
-	$(srcdir)/Hal/KillSwitch.cs		\
-	$(srcdir)/Hal/LaptopPanel.cs		\
-	$(srcdir)/Hal/LightSensor.cs		\
-	$(srcdir)/Hal/Manager.cs		\
-	$(srcdir)/Hal/PropertyModification.cs	\
-	$(srcdir)/Hal/Storage.cs		\
-	$(srcdir)/Hal/SystemPowerManagement.cs	\
-	$(srcdir)/Hal/Volume.cs			\
-	$(srcdir)/Hal/VolumeCrypto.cs		\
 	$(srcdir)/QueryKeywordMapping.cs
 
 # To reduce dependencies and other reasons, we don't build this
@@ -109,7 +84,6 @@ CSFLAGS += -define:DOTNET2
 
 UTIL_ASSEMBLIES =				\
 	$(BEAGREPD_LIBS)				\
-	$(NDESK_DBUS_GLIB_LIBS)			\
 	-r:Mono.Data.Sqlite			\
 	-r:Mono.Posix				\
 	-r:ICSharpCode.SharpZipLib

@@ -40,11 +40,6 @@ else
     export LD_LIBRARY_PATH="@pkglibdir@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
 fi
 
-EVO_LIBDIR="@evolibdir@"
-if [ -n "$EVO_LIBDIR" ]; then
-    export LD_LIBRARY_PATH="$EVO_LIBDIR${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
-fi
-
 monogrind=0
 heap_buddy=0
 heap_shot=0

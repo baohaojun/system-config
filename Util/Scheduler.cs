@@ -752,7 +752,7 @@ namespace Beagrep.Util {
 			bool need_throttle = false;
 
 			// Never speed up if we are using the battery.
-			if (idle_time > idle_threshold && BatteryMonitor.UsingAC) {
+			if (idle_time > idle_threshold) {
 				is_idle = true;
 				double t = (idle_time - idle_threshold) / idle_ramp_up_time;				     
 				idle_scale = (1 - Math.Min (t, 1.0));
