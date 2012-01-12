@@ -1640,6 +1640,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
       'annotating)))
 
 (setq bbdb/gnus-update-records-mode '(my-bbdb/gnus-update-records-mode))
+(setq bbdb/send-prompt-for-create-p nil)
 
 (defun my-bbdb-canonicalize (addr)
   (if (stringp addr)

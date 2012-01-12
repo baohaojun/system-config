@@ -1,3 +1,0 @@
-#!/bin/bash
-
-search-gmail before:$(today "2 month ago"|perl -npe 's,-,/,g') in:${1:-inbox}
