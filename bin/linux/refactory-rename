@@ -19,7 +19,7 @@ test $# = 0 && die "must provide at least 2 args"
 tmpf=/tmp/$(basename $0).$$
 perlhash=$tmpf.hash
 git ls-tree --name-only -r HEAD > $tmpf
-cat $tmpf | xargs -d \\n grep -l -i -I -e "$1" |xargs -d \\n perl -npe '
+cat $tmpf | xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && grep -l -i -I -e "'"$1"'"; done' true |xargs -d \\n perl -npe '
 BEGIN{
     $from = "'"$1"'";
     $to = "'"$2"'";
@@ -60,7 +60,7 @@ function rename-files() {
 	debug doing $(pwd)
 	for x in $(git ls-tree --name-only HEAD); do
 	    if test -d "$x"; then
-		rename-files "$x" "$@"
+		test -L "$x" || rename-files "$x" "$@"
 	    fi
 	    if echo "$x"|grep -q -i -e "$1"; then
 		debug doing "$x"
@@ -80,4 +80,4 @@ for $key (keys %rep_save) {
     )
 }
 	    
-rename-files . "$@"
+#rename-files . "$@"
