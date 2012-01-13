@@ -4,7 +4,7 @@
 export REMOTE=$(git config remote.`repo-remote`.url)
 (
     if tty >/dev/null 2>&1; then
-	git push $REMOTE HEAD:refs/for/`tbranch` 2>&1| grep -v 'x11 forwarding' -i | perl -npe '
+	git push $REMOTE ${1:-HEAD}:refs/for/`tbranch` 2>&1| grep -v 'x11 forwarding' -i | perl -npe '
     if (m,http://bear/gerrit/(\d+),) {
         system("putclip", "git", "pull", $ENV{REMOTE}, 
                "refs/changes/" . substr($1, -2) . "/$1/1");
@@ -12,4 +12,4 @@ export REMOTE=$(git config remote.`repo-remote`.url)
     else
 	cat
     fi
-) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty |tee ~/.logs/gerrit-review.log| mailx -s "Review request: ""$(git log -1|perl -ne 'print if 5..5')" $(git log -1|grep -e 'Reviewed-by:'|pn 2|perl -npe 's/\s+//; s/$/\@marvell.com/; print "\n"')
+) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty |tee ~/.logs/gerrit-review.log| mailx -s "Review request: ""$(git log -1 ${1:-HEAD}|perl -ne 'print if 5..5')" $(git log -1 ${1:-HEAD}|grep -e 'Reviewed-by:'|pn 2|perl -npe 's/\s+//; s/$/\@marvell.com/; print "\n"')
