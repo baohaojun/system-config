@@ -28,3 +28,6 @@ see if he agrees.
   - CLOSING NOTE [2012-01-07 Sat 00:12]
     renamed jira2 to jiralib.
 
+* DONE 每次build MarsBurner都把marsburner setting给删掉。
+  CLOSED: [2012-01-12 Thu 17:28]
+  - CLOSING NOTE [2012-01-12 Thu 17:28]

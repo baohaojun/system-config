@@ -309,7 +309,7 @@ else
 fi
 " nil 0)
     ("qe" "2>/dev/null" nil 1)
-    ("qq" ">/dev/null 2>&1" nil 3)
+    ("qq" ">/dev/null 2>&1" nil 6)
     ("shmode" "# Local variables:
 # mode: shell-script
 # sh-basic-offset: 4
@@ -347,6 +347,8 @@ Cc: \"Anle Zhou\" <anlezhou@marvell.com>,  \"Cheng Liao\" <chengl@marvell.com>, 
 Cc: Coco Wang <kwang@eee168.com>,  Hong Liang <hliang@eee168.com>,  Hui Li <hli@eee168.com>,  hjbao@eee168.com,  Fei Liu <fliu@adsnexus.com>,  Zhongjie Zhu <zjzhu@adsnexus.com>,  Tide Yin <tyin@hzwowpad.com>,  Vincent Ying <vying@eee168.com>,  Leo Yao <lyao@eee168.com>,  ybai <ybai@eee168.com>, Ming Shi <mshi@adsnexus.com>,  hlren <hlren@eee168.com>, cyma <cyma@eee168.com>" nil 0)
     ("telteam" "Anle Zhou <anle.zhou@gmail.com>
 Cc: Kimber <haijun.ji@borqs.com>,  Tide Yin Gmail <tideyin@gmail.com>,  Vincent Ying <vincent.ying@borqs.com>,  \"kevin.yan\" <kevin.yan@borqs.com>,  Anle Zhou <anle.zhou@borqs.com>,  Cheng Liao <cheng.liao@borqs.com>,  Damon Zheng <qiang.zheng@borqs.com>,  Derek Hong <mingsong.hong@borqs.com>,  Eric Lu <eric.lu@borqs.com>,  Harold Shi <harold.shi@borqs.com>,  HL Ren <hailin.ren@borqs.com>,  Hong Liang <hong.liang@borqs.com>,  Hui Li <hui.li@borqs.com>,  JG Ma <junguo.ma@borqs.com>,  Jing Xu <jing.xu@borqs.com>,  JM Zhou <jianmin.zhou@borqs.com>,  Jun Wei <jun.wei@borqs.com>,  KB Chen <kaibing.chen@borqs.com>,  Leo Yao <shihong.yao@borqs.com>,  MQ Ren <mingqi.ren@borqs.com>,  Ping Xiao <ping.xiao@borqs.com>,  Ray Fan <ray.fan@borqs.com>,  Shawn Bow <shawn.bow@borqs.com>,  Stone Zhang <stone.zhang@borqs.com>,  Tide Yin <tide.yin@borqs.com>,  Wei Liang <wei.liang@borqs.com>,  XF Wang <xianfeng.wang@borqs.com>,  XY Chen <xiaoyi.chen@borqs.com>,  YM Liang <yumin.liang@borqs.com>,  Yu Bai <yu.bai@borqs.com>,  Yu Wang <yu.wang@borqs.com>,  ZD Zhang <zhaodong.zhang@borqs.com>,  ZH Qi <zhiheng.qi@borqs.com>" nil 2)
+    ("tools-team" "Yu Bai <yubai@marvell.com>
+Cc: Liangzi Ding <liangzid@marvell.com>, Wenhao Li <wenhaoli@marvell.com>" nil 0)
     ("toolsg" "Tide Yin （尹涛） <tide.yin@borqs.com>
 Cc: \"'Bai yu'\" <yu.bai@borqs.com>, \"'Harold'\" <harold.shi@borqs.com>, \"'yumin'\" <yumin.liang@borqs.com>, 'Ren Mingqi 任明琪' <mingqi.ren@borqs.com>, \"'yu.wang'\" <yu.wang@borqs.com>, \"'肖萍'\" <ping.xiao@borqs.com>" nil 3)
     ("toolteam" "Tide Yin （尹涛） <tide.yin@borqs.com>

@@ -9,7 +9,7 @@ my $pathpat = '.';
 my $pathdeny = '^$';
 chomp(my $pwd =qx/pwd/);
 my $pwd_pat='no such componet';
-my $list_beagrep;
+my $list_beagle;
 
 my $ignore_case;
 my $find_file_only = 0;
@@ -26,7 +26,7 @@ GetOptions(
            "d=s" => \$pwd_pat,
            "i!" => \$ignore_case,
            "f!" => \$find_file_only,
-           "l!" => \$list_beagrep,
+           "l!" => \$list_beagle,
           );
 
 if ($ignore_case) {
@@ -52,7 +52,7 @@ if ($find_file_only) {
       }
       $pat_save = $pat;
   }
-  $pat =~ s,.*/,,; #beagrep can only find a filename, not a path name.
+  $pat =~ s,.*/,,; #beagle can only find a filename, not a path name.
   $pat_save = $pat;
 }
 
@@ -62,18 +62,18 @@ $pat_save =~ s/\\//g; #if it's a path name, it's unlikely to have `\' in it, may
 $pat = shell_quote($pat);
 print "pat is: $pat.\n";
 
-system("which beagrep-break.exe") == 0
-  or die "Error: can not find beagrep-break.exe in your $ENV{PATH}, it should be set in your .sawfishrc";
+system("which beagle-break.exe") == 0
+  or die "Error: can not find beagle-break.exe in your $ENV{PATH}, it should be set in your .sawfishrc";
 
-print "beagrep query argument `[01;31m"
+print "beagle query argument `[01;31m"
   . substr(qx/get_longest_token $pat/, 0, -1) 
   . "[0m'\n";
 
-my $beagrep_files = qx/my-beagrep $pat/;
-my @beagrep_files = split(/\n/, $beagrep_files);
+my $beagle_files = qx/my-beagle $pat/;
+my @beagle_files = split(/\n/, $beagle_files);
 
-if ($list_beagrep) {
-  for (@beagrep_files) {
+if ($list_beagle) {
+  for (@beagle_files) {
     print "$_:$file_default_line: [01;31m****************![0m\n";
   }
   exit 0;
@@ -82,7 +82,7 @@ if ($list_beagrep) {
 if (!$find_file_only) {
   open(my $grep, "|xargs -d '\\n' grep -H -n -I $ignore_case -e $pat");
 
-  for (@beagrep_files) {
+  for (@beagle_files) {
     next unless m/$pathpat/i;
     next if m/$pathdeny/i;
     print $grep "$_\n";
@@ -90,10 +90,10 @@ if (!$find_file_only) {
   close $grep;
 }
 
-#see [[http://baohaojun.wordpress.com/2010/05/06/beagrep-grep-sh%E5%8A%9F%E8%83%BD%E5%8F%88%E5%8F%98%E5%BC%BA%E5%A4%A7%E4%BA%86/]] for why
+#see [[http://baohaojun.wordpress.com/2010/05/06/beagle-grep-sh%E5%8A%9F%E8%83%BD%E5%8F%88%E5%8F%98%E5%BC%BA%E5%A4%A7%E4%BA%86/]] for why
 if ($find_file_only || 1) {
     my %set;
-    for (@beagrep_files) {
+    for (@beagle_files) {
         $set{$_} = 1 if m/$pat_save/i and m/$pathpat/i;
     }
     if ($find_file_only && keys %set > 1 && $file_tag) {
@@ -104,7 +104,7 @@ if ($find_file_only || 1) {
                 if $set{$_} and m,/$pat_save$,; # the `and' part is to make file name match totally
         }
     } else {
-        for (@beagrep_files) {
+        for (@beagle_files) {
             print "$_:$file_default_line: [01;31m****************![0m\n" if $set{$_};
         }
     }

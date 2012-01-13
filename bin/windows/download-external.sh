@@ -197,7 +197,7 @@ function emacs-site-lisps()
     )
 
     rm  ~/bin/windows/ext/offlineimap -f
-    relative-link *offlineimap*/offlineimap.py ~/windows-config/bin/windows/ext/offlineimap
+    ln -sf $(readlink -f *offlineimap*/offlineimap.py) ~/windows-config/bin/windows/ext/offlineimap
     (
 	builtin cd *ctags*/ && ./configure && make -j8 install && ln -sf /usr/local/bin/ctags.exe /usr/bin/ctags-exuberant
     )&

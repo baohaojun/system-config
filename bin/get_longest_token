@@ -1,26 +1,26 @@
 #!/usr/bin/env perl
 
-#beagrep和my-beagrep的辅助代码
+#beagrep和my-beagle的辅助代码
 
-#beagrep分词是在StandardTokenizerImpl.java里实现的，这个文件又是从StandardTokenizerImpl.jflex生成的
+#beagle分词是在StandardTokenizerImpl.java里实现的，这个文件又是从StandardTokenizerImpl.jflex生成的
 
 #分词的规则大概是这样的，abc_def为被中间的_分为两个词，但是abc_def1则会被认为是一个词，具体为什么要这样处理可以看代码
-#也可以执行一下我写的test-beagrep.sh这个文件，后面加一些测试参数，看看分词会分成什么样子。比如：
+#也可以执行一下我写的test-beagle.sh这个文件，后面加一些测试参数，看看分词会分成什么样子。比如：
 
-#test-beagrep.sh __hello__worldx__12 __hello_world1_fuck3
+#test-beagle.sh __hello__worldx__12 __hello_world1_fuck3
 
 #执行的结果是这样的：
 
-# /tmp/11786.test-beagrep/.beagrep '12' 1
-# /tmp/11786.test-beagrep/.beagrep 'hello' 1
-# /tmp/11786.test-beagrep/.beagrep 'hello_world1_fuck3' 1
-# /tmp/11786.test-beagrep/.beagrep 'worldx' 1
+# /tmp/11786.test-beagle/.beagle '12' 1
+# /tmp/11786.test-beagle/.beagle 'hello' 1
+# /tmp/11786.test-beagle/.beagle 'hello_world1_fuck3' 1
+# /tmp/11786.test-beagle/.beagle 'worldx' 1
 
-#这种情况下，我们要搜索 __hello_world1_fuck3 的话，不能直接整个交给beagrep去搜，而是要把前面的__去掉，而 __hello__worldx__12
-#的话，就更复杂一点，要把它变成这样的参数交给beagrep: hello,worldx,12
+#这种情况下，我们要搜索 __hello_world1_fuck3 的话，不能直接整个交给beagle去搜，而是要把前面的__去掉，而 __hello__worldx__12
+#的话，就更复杂一点，要把它变成这样的参数交给beagle: hello,worldx,12
 
 for (@ARGV) {
-    $_ =~ s/\\./ /g; #把\b这种东西用空格代替掉，于是grep '\bHello'的时候，只会让beagrep去搜Hello，而不是bHello
+    $_ =~ s/\\./ /g; #把\b这种东西用空格代替掉，于是grep '\bHello'的时候，只会让beagle去搜Hello，而不是bHello
     @tokens = (@tokens, $_);
 }
 
@@ -29,7 +29,7 @@ $max_token = (sort {length($a) <=> length($b)} @tokens)[-1];
 use String::ShellQuote;
 $max_token = shell_quote($max_token);
 
-my $tokens = qx/beagrep-break.sh $max_token/;
+my $tokens = qx/beagle-break.sh $max_token/;
 
 $tokens =~ s/\r|\n/ /g;
 #$tokens =~ s/\b/*/g;

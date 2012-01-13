@@ -73,7 +73,7 @@ regedit /s no-control-period.reg
 regedit /s keymap-win.reg
 
 mkdir /c/etc/ywb/ -p
-find ~/etc/ywb/exclude -type f|xargs bash -c 'for x in "$@"; do echo $(basename $x); done' xx > /c/etc/ywb/disable.rc
+(cd ~/etc/ywb/exclude >/dev/null 2>&1; ls -1) > /c/etc/ywb/disable.rc
 rm -f ~/user ~/.mozilla ~/Desktop ~/.localw
 
 ln -s "$(cygpath -u "$USERPROFILE")" ~/user
