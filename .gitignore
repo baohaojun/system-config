@@ -132,3 +132,6 @@ tools/DocExtractor.exe.mdb
 tools/beagrep-doc-extractor
 beagrepd/Lucene.Net/Analysis/Standard/1.cs
 tools/beagrep-static-query
+*.exe
+*.exe.mdb
+tools/beagrep-break-words

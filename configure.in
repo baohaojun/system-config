@@ -398,7 +398,6 @@ BeagrepClient/Makefile
 beagrepd/Makefile
 Filters/Makefile
 tools/Makefile
-tools/beagrep-settings.desktop.in
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile

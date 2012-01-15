@@ -25,48 +25,15 @@ WRAPPER_SED = sed 					\
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"		\
 	-e "s|\@bash\@|$(BASH)|"
 
-CRAWL_WRAPPER = beagrep-crawl-system
-CRAWL_WRAPPER_IN = $(CRAWL_WRAPPER).in
+BREAK_WORDS_TARGET = BreakWords.exe
+BREAK_WORDS_WRAPPER = beagrep-break-words
+BREAK_WORDS_CSFILES = $(foreach cs, BreakWords.cs StandardTokenizerImpl.cs Token.cs, $(srcdir)/$(cs))
+$(BREAK_WORDS_TARGET): $(BREAK_WORDS_CSFILES)
+	$(CSC) -out:$@ $(CSFLAGS) $(BREAK_WORDS_CSFILES)
 
-$(CRAWL_WRAPPER): $(CRAWL_WRAPPER_IN)
-	$(WRAPPER_SED) < $(srcdir)/$(CRAWL_WRAPPER_IN) > $@
-	chmod +x $(CRAWL_WRAPPER)
-
-crondir = $(sysconfdir)/cron.daily
-
-INFO_TARGET  = Info.exe
-INFO_WRAPPER = beagrep-info
-INFO_CSFILES = $(srcdir)/Info.cs
-INFO_ASSEMBLIES = ../beagrepd/BeagrepDaemonPlugins.dll
-
-$(INFO_TARGET): $(INFO_CSFILES) $(LOCAL_ASSEMBLIES) $(INFO_ASSEMBLIES)
-	$(CSC) -out:$@ $(CSFLAGS) $(INFO_CSFILES) $(ASSEMBLIES) $(INFO_ASSEMBLIES:%=-r:%)
-
-$(INFO_WRAPPER): $(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(INFO_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(INFO_WRAPPER)
-
-SHUTDOWN_TARGET  = Shutdown.exe
-SHUTDOWN_WRAPPER = beagrep-shutdown
-SHUTDOWN_CSFILES = $(srcdir)/Shutdown.cs
-
-$(SHUTDOWN_TARGET): $(SHUTDOWN_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(CSFLAGS) $(SHUTDOWN_CSFILES) $(ASSEMBLIES)
-
-$(SHUTDOWN_WRAPPER): $(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(SHUTDOWN_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(SHUTDOWN_WRAPPER)
-
-QUERY_TARGET  = Query.exe
-QUERY_WRAPPER = beagrep-query
-QUERY_CSFILES = $(srcdir)/Query.cs
-
-$(QUERY_TARGET): $(QUERY_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(CSFLAGS) $(QUERY_CSFILES) $(ASSEMBLIES)
-
-$(QUERY_WRAPPER): $(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(QUERY_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(QUERY_WRAPPER)
+$(BREAK_WORDS_WRAPPER): $(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(BREAK_WORDS_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $@
 
 STATIC_QUERY_TARGET  = StaticQuery.exe
 STATIC_QUERY_WRAPPER = beagrep-static-query
@@ -77,59 +44,29 @@ $(STATIC_QUERY_TARGET): $(STATIC_QUERY_CSFILES) $(LOCAL_ASSEMBLIES)
 
 $(STATIC_QUERY_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(STATIC_QUERY_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(STATIC_QUERY_WRAPPER)
-
-CONFIG_TARGET = Config.exe
-CONFIG_WRAPPER = beagrep-config
-CONFIG_CSFILES = $(srcdir)/Config.cs
-
-$(CONFIG_TARGET): $(CONFIG_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(CSFLAGS) $(CONFIG_CSFILES) $(ASSEMBLIES)
-
-$(CONFIG_WRAPPER): $(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(CONFIG_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(CONFIG_WRAPPER)
-
+	chmod +x $@
 
 TARGETS = 				\
-	$(INFO_TARGET)			\
-	$(SHUTDOWN_TARGET)		\
-	$(QUERY_TARGET)			\
 	$(STATIC_QUERY_TARGET)		\
-	$(CONFIG_TARGET)
+	$(BREAK_WORDS_TARGET)
+
 
 TARGETS_MDB = $(TARGETS:%=%.mdb)
 
+PREBUILT_WRAPPERS = beagrep beagrep-files beagrep-get-tokens mkbeagrepidx beagrep-unurl.pl
+
 BUILT_WRAPPERS = 			\
-	$(INFO_WRAPPER)			\
-	$(SHUTDOWN_WRAPPER)		\
-	$(QUERY_WRAPPER)		\
 	$(STATIC_QUERY_WRAPPER)		\
-	$(CONFIG_WRAPPER)
+	$(BREAK_WORDS_WRAPPER)
 
-KEYGRABBER =
-
-PREBUILT_WRAPPERS =		\
-	beagrep-index-info	\
-	beagrep-ping		\
-	beagrep-status		\
-	blocate
 
 BIN_WRAPPERS = $(BUILT_WRAPPERS) $(PREBUILT_WRAPPERS)
 
 WRAPPERS =			\
-	$(BIN_WRAPPERS)		\
-	$(CRAWL_WRAPPER)
+	$(BIN_WRAPPERS)
 
-man_MANS = 			\
-	beagrep-config.1		\
-	beagrep-doc-extractor.8	\
-	beagrep-index-info.8	\
-	beagrep-info.1		\
-	beagrep-ping.1		\
-	beagrep-query.1		\
-	beagrep-shutdown.1	\
-	beagrep-status.1
+# man_MANS = 			\
+# 	beagrep-static-query.1
 
 all: $(TARGETS) $(WRAPPERS)
 
@@ -153,9 +90,6 @@ install-data-local: $(TARGETS) $(WRAPPERS)
 		rm -f $$i.tmp;							\
 	done
 
-	$(mkinstalldirs) $(DESTDIR)$(crondir)
-	$(INSTALL_SCRIPT) $(CRAWL_WRAPPER) $(DESTDIR)$(crondir)
-
 uninstall-local:
 	cd $(DESTDIR)$(pkglibdir) && rm -f $(TARGETS) && rm -f $(TARGETS_MDB)
 
@@ -168,31 +102,15 @@ uninstall-local:
 
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
-	$(CRAWL_WRAPPER_IN)		\
-	$(DOC_EXTRACTOR_CSFILES)	\
-	$(INFO_CSFILES)			\
-	$(SHUTDOWN_CSFILES)		\
-	$(QUERY_CSFILES)		\
 	$(STATIC_QUERY_CSFILES)		\
-	$(CONFIG_CSFILES)		\
+	$(BREAK_WORDS_CSFILES)		\
 	$(man_MANS)			\
-	$(cron_SCRIPTS)			\
-	$(desktop_in_files)		\
-	$(desktop_DATA) 		\
-	$(KEYGRABBER)			\
-	$(PREBUILT_WRAPPERS)		\
-	boot.inotify.init		
+	$(PREBUILT_WRAPPERS)
+
 
 
 CLEANFILES = 				\
 	$(TARGETS)			\
 	$(TARGETS_MDB)			\
-	$(BUILT_WRAPPERS)		\
-	$(CRAWL_WRAPPER)		\
-	$(desktop_DATA)		 	\
-	$(desktop_h_files)
-
-
-
-
+	$(BUILT_WRAPPERS)
 
