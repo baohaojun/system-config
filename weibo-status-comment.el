@@ -64,6 +64,6 @@
   (setq weibo-timeline-current-provider provider)
   (unless (eq major-mode 'weibo-timeline-mode)
     (weibo-timeline-mode))
-  (weibo-timeline-pull-new))
+  (weibo-timeline-refresh))
 
 (provide 'weibo-status-comment)
