@@ -1,2 +1,2 @@
 #!/bin/bash
-readlink -m "$@"
+readlink -f "$@"
