@@ -100,14 +100,15 @@
 	switch-to-key))))
 
 (defun weibo-timeline-switch-to-provider (key)
+  (weibo-timeline)
   (let ((provider (cdr (assoc key weibo-timeline-providers))))
     (when provider
-      (setq weibo-timeline-current-provider provider)
-      (weibo-timeline-refresh))))
+      (unless (eq provider weibo-timeline-current-provider)
+	(setq weibo-timeline-current-provider provider)
+	(weibo-timeline-refresh)))))
 
 (defun weibo-timeline-set-provider (provider)
-  (setq weibo-timeline-current-provider provider)
-  (weibo-timeline-refresh))
+  (weibo-status-comment-buffer provider))
 
 (defun weibo-timeline-pretty-printer (item)
   (when (weibo-timeline-provider-p weibo-timeline-current-provider)
@@ -292,13 +293,12 @@
 
 (defun weibo-timeline-refresh ()
   (interactive)
-  (with-current-buffer (weibo-timeline-buffer)
-    (setq mode-name (format "%s-%s" weibo-timeline-mode-name
-			    (weibo-timeline-provider-name
-			     weibo-timeline-current-provider)))
-    (weibo-timeline-update-header)
-    (ewoc-filter weibo-timeline-data (lambda (data) nil))
-    (weibo-timeline-pull-new)))
+  (setq mode-name (format "%s-%s" weibo-timeline-mode-name
+			  (weibo-timeline-provider-name
+			   weibo-timeline-current-provider)))
+  (weibo-timeline-update-header)
+  (ewoc-filter weibo-timeline-data (lambda (data) nil))
+  (weibo-timeline-pull-new))
 
 (defun weibo-timeline-update ()
   (interactive)
@@ -472,7 +472,7 @@
       (weibo-timeline-mode)
       (weibo-timeline-refresh)
       (unless (timerp weibo-timeline-timer)
-	(setq weibo-timeline-timer (run-with-idle-timer 60 t
+	(setq weibo-timeline-timer (run-with-idle-timer 300 t
 							'weibo-timeline-update))))
     (current-buffer)))
 

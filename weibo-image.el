@@ -54,11 +54,11 @@
     (erase-buffer)
     (weibo-image-mode)
     (if (weibo-insert-image (weibo-get-image-file url))
-	(goto-char (point-min))
+	(progn
+	  (setq buffer-read-only t)
+	  (image-mode))
       (weibo-bury-close-window)
-      (message "无法打开图片！"))
-    (setq buffer-read-only t)
-    (image-mode)))
+      (message "无法打开图片！"))))
 
 (defvar weibo-image-mode-map
   (let ((map (make-sparse-keymap)))

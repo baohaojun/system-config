@@ -13,6 +13,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+(defconst weibo-timeline-status-comment-buffer-name "*weibo-status-comment*")
 (defconst weibo-api-status-comments-timeline "statuses/comments")
 
 (defun weibo-pull-status-comments (data parse-func new status)
@@ -56,5 +58,12 @@
    :reply-function 'weibo-reply-status-comments
    :header-function 'weibo-status-comments-header
    :data status))
+
+(defun weibo-status-comment-buffer (provider)
+  (switch-to-buffer (get-buffer-create weibo-timeline-status-comment-buffer-name))
+  (setq weibo-timeline-current-provider provider)
+  (unless (eq major-mode 'weibo-timeline-mode)
+    (weibo-timeline-mode))
+  (weibo-timeline-pull-new))
 
 (provide 'weibo-status-comment)
