@@ -1,8 +1,13 @@
 #!/bin/bash
+export SDIM_SYNC_CANDS=true
 cd ~/doc/ime
-find . -type f|xargs bash -c 'for x in "$@"; do echo read $x; sdim_add_cand $(basename "$x"); done' xx
+tmpf=/tmp/$(basename $0).$$
+find . -type f|xargs bash -c 'for x in "$@"; do echo sdim-add-cand $(basename "$x"); done' xx | sort -u > $tmpf.git
 
-sdim_sync_cands | 
-sort -u | 
-sed -e 's/sdim_add_cand //' |
+sdim-add-cands-replay | sort -u > $tmpf.ime
+
+diff $tmpf.git $tmpf.ime | grep "^<"|cut -b 3-|bash
+
+diff $tmpf.git $tmpf.ime | grep "^>"|cut -b 3-|
+sed -e 's/sdim-add-cand //' |
 xargs bash -c 'for x in "$@"; do dir=$(echo $x|md5sum|cut -b 1-2); mkdir -p $dir; echo write $dir/$x; touch $dir/"$x"; done' xx

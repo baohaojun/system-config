@@ -6,7 +6,7 @@ user_cron=true
 diff ~/.crontab.tmp ~/.crontab && user_cron=false
 test $PWD = ~ && cd ~/windows-config/
 git fetch origin
-for x in $(git branch -a |grep from-mac); do
+for x in $(git branch -a |grep 'remotes.*from-mac'|grep -v origin-w); do
     remote=$(echo $x|awk -F/ '{print $2}')
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
     git pull $remote $branch

@@ -34,4 +34,4 @@ EOF
 
 
 done
-echo "</external-filters>") > /etc/beagle/external-filters.xml'
+echo "</external-filters>") > /etc/beagrep/external-filters.xml'

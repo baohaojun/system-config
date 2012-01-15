@@ -1,0 +1,33 @@
+#!/bin/bash
+start_dir=~/tmp/for-code-reading/`pwd`
+# echo Starting at $start_dir 1>&2
+while test ! -d "$start_dir"/.beagrep -a "$start_dir" != /
+do
+    start_dir=${start_dir%/*}
+done
+
+if test "$start_dir" = / -o "$start_dir" = $HOME
+then
+    start_dir=`readlink -f ~/.gtags-dir`
+fi
+
+beagrep_dir=$start_dir/.beagrep
+# echo Beagrep index found at "$beagrep_dir" 1>&2
+
+if test -f "$start_dir"/.beagrep-filter
+then
+    beagrep_filter="$start_dir"/.beagrep-filter
+else
+    echo 'Warning: you have no .beagrep-filter at $start_dir! You will probablly see lots of noise' 1>&2
+    beagrep_filter=cat
+fi
+
+longest_token=`get_longest_token "$@"`
+for x in "$beagrep_dir" `cat $beagrep_dir/../.beagrep-brothers 2>/dev/null`
+do 
+    beagrep-static-query \
+        --add-static-backend "$(wlp "$x")" \
+        --backend none --max-hits 100000 "$longest_token" | \
+        unurl.pl|grep -v '#'|sort -u|"$beagrep_filter"
+done
+echo /dev/null

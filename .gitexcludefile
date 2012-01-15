@@ -5,7 +5,7 @@
 *.elc
 cscope.files
 cscope.out
-.beagle*
+.beagrep*
 \#*\#
 GPATH
 GRTAGS

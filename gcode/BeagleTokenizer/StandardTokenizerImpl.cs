@@ -1,1 +1,0 @@
-../beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizerImpl.cs
