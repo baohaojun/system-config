@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-function compile_beagle() {
+function compile_beagrep() {
     cd ~/gcode/beagrep
     git co origin/$(uname|perl -npe 's/_.*//')
     sh ./autogen.sh
@@ -8,7 +8,7 @@ function compile_beagle() {
     sudo make install
     git clean -xfd
 
-    cd ~/gcode/BeagleTokenizer/
+    cd ~/gcode/BeagrepTokenizer/
     make
     git clean -xfd
 }
@@ -54,7 +54,7 @@ function compile_gtags() {
 
 
 function do_compile() {
-    compile_beagle "$@"
+    compile_beagrep "$@"
     compile_uncomment_java "$@"
     compile_gtags "$@"
     compile_ibus_sdim "$@"

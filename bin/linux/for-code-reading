@@ -1,11 +1,11 @@
 #!/bin/bash
 
-Filter=${Filter:-~/.my-beagle-filter-android}
+Filter=${Filter:-~/.my-beagrep-filter-android}
 cd -P . 
 outDir=~/tmp/for-code-reading/"`pwd`"
 srcDir=`pwd`
 relativeSrcDir=.
-while test "$outDir" != "" -a ! -d "$outDir"/.beagle; do
+while test "$outDir" != "" -a ! -d "$outDir"/.beagrep; do
     outDir=${outDir%/*}
 done
 
@@ -60,7 +60,7 @@ function mkcscope_files() {
 	    '-o' '-iname' '*.ncb' \
             '-o' '-iname' "cscope.files" \
             -o -iname "cscope.out" \
-            -o -ipath "*/.beagle" \
+            -o -ipath "*/.beagrep" \
             \) -prune -o -type f -print|$Filter | tee "$outDir"/cscope.files
     else
         cat
@@ -80,26 +80,26 @@ function mkgtags-filter() {
     gtags --gtagslabel=plugin-example -f - "$@" "$outDir"
 }
 
-function mkbeagleidx() {
-    mkdir -p "$outDir"/.beagle
+function mkbeagrepidx() {
+    mkdir -p "$outDir"/.beagrep
 
-    beagle-build-index --recursive \
+    beagrep-build-index --recursive \
         --deny-directory-pattern `pwd`/outx \
         --enable-deletion \
-        --target "$(wlp "$outDir"/.beagle/)" \
+        --target "$(wlp "$outDir"/.beagrep/)" \
         "$relativeSrcDir" 2>&1 \
-        |tee -a "$outDir"/.beagle-build-log
+        |tee -a "$outDir"/.beagrep-build-log
 
-    cat "$outDir"/.beagle-build-log |grep "No filter for" \
-        |sort -u > "$outDir"/.beagle-build-log2
+    cat "$outDir"/.beagrep-build-log |grep "No filter for" \
+        |sort -u > "$outDir"/.beagrep-build-log2
 
-    mv "$outDir"/.beagle-build-log2 "$outDir"/.beagle-build-log
+    mv "$outDir"/.beagrep-build-log2 "$outDir"/.beagrep-build-log
 
-    ln $Filter "$outDir"/.beagle-filter -sf
+    ln $Filter "$outDir"/.beagrep-filter -sf
 }
 
 function for-code-reading() {
-    mkbeagleidx "$@"&
+    mkbeagrepidx "$@"&
     mkgtags "$@" #must not put background, the tty(1) depends on this
 }
 

@@ -107,10 +107,10 @@ sub do_cscope($$$$) {
 
 do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
 chdir ($pwd);
-open(my $brothers, "<", ".beagle-brothers") or exit(0);
+open(my $brothers, "<", ".beagrep-brothers") or exit(0);
 while(<$brothers>) {
     chomp;
-    s,/.beagle$,,;
+    s,/.beagrep$,,;
     my $pwd = $_;
     print "\n\n================\n\n";
     do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);

@@ -6,4 +6,4 @@ function get_longest_token()
 }
 
 export -f get_longest_token
-my-beagle "$@"
+my-beagrep "$@"

@@ -9,7 +9,7 @@ cp $1/. ./ -a
 git add . >/dev/null >/dev/null 2>&1
 git rm debian/ -rf >/dev/null 2>&1 || true
 $3
-git rm beagle-grep-readme.org -f ||true
+git rm beagrep-grep-readme.org -f ||true
 git co HEAD conf-data/config-files/FilesQueryable.xml
 (git st -s |grep '^D'|pn 2|xargs git reset  HEAD >/dev/null; git st -s |grep '^ D'|pn 2|xargs git co HEAD >/dev/null;) || true
 (echo; echo; git diff HEAD --name-status |sed -e 's/^/#/') >> $tmp_msg 

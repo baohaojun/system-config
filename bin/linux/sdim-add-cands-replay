@@ -18,4 +18,4 @@ for t in os.walk(__save_path):
         for cand in list(cands):
             if comp not in g_quail_map or cand not in g_quail_map[comp]:
                 if len(cand) > 1:
-                    print("sdim_add_cand", cand)
+                    print("sdim-add-cand", cand)
