@@ -22,11 +22,11 @@ fi
 
 alias rm='rm -i'
 alias mkgtags='mkgtags -i -v'
-alias bcd=cd_beagle
+alias bcd=cd_beagrep
 alias pcd='builtin cd -P'
 alias mail=mailx
 
-cd_beagle() 
+cd_beagrep() 
 {
     if test $# = 1; then
 	dir=$(readlink -f "$1")
@@ -35,7 +35,7 @@ cd_beagle()
     fi
 
     dest=~/tmp/for-code-reading/`pwd`
-    while test ! -d "$dest"/.beagle -a ! -e "$dest"/GPATH -a "$dest" != / -a "$dest" != ""; do
+    while test ! -d "$dest"/.beagrep -a ! -e "$dest"/GPATH -a "$dest" != / -a "$dest" != ""; do
         dest=${dest%/*};
     done
     if test "$dest" = / -o "$dest" = ""; then
