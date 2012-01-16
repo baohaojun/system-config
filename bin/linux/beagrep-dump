@@ -1,5 +1,0 @@
-#!/bin/bash
-
-. ~/.bashrc
-cd_beagrep
-beagrep-dump-index --indexdir=`pwd`/.beagrep --term-frequencies

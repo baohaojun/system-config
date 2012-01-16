@@ -1,2 +1,2 @@
 #!/bin/bash
-repo forall . -c 'echo $REPO_REMOTE' || git remote
+repo forall . -c 'echo $REPO_REMOTE'

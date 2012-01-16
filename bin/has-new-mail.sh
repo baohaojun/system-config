@@ -65,6 +65,7 @@ done
 maildir_sep=:
 if uname | grep -i -q cygwin; then
     maildir_sep=!
+
 fi
 
 for x in */cur; do

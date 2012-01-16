@@ -28,20 +28,3 @@ see if he agrees.
   - CLOSING NOTE [2012-01-07 Sat 00:12]
     renamed jira2 to jiralib.
 
-* DONE 每次build MarsBurner都把marsburner setting给删掉。
-  CLOSED: [2012-01-12 Thu 17:28]
-  - CLOSING NOTE [2012-01-12 Thu 17:28]
-
-* factory tool discussion with Doctor Jia
-
-- flashing problem could be factory bottleneck. 
-- 1-n flashing.
-- RF Calibration, difficult to do in-depth development
-- whole set testing, use SFFT, we will do development based on this tool.
-- auto test and manual test, need be combined
-- wifi/bt/fm/gps etc, test using grassroot method, no SNR test etc.
-- test result database.
-- Doctor Jia advise to add battery calibration and do SN write in early whole set current test.
-- To enter different boot mode, need discuss further
-  1. Test gpio is not a long term solution
-- To discuss how the factory test station status is saved.
