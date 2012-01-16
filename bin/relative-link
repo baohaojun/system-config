@@ -41,7 +41,7 @@ target_file=''
 test $# = 0 && die "ln: missing file operand"
 
 if test $# = 1; then
-    set -- "$@" .
+    set -- "$@" ./"$(basename "$1")"
 fi
 
 args=("$@")
@@ -54,8 +54,12 @@ if (($# > 2)) && test ! -d "$target_dir"; then
     die "ln: target_dir \`$target_dir' is not a directory"
 fi
 
-if test $# = 2 && test ! -d "$target_dir"; then
-    { target_file=$(basename "$target_dir"); target_dir=$(dirname "$target_dir"); }
+if test $# = 2; then
+    if test -d "$target_dir"; then
+	{ target_file=$(basename "$1"); }
+    else
+	{ target_file=$(basename "$target_dir"); target_dir=$(dirname "$target_dir"); }
+    fi
 fi
 
 test -e "$target_dir" || die "ln: target_dir \`$target_dir does not exist"
@@ -64,8 +68,15 @@ old_target_dir=$target_dir;
 target_dir=$(formal-path "$target_dir"|perl -npe 's,/*$,,')
 
 echo -n > ~/.failed-rln
+
+target_file_save=$target_file
 for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
+    if test -z "$target_file_save"; then
+	target_file=$(basename "$source")
+    fi
+    rm -f "$target_dir"/"$target_file"
+
     normal_target=$(formal-path "$target_dir"/"$target_file")
     relative_source=$(calc_relative "$source" "$normal_target")
     # if test -z "target_file"; then

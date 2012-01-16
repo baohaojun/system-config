@@ -4,7 +4,7 @@ set -e
 
 set -- "$(readlink -f "$1")"
 
-mkdir -p "$1".beagle && cd "$1".beagle
+mkdir -p "$1".beagrep && cd "$1".beagrep
 perl -ne 'BEGIN{$ln = 0} print STDERR "$ln\n" if (++$ln % 10000 == 0); $pos = 0; $line = $_; for (1..9) {$pos = index($line, "0x", $pos) + 1;}  $pos = index($line, " ", $pos) + 1; print substr($line, $pos)' "$1" |perl -ne 'BEGIN{
     $l = 1;
     $lines = 1000;
@@ -21,4 +21,4 @@ if ($l++ % $lines == 0 or not $file) {
     open($file, ">", $fn) or die "Error: open $fn failed";
 }
 print $file $_;
-' && mkbeagleidx 
+' && mkbeagrepidx 

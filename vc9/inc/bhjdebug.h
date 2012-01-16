@@ -11,7 +11,7 @@
 #include <pthread.h>
 #define PATH_SEPW L'/'
 #define PATH_SEP '/'
-
+#define GetModuleFileNameA(...)
 #else
 #pragma warning (disable:4996) 
 
@@ -38,7 +38,7 @@
 #define BHJDEBUG(fmt, ...) do {                                         \
         pthread_t tid = pthread_self();                                 \
 		char exe[1024] = "";											\
-		GetModuleFileNameA(NULL, exe, 1023);							\
+		GetModuleFileNameA(NULL, exe, 1023);			\
 		FILE *fp = fopen("d:/log.txt", "a");							\
 		if (!fp) {														\
 			fp = fopen("d:/log.txt", "w");								\

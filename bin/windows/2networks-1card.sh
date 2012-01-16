@@ -1,13 +1,19 @@
 #!/bin/bash
 set -x
-netsh interface ip set address name=eth0 source=dhcp
-while true; do
-    internal_ip=$(ifconfig  eth0|grep 'ip.*addr' -i|perl -npe 's/.*: //')
-    test -z "$internal_ip" || break
-    sleep 1;
-done
 
-external_ip=192.168.33.$(ifconfig /all |md5sum.exe |pn 1|perl -npe 's/^/((x=0x/; s/$/%255)); if test \$x -lt 0; then ((x=-x)); fi; echo \$x/'|bash)
+ip_b4=$(ifconfig /all eth0 | grep phy -i |md5sum.exe |pn 1|perl -npe 's/^/((x=0x/; s/$/%100)); if test \$x -lt 0; then ((x=-x)); fi; echo \$x/'|bash)
+
+if test $(hostname) = BJ-LT7; then
+    netsh interface ip set address name=eth0 source=dhcp
+    while true; do
+	internal_ip=$(ifconfig  eth0|grep 'ip.*addr' -i|perl -npe 's/.*: //')
+	test -z "$internal_ip" || break
+	sleep 1;
+    done
+else
+    internal_ip=10.21.128.$ip_b4
+fi
+external_ip=192.168.33.$ip_b4
 netsh interface ip add address "eth0" $internal_ip 255.255.255.0
 netsh interface ip add address "eth0" $external_ip 255.255.255.0 
 

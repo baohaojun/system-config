@@ -90,8 +90,8 @@ press C-n (to move onto that entry) and Enter (to exec it).
 
 ** 原理
 
-beagle是一个从lucene演变来的搜索引擎程序。当我们想在android/kernel等巨
-大的代码库里grep一点文本的时候，加上beagle，我们可以大大节省时间。
+beagrep是一个从lucene演变来的搜索引擎程序。当我们想在android/kernel等巨
+大的代码库里grep一点文本的时候，加上beagrep，我们可以大大节省时间。
 
 其原因，因为正则表达式太强大，我们可以放弃、出让一点它的强大，换回来更好的性能。
 
@@ -102,13 +102,13 @@ beagle是一个从lucene演变来的搜索引擎程序。当我们想在android/
 
 这么强大的命令来吧？
 
-如果你愿意以退为进，放弃这么强大的功能，那么beagle就可以帮你的忙了：先
-用beagle查询当前目录下有哪几个文件包含``readlink''这个单词，再专门只在
+如果你愿意以退为进，放弃这么强大的功能，那么beagrep就可以帮你的忙了：先
+用beagrep查询当前目录下有哪几个文件包含``readlink''这个单词，再专门只在
 这些个文件上用grep精确的定位出哪一行上出现了这个单词。
 
 参考：
 
-http://github.com/baohaojun/windows-config/raw/master/gcode/beagle/beagle-grep-readme.org
+http://github.com/baohaojun/windows-config/raw/master/gcode/beagrep/beagrep-grep-readme.org
 
 
 ** 那么，哪里能买得到呢？
@@ -141,7 +141,7 @@ git clone git://github.com/baohaojun/windows-config.git
 1. 你的.bashrc等文件会被我替换，但是别担心，我会帮你备份成.bashrc.bak等。
    如果实在不放心，可以自己先备份一下。
 
-2. 最后一个命令会做很多事情，包括编译我的版本的beagle，而在ubuntu上是编
+2. 最后一个命令会做很多事情，包括编译我的版本的beagrep，而在ubuntu上是编
    不过的，有一个文件会出错，你需要用git恢复这个文件到它的上一个版本。
 
 3. 如果你因为使用beagrep从一个文艺青年变成文本青年，本人概不负责。
