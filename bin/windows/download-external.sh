@@ -76,6 +76,8 @@ function download-all()
 		/bin/unzip -o "$x";
             fi
 	done
+	find . -type f -print0|xargs -0 bash -c 'mv "$@" ./' true
+	find . -type f | perl -ne 'chomp; if (lc($_) ne $_) { printf "mv \"%s\" \"%s\"\n", $_, lc($_)}'|bash -x
 	mv ./*/* . || true
 	chmod a+x ./* || true
     )&
