@@ -41,7 +41,14 @@ function download-all()
 	mkdir -p ~/external/download-all
 	cd ~/external/download-all
 
+
+
 	file_list=(
+	    $(
+		for x in putty.exe puttytel.exe pscp.exe psftp.exe plink.exe pageant.exe puttygen.exe; do
+		    echo http://the.earth.li/~sgtatham/putty/latest/x86/$x;
+		done
+	    )
 	    http://mirrors.zerg.biz/stunnel/stunnel-4.50-installer.exe
 	    http://www.imagemagick.org/download/binaries/ImageMagick-6.7.4-Q16-windows.zip
             http://download.sysinternals.com/Files/ProcessMonitor.zip
