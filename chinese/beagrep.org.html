@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>beagrep，两秒钟grep两个G的代码</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="beagrep，两秒钟grep两个G的代码"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-01-16 10:05:50 China Standard Time"/>
+<meta name="author" content=""/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">beagrep，两秒钟grep两个G的代码</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 简介</a></li>
+<li><a href="#sec-2">2 安装</a>
+<ul>
+<li><a href="#sec-2-1">2.1 Linux下安装</a>
+<ul>
+<li><a href="#sec-2-1-1">2.1.1 下载代码</a></li>
+<li><a href="#sec-2-1-2">2.1.2 编译安装</a></li>
+</ul>
+</li>
+<li><a href="#sec-2-2">2.2 Windows下安装</a>
+<ul>
+<li><a href="#sec-2-2-1">2.2.1 安装依赖软件</a></li>
+<li><a href="#sec-2-2-2">2.2.2 下载代码</a></li>
+<li><a href="#sec-2-2-3">2.2.3 编译安装</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 使用</a>
+<ul>
+<li><a href="#sec-3-1">3.1 创建索引</a></li>
+<li><a href="#sec-3-2">3.2 用beagrep搜索</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 简介</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+多年前还在上大学的时候，读到LDD（Linux Device Driver）第一版的前言，作
+者说这本书是他花了很多小时，仔细grep内核源代码才写出来的。所以后来我也
+试着坚持用grep这样的工具阅读源代码。很长一段时间内grep都是足够用了的，
+即使像Linux内核这样的几百兆的代码，grep起来也不会太慢。
+</p>
+<p>
+直到有一天grep了一下Android的代码，花了我半个小时，终于觉得太慢了，受不
+了了。
+</p>
+<p>
+后来发现Linux下开源的桌面索引、搜索软件<a href="http://en.wikipedia.org/wiki/Beagle_(software)">beagle</a>，灵机一动，先用beagle粗略
+地搜一遍可能匹配的文件，然后再单在这些文件内grep，不就可以大大节省时间
+吗？
+</p>
+<p>
+非常热血地向你推荐beagrep（beagle + grep），grep两个G的Android代码，只
+需要两秒钟！
+</p>
+<p>
+更加热血的是，beagrep在Windows下也能用！
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 安装</h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Linux下安装</h3>
+<div class="outline-text-3" id="text-2-1">
+
+
+
+</div>
+
+<div id="outline-container-2-1-1" class="outline-4">
+<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> 下载代码</h4>
+<div class="outline-text-4" id="text-2-1-1">
+
+
+
+
+<pre class="example">git clone git://github.com/baohaojun/beagrep.git -b Linux
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-1-2" class="outline-4">
+<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> 编译安装</h4>
+<div class="outline-text-4" id="text-2-1-2">
+
+
+<p>
+以debian为例，你可能需要先装一些build需要用到的deb包（TODO 搞清楚
+beagrep的build到底需要哪些包）：
+</p>
+
+
+
+<pre class="example">apt-get install mono-devel
+</pre>
+
+
+<p>
+然后到之前git clone出来的beagrep下进行编译安装：
+</p>
+
+
+
+<pre class="example">cd beagrep
+sh ./autogen.sh
+make
+sudo make install
+</pre>
+
+
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Windows下安装</h3>
+<div class="outline-text-3" id="text-2-2">
+
+
+
+</div>
+
+<div id="outline-container-2-2-1" class="outline-4">
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> 安装依赖软件</h4>
+<div class="outline-text-4" id="text-2-2-1">
+
+<p>需要安装cygwin和mono的Windows版。Cygwin建议完全安装，Mono建议安装到默认
+目录下。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2-2-2" class="outline-4">
+<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> 下载代码</h4>
+<div class="outline-text-4" id="text-2-2-2">
+
+
+
+
+<pre class="example">git clone git://github.com/baohaojun/beagrep.git -b Windows
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-2-3" class="outline-4">
+<h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> 编译安装</h4>
+<div class="outline-text-4" id="text-2-2-3">
+
+
+
+
+
+<pre class="example">cd beagrep
+bash build-win.sh
+</pre>
+
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 使用</h2>
+<div class="outline-text-2" id="text-3">
+
+
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> 创建索引</h3>
+<div class="outline-text-3" id="text-3-1">
+
+
+<p>
+到想阅读的源代码目录下，以android为例
+</p>
+
+
+
+<pre class="example">cd ~/src/android
+mkbeagrepidx
+</pre>
+
+
+<p>
+这一步花费时间较长，在Linux下android代码索引大概需要半个小时（跟以前单独用一次grep的时间差不多）。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> 用beagrep搜索</h3>
+<div class="outline-text-3" id="text-3-2">
+
+
+<p>
+在想阅读的代码目录下：
+</p>
+
+
+<pre class="example">cd ~/src/android
+beagrep -e "readlink"
+</pre>
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2012-01-16 10:05:50 China Standard Time</p>
+<p class="author">Author: </p>
+<p class="creator">Org version 7.8.02 with Emacs version 24</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
