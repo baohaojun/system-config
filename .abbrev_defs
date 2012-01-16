@@ -31,7 +31,7 @@
        end code-generator */
     // start generated code
 
-    // end generated code" nil 2)
+    // end generated code" nil 0)
     ("cr" "CRect" nil 2)
     ("cs" "cstring" nil 36)
     ("dcs" "c_str()" nil 10)
@@ -51,7 +51,6 @@
 (define-abbrev-table 'c-mode-abbrev-table
   '(
     ("bpk" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
-    ("ccs" "const cstring&" nil 1)
     ("cpk" "printk(KERN_WARNING \"for continue %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 25)
     ("ipk" "#include <linux/types.h>
 #include <linux/module.h>
