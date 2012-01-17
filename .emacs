@@ -60,9 +60,7 @@
 
 (require 'csharp-mode)
 (require 'w3m)
-(if  (eq system-type 'windows-nt)
-    (setq ido-enable-tramp-completion nil)
-  (require 'tramp))
+(require 'tramp)
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)
 (require 'ibuffer)
@@ -1641,7 +1639,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
       'annotating)))
 
 (setq bbdb/gnus-update-records-mode '(my-bbdb/gnus-update-records-mode))
-(setq bbdb/send-prompt-for-create-p nil)
 
 (defun my-bbdb-canonicalize (addr)
   (if (stringp addr)
@@ -2054,5 +2051,10 @@ criteria can be provided via the optional match-string argument "
     (if (looking-at "\C-z")
 	(delete-char 1))))
 
+(defun copy-string (str)
+  "copy the string into kill-ring"
+  (with-temp-buffer
+    (insert str)
+    (kill-region (point-min) (point-max))))
 
 (server-start)
