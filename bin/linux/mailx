@@ -89,7 +89,11 @@ test -z "${body[0]}" && body=("=")
                 else
                     printf -- \ -'${y:0:1}'\ 
                 fi
-                printf -- "%q" "${'$y'[$x-1]}"
+                if [[ '$y' =~ cc|bcc|to ]]; then
+                    printf -- "%q" "$( echo -n "${'$y'[$x-1]}" |perl -npe "s/.*<(.*)>.*/\$1/")"
+                else
+                    printf -- "%q" "${'$y'[$x-1]}"
+                fi
             done
         fi'
     done
