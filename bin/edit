@@ -14,8 +14,6 @@ if ($ARGV[0] =~ m/^\+\d+$/) {
 my ($myfile) = ($ARGV[0]);
 my $remote_ip = $ENV{"REMOTEIP"};
 
-my $protocol = qx(get-remote-edit-protocol $remote_ip);
-
 my @emacsclient = ('emacsclient', '-n');
 
 if ($0 =~ m,/?edit-wait$,) {
@@ -56,9 +54,9 @@ sub get_emacs_file_name($) {
   } elsif ($ENV{"REMOTEIP"}) {
     my ($myname, $myip, $myport, $remote_ip) = @ENV{"WHOAMI", "LOCALIP", "LOCALPORT", "REMOTEIP"};
     if ($myport eq "22") {
-        return "/$protocol:$myname\@$myip:$file"; 
+        return "/scp:$myname\@$myip:$file"; 
     } else {
-        return "/$protocol:$myname\@$myip#$myport:$file"; 
+        return "/scp:$myname\@$myip#$myport:$file"; 
     }
   } else {
     return $file;
