@@ -16,6 +16,12 @@ my $remote_ip = $ENV{"REMOTEIP"};
 
 my $protocol = qx(get-remote-edit-protocol $remote_ip);
 
+if ($protocol eq "pscp") {
+  # plink on win7 has a bug, can't handle ip connection, only hostname
+  # works
+  $remote_ip = qx(ip-hosts $remote_ip); 
+}
+
 my @emacsclient = ('emacsclient', '-n');
 
 if ($0 =~ m,/?edit-wait$,) {
