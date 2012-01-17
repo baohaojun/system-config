@@ -2050,5 +2050,10 @@ criteria can be provided via the optional match-string argument "
     (if (looking-at "\C-z")
 	(delete-char 1))))
 
+(defun copy-string (str)
+  "copy the string into kill-ring"
+  (with-temp-buffer
+    (insert str)
+    (kill-region (point-min) (point-max))))
 
 (server-start)
