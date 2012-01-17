@@ -1,6 +1,6 @@
 #!/bin/bash
 #ulp stands for Unix Long Path
-if test "${1:0:1}" = /; then
+if test "${1:0:1}" = / -a ! -e "$1"; then
     echo -n "$1"
 else
     cygpath -u "$(cygpath -alm "${1:-.}")"|tr -d '\n'
