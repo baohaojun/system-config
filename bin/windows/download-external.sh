@@ -41,14 +41,7 @@ function download-all()
 	mkdir -p ~/external/download-all
 	cd ~/external/download-all
 
-
-
 	file_list=(
-	    $(
-		for x in putty.exe puttytel.exe pscp.exe psftp.exe plink.exe pageant.exe puttygen.exe; do
-		    echo http://the.earth.li/~sgtatham/putty/latest/x86/$x;
-		done
-	    )
 	    http://mirrors.zerg.biz/stunnel/stunnel-4.50-installer.exe
 	    http://www.imagemagick.org/download/binaries/ImageMagick-6.7.4-Q16-windows.zip
             http://download.sysinternals.com/Files/ProcessMonitor.zip
@@ -76,8 +69,6 @@ function download-all()
 		/bin/unzip -o "$x";
             fi
 	done
-	find . -type f -print0|xargs -0 bash -c 'mv "$@" ./' true
-	find . -type f | perl -ne 'chomp; if (lc($_) ne $_) { printf "mv \"%s\" \"%s\"\n", $_, lc($_)}'|bash -x
 	mv ./*/* . || true
 	chmod a+x ./* || true
     )&
@@ -206,7 +197,7 @@ function emacs-site-lisps()
     )
 
     rm  ~/bin/windows/ext/offlineimap -f
-    ln -sf $(readlink -f *offlineimap*/offlineimap.py) ~/windows-config/bin/windows/ext/offlineimap
+    relative-link *offlineimap*/offlineimap.py ~/windows-config/bin/windows/ext/offlineimap
     (
 	builtin cd *ctags*/ && ./configure && make -j8 install && ln -sf /usr/local/bin/ctags.exe /usr/bin/ctags-exuberant
     )&

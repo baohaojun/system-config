@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PATH=/usr/local/jdk/bin:$HOME/bin/linux/:$HOME/bin/linux/ext/`uname -m`:$HOME/bin/linux/ext:/usr/local/bin:$PATH
+export PATH=$HOME/bin/linux/:$HOME/bin/linux/ext/`uname -m`:$HOME/bin/linux/ext:/usr/local/bin:$PATH
 export PATH=$PATH:$HOME/bin/linux/ext/android-sdk-linux_86/tools:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin
 
 export CLASSPATH=/usr/share/java/stringtemplate.jar:/usr/share/java/antlr3.jar:/usr/share/java/antlr3-runtime.jar:$HOME/bin/linux/ext/antlrworks.jar:.

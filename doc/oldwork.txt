@@ -2672,8 +2672,8 @@ find \( '-path' '*/CVS' \
     '-o' '-path' '*/.repo'\
     '-o' '-iname' "cscope.files"\
     -o -iname "cscope.out"\
-    -o -ipath "*/.beagrep"\
-    \) -prune -o -type f -print0|xargs -0 grep . -Il|~/.my-beagrep-filter > cscope.files
+    -o -ipath "*/.beagle"\
+    \) -prune -o -type f -print0|xargs -0 grep . -Il|~/.my-beagle-filter > cscope.files
 
 .authinfo format:
 machine bhj2 login bhj password ??? port 143
@@ -2902,8 +2902,8 @@ findout what is GScript / Remote DB
 fs.inotify.max_user_watches = 65535
 
 wesnoth
-beagrep-static-query --add-static-backend /path/to/personal/index --backend none kconfig
-beagrep-build-index --recursive --deny-pattern .beagrep --deny-pattern '[0-9].xml' --enable-deletion --target .beagrep/ .
+beagle-static-query --add-static-backend /path/to/personal/index --backend none kconfig
+beagle-build-index --recursive --deny-pattern .beagle --deny-pattern '[0-9].xml' --enable-deletion --target .beagle/ .
 
 
 ****************************************************************
@@ -3269,7 +3269,7 @@ adb pull /data/data/com.android.providers.contacts/databases/contacts2.db .
 $export TARGET_PRODUCT=harmony; export USB_GADGET_MODULE_PATH=kernel/drivers/usb/gadget/
 repo forall -c "git checkout -b bhj-nv.11 tegra-9.12.11"
 
-mkdir -p ~/tmp/`pwd`/.beagrep; beagrep-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target ~/tmp/`pwd`/.beagrep/ .; ln ~/.my-beagrep-filter-android .beagrep-filter -sf; ln -sf ~/tmp/`pwd`/.beagrep ./
+mkdir -p ~/tmp/`pwd`/.beagle; beagle-build-index --recursive --deny-directory-pattern `pwd`/out --enable-deletion --target ~/tmp/`pwd`/.beagle/ .; ln ~/.my-beagle-filter-android .beagle-filter -sf; ln -sf ~/tmp/`pwd`/.beagle ./
 
 
 值得一提的是我找到这个问题的方法。一开始我发现 emacs 每天总是会卡住3，4回，出现的频率很低，很难通过依次禁止 .emacs 中的内容来排查，于是我就到 emacs 的官方邮件列表上去提问，有人告诉了我一个好方法：

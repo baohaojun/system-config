@@ -1,35 +1,24 @@
 #!/usr/bin/env perl
 BEGIN 
-  {
-    our %hostname_ip_map;
-    our %ip_hostname_map;
-    
+{
+    %hosts = {};
     open($file, "<", "/etc/hosts");
     while (<$file>) {
-      next if m/^\s*#/;
-      next if m/^\s*$/;
-      @line = split;
-      $ip = shift @line;
-      for (@line) {
-	$hostname_ip_map{$_} = $ip;
-	$ip_hostname_map{$ip} = $_;
-      }
+        next if m/^\s*#/;
+        next if m/^\s*$/;
+        @line = split;
+        $ip = shift @line;
+        for (@line) {
+            $hosts{$_} = $ip;
+        }
     }
-  }
-
-$arg = $ARGV[0];
-if ($0 =~ m/host-hosts/) {
-
-  $home = $ENV{'HOME'};
-  $arg =~ s,^(?:\\\\|//|smb://|$home/smb/)*(.*?)(\\|/|$),$2,;
-  $host = $1;
-  $arg =~ s,\\,/,g;
-  $ip = $hostname_ip_map{$host};
-  $ip = $host unless $ip;
-  print "$ip$arg";
-} elsif ($0 =~ m/ip-hosts/) {
-  $ip = $arg;
-  $hostname = ($ip_hostname_map{$ip} or $ip);
-  print "$hostname";
 }
 
+$arg = $ARGV[0];
+$home = $ENV{'HOME'};
+$arg =~ s,^(?:\\\\|//|smb://|$home/smb/)*(.*?)(\\|/|$),$2,;
+$host = $1;
+$arg =~ s,\\,/,g;
+$ip = $hosts{$host};
+$ip = $host unless $ip;
+print "$ip$arg";

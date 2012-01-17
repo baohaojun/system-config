@@ -60,7 +60,9 @@
 
 (require 'csharp-mode)
 (require 'w3m)
-(require 'tramp)
+(if  (eq system-type 'windows-nt)
+    (setq ido-enable-tramp-completion nil)
+  (require 'tramp))
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)
 (require 'ibuffer)
@@ -538,10 +540,10 @@
             ))
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(Info-additional-directory-list (list "~/tools/emacswin/info/" "/usr/local/share/info" "/usr/share/info"))
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
@@ -578,6 +580,7 @@
  '(mm-text-html-renderer (quote w3m))
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
+ '(org-agenda-files (quote ("/home/bhj/doc/daily/2011.org" "/home/bhj/doc/daily/2012-01.org")))
  '(org2blog/wp-confirm-post t)
  '(org2blog/wp-use-tags-as-categories t)
  '(require-final-newline t)
@@ -612,10 +615,10 @@
 
 
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
 
 (set-keyboard-coding-system 'utf-8)
@@ -1638,6 +1641,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
       'annotating)))
 
 (setq bbdb/gnus-update-records-mode '(my-bbdb/gnus-update-records-mode))
+(setq bbdb/send-prompt-for-create-p nil)
 
 (defun my-bbdb-canonicalize (addr)
   (if (stringp addr)
@@ -2050,10 +2054,5 @@ criteria can be provided via the optional match-string argument "
     (if (looking-at "\C-z")
 	(delete-char 1))))
 
-(defun copy-string (str)
-  "copy the string into kill-ring"
-  (with-temp-buffer
-    (insert str)
-    (kill-region (point-min) (point-max))))
 
 (server-start)
