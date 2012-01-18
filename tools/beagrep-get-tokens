@@ -13,7 +13,7 @@ $tokens = shell_quote($tokens);
 $tokens = qx/beagrep-break-words $tokens/;
 
 $tokens =~ s/\r|\n/ /g;
-$tokens =~ s/\b/*/g;
+#$tokens =~ s/\b/*/g;
 print "$tokens\n";
 
 
