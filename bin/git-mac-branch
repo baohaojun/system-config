@@ -41,7 +41,7 @@ else
 fi
 
 
-if git submodule foreach 'bash -c "export GITPUSHMACFORCE=true; git-push-mac . || echo failed"' | grep "^failed$";
+if git submodule foreach 'bash -c "export GITPUSHMACFORCE=true; git-push-mac . || echo hello $(pwd) failed&"' | tee /dev/stderr | grep "^hello.*failed$";
 then
     exit -1
 else
@@ -52,7 +52,7 @@ git add .
 
 git commit -m mf ||true
 rb=$(from-mac)
-if git branch --contains HEAD -a |grep from-mac; then 
+if git branch --contains HEAD -a |grep -q from-mac; then 
     echo HEAD already containd in a remote branch, no need to push
     exit
 fi
