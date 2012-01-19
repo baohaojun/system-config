@@ -35,6 +35,10 @@ else
     outDir=~/tmp/for-code-reading/"`pwd`"
 fi
 
+if test -e .globalrc; then
+    export GTAGSCONF=$(readlink -m .globalrc)
+fi
+
 function mkcscope_files() {
     if tty 1>&2 || test "$IN_CRON" = true || test "$IN_EMACS" = true; then
         find $relativeSrcDir \( '-path' '*/CVS' \

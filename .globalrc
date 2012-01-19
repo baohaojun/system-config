@@ -43,9 +43,28 @@ gtags:\
 #
 plugin-example|Example of function layer plugin parser:\
 	:tc=common:extractmethod:\
-	:langmap=c\:.c,yacc\:.y,asm\:.s.S,java\:.java,cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H.h,php\:.php.php3.phtml:\
-	:langmap=fortran\:.f.for.f77.f90.f95,pascal\:.p.pas,c#\:.cs,lisp\:.l.el.lisp.jl(.emacs),javaprop\:(ExternalMessages.properties),kconfig\:(Kconfig*),scheme\:.scm:\
-	:langmap=awk\:.awk,ruby\:.rb,perl\:.pl,python\:.py,make\:(*.am)([mM]akefile).mk.make,vim\:.vim,javascript\:.js,matlab\:.m,sh\:(.bashrc*).sh:\
+	:langmap=c\:.c:\
+	:langmap=yacc\:.y:\
+	:langmap=asm\:.s.S:\
+	:langmap=java\:.java:\
+	:langmap=cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H.h:\
+	:langmap=php\:.php.php3.phtml:\
+	:langmap=fortran\:.f.for.f77.f90.f95:\
+	:langmap=pascal\:.p.pas:\
+	:langmap=c#\:.cs:\
+	:langmap=lisp\:.l.el.lisp.jl(.emacs):\
+	:langmap=javaprop\:(ExternalMessages.properties):\
+	:langmap=kconfig\:(Kconfig*):\
+	:langmap=scheme\:.scm:\
+	:langmap=awk\:.awk:\
+	:langmap=ruby\:.rb:\
+	:langmap=perl\:.pl:\
+	:langmap=python\:.py:\
+	:langmap=make\:(*.am)([mM]akefile).mk.make:\
+	:langmap=vim\:.vim:\
+	:langmap=javascript\:.js:\
+	:langmap=matlab\:.m:\
+	:langmap=sh\:(.bashrc*).sh:\
 	:gtags_parser=c\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=yacc\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=asm\:/usr/local/lib/gtags/exuberant-ctags.la:\
