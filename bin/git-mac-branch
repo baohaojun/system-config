@@ -52,7 +52,11 @@ git add .
 
 git commit -m mf ||true
 rb=$(from-mac)
-git diff --quiet origin/$(echo $rb|perl -npe 's,^refs/heads/,,') || if test "$(git config remote.origin.url | cut -b 1-4)" = git:; then
+if git branch --contains HEAD -a |grep from-mac; then 
+    echo HEAD already containd in a remote branch, no need to push
+    exit
+fi
+if test "$(git config remote.origin.url | cut -b 1-4)" = git:; then
     git remote add origin-w $(git config remote.origin.url | perl -npe 's,^git://,git@,; s,/,:,') || true
     git push origin-w HEAD:$rb
     git fetch origin
