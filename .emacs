@@ -1046,6 +1046,11 @@ Starting from DIRECTORY, look upwards for a cscope database."
 	 (cadddr subs) ;operator +=      function    183 /home...
        (caddr subs))))) ;region_iterator  struct      189 /home...
 
+(defmacro set-remote-env (name val)
+  `(let ((process-environment tramp-remote-process-environment))
+     (setenv ,name ,val)
+     (setq tramp-remote-process-environment process-environment)))
+
 (defun code-def-from-tag-line (line)
   (goto-line line)
   (let ((subs (split-string (current-line-string))))
