@@ -6,6 +6,11 @@ function compile_beagrep() {
     sh ./autogen.sh
     make
     sudo make install
+    git clean -xfd
+
+    cd ~/gcode/BeagrepTokenizer/
+    make
+    git clean -xfd
 }
 
 

@@ -6,24 +6,20 @@ open (my $log_, ">>", glob("~/.edit.log")) or die "Can not open log file";
 print $log_ "@ARGV\n";
 
 if ($ARGV[0] =~ m/^\+\d+$/) {
-  my $line = substr($ARGV[0], 1);
-  shift @ARGV;
-  $ARGV[0] .= ":$line";
+    my $line = substr($ARGV[0], 1);
+    shift @ARGV;
+    $ARGV[0] .= ":$line";
 }
 
 my ($myfile) = ($ARGV[0]);
 my $remote_ip = $ENV{"REMOTEIP"};
 
-my $protocol = "";
-if ($remote_ip) {
-  $protocol = qx(get-remote-edit-protocol $remote_ip);
-}
-
+my $protocol = qx(get-remote-edit-protocol $remote_ip);
 
 my @emacsclient = ('emacsclient', '-n');
 
 if ($0 =~ m,/?edit-wait$,) {
-  @emacsclient = ('emacsclient');
+    @emacsclient = ('emacsclient');
 }
 
 sub get_smb_file($$) {
@@ -66,9 +62,9 @@ sub get_emacs_file_name($) {
     }
 
     if ($myport eq "22") {
-      return "/$protocol:$myname\@$myip:$file"; 
+        return "/$protocol:$myname\@$myip:$file"; 
     } else {
-      return "/$protocol:$myname\@$myip#$myport:$file"; 
+        return "/$protocol:$myname\@$myip#$myport:$file"; 
     }
   } else {
     return $file;
@@ -100,9 +96,9 @@ sub edit_1($)
       $file =~ s,:(\d+)$,, and $line = $1;
 
       if (`uname` =~ m/cygwin/i) {
-	$file = shell_quote($file);
-	$file = `cygpath -u $file`;
-	chomp($file);
+          $file = shell_quote($file);
+          $file = `cygpath -u $file`;
+          chomp($file);
       }
 
       $file = shell_quote($file);
@@ -128,11 +124,11 @@ EOC
   system("ssh $remote_ip $ssh_cmd");
 
 } else {
-  my @cmd = edit_1($myfile);
-  print "will run: ";
-  for (@cmd) {
-    print "'$_' ";
-  }
-  print "\n";
-  system(@cmd);
+    my @cmd = edit_1($myfile);
+    print "will run: ";
+    for (@cmd) {
+	print "'$_' ";
+    }
+    print "\n";
+    system(@cmd);
 }
