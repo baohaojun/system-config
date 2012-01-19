@@ -12,6 +12,7 @@ for x in $(git branch -a |grep 'remotes.*from-mac'|grep -v origin-w); do
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
     git fetch $remote $branch >/dev/null 2>&1 
     if git branch --contains FETCH_HEAD |grep -q '^\*'; then
+	echo no need to merge $branch, it is already '*contained*' in HEAD
 	continue;
     else
 	current=$(git log -1|head -n 1|pn 2)
@@ -27,4 +28,4 @@ done
 test $user_cron = false && { diff ~/.crontab.tmp ~/.crontab || crontab ~/.crontab; }
 git submodule init
 git submodule update
-git submodule foreach 'bash -c "git-pull-mac&"'
+git submodule foreach 'bash -c "git-pull-mac&"' | grep . 
