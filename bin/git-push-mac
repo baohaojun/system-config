@@ -34,7 +34,7 @@ else
 	echo commiting even though you made changes only recently, as you wish
     elif test "$GITPUSHMACFORCE" != true; then
 	if test $(date +%H) -gt 20 ; then #if it's late in the night, we may be at home, so lets reminder it
-	    bhj-notify git-mac-branch "not commiting because you made changes only recently, and we are not on any console"
+	    bhj-notify git-push-mac "not commiting because you made changes only recently, and we are not on any console"
 	fi
 	exit
     fi

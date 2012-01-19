@@ -12,8 +12,8 @@ function debug() {
 
 IFS=$'\n'
 
-git status
-git st -s . | grep . && die "git not clean"
+git st -s . | grep . && die "git not clean:
+$(git status . )"
 
 test $# = 0 && die "must provide at least 2 args"
 tmpf=/tmp/$(basename $0).$$
