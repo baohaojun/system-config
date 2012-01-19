@@ -19,10 +19,9 @@ test $# = 0 && die "must provide at least 2 args"
 tmpf=/tmp/$(basename $0).$$
 perlhash=$tmpf.hash
 git ls-tree --name-only -r HEAD > $tmpf
-echo shit > $tmpf.tmp
 cat $tmpf |
 xargs -d \\n grep -l -i -I -e "$1" |
-xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && echo "$x"; done; echo '$tmpf.tmp true |
+xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && echo "$x"; done' true |
 xargs -d \\n perl -npe '
 BEGIN{
     $from = "'"$1"'";

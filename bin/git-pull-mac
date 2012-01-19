@@ -21,7 +21,6 @@ for x in $(git branch -a |grep 'remotes.*from-mac'|grep -v origin-w); do
 	    echo $remote/$branch contains no diff after merge, reset it
 	    git reset --hard $current
 	else
-	    echo merged from $branch
 	    continue
 	fi
     fi

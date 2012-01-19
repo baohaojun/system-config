@@ -2,8 +2,4 @@
 
 export LANG=zh_CN.GBK 
 export LC_ALL=zh_CN.GBK 
-if type luit >/dev/null 2>&1 ; then
-    luit -encoding GBK "$@"
-else
-    "$@"
-fi
+"$@"
