@@ -41,7 +41,7 @@ else
 fi
 
 
-if git submodule foreach 'bash -c "export GITPUSHMACFORCE=true; git-push-mac . >/dev/null 2>&1 || echo failed"' | grep failed;
+if git submodule foreach 'bash -c "export GITPUSHMACFORCE=true; git-push-mac . || echo failed"' | grep "^failed$";
 then
     exit -1
 else
