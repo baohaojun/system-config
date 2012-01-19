@@ -15,4 +15,5 @@ for x in $(git branch -a |grep "origin/.*from-mac"); do
     fi
 done
 
+git-clean-mac-branches-local
 git submodule foreach 'git-clean-mac-branches&'
