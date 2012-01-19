@@ -1046,6 +1046,11 @@ Starting from DIRECTORY, look upwards for a cscope database."
 	 (cadddr subs) ;operator +=      function    183 /home...
        (caddr subs))))) ;region_iterator  struct      189 /home...
 
+(defmacro set-remote-env (name val)
+  `(let ((process-environment tramp-remote-process-environment))
+     (setenv ,name ,val)
+     (setq tramp-remote-process-environment process-environment)))
+
 (defun code-def-from-tag-line (line)
   (goto-line line)
   (let ((subs (split-string (current-line-string))))
@@ -1419,25 +1424,40 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (defvar boe-default-indent-col 0)
 (make-variable-buffer-local 'boe-default-indent-col)
 
-(defun indent-same-space-as-prev-line ()
-  (interactive)
-  (let* ((col1 (current-column))
-         (col2 (save-excursion
-                 (if (eolp)
-                     col1
-                   (search-forward-regexp "\\S " (line-end-position))
-                   (current-column))))
-         (col2- (save-excursion
-                  (forward-line -1)
-                  (move-to-column col1)
-                  (when (looking-at "\\S ")
-                    (search-forward-regexp "\\s "))
-                  (search-forward-regexp "\\S " (line-end-position))
-                  (current-column))))
-    (delete-region col1 col2)
-    (insert (make-string (- col2- col1 1) ? ))))
+(defun indent-same-space-as-prev-line (n-prev &optional from-bol)
+  (interactive "p")
+  (when from-bol
+    (goto-char (line-beginning-position)))
+  (let ((start-point (point))
+	(end-point (point)))
+    (let* ((col-start-indent (current-column))
+	   (col-end-indent (save-excursion
+			     (or (search-forward-regexp "\\S " (line-end-position) t)
+				 (goto-char (line-end-position)))
+			     (setq end-point (point))
+			     (current-column)))
+	   (col-indent-to (save-excursion
+			    (while (> n-prev 0)
+			      (forward-line -1)
+			      (goto-char (line-end-position))
+			      (search-backward-regexp "\\S ")
+			      (setq n-prev (1- n-prev)))
+			    (move-to-column col-start-indent)
+			    (when (looking-at "\\S ")
+			      (search-forward-regexp "\\s "))
+			    (search-forward-regexp "\\S " (line-end-position))
+			    (current-column))))
+      (unless (equal start-point end-point)
+	(delete-region start-point end-point))
+      (insert (make-string (- col-indent-to col-start-indent 1) ? )))))
 
-(global-set-key [(meta shift ? )] 'indent-same-space-as-prev-line)
+(defun back-to-indent-same-space-as-prev-line (n-prev)
+  (interactive "p")
+  (indent-same-space-as-prev-line n-prev t))
+
+(global-set-key [(shift ? )] 'indent-same-space-as-prev-line)
+
+(global-set-key (kbd "S-<backspace>") 'back-to-indent-same-space-as-prev-line)
               
 (defun save-all-buffers-no-check-modified ()
   (interactive)
