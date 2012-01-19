@@ -538,10 +538,10 @@
             ))
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(Info-additional-directory-list (list "~/tools/emacswin/info/" "/usr/local/share/info" "/usr/share/info"))
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
@@ -578,6 +578,7 @@
  '(mm-text-html-renderer (quote w3m))
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
+ '(org-agenda-files (quote ("/home/bhj/doc/daily/2011.org" "/home/bhj/doc/daily/2012-01.org")))
  '(org2blog/wp-confirm-post t)
  '(org2blog/wp-use-tags-as-categories t)
  '(require-final-newline t)
@@ -612,10 +613,10 @@
 
 
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
 
 (set-keyboard-coding-system 'utf-8)
