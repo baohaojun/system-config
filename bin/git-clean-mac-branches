@@ -1,0 +1,18 @@
+#!/bin/bash
+set -ex
+test $PWD = ~ && cd ~/windows-config/
+if git branch -a|grep origin-w -q; then
+    remote=origin-w;
+else
+    remote=origin
+fi
+
+my_mac=$(from-mac)
+for x in $(git branch -a |grep "origin/.*from-mac"); do
+    x=$(echo $x|perl -npe "s,^remotes/origin/,refs/heads/,")
+    if test $x != $my_mac; then
+	git push $remote :$x
+    fi
+done
+
+git submodule foreach 'git-clean-mac-branches&'
