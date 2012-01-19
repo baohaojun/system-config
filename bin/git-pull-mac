@@ -5,7 +5,7 @@ crontab -l > ~/.crontab.tmp
 user_cron=true
 diff ~/.crontab.tmp ~/.crontab >/dev/null 2>&1 && user_cron=false
 test $PWD = ~ && cd ~/windows-config/
-(cd $(lookup_file .git) && rm refs/remotes/origin/from-mac -rf)
+git-clean-mac-branches-local
 git fetch origin >/dev/null 2>&1 
 for x in $(git branch -a |grep 'remotes.*from-mac'|grep -v origin-w); do
     remote=$(echo $x|awk -F/ '{print $2}')
