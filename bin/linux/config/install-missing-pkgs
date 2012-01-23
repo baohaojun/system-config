@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt-get install aptitude
+apt-get install aptitude
 export LANG=C
 export LC_ALL=C
 
