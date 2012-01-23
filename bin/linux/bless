@@ -12,6 +12,6 @@ for contact in *; do
     if test "$salution" = "$contact"; then
 	salution=$(echo "$contact"|perl -npe 'use Encode; $_ = decode_utf8($_); s/.*(..)/$1/; $_=encode_utf8($_)')
     fi
-    printf "%s，%s%s\n" "$salution" "$text" "$me"
+    printf "%s，%s%s\n" "$salution" "$text" "$me" | gnokii --sendsms "$(cat -- "$contact")"
 done
     
