@@ -21,10 +21,11 @@
 
 #include <QHash>
 namespace Snore{
+class Application;
+class Alert;
 
-
-typedef QHash<QString,class Application*> ApplicationsList ;
-typedef QHash<QString,class Alert*> AlertList;
+typedef QHash<QString,Application*> ApplicationsList ;
+typedef QHash<QString,Alert*> AlertList;
 
 class SNORE_EXPORT Application:public QObject
 {

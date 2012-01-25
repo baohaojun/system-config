@@ -21,6 +21,10 @@
 
 #include <QWidget>
 
+namespace Snore{
+    class SnoreServer;
+}
+
 class SnarlWidget;
 
 class Snarl_Backend:public Snore::Notification_Backend
@@ -29,8 +33,9 @@ class Snarl_Backend:public Snore::Notification_Backend
     Q_INTERFACES(Snore::Notification_Backend)
     friend class SnarlWidget;
 public:
-    Snarl_Backend(class Snore::SnoreServer *snore=0);
+    Snarl_Backend();
     ~Snarl_Backend();
+    virtual void init(Snore::SnoreServer *snore);
     bool isPrimaryNotificationBackend();
 
 private:

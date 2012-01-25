@@ -104,7 +104,9 @@ Notification::Notification ( const Notification &other ):
 {
 }
 
-Notification::~Notification(){
+Notification::~Notification()
+{
+    d.clear();
 }
 
 Notification &Notification::operator=(const Notification& other)

@@ -18,26 +18,29 @@
 #include "snoreserver.h"
 
 #include <QTimer>
+#include <QDebug>
+
 namespace Snore{
 
-SnorePlugin::SnorePlugin ( QString name,SnoreServer *snore ) :
-        _name ( name ),
-        _snore ( snore )
+SnorePlugin::SnorePlugin ( QString name ) :
+    _name ( name )
 {}
 
 SnorePlugin::~SnorePlugin()
 {
-    delete _snore;
+    qDebug()<<_name<<this<<"deleted";
+    _snore->deleteLater();
 }
 
-void SnorePlugin::setSnore ( SnoreServer *snore )
+void SnorePlugin::init( SnoreServer *snore )
 {
-    this->_snore=snore;
+    this->_snore = snore;
+    qDebug()<<"Initialize"<<_name<<this<<snore;
 }
 
 SnoreServer* SnorePlugin::snore()
 {
-    return _snore;
+    return _snore.data();
 }
 
 const QString &SnorePlugin::name() const
@@ -72,8 +75,8 @@ void SnorePlugin::notificationTimedOut(){
     }
 }
 
-Notification_Backend::Notification_Backend ( QString name, SnoreServer *snore ) :
-        SnorePlugin ( name,snore )
+Notification_Backend::Notification_Backend ( QString name ) :
+    SnorePlugin ( name )
 {
 
 }
@@ -82,8 +85,18 @@ Notification_Backend::~Notification_Backend()
 {
 }
 
-Notification_Frontend::Notification_Frontend ( QString name, SnoreServer *snore ) :
-        SnorePlugin ( name,snore )
+void Notification_Backend::init( SnoreServer *snore )
+{
+    SnorePlugin::init(snore);
+    connect( snore,SIGNAL( closeNotify( Snore::Notification ) ),this,SLOT( closeNotification( Snore::Notification) ) );
+    connect( snore,SIGNAL( applicationInitialized( Snore::Application* ) ),this,SLOT( registerApplication( Snore::Application* ) ) );
+    connect( snore,SIGNAL( applicationRemoved( Snore::Application* ) ),this,SLOT( unregisterApplication( Snore::Application* ) ) );
+    if(!isPrimaryNotificationBackend())
+         connect( snore,SIGNAL( notify(Snore::Notification) ),this,SLOT( notify( Snore::Notification ) ) );
+}
+
+Notification_Frontend::Notification_Frontend ( QString name ) :
+    SnorePlugin ( name )
 {
 
 }
@@ -91,6 +104,10 @@ Notification_Frontend::Notification_Frontend ( QString name, SnoreServer *snore 
 Notification_Frontend::~Notification_Frontend()
 {
 }
-
+void Notification_Frontend::init( SnoreServer *snore )
+{
+    SnorePlugin::init(snore);
+    connect( snore,SIGNAL ( closeNotify( Snore::Notification ) ),this,SLOT ( notificationClosed( Snore::Notification) ) );
+}
 }
 #include "interface.moc"

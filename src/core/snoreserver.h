@@ -58,12 +58,13 @@ private:
     ApplicationsList _applications;
 
 
-    QHash<QString,Notification_Backend*> _notyfier;
-    QStringList _primaryNotificationBackends;
-    Notification_Backend * _notificationBackend;
-    QHash<QString,SnorePlugin*> plugins;
+    QHash<QString,Notification_Backend*> m_notyfier;
+    QHash<QString,Notification_Frontend*> m_frontends;
+    QStringList m_primaryNotificationBackends;
+    Notification_Backend * m_notificationBackend;
+    QHash<QString,SnorePlugin*> m_plugins;
 
-    class QSystemTrayIcon *_trayIcon;
+    class QSystemTrayIcon *m_trayIcon;
 
 
 signals:

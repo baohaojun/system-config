@@ -8,8 +8,8 @@
 using namespace Snore;
 
 
-TrayIconNotifer::TrayIconNotifer ( SnoreServer *snore, QSystemTrayIcon *icon ) :
-    Notification_Backend ( "SystemTray",snore ),
+TrayIconNotifer::TrayIconNotifer ( QSystemTrayIcon *icon ) :
+    Notification_Backend ( "SystemTray" ),
     _trayIcon ( icon ),
     _id ( 0 ),
     _displayed(-1)

@@ -25,7 +25,7 @@ class Growl_Backend:public Snore::Notification_Backend
     Q_OBJECT
     Q_INTERFACES(Snore::Notification_Backend)
 public:
-    Growl_Backend(class Snore::SnoreServer *snore=0);
+    Growl_Backend();
     ~Growl_Backend();
     bool isPrimaryNotificationBackend(){return true;}
     static void gntpCallback(const int &id,const std::string &reason,const std::string &data);

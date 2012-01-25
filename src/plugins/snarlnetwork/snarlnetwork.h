@@ -43,8 +43,9 @@ public:
     static const int port=9887;
 
 public:
-    SnarlNetworkFrontend(Snore::SnoreServer *snore=0);
+    SnarlNetworkFrontend();
     ~SnarlNetworkFrontend();
+    virtual void init(Snore::SnoreServer *snore);
     void actionInvoked(Snore::Notification notification);
     void notificationClosed(Snore::Notification notification);
 

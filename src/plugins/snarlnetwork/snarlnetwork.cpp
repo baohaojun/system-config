@@ -27,21 +27,27 @@ using namespace Snore;
 Q_EXPORT_PLUGIN2(snalnetwork,SnarlNetworkFrontend)
 
 
-SnarlNetworkFrontend::SnarlNetworkFrontend(SnoreServer *snore):
-Notification_Frontend("SnarlNetworkFrontend",snore)
+SnarlNetworkFrontend::SnarlNetworkFrontend():
+    Notification_Frontend("SnarlNetworkFrontend")
 {
-    parser=new Parser(this);
-    tcpServer=new QTcpServer(this);
-    if(!tcpServer->listen(QHostAddress::Any,port)){
-        qDebug()<<"The port is already used";
-    }
-    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
-    std::cout<<"The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>"<<std::endl;
+
 }
 
 SnarlNetworkFrontend::~SnarlNetworkFrontend(){
     delete parser;
     delete tcpServer;
+}
+
+void SnarlNetworkFrontend::init(SnoreServer *snore){
+    Notification_Frontend::init(snore);
+    parser=new Parser(this);
+    tcpServer=new QTcpServer(this);
+    if(!tcpServer->listen(QHostAddress::Any,port)){
+        qDebug()<<"The port is already used";
+    }else{
+        connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
+        std::cout<<"The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>"<<std::endl;
+    }
 }
 
 
@@ -86,7 +92,7 @@ void SnarlNetworkFrontend::handleMessages(){
             }
         }
         out+="\r\n";
-        
+
         client->write(out.toUtf8());
         if(noti.httpClient){
             client->disconnectFromHost();

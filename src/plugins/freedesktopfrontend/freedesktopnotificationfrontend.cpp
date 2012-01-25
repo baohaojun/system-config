@@ -31,18 +31,26 @@ using namespace Snore;
 
 Q_EXPORT_PLUGIN2(freedesktop_frontend,FreedesktopNotification_Frontend)
 
-FreedesktopNotification_Frontend::FreedesktopNotification_Frontend(SnoreServer *snore):
-    Notification_Frontend("FreedesktopNotification_Frontend",snore)
+FreedesktopNotification_Frontend::FreedesktopNotification_Frontend():
+    Notification_Frontend("FreedesktopNotification_Frontend")
 {
-    new  NotificationsAdaptor(this);
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerService( "org.freedesktop.Notifications" );
-    dbus.registerObject( "/org/freedesktop/Notifications", this );
+
 }
 
 FreedesktopNotification_Frontend::~FreedesktopNotification_Frontend(){
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.unregisterService( "org.freedesktop.Notifications" );
+    qDebug()<<"FreedesktopNotification_Frontend"<<"bye";
+}
+
+void FreedesktopNotification_Frontend::init(SnoreServer *snore){
+    Notification_Frontend::init(snore);
+    qDebug()<<"arg"<<snore<<this;
+    new  NotificationsAdaptor(this);
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    dbus.registerService( "org.freedesktop.Notifications" );
+    dbus.registerObject( "/org/freedesktop/Notifications", this );
+
 }
 
 void FreedesktopNotification_Frontend::actionInvoked(Notification notification) {
@@ -70,6 +78,9 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
         hints["image_data"].value<QDBusArgument>()>>image;
         icon = SnoreIcon(image.toQImage());
     }
+
+    qDebug()<<snore()<<this;
+
     if(!snore()->aplications().contains(app_name)){        
 #ifdef HAVE_KDE
         SnoreIcon appIcon = SnoreIcon(KIconLoader::global()->iconPath(app_icon, KIconLoader::Desktop));

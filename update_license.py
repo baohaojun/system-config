@@ -5,10 +5,10 @@ import re
 rn = re.compile("\r\n$",re.MULTILINE)
 n = re.compile("(?<!\r)\n",re.MULTILINE)
 
-oldLicense = re.compile("^" + re.escape( "/****************************************************************************************" ) + ".*2011.*" +  re.escape("****************************************************************************************/" ),re.MULTILINE|re.DOTALL)
+oldLicense = re.compile("^" + re.escape( "/****************************************************************************************" ) + ".*2010.*" +  re.escape("****************************************************************************************/" ),re.MULTILINE|re.DOTALL)
 
 newLicense = """/****************************************************************************************
- * Copyright (c) 2011-2012 Patrick von Reth <patrick.vonreth@gmail.com>                 *
+ * Copyright (c) 2010-2012 Patrick von Reth <patrick.vonreth@gmail.com>                 *
  *                                                                                      *
  * This program is free software; you can redistribute it and/or modify it under        *
  * the terms of the GNU General Public License as published by the Free Software        *
@@ -31,6 +31,7 @@ def myWalk(root):
         for fileName in files:
             fileName = os.path.join(root,fileName)
             if os.path.isfile(fileName) and (fileName.endswith(".h") or fileName.endswith(".cpp")):
+                print(fileName)
                 f = open(fileName,"rb+")
                 tmp = f.read()                
                 f.close()

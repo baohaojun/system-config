@@ -23,8 +23,9 @@ class FreedesktopNotification_Frontend:public Snore::Notification_Frontend{
     Q_OBJECT
     Q_INTERFACES(Snore::Notification_Frontend)
 public:
-    FreedesktopNotification_Frontend(class Snore::SnoreServer *snore=0);
+    FreedesktopNotification_Frontend();
     ~FreedesktopNotification_Frontend();
+    virtual void init(Snore::SnoreServer *snore);
 
     void actionInvoked(Snore::Notification notification);
     void notificationClosed(Snore::Notification notification);

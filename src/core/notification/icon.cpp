@@ -26,7 +26,7 @@ namespace Snore{
 
 class SnoreIcon::SnoreIconData : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
     SnoreIconData():
         _isLocalFile(false)
@@ -81,7 +81,9 @@ SnoreIcon::SnoreIcon(const SnoreIcon &other):
 {    }
 
 SnoreIcon::~SnoreIcon()
-{    }
+{
+    d.clear();
+}
 
 
 const QImage &SnoreIcon::image() const{

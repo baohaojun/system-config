@@ -19,17 +19,20 @@
 #include "snore_exports.h"
 #include "notification/notification.h"
 
+#include <QPointer>
+
 namespace Snore{
 class Application;
+class SnoreServer;
 
 class SNORE_EXPORT SnorePlugin:public QObject
 {
     Q_OBJECT
 public:
-    SnorePlugin ( QString name,class SnoreServer *snore=0 );
+    SnorePlugin ( QString name);
     virtual ~SnorePlugin();
-    virtual void setSnore ( class SnoreServer* snore );
-    virtual class SnoreServer* snore();
+    virtual void init( SnoreServer* snore );
+    SnoreServer* snore();
     const QString &name() const;
 
 protected:
@@ -41,7 +44,7 @@ private slots:
 private:
     SnorePlugin() {}
     QString _name;
-    class SnoreServer *_snore;
+    QPointer<SnoreServer> _snore;
     QHash<uint,QTimer*> timeouts;
     QList<uint> timeout_order;
 
@@ -59,8 +62,9 @@ class SNORE_EXPORT Notification_Backend:public SnorePlugin
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin)
 public:
-    Notification_Backend ( QString name,class SnoreServer *snore=0 );
+    Notification_Backend ( QString name );
     virtual ~Notification_Backend();
+    virtual void init(SnoreServer *snore);
     virtual bool isPrimaryNotificationBackend() =0;
 
 
@@ -81,8 +85,9 @@ class SNORE_EXPORT Notification_Frontend:public SnorePlugin
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin)
 public:
-    Notification_Frontend ( QString name,class SnoreServer *snore=0 );
+    Notification_Frontend ( QString name);
     virtual ~Notification_Frontend();
+    virtual void init(SnoreServer *snore);
 
 public slots:
     virtual void actionInvoked( Snore::Notification notification )=0;

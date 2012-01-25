@@ -11,7 +11,7 @@ class TrayIconNotifer:public Snore::Notification_Backend
     Q_OBJECT
     Q_INTERFACES(Snore::Notification_Backend)
 public:
-    TrayIconNotifer ( class Snore::SnoreServer *snore=0,class QSystemTrayIcon *icon=0 );
+    TrayIconNotifer (class QSystemTrayIcon *icon=0 );
     bool isPrimaryNotificationBackend();
 
 public slots:
