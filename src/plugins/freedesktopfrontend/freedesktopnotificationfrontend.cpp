@@ -25,7 +25,7 @@
 #include <QImage>
 
 #ifdef HAVE_KDE
-#include <KIcon>
+#include <KIconLoader>
 #endif
 using namespace Snore;
 
@@ -70,13 +70,11 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
         hints["image_data"].value<QDBusArgument>()>>image;
         icon = SnoreIcon(image.toQImage());
     }
-    if(!snore()->aplications().contains(app_name)){
-        SnoreIcon appIcon;
+    if(!snore()->aplications().contains(app_name)){        
 #ifdef HAVE_KDE
-        KIcon kicon(app_icon);
-        appIcon = SnoreIcon(kicon.pixmap(100,100).toImage());
+        SnoreIcon appIcon = SnoreIcon(KIconLoader::global()->iconPath(app_icon, KIconLoader::Desktop));
 #else
-        appIcon = SnoreIcon(":/root/images/freedesktop-dbus.png");
+        SnoreIcon appIcon = SnoreIcon(":/root/images/freedesktop-dbus.png");
 #endif
         Application *a = new Application(app_name,appIcon);
         a->addAlert(new Alert("DBus Alert","DBus Alert",appIcon));

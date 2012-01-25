@@ -20,6 +20,7 @@
 #include "notification/notification.h"
 
 namespace Snore{
+class Application;
 
 class SNORE_EXPORT SnorePlugin:public QObject
 {
@@ -32,10 +33,10 @@ public:
     const QString &name() const;
 
 protected:
-        QHash<uint,Notification> activeNotifications;
-        void startTimeout(uint id,int timeout);
+    QHash<uint,Notification> activeNotifications;
+    void startTimeout(uint id,int timeout);
 private slots:
-        void notificationTimedOut();
+     void notificationTimedOut();
 
 private:
     SnorePlugin() {}
@@ -65,12 +66,12 @@ public:
 
 
 public slots:
-    virtual void registerApplication ( class Application *application ) =0;
-    virtual void unregisterApplication ( class Application *application ) =0;
-    virtual uint notify ( Notification notification ) =0;
-    virtual void closeNotification (Notification notification ) =0;
+    virtual void registerApplication ( Snore::Application *application ) =0;
+    virtual void unregisterApplication ( Snore::Application *application ) =0;
+    virtual uint notify ( Snore::Notification notification ) =0;
+    virtual void closeNotification ( Snore::Notification notification ) =0;
 
-    //    virtual void update
+
 
 };
 
@@ -84,8 +85,8 @@ public:
     virtual ~Notification_Frontend();
 
 public slots:
-    virtual void actionInvoked (Notification notification )=0;
-    virtual void notificationClosed ( Notification notification )=0;
+    virtual void actionInvoked( Snore::Notification notification )=0;
+    virtual void notificationClosed( Snore::Notification notification )=0;
 };
 
 

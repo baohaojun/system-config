@@ -98,17 +98,17 @@ void SnoreServer::publicatePlugin ( SnorePlugin *plugin )
         }
         else
         {
-            connect ( this,SIGNAL ( notify (Notification) ),nb,SLOT ( notify ( Notification ) ) );
+            connect ( this,SIGNAL ( notify(Snore::Notification) ),nb,SLOT( notify( Snore::Notification ) ) );
         }
         _notyfier.insert ( pluginName,nb );
 
-        connect ( this,SIGNAL ( closeNotify ( Notification ) ),nb,SLOT ( closeNotification ( Notification) ) );
-        connect ( this,SIGNAL ( applicationInitialized ( Application* ) ),nb,SLOT ( registerApplication ( Application* ) ) );
-        connect ( this,SIGNAL ( applicationRemoved ( Application* ) ),nb,SLOT ( unregisterApplication ( Application* ) ) );
+        connect ( this,SIGNAL( closeNotify( Snore::Notification ) ),nb,SLOT ( closeNotification( Snore::Notification) ) );
+        connect ( this,SIGNAL( applicationInitialized( Snore::Application* ) ),nb,SLOT ( registerApplication( Snore::Application* ) ) );
+        connect ( this,SIGNAL( applicationRemoved( Snore::Application* ) ),nb,SLOT ( unregisterApplication( Snore::Application* ) ) );
     }else{
          Notification_Frontend * nf=qobject_cast<Notification_Frontend*> ( plugin );
          if(nf != NULL){
-             connect ( this,SIGNAL ( closeNotify ( Notification ) ),nf,SLOT ( notificationClosed( Notification) ) );
+             connect ( this,SIGNAL ( closeNotify( Snore::Notification ) ),nf,SLOT ( notificationClosed( Snore::Notification) ) );
          }
     }
 }
@@ -119,7 +119,7 @@ uint SnoreServer::broadcastNotification ( Notification notification )
     emit notify ( notification );
     if ( _notificationBackend != NULL )
     {
-        notification.setId(_notificationBackend->notify ( notification ));
+        notification.setId(_notificationBackend->notify( notification ));
         return  notification.id();
     }
     return -1;

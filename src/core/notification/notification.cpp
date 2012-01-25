@@ -29,11 +29,10 @@ static int metaid = qRegisterMetaType<Notification>();
 
 static int count = 0;
 
-class Notification::NotificationData
+class Notification::NotificationData : public QObject
 {
+	Q_OBJECT
 public:
-    
-
     NotificationData ( uint id=0 ):
         _id ( id ),
 	_timeout ( 10 ),
@@ -248,3 +247,4 @@ QDataStream & operator<< ( QDataStream &stream, const Notification::Action &a)
 }
 
 
+#include <notification.moc>

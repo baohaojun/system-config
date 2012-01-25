@@ -24,8 +24,9 @@
 #include <QDebug>
 namespace Snore{
 
-class SnoreIcon::SnoreIconData
+class SnoreIcon::SnoreIconData : public QObject
 {
+	Q_OBJECT
 public:
     SnoreIconData():
         _isLocalFile(false)
@@ -132,4 +133,5 @@ bool SnoreIcon::isEmpty() const{
 }
 
 }
+
 #include "icon.moc"

@@ -18,7 +18,6 @@
 #define SNORESERVER_H
 
 #include "snore_exports.h"
-#include "application.h"
 #include "interface.h"
 
 #include <QStringList>
@@ -35,7 +34,7 @@ public:
     static const QString snoreTMP();
 
 public:
-         SnoreServer (QSystemTrayIcon *trayIcon=0 );
+    SnoreServer (QSystemTrayIcon *trayIcon=0 );
     void publicatePlugin ( const QString &fileName );
     void publicatePlugin ( SnorePlugin *plugin );
 
@@ -68,11 +67,11 @@ private:
 
 
 signals:
-    void applicationInitialized ( Application* );
-    void applicationRemoved ( Application* );
-    void notify ( Notification noti );
-    void actionInvoked( Notification );
-    void closeNotify ( Notification );
+    void applicationInitialized ( Snore::Application* );
+    void applicationRemoved ( Snore::Application* );
+    void notify ( Snore::Notification noti );
+    void actionInvoked( Snore::Notification );
+    void closeNotify ( Snore::Notification );
 
 };
 
