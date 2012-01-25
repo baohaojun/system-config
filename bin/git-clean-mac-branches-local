@@ -1,3 +1,6 @@
 #!/bin/bash
 set -e
-git branch -a|grep from-|cut -b 11-|xargs git branch -rd
+cd $(lookup_file .git)
+find ./refs -name "from-mac"|xargs rm -rfv
+grep -v /from-mac/ packed-refs > packed-refs.bak
+mv packed-refs.bak packed-refs

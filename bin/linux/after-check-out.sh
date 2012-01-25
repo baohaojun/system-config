@@ -23,5 +23,4 @@ do_compile
 
 config-gfw
 
-sudo usermod -a -G dialout $(whoami)
 echo 'OK'
