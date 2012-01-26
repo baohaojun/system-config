@@ -37,8 +37,6 @@ SnarlNetworkFrontend::~SnarlNetworkFrontend(){
 }
 
 bool SnarlNetworkFrontend::init(SnoreServer *snore){
-    if(!Notification_Frontend::init(snore))
-        return false;
     parser=new Parser(this);
     tcpServer=new QTcpServer(this);
     if(!tcpServer->listen(QHostAddress::Any,port)){
@@ -48,7 +46,7 @@ bool SnarlNetworkFrontend::init(SnoreServer *snore){
         connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
         std::cout<<"The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>"<<std::endl;
     }
-    return true;
+    return Notification_Frontend::init(snore);
 }
 
 

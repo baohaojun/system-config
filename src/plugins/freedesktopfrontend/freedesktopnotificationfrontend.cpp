@@ -43,13 +43,11 @@ FreedesktopNotification_Frontend::~FreedesktopNotification_Frontend(){
 }
 
 bool FreedesktopNotification_Frontend::init(SnoreServer *snore){
-    if(!Notification_Frontend::init(snore))
-        return false;
     new  NotificationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService( "org.freedesktop.Notifications" );
     dbus.registerObject( "/org/freedesktop/Notifications", this );
-    return true;
+    return Notification_Frontend::init(snore);
 }
 
 void FreedesktopNotification_Frontend::actionInvoked(Notification notification) {

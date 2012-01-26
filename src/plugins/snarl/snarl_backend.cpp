@@ -52,14 +52,13 @@ Snarl_Backend::~Snarl_Backend()
 
 
  bool Snarl_Backend::init(SnoreServer *snore){
-     if(!Notification_Backend::init(snore))
-         return false;
      winIDWidget = new SnarlWidget(this);
      SnarlInterface *snarlInterface = new SnarlInterface();
      _applications.insert("SnoreNotify",snarlInterface);
      qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
      _defautSnarlinetrface = new SnarlInterface();
-     return true;
+
+     return Notification_Backend::init(snore);
  }
 
 void Snarl_Backend::registerApplication(Application *application){
@@ -79,7 +78,8 @@ void Snarl_Backend::registerApplication(Application *application){
                              0,winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
 
     foreach(Alert *alert,application->alerts()){
-        snarlInterface->AddClass(application->name().toUtf8().constData(),
+        qDebug()<<"registering snarl alert"<<application->name();
+        snarlInterface->AddClass(alert->name().toUtf8().constData(),
                                  alert->name().toUtf8().constData(),
                                  0,0,alert->icon().localUrl().toUtf8().constData());
     }

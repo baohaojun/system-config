@@ -100,6 +100,11 @@ bool Notification_Backend::init( SnoreServer *snore )
     connect( snore,SIGNAL( applicationRemoved( Snore::Application* ) ),this,SLOT( unregisterApplication( Snore::Application* ) ) );
     if(!isPrimaryNotificationBackend())
          connect( snore,SIGNAL( notify(Snore::Notification) ),this,SLOT( notify( Snore::Notification ) ) );
+
+    foreach(Application *a,snore->aplications()){
+        this->registerApplication(a);
+    }
+
     return true;
 
 }

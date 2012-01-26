@@ -182,7 +182,8 @@ void SnoreServer::setPrimaryNotificationBackend ( const QString &backend )
         return;
     qDebug()<<"Setting Notification Backend to:"<<backend;
     m_notificationBackend = qobject_cast<Notification_Backend*>(m_plugins[backend]);
-    m_notificationBackend->init(this);
+    if(!m_notificationBackend->isInitialized())
+        m_notificationBackend->init(this);
 }
 
 const QString &SnoreServer::primaryNotificationBackend(){
