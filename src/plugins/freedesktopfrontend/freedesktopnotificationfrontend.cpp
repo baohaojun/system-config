@@ -68,7 +68,7 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
                                               const QString &app_icon, const QString &summary, const QString &body,
                                               const QStringList &actions, const QVariantMap &hints, int timeout)
 {
-    qDebug()<<app_name<<summary<<body<<app_icon;
+    qDebug()<<app_name<<summary<<body<<app_icon<<timeout;
     SnoreIcon icon;
     NotificationEnums::Prioritys::prioritys priotity = NotificationEnums::Prioritys::NORMAL;
 
@@ -77,8 +77,6 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
         hints["image_data"].value<QDBusArgument>()>>image;
         icon = SnoreIcon(image.toQImage());
     }
-
-    qDebug()<<snore()<<this;
 
     if(!snore()->aplications().contains(app_name)){        
 #ifdef HAVE_KDE

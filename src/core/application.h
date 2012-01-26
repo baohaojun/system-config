@@ -43,10 +43,10 @@ public:
 
 
 private:
-    QString _name;
-    SnoreIcon _icon;
-    AlertList _alerts;
-    bool _initialized;
+    QString m_name;
+    SnoreIcon m_icon;
+    AlertList m_alerts;
+    bool m_initialized;
 
 };
 
@@ -62,10 +62,10 @@ public:
     const SnoreIcon &icon() const;
     bool isActive() const;
 private:
-    QString _name;
-    QString _title;
-    SnoreIcon _icon;
-    bool _active;
+    QString m_name;
+    QString m_title;
+    SnoreIcon m_icon;
+    bool m_active;
 };
 
 

@@ -74,7 +74,7 @@ public:
     const uint &id() const;
     void setId(const uint &id);
     //timeout in seconds
-    //-1 means sticky
+    //0 means sticky
     const int &timeout() const;
     void setActionInvoked ( Action *action );
     void setActionInvoked ( const int &actionID);

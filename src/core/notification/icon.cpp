@@ -29,22 +29,22 @@ class SnoreIcon::SnoreIconData : public QObject
     Q_OBJECT
 public:
     SnoreIconData():
-        _isLocalFile(false)
+        m_isLocalFile(false)
     {	}
 
     SnoreIconData(const QImage &img):
-        _img(img),
-        _isLocalFile(false)
+        m_img(img),
+        m_isLocalFile(false)
     {}
 
     SnoreIconData(const QString &url){
         qDebug()<<"Creating SnoreIcon"<<url;
         if(url.startsWith(":/")){
-            _img = QImage(url);
-            _isLocalFile = false;
+            m_img = QImage(url);
+            m_isLocalFile = false;
         }else if(QFile(url).exists()){
-            _isLocalFile = true;
-            _localFileName = url;
+            m_isLocalFile = true;
+            m_localFileName = url;
         }
     }
 
@@ -52,11 +52,11 @@ public:
     {}
 
 
-    QImage _img;
-    QByteArray _data;
-    QString _localFileName;
-    QString _hash;
-    bool _isLocalFile;
+    QImage m_img;
+    QByteArray m_data;
+    QString m_localFileName;
+    QString m_hash;
+    bool m_isLocalFile;
 
 };
 
@@ -88,51 +88,51 @@ SnoreIcon::~SnoreIcon()
 
 
 const QImage &SnoreIcon::image() const{
-    if(d->_img.isNull() && d->_isLocalFile){
-        d->_img = QImage(d->_localFileName);
+    if(d->m_img.isNull() && d->m_isLocalFile){
+        d->m_img = QImage(d->m_localFileName);
     }
-    return d->_img;
+    return d->m_img;
 }
 
 const QString &SnoreIcon::localUrl()const{
-    if(d->_localFileName.isEmpty()){
+    if(d->m_localFileName.isEmpty()){
         if(hasedImages.contains(hash())){
-            d->_localFileName =  hasedImages[hash()];
+            d->m_localFileName =  hasedImages[hash()];
         }else{
-            d->_localFileName = SnoreServer::snoreTMP();
-            d->_localFileName  = d->_localFileName .append("/").append(hash()).append(".png");
-            hasedImages[hash()] = d->_localFileName;
-            d->_img.save(d->_localFileName ,"PNG");
+            d->m_localFileName = SnoreServer::snoreTMP();
+            d->m_localFileName  = d->m_localFileName .append("/").append(hash()).append(".png");
+            hasedImages[hash()] = d->m_localFileName;
+            d->m_img.save(d->m_localFileName ,"PNG");
         }
     }
-    return d->_localFileName;
+    return d->m_localFileName;
 }
 
 const QByteArray &SnoreIcon::imageData() const{
-    if(d->_data.isEmpty()){
-        QBuffer buffer( &d->_data );
+    if(d->m_data.isEmpty()){
+        QBuffer buffer( &d->m_data );
         buffer.open( QBuffer::WriteOnly );
-        d->_img.save( &buffer, "PNG" );
+        d->m_img.save( &buffer, "PNG" );
     }
-    return d->_data;
+    return d->m_data;
 }
 
 const QString &SnoreIcon::hash() const{
-    if(d->_hash.isEmpty()){
+    if(d->m_hash.isEmpty()){
         QCryptographicHash h(QCryptographicHash::Md5);
         h.addData(imageData());
-        d->_hash = h.result().toHex();
+        d->m_hash = h.result().toHex();
     }
-    return d->_hash;
+    return d->m_hash;
 }
 
 bool SnoreIcon::isLocalFile() const
 {
-    return d->_isLocalFile;
+    return d->m_isLocalFile;
 }
 
 bool SnoreIcon::isEmpty() const{
-    return d->_hash.isEmpty() && d->_img.isNull() && d->_localFileName.isEmpty();
+    return d->m_hash.isEmpty() && d->m_img.isNull() && d->m_localFileName.isEmpty();
 }
 
 }
