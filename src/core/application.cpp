@@ -19,19 +19,19 @@ namespace Snore{
 
 
 Application::Application (const QString &name, const SnoreIcon &icon) :
-        _name ( name ),
-        _icon(icon),
-        _initialized ( false )
+        m_name ( name ),
+        m_icon(icon),
+        m_initialized ( false )
 {
 }
 
 Application::Application() :
-        _name ( "Error: Uninitialized Application" )
+        m_name ( "Error: Uninitialized Application" )
 {}
 
 Application::~Application()
 {
-    foreach ( Alert *a,_alerts )
+    foreach ( Alert *a,m_alerts )
     {
         a->deleteLater();
     }
@@ -39,64 +39,64 @@ Application::~Application()
 
 void Application::addAlert ( Alert *alert )
 {
-    _alerts.insert ( alert->name(),alert );
+    m_alerts.insert ( alert->name(),alert );
 }
 
 const QString &Application::name() const
 {
-    return _name;
+    return m_name;
 }
 
 const SnoreIcon &Application::icon()const
 {
-    return _icon;
+    return m_icon;
 }
 
 const AlertList &Application::alerts() const
 {
-    return _alerts;
+    return m_alerts;
 }
 
 bool Application::isInitialized()
 {
-    return _initialized;
+    return m_initialized;
 }
 
 void Application::setInitialized ( bool b )
 {
-    _initialized = b;
+    m_initialized = b;
 }
 
 Alert::Alert (const QString &name, const QString &title, const SnoreIcon &icon, bool active) :
-        _name ( name ),
-        _title ( title ),
-        _icon(icon),
-        _active ( active )
+        m_name ( name ),
+        m_title ( title ),
+        m_icon(icon),
+        m_active ( active )
 {}
 
 Alert::Alert() :
-        _active ( false )
+        m_active ( false )
 {}
 
 
 const QString &Alert::name() const
 {
-    return _name;
+    return m_name;
 }
 
 const QString &Alert::title() const
 {
-    return _title;
+    return m_title;
 }
 
 const SnoreIcon &Alert::icon() const
 {
-    return _icon;
+    return m_icon;
 }
 
 bool Alert::isActive() const
 {
-    return _active;
+    return m_active;
 }
 
 }
