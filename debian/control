@@ -1,0 +1,52 @@
+Source: beagrep
+Section: utils
+Priority: extra
+Maintainer: Bao haojun <baohaojun@gmail.com>
+Build-Depends: debhelper (>= 8.0.0), autotools-dev,
+ dpkg-query,
+ libc6,
+ libc6-dev,
+ libglib2.0-0,
+ libglib2.0-cil,
+ libglib2.0-dev,
+ libgmime2.4-cil,
+ libice6,
+ libmono0,
+ libmono2.0-cil,
+ libmono-cecil-private-cil,
+ libmono-corlib2.0-cil,
+ libmono-dev,
+ libmono-posix2.0-cil,
+ libmono-security2.0-cil,
+ libmono-sharpzip2.84-cil,
+ libmono-sqlite2.0-cil,
+ libmono-system2.0-cil,
+ libmono-system-data2.0-cil,
+ libmono-system-web2.0-cil,
+ libpcre3,
+ libsm6,
+ libsqlite3-0,
+ libsqlite3-dev,
+ libtaglib2.0-cil,
+ libx11-6,
+ libx11-dev,
+ libxss1,
+ libxss-dev,
+ locales,
+ monodoc-base,
+ mono-gmcs,
+ mono-runtime,
+ x11proto-core-dev,
+ x11proto-scrnsaver-dev
+Standards-Version: 3.9.2
+Homepage: http://baohaojun.github.com/beagrep.html
+Vcs-Git: git://github.com/baohaojun/beagrep.git
+Vcs-Browser: https://github.com/baohaojun/beagrep
+
+Package: beagrep
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${cli:Depends}, bash (>= 3.0), adduser, dbus, xdg-utils
+Description: beagrep = beagle + grep. Grep 2G source code in 2 seconds.
+ beagrep use a forked version of beagle to decide the (relatively a
+ lot smaller) set of possible matching files, then run grep on this
+ set only. Thus greatly improve grep speed.

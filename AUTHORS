@@ -1,4 +1,7 @@
+Beagrep (beagle and grep combination) is designed and implemented by:
+Bao Haojun           <baohaojun@gmail.com>
 
+Beagle Authors:
 Joe Shaw             <joeshaw@novell.com>
 Jon Trowbridge       <jon@trowbridge.org>
 Nat Friedman         <nat@novell.com>
@@ -31,8 +34,11 @@ Tao Fei              <filia.tao@gmail.com>
 Nirbheek Chauhan     <nirbheek.chauhan@gmail.com>
 Enrico Minack        <minack@l3s.de>
 
-Our fantastic logo was designed by Larry Ewing
-and Garrett LeSage.
+A lot of beagle code is not used by beagrep, especially those
+GUI/daemon related code, and thus has been removed by Bao Haojun.
+
+Beagle's fantastic logo was designed by Larry Ewing
+and Garrett LeSage (but beagrep has not used the logo).
 
 Thanks to:
 Doug Cutting (for Lucene, which continues to blow my mind)
