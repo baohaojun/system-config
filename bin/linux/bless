@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+cd ~/cell-contacts/
+text=$(get-stdin)
+if echo "$text" | grep -q -e 包昊军; then
+    me=""
+else
+    me="，包昊军"
+fi
+for contact in ${@:-*}; do
+    salution=${contact##*-}
+    if test "$salution" = "$contact"; then
+	salution=$(echo "$contact"|perl -npe 'use Encode; $_ = decode_utf8($_); s/.*(..)/$1/; $_=encode_utf8($_)')
+    fi
+    echo "Send sms to $contact" 
+    rm -rf ."$contact".failed
+    printf "%s，%s%s\n" "$salution" "$text" "$me" | gnokii --sendsms "$(cat -- "$contact")" || touch ."$contact".failed
+done
+    
