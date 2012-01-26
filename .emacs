@@ -1455,9 +1455,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive "p")
   (indent-same-space-as-prev-line n-prev t))
 
-(global-set-key [(shift ? )] 'indent-same-space-as-prev-line)
+(global-set-key [(meta shift ? )] 'indent-same-space-as-prev-line)
 
-(global-set-key (kbd "S-<backspace>") 'back-to-indent-same-space-as-prev-line)
+(define-key esc-map [(shift backspace)] 'back-to-indent-same-space-as-prev-line)
               
 (defun save-all-buffers-no-check-modified ()
   (interactive)
