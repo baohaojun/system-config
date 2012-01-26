@@ -34,20 +34,21 @@ SnarlNetworkFrontend::SnarlNetworkFrontend():
 }
 
 SnarlNetworkFrontend::~SnarlNetworkFrontend(){
-    delete parser;
-    delete tcpServer;
 }
 
-void SnarlNetworkFrontend::init(SnoreServer *snore){
-    Notification_Frontend::init(snore);
+bool SnarlNetworkFrontend::init(SnoreServer *snore){
+    if(!Notification_Frontend::init(snore))
+        return false;
     parser=new Parser(this);
     tcpServer=new QTcpServer(this);
     if(!tcpServer->listen(QHostAddress::Any,port)){
         qDebug()<<"The port is already used";
+        return false;
     }else{
         connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
         std::cout<<"The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>"<<std::endl;
     }
+    return true;
 }
 
 

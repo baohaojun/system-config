@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QSystemTrayIcon>
+#include <QApplication>
 
 namespace Snore{
 
@@ -95,7 +96,10 @@ void SnoreServer::publicatePlugin ( SnorePlugin *plugin )
                 m_notificationBackend = nb;
             }
         }else{
-            nb->init( this );
+            if(!nb->init( this )){
+                nb->deleteLater();
+                return;
+            }
         }
         m_notyfier.insert ( pluginName,nb );
 
@@ -103,9 +107,10 @@ void SnoreServer::publicatePlugin ( SnorePlugin *plugin )
          Notification_Frontend * nf = qobject_cast<Notification_Frontend*> ( plugin );
          if(nf != NULL){
              qDebug() <<pluginName<<"is a Notification_Frontend";
-             nf->init( this );
-             if(nf != NULL)
+            if(nf->init( this ))
                 m_frontends.insert(nf->name(),nf);
+            else
+                nf->deleteLater();
          }
     }
 }
@@ -116,6 +121,10 @@ uint SnoreServer::broadcastNotification ( Notification notification )
     emit notify ( notification );
     if ( m_notificationBackend != NULL )
     {
+        if(!m_notificationBackend->isInitialized()){
+            qDebug()<<"Notification backend "<<m_notificationBackend<<" isnt initialized will snore will exit now";
+            qApp->quit();
+        }
         notification.setId(m_notificationBackend->notify( notification ));
         return  notification.id();
     }

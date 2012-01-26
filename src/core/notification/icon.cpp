@@ -38,6 +38,7 @@ public:
     {}
 
     SnoreIconData(const QString &url){
+        qDebug()<<"Creating SnoreIcon"<<url;
         if(url.startsWith(":/")){
             _img = QImage(url);
             _isLocalFile = false;

@@ -25,7 +25,7 @@ class FreedesktopNotification_Frontend:public Snore::Notification_Frontend{
 public:
     FreedesktopNotification_Frontend();
     ~FreedesktopNotification_Frontend();
-    virtual void init(Snore::SnoreServer *snore);
+    virtual bool init(Snore::SnoreServer *snore);
 
     void actionInvoked(Snore::Notification notification);
     void notificationClosed(Snore::Notification notification);

@@ -51,13 +51,15 @@ Snarl_Backend::~Snarl_Backend()
 }
 
 
- void Snarl_Backend::init(SnoreServer *snore){
-     Notification_Backend::init(snore);
+ bool Snarl_Backend::init(SnoreServer *snore){
+     if(!Notification_Backend::init(snore))
+         return false;
      winIDWidget = new SnarlWidget(this);
      SnarlInterface *snarlInterface = new SnarlInterface();
      _applications.insert("SnoreNotify",snarlInterface);
      qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
      _defautSnarlinetrface = new SnarlInterface();
+     return true;
  }
 
 void Snarl_Backend::registerApplication(Application *application){

@@ -35,7 +35,7 @@ class Snarl_Backend:public Snore::Notification_Backend
 public:
     Snarl_Backend();
     ~Snarl_Backend();
-    virtual void init(Snore::SnoreServer *snore);
+    virtual bool init(Snore::SnoreServer *snore);
     bool isPrimaryNotificationBackend();
 
 private:

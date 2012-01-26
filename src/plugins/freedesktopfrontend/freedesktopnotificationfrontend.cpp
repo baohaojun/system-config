@@ -40,17 +40,16 @@ FreedesktopNotification_Frontend::FreedesktopNotification_Frontend():
 FreedesktopNotification_Frontend::~FreedesktopNotification_Frontend(){
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.unregisterService( "org.freedesktop.Notifications" );
-    qDebug()<<"FreedesktopNotification_Frontend"<<"bye";
 }
 
-void FreedesktopNotification_Frontend::init(SnoreServer *snore){
-    Notification_Frontend::init(snore);
-    qDebug()<<"arg"<<snore<<this;
+bool FreedesktopNotification_Frontend::init(SnoreServer *snore){
+    if(!Notification_Frontend::init(snore))
+        return false;
     new  NotificationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService( "org.freedesktop.Notifications" );
     dbus.registerObject( "/org/freedesktop/Notifications", this );
-
+    return true;
 }
 
 void FreedesktopNotification_Frontend::actionInvoked(Notification notification) {

@@ -45,7 +45,7 @@ public:
 public:
     SnarlNetworkFrontend();
     ~SnarlNetworkFrontend();
-    virtual void init(Snore::SnoreServer *snore);
+    virtual bool init(Snore::SnoreServer *snore);
     void actionInvoked(Snore::Notification notification);
     void notificationClosed(Snore::Notification notification);
 

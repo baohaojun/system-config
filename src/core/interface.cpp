@@ -23,52 +23,58 @@
 namespace Snore{
 
 SnorePlugin::SnorePlugin ( QString name ) :
-    _name ( name )
+    m_name ( name ),
+    m_initialized(false)
 {}
 
 SnorePlugin::~SnorePlugin()
 {
-    qDebug()<<_name<<this<<"deleted";
-    _snore->deleteLater();
+    qDebug()<<m_name<<this<<"deleted";
 }
 
-void SnorePlugin::init( SnoreServer *snore )
+bool SnorePlugin::init( SnoreServer *snore )
 {
-    this->_snore = snore;
-    qDebug()<<"Initialize"<<_name<<this<<snore;
+    qDebug()<<"Initialize"<<m_name<<this<<snore;
+    this->m_snore = snore;
+    m_initialized = true;
+    return true;
+}
+
+bool SnorePlugin::isInitialized(){
+    return m_initialized;
 }
 
 SnoreServer* SnorePlugin::snore()
 {
-    return _snore.data();
+    return m_snore.data();
 }
 
 const QString &SnorePlugin::name() const
 {
-    return _name;
+    return m_name;
 }
 
 void SnorePlugin::startTimeout(uint id,int timeout){
     if(timeout==-1)//sticky
         return;
-    if(timeouts.contains(id)){
-        QTimer *t = timeouts.take(id);
+    if(m_timeouts.contains(id)){
+        QTimer *t = m_timeouts.take(id);
         t->stop();
         t->deleteLater();
-        timeout_order.removeOne(id);
+        m_timeout_order.removeOne(id);
     }
     QTimer *timer= new QTimer(this);
     timer->setInterval(timeout*1000);
     timer->setSingleShot(true);
-    timeouts.insert(id,timer);
-    timeout_order.append(id);
+    m_timeouts.insert(id,timer);
+    m_timeout_order.append(id);
     connect(timer,SIGNAL(timeout()),this,SLOT(notificationTimedOut()));
     timer->start();
 }
 
 void SnorePlugin::notificationTimedOut(){
-    uint id = timeout_order.takeFirst();
-    timeouts.take(id)->deleteLater();
+    uint id = m_timeout_order.takeFirst();
+    m_timeouts.take(id)->deleteLater();
     if(activeNotifications.contains(id)){
         Notification n = activeNotifications.take(id);
         snore()->closeNotification(n,NotificationEnums::CloseReasons::TIMED_OUT);
@@ -85,14 +91,17 @@ Notification_Backend::~Notification_Backend()
 {
 }
 
-void Notification_Backend::init( SnoreServer *snore )
+bool Notification_Backend::init( SnoreServer *snore )
 {
-    SnorePlugin::init(snore);
+    if(!SnorePlugin::init(snore))
+        return false;
     connect( snore,SIGNAL( closeNotify( Snore::Notification ) ),this,SLOT( closeNotification( Snore::Notification) ) );
     connect( snore,SIGNAL( applicationInitialized( Snore::Application* ) ),this,SLOT( registerApplication( Snore::Application* ) ) );
     connect( snore,SIGNAL( applicationRemoved( Snore::Application* ) ),this,SLOT( unregisterApplication( Snore::Application* ) ) );
     if(!isPrimaryNotificationBackend())
          connect( snore,SIGNAL( notify(Snore::Notification) ),this,SLOT( notify( Snore::Notification ) ) );
+    return true;
+
 }
 
 Notification_Frontend::Notification_Frontend ( QString name ) :
@@ -104,10 +113,12 @@ Notification_Frontend::Notification_Frontend ( QString name ) :
 Notification_Frontend::~Notification_Frontend()
 {
 }
-void Notification_Frontend::init( SnoreServer *snore )
+bool Notification_Frontend::init( SnoreServer *snore )
 {
-    SnorePlugin::init(snore);
+    if(!SnorePlugin::init(snore))
+        return false;
     connect( snore,SIGNAL ( closeNotify( Snore::Notification ) ),this,SLOT ( notificationClosed( Snore::Notification) ) );
+    return true;
 }
 }
 #include "interface.moc"
