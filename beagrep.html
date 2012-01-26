@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>beagrep</title>
+<title>beagrep, grep 2G source code in 2 seconds</title>
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="title" content="beagrep, grep 2G source code in 2 seconds"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2011-12-23 13:41:27 China Standard Time"/>
-<meta name="author" content=""/>
+<meta name="generated" content="2012-01-26 19:53:41 CST"/>
+<meta name="author" content="bhj"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
 <style type="text/css">
@@ -44,6 +44,12 @@ lang="en" xml:lang="en">
   dt { font-weight: bold; }
   div.figure { padding: 0.5em; }
   div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
   textarea { overflow-x: auto; }
   .linenr { font-size:smaller }
   .code-highlighted {background-color:#ffff00;}
@@ -85,14 +91,295 @@ lang="en" xml:lang="en">
 </div>
 
 <div id="content">
-<h1 class="title">beagrep</h1>
+<h1 class="title">beagrep, grep 2G source code in 2 seconds</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Introduction</a></li>
+<li><a href="#sec-2">2 Install</a>
+<ul>
+<li><a href="#sec-2-1">2.1 Linux Install</a>
+<ul>
+<li><a href="#sec-2-1-1">2.1.1 Dependencies</a></li>
+<li><a href="#sec-2-1-2">2.1.2 Download Code</a></li>
+<li><a href="#sec-2-1-3">2.1.3 Compile and Install</a></li>
+</ul>
+</li>
+<li><a href="#sec-2-2">2.2 Windows Install</a>
+<ul>
+<li><a href="#sec-2-2-1">2.2.1 Dependencies</a></li>
+<li><a href="#sec-2-2-2">2.2.2 Download Code</a></li>
+<li><a href="#sec-2-2-3">2.2.3 Compile and Instal</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Usage</a>
+<ul>
+<li><a href="#sec-3-1">3.1 Create Index</a></li>
+<li><a href="#sec-3-2">3.2 run beagrep</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+I still remember when I read the ``Linux Device Drivers'', 1st Edition, in the preface, the author says:
+</p>
+<blockquote>
+
+<p>&hellip; The text you are approaching is the result of hours of patient grepping &hellip;
+</p>
+</blockquote>
+
+
+<p>
+I have been using grep to read source code ever since. It's been
+adequate for a long time, until I started reading Android source code
+with it. I remember vividly how it took me 30 minutes to <code>grep readlink</code> in Android source code (with VCS directory and binary files
+excluded).
+</p>
+<p>
+Then I learned about the beagle software, and it occured to me, what
+if I use beagle and grep together? I mean, to use beagle first to
+decide the (relatively a lot smaller) set of possible matching files
+(i.e., files that contained the word <code>readlink</code>, taking the previous
+example), then invoke grep on this set only. Usually the job can be
+done in a couple of seconds.
+</p>
+<p>
+Beagrep supports both Linux and Windows (requires CYGWIN).
+</p>
+</div>
 
 </div>
 
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Install</h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Linux Install</h3>
+<div class="outline-text-3" id="text-2-1">
+
+
+
+</div>
+
+<div id="outline-container-2-1-1" class="outline-4">
+<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> Dependencies</h4>
+<div class="outline-text-4" id="text-2-1-1">
+
+
+<p>
+Take debian as example, you may need to install the following packages (TODO: make a .deb for it):
+</p>
+
+
+<pre class="example">dpkg-query
+libc6
+libc6-dev
+libglib2.0-0
+libglib2.0-cil
+libglib2.0-dev
+libgmime2.4-cil
+libice6
+libmono0
+libmono2.0-cil
+libmono-cecil-private-cil
+libmono-corlib2.0-cil
+libmono-dev
+libmono-posix2.0-cil
+libmono-security2.0-cil
+libmono-sharpzip2.84-cil
+libmono-sqlite2.0-cil
+libmono-system2.0-cil
+libmono-system-data2.0-cil
+libmono-system-web2.0-cil
+libpcre3
+libsm6
+libsqlite3-0
+libsqlite3-dev
+libtaglib2.0-cil
+libx11-6
+libx11-dev
+libxss1
+libxss-dev
+locales
+monodoc-base
+mono-gmcs
+mono-runtime
+x11proto-core-dev
+x11proto-scrnsaver-dev
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-1-2" class="outline-4">
+<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> Download Code</h4>
+<div class="outline-text-4" id="text-2-1-2">
+
+
+
+
+<pre class="example">git clone git://github.com/baohaojun/beagrep.git -b Linux
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-1-3" class="outline-4">
+<h4 id="sec-2-1-3"><span class="section-number-4">2.1.3</span> Compile and Install</h4>
+<div class="outline-text-4" id="text-2-1-3">
+
+<p>In the beagrep directory you just git cloned:
+</p>
+
+
+
+<pre class="example">cd beagrep
+sh ./autogen.sh
+make
+sudo make install
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Windows Install</h3>
+<div class="outline-text-3" id="text-2-2">
+
+
+
+</div>
+
+<div id="outline-container-2-2-1" class="outline-4">
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> Dependencies</h4>
+<div class="outline-text-4" id="text-2-2-1">
+
+
+<ul>
+<li>Install cygwin.
+
+</li>
+<li>Install mono.
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-2-2" class="outline-4">
+<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> Download Code</h4>
+<div class="outline-text-4" id="text-2-2-2">
+
+
+
+
+<pre class="example">git clone git://github.com/baohaojun/beagrep.git -b Windows
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-2-3" class="outline-4">
+<h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> Compile and Instal</h4>
+<div class="outline-text-4" id="text-2-2-3">
+
+
+
+
+
+<pre class="example">cd beagrep
+bash build-win.sh
+</pre>
+
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Usage</h2>
+<div class="outline-text-2" id="text-3">
+
+
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Create Index</h3>
+<div class="outline-text-3" id="text-3-1">
+
+
+<p>
+In the source code directory you want to ``beagrep'', for e.g. android, 
+</p>
+
+
+
+<pre class="example">cd ~/src/android
+mkbeagrepidx
+</pre>
+
+
+<p>
+This will take quite some time (about the same amount of time you take
+to run <code>grep</code> directly in the source code directory, i.e., ~0.5 hour).
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> run beagrep</h3>
+<div class="outline-text-3" id="text-3-2">
+
+
+<p>
+In the source code directory (or any subdirs under it)
+</p>
+
+
+<pre class="example">cd ~/src/android
+beagrep -e "readlink"
+</pre>
+
+</div>
+</div>
+</div>
+</div>
+
 <div id="postamble">
-<p class="date">Date: 2011-12-23 13:41:27 China Standard Time</p>
-<p class="author">Author: </p>
-<p class="creator">Org version 7.7 with Emacs version 24</p>
+<p class="date">Date: 2012-01-26 19:53:41 CST</p>
+<p class="author">Author: bhj</p>
+<p class="creator">Org version 7.8.02 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

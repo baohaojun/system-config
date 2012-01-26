@@ -1,0 +1,125 @@
+#+title: beagrep, grep 2G source code in 2 seconds
+
+* Introduction
+
+I still remember when I read the ``Linux Device Drivers'', 1st Edition, in the preface, the author says:
+
+#+begin_quote
+... The text you are approaching is the result of hours of patient grepping ...
+#+end_quote
+
+I have been using grep to read source code ever since. It's been
+adequate for a long time, until I started reading Android source code
+with it. I remember vividly how it took me 30 minutes to ~grep
+readlink~ in Android source code (with VCS directory and binary files
+excluded).
+
+Then I learned about the beagle software, and it occured to me, what
+if I use beagle and grep together? I mean, to use beagle first to
+decide the (relatively a lot smaller) set of possible matching files
+(i.e., files that contained the word ~readlink~, taking the previous
+example), then invoke grep on this set only. Usually the job can be
+done in a couple of seconds.
+
+Beagrep supports both Linux and Windows (requires CYGWIN).
+
+* Install
+** Linux Install
+
+*** Dependencies
+
+Take debian as example, you may need to install the following packages (TODO: make a .deb for it):
+#+begin_example
+dpkg-query
+libc6
+libc6-dev
+libglib2.0-0
+libglib2.0-cil
+libglib2.0-dev
+libgmime2.4-cil
+libice6
+libmono0
+libmono2.0-cil
+libmono-cecil-private-cil
+libmono-corlib2.0-cil
+libmono-dev
+libmono-posix2.0-cil
+libmono-security2.0-cil
+libmono-sharpzip2.84-cil
+libmono-sqlite2.0-cil
+libmono-system2.0-cil
+libmono-system-data2.0-cil
+libmono-system-web2.0-cil
+libpcre3
+libsm6
+libsqlite3-0
+libsqlite3-dev
+libtaglib2.0-cil
+libx11-6
+libx11-dev
+libxss1
+libxss-dev
+locales
+monodoc-base
+mono-gmcs
+mono-runtime
+x11proto-core-dev
+x11proto-scrnsaver-dev
+#+end_example
+
+*** Download Code
+#+begin_example
+git clone git://github.com/baohaojun/beagrep.git -b Linux
+#+end_example
+
+*** Compile and Install
+In the beagrep directory you just git cloned:
+
+#+begin_example
+cd beagrep
+sh ./autogen.sh
+make
+sudo make install
+#+end_example
+
+** Windows Install
+
+*** Dependencies
+
+- Install cygwin.
+
+- Install mono.
+
+*** Download Code
+#+begin_example
+git clone git://github.com/baohaojun/beagrep.git -b Windows
+#+end_example
+
+*** Compile and Instal
+
+#+begin_example
+cd beagrep
+bash build-win.sh
+#+end_example
+
+* Usage
+
+** Create Index
+
+In the source code directory you want to ``beagrep'', for e.g. android, 
+
+#+begin_example
+cd ~/src/android
+mkbeagrepidx
+#+end_example
+
+This will take quite some time (about the same amount of time you take
+to run ~grep~ directly in the source code directory, i.e., ~0.5 hour).
+
+** run beagrep
+
+In the source code directory (or any subdirs under it)
+#+begin_example
+cd ~/src/android
+beagrep -e "readlink"
+#+end_example
