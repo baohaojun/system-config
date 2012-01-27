@@ -6,30 +6,27 @@
 #perl -npe 's,http://mirrors.163.com/debian,http://cn.archive.ubuntu.com/ubuntu,'
 
 
-open($file, "-|", "bzcat Sources*bz2*");
+open($file, "-|", "bzcat Sources.bz2*");
 
 $package = $ARGV[0];
 while (<$file>) {
-  chomp;
+    chomp;
     
-  if (m/^Package: $package$/) {
-    while (<$file>) {
-      chomp;
-      if (m/^Directory: (.*)$/) {
-	$dir=$1;
-      } elsif (m/^Files:$/) {
-	while (<$file>) {
-	  last if not m/^\s/;
-	  chomp;
-	  push @name, (split)[2];
-	}
-      } elsif (m/^\s*$/) {
-	for $name (@name) {
-	  $path = "http://mirrors.163.com/debian/$dir/$name\n";
-	  print $path;
-	}
-	last;
-      }
+    if (m/^Package: $package$/) {
+        while(<$file>) {
+            chomp;
+            if (m/^Directory: (.*)$/) {
+                $dir=$1;
+            } elsif (m/^Files:$/) {
+                <$file>;
+                $_ = <$file>;
+                chomp;
+                $name = (split)[2];
+            } elsif (m/^\s*$/) {
+                $path = "http://mirrors.163.com/debian/$dir/$name";
+                print $path;
+                last;
+            }
+        }
     }
-  }
 }
