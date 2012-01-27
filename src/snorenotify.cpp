@@ -27,49 +27,49 @@
 #include <QSettings>
 
 #include <iostream>
+#include <stdlib.h>
 
 using namespace Snore;
 
 SnoreNotify::SnoreNotify():
-    _settings("TheOneRing","SnoreNotify")
+    m_settings("TheOneRing","SnoreNotify")
 {
-    _trayIcon = new TrayIcon();
-    _snore = new Snore::SnoreServer(_trayIcon->trayIcon());
+    m_trayIcon = new TrayIcon();
+    m_snore = new Snore::SnoreServer(m_trayIcon->trayIcon());
 
-    QDir pluginsDir ( qApp->applicationDirPath() +"/snoreplugins" );
-    foreach ( QString fileName, pluginsDir.entryList ( QDir::Files ) )
+    QMap<QString,SnorePluginInfo*> plugins = SnoreServer::pluginCache();
+    foreach ( SnorePluginInfo *info, plugins.values())
     {
-        _snore->publicatePlugin ( pluginsDir.absoluteFilePath ( fileName ) );
+        m_snore->publicatePlugin ( info );
     }
 
 
     load();
-
-    _trayIcon->initConextMenu(_snore);
+    m_trayIcon->initConextMenu(m_snore);
 
     connect(qApp,SIGNAL(aboutToQuit()),this,SLOT(exit()));
 }
 
 SnoreNotify::~SnoreNotify(){
-    delete _snore;
-    delete _trayIcon;
+    delete m_snore;
+    delete m_trayIcon;
 }
 
 void SnoreNotify::load(){
-    _snore->setPrimaryNotificationBackend(_settings.value("notificationBackend").toString());
+    m_snore->setPrimaryNotificationBackend(m_settings.value("notificationBackend").toString());
 }
 
 void SnoreNotify::save(){
-    _settings.setValue("notificationBackend",_snore->primaryNotificationBackend());
+    m_settings.setValue("notificationBackend",m_snore->primaryNotificationBackend());
 }
 
 void SnoreNotify::exit(){
     qDebug()<<"Saving snore settings";
-    foreach(Application *a,_snore->aplications()){
-        _snore->removeApplication(a->name());
+    foreach(Application *a,m_snore->aplications()){
+        m_snore->removeApplication(a->name());
     }
     save();
-    _trayIcon->hide();
+    m_trayIcon->hide();
 }
 
 

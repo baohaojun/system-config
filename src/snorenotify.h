@@ -20,7 +20,7 @@
 #include <QtCore>
 
 namespace Snore{
-    class SnoreServer;
+class SnoreServer;
 }
 
 class SnoreNotify:public QObject
@@ -28,14 +28,14 @@ class SnoreNotify:public QObject
     Q_OBJECT
 public:
     SnoreNotify();
-	~SnoreNotify();
-	void load();
-	void save();
+    ~SnoreNotify();
+    void load();
+    void save();
 
 private:
-	class TrayIcon *_trayIcon;
-        Snore::SnoreServer *_snore;
-        class QSettings _settings;
+    class TrayIcon *m_trayIcon;
+    Snore::SnoreServer *m_snore;
+    class QSettings m_settings;
 
 private slots:
     void exit();

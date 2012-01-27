@@ -24,7 +24,7 @@ if( WITH_GROWL_BACKEND )
                     target_link_libraries(growl_backend pthread)
                 endif(UNIX)
 
-		install(TARGETS growl_backend ${PLUGIN_INSTALL_PATH})
+                install(TARGETS growl_backend ${SNORE_BACKEND_INSTALL_PATH})
 	else(CRYPTOPP_LIBRARIES AND Boost_SYSTEM_LIBRARY)
 		if(NOT CRYPTOPP_LIBRARIES)
 			message(STATUS "Cant build the growl backend because the dependency Cryptopp is missing")

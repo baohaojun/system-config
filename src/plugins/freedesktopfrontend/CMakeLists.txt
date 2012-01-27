@@ -27,7 +27,8 @@ if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Notifications.service
                               DESTINATION share/dbus-1/services/)
 
-    install(TARGETS freedesktop_frontend ${PLUGIN_INSTALL_PATH})
+    install(TARGETS freedesktop_frontend ${SNORE_FRONTEND_INSTALL_PATH})
+
 endif(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
 
 

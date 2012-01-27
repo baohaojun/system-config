@@ -23,20 +23,21 @@
 #include <QStringList>
 
 class QSystemTrayIcon;
+class QDir;
 
 namespace Snore{
-
 class SNORE_EXPORT SnoreServer:public QObject
 {
     Q_OBJECT
 public:
 	static const QString version();
     static const QString snoreTMP();
+    static QMap<QString,SnorePluginInfo*> pluginCache(const QString &pluginPath = QString());
+    static QMap<QString,SnorePluginInfo*> updatePluginCache(const QString &pluginPath = QString());
 
 public:
     SnoreServer (QSystemTrayIcon *trayIcon=0 );
-    void publicatePlugin ( const QString &fileName );
-    void publicatePlugin ( SnorePlugin *plugin );
+    void publicatePlugin ( const SnorePluginInfo *info );
 
 
     uint broadcastNotification ( Notification notification );
@@ -51,11 +52,16 @@ public:
     const QStringList &primaryNotificationBackends() const;
     void setPrimaryNotificationBackend ( const QString &backend );
     const QString &primaryNotificationBackend();
+    QSystemTrayIcon *trayIcon();
 
 
 
 private:
-    ApplicationsList _applications;
+    static const QDir &pluginDir(const QString &pluginPath);
+
+
+    static QMap<QString,SnorePluginInfo*> m_pluginCache;
+    ApplicationsList m_applications;
 
 
     QHash<QString,Notification_Backend*> m_notyfier;
@@ -64,7 +70,7 @@ private:
     Notification_Backend * m_notificationBackend;
     QHash<QString,SnorePlugin*> m_plugins;
 
-    class QSystemTrayIcon *m_trayIcon;
+    QSystemTrayIcon *m_trayIcon;
 
 
 signals:

@@ -34,6 +34,7 @@ if(Boost_USE_STATIC_RUNTIME)
 endif(Boost_USE_STATIC_RUNTIME)
 
 set(PLUGIN_INSTALL_PATH  LIBRARY DESTINATION bin/snoreplugins)
+add_definitions(-DLIBSNORE_PLUGIN_PATH="${CMAKE_INSTALL_PREFIX}/bin/snoreplugins")
 
 add_subdirectory(data)
 add_subdirectory(share)

@@ -15,8 +15,7 @@ add_subdirectory(notification)
 set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         snoreserver.cpp
         application.cpp
-        interface.cpp
-        trayiconnotifer.cpp
+        interface.cpp        
 		${CMAKE_CURRENT_BINARY_DIR}/version.cpp
         )
 
@@ -25,7 +24,7 @@ set ( SnoreNotify_HDR ${SnoreNotify_HDR}
         application.h
         interface.h
         snore_exports.h
-		version.h
+        version.h
         )
 
 automoc4_add_library( snorecore  SHARED ${SnoreNotify_SRCS})

@@ -1,6 +1,11 @@
 set(CMAKE_SHARED_MODULE_PREFIX)
+set(SNORE_BACKEND_INSTALL_PATH ${PLUGIN_INSTALL_PATH}/backend)
+set(SNORE_FRONTEND_INSTALL_PATH ${PLUGIN_INSTALL_PATH}/frontend)
+set(SNORE_PLUGINS_INSTALL_PATH ${PLUGIN_INSTALL_PATH}/plugin)
+
 add_subdirectory(freedesktopnotification)
 add_subdirectory(freedesktopfrontend)
 add_subdirectory(snarlnetwork)
 add_subdirectory(snarl)
 add_subdirectory(growl)
+add_subdirectory(trayicon)

@@ -1,20 +1,29 @@
 #include "trayiconnotifer.h"
-#include "snoreserver.h"
+#include "core/snoreserver.h"
 
+#include <QtCore>
 #include <QSystemTrayIcon>
 #include <QTimer>
 #include <QTime>
 #include <QDebug>
 using namespace Snore;
 
+Q_EXPORT_PLUGIN2(trayicon_backend,TrayIconNotifer)
 
-TrayIconNotifer::TrayIconNotifer ( QSystemTrayIcon *icon ) :
+TrayIconNotifer::TrayIconNotifer () :
     Notification_Backend ( "SystemTray" ),
-    _trayIcon ( icon ),
-    _id ( 0 ),
-    _displayed(-1)
+    m_id ( 0 ),
+    m_displayed(-1)
 {
-    connect(_trayIcon,SIGNAL(messageClicked()),this,SLOT(actionInvoked()));
+
+}
+
+bool TrayIconNotifer::init(SnoreServer *snore){
+     connect(m_trayIcon,SIGNAL(messageClicked()),this,SLOT(actionInvoked()));
+     m_trayIcon = snore->trayIcon();
+     if(m_trayIcon == NULL)
+         return false;
+     return Notification_Backend::init(snore);
 }
 
 void TrayIconNotifer::registerApplication ( Application *application )
@@ -28,11 +37,11 @@ void TrayIconNotifer::unregisterApplication ( Application *application )
 
 uint TrayIconNotifer::notify ( Notification notification )
 {
-    _notificationQue.append(notification);
-    if(_lastNotify.elapsed()> Notification::DefaultTimeout * 1000){
+    m_notificationQue.append(notification);
+    if(m_lastNotify.elapsed()> Notification::DefaultTimeout * 1000){
         displayNotification();
     }
-    return _id++;
+    return m_id++;
 }
 
 void TrayIconNotifer::closeNotification ( Notification notification )
@@ -46,31 +55,31 @@ bool TrayIconNotifer::isPrimaryNotificationBackend()
 }
 
 void TrayIconNotifer::displayNotification(){
-    qDebug()<<"Display"<<_notificationQue.size();
-    Notification notification =  _notificationQue.takeFirst();
-    if(!_notificationQue.isEmpty()){
+    qDebug()<<"Display"<<m_notificationQue.size();
+    Notification notification =  m_notificationQue.takeFirst();
+    if(!m_notificationQue.isEmpty()){
         QTimer::singleShot(notification.timeout()*1000,this,SLOT(closeNotification()));
     }
 
     qDebug()<<"taking"<<notification.title();
-    _displayed = notification.id();
+    m_displayed = notification.id();
     activeNotifications.insert(notification.id(),notification);
-    _trayIcon->showMessage ( Notification::toPlainText(notification.title()),Notification::toPlainText(notification.text()),QSystemTrayIcon::NoIcon,notification.timeout() *1000 );
-    _lastNotify.restart();
+    m_trayIcon->showMessage ( Notification::toPlainText(notification.title()),Notification::toPlainText(notification.text()),QSystemTrayIcon::NoIcon,notification.timeout() *1000 );
+    m_lastNotify.restart();
 }
 
 void TrayIconNotifer::closeNotification(){
-    if(activeNotifications.contains(_displayed)){
-        Notification noti = activeNotifications.take(_displayed);
+    if(activeNotifications.contains(m_displayed)){
+        Notification noti = activeNotifications.take(m_displayed);
         snore()->closeNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
     }
     displayNotification();
 }
 
 void TrayIconNotifer::actionInvoked(){
-    qDebug()<<"Traicon invoked"<<_displayed;
-    if(activeNotifications.contains(_displayed)){
-        Notification noti = activeNotifications.take(_displayed);
+    qDebug()<<"Traicon invoked"<<m_displayed;
+    if(activeNotifications.contains(m_displayed)){
+        Notification noti = activeNotifications.take(m_displayed);
         if(noti.actions().isEmpty()){
             noti.setActionInvoked(noti.actions().keys().first());
             snore()->notificationActionInvoked(noti);

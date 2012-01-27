@@ -25,6 +25,20 @@ namespace Snore{
 class Application;
 class SnoreServer;
 
+class SNORE_EXPORT SnorePluginInfo{
+public:
+    enum type{
+        BACKEND,
+        FRONTEND,
+        PLUGIN
+    };
+    QString pluginFile;
+    QString pluginName;
+    type pluginType;
+    static type typeFromString(const QString &t);
+    static const QStringList &types();
+};
+
 class SNORE_EXPORT SnorePlugin:public QObject
 {
     Q_OBJECT
@@ -40,7 +54,7 @@ protected:
     QHash<uint,Notification> activeNotifications;
     void startTimeout(uint id,int timeout);
 private slots:
-     void notificationTimedOut();
+    void notificationTimedOut();
 
 private:
     SnorePlugin() {}

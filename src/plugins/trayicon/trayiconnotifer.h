@@ -1,17 +1,23 @@
 #ifndef TRAYICONNOTIFER_H
 #define TRAYICONNOTIFER_H
 
-#include "interface.h"
-#include "notification/notification.h"
+#include "core/interface.h"
 
 #include <QTime>
+
+namespace Snore{
+    class SnoreServer;
+}
+
+class QSystemTrayIcon;
 
 class TrayIconNotifer:public Snore::Notification_Backend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::Notification_Backend)
 public:
-    TrayIconNotifer (class QSystemTrayIcon *icon=0 );
+    TrayIconNotifer ();
+    virtual bool init(Snore::SnoreServer *snore);
     bool isPrimaryNotificationBackend();
 
 public slots:
@@ -21,11 +27,11 @@ public slots:
     void closeNotification ( Snore::Notification notification );
 
 private:
-    class QSystemTrayIcon *_trayIcon;
-    QList<Snore::Notification > _notificationQue;
-    QTime _lastNotify;
-    uint _id;
-    uint _displayed;
+    QSystemTrayIcon *m_trayIcon;
+    QList<Snore::Notification > m_notificationQue;
+    QTime m_lastNotify;
+    uint m_id;
+    uint m_displayed;
 
 private slots:
     void displayNotification();

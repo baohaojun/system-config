@@ -22,6 +22,23 @@
 
 namespace Snore{
 
+SnorePluginInfo::type SnorePluginInfo::typeFromString(const QString &t){
+    if(t == QLatin1String("backend"))
+        return BACKEND;
+    if(t == QLatin1String("frontend"))
+        return FRONTEND;
+    return PLUGIN;
+}
+
+const QStringList &SnorePluginInfo::types(){
+    static QStringList *list =NULL;
+    if(list == NULL){
+        list = new QStringList();
+        *list<<"backend"<<"frontend"<<"plugin";
+    }
+    return *list;
+}
+
 SnorePlugin::SnorePlugin ( QString name ) :
     m_name ( name ),
     m_initialized(false)
@@ -99,7 +116,7 @@ bool Notification_Backend::init( SnoreServer *snore )
     connect( snore,SIGNAL( applicationInitialized( Snore::Application* ) ),this,SLOT( registerApplication( Snore::Application* ) ) );
     connect( snore,SIGNAL( applicationRemoved( Snore::Application* ) ),this,SLOT( unregisterApplication( Snore::Application* ) ) );
     if(!isPrimaryNotificationBackend())
-         connect( snore,SIGNAL( notify(Snore::Notification) ),this,SLOT( notify( Snore::Notification ) ) );
+        connect( snore,SIGNAL( notify(Snore::Notification) ),this,SLOT( notify( Snore::Notification ) ) );
 
     foreach(Application *a,snore->aplications()){
         this->registerApplication(a);
