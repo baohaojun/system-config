@@ -80,6 +80,44 @@
         (sdim-got-ime-answer answer))))
 
 
+(defvar sdim-minor-mode-map
+  (let ((sdim-minor-map (make-sparse-keymap)))
+    (define-key sdim-minor-map (kbd "C-c pg") 'sdim-minor-get-projects)
+    (define-key sdim-minor-map (kbd "C-c ib") 'sdim-minor-browse-issue)
+    (define-key sdim-minor-map (kbd "C-c ig") 'sdim-minor-get-issues)
+    (define-key sdim-minor-map (kbd "C-c ih") 'sdim-minor-get-issues-headonly)
+    (define-key sdim-minor-map (kbd "C-c if") 'sdim-minor-get-issues-from-filter-headonly)
+    (define-key sdim-minor-map (kbd "C-c iF") 'sdim-minor-get-issues-from-filter)
+    (define-key sdim-minor-map (kbd "C-c iu") 'sdim-minor-update-issue)
+    (define-key sdim-minor-map (kbd "C-c iw") 'sdim-minor-progress-issue)
+    (define-key sdim-minor-map (kbd "C-c ir") 'sdim-minor-refresh-issue)
+    (define-key sdim-minor-map (kbd "C-c ic") 'sdim-minor-create-issue)
+    (define-key sdim-minor-map (kbd "C-c ik") 'sdim-minor-copy-current-issue-key)
+    (define-key sdim-minor-map (kbd "C-c cu") 'sdim-minor-update-comment)
+    (define-key sdim-minor-map (kbd "C-c tj") 'sdim-minor-todo-to-jira)
+    sdim-minor-map))
+(defvar sdim-minor-mode-hook nil
+  "Hook to run upon entry into sdim minor mode.")
+
+(define-minor-mode sdim-minor-mode
+  "Toggle sdim-minor mode.
+With no argument, the mode is toggled on/off.
+Non-nil argument turns mode on.
+Nil argument turns mode off.
+
+Commands:
+\\{sdim-minor-entry-mode-map}
+
+Entry to this mode calls the value of `sdim-minor-mode-hook'."
+
+  :init-value nil
+  :lighter " sdim"
+  :group 'sdim-minor
+  :keymap sdim-minor-mode-map
+
+  (if sdim-minor-mode
+      (run-mode-hooks 'sdim-minor-mode-hook)))
+
 (defun sdim-got-ime-answer (answer)
   (let ((answer (split-string answer "\n" t)))
     (setq sdim-comp-str "" sdim-cands-str "" sdim-cand-index "0" sdim-beep? "" sdim-commit-str "" sdim-hint-str "" sdim-active? "")
@@ -253,7 +291,6 @@
           (sdim-start-translation key)
         (unless unwind-indicator
           (message "sdim translation failed"))
-	(setq input-method-function 'sdim-input-method)
         (sdim-delete-overlays)
         (set-buffer-modified-p sdim-modified-p)
         ;; Run this hook only when the current input method doesn't
@@ -298,8 +335,7 @@
         "unknown")))))      
 
 (defun sdim-start-translation (key)
-  "Start translation of the typed character KEY by the current Quail package.
-Return the input string."
+  "Start translation of the typed character KEY."
   ;; Check the possibility of translating KEY.
   ;; If KEY is nil, we can anyway start translation.
   (if (or (integerp key) (null key))
@@ -309,7 +345,7 @@ Return the input string."
              (overriding-terminal-local-map sdim-mode-map)
              last-command-event last-command this-command)
 
-        (setq sdim-translating t input-method-function nil)
+        (setq sdim-translating t)
         (while sdim-translating
 
           (let* ((prompt  (if input-method-use-echo-area
@@ -318,13 +354,17 @@ Return the input string."
 				      sdim-cands-str)))
                  (keyseq (if key 
                              (prog1 (vector key) (setq key nil))
-                           (read-key-sequence-vector prompt)))
+			   (prog2
+			       (setq input-method-function nil)
+			       (read-key-sequence-vector prompt)
+			     (setq input-method-function 'sdim-input-method))))
                  (keyed-str (format "keyed %s %s\n" 
                                     (sdim-key-modifier (aref keyseq 0))
                                     (sdim-key-base (aref keyseq 0)))))
             (setq sdim-answer-ready nil sdim-server-answer "")
             (process-send-string sdim-ime-connection keyed-str)
             (while (not sdim-answer-ready)
-              (accept-process-output sdim-ime-connection nil nil 1))
-            (setq unwind-indicator t))))))
+	      (let ((input-method-function 'sdim-input-method))
+		(accept-process-output sdim-ime-connection nil nil 1)))))
+            (setq unwind-indicator t))))
 
