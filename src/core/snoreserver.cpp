@@ -29,7 +29,9 @@
 
 namespace Snore{
 
-QHash<QString,SnorePluginInfo*> SnoreServer::m_pluginCache = QHash<QString,SnorePluginInfo*>() ;
+QHash<QString,SnorePluginInfo*> SnoreServer::s_pluginCache = QHash<QString,SnorePluginInfo*>() ;
+
+QString SnoreServer::s_pluginPath = QString(qApp->applicationDirPath()+"/snoreplugins");
 
 QString const SnoreServer::version(){
     return QString().append(Version::major()).append(".").append(Version::minor()).append(Version::suffix());
@@ -44,7 +46,7 @@ QString const SnoreServer::snoreTMP(){
 SnoreServer::SnoreServer ( QSystemTrayIcon *trayIcon ) :
     m_notificationBackend ( NULL ),
     m_trayIcon ( trayIcon )
-{    
+{
     QDir home ( snoreTMP() );
     if ( !home.exists() ){
         home.cdUp();
@@ -53,36 +55,36 @@ SnoreServer::SnoreServer ( QSystemTrayIcon *trayIcon ) :
 
 }
 
-QHash<QString, SnorePluginInfo *> SnoreServer::pluginCache(const QString &pluginPath){
-    if(!m_pluginCache.isEmpty())
-        return m_pluginCache;
-    QSettings cache(SnoreServer::pluginDir(pluginPath).absoluteFilePath("plugin.cache"),QSettings::IniFormat);
+QHash<QString, SnorePluginInfo *> SnoreServer::pluginCache(){
+    if(!s_pluginCache.isEmpty())
+        return s_pluginCache;
+    QSettings cache(SnoreServer::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
     int size = cache.beginReadArray("plugins");
-    if(size == 0)
-        return updatePluginCache(pluginPath);
-
-
-    for(int i=0;i<size;++i) {
-        cache.setArrayIndex(i);
-        SnorePluginInfo *info  = new SnorePluginInfo();
-        info->pluginFile = cache.value("fileName").toString();
-        info->pluginName = cache.value("name").toString();
-        info->pluginType = (SnorePluginInfo::type)cache.value("type").toInt();
-        m_pluginCache.insert(info->pluginName,info);
+    if(size == 0){
+        updatePluginCache();
+    }else{
+        for(int i=0;i<size;++i) {
+            cache.setArrayIndex(i);
+            SnorePluginInfo::PluginType type = (SnorePluginInfo::PluginType)cache.value("type").toInt();
+            SnorePluginInfo *info = new SnorePluginInfo(cache.value("fileName").toString(),cache.value("name").toString(),type);
+            s_pluginCache.insert(info->name(),info);
+        }
+        cache.endArray();
     }
-    cache.endArray();
 
-    return m_pluginCache;
+    return s_pluginCache;
 }
 
-QHash<QString, SnorePluginInfo *> SnoreServer::updatePluginCache(const QString &pluginPath){
-    QSettings cache(SnoreServer::pluginDir(pluginPath).absoluteFilePath("plugin.cache"),QSettings::IniFormat);
+void SnoreServer::updatePluginCache(const QString &pluginPath){
+    if(!pluginPath.isEmpty())
+        s_pluginPath = pluginPath;
+    QSettings cache(SnoreServer::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
     qDebug()<<"Updating plugin cache"<<cache.fileName();
 
-    m_pluginCache.clear();
+    s_pluginCache.clear();
 
     foreach(const QString &type,SnorePluginInfo::types()){
-        QDir plPath(SnoreServer::pluginDir(pluginPath).absoluteFilePath(type));
+        QDir plPath(SnoreServer::pluginDir().absoluteFilePath(type));
         qDebug()<<"Searching for plugins in"<<plPath.path();
         foreach (QString fileName, plPath.entryList(QDir::Files)) {
             QString filepath(plPath.absoluteFilePath(fileName));
@@ -99,93 +101,84 @@ QHash<QString, SnorePluginInfo *> SnoreServer::updatePluginCache(const QString &
                 plugin->deleteLater();
                 continue;
             }
-            SnorePluginInfo *info = new SnorePluginInfo();
-            info->pluginFile = SnoreServer::pluginDir(pluginPath).relativeFilePath(filepath);
-            info->pluginName = sp->name();
-            info->pluginType = SnorePluginInfo::typeFromString(type);
-            m_pluginCache.insert(info->pluginName,info);
+            SnorePluginInfo *info = new SnorePluginInfo( SnoreServer::pluginDir().relativeFilePath(filepath),sp->name(),SnorePluginInfo::typeFromString(type));
+            s_pluginCache.insert(info->name(),info);
             sp->deleteLater();
-            qDebug()<<"added "<<info->pluginFile<<"to cache";
+            qDebug()<<"added "<<info->name()<<"to cache";
         }
     }
 
-    qDebug()<<m_pluginCache.keys();
-    QList<SnorePluginInfo*> plugins = m_pluginCache.values();
+    qDebug()<<s_pluginCache.keys();
+    QList<SnorePluginInfo*> plugins = s_pluginCache.values();
     cache.beginWriteArray("plugins");
     for(int i=0;i< plugins.size();++i) {
         cache.setArrayIndex(i);
-        cache.setValue("fileName",plugins[i]->pluginFile);
-        cache.setValue("name", plugins[i]->pluginName);
-        cache.setValue("type",plugins[i]->pluginType);
+        cache.setValue("fileName",plugins[i]->file());
+        cache.setValue("name", plugins[i]->name());
+        cache.setValue("type",(int)plugins[i]->type());
     }
     cache.endArray();
-    return m_pluginCache;
 }
 
-const QDir &SnoreServer::pluginDir(const QString &pluginPath){
+const QDir &SnoreServer::pluginDir()
+{
+    //TODO:fix logic
     static QDir *plDir = NULL;
     if(plDir == NULL){
-        if(!pluginPath.isEmpty())
-            plDir = new QDir(pluginPath);
-        if(pluginPath.isEmpty() || plDir->exists()){
-            plDir = new QDir(qApp->applicationDirPath()+"/snoreplugins");
-            if(!plDir->exists())
-                plDir = new QDir(LIBSNORE_PLUGIN_PATH);
-        }
+        plDir = new QDir(s_pluginPath);
+        if(!plDir->exists())
+            plDir = new QDir(LIBSNORE_PLUGIN_PATH);
     }
     return *plDir;
 }
 
-void SnoreServer::publicatePlugin ( const SnorePluginInfo *info )
+void SnoreServer::publicatePlugin ( SnorePluginInfo::PluginTypes types )
 {
-    QPluginLoader loader ( SnoreServer::pluginDir(QString()).absoluteFilePath(info->pluginFile ));
-    qDebug()<<"Trying to load"<<info->pluginFile;
-    if ( !loader.load())
+    foreach ( SnorePluginInfo *info, SnoreServer::pluginCache().values())
     {
-        qDebug() <<"Failed loading plugin: "<<loader.errorString();
-        return;
-    }
-
-    SnorePlugin *plugin = qobject_cast<SnorePlugin*> ( loader.instance());
-    m_plugins.insert ( info->pluginName ,plugin );
-
-    switch(info->pluginType){
-    case SnorePluginInfo::BACKEND:{
-        Notification_Backend * nb = qobject_cast<Notification_Backend *> ( plugin );
-        qDebug() <<info->pluginName<<"is a Notification_Backend";
-        if ( nb->isPrimaryNotificationBackend() )
-        {
-            m_primaryNotificationBackends.append( info->pluginName);
-            if ( m_notificationBackend == NULL )
-            {
-                m_notificationBackend = nb;
+        if(types == SnorePluginInfo::ALL or  types.testFlag(info->type())){
+            switch(info->type()){
+            case SnorePluginInfo::BACKEND:{
+                qDebug() <<info->name()<<"is a Notification_Backend";
+                m_notificationBackends.append( info->name());
+                break;
+            }
+            case SnorePluginInfo::SECONDARY_BACKEND:{
+                Secondary_Notification_Backend *nb = qobject_cast<Secondary_Notification_Backend *> ( info->load() );
+                if(!nb->init( this )){
+                    nb->deleteLater();
+                    break;
+                }
+                m_secondaryNotificationBackends.append(info->name());
+                break;
+            }
+            case SnorePluginInfo::FRONTEND:{
+                Notification_Frontend * nf = qobject_cast<Notification_Frontend*> (info->load());
+                qDebug() <<info->name()<<"is a Notification_Frontend";
+                if(!nf->init( this )){
+                    nf->deleteLater();
+                    break;
+                }
+                m_Frontends.append(info->name());
+                break;
+            }
+            case SnorePluginInfo::PLUGIN:{
+                qDebug() <<info->name()<<"is a SnorePlugin";
+                if(!info->load()->init(this)){
+                    info->load()->deleteLater();
+                    break;
+                }
+                m_plugins.append(info->name());
+                break;
+            }
+            default:{
+                std::cerr<<"Plugin Cache corrupted"<<std::endl;
+                std::cerr<<info->file().toLatin1().constData()<<QString::number((int)info->type()).toLatin1().constData()<<std::endl;
+            }
             }
         }else{
-            if(!nb->init( this )){
-                nb->deleteLater();
-                return;
-            }
-
-            m_notyfier.insert ( info->pluginName,nb );
+            qDebug()<<"dont load "<<info->file()<<info->type();
         }
-        break;
-    }
-    case SnorePluginInfo::FRONTEND:{
-        Notification_Frontend * nf = qobject_cast<Notification_Frontend*> (plugin);
-        qDebug() <<info->pluginName<<"is a Notification_Frontend";
-        if(nf->init( this ))
-            m_frontends.insert(nf->name(),nf);
-        else
-            nf->deleteLater();
-        break;
-    }
-    case SnorePluginInfo::PLUGIN:
-        qDebug() <<info->pluginName<<"is a SnorePlugin";
-        plugin->init(this);
-    break;
-    default:
-        std::cerr<<"Plugin Cache corrupted"<<std::endl ;
-        break;
     }
 }
 
@@ -245,17 +238,27 @@ const ApplicationsList &SnoreServer::aplications() const
 }
 
 
-const QStringList &SnoreServer::primaryNotificationBackends() const
+const QStringList &SnoreServer::notificationBackends() const
 {
-    return m_primaryNotificationBackends;
+    return m_notificationBackends;
+}
+
+const QStringList &SnoreServer::notificationFrontends() const
+{
+    return m_Frontends;
+}
+
+const QStringList &SnoreServer::secondaryNotificationBackends() const
+{
+    return m_secondaryNotificationBackends;
 }
 
 void SnoreServer::setPrimaryNotificationBackend ( const QString &backend )
 {
-    if(!m_primaryNotificationBackends.contains(backend))
+    if(!m_notificationBackends.contains(backend))
         return;
     qDebug()<<"Setting Notification Backend to:"<<backend;
-    m_notificationBackend = qobject_cast<Notification_Backend*>(m_plugins[backend]);
+    m_notificationBackend = qobject_cast<Notification_Backend*>(pluginCache()[backend]->load());
     if(!m_notificationBackend->isInitialized())
         m_notificationBackend->init(this);
 }

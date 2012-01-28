@@ -36,16 +36,7 @@ SnoreNotify::SnoreNotify():
 {
     m_trayIcon = new TrayIcon();
     m_snore = new Snore::SnoreServer(m_trayIcon->trayIcon());
-
-    QHash<QString,SnorePluginInfo*> plugins = SnoreServer::pluginCache();
-    qDebug()<<"Plugins"<<plugins.keys();
-    foreach ( SnorePluginInfo *info, plugins.values())
-    {
-        qDebug()<<"Grr loading "<< info->pluginFile<<info->pluginName;
-        m_snore->publicatePlugin ( info );
-    }
-
-
+    m_snore->publicatePlugin(SnorePluginInfo::ALL);
     load();
     m_trayIcon->initConextMenu(m_snore);
 
@@ -58,7 +49,7 @@ SnoreNotify::~SnoreNotify(){
 }
 
 void SnoreNotify::load(){
-    m_snore->setPrimaryNotificationBackend(m_settings.value("notificationBackend").toString());
+    m_snore->setPrimaryNotificationBackend(m_settings.value("notificationBackend","SystemTray").toString());
 }
 
 void SnoreNotify::save(){

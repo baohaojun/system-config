@@ -18,13 +18,56 @@
 #include "snoreserver.h"
 
 #include <QTimer>
+#include <QPluginLoader>
+#include <QDir>
 #include <QDebug>
 
 namespace Snore{
 
-SnorePluginInfo::type SnorePluginInfo::typeFromString(const QString &t){
+SnorePluginInfo::SnorePluginInfo(QString fileName, QString pluginName, SnorePluginInfo::PluginType type)
+    :m_pluginFile(fileName),
+      m_pluginName(pluginName),
+      m_pluginType(type),
+      m_instance(NULL)
+{
+
+}
+
+SnorePlugin *SnorePluginInfo::load(){
+    if(m_instance != NULL)
+        return m_instance;
+    QPluginLoader loader ( SnoreServer::pluginDir().absoluteFilePath(file()));
+    qDebug()<<"Trying to load"<<file();
+    if ( !loader.load())
+    {
+        qDebug() <<"Failed loading plugin: "<<loader.errorString();
+        return NULL;
+    }
+
+    m_instance = qobject_cast<SnorePlugin*> ( loader.instance());
+    return m_instance;
+}
+
+const QString & SnorePluginInfo::file()
+{
+    return m_pluginFile;
+}
+
+const QString & SnorePluginInfo::name()
+{
+    return m_pluginName;
+}
+
+const SnorePluginInfo::PluginType SnorePluginInfo::type()
+{
+    return m_pluginType;
+}
+
+SnorePluginInfo::PluginType SnorePluginInfo::typeFromString(const QString &t){
     if(t == QLatin1String("backend"))
         return BACKEND;
+    if(t == QLatin1String("secondary_backend"))
+        return SECONDARY_BACKEND;
     if(t == QLatin1String("frontend"))
         return FRONTEND;
     return PLUGIN;
@@ -34,7 +77,7 @@ const QStringList &SnorePluginInfo::types(){
     static QStringList *list =NULL;
     if(list == NULL){
         list = new QStringList();
-        *list<<"backend"<<"frontend"<<"plugin";
+        *list<<"backend"<<"secondary_backend"<<"frontend"<<"plugin";
     }
     return *list;
 }
@@ -106,6 +149,7 @@ Notification_Backend::Notification_Backend ( QString name ) :
 
 Notification_Backend::~Notification_Backend()
 {
+    qDebug()<<"Deleting"<<name();
 }
 
 bool Notification_Backend::init( SnoreServer *snore )
@@ -115,8 +159,6 @@ bool Notification_Backend::init( SnoreServer *snore )
     connect( snore,SIGNAL( closeNotify( Snore::Notification ) ),this,SLOT( closeNotification( Snore::Notification) ) );
     connect( snore,SIGNAL( applicationInitialized( Snore::Application* ) ),this,SLOT( registerApplication( Snore::Application* ) ) );
     connect( snore,SIGNAL( applicationRemoved( Snore::Application* ) ),this,SLOT( unregisterApplication( Snore::Application* ) ) );
-    if(!isPrimaryNotificationBackend())
-        connect( snore,SIGNAL( notify(Snore::Notification) ),this,SLOT( notify( Snore::Notification ) ) );
 
     foreach(Application *a,snore->aplications()){
         this->registerApplication(a);
@@ -126,7 +168,24 @@ bool Notification_Backend::init( SnoreServer *snore )
 
 }
 
-Notification_Frontend::Notification_Frontend ( QString name ) :
+Secondary_Notification_Backend::Secondary_Notification_Backend(const QString &name)
+    :Notification_Backend(name)
+{
+
+}
+
+Secondary_Notification_Backend::~Secondary_Notification_Backend()
+{
+    qDebug()<<"Deleting"<<name();
+}
+
+bool Secondary_Notification_Backend::init(SnoreServer *snore)
+{
+    connect( snore,SIGNAL( notify(Snore::Notification) ),this,SLOT( notify( Snore::Notification ) ) );
+    return Notification_Backend::init(snore);
+}
+
+Notification_Frontend::Notification_Frontend ( const QString &name ) :
     SnorePlugin ( name )
 {
 
@@ -134,6 +193,7 @@ Notification_Frontend::Notification_Frontend ( QString name ) :
 
 Notification_Frontend::~Notification_Frontend()
 {
+    qDebug()<<"Deleting"<<name();
 }
 bool Notification_Frontend::init( SnoreServer *snore )
 {

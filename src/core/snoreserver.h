@@ -30,14 +30,14 @@ class SNORE_EXPORT SnoreServer:public QObject
 {
     Q_OBJECT
 public:
-	static const QString version();
+    static const QString version();
     static const QString snoreTMP();
-    static QHash<QString,SnorePluginInfo*> pluginCache(const QString &pluginPath = QString());
-    static QHash<QString,SnorePluginInfo*> updatePluginCache(const QString &pluginPath = QString());
+    static void updatePluginCache(const QString &pluginPath = "");
+    static const QDir &pluginDir();
 
 public:
     SnoreServer (QSystemTrayIcon *trayIcon=0 );
-    void publicatePlugin ( const SnorePluginInfo *info );
+    void publicatePlugin ( SnorePluginInfo::PluginTypes types );
 
 
     uint broadcastNotification ( Notification notification );
@@ -49,7 +49,10 @@ public:
     void removeApplication ( const QString& appName );
     const ApplicationsList &aplications() const;
 
-    const QStringList &primaryNotificationBackends() const;
+    const QStringList &notificationBackends() const;
+    const QStringList &notificationFrontends() const;
+    const QStringList &secondaryNotificationBackends() const;
+
     void setPrimaryNotificationBackend ( const QString &backend );
     const QString &primaryNotificationBackend();
     QSystemTrayIcon *trayIcon();
@@ -57,20 +60,21 @@ public:
 
 
 private:
-    static const QDir &pluginDir(const QString &pluginPath);
+    static QHash<QString,SnorePluginInfo*> pluginCache();
 
-
-    static QHash<QString,SnorePluginInfo*> m_pluginCache;
+    static QHash<QString,SnorePluginInfo*> s_pluginCache;
     ApplicationsList m_applications;
 
 
-    QHash<QString,Notification_Backend*> m_notyfier;
-    QHash<QString,Notification_Frontend*> m_frontends;
-    QStringList m_primaryNotificationBackends;
+    QStringList m_notificationBackends;
+    QStringList m_Frontends;
+    QStringList m_secondaryNotificationBackends;
+    QStringList m_plugins;
+
     Notification_Backend * m_notificationBackend;
-    QHash<QString,SnorePlugin*> m_plugins;
 
     QSystemTrayIcon *m_trayIcon;
+    static QString s_pluginPath;
 
 
 signals:

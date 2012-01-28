@@ -20,23 +20,38 @@
 #include "notification/notification.h"
 
 #include <QPointer>
+#include <QFlag>
 
 namespace Snore{
 class Application;
 class SnoreServer;
+class SnorePlugin;
 
 class SNORE_EXPORT SnorePluginInfo{
 public:
-    enum type{
-        BACKEND,
-        FRONTEND,
-        PLUGIN
+    enum PluginType{
+        ALL = 0x0,//dor loading plugins
+        BACKEND = 0x1,
+        SECONDARY_BACKEND = 0x2,
+        FRONTEND = 0x4,
+        PLUGIN = 0x8
     };
-    QString pluginFile;
-    QString pluginName;
-    type pluginType;
-    static type typeFromString(const QString &t);
+    Q_DECLARE_FLAGS(PluginTypes, PluginType)
+    SnorePluginInfo(QString fileName,QString pluginName,PluginType type);
+    SnorePlugin *load();
+    const QString &file();
+    const QString &name();
+    const SnorePluginInfo::PluginType type();
+
+
+    static Snore::SnorePluginInfo::PluginType typeFromString(const QString &t);
     static const QStringList &types();
+
+private:
+    QPointer<SnorePlugin> m_instance;
+    QString m_pluginFile;
+    QString m_pluginName;
+    Snore::SnorePluginInfo::PluginType m_pluginType;
 };
 
 class SNORE_EXPORT SnorePlugin:public QObject
@@ -68,6 +83,7 @@ private:
 };
 
 }
+Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::SnorePluginInfo::PluginTypes)
 Q_DECLARE_INTERFACE ( Snore::SnorePlugin,
                       "org.Snore.SnorePlugin/1.0" )
 
@@ -81,7 +97,6 @@ public:
     Notification_Backend ( QString name );
     virtual ~Notification_Backend();
     virtual bool init(SnoreServer *snore);
-    virtual bool isPrimaryNotificationBackend() =0;
 
 
 
@@ -95,13 +110,36 @@ public slots:
 
 };
 
+}
+Q_DECLARE_INTERFACE ( Snore::Notification_Backend,
+                      "org.Snore.NotificationBackend/1.0" )
+
+namespace Snore{
+
+class SNORE_EXPORT Secondary_Notification_Backend:public Notification_Backend
+{
+    Q_OBJECT
+    Q_INTERFACES(Snore::SnorePlugin Snore::Notification_Backend)
+public:
+    Secondary_Notification_Backend(const  QString &name);
+    virtual ~Secondary_Notification_Backend();
+    virtual bool init(SnoreServer *snore);
+
+};
+
+}
+
+Q_DECLARE_INTERFACE ( Snore::Secondary_Notification_Backend,
+                      "org.Snore.SecondaryNotificationBackend/1.0" )
+
+namespace Snore{
 
 class SNORE_EXPORT Notification_Frontend:public SnorePlugin
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin)
 public:
-    Notification_Frontend ( QString name);
+    Notification_Frontend ( const QString &name);
     virtual ~Notification_Frontend();
     virtual bool init(SnoreServer *snore);
 
@@ -110,15 +148,10 @@ public slots:
     virtual void notificationClosed( Snore::Notification notification )=0;
 };
 
-
-
-
-
 }
 
 Q_DECLARE_INTERFACE ( Snore::Notification_Frontend,
                       "org.Snore.NotificationFrontend/1.0" )
-Q_DECLARE_INTERFACE ( Snore::Notification_Backend,
-                      "org.Snore.NotificationBackend/1.0" )
+
 
 #endif//INTERFACE_H
