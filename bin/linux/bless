@@ -14,6 +14,12 @@ for contact in ${@:-*}; do
     fi
     echo "Send sms to $contact" 
     rm -rf ."$contact".failed
-    printf "%s，%s%s\n" "$salution" "$text" "$me" | gnokii --sendsms "$(cat -- "$contact")" || touch ."$contact".failed
+    if echo "$text" | grep -q -e "^$salution" && ! yes-or-no "you already have $salution in your text, repeat it?" ; then
+	salution=""
+    else
+	salution=$salution，
+    fi
+	
+    printf "%s%s%s\n" "$salution" "$text" "$me" | gnokii --sendsms "$(cat -- "$contact")" || touch ."$contact".failed
 done
     
