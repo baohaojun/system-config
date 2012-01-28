@@ -41,7 +41,7 @@ public:
 private:
     SnarlWidget* winIDWidget;
     QHash<QString,Snarl::V42::SnarlInterface*> _applications;
-    Snarl::V42::SnarlInterface* _defautSnarlinetrface;
+    Snarl::V42::SnarlInterface* m_defautSnarlinetrface;
     bool _away;
 
 public slots:
