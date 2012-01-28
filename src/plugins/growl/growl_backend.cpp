@@ -36,8 +36,10 @@ Growl_Backend::Growl_Backend():
 }
 
 Growl_Backend::~Growl_Backend(){
-    foreach(Application *a,this->snore()->aplications().values()){
-        unregisterApplication(a);
+    if(snore()!=NULL){
+        foreach(Application *a,this->snore()->aplications().values()){
+            unregisterApplication(a);
+        }
     }
 }
 

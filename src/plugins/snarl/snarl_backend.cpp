@@ -44,22 +44,24 @@ Snarl_Backend::Snarl_Backend():
 
 Snarl_Backend::~Snarl_Backend()
 {
-    foreach(Application *a,this->snore()->aplications().values()){
-        unregisterApplication(a);
+    if(snore()!=NULL){
+        foreach(Application *a,this->snore()->aplications().values()){
+            unregisterApplication(a);
+        }
     }
-    delete _defautSnarlinetrface;
+    delete m_defautSnarlinetrface;
 }
 
 
- bool Snarl_Backend::init(SnoreServer *snore){
-     winIDWidget = new SnarlWidget(this);
-     SnarlInterface *snarlInterface = new SnarlInterface();
-     _applications.insert("SnoreNotify",snarlInterface);
-     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
-     _defautSnarlinetrface = new SnarlInterface();
+bool Snarl_Backend::init(SnoreServer *snore){
+    winIDWidget = new SnarlWidget(this);
+    SnarlInterface *snarlInterface = new SnarlInterface();
+    _applications.insert("SnoreNotify",snarlInterface);
+    qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
+    m_defautSnarlinetrface = new SnarlInterface();
 
-     return Notification_Backend::init(snore);
- }
+    return Notification_Backend::init(snore);
+}
 
 void Snarl_Backend::registerApplication(Application *application){
     SnarlInterface *snarlInterface = NULL;
@@ -101,7 +103,7 @@ uint Snarl_Backend::notify(Notification notification){
     if(snarlInterface == NULL){
         qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
         qDebug()<<_applications.keys();
-        snarlInterface = _defautSnarlinetrface;
+        snarlInterface = m_defautSnarlinetrface;
     }
     uint id = notification.id();
 
@@ -136,7 +138,7 @@ uint Snarl_Backend::notify(Notification notification){
 }
 
 void Snarl_Backend::closeNotification(Notification notification){
-    _defautSnarlinetrface->Hide(notification.id());
+    m_defautSnarlinetrface->Hide(notification.id());
     activeNotifications.remove(notification.id());
 }
 
