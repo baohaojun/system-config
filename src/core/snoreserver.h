@@ -32,8 +32,8 @@ class SNORE_EXPORT SnoreServer:public QObject
 public:
 	static const QString version();
     static const QString snoreTMP();
-    static QMap<QString,SnorePluginInfo*> pluginCache(const QString &pluginPath = QString());
-    static QMap<QString,SnorePluginInfo*> updatePluginCache(const QString &pluginPath = QString());
+    static QHash<QString,SnorePluginInfo*> pluginCache(const QString &pluginPath = QString());
+    static QHash<QString,SnorePluginInfo*> updatePluginCache(const QString &pluginPath = QString());
 
 public:
     SnoreServer (QSystemTrayIcon *trayIcon=0 );
@@ -60,7 +60,7 @@ private:
     static const QDir &pluginDir(const QString &pluginPath);
 
 
-    static QMap<QString,SnorePluginInfo*> m_pluginCache;
+    static QHash<QString,SnorePluginInfo*> m_pluginCache;
     ApplicationsList m_applications;
 
 

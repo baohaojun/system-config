@@ -37,9 +37,11 @@ SnoreNotify::SnoreNotify():
     m_trayIcon = new TrayIcon();
     m_snore = new Snore::SnoreServer(m_trayIcon->trayIcon());
 
-    QMap<QString,SnorePluginInfo*> plugins = SnoreServer::pluginCache();
+    QHash<QString,SnorePluginInfo*> plugins = SnoreServer::pluginCache();
+    qDebug()<<"Plugins"<<plugins.keys();
     foreach ( SnorePluginInfo *info, plugins.values())
     {
+        qDebug()<<"Grr loading "<< info->pluginFile<<info->pluginName;
         m_snore->publicatePlugin ( info );
     }
 
