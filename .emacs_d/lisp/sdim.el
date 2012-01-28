@@ -80,19 +80,22 @@
         (sdim-got-ime-answer answer))))
 
 
-(defun sdim-minor-mode-got-key ()
-  (interactive)
-  (sdim-input-method last-command-event))
-
 (defvar sdim-minor-mode-map
-  (let* ((tmp-map (make-sparse-keymap))
-	(min-key 32)
-	(max-key 126)
-	(key min-key))
-    (while (<= key max-key)
-      (define-key tmp-map (make-vector 1 key) 'sdim-minor-mode-got-key)
-      (setq key (1+ key)))
-    tmp-map))
+  (let ((sdim-minor-map (make-sparse-keymap)))
+    (define-key sdim-minor-map (kbd "C-c pg") 'sdim-minor-get-projects)
+    (define-key sdim-minor-map (kbd "C-c ib") 'sdim-minor-browse-issue)
+    (define-key sdim-minor-map (kbd "C-c ig") 'sdim-minor-get-issues)
+    (define-key sdim-minor-map (kbd "C-c ih") 'sdim-minor-get-issues-headonly)
+    (define-key sdim-minor-map (kbd "C-c if") 'sdim-minor-get-issues-from-filter-headonly)
+    (define-key sdim-minor-map (kbd "C-c iF") 'sdim-minor-get-issues-from-filter)
+    (define-key sdim-minor-map (kbd "C-c iu") 'sdim-minor-update-issue)
+    (define-key sdim-minor-map (kbd "C-c iw") 'sdim-minor-progress-issue)
+    (define-key sdim-minor-map (kbd "C-c ir") 'sdim-minor-refresh-issue)
+    (define-key sdim-minor-map (kbd "C-c ic") 'sdim-minor-create-issue)
+    (define-key sdim-minor-map (kbd "C-c ik") 'sdim-minor-copy-current-issue-key)
+    (define-key sdim-minor-map (kbd "C-c cu") 'sdim-minor-update-comment)
+    (define-key sdim-minor-map (kbd "C-c tj") 'sdim-minor-todo-to-jira)
+    sdim-minor-map))
 (defvar sdim-minor-mode-hook nil
   "Hook to run upon entry into sdim minor mode.")
 
@@ -167,7 +170,6 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
   (mapc 'make-local-variable sdim-local-variable-list)
   (sdim-connect-to-server)
 
-  (sdim-minor-mode t)
   (setq input-method-function 'sdim-input-method)
   (setq inactivate-current-input-method-function 'sdim-inactivate)
   ;; If we are in minibuffer, turn off the current input method
@@ -177,7 +179,6 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
 
 (defun sdim-inactivate ()
   (interactive)
-  (sdim-minor-mode nil)
   (mapc 'kill-local-variable sdim-local-variable-list))
 
 ;;;_ , Core function of input method (stole from quail)
