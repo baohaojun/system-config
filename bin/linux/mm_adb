@@ -1,6 +1,7 @@
 #!/bin/bash
 set -o pipefail
 LOG=mm.$$
+$(lookup_file prebuilt/linux-x86/ccache/ccache) -M 100G
 if tty; then
     mm "$@" 2>&1|tee /tmp/$LOG || exit -1
 else
