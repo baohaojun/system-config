@@ -17,13 +17,13 @@ install-pkgs -s --reinstall >pkgs.txt 2>&1
 sites=mirrors.163.com/debian
 releases=testing\ unstable
 dists=main\ contrib\ non-free
-archs=${1:-amd64}
+archs=amd64\ i386
 
 for site in $sites; do
     for release in $releases; do
 	for dist in $dists; do
 	    for arch in $archs; do
-		echo http://$site/dists/$release/$dist/binary-$arch/Packages.gz
+		echo http://$site/dists/$release/$dist/binary-$arch/Packages.bz2
 	    done
 	done
     done
@@ -40,7 +40,7 @@ for site in $sites; do
     for release in $releases; do
 	for dist in $dists; do
 	    for arch in $archs; do
-		zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $(eval echo \$$release) >> $release.pkgs
+		bzcat $site/dists/$release/$dist/binary-$arch/Packages.bz2 | get-deb-pkg-path $(eval echo \$$release) >> $release.pkgs
 	    done
 	done
     done

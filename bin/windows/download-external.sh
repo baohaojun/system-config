@@ -90,16 +90,16 @@ function setup-deb-src()
     cd ~/external/deb-src    
 
     source_list=(
-        mirrors.163.com/debian/dists/unstable/main/source/Sources.gz
-        mirrors.163.com/debian/dists/unstable/contrib/source/Sources.gz 
-        mirrors.163.com/debian/dists/unstable/non-free/source/Sources.gz
+        mirrors.163.com/debian/dists/unstable/main/source/Sources.bz2 
+        mirrors.163.com/debian/dists/unstable/contrib/source/Sources.bz2 
+        mirrors.163.com/debian/dists/unstable/non-free/source/Sources.bz2
     )
 
     y=0
     for x in "${source_list[@]}"; do 
         ((y++)) || true
         ( builtin cd ../ && wget -N -r http://$x )
-        ln -sf ../$x Sources.gz.$y
+        ln -sf ../$x Sources.bz2.$y
     done
 }
 

@@ -41,6 +41,3 @@ if test "$TERM" = dumb; then
 else
     . ~/.bashrc-no-emacs
 fi
-DEBEMAIL="baohaojun@gmail.com"
-DEBFULLNAME="Bao Haojun"
-export DEBEMAIL DEBFULLNAME
