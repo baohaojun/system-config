@@ -1,0 +1,9 @@
+#!/bin/bash
+if test $# = 1; then
+    set -- "$(ulp "$1")"
+elif test $# = 2 && test -e "$2"; then
+    set -- "$1" "$(ulp "$2")"
+elif test $# = 3 && test -e "$3"; then
+    set -- "$1" "$2" "$(ulp "$3")"
+fi
+/usr/bin/emacsclient "$@"

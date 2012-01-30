@@ -1,0 +1,7 @@
+#!/bin/bash
+#ulp stands for Unix Long Path
+if test "${1:0:1}" = / -a ! -e "$1"; then
+    echo -n "$1"
+else
+    readlink -m "${1:-.}"
+fi
