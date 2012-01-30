@@ -14,13 +14,16 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#include "snarl_backend.h"
+#include "snarl.h"
 
-#include "core/snoreserver.h"
+#include "core/snore.h"
+#include "core/plugins/snorebackend.h"
 
 #include <QtCore>
 #include <QTextEdit>
 #include <QtDebug>
+#include <QWidget>
+
 
 #include <iostream>
 
@@ -33,43 +36,112 @@
 using namespace Snore;
 using namespace Snarl::V42;
 
-Q_EXPORT_PLUGIN2(snarl_backend,Snarl_Backend)
+Q_EXPORT_PLUGIN2(snarl,SnarlBackend)
 
-Snarl_Backend::Snarl_Backend():
+class SnarlBackend::SnarlWidget:public QWidget
+{
+    Q_OBJECT
+public:
+    SnarlWidget(SnarlBackend * snarl):
+        m_snarl(snarl)
+    {
+        SNARL_GLOBAL_MESSAGE = SnarlInterface::Broadcast();
+    }
+
+    bool winEvent( MSG * msg, long * result ){
+        if(msg->message == SNARL_GLOBAL_MESSAGE){
+            int action = msg->wParam;
+            if(action == SnarlEnums::SnarlLaunched){
+                foreach(Application *a,m_snarl->snore()->aplications()){
+                    m_snarl->registerApplication(a);
+                }
+            }
+
+        }else if(msg->message == SNORENOTIFIER_MESSAGE_ID){
+            int action = msg->wParam & 0xffff;
+            int data = (msg->wParam & 0xffffffff) >> 16;
+            uint notificationID = msg->lParam;
+            qDebug()<<"_snarl->activeNotifications"<<m_snarl->activeNotifications.keys();
+            Notification notification(m_snarl->activeNotifications[notificationID]);
+            qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action<<"data:"<<data;
+            NotificationEnums::CloseReasons::closeReasons reason = NotificationEnums::CloseReasons::NONE;
+            switch(action){
+            case SnarlEnums::CallbackInvoked:
+                reason = NotificationEnums::CloseReasons::CLOSED;
+                break;
+            case SnarlEnums::NotifyAction:
+                reason = NotificationEnums::CloseReasons::CLOSED;
+                notification.setActionInvoked(data);
+                m_snarl->snore()->notificationActionInvoked(notification);
+                break;
+            case SnarlEnums::CallbackClosed:
+                reason = NotificationEnums::CloseReasons::DISMISSED;
+                break;
+            case SnarlEnums::CallbackTimedOut:
+                reason = NotificationEnums::CloseReasons::TIMED_OUT;
+                break;
+                //away stuff
+            case SnarlEnums::SnarlUserAway:
+                qDebug()<<"Snalr user has gone away";
+                m_snarl->m_away = true;
+                break;
+            case SnarlEnums::SnarlUserBack:
+                qDebug()<<"Snalr user has returned";
+                m_snarl->activeNotifications.clear();
+                m_snarl->m_away = false;
+                break;
+            default:
+                qDebug()<<"Unknown snarl action found!!";
+                return false;
+            }
+            m_snarl->snore()->closeNotification(notification,reason);
+            return true;
+        }
+        return false;
+    }
+
+private:
+    uint SNARL_GLOBAL_MESSAGE;
+    SnarlBackend* m_snarl;
+
+};
+
+
+SnarlBackend::SnarlBackend():
     SnoreBackend("Snarl"),
-    _away(false)
+    m_away(false)
 {
 
 }
 
-Snarl_Backend::~Snarl_Backend()
+SnarlBackend::~SnarlBackend()
 {
-    if(snore()!=NULL){
-        foreach(Application *a,this->snore()->aplications().values()){
-            unregisterApplication(a);
+    if(snore() != NULL){
+        foreach(Application *a,snore()->aplications()){
+            this->unregisterApplication(a);
         }
     }
     delete m_defautSnarlinetrface;
 }
 
 
-bool Snarl_Backend::init(SnoreServer *snore){
-    winIDWidget = new SnarlWidget(this);
+bool SnarlBackend::init(SnoreCore *snore){
+    m_eventLoop = new SnarlBackend::SnarlWidget(this);
     SnarlInterface *snarlInterface = new SnarlInterface();
-    _applications.insert("SnoreNotify",snarlInterface);
+    m_applications.insert("SnoreNotify",snarlInterface);
     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
     m_defautSnarlinetrface = new SnarlInterface();
 
     return SnoreBackend::init(snore);
 }
 
-void Snarl_Backend::registerApplication(Application *application){
+void SnarlBackend::registerApplication(Application *application){
     SnarlInterface *snarlInterface = NULL;
-    if(_applications.contains(application->name())){
-        snarlInterface = _applications.value(application->name());
+    if(m_applications.contains(application->name())){
+        snarlInterface = m_applications.value(application->name());
     }else{
         snarlInterface = new SnarlInterface();
-        _applications.insert(application->name(),snarlInterface);
+        m_applications.insert(application->name(),snarlInterface);
     }
     qDebug()<<"Register with Snarl"<<application->name();
     QString appName = application->name();
@@ -77,7 +149,7 @@ void Snarl_Backend::registerApplication(Application *application){
     snarlInterface->Register(appName.toUtf8().constData(),
                              application->name().toUtf8().constData(),
                              application->icon().localUrl().toUtf8().constData(),
-                             0,winIDWidget->winId(),SNORENOTIFIER_MESSAGE_ID);
+                             0,m_eventLoop->winId(),SNORENOTIFIER_MESSAGE_ID);
 
     foreach(Alert *alert,application->alerts()){
         qDebug()<<"registering snarl alert"<<application->name();
@@ -87,8 +159,8 @@ void Snarl_Backend::registerApplication(Application *application){
     }
 }
 
-void Snarl_Backend::unregisterApplication(Application *application){
-    SnarlInterface *snarlInterface = _applications.take(application->name());
+void SnarlBackend::unregisterApplication(Application *application){
+    SnarlInterface *snarlInterface = m_applications.take(application->name());
     if(snarlInterface == NULL)
         return;
     QString appName = application->name();
@@ -97,12 +169,12 @@ void Snarl_Backend::unregisterApplication(Application *application){
     delete snarlInterface;
 }
 
-uint Snarl_Backend::notify(Notification notification){
-    SnarlInterface *snarlInterface = _applications.value(notification.application());
+uint SnarlBackend::notify(Notification notification){
+    SnarlInterface *snarlInterface = m_applications.value(notification.application());
     qDebug()<<"Snarl using the notification instance of:"<<notification.application();
     if(snarlInterface == NULL){
         qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
-        qDebug()<<_applications.keys();
+        qDebug()<<m_applications.keys();
         snarlInterface = m_defautSnarlinetrface;
     }
     uint id = notification.id();
@@ -120,7 +192,7 @@ uint Snarl_Backend::notify(Notification notification){
             snarlInterface->AddAction(id,a->name.toUtf8().constData(),QString("@").append(QString::number(a->id)).toUtf8().constData());
         }
         //add ack stuff
-        if(!_away)
+        if(!m_away)
             activeNotifications[id] = notification;
     }else{
         //update message
@@ -137,70 +209,15 @@ uint Snarl_Backend::notify(Notification notification){
     return id;
 }
 
-void Snarl_Backend::closeNotification(Notification notification){
+void SnarlBackend::closeNotification(Notification notification){
     m_defautSnarlinetrface->Hide(notification.id());
     activeNotifications.remove(notification.id());
 }
 
 
-SnarlWidget::SnarlWidget(Snarl_Backend * snarl):
-    _snarl(snarl)
-{
-    SNARL_GLOBAL_MESSAGE = SnarlInterface::Broadcast();
-}
-
-bool SnarlWidget::winEvent(MSG * msg, long * result){
-    if(msg->message == SNARL_GLOBAL_MESSAGE){
-        int action = msg->wParam;
-        if(action == SnarlEnums::SnarlLaunched){
-            foreach(Application *a,_snarl->snore()->aplications()){
-                _snarl->registerApplication(a);
-            }
-        }
-
-    }else if(msg->message == SNORENOTIFIER_MESSAGE_ID){
-        int action = msg->wParam & 0xffff;
-        int data = (msg->wParam & 0xffffffff) >> 16;
-        uint notificationID = msg->lParam;
-        qDebug()<<"_snarl->activeNotifications"<<_snarl->activeNotifications.keys();
-        Notification notification(_snarl->activeNotifications[notificationID]);
-        qDebug()<<"recived a Snarl callback id:"<<notificationID<<"action:"<<action<<"data:"<<data;
-        NotificationEnums::CloseReasons::closeReasons reason = NotificationEnums::CloseReasons::NONE;
-        switch(action){
-        case SnarlEnums::CallbackInvoked:
-            reason = NotificationEnums::CloseReasons::CLOSED;
-            break;
-        case SnarlEnums::NotifyAction:
-            reason = NotificationEnums::CloseReasons::CLOSED;
-            notification.setActionInvoked(data);
-            _snarl->snore()->notificationActionInvoked(notification);
-            break;
-        case SnarlEnums::CallbackClosed:
-            reason = NotificationEnums::CloseReasons::DISMISSED;
-            break;
-        case SnarlEnums::CallbackTimedOut:
-            reason = NotificationEnums::CloseReasons::TIMED_OUT;
-            break;
-            //away stuff
-        case SnarlEnums::SnarlUserAway:
-            qDebug()<<"Snalr user has gone away";
-            _snarl->_away = true;
-            break;
-        case SnarlEnums::SnarlUserBack:
-            qDebug()<<"Snalr user has returned";
-            _snarl->activeNotifications.clear();
-            _snarl->_away = false;
-            break;
-        default:
-            qDebug()<<"Unknown snarl action found!!";
-            return false;
-        }
-        _snarl->snore()->closeNotification(notification,reason);
-        return true;
-    }
-    return false;
-}
 
 
 
-#include "snarl_backend.moc"
+
+
+#include "snarl.moc"

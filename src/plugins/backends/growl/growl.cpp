@@ -14,40 +14,40 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#include "growl_backend.h"
+#include "growl.h"
 #include "gntp.h"
 
-#include "core/snoreserver.h"
+#include "core/snore.h"
 
 
 #include <QtCore>
 
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(growl_backend,Growl_Backend)
+Q_EXPORT_PLUGIN2(growl,Growl)
 
-Growl_Backend *Growl_Backend::instance = NULL;
+Growl *Growl::s_instance = NULL;
 
-Growl_Backend::Growl_Backend():
+Growl::Growl():
     SnoreBackend("Growl"),
-    _id(0)
+    m_id(0)
 {
-    instance = this;
+    s_instance = this;
 }
 
-Growl_Backend::~Growl_Backend(){
-    if(snore()!=NULL){
-        foreach(Application *a,this->snore()->aplications().values()){
-            unregisterApplication(a);
+Growl::~Growl(){
+    if(snore() != NULL){
+        foreach(Application *a,snore()->aplications()){
+            this->unregisterApplication(a);
         }
     }
 }
 
-void Growl_Backend::registerApplication(Application *application){
+void Growl::registerApplication(Application *application){
     gntp *growl = new gntp(application->name().toUtf8().constData(),application->icon().localUrl().toUtf8().constData());
 
 
-    gntp::gntp_callback callback(&gntpCallback);
+    gntp::gntp_callback callback(&Growl::gntpCallback);
     growl->set_gntp_callback(callback);
     std::vector<std::string> alerts;
     foreach(Alert *a,application->alerts()){
@@ -59,41 +59,41 @@ void Growl_Backend::registerApplication(Application *application){
     }catch(const std::exception& e){
         qDebug()<<"Growl:"<<e.what();
     }
-    _applications.insert(application->name(),growl);
+    m_applications.insert(application->name(),growl);
 }
 
-void Growl_Backend::unregisterApplication(Application *application){
-    gntp *growl = _applications.take(application->name());
+void Growl::unregisterApplication(Application *application){
+    gntp *growl = m_applications.take(application->name());
     if(growl == NULL)
         return;
     delete growl;
 }
 
-uint Growl_Backend::notify(Notification notification){
-    gntp *growl = _applications.value(notification.application());
+uint Growl::notify(Notification notification){
+    gntp *growl = m_applications.value(notification.application());
     if(growl == NULL)
         return -1;
     //qDebug()<<"Notify Growl:"<<notification.application()<<Notification.toPlainText(notification.title());
     try{
-        growl->notify(notification.alert().toUtf8().constData(),_id,
+        growl->notify(notification.alert().toUtf8().constData(),m_id,
                       Notification::toPlainText(notification.title()).toUtf8().constData(),
                       Notification::toPlainText(notification.text()).toUtf8().constData(),
                       notification.icon().localUrl().isEmpty()?NULL:notification.icon().localUrl().toUtf8().constData(),NULL,"1");
-        activeNotifications.insert(_id,notification);
+        activeNotifications.insert(m_id,notification);
 
     }catch(const std::exception& e){
         qDebug()<<"Growl:"<<e.what();
     }
-    return _id++;
+    return m_id++;
 }
 
-void Growl_Backend::closeNotification(Notification notification){
+void Growl::closeNotification(Notification notification){
     Q_UNUSED(notification);
 }
 
-void Growl_Backend::gntpCallback(const int &id,const std::string &reason,const std::string &data){
+void Growl::gntpCallback(const int &id,const std::string &reason,const std::string &data){
     qDebug()<<"Growl Callback"<<id<<QString(reason.c_str())<<QString(data.c_str());
-    Notification n = instance->activeNotifications.take(id);
+    Notification n = s_instance->activeNotifications.take(id);
     NotificationEnums::CloseReasons::closeReasons r = NotificationEnums::CloseReasons::NONE;
     if(reason == "TIMEDOUT")
         r = NotificationEnums::CloseReasons::TIMED_OUT;
@@ -102,11 +102,11 @@ void Growl_Backend::gntpCallback(const int &id,const std::string &reason,const s
     else if(reason == "CLICK"){
         r = NotificationEnums::CloseReasons::CLOSED;
         n.setActionInvoked(QString(data.c_str()).toInt());
-        instance->snore()->notificationActionInvoked(n);
+        s_instance->snore()->notificationActionInvoked(n);
     }
-    instance->snore()->closeNotification(n,r);
+    s_instance->snore()->closeNotification(n,r);
 }
 
 
 
-#include "growl_backend.moc"
+#include "growl.moc"

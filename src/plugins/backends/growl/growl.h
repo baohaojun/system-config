@@ -14,36 +14,33 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#ifndef SNORENOTIFICATIONINSTANCE_H
-#define SNORENOTIFICATIONINSTANCE_H
+#ifndef GROWL_BACKEND_H
+#define GROWL_BACKEND_H
+#include "core/plugins/snorebackend.h"
 
-#include "snore_exports.h"
-#include "snoreserver.h"
-#include "application.h"
-#include "interface.h"
+#include <string>
 
-class SNORE_EXPORT  SnoreNotificationInstance:public Notification_Frontend
+class Growl:public Snore::SnoreBackend
 {
     Q_OBJECT
+    Q_INTERFACES(Snore::SnoreBackend)
 public:
-    SnoreNotificationInstance ( const QString &appname, SnoreServer *parent, const QString &icon="" );
-    ~SnoreNotificationInstance();
-    void addAlert ( const QString &name,const QString &title = 0, const QString &icon="" );
-    void registerWithBackends();
-    void unregisterWithBackends();
-	int notify ( const QString &alert,const QString &title,const QString &text,const QString &icon = 0,int timeout = 10, NotificationEnums::Prioritys::prioritys priority = NotificationEnums::Prioritys::NORMAL,const QList<Notification::Action*> *actions = NULL);
-    void actionInvoked ( Notification notification );
-    void notificationClosed ( Notification notification );
-
-signals:
-    void notificationActionInvoked ( const Notification &notification );
+    Growl();
+    ~Growl();
+    static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
 
 private:
-    SnoreNotificationInstance();
-    Application *_app;
-    SnoreServer *_snore;
+	//a static instance for the static callback methode
+    static Growl *s_instance;
+    uint m_id;
+    QHash<QString,class gntp*> m_applications;
 
-
+public slots:
+    void registerApplication(Snore::Application *application);
+    void unregisterApplication(Snore::Application *application);
+    uint notify(Snore::Notification notification);
+    void closeNotification(Snore::Notification notification);
 };
 
-#endif // SNORENOTIFICATIONINSTANCE_H
+
+#endif // GROWL_BACKEND_H

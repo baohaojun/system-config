@@ -1,7 +1,0 @@
-set( trayicon_SRC
-    trayiconnotifer.cpp
-    )
-automoc4_add_library(trayicon_backend MODULE  ${trayicon_SRC} )
-target_link_libraries(trayicon_backend snorecore ${QT_QTCORE_LIBRARY} )
-
-install(TARGETS trayicon_backend ${SNORE_BACKEND_INSTALL_PATH})

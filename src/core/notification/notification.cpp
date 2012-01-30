@@ -15,7 +15,7 @@
  ****************************************************************************************/
 
 #include "notification.h"
-#include "snoreserver.h"
+#include "snore.h"
 #include "notification/icon.h"
 #include "plugins/plugincontainer.h"
 

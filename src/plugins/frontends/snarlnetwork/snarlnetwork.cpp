@@ -15,7 +15,7 @@
  ****************************************************************************************/
 
 #include "snarlnetwork.h"
-#include "core/snoreserver.h"
+#include "core/snore.h"
 
 #include <QtCore>
 #include <QTcpServer>
@@ -28,7 +28,7 @@ Q_EXPORT_PLUGIN2(snalnetwork,SnarlNetworkFrontend)
 
 
 SnarlNetworkFrontend::SnarlNetworkFrontend():
-    SnoreFrontend("SnarlNetworkFrontend")
+    SnoreFrontend("SnarlNetwork")
 {
 
 }
@@ -36,7 +36,7 @@ SnarlNetworkFrontend::SnarlNetworkFrontend():
 SnarlNetworkFrontend::~SnarlNetworkFrontend(){
 }
 
-bool SnarlNetworkFrontend::init(SnoreServer *snore){
+bool SnarlNetworkFrontend::init(SnoreCore *snore){
     parser=new Parser(this);
     tcpServer=new QTcpServer(this);
     if(!tcpServer->listen(QHostAddress::Any,port)){

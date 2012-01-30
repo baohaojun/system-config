@@ -1,5 +1,5 @@
 #include "trayiconnotifer.h"
-#include "core/snoreserver.h"
+#include "core/snore.h"
 
 #include <QtCore>
 #include <QSystemTrayIcon>
@@ -8,7 +8,7 @@
 #include <QDebug>
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(trayicon_backend,TrayIconNotifer)
+Q_EXPORT_PLUGIN2(trayicon,TrayIconNotifer)
 
 TrayIconNotifer::TrayIconNotifer () :
     SnoreBackend ( "SystemTray" ),
@@ -18,12 +18,12 @@ TrayIconNotifer::TrayIconNotifer () :
 
 }
 
-bool TrayIconNotifer::init(SnoreServer *snore){
-     connect(m_trayIcon,SIGNAL(messageClicked()),this,SLOT(actionInvoked()));
-     m_trayIcon = snore->trayIcon();
-     if(m_trayIcon == NULL)
-         return false;
-     return SnoreBackend::init(snore);
+bool TrayIconNotifer::init(SnoreCore *snore){    
+    m_trayIcon = snore->trayIcon();
+    if(m_trayIcon == NULL)
+        return false;
+    connect(m_trayIcon,SIGNAL(messageClicked()),this,SLOT(actionInvoked()));
+    return SnoreBackend::init(snore);
 }
 
 void TrayIconNotifer::registerApplication ( Application *application )

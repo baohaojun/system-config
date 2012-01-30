@@ -25,7 +25,7 @@
 
 namespace Snore{
 class Application;
-class SnoreServer;
+class SnoreCore;
 class SnorePlugin;
 
 
@@ -36,7 +36,7 @@ class SNORE_EXPORT SnoreFrontend:public SnorePlugin
 public:
     SnoreFrontend ( const QString &name);
     virtual ~SnoreFrontend();
-    virtual bool init(SnoreServer *snore);
+    virtual bool init(SnoreCore *snore);
 
 public slots:
     virtual void actionInvoked( Snore::Notification notification )=0;

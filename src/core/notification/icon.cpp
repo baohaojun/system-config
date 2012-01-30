@@ -15,7 +15,7 @@
  ****************************************************************************************/
 
 #include "icon.h"
-#include "../snoreserver.h"
+#include "../snore.h"
 
 #include <QCryptographicHash>
 #include <QBuffer>
@@ -99,7 +99,7 @@ const QString &SnoreIcon::localUrl()const{
         if(hasedImages.contains(hash())){
             d->m_localFileName =  hasedImages[hash()];
         }else{
-            d->m_localFileName = SnoreServer::snoreTMP();
+            d->m_localFileName = SnoreCore::snoreTMP();
             d->m_localFileName  = d->m_localFileName .append("/").append(hash()).append(".png");
             hasedImages[hash()] = d->m_localFileName;
             d->m_img.save(d->m_localFileName ,"PNG");

@@ -17,7 +17,6 @@
 #ifndef NOTIFICATION_H
 #define NOTIFICATION_H
 #include "../snore_exports.h"
-#include "../application.h"
 #include "icon.h"
 
 #include <QVariant>
@@ -28,9 +27,9 @@ namespace NotificationEnums{
 
 namespace Prioritys{
 enum priority{
-    LOW=-1,
-    NORMAL,
-    HIGH
+    LOW = -1,
+    NORMAL = 0,
+    HIGH = +1
 };
 Q_DECLARE_FLAGS(prioritys, priority)
 Q_DECLARE_OPERATORS_FOR_FLAGS(prioritys)

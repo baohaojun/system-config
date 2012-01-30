@@ -18,6 +18,7 @@
 #define SNORESERVER_H
 
 #include "snore_exports.h"
+#include "application.h"
 #include "plugins/plugincontainer.h"
 #include "notification/notification.h"
 
@@ -27,7 +28,7 @@ class QSystemTrayIcon;
 class QDir;
 
 namespace Snore{
-class SNORE_EXPORT SnoreServer:public QObject
+class SNORE_EXPORT SnoreCore:public QObject
 {
     Q_OBJECT
 public:
@@ -37,7 +38,7 @@ public:
     static const QDir &pluginDir();
 
 public:
-    SnoreServer (QSystemTrayIcon *trayIcon=0 );
+    SnoreCore (QSystemTrayIcon *trayIcon=0 );
     void publicatePlugin ( PluginContainer::PluginTypes types );
 
 
@@ -79,11 +80,11 @@ private:
 
 
 signals:
-    void applicationInitialized ( Snore::Application* );
-    void applicationRemoved ( Snore::Application* );
-    void notify ( Snore::Notification noti );
+    void applicationInitialized( Snore::Application* );
+    void applicationRemoved( Snore::Application* );
+    void notify( Snore::Notification noti );
     void actionInvoked( Snore::Notification );
-    void closeNotify ( Snore::Notification );
+    void closeNotify( Snore::Notification );
 
 };
 

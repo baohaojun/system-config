@@ -15,7 +15,7 @@
  ****************************************************************************************/
 
 #include "snorefrontend.h"
-#include "../snoreserver.h"
+#include "../snore.h"
 
 #include <QTimer>
 #include <QPluginLoader>
@@ -35,11 +35,11 @@ SnoreFrontend::~SnoreFrontend()
     qDebug()<<"Deleting"<<name();
 }
 
-bool SnoreFrontend::init( SnoreServer *snore )
+bool SnoreFrontend::init( SnoreCore *snore )
 {
     if(!SnorePlugin::init(snore))
         return false;
-    connect( snore,SIGNAL ( closeNotify( Snore::Notification ) ),this,SLOT ( notificationClosed( Snore::Notification) ) );
+    connect( snore,SIGNAL ( closeNotify( SnoreCore::Notification ) ),this,SLOT ( notificationClosed( SnoreCore::Notification) ) );
     return true;
 }
 }

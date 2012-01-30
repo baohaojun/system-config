@@ -22,7 +22,7 @@
 #include <QFlag>
 
 namespace Snore{
-class SnoreServer;
+class SnoreCore;
 class SnorePlugin;
 class SnoreFrontend;
 class SnoreBackend;
@@ -45,14 +45,14 @@ public:
     const PluginContainer::PluginType type();
 
 
-    static Snore::PluginContainer::PluginType typeFromString(const QString &t);
+    static PluginContainer::PluginType typeFromString(const QString &t);
     static const QStringList &types();
 
 private:
     QPointer<SnorePlugin> m_instance;
     QString m_pluginFile;
     QString m_pluginName;
-    Snore::PluginContainer::PluginType m_pluginType;
+    PluginContainer::PluginType m_pluginType;
 };
 }
 

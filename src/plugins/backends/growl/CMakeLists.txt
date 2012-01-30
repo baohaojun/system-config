@@ -5,26 +5,26 @@ if( WITH_GROWL_BACKEND )
                      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
                 endif(CMAKE_COMPILER_IS_GNUCXX)
 		set( GROWL__SRC
-			growl_backend.cpp
+                        growl.cpp
 			)
 
-		automoc4_add_library(growl_backend MODULE  ${GROWL__SRC} )
-                target_link_libraries(growl_backend snorecore ${QT_QTCORE_LIBRARY} ${CRYPTOPP_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY})
+                automoc4_add_library(growl MODULE  ${GROWL__SRC} )
+                target_link_libraries(growl snorecore ${QT_QTCORE_LIBRARY} ${CRYPTOPP_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY})
 
                 if(MINGW)
                     #fiexes a multiple defenition error with static boost
-                    SET_TARGET_PROPERTIES(growl_backend PROPERTIES LINK_FLAGS -Wl,--allow-multiple-definition)
+                    SET_TARGET_PROPERTIES(growl PROPERTIES LINK_FLAGS -Wl,--allow-multiple-definition)
                 endif(MINGW)
 
                 if(WIN32)
-                    target_link_libraries(growl_backend wsock32 ws2_32)
+                    target_link_libraries(growl wsock32 ws2_32)
                 endif(WIN32)
 
                 if(UNIX)
-                    target_link_libraries(growl_backend pthread)
+                    target_link_libraries(growl pthread)
                 endif(UNIX)
 
-                install(TARGETS growl_backend ${SNORE_BACKEND_INSTALL_PATH})
+                install(TARGETS growl ${SNORE_BACKEND_INSTALL_PATH})
 	else(CRYPTOPP_LIBRARIES AND Boost_SYSTEM_LIBRARY)
 		if(NOT CRYPTOPP_LIBRARIES)
 			message(STATUS "Cant build the growl backend because the dependency Cryptopp is missing")

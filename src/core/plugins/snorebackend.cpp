@@ -15,7 +15,8 @@
  ****************************************************************************************/
 
 #include "snorebackend.h"
-#include "../snoreserver.h"
+#include "../snore.h"
+#include "../application.h"
 
 #include <QTimer>
 #include <QPluginLoader>
@@ -35,20 +36,20 @@ SnoreBackend::~SnoreBackend()
     qDebug()<<"Deleting"<<name();
 }
 
-bool SnoreBackend::init( SnoreServer *snore )
+
+bool SnoreBackend::init( SnoreCore *snore )
 {
     if(!SnorePlugin::init(snore))
         return false;
-    connect( snore,SIGNAL( closeNotify( Snore::Notification ) ),this,SLOT( closeNotification( Snore::Notification) ) );
-    connect( snore,SIGNAL( applicationInitialized( Snore::Application* ) ),this,SLOT( registerApplication( Snore::Application* ) ) );
-    connect( snore,SIGNAL( applicationRemoved( Snore::Application* ) ),this,SLOT( unregisterApplication( Snore::Application* ) ) );
+    connect( snore,SIGNAL( closeNotify( SnoreCore::Notification ) ),this,SLOT( closeNotification( SnoreCore::Notification) ) );
+    connect( snore,SIGNAL( applicationInitialized( SnoreCore::Application* ) ),this,SLOT( registerApplication( SnoreCore::Application* ) ) );
+    connect( snore,SIGNAL( applicationRemoved( SnoreCore::Application* ) ),this,SLOT( unregisterApplication( SnoreCore::Application* ) ) );
 
     foreach(Application *a,snore->aplications()){
         this->registerApplication(a);
     }
 
     return true;
-
 }
 
 SnoreSecondaryBackend::SnoreSecondaryBackend(const QString &name)
@@ -62,9 +63,9 @@ SnoreSecondaryBackend::~SnoreSecondaryBackend()
     qDebug()<<"Deleting"<<name();
 }
 
-bool SnoreSecondaryBackend::init(SnoreServer *snore)
+bool SnoreSecondaryBackend::init(SnoreCore *snore)
 {
-    connect( snore,SIGNAL( notify(Snore::Notification) ),this,SLOT( notify( Snore::Notification ) ) );
+    connect( snore,SIGNAL( notify(SnoreCore::Notification) ),this,SLOT( notify( SnoreCore::Notification ) ) );
     return SnoreBackend::init(snore);
 }
 

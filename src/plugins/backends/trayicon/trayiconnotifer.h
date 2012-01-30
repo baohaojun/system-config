@@ -6,7 +6,7 @@
 #include <QTime>
 
 namespace Snore{
-    class SnoreServer;
+    class SnoreCore;
 }
 
 class QSystemTrayIcon;
@@ -17,7 +17,7 @@ class TrayIconNotifer:public Snore::SnoreBackend
     Q_INTERFACES(Snore::SnoreBackend)
 public:
     TrayIconNotifer ();
-    virtual bool init(Snore::SnoreServer *snore);
+    virtual bool init(Snore::SnoreCore *snore);
     bool isPrimaryNotificationBackend();
 
 public slots:

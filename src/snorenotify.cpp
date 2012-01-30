@@ -16,7 +16,7 @@
 
 #include "snorenotify.h"
 #include "trayicon.h"
-#include "core/snoreserver.h"
+#include "core/snore.h"
 
 #include <QDir>
 #include <QFile>
@@ -35,7 +35,7 @@ SnoreNotify::SnoreNotify():
     m_settings("TheOneRing","SnoreNotify")
 {
     m_trayIcon = new TrayIcon();
-    m_snore = new Snore::SnoreServer(m_trayIcon->trayIcon());
+    m_snore = new SnoreCore(m_trayIcon->trayIcon());
     m_snore->publicatePlugin(PluginContainer::ALL);
     load();
     m_trayIcon->initConextMenu(m_snore);

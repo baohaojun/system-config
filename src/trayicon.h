@@ -20,7 +20,7 @@
 #include <QtCore>
 
 namespace Snore{
-    class SnoreServer;
+    class SnoreCore;
 }
 
 class TrayIcon:public QObject
@@ -28,7 +28,7 @@ class TrayIcon:public QObject
     Q_OBJECT
 public:
     TrayIcon();
-    void initConextMenu(Snore::SnoreServer *snore);
+    void initConextMenu(Snore::SnoreCore *snore);
     void hide();
     class QSystemTrayIcon* trayIcon();
 
@@ -36,7 +36,7 @@ private:
     class QSystemTrayIcon *_trayIcon;
     class QMenu *_trayMenu;
     class QList<class QAction*> _backendActions;
-    class Snore::SnoreServer *_snore;
+    class Snore::SnoreCore *_snore;
 
 
 public slots:

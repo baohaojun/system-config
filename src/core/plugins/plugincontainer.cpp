@@ -15,7 +15,7 @@
  ****************************************************************************************/
 
 
-#include "../snoreserver.h"
+#include "../snore.h"
 #include "plugins.h"
 #include "snorebackend.h"
 #include "snorefrontend.h"
@@ -40,7 +40,7 @@ PluginContainer::PluginContainer(QString fileName, QString pluginName, PluginCon
 SnorePlugin *PluginContainer::load(){
     if(m_instance != NULL)
         return m_instance;
-    QPluginLoader loader ( SnoreServer::pluginDir().absoluteFilePath(file()));
+    QPluginLoader loader ( SnoreCore::pluginDir().absoluteFilePath(file()));
     qDebug()<<"Trying to load"<<file();
     if ( !loader.load())
     {

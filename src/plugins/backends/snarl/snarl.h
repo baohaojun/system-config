@@ -19,29 +19,22 @@
 #include "core/plugins/snorebackend.h"
 #include "SnarlInterface.h"
 
-#include <QWidget>
 
-namespace Snore{
-    class SnoreServer;
-}
-
-class SnarlWidget;
-
-class Snarl_Backend:public Snore::SnoreBackend
+class SnarlBackend:public Snore::SnoreBackend
 {
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreBackend)
-    friend class SnarlWidget;
 public:
-    Snarl_Backend();
-    ~Snarl_Backend();
-    virtual bool init(Snore::SnoreServer *snore);
+    SnarlBackend();
+    ~SnarlBackend();
+    virtual bool init(Snore::SnoreCore *snore);
 
 private:
-    SnarlWidget* winIDWidget;
-    QHash<QString,Snarl::V42::SnarlInterface*> _applications;
+    class SnarlWidget;
+    SnarlBackend::SnarlWidget* m_eventLoop;
+    QHash<QString,Snarl::V42::SnarlInterface*> m_applications;
     Snarl::V42::SnarlInterface* m_defautSnarlinetrface;
-    bool _away;
+    bool m_away;
 
 public slots:
     void registerApplication(Snore::Application *application);
@@ -51,18 +44,6 @@ public slots:
 
 };
 
-class SnarlWidget:public QWidget
-{
-    Q_OBJECT
-public:
-    SnarlWidget(Snarl_Backend* snarl);
-    bool winEvent( MSG * message, long * result );
-
-private:
-    uint SNARL_GLOBAL_MESSAGE;
-    Snarl_Backend* _snarl;
-
-};
 
 
 

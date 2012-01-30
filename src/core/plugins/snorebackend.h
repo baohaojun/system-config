@@ -25,7 +25,7 @@
 #include <QtCore>
 
 namespace Snore{
-class SnoreServer;
+class SnoreCore;
 
 class SNORE_EXPORT SnoreBackend:public SnorePlugin
 {
@@ -34,14 +34,14 @@ class SNORE_EXPORT SnoreBackend:public SnorePlugin
 public:
     SnoreBackend ( QString name );
     virtual ~SnoreBackend();
-    virtual bool init(SnoreServer *snore);
+    virtual bool init(SnoreCore *snore);
 
 
 
 public slots:
-    virtual void registerApplication ( Snore::Application *application ) =0;
-    virtual void unregisterApplication ( Snore::Application *application ) =0;
-    virtual uint notify ( Snore::Notification notification ) =0;
+    virtual void registerApplication ( Snore::Application *application ) = 0;
+    virtual void unregisterApplication ( Snore::Application *application ) = 0;
+    virtual uint notify ( Snore::Notification notification ) = 0;
     virtual void closeNotification ( Snore::Notification notification ) =0;
 
 
@@ -53,7 +53,7 @@ Q_DECLARE_INTERFACE ( Snore::SnoreBackend,
                       "org.Snore.NotificationBackend/1.0" )
 
 namespace Snore{
-class SnoreServer;
+class SnoreCore;
 
 class SNORE_EXPORT SnoreSecondaryBackend:public SnoreBackend
 {
@@ -62,7 +62,7 @@ class SNORE_EXPORT SnoreSecondaryBackend:public SnoreBackend
 public:
     SnoreSecondaryBackend(const  QString &name);
     virtual ~SnoreSecondaryBackend();
-    virtual bool init(SnoreServer *snore);
+    virtual bool init(SnoreCore *snore);
 
 };
 

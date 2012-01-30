@@ -14,7 +14,7 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#include "../snoreserver.h"
+#include "../snore.h"
 #include "snorebackend.h"
 #include "snorefrontend.h"
 
@@ -35,7 +35,7 @@ SnorePlugin::~SnorePlugin()
     qDebug()<<m_name<<this<<"deleted";
 }
 
-bool SnorePlugin::init( SnoreServer *snore )
+bool SnorePlugin::init( SnoreCore *snore )
 {
     qDebug()<<"Initialize"<<m_name<<this<<snore;
     this->m_snore = snore;
@@ -47,7 +47,7 @@ bool SnorePlugin::isInitialized(){
     return m_initialized;
 }
 
-SnoreServer* SnorePlugin::snore()
+SnoreCore* SnorePlugin::snore()
 {
     return m_snore.data();
 }

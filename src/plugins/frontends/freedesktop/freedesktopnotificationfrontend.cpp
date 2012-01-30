@@ -17,8 +17,8 @@
 #include "freedesktopnotificationfrontend.h"
 #include "notificationsadaptor.h"
 
-#include "plugins/freedesktopnotification/fredesktopnotification.h"
-#include "core/snoreserver.h"
+#include "plugins/backends/freedesktop/fredesktopnotification.h"
+#include "core/snore.h"
 
 #include <QtCore>
 #include <QtDBus>
@@ -32,7 +32,7 @@ using namespace Snore;
 Q_EXPORT_PLUGIN2(freedesktop_frontend,FreedesktopNotification_Frontend)
 
 FreedesktopNotification_Frontend::FreedesktopNotification_Frontend():
-    SnoreFrontend("FreedesktopNotification_Frontend")
+    SnoreFrontend("Freedesktop")
 {
 
 }
@@ -42,7 +42,7 @@ FreedesktopNotification_Frontend::~FreedesktopNotification_Frontend(){
     dbus.unregisterService( "org.freedesktop.Notifications" );
 }
 
-bool FreedesktopNotification_Frontend::init(SnoreServer *snore){
+bool FreedesktopNotification_Frontend::init(SnoreCore *snore){
     new  NotificationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService( "org.freedesktop.Notifications" );

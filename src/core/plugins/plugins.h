@@ -18,14 +18,13 @@
 #define SNORE_PLUGINS_H
 #include "../snore_exports.h"
 #include "../notification/notification.h"
-#include "plugincontainer.h"
 
 #include <QPointer>
 #include <QFlag>
 
 namespace Snore{
 class Application;
-class SnoreServer;
+class SnoreCore;
 
 
 class SNORE_EXPORT SnorePlugin:public QObject
@@ -34,9 +33,9 @@ class SNORE_EXPORT SnorePlugin:public QObject
 public:
     SnorePlugin ( QString name);
     virtual ~SnorePlugin();
-    virtual bool init( SnoreServer* snore );
+    virtual bool init( SnoreCore* snore );
     bool isInitialized();
-    SnoreServer* snore();
+    SnoreCore* snore();
     const QString &name() const;
 
 protected:
@@ -49,7 +48,7 @@ private:
     SnorePlugin() {}
     QString m_name;
     bool m_initialized;
-    QPointer<SnoreServer> m_snore;
+    QPointer<SnoreCore> m_snore;
     QHash<uint,QTimer*> m_timeouts;
     QList<uint> m_timeout_order;
 

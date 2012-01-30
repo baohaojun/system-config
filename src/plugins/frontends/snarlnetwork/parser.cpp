@@ -17,7 +17,7 @@
 #include "parser.h"
 #include "snarlnetwork.h"
 
-#include "core/snoreserver.h"
+#include "core/snore.h"
 #include "core/notification/notification.h"
 
 

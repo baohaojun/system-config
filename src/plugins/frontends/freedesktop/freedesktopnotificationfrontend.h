@@ -14,32 +14,32 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#ifndef GROWL_BACKEND_H
-#define GROWL_BACKEND_H
-#include "core/plugins/snorebackend.h"
+#ifndef FREEDESKTOPNOTIFICATION_FRONTEND_H
+#define FREEDESKTOPNOTIFICATION_FRONTEND_H
+#include "core/plugins/snorefrontend.h"
+#include <QtDBus>
 
-#include <string>
-
-class Growl_Backend:public Snore::SnoreBackend
-{
+class FreedesktopNotification_Frontend:public Snore::SnoreFrontend{
     Q_OBJECT
-    Q_INTERFACES(Snore::SnoreBackend)
+    Q_INTERFACES(Snore::SnoreFrontend)
 public:
-    Growl_Backend();
-    ~Growl_Backend();
-    static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
-private:
-	//a static instance for the static callback methode
-	static Growl_Backend *instance;
-    uint _id;
-    QHash<QString,class gntp*> _applications;
+    FreedesktopNotification_Frontend();
+    ~FreedesktopNotification_Frontend();
+    virtual bool init(Snore::SnoreCore *snore);
 
-public slots:
-    void registerApplication(Snore::Application *application);
-    void unregisterApplication(Snore::Application *application);
-    uint notify(Snore::Notification notification);
-    void closeNotification(Snore::Notification notification);
+    void actionInvoked(Snore::Notification notification);
+    void notificationClosed(Snore::Notification notification);
+    uint Notify(const QString &app_name, uint replaces_id, const QString &app_icon, const QString &summary, const QString &body, const QStringList &actions, const QVariantMap &hints, int timeout);
+    void CloseNotification( uint id );
+
+    QStringList GetCapabilities();
+    QString GetServerInformation(QString& vendor, QString& version, QString& specVersion);	
+
+signals:
+    void NotificationClosed( uint id, uint reason );
+    void ActionInvoked( uint id, const QString& actionKey );
+
+
 };
 
-
-#endif // GROWL_BACKEND_H
+#endif//FREEDESKTOPNOTIFICATION_FRONTEND_H

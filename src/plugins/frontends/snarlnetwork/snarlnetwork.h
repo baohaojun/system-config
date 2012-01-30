@@ -23,7 +23,7 @@
 
 namespace Snore{
     class Notification;
-    class SnoreServer;
+    class SnoreCore;
 }
 
 struct SnarlNotification{
@@ -45,7 +45,7 @@ public:
 public:
     SnarlNetworkFrontend();
     ~SnarlNetworkFrontend();
-    virtual bool init(Snore::SnoreServer *snore);
+    virtual bool init(Snore::SnoreCore *snore);
     void actionInvoked(Snore::Notification notification);
     void notificationClosed(Snore::Notification notification);
 

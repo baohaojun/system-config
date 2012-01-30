@@ -15,7 +15,7 @@
  ****************************************************************************************/
 
 #include "trayicon.h"
-#include "core/snoreserver.h"
+#include "core/snore.h"
 
 #include <QSystemTrayIcon>
 #include <QMenu>
@@ -28,7 +28,7 @@ TrayIcon::TrayIcon()
     _trayIcon = new QSystemTrayIcon(QIcon(":/root/snore.png"));
 }
 
-void TrayIcon::initConextMenu(SnoreServer *snore){
+void TrayIcon::initConextMenu(SnoreCore *snore){
     _snore = snore;
     _trayIcon->setVisible(true);
 
