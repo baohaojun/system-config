@@ -46,3 +46,25 @@ see if he agrees.
   1. Test gpio is not a long term solution
 - To discuss how the factory test station status is saved.
 * TODO 把linux console下的键盘大写键与escape键互换一下			 :pe:
+
+* Things done on 2012-01-30
+
+** Work on org-jira, fixed priority required when creating issue
+
+** Work on Network Manager under sawfish
+
+- Will not allow delete network profile, while under gnome, a auth
+  dialog popup asking for root password, and can go on to delete/add
+  network profile.
+
+- This is fixed by starting policykit after diff with gnome session
+  processes. More may need be fixed.
+
+- Started gnome-keyring-daemen in ~/.xprofile. GDM3 will source this
+  file.
+
+- Will not be able to save after you edit a profile, must delete and
+  then add and get it right when adding. It is different if you run
+  nm-applet as root; in that case it can be saved.
+
+** Work on RNDIS XP driver, turns out only need a .inf file.

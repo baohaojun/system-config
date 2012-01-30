@@ -2088,4 +2088,9 @@ criteria can be provided via the optional match-string argument "
     (kill-region (point-min) (point-max))))
 
 (setq twittering-use-master-password t)
+(defun insert-today ()
+  (interactive)
+  (insert (shell-command-to-string "today")))
+
+(global-set-key [(meta shift ?d)] 'insert-today)
 (server-start)
