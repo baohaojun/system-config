@@ -20,6 +20,7 @@ export HISTFILESIZE=100000
 
 export VC_BUILD_CONFIG=release
 . ~/.bashrc-public
+. ~/.bash_netcompletion
 alias of=cygstart
 alias ps='ps aux -W'
 alias dict='dict -v 2>/dev/null'

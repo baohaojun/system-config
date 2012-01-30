@@ -36,5 +36,8 @@ function renew-xauth() {
 }
 
 function rdesktop() {
-    command rdesktop -K -a 24 -g $(xrandr |grep '\*'|pn 1) $1 -u ${2:-$USER} -p ${3:-123456}
+    host=$1
+    user=${2:-$USER}
+    pass=$(get-authinfo $host $user rdesktop)
+    command rdesktop -K -a 24 -g $(xrandr |grep '\*'|pn 1) $host -u $user -p $pass
 }

@@ -99,8 +99,8 @@
 (define-minor-mode sdim-minor-mode
   "Toggle sdim-minor mode.
 With no argument, the mode is toggled on/off.
-Non-zero argument turns mode on.
-Zero argument turns mode off.
+Non-nil argument turns mode on.
+Nil argument turns mode off.
 
 Commands:
 \\{sdim-minor-entry-mode-map}
@@ -167,7 +167,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
   (mapc 'make-local-variable sdim-local-variable-list)
   (sdim-connect-to-server)
 
-  (sdim-minor-mode 1)
+  (sdim-minor-mode t)
   (setq input-method-function 'sdim-input-method)
   (setq inactivate-current-input-method-function 'sdim-inactivate)
   ;; If we are in minibuffer, turn off the current input method
@@ -177,7 +177,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
 
 (defun sdim-inactivate ()
   (interactive)
-  (sdim-minor-mode 0)
+  (sdim-minor-mode nil)
   (mapc 'kill-local-variable sdim-local-variable-list))
 
 ;;;_ , Core function of input method (stole from quail)

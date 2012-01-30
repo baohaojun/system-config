@@ -37,10 +37,10 @@ _repo-switch() {
         -u)
             br_list=$(
                 (
-                    echo git://android-x86.git.sf.net/gitroot/android-x86/manifest.git
-                    echo git://nv-tegra.nvidia.com/android/manifest.git
-                    echo https://android.googlesource.com/platform/manifest
-                    echo git@www.rayzertrack.com:ggl/pxa935/platform/manifest
+                    echo git://android-x86.git.sf.net/gitroot/android-x86/manifest.git;
+                    echo git://nv-tegra.nvidia.com/android/manifest.git;
+                    echo git://android.git.kernel.org/platform/manifest.git;
+                    echo git@www.rayzertrack.com:ggl/pxa935/platform/manifest;
                     echo git@www.rayzertrack.com:nv/android/manifest
 		    echo file:///android/manifest.git
                     cat ~/.remotes 2>/dev/null

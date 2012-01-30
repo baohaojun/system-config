@@ -1,0 +1,2 @@
+#!/bin/bash
+exec xfce4-panel --disable-wm-check

@@ -9,4 +9,4 @@ else
 fi
 
 section=${3:-main}
-wget -N http://cn.archive.ubuntu.com/${distr}/dists/${release}/${section}/source/Sources.bz2 -O Sources.$distr.$release.$section.bz2
+wget -N http://cn.archive.ubuntu.com/${distr}/dists/${release}/${section}/source/Sources.gz -O Sources.$distr.$release.$section.gz
