@@ -45,4 +45,12 @@ while true; do
     sleep 2; 
 done
 
-
+# for x in /etc/xdg/autostart/*; do
+#     (
+# 	$(cat "$x"|perl -ne '
+# if (m/^\s*Exec\s*=\s*(.*)/) {
+#     print $1;
+# }'
+# 	)&
+#     )
+# done

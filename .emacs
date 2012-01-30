@@ -1431,16 +1431,25 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (let ((start-point (point))
 	(end-point (point)))
     (let* ((col-start-indent (current-column))
+	   (compare-to-prev-lines (if (> n-prev 0)
+				      t
+				    nil))
+	   (n-prev (if (> n-prev 0)
+		       n-prev
+		     (- n-prev)))
 	   (col-end-indent (save-excursion
-			     (or (search-forward-regexp "\\S " (line-end-position) t)
+			     (or (looking-at "\\S ")
+				 (when (search-forward-regexp "\\S " (line-end-position) t)
+				   (backward-char) 
+				   t)
 				 (goto-char (line-end-position)))
 			     (setq end-point (point))
 			     (current-column)))
 	   (col-indent-to (save-excursion
 			    (while (> n-prev 0)
-			      (forward-line -1)
-			      (goto-char (line-end-position))
-			      (search-backward-regexp "\\S ")
+			      (forward-line (if compare-to-prev-lines -1 1))
+			      (goto-char (if compare-to-prev-lines (line-end-position) (line-beginning-position)))
+			      (apply (if compare-to-prev-lines 'search-backward-regexp 'search-forward-regexp) (list "\\S "))
 			      (setq n-prev (1- n-prev)))
 			    (move-to-column col-start-indent)
 			    (when (looking-at "\\S ")
@@ -1455,9 +1464,9 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive "p")
   (indent-same-space-as-prev-line n-prev t))
 
-(global-set-key [(shift ? )] 'indent-same-space-as-prev-line)
+(global-set-key [(meta shift ? )] 'indent-same-space-as-prev-line)
 
-(global-set-key (kbd "S-<backspace>") 'back-to-indent-same-space-as-prev-line)
+(define-key esc-map [(shift backspace)] 'back-to-indent-same-space-as-prev-line)
               
 (defun save-all-buffers-no-check-modified ()
   (interactive)

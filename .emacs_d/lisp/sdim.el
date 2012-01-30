@@ -53,7 +53,7 @@
   '(sdim-translating
     input-method-function
     inactivate-current-input-method-function)
-  "A list of buffer local variable")
+  "A list of buffer local variable for the SDIM input method")
 
 (defvar sdim-ime-connection nil "connection to the ime server, normally localhost:12345")
 
@@ -79,6 +79,41 @@
               sdim-server-answer (substring sdim-server-answer 0 (match-end 0)))
         (sdim-got-ime-answer answer))))
 
+
+(defun sdim-minor-mode-got-key ()
+  (interactive)
+  (sdim-input-method last-command-event))
+
+(defvar sdim-minor-mode-map
+  (let* ((tmp-map (make-sparse-keymap))
+	(min-key 32)
+	(max-key 126)
+	(key min-key))
+    (while (<= key max-key)
+      (define-key tmp-map (make-vector 1 key) 'sdim-minor-mode-got-key)
+      (setq key (1+ key)))
+    tmp-map))
+(defvar sdim-minor-mode-hook nil
+  "Hook to run upon entry into sdim minor mode.")
+
+(define-minor-mode sdim-minor-mode
+  "Toggle sdim-minor mode.
+With no argument, the mode is toggled on/off.
+Non-nil argument turns mode on.
+Nil argument turns mode off.
+
+Commands:
+\\{sdim-minor-entry-mode-map}
+
+Entry to this mode calls the value of `sdim-minor-mode-hook'."
+
+  :init-value nil
+  :lighter " sdim"
+  :group 'sdim-minor
+  :keymap sdim-minor-mode-map
+
+  (if sdim-minor-mode
+      (run-mode-hooks 'sdim-minor-mode-hook)))
 
 (defun sdim-got-ime-answer (answer)
   (let ((answer (split-string answer "\n" t)))
@@ -132,6 +167,7 @@
   (mapc 'make-local-variable sdim-local-variable-list)
   (sdim-connect-to-server)
 
+  (sdim-minor-mode t)
   (setq input-method-function 'sdim-input-method)
   (setq inactivate-current-input-method-function 'sdim-inactivate)
   ;; If we are in minibuffer, turn off the current input method
@@ -141,12 +177,8 @@
 
 (defun sdim-inactivate ()
   (interactive)
+  (sdim-minor-mode nil)
   (mapc 'kill-local-variable sdim-local-variable-list))
-
-(defun sdim-translate (char)
-  (if (functionp sdim-translate-function)
-      (funcall sdim-translate-function char)
-    (char-to-string char)))
 
 ;;;_ , Core function of input method (stole from quail)
 (defun sdim-exit-from-minibuffer ()
@@ -186,6 +218,7 @@
     (error "Can't input characters in current unibyte buffer"))
   (sdim-delete-region)
   (when (not (string-equal "" sdim-commit-str))
+    (setq sdim-modified-p t)
     (let ((inhibit-modification-hooks nil)
           (repeat 1))
       (if current-prefix-arg
@@ -224,9 +257,8 @@
         
         
               
-  (when t
-    (let ((buffer-undo-list t))
-      (insert sdim-comp-str))
+  (let ((buffer-undo-list t))
+    (insert sdim-comp-str)
     (move-overlay sdim-overlay (overlay-start sdim-overlay) (point)))
   (when (and (not input-method-use-echo-area)
              (null unread-command-events)
@@ -242,6 +274,7 @@
         (message "%s" sdim-cands-str)))))
 
 
+(defvar sdim-modified-p nil)
 (defun sdim-input-method (key)
   (if (or buffer-read-only
           overriding-terminal-local-map
@@ -250,15 +283,15 @@
         (message "key not translated: %s" key)
         (list key))
     (sdim-setup-overlays)
-    (let ((modified-p (buffer-modified-p))
-          (inhibit-modification-hooks t)
+    (let ((inhibit-modification-hooks t)
           (unwind-indicator nil))
+      (setq sdim-modified-p (buffer-modified-p))
       (unwind-protect
           (sdim-start-translation key)
         (unless unwind-indicator
           (message "sdim translation failed"))
         (sdim-delete-overlays)
-        (set-buffer-modified-p modified-p)
+        (set-buffer-modified-p sdim-modified-p)
         ;; Run this hook only when the current input method doesn't
         ;; require conversion. When conversion is required, the
         ;; conversion function should run this hook at a proper
@@ -301,8 +334,7 @@
         "unknown")))))      
 
 (defun sdim-start-translation (key)
-  "Start translation of the typed character KEY by the current Quail package.
-Return the input string."
+  "Start translation of the typed character KEY."
   ;; Check the possibility of translating KEY.
   ;; If KEY is nil, we can anyway start translation.
   (if (or (integerp key) (null key))
@@ -310,28 +342,28 @@ Return the input string."
       (let* ((echo-keystrokes 0)
              (help-char nil)
              (overriding-terminal-local-map sdim-mode-map)
-             (generated-events nil)
-             (input-method-function nil)
-             (modified-p (buffer-modified-p))
              last-command-event last-command this-command)
-        (setq sdim-translating t)
 
+        (setq sdim-translating t)
         (while sdim-translating
 
-          (set-buffer-modified-p modified-p)
           (let* ((prompt  (if input-method-use-echo-area
-                             (format "%s %s"
-                                     (or input-method-previous-message "")
-                                     sdim-cands-str)))
+			      (format "%s %s"
+				      (or input-method-previous-message "")
+				      sdim-cands-str)))
                  (keyseq (if key 
                              (prog1 (vector key) (setq key nil))
-                           (read-key-sequence-vector prompt)))
+			   (prog2
+			       (setq input-method-function nil)
+			       (read-key-sequence-vector prompt)
+			     (setq input-method-function 'sdim-input-method))))
                  (keyed-str (format "keyed %s %s\n" 
                                     (sdim-key-modifier (aref keyseq 0))
                                     (sdim-key-base (aref keyseq 0)))))
             (setq sdim-answer-ready nil sdim-server-answer "")
             (process-send-string sdim-ime-connection keyed-str)
             (while (not sdim-answer-ready)
-              (accept-process-output sdim-ime-connection))
-            (setq unwind-indicator t))))))
+	      (let ((input-method-function 'sdim-input-method))
+		(accept-process-output sdim-ime-connection nil nil 1)))))
+            (setq unwind-indicator t))))
 
