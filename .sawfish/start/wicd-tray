@@ -1,2 +1,3 @@
 #!/bin/bash
+exec wicd-client --tray
 
