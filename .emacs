@@ -47,13 +47,13 @@
 
 
   (set-fontset-font (frame-parameter nil 'font)
-		    'han (font-spec :family "Simsun" :size 16))
+		    'han (font-spec :family "Simsun" :size 15))
   (set-fontset-font (frame-parameter nil 'font)
-		    'symbol (font-spec :family "Simsun" :size 16))
+		    'symbol (font-spec :family "Simsun" :size 15))
   (set-fontset-font (frame-parameter nil 'font)
-		    'cjk-misc (font-spec :family "Simsun" :size 16))
+		    'cjk-misc (font-spec :family "Simsun" :size 15))
   (set-fontset-font (frame-parameter nil 'font)
-		    'bopomofo (font-spec :family "Simsun" :size 16)))
+		    'bopomofo (font-spec :family "Simsun" :size 15)))
 
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 (require 'weblogger)
@@ -2086,4 +2086,5 @@ criteria can be provided via the optional match-string argument "
     (insert str)
     (kill-region (point-min) (point-max))))
 
+(setq twittering-use-master-password t)
 (server-start)
