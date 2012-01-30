@@ -1,7 +1,7 @@
 #ifndef TRAYICONNOTIFER_H
 #define TRAYICONNOTIFER_H
 
-#include "core/interface.h"
+#include "core/plugins/snorebackend.h"
 
 #include <QTime>
 
@@ -11,10 +11,10 @@ namespace Snore{
 
 class QSystemTrayIcon;
 
-class TrayIconNotifer:public Snore::Notification_Backend
+class TrayIconNotifer:public Snore::SnoreBackend
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::Notification_Backend)
+    Q_INTERFACES(Snore::SnoreBackend)
 public:
     TrayIconNotifer ();
     virtual bool init(Snore::SnoreServer *snore);

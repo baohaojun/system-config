@@ -79,8 +79,8 @@ public:
     void setActionInvoked ( Action *action );
     void setActionInvoked ( const int &actionID);
     const Action* actionInvoked() const;
-    void setSource(class Notification_Frontend *source)const;
-    class Notification_Frontend *source() const;
+    void setSource(class SnoreFrontend *source)const;
+    class SnoreFrontend *source() const;
     const QString &application() const;
     const QString &title() const;
     const QString &text() const;

@@ -28,7 +28,7 @@ Q_EXPORT_PLUGIN2(snalnetwork,SnarlNetworkFrontend)
 
 
 SnarlNetworkFrontend::SnarlNetworkFrontend():
-    Notification_Frontend("SnarlNetworkFrontend")
+    SnoreFrontend("SnarlNetworkFrontend")
 {
 
 }
@@ -46,7 +46,7 @@ bool SnarlNetworkFrontend::init(SnoreServer *snore){
         connect(tcpServer, SIGNAL(newConnection()), this, SLOT(handleConnection()));
         std::cout<<"The Snarl Network Protokoll is developed for Snarl <http://www.fullphat.net/>"<<std::endl;
     }
-    return Notification_Frontend::init(snore);
+    return SnoreFrontend::init(snore);
 }
 
 

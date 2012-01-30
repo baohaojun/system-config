@@ -14,32 +14,61 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#ifndef GROWL_BACKEND_H
-#define GROWL_BACKEND_H
-#include "core/plugins/snorebackend.h"
+#ifndef SNORE_BACKEND_H
+#define SNORE_BACKEND_H
+#include "../snore_exports.h"
+#include "../notification/notification.h"
+#include "plugins.h"
 
-#include <string>
+#include <QPointer>
+#include <QFlag>
+#include <QtCore>
 
-class Growl_Backend:public Snore::SnoreBackend
+namespace Snore{
+class SnoreServer;
+
+class SNORE_EXPORT SnoreBackend:public SnorePlugin
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnoreBackend)
+    Q_INTERFACES(Snore::SnorePlugin)
 public:
-    Growl_Backend();
-    ~Growl_Backend();
-    static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
-private:
-	//a static instance for the static callback methode
-	static Growl_Backend *instance;
-    uint _id;
-    QHash<QString,class gntp*> _applications;
+    SnoreBackend ( QString name );
+    virtual ~SnoreBackend();
+    virtual bool init(SnoreServer *snore);
+
+
 
 public slots:
-    void registerApplication(Snore::Application *application);
-    void unregisterApplication(Snore::Application *application);
-    uint notify(Snore::Notification notification);
-    void closeNotification(Snore::Notification notification);
+    virtual void registerApplication ( Snore::Application *application ) =0;
+    virtual void unregisterApplication ( Snore::Application *application ) =0;
+    virtual uint notify ( Snore::Notification notification ) =0;
+    virtual void closeNotification ( Snore::Notification notification ) =0;
+
+
+
 };
 
+}
+Q_DECLARE_INTERFACE ( Snore::SnoreBackend,
+                      "org.Snore.NotificationBackend/1.0" )
 
-#endif // GROWL_BACKEND_H
+namespace Snore{
+class SnoreServer;
+
+class SNORE_EXPORT SnoreSecondaryBackend:public SnoreBackend
+{
+    Q_OBJECT
+    Q_INTERFACES(Snore::SnorePlugin Snore::SnoreBackend)
+public:
+    SnoreSecondaryBackend(const  QString &name);
+    virtual ~SnoreSecondaryBackend();
+    virtual bool init(SnoreServer *snore);
+
+};
+
+}
+
+Q_DECLARE_INTERFACE ( Snore::SnoreSecondaryBackend,
+                      "org.Snore.SecondaryNotificationBackend/1.0" )
+
+#endif//SNORE_BACKEND_H

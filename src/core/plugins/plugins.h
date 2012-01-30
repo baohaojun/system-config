@@ -14,32 +14,53 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#ifndef GROWL_BACKEND_H
-#define GROWL_BACKEND_H
-#include "core/plugins/snorebackend.h"
+#ifndef SNORE_PLUGINS_H
+#define SNORE_PLUGINS_H
+#include "../snore_exports.h"
+#include "../notification/notification.h"
+#include "plugincontainer.h"
 
-#include <string>
+#include <QPointer>
+#include <QFlag>
 
-class Growl_Backend:public Snore::SnoreBackend
+namespace Snore{
+class Application;
+class SnoreServer;
+
+
+class SNORE_EXPORT SnorePlugin:public QObject
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::SnoreBackend)
 public:
-    Growl_Backend();
-    ~Growl_Backend();
-    static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
-private:
-	//a static instance for the static callback methode
-	static Growl_Backend *instance;
-    uint _id;
-    QHash<QString,class gntp*> _applications;
+    SnorePlugin ( QString name);
+    virtual ~SnorePlugin();
+    virtual bool init( SnoreServer* snore );
+    bool isInitialized();
+    SnoreServer* snore();
+    const QString &name() const;
 
-public slots:
-    void registerApplication(Snore::Application *application);
-    void unregisterApplication(Snore::Application *application);
-    uint notify(Snore::Notification notification);
-    void closeNotification(Snore::Notification notification);
+protected:
+    QHash<uint,Notification> activeNotifications;
+    void startTimeout(uint id,int timeout);
+private slots:
+    void notificationTimedOut();
+
+private:
+    SnorePlugin() {}
+    QString m_name;
+    bool m_initialized;
+    QPointer<SnoreServer> m_snore;
+    QHash<uint,QTimer*> m_timeouts;
+    QList<uint> m_timeout_order;
+
+
 };
 
+}
+Q_DECLARE_INTERFACE ( Snore::SnorePlugin,
+                      "org.Snore.SnorePlugin/1.0" )
 
-#endif // GROWL_BACKEND_H
+
+
+
+#endif//SNORE_PLUGINS_H

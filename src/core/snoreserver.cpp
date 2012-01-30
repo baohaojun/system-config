@@ -16,6 +16,11 @@
 
 #include "snoreserver.h"
 #include "notification/notification.h"
+#include "plugins/plugincontainer.h"
+#include "plugins/plugins.h"
+#include "plugins/snorebackend.h"
+#include "plugins/snorefrontend.h"
+
 #include "version.h"
 
 #include <iostream>
@@ -29,7 +34,7 @@
 
 namespace Snore{
 
-QHash<QString,SnorePluginInfo*> SnoreServer::s_pluginCache = QHash<QString,SnorePluginInfo*>() ;
+QHash<QString,PluginContainer*> SnoreServer::s_pluginCache = QHash<QString,PluginContainer*>() ;
 
 QString SnoreServer::s_pluginPath = QString(qApp->applicationDirPath()+"/snoreplugins");
 
@@ -55,18 +60,19 @@ SnoreServer::SnoreServer ( QSystemTrayIcon *trayIcon ) :
 
 }
 
-QHash<QString, SnorePluginInfo *> SnoreServer::pluginCache(){
+QHash<QString, PluginContainer *> SnoreServer::pluginCache(){
     if(!s_pluginCache.isEmpty())
         return s_pluginCache;
     QSettings cache(SnoreServer::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
+    QString version = cache.value("version").toString();
     int size = cache.beginReadArray("plugins");
-    if(size == 0){
+    if(size == 0 || version != Version::revision()){
         updatePluginCache();
     }else{
         for(int i=0;i<size;++i) {
             cache.setArrayIndex(i);
-            SnorePluginInfo::PluginType type = (SnorePluginInfo::PluginType)cache.value("type").toInt();
-            SnorePluginInfo *info = new SnorePluginInfo(cache.value("fileName").toString(),cache.value("name").toString(),type);
+            PluginContainer::PluginType type = (PluginContainer::PluginType)cache.value("type").toInt();
+            PluginContainer *info = new PluginContainer(cache.value("fileName").toString(),cache.value("name").toString(),type);
             s_pluginCache.insert(info->name(),info);
         }
         cache.endArray();
@@ -83,7 +89,7 @@ void SnoreServer::updatePluginCache(const QString &pluginPath){
 
     s_pluginCache.clear();
 
-    foreach(const QString &type,SnorePluginInfo::types()){
+    foreach(const QString &type,PluginContainer::types()){
         QDir plPath(SnoreServer::pluginDir().absoluteFilePath(type));
         qDebug()<<"Searching for plugins in"<<plPath.path();
         foreach (QString fileName, plPath.entryList(QDir::Files)) {
@@ -101,7 +107,7 @@ void SnoreServer::updatePluginCache(const QString &pluginPath){
                 plugin->deleteLater();
                 continue;
             }
-            SnorePluginInfo *info = new SnorePluginInfo( SnoreServer::pluginDir().relativeFilePath(filepath),sp->name(),SnorePluginInfo::typeFromString(type));
+            PluginContainer *info = new PluginContainer( SnoreServer::pluginDir().relativeFilePath(filepath),sp->name(),PluginContainer::typeFromString(type));
             s_pluginCache.insert(info->name(),info);
             sp->deleteLater();
             qDebug()<<"added "<<info->name()<<"to cache";
@@ -109,7 +115,8 @@ void SnoreServer::updatePluginCache(const QString &pluginPath){
     }
 
     qDebug()<<s_pluginCache.keys();
-    QList<SnorePluginInfo*> plugins = s_pluginCache.values();
+    cache.setValue("version",Version::revision());
+    QList<PluginContainer*> plugins = s_pluginCache.values();
     cache.beginWriteArray("plugins");
     for(int i=0;i< plugins.size();++i) {
         cache.setArrayIndex(i);
@@ -125,26 +132,29 @@ const QDir &SnoreServer::pluginDir()
     //TODO:fix logic
     static QDir *plDir = NULL;
     if(plDir == NULL){
+        qDebug()<<"PluginDir"<<s_pluginPath;
         plDir = new QDir(s_pluginPath);
         if(!plDir->exists())
             plDir = new QDir(LIBSNORE_PLUGIN_PATH);
     }
+    qDebug()<<"SnorePluginDir:"<<plDir->path();
     return *plDir;
 }
 
-void SnoreServer::publicatePlugin ( SnorePluginInfo::PluginTypes types )
+void SnoreServer::publicatePlugin ( PluginContainer::PluginTypes types )
 {
-    foreach ( SnorePluginInfo *info, SnoreServer::pluginCache().values())
+    qDebug()<<"PluginInfo"<<SnoreServer::pluginCache().keys();
+    foreach ( PluginContainer *info, SnoreServer::pluginCache().values())
     {
-        if(types == SnorePluginInfo::ALL or  types.testFlag(info->type())){
+        if(types == PluginContainer::ALL or  types.testFlag(info->type())){
             switch(info->type()){
-            case SnorePluginInfo::BACKEND:{
+            case PluginContainer::BACKEND:{
                 qDebug() <<info->name()<<"is a Notification_Backend";
                 m_notificationBackends.append( info->name());
                 break;
             }
-            case SnorePluginInfo::SECONDARY_BACKEND:{
-                Secondary_Notification_Backend *nb = qobject_cast<Secondary_Notification_Backend *> ( info->load() );
+            case PluginContainer::SECONDARY_BACKEND:{
+                SnoreSecondaryBackend *nb = qobject_cast<SnoreSecondaryBackend *> ( info->load() );
                 if(!nb->init( this )){
                     nb->deleteLater();
                     break;
@@ -152,8 +162,8 @@ void SnoreServer::publicatePlugin ( SnorePluginInfo::PluginTypes types )
                 m_secondaryNotificationBackends.append(info->name());
                 break;
             }
-            case SnorePluginInfo::FRONTEND:{
-                Notification_Frontend * nf = qobject_cast<Notification_Frontend*> (info->load());
+            case PluginContainer::FRONTEND:{
+                SnoreFrontend * nf = qobject_cast<SnoreFrontend*> (info->load());
                 qDebug() <<info->name()<<"is a Notification_Frontend";
                 if(!nf->init( this )){
                     nf->deleteLater();
@@ -162,7 +172,7 @@ void SnoreServer::publicatePlugin ( SnorePluginInfo::PluginTypes types )
                 m_Frontends.append(info->name());
                 break;
             }
-            case SnorePluginInfo::PLUGIN:{
+            case PluginContainer::PLUGIN:{
                 qDebug() <<info->name()<<"is a SnorePlugin";
                 if(!info->load()->init(this)){
                     info->load()->deleteLater();
@@ -207,7 +217,7 @@ void SnoreServer::closeNotification ( Notification notification,const Notificati
 void SnoreServer::notificationActionInvoked ( Notification notification )
 {
     emit actionInvoked(notification);
-    Notification_Frontend *nf= notification.source();
+    SnoreFrontend *nf= notification.source();
     if ( nf != NULL )
     {
         nf->actionInvoked ( notification );
@@ -255,10 +265,12 @@ const QStringList &SnoreServer::secondaryNotificationBackends() const
 
 void SnoreServer::setPrimaryNotificationBackend ( const QString &backend )
 {
-    if(!m_notificationBackends.contains(backend))
+    if(!pluginCache().contains(backend)){
+        qDebug()<<"Unknown Backend:"<<backend;
         return;
+    }
     qDebug()<<"Setting Notification Backend to:"<<backend;
-    m_notificationBackend = qobject_cast<Notification_Backend*>(pluginCache()[backend]->load());
+    m_notificationBackend = qobject_cast<SnoreBackend*>(pluginCache()[backend]->load());
     if(!m_notificationBackend->isInitialized())
         m_notificationBackend->init(this);
 }

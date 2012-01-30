@@ -29,7 +29,7 @@ Q_EXPORT_PLUGIN2(growl_backend,Growl_Backend)
 Growl_Backend *Growl_Backend::instance = NULL;
 
 Growl_Backend::Growl_Backend():
-    Notification_Backend("Growl"),
+    SnoreBackend("Growl"),
     _id(0)
 {
     instance = this;

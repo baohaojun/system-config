@@ -17,6 +17,7 @@
 #include "notification.h"
 #include "snoreserver.h"
 #include "notification/icon.h"
+#include "plugins/plugincontainer.h"
 
 #include <QDebug>
 #include <QTcpSocket>
@@ -67,7 +68,7 @@ public:
     uint m_id;
     int m_timeout;
     Notification::Action *m_actionInvoked;
-    Notification_Frontend *m_source;
+    SnoreFrontend *m_source;
     QString m_application;
     QString m_alert;
     QString m_title;
@@ -156,11 +157,11 @@ void Notification::setActionInvoked ( const int &id)
     d->m_actionInvoked = d->m_actions[id];
 }
 
-void Notification::setSource(Notification_Frontend *source) const{
+void Notification::setSource(SnoreFrontend *source) const{
     d->m_source = source;
 }
 
-Notification_Frontend *Notification::source() const
+SnoreFrontend *Notification::source() const
 {
     return d->m_source;
 }

@@ -16,7 +16,7 @@
 
 #ifndef SNARLNETWORK_H
 #define SNARLNETWORK_H
-#include "core/interface.h"
+#include "core/plugins/snorefrontend.h"
 #include "parser.h"
 
 #include <QPointer>
@@ -35,9 +35,9 @@ struct SnarlNotification{
     QPointer<class QTcpSocket> clientSocket;
 };
 
-class SnarlNetworkFrontend:public Snore::Notification_Frontend{
+class SnarlNetworkFrontend:public Snore::SnoreFrontend{
     Q_OBJECT
-    Q_INTERFACES(Snore::Notification_Frontend)
+    Q_INTERFACES(Snore::SnoreFrontend)
     friend class Parser;
 public:
     static const int port=9887;

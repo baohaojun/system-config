@@ -11,7 +11,7 @@ using namespace Snore;
 Q_EXPORT_PLUGIN2(trayicon_backend,TrayIconNotifer)
 
 TrayIconNotifer::TrayIconNotifer () :
-    Notification_Backend ( "SystemTray" ),
+    SnoreBackend ( "SystemTray" ),
     m_id ( 0 ),
     m_displayed(-1)
 {
@@ -23,7 +23,7 @@ bool TrayIconNotifer::init(SnoreServer *snore){
      m_trayIcon = snore->trayIcon();
      if(m_trayIcon == NULL)
          return false;
-     return Notification_Backend::init(snore);
+     return SnoreBackend::init(snore);
 }
 
 void TrayIconNotifer::registerApplication ( Application *application )

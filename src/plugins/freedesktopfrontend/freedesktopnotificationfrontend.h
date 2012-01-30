@@ -16,12 +16,12 @@
 
 #ifndef FREEDESKTOPNOTIFICATION_FRONTEND_H
 #define FREEDESKTOPNOTIFICATION_FRONTEND_H
-#include "core/interface.h"
+#include "core/plugins/snorefrontend.h"
 #include <QtDBus>
 
-class FreedesktopNotification_Frontend:public Snore::Notification_Frontend{
+class FreedesktopNotification_Frontend:public Snore::SnoreFrontend{
     Q_OBJECT
-    Q_INTERFACES(Snore::Notification_Frontend)
+    Q_INTERFACES(Snore::SnoreFrontend)
 public:
     FreedesktopNotification_Frontend();
     ~FreedesktopNotification_Frontend();

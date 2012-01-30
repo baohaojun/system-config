@@ -32,7 +32,7 @@ using namespace Snore;
 Q_EXPORT_PLUGIN2(freedesktop_frontend,FreedesktopNotification_Frontend)
 
 FreedesktopNotification_Frontend::FreedesktopNotification_Frontend():
-    Notification_Frontend("FreedesktopNotification_Frontend")
+    SnoreFrontend("FreedesktopNotification_Frontend")
 {
 
 }
@@ -47,7 +47,7 @@ bool FreedesktopNotification_Frontend::init(SnoreServer *snore){
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService( "org.freedesktop.Notifications" );
     dbus.registerObject( "/org/freedesktop/Notifications", this );
-    return Notification_Frontend::init(snore);
+    return SnoreFrontend::init(snore);
 }
 
 void FreedesktopNotification_Frontend::actionInvoked(Notification notification) {

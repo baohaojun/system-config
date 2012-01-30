@@ -36,7 +36,7 @@ using namespace Snarl::V42;
 Q_EXPORT_PLUGIN2(snarl_backend,Snarl_Backend)
 
 Snarl_Backend::Snarl_Backend():
-    Notification_Backend("Snarl"),
+    SnoreBackend("Snarl"),
     _away(false)
 {
 
@@ -60,7 +60,7 @@ bool Snarl_Backend::init(SnoreServer *snore){
     qDebug()<<"Initiating Snarl Backend, Snarl version: "<<snarlInterface->GetVersion();
     m_defautSnarlinetrface = new SnarlInterface();
 
-    return Notification_Backend::init(snore);
+    return SnoreBackend::init(snore);
 }
 
 void Snarl_Backend::registerApplication(Application *application){
@@ -142,9 +142,6 @@ void Snarl_Backend::closeNotification(Notification notification){
     activeNotifications.remove(notification.id());
 }
 
-bool Snarl_Backend::isPrimaryNotificationBackend(){
-    return true;
-}
 
 SnarlWidget::SnarlWidget(Snarl_Backend * snarl):
     _snarl(snarl)

@@ -11,18 +11,17 @@ get_git_head_revision(GIT_REFSPEC SNORE_REVISION)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" @ONLY)
 
 add_subdirectory(notification)
+add_subdirectory(plugins)
 
 set ( SnoreNotify_SRCS ${SnoreNotify_SRCS}
         snoreserver.cpp
         application.cpp
-        interface.cpp        
-		${CMAKE_CURRENT_BINARY_DIR}/version.cpp
+        ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
         )
 
 set ( SnoreNotify_HDR ${SnoreNotify_HDR}
         snoreserver.h
         application.h
-        interface.h
         snore_exports.h
         version.h
         )

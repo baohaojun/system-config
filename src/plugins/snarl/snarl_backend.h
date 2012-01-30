@@ -16,7 +16,7 @@
 
 #ifndef SNARL_BACKEND_H
 #define SNARL_BACKEND_H
-#include "core/interface.h"
+#include "core/plugins/snorebackend.h"
 #include "SnarlInterface.h"
 
 #include <QWidget>
@@ -27,16 +27,15 @@ namespace Snore{
 
 class SnarlWidget;
 
-class Snarl_Backend:public Snore::Notification_Backend
+class Snarl_Backend:public Snore::SnoreBackend
 {
     Q_OBJECT
-    Q_INTERFACES(Snore::Notification_Backend)
+    Q_INTERFACES(Snore::SnoreBackend)
     friend class SnarlWidget;
 public:
     Snarl_Backend();
     ~Snarl_Backend();
     virtual bool init(Snore::SnoreServer *snore);
-    bool isPrimaryNotificationBackend();
 
 private:
     SnarlWidget* winIDWidget;

@@ -18,7 +18,8 @@
 #define SNORESERVER_H
 
 #include "snore_exports.h"
-#include "interface.h"
+#include "plugins/plugincontainer.h"
+#include "notification/notification.h"
 
 #include <QStringList>
 
@@ -37,7 +38,7 @@ public:
 
 public:
     SnoreServer (QSystemTrayIcon *trayIcon=0 );
-    void publicatePlugin ( SnorePluginInfo::PluginTypes types );
+    void publicatePlugin ( PluginContainer::PluginTypes types );
 
 
     uint broadcastNotification ( Notification notification );
@@ -60,9 +61,9 @@ public:
 
 
 private:
-    static QHash<QString,SnorePluginInfo*> pluginCache();
+    static QHash<QString,PluginContainer*> pluginCache();
 
-    static QHash<QString,SnorePluginInfo*> s_pluginCache;
+    static QHash<QString,PluginContainer*> s_pluginCache;
     ApplicationsList m_applications;
 
 
@@ -71,7 +72,7 @@ private:
     QStringList m_secondaryNotificationBackends;
     QStringList m_plugins;
 
-    Notification_Backend * m_notificationBackend;
+    SnoreBackend * m_notificationBackend;
 
     QSystemTrayIcon *m_trayIcon;
     static QString s_pluginPath;

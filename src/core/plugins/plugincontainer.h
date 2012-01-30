@@ -14,32 +14,48 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.                           *
  ****************************************************************************************/
 
-#ifndef GROWL_BACKEND_H
-#define GROWL_BACKEND_H
-#include "core/plugins/snorebackend.h"
+#ifndef PLUGINCONTAINER_H
+#define PLUGINCONTAINER_H
+#include "../snore_exports.h"
 
-#include <string>
+#include <QPointer>
+#include <QFlag>
 
-class Growl_Backend:public Snore::SnoreBackend
-{
-    Q_OBJECT
-    Q_INTERFACES(Snore::SnoreBackend)
+namespace Snore{
+class SnoreServer;
+class SnorePlugin;
+class SnoreFrontend;
+class SnoreBackend;
+class SnoreSecondaryBackend;
+
+class SNORE_EXPORT PluginContainer{
 public:
-    Growl_Backend();
-    ~Growl_Backend();
-    static void gntpCallback(const int &id,const std::string &reason,const std::string &data);
+    enum PluginType{
+        ALL = 0x0,//for loading plugins
+        BACKEND = 0x1,
+        SECONDARY_BACKEND = 0x2,
+        FRONTEND = 0x4,
+        PLUGIN = 0x8
+    };
+    Q_DECLARE_FLAGS(PluginTypes, PluginType)
+    PluginContainer(QString fileName,QString pluginName,PluginType type);
+    SnorePlugin *load();
+    const QString &file();
+    const QString &name();
+    const PluginContainer::PluginType type();
+
+
+    static Snore::PluginContainer::PluginType typeFromString(const QString &t);
+    static const QStringList &types();
+
 private:
-	//a static instance for the static callback methode
-	static Growl_Backend *instance;
-    uint _id;
-    QHash<QString,class gntp*> _applications;
-
-public slots:
-    void registerApplication(Snore::Application *application);
-    void unregisterApplication(Snore::Application *application);
-    uint notify(Snore::Notification notification);
-    void closeNotification(Snore::Notification notification);
+    QPointer<SnorePlugin> m_instance;
+    QString m_pluginFile;
+    QString m_pluginName;
+    Snore::PluginContainer::PluginType m_pluginType;
 };
+}
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(Snore::PluginContainer::PluginTypes)
 
-#endif // GROWL_BACKEND_H
+#endif//PLUGINCONTAINER_H

@@ -36,7 +36,7 @@ SnoreNotify::SnoreNotify():
 {
     m_trayIcon = new TrayIcon();
     m_snore = new Snore::SnoreServer(m_trayIcon->trayIcon());
-    m_snore->publicatePlugin(SnorePluginInfo::ALL);
+    m_snore->publicatePlugin(PluginContainer::ALL);
     load();
     m_trayIcon->initConextMenu(m_snore);
 
