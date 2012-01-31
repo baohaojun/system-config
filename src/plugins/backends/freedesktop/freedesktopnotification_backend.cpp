@@ -6,8 +6,10 @@
 #include <QtCore>
 #include <QImage>
 #include "fredesktopnotification.h"
-#include "core/snoreserver.h"
-#include <QtDBus>
+#include "core/snore.h"
+
+
+using namespace Snore;
 
 Q_EXPORT_PLUGIN2 ( freedesktopnotificationbackend,FreedesktopNotification_Backend )
 
@@ -16,18 +18,18 @@ static const char dbusInterfaceName[] = "org.freedesktop.Notifications";
 static const char dbusPath[] = "/org/freedesktop/Notifications";
 
 
-FreedesktopNotification_Backend::FreedesktopNotification_Backend ( SnoreServer *snore ) :
-    Notification_Backend ( "FreedesktopNotification_Backend",snore )
+FreedesktopNotification_Backend::FreedesktopNotification_Backend () :
+    SnoreBackend ( "FreedesktopNotification_Backend")
 {
-    QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","ActionInvoked",this,SLOT ( actionInvoked( uint,QString ) ) );
-    //    if ( getVendor() =="GNOME" )
-    QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","NotificationClosed",this,SLOT ( closed ( uint,uint ) ) );
+
 
 }
 
-bool FreedesktopNotification_Backend::isPrimaryNotificationBackend()
-{
-    return true;
+bool FreedesktopNotification_Backend::init(SnoreCore *snore){
+      QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","ActionInvoked",this,SLOT ( actionInvoked( uint,QString ) ) );
+    //    if ( getVendor() =="GNOME" )
+    QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","NotificationClosed",this,SLOT ( closed ( uint,uint ) ) );
+    return SnoreBackend::init(snore);
 }
 
 void FreedesktopNotification_Backend::registerApplication ( Application *application )
