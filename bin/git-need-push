@@ -24,7 +24,7 @@ else
 fi
 
 export CHECKING_SUBMODULE=true
-git submodule foreach 'git-need-push'
+git submodule foreach 'git-need-push || true'
 
 test -e $signal && exit 0
 exit -1
