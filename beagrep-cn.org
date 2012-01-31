@@ -1,0 +1,88 @@
+#+title: beagrep，两秒钟grep两个G的代码
+* 简介
+
+多年前还在上大学的时候，读到LDD（Linux Device Driver）第一版的前言，作
+者说这本书是他花了很多小时，仔细grep内核源代码才写出来的。所以后来我也
+试着坚持用grep这样的工具阅读源代码。很长一段时间内grep都是足够用了的，
+即使像Linux内核这样的几百兆的代码，grep起来也不会太慢。
+
+直到有一天grep了一下Android的代码，花了我半个小时，终于觉得太慢了，受不
+了了。
+
+后来发现Linux下开源的桌面索引、搜索软件[[http://en.wikipedia.org/wiki/Beagle_(software)][beagle]]，灵机一动，先用beagle粗略
+地搜一遍可能匹配的文件，然后再单在这些文件内grep，不就可以大大节省时间
+吗？
+
+非常热血地向你推荐beagrep（beagle + grep），grep两个G的Android代码，只
+需要两秒钟！
+
+更加热血的是，beagrep在Windows下也能用！
+
+* 安装
+** Linux下安装
+
+*** 下载代码
+#+begin_example
+git clone git://github.com/baohaojun/beagrep.git -b Linux
+#+end_example
+
+*** 编译安装
+
+以debian为例，你可能需要先装一些build需要用到的deb包（TODO 搞清楚
+beagrep的build到底需要哪些包）：
+
+#+begin_example
+apt-get install mono-devel
+#+end_example
+
+然后到之前git clone出来的beagrep下进行编译安装：
+
+#+begin_example
+cd beagrep
+autoreconf -i
+make
+sudo make install
+#+end_example
+
+
+
+
+
+** Windows下安装
+
+*** 安装依赖软件
+需要安装cygwin和mono的Windows版。Cygwin建议完全安装，Mono建议安装到默认
+目录下。
+
+*** 下载代码
+#+begin_example
+git clone git://github.com/baohaojun/beagrep.git -b Windows
+#+end_example
+
+*** 编译安装
+
+#+begin_example
+cd beagrep
+bash build-win.sh
+#+end_example
+
+* 使用
+
+** 创建索引
+
+到想阅读的源代码目录下，以android为例
+
+#+begin_example
+cd ~/src/android
+mkbeagrepidx
+#+end_example
+
+这一步花费时间较长，在Linux下android代码索引大概需要半个小时（跟以前单独用一次grep的时间差不多）。
+
+** 用beagrep搜索
+
+在想阅读的代码目录下：
+#+begin_example
+cd ~/src/android
+beagrep -e "readlink"
+#+end_example

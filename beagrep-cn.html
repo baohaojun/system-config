@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>beagrep, grep 2G source code in 2 seconds</title>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
-<meta name="title" content="beagrep, grep 2G source code in 2 seconds"/>
+<title>beagrep，两秒钟grep两个G的代码</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="beagrep，两秒钟grep两个G的代码"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-01-26 19:53:41 CST"/>
-<meta name="author" content="bhj"/>
+<meta name="generated" content="2012-01-16 10:05:50 China Standard Time"/>
+<meta name="author" content=""/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
 <style type="text/css">
@@ -91,35 +91,34 @@
 </div>
 
 <div id="content">
-<h1 class="title">beagrep, grep 2G source code in 2 seconds</h1>
+<h1 class="title">beagrep，两秒钟grep两个G的代码</h1>
 
 
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Introduction</a></li>
-<li><a href="#sec-2">2 Install</a>
+<li><a href="#sec-1">1 简介</a></li>
+<li><a href="#sec-2">2 安装</a>
 <ul>
-<li><a href="#sec-2-1">2.1 Linux Install</a>
+<li><a href="#sec-2-1">2.1 Linux下安装</a>
 <ul>
-<li><a href="#sec-2-1-1">2.1.1 Dependencies</a></li>
-<li><a href="#sec-2-1-2">2.1.2 Download Code</a></li>
-<li><a href="#sec-2-1-3">2.1.3 Compile and Install</a></li>
+<li><a href="#sec-2-1-1">2.1.1 下载代码</a></li>
+<li><a href="#sec-2-1-2">2.1.2 编译安装</a></li>
 </ul>
 </li>
-<li><a href="#sec-2-2">2.2 Windows Install</a>
+<li><a href="#sec-2-2">2.2 Windows下安装</a>
 <ul>
-<li><a href="#sec-2-2-1">2.2.1 Dependencies</a></li>
-<li><a href="#sec-2-2-2">2.2.2 Download Code</a></li>
-<li><a href="#sec-2-2-3">2.2.3 Compile and Instal</a></li>
+<li><a href="#sec-2-2-1">2.2.1 安装依赖软件</a></li>
+<li><a href="#sec-2-2-2">2.2.2 下载代码</a></li>
+<li><a href="#sec-2-2-3">2.2.3 编译安装</a></li>
 </ul></li>
 </ul>
 </li>
-<li><a href="#sec-3">3 Usage</a>
+<li><a href="#sec-3">3 使用</a>
 <ul>
-<li><a href="#sec-3-1">3.1 Create Index</a></li>
-<li><a href="#sec-3-2">3.2 run beagrep</a></li>
+<li><a href="#sec-3-1">3.1 创建索引</a></li>
+<li><a href="#sec-3-2">3.2 用beagrep搜索</a></li>
 </ul>
 </li>
 </ul>
@@ -127,50 +126,45 @@
 </div>
 
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> 简介</h2>
 <div class="outline-text-2" id="text-1">
 
 
 <p>
-I still remember when I read the ``Linux Device Drivers'', 1st Edition, in the preface, the author says:
-</p>
-<blockquote>
-
-<p>&hellip; The text you are approaching is the result of hours of patient grepping &hellip;
-</p>
-</blockquote>
-
-
-<p>
-I have been using grep to read source code ever since. It's been
-adequate for a long time, until I started reading Android source code
-with it. I remember vividly how it took me 30 minutes to <code>grep readlink</code> in Android source code (with VCS directory and binary files
-excluded).
+多年前还在上大学的时候，读到LDD（Linux Device Driver）第一版的前言，作
+者说这本书是他花了很多小时，仔细grep内核源代码才写出来的。所以后来我也
+试着坚持用grep这样的工具阅读源代码。很长一段时间内grep都是足够用了的，
+即使像Linux内核这样的几百兆的代码，grep起来也不会太慢。
 </p>
 <p>
-Then I learned about the beagle software, and it occured to me, what
-if I use beagle and grep together? I mean, to use beagle first to
-decide the (relatively a lot smaller) set of possible matching files
-(i.e., files that contained the word <code>readlink</code>, taking the previous
-example), then invoke grep on this set only. Usually the job can be
-done in a couple of seconds.
+直到有一天grep了一下Android的代码，花了我半个小时，终于觉得太慢了，受不
+了了。
 </p>
 <p>
-Beagrep supports both Linux and Windows (requires CYGWIN).
+后来发现Linux下开源的桌面索引、搜索软件<a href="http://en.wikipedia.org/wiki/Beagle_(software)">beagle</a>，灵机一动，先用beagle粗略
+地搜一遍可能匹配的文件，然后再单在这些文件内grep，不就可以大大节省时间
+吗？
+</p>
+<p>
+非常热血地向你推荐beagrep（beagle + grep），grep两个G的Android代码，只
+需要两秒钟！
+</p>
+<p>
+更加热血的是，beagrep在Windows下也能用！
 </p>
 </div>
 
 </div>
 
 <div id="outline-container-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Install</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> 安装</h2>
 <div class="outline-text-2" id="text-2">
 
 
 </div>
 
 <div id="outline-container-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Linux Install</h3>
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Linux下安装</h3>
 <div class="outline-text-3" id="text-2-1">
 
 
@@ -178,60 +172,8 @@ Beagrep supports both Linux and Windows (requires CYGWIN).
 </div>
 
 <div id="outline-container-2-1-1" class="outline-4">
-<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> Dependencies</h4>
+<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> 下载代码</h4>
 <div class="outline-text-4" id="text-2-1-1">
-
-
-<p>
-Take debian as example, you may need to install the following packages (TODO: make a .deb for it):
-</p>
-
-
-<pre class="example">dpkg-query
-libc6
-libc6-dev
-libglib2.0-0
-libglib2.0-cil
-libglib2.0-dev
-libgmime2.4-cil
-libice6
-libmono0
-libmono2.0-cil
-libmono-cecil-private-cil
-libmono-corlib2.0-cil
-libmono-dev
-libmono-posix2.0-cil
-libmono-security2.0-cil
-libmono-sharpzip2.84-cil
-libmono-sqlite2.0-cil
-libmono-system2.0-cil
-libmono-system-data2.0-cil
-libmono-system-web2.0-cil
-libpcre3
-libsm6
-libsqlite3-0
-libsqlite3-dev
-libtaglib2.0-cil
-libx11-6
-libx11-dev
-libxss1
-libxss-dev
-locales
-monodoc-base
-mono-gmcs
-mono-runtime
-x11proto-core-dev
-x11proto-scrnsaver-dev
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-2-1-2" class="outline-4">
-<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> Download Code</h4>
-<div class="outline-text-4" id="text-2-1-2">
 
 
 
@@ -244,11 +186,24 @@ x11proto-scrnsaver-dev
 
 </div>
 
-<div id="outline-container-2-1-3" class="outline-4">
-<h4 id="sec-2-1-3"><span class="section-number-4">2.1.3</span> Compile and Install</h4>
-<div class="outline-text-4" id="text-2-1-3">
+<div id="outline-container-2-1-2" class="outline-4">
+<h4 id="sec-2-1-2"><span class="section-number-4">2.1.2</span> 编译安装</h4>
+<div class="outline-text-4" id="text-2-1-2">
 
-<p>In the beagrep directory you just git cloned:
+
+<p>
+以debian为例，你可能需要先装一些build需要用到的deb包（TODO 搞清楚
+beagrep的build到底需要哪些包）：
+</p>
+
+
+
+<pre class="example">apt-get install mono-devel
+</pre>
+
+
+<p>
+然后到之前git clone出来的beagrep下进行编译安装：
 </p>
 
 
@@ -260,13 +215,17 @@ sudo make install
 </pre>
 
 
+
+
+
+
 </div>
 </div>
 
 </div>
 
 <div id="outline-container-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Windows Install</h3>
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Windows下安装</h3>
 <div class="outline-text-3" id="text-2-2">
 
 
@@ -274,25 +233,18 @@ sudo make install
 </div>
 
 <div id="outline-container-2-2-1" class="outline-4">
-<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> Dependencies</h4>
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> 安装依赖软件</h4>
 <div class="outline-text-4" id="text-2-2-1">
 
-
-<ul>
-<li>Install cygwin.
-
-</li>
-<li>Install mono.
-</li>
-</ul>
-
-
+<p>需要安装cygwin和mono的Windows版。Cygwin建议完全安装，Mono建议安装到默认
+目录下。
+</p>
 </div>
 
 </div>
 
 <div id="outline-container-2-2-2" class="outline-4">
-<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> Download Code</h4>
+<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> 下载代码</h4>
 <div class="outline-text-4" id="text-2-2-2">
 
 
@@ -307,7 +259,7 @@ sudo make install
 </div>
 
 <div id="outline-container-2-2-3" class="outline-4">
-<h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> Compile and Instal</h4>
+<h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> 编译安装</h4>
 <div class="outline-text-4" id="text-2-2-3">
 
 
@@ -326,7 +278,7 @@ bash build-win.sh
 </div>
 
 <div id="outline-container-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> Usage</h2>
+<h2 id="sec-3"><span class="section-number-2">3</span> 使用</h2>
 <div class="outline-text-2" id="text-3">
 
 
@@ -334,12 +286,12 @@ bash build-win.sh
 </div>
 
 <div id="outline-container-3-1" class="outline-3">
-<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Create Index</h3>
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> 创建索引</h3>
 <div class="outline-text-3" id="text-3-1">
 
 
 <p>
-In the source code directory you want to ``beagrep'', for e.g. android, 
+到想阅读的源代码目录下，以android为例
 </p>
 
 
@@ -350,20 +302,19 @@ mkbeagrepidx
 
 
 <p>
-This will take quite some time (about the same amount of time you take
-to run <code>grep</code> directly in the source code directory, i.e., ~0.5 hour).
+这一步花费时间较长，在Linux下android代码索引大概需要半个小时（跟以前单独用一次grep的时间差不多）。
 </p>
 </div>
 
 </div>
 
 <div id="outline-container-3-2" class="outline-3">
-<h3 id="sec-3-2"><span class="section-number-3">3.2</span> run beagrep</h3>
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> 用beagrep搜索</h3>
 <div class="outline-text-3" id="text-3-2">
 
 
 <p>
-In the source code directory (or any subdirs under it)
+在想阅读的代码目录下：
 </p>
 
 
@@ -377,8 +328,8 @@ beagrep -e "readlink"
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-01-26 19:53:41 CST</p>
-<p class="author">Author: bhj</p>
+<p class="date">Date: 2012-01-16 10:05:50 China Standard Time</p>
+<p class="author">Author: </p>
 <p class="creator">Org version 7.8.02 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
