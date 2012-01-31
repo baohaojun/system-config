@@ -59,18 +59,20 @@ if git diff --quiet HEAD && git branch --contains HEAD -a |grep -q from-mac; the
     exit
 fi
 
-git commit -m "$(
-    (
-	echo "###start of comment###"
-	echo in $(pwd):
-	git diff HEAD
-	cat <<EOF
+if git st -s | grep . ; then
+    git commit -m "$(
+	(
+	    echo "###start of comment###"
+	    echo in $(pwd):
+	    git diff HEAD
+	    cat <<EOF
 # Local Variables: #
 # mode:diff #
 # End: #
 EOF
-    ) | get-stdin
-)" ||true
+	) | get-stdin
+    )" ||true
+fi
 
 rb=$(from-mac)
 if git branch --contains HEAD -a |grep -q from-mac; then 

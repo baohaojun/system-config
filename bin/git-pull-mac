@@ -16,7 +16,10 @@ for x in $(git branch -a |grep 'remotes.*from-mac'|grep -v origin-w); do
 	continue;
     else
 	current=$(git log -1|head -n 1|pn 2)
-	git merge FETCH_HEAD >/dev/null 2>&1 
+	git merge FETCH_HEAD >/dev/null 2>&1 || {
+	    echo $remote/$branch merge failed
+	    exit -1
+	}
 	if git diff --quiet $current; then
 	    echo $remote/$branch contains no diff after merge, reset it
 	    git reset --hard $current
