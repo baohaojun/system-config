@@ -4,17 +4,23 @@ set -e
 test $# = 0 -o $# = 1
 tmp=/tmp/`basename $0`.$$
 touch $tmp
-if tty >/dev/null 2>&1; then
+if tty >/dev/null 2>&1 || test $# = 1; then
     test $# = 1 -a "$1" != $tmp && cat $1 > $tmp
 else
     cat > $tmp
 fi
 
 edit-wait $tmp >/dev/null 2>&1
-if test "`cat $tmp | wc -c`" == 0; then
+function get-rid-of-comment() {
+    cat "$@" | perl -ne '
+if (m/###start of comment###/) { $comment = 1; }
+if (not $comment) { print }
+'
+}
+if test "`get-rid-of-comment $tmp | wc -w`" == 0; then
     echo Error: input can not be empty 1>&2
-    exec get-stdin
+    exec get-stdin $tmp
 fi
-cat $tmp
+get-rid-of-comment $tmp
 
 rm $tmp

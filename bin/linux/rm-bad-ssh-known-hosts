@@ -1,0 +1,4 @@
+#!/bin/bash
+set -ex
+test $# = 2
+"$@" 2>&1 | grep 'Offending RSA key in' | pn 5

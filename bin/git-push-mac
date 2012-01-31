@@ -50,7 +50,28 @@ fi
 
 git add . 
 
-git commit -m mf ||true
+while test "$(git log --pretty=oneline -1 | cut -b 42-)" = mf; do
+    git reset --soft HEAD^
+done
+
+if git diff --quiet HEAD && git branch --contains HEAD -a |grep -q from-mac; then
+    echo HEAD already containd in a remote branch, no need to push
+    exit
+fi
+
+git commit -m "$(
+    (
+	echo "###start of comment###"
+	echo in $(pwd):
+	git diff HEAD
+	cat <<EOF
+# Local Variables: #
+# mode:diff #
+# End: #
+EOF
+    ) | get-stdin
+)" ||true
+
 rb=$(from-mac)
 if git branch --contains HEAD -a |grep -q from-mac; then 
     echo HEAD already containd in a remote branch, no need to push

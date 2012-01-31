@@ -24,4 +24,4 @@ _ps_kill()
     return 0
 }
 
-complete -o filenames -F _ps_kill ps-kill
+complete -o filenames -F _ps_kill ps-kill ps-kill-all

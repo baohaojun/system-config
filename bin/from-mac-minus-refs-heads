@@ -1,0 +1,3 @@
+#!/bin/bash
+
+from-mac|cut -b 12-

@@ -1,0 +1,4 @@
+#!/bin/bash
+match=$1
+shift
+ps.pl $match | perl -ne 'print unless (1..1)' | pn 1 | xargs kill "$@"
