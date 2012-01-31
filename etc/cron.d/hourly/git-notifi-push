@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd ~
+git-need-push && bhj-notify "personal project" "Your git repository is not clean, please push it"

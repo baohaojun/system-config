@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -e
+test $(pwd) = $HOME && cd ~/windows-config/
+cd "$(dirname "$(lookup_file .git)")"
+signal=~/.git-need-push
+
+if test -z "$CHECKING_SUBMODULE"; then
+    rm -f $signal
+fi
+
+
+
+if git st -s | grep -q .; then
+    echo "git repo $(pwd) not clean; need push"
+    touch $signal
+    exit 0
+fi
+
+if git diff --quiet HEAD && git branch --contains HEAD -a |grep -q from-mac; then
+    echo HEAD already containd in a remote branch, no need to push $(pwd)
+else
+    touch $signal
+fi
+
+export CHECKING_SUBMODULE=true
+git submodule foreach 'git-need-push'
+
+test -e $signal && exit 0
+exit -1

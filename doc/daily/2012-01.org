@@ -48,6 +48,11 @@ see if he agrees.
 * TODO 把linux console下的键盘大写键与escape键互换一下			 :pe:
 
 * Things done on 2012-01-30
+  :PROPERTIES:
+  :ID:       o2b:b2810d62-fceb-450f-8958-d60f88668372
+  :POST_DATE: [2012-01-31 Tue 10:34]
+  :POSTID:   55
+  :END:
 
 ** Work on org-jira, fixed priority required when creating issue
 
@@ -68,3 +73,8 @@ see if he agrees.
   nm-applet as root; in that case it can be saved.
 
 ** Work on RNDIS XP driver, turns out only need a .inf file.
+
+* 2012-01-31
+
+- Work on git-push-mac and git-pull-mac, should not use meaningless
+  commit message dubbed "mf".
