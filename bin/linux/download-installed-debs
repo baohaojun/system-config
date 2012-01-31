@@ -14,7 +14,7 @@ cd ..
 
 install-pkgs -s --reinstall >pkgs.txt 2>&1 
 
-sites=mirrors.163.com/debian
+sites=localhost:9999/debian
 releases=testing\ unstable
 dists=main\ contrib\ non-free
 archs=${1:-amd64}
