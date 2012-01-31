@@ -75,11 +75,24 @@ see if he agrees.
 ** Work on RNDIS XP driver, turns out only need a .inf file.
 
 * 2012-01-31
+  :PROPERTIES:
+  :ID:       o2b:006652de-5004-4e2f-9415-f93cf4deff2a
+  :POST_DATE: [2012-01-31 Tue 22:28]
+  :POSTID:   59
+  :END:
 
 - Work on git-push-mac and git-pull-mac, should not use meaningless
   commit message dubbed "mf".
 
-* TODO 把firefox bookmark做成可搜索的？					 :pe:
+** TODO 把firefox bookmark做成可搜索的？ 				 :pe:
 
-* TODO fix gnome-open							 :pe:
-* TODO fix sdim while C-s searching
+** TODO fix gnome-open 							 :pe:
+** DONE fix sdim while C-s searching					 :pe:
+   CLOSED: [2012-01-31 Tue 22:01]
+   - CLOSING NOTE [2012-01-31 Tue 22:01]
+
+** DONE fix emacs url-proxy-services error on home PC			 :pe:
+   CLOSED: [2012-01-31 Tue 22:27]
+   - CLOSING NOTE [2012-01-31 Tue 22:27] \\
+     Must not use localhost:8580 as the proxy; must use 127.0.0.1; IPV6 is
+     involved to mess up
