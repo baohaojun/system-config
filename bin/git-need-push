@@ -9,8 +9,7 @@ if test -z "$CHECKING_SUBMODULE"; then
     rm -f $signal
 fi
 
-
-
+test $(git-remote-url|cut -b 1-4) = http && { echo do not check http git repo $(pwd); exit 0 }
 if git st -s | grep -q .; then
     echo "git repo $(pwd) not clean; need push"
     touch $signal
