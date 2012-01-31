@@ -1,11 +1,21 @@
 #!/bin/bash
 running=$(ps.pl $(basename $0)| wc -l);
 function wget() {
-    command wget --tries=1 "$@"
+    command wget -N --tries=1 "$@"
+}
+
+function doit() {
+    wget "$1" -O "$2.html" || { export http_proxy=localhost:8580; wget "$1" -O "$2.html"; }
+    if test "$(stat -c "%s" "$2.html")" = 0; then
+	rm "$2.html"
+    else
+	echo "$1" > "$2.txt"
+	w3m -dump "$2.html" >> "$2.txt" && rm "$2.html"
+    fi
 }
 
 if test $running -lt 80; then
-    (wget "$1" -O "$2.html" || { export http_proxy=localhost:8580; wget "$1" -O "$2.html"; }&)
+    (doit "$1" ./"$2"&)
 else
-    (wget "$1" -O "$2.html" || { export http_proxy=localhost:8580; wget "$1" -O "$2.html"; })
+    (doit "$1" ./"$2")
 fi
