@@ -40,7 +40,7 @@ for site in $sites; do
     for release in $releases; do
 	for dist in $dists; do
 	    for arch in $archs; do
-		zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $(eval echo \$$release) >> $release.pkgs
+		zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $(eval echo \$$release) | perl -npe 's,mirrors.163.com,localhost:9999,' >> $release.pkgs
 	    done
 	done
     done
@@ -52,5 +52,5 @@ done
 ) | grep '^Y: ' | pn 2 | sort -u | mf-download.pl -n 5
 
 mkdir -p debs
-rm debs/*
+rm debs/* >/dev/null 2>&1 || true
 echo 'cat *.pkgs | pn 2 | sort -u | xargs -I %s relative-link %s ./debs/'|putclip

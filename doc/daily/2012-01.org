@@ -82,3 +82,4 @@ see if he agrees.
 * TODO 把firefox bookmark做成可搜索的？					 :pe:
 
 * TODO fix gnome-open							 :pe:
+* TODO fix sdim while C-s searching
