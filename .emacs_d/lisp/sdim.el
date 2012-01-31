@@ -342,6 +342,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
       (let* ((echo-keystrokes 0)
              (help-char nil)
              (overriding-terminal-local-map sdim-mode-map)
+	     (input-method-function nil)
              last-command-event last-command this-command)
 
         (setq sdim-translating t)
@@ -353,17 +354,17 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
 				      sdim-cands-str)))
                  (keyseq (if key 
                              (prog1 (vector key) (setq key nil))
-			   (prog2
-			       (setq input-method-function nil)
-			       (read-key-sequence-vector prompt)
-			     (setq input-method-function 'sdim-input-method))))
+			   (read-key-sequence-vector prompt)))
                  (keyed-str (format "keyed %s %s\n" 
                                     (sdim-key-modifier (aref keyseq 0))
                                     (sdim-key-base (aref keyseq 0)))))
             (setq sdim-answer-ready nil sdim-server-answer "")
             (process-send-string sdim-ime-connection keyed-str)
             (while (not sdim-answer-ready)
-	      (let ((input-method-function 'sdim-input-method))
-		(accept-process-output sdim-ime-connection nil nil 1)))))
-            (setq unwind-indicator t))))
+	      (accept-process-output sdim-ime-connection nil nil 1))
+            (setq unwind-indicator t))))))
 
+
+;; (add-hook 'isearch-mode-hook (lambda () (when sdim-minor-mode (sdim-minor-mode 0))))
+;; (add-hook 'isearch-mode-end-hook (lambda () (when (eq input-method-function 'sdim-input-method)
+;; 					     (sdim-minor-mode 1))))
