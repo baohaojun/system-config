@@ -25,7 +25,7 @@
 
 namespace Snore{
 
-SnoreBackend::SnoreBackend ( QString name ) :
+SnoreBackend::SnoreBackend ( const QString &name ) :
     SnorePlugin ( name )
 {
 

@@ -31,7 +31,7 @@ class SNORE_EXPORT SnorePlugin:public QObject
 {
     Q_OBJECT
 public:
-    SnorePlugin ( QString name);
+    SnorePlugin ( const QString &name);
     virtual ~SnorePlugin();
     virtual bool init( SnoreCore* snore );
     bool isInitialized();

@@ -25,7 +25,7 @@
 
 namespace Snore{
 
-SnorePlugin::SnorePlugin ( QString name ) :
+SnorePlugin::SnorePlugin ( const QString &name ) :
     m_name ( name ),
     m_initialized(false)
 {}
@@ -37,6 +37,10 @@ SnorePlugin::~SnorePlugin()
 
 bool SnorePlugin::init( SnoreCore *snore )
 {
+    if(m_initialized){
+        qFatal("Something went wrong, plugin %s is already initialized",this->name().toLatin1().constData());
+        return false;
+    }
     qDebug()<<"Initialize"<<m_name<<this<<snore;
     this->m_snore = snore;
     m_initialized = true;

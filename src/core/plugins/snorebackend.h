@@ -32,7 +32,7 @@ class SNORE_EXPORT SnoreBackend:public SnorePlugin
     Q_OBJECT
     Q_INTERFACES(Snore::SnorePlugin)
 public:
-    SnoreBackend ( QString name );
+    SnoreBackend(const  QString &name );
     virtual ~SnoreBackend();
     virtual bool init(SnoreCore *snore);
 
