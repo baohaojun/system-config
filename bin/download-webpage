@@ -1,0 +1,11 @@
+#!/bin/bash
+running=$(ps.pl $(basename $0)| wc -l);
+function wget() {
+    command wget --tries=1 "$@"
+}
+
+if test $running -lt 80; then
+    (wget "$1" -O "$2.html" || { export http_proxy=localhost:8580; wget "$1" -O "$2.html"; }&)
+else
+    (wget "$1" -O "$2.html" || { export http_proxy=localhost:8580; wget "$1" -O "$2.html"; })
+fi

@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+sub debug(@) {
+  print STDERR "@_\n";
+}
+
+use String::ShellQuote;
+while (<>) {
+  if (m,HREF="(.*?)".*?>(.*?)</A>,) {
+    $url = $1;
+    $name = $2;
+
+    $name =~ s,/,-,g;
+    $name = shell_quote($name);
+    unless ($url =~ m/^http/) {
+      next;
+    }
+    $url = shell_quote($url);
+
+    system("download-webpage $url $name");
+  }
+}
