@@ -1,5 +1,7 @@
 #ifndef VERSION_H
 #define VERSION_H
+#undef major
+#undef minor
 
 #include "snore_exports.h"
 

@@ -41,9 +41,9 @@ bool SnoreBackend::init( SnoreCore *snore )
 {
     if(!SnorePlugin::init(snore))
         return false;
-    connect( snore,SIGNAL( closeNotify( SnoreCore::Notification ) ),this,SLOT( closeNotification( SnoreCore::Notification) ) );
-    connect( snore,SIGNAL( applicationInitialized( SnoreCore::Application* ) ),this,SLOT( registerApplication( SnoreCore::Application* ) ) );
-    connect( snore,SIGNAL( applicationRemoved( SnoreCore::Application* ) ),this,SLOT( unregisterApplication( SnoreCore::Application* ) ) );
+    connect( snore,SIGNAL( closeNotify( Snore::Notification ) ),this,SLOT( closeNotification( Snore::Notification) ) );
+    connect( snore,SIGNAL( applicationInitialized( Snore::Application* ) ),this,SLOT( registerApplication( Snore::Application* ) ) );
+    connect( snore,SIGNAL( applicationRemoved( Snore::Application* ) ),this,SLOT( unregisterApplication( Snore::Application* ) ) );
 
     foreach(Application *a,snore->aplications()){
         this->registerApplication(a);

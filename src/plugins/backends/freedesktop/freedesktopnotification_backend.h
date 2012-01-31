@@ -1,30 +1,30 @@
 #ifndef FREEDESKTOPNOTIFICATION_H
 #define FREEDESKTOPNOTIFICATION_H
-#include "core/interface.h"
+#include "core/plugins/snorebackend.h"
 #include <QtDBus>
 
 
 class fNotification;
 
-class  FreedesktopNotification_Backend:public Notification_Backend
+class  FreedesktopNotification_Backend:public Snore::SnoreBackend
 {
     Q_OBJECT
-    Q_INTERFACES ( Notification_Backend )
+    Q_INTERFACES ( Snore::SnoreBackend )
 public:
-    FreedesktopNotification_Backend ( class SnoreServer *snore=0 );
-    bool isPrimaryNotificationBackend();
+    FreedesktopNotification_Backend ();
+    virtual bool init(Snore::SnoreCore *snore);
     
 public slots:
-    void registerApplication ( Application *application );
-    void unregisterApplication ( Application *application );
-    uint notify ( Notification notification );
-    void closeNotification ( Notification notification );
+    void registerApplication ( Snore::Application *application );
+    void unregisterApplication ( Snore::Application *application );
+    uint notify ( Snore::Notification notification );
+    void closeNotification ( Snore::Notification notification );
     void actionInvoked(const uint &id,const QString &actionID);
     void closed ( const uint &id,const uint &reason );
 
 };
-QDBusArgument &operator<<(QDBusArgument &a,const Notification &i);
-const QDBusArgument & operator >>(const QDBusArgument &a,  Notification &i) ;
+QDBusArgument &operator<<(QDBusArgument &a,const Snore::Notification &i);
+const QDBusArgument & operator >>(const QDBusArgument &a,  Snore::Notification &i) ;
 
 
 
