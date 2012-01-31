@@ -29,10 +29,10 @@ if git st -s | grep . ; then
 	(
 	    echo "###start of comment###"
 	    echo in $(pwd):
-	    git diff HEAD
+	    git diff HEAD | perl -npe 's,^diff --git ,* ,'
 	    cat <<EOF
 # Local Variables: #
-# mode:diff #
+# mode:org #
 # End: #
 EOF
 	) | get-stdin
