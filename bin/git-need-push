@@ -19,7 +19,9 @@ fi
 if git diff --quiet HEAD && git branch --contains HEAD -a |grep -q from-mac; then
     echo HEAD already containd in a remote branch, no need to push $(pwd)
 else
+    echo no remote from-mac branch contains HEAD, need push $(pwd)
     touch $signal
+    exit 0
 fi
 
 export CHECKING_SUBMODULE=true
