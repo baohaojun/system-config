@@ -84,7 +84,9 @@ see if he agrees.
 - Work on git-push-mac and git-pull-mac, should not use meaningless
   commit message dubbed "mf".
 
-** TODO 把firefox bookmark做成可搜索的？ 				 :pe:
+** DONE 把firefox bookmark做成可搜索的？				 :pe:
+   CLOSED: [2012-02-01 Wed 12:49]
+   - CLOSING NOTE [2012-02-01 Wed 12:49]
 
 ** TODO fix gnome-open 							 :pe:
 ** DONE fix sdim while C-s searching					 :pe:

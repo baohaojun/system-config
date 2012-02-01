@@ -466,7 +466,7 @@
 
 (defun bhj-occur-make-errors ()
   (interactive)
-  (let ((bhj-occur-regexp "no rule to\\|failed\\|errors\\|error:"))
+  (let ((bhj-occur-regexp "no rule to\\|failed\\|errors\\|1 error\\b\\|error:"))
     (call-interactively 'bhj-occur)))
 
 

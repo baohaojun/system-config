@@ -26,7 +26,16 @@ git status -s|grep -v '^ '|grep -v '^?'|grep . -q || die "Error, nothing to comm
 test $# -lt 1 && die "Error: must have a ticket, such as CINEMA-44. See http://bear/jira"
 
 msg=/tmp/gitci-msg.$$
-echo "$1" > $msg
+(
+    echo "###start of comment###"
+    echo in $(pwd):
+    git diff HEAD | perl -npe 's,^diff --git ,* ,'
+    cat <<EOF
+# Local Variables: #
+# mode:org #
+# End: #
+EOF
+) > $msg
 
 ticket="${1%:*}"
 shift

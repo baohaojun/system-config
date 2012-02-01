@@ -6,6 +6,10 @@ FILE=$2
 elif test $# = 1; then
     LINE=${1#*:}
     FILE=${1%:*}
+    if ! test -e $FILE; then
+	FILE=~/.ssh/known_hosts
+	LINE=$1
+    fi
 else
     exit
 fi
