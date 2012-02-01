@@ -20,6 +20,7 @@
 #include "SnarlInterface.h"
 
 
+
 class SnarlBackend:public Snore::SnoreBackend
 {
     Q_OBJECT

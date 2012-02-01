@@ -1,7 +1,7 @@
 if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
     message(STATUS "Adding freedesktop notification frontend")
 
-    set ( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC
+    set( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC
 	    freedesktopnotificationfrontend.cpp
             ../../backends/freedesktop/fredesktopnotification.cpp
 	)

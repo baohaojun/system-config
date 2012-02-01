@@ -276,8 +276,10 @@ void SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
 }
 
 const QString &SnoreCore::primaryNotificationBackend(){
-    if(m_notificationBackend == NULL)
-        return "";
+    if(m_notificationBackend == NULL){
+        static QString none;
+        return none;
+    }
     return m_notificationBackend->name();
 }
 

@@ -17,18 +17,15 @@
 #include "snarl.h"
 
 #include "core/snore.h"
+#include "core/plugins/plugins.h"
 #include "core/plugins/snorebackend.h"
 
 #include <QtCore>
-#include <QTextEdit>
 #include <QtDebug>
 #include <QWidget>
 
 
 #include <iostream>
-
-//disable some msvc warnings
-#define _CRT_SECURE_NO_WARNINGS
 
 
 #define SNORENOTIFIER_MESSAGE_ID  WM_USER + 238

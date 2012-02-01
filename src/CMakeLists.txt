@@ -4,11 +4,11 @@ add_subdirectory(core)
 QT4_ADD_RESOURCES(SNORENOTIFY_RCS ${SNORE_RCS})
 set(SNORENOTIFY_DEPS ${SNORENOTIFY_DEPS} ${SNORENOTIFY_RCS})
 
-if(WIN32)
-  set(WIN32_SPECIFIC WIN32)
-else(WIN32)
+#if(WIN32)
+#  set(WIN32_SPECIFIC WIN32)
+#else(WIN32)
   set(WIN32_SPECIFIC)
-endif(WIN32)
+#endif(WIN32)
 
 automoc4_add_executable( snorenotify ${WIN32_SPECIFIC}  main.cpp snorenotify.cpp trayicon.cpp ${SNORENOTIFY_DEPS})
 
