@@ -89,7 +89,7 @@ for (@words[0..$max]) {
   if ($match == 1) {
     print $print_prefix . $_ . "\n";
   } elsif ($_) {
-    if ($is_prefix) {
+    if ($is_prefix and not $words_file) { #sometimes we do not want fill out the common prefix
       s/\s+/./g;
       printf "%s: %d\n", $_, $count++;
     } else {
