@@ -15,7 +15,12 @@
                                                (window-put window 'depth 0))
                                              (stacking-order))))
 
-
+(bind-keys window-keymap "Super-F4" 
+	     (lambda ()
+	       (let ((window (input-focus)))
+		 (unless (equal (window-class window) "Xfce4-panel")
+		   (delete-window-safely window)))))
+	     
 (defun bhj-activate-window (window)
   (if (window-iconified-p window)
       (uniconify-window window))
