@@ -4,6 +4,10 @@
 touch ~/.where ~/.where.lock
 
 sudo perl -npe 's/^XKBVARIANT=.*/XKBVARIANT="dvp"/;' -i /etc/default/keyboard
+sudo touch /etc/console-setup/* || true
+sudo touch /etc/default/* || true #setupcon may fail when the
+				  #timestamp of these files are messed
+				  #up by debian installation.
 sudo setupcon
 sudo usermod -a -G fuse $USER
 

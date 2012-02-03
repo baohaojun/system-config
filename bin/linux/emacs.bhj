@@ -1,2 +1,7 @@
 #!/bin/bash
-GTK_IM_MODULE= XMODIFIERS= XIM= emacs&
+
+EMACS=emacs
+if type emacs-snapshot-gtk; then
+    EMACS=emacs-snapshot-gtk
+fi
+GTK_IM_MODULE= XMODIFIERS= XIM= $EMACS&

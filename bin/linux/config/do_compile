@@ -29,7 +29,7 @@ function compile_ibus_sdim() {
     ./autogen.sh
     ./configure --prefix=/usr
     make
-    sudo make install
+    sudo make DESTDIR=/ install
     git clean -xfd
 }
 
