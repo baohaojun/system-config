@@ -139,6 +139,7 @@ function rbcd()
 
 function re()
 {
+    echo 'error: re should never be executed!'
 }
 
 alias cd=cd_bhj
