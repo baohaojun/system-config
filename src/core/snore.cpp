@@ -49,7 +49,6 @@ QString const SnoreCore::snoreTMP(){
 
 
 SnoreCore::SnoreCore ( QSystemTrayIcon *trayIcon ) :
-    m_notificationBackend ( NULL ),
     m_trayIcon ( trayIcon )
 {
     QDir home ( snoreTMP() );

@@ -73,7 +73,7 @@ private:
     QStringList m_secondaryNotificationBackends;
     QStringList m_plugins;
 
-    SnoreBackend * m_notificationBackend;
+    QPointer<SnoreBackend> m_notificationBackend;
 
     QSystemTrayIcon *m_trayIcon;
     static QString s_pluginPath;
