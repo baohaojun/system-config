@@ -7553,8 +7553,7 @@ icon and the value is a hash. The key of the child hash is URL and its value
 is the display property for the icon.")
 
 (defvar twittering-convert-program (executable-find "convert"))
-(defvar twittering-convert-fix-size 48)
-(defvar twittering-use-convert (not (null twittering-convert-program))
+(defvar twittering-use-convert (not (null twittering-convert-fix-size))
   "*This variable makes a sense only if `twittering-convert-fix-size'
 is non-nil. If this variable is non-nil, icon images are converted by
 invoking \"convert\". Otherwise, cropped images are displayed.")

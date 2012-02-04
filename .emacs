@@ -600,6 +600,7 @@
  '(tramp-syntax (quote ftp))
  '(tramp-verbose 0)
  '(transient-mark-mode t)
+ '(twittering-convert-fix-size nil)
  '(url-proxy-services (quote (("http" . "127.0.0.1:8580") ("no_proxy" . "^[^.]*$\\|sina.com"))))
  '(user-full-name "Bao Haojun")
  '(w32-symlinks-handle-shortcuts t)
