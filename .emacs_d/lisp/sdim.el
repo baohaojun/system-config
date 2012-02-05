@@ -287,7 +287,12 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
           (unwind-indicator nil))
       (setq sdim-modified-p (buffer-modified-p))
       (unwind-protect
-          (sdim-start-translation key)
+	  (progn
+	    (sdim-start-translation key)
+	    nil) ; must make sure the sdim-input-method got translated
+		 ; events, in this case, we don't have any generated
+		 ; events, the buffer is already modified by us using
+		 ; insert directly.
         (unless unwind-indicator
           (message "sdim translation failed"))
         (sdim-delete-overlays)
