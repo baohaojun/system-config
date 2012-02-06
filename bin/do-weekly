@@ -8,12 +8,12 @@ fi
 year_page=$(date +%Y -d "${1:-today}")
 week_page=$(date +%Y.%m.%d -d "Last Mon")-$(date +%Y.%m.%d -d "${1:-Fri}")
 
-congfu --space Weekly -- -a getSource --title $week_page |print -ne 'print unless(1..1)' > $week_page
+congfu --space Weekly -- -a getSource --title $week_page |perl -ne 'print unless(1..1)' > $week_page
 congfu --space Weekly -- -a storePage --title $week_page --file $week_page --parent $year_page
 
 tool_page=$(congfu --space Weekly -- -a getPageList --title $week_page --children | grep tool -i)
 test -z "$tool_page" && tool_page=Tool_$(date +%Y%m%d -d "${1:-Fri}")
-congfu --space Weekly -- -a getSource --title $tool_page |print -ne 'print unless(1..1)' > $tool_page
+congfu --space Weekly -- -a getSource --title $tool_page |perl -ne 'print unless(1..1)' > $tool_page
 congfu --space Weekly -- -a storePage --title $tool_page --file $tool_page --parent $week_page
 
 bhj_page=bhj_$(date +%Y.%m.%d -d "${1:-Fri}")
