@@ -1,6 +1,7 @@
 #!/bin/bash
 . ~/.bashrc
 cd $(lookup_file .repo/..)
+$(lookup_file prebuilt/linux-x86/ccache/ccache) -M 100G
 
 for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do xval=`eval echo \\$$x`; if test "$xval" != ""; then echo $x\?=`eval echo \\$$x`; fi; done >buildspec.mk
 echo "ANDROID_BUILD_TOP := $PWD" >>buildspec.mk

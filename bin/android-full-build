@@ -9,6 +9,13 @@ cd $top_dir || exit
 . build/envsetup.sh >/dev/null 2>&1
 
 (cd $(android-env get_abs_build_var TARGET_OUT) && rm ../system.img ../obj/PACKAGING/systemimage_intermediates/system.img -v)
-time make kernel 2>&1 | tee build.log
-time make -j3 -l3 -k 2>&1 | tee -a build.log
-time make telephony uboot obm 2>&1 | tee -a build.log
+test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
+
+(
+    echo 'about to lock at '$(date)
+    flock 9 || { echo 'lock failed at'$(date); exit -1; }
+    echo 'lock success! at'$(date)
+    command time make kernel
+    command time make -j${1:-3} -l${1:-3} -k
+    command time make telephony uboot obm
+) 9>~/.logs/android-full-build.lock  2>&1 | tee build.log

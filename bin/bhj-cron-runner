@@ -4,7 +4,7 @@
 run_dir=$(basename $1)
 run_time=$2
 
-logdir=~/.cron-log/$run_dir
+logdir=~/.logs/cron-log/$run_dir
 mkdir -p $logdir
 
 exec > $logdir/bhj-cron-runner 2>&1
