@@ -65,3 +65,4 @@ function gitci-amend() {
 }
 
 `basename $0` "$@"
+if test -z "$DEBUG"; then rm $msg; fi

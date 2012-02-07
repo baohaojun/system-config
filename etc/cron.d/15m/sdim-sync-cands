@@ -11,3 +11,4 @@ diff $tmpf.git $tmpf.ime | grep "^<"|cut -b 3-|bash
 diff $tmpf.git $tmpf.ime | grep "^>"|cut -b 3-|
 sed -e 's/sdim-add-cand //' |
 xargs bash -c 'for x in "$@"; do dir=$(echo $x|md5sum|cut -b 1-2); mkdir -p $dir; echo write $dir/$x; touch $dir/"$x"; done' xx
+if test -z "$DEBUG"; then rm $tmpf.ime $tmpf.git; fi

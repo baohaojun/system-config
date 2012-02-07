@@ -8,3 +8,4 @@
 ../doc/visemacs-vc10.reg
 devcmd/Release/
 scim-cs/scim.suo
+*.o
