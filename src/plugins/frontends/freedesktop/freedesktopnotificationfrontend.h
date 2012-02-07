@@ -19,12 +19,12 @@
 #include "core/plugins/snorefrontend.h"
 #include <QtDBus>
 
-class FreedesktopNotification_Frontend:public Snore::SnoreFrontend{
+class FreedesktopFrontend:public Snore::SnoreFrontend{
     Q_OBJECT
     Q_INTERFACES(Snore::SnoreFrontend)
 public:
-    FreedesktopNotification_Frontend();
-    ~FreedesktopNotification_Frontend();
+    FreedesktopFrontend();
+    ~FreedesktopFrontend();
     virtual bool init(Snore::SnoreCore *snore);
 
     void actionInvoked(Snore::Notification notification);

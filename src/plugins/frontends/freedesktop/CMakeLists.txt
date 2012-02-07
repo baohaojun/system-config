@@ -6,7 +6,7 @@ if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
             ../../backends/freedesktop/fredesktopnotification.cpp
 	)
 
-    qt4_add_dbus_adaptor( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC org.freedesktop.Notifications.xml freedesktopnotificationfrontend.h FreedesktopNotification_Frontend)
+    qt4_add_dbus_adaptor( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC org.freedesktop.Notifications.xml freedesktopnotificationfrontend.h FreedesktopFrontend)
 
     automoc4_add_library(freedesktop MODULE  ${FREEDESKTOP_NOTIFICATION_FRONTEND_SRC} )
     target_link_libraries(freedesktop snorecore ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY} )

@@ -29,20 +29,20 @@
 #endif
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2(freedesktop_frontend,FreedesktopNotification_Frontend)
+Q_EXPORT_PLUGIN2(freedesktop,FreedesktopFrontend)
 
-FreedesktopNotification_Frontend::FreedesktopNotification_Frontend():
+FreedesktopFrontend::FreedesktopFrontend():
     SnoreFrontend("Freedesktop")
 {
 
 }
 
-FreedesktopNotification_Frontend::~FreedesktopNotification_Frontend(){
+FreedesktopFrontend::~FreedesktopFrontend(){
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.unregisterService( "org.freedesktop.Notifications" );
 }
 
-bool FreedesktopNotification_Frontend::init(SnoreCore *snore){
+bool FreedesktopFrontend::init(SnoreCore *snore){
     new  NotificationsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.registerService( "org.freedesktop.Notifications" );
@@ -50,11 +50,11 @@ bool FreedesktopNotification_Frontend::init(SnoreCore *snore){
     return SnoreFrontend::init(snore);
 }
 
-void FreedesktopNotification_Frontend::actionInvoked(Notification notification) {
+void FreedesktopFrontend::actionInvoked(Notification notification) {
     emit ActionInvoked(notification.id(),QString::number(notification.actionInvoked()->id));
 }
 
-void FreedesktopNotification_Frontend::notificationClosed(Notification notification) {
+void FreedesktopFrontend::notificationClosed(Notification notification) {
 
     qDebug()<<"Closing Dbus notification"<<notification.id()<<"reason:"<<(int)notification.closeReason();
     activeNotifications.remove(notification.id());
@@ -62,7 +62,7 @@ void FreedesktopNotification_Frontend::notificationClosed(Notification notificat
     emit NotificationClosed(notification.id(),notification.closeReason());
 }
 
-uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint replaces_id,
+uint FreedesktopFrontend::Notify(const QString &app_name, uint replaces_id,
                                               const QString &app_icon, const QString &summary, const QString &body,
                                               const QStringList &actions, const QVariantMap &hints, int timeout)
 {
@@ -106,13 +106,13 @@ uint FreedesktopNotification_Frontend::Notify(const QString &app_name, uint repl
 
 
 
-void FreedesktopNotification_Frontend::CloseNotification(uint id){
+void FreedesktopFrontend::CloseNotification(uint id){
     Notification noti = activeNotifications.take(id);
     qDebug()<<"Active Dbus Notifications"<<activeNotifications.keys();
     snore()->closeNotification(noti,NotificationEnums::CloseReasons::TIMED_OUT);
 }
 
-QStringList FreedesktopNotification_Frontend::GetCapabilities()
+QStringList FreedesktopFrontend::GetCapabilities()
 {
     return QStringList()
             << "body"
@@ -123,7 +123,7 @@ QStringList FreedesktopNotification_Frontend::GetCapabilities()
                ;
 }
 
-QString FreedesktopNotification_Frontend::GetServerInformation(QString& vendor, QString& version, QString& specVersion)
+QString FreedesktopFrontend::GetServerInformation(QString& vendor, QString& version, QString& specVersion)
 {
     vendor = "Snore";
     version = snore()->version();
