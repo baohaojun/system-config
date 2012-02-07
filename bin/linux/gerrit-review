@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -x
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
 export REMOTE=$(git config remote.`repo-remote`.url)
 (
