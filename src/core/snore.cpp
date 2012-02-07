@@ -64,8 +64,9 @@ QHash<QString, PluginContainer *> SnoreCore::pluginCache(){
         return s_pluginCache;
     QSettings cache(SnoreCore::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
     QString version = cache.value("version").toString();
+    QString path = cache.value("path").toString();
     int size = cache.beginReadArray("plugins");
-    if(size == 0 || version != Version::revision()){
+    if(size == 0 || version != Version::revision() || path != pluginDir().path()){
         updatePluginCache();
     }else{
         for(int i=0;i<size;++i) {
@@ -106,13 +107,14 @@ void SnoreCore::updatePluginCache(){
             }
             PluginContainer *info = new PluginContainer( SnoreCore::pluginDir().relativeFilePath(filepath),sp->name(),PluginContainer::typeFromString(type));
             s_pluginCache.insert(info->name(),info);
-            sp->deleteLater();
+            delete sp;
             qDebug()<<"added "<<info->name()<<"to cache";
         }
     }
 
     qDebug()<<s_pluginCache.keys();
     cache.setValue("version",Version::revision());
+    cache.setValue("path",pluginDir().path());
     QList<PluginContainer*> plugins = s_pluginCache.values();
     cache.beginWriteArray("plugins");
     for(int i=0;i< plugins.size();++i) {

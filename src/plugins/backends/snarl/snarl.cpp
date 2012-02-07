@@ -106,6 +106,7 @@ private:
 
 SnarlBackend::SnarlBackend():
     SnoreBackend("Snarl"),
+    m_defautSnarlinetrface(NULL),
     m_away(false)
 {
 
@@ -118,7 +119,8 @@ SnarlBackend::~SnarlBackend()
             this->unregisterApplication(a);
         }
     }
-    delete m_defautSnarlinetrface;
+    if(m_defautSnarlinetrface)
+        delete m_defautSnarlinetrface;
 }
 
 
