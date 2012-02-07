@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# gtags will call sort, which will use a lot of space for large projects.
+export TMPDIR=~/tmp
+mkdir -p $TMPDIR
+
 Filter=${Filter:-~/.my-beagrep-filter-android}
 cd -P . 
 outDir=~/tmp/for-code-reading/"`pwd`"
