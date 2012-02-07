@@ -36,7 +36,7 @@ namespace Snore{
 
 QHash<QString,PluginContainer*> SnoreCore::s_pluginCache = QHash<QString,PluginContainer*>() ;
 
-QString SnoreCore::s_pluginPath = QString(qApp->applicationDirPath()+"/snoreplugins");
+QDir *SnoreCore::s_pluginDir = NULL;
 
 QString const SnoreCore::version(){
     return QString().append(Version::major()).append(".").append(Version::minor()).append(Version::suffix());
@@ -80,9 +80,7 @@ QHash<QString, PluginContainer *> SnoreCore::pluginCache(){
     return s_pluginCache;
 }
 
-void SnoreCore::updatePluginCache(const QString &pluginPath){
-    if(!pluginPath.isEmpty())
-        s_pluginPath = pluginPath;
+void SnoreCore::updatePluginCache(){
     QSettings cache(SnoreCore::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
     qDebug()<<"Updating plugin cache"<<cache.fileName();
 
@@ -126,18 +124,29 @@ void SnoreCore::updatePluginCache(const QString &pluginPath){
     cache.endArray();
 }
 
-const QDir &SnoreCore::pluginDir()
-{
-    //TODO:fix logic
-    static QDir *plDir = NULL;
-    if(plDir == NULL){
-        qDebug()<<"PluginDir"<<s_pluginPath;
-        plDir = new QDir(s_pluginPath);
-        if(!plDir->exists())
-            plDir = new QDir(LIBSNORE_PLUGIN_PATH);
+const QDir &SnoreCore::pluginDir(){
+    if(s_pluginDir == NULL)
+        setPluginDir();
+    qDebug()<<"SnorePluginDir:"<<s_pluginDir->path();
+    return *s_pluginDir;
+}
+
+void SnoreCore::setPluginDir(const QString &path){
+    if(!path.isEmpty()){//path is not empty
+        QDir *tmp = new QDir(path);
+        if(tmp->exists()){//path exists
+            s_pluginDir = tmp;
+        }else{
+            delete tmp;
+        }
     }
-    qDebug()<<"SnorePluginDir:"<<plDir->path();
-    return *plDir;
+    //if pluginpath is not initialized try snoreplugins/ in application dir
+    if(s_pluginDir == NULL){
+        s_pluginDir  = new QDir(qApp->applicationDirPath()+"/snoreplugins");
+        qDebug()<<"PluginDir"<<s_pluginDir->absolutePath();
+        if(!s_pluginDir->exists())//still not existing? use the path defined on compile time
+            s_pluginDir = new QDir(LIBSNORE_PLUGIN_PATH);
+    }
 }
 
 void SnoreCore::publicatePlugin ( PluginContainer::PluginTypes types )
