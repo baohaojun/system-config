@@ -26,6 +26,7 @@
 
 class QSystemTrayIcon;
 class QDir;
+class QSettings;
 
 namespace Snore{
 class SNORE_EXPORT SnoreCore:public QObject
@@ -64,9 +65,11 @@ public:
 
 private:
     static QHash<QString,PluginContainer*> pluginCache();
+    static QSettings *cacheFile();
 
     static QHash<QString,PluginContainer*> s_pluginCache;
     static QDir *s_pluginDir;
+
     ApplicationsList m_applications;
 
 

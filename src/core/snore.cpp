@@ -38,8 +38,17 @@ QHash<QString,PluginContainer*> SnoreCore::s_pluginCache = QHash<QString,PluginC
 
 QDir *SnoreCore::s_pluginDir = NULL;
 
+QSettings *SnoreCore::cacheFile(){
+#ifdef Q_OS_LINUX
+    return  new QSettings("TheOneRing","libsnore");
+#else
+    return new QSettings(SnoreCore::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
+#endif
+}
+
 QString const SnoreCore::version(){
-    return QString().append(Version::major()).append(".").append(Version::minor()).append(Version::suffix());
+    static QString ver(QString().append(Version::major()).append(".").append(Version::minor()).append(Version::suffix()));
+    return ver;
 }
 
 QString const SnoreCore::snoreTMP(){
@@ -62,28 +71,30 @@ SnoreCore::SnoreCore ( QSystemTrayIcon *trayIcon ) :
 QHash<QString, PluginContainer *> SnoreCore::pluginCache(){
     if(!s_pluginCache.isEmpty())
         return s_pluginCache;
-    QSettings cache(SnoreCore::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
-    QString version = cache.value("version").toString();
-    QString path = cache.value("path").toString();
-    int size = cache.beginReadArray("plugins");
+    QSettings *cache = cacheFile();
+    QString version = cache->value("version").toString();
+    QString path = cache->value("pluginPath").toString();
+    int size = cache->beginReadArray("plugins");
     if(size == 0 || version != Version::revision() || path != pluginDir().path()){
+        qDebug()<<version<<"!="<<Version::revision();
+        qDebug()<<path<<"!="<<pluginDir().path();
         updatePluginCache();
     }else{
         for(int i=0;i<size;++i) {
-            cache.setArrayIndex(i);
-            PluginContainer::PluginType type = (PluginContainer::PluginType)cache.value("type").toInt();
-            PluginContainer *info = new PluginContainer(cache.value("fileName").toString(),cache.value("name").toString(),type);
+            cache->setArrayIndex(i);
+            PluginContainer::PluginType type = (PluginContainer::PluginType)cache->value("type").toInt();
+            PluginContainer *info = new PluginContainer(cache->value("fileName").toString(),cache->value("name").toString(),type);
             s_pluginCache.insert(info->name(),info);
         }
-        cache.endArray();
+        cache->endArray();
     }
 
     return s_pluginCache;
 }
 
 void SnoreCore::updatePluginCache(){
-    QSettings cache(SnoreCore::pluginDir().absoluteFilePath("plugin.cache"),QSettings::IniFormat);
-    qDebug()<<"Updating plugin cache"<<cache.fileName();
+    QSettings *cache = cacheFile();
+    qDebug()<<"Updating plugin cache"<<cache->fileName();
 
     s_pluginCache.clear();
 
@@ -113,17 +124,17 @@ void SnoreCore::updatePluginCache(){
     }
 
     qDebug()<<s_pluginCache.keys();
-    cache.setValue("version",Version::revision());
-    cache.setValue("path",pluginDir().path());
+    cache->setValue("version",Version::revision());
+    cache->setValue("pluginPath",pluginDir().path());
     QList<PluginContainer*> plugins = s_pluginCache.values();
-    cache.beginWriteArray("plugins");
+    cache->beginWriteArray("plugins");
     for(int i=0;i< plugins.size();++i) {
-        cache.setArrayIndex(i);
-        cache.setValue("fileName",plugins[i]->file());
-        cache.setValue("name", plugins[i]->name());
-        cache.setValue("type",(int)plugins[i]->type());
+        cache->setArrayIndex(i);
+        cache->setValue("fileName",plugins[i]->file());
+        cache->setValue("name", plugins[i]->name());
+        cache->setValue("type",(int)plugins[i]->type());
     }
-    cache.endArray();
+    cache->endArray();
 }
 
 const QDir &SnoreCore::pluginDir(){

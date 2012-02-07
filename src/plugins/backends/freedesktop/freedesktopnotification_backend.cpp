@@ -11,38 +11,38 @@
 
 using namespace Snore;
 
-Q_EXPORT_PLUGIN2 ( freedesktopnotificationbackend,FreedesktopNotification_Backend )
+Q_EXPORT_PLUGIN2 ( freedesktopnotificationbackend,FreedesktopBackend )
 
 static const char dbusServiceName[] = "org.freedesktop.Notifications";
 static const char dbusInterfaceName[] = "org.freedesktop.Notifications";
 static const char dbusPath[] = "/org/freedesktop/Notifications";
 
 
-FreedesktopNotification_Backend::FreedesktopNotification_Backend () :
+FreedesktopBackend::FreedesktopBackend () :
     SnoreBackend ( "FreedesktopNotification_Backend")
 {
 
 
 }
 
-bool FreedesktopNotification_Backend::init(SnoreCore *snore){
+bool FreedesktopBackend::init(SnoreCore *snore){
       QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","ActionInvoked",this,SLOT ( actionInvoked( uint,QString ) ) );
     //    if ( getVendor() =="GNOME" )
     QDBusConnection::sessionBus().connect ( "org.freedesktop.Notifications","/org/freedesktop/Notifications","org.freedesktop.Notifications","NotificationClosed",this,SLOT ( closed ( uint,uint ) ) );
     return SnoreBackend::init(snore);
 }
 
-void FreedesktopNotification_Backend::registerApplication ( Application *application )
+void FreedesktopBackend::registerApplication ( Application *application )
 {
     Q_UNUSED ( application );
 }
 
-void FreedesktopNotification_Backend::unregisterApplication ( Application *application )
+void FreedesktopBackend::unregisterApplication ( Application *application )
 {
     Q_UNUSED ( application );
 }
 
-uint  FreedesktopNotification_Backend::notify ( Notification noti )
+uint  FreedesktopBackend::notify ( Notification noti )
 {    
     QDBusMessage message = QDBusMessage::createMethodCall(dbusServiceName, dbusPath, dbusInterfaceName,  "Notify");
     QVariantList args;
@@ -79,7 +79,7 @@ uint  FreedesktopNotification_Backend::notify ( Notification noti )
     }
     return id;
 }
-void FreedesktopNotification_Backend::actionInvoked(const uint &id, const QString &actionID){
+void FreedesktopBackend::actionInvoked(const uint &id, const QString &actionID){
     Notification noti = activeNotifications[id];
     if(noti.id() == 0)
         return;
@@ -88,7 +88,7 @@ void FreedesktopNotification_Backend::actionInvoked(const uint &id, const QStrin
     snore()->notificationActionInvoked ( noti );
 }
 
-void FreedesktopNotification_Backend::closeNotification ( Notification notification )
+void FreedesktopBackend::closeNotification ( Notification notification )
 {
     activeNotifications.remove(notification.id());
     QDBusMessage message = QDBusMessage::createMethodCall(dbusServiceName, dbusPath, dbusInterfaceName,"CloseNotification");
@@ -100,7 +100,7 @@ void FreedesktopNotification_Backend::closeNotification ( Notification notificat
 
 
 
-void FreedesktopNotification_Backend::closed ( const uint &id,const uint &reason )
+void FreedesktopBackend::closed ( const uint &id,const uint &reason )
 {
     qDebug() <<"Closed"<<id<<"|"<<reason;
     if(id == 0)

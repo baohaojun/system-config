@@ -6,12 +6,12 @@
 
 class fNotification;
 
-class  FreedesktopNotification_Backend:public Snore::SnoreBackend
+class  FreedesktopBackend:public Snore::SnoreBackend
 {
     Q_OBJECT
     Q_INTERFACES ( Snore::SnoreBackend )
 public:
-    FreedesktopNotification_Backend ();
+    FreedesktopBackend();
     virtual bool init(Snore::SnoreCore *snore);
     
 public slots:
