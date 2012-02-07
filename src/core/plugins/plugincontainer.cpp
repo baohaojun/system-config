@@ -31,8 +31,7 @@ namespace Snore{
 PluginContainer::PluginContainer(QString fileName, QString pluginName, PluginContainer::PluginType type)
     :m_pluginFile(fileName),
       m_pluginName(pluginName),
-      m_pluginType(type),
-      m_instance(NULL)
+      m_pluginType(type)
 {
 
 }
@@ -62,7 +61,7 @@ const QString & PluginContainer::name()
     return m_pluginName;
 }
 
-const PluginContainer::PluginType PluginContainer::type()
+PluginContainer::PluginType PluginContainer::type()
 {
     return m_pluginType;
 }

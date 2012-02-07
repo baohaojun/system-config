@@ -42,7 +42,7 @@ public:
     SnorePlugin *load();
     const QString &file();
     const QString &name();
-    const PluginContainer::PluginType type();
+    PluginContainer::PluginType type();
 
 
     static PluginContainer::PluginType typeFromString(const QString &t);

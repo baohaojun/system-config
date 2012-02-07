@@ -71,7 +71,7 @@ uint  FreedesktopBackend::notify ( Notification noti )
     message.setArguments(args);
 
     QDBusMessage replyMsg = QDBusConnection::sessionBus().call(message);
-    uint id ;
+    uint id = 0;
     if(replyMsg.type() == QDBusMessage::ReplyMessage){
         id= replyMsg.arguments().at(0).toUInt();
         qDebug()<<"DBUS_ID"<<id;

@@ -32,29 +32,30 @@ static int count = 0;
 
 class Notification::NotificationData : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
     NotificationData ( uint id=0 ):
         m_id ( id ),
-    m_timeout ( 10 ),
-    m_source ( NULL ),
-    m_closeReason(NotificationEnums::CloseReasons::NONE),
-    m_priority(NotificationEnums::Prioritys::NORMAL)
+        m_timeout ( 10 ),
+        m_source ( NULL ),
+        m_priority(NotificationEnums::Prioritys::NORMAL),
+        m_closeReason(NotificationEnums::CloseReasons::NONE)
+
     {
         qDebug()<<"ActiveNotifications"<<++count;
     }
 
     NotificationData ( const QString &application,const QString &alert,const QString &title,const QString &text,const SnoreIcon &icon,int timeout,uint id,NotificationEnums::Prioritys::prioritys priority ):
         m_id ( id ),
-    m_timeout ( timeout ),
-    m_source ( NULL),
-    m_application ( application ),
-    m_alert ( alert ),
-    m_title ( title ),
-    m_text ( text ),
-    m_icon ( icon ),
-    m_priority(priority),
-    m_closeReason(NotificationEnums::CloseReasons::NONE)
+        m_timeout ( timeout ),
+        m_source ( NULL),
+        m_application ( application ),
+        m_alert ( alert ),
+        m_title ( title ),
+        m_text ( text ),
+        m_icon ( icon ),
+        m_priority(priority),
+        m_closeReason(NotificationEnums::CloseReasons::NONE)
     {
         qDebug()<<"ActiveNotifications"<<++count;
     }
