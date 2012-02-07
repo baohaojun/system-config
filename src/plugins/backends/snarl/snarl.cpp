@@ -37,7 +37,7 @@ Q_EXPORT_PLUGIN2(snarl,SnarlBackend)
 
 class SnarlBackend::SnarlWidget:public QWidget
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
     SnarlWidget(SnarlBackend * snarl):
         m_snarl(snarl)
@@ -210,11 +210,5 @@ void SnarlBackend::closeNotification(Notification notification){
     m_defautSnarlinetrface->Hide(notification.id());
     activeNotifications.remove(notification.id());
 }
-
-
-
-
-
-
 
 #include "snarl.moc"

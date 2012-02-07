@@ -46,6 +46,4 @@ public slots:
 };
 
 
-
-
 #endif // SNARL_BACKEND_H
