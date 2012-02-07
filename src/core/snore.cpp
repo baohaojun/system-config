@@ -162,7 +162,7 @@ void SnoreCore::setPluginDir(const QString &path){
     }
 }
 
-void SnoreCore::publicatePlugin ( PluginContainer::PluginTypes types )
+void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
 {
     qDebug()<<"PluginInfo"<<SnoreCore::pluginCache().keys();
     foreach ( PluginContainer *info, SnoreCore::pluginCache().values())

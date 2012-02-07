@@ -41,7 +41,7 @@ public:
 
 public:
     SnoreCore (QSystemTrayIcon *trayIcon=0 );
-    void publicatePlugin ( PluginContainer::PluginTypes types );
+    void loadPlugins ( PluginContainer::PluginTypes types );
 
 
     uint broadcastNotification ( Notification notification );
