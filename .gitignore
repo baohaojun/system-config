@@ -73,8 +73,6 @@ glue/inotify-glue.o
 glue/ioprio-glue.lo
 glue/ioprio-glue.o
 glue/libbeagrepglue.la
-glue/mono-glue.lo
-glue/mono-glue.o
 glue/scheduler-glue.lo
 glue/scheduler-glue.o
 glue/screensaver-glue.lo

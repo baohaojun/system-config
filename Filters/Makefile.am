@@ -24,7 +24,6 @@ LOCAL_ASSEMBLIES =				\
 ASSEMBLIES =				\
 	$(BEAGREPD_LIBS)			\
 	$(SHARPZIPLIB_LIBS)		\
-	$(TAGLIB_SHARP_LIBS)		\
 	-r:Mono.Posix			\
 	-r:System.Web			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)

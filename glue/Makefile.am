@@ -1,4 +1,4 @@
-INCLUDES = $(MONO_CFLAGS)
+INCLUDES = @MONO_CFLAGS@ @GLIB_CFLAGS@
 
 EXTRA_GLUE_SOURCES =
 EXTRA_GLUE_LIBADD =
@@ -21,7 +21,6 @@ SCHEDULER_GLUE_SOURCES =	\
 	scheduler-glue.c
 
 SYSINFO_GLUE_SOURCES =		\
-	mono-glue.c		\
 	screensaver-glue.c	\
 	thread-glue.c		\
 	vmsize-glue.c
