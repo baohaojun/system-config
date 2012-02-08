@@ -284,7 +284,6 @@ import pickle
 # python-indent: 4 #
 # End: #
 " nil 0)
-    ("signal" "SIGNAL" nil 3)
     ("slef" "self" nil 4)
     ("true" "True" nil 2)
    ))

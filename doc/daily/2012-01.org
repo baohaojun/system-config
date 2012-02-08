@@ -88,7 +88,14 @@ see if he agrees.
    CLOSED: [2012-02-01 Wed 12:49]
    - CLOSING NOTE [2012-02-01 Wed 12:49]
 
-** TODO fix gnome-open 							 :pe:
+** DONE fix gnome-open							 :pe:
+   CLOSED: [2012-02-08 Wed 20:27]
+   - CLOSING NOTE [2012-02-08 Wed 20:27] \\
+     gnome-open will always open nautilus with the target file selected.
+     
+     rm ~/.local
+     
+     It is great that I can use this as oc -- open containing folder.
 ** DONE fix sdim while C-s searching					 :pe:
    CLOSED: [2012-01-31 Tue 22:01]
    - CLOSING NOTE [2012-01-31 Tue 22:01]
