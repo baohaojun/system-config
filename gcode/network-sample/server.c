@@ -59,38 +59,53 @@
 #define MAXHOSTNAMELEN 256
 
 
-/* doconnect :
-   do all the socket stuff, and return an fd for one of
-   an open outbound TCP connection
-   a UDP stub-socket thingie
-   with appropriate socket options set up if we wanted source-routing, or
-   an unconnected TCP or UDP socket to listen on.
-   Examines various global o_blah flags to figure out what-all to do. */
-int doconnect (IA * rad, USHORT rp, IA * lad, USHORT lp)
+void die(const char* msg)
 {
-	register int nnetfd;
-	register int rr;
-	int x, y;
-	errno = 0;
+	fprintf(stderr, "%s\n", msg);
+	exit(-1);
+}
 
-	/* grab a socket; set opts */
-newskt:
-	nnetfd = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (nnetfd < 0)
-		bail ("Can't get socket");
-	if (nnetfd == 0)		/* if stdin was closed this might *be* 0, */
-		goto newskt;		/* so grab another.  See text for why... */
-	x = 1;
-	rr = setsockopt (nnetfd, SOL_SOCKET, SO_REUSEADDR, &x, sizeof (x));
+int get_network_fd()
+{
+	int fd = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (fd < 0)
+		die("Can't get socket");
+	int x = 1;
+	int rr = setsockopt (fd, SOL_SOCKET, SO_REUSEADDR, &x, sizeof (x));
 	if (rr == -1)
-		holler ("nnetfd reuseaddr failed");		/* ??? */
+		warn("nnetfd reuseaddr failed");
 
-	return (nnetfd);
-	close (nnetfd);			/* clean up junked socket FD!! */
-	return (-1);
-} /* doconnect */
+	return fd;
+}
 
+int start_server(int srv_fd)
+{
+	struct sockaddr_in sai;
+	sai.sin_family = AF_INET;
+	sai.sin_port = htons(54321);
+	sai.sin_addr.s_addr = inet_addr("127.0.0.1");
+	bind(srv_fd, (struct sockaddr*)&sai, sizeof(struct sockaddr));
+	listen(srv_fd, 5);
+}
+
+int handle_clients(int srv_fd)
+{
+	while (1) {
+		int conn_fd = accept(srv_fd, NULL, NULL);
+		pid_t pid = fork();
+		if (pid == 0) { //child
+			dup2(conn_fd, 0);
+			dup2(conn_fd, 1);
+			dup2(conn_fd, 2);
+			execlp("tcmd-client-handler", "tcmd-client-handler", (char*) NULL);
+		}
+		close(conn_fd);
+	}
+}
 int main(int argc, char** argv)
 {
-
+	int srv_fd;
+	srv_fd = get_network_fd();
+	start_server(srv_fd);
+	handle_clients(srv_fd);
 }

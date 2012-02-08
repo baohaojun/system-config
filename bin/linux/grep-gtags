@@ -55,6 +55,7 @@ sub do_cscope($$$$) {
     my ($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp) = @_;
     chdir ($pwd) or die "Error chdir $pwd";
     my $gtags_dir = $pwd;
+    my $got_results = 0;
     my $code_dir = substr($pwd, length("$ENV{HOME}/tmp/for-code-reading"));
     $code_dir =~ s,/+,/,g;
     open(my $grep, "-|", "echo $lookup_type$lookup_needle|gtags-cscope");
@@ -97,21 +98,18 @@ sub do_cscope($$$$) {
 	# print 'dist between "' . $matches{$_}->[0] . '" and "' . $approx_dir . '" is ' . abs(adistr($matches{$_}->[0], $approx_dir)) . "\n";
 	my ($file, $line, $str) = ($matches{$_}->[0], $matches{$_}->[2], $matches{$_}->[3]);
         print "$code_dir/$file:$line: $str\n" unless $str =~ m/^#undef|^EXPORT_SYMBOL/ or $file =~ m,external/kernel-headers, or $file =~ m,android-[2-7]/arch-,;
+	$got_results = 1;
         
         $update_path{$file} = 1;
     }
     chdir ($code_dir) or die "Can not change to $code_dir";
     my @update_path = keys %update_path; 
     system("echo @update_path |tr ' ' '\n'| gtags --gtagslabel=plugin-example -i -f - $gtags_dir");
+    return $got_results;
 }
 
-do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
-chdir ($pwd);
-open(my $brothers, "<", ".beagrep-brothers") or exit(0);
-while(<$brothers>) {
-    chomp;
-    s,/.beagrep$,,;
-    my $pwd = $_;
-    print "\n\n================\n\n";
-    do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
-}
+exit if do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
+chomp(my $gtags_fallback_dir = qx(readlink -m ~/.gtags-fallback-dir));
+exit unless $gtags_fallback_dir;
+do_cscope($gtags_fallback_dir, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
+
