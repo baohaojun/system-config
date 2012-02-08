@@ -342,7 +342,7 @@ Spent 2 hours on this.
 * DONE 修改bbdb，只对发送的邮件做database collection。			 :pe:
   CLOSED: [2012-01-12 Thu 10:55]
   - CLOSING NOTE [2012-01-12 Thu 10:55]
-* TODO 看3gpp 23.038，关于sms						 :pe:
+* CANCELED 看3gpp 23.038，关于sms					 :pe:
 * TODO learn to use artist-mode						 :pe:
 
 #+BEGIN_DITAA  asciiExample.png -o -r

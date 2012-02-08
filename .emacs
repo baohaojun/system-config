@@ -2120,6 +2120,7 @@ criteria can be provided via the optional match-string argument "
   (if (or (string-match "*** localhost has changed mode for &bitlbee to" msg)
           (string-match "Account already online" msg)
           (string-match "You're already logged in" msg)
+	  (string-match "has quit: Leaving\\|has joined channel" msg)
           (string-match "Unknown error while loading configuration" msg))
       (setq erc-insert-this nil)))
 (add-hook 'erc-insert-pre-hook 'erc-ignore-unimportant)
