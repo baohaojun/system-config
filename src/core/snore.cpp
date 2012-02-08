@@ -177,7 +177,7 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
             case PluginContainer::SECONDARY_BACKEND:{
                 SnoreSecondaryBackend *nb = qobject_cast<SnoreSecondaryBackend *> ( info->load() );
                 if(!nb->init( this )){
-                    info->deleteLater();
+                    nb->deleteLater();
                     break;
                 }
                 m_secondaryNotificationBackends.append(info->name());
@@ -187,7 +187,7 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
                 SnoreFrontend * nf = qobject_cast<SnoreFrontend*> (info->load());
                 qDebug() <<info->name()<<"is a Notification_Frontend";
                 if(!nf->init( this )){
-                    info->deleteLater();
+                    nf->deleteLater();
                     break;
                 }
                 m_Frontends.append(info->name());
@@ -196,7 +196,7 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
             case PluginContainer::PLUGIN:{
                 qDebug() <<info->name()<<"is a SnorePlugin";
                 if(!info->load()->init(this)){
-                    info->deleteLater();
+                    info->load()->deleteLater();
                     break;
                 }
                 m_plugins.append(info->name());
