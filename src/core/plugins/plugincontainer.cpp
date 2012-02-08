@@ -33,7 +33,11 @@ PluginContainer::PluginContainer(QString fileName, QString pluginName, PluginCon
       m_pluginName(pluginName),
       m_pluginType(type)
 {
+}
 
+PluginContainer::~PluginContainer(){
+    if(m_instance)
+        m_instance->deleteLater();
 }
 
 SnorePlugin *PluginContainer::load(){

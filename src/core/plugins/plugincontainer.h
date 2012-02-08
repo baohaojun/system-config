@@ -39,6 +39,7 @@ public:
     };
     Q_DECLARE_FLAGS(PluginTypes, PluginType)
     PluginContainer(QString fileName,QString pluginName,PluginType type);
+    ~PluginContainer();
     SnorePlugin *load();
     const QString &file();
     const QString &name();

@@ -13,7 +13,8 @@ Q_EXPORT_PLUGIN2(trayicon,TrayIconNotifer)
 TrayIconNotifer::TrayIconNotifer () :
     SnoreBackend ( "SystemTray" ),
     m_id ( 0 ),
-    m_displayed(-1)
+    m_displayed(-1),
+    m_trayIcon(NULL)
 {
 
 }

@@ -177,7 +177,7 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
             case PluginContainer::SECONDARY_BACKEND:{
                 SnoreSecondaryBackend *nb = qobject_cast<SnoreSecondaryBackend *> ( info->load() );
                 if(!nb->init( this )){
-                    nb->deleteLater();
+                    info->deleteLater();
                     break;
                 }
                 m_secondaryNotificationBackends.append(info->name());
@@ -187,7 +187,7 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
                 SnoreFrontend * nf = qobject_cast<SnoreFrontend*> (info->load());
                 qDebug() <<info->name()<<"is a Notification_Frontend";
                 if(!nf->init( this )){
-                    nf->deleteLater();
+                    info->deleteLater();
                     break;
                 }
                 m_Frontends.append(info->name());
@@ -196,7 +196,7 @@ void SnoreCore::loadPlugins ( PluginContainer::PluginTypes types )
             case PluginContainer::PLUGIN:{
                 qDebug() <<info->name()<<"is a SnorePlugin";
                 if(!info->load()->init(this)){
-                    info->load()->deleteLater();
+                    info->deleteLater();
                     break;
                 }
                 m_plugins.append(info->name());
@@ -291,9 +291,15 @@ void SnoreCore::setPrimaryNotificationBackend ( const QString &backend )
         return;
     }
     qDebug()<<"Setting Notification Backend to:"<<backend;
-    m_notificationBackend = qobject_cast<SnoreBackend*>(pluginCache()[backend]->load());
-    if(!m_notificationBackend->isInitialized())
-        m_notificationBackend->init(this);
+    SnoreBackend* b = qobject_cast<SnoreBackend*>(pluginCache()[backend]->load());
+    if(!b->isInitialized()){
+        if(!b->init(this)){
+            qDebug()<<"Failed to initialize"<<b->name();
+            return;
+        }
+    }
+
+    m_notificationBackend = b;
 }
 
 const QString &SnoreCore::primaryNotificationBackend(){

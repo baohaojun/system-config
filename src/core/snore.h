@@ -40,7 +40,7 @@ public:
     static void setPluginDir(const QString &path = "");
 
 public:
-    SnoreCore (QSystemTrayIcon *trayIcon=0 );
+    SnoreCore (QSystemTrayIcon *trayIcon = NULL );
     void loadPlugins ( PluginContainer::PluginTypes types );
 
 
