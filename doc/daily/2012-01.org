@@ -45,7 +45,8 @@ see if he agrees.
 - To enter different boot mode, need discuss further
   1. Test gpio is not a long term solution
 - To discuss how the factory test station status is saved.
-* TODO 把linux console下的键盘大写键与escape键互换一下			 :pe:
+* DONE 把linux console下的键盘大写键与escape键互换一下			 :pe:
+  CLOSED: [2012-02-09 Thu 12:26]
 
 * Things done on 2012-01-30
   :PROPERTIES:

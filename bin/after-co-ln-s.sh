@@ -3,6 +3,7 @@ set -e
 mkdir ~/.logs -p
 cd ~/windows-config/
 mkdir -p ~/external/bin/$(uname|perl -npe 's/_.*//')
+mkdir -p ~/tmp/notification-manager
 
 function die() {
     echo "$@"

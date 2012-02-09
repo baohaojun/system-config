@@ -335,7 +335,7 @@ Spent 2 hours on this.
 ** DONE 修改marsburner
    CLOSED: [2012-01-12 Thu 10:56]
    - CLOSING NOTE [2012-01-12 Thu 10:56]
-* TODO tcmd framework
+
 * DONE 集成jira和org-mode						 :pe:
   CLOSED: [2011-12-28 Wed 10:56]
   - CLOSING NOTE [2011-12-28 Wed 10:56]

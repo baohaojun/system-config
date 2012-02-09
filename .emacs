@@ -2152,7 +2152,8 @@ criteria can be provided via the optional match-string argument "
 
 (defun erc-notify-on-msg (msg)
   (if (string-match "bhj:" msg)
-      (shell-command (concat "notify-send \"" msg "\""))))
+      (shell-command (concat "bhj-notify erc " 
+			     (shell-quote-argument msg)))))
 (add-hook 'erc-insert-pre-hook 'erc-notify-on-msg)
 
 (setq bitlbee-target "")

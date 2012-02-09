@@ -1,5 +1,11 @@
 #!/bin/bash
-. ~/.new-xauth
+. ~/.new-xauth >/dev/null 2>&1
 label=$1
 shift
-setsid notification-manager "$label" "$(echo At $(date):; echo "$@")" >> ~/.logs/notification-manager.log 2>&1&
+setsid notification-manager "$label" "$(
+echo At $(date):; 
+echo "$@"|perl -ne '
+BEGIN{use HTML::Entities;} 
+chomp;
+print encode_entities($_) . "\n"
+')" >> ~/.logs/notification-manager.log 2>&1&
