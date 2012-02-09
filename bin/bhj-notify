@@ -2,4 +2,4 @@
 . ~/.new-xauth
 label=$1
 shift
-notify-send "$label" "$(echo At $(date):; echo "$@")"
+setsid notification-manager "$label" "$(echo At $(date):; echo "$@")" >> ~/.logs/notification-manager.log 2>&1&

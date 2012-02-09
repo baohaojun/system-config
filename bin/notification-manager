@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+import os, signal
+import pygtk
+pygtk.require('2.0')
+import pynotify
+import sys
+import fcntl
+
+def handler(signum, frame):
+    pass
+
+os.system("touch ~/tmp/notification-manager.pid")
+pidf = open(os.path.expanduser("~/tmp/notification-manager.pid"), "r+")
+try:
+    fcntl.flock(pidf, fcntl.LOCK_EX|fcntl.LOCK_NB)
+except:
+    pid = int(pidf.read())
+    if len(sys.argv) < 2:
+        print "Error: usage: notification-manager KEY CONTENT"
+        exit(-1)
+    file_ = open(os.path.join(os.path.expanduser("~/tmp/notification-manager"), 
+                         sys.argv[1]), 
+                 "w")
+    if len(sys.argv) == 3:
+        file_.write(sys.argv[2])
+    file_.close()
+    os.kill(pid, signal.SIGUSR1)
+    exit(0)
+
+pidf.truncate()
+pidf.write(str(os.getpid()))
+pidf.flush()    
+
+signal.signal(signal.SIGUSR1, handler)
+
+if not pynotify.init("Replace Test"):
+    sys.exit(1)
+
+notifications = {}
+seq = 0
+while True:
+    seq = seq + 1
+    signal.pause()
+    for tup in os.walk(os.path.expanduser("~/tmp/notification-manager")):
+        for file_ in tup[2]:
+            print "hello", file_
+            content = open(os.path.join(tup[0], file_)).read()
+            os.unlink(os.path.join(tup[0], file_))
+            if file_ in notifications:
+                notifications[file_].close()
+                del notifications[file_]
+                if content:
+                    notifications[file_] = pynotify.Notification(file_, content)
+                    notifications[file_].show()
+            elif content:
+                notifications[file_] = pynotify.Notification(file_, content)
+                notifications[file_].show()
+        break

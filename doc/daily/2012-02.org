@@ -1,0 +1,6 @@
+* DONE work on notification manager.
+  CLOSED: [2012-02-09 Thu 00:08]
+  - CLOSING NOTE [2012-02-09 Thu 00:08]
+** notify window position need fixing.
+*** see how to dump window infomation
+*** see how to use sawfish to adjust window pos.
