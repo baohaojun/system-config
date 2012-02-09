@@ -50,7 +50,7 @@ done
 
 function gitci() {
     git commit -m "$(cat <<EOF
-`get-stdin $msg; echo`
+`get-stdin $msg && echo`
 
 Issue: $ticket
 `for x in ${reviewer[@]}; do echo  Reviewed-by: $x; done`

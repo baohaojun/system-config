@@ -10,7 +10,7 @@ else
     cat > $tmp
 fi
 
-edit-wait $tmp >/dev/null 2>&1
+edit-wait $tmp
 function get-rid-of-comment() {
     cat "$@" | perl -ne '
 if (m/###start of comment###/) { $comment = 1; }
