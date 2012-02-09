@@ -51,3 +51,4 @@ if test "$(git config remote.origin.url | cut -b 1-4)" = git:; then
 else
     git push origin HEAD:$rb
 fi
+test $(pwd) = ~/windows-config && git-notify-push
