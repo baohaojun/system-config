@@ -1,4 +1,13 @@
 #!/bin/bash
 tmp=~/.bash_history.$$
-( (reverse ~/.bash_history; cat ~/.bash_history.bak) | perl -ne 's/^\s*re\s+.*?;//; print if (length($_) < 1024 and not m/^\s*(hi[lr])\s+/)' | uniq-even-non-ajacent > $tmp ) 2>/dev/null
+( 
+    (
+	reverse ~/.bash_history; cat ~/.bash_history.bak) | 
+    perl -ne '
+s/^\s+//;
+s/^cd\s+\S+(\s*;\s*|\s*$)//;
+s/\s*$/\n/;
+s/^re\s+.*?;//;
+print if (length($_) < 1024 and not m/^\s*(hi[lr])\s+/)' | 
+    uniq-even-non-ajacent > $tmp ) 2>/dev/null
 mv $tmp ~/.bash_history.bak
