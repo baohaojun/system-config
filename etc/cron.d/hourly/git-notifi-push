@@ -1,5 +1,10 @@
 #!/bin/bash
 
 cd ~
-git-need-push && bhj-notify "personal project" "Your git repository is not clean, please push it"
+
+if git-need-push; then
+    bhj-notify "personal project" "Your git repository is not clean, please push it"
+else
+    bhj-notify "personal project"
+fi
 true

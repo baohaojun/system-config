@@ -2,10 +2,15 @@
 . ~/.new-xauth >/dev/null 2>&1
 label=$1
 shift
-setsid notification-manager "$label" "$(
-echo At $(date):; 
-echo "$@"|perl -ne '
+
+content=
+if test $# ne 0; then
+content=$(
+    echo At $(date):; 
+    echo "$@"|perl -ne '
 BEGIN{use HTML::Entities;} 
 chomp;
 print encode_entities($_) . "\n"
-')" >> ~/.logs/notification-manager.log 2>&1&
+')
+fi
+setsid notification-manager "$label" "$content"  >> ~/.logs/notification-manager.log 2>&1&
