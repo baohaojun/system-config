@@ -14,3 +14,9 @@ print encode_entities($_) . "\n"
 ')
 fi
 setsid notification-manager "$label" "$content"  >> ~/.logs/notification-manager.log 2>&1&
+if test $(basename $0) = bhj-short-notify; then
+    (
+	sleep 5
+	setsid notification-manager "$label"
+    )&
+fi

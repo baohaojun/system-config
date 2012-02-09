@@ -1,8 +1,9 @@
 #!/bin/bash
 . ~/.bashrc
 
-if test "`basename $0`" == repo-update-x -a $# == 0; then
+if test "`basename $0`" == repo-update-x -a $# == 0 || tty >/dev/null 2>&1 ; then
     set -- . 
+    echo will only update current dir.
 fi
 
 if test $# == 0; then
@@ -22,8 +23,12 @@ for x in "$@"; do
         for x in `cat out/changes.log`; do 
             rfa $x 'git merge `repo-remote`/`tbranch`' 
         done 2>&1|tee out/merge.log
+
+	repo-changes\? $(cat out/changes.log) | grep . > out/changes.log.new || 
+	echo repo is up to date.
 	
 	android-full-build >/dev/null 2>&1
+	bhj-short-notify $(basename $0) "$(pwd): build completed"
     )
 done
 
