@@ -4,3 +4,5 @@
 ** notify window position need fixing.
 *** see how to dump window infomation
 *** see how to use sawfish to adjust window pos.
+* TODO study gerrit command line tool.
+** TODO write a integration tool for it.
