@@ -2170,4 +2170,25 @@ criteria can be provided via the optional match-string argument "
 
 (erc :server "localhost" :port "6667" :nick "bhj" :password bitlbee-password)
 
+(defun goto-line-not-containing (word)
+  "look forward to find a line not containing WORD, maybe because
+we are not interested in those lines that do."
+  (interactive (list (read-string "What word you want to skip? ")))
+  (let* ((temp-buffer (get-buffer-create "*goto-line-not-containing*")))
+    (goto-line 
+     (save-excursion
+       (save-window-excursion
+	 (shell-command-on-region (point-min) 
+				  (point-max)
+				  (format 
+				   "export CURRENTLINE=%s; grep -i -v -e %s -n | perl -ne 'chomp; s/:.*//; if ($_ > $ENV{CURRENTLINE}) { print $_ . \"\\n\";}'"
+				   (line-number-at-pos)
+				   (shell-quote-argument word))
+				  temp-buffer)
+	 
+	 (string-to-number
+	  (with-current-buffer temp-buffer
+	    (goto-char (point-min))
+	    (current-line-string))))))))
+
 (server-start)
