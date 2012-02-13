@@ -15,6 +15,8 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
     echo 'about to lock at '$(date)
     flock 9 || { echo 'lock failed at'$(date); exit -1; }
     echo 'lock success! at'$(date)
+    echo external dirs not managed by repo:
+    repo-external
     result=''
     command time make kernel && result=$result'kernel ok; '
     command time make -j${1:-3} -l${1:-3} -k && result=$result'android ok; '

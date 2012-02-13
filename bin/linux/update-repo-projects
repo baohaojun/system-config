@@ -25,7 +25,11 @@ for x in "$@"; do
             rfa $x 'git merge `repo-remote`/`tbranch`' 
         done 2>&1|tee out/merge.log
 
-	repo-changes\? $(cat out/changes.log) | grep . > out/changes.log.new || 
+	{ repo-changes\? $(cat out/changes.log) | grep . > out/changes.log.new && { 
+		echo some repos still has changes:;
+		cat out/changes.log.new
+	    }
+	} || 
 	echo repo is up to date.
 	
 	android-full-build >/dev/null 2>&1
