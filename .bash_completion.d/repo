@@ -43,8 +43,10 @@ _repo-switch() {
                     echo git@www.rayzertrack.com:ggl/pxa935/platform/manifest
                     echo git@www.rayzertrack.com:nv/android/manifest
 		    echo file:///android/manifest.git
-                    cat ~/.remotes 2>/dev/null
-                ) |sort -u
+		    (cd `lookup_file .repo/manifests` >/dev/null 2>&1; git-remote-url)
+                    cat ~/.repo-manifest-urls 2>/dev/null
+                ) |sort -u | tee ~/.repo-manifest-urls.bak
+		mv ~/.repo-manifest-urls.bak ~/.repo-manifest-urls >/dev/null 2>&1
             )
             ;;
     esac

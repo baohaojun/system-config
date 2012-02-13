@@ -6,6 +6,3 @@
 *** see how to use sawfish to adjust window pos.
 * TODO study gerrit command line tool.
 ** TODO write a integration tool for it.
-
-* TODO do marvell training
-* TODO do marvell stock options.
