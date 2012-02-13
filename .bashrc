@@ -30,11 +30,11 @@ alias svngdiff='svn diff --diff-cmd ~/bin/svntkdiff'
 export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
 export USE_CCACHE=1
-if test -e ~/.bash_path; then
-    . ~/.bash_path
+if test -e ~/.bash-path; then
+    . ~/.bash-path
 else
     export PATH=`echo -n $PATH|tr ':' '\n'|uniq-even-non-ajacent |tr '\n' ':'`
-    printf 'export PATH=%q' "$PATH" > ~/.bash_path
+    printf 'export PATH=%q' "$PATH" > ~/.bash-path
 fi
 if test "$TERM" = dumb; then
     . ~/.bashrc-in-emacs

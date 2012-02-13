@@ -145,8 +145,8 @@ alias repo='PATH=/bin:$PATH repo'
 alias wp="winpath.sh"
 alias up="unipath.sh"
 
-if test -e ~/.bash_path; then
-    . ~/.bash_path
+if test -e ~/.bash-path; then
+    . ~/.bash-path
 else
     SetPath
     unset SetPath
