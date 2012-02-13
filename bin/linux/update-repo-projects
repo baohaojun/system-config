@@ -16,6 +16,7 @@ for x in "$@"; do
         set -e
         cd $x
         cd `lookup_file .repo/..`
+	test -e Makefile || exit
         repo sync -n -j4
         mkdir -p out
         mv out/changes.log out/changes.log-backup-`today` || true
