@@ -33,7 +33,7 @@ export USE_CCACHE=1
 if test -e ~/.bash-path; then
     . ~/.bash-path
 else
-    export PATH=`echo -n $PATH|tr ':' '\n'|uniq-even-non-ajacent |tr '\n' ':'`
+    export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent |tr '\n' ':')
     printf 'export PATH=%q' "$PATH" > ~/.bash-path
 fi
 if test "$TERM" = dumb; then
