@@ -32,7 +32,7 @@ _repo-switch() {
 
     case "$prev" in
         -b)
-            br_list=$( cd `lookup_file .repo/manifests` >/dev/null 2>&1; git branch -r |perl -npe 's,.*/,,')
+            br_list=$( cd `lookup_file .repo/manifests` >/dev/null 2>&1; git branch -r |perl -npe 's,.*?/,,')
             ;;
         -u)
             br_list=$(
