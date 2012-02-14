@@ -1,6 +1,6 @@
 #!/bin/bash
 
-test $# = 0 && set -- ~/.bash_history.bak ~/.bash-path
+test $# = 0 && set -- $(for x in $(find ~/etc/back-to-gmail/ -type l); do readlink -m $x; done)
 for x in "$@"; do
 
     back=~/.logs/git-to-gmail/$x
