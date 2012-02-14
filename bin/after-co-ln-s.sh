@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 mkdir ~/.logs -p
-rm -f ~/tmp || true
+rm -f ~/tmp >/dev/null 2>&1 || true
 mkdir ~/tmp -p
 cd ~/windows-config/
 mkdir -p ~/external/bin/$(uname|perl -npe 's/_.*//')
