@@ -15,6 +15,8 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
     echo 'about to lock at '$(date)
     flock 9 || { echo 'lock failed at'$(date); exit -1; }
     echo 'lock success! at'$(date)
+    echo -n 'before build, ccache size is '
+    du -s -h ~/.ccache/
     echo external dirs not managed by repo:
     repo-external
     result=''
@@ -22,4 +24,6 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
     command time make -j${1:-3} -l${1:-3} -k && result=$result'android ok; '
     command time make telephony uboot obm && result=$result'misc ok; '
     echo "$result"
+    echo -n 'after build, ccache size is '
+    du -s -h ~/.ccache/
 ) 9>~/.logs/android-full-build.lock  2>&1 | tee build.log
