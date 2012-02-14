@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 mkdir ~/.logs -p
+rm -f ~/tmp || true
+mkdir ~/tmp -p
 cd ~/windows-config/
 mkdir -p ~/external/bin/$(uname|perl -npe 's/_.*//')
 mkdir -p ~/tmp/notification-manager
