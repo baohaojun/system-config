@@ -1,6 +1,22 @@
 #!/bin/bash
 
-test $# = 0 && set -- ~/.ecompleterc ~/.bash_history ~/.bash-path
+test $# = 0 && set -- ~/.bash_history.bak ~/.bash-path
 for x in "$@"; do
-    mailx -s "git-to-gmail $x from $(from-mac)" -a "$x" baohaojun@gmail.com </dev/null
+
+    back=~/.logs/git-to-gmail/$x
+    if test -e "$back" && diff "$x" "$back" -rq; then
+	continue
+    else
+	mkdir -p "$(dirname "$back")"
+	rm -rf "$back"
+	cp "$x" "$(dirname "$back")" -av
+    fi
+
+    attachment=$x
+    if test -d $x; then
+	attachment=~/.logs/git-to-gmail-$(echo "$x"|perl -npe 's,/,-,g').tgz
+	tar czfv $attachment $x
+    fi
+
+    mailx -s "git-to-gmail $x from $(from-mac)" -a "$attachment" baohaojun@gmail.com </dev/null
 done
