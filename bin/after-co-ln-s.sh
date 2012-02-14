@@ -4,6 +4,8 @@ mkdir ~/.logs -p
 cd ~/windows-config/
 mkdir -p ~/external/bin/$(uname|perl -npe 's/_.*//')
 mkdir -p ~/tmp/notification-manager
+mkdir -p ~/external/etc/at
+echo ~/external/etc/at >> ~/.where
 
 function die() {
     echo "$@"
