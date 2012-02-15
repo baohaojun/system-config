@@ -1,0 +1,9 @@
+#!/bin/bash
+
+git log -1 |
+grep 'Change-Id:' |
+pn 2 |
+xargs bash -c 'gerrit query change:$@' true |
+grep 'url:' |
+pn 2 |
+xargs of

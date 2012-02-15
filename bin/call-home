@@ -1,0 +1,2 @@
+#!/bin/bash
+ssh $@ bhj.is-a-geek.org

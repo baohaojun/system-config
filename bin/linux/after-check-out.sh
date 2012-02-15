@@ -28,4 +28,5 @@ do_compile
 config-gfw
 
 sudo usermod -a -G dialout $(whoami)
+sudo perl -npe 's/^#user_allow_other/user_allow_other/' -i /etc/fuse.conf
 echo 'OK'
