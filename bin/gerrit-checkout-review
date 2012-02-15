@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+tmpf=/tmp/$(basename $0).$$
+gerrit query $@ --current-patch-set > $tmpf
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+cd $(lookup_file .repo/..) || die repo not found.
+
+export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
+
+git_dir=$(cat .repo/manifest.xml | perl -ne '
+chomp;
+if (m/name="(.*?)"/ and $ENV{PROJECT} =~ m/$1/ and m/path="(.*?)"/) {
+    print $1 . "\n"
+}    
+'
+)
+
+cd $git_dir || die "$git_dir: cd failed"
+ref=$(cat $tmpf|grep 'ref: '|pn 2)
+git fetch $(repo-remote) $ref
+git co FETCH_HEAD
+bash

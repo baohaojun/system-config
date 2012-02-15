@@ -1,5 +1,7 @@
 #!/bin/bash
+
+# find out which repo-switch branch we are currently on.
 set -e
 . ~/.bash_profile
 cd `lookup_file .repo/manifests`
-for x in `git branch -r|grep -v -e '->'|perl -npe 's,.*/,,'`; do git diff origin/$x 2>&1|grep diff -q || echo $x; done
+for x in `git branch -r|grep -v -e '->'|perl -npe 's,.*?/,,'`; do git diff --quiet origin/$x 2>&1 && echo $x; done

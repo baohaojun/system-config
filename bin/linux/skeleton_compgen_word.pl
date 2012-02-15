@@ -3,7 +3,7 @@
 use strict;
 use Getopt::Long;
 
-open(my $log_, ">", glob("~/.skeleton_comp2.log")) or die "Error open log file";
+open(my $log_, ">", glob("~/.logs/.skeleton_comp2.log")) or die "Error open log file";
 
 {
     local $" = "' '";
@@ -14,13 +14,16 @@ my $split_re = '\s+';
 my $use_skeleton_re = 0;
 my $words_file = "";
 my $print_prefix = "";
+my $max_matches_to_print = 20;
 GetOptions(
-    "p=s" => \$print_prefix,
-    "d=s" => \$split_re,
-    "s!" => \$use_skeleton_re,
-    "f=s" => \$words_file,
-    );
+	   "p=s" => \$print_prefix,
+	   "d=s" => \$split_re,
+	   "s!" => \$use_skeleton_re,
+	   "f=s" => \$words_file,
+	   "m=i" => \$max_matches_to_print,
+	  );
 
+print $log_ "max_matches_to_print is $max_matches_to_print\n";
 $split_re = qr($split_re);
 my @words;
 if (not $words_file) {
@@ -84,7 +87,7 @@ for(@sorted) {
 }
 
 my $max = scalar @words - 1;
-$max = 19 if $max >= 20;
+$max = ($max_matches_to_print - 1) if $max >= $max_matches_to_print;
 for (@words[0..$max]) {
   if ($match == 1) {
     print $print_prefix . $_ . "\n";
@@ -100,6 +103,6 @@ for (@words[0..$max]) {
   }
 }
 
-if (@words >= 20) {
+if (@words >= $max_matches_to_print) {
   printf "%02d total zzz... please use hil (history list)!", scalar @words;
 }

@@ -328,6 +328,7 @@ function _android_env()
     case "$prev" in
 	*android-env)
 	    COMPREPLY=( $(skeleton_compgen_word.pl \
+		-m 1000 \
 		-d '\n' -- \
 		"$(extract-def sh $(lookup_file build/envsetup.sh))" \
 		"$cur")
@@ -337,6 +338,7 @@ function _android_env()
 
 	get*_build_var)
 	    COMPREPLY=( $(skeleton_compgen_word.pl \
+		-m 1000 \
 		-d '\n' -- \
 		"$(extract-def make $(lookup_file build/core/envsetup.mk))" \
 		"$cur")
