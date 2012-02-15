@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+which "$1" >/dev/null 2>&1 || die "$1 is not a valid system interpreter"
+export INTERPRETER=$(which $1);
+shift
+
+test $# = 0 && die "Error: missing files: set-interpreter interpreter files..."
+
+for x in "$@"; do
+    if test "$(stat -c %s "$x")" = 0; then
+	echo '#!'$INTERPRETER > "$x";
+	continue
+    fi
+    
+    perl -npe 'if (1..1 and not m/^#!/) {print "#!" . $ENV{INTERPRETER} . "\n"}' -i $x; 
+done
