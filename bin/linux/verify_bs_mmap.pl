@@ -252,6 +252,26 @@ sub do_read_dmesg
     }
 }
 
+sub do_read_proc_mtd
+{
+  my $next_start = 0;
+    while(<>) {
+        chomp(); s/\r//g;
+        if (m/.*:\s+([0-9a-f]+)\s+([0-9a-f]+)\s+"(.*?)"/gi) {
+            my %entry = 
+                ( "name"   => $3,
+                  "file_name"    => "unknown",
+                  "start"        => $next_start,
+                  "size"         => eval("0x" . $1),
+                  "end"          => $next_start + eval("0x" . $1),
+                );
+
+            push @entry_arr, \%entry;
+	    $next_start = $next_start + eval("0x" . $1);
+        }
+    }
+}
+
 sub do_read_kernel
 {
     my ($name, $offset, $size);
@@ -333,6 +353,8 @@ if ($from eq 'human') {
   do_read_memmap();
 } elsif ($from eq 'blob') {
   do_read_blob();
+} elsif ($from eq 'proc/mtd') {
+  do_read_proc_mtd();
 } elsif ($from eq 'dmesg') {
   do_read_dmesg();
 } elsif ($from eq "kernel") {

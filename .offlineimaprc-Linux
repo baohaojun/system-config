@@ -43,3 +43,22 @@ remotepasseval = getcred("gmail", "baohaojun@gmail.com", 993)
 nametrans = lambda foldername: "gmail." + foldername.replace(" ", "_")
 maxconnections = 6
 folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in ('inbox',)])
+
+
+[Account BigGmail]
+localrepository = Local-BigGmail
+remoterepository = Remote-BigGmail
+presynchook = ~/bin/sync_nnmaildir -g
+postsynchook = ~/bin/sync_nnmaildir -m
+
+[Repository Local-BigGmail]
+type = Maildir
+localfolders = ~/Maildir
+
+[Repository Remote-BigGmail]
+type = Gmail
+remoteuser = baohaojun@gmail.com
+remotepasseval = getcred("gmail", "baohaojun@gmail.com", 993)
+nametrans = lambda foldername: "gmail." + foldername.replace(" ", "_")
+maxconnections = 6
+folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in ('bigmirror',)])

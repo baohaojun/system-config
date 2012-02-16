@@ -1,0 +1,12 @@
+#!/bin/bash
+
+for x in ~/Maildir/mrvl.*; do
+    (
+	cd "$x"/cur;
+	find . -size -500000c -type f|xargs -d \\n bash -c 'mv "$@" /home/bhj/Maildir/gmail.MarvellInbox/cur -v ' true 
+	find . -size +500000c -type f|xargs -d \\n bash -c 'mv "$@" /home/bhj/Maildir/gmail.BigMirror/cur -v ' true 
+    )
+done
+
+offlineimap
+offlineimap -a BigGmail
