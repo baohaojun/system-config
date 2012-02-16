@@ -1455,7 +1455,10 @@ Starting from DIRECTORY, look upwards for a cscope database."
 			      (apply (if compare-to-prev-lines 'search-backward-regexp 'search-forward-regexp) (list "\\S "))
 			      (setq n-prev (1- n-prev)))
 			    (move-to-column col-start-indent)
-			    (when (looking-at "\\S ")
+			    (when (and (looking-at "\\S ")
+				       (not (and 
+					     (looking-back "\t")
+					     (> (current-column) col-start-indent))))
 			      (search-forward-regexp "\\s "))
 			    (search-forward-regexp "\\S " (line-end-position))
 			    (current-column))))
