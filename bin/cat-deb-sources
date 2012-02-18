@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat /var/lib/apt/lists/*_Sources

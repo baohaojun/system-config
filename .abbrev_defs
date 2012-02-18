@@ -31,7 +31,7 @@
        end code-generator */
     // start generated code
 
-    // end generated code" nil 2)
+    // end generated code" nil 3)
     ("cr" "CRect" nil 2)
     ("cs" "cstring" nil 36)
     ("dcs" "c_str()" nil 10)
@@ -162,6 +162,8 @@
 
 (define-abbrev-table 'gdb-script-mode-abbrev-table '())
 
+(define-abbrev-table 'git-log-edit-mode-abbrev-table '())
+
 (define-abbrev-table 'global-abbrev-table
   '(
     ("bhjd" "BHJDEBUG(\"\");" bhj-bhjd 103)
@@ -215,13 +217,22 @@
 
 (define-abbrev-table 'lisp-mode-abbrev-table '())
 
+(define-abbrev-table 'log-edit-mode-abbrev-table '())
+
 (define-abbrev-table 'log-view-mode-abbrev-table '())
 
 (define-abbrev-table 'makefile-automake-mode-abbrev-table '())
 
 (define-abbrev-table 'makefile-bsdmake-mode-abbrev-table '())
 
-(define-abbrev-table 'makefile-gmake-mode-abbrev-table '())
+(define-abbrev-table 'makefile-gmake-mode-abbrev-table
+  '(
+    ("codegen" "# start code-generator
+# end code-generator 
+# start generated code
+
+# end generated code" nil 1)
+   ))
 
 (define-abbrev-table 'makefile-imake-mode-abbrev-table '())
 

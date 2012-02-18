@@ -5,5 +5,5 @@ cd ~/Downloads
 dir=$(today)
 dir=${dir%-*}
 mkdir -p $dir
-rm -f today
-ln -sf $dir today
+rm -f ~/today
+ln -sf $(pwd)/$dir ~/today

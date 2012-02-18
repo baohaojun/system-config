@@ -9,3 +9,13 @@
 
 * TODO do marvell training
 * TODO do marvell stock options.
+* TODO how to config static usb0 ip address
+put the following into /etc/network/interfaces:
+#+begin_example
+auto usb0
+allow-hotplug usb0
+iface usb0 inet static
+	address 192.168.42.1
+	netmask 255.255.255.0
+	network 192.168.42.0
+#+end_example

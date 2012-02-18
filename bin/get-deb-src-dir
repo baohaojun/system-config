@@ -6,7 +6,7 @@
 #perl -npe 's,http://mirrors.163.com/debian,http://cn.archive.ubuntu.com/ubuntu,'
 
 
-open($file, "-|", "zcat Sources*gz*");
+open($file, "-|", "zcat Sources*gz* || cat-deb-sources");
 
 $package = $ARGV[0];
 while (<$file>) {
