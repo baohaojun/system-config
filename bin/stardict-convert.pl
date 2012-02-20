@@ -214,6 +214,48 @@ sub do_convert() {
   debug 'all done.\n'
 }
 
+my $bar = <<EOF;
+<script type="text/javascript">
+function DoDict(form)
+{
+top.location="/search-dict/"+form.data.value;
+}
+</script>
+<script type="text/javascript">
+function DoDictMatching(form)
+{
+top.location="/search-dict-matching/"+form.data.value;
+}
+</script><script type="text/javascript">
+function DoDefines(form)
+{
+top.location="/search-dict-definesines/"+form.data.value;
+}
+</script>
+
+<table>
+<tr>
+<td>
+<form name="SearchForm" onSubmit="DoDict(this.form)" method="get" action="/search-dict/">
+Search dict:
+<input type="text" name="data" size="15">
+<input type="button" value="Submit" onclick="DoDict(this.form)">
+</form>
+</td><td>
+<form name="SearchForm" onSubmit="DoDefines(this.form)" method="get" action="/search-dict-definesines/">
+Search defines:
+<input type="text" name="data" size="15">
+<input type="button" value="Submit" onclick="DoDefines(this.form)">
+</form>
+</td><td>
+<form name="SearchForm" onSubmit="DoDictMatching(this.form)" method="get" action="/search-dict-matching/">
+Search matching
+<input type="text" name="data" size="15">
+<input type="button" value="Submit" onclick="DoDictMatching(this.form)">
+</form>
+</td></tr></table>
+EOF
+
 my $style = '<style type="text/css">
     hr.sep {
       color: #00f;
@@ -225,7 +267,7 @@ my $style = '<style type="text/css">
       background-color: #00f;
       height: 3px;
     }
-    </style>';
+    </style>' . $bar;
 
 sub dict() {
   my $word = $ARGV[0];
