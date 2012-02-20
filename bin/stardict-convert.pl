@@ -262,17 +262,18 @@ sub get_definition($) {
 
 sub dict_defines() {
   my $defining_word = $ARGV[0];
-  open(my $filter, "-|", "grep", "-e", "^$defining_word: ", "word_defines.txt") or die "can not open filter";
+  open(my $filter, "-|", "grep", "-i", "-e", "^$defining_word: ", "word_defines.txt") or die "can not open filter";
   my $defining_word_path = name_to_path($defining_word);
   while (<$filter>) {
     chomp;
     m/: (.*)/;
     my @words = split(":", $1);
+    @words = ($defining_word, grep {$_ ne $defining_word} sort { lc $a cmp lc $b } @words);
     print $style;
     print "<h2>" . $defining_word . " is defining " . scalar(@words) . " words</h2>";
     print "<hr>\n";
     for (@words) {
-      print "<a href='/dict-defines-sub/$defining_word/$_'>$_</a> ;"
+      print "<a href='/dict-defines-sub/$defining_word/$_'>$_</a> "
     }
     my $to_display = $words[0];
     if (@ARGV == 2) {
