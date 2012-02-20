@@ -229,7 +229,7 @@ top.location="/search-dict-matching/"+form.data.value;
 </script><script type="text/javascript">
 function DoDefines(form)
 {
-top.location="/search-dict-definesines/"+form.data.value;
+top.location="/search-dict-defines/"+form.data.value;
 }
 </script>
 
@@ -242,7 +242,7 @@ Search dict:
 <input type="button" value="Submit" onclick="DoDict(this.form)">
 </form>
 </td><td>
-<form name="SearchForm" onSubmit="DoDefines(this.form)" method="get" action="/search-dict-definesines/">
+<form name="SearchForm" onSubmit="DoDefines(this.form)" method="get" action="/search-dict-defines/">
 Search defines:
 <input type="text" name="data" size="15">
 <input type="button" value="Submit" onclick="DoDefines(this.form)">
