@@ -298,7 +298,7 @@ sub dict_defines() {
   }
 }
 
-chdir("/home/bhj/tmp/stardict-babylon-AHD4_2.8-2.4.2.tar.bz2.unzip.1574/stardict-babylon-AHD4_2.8-2.4.2") or die "can not chdir";
+chdir("/home/bhj/external/stardict/") or die "can not chdir";
 if ($0 =~ m,/?stardict-convert.pl$,) {
   do_convert();
 } elsif ($0 =~ m,/?dict$,) {
