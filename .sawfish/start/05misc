@@ -21,7 +21,7 @@ fi
 # done >~/.gmail-notifier.log 2>&1 &
 # qq
 
-while true; do (cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver --noreload >>~/.offline-wiki.log 2>&1); sleep 2; done& 
+while true; do (cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver --noreload >>~/.logs/offline-wiki.log 2>&1); sleep 2; done& 
 download-today
 
 command renew-xauth

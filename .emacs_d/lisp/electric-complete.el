@@ -40,14 +40,19 @@ we will get the pattern \"naoehu[)+{*\"
          regexp 
          len1
          len2
-         (oldcur (point)))
+         (oldcur (point))
+	 (back-limit 0))
+    (when mark-active
+      (setq oldcur (max (mark) (point))
+	   back-limit (min (mark) (point)))
+      (goto-char oldcur))
     (push-mark (point))
     (activate-mark)
     (while (not (looking-back "\\w"))
       (backward-char))
     (setq reg-part2 (buffer-substring-no-properties (point) oldcur)
           oldcur (point))
-    (while (looking-back "\\w\\|\\.")
+    (while (and (looking-back "\\w\\|\\.") (< back-limit (point)))
       (backward-char))
     (setq reg-part1 (buffer-substring-no-properties (point) oldcur)
           regexp (concat reg-part1 reg-part2)

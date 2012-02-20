@@ -110,21 +110,25 @@
     ("=over" "=over" cperl-electric-pod 0)
     ("=pod" "=pod" cperl-electric-pod 0)
     ("continue" "continue" cperl-electric-else 0)
+    ("dbgdef" "sub debug(@) {
+  print STDERR \"@_\\n\";
+}
+" nil 0)
     ("do" "do" cperl-electric-keyword 0)
-    ("else" "else" cperl-electric-else 0)
-    ("elsif" "elsif" cperl-electric-keyword 0)
-    ("for" "for" cperl-electric-keyword 0)
+    ("else" "else" cperl-electric-else 1)
+    ("elsif" "elsif" cperl-electric-keyword 3)
+    ("for" "for" cperl-electric-keyword 1)
     ("foreach" "foreach" cperl-electric-keyword 0)
     ("foreachmy" "foreachmy" cperl-electric-keyword 0)
     ("formy" "formy" cperl-electric-keyword 0)
     ("head1" "head1" cperl-electric-pod 0)
     ("head2" "head2" cperl-electric-pod 0)
-    ("if" "if" cperl-electric-keyword 0)
+    ("if" "if" cperl-electric-keyword 8)
     ("over" "over" cperl-electric-pod 0)
     ("pod" "pod" cperl-electric-pod 0)
-    ("unless" "unless" cperl-electric-keyword 0)
+    ("unless" "unless" cperl-electric-keyword 1)
     ("until" "until" cperl-electric-keyword 0)
-    ("while" "while" cperl-electric-keyword 0)
+    ("while" "while" cperl-electric-keyword 1)
    ))
 
 (define-abbrev-table 'csharp-mode-abbrev-table
