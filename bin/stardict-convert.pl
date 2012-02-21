@@ -4,7 +4,8 @@ use strict;
 use Encode;
 use Fcntl qw(SEEK_SET);
 use File::Path;
-
+use URI::Escape;
+open(STDOUT, "|-", "tidy 2>/dev/null") or die "can not tidy up";
 sub debug(@) {
   print STDERR "@_";
 }
@@ -314,9 +315,6 @@ sub dict_defines() {
     print $style;
     print "<h2>" . $defining_word . " is defining " . scalar(@words) . " words</h2>";
     print "<hr>\n";
-    for (@words) {
-      print "<a href='/dict-defines-sub/$defining_word/$_'>$_</a> "
-    }
     my $to_display = $words[0];
     if (@ARGV == 2) {
       $to_display = $ARGV[1] unless not $ARGV[1];
@@ -334,8 +332,13 @@ sub dict_defines() {
 	$next_idx = 0;
       }
       my $next_display = $words[$next_idx];
-      print "<br><a href='/dict-defines-sub/$defining_word/$next_display'>next: $next_display</a>";
+      my $a = uri_escape($next_display);
+      print "<br><a href='/dict-defines-sub/$defining_word/$a'>next: $next_display</a><br/><br/><hr><br/>";
       last;
+    }
+    for (@words) {
+      my $a = uri_escape($_);
+      print "<a href='/dict-defines-sub/$defining_word/$a'>$_</a> "
     }
   }
 }
@@ -348,3 +351,4 @@ if ($0 =~ m,/?stardict-convert.pl$,) {
 } elsif ($0 =~ m,/?dict-defines$,) {
   dict_defines();
 }
+close(STDOUT);
