@@ -15,6 +15,8 @@ LOCAL_STATIC_JAVA_LIBRARIES := com.android.inputmethod.pinyin.lib
 
 LOCAL_CERTIFICATE := shared
 
+LOCAL_PROGUARD_FLAG_FILES := proguard.cfg
+
 # Make sure our dictionary file is not compressed, so we can read it with
 # a raw file descriptor.
 LOCAL_AAPT_FLAGS := -0 .dat
