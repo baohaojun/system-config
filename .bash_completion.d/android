@@ -350,3 +350,25 @@ function _android_env()
 
 complete -o default -F _android_env android-env
 	    
+function _android_full_build() {
+    local cur prev
+    local IFS=$'\n'
+
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    COMPREPLY=( $(skeleton_compgen_word.pl \
+	-m 1000 \
+	-d '\n' -- \
+	"$(
+	    cd $(lookup_file .repo/..) >/dev/null 2>&1
+	    . build/envsetup.sh >/dev/null 2>&1
+	    for x in "${LUNCH_MENU_CHOICES[@]}"; do
+		echo "$x"
+	    done
+	)" \
+	    "$cur")
+    )
+    return 0 
+}
+
+complete -o default -F _android_full_build android-full-build
