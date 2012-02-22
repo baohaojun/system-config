@@ -99,7 +99,7 @@ function mkbeagrepidx() {
     mkdir -p "$outDir"/.beagrep
 
     beagrep-build-index --recursive \
-        --deny-directory-pattern `pwd`/outx \
+        --deny-directory-pattern `pwd`/'out-*' \
         --enable-deletion \
         --target "$(wlp "$outDir"/.beagrep/)" \
         "$relativeSrcDir" 2>&1 \
