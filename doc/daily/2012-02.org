@@ -19,3 +19,9 @@ iface usb0 inet static
 	netmask 255.255.255.0
 	network 192.168.42.0
 #+end_example
+* TODO 试一下能不能在环境变量里设一下gcc版本，做ics的build对其有依赖。
+* TODO 搞定几条测试case。
+* TODO Win7为什么每次都搜索驱动
+* TODO Win7为什么每次都生成新的网卡
+* TODO 能不能在android下build时指定输出文件目录不是默认的out？
+* TODO 在uboot预充电的时候在串口上按Enter，进入fastboot
