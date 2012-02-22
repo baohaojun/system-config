@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# part   0::attr 0::         tim  start 0x00000000, size 0x00040000
+# part   1::attr 0::         obm  start 0x00040000, size 0x00040000
+# part   2::attr 0::       uboot  start 0x00080000, size 0x00080000
+# part   3::attr 0::     ramdisk  start 0x00100000, size 0x00040000
+# part   4::attr 0::        imei  start 0x00140000, size 0x00040000
+# part   5::attr 0:: arbelbinary  start 0x00180000, size 0x00700000
+# part   6::attr 0::   msabinary  start 0x00880000, size 0x00100000
+# part   7::attr 0::      kernel  start 0x00980000, size 0x00400000
+# part   8::attr 0:: maintenance  start 0x00d80000, size 0x00400000
+# part   9::attr 0::    recovery  start 0x01180000, size 0x00500000
+# part  10::attr 0::        misc  start 0x01680000, size 0x00040000
+# part  11::attr 1::       cache  start 0x016c0000, size 0x05140000
+# part  12::attr 1::      system  start 0x06800000, size 0x0a000000
+# part  13::attr 1::    userdata  start 0x10800000, size 0x0d800000
+# part  14::attr 0::        logo  start 0x1e000000, size 0x00340000
+# part  15::attr 0::         env  start 0x1e340000, size 0x00080000
+# part  16::attr 0::      kpanic  start 0x1e3c0000, size 0x00040000
+# part  17::attr 0::         nvm  start 0x1e400000, size 0x00800000
+# part  18::attr 1::   telephony  start 0x1ec00000, size 0x00800000
+# part  19::attr 0::    reserved  start 0x1f400000, size 0x00c00000
+
+cd $(lookup_file flashing)
+fastboot erase ramdisk; fastboot flash ramdisk ramdisk.img
+fastboot erase userdata
+fastboot erase system; fastboot oem onfly system; fastboot flash system system.img
+read -p "Press enter to restart fastboot "
+fastboot reboot

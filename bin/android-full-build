@@ -39,6 +39,7 @@ fi
 if test $# = 1; then
     lunch "$1"
     export OUT_DIR_LONG=out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT
+    mkdir -p $OUT_DIR_LONG
     export OUT_DIR=$(echo -n $OUT_DIR_LONG|md5sum|cut -b 1-3)
     if test -e $OUT_DIR -a "$(readlink -m $OUT_DIR)" != "$(readlink -m $OUT_DIR_LONG)"; then
 	x=0
@@ -52,7 +53,7 @@ if test $# = 1; then
     android-set-product
 fi
 
-(cd $(android-env get_abs_build_var TARGET_OUT) >/dev/null 2>&1 && rm ../system.img ../obj/PACKAGING/systemimage_intermediates/system.img -v) || true
+(set -x; cd $(android-env get_abs_build_var TARGET_OUT) >/dev/null 2>&1 && rm ../system.img ../obj/PACKAGING/systemimage_intermediates/system.img -v) || true
 test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 
 (
