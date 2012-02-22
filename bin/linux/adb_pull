@@ -1,0 +1,8 @@
+#!/usr/bin/env perl
+use String::ShellQuote;
+$dest = pop( @ARGV);
+
+for (@ARGV) {
+    system("adb",  "pull", "$_", "$dest");
+}
+
