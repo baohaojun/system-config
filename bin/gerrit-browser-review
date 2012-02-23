@@ -1,0 +1,6 @@
+#!/bin/bash
+if tty >/dev/null 2>&1; then
+    git log -1
+else 
+    cat
+fi | grep -P '^\s*Change-Id:' | pn 2 | xargs bash -c 'for x in "$@"; do of $(gerrit query $x | grep -P "^\s*url:" | pn 2); done' true
