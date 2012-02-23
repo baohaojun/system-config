@@ -6,6 +6,7 @@ function wget() {
 }
 
 mkdir ~/external/bin/linux/ext/android-sdk-linux_86/google -p
+test -e ~/external/bin/linux/ext/android-sdk-linux_86/google/do.not.download && exit 0
 cd ~/external/bin/linux/ext/android-sdk-linux_86/google
 
 x=16

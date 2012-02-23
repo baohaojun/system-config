@@ -4,9 +4,11 @@ exec >/dev/null
 export IN_CRON=true
 export PATH=/usr/local/bin:$PATH
 function do_it() {
-    mkbeagrepidx 
-    mkgtags -i > .for-code-reading 2>&1
-    touch .for-code-reading
+    if test -f .for-code-reading -a ! -L .for-code-reading; then
+	mkbeagrepidx 
+	mkgtags -i > .for-code-reading 2>&1
+	touch .for-code-reading
+    fi
 }
 
 for x in `locate .for-code-reading`; do 
