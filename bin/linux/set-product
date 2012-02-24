@@ -1,5 +1,4 @@
 #!/bin/bash
-. ~/.bashrc
 cd $(lookup_file .repo/..)
 $(lookup_file prebuilt/linux-x86/ccache/ccache) -M 100G
 export OUT_DIR=${OUT_DIR:-$PWD/out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT}
