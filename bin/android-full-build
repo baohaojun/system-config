@@ -52,8 +52,9 @@ if test $# -gt 0; then
 	fi
 	export OUT_DIR=$OUT_DIR
 	relative-link "$OUT_DIR_LONG" "$OUT_DIR"
-	rm -rf out
+	rm -rf out target_out_symlink
 	ln -s "$OUT_DIR_LONG" out
+	ln -s "$OUT_DIR"/target/product/$TARGET_PRODUCT target_out_symlink
 	android-set-product
     fi
 fi
