@@ -3,8 +3,9 @@ use URI::Escape;
 
 $, = " ";
 $escape = uri_escape("@ARGV");
+$escape =~ s/-/%2D/g;
 $escape = uri_escape($escape); # must do double escape!
-$escape =~ y/-/ /;
+
 print ("https://mail.google.com/mail/?hl=zh-CN&shva=1#search/" . $escape);
 
 system("firefox", "https://mail.google.com/mail/?hl=zh-CN&shva=1#search/" . $escape);
