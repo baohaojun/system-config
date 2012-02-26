@@ -25,7 +25,6 @@ if test "$EMACS" = t; then
 (kill-new (filter-buffer-substring (point-min) (point-max)))
 (View-quit))" )"
         $prefix rm $FILE
-	xclip -o -selection clipboard|xclip -i
     ) >/dev/null 2>&1&
 else 
     rm-last-nl|xclip -i -selection clipboard
