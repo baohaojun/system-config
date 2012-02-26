@@ -28,3 +28,14 @@ iface usb0 inet static
 * TODO Hash sum mismatch:
 
 find . -name '*Release*'|xargs sudo rm -v 
+* TODO samba guest share
+
+security = share
+
+[Guest Share]
+        comment = Guest access share
+        path = /home/bhj/share
+        browseable = yes
+        read only = yes
+        guest ok = yes
+
