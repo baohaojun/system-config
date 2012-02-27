@@ -300,7 +300,7 @@ sub get_definition($) {
       }
     }
   }
-  return "<div style=\"font-size: xx-large\">$dict_html</div>";
+  return $dict_html;
 }
 
 sub dict_defines() {

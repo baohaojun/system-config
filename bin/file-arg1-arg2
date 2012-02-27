@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+my (%h1, %h2);
+my ($fn1, $fn2) = @ARGV;
+open($f1, "<", $fn1) or die "not open ~/$fn1";
+open($f2, "<", $fn2) or die "not open ~/$fn2";
+
+read($f1, $d1, (stat $f1)[7]) or die "can not read $fn1";
+read($f2, $d2, (stat $f2)[7]) or die "can not read $fn2";
+@h1{split(/\n/, $d1)} = ();
+@h2{split(/\n/, $d2)} = ();
+
+for (keys %h1) {
+  if (not exists $h2{$_}) {
+    print "$_ found in $fn1; not in $fn2\n";
+  }
+}
