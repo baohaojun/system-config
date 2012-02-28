@@ -1,0 +1,2 @@
+#!/bin/bash
+for x in "$@"; do /usr/bin/mail -s $x -a $x bhj < /dev/null; done

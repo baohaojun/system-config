@@ -36,3 +36,4 @@ git submodule init
 git submodule update
 git submodule foreach 'bash -c "git-pull-mac&"' | grep . 
 ~/bin/after-co-ln-s.sh
+touch ~/windows-config/.for-code-reading

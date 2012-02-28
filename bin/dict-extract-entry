@@ -1,0 +1,42 @@
+#!/usr/bin/perl
+use strict;
+use File::Path;
+use Encode;
+
+chdir glob("~/external/ahd") or die "can not chdir into ahd";
+my %entries;
+
+# <B><FONT SIZE="-1" FACE="arial,sans-serif"><FONT
+# COLOR="#229966">a</FONT></FONT></B><SUP><B><FONT SIZE="-1"
+# FACE="arial,sans-serif"><FONT COLOR="#229966">1</FONT></FONT></B></SUP> or
+# <B><FONT SIZE="-1" FACE="arial,sans-serif">A</FONT></B>
+
+my $entry_main_re = '<B><FONT SIZE="-1" FACE="arial,sans-serif"><FONT COLOR="#229966">(.+?)</FONT></FONT></B>';
+my $sup_re = '<SUP><B><FONT SIZE="-1" FACE="arial,sans-serif"><FONT COLOR="#229966">(\d+)</FONT></FONT></B></SUP>';
+my $or_re = '\s+or\s+<B><FONT SIZE="-1" FACE="arial,sans-serif">(.+?)</FONT></B>';
+
+my $entry_re = qr($entry_main_re(?:$sup_re)?(?:$or_re)?)o;
+my $remove_pron_re = qr#<A HREF=".*?.wav"><IMG BORDER="0" SRC=".*?JPG/pron.jpg"></A>#o;
+my $remove_banner_re = qr#<BR><FONT SIZE=2><I>The American Heritage. Dictionary of the English Language, Fourth Edition.</I> Copyright . 2002, 2000 by Houghton Mifflin Company. Published by Houghton Mifflin Company. All rights reserved.</FONT>#o;
+
+#<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=R073.htm&amp;articleID=R0338500">rude</A>
+my $remove_link_re = qr#<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=.*?.htm&amp;articleID=.*?">(.+?)</A>#o;
+my $replace_img_re = qr#<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=.*?.htm"><IMG BORDER="0" SRC="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=JPG/(.*?).jpg"></A>#o;
+
+while (<>) {
+  chomp;
+  open(my $file, "<", $_) or die "can not open $_";
+  while (<$file>) {
+    if (m/$entry_re/) {
+      for (($1, $3)) {
+	my $entry_word = $_;
+	if ($entry_word) {
+	  $entry_word =~ s#<FONT FACE="Minion New">(.*?)</FONT>#$1#g;
+	  $entry_word =~ s/&#183;//g;
+	  $entry_word =~ s,&#(.*?);,encode_utf8(chr($1)),eg;
+	  print "$entry_word\n";
+	}
+      }
+    }
+  }
+}

@@ -294,9 +294,15 @@ sub get_definition($) {
     if (get_md5(substr $_, 6) eq $key_md5) {
       open(my $entry_file, "<", $_) or die "can not open $_ for read";
       $dict_html .= "<hr class='subsep' />";
+      my $num_of_def = 0;
       while (<$entry_file>) {
-	s#\036#/dict-images/#g; s#\037##g;
-	$dict_html .= $_;
+	$num_of_def++;
+	debug "$word is defined in $_";
+	chomp();
+	if ($num_of_def > 1) {
+	  $dict_html .= "<hr class='sep' />";
+	}
+	$dict_html .= qx(cat $_);
       }
     }
   }
@@ -343,7 +349,7 @@ sub dict_defines() {
   }
 }
 
-chdir("/home/bhj/external/stardict/") or die "can not chdir";
+chdir("/home/bhj/external/ahd/") or die "can not chdir";
 if ($0 =~ m,/?stardict-convert.pl$,) {
   do_convert();
 } elsif ($0 =~ m,/?dict$,) {

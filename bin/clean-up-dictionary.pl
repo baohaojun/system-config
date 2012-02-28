@@ -17,12 +17,9 @@ my $sup_re = '<SUP><B><FONT SIZE="-1" FACE="arial,sans-serif"><FONT COLOR="#2299
 my $or_re = '\s+or\s+<B><FONT SIZE="-1" FACE="arial,sans-serif">(.+?)</FONT></B>';
 
 my $entry_re = qr($entry_main_re(?:$sup_re)?(?:$or_re)?)o;
-my $remove_pron_re = qr#<A HREF=".*?.wav"><IMG BORDER="0" SRC=".*?JPG/pron.jpg"></A>#o;
+my $remove_pron_re = qr#<A HREF="[^"]*?.wav"><IMG BORDER="0" SRC="[^"]*?JPG/pron.jpg"></A>#o;
 my $remove_banner_re = qr#<BR><FONT SIZE=2><I>The American Heritage. Dictionary of the English Language, Fourth Edition.</I> Copyright . 2002, 2000 by Houghton Mifflin Company. Published by Houghton Mifflin Company. All rights reserved.</FONT>#o;
 
-#<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=R073.htm&amp;articleID=R0338500">rude</A>
-my $remove_link_re = qr#<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=.*?.htm&amp;articleID=.*?">(.+?)</A>#o;
-my $replace_img_re = qr#<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=.*?.htm"><IMG BORDER="0" SRC="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=JPG/(.*?).jpg"></A>#o;
 
 sub debug(@) {
   print STDERR "@_\n";
@@ -75,9 +72,11 @@ for (0..256) {
 	for (($1, $3)) {
 	  my $entry_word = $_;
 	  if ($entry_word) {
-	    $entry_word =~ s#<FONT FACE="Minion New">(.*?)</FONT>#$1#g;
+	    $entry_word =~ s#<FONT FACE="Minion New">([^<]*?)</FONT>#$1#g;
+	    $entry_word =~ s#<SUB>(.*?)</SUB>#$1#g;
+	    $entry_word =~ s#<FONT SIZE="-1">(.*?)</FONT>#$1#g;
 	    $entry_word =~ s/&#183;//g;
-	    $entry_word =~ s,&#(.*?);,encode_utf8(chr($1)),eg;
+	    $entry_word =~ s,&#([^;]*?);,encode_utf8(chr($1)),eg;
 	    $entries{$entry_word} = {} unless exists $entries{$entry_word};
 	    $entries{$entry_word}{$htm_file} = 1;
 	    $lc_words{lc $entry_word} = 1;
@@ -86,8 +85,12 @@ for (0..256) {
       }
       s#$remove_pron_re##g;
       s#$remove_banner_re##g;
-      s#$remove_link_re#$1#g;
-      s#$replace_img_re#<A HREF="JPG/LA$1.jpg"><IMG BORDER="0" SRC="JPG/$1.jpg"></A>#g;
+
+      #<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=R073.htm&amp;articleID=R0338500">rude</A>
+      s#<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=[^"]*?.htm&amp;articleID=[^"]*?">([^<]+?)</A>#$1#g;
+
+      #<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=bend.htm"><IMG BORDER="0" SRC="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=JPG/THbend.jpg"></A>
+      s#<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=[^"]*?.htm"><IMG BORDER="0" SRC="PrefixToTheXREFk_a=..article&amp;view=Search&amp;fileName=JPG/([^"]*?).jpg"></A>#<A HREF="/dict-images/LA$1.jpg"><IMG BORDER="0" SRC="/dict-images/$1.jpg"></A>#g;
       print $nf $_;
       print "finished $htm_file\n";
     }
@@ -119,15 +122,15 @@ for my $entry_word (keys %entries) {
 
     #width='-34' height='-1'>
 
-    $data =~ s/width='.*?' height='.*?'>/>/g;
+    $data =~ s/width='[^>]*?' height='[^>]*?'>/>/g;
     $data =~ s/&#147;/&#8220;/g;
     $data =~ s/&#148;/&#8221;/g;
 
     my $data_strip = lc $data;
     $data_strip =~ tr/\n\r/  /;
-    $data_strip =~ s/<.*?>/ /g;
+    $data_strip =~ s/<[^>]*?>/ /g;
     $data_strip =~ s/&#183;//g;
-    $data_strip =~ s,&#(.*?);,encode_utf8(chr($1)),eg;
+    $data_strip =~ s,&#([^;]*?);,encode_utf8(chr($1)),eg;
     for (split(/(?:\s|\[|\]|\(|\)|;|:|,|“|”)+/, $data_strip)) {
       next unless $_;
       s/·//g;
