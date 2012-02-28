@@ -1,0 +1,2 @@
+#!/bin/bash
+emacsclient -n /scp:bhj@$1:$2
