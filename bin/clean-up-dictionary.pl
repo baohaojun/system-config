@@ -66,8 +66,11 @@ for (0..256) {
   for (glob("$prefix/*.htm")) {
     my $htm_file = $_;
     open(my $of, "<", $_) or die "can not open original file";
-    open(my $nf, ">", $_ . ".fix") or die "can not open fixing file";
-    while (<$of>) {
+    read($of, my $data, (stat $of)[7]) == (stat $of)[7] or die "can not read $_";
+    close($of);
+    open(my $nf, ">", $_) or die "can not open fixing file";
+    for (split(/\n/, $data)) {
+      $_ .= "\n";
       if (m/$entry_re/) {
 	for (($1, $3)) {
 	  my $entry_word = $_;
@@ -94,7 +97,6 @@ for (0..256) {
       print $nf $_;
       print "finished $htm_file\n";
     }
-    close($of);
     close($nf);
   }
 }
@@ -115,8 +117,8 @@ for my $entry_word (keys %entries) {
   for my $def_file (keys $entries{$entry_key}) {
     print $word_file "$def_file\n";
     my $data;
-    my $size = (stat($def_file . ".fix"))[7];
-    open(my $data_file, "<", $def_file . ".fix") or die "can not open $def_file";
+    my $size = (stat($def_file))[7];
+    open(my $data_file, "<", $def_file) or die "can not open $def_file";
     read($data_file, $data, $size) != $size and die "can not read from data file for $size bytes";
     close($data_file);
 

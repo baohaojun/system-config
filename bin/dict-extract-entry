@@ -26,6 +26,7 @@ my $replace_img_re = qr#<A HREF="PrefixToTheXREFk_a=..article&amp;view=Search&am
 while (<>) {
   chomp;
   open(my $file, "<", $_) or die "can not open $_";
+  print "doing $_ ";
   while (<$file>) {
     if (m/$entry_re/) {
       for (($1, $3)) {
