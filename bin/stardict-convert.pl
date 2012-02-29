@@ -216,43 +216,26 @@ sub do_convert() {
 }
 
 my $bar = <<EOF;
-<script type="text/javascript">
-function DoDict(form)
-{
-top.location="/search-dict/"+form.data.value;
-}
-</script>
-<script type="text/javascript">
-function DoDictMatching(form)
-{
-top.location="/search-dict-matching/"+form.data.value;
-}
-</script><script type="text/javascript">
-function DoDefines(form)
-{
-top.location="/search-dict-defines/"+form.data.value;
-}
-</script>
 
 <table>
 <tr>
 <td>
-<form name="SearchForm" onSubmit="DoDict(this.form)" method="get" action="/search-dict/">
+<form name="SearchForm" action="/search-dict/">
 Search dict:
 <input type="text" name="data" size="15">
-<input type="button" value="Submit" onclick="DoDict(this.form)">
+<input type=submit value="Submit" >
 </form>
 </td><td>
-<form name="SearchForm" onSubmit="DoDefines(this.form)" method="get" action="/search-dict-defines/">
+<form name="SearchForm" action="/search-dict-defines/">
 Search defines:
 <input type="text" name="data" size="15">
-<input type="button" value="Submit" onclick="DoDefines(this.form)">
+<input type=submit value="Submit" >
 </form>
 </td><td>
-<form name="SearchForm" onSubmit="DoDictMatching(this.form)" method="get" action="/search-dict-matching/">
+<form name="SearchForm" action="/search-dict-matching/">
 Search matching
 <input type="text" name="data" size="15">
-<input type="button" value="Submit" onclick="DoDictMatching(this.form)">
+<input type=submit value="Submit" >
 </form>
 </td></tr></table>
 EOF

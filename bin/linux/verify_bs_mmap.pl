@@ -325,6 +325,20 @@ sub do_read_kernel_cmd
     }
 }
 
+sub do_read_fastboot() {
+  while (<>) {
+    m/^#?\s*part\b/ or next;
+    s/^#?\s*part\b\s*//;
+    my ($name, $start, $size) = (split)[2, 4, 6];
+    debug("$name: $start: $size: $_\n");
+    push @entry_arr, {
+		      "size"             => $size,
+		      "start"            => $start,
+		      "name"             => $name,
+		     };
+  }
+}
+
 chomp($0 = `basename $0`);
 
 sub Usage
@@ -363,6 +377,8 @@ if ($from eq 'human') {
   do_read_blf();
 } elsif ($from eq "kernel-cmd") {
   do_read_kernel_cmd();
+} elsif ($from eq "fastboot") {
+  do_read_fastboot();
 } else {
   Usage();
 }

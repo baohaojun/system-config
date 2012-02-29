@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if test "$#" = 0; then
+    emacsclient -e '(w3m-goto-url "http://localhost:8000/dict-intro/contents.htm")'
+else
+    emacsclient -e '(w3m-goto-url "http://localhost:8000/dict/'"$1"'")'
+fi

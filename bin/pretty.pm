@@ -1,6 +1,8 @@
 sub pretty($) {
     (my $num) = (@_);
     $num = $num;
+    $num =~ s/.*?((0x)?[a-f0-9]*).*/$1/i;
+    $num = eval($num);
 
     my $kremain = $num % 1024;
     my $mremain = $num % (1024*1024);

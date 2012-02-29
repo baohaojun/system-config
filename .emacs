@@ -2194,5 +2194,14 @@ we are not interested in those lines that do."
 	  (with-current-buffer temp-buffer
 	    (goto-char (point-min))
 	    (current-line-string))))))))
+(defun bhj-do-dictionry (word)
+  "lookup the current word (or region) in dictionary"
+  (interactive
+   (list (if mark-active 
+	     (buffer-substring-no-properties (region-beginning)
+					     (region-end))
+	   (current-word))))
+  (w3m-goto-url (format "http://localhost:8000/dict/%s" word)))
 
+(define-key esc-map [(meta d)] 'bhj-do-dictionry)
 (server-start)
