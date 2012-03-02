@@ -1566,6 +1566,14 @@ Starting from DIRECTORY, look upwards for a cscope database."
                                              (buffer-substring-no-properties (point) (line-end-position))))))
                   "&")))
 
+(add-hook 'gnus-summary-mode-hook 
+	  (lambda ()
+	    (define-key gnus-summary-mode-map "v" 'bhj-view-mail-external)))
+				    
+(defun bhj-view-mail-external ()
+  "open the current maildir file in kmail"
+  (interactive)
+  (shell-command (concat "kmail-view " (shell-quote-argument nnmaildir-article-file-name))))
 
 (setq w3m-fill-column 100)
 (require 'guess-offset)
