@@ -22,7 +22,7 @@
 # part  19::attr 0::    reserved  start 0x1f400000, size 0x00c00000
 
 set -e
-cd $(lookup_file flashing)
+test -e system.img || cd $(lookup_file flashing)
 function die() {
     echo "$@"
     exit -1
@@ -47,7 +47,7 @@ function get-image-path() {
     get-blf-img-val $blf $1 Path
 }
 
-generate-ntim.pl $blf || die 'generate ntim failed, must stop!'
+generate-ntim.pl $blf "/tmp/ntim.$$.out" || die 'generate ntim failed, must stop!'
 
 # $for x in $(seq 1 16); do echo $(get-blf-img-val *.blf $x 'ID Name') $(get-blf-img-val *.blf $x Path);  done
 # TIMH PXA920_NTIM.bin
@@ -110,7 +110,7 @@ do-partition telephony "$(get-image-path PXAY)"
 
 
 # flash tim
-fastboot flash tim "$(get-image-path TIMH)".out
+fastboot flash tim "/tmp/ntim.$$.out"
 
 read -p "Press enter to restart fastboot "
 fastboot reboot

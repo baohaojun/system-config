@@ -3,8 +3,8 @@
 use strict;
 
 my $blf_path = $ARGV[0];
-my $ntim_path = qx(get-blf-img-val $blf_path TIMH Path);
-open(my $ntim, ">", $ntim_path . ".out") or die "can not open ntim: $ntim_path\n";
+my $ntim_path = ($ARGV[1] or qx(get-blf-img-val $blf_path TIMH Path) . ".out");
+open(my $ntim, ">", $ntim_path) or die "can not open ntim: $ntim_path\n";
 
 sub debug(@) {
   print STDERR "@_\n";
@@ -149,6 +149,8 @@ for (1..eval($blf_setting{"Number of Images"})) {
     if (not $img_path) {
       $img_size = 0;
     } else {
+      die "img $img_path not exist!" unless -e $img_path;
+      chomp($img_path = qx(readlink -f $img_path)); # must not be a symlink!
       chomp($img_size = qx(stat -c %s $img_path));
     }
   }
