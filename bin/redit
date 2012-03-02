@@ -1,2 +1,8 @@
 #!/bin/bash
-emacsclient -n /scp:bhj@$1:$2
+user=bhj
+if test $# = 3; then
+    user=$1
+    shift
+fi
+
+emacsclient -n /scp:$user@$1:$2

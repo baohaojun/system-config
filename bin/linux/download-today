@@ -5,5 +5,9 @@ cd ~/Downloads
 dir=$(today)
 dir=${dir%-*}
 mkdir -p $dir
-rm -f ~/today
+rm -f ~/today ~/last-month
 ln -sf $(pwd)/$dir ~/today
+
+dir=$(today 'last month')
+dir=${dir%-*}
+ln -sf $(pwd)/$dir ~/last-month

@@ -1,0 +1,1 @@
+../windows/redirect_vc6/open_blf.sh
