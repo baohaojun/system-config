@@ -69,8 +69,8 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 (
     touch .for-code-reading
     echo 'about to lock at '$(date)
-    flock 9 || { echo 'lock failed at'$(date); exit -1; }
-    echo 'lock success! at'$(date)
+    flock 9 || { echo 'lock failed at '$(date); exit -1; }
+    echo 'lock success! at '$(date)
     (
 	echo "before build, ccache size is $(du -s -h ~/.ccache/)"
 	echo "external dirs not managed by repo: $(repo-external)"
