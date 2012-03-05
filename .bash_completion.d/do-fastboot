@@ -1,0 +1,37 @@
+function _do_fastboot() {
+    local cur prev
+    local IFS=$'\n'
+
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    COMPREPLY=($(skeleton_compgen_word.pl \
+	-m 1000 \
+	-d '\n' -- \
+	"$(
+	echo tim
+	echo obm
+	echo uboot
+	echo ramdisk
+	echo imei
+	echo arbelbinary
+	echo msabinary
+	echo kernel
+	echo maintenance
+	echo recovery
+	echo misc
+	echo cache
+	echo system
+	echo userdata
+	echo logo
+	echo env
+	echo kpanic
+	echo nvm
+	echo telephony
+	echo reserved
+	)" \
+	    "$cur")
+    )
+    return 0 
+}
+
+complete -o default -F _do_fastboot do-fastboot
