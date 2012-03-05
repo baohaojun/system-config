@@ -8,8 +8,12 @@ if test $# != 0; then
 content=$(
     echo At $(date):; 
     echo "$@"|perl -ne '
-BEGIN{use HTML::Entities;} 
+BEGIN{
+    use HTML::Entities;
+    use Encode;
+} 
 chomp;
+$_ = decode_utf8($_);
 print encode_entities($_) . "\n"
 ')
 fi
