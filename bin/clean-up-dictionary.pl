@@ -30,7 +30,19 @@ sub get_md5($) {
   $data = lc $data;
   $data =~ s/\(\d+\)$//;
   $data =~ s/-//g;
+  return get_md5_raw($data);
+}
 
+sub read_file($) {
+  my ($path) = @_;
+  open(my $file, "<", $path) or die "can not open $path";
+  read($file, my $data, (stat $file)[7]) == (stat $file)[7] or die "can not read $path";
+  close($file);
+  return $data;
+}
+
+sub get_md5_raw($) {
+  my ($data) = @_;
   use Digest::MD5;
   my $md5 = Digest::MD5->new;
   $md5->add($data);
@@ -59,6 +71,31 @@ my %word_freqs;
 my %defines;
 my %words;
 my %lc_words;
+
+for (0..255) {
+  my $prefix = sprintf "%02x", $_;
+  for (glob("$prefix/*.htm")) {
+    my $htm_file = $_;
+    open(my $of, "<", $_) or die "can not open original file";
+    read($of, my $data, (stat $of)[7]) == (stat $of)[7] or die "can not read $_";
+    close($of);
+    my @entries = split(/<FONT COLOR=>/, $data);
+    if (@entries > 2) {
+      for (@entries) {
+	next unless $_;
+	$_ = "<FONT COLOR=>" . $_;
+	my $md5 = get_md5_raw($_);
+	my $md5_path = $md5 . ".htm";
+	$md5_path =~ s#^(..)#$1/#;
+	open(my $nf, ">", $md5_path) or die "can not open $md5_path";
+	debug "$htm_file generated $md5 " . scalar @entries;
+	print $nf $_;
+	close($nf);
+      }
+      unlink $htm_file;
+    }
+  }
+}
 
 for (0..256) {
   my $prefix = sprintf "%02x", $_;

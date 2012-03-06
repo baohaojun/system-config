@@ -2,5 +2,5 @@
 if test $# = 0; then
     xdg-open "$(xclip -o -selection primary)" >/dev/null 2>&1
 else 
-    xdg-open "$@" > /dev/null 2>&1
+    xdg-open "$(lookup_file "$@")" > /dev/null 2>&1
 fi

@@ -271,24 +271,31 @@ sub get_definition($) {
   debug "$md5_dir\n";
 
   my $dict_html = "";
+  my %entry_html_files;
   for (glob("$md5_dir/* $md5_dir/.*")) {
     -f $_ or next;
 
     if (get_md5(substr $_, 6) eq $key_md5) {
       open(my $entry_file, "<", $_) or die "can not open $_ for read";
-      $dict_html .= "<hr class='subsep' />";
-      my $num_of_def = 0;
       while (<$entry_file>) {
-	$num_of_def++;
 	debug "$word is defined in $_";
 	chomp();
-	if ($num_of_def > 1) {
-	  $dict_html .= "<hr class='sep' />";
-	}
-	$dict_html .= qx(cat $_);
+	$entry_html_files{$_} = 1;
       }
     }
   }
+
+  my $num_of_def = 0;
+  my %entry_md5s;
+  for (sort {-s $b <=> -s $a} keys %entry_html_files) {
+    my $dict_data = qx(cat $_|tr -d "\r");
+    unless (exists $entry_md5s{$dict_data}) {
+      $dict_html .= "<hr class='sep' />";
+      $entry_md5s{$dict_data} = 1;
+      $dict_html .= qx(cat $_);
+    }
+  }
+
   return "<div style=\"font-size: xx-large\">$dict_html</div>";
 }
 
