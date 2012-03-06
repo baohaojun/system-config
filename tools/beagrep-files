@@ -12,7 +12,7 @@ then
 fi
 
 beagrep_dir=$start_dir/.beagrep
-# echo Beagrep index found at "$beagrep_dir" 1>&2
+echo Beagrep index found at "$beagrep_dir" 1>&2
 
 if test -f "$start_dir"/.beagrep-filter
 then
