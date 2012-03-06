@@ -30,8 +30,9 @@ if git st -s | grep . ; then
 	    echo "###start of comment###"
 	    echo in $(pwd):
 	    git diff HEAD | perl -npe 's,^diff --git ,* ,'
+	    LOCAL=Local
 	    cat <<EOF
-# Local Variables: #
+# $LOCAL Variables: #
 # mode:org #
 # End: #
 EOF
