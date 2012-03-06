@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 test "$(pwd)" = $HOME && cd ~/windows-config
 cd "$(dirname "$(lookup_file .git)")"

@@ -327,9 +327,13 @@ sub dict_defines() {
       if ($next_idx == @words) {
 	$next_idx = 0;
       }
+      my $prev_idx = ($next_idx - 2 + @words) % @words;
       my $next_display = $words[$next_idx];
+      my $prev_display = $words[$prev_idx];
       my $a = uri_escape($next_display);
-      print "<br><a href='/dict-defines-sub/$defining_word/$a'>next: $next_display</a><br/><br/><hr><br/>";
+      my $b = uri_escape($prev_display);
+      print "<br><a href='/dict-defines-sub/$defining_word/$b'>prev: $prev_display</a>";
+      print "&nbsp;<a href='/dict-defines-sub/$defining_word/$a'>next: $next_display</a><br/><br/><hr><br/>";
       last;
     }
     for (@words) {
@@ -339,6 +343,71 @@ sub dict_defines() {
   }
 }
 
+sub dict_matching() {
+  my $pattern = $ARGV[0];
+  my $filter;
+  my $filter_save;
+  my $saved_pattern;
+  if (-e glob("~/.logs/dict_matching.txt")) {
+    open($filter, "<", glob("~/.logs/dict_matching.txt")) or die "can not open dict_matching.txt";
+    chomp($saved_pattern = <$filter>);
+  }
+
+  unless($pattern eq $saved_pattern) {
+    close($filter) if $filter;
+    open($filter, "-|", "grep", "-i", "-P", "$pattern", "words.list") or die "can not open filter";
+    open($filter_save, ">", glob("~/.logs/dict_matching.txt")) or die "can not open dict_matching.txt";
+    print $filter_save "$pattern\n";
+  }
+
+
+  my $num_matching = 0;
+  my @words;
+  print $style;
+  while (<$filter>) {
+    last unless $num_matching++ < 5000;
+    print $filter_save $_ if $filter_save;
+    chomp;
+    push @words, $_;
+  }
+  print "<h2>" . $pattern . " matches " . scalar(@words) . " words</h2>";
+  my $next_idx = 0;
+  @words = sort {lc $a cmp lc $b} @words;
+
+  my $to_display = $words[0];
+  if (@ARGV == 2) {
+    $to_display = $ARGV[1] unless not $ARGV[1];
+  }
+
+  for (@words) {
+    $next_idx++;
+    if ($to_display ne $_) {
+      next;
+    }
+    my $def = get_definition($_);
+    $def =~ s/\bh1>/h3>/g;
+    print $def;
+    if ($next_idx == @words) {
+      $next_idx = 0;
+    }
+
+    my $prev_idx = ($next_idx - 2 + @words) % @words;
+    my $next_display = $words[$next_idx];
+    my $prev_display = $words[$prev_idx];
+    my $a = uri_escape($next_display);
+    my $b = uri_escape($prev_display);
+    print "<br><a href='/dict-matching-sub/$pattern/$b'>prev: $prev_display</a>";
+    print "&nbsp;<a href='/dict-matching-sub/$pattern/$a'>next: $next_display</a><br/><br/><hr><br/>";
+    last;
+  }
+  for (@words) {
+    my $a = uri_escape($_);
+    print "<a href='/dict-matching-sub/$pattern/$a'>$_</a> "
+  }
+  close($filter_save) if $filter_save;
+  close($filter);
+}
+
 chdir("/home/bhj/external/ahd/") or die "can not chdir";
 if ($0 =~ m,/?stardict-convert.pl$,) {
   do_convert();
@@ -346,5 +415,7 @@ if ($0 =~ m,/?stardict-convert.pl$,) {
   dict();
 } elsif ($0 =~ m,/?dict-defines$,) {
   dict_defines();
+} elsif ($0 =~ m,/?dict-matching$,) {
+  dict_matching();
 }
 close(STDOUT);

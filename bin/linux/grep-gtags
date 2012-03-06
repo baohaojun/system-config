@@ -35,7 +35,7 @@ if ($pwd eq "/" or $pwd eq glob("~")) {
     chomp($pwd = `readlink ~/.gtags-dir`);
     print "pwd is read from ~/.gtags-dir at $pwd\n";
 } else {
-    print "link $pwd to ~/gtags-dir\n";
+    print "link $pwd to ~/.gtags-dir\n";
     system("rm", "-f", glob("~/.gtags-dir"));
     system("ln", '-sf', $pwd, glob("~/.gtags-dir"));
 }
@@ -109,7 +109,14 @@ sub do_cscope($$$$) {
 }
 
 exit if do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
-chomp(my $gtags_fallback_dir = qx(readlink -m ~/.gtags-fallback-dir));
+chomp(my $gtags_fallback_dir = qx(readlink ~/.gtags-fallback-dir));
 exit unless $gtags_fallback_dir;
+$gtags_fallback_dir = glob("~/$gtags_fallback_dir");
+
+sub debug(@) {
+  print STDERR "@_\n";
+}
+debug "Not found in current dir; search in $gtags_fallback_dir";
+
 do_cscope($gtags_fallback_dir, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
 
