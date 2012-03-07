@@ -99,7 +99,7 @@ do-partition system "$(get-image-path SYSY)"
 # userdata          =                                       , start:      264M, size:      216M, end:        0B
 do-partition userdata "$(get-image-path USRY)"
 # logo              =                                       , start:      480M, size:    3M256K, end:        0B
-do-partition logo "$(get-image-path PLGO)"
+do-partition logo "$(get-image-path PLGO)" || true
 # env               =                                       , start:  483M256K, size:      512K, end:        0B
 # kpanic            =                                       , start:  483M768K, size:      256K, end:        0B
 # nvm               =                                       , start:      484M, size:        8M, end:        0B

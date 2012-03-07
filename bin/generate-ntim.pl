@@ -151,7 +151,11 @@ for (1..eval($blf_setting{"Number of Images"})) {
     } else {
       die "img $img_path not exist!" unless -e $img_path;
       chomp($img_path = qx(readlink -f $img_path)); # must not be a symlink!
-      chomp($img_size = qx(stat -c %s $img_path));
+      $img_size = -s $img_path;
+      chomp(my $blf_erase_size = qx(get-blf-img-val $blf_path $_ "Erase Size"));
+      if ($blf_erase_size) {
+	$img_size = get_int($blf_erase_size);
+      }
       die "img $img_path size is 0" unless $img_size;
     }
   }
