@@ -60,7 +60,7 @@ for (1..$num_imgs) {
   printf "next img = %c%c%c%c\n", reverse @next_id unless $next_id[0] == 0xff;
   printf "flash_addr is %08x\n", $flash_addr;
   printf "ddr_addr is %08x\n", $ddr_addr;
-  printf "img size is %d\n", $img_size;
+  printf "img size is %d (%s)", $img_size, substr(qx(pretty $img_size), 0, -1);
   if (grep {$_ != 0} @all_0) {
     die "cantained !0 in all_0";
   }

@@ -74,6 +74,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
     (
 	echo "before build, ccache size is $(du -s -h ~/.ccache/)"
 	echo "external dirs not managed by repo: $(repo-external)"
+	echo "changed repos are: $(repo-changes\?)"
     )&
     result=''
     if [[ "$target" =~ kernel ]]; then
