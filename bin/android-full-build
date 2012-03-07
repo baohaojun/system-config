@@ -88,6 +88,12 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	command time make telephony uboot obm && result=$result'misc ok; '
     fi
     echo "$result"
+    (
+	cd flashing
+	./make-links.sh
+	./copy-release.sh .
+	find . -type l -print0 |xargs -0 bash -c 'for x in "$@"; do chmod a+r "$(readlink -m "$x")"; done' true 
+    )
     echo -n 'after build, ccache size is '
     du -s -h ~/.ccache/
 ) 9>~/.logs/android-full-build.lock  2>&1 | tee build.log
