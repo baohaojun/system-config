@@ -1,7 +1,7 @@
 #!/bin/bash
 export ARGS=$@
 export MY_PID=$$
-echo "  PID  PPID     ELAPSED CMD"
+echo "  PID  PPID     ELAPSED CMD" 1>&2
 
 ps -eo pid,ppid,etime,cmd | perl -ne '
 BEGIN{

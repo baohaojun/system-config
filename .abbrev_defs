@@ -332,7 +332,8 @@ fi
     exit -1
 }
 " nil 1)
-    ("eo" "2>&1" nil 3)
+    ("eo" "2>&1" nil 4)
+    ("oe" "1>&2" nil 0)
     ("qe" "2>/dev/null" nil 2)
     ("qq" ">/dev/null 2>&1" nil 9)
     ("shmode" "# Local variables:
