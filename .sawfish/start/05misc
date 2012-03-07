@@ -4,12 +4,13 @@ sudo modprobe -r pcspkr
 python3 ~/gcode/scim-cs/ime-py/ime-server.py&
 if test -f ~/.offlineimaprc; then
     (
+	flock -n 5 || { echo "lock failed for Imap4Monitor.py, exit"; exit; }
 	while true; 
 	do 
 	    python2.6 ~/bin/windows/Imap4Monitor/Imap4Monitor.py;
 	    sleep 2; 
 	done
-    )&
+    ) 5< ~/bin/windows/Imap4Monitor/Imap4Monitor.py &
 fi
 
 # while true; do
@@ -21,7 +22,16 @@ fi
 # done >~/.gmail-notifier.log 2>&1 &
 # qq
 
-while true; do (cd ~/gcode/offline.wikipedia/mywiki; python manage.py runserver --noreload >>~/.logs/offline-wiki.log 2>&1); sleep 2; done& 
+
+(
+    flock -n 5 || { echo "lock failed for manage.py, exit"; exit; }
+    while true; do 
+	cd ~/gcode/offline.wikipedia/mywiki
+	python manage.py runserver --noreload >>~/.logs/offline-wiki.log 2>&1
+	sleep 2; 
+    done
+) 5< ~/gcode/offline.wikipedia/mywiki/manage.py &
+
 download-today
 
 command renew-xauth
@@ -35,15 +45,18 @@ for x in ~/external/sawfish/start/*; do
     )
 done
 
-while true; do
-    if ps aux|grep ssh|grep bhj@216 -q; 
-    then
-        true;
-    else
-        ssh -C2qN -D 8080 bhj@216.194.70.6; 
-    fi
-    sleep 2; 
-done
+(
+    flock -n 5 || { echo "lock failed for ssh, exit"; exit; }
+    while true; do
+	if ps aux|grep ssh|grep bhj@216 -q; 
+	then
+            true;
+	else
+            ssh -C2qN -D 8080 bhj@216.194.70.6; 
+	fi
+	sleep 2; 
+    done
+) 5> ~/.logs/ssh-bhj@216.194.70.6 &
 
 # for x in /etc/xdg/autostart/*; do
 #     (
