@@ -5,7 +5,7 @@ include(GetGitRevisionDescription)
 
 set(SNORE_VERSION_MAJOR 0)
 set(SNORE_VERSION_MINOR 3)
-set(SNORE_VERSION_SUFFIX pre)
+set(SNORE_VERSION_SUFFIX )
 get_git_head_revision(GIT_REFSPEC SNORE_REVISION)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" @ONLY)
