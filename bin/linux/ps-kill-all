@@ -1,4 +1,4 @@
 #!/bin/bash
 match=$1
 shift
-ps.pl $match | perl -ne 'print unless (1..1)' | pn 1 | xargs kill "$@"
+ps.pl $match | grep -v $(basename $0) | tee /dev/stderr | pn 1  | xargs bash -c 'for x in $@; do  kill "$x"; done' true
