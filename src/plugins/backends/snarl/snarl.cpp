@@ -170,7 +170,6 @@ void SnarlBackend::unregisterApplication(Application *application){
 
 uint SnarlBackend::notify(Notification notification){
     SnarlInterface *snarlInterface = m_applications.value(notification.application());
-    qDebug()<<"Snarl using the notification instance of:"<<notification.application();
     if(snarlInterface == NULL){
         qDebug()<<notification.application()<<"not in snarl interfaces, defaulting";
         qDebug()<<m_applications.keys();
