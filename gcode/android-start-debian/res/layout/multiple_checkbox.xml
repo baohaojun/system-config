@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent" 
+	android:layout_height="match_parent">
+
+	<LinearLayout android:id="@+id/layout1"
+		android:layout_alignParentBottom="true" 
+		android:layout_width="match_parent"
+		android:layout_height="80dip" 
+		android:orientation="horizontal">
+
+		<Button android:id="@+id/start" 
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent" 
+			android:layout_weight="1"
+			android:textSize="@dimen/btn_text_size" 
+			android:text="@string/start_test" 
+			android:gravity="center"/>
+
+		<Button android:id="@+id/select" 
+			android:layout_width="wrap_content"
+			android:layout_weight="1" 
+			android:textSize="@dimen/btn_text_size" 
+			android:text="@string/select_back"
+			android:layout_height="match_parent" 
+			android:gravity="center"/>
+
+	</LinearLayout>
+
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="match_parent" 
+		android:layout_height="wrap_content"
+		android:layout_above="@id/layout1">
+		<ListView android:id="@+id/listview" 
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" 
+			android:cacheColorHint="#00000000" />
+	</LinearLayout>
+</RelativeLayout>

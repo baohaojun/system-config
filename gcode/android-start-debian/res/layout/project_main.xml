@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+  
+  <Button android:id="@+id/project_gps" 
+    android:layout_weight="1"
+    android:textSize="@dimen/btn_text_size"
+    android:text="@string/gps_name"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+  </Button>
+  
+  <Button android:id="@+id/project_video"
+    android:layout_weight="1"
+    android:textSize="@dimen/btn_text_size"
+    android:text="@string/video_name"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+  </Button>
+  
+</LinearLayout>

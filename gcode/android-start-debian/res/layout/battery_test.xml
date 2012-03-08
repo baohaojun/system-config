@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_marginTop="80dip"
+        android:gravity="center_horizontal"
+        android:id="@+id/battery_level"
+        android:layout_weight="3"
+        android:textSize="@dimen/content_text_size"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </TextView>
+
+    <LinearLayout
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/battery_pass"
+            android:textSize="@dimen/btn_text_size"
+            android:text="@string/battery_pass"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </Button>
+    
+        <Button
+            android:id="@+id/battery_fail"
+            android:layout_weight="1"
+            android:textSize="@dimen/btn_text_size"
+            android:text="@string/battery_fail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </Button>
+    </LinearLayout>
+  
+</LinearLayout>
+
