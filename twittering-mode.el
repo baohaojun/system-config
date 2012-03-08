@@ -275,6 +275,12 @@ The string should not be empty.  "
   :type 'string
   :group 'twittering)
 
+(defcustom twittering-curl-extra-parameters '()
+  "Extra parameters for curl session.
+You may specify for instance socks proxy here."
+  :type 'list
+  :group 'twittering)
+
 ;;;
 ;;; Internal Variables
 ;;;
@@ -2488,8 +2494,12 @@ The method to perform the request is determined from
             ;; http://www.escafrace.co.jp/blog/09/10/16/1008
             ("Expect" . "")))
          (curl-args
-          `("--include" "--location" "--request" ,method
+          `("--include"
+            "--location"
+            "--request" ,method
             ,@(unless twittering-debug-curl '("--silent"))
+            ,@twittering-curl-extra-parameters
+
             ,@(apply 'append
                      (mapcar
                       (lambda (pair)
