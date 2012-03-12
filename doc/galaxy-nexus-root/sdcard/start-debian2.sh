@@ -28,6 +28,10 @@ if [ -d /system/debian/dev/.udev ] ; then
    mount -o bind /dev /system/debian/dev
    mount -o bind /dev/pts /system/debian/dev/pts
    mount -o bind /dev/shm /system/debian/dev/shm
+   for x in system data cache factory d acct; do
+       mkdir -p /system/debian/android/$x
+       mount -o bind /$x /system/debian/android/$x
+   done
 fi
 
 # start debian ssh
