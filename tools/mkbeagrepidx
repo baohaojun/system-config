@@ -47,6 +47,7 @@ function mkcscope_files() {
             '-o' '-path' '*/{arch}' \
             '-o' '-path' '*/.hg' \
             '-o' '-path' '*/_darcs' \
+            '-o' '-path' '*/out-*' \
             '-o' '-path' '*/.git' \
             '-o' '-path' '*/.bzr' \
             '-o' '-path' '*~*' \
