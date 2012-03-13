@@ -2141,4 +2141,31 @@ we are not interested in those lines that do."
   (w3m-goto-url (format "http://localhost:8000/dict/%s" word)))
 
 (define-key esc-map [(meta d)] 'bhj-do-dictionry)
+
+(defun bhj-open-android-doc-on-java-buffer ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (search-forward-regexp "^\\s *package ")
+    (let ((package-name 
+	   (buffer-substring-no-properties
+	    (point)
+	    (1- (line-end-position))))
+	  (doc-prefix "file:///home/bhj/bin/linux/ext/android-sdk-linux_86/docs/reference")
+	  (html-name (replace-regexp-in-string 
+		      ".java$" ".html" 
+		      (replace-regexp-in-string
+		       ".*/" ""
+		       (buffer-file-name))))
+	  (default-directory (expand-file-name "~")))
+      (shell-command (format "of %s/%s/%s"
+				   doc-prefix
+				   (replace-regexp-in-string
+				    "\\."
+				    "/"
+				    package-name)
+				   html-name)))))
+			 
+(eval-after-load "cc-mode.el"
+  (define-key java-mode-map (kbd "M-s d") 'bhj-open-android-doc-on-java-buffer))
 (server-start)
