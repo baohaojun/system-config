@@ -2,6 +2,10 @@
 function calc_relative() {
     local source=$(formal-path "$1")
     local target=$2
+    if test "$source" = "$(readlink -m "$2")"; then
+	echo .
+	exit 0
+    fi
 
     perl -e '
 ($s, $t)  = @ARGV;
