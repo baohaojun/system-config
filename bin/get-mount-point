@@ -1,0 +1,11 @@
+#!/bin/bash
+if test -d "$1"; then
+    cd "$1";
+else
+    cd "$(dirname "$1")"
+fi
+
+while ! mountpoint . >/dev/null 2>&1 ; do
+    cd ..
+done
+pwd

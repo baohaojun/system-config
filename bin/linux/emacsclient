@@ -6,4 +6,8 @@ elif test $# = 2 && test -e "$2"; then
 elif test $# = 3 && test -e "$3"; then
     set -- "$1" "$2" "$(ulp "$3")"
 fi
+
+if test $# = 2 -a -e "$2" -a "$(fstype "$2")" = fuse.sshfs; then
+    set -- "$1" "$(get-scp-from-sshfs "$2")"
+fi
 /usr/bin/emacsclient "$@"

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+user=bhj
+
+remote=$1
+shift
+if [[ "$remote" =~ @ ]]; then
+   user=${remote%%@*}
+   remote=${remote#*@}
+fi
+
+remote_path=${remote#*:}
+remote=${remote%%:*}
+
+remote=$(host-hosts $remote)
+/usr/bin/sshfs $user@$remote:$path "$@"

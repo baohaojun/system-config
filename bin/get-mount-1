@@ -1,0 +1,4 @@
+#!/bin/bash
+export MP=$(get-mount-point "$1")
+
+mount | perl -a -ne 'print $F[0] if $F[2] eq $ENV{"MP"}'

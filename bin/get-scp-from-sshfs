@@ -1,0 +1,7 @@
+#!/bin/bash
+
+arg=$1
+
+scheme=$(get-mount-1 "$1");
+path=$(relative-path "$(readlink -m "$1")" "$(get-mount-point "$1")"/.)
+echo /scp:"$scheme$path"
