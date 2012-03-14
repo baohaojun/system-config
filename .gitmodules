@@ -10,3 +10,6 @@
 [submodule ".emacs_d/org-jira"]
 	path = .emacs_d/org-jira
 	url = git://github.com/baohaojun/org-jira.git
+[submodule ".emacs_d/mo-git-blame"]
+	path = .emacs_d/mo-git-blame
+	url = git://github.com/baohaojun/mo-git-blame.git
