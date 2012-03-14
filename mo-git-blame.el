@@ -169,6 +169,7 @@ option if this variable is non-nil."
               (if (file-directory-p cwd)
                   (let* ((default-directory cwd)
                          (dir (mo-git-blame-git-string "rev-parse" "--git-dir"))
+                         (dir (concat (or (file-remote-p cwd) "") dir))
                          (dir (if dir (file-name-directory (expand-file-name dir)) "")))
                     (if (and dir (file-directory-p dir))
                         (file-name-as-directory dir))))))
@@ -177,7 +178,12 @@ option if this variable is non-nil."
 
 (defun mo-git-blame-run (&rest args)
   (message "Running 'git %s'..." (car args))
-  (apply 'call-process mo-git-blame-git-executable nil (current-buffer) nil args)
+  (apply 'shell-command
+         (apply 'concat mo-git-blame-git-executable
+                (mapcar (lambda (arg)
+                          (concat " " (shell-quote-argument arg)))
+                        args))
+         (current-buffer) nil)
   (message "Running 'git %s'... done" (car args)))
 
 (defvar mo-git-blame-process nil)
