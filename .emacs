@@ -2168,4 +2168,8 @@ we are not interested in those lines that do."
 			 
 (eval-after-load "cc-mode.el"
   (define-key java-mode-map (kbd "M-s d") 'bhj-open-android-doc-on-java-buffer))
+
+(autoload 'mo-git-blame-file "mo-git-blame" nil t)
+(autoload 'mo-git-blame-current "mo-git-blame" nil t)
+
 (server-start)
