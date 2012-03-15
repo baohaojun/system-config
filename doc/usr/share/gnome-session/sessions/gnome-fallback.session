@@ -57,5 +57,5 @@ Name[zh_HK]=GNOME 後備
 Name[zh_TW]=GNOME 後備
 RequiredComponents=gnome-panel;gnome-settings-daemon;
 RequiredProviders=windowmanager;notifications;
-DefaultProvider-windowmanager=gnome-wm
+DefaultProvider-windowmanager=sawfish
 DefaultProvider-notifications=notification-daemon
