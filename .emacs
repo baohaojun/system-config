@@ -2173,4 +2173,6 @@ we are not interested in those lines that do."
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)
 (autoload 'mo-git-blame-current "mo-git-blame" nil t)
 
+(require 'xclip)
+(turn-on-xclip)
 (server-start)
