@@ -4,12 +4,20 @@
 ** notify window position need fixing.
 *** see how to dump window infomation
 *** see how to use sawfish to adjust window pos.
-* TODO study gerrit command line tool.
-** TODO write a integration tool for it.
+* DONE study gerrit command line tool.
+  CLOSED: [2012-03-15 Thu 10:21]
+  - CLOSING NOTE [2012-03-15 Thu 10:21]
+** DONE write a integration tool for it.
+   CLOSED: [2012-03-15 Thu 10:21]
+   - CLOSING NOTE [2012-03-15 Thu 10:21]
 
-* TODO do marvell training
+* DONE do marvell training
+  CLOSED: [2012-03-15 Thu 10:09]
+  - CLOSING NOTE [2012-03-15 Thu 10:09]
 * TODO do marvell stock options.
-* TODO how to config static usb0 ip address
+* DONE how to config static usb0 ip address
+  CLOSED: [2012-03-15 Thu 10:09]
+  - CLOSING NOTE [2012-03-15 Thu 10:09]
 put the following into /etc/network/interfaces:
 #+begin_example
 auto usb0
@@ -19,16 +27,32 @@ iface usb0 inet static
 	netmask 255.255.255.0
 	network 192.168.42.0
 #+end_example
-* TODO 试一下能不能在环境变量里设一下gcc版本，做ics的build对其有依赖。
-* TODO 搞定几条测试case。
+* DONE 试一下能不能在环境变量里设一下gcc版本，做ics的build对其有依赖。
+  CLOSED: [2012-03-15 Thu 10:09]
+  - CLOSING NOTE [2012-03-15 Thu 10:09]
+* DONE 搞定几条测试case。
+  CLOSED: [2012-03-15 Thu 10:09]
+  - CLOSING NOTE [2012-03-15 Thu 10:09]
 * TODO Win7为什么每次都搜索驱动
-* TODO Win7为什么每次都生成新的网卡
-* TODO 能不能在android下build时指定输出文件目录不是默认的out？
-* TODO 在uboot预充电的时候在串口上按Enter，进入fastboot
-* TODO Hash sum mismatch:
+* DONE Win7为什么每次都生成新的网卡
+  CLOSED: [2012-03-15 Thu 10:10]
+  - CLOSING NOTE [2012-03-15 Thu 10:10]
+    
+* DONE 能不能在android下build时指定输出文件目录不是默认的out？
+  CLOSED: [2012-03-15 Thu 10:21]
+  - CLOSING NOTE [2012-03-15 Thu 10:21] \\
+    Yes, it can.
+* CANCELED 在uboot预充电的时候在串口上按Enter，进入fastboot
+  CLOSED: [2012-03-15 Thu 10:22]
+  - CLOSING NOTE [2012-03-15 Thu 10:22]
+* DONE Hash sum mismatch:
+  CLOSED: [2012-03-15 Thu 10:22]
+  - CLOSING NOTE [2012-03-15 Thu 10:22]
 
 find . -name '*Release*'|xargs sudo rm -v 
-* TODO samba guest share
+* DONE samba guest share
+  CLOSED: [2012-03-15 Thu 10:22]
+  - CLOSING NOTE [2012-03-15 Thu 10:22]
 
 security = share
 
