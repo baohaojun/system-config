@@ -26,6 +26,7 @@ function _do_fastboot() {
 	echo env
 	echo kpanic
 	echo nvm
+	echo factory
 	echo telephony
 	echo reserved
 	)" \
