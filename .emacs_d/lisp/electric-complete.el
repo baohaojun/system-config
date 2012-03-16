@@ -177,8 +177,20 @@ we will get the pattern \"naoehu[)+{*\"
         (let ((mb (match-beginning 0))
               (me (match-end 0)))
           (goto-char mb)
-          (unless (and (looking-at "\\w")
-                       (looking-back "\\w"))
+
+	  ;;; mb can not be in the middle of a word, if so, it is considered a
+	  ;;; bad match.
+          (unless
+	      (and (looking-at "\\w")
+		   (looking-back "\\w"))
+	    ;;; me should also not be in the middle of a word, if so, we should
+	    ;;; find the end of the word.
+	    (save-excursion
+	      (goto-char me)
+	      (when (and (looking-at "\\w")
+			 (looking-back "\\w"))
+		(re-search-forward "\\b" nil t)
+		(setq me (point))))
             (let ((substr (buffer-substring-no-properties mb me)))
               (if (< (point) current-pos)
                   (setq strlist-before (cons substr strlist-before))
