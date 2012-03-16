@@ -48,6 +48,7 @@ This is in addition to, but in preference to, the primary selection.")
 See `x-set-selection'."
   (when (and xclip-program (getenv "DISPLAY"))
     (let* ((process-connection-type nil)
+	   (default-directory "/")
            (proc (start-process "xclip" nil "xclip"
                                 "-selection" (symbol-name type))))
       (process-send-string proc data)
@@ -64,7 +65,10 @@ See `x-set-selection'."
 (defun xclip-selection-value ()
   "See `x-cut-buffer-or-selection-value'."
   (when (and xclip-program (getenv "DISPLAY"))
-    (let (clip-text primary-text)
+    (let (clip-text
+	  primary-text
+	  (default-directory "/"))
+		    
       (when xclip-select-enable-clipboard
         (setq clip-text (shell-command-to-string "xclip -o -selection clipboard"))
         (setq clip-text
