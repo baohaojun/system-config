@@ -43,6 +43,7 @@ chdir $pwd or die "$pwd: $!";
 my $pat_save = $pat;
 
 if ($find_file_only) {
+  $ENV{FIND_FILE_ONLY} = 1;
   if ($pat =~ m/:([0-9]+)$/) {
       $file_default_line = $1;
       $pat = substr($pat, 0, rindex($pat, ':'));

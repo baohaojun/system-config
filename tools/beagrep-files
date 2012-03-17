@@ -34,6 +34,9 @@ function wlp() {
 }
 
 tokens=`beagrep-get-tokens "$@"`
+if test $FIND_FILE_ONLY; then
+    tokens=$(echo -n " $tokens" | perl -npe 's/\s+/ filename:/g; s/(^ *| filename:$)//g')
+fi
 for x in "$beagrep_dir" `cat $beagrep_dir/../.beagrep-brothers 2>/dev/null`
 do 
     beagrep-static-query \
