@@ -6,7 +6,8 @@ x=0
 function find() {
     command find 2>/dev/null "$@"
 }
-builtin cd -P . >/dev/null 2>&1
+
+# builtin cd -P . >/dev/null 2>&1
 
 test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 

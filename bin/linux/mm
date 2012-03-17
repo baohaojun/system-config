@@ -1,5 +1,4 @@
 #!/bin/bash
-. ~/.bashrc
 set -e
 set -o pipefail
 build_env=`lookup_file build/envsetup.sh`
@@ -11,7 +10,7 @@ cd $top_dir/
 set_stuff_for_environment
 cd - 
 
-lcd `lookup_file Android.mk` >/dev/null 2>&1
+cd "$(dirname `lookup_file Android.mk`)"
 mm "$@" files 2>&1|
 grep -v '^Copy: .*/target/product/.*/system/media/audi'|
 grep -v -e '/lang_pico/\|libinputcore-2.so\|libkpencore.so\|libqpicjni6.so\|/root/initlogo.rle\|/system/app/BaiduIme_v2.1.1.6.apk\|/system/app/android_10503_20111014.apk\|/system/app/cn.goapk.market_v2.1.4.apk\|/system/app/com.alensw.picfolder_v1.4.2.apk\|/system/etc/apns-conf.xml\|/system/etc/permissions/com.tmobile.software.themes.xml\|/system/etc/repository.txt'|
