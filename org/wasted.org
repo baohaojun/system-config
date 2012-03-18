@@ -1,0 +1,11 @@
+这里会记录我在哪些事情上浪费过时间，记下来争取下回如果需要再配置一番的话不需要再
+浪费一次。
+
+* eclipse在debian底下表用系统自带的
+
+用这个版本装不了android的adt插件，并且也可能装不了eclim。直接从eclipse的网站上去下载一个安装包回来比较靠谱。
+
+* 装eclim的时候eclipse home要选自己下载的eclipse的目录
+
+并且不要点user local目录，例如~/.eclipse/org.eclipse.platform_3.7.0_155965261/，
+这个是系统自带的eclipse版本才用的，点上这个之后反而装不上eclim了。
