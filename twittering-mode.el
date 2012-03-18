@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2007, 2009, 2010 Yuto Hayamizu.
 ;;               2008 Tsuyoshi CHO
-;;               2010, 2011 William Xu
+;;               2010, 2011, 2012 William Xu
 
 ;; Author: Y. Hayamizu <y.hayamizu@gmail.com>
 ;;         Tsuyoshi CHO <Tsuyoshi.CHO+develop@Gmail.com>
@@ -1642,24 +1642,65 @@ referring the former ID."
 Statuses are stored in ascending-order with respect to their IDs."
   (let ((result nil)
         (status (twittering-find-status id)))
-    (while
-        (and (if (numberp count)
-                 (<= 0 (setq count (1- count)))
-               t)
-             (let ((replied-id (or (assqref 'in-reply-to-status-id status) "")))
-               (unless (string= "" replied-id)
-                 (let ((replied-status (twittering-find-status replied-id)))
-                   (when replied-status
-                     (setq result (cons replied-status result))
-                     (setq status replied-status)
-                     t))))))
+    (case twittering-service-method
+      ((sina)
+       (maphash
+        (lambda (spec pair)
+          (let ((id-table (car pair)))
+            (maphash
+             (lambda (i entry)
+               (when (and (assqref 'status entry)
+                          (equal (assqref 'id (assqref 'status entry)) id))
+                 ;; Only show comment.
+                 (let ((st (assqref 'status entry)))
+                   (when st
+                     (setq entry `((hide-status ,@st)
+                                   ,@(remove-if (lambda (i) (eq (car i) 'status))
+                                                entry)))))
+                 (let ((rc (assqref 'reply-comment entry)))
+                   (when rc
+                     (setq entry `((hide-reply-comment ,@rc)
+                                   ,@(remove-if (lambda (i) (eq (car i) 'reply-comment))
+                                                entry)))))
+                 (setq result (cons entry result))))
+             id-table)))
+        twittering-timeline-data-table))
+      (t
+       (while
+           (and (if (numberp count)
+                    (<= 0 (setq count (1- count)))
+                  t)
+                (let ((replied-id (or (assqref 'in-reply-to-status-id status) "")))
+                  (unless (string= "" replied-id)
+                    (let ((replied-status (twittering-find-status replied-id)))
+                      (when replied-status
+                        (setq result (cons replied-status result))
+                        (setq status replied-status)
+                        t))))))))
     result))
 
 (defun twittering-have-replied-statuses-p (id)
   (let ((status (twittering-find-status id)))
     (when status
-      (let ((replied-id (assqref 'in-reply-to-status-id status)))
-        (and replied-id (not (string= "" replied-id)))))))
+      (case twittering-service-method
+        ((sina)
+         (let ((end (or (twittering-get-next-status-head) (point-max)))
+               (pos (point))
+               has?)
+           (save-excursion
+             (while (and (not has?)
+                         pos
+                         (setq pos (next-single-property-change
+                                    pos 'need-to-be-updated nil end)))
+               (goto-char pos)
+               (when (looking-at "轉發.* 評論(\\([0-9]+\\))")
+                 (setq has? (match-string 1)))
+               (when (eq pos end)
+                 (setq pos nil))))
+           has?))
+        (t
+         (let ((replied-id (assqref 'in-reply-to-status-id status)))
+           (and replied-id (not (string= "" replied-id)))))))))
 
 (defun twittering-add-statuses-to-timeline-data (statuses &optional spec)
   (let* ((spec (or spec (twittering-current-timeline-spec)))
@@ -4793,58 +4834,60 @@ rendered at POS, return nil."
 (defun twittering-render-timeline (buffer &optional additional timeline-data)
   (with-current-buffer buffer
     (save-excursion
-      (let* ((spec (twittering-get-timeline-spec-for-buffer buffer))
-             (timeline-data (twittering-timeline-data-collect spec timeline-data))
-             (rendering-entire (or (null (twittering-get-first-status-head))
-                                   (not additional)))
-             (buffer-read-only nil))
-        (let ((twittering-service-method (caar spec))) ; TODO: necessary?  (xwl)
-          (twittering-update-status-format)
-          (twittering-update-mode-line)
-          (when (and (twittering-timeline-spec-user-p spec) timeline-data)
-            (let ((locate-separator
-                   (lambda ()
-                     (let ((p (next-single-property-change (point-min) 'user-profile-separator)))
-                       (when p (goto-char p))))))
-              (unless (funcall locate-separator)
-                (twittering-render-user-profile timeline-data))
-              (funcall locate-separator)
-              (if twittering-reverse-mode
-                  (narrow-to-region (point-min) (line-beginning-position))
-                (forward-line 1)
-                (narrow-to-region (point) (point-max)))))
-          (when rendering-entire
-            (delete-region (point-min) (point-max)))
-          (let* ((prev-p (twittering-timeline-data-is-previous-p timeline-data))
-                 (get-insert-point
-                  (if prev-p
-                      (if twittering-reverse-mode 'point-min 'point-max)
-                    (if twittering-reverse-mode 'point-max 'point-min))))
-            (mapc
-             (lambda (status)
-               (let ((formatted-status (twittering-format-status status))
-                     (separator "\n"))
-                 (add-text-properties 0 (length formatted-status)
-                                      `(belongs-spec ,spec)
-                                      formatted-status)
-                 (goto-char (funcall get-insert-point))
-                 (cond
-                  ((eobp)
-                   ;; Insert a status after the current position.
-                   (insert formatted-status separator))
-                  (t
-                   ;; Use `insert-before-markers' in order to keep
-                   ;; which status is pointed by each marker.
-                   (insert-before-markers formatted-status separator)))
-                 (when twittering-default-show-replied-tweets
-                   (twittering-show-replied-statuses
-                    twittering-default-show-replied-tweets))))
-             ;; Always insert most adjacent tweet first.
-             (if prev-p
-                 timeline-data		; sorted decreasingly
-               (reverse timeline-data)))) ; sorted increasingly
-          (widen)
-          (debug-print buffer))))))
+      (save-restriction
+        (widen)
+        (let* ((spec (twittering-get-timeline-spec-for-buffer buffer))
+               (timeline-data (twittering-timeline-data-collect spec timeline-data))
+               (rendering-entire (or (null (twittering-get-first-status-head))
+                                     (not additional)))
+               (buffer-read-only nil))
+          (let ((twittering-service-method (caar spec))) ; TODO: necessary?  (xwl)
+            (twittering-update-status-format)
+            (twittering-update-mode-line)
+            (when (and (twittering-timeline-spec-user-p spec) timeline-data)
+              (let ((locate-separator
+                     (lambda ()
+                       (let ((p (next-single-property-change (point-min) 'user-profile-separator)))
+                         (when p (goto-char p))))))
+                (unless (funcall locate-separator)
+                  (twittering-render-user-profile timeline-data))
+                (funcall locate-separator)
+                (if twittering-reverse-mode
+                    (narrow-to-region (point-min) (line-beginning-position))
+                  (forward-line 1)
+                  (narrow-to-region (point) (point-max)))))
+            (when rendering-entire
+              (delete-region (point-min) (point-max)))
+            (let* ((prev-p (twittering-timeline-data-is-previous-p timeline-data))
+                   (get-insert-point
+                    (if prev-p
+                        (if twittering-reverse-mode 'point-min 'point-max)
+                      (if twittering-reverse-mode 'point-max 'point-min))))
+              (mapc
+               (lambda (status)
+                 (let ((formatted-status (twittering-format-status status))
+                       (separator "\n"))
+                   (add-text-properties 0 (length formatted-status)
+                                        `(belongs-spec ,spec)
+                                        formatted-status)
+                   (goto-char (funcall get-insert-point))
+                   (cond
+                    ((eobp)
+                     ;; Insert a status after the current position.
+                     (insert formatted-status separator))
+                    (t
+                     ;; Use `insert-before-markers' in order to keep
+                     ;; which status is pointed by each marker.
+                     (insert-before-markers formatted-status separator)))
+                   (when twittering-default-show-replied-tweets
+                     (twittering-show-replied-statuses
+                      twittering-default-show-replied-tweets))))
+               ;; Always insert most adjacent tweet first.
+               (if prev-p
+                   timeline-data          ; sorted decreasingly
+                 (reverse timeline-data)))) ; sorted increasingly
+            ;; (widen); FIXME: what is this?
+            (debug-print buffer)))))))
 
 
 ;; TODO: this is assuming the user has at least one tweet.
@@ -5075,6 +5118,7 @@ rendered at POS, return nil."
            id (twittering-get-base-id-of-ancestor-at next))))))
 
 (defun twittering-show-replied-statuses (&optional count interactive)
+  "Use C-u prefix to force getting new replies.  "
   (interactive)
   (if (twittering-replied-statuses-visible-p)
       (when interactive
@@ -5082,40 +5126,61 @@ rendered at POS, return nil."
     (let* ((base-id (twittering-get-id-at))
            (statuses (twittering-get-replied-statuses
                       base-id (when (numberp count) count)))
-           (statuses (if twittering-reverse-mode statuses (reverse statuses))))
+           (force? current-prefix-arg))
+      (when force?
+        (setq statuses nil))
       (if statuses
-          (let ((beg (if twittering-reverse-mode
+          (let ((beg (if (and twittering-reverse-mode
+                              (not (eq twittering-service-method 'sina)))
                          (twittering-get-current-status-head)
                        (or (twittering-get-next-status-head)
                            (point-max))))
                 (separator "\n")
                 (prefix "  ")
                 (buffer-read-only nil))
+            (setq statuses (sort statuses (lambda (e1 e2)
+                                            (twittering-status-id<
+                                             (assqref 'id e1)
+                                             (assqref 'id e2)))))
+            (unless twittering-reverse-mode
+              (setq statuses (reverse statuses)))
             (save-excursion
+              (narrow-to-region (twittering-get-current-status-head)
+                                (or (twittering-get-next-status-head)
+                                    (point-max)))
               (goto-char beg)
               (mapc
                (lambda (status)
-                 (let ((id (assqref 'id status))
-                       (formatted-status (twittering-format-status status prefix))
-                       (field-properties ; Overwrite field property.
-                        (twittering-make-field-properties-of-popped-ancestors
-                         status base-id)))
+                 (let* ((id (assqref 'id status))
+                        (spec (twittering-current-timeline-spec))
+                        (formatted-status (twittering-format-status status prefix))
+                        (field-properties ; Overwrite field property.
+                         `(,@(twittering-make-field-properties-of-popped-ancestors
+                              status base-id)
+                           belongs-spec ,spec)))
                    (add-text-properties 0 (length formatted-status)
-                                        field-properties formatted-status)
+                                        field-properties
+                                        formatted-status)
                    (if twittering-reverse-mode
                        (insert-before-markers formatted-status separator)
                      (insert formatted-status separator))))
                statuses)))
         (when interactive
-          (if (twittering-have-replied-statuses-p base-id)
-              (if (y-or-n-p "The replied statuses were not fetched yet.  Fetch it now? ")
-                  (let ((replied-id (assqref 'in-reply-to-status-id
-                                             (twittering-find-status base-id))))
-                    (twittering-call-api 'show `((id . ,replied-id)) '((sync . t)))
-                    (twittering-show-replied-statuses))
-                (message "The status this replies to has not been fetched yet."))
-            (message "This status is not a reply.")))
-        nil))))
+          (case twittering-service-method
+            ((sina)
+             (if (or force? (twittering-have-replied-statuses-p base-id))
+                 (progn
+                   (twittering-call-api 'show `((id . ,base-id)) '((sync . t)))
+                   (setq current-prefix-arg nil)
+                   (twittering-show-replied-statuses))
+               (message "This status has no replies.")))
+            (t
+             (if (twittering-have-replied-statuses-p base-id)
+                 (let ((replied-id (assqref 'in-reply-to-status-id
+                                            (twittering-find-status base-id))))
+                   (twittering-call-api 'show `((id . ,replied-id)) '((sync . t)))
+                   (twittering-show-replied-statuses))
+               (message "This status is not a reply.")))))))))
 
 (defun twittering-hide-replied-statuses (&optional interactive)
   (interactive)
@@ -5127,7 +5192,8 @@ rendered at POS, return nil."
            (pointing-to-base-status
             (not (twittering-rendered-as-ancestor-status-p pos)))
            (beg
-            (if (and pointing-to-base-status (not twittering-reverse-mode))
+            (if (and pointing-to-base-status (or (not twittering-reverse-mode)
+                                                 (eq twittering-service-method 'sina)))
                 (twittering-get-next-status-head pos)
               (let ((pos pos))
                 (while
@@ -5140,7 +5206,8 @@ rendered at POS, return nil."
                            (setq pos prev))))
                 (or pos (point-min)))))
            (end
-            (if (and pointing-to-base-status twittering-reverse-mode)
+            (if (and pointing-to-base-status (and twittering-reverse-mode
+                                                  (not (eq twittering-service-method 'sina))))
                 pos
               (let ((pos beg))
                 (while
@@ -5156,7 +5223,9 @@ rendered at POS, return nil."
                        beg
                      (or (twittering-get-previous-status-head beg)
                          (point-min)))))
-      (delete-region beg end)))
+      (delete-region beg end))
+    (goto-char (point-min))
+    (widen))
    (interactive
     (message "The status this replies to was already hidden."))))
 
@@ -6150,9 +6219,18 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
 
       ;; Tweet Methods
       ((show)
-       (twittering-http-get api-host
-                            (twittering-api-path "statuses/show/" id)
-                            nil `(,@additional-info (command . show))))
+       (let (path parameters)
+         (case service
+           ((sina)
+            (setq path "statuses/comments"
+                  parameters `(("id" . ,id)
+                               ("count" . "200"))))
+           (t
+            (setq path (concat "statuses/show/" id))))
+         (twittering-http-get api-host
+                              (twittering-api-path path)
+                              parameters
+                              `(,@additional-info (command . show)))))
 
       ((block)
        ;; Block a user.
