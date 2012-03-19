@@ -143,7 +143,15 @@ function re()
 }
 
 alias cd=cd_bhj
-alias rcd='cd .repo/manifests'
+
+function rcd() {
+    if test $# = 0; then
+	cd .repo/manifests
+    else
+	scd "$@"
+    fi
+}
+
 alias rs="rfa 'git diff \$REPO_LREV|cat; git st -s|grep . && echo \`pwd\`'"
 
 if [[ "$(tty 2>/dev/null)" =~ /dev/tty[0-9]+ ]]; then
