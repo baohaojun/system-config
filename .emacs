@@ -2175,4 +2175,14 @@ we are not interested in those lines that do."
 
 (require 'xclip)
 (turn-on-xclip)
+
+(add-to-list 'load-path (expand-file-name "~/.emacs_d/emacs-eclim/"))
+;; only add the vendor path when you want to use the libraries provided with emacs-eclim
+(add-to-list 'load-path (expand-file-name "~/.emacs_d/emacs-eclim/vendor"))
+(require 'eclim)
+
+(setq eclim-auto-save t)
+(global-eclim-mode)
+(setq eclim-executable (expand-file-name "~/external/eclipse/eclim"))
+
 (server-start)
