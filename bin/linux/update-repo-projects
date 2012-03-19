@@ -31,9 +31,10 @@ for x in "$@"; do
 	    }
 	} || 
 	echo repo is up to date.
-	
-	android-full-build >/dev/null 2>&1
-	bhj-short-notify $(basename $0) "$(pwd): build completed"
+	if tty >/dev/null 2>&1 && yes-or-no "Start full build?"; then
+	    android-full-build >/dev/null 2>&1
+	    bhj-short-notify $(basename $0) "$(pwd): build completed"
+	fi
     )
 done
 
