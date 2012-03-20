@@ -164,6 +164,9 @@ we will get the pattern \"naoehu[)+{*\"
 	  (nth line (split-string matches "\n")))))))
 
 
+(defvar ecomplete-other-buffer nil
+  "the other buffer to search for completion")
+
 (defun regexp-get-matches (re)
   "Display the possible completions for the regexp."
   (let ((strlist-before nil)
@@ -205,10 +208,10 @@ we will get the pattern \"naoehu[)+{*\"
             strlist-after (cdr strlist-after)))
     (setq strlist (append (nreverse strlist-after) (nreverse strlist-before) strlist))
     ;;get matches from other buffers
-    (if current-prefix-arg
-        (let ((buf-old (current-buffer))
+    (if (or current-prefix-arg ecomplete-other-buffer)
+        (let* ((buf-old (current-buffer))
               (current-prefix-arg nil)
-              (buffer-regexp (read-shell-command "What other buffers to search: ")))
+              (buffer-regexp (or ecomplete-other-buffer (read-shell-command "What other buffers to search: "))))
           (save-excursion
             (mapcar (lambda (buf)
                           (with-current-buffer buf ;;next let's recursive call
@@ -248,11 +251,12 @@ words closer to the (point) appear first"
             strlist-before (cdr strlist-before)
             strlist-after (cdr strlist-after)))
     (setq strlist (append (nreverse strlist-after) (nreverse strlist-before) strlist))
-    (when current-prefix-arg
+    (when (or current-prefix-arg ecomplete-other-buffer)
       (save-excursion
         (let ((buffer-old (current-buffer))
-              (buffer (general-display-matches
-                       (mapcar 'buffer-name (buffer-list))))
+              (buffer (or ecomplete-other-buffer 
+			  (general-display-matches
+			   (mapcar 'buffer-name (buffer-list)))))
               (current-prefix-arg nil))
           (with-current-buffer buffer
             (unless (eq (current-buffer) buffer-old)

@@ -55,6 +55,7 @@ sub do_cscope($$$$) {
     my ($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp) = @_;
     chdir ($pwd) or die "Error chdir $pwd";
     my $gtags_dir = $pwd;
+    $gtags_dir = shell_quote($gtags_dir);
     my $got_results = 0;
     my $code_dir = substr($pwd, length("$ENV{HOME}/tmp/for-code-reading"));
     $code_dir =~ s,/+,/,g;
