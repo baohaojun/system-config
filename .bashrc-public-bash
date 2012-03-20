@@ -93,6 +93,7 @@ function hir() {
     if test $# = 0; then
 	history -r
 	backup_bash_history
+	cat ~/.where.bak >> ~/.where
     else
 	command hil "$@"
     fi
