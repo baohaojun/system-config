@@ -2,7 +2,7 @@
 set -ex
 . ~/.bashrc
 
-cd ~/src/android-mirror/linux-2.6.git
+cd ~/src/android-mirror/linux-2.6.git || exit 0
 git config remote.origin.url git://nv-tegra.nvidia.com/linux-2.6.git
 git fetch origin 
 git config remote.origin.url git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git
