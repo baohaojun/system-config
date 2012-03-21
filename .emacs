@@ -2185,4 +2185,15 @@ we are not interested in those lines that do."
 (global-eclim-mode)
 (setq eclim-executable (expand-file-name "~/external/eclipse/eclim"))
 
+(defadvice hack-dir-local-variables
+  (around hack-remote-file-p first activate)
+  "Hack (hack-dir-local-variables) to make it work with remote files."
+  (require 'cl)
+  (let ((saved-file-remote-p (symbol-function 'file-remote-p)))
+    (flet ((file-remote-p (file &optional identification connected)
+			  (if (string-match "^/scp:" file)
+			      nil
+			    (funcall saved-file-remote-p file identification connected))))
+      ad-do-it)))
+
 (server-start)

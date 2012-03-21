@@ -67,6 +67,10 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 ) || (
     which "$file" 2>/dev/null
 ) || (
-    readlink -m "$file"
+    if [[ "$file" =~ :// ]]; then
+	echo "$file"
+    else
+	readlink -m "$file"
+    fi
     exit -1
 )
