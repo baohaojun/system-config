@@ -5,6 +5,7 @@ for x in "$@"; do
 done 2>&1 | (
     cd $(lookup_file .repo/..);
     log=./out/repo-changes.log"$(echo -n $*)"
-    tee "$log"-$(now) 2>/dev/null
-    ln -sf "$log"-$(now) "log"
+    lognow="$log-$(now)"
+    tee "$lognow" 2>/dev/null
+    ln -sf $(basename "$lognow") "$log"
 )

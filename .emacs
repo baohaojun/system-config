@@ -1575,6 +1575,14 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (defun bhj-view-mail-external ()
   "open the current maildir file in kmail"
   (interactive)
+  ;(defun nnmaildir-request-article (num-msgid &optional gname server to-buffer)
+  (let ((article_id gnus-current-article))
+    (with-temp-buffer
+      (nnmaildir-request-article 
+       article_id
+       gnus-newsgroup-name
+       (replace-regexp-in-string ".*:" "" (gnus-group-server gnus-newsgroup-name))
+       (current-buffer))))
   (shell-command (concat "kmail-view " (shell-quote-argument nnmaildir-article-file-name))))
 
 (setq w3m-fill-column 100)
