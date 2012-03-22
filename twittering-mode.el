@@ -658,15 +658,17 @@ Following services are supported:
 
 ;;          (retweet organic)) ; Default Retweet style: `native', `organic'.
 (defcustom twittering-accounts '()
-  "Account settings service by service.
+  "Account settings per service.
 
     ((service-method
+         (auth oauth)       ; Authentication method: `oauth', `basic'
+         (ssl nil)          ; Use SSL connection: `nil', `t'
+         (quote before)     ; Where to place quotes: `before',  `after'
+
+         ;; Only necessary for `basic' auth.
          (username \"FOO\")
          (password \"PASSWORD\")
-
-         ;; optional
-         (auth basic)       ; Authentication method: `oauth'(default), `basic'.
-         (ssl t)            ; Use SSL connection: `nil'(default), `t'.
+     )
      ...)
 
 How To Choose Authentication Methods
@@ -4252,17 +4254,22 @@ following symbols;
   (let ((quoted-status (twittering-status-has-quotation? status)))
     (cond
      (quoted-text
-      (if (or (string-match (regexp-opt
-                             `(,(replace-regexp-in-string
-                                 (format "^RT @%s: \\|[.[:blank:]]+$"
-                                         (assqref 'screen-name (assqref 'user quoted-status)))
-                                 ""
-                                 text)))
-                            quoted-text)
-              (string= text "转发微博")
-              (string= text "转发微博。"))
-          quoted-text
-        (format "『%s』\n\n    %s" quoted-text text)))
+      (if (eq (twittering-get-accounts 'quote) 'after)
+          (format "%s\n\n    『@%s: %s』"
+                  text
+                  (assqref 'name (assqref 'user quoted-status))
+                  quoted-text)
+        (if (or (string-match (regexp-opt
+                               `(,(replace-regexp-in-string
+                                   (format "^RT @%s: \\|[.[:blank:]]+$"
+                                           (assqref 'screen-name (assqref 'user quoted-status)))
+                                   ""
+                                   text)))
+                              quoted-text)
+                (string= text "转发微博")
+                (string= text "转发微博。"))
+            quoted-text
+          (format "『%s』\n\n    %s" quoted-text text))))
      (t
       text))))
 
@@ -4447,7 +4454,9 @@ following symbols;
       (assqref 'source ,status-sym) ,status-sym))
     ("i" .
      (when (and twittering-icon-mode window-system)
-       (let* ((st (or (twittering-status-has-quotation? ,status-sym) ,status-sym))
+       (let* ((st (or (and (not (eq (twittering-get-accounts 'quote) 'after))
+                           (twittering-status-has-quotation? ,status-sym))
+                      ,status-sym))
               (url
                (cond
                 ((and twittering-use-profile-image-api
@@ -4496,8 +4505,7 @@ following symbols;
                 ((and (not (string= "" reply-id))
                       (not (string= "" reply-name)))
                  (cons (format " in reply to %s" reply-name)
-                       (twittering-get-status-url reply-name reply-id)))
-                (t nil)))
+                       (twittering-get-status-url reply-name reply-id)))))
               (str (car pair))
               (url (cdr pair))
               (properties
@@ -4507,18 +4515,23 @@ following symbols;
          (when str
            (if url (apply 'propertize str properties) str)))))
     ("R" .
-     (when (twittering-is-retweet? ,status-sym)
+     (when (and (not (eq (twittering-get-accounts 'quote) 'after))
+                (twittering-is-retweet? ,status-sym))
        (concat " (retweeted by "
                (twittering-make-string-with-user-name-property
                 (assqref 'screen-name (assqref 'user ,status-sym))
                 ,status-sym)
                ")")))
     ("S" .
-     (let ((st (or (twittering-status-has-quotation? ,status-sym) ,status-sym)))
+     (let ((st (or (and (not (eq (twittering-get-accounts 'quote) 'after))
+                        (twittering-status-has-quotation? ,status-sym))
+                   ,status-sym)))
        (twittering-make-string-with-user-name-property
         (assqref 'name (assqref 'user st)) st)))
     ("s" .
-     (let ((st (or (twittering-status-has-quotation? ,status-sym) ,status-sym)))
+     (let ((st (or (and (not (eq (twittering-get-accounts 'quote) 'after))
+                        (twittering-status-has-quotation? ,status-sym))
+                   ,status-sym)))
        (twittering-make-string-with-user-name-property
         (assqref 'screen-name (assqref 'user st)) st)))
     ("t" .
@@ -4529,7 +4542,11 @@ following symbols;
                ,status-sym)
       ,status-sym
       ,prefix-sym))
-    ("u" . (assqref 'url (assqref 'user ,status-sym)))))
+    ("u" .
+     (let ((st (or (and (not (eq (twittering-get-accounts 'quote) 'after))
+                        (twittering-status-has-quotation? ,status-sym))
+                   ,status-sym)))
+       (assqref 'url (assqref 'user st))))))
 
 (defvar twittering-format-tweet-text-function 'twittering-format-tweet-text-with-quote
   "Function to format a tweet text.
