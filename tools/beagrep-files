@@ -33,10 +33,16 @@ function wlp() {
     esac
 }
 
-tokens=`beagrep-get-tokens "$@"`
+tokens_str=$1
+shift
+additional_tokens=$(echo "$@")
+
+tokens=`beagrep-get-tokens "$tokens_str"`
 if test $FIND_FILE_ONLY; then
     tokens=$(echo -n " $tokens" | perl -npe 's/\s+/ filename:/g; s/(^ *| filename:$)//g')
 fi
+
+tokens="$tokens $additional_tokens"
 for x in "$beagrep_dir" `cat $beagrep_dir/../.beagrep-brothers 2>/dev/null`
 do 
     beagrep-static-query \

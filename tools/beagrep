@@ -6,6 +6,7 @@ use String::ShellQuote;
 
 my $pat = '';
 my $pathpat = '.';
+my $additional_tokens = '';
 my $pathdeny = '^$';
 chomp(my $pwd =qx/pwd/);
 my $pwd_pat='no such componet';
@@ -19,7 +20,9 @@ my $file_tag = "";
 open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
+
 GetOptions(
+	   "a=s" => \$additional_tokens,
            "e=s" => \$pat,
            "p=s" => \$pathpat,
            "v=s" => \$pathdeny,
@@ -67,7 +70,7 @@ print "beagrep query argument `[01;31m"
   . substr(qx/beagrep-get-tokens $pat/, 0, -1) 
   . "[0m'\n";
 
-my $beagrep_files = qx/beagrep-files $pat/;
+my $beagrep_files = qx/beagrep-files $pat $additional_tokens/;
 my @beagrep_files = split(/\n/, $beagrep_files);
 
 if ($list_beagrep) {
