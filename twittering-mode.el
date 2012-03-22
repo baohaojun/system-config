@@ -3344,7 +3344,8 @@ PARAMETERS is alist of URI parameters.
                (concat "d " username " ") nil username spec))))
 
 (defun twittering-reply-to-user (&optional quote)
-  "Non-nil QUOTE will quote status using `twittering-generate-organic-retweet'."
+  "Non-nil QUOTE will quote status using `twittering-generate-organic-retweet'.
+However, QUOTO has no effect on sina weibo.  "
   (interactive "P")
   (let* ((username (get-text-property (point) 'username))
          (id (get-text-property (point) 'id))
@@ -3379,6 +3380,52 @@ PARAMETERS is alist of URI parameters.
           (funcall twittering-update-status-function init-str id username spec)
           (when (or quote (eq (twittering-extract-service spec) 'sina))
             (goto-char (line-beginning-position))))
+      (message "No user selected"))))
+
+(defun twittering-reply-all (&optional quote)
+  "Reply(@) all mentioned users in the tweet.
+Non-nil QUOTE will quote status using `twittering-generate-organic-retweet'.
+However, QUOTO has no effect on sina weibo.  "
+  (interactive "P")
+  (let* ((username (get-text-property (point) 'username))
+         (id (get-text-property (point) 'id))
+         (spec (get-text-property (point) 'belongs-spec))
+         (status (twittering-find-status id))
+         (reply-to-quotation nil)
+         (init-str (if quote
+                       (twittering-generate-organic-retweet)
+                     (concat (mapconcat (lambda (u) (concat "@" u))
+                                        (twittering-get-all-usernames-at-pos)
+                                        " ")
+                             " ")))
+         (quoted-status (twittering-status-has-quotation? status)))
+
+    (when (memq (twittering-extract-service) '(sina socialcast douban))
+      (when quoted-status
+        (setq username
+              (ido-completing-read
+               "Reply to: "
+               `(,(assqref 'name (assqref 'user status))
+                 ,(assqref 'name (assqref 'user quoted-status)))))
+        (when (string= username (assqref 'name (assqref 'user quoted-status)))
+          (setq reply-to-quotation t
+                id (assqref 'id quoted-status))))
+
+      ;; (setq init-str (concat " // @" username))
+      ;; (unless reply-to-quotation
+      ;;   ;; (sina) Quote by default.
+      ;;   (let ((s (assqref 'text (or status quoted-status))))
+      ;;     (setq init-str (concat init-str " " s))))
+
+      ;; (setq init-str "")
+      )
+
+    (if username
+        (progn
+          (funcall twittering-update-status-function init-str id username spec)
+          ;; (when (or quote (eq (twittering-extract-service spec) 'sina))
+          ;;   (goto-char (line-beginning-position)))
+          )
       (message "No user selected"))))
 
 (defun twittering-erase-all ()
