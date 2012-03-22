@@ -72,7 +72,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
     flock 9 || { echo 'lock failed at '$(date); exit -1; }
     echo 'lock success! at '$(date)
     (
-	echo "before build, ccache size is $(du -s -h ~/.ccache/)"
+	echo "before build, ccache stat is $(./prebuilt/linux-x86/ccache/ccache -s)"
 	echo "external dirs not managed by repo: $(repo-external)"
 	echo "changed repos are: $(repo-changes\?)"
     )&
@@ -94,6 +94,6 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	./copy-release.sh .
 	find . -type l -print0 |xargs -0 bash -c 'for x in "$@"; do chmod a+r "$(readlink -m "$x")"; done' true 
     )
-    echo -n 'after build, ccache size is '
-    du -s -h ~/.ccache/
+    echo -n 'after build, ccache stat is '
+    ./prebuilt/linux-x86/ccache/ccache -s
 ) 9>~/.logs/android-full-build.lock  2>&1 | tee build.log
