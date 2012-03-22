@@ -1584,7 +1584,8 @@ Starting from DIRECTORY, look upwards for a cscope database."
        gnus-newsgroup-name
        (replace-regexp-in-string ".*:" "" (gnus-group-server gnus-newsgroup-name))
        (current-buffer))))
-  (shell-command (concat "kmail-view " (shell-quote-argument nnmaildir-article-file-name))))
+  (let ((default-directory "/"))
+    (shell-command (concat "kmail-view " (shell-quote-argument nnmaildir-article-file-name)))))
 
 (setq w3m-fill-column 100)
 (require 'guess-offset)
