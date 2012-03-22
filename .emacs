@@ -562,6 +562,7 @@
  '(gdb-find-source-frame t)
  '(gdb-same-frame t)
  '(gdb-show-main t)
+ '(gnus-article-date-headers (quote (local lapsed)))
  '(gnus-ignored-newsgroups "")
  '(gnus-propagate-marks t)
  '(grep-use-null-device nil)
