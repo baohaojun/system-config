@@ -4255,7 +4255,7 @@ following symbols;
     (cond
      (quoted-text
       (if (eq (twittering-get-accounts 'quote) 'after)
-          (format "%s\n\n    『@%s: %s』"
+          (format "%s\n\n  『@%s: %s』"
                   text
                   (assqref 'name (assqref 'user quoted-status))
                   quoted-text)
@@ -4482,38 +4482,39 @@ following symbols;
     ("l" . (assqref 'location (assqref 'user ,status-sym)))
     ("p" . (when (string-match "true" (assqref 'protected (assqref 'user ,status-sym))) "[x]"))
     ("r" .
-     (let* ((replied-status (or (assqref 'reply-comment ,status-sym)
-                                (assqref 'status ,status-sym)))
-            (reply-id (or (assqref 'in-reply-to-status-id ,status-sym)
-                          (assqref 'id replied-status)
-                          ""))
-            (reply-name (or (assqref 'in-reply-to-screen-name ,status-sym)
-                            (assqref 'screen-name replied-status)
+     (unless (eq (twittering-get-accounts 'quote) 'after)
+       (let* ((replied-status (or (assqref 'reply-comment ,status-sym)
+                                  (assqref 'status ,status-sym)))
+              (reply-id (or (assqref 'in-reply-to-status-id ,status-sym)
+                            (assqref 'id replied-status)
                             ""))
-            (recipient-screen-name
-             (assqref 'recipient-screen-name ,status-sym)))
+              (reply-name (or (assqref 'in-reply-to-screen-name ,status-sym)
+                              (assqref 'screen-name replied-status)
+                              ""))
+              (recipient-screen-name
+               (assqref 'recipient-screen-name ,status-sym)))
 
-       (let* ((pair
-               (cond
-                (replied-status
-                 (let ((name (assqref 'screen-name (assqref 'user status))))
-                   (list (format " (replied by %s)"
-                                 (twittering-make-string-with-user-name-property name status)))))
-                (recipient-screen-name
-                 (cons (format " sent to %s" recipient-screen-name)
-                       (twittering-get-status-url recipient-screen-name)))
-                ((and (not (string= "" reply-id))
-                      (not (string= "" reply-name)))
-                 (cons (format " in reply to %s" reply-name)
-                       (twittering-get-status-url reply-name reply-id)))))
-              (str (car pair))
-              (url (cdr pair))
-              (properties
-               (list 'mouse-face 'highlight 'face 'twittering-uri-face
-                     'keymap twittering-mode-on-uri-map
-                     'uri url)))
-         (when str
-           (if url (apply 'propertize str properties) str)))))
+         (let* ((pair
+                 (cond
+                  (replied-status
+                   (let ((name (assqref 'screen-name (assqref 'user status))))
+                     (list (format " (replied by %s)"
+                                   (twittering-make-string-with-user-name-property name status)))))
+                  (recipient-screen-name
+                   (cons (format " sent to %s" recipient-screen-name)
+                         (twittering-get-status-url recipient-screen-name)))
+                  ((and (not (string= "" reply-id))
+                        (not (string= "" reply-name)))
+                   (cons (format " in reply to %s" reply-name)
+                         (twittering-get-status-url reply-name reply-id)))))
+                (str (car pair))
+                (url (cdr pair))
+                (properties
+                 (list 'mouse-face 'highlight 'face 'twittering-uri-face
+                       'keymap twittering-mode-on-uri-map
+                       'uri url)))
+           (when str
+             (if url (apply 'propertize str properties) str))))))
     ("R" .
      (when (and (not (eq (twittering-get-accounts 'quote) 'after))
                 (twittering-is-retweet? ,status-sym))
