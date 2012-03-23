@@ -8874,7 +8874,7 @@ DATA includes:
   "Buffer local.")
 
 (defun twittering-stream-mode (&optional arg)
-  "Get real time stream push from twitter. "
+  "Get real time stream pushed from twitter. "
   (interactive "P")
   (unless (twittering-buffer-p)
     (error "Not a twmode buffer"))
