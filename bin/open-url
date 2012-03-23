@@ -1,0 +1,2 @@
+#!/bin/bash
+perl -ne 'if (s,.*(http://.*?)(\s+|$),$1,) {print "$1\n"}' | xargs bash -c 'for x in "$@"; do of "$x"; done' true
