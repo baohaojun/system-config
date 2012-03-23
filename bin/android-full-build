@@ -36,7 +36,7 @@ if test $# -gt 2; then
     die "Usage: $(basename "$0") [lunch-combo] [target]"
 fi
 
-target='kernel system misc'
+target=all
 if test $# -gt 0; then
     if lunch "$1"; then
 	shift
@@ -77,6 +77,9 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	echo "changed repos are: $(repo-changes\?)"
     )&
     result=''
+    if test "$target" = all; then
+	time $(which time) make -j$jobs -l$jobs -k droid telephony uboot obm && result=$result'all ok; '
+    fi
     if [[ "$target" =~ kernel ]]; then
 	command time make kernel && result=$result'kernel ok; '
     fi
