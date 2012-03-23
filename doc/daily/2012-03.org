@@ -1,4 +1,4 @@
-* DONE 搞定google nexus的root.
+* CANCELED 搞定google nexus的root.
   CLOSED: [2012-03-01 Thu 16:57]
   - CLOSING NOTE [2012-03-01 Thu 16:57]
 
@@ -12,3 +12,5 @@ cat ../boot.img-ramdisk.gz |gunzip |cpio -i
 mkbootfs . |gzip > ../boot.img-ramdisk.gz 
 mkbootimg --kernel boot.img-zImage --base $(cat *-base) --pagesize $(cat *-pagesize) --ramdisk boot.img-ramdisk.gz -o boot.img 
 sudo fastboot boot boot.img
+* TODO [   14.520965] dcmd: version magic '2.6.29 mod_unload ARMv5 ' should be '3.0.8+ preempt mod_unload ARMv5 '
+

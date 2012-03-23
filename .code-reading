@@ -650,3 +650,19 @@ mmc_cid_show: 这个函数用ctags不能查到，因为它是在一个宏里被�
                 ...
                 NV_REGW(rm, NVRM_MODULE_ID( NvRmPrivModuleID_ClockAndReset, 0 ), \
     =>                  CLK_RST_CONTROLLER_CLK_SOURCE_##ClkModule##_0, reg); \
+
+****************
+
+
+    /scp:bhj@192.168.33.66:/home/bhj/src/ics-sultan/vendor/marvell/generic/ttc_telephony/drivers/genlib/atparser/src/atParser.c:6290:                 if ((rc = utlExecuteBasicAtCommand(parser_p, " ", FALSE, &parameter_value, string_off)) == utlAT_RESULT_CODE_ERROR)
+        *      executing it when found.  Note that as-per the standard, only the first
+        *      collection of AT commands on each line is parsed and executed.
+        *---------------------------------------------------------------------------*/
+        static utlAtResultCode_T utlParseLine(const utlAtParser_P parser_p,
+                                              char          *string_p,
+                                              const size_t string_off)
+        {
+                ...
+                {
+                        ...
+    =>                  if ((rc = utlExecuteBasicAtCommand(parser_p, " ", FALSE, &parameter_value, string_off)) == utlAT_RESULT_CODE_ERROR)
