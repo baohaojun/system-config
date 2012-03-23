@@ -661,9 +661,9 @@ Following services are supported:
   "Account settings per service.
 
     ((service-method
-         (auth oauth)       ; Authentication method: `oauth', `basic'
-         (ssl nil)          ; Use SSL connection: `nil', `t'
-         (quote before)     ; Where to place quotes: `before',  `after'
+         (auth oauth)           ; Authentication method: `oauth', `basic'
+         (ssl nil)              ; Use SSL connection: `nil', `t'
+         (quotation before)     ; Where to place quotation: `before', `after'
 
          ;; Only necessary for `basic' auth.
          (username \"FOO\")
@@ -4254,7 +4254,7 @@ following symbols;
   (let ((quoted-status (twittering-status-has-quotation? status)))
     (cond
      (quoted-text
-      (if (eq (twittering-get-accounts 'quote) 'after)
+      (if (eq (twittering-get-accounts 'quotation) 'after)
           (format "%s\n\n  『@%s: %s』"
                   text
                   (assqref 'name (assqref 'user quoted-status))
@@ -4454,7 +4454,7 @@ following symbols;
       (assqref 'source ,status-sym) ,status-sym))
     ("i" .
      (when (and twittering-icon-mode window-system)
-       (let* ((st (or (and (not (eq (twittering-get-accounts 'quote) 'after))
+       (let* ((st (or (and (not (eq (twittering-get-accounts 'quotation) 'after))
                            (twittering-status-has-quotation? ,status-sym))
                       ,status-sym))
               (url
@@ -4482,7 +4482,7 @@ following symbols;
     ("l" . (assqref 'location (assqref 'user ,status-sym)))
     ("p" . (when (string-match "true" (assqref 'protected (assqref 'user ,status-sym))) "[x]"))
     ("r" .
-     (unless (eq (twittering-get-accounts 'quote) 'after)
+     (unless (eq (twittering-get-accounts 'quotation) 'after)
        (let* ((replied-status (or (assqref 'reply-comment ,status-sym)
                                   (assqref 'status ,status-sym)))
               (reply-id (or (assqref 'in-reply-to-status-id ,status-sym)
@@ -4516,7 +4516,7 @@ following symbols;
            (when str
              (if url (apply 'propertize str properties) str))))))
     ("R" .
-     (when (and (not (eq (twittering-get-accounts 'quote) 'after))
+     (when (and (not (eq (twittering-get-accounts 'quotation) 'after))
                 (twittering-is-retweet? ,status-sym))
        (concat " (retweeted by "
                (twittering-make-string-with-user-name-property
@@ -4524,13 +4524,13 @@ following symbols;
                 ,status-sym)
                ")")))
     ("S" .
-     (let ((st (or (and (not (eq (twittering-get-accounts 'quote) 'after))
+     (let ((st (or (and (not (eq (twittering-get-accounts 'quotation) 'after))
                         (twittering-status-has-quotation? ,status-sym))
                    ,status-sym)))
        (twittering-make-string-with-user-name-property
         (assqref 'name (assqref 'user st)) st)))
     ("s" .
-     (let ((st (or (and (not (eq (twittering-get-accounts 'quote) 'after))
+     (let ((st (or (and (not (eq (twittering-get-accounts 'quotation) 'after))
                         (twittering-status-has-quotation? ,status-sym))
                    ,status-sym)))
        (twittering-make-string-with-user-name-property
@@ -4544,7 +4544,7 @@ following symbols;
       ,status-sym
       ,prefix-sym))
     ("u" .
-     (let ((st (or (and (not (eq (twittering-get-accounts 'quote) 'after))
+     (let ((st (or (and (not (eq (twittering-get-accounts 'quotation) 'after))
                         (twittering-status-has-quotation? ,status-sym))
                    ,status-sym)))
        (assqref 'url (assqref 'user st))))))
