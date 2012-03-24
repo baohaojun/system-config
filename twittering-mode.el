@@ -3394,10 +3394,11 @@ However, QUOTO has no effect on sina weibo.  "
          (spec (get-text-property (point) 'belongs-spec))
          (status (twittering-find-status id))
          (reply-to-quotation nil)
+         (me (assqref 'screen-name (twittering-lookup-user-info-alist 'basic)))
          (init-str (if quote
                        (twittering-generate-organic-retweet)
                      (concat (mapconcat (lambda (u) (concat "@" u))
-                                        (twittering-get-all-usernames-at-pos)
+                                        (remove me (twittering-get-all-usernames-at-pos))
                                         " ")
                              " ")))
          (quoted-status (twittering-status-has-quotation? status)))
@@ -6006,9 +6007,11 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
          (id       (assqref 'id            args-alist))
          (username (assqref 'username      args-alist))
          (sentinel (assqref 'sentinel      args-alist))
+         (cursor   (assqref 'cursor        args-alist))
          (service  (twittering-extract-service))
          (sina? (eq service 'sina))
-         (douban? (eq service 'douban)))
+         (douban? (eq service 'douban))
+         (username-str (if sina? "user_id" "screen_name")))
     (case command
       ((retrieve-timeline)
        (let* ((spec-string (assqref 'timeline-spec-string args-alist))
@@ -6282,7 +6285,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                                parameters
                                additional-info)))
 
-      ;; Tweet Methods
+      ;; Get a single tweet
       ((show)
        (let (path parameters)
          (case service
@@ -6296,6 +6299,25 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                               (twittering-api-path path)
                               parameters
                               `(,@additional-info (command . show)))))
+      ;; Get user info
+      ((show-user)
+       (twittering-http-get api-host
+                            (twittering-api-path "users/show")
+                            `((,username-str . ,username))
+                            additional-info
+                            sentinel))
+
+      ((show-friends show-followers)
+       (twittering-http-get api-host
+                            (twittering-api-path
+                             (concat "statuses/"
+                                     (replace-regexp-in-string
+                                      "show-" "" (symbol-name command))))
+                            `((,username-str . ,username)
+                              ("count" . "200")
+                              ("cursor" . ,cursor))
+                            additional-info
+                            sentinel))
 
       ((block)
        ;; Block a user.
@@ -6569,11 +6591,11 @@ string.")
          nil)
         ((listp twittering-get-simple-retrieved)
          twittering-get-simple-retrieved)))
-      ((show-friendships)
-       twittering-get-simple-retrieved)
       ((emotions)
        (setq twittering-emotions-phrase-url-alist
              twittering-get-simple-retrieved))
+      ((show-user)
+       (car twittering-get-simple-retrieved))
       (t
        twittering-get-simple-retrieved))))
 
@@ -8079,9 +8101,9 @@ handler. "
                    (or ret "")
                    twittering-simple-hash))))
      (t
-      (let ((error-mes (twittering-get-error-message header-info (process-buffer proc))))
+      (let ((error-mes (twittering-get-error-message header-info (current-buffer))))
         (if error-mes
-            (setq mes (format "Response: %s (%s)" status-line error-mes))
+            (setq mes (format "Response: %s" error-mes))
           (setq mes (format "Response: %s" status-line))))))
     (setq twittering-get-simple-retrieved
           (or ret
@@ -9913,7 +9935,8 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
                                   (assqref 'related link))))))
              (assqref 'entry statuses))))
 
-     ((funcall has 'user)               ; `show' a single tweet
+     ((or (funcall has 'user)               ; `show' a single tweet
+          (funcall has 'id))                 ; show-user
       `((,@statuses)))
 
      ((funcall has 'users)              ; followers
@@ -9956,6 +9979,7 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
                                                ":443/" "/"
                                                (assqref 'square45 (assqref 'avatars u)))))))))
              (assqref 'messages statuses))))
+
      (t
       statuses))))
 
@@ -10264,5 +10288,54 @@ e.g.,
     str))
 
 (provide 'twittering-mode)
+
+
+;;;; User Info
+
+(defvar twittering-user-info-alist '())
+;; basic -  basic information
+;; followers
+;; following
+
+(defun twittering-lookup-user-info-alist (attr)
+  (let ((alist (assqref (twittering-extract-service)
+                        twittering-user-info-alist)))
+    (or (assqref attr alist)
+        (let* ((username (twittering-get-accounts 'username))
+               (args `((username . ,username)))
+               api
+               ret)
+          (case attr
+            ((basic)
+             (setq api 'show-user)
+             (setq ret (twittering-get-simple-sync api args)))
+            ((friends followers)
+             (setq api (intern (concat "show-" (symbol-name attr))))
+             (let (page
+                   (cursor "-1"))
+               (while (not (equal cursor "0"))
+                 (setq page (twittering-get-simple-sync
+                             api `(,@args (cursor . ,cursor)))
+                       ret (append ret page)
+                       cursor (assqref 'next-cursor (car page)))))))
+
+          (twittering-update-user-info-alist `(,@alist (,attr . ,ret)))
+          ret))))
+
+(defun twittering-update-user-info-alist (alist)
+  (setq twittering-user-info-alist
+        `((,(twittering-extract-service) ,@alist)
+          ,@(remove-if (lambda (i) (eq (car i) (twittering-extract-service)))
+                       twittering-user-info-alist))))
+
+(defun twittering-friends ()
+  "Return list of friends' screen-names.  "
+  (mapcar (lambda (i) (assqref 'screen-name (assqref 'user i)))
+          (twittering-lookup-user-info-alist 'friends)))
+
+(defun twittering-followers ()
+  (mapcar (lambda (i) (assqref 'screen-name (assqref 'user i)))
+          (twittering-lookup-user-info-alist 'followers)))
+
 
 ;;; twittering.el ends here
