@@ -495,13 +495,13 @@ If nil, this is initialized with a list of valied entries extracted from
      (pre-process-buffer . twittering-pre-process-buffer-urllib)))
   "A list of alist of connection methods.")
 
-(defvar twittering-format-status-function-source ""
+(defvar twittering-last-status-format ""
   "The status format string that has generated the current
 `twittering-format-status-function'.")
 (defvar twittering-format-status-function nil
-  "The formating function generated from `twittering-format-status-function-source'.")
+  "The formating function generated from `twittering-last-status-format'.")
 
-(defvar twittering-format-my-status-function-source "")
+(defvar twittering-last-my-status-format "")
 (defvar twittering-format-my-status-function nil)
 
 (defvar twittering-timeline-data-table (make-hash-table :test 'equal))
@@ -655,11 +655,13 @@ Following services are supported:
   "Account settings per service.
 
     ((service-method
-         (auth oauth)           ; Authentication method: `oauth', `basic'
-         (ssl nil)              ; Use SSL connection: `nil', `t'
-         (quotation before)     ; Where to place quotation: `before', `after'
-         (curl PARAMETERS)      ; Extra parameters to pass to curl,  you may set
-                                ; socks proxy here, for instance.
+         (auth oauth)               ; Authentication method: `oauth', `basic'
+         (ssl nil)                  ; Use SSL connection: `nil', `t'
+         (quotation before)         ; Where to place quotation: `before', `after'
+         (curl PARAMETERS)          ; Extra parameters to pass to curl,  you may set
+                                    ; socks proxy here, for instance.
+         (status-format STRING)
+         (my-status-format STRING)
 
          ;; Only necessary for `basic' auth.
          (username \"FOO\")
@@ -689,6 +691,20 @@ requires an external command `curl' or another command included in
                           (assocref "user_id" token-alist)
                           (assocref "douban_user_id" token-alist)))
           ((password) (assocref "password" token-alist))))))
+
+(defvar twittering-accounts-internal '()
+  "Internal service wise configuration.  ")
+
+(defun twittering-get-accounts-internal (attr)
+  (assqref attr (assqref (twittering-extract-service)
+                         twittering-accounts-internal)))
+
+(defun twittering-update-accounts-internal (alist)
+  (let ((service (twittering-extract-service)))
+    (setq twittering-accounts-internal
+          `(,@(remove-if (lambda (i) (eq (car i) service))
+                         twittering-accounts-internal)
+            (,service ,@alist)))))
 
 ;;; Macros
 
@@ -3866,7 +3882,11 @@ we will open NEXT-NTH url directly. "
         twittering-url-request-resolving-p nil
 
         twittering-private-info-file-loaded-p nil
-        twittering-private-info-file-dirty nil)
+        twittering-private-info-file-dirty nil
+
+        twittering-format-status-function nil
+        twittering-format-my-status-function nil
+        twittering-accounts-internal nil)
   (twit))
 
 (defun twittering-switch-to-unread-timeline ()
@@ -4718,35 +4738,69 @@ It takes three arguments:
       nil))))
 
 (defun twittering-update-status-format ()
-  (mapc
-   (lambda (fmt-src-func)
-     (let ((fmt  (nth 0 fmt-src-func))
-           (src  (nth 1 fmt-src-func))
-           (func (nth 2 fmt-src-func)))
-       (unless (string= (symbol-value fmt) (symbol-value src))
-         (set src (symbol-value fmt))
-         (let ((before (get-buffer "*Compile-Log*")))
-           (set func
+  (cond
+   ((twittering-get-accounts 'status-format)
+    (let ((status-format (twittering-get-accounts 'status-format))
+          (last-status-format (twittering-get-accounts-internal 'last-status-format))
+          (status-func (twittering-get-accounts-internal 'status-format-func)))
+      (unless (and status-func (equal status-format last-status-format))
+        (let* ((func
                 (byte-compile
-                 (twittering-generate-format-status-function
-                  (symbol-value fmt))))
-           (let ((current (get-buffer "*Compile-Log*")))
-             (when (and (null before) current (= 0 (buffer-size current)))
-               (kill-buffer current)))))))
-   '((twittering-status-format
-      twittering-format-status-function-source
-      twittering-format-status-function)
-     (twittering-my-status-format
-      twittering-format-my-status-function-source
-      twittering-format-my-status-function))))
+                 (twittering-generate-format-status-function status-format)))
+               (service (twittering-extract-service))
+               (old (assqref service twittering-accounts-internal)))
+          (twittering-update-accounts-internal
+           `(,@(remove-if (lambda (i)
+                            (memq (car i) '(last-status-format status-func)))
+                          old)
+             (last-status-format . ,status-format)
+             (status-func . ,func)))))))
+
+   ((twittering-get-accounts 'my-status-format)
+    (let ((my-status-format (twittering-get-accounts 'my-status-format))
+          (last-my-status-format (twittering-get-accounts-internal 'last-my-status-format))
+          (status-func (twittering-get-accounts-internal 'my-status-format-func)))
+      (unless (and status-func (equal my-status-format last-my-status-format))
+        (let* ((func
+                (byte-compile
+                 (twittering-generate-format-status-function my-status-format)))
+               (service (twittering-extract-service))
+               (old (assqref service twittering-accounts-internal)))
+          (twittering-update-accounts-internal
+           `(,@(remove-if (lambda (i)
+                            (memq (car i) '(last-my-status-format status-func)))
+                          old)
+             (last-my-status-format . ,my-status-format)
+             (status-func . ,func)))))))
+   (t
+    (unless (and twittering-format-status-function
+                 (equal twittering-status-format twittering-last-status-format))
+      (setq twittering-last-status-format
+            twittering-status-format)
+      (setq twittering-format-status-function
+            (byte-compile
+             (twittering-generate-format-status-function
+              twittering-last-status-format))))
+    (unless (and twittering-format-my-status-function
+                 (equal twittering-my-status-format twittering-last-my-status-format))
+      (setq twittering-last-my-status-format
+            twittering-my-status-format)
+      (setq twittering-format-my-status-function
+            (byte-compile
+             (twittering-generate-format-status-function
+              twittering-last-my-status-format)))))))
 
 (defun twittering-format-status (status &optional prefix)
   "Format a STATUS by using `twittering-format-status-function'.
 Specification of FORMAT-STR is described in the document for the
 variable `twittering-status-format'."
   (if (and twittering-my-status-format (twittering-my-status-p status))
-      (funcall twittering-format-my-status-function status prefix)
-    (funcall twittering-format-status-function status prefix)))
+      (if (twittering-get-accounts 'my-status-format)
+          (funcall (twittering-get-accounts-internal 'my-status-func) status prefix)
+        (funcall twittering-format-my-status-function status prefix))
+    (if (twittering-get-accounts 'status-format)
+        (funcall (twittering-get-accounts-internal 'status-func) status prefix)
+      (funcall twittering-format-status-function status prefix))))
 
 (defun twittering-format-status-for-redisplay (beg end status &optional prefix)
   (twittering-format-status status prefix))
