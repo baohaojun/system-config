@@ -30,7 +30,6 @@
         <Value>GRTAGS</Value>
         <Value>GSYMS</Value>
         <Value>GTAGS</Value>
-	<Value>*.m4</Value>
 	<Value>*.pc</Value>
 	<Value>*.pc.in</Value>
 	<Value>*.omf</Value>

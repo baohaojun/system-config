@@ -225,30 +225,6 @@ namespace Beagrep.Util {
 			public extern static void Init ();
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int GetObjectSizeIcall (object o);
-
-		public static int GetObjectSize (object o)
-		{
-			try {
-				return GetObjectSizeIcall (o);
-			} catch (MissingMethodException) {
-				return -1;
-			}
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int GetObjectPointerIcall (object o);
-
-		public static long GetObjectPointer (object o)
-		{
-			try {
-				return GetObjectPointerIcall (o);
-			} catch (MissingMethodException) {
-				return -1;
-			}
-		}
-
 		///////////////////////////////////////////////////////////////
 
 		private static int disk_stats_read_reqs;

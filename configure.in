@@ -70,7 +70,7 @@ BEAGREP_DEFINES=""
 # check that we have the require version of mono
 
 # Temporary: check for mono-1.9
-PKG_CHECK_MODULES(MONO, mono >= 1.9, mono_1_9=yes, mono_1_9=no) 
+PKG_CHECK_MODULES(MONO, mono-2 >= 1.9, mono_1_9=yes, mono_1_9=no) 
 if test "x$mono_1_9" = "xno"; then
 	AC_MSG_RESULT([missing mono >= 1.9. Searching for mono >= 1.2.4])
 	PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED) 
@@ -230,12 +230,9 @@ dnl ----------------------------------------------
 dnl ----------------------------------------------
 
 dnl taglib-sharp: Needed for indexing audio formats
-
-PKG_CHECK_MODULES(TAGLIB_SHARP, taglib-sharp >= 2.0)
-AC_SUBST(TAGLIB_SHARP_LIBS)
+PKG_CHECK_MODULES([GLIB], glib-2.0 >= 2.2.0)
 
 dnl ----------------------------------------------
-
 PKG_CHECK_MODULES(BEAGREPD,
 [
 	shared-mime-info
