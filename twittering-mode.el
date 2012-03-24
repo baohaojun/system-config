@@ -275,12 +275,6 @@ The string should not be empty.  "
   :type 'string
   :group 'twittering)
 
-(defcustom twittering-curl-extra-parameters '()
-  "Extra parameters for curl session.
-You may specify for instance socks proxy here."
-  :type 'list
-  :group 'twittering)
-
 ;;;
 ;;; Internal Variables
 ;;;
@@ -664,6 +658,8 @@ Following services are supported:
          (auth oauth)           ; Authentication method: `oauth', `basic'
          (ssl nil)              ; Use SSL connection: `nil', `t'
          (quotation before)     ; Where to place quotation: `before', `after'
+         (curl PARAMETERS)      ; Extra parameters to pass to curl,  you may set
+                                ; socks proxy here, for instance.
 
          ;; Only necessary for `basic' auth.
          (username \"FOO\")
@@ -2541,7 +2537,7 @@ The method to perform the request is determined from
             "--location"
             "--request" ,method
             ,@(unless twittering-debug-curl '("--silent"))
-            ,@twittering-curl-extra-parameters
+            ,@(twittering-get-accounts 'curl)
 
             ,@(apply 'append
                      (mapcar
