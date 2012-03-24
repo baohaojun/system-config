@@ -275,6 +275,12 @@ The string should not be empty.  "
   :type 'string
   :group 'twittering)
 
+(defcustom twittering-curl-extra-parameters '()
+  "Extra parameters for curl session.
+You may specify for instance socks proxy here."
+  :type 'list
+  :group 'twittering)
+
 ;;;
 ;;; Internal Variables
 ;;;
@@ -2553,7 +2559,7 @@ The method to perform the request is determined from
             "--location"
             "--request" ,method
             ,@(unless twittering-debug-curl '("--silent"))
-            ,@(twittering-get-accounts 'curl)
+            ,@twittering-curl-extra-parameters
 
             ,@(apply 'append
                      (mapcar
