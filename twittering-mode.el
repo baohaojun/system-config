@@ -7450,6 +7450,7 @@ managed by `twittering-mode'."
         ;; (pop-to-buffer buf)
         (twittering-ensure-whole-of-status-is-visible win))
       (twittering-edit-mode)
+      (setq twittering-service-method (twittering-extract-service spec))
       (unless (twittering-timeline-spec-direct-messages-p spec)
         (and (null init-str)
              twittering-current-hashtag
@@ -10343,9 +10344,6 @@ e.g.,
           (setq str (concat "0." (make-string (1- n) ?0) m1 m2)))))
     str))
 
-(provide 'twittering-mode)
-
-
 ;;;; User Info
 
 (defvar twittering-user-info-alist '())
@@ -10393,5 +10391,7 @@ e.g.,
   (mapcar (lambda (i) (assqref 'screen-name (assqref 'user i)))
           (twittering-lookup-user-info-alist 'followers)))
 
+
+(provide 'twittering-mode)
 
 ;;; twittering.el ends here
