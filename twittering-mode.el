@@ -2576,8 +2576,10 @@ The method to perform the request is determined from
                  (when (and proxy-user proxy-password)
                    `("-U" ,(format "%s:%s" proxy-user proxy-password)))))
 
-            ,@(when (and use-proxy twittering-curl-socks-proxy) ; ad-hoc
-                ,@twittering-curl-socks-proxy)
+             ;; ad-hoc
+            ,@(when (and twittering-curl-socks-proxy
+                         (string-match twittering-uri-regexp-to-proxy uri))
+                twittering-curl-socks-proxy)
 
             ,@(when (string= "POST" method)
                 (let ((opt
@@ -3309,7 +3311,7 @@ PARAMETERS is alist of URI parameters.
     (when (or ask (null spec))
       (setq spec
             `((,(intern
-                 (ido-completing-read
+                 (completing-read
                   "Post to: "
                   `(,@(mapcar 'symbol-name twittering-enabled-services) "all")))))))
 
@@ -3407,6 +3409,8 @@ However, QUOTO has no effect on sina weibo.  "
 Non-nil QUOTE will quote status using `twittering-generate-organic-retweet'.
 However, QUOTO has no effect on sina weibo.  "
   (interactive "P")
+  (unless (memq (twittering-extract-service) '(sina twitter))
+    (error "twittering-reply-all not yet implemented for %S" (twittering-extract-service)))
   (let* ((username (get-text-property (point) 'username))
          (id (get-text-property (point) 'id))
          (spec (get-text-property (point) 'belongs-spec))
@@ -7384,7 +7388,8 @@ managed by `twittering-mode'."
     (define-key km (kbd "C-c C-k") 'twittering-edit-cancel-status)
     (define-key km (kbd "M-n") 'twittering-edit-next-history)
     (define-key km (kbd "M-p") 'twittering-edit-previous-history)
-    (define-key km (kbd "<f4>") 'twittering-edit-replace-at-point)))
+    (define-key km (kbd "<f4>") 'twittering-edit-replace-at-point)
+    (define-key km (kbd "@") 'twittering-edit-@)))
 
 (defun twittering-edit-length-check (&optional beg end len)
   (let* ((status (twittering-edit-extract-status))
@@ -7559,14 +7564,25 @@ managed by `twittering-mode'."
       (insert (nth twittering-edit-local-history-idx
                    twittering-edit-local-history))
       ;; (twittering-edit-setup-help)
-      (goto-char (point-min))))
-  )
+      (goto-char (point-min)))))
 
 (defun twittering-edit-replace-at-point ()
   (interactive)
   (when (eq major-mode 'twittering-edit-mode)
     (twittering-tinyurl-replace-at-point)
     (twittering-edit-length-check)))
+
+(defun twittering-read-friends (friend)
+  (interactive
+   `(,(completing-read "Select a friend: " (twittering-friends))))
+  friend)
+
+(defun twittering-edit-@ ()
+  (interactive)
+  (if (memq (twittering-extract-service) '(sina twitter))
+      (when (looking-back "^[ \t]*")
+        (insert "@" (call-interactively 'twittering-read-friends) " "))
+    (insert "@")))
 
 ;;;;
 ;;;; Edit a status on minibuffer
@@ -10371,7 +10387,9 @@ e.g.,
                  (setq page (twittering-get-simple-sync
                              api `(,@args (cursor . ,cursor)))
                        ret (append ret page)
-                       cursor (assqref 'next-cursor (car page)))))))
+                       cursor (twittering-number-to-string
+                               (string-to-number
+                                (assqref 'next-cursor (car page)))))))))
 
           (twittering-update-user-info-alist `(,@alist (,attr . ,ret)))
           ret))))
@@ -10387,6 +10405,7 @@ e.g.,
   (mapcar (lambda (i) (assqref 'screen-name (assqref 'user i)))
           (twittering-lookup-user-info-alist 'friends)))
 
+;; TODO: Fix twitter.
 (defun twittering-followers ()
   (mapcar (lambda (i) (assqref 'screen-name (assqref 'user i)))
           (twittering-lookup-user-info-alist 'followers)))
