@@ -275,9 +275,9 @@ The string should not be empty.  "
   :type 'string
   :group 'twittering)
 
-(defcustom twittering-curl-extra-parameters '()
-  "Extra parameters for curl session.
-You may specify for instance socks proxy here."
+(defcustom twittering-curl-socks-proxy '()
+  "Socks parameters for curl session.
+Don't use it together with http proxy.  "
   :type 'list
   :group 'twittering)
 
@@ -664,8 +664,6 @@ Following services are supported:
          (auth oauth)               ; Authentication method: `oauth', `basic'
          (ssl nil)                  ; Use SSL connection: `nil', `t'
          (quotation before)         ; Where to place quotation: `before', `after'
-         (curl PARAMETERS)          ; Extra parameters to pass to curl,  you may set
-                                    ; socks proxy here, for instance.
          (status-format STRING)
          (my-status-format STRING)
 
@@ -2559,8 +2557,6 @@ The method to perform the request is determined from
             "--location"
             "--request" ,method
             ,@(unless twittering-debug-curl '("--silent"))
-            ,@twittering-curl-extra-parameters
-
             ,@(apply 'append
                      (mapcar
                       (lambda (pair)
@@ -2579,6 +2575,10 @@ The method to perform the request is determined from
                  `("-x" ,(format "%s:%s" proxy-server proxy-port))
                  (when (and proxy-user proxy-password)
                    `("-U" ,(format "%s:%s" proxy-user proxy-password)))))
+
+            ,@(when (and use-proxy twittering-curl-socks-proxy) ; ad-hoc
+                ,@twittering-curl-socks-proxy)
+
             ,@(when (string= "POST" method)
                 (let ((opt
                        (if (twittering-is-uploading-file-p post-body)
@@ -5618,7 +5618,7 @@ regardless of HTTP or HTTPS.")
 (defcustom twittering-uri-regexp-to-proxy ".*"
   "Matched uri will be retrieved via proxy.
 See also `twittering-proxy-use', `twittering-proxy-server' and
-`twittering-proxy-port'."
+`twittering-proxy-port', `twittering-curl-socks-proxy'.  "
   :type 'string
   :group 'twittering)
 
