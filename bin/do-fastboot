@@ -7,11 +7,12 @@ function die() {
     exit -1
 }
 
-if test $# -lt 1; then
-    die "Usage: $(basename $0) partitions..."
+if test $# -lt 2; then
+    die "Usage: $(basename $0) blf partitions..."
 fi
 
-
+export blf=$1
+shift
 export partitions=("$@")
 function do-partition() {
     local user_arg=false
@@ -38,6 +39,7 @@ function get-image-path() {
     get-blf-img-val $blf $1 Path
 }
 
+do-partition uboot "$(get-image-path OSLO)"
 # ramdisk           =                                       , start:        1M, size:      256K, end:        0B
 do-partition ramdisk "$(get-image-path RAMD)"
 # imei              =                                       , start:    1M256K, size:      256K, end:        0B
