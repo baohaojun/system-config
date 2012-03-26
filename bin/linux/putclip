@@ -28,6 +28,6 @@ if test "$EMACS" = t; then
 	xclip -o -selection clipboard|xclip -i
     ) >/dev/null 2>&1&
 else 
-    rm-last-nl|xclip -i -selection clipboard
-    xclip -o -selection clipboard|xclip -i
+    rm-last-nl|xclip -i -selection clipboard >/dev/null 2>&1
+    xclip -o -selection clipboard|xclip -i >/dev/null 2>&1
 fi
