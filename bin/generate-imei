@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# CString calcImei15th(const CString& imeiStr)
+# {
+# 	if (imeiStr.GetLength() != 15) {
+# 		return "Error: IMEI must be 15 digits";
+# 	}
+
+# 	for (int i=0; i<imeiStr.GetLength(); i++) {
+# 		if (!stringContains("0123456789", imeiStr[i])) {
+# 			return "Error: IMEI must be 15 digits (0-9)";
+# 		}
+# 	}
+
+# 	int sum = 0;
+# 	for (i=0; i<imeiStr.GetLength()-1; i++) {
+# 		int val = imeiStr[i] - '0';
+# 		if (i%2) {
+# 			val *= 2;
+# 			sum += val/10 + val%10;
+# 		} else {
+# 			sum += val;
+# 		}
+# 	}
+	
+# 	return imeiStr.Mid(0, 14) + char((10-sum%10)%10+'0');
+# }
+
+function generate-imei() {
+    imei=
+    sum=0
+    for x in $(seq 0 13); do
+	val=$(date +%N)
+	val=${val:0-1}
+	imei=$imei$val
+	if ((x % 2 == 1)); then
+	    ((val *= 2))
+	    ((sum += val/10 + val%10))
+	else
+	    ((sum += val))
+	fi
+    done
+
+    ((last = (10 - sum%10)%10))
+    echo $imei$last
+}
+
+function debug() {
+    test "$DEBUG" && echo "$@" 1>&2
+}
+
+function die() {
+    echo "$@" 1>&2
+    exit -1
+}
+
+function is-valid-imei() {
+    imei=$1
+    test "$(echo -n "$imei" | wc -c)" != 15 && die "imei must be 15 chars"
+    echo -n "$imei" | grep -q '^[0-9]*$' || die "imei must be all digits"
+    debug imei is $imei
+
+    calc_imei=
+    sum=0
+    for x in $(seq 0 13); do
+	val=${imei:$x:1}
+	debug val is $val
+	calc_imei=$calc_imei$val
+	if ((x % 2 == 1)); then
+	    ((val *= 2))
+	    ((sum += val/10 + val%10))
+	    debug 'val *=2; sum += val/10 + val%10:' sum is $sum for x is $x
+	else
+	    ((sum += val))
+	    debug 'sum += val:' sum is $sum for x in $x
+	fi
+
+    done
+
+    ((last = (10 - sum%10)%10))
+    test $calc_imei$last != $imei && die 'imei not valid! should be' $calc_imei$last
+    true
+}
+
+if test "$(readlink -f "$BASH_SOURCE")" = "$(readlink -f "$(which "$0")" )"; then
+    "`basename $0`" "$@"
+fi

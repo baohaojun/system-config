@@ -327,11 +327,15 @@ else
     cd `pwd`/`dirname $0`;
 fi
 " nil 0)
+    ("dbgdef" "function debug() {
+    echo \"$@\" 1>&2
+}
+" nil 0)
     ("diedef" "function die() {
     echo \"$@\"
     exit -1
 }
-" nil 1)
+" nil 2)
     ("eo" "2>&1" nil 4)
     ("oe" "1>&2" nil 0)
     ("qe" "2>/dev/null" nil 2)
@@ -344,6 +348,10 @@ fi
 # End:
 # ex: ts=4 sw=4 et filetype=sh
 " nil 0)
+    ("symexec" "if test \"$(readlink -f \"$BASH_SOURCE\")\" = \"$(readlink -f \"$(which \"$0\")\" )\"; then
+    \"`basename $0`\" \"$@\"
+fi
+" nil 0)
    ))
 
 (define-abbrev-table 'shell-mode-abbrev-table '())
@@ -351,6 +359,8 @@ fi
 (define-abbrev-table 'slitex-mode-abbrev-table '())
 
 (define-abbrev-table 'smime-mode-abbrev-table '())
+
+(define-abbrev-table 'snippet-mode-abbrev-table '())
 
 (define-abbrev-table 'special-mode-abbrev-table '())
 
