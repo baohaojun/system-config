@@ -7579,9 +7579,9 @@ managed by `twittering-mode'."
 
 (defun twittering-edit-@ ()
   (interactive)
-  (if (memq (twittering-extract-service) '(sina twitter))
-      (when (looking-back "^[ \t]*")
-        (insert "@" (call-interactively 'twittering-read-friends) " "))
+  (if (and (memq (twittering-extract-service) '(sina twitter))
+           (or (bolp) (looking-back "[ \t]+")))
+      (insert "@" (call-interactively 'twittering-read-friends) " ")
     (insert "@")))
 
 ;;;;
@@ -7967,17 +7967,23 @@ image are displayed."
   (let* ((type (car-safe image-pair))
          (data (cdr-safe image-pair))
          (raw-image-spec ;; without margins
-          (create-image data type t))
-         (slice-spec
-          (when (and twittering-convert-fix-size (not twittering-use-convert))
-            (twittering-make-slice-spec raw-image-spec)))
-         (image-spec
-          (if (fboundp 'create-animated-image) ;; Emacs24 or later
-              (create-animated-image data type t :margin 2 :ascent 'center)
-            (create-image data type t :margin 2 :ascent 'center))))
-    (if slice-spec
-        `(display (,image-spec ,slice-spec))
-      `(display ,image-spec))))
+          (ignore-errors (create-image data type t)))
+         slice-spec
+         image-spec)
+    (if raw-image-spec
+        (progn
+          (setq slice-spec
+                (when (and twittering-convert-fix-size (not twittering-use-convert))
+                  (twittering-make-slice-spec raw-image-spec))
+                image-spec
+                (if (fboundp 'create-animated-image) ;; Emacs24 or later
+                    (create-animated-image data type t :margin 2 :ascent 'center)
+                  (create-image data type t :margin 2 :ascent 'center)))
+          (if slice-spec
+              `(display (,image-spec ,slice-spec))
+            `(display ,image-spec)))
+      (message "Unknown image format")
+      '(display))))
 
 (defun twittering-make-icon-string (beg end image-url &optional sync)
   (let ((display-spec (twittering-get-display-spec-for-icon image-url))
@@ -7988,13 +7994,15 @@ image are displayed."
       (add-text-properties 0 (length icon-string) properties icon-string))
     (cond
      (display-spec
-      (let ((icon-string (apply 'propertize "_"
-                                (append properties display-spec))))
-        ;; Remove the property required no longer.
-        (remove-text-properties 0 (length icon-string)
-                                '(need-to-be-updated nil)
-                                icon-string)
-        icon-string))
+      (if (cadr display-spec)
+          (let ((icon-string (apply 'propertize "_"
+                                    (append properties display-spec))))
+            ;; Remove the property required no longer.
+            (remove-text-properties 0 (length icon-string)
+                                    '(need-to-be-updated nil)
+                                    icon-string)
+            icon-string)
+        ""))
      ((and (integerp image-data)
            (<= twittering-url-request-retry-limit image-data))
       ;; Try to retrieve the image no longer.
