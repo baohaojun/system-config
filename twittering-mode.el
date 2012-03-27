@@ -161,7 +161,7 @@ See `twittering-status-format'. "
   :group 'twittering)
 
 (defcustom twittering-retweet-format "RT: %t (via @%s)"
-  "Format string for retweet.
+  "Format string when retweeting.
 
 Items:
  %s - screen_name
@@ -279,6 +279,12 @@ The string should not be empty.  "
   "Socks parameters for curl session.
 Don't use it together with http proxy.  "
   :type 'list
+  :group 'twittering)
+
+(defcustom twittering-auto-adjust-fill-column? t
+  "If t, adjust `twittering-fill-column' and `twittering-my-fill-column'
+automatically when window resizes.  "
+  :type 'boolean
   :group 'twittering)
 
 ;;;
@@ -7023,6 +7029,11 @@ been initialized yet."
   (when (and (boundp 'font-lock-mode) font-lock-mode)
     (font-lock-mode -1))
   (add-to-list 'twittering-buffer-info-list (current-buffer) t)
+  (if twittering-auto-adjust-fill-column?
+      (add-hook 'window-configuration-change-hook
+                'twittering-window-configuration-change)
+    (remove-hook 'window-configuration-change-hook
+                 'twittering-window-configuration-change))
   (run-hooks 'twittering-mode-hook))
 
 (defun twittering-mode ()
@@ -7041,6 +7052,29 @@ been initialized yet."
         (if (listp twittering-initial-timeline-spec-string)
             twittering-initial-timeline-spec-string
           (list twittering-initial-timeline-spec-string))))
+
+(defun twittering-window-configuration-change ()
+  (when (eq major-mode 'twittering-mode)
+    (let ((col (round (window-width)))
+          (padding 8))
+      (unless (= col twittering-fill-column)
+        (setq twittering-fill-column col
+              twittering-my-fill-column (- twittering-fill-column padding))
+        (let ((data (twittering-timeline-data-collect))
+              (from (save-excursion (goto-char (point-min))
+                                    (twittering-get-id-at)))
+              (to (save-excursion (goto-char (point-max))
+                                  (twittering-get-id-at)))
+              (curr (twittering-get-id-at)))
+          (when from
+            (when (twittering-status-id> from to)
+              (setq from to))
+            (setq data (remove-if
+                        (lambda (i)
+                          (twittering-status-id< (assqref 'id i) from))
+                        (twittering-current-timeline-data)))
+            (twittering-render-timeline (current-buffer) nil data)
+            (twittering-jump-to-status curr)))))))
 
 ;;;; Account authorization
 ;;;;
@@ -9292,6 +9326,13 @@ Return POS if no statuses are rendered."
   (interactive)
   (goto-char (or (twittering-get-first-status-head)
                  (point-min))))
+
+(defun twittering-jump-to-status (id)
+  (twittering-goto-first-status)
+  (let (tmp)
+    (while (and (not (equal tmp (twittering-get-id-at)))
+                (not (equal (setq tmp (twittering-get-id-at)) id)))
+      (twittering-goto-next-status))))
 
 (defun twittering-get-first-status-head ()
   "Return the head position of the first status in the current buffer.
