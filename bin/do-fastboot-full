@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export PATH=$(dirname "$(readlink -f "$0")"):$PATH
+
+
 # part   0::attr 0::         tim  start 0x00000000, size 0x00040000
 # part   1::attr 0::         obm  start 0x00040000, size 0x00040000
 # part   2::attr 0::       uboot  start 0x00080000, size 0x00080000
@@ -34,6 +37,11 @@ fi
 
 
 export blf=$1
+
+product=$(fastboot getvar product 2>&1 | grep product: | pn 2)
+if test "$product.blf" != $(basename $blf); then
+    die "You are trying to flash product '$product' with $(basename $blf), it is not allowed!"
+fi
 
 function do-partition() {
     fastboot erase $1;

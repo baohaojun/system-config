@@ -1,0 +1,14 @@
+#!/bin/bash
+
+tmpf=/tmp/$(basename $0).$$
+
+
+(
+    trap 'echo shit' SIGINT;
+    strace -e trace=open,execve -f -q -o $tmpf "$@"
+)
+
+cat $tmpf
+
+edit-wait $tmpf
+rm $tmpf
