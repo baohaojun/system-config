@@ -1,5 +1,9 @@
 #!/bin/bash
 cd $(lookup_file .repo/..)
+if test $# != 0; then
+    . build/envsetup.sh
+    lunch $1
+fi
 $(lookup_file prebuilt/linux-x86/ccache/ccache) -M 100G
 export OUT_DIR=${OUT_DIR:-out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT}
 

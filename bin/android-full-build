@@ -81,14 +81,14 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	time $(which time) make -j$jobs -l$jobs -k droid telephony uboot obm && result=$result'all ok; '
     fi
     if [[ "$target" =~ kernel ]]; then
-	command time make kernel && result=$result'kernel ok; '
+	command time make -k kernel && result=$result'kernel ok; '
     fi
     
     if [[ "$target" =~ system ]]; then
 	command time make -j$jobs -l$jobs -k && result=$result'android ok; '
     fi
     if [[ "$target" =~ misc ]]; then
-	command time make telephony uboot obm && result=$result'misc ok; '
+	command time make -k telephony uboot obm && result=$result'misc ok; '
     fi
     echo "$result"
     (

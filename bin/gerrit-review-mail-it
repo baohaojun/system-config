@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if test "$REMOTEIP"; then
+   ssh-restricted "$REMOTEIP" gerrit-review-mail-it
+   exit
+fi
+
+tmpf=/tmp/$(basename $0).$$
+cat > $tmpf
+
+title=$(
+    cat $tmpf |
+    perl -ne 'print if m/^* git commit message/ .. 0' |
+    perl -ne 's/^\s*//; print if 7..7'
+)
+title="Review request: $title"
+
+recipients=$(
+    cat $tmpf |
+    perl -ne 'print if m/^* git commit message/ .. 0' |
+    grep -e 'Reviewed-by:' |
+    pn 2 |
+    perl -npe 's/\s+//; s/$/\@marvell.com/; print "\n"'
+)
+
+set -e
+cat $tmpf | mailx -s "$title" $recipients
+echo mail sent.

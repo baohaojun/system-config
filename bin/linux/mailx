@@ -97,7 +97,7 @@ test -z "${body[0]}" && body=("=")
             done
         fi'
     done
-    printf " << 31a1b9affa4ee4c6520ac20bb7c16f69\n"
+    printf " << '31a1b9affa4ee4c6520ac20bb7c16f69'\n"
     echo "$body"
     echo "31a1b9affa4ee4c6520ac20bb7c16f69"
 ) | bash

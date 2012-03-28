@@ -1,0 +1,8 @@
+#!/bin/bash
+host=$1
+shift
+args=()
+for x in "$@"; do
+    args=("${args[@]}" "$(printf %q "$x")")
+done
+ssh "$host" "${args[@]}"

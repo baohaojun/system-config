@@ -328,7 +328,7 @@ else
 fi
 " nil 0)
     ("dbgdef" "function debug() {
-    echo \"$@\" 1>&2
+    test \"$DEBUG\" && echo \"$@\" 1>&2
 }
 " nil 0)
     ("diedef" "function die() {
@@ -336,7 +336,7 @@ fi
     exit -1
 }
 " nil 2)
-    ("eo" "2>&1" nil 4)
+    ("eo" "2>&1" nil 5)
     ("oe" "1>&2" nil 0)
     ("qe" "2>/dev/null" nil 2)
     ("qq" ">/dev/null 2>&1" nil 9)
@@ -349,6 +349,10 @@ fi
 # ex: ts=4 sw=4 et filetype=sh
 " nil 0)
     ("symexec" "if test \"$(readlink -f \"$BASH_SOURCE\")\" = \"$(readlink -f \"$(which \"$0\")\" )\"; then
+    \"`basename $0`\" \"$@\"
+fi
+" nil 1)
+    ("symlink?" "if test \"$(readlink -f \"$BASH_SOURCE\")\" = \"$(readlink -f \"$(which \"$0\")\" )\"; then
     \"`basename $0`\" \"$@\"
 fi
 " nil 0)

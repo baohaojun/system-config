@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if test "$REMOTEIP"; then
+    ssh-restricted "$REMOTEIP" $(basename $0) "$@"
+    exit
+fi
+
 issue=$1
 shift
 

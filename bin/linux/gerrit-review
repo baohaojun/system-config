@@ -1,16 +1,32 @@
 #!/bin/bash
 
-set -x
+set -xe
+
+set -o pipefail
+
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
-export REMOTE=$(git config remote.`repo-remote`.url)
+export REMOTE=$(git-remote-url $(repo-remote))
+
 (
     if tty >/dev/null 2>&1; then
-	git push $REMOTE ${1:-HEAD}:refs/for/`tbranch` 2>&1| grep -v 'x11 forwarding' -i | perl -npe '
+	git push $REMOTE ${1:-HEAD}:refs/for/`tbranch` 2>&1 |
+	grep -v 'x11 forwarding' -i |
+	perl -npe '
     if (m,http://bear/gerrit/(\d+),) {
         system("putclip", "git", "pull", $ENV{REMOTE}, 
                "refs/changes/" . substr($1, -2) . "/$1/1");
-    }' 
+    }'
+	echo
+	echo '* git commit message:'
+	echo
+	git log -1 ${1:-HEAD}
     else
 	cat
     fi
-) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty |tee ~/.logs/gerrit-review.log| mailx -s "Review request: ""$(git log -1 ${1:-HEAD}|perl -ne 'print if 5..5')" $(git log -1 ${1:-HEAD}|grep -e 'Reviewed-by:'|pn 2|perl -npe 's/\s+//; s/$/\@marvell.com/; print "\n"')
+) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty > ~/.logs/gerrit-review.log.$$
+
+set +x
+echo push ok.
+
+cat ~/.logs/gerrit-review.log.$$ | gerrit-review-mail-it
+mv ~/.logs/gerrit-review.log.$$ ~/.logs/gerrit-review.log

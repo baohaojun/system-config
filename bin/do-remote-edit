@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use strict;
+delete $ENV{"REMOTEIP"};
 my $edit_cmd = (split(/\n/, $ENV{"SSH_ORIGINAL_COMMAND"}))[-1];
 
 my @edit_cmd = split /\s+/, $edit_cmd;
@@ -7,6 +8,13 @@ my @edit_cmd = split /\s+/, $edit_cmd;
 if ($edit_cmd[0] eq "emacsclient") {
   $" = ", ";
   print "your edit request is @edit_cmd\n";
+  system(@edit_cmd);
+} elsif ($edit_cmd[0] eq "gerrit-review") {
+  print "you want to do gerrit review\n";
+  system("gerrit-review");
+} elsif ($edit_cmd[0] eq "jira-add-comment") {
+  system(@edit_cmd);
+} elsif ($edit_cmd[0] eq "gerrit-review-mail-it") {
   system(@edit_cmd);
 } else {
   print "Error: permission denied.\n"
