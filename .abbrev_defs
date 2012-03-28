@@ -352,10 +352,6 @@ fi
     \"`basename $0`\" \"$@\"
 fi
 " nil 1)
-    ("symlink?" "if test \"$(readlink -f \"$BASH_SOURCE\")\" = \"$(readlink -f \"$(which \"$0\")\" )\"; then
-    \"`basename $0`\" \"$@\"
-fi
-" nil 0)
    ))
 
 (define-abbrev-table 'shell-mode-abbrev-table '())
