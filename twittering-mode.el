@@ -7057,7 +7057,7 @@ been initialized yet."
   (when (eq major-mode 'twittering-mode)
     (let ((col (round (window-width)))
           (padding 8))
-      (unless (= col twittering-fill-column)
+      (unless (= col (or twittering-fill-column 0))
         (setq twittering-fill-column col
               twittering-my-fill-column (- twittering-fill-column padding))
         (let ((data (twittering-timeline-data-collect))
