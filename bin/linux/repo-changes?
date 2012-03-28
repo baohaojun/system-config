@@ -1,7 +1,16 @@
 #!/bin/bash
 test $# = 0 && set -- ""
+export android_dir=$(
+    cd $(lookup_file .repo/..) >/dev/null 2>&1
+    readlink -f .
+)
 for x in "$@"; do 
-    rfa $x 'if git st -s |grep -q . || test $(git log -1 --pretty=oneline|pn 1) != $REPO_LREV; then pwd; fi '
+    rfa $x '
+if git st -s |grep -q . || test $(git log -1 --pretty=oneline|pn 1) != $REPO_LREV; then
+    relative-path $(readlink -f .) $android_dir/;
+    echo;
+fi'
+
 done 2>&1 | (
     cd $(lookup_file .repo/..);
     log=./out/repo-changes.log"$(echo -n $*)"
