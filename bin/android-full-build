@@ -96,7 +96,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	./make-links.sh
 	./copy-release.sh .
 	find . -type l -print0 |xargs -0 bash -c 'for x in "$@"; do chmod a+r "$(readlink -m "$x")"; done' true 
-    )
+    ) >/dev/null 2>&1 
     echo -n 'after build, ccache stat is '
     ./prebuilt/linux-x86/ccache/ccache -s
 ) 9>~/.logs/android-full-build.lock  2>&1 | tee build.log
