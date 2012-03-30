@@ -38,3 +38,5 @@ Bao Zong刚才问我提review之后给大家发的邮件是不是自动发的，
    单机桌面版用，放在服务器上当daemon跑的话不知道稳定性怎样。
 
 2. 系统吞吐量不知道够不够。
+* setxkbmap -variant dvp
+  The above will set the keyboard layout to dvorak programmer.
