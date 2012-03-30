@@ -343,6 +343,7 @@ Spent 2 hours on this.
   CLOSED: [2012-01-12 Thu 10:55]
   - CLOSING NOTE [2012-01-12 Thu 10:55]
 * CANCELED 看3gpp 23.038，关于sms					 :pe:
+3gpp 27.007, 里面有更多的at command命令。
 * TODO learn to use artist-mode						 :pe:
 
 #+BEGIN_DITAA  asciiExample.png -o -r
