@@ -3,7 +3,7 @@
 use strict;
 use Getopt::Long;
 
-open(my $log_, ">", glob("~/.logs/.skeleton_comp2.log")) or die "Error open log file";
+open(my $log_, ">", glob("~/.logs/skeleton_comp.log")) or die "Error open log file";
 
 {
     local $" = "' '";
@@ -54,6 +54,7 @@ if ($skeleton =~ s/\.(\d+)$//) {
 
 my $count = 0;
 
+my $saved_skeleton = $skeleton;
 if ($skeleton =~ m/\./) {
     $skeleton =~ s/\./ /g;
     for my $x (split(/\s+/, $skeleton)) {
@@ -88,17 +89,49 @@ for(@sorted) {
 
 my $max = scalar @words - 1;
 $max = ($max_matches_to_print - 1) if $max >= $max_matches_to_print;
+
+sub output(@) {
+  printf @_;
+
+  print $log_ "output: ";
+  printf $log_ @_;
+}
+
+my $longest_substr;
+sub get_longest_substr(@) {
+  my ($saved_skeleton, @strs) = @_;
+
+  if ($longest_substr) {
+    return $longest_substr;
+  }
+
+  $longest_substr = $saved_skeleton;
+  while ((my $pos = index($strs[0], $longest_substr)) >= 0) {
+    my $next_char = substr($strs[0], $pos + length($longest_substr), 1);
+    if (grep {index($_, $longest_substr . $next_char) < 0} @strs) {
+      last;
+    }
+    $longest_substr .= $next_char;
+  }
+  return $longest_substr;
+}
+
 for (@words[0..$max]) {
   if ($match == 1) {
     print $print_prefix . $_ . "\n";
   } elsif ($_) {
     if (($is_prefix or $max < 5) and not $words_file) { #sometimes we do not want fill out the common prefix
       s/\s+/./g;
-      printf "%s: %d\n", $_, $count++;
+      if ($saved_skeleton !~ m/\./) {
+	output "%s%d: %s\n", get_longest_substr($saved_skeleton, @words[0..$max]), $count++, $_;
+      } else {
+	output "%d: %s\n", $count++, $_;
+      }
+
     } else {
 	print $log_ "is_prefix not true\n";
 	my $fmt = $max < 10 ? "%d" : "%02d";
-	printf "$fmt: %s\n", $count++, $_;
+	output "$fmt: %s\n", $count++, $_;
     }
   }
 }

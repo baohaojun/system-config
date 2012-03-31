@@ -14,9 +14,11 @@ $match = 1;
 ($pid, $ppid) = split(/\s+/, $line);
 next if ($pid == $my_pid or $ppid == $my_pid);
 for (@args) {
-    unless ($line =~ m/$_/i) {
-        $match = 0;
-        last;
+    for (split(/\.|\\* /, $_)) {
+        unless ($line =~ m/$_/i) {
+            $match = 0;
+            last;
+        }
     }
 
 }
