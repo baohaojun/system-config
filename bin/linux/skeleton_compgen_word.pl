@@ -120,7 +120,7 @@ for (@words[0..$max]) {
   if ($match == 1) {
     print $print_prefix . $_ . "\n";
   } elsif ($_) {
-    if (($is_prefix or $max < 5) and not $words_file) { #sometimes we do not want fill out the common prefix
+    if (($is_prefix or $max < 10) and not $words_file) { #sometimes we do not want fill out the common prefix
       s/\s+/./g;
       if ($saved_skeleton !~ m/\./) {
 	output "%s%d: %s\n", get_longest_substr($saved_skeleton, @words[0..$max]), $count++, $_;
