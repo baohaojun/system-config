@@ -8,7 +8,9 @@ elif test $# = 3 && test -e "$3"; then
 fi
 
 if test $# = 2 -a -e "$2"; then
-    test "$(fstype "$2")" = fuse.sshfs && 
-    set -- "$1" "$(get-scp-from-sshfs "$2")"
+    if test "$(fstype "$2")" = fuse.sshfs; then
+	set -x
+	set -- "$1" "$(get-scp-from-sshfs "$2")"
+    fi
 fi
 /usr/bin/emacsclient "$@"

@@ -1,0 +1,3 @@
+#!/bin/bash
+of 'http://www.newsmth.net/bbsbfind.php?q=1&board=MyPhoto&title=&title2=&title3=&userid='$1'&dt=2222'
+of 'http://www.newsmth.net/bbsbfind.php?q=1&board=Pictures&title=&title2=&title3=&userid='$1'&dt=2222'

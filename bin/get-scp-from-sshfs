@@ -3,5 +3,16 @@
 arg=$1
 
 scheme=$(get-mount-1 "$1");
+
+export SSHFS_PROC=$(ps.pl sshfs | grep "$scheme")
+scheme=$(
+    if echo $SSHFS_PROC | grep -P -e '-p\s+\d+' -q; then
+	port=$(echo $SSHFS_PROC | perl -ne 'if (1..1) { m/-p\s+(\d+)/; print $1; }')
+	echo $scheme | perl -npe 's/:/#'$port':/'
+    else
+	echo $scheme
+    fi
+)
+
 path=$(relative-path "$(readlink -m "$1")" "$(get-mount-point "$1")"/.)
 echo /scp:"$scheme$path"
