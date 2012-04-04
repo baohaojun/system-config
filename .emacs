@@ -2120,6 +2120,8 @@ criteria can be provided via the optional match-string argument "
 (global-set-key [(meta shift ?d)] 'insert-today)
 
 (unless (eq system-type 'windows-nt)
+  (require 'xclip)
+  (turn-on-xclip)
   (load-file "~/.emacs_d/lisp/my-erc-config.el"))
 
 (defun goto-line-not-containing (word)
@@ -2182,9 +2184,6 @@ we are not interested in those lines that do."
 
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)
 (autoload 'mo-git-blame-current "mo-git-blame" nil t)
-
-(require 'xclip)
-(turn-on-xclip)
 
 (add-to-list 'load-path (expand-file-name "~/.emacs_d/emacs-eclim/"))
 ;; only add the vendor path when you want to use the libraries provided with emacs-eclim
