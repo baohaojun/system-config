@@ -2205,4 +2205,5 @@ we are not interested in those lines that do."
 			    (funcall saved-file-remote-p file identification connected))))
       ad-do-it)))
 
+(eval-after-load "cperl-mode" '(cperl-set-style 'PerlStyle))
 (server-start)

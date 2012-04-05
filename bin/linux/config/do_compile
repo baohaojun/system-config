@@ -2,8 +2,11 @@
 set -e
 function compile_beagrep() {
     cd ~/gcode/beagrep
-    git co origin/$(uname|perl -npe 's/_.*//')
-    sh ./autogen.sh
+    git clean -xfd
+    git fetch origin $(uname|perl -npe 's/_.*//')
+    git co FETCH_HEAD
+    autoreconf -i
+    ./configure
     make
     sudo make install
 }

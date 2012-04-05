@@ -53,6 +53,17 @@
     ("bpk" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("ccs" "const cstring&" nil 1)
     ("cpk" "printk(KERN_WARNING \"for continue %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 25)
+    ("dbgdef" "#define debug(fmt, ...) do {						\\
+        fprintf(stderr,							\\
+		\"%s %s() %d: \" fmt \"\\n\",				\\
+		strchr(__FILE__, '/')					\\
+		? strchr(__FILE__, '/') + 1				\\
+		: __FILE__,						\\
+                __FUNCTION__, __LINE__,					\\
+		##__VA_ARGS__);						\\
+        fflush(stderr);							\\
+    } while(0)
+" nil 0)
     ("ipk" "#include <linux/types.h>
 #include <linux/module.h>
 #include <linux/proc_fs.h>
@@ -111,7 +122,7 @@
     ("=pod" "=pod" cperl-electric-pod 0)
     ("continue" "continue" cperl-electric-else 0)
     ("dbgdef" "sub debug(@) {
-  print STDERR \"@_\\n\";
+    print STDERR \"@_\\n\";
 }
 " nil 0)
     ("do" "do" cperl-electric-keyword 0)
