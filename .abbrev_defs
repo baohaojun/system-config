@@ -31,7 +31,7 @@
        end code-generator */
     // start generated code
 
-    // end generated code" nil 3)
+    // end generated code" nil 4)
     ("cr" "CRect" nil 2)
     ("cs" "cstring" nil 36)
     ("dcs" "c_str()" nil 10)
@@ -52,6 +52,12 @@
   '(
     ("bpk" "printf(\"hello world %s %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 0)
     ("ccs" "const cstring&" nil 1)
+    ("codegen" "    /* start code-generator
+       end code-generator */
+    // start generated code
+
+    // end generated code
+" nil 1)
     ("cpk" "printk(KERN_WARNING \"for continue %s %d\\n\", __FILE__, __FUNCTION__, __LINE__);" nil 25)
     ("dbgdef" "#define debug(fmt, ...) do {						\\
         fprintf(stderr,							\\
@@ -62,6 +68,15 @@
                 __FUNCTION__, __LINE__,					\\
 		##__VA_ARGS__);						\\
         fflush(stderr);							\\
+    } while(0)
+
+#define ddebug(a) do {				\\
+	debug(#a \" is %d\", (a));			\\
+    } while(0)
+
+#define die(fmt, ...) do {			\\
+	debug(fmt, ##__VA_ARGS__);		\\
+	exit(-1);				\\
     } while(0)
 " nil 0)
     ("ipk" "#include <linux/types.h>
