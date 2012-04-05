@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: mkmod
+# --
+
+include \$(CLEAR_VARS)
+LOCAL_SRC_FILES:= ${module}.c
+LOCAL_MODULE = ${module}
+LOCAL_MODULE_PATH := \$(TARGET_OUT_EXECUTABLES)
+LOCAL_MODULE_TAGS := optional
+include \$(BUILD_EXECUTABLE)
+

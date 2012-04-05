@@ -613,7 +613,8 @@
  '(weblogger-config-alist (quote (("default" "https://storage.msn.com/storageservice/MetaWeblog.rpc" "thomasbhj" "" "MyBlog") ("csdn" "http://blog.csdn.net/flowermonk/services/MetaBlogApi.aspx" "flowermonk" "" "814038"))))
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
- '(x-select-enable-clipboard t))
+ '(x-select-enable-clipboard t)
+ '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets")) nil (yasnippet)))
 
 
 
@@ -2206,4 +2207,6 @@ we are not interested in those lines that do."
       ad-do-it)))
 
 (eval-after-load "cperl-mode" '(cperl-set-style 'PerlStyle))
+
+(yas/global-mode)
 (server-start)
