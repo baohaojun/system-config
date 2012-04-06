@@ -110,14 +110,22 @@ sub do_cscope($$$$) {
 }
 
 exit if do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
-chomp(my $gtags_fallback_dir = qx(readlink ~/.gtags-fallback-dir));
-exit unless $gtags_fallback_dir;
-$gtags_fallback_dir = glob("~/$gtags_fallback_dir");
+
+my @gtags_fallback_dir = map {qx(readlink $_)} glob("~/.gtags-fallback-dir*");
+unless (@gtags_fallback_dir) {
+  print "you have no fallback dir to search for, will exit now";
+  exit;
+}
 
 sub debug(@) {
   print STDERR "@_\n";
 }
-debug "Not found in current dir; search in $gtags_fallback_dir";
 
-do_cscope($gtags_fallback_dir, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
+map {chomp; my @dir = glob("~/$_"); $_ = $dir[0]} @gtags_fallback_dir;
+
+for (@gtags_fallback_dir) {
+  my $dir = $_;
+  debug "Not found in current dir; search in $dir";
+  do_cscope($dir, $lookup_type, $lookup_needle, $lookup_restrict_regexp) and last;
+}
 

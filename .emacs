@@ -176,6 +176,9 @@
   (setq indent-tabs-mode t)
   (setq c-basic-offset 8))
 
+(eval-after-load 'c-mode '(c-set-style 'k&r))
+(setq-default c-basic-offset 4)
+
 (defun linux-c++-mode ()
   "C mode with adjusted defaults for use with the Linux kernel."
   (interactive)
