@@ -25,3 +25,21 @@
 	exit(-1);				\
  } while(0)
 
+#define ASSERT_EQUAL(a,b) do {					\
+	if ((a) != (b)) {					\
+	    printf("error: %s is not equal to %s\n ", #a,  #b); \
+	    exit(-1);						\
+	} else {						\
+	    printf("OK: %s is equal to %s\n", #a, #b);		\
+	}							\
+    } while (0)
+
+
+#define ASSERT_NOT_EQUAL(a,b) do {				\
+	if ((a) == (b)) {					\
+	    printf("error: %s is equal to %s\n", #a, #b);	\
+	    exit(-1);						\
+	} else {						\
+	    printf("OK: %s is not equal to %s\n", #a, #b);	\
+	}							\
+    } while (0)
