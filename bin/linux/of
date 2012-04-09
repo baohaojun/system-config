@@ -1,6 +1,15 @@
 #!/bin/bash
+echo $@ > ~/1.txt
+exec > ~/.logs/of.log 2>&1
+set -x
+
+function gvfs-open() {
+    setsid gvfs-open "$@"
+}
+export -f gvfs-open
+
 if test $# = 0; then
-    xdg-open "$(xclip -o -selection primary)" >/dev/null 2>&1
+    bash xdg-open "$(xclip -o -selection primary)"
 else 
-    xdg-open "$(lookup_file "$@")" > /dev/null 2>&1
+    bash xdg-open "$(lookup_file "$@")" 
 fi
