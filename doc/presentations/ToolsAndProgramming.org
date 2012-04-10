@@ -1,0 +1,50 @@
+#+LaTeX_CLASS: beamer
+#+MACRO: BEAMERMODE presentation
+#+MACRO: BEAMERTHEME Berkeley
+#+MACRO: BEAMERCOLORTHEME crane
+#+MACRO: BEAMERSUBJECT RMRF
+#+MACRO: BEAMERINSTITUTE Marvell BPE.
+#+TITLE: Tools And Programming
+#+AUTHOR: Bao Haojun
+
+
+* Tools from UPE (Unix Programming Environment)
+
+
+** 2, 3, 4, 5
+
+*** The same script behave differently according to script name ($0)
+
+Why? Because: 
+
+- it improves code reuse, 
+- reduce code duplication. 
+
+  Duplication means maintenance cost.
+
+*** It's very similar to busybox
+
+* Make tools smart
+
+** Smart requires memory (a.k.a., history)
+
+*** bash history
+
+Please learn to use:
+
+- Ctrl-r
+- Ctrl-s
+- Alt-. 
+- Alt-n
+- Ctrl-j
+- ... (bind -p)
+*** cd history
+
+*** re (Re-Exec)
+
+It respects memory/history, but it also respects context (auto completion).
+
+
+** Smart requires context-awareness (auto/programmed completion)
+
+*** skeleton completion

@@ -618,7 +618,9 @@
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
  '(x-select-enable-clipboard t)
- '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets")) nil (yasnippet)))
+ '(yas/prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
+ '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets")) nil (yasnippet))
+ '(yas/trigger-key "M-TAB"))
 
 
 
@@ -2229,6 +2231,7 @@ we are not interested in those lines that do."
       \\beamertemplateballitem\n
       \\setbeameroption{show notes}
       \\usepackage[utf8]{inputenc}\n
+      \\usepackage{CJK}\n
       \\usepackage[T1]{fontenc}\n
       \\usepackage{hyperref}\n
       \\usepackage{color}

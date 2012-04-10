@@ -1,0 +1,3 @@
+#!/bin/bash
+
+getclip | xargs -d \\n bash -c 'for x in "$@"; do ed2k "$x"; done' true
