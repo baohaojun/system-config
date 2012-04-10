@@ -1,7 +1,7 @@
 #+LaTeX_CLASS: beamer
 #+MACRO: BEAMERMODE presentation
-#+MACRO: BEAMERTHEME Berkeley
-#+MACRO: BEAMERCOLORTHEME crane
+#+MACRO: BEAMERTHEME AnnArbor
+#+MACRO: BEAMERCOLORTHEME beaver
 #+MACRO: BEAMERSUBJECT RMRF
 #+MACRO: BEAMERINSTITUTE Marvell BPE.
 #+TITLE: Tools And Programming
@@ -42,9 +42,125 @@ Please learn to use:
 
 *** re (Re-Exec)
 
+
 It respects memory/history, but it also respects context (auto completion).
 
+*** The best history tool: git
 
 ** Smart requires context-awareness (auto/programmed completion)
 
 *** skeleton completion
+
+- should allow completing by interesting (remembered, maybe not continuous)
+  stems.
+
+- It is supported by firefox address bar completion.
+
+** Smart require potential/cooperation
+
+*** Do one thing and do it well.
+
+*** Why GUI is not enough
+
+GUI is great for simple and stupid, but when you want to go beyond...
+*** Work with CLI and GUI, seamlessly.
+
+- of
+- oc
+- up
+- clipboard/bash keys
+- get-newest-file
+- of-newest
+- notification.
+
+** Smart requires boundary (cooperation continued)
+
+*** Inteface and boundary
+
+- The Windows way and the Unix way
+
+- Process and DLL.
+
+  + simple to use
+  + easy to debug
+  + difficult to crash
+
+* Some examples
+** Source code reading
+
+*** The preface of <<Linux Device Driver>>, 1st Edition.
+#+begin_quote
+... is the result of hours of patient grepping through the kernel sources ...
+#+end_quote
+*** Brad Fitzpatrick
+
+#+begin_quote
+... pipe find into less and try to understand the directory structure ...
+#+end_quote
+
+** Source Insight?
+
+*** Is this shell or C?
+
+#+begin_example
+echo hello world
+#+end_example
+
+*** Want compile it as gcc?
+
+#+begin_example
+echo echo hello world > 1.c
+
+gcc -D echo='int main() {printf("hello world?\n");}' \
+    -D hello= \
+    -D world=  1.c
+#+end_example
+
+*** What does it implicate?
+
+- double languages
+- Java
+- source insight and alike can be insufficient
+- use text handling tools like grep, perl, etc.
+
+** Write code that writes code
+
+*** When it is 3, make it a 4 (for).
+
+*** When you can not make a 4 in C, make one in Bash (@Bao Haojun)
+
+#+begin_example
+cd ~/windows-config/
+beagrep -e 'start code-generator'
+#+end_example
+
+*** Don't be afraid to give variable long names
+
+- You can type long names easily
+- You can change it easily when it's long
+  - Why C++ author replace ~(int) i~ as ~dynamic_cast<int> i~?
+    
+    It's so long, and so ugly!
+
+** beagrep
+Grep 2G source code in 2 seconds.
+** grep-gtags
+
+- When there are multiple matches.
+
+  #+begin_quote
+  In system/core/init, grep for ~service_start~
+  #+end_quote
+
+  Should respect context.
+
+- Can source insight do that?
+** Offline Wikipedia
+
+- Don't let the GFW stop you!
+
+- [[http://localhost:8000/en/article/Unix_philosophy/&redlink=1][Unix Philosophy]]
+** American Heritage Dictionary
+- Write your own dictionary. Do regexp tricks with it!
+
+- It's helpful for learning English, which is important for programming.

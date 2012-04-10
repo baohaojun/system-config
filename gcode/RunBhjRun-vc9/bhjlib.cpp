@@ -876,91 +876,121 @@ bool file_exist(const cstring& path)
 
 }
 
-program_runner::program_runner(const cstring& cmd, which_output_t which, int timeout)
-{
-	ctor_helper(quote_str(cmd), which, timeout);
-}
+    /* start code-generator
+       perl -e '
+for $x (0..9) {
+    printf "%s\n", "program_runner::program_runner(const cstring& cmd,";
+    for $y (1..($x)) {
+    print "							   const cstring& arg$y,\n";
+    }
+    print "							   which_output_t which, int timeout)\n";
+    print "{\n";
+    printf "    ctor_helper(quote_str(cmd)\n";
+    for $y(1..$x) {
+    print "				+ \" \" + quote_str(arg$y)\n";
+    }
+    print "				,\n";
+    print "				which,\n";
+    print "				timeout);\n";
+    print "}\n\n";
+}'
 
-program_runner::program_runner(const cstring& cmd, 
-							   const cstring& arg1, 
+       end code-generator */
+    // start generated code
+program_runner::program_runner(const cstring& cmd,
 							   which_output_t which, int timeout)
 {
-	ctor_helper(quote_str(cmd)
-				+ " " + quote_str(arg1)
+    ctor_helper(quote_str(cmd)
 				,
-				which, 
+				which,
 				timeout);
 }
-program_runner::program_runner(const cstring& cmd, 
-							   const cstring& arg1, 
-							   const cstring& arg2, 
+
+program_runner::program_runner(const cstring& cmd,
+							   const cstring& arg1,
 							   which_output_t which, int timeout)
 {
-	ctor_helper(quote_str(cmd)
+    ctor_helper(quote_str(cmd)
+				+ " " + quote_str(arg1)
+				,
+				which,
+				timeout);
+}
+
+program_runner::program_runner(const cstring& cmd,
+							   const cstring& arg1,
+							   const cstring& arg2,
+							   which_output_t which, int timeout)
+{
+    ctor_helper(quote_str(cmd)
 				+ " " + quote_str(arg1)
 				+ " " + quote_str(arg2)
 				,
-				which, 
+				which,
 				timeout);
 }
-program_runner::program_runner(const cstring& cmd, 
-							   const cstring& arg1, 
-							   const cstring& arg2, 
-							   const cstring& arg3, 
+
+program_runner::program_runner(const cstring& cmd,
+							   const cstring& arg1,
+							   const cstring& arg2,
+							   const cstring& arg3,
 							   which_output_t which, int timeout)
 {
-	ctor_helper(quote_str(cmd)
+    ctor_helper(quote_str(cmd)
 				+ " " + quote_str(arg1)
 				+ " " + quote_str(arg2)
 				+ " " + quote_str(arg3)
 				,
-				which, 
+				which,
 				timeout);
 }
-program_runner::program_runner(const cstring& cmd, 
-							   const cstring& arg1, 
-							   const cstring& arg2, 
-							   const cstring& arg3, 
-							   const cstring& arg4, 
+
+program_runner::program_runner(const cstring& cmd,
+							   const cstring& arg1,
+							   const cstring& arg2,
+							   const cstring& arg3,
+							   const cstring& arg4,
 							   which_output_t which, int timeout)
 {
-	ctor_helper(quote_str(cmd)
+    ctor_helper(quote_str(cmd)
 				+ " " + quote_str(arg1)
 				+ " " + quote_str(arg2)
 				+ " " + quote_str(arg3)
 				+ " " + quote_str(arg4)
 				,
-				which, 
+				which,
 				timeout);
 }
-program_runner::program_runner(const cstring& cmd, 
-							   const cstring& arg1, 
-							   const cstring& arg2, 
-							   const cstring& arg3, 
-							   const cstring& arg4, 
-							   const cstring& arg5, 
+
+program_runner::program_runner(const cstring& cmd,
+							   const cstring& arg1,
+							   const cstring& arg2,
+							   const cstring& arg3,
+							   const cstring& arg4,
+							   const cstring& arg5,
 							   which_output_t which, int timeout)
 {
-	ctor_helper(quote_str(cmd)
+    ctor_helper(quote_str(cmd)
 				+ " " + quote_str(arg1)
 				+ " " + quote_str(arg2)
 				+ " " + quote_str(arg3)
 				+ " " + quote_str(arg4)
 				+ " " + quote_str(arg5)
 				,
-				which, 
+				which,
 				timeout);
 }
-program_runner::program_runner(const cstring& cmd, 
-							   const cstring& arg1, 
-							   const cstring& arg2, 
-							   const cstring& arg3, 
-							   const cstring& arg4, 
-							   const cstring& arg5, 
-							   const cstring& arg6, 
+
+program_runner::program_runner(const cstring& cmd,
+							   const cstring& arg1,
+							   const cstring& arg2,
+							   const cstring& arg3,
+							   const cstring& arg4,
+							   const cstring& arg5,
+							   const cstring& arg6,
 							   which_output_t which, int timeout)
 {
-	ctor_helper(quote_str(cmd)
+    ctor_helper(quote_str(cmd)
 				+ " " + quote_str(arg1)
 				+ " " + quote_str(arg2)
 				+ " " + quote_str(arg3)
@@ -968,20 +998,21 @@ program_runner::program_runner(const cstring& cmd,
 				+ " " + quote_str(arg5)
 				+ " " + quote_str(arg6)
 				,
-				which, 
+				which,
 				timeout);
 }
-program_runner::program_runner(const cstring& cmd, 
-							   const cstring& arg1, 
-							   const cstring& arg2, 
-							   const cstring& arg3, 
-							   const cstring& arg4, 
-							   const cstring& arg5, 
-							   const cstring& arg6, 
-							   const cstring& arg7, 
+
+program_runner::program_runner(const cstring& cmd,
+							   const cstring& arg1,
+							   const cstring& arg2,
+							   const cstring& arg3,
+							   const cstring& arg4,
+							   const cstring& arg5,
+							   const cstring& arg6,
+							   const cstring& arg7,
 							   which_output_t which, int timeout)
 {
-	ctor_helper(quote_str(cmd)
+    ctor_helper(quote_str(cmd)
 				+ " " + quote_str(arg1)
 				+ " " + quote_str(arg2)
 				+ " " + quote_str(arg3)
@@ -990,21 +1021,22 @@ program_runner::program_runner(const cstring& cmd,
 				+ " " + quote_str(arg6)
 				+ " " + quote_str(arg7)
 				,
-				which, 
+				which,
 				timeout);
 }
-program_runner::program_runner(const cstring& cmd, 
-							   const cstring& arg1, 
-							   const cstring& arg2, 
-							   const cstring& arg3, 
-							   const cstring& arg4, 
-							   const cstring& arg5, 
-							   const cstring& arg6, 
-							   const cstring& arg7, 
-							   const cstring& arg8, 
+
+program_runner::program_runner(const cstring& cmd,
+							   const cstring& arg1,
+							   const cstring& arg2,
+							   const cstring& arg3,
+							   const cstring& arg4,
+							   const cstring& arg5,
+							   const cstring& arg6,
+							   const cstring& arg7,
+							   const cstring& arg8,
 							   which_output_t which, int timeout)
 {
-	ctor_helper(quote_str(cmd)
+    ctor_helper(quote_str(cmd)
 				+ " " + quote_str(arg1)
 				+ " " + quote_str(arg2)
 				+ " " + quote_str(arg3)
@@ -1014,22 +1046,23 @@ program_runner::program_runner(const cstring& cmd,
 				+ " " + quote_str(arg7)
 				+ " " + quote_str(arg8)
 				,
-				which, 
+				which,
 				timeout);
 }
-program_runner::program_runner(const cstring& cmd, 
-							   const cstring& arg1, 
-							   const cstring& arg2, 
-							   const cstring& arg3, 
-							   const cstring& arg4, 
-							   const cstring& arg5, 
-							   const cstring& arg6, 
-							   const cstring& arg7, 
-							   const cstring& arg8, 
-							   const cstring& arg9, 
+
+program_runner::program_runner(const cstring& cmd,
+							   const cstring& arg1,
+							   const cstring& arg2,
+							   const cstring& arg3,
+							   const cstring& arg4,
+							   const cstring& arg5,
+							   const cstring& arg6,
+							   const cstring& arg7,
+							   const cstring& arg8,
+							   const cstring& arg9,
 							   which_output_t which, int timeout)
 {
-	ctor_helper(quote_str(cmd)
+    ctor_helper(quote_str(cmd)
 				+ " " + quote_str(arg1)
 				+ " " + quote_str(arg2)
 				+ " " + quote_str(arg3)
@@ -1040,8 +1073,11 @@ program_runner::program_runner(const cstring& cmd,
 				+ " " + quote_str(arg8)
 				+ " " + quote_str(arg9)
 				,
-				which, 
+				which,
 				timeout);
 }
+
+
+    // end generated code 
 
 CLOSE_NAMESPACE(bhj)

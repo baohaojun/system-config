@@ -3,13 +3,8 @@ echo $@ > ~/1.txt
 exec > ~/.logs/of.log 2>&1
 set -x
 
-function gvfs-open() {
-    setsid gvfs-open "$@"
-}
-export -f gvfs-open
-
 if test $# = 0; then
-    bash xdg-open "$(xclip -o -selection primary)"
+    setsid xdg-open "$(xclip -o -selection primary)"
 else 
-    bash xdg-open "$(lookup_file "$@")" 
+    setsid xdg-open "$(lookup_file "$@")" 
 fi
