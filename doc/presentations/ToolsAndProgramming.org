@@ -164,3 +164,24 @@ Grep 2G source code in 2 seconds.
 - Write your own dictionary. Do regexp tricks with it!
 
 - It's helpful for learning English, which is important for programming.
+* Fork my tools
+
+** It's all on github
+
+#+begin_example
+cd ~
+git clone --recursive \
+    git://github.com/baohaojun/windows-config.git
+~/bin/after-co-ln-s.sh
+~/bin/linux/after-check-out.sh
+#+end_example
+
+or, to save network bandwidth:
+
+#+begin_example
+# get the tarball into your ~ from
+# '\\bible\Public\user\baohaojun\windows-config.tgz'
+
+cd ~
+tar zxfv windows-config.tgz
+#+end_example

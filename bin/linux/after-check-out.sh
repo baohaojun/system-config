@@ -1,13 +1,16 @@
 #!/bin/bash
 
-#下载一些软件，比如antlr
 touch ~/.where ~/.where.lock
 
-sudo perl -npe 's/^XKBVARIANT=.*/XKBVARIANT="dvp"/;' -i /etc/default/keyboard
+if test $(whoami) = bhj; then
+    sudo perl -npe 's/^XKBVARIANT=.*/XKBVARIANT="dvp"/;' -i /etc/default/keyboard
+fi
 sudo touch /etc/console-setup/* || true
-sudo touch /etc/default/* || true #setupcon may fail when the
-				  #timestamp of these files are messed
-				  #up by debian installation.
+sudo touch /etc/default/* || true # setupcon may fail when the timestamp of
+				  # these files are messed up by debian
+				  # installation (time zone or ntp not available
+				  # because we are not connected to the
+				  # Internet).
 sudo setupcon
 sudo usermod -a -G fuse $USER
 
