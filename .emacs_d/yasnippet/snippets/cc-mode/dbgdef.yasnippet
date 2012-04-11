@@ -4,8 +4,8 @@
 #define debug(fmt, ...) do {			\
 	fprintf(stderr,				\
 		"%s %s() %d: " fmt "\n",	\
-		strchr(__FILE__, '/')		\
-		? strchr(__FILE__, '/') + 1	\
+		strrchr(__FILE__, '/')		\
+		? strrchr(__FILE__, '/') + 1	\
 		: __FILE__,			\
 		__FUNCTION__, __LINE__,		\
 		##__VA_ARGS__);			\

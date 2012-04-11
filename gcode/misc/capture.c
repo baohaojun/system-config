@@ -26,14 +26,15 @@
 #include <linux/videodev2.h>
 #include <linux/fb.h>
 #include <stdint.h>
+#include "struct-dump.h"
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 
 #define debug(fmt, ...) do {			\
 	fprintf(stderr,				\
 		"%s %s() %d: " fmt "\n",	\
-		strchr(__FILE__, '/')		\
-		? strchr(__FILE__, '/') + 1	\
+		strrchr(__FILE__, '/')		\
+		? strrchr(__FILE__, '/') + 1	\
 		: __FILE__,			\
 		__FUNCTION__, __LINE__,		\
 		##__VA_ARGS__);			\
@@ -71,6 +72,9 @@
 	    printf("OK: %s is not equal to %s\n", #a, #b);	\
 	}							\
     } while (0)
+
+#define XRES 320
+#define YRES 240
 
 typedef enum {
     IO_METHOD_READ,
@@ -169,8 +173,8 @@ static void
 process_image                   (const void *           p)
 {
 
-    int xres = 640;
-    int yres = 480;
+    int xres = XRES;
+    int yres = YRES;
 
     unsigned char* yuvp = (unsigned char*) p;
     
@@ -630,6 +634,37 @@ init_userp			(unsigned int		buffer_size)
     }
 }
 
+char *desc_v4l2_buf_type[] = {
+	[V4L2_BUF_TYPE_VIDEO_CAPTURE] = "VIDEO_CAPTURE",
+	[V4L2_BUF_TYPE_VIDEO_OUTPUT]  = "VIDEO_OUTPUT",
+	[V4L2_BUF_TYPE_VIDEO_OVERLAY] = "VIDEO_OVERLAY",
+	[V4L2_BUF_TYPE_VBI_CAPTURE]   = "VBI_CAPTURE",
+	[V4L2_BUF_TYPE_VBI_OUTPUT]    = "VBI_OUTPUT",
+	[V4L2_BUF_TYPE_PRIVATE]       = "PRIVATE",
+};
+
+struct struct_desc desc_v4l2_fmtdesc[] = {{
+	.type   = UINT32,
+	.name   = "index",
+},{
+	.type   = ENUM32,
+	.name   = "type",
+	.enums  = desc_v4l2_buf_type,
+	.length = sizeof(desc_v4l2_buf_type) / sizeof(char*),
+},{
+	.type   = UINT32,
+	.name   = "flags",
+},{
+	.type   = STRING,
+	.name   = "description",
+	.length = 32,
+},{
+	.type   = FOURCC,
+	.name   = "pixelformat",
+},{
+	/* end of list */
+}};
+
 static void
 init_device                     (void)
 {
@@ -707,13 +742,55 @@ init_device                     (void)
     CLEAR (fmt);
 
     fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    fmt.fmt.pix.width       = 640; 
-    fmt.fmt.pix.height      = 480;
+    fmt.fmt.pix.width       = XRES; 
+    fmt.fmt.pix.height      = YRES;
     fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-    fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
+    fmt.fmt.pix.field       = V4L2_FIELD_NONE;
 
-    if (-1 == xioctl (fd, VIDIOC_S_FMT, &fmt))
+    
+    int i;
+    for (i = 0;; i++) {
+	struct v4l2_fmtdesc fmtdesc;
+	memset(&fmtdesc,0,sizeof(fmtdesc));
+	fmtdesc.index = i;
+	fmtdesc.type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	if (-1 == ioctl(fd,VIDIOC_ENUM_FMT,&fmtdesc))
+	    break;
+	printf("    VIDIOC_ENUM_FMT(%d,VIDEO_CAPTURE)\n",i);
+	print_struct(stdout,desc_v4l2_fmtdesc,&fmtdesc,"",0);
+    }
+
+    if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt)) {
+	ddebug(fmt.fmt.pix.width);
+	ddebug(fmt.fmt.pix.height);
+	xdebug(fmt.fmt.pix.pixelformat);
+	errno_exit ("VIDIOC_G_FMT");
+    }
+
+    ddebug(fmt.fmt.pix.width);
+    ddebug(fmt.fmt.pix.height);
+    xdebug(fmt.fmt.pix.pixelformat);
+    xdebug(fmt.fmt.pix.field);
+
+
+    if (-1 == xioctl (fd, VIDIOC_S_FMT, &fmt)) {
+	ddebug(fmt.fmt.pix.width);
+	ddebug(fmt.fmt.pix.height);
+	
+	if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt)) {
+	    ddebug(fmt.fmt.pix.width);
+	    ddebug(fmt.fmt.pix.height);
+	    xdebug(fmt.fmt.pix.pixelformat);
+	    errno_exit ("VIDIOC_G_FMT");
+	}
+
+	ddebug(fmt.fmt.pix.width);
+	ddebug(fmt.fmt.pix.height);
+	xdebug(fmt.fmt.pix.pixelformat);
+	xdebug(fmt.fmt.pix.field);
+
 	errno_exit ("VIDIOC_S_FMT");
+    }
 
     /* Note VIDIOC_S_FMT may change width and height. */
 
