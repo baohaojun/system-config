@@ -32,9 +32,30 @@ use strict;
 
 # Dance around to find the actual android toolchain path (it's very
 # deep, so links on $PATH are going to be common.
+
+my $arm_mk = `lookup_file build/core/combo/TARGET_linux-arm.mk`;
+chomp($arm_mk);
+
+open(my $file, "<", $arm_mk) or die "can not open build/core/combo/TARGET_linux-arm.mk";
+
 my $GCC = `lookup_file prebuilt/linux-x86/toolchain/arm-eabi-4.2.1/bin/arm-eabi-gcc`;
 chomp($GCC);
-die "bad arm-eabi-gcc path" if $GCC !~ /(.*)\/prebuilt\//;
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+while (<$file>) {
+  if (m#.*prebuilt/\$\(HOST_PREBUILT_TAG\)/toolchain(.*)#) {
+    $GCC = "prebuilt/linux-x86/toolchain$1gcc";
+    chomp($GCC = `lookup_file $GCC`);
+    last;
+  }
+}
+close($file);
+
+die "bad arm-eabi-gcc path" if not -e $GCC;
+$GCC =~ m#(.*)/prebuilt/# or die "gcc not under prebuilt";
 my $DROID = $1;
 
 if (not -e "$DROID/target_out_symlink") {
@@ -46,7 +67,8 @@ my $ALIB = qx(readlink -f "$DROID/target_out_symlink");
 chomp($ALIB);
 $ALIB .= "/obj/lib";
 
-my $TOOLCHAIN = "$DROID/prebuilt/linux-x86/toolchain/arm-eabi-4.2.1";
+$GCC =~ m#(.*)/bin/#;
+my $TOOLCHAIN = $1;
 $ENV{"PATH"} = $TOOLCHAIN . "/bin:" . $ENV{"PATH"};
 
 my @include_paths = (
@@ -93,6 +115,7 @@ my @compile_args = (
     "-mthumb-interwork",
     "-fpic",
     "-fno-exceptions",
+    "-fno-short-enums",
     "-ffunction-sections",
     "-funwind-tables", # static exception-like tables
     "-fstack-protector", # check guard variable before return
@@ -111,34 +134,41 @@ my @optimize_args = (
     "-funswitch-loops");
 
 my @link_args = (
-    "-Bdynamic",
-    "-Wl,-T,$DROID/build/core/armelf.x",
-    "-Wl,-dynamic-linker,/system/bin/linker",
-    "-Wl,--gc-sections",
-    "-Wl,-z,nocopyreloc",
-    "-Wl,--no-undefined",
-    "-Wl,-rpath-link=$ALIB",
-    "-L$ALIB",
-    "-nostdlib",
-    "$ALIB/crtend_android.o",
-    "$ALIB/crtbegin_dynamic.o",
-    "$TOOLCHAIN/lib/gcc/arm-eabi/4.2.1/interwork/libgcc.a",
-    "-lc",
-    "-lm");
-    
+		 "-Bdynamic",
+		 "-Wl,-T,$DROID/build/core/armelf.x",
+		 "-Wl,-dynamic-linker,/system/bin/linker",
+		 "-Wl,--gc-sections",
+		 "-Wl,-z,nocopyreloc",
+		 "-Wl,--no-undefined",
+		 "-Wl,-rpath-link=$ALIB",
+		 "-L$ALIB",
+		 "-nostdlib",
+		 "$ALIB/crtend_android.o",
+		 "$ALIB/crtbegin_dynamic.o",
+		 glob("$TOOLCHAIN/lib/gcc/*/*/interwork/libgcc.a " .
+		      "$TOOLCHAIN/lib/gcc/*/*/libgcc.a " .
+		      "$TOOLCHAIN/lib/gcc/*/*/*/libgcc.a"
+		     ),
+		 "-lc",
+		 "-lm"
+		);
+
 # Also need: -Wl,-soname,libXXXX.so
 my @shared_args = (
-    "-nostdlib",
-    "-Wl,-T,$DROID/build/core/armelf.xsc",
-    "-Wl,--gc-sections",
-    "-Wl,-shared,-Bsymbolic",
-    "-L$ALIB",
-    "-Wl,--no-whole-archive",
-    "-lc",
-    "-lm",
-    "-Wl,--no-undefined",
-    "$TOOLCHAIN/lib/gcc/arm-eabi/4.2.1/interwork/libgcc.a",
-    "-Wl,--whole-archive"); # .a, .o input files go *after* here
+		   "-nostdlib",
+		   "-Wl,-T,$DROID/build/core/armelf.xsc",
+		   "-Wl,--gc-sections",
+		   "-Wl,-shared,-Bsymbolic",
+		   "-L$ALIB",
+		   "-Wl,--no-whole-archive",
+		   "-lc",
+		   "-lm",
+		   "-Wl,--no-undefined",
+		   glob("$TOOLCHAIN/lib/gcc/*/*/interwork/libgcc.a " .
+			"$TOOLCHAIN/lib/gcc/*/*/libgcc.a " .
+			"$TOOLCHAIN/lib/gcc/*/*/*/libgcc.a"
+		       ),
+		   "-Wl,--whole-archive"); # .a, .o input files go *after* here
 
 # Now implement a quick parser for a gcc-like command line
 
@@ -182,7 +212,7 @@ if($mode eq "-shared") { $need_shlink = 1; }
 if($have_src and $mode ne "-E") { $need_cpp = $need_compile = 1; }
 
 # Assemble the command:
-my @cmd = ("arm-eabi-gcc");
+my @cmd = ($GCC);
 if($mode ne "DEFAULT") { @cmd = (@cmd, $mode); }
 if(defined $out) { @cmd = (@cmd, "-o", $out); }
 if($need_cpp) { @cmd = (@cmd, @include_paths, @preprocess_args); }

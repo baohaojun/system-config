@@ -73,8 +73,8 @@
 	}							\
     } while (0)
 
-#define XRES 320
-#define YRES 240
+#define XRES 480
+#define YRES 360
 
 typedef enum {
     IO_METHOD_READ,
@@ -114,6 +114,7 @@ xioctl(int                    fd,
 {
     int r;
 
+    xdebug(request);
     do r = ioctl (fd, request, arg);
     while (-1 == r && EINTR == errno);
 
@@ -321,6 +322,7 @@ read_frame(void)
 
 	process_image (buffers[buf.index].start);
 
+	system("echo shit; sleep 5");
 	if (-1 == xioctl (fd, VIDIOC_QBUF, &buf))
 	    errno_exit ("VIDIOC_QBUF");
 
@@ -355,7 +357,7 @@ read_frame(void)
 	assert (i < n_buffers);
 
 	process_image ((void *) buf.m.userptr);
-
+	system("echo shit;sleep 5");
 	if (-1 == xioctl (fd, VIDIOC_QBUF, &buf))
 	    errno_exit ("VIDIOC_QBUF");
 
@@ -469,9 +471,10 @@ start_capturing                 (void)
 	    buf.type        = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	    buf.memory      = V4L2_MEMORY_USERPTR;
 	    buf.index       = i;
-	    buf.m.userptr	= (unsigned long) buffers[i].start;
+            buf.m.userptr   = (unsigned long) buffers[i].start;
 	    buf.length      = buffers[i].length;
 
+	    system("echo shit;sleep 5");
 	    if (-1 == xioctl (fd, VIDIOC_QBUF, &buf))
 		errno_exit ("VIDIOC_QBUF");
 	}
@@ -541,6 +544,8 @@ init_mmap			(void)
     req.memory              = V4L2_MEMORY_MMAP;
 
     if (-1 == xioctl (fd, VIDIOC_REQBUFS, &req)) {
+	
+
 	if (EINVAL == errno) {
 	    fprintf (stderr, "%s does not support "
 		     "memory mapping\n", dev_name);
@@ -550,7 +555,8 @@ init_mmap			(void)
 	}
     }
 
-    if (req.count < 2) {
+    ddebug(req.count);
+    if (req.count < 1) {
 	fprintf (stderr, "Insufficient buffer memory on %s\n",
 		 dev_name);
 	exit (EXIT_FAILURE);
@@ -606,6 +612,7 @@ init_userp			(unsigned int		buffer_size)
     req.memory              = V4L2_MEMORY_USERPTR;
 
     if (-1 == xioctl (fd, VIDIOC_REQBUFS, &req)) {
+	xdebug(VIDIOC_REQBUFS);
 	if (EINVAL == errno) {
 	    fprintf (stderr, "%s does not support "
 		     "user pointer i/o\n", dev_name);
@@ -614,18 +621,22 @@ init_userp			(unsigned int		buffer_size)
 	    errno_exit ("VIDIOC_REQBUFS");
 	}
     }
+    xdebug(req.count);
 
-    buffers = calloc (4, sizeof (*buffers));
+    buffers = calloc (req.count, sizeof (*buffers));
 
     if (!buffers) {
 	fprintf (stderr, "Out of memory\n");
 	exit (EXIT_FAILURE);
     }
 
-    for (n_buffers = 0; n_buffers < 4; ++n_buffers) {
+    for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
 	buffers[n_buffers].length = buffer_size;
 	buffers[n_buffers].start = memalign (/* boundary */ page_size,
 					     buffer_size);
+	xdebug(buffers[n_buffers].start);
+	memset(buffers[n_buffers].start, 0, buffer_size);
+	xdebug(page_size);
 
 	if (!buffers[n_buffers].start) {
 	    fprintf (stderr, "Out of memory\n");
@@ -665,6 +676,63 @@ struct struct_desc desc_v4l2_fmtdesc[] = {{
 	/* end of list */
 }};
 
+char *desc_input_type[32] = {
+	[ V4L2_INPUT_TYPE_TUNER ]  = "TUNER",
+	[ V4L2_INPUT_TYPE_CAMERA ] = "CAMERA",
+};
+
+char *bits_standard[64] = {
+	"PAL_B",      "PAL_B1",      "PAL_G",   "PAL_H",
+	"PAL_I",      "PAL_D",       "PAL_D1",  "PAL_K",
+	"PAL_M",      "PAL_N",       "PAL_Nc",  "PAL_60",
+	"NTSC_M",     "NTSC_M_JP",   "?", "?",
+	"SECAM_B",    "SECAM_D",     "SECAM_G", "SECAM_H",
+	"SECAM_K",    "SECAM_K1",    "SECAM_L", "?"
+	"ATSC_8_VSB", "ATSC_16_VSB",
+};
+
+char *bits_input_status[32] = {
+	"NO_POWER", "NO_SIGNAL", "NO_COLOR", "?",
+	"?","?","?","?",
+	"NO_H_LOCK", "COLOR_KILL", "?", "?",
+	"?","?","?","?",
+	"NO_SYNC", "NO_EQU", "NO_CARRIER", "?",
+	"?","?","?","?",
+	"MACROVISION", "NO_ACCESS", "VTR", "?",
+	"?","?","?","?",
+};
+
+struct struct_desc desc_v4l2_input[] = {
+    {
+	.type   = UINT32,
+	.name   = "index",
+    },{
+	.type   = STRING,
+	.name   = "name",
+	.length = 32,
+    },{
+	.type   = ENUM32,
+	.name   = "type",
+	.enums  = desc_input_type,
+	.length = sizeof(desc_input_type) / sizeof(char*),
+    },{
+	.type   = UINT32,
+	.name   = "audioset",
+    },{
+	.type   = UINT32,
+	.name   = "tuner",
+    },{
+	.type   = BITS64,
+	.name   = "std",
+	.bits   = bits_standard
+    },{
+	.type   = BITS32,
+	.name   = "status",
+	.bits   = bits_input_status,
+    },{
+	/* end of list */
+    }
+};
 static void
 init_device                     (void)
 {
@@ -742,22 +810,75 @@ init_device                     (void)
     CLEAR (fmt);
 
     fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    fmt.fmt.pix.width       = XRES; 
-    fmt.fmt.pix.height      = YRES;
-    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-    fmt.fmt.pix.field       = V4L2_FIELD_NONE;
 
-    
-    int i;
-    for (i = 0;; i++) {
-	struct v4l2_fmtdesc fmtdesc;
-	memset(&fmtdesc,0,sizeof(fmtdesc));
-	fmtdesc.index = i;
-	fmtdesc.type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-	if (-1 == ioctl(fd,VIDIOC_ENUM_FMT,&fmtdesc))
-	    break;
-	printf("    VIDIOC_ENUM_FMT(%d,VIDEO_CAPTURE)\n",i);
-	print_struct(stdout,desc_v4l2_fmtdesc,&fmtdesc,"",0);
+    xdebug(VIDIOC_QUERYCAP);
+    xdebug(VIDIOC_RESERVED);
+    xdebug(VIDIOC_ENUM_FMT);
+    xdebug(VIDIOC_G_FMT);
+    xdebug(VIDIOC_S_FMT);
+    xdebug(VIDIOC_REQBUFS);
+    xdebug(VIDIOC_QUERYBUF);
+    xdebug(VIDIOC_G_FBUF);
+    xdebug(VIDIOC_S_FBUF);
+    xdebug(VIDIOC_OVERLAY);
+    xdebug(VIDIOC_QBUF);
+    xdebug(VIDIOC_DQBUF);
+    xdebug(VIDIOC_STREAMON);
+    xdebug(VIDIOC_STREAMOFF);
+    xdebug(VIDIOC_G_PARM);
+    xdebug(VIDIOC_S_PARM);
+    xdebug(VIDIOC_G_STD);
+    xdebug(VIDIOC_S_STD);
+    xdebug(VIDIOC_ENUMSTD);
+    xdebug(VIDIOC_ENUMINPUT);
+    xdebug(VIDIOC_G_CTRL);
+    xdebug(VIDIOC_S_CTRL);
+    xdebug(VIDIOC_G_TUNER);
+    xdebug(VIDIOC_S_TUNER);
+    xdebug(VIDIOC_G_AUDIO);
+    xdebug(VIDIOC_S_AUDIO);
+    xdebug(VIDIOC_QUERYCTRL);
+    xdebug(VIDIOC_QUERYMENU);
+    xdebug(VIDIOC_G_INPUT);
+    xdebug(VIDIOC_S_INPUT);
+    xdebug(VIDIOC_G_OUTPUT);
+    xdebug(VIDIOC_S_OUTPUT);
+    xdebug(VIDIOC_ENUMOUTPUT);
+    xdebug(VIDIOC_G_AUDOUT);
+    xdebug(VIDIOC_S_AUDOUT);
+    xdebug(VIDIOC_G_MODULATOR);
+    xdebug(VIDIOC_S_MODULATOR);
+    xdebug(VIDIOC_G_FREQUENCY);
+    xdebug(VIDIOC_S_FREQUENCY);
+    xdebug(VIDIOC_CROPCAP);
+    xdebug(VIDIOC_G_CROP);
+    xdebug(VIDIOC_S_CROP);
+    xdebug(VIDIOC_G_JPEGCOMP);
+    xdebug(VIDIOC_S_JPEGCOMP);
+    xdebug(VIDIOC_QUERYSTD);
+    xdebug(VIDIOC_TRY_FMT);
+    xdebug(VIDIOC_ENUMAUDIO);
+    xdebug(VIDIOC_ENUMAUDOUT);
+    xdebug(VIDIOC_G_PRIORITY);
+    xdebug(VIDIOC_S_PRIORITY);
+    xdebug(VIDIOC_G_SLICED_VBI_CAP);
+    xdebug(VIDIOC_LOG_STATUS);
+    xdebug(VIDIOC_G_EXT_CTRLS);
+    xdebug(VIDIOC_S_EXT_CTRLS);
+    xdebug(VIDIOC_TRY_EXT_CTRLS);
+    xdebug(VIDIOC_ENUM_FRAMESIZES);
+    xdebug(VIDIOC_ENUM_FRAMEINTERVALS);
+    xdebug(VIDIOC_G_ENC_INDEX);
+    xdebug(VIDIOC_ENCODER_CMD);
+    xdebug(VIDIOC_TRY_ENCODER_CMD);
+    xdebug(VIDIOC_DBG_S_REGISTER);
+    xdebug(VIDIOC_DBG_G_REGISTER);
+    xdebug(VIDIOC_DBG_G_CHIP_IDENT);
+    xdebug(VIDIOC_S_HW_FREQ_SEEK);
+
+    int index = 1;
+    if (-1 == xioctl(fd, VIDIOC_S_INPUT, &index)) {
+	errno_exit("VIDIOC_S_INPUT");
     }
 
     if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt)) {
@@ -771,6 +892,35 @@ init_device                     (void)
     ddebug(fmt.fmt.pix.height);
     xdebug(fmt.fmt.pix.pixelformat);
     xdebug(fmt.fmt.pix.field);
+
+
+    fmt.fmt.pix.width       = XRES; 
+    fmt.fmt.pix.height      = YRES;
+    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUV422P;
+    fmt.fmt.pix.field       = V4L2_FIELD_ANY;
+
+    
+    int i;
+
+    for (i = 0;; i++) {
+	struct v4l2_input       input;
+	memset(&input,0,sizeof(input));
+	input.index = i;
+	if (-1 == ioctl(fd,VIDIOC_ENUMINPUT,&input))
+	    break;
+	printf("    VIDIOC_ENUMINPUT(%d)\n",i);
+	print_struct(stdout,desc_v4l2_input,&input,"",0);
+    }
+    for (i = 0;; i++) {
+	struct v4l2_fmtdesc fmtdesc;
+	memset(&fmtdesc,0,sizeof(fmtdesc));
+	fmtdesc.index = i;
+	fmtdesc.type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	if (-1 == ioctl(fd,VIDIOC_ENUM_FMT,&fmtdesc))
+	    break;
+	printf("    VIDIOC_ENUM_FMT(%d,VIDEO_CAPTURE)\n",i);
+	print_struct(stdout,desc_v4l2_fmtdesc,&fmtdesc,"",0);
+    }
 
 
     if (-1 == xioctl (fd, VIDIOC_S_FMT, &fmt)) {
@@ -812,6 +962,7 @@ init_device                     (void)
 	break;
 
     case IO_METHOD_USERPTR:
+	xdebug(fmt.fmt.pix.sizeimage);
 	init_userp (fmt.fmt.pix.sizeimage);
 	break;
     }

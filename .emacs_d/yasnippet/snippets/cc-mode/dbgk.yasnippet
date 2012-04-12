@@ -1,0 +1,43 @@
+# -*- mode: snippet -*-
+# name: dbgdef
+# --
+#define debug(fmt, ...) do {			\
+	printk("%s %s() %d: " fmt "\n",	        \
+		strrchr(__FILE__, '/')		\
+		? strrchr(__FILE__, '/') + 1	\
+		: __FILE__,			\
+		__FUNCTION__, __LINE__,		\
+		##__VA_ARGS__);			\
+ } while(0)
+
+#define ddebug(a) do {				\
+	debug(#a " is %d", (a));		\
+ } while(0)
+
+#define xdebug(a) do {				\
+	debug(#a " is 0x%x", (a));              \
+ } while(0)
+
+#define die(fmt, ...) do {			\
+	debug(fmt, ##__VA_ARGS__);		\
+	exit(-1);				\
+ } while(0)
+
+#define ASSERT_EQUAL(a,b) do {					\
+	if ((a) != (b)) {					\
+	    printk("error: %s is not equal to %s\n ", #a,  #b); \
+	    exit(-1);						\
+	} else {						\
+	    printk("OK: %s is equal to %s\n", #a, #b);		\
+	}							\
+    } while (0)
+
+
+#define ASSERT_NOT_EQUAL(a,b) do {				\
+	if ((a) == (b)) {					\
+	    printk("error: %s is equal to %s\n", #a, #b);	\
+	    exit(-1);						\
+	} else {						\
+	    printk("OK: %s is not equal to %s\n", #a, #b);	\
+	}							\
+    } while (0)
