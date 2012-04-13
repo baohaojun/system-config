@@ -143,7 +143,15 @@ beagrep -e 'start code-generator'
     It's so long, and so ugly!
 
 ** beagrep
-Grep 2G source code in 2 seconds.
+*** Grep 2G source code in 2 seconds.
+*** Why does it work?
+    - Because regexp is simple; you grep by full words. No ~r.*e.*a.*d.*l.*i.*n.*k~
+*** Why is it so fast?
+    - Because you grep *interesting* words.
+      - Do not grep ~include~ in C.
+      - Do not grep ~import~ in Java.
+      - If you do, there should be other *interesting* words.
+
 ** grep-gtags
 
 - When there are multiple matches.
@@ -172,8 +180,8 @@ Grep 2G source code in 2 seconds.
 cd ~
 git clone --recursive \
     git://github.com/baohaojun/windows-config.git
-~/bin/after-co-ln-s.sh
-~/bin/linux/after-check-out.sh
+~/windows-config/bin/after-co-ln-s.sh
+~/windows-config/bin/linux/after-check-out.sh
 #+end_example
 
 or, to save network bandwidth:
@@ -184,4 +192,6 @@ or, to save network bandwidth:
 
 cd ~
 tar zxfv windows-config.tgz
+~/windows-config/bin/after-co-ln-s.sh
+~/windows-config/bin/linux/after-check-out.sh
 #+end_example
