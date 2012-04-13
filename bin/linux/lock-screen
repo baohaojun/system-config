@@ -1,4 +1,4 @@
 #!/bin/bash
-ps-kill-all gnome-screensaver
-slock
-ps-kill-all gnome-screensaver
+
+gnome-screensaver-command -a -l&
+sleep 5 && xset dpms force off
