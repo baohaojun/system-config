@@ -60,7 +60,7 @@ plugin-example|Example of function layer plugin parser:\
 	:langmap=ruby\:.rb:\
 	:langmap=perl\:.pl:\
 	:langmap=python\:.py:\
-	:langmap=make\:(*.am)([mM]akefile).mk.make:\
+	:langmap=make\:(*.am)([mM]akefile*)(Kbuild*).mk.make:\
 	:langmap=vim\:.vim:\
 	:langmap=javascript\:.js:\
 	:langmap=matlab\:.m:\
