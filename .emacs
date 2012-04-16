@@ -188,11 +188,11 @@
   (setq indent-tabs-mode nil)
   (setq c-basic-offset 4))
 
-(setq auto-mode-alist (cons '(".*/kernel.*\\.[ch]$" . linux-c-mode)
-			    (cons '("logcat.log.*" . fundamental-mode)
-				  auto-mode-alist)))
-(setq auto-mode-alist (cons '(".*\\.cpp$" . linux-c++-mode)
-                            auto-mode-alist))
+(setq auto-mode-alist (append '((".*/kernel.*\\.[ch]$" . linux-c-mode)
+				("logcat.log.*" . fundamental-mode)
+				(".*\\.cpp$" . linux-c++-mode)
+				("Kbuild*" . makefile-gmake-mode))			      
+				  auto-mode-alist))
 
 (setq frame-title-format "emacs@%b")
 (auto-image-file-mode)
