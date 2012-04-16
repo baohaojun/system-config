@@ -8259,16 +8259,19 @@ handler. "
              (lambda (entry)
                (let* ((size (elt entry 0))
                       (url (elt entry 1))
-                      (properties
-                       (gethash url
-                                (gethash size twittering-icon-prop-hash))))
-                 (insert (if size
-                             (format "(%d " size)
-                           "(nil "))
-                 (prin1 url (current-buffer))
-                 (insert " ")
-                 (prin1 properties (current-buffer))
-                 (insert ")\n")))
+                      properties)
+                 ;; Do not save embeded images inside tweet.
+                 (unless (string-match "ww[0-9]+.sinaimg.cn" url)
+                   (setq properties
+                         (gethash url
+                                  (gethash size twittering-icon-prop-hash)))
+                   (insert (if size
+                               (format "(%d " size)
+                             "(nil "))
+                   (prin1 url (current-buffer))
+                   (insert " ")
+                   (prin1 properties (current-buffer))
+                   (insert ")\n"))))
              stored-data)
             (insert "))")))))))
 
