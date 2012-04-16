@@ -73,7 +73,14 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then
     if test "$NO_PUTCLIP" = true; then
         "`basename -- $0`" "$@"
     else
-        "`basename -- $0`" "$@"|tee /dev/tty|putclip
+	out=/dev/null
+	if tty >/dev/null 2>&1;
+	then 
+	    out=/dev/tty
+	fi
+        "`basename -- $0`" "$@" |
+	tee $out |
+	putclip
     fi
 else
     for x in swp sup wp up mp tmp gitp; do 

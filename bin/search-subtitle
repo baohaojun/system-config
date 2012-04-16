@@ -1,0 +1,15 @@
+#!/bin/bash
+
+test $# = 0 && set -- "$(getclip)"
+
+set -- "$(echo "$@" | perl -npe 's/ /-/g')"
+
+url=$(
+    echo -n "http://www.mysubtitles.com/subtitles/search/";
+    echo -n "$@" | perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf("%%%02x", ord($1))#seg; s# #+#g'
+    echo /en
+)
+echo "$url"|tee /dev/tty|putclip
+of "$url"&
+
+
