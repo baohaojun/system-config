@@ -8,7 +8,6 @@ mkdir -p ~/external/bin/linux/ext/`uname -m` \
 
 function download_lisp() {
     mkdir -p ~/external/.emacs_d/lisp/ext/
-    ln -sf ~/external/.emacs_d/lisp/ext ~/.emacs_d/lisp/
     builtin cd ~/.emacs_d/lisp/ext/
 }
 
