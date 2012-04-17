@@ -7,6 +7,7 @@ function fix-it() {
 	target=$(cat "$1" | pn 2)
 	target=$(relative-path "$target" $(pwd)/)
 	echo gitdir: "$target" | tee "$1"
+	git config core.worktree $(readlink -f .)
     )
 }
 
