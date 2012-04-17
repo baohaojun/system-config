@@ -34,6 +34,7 @@ done
 test $user_cron = false && { diff ~/.crontab.tmp ~/.crontab || crontab ~/.crontab; }
 git submodule init
 git submodule update
-git submodule foreach 'bash -c "git-pull-mac&"' | grep . 
+git submodule foreach 'bash -c "git-pull-mac&"' | grep .
+fix-submodule-dot-git
 ~/bin/after-co-ln-s.sh
 touch ~/windows-config/.for-code-reading

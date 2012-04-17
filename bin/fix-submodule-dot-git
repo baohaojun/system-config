@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function fix-it() {
+    (
+	set -e
+	cd $(dirname "$1")
+	target=$(cat "$1" | pn 2)
+	target=$(relative-path "$target" $(pwd)/)
+	echo gitdir: "$target" | tee "$1"
+    )
+}
+
+export -f fix-it
+
+find $(pwd) -name .git -type f | xargs bash -c 'for x in "$@"; do fix-it "$x"; done' true

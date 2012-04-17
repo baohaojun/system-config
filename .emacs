@@ -191,7 +191,8 @@
 (setq auto-mode-alist (append '((".*/kernel.*\\.[ch]$" . linux-c-mode)
 				("logcat.log.*" . fundamental-mode)
 				(".*\\.cpp$" . linux-c++-mode)
-				("Kbuild*" . makefile-gmake-mode))			      
+				("Kbuild*" . makefile-gmake-mode)
+				("makefile*" . makefile-gmake-mode))
 				  auto-mode-alist))
 
 (setq frame-title-format "emacs@%b")

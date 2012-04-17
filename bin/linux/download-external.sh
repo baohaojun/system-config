@@ -5,27 +5,6 @@ mkdir -p ~/external/bin/linux/ext/`uname -m` \
     ~/external/bin/linux/ext/media-wiki-images \
     ~/external/bin/linux/ext/media-wiki-thumb \
     ~/external/bin/linux/ext/media-wiki-math
-function download_antlr() {
-    mkdir -p ~/external/bin/linux/ext
-    builtin cd ~/bin/linux/ext/
-    wget http://android.git.kernel.org/repo
-    chmod +x repo
-
-    ext_download=(
-        http://www.antlr.org/download/antlr-3.2.tar.gz
-        http://www.antlr.org/download/antlr-3.2.jar
-        http://www.antlr.org/download/antlrworks-1.3.1.jar
-        http://www.stringtemplate.org/download/stringtemplate-3.2.1.tar.gz
-    )
-    for x in "${ext_download[@]}"; do 
-        while ! wget -c --timeout 30 --connect-timeout 30 --tries 1 $x; do echo `basename $x` 'download failed, retry!'; done
-    done
-    ln -sf antlr-3.2.jar antlr3.jar
-    tar zxfv stringtemplate*tar.gz
-    ln -sf stringte*/lib/string*.jar stringtemplate.jar
-    ln -sf antlrworks-1.3.1.jar antlrworks.jar
-
-}
 
 function download_lisp() {
     mkdir -p ~/external/.emacs_d/lisp/ext/
@@ -55,7 +34,6 @@ EOF
 }
 
 function download_external() {
-    download_antlr
     download_lisp
     download_books    
 }

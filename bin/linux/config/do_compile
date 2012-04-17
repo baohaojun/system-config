@@ -4,7 +4,7 @@ function compile_beagrep() {
     cd ~/gcode/beagrep
     git clean -xfd
     git fetch origin $(uname|perl -npe 's/_.*//')
-    git co FETCH_HEAD
+    git checkout FETCH_HEAD
     autoreconf -i
     ./configure
     make
