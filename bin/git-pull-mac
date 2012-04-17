@@ -1,9 +1,6 @@
 #!/bin/bash
 
 set -e
-crontab -l > ~/.crontab.tmp
-user_cron=true
-diff ~/.crontab.tmp ~/.crontab >/dev/null 2>&1 && user_cron=false
 test $PWD = ~ && cd ~/windows-config/
 cd "$(dirname "$(lookup_file .git)")"
 
@@ -31,7 +28,9 @@ for x in $(git branch -a |grep 'remotes.*from-mac'|grep -v origin-w); do
 	fi
     fi
 done
-test $user_cron = false && { diff ~/.crontab.tmp ~/.crontab || crontab ~/.crontab; }
+if test "$USER" = bhj; then
+    crontab ~/.crontab
+fi
 git submodule init
 git submodule update
 git submodule foreach 'bash -c "git-pull-mac&"' | grep .

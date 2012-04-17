@@ -35,6 +35,10 @@ cp ~/doc/monaco-linux.ttf ~/.fonts
 fc-cache -v
 
 #设置gmail邮件
-test `whoami` = bhj && . config_email || true
-test `whoami` = bhj && sudo apt-get install texlive-full || true
-test `whoami` = bhj && crontab ~/.crontab
+
+if test "$USER" = bhj; then
+    set +e
+    . config_email
+    sudo apt-get install texlive-full 
+    crontab ~/.crontab
+fi
