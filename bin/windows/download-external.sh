@@ -3,7 +3,7 @@
 function my-read() {
     echo -- "$@" > my-read.$$.txt
     notepad my-read.$$.txt || true
-    rm my-read.$$.txt || true
+    rm -f my-read.$$.txt || true
 }
 
 function mkdir() {
@@ -275,6 +275,11 @@ function get-ms-addons()
 
 function setup-vc6-env() {
     unset PATHVC
+    for x in ~/vc6/path/* ~/vc6/inc/* ~/vc6/lib/*; do
+	if test ! -e "$x"; then
+	    my-read -p "setup-vc6-env: $x is $(readlink -m "$x"); but it does not exist"
+	fi
+    done
     for x in ~/vc6/path/*; do export PATHVC=$PATHVC:`readlink -m "$x"`; done
     export PATH=~/bin/:$PATHVC:$PATH
     export INCLUDE=`for x in ~/vc6/inc/*; do readlink -f "$x"; done|u2dpath`
@@ -393,7 +398,7 @@ index 4efd727..06317c7 100644
  /*
   * For the same reason as the one above we are not able to detect easily use
 EOF
-        cmd.exe /c configure.bat msvc6; cd build/lib; nmake /fmsvc.mak install
+        (set +e; cmd.exe /c configure.bat msvc6; cd build/lib; nmake /fmsvc.mak install)
     )
 
     build-boost
