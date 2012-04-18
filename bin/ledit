@@ -1,0 +1,3 @@
+#!/bin/bash
+export LOCAL_EDIT=true
+edit "$@"
