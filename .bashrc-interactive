@@ -124,6 +124,6 @@ function rcd() {
 
 alias rs="rfa 'git diff \$REPO_LREV|cat; git st -s|grep . && echo \`pwd\`'"
 
-if [[ "$(tty 2>/dev/null)" =~ /dev/tty[0-9]+ ]]; then
+if test "$USER" = bhj && [[ "$(tty 2>/dev/null)" =~ /dev/tty[0-9]+ ]]; then
     swap-control-alt
 fi
