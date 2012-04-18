@@ -284,6 +284,8 @@ function setup-vc6-env() {
     export PATH=~/bin/:$PATHVC:$PATH
     export INCLUDE=`for x in ~/vc6/inc/*; do readlink -f "$x"; done|u2dpath`
     export LIB=`for x in ~/vc6/lib/*; do readlink -f "$x"; done|u2dpath`
+    export TEMP=/tmp
+    export TMP=/tmp
 }
 
 function build-boost() {

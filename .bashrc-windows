@@ -167,7 +167,8 @@ function complete_skeleton_words() {
 }
 
 complete -o default -F complete_skeleton_words ps.pl
-return 0
 
-COMMONPROGRAMFILES=${COMMONPROGRAMFILES:-'C:\Program Files\Common Files'}
-PROGRAMFILES=${PROGRAMFILES:-'C:\Program Files'}
+export COMMONPROGRAMFILES=${COMMONPROGRAMFILES:-'C:\Program Files\Common Files'}
+export PROGRAMFILES=${PROGRAMFILES:-'C:\Program Files'}
+
+return 0
