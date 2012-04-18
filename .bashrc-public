@@ -1,6 +1,5 @@
 #!/bin/bash
 export PATH=/home/bhj/external/bin/linux/ext/android-sdk-linux_86/tools/ndk/android-ndk-r4b:$HOME/bin:$PATH:/home/bhj/bin/linux/ext/arm-eabi-4.4.0/bin:/home/bhj/external/bin/linux/ext/arm-2010q1/bin:/home/bhj/external/bin/linux/ext/arm-linux-4.1.1/bin
-export PROMPT_COMMAND="history -a"
 export EDITOR=edit-wait
 
 if test -z "$SSH_CLIENT"; then
@@ -50,11 +49,23 @@ cd_beagrep()
 cd_ok()
 {
     builtin cd "$@"
-    history -s cd "$PWD"
     return 0
 }
 
 cd_record()
+{
+    local ret=$?
+    history -a
+    if test "$BHJ_PWD" = "$PWD"; then
+	return $ret
+    fi
+    BHJ_PWD=$PWD
+
+   (flock -x ~/.where.lock -c where&)
+   return $ret
+}
+
+cdr()
 {
     if [[ "$PWD" =~ ^$HOME/smb/ ]]; then
         local pat=$HOME/smb/
@@ -63,7 +74,6 @@ cd_record()
     else
         history -s cd "$(printf %q "`pwd`")"
     fi
-   (flock -x ~/.where.lock -c where&)
 }
 
 
@@ -109,7 +119,6 @@ fi
 
 scd()
 {
-    history -s scd "$@"
     if test $# = 1; then
 	dir=$(lookup_file "$1"|tee /dev/stderr|head -n 1)
 	dir=$(formal-path "$dir")

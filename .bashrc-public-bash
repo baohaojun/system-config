@@ -20,8 +20,6 @@ lcd()
 	    smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"
 	fi
         builtin cd ~/smb/"$(host-hosts "$1")"
-        history -s cd "$(printf %q "`pwd`")"
-        history -s cd "$(printf %q "$1")"
         return 0
     fi
    
@@ -49,15 +47,12 @@ lcd()
             return 1;
         fi
         builtin cd "$link"
-        cd_record
         return $?
     elif test -L "$link" -a -f "$link"; then
         builtin cd "$(dirname "$(readlink -f "$link")")"
-        cd_record
         return $?
     else
         builtin cd "$(dirname "$link")"
-        cd_record
         return $?
     fi
 }
@@ -78,7 +73,6 @@ _ucd() #we go to upper dir which match the $1, for ex, cd 'ho' in /home/bhj will
         return 1;
     fi
     builtin cd "$dir"
-    cd_record
     return $?
 }
 
@@ -115,12 +109,6 @@ function _select_cd() {
         NUM=`my_select "${dirs[@]}"`
         ((NUM--))
         builtin cd "${dirs[$NUM]}"
-        cd_record
-        if test $# = 1; then
-            history -s cd "$(printf %q "$1")"
-        else
-            history -s cd "$@"
-        fi
     fi
 }
 
