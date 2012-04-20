@@ -24,6 +24,12 @@ Why? Because:
 
 *** It's very similar to busybox
 
+** It's a very nice *pattern*
+
+*** The bridge design pattern?
+
+- Bridge cygwin shell script and Windows .exe together.
+
 * Make tools smart
 
 ** Smart requires memory (a.k.a., history)
@@ -81,9 +87,10 @@ GUI is great for simple and stupid, but when you want to go beyond...
 
 - Process and DLL.
 
-  + simple to use
+  + simple to use/reuse
   + easy to debug
   + difficult to crash
+
 
 * Some examples
 ** Source code reading
@@ -92,7 +99,7 @@ GUI is great for simple and stupid, but when you want to go beyond...
 #+begin_quote
 ... is the result of hours of patient grepping through the kernel sources ...
 #+end_quote
-*** Brad Fitzpatrick
+*** Brad Fitzpatrick (<<Coders At Work>>)
 
 #+begin_quote
 ... pipe find into less and try to understand the directory structure ...
