@@ -1,0 +1,185 @@
+### BEGIN ###
+# Programmer Dvorak
+map 0x19360409
+
+include modifiers
+
+#
+# Esc and Function keys
+#
+Escape       0x01 localstate
+F1           0x3b localstate
+F2           0x3c localstate
+F3           0x3d localstate
+F4           0x3e localstate
+F5           0x3f localstate
+F6           0x40 localstate
+F7           0x41 localstate
+F8           0x42 localstate
+F9           0x43 localstate
+F10          0x44 localstate
+F11          0x57 localstate
+SunF36       0x57 localstate
+F12          0x58 localstate
+SunF37       0x58 localstate
+
+#
+# number row w/o shift
+#
+dollar       0x29
+ampersand    0x02
+bracketleft  0x03
+braceleft    0x04
+braceright   0x05
+parenleft    0x06
+equal        0x07
+asterisk     0x08
+parenright   0x09
+plus         0x0a
+bracketright 0x0b
+exclam       0x0c
+numbersign   0x0d
+BackSpace    0x0e
+
+#
+# number row w shift
+#
+asciitilde   0x29 shift
+percent      0x02 shift
+7            0x03 shift
+5            0x04 shift
+3            0x05 shift
+1            0x06 shift
+9            0x07 shift
+0            0x08 shift
+2            0x09 shift
+4            0x0a shift
+6            0x0b shift
+8            0x0c shift
+grave        0x0d shift
+
+#
+# first letter row
+#
+Tab          0x0f localstate
+ISO_Left_Tab 0x0f shift
+semicolon    0x10
+colon        0x10 shift
+comma        0x11
+less         0x11 shift
+period       0x12
+greater      0x12 shift
+p            0x13 addupper
+y            0x14 addupper
+f            0x15 addupper
+g            0x16 addupper
+c            0x17 addupper
+r            0x18 addupper
+l            0x19 addupper
+slash        0x1a
+question     0x1a shift
+at           0x1b
+asciicircum  0x1b shift
+backslash    0x2b
+bar          0x2b shift
+
+#
+# second letter row
+#
+Caps_Lock    0x00 inhibit
+a            0x1e addupper
+o            0x1f addupper
+e            0x20 addupper
+u            0x21 addupper
+i            0x22 addupper
+d            0x23 addupper
+h            0x24 addupper
+t            0x25 addupper
+n            0x26 addupper
+s            0x27 addupper
+minus        0x28
+underscore   0x28 shift
+Return       0x1c localstate
+
+#
+# third letter row
+#
+apostrophe   0x2c
+quotedbl     0x2c shift
+q            0x2d addupper
+j            0x2e addupper
+k            0x2f addupper
+x            0x30 addupper
+b            0x31 addupper
+m            0x32 addupper
+w            0x33 addupper
+v            0x34 addupper
+z            0x35 addupper
+
+space        0x39 localstate
+
+Left         0xcb localstate
+Right        0xcd localstate
+Up           0xc8 localstate
+Down         0xd0 localstate
+
+Insert       0xd2 localstate
+Delete       0xd3 localstate
+Home         0xc7 localstate
+End          0xcf localstate
+Prior        0xc9 localstate
+Page_Up      0xc9 localstate
+Next         0xd1 localstate
+Page_Down    0xd1 localstate
+
+Print        0xb7 localstate
+Sys_Req      0xb7 localstate
+Execute      0xb7 localstate
+F22          0xb7 localstate
+Scroll_Lock  0x46
+F23          0x46
+
+#
+# Numpad
+#
+Num_Lock 0x45
+KP_Divide 0xb5
+KP_Multiply 0x37
+KP_Subtract 0x4a
+KP_Add 0x4e
+KP_Enter 0x9c
+
+KP_Decimal 0x53 numlock
+KP_Separator 0x53 numlock
+KP_Delete 0x53
+
+KP_0 0x52 numlock
+KP_Insert 0x52
+
+KP_1 0x4f numlock
+KP_End 0x4f
+
+KP_2 0x50 numlock
+KP_Down 0x50
+
+KP_3 0x51 numlock
+KP_Next 0x51
+
+KP_4 0x4b numlock
+KP_Left 0x4b
+
+KP_5 0x4c numlock
+KP_Begin 0x4c
+
+KP_6 0x4d numlock
+KP_Right 0x4d
+
+KP_7 0x47 numlock
+KP_Home 0x47
+
+KP_8 0x48 numlock
+KP_Up 0x48
+
+KP_9 0x49 numlock
+KP_Prior 0x49
+### END ###
