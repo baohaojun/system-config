@@ -1,2 +1,9 @@
 #!/bin/bash
-awk 'BEGIN{srand(); printf("%d\n", int(rand() * '"${1-10}"'))}'
+    awk '
+BEGIN {
+    srand();
+    for (i = 0; i < '"${2-1}"'; i++) {
+        printf("%d\n", int(rand() * '"${1-10}"'));
+    }
+}'
+

@@ -114,7 +114,18 @@ function _select_cd() {
 
 function tcd() {
     local IFS=$'\n'
-    _select_cd $(lookup_file `today "$@"`; lookup_file `today-- "$@"`) $(pcd ~/today && { lookup_file `today "$@"`;  lookup_file `today-- "$@"`; })
+
+    _select_cd $(
+	export LOOKUP_NON_EXIST_FILES=false 
+	lookup_file $(today "$@" | perl -npe 's/(.*)-.*/$1/')
+	lookup_file `today-- "$@"`
+    ) $(
+	export LOOKUP_NON_EXIST_FILES=false
+	pcd ~/today && {
+	    lookup_file $(today "$@" | perl -npe 's/(.*)-.*/$1/')
+	    lookup_file `today-- "$@"`; 
+	}
+    )
 }
 
 function mcd() {
