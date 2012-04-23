@@ -5,7 +5,6 @@ tmp=~/.bash_history.$$
 	reverse ~/.bash_history; cat ~/.bash_history.bak) | 
     perl -ne '
 s/^#?\s+//;
-s/^#?cd\s+(?!smb:)\S+(\s*;\s*|\s*$)//;
 s/\s*$/\n/;
 s/^#?re\s+.*?;//;
 print if (length($_) < 1024 and not m/^\s*(hi[lr])\s+/)' | 

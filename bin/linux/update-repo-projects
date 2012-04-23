@@ -22,7 +22,8 @@ for x in "$@"; do
         mv out/changes.log out/changes.log-backup-`today` || true
         repo-changes\? 2>&1|tee out/changes.log
         for x in `cat out/changes.log`; do 
-            rfa $x 'git merge `repo-remote`/`tbranch`' 
+	    (cd $x || repo sync "$x")
+            rfa $x 'git merge `repo-remote`/`tbranch`' || true
         done 2>&1|tee out/merge.log
 
 	{ repo-changes\? $(cat out/changes.log) | grep . > out/changes.log.new && { 
