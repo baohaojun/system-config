@@ -37,8 +37,9 @@ function renew-xauth() {
 
 function rdesktop() {
     host=$1
-    user=${2:-$USER}
-    shift 2
+    shift
+    user=${1:-$USER}
+    shift
     if test $# = 0; then
 	set -- -k en-dvp
     fi
