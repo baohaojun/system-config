@@ -4292,15 +4292,17 @@ following symbols;
                   text
                   (assqref 'name (assqref 'user quoted-status))
                   quoted-text)
-        (if (or (string-match (regexp-opt
-                               `(,(replace-regexp-in-string
-                                   (format "^RT @%s: \\|[.[:blank:]]+$"
-                                           (assqref 'screen-name (assqref 'user quoted-status)))
-                                   ""
-                                   text)))
-                              quoted-text)
-                (string= text "转发微博")
-                (string= text "转发微博。"))
+        (if (or (string-match
+                 (regexp-opt
+                  `(,(replace-regexp-in-string
+                      (format "^RT @%s: \\|[.[:blank:]]+$"
+                              (assqref 'screen-name (assqref 'user quoted-status)))
+                      ""
+                      text)))
+                 (replace-regexp-in-string
+                  "[.[:blank:]]+$" "" quoted-text))
+
+                (string-match "\\(转发微博\\|轉發微博\\).?" text))
             quoted-text
           (format "『%s』\n\n    %s" quoted-text text))))
      (t
