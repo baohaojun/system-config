@@ -1,0 +1,17 @@
+#!/bin/bash
+
+cd ~/doc/galaxy-nexus-root/
+
+adb shell su -c 'mount -o remount /system'
+
+for x in $(find ./ -type d); do adb shell su -c "mkdir -p ${x#.}"; done
+
+for x in $(find ./system -type f); do
+    adb push $x /sdcard/sys_$(basename $x);
+    adb shell su -c "cat /sdcard/sys_$(basename $x) > ${x#.}";
+    if test -x $x; then
+	adb shell su -c "chmod 555 ${x#.}"
+    fi
+done
+
+for x in $(find ./sdcard -type f); do adb push $x ${x#.}; done
