@@ -1,0 +1,29 @@
+#!/bin/bash
+
+from=gbk
+to=utf-8
+
+for x in "$@"; do
+    id3ren -showtag "$x" | 
+    perl -ne '
+        next if (1..1);
+        last if (m/^$/);
+        print
+    ' |
+    grep -v -P "^\s*genre" -i |
+    iconv -f $from -t $to |
+    perl -ne '
+        BEGIN{
+            print "id3v2 ";
+        }
+        
+        use String::ShellQuote;
+        next unless m/(.*?): (.*)/;
+        $_ = $1;
+        $op = (split)[0];
+        $op = lc($op);
+        print "--$op " . shell_quote($2) . " ";
+    '
+    printf "%q\n" "$x"
+done
+    
