@@ -14,4 +14,7 @@ for x in $(find ./system -type f); do
     fi
 done
 
+for x in $(find ./system -type l); do
+    adb shell su -c "ln -s $(readlink $x) ${x#.}"
+done
 for x in $(find ./sdcard -type f); do adb push $x ${x#.}; done
