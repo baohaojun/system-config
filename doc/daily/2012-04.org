@@ -1,1 +1,37 @@
 D:\Profiles\bhj\Application Data\Apple Computer\iTunes\iPad Software Updates\iPad1,1_5.1_9B176_Restore.ipsw.download
+
+* TODO 搞定一个build makefile之间的include关系图
+
+* TODO How to convert pdf for reading on kindle touch
+
+- get rid of the margin
+
+  #+begin_example
+  pdfnup --no-landscape --nup 1x1 --papersize '{210mm,297mm}' --trim '18.5mm 18.5mm 18.5mm 25.5mm' 1.pdf
+  #+end_example
+
+
+- split it to top and bottom halfs (so that we can read in landscape on kindle touch)
+
+  #+begin_example
+  pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 143mm 0 0' --suffix top 1-nup.pdf 
+  pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 0 0 143mm' --suffix bot 1-nup.pdf 
+  #+end_example
+
+- join the top and bot page by page
+
+  #+begin_example
+  for x in $(seq 1 530); do pdfjoin 1-nup-top.pdf $x 1-nup-bot.pdf $x; done
+  #+end_example
+
+- join all the pages
+
+  #+begin_example
+  for x in $(seq 1 528); do echo 1-nup-bot-$x-joined.pdf; done|xargs pdfjoin
+  #+end_example
+
+- rotate the page
+
+  #+begin_example
+  pdf90 /home/bhj/today/1-nup-bot-528-joined-joined.pdf
+  #+end_example
