@@ -1,0 +1,25 @@
+
+
+Android的Makefile系统正在变得越来越严格，以前我们可以直接在Android.mk里去修改
+~PRODUCT_COPY_FILES~ 去往系统里拷贝更多的PREBUILD文件，但是现在这个机制已经被取消
+了，因为GOOGLE觉得这样的机制太难AUDIT了。
+
+第二个更改的机制是， ~LOCAL_MODULE_TAG~ 不能取为 ~USER~ 了，所以最终RELEASE给用户
+的版本里面想要包含一个PACKAGE的话，必须在 ~PRODUCT_PACKAGES~ 里加上它。
+
+因为这两个机制的变化，现在我们想拷一些文件的话需要用 ~BUILD_PREBUILD~ 或者
+~BUILD_MULTI_PREBUILD~ 这个机制。然后去每个产品的 /product.mk/ 里去把每个刚定义的
+~PACKAGE~ 加到 ~PRODUCT_PACKAGES~ 里。
+
+这样做有一个不好的地方是，当有N个PACKAGES，和M个PRODUCTS的时候，工作量会是一个乘
+法，也就是Θ（N·M）。在每个产品里要把每个PACKAGE都给加上，忘了一个的话就意味着某个
+产品的USER BUILD有问题。这种问题很难查，因为你不能很容易的知道哪个产品的RELEASE出问题了。
+
+有一个减少工作量的机制是，当这N个PACKAGE其实是相互依赖关系非常紧密的时候，比如说
+属于同一个子系统，那么可以用 ~LOCAL_REQUIRED_MODULES~ 这个机制，把其他所有的
+PACKAGE都让最重要的那个PACKAGE来REQUIRE。然后在每个PRODUCT里只要加这一个PACKAGE就
+可以了。
+
+这样做的另一个好处是，如果出问题的话比较好查。要么某个产品的RELEASE的整个子系统都
+不工作（因为忘记改其product.mk），要么所有产品的子系统都有相同的问题（因为大家都
+少REQUIRE了一个PACKAGE）。
