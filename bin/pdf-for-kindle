@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -e
+pdf=$1
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+test $# != 1 && die "Error: Usage $(basename $0) PDF"
+
+test -e $pdf || die "Error: $pdf does not exist";
+
+pdf=${pdf%.pdf}
+
+pdfnup --no-landscape --nup 1x1 --papersize '{210mm,297mm}' --trim '18.5mm 18.5mm 18.5mm 25.0mm' "$pdf".pdf
+pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 143mm 0 0' --suffix top "$pdf"-nup.pdf 
+pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 0 0 143mm' --suffix bot "$pdf"-nup.pdf 
+
+x=0;
+
+while true; do
+    ((x++)) || true;
+    if ! pdfjoin "$pdf"-nup-top.pdf $x "$pdf"-nup-bot.pdf $x; then
+	break
+    fi
+done
+
+((y=x-1))
+for x in $(seq 1 $y); do echo "$pdf"-nup-bot-$x-joined.pdf; done|xargs pdfjoin
+
+pdf90 /home/bhj/today/"$pdf"-nup-bot-$y-joined-joined.pdf

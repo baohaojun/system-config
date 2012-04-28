@@ -11,3 +11,4 @@ ln -sf $(pwd)/$dir ~/today
 dir=$(today 'last month')
 dir=${dir%-*}
 ln -sf $(pwd)/$dir ~/last-month
+ln -sf ~/Downloads/forever/* ~/today/
