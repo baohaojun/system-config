@@ -95,8 +95,9 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	(
 	    cd flashing
 	    ./make-links.sh
-	    ./copy-release.sh .
-	    find . -type l -print0 |xargs -0 bash -c 'for x in "$@"; do chmod a+r "$(readlink -m "$x")"; done' true 
+	    dest=$(android-env get_abs_build_var OUT_DIR)/flashing/
+	    mkdir -p $dest
+	    DO_SYMLINK=true ./copy-release.sh $dest
 	) >/dev/null 2>&1 
 	echo -n 'after build, ccache stat is '
 	./prebuilt/linux-x86/ccache/ccache -s
