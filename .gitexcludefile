@@ -16,3 +16,4 @@ GTAGS
 *exe.stackdump
 *~
 .for-code-reading
+.fuse_hidden*
