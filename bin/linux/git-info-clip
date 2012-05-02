@@ -14,7 +14,7 @@ fi
 
 cd -P .
 git_dir=$(dirname $(lookup_file .git))
-git_proj_http=$(git config remote.origin.url|perl -npe 's,git@github.com:,http://github.com/,; s,git://,http://,; s,\.git$,,')
+git_proj_http=$(git config remote.origin.url|perl -npe 's,git\@github.com:,http://github.com/,; s,git://,http://,; s,\.git$,,')
 
 stem=/raw/master
 if test -d "$1"; then
