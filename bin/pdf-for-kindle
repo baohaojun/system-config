@@ -31,3 +31,6 @@ done
 for x in $(seq 1 $y); do echo "$pdf"-nup-bot-$x-joined.pdf; done|xargs pdfjoin
 
 pdf90 /home/bhj/today/"$pdf"-nup-bot-$y-joined-joined.pdf
+
+mv "$pdf"-nup-bot-$y-joined-joined-rotated90.pdf kindle-"$pdf".pdf
+rm -rf "$pdf"-nup*.pdf

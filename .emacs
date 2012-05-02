@@ -573,7 +573,7 @@
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
- '(ispell-program-name "aspell" t)
+ '(ispell-program-name "aspell")
  '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
  '(jiralib-url "http://bible/jira")
