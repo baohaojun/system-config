@@ -1,12 +1,116 @@
 #!/bin/bash
 
 set -e
-pdf=$1
+
+left=18.5mm
+bot=18.5mm
+right=18.5mm
+top=25.0mm
+paper=a4
+duplicate=10mm
+scale=1
+max=-1
 
 function die() {
     echo "$@"
     exit -1
 }
+
+TEMP=$(getopt -o t:l:r:b:d:p:s:m: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+	-t)
+	    top=$2
+	    shift 2
+	    ;;
+	-l)
+	    left=$2
+	    shift 2
+	    ;;
+	-b)
+	    bot=$2
+	    shift 2
+	    ;;
+	-r)
+	    right=$2
+	    shift 2
+	    ;;
+	-d)
+	    duplicate=$2
+	    shift 2
+	    ;;
+	-p)
+	    paper=$2
+	    shift 2
+	    ;;
+	-s)
+	    scale=$2
+	    shift 2
+	    ;;
+	-m)
+	    max=$2
+	    shift 2
+	    ;;
+	--)
+	    shift
+	    break
+	    ;;
+	*)
+	    die "internal error"
+	    ;;
+    esac
+done
+pdf=$1
+
+if test $paper = a4; then
+    o_width=210mm
+    o_height=297mm
+elif test $paper = ul; then
+    o_width=215.9mm
+    o_height=279.4mm
+else
+    die "Error: old paper size must be one of 'a4' or 'ul'"
+fi
+
+function subtract() {
+    perl -e '$sub1 = $ARGV[0]; $sub2 = $ARGV[1];
+    $sub1 =~ m/(.*)(..)$/;
+    $sub1 = $1;
+    if ($2 eq "in") {
+        $sub1 *= 2.54;
+    }
+
+    $sub2 =~ m/(.*)(..)$/;
+    $sub2 = $1;
+
+    if ($2 eq "in") {
+        $sub2 *= 2.54;
+    }
+
+    print "" . ($sub1 - $sub2) . "mm"
+' "$@"
+}
+
+n_width=$(subtract $o_width $left)
+n_width=$(subtract $n_width $right)
+
+n_height=$(subtract $o_height $top)
+n_height=$(subtract $n_height $bot)
+
+function scale() {
+    perl -e '$h = $ARGV[0];
+    $h =~ s/^(.*)mm$/$1/;
+    $h *= $ARGV[1];
+    print "$h" . "mm"
+' "$@"
+}
+
+half_n_height=$(scale $n_height 0.5)
+cut_n_height=$(subtract $n_height $half_n_height)
+cut_n_height=$(subtract $cut_n_height $duplicate)
+remaining_n_height=$(subtract $n_height $cut_n_height)
+
 
 test $# != 1 && die "Error: Usage $(basename $0) PDF"
 
@@ -14,14 +118,19 @@ test -e $pdf || die "Error: $pdf does not exist";
 
 pdf=${pdf%.pdf}
 
-pdfnup --no-landscape --nup 1x1 --papersize '{210mm,297mm}' --trim '18.5mm 18.5mm 18.5mm 25.0mm' "$pdf".pdf
-pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 143mm 0 0' --suffix top "$pdf"-nup.pdf 
-pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 0 0 143mm' --suffix bot "$pdf"-nup.pdf 
+pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$n_height}"           --trim "$left $bot $right $top" "$pdf".pdf
+pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 $cut_n_height 0 0" --suffix top "$pdf"-nup.pdf 
+pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 0 0 $cut_n_height" --suffix bot "$pdf"-nup.pdf
+
 
 x=0;
 
 while true; do
     ((x++)) || true;
+    if test $max -gt 0 -a $x -gt $max; then
+	break
+    fi
+
     if ! pdfjoin "$pdf"-nup-top.pdf $x "$pdf"-nup-bot.pdf $x; then
 	break
     fi
@@ -29,6 +138,13 @@ done
 
 ((y=x-1))
 for x in $(seq 1 $y); do echo "$pdf"-nup-bot-$x-joined.pdf; done|xargs pdfjoin
+
+if test $scale != 1; then
+    n_width=$(scale $n_width $scale)
+    remaining_n_height=$(scale $remaining_n_height $scale)
+    pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --scale $scale --noautoscale true "$pdf"-nup-bot-$y-joined-joined.pdf
+    mv "$pdf"-nup-bot-$y-joined-joined-nup.pdf "$pdf"-nup-bot-$y-joined-joined.pdf
+fi
 
 pdf90 /home/bhj/today/"$pdf"-nup-bot-$y-joined-joined.pdf
 

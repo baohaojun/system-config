@@ -1,0 +1,129 @@
+#!/bin/bash
+
+# us letter: 215.9 mm × 279.4 mm
+# a4: 210 mm x 297
+
+set -e
+
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+function Usage() {
+    echo "Usage: $(basename $0) [OPTIONS...] INPUT.pdf"
+    echo "	OPTIONS: -w top|bot|left|right, the position (where) of the remaining page after cut"
+    echo "               -a, original size of INPUT.pdf is a4"
+    echo "               -u, original size of INPUT.pdf is us letter"
+    echo "               -h, show this help"
+    echo "               -s size, the width (-w is left|right) or height (-w is top|bot) of the remaining page"
+    echo "                        default unit is mm"
+}
+
+
+o_size=a4
+where=top
+
+TEMP=$(getopt -o w:s:auh -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+	-w)
+	    where=$2
+	    shift 2
+	    ;;
+	-s)
+	    remaining_size=$2
+	    shift 2
+	    ;;
+	-a)
+	    o_size=a4
+	    shift
+	    ;;
+	-u)
+	    o_size=ul
+	    shift
+	    ;;
+	-h)
+	    Usage
+	    exit 0
+	    ;;
+	--)
+	    shift
+	    break
+	    ;;
+	*)
+	    die "internal error"
+	    ;;
+    esac
+done
+
+if test $# != 1; then
+    die "Error: $(Usage) (remaining args: $@)"
+fi
+
+pdf=$1
+test -e $pdf || die "Error: $pdf does not exist";
+pdf=${pdf%.pdf}
+
+
+left=0mm
+right=0mm
+top=0mm
+bot=0mm
+
+if test $o_size = a4; then
+    o_width=210mm
+    o_height=297mm
+elif test $o_size = ul; then
+    o_width=215.9mm
+    o_height=279.4mm
+else
+    die "Error: old paper size must be one of 'a4' or 'ul'"
+fi
+
+function subtract() {
+    perl -e '$sub1 = $ARGV[0]; $sub2 = $ARGV[1];
+    $sub1 =~ m/(.*)(..)$/;
+    $sub1 = $1;
+    if ($2 eq "in") {
+        $sub1 *= 2.54;
+    }
+
+    $sub2 =~ m/(.*)(..)$/;
+    $sub2 = $1;
+
+    if ($2 eq "in") {
+        $sub2 *= 2.54;
+    }
+
+    print "" . ($sub1 - $sub2) . "mm"
+' "$@"
+}
+
+
+
+
+if test $where = top; then
+    bot=$(subtract $o_height $remaining_size)
+elif test $where = bot; then
+    top=$(subtract $o_height $remaining_size)
+elif test $where = left; then
+    right=$(subtract $o_width $remaining_size)
+elif test $where = right; then
+    left=$(subtract $o_width $remaining_size)
+else
+    die "Error: -w must be one of top|bot|right|left";
+fi
+
+n_width=$o_width
+n_height=$o_height
+
+if test $where = top -o $where = bot; then
+    n_height=$remaining_size
+else
+    n_width=$remaining_size
+fi
+
+pdfnup --no-landscape --papersize "{$n_width,$n_height}" --nup 1x1 --trim "$left $bot $right $top" --clip true "$pdf".pdf
