@@ -1,0 +1,1 @@
+../doc/home/.gnome2/nautilus-scripts/send-to-kindle.sh
