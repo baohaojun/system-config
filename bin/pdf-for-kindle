@@ -16,10 +16,17 @@ function die() {
     exit -1
 }
 
-TEMP=$(getopt -o t:l:r:b:d:p:s:m: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o t:l:r:b:d:p:s:m:c: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+	-c)
+	    top=$2
+	    bot=$2
+	    left=$2
+	    right=$2
+	    shift 2
+	    ;;
 	-t)
 	    top=$2
 	    shift 2

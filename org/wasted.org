@@ -21,3 +21,8 @@
 
 所以真正的解决方法是让sshd服务用bhj帐号去启动，这样不管我怎么登录上去的，最后的权
 限都是我的用户帐号bhj，而不是变成系统的system帐号。
+
+* /etc/resolv.conf dns被改掉
+
+  /etc/network/interfaces里最好把eth0都去掉，因为它会导致dhclient跑起来，从而让
+  dns的设置过一段时间就被强行改掉
