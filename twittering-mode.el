@@ -94,11 +94,9 @@ call is limited by the hour."
   :type 'integer
   :group 'twittering)
 
-(defcustom twittering-initial-timeline-spec-string ":home@twitter"
-  "*The initial timeline spec string. If the value of the variable is a
-list of timeline spec strings, the timelines are rendered on their own
-buffers."
-  :type 'string
+(defcustom twittering-initial-timeline-spec-string '(":home@twitter")
+  "*The initial timeline spec strings."
+  :type 'list
   :group 'twittering)
 
 (defcustom twittering-format-thumbnail-prefix "                          "
