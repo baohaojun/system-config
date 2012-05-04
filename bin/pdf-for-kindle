@@ -7,13 +7,36 @@ bot=18.5mm
 right=18.5mm
 top=25.0mm
 paper=a4
-duplicate=10mm
-scale=1
+duplicate=5mm
+scale=1.2
 max=-1
 
 function die() {
     echo "$@"
     exit -1
+}
+
+function subtract() {
+    perl -e '$sub1 = $ARGV[0]; $sub2 = $ARGV[1];
+    $sub1 =~ m/(.*)(..)$/;
+    $sub1 = $1;
+    if ($2 eq "in") {
+        $sub1 *= 2.54;
+    }
+
+    $sub2 =~ m/(.*)(..)$/;
+    $sub2 = $1;
+
+    if ($2 eq "in") {
+        $sub2 *= 2.54;
+    }
+
+    print "" . ($sub1 - $sub2) . "mm"
+' "$@"
+}
+
+function sum() {
+    subtract "$1" "$(subtract 0mm "$2")"
 }
 
 TEMP=$(getopt -o t:l:r:b:d:p:s:m:c: -n $(basename $0) -- "$@")
@@ -27,22 +50,34 @@ while true; do
 	    right=$2
 	    shift 2
 	    ;;
+
+## start code-generator "^\\s *#"
+    # for x in top bot left right; do
+	# printf "%s\n"  "-${x:0:1})"
+	# printf "%s\n" "$x=\$(sum \$$x \$2)"
+	# printf "%s\n" "shift 2"
+	# printf "%s\n" ";;"
+    # done
+## end code-generator
+## start generated code
 	-t)
-	    top=$2
-	    shift 2
-	    ;;
-	-l)
-	    left=$2
+	    top=$(sum $top $2)
 	    shift 2
 	    ;;
 	-b)
-	    bot=$2
+	    bot=$(sum $bot $2)
+	    shift 2
+	    ;;
+	-l)
+	    left=$(sum $left $2)
 	    shift 2
 	    ;;
 	-r)
-	    right=$2
+	    right=$(sum $right $2)
 	    shift 2
 	    ;;
+
+## end generated code
 	-d)
 	    duplicate=$2
 	    shift 2
@@ -80,25 +115,6 @@ else
     die "Error: old paper size must be one of 'a4' or 'ul'"
 fi
 
-function subtract() {
-    perl -e '$sub1 = $ARGV[0]; $sub2 = $ARGV[1];
-    $sub1 =~ m/(.*)(..)$/;
-    $sub1 = $1;
-    if ($2 eq "in") {
-        $sub1 *= 2.54;
-    }
-
-    $sub2 =~ m/(.*)(..)$/;
-    $sub2 = $1;
-
-    if ($2 eq "in") {
-        $sub2 *= 2.54;
-    }
-
-    print "" . ($sub1 - $sub2) . "mm"
-' "$@"
-}
-
 n_width=$(subtract $o_width $left)
 n_width=$(subtract $n_width $right)
 
@@ -126,6 +142,7 @@ test -e $pdf || die "Error: $pdf does not exist";
 pdf=${pdf%.pdf}
 
 pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$n_height}"           --trim "$left $bot $right $top" "$pdf".pdf
+cp "$pdf"-nup.pdf cut-"$pdf".pdf
 pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 $cut_n_height 0 0" --suffix top "$pdf"-nup.pdf 
 pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 0 0 $cut_n_height" --suffix bot "$pdf"-nup.pdf
 

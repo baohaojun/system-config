@@ -16,26 +16,26 @@ for x in "$@"; do
         set -e
         cd $x
         cd `lookup_file .repo/..`
-	test -e Makefile || exit
+        test -e Makefile || exit
         repo sync -n -j4
         mkdir -p out
         mv out/changes.log out/changes.log-backup-`today` || true
         repo-changes\? 2>&1|tee out/changes.log
         for x in `cat out/changes.log`; do 
-	    (cd $x || repo sync "$x")
+            (cd $x || repo sync "$x" || true)
             rfa $x 'git merge `repo-remote`/`tbranch`' || true
         done 2>&1|tee out/merge.log
 
-	{ repo-changes\? $(cat out/changes.log) | grep . > out/changes.log.new && { 
-		echo some repos still has changes:;
-		cat out/changes.log.new
-	    }
-	} || 
-	echo repo is up to date.
-	if yes-or-no -y "Start full build?"; then
-	    android-full-build >/dev/null 2>&1
-	    bhj-short-notify $(basename $0) "$(pwd): build completed"
-	fi
+        { repo-changes\? $(cat out/changes.log) | grep . > out/changes.log.new && { 
+                echo some repos still has changes:;
+                cat out/changes.log.new
+            }
+        } || 
+        echo repo is up to date.
+        if yes-or-no -y "Start full build?"; then
+            android-full-build >/dev/null 2>&1
+            bhj-short-notify $(basename $0) "$(pwd): build completed"
+        fi
     )
 done
 

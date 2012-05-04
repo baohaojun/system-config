@@ -2045,8 +2045,13 @@ criteria can be provided via the optional match-string argument "
 
 (defun bhj-do-code-generation ()
   (interactive)
-  (let (start-of-code end-of-code code-text start-of-text end-of-text)
+  (let (start-of-code end-of-code code-text start-of-text end-of-text code-transform)
     (search-backward "start code-generator")
+    (forward-char (length "start code-generator"))
+    (if (looking-at "\\s *\\(\"\\|(\\)")
+	(setq code-transform 
+	     (read
+	      (buffer-substring-no-properties (point) (line-end-position)))))
     (next-line)
     (move-beginning-of-line nil)
     (setq start-of-code (point))
@@ -2055,6 +2060,11 @@ criteria can be provided via the optional match-string argument "
     (move-end-of-line nil)
     (setq end-of-code (point))
     (setq code-text (buffer-substring-no-properties start-of-code end-of-code))
+    (cond
+     ((stringp code-transform)
+      (setq code-text (replace-regexp-in-string code-transform "" code-text)))
+     ((consp code-transform)
+      (setq code-text (replace-regexp-in-string (car code-transform) (cadr code-transform) code-text))))
 
     (search-forward "start generated code")
     (next-line)
@@ -2064,7 +2074,8 @@ criteria can be provided via the optional match-string argument "
     (previous-line)
     (move-end-of-line nil)
     (setq  end-of-text (point))
-    (shell-command-on-region start-of-text end-of-text code-text nil t)))
+    (shell-command-on-region start-of-text end-of-text code-text nil t)
+    (indent-region start-of-text (point))))
 
 (require 'org-jira)
 (condition-case nil

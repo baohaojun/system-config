@@ -32,8 +32,32 @@ right=0mm
 top=0mm
 bot=0mm
 
-TEMP=$(getopt -o w:s:auhW:H:l:b:r:t:c: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o w:s:p:auhW:H:l:b:r:t:c: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
+
+function subtract() {
+    perl -e '$sub1 = $ARGV[0]; $sub2 = $ARGV[1];
+    $sub1 =~ m/(.*)(..)$/;
+    $sub1 = $1;
+    if ($2 eq "in") {
+        $sub1 *= 25.4;
+    }
+
+    $sub2 =~ m/(.*)(..)$/;
+    $sub2 = $1;
+
+    if ($2 eq "in") {
+        $sub2 *= 25.4;
+    }
+
+    print "" . ($sub1 - $sub2) . "mm"
+' "$@"
+}
+
+function sum() {
+    subtract "$1" "$(subtract 0mm "$2")"
+}
+
 while true; do
     case "$1" in
 	-w)
@@ -42,6 +66,10 @@ while true; do
 	    ;;
 	-s)
 	    remaining_size=$2
+	    shift 2
+	    ;;
+	-p)
+	    o_size=$2
 	    shift 2
 	    ;;
 	-a)
@@ -73,22 +101,35 @@ while true; do
 	    bot=$2
 	    shift 2
 	    ;;
+	
+## start code-generator "^\\s *#"
+    # for x in top bot left right; do
+	# printf "%s\n"  "-${x:0:1})"
+	# printf "%s\n" "$x=\$(sum \$$x \$2)"
+	# printf "%s\n" "shift 2"
+	# printf "%s\n" ";;"
+    # done
+## end code-generator
+## start generated code
 	-t)
-	    top=$2
+	    top=$(sum $top $2)
 	    shift 2
 	    ;;
 	-b)
-	    bot=$2
+	    bot=$(sum $bot $2)
 	    shift 2
 	    ;;
 	-l)
-	    left=$2
+	    left=$(sum $left $2)
 	    shift 2
 	    ;;
 	-r)
-	    right=$2
+	    right=$(sum $right $2)
 	    shift 2
-	    ;;	
+	    ;;
+
+## end generated code
+
 	--)
 	    shift
 	    break
@@ -119,28 +160,6 @@ elif test $o_size = cust; then
 else
     die "Error: old paper size must be one of 'a4' or 'ul' or 'cust'"
 fi
-
-function subtract() {
-    perl -e '$sub1 = $ARGV[0]; $sub2 = $ARGV[1];
-    $sub1 =~ m/(.*)(..)$/;
-    $sub1 = $1;
-    if ($2 eq "in") {
-        $sub1 *= 25.4;
-    }
-
-    $sub2 =~ m/(.*)(..)$/;
-    $sub2 = $1;
-
-    if ($2 eq "in") {
-        $sub2 *= 25.4;
-    }
-
-    print "" . ($sub1 - $sub2) . "mm"
-' "$@"
-}
-
-
-
 
 if test $where = top; then
     bot=$(subtract $o_height $remaining_size)

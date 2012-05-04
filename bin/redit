@@ -1,8 +1,14 @@
 #!/bin/bash
 user=bhj
+proto=scp
+if test $# = 4; then
+    proto=$1
+    shift
+fi
+
 if test $# = 3; then
     user=$1
     shift
 fi
 
-emacsclient -n /scp:$user@$1:$2
+emacsclient -n /$proto:$user@$1:$2
