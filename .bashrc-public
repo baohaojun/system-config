@@ -61,7 +61,11 @@ cd_record()
     fi
     BHJ_PWD=$PWD
 
-   (flock -x ~/.where.lock -c where&)
+   (
+       if test LC_ALL != C; then
+	   flock -x ~/.where.lock -c where; 
+       fi&
+   )
    return $ret
 }
 
