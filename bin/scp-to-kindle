@@ -1,2 +1,2 @@
 #!/bin/bash
-rsync "$@" kindle:/mnt/us/documents/
+scp "$@" kindle:/mnt/us/documents/
