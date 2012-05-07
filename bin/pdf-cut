@@ -31,8 +31,9 @@ left=0mm
 right=0mm
 top=0mm
 bot=0mm
-
-TEMP=$(getopt -o w:s:p:auhW:H:l:b:r:t:c: -n $(basename $0) -- "$@")
+min_page=50
+max_page=55
+TEMP=$(getopt -o w:s:p:auhW:H:l:b:r:t:c:m:M: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 
 function subtract() {
@@ -189,4 +190,4 @@ else
     n_height=$(subtract $n_height $bot)
 fi
 
-pdfnup --no-landscape --papersize "{$n_width,$n_height}" --nup 1x1 --trim "$left $bot $right $top" --clip true "$pdf".pdf
+pdfnup --no-landscape --papersize "{$n_width,$n_height}" --nup 1x1 --trim "$left $bot $right $top" --clip true "$pdf".pdf $min_page-$max_page
