@@ -5,7 +5,18 @@ if test $# != 0; then
     lunch $1
 fi
 $(lookup_file prebuilt/linux-x86/ccache/ccache) -M 100G
-export OUT_DIR=${OUT_DIR:-out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT}
+
+export OUT_DIR_LONG=out/out-$TARGET_PRODUCT-$TARGET_BUILD_VARIANT
+mkdir -p $OUT_DIR_LONG
+export OUT_DIR=$(echo -n $OUT_DIR_LONG|md5sum|cut -b 1-3)
+if test -e $OUT_DIR -a "$(readlink -m $OUT_DIR)" != "$(readlink -m $OUT_DIR_LONG)"; then
+    x=0
+    while test -e $OUT_DIR.$x; do
+	((x++))
+    done
+    OUT_DIR=$OUT_DIR.$x
+fi
+export OUT_DIR=$OUT_DIR
 
 for x in `echo '$TARGET_BUILD_APPS $TARGET_BUILD_TYPE $OUT_DIR $TARGET_BUILD_VARIANT $TARGET_PRODUCT $TARGET_SIMULATOR'|sed -e 's/\\$//g'`; do xval=`eval echo \\$$x`; if test "$xval" != ""; then echo $x\?=`eval echo \\$$x`; fi; done >buildspec.mk
 echo "ANDROID_BUILD_TOP := $PWD" >>buildspec.mk
