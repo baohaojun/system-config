@@ -16,7 +16,7 @@ sub search_subdir($) {
     #elif it matches a prefix of a project dir, recurse it
     #else print it, 
 
-    my @subdirs = grep {-d "$this_dir/$_" and !/^\.$|^\.\.$|^\.repo$/} readdir($dh);
+    my @subdirs = grep {-d "$this_dir/$_" and ! -l "$this_dir/$_" and !/^\.$|^\.\.$|^\.repo$/} readdir($dh);
     closedir $dh;
     for my $sd (@subdirs) {
         if (grep {/^$this_dir\/$sd$/} @repo_dirs) {
