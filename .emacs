@@ -1,3 +1,4 @@
+
 ;; Red Hat Linux default .emacs initialization file  ; -*- mode: emacs-lisp -*-
 
 (keyboard-translate ?\C-x ?\C-h)
@@ -471,7 +472,7 @@
 
 (defun bhj-occur-make-errors ()
   (interactive)
-  (let ((bhj-occur-regexp "\\*\\*\\*\\|no rule to\\|failed\\|[0-9]+elapsed \\|error [0-9]+\\|because of errors\\|[0-9]+ error\\b\\|error:"))
+  (let ((bhj-occur-regexp "\\*\\*\\*\\|circular.*dropped\\|no rule to\\|failed\\|[0-9]+elapsed \\|error [0-9]+\\|because of errors\\|[0-9]+ error\\b\\|error:"))
     (call-interactively 'bhj-occur)))
 
 
