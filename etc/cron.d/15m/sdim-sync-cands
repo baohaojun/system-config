@@ -1,4 +1,5 @@
 #!/bin/bash
+test -e ~/.sdim-single && exit
 export SDIM_SYNC_CANDS=true
 cd ~/doc/ime
 tmpf=/tmp/$(basename $0).$$

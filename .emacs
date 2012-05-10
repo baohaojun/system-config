@@ -2220,9 +2220,10 @@ we are not interested in those lines that do."
   (require 'cl)
   (let ((saved-file-remote-p (symbol-function 'file-remote-p)))
     (flet ((file-remote-p (file &optional identification connected)
-			  (if (string-match "^/scp:" file)
-			      nil
-			    (funcall saved-file-remote-p file identification connected))))
+			  (cond
+			   ((string-match "^/scp:" file) nil)
+			   ((string-match "/smb/" file) t)
+			   (t (funcall saved-file-remote-p file identification connected)))))
       ad-do-it)))
 
 (eval-after-load "cperl-mode" '(cperl-set-style 'PerlStyle))

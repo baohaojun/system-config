@@ -4,7 +4,7 @@ use URI::Escape;
 $, = " ";
 $escape = uri_escape("@ARGV");
 $escape =~ s/-/%2D/g;
-$escape = uri_escape($escape); # must do double escape!
+#$escape = uri_escape($escape); # must do double escape!
 
 print ("https://mail.google.com/mail/?hl=zh-CN&shva=1#search/" . $escape);
 

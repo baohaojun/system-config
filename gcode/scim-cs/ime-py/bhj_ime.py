@@ -310,7 +310,8 @@ class ime:
         
         if _g_ime_quail.has_quail(self.compstr) \
                 and not _g_ime_trans.has_trans(self.compstr) \
-                and len(self.__cands) == 1:
+                and len(self.__cands) == 1 \
+                and not os.path.exists(os.path.join(os.environ["HOME"], ".sdim-single")):                
             self.__commit_cand()
 
     @property
