@@ -130,7 +130,14 @@ while true; do
 	    ;;
 
 ## end generated code
-
+	-m)
+	    min_page=$2
+	    shift 2
+	    ;;
+	-M)
+	    max_page=$2
+	    shift 2
+	    ;;
 	--)
 	    shift
 	    break
