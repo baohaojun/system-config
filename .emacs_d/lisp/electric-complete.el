@@ -27,60 +27,59 @@ e.g., \"sthe='\", the regexp for completion should be
 \"s.*?t.*?h.*?e.*?=.*?'\". That is, fill in a \".*?\" pattern
 between each 2 characters.
 
-The original pattern should be looked backwards for the second
-word boundary \\b. So that if we are looking back at:
+If the region is active, the original pattern is built from what
+is in the region.
 
-   [{)}*& aonehua naoehu[)+{*
+If the region is not active, the original pattern should be
+found by looking backwards for the second word boundary \\b. So
+that if we are looking back at:
 
-we will get the pattern \"naoehu[)+{*\"
+   [{)}& aonehua naoehu[)+{*
+
+we will get the pattern \"naoehu[)+{\"
 "
+
   (interactive)
-  (let* (reg-part1
-         reg-part2 
-         regexp 
-         len1
-         len2
-         (oldcur (point))
-	 (back-limit 0))
-    (when mark-active
-      (setq oldcur (max (mark) (point))
-	   back-limit (min (mark) (point)))
-      (goto-char oldcur))
-    (push-mark (point))
-    (activate-mark)
-    (while (not (looking-back "\\w"))
-      (backward-char))
-    (setq reg-part2 (buffer-substring-no-properties (point) oldcur)
-          oldcur (point))
-    (while (and (looking-back "\\w\\|\\.") (< back-limit (point)))
-      (backward-char))
-    (setq reg-part1 (buffer-substring-no-properties (point) oldcur)
-          regexp (concat reg-part1 reg-part2)
-          len1 (length reg-part1)
-          len2 (length reg-part2))
+  (let (old-regexp new-regexp)
+    (if mark-active
+	(setq old-regexp (buffer-substring-no-properties (region-beginning) (region-end)))
+      (let* (reg-part1
+	     reg-part2 
+	     (oldcur (point))
+	     (back-limit (line-beginning-position)))
+	(push-mark (point))
+	(activate-mark)
+	(while (and (not (looking-back "\\w")) (< back-limit (point)))
+	  (backward-char))
+	(setq reg-part2 (buffer-substring-no-properties (point) oldcur)
+	      oldcur (point))
+	(while (and (looking-back "\\w\\|\\.") (< back-limit (point)))
+	  (backward-char))
+	(setq reg-part1 (buffer-substring-no-properties (point) oldcur)
+	      old-regexp (concat reg-part1 reg-part2))))
     
-    (let* (last-char-w-p
-          (re-list (string-to-list regexp))
-          (nth 0)
-          (new-re-list nil))
+    (let* ((re-list (string-to-list old-regexp))
+	   (after-first-char nil)
+	   (new-re-list nil))
 
       (while re-list
         (setq char (car re-list)
               re-list (cdr re-list))
 
-        (when  (> nth 0)
-          (setq new-re-list (append (nreverse (string-to-list ".*?")) new-re-list)))
+        (if after-first-char
+	    (setq new-re-list (append (nreverse (string-to-list ".*?")) new-re-list))
+	  (setq after-first-char t))
         
         (if (eq char ?.)
-            (setq new-re-list (append (nreverse (string-to-list "\\W")) new-re-list))
+            (setq new-re-list (append (nreverse (string-to-list "\\Sw")) new-re-list))
           (case (char-syntax char)
             (?w (setq new-re-list (cons char new-re-list)))
             (t (when (member char (string-to-list "^$*?[]+"))
                  (setq new-re-list (cons ?\\ new-re-list)))
-               (setq new-re-list (cons char new-re-list)))))
-        (setq nth (1+ nth)))
-      (setq regexp (apply 'string (nreverse new-re-list))))
-    (regexp-display-abbrev regexp)))
+               (setq new-re-list (cons char new-re-list))))))
+
+      (setq new-regexp (apply 'string (nreverse new-re-list))))
+    (regexp-display-abbrev new-regexp)))
 
 (defun regexp-display-abbrev (regexp)
   "Display the possible abbrevs for the regexp."
@@ -168,6 +167,13 @@ we will get the pattern \"naoehu[)+{*\"
   "the other buffer to search for completion")
 
 (defun regexp-get-matches (re)
+  (let ((list (regexp-get-matches-internal re)))
+    (if (and (boundp 'old-regexp)
+	     (stringp old-regexp))
+	(delete old-regexp list)
+      list)))
+
+(defun regexp-get-matches-internal (re)
   "Display the possible completions for the regexp."
   (let ((strlist-before nil)
         (strlist-after nil)

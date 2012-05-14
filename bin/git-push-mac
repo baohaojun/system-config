@@ -45,8 +45,9 @@ if git branch --contains HEAD -a |grep -q from-mac; then
     echo HEAD already containd in a remote branch, no need to push
     exit
 fi
-if test "$(git config remote.origin.url | cut -b 1-4)" = git:; then
-    git remote add origin-w $(git config remote.origin.url | perl -npe 's,^git://,git@,; s,/,:,') 2>/dev/null || true
+if echo "$(git config remote.origin.url | cut -b 1-4)" | grep -P -e 'git[:@]' -q; then
+    git remote rm origin-w >/dev/null 2>&1 || true
+    git remote add origin-w $(git config remote.origin.url | perl -npe 's,^git(://|@)github.com(/|:)(.*?)/,https://$3\@github.com/$3/,') 2>/dev/null || true
     git push origin-w HEAD:$rb
     git fetch origin
 else
