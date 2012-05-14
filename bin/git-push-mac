@@ -4,7 +4,7 @@ set -ex
 test "$(pwd)" = $HOME && cd ~/windows-config
 cd "$(dirname "$(lookup_file .git)")"
 
-test "$(git config remote.origin.url | cut -b 1-5)" = https && exit 0
+git config remote.origin.url | grep -q baohaojun || exit 0 # this is not my github, do not try to push it.
 
 if git submodule foreach 'bash -c "git-push-mac || echo hello $(pwd) failed&"' | tee /dev/stderr | grep "^hello.*failed$";
 then
@@ -49,6 +49,7 @@ if echo "$(git config remote.origin.url | cut -b 1-4)" | grep -P -e 'git[:@]' -q
     git remote rm origin-w >/dev/null 2>&1 || true
     git remote add origin-w $(git config remote.origin.url | perl -npe 's,^git(://|@)github.com(/|:)(.*?)/,https://$3\@github.com/$3/,') 2>/dev/null || true
     git push origin-w HEAD:$rb
+    git config remote.origin.url $(git config remote.origin-w.url | perl -npe 's,https://.*?\@,https://,')
     git fetch origin
 else
     git push origin HEAD:$rb
