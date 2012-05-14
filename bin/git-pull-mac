@@ -5,6 +5,7 @@ test $PWD = ~ && cd ~/windows-config/
 cd "$(dirname "$(lookup_file .git)")"
 
 git-clean-mac-branches-local
+git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git://,https://,')
 git fetch origin >/dev/null 2>&1 
 for x in $(git branch -a |grep 'remotes.*from-mac'|grep -v origin-w); do
     remote=$(echo $x|awk -F/ '{print $2}')
