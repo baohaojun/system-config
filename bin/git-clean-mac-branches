@@ -1,11 +1,7 @@
 #!/bin/bash
 set -ex
 test $PWD = ~ && cd ~/windows-config/
-if git branch -a|grep origin-w -q; then
-    remote=origin-w;
-else
-    remote=origin
-fi
+remote=origin
 
 my_mac=$(from-mac)
 for x in $(git branch -a |grep "origin/.*from-mac"); do
