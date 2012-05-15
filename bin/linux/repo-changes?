@@ -4,6 +4,10 @@ export android_dir=$(
     cd $(lookup_file .repo/..) >/dev/null 2>&1
     readlink -f .
 )
+if test $# = 1 -a -f "$1"; then
+    set -- $(cat "$1")
+fi
+
 for x in "$@"; do 
     rfa $x '
 if git st -s |grep -q . || test $(git log -1 --pretty=oneline|pn 1) != $REPO_LREV; then
@@ -16,5 +20,5 @@ done 2>&1 | (
     log=./out/repo-changes.log"$(echo -n $*)"
     lognow="$log-$(now)"
     tee "$lognow" 2>/dev/null
-    ln -sf $(basename "$lognow") "$log"
+    ln -sf $(basename "$lognow") "$log" >/dev/null 2>&1
 )
