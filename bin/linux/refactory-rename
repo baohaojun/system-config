@@ -12,7 +12,7 @@ function debug() {
 
 IFS=$'\n'
 
-git st -s . | grep . && die "git not clean:
+git status -s . | grep . && die "git not clean:
 $(git status . )"
 
 test $# = 0 && die "must provide at least 2 args"
