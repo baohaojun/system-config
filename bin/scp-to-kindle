@@ -1,2 +1,4 @@
 #!/bin/bash
-scp "$@" kindle:/mnt/us/documents/
+
+remote=$(basename $0| perl -npe 's/scp-to-//')
+scp "$@" $remote:/mnt/us/documents/

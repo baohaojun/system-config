@@ -57,6 +57,7 @@
   (if (or (string-match "*** localhost has changed mode for &bitlbee to" msg)
 	  (string-match "Account already online\\|Trying to get all accounts" msg)
 	  (string-match "You're already logged in" msg)
+	  (string-match "msn.* - Logging in:" msg)
 	  (string-match "has quit: Leaving\\|has joined channel" msg)
 	  (string-match "Unknown error while loading configuration" msg))
       (setq erc-insert-this nil)))
