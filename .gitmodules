@@ -3,16 +3,16 @@
 	url = https://github.com/punchagan/org2blog.git
 [submodule "gcode/beagrep"]
 	path = gcode/beagrep
-	url = git://github.com/baohaojun/beagrep.git
+	url = https://github.com/baohaojun/beagrep.git
 [submodule "doc/baohaojun"]
 	path = doc/baohaojun
-	url = git://github.com/baohaojun/baohaojun.github.com.git
+	url = https://github.com/baohaojun/baohaojun.github.com.git
 [submodule ".emacs_d/org-jira"]
 	path = .emacs_d/org-jira
-	url = git://github.com/baohaojun/org-jira.git
+	url = https://github.com/baohaojun/org-jira.git
 [submodule ".emacs_d/mo-git-blame"]
 	path = .emacs_d/mo-git-blame
-	url = git://github.com/baohaojun/mo-git-blame.git
+	url = https://github.com/baohaojun/mo-git-blame.git
 [submodule ".emacs_d/emacs-eclim"]
 	path = .emacs_d/emacs-eclim
 	url = https://github.com/senny/emacs-eclim.git
