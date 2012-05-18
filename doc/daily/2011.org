@@ -107,7 +107,7 @@ IFS=$'\n' #不想处理文件名中空格的偷懒办法
 git status #如果没用git管理，就退出吧（前面set -e了）。连版本管理都没有，还敢用重构？
 #版本管理 != git，但是也差不多了吧，至少对我自己是相当安全的，git那么普遍，不至于出现依赖关系倒置的情况。
 
-git st -s . | grep . && die "git not clean" #git里有东西还没check in，好险...
+git status -s . | grep . && die "git not clean" #git里有东西还没check in，好险...
 
 test "$#" = 0 && die "must provide at least 2 args" #这个逻辑有点松，其实我现在只能支持两个参数
 # 正确的写法应该是：test "$#" != 2 && die "must provide exactly 2 args"，但是我在想以后要不要支持多于一组重命名参数。

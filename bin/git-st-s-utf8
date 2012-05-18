@@ -1,6 +1,6 @@
 #!/bin/bash
 
-command git st -s . | perl -ne '
+command git status -s . | perl -ne '
 chomp();
 $_ = substr($_, 3);
 if (m/^"/) {

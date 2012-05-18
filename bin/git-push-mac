@@ -24,7 +24,7 @@ if git diff --quiet HEAD && git branch --contains HEAD -a |grep -q from-mac; the
     exit
 fi
 
-if git st -s | grep . ; then
+if git status -s | grep . ; then
     git commit -m "$(
 	(
 	    echo "###start of comment###"

@@ -10,7 +10,7 @@ fi
 
 for x in "$@"; do 
     rfa $x '
-if git st -s |grep -q . || test $(git log -1 --pretty=oneline|pn 1) != $REPO_LREV; then
+if git status -s |grep -q . || test $(git log -1 --pretty=oneline|pn 1) != $REPO_LREV; then
     relative-path $(readlink -f .) $android_dir/;
     echo;
 fi'

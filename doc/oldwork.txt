@@ -3431,7 +3431,7 @@ composite -geometry +59+354 book_shelf.png xx.png xx.png
 composite -geometry +59+196 book_shelf.png xx.png xx.png 
 composite curtain_left.png xx.png xx.png 
 composite -geometry +880+0 curtain_right.png xx.png xx.png 
-git st -s|awk '{print $2}'|xargs bash -c 'for x in "$@"; do emacsclient $x; done' xx
+git status -s|awk '{print $2}'|xargs bash -c 'for x in "$@"; do emacsclient $x; done' xx
 
 (. ~/.bashrc; lcd out/target; rm -f product/eeepc/obj/PACKAGING/systemimage_unopt_intermediates/system.img; rm -f product/eeepc/system.img; rm -f product/eeepc/eeepc.iso; lcd bootable/newinstaller/;  touch ./boot/isolinux/*; mm iso_img)
 
@@ -3843,7 +3843,7 @@ cleartomark
 
 
 remove already deleted files
-git st -s|grep '^ D'|awk '{print $2}'|xargs git rm 
+git status -s|grep '^ D'|awk '{print $2}'|xargs git rm 
 
 perl -e '$dood="recovery:680:a00:800,boot:1080:1000:800,mbr:2080:200:800,system:2280:10000:800,cache:12280:4000:800,misc:16280:400:800,userdata:16680:1c1580:800"; @dood=split(",", $dood); for $dood (@dood) {@xx=split(":", $dood); $start = eval("0x".$xx[1]); $size=eval("0x".$xx[2]); $mul = eval("0x".$xx[3]); $name=$xx[0]; $start *= $mul; $size*=$mul; print "name: $name, size: $size, start: $start\n"}'
 
@@ -3866,7 +3866,7 @@ pidgin: Tools->Privacy
 
 tegra_charger_register
 
-git st -s|grep -v '^ D'|awk '{print $2}'|xargs git dt
+git status -s|grep -v '^ D'|awk '{print $2}'|xargs git dt
 
 wine1.2终于出啦.虽然只是rc1.但是已经几近完美支持中文而且QQ不会突然崩溃.
 单文件版的Q2009貌似就是TM版的.还不支持显示用户是否是用手机登录的.而且分组顺序经常混乱.如今终于可以解决啦..~~
