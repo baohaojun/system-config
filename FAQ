@@ -1,0 +1,8 @@
+-*- org -*-
+
+** I use black background theme, how do i change tweet background face?
+
+   Here is my config for black background:
+
+     (set-face-background twittering-zebra-1-face "gray24")
+     (set-face-background twittering-zebra-2-face "gray22")
