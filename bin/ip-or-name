@@ -3,7 +3,7 @@ BEGIN
   {
     our %hostname_ip_map;
     our %ip_hostname_map;
-    
+
     open($file, "<", "/etc/hosts");
     while (<$file>) {
       next if m/^\s*#/;
@@ -27,7 +27,7 @@ if ($0 =~ m/ip-or-name/) {
   $ip = $hostname_ip_map{$host};
   $ip = $host unless $ip;
   print "$ip$arg";
-} elsif ($0 =~ m/ip-hosts/) {
+} elsif ($0 =~ m/-or-ip/) {
   $ip = $arg;
   $hostname = ($ip_hostname_map{$ip} or $ip);
   print "$hostname";

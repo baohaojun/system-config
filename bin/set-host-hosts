@@ -18,7 +18,10 @@ $ip = $ARGV[1];
 
 $hosts{$host} = $ip;
 
+open($file, ">", "/etc/hosts") or die "Error: can not open /etc/hosts, are you root?";
+
 for (sort keys %hosts) {
     $ip = $hosts{$_};
+    print $file "$ip $_\n";
     print "$ip $_\n";
 }
