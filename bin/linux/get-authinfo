@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use strict;
+my $got_pass=0;
 open(my $auth, "<", glob("~/.authinfo")) or die "No .authinfo in your HOME";
 while (<$auth>) {
     my @fields = split;
@@ -7,7 +8,12 @@ while (<$auth>) {
     if ($ARGV[0] eq $machine) {
 	if ($ARGV[1] and $ARGV[1] eq $user or not $ARGV[1]) {
 	    print $pass;
+	    $got_pass = 1;
 	    last;
 	}
     }
+}
+
+unless ($got_pass) {
+  system("bash -c 'read -p \"Password: \" -s pass; echo \$pass'");
 }

@@ -18,7 +18,7 @@ BEGIN
   }
 
 $arg = $ARGV[0];
-if ($0 =~ m/host-hosts/) {
+if ($0 =~ m/ip-or-name/) {
 
   $home = $ENV{'HOME'};
   $arg =~ s,^(?:\\\\|//|smb://|$home/smb/)*(.*?)(\\|/|$),$2,;

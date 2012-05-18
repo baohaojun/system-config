@@ -19,7 +19,7 @@ lcd()
 	    sudo umount -l ~/smb
 	    smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"
 	fi
-        builtin cd ~/smb/"$(host-hosts "$1")"
+        builtin cd ~/smb/"$(ip-or-name "$1")"
         return 0
     fi
    
