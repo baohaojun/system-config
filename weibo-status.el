@@ -51,7 +51,7 @@
   (make-weibo-status
    :id (weibo-get-node-text node 'id)
    :text (weibo-get-node-text node 'text)
-   :source (mm-decode-coding-string (nth 2 (nth 2 (weibo-get-node node 'source))) 'utf-8)
+   :source (mm-decode-coding-string (or (nth 2 (nth 2 (weibo-get-node node 'source))) "") 'utf-8)
    :favorited (weibo-get-node-text node 'favorited)
    :truncated (weibo-get-node-text node 'truncated)
    :in_reply_to_status_id (weibo-get-node-text node 'in_reply_to_status_id)

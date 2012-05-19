@@ -15,6 +15,9 @@
 
 (defconst weibo-image-buffer-name "*weibo-image*")
 
+(defvar weibo-display-image t
+  "When set to true, images are displayed. Set it to nil to disable image display.")
+
 (defun weibo-get-image-directory ()
   (let ((image-directory (expand-file-name "cache" weibo-directory)))
     (unless (file-exists-p image-directory)
@@ -25,27 +28,30 @@
   (expand-file-name (md5 url) (weibo-get-image-directory)))
 
 (defun weibo-get-image-file (url)
-  (let ((image-file (weibo-make-image-file-name url)))
-    (unless (file-exists-p image-file)
-      (with-current-buffer (url-retrieve-synchronously url)
-	(goto-char (point-min))
-	(let ((end (search-forward "\n\n" nil t)))
-	  (when end
-	    (delete-region (point-min) end)
-	    (write-file image-file)))
-	(kill-buffer)))
-    (if (file-exists-p image-file) image-file nil)))
+  (if weibo-display-image
+      (let ((image-file (weibo-make-image-file-name url)))
+	(unless (file-exists-p image-file)
+	  (with-current-buffer (url-retrieve-synchronously url)
+	    (goto-char (point-min))
+	    (let ((end (search-forward "\n\n" nil t)))
+	      (when end
+		(delete-region (point-min) end)
+		(write-file image-file)))
+	    (kill-buffer)))
+	(if (file-exists-p image-file) image-file nil))
+    nil))
 
 (defun weibo-insert-image (image-file &optional url)
-  (when image-file
-    (condition-case err
-	(progn
-	  (insert-image (create-image image-file) url)
-	  t)
-      (error
-     (when (file-exists-p image-file)
-       (delete-file image-file))
-     nil))))
+  (when weibo-display-image
+    (when image-file
+      (condition-case err
+	  (progn
+	    (insert-image (create-image image-file) url)
+	    t)
+	(error
+	 (when (file-exists-p image-file)
+	   (delete-file image-file))
+	 nil)))))
 
 (defun weibo-show-image (url)
   (let ((init_t (not (get-buffer weibo-image-buffer-name))))
