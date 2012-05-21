@@ -1,4 +1,5 @@
 #!/bin/bash
 
+xset b off
 gnome-screensaver-command -a -l&
 sleep 5 && xset dpms force off
