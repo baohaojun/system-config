@@ -1,0 +1,29 @@
+- Compile java to class:
+
+  #+begin_example
+  javac Test.java
+  #+end_example
+
+- Convert to .dex:
+
+  #+begin_example
+  /home/bhj/src/ics-sultan-out/out-jasmine-eng/host/linux-x86/bin/dx --dex  --output=classes.dex Test.class
+  #+end_example
+
+  Note that the .dex file name must be classes.dex, as can be seen from error
+  output spitted by adb logcat when it is not name so.
+
+- Convert it to .jar:
+
+  #+begin_example
+  jar cfv Test.jar classes.dex
+  #+end_example
+
+- adb push it to phone and run it using ~app_process~
+
+  #+begin_example
+  export CLASSPATH=/data/Test.jar
+  app_process /system/bin Test
+  #+end_example
+
+  Refer to ~/system/bin/monkey~ for an example.
