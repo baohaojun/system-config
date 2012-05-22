@@ -620,6 +620,7 @@
  '(woman-manpath (quote ("/usr/man" "/usr/share/man" "/usr/local/man")))
  '(woman-use-own-frame nil)
  '(x-select-enable-clipboard t)
+ '(yas/also-auto-indent-first-line t)
  '(yas/prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
  '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets")) nil (yasnippet))
  '(yas/trigger-key "M-TAB"))
@@ -2074,9 +2075,10 @@ criteria can be provided via the optional match-string argument "
     (search-forward "end generated code")
     (previous-line)
     (move-end-of-line nil)
-    (setq  end-of-text (point))
+    (setq end-of-text (point))
     (shell-command-on-region start-of-text end-of-text code-text nil t)
-    (indent-region start-of-text (point))))
+    (indent-region (min (point) (mark))
+		   (max (point) (mark)))))
 
 (require 'org-jira)
 (condition-case nil
