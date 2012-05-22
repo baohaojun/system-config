@@ -12,3 +12,4 @@ dir=$(today 'last month')
 dir=${dir%-*}
 relative-link $(pwd)/$dir ~/last-month
 relative-link ~/Downloads/forever/* ~/today/
+relative-link ~/Downloads/forever/ ~/today/
