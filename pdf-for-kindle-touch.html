@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>pdf-for-kindle-touch</title>
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="title" content="pdf-for-kindle-touch"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-02 18:57:00 CST"/>
+<meta name="generated" content="2012-05-23 13:46:56 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -21,6 +21,9 @@ lang="en" xml:lang="en">
   .target { }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
   p.verse { margin-left: 3% }
   pre {
 	border: 1pt solid #AEBDCC;
@@ -31,10 +34,23 @@ lang="en" xml:lang="en">
         overflow:auto;
   }
   table { border-collapse: collapse; }
-  td, th { vertical-align: top; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
   dt { font-weight: bold; }
   div.figure { padding: 0.5em; }
   div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
   .linenr { font-size:smaller }
   .code-highlighted {background-color:#ffff00;}
   .org-info-js_info-navigation { border-style:none; }
@@ -66,10 +82,15 @@ lang="en" xml:lang="en">
  }
 /*]]>*///-->
 </script>
+
 </head>
 <body>
-<div id="content">
 
+<div id="preamble">
+
+</div>
+
+<div id="content">
 <h1 class="title">pdf-for-kindle-touch</h1>
 
 
@@ -77,19 +98,59 @@ lang="en" xml:lang="en">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 How to convert pdf for reading on kindle touch </a></li>
+<li><a href="#sec-1">1 How to get your pdf Kindle-touch-ready (using open source tools)</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Already got a pdf</a></li>
+<li><a href="#sec-1-2">1.2 When you can print to a pdf</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> <span class="todo TODO"> TODO</span> How to convert pdf for reading on kindle touch </h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> How to get your pdf Kindle-touch-ready (using open source tools)</h2>
 <div class="outline-text-2" id="text-1">
 
 
+<p>
+PDF reading on Kindle touch is suffer. Googling "pdf kindle touch" will show you
+how many other people also thinks so.
+</p>
+<p>
+With the help of some open source tools (mainly pdfjam), you can actually get a
+lot better experience reading pdf on your Kindle touch.
+</p>
+<p>
+Below I will talk about how to get you pdf file kindle-touch-ready on 2 situations: 
+</p>
 <ul>
-<li>
-get rid of the margin
+<li>you already got a pdf
+
+</li>
+<li>you are about to print (such as an html) into pdf
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Already got a pdf</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+<p>
+When you already got a pdf, there is not much you can do except to sacrifice
+something: you need cut every page into halves so that it looks large enough on
+kindle touch and do not strain your eyes so much.
+</p>
+<p>
+With the help of pdfjam, you can achieve this like the following.
+</p>
+<ul>
+<li>Get rid of the margin
 
 
 
@@ -98,12 +159,18 @@ get rid of the margin
 </pre>
 
 
+<p>
+  How much you need to cut off? You may need to try and error for it. If you cut
+  too little, the pages would not be as big as it can be when displayed on the
+  Kindle touch, thus still strains your eyes out a little bit. But if you cut
+  off too much, then useful text might be cut off, which is surely not wanted, either.
+</p></li>
+</ul>
 
 
 
-</li>
-<li>
-split it to top and bottom halfs (so that we can read in landscape on kindle touch)
+<ul>
+<li>split it to top and bottom halfs (so that we can read in landscape on kindle touch)
 
 
 
@@ -113,11 +180,27 @@ pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 0 0 143mm'
 </pre>
 
 
+<p>
+  Note that I'm not cutting right through the center of the page, for an A4
+  (210mm x 297mm) page, that will be 148mm cut off and 149mm remaining. Instead,
+  for each half, I cut off 143mm and 154mm remained. This is because we do not
+  want part of a line of text show in the top half while the other part of the
+  same line of text show in the bottom half. With the extra space we reserved,
+  if a line of text is only partially shown in the top half, for e.g., it will
+  almost certainly show completely in the bottom half.
+</p>
+<p>
+  At the end of this, you get 2 pdf files, one consist all the pages for the top
+  half, and one all the pages of the bottom half. This is mostly not what we
+  want, we want the top half pages and bottom half pages interwined in the
+  correct order. To achieve this, we need 2 steps.
+</p></li>
+</ul>
 
 
-</li>
-<li>
-join the top and bot page by page
+
+<ul>
+<li>split and interwine the top and bot pdf files page by page
 
 
 
@@ -126,11 +209,16 @@ join the top and bot page by page
 </pre>
 
 
-
-
+<p>
+  At the end of this, we get as many pdf files as there are pages in the
+  original pdf file, each new file contains exactly 2 pages, the top half page
+  and the bottom half page.
+</p>
+<p>
+  So we need to join them.
+</p>
 </li>
-<li>
-join all the pages
+<li>join all the new pdfs
 
 
 
@@ -139,11 +227,8 @@ join all the pages
 </pre>
 
 
-
-
 </li>
-<li>
-rotate the page
+<li>rotate the pages
 
 
 
@@ -152,18 +237,60 @@ rotate the page
 </pre>
 
 
-
-</li>
-</ul>
-</div>
-</div>
-<div id="postamble">
-<p class="author"> Author: Bao Haojun
-<a href="mailto:baohaojun@gmail.com">&lt;baohaojun@gmail.com&gt;</a>
+<p>
+  After all these steps, you can view your pdf in landscape mode on your Kindle
+  touch. Finally.
 </p>
-<p class="date"> Date: 2012-05-02 18:57:00 CST</p>
-<p class="creator">HTML generated by org-mode 6.33x in emacs 23</p>
+<p>
+  This seems a lot of ordeal, so I have put together 2 scripts to automate them,
+  you can find it at <a href="https://github.com/baohaojun/windows-config/raw/master/bin/pdf-cut">pdf-cut</a> and <a href="https://github.com/baohaojun/windows-config/raw/master/bin/pdf-for-kindle">pdf-for-kindle</a>. The former is for trial and
+  error when you need to determine how much to cut off each page, and after you
+  get the perfect set of parameters, you can change <code>pdf-cut</code> to
+  <code>pdf-for-kindle</code> to get the converted Kindle-Touch-Ready version of pdf.
+</p></li>
+</ul>
+
+
 </div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> When you can print to a pdf</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+<p>
+There is a very simple way to get a Kindle-Touch-Ready pdf in this situation,
+customize your cups-pdf page size!
+</p>
+<p>
+For e.g., I have my pdf pseudo printer page size to be set up as 8.5in x 6in.
+</p>
+<p>
+After you got the pdf printed, you can use the same tricks to cut out the
+margins and rotate it for landscape viewing on Kindle.
+</p>
+<p>
+Another pitfall in this solution though: Kindle-Touch will easily display
+out-of-memory for pdf thus created. I believe its because the ghostscript
+backend used in cups-pdf printer use a lot of Type-3 fonts which is memory
+hungry.
+</p>
+<p>
+My solution, is to root my Kindle-Touch and turn swapping on, so it can get 512M
+extra virtual memory!
+</p></div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2012-05-23 13:46:56 CST</p>
+<p class="author">Author: Bao Haojun</p>
+<p class="creator">Org version 7.8.09 with Emacs version 24</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
 </div>
 </body>
 </html>
