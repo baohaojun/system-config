@@ -51,7 +51,7 @@
   (make-weibo-status
    :id (weibo-get-node-text node 'id)
    :text (weibo-get-node-text node 'text)
-   :source (mm-decode-coding-string (or (nth 2 (nth 2 (weibo-get-node node 'source))) "") 'utf-8)
+   :source (replace-regexp-in-string "<[^>]*>" "" (or (weibo-get-node-text node 'source) ""))
    :favorited (weibo-get-node-text node 'favorited)
    :truncated (weibo-get-node-text node 'truncated)
    :in_reply_to_status_id (weibo-get-node-text node 'in_reply_to_status_id)
@@ -75,7 +75,7 @@
     (with-temp-message (concat "获取微博 " param "...")
       (weibo-get-data type
 		      parse-func param
-		      "statuses" new)
+		      new)
       (when (and new (string= type weibo-api-status-mention-timeline))
 	(weibo-timeline-reset-count "2")))))
 
@@ -130,33 +130,32 @@
 		      'weibo-parse-update-status (format "?ids=%s" ids) status-list type))))
 
 (defun weibo-parse-update-status (root status-list type)
-  (when (string= (xml-node-name root) "counts")
-      (let* ((node-list (xml-node-children root))
-	    (first-status (and (string= type weibo-api-status-friends-timeline)
-			       (car status-list)))
-	    (since-id (and first-status (weibo-status-id first-status)))
-	    (status-alist (mapcar (lambda (status)
-				    `(,(weibo-status-id status) . ,status))
-				  status-list))
-	    (rtstatus-alist (mapcar (lambda (status)
-				      (let ((rtstatus (weibo-status-retweeted_status status)))
-					(when rtstatus
-					  `(,(weibo-status-id rtstatus) . ,rtstatus))))
-				    status-list)))
-	(mapc (lambda (node)
-		(let* ((id (weibo-get-node-text node 'id))
-		      (comments (weibo-get-node-text node 'comments))
-		      (rt (weibo-get-node-text node 'rt))
-		      (astatus (assoc id status-alist))
-		      (status (and astatus (cdr astatus)))
-		      (artstatus (assoc id rtstatus-alist))
-		      (rtstatus (and artstatus (cdr artstatus))))
-		  (when status (setf (weibo-status-comments status) comments
-				     (weibo-status-rt status) rt))
-		  (when rtstatus (setf (weibo-status-comments rtstatus) comments
+  (when (weibo-check-result root)
+    (let* ((first-status (and (string= type weibo-api-status-friends-timeline)
+			      (car status-list)))
+	   (since-id (and first-status (weibo-status-id first-status)))
+	   (status-alist (mapcar (lambda (status)
+				   `(,(weibo-status-id status) . ,status))
+				 status-list))
+	   (rtstatus-alist (mapcar (lambda (status)
+				     (let ((rtstatus (weibo-status-retweeted_status status)))
+				       (when rtstatus
+					 `(,(weibo-status-id rtstatus) . ,rtstatus))))
+				   status-list)))
+      (mapc (lambda (node)
+	      (let* ((id (weibo-get-node-text node 'id))
+		     (comments (weibo-get-node-text node 'comments))
+		     (rt (weibo-get-node-text node 'rt))
+		     (astatus (assoc id status-alist))
+		     (status (and astatus (cdr astatus)))
+		     (artstatus (assoc id rtstatus-alist))
+		     (rtstatus (and artstatus (cdr artstatus))))
+		(when status (setf (weibo-status-comments status) comments
+				   (weibo-status-rt status) rt))
+		(when rtstatus (setf (weibo-status-comments rtstatus) comments
 				     (weibo-status-rt rtstatus) rt))))
-	      node-list)
-	`(,since-id . ,status-list))))
+	    (append root nil))
+      `(,since-id . ,status-list))))
 
 (defun weibo-post-status (&rest p)
   (weibo-create-post "" "发表微博" nil 'weibo-send-status))

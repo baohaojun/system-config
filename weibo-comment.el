@@ -35,7 +35,7 @@
   (make-weibo-comment
    :id (weibo-get-node-text node 'id)
    :text (weibo-get-node-text node 'text)
-   :source (mm-decode-coding-string (nth 2 (nth 2 (weibo-get-node node 'source))) 'utf-8)
+   :source (replace-regexp-in-string "<[^>]*>" "" (or (weibo-get-node-text node 'source) ""))
    :favorited (weibo-get-node-text node 'favorited)
    :truncated (weibo-get-node-text node 'truncated)
    :created_at (weibo-get-node-text node 'created_at)
@@ -54,7 +54,7 @@
     (with-temp-message (concat "获取评论 " param "...")
       (weibo-get-data type
 		      parse-func param
-		      "comments" new)
+		      new)
       (weibo-timeline-reset-count "1"))))
 
 (defun weibo-comment-pretty-printer (comment &optional p)
@@ -130,11 +130,10 @@
 		      'weibo-comment-parse-update-status (format "?ids=%s" ids) comment-list type))))
 
 (defun weibo-comment-parse-update-status (root comment-list type)
-  (when (string= (xml-node-name root) "counts")
-    (let ((node-list (xml-node-children root))
-	  (comment-alist (mapcar (lambda (comment)
-				  `(,(weibo-status-id (weibo-comment-status comment))
-				    . ,comment)) comment-list)))
+  (when (weibo-check-result root)
+    (let ((comment-alist (mapcar (lambda (comment)
+				   `(,(weibo-status-id (weibo-comment-status comment))
+				     . ,comment)) comment-list)))
       (mapc (lambda (node)
 	      (let* ((id (weibo-get-node-text node 'id))
 		     (comments (weibo-get-node-text node 'comments))
@@ -143,7 +142,7 @@
 		     (comment (and acomment (cdr acomment))))
 		(when comment (setf (weibo-status-comments (weibo-comment-status comment)) comments
 				    (weibo-status-rt (weibo-comment-status comment)) rt))))
-	    node-list))
+	    (append root nil)))
     `(nil . ,comment-list)))
 
 (defun weibo-comment-timeline-provider (key name data)

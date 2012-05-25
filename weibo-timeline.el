@@ -47,7 +47,7 @@
   (weibo-get-data weibo-api-status-unread 'weibo-timeline-parse-unread param))
 
 (defun weibo-timeline-parse-unread (root)
-  (when (string= (xml-node-name root) "count")
+  (when (weibo-check-result root)
     (let ((followers (weibo-get-node-text root 'followers))
 	  (dm (weibo-get-node-text root 'dm))
 	  (mentions (weibo-get-node-text root 'mentions))
@@ -145,20 +145,18 @@
 			  'follow-link t)))
     (insert "\n")))
 
-(defun weibo-timeline-parse-root (root root-name front-t &optional clear-t)
+(defun weibo-timeline-parse-data (root front-t &optional clear-t)
   (when clear-t (ewoc-filter weibo-timeline-data (lambda (data) nil)))
-  (and root (string= (xml-node-name root) root-name)
-       (weibo-timeline-parse-nodes (xml-node-children root) front-t)))
-
-(defun weibo-timeline-parse-nodes (node-list front_t)
-  (let ((proc_func (if front_t 'ewoc-enter-first 'ewoc-enter-last)))
-    (mapc '(lambda (node)
-	     (apply proc_func (list weibo-timeline-data
-				    (apply
-				     (weibo-timeline-provider-make-function
-				      weibo-timeline-current-provider)
-				     `(,node)))))
-	  (if front_t (reverse node-list) (cdr node-list)))))
+  (when (weibo-check-result root)
+    (let ((proc-func (if front-t 'ewoc-enter-first 'ewoc-enter-last))
+	  (data (append root nil)))
+      (mapc '(lambda (node)
+	       (apply proc-func (list weibo-timeline-data
+				      (apply
+				       (weibo-timeline-provider-make-function
+					weibo-timeline-current-provider)
+				       `(,node)))))
+	    (if front-t (reverse data) data)))))
 
 (defun weibo-timeline-pull (new)
   (when (weibo-timeline-provider-p weibo-timeline-current-provider)
@@ -168,7 +166,7 @@
       (apply (weibo-timeline-provider-pull-function weibo-timeline-current-provider)
 	     (list
 	      node-data
-	      'weibo-timeline-parse-root new
+	      'weibo-timeline-parse-data new
 	      (weibo-timeline-provider-data weibo-timeline-current-provider))))
     (weibo-timeline-update)))
 

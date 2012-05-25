@@ -22,7 +22,7 @@
 	 (param (format "?id=%s" id)))
     (with-temp-message "获取微博评论..."
       (weibo-get-data weibo-api-status-comments-timeline
-		       parse-func param "comments" t t))))
+		       parse-func param t t))))
 
 (defun weibo-status-comments-pretty-printer (comment &optional p)
   (weibo-insert-comment comment nil))

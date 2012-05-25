@@ -126,7 +126,7 @@
 	    ", " (weibo-user-location user) ") ")))
 
 (defun weibo-parse-user (root func)
-  (if (string= (xml-node-name root) "hash")
+  (if (not (weibo-check-result root))
       (progn
 	(message "找不到此用户")
 	nil)

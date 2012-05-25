@@ -15,6 +15,7 @@
 
 (require 'hex-util)
 (require 'oauth)
+(require 'json)
 (require 'weibo-timeline)
 (require 'weibo-status)
 (require 'weibo-user)
@@ -73,44 +74,56 @@
     (kill-this-buffer))
   weibo-token)
 
+(defun weibo-check-result (root)
+  (if (and root (length root)
+	   (if (and (listp root) (weibo-get-node root 'error)) nil t))
+      t
+    (print (weibo-get-node-text root 'error))
+    nil))
+
 (defun weibo-get-node (pnode tag)
-  (car (xml-get-children pnode tag)))
+  (assoc tag pnode))
 
 (defun weibo-get-node-text (node tag)
-  (let ((str (car (xml-node-children (weibo-get-node node tag)))))
-    (and str (mm-decode-coding-string str 'utf-8))))
+  (let ((data (cdr (weibo-get-node node tag))))
+    (cond ((numberp data) (format "%d" data))
+	  (t data))))
 
 (defun weibo-get-body ()
   (goto-char (point-min))
   (let ((start
 	 (or (search-forward "\r\n\r\n" nil t)
-	     (search-forward "\n\n" nil t))))
+	     (search-forward "\n\n" nil t)))
+	(buffer (current-buffer))
+	(max (point-max)))
     (when start
-      (xml-parse-region start (point-max)))))
+      (with-temp-buffer
+	(insert-buffer-substring buffer start max)
+	(mm-decode-coding-region (point-min) (point-max) 'utf-8)
+	(goto-char (point-min))
+	(replace-regexp "\"id\":\\([0-9]+\\)," "\"id\":\"\\1\",")
+	(goto-char (point-min))
+	(json-read)))))
 
 (defun weibo-get-data (item callback &optional param &rest cbdata)
-  (let ((root (car (with-current-buffer
+  (let ((root (with-current-buffer
 		       (oauth-fetch-url
 			(weibo-get-token)
-			(concat (format "%s%s.xml" weibo-api-url item) param))
-		     (weibo-get-body)))))
+			(concat (format "%s%s.json" weibo-api-url item) param))
+		     (weibo-get-body))))
     (apply callback (cons root cbdata))))
 
 (defun weibo-post-data (item callback vars &optional param &rest cbdata)
   (let ((root (car (with-current-buffer
 		       (oauth-post-url
 			(weibo-get-token)
-			(concat (format "%s%s.xml" weibo-api-url item) param) vars)
+			(concat (format "%s%s.json" weibo-api-url item) param) vars)
 		     (weibo-get-body)))))
     (apply callback (cons root cbdata))))
 
 (defun weibo-parse-data-result (root &rest data)
   (when root
-    (let ((root-name (xml-node-name root)))
-      (cond
-       ((string= root-name "hash")
-	(print root) nil)
-       (t)))))
+    (print root)))
 
 (defun weibo-bury-close-window ()
   (interactive)
