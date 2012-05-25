@@ -103,7 +103,9 @@
 	(goto-char (point-min))
 	(replace-regexp "\"id\":\\([0-9]+\\)," "\"id\":\"\\1\",")
 	(goto-char (point-min))
-	(json-read)))))
+	(condition-case nil
+	    (json-read)
+	  ((error nil) `((error . ,(buffer-substring (point-min) (point-max))))))))))
 
 (defun weibo-get-data (item callback &optional param &rest cbdata)
   (let ((root (with-current-buffer

@@ -178,7 +178,7 @@ Returns an oauth-access-token if everything was successful."
     (setq auth-req
           (oauth-sign-request-hmac-sha1
            (oauth-make-request
-            (concat access-url "?oauth_verifier=" access-token)
+            (concat access-url "?oauth_verifier=" (url-hexify-string access-token))
             consumer-key unauth-t)
            consumer-secret))
     (setq auth-t (oauth-fetch-token auth-req))

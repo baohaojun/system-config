@@ -144,7 +144,7 @@
     (when init-t
       (weibo-user-mode))
     (unless (weibo-get-data weibo-api-user-show
-		    'weibo-parse-user (format "?screen_name=%s" name)
+		    'weibo-parse-user (format "?screen_name=%s" (url-hexify-string name))
 		    'weibo-insert-user-detail)
       (setq close-t t))
     (setq buffer-read-only t)
