@@ -171,10 +171,10 @@ Returns an oauth-access-token if everything was successful."
                            authorize-url (oauth-t-token unauth-t)))
     (if oauth-enable-browse-url (browse-url auth-url))
     (read-string (concat 
-                  "Please authorize this application by visiting: " auth-url
-                  " \nPress enter once you have done so: "))
+                  "授权此应用，请访问: " auth-url
+                  " \n获得授权码后按回车键..."))
     (setq access-token (read-string
-                        "Please enter the provided code: "))
+                        "请输入授权码: "))
     (setq auth-req
           (oauth-sign-request-hmac-sha1
            (oauth-make-request
