@@ -1,4 +1,3 @@
-#include "bhjdebug.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/soundcard.h>
@@ -59,6 +58,49 @@ void check_1_more_arg(int i, int argc)
     }
 }
 
+#define debug(fmt, ...) do {    \
+        fprintf(stderr,				\
+                "%s %s() %d: " fmt "\n",        \
+                strrchr(__FILE__, '/')          \
+                ? strrchr(__FILE__, '/') + 1	\
+                : __FILE__,                     \
+                __FUNCTION__, __LINE__,         \
+                ##__VA_ARGS__);                 \
+        fflush(stderr);                         \
+               } while(0)
+
+#define ddebug(a) do {				\
+        debug(#a " is %d", (a));    \
+    } while(0)
+
+#define xdebug(a) do {                      \
+        debug(#a " is 0x%x", (a));          \
+    } while(0)
+
+#define die(fmt, ...) do {			\
+        debug(fmt, ##__VA_ARGS__);  \
+        exit(-1);                   \
+    } while(0)
+
+#define ASSERT_EQUAL(a,b) do {          \
+        if ((a) != (b)) {                                   \
+            printf("error: %s is not equal to %s\n ", #a,  #b); \
+            exit(-1);                                           \
+        } else {                                                \
+            printf("OK: %s is equal to %s\n", #a, #b);          \
+        }                                                       \
+    } while (0)
+
+
+#define ASSERT_NOT_EQUAL(a,b) do {      \
+        if ((a) == (b)) {                               \
+            printf("error: %s is equal to %s\n", #a, #b);	\
+            exit(-1);                                       \
+        } else {                                            \
+            printf("OK: %s is not equal to %s\n", #a, #b);	\
+        }                                                   \
+    } while (0)
+
 int main(int argc, char *argv[])
 {
 
@@ -84,10 +126,10 @@ int main(int argc, char *argv[])
     if (!wav_file)
         Usage();
 
-    simple_debug(wav_file, %s);
-    simple_debug(sample_rate, %d);
-    simple_debug(channels, %d);
-    simple_debug(bits_per_sample, %d);
+    debug("%s", wav_file);
+    ddebug(sample_rate);
+    ddebug(channels);
+    ddebug(bits_per_sample);
 
     open_dsp(sample_rate, channels, bits_per_sample);
 

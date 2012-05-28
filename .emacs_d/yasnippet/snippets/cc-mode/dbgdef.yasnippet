@@ -34,6 +34,12 @@
 	}							\
     } while (0)
 
+#define die_if(cond) do {						\
+	if (cond) {							\
+	    printf("error: condition %s is true, need to die\n", #cond); \
+	    exit(-1);							\
+	}								\
+    } while (0)
 
 #define ASSERT_NOT_EQUAL(a,b) do {				\
 	if ((a) == (b)) {					\

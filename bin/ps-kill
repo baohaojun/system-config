@@ -5,5 +5,5 @@ if test $# = 1; then
 fi
 
 for x in "$@"; do
-    kill $(echo $x|pn 2)
+    kill $(echo $x|perl -npe 's/\./ /g'|pn 2)
 done

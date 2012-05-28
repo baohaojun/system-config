@@ -124,17 +124,19 @@ fi
 scd()
 {
     if test $# = 1; then
-	dir=$(lookup_file "$1"|tee /dev/stderr|head -n 1)
-	dir=$(formal-path "$dir")
-	basedir=$(dirname "$dir")
-	stem=$(basename "$dir")
-	
-	dir1=$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')
-	if test -e  "$dir1"; then
-	    cd "$dir1"
-	else
-	    cd "$(pwd | perl -npe 's,('$basedir'/),$1'$stem'/,')"
-	fi
+
+	for dir in $(lookup_file "$1"|tee /dev/stderr); do
+	    dir=$(formal-path "$dir")
+	    basedir=$(dirname "$dir")
+	    stem=$(basename "$dir")
+	    
+	    dir1=$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')
+	    if test -e  "$dir1"; then
+		cd "$dir1" && break
+	    else
+		cd "$(pwd | perl -npe 's,('$basedir'/),$1'$stem'/,')" && break
+	    fi
+	done
     else
 	dir1=$(pwd | perl -npe 's#'"$1"'#'"$2"'#g')
 	test -d "$dir1" && { cd "$dir1"; return; }
