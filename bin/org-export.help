@@ -1,6 +1,7 @@
 #!/bin/bash
 cat <<EOF
 (progn
+  (global-font-lock-mode t)
   (setq load-path
 	(nconc (list (expand-file-name "~/.emacs_d/lisp")
 		     (expand-file-name "~/.emacs_d/lisp/ext"))
