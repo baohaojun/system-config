@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+use strict;
+
+use lib glob("~/bin");
+use pretty;
+
+while(<>) {
+  chomp();
+  my @fields = split;
+  die unless scalar @fields == 3;
+
+  use POSIX;
+  $fields[1] = (strtol($fields[1]))[0];
+  $fields[2] = (strtol($fields[2]))[0];
+  printf "%-20s %20s %20s\n", $fields[0], pretty($fields[1]), pretty($fields[2] - $fields[1]);
+}

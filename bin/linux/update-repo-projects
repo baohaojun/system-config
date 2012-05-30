@@ -21,7 +21,9 @@ for x in "$@"; do
 
 	my-rfa -j 5 -- bash -c 'mkdir -p $(lookup_file .repo/../out)/$(today);
                                 log=$(lookup_file .repo/../out)/$(today)/$(echo $REPO_PATH | sed -e "s,/,.,g").git-log;
-                                git log $(repo-remote)/$(repo-refname)@"{1 day ago}"..$(repo-remote)/$(repo-refname) > $log
+                                remote=$(repo-remote)
+                                refname=$(repo-refname)
+                                git log $remote/$refname@"{1 day ago}"..$remote/$refname > $log
                                 if test $(stat -c %s $log) = 0; then
                                     rm $log
                                 fi
