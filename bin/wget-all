@@ -1,0 +1,2 @@
+#!/bin/bash
+wget -r -l1 -k --page-requisites -c "$@"

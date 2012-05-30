@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e
+cd $(lookup_file .repo/..)
+test -d .repo
+
+jobs=1
+TEMP=$(getopt -o j: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+	-j)
+	jobs=$2
+	shift 2
+	;;
+	--)
+	    shift
+	    break
+	    ;;
+	*)
+	    die "internal error"
+	    ;;
+    esac
+done
+
+job=0
+for x in $(xmlstarlet sel -B -t -m //project -v @path -n .repo/manifest.xml); do 
+    export REPO_PATH=$x
+    job=$((job + 1))
+    job=$((job % jobs))
+    (
+	(
+	    flock -x 9
+	    cd $x;
+	    "$@"
+	) 9>~/.logs/my-rfa-$job.log &
+    )
+done

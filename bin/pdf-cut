@@ -13,12 +13,22 @@ function die() {
 
 function Usage() {
     echo "Usage: $(basename $0) [OPTIONS...] INPUT.pdf"
-    echo "	OPTIONS: -w top|bot|left|right, the position (where) of the remaining page after cut"
-    echo "               -a, original size of INPUT.pdf is a4"
-    echo "               -u, original size of INPUT.pdf is us letter"
+    echo "	OPTIONS: -w top|bot|left|right, the position (where) of the remaining page after cut (deprecated)"
+    echo "               -a, original size of INPUT.pdf is a4, refer to -p, -W and -H"
+    echo "               -u, original size of INPUT.pdf is us letter, refer to -p, -W and -H"
+    echo "               -p a4|ul, specify the original size of INPUT.pdf"
+    echo "               -W NNN{in|mm}, the original width of INPUT.pdf, unit can be in or mm."
+    echo "               -H NNN{in|mm}, the original height of INPUT.pdf, unit can be in or mm."
     echo "               -h, show this help"
     echo "               -s size, the width (-w is left|right) or height (-w is top|bot) of the remaining page"
-    echo "                        default unit is mm"
+    echo "                        default unit is mm (deprecated)"
+    echo "               -c circumcise, how much to circumsize (cut off on each side of left/right/bot/top"
+    echo "               -l left, how much *more* to cut off on the left, note that it accumulates!"
+    echo "               -r right, see -l"
+    echo "               -t top, see -l"
+    echo "               -b bot, see -l"
+    echo "               -m min, the minimum page number to start cutting"
+    echo "               -M max, the maximum page number to start cutting"
 }
 
 

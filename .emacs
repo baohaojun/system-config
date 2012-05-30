@@ -1481,7 +1481,26 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (defun back-to-indent-same-space-as-prev-line (n-prev)
   (interactive "p")
-  (indent-same-space-as-prev-line n-prev t))
+  (if (looking-back "\\S ")
+      (let* ((old-pos (point))
+	     (old-col (current-column))
+	     (pat-start (save-excursion
+			  (search-backward-regexp "\\(^\\|\\s \\)\\S ")
+			  (unless (looking-at "^")
+			    (forward-char))
+			  (point)))
+	     (pat (buffer-substring-no-properties old-pos pat-start))
+	     (col-back-to (save-excursion
+			    (goto-char pat-start)
+			    (search-backward pat)
+			    (current-column)))
+	     (pos-back-to (- old-pos (- old-col col-back-to))))
+	(untabify (line-beginning-position) old-pos)
+	(if (< pos-back-to old-pos)
+	    (delete-region pos-back-to old-pos)
+	  (delete-region pat-start old-pos)
+	  (insert (make-string (- pos-back-to pat-start) ?\ ))))
+    (indent-same-space-as-prev-line n-prev t)))
 
 (global-set-key [(meta shift ? )] 'indent-same-space-as-prev-line)
 

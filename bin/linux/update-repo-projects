@@ -18,6 +18,14 @@ for x in "$@"; do
         cd `lookup_file .repo/..`
         test -e Makefile || exit
         repo sync -n -j4
+
+	my-rfa -j 5 -- bash -c 'mkdir -p $(lookup_file .repo/../out)/$(today);
+                                log=$(lookup_file .repo/../out)/$(today)/$(echo $REPO_PATH | sed -e "s,/,.,g").git-log;
+                                git log $(repo-remote)/$(repo-refname)@"{1 day ago}"..$(repo-remote)/$(repo-refname) > $log
+                                if test $(stat -c %s $log) = 0; then
+                                    rm $log
+                                fi
+                               '
         mkdir -p out
         mv out/changes.log out/changes.log-backup-`today` || true
         repo-changes\? 2>&1|tee out/changes.log
