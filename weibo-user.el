@@ -79,7 +79,7 @@
 	  (created_at (weibo-user-created_at user)))
       (weibo-insert-image (weibo-get-image-file
 			   (weibo-get-larger-profile_image_url
-			    (weibo-user-profile_image_url user))))
+			    (weibo-user-profile_image_url user)) t))
       (insert " ")
       (insert (weibo-user-screen_name user))
       (when (string= (weibo-user-verified user) "true")
@@ -147,6 +147,7 @@
 		    'weibo-parse-user (format "?screen_name=%s" (url-hexify-string name))
 		    'weibo-insert-user-detail)
       (setq close-t t))
+    (goto-char (point-min))
     (setq buffer-read-only t)
     (when close-t (weibo-bury-close-window)))))
 
