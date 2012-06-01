@@ -157,7 +157,7 @@
 					weibo-timeline-current-provider)
 				       `(,node)))))
 	    (if front-t (reverse data) data))))
-  (weibo-download-image-in-queue))
+  (run-with-idle-timer 0.2 nil 'weibo-download-image-in-queue))
 
 (defun weibo-timeline-pull (new)
   (when (weibo-timeline-provider-p weibo-timeline-current-provider)

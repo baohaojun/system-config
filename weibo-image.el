@@ -19,6 +19,7 @@
   "When set to true, images are displayed. Set it to nil to disable image display")
 
 (defvar weibo-download-image-queue nil)
+(defvar weibo-download-image-queue2 nil)
 
 (defun weibo-get-image-directory ()
   (let ((image-directory (expand-file-name "cache" weibo-directory)))
@@ -40,18 +41,36 @@
       (kill-buffer))))
 
 (defun weibo-add-to-image-download-queue (url)
-  (add-to-list 'weibo-download-image-queue url))
+  (unless (member url weibo-download-image-queue2)
+    (add-to-list 'weibo-download-image-queue url)))
 
 (defun weibo-download-image-in-queue ()
-  (let ((size (length weibo-download-image-queue)))
-    (while (> size 0)
-	  (let ((current-position (point)))
-	    (message (format "剩余%d张图片" size))
-	    (weibo-download-image-file (pop weibo-download-image-queue))
-	    (ewoc-refresh weibo-timeline-data)
-	    (goto-char current-position)
-	    (setq size (length weibo-download-image-queue)))))
-  (setq weibo-download-image-queue nil))
+  (let ((buffer (current-buffer))
+	(url (pop weibo-download-image-queue)))
+    (while url
+	(let ((image-file (weibo-make-image-file-name url))
+	      (size (length weibo-download-image-queue)))
+	  (message (format "剩余%d张图片" size))
+	  (unless (file-exists-p image-file)
+	    (add-to-list 'weibo-download-image-queue2 url)
+	    (url-retrieve url
+			(lambda (status image-file weibo-timeline-data buffer url)
+			  (goto-char (point-min))
+			  (let ((end (search-forward "\n\n" nil t)))
+			    (when end
+			      (delete-region (point-min) end)
+			      (write-file image-file)))
+			  (kill-buffer)
+			  (setq weibo-download-image-queue2 (remove url weibo-download-image-queue2))
+			  (when (= (% (length weibo-download-image-queue2) 5) 0)
+			    (with-current-buffer buffer
+			      (let ((current-position (point)))
+				(ewoc-refresh weibo-timeline-data)
+				(goto-char current-position)))))
+			`(,image-file ,weibo-timeline-data ,buffer ,url)))
+	  (setq url (pop weibo-download-image-queue))
+	  (when (= (% size 5) 0)
+	    (sleep-for 0.1))))))
 
 (defun weibo-get-image-file (url &optional download-synchronously)
   (if weibo-display-image
