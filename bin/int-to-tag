@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+
+use POSIX;
+
+($int) = strtol($ARGV[0]);
+$str=pack("N", $int);
+@chars = unpack("cccc", $str);
+printf "%c" x @chars, @chars;

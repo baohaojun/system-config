@@ -472,7 +472,7 @@
 
 (defun bhj-occur-make-errors ()
   (interactive)
-  (let ((bhj-occur-regexp "\\*\\*\\*\\|circular.*dropped\\|no rule to\\|failed\\|[0-9]+elapsed \\|error [0-9]+\\|because of errors\\|[0-9]+ error\\b\\|error:"))
+  (let ((bhj-occur-regexp "\\*\\*\\*\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]+elapsed \\|error [0-9]+\\|because of errors\\|[0-9]+ error\\b\\|error:"))
     (call-interactively 'bhj-occur)))
 
 
@@ -612,6 +612,8 @@
  '(twittering-convert-fix-size nil)
  '(url-proxy-services (quote (("http" . "127.0.0.1:8580") ("no_proxy" . "^[^.]*$\\|sina.com"))))
  '(user-full-name "Bao Haojun")
+ '(vc-handled-backends (quote (RCS CVS SVN SCCS Bzr Git Hg)))
+ '(vc-ignore-dir-regexp "\\`\\(?:[\\/][\\/][^\\/]+[\\/]\\|/\\(?:net\\|afs\\|\\.\\.\\.\\)/\\)\\'\\|/smb/")
  '(visible-bell t)
  '(w32-symlinks-handle-shortcuts t)
  '(w32-use-w32-font-dialog nil)

@@ -26,38 +26,9 @@ if ($0 =~ m,/?edit-wait$,) {
   @emacsclient = ('emacsclient');
 }
 
-sub get_smb_file($$) {
-  my ($remote, $file) = @_;
-
-  open(my $f, "<", glob("~/.smb/smbnetfs.conf")) or die "Error: can't open ~/.smb/smbnetfs.conf";
-  my $login = "";
-  while (<$f>) {
-    if (m/^\s*auth\s+$remote\s+(\S+)/) {
-      $login = $1;
-      print STDERR "login is $login\n";
-      last;
-    }
-  }
-  close $f;
-
-  if ($login) {
-    return "/smb:$login\@$remote:$file";
-  } else {
-    return "/smb:$remote:$file";
-  }
-}
-
 sub get_emacs_file_name($) {
   my ($file) = @_;
-  my $smb = glob("~/smb");
-
-  if ($file =~ m,$smb/(.*?)(/.*),) {
-    #/smb:samba@dog:/protected
-    my $remote = $1;
-    $file = $2;
-    return get_smb_file($remote, $file);
-
-  } elsif ($ENV{"REMOTEIP"}) {
+  if ($ENV{"REMOTEIP"}) {
     my ($myname, $myip, $myport, $remote_ip) = @ENV{"WHOAMI", "LOCALIP", "LOCALPORT", "REMOTEIP"};
     if ($protocol eq "pscp") {
       # plink on win7 has a bug, can't handle ip connection, only hostname
@@ -85,10 +56,6 @@ sub edit_1($)
       $file = shell_quote($file);
       chomp($file = qx(lookup_file $file));
       return (@emacsclient, get_emacs_file_name($file));
-
-    } elsif ($file =~ m,smb://(.*?)(/.*),) {
-
-      return @emacsclient, get_smb_file($1, $2);
 
     } else {
 

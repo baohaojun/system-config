@@ -33,6 +33,10 @@ lcd()
         set -- ../"$1";
 	looking=`dirname "$looking"`
 	test "$looking" = / && break
+	if test -e "$looking"/"$ori"; then
+	    builtin cd "$looking"/"$ori"
+	    return $?
+	fi
     done
 
     if ! test -e "$1" >/dev/null; then

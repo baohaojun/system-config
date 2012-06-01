@@ -65,6 +65,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	    echo "external dirs not managed by repo: $(repo-external)"
 	    echo "changed repos are: $(repo-changes\?)"
 	)&
+	rm */out/ -rf || true
 	result=''
 	if test "$target" = all; then
 	    time $(which time) make -j$jobs -l$jobs -k droid telephony uboot obm && result=$result'all ok; '
