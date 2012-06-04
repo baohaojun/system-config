@@ -3,3 +3,4 @@ Font=Lucida Console
 FontHeight=12
 CursorType=block
 Scrollbar=none
+BackgroundColour=63,63,63

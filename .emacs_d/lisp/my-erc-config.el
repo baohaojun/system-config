@@ -63,4 +63,6 @@
       (setq erc-insert-this nil)))
 (add-hook 'erc-insert-pre-hook 'erc-ignore-unimportant) ; order is important
 
-(erc :server "localhost" :port "6667" :nick "bhj" :password bitlbee-password)
+(defun my-erc ()
+  (interactive)
+  (erc :server "localhost" :port "6667" :nick "bhj" :password bitlbee-password))

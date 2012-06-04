@@ -6,20 +6,25 @@ use String::ShellQuote;
 open(my $out, "-|",  "ctags-exuberant --language-force=" . $ENV{GTAGS_LANG_FORCE} . " -xu " . $ENV{GTAGS_START_FILE})
     or die "Error: open gtags output";
 
+open(my $debug, ">", glob("~/.logs/grep-func-call.log"))
+  or die "Error: can not open log";
+
 my %func_location_map;
 my @func_lines;
 
 $func_location_map{1} = "******";
 while(<$out>) {
+  print $debug "$_";
     m/(\S*?)\s+(\S*?)\s+(\S*?)\s+(.*)/ or next;
     my ($func, $type, $line) = ($1, $2, $3);
-    $func_location_map{$line} = $func if $type eq "function" or $type eq "method";
+    $func_location_map{$line} = $func if $type eq "function" or $type eq "method" or $type eq "macro";
 }
 
 @func_lines = sort { $a <=> $b } keys %func_location_map;
 open(my $file, "<", $ENV{GTAGS_START_FILE}) or die "Error: open source file";
 my $target = $ARGV[1]; #argv.0 is -e
 
+print $debug "func_lines are @func_lines\n";
 my $last_match_line = 1;
 while(<$file>) {
     if (m/$target/) {
