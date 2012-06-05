@@ -6,7 +6,8 @@ if test -d ~/external/cygwin; then
 elif test -e ~/external/.cygwin-dir; then
     cd "$(cat ~/external/.cygwin-dir)"
 else
-    false
+    true
+    exit
 fi
 
 mirrorcyg.pl | mf-download.pl -n ${1:-3}
