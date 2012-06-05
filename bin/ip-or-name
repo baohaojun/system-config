@@ -28,8 +28,12 @@ if ($0 =~ m/ip-or-name/) {
   $ip = $host unless $ip;
   print "$ip$arg";
 } elsif ($0 =~ m/-or-ip/) {
-  $ip = $arg;
-  $hostname = ($ip_hostname_map{$ip} or $ip);
-  print "$hostname";
+
+  $home = $ENV{'HOME'};
+  $arg =~ s,^(?:\\\\|//|smb://|$home/smb/)*(.*?)(\\|/|$),$2,;
+  $host_or_ip = $1;
+  $arg =~ s,\\,/,g;
+  $host_or_ip = ($ip_hostname_map{$host_or_ip} or $host_or_ip);
+  print "$host_or_ip$arg";
 }
 
