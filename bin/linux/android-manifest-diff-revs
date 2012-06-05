@@ -15,7 +15,6 @@ my %f2;
 open(my $F1, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@revision -n $f1") or die "Error opening $f1\n";
 
 while (<$F1>) {
-  debug "got from f1: $_";
   next unless m/^(.*?)\s*=\s*(.*)\s*$/;
   $f1{$1} = $2;
 }
@@ -23,7 +22,6 @@ close $F1;
 
 open(my $F2, "-|", "xmlstarlet sel -t -m //project -v \@path -o '=' -v \@revision -n $f2") or die "Error opening $f2\n";
 while (<$F2>) {
-  debug "got from f2: $_";
   next unless m/^(.*?)\s*=\s*(.*)\s*$/;
   $f2{$1} = $2;
 }
@@ -44,7 +42,7 @@ for my $x1 (keys %f1) {
     if ($rev2) {
       $rev2 = "revision=\"$rev2\"";
     }
-    printf('1: <project path="%s" name="%s"%s/> <=> 2: <project path="%s" name="%s"%s/>' . "\n", $x1, $f1{$x1}, $rev1, $x1, $f2{$x1}, $rev2);
+    printf('(cd %s; export REV1=%s; export REV2=%s; bash)' . "\n", $x1, $f1{$x1}, $f2{$x1});
   } else {
     chomp(my $rev1 = qx(xmlstarlet sel -t -m //project -i "\@path='$x1'" -v \@revision $f1));
     if ($rev1) {
