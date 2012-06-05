@@ -69,6 +69,7 @@ cp ~/doc/monaco-linux.ttf /cygdrive/c/windows/fonts/simsun.ttc /cygdrive/c/windo
 fc-cache || true
 cd ~/doc
 regedit /s no-shift-space-toggle.reg
+regedit /s fix-windows-share-alias.reg
 regedit /s no-control-period.reg
 regedit /s keymap-win.reg
 
