@@ -6,7 +6,7 @@ tmp=~/.bash_history.$$
     perl -ne '
 s/^#?\s+//;
 s/\s*$/\n/;
-s/^#?re\s+.*?;//;
+s/^#?rex?\s+.*?(?:;|$)//;
 print if (length($_) < 1024 and not m/^\s*(hi[lr])\s+/)' | 
     uniq-even-non-ajacent > $tmp ) 2>/dev/null
 mv $tmp ~/.bash_history.bak

@@ -112,6 +112,11 @@ function re()
     echo 'error: re should never be executed!'
 }
 
+function rex()
+{
+    command rex "$@" ~/.bash_history.bak
+}
+
 alias cd=cd_bhj
 
 function rcd() {

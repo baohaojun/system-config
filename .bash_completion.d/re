@@ -17,5 +17,5 @@ function _re()
     return 0
 }
 
-complete -o default -F _re re
+complete -o default -F _re re rex
 	    

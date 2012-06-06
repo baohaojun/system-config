@@ -1,0 +1,51 @@
+#!/usr/bin/perl
+
+# This script reserves only the first line matched by all regexps in the file.
+
+use strict;
+
+die "Usage: rex regexp... file" unless scalar @ARGV >= 2;
+my @regexps = @ARGV[0..(@ARGV - 2)];
+my $file = $ARGV[@ARGV - 1];
+my $file_tmp = "$file.$$";
+
+open (my $f, "<", $file) or die "Can not open $file";
+open (my $ft, ">", $file_tmp) or die "Can not open $file_tmp";
+
+@regexps = map {qr($_)} @regexps;
+
+my @removed_lines = ();
+
+my $first_line = 1;
+skip: while (<$f>) {
+  my $line = $_;
+  my $all_match = 1;
+  for my $regexp (@regexps) {
+    unless ($line =~ m/$regexp/) {
+      $all_match = 0;
+      last;
+    }
+  }
+
+  if ($all_match) {
+    if ($first_line eq "1") {
+      $first_line = $line;
+    } else {
+      push @removed_lines, $line;
+      next;
+    }
+  }
+
+  print $ft $line;
+}
+
+for (reverse @removed_lines) {
+  print $_;
+}
+
+close($ft);
+close($f);
+print "\n$first_line\n";
+if (system("yes-or-no-p 'Remove all the above lines except the last one?'") == 0) {
+  system("mv $file_tmp $file");
+}
