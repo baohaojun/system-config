@@ -1,0 +1,41 @@
+#!/usr/bin/perl
+use strict;
+
+use lib glob("~/bin");
+use pretty;
+
+my @lines;
+
+while(<>) {
+    push @lines, $_;
+}
+
+my $total_line = $lines[@lines - 1];
+$total_line =~ m/^total: (.*)$/ or die "total: not matched";
+my $total = un_pretty($1);
+pop @lines;
+
+my $next_start = 0;
+foreach my $ln (3..@lines) {
+    $_ = $lines[$ln - 1];
+    chomp();
+    my @fields = split /\s*:\s*/;
+    die "fields is not 3" unless scalar @fields == 3;
+
+    my ($name, $start, $size) = @fields;
+
+    $start = un_pretty($start);
+    $size = un_pretty($size);
+
+    if ($ln == 3) {
+	$next_start = $start;
+    }
+
+    ($start, $next_start) = ($next_start, $next_start + $size);
+
+    if ($ln == @lines) {
+	$size = $total - $start;
+    }
+
+    printf "%-24s%-24s%s\n", $name, sprintf("0x%X", $start), sprintf("0x%X", $start + $size);
+}

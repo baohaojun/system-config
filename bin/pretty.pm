@@ -6,14 +6,18 @@ sub pretty($) {
 
     my $kremain = $num % 1024;
     my $mremain = $num % (1024*1024);
-    
-    my $m_num = ($num - $mremain) / (1024*1024);
+    my $gremain = $num % (1024*1024*1024);
+
+
+    my $g_num = ($num - $gremain) / (1024*1024*1024);
+    my $m_num = ($gremain - $mremain) / (1024*1024);
     my $k_num = ($mremain - $kremain) / 1024;
 
     my $b_num = $kremain;
 
     my $pretty;
-    $pretty = sprintf("%dM", $m_num) if $m_num;
+    $pretty = sprintf("%dG", $g_num) if $g_num;
+    $pretty .= sprintf("%dM", $m_num) if $m_num;
     $pretty .= sprintf("%dK", $k_num) if $k_num;
     $pretty .= sprintf("%dB", $b_num) if $b_num;
 
@@ -25,9 +29,10 @@ sub debug(@) {
   print STDERR "@_\n";
 }
 
+use POSIX;
 sub un_pretty($) 
 {
-    my ($m_num, $k_num, $b_num, $mremain, $kremain);
+    my ($g_num, $m_num, $k_num, $b_num, $gremain, $mremain, $kremain);
     my ($un_pretty) = (@_);
 
     $un_pretty =~ s/\s*//g;
@@ -36,20 +41,27 @@ sub un_pretty($)
       return oct ($un_pretty) if $un_pretty =~ /^0/;
       return $un_pretty;
     }
+    if ($un_pretty =~ s/^(.*?)G//i) {
+      ($g_num) = strtol($1, 0);
+    }
 
     if ($un_pretty =~ s/^(.*?)M//i) {
-        $m_num = $1;
+        ($m_num) = strtol($1, 0);
     }
 
     if ($un_pretty =~ s/^(.*?)K//i) {
-        $k_num = $1;
+        ($k_num) = strtol($1, 0);
     }
 
-    if ($un_pretty =~ s/^(.*?)B//i) {
-        $b_num = $1;
+    if ($un_pretty =~ s/^(.*?)B?$//i) {
+        ($b_num) = strtol($1, 0);
     }
 
-    my $ret = $m_num * 1024 * 1024 + $k_num * 1024 + $b_num;
+    my $ret = $g_num * 1024 * 1024 * 1024
+	+ $m_num * 1024 * 1024
+	+ $k_num * 1024
+	+ $b_num;
+
     if ($un_pretty =~ s/^(\+|-)//) {
       my $factor = $1 eq "+" ? 1 : -1;
       $ret += $factor * un_pretty($un_pretty);

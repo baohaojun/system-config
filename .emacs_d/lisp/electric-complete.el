@@ -189,9 +189,8 @@ we will get the pattern \"naoehu[)+{\"
 
 	  ;;; mb can not be in the middle of a word, if so, it is considered a
 	  ;;; bad match.
-          (unless
-	      (and (looking-at "\\w")
-		   (looking-back "\\w"))
+          (unless (and (looking-at "\\w")
+		       (looking-back "\\w"))
 	    ;;; me should also not be in the middle of a word, if so, we should
 	    ;;; find the end of the word.
 	    (save-excursion

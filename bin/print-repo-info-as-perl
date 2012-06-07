@@ -1,0 +1,6 @@
+#!/bin/bash
+
+printf '$repo_info{"%s"}{"remote"} = "%s";\n' $PWD "$REPO_REMOTE"
+printf '$repo_info{"%s"}{"branch"} = "%s";\n' $PWD "$REPO_RREV"
+printf '$repo_info{"%s"}{"path"} = "%s";\n' $PWD "$REPO_PATH"
+printf '$repo_info{"%s"}{"project"} = "%s";\n' $PWD "$REPO_PROJECT"

@@ -5,26 +5,12 @@ use Getopt::Long;
 use lib glob("~/bin");
 use pretty;
 
-my $un_pretty;
-
-GetOptions(
-    "u!" => \$un_pretty,
-    );
-
 if (@ARGV) {
   for (@ARGV) {
-    if ($un_pretty) {
-      printf("%s: %d 0x%08x\n", $_, un_pretty($_), un_pretty($_));
-    } else {
-      printf("%d 0x%08x: %s\n", eval($_), eval($_), pretty(eval($_)));
-    }
+    printf("%s %d 0x%08x\n", pretty(un_pretty($_)), un_pretty($_), un_pretty($_));
   }
 } else {
   while (<>) {
-    if ($un_pretty) {
-      printf("%s: %d 0x%08x\n", $_, un_pretty($_), un_pretty($_));
-    } else {
-      printf("%d 0x%08x: %s\n", eval($_), eval($_), pretty(eval($_)));
-    }
+    printf("%s %d 0x%08x\n", pretty(un_pretty($_)), un_pretty($_), un_pretty($_));
   }
 }

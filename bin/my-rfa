@@ -24,15 +24,18 @@ while true; do
 done
 
 job=0
+
+(cd .repo; make -f ~/etc/generate-repo-info.mk) >/dev/null 2>&1 
+export REPO_INFO=$(readlink -m .repo/repo_info.pl)
+
 for x in $(xmlstarlet sel -B -t -m //project -v @path -n .repo/manifest.xml); do 
-    export REPO_PATH=$x
     job=$((job + 1))
     job=$((job % jobs))
     (
 	(
 	    flock -x 9
 	    cd $x;
-	    "$@"
+	    bash -c "$@"
 	) 9>~/.logs/my-rfa-$job.log &
     )
 done

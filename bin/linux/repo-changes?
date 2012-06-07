@@ -8,11 +8,28 @@ if test $# = 1 -a -f "$1"; then
     set -- $(cat "$1")
 fi
 
+if test -z "$1"; then
+    rfa='my-rfa -j 5'
+else
+    rfa=rfa
+fi
+
 for x in "$@"; do 
-    rfa $x '
-if git status -s |grep -q . || test $(git log -1 --pretty=oneline|pn 1) != $REPO_LREV; then
-    relative-path $(readlink -f .) $android_dir/;
-    echo;
+    $rfa $x '
+vars=(
+        $($REPO_INFO remote branch)
+     )
+remote=${vars[0]}
+branch=${vars[1]}
+rev=$(git show -s --format=format:"%H" $remote/$branch)
+
+if git status -s |grep -q . || test $(git show -s --format=format:"%H" HEAD) != $rev; then
+    git fetch $remote $branch >/dev/null 2>&1
+    rev=$(git show -s --format=format:"%H" FETCH_HEAD)
+    if git status -s |grep -q . || test $(git log -1 --pretty=oneline|pn 1) != $rev; then
+        relative-path $(readlink -f .) $android_dir/;
+        echo;
+    fi
 fi'
 
 done 2>&1 | (

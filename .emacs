@@ -2044,7 +2044,6 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
           (mm-coding-system-priorities
            '(iso-8859-1 gbk utf-8))))
        gnus-parameters))
-(defalias 'perl-mode 'cperl-mode)
 
 (defun bhj-org-tasks-closed-last-week (&optional match-string)
   "Produces an org agenda tags view list of the tasks completed 
@@ -2282,8 +2281,6 @@ we are not interested in those lines that do."
 			   ((string-match "/smb/" file) t)
 			   (t (funcall saved-file-remote-p file identification connected)))))
       ad-do-it)))
-
-(eval-after-load "cperl-mode" '(cperl-set-style 'PerlStyle))
 
 (yas/global-mode)
 
