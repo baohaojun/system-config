@@ -1,5 +1,11 @@
 #!/bin/bash
 
+export REPO_INFO=$(
+    cd $(lookup_file .repo/..)
+    (cd .repo; make -f ~/etc/generate-repo-info.mk) >/dev/null 2>&1 
+    readlink -m .repo/repo_info.pl
+)
+
 if test -d "$1"; then
     repo forall "$1" -c "$2"
 elif test -f "$1"; then
