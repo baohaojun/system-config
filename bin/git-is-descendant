@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function die() {
+    echo "$@";
+    exit -1;
+}
+test $# != 2 && die "Usage: $(basename $0) DESCENDANT? ANCESTOR?"
+
+test "$(git merge-base "$1" "$2")" = "$(git show -s --format=%H "$2")" && { echo yes; exit 0; }
+echo no
+exit -1

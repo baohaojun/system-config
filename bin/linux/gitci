@@ -8,7 +8,7 @@ function add-jira-comment() {
     if test $# = 0; then
         set -- git commit --amend
     fi
-    (echo "$@": In repo: `rfa . 'echo $REPO_PATH'`; echo; git log -1)|jira-add-comment $ticket
+    (echo "$@": In repo: `repo forall . -c 'echo $REPO_PATH'`; echo; git log -1)|jira-add-comment $ticket
 }
 
 if test "`basename $0`" = add-jira-comment; then

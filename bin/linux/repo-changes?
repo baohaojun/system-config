@@ -1,38 +1,36 @@
 #!/bin/bash
-test $# = 0 && set -- ""
-export android_dir=$(
-    cd $(lookup_file .repo/..) >/dev/null 2>&1
-    readlink -f .
+
+set -- $(
+    for x in "$@"; do
+	echo -d "$x"
+    done
 )
-if test $# = 1 -a -f "$1"; then
-    set -- $(cat "$1")
-fi
 
-if test -z "$1"; then
-    rfa='my-rfa -j 5'
-else
-    rfa=rfa
-fi
-
-for x in "$@"; do 
-    $rfa $x '
-vars=(
-        $($REPO_INFO remote branch)
-     )
-remote=${vars[0]}
-branch=${vars[1]}
+my-rfa -j 4 "$@" -- '
+set -- $($REPO_INFO remote branch path)
+remote=$1
+branch=$2
+path=$3
 rev=$(git show -s --format=format:"%H" $remote/$branch)
 
-if git status -s |grep -q . || test $(git show -s --format=format:"%H" HEAD) != $rev; then
+if test $(git show -s --format=format:"%H" HEAD) != $rev; then
     git fetch $remote $branch >/dev/null 2>&1
     rev=$(git show -s --format=format:"%H" FETCH_HEAD)
-    if git status -s |grep -q . || test $(git log -1 --pretty=oneline|pn 1) != $rev; then
-        relative-path $(readlink -f .) $android_dir/;
-        echo;
+    if test $(git log -1 --pretty=oneline|pn 1) != $rev; then
+        (
+            flock -x 9;
+            echo $path;
+            exit
+        )
     fi
-fi'
+fi
 
-done 2>&1 | (
+if git status -s |grep -q .; then
+    (
+        flock -x 9;
+        echo $path;
+    )
+fi' 2>&1 9>~/.logs/repo-changes.lock | (
     cd $(lookup_file .repo/..);
     log=./out/repo-changes.log"$(echo -n $*)"
     lognow="$log-$(now)"

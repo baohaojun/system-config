@@ -1,2 +1,2 @@
 #!/bin/bash
-rfa . 'echo $REPO_LREV'
+repo forall . -c 'echo $REPO_LREV'

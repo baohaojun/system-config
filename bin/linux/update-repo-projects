@@ -33,7 +33,7 @@ for x in "$@"; do
         repo-changes\? 2>&1|tee out/changes.log
         for x in `cat out/changes.log`; do 
             (cd $x || repo sync "$x" || true)
-            rfa $x 'git merge `repo-remote`/`tbranch`' || true
+            repo forall $x -c 'git merge `repo-remote`/`tbranch`' || true
         done 2>&1|tee out/merge.log
 
         { repo-changes\? $(cat out/changes.log) | grep . > out/changes.log.new && { 
