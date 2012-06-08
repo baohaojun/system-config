@@ -14,13 +14,14 @@ cd ..
 
 install-pkgs -s --reinstall >pkgs.txt 2>&1 
 
-sites=localhost:9999/debian
-releases=testing\ unstable
-dists=main\ contrib\ non-free
-archs=${1:-amd64}
+sites=localhost:9999/debian\ localhost:9999/ubuntu
+releases=testing\ unstable\ precise
+dists=main\ contrib\ non-free\ universe\ multiverse\ restricted
+archs=armel\ i386\ amd64
 
 for site in $sites; do
     for release in $releases; do
+	rm $release.txt -f
 	for dist in $dists; do
 	    for arch in $archs; do
 		echo http://$site/dists/$release/$dist/binary-$arch/Packages.gz
@@ -30,25 +31,24 @@ for site in $sites; do
 done | mf-download.pl -n 5
 	
 	
-testing=$(cat pkgs.txt|grep -e '^Inst .*Debian:testing'|pn 2)
-unstable=$(cat pkgs.txt|grep -e '^Inst .*Debian:unstable'|pn 2)
+pkgnames=$(cat pkgs.txt|grep -e '^Inst .*Debian:'|pn 2)
 
-rm -f testing.pkgs unstable.pkgs
 
 for site in $sites; do
-    export SITE=$site
+    export SITE=$(echo $site| perl -npe 's,.*/,,')
     for release in $releases; do
 	for dist in $dists; do
 	    for arch in $archs; do
-		zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $(eval echo \$$release) | perl -npe 's,mirrors.163.com,localhost:9999,' >> $release.pkgs
+		zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $pkgnames | perl -npe 's,mirrors.163.com,localhost:9999,' >> $release.pkgs
 	    done
 	done
     done
 done
 
 (
-    cat testing.pkgs; 
-    cat unstable.pkgs;
+    for release in $releases; do
+	cat $release.pkgs; 
+    done
 ) | grep '^Y: ' | pn 2 | sort -u | mf-download.pl -n 5
 
 mkdir -p debs
