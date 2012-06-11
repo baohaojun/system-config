@@ -184,7 +184,7 @@ sub do_convert() {
 	print $word_file "<B>$key</B>";
       }
       print $word_file "Syn. ";
-      for (sort { $a cmp $b } keys $syn_words{$key}) {
+      for (sort { $a cmp $b } keys %{$syn_words{$key}}) {
 	print $word_file "$key&nbsp; ";
       }
     }

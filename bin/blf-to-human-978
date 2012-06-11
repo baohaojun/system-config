@@ -58,7 +58,7 @@ for (@lines) {
 }
 
 for my $idx (keys %images) {
-  die "wrong number of image key/vals for $idx" unless keys $images{$idx} == 13;
+  die "wrong number of image key/vals for $idx" unless keys %{$images{$idx}} == 13;
 
 my @keys = (
 	    "Image Size To Hash in bytes",

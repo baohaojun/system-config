@@ -23,25 +23,27 @@ archs=armel\ i386\ amd64
 
 for site in $sites; do
     for release in $releases; do
-	rm $release.txt -f
+	rm $release.pkgs -f
 	for dist in $dists; do
 	    for arch in $archs; do
-		echo http://$site/dists/$release/$dist/binary-$arch/Packages.gz
+		if ! tty >/dev/null 2>&1; then
+		    echo http://$site/dists/$release/$dist/binary-$arch/Packages.gz
+		fi
 	    done
 	done
     done
-done | mf-download.pl -n 5
+done | mf-download.pl -n 2
 	
 	
 pkgnames=$(cat pkgs.txt|grep -e '^Inst .*Debian:'|pn 2)
 
 
 for site in $sites; do
-    export SITE=$(echo $site| perl -npe 's,.*/,,')
+    export SITE=$site;
     for release in $releases; do
 	for dist in $dists; do
 	    for arch in $archs; do
-		zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $pkgnames | perl -npe 's,mirrors.163.com,localhost:9999,' >> $release.pkgs
+		zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $pkgnames >> $release.pkgs
 	    done
 	done
     done
@@ -51,7 +53,7 @@ done
     for release in $releases; do
 	cat $release.pkgs; 
     done
-) | grep '^Y: ' | pn 2 | sort -u | mf-download.pl -n 5
+) | grep '^Y: ' | pn 2 | sort -u | mf-download.pl -n 2
 
 mkdir -p debs
 rm debs/* >/dev/null 2>&1 || true

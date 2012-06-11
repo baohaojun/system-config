@@ -151,7 +151,7 @@ for my $entry_word (keys %entries) {
 
   open(my $word_file, ">", "$md5_dir/$key_path") or die "can not open $entry_word for writing";
 
-  for my $def_file (keys $entries{$entry_key}) {
+  for my $def_file (keys %{$entries{$entry_key}}) {
     print $word_file "$def_file\n";
     my $data;
     my $size = (stat($def_file))[7];

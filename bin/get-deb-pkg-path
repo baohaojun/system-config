@@ -12,7 +12,7 @@ for (@ARGV) {
 }
 
 @ARGV = ();
-my $site = "debian";
+my $site = "mirrors.163.com/debian";
 if ($ENV{"SITE"}) {
     $site = $ENV{"SITE"};
 }
@@ -25,10 +25,13 @@ while (<>) {
     while (<>) {
       chomp;
       if (m/^Filename: (.*)$/) {
-	$path = "mirrors.163.com/$site/$1";
+	$path = "$site/$1";
       } elsif (m/^Size: (.*)$/) {
 	if (-s $path != $1) {
-	  print "Y: http://$path\n";
+	    if (-e $path) {
+		unlink $path;
+	    }
+	    print "Y: http://$path\n";
 	} else {
 	  print "N: http://$path\n";
 	}
