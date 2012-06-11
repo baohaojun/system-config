@@ -12,7 +12,9 @@ export PACKAGES_DIR=$workdir
 
 cd ..
 
-install-pkgs -s --reinstall >pkgs.txt 2>&1 
+if tty >/dev/null 2>&1; then
+    install-pkgs -s --reinstall >pkgs.txt 2>&1 
+fi
 
 sites=localhost:9999/debian\ localhost:9999/ubuntu
 releases=testing\ unstable\ precise

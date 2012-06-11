@@ -1,2 +1,6 @@
 #!/bin/bash
-repo forall . -c 'echo $REPO_REMOTE' || git remote
+if test "$REPO_INFO"; then
+    $REPO_INFO remote
+else
+    repo forall . -c 'echo $REPO_REMOTE' || git remote
+fi

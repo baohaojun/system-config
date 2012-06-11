@@ -1,16 +1,20 @@
 #!/bin/bash
 set -ex
-. ~/.bashrc
 
 cd ~/src/android-mirror/linux-2.6.git || exit 0
 
 cd ~/src/android-mirror/
+
+repo-switch -u bibler:shgit/manifest -b tknevo-ics --repo-url=bibler:tools/repo 
+repo sync
 
 repo-switch -u https://android.googlesource.com/platform/manifest -b gingerbread
 repo sync
 
 repo-switch -u https://android.googlesource.com/platform/manifest -b android-4.0.4_r1.2
 repo sync
+
+
 
 
 #vendor/nvidia and hardware/tegra, we can do nothing, their git is maintained by us.
