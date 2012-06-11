@@ -12,7 +12,7 @@ export PACKAGES_DIR=$workdir
 
 cd ..
 
-if tty >/dev/null 2>&1; then
+if ! tty >/dev/null 2>&1; then
     install-pkgs -s --reinstall >pkgs.txt 2>&1 
 fi
 
