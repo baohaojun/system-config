@@ -33,8 +33,9 @@ function Usage() {
 
 issue=
 git_opts=
-signed_off_by=$(cat ~/.signed_off_by 2>/dev/null || true)
-TEMP=$(getopt -o i:as:h -n $(basename $0) -- "$@")
+git_amend=
+signed_off_by=$(cat ~/.signed-off-by 2>/dev/null || true)
+TEMP=$(getopt -o i:as:h --long amend -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -46,6 +47,11 @@ while true; do
 	    git_opts="$git_opts -a"
 	    shift
 	    ;;
+	--amend)
+	    git_opts="$git_opts --amend"
+	    git_amend=true
+	    shift
+	    ;;	    
 	-s)
 	    signed_off_by=$2
 	    shift 2
@@ -87,26 +93,39 @@ msg=/tmp/gitci-msg.$$
 EOF
 ) > $msg
 
-reviewer=()
+reviewers=()
 while test $# -gt 0; do 
-    reviewer=("${reviewer[@]}" "$(echo "${1%@*}"|perl -npe 's/.*<//')")
+    reviewers=("${reviewers[@]}" "$(echo "${1%@*}"|perl -npe 's/.*<//')")
     shift
 done
 
 function gitci() {
-    git commit $git_opts -m "$(cat <<EOF
+    if test -z "$git_amend"; then
+	git commit $git_opts -m "$(cat <<EOF
 `get-stdin "$msg"`
 EOF
 )"
+    else
+	git commit $git_opts
+    fi
 
     if test -n "$issue"; then
 	add-jira-comment git commit
     fi
-}
 
-function gitci-amend() {
-    git commit --amend $git_opts
-    add-jira-comment git commit --amend
+    review_host=$(xmlstarlet sel -B -t -m //default -v @review -b \
+	$(lookup_file .repo/manifest.xml 2>/dev/null || echo /dev/null) 2>/dev/null |
+	perl -npe 's,^http.?://,,')
+
+    if test -n "$review_host" && yes-or-no-p -y "Push for review?"; then
+	set -x
+        git push --receive-pack="$(
+            echo -n 'git receive-pack ';
+            for x in "${reviewers[@]}"; do
+                echo -n "--reviewer=$x "
+            done)" \
+            $(git-remote-url $(repo-remote)) HEAD:refs/for/$(repo-refname)
+    fi
 }
 
 `basename $0` "$@"

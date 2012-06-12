@@ -92,8 +92,7 @@ $ssh_cmd
 EOC
   $ssh_cmd = shell_quote($ssh_cmd);
   print "ssh $remote_ip $ssh_cmd";
-  system("ssh $remote_ip $ssh_cmd");
-
+  exit(system("ssh $remote_ip $ssh_cmd"));
 } else {
   my @cmd = edit_1($myfile);
   print "will run: ";
@@ -101,5 +100,5 @@ EOC
     print "'$_' ";
   }
   print "\n";
-  system(@cmd);
+  exit(system(@cmd));
 }
