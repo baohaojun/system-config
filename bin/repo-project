@@ -1,0 +1,6 @@
+#!/bin/bash
+if test "$REPO_INFO"; then
+    $REPO_INFO project
+else
+    repo forall . -c 'echo $REPO_PROJECT' || git remote
+fi

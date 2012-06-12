@@ -1,0 +1,1 @@
+* TODO 看一下uboot的串口怎么从usb出。
