@@ -1,2 +1,2 @@
 #!/bin/bash
-ssh $(cat ~/.confserv)r gerrit "$@"
+ssh $(git-remote-url $(repo-remote) | perl -npe 's/:.*//') gerrit "$@"
