@@ -2,13 +2,13 @@
 set -e
 
 function add-jira-comment() {
-    if test -z "$ticket"; then
-        ticket=`git log -1|grep Issue: |perl -npe 's/.*: //'`
+    if test -z "$issue"; then
+        issue=`git log -1|grep Issue: |perl -npe 's/.*: //'`
     fi
     if test $# = 0; then
         set -- git commit --amend
     fi
-    (echo "$@": In repo: `repo forall . -c 'echo $REPO_PATH'`; echo; git log -1)|jira-add-comment $ticket
+    (echo "$@": In repo: `repo forall . -c 'echo $REPO_PATH'`; echo; git log -1)|jira-add-comment $issue
 }
 
 if test "`basename $0`" = add-jira-comment; then
@@ -21,12 +21,62 @@ die() {
     false
 }
 
-git status -s|grep -v '^ '|grep -v '^?'|grep . -q || die "Error, nothing to commit"
+function Usage() {
+    echo "$(basename $0) [-i ISSUE] [-a] [-s SIGNED_OFF_BY] [-h]"
+    echo ""
+    echo "    -i ISSUE: ISSUE is the jira issue id."
+    echo "    -a: it is passed to git commit"
+    echo "    -s SIGNED_OFF_BY: add a Signed-off-by: line into git commit message."
+    echo "                      you can also set it in '~/.signed-off-by'"
+    echo "    -h: show this help."
+}
 
-test $# -lt 1 && die "Error: must have a ticket, such as CINEMA-44. See http://bear/jira"
+issue=
+git_opts=
+signed_off_by=$(cat ~/.signed_off_by 2>/dev/null || true)
+TEMP=$(getopt -o i:as:h -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+	-i)
+	    issue="${2%:*}"
+	    shift 2
+	    ;;
+	-a)
+	    git_opts="$git_opts -a"
+	    shift
+	    ;;
+	-s)
+	    signed_off_by=$2
+	    shift 2
+	    ;;
+	-h)
+	    Usage
+	    exit
+	    ;;
+	--)
+	    shift
+	    break
+	    ;;
+	*)
+	    die "internal error"
+	    ;;
+    esac
+done
 
 msg=/tmp/gitci-msg.$$
 (
+    echo ""
+    echo ""
+
+    if test -n "$issue"; then
+	echo "Issue: $issue"
+    fi
+
+    if test -n "$signed_off_by"; then
+	echo "$signed_off_by"
+    fi
+
     echo "###start of comment###"
     echo in $(pwd):
     git diff HEAD | perl -npe 's,^diff --git ,* ,'
@@ -37,11 +87,6 @@ msg=/tmp/gitci-msg.$$
 EOF
 ) > $msg
 
-ticket="${1%:*}"
-shift
-
-test $# -lt 1 && die "Error: at least 1 reviewer"
-
 reviewer=()
 while test $# -gt 0; do 
     reviewer=("${reviewer[@]}" "$(echo "${1%@*}"|perl -npe 's/.*<//')")
@@ -49,18 +94,18 @@ while test $# -gt 0; do
 done
 
 function gitci() {
-    git commit -m "$(cat <<EOF
-`get-stdin $msg && echo`
-
-Issue: $ticket
-`for x in ${reviewer[@]}; do echo  Reviewed-by: $x; done`
+    git commit $git_opts -m "$(cat <<EOF
+`get-stdin "$msg"`
 EOF
 )"
-   add-jira-comment git commit
+
+    if test -n "$issue"; then
+	add-jira-comment git commit
+    fi
 }
 
 function gitci-amend() {
-    git commit --amend
+    git commit --amend $git_opts
     add-jira-comment git commit --amend
 }
 
