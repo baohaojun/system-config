@@ -1,0 +1,116 @@
+#!/bin/bash
+
+set -e
+tmpf=/tmp/$(basename $0).$$
+
+function Usage() {
+    echo "gerrit-diff-patchsets PATCH_SET1 PATCH_SET2 [QUERY...]"
+    echo ""
+    echo "QUERY: the gerrit query statement, if not present, the default is the"
+    echo "       Change-Id of the HEAD commit in the current git project."
+}
+
+TEMP=$(getopt -o h --long help -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+	-h|--help)
+	    Usage
+	    exit
+	    ;;
+	--)
+	    shift
+	    break
+	    ;;
+	*)
+	    die "internal error"
+	    ;;
+    esac
+done
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+if test $# -lt 2; then
+    Usage
+    exit -1
+fi
+
+ps1=$1
+ps2=$2
+shift 2
+
+if test $# = 0; then
+    set -- $(gerrit-change-id)
+fi
+
+gerrit query "$@" --current-patch-set > $tmpf
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+cd $(lookup_file .repo/..) || die repo not found.
+
+export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
+
+git_dir=$(cat .repo/manifest.xml | perl -ne '
+chomp;
+if (m/name="(.*?)"/ and $ENV{PROJECT} =~ m/$1/ and m/path="(.*?)"/) {
+    print $1 . "\n"
+}    
+'
+)
+
+cd $git_dir || die "$git_dir: cd failed"
+ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
+REF1=$(echo $ref| perl -npe "s,(.*)/.*,\$1/$ps1,")
+REF2=$(echo $ref| perl -npe "s,(.*)/.*,\$1/$ps2,")
+
+git fetch $(repo-remote) $REF1
+REF1=$(git show -s --format=format:%h FETCH_HEAD)
+
+git fetch $(repo-remote) $REF2
+REF2=$(git show -s --format=format:%h FETCH_HEAD)
+
+export REF1 REF2
+
+echo REF1=$REF1\; REF2=$REF2\;
+
+echo
+echo
+
+set +x
+while true; do
+    echo
+    echo "**************** Please choose what you want to do ****************"
+    sel=$(my-select \
+	"start git diff $REF1 $REF2 (good for additional changes)" \
+	"start gitk $REF1 $REF2 (good for a rebased patch set)" \
+	"start bash with REF1 REF2 set accordingly (do whatever you want)" \
+	"exit (you can press Ctrl-C alternatively)")
+    
+    case $sel in
+	1)
+	    git diff $REF1 $REF2
+	    ;;
+	2)
+	    gitk $REF1 $REF2
+	    ;;
+	3)
+	    bash
+	    ;;
+	4)
+	    exit
+	    ;;
+	*)
+	    echo please select again
+	    ;;
+    esac
+done
+
+	
+    

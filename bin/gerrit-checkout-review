@@ -21,7 +21,7 @@ if (m/name="(.*?)"/ and $ENV{PROJECT} =~ m/$1/ and m/path="(.*?)"/) {
 )
 
 cd $git_dir || die "$git_dir: cd failed"
-ref=$(cat $tmpf|grep 'ref: '|pn 2)
+ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
 git fetch $(repo-remote) $ref
 git co FETCH_HEAD
 bash

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function my_select() 
+{
+    local y=1
+    for x in "$@"; do 
+        echo $y\) "$x" >/dev/tty;
+        ((y++))
+    done
+
+    read -p "#?" NUM
+    if [[ x"$NUM" = x || ! "$NUM" =~ ^[1-9][0-9]*$ ]] || (( "$NUM" > $# )); then
+        NUM=1
+    fi
+    echo $NUM
+}
+
+my_select "$@"

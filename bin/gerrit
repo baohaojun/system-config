@@ -1,2 +1,6 @@
 #!/bin/bash
-ssh $(git-remote-url $(repo-remote) | perl -npe 's/:.*//') gerrit "$@"
+host=$( (git-remote-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
+if test -z "$host"; then
+    host=bibler
+fi
+ssh $host gerrit "$@"
