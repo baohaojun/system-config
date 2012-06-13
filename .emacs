@@ -562,7 +562,7 @@
  '(ecomplete-database-file-coding-system (quote utf-8))
  '(edebug-eval-macro-args t)
  '(emacs-lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
- '(fill-column 80)
+ '(fill-column 70)
  '(font-lock-maximum-decoration 2)
  '(gdb-find-source-frame t)
  '(gdb-same-frame t)

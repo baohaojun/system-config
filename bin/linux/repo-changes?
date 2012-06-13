@@ -20,8 +20,9 @@ if test $(git show -s --format=format:"%H" HEAD) != $rev; then
         (
             flock -x 9;
             echo $path;
-            exit
         )
+        exit
+
     fi
 fi
 
