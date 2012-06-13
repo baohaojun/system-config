@@ -3,7 +3,7 @@
 use strict;
 use Getopt::Long;
 
-unlink glob("~/.logs/skeleton_comp.log"));
+unlink glob("~/.logs/skeleton_comp.log");
 
 sub debug(@) {
     open(my $log_, ">>", glob("~/.logs/skeleton_comp.log")) or die "Error open log file";
