@@ -12,7 +12,7 @@ my $file_tmp = "$file.$$";
 open (my $f, "<", $file) or die "Can not open $file";
 open (my $ft, ">", $file_tmp) or die "Can not open $file_tmp";
 
-@regexps = map {qr($_)} @regexps;
+@regexps = map {qr($_)i} @regexps;
 
 my @removed_lines = ();
 
