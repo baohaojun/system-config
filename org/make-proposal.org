@@ -1,10 +1,15 @@
 Hi, all
 
 To speed up Marvell's android system build, I want to propose the
-following improvements to our build system.
+following improvements to our build system: a) enable parallel build
+for all components and b) enable the use of ccache.
 
-These changes are mainly focused on Marvell proprietary projects such as
-uboot/obm/modules/kernel.
+These changes are mainly focused on Marvell proprietary projects such
+as uboot/obm/modules/kernel. Those projects using Android.mk has no
+problem with these 2 goals.
+
+I have pushed some review requests for this proposal, you can visit
+them here: [[http://shgit.marvell.com/r/#q,owner:hjbao+status:open,n,z][my review requests]].
 
 * Make them all support parallel build
 
@@ -51,6 +56,9 @@ uboot/obm/modules/kernel.
      make rule, and write ~$(MAKE)~ instead of ~make~ directly. See
      the Make info page.
 
+     Fortunately this can be easily done with a script, I have
+     provided one, it is attached (fix-mk.pl).
+
 
 * Make them all support use of ccache
 
@@ -62,15 +70,15 @@ uboot/obm/modules/kernel.
 
 ** Why did we not support it?
 
-   There is a defect in our Makefiles: the CROSS_COMPILE variable is
-   both ~export~-ed and passed to a recursive make on the command
-   line. The second caused it impossible to use ccache because it would
-   introduce a space in the CROSS_COMPILE variable and cause the
-   command line fail to parse.
+   There is a defect in our Makefiles: the ~CROSS_COMPILE~ variable is
+   *both* ~export~-ed and passed to a recursive make on the command
+   line. The second caused it impossible to use ccache because it
+   would introduce a space in the ~CROSS_COMPILE~ variable and cause
+   the command line fail to parse.
 
 
 ** How to fix it?
 
-   Do not pass the CROSS_COMPILE on the command line. It's unnecessary
+   Do not pass the ~CROSS_COMPILE~ on the command line. It's unnecessary
    anyway, since it is already ~export~-ed.
    

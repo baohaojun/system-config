@@ -124,7 +124,7 @@ EOF
             for x in "${reviewers[@]}"; do
                 echo -n "--reviewer=$x "
             done)" \
-            $(git-remote-url $(repo-remote)) HEAD:refs/for/$(repo-refname)
+            $review_host:$(git-remote-url $(repo-remote) | perl -npe 's/.*://; s,^/git/,,') HEAD:refs/for/$(repo-refname)
     fi
 }
 
