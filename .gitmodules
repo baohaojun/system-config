@@ -16,3 +16,6 @@
 [submodule ".emacs_d/emacs-eclim"]
 	path = .emacs_d/emacs-eclim
 	url = https://github.com/senny/emacs-eclim.git
+[submodule ".emacs_d/org-confluence"]
+	path = .emacs_d/org-confluence
+	url = https://github.com/hgschmie/org-confluence.git

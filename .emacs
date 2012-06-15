@@ -6,10 +6,13 @@
 
 (setq load-path
       (nconc (list (expand-file-name "~/.emacs_d/lisp")
+		   (expand-file-name "~/.emacs_d/org-confluence")
 		   (expand-file-name "~/.emacs_d/org-jira")
 		   (expand-file-name "~/.emacs_d/mo-git-blame")
 		   (expand-file-name "~/.emacs_d/lisp/ext"))
 	     load-path))
+
+(require 'org-confluence)
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
   (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
@@ -472,7 +475,7 @@
 
 (defun bhj-occur-make-errors ()
   (interactive)
-  (let ((bhj-occur-regexp "\\*\\*\\*\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]+elapsed \\|error [0-9]+\\|because of errors\\|[0-9]+ error\\b\\|error:"))
+  (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]+elapsed \\|error [0-9]+\\|because of errors\\|[0-9]+ error\\b\\|error:"))
     (call-interactively 'bhj-occur)))
 
 

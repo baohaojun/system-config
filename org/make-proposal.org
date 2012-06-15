@@ -62,8 +62,7 @@ them here: [[http://shgit.marvell.com/r/#q,owner:hjbao+status:open,n,z][my revie
 
 * Make them all support use of ccache
 
-  With the use of ccache, a full build of kernel (~make clean; make
-  -j4~) can speed up from 10 minutes to a bare 2 minutes compared to
+  With the use of ccache, a full build of kernel (~make clean; make -j4~) can speed up from 10 minutes to a bare 2 minutes compared to
   when ccache is not used.
 
   This speed up is too good to be ignored. Android supports [[http://source.android.com/source/building.html#using-ccache][ccache]] itself.
