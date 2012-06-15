@@ -285,6 +285,11 @@ automatically when window resizes.  "
   :type 'boolean
   :group 'twittering)
 
+(defcustom twittering-tweet-separator ""
+  "A string for separating tweets.  "
+  :type 'string
+  :group 'twittering)
+
 ;;;
 ;;; Internal Variables
 ;;;
@@ -516,16 +521,9 @@ If nil, this is initialized with a list of valied entries extracted from
 
 (defvar twittering-timeline-data-table (make-hash-table :test 'equal))
 
-(defvar twittering-username-face 'twittering-username-face)
-(defvar twittering-uri-face 'twittering-uri-face)
-
-(defvar twittering-zebra-1-face 'twittering-zebra-1-face)
-(defvar twittering-zebra-2-face 'twittering-zebra-2-face)
-
 (defface twittering-zebra-1-face `((t (:background "#e6e6fa"))) "" :group 'faces)
 (defface twittering-zebra-2-face `((t (:background "#ffe4e1"))) "" :group 'faces)
 
-(defvar twittering-verify-face 'twittering-verify-face)
 (defface twittering-verify-face `((t (:inherit 'font-lock-variable-name-face)))
   "Face for decorating the V symbol used by weibo.com.  "
   :group 'faces)
@@ -4307,173 +4305,175 @@ following symbols;
       text))))
 
 (defun twittering-make-fontified-tweet-text (str status prefix)
-  (case (twittering-extract-service)
-    ((sina)
-     ;; emotions
-     (unless twittering-is-getting-emotions-p
-       (setq twittering-is-getting-emotions-p t)
-       (twittering-get-simple nil nil nil 'emotions))
-     (let (index
-           skip-fake-emotion)
-       (while (if skip-fake-emotion
-                  (progn
-                    (setq skip-fake-emotion nil)
-                    (setq index (string-match "\\(\\[[^][]+\\]\\)" str (1+ index))))
-                (setq index (string-match "\\(\\[[^][]+\\]\\)" str)))
-         (let* ((repl (twittering-make-emotions-string nil nil (match-string 1 str)))
-                (new-str (replace-match repl nil nil str)))
-           (if (equal new-str str)
-               (setq skip-fake-emotion t))
-           (setq str new-str)))))
+  (if (not str)
+      ""
+    (case (twittering-extract-service)
+      ((sina)
+       ;; emotions
+       (unless twittering-is-getting-emotions-p
+         (setq twittering-is-getting-emotions-p t)
+         (twittering-get-simple nil nil nil 'emotions))
+       (let (index
+             skip-fake-emotion)
+         (while (if skip-fake-emotion
+                    (progn
+                      (setq skip-fake-emotion nil)
+                      (setq index (string-match "\\(\\[[^][]+\\]\\)" str (1+ index))))
+                  (setq index (string-match "\\(\\[[^][]+\\]\\)" str)))
+           (let* ((repl (twittering-make-emotions-string nil nil (match-string 1 str)))
+                  (new-str (replace-match repl nil nil str)))
+             (if (equal new-str str)
+                 (setq skip-fake-emotion t))
+             (setq str new-str)))))
 
-    ((douban)
-     (setq str (twittering-make-string-with-uri-property str))))
+      ((douban)
+       (setq str (twittering-make-string-with-uri-property str))))
 
-  ;; Wash html tags
-  (with-temp-buffer
-    (insert str)
-    (html2text)
-    (setq str (buffer-string)))
+    ;; Wash html tags
+    (with-temp-buffer
+      (insert str)
+      (html2text)
+      (setq str (buffer-string)))
 
-  ;; tag, username, uri
-  (let* ((regexp-list
-          `( ;; Hashtag
-            (hashtag . ,(concat twittering-regexp-hash
-                                (if (eq (twittering-extract-service) 'sina)
-                                    (format "\\([^%s\n]+%s\\)"
-                                            twittering-regexp-hash
-                                            twittering-regexp-hash)
-                                  "\\([a-zA-Z0-9_-]+\\)")))
-            ;; @USER/LIST
-            (list-name . ,(concat twittering-regexp-atmark
-                                  "\\([a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+\\)"))
-            ;; @USER
-            (screen-name
-             . ,(concat twittering-regexp-atmark
-                        (if (eq (twittering-extract-service) 'sina)
-                            ;; Exclude some common chinese punctuations.
-                            (format "\\([^:,.?!：)）、，。？！…[:space:]%s]+\\)"
-                                    twittering-regexp-atmark)
-                          "\\([a-zA-Z0-9_-]+\\)")))
-            ;; URI
-            (uri . ,twittering-regexp-uri)))
-         (regexp-str (mapconcat 'cdr regexp-list "\\|"))
-         (pos 0))
-    (while (string-match regexp-str str pos)
-      (let* ((entry
-              ;; Find matched entries.
-              (let ((rest regexp-list)
-                    (counter 1))
-                (while (and rest (not (match-string counter str)))
-                  (setq rest (cdr rest))
-                  (setq counter (1+ counter)))
-                (when rest
-                  (list (caar rest)
-                        (match-beginning counter)
-                        (match-string counter str)))))
-             (sym (elt entry 0))
-             (matched-beg (elt entry 1))
-             (matched-str (elt entry 2))
-             (beg (if (memq sym '(list-name screen-name))
-                      ;; Properties are added to the matched part only.
-                      ;; The prefixes `twittering-regexp-atmark' will not
-                      ;; be highlighted.
-                      matched-beg
-                    (match-beginning 0)))
-             (end (match-end 0))
-             (properties
-              (cond
-               ((eq sym 'hashtag)
-                (ignore-errors
-                  (let* ((hashtag matched-str)
-                         (spec
-                          (twittering-string-to-timeline-spec
-                           (concat "#" hashtag)))
-                         (url (twittering-get-search-url (concat "#" hashtag))))
+    ;; tag, username, uri
+    (let* ((regexp-list
+            `( ;; Hashtag
+              (hashtag . ,(concat twittering-regexp-hash
+                                  (if (eq (twittering-extract-service) 'sina)
+                                      (format "\\([^%s\n]+%s\\)"
+                                              twittering-regexp-hash
+                                              twittering-regexp-hash)
+                                    "\\([a-zA-Z0-9_-]+\\)")))
+              ;; @USER/LIST
+              (list-name . ,(concat twittering-regexp-atmark
+                                    "\\([a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+\\)"))
+              ;; @USER
+              (screen-name
+               . ,(concat twittering-regexp-atmark
+                          (if (eq (twittering-extract-service) 'sina)
+                              ;; Exclude some common chinese punctuations.
+                              (format "\\([^:,.?!：)）、，。？！…[:space:]%s]+\\)"
+                                      twittering-regexp-atmark)
+                            "\\([a-zA-Z0-9_-]+\\)")))
+              ;; URI
+              (uri . ,twittering-regexp-uri)))
+           (regexp-str (mapconcat 'cdr regexp-list "\\|"))
+           (pos 0))
+      (while (string-match regexp-str str pos)
+        (let* ((entry
+                ;; Find matched entries.
+                (let ((rest regexp-list)
+                      (counter 1))
+                  (while (and rest (not (match-string counter str)))
+                    (setq rest (cdr rest))
+                    (setq counter (1+ counter)))
+                  (when rest
+                    (list (caar rest)
+                          (match-beginning counter)
+                          (match-string counter str)))))
+               (sym (elt entry 0))
+               (matched-beg (elt entry 1))
+               (matched-str (elt entry 2))
+               (beg (if (memq sym '(list-name screen-name))
+                        ;; Properties are added to the matched part only.
+                        ;; The prefixes `twittering-regexp-atmark' will not
+                        ;; be highlighted.
+                        matched-beg
+                      (match-beginning 0)))
+               (end (match-end 0))
+               (properties
+                (cond
+                 ((eq sym 'hashtag)
+                  (ignore-errors
+                    (let* ((hashtag matched-str)
+                           (spec
+                            (twittering-string-to-timeline-spec
+                             (concat "#" hashtag)))
+                           (url (twittering-get-search-url (concat "#" hashtag))))
+                      (list
+                       'mouse-face 'highlight
+                       'keymap twittering-mode-on-uri-map
+                       'uri url
+                       'goto-spec spec
+                       'face 'twittering-username-face))))
+                 ((eq sym 'list-name)
+                  (let ((list-name matched-str))
                     (list
                      'mouse-face 'highlight
                      'keymap twittering-mode-on-uri-map
-                     'uri url
-                     'goto-spec spec
-                     'face 'twittering-username-face))))
-               ((eq sym 'list-name)
-                (let ((list-name matched-str))
-                  (list
-                   'mouse-face 'highlight
-                   'keymap twittering-mode-on-uri-map
-                   'uri (twittering-get-status-url list-name)
-                   'goto-spec (twittering-string-to-timeline-spec list-name)
-                   'face 'twittering-username-face)))
-               ((eq sym 'screen-name)
-                (let ((screen-name matched-str))
-                  (list
-                   'mouse-face 'highlight
-                   'keymap twittering-mode-on-uri-map
-                   'uri (if (eq (twittering-extract-service) 'sina)
-                            ;; TODO: maybe we can get its user_id
-                            ;; at background.
-                            (concat "http://t.sina.com.cn/search/user.php?search="
-                                    screen-name)
-                          (twittering-get-status-url screen-name))
-                   'screen-name-in-text screen-name
-                   'goto-spec (twittering-string-to-timeline-spec screen-name)
-                   'face 'twittering-username-face)))
-               ((eq sym 'uri)
-                (let ((uri matched-str))
-                  (list
-                   'mouse-face 'highlight
-                   'keymap twittering-mode-on-uri-map
-                   'uri uri
-                   'face 'twittering-uri-face))))))
-        (add-text-properties beg end properties str)
-        (setq pos end))))
+                     'uri (twittering-get-status-url list-name)
+                     'goto-spec (twittering-string-to-timeline-spec list-name)
+                     'face 'twittering-username-face)))
+                 ((eq sym 'screen-name)
+                  (let ((screen-name matched-str))
+                    (list
+                     'mouse-face 'highlight
+                     'keymap twittering-mode-on-uri-map
+                     'uri (if (eq (twittering-extract-service) 'sina)
+                              ;; TODO: maybe we can get its user_id
+                              ;; at background.
+                              (concat "http://t.sina.com.cn/search/user.php?search="
+                                      screen-name)
+                            (twittering-get-status-url screen-name))
+                     'screen-name-in-text screen-name
+                     'goto-spec (twittering-string-to-timeline-spec screen-name)
+                     'face 'twittering-username-face)))
+                 ((eq sym 'uri)
+                  (let ((uri matched-str))
+                    (list
+                     'mouse-face 'highlight
+                     'keymap twittering-mode-on-uri-map
+                     'uri uri
+                     'face 'twittering-uri-face))))))
+          (add-text-properties beg end properties str)
+          (setq pos end))))
 
-  ;; (douban) details
-  (let ((detail (assqref 'detail status)))
-    (when detail
-      (setq detail (concat detail
-                           "?alt=json&apikey="
-                           (twittering-lookup-service-method-table
-                            'oauth-consumer-key)))
-      (let ((s (twittering-make-douban-detail-string nil nil detail)))
-        (setq str (format "%s\n\n%s" str s)))))
+    ;; (douban) details
+    (let ((detail (assqref 'detail status)))
+      (when detail
+        (setq detail (concat detail
+                             "?alt=json&apikey="
+                             (twittering-lookup-service-method-table
+                              'oauth-consumer-key)))
+        (let ((s (twittering-make-douban-detail-string nil nil detail)))
+          (setq str (format "%s\n\n%s" str s)))))
 
-  ;; thumbnail picture
-  (let* ((st (or (twittering-status-has-quotation? status) status))
-         (s (if (and twittering-icon-mode window-system)
-                (let ((thumbnail-pic (assqref 'thumbnail-pic st))
-                      (original-pic (assqref 'original-pic st)))
-                  (when thumbnail-pic
-                    (if original-pic
-                        (twittering-toggle-thumbnail-1 thumbnail-pic original-pic t)
-                      (twittering-make-original-icon-string nil nil thumbnail-pic))))
-              (assqref 'original-pic st))))
-    (when s
-      (setq str (concat str "\n" twittering-format-thumbnail-prefix s))))
+    ;; thumbnail picture
+    (let* ((st (or (twittering-status-has-quotation? status) status))
+           (s (if (and twittering-icon-mode window-system)
+                  (let ((thumbnail-pic (assqref 'thumbnail-pic st))
+                        (original-pic (assqref 'original-pic st)))
+                    (when thumbnail-pic
+                      (if original-pic
+                          (twittering-toggle-thumbnail-1 thumbnail-pic original-pic t)
+                        (twittering-make-original-icon-string nil nil thumbnail-pic))))
+                (assqref 'original-pic st))))
+      (when s
+        (setq str (concat str "\n" twittering-format-thumbnail-prefix s))))
 
-  ;; comment/retweet counts
-  (let ((service (twittering-extract-service)))
-    (when (memq service '(sina socialcast))
-      (let* ((n (- (twittering-calculate-fill-column (length prefix))
-                   ;; space for counts string.
-                   (if (eq service 'sina) 18 8)))
-             (fmt (format "%%%ds" n))
-             s)
-        (case service
-          ((sina)
-           (let ((spec-string (twittering-current-timeline-spec-string)))
-             (unless (equal spec-string ":replies@sina")
-               (setq s (twittering-get-simple nil nil nil 'counts)))))
+    ;; comment/retweet counts
+    (let ((service (twittering-extract-service)))
+      (when (memq service '(sina socialcast))
+        (let* ((n (- (twittering-calculate-fill-column (length prefix))
+                     ;; space for counts string.
+                     (if (eq service 'sina) 18 8)))
+               (fmt (format "%%%ds" n))
+               s)
+          (case service
+            ((sina)
+             (let ((spec-string (twittering-current-timeline-spec-string)))
+               (unless (equal spec-string ":replies@sina")
+                 (setq s (twittering-get-simple nil nil nil 'counts)))))
 
-          ((socialcast)
-           (setq s (format "     Likes(%s) Comments(%s)"
-                           (assqref 'likes-count status)
-                           (assqref 'comments-count status)))))
+            ((socialcast)
+             (setq s (format "     Likes(%s) Comments(%s)"
+                             (assqref 'likes-count status)
+                             (assqref 'comments-count status)))))
 
-        (when s
-          (setq str (concat str "\n" (format fmt s)))))))
+          (when s
+            (setq str (concat str "\n" (format fmt s)))))))
 
-  str)
+    str))
 
 (defun twittering-generate-format-table (status-sym prefix-sym)
   `(("%" . "%")
@@ -4637,8 +4637,8 @@ It takes three arguments:
                (braced-body (car pair))
                (rest (cdr pair)))
           `((twittering-decorate-zebra-background (concat ,@braced-body)
-                                                  ,face-sym-1
-                                                  ,face-sym-2)
+                                                  (quote ,face-sym-1)
+                                                  (quote ,face-sym-2))
             . ,rest)))
        ((string-match "\\`\\(FILL\\|FOLD\\)\\(\\[\\([^]]*\\)\\]\\)?{"
                       following)
@@ -4995,22 +4995,21 @@ rendered at POS, return nil."
                     (if prev-p
                         (if twittering-reverse-mode 'point-min 'point-max)
                       (if twittering-reverse-mode 'point-max 'point-min))))
+              (goto-char (funcall get-insert-point))
               (mapc
                (lambda (status)
-                 (let ((formatted-status (twittering-format-status status))
-                       (separator "\n"))
+                 (let ((formatted-status (twittering-format-status status)))
                    (add-text-properties 0 (length formatted-status)
                                         `(belongs-spec ,spec)
                                         formatted-status)
-                   (goto-char (funcall get-insert-point))
                    (cond
                     ((eobp)
                      ;; Insert a status after the current position.
-                     (insert formatted-status separator))
+                     (insert formatted-status twittering-tweet-separator))
                     (t
                      ;; Use `insert-before-markers' in order to keep
                      ;; which status is pointed by each marker.
-                     (insert-before-markers formatted-status separator)))
+                     (insert-before-markers formatted-status twittering-tweet-separator)))
                    (when twittering-default-show-replied-tweets
                      (twittering-show-replied-statuses
                       twittering-default-show-replied-tweets))))
@@ -5267,7 +5266,6 @@ rendered at POS, return nil."
                          (twittering-get-current-status-head)
                        (or (twittering-get-next-status-head)
                            (point-max))))
-                (separator "\n")
                 (prefix "  ")
                 (buffer-read-only nil))
             (setq statuses (sort statuses (lambda (e1 e2)
@@ -5294,8 +5292,8 @@ rendered at POS, return nil."
                                         field-properties
                                         formatted-status)
                    (if twittering-reverse-mode
-                       (insert-before-markers formatted-status separator)
-                     (insert formatted-status separator))))
+                       (insert-before-markers formatted-status twittering-tweet-separator)
+                     (insert formatted-status twittering-tweet-separator))))
                statuses)))
         (when interactive
           (case twittering-service-method
@@ -9119,7 +9117,7 @@ The zebra face is decided by looking at adjacent face. "
                          goto-spec
                          ,(twittering-string-to-timeline-spec
                            listname)
-                         face twittering-username-face)
+                         face 'twittering-username-face)
                        display-string)
   display-string)
 
