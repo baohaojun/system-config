@@ -5,7 +5,7 @@ set -xe
 set -o pipefail
 
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
-export REMOTE=$(git-remote-url $(repo-remote))
+export REMOTE=$( (repo-review-url) )
 
 (
     if tty >/dev/null 2>&1; then

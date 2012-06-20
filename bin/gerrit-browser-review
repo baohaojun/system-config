@@ -9,6 +9,16 @@ if test $# = 0; then
 	fi | grep -P '^\s*Change-Id:' | pn 2) 
 fi
 
-for x in "$@"; do
-    of $(gerrit query $x | grep -P "^\s*url:" | pn 2); 
-done
+(
+    for x in "$@"; do
+	query_out=$(gerrit query $x)
+	url=$(echo "$query_out" | grep -P "^\s*url:" | pn 2 | head -n 1)
+	if test -z "$url"; then
+	    id=$(echo "$query_out" | grep -P "^\s*number:" | pn 2 | head -n 1)
+	    host=$( (repo-review-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
+	    url=$(printf http://%s%s $host $id)
+	fi
+	of "$url"
+	sleep 1;
+    done
+)

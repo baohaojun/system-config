@@ -8,11 +8,10 @@ function die() {
     exit -1
 }
 
-cd $(lookup_file .repo/..) || die repo not found.
 
 export PROJECT=$(cat $tmpf|grep 'project: '|pn 2)
 
-git_dir=$(cat .repo/manifest.xml | perl -ne '
+git_dir=$(cat $(lookup_file .repo/manifest.xml) | perl -ne '
 chomp;
 if (m/name="(.*?)"/ and $ENV{PROJECT} =~ m/$1/ and m/path="(.*?)"/) {
     print $1 . "\n"
@@ -20,7 +19,10 @@ if (m/name="(.*?)"/ and $ENV{PROJECT} =~ m/$1/ and m/path="(.*?)"/) {
 '
 )
 
-cd $git_dir || die "$git_dir: cd failed"
+if test -n "$git_dir"; then
+    cd $(lookup_file .repo/..) || die repo not found.
+    cd $git_dir || die "$git_dir: cd failed"
+fi
 ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
 git fetch $(repo-remote) $ref
 git co FETCH_HEAD
