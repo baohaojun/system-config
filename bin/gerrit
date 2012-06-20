@@ -1,5 +1,5 @@
 #!/bin/bash
-host=$( (git-review-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
+host=$( (repo-review-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
 if test -z "$host"; then
     host=bibler
 fi
