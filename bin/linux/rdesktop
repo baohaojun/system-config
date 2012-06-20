@@ -1,0 +1,14 @@
+#!/bin/bash
+function rdesktop() {
+    host=$1
+    shift
+    user=${1:-$USER}
+    shift
+    if test $# = 0; then
+	set -- -k en-dvp
+    fi
+    pass=$(get-authinfo $host $user rdesktop)
+    setsid /usr/bin/rdesktop -K -a 24 -g $(xrandr |grep '\*'|pn 1) $host -u $user -p $pass "$@"
+}
+
+rdesktop "$@"

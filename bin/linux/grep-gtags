@@ -8,8 +8,6 @@ open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
 print "$0 ";
-
-my @ARGV_save = @ARGV;
 foreach my $x (@ARGV) {
     $x = shell_quote($x);
     print "$x ";
@@ -19,10 +17,7 @@ print "\n";
 
 #gtags-cscope-grep regexp
 
-my $pwd;
-
-
-chomp($pwd = $ENV{PWD});
+my $pwd = $ENV{PWD};
 
 $pwd = "$ENV{HOME}/tmp/for-code-reading$pwd";
 our $approx_dir = "ENV{HOME}/tmp/for-code-reading$ENV{GTAGS_START_FILE}";

@@ -302,7 +302,11 @@
 
 (define-abbrev-table 'python-mode-abbrev-table
   '(
+    ("class" "" python-skeleton-class 0)
+    ("def" "" python-skeleton-def 0)
     ("false" "False" nil 2)
+    ("for" "" python-skeleton-for 0)
+    ("if" "" python-skeleton-if 0)
     ("ifmain" "if __name__ == '__main__':
    " nil 1)
     ("pqimport" "from PyQt4.QtCore import *
@@ -318,6 +322,8 @@ import pickle
 " nil 0)
     ("slef" "self" nil 4)
     ("true" "True" nil 2)
+    ("try" "" python-skeleton-try 0)
+    ("while" "" python-skeleton-while 0)
    ))
 
 (define-abbrev-table 'sawfish-console-mode-abbrev-table '())

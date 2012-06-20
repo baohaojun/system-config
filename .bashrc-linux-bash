@@ -34,15 +34,3 @@ function renew-xauth() {
         export $(cat /proc/`ps -o comm=  -o pid= -A|grep gnome-terminal|pn 2`/environ|perl -npe 's/\x00/\n/g'|grep '^REMOTEIP=')
     fi
 }
-
-function rdesktop() {
-    host=$1
-    shift
-    user=${1:-$USER}
-    shift
-    if test $# = 0; then
-	set -- -k en-dvp
-    fi
-    pass=$(get-authinfo $host $user rdesktop)
-    command rdesktop -K -a 24 -g $(xrandr |grep '\*'|pn 1) $host -u $user -p $pass "$@"
-}

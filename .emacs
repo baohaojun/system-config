@@ -13,6 +13,8 @@
 	     load-path))
 
 (require 'org-confluence)
+(require 'mmm-mode)
+(setq stack-trace-on-error t)
 
 (when  (or (eq system-type 'cygwin) (eq system-type 'windows-nt))
   (let ((bhj-lisp-load-path (if (eq system-type 'windows-nt)
@@ -562,6 +564,7 @@
  '(describe-char-unidata-list (quote (name general-category canonical-combining-class bidi-class decomposition decimal-digit-value digit-value numeric-value mirrored old-name iso-10646-comment uppercase lowercase titlecase)))
  '(dictem-server "localhost")
  '(dictionary-server "localhost")
+ '(ecb-options-version "2.40")
  '(ecomplete-database-file-coding-system (quote utf-8))
  '(edebug-eval-macro-args t)
  '(emacs-lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
@@ -577,6 +580,7 @@
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
+ '(install-elisp-repository-directory "~/.emacs_d/lisp/")
  '(ispell-program-name "aspell")
  '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
@@ -588,6 +592,7 @@
  '(message-dont-reply-to-names (quote (".*haojun.*" "hjbao")))
  '(message-mail-alias-type nil)
  '(mm-text-html-renderer (quote w3m))
+ '(mmm-submode-decoration-level 2)
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
  '(org-agenda-files (quote ("/home/bhj/doc/daily/2011.org" "/home/bhj/doc/daily/2012-01.org")))
@@ -793,7 +798,7 @@
   "Run the debugger in VS.NET"
   (interactive)
   (devenv-cmd "Debug.Start"))
-(global-set-key [f5] 'devenv-debug)
+(global-set-key [(control f5)] 'devenv-debug)
 
 
 (setenv "EMACS" "t")
@@ -2299,5 +2304,5 @@ we are not interested in those lines that do."
 (defun bhj-choose-from-output ()
   (interactive)
   (bhj-choose (split-string (shell-command-to-string (read-from-minibuffer "command to run: ")) nil t)))
-
+(load "RubikitchAnythingConfiguration.el")
 (server-start)

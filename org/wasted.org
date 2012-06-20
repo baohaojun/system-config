@@ -26,3 +26,5 @@
 
   /etc/network/interfaces里最好把eth0都去掉，因为它会导致dhclient跑起来，从而让
   dns的设置过一段时间就被强行改掉
+
+* 改xp与win7的双启动修复利器：ntbootautofix。dual boot。
