@@ -4739,15 +4739,15 @@ It takes three arguments:
                  (or (get-text-property 0 'need-to-be-updated str)
                      (and next (< next (length str))))))
            (add-text-properties 0 (length str) common-properties str)
-           (when (and prefix need-to-be-updated)
-             ;; With a prefix, redisplay the total status instead of
-             ;; redisplaying partially.
-             (remove-text-properties 0 (length str)
-                                     '(need-to-be-updated nil) str)
-             (put-text-property 0 (length str) 'need-to-be-updated
-                                `(twittering-format-status-for-redisplay
-                                  ,status ,prefix)
-                                str))
+           ;; (when (and prefix need-to-be-updated)
+           ;;   ;; With a prefix, redisplay the total status instead of
+           ;;   ;; redisplaying partially.
+           ;;   (remove-text-properties 0 (length str)
+           ;;                           '(need-to-be-updated nil) str)
+           ;;   (put-text-property 0 (length str) 'need-to-be-updated
+           ;;                      `(twittering-format-status-for-redisplay
+           ;;                        ,status ,prefix)
+           ;;                      str))
            str)))
      (t
       (message "Failed to generate a status formater for `twittering-mode'.")
@@ -5266,14 +5266,12 @@ rendered at POS, return nil."
                          (twittering-get-current-status-head)
                        (or (twittering-get-next-status-head)
                            (point-max))))
-                (prefix "  ")
+                (prefix  "  ")
                 (buffer-read-only nil))
             (setq statuses (sort statuses (lambda (e1 e2)
                                             (twittering-status-id<
                                              (assqref 'id e1)
                                              (assqref 'id e2)))))
-            (unless twittering-reverse-mode
-              (setq statuses (reverse statuses)))
             (save-excursion
               (narrow-to-region (twittering-get-current-status-head)
                                 (or (twittering-get-next-status-head)
@@ -5291,10 +5289,11 @@ rendered at POS, return nil."
                    (add-text-properties 0 (length formatted-status)
                                         field-properties
                                         formatted-status)
-                   (if twittering-reverse-mode
-                       (insert-before-markers formatted-status twittering-tweet-separator)
-                     (insert formatted-status twittering-tweet-separator))))
-               statuses)))
+                   (insert formatted-status twittering-tweet-separator)
+                   (goto-char (line-beginning-position))))
+               (if twittering-reverse-mode
+                   (reverse statuses)
+                 statuses))))
         (when interactive
           (case twittering-service-method
             ((sina)
@@ -5361,10 +5360,11 @@ rendered at POS, return nil."
 
 (defun twittering-toggle-show-replied-statuses ()
   (interactive)
-  (if (twittering-replied-statuses-visible-p)
-      (twittering-hide-replied-statuses (interactive-p))
-    (twittering-show-replied-statuses twittering-show-replied-tweets
-                                      (interactive-p))))
+  (save-excursion
+    (if (twittering-replied-statuses-visible-p)
+        (twittering-hide-replied-statuses (interactive-p))
+      (twittering-show-replied-statuses twittering-show-replied-tweets
+                                        (interactive-p)))))
 
 
 ;;;; Automatic redisplay of statuses on buffer
@@ -9062,19 +9062,29 @@ Duplicated elements should not exist in STR-LIST."
 (defun twittering-decorate-zebra-background (object face1 &optional face2)
   "Append zebra background to OBJECT.
 The zebra face is decided by looking at adjacent face. "
-  (let* ((start 0)
-         (other-faces (get-text-property start 'face object))
-         (end nil)
-         (pos (twittering-get-current-status-head))
-         (zebra-face (if (and pos
-                              face2
-                              (memq face1
-                                    (let ((faces (get-text-property pos 'face)))
-                                      (if (listp faces) faces (list faces)))))
-                         face2
-                       face1)))
+  (let ((other-faces (get-text-property (point) 'face))
+        start end zebra-face)
+    
+    ;; check previous face in the buffer
+    (setq start (point))
+    (save-excursion
+      (while (and start
+                  (setq start (previous-single-property-change start 'face)))
+        (cond
+         ((memq face1 (get-text-property start 'face))
+          (setq zebra-face face2
+                start nil))
+         ((memq face2 (get-text-property start 'face))
+          (setq zebra-face face1
+                start nil)))))
+    
+    (unless zebra-face (setq zebra-face face1))
     (when (and zebra-face (atom zebra-face))
       (setq zebra-face `(,zebra-face)))
+
+    ;; decorate string
+    (setq start 0
+          end nil)
     (while (setq end (next-single-property-change start 'face object))
       (put-text-property start end
                          'face (append zebra-face
