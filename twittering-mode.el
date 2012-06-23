@@ -60,6 +60,7 @@
        ;; details.
        (require 'unicode nil t)))
 (require 'url)
+(require 'oauth2)
 
 (defconst twittering-mode-version "HEAD")
 
@@ -594,16 +595,17 @@ do not display unread notifier on mode line.")
     (statusnet (status-url twittering-get-status-url-statusnet)
                (search-url twittering-get-search-url-statusnet))
 
-    (sina (api "api.t.sina.com.cn")
-          (web "t.sina.com.cn")
+    (sina (api "api.weibo.com")
+          (web "weibo.com")
           ;; search is restricted by sina..
 
-          (oauth-request-token-url-without-scheme
-           "://api.t.sina.com.cn/oauth/request_token")
+          (api-prefix    "2/")
+
           (oauth-authorization-url-base-without-scheme
-           "://api.t.sina.com.cn/oauth/authorize?oauth_token=")
+           "://api.weibo.com/oauth2/authorize")
           (oauth-access-token-url-without-scheme
-           "://api.t.sina.com.cn/oauth/access_token")
+           "://api.weibo.com/oauth2/access_token")
+          
           (oauth-consumer-key
            ,(base64-decode-string "MTg4MjM3MzM0NQ=="))
           (oauth-consumer-secret
@@ -637,7 +639,7 @@ do not display unread notifier on mode line.")
 Following services are supported:
   'twitter    -- http://www.twitter.com
   'statusnet  -- http://status.net
-  'sina       -- http://t.sina.com.cn
+  'sina       -- http://weibo.com
   'douban     -- http://www.douban.com
   'socialcast -- your own socialcast web(http://www.socialcast.com/)"
   :type 'list
@@ -698,7 +700,8 @@ requires an external command `curl' or another command included in
                           (assocref "douban_user_id" token-alist)))
           ((password) (assocref "password" token-alist))))))
 
-(defvar twittering-accounts-internal '()
+(defvar twittering-accounts-internal '((douban (oauth . 1.0))
+                                       (twitter (oauth . 1.0)))
   "Internal service wise configuration.  ")
 
 (defun twittering-get-accounts-internal (attr)
@@ -3016,9 +3019,13 @@ the server when the HTTP status code equals to 400 or 403."
          (sentinel (or sentinel 'twittering-http-get-default-sentinel))
          (path (concat "/" method (if (eq service 'douban) "" ".json")))
          (request
-          (twittering-add-application-header-to-http-request
-           (twittering-make-http-request
-            "GET" nil host nil path parameters "" (twittering-get-accounts 'ssl)))))
+          (if (not (equal (twittering-get-accounts-internal 'oauth) 1.0))
+              (twittering-make-http-request
+               "GET" nil host nil path `(,@parameters ,(assoc "access_token" (twittering-lookup-oauth-access-token-alist)))
+               "" (twittering-get-accounts 'ssl))
+            (twittering-add-application-header-to-http-request
+             (twittering-make-http-request
+              "GET" nil host nil path parameters "" (twittering-get-accounts 'ssl))))))
     (twittering-send-http-request
      request additional-info sentinel clean-up-sentinel)))
 
@@ -3068,11 +3075,21 @@ PARAMETERS is alist of URI parameters.
          ;; "POST" url (and (not (twittering-is-uploading-file-p parameters))
          ;;                  parameters))))
          (request
-          (twittering-add-application-header-to-http-request
-           (twittering-make-http-request "POST" nil host nil path
-                                         (unless (eq (twittering-extract-service) 'douban) parameters)
-                                         post-body
-                                         (twittering-get-accounts 'ssl)))))
+          (if (not (equal (twittering-get-accounts-internal 'oauth) 1.0))
+          
+              (twittering-make-http-request "POST" nil host nil path
+                                            (unless (eq (twittering-extract-service) 'douban) 
+                                              `(,@parameters ,(assoc "access_token" (twittering-lookup-oauth-access-token-alist)))
+                                              )
+                                            post-body
+                                            (twittering-get-accounts 'ssl))
+            (twittering-add-application-header-to-http-request
+             (twittering-make-http-request "POST" nil host nil path
+                                           (unless (eq (twittering-extract-service) 'douban) 
+                                             parameters)
+                                           post-body
+                                           (twittering-get-accounts 'ssl))))))
+
     (twittering-send-http-request request additional-info
                                   sentinel clean-up-sentinel)))
 
@@ -3897,8 +3914,7 @@ we will open NEXT-NTH url directly. "
         twittering-private-info-file-dirty nil
 
         twittering-format-status-function nil
-        twittering-format-my-status-function nil
-        twittering-accounts-internal nil)
+        twittering-format-my-status-function nil)
   (twit))
 
 (defun twittering-switch-to-unread-timeline ()
@@ -3935,7 +3951,7 @@ we will open NEXT-NTH url directly. "
                   (value (cdr pair)))
               (cond
                ((memq sym twittering-variables-stored-with-encryption)
-                (set sym value)
+                (set sym (append (symbol-value sym) value))
                 sym)
                (t
                 nil)))))
@@ -4227,6 +4243,8 @@ following symbols;
                    (case (twittering-extract-service)
                      ((twitter socialcast)
                       screen-name)
+                     ((sina)
+                      (assqref 'profile-url (assqref 'user status)))
                      (t
                       (assqref 'id (assqref 'user status))))))
              (spec (twittering-string-to-timeline-spec screen-name)))
@@ -4412,7 +4430,7 @@ following symbols;
                      'uri (if (eq (twittering-extract-service) 'sina)
                               ;; TODO: maybe we can get its user_id
                               ;; at background.
-                              (concat "http://t.sina.com.cn/search/user.php?search="
+                              (concat "http://weibo.com/search/user.php?search="
                                       screen-name)
                             (twittering-get-status-url screen-name))
                      'screen-name-in-text screen-name
@@ -6144,7 +6162,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                      (let ((username (elt (cdr spec) 1)))
                        (if (eq service 'sina)
                            (progn
-                             (setq parameters `(,@parameters ("id" . ,username)))
+                             (setq parameters `(,@parameters ("screen_name" . ,username)))
                              (twittering-api-path "statuses/user_timeline"))
                          (twittering-api-path "statuses/user_timeline/" username))))
                     ((list)
@@ -6450,7 +6468,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
       ;; ---------------------------
       ((counts)
        (twittering-http-get api-host
-                            (twittering-api-path "statuses/counts")
+                            (twittering-api-path "statuses/count")
                             ;; USERNAME treated as IDS here
                             `(("ids" . ,(assqref 'ids args-alist)))
                             additional-info
@@ -6464,10 +6482,10 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                             sentinel))
 
       ;; mid<->id
-      ;;   http://api.t.sina.com.cn/queryid.json?mid=5KD0TZiyL24&isBase62=1&type=1
-      ;;   http://api.t.sina.com.cn/querymid.json?id=6401236707&type=1
+      ;;   http://api.weibo.com/queryid.json?mid=5KD0TZiyL24&isBase62=1&type=1
+      ;;   http://api.weibo.com/querymid.json?id=6401236707&type=1
       ;; the other way (id->mid)
-      ;;   http://api.t.sina.com.cn/$uid/statuses/$tid?s=6cm7D0"
+      ;;   http://api.weibo.com/$uid/statuses/$tid?s=6cm7D0"
 
       ;; ((get-tweet-url)                        ; FIXME: doesn't work??
       ;;  (twittering-http-get (twittering-lookup-service-method-table 'api)
@@ -6514,7 +6532,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
           (mentions        . "statuses/mentions")
           (public          . "statuses/public_timeline")
           (replies         . ,(if (eq service 'sina)
-                                  "statuses/comments_timeline"
+                                  "comments/timeline"
                                 "statuses/replies"))
           (retweeted_by_me . "statuses/retweeted_by_me")
           (retweeted_to_me . "statuses/retweeted_to_me")
@@ -6564,7 +6582,7 @@ string.")
                 (pred (lambda (i) (equal (assqref 'id i) id)))
                 (count (find-if pred retrieved)))
            (when count
-             (let* ((rt (assqref 'rt count))
+             (let* ((rt (assqref 'reposts count))
                     (cm (assqref 'comments count))
                     (rt-str (if (equal rt "0") "" (concat "(" rt ")")))
                     (cm-str (if (equal cm "0") "" (concat "(" cm ")"))))
@@ -6709,7 +6727,8 @@ string.")
 
 (defun twittering-get-status-url (username &optional id)
   "Generate a URL of a user or a specific status."
-  (let ((scheme (if (twittering-get-accounts 'ssl) "https" "http"))
+  (let ((scheme ;; (if (twittering-get-accounts 'ssl) "https" "http"))
+         "http")
         (path (funcall (twittering-lookup-service-method-table 'status-url)
                        username id)))
     (concat scheme "://" path)))
@@ -6737,7 +6756,16 @@ string.")
         ;; (twittering-get-simple-sync 'query-mid
         ;;                                   `((username . ,username)
         ;;                                     (id . ,id)))
-        (format "%s/%s/statuses/%s?s=6cm7D0" api username id)
+        ;; (format "%s/%s/statuses/%s?s=6cm7D0" api username id) ; oauth 1.0
+        (format "%s/%s/%s" web username
+                (mapconcat (lambda (s)
+                             (apply 'string (reverse (string-to-list s))))
+                           (mapcar 'twittering-int-to-radix62
+                                   (mapcar 'string-to-int
+                                           `(,(substring id 0 -14)
+                                             ,(substring id -14 -7)
+                                             ,(substring id -7))))
+                           ""))
       (format "%s/%s" web username))))
 
 (defun twittering-get-status-url-douban (username &optional id)
@@ -7110,144 +7138,160 @@ If nil, read it from the minibuffer."
 (defvar twittering-private-info-file-dirty nil)
 
 (defun twittering-verify-credentials ()
-  (let ((service (twittering-extract-service)))
-    (cond
-     ((or (twittering-account-authorized-p)
-          (twittering-account-authorization-queried-p))
-      nil)
-     ((and (memq (twittering-get-accounts 'auth) '(oauth xauth))
-           (or (null (twittering-lookup-service-method-table 'oauth-consumer-key))
-               (null (twittering-lookup-service-method-table 'oauth-consumer-secret))))
-      (message "Consumer for OAuth is not specified."))
-     ((and twittering-use-master-password
-           (not (twittering-capable-of-encryption-p)))
-      (message "You need GnuPG and (EasyPG or alpaca.el) for master password!"))
+  (let* ((service (twittering-extract-service))
+         (scheme (if (twittering-get-accounts 'ssl) "https" "http")))
+    (if (not (equal (twittering-get-accounts-internal 'oauth) 1.0))
+        (progn
+          (setq scheme "https")         ; oauth 2.0 requirement.  
+          (when (or (assocref "access_token" (twittering-lookup-oauth-access-token-alist))
+                    (twittering-update-oauth-access-token-alist
+                     `(("access_token" . 
+                        ,(oauth2-token-access-token
+                          (oauth2-auth-and-store
+                           (concat scheme (twittering-lookup-service-method-table
+                                           'oauth-authorization-url-base-without-scheme))
+                           (concat scheme (twittering-lookup-service-method-table
+                                           'oauth-access-token-url-without-scheme))
+                           ""
+                           (twittering-lookup-service-method-table 'oauth-consumer-key)
+                           (twittering-lookup-service-method-table 'oauth-consumer-secret)))))))
+            (twittering-update-account-authorization 'authorized)
+            (twittering-start)))
 
-     ((memq (twittering-get-accounts 'auth) '(oauth xauth basic))
-      (let ((ok nil))
-        ;; 1. Read token from saved file
-        (when (and twittering-use-master-password
-                   (twittering-capable-of-encryption-p)
-                   (not twittering-private-info-file-loaded-p)
-                   (file-exists-p twittering-private-info-file)
-                   (twittering-load-private-info-with-guide)
-                   (twittering-has-oauth-access-token-p))
-          (twittering-update-account-authorization 'queried)
-          (setq ok (twittering-has-oauth-access-token-p))
-          (if ok
-              (twittering-update-account-authorization 'authorized)
-            (unless (eq (twittering-get-accounts 'auth) 'basic)
-              (let ((oauth-alist (twittering-lookup-oauth-access-token-alist)))
-                (twittering-call-api 'verify-credentials
-                                     `((sentinel
-                                        . twittering-http-get-verify-credentials-sentinel)
-                                       (clean-up-sentinel
-                                        . twittering-http-get-verify-credentials-clean-up-sentinel))
-                                     `(,(case service
-                                          ((sina)
-                                           `(user_id . ,(assocref "user_id" oauth-alist)))
-                                          ((douban)
-                                           `(user_id . ,(assocref "douban_user_id" oauth-alist)))
-                                          (t
-                                           `(username . ,(assocref "screen_name" oauth-alist))))
-                                       (password . nil)
-                                       (service . ,service)
-                                       (sync . t)))
-                (setq ok t)))))
+      (cond
+       ((or (twittering-account-authorized-p)
+            (twittering-account-authorization-queried-p))
+        nil)
+       ((and (memq (twittering-get-accounts 'auth) '(oauth xauth))
+             (or (null (twittering-lookup-service-method-table 'oauth-consumer-key))
+                 (null (twittering-lookup-service-method-table 'oauth-consumer-secret))))
+        (message "Consumer for OAuth is not specified."))
+       ((and twittering-use-master-password
+             (not (twittering-capable-of-encryption-p)))
+        (message "You need GnuPG and (EasyPG or alpaca.el) for master password!"))
 
-        ;; 2. Maybe info file has already been read when loading other accounts.
-        (unless ok
-          (setq ok (twittering-has-oauth-access-token-p)))
-
-        ;; 3. Get/Renew token
-        (unless ok
-          (let* ((scheme (if (twittering-get-accounts 'ssl) "https" "http"))
-                 (access-token-url (concat scheme
-                                           (twittering-lookup-service-method-table
-                                            'oauth-access-token-url-without-scheme)))
-                 (consumer-key (twittering-lookup-service-method-table
-                                'oauth-consumer-key))
-                 (consumer-secret (twittering-lookup-service-method-table
-                                   'oauth-consumer-secret)))
-
-            (case (twittering-get-accounts 'auth)
-              ((oauth)
-               (let* ((request-token-url (concat scheme
-                                                 (twittering-lookup-service-method-table
-                                                  'oauth-request-token-url-without-scheme)))
-                      (token-alist (twittering-oauth-get-access-token
-                                    request-token-url
-                                    (lambda (token)
-                                      (concat scheme
-                                              (twittering-lookup-service-method-table
-                                               'oauth-authorization-url-base-without-scheme)
-                                              token))
-                                    access-token-url
-                                    consumer-key
-                                    consumer-secret
-                                    "twittering-mode")))
-                 (when (and (assoc "oauth_token"        token-alist)
-                            (assoc "oauth_token_secret" token-alist)
-                            (or (assoc "screen_name" token-alist)
-                                (assoc "user_id" token-alist)
-                                (assoc "douban_user_id" token-alist)))
-                   (twittering-update-oauth-access-token-alist token-alist)
-                   (setq ok t))))
-
-              ((xauth)
-               (let* ((account-info (twittering-prepare-account-info))
-                      (token-alist (twittering-xauth-get-access-token
-                                    access-token-url
-                                    consumer-key
-                                    consumer-secret
-                                    (car account-info)
-                                    (cdr account-info))))
-                 ;; Dispose of password as recommended by Twitter.
-                 ;; http://dev.twitter.com/pages/xauth
-                 (setcdr account-info nil)
-                 (when (and token-alist
-                            (assoc "oauth_token" token-alist)
-                            (assoc "oauth_token_secret" token-alist))
-                   (twittering-update-oauth-access-token-alist token-alist)
-                   (setq ok t))))
-
-              ((basic)
-               (let ((account-info (twittering-prepare-account-info)))
-                 (twittering-call-api 'verify-credentials
-                                      `((sentinel . twittering-http-get-verify-credentials-sentinel)
-                                        (clean-up-sentinel
-                                         . twittering-http-get-verify-credentials-clean-up-sentinel))
-                                      `((username . ,(car account-info))
-                                        (password . ,(cdr account-info))
-                                        (service  . ,service)
-                                        (sync . t)))
-                 (setq ok (twittering-get-account-authorization))))))
-
-          (setq twittering-private-info-file-dirty t))
-
-        ;; 4. Update info file when changed.
-        (if (not ok)
-            (error "Authorization `%s' via OAuth failed. Type M-x twittering-restart to retry."
-                   service)
-          (twittering-update-account-authorization 'authorized)
-          (message "Authorization for \"%s\" succeeded." service)
-          ;; Only save when we authenticate all enabled services and have updated
-          ;; anyone of them.
+       ((memq (twittering-get-accounts 'auth) '(oauth xauth basic))
+        (let ((ok nil))
+          ;; 1. Read token from saved file
           (when (and twittering-use-master-password
                      (twittering-capable-of-encryption-p)
-                     twittering-private-info-file-dirty
-                     (>= (length twittering-oauth-access-token-alist)
-                         (length twittering-enabled-services))
-                     (every (lambda (service)
-                              (eq (twittering-get-account-authorization service)
-                                  'authorized))
-                            twittering-enabled-services))
-            (twittering-save-private-info-with-guide))
+                     (not twittering-private-info-file-loaded-p)
+                     (file-exists-p twittering-private-info-file)
+                     (twittering-load-private-info-with-guide)
+                     (twittering-has-oauth-access-token-p))
+            (twittering-update-account-authorization 'queried)
+            (setq ok (twittering-has-oauth-access-token-p))
+            (if ok
+                (twittering-update-account-authorization 'authorized)
+              (unless (eq (twittering-get-accounts 'auth) 'basic)
+                (let ((oauth-alist (twittering-lookup-oauth-access-token-alist)))
+                  (twittering-call-api 'verify-credentials
+                                       `((sentinel
+                                          . twittering-http-get-verify-credentials-sentinel)
+                                         (clean-up-sentinel
+                                          . twittering-http-get-verify-credentials-clean-up-sentinel))
+                                       `(,(case service
+                                            ((sina)
+                                             `(user_id . ,(assocref "user_id" oauth-alist)))
+                                            ((douban)
+                                             `(user_id . ,(assocref "douban_user_id" oauth-alist)))
+                                            (t
+                                             `(username . ,(assocref "screen_name" oauth-alist))))
+                                         (password . nil)
+                                         (service . ,service)
+                                         (sync . t)))
+                  (setq ok t)))))
 
-          (twittering-start))))
-     (t
-      (message "%s is invalid as an authorization method."
-               (twittering-get-accounts 'auth))))))
+          ;; 2. Maybe info file has already been read when loading other accounts.
+          (unless ok
+            (setq ok (twittering-has-oauth-access-token-p)))
+
+          ;; 3. Get/Renew token
+          (unless ok
+            (let* ((access-token-url (concat scheme
+                                             (twittering-lookup-service-method-table
+                                              'oauth-access-token-url-without-scheme)))
+                   (consumer-key (twittering-lookup-service-method-table 'oauth-consumer-key))
+                   (consumer-secret (twittering-lookup-service-method-table 'oauth-consumer-secret)))
+
+              (case (twittering-get-accounts 'auth)
+                ((oauth)
+                 (let* ((request-token-url (concat scheme
+                                                   (twittering-lookup-service-method-table
+                                                    'oauth-request-token-url-without-scheme)))
+                        (token-alist (twittering-oauth-get-access-token
+                                      request-token-url
+                                      (lambda (token)
+                                        (concat scheme
+                                                (twittering-lookup-service-method-table
+                                                 'oauth-authorization-url-base-without-scheme)
+                                                token))
+                                      access-token-url
+                                      consumer-key
+                                      consumer-secret
+                                      "twittering-mode")))
+                   (when (and (assoc "oauth_token"        token-alist)
+                              (assoc "oauth_token_secret" token-alist)
+                              (or (assoc "screen_name" token-alist)
+                                  (assoc "user_id" token-alist)
+                                  (assoc "douban_user_id" token-alist)))
+                     (twittering-update-oauth-access-token-alist token-alist)
+                     (setq ok t))))
+
+                ((xauth)
+                 (let* ((account-info (twittering-prepare-account-info))
+                        (token-alist (twittering-xauth-get-access-token
+                                      access-token-url
+                                      consumer-key
+                                      consumer-secret
+                                      (car account-info)
+                                      (cdr account-info))))
+                   ;; Dispose of password as recommended by Twitter.
+                   ;; http://dev.twitter.com/pages/xauth
+                   (setcdr account-info nil)
+                   (when (and token-alist
+                              (assoc "oauth_token" token-alist)
+                              (assoc "oauth_token_secret" token-alist))
+                     (twittering-update-oauth-access-token-alist token-alist)
+                     (setq ok t))))
+
+                ((basic)
+                 (let ((account-info (twittering-prepare-account-info)))
+                   (twittering-call-api 'verify-credentials
+                                        `((sentinel . twittering-http-get-verify-credentials-sentinel)
+                                          (clean-up-sentinel
+                                           . twittering-http-get-verify-credentials-clean-up-sentinel))
+                                        `((username . ,(car account-info))
+                                          (password . ,(cdr account-info))
+                                          (service  . ,service)
+                                          (sync . t)))
+                   (setq ok (twittering-get-account-authorization))))))
+
+            (setq twittering-private-info-file-dirty t))
+
+          ;; 4. Update info file when changed.
+          (if (not ok)
+              (error "Authorization `%s' via OAuth failed. Type M-x twittering-restart to retry."
+                     service)
+            (twittering-update-account-authorization 'authorized)
+            (message "Authorization for \"%s\" succeeded." service)
+            ;; Only save when we authenticate all enabled services and have updated
+            ;; anyone of them.
+            (when (and twittering-use-master-password
+                       (twittering-capable-of-encryption-p)
+                       twittering-private-info-file-dirty
+                       (>= (length twittering-oauth-access-token-alist)
+                           (length twittering-enabled-services))
+                       (every (lambda (service)
+                                (eq (twittering-get-account-authorization service)
+                                    'authorized))
+                              twittering-enabled-services))
+              (twittering-save-private-info-with-guide))
+
+            (twittering-start))))
+       (t
+        (message "%s is invalid as an authorization method."
+                 (twittering-get-accounts 'auth)))))))
 
 (defun twittering-http-get-verify-credentials-sentinel (proc status connection-info header-info)
   (let ((status-line (assqref 'status-line header-info))
@@ -9066,17 +9110,18 @@ The zebra face is decided by looking at adjacent face. "
         start end zebra-face)
     
     ;; check previous face in the buffer
-    (setq start (point))
-    (save-excursion
-      (while (and start
-                  (setq start (previous-single-property-change start 'face)))
-        (cond
-         ((memq face1 (get-text-property start 'face))
-          (setq zebra-face face2
-                start nil))
-         ((memq face2 (get-text-property start 'face))
-          (setq zebra-face face1
-                start nil)))))
+    (when (and face1 face2)
+      (setq start (point))
+      (save-excursion
+        (while (and start
+                    (setq start (previous-single-property-change start 'face)))
+          (cond
+           ((memq face1 (get-text-property start 'face))
+            (setq zebra-face face2
+                  start nil))
+           ((memq face2 (get-text-property start 'face))
+            (setq zebra-face face1
+                  start nil))))))
     
     (unless zebra-face (setq zebra-face face1))
     (when (and zebra-face (atom zebra-face))
@@ -10113,6 +10158,12 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
                                                (assqref 'square45 (assqref 'avatars u)))))))))
              (assqref 'messages statuses))))
 
+     ((funcall has 'comments)          
+      (assqref 'comments statuses))
+
+     ((funcall has 'statuses)          
+      (assqref 'statuses statuses))
+
      (t
       statuses))))
 
@@ -10469,6 +10520,38 @@ e.g.,
 (defun twittering-followers ()
   (mapcar (lambda (i) (assqref 'screen-name (assqref 'user i)))
           (twittering-lookup-user-info-alist 'followers)))
+
+;;;; Sina Utilities
+
+(defun twittering-int-to-radix62 (n)
+  "Radix 62 is defined as: 0..9a..zA..Z"
+  (if (< n 62)
+      (twittering-int-to-radix62-1 n)
+    (concat (twittering-int-to-radix62-1 (% n 62))
+            (twittering-int-to-radix62 (/ n 62)))))
+
+(defun twittering-int-to-radix62-1 (n)
+  "Radix 62 is defined as: 0..9a..zA..Z
+N is less than 62.  "
+  (cond ((< n 10)
+             (number-to-string n))
+            ((and (>= n 10) (<= n 35))
+             (char-to-string (+ ?a (- n 10))))
+            (t
+             (char-to-string (+ ?A (- n 36))))))
+
+(defun twittering-radix62-to-int (s)
+  (reduce (lambda (a b) (+ a (* b 62)))
+          (reverse
+           (mapcar 'twittering-radix62-to-int-1 (string-to-list s)))))
+
+(defun twittering-radix62-to-int-1 (c)
+  (cond ((and (>= c ?0) (<= c ?9))
+         (- c ?0))
+        ((and (>= c ?a) (<= c ?z))
+         (+ (- c ?a) 10))
+        (t
+         (+ (- c ?A) 36))))
 
 
 (provide 'twittering-mode)
