@@ -661,7 +661,9 @@ Following services are supported:
                              twittering-oauth-access-token-alist))))
 
 ;;          (retweet organic)) ; Default Retweet style: `native', `organic'.
-(defcustom twittering-accounts '()
+(defcustom twittering-accounts '((twitter (ssl t))
+                                 (sina (ssl t))
+                                 (socialcast (ssl t)))
   "Account settings per service.
 
     ((service-method
