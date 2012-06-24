@@ -2354,7 +2354,8 @@ The method to perform the request is determined from
            (when (and (or sync?
                           (memq status '(exit signal closed failed)))
                       (buffer-live-p buffer)
-                      (not twittering-debug-mode))
+                      ;; (not twittering-debug-mode)
+                      )
              (kill-buffer buffer))
            (when error?
              (unless (assqref 'stream connection-info)
@@ -6273,17 +6274,20 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
          (case service
            ((sina)
             (setq comment? (and id (not retweeting?)))
-            (setq method (if comment? "statuses/comment" "statuses/update"))
+            (setq method (unless comment? "statuses/update"))
             (setq parameters
                   `((,(if comment? "comment" "status") . ,status)
                     ,@(when id
                         (cond
                          (quoted-id     ; comment to comment
+                          (setq method "comments/reply")
                           `(("id" . ,quoted-id)
                             ("cid" . ,id)))
                          (retweeting?   ; retweet with comments
-                          `(("in_reply_to_status_id" . ,id)))
+                          (setq method "statuses/repost")
+                          `(("id" . ,id)))
                          (t             ; comment
+                          (setq method "comments/create")
                           `(("id" . ,id))))))))
 
            ((socialcast)
@@ -6331,11 +6335,18 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                              nil
                              additional-info))
       ((retweet)
-       (twittering-http-post api-host
-                             (twittering-api-path "statuses/retweet/" id)
-                             nil
-                             additional-info))
+       (case service
+         ((sina)
+          (setq method "statuses/repost"
+                parameters `(("id" . ,id))))
+         (t
+          (setq method (concat "statuses/retweet/" id))))
 
+       (twittering-http-post api-host
+                             (twittering-api-path method)
+                             parameters
+                             additional-info))
+      
       ;; Account Resources
       ((verify-credentials)
        (let ((clean-up-sentinel (assqref 'clean-up-sentinel args-alist)))
@@ -6374,7 +6385,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
        (let (path parameters)
          (case service
            ((sina)
-            (setq path "statuses/comments"
+            (setq path "comments/show"
                   parameters `(("id" . ,id)
                                ("count" . "200"))))
            (t
@@ -7156,9 +7167,9 @@ If nil, read it from the minibuffer."
                                            'oauth-access-token-url-without-scheme))
                            ""
                            (twittering-lookup-service-method-table 'oauth-consumer-key)
-                           (twittering-lookup-service-method-table 'oauth-consumer-secret)))))))
-            (twittering-update-account-authorization 'authorized)
-            (twittering-start)))
+                           (twittering-lookup-service-method-table 'oauth-consumer-secret)
+                           (base64-decode-string "aHR0cDovL3h3bC5hcHBzcG90LmNvbS9jYWxsYmFjaw==")))))))
+            (twittering-update-account-authorization 'authorized)))
 
       (cond
        ((or (twittering-account-authorized-p)
@@ -7288,9 +7299,7 @@ If nil, read it from the minibuffer."
                                 (eq (twittering-get-account-authorization service)
                                     'authorized))
                               twittering-enabled-services))
-              (twittering-save-private-info-with-guide))
-
-            (twittering-start))))
+              (twittering-save-private-info-with-guide)))))
        (t
         (message "%s is invalid as an authorization method."
                  (twittering-get-accounts 'auth)))))))
@@ -9686,6 +9695,7 @@ this function does nothing."
 
 (defun debug-printf (fmt &rest args)
   (when twittering-debug-mode
+    (message "%s\n" (concat "[debug] " (apply 'format fmt args)))
     (with-current-buffer (twittering-debug-buffer)
       (insert "[debug] " (apply 'format fmt args))
       (newline))))
@@ -10380,16 +10390,17 @@ SPEC may be a timeline spec or a timeline spec string."
                 (start-timer (null twittering-buffer-info-list)))
             ;; (add-to-list 'twittering-buffer-info-list buffer t)
             (with-current-buffer buffer
-              (twittering-mode-setup spec-string)
-              (twittering-verify-credentials)
-              (twittering-render-timeline buffer)
-              (when (twittering-account-authorized-p)
-                (when twittering-active-mode
-                  (twittering-get-and-render-timeline))
-                (when start-timer
-                  ;; If `buffer' is the first managed buffer,
-                  ;; call `twittering-start' to start timers.
-                  (twittering-start))))
+              (let ((inhibit-read-only t))
+                (twittering-mode-setup spec-string)
+                (twittering-verify-credentials)
+                (twittering-render-timeline buffer)
+                (when (twittering-account-authorized-p)
+                  (when twittering-active-mode
+                    (twittering-get-and-render-timeline))
+                  (when start-timer
+                    ;; If `buffer' is the first managed buffer,
+                    ;; call `twittering-start' to start timers.
+                    (twittering-start)))))
             buffer))))))
 
 ;;;;
