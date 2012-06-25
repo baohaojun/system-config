@@ -592,6 +592,7 @@
  '(message-dont-reply-to-names (quote (".*haojun.*" "hjbao")))
  '(message-mail-alias-type nil)
  '(mm-text-html-renderer (quote w3m))
+ '(mmm-global-mode t nil (mmm-mode))
  '(mmm-submode-decoration-level 2)
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)

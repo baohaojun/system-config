@@ -22,20 +22,17 @@ die() {
 }
 
 function Usage() {
-    echo "$(basename $0) [-i ISSUE] [-a] [-s SIGNED_OFF_BY] [-h]"
+    echo "$(basename $0) [-i ISSUE] [-a] [-h]"
     echo ""
     echo "    -i ISSUE: ISSUE is the jira issue id."
     echo "    -a: it is passed to git commit"
-    echo "    -s SIGNED_OFF_BY: add a Signed-off-by: line into git commit message."
-    echo "                      you can also set it in '~/.signed-off-by'"
     echo "    -h: show this help."
 }
 
 issue=
 git_opts=
 git_amend=
-signed_off_by=$(cat ~/.signed-off-by 2>/dev/null || true)
-TEMP=$(getopt -o i:as:h --long amend -n $(basename $0) -- "$@")
+TEMP=$(getopt -o i:ah --long amend -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -52,10 +49,6 @@ while true; do
 	    git_amend=true
 	    shift
 	    ;;	    
-	-s)
-	    signed_off_by=$2
-	    shift 2
-	    ;;
 	-h)
 	    Usage
 	    exit
@@ -101,7 +94,7 @@ done
 
 function gitci() {
     if test -z "$git_amend"; then
-	git commit $git_opts -m "$(cat <<EOF
+	git commit $git_opts -s -m "$(cat <<EOF
 `get-stdin "$msg"`
 EOF
 )"
@@ -124,7 +117,7 @@ EOF
             for x in "${reviewers[@]}"; do
                 echo -n "--reviewer=$x "
             done)" \
-            $review_host:$(git-remote-url $(repo-remote) | perl -npe 's/.*://; s,^/git/,,') HEAD:refs/for/$(repo-refname)
+            "$(repo-review-url)" HEAD:refs/for/$(repo-refname)
     fi
 }
 

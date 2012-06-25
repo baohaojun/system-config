@@ -14,3 +14,5 @@ gcode/scim-cs/scim.opensdf
 TempWmicBatchFile.bat
 News
 Mail
+*.pyc
+*.elc

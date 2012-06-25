@@ -19,19 +19,23 @@ for x in "$@"; do
         test -e Makefile || exit
         repo sync -n -j4
 
-	my-rfa -j 5 -- bash -c 'mkdir -p $(lookup_file .repo/../out)/$(today);
-                                log=$(lookup_file .repo/../out)/$(today)/$(echo $REPO_PATH | sed -e "s,/,.,g").git-log;
-                                remote=$(repo-remote)
-                                refname=$(repo-refname)
-                                git log $remote/$refname@"{1 day ago}"..$remote/$refname > $log
-                                if test $(stat -c %s $log) = 0; then
-                                    rm $log
-                                fi
-                               '
+	my-rfa -j 5 -- '
+#{%sh%}
+mkdir -p $(lookup_file .repo/../out)/$(today);
+log=$(lookup_file .repo/../out)/$(today)/$(echo $REPO_PATH | sed -e "s,/,.,g").git-log;
+remote=$(repo-remote)
+refname=$(repo-refname)
+git log $remote/$refname@"{1 day ago}"..$remote/$refname > $log
+if test $(stat -c %s $log) = 0;
+then
+    rm $log
+fi
+#{%/sh%}
+'
         mkdir -p out
         mv out/changes.log out/changes.log-backup-`today` || true
         repo-changes\? 2>&1|tee out/changes.log
-        for x in `cat out/changes.log`; do 
+        for x in `cat out/changes.log | pn 1`; do 
             (cd $x || repo sync "$x" || true)
             repo forall $x -c 'git rebase `repo-remote`/`tbranch`' || true
         done 2>&1|tee out/merge.log

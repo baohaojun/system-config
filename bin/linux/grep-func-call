@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+print "\n";
 use strict;
 use String::ShellQuote;
 
