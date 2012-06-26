@@ -5,7 +5,6 @@
 	email = hjbao@marvell.com
 
 [core]
-	excludesfile = ~/.gitexcludefile
 	pager = 
 [alias]
 	st = status

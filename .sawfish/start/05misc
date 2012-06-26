@@ -1,5 +1,6 @@
 #!/bin/bash
 echo sawfish starting sub programs
+rm ~/.fonts/monaco-windows.ttf -f
 sudo modprobe -r pcspkr 
 python3 ~/gcode/scim-cs/ime-py/ime-server.py&
 if test -f ~/.offlineimaprc; then
