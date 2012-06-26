@@ -1,0 +1,41 @@
+#!/bin/bash
+
+function do_it() {
+    x=$1
+    y=$2
+    if echo $y | grep -q -v -e -; then
+	y=$y-eng
+    fi
+    mkdir $(dirname $x)/$(basename $x)-out/out-$y -p
+    (
+        (
+            echo will now lock $x $y
+            flock 9
+            echo $x $y locked
+            set -e
+            cd $x
+            android-set-product $y
+            rm $(android-env get_build_var TARGET_OUT) -rf
+            android-full-build $y
+        ) 9< /bin/bash > $(dirname $x)/$(basename $x)-out/out-$y/build.log.$(today) 2>&1 &
+    )
+}
+
+for x in ~/src/ics-sultan/ ~/src/shgit-ics/; do
+    for y in sultan jasmine; do
+        do_it $x $y
+    done
+done
+
+for x in ~/src/ics-978/; do
+    for y in ariel arieldkb; do
+        do_it $x $y
+    done
+done
+
+for x in ~/src/ics-saarc; do
+    for y in  pxa978dkb_def pxa978ariel_def-userdebug pxa978ariel_def; do
+        do_it $x $y
+    done
+done
+    

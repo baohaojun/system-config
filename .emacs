@@ -1591,9 +1591,11 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (defun sudoedit ()
   (interactive)
-  (if (file-remote-p (buffer-file-name))
-      (find-alternate-file (replace-regexp-in-string "^/scp:.*?:" "" (buffer-file-name)))    
-    (find-alternate-file (concat remote-sudo-prefix (buffer-file-name)))))
+  (find-alternate-file (concat remote-sudo-prefix (buffer-file-name))))
+
+(defun localedit ()
+  (interactive)
+  (find-alternate-file (replace-regexp-in-string "^/scp:.*?:" "" (buffer-file-name))))
 
 (defun gnus-gmail-search-subject ()
   (interactive)

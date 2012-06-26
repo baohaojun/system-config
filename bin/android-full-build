@@ -91,4 +91,4 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	echo -n 'after build, ccache stat is '
 	./prebuilt/linux-x86/ccache/ccache -s
     )
-) 9>~/.logs/android-full-build.lock  2>&1 | tee build.log
+) 9>~/.logs/android-full-build.lock  2>&1 | tee build.log out/build.log
