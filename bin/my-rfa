@@ -4,10 +4,15 @@ set -e
 
 jobs=1
 dirs=()
-TEMP=$(getopt -o d:j: -n $(basename $0) -- "$@")
+debug=0
+TEMP=$(getopt -o xd:j: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+	-x)
+	    debug=1
+	    shift
+	    ;;
 	-j)
 	    jobs=$2
 	    shift 2
@@ -67,7 +72,11 @@ for x in "${dirs[@]}"; do
 	(
 	    cd $x || exit
 	    flock -x 9
-	    bash -c "$@"
+	    x=
+	    if test "$debug" = 1; then
+		x=-x
+	    fi
+	    bash $x -c "$@"
 	) 9>~/.logs/my-rfa-locks/$job.lock &
     )
 done | tee ~/.logs/my-rfa.log
