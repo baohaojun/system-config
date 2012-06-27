@@ -719,16 +719,6 @@ requires an external command `curl' or another command included in
 
 ;;; Macros
 
-(defmacro debug-print (obj)
-  (let ((obsym (gensym)))
-    `(let ((,obsym ,obj))
-       (if twittering-debug-mode
-           (with-current-buffer (twittering-debug-buffer)
-             (insert "[debug] " (prin1-to-string ,obsym))
-             (newline)
-             ,obsym)
-         ,obsym))))
-
 (defmacro list-push (value listvar)
   `(setq ,listvar (cons ,value ,listvar)))
 
@@ -5036,11 +5026,8 @@ rendered at POS, return nil."
                       twittering-default-show-replied-tweets))))
                ;; Always insert most adjacent tweet first.
                (if prev-p
-                   timeline-data          ; sorted decreasingly
-                 (reverse timeline-data)))) ; sorted increasingly
-            ;; (widen); FIXME: what is this?
-            (debug-print buffer)))))))
-
+                   timeline-data                  ; sorted decreasingly
+                 (reverse timeline-data)))))))))) ; sorted increasingly            
 
 ;; TODO: this is assuming the user has at least one tweet.
 (defun twittering-render-user-profile (timeline-data)
