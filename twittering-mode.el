@@ -5298,7 +5298,7 @@ rendered at POS, return nil."
                                         field-properties
                                         formatted-status)
                    (insert formatted-status twittering-tweet-separator)
-                   (goto-char (line-beginning-position))))
+                   (delete-region (line-beginning-position) (point))))
                (if twittering-reverse-mode
                    (reverse statuses)
                  statuses))))
@@ -5355,25 +5355,24 @@ rendered at POS, return nil."
                            (setq pos (twittering-get-next-status-head pos)))))
                 (or pos (point-max)))))
            (buffer-read-only nil))
-      (unless pointing-to-base-status
-        (goto-char (if twittering-reverse-mode
-                       beg
-                     (or (twittering-get-previous-status-head beg)
-                         (point-min)))))
+      ;; (unless pointing-to-base-status
+      ;;   (goto-char (if twittering-reverse-mode
+      ;;                  beg
+      ;;                (or (twittering-get-previous-status-head beg)
+      ;;                    (point-min)))))
       (delete-region beg end))
-    (goto-char (point-min))
+    (goto-char (point-max))
+    (twittering-goto-previous-status)
     (widen))
    (interactive
     (message "The status this replies to was already hidden."))))
 
 (defun twittering-toggle-show-replied-statuses ()
   (interactive)
-  (save-excursion
-    (if (twittering-replied-statuses-visible-p)
-        (twittering-hide-replied-statuses (interactive-p))
-      (twittering-show-replied-statuses twittering-show-replied-tweets
-                                        (interactive-p)))))
-
+  (if (twittering-replied-statuses-visible-p)
+      (twittering-hide-replied-statuses (interactive-p))
+    (twittering-show-replied-statuses twittering-show-replied-tweets
+                                      (interactive-p))))
 
 ;;;; Automatic redisplay of statuses on buffer
 ;;;;
@@ -7080,7 +7079,8 @@ been initialized yet."
           (list twittering-initial-timeline-spec-string))))
 
 (defun twittering-window-configuration-change ()
-  (when (eq major-mode 'twittering-mode)
+  (when (and (eq major-mode 'twittering-mode)
+             (not (twittering-replied-statuses-visible-p)))
     (let ((col (round (window-width)))
           (padding 8))
       (unless (= col (or twittering-fill-column 0))
