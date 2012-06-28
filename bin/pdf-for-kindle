@@ -170,7 +170,7 @@ if test $scale != 1; then
     mv "$pdf"-nup-bot-$y-joined-joined-nup.pdf "$pdf"-nup-bot-$y-joined-joined.pdf
 fi
 
-pdf90 /home/bhj/today/"$pdf"-nup-bot-$y-joined-joined.pdf
+pdf90 "$pdf"-nup-bot-$y-joined-joined.pdf
 
 mv "$pdf"-nup-bot-$y-joined-joined-rotated90.pdf kindle-"$pdf".pdf
 rm -rf "$pdf"-nup*.pdf

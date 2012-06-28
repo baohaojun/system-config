@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo bash -c 'cd /sys/bus/pci/drivers/ehci_hcd; for x in $(find . -name "0000*"); do x=$(basename $x); echo fixing $x; echo $x > unbind; sleep 1; echo $x > bind; done'

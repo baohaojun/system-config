@@ -21,8 +21,11 @@ for x in "$@"; do
 
 	my-rfa -j 5 -- '
 #{%sh%}
-mkdir -p $(lookup_file .repo/../out)/$(today);
-log=$(lookup_file .repo/../out)/$(today)/$(repo-path | sed -e "s,/,.,g").git-log;
+android_dir=$(readlink -f $(lookup_file .repo/..))
+out_dir=$(dirname $android_dir)/$(basename $android_dir)-out/daily-changes
+mkdir -p $out_dir/$(today);
+relative-link $out_dir $android_dir
+log=$out_dir/$(today)/$(repo-path | sed -e "s,/,.,g").git-log;
 remote=$(repo-remote)
 refname=$(repo-refname)
 git log $remote/$refname@"{1 day ago}"..$remote/$refname > $log

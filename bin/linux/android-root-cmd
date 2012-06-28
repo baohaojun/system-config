@@ -1,4 +1,4 @@
 #!/bin/bash
-. ~/.bashrc
-lcd build/..
+
+cd $(lookup_file .repo/..)
 "$@"
