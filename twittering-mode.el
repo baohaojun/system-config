@@ -523,7 +523,7 @@ If nil, this is initialized with a list of valied entries extracted from
 (defvar twittering-timeline-data-table (make-hash-table :test 'equal))
 
 (defface twittering-zebra-1-face `((t (:background "#e6e6fa"))) "" :group 'faces)
-(defface twittering-zebra-2-face `((t (:background "#ffe4e1"))) "" :group 'faces)
+(defface twittering-zebra-2-face `((t (:background "white"))) "" :group 'faces)
 
 (defface twittering-verify-face `((t (:inherit 'font-lock-variable-name-face)))
   "Face for decorating the V symbol used by weibo.com.  "
