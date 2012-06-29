@@ -14,9 +14,9 @@ path=$3
 rev=$(git show -s --format=format:"%H" $remote/$branch)
 
 if test $(git show -s --format=format:"%H" HEAD) != $rev; then
-    git fetch $remote $branch >/dev/null 2>&1
-    rev=$(git show -s --format=format:"%H" FETCH_HEAD)
-    if test $(git log -1 --pretty=oneline|pn 1) != $rev; then
+    git fetch $remote refs/heads/$branch >/dev/null 2>&1 
+    rev=$(git show -s --format=format:"%H" FETCH_HEAD >/dev/null 2>&1)
+    if test $(git log -1 --pretty=oneline|pn 1) != "$rev"; then
         (
             flock -x 9;
             echo $path rev not the same;

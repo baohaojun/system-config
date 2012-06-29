@@ -17,15 +17,26 @@ for x in "$@"; do
         cd $x
         cd `lookup_file .repo/..`
         test -e Makefile || exit
-        repo sync -n -j4
+	if yes-or-no-p -y "do repo sync?"; then
+            repo sync -n -j4
+	fi
+	ANDROID_DIR=$(readlink -f $(lookup_file .repo/..))
+	CHANGES_DIR=$(dirname $ANDROID_DIR)/$(basename $ANDROID_DIR)-out/daily-changes
+	TODAYS_CHANGES_DIR=$CHANGES_DIR/$(today)
+	mkdir -p $TODAYS_CHANGES_DIR
+	relative-link $CHANGES_DIR $ANDROID_DIR || true
+	
+	export ANDROID_DIR TODAYS_CHANGES_DIR
+
+	for x in $(xmlstarlet sel -B -t -m //project -v @path -n -b  $(lookup_file .repo/manifest.xml 2>/dev/null || echo /dev/null)  2>/dev/null); do
+	    test -d "$x" && continue
+	    repo sync $(echo $x|perl -npe 's,/+$,,')
+	    touch ~/etc/generate-repo-info.mk
+	done
 
 	my-rfa -j 5 -- '
 #{%sh%}
-android_dir=$(readlink -f $(lookup_file .repo/..))
-out_dir=$(dirname $android_dir)/$(basename $android_dir)-out/daily-changes
-mkdir -p $out_dir/$(today);
-relative-link $out_dir $android_dir
-log=$out_dir/$(today)/$(repo-path | sed -e "s,/,.,g").git-log;
+log=$TODAYS_CHANGES_DIR/$(repo-path | sed -e "s,/,.,g").git-log;
 remote=$(repo-remote)
 refname=$(repo-refname)
 git log $remote/$refname@"{1 day ago}"..$remote/$refname > $log
@@ -35,6 +46,7 @@ then
 fi
 #{%/sh%}
 '
+
         mkdir -p out
         mv out/changes.log out/changes.log-backup-`today` || true
         repo-changes\? 2>&1|tee out/changes.log
