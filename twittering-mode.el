@@ -9113,13 +9113,16 @@ The zebra face is decided by looking at adjacent face. "
       (save-excursion
         (while (and start
                     (setq start (previous-single-property-change start 'face)))
-          (cond
-           ((memq face1 (get-text-property start 'face))
-            (setq zebra-face face2
-                  start nil))
-           ((memq face2 (get-text-property start 'face))
-            (setq zebra-face face1
-                  start nil))))))
+          (let ((faces (get-text-property start 'face)))
+            (when (and faces (not (listp faces)))
+              (setq faces `(,faces)))
+            (cond
+             ((memq face1 faces)
+              (setq zebra-face face2
+                    start nil))
+             ((memq face2 faces)
+              (setq zebra-face face1
+                    start nil)))))))
     
     (unless zebra-face (setq zebra-face face1))
     (when (and zebra-face (atom zebra-face))
