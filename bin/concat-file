@@ -1,0 +1,41 @@
+#!/bin/bash
+
+function die() {
+    echo "$@" 1>&2
+    exit -1
+}
+
+remainder_2=$(($# % 2))
+if test "$remainder_2" != 0; then
+   die "Usage: $(basename $0) [OFFSET IMAGE_NAME_OR_TAG]..."
+fi
+
+tmp_file=~/tmp/concated-$(echo "$@" | perl -npe 's,(/|\s)+,-,g')
+mkdir ~/tmp -p
+
+echo -n > $tmp_file
+while test $# != 0; do
+    offset=$1
+    file=$2
+    shift 2
+    if test ! -e "$file"; then
+	if test -z "$BLF"; then
+	    die "Error: $file not found, and BLF is not set"
+	fi
+	echo -n file for tag "($file)" is:\  1>&2 
+	file=$(get-blf-img-val $BLF "$file" Path)
+	echo $file 1>&2 
+	if test ! -e "$file"; then
+	    die "file ($file) not exist in $BLF"
+	fi
+    fi
+
+    bs=1
+    seek=$offset
+    if test "$(decimal $(decimal $offset/512)*512)" = "$(decimal $offset)"; then
+	bs=512
+	seek=$(decimal $offset/$bs)
+    fi
+    dd if="$file" of=$tmp_file bs=$bs seek=$seek >/dev/null 2>&1 
+done
+echo $tmp_file

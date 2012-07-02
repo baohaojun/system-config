@@ -7,8 +7,9 @@ open(my $blf, "<", $ARGV[0]) or die "can not open blf";
 my $last_img_id = -1;
 my %img_settings;
 while (<$blf>) {
-  next unless m/^\s*(\d+)\s+Image\s+(.*?)\s*=\s*(.*?)\s*$/;
+  next unless m/^\s*(\d+)(?:\s|_)+Image(?:\s|_)+(.*?)\s*=\s*(.*?)\s*$/;
   my ($img_id, $img_key, $img_val) = ($1, $2, $3);
+  $img_key =~ s/_/ /g;
   $img_settings{$img_id} = {} unless exists $img_settings{$img_id};
   $img_settings{$img_id}{$img_key} = $img_val;
 }
