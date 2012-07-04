@@ -5,6 +5,7 @@ git-remote-url $(repo-remote) | perl -npe '
 s,(shgit.marvell.com):/git/,$1/r/:,;
 %rewrites = (
     "android/vendor/marvell/ose/ttc_telephony" => "ose/linux/ttc_telephony",
+    "^bibler:" => "bible/gerrit:",
 );
 foreach $key (keys %rewrites) {
     s,$key,$rewrites{$key},e;

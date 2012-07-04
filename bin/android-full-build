@@ -45,6 +45,8 @@ if test $# -gt 0; then
     fi
     . ~/bin/.android-set-outdir
     android-set-product
+    # re-lunch, so that the ANDROID_PRODUCT_OUT can inherit from the new OUT_DIR
+    lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
 fi
 
 if test $# -gt 0; then
