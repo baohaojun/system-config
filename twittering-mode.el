@@ -699,7 +699,8 @@ requires an external command `curl' or another command included in
           ((auth) 'oauth)
           ((username) (or (assocref "screen_name" token-alist)
                           (assocref "user_id" token-alist)
-                          (assocref "douban_user_id" token-alist)))
+                          (assocref "douban_user_id" token-alist)
+                          (assqref 'uid (assocref "access-response" token-alist))))
           ((password) (assocref "password" token-alist))))))
 
 (defvar twittering-accounts-internal '((douban (oauth . 1.0))
@@ -3022,6 +3023,8 @@ the server when the HTTP status code equals to 400 or 403."
     (twittering-send-http-request
      request additional-info sentinel clean-up-sentinel)))
 
+(defvar twittering-oauth2-wait-user-for-reverifying nil)
+
 (defun twittering-http-get-default-sentinel (proc status connection-info header-info)
   (let ((status-line (assqref 'status-line header-info))
         (status-code (assqref 'status-code header-info))
@@ -3041,10 +3044,20 @@ the server when the HTTP status code equals to 400 or 403."
                    (not (assqref 'noninteractive connection-info)))
           (format "Fetching %s.  Success." spec-string))))
      (t
-      (format "Response from `%s': %s"
-              spec-string
-              (twittering-get-error-message header-info (current-buffer)))))))
-
+      (let ((twittering-service-method (twittering-extract-service spec-string))
+            (error-msg (twittering-get-error-message header-info
+                                                     (current-buffer))))
+        (unwind-protect
+            (if (and (not twittering-oauth2-wait-user-for-reverifying)
+                     (setq twittering-oauth2-wait-user-for-reverifying t)
+                     (eq twittering-service-method 'sina)
+                     (equal status-code "400")
+                     (string-match "expired_token" error-msg)
+                     (y-or-n-p "Access token expired, weibo.com asks you to verify again, OK? "))
+                (twittering-oauth2-force-verify-credentials)
+              (format "Response from `%s': %s" spec-string error-msg))
+          (setq twittering-oauth2-wait-user-for-reverifying nil)))))))
+      
 (defun twittering-http-post (host method &optional parameters additional-info sentinel clean-up-sentinel)
   "Send HTTP POST request to api.twitter.com (or search.twitter.com)
 HOST is hostname of remote side, api.twitter.com (or search.twitter.com).
@@ -6082,7 +6095,7 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
          (service  (twittering-extract-service))
          (sina? (eq service 'sina))
          (douban? (eq service 'douban))
-         (username-str (if sina? "user_id" "screen_name")))
+         (username-str (if sina? "uid" "screen_name")))
     (case command
       ((retrieve-timeline)
        (let* ((spec-string (assqref 'timeline-spec-string args-alist))
@@ -6391,9 +6404,13 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
       ((show-friends show-followers)
        (twittering-http-get api-host
                             (twittering-api-path
-                             (concat "statuses/"
-                                     (replace-regexp-in-string
-                                      "show-" "" (symbol-name command))))
+                             (assqref service
+                                      `((twitter . ,(concat "statuses/"
+                                                            (replace-regexp-in-string
+                                                             "show-" "" (symbol-name command))))
+                                        (sina . ,(concat "friendships/"
+                                                         (replace-regexp-in-string
+                                                          "show-" "" (symbol-name command)))))))
                             `((,username-str . ,username)
                               ("count" . "200")
                               ("cursor" . ,cursor))
@@ -7144,20 +7161,19 @@ If nil, read it from the minibuffer."
         (progn
           (setq scheme "https")         ; oauth 2.0 requirement.  
           (when (or (assocref "access_token" (twittering-lookup-oauth-access-token-alist))
-                    (twittering-update-oauth-access-token-alist
-                     `(("access_token" . 
-                        ,(oauth2-token-access-token
-                          (oauth2-auth-and-store
-                           (concat scheme (twittering-lookup-service-method-table
-                                           'oauth-authorization-url-base-without-scheme))
-                           (concat scheme (twittering-lookup-service-method-table
-                                           'oauth-access-token-url-without-scheme))
-                           ""
-                           (twittering-lookup-service-method-table 'oauth-consumer-key)
-                           (twittering-lookup-service-method-table 'oauth-consumer-secret)
-                           (base64-decode-string "aHR0cDovL3h3bC5hcHBzcG90LmNvbS9jYWxsYmFjaw==")))))))
+                    (let ((token (oauth2-auth-and-store
+                                  (concat scheme (twittering-lookup-service-method-table
+                                                  'oauth-authorization-url-base-without-scheme))
+                                  (concat scheme (twittering-lookup-service-method-table
+                                                  'oauth-access-token-url-without-scheme))
+                                  ""
+                                  (twittering-lookup-service-method-table 'oauth-consumer-key)
+                                  (twittering-lookup-service-method-table 'oauth-consumer-secret)
+                                  (base64-decode-string "aHR0cDovL3h3bC5hcHBzcG90LmNvbS9jYWxsYmFjaw=="))))
+                      (twittering-update-oauth-access-token-alist
+                       `(("access_token" . ,(oauth2-token-access-token token))
+                         ("access-response" . ,(oauth2-token-access-response token))))))
             (twittering-update-account-authorization 'authorized)))
-
       (cond
        ((or (twittering-account-authorized-p)
             (twittering-account-authorization-queried-p))
@@ -7319,6 +7335,46 @@ If nil, read it from the minibuffer."
                (eq (twittering-get-account-authorization) 'queried))
       (twittering-update-account-authorization nil)
       (message "Authorization failed. Type M-x twittering-restart to retry."))))
+
+(defun twittering-oauth2-force-verify-credentials ()
+  "Some evil site like weibo.com, doesn't open refresh api.  It forces user to
+authenticate again.  "
+  (let* ((twittering-service-method 'sina)
+         (scheme "https")
+         (token (twittering-oauth2-auth-and-store-force
+                 (concat scheme (twittering-lookup-service-method-table
+                                 'oauth-authorization-url-base-without-scheme))
+                 (concat scheme (twittering-lookup-service-method-table
+                                 'oauth-access-token-url-without-scheme))
+                 ""
+                 (twittering-lookup-service-method-table 'oauth-consumer-key)
+                 (twittering-lookup-service-method-table 'oauth-consumer-secret)
+                 (base64-decode-string "aHR0cDovL3h3bC5hcHBzcG90LmNvbS9jYWxsYmFjaw=="))))
+    (twittering-update-oauth-access-token-alist
+     `(("access_token" . ,(oauth2-token-access-token token))
+       ("access-response" . ,(oauth2-token-access-response token))))
+    (twittering-update-account-authorization 'authorized)))
+
+(defun twittering-oauth2-auth-and-store-force (auth-url token-url resource-url client-id client-secret &optional redirect-uri)
+  "Request access to a resource and store it using `plstore'."
+  ;; We store a MD5 sum of all URL
+  (let* ((plstore (plstore-open oauth2-token-file))
+         (id (oauth2-compute-id auth-url token-url resource-url))
+         (plist (cdr (plstore-get plstore id))))
+    ;; Check if we found something matching this access
+    (let ((token (oauth2-auth auth-url token-url
+                              client-id client-secret resource-url nil redirect-uri)))
+      ;; Set the plstore
+      (setf (oauth2-token-plstore token) plstore)
+      (setf (oauth2-token-plstore-id token) id)
+      (plstore-put plstore id nil `(:access-token
+                                    ,(oauth2-token-access-token token)
+                                    :refresh-token
+                                    ,(oauth2-token-refresh-token token)
+                                    :access-response
+                                    ,(oauth2-token-access-response token)))
+      (plstore-save plstore)
+      token)))
 
 ;;;; Start/Stop
 ;;;
