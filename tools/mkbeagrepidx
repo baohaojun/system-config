@@ -78,6 +78,9 @@ function _mk_help_dir() {
 
 function mkgtags() {
     _mk_help_dir
+    if test -e .globalrc; then
+	export GTAGSCONF=$(readlink -f .globalrc)
+    fi
     mkcscope_files | gtags --gtagslabel=plugin-example -f - "$@" "$outDir"
 }
 
