@@ -73,16 +73,6 @@ function do-partition() {
     fastboot flash $1 ${2:-$1.img}
 }
 
-function do-partition-sparse() {
-    should-do-it $1 || return 0
-    fastboot erase $1
-    fastboot oem onfly $1
-    mkdir -p ~/tmp/
-    tmpf=~/tmp/$(basename $2).raw
-    simg2img $2 $tmpf
-    fastboot flash $1 $tmpf
-}
-
 function get-image-path() {
     get-blf-img-val $blf $1 Path
 }
@@ -117,8 +107,8 @@ if test $(basename $0) = do-fastboot-full-978; then
     fastboot erase tdNvm
 fi
 
-do-partition-sparse system "$(get-image-path SYSY)"
-do-partition-sparse userdata "$(get-image-path USRY)"
+do-partition system "$(get-image-path SYSY)"
+do-partition userdata "$(get-image-path USRY)"
 do-partition logo "$(get-image-path PLGO)" || true
 
 do-partition tdTelephony "$(get-image-path PXAY)"
