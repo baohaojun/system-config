@@ -1,0 +1,35 @@
+#!/bin/bash
+function _guilt()
+{
+    local cur prev opts cmds type types c subcommand
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--help --silent --verbose"
+    cmds=$(find /usr/lib/guilt/ -type f | xargs bash -c 'for x in "$@"; do basename $x | sed -e "s/^guilt-//"; done' true)
+    subcommand=""
+
+  # Look for the subcommand.
+    c=1
+    while [ $c -lt $COMP_CWORD ]; do
+	word="${COMP_WORDS[c]}"
+	for cmd in $cmds; do
+	    if [ "$cmd" = "$word" ]; then
+		subcommand="$word"
+	    fi
+	done
+	c=$((++c))
+    done
+
+    case "$subcommand" in
+	'')
+COMPREPLY=( $(compgen -W "${cmds}" -- ${cur}) )
+return 0
+;;
+esac
+
+
+return 0
+}
+
+complete -o default -F _guilt guilt
