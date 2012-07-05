@@ -8,31 +8,45 @@ function _do_fastboot() {
 	-m 1000 \
 	-d '\n' -- \
 	"$(
-	echo tim
-	echo obm
-	echo uboot
-	echo ramdisk
-	echo imei
 	echo arbelbinary
-	echo msabinary
-	echo kernel
-	echo maintenance
-	echo recovery
-	echo misc
 	echo cache
-	echo system
-	echo userdata
-	echo logo
+	echo Cache
+	echo DTIM
 	echo env
-	echo kpanic
-	echo nvm
 	echo factory
-	echo telephony
+	echo imei
+	echo kernel
+	echo kpanic
+	echo logo
+	echo maintenance
+	echo mep
+	echo misc
+	echo MRD
+	echo MRDBackup
+	echo msabinary
+	echo nvm
+	echo obm
+	echo pinmux
+	echo pmce
+	echo ramdisk
+	echo recovery
 	echo reserved
+	echo sdcard
+	echo start
+	echo system
+	echo tdCp
+	echo tdNvm
+	echo tdTelephony
+	echo telephony
+	echo tim
+	echo uboot
+	echo umtsCp
+	echo umtsNvm
+	echo userdata
 	)" \
 	    "$cur")
     )
     return 0 
 }
 
-complete -o default -F _do_fastboot do-fastboot
+complete -o default -F _do_fastboot do-fastboot do-fastboot-978

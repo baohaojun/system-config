@@ -82,14 +82,14 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	if [[ "$target" =~ misc ]]; then
 	    command time make -k telephony uboot obm && result=$result'misc ok; '
 	fi
-	echo "$result"
 	(
 	    cd flashing
 	    ./make-links.sh
 	    dest=$(android-env get_abs_build_var OUT_DIR)/flashing/
 	    mkdir -p $dest
 	    DO_SYMLINK=true ./copy-release.sh $dest
-	) >/dev/null 2>&1 
+	)
+	echo "$result"
 	echo -n 'after build, ccache stat is '
 	./prebuilt/linux-x86/ccache/ccache -s
     )

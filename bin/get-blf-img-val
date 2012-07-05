@@ -2,7 +2,7 @@
 
 use strict;
 
-open(my $blf, "<", $ARGV[0]) or die "can not open blf";
+open(my $blf, "<", $ARGV[0]) or die "can not open blf " . $ARGV[0];
 
 my $last_img_id = -1;
 my %img_settings;

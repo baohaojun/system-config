@@ -31,12 +31,36 @@ function die() {
     exit -1
 }
 
-if test $# != 1 -o ! -e $1; then
-    die "Usage: $(basename $0) XXX.blf"
+if test $(basename $0) = do-fastboot-full-978; then
+    if test $# != 1 -o ! -e $1; then
+	die "Usage: $(basename $0) XXX.blf"
+    fi
+else
+    if test $# -lt 2; then
+	die "Usage: $(basename $0) blf partitions..."
+    fi
 fi
 
 
-export blf=$1
+export blf=$(readlink -m "$1")
+test -e "$blf" || die "no such file $blf"
+export BLF=$blf
+
+shift
+export partitions=("$@")
+
+function should-do-it() {
+    if test $(basename $0) = do-fastboot-full-978; then
+	return 0;
+    fi
+
+    for x in "${partitions[@]}"; do
+	if test "$1" = "$x"; then
+	    return 0
+	fi
+    done
+    return 1
+}
 
 # product=$(fastboot getvar product 2>&1 | grep product: | pn 2)
 # if test "$product.blf" != $(basename $blf); then
@@ -44,11 +68,13 @@ export blf=$1
 # fi
 
 function do-partition() {
+    should-do-it $1 || return 0
     fastboot erase $1;
     fastboot flash $1 ${2:-$1.img}
 }
 
 function do-partition-sparse() {
+    should-do-it $1 || return 0
     fastboot erase $1
     fastboot oem onfly $1
     mkdir -p ~/tmp/
@@ -85,17 +111,22 @@ do-partition kernel "$(get-image-path ZIMG)"
 do-partition tdCp "$(concat-file 0 ARBI 7M GRBI 10M GRB2)"
 do-partition recovery "$(concat-file 0 OSLR 1M ZIMR 5M RAMR)"
 
-fastboot erase misc
-fastboot erase Cache
+if test $(basename $0) = do-fastboot-full-978; then
+    fastboot erase misc
+    fastboot erase Cache
+    fastboot erase tdNvm
+fi
 
 do-partition-sparse system "$(get-image-path SYSY)"
 do-partition-sparse userdata "$(get-image-path USRY)"
 do-partition logo "$(get-image-path PLGO)" || true
-fastboot erase tdNvm
+
 do-partition tdTelephony "$(get-image-path PXAY)"
 do-partition GPT "$(get-image-path PGPT)"
 do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
-do-partition OBM $(concat-file 0 ntim_emmc.bin 4K "$(get-image-path OBMI)")
+do-partition OBM $(concat-file 0 ntim_emmc.bin 4K OBMI)
 
-read -p "Press enter to restart fastboot "
-fastboot reboot
+if test $(basename $0) = do-fastboot-full-978; then
+    read -p "Press enter to restart fastboot "
+    fastboot reboot
+fi
