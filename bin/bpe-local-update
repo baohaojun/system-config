@@ -1,0 +1,58 @@
+#!/bin/bash
+
+cd $(lookup_file .repo/..)
+if set -o|grep xtrace.*on -q; then
+    bashx='bash -x'
+    gq() {
+	bash -x gq
+    }
+else
+    bashx=
+fi
+
+
+for x in $(find flashing -type f -name series); do
+    (
+	proj=$(dirname $x | perl -npe 's,^flashing/quilt/,,')
+	patch_dir=$(pwd)/$(dirname $x)
+	git_base=$(cat $patch_dir/.base)
+	git_result=$(cat $patch_dir/.result)
+	
+	log=$(pwd)/out/bpe-build-local/$(today)$(echo $proj|perl -npe 's,/,-,g');
+	mkdir -p $(dirname $log)
+	(
+	    set +e
+	    cd $proj
+	    if test "$(git rev-parse $(repo-remote)/$(repo-branch))" != "$git_base"; then
+		git log $git_base..$(repo-remote)/$(repo-branch) > $log-upstream-updated
+	    fi
+	    
+	    local_url=$(repo-remote-url|perl -npe 's,.*:/git/android/,bibler:shgit/,')
+	    git fetch $local_url refs/heads/*:refs/local/*
+	    
+	    if test "$(git rev-parse BPE-LOCAL)" != "$result"; then
+		git log $result..BPE-LOCAL > $log-downstream-updated
+	    fi
+
+	    qx=quilt-$(now|perl -npe 's/:/-/g') #the quilt/guilt branch for working on
+	    git branch -D $qx || true # to make sure
+	    git co -b $qx $git_base
+	    git reset --hard $git_base
+	    git clean -xfd
+	    gq init
+	    cp $patch_dir/* .git/patches/$qx/
+	    gq push -a
+	    gq rebase $(repo-remote)/$(repo-branch)
+	    touch $log-gq-rebase-failed
+	    gq export $patch_dir
+	    (
+		cd $patch_dir
+		git st -s . |grep . && 
+		touch $log-patches-rebased
+	    )
+
+	    git diff -q BPE-LOCAL || touch $log-patches-obsolete
+	    
+	)
+    )
+done

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: bashx
+# --
+if set -o|grep xtrace.*on -q; then
+    bashx='bash -x'
+else
+    bashx=
+fi

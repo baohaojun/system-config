@@ -2,8 +2,15 @@
 
 cmd=$1
 shift
+
+if set -o|grep xtrace.*on -q; then
+    bashx='bash -x'
+else
+    bashx=
+fi
+
 if test -x ~/bin/gq-"$cmd"; then
    gq-"$cmd" "$@"; 
 else
-    guilt "$cmd" "$@"
+    $bashx $(which guilt) "$cmd" "$@"
 fi

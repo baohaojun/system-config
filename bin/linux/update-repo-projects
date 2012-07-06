@@ -1,7 +1,7 @@
 #!/bin/bash
 . ~/.bashrc
 
-if test "`basename $0`" == repo-update-x -a $# == 0 || tty >/dev/null 2>&1 ; then
+if test $(basename $0) != update-repo-projects -a $# == 0 || tty >/dev/null 2>&1 ; then
     set -- . 
     echo will only update current dir.
 fi
@@ -51,18 +51,39 @@ fi
         mv out/changes.log out/changes.log-backup-`today` || true
         repo-changes\? 2>&1|tee out/changes.log
         for x in `cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1`; do 
-            (cd $x || {	touch ~/etc/generate-repo-info.mk; repo sync "$x"; } || true)
-            repo forall $x -c 'git rebase `repo-remote`/`tbranch`' || true
+	    if test ! -d $x; then
+		touch ~/etc/generate-repo-info.mk;
+		repo sync "$x" || true
+		continue
+	    fi
+	    
+	    if test $(basename $0) = bpe-local-build; then
+		(
+		    file=$(pwd)/out/code-backup/$x/now
+		    mkdir -p $(dirname file)
+		    cd $x
+		    file=$file-$(git rev-parse HEAD)
+		    git add .
+		    git diff HEAD > "$file"
+		    git reset --hard $(repo-remote)/$(repo-branch)
+		)
+		continue
+	    fi
+            repo forall $x -c 'git rebase `repo-remote`/`repo-branch`' || true
         done 2>&1|tee out/merge.log
 
-
-
-        { repo-changes\? $(cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1) | grep . > out/changes.log.new && {
+        { 
+	    repo-changes\? $(cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1) | grep . > out/changes.log.new && 
+	    {
                 echo some repos still has changes:;
                 cat out/changes.log.new
             }
         } || 
         echo repo is up to date.
+
+	if test $(basename $0) = bpe-local-build; then
+	    bpe-local-update
+	fi
         if yes-or-no -y "Start full build?"; then
             android-full-build 'kernel system misc'  >/dev/null 2>&1
             bhj-short-notify $(basename $0) "$(pwd): build completed"

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+IFS=$'\t\n'
+for x in $(ps.pl "$@"); do
+    echo $x
+    ls -l /proc/$(echo $x|pn 1)/fd
+done
