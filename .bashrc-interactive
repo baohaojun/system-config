@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if test "$EMACS" != t; then
+if test "$EMACS" != t -a -e /etc/bash_completion; then
     . /etc/bash_completion
 fi
 
@@ -101,8 +101,6 @@ function rex()
 {
     command rex "$@" ~/.bash_history.bak
 }
-
-alias cd=cd_bhj
 
 function rcd() {
     if test $# = 0; then

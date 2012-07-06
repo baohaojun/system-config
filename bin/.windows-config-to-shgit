@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd ~/windows-config/
+ssh shgit mkdir git/windows-config.git -p
+git push shgit:git/windows-config.git HEAD:refs/heads/master
+for x in $(git submodule |pn 2); do 
+    (
+	cd $x; 
+	dir=git/submodules/$x.git; 
+	ssh shgit bash -c "echo hello $dir; mkdir $dir -p; cd $dir; git init --bare"; 
+	git push shgit:$dir HEAD:refs/heads/master
+    ); 
+done 

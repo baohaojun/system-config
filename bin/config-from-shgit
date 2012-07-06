@@ -1,0 +1,16 @@
+#!/bin/bash
+for x in $(
+    ssh shgit bash -c 'true; cd /home/hjbao/git/submodules; find . -name "*.git"'|
+    cut -b 3-|
+    perl -npe "s/.git$//"
+); do
+    echo $x; 
+    dir=.git/modules/$x; 
+    (
+	rm -rf $dir
+	mkdir -p $dir; 
+     	cd $dir; 
+	git clone --bare shgit:/home/hjbao/git/submodules/$x .; 
+	git config core.bare false
+    ) ; 
+done

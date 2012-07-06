@@ -144,3 +144,23 @@ for x in ~/.bash_completion.d/*; do
 done
 
 alias hil=hir
+
+cd_record()
+{
+    local ret=$?
+    history -a
+    if test "$BHJ_PWD" = "$PWD"; then
+	return $ret
+    fi
+    BHJ_PWD=$PWD
+
+   (
+       if test "$LC_ALL" != C; then
+	   flock -x ~/.where.lock -c where; 
+       fi&
+   )
+   return $ret
+}
+
+export PROMPT_COMMAND="cd_record"
+alias cd=cd_bhj

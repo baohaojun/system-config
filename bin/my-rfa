@@ -2,7 +2,7 @@
 
 set -e
 
-jobs=1
+jobs=5
 dirs=()
 debug=0
 TEMP=$(getopt -o xd:j: -n $(basename $0) -- "$@")

@@ -3,7 +3,6 @@ shopt -s nocaseglob
 shopt -s histappend
 export HISTCONTROL="ignoredups"
 export HISTIGNORE="bg:fg:exit"
-export PROMPT_COMMAND="cd_record"
 alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
 alias dir='ls --color=auto --format=vertical --show-control-chars'
 alias vdir='ls --color=auto --format=long --show-control-chars'
