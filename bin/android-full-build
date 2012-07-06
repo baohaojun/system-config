@@ -89,8 +89,10 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	    mkdir -p $dest
 	    DO_SYMLINK=true ./copy-release.sh $dest
 	)
-	echo "$result"
 	echo -n 'after build, ccache stat is '
 	./prebuilt/linux-x86/ccache/ccache -s
+	echo 
+	echo "full build result is $result"
+	echo
     )
 ) 9>~/.logs/android-full-build.lock  2>&1 | tee build.log out/build.log

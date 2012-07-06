@@ -18,3 +18,5 @@
         insteadOf = "git://android.git.kernel.org/"
 [url "bibler:android"]
         insteadOf = "ssh://gerrit2@bible/~gerrit2/android"
+[guilt]
+	diffstat = true

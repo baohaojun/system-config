@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cmd=$1
+shift
+if test -x ~/bin/gq-"$cmd"; then
+   gq-"$cmd" "$@"; 
+else
+    guilt "$cmd" "$@"
+fi

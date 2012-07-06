@@ -1,0 +1,20 @@
+#+title: Coworking With APSE: the process
+
+* Comparing BPE-APSE relationship to Debian-Upstream
+
+When working with APSE, we are quite like what debian community is
+working with those upstream open source projects.
+
+Some might say it's more like the product team and the platform
+team. I don't like it very much, because it doesn't seem to very
+helpful. In contrary, the debian-upstream relationship seem to be much
+more successful, so I hope likening BPE-APSE to it can be healthy for
+both parts.
+
+What debian does is linux distribution. It contributes back patches to
+each upstream project when bugs are found. But still, some patches can
+not go back upstream, because they are debian specific and thus of no
+general interest to the upstream project.
+
+* How does debian works?
+
