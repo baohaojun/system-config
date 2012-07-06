@@ -15,7 +15,7 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
     while true; do
 
 	if [[ "$PWD" =~ ^$HOME/smb/[^/]+$ || "$PWD" =~ ^//[^/]+$ ]]; then
-	    if test "$(dirname "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
+	    if test "$(dirname -- "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
 		break;
 	    else
 		cd ~
@@ -41,8 +41,8 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 	fi
     fi
 ) || (
-    dir=`dirname "$file"`
-    base=`basename "$file"`
+    dir=`dirname -- "$file"`
+    base=`basename -- "$file"`
 
     while true; do
 	if find "$dir" -maxdepth 1 -iname "*$base*"|grep -q .; then
@@ -55,7 +55,7 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 	fi
 
 	if [[ "$PWD" =~ ^$HOME/smb/[^/]+$ || "$PWD" =~ ^//[^/]+$ ]]; then
-	    if test "$(dirname "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
+	    if test "$(dirname -- "$1")" = . && find . -maxdepth 1|grep -q "^./$1$"; then
 		break;
 	    else
 		cd ~

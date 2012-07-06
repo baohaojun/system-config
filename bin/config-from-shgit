@@ -14,3 +14,5 @@ for x in $(
 	git config core.bare false
     ) ; 
 done
+
+git submodule foreach bash -c '"set -x; git config remote.origin.url $(git config remote.origin.url | perl -npe s/^git/https/)"'
