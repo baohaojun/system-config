@@ -1,6 +1,25 @@
 #!/bin/bash
 
-cd $(lookup_file .repo/..)
+BPE_ON_APSE=
+blu_rebase=
+TEMP=$(getopt -o r --long rebase -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+	-r|--rebase)
+	blu_rebase=true
+	shift
+	;;
+	--)
+	shift
+	break
+	;;
+	*)
+	die "internal error"
+	;;
+    esac
+done
+
 if set -o|grep xtrace.*on -q; then
     bashx='bash -x'
     gq() {
@@ -15,15 +34,25 @@ function die() {
     exit -1
 }
 
-for x in $(find flashing -type f -name series); do
+if test $# = 1 -o ! -d .repo; then
+    args=flashing/quilt/$(repo-path)/series
+else
+    cd $(lookup_file .repo/..)
+    args=$(find flashing -type f -name series | grep -v -e '\.git')
+fi
+
+cd $(lookup_file .repo/..)
+
+for x in $args; do
     (
 	proj=$(dirname $x | perl -npe 's,^flashing/quilt/,,')
 	patch_dir=$(pwd)/$(dirname $x)
-	git_base=$(cat $patch_dir/.base)
-	git_result=$(cat $patch_dir/.result)
+	export git_base=$(cat $patch_dir/.base)
+	export git_result=$(cat $patch_dir/.result)
 	
-	log=$(pwd)/out/bpe-build-local/$(today)$(echo $proj|perl -npe 's,/,-,g');
+	log=$(pwd)/out/bpe-build-local/$(today)-$(echo $proj|perl -npe 's,/,-,g');
 	mkdir -p $(dirname $log)
+	rm $log-*
 	(
 	    set +e
 	    cd $proj
@@ -34,8 +63,8 @@ for x in $(find flashing -type f -name series); do
 	    local_url=$(repo-remote-url|perl -npe 's,.*:/git/android/,bibler:shgit/,')
 	    git fetch $local_url refs/heads/*:refs/local/*
 	    
-	    if test "$(git rev-parse BPE-LOCAL)" != "$result"; then
-		git log $result..BPE-LOCAL > $log-downstream-updated
+	    if test "$(git rev-parse BPE-LOCAL)" != "$git_result"; then
+		git log $git_result..BPE-LOCAL > $log-downstream-updated
 	    fi
 
 	    qx=quilt-$(now|perl -npe 's/:/-/g') #the quilt/guilt branch for working on
@@ -46,8 +75,17 @@ for x in $(find flashing -type f -name series); do
 	    gq init
 	    cp $patch_dir/* .git/patches/$qx/
 	    gq push -a
-	    gq rebase $(repo-remote)/$(repo-branch)
-	    touch $log-gq-rebase-failed
+	    if test -z "$blu_rebase"; then
+		echo Will now start a new shell
+		export BPE_ON_APSE=true
+		bash
+		exit
+	    fi
+
+	    if test "$(git rev-parse $(repo-remote)/$(repo-branch))" != "$git_base"; then
+		gq rebase $(repo-remote)/$(repo-branch) ||
+		touch $log-gq-rebase-failed
+	    fi
 	    cp .git/patches/$qx/* $patch_dir/
 	    rm $patch_dir/status
 	    (
@@ -56,7 +94,7 @@ for x in $(find flashing -type f -name series); do
 		touch $log-patches-rebased
 	    )
 
-	    git diff -q BPE-LOCAL || touch $log-patches-obsolete
+	    git diff --quiet BPE-LOCAL || git diff BPE-LOCAL > $log-patches-obsolete
 	    
 	)
     )

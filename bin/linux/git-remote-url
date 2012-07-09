@@ -2,4 +2,10 @@
 set -e
 test $# == 0 && set -- origin
 
-git config remote.$1.url
+git config remote.$1.url | (
+    if test "$BPE_ON_APSE"; then
+	perl -npe 's,.*?:,bibler:,; s,:/git/android/,:shgit/,'
+    else
+	cat
+    fi
+)

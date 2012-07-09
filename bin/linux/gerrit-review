@@ -9,7 +9,7 @@ export REMOTE=$( (repo-review-url) )
 
 (
     if tty >/dev/null 2>&1; then
-	git push $REMOTE ${1:-HEAD}:refs/for/`tbranch` 2>&1 |
+	git push $REMOTE ${1:-HEAD}:refs/for/`repo-branch` 2>&1 |
 	grep -v 'x11 forwarding' -i |
 	perl -npe '
     if (m,http://bear/gerrit/(\d+),) {

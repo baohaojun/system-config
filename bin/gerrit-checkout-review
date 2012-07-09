@@ -24,7 +24,7 @@ if test -n "$git_dir"; then
     cd $git_dir || die "$git_dir: cd failed"
 fi
 ref=$(cat $tmpf|grep 'ref: '|pn 2|tail -n 1)
-git fetch $(repo-remote) $ref
+git fetch $(repo-remote-url) $ref
 if test $(basename $0) = gerrit-checkout-review; then
     git co FETCH_HEAD
 fi

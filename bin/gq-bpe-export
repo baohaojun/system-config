@@ -17,5 +17,5 @@ mkdir -p $outd
 rm -rf $outd
 
 gq export $outd
-git rev-parse $1 > $outd/base
-git rev-parse $2 > $outd/result
+git rev-parse $1 > $outd/.base
+git rev-parse $2 > $outd/.result

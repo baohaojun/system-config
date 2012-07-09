@@ -82,7 +82,7 @@ fi
         echo repo is up to date.
 
 	if test $(basename $0) = bpe-local-build; then
-	    bpe-local-update
+	    bpe-local-update -r
 	fi
         if yes-or-no -y "Start full build?"; then
             android-full-build 'kernel system misc'  >/dev/null 2>&1

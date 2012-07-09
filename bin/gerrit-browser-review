@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if test $# = 0; then
+if test $# = 0 -o $# = 1 -a -n "$(git rev-parse "$1" 2>/dev/null)"; then
     set -- $(
 	if tty >/dev/null 2>&1; then
-	    git log -1
+	    git log -1 "$(git rev-parse $1)"
 	else 
 	    cat
 	fi | grep -P '^\s*Change-Id:' | pn 2) 
