@@ -21,7 +21,7 @@ function _guilt()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     opts="--help --silent --verbose"
     cmds=$(
-	find /usr/lib/guilt/ -maxdepth 1 -type f | xargs bash -c 'for x in "$@"; do basename $x | sed -e "s/^guilt-//"; done' true
+	find 2>/dev/null /usr/lib/guilt/ -maxdepth 1 -type f | xargs bash -c 'for x in "$@"; do basename $x | sed -e "s/^guilt-//"; done' true
 	find ~/bin/ -maxdepth 1 -type f -name 'gq-*' | xargs bash -c 'for x in "$@"; do basename $x | sed -e "s/^gq-//"; done' true
     )
     subcommand=""

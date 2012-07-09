@@ -9,8 +9,15 @@ else
     bashx=
 fi
 
+function die() {
+    echo "$@"
+    exit -1
+}
+
+export -f die
+
 if test -x ~/bin/gq-"$cmd"; then
-   gq-"$cmd" "$@"; 
+    $bashx $(wlp $(which gq-"$cmd")) "$@"; 
 else
     $bashx $(wlp $(which guilt)) "$cmd" "$@"
 fi
