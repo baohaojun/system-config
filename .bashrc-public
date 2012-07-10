@@ -4,7 +4,7 @@ export EDITOR=edit-wait
 
 if test -z "$SSH_CLIENT"; then
     HOSTNAME=`hostname`
-    export PS1='\n[01;34m{ [01;31m'`whoami`'[01;34m@[01;33m'$HOSTNAME'[01;34m [01;32m'\$PWD'[01;34m }[0m\n\$'
+    export PS1='\n[01;34m{ [01;31m'`whoami`'[01;34m@[01;33m'$HOSTNAME'[01;34m [01;32m'\$PWD'[01;34m '\$RECURSIVE_SHELL'}[0m\n\$'
 else
     export LOCALIP=`echo $SSH_CONNECTION|awk '{print $3}'|sed -e 's/.*://'`
     export LOCALPORT=`echo $SSH_CONNECTION|awk '{print $4}'`
@@ -12,7 +12,7 @@ else
     export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
     export DISPLAY=${DISPLAY:-$REMOTEIP:0.0}
     export PS1HostName=`hostname`
-    export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue[0m )\n\$'
+    export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue '\$RECURSIVE_SHELL'[0m)\n\$'
     alias sudoedit='WHOAMI=root edit'
     if test "$TERM" = dumb; then
         export PS1='\$'

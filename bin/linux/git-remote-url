@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-test $# == 0 -o -n "$1" && set -- origin
+test $# == 0 -o -z "$1" && set -- origin
 
 git config remote.$1.url | (
     if test "$BPE_ON_APSE"; then

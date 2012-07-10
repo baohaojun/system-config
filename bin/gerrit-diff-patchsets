@@ -101,7 +101,7 @@ while true; do
 	    gitk $REF1 $REF2
 	    ;;
 	3)
-	    bash
+            start-recursive-shell gerrit diff
 	    ;;
 	4)
 	    exit

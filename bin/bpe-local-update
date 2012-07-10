@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 BPE_ON_APSE=
 blu_rebase=
 TEMP=$(getopt -o r --long rebase -n $(basename $0) -- "$@")
@@ -61,10 +62,16 @@ for x in $args; do
 	    fi
 	    
 	    local_url=$(repo-remote-url|perl -npe 's,.*:/git/android/,bibler:shgit/,')
-	    git fetch $local_url refs/heads/*:refs/local/*
 	    
-	    if test "$(git rev-parse BPE-LOCAL)" != "$git_result"; then
-		git log $git_result..BPE-LOCAL > $log-downstream-updated
+	    bpe_local=$(git symbolic-ref bpe-local 2>/dev/null)
+	    if test -z "$bpe_local"; then
+		die "error: bpe_local symbolic ref not set up"
+	    fi
+	    bpe_local=$(basename $bpe_local)
+	    git fetch $local_url refs/heads/$bpe_local:refs/local/$bpe_local
+	    
+	    if test "$(git rev-parse bpe-local)" != "$git_result"; then
+		git log $git_result..bpe-local > $log-downstream-updated
 	    fi
 
 	    qx=quilt-$(now|perl -npe 's/:/-/g') #the quilt/guilt branch for working on
@@ -77,8 +84,7 @@ for x in $args; do
 	    gq push -a
 	    if test -z "$blu_rebase"; then
 		echo Will now start a new shell
-		export BPE_ON_APSE=true
-		bash
+		start-recursive-shell quilt rebase
 		exit
 	    fi
 
@@ -94,7 +100,7 @@ for x in $args; do
 		touch $log-patches-rebased
 	    )
 
-	    git diff --quiet BPE-LOCAL || git diff BPE-LOCAL > $log-patches-obsolete
+	    git diff --quiet bpe-local || git diff bpe-local > $log-patches-obsolete
 	    
 	)
     )

@@ -162,5 +162,15 @@ cd_record()
    return $ret
 }
 
+start-recursive-shell()
+{
+    (
+        export RECURSIVE_SHELL=$(echo Recursive: "$@"\ )
+        bash
+    )
+}
+
+export -f start-recursive-shell
+
 export PROMPT_COMMAND="cd_record"
 alias cd=cd_bhj
