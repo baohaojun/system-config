@@ -1,6 +1,8 @@
 #!/bin/bash
 
-if test $# = 0 -o $# = 1 -a -n "$(git rev-parse "$1" 2>/dev/null)"; then
+test $# = 0 && set -- HEAD
+
+if test $# = 1 -a -n "$(git rev-parse "$1" 2>/dev/null)"; then
     set -- $(
 	if tty >/dev/null 2>&1; then
 	    git log -1 "$(git rev-parse $1)"

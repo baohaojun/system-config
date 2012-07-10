@@ -53,7 +53,7 @@ for x in $args; do
 	
 	log=$(pwd)/out/bpe-build-local/$(today)-$(echo $proj|perl -npe 's,/,-,g');
 	mkdir -p $(dirname $log)
-	rm $log-*
+	rm $log-* -f
 	(
 	    set +e
 	    cd $proj
@@ -75,10 +75,12 @@ for x in $args; do
 	    fi
 
 	    qx=quilt-$(now|perl -npe 's/:/-/g') #the quilt/guilt branch for working on
-	    git branch -D $qx || true # to make sure
+	    (
+                git branch -D $qx || true # to make sure
+            ) >/dev/null 2>&1 
 	    git co -b $qx $git_base
 	    git reset --hard $git_base
-	    git clean -xfd
+	    git clean -xfd >/dev/null 2>&1 
 	    gq init
 	    cp $patch_dir/* .git/patches/$qx/
 	    gq push -a
@@ -93,7 +95,7 @@ for x in $args; do
 		touch $log-gq-rebase-failed
 	    fi
 	    cp .git/patches/$qx/* $patch_dir/
-	    rm $patch_dir/status
+	    rm $patch_dir/status -f
 	    (
 		cd $patch_dir
 		git st -s . |grep . && 

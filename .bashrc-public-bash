@@ -148,6 +148,11 @@ alias hil=hir
 cd_record()
 {
     local ret=$?
+    if test $ret -ne 0; then
+        export PROMPT_RET="Ret: $ret "
+    else
+        export PROMPT_RET=
+    fi
     history -a
     if test "$BHJ_PWD" = "$PWD"; then
 	return $ret
@@ -165,7 +170,7 @@ cd_record()
 start-recursive-shell()
 {
     (
-        export RECURSIVE_SHELL=$(echo Recursive: "$@"\ )
+        export RECURSIVE_SHELL='[01;32mRecursive[01;31m:[01;32m'"$@"'[01;34m '
         bash
     )
 }
