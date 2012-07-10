@@ -109,30 +109,30 @@ scd()
 {
     if test $# = 1; then
 
-	for dir in $(lookup_file "$1"|tee /dev/stderr); do
-	    dir=$(formal-path "$dir")
-	    basedir=$(dirname "$dir")
-	    stem=$(basename "$dir")
-	    
-	    dir1=$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')
-	    if test -e  "$dir1"; then
-		cd "$dir1" && break
-	    else
-		cd "$(pwd | perl -npe 's,('$basedir'/),$1'$stem'/,')" && break
-	    fi
-	done
+        for dir in $(lookup_file "$1"|tee /dev/stderr); do
+            dir=$(echo "$dir" | perl -npe 's,/./,/,g')
+            basedir=$(common-path "$PWD" "$dir")
+            stem="${dir:${#basedir}+1}"
+            
+            dir1=$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')
+            if test -e  "$dir1"; then
+                cd "$dir1" && break
+            else
+                cd "$(pwd | perl -npe 's,('$basedir'/),$1'$stem'/,')" && break
+            fi
+        done
     else
-	dir1=$(pwd | perl -npe 's#'"$1"'#'"$2"'#g')
-	test -d "$dir1" && { cd "$dir1"; return; }
-	
-	dir=$(lookup_file "$1"|tee /dev/stderr|head -n 1)
-	shift
-	dir=$(builtin cd "$dir"; lookup_file "$1"|tee /dev/stderr|head -n 1)
-	dir=$(formal-path "$dir")
-	basedir=$(dirname "$dir")
-	stem=$(basename "$dir")
-	
-	cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')"
+        dir1=$(pwd | perl -npe 's#'"$1"'#'"$2"'#g')
+        test -d "$dir1" && { cd "$dir1"; return; }
+        
+        dir=$(lookup_file "$1"|tee /dev/stderr|head -n 1)
+        shift
+        dir=$(builtin cd "$dir"; lookup_file "$1"|tee /dev/stderr|head -n 1)
+        dir=$(formal-path "$dir")
+        basedir=$(dirname "$dir")
+        stem=$(basename "$dir")
+        
+        cd "$(pwd | perl -npe 's,('$basedir'/)(.*?)(/|$),$1'$stem'/,')"
     fi
 }
 export EMAIL=baohaojun@gmail.com

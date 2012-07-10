@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm ~/src/ics-saarc-out/out-pxa978ariel_def-eng -rf
+
 function do_it() {
     x=$1
     y=$2

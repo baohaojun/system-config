@@ -71,6 +71,7 @@
 (require 'tramp)
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)
+(add-hook 'sh-mode-hook (lambda () (setq indent-tabs-mode nil)))
 (require 'ibuffer)
 (require 'browse-kill-ring)
 (require 'ido)

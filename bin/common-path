@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+if test $# != 2; then
+    die Usage: $(basename $0) dir1 dir2
+fi
+
+dir1=$(formal-path "$1")
+dir2=$(formal-path "$2")
+
+while true; do
+    dir2_x=$dir2
+    while true; do
+        if test "$dir1" = "$dir2_x"; then
+            echo "$dir1"
+            exit 0
+        fi
+        dir2_x=$(dirname "$dir2_x")
+        if test "$dir2_x" = /; then
+            break
+        fi
+    done
+    dir1=$(dirname $dir1)
+done
