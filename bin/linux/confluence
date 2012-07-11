@@ -38,8 +38,17 @@ chomp (my $confpath=`cat ~/.confpath`);
 
 my $space = "~$confuser";
 
+my @debug = ("bash");
+my $debug = '';
 GetOptions(
     "space=s" => \$space,
-    );    
+    "server=s" => \$confserv,
+    "debug=s" => \$debug,
+    );
 
-system("confluence.sh", "--server", "http://$confserv$confpath", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", $space, @ARGV);
+if ($debug) {
+    @debug = ("bash", "-x");
+}
+
+chomp(my $confluence_sh = qx(which confluence.sh));
+system(@debug, $confluence_sh, "--server", "http://$confserv", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", $space, @ARGV);
