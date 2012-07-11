@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd .git/patches/$(basename $(git symbolic-ref HEAD))
+start-recursive-shell "guilt cd"

@@ -27,7 +27,7 @@ if ! tty >/dev/null 2>&1; then
     exit -1
 fi
 
-read -p "$user_prompt $prompt: "
+read -p "$user_prompt $prompt: " >/dev/tty 2>&1
 
 if test -z "$REPLY" -a $default = yes; then
     exit 0

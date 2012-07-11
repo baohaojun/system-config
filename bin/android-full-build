@@ -88,11 +88,14 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	    dest=$(android-env get_abs_build_var OUT_DIR)/flashing/
 	    mkdir -p $dest
 	    DO_SYMLINK=true ./copy-release.sh $dest
-	)
+	) || true
 	echo -n 'after build, ccache stat is '
 	./prebuilt/linux-x86/ccache/ccache -s
 	echo 
 	echo "full build result is $result"
 	echo
+        echo "$result" | grep -q -e "all ok" # make sure it exit with the right return value
     )
 ) 9>~/.logs/android-full-build.lock  2>&1 | tee build.log out/build.log
+
+tail -n 2 build.log | grep -q -e "all ok" # make sure it exit with the right return value

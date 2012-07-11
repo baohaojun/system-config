@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -e
+set -x
+
+ANDROID_DIR=$(readlink -f $(lookup_file .repo/..))
+CHANGES_DIR=$(dirname $ANDROID_DIR)/$(basename $ANDROID_DIR)-out/daily-changes
+TODAYS_CHANGES_DIR=$CHANGES_DIR/$(today)
+
+how_long='1 day'
+if test $# -gt 0; then
+    how_long=$1
+    TODAYS_CHANGES_DIR=$CHANGES_DIR/$(now)-$(echo $how_long|perl -npe 's,\W,-,g')
+fi
+
+since_when=$(now -d "$how_long ago")
+
+if test $# -gt 1; then
+    TODAYS_CHANGES_DIR=$(wlp $2)
+fi
+
+if test $# -gt 2; then
+    die "Error: Usage $(basename $0) [how_long] [save_log_dir]"
+fi
+
+mkdir -p $TODAYS_CHANGES_DIR
+
+if test $# = 0; then
+    rm -f $CHANGES_DIR/today
+    relative-link $TODAYS_CHANGES_DIR $CHANGES_DIR/today || true
+fi
+
+relative-link $CHANGES_DIR $ANDROID_DIR || true
+
+export ANDROID_DIR TODAYS_CHANGES_DIR
+
+for x in $(xmlstarlet sel -B -t -m //project -v @path -n -b  $(lookup_file .repo/manifest.xml 2>/dev/null || echo /dev/null)  2>/dev/null); do
+    test -d "$x" && continue
+    repo sync $(echo $x|perl -npe 's,/+$,,')
+    touch ~/etc/generate-repo-info.mk
+done
+
+my-rfa -j 5 -- '
+#{%sh%}
+log=$TODAYS_CHANGES_DIR/$(repo-path | sed -e "s,/,.,g").git-log;
+remote=$(repo-remote)
+refname=$(repo-refname)
+git log --format=fuller --since='"$since_when"' $remote/$refname > $log 2>&1
+if test $(stat -c %s $log) = 0;
+then
+    rm $log
+fi
+#{%/sh%}
+'

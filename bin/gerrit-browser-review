@@ -5,7 +5,7 @@ test $# = 0 && set -- HEAD
 if test $# = 1 -a -n "$(git rev-parse "$1" 2>/dev/null)"; then
     set -- $(
 	if tty >/dev/null 2>&1; then
-	    git log -1 "$(git rev-parse $1)"
+	    git log -1 "$(git rev-parse $1)" || echo "Change-Id: $1"
 	else 
 	    cat
 	fi | grep -P '^\s*Change-Id:' | pn 2) 
@@ -18,6 +18,10 @@ fi
 	if test -z "$url"; then
 	    id=$(echo "$query_out" | grep -P "^\s*number:" | pn 2 | head -n 1)
 	    host=$( (repo-review-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
+	    if test -z "$host"; then
+		host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup_file .repo/manifest.xml) | perl -npe 's,.*://,,')
+	    fi
+
 	    url=$(printf http://%s%s $host $id)
 	fi
 	of "$url"

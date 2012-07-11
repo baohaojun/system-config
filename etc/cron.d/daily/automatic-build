@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd ~/src/ics-bpe/ >/dev/null 2>&1 || exit 0
+
+android-hourly-build pxa978ariel_def-eng 

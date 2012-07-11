@@ -71,7 +71,7 @@ we will get the pattern \"naoehu[)+{\"
 	  (setq after-first-char t))
         
         (if (eq char ?.)
-            (setq new-re-list (append (nreverse (string-to-list "\\Sw")) new-re-list))
+            (setq new-re-list (append (nreverse (string-to-list "\\.")) new-re-list))
           (case (char-syntax char)
             (?w (setq new-re-list (cons char new-re-list)))
             (t (when (member char (string-to-list "^$*?[]+"))

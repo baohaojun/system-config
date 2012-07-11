@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+cd $(lookup_file .repo/..)
+start_hour=$(date +%H)
+test -d .repo || die ".repo not found, not android source directory?"
+
+(
+    set -x
+    rm -f .build-started
+    if yes-or-no-p -y "Do sync?"; then
+        my-rfa 'git reset --hard; git clean -xfd' || true
+        repo sync -j4 -d || die "repo sync failed"
+    fi
+    
+    touch .build-started
+    android-full-build "$@" || die "android-full-build failed"
+    touch .build_ok
+    rm .build_failed -fr
+) > hourly-build.log 2>&1 || (
+
+    if test ! -e .build-started; then # build has not started, why?
+        exit -1
+    fi
+
+    if test "$start_hour" = 6; then #maybe need do a full clean build next time.
+        rm ../$(basename $(pwd))-out/out-* -rf
+    fi
+
+    daily_change_dir=daily-changes/$(basename $0).$$
+    rm -rf ${daily_change_dir}
+    android-daily-changes '1 hour' $(pwd)/$daily_change_dir
+    mv hourly-build.log build.log
+    if test -z "$REMOTEIP"; then
+        export REMOTEIP=10.21.130.154
+    fi
+    if test -e .build_ok; then
+        rm .build_ok
+        tar cz $daily_change_dir build.log | gerrit-review-mail-it build-failed "$@"
+    fi
+
+)

@@ -11,8 +11,8 @@ for (@arg2) {
 }
 
 for (@arg1) {
-    $arg1{$_} = 1 unless $arg2{$_} == 1;
+    push @arg1_remain, $_ unless $arg2{$_} == 1;
 }
 
 $,="\n";
-print keys %arg1;
+print @arg1_remain;

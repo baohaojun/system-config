@@ -371,4 +371,4 @@ function _android_full_build() {
     return 0 
 }
 
-complete -o default -F _android_full_build android-full-build android-set-product
+complete -o default -F _android_full_build android-full-build android-set-product android-hourly-build

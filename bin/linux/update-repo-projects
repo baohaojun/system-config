@@ -7,7 +7,7 @@ if test $(basename $0) != update-repo-projects -a $# == 0 || tty >/dev/null 2>&1
 fi
 
 if test $# == 0; then
-    set -- `locate -b -r '^\.repo$'|grep src`
+    set -- `locate -b -r '^\.repo$'|grep src | grep -v ics-bpe`
 fi
 
 echo will update: "$@"
@@ -20,32 +20,8 @@ for x in "$@"; do
 	if yes-or-no-p -y "do repo sync?"; then
             repo sync -n -j4
 	fi
-	ANDROID_DIR=$(readlink -f $(lookup_file .repo/..))
-	CHANGES_DIR=$(dirname $ANDROID_DIR)/$(basename $ANDROID_DIR)-out/daily-changes
-	TODAYS_CHANGES_DIR=$CHANGES_DIR/$(today)
-	mkdir -p $TODAYS_CHANGES_DIR
-	relative-link $CHANGES_DIR $ANDROID_DIR || true
-	
-	export ANDROID_DIR TODAYS_CHANGES_DIR
 
-	for x in $(xmlstarlet sel -B -t -m //project -v @path -n -b  $(lookup_file .repo/manifest.xml 2>/dev/null || echo /dev/null)  2>/dev/null); do
-	    test -d "$x" && continue
-	    repo sync $(echo $x|perl -npe 's,/+$,,')
-	    touch ~/etc/generate-repo-info.mk
-	done
-
-	my-rfa -j 5 -- '
-#{%sh%}
-log=$TODAYS_CHANGES_DIR/$(repo-path | sed -e "s,/,.,g").git-log;
-remote=$(repo-remote)
-refname=$(repo-refname)
-git log $remote/$refname@"{1 day ago}"..$remote/$refname > $log
-if test $(stat -c %s $log) = 0;
-then
-    rm $log
-fi
-#{%/sh%}
-'
+        android-daily-changes
 
         mkdir -p out
         mv out/changes.log out/changes.log-backup-`today` || true

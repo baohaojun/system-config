@@ -1,28 +1,77 @@
 #!/bin/bash
 
 if test "$REMOTEIP"; then
-   ssh-restricted "$REMOTEIP" gerrit-review-mail-it
+   ssh-restricted "$REMOTEIP" gerrit-review-mail-it "$@"
    exit
 fi
 
 tmpf=/tmp/$(basename $0).$$
 cat > $tmpf
 
-title=$(
-    cat $tmpf |
-    perl -ne 'print if m/^* git commit message/ .. 0' |
-    perl -ne 's/^\s*//; print if 7..7'
-)
-title="Review request: $title"
+if test $# = 0; then
 
-recipients=$(
-    cat $tmpf |
-    perl -ne 'print if m/^* git commit message/ .. 0' |
-    grep -e 'Reviewed-by:' |
-    pn 2 |
-    perl -npe 's/\s+//; s/$/\@marvell.com/; print "\n"'
-)
+    title=$(
+        cat $tmpf |
+        perl -ne 'print if m/^* git commit message/ .. 0' |
+        perl -ne 's/^\s*//; print if 7..7'
+    )
+    title="Review request: $title"
 
-set -e
-cat $tmpf | mailx -s "$title" $recipients
+    recipients=$(
+        cat $tmpf |
+        perl -ne 'print if m/^* git commit message/ .. 0' |
+        grep -e 'Reviewed-by:' |
+        pn 2 |
+        perl -npe 's/\s+//; s/$/\@marvell.com/; print "\n"'
+    )
+
+    set -e
+    cat $tmpf | mailx -s "$title" $recipients
+    echo mail sent.
+fi
+
+if test "$1" = build-failed; then
+    shift
+    set -e
+    title=$(echo Automatic hourly build failed $(now) - "$@")
+    
+    tmpd=~/tmp/$(basename $0).$$.dir
+    mkdir -p $tmpd
+    cd $tmpd
+    tar zxfv $tmpf
+
+    
+    recipients=$(
+        find ./daily-changes -type f | xargs cat |
+        grep '^Commit:' |
+        perl -npe 's/.*<//; s/>.*//;' |
+        sort -u;
+        echo hjbao@marvell.com
+    )
+
+    set -e
+    cp $tmpf commit-messages.tgz
+    cat <<EOF | mailx -s "$title" hjbao@marvell.com -a commit-messages.tgz -a build.log
+Hi, all
+
+$recipients
+
+You are receiving this email because the automatic hourly build has
+failed, and you are among the people who commited changes in the last
+hour.
+
+Please refer to the attached commit-messages.tgz for the details of
+your commit.
+
+In the attached build.log, you can find the build fail reason.
+
+Sorry for disturbing your work flow, especially so if you are not
+responsible for this build error. But let's work together more closely
+to improve our quality!
+
+Thanks.
+
+EOF
+    
+fi
 echo mail sent.

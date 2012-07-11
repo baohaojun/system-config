@@ -1,6 +1,9 @@
 #!/bin/bash
 host=$( (repo-review-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
 if test -z "$host"; then
+    host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup_file .repo/manifest.xml) | perl -npe 's,.*://,,')
+fi
+if test -z "$host"; then
     host=bibler
 fi
 
