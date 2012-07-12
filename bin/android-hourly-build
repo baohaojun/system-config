@@ -40,9 +40,13 @@ test -d .repo || die ".repo not found, not android source directory?"
     if test -z "$REMOTEIP"; then
         export REMOTEIP=10.21.130.154
     fi
+    
+    last_time_build_ok=no
+
     if test -e .build_ok; then
         rm .build_ok
-        tar cz $daily_change_dir build.log | gerrit-review-mail-it build-failed "$@"
+        last_time_build_ok=yes
     fi
+    tar cz $daily_change_dir build.log | gerrit-review-mail-it build-failed last_time_build_ok=$last_time_build_ok "$@"
 
 )

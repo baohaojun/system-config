@@ -33,6 +33,10 @@ fi
 if test "$1" = build-failed; then
     shift
     set -e
+
+    last_time_build_ok=$1
+    shift
+
     title=$(echo Automatic hourly build failed $(now) - "$@")
     
     tmpd=~/tmp/$(basename $0).$$.dir
@@ -49,9 +53,16 @@ if test "$1" = build-failed; then
         echo hjbao@marvell.com
     )
 
+    if test -e ~/.mail-build-errors -a $last_time_build_ok = "last_time_build_ok=yes";
+    then
+        recipients="-c $recipients"
+    else
+        recipients=
+    fi
+    
     set -e
     cp $tmpf commit-messages.tgz
-    cat <<EOF | mailx -s "$title" hjbao@marvell.com -a commit-messages.tgz -a build.log
+    cat <<EOF | mailx -s "$title" hjbao@marvell.com $recipients -a commit-messages.tgz -a build.log
 Hi, all
 
 $recipients
