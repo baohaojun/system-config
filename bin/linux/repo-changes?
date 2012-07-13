@@ -17,6 +17,14 @@ set -- $($REPO_INFO remote branch path)
 remote=$1
 branch=$2
 path=$3
+# function git()
+# {
+#     command git "$@" || 
+#     {
+#         echo git "$@" failed at $(pwd);
+#     } 1>&2
+# }
+export -f git
 rev=$(git rev-parse $remote/$branch)
 
 if test $(git rev-parse HEAD) != $rev; then

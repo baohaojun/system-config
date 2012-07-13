@@ -14,6 +14,6 @@ echo "CC := gcc-4.5" >>buildspec.mk
 echo "CXX := g++-4.5" >>buildspec.mk
 echo "export CC CXX" >>buildspec.mk
 echo "export TARGET_PRODUCT" >>buildspec.mk
-if test -e buildspec-x.mk; then
-    cat buildspec-x.mk >> buildspec.mk
+if test -e .repo/buildspec-x.mk; then
+    cat .repo/buildspec-x.mk >> buildspec.mk
 fi

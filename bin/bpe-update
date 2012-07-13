@@ -64,15 +64,16 @@ for x in $args; do
 	    local_url=$(repo-remote-url|perl -npe 's,.*:/git/android/,bibler:shgit/,')
 	    
 	    bpe_local=$(git symbolic-ref bpe-local 2>/dev/null)
-	    if test -z "$bpe_local"; then
-		die "error: bpe_local symbolic ref not set up"
-	    fi
-	    bpe_local=$(basename $bpe_local)
-	    git fetch $local_url refs/heads/$bpe_local:refs/local/$bpe_local
+	    if test -n "$bpe_local"; then
+		echo "error: bpe_local symbolic ref not set up in $(pwd)"
+	    else
+	        bpe_local=$(basename $bpe_local)
+	        git fetch $local_url refs/heads/$bpe_local:refs/local/$bpe_local
 	    
-	    if test "$(git rev-parse bpe-local)" != "$git_result"; then
-		git log $git_result..bpe-local > $log-downstream-updated
-	    fi
+	        if test "$(git rev-parse bpe-local)" != "$git_result"; then
+		    git log $git_result..bpe-local > $log-downstream-updated
+	        fi
+            fi
 
 	    qx=quilt-$(now|perl -npe 's/:/-/g') #the quilt/guilt branch for working on
 	    (
@@ -89,9 +90,13 @@ for x in $args; do
 		start-recursive-shell quilt rebase
 		exit
 	    fi
-
+            if test -z "$GQ_REBASE_TO"; then
+                GQ_REBASE_TO=$(repo-remote-branch)
+            else
+                echo Will rebase to $GQ_REBASE_TO
+            fi
 	    if test "$(git rev-parse $(repo-remote)/$(repo-branch))" != "$git_base"; then
-		gq rebase $(repo-remote)/$(repo-branch) ||
+		gq rebase $GQ_REBASE_TO || 
 		touch $log-gq-rebase-failed
 	    fi
 	    cp .git/patches/$qx/* $patch_dir/
@@ -101,9 +106,6 @@ for x in $args; do
 		git st -s . |grep . && 
 		touch $log-patches-rebased
 	    )
-
-	    git diff --quiet bpe-local || git diff bpe-local > $log-patches-obsolete
-	    
 	)
     )
 done

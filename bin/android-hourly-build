@@ -11,6 +11,9 @@ cd $(lookup_file .repo/..)
 start_hour=$(date +%H)
 test -d .repo || die ".repo not found, not android source directory?"
 
+exec 9>.android-full-build.lock
+flock 9
+
 (
     set -x
     rm -f .build-started
@@ -20,6 +23,7 @@ test -d .repo || die ".repo not found, not android source directory?"
     fi
     
     touch .build-started
+    flock -u 9
     android-full-build "$@" || die "android-full-build failed"
     touch .build_ok
     rm .build_failed -fr
@@ -36,7 +40,6 @@ test -d .repo || die ".repo not found, not android source directory?"
     daily_change_dir=daily-changes/$(basename $0).$$
     rm -rf ${daily_change_dir}
     android-daily-changes '1 hour' $(pwd)/$daily_change_dir
-    mv hourly-build.log build.log
     if test -z "$REMOTEIP"; then
         export REMOTEIP=10.21.130.154
     fi
@@ -47,6 +50,6 @@ test -d .repo || die ".repo not found, not android source directory?"
         rm .build_ok
         last_time_build_ok=yes
     fi
-    tar cz $daily_change_dir build.log | gerrit-review-mail-it build-failed last_time_build_ok=$last_time_build_ok "$@"
+    tar cz $daily_change_dir build.log hourly-build.log | gerrit-review-mail-it build-failed last_time_build_ok=$last_time_build_ok "$@"
 
 )

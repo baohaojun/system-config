@@ -1,21 +1,35 @@
 #!/bin/bash
 
 set -e
-if test $# != 2; then
-    die "Usage: $(basename $0) FROM TO"
+if test $# -lt 1; then
+    die "Usage: $(basename $0) FROM [TO]"
 fi
 
 top=$(lookup_file .repo/..)
 outd=$top/flashing/quilt/$(repo-path)/
 mkdir -p $outd
+
 (
     cd $outd
-    if git st -s | grep -q .; then
-	die "Can not work on non-clean quilt output dir"
-    fi
+    git rm -rf . || true
 )
 rm -rf $outd
 
 gq export $outd
+
 git rev-parse $1 > $outd/.base
-git rev-parse $2 > $outd/.result
+if test -n "$2"; then
+    git rev-parse $2 > $outd/.result
+else
+    (
+        set -x
+        cd $top/flashing/
+        git reset -- $outd/.result || true
+        git co -- $outd.result || true
+    )
+fi
+
+(
+    cd $outd
+    git add . || true
+)

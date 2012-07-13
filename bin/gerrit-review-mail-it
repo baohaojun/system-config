@@ -44,6 +44,10 @@ if test "$1" = build-failed; then
     cd $tmpd
     tar zxfv $tmpf
 
+    #################################################################
+    # in case some one passed a symlink to a passwd file, trying to
+    # trick us to mail that file to him!
+    find . -type -l | xargs rm >/dev/null 2>&1 || true 
     
     recipients=$(
         find ./daily-changes -type f | xargs cat |
@@ -77,7 +81,7 @@ your commit.
 In the attached build.log, you can find the build fail reason. Here's
 a grep which hopefully can show some clue:
 
-$(grep -e "\*\*\*.*stop\|no such \|circular.*dropped\|no rule to\|failed\|[0-9]+elapsed \|error [0-9]+\|because of errors\|[0-9]+ error\b\|error:" build.log | perl -npe 's/^/    /')
+$(grep -i -e "\*\*\*.*stop\|no such \|circular.*dropped\|no rule to\|failed\|[0-9]+elapsed \|error [0-9]+\|because of errors\|[0-9]+ error\b\|error:" build.log | perl -npe 's/^/    /')
 
 Sorry for disturbing your work flow, especially so if you are not
 responsible for this build error. But let's work together more closely

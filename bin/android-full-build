@@ -5,7 +5,10 @@ build_env=`lookup_file build/envsetup.sh`
 top_dir=`dirname $build_env`
 top_dir=`readlink -f $top_dir/..`
 set -e
-jobs=3 #default
+# jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
+# jobs=$((jobs + jobs / 2))
+jobs=3
+
 TEMP=$(getopt -o j: -n $(basename $0) -- "$@")
 function die() {
     echo "$@"
@@ -96,6 +99,6 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	echo
         echo "$result" | grep -q -e "all ok" # make sure it exit with the right return value
     )
-) 9>~/.logs/android-full-build.lock  2>&1 | tee build.log out/build.log
+) 9>.android-full-build.lock  2>&1 | tee build.log out/build.log
 
 tail -n 2 build.log | grep -q -e "all ok" # make sure it exit with the right return value

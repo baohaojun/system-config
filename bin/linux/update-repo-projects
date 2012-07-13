@@ -7,15 +7,25 @@ if test $(basename $0) != update-repo-projects -a $# == 0 || tty >/dev/null 2>&1
 fi
 
 if test $# == 0; then
-    set -- `locate -b -r '^\.repo$'|grep src | grep -v ics-bpe`
+    set -- `locate -b -r '^\.repo$'|grep src | grep -v ics-autobuild`
 fi
 
 echo will update: "$@"
 for x in "$@"; do 
+    cd $x || continue
+    cd `lookup_file .repo/..` || continue
+
     (
         set -e
-        cd $x
-        cd `lookup_file .repo/..`
+        flock 9
+        test -d .repo
+
+        if pwd | grep rollback -q; then
+            exit 0
+        fi
+        if test -e .no-update; then
+            exit 0
+        fi
         test -e Makefile || exit
 	if yes-or-no-p -y "do repo sync?"; then
             repo sync -n -j4
@@ -74,10 +84,11 @@ fi
 	    bpe-update -r
 	fi
         if yes-or-no -y "Start full build?"; then
-            android-full-build 'kernel system misc'  >/dev/null 2>&1
+            flock -u 9
+            android-full-build
             bhj-short-notify $(basename $0) "$(pwd): build completed"
         fi
-    )
+    ) 9>.android-full-build.lock
 done
 
 if test $# != 1; then

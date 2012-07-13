@@ -69,12 +69,19 @@ function should-do-it() {
 
 function do-partition() {
     should-do-it $1 || return 0
+    if test $# != 2; then
+        die "Usage: do-partition PARTNAME IMAGE_PATH"
+    fi
     fastboot erase $1;
-    fastboot flash $1 ${2:-$1.img}
+    fastboot flash $1 "$2"
 }
 
 function get-image-path() {
-    get-blf-img-val $blf $1 Path
+    IMG_PATH=$(get-blf-img-val $blf $1 Path)
+    if test "$(arg1-arg2 "$1" "$OVERIDE_IMAGES")" = ""; then
+        IMG_PATH=$OVERIDE_PATH/$(basename $IMG_PATH)
+    fi
+    echo $IMG_PATH
 }
 
 # $for x in $(seq 1 16); do echo $(get-blf-img-val *.blf $x 'ID Name') $(get-blf-img-val *.blf $x Path);  done
