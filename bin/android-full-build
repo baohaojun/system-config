@@ -1,10 +1,11 @@
 #!/bin/bash
 
-. ~/.bashrc
+cd $(lookup_file .repo/..)
 build_env=`lookup_file build/envsetup.sh`
-top_dir=`dirname $build_env`
-top_dir=`readlink -f $top_dir/..`
+top_dir=$(pwd)
+
 set -e
+test -d .repo -a -e build/envsetup.sh
 # jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
 # jobs=$((jobs + jobs / 2))
 jobs=3

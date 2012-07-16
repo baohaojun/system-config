@@ -61,7 +61,7 @@ cd $(lookup_file .repo/..)
 test -d .repo
 
 (cd .repo; make -f ~/etc/generate-repo-info.mk) >/dev/null 2>&1 
-export REPO_INFO=$(readlink -m .repo/repo_info.pl)
+export REPO_INFO=$(pwd)/.repo/repo_info.pl
 
 function die() {
     echo "$@"
