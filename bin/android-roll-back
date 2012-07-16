@@ -5,15 +5,13 @@ function die() {
     exit -1
 }
 
-
-time=$(now 2>/dev/null -d "$1" | perl -npe 's/(.*)-.*/$1-00:00:01/')
-
-if test -z "$time"; then
-    die "Error: Usage $(basename $0) ['n day ago']"
+dirs=
+if test ! -d .repo && repo-path | grep -q .; then
+    echo will only work on $(repo-path)
+    dirs="-d $(repo-path)"
 fi
 
-echo "Will roll back to $time"
-export ROLLBACK_TIME=$time
+export ROLLBACK_TIME=$1
 
 export ANDROID_DIR=$(lookup_file .repo/..)
 cd $ANDROID_DIR
@@ -25,7 +23,7 @@ exec 9>.android-full-build.lock
 flock 9
 
 rm .repo/repo_info.pl -f
-my-rfa '
+my-rfa $dirs '
 if test $(basename $PWD) = tcmd; then
     exit 0
 fi
@@ -35,7 +33,7 @@ git reset --hard $commit;
 git clean -xfd;
 '
 
-my-rfa '
+my-rfa $dirs '
 if test -e $ANDROID_DIR/flashing/quilt/$(repo-path); then
     commit=$(git log --format=fuller --until="$ROLLBACK_TIME" $(repo-remote-branch) -1|head -n 1 | pn 2);
     export GQ_REBASE_TO=$commit

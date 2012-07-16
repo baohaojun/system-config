@@ -39,7 +39,7 @@ flock 9
 
     daily_change_dir=daily-changes/$(basename $0).$$
     rm -rf ${daily_change_dir}
-    android-daily-changes '1 hour' $(pwd)/$daily_change_dir
+    android-daily-changes -f "$(now-rfc -d '1 hour ago')" -d $(pwd)/$daily_change_dir
     if test -z "$REMOTEIP"; then
         export REMOTEIP=10.21.130.154
     fi

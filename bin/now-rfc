@@ -1,0 +1,3 @@
+#!/bin/bash
+
+date --rfc-3339=seconds "$@"

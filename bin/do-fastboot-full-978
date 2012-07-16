@@ -108,11 +108,6 @@ do-partition kernel "$(get-image-path ZIMG)"
 do-partition tdCp "$(concat-file 0 ARBI 7M GRBI 10M GRB2)"
 do-partition recovery "$(concat-file 0 OSLR 1M ZIMR 5M RAMR)"
 
-if test $(basename $0) = do-fastboot-full-978; then
-    fastboot erase misc
-    fastboot erase Cache
-    fastboot erase tdNvm
-fi
 
 do-partition system "$(get-image-path SYSY)"
 do-partition userdata "$(get-image-path USRY)"
@@ -122,6 +117,12 @@ do-partition tdTelephony "$(get-image-path PXAY)"
 do-partition GPT "$(get-image-path PGPT)"
 do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
 do-partition OBM $(concat-file 0 ntim_emmc.bin 4K OBMI)
+
+# if test $(basename $0) = do-fastboot-full-978; then
+#     fastboot erase misc
+#     fastboot erase Cache
+#     fastboot erase tdNvm
+# fi
 
 if test $(basename $0) = do-fastboot-full-978; then
     read -p "Press enter to restart fastboot "

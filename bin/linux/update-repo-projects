@@ -26,6 +26,9 @@ for x in "$@"; do
         if test -e .no-update; then
             exit 0
         fi
+        if test ! -e .do-update; then
+            exit 0
+        fi
         test -e Makefile || exit
 	if yes-or-no-p -y "do repo sync?"; then
             repo sync -n -j4

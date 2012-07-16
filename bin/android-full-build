@@ -101,4 +101,4 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
     )
 ) 9>.android-full-build.lock  2>&1 | tee build.log out/build.log
 
-tail -n 2 build.log | grep -q -e "all ok" # make sure it exit with the right return value
+grep 'full build result is' build.log | grep -q -e "all ok" # make sure it exit with the right return value

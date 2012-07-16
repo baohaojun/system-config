@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -- "${1:-0}"
+
+if test $(basename $0) = day-start; then
+    replace='s/\d+:\d+:\d+/00:00:01/'
+else
+    replace='s/\d+:\d+:\d+/23:59:59/'
+fi
+
+if echo "$1"|grep -q -P '^[-+]?\d+$'; then
+    date --rfc-3339=seconds -d "$1 days"
+else
+    date --rfc-3339=seconds -d "$1"
+fi | perl -npe "$replace"  | tr -d '\n'
+

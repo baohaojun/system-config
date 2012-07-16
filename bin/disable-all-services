@@ -1,0 +1,15 @@
+#!/usr/bin/perl -i
+
+while (<>) {
+    chomp;
+    if (m/(^\s*service.*(?<!\\)$)/) {
+	printf "%s\n", $_; 
+	unless (m/console/) {
+	    print "    disabled\n";
+	}
+    } else {
+	printf "%s\n", $_;
+    }
+}
+
+

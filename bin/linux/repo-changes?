@@ -24,7 +24,7 @@ path=$3
 #         echo git "$@" failed at $(pwd);
 #     } 1>&2
 # }
-export -f git
+# export -f git
 rev=$(git rev-parse $remote/$branch)
 
 if test $(git rev-parse HEAD) != $rev; then
