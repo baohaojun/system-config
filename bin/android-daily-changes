@@ -61,6 +61,7 @@ if test -z "$TODAYS_CHANGES_DIR"; then
     fi
 fi
 
+TODAYS_CHANGES_DIR=$(echo "$TODAYS_CHANGES_DIR" | perl -npe 's/:|~| /-/g')
 mkdir -p "$TODAYS_CHANGES_DIR"
 
 if test "$from" = "$(day-start- -1)" -a "$to" = "$(day-end- -1)"; then
@@ -82,7 +83,7 @@ my-rfa -j 5 -- '
 log="$TODAYS_CHANGES_DIR"/$(repo-path | sed -e "s,/,.,g").git-log;
 remote=$(repo-remote)
 refname=$(repo-refname)
-git log --format=fuller $ADD_GIT_ARGS --since='"$from"' --until='"$to"' $remote/$refname > "$log" 2>&1
+git log --format=fuller $ADD_GIT_ARGS --since="'"$from"'" --until="'"$to"'" $remote/$refname > "$log" 2>&1
 if test $(stat -c %s "$log") = 0;
 then
     rm "$log"
