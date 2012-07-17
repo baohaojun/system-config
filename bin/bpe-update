@@ -2,7 +2,7 @@
 
 set -e
 BPE_ON_APSE=
-blu_rebase=
+blu_rebase= # bpe local update
 TEMP=$(getopt -o r --long rebase -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do

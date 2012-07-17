@@ -2,7 +2,15 @@
 
 set -- "${1:-0}"
 
-if test $(basename $0) = day-start; then
+if echo $0 | grep -q -e '-$'; then
+    do_dash='s/ /-/g'
+else
+    do_dash=''
+fi
+
+prog=$(echo $0 | perl -npe 's/-$//')
+
+if test $(basename $prog) = day-start; then
     replace='s/\d+:\d+:\d+/00:00:01/'
 else
     replace='s/\d+:\d+:\d+/23:59:59/'
@@ -12,5 +20,5 @@ if echo "$1"|grep -q -P '^[-+]?\d+$'; then
     date --rfc-3339=seconds -d "$1 days"
 else
     date --rfc-3339=seconds -d "$1"
-fi | perl -npe "$replace"  | tr -d '\n'
+fi | perl -npe "$replace" | perl -npe "$do_dash" | tr -d '\n'
 

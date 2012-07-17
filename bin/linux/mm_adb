@@ -6,6 +6,7 @@ if tty; then
 else
     cat|tee /tmp/$LOG
 fi
+echo tmp file is /tmp/$LOG
 install_files=($(cat /tmp/$LOG|grep '^Install: '|perl -npe 's/.*: //'))
 copy_files=($(cat /tmp/$LOG|grep -v '.ogg$'|grep "${1:-^Copy:}"|perl -npe 's/'"${1:-^Copy}"': //'))
 

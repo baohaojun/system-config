@@ -72,9 +72,24 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	    echo "changed repos are: $(repo-changes\?)"
 	)&
 	rm */out/ -rf || true
+        if test -e /usr/bin/ccache; then
+            ln -sf /usr/bin/ccache prebuilt/linux-x86/ccache/ccache
+        fi
 	result=''
 	if test "$target" = all; then
-	    time $(which time) make -j$jobs -l$jobs -k droid telephony uboot obm && result=$result'all ok; '
+            export build_mount_p=$(readlink -f ../)/.afb
+            mkdir -p $build_mount_p
+            test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1
+            time sudo unshare -m -- bash -c '
+                set -ex
+                mount $(pwd) '$build_mount_p' -o bind;
+                cd '$build_mount_p'
+                su bhj -c "
+                    . ~/.bashrc;
+                    . .buildenv.sh;
+                    make -j'$jobs' -l '$jobs' -k droid telephony uboot obm
+                "
+            ' && result=$result'all ok; '
 	fi
 	if [[ "$target" =~ kernel ]]; then
 	    command time make -k kernel && result=$result'kernel ok; '

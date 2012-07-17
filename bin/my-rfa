@@ -6,6 +6,13 @@ jobs=5
 dirs=()
 debug=0
 TEMP=$(getopt -o xd:j: -n $(basename $0) -- "$@")
+function die() {
+    echo "$@"
+    exit -1
+}
+
+export -f die
+
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -47,7 +54,7 @@ else
 		if test -d "$x"; then
 		    repo forall "$x" -c 'echo $REPO_PATH'
 		elif test -f "$x"; then
-		    cat "$x"
+		    cat "$x" | pn 1
 		else
 		    die "Error: not a dir: $x"
 		fi

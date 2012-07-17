@@ -1,9 +1,31 @@
 #!/bin/bash
 
+if test $(basename $0) = repo-not-clean; then
+    export DO_GIT_ST_ONLY=true
+fi
+
+export GIT_END_DATE=
+TEMP=$(getopt -o e: --long end: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+	-e|--end)
+	    export GIT_END_DATE=$(day-end $2)
+	shift 2
+	;;
+	--)
+	shift
+	break
+	;;
+	*)
+	die "internal error"
+	;;
+    esac
+done
+
 if test $# = 0 -a ! -d .repo; then
     set -- .
 fi
-    
 
 set -- $(
     for x in "$@"; do
@@ -25,12 +47,19 @@ path=$3
 #     } 1>&2
 # }
 # export -f git
-rev=$(git rev-parse $remote/$branch)
 
-if test $(git rev-parse HEAD) != $rev; then
+if test -z "$GIT_END_DATE"; then
+    rev=$(git rev-parse $remote/$branch)
+else
+    rev=$(git log --until="$GIT_END_DATE" -1 $(repo-remote-branch)|head -n 1|pn 2)
+fi
+
+head_rev=$(git rev-parse HEAD)
+
+if test "$DO_GIT_ST_ONLY" != true -a "$head_rev" != "$rev"; then
     git fetch $remote refs/heads/$branch >/dev/null 2>&1 
     rev=$(git rev-parse FETCH_HEAD)
-    if test $(git rev-parse HEAD) != "$rev"; then
+    if test "$head_rev" != "$rev"; then
         (
             flock -x 9;
             echo $path rev not the same;
@@ -44,14 +73,16 @@ if git status -s |grep -q .; then
     (
         if test -e "$(git config core.excludesfile)"; then
             exc_file=$(git config core.excludesfile)
-            for file in $(git status -s | pn 2); do
-                if ! grep -e "^$file\$" -q -- "$exc_file"; then
-                    flock -x 9;
-                    echo $path repo not clean: $file;
-                    break
-                fi
-            done
+        else
+            exc_file=/dev/null
         fi
+        for file in $(git status -s | pn 2); do
+            if ! grep -e "^$file\$" -q -- "$exc_file"; then
+                flock -x 9;
+                echo $path repo not clean: $file;
+                break
+            fi
+        done
     )
 fi
 #{%/sh%}

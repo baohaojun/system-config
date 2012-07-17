@@ -63,7 +63,7 @@ fi
 
 mkdir -p "$TODAYS_CHANGES_DIR"
 
-if test "$from" = "$(day-start -1)" -a "$to" = "$(day-end -1)"; then
+if test "$from" = "$(day-start- -1)" -a "$to" = "$(day-end- -1)"; then
     relative-link "$TODAYS_CHANGES_DIR" $CHANGES_DIR/yesterday || true
 fi
 
