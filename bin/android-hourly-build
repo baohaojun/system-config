@@ -25,7 +25,7 @@ flock 9
             if test -e $ANDROID_TOP/flashing/quilt/$(repo-path)/series && gq next | grep -q .; then
                 echo Error: $(pwd) guilt not cleanly applied
             fi
-        '
+        ' | grep . && die "guilt rebase not cleanly applied; need bail out."
     fi
     
     touch .build-started
