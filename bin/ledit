@@ -1,3 +1,7 @@
 #!/bin/bash
-export LOCAL_EDIT=true
-edit "$@"
+if test -z "$REMOTEIP"; then
+    export LOCAL_EDIT=true
+    edit "$@"
+else
+    ssh $REMOTEIP emacsclient -n "$(if test -e "$1"; then readlink -f "$1"; else which "$1"; fi)"
+fi

@@ -57,7 +57,15 @@ if test $# -gt 0; then
     target=$1
 fi
 
-(set -x; cd $(android-env get_abs_build_var TARGET_OUT) >/dev/null 2>&1 && rm ../system.img ../obj/PACKAGING/systemimage_intermediates/system.img -v) || true
+(
+    set -x;
+    set -e
+    test -d "$ANDROID_PRODUCT_OUT"
+    cd "$ANDROID_PRODUCT_OUT"
+    rm ../system.img ../obj/PACKAGING/systemimage_intermediates/system.img -vf
+    rm kernel telephony uboot-obm -rf    
+) || true
+
 test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 
 (
@@ -72,6 +80,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	    echo "changed repos are: $(repo-changes\?)"
 	)&
 	rm */out/ -rf || true
+        
         if test -e /usr/bin/ccache; then
             ln -sf /usr/bin/ccache prebuilt/linux-x86/ccache/ccache
         fi

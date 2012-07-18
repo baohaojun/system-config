@@ -2,13 +2,13 @@
 
 set -e
 BPE_ON_APSE=
-blu_rebase= # bpe local update
+do_rebase= 
 TEMP=$(getopt -o r --long rebase -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 	-r|--rebase)
-	blu_rebase=true
+	do_rebase=true
 	shift
 	;;
 	--)
@@ -44,11 +44,16 @@ fi
 
 cd $(lookup_file .repo/..)
 
+echo will update the following: $args
+
 for x in $args; do
     (
 	proj=$(dirname $x | perl -npe 's,^flashing/quilt/,,')
 	patch_dir=$(pwd)/$(dirname $x)
 	export git_base=$(cat $patch_dir/.base)
+        if test -n "$GQ_REBASE_FROM"; then
+            git_base=$GQ_REBASE_FROM
+        fi
 	export git_result=$(cat $patch_dir/.result)
 	
 	log=$(pwd)/out/bpe-build-local/$(today)-$(echo $proj|perl -npe 's,/,-,g');
@@ -64,13 +69,13 @@ for x in $args; do
 	    local_url=$(repo-remote-url|perl -npe 's,.*:/git/android/,bibler:shgit/,')
 	    
 	    bpe_local=$(git symbolic-ref bpe-local 2>/dev/null)
-	    if test -n "$bpe_local"; then
+	    if test -z "$bpe_local"; then
 		echo "error: bpe_local symbolic ref not set up in $(pwd)"
 	    else
-	        bpe_local=$(basename $bpe_local)
+	        bpe_local=$(basename "$bpe_local")
 	        git fetch $local_url refs/heads/$bpe_local:refs/local/$bpe_local
 	    
-	        if test "$(git rev-parse bpe-local)" != "$git_result"; then
+	        if test "$(git rev-parse bpe-local 2>/dev/null)" != "$git_result"; then
 		    git log $git_result..bpe-local > $log-downstream-updated
 	        fi
             fi
@@ -85,7 +90,7 @@ for x in $args; do
 	    gq init
 	    cp $patch_dir/* .git/patches/$qx/
 	    gq push -a
-	    if test -z "$blu_rebase"; then
+	    if test -z "$do_rebase"; then
 		echo Will now start a new shell
 		start-recursive-shell quilt rebase
 		exit
@@ -106,6 +111,8 @@ for x in $args; do
 		git st -s . |grep . && 
 		touch $log-patches-rebased
 	    )
+            echo $x guilt rebase completed.
 	)
+        true
     )
 done

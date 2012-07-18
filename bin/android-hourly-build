@@ -20,6 +20,12 @@ flock 9
     if yes-or-no-p -y "Do sync?"; then
         my-rfa 'git reset --hard; git clean -xfd' || true
         repo sync -j4 -d || die "repo sync failed"
+        bpe-update -r
+        my-rfa '
+            if test -e $ANDROID_TOP/flashing/quilt/$(repo-path)/series && gq next | grep -q .; then
+                echo Error: $(pwd) guilt not cleanly applied
+            fi
+        '
     fi
     
     touch .build-started
@@ -29,17 +35,19 @@ flock 9
     rm .build_failed -fr
 ) > hourly-build.log 2>&1 || (
 
-    if test ! -e .build-started; then # build has not started, why?
-        exit -1
-    fi
-
     if test "$start_hour" = 6; then #maybe need do a full clean build next time.
         rm ../$(basename $(pwd))-out/out-* -rf
     fi
 
     daily_change_dir=daily-changes/$(basename $0).$$
     rm -rf ${daily_change_dir}
-    android-daily-changes -f "$(now-rfc -d '1 hour ago')" -d $(pwd)/$daily_change_dir
+
+    if test ! -e .build-started; then # build has not started, why?
+        mkdir -p $(pwd)/$daily_change_dir
+    else
+        android-daily-changes -f "$(now-rfc -d '1 hour ago')" -d $(pwd)/$daily_change_dir
+    fi
+
     if test -z "$REMOTEIP"; then
         export REMOTEIP=10.21.130.154
     fi

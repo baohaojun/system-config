@@ -1,6 +1,14 @@
 #!/bin/bash
 . ~/.bashrc
 
+if test $(basename $0) = update-repo-projects; then
+    (
+        set -e
+        cd ~/src/android
+        repo sync -n -j4
+    )
+fi
+
 if test $(basename $0) != update-repo-projects -a $# == 0 || tty >/dev/null 2>&1 ; then
     set -- . 
     echo will only update current dir.

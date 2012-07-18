@@ -25,8 +25,13 @@ flock 9
 rm .repo/repo_info.pl -f
 my-rfa $dirs '
 if test $(basename $PWD) = tcmd; then
-    exit 0
+    if git-is-ancestor HEAD $(repo-remote-branch) && test "$(git st -s | wc -l )" = 0; then
+        true
+    else
+        exit 0
+    fi
 fi
+
 set -x
 commit=$(git log --format=fuller --until="$ROLLBACK_TIME" $(repo-remote-branch) -1|head -n 1 | pn 2);
 git checkout $commit;
@@ -38,6 +43,7 @@ my-rfa $dirs '
 if test -e $ANDROID_DIR/flashing/quilt/$(repo-path); then
     commit=$(git log --format=fuller --until="$ROLLBACK_TIME" $(repo-remote-branch) -1|head -n 1 | pn 2);
     export GQ_REBASE_TO=$commit
+    export GQ_REBASE_FROM=$commit
     bpe-update -r
 fi
 '
