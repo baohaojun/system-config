@@ -35,6 +35,9 @@ set -- $(
 
 my-rfa -j 4 "$@" -- '
 #{%sh%}
+if test "$DEBUG" = true; then
+    set -x
+fi
 set -- $($REPO_INFO remote branch path)
 remote=$1
 branch=$2
@@ -51,17 +54,32 @@ path=$3
 if test -z "$GIT_END_DATE"; then
     rev=$(git rev-parse $remote/$branch)
 else
-    rev=$(git log --until="$GIT_END_DATE" -1 $(repo-remote-branch)|head -n 1|pn 2)
+    rev=$(git log --until="$GIT_END_DATE" -1 $remote/$branch|head -n 1|pn 2)
 fi
 
 head_rev=$(git rev-parse HEAD)
 
 if test "$DO_GIT_ST_ONLY" != true -a "$head_rev" != "$rev"; then
-    git fetch $remote refs/heads/$branch >/dev/null 2>&1 
-    rev=$(git rev-parse FETCH_HEAD)
-    if test "$head_rev" != "$rev"; then
+    need_bail=true
+
+    if test -e $ANDROID_TOP/flashing/quilt/$path/series; then
+        if test "$(git rev-parse HEAD"~$(gq applied 2>/dev/null|wc -l )")" = $rev; then
+            need_bail=false
+        fi
+    fi
+
+    if test $need_bail = true; then
+        git fetch $remote refs/heads/$branch >/dev/null 2>&1 
+        fetch_rev=$(git rev-parse FETCH_HEAD)
+
+        if test "$head_rev" = "$fetch_rev"; then
+            need_bail=false
+        fi
+    fi
+
+    if test $need_bail = true; then
         (
-            flock -x 9;
+            flock -x 10;
             echo $path rev not the same;
         )
         exit
@@ -78,7 +96,7 @@ if git status -s |grep -q .; then
         fi
         for file in $(git status -s | pn 2); do
             if ! grep -e "^$file\$" -q -- "$exc_file"; then
-                flock -x 9;
+                flock -x 10;
                 echo $path repo not clean: $file;
                 break
             fi
@@ -86,7 +104,7 @@ if git status -s |grep -q .; then
     )
 fi
 #{%/sh%}
-' 2>&1 9>~/.logs/repo-changes.lock | (
+' 2>&1 10>~/.logs/repo-changes.lock | (
     cd $(lookup_file .repo/..);
     log=./out/repo-changes.log"$(echo -n $*)"
     lognow="$log-$(now)"
