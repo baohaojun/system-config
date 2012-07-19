@@ -7,6 +7,12 @@ use String::ShellQuote;
 open(my $out, "-|",  "ctags-exuberant --language-force=" . $ENV{GTAGS_LANG_FORCE} . " -xu " . $ENV{GTAGS_START_FILE})
     or die "Error: open gtags output";
 
+open(my $env, ">", glob("~/.logs/grep-func-call.env"))
+    or die "Error: open env save file failed";
+
+print $env "export GTAGS_LANG_FORCE=$ENV{GTAGS_LANG_FORCE}\n";
+print $env "export GTAGS_START_FILE=$ENV{GTAGS_START_FILE}\n";
+
 open(my $debug, ">", glob("~/.logs/grep-func-call.log"))
   or die "Error: can not open log";
 
@@ -26,17 +32,27 @@ open(my $file, "<", $ENV{GTAGS_START_FILE}) or die "Error: open source file";
 my $target = $ARGV[1]; #argv.0 is -e
 
 print $debug "func_lines are @func_lines\n";
-my $last_match_line = 1;
+my $last_match_func_ln = 1;
+my %file_line_map;
 while(<$file>) {
+    $file_line_map{$.} = $_;
     if (m/$target/) {
-	my $last = 1;
+	print $debug ":$.: $_";
+	my $last_checked_func_ln = 1;
+	my $line = $_;
+
+	
 	for (@func_lines) {
-	    if ($. < $_) {
-		print $ENV{GTAGS_START_FILE} . ":$last: " . $func_location_map{$last} . "\n" unless $last == $last_match_line;
-		$last_match_line = $last;
+	    if ($. < $_ or $_ == $func_lines[@func_lines - 1]) {
+		if ($last_checked_func_ln != $.) {
+		    print $ENV{GTAGS_START_FILE} . ":$last_checked_func_ln: " . $file_line_map{$last_checked_func_ln}
+			unless $last_checked_func_ln == $last_match_func_ln; # do not print 
+		    print $ENV{GTAGS_START_FILE} . ":$.: " . $line;
+		}
+		$last_match_func_ln = $last_checked_func_ln;
 		last;
 	    }
-	    $last = $_;
+	    $last_checked_func_ln = $_;
 	}
     }
 }

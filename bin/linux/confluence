@@ -35,6 +35,8 @@ for (@ARGV) {
 chomp (my $confserv=`cat ~/.confserv`);
 chomp (my $confuser=`cat ~/.confuser`);
 chomp (my $confpath=`cat ~/.confpath`);
+chomp (my $confhttp=`cat ~/.confhttp 2>/dev/null`);
+$confhttp = "http" unless $confhttp;
 
 my $space = "~$confuser";
 
@@ -51,4 +53,4 @@ if ($debug) {
 }
 
 chomp(my $confluence_sh = qx(which confluence.sh));
-system(@debug, $confluence_sh, "--server", "http://$confserv", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", $space, @ARGV);
+system(@debug, $confluence_sh, "--server", "$confhttp://$confserv", "--user", $confuser, "--password", `get-authinfo $confserv|tr -d '\n'`, "--space", $space, @ARGV);

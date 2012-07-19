@@ -45,7 +45,7 @@ flock 9
     if test ! -e .build-started; then # build has not started, why?
         mkdir -p $(pwd)/$daily_change_dir
     else
-        android-daily-changes -f "$(now-rfc -d '1 hour ago')" -d $(pwd)/$daily_change_dir
+        android-daily-changes -f "$(now-rfc -d '1 hour ago'|perl -npe 's/( \d+):\d+:/$1:00:/)" -d $(pwd)/$daily_change_dir
     fi
 
     if test -z "$REMOTEIP"; then

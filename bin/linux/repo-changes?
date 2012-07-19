@@ -24,7 +24,7 @@ while true; do
 done
 
 if test $# = 0 -a ! -d .repo; then
-    set -- .
+    set -- $(repo-top)/$(repo-path)
 fi
 
 set -- $(
@@ -57,6 +57,23 @@ else
     rev=$(git log --until="$GIT_END_DATE" -1 $remote/$branch|head -n 1|pn 2)
 fi
 
+if git status -s |grep -q .; then
+    (
+        if test -e "$(git config core.excludesfile)"; then
+            exc_file=$(git config core.excludesfile)
+        else
+            exc_file=/dev/null
+        fi
+        for file in $(git status -s | pn 2); do
+            if ! grep -e "^$file\$" -q -- "$exc_file"; then
+                flock -x 10;
+                echo $path repo not clean: $file;
+                break
+            fi
+        done
+    )
+fi
+
 head_rev=$(git rev-parse HEAD)
 
 if test "$DO_GIT_ST_ONLY" != true -a "$head_rev" != "$rev"; then
@@ -87,22 +104,6 @@ if test "$DO_GIT_ST_ONLY" != true -a "$head_rev" != "$rev"; then
     fi
 fi
 
-if git status -s |grep -q .; then
-    (
-        if test -e "$(git config core.excludesfile)"; then
-            exc_file=$(git config core.excludesfile)
-        else
-            exc_file=/dev/null
-        fi
-        for file in $(git status -s | pn 2); do
-            if ! grep -e "^$file\$" -q -- "$exc_file"; then
-                flock -x 10;
-                echo $path repo not clean: $file;
-                break
-            fi
-        done
-    )
-fi
 #{%/sh%}
 ' 2>&1 10>~/.logs/repo-changes.lock | (
     cd $(lookup_file .repo/..);

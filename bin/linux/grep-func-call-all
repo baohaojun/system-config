@@ -1,0 +1,21 @@
+#!/bin/bash
+
+IFS=$'\t\n'
+
+function get_lang_for_file_from_globalrc() {
+    lang_for_file "$@"
+}
+
+echo
+for file in $(beagrep -e "\b$2\b" --grep -l); do
+    if test ! -e "$file"; then
+        continue
+    fi
+    export GTAGS_LANG_FORCE=c
+    gtags_rc=$(lookup_file .globalrc)
+    if test -e "$gtags_rc"; then
+        GTAGS_LANG_FORCE=$(get_lang_for_file_from_globalrc "$file" $gtags_rc)
+    fi
+    export GTAGS_START_FILE=$file
+    grep-func-call -e "$2"| grep -v '^$'
+done

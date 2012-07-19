@@ -60,6 +60,7 @@ we will get the pattern \"naoehu[)+{\"
     
     (let* ((re-list (string-to-list old-regexp))
 	   (after-first-char nil)
+	   (is-first-char t)
 	   (new-re-list nil))
 
       (while re-list
@@ -71,12 +72,16 @@ we will get the pattern \"naoehu[)+{\"
 	  (setq after-first-char t))
         
         (if (eq char ?.)
-            (setq new-re-list (append (nreverse (string-to-list "\\.")) new-re-list))
+	    (if is-first-char
+		(setq new-re-list (append (nreverse (string-to-list "\\.")) new-re-list))
+	      (setq new-re-list (append (nreverse (string-to-list "\\W")) new-re-list)))
           (case (char-syntax char)
             (?w (setq new-re-list (cons char new-re-list)))
             (t (when (member char (string-to-list "^$*?[]+"))
                  (setq new-re-list (cons ?\\ new-re-list)))
-               (setq new-re-list (cons char new-re-list))))))
+               (setq new-re-list (cons char new-re-list)))))
+
+	(setq is-first-char nil))
 
       (setq new-regexp (apply 'string (nreverse new-re-list))))
     (regexp-display-abbrev new-regexp)))

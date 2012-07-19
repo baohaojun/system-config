@@ -1,0 +1,90 @@
+* Why did I do it?
+
+To avoid build error in daily (actually, nightly) release build, we
+need catch build errors as soon as possible.
+
+In fact, the best methodology recommends automating the build for
+every commit. Quote from [[http://en.wikipedia.org/wiki/Continuous_integration#Every_commit_.28to_baseline.29_should_be_built][Wikipedia]]:
+
+#+begin_quote
+
+Every commit (to baseline) should be built
+
+The system should build commits to the current working version in
+order to verify that they integrate correctly. A common practice is to
+use Automated Continuous Integration, although this may be done
+manually. For many, continuous integration is synonymous with using
+Automated Continuous Integration where a continuous integration server
+or daemon monitors the version control system for changes, then
+automatically runs the build process.
+
+#+end_quote
+
+But this is too difficult to implement. So instead, I choose to do the
+build hourly.
+
+* How did it work?
+
+First of all, a build should be fast, which alone nailed the following
+decisions for me:
+
+1. Do a rolling build, instead of a clean full build every time.
+
+2. Do a single product build, instead of the full array of products
+   (currently I chose pxa978 ariel).
+
+In addition, when a hourly build error happen, a notification email
+will be sent to each one who commited code in the last hour.
+
+But this error notification email will only be sent if the last hour's
+build is OK, to reduce noise; or if the time is after 15:00 o'clock,
+because it's more urgent to be fixed at this close to COB time.
+
+* How did it not work?
+
+Generally, the hourly build can catch build errors very precisely. But
+in occasion, it will produce false alarms because a rolling build is
+used.
+
+For e.g., consider the following scenario:
+
+- File xxx.c has this code:
+
+  #+begin_example
+  #ifdef BOARD_HAS_XXX
+  voild func_xxx() {}
+  #endif
+  #+end_example
+
+But the BOARD_HAS_XXX has not been defined before, until somebody
+defined it for the ariel product:
+
+- In ariel_product.mk, add the following:
+
+  #+begin_example
+  BOARD_HAS_XXX := true
+  #+end_example
+
+- In File yyy.c, add the following:
+  
+  #+begin_example
+  #ifdef BOARD_HAS_XXX
+  func_xxx();
+  #endif
+  #+end_example
+
+It is very correct code and will cause no problem in a clean full
+build, but in a rolling build, there will be a linking error:
+
+- Only yyy.c and the ariel_product.mk is updated, so yyy.o need
+  recompile, with a call to func_xxx.
+
+- xxx.c is not updated, thus the old xxx.o is used for linking, and it
+  missed the func_xxx definition.
+
+This is because the android build system is not perfect, it can not
+notice the BOARD_HAS_XXX macro for xxx.c has changed, and thus it need
+recompilation.
+
+So please forgive me if this false alarm happens once in a little
+while.

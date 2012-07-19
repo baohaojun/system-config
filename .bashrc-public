@@ -108,6 +108,11 @@ fi
 scd()
 {
     if test $# = 1; then
+        if pwd|grep -q -e "$1"; then
+            scd "$1" ''
+            return $?
+        fi
+            
 
         for dir in $(lookup_file "$1"|tee /dev/stderr); do
             dir=$(echo "$dir" | perl -npe 's,/./,/,g')

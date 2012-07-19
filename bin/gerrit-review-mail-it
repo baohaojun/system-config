@@ -70,11 +70,13 @@ if test "$1" = build-failed; then
     cat <<EOF | mailx -s "$title" hjbao@marvell.com $recipients -a commit-messages.tgz -a build.log
 Hi, all
 
-$recipients
-
 You are receiving this email because the automatic hourly build has
 failed, and you are among the people who commited changes in the last
-hour.
+hour. See
+
+    https://ewiki.marvell.com/pages/viewpage.action?pageId=38453690 
+
+for more infomation about the hourly build.
 
 Please refer to the attached commit-messages.tgz for the details of
 your commit.
