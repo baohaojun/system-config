@@ -18,3 +18,4 @@ Mail
 *.elc
 \#*
 .#*
+.for-code-reading
