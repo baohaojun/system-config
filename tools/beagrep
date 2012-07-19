@@ -21,12 +21,13 @@ my $grep_use_perl_regexp;
 open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
-
+my $grep_add_opts = "";
 GetOptions(
     "a=s" => \$additional_tokens,
     "e=s" => \$pat,
     "p=s" => \$pathpat,
     "perl=s" => \$grep_use_perl_regexp,
+    "grep=s" => \$grep_add_opts,
     "v=s" => \$pathdeny,
     "d=s" => \$pwd_pat,
     "i!" => \$ignore_case,
@@ -89,7 +90,7 @@ if ($list_beagrep) {
 }
 
 if (!$find_file_only) {
-  open(my $grep, "|xargs -d '\\n' grep -H -n -I $ignore_case $grep_use_perl_regexp -e $pat");
+  open(my $grep, "|xargs -d '\\n' grep -H -n -I $ignore_case $grep_add_opts $grep_use_perl_regexp -e $pat");
 
   for (@beagrep_files) {
     next unless m/$pathpat/i;
