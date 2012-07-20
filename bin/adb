@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if test "$1" = -s; then
-   echo "$2" > ~/.adbd
-elif test "$1" != devices -a $(setsid adb.sdk start-server >/dev/null 2>&1 ; adb.sdk devices | grep .| wc -l) -gt 2; then
-     set -- -s "$(cat ~/.adbd)" "$@"
-fi
-
-adb.sdk "$@"
