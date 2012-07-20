@@ -31,11 +31,10 @@ for (@ARGV) {
         next;
     }
 }
-
-chomp (my $confserv=`cat ~/.confserv`);
-chomp (my $confuser=`cat ~/.confuser`);
-chomp (my $confpath=`cat ~/.confpath`);
-chomp (my $confhttp=`cat ~/.confhttp 2>/dev/null`);
+my $conf_dir = $ENV{"CONF_DIR"} || glob("~");
+chomp (my $confserv=`cat $conf_dir/.confserv`);
+chomp (my $confuser=`cat $conf_dir/.confuser`);
+chomp (my $confhttp=`cat $conf_dir/.confhttp 2>/dev/null`);
 $confhttp = "http" unless $confhttp;
 
 my $space = "~$confuser";
@@ -48,7 +47,7 @@ GetOptions(
     "debug=s" => \$debug,
     );
 
-if ($debug) {
+if ($debug || $ENV{"DEBUG"}) {
     @debug = ("bash", "-x");
 }
 

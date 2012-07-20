@@ -1,0 +1,118 @@
+#+title: beagrep, grep 2G source code in 2 seconds
+
+* Introduction
+
+I still remember when I read the ``Linux Device Drivers'', 1st Edition, in the preface, the author says:
+
+#+begin_quote
+... The text you are approaching is the result of hours of patient grepping ...
+#+end_quote
+
+I have been using grep to read source code ever since. It's been
+adequate for a long time, until I started reading Android source code
+with it. I remember vividly how it took me 30 minutes to ~grep
+readlink~ in Android source code (with VCS directory and binary files
+excluded).
+
+Then I learned about the beagle software, which is a desktop search
+engine. And it occured to me, what if I use beagle and grep together?
+I mean, to use beagle first to decide the (relatively a lot smaller)
+set of possible matching files (i.e., files that contained the word
+~readlink~, taking the previous example), then invoke grep on this set
+only. Usually the job can be done in a couple of seconds.
+
+Beagrep supports both Linux and Windows (requires CYGWIN).
+
+And now, I have made 2 Ubuntu .deb packages for beagrep, so those of
+you who are using Lucid or Precise (the 2010 and 2012 LTS version of
+Ubuntu, respectively) can install and use beagrep easily.
+
+* Install
+
+If, for e.g., you are running Precise, then you can install beagrep like this:
+
+#+begin_example
+dpkg -i beagrep_0.4.0-1_amd64-precise.deb
+apt-get -f install
+#+end_example
+
+Please choose the [[./beagrep_0.4.0-1_amd64-lucid.deb][lucid]] or [[./beagrep_0.4.0-1_amd64-precise.deb][precise]] version of .deb based on your
+system installation.
+
+* Usage
+
+** Create Index
+
+In the source code directory you want to ``beagrep'', for e.g. android, 
+
+#+begin_example
+cd ~/src/android
+mkbeagrepidx
+#+end_example
+
+This will take quite some time (about the same amount of time you take
+to run ~grep~ directly in the source code directory, i.e., ~0.5
+hour). I highly suggest that you run it during midnight, using
+crontab. Of course, you can also use beagrep on smaller projects,
+which won't take so long.
+
+Note also, that only the first time will take a long time, subsequent
+invocation will notice (based on file's timestamp and the index
+database's record) only those (assumed small set of) updated files
+will require re-indexing, and greatly reduce the time required.
+
+
+** Run beagrep
+
+In the source code directory (or any subdirs under it)
+#+begin_example
+cd ~/src/android
+beagrep -e "readlink"
+#+end_example
+
+Here's a list of all arguments that beagrep takes:
+
+#+begin_example
+beagrep -e REGEXP_MATCH [-p REGEXP_PATH] [-a ADDITIONAL_WORDS] [-v REGEXP_REVERSE_PATH] [-i] [-f] [-l] [--grep GREP_OPTIONS] [-a]
+#+end_example
+
+- -e ~REGEXP_MATCH~ :: This is the minimum required arguments. For e.g., ~beagrep -e readlink~
+
+     The ~REGEXP_MATCH~ serves 2 purposes:
+
+     - First, it is computed into whole words for querying beagle. For
+       e.g., ~l] [--grep GREP_OPTIONS]~ above should be matched with
+       the following REGEXP: ~l\] \[--grep GREP_OPTIONS\]~, but it
+       should be converted into 4 words: ~l grep GREP OPTIONS~ for
+       beagle.
+
+     - Second, it is used as the regexp for grep to work on.
+
+- -a ~ADDITIONAL_WORDS~ :: means to add more words into the beagle
+     query. This is useful by increasing the work beagle need to do,
+     but reduce the possible workset grep need to work on.
+
+- -p ~REGEXP_PATH~ :: means to limit the search result to those files whose pathname matches ~REGEXP_PATH~.
+
+- -v ~REGEXP_REVERSE_PATH~ :: means to exclude those matched files whose pathname matches ~REGEXP_REVERSE_PATH~.
+
+- -i :: means to do case insignificant grep.
+
+- -f :: means to do the match in filenames only. For example, ~beagrep
+        -e readlink -f~ will only show results like readlink.h and
+        readlink.c.
+
+	This is very useful for finding files. Note that when ~-f~ is
+        used, the beagle querying words will be computed differently:
+        only the basename will be used, and ~filename:~ is prepended
+        onto each words.
+
+- -l :: means to list the beagle matched list of files directly, without running grep to match on them.
+
+- --grep ~GREP_OPTIONS~ :: means to pass additional arguments to the
+     grep invocation. For e.g., the ~-l~ argument can be passed to
+     beagrep directly, or it can be passed using ~--grep~, they mean different things:
+
+     ~beagrep -e "hello world" -l~ will show a file containing "hello
+     wonderful world", but ~beagrep -e "hello world" --grep -l~ will
+     not show that file as a match.

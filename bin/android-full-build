@@ -70,14 +70,20 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 
 (
     time (
-	touch .for-code-reading
+        if pwd | grep -P -e '\d+-\d+'; then
+            echo looks like a rolling back build dir, do not do code reading in it
+        else
+	    touch .for-code-reading
+        fi
 	echo 'about to lock at '$(date)
 	flock 9 || { echo 'lock failed at '$(date); exit -1; }
 	echo 'lock success! at '$(date)
 	(
 	    echo "before build, ccache stat is $(./prebuilt/linux-x86/ccache/ccache -s)"
-	    echo "external dirs not managed by repo: $(repo-external)"
-	    echo "changed repos are: $(repo-changes\?)"
+            if test -e .afb-do-repo-changes; then
+	        echo "external dirs not managed by repo: $(repo-external)"
+	        echo "changed repos are: $(repo-changes\?)"
+            fi
 	)&
 	rm */out/ -rf || true
         

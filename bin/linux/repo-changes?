@@ -42,6 +42,12 @@ set -- $($REPO_INFO remote branch path)
 remote=$1
 branch=$2
 path=$3
+if test ${#branch} = 40; then
+    remote_rev=$branch
+else
+    remote_rev=$(git rev-parse $remote/$branch)
+fi
+
 # function git()
 # {
 #     command git "$@" || 
@@ -52,9 +58,9 @@ path=$3
 # export -f git
 
 if test -z "$GIT_END_DATE"; then
-    rev=$(git rev-parse $remote/$branch)
+    rev=$(git rev-parse $remote_rev)
 else
-    rev=$(git log --until="$GIT_END_DATE" -1 $remote/$branch|head -n 1|pn 2)
+    rev=$(git log --until="$GIT_END_DATE" -1 $remote_rev|head -n 1|pn 2)
 fi
 
 if git status -s |grep -q .; then

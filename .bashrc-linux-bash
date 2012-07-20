@@ -34,3 +34,13 @@ function renew-xauth() {
         export $(cat /proc/`ps -o comm=  -o pid= -A|grep gnome-terminal|pn 2`/environ|perl -npe 's/\x00/\n/g'|grep '^REMOTEIP=')
     fi
 }
+
+function adb() {
+    if test "$1" = -s; then
+        echo "$2" > ~/.adbd
+    elif test "$1" != devices -a $(setsid adb start-server >/dev/null 2>&1 ; command adb devices | grep .| wc -l) -gt 2; then
+        set -- -s "$(cat ~/.adbd)" "$@"
+    fi
+
+    command adb "$@"
+}

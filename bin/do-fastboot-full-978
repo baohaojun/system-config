@@ -25,6 +25,13 @@ export PATH=$(dirname "$(readlink -f "$0")"):$PATH
 # part  19::attr 0::    reserved  start 0x1f400000, size 0x00c00000
 
 set -e
+
+part_table=$(fastboot oem part 2>&1)
+is_old_part_table=false
+if echo "$part_table" | grep -q -e 'td_cp'; then
+    is_old_part_table=true
+fi
+
 test -e system.img || cd $(lookup_file flashing)
 function die() {
     echo "$@"
@@ -68,12 +75,33 @@ function should-do-it() {
 # fi
 
 function do-partition() {
-    should-do-it $1 || return 0
+    part=$1
+    should-do-it $part || return 0
+    if test $is_old_part_table = true; then
+        case $1 in
+            tdCp)
+                part=td_cp
+                ;;
+            tdTelephony)
+                part=td_telephony
+                ;;
+            tdNvm)
+                part=td_nvm
+                ;;
+            system)
+                part=android_system
+                ;;
+            userdata)
+                part=android_data
+                ;;
+        esac
+    fi
+
     if test $# != 2; then
         die "Usage: do-partition PARTNAME IMAGE_PATH"
     fi
-    fastboot erase $1;
-    fastboot flash $1 "$2"
+    fastboot erase $part;
+    fastboot flash $part "$2"
 }
 
 function get-image-path() {
@@ -118,11 +146,20 @@ do-partition GPT "$(get-image-path PGPT)"
 do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
 do-partition OBM $(concat-file 0 ntim_emmc.bin 4K OBMI)
 
-# if test $(basename $0) = do-fastboot-full-978; then
-#     fastboot erase misc
-#     fastboot erase Cache
-#     fastboot erase tdNvm
-# fi
+if test $(basename $0) = do-fastboot-full-978; then
+    fastboot erase misc
+    fastboot erase Cache
+    if test $is_old_part_table = true; then
+        fastboot erase td_nvm
+    else
+        fastboot erase tdNvm
+    fi
+    for x in obm mep pinmux; do
+        fastboot erase $x
+    done
+    fastboot erase MRD
+    fastboot erase MRDBackup
+fi
 
 if test $(basename $0) = do-fastboot-full-978; then
     read -p "Press enter to restart fastboot "
