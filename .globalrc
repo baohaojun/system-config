@@ -47,7 +47,7 @@ plugin-example|Example of function layer plugin parser:\
 	:langmap=yacc\:.y:\
 	:langmap=asm\:.s.S:\
 	:langmap=java\:.java:\
-	:langmap=cpp\:.c++.cc.cpp.cxx.hxx.hpp.C.H.h:\
+	:langmap=c++\:.c++.cc.cpp.cxx.hxx.hpp.C.H.h:\
 	:langmap=php\:.php.php3.phtml:\
 	:langmap=fortran\:.f.for.f77.f90.f95:\
 	:langmap=pascal\:.p.pas:\
