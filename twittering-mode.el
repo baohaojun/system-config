@@ -1730,19 +1730,20 @@ Statuses are stored in ascending-order with respect to their IDs."
            (remove nil
                    (mapcar
                     (lambda (status)
-                      (let ((id (assqref 'id status))
-                            (retweeted-id
-                             (assqref 'id (assqref 'retweeted-status status))))
-                        (unless (or (not retweeted-id)
-                                    (gethash retweeted-id referring-id-table))
-                          ;; Store the id of the first observed tweet
-                          ;; that refers `retweeted-id'.
-                          (puthash retweeted-id id referring-id-table))
-                        (unless (gethash id id-table)
-                          (puthash id status id-table)
-                          (puthash id id referring-id-table)
-                          `((source-spec . ,spec)
-                            ,@status))))
+                      (ignore-errors
+                        (let ((id (assqref 'id status))
+                              (retweeted-id
+                               (assqref 'id (assqref 'retweeted-status status))))
+                          (unless (or (not retweeted-id)
+                                      (gethash retweeted-id referring-id-table))
+                            ;; Store the id of the first observed tweet
+                            ;; that refers `retweeted-id'.
+                            (puthash retweeted-id id referring-id-table))
+                          (unless (gethash id id-table)
+                            (puthash id status id-table)
+                            (puthash id id referring-id-table)
+                            `((source-spec . ,spec)
+                              ,@status)))))
                     statuses))))
       (when new-statuses
         (puthash spec `(,id-table
