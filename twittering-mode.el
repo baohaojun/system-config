@@ -6193,7 +6193,9 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                         (cond
                          ((string= l "followers") "statuses/followers")
                          ((string= l "following") "statuses/friends")
-                         ((string= l "favorites") (concat "favorites/" u))
+                         ((string= l "favorites") (if (eq service 'sina)
+                                                      "favorites"
+                                                    (concat "favorites/" u)))
                          (t (concat "" u "/lists/" l "/statuses"))))))
                     ((search)
                      (twittering-lookup-service-method-table 'search-method))
@@ -6242,14 +6244,17 @@ block-and-report-as-spammer -- Block a user and report him or her as a spammer.
                             sentinel))
 
       ;; Favorite Methods
-      ((create-favorites)
-       (twittering-http-post api-host
-                             (twittering-api-path "favorites/create/" id)
-                             nil additional-info))
-      ((destroy-favorites)
-       (twittering-http-post api-host
-                             (twittering-api-path "favorites/destroy/" id)
-                             nil additional-info))
+      ((create-favorites destroy-favorites)
+       (let ((action (car (split-string (symbol-name command) "-")))
+             method parameters)
+         (case service
+           ((sina)
+            (setq method (format "favorites/%s" action)
+                  parameters `(("id" . ,id))))
+            (t
+             (setq method (format "favorites/%s/%s" action id))))
+
+         (twittering-http-post api-host (twittering-api-path method) parameters additional-info)))
 
       ;; List Subscribers Methods
       ((subscribe-list)
@@ -6793,15 +6798,16 @@ string.")
         ;;                                   `((username . ,username)
         ;;                                     (id . ,id)))
         ;; (format "%s/%s/statuses/%s?s=6cm7D0" api username id) ; oauth 1.0
-        (format "%s/%s/%s" web username
-                (mapconcat (lambda (s)
-                             (apply 'string (reverse (string-to-list s))))
-                           (mapcar 'twittering-int-to-radix62
-                                   (mapcar 'string-to-int
-                                           `(,(substring id 0 -14)
-                                             ,(substring id -14 -7)
-                                             ,(substring id -7))))
-                           ""))
+        (ignore-errors                  ; ignore deleted status
+          (format "%s/%s/%s" web username
+                  (mapconcat (lambda (s)
+                               (apply 'string (reverse (string-to-list s))))
+                             (mapcar 'twittering-int-to-radix62
+                                     (mapcar 'string-to-int
+                                             `(,(substring id 0 -14)
+                                               ,(substring id -14 -7)
+                                               ,(substring id -7))))
+                             "")))
       (format "%s/%s" web username))))
 
 (defun twittering-get-status-url-douban (username &optional id)
@@ -10237,7 +10243,14 @@ A4GBAFjOKer89961zgK5F7WF0bnj4JXMJTENAKaSbn+2kmOeUJXRmm/kEd5jhW6Y
                                                (assqref 'square45 (assqref 'avatars u)))))))))
              (assqref 'messages statuses))))
 
-     ((funcall has 'comments)          
+     ((funcall has 'favorites)
+      (mapcar (lambda (fav)
+                `(,@(assqref 'status fav)
+                  ,(assq 'favorited-time fav)
+                  ,(assq 'tags fav)))
+              (assqref 'favorites statuses)))
+     
+     ((funcall has 'comments)
       (assqref 'comments statuses))
 
      ((funcall has 'statuses)          
