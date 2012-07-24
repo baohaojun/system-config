@@ -3034,12 +3034,14 @@ the server when the HTTP status code equals to 400 or 403."
      ((string= status-code "200")
       (debug-printf "connection-info=%s" connection-info)
       (let ((statuses (twittering-construct-statuses)))
-        ;; Are we are fetching replies?
-        (when (eq (assqref 'command connection-info) 'show)
-          (setq statuses
-                (mapcar (lambda (st) `(,@st (twittering-reply? . t)))
-                        statuses)))
-        (twittering-update-timeline statuses spec)
+        (ignore-errors
+          (when (assqref 'id (car statuses))
+            ;; Are we are fetching replies?
+            (when (eq (assqref 'command connection-info) 'show)
+              (setq statuses
+                    (mapcar (lambda (st) `(,@st (twittering-reply? . t)))
+                            statuses)))
+            (twittering-update-timeline statuses spec)))
         (when (and twittering-notify-successful-http-get
                    (not (assqref 'noninteractive connection-info)))
           (format "Fetching %s.  Success." spec-string))))
@@ -3875,9 +3877,10 @@ current buffer."
 
 (defun twittering-open-url-externally (&optional next-nth)
   "Select and open url inside tweet.
-Optionally you may provide a number -- NEXT-NTH(starting from 1),
-we will open NEXT-NTH url directly. "
-  (interactive)
+Optionally you may provide a number, we will open NEXT-NTH url
+directly.  Specially, if NEXT-NTH is 0, it will open the embeded
+image directly.  "
+  (interactive "P")
   (let ((limit (or (twittering-get-next-status-head) (point-max)))
         (urls '())
         (start nil)
@@ -3900,12 +3903,26 @@ we will open NEXT-NTH url directly. "
                           urls)))
           (setq start end))))
     (setq urls (remove-duplicates urls :test 'equal))
-    (browse-url
-     (get-text-property
-      0 'uri
-      (if next-nth
-          (nth (1- next-nth) (reverse urls))
-        (completing-read "Open url externally: " (reverse urls)))))))
+    (ignore-errors
+      (browse-url
+       (get-text-property
+        0 'uri
+        (if next-nth
+            (if (zerop next-nth)
+                (find "IMAGE" urls :test 'equal)
+              (nth (1- next-nth) (reverse urls)))
+          (completing-read "Open url externally: " (reverse urls))))))))
+
+(defun twittering-open-all-thumbnails-externally ()
+  "Open all full size of the thumbnails with browse-url.  "
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (twittering-get-next-status-head)
+      (twittering-open-url-externally 0)
+      (twittering-goto-next-status))
+    (when (twittering-get-current-status-head)
+      (twittering-open-url-externally 0))))
 
 (defun twittering-restart ()
   (interactive)
@@ -4944,49 +4961,50 @@ rendered at POS, return nil."
   (twittering-fill-string
    (funcall formater status prefix) (length prefix) local-prefix keep-newline))
 
-(defun twittering-make-passed-time-string
-  (beg end created-at-str time-format &optional additional-properties)
-  (let* ((encoded (date-to-time created-at-str))
-         (secs (time-to-seconds (time-since encoded)))
-         (time-string
-          (cond
-           ((string= time-format "%g")
-            (if (< emacs-major-version 24)
-                (require 'gnus-util)
-              (require 'gnus-sum))
-            (gnus-user-date created-at-str))
+(defun twittering-make-passed-time-string (beg end created-at-str time-format
+                                               &optional additional-properties)
+  (when created-at-str
+    (let* ((encoded (date-to-time created-at-str))
+           (secs (time-to-seconds (time-since encoded)))
+           (time-string
+            (cond
+             ((string= time-format "%g")
+              (if (< emacs-major-version 24)
+                  (require 'gnus-util)
+                (require 'gnus-sum))
+              (gnus-user-date created-at-str))
 
-           ((< secs 5) "less than 5 seconds ago")
-           ((< secs 10) "less than 10 seconds ago")
-           ((< secs 20) "less than 20 seconds ago")
-           ((< secs 30) "half a minute ago")
-           ((< secs 60) "less than a minute ago")
-           ((< secs 150) "1 minute ago")
-           ((< secs 2400) (format "%d minutes ago"
-                                  (/ (+ secs 30) 60)))
-           ((< secs 5400) "about 1 hour ago")
-           ((< secs 84600) (format "about %d hours ago"
-                                   (/ (+ secs 1800) 3600)))
-           (t (format-time-string time-format encoded))))
-         (properties (append additional-properties
-                             (and beg (text-properties-at beg)))))
-    ;; Restore properties.
-    (when properties
-      (add-text-properties 0 (length time-string) properties time-string))
-    (if (and (< secs 84600)
-             (if (string= time-format "%g")
-                 (= (time-to-day-in-year (current-time))
-                    (time-to-day-in-year encoded))
-               t))
-        (put-text-property 0 (length time-string)
-                           'need-to-be-updated
-                           `(twittering-make-passed-time-string
-                             ,created-at-str ,time-format)
-                           time-string)
-      ;; Remove the property required no longer.
-      (remove-text-properties 0 (length time-string) '(need-to-be-updated nil)
-                              time-string))
-    time-string))
+             ((< secs 5) "less than 5 seconds ago")
+             ((< secs 10) "less than 10 seconds ago")
+             ((< secs 20) "less than 20 seconds ago")
+             ((< secs 30) "half a minute ago")
+             ((< secs 60) "less than a minute ago")
+             ((< secs 150) "1 minute ago")
+             ((< secs 2400) (format "%d minutes ago"
+                                    (/ (+ secs 30) 60)))
+             ((< secs 5400) "about 1 hour ago")
+             ((< secs 84600) (format "about %d hours ago"
+                                     (/ (+ secs 1800) 3600)))
+             (t (format-time-string time-format encoded))))
+           (properties (append additional-properties
+                               (and beg (text-properties-at beg)))))
+      ;; Restore properties.
+      (when properties
+        (add-text-properties 0 (length time-string) properties time-string))
+      (if (and (< secs 84600)
+               (if (string= time-format "%g")
+                   (= (time-to-day-in-year (current-time))
+                      (time-to-day-in-year encoded))
+                 t))
+          (put-text-property 0 (length time-string)
+                             'need-to-be-updated
+                             `(twittering-make-passed-time-string
+                               ,created-at-str ,time-format)
+                             time-string)
+        ;; Remove the property required no longer.
+        (remove-text-properties 0 (length time-string) '(need-to-be-updated nil)
+                                time-string))
+      time-string)))
 
 (defun twittering-render-timeline (buffer &optional additional timeline-data)
   (with-current-buffer buffer
