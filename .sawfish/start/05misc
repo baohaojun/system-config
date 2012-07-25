@@ -1,5 +1,10 @@
 #!/bin/bash
 echo sawfish starting sub programs
+
+if test -e ~/.fonts/symbol.ttf; then
+    mv ~/.fonts/symbol.ttf ~/tmp/symbol.ttf.$$
+fi
+
 rm ~/.fonts/monaco-windows.ttf -f
 sudo modprobe -r pcspkr 
 python3 ~/gcode/scim-cs/ime-py/ime-server.py&

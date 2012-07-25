@@ -28,3 +28,4 @@
   dns的设置过一段时间就被强行改掉
 
 * 改xp与win7的双启动修复利器：ntbootautofix。dual boot。
+* ~/.fonts下放一个windows下拷过来的symbol.ttf字体文件会导致evince打开pdf文件一些特殊字符显示异常

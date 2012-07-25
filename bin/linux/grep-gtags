@@ -4,6 +4,10 @@ use Getopt::Long;
 use strict;
 use String::ShellQuote;
 
+sub debug(@) {
+  print STDERR "@_\n";
+}
+
 open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
@@ -87,11 +91,12 @@ sub do_cscope($$$$) {
     my $gpath_path = "$gtags_dir/GPATH";
     my %update_path;
     for (sort {
-	abs(adistr($matches{$a}->[0], $approx_dir)) + abs(adistr($matches{$a}->[4], $lookup_needle))
+	abs(adistr($matches{$a}->[0], $approx_dir)) + abs(adistr($matches{$a}->[4], $lookup_needle)) / 2
 	    <=> 
-	    abs(adistr($matches{$b}->[0], $approx_dir)) + abs(adistr($matches{$b}->[4], $lookup_needle))
+	    abs(adistr($matches{$b}->[0], $approx_dir)) + abs(adistr($matches{$b}->[4], $lookup_needle)) / 2
 	 } @matches) {
 	# print 'dist between "' . $matches{$_}->[0] . '" and "' . $approx_dir . '" is ' . abs(adistr($matches{$_}->[0], $approx_dir)) . "\n";
+	# print 'dist between "' . $matches{$_}->[4] . '" and "' . $lookup_needle . '" is ' . abs(adistr($matches{$_}->[4], $lookup_needle)) . "\n";
 	my ($file, $line, $str) = ($matches{$_}->[0], $matches{$_}->[2], $matches{$_}->[3]);
         print "$code_dir/$file:$line: $str\n" unless $str =~ m/^#undef|^EXPORT_SYMBOL/ or $file =~ m,external/kernel-headers, or $file =~ m,android-[2-7]/arch-,;
 	$got_results = 1;
@@ -112,9 +117,6 @@ unless (@gtags_fallback_dir) {
   exit;
 }
 
-sub debug(@) {
-  print STDERR "@_\n";
-}
 
 map {chomp; my @dir = glob("~/$_"); $_ = $dir[0]} @gtags_fallback_dir;
 
