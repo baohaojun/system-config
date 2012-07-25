@@ -22,7 +22,7 @@ flock 9
         repo sync -j4 -d || die "repo sync failed"
         bpe-update -r
         my-rfa '
-            if test -e $ANDROID_TOP/flashing/quilt/$(repo-path)/series && gq next | grep -q .; then
+            if test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$(repo-path)/series && gq next | grep -q .; then
                 echo Error: $(pwd) guilt not cleanly applied
             fi
         ' | grep . && die "Error: guilt rebase not cleanly applied; need bail out." > build.log

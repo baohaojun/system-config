@@ -36,7 +36,7 @@ function die() {
 }
 
 if test $# = 1 -o ! -d .repo; then
-    args=flashing/quilt/$(repo-path)/series
+    args=flashing/quilt/$(repo-tracking)/$(repo-path)/series
 else
     cd $(lookup_file .repo/..)
     args=$(find flashing -type f -name series | grep -v -e '\.git')
@@ -48,7 +48,7 @@ echo will update the following: $args
 
 for x in $args; do
     (
-	proj=$(dirname $x | perl -npe 's,^flashing/quilt/,,')
+	proj=$(dirname $x | perl -npe 's,^flashing/quilt/$(repo-tracking)/,,')
 	patch_dir=$(pwd)/$(dirname $x)
 	export git_base=$(cat $patch_dir/.base)
         if test -n "$GQ_REBASE_FROM"; then

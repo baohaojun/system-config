@@ -40,7 +40,7 @@ git clean -xfd;
 '
 
 my-rfa $dirs '
-if test -e $ANDROID_DIR/flashing/quilt/$(repo-path); then
+if test -e $ANDROID_DIR/flashing/quilt/$(repo-tracking)/$(repo-path); then
     commit=$(git log --format=fuller --until="$ROLLBACK_TIME" $(repo-remote-branch) -1|head -n 1 | pn 2);
     export GQ_REBASE_TO=$commit
     export GQ_REBASE_FROM=$commit

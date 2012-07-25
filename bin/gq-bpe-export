@@ -6,7 +6,7 @@ if test $# -lt 1; then
 fi
 
 top=$(lookup_file .repo/..)
-outd=$top/flashing/quilt/$(repo-path)/
+outd=$top/flashing/quilt/$(repo-tracking)/$(repo-path)/
 mkdir -p $outd
 
 (
