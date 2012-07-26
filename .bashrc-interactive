@@ -4,6 +4,10 @@ if test "$EMACS" != t -a -e /etc/bash_completion; then
     . /etc/bash_completion
 fi
 
+for x in ~/.bash_completion.d/*; do 
+    . "$x"
+done
+
 function cd_bhj () 
 {
     local oldpwd=`pwd`

@@ -139,10 +139,6 @@ function mcd() {
     _select_cd $(lookup_file "$@")
 }
 
-for x in ~/.bash_completion.d/*; do 
-    . "$x"
-done
-
 alias hil=hir
 
 cd_record()

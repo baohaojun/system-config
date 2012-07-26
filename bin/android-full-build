@@ -62,6 +62,7 @@ fi
     set -e
     test -d "$ANDROID_PRODUCT_OUT"
     cd "$ANDROID_PRODUCT_OUT"
+    test -d .repo && die "can not do it; .repo means we are at android top."
     rm ../system.img ../obj/PACKAGING/systemimage_intermediates/system.img -vf
     rm kernel telephony uboot-obm -rf    
 ) || true

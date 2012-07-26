@@ -54,7 +54,7 @@ sub edit_1($)
     if (-e $file) {
 
       $file = shell_quote($file);
-      chomp($file = qx(lookup_file $file));
+      chomp($file = qx(lookup_file -e -- $file));
       return (@emacsclient, get_emacs_file_name($file));
 
     } else {
@@ -73,7 +73,7 @@ sub edit_1($)
       }
 
       $file = shell_quote($file);
-      chomp($file = qx(lookup_file $file|head -n 1));
+      chomp($file = qx(lookup_file -e -- $file|head -n 1));
       return (@emacsclient, "+$line", get_emacs_file_name($file));
     }
   }

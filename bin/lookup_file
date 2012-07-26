@@ -1,5 +1,24 @@
 #!/bin/bash
 
+exact=false
+TEMP=$(getopt -o e --long exact -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -e|--exact)
+            exact=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
 file=$1
 x=0
 
@@ -39,6 +58,10 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 	else
 	    echo "$file"
 	fi
+    fi
+) || (
+    if test $exact = true; then
+        which "$1" 2>/dev/null
     fi
 ) || (
     dir=`dirname -- "$file"`
