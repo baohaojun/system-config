@@ -8,26 +8,34 @@ function get_lang_for_file_from_globalrc() {
 
 regexp=hello
 silent=
+members=
 
-TEMP=$(getopt -o e:s -n $(basename $0) -- "$@")
+TEMP=$(getopt -o e:sma -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -e)
-        regexp=$2
-        shift 2
-        ;;
+            regexp=$2
+            shift 2
+            ;;
         -s)
             silent=-s
             shift 1
             ;;
+        -m)
+            members=-m
+            shift
+            ;;
+        -a)
+            shift
+            ;;
         --)
-        shift
-        break
-        ;;
+            shift
+            break
+            ;;
         *)
-        die "internal error"
-        ;;
+            die "internal error"
+            ;;
     esac
 done
 
@@ -40,7 +48,10 @@ for file in $(beagrep -e "\b$regexp\b" --grep -l); do
     gtags_rc=$(lookup_file .globalrc)
     if test -e "$gtags_rc"; then
         GTAGS_LANG_FORCE=$(get_lang_for_file_from_globalrc "$file" $gtags_rc)
+        if test "$GTAGS_LANG_FORCE" = unknown; then
+            continue
+        fi
     fi
     export GTAGS_START_FILE=$file
-    grep-func-call -e "$regexp" $silent| grep -v '^$'
+    grep-func-call -e "$regexp" $silent $members| grep -v '^$'
 done

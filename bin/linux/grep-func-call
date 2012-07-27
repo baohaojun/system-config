@@ -7,11 +7,22 @@ use Getopt::Long;
 
 my $silent = 0;
 my $target = "hello";
+my $members = 0;
+my $grep_all = 0;
+
+my @saved_argv = @ARGV;
 
 GetOptions(
     "s!" => \$silent,
+    "a!" => \$grep_all,
+    "m!" => \$members,
     "e=s" => \$target,
     );
+
+if ($grep_all) {
+    system("grep-func-call-all", @saved_argv);
+    exit 0;
+}
 
 open(my $out, "-|",  "ctags-exuberant --language-force=" . $ENV{GTAGS_LANG_FORCE} . " -xu " . $ENV{GTAGS_START_FILE})
     or die "Error: open gtags output";
@@ -25,57 +36,69 @@ print $env "export GTAGS_START_FILE=$ENV{GTAGS_START_FILE}\n";
 open(my $debug, ">", glob("~/.logs/grep-func-call.log"))
   or die "Error: can not open log";
 
+sub debug(@) {
+    print $debug "@_\n";
+}
+
 my %func_location_map;
-my @func_lines;
+my @func_locations;
 
 $func_location_map{1} = "******";
+$func_location_map{10000000} = "******";
 while(<$out>) {
   print $debug "$_";
     m/(\S*?)\s+(\S*?)\s+(\S*?)\s+(.*)/ or next;
     my ($func, $type, $line) = ($1, $2, $3);
-    $func_location_map{$line} = $func if $type eq "function" or $type eq "method" or $type eq "macro";
+    $func_location_map{$line} = $func if $type eq "function" or $type eq "method" or $type eq "macro" or $type eq "class";
 }
 
-@func_lines = sort { $a <=> $b } keys %func_location_map;
+@func_locations = sort { $a <=> $b } keys %func_location_map;
 open(my $file, "<", $ENV{GTAGS_START_FILE}) or die "Error: open source file";
 
-print $debug "func_lines are @func_lines\n";
-my $last_match_func_ln = 1;
+print $debug "func_locations are @func_locations\n";
+my $last_match_func_location = 1;
 my %file_line_map;
+my %printed_func_map;
 while(<$file>) {
     $file_line_map{$.} = $_;
-    if (m/$target/) {
-	print $debug ":$.: $_";
-	my $last_checked_func_ln = -1;
-	my $line = $_;
+    next unless m/$target/;
 
-	my $next_func_line = 0;
-	for (@func_lines) {
-	    $next_func_line++;
-	    if ($next_func_line < @func_lines and 
-		(
-		 $. == $func_lines[$next_func_line] 
-		)
-		) { # the current line is a defun
-		last;
-	    }
+    debug ":$.: $_";
+    my $last_checked_func_location = -1;
+    my $line_str = $_;
+    my $line_no = $.;
 
-	    if ($. < $_ or $_ == $func_lines[@func_lines - 1]) {
-		if ($last_checked_func_ln != $.) {
-		    print $ENV{GTAGS_START_FILE} . ":$last_checked_func_ln: <= " 
-			. 
-			(
-			 $silent ? $func_location_map{$last_checked_func_ln} : $file_line_map{$last_checked_func_ln}
-			)
-			unless $last_checked_func_ln == $last_match_func_ln; # do not print again for the same caller
-
-		    print $ENV{GTAGS_START_FILE} . ":$.: => " . $line unless ($silent or $func_location_map{$last_checked_func_ln} eq "******"); # print the callee.
-		}
-		$last_match_func_ln = $last_checked_func_ln;
-		last;
-	    }
-	    $last_checked_func_ln = $_;
+    my $next_func_location_idx = 0;
+    my $func_location_before;
+    for my $idx (1.. (@func_locations - 1)) {
+	if ($func_locations[$idx] > $.) {
+	    $func_location_before = $func_locations[$idx - 1];
+	    last;
 	}
     }
+    
+    next if $func_location_map{$func_location_before} eq "******";
+    if ($func_location_map{$func_location_before} =~ m/$target/) { # this is the definition of target
+	next;
+    }
+
+    if ($members == 0 && $func_location_before == $line_no && $file_line_map{$line_no} =~ m/\b$target\b/) {
+	next;
+    } else {
+	debug "members: $members, func_location_before: $func_location_before, line: $line_no, file_line_map{\$line_no}: $file_line_map{$line_no}, target: $target";
+    }
+
+
+    unless ($printed_func_map{$func_location_before}) {
+	print $ENV{GTAGS_START_FILE} . ":$func_location_before: <= " 
+	    . 
+	    (
+	     $silent ? ($func_location_map{$func_location_before} . "\n") : $file_line_map{$func_location_before}
+	    );
+	$printed_func_map{$func_location_before} = 1;
+    }
+
+    print $ENV{GTAGS_START_FILE} . ":$.: => " . $line_str unless ($silent);
 }
+
 

@@ -1,4 +1,11 @@
 #!/bin/bash
+
+export sig=-9
+if test "${1:0:1}" = -; then
+    sig=$1
+    shift
+fi
+    
 match=$1
 shift
-ps.pl $match | grep -v $(basename $0) | tee /dev/stderr | pn 1  | xargs bash -c 'for x in $@; do  kill -9 "$x"; done' true
+ps.pl $match | grep -v $(basename $0) | tee /dev/stderr | pn 1  | xargs bash -c 'for x in $@; do  kill $sig "$x"; done' true

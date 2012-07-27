@@ -29,7 +29,7 @@ fi
 
 	    url=$(printf http://%s%s $host $id)
 	fi
-	of "$url"
+	firefox "$url"
 	sleep 1;
     done
 )

@@ -61,7 +61,7 @@ if test -z "$TODAYS_CHANGES_DIR"; then
     fi
 fi
 
-TODAYS_CHANGES_DIR=$(echo "$TODAYS_CHANGES_DIR" | perl -npe 's/:|~| /-/g')
+TODAYS_CHANGES_DIR=$(echo "$TODAYS_CHANGES_DIR" | perl -npe 's/:|~| /-/g; s/-23-59-59\+08-00//g')
 mkdir -p "$TODAYS_CHANGES_DIR"
 
 if test "$from" = "$(day-start- -1)" -a "$to" = "$(day-end- -1)"; then

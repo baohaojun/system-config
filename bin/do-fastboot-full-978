@@ -26,91 +26,93 @@ export PATH=$(dirname "$(readlink -f "$0")"):$PATH
 
 set -e
 
-part_table=$(fastboot oem part 2>&1)
-is_old_part_table=false
-if echo "$part_table" | grep -q -e 'td_cp'; then
-    is_old_part_table=true
-fi
+time (
 
-test -e system.img || cd $(lookup_file flashing)
-function die() {
-    echo "$@"
-    exit -1
-}
-
-if test $(basename $0) = do-fastboot-full-978; then
-    if test $# != 1 -o ! -e $1; then
-	die "Usage: $(basename $0) XXX.blf"
+    part_table=$(fastboot oem part 2>&1)
+    is_old_part_table=false
+    if echo "$part_table" | grep -q -e 'td_cp'; then
+        is_old_part_table=true
     fi
-else
-    if test $# -lt 2; then
-	die "Usage: $(basename $0) blf partitions..."
-    fi
-fi
 
+    test -e system.img || cd $(lookup_file flashing)
+    function die() {
+        echo "$@"
+        exit -1
+    }
 
-export blf=$(readlink -m "$1")
-test -e "$blf" || die "no such file $blf"
-export BLF=$blf
-
-shift
-export partitions=("$@")
-
-function should-do-it() {
     if test $(basename $0) = do-fastboot-full-978; then
-	return 0;
+        if test $# != 1 -o ! -e $1; then
+	    die "Usage: $(basename $0) XXX.blf"
+        fi
+    else
+        if test $# -lt 2; then
+	    die "Usage: $(basename $0) blf partitions..."
+        fi
     fi
 
-    for x in "${partitions[@]}"; do
-	if test "$1" = "$x"; then
-	    return 0
-	fi
-    done
-    return 1
-}
+
+    export blf=$(readlink -m "$1")
+    test -e "$blf" || die "no such file $blf"
+    export BLF=$blf
+
+    shift
+    export partitions=("$@")
+
+    function should-do-it() {
+        if test $(basename $0) = do-fastboot-full-978; then
+	    return 0;
+        fi
+
+        for x in "${partitions[@]}"; do
+	    if test "$1" = "$x"; then
+	        return 0
+	    fi
+        done
+        return 1
+    }
 
 # product=$(fastboot getvar product 2>&1 | grep product: | pn 2)
 # if test "$product.blf" != $(basename $blf); then
 #     die "You are trying to flash product '$product' with $(basename $blf), it is not allowed!"
 # fi
 
-function do-partition() {
-    part=$1
-    should-do-it $part || return 0
-    if test $is_old_part_table = true; then
-        case $1 in
-            tdCp)
-                part=td_cp
-                ;;
-            tdTelephony)
-                part=td_telephony
-                ;;
-            tdNvm)
-                part=td_nvm
-                ;;
-            system)
-                part=android_system
-                ;;
-            userdata)
-                part=android_data
-                ;;
-        esac
-    fi
+    function do-partition() {
+        part=$1
+        should-do-it $part || return 0
+        if test $is_old_part_table = true; then
+            case $1 in
+                tdCp)
+                    part=td_cp
+                    ;;
+                tdTelephony)
+                    part=td_telephony
+                    ;;
+                tdNvm)
+                    part=td_nvm
+                    ;;
+                system)
+                    part=android_system
+                    ;;
+                userdata)
+                    part=android_data
+                    ;;
+            esac
+        fi
 
-    if test $# != 2; then
-        die "Usage: do-partition PARTNAME IMAGE_PATH"
-    fi
-    fastboot erase $part;
-    fastboot flash $part "$2"
-}
+        if test $# != 2; then
+            die "Usage: do-partition PARTNAME IMAGE_PATH"
+        fi
+        fastboot erase $part;
+        fastboot flash $part "$2"
+    }
 
-function get-image-path() {
-    IMG_PATH=$(get-blf-img-val $blf $1 Path)
-    if test "$(arg1-arg2 "$1" "$OVERIDE_IMAGES")" = ""; then
-        IMG_PATH=$OVERIDE_PATH/$(basename $IMG_PATH)
-    fi
-    echo $IMG_PATH
-}
+    function get-image-path() {
+        IMG_PATH=$(get-blf-img-val $blf $1 Path)
+        if test "$(arg1-arg2 "$1" "$OVERIDE_IMAGES")" = ""; then
+            IMG_PATH=$OVERIDE_PATH/$(basename $IMG_PATH)
+        fi
+        echo $IMG_PATH
+    }
 
 # $for x in $(seq 1 16); do echo $(get-blf-img-val *.blf $x 'ID Name') $(get-blf-img-val *.blf $x Path);  done
 # TIMH PXA920_NTIM.bin
@@ -130,36 +132,41 @@ function get-image-path() {
 # PMCE prdcfg.bin
 # ERAN panic.part
 
-do-partition uboot "$(get-image-path OSLO)"
-do-partition ramdisk "$(get-image-path RAMD)"
-do-partition kernel "$(get-image-path ZIMG)"
-do-partition tdCp "$(concat-file 0 ARBI 7M GRBI 10M GRB2)"
-do-partition recovery "$(concat-file 0 OSLR 1M ZIMR 5M RAMR)"
+    do-partition uboot "$(get-image-path OSLO)"
+    do-partition ramdisk "$(get-image-path RAMD)"
+    do-partition kernel "$(get-image-path ZIMG)"
+    do-partition tdCp "$(concat-file 0 ARBI 7M GRBI 10M GRB2)"
+    do-partition recovery "$(concat-file 0 OSLR 1M ZIMR 5M RAMR)"
 
 
-do-partition system "$(get-image-path SYSY)"
-do-partition userdata "$(get-image-path USRY)"
-do-partition logo "$(get-image-path PLGO)" || true
-
-do-partition tdTelephony "$(get-image-path PXAY)"
-do-partition GPT "$(get-image-path PGPT)"
-do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
-do-partition OBM $(concat-file 0 ntim_emmc.bin 4K OBMI)
-
-if test $(basename $0) = do-fastboot-full-978; then
-    fastboot erase misc
-    fastboot erase Cache
-    if test $is_old_part_table = true; then
-        fastboot erase td_nvm
-    else
-        fastboot erase tdNvm
+    do-partition system "$(get-image-path SYSY)"
+    do-partition userdata "$(get-image-path USRY)"
+    do-partition pmce $(concat-file 0 PMCE 256K LOGO) || true
+    if test "$do_factory" = true; then
+        do-partition factory "$(get-image-path FACT)"
     fi
-    for x in obm mep pinmux; do
-        fastboot erase $x
-    done
-    fastboot erase MRD
-    fastboot erase MRDBackup
-fi
+    do-partition tdTelephony "$(get-image-path PXAY)"
+
+    do-partition GPT "$(get-image-path PGPT)"
+    do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
+    do-partition OBM $(concat-file 0 ntim_emmc.bin 4K OBMI)
+
+
+    if test $(basename $0) = do-fastboot-full-978; then
+        fastboot erase misc
+        fastboot erase Cache
+        if test $is_old_part_table = true; then
+            fastboot erase td_nvm
+        else
+            fastboot erase tdNvm
+        fi
+        for x in obm mep pinmux; do
+            fastboot erase $x
+        done
+        fastboot erase MRD
+        fastboot erase MRDBackup
+    fi
+)
 
 if test $(basename $0) = do-fastboot-full-978; then
     read -p "Press enter to restart fastboot "

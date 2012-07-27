@@ -4,12 +4,43 @@ set -xe
 
 set -o pipefail
 
+rev=HEAD
+
+TEMP=$(getopt -o r: --long revision: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -r|--revision)
+        rev=$2
+        shift 2
+        ;;
+        --)
+        shift
+        break
+        ;;
+        *)
+        die "internal error"
+        ;;
+    esac
+done
+
+reviewers=()
+while test $# -gt 0; do 
+    reviewers=("${reviewers[@]}" "$(echo "${1%@*}"|perl -npe 's/.*<//')")
+    shift
+done
+
+
 # git pull ssh://hjbao@bear:29418/android/platform/external/rayzerlink-tools refs/changes/74/474/1
 export REMOTE=$( (repo-review-url) )
 
 (
     if tty >/dev/null 2>&1; then
-	git push $REMOTE ${1:-HEAD}:refs/for/`repo-branch` 2>&1 |
+	git push  --receive-pack="$(
+            echo -n 'git receive-pack ';
+            for x in "${reviewers[@]}"; do
+                echo -n "--reviewer=$x "
+            done)" $REMOTE "$rev":refs/for/`repo-branch` 2>&1 |
 	grep -v 'x11 forwarding' -i |
 	perl -npe '
     if (m,http://bear/gerrit/(\d+),) {
@@ -19,7 +50,7 @@ export REMOTE=$( (repo-review-url) )
 	echo
 	echo '* git commit message:'
 	echo
-	git log -1 ${1:-HEAD}
+	git log -1 "$rev"
     else
 	cat
     fi

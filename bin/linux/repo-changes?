@@ -85,7 +85,7 @@ head_rev=$(git rev-parse HEAD)
 if test "$DO_GIT_ST_ONLY" != true -a "$head_rev" != "$rev"; then
     need_bail=true
 
-    if test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$path/series; then
+    if git symbolic-ref HEAD >/dev/null 2>&1 && test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$path/series; then
         if test "$(git rev-parse HEAD"~$(gq applied 2>/dev/null|wc -l )")" = $rev; then
             need_bail=false
         fi
