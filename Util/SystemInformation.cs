@@ -316,13 +316,7 @@ namespace Beagrep.Util {
 
 		public static bool IsPathOnBlockDevice (string path)
 		{
-			Mono.Unix.Native.Stat stat;
-			if (Mono.Unix.Native.Syscall.stat (path, out stat) != 0) {
-				Log.Warn ("Unable to stat() {0}: {1}", path, Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ()));
-				return true;
-			}
-			
-			return (stat.st_dev >> 8 != 0);
+			return true;
 		}
 
 		///////////////////////////////////////////////////////////////
