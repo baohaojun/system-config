@@ -13,10 +13,10 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(defconst weibo-api-send-comment "statuses/comment")
-(defconst weibo-api-send-reply "statuses/reply")
-(defconst weibo-api-comments-by-me-timeline "statuses/comments_by_me")
-(defconst weibo-api-comments-to-me-timeline "statuses/comments_to_me")
+(defconst weibo-api-send-comment "comments/create")
+(defconst weibo-api-send-reply "comments/reply")
+(defconst weibo-api-comments-by-me-timeline "comments/by_me")
+(defconst weibo-api-comments-to-me-timeline "comments/to_me")
 
 ;; id: 评论ID
 ;; text: 评论内容
@@ -93,6 +93,10 @@
 	   (user_name (weibo-user-screen_name (weibo-comment-user comment))))
       (weibo-create-post (format "回复@%s:" user_name) "回复评论" nil 'weibo-send-reply cid id))))
 
+(defun weibo-parse-comment-result (root &rest data)
+  (when (weibo-check-result root)
+    (message "发布成功！")))
+
 (defun weibo-send-reply (text cid id)
   (let ((data nil)
 	(api weibo-api-send-reply))
@@ -103,7 +107,7 @@
       (add-to-list 'data `("comment" . ,text))
       (add-to-list 'data `("id" . ,id))
       (add-to-list 'data `("cid" . ,cid))
-      (weibo-post-data api 'weibo-parse-data-result data nil nil)))))
+      (weibo-post-data api 'weibo-parse-comment-result data nil nil)))))
 
 (defun weibo-send-comment (text comment-id)
   (let ((data nil)
@@ -114,7 +118,7 @@
      (t
       (add-to-list 'data `("comment" . ,text))
       (add-to-list 'data `("id" . ,comment-id))
-      (weibo-post-data api 'weibo-parse-data-result data nil nil)))))
+      (weibo-post-data api 'weibo-parse-comment-result data nil nil)))))
 
 (defun weibo-look-comment-status (comment &rest p)
   (when comment
@@ -148,6 +152,7 @@
 (defun weibo-comment-timeline-provider (key name data)
   (make-weibo-timeline-provider
    :key key
+   :tag 'comments
    :name name
    :make-function 'weibo-make-comment
    :pretty-printer-function 'weibo-comment-pretty-printer

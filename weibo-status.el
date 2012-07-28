@@ -64,7 +64,7 @@
 		       (when retweeted
 			 (weibo-make-status retweeted)))
    :created_at (weibo-get-node-text node 'created_at)
-   :user (weibo-make-user (weibo-get-node node 'user))
+   :user (when (weibo-get-node node 'user) (weibo-make-user (weibo-get-node node 'user)))
    :comments "0"
    :rt "0"))
 
@@ -90,8 +90,10 @@
       (when retweeted
 	(insert weibo-timeline-sub-separator "\n")
 	(insert " 提到：" indent))
-      (weibo-insert-user (weibo-status-user status) nil)
-      (insert "说道：\n")
+      (when (weibo-status-user status)
+	(weibo-insert-user (weibo-status-user status) nil)
+	(insert "说道："))
+      (insert "\n")
       (insert indent)
       (weibo-timeline-insert-text (weibo-status-text status))
       (when (weibo-status-thumbnail_pic status) (insert indent))
@@ -106,18 +108,20 @@
 	(insert weibo-timeline-sub-separator "\n")))))
 
 (defun weibo-parse-status-time (time-string)
-  (let ((now (current-time-string)))
-    (if (< 0 (days-between now time-string))
-      (if (= (nth 5 (parse-time-string now)) (nth 5 (parse-time-string time-string)))
-	  (format-time-string "%m月%d日 %H:%M" (date-to-time time-string))
-	(format-time-string "%Y年%m月%d日 %H:%M" (date-to-time time-string)))
-      (let* ((seconds (floor (time-to-seconds (time-since time-string))))
-	     (hours (/ seconds 3600))
-	     (minutes (/ (% seconds 3600) 60)))
-	(cond
-	 ((< 0 hours) (format-time-string "今天%H:%M" (date-to-time time-string)))
-	 ((< 0 minutes) (format "%d分钟前" minutes))
-	 (t (format "%d秒前" seconds)))))))
+  (if (= (length time-string) 0)
+      ""
+    (let ((now (current-time-string)))
+      (if (< 0 (days-between now time-string))
+	  (if (= (nth 5 (parse-time-string now)) (nth 5 (parse-time-string time-string)))
+	      (format-time-string "%m月%d日 %H:%M" (date-to-time time-string))
+	    (format-time-string "%Y年%m月%d日 %H:%M" (date-to-time time-string)))
+	(let* ((seconds (floor (time-to-seconds (time-since time-string))))
+	       (hours (/ seconds 3600))
+	       (minutes (/ (% seconds 3600) 60)))
+	  (cond
+	   ((< 0 hours) (format-time-string "今天%H:%M" (date-to-time time-string)))
+	   ((< 0 minutes) (format "%d分钟前" minutes))
+	   (t (format "%d秒前" seconds))))))))
 
 (defun weibo-update-status (status-list type)
   (when status-list
@@ -211,6 +215,7 @@
 (defun weibo-status-timeline-provider (key name data)
   (make-weibo-timeline-provider
    :key key
+   :tag 'statuses
    :name name
    :make-function 'weibo-make-status
    :pretty-printer-function 'weibo-status-pretty-printer

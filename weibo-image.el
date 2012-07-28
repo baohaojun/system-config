@@ -18,6 +18,8 @@
 (defvar weibo-display-image t
   "When set to true, images are displayed. Set it to nil to disable image display")
 
+(setq max-image-size t)
+
 (defvar weibo-download-image-queue nil)
 (defvar weibo-download-image-queue2 nil)
 
@@ -62,7 +64,8 @@
 			      (write-file image-file)))
 			  (kill-buffer)
 			  (setq weibo-download-image-queue2 (remove url weibo-download-image-queue2))
-			  (when (= (% (length weibo-download-image-queue2) 5) 0)
+			  (when (or (= (% (length weibo-download-image-queue2) 5) 0)
+				    (< (length weibo-download-image-queue2) 5))
 			    (with-current-buffer buffer
 			      (let ((current-position (point)))
 				(ewoc-refresh weibo-timeline-data)
@@ -74,12 +77,13 @@
 
 (defun weibo-get-image-file (url &optional download-synchronously)
   (if weibo-display-image
-      (let ((image-file (weibo-make-image-file-name url)))
-	(unless (file-exists-p image-file)
-	  (if download-synchronously
-	      (weibo-download-image-file url)
-	    (weibo-add-to-image-download-queue url)))
-	(if (file-exists-p image-file) image-file nil))
+      (if url
+	  (let ((image-file (weibo-make-image-file-name url)))
+	    (unless (file-exists-p image-file)
+	      (if download-synchronously
+		  (weibo-download-image-file url)
+		(weibo-add-to-image-download-queue url)))
+	    (if (file-exists-p image-file) image-file nil)))
     nil))
 
 (defun weibo-insert-image (image-file &optional url)

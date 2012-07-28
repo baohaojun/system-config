@@ -13,9 +13,9 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(require 'hex-util)
-(require 'oauth)
+(require 'url)
 (require 'json)
+(require 'weibo-authorize)
 (require 'weibo-timeline)
 (require 'weibo-status)
 (require 'weibo-user)
@@ -24,52 +24,45 @@
 (require 'weibo-comment)
 (require 'weibo-status-comment)
 
-(defconst weibo-request-url "http://api.t.sina.com.cn/oauth/request_token" "Request the unauthorized token")
-(defconst weibo-authorized-url "http://api.t.sina.com.cn/oauth/authorize" "Redirect the user to this url")
-(defconst weibo-access-url "http://api.t.sina.com.cn/oauth/access_token" "Request an access token")
-(defconst weibo-api-url "http://api.t.sina.com.cn/" "API base url")
+(defconst weibo-api-url "https://api.weibo.com/2/" "API base url")
 
 (defvar weibo-directory "~/.t.weibo.emacs.d")
-(defvar weibo-consumer-key "214135744")
-(defvar weibo-consumer-secret "1e0487b02bae1e0df794ebb665d12cf6")
 (defvar weibo-token nil)
-
-(setq oauth-use-curl nil)
+(defvar weibo-token-expire nil)
 
 (defun weibo-get-token-file ()
   (unless (file-exists-p (expand-file-name weibo-directory))
     (make-directory (expand-file-name weibo-directory) t))
-  (expand-file-name "token" weibo-directory))
+  (expand-file-name "token2" weibo-directory))
 
 (defun weibo-get-token ()
   (unless weibo-token
     (weibo-authorize))
   weibo-token)
 
+(defun weibo-parse-token (string)
+  (when (string-match "\\([^:]*\\):\\(.*\\)" string)
+    (setq weibo-token (match-string 1 string))
+    (setq weibo-token-expire (match-string 2 string))))
+
+(defun weibo-token-expired ()
+  (when weibo-token-expire
+    (> (float-time) (string-to-number weibo-token-expire))))
+
 (defun weibo-authorize (&optional reauthorize)
-  (if (file-exists-p (weibo-get-token-file))
-      (progn
-	(save-excursion
+  (when (file-exists-p (weibo-get-token-file))
+    (save-excursion
 	  (find-file (weibo-get-token-file))
-	  (let ((str (buffer-substring-no-properties (point-min) (point-max))))
-	    (if (string-match "\\([^:]*\\):\\(.*\\)" str)
-		(setq weibo-token (make-oauth-access-token
-				   :consumer-key weibo-consumer-key
-				   :consumer-secret weibo-consumer-secret
-				   :auth-t (make-oauth-t
-					    :token (match-string 1 str)
-					    :token-secret (match-string 2 str))))))
+	  (weibo-parse-token (buffer-substring-no-properties (point-min) (point-max)))	 
 	  (save-buffer)
-	  (kill-this-buffer))))
-  (when (or reauthorize (not weibo-token))
-    (setq weibo-token (oauth-authorize-app weibo-consumer-key weibo-consumer-secret weibo-request-url weibo-access-url weibo-authorized-url)))
+	  (kill-this-buffer)))
+  (when (or reauthorize (not weibo-token) (weibo-token-expired))
+    (weibo-parse-token (weibo-authorize-app))
+    (setq weibo-token-expire (number-to-string (+ (float-time) (string-to-number weibo-token-expire)))))
   (save-excursion
     (find-file (weibo-get-token-file))
-    (let ((token (oauth-access-token-auth-t weibo-token)))
-      (erase-buffer)
-      (insert (format "%s:%s\n"
-		      (oauth-t-token token)
-		      (oauth-t-token-secret token))))
+    (erase-buffer)
+    (insert (format "%s:%s\n" weibo-token weibo-token-expire))
     (save-buffer)
     (kill-this-buffer))
   weibo-token)
@@ -107,20 +100,36 @@
 	    (json-read)
 	  ((error nil) `((error . ,(buffer-substring (point-min) (point-max))))))))))
 
+(defun weibo-retrieve-url (url)
+  (let ((url-request-method "GET")
+	(url-request-extra-headers
+	 `(("Authorization" . ,(format "OAuth2 %s" (url-hexify-string (weibo-get-token)))))))
+    (url-retrieve-synchronously url)))
+
+(defun weibo-send-url (url args)
+  (let ((url-request-method "POST")
+	(url-request-extra-headers
+	 `(("Content-Type" . "application/x-www-form-urlencoded")
+	   ("Authorization" . ,(format "OAuth2 %s" (url-hexify-string (weibo-get-token))))))
+	(url-request-data
+	 (mapconcat (lambda (arg)
+		      (concat (url-hexify-string (car arg))
+			      "="
+			      (url-hexify-string (cdr arg))))
+		    args
+		    "&")))
+    (url-retrieve-synchronously url)))
+
 (defun weibo-get-data (item callback &optional param &rest cbdata)
   (let ((root (with-current-buffer
-		       (oauth-fetch-url
-			(weibo-get-token)
-			(concat (format "%s%s.json" weibo-api-url item) param))
-		     (weibo-get-body))))
+		  (weibo-retrieve-url (concat (format "%s%s.json" weibo-api-url item) param))
+		(weibo-get-body))))
     (apply callback (cons root cbdata))))
 
 (defun weibo-post-data (item callback vars &optional param &rest cbdata)
-  (let ((root (car (with-current-buffer
-		       (oauth-post-url
-			(weibo-get-token)
-			(concat (format "%s%s.json" weibo-api-url item) param) vars)
-		     (weibo-get-body)))))
+  (let ((root (with-current-buffer
+		       (weibo-send-url (concat (format "%s%s.json" weibo-api-url item) param) vars)
+		     (weibo-get-body))))
     (apply callback (cons root cbdata))))
 
 (defun weibo-parse-data-result (root &rest data)

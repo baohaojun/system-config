@@ -15,7 +15,7 @@
 
 
 (defconst weibo-timeline-status-comment-buffer-name "*weibo-status-comment*")
-(defconst weibo-api-status-comments-timeline "statuses/comments")
+(defconst weibo-api-status-comments-timeline "comments/show")
 
 (defun weibo-pull-status-comments (data parse-func new status)
   (let* ((id (and status (weibo-status-id status)))
@@ -47,6 +47,7 @@
 (defun weibo-status-comments-timeline-provider (status)
   (make-weibo-timeline-provider
    :key nil
+   :tag 'comments
    :name "察看微博"
    :make-function 'weibo-make-comment
    :pretty-printer-function 'weibo-status-comments-pretty-printer

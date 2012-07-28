@@ -40,11 +40,13 @@
 
 (defvar weibo-timeline-timer nil)
 
-(defconst weibo-api-status-unread "statuses/unread")
-(defconst weibo-api-reset-count "statuses/reset_count")
+(defconst weibo-api-status-unread "remind/unread_count")
+(defconst weibo-api-reset-count "remind/set_count")
 
 (defun weibo-timeline-get-unread (&optional param)
-  (weibo-get-data weibo-api-status-unread 'weibo-timeline-parse-unread param))
+  (if nil
+      (weibo-get-data weibo-api-status-unread 'weibo-timeline-parse-unread param))
+  "")
 
 (defun weibo-timeline-parse-unread (root)
   (when (weibo-check-result root)
@@ -71,11 +73,13 @@
 	   (format "新评论(%s) " comments)))))))
 
 (defun weibo-timeline-reset-count (type)
-  (weibo-post-data weibo-api-reset-count (lambda (root))
-		   `(("type" . ,type))))
+  (if nil
+      (weibo-post-data weibo-api-reset-count (lambda (root))
+		       `(("type" . ,type)))))
 
 (defstruct weibo-timeline-provider
   key
+  tag
   name
   make-function
   pretty-printer-function
@@ -148,8 +152,9 @@
 (defun weibo-timeline-parse-data (root front-t &optional clear-t)
   (when clear-t (ewoc-filter weibo-timeline-data (lambda (data) nil)))
   (when (weibo-check-result root)
-    (let ((proc-func (if front-t 'ewoc-enter-first 'ewoc-enter-last))
-	  (data (append root nil)))
+    (let* ((proc-func (if front-t 'ewoc-enter-first 'ewoc-enter-last))
+	   (tag (weibo-timeline-provider-tag weibo-timeline-current-provider))
+	   (data (append (cdr (assoc tag root)) nil)))
       (mapc '(lambda (node)
 	       (apply proc-func (list weibo-timeline-data
 				      (apply
@@ -318,7 +323,8 @@
 	(mapc (lambda (data)
 		(ewoc-enter-last weibo-timeline-data data)) result-list))
       (weibo-timeline-update-header unread)
-      (goto-char old-point))))
+      (goto-char old-point))
+    (run-with-idle-timer 0.2 nil 'weibo-download-image-in-queue)))
 
 (defconst weibo-timeline-help-content
   "* 简介
