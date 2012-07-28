@@ -10,7 +10,7 @@ Initialization:
 Usage:
 
 1. Please make sure you have GNUTLS (or OPENSSL) installed and
-   functionaly:
+   functional:
    - You should either have gnutls-cli or openssl in your PATH
    - Or if you are using Emacs 24, you can also use the built-in GNUTLS
      support if enabled
