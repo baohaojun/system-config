@@ -8,17 +8,21 @@ Initialization:
     (add-to-list 'load-path "path to directory")
 
 Usage:
-1. Load the weibo library:
+
+1. Please make sure you have GNUTLS (or OPENSSL) installed and
+   functionaly:
+   - You should either have gnutls-cli or openssl in your PATH
+   - Or if you are using Emacs 24, you can also use the built-in GNUTLS
+     support if enabled
+
+2. Load the weibo library:
      (require 'weibo)
 
-2. It uses the EMACS built-in url-retrieve by default. To use curl
-    instead:
-     (setq oauth-use-curl t)
-
 3. Authorization:
-   - The first time you use the client(e.g., check the time line), you
-     will be redirected to the Sina authorization page, where you can
-     authorize this client and see a pin number.     
+   - The first time you use the client(e.g., check the time line) or
+     if your token expired, you will be redirected to the Sina
+     authorization page, where you can authorize this client and see a
+     pin number.
    - Input that pin number into the echo area in EMACS
     
 4. Check your timeline:
