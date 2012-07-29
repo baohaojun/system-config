@@ -15,6 +15,7 @@
 
 (require 'url)
 (require 'json)
+(require 'cl)
 (require 'weibo-authorize)
 (require 'weibo-timeline)
 (require 'weibo-status)
