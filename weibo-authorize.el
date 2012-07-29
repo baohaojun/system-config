@@ -22,7 +22,8 @@
 (defvar weibo-consumer-secret "1e0487b02bae1e0df794ebb665d12cf6")
 
 (defun weibo-authorize-cb-filter (proc string)
-  (process-send-string proc "<script type=\"text/javascript\" >var hash = document.location.hash.substring(1); var result = \"\"; var token=\"\"; var expire=\"\"; var params = hash.split(\"&\"); for (var i = 0; i < params.length; i ++) {var pairs = params[i].split(\"=\"); if (pairs[0] == \"access_token\") token=pairs[1]; if (pairs[0] == \"expires_in\") expire=pairs[1];}window.onload=function(){document.getElementById(\"access\").innerText = token + \":\" + expire;}</script><html><body>emacs.weibo提示您，您的授权码是：<div style=\"border:1px solid;\" id=\"access\"></div>请将框中的字符粘贴回emacs中</html>")
+  (process-send-string proc "")
+  (process-send-string proc "<html><head><script type=\"text/javascript\" >var hash = document.location.hash.substring(1); var result = \"\"; var token=\"\"; var expire=\"\"; var params = hash.split(\"&\"); for (var i = 0; i < params.length; i ++) {var pairs = params[i].split(\"=\"); if (pairs[0] == \"access_token\") token=pairs[1]; if (pairs[0] == \"expires_in\") expire=pairs[1];}window.onload=function(){document.getElementById(\"access\").innerText = token + \":\" + expire;}</script></head><body>emacs.weibo提示您，您的授权码是：<div style=\"border:1px solid;\" id=\"access\"></div>请将框中的字符粘贴回emacs中</html>")
   (process-send-eof proc))
 
 (defun weibo-authorize-start-cb-server ()
@@ -40,9 +41,10 @@
 
 (defun weibo-authorize-app ()
   (weibo-authorize-start-cb-server)
-  (browse-url (format weibo-authorize-url (url-hexify-string weibo-consumer-key) (url-hexify-string weibo-authorize-cb-url)))
-  (let ((access-token (read-string "请输入授权码：")))
-    (weibo-authorize-stop-cb-server)
-    access-token))
+  (let ((auth-url (format weibo-authorize-url (url-hexify-string weibo-consumer-key) (url-hexify-string weibo-authorize-cb-url))))
+    (browse-url auth-url)
+    (let ((access-token (read-string (format "请输入授权码(如果浏览器没有自动打开，请访问 %s 获得授权码)：" auth-url))))
+      (weibo-authorize-stop-cb-server)
+      access-token)))
 
 (provide 'weibo-authorize)
