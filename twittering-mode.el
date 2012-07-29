@@ -3049,16 +3049,18 @@ the server when the HTTP status code equals to 400 or 403."
       (let ((twittering-service-method (twittering-extract-service spec-string))
             (error-msg (twittering-get-error-message header-info
                                                      (current-buffer))))
-        (unwind-protect
-            (if (and (not twittering-oauth2-wait-user-for-reverifying)
-                     (setq twittering-oauth2-wait-user-for-reverifying t)
+        ;; (unwind-protect
+            (if (and ;; (not twittering-oauth2-wait-user-for-reverifying)
+                     ;; (setq twittering-oauth2-wait-user-for-reverifying t)
                      (eq twittering-service-method 'sina)
                      (equal status-code "400")
                      (string-match "expired_token" error-msg)
-                     (y-or-n-p "Access token expired, weibo.com asks you to verify again, OK? "))
-                (twittering-oauth2-force-verify-credentials)
-              (format "Response from `%s': %s" spec-string error-msg))
-          (setq twittering-oauth2-wait-user-for-reverifying nil)))))))
+                     ;;(y-or-n-p "Access token expired, weibo.com asks you to verify again, OK? ")
+                     )
+                (message "Sina weibo access token expired, M-x twittering-oauth2-force-verify-credentials to reverify")
+                ;; (twittering-oauth2-force-verify-credentials)
+              (format "Response from `%s': %s" spec-string error-msg)))))))
+          ;; (setq twittering-oauth2-wait-user-for-reverifying nil)))))))
       
 (defun twittering-http-post (host method &optional parameters additional-info sentinel clean-up-sentinel)
   "Send HTTP POST request to api.twitter.com (or search.twitter.com)
@@ -7365,6 +7367,7 @@ If nil, read it from the minibuffer."
 (defun twittering-oauth2-force-verify-credentials ()
   "Some evil site like weibo.com, doesn't open refresh api.  It forces user to
 authenticate again.  "
+  (interactive)
   (let* ((twittering-service-method 'sina)
          (scheme "https")
          (token (twittering-oauth2-auth-and-store-force
