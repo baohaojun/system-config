@@ -37,7 +37,7 @@
   (expand-file-name "token2" weibo-directory))
 
 (defun weibo-get-token ()
-  (unless weibo-token
+  (unless (and weibo-token (not (weibo-token-expired)))
     (weibo-authorize))
   weibo-token)
 
