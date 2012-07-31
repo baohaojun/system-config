@@ -58,6 +58,9 @@ for x in .hosts.*; do
         echo "({ cd $prefix/$path >/dev/null 2>&1 || cd $prefix/$path2; }; head=\$(git rev-parse $branch); echo $url \$head $branch)"
     done | ssh $ssh_host
 done 2>.remote.err | sort -u > .remote_refs.txt
-        
-        
-    
+
+if diff -q .remote_refs.txt .local_refs.txt; then
+    exit 0;
+fi
+
+exit -1

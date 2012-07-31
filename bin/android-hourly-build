@@ -83,10 +83,12 @@ flock 9
                 die "Error: build failed with rebase enabled, but succeeds when disabled"
             else
                 rm .build-started
+                touch .rebased_build_failed
                 die "Error: build failed with rebase enabled or disabled"
             fi            
         fi
     fi
+    rm .rebased_build_failed -f
     touch .build_ok
     rm .build_failed -fr
 ) > $hourly_log 2>&1 || (
@@ -98,8 +100,11 @@ flock 9
     daily_change_dir=daily-changes/$(basename $0).$$
     rm -rf ${daily_change_dir}
 
+    build_started=yes
     if test ! -e .build-started; then # build has not started, why?
+        build_started=no
         mkdir -p $(pwd)/$daily_change_dir
+        cp $hourly_log build.log
     else
         android-daily-changes -f "$(now-rfc -d '1 hour ago'|perl -npe 's/( \d+):\d+:/$1:00:/')" -d $(pwd)/$daily_change_dir
     fi
@@ -114,7 +119,12 @@ flock 9
         rm .build_ok
         last_time_build_ok=yes
     fi
-    tar cz $daily_change_dir build.log $hourly_log | gerrit-review-mail-it build-failed last_time_build_ok=$last_time_build_ok "$@" || true
+    tar cz $daily_change_dir build.log $hourly_log | 
+    gerrit-review-mail-it \
+        build-failed \
+        last_time_build_ok=$last_time_build_ok \
+        build_started=$build_started "$@" || 
+    true
     rm $daily_change_dir -rf
 
 )

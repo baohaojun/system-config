@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -x
-cd ~/src/ics-autobuild/ >/dev/null 2>&1 || exit 0
 
 hour=$(date +%_H)
 export start_hour=$hour
@@ -10,7 +9,11 @@ if test $hour -lt 8 -o $hour -gt 21; then
     exit
 fi
 
-android-hourly-build pxa978ariel_def-eng 
+cd ~/src/ics-autobuild/ >/dev/null 2>&1 || exit 0
+
+if do-we-need-rebuild; then
+    android-hourly-build pxa978ariel_def-eng 
+fi
 
 cd ~/src/bpe-autobuild/ >/dev/null 2>&1 || exit 0
 touch .do_not_gq_rebase
@@ -18,4 +21,6 @@ touch .do_not_gq_rebase
 exec 9>.android-full-build.lock
 flock -n 9 || exit 0
 flock -u 9
-android-hourly-build pxa978ariel_cmcc-eng
+if do-we-need-rebuild; then
+    android-hourly-build pxa978ariel_cmcc-eng
+fi
