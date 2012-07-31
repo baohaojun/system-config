@@ -1,5 +1,10 @@
 #!/bin/bash
-host=$( (repo-review-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
+if test "$GERRIT_HOST"; then
+    host=$GERRIT_HOST
+else
+    host=$( (repo-review-url $(repo-remote) | perl -npe 's/:.*//') 2>/dev/null )
+fi
+
 if test -z "$host"; then
     host=$(xmlstarlet sel -B -t -m //default -v @review -n -b $(lookup_file .repo/manifest.xml) | perl -npe 's,.*://,,')
 fi
