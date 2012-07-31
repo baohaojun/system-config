@@ -105,6 +105,9 @@ flock 9
     build_started=yes
     if test ! -e .build-started; then # build has not started, why?
         build_started=no
+        if test -e .rebased_build_failed; then
+            build_started=rebased
+        fi
         mkdir -p $(pwd)/$daily_change_dir
         cp $hourly_log build.log
     else
