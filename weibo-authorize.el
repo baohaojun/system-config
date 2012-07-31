@@ -23,7 +23,8 @@
 
 (defun weibo-authorize-cb-filter (proc string)
   (set-process-coding-system proc 'utf-8 'utf-8)
-  (process-send-string proc "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html\"; charset=\"utf-8\"><script type=\"text/javascript\" >var hash = document.location.hash.substring(1); var result = \"\"; var token=\"\"; var expire=\"\"; var params = hash.split(\"&\"); for (var i = 0; i < params.length; i ++) {var pairs = params[i].split(\"=\"); if (pairs[0] == \"access_token\") token=pairs[1]; if (pairs[0] == \"expires_in\") expire=pairs[1];}window.onload=function(){document.getElementById(\"access\").innerText = token + \":\" + expire;}</script></head><body>emacs.weibo提示您，您的授权码是：<div style=\"border:1px solid;\" id=\"access\"></div>请将框中的字符粘贴回emacs中</html>")
+  (process-send-string proc "HTTP/1.0 200 OK\nContent-Type: text/html\n\n")
+  (process-send-string proc "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html\"; charset=\"utf-8\"><script type=\"text/javascript\" > function load_at() {var hash = document.location.hash.substring(1); var result = \"\"; var token=\"\"; var expire=\"\"; var params = hash.split(\"&\"); for (var i = 0; i < params.length; i ++) {var pairs = params[i].split(\"=\"); if (pairs[0] == \"access_token\") token=pairs[1]; if (pairs[0] == \"expires_in\") expire=pairs[1];} document.getElementById(\"access\").innerHTML = token + \":\" + expire;} window.onload=load_at; </script></head><body>emacs.weibo提示您，您的授权码是：<div style=\"border:1px solid;\" id=\"access\"></div>请将框中的字符粘贴回emacs中</html>")
   (process-send-eof proc))
 
 (defun weibo-authorize-start-cb-server ()
