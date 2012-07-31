@@ -82,7 +82,7 @@
 			    (weibo-user-profile_image_url user)) t))
       (insert " ")
       (insert (weibo-user-screen_name user))
-      (when (string= (weibo-user-verified user) "true")
+      (when (eq (weibo-user-verified user) t)
 	(insert " V"))
       (insert " (" 
 	      (cond ((string= (weibo-user-gender user) "m") "男")
@@ -117,7 +117,7 @@
     (insert-text-button (weibo-user-screen_name user)
 			'action (lambda (b) (weibo-show-user (button-label b)))
 			'follow-link t)
-    (when (string= (weibo-user-verified user) "true")
+    (when (eq (weibo-user-verified user) t)
       (insert " V"))
     (insert " (" 
 	    (cond ((string= (weibo-user-gender user) "m") "男")
