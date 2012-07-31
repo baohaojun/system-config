@@ -1,0 +1,63 @@
+#!/bin/bash
+
+set -e
+
+export mysh=$(readlink -f $0)
+if test ! -e $mysh; then
+    export mysh=$(readlink -f $(which $0))
+fi
+
+my-rfa '
+#{%sh-mode%}
+head=$(
+       if test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$(repo-path)/series; then
+           git merge-base HEAD $(repo-remote-branch)
+       else
+           git rev-parse HEAD
+       fi
+      )
+remote_url=$(repo-remote-url)
+remote_branch=$(repo-branch)
+(
+    flock 22
+    echo $remote_url $head $remote_branch
+) 22<$mysh
+#{%/sh-mode%}
+' | sort -u > .local_refs.txt
+
+repo-sync -n flashing/ || true
+
+if test -e .repo/.need_rebuild; then
+    exit 0
+fi
+
+rm .hosts.* -f;
+
+cat .local_refs.txt | while read url head branch; do
+    host=${url%:*}
+    path=${url#*:}
+    echo $url $branch >> .hosts.$host
+done
+
+for x in .hosts.*; do
+    host=${x#.hosts.}
+    if test $host = bibler; then
+        ssh_host=bible
+        prefix=/home/gerrit2/
+    else
+        ssh_host=shgit
+        prefix=/
+    fi
+    
+    cat $x | while read url branch; do
+        path=/${url#*:}
+        if ! [[ $path =~ \.git$ ]]; then
+            path=$path.git
+        fi
+        path2=${path/\/android\///bpe-git/}
+        echo "({ cd $prefix/$path >/dev/null 2>&1 || cd $prefix/$path2; }; head=\$(git rev-parse $branch); echo $url \$head $branch)"
+    done | ssh $ssh_host
+done 2>.remote.err | sort -u > .remote_refs.txt
+        
+        
+    

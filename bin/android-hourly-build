@@ -8,7 +8,7 @@ function die() {
 }
 
 cd $(lookup_file .repo/..)
-start_hour=$(date +%H)
+start_hour=${start_hour-$(date +%_H)}
 test -d .repo || die ".repo not found, not android source directory?"
 
 if test "$DO_NOT_GQ_REBASE" = true; then
@@ -17,6 +17,9 @@ else
     hourly_log=hourly-build.log
 fi
 
+if test -e $hourly_log; then
+    mv $hourly_log $hourly_log.$((start_hour - 1))
+fi
 
 exec 9>.android-full-build.lock
 flock 9
@@ -65,12 +68,30 @@ flock 9
     
     touch .build-started
     flock -u 9
-    android-full-build "$@" || die "android-full-build failed"
+    if test "$DO_NOT_GQ_REBASE" = true; then
+        android-full-build "$@" || die "android-full-build failed"
+    else
+        if ! android-full-build "$@"; then
+            mv build.log build.log-rebased
+            (
+                export DO_NOT_GQ_REBASE=true
+                android-hourly-build "$@" || true
+            )
+            mv build.log-rebased build.log
+            if test .build_ok; then
+                rm .build_ok
+                die "Error: build failed with rebase enabled, but succeeds when disabled"
+            else
+                rm .build-started
+                die "Error: build failed with rebase enabled or disabled"
+            fi            
+        fi
+    fi
     touch .build_ok
     rm .build_failed -fr
 ) > $hourly_log 2>&1 || (
 
-    if test "$start_hour" = 6; then #maybe need do a full clean build next time.
+    if test $start_hour = 20; then #maybe need do a full clean build next time.
         rm ../$(basename $(pwd))-out/out-* -rf
     fi
 

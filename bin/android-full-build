@@ -80,8 +80,8 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	flock 9 || { echo 'lock failed at '$(date); exit -1; }
 	echo 'lock success! at '$(date)
 	(
-	    echo "before build, ccache stat is $(./prebuilt/linux-x86/ccache/ccache -s)"
             if test -e .afb-do-repo-changes; then
+	        echo "before build, ccache stat is $(./prebuilt/linux-x86/ccache/ccache -s)"
 	        echo "external dirs not managed by repo: $(repo-external)"
 	        echo "changed repos are: $(repo-changes\?)"
             fi
@@ -124,8 +124,10 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	    mkdir -p $dest
 	    DO_SYMLINK=true ./copy-release.sh $dest
 	) || true
-	echo -n 'after build, ccache stat is '
-	./prebuilt/linux-x86/ccache/ccache -s
+        if test -e .afb-do-repo-changes; then
+	    echo -n 'after build, ccache stat is '
+	    ./prebuilt/linux-x86/ccache/ccache -s
+        fi
 	echo 
 	echo "full build result is $result"
 	echo

@@ -3,7 +3,7 @@
 cd ~/Maildir || exit 1
 result=$(pwd)/mail-check-result
 test -e $result || { touch $result; sleep 1; touch */cur; }
-hour=$(date +%H|sed -e 's/^0//')
+hour=$(date +%_H)
 
 function not_intesting_now() {
     if ((hour >= 8 && hour <= 18)); then

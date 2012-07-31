@@ -34,5 +34,8 @@ fi
     done
 ) > repo-switch
 
+if ! diff -q manifest.xml manifest.xml.old; then
+    touch .need_rebuild
+fi
 
 echo ok.

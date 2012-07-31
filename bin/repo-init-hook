@@ -1,0 +1,12 @@
+#!/bin/bash
+
+perl -ne 'print unless /tcmd/' manifest.xml > manifest.xml.new
+if ! diff -q manifest.xml.new manifest.xml.old; then
+    rm manifest.xml -f
+    cp manifest.xml.new manifest.xml -av
+else
+    rm manifest.xml -f
+    cp manifest.xml.old manifest.xml -av
+fi
+
+    
