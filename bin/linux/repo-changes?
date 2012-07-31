@@ -52,7 +52,11 @@ fi
 # {
 #     command git "$@" || 
 #     {
-#         echo git "$@" failed at $(pwd);
+#         case "$1" in
+#             *)
+#                 echo $(pwd) git "$@" failed
+#                 ;;
+#         esac
 #     } 1>&2
 # }
 # export -f git

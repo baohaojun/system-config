@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# repo_path=$(echo /$REPO_PATH | perl -npe 's,/+,/,; s,/$,,')
+# printf '$repo_info{$android_path . "%s"}{"remote"} = "%s";\n' $repo_path "$REPO_REMOTE"
+# printf '$repo_info{$android_path . "%s"}{"branch"} = "%s";\n' $repo_path "$REPO_RREV"
+# printf '$repo_info{$android_path . "%s"}{"path"} = "%s";\n' $repo_path "$REPO_PATH"
+# printf '$repo_info{$android_path . "%s"}{"project"} = "%s";\n' $repo_path "$REPO_PROJECT"
+
+xmlstarlet sel -B -t -m //default \
+    -o '$default_remote = "'  -v @remote -o '";' -n \
+    -o '$default_revision = "' -m //default -v @revision -o '";' -n manifest.xml
+
+for x in manifest.xml local_manifest.xml; do
+    if test -e $x; then
+        xmlstarlet sel -B -t -m //project \
+            -o '$repo_info{$android_path . "/' -v @path -o '"}{"project"} = "' -v @name  -o '";' -n \
+            -o '$repo_info{$android_path . "/' -v @path -o '"}{"path"} = "' -v @path  -o '";' -n \
+            -o '$repo_info{$android_path . "/' -v @path -o '"}{"branch"} = ("' -v @revision  -o '" or $default_revision);' -n \
+            -o '$repo_info{$android_path . "/' -v @path -o '"}{"remote"} = ("' -v @remote  -o '" or $default_remote);' -n \
+            $x
+    fi
+done | perl -npe 's,/+,/,g; s,/",",g'
+
+echo 'foreach (@ARGV) { print $repo_info{$ENV{"PWD"}}{$_} . "\n"; }'

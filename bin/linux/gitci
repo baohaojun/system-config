@@ -32,7 +32,7 @@ function Usage() {
 issue=
 git_opts=
 git_amend=
-TEMP=$(getopt -o i:ah --long amend -n $(basename $0) -- "$@")
+TEMP=$(getopt -o i:ahs --long amend -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -57,6 +57,10 @@ while true; do
 	    shift
 	    break
 	    ;;
+	-s)
+            shift
+            break
+            ;;
 	*)
 	    die "internal error"
 	    ;;

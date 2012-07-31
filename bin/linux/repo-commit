@@ -1,5 +1,0 @@
-#!/bin/bash
-
-repo sync -n . 
-git merge `repo-remote`/`tbranch` 
-git push `repo-remote` HEAD:`tbranch`

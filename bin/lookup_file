@@ -62,6 +62,8 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 ) || (
     if test $exact = true; then
         which "$1" 2>/dev/null
+    else
+        false
     fi
 ) || (
     dir=`dirname -- "$file"`

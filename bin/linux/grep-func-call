@@ -77,8 +77,13 @@ while(<$file>) {
 	}
     }
     
-    next if $func_location_map{$func_location_before} eq "******";
-    if ($func_location_map{$func_location_before} =~ m/$target/) { # this is the definition of target
+    if ($func_location_map{$func_location_before} eq "******") {
+	debug "the previous defun is *****";
+	next;
+    }
+
+    if ($func_location_map{$func_location_before} =~ m/\b$target\b/) { # this is the definition of target
+	debug "the previous definition matches myself";
 	next;
     }
 

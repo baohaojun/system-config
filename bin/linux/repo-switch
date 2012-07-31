@@ -1,9 +1,38 @@
 #!/bin/bash
 set -e
-. ~/.bash_profile
-cd `lookup_file .repo/manifests`
-rm ../manifest.xml || true
+
+cd $(lookup_file .repo)
+test -d manifests
+
+cp -av $(readlink -f manifest.xml) manifest.xml.old || true
+rm manifest.xml || true
+
+if test -e local_manifest.xml; then
+    mv local_manifest.xml local_manifest.xml.2
+fi
+
+cd manifests
 git co HEAD^
 for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
 
 repo init "$@"
+
+cd ..
+
+if test -x repo-init-hook; then
+    ./repo-init-hook
+fi
+
+if test -e local_manifest.xml.2; then
+    mv -v local_manifest.xml.2 local_manifest.xml
+fi
+
+(
+    printf 'repo-switch'
+    for x in "$@"; do 
+        printf ' %q' "$x";
+    done
+) > repo-switch
+
+
+echo ok.

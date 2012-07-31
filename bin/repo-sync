@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+cd $(lookup_file .repo)
+test -d manifests
+if test -e repo-switch; then
+    bash ./repo-switch </dev/null
+fi
+repo sync "$@"
+
+
+
+
