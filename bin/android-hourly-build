@@ -11,6 +11,8 @@ cd $(lookup_file .repo/..)
 start_hour=${start_hour-$(date +%_H)}
 test -d .repo || die ".repo not found, not android source directory?"
 
+rm .repo/.need_rebuild -f
+
 if test "$DO_NOT_GQ_REBASE" = true; then
     hourly_log=hourly-build-without-rebase.log
 else
