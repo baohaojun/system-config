@@ -1,0 +1,28 @@
+#!/bin/bash
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+set -e
+test "$1" || die "Usage: $(basename $0) arp_host"
+
+
+if test $(basename $0) = update-arp; then
+    for host_name in "$@"; do
+
+        arp=$(perl -a -ne  'if ($F[0] eq '"$host_name"') {print $F[1]}' ~/etc/arp-hosts)
+        if test -z "$arp"; then
+            die "can not find arp entry for $host_name"
+        fi
+        ip=$(sudo arping -c 1 -r $arp)
+        if test -z "$ip"; then
+            die "can not arping $arp"
+        fi
+
+        sudo update-host-ip "$host_name" $ip
+    done
+    exit 0
+fi
+
+ssh "$1"

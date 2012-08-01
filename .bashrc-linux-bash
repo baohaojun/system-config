@@ -44,3 +44,9 @@ function adb() {
 
     command adb "$@"
 }
+
+function sudo {
+    command sudo env PATH=$PATH "$@"
+}
+
+export -f sudo
