@@ -1,6 +1,9 @@
 #!/bin/bash
 
 cd ~/weekly || exit
+if test .weeklyrc; then
+    . .weeklyrc
+fi
 if echo "${1:-Fri}" |grep fri -iqv; then
     yes-or-no "Warning: you are not doing weekly for a Friday, continue?" || exit;
 fi
