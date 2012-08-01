@@ -10,3 +10,5 @@ gerrit review "$(git rev-parse $rev)" --submit --verified +1 --code-review +2
         bash .gerrit-hooks do-review
     fi
 )
+
+gerrit query "$(git rev-parse $rev)"

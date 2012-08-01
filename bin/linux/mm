@@ -29,7 +29,7 @@ time (
                     . ~/.bashrc;
                     ONE_SHOT_MAKEFILE='$ONE_SHOT_MAKEFILE' make all_modules '"$(for x in "$@"; do printf %q\  "$x"; done)"'
                 "
-            ' 2>&1|tee ~/mm.log|
+            ' 2>&1|tee ~/.logs/mm.log|
     grep -v '^Copy: .*/target/product/.*/system/media/audi'|
     grep -v -e '/lang_pico/\|libinputcore-2.so\|libkpencore.so\|libqpicjni6.so\|/root/initlogo.rle\|/system/app/BaiduIme_v2.1.1.6.apk\|/system/app/android_10503_20111014.apk\|/system/app/cn.goapk.market_v2.1.4.apk\|/system/app/com.alensw.picfolder_v1.4.2.apk\|/system/etc/apns-conf.xml\|/system/etc/permissions/com.tmobile.software.themes.xml\|/system/etc/repository.txt'|
     perl -ne 'print unless /unmappable character for encoding ascii/'
