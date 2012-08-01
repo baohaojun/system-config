@@ -5,13 +5,16 @@ set -x
 hour=$(date +%_H)
 export start_hour=$hour
 
-if test $hour -lt 8 -o $hour -gt 21; then
+if test $hour -lt 8 -o $hour -gt 20; then
     exit
 fi
 
 cd ~/src/ics-autobuild/ >/dev/null 2>&1 || exit 0
 
-if do-we-need-rebuild; then
+if test $hour = 20 || do-we-need-rebuild; then
+    if test $hour = 20; then 
+        rm ../$(basename $(pwd))-out/out-* -rf
+    fi
     android-hourly-build pxa978ariel_def-eng 
 fi
 
@@ -21,6 +24,9 @@ touch .do_not_gq_rebase
 exec 9>.android-full-build.lock
 flock -n 9 || exit 0
 flock -u 9
-if do-we-need-rebuild; then
+if test $hour = 20 || do-we-need-rebuild; then
+    if test $hour = 20; then #maybe need do a full clean build next time.
+        rm ../$(basename $(pwd))-out/out-* -rf
+    fi
     android-hourly-build pxa978ariel_cmcc-eng
 fi

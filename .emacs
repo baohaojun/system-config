@@ -55,13 +55,13 @@
 
 
   (set-fontset-font (frame-parameter nil 'font)
-		    'han (font-spec :family "Simsun" :size 15))
+		    'han (font-spec :family "Simsun" :size 16))
   (set-fontset-font (frame-parameter nil 'font)
-		    'symbol (font-spec :family "Simsun" :size 15))
+		    'symbol (font-spec :family "Simsun" :size 16))
   (set-fontset-font (frame-parameter nil 'font)
-		    'cjk-misc (font-spec :family "Simsun" :size 15))
+		    'cjk-misc (font-spec :family "Simsun" :size 16))
   (set-fontset-font (frame-parameter nil 'font)
-		    'bopomofo (font-spec :family "Simsun" :size 15)))
+		    'bopomofo (font-spec :family "Simsun" :size 16)))
 
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 (require 'weblogger)

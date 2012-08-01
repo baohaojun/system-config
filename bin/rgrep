@@ -1,4 +1,4 @@
 #!/bin/sh
 echo
 
-exec grep -r "$@" 2>/dev/null
+exec grep -r "$@" --exclude-dir=.git 2>/dev/null

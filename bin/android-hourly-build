@@ -95,10 +95,6 @@ flock 9
     rm .build_failed -fr
 ) > $hourly_log 2>&1 || (
 
-    if test $start_hour = 20; then #maybe need do a full clean build next time.
-        rm ../$(basename $(pwd))-out/out-* -rf
-    fi
-
     daily_change_dir=daily-changes/$(basename $0).$$
     rm -rf ${daily_change_dir}
 

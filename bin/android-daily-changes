@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x
 
 ANDROID_DIR=$(readlink -f $(lookup_file .repo/..))
 CHANGES_DIR=$(dirname $ANDROID_DIR)/$(basename $ANDROID_DIR)-out/daily-changes

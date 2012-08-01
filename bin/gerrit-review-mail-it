@@ -40,7 +40,7 @@ if test "$1" = build-failed; then
     build_started=${1#*=}
     shift
 
-    bhj-notify "hourly build $(now)" "failed, last time ok? $last_time_build_ok; build started? $build_started"
+    bhj-notify "hourly build $@ last: $last_time_build_ok, start: $build_started" "failed, last time ok? $last_time_build_ok; build started? $build_started"
 
     title=$(echo Automatic hourly build failed $(now) - "$@")
     
