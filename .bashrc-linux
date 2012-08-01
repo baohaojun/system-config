@@ -5,15 +5,14 @@ export PATH=$PATH:$HOME/bin/linux/ext/android-sdk-linux_86/tools:/usr/local/bin:
 
 export CLASSPATH=/usr/share/java/stringtemplate.jar:/usr/share/java/antlr3.jar:/usr/share/java/antlr3-runtime.jar:$HOME/bin/linux/ext/antlrworks.jar:.
 
-alias aptitude='sudo aptitude'
-alias sudo='sudo env PATH=$PATH'
-alias umount='sudo umount'
-alias mount='sudo mount'
 
 
 alias minicom='minicom -w -D /dev/ttyUSB*'
 if [ -n "$BASH_VERSION" -a "$BASH" = /bin/bash ]; then
     . ~/.bashrc-linux-bash
 fi
-alias quilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
-alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
+
+. ~/.bashrc-aliases
+if test -e ~/.bashrc-linux-$USER; then
+    . ~/.bashrc-linux-$USER
+fi

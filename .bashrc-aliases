@@ -1,0 +1,10 @@
+#!/bin/bash
+
+alias arping='sudo arping'
+alias quilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
+alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
+alias aptitude='sudo aptitude'
+alias sudo='sudo env PATH=$PATH'
+alias umount='sudo umount'
+alias mount='sudo mount'
+
