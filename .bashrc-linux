@@ -16,5 +16,3 @@ fi
 if test -e ~/.bashrc-linux-$USER; then
     . ~/.bashrc-linux-$USER
 fi
-
-

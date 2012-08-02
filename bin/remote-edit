@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if test $# = 2; then
-    emacsclient -n /scp:bhj@"$1":"$2"
+    emacsclient -n /scp:$USER@"$1":"$2"
 elif test $# = 3; then
     emacsclient -n /scp:"$1"@"$2":"$3"
 else

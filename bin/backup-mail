@@ -4,8 +4,8 @@ for x in ~/Maildir/*/cur ~/Maildir/*/new; do
     [[ $x =~ gmail ]] && continue
     (
 	cd "$x"
-	find . -size -500000c -type f|xargs -d \\n bash -c 'mv -v "$@" /home/bhj/Maildir/gmail.MarvellInbox/cur -v ' true 
-	find . -size +500000c -type f|xargs -d \\n bash -c 'mv -v "$@" /home/bhj/Maildir/gmail.BigMirror/cur -v ' true 
+	find . -size -500000c -type f|xargs -d \\n bash -c 'mv -v "$@" ~/Maildir/gmail.MarvellInbox/cur -v ' true 
+	find . -size +500000c -type f|xargs -d \\n bash -c 'mv -v "$@" ~/Maildir/gmail.BigMirror/cur -v ' true 
     )
 done
 

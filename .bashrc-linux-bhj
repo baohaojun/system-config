@@ -1,5 +1,2 @@
 #!/bin/bash
 
-if test $(cat /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts) != 0; then
-    sudo bash -c 'echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts'
-fi

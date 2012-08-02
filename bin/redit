@@ -1,5 +1,5 @@
 #!/bin/bash
-user=bhj
+user=$USER
 proto=scp
 if test $# = 4; then
     proto=$1

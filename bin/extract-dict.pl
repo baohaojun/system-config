@@ -20,7 +20,7 @@ sub debug(@) {
 while (1) {
 
   my %old_ts = ();
-  for (glob("/home/bhj/.wine/drive_c/AHD4withThesaurus/outfile*.htm")) {
+  for (glob("~/.wine/drive_c/AHD4withThesaurus/outfile*.htm")) {
     $old_ts{$_} = qx(stat -c %Y $_);
   }
 
@@ -31,7 +31,7 @@ while (1) {
   my $try = 0;
   while (1) {
     my %new_ts = ();
-    for (glob("/home/bhj/.wine/drive_c/AHD4withThesaurus/outfile*.htm")) {
+    for (glob("~/.wine/drive_c/AHD4withThesaurus/outfile*.htm")) {
       $new_ts{$_} = qx(stat -c %Y $_);
     }
     for (keys %new_ts) {

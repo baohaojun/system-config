@@ -39,9 +39,10 @@ function symlink-map() {
 symlink-map ~/windows-config/ ~/
 symlink-map ~/windows-config/.config.vc/ ~/.config
 
-if test `whoami` = bhj; then
-    ln -sf ~/.gitconfig.`whoami` ~/.gitconfig
+if test -e ~/.gitconfig.$USER; then
+    ln -sf ~/.gitconfig.$USER ~/.gitconfig
 fi
+
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/

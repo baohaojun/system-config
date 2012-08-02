@@ -29,9 +29,11 @@ for x in $(git branch -a |grep 'remotes.*from-mac'); do
 	fi
     fi
 done
-if test "$USER" = bhj; then
-    crontab ~/.crontab
+
+if test -e ~/.crontab.$USER; then
+    crontab ~/.crontab.$USER
 fi
+
 git submodule init
 git submodule update
 git submodule foreach 'bash -c "git-pull-mac&"' | grep .

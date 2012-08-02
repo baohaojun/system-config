@@ -9,7 +9,7 @@
 
 # output should be like: 
 
-    # /home/bhj/src/android-nv-froyo/frameworks/base/libs/ui/EventHub.cpp:328:     while(1) {
+    # ~/src/android-nv-froyo/frameworks/base/libs/ui/EventHub.cpp:328:     while(1) {
     #    
     #     bool EventHub::getEvent(int32_t* outDeviceId, int32_t* outType,
     #         int32_t* outScancode, int32_t* outKeycode, uint32_t *outFlags,

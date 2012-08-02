@@ -2,9 +2,9 @@
 set -e
 
 packages_dir=${PACKAGES_DIR:-~/bin/linux/config/pkgs/}
-packages=$(find "$packages_dir" -type f|perl -npe 's,.*/,,')
-if test "$USER" = bhj; then
-    packages="$packages texlive-full"
+packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,')
+if test -d "$packages_dir/$USER"; then
+    packages="$packages $(find "$packages_dir/$USER" -maxdepth 1 -type f|perl -npe 's,.*/,,')"
 fi
 
 export LC_ALL=C

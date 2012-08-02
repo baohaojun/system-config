@@ -1,1 +1,6 @@
-linux/repo-remote
+#!/bin/bash
+if test "$REPO_INFO"; then
+    $REPO_INFO remote
+else
+    repo forall . -c 'echo $REPO_REMOTE' 2>/dev/null || git remote
+fi

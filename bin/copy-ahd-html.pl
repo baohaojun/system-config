@@ -6,7 +6,7 @@ sub debug(@) {
 }
 
 my %new_ts = ();
-for (glob("/home/bhj/.wine/drive_c/AHD4withThesaurus/outfile*.htm")) {
+for (glob("~/.wine/drive_c/AHD4withThesaurus/outfile*.htm")) {
   $new_ts{$_} = qx(stat -c %Y $_);
 }
 for (keys %new_ts) {

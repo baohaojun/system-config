@@ -1,6 +1,6 @@
 #!/bin/bash
 
-user=bhj
+user=$USER
 
 remote=$1
 shift

@@ -408,7 +408,7 @@ sub dict_matching() {
   close($filter);
 }
 
-chdir("/home/bhj/external/ahd/") or die "can not chdir";
+chdir(glob("~/external/ahd/")) or die "can not chdir";
 if ($0 =~ m,/?stardict-convert.pl$,) {
   do_convert();
 } elsif ($0 =~ m,/?dict$,) {

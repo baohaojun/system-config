@@ -114,6 +114,6 @@ function rcd() {
     fi
 }
 
-if test "$USER" = bhj && [[ "$(tty 2>/dev/null)" =~ /dev/tty[0-9]+ ]]; then
-    swap-control-alt
+if test -e ~/.bashrc-interactive-$USER; then
+    . ~/.bashrc-interactive-$USER
 fi
