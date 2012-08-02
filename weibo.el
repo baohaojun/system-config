@@ -137,6 +137,22 @@
   (when root
     (print root)))
 
+(defun weibo-string-decrement (str)
+  (let ((strl (reverse (delete "" (split-string str ""))))
+	(result nil)
+	(done nil))
+    (while strl
+      (let ((c (car strl)))
+	(push
+	 (if done c
+	   (if (string= "0" c) "9"
+	     (progn
+	       (setq done t)
+	       (number-to-string (- (string-to-number c) 1)))))
+	 result))
+      (setq strl (cdr strl)))
+    (mapconcat 'identity result "")))
+
 (defun weibo-bury-close-window ()
   (interactive)
   (bury-buffer)

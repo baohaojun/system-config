@@ -50,7 +50,7 @@
 (defun weibo-pull-comment (node parse-func new type)
   (let* ((keyword (if new "since_id" "max_id"))
 	 (id (and node-data (weibo-comment-id node-data)))
-	 (param (and id (format "?%s=%s" keyword id))))
+	 (param (and id (format "?%s=%s" keyword (if new id (weibo-string-decrement id))))))
     (with-temp-message (concat "获取评论 " param "...")
       (weibo-get-data type
 		      parse-func param
