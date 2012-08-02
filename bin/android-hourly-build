@@ -27,6 +27,8 @@ exec 9>.android-full-build.lock
 flock 9
 
 (
+    diff .local_refs.txt .remote_refs.txt || true
+    echo hourly build start hours is $start_hour
     set -x
     rm -f .build-started
     if yes-or-no-p -y "Do sync?"; then

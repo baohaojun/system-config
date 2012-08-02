@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+
+# find . -type f |xargs -d '\n' bash -c 'stat -c %s:%n "$@"' true > ~/1.txt
+
+while (<>) {
+    chomp();
+    m/(.*?):(.*)/;
+
+    ($size, $filename) = ($1, $2);
+    next if -l $filename;
+    if (not $size) {
+	next;
+    }
+    if (exists $size_map{$size}) {
+	print "$size_map{$size}\n";
+	print "$filename\n";
+    } else {
+	$size_map{$size} = $filename;
+    }
+}
+
+    

@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+
+# find . -type f |xargs -d '\n' bash -c 'stat -c %s:%n "$@"' true > ~/1.txt
+
+while (<>) {
+    chomp();
+    m/^(.{32})  (.*)/ or next;
+
+    ($md5, $filename) = ($1, $2);
+    next if -l $filename;
+    if (not $md5) {
+	next;
+    }
+    if (exists $md5_map{$md5}) {
+	if ($md5_map{$md5} =~ m,^./user/, and $filename =~ m,^./user,,) {
+	    next;
+	}
+	system("ln", "-f", $md5_map{$md5}, $filename) == 0 or 
+	    system("ln", "-f", $filename, $md5_map{$md5});
+    } else {
+	$md5_map{$md5} = $filename;
+    }
+}
+
+    
