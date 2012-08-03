@@ -20,3 +20,5 @@
         insteadOf = "ssh://gerrit2@bible/~gerrit2/android"
 [guilt]
 	diffstat = true
+[format]
+	pretty = fuller

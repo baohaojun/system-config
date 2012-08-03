@@ -2,15 +2,13 @@
 
 use strict;
 
+my $seen_plugin;
 while (<>) {
     if (/plugin-example\|/) {
-	while(<>) {
-	    if (m/:langmap=(.*?)\\?:(.*):\\?$/) {
-		print "$1:$2,";
-	    }
-	}
+	$seen_plugin = 1
     }
+    if ($seen_plugin and m/:langmap=(.*?)\\?:(.*):\\?$/) {
+	print "$1:$2,";
+    } 
 }
-
-
-#/usr/bin/ctags-exuberant --langmap=c:.c,yacc:.y,asm:.s.S,java:.java,c++:.c++.cc.cpp.cxx.hxx.hpp.C.H.h,php:.php.php3.phtml,fortran:.f.for.f77.f90.f95,pascal:.p.pas,c#:.cs,lisp:.l.el.lisp.jl(.emacs),javaprop:(ExternalMessages.properties),kconfig:(Kconfig*),scheme:.scm,awk:.awk,ruby:.rb,perl:.pl,python:.py,make:(*.am)([mM]akefile*)(Kbuild*).mk.make,vim:.vim,javascript:.js,matlab:.m,sh:(.bashrc*).sh -xu --filter --filter-terminator=###terminator###  --format=1
+#/usr/bin/ctags-exuberant --langmap=$(lang-map-for-ctags ~/.globalrc) -xu --filter --filter-terminator='###terminator###'  --format=1
