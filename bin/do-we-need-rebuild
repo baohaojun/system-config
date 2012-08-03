@@ -60,7 +60,7 @@ for x in .hosts.*; do
 done 2>.remote.err | sort -u > .remote_refs.txt
 
 if diff -q .remote_refs.txt .local_refs.txt; then
-    exit 0;
+    exit -1
 fi
 
-exit -1
+exit 0
