@@ -40,5 +40,5 @@ if test "$USER" = bhj; then
     set +e
     . config_email
     sudo apt-get install texlive-full 
-    crontab ~/.crontab
+    crontab ~/.crontab.bhj
 fi

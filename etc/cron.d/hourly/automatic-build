@@ -11,12 +11,18 @@ fi
 
 cd ~/src/ics-autobuild/ >/dev/null 2>&1 || exit 0
 
-if test $hour = 20 || android-need-rebuild; then
-    if test $hour = 20; then 
-        rm ../$(basename $(pwd))-out/out-* -rf
+(
+    if test $hour = 20 -o -e .do_rebuild || android-need-rebuild; then
+        if test $hour = 20; then 
+            rm ../$(basename $(pwd))-out/out-* -rf
+        fi
+        exec 9>.android-full-build.lock
+        flock -n 9 || exit 0
+        flock -u 9
+
+        android-hourly-build pxa978ariel_def-eng 
     fi
-    android-hourly-build pxa978ariel_def-eng 
-fi
+)
 
 cd ~/src/bpe-autobuild/ >/dev/null 2>&1 || exit 0
 touch .do_not_gq_rebase
@@ -24,7 +30,7 @@ touch .do_not_gq_rebase
 exec 9>.android-full-build.lock
 flock -n 9 || exit 0
 flock -u 9
-if test $hour = 20 || android-need-rebuild; then
+if test $hour = 20 -o -e .do_rebuild || android-need-rebuild; then
     if test $hour = 20; then #maybe need do a full clean build next time.
         rm ../$(basename $(pwd))-out/out-* -rf
     fi
