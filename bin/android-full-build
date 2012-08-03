@@ -96,11 +96,11 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
             export build_mount_p=$(readlink -f ../)/.afb
             mkdir -p $build_mount_p
             test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1
-            time sudo env OLDUSER=$USER unshare -m -- bash -c '
+            time sudo unshare -m -- bash -c '
                 set -ex
                 mount $(pwd) '$build_mount_p' -o bind;
                 cd '$build_mount_p'
-                su $OLDUSER -c "
+                su '$USER' -c "
                     . ~/.bashrc;
                     . .buildenv.sh;
                     make -j'$jobs' -l '$jobs' -k droid telephony uboot obm

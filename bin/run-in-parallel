@@ -1,0 +1,36 @@
+#!/bin/bash
+
+jobs=5
+TEMP=$(getopt -o j: --long jobs: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -j|--jobs)
+            jobs=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+cmd=$1
+shift
+lock_dir=~/.logs/$(basename $0).lock/
+mkdir -p $lock_dir
+
+x=0
+
+for y in "$@"; do
+    ((x %= jobs))
+    (
+        flock 9
+        bash -c "$cmd" true "$y"
+    ) 9> $lock_dir/$x&
+    ((x++))
+done
