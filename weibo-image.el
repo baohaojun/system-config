@@ -90,9 +90,9 @@
   (when weibo-display-image
     (when image-file
       (condition-case err
-	  (progn
-	    (insert-image (create-image image-file) url)
-	    t)
+	  (let ((img (create-image image-file)))
+	      (insert-image img url)
+	      img)
 	(error
 	 (when (file-exists-p image-file)
 	   (delete-file image-file))
@@ -104,21 +104,32 @@
     (setq buffer-read-only nil)
     (erase-buffer)
     (weibo-image-mode)
-    (if (weibo-insert-image (weibo-get-image-file url t))
+    (let ((img (weibo-insert-image (weibo-get-image-file url t))))
+      (if img
 	(progn
 	  (setq buffer-read-only t)
-	  (image-mode))
-      (weibo-bury-close-window)
-      (message "无法打开图片！"))))
+	  ;(image-mode)
+	  (if (and (fboundp 'image-animated-p) (image-animated-p img))
+	      (weibo-play-animation)))
+	(weibo-bury-close-window)
+	(message "无法打开图片！")))))
+
+(defun weibo-play-animation ()
+  (interactive)
+  (when (fboundp 'image-toggle-animation)
+    (image-toggle-animation)))
 
 (defvar weibo-image-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map "q" 'weibo-bury-close-window)
+    (define-key map " " 'weibo-play-animation)
     map)
   "Keymap for weibo-image-mode")
 
 (define-derived-mode weibo-image-mode fundamental-mode "Weibo-Image"
   "Major mode for displaying weibo image"
-  (use-local-map weibo-image-mode-map))
+  (use-local-map weibo-image-mode-map)
+  (make-local-variable 'image-animate-loop)
+  (setq image-animate-loop t))
 
 (provide 'weibo-image)
