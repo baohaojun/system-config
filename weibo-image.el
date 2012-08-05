@@ -13,6 +13,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+(require 'image-mode)
+
 (defconst weibo-image-buffer-name "*weibo-image*")
 
 (defvar weibo-display-image t
@@ -123,6 +125,8 @@
   (let ((map (make-sparse-keymap)))
     (define-key map "q" 'weibo-bury-close-window)
     (define-key map " " 'weibo-play-animation)
+    (define-key map (kbd "C-n") 'image-next-line)
+    (define-key map (kbd "C-p") 'image-previous-line)
     map)
   "Keymap for weibo-image-mode")
 
@@ -130,6 +134,7 @@
   "Major mode for displaying weibo image"
   (use-local-map weibo-image-mode-map)
   (make-local-variable 'image-animate-loop)
-  (setq image-animate-loop t))
+  (setq image-animate-loop t)
+  (image-mode-setup-winprops))
 
 (provide 'weibo-image)
