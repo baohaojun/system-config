@@ -71,7 +71,8 @@
 (defun weibo-pull-status (node parse-func new type)
   (let* ((keyword (if new "since_id" "max_id"))
 	 (id (and node-data (weibo-status-id node-data)))
-	 (param (and id (format "?%s=%s" keyword (if new id (weibo-string-decrement id))))))
+	 (idparam (and id (format "%s=%s" keyword (if new id (weibo-string-decrement id)))))
+	 (param (format "?%s" (mapconcat 'identity (remove-if-not 'stringp (list weibo-timeline-extra-params idparam)) "&"))))
     (with-temp-message (concat "获取微博 " param "...")
       (weibo-get-data type
 		      parse-func param

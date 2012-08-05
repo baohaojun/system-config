@@ -69,7 +69,8 @@
 
 (defun weibo-insert-user-detail (user)
   (when user
-    (let ((desc (weibo-user-description user))
+    (let ((id (weibo-user-id user))
+	  (desc (weibo-user-description user))
 	  (url (weibo-user-url user))
 	  (domain (weibo-user-domain user))
 	  (followers_count (weibo-user-followers_count user))
@@ -77,6 +78,7 @@
 	  (statuses_count (weibo-user-statuses_count user))
 	  (favorites_count (weibo-user-favorites_count user))
 	  (created_at (weibo-user-created_at user)))
+      (setq weibo-user-uid id)
       (weibo-insert-image (weibo-get-image-file
 			   (weibo-get-larger-profile_image_url
 			    (weibo-user-profile_image_url user)) t))
@@ -103,7 +105,14 @@
       (when friends_count
 	(insert (format " 关注数量：%s\n" friends_count)))
       (when statuses_count
-	(insert (format " 微博数量：%s\n" statuses_count)))
+	(insert " 微博数量：")
+	(insert-text-button (format "%s" statuses_count)
+			    'action (lambda (b)
+				      (weibo-bury-close-window)
+				      (weibo-timeline-switch-to-provider
+					"i" (format "uid=%s" weibo-user-uid)))
+			    'follow-link t)
+	(insert "\n"))
       (when favorites_count
 	(insert (format " 收藏数量：%s\n" favorites_count)))
       (when created_at
@@ -159,6 +168,7 @@
 
 (define-derived-mode weibo-user-mode fundamental-mode "Weibo-User"
   "Major mode for displaing weibo user"
-  (use-local-map weibo-user-mode-map))
+  (use-local-map weibo-user-mode-map)
+  (make-local-variable 'weibo-user-uid))
 
 (provide 'weibo-user)

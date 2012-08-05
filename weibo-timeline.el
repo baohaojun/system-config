@@ -43,6 +43,8 @@
 (defconst weibo-api-status-unread "remind/unread_count")
 (defconst weibo-api-reset-count "remind/set_count")
 
+(defvar weibo-timeline-extra-params nil)
+
 (defun weibo-timeline-get-unread (&optional param)
   (if nil
       (weibo-get-data weibo-api-status-unread 'weibo-timeline-parse-unread param))
@@ -103,11 +105,11 @@
       (define-key weibo-timeline-mode-map key
 	switch-to-key))))
 
-(defun weibo-timeline-switch-to-provider (key)
+(defun weibo-timeline-switch-to-provider (key &optional extra-params)
   (weibo-timeline)
   (let ((provider (cdr (assoc key weibo-timeline-providers))))
     (when provider
-      (unless (eq provider weibo-timeline-current-provider)
+      (when (or (unless (string= extra-params weibo-timeline-extra-params) (setq weibo-timeline-extra-params extra-params) t) (not (eq provider weibo-timeline-current-provider)))
 	(setq weibo-timeline-current-provider provider)
 	(weibo-timeline-refresh)))))
 
