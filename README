@@ -30,7 +30,7 @@ Usage:
 
 Customization:
 
-The following variable can be customized to fit your need.
+The following variables can be customized to fit your need.
 
 - weibo-directory: the directory where the token file is stored.  A
   "cache" directory is also created in this directory to store image
