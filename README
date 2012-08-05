@@ -1,4 +1,4 @@
-This is a Weibo client for EMACS.
+1;3201;0cThis is a Weibo client for EMACS.
 
 Initialization:
 
@@ -27,6 +27,13 @@ Usage:
     
 4. Check your timeline:
      M-x weibo-timeline
+
+Customization:
+
+The following variable can be customized to fit your need.
+
+- weibo-directory: the directory where the token file is stored. A "cache" directory is also created in this directory to store image files. (Default: "~/t.weibo.emacs.d")
+- weibo-display-image: whether to display image in the timeline. (Default: t)
      
 More features are being developed
 
