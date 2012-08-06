@@ -38,7 +38,7 @@
   province city location description url
   profile_image_url domain gender
   followers_count friends_count statuses_count favorites_count
-  created_at following verified)
+  created_at following verified verified_reason avatar_large)
 
 (defun weibo-make-user (node)
   (make-weibo-user
@@ -52,20 +52,14 @@
    :statuses_count (weibo-get-node-text node 'statuses_count)
    :favorites_count (weibo-get-node-text node 'favorites_count)   
    :verified (weibo-get-node-text node 'verified)
-   :profile_image_url (weibo-get-node-text node 'profile_image_url)))
+   :verified_reason (weibo-get-node-text node 'verified_reason)
+   :profile_image_url (weibo-get-node-text node 'profile_image_url)
+   :avatar_large (weibo-get-node-text node 'avatar_large)))
 
 (defun weibo-insert-user (user details_t)
   (if details_t
       (weibo-insert-user-detail user)
     (weibo-insert-user-simple user)))
-
-(defun weibo-get-larger-profile_image_url (image-url)
-  (when image-url
-    (with-temp-buffer
-      (insert image-url)
-      (goto-char (point-min))
-      (replace-string "/50/" "/180/")
-      (buffer-string))))
 
 (defun weibo-insert-user-detail (user)
   (when user
@@ -77,12 +71,18 @@
 	  (friends_count (weibo-user-friends_count user))
 	  (statuses_count (weibo-user-statuses_count user))
 	  (favorites_count (weibo-user-favorites_count user))
-	  (created_at (weibo-user-created_at user)))
-      (weibo-insert-image (weibo-get-image-file
-			   (weibo-get-larger-profile_image_url
-			    (weibo-user-profile_image_url user)) t))
+	  (created_at (weibo-user-created_at user))
+	  (profile_image_url (weibo-user-profile_image_url user))
+	  (avatar_large (weibo-user-avatar_large user))
+	  (verified_reason (weibo-user-verified_reason user)))
+      (weibo-insert-image (weibo-get-image-file avatar_large t))
       (insert " ")
-      (insert (weibo-user-screen_name user))
+      (insert-text-button (weibo-user-screen_name user)
+			  'action `(lambda (b)
+				     (weibo-bury-close-window)
+				     (weibo-timeline-switch-to-provider
+				      "i" ,(format "uid=%s" id)))
+			  'follow-link t)
       (when (eq (weibo-user-verified user) t)
 	(insert " V"))
       (insert " (" 
@@ -93,29 +93,24 @@
       (insert "\n")
       (when desc
 	(insert " 个人描述：")
-	(weibo-timeline-insert-text desc)
-	(insert "\n"))
+	(weibo-timeline-insert-text desc))
+      (when verified_reason
+	(insert " 认证信息：")
+	(weibo-timeline-insert-text verified_reason))
       (when url
-	(insert (format " 博客地址：%s\n" url)))
+	(insert (format " 博客地址： %s\n" url)))
       (when domain
-	(insert (format " 个性地址：%s\n" domain)))
+	(insert (format " 个性地址： %s\n" domain)))
       (when followers_count
-	(insert (format " 粉丝数量：%s\n" followers_count)))
+	(insert (format " 粉丝数量： %s\n" followers_count)))
       (when friends_count
-	(insert (format " 关注数量：%s\n" friends_count)))
+	(insert (format " 关注数量： %s\n" friends_count)))
       (when statuses_count
-	(insert " 微博数量：")
-	(insert-text-button (format "%s" statuses_count)
-			    'action `(lambda (b)
-				       (weibo-bury-close-window)
-				       (weibo-timeline-switch-to-provider
-					"i" ,(format "uid=%s" id)))
-			    'follow-link t)
-	(insert "\n"))
+	(insert (format " 微博数量： %s\n" statuses_count)))
       (when favorites_count
-	(insert (format " 收藏数量：%s\n" favorites_count)))
+	(insert (format " 收藏数量： %s\n" favorites_count)))
       (when created_at
-	(insert (format " 加入时间：%s\n" created_at)))
+	(insert (format " 加入时间： %s\n" created_at)))
       t)))
 
 (defun weibo-insert-user-simple (user)
