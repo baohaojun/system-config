@@ -49,7 +49,7 @@ while(<$out>) {
   print $debug "$_";
     m/(\S*?)\s+(\S*?)\s+(\S*?)\s+(.*)/ or next;
     my ($func, $type, $line) = ($1, $2, $3);
-    $func_location_map{$line} = $func if $type eq "function" or $type eq "method" or $type eq "macro" or $type eq "class";
+    $func_location_map{$line} = $func if $type eq "function" or $type eq "method" or $type eq "macro" or $type eq "class" or $type eq "variable";
 }
 
 @func_locations = sort { $a <=> $b } keys %func_location_map;

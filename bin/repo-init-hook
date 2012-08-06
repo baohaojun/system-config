@@ -9,4 +9,16 @@ else
     cp manifest.xml.old manifest.xml -av
 fi
 
-    
+if test ! -e local_manifest.xml; then
+    cat <<EOF > local_manifest.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+
+  <remote  name="apse"
+           fetch="shgit.marvell.com:/git/android"
+           review="http://bible/gerrit/" />
+
+  <project path="vendor/marvell/generic/tcmd" name="vendor/marvell/generic/tcmd" revision="master" remote="apse" />
+</manifest>
+EOF
+fi
