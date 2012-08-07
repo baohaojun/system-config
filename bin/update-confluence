@@ -1,5 +1,8 @@
 #!/bin/bash
 set -e
+if test -e .confluence.rc; then
+    . .confluence.rc
+fi
 
 test $# = 0 && cd ~/confluence/
 IFS=$'\n'

@@ -65,10 +65,10 @@ while (<$ctags_pipe>) {
 	debug "file $this_ctags_file, line $this_ctags_linum";
 	next;
     }
-    my $type = $this_ctags_type;
-
-    unless ($type eq "function" or $type eq "method" or $type eq "class") {
-	next;
+    my $type = $last_ctags_type;
+    my $do_record = 0;
+    if ($type eq "function" or $type eq "method" or $type eq "class") {
+	$do_record = 1;
     }
     unless ($current_file_handle) {
 	open($current_file_handle, "<", $this_ctags_file);
@@ -77,6 +77,7 @@ while (<$ctags_pipe>) {
     if ($last_ctags_def) {
 	while($current_file_line + 1 < $this_ctags_linum and my $line = <$current_file_handle>) {
 	    $current_file_line++;
+	    next unless $do_record;
 	    chomp($line);
 	    while ($line =~ m/$lang_token_regexp/g) {
 		def_contains($&);

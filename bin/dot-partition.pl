@@ -13,10 +13,12 @@ use Getopt::Long;
 my $max_level = 5;
 my $start_def;
 my $max_reverse_level = 0;
+my $max_called_by = 20000;
 GetOptions(
     "m=n" => \$max_level,
     "s=s" => \$start_def,
     "r=n" => \$max_reverse_level,
+    "b=n" => \$max_called_by,
     );
 
 unless ($start_def) {
@@ -43,6 +45,7 @@ my @parts = keys %partition;
 my $level = 0;
 my $part_file;
 my $filename;
+my %printed;
 sub do_part($) {
     my ($source) = @_;
     debug " " x $level . "enter $source, level is $level" unless $visited{$source};
@@ -60,12 +63,13 @@ sub do_part($) {
 
     do {
 	foreach my $target (keys %{$partition{$source}}) {
-	    print $part_file "$partition{$source}{$target}\n";
+	    print $part_file "$partition{$source}{$target}\n" unless $printed{$partition{$source}{$target}};
+	    $printed{$partition{$source}{$target}} = 1;
 	    do_part($target);
-	    if ($level <= $max_reverse_level) {
+	    if ($level <= $max_reverse_level and keys(%{$reverse_partition{$source}}) < $max_called_by) {
 		foreach my $reverse (keys %{$reverse_partition{$source}}) {
-		    print $part_file "$reverse_partition{$source}{$reverse}\n" if $reverse_partition{$source}{$reverse};
-		    delete $reverse_partition{$source}{$reverse};
+		    print $part_file "$reverse_partition{$source}{$reverse}\n" unless $printed{$reverse_partition{$source}{$reverse}};
+		    $printed{$reverse_partition{$source}{$reverse}} = 1;
 		}
 	    }
 	}
@@ -75,7 +79,7 @@ sub do_part($) {
     if ($level == 0) {
 	print $part_file "}\n";
 	close($part_file);
-	system("(dot -Tpdf -o $filename.pdf $filename; acroread $filename.pdf)&");
+	system("(dot -Tpdf -o $filename.pdf $filename; acroread $filename.pdf) >/dev/null 2>&1&");
     }
 	    }
 
