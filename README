@@ -34,7 +34,11 @@ The following variables can be customized to fit your need.
 
 - weibo-directory: the directory where the token file is stored.  A
   "cache" directory is also created in this directory to store image
-  files. (Default: "~/t.weibo.emacs.d")  
+  files. (Default: "~/t.weibo.emacs.d")
+
+- weibo-image-directory: when set, this variable specifies the
+  alternative directory where image files are stored. (Default: nil)
+  
 - weibo-display-image: whether to display image in the
   timeline. (Default: t)
      

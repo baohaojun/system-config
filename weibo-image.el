@@ -20,13 +20,20 @@
 (defvar weibo-display-image t
   "When set to true, images are displayed. Set it to nil to disable image display")
 
+(defvar weibo-image-directory nil
+  "Customize this variable to specify path to image cache. If set to nil, weibo-directory/cache is used")
+
 (setq max-image-size t)
 
 (defvar weibo-download-image-queue nil)
 (defvar weibo-download-image-queue2 nil)
 
 (defun weibo-get-image-directory ()
-  (let ((image-directory (expand-file-name "cache" weibo-directory)))
+  (let ((image-directory
+	 (if (and weibo-image-directory
+		  (not (string= weibo-image-directory "")))
+	     weibo-image-directory
+	   (expand-file-name "cache" weibo-directory))))
     (unless (file-exists-p image-directory)
       (make-directory image-directory t))
     image-directory))
