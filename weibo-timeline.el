@@ -136,7 +136,7 @@
       (while (search-forward-regexp weibo-timeline-name-regexp pos-end t)
 	(make-text-button (match-beginning 0) (match-end 0)
 			  'action (lambda (b) (weibo-show-user (button-label b)))
-			  'follow-link t))
+			  'follow-link t))      
       (goto-char pos-end))))
 
 (defun weibo-timeline-insert-picture (thumb_pic mid_pic)
@@ -195,6 +195,14 @@
 	 (ewoc_node (and node (ewoc-next weibo-timeline-data node))))
     (if (not ewoc_node)
 	(weibo-timeline-pull-old)
+      (goto-char (ewoc-location ewoc_node))
+      (recenter-top-bottom 0))))
+
+(defun weibo-timeline-move-prev ()
+  (interactive)  
+  (let* ((node (ewoc-locate weibo-timeline-data))
+	 (ewoc_node (and node (ewoc-prev weibo-timeline-data node))))
+    (when ewoc_node
       (goto-char (ewoc-location ewoc_node))
       (recenter-top-bottom 0))))
 
@@ -416,6 +424,8 @@
 	(define-key map "g" 'weibo-timeline-pull-new)
 	(define-key map "m" 'weibo-timeline-pull-old)
 	(define-key map " " 'weibo-timeline-move-next)
+	(define-key map "j" 'weibo-timeline-move-next)
+	(define-key map "k" 'weibo-timeline-move-prev)	
 	(define-key map "r" 'weibo-timeline-refresh)
 	(define-key map "u" 'weibo-timeline-update)	
 	(define-key map "s" 'weibo-timeline-inspect)

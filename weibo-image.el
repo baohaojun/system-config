@@ -126,7 +126,9 @@
     (define-key map "q" 'weibo-bury-close-window)
     (define-key map " " 'weibo-play-animation)
     (define-key map (kbd "C-n") 'image-next-line)
+    (define-key map (kbd "<down>") 'image-next-line)
     (define-key map (kbd "C-p") 'image-previous-line)
+    (define-key map (kbd "<up>") 'image-previous-line)    
     map)
   "Keymap for weibo-image-mode")
 
