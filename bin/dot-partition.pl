@@ -9,25 +9,18 @@ sub debug(@) {
     print STDERR "@_\n";
 }
 
-sub add_to_partition($$)
-{
-    my ($source, $target) = @_;
-    debug "add $target to $source";
+use Getopt::Long;
+my $max_level = 5;
+my $start_def;
+my $max_reverse_level = 0;
+GetOptions(
+    "m=n" => \$max_level,
+    "s=s" => \$start_def,
+    "r=n" => \$max_reverse_level,
+    );
 
-    return 0 unless $target;
-    foreach my $key (keys %{$partition{$target}}) {
-	debug "change partition from $target to $source";
-	$partition{$source}{$key} = 1;
-    }
-
-    foreach my $key (keys %reverse_partition) {
-	if ($reverse_partition{$key} eq $target) {
-	    $reverse_partition{$key} = $source;
-	    add_to_partition($source, $key) unless $key eq $source;
-	}
-    }
-    delete $partition{$target} unless $target eq $source;
-    $reverse_partition{$target} = $source;
+unless ($start_def) {
+    $max_reverse_level = $max_level = 20000;
 }
 
 while (<>) {
@@ -36,30 +29,68 @@ while (<>) {
 	my $source = $PREMATCH;
 	my $target = $POSTMATCH;
 
-	my $part = exists $reverse_partition{$source} ? $reverse_partition{$source} : $source;
+	$partition{$source} = {} unless exists $partition{$source};
+	$partition{$source}{$target} = "$source -> $target";
 
-	$partition{$part} = {} unless exists $partition{$part};
-	add_to_partition($part, $target);
-	add_to_partition($part, $reverse_partition{$target});
-
-	$partition{$part}{"$source -> $target"} = 1;
+	$reverse_partition{$target} = {} unless exists $reverse_partition{$target};
+	$reverse_partition{$target}{$source} = "$source -> $target";
     }
 }
 
-foreach my $part (keys %partition) {
-    my $filename = "$part.dot";
-    $filename =~ s/"//g;
-    open (my $part_file, ">", "$filename") 
-	or die "Can not open $filename";
-    debug "reverse for $part is $reverse_partition{$part}";
+my %visited;
+my @parts = keys %partition;
 
-    print $part_file "digraph {\ngraph [ ratio=.5 ];\n";
+my $level = 0;
+my $part_file;
+my $filename;
+sub do_part($) {
+    my ($source) = @_;
+    debug " " x $level . "enter $source, level is $level" unless $visited{$source};
+    return if ($level >= $max_level);
+    return if exists $visited{$source};
+    $visited{$source} = 1;
 
-    foreach my $relation (keys %{$partition{$part}}) {
-	print $part_file "$relation\n";
+    if ($level++ == 0) {
+	$filename = "$source.dot";
+	$filename =~ s/"//g;
+	open ($part_file, ">", "$filename")
+	    or die "Can not open $filename";
+	print $part_file "digraph {\ngraph [ ratio=.5 ];\n";
     }
 
-    print $part_file "}\n";
-    close ($part_file);
-}
+    do {
+	foreach my $target (keys %{$partition{$source}}) {
+	    print $part_file "$partition{$source}{$target}\n";
+	    do_part($target);
+	    if ($level <= $max_reverse_level) {
+		foreach my $reverse (keys %{$reverse_partition{$source}}) {
+		    print $part_file "$reverse_partition{$source}{$reverse}\n" if $reverse_partition{$source}{$reverse};
+		    delete $reverse_partition{$source}{$reverse};
+		}
+	    }
+	}
+    } while (0);
+    $level--;
+    debug " " x $level . "exit $source, level is $level";
+    if ($level == 0) {
+	print $part_file "}\n";
+	close($part_file);
+	system("(dot -Tpdf -o $filename.pdf $filename; acroread $filename.pdf)&");
+    }
+	    }
 
+if ($start_def) {
+
+    if (exists $partition{$start_def}) {
+	do_part($start_def);
+    } else {
+	$start_def = "\"$start_def\"";
+	do_part($start_def);
+    }
+
+} else {
+    foreach my $part (@parts) {
+	debug "doing $part";
+	do_part($part);
+    }
+}

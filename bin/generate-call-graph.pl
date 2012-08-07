@@ -89,6 +89,7 @@ while (<$ctags_pipe>) {
 
 }
 
+my %graph_map;
 my (%calls_map, %called_by_map, %label_map);
 foreach my $def (sort keys %def_contains_map) {
     foreach my $def_info (sort keys %{$def_contains_map{$def}}) {
@@ -107,10 +108,17 @@ foreach my $def (sort keys %def_contains_map) {
 	    foreach my $word (sort keys %{$def_contains_map{$def}{$def_info}{$line}}) {
 		if (exists $def_contains_map{$word} and $word ne $def) {
 		    unless (exists $called_by_map{$word}) {
-			write_graph("\"$def\" -> \"$word\"\n");
 			$called_by_map{$word} = {};
 		    }
 		    $called_by_map{$word}{"$file:$line"} = "$def: $def_info";
+
+		    $graph_map{$def} = {} unless exists $graph_map{$def};
+		    unless (exists $graph_map{$def}{$word}) {
+			$graph_map{$def}{$word} = 1;
+			write_graph("\"$def\" -> \"$word\"\n");
+		    }
+			
+
 
 		    $calls_map{def} = {} unless exists $calls_map{$def};
 		    $calls_map{$def}{$def_info} = {} unless exists $calls_map{$def}{$def_info};
