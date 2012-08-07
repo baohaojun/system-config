@@ -46,9 +46,7 @@
 (defvar weibo-timeline-extra-params nil)
 
 (defun weibo-timeline-get-unread (&optional param)
-  (if nil
-      (weibo-get-data weibo-api-status-unread 'weibo-timeline-parse-unread param))
-  "")
+  (weibo-get-data weibo-api-status-unread 'weibo-timeline-parse-unread param))
 
 (defun weibo-timeline-parse-unread (root)
   (when (weibo-check-result root)
