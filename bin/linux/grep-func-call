@@ -93,6 +93,7 @@ while(<$file>) {
 	debug "members: $members, func_location_before: $func_location_before, line: $line_no, file_line_map{\$line_no}: $file_line_map{$line_no}, target: $target";
     }
 
+    next if $file_line_map{$func_location_before} =~ m/^\s*#\s*define\s+.*[^\\]$/;
 
     unless ($printed_func_map{$func_location_before}) {
 	print $ENV{GTAGS_START_FILE} . ":$func_location_before: <= " 
