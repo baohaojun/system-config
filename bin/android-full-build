@@ -57,8 +57,8 @@ if test $# -gt 0; then
     target=$1
 fi
 
+set -x;
 (
-    set -x;
     set -e
     test -d "$ANDROID_PRODUCT_OUT"
     cd "$ANDROID_PRODUCT_OUT"
@@ -77,15 +77,8 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	    touch .for-code-reading
         fi
 	echo 'about to lock at '$(date)
-	flock 9 || { echo 'lock failed at '$(date); exit -1; }
+	flock 9
 	echo 'lock success! at '$(date)
-	(
-            if test -e .afb-do-repo-changes; then
-	        echo "before build, ccache stat is $(./prebuilt/linux-x86/ccache/ccache -s)"
-	        echo "external dirs not managed by repo: $(repo-external)"
-	        echo "changed repos are: $(repo-changes\?)"
-            fi
-	)&
 	rm */out/ -rf || true
         
         if test -e /usr/bin/ccache; then
@@ -131,8 +124,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	echo 
 	echo "full build result is $result"
 	echo
-        echo "$result" | grep -q -e "all ok" # make sure it exit with the right return value
     )
 ) 9>.android-full-build.lock  2>&1 | tee build.log out/build.log
 
-grep 'full build result is' build.log | grep -q -e "all ok" # make sure it exit with the right return value
+grep -Hn -e 'full build result is' build.log | grep -e "all ok" # make sure it exit with the right return value

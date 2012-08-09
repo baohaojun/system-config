@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+test $# = 1 || die "Error: Usage $(basename $0) CMD"
+
+if test "$1" != "$(basename $1)"; then
+    die "cmd must be a basename, no dir part allowed"
+fi
+
+cmd=$(which $1)
+if test "$cmd" = ~/bin/linux/ext/$1; then
+    die "already set up debugging for $1"
+fi
+
+cat <<EOF > ~/bin/linux/ext/$1
+#!/bin/bash
+mkdir -p ~/.logs/do-debug-cmd.log/
+echo "\$@" >> ~/.logs/do-debug-cmd.log/$1
+exec $cmd "\$@"
+EOF
+chmod +x ~/bin/linux/ext/$1

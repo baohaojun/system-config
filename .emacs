@@ -2307,3 +2307,8 @@ we are not interested in those lines that do."
   (bhj-choose (split-string (shell-command-to-string (read-from-minibuffer "command to run: ")) nil t)))
 (load "RubikitchAnythingConfiguration.el")
 (server-start)
+
+(add-hook 'vc-git-log-view-mode-hook
+	  (lambda ()
+	    (when (string= log-view-message-re "^commit *\\([0-9a-z]+\\)")
+	      (setq log-view-message-re "^commit +\\([0-9a-z]+\\)"))))

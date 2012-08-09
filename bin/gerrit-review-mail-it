@@ -88,11 +88,7 @@ your commit.
 In the attached build.log, you can find the build fail reason. Here's
 a grep which hopefully can show some clue:
 
-$(grep -i -e "\*\*\*.*stop\|no such \|circular.*dropped\|no rule to\|failed\|[0-9]+elapsed \|error [0-9]+\|because of errors\|[0-9]+ error\b\|error:\|undefined reference to" build.log | perl -npe 's/^/    /')
-
-Sorry for disturbing your work flow, especially so if you are not
-responsible for this build error. But let's work together more closely
-to improve our quality!
+$(grep -Hn -i -e "\*\*\*.*stop\|no such \|circular.*dropped\|no rule to\|failed\|[0-9]+elapsed \|error [0-9]+\|because of errors\|[0-9]+ error\b\|error:\|undefined reference to" build.log | perl -npe 's/^/    /')
 
 Thanks.
 

@@ -13,8 +13,8 @@ sudo apt-get dist-upgrade --download-only --yes
 
     x=$(echo ~/smb/bible/cm/release-$(today--)/tknevo-ics*/pxa978ariel_cmcc_release/)
     cd $x
-    patches=$(echo logo.bin *.blf* *gpt* u-boot.bin *ddr* fact* prdcfg*)
-    cp $patches ~/smb/bible/Public/apse-daily-build/$(today)/bpe-patches -av
+    patches=$(echo logo.bin *.blf* *gpt* u-boot.bin *DDR* fact* prdcfg*)
+    cp $patches ~/smb/bible/Public/apse-daily-build/$(today)/bpe-patches -av || true
     
     sudo umount -l ~/bible || true
     sshfs samba@bible:/ ~/bible
@@ -39,5 +39,10 @@ sudo apt-get dist-upgrade --download-only --yes
         done
     )
 )
-    
-chmod a-w ~/bible/home/samba/public/apse-daily-build/$(today)/ -R
+
+(
+    set -e    
+    chmod a-w ~/bible/home/samba/public/apse-daily-build/$(today)/ -R
+    cd ~/bible/home/samba/public/apse-daily-build 
+    ls -t */ -d |perl -ne 'print unless 1..5' |xargs rm -rf
+)

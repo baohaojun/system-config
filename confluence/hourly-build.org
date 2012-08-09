@@ -40,6 +40,13 @@ But this error notification email will only be sent if the last hour's
 build is OK, to reduce noise; or if the time is after 15:00 o'clock,
 because it's more urgent to be fixed at this close to COB time.
 
+In the mail, a grep on the common error patterns are included, the
+grep command is like the following:
+
+#+begin_example
+grep -Hn -i -e "\*\*\*.*stop\|no such \|circular.*dropped\|no rule to\|failed\|[0-9]+elapsed \|error [0-9]+\|because of errors\|[0-9]+ error\b\|error:\|undefined reference to" build.log
+#+end_example
+
 * How did it not work?
 
 Generally, the hourly build can catch build errors very precisely. But

@@ -34,7 +34,6 @@ time (
         is_old_part_table=true
     fi
 
-    test -e system.img || cd $(lookup_file flashing)
     function die() {
         echo "$@"
         exit -1

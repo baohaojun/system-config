@@ -24,7 +24,7 @@ if ($grep_all) {
     exit 0;
 }
 
-open(my $out, "-|",  "ctags-exuberant --language-force=" . $ENV{GTAGS_LANG_FORCE} . " -xu " . $ENV{GTAGS_START_FILE})
+open(my $out, "-|",  "ctags-exuberant --c-kinds=+p --language-force=" . $ENV{GTAGS_LANG_FORCE} . " -xu " . $ENV{GTAGS_START_FILE})
     or die "Error: open gtags output";
 
 open(my $env, ">", glob("~/.logs/grep-func-call.env"))
@@ -47,9 +47,9 @@ $func_location_map{1} = "******";
 $func_location_map{10000000} = "******";
 while(<$out>) {
   print $debug "$_";
-    m/(\S*?)\s+(\S*?)\s+(\S*?)\s+(.*)/ or next;
-    my ($func, $type, $line) = ($1, $2, $3);
-    $func_location_map{$line} = $func if $type eq "function" or $type eq "method" or $type eq "macro" or $type eq "class" or $type eq "variable";
+  m/(\S*?)\s+(\S*?)\s+(\S*?)\s+(.*)/ or next;
+  my ($func, $type, $line) = ($1, $2, $3);
+  $func_location_map{$line} = $func;
 }
 
 @func_locations = sort { $a <=> $b } keys %func_location_map;
