@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+export CONF_DIR=~
 if test -e .confluence.rc; then
     . .confluence.rc
 fi
@@ -20,7 +21,7 @@ for x in "${args[@]}"; do
 
     logf=~/.logs/$(basename $0)-$$.log
     congfu -- -a storePage --title "${x%%.org}" --encoding UTF-8 --file "$x".$$ > $logf 2>&1|| die "Error: see above"
-    cat $logf|grep 'Page has id: '|perl -npe 's/.*Page has id: (\d+).*/$1/'|xargs -I %s bash -x -c "of http://$(cat ~/.confserv)$(cat ~/.confpath)/pages/viewpage.action?pageId=%s"
+    cat $logf|grep 'Page has id: '|perl -npe 's/.*Page has id: (\d+).*/$1/'|xargs -I %s bash -x -c "of http://$(cat $CONF_DIR/.confserv)/pages/viewpage.action?pageId=%s"
     congfu -- -a removeAttachment  --title "${x%%.org}" --name "$x".mht
     congfu -- -a addAttachment --title "${x%%.org}" --file "$x".mht --mime text/html
     rm "$x".$$
