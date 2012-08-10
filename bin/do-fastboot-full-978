@@ -151,7 +151,7 @@ time (
     do-partition OBM $(concat-file 0 ntim_emmc.bin 4K OBMI)
 
 
-    if test $(basename $0) = do-fastboot-full-978; then
+    if test $(basename $0) = do-fastboot-full-978 -a "$ERASE_ALL" != false; then
         fastboot erase misc
         fastboot erase Cache
         if test $is_old_part_table = true; then

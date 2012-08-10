@@ -5,6 +5,8 @@ if test -d ~/external/cygwin; then
     cd ~/external/cygwin 
 elif test -e ~/external/.cygwin-dir; then
     cd "$(cat ~/external/.cygwin-dir)"
+elif test -e ~/external/.mirror-cygwin.rc; then
+    . ~/external/.mirror-cygwin.rc
 else
     true
     exit

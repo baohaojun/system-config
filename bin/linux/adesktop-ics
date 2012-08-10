@@ -3,7 +3,9 @@
     mkdir -p ~/bin/linux/ext/android-screen-ics
     cd ~/bin/linux/ext/android-screen-ics
     for x in android-screencast.jar ddmlib-3.1.0.jar; do
-	echo http://alexfdz-screencast-honeycomb.googlecode.com/git/android-screencast-dist/lib/$x
+        if test ! -e $x; then
+	    echo http://alexfdz-screencast-honeycomb.googlecode.com/git/android-screencast-dist/lib/$x
+        fi
     done |xargs wget -N
 
 

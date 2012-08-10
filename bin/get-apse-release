@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+mkdir -p ~/today/transient/flashing/
+cd ~/today/transient/flashing/
+
+set -- android/pxa978T/$1_pxa978T-ics/pxa978ariel_def/
+
+cat ~/.smbpass | ssh shgit bash -c 'cat /dev/stdin | smbclient //sh-fs04/autobuild -D '$1' -A /dev/stdin -TcXr flashing.tar "*System.map" "*.tgz" "*vmlinux"; rm ~/android -rf; tar xfv flashing.tar;'
+
+rsync -av --exclude='*.tgz' --exclude=vmlinux --exclude=System.map shgit:$1/* .
