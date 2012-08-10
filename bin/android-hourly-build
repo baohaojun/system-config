@@ -30,6 +30,8 @@ flock 9
     diff .local_refs.txt .remote_refs.txt || true
     echo hourly build start hours is $start_hour
     set -x
+    cat .local_refs.txt
+    cat .remote_refs.txt
     rm -f .build-started
     if yes-or-no-p -y "Do sync?"; then
         if test "$DO_NOT_GQ_REBASE" = true; then

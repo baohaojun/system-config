@@ -6,11 +6,22 @@
 # printf '$repo_info{$android_path . "%s"}{"path"} = "%s";\n' $repo_path "$REPO_PATH"
 # printf '$repo_info{$android_path . "%s"}{"project"} = "%s";\n' $repo_path "$REPO_PROJECT"
 
+echo '#!/usr/bin/perl'
+echo '$android_path = $0;'
+echo '$android_path =~ s,/.repo/repo_info.pl,,;'
+
+if test $# = 0; then
+    set -- manifest.xml local_manifest.xml
+fi
+
+xmlstarlet sel -B -t -m //remote \
+    -o '$remote_map{"' -v @name -o '"} = "' -v @fetch -o '";' -n $1
+
 xmlstarlet sel -B -t -m //default \
     -o '$default_remote = "'  -v @remote -o '";' -n \
-    -o '$default_revision = "' -m //default -v @revision -o '";' -n manifest.xml
+    -o '$default_revision = "' -m //default -v @revision -o '";' -n $1
 
-for x in manifest.xml local_manifest.xml; do
+for x in "$@"; do
     if test -e $x; then
         xmlstarlet sel -B -t -m //project \
             -o '$repo_info{$android_path . "/' -v @path -o '"}{"project"} = "' -v @name  -o '";' -n \

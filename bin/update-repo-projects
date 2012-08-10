@@ -2,6 +2,7 @@
 . ~/.bashrc
 
 if test "$RUNNING_IN_CRON" = true; then
+    export DO_REPO_UPDATE=true
     (
         set -e
         cd ~/src/android

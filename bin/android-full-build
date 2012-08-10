@@ -80,7 +80,9 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 	flock 9
 	echo 'lock success! at '$(date)
 	rm */out/ -rf || true
-        
+        if test "$DO_REPO_UPDATE" = true; then
+            rm out/*/ -rf || true
+        fi        
         if test -e /usr/bin/ccache; then
             ln -sf /usr/bin/ccache prebuilt/linux-x86/ccache/ccache
         fi
