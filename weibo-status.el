@@ -108,20 +108,23 @@
       (when retweeted
 	(insert weibo-timeline-sub-separator "\n")))))
 
+(defun weibo-generate-time-string (fmtstr tmstr &rest args)
+  (apply 'format (format-time-string fmtstr (date-to-time tmstr)) args))
+
 (defun weibo-parse-status-time (time-string)
   (if (= (length time-string) 0)
       ""
     (let ((now (current-time-string)))
       (if (< 0 (days-between now time-string))
 	  (if (= (nth 5 (parse-time-string now)) (nth 5 (parse-time-string time-string)))
-	      (format-time-string "%m月%d日 %H:%M" (date-to-time time-string))
-	    (format-time-string "%Y年%m月%d日 %H:%M" (date-to-time time-string)))
+	      (weibo-generate-time-string "%m%%s%d%%s %H:%M" time-string "月" "日")
+	    (weibo-generate-time-string "%Y%%s%m%%s%d%%s %H:%M" time-string "年" "月" "日"))
 	(let* ((seconds (floor (time-to-seconds (time-since time-string))))
 	       (hours (/ seconds 3600))
 	       (minutes (/ (% seconds 3600) 60)))
 	  (cond
-	   ((< 0 hours) (format-time-string "今天%H:%M" (date-to-time time-string)))
-	   ((< 0 minutes) (format "%d分钟前" minutes))
+	   ((< 0 hours) (weibo-generate-time-string "%%s%H:%M" time-string "今天"))
+	   ((< 0 minutes) (weibo-generate-time-string "%d%%s" time-string "分钟前"))
 	   (t (format "%d秒前" seconds))))))))
 
 (defun weibo-update-status (status-list type)
