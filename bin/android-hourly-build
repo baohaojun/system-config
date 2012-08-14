@@ -64,7 +64,7 @@ flock 9
             if test "$DO_NOT_GQ_REBASE" = true; then
                 flock -u 9
                 android-hourly-build "$@" || true
-                rm daily-changes/* -rf
+                rm daily-changes/* -rf .build-started
                 mv build.log-rebase build.log
                 die "Error: guilt rebase not cleanly applied; need bail out."
             fi

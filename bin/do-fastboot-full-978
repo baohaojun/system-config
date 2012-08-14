@@ -28,6 +28,10 @@ set -e
 
 time (
 
+    echo before locking
+    flock 9
+    echo done locking
+
     part_table=$(fastboot oem part 2>&1)
     is_old_part_table=false
     if echo "$part_table" | grep -q -e 'td_cp'; then
@@ -42,6 +46,8 @@ time (
     if test $(basename $0) = do-fastboot-full-978; then
         if test $# != 1 -o ! -e $1; then
 	    die "Usage: $(basename $0) XXX.blf"
+        elif test $(basename $1) = $1 -a -e ~/src/android/boot/obm/TimBuilder; then
+            ~/src/android/boot/obm/TimBuilder -r $(pwd)/$1 || true
         fi
     else
         if test $# -lt 2; then
@@ -165,7 +171,16 @@ time (
         fastboot erase MRD
         fastboot erase MRDBackup
     fi
-)
+) 9<"$(
+    export mysh=$(readlink -f $0)
+    if test ! -e $mysh; then
+        export mysh=$(readlink -f $(which $0))
+    fi
+    echo $mysh
+)"
+
+
+
 
 if test $(basename $0) = do-fastboot-full-978; then
     read -p "Press enter to restart fastboot "

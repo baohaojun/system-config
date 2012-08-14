@@ -114,7 +114,7 @@ scd()
         fi
             
 
-        for dir in $(lookup_file "$1"|tee /dev/stderr); do
+        for dir in $(lookup_file -- "$1"|tee /dev/stderr); do
             dir=$(echo "$dir" | perl -npe 's,/./,/,g')
             basedir=$(common-path "$PWD" "$dir")
             stem="${dir:${#basedir}+1}"
@@ -133,7 +133,7 @@ scd()
         dir1=$(pwd | perl -npe 's#'"$1"'#'"$2"'#g')
         test -d "$dir1" && { cd "$dir1"; return; }
         
-        dir=$(lookup_file "$1"|tee /dev/stderr|head -n 1)
+        dir=$(lookup_file -- "$1"|tee /dev/stderr|head -n 1)
         shift
         dir=$(builtin cd "$dir"; lookup_file "$1"|tee /dev/stderr|head -n 1)
         dir=$(formal-path "$dir")

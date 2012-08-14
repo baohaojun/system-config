@@ -56,7 +56,7 @@ else
 		if test -d "$x"; then
 		    repo forall "$x" -c 'echo $REPO_PATH'
 		elif test -f "$x"; then
-		    cat "$x" | pn 1
+		    cat "$x" | pn 1 | sort -u
 		else
 		    die "Error: not a dir: $x"
 		fi

@@ -23,6 +23,10 @@ while true; do
     esac
 done
 
+if test "$1" = out/repo-changes.log; then
+    cd $(lookup_file .repo/..)
+fi
+
 if test $# = 0 -a ! -d .repo; then
     set -- $(repo-top)/$(repo-path)
 fi
