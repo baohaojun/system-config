@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+
+use strict;
+
+die "Usage: $0 .local_revs.txt .remote_revs.txt" if (@ARGV != 2);
+
+open(my $diff, "-|", "diff", @ARGV)
+    or die "Can not diff on @ARGV";
+
+my %old_rev;
+my %new_rev;
+
+while (<$diff>) {
+    chomp;
+    my @parts = split;
+    if ($parts[0] eq '<') {
+	$old_rev{$parts[1]} = $parts[2];
+    } elsif ($parts[0] eq '>') {
+	$new_rev{$parts[1]} = $parts[2];
+    }
+}
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+unless (exists $ENV{"HOURLY_BUILD_LOGD"}) {
+    debug "Warning: HOURLY_BUILD_LOGD not set in env";
+    $ENV{"HOURLY_BUILD_LOGD"} = "$ENV{PWD}/hourly-build-changs";
+    system("mkdir -p $ENV{HOURLY_BUILD_LOGD}");
+}
+
+my $command_str = "";    
+foreach my $url (keys %old_rev) {
+    next unless exists $new_rev{$url};
+    my ($rev1, $rev2) = ($old_rev{$url}, $new_rev{$url});
+    $command_str = sprintf "%s\n%s", $command_str, "
+#{%sh-mode%}
+if test \"\$(repo-remote-url)\" = $url; then
+    logf=\${HOURLY_BUILD_LOGD}/\$(repo-path|perl -npe s,/,.,g).log
+    (git log $rev1..$rev2; git log $rev2..$rev1) > \$logf;
+fi
+#{%/sh-mode%}
+";
+}
+
+system("my-rfa", $command_str);
+	   
+    

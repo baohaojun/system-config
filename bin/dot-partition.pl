@@ -58,7 +58,7 @@ sub do_part($) {
 	$filename =~ s/"//g;
 	open ($part_file, ">", "$filename")
 	    or die "Can not open $filename";
-	print $part_file "digraph {\ngraph [ ratio=.5 ];\n";
+	print $part_file "digraph {\nrankdir=LR;\ngraph [ ratio=.5 ];\n";
     }
 
     do {

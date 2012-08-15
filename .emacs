@@ -467,7 +467,14 @@
 		 (line-end-position))))
 
 	(unless bhj-occur-regexp
-	  (setq regexp (concat "\\b" (replace-regexp-in-string "\\([][^$*?\\\\.+]\\)" "\\\\\\1" regexp) "\\b")))
+	  (setq regexp (concat
+			(if (string-match "^\\w" regexp)
+			    "\\b"
+			  "")
+			(replace-regexp-in-string "\\([][^$*?\\\\.+]\\)" "\\\\\\1" regexp) 
+			(if (string-match "\\w$" regexp)
+			    "\\b"
+			  ""))))
 
 	(setq regexp 
 	      (read-shell-command "List lines matching regexp: " regexp))

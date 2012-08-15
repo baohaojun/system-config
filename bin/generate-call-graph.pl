@@ -116,7 +116,12 @@ foreach my $def (sort keys %def_contains_map) {
 		    $graph_map{$def} = {} unless exists $graph_map{$def};
 		    unless (exists $graph_map{$def}{$word}) {
 			$graph_map{$def}{$word} = 1;
-			write_graph("\"$def\" -> \"$word\"\n");
+			foreach my $info (keys %{$def_contains_map{$word}}) {
+			    if ($info =~ m/method|function/) {
+				write_graph("\"$def\" -> \"$word\"\n");
+				last;
+			    }
+			}
 		    }
 			
 

@@ -5,6 +5,21 @@ build_env=`lookup_file build/envsetup.sh`
 top_dir=$(pwd)
 
 set -e
+
+if test -e .afbrc; then
+    . .afbrc
+fi
+
+if test "$hourly_build_debug" = true; then
+    if test -e .patch_applied; then
+        echo "Error: pateches applied"
+        exit -1;
+    else
+        echo "Error: patches not applied"
+        exit 0;
+    fi
+fi
+
 test -d .repo -a -e build/envsetup.sh
 # jobs=$(cat /proc/cpuinfo |grep '^processor'|wc -l) #default
 # jobs=$((jobs + jobs / 2))

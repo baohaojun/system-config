@@ -8,10 +8,6 @@ set -e
         export mysh=$(readlink -f $(which $0))
     fi
 
-    start_hour=${start_hour-$(date +%_H|tr -d ' ')}
-    logdir=../$(basename $PWD)-out/refs.$start_hour
-    mkdir -p $logdir
-    cp -av .*refs.txt $logdir || true
     my-rfa '
 #{%sh-mode%}
 head=$(

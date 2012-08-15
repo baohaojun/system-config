@@ -32,16 +32,8 @@ fi
 
 if test "$1" = build-failed; then
     shift
-    set -e
-
-    last_time_build_ok=${1#*=}
-    shift
+    set -ex    
     
-    build_started=${1#*=}
-    shift
-
-    bhj-notify "hourly build $@ last: $last_time_build_ok, start: $build_started" "failed, last time ok? $last_time_build_ok; build started? $build_started"
-
     title=$(echo Automatic hourly build failed $(now) - "$@")
     
     tmpd=~/tmp/$(basename $0).$$.dir
@@ -49,22 +41,28 @@ if test "$1" = build-failed; then
     cd $tmpd
     tar zxfv $tmpf
 
+    bhj-notify "hourly build failed: $@ $(tail -n 1 .build-status)" "failed, $(cat .build-status)"
+
+    title=$(echo Automatic hourly build failed $(now) - "$@")
     #################################################################
     # in case some one passed a symlink to a passwd file, trying to
     # trick us to mail that file to him!
-    find . -type -l | xargs rm >/dev/null 2>&1 || true 
+    find . -type l | xargs rm >/dev/null 2>&1 || true 
     
     recipients=$(
         find ./daily-changes -type f | xargs cat |
         grep '^Commit:' |
         perl -npe 's/.*<//; s/>.*//;' |
+        grep '@marvell.com' |
         sort -u;
         echo hjbao@marvell.com
     )
 
-    if test -e ~/.mail-build-errors -a $last_time_build_ok = "last_time_build_ok=yes";
+    in_mail_recipients=$recipients
+    if test -e .mail_people -a -e ~/.mail-build-errors -a -e .build_ok;
     then
         recipients="-c $recipients"
+        in_mail_recipients=
     else
         recipients=
     fi
@@ -73,7 +71,7 @@ if test "$1" = build-failed; then
     cp $tmpf commit-messages.tgz
     cat <<EOF | mailx -s "$title" hjbao@marvell.com $recipients -a commit-messages.tgz -a build.log
 Hi, all
-
+$in_mail_recipients
 You are receiving this email because the automatic hourly build has
 failed, and you are among the people who commited changes in the last
 hour. See

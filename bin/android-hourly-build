@@ -2,29 +2,43 @@
 
 set -e
 
+if test -e .ahbrc; then
+    . .ahbrc
+fi
+
 function die() {
-    echo "$@"
+    echo "Error: $@"
+    debug "Error: $@"
     exit -1
 }
 
 cd $(lookup_file .repo/..)
-start_hour=${start_hour-$(date +%_H)}
+start_hour=${start_hour-$(date +%_H|tr -d ' ')}
 test -d .repo || die ".repo not found, not android source directory?"
 
-rm .repo/.need_rebuild -f
+rm .repo/.need_rebuild -f # hack
+rm .build_ok build.log .build-status .patch_applied .mail_people -f
 
-if test "$DO_NOT_GQ_REBASE" = true; then
-    hourly_log=hourly-build-without-rebase.log
-else
-    hourly_log=hourly-build.log
-fi
 
-if test -e $hourly_log; then
-    mv $hourly_log $hourly_log.$((start_hour - 1))
-fi
+hourly_log=.hourly-build.log.$start_hour
+ln -sf $hourly_log hourly-build.log
+refsdir=../$(basename $PWD)-out/refs.$start_hour
+mkdir -p $refsdir
 
 exec 9>.android-full-build.lock
 flock 9
+
+function debug() {
+    echo "$@" >> .build-status
+}
+
+function remove_patches() {
+    rm .patch_applied -f
+    my-rfa '
+        git reset --hard $(repo-remote-branch)
+        git clean -xfd
+    '
+}
 
 (
     diff .local_refs.txt .remote_refs.txt || true
@@ -32,104 +46,89 @@ flock 9
     set -x
     cat .local_refs.txt
     cat .remote_refs.txt
-    rm -f .build-started
-    if yes-or-no-p -y "Do sync?"; then
-        if test "$DO_NOT_GQ_REBASE" = true; then
-            # only need reset those local patch rebased
-            my-rfa '
-                if test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$(repo-path)/series; then
-                    git reset --hard $(repo-remote-branch)
-                    git clean -xfd
-                fi
-            '
+    cp -av .*refs.txt $refsdir || true
+
+    debug "started hourly build, repo syncing... "
+    my-rfa 'git reset --hard; git clean -xfd' || true
+    repo-sync -j4 -d || die "repo sync failed"
+
+    bpe-update -r || true
+    my-rfa '
+           if test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$(repo-path)/series; then
+               gq applied | grep . && touch $ANDROID_TOP/.patch_applied
+           fi
+    '
+
+    if test -e .patch_applied; then
+        debug "Applied some bpe local patches"
+    fi
+    my-rfa '
+           if test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$(repo-path)/series; then
+               gq next | grep -q . && echo Error: $(pwd) guilt not cleanly applied
+           fi
+    ' | grep . > build.log-rebase && {
+        debug "Error: bpe lacal patch rebase failed"
+        cat build.log-rebase
+
+        remove_patches
+        debug "started hourly build without bpe local patches"
+        true
+    }
+
+    flock -u 9
+    android-full-build "$@" || {
+        if test -e .patch_applied; then
+            remove_patches
+            android-full-build "$@" || {
+                touch .mail_people
+                die "build failed with patches removed"
+            }
+            die "build failed with patches applied"
         else
-            my-rfa 'git reset --hard; git clean -xfd' || true
-            if test "$LOCAL_SYNC" = true; then
-                repo sync -j4 -d -l
-            else
-                repo-sync -j4 -d 
-            fi || die "Error: repo sync failed" | tee build.log
+            touch .mail_people
+            die "build failed with patches removed"
         fi
-
-        if test ! -e .do_not_gq_rebase -a "$DO_NOT_GQ_REBASE" != true; then
-            {
-                bpe-update -r
-                my-rfa '
-                    if test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$(repo-path)/series && gq next | grep -q .; then
-                        echo Error: $(pwd) guilt not cleanly applied
-                    fi
-                ' | grep . && export DO_NOT_GQ_REBASE=true
-            } > build.log-rebase
-
-            if test "$DO_NOT_GQ_REBASE" = true; then
-                flock -u 9
-                android-hourly-build "$@" || true
-                rm daily-changes/* -rf .build-started
-                mv build.log-rebase build.log
-                die "Error: guilt rebase not cleanly applied; need bail out."
-            fi
-        fi
-            
+    }
+    
+    if test "$ahb_always_fail" = true; then
+        die "Build failed because we are debugging"
     fi
     
-    touch .build-started
-    flock -u 9
-    if test "$DO_NOT_GQ_REBASE" = true; then
-        android-full-build "$@" || die "android-full-build failed"
-    else
-        if ! android-full-build "$@"; then
-            mv build.log build.log-rebased
-            (
-                export DO_NOT_GQ_REBASE=true
-                android-hourly-build "$@" || true
-            )
-            mv build.log-rebased build.log
-            if test .build_ok; then
-                rm .build_ok
-                die "Error: build failed with rebase enabled, but succeeds when disabled"
-            else
-                rm .build-started
-                touch .rebased_build_failed
-                die "Error: build failed with rebase enabled or disabled"
-            fi            
-        fi
+    if test "$(stat -c %s build.log-rebase)" != 0; then
+        die "$(cat build.log-rebase)"
     fi
-    rm .rebased_build_failed -f
     touch .build_ok
-    rm .build_failed -fr
+
 ) > $hourly_log 2>&1 || (
 
+    rm daily-changes/* -rf
     daily_change_dir=daily-changes/$(basename $0).$$
-    rm -rf ${daily_change_dir}
+    mkdir -p $daily_change_dir
 
-    build_started=yes
-    if test ! -e .build-started; then # build has not started, why?
-        build_started=no
-        if test -e .rebased_build_failed; then
-            build_started=rebased
-        fi
-        mkdir -p $(pwd)/$daily_change_dir
-        cp $hourly_log build.log
-    else
-        android-daily-changes -f "$(now-rfc -d '2 hour ago'|perl -npe 's/( \d+):\d+:/$1:00:/')" -d $(pwd)/$daily_change_dir
+    android-need-rebuild || true
+    mkdir -p $refsdir/after-sync
+    cp -av .*refs.txt $refsdir/after-sync || true
+    export HOURLY_BUILD_LOGD=$PWD/$daily_change_dir
+    android-need-rebuild-log $refsdir/.local_refs.txt $refsdir/after-sync/.local_refs.txt
+
+    if test ! -e .mail_people; then
+        cat .build-status $hourly_log > build.log # need more infomation since this is for myself
     fi
 
     if test -z "$REMOTEIP"; then
         export REMOTEIP=10.21.130.154
     fi
     
-    last_time_build_ok=no
-
-    if test -e .build_ok; then
-        rm .build_ok
-        last_time_build_ok=yes
-    fi
-    tar cz $daily_change_dir build.log $hourly_log | 
+    tar cz $daily_change_dir .build-status build.log $hourly_log $(
+        for x in .mail_people .build_ok; do
+            if test -e $x; then
+                echo $x
+            fi
+        done
+    ) | 
     gerrit-review-mail-it \
         build-failed \
-        last_time_build_ok=$last_time_build_ok \
-        build_started=$build_started "$@" || 
+        "$@" || 
     true
     rm $daily_change_dir -rf
-
 )
