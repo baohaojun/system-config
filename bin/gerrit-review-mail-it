@@ -69,7 +69,7 @@ if test "$1" = build-failed; then
     
     set -e
     cp $tmpf commit-messages.tgz
-    cat <<EOF | mailx -s "$title" hjbao@marvell.com $recipients -a commit-messages.tgz -a build.log
+    cat <<EOF |tee /dev/stderr | mailx -s "$title" hjbao@marvell.com $recipients -a commit-messages.tgz -a build.log
 Hi, all
 $in_mail_recipients
 You are receiving this email because the automatic hourly build has
@@ -83,10 +83,15 @@ for more infomation about the hourly build.
 Please refer to the attached commit-messages.tgz for the details of
 your commit.
 
+$(if test -e .repo/repo-switch; then
+    echo The repo is inited with the following command:
+    echo "    $(cat .repo/repo-switch|perl -npe 's/repo-switch/repo init/')"
+    echo 
+)
 In the attached build.log, you can find the build fail reason. Here's
 a grep which hopefully can show some clue:
 
-$(grep -Hn -i -e "\*\*\*.*stop\|no such \|circular.*dropped\|no rule to\|failed\|[0-9]+elapsed \|error [0-9]+\|because of errors\|[0-9]+ error\b\|error:\|undefined reference to" build.log | perl -npe 's/^/    /')
+$(grep -Hn -i -e "$(grep -o -e '".*invalid argument.*no rule to.*"' ~/.emacs|perl -npe 's,",,g; s,\\\\,\\,g')" build.log | perl -npe 's/^/    /')
 
 Thanks.
 

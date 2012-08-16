@@ -122,7 +122,7 @@ function remove_patches() {
     fi
     
     tar cz $daily_change_dir .build-status build.log $hourly_log $(
-        for x in .mail_people .build_ok; do
+        for x in .mail_people .build_ok .repo/repo-switch; do
             if test -e $x; then
                 echo $x
             fi
