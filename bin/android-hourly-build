@@ -17,7 +17,7 @@ start_hour=${start_hour-$(date +%_H|tr -d ' ')}
 test -d .repo || die ".repo not found, not android source directory?"
 
 rm .repo/.need_rebuild -f # hack
-rm .build_ok build.log .build-status .patch_applied .mail_people -f
+rm build.log .build-status .patch_applied .mail_people -f
 
 
 hourly_log=.hourly-build.log.$start_hour
@@ -52,7 +52,7 @@ function remove_patches() {
     my-rfa 'git reset --hard; git clean -xfd' || true
     repo-sync -j4 -d || die "repo sync failed"
 
-    bpe-update -r || true
+    bpe-push-patches || true
     my-rfa '
            if test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$(repo-path)/series; then
                gq applied | grep . && touch $ANDROID_TOP/.patch_applied
@@ -61,19 +61,21 @@ function remove_patches() {
 
     if test -e .patch_applied; then
         debug "Applied some bpe local patches"
-    fi
-    my-rfa '
+        my-rfa '
            if test -e $ANDROID_TOP/flashing/quilt/$(repo-tracking)/$(repo-path)/series; then
                gq next | grep -q . && echo Error: $(pwd) guilt not cleanly applied
            fi
-    ' | grep . > build.log-rebase && {
-        debug "Error: bpe lacal patch rebase failed"
-        cat build.log-rebase
+        ' | grep . > build.log-rebase && {
+            debug "Error: bpe lacal patch rebase failed"
+            cat build.log-rebase
 
-        remove_patches
-        debug "started hourly build without bpe local patches"
-        true
-    }
+            remove_patches
+            debug "started hourly build without bpe local patches"
+            true
+        }
+    else
+        debug "No patches are applied"
+    fi
 
     flock -u 9
     android-full-build "$@" || {
@@ -130,5 +132,5 @@ function remove_patches() {
         build-failed \
         "$@" || 
     true
-    rm $daily_change_dir -rf
+    rm $daily_change_dir -rf .build_ok
 )

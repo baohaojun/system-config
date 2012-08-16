@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ls -t "$@" -d|head -n 1

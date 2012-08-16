@@ -1,0 +1,55 @@
+#!/bin/bash
+
+set -e
+BPE_ON_APSE=
+
+if set -o|grep xtrace.*on -q; then
+    bashx='bash -x'
+    gq() {
+	bash -x gq "$@"
+    }
+else
+    bashx=
+fi
+
+function die() {
+    echo "$@"
+    exit -1
+}
+
+if test $# = 1 -o ! -d .repo; then
+    args=flashing/quilt/$(repo-tracking)/$(repo-path)/series
+else
+    cd $(lookup_file .repo/..)
+    args=$(find flashing/quilt/$(repo-tracking)/ -type f -name series | grep -v -e '\.git')
+fi
+
+cd $(lookup_file .repo/..)
+
+echo will update the following: $args
+
+for x in $args; do
+    (
+	proj=$(dirname $x | perl -npe 's,^flashing/quilt/'$(repo-tracking)'/,,')
+	patch_dir=$(pwd)/$(dirname $x)
+	
+	log=$(pwd)/out/bpe-build-local/$(today)-$(echo $proj|perl -npe 's,/,-,g');
+	mkdir -p $(dirname $log)
+	rm $log-* -f
+	(
+	    set +e
+	    cd $proj
+	    
+	    qx=quilt-$(now|perl -npe 's/:/-/g') #the quilt/guilt branch for working on
+	    (
+                git branch -D $qx || true # to make sure
+            ) >/dev/null 2>&1 
+	    git co -b $qx $(repo-remote-branch)
+	    gq init
+	    cp $patch_dir/* .git/patches/$qx/
+	    gq push -a
+            echo $x guilt rebase completed.
+	)
+        true
+    )
+done
