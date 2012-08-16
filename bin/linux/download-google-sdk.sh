@@ -41,11 +41,23 @@ for x in http://android-sdk-addons.motodevupdate.com/addons.xml \
     http://dl.htcdev.com/sdk/addon.xml \
     http://innovator.samsungmobile.com/android/repository/repository.xml \
     https://dl-ssl.google.com/android/repository/addon.xml \
-    https://dl-ssl.google.com/android/repository/repository-5.xml \
     http://software.intel.com/sites/landingpage/android/addon.xml \
     http://www.echobykyocera.com/download/echo_repository.xml; do
     wget -N -r $x || true
 done
+
+for x in $(seq 5 1000); do
+    wget -N -r https://dl-ssl.google.com/android/repository/repository-$x.xml || break
+done
+
+((x--))
+
+xmlstarlet sel -N\
+     sdk="http://schemas.android.com/sdk/android/repository/$x"\
+     -B -t -m "//sdk:archive" -v "sdk:url" -o ':' -v "sdk:checksum"\
+     -n dl-ssl.google.com/android/repository/repository-$x.xml |\
+perl -npe 's!(.*):(.*)!test `shasum </dev/null $1|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; wget -N http://dl.google.com/android/repository/$1)!g'|bash -x
+
 
 
 xmlstarlet sel -N\
@@ -60,12 +72,7 @@ xmlstarlet sel -N\
      -n dl-ssl.google.com/android/repository/addon.xml |\
 perl -npe 's!(.*):(.*)!test `shasum </dev/null $1|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; wget -N http://dl.google.com/android/repository/$1)!g'|bash -x
 
-xmlstarlet sel -N\
-     sdk="http://schemas.android.com/sdk/android/repository/5"\
-     -B -t -m "//sdk:archive" -v "sdk:url" -o ':' -v "sdk:checksum"\
-     -n dl-ssl.google.com/android/repository/repository-5.xml |\
-perl -npe 's!(.*):(.*)!test `shasum </dev/null $1|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; wget -N http://dl.google.com/android/repository/$1)!g'|bash -x
-
+mkdir -p ../temp
 cd ../temp
 ln ../google/* . -f
 

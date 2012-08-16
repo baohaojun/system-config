@@ -58,10 +58,10 @@ remote_branch=$(repo-branch)
             path2=${path/\/android\///bpe-git/}
             echo "({ cd $prefix/$path >/dev/null 2>&1 || cd $prefix/$path2; }; head=\$(git rev-parse $branch); echo $url \$head $branch)"
         done | ssh $ssh_host
-    done 2>.remote.err | sort -u > .remote_refs.txt
+    done 2>.err.remote_refs.txt | sort -u > .remote_refs.txt
 ) || exit 0
 
-if diff -q .remote_refs.txt .local_refs.txt; then
+if diff .remote_refs.txt .local_refs.txt; then
     exit -1
 fi
 

@@ -82,12 +82,15 @@ for more infomation about the hourly build.
 
 Please refer to the attached commit-messages.tgz for the details of
 your commit.
-
-$(if test -e .repo/repo-switch; then
-    echo The repo is inited with the following command:
-    echo "    $(cat .repo/repo-switch|perl -npe 's/repo-switch/repo init/')"
-    echo 
+$(
+    if test -e .repo/repo-switch; then
+        echo
+        echo The repo is inited with the following command:
+        echo 
+        echo "    $(cat .repo/repo-switch|perl -npe 's/repo-switch/repo init/')"
+    fi
 )
+
 In the attached build.log, you can find the build fail reason. Here's
 a grep which hopefully can show some clue:
 
