@@ -5,26 +5,35 @@ use strict;
 use String::ShellQuote;
 use Getopt::Long;
 
+open(my $debug, ">", glob("~/.logs/grep-func-call.log"))
+  or die "Error: can not open log";
+
+sub debug(@) {
+    print $debug "@_\n";
+}
+
 my $silent = 0;
 my $target = "hello";
 my $members = 0;
 my $grep_all = 0;
-
-my @saved_argv = @ARGV;
+my $no_comment = 0;
+my @argv_for_grep_all = @ARGV;
 
 GetOptions(
     "s!" => \$silent,
     "a!" => \$grep_all,
     "m!" => \$members,
     "e=s" => \$target,
+    "nc!" => \$no_comment,
     );
 
+debug "$0:" . __LINE__ . ": no_comment is $no_comment";
 if ($grep_all) {
-    system("grep-func-call-all", @saved_argv);
+    system("grep-func-call-all", @argv_for_grep_all);
     exit 0;
 }
 
-open(my $out, "-|",  "ctags-exuberant --c-kinds=+p --language-force=" . $ENV{GTAGS_LANG_FORCE} . " -xu " . $ENV{GTAGS_START_FILE})
+open(my $ctags_pipe, "-|",  "ctags-exuberant --c-kinds=+p --language-force=" . $ENV{GTAGS_LANG_FORCE} . " -xu " . $ENV{GTAGS_START_FILE})
     or die "Error: open gtags output";
 
 open(my $env, ">", glob("~/.logs/grep-func-call.env"))
@@ -33,30 +42,23 @@ open(my $env, ">", glob("~/.logs/grep-func-call.env"))
 print $env "export GTAGS_LANG_FORCE=$ENV{GTAGS_LANG_FORCE}\n";
 print $env "export GTAGS_START_FILE=$ENV{GTAGS_START_FILE}\n";
 
-open(my $debug, ">", glob("~/.logs/grep-func-call.log"))
-  or die "Error: can not open log";
+my %def_line_map;
+my @def_lines;
 
-sub debug(@) {
-    print $debug "@_\n";
-}
-
-my %func_location_map;
-my @func_locations;
-
-$func_location_map{1} = "******";
-$func_location_map{10000000} = "******";
-while(<$out>) {
+$def_line_map{1} = "******";
+$def_line_map{10000000} = "******";
+while(<$ctags_pipe>) {
   print $debug "$_";
   m/(\S*?)\s+(\S*?)\s+(\S*?)\s+(.*)/ or next;
   my ($func, $type, $line) = ($1, $2, $3);
-  $func_location_map{$line} = $func;
+  $def_line_map{$line} = $func;
 }
 
-@func_locations = sort { $a <=> $b } keys %func_location_map;
+@def_lines = sort { $a <=> $b } keys %def_line_map;
 open(my $file, "<", $ENV{GTAGS_START_FILE}) or die "Error: open source file";
 
-print $debug "func_locations are @func_locations\n";
-my $last_match_func_location = 1;
+print $debug "def_lines are @def_lines\n";
+my $last_match_def_line = 1;
 my %file_line_map;
 my %printed_func_map;
 while(<$file>) {
@@ -64,47 +66,55 @@ while(<$file>) {
     next unless m/$target/;
 
     debug ":$.: $_";
-    my $last_checked_func_location = -1;
+    my $last_checked_def_line = -1;
     my $line_str = $_;
     my $line_no = $.;
 
-    my $next_func_location_idx = 0;
-    my $func_location_before;
-    for my $idx (1.. (@func_locations - 1)) {
-	if ($func_locations[$idx] > $.) {
-	    $func_location_before = $func_locations[$idx - 1];
+    my $next_def_line_idx = 0;
+    my $current_def_line;
+    for my $idx (1.. (@def_lines - 1)) {
+	if ($def_lines[$idx] > $.) {
+	    $current_def_line = $def_lines[$idx - 1];
 	    last;
 	}
     }
     
-    if ($func_location_map{$func_location_before} eq "******") {
+    if ($def_line_map{$current_def_line} eq "******") {
 	debug "the previous defun is *****";
 	next;
     }
 
-    if ($func_location_map{$func_location_before} =~ m/\b$target\b/) { # this is the definition of target
+    if ($def_line_map{$current_def_line} =~ m/\b$target\b/) { # this is the definition of target
 	debug "the previous definition matches myself";
 	next;
     }
 
-    if ($members == 0 && $func_location_before == $line_no && $file_line_map{$line_no} =~ m/\b$target\b/) {
+    if ($no_comment and m,(?:^\s*/?\*)|(?:^\s*//),) {
+	debug "$0:" . __LINE__ . ": no comment should be allowed";
 	next;
-    } else {
-	debug "members: $members, func_location_before: $func_location_before, line: $line_no, file_line_map{\$line_no}: $file_line_map{$line_no}, target: $target";
     }
-
-    next if $file_line_map{$func_location_before} =~ m/^\s*#\s*define\s+.*[^\\]$/;
-
-    unless ($printed_func_map{$func_location_before}) {
-	print $ENV{GTAGS_START_FILE} . ":$func_location_before: <= " 
+	    
+    if ($members == 0 && $current_def_line == $line_no && $file_line_map{$line_no} =~ m/\b$target\b/ && $def_line_map{$current_def_line} =~ m/\b$target\b/) {
+	#next;
+	;
+    } else {
+	debug "members: $members, current_def_line: $current_def_line, line: $line_no, file_line_map{\$line_no}: $file_line_map{$line_no}, target: $target";
+    }
+    next if $file_line_map{$current_def_line} =~ m/^\s*#\s*define\s+.*[^\\]$/;
+    unless ($printed_func_map{$current_def_line}) {
+	my $calling_tag = "<=";
+	if ($current_def_line == $.) {
+	    $calling_tag = "<>";
+	}
+	print $ENV{GTAGS_START_FILE} . ":$current_def_line: $calling_tag " 
 	    . 
 	    (
-	     $silent ? ($func_location_map{$func_location_before} . "\n") : $file_line_map{$func_location_before}
+	     $silent ? ($def_line_map{$current_def_line} . "\n") : $file_line_map{$current_def_line}
 	    );
-	$printed_func_map{$func_location_before} = 1;
+	$printed_func_map{$current_def_line} = 1;
     }
 
-    print $ENV{GTAGS_START_FILE} . ":$.: => " . $line_str unless ($silent);
+    print $ENV{GTAGS_START_FILE} . ":$.: => " . $line_str unless ($silent or $current_def_line == $.);
 }
 
 

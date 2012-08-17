@@ -9,14 +9,19 @@ function get_lang_for_file_from_globalrc() {
 regexp=hello
 silent=
 members=
+no_comment=
 
-TEMP=$(getopt -o e:sma -n $(basename $0) -- "$@")
+TEMP=$(getopt -o e:sma --long nc -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -e)
             regexp=$2
             shift 2
+            ;;
+        --nc)
+            no_comment=--nc
+            shift
             ;;
         -s)
             silent=-s
@@ -53,5 +58,5 @@ for file in $(beagrep -e "\b$regexp\b" --grep -l); do
         fi
     fi
     export GTAGS_START_FILE=$file
-    grep-func-call -e "$regexp" $silent $members| grep -v '^$'
+    grep-func-call -e "$regexp" $silent $members $no_comment| grep -v '^$'
 done
