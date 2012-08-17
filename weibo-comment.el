@@ -17,6 +17,7 @@
 (defconst weibo-api-send-reply "comments/reply")
 (defconst weibo-api-comments-by-me-timeline "comments/by_me")
 (defconst weibo-api-comments-to-me-timeline "comments/to_me")
+(defconst weibo-api-comments-mentions-timeline "comments/mentions")
 
 ;; id: 评论ID
 ;; text: 评论内容
@@ -171,5 +172,8 @@
 
 (defun weibo-comments-to-me-timeline-provider ()
   (weibo-comment-timeline-provider "c" "收到评论" weibo-api-comments-to-me-timeline))
+
+(defun weibo-comments-mentions-timeline-provider ()
+  (weibo-comment-timeline-provider "x" "提到我的评论" weibo-api-comments-to-me-timeline))
 
 (provide 'weibo-comment)

@@ -240,7 +240,7 @@
   (weibo-status-timeline-provider "i" "我的微博" weibo-api-status-user-timeline))
 
 (defun weibo-mention-timeline-provider ()
-  (weibo-status-timeline-provider "@" "提到我的" weibo-api-status-mention-timeline))
+  (weibo-status-timeline-provider "@" "提到我的微博" weibo-api-status-mention-timeline))
 
 (defun weibo-public-timeline-provider ()
   (weibo-status-timeline-provider "w" "谁在说" weibo-api-status-public-timeline))

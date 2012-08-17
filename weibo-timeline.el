@@ -18,12 +18,12 @@
 (defconst weibo-timeline-buffer-name "*weibo-timeline*")
 (defconst weibo-timeline-mode-name "微博时间线")
 
-(defconst weibo-timeline-headline "微博：%s\n命令：%s\n操作：新消息(g) 刷新(r) 下一条（空格) 帮助(h) 退出(q)")
-(defconst weibo-timeline-post-caption "发表微博(P) ")
-(defconst weibo-timeline-look-caption "察看(L) ")
-(defconst weibo-timeline-retweet-caption "转发(T) ")
-(defconst weibo-timeline-comment-caption "评论(C) ")
-(defconst weibo-timeline-reply-caption "回复(R) ")
+(defconst weibo-timeline-headline "微博：%s\n命令：%s\n操作：g新消息 r刷新 j下一条 k上一条 h帮助 q退出")
+(defconst weibo-timeline-post-caption "P发表微博 ")
+(defconst weibo-timeline-look-caption "L察看 ")
+(defconst weibo-timeline-retweet-caption "T转发 ")
+(defconst weibo-timeline-comment-caption "C评论 ")
+(defconst weibo-timeline-reply-caption "R回复 ")
 
 (defconst weibo-timeline-footline "提示：获取更多较早前消息(m)")
 
@@ -50,27 +50,30 @@
 
 (defun weibo-timeline-parse-unread (root)
   (when (weibo-check-result root)
-    (let ((followers (weibo-get-node-text root 'followers))
+    (let ((follower (weibo-get-node-text root 'follower))
 	  (dm (weibo-get-node-text root 'dm))
-	  (mentions (weibo-get-node-text root 'mentions))
-	  (comments (weibo-get-node-text root 'comments))
-	  (new-status (weibo-get-node-text root 'new_status)))
+	  (mention_status (weibo-get-node-text root 'mention_status))
+	  (mention_cmt (weibo-get-node-text root 'mention_cmt))	  
+	  (cmt (weibo-get-node-text root 'cmt))
+	  (status (weibo-get-node-text root 'status)))
       (unless (= 0 (string-to-number
-		    (concat followers
-			    dm mentions
-			    comments
-			    new-status)))
+		    (concat follower
+			    dm mention_status
+			    mention_cmt
+			    cmt status)))
 	(concat
-	 (unless (or (not new-status) (string= new-status "0"))
-	   (format "新微博(%s) " new-status))
-	 (unless (string= followers "0")
-	   (format "新粉丝(%s) " followers))
+	 (unless (string= follower "0")
+	   (format "新粉丝(%s) " follower))
+	 (unless (string= status "0")
+	   (format "新微博(%s) " status))
+	 (unless (string= cmt "0")
+	   (format "新评论(%s) " cmt))	 
 	 (unless (string= dm "0")
 	   (format "新私信(%s) " dm))
-	 (unless (string= mentions "0")
-	   (format "新@我(%s) " mentions))
-	 (unless (string= comments "0")
-	   (format "新评论(%s) " comments)))))))
+	 (unless (string= mention_status "0")
+	   (format "新@我的微博(%s) " mention_status))
+	 (unless (string= mention_cmt "0")
+	   (format "新@我的评论(%s) " mention_cmt)))))))
 
 (defun weibo-timeline-reset-count (type)
   (if nil
@@ -270,8 +273,8 @@
 				(lambda (item)
 				  (let ((provider (cdr item)))
 				    (concat
-				     (weibo-timeline-provider-name provider) "("
-				     (weibo-timeline-provider-key provider) ")")))
+				     (weibo-timeline-provider-key provider) 
+				     (weibo-timeline-provider-name provider))))
 				weibo-timeline-providers " ")
 			       (concat
 				(when (weibo-timeline-provider-post-function
@@ -324,8 +327,7 @@
 					  (weibo-timeline-provider-data weibo-timeline-current-provider)))))
 	   (result-list (and result (cdr result)))
 	   (since-id (and result (car result)))
-	   (unread (weibo-timeline-get-unread
-		   (when since-id (format "?with_new_status=1&since_id=%s" since-id)))))
+	   (unread (weibo-timeline-get-unread "")))
       (when result-list
 	(ewoc-filter weibo-timeline-data (lambda (data) nil))
 	(mapc (lambda (data)
