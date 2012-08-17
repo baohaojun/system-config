@@ -136,23 +136,24 @@
     (apply func (list (weibo-make-user root)))))
 
 (defun weibo-show-user (screen-name)
-  (when screen-name
-    (let ((init-t (not (get-buffer weibo-user-buffer-name)))
-	  (close-t nil)
-	  (name (if (string-match "@" screen-name) (substring screen-name 1)
-		  screen-name)))
-      (switch-to-buffer-other-window weibo-user-buffer-name)
-    (setq buffer-read-only nil)
-    (erase-buffer)
-    (when init-t
-      (weibo-user-mode))
-    (unless (weibo-get-data weibo-api-user-show
-		    'weibo-parse-user (format "?screen_name=%s" (url-hexify-string name))
-		    'weibo-insert-user-detail)
-      (setq close-t t))
-    (goto-char (point-min))
-    (setq buffer-read-only t)
-    (when close-t (weibo-bury-close-window)))))
+  (with-temp-message "获取用户资料..."
+    (when screen-name
+      (let ((init-t (not (get-buffer weibo-user-buffer-name)))
+	    (close-t nil)
+	    (name (if (string-match "@" screen-name) (substring screen-name 1)
+		    screen-name)))
+	(switch-to-buffer-other-window weibo-user-buffer-name)
+	(setq buffer-read-only nil)
+	(erase-buffer)
+	(when init-t
+	  (weibo-user-mode))
+	(unless (weibo-get-data weibo-api-user-show
+				'weibo-parse-user (format "?screen_name=%s" (url-hexify-string name))
+				'weibo-insert-user-detail)
+	  (setq close-t t))
+	(goto-char (point-min))
+	(setq buffer-read-only t)
+	(when close-t (weibo-bury-close-window))))))
 
 (defvar weibo-user-mode-map
   (let ((map (make-sparse-keymap)))

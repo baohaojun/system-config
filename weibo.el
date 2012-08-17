@@ -105,7 +105,8 @@
   (let ((url-request-method "GET")
 	(url-request-extra-headers
 	 `(("Authorization" . ,(format "OAuth2 %s" (url-hexify-string (weibo-get-token)))))))
-    (url-retrieve-synchronously url)))
+    (flet ((message (&rest args) nil))
+      (url-retrieve-synchronously url))))
 
 (defun weibo-send-url (url args)
   (let ((url-request-method "POST")
@@ -119,7 +120,8 @@
 			      (url-hexify-string (cdr arg))))
 		    args
 		    "&")))
-    (url-retrieve-synchronously url)))
+    (flet ((message (&rest args) nil))
+      (url-retrieve-synchronously url))))
 
 (defun weibo-get-data (item callback &optional param &rest cbdata)
   (let ((root (with-current-buffer

@@ -43,13 +43,15 @@
 
 (defun weibo-download-image-file (url)
   (let ((image-file (weibo-make-image-file-name url)))
-    (with-current-buffer (url-retrieve-synchronously url)
-      (goto-char (point-min))
-      (let ((end (search-forward "\n\n" nil t)))
-	(when end
-	  (delete-region (point-min) end)
-	  (write-file image-file)))
-      (kill-buffer))))
+    (flet ((message (&rest args) nil))
+      (with-current-buffer (url-retrieve-synchronously url)
+	(goto-char (point-min))
+	(let ((end (search-forward "\n\n" nil t)))
+	  (when end
+	    (delete-region (point-min) end)
+	    (write-region (point-min) (point-max) image-file nil 0)))
+	(kill-buffer)))
+    image-file))
 
 (defun weibo-add-to-image-download-queue (url)
   (unless (member url weibo-download-image-queue2)
@@ -70,7 +72,7 @@
 			  (let ((end (search-forward "\n\n" nil t)))
 			    (when end
 			      (delete-region (point-min) end)
-			      (write-file image-file)))
+			      (write-region (point-min) (point-max) image-file nil 0)))
 			  (kill-buffer)
 			  (setq weibo-download-image-queue2 (remove url weibo-download-image-queue2))
 			  (when (or (= (% (length weibo-download-image-queue2) 5) 0)
@@ -79,7 +81,7 @@
 			      (let ((current-position (point)))
 				(ewoc-refresh weibo-timeline-data)
 				(goto-char current-position)))))
-			`(,image-file ,weibo-timeline-data ,buffer ,url)))
+			`(,image-file ,weibo-timeline-data ,buffer ,url) t))
 	  (setq url (pop weibo-download-image-queue))
 	  (when (= (% size 5) 0)
 	    (sleep-for 0.1))))))
@@ -113,7 +115,8 @@
     (setq buffer-read-only nil)
     (erase-buffer)
     (weibo-image-mode)
-    (let ((img (weibo-insert-image (weibo-get-image-file url t))))
+    (with-temp-message "获取图片..."
+      (let ((img (weibo-insert-image (weibo-get-image-file url t))))
       (if img
 	(progn
 	  (setq buffer-read-only t)
@@ -121,7 +124,7 @@
 	  (if (and (fboundp 'image-animated-p) (image-animated-p img))
 	      (weibo-play-animation)))
 	(weibo-bury-close-window)
-	(message "无法打开图片！")))))
+	(message "无法打开图片！"))))))
 
 (defun weibo-play-animation ()
   (interactive)
