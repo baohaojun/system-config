@@ -38,7 +38,7 @@ export PATH=/bin:/usr/bin:/sbin:/usr/sbin:$PATH
 # must ensure linux standard paths come before android paths, or else the wrong
 # version will be used and cause segfault, because the /system/ etc. also are
 # mounted (and symlinked) under the debian chroot jail.
-
+echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
 chroot /data/debian /usr/sbin/service openbsd-inetd start
 
 # mount sd in debian

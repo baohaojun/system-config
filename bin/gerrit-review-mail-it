@@ -58,8 +58,12 @@ if test "$1" = build-failed; then
         echo hjbao@marvell.com
     )
 
+    if test ! -e .compile_failed; then
+        cat .build-status $hourly_log > build.log # need more infomation since this is for myself
+    fi
+
     in_mail_recipients=$recipients
-    if test -e .mail_people -a -e ~/.mail-build-errors -a -e .build_ok;
+    if test -e .compile_failed -a -e ~/.mail-build-errors -a -e .last_build_ok
     then
         recipients="-c $recipients"
         in_mail_recipients=

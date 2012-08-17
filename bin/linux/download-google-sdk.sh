@@ -52,25 +52,18 @@ done
 
 ((x--))
 
-xmlstarlet sel -N\
-     sdk="http://schemas.android.com/sdk/android/repository/$x"\
-     -B -t -m "//sdk:archive" -v "sdk:url" -o ':' -v "sdk:checksum"\
-     -n dl-ssl.google.com/android/repository/repository-$x.xml |\
-perl -npe 's!(.*):(.*)!test `shasum </dev/null $1|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; wget -N http://dl.google.com/android/repository/$1)!g'|bash -x
+if tty >/dev/null 2>&1; then
+    vpattern='windows\|macos'
+else
+    vpattern=shit
+fi
 
-
-
-xmlstarlet sel -N\
-     sdk="http://schemas.android.com/sdk/android/repository/3"\
-     -B -t -m "//sdk:archive" -v "sdk:url" -o ':' -v "sdk:checksum"\
-     -n dl-ssl.google.com/android/repository/repository.xml |\
-perl -npe 's!(.*):(.*)!test `shasum </dev/null $1|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; wget -N http://dl.google.com/android/repository/$1)!g'|bash -x
-
-xmlstarlet sel -N\
-     sdk="http://schemas.android.com/sdk/android/addon/3"\
-     -B -t -m "//sdk:archive" -v "sdk:url" -o ':' -v "sdk:checksum"\
-     -n dl-ssl.google.com/android/repository/addon.xml |\
-perl -npe 's!(.*):(.*)!test `shasum </dev/null $1|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; wget -N http://dl.google.com/android/repository/$1)!g'|bash -x
+for x in dl-ssl.google.com/android/repository/repository-*.xml; do
+    xmlstarlet sel -N \
+        $(cat $x|grep -P -e 'sdk=".*?"' -o|perl -npe 's/"//g') \
+        -B -t -m "//sdk:archive" -v "sdk:url" -o ':' -v "sdk:checksum" \
+        -n $x    
+done | sort -u | perl -npe 's!(.*):(.*)!test `shasum </dev/null $1|awk "{print \\\\\$1}"`x = $2x && echo $1 already exist || (echo download $1; wget -N http://dl.google.com/android/repository/$1)!g'|grep -i -e "$vpattern" -v|bash -x
 
 mkdir -p ../temp
 cd ../temp

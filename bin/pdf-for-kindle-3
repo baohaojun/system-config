@@ -141,11 +141,23 @@ function scale() {
 ' "$@"
 }
 
-half_n_height=$(scale $n_height 0.5)
-cut_n_height=$(subtract $n_height $half_n_height)
-cut_n_height=$(subtract $cut_n_height $duplicate)
-remaining_n_height=$(subtract $n_height $cut_n_height)
+function debug() {
+    echo "$@" 1>&2
+}
+ 
+third_n_height=$(scale $n_height 0.333333)
+debug "third_n_height is $third_n_height"
+third_n_height_2=$(scale $third_n_height 2)
+debug "third_n_height_2 is $third_n_height_2"
 
+cut_1_bot=$(subtract $third_n_height_2 $duplicate)
+
+cut_2_top=$(subtract $third_n_height $duplicate)
+cut_2_bot=$cut_2_top
+
+cut_3_top=$cut_1_bot
+
+remaining_n_height=$third_n_height
 
 test $# != 1 && die "Error: Usage $(basename $0) PDF"
 
@@ -155,8 +167,9 @@ pdf=${pdf%.pdf}
 
 pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$n_height}"           --trim "$left $bot $right $top" "$pdf".pdf
 cp "$pdf"-nup.pdf cut-"$pdf".pdf
-pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 $cut_n_height 0 0" --suffix top "$pdf"-nup.pdf 
-pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 0 0 $cut_n_height" --suffix bot "$pdf"-nup.pdf
+pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 $cut_1_bot 0 0" --suffix top "$pdf"-nup.pdf 
+pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 $cut_2_bot 0 $cut_2_top" --suffix mid "$pdf"-nup.pdf
+pdfnup --no-landscape --nup 1x1 --papersize "{$n_width,$remaining_n_height}" --trim "0 0 0 $cut_3_top" --suffix bot "$pdf"-nup.pdf
 
 
 x=0;
@@ -167,7 +180,7 @@ while true; do
 	break
     fi
 
-    if ! pdfjoin "$pdf"-nup-top.pdf $x "$pdf"-nup-bot.pdf $x; then
+    if ! pdfjoin "$pdf"-nup-top.pdf $x "$pdf"-nup-mid.pdf $x "$pdf"-nup-bot.pdf $x; then
 	break
     fi
 done
