@@ -49,6 +49,7 @@
 	(let ((end (search-forward "\n\n" nil t)))
 	  (when end
 	    (delete-region (point-min) end)
+	    (replace-string "\r\n" "\n")
 	    (write-region (point-min) (point-max) image-file nil 0)))
 	(kill-buffer)))
     image-file))
@@ -72,6 +73,7 @@
 			  (let ((end (search-forward "\n\n" nil t)))
 			    (when end
 			      (delete-region (point-min) end)
+			      (replace-string "\r\n" "\n")
 			      (write-region (point-min) (point-max) image-file nil 0)))
 			  (kill-buffer)
 			  (setq weibo-download-image-queue2 (remove url weibo-download-image-queue2))
