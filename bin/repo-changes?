@@ -80,8 +80,11 @@ if git status -s |grep -q .; then
         fi
         for file in $(git status -s | pn 2); do
             if ! grep -e "^$file\$" -q -- "$exc_file"; then
-                flock -x 10;
-                echo $path repo not clean: $file;
+                (
+                    flock -x 10;
+                    echo $path repo not clean: $file;
+                )
+
                 break
             fi
         done

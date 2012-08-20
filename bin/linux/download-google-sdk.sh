@@ -58,7 +58,7 @@ else
     vpattern=shit
 fi
 
-for x in dl-ssl.google.com/android/repository/repository-*.xml; do
+for x in dl-ssl.google.com/android/repository/*.xml; do
     xmlstarlet sel -N \
         $(cat $x|grep -P -e 'sdk=".*?"' -o|perl -npe 's/"//g') \
         -B -t -m "//sdk:archive" -v "sdk:url" -o ':' -v "sdk:checksum" \

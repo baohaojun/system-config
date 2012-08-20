@@ -34,7 +34,11 @@ lcd()
 	looking=`dirname "$looking"`
 	test "$looking" = / && break
 	if test -e "$looking"/"$ori"; then
-	    builtin cd "$looking"/"$ori"
+            if test -d "$looking"/"$ori"; then
+	        builtin cd "$looking"/"$ori"
+            else
+                builtin cd "$(dirname "$looking"/"$ori")"
+            fi
 	    return $?
 	fi
     done

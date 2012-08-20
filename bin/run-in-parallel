@@ -33,4 +33,4 @@ for y in "$@"; do
         bash -c "$cmd" true "$y"
     ) 9> $lock_dir/$x&
     ((x++))
-done
+done | cat

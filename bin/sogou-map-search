@@ -1,0 +1,8 @@
+#!/bin/bash
+
+url='http://map.sogou.com/#lq='"`echo \"$@\"|perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf(\"%%%02x\", ord($1))#seg; s# #+#g'`" 
+echo "$url"|tee /dev/tty|putclip
+firefox "$url"&
+
+
+#http://map.sogou.com/#lq=%u6E05%u534E%u5927%u5B66
