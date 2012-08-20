@@ -4,7 +4,6 @@
 export TMPDIR=~/tmp
 mkdir -p $TMPDIR
 
-Filter=${Filter:-~/.my-beagrep-filter-android}
 cd -P . 
 outDir=~/tmp/for-code-reading/"`pwd`"
 srcDir=`pwd`
@@ -66,7 +65,7 @@ function mkcscope_files() {
             '-o' '-iname' "cscope.files" \
             -o -iname "cscope.out" \
             -o -ipath "*/.beagrep" \
-            \) -prune -o -type f -print|$Filter | tee "$outDir"/cscope.files
+            \) -prune -o -type f -print | tee "$outDir"/cscope.files
     else
         cat
     fi
@@ -114,7 +113,6 @@ function mkbeagrepidx() {
 
     mv "$outDir"/.beagrep-build-log2 "$outDir"/.beagrep-build-log
 
-    ln $Filter "$outDir"/.beagrep-filter -sf
 }
 
 function for-code-reading() {

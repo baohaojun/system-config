@@ -14,14 +14,6 @@ fi
 beagrep_dir=$start_dir/.beagrep
 echo Beagrep index found at "$beagrep_dir" 1>&2
 
-if test -f "$start_dir"/.beagrep-filter
-then
-    beagrep_filter="$start_dir"/.beagrep-filter
-else
-    echo 'Warning: you have no .beagrep-filter at $start_dir! You will probablly see lots of noise' 1>&2
-    beagrep_filter=cat
-fi
-
 function wlp() {
     case $(uname) in
 	CYGWIN*)
@@ -48,6 +40,6 @@ do
     beagrep-static-query \
         --add-static-backend "$(wlp "$x")" \
         --backend none --max-hits 100000 "$tokens" | \
-        beagrep-unurl.pl|grep -v '#'|sort -u|"$beagrep_filter"
+        beagrep-unurl.pl|grep -v '#'|sort -u
 done
 echo /dev/null
