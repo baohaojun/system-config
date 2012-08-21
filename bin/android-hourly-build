@@ -81,15 +81,12 @@ function remove_patches() {
     android-full-build "$@" || {
         if test -e .patch_applied; then
             remove_patches
-            android-full-build "$@" || {
-                touch .compile_failed
-                die "build failed with patches removed"
-            }
-            die "build failed with patches applied"
-        else
-            touch .compile_failed
-            die "build failed with patches removed"
+            if android-full-build "$@"; then
+                die "build failed with patches applied"
+            fi
         fi
+        touch .compile_failed
+        die "build failed with patches removed"
     }
     
     if test "$ahb_always_fail" = true; then
