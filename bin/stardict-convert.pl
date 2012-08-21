@@ -1,10 +1,11 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 
 use strict;
 use Encode;
 use Fcntl qw(SEEK_SET);
 use File::Path;
 use URI::Escape;
+system("which tidy >/dev/null 2>&1") == 0 or die "tidy(1) not found";
 open(STDOUT, "|-", "tidy 2>/dev/null") or die "can not tidy up";
 sub debug(@) {
   print STDERR "@_";
@@ -253,15 +254,6 @@ my $style = '<style type="text/css">
     }
     </style>' . $bar;
 
-sub dict() {
-  my $word = $ARGV[0];
-  my $dict_html = get_definition($word);
-  my $word_path = name_to_path($word);
-
-  print $style;
-  print $dict_html;
-}
-
 sub get_definition($) {
   my $word = $_[0];
 
@@ -297,6 +289,15 @@ sub get_definition($) {
   }
 
   return "<div style=\"font-size: xx-large\">$dict_html</div>";
+}
+
+sub dict() {
+  my $word = $ARGV[0];
+  my $dict_html = get_definition($word);
+  my $word_path = name_to_path($word);
+  
+  print $style;
+  print $dict_html;
 }
 
 sub dict_defines() {
