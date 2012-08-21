@@ -33,6 +33,7 @@ fi
     flock -n 5 || { echo "lock failed for manage.py, exit"; exit; }
     while true; do 
 	cd ~/gcode/offline.wikipedia/mywiki
+        test -e ../en.py || exit
 	python manage.py runserver 0.0.0.0:34567 --noreload >>~/.logs/offline-wiki.log 2>&1
 	sleep 2; 
     done

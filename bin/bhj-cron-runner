@@ -23,5 +23,6 @@ cmds=($(find . -maxdepth 1 -type f -o -type l|grep -v -e '\.stackdump$'))
 
 for x in ${cmds[@]}; do
     chmod +x $x || true
+    test -e $x || continue
     ($x || bhj-notify cron-runner "$x failed" &) > $logdir/$x.log-$(date +%A-%H:%M) 2>&1 
 done&

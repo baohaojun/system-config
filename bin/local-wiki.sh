@@ -2,7 +2,7 @@
 test -e ~/external/bin/linux/ext/wiki-"$1".txt || set -- en "$@"
 lang=$1
 shift
-host=localhost:8000
+host=localhost:34567
 if test -e ~/.edictrc; then
     . ~/.edictrc
 fi
