@@ -94,7 +94,7 @@ $(
         echo
         echo The repo is inited with the following command:
         echo 
-        echo "    $(cat .repo/repo-switch|perl -npe 's/repo-switch/repo init/')"
+        echo "    $(cat .repo/repo-switch|perl -npe 's/repo-switch/repo init/; s/hjbao\@//;')"
     fi
 )
 
