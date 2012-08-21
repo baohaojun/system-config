@@ -1,4 +1,5 @@
 package com.baohaojun.crossdict;
+import android.app.Acti
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -15,5 +16,6 @@ public class CrossDictionaryActivity extends Activity {
 	mWebView = (WebView) findViewById(R.id.webview);
 	mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.loadData("<a href='x'>Hello World! - 1</a>", "text/html", null);
+	mWebView.addView
     }
 }

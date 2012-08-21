@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test "$(which $1)" != $(readlink -f ~/bin/linux/ext/$(basename $1)); then
+   die "stop debug can only act on commands under ~/bin/linux/ext/"
+fi
+
+if ! grep -q 'start-debug' ~/bin/linux/ext/$(basename $1); then
+    die "stop debug can only act on commands created by start-debug"
+fi
+
+rm ~/bin/linux/ext/$(basename $1)

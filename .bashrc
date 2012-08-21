@@ -32,6 +32,9 @@ export USE_CCACHE=1
 if test -e ~/.bash-path; then
     . ~/.bash-path
 else
+    if test -d ~/etc/path/$(uname)-$(uname -m); then
+        export PATH=$(cd ~/etc/path/$(uname)-$(uname -m); for x in *; do readlink -m $x; done|tr '\n' ':')
+    fi
     export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent |tr '\n' ':')
     printf 'export PATH=%q' "$PATH" > ~/.bash-path
 fi

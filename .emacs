@@ -573,6 +573,7 @@
  '(dictem-server "localhost")
  '(dictionary-server "localhost")
  '(ecb-options-version "2.40")
+ '(eclim-executable "eclim")
  '(ecomplete-database-file-coding-system (quote utf-8))
  '(edebug-eval-macro-args t)
  '(emacs-lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
@@ -588,7 +589,7 @@
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
  '(install-elisp-repository-directory "~/.emacs_d/lisp/")
- '(ispell-program-name "aspell")
+ '(ispell-program-name "aspell" t)
  '(jira-host "bible")
  '(jira-url "http://bible/jira/rpc/xmlrpc")
  '(jiralib-url "http://bible/jira")
@@ -2284,7 +2285,6 @@ we are not interested in those lines that do."
 
 (setq eclim-auto-save t)
 (global-eclim-mode)
-(setq eclim-executable (expand-file-name "~/external/eclipse/eclim"))
 
 (defadvice hack-dir-local-variables
   (around hack-remote-file-p first activate)

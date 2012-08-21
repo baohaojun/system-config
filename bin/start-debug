@@ -19,8 +19,8 @@ fi
 
 cat <<EOF > ~/bin/linux/ext/$1
 #!/bin/bash
-mkdir -p ~/.logs/do-debug-cmd.log/
-echo "\$@" >> ~/.logs/do-debug-cmd.log/$1
+mkdir -p ~/.logs/start-debug.log/
+echo "\$@" >> ~/.logs/start-debug.log/$1
 exec $cmd "\$@"
 EOF
 chmod +x ~/bin/linux/ext/$1
