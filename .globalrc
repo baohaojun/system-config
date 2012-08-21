@@ -58,7 +58,7 @@ plugin-example|Example of function layer plugin parser:\
 	:langmap=scheme\:.scm:\
 	:langmap=awk\:.awk:\
 	:langmap=ruby\:.rb:\
-	:langmap=perl\:.pl:\
+	:langmap=perl\:.pl.pm:\
 	:langmap=python\:.py:\
 	:langmap=make\:(*.am)([mM]akefile*)(Kbuild*).mk.make:\
 	:langmap=vim\:.vim:\

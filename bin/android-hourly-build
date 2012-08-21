@@ -17,7 +17,7 @@ start_hour=${start_hour-$(date +%_H|tr -d ' ')}
 test -d .repo || die ".repo not found, not android source directory?"
 
 rm .repo/.need_rebuild -f # hack
-rm build.log .build-status .patch_applied .mail_people -f
+rm .build-status .patch_applied .compile_failed -f
 
 
 hourly_log=.hourly-build.log.$start_hour
@@ -82,12 +82,12 @@ function remove_patches() {
         if test -e .patch_applied; then
             remove_patches
             android-full-build "$@" || {
-                touch .mail_people
+                touch .compile_failed
                 die "build failed with patches removed"
             }
             die "build failed with patches applied"
         else
-            touch .mail_people
+            touch .compile_failed
             die "build failed with patches removed"
         fi
     }
@@ -99,7 +99,7 @@ function remove_patches() {
     if test "$(stat -c %s build.log-rebase)" != 0; then
         die "$(cat build.log-rebase)"
     fi
-    touch .build_ok
+    touch .last_build_ok
 
 ) > $hourly_log 2>&1 || (
 
@@ -113,7 +113,7 @@ function remove_patches() {
     export HOURLY_BUILD_LOGD=$PWD/$daily_change_dir
     android-need-rebuild-log $refsdir/.local_refs.txt $refsdir/after-sync/.local_refs.txt
 
-    if test ! -e .mail_people; then
+    if test ! -e .compile_failed; then
         cat .build-status $hourly_log > build.log # need more infomation since this is for myself
     fi
 
@@ -122,7 +122,7 @@ function remove_patches() {
     fi
     
     tar cz $daily_change_dir .build-status build.log $hourly_log $(
-        for x in .mail_people .build_ok .repo/repo-switch; do
+        for x in .compile_failed .last_build_ok .repo/repo-switch; do
             if test -e $x; then
                 echo $x
             fi
@@ -132,5 +132,5 @@ function remove_patches() {
         build-failed \
         "$@" || 
     true
-    rm $daily_change_dir -rf .build_ok
+    rm $daily_change_dir -rf .last_build_ok
 )

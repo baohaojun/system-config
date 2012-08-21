@@ -99,7 +99,11 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
             rm out/*/ -rf || true
         fi        
         if test -e /usr/bin/ccache; then
-            ln -sf /usr/bin/ccache prebuilt/linux-x86/ccache/ccache
+            if test -e prebuilt/linux-x86/ccache; then
+                ln -sf /usr/bin/ccache prebuilt/linux-x86/ccache/ccache
+            elif test -e prebuilts/misc/linux-x86/ccache/ccache; then
+                ln -sf /usr/bin/ccache prebuilts/misc/linux-x86/ccache
+            fi
         fi
 	result=''
 	if test "$target" = all; then

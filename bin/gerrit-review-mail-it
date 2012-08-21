@@ -56,10 +56,13 @@ if test "$1" = build-failed; then
         grep '@marvell.com' |
         sort -u;
         echo hjbao@marvell.com
+        if test -e ~/.mail-build-errors; then
+            cat ~/.mail-build-errors
+        fi
     )
 
     if test ! -e .compile_failed; then
-        cat .build-status $hourly_log > build.log # need more infomation since this is for myself
+        cat .build-status $(echo .hourly-build.log.*) > build.log # need more infomation since this is for myself 
     fi
 
     in_mail_recipients=$recipients
