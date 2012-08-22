@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) ~/wikipedia/enwiki-latest-pages-articles.xml.bz2"
+fi
+
+idx=${1/%.xml.bz2/.idx}
+~/gcode/offline.wikipedia/mparser.py $1 > $idx.2
+export LC_ALL=C && sort -k 10 ${idx}.2 > $idx
+rm $idx.2
