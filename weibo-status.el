@@ -98,7 +98,7 @@
       (insert indent)
       (weibo-timeline-insert-text (weibo-status-text status))
       (when (weibo-status-thumbnail_pic status) (insert indent))
-      (weibo-timeline-insert-picture (weibo-status-thumbnail_pic status) (weibo-status-bmiddle_pic status))
+      (weibo-timeline-insert-picture (weibo-status-thumbnail_pic status) (weibo-status-original_pic status))
       (unless retweeted
 	(let ((retweeted_status (weibo-status-retweeted_status status)))
 	  (weibo-insert-status retweeted_status t)))

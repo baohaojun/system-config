@@ -292,18 +292,18 @@
 				(when (weibo-timeline-provider-reply-function
 				       weibo-timeline-current-provider)
 				  weibo-timeline-reply-caption)))
+		       (when (> (length msg) 0)
+			 (concat "\n"
+				 weibo-timeline-separator
+				 "\n微博提示："
+				 msg))
 		       (let ((header-func
 			      (weibo-timeline-provider-header-function
 			       weibo-timeline-current-provider)))
 			 (when header-func
 			   (apply header-func
 				  (list (weibo-timeline-provider-data
-					 weibo-timeline-current-provider)))))
-		       (when (> (length msg) 0)
-			 (concat "\n"
-				 weibo-timeline-separator
-				 "\n微博提示："
-				 msg)))
+					 weibo-timeline-current-provider))))))
 	       weibo-timeline-footline))
 
 (defun weibo-timeline-refresh ()
