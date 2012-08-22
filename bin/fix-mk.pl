@@ -4,7 +4,7 @@ my @lines;
 my $line;
 while (<>) {
 
-    s/ CROSS_COMPILE=\$\(CROSS_COMPILE.*?\)//;
+    s/ CROSS_COMPILE=\$(\(|\{)CROSS_COMPILE[^({})]*(\)|\})//;
     s/ -j\$\(MAKE_JOBS\)//;
     if ($line) {
 	$line = $line . $_;

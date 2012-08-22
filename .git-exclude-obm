@@ -1,1 +1,10 @@
-obm
+Bootloader_*
+*.INC
+Loader/Build/*.txt
+*_linux.S
+*_linux._S
+*_linux.MAC
+*_linux.o
+Loader/Platforms/*/release/
+Loader/Platforms/*/DKB/*.map
+Loader/Platforms/*/DKB/*.bin

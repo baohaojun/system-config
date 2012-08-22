@@ -25,6 +25,10 @@ if (($# > 2)) && test ! -d "$target_dir"; then
     die "ln: target_dir \`$target_dir' is not a directory"
 fi
 
+if [[ "$target_dir" =~ /$ ]] && test ! -d "$target_dir"; then
+    die "target \`$target_dir' is not a directory"
+fi
+
 if test $# = 2; then
     if test -d "$target_dir"; then
 	{ target_file=$(basename "$1"); }

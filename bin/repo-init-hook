@@ -1,6 +1,6 @@
 #!/bin/bash
 
-perl -ne 'print unless /tcmd/' manifest.xml > manifest.xml.new
+perl -ne 'print unless m,tcmd|generic/flashing,' manifest.xml > manifest.xml.new
 if ! diff -q manifest.xml.new manifest.xml.old; then
     rm manifest.xml -f
     cp manifest.xml.new manifest.xml -av
@@ -18,7 +18,13 @@ if test ! -e local_manifest.xml; then
            fetch="shgit.marvell.com:/git/android"
            review="http://bible/gerrit/" />
 
+  <remote  name="bpe-bhj"
+           fetch="bibler:android/"
+           review="http://bible/gerrit/" />
+
+
   <project path="vendor/marvell/generic/tcmd" name="vendor/marvell/generic/tcmd" revision="master" remote="apse" />
+  <project path="flashing" name="platform/vendor/marvell/generic/flashing" revision="tk-master" remote="bpe-bhj" />
 </manifest>
 EOF
 fi

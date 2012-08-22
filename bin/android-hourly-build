@@ -22,7 +22,7 @@ rm .build-status .patch_applied .compile_failed -f
 
 hourly_log=.hourly-build.log.$start_hour
 ln -sf $hourly_log hourly-build.log
-refsdir=../$(basename $PWD)-out/refs.$start_hour
+refsdir=.repo/refs.$start_hour
 mkdir -p $refsdir
 
 exec 9>.android-full-build.lock
@@ -81,7 +81,7 @@ function remove_patches() {
     android-full-build "$@" || {
         if test -e .patch_applied; then
             remove_patches
-            if android-full-build "$@"; then
+            if NO_PARALLEL_BUILD=true android-full-build "$@"; then
                 die "build failed with patches applied"
             fi
         fi

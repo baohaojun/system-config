@@ -51,11 +51,10 @@ done
 cd $top_dir || exit
 . build/envsetup.sh >/dev/null 2>&1
 
-if test $# -gt 2; then
-    die "Usage: $(basename "$0") [lunch-combo] [target]"
+if test $# -gt 1; then
+    die "Usage: $(basename "$0") [lunch-combo]"
 fi
 
-target=all
 if test $# -gt 0; then
     if lunch "$1"; then
 	shift
@@ -66,10 +65,6 @@ if test $# -gt 0; then
     android-set-product
     # re-lunch, so that the ANDROID_PRODUCT_OUT can inherit from the new OUT_DIR
     lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
-fi
-
-if test $# -gt 0; then
-    target=$1
 fi
 
 set -x;
@@ -106,31 +101,25 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
             fi
         fi
 	result=''
-	if test "$target" = all; then
-            export build_mount_p=$(readlink -f ../)/.afb
-            mkdir -p $build_mount_p
-            test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1
-            time sudo unshare -m -- bash -c '
-                set -ex
-                mount $(pwd) '$build_mount_p' -o bind;
-                cd '$build_mount_p'
-                su '$(whoami)' -c "
-                    . ~/.bashrc;
-                    . .buildenv.sh;
+        export build_mount_p=$(readlink -f ../)/.afb
+        mkdir -p $build_mount_p
+        test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1
+        time sudo env NO_PARALLEL_BUILD=$NO_PARALLEL_BUILD unshare -m -- bash -c '
+            set -ex
+            mount $(pwd) '$build_mount_p' -o bind;
+            cd '$build_mount_p'
+            su '$(whoami)' -c "
+                . ~/.bashrc;
+                . .buildenv.sh;
+                if test -z "$NO_PARALLEL_BUILD"; then
                     make -j'$jobs' -l '$jobs' -k droid telephony uboot obm
-                "
-            ' && result=$result'all ok; '
-	fi
-	if [[ "$target" =~ kernel ]]; then
-	    command time make -k kernel && result=$result'kernel ok; '
-	fi
-	
-	if [[ "$target" =~ system ]]; then
-	    command time make -j$jobs -l$jobs -k && result=$result'android ok; '
-	fi
-	if [[ "$target" =~ misc ]]; then
-	    command time make -k telephony uboot obm && result=$result'misc ok; '
-	fi
+                elif test -e flashing/quilt/$(repo-tracking)/do-no-parallel-build; then
+                    bash flashing/quilt/$(repo-tracking)/do-no-parallel-build
+                else
+                    bash flashing/quilt/do-no-parallel-build                 
+                fi
+            "
+        ' && result=$result'all ok; '
 	(
 	    cd flashing
 	    ./make-links.sh
