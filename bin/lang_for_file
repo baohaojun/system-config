@@ -17,6 +17,7 @@ unless (-e $globalrc) {
 
 my $source_file = $ARGV[0];
 $source_file =~ s,.*/,,;
+$source_file =~ s,\.gz$,,;
 
 open(my $rcfile, "<", $globalrc) or die "Can not open globalrc $globalrc";
 
