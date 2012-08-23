@@ -2313,9 +2313,42 @@ we are not interested in those lines that do."
   (interactive)
   (bhj-choose (split-string (shell-command-to-string (read-from-minibuffer "command to run: ")) nil t)))
 (load "RubikitchAnythingConfiguration.el")
-(server-start)
 
 (add-hook 'vc-git-log-view-mode-hook
 	  (lambda ()
 	    (when (string= log-view-message-re "^commit *\\([0-9a-z]+\\)")
 	      (setq log-view-message-re "^commit +\\([0-9a-z]+\\)"))))
+
+(defun imenu-create-index-using-ctags ()
+  "Create the index like the imenu-default-create-index-function,
+using ctags-exuberant"
+
+  (let ((source-buffer (current-buffer))
+	(temp-buffer (get-buffer-create "* imenu-ctags *"))
+	result-alist)
+    (save-excursion
+      (save-restriction
+	(widen)
+	(save-window-excursion
+	  (shell-command-on-region 
+	   (point-min)
+	   (point-max)
+	   (concat "imenu-ctags " 
+		   (file-name-nondirectory (buffer-file-name source-buffer)))
+	   temp-buffer))
+	(with-current-buffer temp-buffer
+	  (goto-char (point-min))
+	  (while (search-forward-regexp "^\\([0-9]+\\) : \\(.*\\)" nil t)
+	    (setq result-alist
+		  (cons (cons (match-string 2) 
+			      (let ((marker (make-marker)))
+				(set-marker marker (string-to-number (match-string 1)) source-buffer)))
+			result-alist))))))
+    (nreverse result-alist)))
+
+(setq-default imenu-create-index-function #'imenu-create-index-using-ctags)
+  
+(condition-case nil
+    (server-start)
+  (error (message "emacs server start failed")))
+

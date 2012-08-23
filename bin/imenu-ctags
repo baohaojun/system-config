@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+
+use strict;
+use Encode;
+
+my $filename = $ARGV[0];
+@ARGV = ();
+
+my $point = 1;
+my %line_point_map;
+my $line = 0;
+chomp(my $mode = qx(lang_for_file $filename));
+
+open(my $ctags_pipe, "-|", "ctags-exuberant --language-force=$mode -xu /dev/stdin > ~/.imenu-ctags.$$")
+    or die "Can not open ctags program";
+
+while (<>) {
+    $line_point_map{++$line} = $point;
+    my $u_ = decode_utf8($_);
+    $point += length($u_);
+    print $ctags_pipe $_;
+}
+close $ctags_pipe;
+
+my $total_lines = $line;
+
+wait;
+
+open(my $ctags_out, "<", glob("~/.imenu-ctags.$$"))
+    or die "Can not open ctags output";
+
+my %def_seen_map;
+while (<$ctags_out>) {
+    my ($def_name, $def_type, $line) = split;
+    $def_name = "$def_name - $def_type";
+    if (exists $def_seen_map{$def_name}) {
+	$def_seen_map{$def_name}++;
+    } else {
+	$def_seen_map{$def_name} = 1;
+    }
+
+    my $suffix = '';
+    if ($def_seen_map{$def_name} != 1) {
+	$suffix = " ($def_seen_map{$def_name})"
+    }
+
+    print "$line_point_map{$line} : $def_name$suffix\n";
+}
+unlink glob("~/.imenu-ctags.$$");
