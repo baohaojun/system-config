@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+manifest=$(lookup_file AndroidManifest.xml)
+#xmlstarlet sel -B -t -m //project -v @path  -n /home/bhj/smb/bible/cm/release-20120710/tkpxa978T-ics.ariel.eng.blds.20120710.000002/manifest-tkpxa978T-ics.ariel.eng.blds.20120710.000002.xml 
+
+package=$(xmlstarlet sel -B -t -m //manifest -v @package $manifest)
+
+activities=(
+    $(xmlstarlet sel -N android="http://schemas.android.com/apk/res/android" -B -t -m //activity -v @android:name -n $manifest)
+)
+
+echo $activities
+
+start=$activities
+
+if test ${#activities[@]} -gt 1; then
+    select=$(my-select "${activities[@]}")
+    start=${activities[$select -  1]}
+fi
+start=${start#.}
+adb shell am start -n $package/.$start
+#adb shell am start -n com.baohaojun.crossdict/.CrossDictionaryActivity

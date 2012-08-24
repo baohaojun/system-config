@@ -11,7 +11,7 @@ my %line_point_map;
 my $line = 0;
 chomp(my $mode = qx(lang_for_file $filename));
 
-open(my $ctags_pipe, "-|", "ctags-exuberant --language-force=$mode -xu /dev/stdin > ~/.imenu-ctags.$$")
+open(my $ctags_pipe, "-|", "ctags-exuberant --language-force=$mode -xu --extra=+q /dev/stdin > ~/.imenu-ctags.$$")
     or die "Can not open ctags program";
 
 while (<>) {
@@ -30,6 +30,7 @@ open(my $ctags_out, "<", glob("~/.imenu-ctags.$$"))
     or die "Can not open ctags output";
 
 my %def_seen_map;
+my %imenu_line_map; # for handling the qualified names from ctags
 while (<$ctags_out>) {
     my ($def_name, $def_type, $line) = split;
     $def_name = "$def_name - $def_type";
@@ -44,6 +45,11 @@ while (<$ctags_out>) {
 	$suffix = " ($def_seen_map{$def_name})"
     }
 
-    print "$line_point_map{$line} : $def_name$suffix\n";
+    
+    $imenu_line_map{$line} = "$line_point_map{$line} : $def_name$suffix\n";
+}
+
+foreach my $line (sort keys %imenu_line_map) {
+    print $imenu_line_map{$line}
 }
 unlink glob("~/.imenu-ctags.$$");

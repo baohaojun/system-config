@@ -22,3 +22,6 @@
 [submodule "gcode/guilt"]
 	path = gcode/guilt
 	url = https://github.com/baohaojun/guilt.git
+[submodule "gcode/crossdict"]
+	path = gcode/crossdict
+	url = https://github.com/baohaojun/BTAndroidWebViewSelection

@@ -16,3 +16,4 @@ if ! grep -q 'start-debug' ~/bin/linux/ext/$(basename $1); then
 fi
 
 rm ~/bin/linux/ext/$(basename $1)
+rm ~/.logs/start-debug.log/$(basename $1) -rf

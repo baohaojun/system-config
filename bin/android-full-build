@@ -116,7 +116,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                 elif test -e flashing/quilt/$(repo-tracking)/do-no-parallel-build; then
                     bash flashing/quilt/$(repo-tracking)/do-no-parallel-build
                 else
-                    bash flashing/quilt/do-no-parallel-build                 
+                    bash flashing/quilt/do-no-parallel-build
                 fi
             "
         ' && result=$result'all ok; '

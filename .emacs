@@ -261,7 +261,7 @@
 	 :url "http://baohaojun.wordpress.com/xmlrpc.php"
 	 :username "baohaojun")))
 
-(define-key js-mode-map [(meta .)] 'my-cscope-find-global-definition)
+(define-key js-mode-map [(meta .)] 'gtags-grep)
 (define-key global-map [(meta control \,)] 'cscope-pop-mark)
 (define-key global-map [(meta control .)] 'cscope-pop-mark-back)
 
@@ -574,6 +574,7 @@
  '(dictionary-server "localhost")
  '(ecb-options-version "2.40")
  '(eclim-executable "eclim")
+ '(eclim-interactive-completion-function (quote anything-completing-read))
  '(ecomplete-database-file-coding-system (quote utf-8))
  '(edebug-eval-macro-args t)
  '(emacs-lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
@@ -588,6 +589,7 @@
  '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
+ '(imenu-max-item-length nil)
  '(install-elisp-repository-directory "~/.emacs_d/lisp/")
  '(ispell-program-name "aspell" t)
  '(jira-host "bible")
@@ -825,17 +827,26 @@
 			      auto-mode-alist))
 (require 'saveplace)
 
+(defun random-theme()
+  (interactive)
+  (dolist (theme custom-enabled-themes)
+    (disable-theme theme))
+  (load-theme (let ((theme (nth (random (length (custom-available-themes))) (custom-available-themes))))
+		(message "loaded theme: %s" theme)
+		theme)))
+
 (require 'color-theme)
 (condition-case nil
     (progn
       (color-theme-initialize)
       (require 'color-theme-library))
   (error nil))
-;(color-theme-arjen)
+					;(color-theme-arjen)
 (condition-case nil
-    (load-theme 'wheatgrass)
+    (random-theme)
   (error (color-theme-arjen)))
-;(w32-register-hot-key [A-tab])
+
+;(w32r-register-hot-key [A-tab])
 
 (defun markdown-nobreak-p ()
   "Returns nil if it is ok for fill-paragraph to insert a line
