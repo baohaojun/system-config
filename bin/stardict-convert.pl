@@ -333,12 +333,24 @@ sub dict_defines() {
       my $prev_display = $words[$prev_idx];
       my $a = uri_escape($next_display);
       my $b = uri_escape($prev_display);
+      
+      $prev_display = decode_utf8($prev_display);
+      $next_display = decode_utf8($next_display);
+      
+      $prev_display =~ s!([^a-z0-9])!sprintf "&#%d;", ord($1)!egi;
+      $next_display =~ s!([^a-z0-9])!sprintf "&#%d;", ord($1)!egi;
+
+      $prev_display = encode_utf8($prev_display);
+      $next_display = encode_utf8($next_display);
       print "<br><a href='/dict-defines-sub/$defining_word/$b'>prev: $prev_display</a>";
       print "&nbsp;<a href='/dict-defines-sub/$defining_word/$a'>next: $next_display</a><br/><br/><hr><br/>";
       last;
     }
     for (@words) {
       my $a = uri_escape($_);
+      $_ = decode_utf8($_);
+      $_ =~ s!([^a-z0-9])!sprintf "&#%d;", ord($1)!egi;
+      $_ = decode_utf8($_);
       print "<a href='/dict-defines-sub/$defining_word/$a'>$_</a> "
     }
   }
@@ -397,12 +409,26 @@ sub dict_matching() {
     my $prev_display = $words[$prev_idx];
     my $a = uri_escape($next_display);
     my $b = uri_escape($prev_display);
+
+    $prev_display = decode_utf8($prev_display);
+    $next_display = decode_utf8($next_display);
+    
+    $prev_display =~ s!([^a-z0-9])!sprintf "&#%d;", ord($1)!egi;
+    $next_display =~ s!([^a-z0-9])!sprintf "&#%d;", ord($1)!egi;
+
+    $prev_display = encode_utf8($prev_display);
+    $next_display = encode_utf8($next_display);
+
+    debug "prev_display is $prev_display";
     print "<br><a href='/dict-matching-sub/$pattern/$b'>prev: $prev_display</a>";
     print "&nbsp;<a href='/dict-matching-sub/$pattern/$a'>next: $next_display</a><br/><br/><hr><br/>";
     last;
   }
   for (@words) {
     my $a = uri_escape($_);
+    $_ = decode_utf8($_);
+    $_ =~ s!([^a-z0-9])!sprintf "&#%d;", ord($1)!egi;
+    $_ = encode_utf8($_);
     print "<a href='/dict-matching-sub/$pattern/$a'>$_</a> "
   }
   close($filter_save) if $filter_save;
