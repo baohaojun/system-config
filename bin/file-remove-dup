@@ -1,0 +1,10 @@
+#!/bin/bash
+
+md5s=()
+for x in "$@"; do
+    md5=$(cat "$x" | tr -d '\r' | md5sum | pn 1)
+    if test "$(arg1-arg2 $md5 "${md5s[@]}")"; then
+        md5s=("${md5s[@]}" $md5)
+        echo "$x"
+    fi
+done

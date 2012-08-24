@@ -40,23 +40,27 @@ we will get the pattern \"naoehu[)+{\"
 "
 
   (interactive)
-  (let (old-regexp new-regexp)
+  (let (old-regexp new-regexp search-start search-end)
     (if mark-active
-	(setq old-regexp (buffer-substring-no-properties (region-beginning) (region-end)))
+	(setq old-regexp (buffer-substring-no-properties (region-beginning) (region-end))
+	      search-start (region-beginning)
+	      search-end (region-end))
       (let* (reg-part1
 	     reg-part2 
 	     (oldcur (point))
 	     (back-limit (line-beginning-position)))
 	(push-mark (point))
 	(activate-mark)
-	(while (and (not (looking-back "\\w")) (< back-limit (point)))
+	(while (and (not (looking-back "\\w\\|\\s ")) (< back-limit (point)))
 	  (backward-char))
 	(setq reg-part2 (buffer-substring-no-properties (point) oldcur)
 	      oldcur (point))
 	(while (and (looking-back "\\w\\|\\.") (< back-limit (point)))
 	  (backward-char))
 	(setq reg-part1 (buffer-substring-no-properties (point) oldcur)
-	      old-regexp (concat reg-part1 reg-part2))))
+	      old-regexp (concat reg-part1 reg-part2)
+	      search-start (region-beginning)
+	      search-end (region-end))))
     
     (let* ((re-list (string-to-list old-regexp))
 	   (after-first-char nil)
@@ -194,8 +198,11 @@ we will get the pattern \"naoehu[)+{\"
 
 	  ;;; mb can not be in the middle of a word, if so, it is considered a
 	  ;;; bad match.
-          (unless (and (looking-at "\\w")
-		       (looking-back "\\w"))
+          (unless (or (and (looking-at "\\w")
+			   (looking-back "\\w"))
+		      (and (boundp 'search-start) ; the found string is over our searching pattern
+			   (boundp 'search-end)
+			   (= me search-end)))
 	    ;;; me should also not be in the middle of a word, if so, we should
 	    ;;; find the end of the word.
 	    (save-excursion
