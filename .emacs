@@ -2358,6 +2358,10 @@ using ctags-exuberant"
     (nreverse result-alist)))
 
 (setq-default imenu-create-index-function #'imenu-create-index-using-ctags)
+(add-hook 'python-mode-hook 
+	  (lambda ()
+	    (setq imenu-create-index-function #'imenu-create-index-using-ctags))
+	  t)
   
 (condition-case nil
     (server-start)
