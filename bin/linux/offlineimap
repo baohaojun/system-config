@@ -1,0 +1,6 @@
+#!/bin/bash
+tsocks=
+if test -e ~/.tsocks; then
+    tsocks=tsocks
+fi
+$tsocks /usr/bin/offlineimap || true

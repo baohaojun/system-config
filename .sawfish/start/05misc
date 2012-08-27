@@ -56,15 +56,10 @@ if test $USER = bhj; then
     (
 	flock -n 5 || { echo "lock failed for ssh, exit"; exit; }
 	while true; do
-	    if ps aux|grep ssh|grep bhj@216 -q; 
-	    then
-		true;
-	    else
-		ssh -C2qN -D 8080 bhj@216.194.70.6; 
-	    fi
-	    sleep 2; 
+	    test -e ~/.tsocks && ssh -C2qN -D 18080 home
+	    sleep $(random 60); 
 	done
-    ) 5> ~/.logs/ssh-bhj@216.194.70.6 &
+    ) 5> ~/.logs/ssh-tsocks&
 fi
 
 # for x in /etc/xdg/autostart/*; do

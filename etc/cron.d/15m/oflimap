@@ -1,2 +1,1 @@
-#!/bin/bash
-offlineimap || true
+../../../bin/linux/offlineimap
