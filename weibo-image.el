@@ -122,6 +122,8 @@
       (if img
 	(progn
 	  (setq buffer-read-only t)
+	  (goto-char (point-min))
+	  (end-of-line)
 	  ;(image-mode)
 	  (if (and (fboundp 'image-animated-p) (image-animated-p img))
 	      (weibo-play-animation)))
