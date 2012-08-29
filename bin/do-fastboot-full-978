@@ -152,7 +152,9 @@ time (
     fi
     do-partition tdTelephony "$(get-image-path PXAY)"
 
-    do-partition GPT "$(get-image-path PGPT)"
+    if test "$ERASE_ALL" = true; then
+        do-partition GPT "$(get-image-path PGPT)"
+    fi
     do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
     do-partition OBM $(concat-file 0 ntim_emmc.bin 4K OBMI)
 

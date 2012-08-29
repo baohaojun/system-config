@@ -1,3 +1,6 @@
 #!/bin/bash
 
-get-newest-file "$@" | xargs -d \\n of
+file=$(get-newest-file "$@")
+
+echo $file
+of "$file"

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+perl -ne 'print unless (m,/arch/, and not m,/arch/'$1'/,)'
