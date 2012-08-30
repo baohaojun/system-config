@@ -55,6 +55,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, ${cli:Depends}, bash (>= 3.0), addu
   libmono-2.0-1,
   libmono-posix2.0-cil,
   libmono-sqlite2.0-cil,
+  libglib2.0-cil,
   libpcre3,
   libsm6,
   libsqlite3-0,
