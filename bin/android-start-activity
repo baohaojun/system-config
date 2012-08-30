@@ -8,7 +8,7 @@ manifest=$(lookup_file AndroidManifest.xml)
 package=$(xmlstarlet sel -B -t -m //manifest -v @package $manifest)
 
 activities=(
-    $(xmlstarlet sel -N android="http://schemas.android.com/apk/res/android" -B -t -m //activity -v @android:name -n $manifest)
+    $(xmlstarlet sel -N android="http://schemas.android.com/apk/res/android" -B -t -m //activity -n -v @android:name -o ' ' -m intent-filter -m category -v @android:name -o ' ' ${manifest:-AndroidManifest.xml}|grep android.intent.category.LAUNCHER|pn 1)
 )
 
 echo $activities
@@ -19,6 +19,14 @@ if test ${#activities[@]} -gt 1; then
     select=$(my-select "${activities[@]}")
     start=${activities[$select -  1]}
 fi
-start=${start#.}
-adb shell am start -n $package/.$start
+if [[ $start =~ ^$package ]]; then
+    echo adb shell am start -n ${start/#$package/$package/}
+    adb shell am start -n ${start/#$package/$package/}
+else
+    echo adb shell am start -n $package/$start
+    adb shell am start -n $package/$start
+    if ! [[ $start =~ \. ]]; then
+        adb shell am start -n $package/.$start
+    fi
+fi
 #adb shell am start -n com.baohaojun.crossdict/.CrossDictionaryActivity

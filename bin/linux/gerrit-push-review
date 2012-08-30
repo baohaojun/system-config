@@ -59,9 +59,14 @@ export REMOTE=$( (repo-review-url) )
 set +x
 echo push ok.
 
-if test .gerrit-hooks; then
-    echo gerrit hooks found, push for review.
-    bash .gerrit-hooks push-for-review
-fi
+(
+    cd $(dirname $(lookup_file .git))
+    set -e
+    test -e .git
+    if test -e .gerrit-hooks; then
+        echo gerrit hooks found, push for review.
+        bash .gerrit-hooks push-for-review
+    fi
+)
 
 mv ~/.logs/gerrit-review.log.$$ ~/.logs/gerrit-review.log

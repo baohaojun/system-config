@@ -1,0 +1,40 @@
+#!/usr/bin/perl
+
+use strict;
+
+my @section;
+while (<>) {
+    
+    if (m/^\s*on\s+property:sys.usb.config=.*/) {
+	# need to write out the last section
+	if (@section) {
+	    foreach my $line (@section) {
+		print $line;
+	    }
+
+	    if ($section[0] =~ m/^\s*on\s+property:sys.usb.config=.*/ and $section[0] !~ m/\bacm\b/) {
+		$section[0] =~ s/$/,acm/;
+		foreach my $line (@section) {
+		    print $line;
+		}
+	    }
+	}
+	
+	@section = ($_);
+    } else {
+	push @section, $_;
+    }
+}
+
+if (@section) {
+    foreach my $line (@section) {
+	print $line;
+    }
+
+    if ($section[0] =~ m/^\s*on\s+property:sys.usb.config=.*/ and $section[0] !~ m/\bacm\b/) {
+	$section[0] =~ s/$/,acm/;
+	foreach my $line (@section) {
+	    print $line;
+	}
+    }
+}

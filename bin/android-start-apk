@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -ex
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) apk"
+fi
+
+file=$(readlink -f "$1")
+
+if test ! -d ~/tmp/$(basename $1).unpack; then
+    mkdir -p ~/tmp/$(basename $1).unpack
+    cd ~/tmp/$(basename $1).unpack
+    unzip "$file"
+fi
+
+cd ~/tmp/$(basename $1).unpack
+if test ! -e .AndroidManifest.xml-is-good; then
+    axml2xml.pl AndroidManifest.xml > .AndroidManifest.xml.bak
+    rm ./* -rf
+    mv .AndroidManifest.xml.bak AndroidManifest.xml
+    touch .AndroidManifest.xml-is-good
+fi
+echo will now start $(basename "$file")
+android-start-activity

@@ -124,7 +124,7 @@ EOF
             "$(repo-review-url)" HEAD:refs/for/$(repo-refname)
         (
             cd $(lookup_file .git/..)
-            if test .gerrit-hooks; then
+            if test -e .gerrit-hooks; then
                 bash .gerrit-hooks push-for-review
             fi
         )
