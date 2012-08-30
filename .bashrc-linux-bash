@@ -20,7 +20,7 @@ do
         fi
     }"
 done
-. ~/bin/linux/wp
+. ~/bin/wp
 
 function renew-xauth() {
     if test -z "$SSH_CLIENT"; then
