@@ -7,6 +7,13 @@ function die() {
     exit -1
 }
 
+if test $# = 0; then
+    for x in ~/.logs/start-debug.log/*; do
+        test -e "$x" && stop-debug $(basename $x)
+    done
+    exit
+fi
+
 if test "$(which $1)" != $(readlink -f ~/bin/linux/ext/$(basename $1)); then
    die "stop debug can only act on commands under ~/bin/linux/ext/"
 fi

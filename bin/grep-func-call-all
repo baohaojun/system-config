@@ -44,8 +44,20 @@ while true; do
     esac
 done
 
-echo
-for file in $(beagrep -e "\b$regexp\b" --grep -l); do
+echo # workaround for emacs tramp grep will destroy the first output
+     # line with a '$' prompt
+
+re_beagrep=$regexp
+
+if echo "$regexp" | grep -q -e "^\b"; then
+    re_beagrep=\\b$re_beagrep
+fi
+
+if echo "$regexp" | grep -q -e "\b$"; then
+    re_beagrep=$re_beagrep\\b
+fi
+
+for file in $(beagrep -e "$re_beagrep" --grep "-l -P"); do
     if test ! -e "$file"; then
         continue
     fi
