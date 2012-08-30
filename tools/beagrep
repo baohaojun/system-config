@@ -69,8 +69,7 @@ if ($find_file_only) {
   $pat_save = $pat;
 }
 
-$pat_save =~ s/\\//g; #if it's a path name, it's unlikely to have `\' in it, maybe added by .emacs
-
+$pat_save =~ s/\\|\(//g; #if it's a path name, it's unlikely to have `\' in it, maybe added by .emacs
 
 $pat = shell_quote($pat);
 print "pat is: $pat.\n";
