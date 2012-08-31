@@ -42,12 +42,6 @@ fi
 AC_PATH_PROG(BASH, bash)
 AC_SUBST(BASH)
 
-# firefox extension uses zip to create the jar/xpi files
-AC_PATH_PROG(ZIP, zip, no)
-if test "x$ZIP" = "xno"; then
-	AC_MSG_ERROR([You need to install the zip program])
-fi
-
 AC_PATH_PROG(MONO, mono, no)
 if test "x$MONO" = "xno"; then
 	AC_MSG_ERROR([You need to install the Mono runtime])
@@ -236,7 +230,7 @@ dnl ----------------------------------------------
 PKG_CHECK_MODULES(BEAGREPD,
 [
 	shared-mime-info
-	gmime-sharp-2.4 >= $GMIME_SHARP_REQUIRED
+	gmime-sharp-2.6 >= $GMIME_SHARP_REQUIRED
 	glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
 ])
 BEAGREPD_LIBS="$BEAGREPD_LIBS"
