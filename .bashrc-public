@@ -114,7 +114,7 @@ scd()
         fi
             
 
-        for dir in $(lookup_file -- "$1"|tee /dev/stderr); do
+        for dir in $(lookup-closest-file "$PWD" -- "$1"|tee /dev/stderr); do
             dir=$(echo "$dir" | perl -npe 's,/./,/,g')
             basedir=$(common-path "$PWD" "$dir")
             stem="${dir:${#basedir}+1}"

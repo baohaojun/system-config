@@ -93,13 +93,6 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
         if test "$DO_REPO_UPDATE" = true; then
             rm out/*/ -rf || true
         fi        
-        if test -e /usr/bin/ccache; then
-            if test -e prebuilt/linux-x86/ccache; then
-                ln -sf /usr/bin/ccache prebuilt/linux-x86/ccache/ccache
-            elif test -e prebuilts/misc/linux-x86/ccache/ccache; then
-                ln -sf /usr/bin/ccache prebuilts/misc/linux-x86/ccache
-            fi
-        fi
 	result=''
         export build_mount_p=$(readlink -f ../)/.afb
         mkdir -p $build_mount_p
@@ -111,8 +104,12 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
             su '$(whoami)' -c "
                 . ~/.bashrc;
                 . .buildenv.sh;
+                if test -e .buildenv.sh.x; then
+                    set -x
+                    . .buildenv.sh.x
+                fi
                 if test -z "$NO_PARALLEL_BUILD"; then
-                    make -j'$jobs' -l '$jobs' -k droid telephony uboot obm
+                    make -j'$jobs' -l '$jobs' -k droid telephony uboot obm \$AFBV
                 elif test -e flashing/quilt/$(repo-tracking)/do-no-parallel-build; then
                     bash flashing/quilt/$(repo-tracking)/do-no-parallel-build
                 else

@@ -1,0 +1,5 @@
+#!/usr/bin/perl
+
+use String::Approx 'adistr';
+
+print abs(adistr($ARGV[0], $ARGV[1])) . "\r$ARGV[0]\r$ARGV[1]\n";
