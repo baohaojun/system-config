@@ -6,13 +6,20 @@ function die() {
     exit -1
 }
 
-if ! git-is-ancestor $1 HEAD; then
-    die "Remote branch is not ancestor of HEAD, risk of losing data"
+if test $# = 0; then
+    set -- $(git branch -a |pn 1|grep from-mac)
 fi
+for b in "$@"; do
+    if ! git-is-ancestor $b HEAD; then
+        die "Remote branch is not ancestor of HEAD, risk of losing data"
+    fi
 
-set -- ${1#remotes/}
-origin=$(echo ${1#remotes/}|cut -d / -f 1)
-branch=${1#*/}
-set -x
-git push $origin :refs/heads/$branch
-
+    set -- ${b#remotes/}
+    origin=$(echo ${b#remotes/}|cut -d / -f 1)
+    branch=${b#*/}
+    (
+        set -x
+        git push $origin :refs/heads/$branch
+        perl -ne 'print unless m,$branch,' -i $(lookup_file .git/packed-refs)
+    )
+done
