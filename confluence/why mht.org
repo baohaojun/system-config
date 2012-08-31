@@ -19,6 +19,9 @@ wiki markup syntax就什么都不是了。org-mode是我选择使用.mht文件�
 
 - IE是自动支持的（废话，微软自己的东西能不支持吗）。
 
+- Ubuntu上自带的Opera浏览器默认就支持打开.mht文件
+
 - Firefox 需要安装 [[https://addons.mozilla.org/en-US/firefox/addon/unmht/][unmht]] 插件。
 
-  另外，一个很有趣的现象是，IE不支持.mht里的javascript和html anchor，所以推荐使用firefox + 插件的方式。
+  （一个很有趣的现象是，IE不支持.mht里的javascript和html anchor，所以推荐使用firefox + 插件的方式。）
+

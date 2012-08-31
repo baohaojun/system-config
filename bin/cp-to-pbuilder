@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $(ps.pl pbuild.$1 2>/dev/null|tee ~/.logs/$(basename $0).log|grep -v -e "sudo\|$(basename $0)"|tee /dev/stderr|wc -l) != 1; then
+    die "Not exactly 1 pbuilder process found for $1"
+fi
+
+pid=$(ps.pl pbuild.$1 2>/dev/null|grep -v -e "sudo\|$(basename $0)"|pn 1)
+sudo cp *$2  /var/cache/pbuilder/build/$pid/root/ -av

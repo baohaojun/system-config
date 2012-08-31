@@ -1,1 +1,1 @@
-../../../../bin/linux/download-google-sdk.sh
+../../../../../bin/download-google-sdk.sh
