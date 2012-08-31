@@ -22,6 +22,9 @@ LOCAL_PROGUARD_FLAG_FILES := proguard.cfg
 # Make sure our dictionary file is not compressed, so we can read it with
 # a raw file descriptor.
 LOCAL_AAPT_FLAGS := -0 .dat
+LOCAL_AAPT_FLAGS += -0 .dict
+
+LOCAL_PROGUARD_FLAG_FILES := proguard.flags
 
 include $(BUILD_PACKAGE)
 
