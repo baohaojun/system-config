@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if ! git-is-ancestor $1 HEAD; then
+    die "Remote branch is not ancestor of HEAD, risk of losing data"
+fi
+
+set -- ${1#remotes/}
+origin=$(echo ${1#remotes/}|cut -d / -f 1)
+branch=${1#*/}
+set -x
+git push $origin :refs/heads/$branch
+
