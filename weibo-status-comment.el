@@ -29,6 +29,8 @@
 
 (defun weibo-status-comments-header (status)
   (with-temp-buffer
+    (setq fill-column 70)
+    (set (make-local-variable 'fill-nobreak-predicate) 'weibo-timeline-name-nobreak-p)    
     (insert "\n")
     (weibo-insert-status status nil)
     (buffer-string)))
