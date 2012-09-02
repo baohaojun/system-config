@@ -14,7 +14,7 @@ for b in "$@"; do
         die "Remote branch is not ancestor of HEAD, risk of losing data"
     fi
 
-    set -- ${b#remotes/}
+    b=${b#remotes/}
     origin=$(echo ${b#remotes/}|cut -d / -f 1)
     branch=${b#*/}
     (
