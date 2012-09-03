@@ -12,31 +12,26 @@ if test $hour -lt 8 -o $hour -gt 20; then
     exit
 fi
 
-cd ~/src/ics-autobuild/ >/dev/null 2>&1 || exit 0
+if test $hour = 20; then
+    locate .android-hourly-build > ~/.ahb-dirs
+fi
 
-(
-    if test $hour = 20 -o -e .do_rebuild || android-need-rebuild; then
-        if test $hour = 20; then 
+for rebuild_dirs in $(cat ~/.ahb-dirs); do
+    rebuild_dirs=$(dirname $rebuild_dirs)
+    (
+        cd $rebuild_dirs >/dev/null 2>&1 || exit 0
+        test -e .repo || exit 0
+        if test $hour != 20 && ! android-need-rebuild; then
+            exit 0
+        fi
+        if test $hour = 20; then
             rm .repo/out-* -rf
         fi
-        exec 9>.android-full-build.lock
+        exec 9>~/.android-full-build.lock
+        ln -sf ~/.android-full-build.lock .
         flock -n 9 || exit 0
         flock -u 9
         rm .build-status
-        android-hourly-build pxa978ariel_def-eng 
-    fi
-)
-
-cd ~/src/bpe-autobuild/ >/dev/null 2>&1 || exit 0
-touch .do_not_gq_rebase
-
-exec 9>.android-full-build.lock
-flock -n 9 || exit 0
-flock -u 9
-if test $hour = 20 -o -e .do_rebuild || android-need-rebuild; then
-    if test $hour = 20; then #maybe need do a full clean build next time.
-        rm .repo/out-* -rf
-    fi
-    rm .build-status
-    android-hourly-build pxa978ariel_cmcc-eng
-fi
+        android-hourly-build $(cat .android-hourly-build)
+    )
+done

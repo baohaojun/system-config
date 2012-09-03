@@ -95,5 +95,5 @@ fi
 done
 
 if test $# != 1; then
-    ~/bin/linux/cron-code-reading
+    cron-code-reading
 fi

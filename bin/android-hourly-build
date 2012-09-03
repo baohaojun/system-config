@@ -78,16 +78,18 @@ function remove_patches() {
     fi
 
     flock -u 9
-    android-full-build "$@" || {
-        if test -e .patch_applied; then
-            remove_patches
-            if NO_PARALLEL_BUILD=true android-full-build "$@"; then
-                die "build failed with patches applied"
+    for product in "$@"; do
+        android-full-build "$product" || {
+            if test -e .patch_applied; then
+                remove_patches
+                if NO_PARALLEL_BUILD=true android-full-build "$product"; then
+                    die "build failed with patches applied"
+                fi
             fi
-        fi
-        touch .compile_failed
-        die "build failed with patches removed"
-    }
+            echo $product > .compile_failed
+            die "build failed with patches removed"
+        }
+    done
     
     if test "$ahb_always_fail" = true; then
         die "Build failed because we are debugging"
@@ -127,7 +129,13 @@ function remove_patches() {
     ) | 
     gerrit-review-mail-it \
         build-failed \
-        "$@" || 
+        $(
+        if test -e .compile_failed; then
+            cat .compile_failed; 
+        else
+            echo "$@"
+        fi
+    ) || 
     true
     rm $daily_change_dir -rf .last_build_ok
 )
