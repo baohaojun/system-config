@@ -21,32 +21,35 @@
 * 安装
 ** Linux下安装
 
-*** 下载代码
+*** 用.deb包安装
+
+我在github上提供了4个.deb包，分别是给ubuntu 10.04, 11.10, 12.04和
+debian testing (wheezy)的，如果你的Linux发行版恰好是这几个中的一个，那
+你可以在 [[https://github.com/baohaojun/beagrep/downloads][这里]] 直接选一个.deb包下载安装，以ubuntu 12.04 (precise)为例：
+
 #+begin_example
-git clone git://github.com/baohaojun/beagrep.git -b Linux
+dpkg -i beagrep_0.4.0-1_amd64-ubuntu-precise.deb # 会出错，因为一些依赖的.deb包没装上
+apt-get -f install # 装上依赖的.deb包，修正上面的错误
 #+end_example
 
 *** 编译安装
 
-以debian为例，你可能需要先装一些build需要用到的deb包（TODO 搞清楚
-beagrep的build到底需要哪些包）：
+如果你需要自己编译，以ubuntu precise为例：
 
 #+begin_example
-apt-get install mono-devel
+git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
+# you can also run "git branch -a" to see other versions of ubuntu supported
+
+# Install build dependencies. You can open debian/control and check
+# the build dependencies and install all of them. The following
+# command will try to install them automatically, but if it fails then
+# you need figure out which packages to install manually. Good luck!
+# Or you can contact me for help.
+apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')
+
+# do the build
+(set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
 #+end_example
-
-然后到之前git clone出来的beagrep下进行编译安装：
-
-#+begin_example
-cd beagrep
-autoreconf -i
-make
-sudo make install
-#+end_example
-
-
-
-
 
 ** Windows下安装
 
@@ -68,6 +71,12 @@ bash build-win.sh
 
 * 使用
 
+** 快速smoke test
+#+begin_example
+cd /tmp; mkdir $$; cd $$; echo main > 1.txt; mkbeagrepidx; beagrep -e 'main' --grep '--color=auto'; true; cd ..; rm $$ -rf
+#+end_example
+
+如果beagrep安装配置没有问题的话，在上面的命令输出的最后，你可以看到类似于 ~/tmp/11468/1.txt:1:main~ 。
 ** 创建索引
 
 到想阅读的源代码目录下，以android为例

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="beagrep，两秒钟grep两个G的代码"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-05-23 15:57:42 CST"/>
+<meta name="generated" content="2012-09-03 13:29:09 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -103,7 +103,7 @@
 <ul>
 <li><a href="#sec-2-1">2.1 Linux下安装</a>
 <ul>
-<li><a href="#sec-2-1-1">2.1.1 下载代码</a></li>
+<li><a href="#sec-2-1-1">2.1.1 用.deb包安装</a></li>
 <li><a href="#sec-2-1-2">2.1.2 编译安装</a></li>
 </ul>
 </li>
@@ -117,8 +117,9 @@
 </li>
 <li><a href="#sec-3">3 使用</a>
 <ul>
-<li><a href="#sec-3-1">3.1 创建索引</a></li>
-<li><a href="#sec-3-2">3.2 用beagrep搜索</a></li>
+<li><a href="#sec-3-1">3.1 快速smoke test</a></li>
+<li><a href="#sec-3-2">3.2 创建索引</a></li>
+<li><a href="#sec-3-3">3.3 用beagrep搜索</a></li>
 </ul>
 </li>
 <li><a href="#sec-4">4 原理</a>
@@ -182,13 +183,20 @@
 </div>
 
 <div id="outline-container-2-1-1" class="outline-4">
-<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> 下载代码</h4>
+<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> 用.deb包安装</h4>
 <div class="outline-text-4" id="text-2-1-1">
 
 
+<p>
+我在github上提供了4个.deb包，分别是给ubuntu 10.04, 11.10, 12.04和
+debian testing (wheezy)的，如果你的Linux发行版恰好是这几个中的一个，那
+你可以在 <a href="https://github.com/baohaojun/beagrep/downloads">这里</a> 直接选一个.deb包下载安装，以ubuntu 12.04 (precise)为例：
+</p>
 
 
-<pre class="example">git clone git://github.com/baohaojun/beagrep.git -b Linux
+
+<pre class="example">dpkg -i beagrep_0.4.0-1_amd64-ubuntu-precise.deb # 会出错，因为一些依赖的.deb包没装上
+apt-get -f install # 装上依赖的.deb包，修正上面的错误
 </pre>
 
 
@@ -202,31 +210,24 @@
 
 
 <p>
-以debian为例，你可能需要先装一些build需要用到的deb包（TODO 搞清楚
-beagrep的build到底需要哪些包）：
+如果你需要自己编译，以ubuntu precise为例：
 </p>
 
 
 
-<pre class="example">apt-get install mono-devel
+<pre class="example">git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
+# you can also run "git branch -a" to see other versions of ubuntu supported
+
+# Install build dependencies. You can open debian/control and check
+# the build dependencies and install all of them. The following
+# command will try to install them automatically, but if it fails then
+# you need figure out which packages to install manually. Good luck!
+# Or you can contact me for help.
+apt-get instll $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/Standards-Version/'|grep -v -e Build-Depends:\\\|Standards-Version|perl -npe 's/,/ /g')
+
+# do the build
+(set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
 </pre>
-
-
-<p>
-然后到之前git clone出来的beagrep下进行编译安装：
-</p>
-
-
-
-<pre class="example">cd beagrep
-autoreconf -i
-make
-sudo make install
-</pre>
-
-
-
-
 
 
 </div>
@@ -296,8 +297,25 @@ bash build-win.sh
 </div>
 
 <div id="outline-container-3-1" class="outline-3">
-<h3 id="sec-3-1"><span class="section-number-3">3.1</span> 创建索引</h3>
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> 快速smoke test</h3>
 <div class="outline-text-3" id="text-3-1">
+
+
+
+
+<pre class="example">cd /tmp; mkdir $$; cd $$; echo main &gt; 1.txt; mkbeagrepidx; beagrep -e 'main' --grep '--color=auto'; true; cd ..; rm $$ -rf
+</pre>
+
+
+<p>
+如果beagrep安装配置没有问题的话，在上面的命令输出的最后，你可以看到类似于 <code>/tmp/11468/1.txt:1:main</code> 。
+</p></div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> 创建索引</h3>
+<div class="outline-text-3" id="text-3-2">
 
 
 <p>
@@ -312,7 +330,9 @@ mkbeagrepidx
 
 
 <p>
-这一步第一次花费的时间较长，在Linux下android代码索引大概需要半个小时（跟以前单独用一次grep的时间差不多）。
+这一步第一次花费的时间较长，在Linux下android代码索引大概需要半个小时
+（跟以前单独用一次grep的时间差不多）。我建议可以用crontab定时在半夜做这
+个工作。
 </p>
 <p>
 但是如果以前已经生成过index，则再做一次花的时间应该可以大为缩短（几分钟），因为那
@@ -328,9 +348,9 @@ index。
 
 </div>
 
-<div id="outline-container-3-2" class="outline-3">
-<h3 id="sec-3-2"><span class="section-number-3">3.2</span> 用beagrep搜索</h3>
-<div class="outline-text-3" id="text-3-2">
+<div id="outline-container-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> 用beagrep搜索</h3>
+<div class="outline-text-3" id="text-3-3">
 
 
 <p>
@@ -495,9 +515,9 @@ beagrep之所以能大大加快grep的速度，是因为它能大大缩小grep�
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-05-23 15:57:42 CST</p>
+<p class="date">Date: 2012-09-03 13:29:09 CST</p>
 <p class="author">Author: Bao Haojun</p>
-<p class="creator">Org version 7.8.09 with Emacs version 24</p>
+<p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>
