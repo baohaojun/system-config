@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for x in $(sudo ls -l /proc/$1/fd|grep socket:|perl -npe 's/.*\[|\].*//g'); do
+    cat /proc/net/tcp |grep "\b$x\b" |perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg'
+done
+
+

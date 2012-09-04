@@ -41,6 +41,18 @@ my-rfa -j 4 "$@" -- '
 #{%sh%}
 if test "$DEBUG" = true; then
     set -x
+    function git()
+    {
+        command git "$@" || 
+        {
+            case "$1" in
+                *)
+                    echo $(pwd) git "$@" failed
+                    ;;
+            esac
+        } 1>&2
+    }
+    export -f git
 fi
 set -- $($REPO_INFO remote branch path)
 remote=$1
@@ -51,19 +63,6 @@ if test ${#branch} = 40; then
 else
     remote_rev=$(git rev-parse $remote/$branch)
 fi
-
-# function git()
-# {
-#     command git "$@" || 
-#     {
-#         case "$1" in
-#             *)
-#                 echo $(pwd) git "$@" failed
-#                 ;;
-#         esac
-#     } 1>&2
-# }
-# export -f git
 
 if test -z "$GIT_END_DATE"; then
     rev=$(git rev-parse $remote_rev)

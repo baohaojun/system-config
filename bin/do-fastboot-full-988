@@ -1,0 +1,183 @@
+#!/bin/bash
+
+export PATH=$(dirname "$(readlink -f "$0")"):$PATH
+
+
+# part   0::attr 0::         tim  start 0x00000000, size 0x00040000
+# part   1::attr 0::         obm  start 0x00040000, size 0x00040000
+# part   2::attr 0::       uboot  start 0x00080000, size 0x00080000
+# part   3::attr 0::     ramdisk  start 0x00100000, size 0x00040000
+# part   4::attr 0::        imei  start 0x00140000, size 0x00040000
+# part   5::attr 0:: arbelbinary  start 0x00180000, size 0x00700000
+# part   6::attr 0::   msabinary  start 0x00880000, size 0x00100000
+# part   7::attr 0::      kernel  start 0x00980000, size 0x00400000
+# part   8::attr 0:: maintenance  start 0x00d80000, size 0x00400000
+# part   9::attr 0::    recovery  start 0x01180000, size 0x00500000
+# part  10::attr 0::        misc  start 0x01680000, size 0x00040000
+# part  11::attr 1::       cache  start 0x016c0000, size 0x05140000
+# part  12::attr 1::      system  start 0x06800000, size 0x0a000000
+# part  13::attr 1::    userdata  start 0x10800000, size 0x0d800000
+# part  14::attr 0::        logo  start 0x1e000000, size 0x00340000
+# part  15::attr 0::         env  start 0x1e340000, size 0x00080000
+# part  16::attr 0::      kpanic  start 0x1e3c0000, size 0x00040000
+# part  17::attr 0::         nvm  start 0x1e400000, size 0x00800000
+# part  18::attr 1::   telephony  start 0x1ec00000, size 0x00800000
+# part  19::attr 0::    reserved  start 0x1f400000, size 0x00c00000
+
+set -e
+
+time (
+
+    echo before locking
+    flock 9
+    echo done locking
+
+    part_table=$(fastboot oem part 2>&1)
+    is_old_part_table=false
+    if echo "$part_table" | grep -q -e 'td_cp'; then
+        is_old_part_table=true
+    fi
+
+    function die() {
+        echo "$@"
+        exit -1
+    }
+
+    if test $(basename $0) = do-fastboot-full-988; then
+        if test $# != 1 -o ! -e $1; then
+	    die "Usage: $(basename $0) XXX.blf"
+        elif test $(basename $1) = $1 -a -e ~/src/android/boot/obm/TimBuilder; then
+            ~/src/android/boot/obm/TimBuilder -r $(pwd)/$1 || true
+        fi
+    else
+        if test $# -lt 2; then
+	    die "Usage: $(basename $0) blf partitions..."
+        fi
+    fi
+
+
+    export blf=$(readlink -m "$1")
+    test -e "$blf" || die "no such file $blf"
+    export BLF=$blf
+
+    shift
+    export partitions=("$@")
+
+    function should-do-it() {
+        if test $(basename $0) = do-fastboot-full-988; then
+	    return 0;
+        fi
+
+        for x in "${partitions[@]}"; do
+	    if test "$1" = "$x"; then
+	        return 0
+	    fi
+        done
+        return 1
+    }
+
+# product=$(fastboot getvar product 2>&1 | grep product: | pn 2)
+# if test "$product.blf" != $(basename $blf); then
+#     die "You are trying to flash product '$product' with $(basename $blf), it is not allowed!"
+# fi
+
+    function do-partition() {
+        part=$1
+        should-do-it $part || return 0
+        if test $is_old_part_table = true; then
+            case $1 in
+                tdCp)
+                    part=td_cp
+                    ;;
+                tdTelephony)
+                    part=td_telephony
+                    ;;
+                tdNvm)
+                    part=td_nvm
+                    ;;
+                system)
+                    part=android_system
+                    ;;
+                userdata)
+                    part=android_data
+                    ;;
+            esac
+        fi
+
+        if test $# != 2; then
+            die "Usage: do-partition PARTNAME IMAGE_PATH"
+        fi
+        fastboot erase $part;
+        fastboot flash $part "$2"
+    }
+
+    function get-image-path() {
+        IMG_PATH=$(get-blf-img-val $blf $1 Path)
+        if test "$(arg1-arg2 "$1" "$OVERIDE_IMAGES")" = ""; then
+            IMG_PATH=$OVERIDE_PATH/$(basename $IMG_PATH)
+        fi
+        echo $IMG_PATH
+    }
+
+# $for x in $(seq 1 16); do echo $(get-blf-img-val *.blf $x 'ID Name') $(get-blf-img-val *.blf $x Path);  done
+# TIMH PXA920_NTIM.bin
+# OBMI TTC2_Sultan_Loader_3_2_13_LINUX.bin
+# PXAY pxafs.img
+# USRY userdata.img
+# SYSY system.img
+# RCOV ramdisk-recovery.img
+# MNTN uImage-mt
+# ZIMG uImage
+# RAMD ramdisk.img
+# GRBI TTC1_M05_AI_A1_Flash.bin
+# ARBI Arbel_DIGRF3.bin
+# OSLO u-boot.bin
+# RBLI ReliableData.bin
+# PLGO logo.bin
+# PMCE prdcfg.bin
+# ERAN panic.part
+
+    do-partition bootloader "$(get-image-path OSLO)"
+    do-partition ramdisk "$(get-image-path RAMD)"
+    do-partition kernel "$(get-image-path ZIMG)"
+    do-partition radio "$(concat-file 0 ARBI 7M GRBI)"
+    do-partition recovery "$(concat-file 0 OSLR 1M ZIMR 5M RAMR)"
+
+
+    do-partition system "$(get-image-path SYSY)"
+    do-partition userdata "$(get-image-path USRY)"
+    do-partition pmce $(concat-file 0 PMCE 1M LOGO) || true
+    if test "$do_factory" = true; then
+        do-partition factory "$(get-image-path FACT)"
+    fi
+
+    if test "$ERASE_ALL" = true; then
+        do-partition GPT "$(get-image-path PGPT)"
+        do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
+        do-partition OBM $(concat-file 0 ntim_emmc.bin 4K OBMI)
+    fi
+
+
+    if test $(basename $0) = do-fastboot-full-988 -a "$ERASE_ALL" = true; then
+        fastboot erase misc
+        fastboot erase cache
+        fastboot erase NVM
+        fastboot erase MEP2
+        fastboot erase MRD
+        fastboot erase MRD1
+    fi
+) 9<"$(
+    export mysh=$(readlink -f $0)
+    if test ! -e $mysh; then
+        export mysh=$(readlink -f $(which $0))
+    fi
+    echo $mysh
+)"
+
+
+
+
+if test $(basename $0) = do-fastboot-full-988; then
+    read -p "Press enter to restart fastboot "
+    fastboot reboot
+fi

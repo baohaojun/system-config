@@ -1,5 +1,13 @@
 #!/bin/bash
 
+qcd()
+{
+    local branch=$(git symbolic-ref HEAD)
+    branch=${branch#refs/heads/}
+    
+    cd .git/patches/$branch
+}
+
 lcd()
 {
     if test $# != 1; then

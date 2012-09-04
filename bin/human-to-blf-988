@@ -125,6 +125,7 @@ for (@lines) {
 for my $idx (sort {$a <=> $b} keys %images) {
     my @str_keys = (
 	"Image Size To Hash in bytes",
+	"Size To CRC in bytes",
 	"Partition Number",
 	"ID Name",
 	"Type",

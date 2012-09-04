@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e
+if gq series >/dev/null 2>&1; then
+    gq push -a
+fi
+
+head=$(git symbolic-ref HEAD 2>/dev/null || git rev-parse HEAD)
+
+(
+    commits=$(git rev-list ^$(repo-remote-branch) HEAD)
+    tmp_branch=$(basename $0).$$
+    git branch -D $tmp_branch >/dev/null 2>&1 || true
+    git co -b $tmp_branch $(repo-remote-branch)
+
+    gq init
+
+    for x in $commits; do
+        gq import-commit $x;
+    done
+    gq push -a
+    gq bpe-export $(repo-remote-branch)
+    git branch -D $tmp_branch >/dev/null 2>&1 || true
+) || true
+git co $head
