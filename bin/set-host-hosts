@@ -29,8 +29,17 @@ for my $host (keys %hosts) {
 }
 
 $, = " ";
+
+sub count_dot($) 
+{
+    my $str = $_[0];
+    $str =~ s/[^.]//g;
+    return length $str;
+}
+
 for my $ip ("127.0.0.1", "::1") {
     if (exists $ip_map{$ip}) {
+	@{$ip_map{$ip}} = sort {count_dot $b <=> count_dot $a} @{$ip_map{$ip}};
 	print $file "$ip @{$ip_map{$ip}}\n";
 	delete $ip_map{$ip};
     }
