@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="beagrep，两秒钟grep两个G的代码"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-03 13:29:09 CST"/>
+<meta name="generated" content="2012-09-05 14:07:37 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -119,7 +119,11 @@
 <ul>
 <li><a href="#sec-3-1">3.1 快速smoke test</a></li>
 <li><a href="#sec-3-2">3.2 创建索引</a></li>
-<li><a href="#sec-3-3">3.3 用beagrep搜索</a></li>
+<li><a href="#sec-3-3">3.3 man page for mkbeagrepidx</a></li>
+<li><a href="#sec-3-4">3.4 用beagrep搜索</a>
+<ul>
+<li><a href="#sec-3-4-1">3.4.1 man page for beagrep</a></li>
+</ul></li>
 </ul>
 </li>
 <li><a href="#sec-4">4 原理</a>
@@ -349,8 +353,81 @@ index。
 </div>
 
 <div id="outline-container-3-3" class="outline-3">
-<h3 id="sec-3-3"><span class="section-number-3">3.3</span> 用beagrep搜索</h3>
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> man page for mkbeagrepidx</h3>
 <div class="outline-text-3" id="text-3-3">
+
+
+<p>
+mkbeagrepidx is a simple wrapper over beagrep-build-index. You can
+configure it for which directories to ignore using
+<code>--deny-directory-pattern</code> option. By default, 
+</p>
+<ul>
+<li>The $PWD/out is ignored, because it contains android build output
+</li>
+<li>The */.git is ignored, because of well known reason
+</li>
+<li>The */.repo is ignored, for the same reason.
+</li>
+</ul>
+
+
+<p>
+The syntax is comma separated shell glob patterns, and you can check
+how it is converted into regular expression by examing the beginning
+of mkbeagrepidx output.
+</p>
+<p>
+You can customize it using several ways, in the order of increasing
+priority:
+</p>
+<ul>
+<li>Not customize it, then 
+
+
+
+
+<pre class="example">"$PWD/out,*/.repo,*/.git"
+</pre>
+
+
+<p>  
+  will be used.
+</p>
+</li>
+<li>Overide it in <code>/.mkbeagrepidx.rc, setting the ~BEAGREP_IGNORE_DIR_PATTERNS</code> environment variable:
+
+
+
+
+<pre class="example">export BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/.git"
+</pre>
+
+
+</li>
+<li>Overide it in the .mkbeagrepidx.rc in the current working directory, same as the above.
+
+</li>
+<li>Overide it on the command line:
+
+
+
+
+<pre class="example">mkbeagrepidx --deny-directory-pattern "$PWD/out,*/.repo,*/.git,*/.svn"
+</pre>
+
+</li>
+</ul>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> 用beagrep搜索</h3>
+<div class="outline-text-3" id="text-3-4">
 
 
 <p>
@@ -363,6 +440,85 @@ beagrep -e "readlink"
 </pre>
 
 
+
+</div>
+
+<div id="outline-container-3-4-1" class="outline-4">
+<h4 id="sec-3-4-1"><span class="section-number-4">3.4.1</span> man page for beagrep</h4>
+<div class="outline-text-4" id="text-3-4-1">
+
+
+<p>
+Here's a list of all arguments that beagrep takes:
+</p>
+
+
+
+<pre class="example">beagrep -e REGEXP_MATCH [-p REGEXP_PATH] [-a ADDITIONAL_WORDS] [-v REGEXP_REVERSE_PATH] [-i] [-f] [-l] [--grep GREP_OPTIONS] [-a]
+</pre>
+
+
+<dl>
+<dt>-e <code>REGEXP_MATCH</code></dt><dd>This is the minimum required arguments. For e.g., <code>beagrep -e readlink</code>
+
+<p>
+     The <code>REGEXP_MATCH</code> serves 2 purposes:
+</p>
+<ul>
+<li>First, it is computed into whole words for querying beagle. For
+       e.g., <code>l] [--grep GREP_OPTIONS]</code> above should be matched with
+       the following REGEXP: <code>l\] \[--grep GREP_OPTIONS\]</code>, but it
+       should be converted into 4 words: <code>l grep GREP OPTIONS</code> for
+       beagle.
+
+</li>
+<li>Second, it is used as the regexp for grep to work on.
+
+</li>
+</ul>
+
+</dd>
+<dt>-a <code>ADDITIONAL_WORDS</code></dt><dd>means to add more words into the beagle
+     query. This is useful by increasing the work beagle need to do,
+     but reduce the possible workset grep need to work on.
+
+</dd>
+<dt>-p <code>REGEXP_PATH</code></dt><dd>means to limit the search result to those files whose pathname matches <code>REGEXP_PATH</code>.
+
+</dd>
+<dt>-v <code>REGEXP_REVERSE_PATH</code></dt><dd>means to exclude those matched files whose pathname matches <code>REGEXP_REVERSE_PATH</code>.
+
+</dd>
+<dt>-i</dt><dd>means to do case insignificant grep.
+
+</dd>
+<dt>-f</dt><dd>means to do the match in filenames only. For example, <code>beagrep         -e readlink -f</code> will only show results like readlink.h and
+        readlink.c.
+
+<p>
+        This is very useful for finding files. Note that when <code>-f</code> is
+        used, the beagle querying words will be computed differently:
+        only the basename will be used, and <code>filename:</code> is prepended
+        onto each words.
+</p>
+</dd>
+<dt>-l</dt><dd>means to list the beagle matched list of files directly, without running grep to match on them.
+
+</dd>
+<dt>&ndash;grep <code>GREP_OPTIONS</code></dt><dd>means to pass additional arguments to the
+     grep invocation. For e.g., the <code>-l</code> argument can be passed to
+     beagrep directly, or it can be passed using <code>--grep</code>, they mean different things:
+
+<p>
+     <code>beagrep -e "hello world" -l</code> will show a file containing "hello
+     wonderful world", but <code>beagrep -e "hello world" --grep -l</code> will
+     not show that file as a match.
+</p></dd>
+</dl>
+
+
+
+</div>
 </div>
 </div>
 
@@ -515,7 +671,7 @@ beagrep之所以能大大加快grep的速度，是因为它能大大缩小grep�
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-03 13:29:09 CST</p>
+<p class="date">Date: 2012-09-05 14:07:37 CST</p>
 <p class="author">Author: Bao Haojun</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
