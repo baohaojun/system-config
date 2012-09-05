@@ -352,7 +352,7 @@ see a picture below:
 [[./call-graph.png]]
 
 This picture is generated for the adb sub-project in android code. You
-can see which functions are calling adb_connect, and which functions
+can see which functions are calling ~adb_connect~, and which functions
 are called by it.
 
 It is generated using beagrep + ctags-exuberant + graphviz, using my
