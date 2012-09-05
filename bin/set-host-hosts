@@ -20,8 +20,22 @@ $hosts{$host} = $ip;
 
 open($file, ">", "/etc/hosts") or die "Error: can not open /etc/hosts, are you root?";
 
-for (sort keys %hosts) {
-    $ip = $hosts{$_};
-    print $file "$ip $_\n";
-    print "$ip $_\n";
+my %ip_map;
+
+for my $host (keys %hosts) {
+    my $ip = $hosts{$host};
+    $ip_map{$ip} = [] unless exists $ip_map{$ip};
+    push @{$ip_map{$ip}}, $host;
+}
+
+$, = " ";
+for my $ip ("127.0.0.1", "::1") {
+    if (exists $ip_map{$ip}) {
+	print $file "$ip @{$ip_map{$ip}}\n";
+	delete $ip_map{$ip};
+    }
+}
+
+for my $ip (sort keys %ip_map) {
+    print $file "$ip @{$ip_map{$ip}}\n";
 }

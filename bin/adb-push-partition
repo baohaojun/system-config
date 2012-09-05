@@ -1,0 +1,3 @@
+#!/bin/bash
+set -x
+adb push $1 /data/; adb shell dd if=/data/$1 of=/dev/block/platform/sdhci-pxa.2/by-name/$2

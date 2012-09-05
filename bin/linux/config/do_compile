@@ -3,8 +3,6 @@ set -e
 function compile_beagrep() {
     cd ~/gcode/beagrep
     git clean -xfd
-    git fetch origin for-debian
-    git checkout FETCH_HEAD
     autoreconf -i
     ./configure
     make

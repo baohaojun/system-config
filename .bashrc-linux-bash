@@ -42,7 +42,11 @@ function adb() {
         set -- -s "$(cat ~/.adbd)" "$@"
     fi
 
-    command adb "$@"
+    if test $# -lt 1 -a $1 = shell; then
+        command adb "$@" | tr -d '\r'
+    else
+        command adb "$@"
+    fi
 }
 
 function sudo {

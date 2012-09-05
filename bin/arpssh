@@ -19,7 +19,7 @@ if test $(basename $0) = update-arp; then
         if test -z "$ip"; then
             die "can not arping $arp"
         fi
-
+        echo ip is $ip
         sudo update-host-ip "$host_name" $ip
     done
     exit 0
