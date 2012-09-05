@@ -98,6 +98,46 @@ index。
 用 ~mkbeagrepidx~ ，程序会问你是否想更新上级已有的index库，如果选是，则取决于该子
 目录的大小，可能更新index的时间只需要几秒钟。
 
+** man page for mkbeagrepidx
+
+mkbeagrepidx is a simple wrapper over beagrep-build-index. You can
+configure it for which directories to ignore using
+~--deny-directory-pattern~ option. By default, 
+
+- The $PWD/out is ignored, because it contains android build output
+- The */.git is ignored, because of well known reason
+- The */.repo is ignored, for the same reason.
+
+The syntax is comma separated shell glob patterns, and you can check
+how it is converted into regular expression by examing the beginning
+of mkbeagrepidx output.
+
+You can customize it using several ways, in the order of increasing
+priority:
+
+- Not customize it, then 
+
+  #+begin_example
+  "$PWD/out,*/.repo,*/.git"
+  #+end_example
+  
+  will be used.
+
+- Overide it in ~/.mkbeagrepidx.rc, setting the ~BEAGREP_IGNORE_DIR_PATTERNS~ environment variable:
+
+  #+begin_example
+  export BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/.git"
+  #+end_example
+
+- Overide it in the .mkbeagrepidx.rc in the current working directory, same as the above.
+
+- Overide it on the command line:
+
+  #+begin_example
+  mkbeagrepidx --deny-directory-pattern "$PWD/out,*/.repo,*/.git,*/.svn"
+  #+end_example
+  
+
 ** 用beagrep搜索
 
 在想阅读的代码目录下：
@@ -105,6 +145,56 @@ index。
 cd ~/src/android
 beagrep -e "readlink"
 #+end_example
+
+*** man page for beagrep
+
+Here's a list of all arguments that beagrep takes:
+
+#+begin_example
+beagrep -e REGEXP_MATCH [-p REGEXP_PATH] [-a ADDITIONAL_WORDS] [-v REGEXP_REVERSE_PATH] [-i] [-f] [-l] [--grep GREP_OPTIONS] [-a]
+#+end_example
+
+- -e ~REGEXP_MATCH~ :: This is the minimum required arguments. For e.g., ~beagrep -e readlink~
+
+     The ~REGEXP_MATCH~ serves 2 purposes:
+
+     - First, it is computed into whole words for querying beagle. For
+       e.g., ~l] [--grep GREP_OPTIONS]~ above should be matched with
+       the following REGEXP: ~l\] \[--grep GREP_OPTIONS\]~, but it
+       should be converted into 4 words: ~l grep GREP OPTIONS~ for
+       beagle.
+
+     - Second, it is used as the regexp for grep to work on.
+
+- -a ~ADDITIONAL_WORDS~ :: means to add more words into the beagle
+     query. This is useful by increasing the work beagle need to do,
+     but reduce the possible workset grep need to work on.
+
+- -p ~REGEXP_PATH~ :: means to limit the search result to those files whose pathname matches ~REGEXP_PATH~.
+
+- -v ~REGEXP_REVERSE_PATH~ :: means to exclude those matched files whose pathname matches ~REGEXP_REVERSE_PATH~.
+
+- -i :: means to do case insignificant grep.
+
+- -f :: means to do the match in filenames only. For example, ~beagrep
+        -e readlink -f~ will only show results like readlink.h and
+        readlink.c.
+
+	This is very useful for finding files. Note that when ~-f~ is
+        used, the beagle querying words will be computed differently:
+        only the basename will be used, and ~filename:~ is prepended
+        onto each words.
+
+- -l :: means to list the beagle matched list of files directly, without running grep to match on them.
+
+- --grep ~GREP_OPTIONS~ :: means to pass additional arguments to the
+     grep invocation. For e.g., the ~-l~ argument can be passed to
+     beagrep directly, or it can be passed using ~--grep~, they mean different things:
+
+     ~beagrep -e "hello world" -l~ will show a file containing "hello
+     wonderful world", but ~beagrep -e "hello world" --grep -l~ will
+     not show that file as a match.
+
 
 * 原理
 
