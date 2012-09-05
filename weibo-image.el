@@ -14,6 +14,7 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (require 'image-mode)
+(require 'url)
 
 (defconst weibo-image-buffer-name "*weibo-image*")
 
@@ -61,7 +62,7 @@
 (defun weibo-url-retrieve (url callback &optional cbargs silent)
   (if (> emacs-major-version 23)
       (funcall 'url-retrieve url callback cbargs silent)
-    (funcall 'url-retreive url callback cbargs)))
+    (funcall 'url-retrieve url callback cbargs)))
 
 (defun weibo-download-image-in-queue ()
   (let ((buffer (current-buffer))
