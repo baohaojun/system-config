@@ -15,7 +15,6 @@
 
 (require 'url)
 (require 'json)
-(require 'cl)
 (require 'weibo-authorize)
 (require 'weibo-timeline)
 (require 'weibo-status)
@@ -95,7 +94,8 @@
 	(insert-buffer-substring buffer start max)
 	(mm-decode-coding-region (point-min) (point-max) 'utf-8)
 	(goto-char (point-min))
-	(replace-regexp "\"id\":\\([0-9]+\\)," "\"id\":\"\\1\",")
+	(while (re-search-forward "\"id\":\\([0-9]+\\)," nil t)
+	  (replace-match "\"id\":\"\\1\"," nil nil))
 	(goto-char (point-min))
 	(condition-case nil
 	    (json-read)

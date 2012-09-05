@@ -13,6 +13,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+(require 'cl)
+
 (defconst weibo-api-status-public-timeline "statuses/public_timeline")
 (defconst weibo-api-status-friends-timeline "statuses/friends_timeline")
 (defconst weibo-api-status-user-timeline "statuses/user_timeline")
@@ -70,7 +72,7 @@
 
 (defun weibo-pull-status (node parse-func new type)
   (let* ((keyword (if new "since_id" "max_id"))
-	 (id (and node-data (weibo-status-id node-data)))
+	 (id (and node (weibo-status-id node)))
 	 (idparam (and id (format "%s=%s" keyword (if new id (weibo-string-decrement id)))))
 	 (param (format "?%s" (mapconcat 'identity (remove-if-not 'stringp (list weibo-timeline-extra-params idparam)) "&"))))
     (with-temp-message (concat "获取微博 " param "...")
@@ -119,12 +121,12 @@
 	  (if (= (nth 5 (parse-time-string now)) (nth 5 (parse-time-string time-string)))
 	      (weibo-generate-time-string "%m%%s%d%%s %H:%M" time-string "月" "日")
 	    (weibo-generate-time-string "%Y%%s%m%%s%d%%s %H:%M" time-string "年" "月" "日"))
-	(let* ((seconds (floor (time-to-seconds (time-since time-string))))
+	(let* ((seconds (floor (float-time (time-since time-string))))
 	       (hours (/ seconds 3600))
 	       (minutes (/ (% seconds 3600) 60)))
 	  (cond
 	   ((< 0 hours) (weibo-generate-time-string "%%s%H:%M" time-string "今天"))
-	   ((< 0 minutes) (weibo-generate-time-string "%d%%s" time-string "分钟前"))
+	   ((< 0 minutes) (format "%d分钟前" minutes))
 	   (t (format "%d秒前" seconds))))))))
 
 (defun weibo-update-status (status-list type)
@@ -245,3 +247,7 @@
 (defun weibo-public-timeline-provider ()
   (weibo-status-timeline-provider "w" "谁在说" weibo-api-status-public-timeline))
 (provide 'weibo-status)
+
+;; Local Variables: 
+;; byte-compile-warnings: (not cl-functions) 
+;; End: 

@@ -158,12 +158,12 @@
     (let* ((proc-func (if front-t 'ewoc-enter-first 'ewoc-enter-last))
 	   (tag (weibo-timeline-provider-tag weibo-timeline-current-provider))
 	   (data (append (cdr (assoc tag root)) nil)))
-      (mapc '(lambda (node)
+      (mapc (function (lambda (node)
 	       (apply proc-func (list weibo-timeline-data
 				      (apply
 				       (weibo-timeline-provider-make-function
 					weibo-timeline-current-provider)
-				       `(,node)))))
+				       `(,node))))))
 	    (if front-t (reverse data) data))))
   (run-with-idle-timer 0.2 nil 'weibo-download-image-in-queue))
 

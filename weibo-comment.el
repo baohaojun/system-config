@@ -13,6 +13,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+(require 'weibo-timeline)
+
 (defconst weibo-api-send-comment "comments/create")
 (defconst weibo-api-send-reply "comments/reply")
 (defconst weibo-api-comments-by-me-timeline "comments/by_me")
@@ -50,7 +52,7 @@
 
 (defun weibo-pull-comment (node parse-func new type)
   (let* ((keyword (if new "since_id" "max_id"))
-	 (id (and node-data (weibo-comment-id node-data)))
+	 (id (and node (weibo-comment-id node)))
 	 (param (and id (format "?%s=%s" keyword (if new id (weibo-string-decrement id))))))
     (with-temp-message (concat "获取评论 " param "...")
       (weibo-get-data type
