@@ -348,8 +348,10 @@ namespace Beagrep.Daemon
 					denied_regex = StringFu.GetPatternRegex (denied_patterns);
 			}
 
-			if (denied_dir_patterns.Count > 0)
+			if (denied_dir_patterns.Count > 0) {
 				denied_dir_regex = StringFu.GetPatternRegex (denied_dir_patterns);
+				Log.Always("Will ignore directories matching regular expression: {0}", denied_dir_regex);
+			}
 
 			Log.Always ("Starting beagrep-build-index (pid {0}) at {1}", Process.GetCurrentProcess ().Id, DateTime.Now);
 
@@ -944,9 +946,6 @@ namespace Beagrep.Daemon
 		
 		static bool Ignore (DirectoryInfo directory)
 		{
-			if (directory.Name.StartsWith (".")) //FIXME: is this a really good desicion?
-				return true;
-
 			if (denied_dir_regex.IsMatch (directory.FullName)) {
 				return true;
 			} else {

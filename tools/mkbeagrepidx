@@ -100,9 +100,26 @@ function wlp() {
 
 function mkbeagrepidx() {
     mkdir -p "$outDir"/.beagrep
+    if test -e ~/.mkbeagrepidx.rc; then
+        . ~/.mkbeagrepidx.rc
+    fi
+
+    if test -e ./.mkbeagrepidx.rc; then
+        . ./.mkbeagrepidx.rc
+    fi
+
+    local -a ADDITIONAL_OPTIONS=
+
+    if test $# != 0; then
+        ADDITIONAL_OPTIONS=("$@")
+    elif test "$BEAGREP_IGNORE_DIR_PATTERNS"; then
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "$BEAGREP_IGNORE_DIR_PATTERNS")
+    else
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "$PWD/out,*/.repo,*/.git")
+    fi
 
     beagrep-build-index --recursive \
-        --deny-directory-pattern `pwd`/'out-*' \
+        "${ADDITIONAL_OPTIONS[@]}" \
         --enable-deletion \
         --target "$(wlp "$outDir"/.beagrep/)" \
         "$relativeSrcDir" 2>&1 \
@@ -116,7 +133,7 @@ function mkbeagrepidx() {
 }
 
 function for-code-reading() {
-    mkbeagrepidx "$@"&
+    mkbeagrepidx&
     mkgtags "$@" #must not put background, the tty(1) depends on this
 }
 
