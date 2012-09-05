@@ -18,6 +18,8 @@ if test $(basename $0) = build-beagrep-debs; then
             fi
             pkg=~/external/${branch#for-}-beagrep-build.tgz;
             if test -e $pkg; then
+                rm -rf ~/tmp/beagrep-debs/$branch
+                mkdir -p ~/tmp/beagrep-debs/$branch
                 sudo pbuilder --execute --basetgz $pkg \
                     --bindmounts /home $ADDITIONAL_BUILD_BEAGREP_DEBS_ARGS -- \
                     $(which do-beagrep-build) \
@@ -53,8 +55,15 @@ bldir=~/$$
     cd ..
     test -e *.deb || exit -1
     mv *.deb beagrep-$branch-$today-$hash.deb
-    rm -rf $myhome/tmp/beagrep-debs/$branch
-    mkdir -p $myhome/tmp/beagrep-debs/$branch
+    dpkg -i beagrep-$branch-$today-$hash.deb
+    apt-get -f install -y
+    (
+        mkdir tmp
+        cd tmp
+        echo main > 1.txt
+        mkbeagrepidx
+        beagrep -e 'main' | grep '1.txt:1:main' || exit -1
+    )
     cp -a * $myhome/tmp/beagrep-debs/$branch
     chown -R $myuid $myhome/tmp/beagrep-debs/$branch
     cd ~
