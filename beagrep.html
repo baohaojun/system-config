@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="title" content="beagrep, grep 2G source code in 2 seconds"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-05 16:11:18 CST"/>
+<meta name="generated" content="2012-09-05 17:48:08 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -140,6 +140,7 @@
 <ul>
 <li><a href="#sec-5-1">5.1 offline Wikipedia</a></li>
 <li><a href="#sec-5-2">5.2 <code>grep-func-call</code> and <code>grep-func-call-all</code></a></li>
+<li><a href="#sec-5-3">5.3 Generate call graph</a></li>
 </ul>
 </li>
 </ul>
@@ -179,7 +180,7 @@ done in a couple of seconds.
 Beagrep supports both Linux and Windows (requires CYGWIN).
 </p>
 <p>
-(Note a Chinse version of this page is available <a href="http://baohaojun.github.com/beagrep-cn.html">here</a>, but it may be
+(Note a Chinese version of this page is available <a href="http://baohaojun.github.com/beagrep-cn.html">here</a>, but it may be
 outdated).
 </p>
 </div>
@@ -767,13 +768,30 @@ didn't make it a stand-alone project, it's under the
 <p>
 The latter used beagrep and ctags-exuberant to search for which
 functions called a specific function. It's under the <code>bin/</code> directory.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-5-3" class="outline-3">
+<h3 id="sec-5-3"><span class="section-number-3">5.3</span> Generate call graph</h3>
+<div class="outline-text-3" id="text-5-3">
+
+
+<p>
+This is a tool to generate a call graph for the software project you
+want. I have found its effectiveness is to be questioned, but you can
+see a picture below:
+</p>
+<p>
+<img src="./call-graph.png"  alt="./call-graph.png" />
 </p></div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-05 16:11:18 CST</p>
+<p class="date">Date: 2012-09-05 17:48:08 CST</p>
 <p class="author">Author: Bao Haojun</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

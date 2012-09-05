@@ -342,3 +342,23 @@ didn't make it a stand-alone project, it's under the
 
 The latter used beagrep and ctags-exuberant to search for which
 functions called a specific function. It's under the ~bin/~ directory.
+
+** Generate call graph
+
+This is a tool to generate a call graph for the software project you
+want. I have found its effectiveness is to be questioned, but you can
+see a picture below:
+
+[[./call-graph.png]]
+
+This picture is generated for the adb sub-project in android code. You
+can see which functions are calling adb_connect, and which functions
+are called by it.
+
+It is generated using beagrep + ctags-exuberant + graphviz, using my
+wrap scripts like following in the android/system/core directory:
+
+#+begin_example
+generate-call-graph.pl > call_graph.org
+dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2 
+#+end_example
