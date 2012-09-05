@@ -7,7 +7,7 @@
 (defun bhj-window-class (window)
   (caddr (get-x-property window 'WM_CLASS)))
 
-(bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/linux/screenshot&")))
+(bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/screenshot&")))
 (bind-keys global-keymap "Super-DEL" (lambda () (system "gnome-screensaver-command -l&")))
 (bind-keys global-keymap "Super-Print" (lambda () (system "super-print.sh&")))
 (bind-keys window-keymap "Super-i" (lambda () (display-message (concat "Window class is: " (caddr (get-x-property (input-focus) (quote WM_CLASS)))))))
