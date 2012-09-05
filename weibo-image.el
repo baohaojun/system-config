@@ -58,6 +58,11 @@
   (unless (member url weibo-download-image-queue2)
     (add-to-list 'weibo-download-image-queue url)))
 
+(defun weibo-url-retrieve (url callback &optional cbargs silent)
+  (if (> emacs-major-version 23)
+      (funcall 'url-retrieve url callback cbargs silent)
+    (funcall 'url-retreive url callback cbargs)))
+
 (defun weibo-download-image-in-queue ()
   (let ((buffer (current-buffer))
 	(url (pop weibo-download-image-queue)))
@@ -67,7 +72,7 @@
 	  (message (format "剩余%d张图片" size))
 	  (unless (file-exists-p image-file)
 	    (add-to-list 'weibo-download-image-queue2 url)
-	    (url-retrieve url
+	    (weibo-url-retrieve url
 			(lambda (status image-file weibo-timeline-data buffer url)
 			  (goto-char (point-min))
 			  (let ((end (search-forward "\n\n" nil t)))
