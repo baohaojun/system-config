@@ -690,6 +690,12 @@
           (all-marvell t)
           (start-pos 0))
 
+      (when (save-excursion
+	      (save-restriction
+		(message-narrow-to-headers)
+		(message-fetch-field "Newsgroups")))
+	(setq all-marvell nil))
+
       (while (and all-marvell (string-match "@" receivers start-pos))
         (setq start-pos (match-end 0))
         (unless (equal (string-match 
