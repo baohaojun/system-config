@@ -24,6 +24,16 @@ if git diff --quiet HEAD && git branch --contains HEAD -a |grep -q from-mac; the
     exit
 fi
 
+if git remote -v | grep baohaojun.github.com.git; then
+    org_changes=$(git st -s | pn 2|grep -e '\.org$')
+    html_changes=$(git st -s | pn 2|grep -e '\.html$'|perl -npe 's/\.html$/.org/')
+
+    for x in $(arg1-arg2 $org_changes $html_changes); do 
+        org-export $x
+    done
+    git add .
+fi
+
 if git status -s | grep . ; then
     git commit -m "$(
 	(
