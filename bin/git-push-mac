@@ -37,7 +37,7 @@ if git status -s | grep . ; then
 # End: #
 EOF
 	) | get-stdin
-    )" ||true
+    )" ||true # " to fix the font-lock...
 fi
 
 rb=$(from-mac)
@@ -47,6 +47,7 @@ if git branch --contains HEAD -a |grep -q from-mac; then
 fi
 
 git push origin HEAD:$rb
+git push || true
 
 if test $(pwd) = ~/windows-config; then
     git-notify-push
