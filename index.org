@@ -28,7 +28,7 @@ myself. Just to show you what a geek I am:-)
   SDIM, or Shadow Dance Input Method, is an input method I develop and
   use myself only. It is available under 3 platforms, Linux, Windows, and Emacs.
 
-- Semi-offline Wikipedia
+- Semi Offline Wikipedia
 
   It is a fork of [[http://users.softlab.ece.ntua.gr/~ttsiod/buildWikipediaOffline.html][this project]]. I fixed some bugs, updated the
   mediawiki base version, and added one major feature: allow fetching
