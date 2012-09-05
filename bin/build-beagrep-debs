@@ -1,0 +1,66 @@
+#!/bin/bash
+
+if test $(basename $0) = build-beagrep-debs; then
+    cd ~/gcode/beagrep
+    for branch in $(git branch -a |grep -v remotes|sed 's/^\*/ /'|grep for); do
+        (
+            if test $# != 0; then
+                do_build=false
+                for m in "$@"; do
+                    if echo $branch | grep -q -e $m; then
+                        do_build=true
+                        break
+                    fi
+                done
+                if test $do_build = false; then
+                    exit
+                fi
+            fi
+            pkg=~/external/${branch#for-}-beagrep-build.tgz;
+            if test -e $pkg; then
+                sudo pbuilder --execute --basetgz $pkg \
+                    --bindmounts /home $ADDITIONAL_BUILD_BEAGREP_DEBS_ARGS -- \
+                    $(which do-beagrep-build) \
+                    $branch \
+                    ~ \
+                    $UID \
+                    $(today) \
+                    $(git log --pretty=format:%h -1 $branch)
+            fi
+        )
+    done
+    exit
+fi
+
+set -ex
+branch=$1
+myhome=$2
+myuid=$3
+today=$4
+hash=$5
+bldir=~/$$
+
+(
+    mkdir -p $bldir
+    cd $myhome/gcode/beagrep
+    git archive --format=tar -o $bldir/beagrep_0.4.0.orig.tar $branch
+    cd $bldir
+    gzip beagrep_0.4.0.orig.tar
+    mkdir beagrep
+    cd beagrep
+    tar zxfv ../beagrep_0.4.0.orig.tar.gz
+    dpkg-buildpackage || true
+    cd ..
+    test -e *.deb || exit -1
+    mv *.deb beagrep-$branch-$today-$hash.deb
+    rm -rf $myhome/tmp/beagrep-debs/$branch
+    mkdir -p $myhome/tmp/beagrep-debs/$branch
+    cp -a * $myhome/tmp/beagrep-debs/$branch
+    chown -R $myuid $myhome/tmp/beagrep-debs/$branch
+    cd ~
+    rm $bldir -rf
+) || (
+    echo "build failed, please check it in the shell"
+    bash || true
+    rm $bldir -rf
+)
