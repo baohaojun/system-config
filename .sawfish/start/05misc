@@ -42,8 +42,6 @@ fi
 download-today
 
 command renew-xauth
-killall syndaemon
-syndaemon -i 1 -d
 
 for x in ~/external/sawfish/start/*; do
     (
