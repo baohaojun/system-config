@@ -79,8 +79,12 @@
       (weibo-get-data type
 		      parse-func param
 		      new)
-      (when (and new (string= type weibo-api-status-mention-timeline))
-	(weibo-timeline-reset-count "2")))))
+      (when new
+	(cond
+	 ((string= type weibo-api-status-friends-timeline)
+	  (weibo-timeline-reset-count "status"))
+	 ((string= type weibo-api-status-mention-timeline)
+	  (weibo-timeline-reset-count "mention_status")))))))
 
 (defun weibo-status-pretty-printer (status &optional p)
   (weibo-insert-status status nil))

@@ -58,7 +58,12 @@
       (weibo-get-data type
 		      parse-func param
 		      new)
-      (weibo-timeline-reset-count "1"))))
+      (when new
+	(cond
+	 ((string= type weibo-api-comments-to-me-timeline)
+	  (weibo-timeline-reset-count "cmt"))
+	 ((string= type weibo-api-comments-mentions-timeline)
+	  (weibo-timeline-reset-count "mention_cmt")))))))
 
 (defun weibo-comment-pretty-printer (comment &optional p)
   (weibo-insert-comment comment t))
@@ -176,6 +181,6 @@
   (weibo-comment-timeline-provider "c" "收到评论" weibo-api-comments-to-me-timeline))
 
 (defun weibo-comments-mentions-timeline-provider ()
-  (weibo-comment-timeline-provider "x" "提到我的评论" weibo-api-comments-to-me-timeline))
+  (weibo-comment-timeline-provider "x" "提到我的评论" weibo-api-comments-mentions-timeline))
 
 (provide 'weibo-comment)

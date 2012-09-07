@@ -76,9 +76,8 @@
 	   (format "新@我的评论(%s) " mention_cmt)))))))
 
 (defun weibo-timeline-reset-count (type)
-  (if nil
-      (weibo-post-data weibo-api-reset-count (lambda (root))
-		       `(("type" . ,type)))))
+  (weibo-post-data weibo-api-reset-count (lambda (root))
+		       `(("type" . ,type))))
 
 (defstruct weibo-timeline-provider
   key
