@@ -3,7 +3,7 @@
 set -xe
 
 set -o pipefail
-
+repo-update
 rev=HEAD
 
 TEMP=$(getopt -o r: --long revision: -n $(basename $0) -- "$@")

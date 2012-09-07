@@ -30,9 +30,7 @@ for x in "$@"; do
             exit 0
         fi
         test -e Makefile || exit
-	if yes-or-no-p -y "do repo sync?"; then
-            repo-sync -n -j4
-	fi
+        repo-sync -n -j4
 
         android-daily-changes
 
@@ -86,11 +84,9 @@ fi
 	if test $(basename $0) = bpe-local-build; then
 	    bpe-update -r
 	fi
-        if yes-or-no -y "Start full build?"; then
-            flock -u 9
-            android-full-build
-            bhj-short-notify $(basename $0) "$(pwd): build completed"
-        fi
+        flock -u 9
+        android-full-build
+        bhj-short-notify $(basename $0) "$(pwd): build completed"
     ) 9>.android-full-build.lock
 done
 
