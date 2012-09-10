@@ -1,5 +1,5 @@
 #!/bin/bash
-test -e ~/external/bin/linux/ext/wiki-"$1".txt || set -- en "$@"
+test -L ~/gcode/offline.wikipedia/$1.py || set -- en "$@"
 lang=$1
 shift
 host=localhost:34567
