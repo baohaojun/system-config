@@ -9,6 +9,4 @@
 	((x = x + y))
 	sleep $x
     done
-    backup-mail
-
 ) 9>~/.logs/$(basename $0).lock  2>&1 
