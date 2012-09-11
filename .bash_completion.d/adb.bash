@@ -193,7 +193,8 @@ _adb_cmd_shell() {
         return 0
     fi
 
-    i=$((i+1))
+    i=$COMP_CWORD
+    cur="${COMP_WORDS[i]}"
     case "$cur" in
         ls)
             _adb_shell_ls $serial $i
