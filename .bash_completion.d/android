@@ -98,129 +98,14 @@ function _android()
 }
 complete -o default -F _android android
 
-function _adb()
-{
-    local cur prev opts cmds c subcommand device_selected
-    local IFS=$' \t\n'
-    COMPREPLY=()
-    cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="-d -e -s -p"
-    cmds="devices push pull sync shell emu logcat forward jdwp install \
-        uninstall bugreport help version wait-for-device start-server \
-        reboot reboot-bootloader \
-        kill-server get-state get-serialno status-window remount root ppp"
-    subcommand=""
-    device_selected=""
-
-  # Look for the subcommand.
-    c=1
-    while [ $c -lt $COMP_CWORD ]; do
-        word="${COMP_WORDS[c]}"
-        if [ "$word" = "-d" -o "$word" = "-e" -o "$word" = "-s" ]; then
-            device_selected=true
-            opts="-p"
-        fi
-        for cmd in $cmds; do
-            if [ "$cmd" = "$word" ]; then
-                subcommand="$word"
-            fi
-        done
-        c=$((++c))
-    done
-
-    case "${subcommand}" in
-        '')
-            case "${prev}" in
-                -p)
-                    return 0;
-                    ;;
-                -s)
-          # Use 'adb devices' to list serial numbers.
-                    COMPREPLY=( $(compgen -W "$(adb devices|tail -n +2|head -n -1|cut -f1)" -- ${cur} ) )
-                    return 0
-                    ;;
-            esac
-            case "${cur}" in
-                -*)
-                    COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
-                    return 0
-                    ;;
-            esac
-            if [ -z "$device_selected" ]; then
-                local num_devices=$(( $(adb devices 2>/dev/null|wc -l) - 2 ))
-                if [ "$num_devices" -gt "1" ]; then
-          # With multiple devices, you must choose a device first.
-                    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-                    return 0
-                fi
-            fi
-            COMPREPLY=( $(compgen -W "${cmds}" -- ${cur}) )
-            return 0
-            ;;
-        install)
-            case "${cur}" in
-                -*)
-                    COMPREPLY=( $(compgen -W "-k -l" -- ${cur}) )
-                    return 0
-                    ;;
-            esac
-            ;;
-        forward)
-      # Filename or installation option.
-            COMPREPLY=( $(compgen -W "tcp: localabstract: localreserved: localfilesystem: dev: jdwp:" -- ${cur}) )
-            return 0
-            ;;
-        uninstall)
-            case "${cur}" in
-                -*)
-                    COMPREPLY=( $(compgen -W "-k" -- ${cur}) )
-                    return 0
-                    ;;
-            esac
-            ;;
-        logcat)
-            case "${cur}" in
-                -*)
-                    COMPREPLY=( $(compgen -W "-v -b -c -d -f -g -n -r -s" -- ${cur}) )
-                    return 0
-                    ;;
-            esac
-            case "${prev}" in
-                -v)
-                    COMPREPLY=( $(compgen -W "brief process tag thread raw time long" -- ${cur}) )
-                    return 0
-                    ;;
-                -b)
-                    COMPREPLY=( $(compgen -W "radio events main" -- ${cur}) )
-                    return 0
-                    ;;
-            esac
-            ;;
-        pull|push|shell)
-	    IFS=$'\t\n'
-            COMPREPLY=( $(
-                    (IFS=$'\t\n'; for x in `adb shell adbcompgen.sh "${cur}"|tr -d '\r'`; do if test -e "$x"; then true; else echo "$x"; fi; done)
-                    compgen -f "${cur}") )
-            return 0
-            ;;            
-    esac
-}
-
-complete -o default -o filenames -o nospace -F _adb adb
-
 function _adb_push()
 {
-    local cur
-    local IFS=$'\t\n'
     cur="${COMP_WORDS[COMP_CWORD]}"
-    COMPREPLY=( $(
-            (IFS=$'\t\n'; for x in `adb shell adbcompgen.sh "${cur}"|tr -d '\r'`; do if test -e "$x"; then true; else echo "$x"; fi; done)
-            compgen -f -- "${cur}") )
+    _adb_util_list_files none "$cur"
     return 0
 }
 
-complete -o default -o filenames -o nospace -F _adb_push adb_push
+complete -o default -o filenames -o nospace -F _adb_push adb_push adb_pull
 
 function _fastboot()
 {
