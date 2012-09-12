@@ -1,6 +1,6 @@
 #!/bin/bash
-tsocks=
-if test -e ~/.tsocks; then
-    tsocks=tsocks
+tsocks=tsocks
+if test -e ~/.at-home; then
+    tsocks=
 fi
 $tsocks /usr/bin/offlineimap || true

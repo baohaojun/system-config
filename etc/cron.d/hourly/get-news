@@ -1,5 +1,10 @@
 #!/bin/bash
 set -x
-sudo su - news -c "tsocks /usr/sbin/fetchnews -v"
-sudo su - news -c "/usr/sbin/fetchnews -v"
+
+if test -e ~/.at-home; then
+    sudo su - news -c "/usr/sbin/fetchnews -v"
+else
+    sudo su - news -c "tsocks /usr/sbin/fetchnews -v"
+fi
+
 true
