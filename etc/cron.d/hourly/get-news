@@ -1,4 +1,5 @@
 #!/bin/bash
-sudo su - news -c tsocks /usr/sbin/fetchnews
-sudo su - news -c /usr/sbin/fetchnews
+set -x
+sudo su - news -c "tsocks /usr/sbin/fetchnews -v"
+sudo su - news -c "/usr/sbin/fetchnews -v"
 true

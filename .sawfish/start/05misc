@@ -50,16 +50,6 @@ for x in ~/external/sawfish/start/*; do
     )
 done
 
-if test $USER = bhj; then
-    (
-	flock -n 5 || { echo "lock failed for ssh, exit"; exit; }
-	while true; do
-	    test -e ~/.tsocks && ssh -C2qN -D 18080 home
-	    sleep $(random 60); 
-	done
-    ) 5> ~/.logs/ssh-tsocks&
-fi
-
 # for x in /etc/xdg/autostart/*; do
 #     (
 # 	$(cat "$x"|perl -ne '

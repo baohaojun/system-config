@@ -181,9 +181,6 @@ time (
     echo $mysh
 )"
 
-
-
-
 if test $(basename $0) = do-fastboot-full-978; then
     read -p "Press enter to restart fastboot "
     fastboot reboot
