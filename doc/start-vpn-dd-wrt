@@ -1,0 +1,6 @@
+date 091500002012
+sleep 3
+openvpn --config /tmp/openvpn/openvpn.conf --route-up /tmp/openvpn/route-up.sh --down /tmp/openvpn/route-down.sh --daemon 
+iptables -t nat -I POSTROUTING -o br0 -j MASQUERADE
+iptables -I FORWARD -i br0 -o tun0 -j ACCEPT
+iptables -I FORWARD -i tun0 -o br0 -j ACCEPT
