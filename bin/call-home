@@ -1,5 +1,10 @@
 #! /bin/bash
 
+if test "$USER" != bhj; then
+    echo Should not start ssh because you are not bao haojun
+    exit 0
+fi
+
 (
     flock -n 9 || { echo 'lock failed at '$(date); exit 0; }
     while true; do
@@ -9,4 +14,22 @@
 	((x = x + y))
 	sleep $x
     done
-) 9>~/.logs/$(basename $0).lock  2>&1 
+) 9>~/.logs/$(basename $0).lock  2>&1 &
+
+(
+    flock -n 9 || { echo 'lock failed at '$(date); exit 0; }
+    while true; do
+        tsocks ssh -C2qN -D 38080 bhj@fixnet
+	x=30
+	y=$(random 30)
+	((x = x + y))
+	sleep $x
+    done
+) 9>~/.logs/$(basename $0).lock-fix-net  2>&1 &
+
+if nmcli con status id vpn-home |grep 'VPN connected'; then
+    sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
+else
+    nmcli con up id vpn-home
+    sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
+fi || true
