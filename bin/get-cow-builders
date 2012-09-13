@@ -1,0 +1,28 @@
+#!/bin/bash
+
+target=${1:-.}
+for system in debian-testing $(for dist in lucid natty oneiric precise; do echo ubuntu-$dist; done); do
+    for arch in i386 amd64; do
+        if ! echo $system-$arch|grep -q "$target"; then
+            echo $system-$arch is not matched by $target, continue
+            continue
+        fi
+        echo will generate $system-$arch
+
+        basepath=~/external/cowbuilder/$system-$arch/bare
+        rm $basepath -rf
+        mkdir $basepath -p
+        components='main contrib non-free'
+        extra_args=
+        if echo $system|grep ubuntu; then
+            components='main universe multiverse'
+            gpgpath=~/external/ubuntu-keyring/ubuntu-archive-keyring.gpg
+            extra_args="--keyring $gpgpath --debootstrapopts --keyring=$gpgpath"
+        fi
+        
+        sysname=${system%-*}
+        dist=${system#*-}
+        
+        command sudo cowbuilder --create --basepath $basepath/base.cow --mirror http://r66:9999/$sysname --distribution $dist --components "$components" $extra_args --architecture $arch
+    done
+done        
