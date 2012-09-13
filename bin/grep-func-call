@@ -50,8 +50,19 @@ $def_line_map{10000000} = "******";
 while(<$ctags_pipe>) {
   print $debug "$_";
   m/(\S*?)\s+(\S*?)\s+(\S*?)\s+(.*)/ or next;
-  my ($func, $type, $line) = ($1, $2, $3);
-  $def_line_map{$line} = $func;
+  my ($def, $type, $line, $str) = ($1, $2, $3, $4);
+  if ($type eq "macro" and $_ !~ m/\\$/) {
+      # a macro not ended with ~\~ is a simple macro, skip it
+      # because it can not cantain usage of others,
+
+      # unless this macro is actually defined using $target:
+      if ($def !~ m/\b$target\b/ and $_ =~ m/\b$target\b/) { 
+	  print $ENV{GTAGS_START_FILE} . ":$line: <> macro $def is defined using $target\n";
+      }
+
+      next;
+  }
+  $def_line_map{$line} = $def;
 }
 
 @def_lines = sort { $a <=> $b } keys %def_line_map;
@@ -85,7 +96,10 @@ while(<$file>) {
     }
 
     if ($def_line_map{$current_def_line} =~ m/\b$target\b/) { # this is the definition of target
-	debug "the previous definition matches myself";
+	debug "the previous definition matches myself: " . 
+	    "current_def_line is $current_def_line, " .
+	    "def_line is $def_line_map{$current_def_line}; " . 
+	    "current line is $line_str";
 	next;
     }
 
@@ -100,7 +114,6 @@ while(<$file>) {
     } else {
 	debug "members: $members, current_def_line: $current_def_line, line: $line_no, file_line_map{\$line_no}: $file_line_map{$line_no}, target: $target";
     }
-    next if $file_line_map{$current_def_line} =~ m/^\s*#\s*define\s+.*[^\\]$/;
     unless ($printed_func_map{$current_def_line}) {
 	my $calling_tag = "<=";
 	if ($current_def_line == $.) {
