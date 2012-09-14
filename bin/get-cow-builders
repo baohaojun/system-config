@@ -16,7 +16,7 @@ for system in debian-testing $(for dist in lucid natty oneiric precise; do echo 
         extra_args=
         if echo $system|grep ubuntu; then
             components='main universe multiverse'
-            gpgpath=~/external/ubuntu-keyring/ubuntu-archive-keyring.gpg
+            gpgpath=~/external/ubuntu-keyring/usr/share/keyrings/ubuntu-archive-keyring.gpg
             extra_args="--keyring $gpgpath --debootstrapopts --keyring=$gpgpath"
         fi
         

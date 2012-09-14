@@ -2,6 +2,7 @@
 set -ex
 
 cd ~/src/android-mirror/linux-2.6.git || exit 0
+git fetch https://github.com/mirrors/linux
 
 cd ~/src/android-mirror/
 

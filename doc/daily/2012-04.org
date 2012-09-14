@@ -2,7 +2,9 @@ D:\Profiles\bhj\Application Data\Apple Computer\iTunes\iPad Software Updates\iPa
 
 * TODO 搞定一个build makefile之间的include关系图
 
-* TODO How to convert pdf for reading on kindle touch
+* DONE How to convert pdf for reading on kindle touch
+  CLOSED: [2012-09-14 Fri 10:47]
+  - CLOSING NOTE [2012-09-14 Fri 10:47]
 
 - get rid of the margin
 
