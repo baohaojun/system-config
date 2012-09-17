@@ -21,7 +21,9 @@ my $grep_use_perl_regexp;
 open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
+mkdir glob("~/.logs");
 open(my $debuglog, ">", glob("~/.logs/beagrep.log")) or die "Error openning log";
+
 sub debug(@) {
     print $debuglog "@_\n";
 }
