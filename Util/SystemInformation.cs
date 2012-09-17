@@ -124,12 +124,6 @@ namespace Beagrep.Util {
 		/// <returns>
 		/// A <see cref="System.Boolean"/>
 		/// </returns>
-		public static bool XssInit ()
-		{
-			int has_xss = screensaver_glue_init ();
-			use_screensaver = (has_xss == 1);
-			return use_screensaver;
-		}
 
 		[DllImport ("libbeagrepglue.so")]
 		extern static unsafe int screensaver_info (ScreenSaverState *state,

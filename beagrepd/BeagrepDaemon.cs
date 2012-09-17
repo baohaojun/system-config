@@ -489,11 +489,6 @@ namespace Beagrep.Daemon {
 			// Initialize GObject type system
 			g_type_init ();
 			
-			if (SystemInformation.XssInit ())
-				Logger.Log.Debug ("Established a connection to the X server");
-			else
-				Logger.Log.Debug ("Unable to establish a connection to the X server");
-			XSetIOErrorHandler (BeagrepXIOErrorHandler);
 
 			// Lower our CPU priority
 			SystemPriorities.Renice (7);
@@ -533,28 +528,6 @@ namespace Beagrep.Daemon {
 			}
 
 			Log.Always ("Beagrep daemon process shut down cleanly.");
-		}
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		private delegate int XIOErrorHandler (IntPtr display);
-
-		[DllImport ("libX11.so.6")]
-		extern static private int XSetIOErrorHandler (XIOErrorHandler handler);
-
-		private static int BeagrepXIOErrorHandler (IntPtr display)
-		{
-			Logger.Log.Debug ("Lost our connection to the X server!  Trying to shut down gracefully");
-
-			if (! Shutdown.ShutdownRequested)
-				Shutdown.BeginShutdown ();
-
-			Logger.Log.Debug ("Xlib is forcing us to exit!");
-
-			ExceptionHandlingThread.SpewLiveThreads ();
-	
-			// Returning will cause xlib to exit immediately.
-			return 0;
 		}
 
 		/////////////////////////////////////////////////////////////////////////////

@@ -20,7 +20,6 @@ GTK_SHARP_REQUIRED=2.10.0
 GMIME_SHARP_REQUIRED=2.2.0
 EVOLUTION_SHARP_REQUIRED=0.13.3
 GTK_REQUIRED=2.10.0
-AVAHI_SHARP_REQUIRED=0.6.10
 
 ########################################################################
 
@@ -130,59 +129,7 @@ AM_CONDITIONAL(ENABLE_XDG_OPEN, test "x$XDG_OPEN" != "xno")
 AC_MSG_CHECKING([for sqlite3 >= 3.3.9])
 AC_CHECK_LIB(sqlite3, sqlite3_prepare_v2)
 
-AC_ARG_ENABLE([xss],
-	      AC_HELP_STRING([--disable-xss], [Disable monitoring xscreensaver to speed up indexing when user is idle]),
-	      enable_xss=$enableval,
-	      enable_xss=yes)
-
-AC_PATH_XTRA
-
-# Needed by glue/screensaver-glue.c
-# The OLD_CFLAGS/CFLAGS hack is needed to build on Ubuntu Breezy Badger 
-OLD_CFLAGS="$CFLAGS"
-OLD_LDFLAGS="$LDFLAGS"
-OLD_LIBS="$LIBS"
-CFLAGS="$CFLAGS $X_CFLAGS"
-LDFLAGS="$LDFLAGS $X_LIBS"
-AC_CHECK_HEADER(X11/extensions/scrnsaver.h, enable_scrnsaver=yes, enable_scrnsaver=no)
-AC_CHECK_LIB(Xss,XScreenSaverQueryExtension, enable_libxss=yes, enable_libxss=no)
-have_xss=no
-if test "x$enable_xss$enable_scrnsaver$enable_libxss" = "xyesyesyes"; then
-	XSS_LIBS="-lXss"
-	have_xss=yes
-	AC_DEFINE(HAVE_LIBXSS,1,[Define to 1 if libXss is installed])
-fi
-AM_CONDITIONAL(ENABLE_LIBXSS, test "x$have_xss" = "xyes")
-CFLAGS="$OLD_CFLAGS"
-LDFLAGS="$OLD_LDFLAGS"
-LIBS="$OLD_LIBS"
-
 dnl ----------------------------------------------
-
-AC_ARG_ENABLE([thunderbird],
-        AC_HELP_STRING([--disable-thunderbird], [Disable Thunderbird Mail Backend (default no)]),
-        enable_tbird=$enableval,
-        enable_tbird=yes)
-AM_CONDITIONAL(ENABLE_THUNDERBIRD, test "x$enable_tbird" = "xyes")
-
-dnl ----------------------------------------------
-
-AC_ARG_ENABLE([googlebackends],
-        AC_HELP_STRING([--disable-googlebackends], [Disable GMail and other Google backends (default no)]),
-        enable_google=$enableval,
-        enable_google=yes)
-AM_CONDITIONAL(ENABLE_GOOGLEBACKENDS, test "x$enable_google" = "xyes")
-
-if test "x$enable_google" = "xyes"; then
-  i="System.Security"
-  AC_MSG_CHECKING([for $i.dll (needed by Google backends)])
-  if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll; then
-    AC_MSG_ERROR([missing required mono DLL: $i.dll])
-  else
-    AC_MSG_RESULT([found])
-  fi
-fi
-
 
 dnl inotify
 
@@ -239,91 +186,9 @@ AC_SUBST(BEAGREPD_LIBS)
 GMIME_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gmime-sharp-2.4`
 
 dnl ----------------------------------------------
-dnl Epiphany Extension
-
-AC_ARG_ENABLE([epiphany-extension],
-	AC_HELP_STRING([--enable-epiphany-extension], [Enable Epiphany Extension (default auto)]),
-	enable_epiphany_extension=$enableval,
-	enable_epiphany_extension=auto)
-
-use_new_epiphany_extension=no
-if test "x$enable_epiphany_extension" != "xno"; then
-	AC_MSG_CHECKING([for Epiphany])
-	AC_MSG_RESULT()
-
-	dnl If you want to add anything but a <major>.<minor> version here, you
-	dnl need to see the handling of the epiphany_version variable in the
-	dnl epiphany extension code
-	VALID_EPIPHANY_VERSIONS="2.22 2.20 2.19 2.18 2.17 2.16 2.15 2.14 1.8 1.6"
-	for v in $VALID_EPIPHANY_VERSIONS; do
-	
-		AC_MSG_CHECKING([for Epiphany $v])
-		PKG_CHECK_EXISTS(epiphany-$v, found_ephy=yes, found_ephy=no)
-		if test "x$found_ephy" = "xyes"; then
-			EPIPHANY_MAJOR=$v
-			AC_MSG_RESULT([yes])
-			break
-		else
-			AC_MSG_RESULT([no])
-		fi
-	done
-
-	if test "x$found_ephy" = "xno"; then
-		if test "x$enable_epiphany_extension" = "xyes"; then
-			AC_MSG_ERROR([Epiphany (and/or its development files) could not be found])
-		else
-			enable_epiphany_extension="no (Epiphany not installed)"
-		fi
-	else
-		EPIPHANY_EXTENSION_INIT($EPIPHANY_MAJOR)
-		if test "$EPIPHANY_HAS_PYTHON" != "1"; then
-			enable_epiphany_extension="no (Epiphany lacks Python support)"
-		else
-			enable_epiphany_extension="yes"
-		fi
-	fi
-fi
-
-AM_CONDITIONAL(ENABLE_EPIPHANY_EXTENSION, test "x$enable_epiphany_extension" = "xyes")
-AC_SUBST(EPIPHANY_MAJOR)
-
-# distcheck hack
-AC_ARG_ENABLE([epiphany-extension-install],
-	AS_HELP_STRING([--enable-epiphany-extension-install],[Install Epiphany Extension]),
-	[install_epiphany_extension=$enableval],
-	[install_epiphany_extension=yes])
-
-AM_CONDITIONAL([INSTALL_EPIPHANY_EXTENSION], [test "x$install_epiphany_extension" = "xyes"])
-
-dnl ----------------------------------------------
-
-dnl Galago
-
-PKG_CHECK_MODULES(GALAGO, galago-sharp >= 0.5 , enable_galago=yes, enable_galago=no)
-AM_CONDITIONAL(ENABLE_GALAGO, test "x$enable_galago" = "xyes")
-AC_SUBST(GALAGO_LIBS)
-
-dnl ----------------------------------------------
 
 GTK_BINARY_VERSION=`$PKG_CONFIG --variable=gtk_binary_version gtk+-2.0`
 AC_SUBST(GTK_BINARY_VERSION)
-
-dnl For the systeminfo glue
-
-SYSTEMINFO_GLUE_X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 $XSS_LIBS $X_EXTRA_LIBS"
-AC_SUBST(SYSTEMINFO_GLUE_X_LIBS)
-
-dnl ----------------------------------------------
-
-dnl KDE launcher/icon support
-
-kde_prefix_print="unknown; will guess at runtime"
-AC_PATH_PROG(KDE_CONFIG, [kde-config], [no])
-if test ! "x$KDE_CONFIG" = "xno"; then
-	KDE_PREFIX=`$KDE_CONFIG --prefix`
-	kde_prefix_print="$KDE_PREFIX"
-fi
-AC_SUBST(KDE_PREFIX)
 
 dnl ----------------------------------------------
 
@@ -404,17 +269,6 @@ echo "
 	Inotify:		  ${enable_inotify}
 
 	Prefix:			  ${prefix}
-	KDE prefix:		  ${kde_prefix_print}
-
-	galago-sharp?		  ${enable_galago}
-	avahi-sharp		  ${enable_avahi}
-
-	Firefox Extension?	  yes
-	Epiphany Extension?	  ${enable_epiphany_extension}
-	Thunderbird Extension? 	  ${enable_tbird}
-	Google Backends?          ${enable_google}
-
-	Monitor screensaver       ${have_xss}
 
 	Build RDF Adapter         ${enable_rdf_adapter} (purely experimental)
 	Build docs?               ${with_docs}

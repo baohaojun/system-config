@@ -16,10 +16,6 @@ GLOBAL_CONFIG_FILES = \
 	$(srcdir)/config-files/FilesQueryable.xml	\
 	$(srcdir)/config-files/Networking.xml
 
-if ENABLE_GOOGLEBACKENDS
-GLOBAL_CONFIG_FILES += $(srcdir)/config-files/GoogleBackends.xml
-endif
-
 global_config_filesdir = $(sysconfdir)/beagrep/config-files
 global_config_files_DATA = $(GLOBAL_CONFIG_FILES)
 

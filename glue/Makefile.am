@@ -21,15 +21,10 @@ SCHEDULER_GLUE_SOURCES =	\
 	scheduler-glue.c
 
 SYSINFO_GLUE_SOURCES =		\
-	screensaver-glue.c	\
 	thread-glue.c		\
 	vmsize-glue.c
 
 SYSINFO_GLUE_LIBADD = $(MONO_LIBS)
-
-if ENABLE_LIBXSS
-SYSINFO_GLUE_LIBADD += $(SYSTEMINFO_GLUE_X_LIBS)
-endif
 
 XDGMIME_GLUE_SOURCES =		\
 	xdgmime/xdgmime.c	\
