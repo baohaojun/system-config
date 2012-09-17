@@ -122,6 +122,12 @@ map {chomp; my @dir = glob("~/$_"); $_ = $dir[0]} @gtags_fallback_dir;
 
 for (@gtags_fallback_dir) {
   my $dir = $_;
+  my $code_dir = $dir;
+  $code_dir =~ s,.*?tmp/for-code-reading,,;
+  unless (-e $dir and -e $code_dir) {
+      debug "file not found: $dir or $code_dir";
+      next;
+  }
   debug "Not found in current dir; search in $dir";
   do_cscope($dir, $lookup_type, $lookup_needle, $lookup_restrict_regexp) and last;
 }
