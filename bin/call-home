@@ -48,7 +48,7 @@ fi
         exit 0
     fi
     while true; do
-        ssh -D 48080 r66
+        ssh -C2qN -D 48080 r66
         x=30
         y=$(random 30)
         ((x = x + y))
