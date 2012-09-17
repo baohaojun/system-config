@@ -42,9 +42,36 @@ fi
     done
 ) 9>~/.logs/$(basename $0).lock-fix-net  2>&1 &
 
-if nmcli con status id vpn-home |grep 'VPN connected'; then
-    sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
-else
-    sudo su - -c 'nmcli con up id vpn-home'
-    sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
-fi || true
+(
+    flock -n 9 || { echo 'lock failed for r66 at '$(date); exit 0; }
+    if test -e ~/.at-home; then
+        exit 0
+    fi
+    while true; do
+        ssh -D 48080 r66
+        x=30
+        y=$(random 30)
+        ((x = x + y))
+        sleep $x
+    done
+) 9>~/.logs/$(basename $0).lock-r66  2>&1 &
+
+(
+    flock -n 9 || { echo 'lock failed for vpn at '$(date); exit 0; }
+    if test -e ~/.at-home; then
+        exit 0
+    fi
+
+    if sudo iptables-save|grep 'dport 1194'; then
+        true;
+    else
+        sudo iptables -t nat -A OUTPUT -p tcp --dport 1194 \! -d 192.168.67.0/255.255.255.0 -j DNAT --to-destination :80
+    fi
+
+    if nmcli con status id vpn-home |grep 'VPN connected'; then
+        sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
+    else
+        sudo su - -c 'nmcli con up id vpn-home'
+        sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
+    fi || true
+) 9>~/.logs/$(basename $0).lock-vpn 2>&1 &
