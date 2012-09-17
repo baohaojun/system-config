@@ -185,7 +185,7 @@ endef
 ** 调用 ~_import-node~
 
 同时注意如果已经import过了的话，就不重复import了（用.seen变量来标记）。
-也就是解决了上面说的直接 ~include~ 的话没法解决的问题。
+也就是解决了上面说的直接 ~include~ 的话没法解决的多重继承问题。
 
 #+begin_example
 define _import-nodes-inner
@@ -211,7 +211,7 @@ endef
 空之前它会调用 copy-var-list 把所有 ~PRODUCT_XXX~ 给保存下来。
 
 所以被继承的makefile不需要担心应该是使用 ~:=~ 还是 ~+=~ 来设置那些变量，
-因为有保存了嘛。这也是之前提到的直接用 ~include~ 无法解决的问题。
+因为有保存了嘛。这也是之前提到的直接用 ~include~ 无法解决的一个问题。
 
 最后的 ~_expand-inherited-values~ 实在是一个 brain teaser，但是其基本的
 意思就是把继承过来的子makefile里设的产品变量的值给摘到真正的产品的变量

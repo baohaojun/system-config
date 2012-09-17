@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Android-Product-Makefiles"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-17 14:12:13 CST"/>
+<meta name="generated" content="2012-09-17 14:36:20 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -422,7 +422,7 @@ endef
 
 <p>
 同时注意如果已经import过了的话，就不重复import了（用.seen变量来标记）。
-也就是解决了上面说的直接 <code>include</code> 的话没法解决的问题。
+也就是解决了上面说的直接 <code>include</code> 的话没法解决的多重继承问题。
 </p>
 
 
@@ -460,7 +460,7 @@ endef
 </p>
 <p>
 所以被继承的makefile不需要担心应该是使用 <code>:=</code> 还是 <code>+=</code> 来设置那些变量，
-因为有保存了嘛。这也是之前提到的直接用 <code>include</code> 无法解决的问题。
+因为有保存了嘛。这也是之前提到的直接用 <code>include</code> 无法解决的一个问题。
 </p>
 <p>
 最后的 <code>_expand-inherited-values</code> 实在是一个 brain teaser，但是其基本的
@@ -510,7 +510,7 @@ endef
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-17 14:12:13 CST</p>
+<p class="date">Date: 2012-09-17 14:36:20 CST</p>
 <p class="author">Author: Bao Haojun</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
