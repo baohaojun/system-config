@@ -10,8 +10,6 @@ Build-Depends:
   gawk,
   git,
   gtk-doc-tools,
-  ia32-libs,
-  libc6-i386,
   libesd0-dev,
   libexpat1-dev,
   libfile-fcntllock-perl,
