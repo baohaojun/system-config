@@ -5,7 +5,7 @@ tmpf=/tmp/$(basename $0).$$
 
 (
     trap 'echo shit' SIGINT;
-    strace -e trace=open,execve -f -q -o $tmpf "$@"
+    strace -e trace=open,execve -f -q -o /dev/stdout "$@" 2>&1 | tee $tmpf
 )
 
 cat $tmpf

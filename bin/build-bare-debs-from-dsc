@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+
+cd ~/tmp/beagrep-debs/
+
+if test $# = 0; then
+   set -- .
+fi
+for x in */*.dsc; do
+    echo $x | grep "$@" || continue
+    branch=$(basename $(dirname $x));
+    arch=${branch#for-*-*-}
+    basepath=${branch#for-}
+    basepath=${basepath%-$arch}
+    echo building $basepath-$arch
+    basepath=~/external/cowbuilder/$basepath-$arch/bare/base.cow
+    builddir=~/tmp/cowbuild
+
+    sudo unshare -m -- bash -c "
+        mkdir -p $builddir
+        mount -o size=2000000k -t tmpfs none $builddir
+        echo -n copying files...\ 
+        cp -a $basepath $builddir
+        echo done
+        sudo cowbuilder --build --basepath $builddir/base.cow --buildplace=$builddir $x || true
+    "
+done 2>&1 | tee  ~/.logs/build.log

@@ -22,6 +22,7 @@ echo "CXX := g++-4.5" >>buildspec.mk
 echo "export CC CXX" >>buildspec.mk
 echo "export TARGET_PRODUCT" >>buildspec.mk
 if test ! -e .repo/buildspec-x.mk; then
+    rm .repo/buildspec-x.mk -f
     echo 'export KERNEL_HELPER_BHJ:=yes' > .repo/buildspec-x.mk
 fi
 if test -e .repo/buildspec-x.mk; then

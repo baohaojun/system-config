@@ -1,0 +1,68 @@
+#!/usr/bin/perl
+use lib '/usr/share/devscripts';
+use Devscripts::PackageDeps;
+
+use strict;
+
+my ($pkg_high, $pkg_low)=@ARGV; # pkg high is dependent on low
+
+my $packagedeps = new Devscripts::PackageDeps ('/var/lib/dpkg/status');
+
+my @stack;
+push @stack, $pkg_high;
+my %seen;
+$seen{$pkg_high} = 1;
+
+my $found;
+
+sub debug(@) {
+    if ($ENV{DEBUG}) {
+	print STDERR "@_\n";
+    }
+}
+
+sub find_path($$)
+{
+    my ($from, $to) = @_;
+    debug "checking $from -> $to?";
+    my $deps = $packagedeps->dependencies($from);
+    my @deps;
+    if (ref $deps) {
+	@deps = sort map {ref $_ ? @$_ : $_} @$deps;
+	debug "deps for $from are " . join ", ", @deps;
+	# @deps = map {s/:.*//; $_} @deps;
+
+    } else {
+	debug "not a ref";
+	return ();
+    }
+
+    if (grep {debug "checking for $from: $_"; $_ =~ m/^\Q$to\E($|:)/} @deps) {
+	$found = 1;
+	debug "return $from => $to";
+	return ($from, $to);
+    }
+    if ($found) {
+	debug "alreday found";
+	return ();
+    }
+
+    if (grep {not $seen{$_}} @deps) {
+	my @ret = map {
+	    if (not $seen{$_}) {
+		$seen{$_} = 1; 
+		find_path($_, $to)
+	    }
+	    else {
+		();
+	    }
+	} @deps;
+	if (@ret) {
+	    debug "found @ret";
+	    return ($from, @ret);
+	}
+    }
+    debug "nothing found";
+    return ();
+}
+print join(" => ", find_path($pkg_high, $pkg_low));

@@ -1614,7 +1614,10 @@ Starting from DIRECTORY, look upwards for a cscope database."
 
 (defun sudoedit ()
   (interactive)
-  (find-alternate-file (concat remote-sudo-prefix (buffer-file-name))))
+  (find-alternate-file
+   (if (file-remote-p (buffer-file-name))
+       (replace-regexp-in-string ":.*?@" ":root@" (buffer-file-name))
+     (concat remote-sudo-prefix (buffer-file-name)))))
 
 (defun localedit ()
   (interactive)

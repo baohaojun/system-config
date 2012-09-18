@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+use lib '/usr/share/devscripts';
+use Devscripts::PackageDeps;
+
+@pkgs=@ARGV;
+
+$packagedeps = new Devscripts::PackageDeps ('/var/lib/dpkg/status');
+my ($packages_ref,$dep_packages_ref) =
+    $packagedeps->min_dependencies(@pkgs);
+@packages = @$packages_ref;
+%dep_packages = %$dep_packages_ref;
+
+
+print "Packages needed:\n";
+print join("\n  ", @packages), "\n";
+
+if (scalar keys %dep_packages) {
+    print "\nOther packages used with depending packages listed:\n";
+    foreach my $pkg (sort keys %dep_packages) {
+	print "  $pkg  <=  $dep_packages{$pkg}\n";
+    }
+}
+
+print keys %{$packagedeps};

@@ -1,4 +1,4 @@
 #!/bin/bash
 set -x
 branch=$(git branch | grep '^\*' | pn 2)
-edit ./.git/patches/$branch/$1
+edit $GIT_DIR/patches/$branch/$1

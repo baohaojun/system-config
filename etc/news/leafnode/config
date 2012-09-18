@@ -14,9 +14,3 @@ only_groups_match_all = 1
 
 server = news.gmane.org
 
-server = news.eutelia.it
-nopost = 1
-
-server = news2.neva.ru
-nopost = 1
-

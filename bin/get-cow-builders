@@ -1,16 +1,16 @@
 #!/bin/bash
 
+set -e
 target=${1:-.}
 for system in debian-testing $(for dist in lucid natty oneiric precise; do echo ubuntu-$dist; done); do
     for arch in i386 amd64; do
         if ! echo $system-$arch|grep -q "$target"; then
-            echo $system-$arch is not matched by $target, continue
             continue
         fi
         echo will generate $system-$arch
 
         basepath=~/external/cowbuilder/$system-$arch/bare
-        rm $basepath -rf
+        sudo rm $(dirname $basepath)/bare -rf
         mkdir $basepath -p
         components='main contrib non-free'
         extra_args=
@@ -20,9 +20,17 @@ for system in debian-testing $(for dist in lucid natty oneiric precise; do echo 
             extra_args="--keyring $gpgpath --debootstrapopts --keyring=$gpgpath"
         fi
         
-        sysname=${system%-*}
-        dist=${system#*-}
+        sysname=${system%-*} #debian/ubuntu
+        dist=${system#*-} #lucid/testing
         
-        command sudo cowbuilder --create --basepath $basepath/base.cow --mirror http://r66:9999/$sysname --distribution $dist --components "$components" $extra_args --architecture $arch
+        sudo unshare -m -- bash -c "
+            mkdir -p $basepath/base.cow2
+            mount -t tmpfs none $basepath/base.cow2 -o size=2000000k
+            command sudo cowbuilder --create --basepath $basepath/base.cow2/base --mirror http://r66:9999/$sysname --distribution $dist --components \"$components\" $extra_args --architecture $arch
+            mv $basepath/base.cow2/base $basepath/base.cow -v
+        "
+        if test $dist = lucid; then
+            sudo perl -npe 'if (m/'$dist'/) {$back = $_; $back =~ s/'$dist'/'$dist'-backports/; print $back}' -i $basepath/base.cow/etc/apt/sources.list
+        fi
     done
 done        
