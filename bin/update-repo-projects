@@ -46,20 +46,6 @@ for x in "$@"; do
 		continue
 	    fi
 	    
-	    if test $(basename $0) = bpe-local-build; then
-		(
-		    patchdir=$(readlink -m out)/../code-backup/$x/$(now)
-		    mkdir -p "$patchdir"
-		    cd $x
-		    file=$patchdir/head-$(git rev-parse HEAD)
-		    touch "$file"
-		    git add .
-		    git commit -m 'backup for autobuild'
-		    git format-patch HEAD^ -o $patchdir
-		    git reset --hard $(repo-remote)/$(repo-branch)
-		)
-		continue
-	    fi
             repo forall $x -c '
 #{%sh%}
 set -x
@@ -73,6 +59,7 @@ fi
 #{%/sh%}
 ' || true
         done 2>&1|tee out/merge.log
+        repo-changes\? || true
 
         { 
 	    repo-changes\? $(cat out/changes.log | perl -npe 's/.*?cd: (.*?):.*/$1/' | pn 1) | grep . > out/changes.log.new && 
