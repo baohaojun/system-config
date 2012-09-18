@@ -26,11 +26,14 @@ for system in debian-testing $(for dist in lucid natty oneiric precise; do echo 
         sudo unshare -m -- bash -c "
             mkdir -p $basepath/base.cow2
             mount -t tmpfs none $basepath/base.cow2 -o size=2000000k
-            command sudo cowbuilder --create --basepath $basepath/base.cow2/base --mirror http://r66:9999/$sysname --distribution $dist --components \"$components\" $extra_args --architecture $arch
-            mv $basepath/base.cow2/base $basepath/base.cow -v
+            command sudo cowbuilder --create --basepath $basepath/base.cow2/base --mirror http://r66:9999/$sysname --distribution $dist --components \"$components\" $extra_args --architecture $arch --buildplace $basepath/base.cow2
+            if test $dist = lucid; then
+                sudo perl -npe 'if (m/'$dist'/) {\$back = \$_; \$back =~ s/'$dist'/'$dist'-backports/; print \$back}' -i $basepath/base.cow2/base/etc/apt/sources.list
+                sudo cowbuilder --update --basepath $basepath/base.cow2/base --buildplace $basepath/base.cow2
+            fi
+            echo -n copying back the base files...\ 
+            mv $basepath/base.cow2/base $basepath/base.cow
+            echo done
         "
-        if test $dist = lucid; then
-            sudo perl -npe 'if (m/'$dist'/) {$back = $_; $back =~ s/'$dist'/'$dist'-backports/; print $back}' -i $basepath/base.cow/etc/apt/sources.list
-        fi
     done
-done        
+done 2>&1 | grep --line-buffered -i -v 'create hard link.*invalid cross-device link' | time tee ~/.logs/$(basename $0).log

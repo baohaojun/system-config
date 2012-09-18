@@ -25,4 +25,4 @@ for x in */*.dsc; do
         echo done
         sudo cowbuilder --build --basepath $builddir/base.cow --buildplace=$builddir $x || true
     "
-done 2>&1 | tee  ~/.logs/build.log
+done 2>&1 | grep --line-buffered -i -v 'create hard link.*invalid cross-device link' | bash -c "time tee  ~/.logs/$(basename $0).log"
