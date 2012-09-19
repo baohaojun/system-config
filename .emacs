@@ -727,26 +727,29 @@
 	       (setq smtpmail-auth-credentials 
 		     '(("localhost"
 			2025
-			"baohaojun@gmail.com"
+			"hjbao@marvell.com"
 			nil))
 		     message-send-mail-function 'smtpmail-send-it
+		     smtpmail-stream-type nil
 		     user-mail-address "hjbao@marvell.com"
 		     smtpmail-default-smtp-server "localhost"
 		     smtpmail-smtp-server "localhost"
 		     smtpmail-smtp-service 2025))
+
 	      ((save-excursion (search-forward-regexp "@gmail.com" (line-end-position) t))
 	       (kill-line)
 	       (insert "\"Bao Haojun\" <baohaojun@gmail.com>")
 	       (setq smtpmail-auth-credentials 
-		     '(("localhost"
-			3025
+		     '(("smtp.gmail.com"
+			465
 			"baohaojun@gmail.com"
 			nil))
 		     message-send-mail-function 'smtpmail-send-it
+		     smtpmail-stream-type 'ssl
 		     user-mail-address "baohaojun@gmail.com"
-		     smtpmail-default-smtp-server "localhost"
-		     smtpmail-smtp-server "localhost"
-		     smtpmail-smtp-service 3025))
+		     smtpmail-default-smtp-server "smtp.gmail.com"
+		     smtpmail-smtp-server "smtp.gmail.com"
+		     smtpmail-smtp-service 465))
 	      (t
 	       (error "don't know send as whom")))))))
 
@@ -1054,17 +1057,20 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive)
   (save-excursion
     (save-window-excursion
-      (shell-command
-       (let ((mode-name-minus-mode 
-              (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
-         (concat "ctags-exuberant --language-force="
-                 (shell-quote-argument 
-                  (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
-                      mode-name-minus-mode))
-                 " -xu "
-                 (shell-quote-argument (format "%s" (my-buffer-file-name-local (current-buffer))))
-                 (cdr (assoc mode-name-minus-mode emacs-mode-ctags-tag-filter))))
-       output-buf))))
+      (save-restriction
+	(widen)
+	(shell-command-on-region
+	 (point-min)
+	 (point-max)
+	 (let ((mode-name-minus-mode 
+		(replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))
+	   (concat "ctags-stdin --language-force="
+		   (shell-quote-argument 
+		    (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
+			mode-name-minus-mode))
+		   " -xu "
+		   (cdr (assoc mode-name-minus-mode emacs-mode-ctags-tag-filter))))
+	 output-buf)))))
 
 (defvar grep-func-call-history nil)
 (defun grep-func-call ()

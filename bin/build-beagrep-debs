@@ -18,12 +18,16 @@ if test $(basename $0) = build-beagrep-debs; then
                     fi
                 fi
                 pkg=~/external/cowbuilder/${branch#for-}-$arch/beagrep-build/base.cow
+                if test ! -e $pkg; then
+                    ADDITIONAL_BUILD_BEAGREP_DEBS_ARGS=
+                    pkg=~/external/cowbuilder/${branch#for-}-$arch/bare/base.cow
+                fi
                 if test -e $pkg; then
                     rm -rf ~/tmp/beagrep-debs/$branch-$arch
                     mkdir -p ~/tmp/beagrep-debs/$branch-$arch
                     mkdir ~/tmp/build -p
                     builddir=~/tmp/build
-                    sudo unshare -m -- bash -c "
+                    time sudo unshare -m -- bash -c "
                         mount -o size=2000000k -t tmpfs none $builddir
                         echo copying base files...
                         time cp $pkg $builddir -a
@@ -67,8 +71,9 @@ export bldir=~/$$
         if [[ $branch =~ ubuntu- ]] && ! grep backports /etc/apt/sources.list; then
             dist=${branch#for-ubuntu-};
             perl -npe 'if (m/'$dist'/) {$back = $_; $back =~ s/'$dist'/'$dist'-backports/; print $back}' -i /etc/apt/sources.list
-            apt-get update
         fi
+        apt-get update
+        apt-get install dh-autoreconf
     } || true
     which vim || apt-get -y install vim || true
 

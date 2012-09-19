@@ -65,12 +65,21 @@
           "sent-mails")))) 
 
 (setq gnus-select-method
-      '(nnmaildir "Gmail"
-		  (directory (if (eq system-type 'windows-nt)
+      `(nnmaildir "Gmail"
+		  (directory ,(if (eq system-type 'windows-nt)
 				 "~/../Maildir"
 			       "~/Maildir"))
 		  (directory-files nnheader-directory-files-safe) 
 		  (get-new-mail nil)))
+
+(defadvice nnmaildir--prepare (around no-ephmeral (server group) activate)
+  (let ((server
+	 (if (and (stringp server)
+	     (string= server "Gmail-ephemeral"))
+	     "Gmail"
+	   server)))
+    ad-do-it))
+
 (setq smtpmail-auth-credentials 
       '(("localhost"
 	 2025

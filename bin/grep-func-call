@@ -33,7 +33,19 @@ if ($grep_all) {
     exit 0;
 }
 
-open(my $ctags_pipe, "-|",  "ctags-exuberant --c-kinds=+p --language-force=" . $ENV{GTAGS_LANG_FORCE} . " -xu " . $ENV{GTAGS_START_FILE})
+my $is_gz = 0;
+my $command = "ctags-exuberant --c-kinds=+p --language-force=$ENV{GTAGS_LANG_FORCE} -xu $ENV{GTAGS_START_FILE}";
+
+if ($ENV{GTAGS_START_FILE} =~ m/\.gz$/) {
+    debug "file is a gzip file";
+    $is_gz = 1;
+    $command = "zcat $ENV{GTAGS_START_FILE} | ctags-stdin --c-kinds=+p --language-force=$ENV{GTAGS_LANG_FORCE} -xu";
+}
+
+
+debug "will run $command";
+
+open(my $ctags_pipe, "-|",  $command)
     or die "Error: open gtags output";
 
 open(my $env, ">", glob("~/.logs/grep-func-call.env"))
@@ -72,7 +84,13 @@ while(<$ctags_pipe>) {
 }
 
 @def_lines = sort { $a <=> $b } keys %def_line_map;
-open(my $file, "<", $ENV{GTAGS_START_FILE}) or die "Error: open source file";
+
+my $file;
+if (not $is_gz) {
+    open($file, "<", $ENV{GTAGS_START_FILE}) or die "Error: open source file";
+} else {
+    open($file, "-|", "zcat $ENV{GTAGS_START_FILE}") or die "Error: open source file";
+}
 
 print $debug "def_lines are @def_lines\n";
 my $last_match_def_line = 1;
