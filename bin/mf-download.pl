@@ -3,6 +3,7 @@
 use strict;
 use Getopt::Long;
 
+exit if $ENV{DRYRUN} eq "true";
 my $nthreads = 3;
 
 GetOptions(

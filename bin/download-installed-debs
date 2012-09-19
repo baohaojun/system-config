@@ -45,7 +45,7 @@ for site in $sites; do
                 echo continue for $site, dist: $dist
                 continue
             fi
-
+            echo http://$site/dists/$release/$dist/source/Sources.gz
 	    for arch in $archs; do
                 if echo $site | grep ubuntu && test $arch = armel; then
                     echo continue for $site, arch: $arch
@@ -64,6 +64,7 @@ for site in $sites; do
     export SITE=$site;
     for release in $releases; do
 	for dist in $dists; do
+            zcat $site/dists/$release/$dist/source/Sources.gz | get-deb-src-path-size $pkgnames >> $release.pkgs
 	    for arch in $archs; do
 		zcat $site/dists/$release/$dist/binary-$arch/Packages.gz | get-deb-pkg-path $pkgnames >> $release.pkgs
 	    done

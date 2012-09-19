@@ -1,0 +1,94 @@
+#!/usr/bin/env perl
+
+#system("rm Sources.gz");
+#system("wget http://mirrors.163.com/debian/dists/sid/main/source/Sources.gz");
+#http://cn.archive.ubuntu.com/ubuntu/dists/maverick/main/source/Sources.gz
+#perl -npe 's,http://mirrors.163.com/debian,http://cn.archive.ubuntu.com/ubuntu,'
+
+# Package: zangband
+# Binary: zangband, zangband-data
+# Version: 1:2.7.5pre1-4
+# Maintainer: Drew Parsons <dparsons@debian.org>
+# Build-Depends: debhelper (>> 5.0.0), quilt, automake, libncurses5-dev, libx11-dev, libxext-dev, libxt-dev, x11proto-core-dev, libxaw7-dev, tk8.4-dev
+# Architecture: any
+# Version: 3.4.2-1
+# Maintainer: Francisco Moya <paco@debian.org>
+# Uploaders: Cleto Martín <cleto.martin@gmail.com>
+# Build-Depends: debhelper (>= 7.0.50~)
+# Architecture: all
+# Standards-Version: 3.9.2
+# Format: 3.0 (quilt)
+# Files:
+#  03be42ace2f822f9a7bad007a450ae9c 1157 zeroc-ice-manual_3.4.2-1.dsc
+#  8f32c078052a792a4557c70b81b2c82f 4233047 zeroc-ice-manual_3.4.2.orig.tar.gz
+#  a1809a0174ebe4a21da0fb5c867786f4 6641 zeroc-ice-manual_3.4.2-1.debian.tar.gz
+# Checksums-Sha1:
+#  52d5e9a0b38c45260b46dc30f9d2d312a92a7a7b 1157 zeroc-ice-manual_3.4.2-1.dsc
+#  d68c67bbb5dee085ec41e00df220c3f4f759740d 4233047 zeroc-ice-manual_3.4.2.orig.tar.gz
+#  38c8965571cc1735fbfa072d989bdcccb9c60e1d 6641 zeroc-ice-manual_3.4.2-1.debian.tar.gz
+# Checksums-Sha256:
+#  7891fba4fdb717f8ddea77050d6692769c690e507b4571d6ced61cd8429c043e 1157 zeroc-ice-manual_3.4.2-1.dsc
+#  4924070a382b00dd28a6a8168624d7b0b09503ed2e7d14e9866b1c4a513f69cd 4233047 zeroc-ice-manual_3.4.2.orig.tar.gz
+#  d7831489ee093cd0b55ac745f039614c5150d18c42de67def03c31ca316b40d2 6641 zeroc-ice-manual_3.4.2-1.debian.tar.gz
+# Package-List:
+#  zeroc-ice-manual deb non-free/doc optional
+# Directory: pool/non-free/z/zeroc-ice-manual
+# Priority: source
+# Section: non-free/doc
+
+
+
+for (@ARGV) {
+  $pkgs{$_} = 1;
+}
+
+@ARGV = ();
+my $site = "mirrors.163.com/debian";
+if ($ENV{"SITE"}) {
+    $site = $ENV{"SITE"};
+}
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+out:
+while (<>) {
+  chomp;
+  if (m/^Package: (.*)$/) {
+    next if not $pkgs{$1};
+    my $pkg = $1;
+    my %files;
+    my $dir;
+
+    while (<>) {
+	chomp;
+	if (m/^$/) {
+	    die "directory not set for $site: $pkg" unless $dir;
+	    die "files not found for $site: $pkg" unless keys %files;
+	    
+	    for my $file (keys %files) {
+		my $path = "$site/$dir/$file";
+		my $size = $files{$file};
+		if (-s $path != $size) {
+		    if (-e $path) {
+			unlink $path;
+		    }
+		    print "Y: http://$path\n";
+		} else {
+		    print "N: http://$path\n";
+		}
+	    }
+	    next out;
+	}
+	if (m/^Directory: (.*)/) {
+	    $dir = $1;
+	    next;
+	}
+	if (m/^ [0-9a-f]{32} (\d+) (.*)/) { # found a file
+	    $files{$2} = $1;
+	    next;
+	}
+    }
+  }
+}

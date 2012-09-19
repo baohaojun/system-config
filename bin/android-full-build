@@ -100,23 +100,23 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
         export build_mount_p=$(readlink -f ../)/.afb
         mkdir -p $build_mount_p
         test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1
-        time sudo env NO_PARALLEL_BUILD=$NO_PARALLEL_BUILD unshare -m -- bash -c '
+        time sudo env NO_PARALLEL_BUILD=$NO_PARALLEL_BUILD unshare -m -- bash -c "
             set -ex
-            mount $(pwd) '$build_mount_p' -o bind;
-            cd '$build_mount_p'
-            su '$(whoami)' -c "
+            mount $(pwd) $build_mount_p -o bind;
+            cd $build_mount_p
+            su $(whoami) -c '
                 . ~/.bashrc;
                 . .buildenv.sh;
                 if test -e .buildenv.sh.x; then
                     set -x
                     . .buildenv.sh.x
                 fi
-                if test -z "$NO_PARALLEL_BUILD"; then
-                    make -j'$jobs' -l '$jobs' -k droid telephony uboot obm \$AFBV
+                if test -z \"$NO_PARALLEL_BUILD\"; then
+                    make -j$jobs -l $jobs -k droid telephony uboot obm \$AFBV
                 else
 
                     . ./build/envsetup.sh
-                    lunch '$TARGET_PRODUCT-$TARGET_BUILD_VARIANT'
+                    lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
 
                     if test -e flashing/quilt/$(repo-tracking)/do-no-parallel-build; then
                         bash flashing/quilt/$(repo-tracking)/do-no-parallel-build
@@ -124,8 +124,8 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                         bash flashing/quilt/do-no-parallel-build
                     fi
                 fi
-            "
-        ' && result=$result'all ok; '
+            '
+        " && result=$result'all ok; '
 	(
 	    cd flashing
 	    ./make-links.sh

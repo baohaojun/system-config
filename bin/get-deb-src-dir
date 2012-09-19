@@ -6,27 +6,34 @@
 #perl -npe 's,http://mirrors.163.com/debian,http://cn.archive.ubuntu.com/ubuntu,'
 
 
-open($file, "-|", "zcat Sources*gz* || cat-deb-sources");
 
-$package = $ARGV[0];
-while (<$file>) {
+for (@ARGV) {
+  $pkgs{$_} = 1;
+}
+
+@ARGV = ();
+my $site = "mirrors.163.com/debian";
+if ($ENV{"SITE"}) {
+    $site = $ENV{"SITE"};
+}
+
+while (<>) {
   chomp;
-    
-  if (m/^Package: $package$/) {
-    while (<$file>) {
+  if (m/^Package: (.*)$/) {
+    next if not $pkgs{$1};
+
+    while (<>) {
       chomp;
-      if (m/^Directory: (.*)$/) {
-	$dir=$1;
-      } elsif (m/^Files:$/) {
-	while (<$file>) {
-	  last if not m/^\s/;
-	  chomp;
-	  push @name, (split)[2];
-	}
-      } elsif (m/^\s*$/) {
-	for $name (@name) {
-	  $path = "http://mirrors.163.com/debian/$dir/$name\n";
-	  print $path;
+      if (m/^Filename: (.*)$/) {
+	$path = "$site/$1";
+      } elsif (m/^Size: (.*)$/) {
+	if (-s $path != $1) {
+	    if (-e $path) {
+		unlink $path;
+	    }
+	    print "Y: http://$path\n";
+	} else {
+	  print "N: http://$path\n";
 	}
 	last;
       }

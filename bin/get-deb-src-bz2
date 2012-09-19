@@ -1,12 +1,42 @@
-#!/bin/bash
+#!/usr/bin/env perl
 
-distr=${1:-debian}
+#system("rm Sources.gz");
+#system("wget http://mirrors.163.com/debian/dists/sid/main/source/Sources.gz");
+#http://cn.archive.ubuntu.com/ubuntu/dists/maverick/main/source/Sources.gz
+#perl -npe 's,http://mirrors.163.com/debian,http://cn.archive.ubuntu.com/ubuntu,'
 
-if test $distr = debian; then
-    release=${2:-sid}
-else
-    release=${2:-hardy}
-fi
 
-section=${3:-main}
-wget -N http://cn.archive.ubuntu.com/${distr}/dists/${release}/${section}/source/Sources.gz -O Sources.$distr.$release.$section.gz
+
+for (@ARGV) {
+  $pkgs{$_} = 1;
+}
+
+@ARGV = ();
+my $site = "mirrors.163.com/debian";
+if ($ENV{"SITE"}) {
+    $site = $ENV{"SITE"};
+}
+
+while (<>) {
+  chomp;
+  if (m/^Package: (.*)$/) {
+    next if not $pkgs{$1};
+
+    while (<>) {
+      chomp;
+      if (m/^Filename: (.*)$/) {
+	$path = "$site/$1";
+      } elsif (m/^Size: (.*)$/) {
+	if (-s $path != $1) {
+	    if (-e $path) {
+		unlink $path;
+	    }
+	    print "Y: http://$path\n";
+	} else {
+	  print "N: http://$path\n";
+	}
+	last;
+      }
+    }
+  }
+}
