@@ -23,14 +23,19 @@ debug "$0 @ARGV";
 
 my %line_def_map;
 my %matching_def_map;
+
+my $last_non_member_line;
 while (<$ctags_pipe>) {
     my ($def, $type, $line) = split;
     debug "got def: $def, type: $type, line: $line";
-    $line_def_map{$line} = [$def, $type];
+    $line_def_map{$line} = [$def, $type] unless $type eq 'member';
+    if ($type ne "member") {
+	$last_non_member_line = $line;
+    }
 
     if ($def eq $target_def) {
 	debug "got matching $def on $line";
-	$matching_def_map{$line} = [$def, $type];
+	$matching_def_map{$last_non_member_line} = [$def, $type];
     }
 }
 
@@ -59,5 +64,5 @@ if ($end_line > $start_line + 10) {
     $should_dot = 1;
 }
 debug "start is $start_line, end is $end_line";
-system("perl -ne 'print \"    \$.: \$_\" if $start_line..$end_line' $file");
+system("perl -ne 'if ($start_line..$end_line) { print \"    \$.: \$_\"; exit if m/^\\}/; }' $file");
 print "    ...\n" if $should_dot;
