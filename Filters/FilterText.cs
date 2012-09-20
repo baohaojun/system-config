@@ -83,6 +83,7 @@ namespace Beagrep.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-xslt"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-markdown"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-shellscript"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-yaml"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xslt+xml"));
