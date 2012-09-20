@@ -15,6 +15,25 @@
 
 (defconst weibo-user-buffer-name "*weibo-user*")
 (defconst weibo-api-user-show "users/show")
+(defconst weibo-api-friendships-friends "friendships/friends")
+(defconst weibo-api-account-getuid "account/get_uid")
+
+(defvar weibo-user-uid nil)
+(defvar weibo-user-friends-list nil)
+(defvar weibo-user-custom-list nil)
+
+(defun weibo-user-get-uid ()
+  (weibo-get-data weibo-api-account-getuid
+		  (lambda (uid)
+		    (setq weibo-user-uid (weibo-get-node-text uid 'uid)))))
+
+(defun weibo-user-get-friends ()
+  (weibo-get-data weibo-api-friendships-friends
+		  (lambda (friends)
+		    (setq weibo-user-friends-list
+			  (mapcar (lambda (user) (format "@%s " (weibo-get-node-text user 'screen_name)))
+			    (cdr (weibo-get-node friends 'users)))))
+		  (format "?uid=%s&count=200" weibo-user-uid)))
 
 ;; id: 用户UID
 ;; screen_name: 微博昵称

@@ -31,6 +31,7 @@
 (defconst weibo-timeline-sub-separator (make-string 70 ?-))
 
 (defconst weibo-timeline-name-regexp "@\\(\\w\\|_\\|-\\)+")
+(defconst weibo-timeline-name-regexp2 "@\\(\\w\\|_\\|-\\)*")
 
 (defvar weibo-timeline-data nil "Buffer local variable that holds timeline data")
 (defvar weibo-timeline-current-provider nil
@@ -46,6 +47,9 @@
 (defvar weibo-timeline-extra-params nil)
 
 (defun weibo-timeline-get-unread (&optional param)
+  (unless weibo-user-uid
+    (weibo-user-get-uid)
+    (weibo-user-get-friends))
   (weibo-get-data weibo-api-status-unread 'weibo-timeline-parse-unread param))
 
 (defun weibo-timeline-parse-unread (root)
@@ -312,7 +316,8 @@
 			   weibo-timeline-current-provider)))
   (weibo-timeline-update-header)
   (ewoc-filter weibo-timeline-data (lambda (data) nil))
-  (weibo-timeline-pull-new))
+  (weibo-timeline-pull-new)
+  (weibo-user-get-friends))
 
 (defun weibo-timeline-update ()
   (interactive)

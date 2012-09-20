@@ -16,10 +16,19 @@
 (defconst weibo-post-buffer-name "*weibo-update*")
 (defconst weibo-post-mode-name "发表微博")
 
+(defun weibo-post-name-completion-at-point-function ()
+  (let ((current-pos (point))
+	(begin (or (search-backward-regexp weibo-timeline-name-regexp2 (point-min) t) (point)))
+	(end (or (search-forward-regexp weibo-timeline-name-regexp2 (point-max) t) (point))))
+    (goto-char current-pos)
+    (list begin end (append weibo-user-friends-list weibo-user-custom-list) :predicate (lambda (s) (string-equal (substring s 0 1) "@")))))
+
 (define-derived-mode weibo-post-mode fundamental-mode weibo-post-mode-name
   "Major mode for posting weibo message"
+  (set (make-variable-buffer-local 'completion-at-point-functions) '(weibo-post-name-completion-at-point-function))
   (local-set-key "\C-c\C-c" 'weibo-send-post)
-  (local-set-key "\C-c\C-d" 'weibo-discard-post))
+  (local-set-key "\C-c\C-d" 'weibo-discard-post)
+  (local-set-key [tab] 'completion-at-point))
 
 (defvar weibo-post-data nil)
 (defvar weibo-post-send-func nil)
