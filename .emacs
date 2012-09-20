@@ -342,9 +342,16 @@
 ;;   (insert bhj-clt-branch))
 ;; (define-key minibuffer-local-shell-command-map [(control meta b )] 'bhj-clt-insert-branch)
 
-(define-key minibuffer-local-map [(control meta f)] 'bhj-clt-insert-file-name)
+(defun bhj-edit-grep-pattern ()
+  (interactive)
+  (beginning-of-line)
+  (search-forward "\"" nil t 2)
+  (backward-char))
 
-(define-key minibuffer-local-map [(control meta d )] 'bhj-insert-pwdu)
+(define-key minibuffer-local-map [(control meta shift f)] 'bhj-clt-insert-file-name)
+(define-key minibuffer-local-map [(control meta e)] 'bhj-edit-grep-pattern)
+
+(define-key minibuffer-local-map [(control meta shift d )] 'bhj-insert-pwdu)
 
 (defvar last-grep-marker nil)
 
