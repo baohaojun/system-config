@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="title" content="beagrep, grep 2G source code in 2 seconds"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-05 17:59:12 CST"/>
+<meta name="generated" content="2012-09-20 10:04:18 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -366,6 +366,17 @@ Android cost me about half an hour (it's about the same time you run
 grep directly on android source). So I'd advise you create a cron job
 to do it at midnight.
 </p>
+<p>
+It takes about 8 minutes to index linux kernel (v3.6-rc6):
+</p>
+
+
+
+<pre class="example">Debug: IndexWorker Done
+Debug: Elapsed time 478.01s.
+</pre>
+
+
 <p>
 But the good news is if indexing has already been done before, there
 re-indexing will only work on those updated files based on file
@@ -808,7 +819,7 @@ dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-05 17:59:12 CST</p>
+<p class="date">Date: 2012-09-20 10:04:18 CST</p>
 <p class="author">Author: Bao Haojun</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

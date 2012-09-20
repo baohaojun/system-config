@@ -108,6 +108,13 @@ Android cost me about half an hour (it's about the same time you run
 grep directly on android source). So I'd advise you create a cron job
 to do it at midnight.
 
+It takes about 8 minutes to index linux kernel (v3.6-rc6):
+
+#+begin_example
+Debug: IndexWorker Done
+Debug: Elapsed time 478.01s.
+#+end_example
+
 But the good news is if indexing has already been done before, there
 re-indexing will only work on those updated files based on file
 time-stamp. So it will cost you only a few minutes to re-index the
