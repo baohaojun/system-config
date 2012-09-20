@@ -345,13 +345,21 @@
 (defun bhj-edit-grep-pattern ()
   (interactive)
   (beginning-of-line)
-  (search-forward "\"" nil t 2)
-  (backward-char))
+  (let ((min (progn
+	       (search-forward "\"" nil t)
+	       (point)))
+	(max (progn
+	       (search-forward "\"" nil t)
+	       (backward-char)
+	       (point))))
+    (undo-boundary)
+    (when (< min max)
+      (delete-region min max))))
 
-(define-key minibuffer-local-map [(control meta shift f)] 'bhj-clt-insert-file-name)
-(define-key minibuffer-local-map [(control meta e)] 'bhj-edit-grep-pattern)
+(define-key minibuffer-local-map [(meta shift f)] 'bhj-clt-insert-file-name)
+(define-key minibuffer-local-map [(meta shift e)] 'bhj-edit-grep-pattern)
 
-(define-key minibuffer-local-map [(control meta shift d )] 'bhj-insert-pwdu)
+(define-key minibuffer-local-map [(meta shift d )] 'bhj-insert-pwdu)
 
 (defvar last-grep-marker nil)
 
