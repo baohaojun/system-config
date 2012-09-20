@@ -14,3 +14,4 @@ only_groups_match_all = 1
 
 server = news.gmane.org
 
+server = news.gnus.org
