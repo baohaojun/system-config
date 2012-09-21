@@ -29,7 +29,9 @@ if git remote -v | grep baohaojun.github.com.git; then
     html_changes=$(git st -s | pn 2|grep -e '\.html$'|perl -npe 's/\.html$/.org/' || true)
 
     for x in $(arg1-arg2 $org_changes $html_changes); do 
-        org-export $x
+        if test -e $x; then
+            org-export $x
+        fi
     done
     git add .
 fi

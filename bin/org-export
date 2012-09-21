@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+if test $# = 0; then
+    die "Error: Usage $(basename $0) FILE.org"
+fi
+
+export ORG_FILE_NAME=$(readlink -f $1);
+test -e $1
 tf=/tmp/org-export-$$ # temp file
 (
     if grep -e '^#+title:' -i "$1" -q; then
@@ -15,7 +21,7 @@ EOF
     if test $# = 1; then
 	cat "$1"
     else
-	perl -ne '
+	perl -ne ' # I am not sure what does this mean anymore.
 BEGIN {
     $start = 0; 
 }
