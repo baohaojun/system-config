@@ -1,60 +1,47 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>org-jira</title>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="org-jira"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-01-07 21:04:03 China Standard Time"/>
-<meta name="author" content=""/>
+<meta name="generated" content="2012-09-21 18:44:56 CST"/>
+<meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
 <link rel="stylesheet" href="css/default.css" type="text/css">
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
-  .title  { text-align: center; }
-  .todo   { color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
-  pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
-  }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
-  dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
-  /*]]>*/-->
-</style>
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
 <script type="text/javascript">
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
@@ -93,25 +80,25 @@ lang="en" xml:lang="en">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Introduction </a></li>
-<li><a href="#sec-2">2 Features </a>
+<li><a href="#sec-1">1 Introduction</a></li>
+<li><a href="#sec-2">2 Features</a>
 <ul>
-<li><a href="#sec-2-1">2.1 Sync Jira tickets into Org-mode todo items in a batch mode </a></li>
-<li><a href="#sec-2-2">2.2 Update Org-mode new edits back to Jira </a></li>
-<li><a href="#sec-2-3">2.3 Progress Jira ticket workflow in Org-mode </a></li>
-<li><a href="#sec-2-4">2.4 Create new Jira issue in org mode </a></li>
-<li><a href="#sec-2-5">2.5 Convert existing org mode TODO item into Jira ticket </a></li>
-<li><a href="#sec-2-6">2.6 Edit existing Jira comments / add new comment </a></li>
-<li><a href="#sec-2-7">2.7 Open current issue in browser </a></li>
+<li><a href="#sec-2-1">2.1 Sync Jira tickets into Org-mode todo items in a batch mode</a></li>
+<li><a href="#sec-2-2">2.2 Update Org-mode new edits back to Jira</a></li>
+<li><a href="#sec-2-3">2.3 Progress Jira ticket workflow in Org-mode</a></li>
+<li><a href="#sec-2-4">2.4 Create new Jira issue in org mode</a></li>
+<li><a href="#sec-2-5">2.5 Convert existing org mode TODO item into Jira ticket</a></li>
+<li><a href="#sec-2-6">2.6 Edit existing Jira comments / add new comment</a></li>
+<li><a href="#sec-2-7">2.7 Open current issue in browser</a></li>
 </ul>
 </li>
-<li><a href="#sec-3">3 Usage </a></li>
+<li><a href="#sec-3">3 Usage</a></li>
 </ul>
 </div>
 </div>
 
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Introduction </h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 
 
@@ -165,7 +152,7 @@ and hacked into a new <a href="http://github.com/baohaojun/org-jira/raw/master/o
 </div>
 
 <div id="outline-container-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Features </h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> Features</h2>
 <div class="outline-text-2" id="text-2">
 
 
@@ -173,7 +160,7 @@ and hacked into a new <a href="http://github.com/baohaojun/org-jira/raw/master/o
 </div>
 
 <div id="outline-container-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Sync Jira tickets into Org-mode todo items in a batch mode </h3>
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Sync Jira tickets into Org-mode todo items in a batch mode</h3>
 <div class="outline-text-3" id="text-2-1">
 
 
@@ -211,7 +198,6 @@ test comment
 </pre>
 
 
-
 <p>  
 Also note the ID Org entry, both the Jira issue and Jira comment has
 an attribute ideal for this entry. Org-mode has an API for finding
@@ -222,7 +208,7 @@ heading from ID entry.
 </div>
 
 <div id="outline-container-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Update Org-mode new edits back to Jira </h3>
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Update Org-mode new edits back to Jira</h3>
 <div class="outline-text-3" id="text-2-2">
 
 
@@ -235,7 +221,7 @@ After you edit the attributes, such as change priority from "Major" to
 </div>
 
 <div id="outline-container-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Progress Jira ticket workflow in Org-mode </h3>
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Progress Jira ticket workflow in Org-mode</h3>
 <div class="outline-text-3" id="text-2-3">
 
 <p>You can Resolve/Close/Reopen the jira ticket and so on, without leaving org-mode!
@@ -245,7 +231,7 @@ After you edit the attributes, such as change priority from "Major" to
 </div>
 
 <div id="outline-container-2-4" class="outline-3">
-<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Create new Jira issue in org mode </h3>
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Create new Jira issue in org mode</h3>
 <div class="outline-text-3" id="text-2-4">
 
 
@@ -259,7 +245,7 @@ whom, and one-line summary, etc.
 </div>
 
 <div id="outline-container-2-5" class="outline-3">
-<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Convert existing org mode TODO item into Jira ticket </h3>
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Convert existing org mode TODO item into Jira ticket</h3>
 <div class="outline-text-3" id="text-2-5">
 
 
@@ -276,7 +262,7 @@ you will trade a normal TODO for a Jira ticket tracked TODO.
 </div>
 
 <div id="outline-container-2-6" class="outline-3">
-<h3 id="sec-2-6"><span class="section-number-3">2.6</span> Edit existing Jira comments / add new comment </h3>
+<h3 id="sec-2-6"><span class="section-number-3">2.6</span> Edit existing Jira comments / add new comment</h3>
 <div class="outline-text-3" id="text-2-6">
 
 
@@ -288,7 +274,7 @@ These are also supported.
 </div>
 
 <div id="outline-container-2-7" class="outline-3">
-<h3 id="sec-2-7"><span class="section-number-3">2.7</span> Open current issue in browser </h3>
+<h3 id="sec-2-7"><span class="section-number-3">2.7</span> Open current issue in browser</h3>
 <div class="outline-text-3" id="text-2-7">
 
 
@@ -303,7 +289,7 @@ open the current issue in an external browser such as firefox.
 </div>
 
 <div id="outline-container-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> Usage </h2>
+<h2 id="sec-3"><span class="section-number-2">3</span> Usage</h2>
 <div class="outline-text-2" id="text-3">
 
 
@@ -314,7 +300,6 @@ To use org-jira.el, get the .el files from <a href="https://github.com/baohaojun
 
 <pre class="example">git clone git://github.com/baohaojun/org-jira.git
 </pre>
-
 
 
 <p>   
@@ -328,18 +313,16 @@ Then put the following in your .emacs,
 </p>
 
 
-<pre class="src src-emacs-lisp">(setq jiralib-url <span style="color: #3AA221;">"http://jira-host/jira"</span>)
-<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">you need make sure the jiralib-url is correct. Login your jira</span>
-<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">server in browser, the home page URL should be like:</span>
-<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">https://issues.apache.org/jira/secure/Dashboard.jspa</span>
-<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">remove the "/secure/Dashboard.jspa" part and you get the jiralib-url: </span>
-<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">"https://issues.apache.org/jira"</span>
+<pre class="src src-emacs-lisp">(setq jiralib-url <span class="org-string">"http://jira-host/jira"</span>)
+<span class="org-comment-delimiter">; </span><span class="org-comment">you need make sure the jiralib-url is correct. Login your jira</span>
+<span class="org-comment-delimiter">; </span><span class="org-comment">server in browser, the home page URL should be like:</span>
+<span class="org-comment-delimiter">; </span><span class="org-comment">https://issues.apache.org/jira/secure/Dashboard.jspa</span>
+<span class="org-comment-delimiter">; </span><span class="org-comment">remove the "/secure/Dashboard.jspa" part and you get the jiralib-url: </span>
+<span class="org-comment-delimiter">; </span><span class="org-comment">"https://issues.apache.org/jira"</span>
 
-(<span style="color: #ff00ff;">require</span> '<span style="color: #00ffff;">org-jira</span>) 
-<span style="color: #ff0000;">; </span><span style="color: #ff0000; font-style: italic;">jiralib is not explicitly required, since org-jira will load it</span>
+(<span class="org-keyword">require</span> '<span class="org-constant">org-jira</span>) 
+<span class="org-comment-delimiter">; </span><span class="org-comment">jiralib is not explicitly required, since org-jira will load it</span>
 </pre>
-
-
 
 
 <p> 
@@ -357,10 +340,27 @@ Then start syncing with <code>M-x org-jira-get-issues</code> .
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-01-07 21:04:03 China Standard Time</p>
-<p class="author">Author: </p>
-<p class="creator">Org version 7.7 with Emacs version 24</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
 
 </div>
 </body>

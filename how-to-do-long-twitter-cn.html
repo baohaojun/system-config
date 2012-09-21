@@ -3,63 +3,45 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>自己动手做长微博（推特），带图片的</title>
+<title>自己动手做长微博（推特），内嵌图片的</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="自己动手做长微博（推特），带图片的"/>
+<meta name="title" content="自己动手做长微博（推特），内嵌图片的"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-02-02 11:48:26 CST"/>
-<meta name="author" content="bhj"/>
+<meta name="generated" content="2012-09-21 18:44:54 CST"/>
+<meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
-  .title  { text-align: center; }
-  .todo   { color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
-  pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
-  }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
-  dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
-    background: #ffffcc;
-  }
-  textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
-  /*]]>*/-->
-</style>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
 <script type="text/javascript">
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
@@ -91,7 +73,7 @@
 </div>
 
 <div id="content">
-<h1 class="title">自己动手做长微博（推特），带图片的</h1>
+<h1 class="title">自己动手做长微博（推特），内嵌图片的</h1>
 
 <p>看到一个写得很好的网页，想分享给朋友，你可以直接在微博上发个链接，但这
 样不如直接把网页转成一张图片发到微博上更能吸引人。
@@ -144,10 +126,27 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-02-02 11:48:26 CST</p>
-<p class="author">Author: bhj</p>
-<p class="creator">Org version 7.8.02 with Emacs version 24</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
 
 </div>
 </body>
