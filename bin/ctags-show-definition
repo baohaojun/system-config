@@ -28,7 +28,7 @@ my $last_non_member_line;
 while (<$ctags_pipe>) {
     my ($def, $type, $line) = split;
     debug "got def: $def, type: $type, line: $line";
-    $line_def_map{$line} = [$def, $type] unless $type eq 'member';
+    $line_def_map{$line} = [$def, $type] unless $type eq 'member' or $type eq 'macro' and $_ !~ /\\$/;
     if ($type ne "member") {
 	$last_non_member_line = $line;
     }

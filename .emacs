@@ -578,6 +578,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(Info-additional-directory-list (list "~/tools/emacswin/info/" "/usr/local/share/info" "/usr/share/info"))
+ '(ansi-color-names-vector ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bbdb-hashtable-size 10007)
@@ -601,7 +602,6 @@
  '(gnus-ignored-newsgroups "")
  '(gnus-propagate-marks t)
  '(grep-use-null-device nil)
- '(htmlize-output-type (quote font))
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
  '(imenu-max-item-length nil)
@@ -858,6 +858,22 @@
   (load-theme (let ((theme (nth (random (length (custom-available-themes))) (custom-available-themes))))
 		(message "loaded theme: %s" theme)
 		theme)))
+
+(defun try-all-themes()
+  (interactive)
+  (dolist (theme (custom-available-themes))
+    (dolist (theme custom-enabled-themes)
+      (disable-theme theme))
+    (message "will enable %s" theme)
+    (load-theme theme)
+    (recursive-edit)))
+
+(defun try-all-color-themes()
+  (interactive)
+  (dolist (theme color-themes)
+    (recursive-edit)
+    (message "will use %s" (car theme)
+    (funcall (car theme)))))
 
 (require 'color-theme)
 (condition-case nil

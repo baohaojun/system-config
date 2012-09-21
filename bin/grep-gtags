@@ -4,20 +4,17 @@ use Getopt::Long;
 use strict;
 use String::ShellQuote;
 
+my $debug;
+open($debug, ">", glob("~/.logs/grep-gtags.log")) or
+    open($debug, ">",  "/dev/null") or
+    die "Can not open debug file even on /dev/null";
+
 sub debug(@) {
-  print STDERR "@_\n";
+  print $debug "@_\n";
 }
 
 open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
-
-print "$0 ";
-foreach my $x (@ARGV) {
-    $x = shell_quote($x);
-    print "$x ";
-}
-print "\n";
-
 
 #gtags-cscope-grep regexp
 
@@ -34,17 +31,18 @@ if ($pwd eq "/" or $pwd eq glob("~")) {
     chomp($pwd = `readlink ~/.gtags-dir`);
     print "pwd is read from ~/.gtags-dir at $pwd\n";
 } else {
-    print "link $pwd to ~/.gtags-dir\n";
     system("rm", "-f", glob("~/.gtags-dir"));
     system("ln", '-sf', $pwd, glob("~/.gtags-dir"));
 }
 
 my $lookup_type = 1;
 my $lookup_needle = "hello_world";
+my $arch = ".";
 my $lookup_restrict_regexp;
 
 GetOptions(
     "e=s" => \$lookup_needle,
+    "a=s" => \$arch,
     );
 
 $lookup_needle =~ s/\+.*//;
@@ -76,15 +74,25 @@ sub do_cscope($$$$) {
         }
 
 	unless ($_ eq "") {
-	    push @matches, $_;
+	    debug "got $_";
 	    m/(.*?) (.*?) (.*?) (.*)/;
-	    $matches{$_} = [$1, $2, $3, $4];
-	    my $x = $1;
+	    my ($path, $def, $line, $str) = ($1, $2, $3, $4);
+	    if ($arch ne "." and $path =~ m,(?:/|^)arch/, and $path !~ m,(?:/|^)arch/[^/]*$arch,) {
+		debug "ignore $path because arch not matches";
+		next;
+	    }
+	    $matches{$_} = [$path, $def, $line, $str]; # arch/h8300/kernel/entry.S need_resched 312 need_resched:
+	    my $x = $path;
 	    $x =~ s,.*/,,;
-	    $matches{$_}->[4] = $x;
+	    $matches{$_}->[4] = $x; # the fifth element is the dir
+				    # part of the path, it will be
+				    # used for distance calculation
+
+	    push @matches, $_;
 	}
     }
 
+    printf "found total %d definitions\n", scalar @matches;
     use String::Approx 'adistr';
     our $approx_dir;
 

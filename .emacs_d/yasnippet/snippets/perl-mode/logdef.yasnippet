@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: logdef
+# --
+open(my \$debug, ">", glob("~/.logs/$1.log"))
+    or die "Can not open debug log file ~/.logs/$1.log";
+sub debug(@) {
+    print \$debug "@_\n";
+}
