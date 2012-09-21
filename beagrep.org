@@ -37,16 +37,16 @@ precise(12.04). They are all for amd64. If you happen to be using one
 of these, you can download them [[https://github.com/baohaojun/beagrep/downloads][here]]. Here's how to install it using
 ubuntu 12.04 as an example:
 
-#+begin_example
+#+begin_src sh
 dpkg -i beagrep-for-ubuntu-precise-2012-09-05-ae0a1a2.deb # will probably get dependency errors
 apt-get -f install # fix the dependency errors
-#+end_example
+#+end_src
 
 *** Compile by yourself
 
 If you need compile by yourself, using Ubuntu precise as an example:
 
-#+begin_example
+#+begin_src sh
 git clone https://github.com/baohaojun/beagrep.git -b for-ubuntu-precise
 # you can also run "git branch -a" to see other versions of debian/ubuntu supported
 
@@ -59,7 +59,7 @@ apt-get install $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/St
 
 # do the build
 (set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
-#+end_example
+#+end_src
 
 ** Windows install
 
@@ -72,23 +72,23 @@ You need install CYGWIN and Mono for Windows.
 
 *** Get beagrep Windows code
 
-#+begin_example
+#+begin_src sh
 git clone git://github.com/baohaojun/beagrep.git -b Windows
-#+end_example
+#+end_src
 
 *** Compile and install
 
-#+begin_example
+#+begin_src sh
 cd beagrep
 bash build-win.sh
-#+end_example
+#+end_src
 
 * Usage
 
 ** Quick smoke test
-#+begin_example
+#+begin_src sh
 cd /tmp; mkdir $$; cd $$; echo main > 1.txt; mkbeagrepidx; beagrep -e 'main' --grep '--color=auto'; true; cd ..; rm $$ -rf
-#+end_example
+#+end_src
 
 If beagrep has been installed correctly, at the end of the above
 command's output, you should see something like
@@ -98,10 +98,10 @@ command's output, you should see something like
 
 In your source code directory, using android as example: 
 
-#+begin_example
+#+begin_src sh
 cd ~/src/android
 mkbeagrepidx
-#+end_example
+#+end_src
 
 This step will cost you quite some time, under my Linux indexing
 Android cost me about half an hour (it's about the same time you run
@@ -156,27 +156,27 @@ priority:
 
 - Override it in ~/.mkbeagrepidx.rc, setting the ~BEAGREP_IGNORE_DIR_PATTERNS~ environment variable:
 
-  #+begin_example
+  #+begin_src sh
   export BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/.git"
-  #+end_example
+  #+end_src
 
 - Override it in the .mkbeagrepidx.rc in the current working directory, same as the above.
 
 - Override it on the command line (you must repeat the default pattern
   because it won't append):
 
-  #+begin_example
+  #+begin_src sh
   mkbeagrepidx --deny-directory-pattern "$PWD/out,*/.repo,*/.git,*/.svn"
-  #+end_example
+  #+end_src
   
 
 ** Searching using beagrep
 
 Under your source code directory:
-#+begin_example
+#+begin_src sh
 cd ~/src/android
 beagrep -e "readlink"
-#+end_example
+#+end_src
 
 *** Man page for beagrep
 
@@ -365,7 +365,7 @@ are called by it.
 It is generated using beagrep + ctags-exuberant + graphviz, using my
 wrap scripts like following in the android/system/core directory:
 
-#+begin_example
+#+begin_src sh
 generate-call-graph.pl > call_graph.org
 dot-partition.pl call_graph.dot -s adb_connect -m 1 -r 2 
-#+end_example
+#+end_src
