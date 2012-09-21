@@ -620,7 +620,39 @@
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
  '(org-agenda-files (quote ("/home/bhj/doc/daily/2011.org" "/home/bhj/doc/daily/2012-01.org")))
- '(org-export-html-style-extra "<link rel=\"stylesheet\" href=\"css/default.css\" type=\"text/css\">")
+ '(org-export-html-coding-system (quote utf-8))
+ '(org-export-html-postamble (lambda nil (buffer-file-name)))
+ '(org-export-html-style-extra "<link rel=\"stylesheet\" href=\"css/default.css\" type=\"text/css\">
+ <link rel=\"shortcut icon\" href=\"/poison.png\" type=\"image/png\" />
+
+    <script type=\"text/javascript\" src=\"js/jquery-1.7.1.min.js\"></script>
+    <script type=\"text/javascript\">
+        var BYB = {};
+    </script>
+    <script type=\"text/javascript\">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>")
  '(org-export-html-style-include-default nil)
  '(org-export-htmlize-output-type (quote css))
  '(org-file-apps (quote ((auto-mode . emacs) ("\\.mm\\'" . default) ("\\.x?html?\\'" . default) ("\\.pdf\\'" . "of %s"))))
