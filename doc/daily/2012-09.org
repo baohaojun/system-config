@@ -1,0 +1,5 @@
+my offline wikipedia source code seems to be copied from 
+
+git clone https://gerrit.wikimedia.org/r/p/mediawiki/core.git 
+
+git co 8e777b538aae62c6ed022ba79049c4e05ee744e0
