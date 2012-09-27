@@ -5,7 +5,25 @@ function die() {
 }
 
 set -e
+iface=eth0
 test "$1" || die "Usage: $(basename $0) arp_host"
+TEMP=$(getopt -o i: --long iface -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -i|--iface)
+        iface=$2
+        shift 2
+        ;;
+        --)
+        shift
+        break
+        ;;
+        *)
+        die "internal error"
+        ;;
+    esac
+done
 
 
 if test $(basename $0) = update-arp; then
@@ -15,7 +33,7 @@ if test $(basename $0) = update-arp; then
         if test -z "$arp"; then
             die "can not find arp entry for $host_name"
         fi
-        ip=$(sudo arping -c 1 -r $arp)
+        ip=$(sudo arping -i $iface -c 1 -r $arp)
         if test -z "$ip"; then
             die "can not arping $arp"
         fi

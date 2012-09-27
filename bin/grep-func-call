@@ -69,6 +69,7 @@ print $env "export GTAGS_LANG_FORCE=$ENV{GTAGS_LANG_FORCE}\n";
 print $env "export GTAGS_START_FILE=$ENV{GTAGS_START_FILE}\n";
 
 my %def_line_map;
+my %type_line_map;
 my @def_lines;
 
 sub is_makefile()
@@ -83,6 +84,7 @@ while(<$ctags_pipe>) {
   print $debug "$_";
   m/(\S*?)\s+(\S*?)\s+(\S*?)\s+(.*)/ or next;
   my ($def, $type, $line, $str) = ($1, $2, $3, $4);
+  $type_line_map{$line} = $type;
   if (not is_makefile() and $type eq "macro" and $_ !~ m/\\$/) {
       # a macro not ended with ~\~ is a simple macro, skip it
       # because it can not cantain usage of others,
@@ -130,6 +132,11 @@ while(<$file>) {
     
     if ($def_line_map{$current_def_line} eq "******") {
 	debug "the previous defun is *****";
+	next;
+    }
+
+    if ($type_line_map{$current_def_line} eq "prototype") {
+	debug "the previous defun is a prototype";
 	next;
     }
 
