@@ -8,10 +8,16 @@ function get_lang_for_file_from_globalrc() {
 
 regexp=hello
 silent=
+ignore_case=
 members=
 no_comment=
 
-TEMP=$(getopt -o e:sma --long nc -n $(basename $0) -- "$@")
+echo -n > ~/.logs/$(basename $0).log
+function debug() {
+    echo "$@" >> ~/.logs/$(basename $0).log
+}
+
+TEMP=$(getopt -o e:sima --long nc -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -25,6 +31,10 @@ while true; do
             ;;
         -s)
             silent=-s
+            shift 1
+            ;;
+        -i)
+            ignore_case=-i
             shift 1
             ;;
         -m)
@@ -57,7 +67,9 @@ if echo "$regexp" | grep -q -e "\b$"; then
     re_beagrep=$re_beagrep\\b
 fi
 
-for file in $(beagrep -e "$re_beagrep" --grep "-l -P"); do
+debug "re_beagrep is $re_beagrep"
+for file in $(beagrep -e "$re_beagrep" $ignore_case --grep "-l -P"); do
+    debug "got file $file";
     if test ! -e "$file"; then
         continue
     fi
@@ -70,5 +82,5 @@ for file in $(beagrep -e "$re_beagrep" --grep "-l -P"); do
         fi
     fi
     export GTAGS_START_FILE=$file
-    grep-func-call -e "$regexp" $silent $members $no_comment| grep -v '^$'
+    grep-func-call -e "$regexp" $silent $ignore_case $members $no_comment| grep -v '^$'
 done

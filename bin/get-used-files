@@ -11,4 +11,4 @@ tmpf=/tmp/$(basename $0).$$
 cat $tmpf
 
 edit-wait $tmpf
-rm $tmpf
+test $(whoami) = root || rm $tmpf

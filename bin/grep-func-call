@@ -13,6 +13,7 @@ sub debug(@) {
 }
 
 my $silent = 0;
+my $ignore_case = 0;
 my $target = "hello";
 my $members = 0;
 my $grep_all = 0;
@@ -21,11 +22,24 @@ my @argv_for_grep_all = @ARGV;
 
 GetOptions(
     "s!" => \$silent,
+    "i!" => \$ignore_case,
     "a!" => \$grep_all,
     "m!" => \$members,
     "e=s" => \$target,
     "nc!" => \$no_comment,
     );
+
+if ($target =~ m/^\b/) {
+    $target = "\\b$target";
+}
+
+if ($target =~ m/\b$/) {
+    $target = "$target\\b";
+}
+
+if ($ignore_case) {
+    $target = qr/$target/i;
+}
 
 debug "$0:" . __LINE__ . ": no_comment is $no_comment";
 if ($grep_all) {
