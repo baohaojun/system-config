@@ -1,3 +1,61 @@
 #!/bin/bash
 
-echo 'http://www.imdb.com/search/title?sort=num_votes&title_type=feature&user_rating=7.0,10&year=2010,2010'
+
+# http://www.imdb.com/search/title?sort=num_votes,asc&title_type=feature&user_rating=7.0,10&year=2010,2010&num_votes=10000,100000000
+
+year=$(date +%Y)
+rate=7
+vote=10000
+YEAR=$year
+RATE=10
+VOTE=100000000
+TEMP=$(getopt -o y:r:v:Y:R:V: --long year:rate:vote:YEAR:RATE:VOTE: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -y|--year)
+            year=$2
+            shift 2
+            ;;
+        -r|--rate)
+            rate=$2
+            shift 2
+            ;;
+        -v|--vote)
+            vote=$2
+            shift 2
+            ;;
+        -Y|--YEAR)
+            YEAR=$2
+            shift 2
+            ;;
+        -R|--RATE)
+            RATE=$2
+            shift 2
+            ;;
+        -V|--VOTE)
+            VOTE=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 0; then
+    die "Error: Usage $(basename $0) [-y YEAR] [-r RATE] [-v VOTE]"
+fi
+
+url="$(printf "http://www.imdb.com/search/title?sort=num_votes&title_type=feature&user_rating=%.1f,%.1f&year=%s,%s&num_votes=%s,%s" $rate $RATE $year $year $vote $VOTE)"
+echo "$url"
+firefox "$url"
