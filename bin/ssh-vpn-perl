@@ -1,0 +1,46 @@
+#!/usr/bin/perl
+
+use Expect;
+use strict;
+use IO::Pty;
+
+sub do_ssh($$$) {
+  (my $username, my $password, my $host) = @_;
+
+  my $spawn = new Expect;
+  $spawn->raw_pty(1);  
+
+  my $PROMPT;
+
+  # This function traps WINCH signals and passes them on
+  sub winch {
+      my $signame = shift;
+      my $pid = $spawn->pid;
+      print "pid $pid, SIG$signame\n";
+      $spawn->slave->clone_winsize_from(\*STDIN);
+      kill WINCH => $spawn->pid if $spawn->pid;
+  }
+
+  $SIG{WINCH} = \&winch;        # best strategy
+
+  $spawn=Expect->spawn("ssh -C2qN -D 18080 $username\@$host");
+  # log everything if you want
+  # $spawn->log_file("/tmp/autossh.log.$$");
+
+  my $PROMPT  = '[\]\$\>\#]$';
+  my $ret = $spawn->expect(30,
+                           [ qr/\(yes\/no\)\?\s*$/ => sub { $spawn->send("yes\n"); exp_continue; } ],
+                           [ qr/assword:\s*$/ 	=> sub { $spawn->send("$password\n"); exp_continue; } ],
+                           [ qr/ogin:\s*$/		=> sub { $spawn->send("$username\n"); exp_continue; } ],
+                           [ qr/REMOTE HOST IDEN/ 	=> sub { print "FIX: .ssh/known_hosts\n"; exp_continue; } ],
+                           [ qr/$PROMPT/ 		=> sub { $spawn->send("echo Now try window resizing\n"); } ],
+                          );
+    
+  # Hand over control
+  $spawn->interact();
+}
+
+if ($ENV{USER} eq "bhj") {
+    chomp(my $password = qx(get-authinfo fixnet bhj));
+    do_ssh("bhj", $password, "fixnet");
+}

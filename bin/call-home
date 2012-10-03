@@ -27,7 +27,7 @@ fi
 (
     flock -n 9 || { echo 'lock failed for fixnet at '$(date); exit 0; }
     while true; do
-        ssh -C2qN -D 18080 bhj@fixnet
+        ssh-vpn
 	x=30
 	y=$(random 30)
 	((x = x + y))

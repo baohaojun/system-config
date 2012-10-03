@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+
+use URI::Escape;
+
+$, = " ";
+$escape = uri_escape("@ARGV");
+
+print $escape;
