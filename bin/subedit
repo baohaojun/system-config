@@ -1,0 +1,76 @@
+#!/usr/bin/perl
+
+# this is a script to fix the subtitle
+
+# With only 1 argument, it's like mplayer's -subdelay, the subtitle
+# will be delayed (advanced if negative). It can be a float.
+
+# With 4 arguments, the first 2 are the starting and ending time tags
+# in the old subtitle, the last 2 are the starting and ending time
+# tags desired in the new subtitle. The new one is linearly generated
+# using these infomation.
+
+# y = a * x + b
+
+use strict;
+
+sub timetag_human_to_sec($)
+{
+    my ($tag) = @_;
+
+    if ($tag =~ m/(\d\d):(\d\d):(\d\d),(\d\d\d)/) {
+	return $1 * 3600 + $2 * 60 + $3 + $4 / 1000;
+    }
+    return $tag;
+}
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+sub timetag_sec_to_human($)
+{
+    my ($sec) = @_;
+    my ($subsec, $min, $hour);
+
+    if ($sec < 0) {
+	$sec = 0;
+    }
+    $sec *= 1000;
+    $sec = int($sec);
+    $subsec = $sec % 1000;
+    $sec = int($sec/1000);
+    $hour = int($sec / 3600);
+    $min = int(($sec - $hour * 3600) / 60);
+    $sec %= 60;
+    return sprintf "%02d:%02d:%02d,%03d", $hour, $min, $sec, $subsec;
+}
+
+my $a, $b;
+if (@ARGV == 1) {
+    $a = 1;
+    $b = timetag_human_to_sec($ARGV[0]);
+    debug "hello world", timetag_sec_to_human($b);
+
+} elsif (@ARGV == 4) {
+    my ($x1, $x2, $y1, $y2) = map {timetag_human_to_sec $_} @ARGV;
+    $a = ($y2 - $y1) / ($x2 - $x1);
+    $b = $y1 - $a * $x1;
+} else {
+    die "Usage: $0 DIFF or $0 old_start old_end new_start new_end"
+}
+
+debug "a is $a, b is $b";
+
+@ARGV = ();
+while (<>) {
+    chomp;
+    if (m/^(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})/) {
+	my ($tag1, $tag2) = map {timetag_human_to_sec $_} ($1, $2);
+	$tag1 = $a * $tag1 + $b;
+	$tag2 = $a * $tag2 + $b;
+	printf "%s --> %s\n", map {timetag_sec_to_human $_} ($tag1, $tag2);
+    } else {
+	print;
+    }
+}
