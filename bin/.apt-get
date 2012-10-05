@@ -1,0 +1,5 @@
+#!/bin/bash
+function apt-get() {
+ sudo ifconfig eth0:0 $(ip-or-name r66) ;
+ ssh -R :9999:mirrors.163.com:80 localhost bash -c "true; sleep 1; apt-get $@"
+}
