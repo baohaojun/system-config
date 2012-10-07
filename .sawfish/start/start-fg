@@ -1,6 +1,0 @@
-#!/bin/bash
-for x in $(seq 1 5); do
-    ps.pl gnome-panel 2>/dev/null | grep -q . && break
-    sleep 1
-done
-exec wine ~/external/hello-bg.exe
