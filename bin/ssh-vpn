@@ -9,4 +9,5 @@ expect password {
     send "$password\n"
 }
 
-wait
+puts [wait]
+exit

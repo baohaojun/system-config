@@ -10,7 +10,7 @@ if test -e .afbrc; then
     . .afbrc
 fi
 
-rm out -f # in case it's a dangling symlink.
+rm out -rf # in case it's a dangling symlink.
 if test "$hourly_build_debug" = true; then
     if test -e .patch_applied; then
         echo "Error: pateches applied"
@@ -71,7 +71,9 @@ fi
 export TARGET_PRODUCT=$TARGET_PRODUCT
 export TARGET_BUILD_VARIANT=$TARGET_BUILD_VARIANT
 
-set -x;
+if test "$DEBUG" = true; then
+    set -x;
+fi
 (
     set -e
     test -d "$ANDROID_PRODUCT_OUT"
@@ -85,6 +87,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
 
 (
     time (
+        set -e
         if pwd | grep -P -e '\d+-\d+'; then
             echo looks like a rolling back build dir, do not do code reading in it
         else
@@ -126,7 +129,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                     fi
                 fi
             '
-        " && result=$result'all ok; '
+        " && result=$result'all ok; ' && echo build is successful &&
 	(
 	    cd flashing
 	    ./make-links.sh

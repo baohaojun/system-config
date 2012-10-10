@@ -25,9 +25,14 @@ fi
 ) 9>~/.logs/$(basename $0).lock  2>&1 &
 
 (
+    if test "$DEBUG" = true; then
+        set -x;
+    fi
     flock -n 9 || { echo 'lock failed for fixnet at '$(date); exit 0; }
     while true; do
-        ssh-vpn
+        if ssh-vpn 2>&1 | grep -q SIGKILL; then
+            continue
+        fi
 	x=30
 	y=$(random 30)
 	((x = x + y))

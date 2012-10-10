@@ -1,0 +1,18 @@
+#!/usr/bin/expect -f
+
+set user [lindex $argv 0]
+set pass [lindex $argv 1]
+
+spawn sudo smbpasswd -a $user
+expect {
+    -re "^New SMB password:" {
+	send "$pass\n"
+	exp_continue
+    }
+    -re "Retype new SMB password:" {
+	send "$pass\n"
+	exp_continue
+    }
+}
+
+wait
