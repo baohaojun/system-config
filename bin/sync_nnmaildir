@@ -56,7 +56,7 @@ for (glob "$dir/*") {
       if ($flags =~ /F/) {
         mkdir "$path/.nnmaildir/marks/tick";
         my $dst = "$path/.nnmaildir/marks/tick/$message";
-        link "$file","$dst"
+        symlink "$file","$dst"
           and print "Added mail in $mb to nnmaildir ticks\n";
       } else {
         # my $dst = "$path/.nnmaildir/marks/tick/$message";
@@ -68,7 +68,7 @@ for (glob "$dir/*") {
       if ($flags =~ /S/) {
         mkdir "$path/.nnmaildir/marks/read";
         my $dst = "$path/.nnmaildir/marks/read/$message";
-        link "$file","$dst"
+        symlink "$file","$dst"
           and print "Added mail in $mb to nnmaildir seen\n";
       } else {
         my $dst = "$path/.nnmaildir/marks/read/$message";

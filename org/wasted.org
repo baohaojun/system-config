@@ -9,15 +9,16 @@
 
 并且不要点user local目录，例如~/.eclipse/org.eclipse.platform_3.7.0_155965261/，
 这个是系统自带的eclipse版本才用的，点上这个之后反而装不上eclim了。
-* vs2008必须装sp1都能避免此错误：
+* vs2008必须装sp1才能避免此错误：
 
 .\stdafx.cpp : fatal error C1902: Program database manager mismatch; please check your installation
 
-泪奔，装sp1是避免不了的。这个错误只会在用ssh登录上去运行vccompile的时候才会发生。
-并且是那种用了id_rsa不需要输入密码的情况下。
+泪奔，装sp1是解决不了这个问题的。这个错误只会在用ssh登录上去运行
+vccompile的时候才会发生。并且是那种用了id_rsa不需要输入密码的情况下。
 
-这种情况下登录上去后看系统的环境变量USERNAME是system，而如果把client端的id_rsa移
-走，要求输入密码之后登录上去的话，看环境变量USERNAME就是我的用户名bhj。
+这种情况下登录上去后看系统的环境变量USERNAME是system，而如果把client端
+的id_rsa移走，要求输入密码之后登录上去的话，看环境变量USERNAME就是我的
+用户名bhj。所以这是一个cygwin的bug，最后的uid取决于登录时是否输入了密码。
 
 所以真正的解决方法是让sshd服务用bhj帐号去启动，这样不管我怎么登录上去的，最后的权
 限都是我的用户帐号bhj，而不是变成系统的system帐号。

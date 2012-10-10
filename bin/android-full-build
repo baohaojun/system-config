@@ -10,6 +10,7 @@ if test -e .afbrc; then
     . .afbrc
 fi
 
+rm out -f # in case it's a dangling symlink.
 if test "$hourly_build_debug" = true; then
     if test -e .patch_applied; then
         echo "Error: pateches applied"
