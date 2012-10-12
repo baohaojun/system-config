@@ -1,7 +1,23 @@
 #!/bin/bash
 
 for x in $(sudo ls -l /proc/$1/fd|grep socket:|perl -npe 's/.*\[|\].*//g'); do
-    cat /proc/net/tcp |grep "\b$x\b" |perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg'
+    sudo bash -c "ls -l /proc/$1/fd/* 2>/dev/null"|grep socket.*$x
+    if cat /proc/net/tcp |grep "\b$x\b" |perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg'|grep .; then
+        echo ^^^^ TCP: ^^^^
+        echo
+        continue
+    fi
+
+    if cat /proc/net/udp |grep "\b$x\b" |perl -npe 's/([a-f0-9]{8}):([a-f0-9]{4})/{$ip=eval("0x$1"); $port=eval("0x$2"); use Socket; inet_ntoa(pack("I", $ip)) . ":$port"; }/ieg' | grep .; then
+        echo ^^^^ UDP: ^^^^
+        echo
+        continue
+    fi
+    if cat /proc/net/unix|tr -d \\0|grep "\b$x\b"; then
+        echo ^^^^ UNIX: ^^^^
+        echo
+        continue
+    fi
 done
 
 

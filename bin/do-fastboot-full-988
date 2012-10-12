@@ -44,8 +44,8 @@ time (
     }
 
     if test $(basename $0) = do-fastboot-full-988; then
-        if test $# != 1 -o ! -e $1; then
-	    die "Usage: $(basename $0) XXX.blf"
+        if test ! -e $1; then
+	    die "Usage: $(basename $0) XXX.blf PARTS"
         elif test $(basename $1) = $1 -a -e ~/src/android/boot/obm/TimBuilder; then
             ~/src/android/boot/obm/TimBuilder -r $(pwd)/$1 || true
         fi
@@ -64,16 +64,17 @@ time (
     export partitions=("$@")
 
     function should-do-it() {
-        if test $(basename $0) = do-fastboot-full-988; then
-	    return 0;
+        local default=0
+        if test $(basename $0) != do-fastboot-full-988; then
+	    default=1
         fi
 
         for x in "${partitions[@]}"; do
 	    if test "$1" = "$x"; then
-	        return 0
+	        return $((! default))
 	    fi
         done
-        return 1
+        return $((default))
     }
 
 # product=$(fastboot getvar product 2>&1 | grep product: | pn 2)
@@ -83,7 +84,7 @@ time (
 
     function do-partition() {
         part=$1
-        should-do-it $part || return 0
+        should-do-it $part || { echo will skip $part; return 0; }
         if test $is_old_part_table = true; then
             case $1 in
                 tdCp)

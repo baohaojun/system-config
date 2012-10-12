@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+max=1024
+if test -f "$1" -a $(stat -c %s "$1") -lt $max; then
+    max=$(stat -c %s "$1")
+fi
+if test $(dd 2>/dev/null if="$1" bs=1 count=$max|tr -d '\0'|wc -c) -eq $max; then
+    exit 1
+fi
+exit 0
+    

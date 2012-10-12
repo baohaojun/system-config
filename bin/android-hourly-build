@@ -118,6 +118,9 @@ function remove_patches() {
 
     if test -z "$REMOTEIP"; then
         export REMOTEIP=10.21.130.154
+        if test -e ~/.remoteip; then
+            . ~/.remoteip;
+        fi
     fi
     
     tar cz $daily_change_dir .build-status build.log $hourly_log $(

@@ -10,6 +10,9 @@ else
     export LOCALPORT=`echo $SSH_CONNECTION|awk '{print $4}'`
     export WHOAMI=`whoami`
     export REMOTEIP=`echo ${SSH_CLIENT} | awk '{print $1}'|perl -npe 's/.*://'`
+    if test "$DISPLAY"; then
+        echo export REMOTEIP=$REMOTEIP > ~/.remoteip
+    fi
     export DISPLAY=${DISPLAY:-$REMOTEIP:0.0}
     export PS1HostName=`hostname`
     export PS1='\n( \u@$PS1HostName [01;32m| \w |[0m [01;34mRemote[01;31m:[01;34mTrue '\$PROMPT_RET\$RECURSIVE_SHELL'[0m)\n\$'
