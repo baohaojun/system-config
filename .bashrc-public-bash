@@ -188,3 +188,5 @@ export -f start-recursive-shell
 export PROMPT_COMMAND="cd_record"
 alias cd=cd_bhj
 alias cow='cp --reflink=always -a'
+shopt -s nocaseglob
+shopt -s histappend

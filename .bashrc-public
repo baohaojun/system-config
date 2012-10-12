@@ -104,7 +104,7 @@ if tty -s; then
     stty -ixon -ixoff >/dev/null 2>&1
 fi
 
-if test $(echo "$BASH_VERSION"|sed -e 's,\..*,,') -ge 4 -a "$BASH" = /bin/bash; then
+if test 0"$(echo "$BASH_VERSION"|sed -e 's,\..*,,')" -ge 4 -a x"$BASH" = x/bin/bash; then
     . ~/.bashrc-public-bash
 fi
 

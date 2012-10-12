@@ -1,6 +1,4 @@
 export PATH=/bin:"$PATH"
-shopt -s nocaseglob
-shopt -s histappend
 export HISTCONTROL="ignoredups"
 export HISTIGNORE="bg:fg:exit"
 alias ls='ls -hF --color=tty --show-control-chars --block-size=1'                 # classify files in colour
