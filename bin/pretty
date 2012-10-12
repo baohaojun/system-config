@@ -2,7 +2,7 @@
 
 use strict;
 use Getopt::Long;
-use lib glob("~/bin");
+use lib substr($0, 0, -length("/pretty"));
 use pretty;
 
 if (@ARGV) {

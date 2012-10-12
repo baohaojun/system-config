@@ -56,17 +56,26 @@ if test $# -gt 1; then
     die "Usage: $(basename "$0") [lunch-combo]"
 fi
 
-if test $# -gt 0; then
-    if lunch "$1"; then
-	shift
-    else
-	lunch $(get_build_var TARGET_PRODUCT)-$(get_build_var TARGET_BUILD_VARIANT)
-    fi
-    . ~/bin/.android-set-outdir
-    android-set-product
-    # re-lunch, so that the ANDROID_PRODUCT_OUT can inherit from the new OUT_DIR
-    lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
+if test $# = 0 -a ! -e buildspec.mk; then
+    die "lunch combo must be specified because a previous buildspec.mk is not found"
 fi
+
+if test $# = 0; then
+    
+    set -- $(
+        cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_PRODUCT\s*.?=\s*(.*?)\s*$/')-$(
+        cat buildspec.mk|perl -ne 'print $1 if /^\s*TARGET_BUILD_VARIANT\s*.?=\s*(.*?)\s*$/')
+    echo set the build for "$@"
+fi
+if lunch "$1"; then
+    shift
+else
+    lunch $(get_build_var TARGET_PRODUCT)-$(get_build_var TARGET_BUILD_VARIANT)
+fi
+. ~/bin/.android-set-outdir
+android-set-product
+    # re-lunch, so that the ANDROID_PRODUCT_OUT can inherit from the new OUT_DIR
+lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT
 
 export TARGET_PRODUCT=$TARGET_PRODUCT
 export TARGET_BUILD_VARIANT=$TARGET_BUILD_VARIANT

@@ -74,7 +74,13 @@ fi
 	    bpe-update -r
 	fi
         flock -u 9
-        android-full-build
+        if test $(stat -c %s .do-update) != 0; then
+            for x in $(cat .do-update); do
+                android-full-build $x
+            done
+        else
+            android-full-build
+        fi
         bhj-short-notify $(basename $0) "$(pwd): build completed"
     ) 9>.android-full-build.lock
 done
