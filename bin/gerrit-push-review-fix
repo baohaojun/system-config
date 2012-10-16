@@ -1,0 +1,30 @@
+#!/bin/bash
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+set -e
+log=~/.logs/$(basename $0).log
+while true; do
+    gerrit-push-review > $log 2>&1 && break
+
+    cid=$(cat $log | grep -o -P -e '\(change \d+ closed\)'|pn 2)
+    if test -z "$cid"; then
+        cat $log
+        die "can not find the closed review id"
+    fi
+
+    gerrit-fetch-review "$cid"
+    head=$(git rev-parse HEAD)
+    git co FETCH_HEAD
+    git merge $(repo-remote-branch)
+    gerrit-push-review
+    gerrit-do-review
+    repo sync -n .
+    git co $head
+    git rebase $(repo-remote-branch)
+done
+
+    

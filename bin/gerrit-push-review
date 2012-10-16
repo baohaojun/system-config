@@ -63,7 +63,7 @@ export REMOTE=$( (repo-review-url) )
     else
 	cat
     fi
-) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty > ~/.logs/gerrit-review.log.$$
+) | perl  -npe 's/\033\[./ /g' |tr '\r' '\n'| tee /dev/tty ~/.logs/gerrit-review.log.$$
 
 set +x
 echo push ok.

@@ -36,6 +36,10 @@ function renew-xauth() { # so that in the saved gnu screen session, I can reset 
 }
 
 function adb() {
+    if test "$1" = -w; then
+        command adb wait-for-device
+        shift
+    fi
     if test "$1" = -s; then
         echo "$2" > ~/.adbd
     elif test "$1" != devices -a $(setsid adb start-server >/dev/null 2>&1 ; command adb devices | grep .| wc -l) -gt 2; then
@@ -49,8 +53,24 @@ function adb() {
     fi
 }
 
-function sudo {
-    command sudo env PATH=$PATH "$@"
-}
+if test -e ~/.logs/sudo-ssh; then
 
+    function sudo {
+        command=$(
+            echo 'true; true;'
+            printf "cd %q\n%q" "$PWD" "$1"
+            shift
+            for x in "$@"; do
+                printf " %q" "$x"
+            done
+            echo
+        )
+        ssh root@localhost bash -c "$command"
+    }
+
+else
+    function sudo {
+        command sudo env PATH=$PATH "$@"
+    }
+fi
 export -f sudo
