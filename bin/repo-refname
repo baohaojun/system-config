@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if test "$REPO_BRANCH"; then
+    echo "$REPO_BRANCH"
+    exit
+fi
+
 if test -z "$BPE_ON_APSE"; then
     if test "$REPO_INFO"; then
 	$REPO_INFO branch

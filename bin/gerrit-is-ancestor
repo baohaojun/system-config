@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) REVIEW1 REVIEW2"
+fi
+
+if test "$1" = "$2"; then
+    echo "they are the same, so do not consider them ancestor/descendant to avoid deadloop"
+    exit -1
+fi
+
+gerrit-fetch-review "$1" || die "can not fetch review for: $1"
+head1=$(git rev-parse FETCH_HEAD)
+
+gerrit-fetch-review "$2" || die "can not fetch review for: $2"
+head2=$(git rev-parse FETCH_HEAD)
+
+git-is-ancestor $head1 $head2

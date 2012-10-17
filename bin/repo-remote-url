@@ -1,3 +1,7 @@
 #!/bin/bash
 
-git-remote-url $(repo-remote 2>/dev/null)
+if test "$GERRIT_HOST"; then
+    git remote -v |pn 2 | grep -e "$GERRIT_HOST" |uniq-even-non-ajacent | head -n 1
+else
+    git-remote-url $(repo-remote 2>/dev/null)
+fi

@@ -4,5 +4,5 @@ branch=$(repo-branch)
 if test ${#branch} = 40; then
     echo $branch
 else
-    echo $(repo-remote)/branch
+    echo $(repo-remote)/$branch
 fi

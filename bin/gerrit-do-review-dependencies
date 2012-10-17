@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -e
+
+if test "$DEBUG"; then
+    set -x
+fi
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) DEPENDING"
+fi
+
+rev=$1
+my_query=$(gerrit query -- "$(git rev-parse $rev)")
+
+if ! echo "$my_query" | grep -P -e "^\s*status: MERGED\s*$"; then
+    
+    my_number=$(echo "$my_query"| grep number: | pn 2|head -n 1)
+
+    for x in $(gerrit query -- "status:open AND
+                            owner:$(git config user.email|perl -npe 's/\@.*//') AND
+                            project:^.*$(basename $(repo-project))" | # AND branch:$(repo-branch) 
+
+        grep number: | pn 2|sort -n); do
+        if gerrit-is-ancestor $x $my_number; then
+            echo "Will review $x as it is dependent by $rev"
+            (
+                set -x
+                gerrit review $(
+                    gerrit-fetch-review $x >/dev/null 2>&1; 
+                    git rev-parse FETCH_HEAD
+                ) --submit --verified +1 --code-review +2
+            )
+        fi
+    done
+fi
+
+
+
