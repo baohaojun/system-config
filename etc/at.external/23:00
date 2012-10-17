@@ -1,0 +1,10 @@
+#!/bin/bash
+
+time (
+    mkdir -p ~/backup
+    sudo rsync -av /home/bpehw/pcb /home/bpehw/doc ~/backup
+    sudo getfacl -R /home/bpehw > ~/backup/acl.txt
+    cd ~/backup
+    sudo git add .
+    sudo git commit -m $(today)
+)

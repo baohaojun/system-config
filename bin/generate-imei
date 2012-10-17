@@ -30,7 +30,7 @@ function generate-imei() {
     imei=
     sum=0
     for x in $(seq 0 13); do
-	val=$(date +%N)
+	val=$(random 10)
 	val=${val:0-1}
 	imei=$imei$val
 	if ((x % 2 == 1)); then

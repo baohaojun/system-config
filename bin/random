@@ -1,9 +1,10 @@
-#!/bin/bash
-    awk '
-BEGIN {
-    srand();
-    for (i = 0; i < '"${2-1}"'; i++) {
-        printf("%d\n", int(rand() * '"${1-10}"'));
-    }
-}'
+#!/usr/bin/perl
+use strict;
+open(my $randf, "<", "/dev/urandom")
+    or die "can not open random";
 
+read $randf, my $randata, 8;
+my ($randval) = unpack("Q", $randata);
+
+$randval = int($randval / 0xffffffffffffffff * $ARGV[0]) if $ARGV[0];
+printf "$randval\n";

@@ -5,9 +5,16 @@ set password [read $fl]
 close $fl
 
 spawn ssh -C2qN -D 18080 fixnet
-expect password {
+expect -timeout 150 password {
+    puts "send password\n";
     send "$password\n"
+} timeout {
+  puts "timed out\n"
 }
 
 puts [wait]
 exit
+
+# Local Variables: #
+# mode: tcl #
+# End: #

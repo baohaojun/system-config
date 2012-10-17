@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 mkdir ~/.logs -p
+touch ~/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
 mkdir ~/tmp -p
 cd ~/windows-config/
@@ -37,7 +38,9 @@ function symlink-map() {
 }
 
 symlink-map ~/windows-config/ ~/
-symlink-map ~/windows-config/.config.vc/ ~/.config
+if test -d ~/.config; then
+    symlink-map ~/windows-config/.config.vc/ ~/.config
+fi
 
 if test -e ~/.gitconfig.$USER; then
     ln -sf ~/.gitconfig.$USER ~/.gitconfig

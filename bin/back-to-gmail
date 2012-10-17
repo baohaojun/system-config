@@ -3,7 +3,7 @@
 test $# = 0 && set -- $(for x in $(find ~/etc/back-to-gmail/ -type l); do readlink -m $x; done)
 for x in "$@"; do
 
-    back=~/.logs/git-to-gmail/$x
+    back=~/.logs/git-to-gmail/"$x"
     if test -e "$back" && diff "$x" "$back" -rq; then
 	continue
     else
@@ -13,9 +13,9 @@ for x in "$@"; do
     fi
 
     attachment=$x
-    if test -d $x; then
-	attachment=~/.logs/git-to-gmail-$(echo "$x"|perl -npe 's,/,-,g').tgz
-	tar czfv $attachment $x
+    if test -d "$x"; then
+	attachment=~/.logs/git-to-gmail-"$(echo "$x"|perl -npe 's,/,-,g')".tgz
+	tar czfv "$attachment" "$x"
     fi
 
     mailx -s "git-to-gmail $x from $(from-mac)" -a "$attachment" baohaojun@gmail.com </dev/null
