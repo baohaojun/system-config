@@ -9,14 +9,17 @@ cd ~/src/android-mirror/
 repo-switch -u bibler:shgit/manifest -b tknevo-ics --repo-url=bibler:tools/repo 
 repo sync
 
-repo-switch -u https://android.googlesource.com/platform/manifest -b gingerbread
-repo sync
-
-repo-switch -u https://android.googlesource.com/platform/manifest -b android-4.0.4_r1.2
-repo sync
-
-
-
+for branch in $(
+    cd .repo/manifests >/dev/null 2>&1 
+    git branch -a | grep -P -e '/android-\d' | sort -n | tail -n 1 | perl -npe 's,.*/,,'
+    if test ! -e .repo/update-android-branches; then
+        echo jb-dev > .repo/update-android-branches
+    fi
+    cat .repo/update-android-branches 2>/dev/null
+); do 
+    repo-switch -u https://android.googlesource.com/platform/manifest -b $branch
+    repo sync -j1
+done
 
 #vendor/nvidia and hardware/tegra, we can do nothing, their git is maintained by us.
 

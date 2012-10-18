@@ -582,6 +582,7 @@
  '(auth-sources (quote ((:source "~/.authinfo" :host t :protocol t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/tmp"))))
  '(bbdb-hashtable-size 10007)
+ '(before-save-hook (quote ((lambda nil (let ((filename (buffer-file-name))) (when (and (file-remote-p filename) (string-match "/windows-config/" filename)) (yes-or-no-p "Are you sure it's alright to save this remote file when you have a local copy?")))))))
  '(canlock-password "78f140821d1f56625e4e7e035f37d6d06711d112")
  '(case-fold-search t)
  '(delete-old-versions t)
