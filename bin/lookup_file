@@ -60,8 +60,9 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 	fi
     fi
 ) || (
-    if test $exact = true; then
-        which "$1" 2>/dev/null
+    if test "$exact" = true; then
+        which "$1" 2>/dev/null || true
+        exit 0
     else
         false
     fi

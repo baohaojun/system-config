@@ -1,7 +1,13 @@
 #!/bin/bash
 set -e
 
-cd $(lookup_file .repo)
+repodir=$(lookup_file -e .repo)
+if test -z "$repodir"; then
+    repo init "$@"
+    exit
+fi
+
+cd "$repodir"
 test -d manifests
 
 cp -av $(readlink -f manifest.xml) manifest.xml.old || true

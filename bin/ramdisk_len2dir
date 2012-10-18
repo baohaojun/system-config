@@ -3,9 +3,20 @@
 $rdfilename = $ARGV[0];
 open($file, "<", $rdfilename);
 seek $file, -4, 2;
+$total = tell($file) + 4;
 read $file, $len, 4;
 
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
 $len = unpack("L", $len);
+
+debug "len is $len\n";
+if ($len == 0) {
+    $len = $total;
+    print "len is set to total: $len\n";
+}
 
 seek $file, 0, 0;
 read $file, $content, $len;
