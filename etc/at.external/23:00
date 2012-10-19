@@ -7,4 +7,5 @@ time (
     cd ~/backup
     sudo git add .
     sudo git commit -m $(today)
+    sudo git push bhj@r31:backup master:master
 )

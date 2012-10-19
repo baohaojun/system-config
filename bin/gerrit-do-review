@@ -28,4 +28,3 @@ if test -z "$GERRIT_HOST"; then
     )
 fi
 
-gerrit query "$(git rev-parse $rev)" | grep -P -e "^\s*status: MERGED\s*$" || die "gerrit for $rev not merged!"

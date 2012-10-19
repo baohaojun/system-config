@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+export PATH=~bhj/bin/:$PATH
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) USERNAME"
+fi
+
+pass=$(generate-imei|cut -b 1-8)
+user=$1
+useradd -p $pass $user -s /bin/false
+smbpasswd.exp $user $pass
+echo "user%pass: $user%$pass"
+echo "you can test using: smbclient //localhost/bpehw -U $user%$pass"
+

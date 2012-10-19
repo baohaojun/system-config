@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+
+use strict;
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+
+my @files = split(' ', qx(find . -iname "*.h" -o -iname "*.c" -o -name "*.cpp"));
+my %file_basename_map;
+
+for my $file (@files) {
+    my $basefile = $file;
+    $basefile =~ s,.*/,,;
+
+    $file_basename_map{$basefile} = [] unless exists $file_basename_map{$basefile};
+    push @{$file_basename_map{$basefile}}, $file;
+}
+
+my @basefiles = map {my $file = $_; $file =~ s,.*/,,; $file} @files;
+my @patterns = map {"\\b\Q$_\E\\b"} @basefiles;
+
+my $pattern = join("|", @patterns);
+$pattern = qr($pattern);
+
+while (1) {
+    debug "will run the make";
+    my $ret = system("make -j20 -k -C .. uboot >/dev/null 2>~/1.txt");
+    if ($ret == 0) {
+	debug "make is ok";
+	exit
+    }
+    debug "make is not ok";
+    my $out = qx(cat ~/1.txt);
+    my %used_files;
+    while ($out =~ m/($pattern)/g) {
+	$used_files{$1} = 1;
+    }
+    last unless %used_files;
+    my @used_files_full =  map {@{$file_basename_map{$_}}} keys %used_files;
+    # map {system("git", "co", $_)} @used_files_full;
+    system("git", "co", @used_files_full);
+    print "used_files_full are @used_files_full\n";
+}
