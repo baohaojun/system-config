@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="阅读源代码"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-19 17:52:37 CST"/>
+<meta name="generated" content="2012-10-22 09:42:26 CST"/>
 <meta name="author" content="Haojun Bao"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -115,7 +115,8 @@
 </ul>
 </li>
 <li><a href="#sec-8">8 生成调用关系图</a></li>
-<li><a href="#sec-9">9 查找局部变量的定义</a></li>
+<li><a href="#sec-9">9 cscope 和 gtags</a></li>
+<li><a href="#sec-10">10 查找局部变量的定义</a></li>
 </ul>
 </div>
 </div>
@@ -177,7 +178,8 @@
 
 <p>
 Emacs 是一个很强悍的编辑器，基本上只有 Vim 可与之匹敌。（鄙人是一个狂热
-的 Emacs 粉，但绝不是 Vim 黑）。
+的 Emacs 粉，但绝不是 Vim 黑，因为我学Emacs的过程，最大的收益来自于Vim
+作者所写的“<a href="http://www.moolenaar.net/habits.html">Seven habits of effective text editing</a>”）。
 </p>
 <p>
 没错，Emacs的学习曲线可能是陡一些，但是话说回来，学会它绝对是值得的，并
@@ -198,8 +200,8 @@ Emacs 是一个很强悍的编辑器，基本上只有 Vim 可与之匹敌。（
 
 <p>
    任何一个好的软件背后都会有一个强大的社区以及库。Java语言为什么那么火？
-   因为它的语言自带的标准库提供了很强大的功能。Perl的背后有cpan（相信我，
-   里面真的简直什么都有）。TeX背后有ctan。Emacs的背后有EmacsWiki。
+   因为它自带的标准库提供了很强大的功能。Perl的背后有cpan（相信我，里面
+   真的简直什么都有）。TeX背后有ctan。Emacs的背后有EmacsWiki。
 </p>
 <p>
    有了这样一个社区之后，无论你想要什么样的功能，很可能你到社区里找一找
@@ -210,7 +212,7 @@ Emacs 是一个很强悍的编辑器，基本上只有 Vim 可与之匹敌。（
    这些社区（库）的实现，一般都是用Emacs自带的语言Elisp来实现的。所以我
    们把它称为内功。说到Elisp，它是最古老而伟大的Lisp语言（听起来有点宗
    教狂热？）的一个专门为Emacs的编辑器功能而量身定做的一个变种。学点
-   Lisp很有好处。
+   Lisp是很有好处的（据说:-）。
 </p>
 </div>
 
@@ -255,7 +257,7 @@ Emacs配套试用的话，你需要用很多步骤：
 
 
 </li>
-<li>退出编辑器，回到命令行，运行 make，查开结果，如果出错，回第2步。
+<li>退出编辑器，回到命令行，运行 make，查看结果，如果出错，回第2步。
 
 </li>
 <li>删除此临时文件。
@@ -283,7 +285,8 @@ make: *** [out/target/product/xx/kernel] Error 1
 
 
 <p>
-于是你就知道试用通过了。
+于是你就知道试用通过了，并且这小段代码已经在它应该在的位置上，没那么多
+乱七八糟非常不简约的步骤哦！
 </p>
 </div>
 
@@ -297,8 +300,10 @@ make: *** [out/target/product/xx/kernel] Error 1
 <p>
    如果试用不够的话，你可以在Emacs里直接打开该外部程序的文档来深入学习。
    Linux下常见的man手册、info手册，perl的perldoc方档等都可以直接在
-   Emacs里打开看，并且比起在终端上用man(1)命令打开，在Emacs里你可以调用
-   更丰富的浏览、搜索功能。
+   Emacs里打开看，并且比起在终端上用相应的man(1)等命令打开，在Emacs里你
+   可以调用更丰富的浏览、搜索功能（如果是在终端上打开，你的输出是
+   <code>$PAGER</code> 来控制的，可能是 <code>less</code> ，也可能是 <code>more</code> ，甚至可能是
+   <code>cat</code> ）。
 </p>
 <p>
    比如，在我知道perldoc怎么用之前，我一直直接用man perlfunc来看perl的
@@ -351,15 +356,16 @@ make: *** [out/target/product/xx/kernel] Error 1
 elisp程序和一段perl程序其实都是程序。
 </p>
 <p>
-这种用法我用的最多的是org-mode的发布功能，比如的我github page，我用
-org-mode写完一篇文章之后，可能忘了把它发布为html，所以我在git push的时
-候可以加个hook，自动检查一下，相应的.html文件是不是没有更新，如果没有的
-话，就逆向调用Emacs一下，自动完成.html的发布（要不然的话还手动打开
-Emacs，再打开这个.org文件，再手动发布，就太烦了）。
+这种用法我用的最多的是org-mode的发布功能，比如的我github page（您目前正
+在看的这篇文章就是发布于github上），我用org-mode写完一篇文章之后，可能
+忘了把它发布为html，所以我在git push的时候可以加个hook，自动检查一下，
+相应的.html文件是不是没有更新，如果没有的话，就逆向调用Emacs一下，自动
+完成.html的发布（要不然的话还手动打开Emacs，再打开这个.org文件，再手动
+发布，就太烦了）。
 </p>
 <p>
-所以这就是我喜欢用Emacs的原因，内外兼修，无限可能。下面我们开始讲怎样调
-用一个个具体的外部程序来把Emacs打造成强大的代码阅读工具。
+所以以上就是我喜欢用Emacs的原因，内外兼修，无限可能。下面我们开始讲怎样
+调用一个个具体的外部程序来把Emacs打造成强大的代码阅读工具吧！
 </p>
 </div>
 </div>
@@ -382,13 +388,13 @@ compilation-mode（make出错，perl脚本里的die，还有很多其他程序�
 </p>
 <p>
 从下面的例子可以看到，实际上Emacs使用的mode是grep-mode，但这个实际上是
-从compilation-mode继承下来的。这种输出有一个模式，那就是
- <code>文件:行号: 内容</code> 。所以Emacs很容易parse出应该跳转到哪个文件的哪一行上。
+从compilation-mode继承下来的。这种输出有一个基本模式，那就是
+“ <code>文件名:行号: 内容</code> ”。所以Emacs很容易parse出应该跳转到哪个文件的哪一行上。
 </p>
 <p>
 跳转到下一个匹配行的Emacs函数是 <code>next-error</code> （由此可见其与
-compilation-mode的联系，把grep的匹配也称之为一个error，软件重用是好的，
-但真的会造成困惑吧）。
+compilation-mode的联系，把grep的匹配也称之为一个error，软件逻辑重用是好
+的，但这样的名字重用真的会造成困惑吧）。
 </p>
 
 
@@ -402,7 +408,6 @@ ime-socket.cpp:2:#include &lt;string&gt;
 ...
 
 Grep finished (matches found) at Fri Oct 19 16:25:46
-
 </pre>
 
 
@@ -476,6 +481,17 @@ SCIM_FULL_LETTER_ICON macro        62 scim_fcitx_imengine.cpp #define SCIM_FULL_
 <p>
 <img src="./grep-def.png"  alt="./grep-def.png" />
 </p>
+<p>
+这样做的额外的好处是，查找上一个/下一个定义点的Emacs按键，也跟
+grep/compilation统一起来了！（不去记两套不同但功能完全类似的按键，就像
+保护自己的脑力不被 <code>less</code> 的不常用、irrelevant、insignificant的正则表达
+式规则污染一样，非常必要。）
+</p>
+<p>
+一个缺点是，所有使用grep-mode的外部输出，都共用一个buffer，看完ctags看
+grep再回来看之前的ctags的话，就不得不重新查一遍（或许我应该去看看
+multi-grep，但幸好这些grep/ctags查得都很快）。
+</p>
 </div>
 
 </div>
@@ -543,11 +559,11 @@ Search complete.  Search time = 0.59 seconds.
 <p>
 这种情况我们应该怎么对它进行排序呢？要注意的是，“最重要的、最相关的”这
 一标准是上下文相关的。如果用户当前在看system init相关的代码，很可能用户
-希望第二个parse<sub>state出现在最前面，如果用户在看iptables相关的代码，那么</sub>
+希望第二个 <code>parse_state</code> 出现在最前面，如果用户在看iptables相关的代码，那么
 很可能需要把4、5、6排在前面。
 </p>
 <p>
-怎么办呢？我想到了一个很“土”的办法。
+怎么办呢？我想到了一个“土”办法。
 </p>
 <p>
 把用户开始搜索的时候正在阅读的文件，记为起始文件；把结果文件中的每一个，
@@ -559,8 +575,8 @@ Search complete.  Search time = 0.59 seconds.
 </p>
 <p>
 假设我们的起始文件是 <code>/home/bhj/src/android/system/core/init/init.c</code> ，
-在读这个文件代码的时候，我们想查一下 <code>parse_state</code> ，查出来有一条
-<code>/home/bhj/src/android/system/core/init/parser.c</code> 里面包含有这个定义，
+在读这个文件代码的时候，我们想查一下 <code>parse_state</code> ，查出来有一
+条 <code>/home/bhj/src/android/system/core/init/parser.c</code> 里面包含有这个定义，
 那它当然应该排在最前面了，因为它距离最短，大家甚至都是在一个目录下的。
 </p>
 </div>
@@ -581,10 +597,10 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 <img src="./si-imenu.png"  alt="./si-imenu.png" />
 </p>
 <p>
-我的imenu的用法当然跟source insight有点不一样，但精神上是类似的。首先，
+我们的imenu的用法当然跟source insight有点不一样，但精神上是类似的。首先，
 我不能一直炫炫地显示着有一个“定义窗口”，我想看有哪些定义的话，需要自己
 手动打一下imenu命令（我曾经很偏执地也想要一个这样的窗口，并且这也是可以
-实现的，但是后来我突然不想要了，嘻嘻）。
+通过 ecb 之类的插件实现的，但是后来我突然不想要了，嘻嘻）。
 </p>
 <p>
 其次，如下图所示
@@ -594,12 +610,13 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 </p>
 <p>
 我可以把它跟emacs的 <code>anything.el</code> 结合，对要显示何种定义做更精准的控制
-(图中只显示了 <code>macro</code> ）。Emacs加一分！~anything~ 的好处在于你还可以接
-着打一个空格，再打一个正则表达式，继续过滤出你真正想要的定义。
+(图中只显示了 <code>macro</code> ）。Source insight做不到这一点，所以，Emacs加一
+分！~anything~ 的好处在于你还可以接着打一个空格，再打一个正则表达式，继
+续过滤出你真正想要的定义。
 </p>
 <p>
-最后，我不需要用鼠标点，直接回车就跳到定义的点上了（看完不想跳的话就按
-<code>C-g</code> ）。
+最后，我不需要用鼠标点，直接回车就跳到定义的点上了（看完不想跳的话就
+按~C-g~ ）Source insight必须用鼠标点，所以 Emacs 再加一分！
 </p>
 
 </div>
@@ -652,7 +669,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 <p>
 其工作原理是这样的，以上图为例，先beagrep出readlink出现在哪些文件里，再
 在这些文件上当场调用ctags-exuberant，获得类似这样的信息：某文件第100行
-有一个函数定义A<sub>func，150行有一个函数B</sub><sub>func，而readlink出现在了125行，</sub>
+有一个函数定义A<sub>func，150行有下一个函数B</sub><sub>func，而readlink出现在了125行，</sub>
 那么，我们可以说，A<sub>func调用了readlink这个函数。</sub>
 </p>
 <p>
@@ -680,15 +697,39 @@ source-insight有生成调用关系图的功能（有人用过吗？），我们
 </div>
 
 <div id="outline-container-9" class="outline-2">
-<h2 id="sec-9"><span class="section-number-2">9</span> 查找局部变量的定义</h2>
+<h2 id="sec-9"><span class="section-number-2">9</span> cscope 和 gtags</h2>
 <div class="outline-text-2" id="text-9">
 
 
 <p>
-呵呵，这个也是可以实现的，给大家当脑筋急转弯吧。
+我曾经也用过这两个工具，从上面的函数定义距离计算的例子中可以看到，写那
+一段的时候我还是在用cscope。后来转成用gtags，最后用的是ctags-exuberant。
 </p>
+<p>
+虽然现在已经不完全用这两个工具了，它俩的一些好的idea我还是吸收了，比如
+在cscope.el里有一个cscope-marker-ring，能够在查询定义之后回到开始查询的
+地方，经过我的改良之后，纵横进退，异常方便。而gtags既有接口模拟cscope的
+输出，又有plugin机制可以调ctags-exuberant来做定义点预索引，所以为我试用
+这几个不同工具时的平滑过渡提供了很大的方便。目前我还在通过它来调用
+ctags-exuberant，因为它有内建增量更新索引机制。
+</p>
+</div>
 
 </div>
+
+<div id="outline-container-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2">10</span> 查找局部变量的定义</h2>
+<div class="outline-text-2" id="text-10">
+
+
+<p>
+这个也是可以实现的，先记下当前的变量，再搜到当前函数开头（可以用
+ctags-exuberant来记算），再搜到记下的变量的第一次出现的地方。
+</p>
+<p>
+写到这里，我们的“Emacs和它的朋友们——代码阅读篇”就告一段落了。下一篇，你
+猜对了，“Code Writing”，敬请期待！
+</p></div>
 </div>
 </div>
 
