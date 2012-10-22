@@ -21,7 +21,7 @@ windows-config的子目录下呢？别急，听我慢慢道来:-)
 - 为什么叫windows-config？这只是个巧合而已，最开始的时候我正在公司的
   windows机器上用cygwin，所以其配置文件就叫windows-config了。本来计划在
   linux底下搞个linux-config的，但后来发现完全没必要，它们可以用设计模式
-  中factory的模式共用大部分代码:-)
+  中factory的模式共用大部分代码，见[[活用design-pattern]]:-)
 
 最后，“额外的几条脚本”是指何意？把代码checkout到
 ~$HOME/windows-config/~ 下之后，只要记得跑这两条命令就搞定了：

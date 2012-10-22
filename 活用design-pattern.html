@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>活用design-pattern</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="活用design-pattern"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-10-22 10:59:02 CST"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">活用design-pattern</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 在 shell脚本里使用Abstract Factory的设计模式</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 在 shell脚本里使用Abstract Factory的设计模式</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+在不同的平台下，我需要定义一族函数， <code>of</code> ，其作用是在命令行下用各自系
+统定义的图形程序打开某个文件或URL（ <code>of</code> 是 “open file”之意）。
+</p>
+<p>
+比如， <code>of</code> 在Windows平台下应该用Explorer打开当前目录，而在Linux平台下
+应该用nautilus打开当前目录。
+</p>
+<p>
+我需要一个工厂虚类，其实就是文件。在linux下，这个工厂有一个实类，同时也
+有一个对象，那就是我的.bashrc-linux；而在Windows下呢，那就是我
+的.bashrc-windows。（我在Windows下在用的是Cygwin。所以也可以使用bash）。
+</p>
+<p>
+在.bashrc-linux这个工厂里，我们这样创建它的版本的 <code>of</code> （我们把
+<code>of-linux</code> 这个名字省略了，直接就叫 <code>of</code> ，严格按照design pattern来的话，
+你肯定会看到 <code>of-linux~，最后看见它被赋给一个 ~of</code> 的指针或者引用） ：
+</p>
+
+
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">of</span>() {
+    gnome-open <span class="org-string">"$@"</span> &gt; /dev/null 2&gt;&amp;1
+}
+</pre>
+
+<p>
+而在.bashrc-windows这个工厂里，我们这样创建 <code>of</code> ：
+</p>
+
+
+
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">of</span>() {
+     cygstart <span class="org-string">"$@"</span> &gt; /dev/null 2&gt;&amp;1
+}
+</pre>
+
+
+<p>
+在.bashrc里，我们这样决定要用哪个工厂：
+</p>
+
+
+
+<pre class="src src-sh"><span class="org-keyword">if </span><span class="org-builtin">test</span> <span class="org-sh-quoted-exec">`uname`</span> = Linux; <span class="org-keyword">then</span>
+    <span class="org-variable-name">factory</span>=~/.bashrc-linux
+<span class="org-keyword">else</span>
+    <span class="org-variable-name">factory</span>=~/.bashrc-windows
+<span class="org-keyword">fi</span>
+</pre>
+
+
+<p>
+然后，我们让工厂开工去创建我们想要的对象：
+</p>
+
+
+
+<pre class="src src-sh"><span class="org-builtin">.</span> $<span class="org-variable-name">factory</span>
+</pre>
+
+
+<p>
+哈哈，设计模式有何难哉！（如果你是设计模式高手并且认为我是在瞎扯，那就
+对了，我认为设计模式是好的，我们其实一直在默默地用着，但把它拎出来大吹
+大擂就容易过了:-）
+</p></div>
+</div>
+</div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>
