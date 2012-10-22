@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Emacs和它的朋友们——阅读源代码篇"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-22 14:23:23 CST"/>
+<meta name="generated" content="2012-10-22 14:27:57 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -84,39 +84,38 @@
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1 Source Insight</a></li>
-<li><a href="#sec-2">2 开源解决方案</a></li>
-<li><a href="#sec-3">3 Emacs</a>
+<li><a href="#sec-2">2 Emacs</a>
 <ul>
-<li><a href="#sec-3-1">3.1 强大的社区和库的支持——内功</a></li>
-<li><a href="#sec-3-2">3.2 友好的与其他强大的工具配套使用——外功</a>
+<li><a href="#sec-2-1">2.1 强大的社区和库的支持——内功</a></li>
+<li><a href="#sec-2-2">2.2 友好的与其他强大的工具配套使用——外功</a>
 <ul>
-<li><a href="#sec-3-2-1">3.2.1 试用</a></li>
-<li><a href="#sec-3-2-2">3.2.2 文档</a></li>
-<li><a href="#sec-3-2-3">3.2.3 使用</a></li>
-<li><a href="#sec-3-2-4">3.2.4 逆袭の使用</a></li>
+<li><a href="#sec-2-2-1">2.2.1 试用</a></li>
+<li><a href="#sec-2-2-2">2.2.2 文档</a></li>
+<li><a href="#sec-2-2-3">2.2.3 使用</a></li>
+<li><a href="#sec-2-2-4">2.2.4 逆袭の使用</a></li>
 </ul></li>
 </ul>
 </li>
-<li><a href="#sec-4">4 Grep</a></li>
-<li><a href="#sec-5">5 ctags-exuberant</a>
+<li><a href="#sec-3">3 Grep</a></li>
+<li><a href="#sec-4">4 ctags-exuberant</a>
 <ul>
-<li><a href="#sec-5-1">5.1 打造个人的使用习惯</a></li>
-<li><a href="#sec-5-2">5.2 多点定义下的距离计算</a></li>
+<li><a href="#sec-4-1">4.1 打造个人的使用习惯</a></li>
+<li><a href="#sec-4-2">4.2 多点定义下的距离计算</a></li>
 </ul>
 </li>
-<li><a href="#sec-6">6 imenu</a>
+<li><a href="#sec-5">5 imenu</a>
 <ul>
-<li><a href="#sec-6-1">6.1 imenu与ctags-exuberant的结合</a></li>
+<li><a href="#sec-5-1">5.1 imenu与ctags-exuberant的结合</a></li>
 </ul>
 </li>
-<li><a href="#sec-7">7 beagrep</a>
+<li><a href="#sec-6">6 beagrep</a>
 <ul>
-<li><a href="#sec-7-1">7.1 beagrep与ctags-exuberant的结合使用</a></li>
+<li><a href="#sec-6-1">6.1 beagrep与ctags-exuberant的结合使用</a></li>
 </ul>
 </li>
-<li><a href="#sec-8">8 生成调用关系图</a></li>
-<li><a href="#sec-9">9 cscope 和 gtags</a></li>
-<li><a href="#sec-10">10 查找局部变量的定义</a></li>
+<li><a href="#sec-7">7 生成调用关系图</a></li>
+<li><a href="#sec-8">8 cscope 和 gtags</a></li>
+<li><a href="#sec-9">9 查找局部变量的定义</a></li>
 </ul>
 </div>
 </div>
@@ -127,8 +126,9 @@
 
 
 <p>
-很多人都用过并且现在也还用着这个工具：Source Insight。不可否认，它有很
-多优点：非常直观，非常容易上手，该有的功能基本上都有&hellip;
+谈到阅读源代码，不得不提一下很多人都用过并且现在也还用着的一个工具：
+Source Insight。很多年前我最早接触的源代码阅读工具就是这个。不可否认，
+它有很多优点：非常直观，非常容易上手，该有的功能基本上都有&hellip;
 </p>
 <p>
 但是，它也有一些缺点：
@@ -151,29 +151,18 @@
 </ul>
 
 
+<p>
+使用开源软件 Emacs 和它的朋友们，我们可以实现Source Insight所拥有的大部
+分（也是最有价值的那部分）功能。并且能极大的超越。
+</p>
+
 </div>
 
 </div>
 
 <div id="outline-container-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> 开源解决方案</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> Emacs</h2>
 <div class="outline-text-2" id="text-2">
-
-
-<p>
-使用开源软件，我们可以实现Source Insight所拥有的大部分（也是最有价值的
-那部分）功能。
-</p>
-<p>
-并且能极大的超越。
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> Emacs</h2>
-<div class="outline-text-2" id="text-3">
 
 
 <p>
@@ -193,9 +182,9 @@ Emacs 是一个很强悍的编辑器，基本上只有 Vim 可与之匹敌。（
 
 </div>
 
-<div id="outline-container-3-1" class="outline-3">
-<h3 id="sec-3-1"><span class="section-number-3">3.1</span> 强大的社区和库的支持——内功</h3>
-<div class="outline-text-3" id="text-3-1">
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 强大的社区和库的支持——内功</h3>
+<div class="outline-text-3" id="text-2-1">
 
 
 <p>
@@ -218,9 +207,9 @@ Emacs 是一个很强悍的编辑器，基本上只有 Vim 可与之匹敌。（
 
 </div>
 
-<div id="outline-container-3-2" class="outline-3">
-<h3 id="sec-3-2"><span class="section-number-3">3.2</span> 友好的与其他强大的工具配套使用——外功</h3>
-<div class="outline-text-3" id="text-3-2">
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> 友好的与其他强大的工具配套使用——外功</h3>
+<div class="outline-text-3" id="text-2-2">
 
 
 <p>
@@ -229,9 +218,9 @@ Emacs 是一个很强悍的编辑器，基本上只有 Vim 可与之匹敌。（
 
 </div>
 
-<div id="outline-container-3-2-1" class="outline-4">
-<h4 id="sec-3-2-1"><span class="section-number-4">3.2.1</span> 试用</h4>
-<div class="outline-text-4" id="text-3-2-1">
+<div id="outline-container-2-2-1" class="outline-4">
+<h4 id="sec-2-2-1"><span class="section-number-4">2.2.1</span> 试用</h4>
+<div class="outline-text-4" id="text-2-2-1">
 
 
 <p>
@@ -292,9 +281,9 @@ make: *** [out/target/product/xx/kernel] Error 1
 
 </div>
 
-<div id="outline-container-3-2-2" class="outline-4">
-<h4 id="sec-3-2-2"><span class="section-number-4">3.2.2</span> 文档</h4>
-<div class="outline-text-4" id="text-3-2-2">
+<div id="outline-container-2-2-2" class="outline-4">
+<h4 id="sec-2-2-2"><span class="section-number-4">2.2.2</span> 文档</h4>
+<div class="outline-text-4" id="text-2-2-2">
 
 
 <p>
@@ -330,9 +319,9 @@ make: *** [out/target/product/xx/kernel] Error 1
 
 </div>
 
-<div id="outline-container-3-2-3" class="outline-4">
-<h4 id="sec-3-2-3"><span class="section-number-4">3.2.3</span> 使用</h4>
-<div class="outline-text-4" id="text-3-2-3">
+<div id="outline-container-2-2-3" class="outline-4">
+<h4 id="sec-2-2-3"><span class="section-number-4">2.2.3</span> 使用</h4>
+<div class="outline-text-4" id="text-2-2-3">
 
 
 <p>
@@ -346,9 +335,9 @@ make: *** [out/target/product/xx/kernel] Error 1
 
 </div>
 
-<div id="outline-container-3-2-4" class="outline-4">
-<h4 id="sec-3-2-4"><span class="section-number-4">3.2.4</span> 逆袭の使用</h4>
-<div class="outline-text-4" id="text-3-2-4">
+<div id="outline-container-2-2-4" class="outline-4">
+<h4 id="sec-2-2-4"><span class="section-number-4">2.2.4</span> 逆袭の使用</h4>
+<div class="outline-text-4" id="text-2-2-4">
 
 
 <p>
@@ -373,9 +362,9 @@ elisp程序和一段perl程序其实都是程序。
 
 </div>
 
-<div id="outline-container-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> Grep</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Grep</h2>
+<div class="outline-text-2" id="text-3">
 
 
 <p>
@@ -418,9 +407,9 @@ Grep finished (matches found) at Fri Oct 19 16:25:46
 
 </div>
 
-<div id="outline-container-5" class="outline-2">
-<h2 id="sec-5"><span class="section-number-2">5</span> ctags-exuberant</h2>
-<div class="outline-text-2" id="text-5">
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> ctags-exuberant</h2>
+<div class="outline-text-2" id="text-4">
 
 
 <p>
@@ -441,9 +430,9 @@ ctags-exuberant是emacs自带的etags的一个加强兼容版。用它可以查�
 
 </div>
 
-<div id="outline-container-5-1" class="outline-3">
-<h3 id="sec-5-1"><span class="section-number-3">5.1</span> 打造个人的使用习惯</h3>
-<div class="outline-text-3" id="text-5-1">
+<div id="outline-container-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> 打造个人的使用习惯</h3>
+<div class="outline-text-3" id="text-4-1">
 
 
 <p>
@@ -499,9 +488,9 @@ multi-grep，但幸好这些grep/ctags查得都很快）。
 
 </div>
 
-<div id="outline-container-5-2" class="outline-3">
-<h3 id="sec-5-2"><span class="section-number-3">5.2</span> 多点定义下的距离计算</h3>
-<div class="outline-text-3" id="text-5-2">
+<div id="outline-container-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> 多点定义下的距离计算</h3>
+<div class="outline-text-3" id="text-4-2">
 
 
 <p>
@@ -587,9 +576,9 @@ Search complete.  Search time = 0.59 seconds.
 
 </div>
 
-<div id="outline-container-6" class="outline-2">
-<h2 id="sec-6"><span class="section-number-2">6</span> imenu</h2>
-<div class="outline-text-2" id="text-6">
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> imenu</h2>
+<div class="outline-text-2" id="text-5">
 
 
 <p>
@@ -624,9 +613,9 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 
 </div>
 
-<div id="outline-container-6-1" class="outline-3">
-<h3 id="sec-6-1"><span class="section-number-3">6.1</span> imenu与ctags-exuberant的结合</h3>
-<div class="outline-text-3" id="text-6-1">
+<div id="outline-container-5-1" class="outline-3">
+<h3 id="sec-5-1"><span class="section-number-3">5.1</span> imenu与ctags-exuberant的结合</h3>
+<div class="outline-text-3" id="text-5-1">
 
 
 <p>
@@ -646,9 +635,9 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 
 </div>
 
-<div id="outline-container-7" class="outline-2">
-<h2 id="sec-7"><span class="section-number-2">7</span> beagrep</h2>
-<div class="outline-text-2" id="text-7">
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> beagrep</h2>
+<div class="outline-text-2" id="text-6">
 
 
 <p>
@@ -658,9 +647,9 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 
 </div>
 
-<div id="outline-container-7-1" class="outline-3">
-<h3 id="sec-7-1"><span class="section-number-3">7.1</span> beagrep与ctags-exuberant的结合使用</h3>
-<div class="outline-text-3" id="text-7-1">
+<div id="outline-container-6-1" class="outline-3">
+<h3 id="sec-6-1"><span class="section-number-3">6.1</span> beagrep与ctags-exuberant的结合使用</h3>
+<div class="outline-text-3" id="text-6-1">
 
 
 <p>
@@ -683,9 +672,9 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 
 </div>
 
-<div id="outline-container-8" class="outline-2">
-<h2 id="sec-8"><span class="section-number-2">8</span> 生成调用关系图</h2>
-<div class="outline-text-2" id="text-8">
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> 生成调用关系图</h2>
+<div class="outline-text-2" id="text-7">
 
 
 <p>
@@ -699,9 +688,9 @@ source-insight有生成调用关系图的功能（有人用过吗？），我们
 
 </div>
 
-<div id="outline-container-9" class="outline-2">
-<h2 id="sec-9"><span class="section-number-2">9</span> cscope 和 gtags</h2>
-<div class="outline-text-2" id="text-9">
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> cscope 和 gtags</h2>
+<div class="outline-text-2" id="text-8">
 
 
 <p>
@@ -720,9 +709,9 @@ ctags-exuberant，因为它有内建增量更新索引机制。
 
 </div>
 
-<div id="outline-container-10" class="outline-2">
-<h2 id="sec-10"><span class="section-number-2">10</span> 查找局部变量的定义</h2>
-<div class="outline-text-2" id="text-10">
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> 查找局部变量的定义</h2>
+<div class="outline-text-2" id="text-9">
 
 
 <p>
