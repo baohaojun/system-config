@@ -343,8 +343,8 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 
 其工作原理是这样的，以上图为例，先beagrep出readlink出现在哪些文件里，再
 在这些文件上当场调用ctags-exuberant，获得类似这样的信息：某文件第100行
-有一个函数定义A_func，150行有下一个函数B_func，而readlink出现在了125行，
-那么，我们可以说，A_func调用了readlink这个函数。
+有一个函数定义 ~A_func~ ，150行有下一个函数 ~B_func~ ，而readlink出现在了125行，
+那么，我们可以说， ~A_func~ 调用了readlink这个函数。
 
 又一次，我使用了 grep-mode 来一统其输出格式。
 

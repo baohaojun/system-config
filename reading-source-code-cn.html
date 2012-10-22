@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Emacs和它的朋友们——阅读源代码篇"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-22 14:35:42 CST"/>
+<meta name="generated" content="2012-10-22 20:07:34 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -662,8 +662,8 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 <p>
 其工作原理是这样的，以上图为例，先beagrep出readlink出现在哪些文件里，再
 在这些文件上当场调用ctags-exuberant，获得类似这样的信息：某文件第100行
-有一个函数定义A<sub>func，150行有下一个函数B</sub><sub>func，而readlink出现在了125行，</sub>
-那么，我们可以说，A<sub>func调用了readlink这个函数。</sub>
+有一个函数定义 <code>A_func</code> ，150行有下一个函数 <code>B_func</code> ，而readlink出现在了125行，
+那么，我们可以说， <code>A_func</code> 调用了readlink这个函数。
 </p>
 <p>
 又一次，我使用了 grep-mode 来一统其输出格式。
