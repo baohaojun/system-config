@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="阅读源代码"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-22 11:01:43 CST"/>
+<meta name="generated" content="2012-10-22 14:14:58 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -93,7 +93,7 @@
 <li><a href="#sec-3-2-1">3.2.1 试用</a></li>
 <li><a href="#sec-3-2-2">3.2.2 文档</a></li>
 <li><a href="#sec-3-2-3">3.2.3 使用</a></li>
-<li><a href="#sec-3-2-4">3.2.4 逆用使用</a></li>
+<li><a href="#sec-3-2-4">3.2.4 逆袭の使用</a></li>
 </ul></li>
 </ul>
 </li>
@@ -178,17 +178,17 @@
 
 <p>
 Emacs 是一个很强悍的编辑器，基本上只有 Vim 可与之匹敌。（鄙人是一个狂热
-的 Emacs 粉，但绝不是 Vim 黑，因为我学Emacs的过程，最大的收益来自于Vim
+的 Emacs 粉，但绝不是 Vim 黑，因为我学Emacs的过程，最大的受益来自于Vim
 作者所写的“<a href="http://www.moolenaar.net/habits.html">Seven habits of effective text editing</a>”）。
 </p>
 <p>
 没错，Emacs的学习曲线可能是陡一些，但是话说回来，学会它绝对是值得的，并
-且不然的话，就没意思了。
+且不然的话，就没意思了——爬个香山，能和珠峰比哪个更带劲儿么？
 </p>
 <p>
 作为一个Emacs的老用户，我想我应该说说为什么我向大家推荐Emacs。这是一件
-看上去很简单，实际上很困难的事情，就像解释人为什么要呼吸空气一样。但无
-论如何，我会认真试一下。
+看上去很简单，实际上很困难的事情，因为太熟悉了，就像要解释人为什么要呼
+吸空气一样。但无论如何，我会认真试一下。
 </p>
 
 </div>
@@ -347,7 +347,7 @@ make: *** [out/target/product/xx/kernel] Error 1
 </div>
 
 <div id="outline-container-3-2-4" class="outline-4">
-<h4 id="sec-3-2-4"><span class="section-number-4">3.2.4</span> 逆用使用</h4>
+<h4 id="sec-3-2-4"><span class="section-number-4">3.2.4</span> 逆袭の使用</h4>
 <div class="outline-text-4" id="text-3-2-4">
 
 
@@ -396,10 +396,13 @@ compilation-mode（make出错，perl脚本里的die，还有很多其他程序�
 compilation-mode的联系，把grep的匹配也称之为一个error，软件逻辑重用是好
 的，但这样的名字重用真的会造成困惑吧）。
 </p>
+<p>
+下面你会看到我把所有的代码阅读工具的界面都归一到grep-mode上来了，所以可见grep在我心目中的重要性:-)
+</p>
 
 
 
-<pre class="example">-*- mode: grep; default-directory: "~/windows-config/gcode/fcitx/src/" -*-
+<pre class="example">-*- mode: grep; default-directory: "~/windows-config/gcode/fcitx/src/" -*- 
 Grep started at Fri Oct 19 16:25:46
 
 grep -nH -e include *.cpp
@@ -629,7 +632,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 <p>
 最后，上面的图里显示的 imenu 定义跟默认的 Emacs 自带的有点不一样哦！那
 是因为我发现 Emacs 自带的imenu找定义功能不够强大，所以我就把它定制了一
-下，转而寻求强大的ctags-exuberant的帮助（详见 <a href="#">我的配置系统</a> ）：
+下，转而寻求强大的ctags-exuberant的帮助（详见 <a href="./my-config-cn.html">我的配置系统</a> ）：
 </p>
 
 
@@ -649,7 +652,7 @@ imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 
 
 
 <p>
-终于说到我的 favorite，beagrep了。详见 <a href="#grep-G">两秒钟grep两G代码！</a>，呵呵。
+终于说到我的 favorite，beagrep了。详见 <a href="./beagrep-cn.html">两秒钟grep两G代码！</a>。
 </p>
 
 

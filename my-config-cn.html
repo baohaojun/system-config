@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>活用design-pattern</title>
+<title>My configuration system</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="活用design-pattern"/>
+<meta name="title" content="My configuration system"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-22 10:59:02 CST"/>
+<meta name="generated" content="2012-10-22 14:13:28 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -73,91 +73,75 @@
 </div>
 
 <div id="content">
-<h1 class="title">活用design-pattern</h1>
+<h1 class="title">My configuration system</h1>
 
-
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<p>我的配置系统是github上的一个项目，<a href="https://github.com/baohaojun/windows-config">Windows-config</a>。
+</p>
+<p>
+里面最开始只是我的.bashrc、.emacs等文件，但很快我就把它的目标修正为：当
+我新安装一台机器后，我可以通过一个简单的 <code>git checkout</code> 和额外的几条脚本，把
+我的个人环境快速重建出来。
+</p>
+<p>
+整个项目必须checkout到你的 <code>$HOME/windows-config</code> 下。你可能会觉得奇
+怪，.bashrc/.emacs等文件不是应该放在 <code>$HOME/</code> 下吗，为什么要放到一个叫
+windows-config的子目录下呢？别急，听我慢慢道来:-)
+</p>
+<p>
+这其实是两个问题：
+</p>
 <ul>
-<li><a href="#sec-1">1 在 shell脚本里使用Abstract Factory的设计模式</a></li>
+<li>为什么要子目录？你自己试试就知道了，因为不用子目录，直接放在
+  <code>$HOME/</code> 下的话，你每次跑 <code>git status</code> 会被烦死的，因为会有很多其它系
+  统自动生成的配置文件、log文件等。你难道能不停更新你的.gitignore？你难
+  道能忍住、记住不能在 <code>$HOME/</code> 下跑 <code>git clean -xfd</code> （会把所有非git版
+  本管理文件全部删除，泪啊）？
+
+</li>
+<li>为什么叫windows-config？这只是个巧合而已，最开始的时候我正在公司的
+  windows机器上用cygwin，所以其配置文件就叫windows-config了。本来计划在
+  linux底下搞个linux-config的，但后来发现完全没必要，它们可以用设计模式
+  中factory的模式共用大部分代码，见<a href="#design-pattern">活用design-pattern</a>:-)
+</li>
 </ul>
-</div>
-</div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> 在 shell脚本里使用Abstract Factory的设计模式</h2>
-<div class="outline-text-2" id="text-1">
 
 
 <p>
-在不同的平台下，我需要定义一族函数， <code>of</code> ，其作用是在命令行下用各自系
-统定义的图形程序打开某个文件或URL（ <code>of</code> 是 “open file”之意）。
-</p>
-<p>
-比如， <code>of</code> 在Windows平台下应该用Explorer打开当前目录，而在Linux平台下
-应该用nautilus打开当前目录。
-</p>
-<p>
-我需要一个工厂虚类，其实就是文件。在linux下，这个工厂有一个实类，同时也
-有一个对象，那就是我的.bashrc-linux；而在Windows下呢，那就是我
-的.bashrc-windows。（我在Windows下在用的是Cygwin。所以也可以使用bash）。
-</p>
-<p>
-在.bashrc-linux这个工厂里，我们这样创建它的版本的 <code>of</code> （我们把
-<code>of-linux</code> 这个名字省略了，直接就叫 <code>of</code> ，严格按照design pattern来的话，
-你肯定会看到 <code>of-linux~，最后看见它被赋给一个 ~of</code> 的指针或者引用） ：
+最后，“额外的几条脚本”是指何意？把代码checkout到
+<code>$HOME/windows-config/</code> 下之后，只要记得跑这两条命令就搞定了：
 </p>
 
 
 
-<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">of</span>() {
-    gnome-open <span class="org-string">"$@"</span> &gt; /dev/null 2&gt;&amp;1
-}
-</pre>
-
-<p>
-而在.bashrc-windows这个工厂里，我们这样创建 <code>of</code> ：
-</p>
-
-
-
-<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">of</span>() {
-     cygstart <span class="org-string">"$@"</span> &gt; /dev/null 2&gt;&amp;1
-}
+<pre class="src src-sh">~/windows-config/bin/after-co-ln-s.sh
+~/windows-config/bin/linux/after-check-out.sh
 </pre>
 
 
 <p>
-在.bashrc里，我们这样决定要用哪个工厂：
+其中第一条就是要把相应的该放在 <code>$HOME</code> 下的文件/目录通过symlink给放出来。
+第二条则是做一些.deb包的安装、编译工作。
 </p>
-
-
-
-<pre class="src src-sh"><span class="org-keyword">if </span><span class="org-builtin">test</span> <span class="org-sh-quoted-exec">`uname`</span> = Linux; <span class="org-keyword">then</span>
-    <span class="org-variable-name">factory</span>=~/.bashrc-linux
-<span class="org-keyword">else</span>
-    <span class="org-variable-name">factory</span>=~/.bashrc-windows
-<span class="org-keyword">fi</span>
-</pre>
-
+<p>
+其中.deb包的安装有点意思，可以跟大家说说：
+</p>
+<ul>
+<li>用文件系统作数据库。我每次发现自己希望默认该装什么包，我就以该包的名
+  字在某配置目录（ <code>/home/bhj/bin/linux/config/pkgs/</code> ）下生成一个文件。
+  参见ESR的<a href="http://www.catb.org/esr/writings/taoup/">The Art of Unix Programming</a>。
 
 <p>
-然后，我们让工厂开工去创建我们想要的对象：
+  我会把所有文件都作为参数传给 <code>apt-get intstall</code> 。
 </p>
+</li>
+<li>安装出错的自动处理。随着时间推移，或者我从debian换到ubuntu或者反之，
+  有些包可能会找不到了。这时候我们只需要把 <code>apt-get install</code> 的
+  stdout/stderr结果记下来，parse一下，再把出错的包从它的参数列里拿掉再
+  来一遍（实际上是一个while循环）就好了。
+</li>
+</ul>
 
 
-
-<pre class="src src-sh"><span class="org-builtin">.</span> $<span class="org-variable-name">factory</span>
-</pre>
-
-
-<p>
-哈哈，设计模式有何难哉！（如果你是设计模式高手并且认为我是在瞎扯，那就
-对了，我认为设计模式是好的，我们其实一直在默默地用着，但把它拎出来大吹
-大擂就容易过了:-）
-</p></div>
-</div>
 </div>
 
 <div id="postamble">
