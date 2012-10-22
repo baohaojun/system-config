@@ -286,8 +286,10 @@ multi-grep，但幸好这些grep/ctags查得都很快）。
 把用户开始搜索的时候正在阅读的文件，记为起始文件；把结果文件中的每一个，
 都跟起始文件计算一下“距离”。距离最短的，就认为是最相关的。
 
-怎么计算距离呢？哈哈，perl有一个module，已经实现了计算两个字符串之间的
-距离的功能。我们直接拿来用就行了（再一次让我们见识到了社区的力量）。
+怎么计算距离呢？哈哈，perl有一个module，叫 ~String::Approx~ ，可以直接
+从cpan上安装，如果是用debian/ubuntu的话，也可以直接 ~apt-get install
+libstring-approx-perl~ 。它已经帮我们实现了计算两个字符串之间的距离的功
+能，我们直接拿来用就行了（再一次让我们见识到了社区的力量）。
 
 假设我们的起始文件是 ~/home/bhj/src/android/system/core/init/init.c~ ，
 在读这个文件代码的时候，我们想查一下 ~parse_state~ ，查出来有一
@@ -297,7 +299,7 @@ multi-grep，但幸好这些grep/ctags查得都很快）。
 * imenu
 
 imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 里类似于
-下图的功能（1. 列出当前文件中的所有定义，2. 鼠标点击实现跳转）：
+下图的功能（1. 列出当前文件中的所有定义方便查看，2. 鼠标点击实现跳转）：
 
 [[./si-imenu.png]]
 

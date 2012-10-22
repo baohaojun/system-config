@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Emacs和它的朋友们——阅读源代码篇"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-22 14:27:57 CST"/>
+<meta name="generated" content="2012-10-22 14:35:42 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -562,8 +562,9 @@ Search complete.  Search time = 0.59 seconds.
 都跟起始文件计算一下“距离”。距离最短的，就认为是最相关的。
 </p>
 <p>
-怎么计算距离呢？哈哈，perl有一个module，已经实现了计算两个字符串之间的
-距离的功能。我们直接拿来用就行了（再一次让我们见识到了社区的力量）。
+怎么计算距离呢？哈哈，perl有一个module，叫 <code>String::Approx</code> ，可以直接
+从cpan上安装，如果是用debian/ubuntu的话，也可以直接 <code>apt-get install libstring-approx-perl</code> 。它已经帮我们实现了计算两个字符串之间的距离的功
+能，我们直接拿来用就行了（再一次让我们见识到了社区的力量）。
 </p>
 <p>
 假设我们的起始文件是 <code>/home/bhj/src/android/system/core/init/init.c</code> ，
@@ -583,7 +584,7 @@ Search complete.  Search time = 0.59 seconds.
 
 <p>
 imenu是Emacs自带的一个命令，用它可以轻松地实现 source-insight 里类似于
-下图的功能（1. 列出当前文件中的所有定义，2. 鼠标点击实现跳转）：
+下图的功能（1. 列出当前文件中的所有定义方便查看，2. 鼠标点击实现跳转）：
 </p>
 <p>
 <img src="./si-imenu.png"  alt="./si-imenu.png" />
