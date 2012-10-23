@@ -1,5 +1,6 @@
 #!/bin/bash
 set -ex
+. ~/bin/.gitx
 
 test "$(pwd)" = $HOME && cd ~/windows-config
 cd "$(dirname "$(lookup_file .git)")"
@@ -13,6 +14,17 @@ else
     true
 fi
 
+if git remote -v | grep baohaojun.github.com.git; then
+    org_changes=$(git st -S|grep -e '\.org$' || true)
+    for x in $org_changes; do 
+        if test -e $x; then
+            org-export $x
+            yes-or-no-p -y "Continue?"
+        fi
+    done
+    git add .
+fi
+
 git add . 
 
 while test "$(git log --pretty=oneline -1 | cut -b 42-)" = mf; do
@@ -22,18 +34,6 @@ done
 if git diff --quiet HEAD && git branch --contains HEAD -a |grep -q from-mac; then
     echo HEAD already containd in a remote branch, no need to push
     exit
-fi
-
-if git remote -v | grep baohaojun.github.com.git; then
-    org_changes=$(git st -s | pn 2|grep -e '\.org$' || true)
-    html_changes=$(git st -s | pn 2|grep -e '\.html$'|perl -npe 's/\.html$/.org/' || true)
-
-    for x in $(arg1-arg2 $org_changes $html_changes); do 
-        if test -e $x; then
-            org-export $x
-        fi
-    done
-    git add .
 fi
 
 if git status -s | grep . ; then

@@ -46,7 +46,7 @@ fi
         sudo ifconfig eth0:1 $(ip-or-name r66)
     fi
     while true; do
-        ssh -C2qN -D 48080 r66
+        ssh -2qN -D 48080 r66
         x=30
         y=$(random 30)
         ((x = x + y))

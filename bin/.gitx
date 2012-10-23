@@ -1,0 +1,26 @@
+#!/bin/bash
+git()
+{
+
+    (
+	if test "`readlink -f .`" = "`readlink -f ~`" -a "$1" != clone
+	then
+            cd ~/windows-config/;
+	fi
+
+	if test "$1" = st -a "$2" = -S; then
+	    command git status -s | perl -ne '
+chomp(); 
+$_ = substr($_, 3); 
+if (m/^"/) { 
+    $_ = eval($_);
+}
+print $_ . "\n";
+'
+	  exit
+	fi
+    
+	command git "$@"
+    )
+
+}
