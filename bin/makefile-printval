@@ -1,0 +1,3 @@
+#/bin/bash
+
+echo "\$(warning value is :$(cat):)"|make -f -

@@ -29,7 +29,7 @@ while ( not -f "$pwd/GTAGS" and not "$pwd" eq "/") {
 
 if ($pwd eq "/" or $pwd eq glob("~")) {
     chomp($pwd = `readlink ~/.gtags-dir`);
-    print "pwd is read from ~/.gtags-dir at $pwd\n";
+    print "pwd is read from ~/.gtags-dir at $pwd\n" unless $ENV{UNPACK_MACRO};
 } else {
     system("rm", "-f", glob("~/.gtags-dir"));
     system("ln", '-sf', $pwd, glob("~/.gtags-dir"));
@@ -106,6 +106,21 @@ sub do_cscope($$$$) {
 	# print 'dist between "' . $matches{$_}->[0] . '" and "' . $approx_dir . '" is ' . abs(adistr($matches{$_}->[0], $approx_dir)) . "\n";
 	# print 'dist between "' . $matches{$_}->[4] . '" and "' . $lookup_needle . '" is ' . abs(adistr($matches{$_}->[4], $lookup_needle)) . "\n";
 	my ($file, $line, $str) = ($matches{$_}->[0], $matches{$_}->[2], $matches{$_}->[3]);
+
+	if ($ENV{UNPACK_MACRO} and $str =~ m/^\s*#define\s+$lookup_needle\s+(\S+)$/) {
+	    unless ($1 eq $lookup_needle or $ENV{UNPACK_MACRO} >= 5) {
+		my $UNPACK_MACRO = $ENV{UNPACK_MACRO} + 1;
+		print "need to lookup the $1 'cause you are probably not interested in '$str'\n";
+		system("UNPACK_MACRO=$UNPACK_MACRO $0 -e $1");
+	    }
+	}
+	if ($str =~ m/^\s*typedef (?:struct|enum)\s+(.*)\s+$lookup_needle/) { # need look up the $1 instead
+	    unless ($1 eq $lookup_needle or $ENV{UNPACK_MACRO} >= 5) {
+		my $UNPACK_MACRO = $ENV{UNPACK_MACRO} + 1;
+		print "need to lookup the $1 'cause you are probably not interested in '$str'\n";
+		system("UNPACK_MACRO=$UNPACK_MACRO $0 -e $1");
+	    }
+	}
         print "$code_dir/$file:$line: $str\n" 
 	    unless # we should extract this into a .conf!!
 	    $str =~ m/^#undef|^EXPORT_SYMBOL/ or $file =~ m,external/kernel-headers, or $file =~ m,android-[2-7]/arch-,;
