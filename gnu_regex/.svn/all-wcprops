@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svnroot/ctags/!svn/ver/710/trunk/gnu_regex
+END
+regex.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svnroot/ctags/!svn/ver/707/trunk/gnu_regex/regex.h
+END
+regexec.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/ctags/!svn/ver/710/trunk/gnu_regex/regexec.c
+END
+regex_internal.c
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/ctags/!svn/ver/710/trunk/gnu_regex/regex_internal.c
+END
+README.txt
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/ctags/!svn/ver/707/trunk/gnu_regex/README.txt
+END
+regex.c
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svnroot/ctags/!svn/ver/707/trunk/gnu_regex/regex.c
+END
+regex_internal.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/ctags/!svn/ver/710/trunk/gnu_regex/regex_internal.h
+END
+regcomp.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/ctags/!svn/ver/710/trunk/gnu_regex/regcomp.c
+END

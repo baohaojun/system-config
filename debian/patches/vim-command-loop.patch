@@ -1,0 +1,24 @@
+Description: Fix infinite loop parsing vim commands
+ This happens if a non-alphanumeric character other than whitespace or '-'
+ is found before the first alphanumeric character after 'command'.
+Author: Colin Watson <cjwatson@ubuntu.com>
+Bug: http://sourceforge.net/tracker/index.php?func=detail&aid=3214129&group_id=6556&atid=106556
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/736367
+Forwarded: no
+Last-Update: 2011-03-17
+
+Index: b/vim.c
+===================================================================
+--- a/vim.c
++++ b/vim.c
+@@ -405,7 +405,9 @@
+ 			while (*cp && !isspace ((int) *cp))
+ 				++cp; 
+ 		}
+-	} while ( *cp &&  !isalnum ((int) *cp) );
++		else
++			break;
++	} while ( *cp );
+ 
+ 	if ( ! *cp )
+ 	{

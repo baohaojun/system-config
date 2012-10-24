@@ -1,0 +1,370 @@
+exuberant-ctags (1:5.9~svn20110310-4) unstable; urgency=low
+
+  * Simplify alternatives handling.  update-alternatives doesn't need so
+    much babysitting these days.
+  * Reduce the etags alternative's priority to 10 so that it's less than
+    that of emacs (closes: #668560).
+  * Upgrade to debhelper v9 and its new arrangements for honouring
+    dpkg-buildflags output.
+  * Append CPPFLAGS to CFLAGS, since the upstream build system doesn't
+    honour CPPFLAGS.  This enables -D_FORTIFY_SOURCE=2 with Debian's default
+    dpkg-buildflags configuration.
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 14 Apr 2012 13:42:14 +0100
+
+exuberant-ctags (1:5.9~svn20110310-3) unstable; urgency=low
+
+  * Mark exuberant-ctags Multi-Arch: foreign.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 09 Nov 2011 01:44:38 +0000
+
+exuberant-ctags (1:5.9~svn20110310-2) unstable; urgency=low
+
+  * Add Go support, from a patch by Alexey Marinichev (closes: #634166).
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 20 Jul 2011 14:24:17 +0100
+
+exuberant-ctags (1:5.9~svn20110310-1) unstable; urgency=low
+
+  * New upstream release snapshot (thanks, Daniel Hahler; LP: #732860).
+    - Fix crash with comments inside strings in OCaml (LP: #554898).
+  * Drop accepted patches:
+    - debian/patches/make-match-loop.patch
+    - debian/patches/php-ignore-keywords-in-comments.patch
+  * For Python, disable -i so imports are not tagged by default (thanks,
+    Barry Warsaw; LP: #618979).
+  * Upstream uses AC_SYS_LARGEFILE now, so drop explicit
+    -D_FILE_OFFSET_BITS=64 in debian/rules.
+  * Fix infinite loop parsing vim commands, when a non-alphanumeric
+    character other than whitespace or '-' is found before the first
+    alphanumeric character after 'command' (LP: #736367).
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 17 Mar 2011 16:47:08 +0000
+
+exuberant-ctags (1:5.8-4) unstable; urgency=low
+
+  * Apply patch from Ben Spencer to use memmove rather than strcpy on
+    overlapping strings (closes: #594185).
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 17 Feb 2011 13:47:11 +0000
+
+exuberant-ctags (1:5.8-3) unstable; urgency=low
+
+  * Compile with -D_FILE_OFFSET_BITS=64 in order to support 64-bit inode
+    numbers and file sizes on 32-bit systems (thanks, Hamish Moffatt;
+    closes: #588771).
+
+ -- Colin Watson <cjwatson@debian.org>  Mon, 12 Jul 2010 10:12:13 +0100
+
+exuberant-ctags (1:5.8-2) unstable; urgency=low
+
+  * Rewrite debian/rules using debhelper 7.
+  * Convert to source format 3.0 (quilt).
+  * Policy version 3.8.4: no changes required.
+  * Fix endless loop on unmatched { in a Makefile with no following newline
+    (thanks, Martin Dorey; closes: #571652).
+  * Backport upstream patch to ignore keywords inside PHP multiline comments
+    (closes: #505538).
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 26 Feb 2010 23:20:58 +0000
+
+exuberant-ctags (1:5.8-1) unstable; urgency=low
+
+  * New upstream release. Debian bugs fixed:
+    - Add support for ASP classes (closes: #529215).
+  * Compress files using gzip -n (cf. debhelper 6.0.6).
+  * Add a watch file.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 14 Jul 2009 15:05:23 +0100
+
+exuberant-ctags (1:5.7-4) unstable; urgency=low
+
+  * Update DEB_BUILD_OPTIONS parsing code from policy 3.8.0.
+  * Backport from upstream (closes: #484797, SF #1878155):
+    - jscript.c was not properly handling escaped quotes.
+  * Add a Homepage control field.
+  * Refer to /usr/share/common-licenses/GPL-2 in debian/copyright rather
+    than plain GPL.
+  * Policy version 3.8.0.
+
+ -- Colin Watson <cjwatson@debian.org>  Mon, 09 Jun 2008 09:07:27 +0100
+
+exuberant-ctags (1:5.7-3) unstable; urgency=low
+
+  * Backport from upstream (thanks, Daniel Hahler of Ubuntu;
+    closes: #460982, LP: #179492):
+    - Fix parsing of Python variables starting with "def" or "class" as
+      function or class definitions.
+  * Policy version 3.7.3: no changes required.
+  * Add an actual copyright notice to debian/copyright (from 'ctags
+    --version' output).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 04 Mar 2008 10:38:11 +0000
+
+exuberant-ctags (1:5.7-2) unstable; urgency=low
+
+  * Add an md5sums control file.
+  * Use autotools-dev's recommended ./configure --build and --host options.
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 17 Nov 2007 20:35:19 +0000
+
+exuberant-ctags (1:5.7-1) unstable; urgency=low
+
+  * New upstream release. Debian bugs fixed:
+    - Fixed typo in man page (closes: #366412).
+    - Fixed parsing of generic classes/interfaces (Java, closes: #368955).
+    - Added support for arbitrary nesting depth (Python, closes: #409078).
+    - Fixed parsing of comment-to-end-of-line with no newline before EOF
+      (Fortran, closes: #432872).
+  * Only ignore missing-Makefile errors in clean target, not all other
+    errors.
+
+ -- Colin Watson <cjwatson@debian.org>  Sat, 08 Sep 2007 09:16:38 +0100
+
+exuberant-ctags (1:5.6-1) unstable; urgency=low
+
+  * New upstream release (closes: #374097).
+  * Fix accidentally-unrendered line in ctags(1) (closes: #271323).
+  * Policy version 3.7.2: no changes required.
+
+ -- Colin Watson <cjwatson@debian.org>  Mon, 31 Jul 2006 09:09:12 +0100
+
+exuberant-ctags (1:5.5.4-2) unstable; urgency=low
+
+  * Fix bashisms in postinst and prerm.
+  * Add .svn, {arch}, .arch-ids, .bzr, _darcs, and .git to the default
+    exclude list (thanks, Jon Dowland; closes: #363388).
+
+ -- Colin Watson <cjwatson@debian.org>  Wed, 19 Apr 2006 11:56:16 +0100
+
+exuberant-ctags (1:5.5.4-1) unstable; urgency=medium
+
+  * New upstream release.
+    - Fixed broken -R option.
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 30 Mar 2004 11:56:40 +0100
+
+exuberant-ctags (1:5.5.3-1) unstable; urgency=low
+
+  * New upstream release.
+    - Fixed destruction of tag file with certain informational options
+      (closes: #218382).
+
+ -- Colin Watson <cjwatson@debian.org>  Tue, 16 Mar 2004 21:11:22 +0000
+
+exuberant-ctags (1:5.5.2-1) unstable; urgency=low
+
+  * New upstream release.
+  * Improve short description a bit.
+  * Policy version 3.6.1: no changes required.
+
+ -- Colin Watson <cjwatson@debian.org>  Thu, 18 Sep 2003 20:20:49 +0100
+
+exuberant-ctags (1:5.5.1-1) unstable; urgency=low
+
+  * New upstream release.
+    - ctags --help, --version, and --license no longer create a tags file
+      (closes: #187474).
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 15 Aug 2003 20:55:20 +0100
+
+exuberant-ctags (1:5.5-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed,  2 Apr 2003 08:23:38 +0100
+
+exuberant-ctags (1:5.4-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri, 18 Oct 2002 01:51:03 +0100
+
+exuberant-ctags (1:5.3.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Policy version 3.5.7: support DEB_BUILD_OPTIONS=noopt,nostrip.
+
+ -- Colin Watson <cjwatson@debian.org>  Fri,  4 Oct 2002 06:47:35 +0100
+
+exuberant-ctags (1:5.3-1) unstable; urgency=low
+
+  * New upstream release.
+  * QUOTES seems to have been removed upstream. Don't install it.
+  * Clean up debian/copyright a little.
+  * Update list of languages in description.
+  * Build with -Wall.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed,  7 Aug 2002 19:41:55 +0100
+
+exuberant-ctags (1:5.2.2-2) unstable; urgency=low
+
+  * New maintainer. Thanks, Wichert.
+  * Remove the /usr/doc compatibility symlink.
+
+ -- Colin Watson <cjwatson@debian.org>  Wed,  7 Aug 2002 14:12:47 +0100
+
+exuberant-ctags (1:5.2.2-1) unstable; urgency=medium
+
+  * New upstream version
+  * Don't abort if update-alternatives reports an error. Closes: Bug#133033
+  * Remove temporary file in postinst. Closes: Bug#134208
+
+ -- Wichert Akkerman <wakkerma@debian.org>  Sun, 17 Feb 2002 15:16:36 +0100
+
+exuberant-ctags (1:5.0.1-3) unstable; urgency=low
+
+  * Fix spelling error in description
+
+ -- Wichert Akkerman <wakkerma@debian.org>  Sat, 17 Nov 2001 17:25:11 +0100
+
+exuberant-ctags (1:5.0.1-2) unstable; urgency=low
+
+  * Change alternative priority on user demand so it is higher then
+    that of other `wimpy ctags' implementations.
+  * Remove Linux reference from copyright
+
+ -- Wichert Akkerman <wakkerma@debian.org>  Sat,  6 Oct 2001 14:57:52 +0200
+
+exuberant-ctags (1:5.0.1-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Wichert Akkerman <wakkerma@debian.org>  Mon, 16 Apr 2001 04:36:50 +0200
+
+exuberant-ctags (1:5.0-2) unstable; urgency=low
+
+  * Change section to editors and priority to optional so they match
+    the dinstall overrides
+  * Fix typo in Suggests. Closes: Bug#92791
+  * Add vile to Suggests. Closes: Bug#51948
+
+ -- Wichert Akkerman <wakkerma@debian.org>  Sun, 15 Apr 2001 13:14:53 +0200
+
+exuberant-ctags (1:5.0-1) unstable; urgency=low
+
+  * Change maintainer, Heiko is effectively MIA
+  * New upstream version
+  * Bump Standards-Version to 3.5.2
+  * Update description to note that exuberant can now also handle
+    ASP, Makefiles, Pascal, PHP, REXX, Ruby and S-Lang.
+
+ -- Wichert Akkerman <wakkerma@debian.org>  Sat, 14 Apr 2001 10:26:58 +0200
+
+exuberant-ctags (1:4.0.3-0.1) unstable; urgency=low
+
+  * Non-maintainer upload
+  * New upstream version
+  * Update Standards-Version to 3.2.1.0
+  * Repackaged from scratch
+  * FHS compliant paths now
+  * Change priority to extra
+  * Properly handle alternatives with respect to aborted upgrades
+  * Rewrite copyright to reflect new license (GPL), homepage location
+    (sourceforge) and email address of author.
+  * Remove references to elv-ctags and conflicts for packages that
+    vanished 3 years ago
+  * Redid extended description: reformat it so it is readable
+    and reflects the current future set better.
+
+ -- Wichert Akkerman <wakkerma@debian.org>  Tue, 29 Aug 2000 02:49:18 +0200
+
+exuberant-ctags (1:3.2.4-0) unstable; urgency=high
+
+  * new upstream (closes #37172)
+  * /usr/man/man1/ctags.1.gz removed (closes #35967)
+  * 34666 outdated with new upstream (closes #34666)
+  * fixed typos in README (closes #38882)
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Tue, 20 Jul 1999 21:43:29 +0200
+
+exuberant-ctags (1:3.1.2-1) unstable; urgency=high
+
+  * new upstream
+  * Updated the debian/copyright file (original source location)
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Wed, 10 Feb 1999 01:09:18 +0100
+
+exuberant-ctags (1:2.3.2-2) frozen unstable; urgency=high
+
+  * removed the ctags.1 man page (since this page is provided through
+    the alternatives mechanism (closes #33100 (grave), #28532)
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Wed, 10 Feb 1999 00:39:06 +0100
+
+exuberant-ctags (1:2.3.2-1) unstable; urgency=high
+
+  * maintainer upload (since Peter Moulder can't do this)
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Wed, 14 Oct 1998 17:30:03 +0200
+
+exuberant-ctags (1:2.3.2-0.1) unstable; urgency=high
+
+  * new upstream version.  Now supports Java.
+  * Non-maintainer upload.
+  * Change Section to `devel'.
+  * Fix lintian bugs.
+
+ -- Peter Moulder <pjm@debs.fuller.edu>  Sat, 26 Sep 1998 18:20:20 +1000
+
+exuberant-ctags (1:1.7.5-2) unstable; urgency=high
+
+  * include the _original_ source
+  * debian/rules clean target removes now the config.log file
+    (is not present in orig source)
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Thu, 15 Jan 1998 17:21:24 +0100
+
+exuberant-ctags (1:1.7.5-1) unstable; urgency=low
+
+  * new upstream (fixes #16297)
+  * no debian related bugs fixed
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Thu, 15 Jan 1998 14:20:34 +0100
+
+exuberant-ctags (1:1.7.4-1) unstable; urgency=low
+
+  * Non-maintainer release
+  * Compiled with libc6
+  * New upstream version
+  * Use pristine upstream source
+  * Strip installed executable (fixes #15716)
+  * Rename CHANGES to changelog
+
+ -- Richard Braakman <dark@xs4all.nl>  Fri, 26 Dec 1997 22:49:10 +0100
+
+exuberant-ctags (1:1.6-1) unstable; urgency=high
+
+  * use epoch to make 1.6 > 1.6b2
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Sun, 1 Jun 1997 10:44:43 +0200
+
+exuberant-ctags (1.6-1) unstable; urgency=high
+
+  * new upstream release
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Sat, 17 May 1997 20:25:08 +0200
+
+exuberant-ctags (1.6b2-1) unstable; urgency=high
+
+  * new upstream release
+
+ -- Heiko schlittermann <heiko@lotte.sax.de>  Wed, 23 Apr 1997 11:07:09 +0200
+
+vimctags (1.5-1) unstable; urgency=low
+
+  * new upstream release
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Tue, 25 Mar 1997 22:21:21 +0100
+
+ctags (1.4-2) unstable; urgency=low
+
+  * conflicts with emacs' ctags (and elvisctags)
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Tue, 10 Sep 1996 17:04:10 +0200
+
+ctags (1.4-1) unstable; urgency=low
+
+  * initial release
+
+ -- Heiko Schlittermann <heiko@lotte.sax.de>  Fri, 30 Aug 1996 16:12:32 +0200
