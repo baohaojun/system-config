@@ -179,7 +179,7 @@ Grep finished (matches found) at Fri Oct 19 16:25:46
 * ctags-exuberant
 
 ctags-exuberant是emacs自带的etags的一个加强兼容版。用它可以查函数、类、
-结构等定义于可处。它支持40多种语言。它可以轻容地扩展支持更多简单的语言，
+结构等定义于何处。它支持40多种语言。它可以轻易地扩展支持更多简单的语言，
 比如Kernel的Kconfig脚本，可以通过一个这样的 ~$HOME/.ctags~ 文件来增加支
 持：
 
