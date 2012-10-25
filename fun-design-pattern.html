@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>fun-design-pattern</title>
+<title>在shell脚本里使用Abstract Factory的设计模式</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="fun-design-pattern"/>
+<meta name="title" content="在shell脚本里使用Abstract Factory的设计模式"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-22 14:14:28 CST"/>
+<meta name="generated" content="2012-10-25 11:14:49 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -73,40 +73,53 @@
 </div>
 
 <div id="content">
-<h1 class="title">fun-design-pattern</h1>
+<h1 class="title">在shell脚本里使用Abstract Factory的设计模式</h1>
 
-
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 在 shell脚本里使用Abstract Factory的设计模式</a></li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> 在 shell脚本里使用Abstract Factory的设计模式</h2>
-<div class="outline-text-2" id="text-1">
-
-
-<p>
-在不同的平台下，我需要定义一族函数， <code>of</code> ，其作用是在命令行下用各自系
-统定义的图形程序打开某个文件或URL（ <code>of</code> 是 “open file”之意）。
+<p>Abstract Factory的定义见 <a href="http://en.wikipedia.org/wiki/Abstract_factory_pattern">wikipedia</a> 。
 </p>
 <p>
-比如， <code>of</code> 在Windows平台下应该用Explorer打开当前目录，而在Linux平台下
-应该用nautilus打开当前目录。
+在不同的平台下，我需要分别定义一组函数/命令， 比如 <code>of</code> ，其作用是在命
+令行下用图形程序打开参数指定的文件或URL（ <code>of</code> 是 “open file”之意）；又
+比如 <code>oc</code> ，“open container”，其作用是用文件管理器打开参数指定的文件所
+在文件夹并选定该文件。
 </p>
 <p>
-我需要一个工厂虚类，其实就是文件。在linux下，这个工厂有一个实类，同时也
-有一个对象，那就是我的.bashrc-linux；而在Windows下呢，那就是我
-的.bashrc-windows。（我在Windows下在用的是Cygwin。所以也可以使用bash）。
+这个需求非常符合 Abstract Factory 设计模式的使用场景，请听我慢慢道来。
 </p>
 <p>
-在.bashrc-linux这个工厂里，我们这样创建它的版本的 <code>of</code> （我们把
-<code>of-linux</code> 这个名字省略了，直接就叫 <code>of</code> ，严格按照design pattern来的话，
-你肯定会看到 <code>of-linux~，最后看见它被赋给一个 ~of</code> 的指针或者引用） ：
+比如，重复上面的叙述，虚拟的 <code>of</code> 的定义为：在命令行下用图形程序打开参
+数指定的文件或URL。具体的 <code>of</code> 的定义则是（以linux为例）：在linux命令行
+下用linux图形程序打开参数指定的文件或URL。 （比如 <code>of readme.txt</code> ，在
+Windows平台下应该用notepad.exe打开该文本文件（取决于注册表中的文件关
+联），而在Linux平台下应该用相应的例如gedit程序来打开此文件。）
+</p>
+<p>
+（ <code>of</code> 命令最早是受到了 cygwin 下 cygstart 命令的启发。而 cygstart 其
+实是受 windows 下 cmd.exe 自带的 start 命令启发；并且 Linux 底下也有类
+似功能的 xdg-open 和 gnome-open 命令。但非要去记不同的环境下一定要敲不
+同的命令实在是一件让人痛苦的事情，就像面象对象编程用虚函数解决掉了
+giant “switch” 语句的问题，我们也可以用抽象工厂模式来抹除这种痛苦。）
+</p>
+<p>
+我需要一个工厂虚类，通过它我可以创建虚拟的 <code>of/oc</code> 命令。在linux下，有
+一个具体的工厂，通过它我可以创建具体的linux版本的 <code>of/oc</code> 命令；在
+windows下，也有一个具体的工厂，通过它我可以创建具体的windows版本的
+<code>of/oc</code> 命令。
+</p>
+<p>
+如果一定要把类、对象的比喻进行到底的话，这里所说的工厂虚类我们可以把它
+等同于文件的概念。则相应的linux工厂实类的定义就是“一个实现了linux版
+<code>of</code> 命令创建功能的文件”。在面向对象编程中，虚类是无法创建直接对应于它
+的对象的；但linux工厂实类我们可以为它创建一个对象，也就是一个实际存在于
+文件系统中的文件（而不再是口头说说的、概念上的文件）：
+<code>$HOME/.bashrc-linux</code> 。接下来linux版 <code>of</code> 实类的定义类似于 <code>function of() { ... }</code> ，要为它创建一个对象的话，我们需要把这段定义交给bash命令
+行执行一下，见下图：
+</p>
+<p>
+<img src="./create-of.png"  alt="./create-of.png" />
+</p>
+<p>
+在 <code>.bashrc-linux</code> 这个工厂里，我们这样定义linux版的 <code>of</code> ：
 </p>
 
 
@@ -116,8 +129,9 @@
 }
 </pre>
 
+
 <p>
-而在.bashrc-windows这个工厂里，我们这样创建 <code>of</code> ：
+而在 <code>.bashrc-windows</code> 这个工厂里，我们这样定义windows版的 <code>of</code> ：
 </p>
 
 
@@ -129,7 +143,8 @@
 
 
 <p>
-在.bashrc里，我们这样决定要用哪个工厂：
+抽象工厂模式里一般在程序刚开始的时候决定使用哪个具体的工厂，所以在我的
+.bashrc 里：
 </p>
 
 
@@ -143,22 +158,21 @@
 
 
 <p>
-然后，我们让工厂开工去创建我们想要的对象：
+最后，我们让工厂开工，一次性制造出我们想要的 <code>of/oc</code> 以及其他 <b>概念上平 台无关，实现上平台相关，故曰之抽象</b> 的 <b>一系列，故曰之工厂</b> 的命令：
 </p>
 
 
 
-<pre class="src src-sh"><span class="org-builtin">.</span> $<span class="org-variable-name">factory</span>
+<pre class="src src-sh"><span class="org-keyword">function</span> <span class="org-function-name">Start</span>() {
+    <span class="org-builtin">source</span> <span class="org-string">"$2"</span>
+}
+Start the <span class="org-string">"$factory"</span> and claim deep understanding about Abstract Factory design pattern<span class="org-string">\!</span> No kidding<span class="org-string">\!</span>
 </pre>
 
 
 <p>
-哈哈，设计模式有何难哉！（如果你是设计模式高手并且认为我是在瞎扯，那就
-对了，我认为设计模式是好的，我们其实一直在默默地用着，但把它拎出来大吹
-大擂就容易过了:-）
+这就是我对抽象工厂模式的理解，您觉得呢？
 </p></div>
-</div>
-</div>
 
 <div id="postamble">
     <hr/>
