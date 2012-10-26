@@ -19,6 +19,8 @@ my $members = 0;
 my $grep_all = 0;
 my $no_comment = 0;
 my @argv_for_grep_all = @ARGV;
+my $path_matcher = "";
+my @beagrep_path_arg;
 
 GetOptions(
     "s!" => \$silent,
@@ -26,8 +28,13 @@ GetOptions(
     "a!" => \$grep_all,
     "m!" => \$members,
     "e=s" => \$target,
+    "p=s" => \$path_matcher,
     "nc!" => \$no_comment,
     );
+
+if ($path_matcher) {
+    @beagrep_path_arg = ("-p", $path_matcher);
+}
 
 if ($target =~ m/^\b/) {
     $target = "\\b$target";

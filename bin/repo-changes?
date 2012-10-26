@@ -131,4 +131,5 @@ fi
     lognow="$log-$(now)"
     tee "$lognow" 2>/dev/null
     ln -sf $(basename "$lognow") "$log" >/dev/null 2>&1
+    cp "$log" .repo/repo-changes.log >/dev/null 2>&1
 )

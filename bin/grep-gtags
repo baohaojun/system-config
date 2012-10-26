@@ -18,48 +18,52 @@ print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 
 #gtags-cscope-grep regexp
 
-my $pwd = $ENV{PWD};
+my $start_dir = $ENV{PWD};
+debug "started grep in $start_dir\n";
 
-$pwd = "$ENV{HOME}/tmp/for-code-reading$pwd";
+my $db_dir = "$ENV{HOME}/tmp/for-code-reading$start_dir";
 our $approx_dir = "ENV{HOME}/tmp/for-code-reading$ENV{GTAGS_START_FILE}";
 
-while ( not -f "$pwd/GTAGS" and not "$pwd" eq "/") {
-    chomp($pwd = `dirname "$pwd"`);
+while ( not -f "$db_dir/GTAGS" and not "$db_dir" eq "/") {
+    chomp($db_dir = `dirname "$db_dir"`);
 }
 
-if ($pwd eq "/" or $pwd eq glob("~")) {
-    chomp($pwd = `readlink ~/.gtags-dir`);
-    print "pwd is read from ~/.gtags-dir at $pwd\n" unless $ENV{UNPACK_MACRO};
+if ($db_dir eq "/" or $db_dir eq glob("~")) {
+    chomp($db_dir = `readlink ~/.gtags-dir`);
+    print "db_dir is read from ~/.gtags-dir at $db_dir\n" unless $ENV{UNPACK_MACRO};
 } else {
     system("rm", "-f", glob("~/.gtags-dir"));
-    system("ln", '-sf', $pwd, glob("~/.gtags-dir"));
+    system("ln", '-sf', $db_dir, glob("~/.gtags-dir"));
 }
 
 my $lookup_type = 1;
 my $lookup_needle = "hello_world";
 my $arch = ".";
 my $lookup_restrict_regexp;
+my $path_matcher = ".";
 
 GetOptions(
     "e=s" => \$lookup_needle,
     "a=s" => \$arch,
+    "p=s" => \$path_matcher,
     );
 
+$path_matcher = qr($path_matcher);
 $lookup_needle =~ s/\+.*//;
-$approx_dir = substr($approx_dir, length($pwd));
+$approx_dir = substr($approx_dir, length($db_dir));
 
 sub do_cscope($$$$) {
-    my ($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp) = @_;
-    chdir ($pwd) or die "Error chdir $pwd";
-    my $gtags_dir = $pwd;
-    $gtags_dir = shell_quote($gtags_dir);
+    my ($db_dir, $lookup_type, $lookup_needle, $lookup_restrict_regexp) = @_;
+    chdir ($db_dir) or die "Error chdir $db_dir";
+    my $db_dir_quoted = shell_quote($db_dir);
     my $got_results = 0;
-    my $code_dir = substr($pwd, length("$ENV{HOME}/tmp/for-code-reading"));
+    my $code_dir = substr($db_dir, length("$ENV{HOME}/tmp/for-code-reading"));
     $code_dir =~ s,/+,/,g;
     open(my $grep, "-|", "echo $lookup_type$lookup_needle|gtags-cscope");
 
     my @matches;
     my %matches;
+    my $path_filter_worked;
 
     while (<$grep>) {
         chomp();
@@ -81,6 +85,11 @@ sub do_cscope($$$$) {
 		debug "ignore $path because arch not matches";
 		next;
 	    }
+	    if ($path !~ m/$path_matcher/) {
+		debug "ignore $path because of path matcher miss";
+		$path_filter_worked = 1;
+		next;
+	    }
 	    $matches{$_} = [$path, $def, $line, $str]; # arch/h8300/kernel/entry.S need_resched 312 need_resched:
 	    my $x = $path;
 	    $x =~ s,.*/,,;
@@ -92,11 +101,14 @@ sub do_cscope($$$$) {
 	}
     }
 
+    if (not @matches and $path_filter_worked) {
+	print "path filter worked, and you got 0 matches!\n";
+    }
+
     printf "found total %d definitions\n", scalar @matches;
     use String::Approx 'adistr';
     our $approx_dir;
 
-    my $gpath_path = "$gtags_dir/GPATH";
     my %update_path;
     for (sort {
 	abs(adistr($matches{$a}->[0], $approx_dir)) + abs(adistr($matches{$a}->[4], $lookup_needle)) / 2
@@ -132,11 +144,11 @@ sub do_cscope($$$$) {
     }
     chdir ($code_dir) or die "Can not change to $code_dir";
     my @update_path = keys %update_path; 
-    system("echo @update_path |tr ' ' '\n'| gtags --gtagslabel=plugin-example -i -f - $gtags_dir");
+    system("echo @update_path |tr ' ' '\n'| gtags --gtagslabel=plugin-example -i -f - $db_dir_quoted");
     return $got_results;
 }
 
-exit if do_cscope($pwd, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
+exit if do_cscope($db_dir, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
 
 my @gtags_fallback_dir = map {qx(readlink $_)} glob("~/.gtags-fallback-dir*");
 unless (@gtags_fallback_dir) {

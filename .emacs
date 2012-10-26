@@ -1745,7 +1745,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key (kbd "C-{") 'beginning-of-buffer)
 (global-set-key (kbd "C-}") 'end-of-buffer)
 (global-set-key (kbd "M-.") 'gtags-grep)
-(global-set-key (kbd "C-.") 'gtags-grep)
 (global-set-key (kbd "M-g f") 'grep-func-call)
 (global-set-key (kbd "M-s e") 'bhj-occur-make-errors)
 ;(global-set-key [?\C-,] (lookup-key global-map [?\C-x]))

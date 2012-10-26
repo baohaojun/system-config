@@ -56,7 +56,7 @@ fi
 
 (
     flock -n 9 || { echo 'lock failed for vpn at '$(date); exit 0; }
-    if test -e ~/.at-home; then
+    if test -e ~/.at-home -o -e ~/.no-vpn; then
         exit 0
     fi
 
