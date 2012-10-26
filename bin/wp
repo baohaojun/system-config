@@ -84,13 +84,9 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     if test "$NO_PUTCLIP" = true; then
         "`basename -- $0`" "$@"
     else
-	out=/dev/null
-	if tty >/dev/null 2>&1;
-	then 
-	    out=/dev/tty
-	fi
-        "`basename -- $0`" "$@" |
-	tee $out |
+        out=$($(basename -- $0) "$@")
+        echo "$out"
+        echo "$out"|
 	putclip
     fi
 else # we are being sourced

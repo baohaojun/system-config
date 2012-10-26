@@ -152,12 +152,18 @@ time (
         do-partition factory "$(get-image-path FACT)"
     fi
 
-    if test "$ERASE_ALL" = true; then
-        do-partition GPT "$(get-image-path PGPT)"
-        do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
-        do-partition OBM $(concat-file 0 ntim_emmc.bin 4K OBMI)
-    fi
 
+    do-partition GPT "$(get-image-path PGPT)"
+
+    ntim_bin=$(get-image-path TIMH)
+    if test ! -e "$ntim_bin" -a -e ./software_downloader/Utilities/TimBuilder/TimBuilder.exe; then
+        wine ./software_downloader/Utilities/TimBuilder/TimBuilder.exe -r "$(command wp $BLF)"
+    fi
+    
+    if test -e "$ntim_bin"; then
+        do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
+        do-partition OBM $(concat-file 0 TIMH 128K OBMI)
+    fi
 
     if test $(basename $0) = do-fastboot-full-988 -a "$ERASE_ALL" = true; then
         fastboot erase misc
