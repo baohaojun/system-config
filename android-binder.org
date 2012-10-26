@@ -1,0 +1,40 @@
+#+title: android的binder机制
+
+~status_t IPCThreadState::talkWithDriver(bool doReceive)~ 这个函数会把kernel driver打交道，通过ioctl。
+
+~status_t status = IPCThreadState::self()->transact(~ 这个是在BpBinder里调用的。
+
+#+begin_src c
+#define IMPLEMENT_META_INTERFACE(INTERFACE, NAME)                       \
+    const android::String16 I##INTERFACE::descriptor(NAME);             \
+    const android::String16&                                            \
+            I##INTERFACE::getInterfaceDescriptor() const {              \
+        return I##INTERFACE::descriptor;                                \
+    }                                                                   \
+    android::sp<I##INTERFACE> I##INTERFACE::asInterface(                \
+            const android::sp<android::IBinder>& obj)                   \
+    {                                                                   \
+        android::sp<I##INTERFACE> intr;                                 \
+        if (obj != NULL) {                                              \
+            intr = static_cast<I##INTERFACE*>(                          \
+                obj->queryLocalInterface(                               \
+                        I##INTERFACE::descriptor).get());               \
+            if (intr == NULL) {                                         \
+                intr = new Bp##INTERFACE(obj);                          \
+            }                                                           \
+        }                                                               \
+        return intr;                                                    \
+    }                                                                   \
+    I##INTERFACE::I##INTERFACE() { }                                    \
+    I##INTERFACE::~I##INTERFACE() { }                                   \
+#+end_src
+
+所有的BpXXX对是在这个 ~I##INTERFACE::asInterface~ 里创建的。
+
+常见的用法是： 
+
+#+begin_example
+        IBinder service = ServiceManager.getService("mount");
+        mMountService = IMountService.Stub.asInterface(service);
+#+end_example
+
