@@ -3,7 +3,7 @@
 我的配置系统是github上的一个项目，[[https://github.com/baohaojun/windows-config][Windows-config]]。
 
 里面最开始只是我的.bashrc、.emacs等文件，但很快我就把它的目标修正为：当
-我新安装一台机器后，我可以通过一个简单的 ~git checkout~ 和额外的几条脚本，把
+我新安装一台机器后，我可以通过一个简单的 ~git clone --recursive http://github.com/baohaojun/windows-config~ 和额外的几条脚本，把
 我的个人环境快速重建出来。
 
 整个项目必须checkout到你的 ~$HOME/windows-config~ 下。你可能会觉得奇
@@ -31,8 +31,9 @@ windows-config的子目录下呢？别急，听我慢慢道来:-)
 ~/windows-config/bin/linux/after-check-out.sh
 #+end_src
 
-其中第一条就是要把相应的该放在 ~$HOME~ 下的文件/目录通过symlink给放出来。
-第二条则是做一些.deb包的安装、编译工作。
+其中第一条就是要把相应的该放在 ~$HOME~ 下的文件/目录通过symlink给放出来，
+让bash/emacs等程序能读到。用symlink而不是拷贝出来有一个额外的好处，你能
+猜到 [[./why-symlink-my-config.html][是什么]] 吗？第二条则是做一些.deb包的安装、编译工作。
 
 其中.deb包的安装有点意思，可以跟大家说说：
 
@@ -47,3 +48,4 @@ windows-config的子目录下呢？别急，听我慢慢道来:-)
   stdout/stderr结果记下来，parse一下，再把出错的包从它的参数列里拿掉再
   来一遍（实际上是一个while循环）就好了。
 
+最后，欢迎大家试用我的配置系统，并多提改进意见:-)
