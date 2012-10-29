@@ -38,3 +38,6 @@
         mMountService = IMountService.Stub.asInterface(service);
 #+end_example
 
+# Local Variables: #
+# bhj-grep-dir: "~/src/android/" #
+# End: #
