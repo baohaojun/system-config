@@ -1,3 +1,7 @@
-* TODO wifi calibration and battery calibration for factory production.
+* DONE wifi calibration and battery calibration for factory production.
+  CLOSED: [2012-10-29 Mon 18:49]
+  - CLOSING NOTE [2012-10-29 Mon 18:49]
 
-* TODO grep-func-call-all -e "UnixTransport": this will show a bug.
+* DONE grep-func-call-all -e "UnixTransport": this will show a bug.
+  CLOSED: [2012-10-29 Mon 18:50]
+  - CLOSING NOTE [2012-10-29 Mon 18:50]

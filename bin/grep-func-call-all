@@ -11,6 +11,7 @@ silent=
 ignore_case=
 members=
 no_comment=
+reverse_matcher=()
 path_matcher=()
 
 echo -n > ~/.logs/$(basename $0).log
@@ -18,7 +19,7 @@ function debug() {
     echo "$@" >> ~/.logs/$(basename $0).log
 }
 
-TEMP=$(getopt -o e:p:sima --long nc -n $(basename $0) -- "$@")
+TEMP=$(getopt -o e:p:v:sima --long nc -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -28,6 +29,10 @@ while true; do
             ;;
         -p)
             path_matcher=(-p "$2")
+            shift 2
+            ;;
+        -v)
+            reverse_matcher=(-v "$2")
             shift 2
             ;;
         --nc)
@@ -87,5 +92,5 @@ for file in $(beagrep -e "$re_beagrep" $ignore_case "${path_matcher[@]}" --grep 
         fi
     fi
     export GTAGS_START_FILE=$file
-    grep-func-call -e "$regexp" $silent $ignore_case $members $no_comment| grep -v '^$'
+    grep-func-call -e "$regexp" $silent $ignore_case $members $no_comment "${reverse_matcher[@]}"| grep -v '^$'
 done

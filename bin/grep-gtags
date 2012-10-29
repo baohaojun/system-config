@@ -48,7 +48,7 @@ GetOptions(
     "p=s" => \$path_matcher,
     );
 
-$path_matcher = qr($path_matcher);
+$path_matcher = qr($path_matcher)i;
 $lookup_needle =~ s/\+.*//;
 $approx_dir = substr($approx_dir, length($db_dir));
 

@@ -10,10 +10,6 @@ _git_ci()
     _get_comp_words_by_ref cur prev
 
     case $COMP_CWORD in
-        1)
-            _jira_file_list ~/jira-issues/
-            return 0
-            ;;
         *)
             _jira_file_list ~/jira-users/
             return 0
@@ -24,7 +20,7 @@ _git_ci()
 }
 
 
-complete -o filenames -F _git_ci gitci gerrit-review
+complete -o filenames -F _git_ci gitci gerrit-review gerrit-push-review
 complete -o filenames -F _git_ci gitci-amend
 
 # Local variables:

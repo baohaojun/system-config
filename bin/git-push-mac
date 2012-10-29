@@ -19,9 +19,12 @@ if git remote -v | grep baohaojun.github.com.git; then
     for x in $org_changes; do 
         if test -e $x; then
             org-export $x
-            yes-or-no-p -y "Continue?"
         fi
     done
+    if git st -S | grep . ; then
+        yes-or-no-p -y "Continue?"
+    fi
+
     git add .
 fi
 

@@ -34,6 +34,10 @@ while true; do
 done
 
 reviewers=()
+if test $# = 0; then
+    die "Error: Usage $(basename $0) REVIEWER..."
+fi
+
 while test $# -gt 0; do 
     reviewers=("${reviewers[@]}" "$(echo "${1%@*}"|perl -npe 's/.*<//')")
     shift

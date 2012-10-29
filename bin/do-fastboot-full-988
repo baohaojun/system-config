@@ -56,7 +56,7 @@ time (
     fi
 
 
-    export blf=$(readlink -m "$1")
+    export blf=$(absp "$1")
     test -e "$blf" || die "no such file $blf"
     export BLF=$blf
 

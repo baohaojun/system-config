@@ -41,6 +41,16 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         relative-path "$FILE" $(readlink -f $(lookup_file .repo/..))/
     }
 
+    function absp()
+    {
+        HFILE=$FILE
+        if test "${FILE:0:1}" = /; then
+            echo $FILE
+        else
+            echo $(pwd)/$FILE
+        fi
+    }
+
     function wp()
     {
 
