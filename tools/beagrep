@@ -84,9 +84,9 @@ if ($pat_implicit_path =~ m/\(|\)/) {
 }
 
 $pat = shell_quote($pat);
-print "pat is: $pat.\n";
+debug "pat is: $pat.\n";
 
-print "beagrep query argument `[01;31m"
+debug "beagrep query argument `[01;31m"
   . substr(qx/beagrep-get-tokens $pat/, 0, -1) 
   . "[0m'\n";
 
