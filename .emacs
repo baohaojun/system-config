@@ -376,12 +376,21 @@
     (ring-insert ring obj)))
 ;; (defcustom bhj-grep-default-directory "/pscp:a22242@10.194.131.91:/"
 ;;   "the default directory in which to run grep")
+
+(defun grep-bhj-dir ()
+  (interactive)
+  (let ((default-directory
+	  (if (boundp 'bhj-grep-dir)
+	      bhj-grep-dir
+	    default-directory)))
+    (call-interactively 'grep)))
+
 (keydef "M-g r" (progn
                   (let ((current-prefix-arg 4)
                         ;; (default-directory (eval bhj-grep-default-directory))
                         (grep-use-null-device nil))
                     (nodup-ring-insert cscope-marker-ring (point-marker))
-                    (call-interactively 'grep))))
+                    (call-interactively 'grep-bhj-dir))))
 
 (defvar grep-find-file-history nil)
 
@@ -399,7 +408,7 @@
                         (my-grep-command "rgrep -Hn -e pat")
                         (current-prefix-arg 4))
                     (nodup-ring-insert cscope-marker-ring (point-marker))
-                    (call-interactively 'grep)
+                    (call-interactively 'grep-bhj-dir)
                     (setq grep-rgrep-history grep-history))))
 
 (defvar grep-gtags-history nil)
@@ -417,7 +426,7 @@
 	    (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
 	    (setq tramp-remote-process-environment process-environment))
 	(setenv "GTAGS_START_FILE" file)))
-    (call-interactively 'grep)
+    (call-interactively 'grep-bhj-dir)
     (setq grep-gtags-history grep-history)))
 
 (defun grep-tag-default-path ()
@@ -453,7 +462,7 @@
 	(current-prefix-arg 4))
     (flet ((grep-tag-default () (grep-tag-default-path)))
       (nodup-ring-insert cscope-marker-ring (point-marker))
-      (call-interactively 'grep)
+      (call-interactively 'grep-bhj-dir)
       (setq grep-find-file-history grep-history))))
 
 (global-set-key [(control meta o)] 'bhj-occur)
@@ -661,7 +670,7 @@
  '(org2blog/wp-confirm-post t)
  '(org2blog/wp-use-tags-as-categories t)
  '(require-final-newline t)
- '(safe-local-variable-values (quote ((sh-indent-comment . t) (c-style . whitesmith) (major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
+ '(safe-local-variable-values (quote ((bhj-grep-dir . "~/src/android/") (bhj-grep-dir . ~/src/android/) (sh-indent-comment . t) (c-style . whitesmith) (major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
  '(save-place t nil (saveplace))
  '(senator-minor-mode-hook (quote (ignore)))
  '(session-initialize (quote (de-saveplace session places keys menus)) nil (session))
@@ -1159,7 +1168,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 	(setenv "GTAGS_START_FILE" file)
 	(setenv "GTAGS_LANG_FORCE" (or (cdr (assoc mode-name-minus-mode emacs-mode-ctags-lang-map))
 				       mode-name-minus-mode))))
-    (call-interactively 'grep)
+    (call-interactively 'grep-bhj-dir)
     (setq grep-func-call-history grep-history)))
 
 (defun code-line-number-from-tag-line (line)
