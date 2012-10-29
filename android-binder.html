@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="android的binder机制"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-29 13:46:23 CST"/>
+<meta name="generated" content="2012-10-29 19:27:40 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -78,7 +78,8 @@
 <p><code>status_t IPCThreadState::talkWithDriver(bool doReceive)</code> 这个函数会把kernel driver打交道，通过ioctl。
 </p>
 <p>
-<code>status_t status = IPCThreadState::self()-&gt;transact(</code> 这个是在BpBinder里调用的。
+<code>status_t status = IPCThreadState::self()-&gt;transact(</code> 这个是在BpBinder
+里的 <code>status_t BpBinder::transact(</code> 调用的。
 </p>
 
 
@@ -109,7 +110,7 @@
 
 
 <p>
-所有的BpXXX对是在这个 <code>I##INTERFACE::asInterface</code> 里创建的。
+所有的BpXXX都是在这个 <code>I##INTERFACE::asInterface</code> 里创建的。
 </p>
 <p>
 常见的用法是： 
@@ -122,6 +123,17 @@ mMountService = IMountService.Stub.asInterface(service);
 </pre>
 
 
+<p>
+与BpBinder类对应的是BBinder类，它们都是IBinder的子类，都需要定义
+transact函数，不同是前者（proxy）的transact只是一个ipc调用，后者则是真
+正干活的。
+</p>
+<p>
+前者什么时候会被调用？随便一搜出来的基本上都是
+<code>remote()-&gt;transact(...)</code> ，但后者的调用比较隐蔽一些，初步怀疑是在
+<code>void IPCThreadState::joinThreadPool(bool isMain)</code> 里，调了 <code>result = talkWithDriver();</code> ，然后是 <code>result = executeCommand(cmd);</code> ，此函数会
+调用 <code>const status_t error = b-&gt;transact(tr.code, buffer, &amp;reply, tr.flags);</code> 。
+</p>
 </div>
 
 <div id="postamble">
