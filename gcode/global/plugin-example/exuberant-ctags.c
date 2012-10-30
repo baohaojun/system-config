@@ -58,7 +58,7 @@ static char *argv[] = {
 	"-xu",
 	"--filter",
 	"--filter-terminator=" TERMINATOR "\n",
-	"--format=1",
+	"--extra=+q",
 	NULL
 };
 static pid_t pid;
@@ -191,7 +191,8 @@ static void
 put_line(char *ctags_x, const struct parser_param *param)
 {
 	int lineno;
-	char *p, *tagname, *filename;
+	char *p, *tagname, *filename, *typename;
+	int typelen;
 
 	filename = strstr(ctags_x, param->file);
 	if (filename == NULL || filename == ctags_x)
@@ -218,7 +219,17 @@ put_line(char *ctags_x, const struct parser_param *param)
 		return;
 	while (p >= ctags_x && !isspace((unsigned char)*p))
 		p--;
+	if (p < ctags_x)
+		return;
+	typename = p + 1;
+	while (p >= ctags_x && isspace((unsigned char)*p))
+		*p-- = '\0';
+	if (p < ctags_x)
+		return;
+	while (p >= ctags_x && !isspace((unsigned char)*p))
+		p--;
 	tagname = p + 1;
+
 	p = filename + strlen(param->file);
 	if (*p != '\0') {
 		if (!isspace((unsigned char)*p))
@@ -227,7 +238,15 @@ put_line(char *ctags_x, const struct parser_param *param)
 		while (isspace((unsigned char)*p))
 			p++;
 	}
-	param->put(PARSER_DEF, tagname, lineno, filename, p, param->arg);
+
+	typelen = strlen(typename);
+
+	p -= typelen + 2;
+	memmove(p, typename, typelen);
+	p[typelen] = ':';
+	p[typelen + 1] = '\t';
+
+	param->put(PARSER_DEF, tagname, lineno, param->file, p, param->arg);
 }
 
 void
