@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>用ctags索引Android资源定义的.xml和.png文件</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="用ctags索引Android资源定义的.xml和.png文件"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-10-31 16:55:03 CST"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">用ctags索引Android资源定义的.xml和.png文件</h1>
+
+<p>看着Android的那一堆资源定义文件，真是头疼啊，只能一点一点的grep，有点不
+便呢。
+</p>
+<p>
+今日突发奇想，能不能把它当成一种编程语言，用编程语言索引之王——
+ctags-exuberant来处理它呢？试试看！
+</p>
+<p>
+先打开man手册看一眼？不用了，我以前搞过linux kernel kconfig脚本的ctags
+处理，这回打开 <code>$HOME/.ctags</code> 复习一下先：
+</p>
+
+
+
+<pre class="example">--langdef=kconfig
+--langmap=kconfig:(Kconfig)
+--regex-kconfig=/^(menu)?config[ \t]*([a-zA-Z0-9_]+)/CONFIG_\2/d,definition/
+</pre>
+
+
+<p>
+照葫芦画瓢，所以我们的layout、strings等xml可以这样写它们的语言定义之正则表达式：
+</p>
+
+
+
+<pre class="example">--langdef=androidxml
+--langmap=androidxml:.xml
+--regex-androidxml=/android:id="@\+id\/([^"]*)"/\1/d,id/
+--regex-androidxml=/name[ \t]*=[ \t]*"([^"]*)"/\1/d,resource/
+</pre>
+
+
+<p>
+试了一下，嗯，索引之王ctags-exuberant，果然是，行！科科科&hellip;
+</p>
+<p>
+接下来，要对.png文件进行索引！什麻？你问有没有听错？.png文件不是图片吗，
+怎么可能把它当成编程语言文件进行索引呢？是这样的，.png图片文件是一种资
+源，而Android会为每一项资源生成一个id，放在它自动生成的R.java文件中。但
+你索引这些R.java的话，就真的是“索”然无味啊，找到一堆id，根本不明白它们哪个是哪个：
+</p>
+
+
+
+<pre class="src src-java"><span class="org-keyword">public</span> <span class="org-keyword">static</span> <span class="org-keyword">final</span> <span class="org-type">int</span> <span class="org-variable-name">app_name</span>=0x7f050000;
+<span class="org-keyword">public</span> <span class="org-keyword">static</span> <span class="org-keyword">final</span> <span class="org-type">int</span> <span class="org-variable-name">eglconfig_prompt</span>=0x7f050001;
+<span class="org-keyword">public</span> <span class="org-keyword">static</span> <span class="org-keyword">final</span> <span class="org-type">int</span> <span class="org-variable-name">eglconfig_text</span>=0x7f050002;
+<span class="org-keyword">public</span> <span class="org-keyword">static</span> <span class="org-keyword">final</span> <span class="org-type">int</span> <span class="org-variable-name">logging_prompt</span>=0x7f050003;
+<span class="org-keyword">public</span> <span class="org-keyword">static</span> <span class="org-keyword">final</span> <span class="org-type">int</span> <span class="org-variable-name">logging_text</span>=0x7f050004;
+</pre>
+
+
+<p>
+BUT！人生最厉害就是这个BUT！png资源对应的id名字就是该png文件名去掉.png
+扩展名而已啊！（请问这是什么编程模式？真的是，行！）
+</p>
+<p>
+但这个功能没法简单的hack ctags-exuberant来搞定了，但是因为我是通过
+gtags-plugin来调用ctags的，所以我们可以掉头去搞gtags的plugin-example，
+结果见图：
+</p>
+<p>
+<img src="./grep-png.png"  alt="./grep-png.png" />
+</p>
+<p>
+尤其爽的是，在Emacs底下，“编辑”.png文件的话，会把它以图片方式打开，而不
+是一堆乱码。这样才够直观嘛！另外，很多layout下的.xml文件名也会被当作一
+个id出现在源码中，所以我们也一并处理了，gtags的patch如下（已经checkin到
+<a href="./my-config-cn.html">我的配置系统</a> ）：
+</p>
+
+
+
+<pre class="src src-diff"><span class="org-diff-context">diff --git a/gcode/global/plugin-example/exuberant-ctags.c b/gcode/global/plugin-example/exuberant-ctags.c</span>
+<span class="org-diff-context">index b7ea5dd..09048d0 100644</span>
+<span class="org-diff-header">--- </span><span class="org-diff-header"><span class="org-diff-file-header">a/gcode/global/plugin-example/exuberant-ctags.c</span></span>
+<span class="org-diff-header">+++ </span><span class="org-diff-header"><span class="org-diff-file-header">b/gcode/global/plugin-example/exuberant-ctags.c</span></span>
+<span class="org-diff-hunk-header">@@ -249,16 +249,42 @@</span><span class="org-diff-function"> put_line(char *ctags_x, const struct parser_param *param)</span>
+<span class="org-diff-context">        param-&gt;put(PARSER_DEF, tagname, lineno, param-&gt;file, p, param-&gt;arg);</span>
+<span class="org-diff-context"> }</span>
+
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">static int handle_special_files(const struct parser_param *param, int filename_len, const char* ext, const char* fakeline)</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">{</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">       int extlen = strlen(ext);</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">       if (filename_len &gt; extlen &amp;&amp; ! strcmp(param-&gt;file + filename_len - extlen, ext)) {</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">               char filename[1024];</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">               char* p = param-&gt;file + filename_len - extlen;</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">               while (p &gt; param-&gt;file &amp;&amp; *--p != '/')</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">                       ;</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">               p++;</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">               strncpy(filename, p, sizeof filename);</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">               filename[param-&gt;file + filename_len - p - extlen] = '\0';</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">               param-&gt;put(PARSER_DEF, filename, 1, param-&gt;file, fakeline, param-&gt;arg);</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">               return 1;</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">       }</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">       return 0;</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">}</span>
+<span class="org-diff-indicator-added">+</span>
+<span class="org-diff-context"> void</span>
+<span class="org-diff-context"> parser(const struct parser_param *param)</span>
+<span class="org-diff-context"> {</span>
+<span class="org-diff-context">        char *ctags_x;</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">       int filename_len;</span>
+
+<span class="org-diff-context">        assert(param-&gt;size &gt;= sizeof(*param));</span>
+
+<span class="org-diff-context">        if (op == NULL)</span>
+<span class="org-diff-context">                start_ctags(param);</span>
+
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">       filename_len = strlen(param-&gt;file);</span>
+<span class="org-diff-indicator-added">+</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">       handle_special_files(param, filename_len, ".xml", "xml:\t***");</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">       if (handle_special_files(param, filename_len, ".9.png", "9png:\t***") ||</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">           handle_special_files(param, filename_len, ".png", "png:\t***")) {</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">               return;</span>
+<span class="org-diff-indicator-added">+</span><span class="org-diff-added">       }               </span>
+<span class="org-diff-indicator-added">+</span>
+<span class="org-diff-context">        /* Write path of input file to pipe. */</span>
+<span class="org-diff-context">        fputs(param-&gt;file, op);</span>
+<span class="org-diff-context">        putc('\n', op);</span>
+</pre>
+
+
+<p>
+事实上，我还想把Android的颜色资源id真的用它所代表的颜色画出来呢。下次吧！
+</p>
+
+
+
+<pre class="src src-xml"><span class="org-nxml-tag-delimiter">&lt;</span><span class="org-nxml-element-local-name">color</span> <span class="org-nxml-attribute-local-name">name</span>=<span class="org-nxml-attribute-value-delimiter">"</span><span class="org-nxml-attribute-value">link_text_dark</span><span class="org-nxml-attribute-value-delimiter">"</span><span class="org-nxml-tag-delimiter">&gt;</span><span class="org-nxml-text">#5c5cff</span><span class="org-nxml-tag-delimiter">&lt;</span><span class="org-nxml-tag-slash">/</span><span class="org-nxml-element-local-name">color</span><span class="org-nxml-tag-delimiter">&gt;</span>
+</pre>
+
+
+</div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>
