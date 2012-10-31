@@ -75,7 +75,6 @@ sub do_cscope($$$$) {
     $code_dir =~ s,/+,/,g;
     open(my $grep, "-|", "echo $lookup_type$lookup_needle|gtags-cscope");
 
-    my @matches;
     my %matches;
     my $path_filter_worked;
     my %matches_path_line;
@@ -129,15 +128,15 @@ read_line:
 				    # part of the path, it will be
 				    # used for distance calculation
 
-	    push @matches, $_;}
+	}
 			
     }
 
-    if (not @matches and $path_filter_worked) {
+    if (not %matches and $path_filter_worked) {
 	print "path filter worked, and you got 0 matches!\n";
     }
 
-    printf "found total %d definitions\n", scalar @matches;
+    printf "found total %d definitions\n", scalar keys %matches;
     use String::Approx 'adistr';
     our $approx_dir;
 
@@ -146,7 +145,7 @@ read_line:
 	abs(adistr($matches{$a}->[0], $approx_dir)) + abs(adistr($matches{$a}->[4], $lookup_needle)) / 2
 	    <=> 
 	    abs(adistr($matches{$b}->[0], $approx_dir)) + abs(adistr($matches{$b}->[4], $lookup_needle)) / 2
-	 } @matches) {
+	 } keys %matches) {
 	# print 'dist between "' . $matches{$_}->[0] . '" and "' . $approx_dir . '" is ' . abs(adistr($matches{$_}->[0], $approx_dir)) . "\n";
 	# print 'dist between "' . $matches{$_}->[4] . '" and "' . $lookup_needle . '" is ' . abs(adistr($matches{$_}->[4], $lookup_needle)) . "\n";
 	my ($file, $def, $line, $str) = @{$matches{$_}};
@@ -173,7 +172,7 @@ read_line:
 	    print "$code_dir/$file:$line: $str\n" 
 	}
 	$got_results = 1;
-	if (@matches < 5) { # this will be nice!
+	if (keys %matches < 5) { # this will be nice!
 	    system("ctags-show-definition $code_dir/$file $line $lookup_needle");
 	}        
         $update_path{$file} = 1;

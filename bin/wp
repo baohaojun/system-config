@@ -91,7 +91,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     }
     export FILE=${1:-`pwd`}
     export FILE=`lookup_file "$FILE"`
-    if test "$NO_PUTCLIP" = true; then
+    if test "$NO_PUTCLIP" = true || test -z "EMACS" && ! tty >/dev/null 2>&1; then
         "`basename -- $0`" "$@"
     else
         out=$($(basename -- $0) "$@")

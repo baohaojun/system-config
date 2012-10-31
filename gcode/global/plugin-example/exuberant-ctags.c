@@ -249,15 +249,41 @@ put_line(char *ctags_x, const struct parser_param *param)
 	param->put(PARSER_DEF, tagname, lineno, param->file, p, param->arg);
 }
 
+static int handle_special_files(const struct parser_param *param, int filename_len, const char* ext, const char* fakeline)
+{
+	int extlen = strlen(ext);
+	if (filename_len > extlen && ! strcmp(param->file + filename_len - extlen, ext)) {
+		char filename[1024];
+		char* p = param->file + filename_len - extlen;
+		while (p > param->file && *--p != '/')
+			;
+		p++;
+		strncpy(filename, p, sizeof filename);
+		filename[param->file + filename_len - p - extlen] = '\0';
+		param->put(PARSER_DEF, filename, 1, param->file, fakeline, param->arg);
+		return 1;
+	}
+	return 0;
+}
+
 void
 parser(const struct parser_param *param)
 {
 	char *ctags_x;
+	int filename_len;
 
 	assert(param->size >= sizeof(*param));
 
 	if (op == NULL)
 		start_ctags(param);
+
+	filename_len = strlen(param->file);
+
+	handle_special_files(param, filename_len, ".xml", "xml:\t***");
+	if (handle_special_files(param, filename_len, ".9.png", "9png:\t***") ||
+	    handle_special_files(param, filename_len, ".png", "png:\t***")) {
+		return;
+	}		
 
 	/* Write path of input file to pipe. */
 	fputs(param->file, op);
