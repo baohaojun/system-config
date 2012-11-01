@@ -1,6 +1,9 @@
 #!/bin/bash
 user=$USER
 proto=scp
+if test $# = 0; then
+    die "Error: Usage $(basename $0) [proto] [user] host path"
+fi
 if test $# = 4; then
     proto=$1
     shift

@@ -157,7 +157,7 @@ read_line:
 		system("UNPACK_MACRO=$UNPACK_MACRO $0 -e $1");
 	    }
 	}
-	if ($str =~ m/^\s*typedef (?:struct|enum)\s+(.*)\s+$lookup_needle/) { # need look up the $1 instead
+	if ($str =~ m/:\t\s*typedef (?:struct|enum)\s+(.*)\s+$lookup_needle/) { # need look up the $1 instead
 	    unless ($1 eq $lookup_needle or $ENV{UNPACK_MACRO} >= 5) {
 		my $UNPACK_MACRO = $ENV{UNPACK_MACRO} + 1;
 		print "need to lookup the $1 'cause you are probably not interested in '$str'\n";

@@ -12,8 +12,16 @@
 # By default this script does nothing.
 
 echo 0 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
-if test -d ~bhj/; then
+
+sess=/usr/share/gnome-session/sessions/gnome-fallback.session
+if test -d ~bhj/ -a -e $sess; then
     perl -npe 's/RequiredComponents=.*/RequiredComponents=gnome-settings-daemon;/; 
-               s/DefaultProvider-windowmanager=.*/DefaultProvider-windowmanager=sawfish/' -i /usr/share/gnome-session/sessions/gnome-fallback.session
+               s/DefaultProvider-windowmanager=.*/DefaultProvider-windowmanager=sawfish/' -i $sess
+fi
+
+if test -d ~gerrit2; then
+    for x in ~gerrit2/*/bin/gerrit.sh; do 
+        sudo su - gerrit2 -c "$x start"
+    done
 fi
 exit 0
