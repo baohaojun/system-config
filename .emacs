@@ -539,11 +539,23 @@
 
 (defun bhj-isearch-from-bod (&optional col-indent)
   (interactive "p")
-  (let ((word (current-word)))
-    (nodup-ring-insert cscope-marker-ring (point-marker))
-    (bhj-c-beginning-of-defun)
-    (setq regexp-search-ring (cons (concat "\\b" word "\\b") regexp-search-ring))
-    (search-forward-regexp (concat "\\b" word "\\b"))))
+  (with-syntax-table (let ((new-table (make-syntax-table (syntax-table))))
+		       (modify-syntax-entry ?_ "w" new-table)
+		       new-table)
+    (let ((word (current-word)))
+      (nodup-ring-insert cscope-marker-ring (point-marker))
+      (bhj-c-beginning-of-defun)
+
+      (unless (string-equal (car regexp-search-ring) (concat "\\b" word "\\b"))
+	(add-to-history
+	 'regexp-search-ring
+	 (concat "\\b" word "\\b")
+	 regexp-search-ring-max))
+      (let ((not-match t))
+	(while not-match
+	  (search-forward-regexp (concat "\\b" word "\\b"))
+	  (when (string-equal word (current-word))
+	    (setq not-match nil)))))))
 
 (global-set-key [(shift meta s)] 'bhj-isearch-from-bod)
 
