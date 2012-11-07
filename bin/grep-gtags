@@ -36,7 +36,6 @@ if ($db_dir eq "/" or $db_dir eq glob("~")) {
     system("ln", '-sf', $db_dir, glob("~/.gtags-dir"));
 }
 
-my $lookup_type = 1;
 my $lookup_needle = "hello_world";
 my $arch = ".";
 my $lookup_restrict_regexp;
@@ -66,71 +65,80 @@ sub is_qualified_by($$)
     return 0;    
 }
 
-sub do_cscope($$$$) {
-    my ($db_dir, $lookup_type, $lookup_needle, $lookup_restrict_regexp) = @_;
+sub parse_xref($$)
+{
+    my ($grep, $updating) = @_;
+
+    our %matches;
+    our $path_filter_worked;
+    our %matches_path_line;
+    our %update_path;
+
+    
+    while (<$grep>) {
+        chomp();
+	debug "got $_";
+
+        if ($lookup_restrict_regexp && not m/$lookup_restrict_regexp/i) {
+            next;
+        }
+
+	m/(.*?)\s+(\d+)\s+(\S+)\s+(.*)/ or next;
+	my ($def, $line, $path, $str) = ($1, $2, $3, $4);
+	if (not -e "$path") {
+	    next;
+	}
+	if ($arch ne "." and $path =~ m,(?:/|^)arch/, and $path !~ m,(?:/|^)arch/[^/]*$arch,) {
+	    debug "ignore $path because arch not matches";
+	    next;
+	}
+	if ($path !~ m/$path_matcher/) {
+	    debug "ignore $path because of path matcher miss";
+	    $path_filter_worked = 1;
+	    next;
+	}
+
+	$_ = "$path:$line:$def";
+	my $loc = "$path:$line";
+	$matches_path_line{$loc} = {} unless exists $matches_path_line{$loc};
+	
+	foreach my $elem (keys %{$matches_path_line{$loc}}) {
+	    debug "checking $elem against $def";
+	    if (is_qualified_by($def, $elem)) {
+		next read_line;
+	    } elsif (is_qualified_by($elem, $def)) {
+		delete $matches_path_line{$loc}{$elem};
+		delete $matches{"$path:$line:$elem"};
+	    }
+	}
+	$matches_path_line{$loc}{$def} = 1;	
+	$matches{$_} = [$path, $def, $line, $str]; # arch/h8300/kernel/entry.S need_resched 312 need_resched:
+	my $x = $path;
+	$x =~ s,.*/,,;
+	$matches{$_}->[4] = abs(adistr($matches{$_}->[0], $approx_dir)) + abs(adistr($x, $lookup_needle)) / 2;
+	$update_path{$path} = 1;
+	
+    }
+}
+sub do_cscope($$$) {
+    my ($db_dir, $lookup_needle, $lookup_restrict_regexp) = @_;
     chdir ($db_dir) or die "Error chdir $db_dir";
     my $db_dir_quoted = shell_quote($db_dir);
     my $got_results = 0;
     my $code_dir = substr($db_dir, length("$ENV{HOME}/tmp/for-code-reading"));
     $code_dir =~ s,/+,/,g;
-    open(my $grep, "-|", "echo $lookup_type$lookup_needle|gtags-cscope");
+    open(my $grep, "-|", "global -x $lookup_needle");
+    chdir ($code_dir) or die "Can not change to $code_dir";
+    printf "make: Entering directory \`%s'\n", $code_dir;
 
-    my %matches;
-    my $path_filter_worked;
-    my %matches_path_line;
+    our %matches;
+    our $path_filter_worked;
+    our %matches_path_line;
+    our %update_path;
 
 read_line:
 
-    while (<$grep>) {
-        chomp();
-        s/^>>.*//;
-        my $file=$_;
-        $file =~ s/ .*//;
-        if (not -e "$code_dir/$file") {
-            next;
-        }
-        if ($lookup_restrict_regexp && not m/$lookup_restrict_regexp/i) {
-            next;
-        }
-
-	unless ($_ eq "") {
-	    debug "got $_";
-	    m/(.*?) (.*?) (.*?) (.*)/;
-	    my ($path, $def, $line, $str) = ($1, $2, $3, $4);
-	    if ($arch ne "." and $path =~ m,(?:/|^)arch/, and $path !~ m,(?:/|^)arch/[^/]*$arch,) {
-		debug "ignore $path because arch not matches";
-		next;
-	    }
-	    if ($path !~ m/$path_matcher/) {
-		debug "ignore $path because of path matcher miss";
-		$path_filter_worked = 1;
-		next;
-	    }
-
-	    $_ = "$path:$line:$def";
-	    my $loc = "$path:$line";
-	    $matches_path_line{$loc} = {} unless exists $matches_path_line{$loc};
-	    
-	    foreach my $elem (keys %{$matches_path_line{$loc}}) {
-		debug "checking $elem against $def";
-		if (is_qualified_by($def, $elem)) {
-		    next read_line;
-		} elsif (is_qualified_by($elem, $def)) {
-		    delete $matches_path_line{$loc}{$elem};
-		    delete $matches{"$path:$line:$elem"};
-		}
-	    }
-	    $matches_path_line{$loc}{$def} = 1;	
-	    $matches{$_} = [$path, $def, $line, $str]; # arch/h8300/kernel/entry.S need_resched 312 need_resched:
-	    my $x = $path;
-	    $x =~ s,.*/,,;
-	    $matches{$_}->[4] = $x; # the fifth element is the dir
-				    # part of the path, it will be
-				    # used for distance calculation
-
-	}
-			
-    }
+    parse_xref($grep, 0);
 
     if (not %matches and $path_filter_worked) {
 	print "path filter worked, and you got 0 matches!\n";
@@ -140,13 +148,24 @@ read_line:
     use String::Approx 'adistr';
     our $approx_dir;
 
-    my %update_path;
+    my @update_path = keys %update_path; 
+    open(my $updates, "-|", "echo @update_path |tr ' ' '\n'| gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
+	or die "Can not query update on gtags";
+
+    @update_path = map {chomp; $_} <$updates>;
+    if (@update_path) {
+	print "These files need update: @update_path\n";
+    }
+
+
+
     for (sort {
-	abs(adistr($matches{$a}->[0], $approx_dir)) + abs(adistr($matches{$a}->[4], $lookup_needle)) / 2
-	    <=> 
-	    abs(adistr($matches{$b}->[0], $approx_dir)) + abs(adistr($matches{$b}->[4], $lookup_needle)) / 2
+	($matches{$a}->[4] <=> $matches{$b}->[4])
+	    or
+	    ($matches{$a}->[2] <=> $matches{$b}->[2])
 	 } keys %matches) {
-	# print 'dist between "' . $matches{$_}->[0] . '" and "' . $approx_dir . '" is ' . abs(adistr($matches{$_}->[0], $approx_dir)) . "\n";
+	
+	debug "dist between $_ and $approx_dir is $matches{$_}->[4]";
 	# print 'dist between "' . $matches{$_}->[4] . '" and "' . $lookup_needle . '" is ' . abs(adistr($matches{$_}->[4], $lookup_needle)) . "\n";
 	my ($file, $def, $line, $str) = @{$matches{$_}};
 
@@ -169,21 +188,17 @@ read_line:
 		 $file =~ m,external/kernel-headers, or
 		 $file =~ m,android-[2-7]/arch-,) {
 	    $str =~ s,:\t,: <$def> : ,;
-	    print "$code_dir/$file:$line: $str\n" 
+	    print "$file:$line: $str\n" 
 	}
 	$got_results = 1;
 	if (keys %matches < 5) { # this will be nice!
 	    system("ctags-show-definition $code_dir/$file $line $lookup_needle");
 	}        
-        $update_path{$file} = 1;
     }
-    chdir ($code_dir) or die "Can not change to $code_dir";
-    my @update_path = keys %update_path; 
-    system("echo @update_path |tr ' ' '\n'| gtags --gtagslabel=plugin-example -i -f - $db_dir_quoted");
     return $got_results;
 }
 
-exit if do_cscope($db_dir, $lookup_type, $lookup_needle, $lookup_restrict_regexp);
+exit if do_cscope($db_dir, $lookup_needle, $lookup_restrict_regexp);
 
 my @gtags_fallback_dir = map {qx(readlink $_)} glob("~/.gtags-fallback-dir*");
 unless (@gtags_fallback_dir) {
@@ -203,6 +218,6 @@ for (@gtags_fallback_dir) {
       next;
   }
   debug "Not found in current dir; search in $dir";
-  do_cscope($dir, $lookup_type, $lookup_needle, $lookup_restrict_regexp) and last;
+  do_cscope($dir, $lookup_needle, $lookup_restrict_regexp) and last;
 }
 

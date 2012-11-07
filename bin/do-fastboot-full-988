@@ -156,11 +156,14 @@ time (
     do-partition GPT "$(get-image-path PGPT)"
 
     ntim_bin=$(get-image-path TIMH)
-    if test ! -e "$ntim_bin" -a -e ./software_downloader/Utilities/TimBuilder/TimBuilder.exe; then
-        wine ./software_downloader/Utilities/TimBuilder/TimBuilder.exe -r "$(command wp $BLF)"
+
+    if test -e./software_downloader/Utilities/TimBuilder/TimBuilder.exe; then
+        if test ! -e "$ntim_bin" -o "$(stat -c %s "$ntim_bin")" == 0; then
+            wine ./software_downloader/Utilities/TimBuilder/TimBuilder.exe -r "$(command wp $BLF)"
+        fi
     fi
     
-    if test -e "$ntim_bin"; then
+    if test -e "$ntim_bin" -a "$(stat -c %s "$ntim_bin")" != 0; then
         do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
         do-partition OBM $(concat-file 0 TIMH 128K OBMI)
     fi

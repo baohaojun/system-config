@@ -109,7 +109,7 @@ start_ctags(const struct parser_param *param)
 			param->die("dup2 failed.");
 		close(opipe[0]);
 		close(ipipe[1]);
-		execvp(EXUBERANT_CTAGS, argv);
+		execvp("ctags-exuberant", argv);
 		param->die("execvp failed.");
 	}
 	/* parent process */

@@ -65,6 +65,7 @@ int printconf(const char *);
 
 int cflag;					/* compact format */
 int iflag;					/* incremental update */
+int uflag;                                      /* update needed? */
 int Iflag;					/* make  idutils index */
 int Oflag;					/* use objdir */
 int qflag;					/* quiet mode */
@@ -122,6 +123,7 @@ static struct option const long_options[] = {
 	{"file", required_argument, NULL, 'f'},
 	{"idutils", no_argument, NULL, 'I'},
 	{"incremental", no_argument, NULL, 'i'},
+	{"update-query", no_argument, NULL, 'u'},
 	{"max-args", required_argument, NULL, 'n'},
 	{"omit-gsyms", no_argument, NULL, 'o'},		/* removed */
 	{"objdir", no_argument, NULL, 'O'},
@@ -168,7 +170,7 @@ main(int argc, char **argv)
 	int option_index = 0;
 	STATISTICS_TIME *tim;
 
-	while ((optchar = getopt_long(argc, argv, "cd:f:iIn:oOqvwse", long_options, &option_index)) != EOF) {
+	while ((optchar = getopt_long(argc, argv, "cd:f:iuIn:oOqvwse", long_options, &option_index)) != EOF) {
 		switch (optchar) {
 		case 0:
 			/* already flags set */
@@ -216,6 +218,10 @@ main(int argc, char **argv)
 			file_list = optarg;
 			break;
 		case 'i':
+			iflag++;
+			break;
+		case 'u':
+			uflag++;
 			iflag++;
 			break;
 		case 'I':
@@ -622,9 +628,13 @@ normal_update:
 					strbuf_puts0(addlist, path);
 					total++;
 				} else if (gpath_mtime(NULL, fid) < statp.st_mtime) {
-					strbuf_puts0(addlist, path);
-					total++;
-					idset_add(deleteset, n_fid);
+					if (uflag) {
+						printf("%s\n", path);
+					} else {
+						strbuf_puts0(addlist, path);
+						total++;
+						idset_add(deleteset, n_fid);
+					}
 				}
 			}
 		}

@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+use strict;
+
+
+sub debug(@) {
+    #print STDERR "@_\n";
+}
+
+if (@ARGV < 1) {
+    die "Usage: $0 TAG FILES..."
+}
+my $lookup_needle = shift @ARGV;
+
+my $ctags_lang_map = qx(lang-map-for-ctags ~/.globalrc);
+
+open(my $xref, "-|", "ctags-exuberant", "--langmap=$ctags_lang_map", "-xu", "--extra=+q", @ARGV) or
+    die "Can not open xref";
+
+my $lookup_needle_re = qr((?:^|\.|:)\Q$lookup_needle\E);
+
+while(<$xref>) {
+    chomp;
+    debug "Got: $_";
+    m/(.*?)\s+(\S+)\s+(\d+)\s+(\S+)\s+(.*)/ or next;
+    my ($tag, $type, $line, $path, $str) = ($1, $2, $3, $4, $5);
+    printf "%s %d %s %s:\t%s\n", $tag, $line, $path, $type, $str if $tag =~ m/$lookup_needle_re/;
+}
