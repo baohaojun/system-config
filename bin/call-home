@@ -11,8 +11,8 @@ fi
         if test -e ~/.at-home; then
             exit 0
         fi
-	ssh -C2qN -D 38080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 bhj.is-a-geek.org -p 443 ||
-        if route -n |grep -e "$(host bhj.is-a-geek.org | pn 4)"; then
+	ssh -C2qN -D 38080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 bhj-is-a-geek.oicp.net -p 443 ||
+        if route -n |grep -e "$(host bhj-is-a-geek.oicp.net | pn 4)"; then
             true
         else
             sudo su - -c 'nmcli con down id vpn-home'

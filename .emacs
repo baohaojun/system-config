@@ -2400,7 +2400,6 @@ we are not interested in those lines that do."
 (require 'eclim)
 
 (setq eclim-auto-save t)
-(global-eclim-mode)
 
 (defadvice hack-dir-local-variables
   (around hack-remote-file-p first activate)
