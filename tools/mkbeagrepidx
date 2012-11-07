@@ -39,7 +39,7 @@ else
 fi
 
 function mkcscope_files() {
-    if tty 1>&2 || test "$IN_CRON" = true || test "$IN_EMACS" = true; then
+    if tty >/dev/null 2>&1 || test "$IN_CRON" = true || test "$IN_EMACS" = true; then
         find $relativeSrcDir \( '-path' '*/CVS' \
             '-o' '-path' '*/.svn' \
             '-o' '-path' '*/autom4te.cache' \
