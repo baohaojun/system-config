@@ -68,5 +68,6 @@ fi
     else
         sudo su - -c 'nmcli con up id vpn-home'
         sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
+        sudo route add $(host github.com|grep 'has address'|head -n 1|pn 4) gw 10.21.130.1
     fi || true
 ) 9>~/.logs/$(basename $0).lock-vpn 2>&1 &
