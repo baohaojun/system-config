@@ -46,7 +46,7 @@ plugin-example|Example of function layer plugin parser:\
 	:langmap=c\:.c:\
 	:langmap=yacc\:.y:\
 	:langmap=asm\:.s.S:\
-	:langmap=java\:.java:\
+	:langmap=java\:.java.aidl:\
 	:langmap=c++\:.c++.cc.cpp.cxx.hxx.hpp.C.H.h:\
 	:langmap=php\:.php.php3.phtml:\
 	:langmap=fortran\:.f.for.f77.f90.f95:\
@@ -55,6 +55,8 @@ plugin-example|Example of function layer plugin parser:\
 	:langmap=lisp\:.l.el.lisp.jl(.emacs):\
 	:langmap=javaprop\:(ExternalMessages.properties):\
 	:langmap=kconfig\:(Kconfig*):\
+	:langmap=androidxml\:.xml:\
+	:langmap=androidpng\:.png:\
 	:langmap=scheme\:.scm:\
 	:langmap=awk\:.awk:\
 	:langmap=ruby\:.rb:\
@@ -76,6 +78,8 @@ plugin-example|Example of function layer plugin parser:\
 	:gtags_parser=c#\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=lisp\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=kconfig\:/usr/local/lib/gtags/exuberant-ctags.la:\
+	:gtags_parser=androidxml\:/usr/local/lib/gtags/exuberant-ctags.la:\
+	:gtags_parser=androidpng\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=javaprop\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=scheme\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=awk\:/usr/local/lib/gtags/exuberant-ctags.la:\

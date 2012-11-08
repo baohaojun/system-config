@@ -13,6 +13,10 @@ function die() {
 
 export -f die
 
+if test ! -e $(lookup_file .repo)/manifest.xml; then
+    die "Error: .repo/manifest.xml not found"
+fi
+
 eval set -- "$TEMP"
 while true; do
     case "$1" in

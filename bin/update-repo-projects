@@ -70,13 +70,11 @@ fi
         } || 
         echo repo is up to date.
 
-	if test $(basename $0) = bpe-local-build; then
-	    bpe-update -r
-	fi
         flock -u 9
+        rm .repo/out-*/ -rf
         if test $(stat -c %s .do-update) != 0; then
             for x in $(cat .do-update); do
-                android-full-build $x
+                android-full-build $x || true
             done
         else
             android-full-build
@@ -85,6 +83,6 @@ fi
     ) 9>.android-full-build.lock
 done
 
-if test $# != 1; then
+if test "$RUNNING_IN_CRON" = true; then
     cron-code-reading
 fi

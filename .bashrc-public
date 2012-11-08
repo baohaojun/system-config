@@ -36,6 +36,10 @@ cd_beagrep()
 	return
     fi
 
+    if [[ "$PWD" =~ tmp/for-code-reading ]]; then
+        builtin cd "${PWD#*for-code-reading}"
+        return
+    fi
     dest=~/tmp/for-code-reading/`pwd`
     while test ! -d "$dest"/.beagrep -a ! -e "$dest"/GPATH -a "$dest" != / -a "$dest" != ""; do
         dest=${dest%/*};
@@ -67,33 +71,7 @@ cdr()
     fi
 }
 
-
-
-git()
-{
-
-    (
-	if test "`readlink -f .`" = "`readlink -f ~`" -a "$1" != clone
-	then
-            cd ~/windows-config/;
-	fi
-
-	if test "$1" = st -a "$2" = -S; then
-	    command git status -s | perl -ne '
-chomp(); 
-$_ = substr($_, 3); 
-if (m/^"/) { 
-    $_ = eval($_);
-}
-print $_ . "\n";
-'
-	  exit
-	fi
-    
-	command git "$@"
-    )
-
-}
+. ~/bin/.gitx
 
 rbranch()
 {

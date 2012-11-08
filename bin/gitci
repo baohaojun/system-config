@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Local Variables: #
+# mode: sh #
+# End: #
+
+
 function add-jira-comment() {
     if test -z "$issue"; then
         issue=`git log -1|grep Issue: |perl -npe 's/.*: //'`
@@ -133,3 +138,4 @@ EOF
 
 `basename $0` "$@"
 if test -z "$DEBUG"; then rm $msg; fi
+

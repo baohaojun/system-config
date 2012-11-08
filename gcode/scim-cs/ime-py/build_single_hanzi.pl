@@ -13,10 +13,12 @@ sub debug(@) {
 
 while (<$wubi_multi_file>) {
     $_ = decode_utf8($_);
-    while (1) {
-	s/(" : \(.*?)("(?!,)[^"]{2,}",? ?)/$1/ or last;
+    if (m/^"[a-y]/) {
+	while (1) {
+	    s/(" : \(.*?)("(?!,)[^"]{2,}",? ?)/$1/ or last;
+	}
     }
     $_ = encode_utf8($_);
-    
     print unless m/: \(\)/;
+
 }

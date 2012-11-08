@@ -85,3 +85,8 @@ ltmain.sh
 plugin-example/Makefile
 plugin-example/Makefile.in
 stamp-h1
+global/global
+gozilla/gozilla
+gtags-cscope/gtags-cscope
+gtags/gtags
+htags/htags

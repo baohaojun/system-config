@@ -11,8 +11,11 @@ fi
         if test -e ~/.at-home; then
             exit 0
         fi
-	ssh -C2qN -D 38080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 bhj.is-a-geek.org -p 443 ||
-        if route -n |grep -e "$(host bhj.is-a-geek.org | pn 4)"; then
+        if test ! -e ~/.ssh-home-ok; then
+            exit 0;
+        fi
+	ssh -C2qN -D 38080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 bhj-is-a-geek.oicp.net -p 443 ||
+        if route -n |grep -e "$(host bhj-is-a-geek.oicp.net | pn 4)"; then
             true
         else
             sudo su - -c 'nmcli con down id vpn-home'
@@ -46,7 +49,7 @@ fi
         sudo ifconfig eth0:1 $(ip-or-name r66)
     fi
     while true; do
-        ssh -C2qN -D 48080 r66
+        ssh -2qN -D 48080 -R 18080:localhost:18080 r66
         x=30
         y=$(random 30)
         ((x = x + y))
@@ -56,14 +59,8 @@ fi
 
 (
     flock -n 9 || { echo 'lock failed for vpn at '$(date); exit 0; }
-    if test -e ~/.at-home; then
+    if test -e ~/.at-home -o -e ~/.no-vpn; then
         exit 0
-    fi
-
-    if sudo iptables-save|grep 'dport 1194'; then
-        true;
-    else
-        sudo iptables -t nat -A OUTPUT -p tcp --dport 1194 \! -d 192.168.67.0/255.255.255.0 -j DNAT --to-destination :80
     fi
 
     if nmcli con status id vpn-home |grep 'VPN connected'; then
@@ -71,5 +68,6 @@ fi
     else
         sudo su - -c 'nmcli con up id vpn-home'
         sudo route add -net 10.0.0.0 netmask 255.0.0.0 gw 10.21.130.1
+        sudo route add $(host github.com|grep 'has address'|head -n 1|pn 4) gw 10.21.130.1
     fi || true
 ) 9>~/.logs/$(basename $0).lock-vpn 2>&1 &

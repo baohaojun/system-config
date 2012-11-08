@@ -27,6 +27,9 @@ htags_DEPENDENCIES = $(LDADD)
 
 man_MANS = htags.1
 
+%.c : %.l
+	lex -o $@ $<
+
 gtagsdir = ${datadir}/gtags
 gtags_DATA = global.cgi.tmpl ghtml.cgi.tmpl completion.cgi.tmpl bless.sh.tmpl \
 	jscode_suggest.tmpl jscode_treeview.tmpl style.css.tmpl

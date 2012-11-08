@@ -70,9 +70,9 @@ function wcd()
 function fedit() 
 {
     local IFS=$'\n'
-    local line=1
+    local line=
     if [[ "$1" =~ :[0-9]+:?$ ]]; then
-	line=$(echo "$1"|perl -npe 's/.*:(\d+):?$/$1/')
+	line=:$(echo "$1"|perl -npe 's/.*:(\d+):?$/$1/')
 	set -- "$(echo "$1"|perl -npe 's/:(\d+):?$//')"
     fi
     dirs=( $(find . -iname "*$1*") )
@@ -80,11 +80,11 @@ function fedit()
         echo 'Error: no such file or directory'
         return 1
     elif test ${#dirs[@]} = 1; then
-        edit ${dirs[0]}:$line
+        edit ${dirs[0]}$line
     else 
         NUM=`my_select "${dirs[@]}"`
         ((NUM--))
-        edit "${dirs[$NUM]}":$line
+        edit "${dirs[$NUM]}"$line
     fi
 }
 

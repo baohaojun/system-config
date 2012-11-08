@@ -18,13 +18,18 @@ function die() {
     exit -1
 }
 
-cd ~/etc/cron.d/$run_dir
-cmds=($(find . -maxdepth 1 -type f -o -type l|grep -v -e '\.stackdump$'))
+for dir in ~/etc/cron.d/$run_dir ~/external/etc/cron.d/$run_dir; do
+    if test ! -d $dir; then
+        continue
+    fi
+    cd $dir
+    cmds=($(find . -maxdepth 1 -type f -o -type l|grep -v -e '\.stackdump$'))
 
-for x in ${cmds[@]}; do
-    chmod +x $x || true
-    test -e $x || continue
-    ld=$logdir/$x/$(date +%A)/
-    mkdir -p $ld
-    ($x || bhj-notify cron-runner "$x failed" &) > $ld/$(date +%H:%M) 2>&1 
+    for x in ${cmds[@]}; do
+        chmod +x $x || true
+        test -e $x || continue
+        ld=$logdir/$x/$(date +%A)/
+        mkdir -p $ld
+        ($x || bhj-notify cron-runner "$x failed" &) > $ld/$(date +%H:%M) 2>&1 
+    done
 done&
