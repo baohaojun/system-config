@@ -35,7 +35,11 @@ done
 
 reviewers=()
 if test $# = 0; then
-    die "Error: Usage $(basename $0) REVIEWER..."
+    if yes-or-no-p "Add your self as the reviewer?"; then
+        set -- $(git config user.email)
+    else
+        die "Error: Usage $(basename $0) REVIEWER..."
+    fi
 fi
 
 while test $# -gt 0; do 
