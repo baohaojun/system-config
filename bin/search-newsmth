@@ -1,3 +1,35 @@
 #!/bin/bash
-of 'http://www.newsmth.net/bbsbfind.php?q=1&board=MyPhoto&title=&title2=&title3=&userid='$1'&dt=2222'
-of 'http://www.newsmth.net/bbsbfind.php?q=1&board=Pictures&title=&title2=&title3=&userid='$1'&dt=2222'
+
+TEMP=$(getopt -o a:b: --long author:board: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+
+author=flonk
+def_board=(MyPhoto Pictures)
+board=()
+while true; do
+    case "$1" in
+        -a|--author)
+            author=$2
+            shift 2
+            ;;
+        -b|--board)
+            board=("${board[@]}" $2)
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+if test -z "$board"; then
+    board=("${def_board[@]}")
+fi
+for b in "${board[@]}"; do
+    of "http://www.newsmth.net/bbsbfind.php?q=1&board=$b&title=&title2=&title3=&userid=$author&dt=2222"
+done
+
