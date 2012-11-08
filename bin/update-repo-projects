@@ -83,6 +83,6 @@ fi
     ) 9>.android-full-build.lock
 done
 
-if test $# != 1; then
+if test "$RUNNING_IN_CRON" = true; then
     cron-code-reading
 fi

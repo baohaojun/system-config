@@ -1,12 +1,11 @@
 #!/bin/bash
 exec >/dev/null
 . ~/.bashrc
-export IN_CRON=true
 export PATH=/usr/local/bin:$PATH
 function do_it() {
     if test -f .for-code-reading -a ! -L .for-code-reading; then
 	mkbeagrepidx 
-	mkgtags -i > .for-code-reading 2>&1
+	bash -x mkgtags -i -v > .for-code-reading 2>&1
 	touch .for-code-reading
     fi
 }

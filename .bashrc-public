@@ -36,6 +36,10 @@ cd_beagrep()
 	return
     fi
 
+    if [[ "$PWD" =~ tmp/for-code-reading ]]; then
+        builtin cd "${PWD#*for-code-reading}"
+        return
+    fi
     dest=~/tmp/for-code-reading/`pwd`
     while test ! -d "$dest"/.beagrep -a ! -e "$dest"/GPATH -a "$dest" != / -a "$dest" != ""; do
         dest=${dest%/*};

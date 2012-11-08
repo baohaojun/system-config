@@ -168,11 +168,12 @@ sub do_cscope($$$) {
 		}
 	    }
 	}
+
+	open($grep, "-|", "global-ctags", $lookup_needle, @updated_paths) or
+	    die "can not open pipe for global-ctags";
+	parse_xref($grep, 1);
     }
 
-    open($grep, "-|", "global-ctags", $lookup_needle, @updated_paths) or
-	die "can not open pipe for global-ctags";
-    parse_xref($grep, 1);
 
     for (sort {
 	($matches{$a}{"dist"} <=> $matches{$b}{"dist"})
