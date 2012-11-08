@@ -40,7 +40,7 @@ fi
 test -e "$target_dir" || die "ln: target_dir \`$target_dir does not exist"
 
 old_target_dir=$target_dir;
-target_dir=$(formal-path "$target_dir"|perl -npe 's,/*$,,')
+target_dir=$(formal-path "$target_dir")
 
 echo -n > ~/.failed-rln
 

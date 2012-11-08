@@ -1,0 +1,42 @@
+#!/bin/bash
+
+trueone_rc=~/external/etc/overide/.$(basename $0).trueone
+if test -e $trueone_rc; then
+    . $trueone_rc
+else
+    mkdir -p $(dirname $trueone_rc)
+    the_adb=$(type -a adb|grep 'adb is /'|grep -v /debug/|perl -ne 'print if 2..2'|pn 3)
+    echo the_adb=$the_adb > $trueone_rc
+fi
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test -z "$the_adb"; then
+    die "Error, the adb is not found"
+fi
+    
+function adb() {
+    if test "$1" = -w; then
+        $the_adb wait-for-device
+        shift
+    fi
+    if test "$1" = -s; then
+        echo "$2" > ~/.adbd
+    elif test "$1" != devices -a $(setsid $the_adb start-server >/dev/null 2>&1 ; $the_adb devices | grep .| wc -l) -gt 2; then
+        set -- -s "$(cat ~/.adbd)" "$@"
+    fi
+
+    if test $# -lt 1 -a $1 = shell; then
+        $the_adb "$@" | tr -d '\r'
+    elif test $# = 3 -a $1 = shell -a $2 = restart; then
+        $the_adb shell stop $3; 
+        $the_adb shell start $3;
+    else
+        $the_adb "$@"
+    fi
+}
+
+adb "$@"
