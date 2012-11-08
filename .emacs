@@ -2466,6 +2466,10 @@ using ctags-exuberant"
 	  (lambda ()
 	    (setq imenu-create-index-function #'imenu-create-index-using-ctags))
 	  t)
+
+(add-hook 'grep-mode-hook
+	  (lambda ()
+	    (setq compilation-directory-matcher (default-value 'compilation-directory-matcher))))
   
 (condition-case nil
     (server-start)
