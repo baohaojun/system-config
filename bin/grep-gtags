@@ -72,9 +72,10 @@ sub parse_xref($$)
     our %matches;
     our $path_filter_worked;
     our %matches_path_line;
-    our %update_path;
+    our %updated_paths;
 
     
+read_line:
     while (<$grep>) {
         chomp();
 	debug "got $_";
@@ -112,11 +113,16 @@ sub parse_xref($$)
 	    }
 	}
 	$matches_path_line{$loc}{$def} = 1;	
-	$matches{$_} = [$path, $def, $line, $str]; # arch/h8300/kernel/entry.S need_resched 312 need_resched:
+	$matches{$_} = {
+	    "path" => $path,
+	    "def"  => $def,
+	    "line" => $line,
+	    "str", => $str
+	};
 	my $x = $path;
 	$x =~ s,.*/,,;
-	$matches{$_}->[4] = abs(adistr($matches{$_}->[0], $approx_dir)) + abs(adistr($x, $lookup_needle)) / 2;
-	$update_path{$path} = 1;
+	$matches{$_}{"dist"} = abs(adistr($matches{$_}{"path"}, $approx_dir)) + abs(adistr($x, $lookup_needle)) / 2;
+	$updated_paths{$path} = 1;
 	
     }
 }
@@ -134,11 +140,10 @@ sub do_cscope($$$) {
     our %matches;
     our $path_filter_worked;
     our %matches_path_line;
-    our %update_path;
-
-read_line:
+    our %updated_paths;
 
     parse_xref($grep, 0);
+    close($grep);
 
     if (not %matches and $path_filter_worked) {
 	print "path filter worked, and you got 0 matches!\n";
@@ -148,26 +153,35 @@ read_line:
     use String::Approx 'adistr';
     our $approx_dir;
 
-    my @update_path = keys %update_path; 
-    open(my $updates, "-|", "echo @update_path |tr ' ' '\n'| gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
+    my @updated_paths = keys %updated_paths; 
+    open(my $updates_handle, "-|", "echo @updated_paths |tr ' ' '\n'| gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
 	or die "Can not query update on gtags";
 
-    @update_path = map {chomp; $_} <$updates>;
-    if (@update_path) {
-	print "These files need update: @update_path\n";
+    @updated_paths = map {chomp; s,^\./,,; $_} <$updates_handle>;
+    close($updates_handle);
+    if (@updated_paths) {
+	debug "These files need update: @updated_paths\n";
+	foreach my $path(@updated_paths) {
+	    foreach my $match (keys %matches) {
+		if ($matches{$match}{path} eq $path) {
+		    delete $matches{$match};
+		}
+	    }
+	}
     }
 
-
+    open($grep, "-|", "global-ctags", $lookup_needle, @updated_paths) or
+	die "can not open pipe for global-ctags";
+    parse_xref($grep, 1);
 
     for (sort {
-	($matches{$a}->[4] <=> $matches{$b}->[4])
+	($matches{$a}{"dist"} <=> $matches{$b}{"dist"})
 	    or
-	    ($matches{$a}->[2] <=> $matches{$b}->[2])
+	    ($matches{$a}{"line"} <=> $matches{$b}{"line"})
 	 } keys %matches) {
 	
-	debug "dist between $_ and $approx_dir is $matches{$_}->[4]";
-	# print 'dist between "' . $matches{$_}->[4] . '" and "' . $lookup_needle . '" is ' . abs(adistr($matches{$_}->[4], $lookup_needle)) . "\n";
-	my ($file, $def, $line, $str) = @{$matches{$_}};
+	debug "dist between $_ and $approx_dir is $matches{$_}{dist}";
+	my ($file, $def, $line, $str) = @{$matches{$_}}{"path", "def", "line", "str"};
 
 	if ($ENV{UNPACK_MACRO} and $str =~ m/^\s*#define\s+$lookup_needle\s+(\S+)$/) {
 	    unless ($1 eq $lookup_needle or $ENV{UNPACK_MACRO} >= 5) {
