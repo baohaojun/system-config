@@ -25,6 +25,3 @@
 [submodule "gcode/crossdict"]
 	path = gcode/crossdict
 	url = https://github.com/baohaojun/BTAndroidWebViewSelection
-[submodule "gcode/ctags-exuberant"]
-	path = gcode/ctags-exuberant
-	url = https://github.com/baohaojun/ctags-exuberant.git

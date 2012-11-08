@@ -25,23 +25,13 @@ while (@s and @t) {
     }
 }
 
-sub debug(@) {
-    print STDERR "@_\n";
-}
-
-debug "last_slash is $last_slash";
-
-if ($last_slash == 1) { #we should use abspath as they have no common components
-    print $s;
-    exit 0;
-}
 $relative_s = substr($s, $last_slash);
 $remaining_t = substr($t, $last_slash);
 
 $remaining_t = grep(m:/:, split("", $remaining_t));
 $relative_s = "../" x $remaining_t . $relative_s;
 print "$relative_s";
-' "$source" "$target" 2>~/.logs/relative-path.log
+' "$source" "$target"
 }
 
 if test "$(basename "$BASH_SOURCE")" = "$(basename "$0")"; then

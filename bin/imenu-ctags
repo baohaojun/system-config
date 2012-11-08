@@ -11,7 +11,7 @@ my %line_point_map;
 my $line = 0;
 chomp(my $mode = qx(lang_for_file $filename));
 
-open(my $ctags_pipe, "-|", "ctags-exuberant --c-kinds=+p --language-force=$mode -xu --extra=+q /dev/stdin > ~/.imenu-ctags.$$")
+open(my $ctags_pipe, "-|", "ctags-exuberant --language-force=$mode -xu --extra=+q /dev/stdin > ~/.imenu-ctags.$$")
     or die "Can not open ctags program";
 
 while (<>) {

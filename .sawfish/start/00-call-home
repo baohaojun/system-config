@@ -1,4 +1,0 @@
-#!/bin/bash
-nmcli con up id DHCP
-sleep 5
-call-home

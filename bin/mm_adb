@@ -12,7 +12,7 @@ copy_files=($(cat /tmp/$LOG|grep -v '.ogg$'|grep "${1:-^Copy:}"|perl -npe 's/'"$
 
 for x in ${install_files[@]} ${copy_files[@]}; do
     y=`echo $x|perl -npe 's,.*/target/product/.*?/,/,'|perl -npe 's,^/data/app/,/system/app/,'`
-    printf "adb_push %q %q" "$x" "$y"
+    echo push $x '->' $y
     adb_push $x $y
 done
 

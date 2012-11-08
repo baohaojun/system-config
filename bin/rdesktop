@@ -1,35 +1,12 @@
 #!/bin/bash
-function die() {
-    echo Error: "$@"
-    exit -1
-}
-
 function rdesktop() {
-
-    kbd=en-dvp
-    TEMP=$(getopt -o k: -n $(basename $0) -- "$@")
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
-            -k)
-                kbd=$2
-                shift 2
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "internal error"
-                ;;
-        esac
-    done
     host=$1
     shift
     user=${1:-$USER}
     shift
-
-    set -- -k $kbd -r clipboard:PRIMARYCLIPBOARD "$@"
+    if test $# = 0; then
+	set -- -k en-dvp
+    fi
     pass=$(get-authinfo $host $user rdesktop)
     setsid /usr/bin/rdesktop -K -a 24 -g $(xrandr |grep '\*'|pn 1) $host -u $user -p $pass "$@"
 }

@@ -33,10 +33,7 @@ iface usb0 inet static
 * DONE 搞定几条测试case。
   CLOSED: [2012-03-15 Thu 10:09]
   - CLOSING NOTE [2012-03-15 Thu 10:09]
-* DONE Win7为什么每次都搜索驱动
-  CLOSED: [2012-10-29 Mon 18:49]
-  - CLOSING NOTE [2012-10-29 Mon 18:49] \\
-    Canceled
+* TODO Win7为什么每次都搜索驱动
 * DONE Win7为什么每次都生成新的网卡
   CLOSED: [2012-03-15 Thu 10:10]
   - CLOSING NOTE [2012-03-15 Thu 10:10]

@@ -1,35 +1,13 @@
 #!/usr/bin/env perl
 
-use Getopt::Long;
-my $pre;
-GetOptions(
-    "pre=s" => \$pre,
-    );
-
-if ($pre) {
-    $pre_re = qr/^\Q$pre\E/;
-}
-
 while (<>)
 {
     if (not exists $file{$_}) {
         $file{$_} = 1;
-	push @file, $_;
-
-	if ($pre and m/$pre_re/) {
-	    $file_pre{$_} = 1;
-	    push @file_pre, $_;
-	}
-    }
-}
-
-if ($pre) {
-    for (@file_pre) {
-	print $_;
+        push @file, $_;
     }
 }
 
 for (@file) {
-    next if ($pre and exists $file{$pre . $_} or exists $file_pre{$_});
     print $_;
 }

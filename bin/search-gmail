@@ -1,8 +1,6 @@
 #!/usr/bin/env perl
 use URI::Escape;
 
-push @ARGV, "-bash_history.bak";
-
 $, = " ";
 $escape = uri_escape("@ARGV");
 $escape =~ s/-/%2D/g;

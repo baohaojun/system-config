@@ -6,6 +6,7 @@ maxfetch = 3000
 ### Outgoing Servers (local messages are sent to them)
 
 server = nntp.aioe.org
+noread = 1
 only_groups_match_all = 1
 
 

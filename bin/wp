@@ -41,16 +41,6 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         relative-path "$FILE" $(readlink -f $(lookup_file .repo/..))/
     }
 
-    function absp()
-    {
-        HFILE=$FILE
-        if test "${FILE:0:1}" = /; then
-            echo $FILE
-        else
-            echo $(pwd)/$FILE
-        fi
-    }
-
     function wp()
     {
 
@@ -91,12 +81,16 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     }
     export FILE=${1:-`pwd`}
     export FILE=`lookup_file "$FILE"`
-    if test "$NO_PUTCLIP" = true || test -z "EMACS" && ! tty >/dev/null 2>&1; then
+    if test "$NO_PUTCLIP" = true; then
         "`basename -- $0`" "$@"
     else
-        out=$($(basename -- $0) "$@")
-        echo "$out"
-        echo "$out"|
+	out=/dev/null
+	if tty >/dev/null 2>&1;
+	then 
+	    out=/dev/tty
+	fi
+        "`basename -- $0`" "$@" |
+	tee $out |
 	putclip
     fi
 else # we are being sourced

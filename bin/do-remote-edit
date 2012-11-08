@@ -16,8 +16,6 @@ if ($edit_cmd[0] eq "emacsclient") {
   system(@edit_cmd);
 } elsif ($edit_cmd[0] eq "gerrit-review-mail-it") {
   system(@edit_cmd);
-} elsif ($edit_cmd[0] eq "remote-putclip") {
-    system(@edit_cmd);
 } else {
   print "Error: permission denied.\n"
 }

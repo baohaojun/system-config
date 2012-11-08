@@ -21,7 +21,6 @@ time (
     export build_mount_p=$(readlink -f ../)/.afb
     mkdir -p $build_mount_p
     test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1
-    echo "make: Entering directory \`$(pwd)'"
     time sudo unshare -m -- bash -c '
                 set -ex
                 mount $(pwd) '$build_mount_p' -o bind;

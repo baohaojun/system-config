@@ -19,9 +19,6 @@ my $members = 0;
 my $grep_all = 0;
 my $no_comment = 0;
 my @argv_for_grep_all = @ARGV;
-my $path_matcher = "";
-my @beagrep_path_arg;
-my $reverse_matcher;
 
 GetOptions(
     "s!" => \$silent,
@@ -29,19 +26,8 @@ GetOptions(
     "a!" => \$grep_all,
     "m!" => \$members,
     "e=s" => \$target,
-    "p=s" => \$path_matcher,
-    "v=s" => \$reverse_matcher,
     "nc!" => \$no_comment,
     );
-
-if ($path_matcher) {
-    @beagrep_path_arg = ("-p", $path_matcher);
-}
-
-if ($reverse_matcher) {
-    $reverse_matcher = qr($reverse_matcher);
-    debug "got reverse matcher: $reverse_matcher";
-}
 
 if ($target =~ m/^\b/) {
     $target = "\\b$target";
@@ -129,7 +115,6 @@ my %printed_func_map;
 while(<$file>) {
     $file_line_map{$.} = $_;
     next unless m/$target/;
-    next if ($reverse_matcher and m/$reverse_matcher/);
 
     debug ":$.: $_";
     my $last_checked_def_line = -1;

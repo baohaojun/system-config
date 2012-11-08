@@ -1,8 +1,6 @@
 D:\Profiles\bhj\Application Data\Apple Computer\iTunes\iPad Software Updates\iPad1,1_5.1_9B176_Restore.ipsw.download
 
-* DONE 搞定一个build makefile之间的include关系图
-  CLOSED: [2012-10-29 Mon 18:49]
-  - CLOSING NOTE [2012-10-29 Mon 18:49]
+* TODO 搞定一个build makefile之间的include关系图
 
 * DONE How to convert pdf for reading on kindle touch
   CLOSED: [2012-09-14 Fri 10:47]

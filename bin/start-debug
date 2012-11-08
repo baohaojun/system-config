@@ -13,22 +13,18 @@ if test "$1" != "$(basename $1)"; then
 fi
 
 cmd=$(which $1)
-if test "$cmd" = "$(readlink -f ~/bin/linux/ext/debug/$1)"; then
+if test "$cmd" = ~/bin/linux/ext/$1; then
     die "already set up debugging for $1"
 fi
 
-cat <<EOF > ~/bin/linux/ext/debug/$1
+cat <<EOF > ~/bin/linux/ext/$1
 #!/bin/bash
 mkdir -p ~/.logs/start-debug.log/
 
-(
-    printf "cd %q;" "$(pwd)"
-
-    for x in "$1" "\$@"; do
-        printf "%q " "\$x" 
-    done
-    echo
-) >> ~/.logs/start-debug.log/$1
+for x in "$1" "\$@"; do
+    printf "%q " "\$x" >> ~/.logs/start-debug.log/$1
+done
+echo >> ~/.logs/start-debug.log/$1
 exec $cmd "\$@"
 EOF
-chmod +x ~/bin/linux/ext/debug/$1
+chmod +x ~/bin/linux/ext/$1

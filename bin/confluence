@@ -32,19 +32,9 @@ for (@ARGV) {
     }
 }
 my $conf_dir = $ENV{"CONF_DIR"} || glob("~");
-
-my ($confserv, $confuser, $confhttp);
-
-if ($ENV{CONFLUENCE_USER}) {
-    $confserv = $ENV{CONFLUENCE_SERV};
-    $confuser = $ENV{CONFLUENCE_USER};
-    $confhttp = $ENV{CONFLUENCE_HTTP}
-} elsif (-f "$conf_dir/.confserv") {
-    chomp ($confserv=`cat $conf_dir/.confserv`);
-    chomp ($confuser=`cat $conf_dir/.confuser`);
-    chomp ($confhttp=`cat $conf_dir/.confhttp 2>/dev/null`);
-}
-
+chomp (my $confserv=`cat $conf_dir/.confserv`);
+chomp (my $confuser=`cat $conf_dir/.confuser`);
+chomp (my $confhttp=`cat $conf_dir/.confhttp 2>/dev/null`);
 $confhttp = "http" unless $confhttp;
 
 my $space = "~$confuser";

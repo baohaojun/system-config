@@ -56,7 +56,7 @@ time (
     fi
 
 
-    export blf=$(absp "$1")
+    export blf=$(readlink -m "$1")
     test -e "$blf" || die "no such file $blf"
     export BLF=$blf
 
@@ -152,21 +152,12 @@ time (
         do-partition factory "$(get-image-path FACT)"
     fi
 
-
-    do-partition GPT "$(get-image-path PGPT)"
-
-    ntim_bin=$(get-image-path TIMH)
-
-    if test -e./software_downloader/Utilities/TimBuilder/TimBuilder.exe; then
-        if test ! -e "$ntim_bin" -o "$(stat -c %s "$ntim_bin")" == 0; then
-            wine ./software_downloader/Utilities/TimBuilder/TimBuilder.exe -r "$(command wp $BLF)"
-        fi
-    fi
-    
-    if test -e "$ntim_bin" -a "$(stat -c %s "$ntim_bin")" != 0; then
+    if test "$ERASE_ALL" = true; then
+        do-partition GPT "$(get-image-path PGPT)"
         do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
-        do-partition OBM $(concat-file 0 TIMH 128K OBMI)
+        do-partition OBM $(concat-file 0 ntim_emmc.bin 4K OBMI)
     fi
+
 
     if test $(basename $0) = do-fastboot-full-988 -a "$ERASE_ALL" = true; then
         fastboot erase misc

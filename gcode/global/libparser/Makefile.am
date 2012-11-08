@@ -17,13 +17,8 @@ noinst_HEADERS = parser.h internal.h asm_parse.h \
 
 libgloparser_a_SOURCES = parser.c C.c Cpp.c asm_parse.c asm_scan.c java.c php.c
 
-asm_parse.h : asm_parse.c
-
 asm_parse.c : asm_parse.y
 	yacc --defines=asm_parse.h -o asm_parse.c asm_parse.y
-
-%.c : %.l
-	lex -o $@ $<
 
 INCLUDES = @INCLUDES@
 
