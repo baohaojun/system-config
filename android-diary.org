@@ -1,0 +1,550 @@
+
+* Get nv code
+
+#+begin_src sh
+
+# for p1, froyo version
+repo init -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre_p1_22.xml --repo-url=ssh://bearr/android/tools/repo.git
+repo sync
+
+# for p2, froyo version
+repo init -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre_p2_22.xml --repo-url=ssh://bearr/android/tools/repo.git
+repo sync
+
+# for p2, gingerbread version
+repo init -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre_p2_23.xml --repo-url=ssh://bearr/android/tools/repo.git
+repo sync
+
+# for p2, froyo ventana vanilla version (ventana阳春版)
+repo init -u ssh://bearr/android/platform/manifest.git -b theatre -m theatre-vanilla-ventana-10.9.7.xml --repo-url=ssh://bearr/android/tools/repo.git
+repo sync
+
+#+end_src
+
+更新：（2011-05-06）p1/p2的image和板子如果混了交叉烧的话有可能导致板子不起机。因为p2内存是1G，而p1则为512M。此外，p1上我们没有effort去跑gingerbread。
+
+* build
+
+#+begin_src sh
+# for froyo
+(cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make -j8 -l8 -k )
+
+# for gingerbread
+(cd .repo/.. && export TARGET_PRODUCT=carnation && . build/envsetup.sh && setpaths&& lunch carnation-eng && time make -j8 -l8 -k )
+
+# 需要注意如果你的cpu是双核的，需要相应修改-j8 -l8这两个参数，一般我写成cpu核数的两倍
+# 如果不改的话，有时候机器看上去像死机了似的
+#+end_src
+
+*更新* （2011-05-10）：从今天开始，不需要再去wifi目录下做一遍git clean了，我把它的build依赖关系fix了。
+
+* 按键
+
+键的顺序：上方，从右往左：Menu，Power，Reset（小孔，有的可能闭着的），Recovery（也是小孔），Vol+，Vol-。右侧，从上往下，Back，Home。
+
+有些地方是标示的有点问题，比如Home键，标示成Menu了。
+
+注意，上面说的这个键的顺序是p1板的，p2板有改过，我们可以看丝印图。（theatre-p2-silk.pdf，在vendor/nvidia/theatre-doc下）。
+
+* 烧写
+
+烧写需要用的文件可以是自己做full build出来，也可以直接用cm release出来的文件：比如 ~smb://dog/protected/wowpad/cm/release-20110124/cinema-r2.2.134~ 下的文件。
+
+在Linux下烧写用的脚本是theatre-flash.sh文件，以自己build的为例，这个文件在android代码最上层的flashing目录下，烧机步骤为：
+
+# 装了壳的板子，在SD卡槽的旁边有一个小孔，里面是recovery键，用针捅着，不要放手，然后按开机键。
+# 这时候屏幕不会亮，要判断系统有没有进入烧机模式，你需要看一下lsusb的输出，有类似于下面这行的话，就说明板子已经进入了烧机模式：
+#+begin_example
+#+end_example
+...
+Bus 001 Device 028: ID 0955:7820 NVidia Corp. 
+...
+#+end_example
+# 在android代码的最上层目录下运行下面的命令：
+#+begin_src sh
+(cd .repo/.. && cd flashing/ && ./theater-flash.sh)
+#+end_src
+
+** Windows下烧写
+
+首先，点[[^nvflash-usb-pc-driver.zip][这里]]下载并安装本文附件中的usb驱动。这个操作只要执行一次就可以了。
+
+*更新*：（2011-05-06）这个版本里有64位的Windows驱动，需要的话可以试一下。我自己是没有试过的:-)
+
+驱动安装方法：使板子进入烧机模式，然后插到Windows的机器上，桌面通知图标区域应该弹出通知，发现新硬件，安装驱动即可。如果没有通知，则可能需要直接到设备管理器中去看。如果这里也没有，那么可能板子没有进入烧机模式，或者其他硬件问题。
+
+然后，从2011-01-26起，不论自己build出来的还是CM release出来的，里面应该有一个theatre-flash.bat文件，双击运行这个文件即可。如果烧写出错的话，相同目录下还有一个theatre-full-flash.bat文件，试试这个。关于这两种烧写方法有何区别，参见最后的faq。
+
+CM release出来的会放在 ~\\dog\protected\wowpad\cm\~ 下，你直接双击.bat文件是不行的，Windows对.bat文件（其实主要是cmd.exe）有限制，不得跑到网络路径上，所以你需要把相应的文件拷出来，或者更好的方法是到 ~\\dog~ 下把protected点击右键映射成一个网络驱动器比如Z:，然后到Z:盘的相应目录下双击那个.bat文件。
+
+注意：Windows下烧机不是Nvidia官方正式支持的烧机方法，如果有问题请继续回到Linux下烧机。
+
+* 单独编译、烧写kernel和bootloader
+
+不要自己去kernel目录下make，这个是不支持的，如果这样做了的话，会导致full build出问题。
+
+Nvidia自己写了一套编译kernel+ramdisk的脚本，集成在Android的build系统里，调用方法为：
+
+#+begin_src sh
+(cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make -j8 -l8 -k bootimage)
+#+end_src
+
+更新（2011-03-31）：
+#+begin_src sh
+(cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && kconfig tegra_cinema_android_defconfig && time krebuild -j8 -l8)
+#+end_src
+
+用这个方法去做kernel build，会更快，因为不需要去parse android的整个Makefile系统；此外还能自己指定用什么kernel config文件（即上面的 tegra_cinema_android_defconfig）。
+
+烧写Kernel：
+
+#+begin_src sh
+#for 2.2
+(cd .repo/.. && cd flashing/ && sudo ./nvflash --bl bootloader.bin --download 6 boot.img --go)
+
+#for 2.3, see notes below
+(cd .repo/.. && cd flashing/ && sudo ./nvflash --bl bootloader.bin --download 5 boot.img --go) 
+
+#+end_src
+
+
+编译bootloader：
+
+#+begin_src sh
+(cd .repo/.. && export TARGET_PRODUCT=cinema && . build/envsetup.sh && time make -j8 -l8 -k bootloader)
+#+end_src
+
+烧写bootloader：
+
+#+begin_src sh
+(cd .repo/.. && cd flashing/ && sudo ./nvflash --bl bootloader.bin --download 4 bootloader.bin --go)
+#+end_src
+
+*注意*，这里写着的--download后面跟的6和4，是指相应image的分区号，在目前的froyo版本的theatre里就是6/4，kernel是6，bootloader是4；但是在gingerbread里，kernel的分区变成了5。这个你可以看一下flashing git目录下的.cfg文件就明了。
+
+* 代码review
+
+先看一下你总共改了几个git repository，一般我用的命令是（你可以用自己的命令来达到相同的目的）：
+#+begin_src sh
+repo forall -c 'git diff $REPO_LREV|grep -q . && pwd'
+#+end_src
+
+当然，如果你确信自己只改了一个git repository，比如 ~kernel~ ，那么你可以跳过这一步。
+
+然后到每一个有修改的git repository下，运行下面的几条命令：
+
+** 先同步到最新代码
+
+#+begin_src sh
+repo sync .
+#+end_src
+
+然后可能还需要 ~git merge~ 等操作，保证你的改动是基于最新的主线代码之上的。具体操作可参考git手册。
+
+** 确保一个review只有一个commit
+
+在你解bug、写代码的过程中，你可以多次commit，但是最后要让别人review的时候，99%的情况下，应该只有一个commit。
+
+所以你可能需要跑这条命令来修改你的历史记录：
+
+#+begin_src sh
+repo forall . -c 'git reset --soft $REPO_LREV'
+#+end_src
+
+然后再 ~git commit~ 一下。
+
+** 提交review
+
+#+begin_src sh
+git push letou HEAD:refs/for/`tbranch`
+#+end_src
+
+*解释*：这里 ~letou~ 是NV项目的repo manifest.xml文件里定义的remote的名字。这个在别的项目（aster）上被定义为korg，这是不对的，korg应该特指kernel.org，我们不应该用这个名字。
+
+HEAD则是说，把你当前branch（可为匿名）的HEAD（也就是最新版本）推上去做review。
+
+*注意*：在提交review之前，需要确保你的commit comments的格式与最终的公司流程要求里规定的格式符合，否则的话，你在review完了之后为了改comments还需要再commit一次，就不合适了。因为我们的一个目标是，review完了，OK了的代码，就是直接进主线的代码。而commit comments也是review内容的一部分。
+
+** tbranch
+
+*注意*：上面给出的这条命令里有个 ~`tbranch`~ ，这个子命令会给出我当前代码目录是在跟踪哪个分支。使用它我们就不需要再去记忆不同的目录、不同的产品、不同的硬件分别都是在使用哪个分支，让计算机帮我们算出来，这是最好的做法。为什么这么说呢？因为这个做法符合SPOT原理。Single Point Of Truth。我的当前目录是在跟踪哪个上游分支，这是一个truth/fact，这个truth在repo manifest.xml里给出过了，我们在check-in代码的时候，最好不要提这个分支的名字，因为一提就违反了SPOT原理，一个truth出现在了多个Point上：manifest.xml中、你的命令行、我的命令行上。这样，一个地方改了这个truth，其他所有地方（所有直接使用分支名的人）都需要跟着改，没改的就得捅篓子，不知道怎么改的还得问别人，从而产生很多额外的不必要的effort。SPOT原理可参考The Art Of Unix Programming。
+
+下面是tbranch的实现，请把它拷到你的/usr/bin/下：
+
+#+begin_src sh
+#!/bin/bash
+repo forall . -c 'echo $REPO_RREV'
+#+end_src
+
+这样你以后再也不用记当前是在用theatre还是theatre-p2还是theatre-gb-p2还是aster23：
+
+#+begin_src sh
+git push letou HEAD:refs/for/`tbranch`
+#+end_src
+
+如果是最后要push到服务器上游分支，那么类似地，我也一样不写theatre等分支名，而是用tbranch：
+
+#+begin_src sh
+git push letou HEAD:`tbranch`
+#+end_src
+
+你可以用repo help forall看一下，tbranch是怎么实现的。用tbranch还有一个好处，那就是，你不大会写错branch名字。之前我有发现有位同事不小心把theatre写成了threatre，结果push到主线之后cm那边却没build出来。
+
+** 添加reviewer
+
+当你跑完push到review的命令，输出中会有一行，包含一个网页URL，类似于 ~http://bear/gerrit/#change,16~ ，你登录这个网页，就可以添加让谁来帮你review代码了。（你可以点一下这个链接，看一下以后我们经常会用的界面是啥样的）
+
+** 提交代码
+
+这一步应该大家都会做了，就是 ~git push letou HEAD:`tbranch`~ 。
+
+当你的reviewer review完你的代码，他可以直接在上面的这个网页里操作，如果approve了，系统会自动给你发一封邮件，告诉你OK了，这时候你就可以把代码提交到主线上了。
+
+** 二次review
+
+有时候一次review是不够的，你的代码中可能包含某些错误，别人帮你review出来了；或者你根本操作的时候搞错了，提交了错误版本的代码。比如你当前做的feature，同时需要在NV和freescale上实现，然后你把freescale的代码给提交到NV的branch上做review，这就是第二种错误。
+
+针对这两种错误，我们有两种不同的处理方式，可以根据实际情况自己选择：
+
+*** 提交新的patchset
+
+这个主要针对第一种错误。在别人帮你review出错误之后，你把这些错误修正了，然后再次 ~git commit~ ，注意两点：a) 加--amend参数；b) 保持comments里的Change-Id不变。
+
+如果你不加--amend参数，那么你手里就会有两个commit了，上一次的和这一次的。这个我们之前就说过是要避免的。（如果已经搞出两个commit出来，可以用 ~git reset --soft~ 修改你私有的历史记录，所以不用担心）
+
+如果你不保持Change-Id不变，那么你提交review的时候，gerrit里就会生成一个新的review，而不是在旧的review上生成一个新的patchset。
+
+如果你一不小心弄错了，Change-Id变了，生成了一个新的review，那么你需要下面的操作，至少把旧的review给abandon掉。一直挂在上面是不好的，无效的review如果太多了的话，会把有用的review给淹没。
+
+*** Abandon review
+
+当你完全提交错了的情况下，你可以到gerrit里直接按那个Abandon Change按钮，这样这个change就无效了。
+
+需要指出的是，我们“鼓励”你多犯错误。不是所有的错误都像build error那样会被罚款的。如果你不敢提交到主线，可以提交到gerrit review上来，因为在这里，犯了错误是可以改正的。而且大家可以帮你一起看、一起学习。当然，你需要保证代码的一个基本质量，否则就是浪费大家的时间。
+
+* 代码组织示例
+
+在这里会陆续告诉大家一些NV项目里的代码是怎么组织的。我们的NV项目从硬件原理图上就非常closely的follow NV的参考设计，软件也是如此。现在必须这样做，因为如果不follow的话，可能会有很大的风险，都需要自己承担。
+
+而软件方面，NV是有着自己的一套代码组织方法，可能跟常见的开源软件不大一样。其原因是因为它有自己的操作系统，并且还需要支持Linux、Windows。而它基本上希望以一套代码（至少是一套API）来实现这些支持。
+
+所以在NV的kernel代码里，你除了正规的Linux kernel的api，还会见到NV自己的api。API名字虽然不同，但是其实它们做的是非常类似的事，所以简单了解一下即可，不必panic。
+
+同时告诉大家一个好消息，在强大的开源社区面前，NV的代码会在gingerbread、honeycomb里完全follow正规api。因为这些版本android的kernel是google帮忙porting的，人家哪会鸟NV自己的api呢:-)
+
+** GPIO的使用
+
+NV的gpio命名是以字母a-z分组，每组有8个gpio。所以你会看到类似于gpio_ps5的名字，意思就是s组的5管脚（注意是从管脚0开始数，所以其实是第6个）。想计算这个名字在代码里应该对应gpio管脚的序号是多少，可以用我写的一个[[http://github.com/baohaojun/windows-config/raw/master/bin/linux/nvgpio][小脚本]]，用法如下： ~nvgpio s 5~ 。
+
+或者直接参考kernel/arch/arm/mach-tegra/gpio-names.h。
+
+#+begin_src c
+#define TEGRA_GPIO_PA0		0
+#define TEGRA_GPIO_PA1		1
+#define TEGRA_GPIO_PA2		2
+...
+#define TEGRA_GPIO_PO5		117
+#define TEGRA_GPIO_PO6		118
+#define TEGRA_GPIO_PO7		119
+#define TEGRA_GPIO_PP0		120
+...
+#+end_src
+
+
+如果想在用户空间操作output gpio的输出电平拉高、拉低，或者读取input gpio的输入电平被拉高、拉低，可以考虑/sys/class/gpio（用法见kernel Documentation）。这一招在bring-up的时候非常有用。
+
+比如下面这段代码就把123这个gpio（gpio_pp3）给拉成输出高电平。
+#+begin_src sh
+cd /sys/class/gpio
+echo 123 > export
+cd gpio123
+echo out > direction
+echo 1 > vale
+#+end_src
+
+如果想知道用kernel自己的api在NV项目里怎么操作gpio，可参考下面的代码：
+
+#+begin_src none
+    /home/bhj/src/theatre/kernel/arch/arm/mach-tegra/board-ventana-wifi.c:39:     gpio_set_value(VENTANA_WLAN_PWR, on);
+        static int ventana_wifi_power_state;
+        static int ventana_wifi_power(int on)
+        {
+            ...
+    =>      gpio_set_value(VENTANA_WLAN_PWR, on);
+#+end_src
+
+如果想知道NV自己的api是怎么操作gpio（大部分gpio都是如此操作），可参考下面的代码：
+
+#+begin_src none
+这里是在C代码里设wifi用了哪个gpio，这个文件里还能看到大部分的i2c设备在NV的代码体系里是怎么设置总线、地址的：
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/query/ventana/subboards/nvodm_query_discovery_pm275_addresses.h:351:     { NvOdmIoModule_Gpio, 'k'-'a', 0x6, 1 },                    /* GPIO Port K and Pin 6 - WIFI_RST */
+        // Wlan
+        static const NvOdmIoAddress s_WlanAddresses[] =
+        {
+            ...
+    =>      { NvOdmIoModule_Gpio, 'k'-'a', 0x6, 1 },                    /* GPIO Port K and Pin 6 - WIFI_RST */
+
+****************************************************************
+这里是在获取哪个gpio管脚是gsensor的管脚：
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/platform/accelerometer/nvodm_accelerometer_kxtf9.c:817:                 FoundGpio = NV_TRUE;
+        NvBool kxtf9_init(NvOdmAccelHandle* hDevice)
+        {
+            ...
+            {
+                ...
+                {
+                    ...
+                    case NvOdmIoModule_Gpio:
+                        ...
+    =>                  FoundGpio = NV_TRUE;
+
+****************************************************************
+这里是在设gsensor的gpio管脚中断：
+
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/odm_kit/platform/accelerometer/nvodm_accelerometer_kxtf9.c:362:     if (NvOdmGpioInterruptRegister(hDevice->hGpioINT,
+        static NvBool ConfigInterrupt(NvOdmAccelHandle hDevice)
+        {
+            ...
+    =>      if (NvOdmGpioInterruptRegister(hDevice->hGpioINT,
+
+#+end_src
+
+*** debugfs下的gpio
+
+如果不能export，又不想走kernel改code、烧入、reboot等一大串的流程，嫌它太浪费时间，并且只是想看一下当前某个gpio是不是被配置，被配成in还是out了，逻辑电平是高还是低，那么，你可以用debugfs，它提供gpio的一些信息。此外，/proc/interrupts底下也有一些gpio中断是否被触发过，触发过多少次的信息。
+
+想看debugfs下的gpio，使用命令如下：
+
+#+begin_src sh
+mkdir /data/debugfs
+mount -t debugfs null /data/debugfs
+cat /data/debugfs/gpio
+#+end_src
+
+** Pinmux的查询
+
+跟gpio非常相关的一个概念就是pinmux。所谓pinmux，也就是管脚复用的意思。从tegra2的trm文档里可以了解、查询到最详细的pinmux信息。我也是经过一段时间的学习之后才慢慢理解了什么是pinmux。
+
+嵌入式cpu，为了做得比较通用、灵活，同时也为了节省成本，往往会赋予一个管脚多种功能，客户可以根据自己的需要，在设计系统的时候，选择、决定每个管脚的功能。
+
+举例来说，比如一个led功能，可能并不是每个客户设计的系统都有led，所以如果没有pinmux的话，你的cpu专门为led设计一个专用管脚，则这个管脚对不用led的客户就是浪费了；如果你把这个管脚拿掉，则需要led功能的客户的需求不能满足，你的cpu就不够灵活。
+
+此外，一个管脚可以选择几个功能；同样的，一个功能也可以出现在多个管脚上。这两个是相辅相成，不可分割的。前者必然导致后者，后者也必然导致前者。比如，我的管脚p1能配3个功能，f1, f2, f3，那么，在我设计的某个特定系统中，我选择让p1管脚出功能f1，可是同时我还希望能有功能f2，所以功能f2必须能配到另外一个管脚上，这样前者就推出了后者。反之亦然。比如，我的功能f1可以配到3个管脚上，p1, p2, p3，那么，在我设计的某个特定系统中，我已经决定让f1配到p1管脚上，这时，如果前者不成立，一个管脚只能有一个功能，那我的p2、p3管脚就浪费了。所以后者就推出了前者（严谨吧？告诉你一个小秘密，我差点读了数学系）。
+
+这就是pinmux。大多数管脚除了它们自己特定的2~3个功能之外，还都可以配成一个通用的功能。这就是gpio。
+
+所以在原理图上，你会看到一个管脚的序号、主功能名，而在pinmux文件中（我们的NV项目没有出pinmux表，我们可以基于另外一个项目的pinmux表，在vendor/nvidia/theatre-doc/pinmux/下），我们可以看到这个管脚的次功能名和gpio名。这个比查trm文档方便一些，但是还是比较麻烦，所以（谢谢佟波的建议）我提供一个脚本[[http://github.com/baohaojun/windows-config/raw/master/bin/linux/nvpinmux][nvpinmux]]，可以方便地查看一个管脚的管脚名、pinmux功能名、gpio名。
+
+这个脚本需要你把[[http://github.com/baohaojun/windows-config/raw/master/doc/pinmux.csv][这个文件]]放到你的~/doc目录下。
+
+使用方法：
+#+begin_src none
+$nvpinmux pw2
+AA24 LCD_PWR2 GPIO_PC6
+P22 SPI2_CS1_N GPIO_PW2
+#+end_src
+
+如果你觉得这个脚本给出的信息不够的话，你可以自己再完善一下:-)
+
+** I2C的使用
+
+NV自己的体系用法，可以参考上面gpio，在上述文件的gpio附近能看到对nv i2c api的使用。
+
+正规kernel的用法，可以参考drivers/hwmon/mm_ak8975.c，以及下面的代码：
+
+#+begin_src none
+    /scp:bhj@192.168.88.9:/home/bhj/src/theatre/kernel/arch/arm/mach-tegra/board-generic.c:191:         I2C_BOARD_INFO("mm_ak8975", 0x0C),
+        static struct i2c_board_info bus4_i2c_devices[] = {
+        #ifdef CONFIG_SENSORS_AK8975
+            {
+    =>          I2C_BOARD_INFO("mm_ak8975", 0x0C),
+#+end_src
+
+*** i2c-tools的使用
+
+编写i2c驱动，一个非常非常重要、不可或缺的工具，叫i2c-tools。这个我已经放进NV的code里，大家直接就可以用了。
+
+我最经常用的有两种用法：
+
+**** 用i2cdetect看某条总线上有多少i2c设备。
+
+比如下面这个例子，i2cdetect就在i2c-0总线上检测到了三个设备，分别在地址0x1a，0x44，0x5c上面。
+
+这种用法对于一个spec里没有清晰指出设备i2c地址的元件，非常有用。不需要花时间去来回问vendor support了。
+
+#+begin_src none
+$adb shell i2cdetect -y -r 0
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- -- 
+10: -- -- -- -- -- -- -- -- -- -- 1a -- -- -- -- -- 
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+40: -- -- -- -- 44 -- -- -- -- -- -- -- -- -- -- -- 
+50: -- -- -- -- -- -- -- -- -- -- -- -- 5c -- -- -- 
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+70: -- -- -- -- -- -- -- --   
+#+end_src
+
+**** 用i2cget读取某个i2c设备的某个寄存器
+
+略。
+
+**** 用i2cset写某个i2c设备的某个寄存器。
+
+详情请看 ~man i2cget~ 等。（没错，ubuntu/debian上有i2c-tools，apt-get install一下就好了）
+
+更新（2011-04-19）：在NV系统上，有些设备可以用i2cget/i2cset读、写其寄存器，但是有些设备却不行，会返回resource busy错误。这是因为NV的有些设备的驱动是用它自己的架构写，有些是用kernel标准的device/driver的架构写，后者就不允许随便的用i2cget/i2cset了。如果实在想要用的话，必须用 -f 选项。比如p2b的touch驱动就碰到了这个问题，早先的touch设备是可以直接不加 -f 用i2c-tools操作的，但是现在我们用kernel标准架构重写了它的驱动，结果就必须加 -f 选项了。
+
+* Gingerbread
+
+NV的工程师已经帮我们把gingerbread在咱们的板子上跑了起来，我把代码整合了一下，现在可以放到p2的板子上跑。p1的板子可能需要改一下kernel和vendor/nvidia底下的代码，以及flashing底下的烧写程序。怎么改的话看一下git log我就能想起来。
+
+目前只能点亮lcd，用远程桌面（google androidscreencast.jnlp）的话可以把视频播放起来。远程桌面不会有显示，但是鼠标、键盘是可用的。
+
+接下来大量的driver需要port到gb上，因为现在的kernel不再使用nvidia的api，而是正规的kernel api。
+
+** 如何编译
+
+默认一定要用64位的系统了，所以你可能需要重装系统。并且prebuilt底下的arm-eabi-gcc还是32位版本的，所以你需要装一些32bit的库：
+
+#+begin_src sh
+for x in gcc-multilib g++-multilib ia32-libs ia32-libs-gtk lib32ncurses5-dev lib32readline6-dev lib32z1-dev lib32z-dev libc6-dev-i386; do sudo apt-get install -y $x; done
+#+end_src
+
+*** 如何编译android
+
+#+begin_src sh
+(cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && setpaths&& lunch ventana-eng && time make -j8 -l8 -k )
+#+end_src
+
+*** 如何编译kernel
+
+#+begin_src sh
+(cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && setpaths&& lunch ventana-eng && ksetup tegra_defconfig && krebuild -j8)
+#+end_src
+
+注意上面的这种编译kernel的方法，比用android自带的build系统去(make bootimage)，要快一些，因为不需要parse Android的庞大的Makefile。
+
+而且，在gb-tegra里面，可能已经不能用android的build系统make bootimage来编译kernel，必须用krebuild了。这个命令是在vendorsetup.sh里定义的。
+
+* FAQ
+
+** wifi出错
+
+注意前面我给出的所有编译命令，都会到wifi驱动的代码目录下做一个git clean。这是因为这个驱动的代码是独立于kernel编译的，其makefile写得有问题，不能正确更新wifi驱动与kernel保持一致，最终导致驱动load失败。
+
+** build OK，没看到system.img
+
+在这个目录：out/target/product/ventana/system 底下，如果没有看到system.img的话，可能是你的build env没有设对。变成build generic了。晏峰碰到了这个问题。
+
+在标准的android教程里，可能都会告诉你，每次打开一个terminal，先设一下环境，也就是buildenv.sh、lunch等命令。
+
+这样做，我认为不好。首先，我怎么才能记得每次打开一个terminal都要设一下环境呢？万一某个terminal我没有设过，直接build了，出来的是generic的image，而不是我想要的ventana的image，这样就太浪费时间和感情了（害我白等0.5~1个小时）。
+
+其次，设了android的环境之后，引入了一些我不想要的东西。比如help命令，这是一个bash自带的命令，可是android的环境把它重定义了。
+
+这就是为什么我给出的命令都类似于下面的格式：
+
+#+begin_src sh
+(cd .repo/.. && export TARGET_PRODUCT=ventana && . build/envsetup.sh && setpaths&& lunch ventana-eng && ksetup tegra_defconfig && krebuild -j8)
+#+end_src
+
+这里，最外面的括号“()”直接启动了一个子shell，在这个子shell里，我把android需要的环境给设上，并且开始build。build一结束，这些环境就随着这个子shell一起烟消云散了。
+
+基于以上的两个原因，我非常喜欢用子shell的形式来给出命令。
+
+** LCD连接线怎么接
+
+最早的lcd线，两头是一样的，哪头接lcd，哪头接板子，都可以。
+
+后来的lcd线，做了cost reduction，必须用固定的一头接lcd，另一头接板子，如果接错的话，lcd是不会亮的（但是倒也不会烧板子，所以目前（2011-03-24）是不需要担心这个的）。
+
+可以这样简单地区分哪头是哪头：接lcd的那一头，左三右四。也就是说，把正确的那头对准lcd的connector，从左边数应该有3根紧挨着的线，从右边数应该有4根紧挨着的线。
+
+** 远程桌面
+
+在连着adb的时候，用本文附件中的androidscreencast.jnlp可以用远程桌面登录android设备。需要apt-get install openjdk-6-jdk。运行方法：
+
+#+begin_src sh
+LANG=C LC_ALL=C javaws androidscreencast.jnlp
+#+end_src
+
+前面的两个环境变量的设置是为了让这个远程桌面程序使用英文字体。如果发现字体显示异常并且你的环境是中文的话，可以用这个选项。我一般选的语言设置是 ~en_US.UTF-8~ 。
+
+注意一定要用1.6版本的javaws，我们现在很多同事用的都是1.5版本jdk，可以用
+
+#+begin_src sh
+type -a javaws
+#+end_src
+
+看一下你的javaws是在哪个目录下，是什么版本。
+
+** 怎么做touch的calibration
+
+#+begin_src sh
+adb shell i2cset -f -y 0x0 0x5c 0x37 3
+adb shell i2cset -f -y 0x0 0x41 0xcc 3
+#+end_src
+
+有两种touch，所以上面这两条命令跑一条就可以，但是两条都跑就两种touch都能包含了，不要管哪种touch对应哪条命令。
+
+** 工厂tool做touch calibration
+
+在开机完成15分钟内，可以插一块根目录下带一特殊文件的U盘，文件名为 ~touch_calibration~ 。15分钟内系统检测到这样的U盘插入，就会做touch校准的动作。在做校准动作之前，会有一个android系统toast提示，类似“马上要进行touch校准，不要碰touch，并保持touch表面光洁”；做完校准以后，也会有相应的提示。
+
+注意：必须保证文件名不带扩展名。
+
+注意：不要试图插此U盘起机做校准，这样做会不知道touch是什么时候被校准的，因为在起机过程中toast提示是无法显示的。你看不到这些提示，就有可能不小心把手碰到touch，从而造成校准不成功。
+
+注意：要先把屏幕解锁，再做校准。因为toast系统提示在屏幕锁着的状态下是不会显示的，这一点不像在系统status bar上的通知事件，不解锁也能看见，比如U盘插入、正在扫描等事件通知等。
+
+** touch的备用料
+
+目前（2011-03-29）我们还不能同一套code来支持备用的touch（ilitek的touch，i2c的地址是0x41，而另一款，主用料touch，sintek的，i2c地址是0x5c，这个可以用i2cdetect看出来）。
+
+但是我们正在写可以同时支持两款touch的驱动程序。
+
+更新（2011-04-06）：theatre-p2出来的image已经可以同时支持两款touch了。
+
+** Windows下的adb
+
+Windows下的adb驱动不能直接用Google SDK里的，需要做一下修改。把Nvidia的usb设备的 ~vendor_id/product_id~ 给加到驱动的.inf文件中去。
+
+如果你不知道怎么改的话，可以直接用本文附件中的[[^adb.tgz][adb.tgz]]，解压开之后里面还有一个 ~usb_driver_r03-windows.tgz~ 的压缩包，就是adb的驱动，里面的.inf文件是我已经改过了的。
+
+有时候adb连不上的时候，可能需要重新安装（强制升级）一下驱动。
+
+** 怎么修改bulid出来的system.img
+
+有些极端情况下，需要改一下已经生成的system.img，比如在深圳的一些同事，可能为了测试方便，想把某个.apk放到system.img里，这样烧完机就可以用这个程序，而不需要再装一遍。如果只装一台机器当然还好，可是如果需要装几十台机器的话，那就不如在烧机的时候就把这个apk烧进去来得方便。
+
+具体的做法，一定要在Linux下：
+
+#+begin_src sh
+sudo mount system.img /mnt -o loop
+cp test.apk /mnt/app
+sudo umount /mnt
+#+end_src
+
+这样就改好了。
+
+** 怎样得到nvidia的source code
+
+这个可以看nvidia的release notes，最新的版本在vendor/nvidia/theatre-doc/tegra2/10.9.9下有。从Nv开源的repo里获取代码，不能获得bsp相关的部分。
+
+以2.3版本的为例：
+#+begin_src sh
+repo init -u git://nv-tegra.nvidia.com/android/manifest.git -b gingerbread-tegra 
+repo sync
+#+end_src
+
+** theatre-flash和theatre-full-flash的区别
+
+由于我们支持内置sdcard，我们在烧写的时候最好能保证不擦除内置sdcard里的内容，比如video、audio、image等资源文件，是我们费很大劲adb push进去的，不希望一烧机又得重来一遍。所以我们提供了theatre-flash.bat。它不会擦除内置sdcard的内容。
+
+但是在某些特殊情况下，我们不得不擦除整块emmc里的内容，所以我们提供了theatre-full-flash.bat文件。这三种情况下需要用这个来烧写：1. 分区表有变化；2. .bct（板级配置文件）有变化；3. ODMDATA参数有变化。
+
+一般需要full flash的时候我们会有一个release notes或者发一封邮件出来提醒一下大家。
+

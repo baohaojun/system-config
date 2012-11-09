@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="在shell脚本里使用Abstract Factory的设计模式"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-25 11:14:49 CST"/>
+<meta name="generated" content="2012-11-09 09:58:37 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -108,12 +108,14 @@ windows下，也有一个具体的工厂，通过它我可以创建具体的wind
 </p>
 <p>
 如果一定要把类、对象的比喻进行到底的话，这里所说的工厂虚类我们可以把它
-等同于文件的概念。则相应的linux工厂实类的定义就是“一个实现了linux版
-<code>of</code> 命令创建功能的文件”。在面向对象编程中，虚类是无法创建直接对应于它
-的对象的；但linux工厂实类我们可以为它创建一个对象，也就是一个实际存在于
-文件系统中的文件（而不再是口头说说的、概念上的文件）：
-<code>$HOME/.bashrc-linux</code> 。接下来linux版 <code>of</code> 实类的定义类似于 <code>function of() { ... }</code> ，要为它创建一个对象的话，我们需要把这段定义交给bash命令
-行执行一下，见下图：
+等同于文件的概念。则相应的linux工厂实类的定义就是“一个实现了linux版~of~
+命令创建功能的文件”。在面向对象编程中，虚类是无法创建直接对应于它的对象
+的；但linux工厂实类我们可以为它创建一个对象，也就是一个实际存在于文件系
+统中的文件（而不再是口头说说的、概念上的文件）：~$HOME/.bashrc-linux~
+（注意我们只能创建一个这样的对象，如果你自己把这个对象拷贝一份到
+<code>$HOME/.bashrc-linux.bak</code> 的话也是可以的——但系统不认，请问这叫什么
+design pattern？）。接下来linux版 <code>of</code> 实类的定义类似于 <code>function of() { ... }</code> ，要为它创建一个对象的话，我们需要把这段定义交给bash命令行执行
+一下，见下图：
 </p>
 <p>
 <img src="./create-of.png"  alt="./create-of.png" />
