@@ -101,6 +101,13 @@ read_line:
 	    next;
 	}
 
+	if ( # we should extract this into a .conf!!
+	     $str =~ m/^#undef|^variable.*:\s+EXPORT_SYMBOL/ or 
+	     $path =~ m,external/kernel-headers, or
+	     $path =~ m,android-[2-7]/arch-,) {
+	    next;
+	}
+
 	$_ = "$path:$line:$def";
 	my $loc = "$path:$line";
 	$matches_path_line{$loc} = {} unless exists $matches_path_line{$loc};
@@ -151,7 +158,6 @@ sub do_cscope($$$) {
 	print "path filter worked, and you got 0 matches!\n";
     }
 
-    printf "found total %d definitions\n", scalar keys %matches;
     use String::Approx 'adistr';
     our $approx_dir;
 
@@ -181,6 +187,7 @@ sub do_cscope($$$) {
 	parse_xref($grep, 1);
     }
 
+    printf "found total %d definitions\n", scalar keys %matches;
 
     for (sort {
 	($matches{$a}{"dist"} <=> $matches{$b}{"dist"})
@@ -205,13 +212,8 @@ sub do_cscope($$$) {
 		system("UNPACK_MACRO=$UNPACK_MACRO $0 -e $1");
 	    }
 	}
-	unless ( # we should extract this into a .conf!!
-		 $str =~ m/^#undef|^EXPORT_SYMBOL/ or 
-		 $file =~ m,external/kernel-headers, or
-		 $file =~ m,android-[2-7]/arch-,) {
-	    $str =~ s,:\t,: <$def> : ,;
-	    print "$file:$line: $str\n" 
-	}
+	$str =~ s,:\t,: <$def> : ,;
+	print "$file:$line: $str\n";
 	$got_results = 1;
 	if (keys %matches < 5) { # this will be nice!
 	    system("ctags-show-definition $code_dir/$file $line $lookup_needle");
