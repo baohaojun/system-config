@@ -30,6 +30,11 @@ if test -z "$board"; then
     board=("${def_board[@]}")
 fi
 for b in "${board[@]}"; do
+    case $b in
+        Kernel)
+            b=KernelTech
+            ;;
+    esac
     of "http://www.newsmth.net/bbsbfind.php?q=1&board=$b&title=&title2=&title3=&userid=$author&dt=2222"
 done
 

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+of http://baohaojun.github.com/${1/%.org/.html}

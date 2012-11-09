@@ -22,7 +22,9 @@ my $start_dir = $ENV{PWD};
 debug "started grep in $start_dir\n";
 
 my $db_dir = "$ENV{HOME}/tmp/for-code-reading$start_dir";
+my $start_file = $ENV{GTAGS_START_FILE};
 our $approx_dir = "ENV{HOME}/tmp/for-code-reading$ENV{GTAGS_START_FILE}";
+
 
 while ( not -f "$db_dir/GTAGS" and not "$db_dir" eq "/") {
     chomp($db_dir = `dirname "$db_dir"`);
@@ -154,11 +156,16 @@ sub do_cscope($$$) {
     our $approx_dir;
 
     my @updated_paths = keys %updated_paths; 
+
+
+    $start_file = substr($start_file, 1 + length($code_dir));
     open(my $updates_handle, "-|", "echo @updated_paths |tr ' ' '\n'| gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
 	or die "Can not query update on gtags";
 
     @updated_paths = map {chomp; s,^\./,,; $_} <$updates_handle>;
     close($updates_handle);
+
+    push @updated_paths, $start_file if -e $start_file and not $updated_paths{$start_file};
     if (@updated_paths) {
 	debug "These files need update: @updated_paths\n";
 	foreach my $path(@updated_paths) {

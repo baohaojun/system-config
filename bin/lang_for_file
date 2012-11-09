@@ -59,4 +59,17 @@ foreach my $lang (keys %lang_map) {
 	}
     }
 }
-print "unknown";
+
+chomp(my $interp = qx(cat $source_file|head -n 1|pn 1));
+unless ($interp =~ m/^#!/) {
+    print "unknown";
+    exit 0;
+}
+
+$interp =~ s,.*/,,;
+
+my %unk_lang_map = (
+    "bash" => "sh",
+    );
+
+print ($unk_lang_map{$interp} or $interp);

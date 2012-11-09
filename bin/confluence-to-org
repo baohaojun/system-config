@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+
+$started = 0;
+while (<>) {
+    s/^h(\d+)\. /"*" x $1 . " "/e;
+    s/\s*\{\{\s*(.*?)\s*\}\}\s*/ ~$1~ /g;
+    s/^\Q{code:none}$\E/{code}/;
+    if (m/^\{code:.*\}/..m/^\{code\}/) {
+	print "#+begin_src $1\n" if m/^\{code:(.*)\}/;
+	print "#+end_src\n" if m/^\{code\}/;
+	print unless m/\{code/;
+	next;
+    } 
+
+    if (m/^\{code\}/...m/^\{code\}/) {
+	print "#+begin_example\n" if m/\{code\}/ and not $started;
+	$started = 1;
+	print "#+end_example\n" if m/\{code\}/;
+	print unless m/\{code/;
+	next;
+    } 
+    $started = 0; 
+
+    s/\[(.*?)\|(.*?)\]/[[$2][$1]]/g;
+
+    print;
+}
+

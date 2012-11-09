@@ -1,0 +1,6 @@
+#!/bin/bash
+IFS=$'\n'
+
+dood=($("$@"))
+n=$(my-select "${dood[@]}")
+echo ${dood[n-1]}

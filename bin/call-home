@@ -12,9 +12,11 @@ fi
             exit 0
         fi
         if test ! -e ~/.ssh-home-ok; then
-            exit 0;
+            home=192.168.33.8
+        else
+            home=bhj-is-a-geek.oicp.net
         fi
-	ssh -C2qN -D 38080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 bhj-is-a-geek.oicp.net -p 443 ||
+	ssh -C2qN -D 38080 -R :$(printf %d 0x2$(from-mac|sha1sum|cut -b 1-3)):localhost:22 root@$home -p 443 ||
         if route -n |grep -e "$(host bhj-is-a-geek.oicp.net | pn 4)"; then
             true
         else

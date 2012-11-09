@@ -1,0 +1,80 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+cd $(lookup_file -e .repo/..)
+
+if test ! -d .repo; then
+    cd ~/src/android || die "Error: .repo not found, not android project?"
+fi
+
+gdb_exe=$(readlink -m android-gdb)
+if test ! -e "$gdb_exe"; then
+   gdb_exe=$(android-env get_abs_build_var TARGET_CC|grep gcc|perl -npe 's/.*ccache //; s/-gcc$/-gdb/')
+   if test ! -x "$gdb_exe"; then
+       die "gdb found at $gdb_exe, but it's not executable";
+   fi
+   relative-link $gdb_exe android-gdb
+fi
+
+symdir=$(echo $PWD/out/target/product/*/symbols)
+TEMP=$(getopt -o hH:s:c:p: --long help,host:,symbol:,core:port: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+core=
+port=3333
+host=phone
+while true; do
+    case "$1" in
+        -h|--help)
+            Usage
+            exit 0
+            ;;
+        -H|--host)
+            host=$2
+            shift 2
+            ;;
+        -s|--symbol)
+            symdir=$2
+            shift 2
+            ;;
+        -c|--core)
+            core=$2
+            shift 2
+            ;;
+        -p|--port)
+            port=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+cat >/tmp/gdbclient.cmds <<EOF
+set solib-absolute-prefix $symdir
+set solib-search-path $symdir/system/lib$(for x in $symdir/system/lib/*/; do echo -n :$x; done):$symdir/system/usr/lib/alsa-lib
+$(
+    if test x$core = x; then
+        echo target remote $host:$port
+    fi
+)
+#dir $PWD
+EOF
+
+if test -n "$EMACS"; then
+    annotate=-f
+fi
+adb forward tcp:$port tcp:$port || true
+exe_to_dbg=$(select-output-line bash -c "find ./out/target/product/*/symbols/{system,}/*bin -name '*$1*'")
+
+$gdb_exe $annotate -x /tmp/gdbclient.cmds $core $exe_to_dbg
+
