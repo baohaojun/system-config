@@ -16,7 +16,7 @@ my $ctags_lang_map = qx(lang-map-for-ctags ~/.globalrc);
 open(my $xref, "-|", "ctags-exuberant", "--langmap=$ctags_lang_map", "-xu", "--extra=+q", @ARGV) or
     die "Can not open xref";
 
-my $lookup_needle_re = qr((?:^|\.|:)\Q$lookup_needle\E$);
+my $lookup_needle_re = qr((?:^|\.|:)\Q$lookup_needle\E);
 
 while(<$xref>) {
     chomp;
