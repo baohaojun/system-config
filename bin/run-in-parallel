@@ -27,10 +27,19 @@ mkdir -p $lock_dir
 x=0
 
 for y in "$@"; do
-    ((x %= jobs))
-    (
-        flock 9
-        bash -c "$cmd" true "$y"
-    ) 9> $lock_dir/$x&
-    ((x++))
+    while true; do
+        ((x %= jobs))
+        if test $(fuser $lock_dir/$x 2>&1 |wc -w) -gt 5; then
+            echo need sleep 1>&2
+            sleep 1;
+            ((x++));
+            continue
+        fi
+        (
+            flock 9
+            bash -c "$cmd" true "$y"
+        ) 9> $lock_dir/$x&
+        ((x++))
+        break
+    done
 done | cat
