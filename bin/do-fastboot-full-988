@@ -168,10 +168,11 @@ time (
         do-partition OBM $(concat-file 0 TIMH 128K OBMI)
     fi
 
+    fastboot erase misc
+    fastboot erase cache
+    fastboot erase NVM
+
     if test $(basename $0) = do-fastboot-full-988 -a "$ERASE_ALL" = true; then
-        fastboot erase misc
-        fastboot erase cache
-        fastboot erase NVM
         fastboot erase MEP2
         fastboot erase MRD
         fastboot erase MRD1

@@ -1,0 +1,25 @@
+# -*- mode: snippet -*-
+# name: Getopt
+# --
+  int opt;
+  while ((opt = getopt(argc, argv, "${1:nt:}")) != -1) {
+      switch (opt) {
+          case '${2:n}':
+              ${3://flags = 1;}
+              break;
+          case '${4:t}':
+              ${5://nsecs = atoi(optarg);}
+              break;
+          default: /* '?' */
+              fprintf(stderr, "Usage: %s [-t nsecs] [-n] name\n", argv[0]);
+              exit(-1);
+      }
+  }
+
+  if (optind >= argc) {
+      fprintf(stderr, "Expected argument after options\n");
+      exit(-1);
+  }
+
+  //printf("name argument = %s\n", argv[optind]);
+  $0

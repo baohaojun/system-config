@@ -196,7 +196,7 @@
   (setq c-basic-offset 4))
 
 (setq auto-mode-alist (append '((".*/kernel.*\\.[ch]$" . linux-c-mode)
-				("logcat.log.*" . fundamental-mode)
+				("logcat\\.log.*" . fundamental-mode)
 				(".*\\.cpp$" . linux-c++-mode)
 				(".*\\.aidl$" . java-mode)
 				("Kbuild*" . makefile-gmake-mode)

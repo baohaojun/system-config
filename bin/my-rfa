@@ -4,8 +4,9 @@ set -e
 
 jobs=5
 dirs=()
+export path_pattern=
 debug=0
-TEMP=$(getopt -o xd:j: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o xd:j:p: -n $(basename $0) -- "$@")
 function die() {
     echo "$@"
     exit -1
@@ -32,6 +33,10 @@ while true; do
 	    dirs=("${dirs[@]}" "$2")
 	    shift 2
 	    ;;
+        -p)
+            path_pattern=$2
+            shift 2
+            ;;
 	--)
 	    shift
 	    break
@@ -86,6 +91,9 @@ function die() {
 export -f die
 mkdir -p ~/.logs/my-rfa-locks
 for x in "${dirs[@]}"; do 
+    if test "$path_pattern" && ! [[ "$x" =~ "$path_pattern" ]]; 
+        then continue
+    fi
     job=$((job + 1))
     job=$((job % jobs))
     (

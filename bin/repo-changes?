@@ -4,22 +4,27 @@ if test $(basename $0) = repo-not-clean; then
     export DO_GIT_ST_ONLY=true
 fi
 
+export path_pattern=
 export GIT_END_DATE=
-TEMP=$(getopt -o e: --long end: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o e:p: --long end:,pattern: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
 	-e|--end)
 	    export GIT_END_DATE=$(day-end $2)
-	shift 2
-	;;
+	    shift 2
+	    ;;
+        -p|--path)
+            path_pattern=$2
+            shift 2
+            ;;
 	--)
-	shift
-	break
-	;;
+	    shift
+	    break
+	    ;;
 	*)
-	die "internal error"
-	;;
+	    die "internal error"
+	    ;;
     esac
 done
 
@@ -37,7 +42,7 @@ set -- $(
     done
 )
 
-my-rfa -j 4 "$@" -- '
+my-rfa -j 4 -p "$path_pattern" "$@" -- '
 #{%sh%}
 if test "$DEBUG" = true; then
     set -x
