@@ -26,7 +26,7 @@ function adb() {
     if test "$1" = -s; then
         echo "$2" > ~/.adbd
     elif test "$1" != devices -a $(setsid $the_adb start-server >/dev/null 2>&1 ; $the_adb devices | grep .| wc -l) -gt 2; then
-        set -- -s "$(cat ~/.adbd)" "$@"
+        export ANDROID_SERIAL=$(cat ~/.adbd)
     fi
 
     if test "$1" = gdbserver; then
@@ -73,6 +73,7 @@ function gdbserver() {
         adb shell gdbserver --attach :$port $pid
         return 0;
     fi
+    adb forward tcp:$port tcp:$port || true
     exec adb shell gdbserver :$port "$@"
 }
 adb "$@"

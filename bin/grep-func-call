@@ -130,6 +130,10 @@ while(<$file>) {
     $file_line_map{$.} = $_;
     next unless m/$target/;
     next if ($reverse_matcher and m/$reverse_matcher/);
+    my $is_calling_myself = 1;
+    if (m/->$target/ or m/\.$target/ or m/:$target/) {
+	$is_calling_myself = 0;
+    }
 
     debug ":$.: $_";
     my $last_checked_def_line = -1;
@@ -155,9 +159,10 @@ while(<$file>) {
 	next;
     }
 
-    if ($def_line_map{$current_def_line} =~ m/\b$target\b/) { # this is the definition of target
+    if (($is_calling_myself or $current_def_line == $line_no) and $def_line_map{$current_def_line} =~ m/\b$target\b/) { # this is the definition of target
 	debug "the previous definition matches myself: " . 
 	    "current_def_line is $current_def_line, " .
+	    "line_no is $line_no, " .
 	    "def_line is $def_line_map{$current_def_line}; " . 
 	    "current line is $line_str";
 	next;

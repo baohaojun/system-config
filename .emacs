@@ -619,6 +619,7 @@
  '(emacs-lisp-mode-hook (quote ((lambda nil (make-local-variable (quote cscope-symbol-chars)) (setq cscope-symbol-chars "-A-Za-z0-9_")))))
  '(fill-column 70)
  '(gdb-find-source-frame t)
+ '(gdb-many-windows t)
  '(gdb-same-frame t)
  '(gdb-show-main t)
  '(gnus-article-date-headers (quote (local lapsed)))
@@ -1768,6 +1769,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key (kbd "M-.") 'gtags-grep)
 (global-set-key (kbd "M-g f") 'grep-func-call)
 (global-set-key (kbd "M-s e") 'bhj-occur-make-errors)
+(global-set-key (kbd "M-s x") 'compilation-minor-mode)
 ;(global-set-key [?\C-,] (lookup-key global-map [?\C-x]))
 (eval-after-load "diff-mode"
   '(define-key diff-mode-map (kbd "M-g") (lookup-key global-map (kbd "M-g"))))

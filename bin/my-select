@@ -3,6 +3,10 @@
 function my_select() 
 {
     local y=1
+    if test $# = 1; then
+        echo 1
+        return
+    fi
     for x in "$@"; do 
         echo $y\) "$x" >/dev/tty;
         ((y++))

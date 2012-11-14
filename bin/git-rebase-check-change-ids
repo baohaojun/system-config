@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) branch"
+fi
+todo_revs=$(git rev-list HEAD ^$1|reverse)
+done_revs=$(git rev-list $1 ^HEAD)
+done_logs=$(for x in $done_revs; do git log -1 $x; done)
+head=$(git rev-parse HEAD)
+
+git co $1 || true
+for x in $todo_revs; do
+    change_id=$(git log -1 $x|grep Change-Id:|pn 2)
+    if ! [[ "$change_id" =~ ^I[a-f0-9]{40} ]]; then
+        change_id=not_such_change_idxxxxx
+    fi
+    if echo "$done_logs"|grep "$change_id"; then
+        echo "$x already in: $(git log $x -1)"
+    else
+        echo $x need to be rebased
+        git log -1 -p $x | cat
+        git cherry-pick $x || start-recursive-shell "rebase $x"
+    fi
+done
+
+git push $(repo-remote) HEAD:refs/heads/sandbox/hjbao/$1-$(today)

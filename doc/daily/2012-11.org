@@ -23,3 +23,33 @@
 : ...................
 
 你是说用大拇指去按原来的Ctrl键？这样常见的小指劳损应该不会发生，但大拇指弯得太厉害也该抱怨了。还有就是那种需要3键齐按（Ctrl+Alt+H）的情况还是有不便的。
+
+* Binder
+
+    #+begin_example
+    Breakpoint 1, mrvl_ap_dev_set_stream_volume_index (pol=0x40e54d30, stream=AUDIO_STREAM_FM, index=10) at vendor/marvell/generic/libaudio/audio_policy_mrvl.c:2579
+    (gdb) bt
+    #0  mrvl_ap_dev_set_stream_volume_index (pol=0x40e54d30, stream=AUDIO_STREAM_FM, index=10) at vendor/marvell/generic/libaudio/audio_policy_mrvl.c:2579
+    #1  0x400e1c90 in setStreamVolumeIndex (index=10, stream=AUDIO_STREAM_FM, this=<optimized out>, device=<optimized out>)
+        at frameworks/av/services/audioflinger/AudioPolicyService.cpp:400
+    #2  android::AudioPolicyService::setStreamVolumeIndex (this=<optimized out>, stream=AUDIO_STREAM_FM, index=10, device=AUDIO_DEVICE_OUT_WIRED_HEADSET)
+        at frameworks/av/services/audioflinger/AudioPolicyService.cpp:380
+    #3  0x40251f24 in android::BnAudioPolicyService::onTransact (this=0x40e5a228, code=<optimized out>, data=<optimized out>, reply=0x42076e04, flags=16)
+        at frameworks/av/media/libmedia/IAudioPolicyService.cpp:520
+    #4  0x401b93da in android::BBinder::transact (this=0x40e5a22c, code=16, data=..., reply=0x42076e04, flags=16) at frameworks/native/libs/binder/Binder.cpp:108
+    #5  0x401bbfb6 in android::IPCThreadState::executeCommand (this=0x40e66188, cmd=<optimized out>) at frameworks/native/libs/binder/IPCThreadState.cpp:1034
+    #6  0x401bc3e0 in android::IPCThreadState::joinThreadPool (this=0x40e66188, isMain=<optimized out>) at frameworks/native/libs/binder/IPCThreadState.cpp:473
+    #7  0x401c02b8 in android::PoolThread::threadLoop (this=0x41d14f10) at frameworks/native/libs/binder/ProcessState.cpp:67
+    #8  0x401d9f48 in android::Thread::_threadLoop (user=0x41d14f10) at frameworks/native/libs/utils/Threads.cpp:793
+    #9  0x401d9aae in thread_data_t::trampoline (t=<optimized out>) at frameworks/native/libs/utils/Threads.cpp:132
+    #10 0x40117bd4 in __thread_entry (func=0x401d9a15 <thread_data_t::trampoline(thread_data_t const*)>, arg=0x41d15170, tls=<optimized out>)
+        at bionic/libc/bionic/pthread.c:217
+    #11 0x4011732c in pthread_create (thread_out=0x41d15198, attr=0xbef15a88, start_routine=0x401d9a15 <thread_data_t::trampoline(thread_data_t const*)>, arg=0x41d15170)
+        at bionic/libc/bionic/pthread.c:356
+    #12 0x00000000 in ?? ()
+    (gdb) 
+    #+end_example
+    
+
+* TODO write out the cscope-ring's contents, make it a code-reading assistent.
+* TODO write out the gdb usage under Emacs

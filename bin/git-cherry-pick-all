@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) BRANCH"
+fi
+for x in $(git rev-list $1 ^HEAD|reverse); do
+    git log -1 $x
+    git cherry-pick $x || start-recursive-shell cherry-pick-all
+done
