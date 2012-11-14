@@ -1,4 +1,9 @@
 #!/bin/bash
+export my_git_proxy=
+if ifconfig | grep "^tun0"; then
+    my_git_proxy=proxychains
+fi
+
 git()
 {
 
@@ -9,7 +14,7 @@ git()
 	fi
 
 	if test "$1" = st -a "$2" = -S; then
-	    command git status -s | perl -ne '
+	    command $my_git_proxy git status -s | perl -ne '
 chomp(); 
 $_ = substr($_, 3); 
 if (m/^"/) { 

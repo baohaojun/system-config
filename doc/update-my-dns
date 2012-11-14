@@ -1,0 +1,36 @@
+#!/bin/sh
+
+set -xe
+export PATH=/jffs/bin:$PATH
+
+my_ip_dns=$(nslookup bhj.is-a-geek.org | grep bhj.is-a-geek.org -A 1|tail -n 1|awk '{print $3}')
+my_ip_det=$( (cat <<EOF
+GET /checkip HTTP/1.1
+User-Agent: Wget/1.13.4 (linux-gnu)
+Accept: */*
+Host: ddns.oray.com
+Connection: Keep-Alive
+
+EOF
+sleep 5) | busybox nc ddns.oray.com 80 | grep 'Current IP' | sed -e 's/.*Current IP Address: \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'
+);
+
+if test -z "$my_ip_det"; then
+    exit 0;
+fi
+
+if test "$my_ip_dns" != "$my_ip_det"; then
+    (
+        cat <<EOF
+GET /nic/update?hostname=bhj.is-a-geek.org&wildcard=NOCHG&mx=NOCHG&backmx=NOCHG HTTP/1.1
+User-Agent: Wget/1.13.4 (linux-gnu)
+Accept: */*
+Host: members.dyndns.org
+Connection: Keep-Alive
+Authorization: Basic $1
+
+EOF
+        sleep 5
+    ) | busybox nc members.dyndns.org 80
+fi
+        
