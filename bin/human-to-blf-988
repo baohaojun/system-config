@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 
 use strict;
-use lib glob("~/bin");
+use FindBin;
+use lib $FindBin::Bin;
 use pretty;
 
 my $image_started;

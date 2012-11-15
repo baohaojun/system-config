@@ -102,7 +102,7 @@ read_line:
 	}
 
 	if ( # we should extract this into a .conf!!
-	     $str =~ m/^#undef|^variable.*:\s+EXPORT_SYMBOL/ or 
+	     $str =~ m/(?:^|:\t)#undef|^variable.*:\s+EXPORT_SYMBOL/ or 
 	     $path =~ m,external/kernel-headers, or
 	     $path =~ m,android-[2-7]/arch-,) {
 	    next;
