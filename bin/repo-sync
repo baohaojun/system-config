@@ -1,7 +1,14 @@
 #!/bin/bash
 
 set -e
-cd $(lookup_file .repo)
+repo_dir=$(lookup_file -e .repo)
+
+if test -z "$repo_dir"; then
+    git fetch -v
+    exit 0
+fi
+
+cd "$repo_dir";
 test -d manifests
 if test -e repo-switch; then
     bash ./repo-switch </dev/null

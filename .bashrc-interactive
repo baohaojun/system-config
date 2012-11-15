@@ -114,6 +114,8 @@ function rcd() {
     fi
 }
 
+. ~/bin/.gitx
+
 if test -e ~/.bashrc-interactive-$USER; then
     . ~/.bashrc-interactive-$USER
 fi

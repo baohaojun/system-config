@@ -71,8 +71,6 @@ cdr()
     fi
 }
 
-. ~/bin/.gitx
-
 rbranch()
 {
     repo forall . -c 'echo $REPO_RREV'

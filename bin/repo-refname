@@ -5,6 +5,15 @@ if test "$REPO_BRANCH"; then
     exit
 fi
 
+if test -z "$(lookup_file -e .repo)"; then
+    branch=$(git symbolic-ref HEAD 2>/dev/null)
+    if test -z "$branch"; then
+        echo master
+    else
+        echo $branch|perl -npe 's,^refs/heads/,,'
+    fi
+    exit 0
+fi
 if test -z "$BPE_ON_APSE"; then
     if test "$REPO_INFO"; then
 	$REPO_INFO branch
