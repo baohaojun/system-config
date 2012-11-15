@@ -6,6 +6,9 @@ function die() {
 }
 test $# != 2 && die "Usage: $(basename $0) ANCESTOR? DESCENDANT?"
 
-test "$(git merge-base "$1" "$2")" = "$(git show -s --format=%H "$1")" && { echo yes; exit 0; }
+if test "$(git merge-base "$1" "$2")" = "$(git rev-parse "$1^{commit}")"; then
+    echo yes;
+    exit 0;
+fi
 echo no
 exit -1

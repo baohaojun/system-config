@@ -63,6 +63,7 @@ fi
 
 git push origin HEAD:$rb
 git push || true
+git push origin HEAD:master || true
 
 if test $(pwd) = ~/windows-config; then
     git-notify-push

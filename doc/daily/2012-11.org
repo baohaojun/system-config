@@ -24,7 +24,7 @@
 
 你是说用大拇指去按原来的Ctrl键？这样常见的小指劳损应该不会发生，但大拇指弯得太厉害也该抱怨了。还有就是那种需要3键齐按（Ctrl+Alt+H）的情况还是有不便的。
 
-* Binder
+* TODO Binder
 
     #+begin_example
     Breakpoint 1, mrvl_ap_dev_set_stream_volume_index (pol=0x40e54d30, stream=AUDIO_STREAM_FM, index=10) at vendor/marvell/generic/libaudio/audio_policy_mrvl.c:2579
@@ -51,5 +51,9 @@
     #+end_example
     
 
-* TODO write out the cscope-ring's contents, make it a code-reading assistent.
-* TODO write out the gdb usage under Emacs
+* CANCELED write out the cscope-ring's contents, make it a code-reading assistent.
+  CLOSED: [2012-11-15 Thu 16:57]
+  - CLOSING NOTE [2012-11-15 Thu 16:57]
+* DONE write out the gdb usage under Emacs
+  CLOSED: [2012-11-15 Thu 16:56]
+  - CLOSING NOTE [2012-11-15 Thu 16:56]
