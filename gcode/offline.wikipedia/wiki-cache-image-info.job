@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+set -x
+(
+    saved_file=$2
+    wiki-cache-image-thumb.job "$@"
+
+    url=`json-decode-wiki-image-info $saved_file`
+    test -z "$url" && exit
+    md5=`echo -n "$url"|md5sum|pn 1`
+
+    md5s_d=${md5:0:2}
+    md5s_f=${md5:2}
+    ext=.${url##*.}
+    md5s_p="images/thumb/$md5s_d/$md5s_f$ext"
+    wiki-cache-image-thumb.job "$url" "$md5s_p"
+)&

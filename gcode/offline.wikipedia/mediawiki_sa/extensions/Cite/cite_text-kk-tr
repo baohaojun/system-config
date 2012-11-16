@@ -1,0 +1,63 @@
+﻿﻿__NOTOC__
+<div style="border: 1px solid grey; background: #E6E8FA; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== «{{FULLPAGENAME}}» atawılı betiniñ kitapnamalıq egjeý-tegjeýleri ==
+
+* Bettiñ atawı: {{FULLPAGENAME}}
+* Awtorı: {{SITENAME}} üleskerleri
+* Baspageri: ''{{SITENAME}}, {{int:sitesubtitle}}''.
+* Soñğı nusqasınıñ kezi: {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC
+* Alınğan kezi: <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC</citation>
+* Turaqtı siltemesi: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+* Bet nusqasınıñ teñdestirw nomiri: {{REVISIONID}}
+
+</div>
+<div class="plainlinks" style="border: 1px solid grey; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== «{{FULLPAGENAME}}» betiniñ däýeksöz mänerleri ==
+
+=== [[GOST mäneri]] ===
+<!-- ([[GOST 7.1|GOST 7.1—2003]] jäne [[GOST 7.82|GOST 7.82—2001]]) -->
+{{SITENAME}}, {{int:sitesubtitle}} [Élektrondı qaýnar] : {{FULLPAGENAME}}, nusqasınıñ nömiri {{REVISIONID}}, soñğı tüzetwi {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC / Wïkïpedïya awtorları. — Élektrondı derek. — Florïda ştatı. : Wïkïmedïya Qorı, {{CURRENTYEAR}}. — Qatınaw reti: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+
+=== [[APA mäneri]] ===
+{{FULLPAGENAME}}. ({{CURRENTYEAR}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}). ''{{SITENAME}}, {{int:sitesubtitle}}'' mağlumatı. {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} betinen <citation>{{CURRENTTIME}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> kezinde alınğan.
+
+=== [[MLA mäneri]] ===
+«{{FULLPAGENAME}}». ''{{SITENAME}}, {{int:sitesubtitle}}''. {{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC. <citation>{{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}}</citation> &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
+
+=== [[MHRA mäneri]] ===
+{{SITENAME}} üleskerleri, '{{FULLPAGENAME}}', ''{{SITENAME}}, {{int:sitesubtitle}},'' {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC, &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [<citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}</citation> kezinde qatınaldı]
+
+=== [[Şïkago mäneri]] ===
+{{SITENAME}} üleskeri, «{{FULLPAGENAME}}», ''{{SITENAME}}, {{int:sitesubtitle}},'' {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (<citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> kezinde qatınaldı).
+
+=== [[CBE/CSE mäneri]] ===
+{{SITENAME}} üleskerleri. {{FULLPAGENAME}} [Ïnternet]. {{SITENAME}}, {{int:sitesubtitle}}; {{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}, {{CURRENTTIME}} UTC [<citation>{{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}</citation> kezinde däýeksöz alındı]. Qatınawı:
+{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
+
+=== [[Kök kitap|Kök kitap mäneri]] ===
+{{FULLPAGENAME}}, {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (soñğı qaralğanı <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> kezinde).
+
+=== [[BibTeX]] jazbası ===
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}",
+    note = "[Jeliden; <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation> kezinde qatınaldı]"
+  }
+
+[[LaTeX]] bwmasınıñ URL jaýın (<code>\usepackage{url}</code> kirispeniñ qaýbir ornında) qoldanğanda (veb jaýların önerlew pişimdewin keltiredi) kelesisin qalawğa boladı:
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "'''\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''",
+    note = "[Jeliden; <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation> kezinde qatınaldı]"
+  }
+
+
+</div> <!--closing div for "plainlinks"-->

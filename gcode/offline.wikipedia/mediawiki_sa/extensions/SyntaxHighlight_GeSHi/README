@@ -1,0 +1,66 @@
+This extension allows source code to be syntax highlighted on the wiki pages.
+This README file might be out of date, have a look at the extension page
+for updated informations:
+
+    http://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi
+
+== Requirements ==
+
+This version of the extension has been tested with GeSHi 1.0.8.10 and MediaWiki 1.18
+as of 2011-02-19. It may or may not work with earlier versions of the aforementioned
+software. To get releases of this extension compatible with earlier versions of
+MediaWiki, visit: 
+
+    http://www.mediawiki.org/wiki/Special:ExtensionDistributor/SyntaxHighlight_GeSHi
+
+
+== Installation ==
+
+If you downloaded this from MediaWiki.org, there should already be
+a 'geshi' directory in this folder. If there is, you can skip the next
+paragraph.
+
+Download the latest stable build from
+http://sourceforge.net/project/showfiles.php?group_id=114997, and unzip it into
+your extensions/SyntaxHighlight_GeSHi/ directory. (Note: the zip file creates a 
+sub-directory called geshi/, and places a file geshi.php there)
+
+Add this line to your LocalSettings.php:
+
+	require_once("extensions/SyntaxHighlight_GeSHi/SyntaxHighlight_GeSHi.php");
+
+If your MediaWiki software is obtained via Subversion, then the latest build 
+can be downloaded via the Subversion repository. First of all, is to switch 
+into your extensions/SyntaxHighlight_GeSHi/ directory. Then invoke the command 
+to obtain the latest build of the GeSHi code:
+
+	svn checkout https://geshi.svn.sourceforge.net/svnroot/geshi/trunk/geshi-1.0.X/src/ geshi
+
+If needed, change the following line on SyntaxHighlight_GeSHi.class.php to 
+suit the path of your geshi.php file
+    
+	require_once( 'geshi/geshi.php' );
+
+== Usage ==
+
+On the wiki page, you can now use "source" elements:
+
+<source lang="php">
+<?php
+    v = "string";    // sample initialization
+?>
+html text
+<?php
+    echo v;         // end of php code
+?>
+</source>
+
+== Parameters ==
+
+Please see the documentation of GeSHi on http://qbnz.com/highlighter/geshi-doc.html
+for detailed information to use some of the parameters.
+
+* lang;		Defines the language 
+* line;		Corresponds to enable_line_numbers method on GeSHi
+* start;	Corresponds to start_line_numbers_at method on GeSHi
+* strict;	Corresponds to enable_strict_mode method on GeSHi

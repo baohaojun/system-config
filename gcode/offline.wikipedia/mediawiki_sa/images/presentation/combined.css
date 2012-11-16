@@ -1,0 +1,954 @@
+.suggestions{
+overflow:hidden;
+position:absolute;
+top:0px;
+left:0px;
+width:0px;
+border:none;
+z-index:99;
+padding:0;
+margin:-1px 0 0 0;
+}
+.suggestions-special{
+position:relative;
+background-color:Window;
+font-size:0.8em;
+cursor:pointer;
+border:solid 1px #aaaaaa;
+padding:0;
+margin:0;
+margin-top:-2px;
+display:none;
+padding:0.25em 0.25em;
+line-height:1.25em;
+}
+.suggestions-results{
+background-color:white;
+background-color:Window;
+font-size:0.8em;
+cursor:pointer;
+border:solid 1px #aaaaaa;
+padding:0;
+margin:0;
+}
+.suggestions-result{
+color:black;
+color:WindowText;
+margin:0;
+line-height:1.5em;
+padding:0.01em 0.25em;
+}
+.suggestions-result-current{
+background-color:#4C59A6;
+background-color:Highlight;
+color:white;
+color:HighlightText;
+}
+.suggestions-special .special-label{
+font-size:0.8em;
+color:gray;
+}
+.suggestions-special .special-query{
+color:black;
+font-style:italic;
+}
+.suggestions-special .special-hover{
+background-color:silver;
+}
+.suggestions-result-current .special-label,
+.suggestions-result-current .special-query{
+color:white;
+color:HighlightText;
+}
+.autoellipsis-matched,
+.highlight{
+font-weight:bold;
+}
+#mw-panel.collapsible-nav div.portal{
+background-image:url(../images/vector/collapsibleNav/portal-break.png?1);
+background-position:left top;
+background-repeat:no-repeat;
+padding:0.25em 0 !important;
+margin:-11px 9px 10px 11px;
+}
+body.rtl #mw-panel.collapsible-nav div.portal{
+background-position:right top;
+margin:-11px 11px 10px 9px;
+}
+#mw-panel.collapsible-nav div.portal h5{
+color:#4D4D4D;
+font-weight:normal;
+background:url(../images/vector/collapsibleNav/arrow-down.png?1) 0 50% no-repeat;
+padding:4px  0 3px 1.5em;
+margin-bottom:0px;
+}
+body.rtl #mw-panel.collapsible-nav div.portal h5{
+background:url(../images/vector/collapsibleNav/arrow-down.png?1) 100% 50% no-repeat;
+padding:4px  1.5em 3px 0;
+}
+#mw-panel.collapsible-nav div.collapsed h5{
+color:#0645AD;
+background:url(../images/vector/collapsibleNav/arrow-right.png?1) 0 50% no-repeat;
+margin-bottom:0px;
+}
+body.rtl #mw-panel.collapsible-nav div.collapsed h5{
+background:url(../images/vector/collapsibleNav/arrow-left.png?1) 100% 50% no-repeat;
+}
+#mw-panel.collapsible-nav div h5:hover{
+cursor:pointer;
+text-decoration:none;
+}
+#mw-panel.collapsible-nav div.collapsed h5:hover{
+text-decoration:underline;
+}
+#mw-panel.collapsible-nav div.portal div.body{
+background:none !important;
+padding-top:0px;
+display:none;
+}
+#mw-panel.collapsible-nav div.persistent div.body{
+display:block;
+}
+#mw-panel.collapsible-nav div.first h5{
+display:none;
+}
+#mw-panel.collapsible-nav div.persistent h5{
+background:none !important;
+padding-left:0.7em;
+cursor:default;
+}
+#mw-panel.collapsible-nav div.portal div.body ul li{
+padding:0.25em 0;
+}
+#mw-panel.collapsible-nav div.first{
+background-image:none;
+margin-top:0px;
+}
+#mw-panel.collapsible-nav div.persistent div.body{
+margin-left:0.5em;
+}
+body.rtl #mw-panel.collapsible-nav div.persistent div.body{
+margin-left:0;
+margin-right:0.5em;
+}
+form#editform{
+margin:0;
+padding:0;
+}
+#wpSummary,#wpSummaryLabel{
+margin-bottom:1em;
+}
+.wikiEditor-ui textarea#wpTextbox1{
+border:none;
+padding:0;
+margin:-1px;
+line-height:1.5em;
+}
+.wikiEditor-ui .wikiEditor-ui-text > textarea#wpTextbox1{
+margin:0;
+}
+.wikiEditor-ui{
+float:left;
+position:relative;
+clear:both;
+width:100%;
+background-color:#E0EEf7;
+border:solid silver 1px;
+}
+body.rtl .wikiEditor-ui{
+float:right;
+}
+.wikiEditor-ui .wikiEditor-ui-bottom{
+}
+.wikiEditor-ui .wikiEditor-ui-text{
+line-height:0;
+}
+.wikiEditor-ui .wikiEditor-ui-top{
+position:relative;
+border-bottom:solid silver 1px;
+}
+.wikiEditor-ui .wikiEditor-ui-left{
+float:left;
+width:100%;
+}
+body.rtl .wikiEditor-ui .wikiEditor-ui-left{
+float:right;
+}
+.wikiEditor-ui .wikiEditor-ui-right{
+float:right;
+background:#F3F3F3;
+overflow:hidden;
+}
+body.rtl .wikiEditor-ui .wikiEditor-ui-right{
+float:left;
+}
+.wikiEditor-wikitext{
+float:left;
+width:100%;
+}
+.wikiEditor-ui-controls{
+float:left;
+width:100%;
+background-color:white;
+margin-top:-1px;
+border-bottom:solid 1px silver;
+}
+.wikiEditor-ui-tabs{
+float:left;
+height:2.5em;
+margin-left:-1px;
+background-color:white;
+border-left:solid 1px silver;
+border-top:solid 1px silver;
+}
+.wikiEditor-ui-buttons{
+float:right;
+height:2.5em;
+margin-right:-1px;
+background-color:white;
+padding-left:1em;
+border-top:solid 1px white;
+}
+.wikiEditor-ui-buttons button{
+margin-left:0.5em;
+}
+.wikiEditor-ui-tabs div{
+float:left;
+height:2.5em;
+background-color:#f3f3f3;
+border-right:solid 1px silver;
+border-bottom:solid 1px silver;
+}
+.wikiEditor-ui-tabs div.current{
+border-bottom:solid 1px white;
+background-color:white;
+}
+.wikiEditor-ui-tabs div a{
+display:inline-block;
+padding:0 0.75em;
+line-height:2.5em;
+color:#0645AD;
+}
+.wikiEditor-ui-tabs div.current a{
+color:#333333;
+}
+.wikiEditor-ui-tabs div.current a:hover{
+text-decoration:none;
+}
+.wikiEditor-view-wikitext{
+line-height:1em;
+}
+.wikiEditor-ui-loading{
+background:#f3f3f3;
+z-index:10;
+position:absolute;
+top:0;
+left:0;
+text-align:center;
+height:100%;
+width:100%;
+border:1px solid silver;
+margin:-1px;
+}
+.wikiEditor-ui-loading span{
+display:block;
+height:24px;
+width:24px;
+background:url( ../images/wikiEditor/toolbar/loading.gif ) 0 0 no-repeat;
+text-indent:-9999px;
+margin:0 auto;
+}
+.wikiEditor-toolbar-dialog table{
+margin-top:0.75em;
+}
+.wikiEditor-toolbar-dialog table td{
+padding:0.5em;
+height:3em;
+overflow:visible;
+}
+div.suggestions{
+z-index:1099;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-titlebar-close:hover{
+text-decoration:none;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-content .status-invalid input{
+border:2px solid red;
+padding:2px 1px;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-titlebar{
+padding:0.9em 1.4em 0.6em !important;
+}
+.wikiEditor-toolbar-dialog table td{
+padding:0 !important;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-buttonpane button{
+-moz-border-radius:4px;
+-webkit-border-radius:4px;
+padding:0.2em 0.6em 0.15em !important;
+margin:0.5em 0 0.5em 0.4em !important;
+border:1px solid #a6a6a6 !important;
+background:#f2f2f2 url( ../images/wikiEditor/dialogs/button_off.png?1) repeat-x scroll 50% 100% !important;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-buttonpane button:hover{
+border-color:#6e7273;
+background:#e1e1e1 url( ../images/wikiEditor/dialogs/button_over.png?1) repeat-x scroll 50% 100% !important;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-buttonpane button:active,
+.wikiEditor-toolbar-dialog .ui-dialog-buttonpane button:focus{
+border-color:#707271;
+background:#bfbfbf url( ../images/wikiEditor/dialogs/button_down.png?1) repeat-x scroll 50% 100% !important;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-buttonpane button.disabled{
+color:#7f7f7f;
+border-color:#cccccc;
+background:#f2f2f2 url( ../images/wikiEditor/dialogs/button_disabled.png?1) repeat-x scroll 50% 100% !important;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-buttonpane button::-moz-focus-inner{
+border:0;
+}
+.wikiEditor-toolbar-dialog .ui-widget-header{
+background:#f0f0f0 url( ../images/wikiEditor/dialogs/titlebar_fade.png?1) repeat-x scroll 50% 100% !important;
+}
+.wikiEditor-toolbar-dialog .ui-icon-closethick{
+background:url( ../images/wikiEditor/dialogs/close_x.png?1) no-repeat 50% 50% !important;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-buttonpane{
+margin-top:0 !important;
+padding:0.3em 1.4em 0.5em 1.4em !important;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-content fieldset{
+border:none !important;
+margin:0 !important;
+padding:0 !important;
+}
+.wikiEditor-toolbar-dialog .ui-widget-header{
+border-bottom:1px solid #6bc8f3 !important;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-content input[type=text]{
+-moz-box-sizing:border-box;
+-ms-box-sizing:border-box;
+-webkit-box-sizing:border-box;
+-khtml-box-sizing:border-box;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-content input[type="radio"],
+.wikiEditor-toolbar-dialog .ui-dialog-content input[type="checkbox"]{
+margin-left:0;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-titlebar-close{
+padding:0;
+}
+body.ltr .wikiEditor-toolbar-dialog .ui-dialog-titlebar-close{
+right:0.9em;
+}
+.wikieditor-toolbar-field-wrapper{
+padding:0 0 25px 0;
+}
+.wikieditor-toolbar-floated-field-wrapper{
+float:left;
+margin-right:2em;
+}
+.wikieditor-toolbar-dialog-hint{
+color:#999999;
+}
+.wikiEditor-toolbar-dialog,
+.wikiEditor-toolbar-dialog .ui-widget-content{
+border:none !important;
+}
+#wikieditor-toolbar-table-dialog fieldset{
+width:218px;
+padding:0;
+float:left;
+}
+body.rtl #wikieditor-toolbar-table-dialog fieldset{
+float:right;
+}
+#wikieditor-toolbar-table-dialog .wikieditor-toolbar-table-preview-wrapper{
+width:330px;
+padding:0;
+float:right;
+}
+body.rtl #wikieditor-toolbar-table-dialog .wikieditor-toolbar-table-preview-wrapper{
+float:left;
+}
+body.rtl .wikiEditor-toolbar-dialog .wikieditor-toolbar-table-preview-wrapper table{
+margin-left:1em;
+margin-right:0;
+}
+.wikieditor-toolbar-table-preview-content *{
+cursor:default;
+}
+.wikiEditor-toolbar-dialog .wikieditor-toolbar-table-preview-wrapper table{
+width:100% !important;
+}
+.wikiEditor-toolbar-dialog .wikieditor-toolbar-table-preview-content table td{
+padding:10px 4px !important;
+height:auto !important;
+}
+.wikiEditor-toolbar-dialog .wikieditor-toolbar-table-preview-content table th{
+padding:7px 3px !important;
+}
+.wikieditor-toolbar-table-dimension-fields .wikieditor-toolbar-field-wrapper{
+float:left;
+margin-right:20px;
+vertical-align:bottom;
+}
+body.rtl .wikieditor-toolbar-table-dimension-fields .wikieditor-toolbar-field-wrapper{
+float:right;
+margin-right:0px;
+margin-left:20px;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-content{
+padding:30px 20px 0 !important;
+}
+.wikieditor-toolbar-dialog-wrapper{
+width:100%;
+}
+#wikieditor-toolbar-link-int-target-status{
+float:right;
+}
+#wikieditor-toolbar-link-int-target,
+#wikieditor-toolbar-link-int-text{
+width:100%;
+}
+#wikieditor-toolbar-tool-link-int-target-label{
+float:left;
+line-height:1.7em;
+}
+#wikieditor-toolbar-link-int-target-status-loading{
+line-height:1.7em;
+}
+#wikieditor-toolbar-link-int-target-status-exists,
+#wikieditor-toolbar-link-int-target-status-notexists,
+#wikieditor-toolbar-link-int-target-status-invalid,
+#wikieditor-toolbar-link-int-target-status-external{
+padding-left:30px;
+background-position:0 50%;
+background-repeat:no-repeat;
+}
+#wikieditor-toolbar-link-int-target-status-exists{
+background-image:url( ../images/wikiEditor/dialogs/insert-link-exists.png?1);
+}
+#wikieditor-toolbar-link-int-target-status-notexists{
+background-image:url( ../images/wikiEditor/dialogs/insert-link-notexists.png?1);
+}
+#wikieditor-toolbar-link-int-target-status-invalid{
+background-image:url( ../images/wikiEditor/dialogs/insert-link-invalid.png?1);
+}
+#wikieditor-toolbar-link-int-target-status-external{
+background-image:url( ../images/wikiEditor/dialogs/insert-link-external.png?1);
+}
+#wikieditor-toolbar-reference-dialog label{
+float:left;
+line-height:1.7em;
+}
+#wikieditor-toolbar-reference-text{
+width:100%;
+}
+body.rtl .wikiEditor-toolbar-dialog .ui-dialog-buttonpane button{
+float:left;
+margin:0.5em 0.4em 0.5em 0 !important;
+}
+body.rtl .wikiEditor-toolbar-dialog .ui-dialog-titlebar-close{
+left:0.9em;
+right:auto;
+}
+body.rtl .wikiEditor-toolbar-dialog .ui-dialog-title{
+float:right;
+}
+body.rtl #wikieditor-toolbar-link-int-target-status{
+float:left;
+}
+body.rtl #wikieditor-toolbar-tool-link-int-target-label{
+float:right;
+}
+body.rtl .wikieditor-toolbar-floated-field-wrapper{
+float:right;
+margin-right:0;
+margin-left:2em;
+}
+body.rtl #wikieditor-toolbar-link-int-target-status-exists,
+body.rtl #wikieditor-toolbar-link-int-target-status-notexists,
+body.rtl #wikieditor-toolbar-link-int-target-status-invalid,
+body.rtl #wikieditor-toolbar-link-int-target-status-external{
+padding-left:0;
+padding-right:30px;
+background-position:100% 50%;
+}
+body.rtl #wikieditor-toolbar-link-int-target-status-external{
+background-image:url( ../images/wikiEditor/dialogs/insert-link-external-rtl.png?1);
+}
+body.rtl #wikieditor-toolbar-reference-dialog label{
+float:right;
+}
+.wikiEditor-template-dialog-fields label{
+text-transform:capitalize;
+float:left;
+width:25%;
+line-height:2.25em;
+}
+.wikiEditor-template-dialog-fields textarea{
+float:right;
+width:70%;
+line-height:1.5em;
+height:1.5em;
+}
+.wikiEditor-template-dialog-fields .wikiEditor-template-dialog-field-wrapper{
+padding:0.75em 0.33em;
+border-bottom:dashed 1px silver;
+clear:both;
+}
+.wikiEditor-template-dialog-fields .wikiEditor-template-dialog-field-wrapper:first-child{
+padding-top:0;
+}
+.wikiEditor-template-dialog-fields .wikiEditor-template-dialog-field-wrapper:last-child{
+border-bottom:none;
+}
+.wikieditor-toolbar-table-dimension-fields:after,
+.wikieditor-toolbar-dialog-wrapper:after{
+visibility:hidden;
+display:block;
+font-size:0;
+content:" ";
+clear:both;
+height:0;
+}
+.wikieditor-toolbar-table-dimension-fields,
+.wikieditor-toolbar-dialog-wrapper{
+display:inline-table;
+}
+* html .wikieditor-toolbar-table-dimension-fields,
+* html .wikieditor-toolbar-dialog-wrapper{
+height:1%;
+}
+.wikieditor-toolbar-table-dimension-fields,
+.wikieditor-toolbar-dialog-wrapper{
+display:block;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-buttonpane{
+border-top:1px solid #cccccc !important;
+}
+.wikiEditor-toolbar-dialog .ui-dialog-content{
+padding-bottom:1em !important;
+}
+.wikiEditor-dialog-editoptions{
+margin-top:15px;
+}
+.wikiEditor-publish-dialog-copywarn{
+margin-top:0.5em;
+}
+.wikiEditor-publish-dialog-summary{
+margin-top:1.5em;
+}
+.wikiEditor-publish-dialog-options{
+margin-top:1.5em;
+}
+.wikiEditor-ui-toolbar{
+position:relative;
+width:100%;
+}
+.wikiEditor-ui-toolbar .sections{
+float:left;
+width:100%;
+clear:both;
+height:0;
+}
+body.rtl .wikiEditor-ui-toolbar .sections{
+float:right;
+}
+.wikiEditor-ui-toolbar .sections .section{
+display:none;
+float:left;
+width:100%;
+border-top:solid 1px #DDDDDD;
+background-color:#E0EEf7;
+}
+.wikiEditor-ui-toolbar{
+background-image:url(../images/wikiEditor/toolbar/base.png?1);
+background-position:left top;
+background-repeat:repeat-x;
+}
+/*
+.wikiEditor-ui-toolbar .toolbar{
+background-image:url(../images/wikiEditor/toolbar/base.png?1);
+background-position:left top;
+}
+*/
+body.rtl .wikiEditor-ui-toolbar .sections .section{
+float:right;
+}
+.wikiEditor-ui-toolbar .sections div .spinner{
+display:none;
+}
+.wikiEditor-ui-toolbar .sections .loading .spinner{
+display:block;
+background-image:url(../images/wikiEditor/toolbar/loading.gif?2);
+background-position:left center;
+background-repeat:no-repeat;
+padding-left:32px;
+margin-left:0.5em;
+height:32px;
+float:left;
+color:#666666;
+}
+body.rtl .wikiEditor-ui-toolbar .sections .loading .spinner{
+background-position:right center;
+padding-left:0;
+padding-right:32px;
+margin-left:0;
+margin-right:0.5em;
+float:right;
+}
+.wikiEditor-ui-toolbar .tabs,
+.wikiEditor-ui-toolbar .section-main{
+position:relative;
+float:left;
+height:26px;
+}
+body.rtl .wikiEditor-ui-toolbar .tabs,
+body.rtl .wikiEditor-ui-toolbar .section-main{
+float:right;
+}
+.wikiEditor-ui-toolbar .group{
+float:left;
+height:26px;
+padding-right:6px;
+border-right:solid 1px #DDDDDD;
+margin:3px;
+}
+body.rtl .wikiEditor-ui-toolbar .group{
+float:right;
+padding-right:0;
+padding-left:6px;
+border-right:none;
+border-left:solid 1px #DDDDDD;
+}
+.wikiEditor-ui-toolbar .group-search{
+float:right;
+padding:0 0 0 6px;
+border-right:none;
+border-left:1px solid #DDDDDD;
+}
+.wikiEditor-ui-toolbar .group-insert{
+border-right:none;
+}
+body.rtl .wikiEditor-ui-toolbar .group-search{
+float:left;
+padding:0 6px 0 0;
+border-left:none;
+border-right:1px solid #DDDDDD;
+}
+body.rtl .wikiEditor-ui-toolbar .group-insert{
+border-left:none;
+}
+.wikiEditor-toolbar-spritedButton{
+background:url(../images/wikiEditor/toolbar/button-sprite.png?1) 0 0 no-repeat;
+display:block;
+float:left;
+height:22px;
+text-indent:-9999px;
+width:22px;
+padding:2px;
+cursor:pointer;
+overflow:hidden;
+}
+.wikiEditor-ui-toolbar .tabs{
+list-style:none;
+margin:3px;
+}
+.wikiEditor-ui-toolbar .tabs span.tab{
+display:inline-block;
+float:left;
+line-height:26px;
+}
+.wikiEditor-ui-toolbar .tabs > span.tab{
+display:block;
+}
+body.rtl .wikiEditor-ui-toolbar .tabs > span.tab{
+float:right;
+}
+.wikiEditor-ui-toolbar .tabs span.tab a,
+.wikiEditor-ui-toolbar .tabs span.tab a:visited{
+display:inline-block;
+float:left;
+padding-left:18px;
+padding-right:12px;
+height:26px;
+cursor:pointer;
+color:#0645ad;
+background-image:url(../images/wikiEditor/toolbar/arrow-right.png?1);
+background-position:left center;
+background-repeat:no-repeat;
+}
+body.rtl .wikiEditor-ui-toolbar .tabs span.tab a,
+body.rtl .wikiEditor-ui-toolbar .tabs span.tab a:visited{
+padding-left:12px;
+padding-right:18px;
+background-image:url(../images/wikiEditor/toolbar/arrow-left.png?1);
+background-position:right center;
+}
+body.rtl .wikiEditor-ui-toolbar .tabs > span.tab > a,
+body.rtl .wikiEditor-ui-toolbar .tabs > pan.tab > a:visited{
+float:right;
+}
+.wikiEditor-ui-toolbar .tabs span.tab a.current,
+.wikiEditor-ui-toolbar .tabs span.tab a.current:visited{
+color:#333333;
+background-image:url(../images/wikiEditor/toolbar/arrow-down.png?1);
+}
+body.rtl .wikiEditor-ui-toolbar .tabs span.tab a.current,
+body.rtl .wikiEditor-ui-toolbar .tabs span.tab a.current:visited{
+background-image:url(../images/wikiEditor/toolbar/arrow-down.png?1);
+}
+.wikiEditor-ui-toolbar .tabs span.tab a.current:hover{
+text-decoration:none;
+}
+.wikiEditor-ui-toolbar .tabs span.tab a.loading{
+background-image:url(../images/wikiEditor/toolbar/loading-small.gif?1) !important;
+}
+.wikiEditor-ui-toolbar .group .label{
+float:left;
+border:0px;
+height:22px;
+line-height:22px;
+margin:2px;
+margin-left:5px;
+margin-right:8px;
+color:#777777;
+cursor:default;
+}
+body.rtl .wikiEditor-ui-toolbar .group > .label{
+float:right;
+margin-left:8px;
+margin-right:5px;
+}
+.wikiEditor-ui-toolbar .group img.tool{
+float:left;
+border:0px;
+height:22px;
+width:22px;
+padding:2px;
+cursor:pointer;
+}
+body.rtl .wikiEditor-ui-toolbar .group > img.tool{
+float:right;
+}
+.wikiEditor-ui-toolbar .group .tool-select{
+float:left;
+margin:2px;
+height:22px;
+cursor:pointer;
+border:solid 1px silver;
+padding:0;
+margin-right:0;
+cursor:pointer;
+background-color:#ffffff;
+}
+body.rtl .wikiEditor-ui-toolbar .group > .tool-select{
+float:right;
+}
+.wikiEditor-ui-toolbar .group .tool-select .label{
+background-image:url(../images/wikiEditor/toolbar/arrow-down.png?1);
+background-position:center right;
+background-repeat:no-repeat;
+padding:0;
+margin:0;
+padding-left:4px;
+padding-right:22px;
+margin-right:4px;
+cursor:pointer;
+text-decoration:none;
+color:#333333;
+}
+body.rtl .wikiEditor-ui-toolbar .group .tool-select .label{
+background-position:center left;
+padding-right:4px;
+padding-left:22px;
+margin-left:4px;
+margin-right:0;
+}
+body.rtl .wikiEditor-ui-toolbar .group .tool-select .menu{
+clear:both;
+}
+.wikiEditor-ui-toolbar .group .tool-select .menu .options{
+position:absolute;
+display:none;
+margin-left:-1px;
+border:solid 1px silver;
+background-color:#ffffff;
+}
+body.rtl .wikiEditor-ui-toolbar .group .tool-select .menu{
+margin-left:-1px;
+margin-right:-1px;
+}
+.wikiEditor-ui-toolbar .group .tool-select .options {
+margin-top:22px;
+}
+.wikiEditor-ui-toolbar .group .tool-select .options .option{
+display:block;
+padding:0.5em;
+text-decoration:none;
+color:black;
+white-space:nowrap;
+}
+.wikiEditor-ui-toolbar .group .tool-select .options .option:hover{
+background-color:#E0EEf7;
+}
+.wikiEditor-ui-toolbar .group .tool-select .options .option[rel=heading-2]{
+font-size:150%;
+font-weight:normal;
+}
+.wikiEditor-ui-toolbar .group .tool-select .options .option[rel=heading-3]{
+font-size:132%;
+font-weight:normal;
+}
+.wikiEditor-ui-toolbar .group .tool-select .options .option[rel=heading-4]{
+font-size:116%;
+font-weight:normal;
+}
+.wikiEditor-ui-toolbar .group .tool-select .options .option[rel=heading-5]{
+font-size:100%;
+font-weight:bold;
+}
+.wikiEditor-ui-toolbar .booklet .index{
+float:left;
+width:20%;
+height:125px;
+overflow:auto;
+}
+body.rtl .wikiEditor-ui-toolbar .booklet .index{
+float:right;
+}
+.wikiEditor-ui-toolbar .booklet .index div{
+padding:4px;
+padding-left:6px;
+cursor:pointer;
+color:#0645ad;
+}
+body.rtl .wikiEditor-ui-toolbar .booklet .index div{
+padding-left:4px;
+padding-right:6px;
+}
+.wikiEditor-ui-toolbar .booklet .index .current{
+background-color:#FAFAFA;
+color:#333333;
+cursor:default;
+}
+.wikiEditor-ui-toolbar .booklet .pages{
+float:right;
+width:80%;
+height:125px;
+overflow:auto;
+background-color:#FAFAFA;
+}
+body.rtl .wikiEditor-ui-toolbar .booklet .pages{
+float:left;
+}
+.wikiEditor-ui-toolbar .page-table table{
+padding-left:5px;
+padding-right:5px;
+background:none;
+}
+.wikiEditor-ui-toolbar .page-table th{
+color:#999999;
+}
+.wikiEditor-ui-toolbar .page-table td{
+color:black;
+border-top:solid 1px #EEEEEE;
+}
+.wikiEditor-ui-toolbar .page-table th,
+.wikiEditor-ui-toolbar .page-table td{
+text-align:left;
+padding:5px;
+margin:0px;
+}
+body.rtl .wikiEditor-ui-toolbar .page-table th,
+body.rtl .wikiEditor-ui-toolbar .page-table td{
+text-align:right;
+}
+.wikiEditor-ui-toolbar .section-help .page-table td.cell-syntax,
+.wikiEditor-ui-toolbar .section-help .page-table td.syntax{
+font-family:monospace;
+}
+.wikiEditor-ui-toolbar .section-help .page-table td.syntax,
+.wikiEditor-ui-toolbar .section-help .page-table td.cell-syntax,
+.wikiEditor-ui-toolbar .section-help .page-table td.cell-result,
+.wikiEditor-ui-toolbar .section-help .page-table td.result{
+width:40%;
+}
+.wikiEditor-ui-toolbar .section-help .page-table td.description,
+.wikiEditor-ui-toolbar .section-help .page-table td.description{
+width:20%;
+}
+.wikiEditor-ui-toolbar .page-characters div span{
+border:solid 1px #DDDDDD;
+padding:5px;
+padding-left:8px;
+padding-right:8px;
+margin-left:5px;
+margin-top:5px;
+height:1em;
+float:left;
+display:block;
+color:black;
+text-decoration:none;
+cursor:pointer;
+font-family:monospace;
+font-size:1.25em;
+}
+body.rtl .wikiEditor-ui-toolbar .page-characters > div > span,
+.wikiEditor-ui-toolbar .page-characters div[dir=rtl] span{
+direction:rtl;
+float:right;
+margin-left:0;
+margin-right:5px;
+}
+.wikiEditor-ui-toolbar .page-characters div span:hover{
+background-color:white;
+text-decoration:none;
+border-color:#a8d7f9;
+}
+.ui-widget table td.wikieditor-toolbar-table-preview-wrapper span{
+padding:4px 6px 0px;
+display:block;
+}
+.ui-widget table .wikieditor-toolbar-table-preview-frame{
+width:340px;
+background:#fff;
+padding:10px;
+overflow:hidden;
+display:block;
+position:relative;
+}
+.ui-widget table .wikieditor-toolbar-table-preview-content{
+width:375px;
+display:block;
+}
+.ui-widget table .wikieditor-toolbar-table-preview{
+width:340px;
+}
+.ui-widget table td.wikieditor-toolbar-table-preview-wrapper{
+background:#e5e5e5;
+padding:10px;
+}
+.wikiEditor-preview-loading{
+padding:1em;
+background-color:white;
+}
+.wikiEditor-preview-loading span{
+color:#666666;
+}
+.wikiEditor-preview-spinner{
+padding-right:1em;
+}
+.wikiEditor-preview-contents{
+padding:1em;
+background-color:white;
+}
+#wikiEditor-0-preview-dialog .wikiEditor-ui-loading{
+overflow:hidden;
+border:none;
+}
+.ui-dialog .ui-dialog-buttonpane{
+margin:0 !important;
+}
