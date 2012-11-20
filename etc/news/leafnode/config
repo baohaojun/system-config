@@ -12,5 +12,4 @@ only_groups_match_all = 1
 ### Incoming server (remote articles are received from these hosts)
 
 server = news.gmane.org
-
-server = news.gnus.org
+only_groups_match_all = 1

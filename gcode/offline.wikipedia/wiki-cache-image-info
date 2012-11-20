@@ -1,8 +1,0 @@
-#!/bin/bash
-set -e
-
-# if we are executing with socket open, we need close those fds,
-# because they might cause http clients waiting unnecessarily.
-eval $(for x in `ls -l /proc/$$/fd |grep -P 'socket:\[\d+\]'|pn 9`; do echo exec $x\>/dev/null\;; done)
-
-wiki-cache-image-info.job "$@" >> ~/.logs/wiki-cache-image-info.log 2>&1&
