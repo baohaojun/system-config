@@ -1,0 +1,54 @@
+__NOTOC__
+<div style="border: 1px solid grey; background: #E6E8FA; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== Të dhënat bibliografike për «{{FULLPAGENAME}}» ==
+* Emri i faqes: {{FULLPAGENAME}}
+* Autori: Redaktorët e {{SITENAME}}-s
+* Publikuesi: ''{{SITENAME}}, {{int:sitesubtitle}}''.
+* Data e versionit të fundit: {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC
+* E marrë më: <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC</citation>
+* Lidhja e përhershme: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+* Nr i versionit të faqes: {{REVISIONID}}
+</div>
+
+<div class="plainlinks" style="border: 1px solid grey; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== Stile të ndryshme citimi për «{{FULLPAGENAME}}» ==
+
+=== [[Stili citimit APA|APA]] ===
+{{FULLPAGENAME}}. ({{CURRENTYEAR}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}). ''{{SITENAME}}, {{int:sitesubtitle}}''. Retrieved <citation>{{CURRENTTIME}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> from {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
+
+=== [[Stili citimit MLA|MLA]] ===
+\"{{FULLPAGENAME}}.\" ''{{SITENAME}}, {{int:sitesubtitle}}''. {{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC. <citation>{{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}}</citation> &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
+
+=== [[Stili citimit MHRA|MHRA]] ===
+{{SITENAME}} contributors, '{{FULLPAGENAME}}', ''{{SITENAME}}, {{int:sitesubtitle}},'' {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC, &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [accessed <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}</citation>]
+
+=== [[Stili i citimit Chicago|Chicago]] ===
+{{SITENAME}} contributors, \"{{FULLPAGENAME}},\" ''{{SITENAME}}, {{int:sitesubtitle}},'' {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (accessed <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
+
+=== [[Stili i citimit CBE/CSE|CBE/CSE]] ===
+{{SITENAME}} contributors. {{FULLPAGENAME}} [Internet]. {{SITENAME}}, {{int:sitesubtitle}}; {{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}, {{CURRENTTIME}} UTC [cited <citation>{{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}</citation>]. Available from: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
+
+=== [[Stili i citimit Bluebook|Bluebook]] ===
+{{FULLPAGENAME}}, {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (last visited <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
+
+=== [[Stili i citimit BibTeX|BibTeX]] ===
+@misc{ wiki:xxx,
+	author = "{{SITENAME}}",
+	title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+	year = "{{CURRENTYEAR}}",
+	url = "{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}",
+	note = "[Online; accessed <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]"
+} 
+
+When using the [[LaTeX]] package url (<code>\\usepackage{url}</code> somewhere in the preamble) which tends to give much more nicely formatted web addresses, the following may preferred:
+
+@misc{ wiki:xxx,
+	author = "{{SITENAME}}",
+	title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+	year = "{{CURRENTYEAR}}",
+	url = "'''\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''",
+	note = "[Online; accessed <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]"
+}
+</div><!--closing div for "plainlinks"-->

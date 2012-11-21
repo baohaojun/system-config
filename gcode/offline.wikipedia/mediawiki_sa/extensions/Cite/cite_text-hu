@@ -1,0 +1,66 @@
+__NOTOC__
+<div style=\"width: 90%; text-align: center; font-size: 85%; margin: 10px auto;\">[[#APA style|APA]] | [[#MLA style|MLA]] | [[#MHRA style|MHRA]] | [[#Chicago style|Chicago]] | [[#CBE/CSE style|CSE]] | [[#Bluebook style|Bluebook]] | [[#BibTeX entry|BibTeX]]</div>
+
+'''FONTOS MEGJEGYZÉS:''' A legtöbb tanár és szakember nem tartja helyesnek a [[harmadlagos forrás]]ok – mint a lexikonok – kizárólagos forrásként való felhasználását. A Wiki cikkeket háttérinformációnak, vagy a további kutatómunka kiindulásaként érdemes használni.
+
+Mint minden [[{{ns:project}}:Ki írja a Wikipédiát|közösség által készített]] hivatkozásnál, a wiki tartalmában is lehetségesek hibák vagy pontatlanságok: kérjük, több független forrásból ellenőrizd a tényeket és ismerd meg a [[{{ns:project}}:Jogi nyilatkozat|jogi nyilatkozatunkat]], mielőtt a wiki adatait felhasználod.
+
+<div style=\"border: 1px solid grey; background: #E6E8FA; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;\">
+
+== {{FULLPAGENAME}} lap adatai ==
+
+* Lap neve: {{FULLPAGENAME}} 
+* Szerző: Wiki szerkesztők
+* Kiadó: ''{{SITENAME}}, {{MediaWiki:Sitesubtitle}}''. 
+* A legutóbbi változat dátuma: {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC
+* Letöltés dátuma: <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC</citation>
+* Állandó hivatkozás: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+* Lapváltozat-azonosító: {{REVISIONID}}
+
+Légy szíves, ellenőrizd, hogy ezek az adatok megfelelnek-e a kívánalmaidnak.  További információhoz lásd az '''[[{{ns:project}}:Idézés a Wikipédiából|Idézés a Wikipédiából]]''' lapot.
+
+</div>
+<div class=\"plainlinks\" style=\"border: 1px solid grey; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;\"> 
+
+== Idézési stílusok a(z) {{FULLPAGENAME}} laphoz ==
+
+=== APA stílus ===
+{{FULLPAGENAME}}. ({{CURRENTYEAR}}. {{CURRENTMONTHNAME}} {{CURRENTDAY}}). ''{{SITENAME}}, {{MediaWiki:Sitesubtitle}}''. Retrieved <citation>{{CURRENTYEAR}}. {{CURRENTMONTHNAME}} {{CURRENTDAY}}. {{CURRENTTIME}}</citation> from {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
+
+=== MLA stílus ===
+\"{{FULLPAGENAME}}.\" ''{{SITENAME}}, {{MediaWiki:Sitesubtitle}}''. {{CURRENTYEAR}}. {{CURRENTMONTHABBREV}}. {{CURRENTDAY}}. {{CURRENTTIME}} UTC. <citation>{{CURRENTYEAR}}. {{CURRENTMONTHABBREV}}. {{CURRENTDAY}}. {{CURRENTTIME}}</citation> &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
+
+=== MHRA stílus ===
+Wiki szerkesztők, '{{FULLPAGENAME}}',  ''{{SITENAME}}, {{MediaWiki:Sitesubtitle}},'' {{CURRENTYEAR}}. {{CURRENTMONTHNAME}} {{CURRENTDAY}}. {{CURRENTTIME}} UTC, &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [accessed <citation>{{CURRENTYEAR}}. {{CURRENTMONTHNAME}} {{CURRENTDAY}}.</citation>]
+
+=== Chicago stílus ===
+Wiki szerkesztők, \"{{FULLPAGENAME}},\"  ''{{SITENAME}}, {{MediaWiki:Sitesubtitle}},'' {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (accessed <citation>{{CURRENTYEAR}}. {{CURRENTMONTHNAME}} {{CURRENTDAY}}.</citation>).
+
+=== CBE/CSE stílus ===
+wiki szerkesztők. {{FULLPAGENAME}} [Internet].  {{SITENAME}}, {{MediaWiki:Sitesubtitle}};  {{CURRENTYEAR}}. {{CURRENTMONTHABBREV}}. {{CURRENTDAY}}.  {{CURRENTTIME}} UTC [cited <citation>{{CURRENTYEAR}}. {{CURRENTMONTHABBREV}}. {{CURRENTDAY}}.</citation>].  Elérhető: 
+{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
+
+=== Bluebook stílus ===
+{{FULLPAGENAME}}, {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (last visited <citation>{{CURRENTYEAR}}. {{CURRENTMONTHNAME}} {{CURRENTDAY}}.</citation>).
+
+=== [[BibTeX]] bejegyzés ===
+
+  @misc{ wiki:xxx,
+    author = \"{{SITENAME}}\",
+    title = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{MediaWiki:Sitesubtitle}}\",
+    year = \"{{CURRENTYEAR}}\",
+    url = \"{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}\",
+    note = \"[Online; accessed <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"
+  }
+
+Az <code>url</code> nevű [[LaTeX]] csomag használata esetén (<code>\\usepackage{url}</code> a preambulumban), amely a webes hivatkozások formázásában nyújt segítséget, a következő forma ajánlott:
+
+  @misc{ wiki:xxx,
+    author = \"{{SITENAME}}\",
+    title = \"{{FULLPAGENAME}} --- {{SITENAME}}{,} {{MediaWiki:Sitesubtitle}}\",
+    year = \"{{CURRENTYEAR}}\",
+    url = \"'''\\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''\",
+    note = \"[Online; accessed <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]\"
+  }
+
+</div> <!--closing \"Citation styles\" div-->

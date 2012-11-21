@@ -1,0 +1,62 @@
+__NOTOC__
+<div style="border: 1px solid grey; background: #E6E8FA; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== 「{{FULLPAGENAME}}」の書誌情報 ==
+
+* ページ名: {{FULLPAGENAME}}
+* 著者: {{SITENAME}}への寄稿者ら
+* 発行者: {{int:sitesubtitle}}『{{SITENAME}}』
+* 更新日時: {{CURRENTYEAR}}年{{CURRENTMONTHNAME}}{{CURRENTDAY}}日 {{CURRENTTIME}} (UTC)
+* 取得日時: <citation>{{CURRENTYEAR}}年{{CURRENTMONTHNAME}}{{CURRENTDAY}}日 {{CURRENTTIME}} (UTC)</citation>
+* 恒久的なURI: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+* ページの版番号: {{REVISIONID}}
+
+</div>
+<div class="plainlinks" style="border: 1px solid grey; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== 各種方式による「{{FULLPAGENAME}}」の引用の仕方 ==
+
+=== [[科学技術情報流通技術基準|SIST02方式]] ===
+{{SITENAME}}への寄稿者ら. “{{FULLPAGENAME}}”. {{SITENAME}}, {{int:sitesubtitle}}. {{CURRENTYEAR}}-{{CURRENTMONTH}}-{{CURRENTDAY}}. {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}, (参照 <citation>{{CURRENTYEAR}}-{{CURRENTMONTH}}-{{CURRENTDAY}}</citation>).
+
+=== [[APA方式]] ===
+{{FULLPAGENAME}}. ({{CURRENTYEAR}}年{{CURRENTMONTHNAME}}{{CURRENTDAY}}日{{CURRENTTIME}}). ''{{SITENAME}}, {{int:sitesubtitle}}''. <citation>{{CURRENTYEAR}}年{{CURRENTMONTHNAME}}{{CURRENTDAY}}日{{CURRENTTIME}}</citation> {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} にて閲覧.
+
+=== [[The MLA style manual|MLA方式]] ===
+"{{FULLPAGENAME}}." ''{{SITENAME}}, {{int:sitesubtitle}}''. {{CURRENTYEAR}}年{{CURRENTMONTHABBREV}}{{CURRENTDAY}}日{{CURRENTTIME}} (UTC). <citation>{{CURRENTYEAR}}年{{CURRENTMONTHABBREV}}{{CURRENTDAY}}日{{CURRENTTIME}}</citation> &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
+
+=== [[MHRA Style Guide|MHRA方式]] ===
+{{SITENAME}}への寄稿者ら, '{{FULLPAGENAME}}', ''{{SITENAME}}, {{int:sitesubtitle}},''{{CURRENTYEAR}}年{{CURRENTMONTHABBREV}}{{CURRENTDAY}}日 (UTC), &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [<citation>{{CURRENTYEAR}}年{{CURRENTMONTHABBREV}}{{CURRENTDAY}}日</citation>閲覧]
+
+=== [[The Chicago Manual of Style|Chicago方式]] ===
+{{SITENAME}}への寄稿者ら, "{{FULLPAGENAME}}," ''{{SITENAME}}, {{int:sitesubtitle}},'' {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (<citation>{{CURRENTYEAR}}年{{CURRENTMONTHABBREV}}{{CURRENTDAY}}日</citation>閲覧).
+
+=== [[Council of Science Editors|CBE/CSE方式]] ===
+{{SITENAME}}への寄稿者ら. {{FULLPAGENAME}} [Internet]. {{SITENAME}}, {{int:sitesubtitle}}; {{CURRENTYEAR}}年{{CURRENTMONTHABBREV}}{{CURRENTDAY}}日{{CURRENTTIME}} (UTC) [<citation>{{CURRENTYEAR}}年{{CURRENTMONTHABBREV}}{{CURRENTDAY}}日</citation>現在で引用]. 入手元：
+{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
+
+=== [[Bluebook|Bluebook方式]] ===
+{{FULLPAGENAME}}, {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (<citation>{{CURRENTYEAR}}年{{CURRENTMONTHNAME}}{{CURRENTDAY}}日</citation>最終訪問).
+
+=== [[BibTeX]]エントリ ===
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}",
+    note = "[オンライン; 閲覧日時 <citation>{{CURRENTYEAR}}-{{CURRENTDAY}}-{{CURRENTMONTH}}</citation>]"
+  }
+
+ウェブアドレスを見た目良く整形するために[[LaTeX]]パッケージ url を用いる場合（プリアンブルのどこかに<code>\usepackage{url}</code>がある場合）は、下記の方が良いかもしれません：
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "'''\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''",
+    note = "[オンライン; 閲覧日時 <citation>{{CURRENTYEAR}}-{{CURRENTDAY}}-{{CURRENTMONTH}}</citation>]"
+  }
+
+
+</div> <!--closing div for "plainlinks"-->

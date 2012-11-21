@@ -1,0 +1,58 @@
+__NOTOC__
+<div style="border: 1px solid grey; background: #E6E8FA; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== Bibliografiset tiedot artikkelille {{FULLPAGENAME}} ==
+
+* Sivun nimi: {{FULLPAGENAME}}
+* Tekijä: {{SITENAME}}-projektin osanottajat
+* Julkaisija: ''{{SITENAME}}, {{int:sitesubtitle}}''.
+* Viimeisimmän version päivämäärä: {{CURRENTDAY}}. {{CURRENTMONTHNAME}}ta {{CURRENTYEAR}}, kello {{CURRENTTIME}} (UTC)
+* Sivu haettu: <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}}ta {{CURRENTYEAR}}, kello {{CURRENTTIME}} (UTC)</citation>
+* Pysyvä osoite: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+* Sivun version tunniste: {{REVISIONID}}
+
+</div>
+<div class="plainlinks" style="border: 1px solid grey; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== Viittaustyylit artikkelille {{FULLPAGENAME}} ==
+
+=== APA-tyyli ===
+{{FULLPAGENAME}}. ({{CURRENTYEAR}}, {{CURRENTMONTHNAME}}n {{CURRENTDAY}}). ''{{SITENAME}}, {{int:sitesubtitle}}''. Haettu <citation>{{CURRENTTIME}}, {{CURRENTMONTHNAME}}n {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> osoitteesta {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
+
+=== MLA-tyyli ===
+"{{FULLPAGENAME}}." ''{{SITENAME}}, {{int:sitesubtitle}}''. {{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC. <citation>{{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}}</citation> &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
+
+=== MHRA-tyyli ===
+{{SITENAME}} contributors, '{{FULLPAGENAME}}', ''{{SITENAME}}, {{int:sitesubtitle}},'' {{CURRENTDAY}} {{CURRENTMONTHNAME}}ta {{CURRENTYEAR}}, {{CURRENTTIME}} UTC, &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [haettu <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}}ta {{CURRENTYEAR}}</citation>]
+
+=== Chicago-tyyli ===
+{{SITENAME}}-projektin osanottajat, "{{FULLPAGENAME}}," ''{{SITENAME}}, {{int:sitesubtitle}},'' {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (haettu <citation>{{CURRENTMONTHNAME}}n {{CURRENTDAY}}, {{CURRENTYEAR}}</citation>).
+
+=== CBE/CSE-tyyli ===
+{{SITENAME}}-projektin osanottajat. {{FULLPAGENAME}} [Internet]. {{SITENAME}}, {{int:sitesubtitle}}; {{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}, {{CURRENTTIME}} UTC [cited <citation>{{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}</citation>]. Saatavilla osoitteesta: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
+
+=== Bluebook-tyyli ===
+{{FULLPAGENAME}}, {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (vierailtu viimeksi <citation>{{CURRENTMONTHNAME}}n {{CURRENTDAY}}., {{CURRENTYEAR}}</citation>).
+
+=== BibTeX-muoto ===
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}",
+    note = "[Online; haettu <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]"
+  }
+
+Käytettäessä [[LaTeX]]-pakettia url, (<code>\usepackage{url}</code> jossain alussa) joka tapaa antaa paremmin muotoiltuja osoitteita, seuraavaa muotoa voidaan käyttää:
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "'''\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''",
+    note = "[Online; haettu <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation>]"
+  }
+
+
+</div> <!--closing div for "plainlinks"-->

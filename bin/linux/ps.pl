@@ -5,6 +5,7 @@ echo "  PID  PPID     ELAPSED CMD" 1>&2
 
 ps -eo pid,ppid,etime,cmd | perl -ne '
 BEGIN{
+    $found = 0;
     @args=split(/\s+/, $ENV{"ARGS"});
     $my_pid = $ENV{"MY_PID"};
 }
@@ -25,4 +26,14 @@ for (@args) {
 
 if ($match) {
     print $line;
-}'
+    $found = 1;
+}
+
+END{
+    if (not $found) {
+        exit 1;
+    } else {
+        exit 0;
+    }
+}
+'

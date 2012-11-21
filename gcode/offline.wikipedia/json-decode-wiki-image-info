@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+import jsonpickle, sys
+
+info = open(sys.argv[1]).read()
+
+for page_id in jsonpickle.decode(info)['query']['pages']:
+    print jsonpickle.decode(info)['query']['pages'][page_id]['imageinfo'][0]['thumburl']

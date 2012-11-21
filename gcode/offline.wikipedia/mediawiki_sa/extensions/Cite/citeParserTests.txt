@@ -1,0 +1,357 @@
+# Force the test runner to ensure the extension is loaded
+!! hooks
+ref
+references
+!! endhooks
+
+!! test
+Simple <ref>, no <references/>
+!! input
+Wikipedia rocks!<ref>Proceeds of Rockology, vol. XXI</ref>
+!! result
+<p>Wikipedia rocks!<sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[1]</a></sup>
+</p>
+<br /><strong class="error">Cite error: <code>&lt;ref&gt;</code> tags exist, but no <code>&lt;references/&gt;</code> tag was found</strong>
+!! end
+
+!! test
+Simple <ref>, with <references/>
+!! input
+Wikipedia rocks!<ref>Proceeds of Rockology, vol. XXI</ref>
+
+<references/>
+!! result
+<p>Wikipedia rocks!<sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-0"><a href="#cite_ref-0">↑</a> Proceeds of Rockology, vol. XXI</li></ol>
+
+!! end
+
+
+!! article
+Template:Simple template
+!! text
+A ''simple'' template.
+!! endarticle
+
+
+!! test
+<ref> with a simple template
+!! input
+Templating<ref>{{simple template}}</ref>
+
+<references/>
+!! result
+<p>Templating<sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-0"><a href="#cite_ref-0">↑</a> A <i>simple</i> template.</li></ol>
+
+!! end
+
+!! test
+<ref> with a <nowiki>
+!! input
+Templating<ref><nowiki>{{simple template}}</nowiki></ref>
+
+<references/>
+!! result
+<p>Templating<sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-0"><a href="#cite_ref-0">↑</a> {{simple template}}</li></ol>
+
+!! end
+
+
+!! test
+<ref> in a <nowiki>
+!! input
+Templating<nowiki><ref>{{simple template}}</ref></nowiki>
+
+<references/>
+!! result
+<p>Templating&lt;ref&gt;{{simple template}}&lt;/ref&gt;
+</p><p><br />
+</p>
+!! end
+
+!! test
+<ref> in a <!--comment-->
+!! input
+Templating<!--<ref>{{simple template}}</ref>-->
+
+<references/>
+!! result
+<p>Templating
+</p><p><br />
+</p>
+!! end
+
+!! test
+<!--comment--> in a <ref> (bug 5384)
+!! input
+Templating<ref>Text<!--comment--></ref>
+
+<references/>
+!! result
+<p>Templating<sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-0"><a href="#cite_ref-0">↑</a> Text</li></ol>
+
+!! end
+
+!! test
+<references> after <gallery> (bug 6164)
+!! input
+<ref>one</ref>
+
+<gallery>Image:Foobar.jpg</gallery>
+
+<references/>
+!! result
+<p><sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[1]</a></sup>
+</p>
+<table class="gallery" cellspacing="0" cellpadding="0">
+	<tr>
+		<td><div class="gallerybox" style="width: 155px;">
+			<div class="thumb" style="padding: 66px 0; width: 150px;"><div style="margin-left: auto; margin-right: auto; width: 120px;"><a href="/wiki/File:Foobar.jpg" class="image"><img alt="Foobar.jpg" src="http://example.com/images/3/3a/Foobar.jpg" width="120" height="14" /></a></div></div>
+			<div class="gallerytext">
+			</div>
+		</div></td>
+	</tr>
+</table>
+<ol class="references"><li id="cite_note-0"><a href="#cite_ref-0">↑</a> one</li></ol>
+
+!! end
+
+!! test
+{{REVISIONID}} on page with <ref> (bug 6299)
+!! input
+{{REVISIONID}}<ref>elite</ref>
+!! result
+<p>1337<sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[1]</a></sup>
+</p>
+<br /><strong class="error">Cite error: <code>&lt;ref&gt;</code> tags exist, but no <code>&lt;references/&gt;</code> tag was found</strong>
+!! end
+
+!! test
+{{REVISIONID}} on page without <ref> (bug 6299 sanity check)
+!! input
+{{REVISIONID}}
+!! result
+<p>1337
+</p>
+!! end
+
+!! test
+Blank ref followed by ref with content
+!! input
+<ref name="blank"/>
+
+<ref name="blank">content</ref>
+
+<references/>
+!! result
+<p><sup id="cite_ref-blank_0-0" class="reference"><a href="#cite_note-blank-0">[1]</a></sup>
+</p><p><sup id="cite_ref-blank_0-1" class="reference"><a href="#cite_note-blank-0">[1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-blank-0">↑ <sup><a href="#cite_ref-blank_0-0">1.0</a></sup> <sup><a href="#cite_ref-blank_0-1">1.1</a></sup> content</li></ol>
+
+!! end
+
+!! test
+Regression: non-blank ref "0" followed by ref with content
+!! input
+<ref name="blank">0</ref>
+
+<ref name="blank">content</ref>
+
+<references/>
+!! result
+<p><sup id="cite_ref-blank_0-0" class="reference"><a href="#cite_note-blank-0">[1]</a></sup>
+</p><p><sup id="cite_ref-blank_0-1" class="reference"><a href="#cite_note-blank-0">[1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-blank-0">↑ <sup><a href="#cite_ref-blank_0-0">1.0</a></sup> <sup><a href="#cite_ref-blank_0-1">1.1</a></sup> 0</li></ol>
+
+!! end
+
+!! test
+Regression sanity check: non-blank ref "1" followed by ref with content
+!! input
+<ref name="blank">1</ref>
+
+<ref name="blank">content</ref>
+
+<references/>
+!! result
+<p><sup id="cite_ref-blank_0-0" class="reference"><a href="#cite_note-blank-0">[1]</a></sup>
+</p><p><sup id="cite_ref-blank_0-1" class="reference"><a href="#cite_note-blank-0">[1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-blank-0">↑ <sup><a href="#cite_ref-blank_0-0">1.0</a></sup> <sup><a href="#cite_ref-blank_0-1">1.1</a></sup> 1</li></ol>
+
+!! end
+
+!! test
+Ref names containing a number
+!! input
+<ref name="test123test">One</ref>
+<ref name="123test">Two</ref>
+<ref name="test123">Three</ref>
+
+<references />
+!! result
+<p><sup id="cite_ref-test123test_0-0" class="reference"><a href="#cite_note-test123test-0">[1]</a></sup>
+<sup id="cite_ref-123test_1-0" class="reference"><a href="#cite_note-123test-1">[2]</a></sup>
+<sup id="cite_ref-test123_2-0" class="reference"><a href="#cite_note-test123-2">[3]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-test123test-0"><a href="#cite_ref-test123test_0-0">↑</a> One</li>
+<li id="cite_note-123test-1"><a href="#cite_ref-123test_1-0">↑</a> Two</li>
+<li id="cite_note-test123-2"><a href="#cite_ref-test123_2-0">↑</a> Three</li></ol>
+
+!! end
+
+!! test
+Erroneous refs
+!! input
+<ref name="0">Zero</ref>
+
+<ref>Also zero, but differently! (Normal ref)</ref>
+
+<ref />
+
+<ref name="foo" name="bar" />
+
+<ref name="blankwithnoreference" />
+
+<references name="quasit" />
+
+<references />
+!! result
+<p><strong class="error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+name cannot be a simple integer. Use a descriptive title</strong>
+</p><p><sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[1]</a></sup>
+</p><p><strong class="error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+refs with no content must have a name</strong>
+</p><p><sup id="cite_ref-bar_1-0" class="reference"><a href="#cite_note-bar-1">[2]</a></sup>
+</p><p><sup id="cite_ref-blankwithnoreference_2-0" class="reference"><a href="#cite_note-blankwithnoreference-2">[3]</a></sup>
+</p><p><strong class="error">Cite error: Invalid <code>&lt;references&gt;</code> tag;
+parameter "group" is allowed only.
+Use <code>&lt;references /&gt;</code>, or <code>&lt;references group="..." /&gt;</code></strong>
+</p>
+<ol class="references"><li id="cite_note-0"><a href="#cite_ref-0">↑</a> Also zero, but differently! (Normal ref)</li>
+<li id="cite_note-bar"><a href="#cite_ref-bar_0">↑</a> <strong class="error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+no text was provided for refs named <code>bar</code></strong></li>
+<li id="cite_note-blankwithnoreference"><a href="#cite_ref-blankwithnoreference_0">↑</a> <strong class="error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+no text was provided for refs named <code>blankwithnoreference</code></strong></li></ol>
+
+!! end
+
+
+!! test
+Simple <ref>, with <references/> in group
+!! input
+Wikipedia rocks!<ref>Proceeds of Rockology, vol. XXI</ref>
+Wikipedia rocks!<ref group=note>Proceeds of Rockology, vol. XXI</ref>
+
+<references/>
+<references group=note/>
+!! result
+<p>Wikipedia rocks!<sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[1]</a></sup>
+Wikipedia rocks!<sup id="cite_ref-1" class="reference"><a href="#cite_note-1">[note 1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-0"><a href="#cite_ref-0">↑</a> Proceeds of Rockology, vol. XXI</li></ol>
+<ol class="references"><li id="cite_note-1"><a href="#cite_ref-1">↑</a> Proceeds of Rockology, vol. XXI</li></ol>
+
+!! end
+
+!! test
+Simple <ref>, with <references/> in group, with groupname in chinese 
+!! input
+AAA<ref group="参">ref a</ref>BBB<ref group="注">note b</ref>CCC<ref group="参">ref c</ref>
+
+;refs
+<references group="参" />
+;notes
+<references group="注" />
+!! result
+<p>AAA<sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[参 1]</a></sup>BBB<sup id="cite_ref-1" class="reference"><a href="#cite_note-1">[注 1]</a></sup>CCC<sup id="cite_ref-2" class="reference"><a href="#cite_note-2">[参 2]</a></sup>
+</p>
+<dl><dt>refs
+</dt></dl>
+<ol class="references"><li id="cite_note-0"><a href="#cite_ref-0">↑</a> ref a</li>
+<li id="cite_note-2"><a href="#cite_ref-2">↑</a> ref c</li></ol>
+<dl><dt>notes
+</dt></dl>
+<ol class="references"><li id="cite_note-1"><a href="#cite_ref-1">↑</a> note b</li></ol>
+
+!! end
+
+!! test
+<ref> defined in <references>
+!! input
+<ref name="foo"/>
+
+<references>
+<ref name="foo">BAR</ref>
+</references>
+!! result
+<p><sup id="cite_ref-foo_0-0" class="reference"><a href="#cite_note-foo-0">[1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-foo-0"><a href="#cite_ref-foo_0-0">↑</a> BAR</li></ol>
+
+!! end
+
+!! test
+<ref> defined in <references> called with #tag
+!! input
+<ref name="foo"/>
+
+{{#tag:references|
+<ref name="foo">BAR</ref>
+}}
+!! result
+<p><sup id="cite_ref-foo_0-0" class="reference"><a href="#cite_note-foo-0">[1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-foo-0"><a href="#cite_ref-foo_0-0">↑</a> BAR</li></ol>
+
+!! end
+
+!! test
+<ref> defined in <references> error conditions
+!! input
+<ref name="foo" group="2"/>
+
+<references group="2">
+<ref name="foo"/>
+<ref name="unused">BAR</ref>
+<ref name="foo" group="1">bad group</ref>
+<ref>BAR BAR</ref>
+</references>
+!! result
+<p><sup id="cite_ref-foo_0-0" class="reference"><a href="#cite_note-foo-0">[2 1]</a></sup>
+</p>
+<ol class="references"><li id="cite_note-foo"><a href="#cite_ref-foo_0">↑</a> <strong class="error">Cite error: Invalid <code>&lt;ref&gt;</code> tag;
+no text was provided for refs named <code>foo</code></strong></li></ol>
+<p><strong class="error">Cite error: <code>&lt;ref&gt;</code> tag with name "unused" defined in <code>&lt;references&gt;</code> is not used in prior text.</strong><br />
+<strong class="error">Cite error: <code>&lt;ref&gt;</code> tag in <code>&lt;references&gt;</code> has conflicting group attribute "1".</strong><br />
+<strong class="error">Cite error: <code>&lt;ref&gt;</code> tag defined in <code>&lt;references&gt;</code> has no name attribute.</strong>
+</p>
+!! end
+
+!! article
+MediaWiki:cite_link_label_group-klingon
+!! text
+wa' cha' wej loS vagh jav Soch chorgh Hut wa'maH
+!! endarticle
+
+!! test
+<ref> with custom group link
+!! input
+Wikipedia rocks!<ref group="klingon">Proceeds of Rockology, vol. XXI</ref>
+
+<references group="klingon"/>
+!! result
+<p>Wikipedia rocks!<sup id="cite_ref-0" class="reference"><a href="#cite_note-0">[wa']</a></sup>
+</p>
+<ol class="references"><li id="cite_note-0"><a href="#cite_ref-0">↑</a> Proceeds of Rockology, vol. XXI</li></ol>
+
+!! end

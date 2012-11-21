@@ -1,0 +1,63 @@
+__NOTOC__
+<div style="border: 1px solid grey; background: #E6E8FA; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== «{{FULLPAGENAME}}» атауылы бетінің кітапнамалық егжей-тегжейлері ==
+
+* Беттің атауы: {{FULLPAGENAME}}
+* Ауторы: {{SITENAME}} үлескерлері
+* Баспагері: ''{{SITENAME}}, {{int:sitesubtitle}}''.
+* Соңғы нұсқасының кезі: {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC
+* Алынған кезі: <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC</citation>
+* Тұрақты сілтемесі: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+* Бет нұсқасының теңдестіру номірі: {{REVISIONID}}
+
+</div>
+<div class="plainlinks" style="border: 1px solid grey; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== «{{FULLPAGENAME}}» бетінің дәйексөз мәнерлері ==
+
+=== [[ГОСТ мәнері]] ===
+<!-- ([[ГОСТ 7.1|ГОСТ 7.1—2003]] және [[ГОСТ 7.82|ГОСТ 7.82—2001]]) -->
+{{SITENAME}}, {{int:sitesubtitle}} [Электронды қайнар] : {{FULLPAGENAME}}, нұсқасының нөмірі {{REVISIONID}}, соңғы түзетуі {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC / Уикипедия ауторлары. — Электронды дерек. — Флорида штаты. : Уикимедия Қоры, {{CURRENTYEAR}}. — Қатынау реті: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+
+=== [[APA мәнері]] ===
+{{FULLPAGENAME}}. ({{CURRENTYEAR}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}). ''{{SITENAME}}, {{int:sitesubtitle}}'' мағлұматы. {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} бетінен <citation>{{CURRENTTIME}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> кезінде алынған.
+
+=== [[MLA мәнері]] ===
+«{{FULLPAGENAME}}». ''{{SITENAME}}, {{int:sitesubtitle}}''. {{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC. <citation>{{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}}</citation> &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
+
+=== [[MHRA мәнері]] ===
+{{SITENAME}} үлескерлері, '{{FULLPAGENAME}}', ''{{SITENAME}}, {{int:sitesubtitle}},'' {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC, &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [<citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}</citation> кезінде қатыналды]
+
+=== [[Шикаго мәнері]] ===
+{{SITENAME}} үлескері, «{{FULLPAGENAME}}», ''{{SITENAME}}, {{int:sitesubtitle}},'' {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (<citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> кезінде қатыналды).
+
+=== [[CBE/CSE мәнері]] ===
+{{SITENAME}} үлескерлері. {{FULLPAGENAME}} [Интернет]. {{SITENAME}}, {{int:sitesubtitle}}; {{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}, {{CURRENTTIME}} UTC [<citation>{{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}</citation> кезінде дәйексөз алынды]. Қатынауы:
+{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
+
+=== [[Көк кітап|Көк кітап мәнері]] ===
+{{FULLPAGENAME}}, {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (соңғы қаралғаны <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> кезінде).
+
+=== [[BibTeX]] жазбасы ===
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}",
+    note = "[Желіден; <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation> кезінде қатыналды]"
+  }
+
+[[LaTeX]] бумасының URL жайын (<code>\usepackage{url}</code> кіріспенің қайбір орнында) қолданғанда (веб жайларын өнерлеу пішімдеуін келтіреді) келесісін қалауға болады:
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "'''\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''",
+    note = "[Желіден; <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation> кезінде қатыналды]"
+  }
+
+
+</div> <!--closing div for "plainlinks"-->

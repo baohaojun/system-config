@@ -1,0 +1,61 @@
+__NOTOC__
+<div style="border: 1px solid grey; background: #E6E8FA; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== {{FULLPAGENAME}}的文獻詳細資訊 ==
+
+* 頁面名稱：{{FULLPAGENAME}}
+* 作者：{{SITENAME}}編者
+* 出版者：{{SITENAME}}，{{int:sitesubtitle}}．
+* 最新版本日期：{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日{{CURRENTTIME}}（協調世界時）
+* 查閲日期：<citation>{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日{{CURRENTTIME}}（協調世界時）</citation>
+* 永久連結：{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+* 頁面版本號：{{REVISIONID}}
+
+</div>
+<div class="plainlinks" style="border: 1px solid grey; width: 90%; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== {{FULLPAGENAME}}的參考文獻格式 ==
+
+=== GB7714格式 ===
+{{SITENAME}}編者．{{FULLPAGENAME}}[G/OL]．{{SITENAME}}，{{int:sitesubtitle}}，{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日{{CURRENTTIME}}［<citation>{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日{{CURRENTTIME}}</citation>］．{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}．
+
+=== APA格式 ===
+{{FULLPAGENAME}}．（{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日）．''{{SITENAME}}，{{int:sitesubtitle}}''．於<citation>{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日{{CURRENTTIME}}</citation>查閲自{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}．
+
+=== MLA格式 ===
+「{{FULLPAGENAME}}」．''{{SITENAME}}，{{int:sitesubtitle}}''．{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日{{CURRENTTIME}}（協調世界時）．<citation>{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日{{CURRENTTIME}}</citation> &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;．
+
+=== MHRA格式 ===
+{{SITENAME}}編者，『{{FULLPAGENAME}}』，''{{SITENAME}}，{{int:sitesubtitle}}''，{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日{{CURRENTTIME}}（協調世界時），&lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;［於<citation>{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日</citation>查閲］
+
+=== 芝加哥格式 ===
+{{SITENAME}}編者，「{{FULLPAGENAME}}」，''{{SITENAME}}，{{int:sitesubtitle}}''，{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}（於<citation>{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日</citation>查閲）．
+
+=== CBE/CSE格式 ===
+{{SITENAME}}編者．{{FULLPAGENAME}}［網際網絡］．{{SITENAME}}，{{int:sitesubtitle}}；{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日{{CURRENTTIME}}（協調世界時）［引用於<citation>{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日</citation>］．可訪問自：
+{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}．
+
+=== Bluebook格式 ===
+{{FULLPAGENAME}}，{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}（最新訪問於<citation>{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日</citation>）．
+
+=== BibTeX記錄 ===
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}",
+    note = "[線上資源；訪問於<citation>{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日</citation>]"
+  }
+
+使用LaTeX包裝的連結（開頭某處的<code>\usepackage{url}</code>）將提供更好的網址格式，推薦選用下列格式：
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "'''\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''",
+    note = "[線上資源；訪問於<citation>{{CURRENTYEAR}}年{{CURRENTMONTH}}月{{CURRENTDAY}}日</citation>]"
+  }
+
+
+</div> <!--closing div for "plainlinks"-->

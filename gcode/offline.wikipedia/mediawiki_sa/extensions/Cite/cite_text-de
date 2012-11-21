@@ -1,0 +1,44 @@
+__NOTOC__
+<div style="width:100%; padding:0px 10px 2px 10px; margin:5px auto;">
+Diese Seite dient ausschließlich als Hilfe zum '''korrekten Zitieren von Daten, einzelnen Sätzen oder kürzeren Abschnitten''' aus {{SITENAME}} im Rahmen des Zitatrechts.
+
+'''Wichtig:''' Zur Übernahme umfangreicher Absätze oder kompletter Seiten müssen die [[{{MediaWiki:Copyrightpage}}|Lizenzbestimmungen]] eingehalten werden.
+</div>
+
+<div class="plainlinks" style="border-style: solid;  border-width: 1px; width:95%; padding:6px 10px 6px 10px; margin:5px auto;">
+== Bibliografische Angaben für „[[{{FULLPAGENAME}}]]“ ==
+* Seitentitel: {{FULLPAGENAME}}
+* Herausgeber: {{SITENAME}}, {{MediaWiki:Sitesubtitle}}. 
+* Autor(en): siehe [{{fullurl:{{FULLPAGENAME}}|action=history}} Versionsgeschichte]
+* Datum der letzten Bearbeitung: {{LOCALDAY}}. {{LOCALMONTHNAME}} {{LOCALYEAR}}, {{LOCALTIME}}
+* Versions-ID der Seite: {{REVISIONID}}
+* Permanentlink: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+* Datum des Abrufs: <citation>{{LOCALDAY}}. {{LOCALMONTHNAME}} {{LOCALYEAR}}, {{LOCALTIME}}</citation>
+</div>
+
+<div class="plainlinks" style="border-style: solid;  border-width: 1px; width:95%; padding:6px 10px 6px 10px; margin:5px auto;">
+==Zitatangabe zum Kopieren==
+Seite ''{{FULLPAGENAME}}.'' In: {{SITENAME}}, {{MediaWiki:Sitesubtitle}}. Bearbeitungsstand: {{LOCALDAY}}. {{LOCALMONTHNAME}} {{LOCALYEAR}}, {{LOCALTIME}}. URL: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (Abgerufen: <citation>{{LOCALDAY}}. {{LOCALMONTHNAME}} {{LOCALYEAR}}, {{LOCALTIME}}</citation>)
+</div>
+
+<div class="plainlinks" style="border-style: solid;  border-width: 1px; width:95%; padding:6px 10px 6px 10px; margin:5px auto;">
+== BibTeX-Eintrag ==
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{MediaWiki:Sitesubtitle}}",
+    year = "{{LOCALYEAR}}",
+    url = "{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}",
+    note = "[Online; Stand <citation>{{LOCALDAY}}. {{LOCALMONTHNAME}} {{LOCALYEAR}}</citation>]"
+  }
+
+Bei Benutzung der LaTeX-Paketes „url“ (<tt>\usepackage{url}</tt> im Bereich der Einleitung), welches eine schöner formatierte Internetadresse ausgibt, oder „hyperref“ (<tt>\usepackage{hyperref}</tt>, nur bei Erzeugung von PDF-Dokumenten), welches diese zusätzlich noch verlinkt, kann die folgende Ausgabe genommen werden:
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{MediaWiki:Sitesubtitle}}",
+    year = "{{LOCALYEAR}}",
+    url = "'''\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''",
+    note = "[Online; Stand <citation>{{LOCALDAY}}. {{LOCALMONTHNAME}} {{LOCALYEAR}}</citation>]"
+  }
+</div><!--closing div for "plainlinks"-->

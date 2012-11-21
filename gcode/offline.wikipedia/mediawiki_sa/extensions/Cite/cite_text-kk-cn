@@ -1,0 +1,63 @@
+﻿__NOTOC__
+<div style="border: 1px solid grey; background: #E6E8FA; width: 90٪; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== «{{FULLPAGENAME}}» اتاۋىلى بەتٸنٸڭ كٸتاپنامالىق ەگجەي-تەگجەيلەرٸ ==
+
+* بەتتٸڭ اتاۋى: {{FULLPAGENAME}}
+* اۋتورى: {{SITENAME}} ٷلەسكەرلەرٸ
+* باسپاگەرٸ: ''{{SITENAME}}, {{int:sitesubtitle}}''.
+* سوڭعى نۇسقاسىنىڭ كەزٸ: {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC
+* الىنعان كەزٸ: <citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}} {{CURRENTTIME}} UTC</citation>
+* تۇراقتى سٸلتەمەسٸ: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+* بەت نۇسقاسىنىڭ تەڭدەستٸرۋ نومٸرٸ: {{REVISIONID}}
+
+</div>
+<div class="plainlinks" style="border: 1px solid grey; width: 90٪; padding: 15px 30px 15px 30px; margin: 10px auto;">
+
+== «{{FULLPAGENAME}}» بەتٸنٸڭ دٵيەكسٶز مٵنەرلەرٸ ==
+
+=== [[گوست مٵنەرٸ]] ===
+<!-- ([[گوست 7.1|گوست 7.1—2003]] جٵنە [[گوست 7.82|گوست 7.82—2001]]) -->
+{{SITENAME}}, {{int:sitesubtitle}} [ەلەكتروندى قاينار] : {{FULLPAGENAME}}, نۇسقاسىنىڭ نٶمٸرٸ {{REVISIONID}}, سوڭعى تٷزەتۋٸ {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC / ۋيكيپەدييا اۋتورلارى. — ەلەكتروندى دەرەك. — فلوريدا شتاتى. : ۋيكيمەدييا قورى, {{CURRENTYEAR}}. — قاتىناۋ رەتٸ: {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}
+
+=== [[APA مٵنەرٸ]] ===
+{{FULLPAGENAME}}. ({{CURRENTYEAR}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}). ''{{SITENAME}}, {{int:sitesubtitle}}'' ماعلۇماتى. {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} بەتٸنەن <citation>{{CURRENTTIME}}, {{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> كەزٸندە الىنعان.
+
+=== [[MLA مٵنەرٸ]] ===
+«{{FULLPAGENAME}}». ''{{SITENAME}}, {{int:sitesubtitle}}''. {{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC. <citation>{{CURRENTDAY}} {{CURRENTMONTHABBREV}} {{CURRENTYEAR}}, {{CURRENTTIME}}</citation> &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt;.
+
+=== [[MHRA مٵنەرٸ]] ===
+{{SITENAME}} ٷلەسكەرلەرٸ, '{{FULLPAGENAME}}', ''{{SITENAME}}, {{int:sitesubtitle}},'' {{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}, {{CURRENTTIME}} UTC, &lt;{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}&gt; [<citation>{{CURRENTDAY}} {{CURRENTMONTHNAME}} {{CURRENTYEAR}}</citation> كەزٸندە قاتىنالدى]
+
+=== [[شيكاگو مٵنەرٸ]] ===
+{{SITENAME}} ٷلەسكەرٸ, «{{FULLPAGENAME}}», ''{{SITENAME}}, {{int:sitesubtitle}},'' {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (<citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> كەزٸندە قاتىنالدى).
+
+=== [[CBE/CSE مٵنەرٸ]] ===
+{{SITENAME}} ٷلەسكەرلەرٸ. {{FULLPAGENAME}} [ينتەرنەت]. {{SITENAME}}, {{int:sitesubtitle}}; {{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}, {{CURRENTTIME}} UTC [<citation>{{CURRENTYEAR}} {{CURRENTMONTHABBREV}} {{CURRENTDAY}}</citation> كەزٸندە دٵيەكسٶز الىندى]. قاتىناۋى:
+{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}.
+
+=== [[كٶك كٸتاپ|كٶك كٸتاپ مٵنەرٸ]] ===
+{{FULLPAGENAME}}, {{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}} (سوڭعى قارالعانى <citation>{{CURRENTMONTHNAME}} {{CURRENTDAY}}, {{CURRENTYEAR}}</citation> كەزٸندە).
+
+=== [[BibTeX]] جازباسى ===
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}",
+    note = "[جەلٸدەن; <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation> كەزٸندە قاتىنالدى]"
+  }
+
+[[LaTeX]] بۋماسىنىڭ URL جايىن (<code>\usepackage{url}</code> كٸرٸسپەنٸڭ قايبٸر ورنىندا) قولدانعاندا (ۆەب جايلارىن ٶنەرلەۋ پٸشٸمدەۋٸن كەلتٸرەدٸ) كەلەسٸسٸن قالاۋعا بولادى:
+
+  @misc{ wiki:xxx,
+    author = "{{SITENAME}}",
+    title = "{{FULLPAGENAME}} --- {{SITENAME}}{,} {{int:sitesubtitle}}",
+    year = "{{CURRENTYEAR}}",
+    url = "'''\url{'''{{fullurl:{{FULLPAGENAME}}|oldid={{REVISIONID}}}}'''}'''",
+    note = "[جەلٸدەن; <citation>{{CURRENTDAY}}-{{CURRENTMONTHNAME}}-{{CURRENTYEAR}}</citation> كەزٸندە قاتىنالدى]"
+  }
+
+
+</div> <!--closing div for "plainlinks"-->
