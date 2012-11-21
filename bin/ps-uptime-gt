@@ -7,10 +7,12 @@ while (<>) {
     if ($F[2] =~ m/(\d*?)?:?(\d*?)?:?(\d+)$/) { 
         if ($1 * 3600 + $2 * 60 + $3 > '$2') {
             print $F[0]; 
+            print STDERR "found a long one: $_\n";
             exit 0;
+        } else {
+            print STDERR "found a short one: $_\n";
         }
     }
-    exit -1;
 }
 exit -1;
 '

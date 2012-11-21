@@ -11,6 +11,7 @@
 		   (expand-file-name "~/.emacs_d/mo-git-blame")
 		   (expand-file-name "~/.emacs_d/lisp/ext"))
 	     load-path))
+(package-initialize)
 
 (require 'org-confluence)
 (require 'mmm-mode)
@@ -701,7 +702,6 @@
  '(tramp-verbose 0)
  '(transient-mark-mode t)
  '(twittering-convert-fix-size nil)
- '(url-proxy-services (quote (("http" . "127.0.0.1:8580") ("no_proxy" . "^[^.]*$\\|sina.com"))))
  '(user-full-name "Bao Haojun")
  '(vc-handled-backends (quote (RCS CVS SVN SCCS Bzr Git Hg)))
  '(vc-ignore-dir-regexp "\\`\\(?:[\\/][\\/][^\\/]+[\\/]\\|/\\(?:net\\|afs\\|\\.\\.\\.\\)/\\)\\'\\|/smb/")
@@ -717,6 +717,8 @@
  '(yas/prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
  '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets")) nil (yasnippet))
  '(yas/trigger-key "M-TAB"))
+
+; '(url-proxy-services (quote (("http" . "127.0.0.1:18080") ("no_proxy" . "^[^.]*$\\|sina.com"))))
 
 
 
@@ -2323,7 +2325,6 @@ criteria can be provided via the optional match-string argument "
     (insert str)
     (kill-region (point-min) (point-max))))
 
-(setq twittering-use-master-password t)
 (defun insert-today ()
   (interactive)
   (insert (shell-command-to-string "today")))
