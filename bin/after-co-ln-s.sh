@@ -1,5 +1,7 @@
 #!/bin/bash
 set -e
+touch ~/.authinfo
+chmod og-r ~/.authinfo
 mkdir ~/.logs -p
 touch ~/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
