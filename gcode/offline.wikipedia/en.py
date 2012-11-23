@@ -1,1 +1,0 @@
-../../../external/bin/linux/ext/wiki-en.txt

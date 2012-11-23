@@ -1,4 +1,0 @@
-#!/bin/bash
-set -e
-eval $(for x in `ls -l /proc/$$/fd |grep -P 'socket:\[\d+\]'|pn 9`; do echo exec $x\>/dev/null\;; done)
-wiki-cache-image-thumb.job "$@" >> ~/.wiki-cache-image-info.log 2>&1&
