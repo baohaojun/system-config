@@ -45,27 +45,24 @@ we will get the pattern \"naoehu[)+{\"
 	(setq old-regexp (buffer-substring-no-properties (region-beginning) (region-end))
 	      search-start (region-beginning)
 	      search-end (region-end))
-      (let* (reg-part1
-	     reg-part2 
-	     (oldcur (point))
-	     (back-limit (line-beginning-position)))
+      (let* ((back-limit (line-beginning-position)))
 	(push-mark (point))
 	(activate-mark)
-	(while (and (not (looking-back "\\w\\|\\s ")) (< back-limit (point)))
+
+	(while (and (looking-back "\\s ") (< back-limit (point)))
 	  (backward-char))
-	(setq reg-part2 (buffer-substring-no-properties (point) oldcur)
-	      oldcur (point))
-	(while (and (looking-back "\\w\\|\\.") (< back-limit (point)))
+
+	(while (and (not (looking-back "\\s ")) (< back-limit (point)))
 	  (backward-char))
-	(setq reg-part1 (buffer-substring-no-properties (point) oldcur)
-	      old-regexp (concat reg-part1 reg-part2)
-	      search-start (region-beginning)
-	      search-end (region-end))))
+	(setq search-start (region-beginning)
+	      search-end (region-end)
+	      old-regexp (buffer-substring-no-properties search-start search-end))))
     
     (let* ((re-list (string-to-list old-regexp))
 	   (after-first-char nil)
 	   (is-first-char t)
-	   (new-re-list nil))
+	   new-re-list
+	   char)
 
       (while re-list
         (setq char (car re-list)
@@ -199,7 +196,9 @@ we will get the pattern \"naoehu[)+{\"
 	  ;;; mb can not be in the middle of a word, if so, it is considered a
 	  ;;; bad match.
           (unless (or (and (looking-at "\\w")
-			   (looking-back "\\w"))
+			   (looking-back "\\w")
+			   ; 你好*ma should provide a good match as "ma", not "你好ma"
+			   (not (looking-at "\\b")))
 		      (and (boundp 'search-start) ; the found string is over our searching pattern
 			   (boundp 'search-end)
 			   (= me search-end)))
