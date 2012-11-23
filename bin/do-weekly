@@ -60,4 +60,9 @@ EOF
 if tty >/dev/null 2>&1 ; then
     edit-wait $bhj_page
 fi
-congfu --space Weekly -- -a storePage --title $bhj_page --file $bhj_page --parent $tool_page --encoding UTF-8
+
+log=~/.logs/do-weekly.log
+congfu --space Weekly -- -a storePage --title $bhj_page --file $bhj_page --parent $tool_page --encoding UTF-8 2>&1|tee $log
+
+id=$(cat $log|grep 'Page has id:'|perl -npe 's/.*Page has id: //')
+of http://$CONFLUENCE_SERV/pages/viewpage.action?pageId=$id
