@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if test -e ~/.at-home; then
+    exec offlineimap
+fi
+
+offlineimap -a Marvell
+tsocks offlineimap -a Gmail
