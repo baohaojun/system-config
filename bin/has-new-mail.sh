@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# exit 0: has new mail
+# exit 1: no new mail
+# exit 2: has new mail, but offlineimap is still running
+
 cd ~/Maildir || exit 1
 result=~/.logs/mail-check-result
 test -e $result || { touch $result; sleep 1; touch */cur; }
@@ -45,6 +49,9 @@ function got-mail() {
 		exit $?
 	    fi
 	fi
+        if ps.pl offlineimap; then
+            exit 2
+        fi
 	exit 0
     else
 	exit 1

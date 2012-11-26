@@ -11,6 +11,8 @@ from PyQt4.QtGui import *
 import threading
 from imaplib import *
 
+_long_check_period = 60 * 60 * 1000
+
 app=QApplication(sys.argv)
 
 app.setOrganizationName("Bao Haojun")
@@ -23,7 +25,7 @@ class ConfigDlg (QDialog):
         settings = QSettings()
         layout = QGridLayout()
 
-        self.was_dirty = False
+        self.last_check_has_new_mail = False
         
         self.host = settings.value("host", QVariant("localhost")).toString()
         self.port = settings.value("port", QVariant("0")).toString()
@@ -118,61 +120,23 @@ class ConfigDlg (QDialog):
         self.checkMail()
 
     def checkMail(self):
-        if int(self.port) == 0:
-            try:
-                if os.system("bash has-new-mail.sh") == 0:
-                    self.trayIcon.setIcon(QIcon(":/got-mail.png"))
-                    if not self.was_dirty:
-                        self.trayIcon.showMessage("Hey!", "You've got mail", 5000)
-                    self.was_dirty = True
-                    self.timer.start(5000)
-                else:
-                    self.trayIcon.setIcon(QIcon(":/no-mail.png"))
-                    self.was_dirty = False
-                    self.timer.start(30000)
-            except:
-                pass
-            return
         try:
-            func = IMAP4_SSL if self.ssl else IMAP4
-            x=func(self.host, int(self.port))
-            x.login(self.username, self.password)
-            for mb in self.mailbox.split('/'):
-                y = x.status(mb, '(unseen)')
-                if y[0] != 'OK':
-                    raise RuntimeError, 'IMAP result not OK'
-                if '(UNSEEN 0)' not in y[1][0]:
-                    self.trayIcon.setIcon(QIcon(":/got-mail.png"))
-                    self.timer.start(5000)
-                    self.was_dirty = True
-                    break
+            result = os.system("bash has-new-mail.sh") / 256
+            if result == 0:
+                self.trayIcon.setIcon(QIcon(":/got-mail.png"))
+                if not self.last_check_has_new_mail:
+                    self.trayIcon.showMessage("Hey!", "You've got mail", 5000)
+                self.last_check_has_new_mail = True
+                self.timer.start(5000)
             else:
                 self.trayIcon.setIcon(QIcon(":/no-mail.png"))
-                if self.was_dirty:
-                    os.system("offlineimap -a Gmail&")
-                self.was_dirty = False
-                self.timer.start(300000)
+                self.last_check_has_new_mail = False
+                next_check = _long_check_period
+                if result == 2:
+                    next_check = 5000
+                self.timer.start(next_check)
         except:
-            type_, value_ = sys.exc_info()[:2]
-            self.trayIcon.showMessage("Error:", `type_` + ' ' + `value_`, QSystemTrayIcon.Information, 5000)
-            print "Error:", `type_` + ' ' + `value_`
-            self.trayIcon.setIcon(QIcon(":/error-mail.png"))
-            self.timer.start(300000)
-            
-        finally:
-            try:
-                x.logout()
-            except:
-                pass
-        
-
-    
-
-
-
-
-        
-
+            pass
 
 config = ConfigDlg()
 app.exec_()
