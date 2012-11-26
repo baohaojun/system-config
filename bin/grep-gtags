@@ -110,11 +110,13 @@ read_line:
 
 	if ($type_re and $str !~ m/$type_re\S*:\t/) {
 	    debug "ignore $path because type mismatch";
+	    $path_filter_worked = 1;
 	    next;
 	}
 
 	if (not $type_re and $str =~ m/^prototype:\t/) {
 	    debug "ignore prototype";
+	    $path_filter_worked = 1;
 	    next;
 	}
 
@@ -172,7 +174,11 @@ sub do_cscope($$$) {
     close($grep);
 
     if (not %matches and $path_filter_worked) {
-	print "path filter worked, and you got 0 matches!\n";
+	print "Filter worked, and you got 0 matches! Will restart without filtering\n";
+	$path_matcher = ".";
+	$type_re = "";
+	do_cscope(@_);
+	return 1;
     }
 
     use String::Approx 'adistr';
