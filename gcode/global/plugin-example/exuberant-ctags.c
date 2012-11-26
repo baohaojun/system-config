@@ -53,12 +53,13 @@
 #define INITIAL_BUFSIZE		1024
 
 static char *argv[] = {
-	EXUBERANT_CTAGS,
+	"ctags-exuberant",
 	NULL,
 	"-xu",
 	"--filter",
 	"--filter-terminator=" TERMINATOR "\n",
 	"--extra=+q",
+	"--c-kinds=+p",
 	NULL
 };
 static pid_t pid;

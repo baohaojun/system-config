@@ -2,8 +2,17 @@
 use strict;
 
 
+use Getopt::Long;
+my $ignore_case;
+GetOptions(
+    "i!" => \$ignore_case,
+    );
+
+open(my $_log, ">", glob("~/.logs/global-ctags.log"))
+    or die "Can not open log";
+
 sub debug(@) {
-    #print STDERR "@_\n";
+    print $_log "@_\n";
 }
 
 if (@ARGV < 1) {
@@ -13,15 +22,35 @@ my $lookup_needle = shift @ARGV;
 
 my $ctags_lang_map = qx(lang-map-for-ctags ~/.globalrc);
 
-open(my $xref, "-|", "ctags-exuberant", "--langmap=$ctags_lang_map", "-xu", "--extra=+q", @ARGV) or
+open(my $xref, "-|", "ctags-exuberant", "--langmap=$ctags_lang_map", "-xu", "--c-kinds=+p", "--extra=+q", @ARGV) or
     die "Can not open xref";
 
-my $lookup_needle_re = qr((?:^|\.|:)\Q$lookup_needle\E$);
+my $lookup_needle_re;
+
+if ($ignore_case) {
+    $lookup_needle_re = qr((?:^|\.|:)\Q$lookup_needle\E$)i;
+    if ($lookup_needle =~ m/\.\*/) {
+	$lookup_needle_re = qr($lookup_needle)i;
+    }
+} else {
+    $lookup_needle_re = qr((?:^|\.|:)\Q$lookup_needle\E$);
+    if ($lookup_needle =~ m/\.\*/) {
+	$lookup_needle_re = qr($lookup_needle);
+    }
+}
+
+if ($ignore_case) {
+    debug "ignore case";
+    $lookup_needle_re = qr($lookup_needle_re)i;
+}
 
 while(<$xref>) {
     chomp;
     debug "Got: $_";
     m/(.*?)\s+(\S+)\s+(\d+)\s+(\S+)\s+(.*)/ or next;
     my ($tag, $type, $line, $path, $str) = ($1, $2, $3, $4, $5);
-    printf "%s %d %s %s:\t%s\n", $tag, $line, $path, $type, $str if $tag =~ m/$lookup_needle_re/;
+    if ($tag =~ m/$lookup_needle_re/) {
+	printf "%s %d %s %s:\t%s\n", $tag, $line, $path, $type, $str;
+	debug sprintf "%s %d %s %s:\t%s\n", $tag, $line, $path, $type, $str;
+    }
 }

@@ -42,12 +42,19 @@ my $lookup_needle = "hello_world";
 my $arch = ".";
 my $lookup_restrict_regexp;
 my $path_matcher = ".";
-
+my $ignore_case = "";
+my $type_re;
 GetOptions(
     "e=s" => \$lookup_needle,
     "a=s" => \$arch,
     "p=s" => \$path_matcher,
+    "i!"  => \$ignore_case,
+    "t=s" => sub {$type_re = qr($_[1])},
     );
+
+if ($ignore_case) {
+    $ignore_case = "-i";
+}
 
 $path_matcher = qr($path_matcher)i;
 $lookup_needle =~ s/\+.*//;
@@ -101,6 +108,16 @@ read_line:
 	    next;
 	}
 
+	if ($type_re and $str !~ m/$type_re\S*:\t/) {
+	    debug "ignore $path because type mismatch";
+	    next;
+	}
+
+	if (not $type_re and $str =~ m/^prototype:\t/) {
+	    debug "ignore prototype";
+	    next;
+	}
+
 	if ( # we should extract this into a .conf!!
 	     $str =~ m/(?:^|:\t)#undef|^variable.*:\s+EXPORT_SYMBOL/ or 
 	     $path =~ m,external/kernel-headers, or
@@ -142,7 +159,7 @@ sub do_cscope($$$) {
     my $got_results = 0;
     my $code_dir = substr($db_dir, length("$ENV{HOME}/tmp/for-code-reading"));
     $code_dir =~ s,/+,/,g;
-    open(my $grep, "-|", "global -x $lookup_needle");
+    open(my $grep, "-|", "global -x $lookup_needle $ignore_case");
     chdir ($code_dir) or die "Can not change to $code_dir";
     printf "make: Entering directory \`%s'\n", $code_dir;
 
@@ -182,7 +199,8 @@ sub do_cscope($$$) {
 	    }
 	}
 
-	open($grep, "-|", "global-ctags", $lookup_needle, @updated_paths) or
+	my @ignore_case = $ignore_case ? ("-i") : ();
+	open($grep, "-|", "global-ctags", @ignore_case, $lookup_needle, @updated_paths) or
 	    die "can not open pipe for global-ctags";
 	parse_xref($grep, 1);
     }

@@ -172,14 +172,14 @@ we will get the pattern \"naoehu[)+{\"
 (defvar ecomplete-other-buffer nil
   "the other buffer to search for completion")
 
-(defun regexp-get-matches (re)
-  (let ((list (regexp-get-matches-internal re)))
+(defun regexp-get-matches (re &optional no-recur)
+  (let ((list (regexp-get-matches-internal re no-recur)))
     (if (and (boundp 'old-regexp)
 	     (stringp old-regexp))
 	(delete old-regexp list)
       list)))
 
-(defun regexp-get-matches-internal (re)
+(defun regexp-get-matches-internal (re &optional no-recur)
   "Display the possible completions for the regexp."
   (let ((strlist-before nil)
         (strlist-after nil)
@@ -197,7 +197,7 @@ we will get the pattern \"naoehu[)+{\"
 	  ;;; bad match.
           (unless (or (and (looking-at "\\w")
 			   (looking-back "\\w")
-			   ; 你好*ma should provide a good match as "ma", not "你好ma"
+					; 你好*ma should provide a good match as "ma", not "你好ma"
 			   (not (looking-at "\\b")))
 		      (and (boundp 'search-start) ; the found string is over our searching pattern
 			   (boundp 'search-end)
@@ -224,23 +224,20 @@ we will get the pattern \"naoehu[)+{\"
             strlist-after (cdr strlist-after)))
     (setq strlist (append (nreverse strlist-after) (nreverse strlist-before) strlist))
     ;;get matches from other buffers
-    (if (or current-prefix-arg ecomplete-other-buffer)
-        (let* ((buf-old (current-buffer))
-              (current-prefix-arg nil)
-              (buffer-regexp (or ecomplete-other-buffer (read-shell-command "What other buffers to search: "))))
-          (save-excursion
-            (mapcar (lambda (buf)
-                          (with-current-buffer buf ;;next let's recursive call
-                            (setq strlist (append (regexp-get-matches re) strlist))))
-                    (delete-if-not
-                     (lambda (x)
-                       (string-match-p buffer-regexp (buffer-name x)))
-                     (delete buf-old
-                             (buffer-list))))
-                strlist))
-      strlist)))
+    (if no-recur
+	strlist
+      (let* ((buf-old (current-buffer)))
+	(save-excursion
+	  (mapcar (lambda (buf)
+		    (with-current-buffer buf ;;next let's recursive call
+		      (setq strlist (append (regexp-get-matches re t) strlist))))
+		  (delete buf-old
+			  (mapcar (lambda (w)
+				    (window-buffer w))
+				  (window-list))))
+	  strlist)))))
 
-(defun skeleton-get-matches-order (skeleton)
+(defun skeleton-get-matches-order (skeleton &optional no-recur)
   "Get all the words that contains every character of the
 SKELETON from the current buffer The words are ordered such that
 words closer to the (point) appear first"
@@ -267,15 +264,16 @@ words closer to the (point) appear first"
             strlist-before (cdr strlist-before)
             strlist-after (cdr strlist-after)))
     (setq strlist (append (nreverse strlist-after) (nreverse strlist-before) strlist))
-    (when (or current-prefix-arg ecomplete-other-buffer)
-      (save-excursion
-        (let ((buffer-old (current-buffer))
-              (buffer (or ecomplete-other-buffer 
-			  (general-display-matches
-			   (mapcar 'buffer-name (buffer-list)))))
-              (current-prefix-arg nil))
-          (with-current-buffer buffer
-            (unless (eq (current-buffer) buffer-old)
-              (setq strlist (append (skeleton-get-matches-order skeleton) strlist)))))))
-    strlist))
 
+    (if no-recur
+	strlist
+      (let* ((buf-old (current-buffer)))
+	(save-excursion
+	  (mapcar (lambda (buf)
+		    (with-current-buffer buf ;;next let's recursive call
+		      (setq strlist (append (skeleton-get-matches-order skeleton t) strlist))))
+		  (delete buf-old
+			  (mapcar (lambda (w)
+				    (window-buffer w))
+				  (window-list))))
+	  strlist)))))
