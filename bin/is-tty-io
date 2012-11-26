@@ -1,0 +1,3 @@
+#!/bin/bash
+
+test "$(readlink -f /proc/$$/fd/0)" = "$(readlink -f /proc/$$/fd/1)"

@@ -23,13 +23,13 @@ lcd()
 
     if [[ "$1" =~ ^\\\\|^//|^smb://|/smb/ && `uname` = Linux ]]; then
         chmod 600 ~/.smb/*
-	if ! mount | grep -q '^smbnetfs on'; then
+        if ! mount | grep -q '^smbnetfs on'; then
             if smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"|grep -q . ; then
-		sudo umount -l ~/smb
-		smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"
-	    fi
-	fi
-        builtin cd ~/smb/"$(name-or-ip "$1")"
+                sudo umount -l ~/smb
+                smbnetfs -o allow_root ~/smb 2>&1|grep -v "mountpoint is not empty\|'nonempty' mount option\|gnome-keyring is not available"
+            fi
+        fi
+        builtin cd ~/smb/"$(ip-or-name "$1")"
         return 0
     fi
    
@@ -39,16 +39,16 @@ lcd()
     local x=0
     while ! test -e "$1" >/dev/null || { [[ "$looking" =~ ^$HOME/smb(/[^/]+)?$ ]] && test "$looking" != "$start"; }; do # [[..]] because test -e not work in smbnetfs top levels
         set -- ../"$1";
-	looking=`dirname "$looking"`
-	test "$looking" = / && break
-	if test -e "$looking"/"$ori"; then
+        looking=`dirname "$looking"`
+        test "$looking" = / && break
+        if test -e "$looking"/"$ori"; then
             if test -d "$looking"/"$ori"; then
-	        builtin cd "$looking"/"$ori"
+                builtin cd "$looking"/"$ori"
             else
                 builtin cd "$(dirname "$looking"/"$ori")"
             fi
-	    return $?
-	fi
+            return $?
+        fi
     done
 
     if ! test -e "$1" >/dev/null; then

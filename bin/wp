@@ -40,6 +40,12 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         HFILE=$FILE
         relative-path "$FILE" $(readlink -f $(lookup_file .repo/..))/
     }
+    
+    function gitp()
+    {
+        HFILE=$FILE
+        relative-path "$FILE" $(readlink -f $(lookup_file .git))/
+    }
 
     function absp()
     {
@@ -83,24 +89,20 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo -n "/scp:`whoami`@$LOCALIP:$FILE"
     }
 
-    function gitp()
-    {
-        git=`lookup_file .git`
-        path=`dirname $git`/
-        echo "${FILE##$path}"        
-    }
     export FILE=${1:-`pwd`}
-    export FILE=`lookup_file "$FILE"`
-    if test "$NO_PUTCLIP" = true || test -z "EMACS" && ! tty >/dev/null 2>&1; then
-        "`basename -- $0`" "$@"
-    else
-        out=$($(basename -- $0) "$@")
-        echo "$out"
-        echo "$out"|
-	putclip
+    export FILE=$(lookup_file "$FILE")
+
+    out=$($(basename -- $0) "$@")
+    echo "$out"
+    if test "$NO_PUTCLIP" = true; then
+        return
+    fi
+
+    if is-in-emacs || is-tty-io; then
+        echo "$out" | putclip
     fi
 else # we are being sourced
-    for x in swp sup wp ap up mp tmp gitp; do 
+    for x in swp sup gitp wp ap up mp tmp; do 
         eval 'function '$x'() {
             command '$x' "$@" || { renew-xauth; command '$x' "$@"; }
             if test "$NO_PUTCLIP" = true; then
