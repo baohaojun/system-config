@@ -65,7 +65,12 @@ function mkcscope_files() {
             '-o' '-iname' "cscope.files" \
             -o -iname "cscope.out" \
             -o -ipath "*/.beagrep" \
-            \) -prune -o -type f -print | tee "$outDir"/cscope.files
+            \) -prune -o -type f -print | 
+            perl -ne 'print unless m,
+                (?:frameworks/base/api/[0-9]+.xml)|
+                (?:frameworks/base/docs/html/sdk/api_diff/.*\.xml)|
+                (?:development/sdk/api-versions.xml),x' |
+            tee "$outDir"/cscope.files
     else
         cat
     fi
