@@ -89,24 +89,29 @@
 
 (defun grep-shell-quote-argument (argument)
   "Quote ARGUMENT for passing as argument to an inferior shell."
-    (if (equal argument "")
-        "\"\""
-      ;; Quote everything except POSIX filename characters.
-      ;; This should be safe enough even for really weird shells.
-      (let ((result "") (start 0) end)
-        (while (string-match "[].*[^$\"\\]" argument start)
-          (setq end (match-beginning 0)
-                result (concat result (substring argument start end)
-                               (let ((char (aref argument end)))
-                                 (cond
-                                  ((eq ?$ char)
-                                   "\\\\\\")
-                                  ((eq ?\\  char)
-                                   "\\\\\\")
-                                  (t
-                                   "\\"))) (substring argument end (1+ end)))
-                start (1+ end)))
-        (concat "\"" result (substring argument start) "\""))))
+  (cond
+   ((and (boundp 'no-grep-quote)
+	 no-grep-quote)
+    (format "\"%s\"" argument))
+   ((equal argument "")
+    "\"\"")
+   (t
+    ;; Quote everything except POSIX filename characters.
+    ;; This should be safe enough even for really weird shells.
+    (let ((result "") (start 0) end)
+      (while (string-match "[].*[^$\"\\]" argument start)
+	(setq end (match-beginning 0)
+	      result (concat result (substring argument start end)
+			     (let ((char (aref argument end)))
+			       (cond
+				((eq ?$ char)
+				 "\\\\\\")
+				((eq ?\\  char)
+				 "\\\\\\")
+				(t
+				 "\\"))) (substring argument end (1+ end)))
+	      start (1+ end)))
+      (concat "\"" result (substring argument start) "\"")))))
 
 (defun grep-default-command ()
   "Compute the default grep command for C-u M-x grep to offer."
@@ -423,6 +428,7 @@
 (defun gtags-grep (&optional history-var def-grep-command)
   (interactive)
   (let ((grep-history grep-gtags-history)
+	(no-grep-quote t)
 	(my-grep-command (or def-grep-command "grep-gtags -e pat"))
 	(current-prefix-arg 4))
     (nodup-ring-insert cscope-marker-ring (point-marker))
@@ -635,6 +641,7 @@
  '(ido-enable-regexp t)
  '(ido-ignore-files (quote ("\\`CVS/" "\\`#" "\\`.#" "\\`\\.\\./" "\\`\\./" ".*\\.\\(loc\\|org\\|mkelem\\)")))
  '(imenu-max-item-length nil)
+ '(imenu-space-replacement " ")
  '(install-elisp-repository-directory "~/.emacs_d/lisp/")
  '(ispell-program-name "aspell" t)
  '(jira-host "bible")

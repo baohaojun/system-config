@@ -50,12 +50,14 @@ my $path_matcher;
 my $path_matcher_inv;
 my $ignore_case = "";
 my $type_re;
+my $fall_back = 0;
 GetOptions(
     "e=s" => \$lookup_needle,
     "a=s" => \$arch,
     "p=s" => sub {$path_matcher = qr($_[1])i},
     "v=s" => sub {$path_matcher_inv = qr($_[1])i},
     "i!"  => \$ignore_case,
+    "b!"  => \$fall_back,
     "t=s" => sub {$type_re = qr($_[1])i},
     );
 
@@ -80,12 +82,12 @@ sub is_qualified_by($$)
     return 0;    
 }
 
+my $filter_worked = 0;
 sub parse_xref($$)
 {
     my ($grep, $updating) = @_;
 
     our %matches;
-    our $path_filter_worked;
     our %matches_path_line;
     our %updated_paths;
     
@@ -122,19 +124,18 @@ read_line:
 	}
 	if ($path_matcher and $path !~ m/$path_matcher/) {
 	    debug "ignore $path because of path matcher miss";
-	    $path_filter_worked = 1;
+	    $filter_worked++;
 	    next;
 	}
 
 	if ($type_re and $type !~ m/$type_re/) {
 	    debug "ignore $path because type mismatch: $type !~ $type_re";
-	    $path_filter_worked = 1;
+	    $filter_worked++;
 	    next;
 	}
 
 	if (not $type_re and $type eq "prototype") {
-	    debug "ignore prototype";
-	    $path_filter_worked = 1;
+	    debug "ignore prototype for $str";
 	    next;
 	}
 
@@ -173,6 +174,12 @@ read_line:
     }
 }
 sub do_cscope($$$) {
+    $filter_worked = 0;
+    debug "do_cscope @_";
+    if ($fall_back) {
+	$fall_back = 0;
+	return 0;
+    }
     my ($db_dir, $lookup_needle, $lookup_restrict_regexp) = @_;
     my $lookup_needle_quote = shell_quote($lookup_needle);
     my $db_dir_quoted = shell_quote($db_dir);
@@ -190,19 +197,17 @@ sub do_cscope($$$) {
     } else {
 	open($grep, "-|", "global -x $lookup_needle_quote $ignore_case");
     }
-    printf "make: Entering directory \`%s'\n", $code_dir;
-
     our %matches;
-    our $path_filter_worked;
     our %matches_path_line;
     our %updated_paths;
 
     parse_xref($grep, 0);
     close($grep);
 
-    if (not %matches and $path_filter_worked) {
-	print "Filter worked, and you got 0 matches! Will restart without filtering\n";
-	$path_matcher = ".";
+    if (not %matches and $filter_worked) {
+	print "Filter worked in $code_dir, and you got 0 matches! Will restart without filtering\n";
+	$filter_worked = 0;
+	$path_matcher = "";
 	$type_re = "";
 	do_cscope(@_);
 	return 1;
@@ -241,7 +246,9 @@ sub do_cscope($$$) {
 	parse_xref($grep, 1);
     }
 
-    printf "found total %d definitions\n", scalar keys %matches;
+    if (%matches) {
+	printf "Found total %d%s definitions: Entering directory \`%s'\n", scalar keys %matches, $filter_worked ? "/$filter_worked" : "", $code_dir;
+    }
 
     for (sort {
 	($matches{$a}{"dist"} <=> $matches{$b}{"dist"})
@@ -278,14 +285,13 @@ sub do_cscope($$$) {
 
 exit if do_cscope($db_dir, $lookup_needle, $lookup_restrict_regexp);
 
-my @gtags_fallback_dir = map {qx(readlink $_)} glob("~/.gtags-fallback-dir*");
+my @gtags_fallback_dir = map {chomp($_ = qx(readlink -f $_)); $_} (glob("$db_dir/.gtags-fallback-dir*") or glob("~/.gtags-fallback-dir*"));
+
 unless (@gtags_fallback_dir) {
   print "you have no fallback dir to search for, will exit now";
   exit;
 }
 
-
-map {chomp; my @dir = glob("~/$_"); $_ = $dir[0]} @gtags_fallback_dir;
 
 for (@gtags_fallback_dir) {
   my $dir = $_;

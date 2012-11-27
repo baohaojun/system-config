@@ -29,27 +29,18 @@ wait;
 open(my $ctags_out, "<", glob("~/.imenu-ctags.$$"))
     or die "Can not open ctags output";
 
-my %def_seen_map;
 my %imenu_line_map; # for handling the qualified names from ctags
 while (<$ctags_out>) {
-    my ($def_name, $def_type, $line) = split;
+
+    # java.util        package      18 Properties.java  package java.util;
+    chomp;
+    m/(.*?)\s+(\S+)\s+(\d+)\s+(\S+)\s+(.+)/ or next;
+    my ($def_name, $def_type, $line, $path, $str) = ($1, $2, $3, $4, $5);
     $def_name = "$def_name - $def_type";
-    if (exists $def_seen_map{$def_name}) {
-	$def_seen_map{$def_name}++;
-    } else {
-	$def_seen_map{$def_name} = 1;
-    }
-
-    my $suffix = '';
-    if ($def_seen_map{$def_name} != 1) {
-	$suffix = " ($def_seen_map{$def_name})"
-    }
-
-    
-    $imenu_line_map{$line} = "$line_point_map{$line} : $def_name$suffix\n";
+    $imenu_line_map{$line} = "$line_point_map{$line} : $def_name : $str\n";
 }
 
-foreach my $line (sort keys %imenu_line_map) {
+foreach my $line (sort {$a <=> $b} keys %imenu_line_map) {
     print $imenu_line_map{$line}
 }
 unlink glob("~/.imenu-ctags.$$");

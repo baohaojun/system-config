@@ -7,6 +7,24 @@ function die() {
     exit -1
 }
 
+no_clobber=false
+TEMP=$(getopt -o n --long no-clobber -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -n|--no-clobber)
+        no_clobber=true
+        shift
+        ;;
+        --)
+        shift
+        break
+        ;;
+        *)
+        die "internal error"
+        ;;
+    esac
+done
 target_file=''
 
 test $# = 0 && die "ln: missing file operand"
@@ -49,6 +67,10 @@ for x in $(seq 1 $n_targets); do
     source=${args[$x-1]}
     if test -z "$target_file_save"; then
 	target_file=$(basename "$source")
+    fi
+    if test -e "$target_dir"/"$target_file"; then
+        echo "$target_dir"/"$target_file" already exist\!
+        continue
     fi
     rm -f "$target_dir"/"$target_file"
 
