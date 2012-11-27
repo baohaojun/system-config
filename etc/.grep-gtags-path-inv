@@ -1,0 +1,7 @@
+external/kernel-headers | 
+development/ndk/platforms/android-\d+/include/ |
+prebuilts/gcc/.*/usr/include/ |
+prebuilts/ndk/android-ndk-r\d+/.*/usr/include/ |
+external/.*\.js$ |
+/tests/ |
+sdk/eclipse/plugins/com.android.ide.eclipse.tests

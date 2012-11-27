@@ -38,25 +38,31 @@ if ($db_dir eq "/" or $db_dir eq glob("~")) {
     system("ln", '-sf', $db_dir, glob("~/.gtags-dir"));
 }
 
+my $imenu_mode = 0;
+if ($0 =~ m,grep-imenu$,) {
+    $imenu_mode = 1;
+}
+
 my $lookup_needle = "hello_world";
 my $arch = ".";
 my $lookup_restrict_regexp;
-my $path_matcher = ".";
+my $path_matcher;
+my $path_matcher_inv;
 my $ignore_case = "";
 my $type_re;
 GetOptions(
     "e=s" => \$lookup_needle,
     "a=s" => \$arch,
-    "p=s" => \$path_matcher,
+    "p=s" => sub {$path_matcher = qr($_[1])i},
+    "v=s" => sub {$path_matcher_inv = qr($_[1])i},
     "i!"  => \$ignore_case,
-    "t=s" => sub {$type_re = qr($_[1])},
+    "t=s" => sub {$type_re = qr($_[1])i},
     );
 
 if ($ignore_case) {
     $ignore_case = "-i";
 }
 
-$path_matcher = qr($path_matcher)i;
 $lookup_needle =~ s/\+.*//;
 $approx_dir = substr($approx_dir, length($db_dir));
 
@@ -82,8 +88,16 @@ sub parse_xref($$)
     our $path_filter_worked;
     our %matches_path_line;
     our %updated_paths;
-
     
+    my $path_inv;
+    if (-e ".grep-gtags-path-inv") {
+	$path_inv = qx(cat .grep-gtags-path-inv);
+	$path_inv = qr($path_inv)x;
+    } elsif (-e glob("~/etc/.grep-gtags-path-inv")) {
+	$path_inv = qx(cat ~/etc/.grep-gtags-path-inv);
+	$path_inv = qr($path_inv)x;
+    }
+
 read_line:
     while (<$grep>) {
         chomp();
@@ -95,6 +109,10 @@ read_line:
 
 	m/(.*?)\s+(\d+)\s+(\S+)\s+(.*)/ or next;
 	my ($def, $line, $path, $str) = ($1, $2, $3, $4);
+	my $type = "definition";
+	if ($str =~ m/^(\S+):\t/) {
+	    $type = $1;
+	}
 	if (not -e "$path") {
 	    next;
 	}
@@ -102,19 +120,19 @@ read_line:
 	    debug "ignore $path because arch not matches";
 	    next;
 	}
-	if ($path !~ m/$path_matcher/) {
+	if ($path_matcher and $path !~ m/$path_matcher/) {
 	    debug "ignore $path because of path matcher miss";
 	    $path_filter_worked = 1;
 	    next;
 	}
 
-	if ($type_re and $str !~ m/$type_re\S*:\t/) {
-	    debug "ignore $path because type mismatch";
+	if ($type_re and $type !~ m/$type_re/) {
+	    debug "ignore $path because type mismatch: $type !~ $type_re";
 	    $path_filter_worked = 1;
 	    next;
 	}
 
-	if (not $type_re and $str =~ m/^prototype:\t/) {
+	if (not $type_re and $type eq "prototype") {
 	    debug "ignore prototype";
 	    $path_filter_worked = 1;
 	    next;
@@ -122,8 +140,7 @@ read_line:
 
 	if ( # we should extract this into a .conf!!
 	     $str =~ m/(?:^|:\t)#undef|^variable.*:\s+EXPORT_SYMBOL/ or 
-	     $path =~ m,external/kernel-headers, or
-	     $path =~ m,android-[2-7]/arch-,) {
+	     $path =~ $path_inv) {
 	    next;
 	}
 
@@ -145,7 +162,8 @@ read_line:
 	    "path" => $path,
 	    "def"  => $def,
 	    "line" => $line,
-	    "str", => $str
+	    "str" => $str,
+	    "type", => $type,
 	};
 	my $x = $path;
 	$x =~ s,.*/,,;
@@ -156,13 +174,22 @@ read_line:
 }
 sub do_cscope($$$) {
     my ($db_dir, $lookup_needle, $lookup_restrict_regexp) = @_;
-    chdir ($db_dir) or die "Error chdir $db_dir";
+    my $lookup_needle_quote = shell_quote($lookup_needle);
     my $db_dir_quoted = shell_quote($db_dir);
     my $got_results = 0;
     my $code_dir = substr($db_dir, length("$ENV{HOME}/tmp/for-code-reading"));
     $code_dir =~ s,/+,/,g;
-    open(my $grep, "-|", "global -x $lookup_needle $ignore_case");
     chdir ($code_dir) or die "Can not change to $code_dir";
+
+    $ENV{GTAGSDBPATH} = $db_dir;
+    $ENV{GTAGSROOT} = $code_dir;
+
+    my $grep;
+    if ($imenu_mode) {
+	open($grep, "-|", "cat /dev/null");
+    } else {
+	open($grep, "-|", "global -x $lookup_needle_quote $ignore_case");
+    }
     printf "make: Entering directory \`%s'\n", $code_dir;
 
     our %matches;
@@ -188,11 +215,14 @@ sub do_cscope($$$) {
 
 
     $start_file = substr($start_file, 1 + length($code_dir));
-    open(my $updates_handle, "-|", "echo @updated_paths |tr ' ' '\n'| gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
-	or die "Can not query update on gtags";
 
-    @updated_paths = map {chomp; s,^\./,,; $_} <$updates_handle>;
-    close($updates_handle);
+    if (not $imenu_mode) {
+	open(my $updates_handle, "-|", "echo @updated_paths |tr ' ' '\n'| gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
+	    or die "Can not query update on gtags";
+
+	@updated_paths = map {chomp; s,^\./,,; $_} <$updates_handle>;
+	close($updates_handle);
+    }
 
     push @updated_paths, $start_file if -e $start_file and not $updated_paths{$start_file};
     if (@updated_paths) {

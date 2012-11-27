@@ -413,12 +413,17 @@
                     (setq grep-rgrep-history grep-history))))
 
 (defvar grep-gtags-history nil)
+(defvar grep-imenu-history nil)
 
+(defun grep-imenu ()
+  (interactive)
+  (let ((grep-gtags-history grep-imenu-history))
+    (gtags-grep 'grep-imenu-history "grep-imenu -i -e pat")))
 
-(defun gtags-grep ()
+(defun gtags-grep (&optional history-var def-grep-command)
   (interactive)
   (let ((grep-history grep-gtags-history)
-	(my-grep-command "grep-gtags -e pat")
+	(my-grep-command (or def-grep-command "grep-gtags -e pat"))
 	(current-prefix-arg 4))
     (nodup-ring-insert cscope-marker-ring (point-marker))
     (let ((file (my-buffer-file-name (current-buffer))))
@@ -428,7 +433,7 @@
 	    (setq tramp-remote-process-environment process-environment))
 	(setenv "GTAGS_START_FILE" file)))
     (call-interactively 'grep-bhj-dir)
-    (setq grep-gtags-history grep-history)))
+    (set (or history-var 'grep-gtags-history) grep-history)))
 
 (defun grep-tag-default-path ()
   (or (and transient-mark-mode mark-active
