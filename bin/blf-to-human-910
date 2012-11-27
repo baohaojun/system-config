@@ -1,0 +1,119 @@
+#!/usr/bin/perl
+
+use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use pretty;
+
+my $image_started;
+my @lines;
+my %images;
+my $n_images;
+
+sub debug(@) {
+  print STDERR "@_\n";
+}
+
+while (<>) {
+  chomp();
+  s#^\s*##;
+  s#\s*$##;
+  s#=# = #g;
+  s#\s+# #g;
+
+  my $record_line = 1;
+
+  if (m#^Number of Images = (\d+)#) {
+    $n_images = $1;
+  } elsif (m#^\s*(\d+)\s+Image\s+(.*?)\s+=\s+(.*)\s*$#) {
+    my ($img_idx, $img_key, $img_val) = ($1, $2, $3);
+
+    die "invalid image idx $img_idx" if $img_idx <= 0 or $img_idx > $n_images;
+    $images{$img_idx} = {} unless exists $images{$img_idx};
+
+    die "image $img_idx\{$img_key\} already exists" if exists $images{$img_idx}{$img_key};
+    $images{$img_idx}{$img_key} = $img_val;
+
+    $record_line = 0;
+  }
+
+  @lines = (@lines, $_) if $record_line;
+}
+
+for (@lines) {
+  print "$_\n";
+}
+
+for my $idx (keys %images) {
+  die "wrong number of image key/vals for $idx" unless keys %{$images{$idx}} == 11;
+
+my @keys = (
+	    "Image Size To CRC in bytes",
+	    "Partition Number",
+	    "Erase Size",
+	    "ID Name",
+	    "Type",
+	    "Load Address",
+	    "Flash Entry Address",
+	    "Path",
+	    "Next Image ID",
+	    "Image ID",
+	    "Enable"
+	   );
+
+  for (@keys) {
+    die "$_ not in image key/vals for $idx" unless exists $images{$idx}{$_};
+  }
+
+  my @zero_keys = (
+		   "Image Size To CRC in bytes",
+		   "Partition Number",
+		  );
+
+  for my $zero_key (@zero_keys) {
+    die "value for $zero_key is not 0" unless $images{$idx}{$zero_key} == 0;
+  }
+
+  my @number_keys = (
+		     "Erase Size",
+		     "Load Address",
+		     "Flash Entry Address",
+		    );
+  for (@number_keys) {
+    $images{$idx}{$_} = "0" unless $images{$idx}{$_}; # in case it is empty.
+    die "not valid number for $_: image $idx" unless $images{$idx}{$_} =~ m#^(0x)?[a-f0-9]+$#i;
+    $images{$idx}{$_} = oct($images{$idx}{$_}) if $images{$idx}{$_} =~ /^0/;
+    $images{$idx}{$_ . ".pretty"} = sprintf "%+10s", pretty($images{$idx}{$_});
+    if ($images{$idx}{$_} > 0x7fffffff) {
+      $images{$idx}{$_ . ".pretty"} = sprintf "0x%08x", $images{$idx}{$_};
+    }
+  }
+
+  $images{$idx}{"Enable"} = $images{$idx}{"Enable"} ? " Enabled" : "Disabled";
+  $images{$idx}{"Type"} = sprintf "%+5s", $images{$idx}{"Type"};
+}
+
+print "### Start of human readable image list ###\n";
+print "Name :  Type : FlashStart :     Memory :      Erase :  Enable? : Path\n";
+
+for my $idx (sort { $images{$a}{"Flash Entry Address"} <=> $images{$b}{"Flash Entry Address"} } keys %images) {
+  my @print_keys = (
+		    "ID Name",
+		    "Type",
+		    "Flash Entry Address.pretty",
+		    "Load Address.pretty",
+		    "Erase Size.pretty",
+		    "Enable",
+		    "Path",
+		   );
+
+  for my $key (@print_keys) {
+    print " " unless $key eq "ID Name";
+    if ($key ne "Path") {
+      printf "%s :", $images{$idx}{$key};
+    } else {
+      printf "%s\n", $images{$idx}{$key};
+    }
+
+  }
+}

@@ -1,0 +1,141 @@
+#!/usr/bin/perl
+
+use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use pretty;
+
+my $image_started;
+my @lines;
+my %images;
+my $n_images;
+
+sub debug(@) {
+  print STDERR "@_\n";
+}
+
+while (<>) {
+  chomp();
+  s#^\s*##;
+  s#\s*$##;
+  s#=# = #g;
+  s#\s+# #g;
+
+  if (m#^Number of Images = (\d+)#) {
+    $n_images = $1;
+  } elsif (m,^### Start of human readable image list ###$,) {
+    my $img_idx = 0;
+    while (<>) {
+      chomp();
+      if (m,^ #Name :  Type : FlashStart :     Memory :      Erase :  Enable? : Path
+	    ([^:]+): # name
+	    ([^:]+): # type
+	    ([^:]+): # flash start
+	    ([^:]+): # memory
+	    ([^:]+): # erase
+	    ([^:]+): # enable?
+	    ([^:]+)$,x) {
+	next if $1 eq "Name ";
+
+	$img_idx++;
+
+	my %image_keyvals;
+	@image_keyvals{
+		    "ID Name",
+		    "Type",
+		    "Flash Entry Address",
+		    "Load Address",
+		    "Erase Size",
+		    "Enable",
+		    "Path",
+		   } = ($1, $2, $3, $4, $5, $6, $7);
+	for (keys %image_keyvals) {
+	  $image_keyvals{$_} =~ s/^\s*|\s*$//g;
+	  $image_keyvals{$_} =~ s/\s+/ /g;
+	}
+
+	my @number_keys = (
+			"Flash Entry Address",
+			"Load Address",
+			"Erase Size"
+		       );
+
+	for (@number_keys) {
+	  $image_keyvals{$_} = un_pretty($image_keyvals{$_});
+	}
+
+	my @zero_keys = (
+			 "Image Size To CRC in bytes",
+			 "Partition Number",
+			);
+
+	for (@zero_keys) {
+	  $image_keyvals{$_} = 0;
+	}
+
+	$image_keyvals{"Enable"} = $image_keyvals{"Enable"} eq "Enabled" ? 1 : 0;
+
+	$images{$img_idx} = \%image_keyvals;
+      }
+    }
+    last; # must break out, the <> has all been consumed.
+  }
+  @lines = (@lines, $_);
+}
+
+sub name_to_id($) {
+  my ($id) = @_;
+  die "invalid name: $id" unless length($id) == 4;
+
+  my @data = map(ord, reverse split(//, $id));
+  my $packed = pack("CCCC", @data);
+  return (unpack("I", $packed))[0];
+}
+
+for (keys %images) {
+  # 1 Image Next Image ID = 0x4F424D49
+  # 1 Image Image ID = 0x54494D48
+  $images{$_}{"Image ID"} = name_to_id($images{$_}{"ID Name"});
+
+  if ($_ == keys %images) {
+    $images{$_}{"Next Image ID"} = 0xffffffff;
+  } else {
+    $images{$_}{"Next Image ID"} = name_to_id($images{$_ + 1}{"ID Name"});
+  }
+}
+
+for (@lines) {
+  if (m/^Number of Images /) {
+    $_ = "Number of Images = " . keys %images;
+  }
+  print "$_\n";
+}
+
+for my $idx (sort {$a <=> $b} keys %images) {
+  my @str_keys = (
+	    "Image Size To CRC in bytes",
+	    "Partition Number",
+	    "ID Name",
+	    "Type",
+	    "Path",
+	    "Enable"
+	   );
+
+  my @number_keys = (
+		     "Erase Size",
+		     "Load Address",
+		     "Flash Entry Address",
+		     "Image ID",
+		     "Next Image ID",
+		    );
+  for my $key (@str_keys) {
+    printf "%d Image %s = %s\n", $idx, $key, $images{$idx}{$key};
+  }
+  for my $key (@number_keys) {
+    if ($key eq "Erase Size" and $images{$idx}{$key} == 0) {
+      printf "%d Image %s = \n", $idx, $key;
+    } else {
+      printf "%d Image %s = 0x%08x\n", $idx, $key, $images{$idx}{$key};
+    }
+  }
+}

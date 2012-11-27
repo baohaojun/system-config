@@ -16,6 +16,7 @@ News
 Mail
 *.pyc
 *.elc
+*.class
 \#*
 .#*
 .for-code-reading

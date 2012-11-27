@@ -43,7 +43,7 @@ time (
         exit -1
     }
 
-    if test $(basename $0) = do-fastboot-full-988; then
+    if [[ $(basename $0) =~ do-fastboot-full ]]; then
         if test ! -e $1; then
 	    die "blf file '$1' not exist! Usage: $(basename $0) XXX.blf PARTS"
         elif test $(basename $1) = $1 -a -e ~/src/android/boot/obm/TimBuilder; then
@@ -65,7 +65,7 @@ time (
 
     function should-do-it() {
         local default=0
-        if test $(basename $0) != do-fastboot-full-988; then
+        if ! [[ $(basename $0) =~ do-fastboot-full ]]; then
 	    default=1
         fi
 
@@ -164,7 +164,7 @@ time (
     fi
     
     if test -e "$ntim_bin" -a "$(stat -c %s "$ntim_bin")" != 0; then
-        do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
+        do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery 1M DTim.CP)
         do-partition OBM $(concat-file 0 TIMH 128K OBMI)
     fi
 
@@ -172,7 +172,7 @@ time (
     fastboot erase cache
     fastboot erase NVM
 
-    if test $(basename $0) = do-fastboot-full-988 -a "$ERASE_ALL" = true; then
+    if [[ $(basename $0) =~ do-fastboot-full ]] && test "$ERASE_ALL" = true; then
         fastboot erase MEP2
         fastboot erase MRD
         fastboot erase MRD1
@@ -188,7 +188,7 @@ time (
 
 
 
-if test $(basename $0) = do-fastboot-full-988; then
+if [[ $(basename $0) =~ do-fastboot-full ]]; then
     read -p "Press enter to restart fastboot "
     fastboot reboot
 fi
