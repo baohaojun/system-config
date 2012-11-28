@@ -33,10 +33,14 @@ if test $(basename $0) = update-arp; then
         if test -z "$arp"; then
             die "can not find arp entry for $host_name"
         fi
-        ip=$(sudo arping -i $iface -c 1 -r $arp)
-        if test -z "$ip"; then
-            die "can not arping $arp"
-        fi
+        for ((x=0; x<100; x++)); do
+            ip=$(sudo arping -i $iface -c 1 -r $arp | head -n 1 || true)
+            if test -z "$ip"; then
+                echo "can not arping $arp: $x"
+            else
+                break
+            fi
+        done
         echo ip is $ip
         sudo update-host-ip "$host_name" $ip
     done
