@@ -31,9 +31,11 @@ for (@ARGV) {
     }
 }
 
-my $confserv=`cat ~/.confserv`;
-my $confuser=`cat ~/.confuser`;
-chomp($confserv);
-chomp($confuser);
+chomp(my $confserv=`cat ~/.confserv`);
+chomp(my $confuser=`cat ~/.confuser`);
+
+if (-e glob("~/.jirarc")) {
+    eval `cat ~/.jirarc`;
+}
 
 system("jira.sh", "-s", "http://$confserv/jira", "-u", "$confuser", "-p", `get-authinfo $confserv|tr -d '\n'`, @ARGV);

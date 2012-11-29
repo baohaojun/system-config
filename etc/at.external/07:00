@@ -1,0 +1,5 @@
+#!/bin/bash
+n_issues=$(jira --action getIssueList --filter my-open|head -n 1|perl -npe 's/\.//g')
+if test "$n_issues" != "0 issues"; then
+    mailx hjbao@marvell.com -s "You have $n_issues open in jira, please take care of them!" < /dev/null
+fi

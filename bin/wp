@@ -6,9 +6,6 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 # redefine these functions
     function swp()
     {
-
-        HFILE=$FILE
-
         if [[ "$FILE" =~ ~/smb/ ]]; then
             FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,\\\\\\\\,; s,/,\\\\,g'`
 	    host=$(echo "$FILE" | perl -npe 's,^..(.*?)\\.*,$1,')
@@ -24,9 +21,6 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function sup()
     {
-        
-        HFILE=$FILE
-        
         if [[ "$FILE" =~ ~/smb/ ]]; then
             FILE=`echo "$FILE"|perl -npe 's,^.*?/smb/,smb://,g'`
         else
@@ -37,19 +31,16 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function ap()
     {
-        HFILE=$FILE
         relative-path "$FILE" $(readlink -f $(lookup_file .repo/..))/
     }
     
     function gitp()
     {
-        HFILE=$FILE
         relative-path "$FILE" $(readlink -f $(lookup_file .git))/
     }
 
     function absp()
     {
-        HFILE=$FILE
         if test "${FILE:0:1}" = /; then
             echo $FILE
         else
@@ -59,15 +50,17 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function wp()
     {
-
-        HFILE=$FILE
         FILE=z:$FILE
         echo -n "$FILE"|perl -npe 's,/,\\,g'
     }
 
+    function realp()
+    {
+        readlink -f "$FILE"
+    }
+
     function up()
     {
-
         printf %q "$FILE"
     }
 
@@ -102,7 +95,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
         echo "$out" | putclip
     fi
 else # we are being sourced
-    for x in swp sup gitp wp ap up mp tmp; do 
+    for x in swp sup gitp wp ap up mp tmp realp; do 
         eval 'function '$x'() {
             command '$x' "$@" || { renew-xauth; command '$x' "$@"; }
             if test "$NO_PUTCLIP" = true; then

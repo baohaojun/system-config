@@ -2258,6 +2258,7 @@ criteria can be provided via the optional match-string argument "
 (global-set-key (kbd "M-s g") 'bhj-do-code-generation)
 (global-set-key (kbd "M-s c") (lambda () (interactive) (call-interactively 'compile)))
 (global-set-key (kbd "M-g i") 'imenu)
+(global-set-key (kbd "M-g I") 'grep-imenu)
 (global-set-key (kbd "M-g m") 'man)
 
 (setq org-plantuml-jar-path "~/bin/plantuml.jar")
