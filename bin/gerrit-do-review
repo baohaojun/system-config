@@ -1,22 +1,51 @@
 #!/bin/bash
 
-rev=${1-HEAD}
+if test "$DEBUG" = true; then
+    set -x
+fi
+
+set -e
 
 function die() {
     echo Error: "$@"
     exit -1
 }
 
+action='--submit --verified +1 --code-review +2'
+
+TEMP=$(getopt -o a --long abort -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -a|--abort)
+        action=--abandon
+        shift
+        ;;
+        --)
+        shift
+        break
+        ;;
+        *)
+        die "internal error"
+        ;;
+    esac
+done
+
+rev=${1-HEAD}
+
 repo sync -n .
 if ! git-is-ancestor $(repo-remote-branch) $rev; then
     die "Not fast-forward push is not allowed"
 fi
 
-gerrit review "$(git rev-parse $rev)" --submit --verified +1 --code-review +2 
+rev_list=$(git rev-list $rev ^$(repo-remote-branch))
+for subrev in $rev_list; do
+    gerrit review "$(git rev-parse $subrev)" $action
+done
+
 if test "$DEBUG"; then
     sleep 1
 fi
-gerrit-do-review-dependencies $rev
 
 if test -z "$GERRIT_HOST"; then
     (
