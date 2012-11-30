@@ -66,6 +66,10 @@ if ($ignore_case) {
 }
 
 $lookup_needle =~ s/\+.*//;
+if ($imenu_mode and not $lookup_needle) {
+    $lookup_needle = ".*";
+}
+    
 $approx_dir = substr($approx_dir, length($db_dir));
 
 sub is_qualified_by($$)
@@ -276,7 +280,7 @@ sub do_cscope($$$) {
 	$str =~ s,:\t,: <$def> : ,;
 	print "$file:$line: $str\n";
 	$got_results = 1;
-	if (keys %matches < 5) { # this will be nice!
+	if (keys %matches < 5 and not $imenu_mode) { # this will be nice!
 	    system("ctags-show-definition $code_dir/$file $line $lookup_needle");
 	}        
     }
