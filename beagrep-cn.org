@@ -125,7 +125,7 @@ priority:
   
   will be used.
 
-- Overide it in ~/.mkbeagrepidx.rc, setting the ~BEAGREP_IGNORE_DIR_PATTERNS~ environment variable:
+- Overide it in =~/.mkbeagrepidx.rc=, setting the ~BEAGREP_IGNORE_DIR_PATTERNS~ environment variable:
 
   #+begin_example
   export BEAGREP_IGNORE_DIR_PATTERNS="$PWD/out,*/.repo,*/.git"
