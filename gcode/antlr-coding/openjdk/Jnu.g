@@ -281,14 +281,29 @@
                 java -cp ver.jar Main 2 false false false false false Java.g 
 */
   
-grammar Java;
+grammar Jnu;
 
 
 options {
     backtrack=true;
     memoize=true;
     output = AST;              // build trees
-    ASTLabelType = CommonTree;
+    ASTLabelType = JnuAST;
+}
+
+tokens {
+  METHOD_DECL; // function definition
+  ARG_DECL;    // parameter
+  BLOCK;
+  MEMBERS;     // class body
+  VAR_DECL;
+  FIELD_DECL;
+  CALL;
+  ELIST;       // expression list
+  EXPR; 	   // root of an expression
+  EXTENDS;
+  IMPORT_DECL;
+  TYPE_PARAM;
 }
 
 /********************************************************************************************
@@ -307,7 +322,7 @@ compilationUnit
     ;
 
 packageDeclaration 
-    :   'package' qualifiedName
+    :   'package'^ qualifiedName
         ';'
     ;
 
@@ -315,23 +330,10 @@ importDeclaration
     :   'import' 
         ('static'
         )?
-        IDENTIFIER '.' '*'
-        ';'       
-    |   'import' 
-        ('static'
-        )?
-        IDENTIFIER
-        ('.' IDENTIFIER
-        )+
+        qualifiedName
         ('.' '*'
         )?
-        ';'
-    ;
-
-qualifiedImportName 
-    :   IDENTIFIER
-        ('.' IDENTIFIER
-        )*
+        ';' -> ^('import' qualifiedName)
     ;
 
 typeDeclaration 
@@ -384,6 +386,8 @@ normalClassDeclaration
         ('implements' typeList
         )?            
         classBody
+        
+        -> ^('class' IDENTIFIER typeParameters? type? typeList?)
     ;
 
 
@@ -399,6 +403,8 @@ typeParameter
     :   IDENTIFIER
         ('extends' typeBound
         )?
+
+        -> ^(TYPE_PARAM IDENTIFIER typeBound?)
     ;
 
 
@@ -524,6 +530,9 @@ methodDeclaration
         (blockStatement
         )*
         '}'
+        
+        -> ^(METHOD_DECL IDENTIFIER typeParameters? formalParameters qualifiedNameList? blockStatement*)
+
     |   modifiers
         (typeParameters
         )?
@@ -540,6 +549,8 @@ methodDeclaration
             block
         |   ';' 
         )
+
+        -> ^(METHOD_DECL IDENTIFIER typeParameters? formalParameters qualifiedNameList? block)
     ;
 
 
@@ -550,6 +561,8 @@ fieldDeclaration
         (',' variableDeclarator
         )*
         ';'
+
+        -> ^(FIELD_DECL type variableDeclarator)+
     ;
 
 variableDeclarator 
@@ -557,7 +570,9 @@ variableDeclarator
         ('[' ']'
         )*
         ('=' variableInitializer
-        )?
+        )? 
+
+        -> ^(VAR_DECL IDENTIFIER)
     ;
 
 /**

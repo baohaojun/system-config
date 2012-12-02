@@ -10,21 +10,21 @@ import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
 
 public class Test {
-    /** An adaptor that tells ANTLR to build CymbolAST nodes */
+    /** An adaptor that tells ANTLR to build JnuAST nodes */
     public static TreeAdaptor cymbalAdaptor = new CommonTreeAdaptor() {
         public Object create(Token token) {
-            return new CymbolAST(token);
+            return new JnuAST(token);
         }
         public Object dupNode(Object t) {
             if ( t==null ) {
                 return null;
             }
-            return create(((CymbolAST)t).token);
+            return create(((JnuAST)t).token);
         }
         public Object errorNode(TokenStream input, Token start, Token stop,
                                 RecognitionException e)
         {
-            CymbolErrorNode t = new CymbolErrorNode(input, start, stop, e);
+            JnuErrorNode t = new JnuErrorNode(input, start, stop, e);
             //System.out.println("returning error node '"+t+"' @index="+input.index());
             return t;
         }
@@ -35,9 +35,9 @@ public class Test {
         if ( args.length>0 ) input = new ANTLRFileStream(args[0]);
         else input = new ANTLRInputStream(System.in);
         // Create lexer/parser to build trees from stdin
-        CymbolLexer lex = new CymbolLexer(input);
+        JnuLexer lex = new JnuLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lex);
-        CymbolParser p = new CymbolParser(tokens);
+        JnuParser p = new JnuParser(tokens);
         p.setTreeAdaptor(cymbalAdaptor);
         RuleReturnScope r = p.compilationUnit();   // launch parser by calling start rule
         CommonTree t = (CommonTree)r.getTree();    // get tree result

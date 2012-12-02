@@ -28,7 +28,7 @@ public class SymbolTable {
         globals.define(new BuiltInTypeSymbol("void")); // pseudo-type
     }
 
-    public static Symbol resolveID(CymbolAST idAST) {
+    public static Symbol resolveID(JnuAST idAST) {
         Symbol s = idAST.scope.resolve(idAST.getText());
         System.out.println("line "+idAST.getLine()+": resolve "+
                            idAST.getText()+" to "+s);

@@ -1,8 +1,8 @@
 // START: header
 tree grammar Ref;
 options {
-  tokenVocab = Cymbol;
-  ASTLabelType = CymbolAST;
+  tokenVocab = Jnu;
+  ASTLabelType = JnuAST;
   filter = true;
 }
 @members {

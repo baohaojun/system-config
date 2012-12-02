@@ -1,7 +1,7 @@
-grammar Cymbol;
+grammar Jnu;
 options {
   output = AST;              // build trees
-  ASTLabelType = CymbolAST;
+  ASTLabelType = JnuAST;
 }
 
 tokens {

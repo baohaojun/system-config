@@ -1,8 +1,8 @@
 // START: header
 tree grammar Def;
 options {
-  tokenVocab = Cymbol;
-  ASTLabelType = CymbolAST;
+  tokenVocab = Jnu;
+  ASTLabelType = JnuAST;
   filter = true;
 }
 @members {
@@ -18,6 +18,7 @@ options {
 
 topdown
     :   enterBlock
+    |   enterPackage
     |   enterMethod
     |   enterClass
     |   varDeclaration
@@ -31,7 +32,12 @@ bottomup
     ;
 
 // S C O P E S
-
+enterPackage
+    :   ^('package' .*)
+        {
+            System.out.println("package: ");
+        }
+    ;
 enterBlock
     :   BLOCK {currentScope = new LocalScope(currentScope);} // push scope
     ;
@@ -69,15 +75,15 @@ exitClass
     ;
 
 enterMethod
-    :   ^(METHOD_DECL type=. ID .*) // match method subtree with 0-or-more args
+    :   ^(METHOD_DECL ID .*) // match method subtree with 0-or-more args
         {
         System.out.println("line "+$ID.getLine()+": def method "+$ID.text);
-        $type.scope = currentScope;
-        MethodSymbol ms = new MethodSymbol($ID.text,null,currentScope);
-        ms.def = $ID;            // track AST location of def's ID
-        $ID.symbol = ms;         // track in AST
-        currentScope.define(ms); // def method in globals
-        currentScope = ms;       // set current scope to method scope
+        // $type.scope = currentScope;
+        // MethodSymbol ms = new MethodSymbol($ID.text,null,currentScope);
+        // ms.def = $ID;            // track AST location of def's ID
+        // $ID.symbol = ms;         // track in AST
+        // currentScope.define(ms); // def method in globals
+        // currentScope = ms;       // set current scope to method scope
         }
     ;
 exitMethod
@@ -91,8 +97,8 @@ exitMethod
 // START: atoms
 /** Set scope for any identifiers in expressions or assignments */
 atoms
-@init {CymbolAST t = (CymbolAST)input.LT(1);}
-    :  {t.hasAncestor(EXPR)||t.hasAncestor(ASSIGN)}? ('this'|ID)
+@init {JnuAST t = (JnuAST)input.LT(1);}
+    :  {t.hasAncestor(EXPR)}? ('this'|ID)
        {t.scope = currentScope;}
     ;
 //END: atoms

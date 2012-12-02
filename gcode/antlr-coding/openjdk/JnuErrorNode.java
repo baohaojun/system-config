@@ -6,10 +6,12 @@
  * We make no guarantees that this code is fit for any purpose. 
  * Visit http://www.pragmaticprogrammer.com/titles/tpdsl for more book information.
 ***/
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.Token;
-public class CymbolAST extends CommonTree {
-    public Scope scope;   // set by Def.g; ID lives in which scope?
-    public Symbol symbol; // set by Ref.g; point at def in symbol table 
-    public CymbolAST(Token t) { super(t); }
+import org.antlr.runtime.*;
+
+public class JnuErrorNode extends JnuAST {
+    public JnuErrorNode(TokenStream input, Token start, Token stop,
+                            RecognitionException e)
+    {
+	super(start); // no need to record anything for this example
+    }
 }
