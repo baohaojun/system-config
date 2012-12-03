@@ -666,3 +666,38 @@ mmc_cid_show: 这个函数用ctags不能查到，因为它是在一个宏里被�
                 {
                         ...
     =>                  if ((rc = utlExecuteBasicAtCommand(parser_p, " ", FALSE, &parameter_value, string_off)) == utlAT_RESULT_CODE_ERROR)
+
+****************
+这个文件里的 $a.int是怎么回事？请看接下来的分析
+
+    /home/bhj/src/antlr/code/walking/patterns/Simplify.g:20: zeroX : ^('*' a=INT b=INT {$a.int==0}?) -> $a ; // 0*x -> 0
+    =>  zeroX : ^('*' a=INT b=INT {$a.int==0}?) -> $a ; // 0*x -> 0
+
+****************
+在编译之后，它会生成这样的代码：
+
+    /home/bhj/src/antlr/code/walking/patterns/Simplify.java:484:                 throw new FailedPredicateException(input, "zeroX", "$a.int==0");
+        public class Simplify extends TreeRewriter {
+            ...
+            public final Simplify.zeroX_return zeroX() throws RecognitionException {
+                ...
+                try {
+                    ...
+                    if ( !(((a!=null?Integer.valueOf(a.getText()):0)==0)) ) {
+                        ...
+    =>                  throw new FailedPredicateException(input, "zeroX", "$a.int==0");
+
+****************
+所以我们只要在antlr的代码里grep Integer.valueOf就可以知道是怎么回事，并且我们可以发现除了.int之外更多的东西：
+
+    /home/bhj/src/antlr/antlr3-3.2/tool/src/main/resources/org/antlr/codegen/templates/Java/Java.stg:1294:     "(<scope>!=null?Integer.valueOf(<scope>.getText()):0)"
+        lexerRuleLabelPropertyRef_pos(scope,attr) ::= 
+            "(<scope>!=null?<scope>.getCharPositionInLine():-1)"
+        lexerRuleLabelPropertyRef_channel(scope,attr) ::=
+            "(<scope>!=null?<scope>.getChannel():0)"
+        lexerRuleLabelPropertyRef_index(scope,attr) ::=
+            "(<scope>!=null?<scope>.getTokenIndex():0)"
+        lexerRuleLabelPropertyRef_text(scope,attr) ::=
+            "(<scope>!=null?<scope>.getText():null)"
+        lexerRuleLabelPropertyRef_int(scope,attr) ::=
+    =>      "(<scope>!=null?Integer.valueOf(<scope>.getText()):0)"
