@@ -303,7 +303,14 @@ tokens {
   EXPR; 	   // root of an expression
   EXTENDS;
   IMPORT_DECL;
-  TYPE_PARAM;
+  CLASS_REF;
+  BUILT_IN;
+  QUALIFIED;
+  ARRAY_VAR;
+  SCALAR_VAR;
+  CLASS_PARAM;
+  CLASS_BODY;
+  RETURN_TYPE;
 }
 
 /********************************************************************************************
@@ -331,9 +338,10 @@ importDeclaration
         ('static'
         )?
         qualifiedName
-        ('.' '*'
-        )?
-        ';' -> ^('import' qualifiedName)
+        ('.' '*' -> ^('import' qualifiedName '*')
+        | -> ^('import' qualifiedName)
+        )
+        ';'
     ;
 
 typeDeclaration 
@@ -383,11 +391,11 @@ normalClassDeclaration
         )?
         ('extends' type
         )?
-        ('implements' typeList
+        ('implements' type (',' type)*
         )?            
         classBody
         
-        -> ^('class' IDENTIFIER typeParameters? type? typeList?)
+        -> ^('class' IDENTIFIER ^(CLASS_PARAM typeParameters?) ^(SUPER type*) ^(CLASS_BODY classBody))
     ;
 
 
@@ -401,17 +409,10 @@ typeParameters
 
 typeParameter 
     :   IDENTIFIER
-        ('extends' typeBound
+        ('extends' type ('&' type)*
         )?
 
-        -> ^(TYPE_PARAM IDENTIFIER typeBound?)
-    ;
-
-
-typeBound 
-    :   type
-        ('&' type
-        )*
+        -> ^('class' IDENTIFIER ^(CLASS_PARAM) ^(SUPER type*) ^(CLASS_BODY))
     ;
 
 
@@ -420,7 +421,7 @@ enumDeclaration
         ('enum'
         ) 
         IDENTIFIER
-        ('implements' typeList
+        ('implements' type (',' type)*
         )?
         enumBody
     ;
@@ -473,15 +474,10 @@ normalInterfaceDeclaration
     :   modifiers 'interface' IDENTIFIER
         (typeParameters
         )?
-        ('extends' typeList
+        ('extends' type (',' type)*
         )?
         interfaceBody
-    ;
-
-typeList 
-    :   type
-        (',' type
-        )*
+        -> ^('class' IDENTIFIER ^(CLASS_PARAM typeParameters?) ^(SUPER type*) ^(CLASS_BODY interfaceBody))
     ;
 
 classBody 
@@ -531,14 +527,12 @@ methodDeclaration
         )*
         '}'
         
-        -> ^(METHOD_DECL IDENTIFIER typeParameters? formalParameters qualifiedNameList? blockStatement*)
+        -> ^(METHOD_DECL ^(RETURN_TYPE) IDENTIFIER typeParameters? formalParameters qualifiedNameList? ^(BLOCK blockStatement*))
 
     |   modifiers
         (typeParameters
         )?
-        (type
-        |   'void'
-        )
+        return_type
         IDENTIFIER
         formalParameters
         ('[' ']'
@@ -550,29 +544,31 @@ methodDeclaration
         |   ';' 
         )
 
-        -> ^(METHOD_DECL IDENTIFIER typeParameters? formalParameters qualifiedNameList? block)
+        -> ^(METHOD_DECL ^(RETURN_TYPE return_type) IDENTIFIER typeParameters? formalParameters qualifiedNameList? ^(BLOCK block))
     ;
 
+return_type : type | 'void' ;
 
 fieldDeclaration 
     :   modifiers
-        type
+        type 
         variableDeclarator
         (',' variableDeclarator
         )*
         ';'
 
-        -> ^(FIELD_DECL type variableDeclarator)+
+        -> ^(FIELD_DECL type variableDeclarator+) 
     ;
 
 variableDeclarator 
     :   IDENTIFIER
-        ('[' ']'
-        )*
+        (
+        :   ('[' ']'
+            )+ -> ^(ARRAY_VAR IDENTIFIER)
+        |   -> ^(SCALAR_VAR IDENTIFIER)
+        )
         ('=' variableInitializer
         )? 
-
-        -> ^(VAR_DECL IDENTIFIER)
     ;
 
 /**
@@ -616,12 +612,12 @@ interfaceFieldDeclaration
 
 
 type 
-    :   classOrInterfaceType
+    :   classOrInterfaceType 
         ('[' ']'
-        )*
+        )* -> classOrInterfaceType
     |   primitiveType
         ('[' ']'
-        )*
+        )*  -> primitiveType
     ;
 
 
@@ -632,18 +628,18 @@ classOrInterfaceType
         ('.' IDENTIFIER
             (typeArguments
             )?
-        )*
+        )* -> ^(CLASS_REF ^(QUALIFIED IDENTIFIER+) typeArguments*)
     ;
 
 primitiveType  
-    :   'boolean'
-    |   'char'
-    |   'byte'
-    |   'short'
-    |   'int'
-    |   'long'
-    |   'float'
-    |   'double'
+    :   'boolean' 
+    |   'char' 
+    |   'byte' 
+    |   'short' 
+    |   'int' 
+    |   'long' 
+    |   'float' 
+    |   'double' 
     ;
 
 typeArguments 
@@ -691,13 +687,13 @@ formalParameterDecls
 normalParameterDecl 
     :   variableModifiers type IDENTIFIER
         ('[' ']'
-        )*
+        )* -> ^(ARG_DECL type IDENTIFIER)
     ;
 
 ellipsisParameterDecl 
     :   variableModifiers
         type  '...'
-        IDENTIFIER
+        IDENTIFIER -> ^(ARG_DECL type IDENTIFIER)
     ;
 
 
@@ -718,9 +714,11 @@ explicitConstructorInvocation
     ;
 
 qualifiedName 
-    :   IDENTIFIER
+    :   IDENTIFIER 
+    |
+        IDENTIFIER
         ('.' IDENTIFIER
-        )*
+        )+ -> ^('.' IDENTIFIER+)
     ;
 
 annotations 
@@ -809,7 +807,7 @@ block
     :   '{'
         (blockStatement
         )*
-        '}'
+        '}' -> ^(BLOCK blockStatement*)
     ;
 
 /*
@@ -852,7 +850,7 @@ localVariableDeclaration
     :   variableModifiers type
         variableDeclarator
         (',' variableDeclarator
-        )*
+        )* -> ^(VAR_DECL type variableDeclarator*)
     ;
 
 statement 
@@ -1117,14 +1115,14 @@ primary
     :   parExpression            
     |   'this'
         ('.' IDENTIFIER
-        )*
+        )* 
         (identifierSuffix
-        )?
+        )? -> ^(EXPR 'this' IDENTIFIER* identifierSuffix?)
     |   IDENTIFIER
         ('.' IDENTIFIER
         )*
         (identifierSuffix
-        )?
+        )? -> ^(EXPR IDENTIFIER* identifierSuffix?)
     |   'super'
         superSuffix
     |   literal
@@ -1236,7 +1234,7 @@ classCreatorRest
 
 
 nonWildcardTypeArguments 
-    :   '<' typeList
+    :   '<' type (',' type)*
         '>'
     ;
 

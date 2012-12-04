@@ -32,6 +32,13 @@ time (
     flock 9
     echo done locking
 
+    if test "$(get-mount-1)" = smbnetfs; then
+        dir=/tmp/$(basename $0).$$/
+        mkdir $dir
+        relative-link * $dir/        
+        cd $dir/
+    fi
+
     part_table=$(fastboot oem part 2>&1)
     is_old_part_table=false
     if echo "$part_table" | grep -q -e 'td_cp'; then

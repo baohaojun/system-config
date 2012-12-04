@@ -19,8 +19,10 @@ options {
 topdown
     :   enterBlock
     |   enterPackage
+    |   enterImport
     |   enterMethod
     |   enterClass
+    |   enterClassRef
     |   varDeclaration
     |   atoms
     ;
@@ -33,13 +35,23 @@ bottomup
 
 // S C O P E S
 enterPackage
-    :   ^('package' .*)
-        {
-            System.out.println("package: ");
-        }
+    :   ^('package' qualifiedName)
     ;
+
+enterImport
+    :   ^('import' qualifiedName '*'?)
+    ;
+
+qualifiedName 
+    :   IDENTIFIER 
+    |   ^('.' e+=IDENTIFIER+)
+    ;
+
 enterBlock
-    :   BLOCK {currentScope = new LocalScope(currentScope);} // push scope
+    :   BLOCK {
+            currentScope = new LocalScope(currentScope);
+            System.out.println("Enter block");
+        } // push scope
     ;
 exitBlock
     :   BLOCK
@@ -51,39 +63,52 @@ exitBlock
 
 // START: class
 enterClass
-    :   ^('class' name=ID (^(EXTENDS sup=ID))? .)
-        { // def class but leave superclass blank until ref phase
-        System.out.println("line "+$name.getLine()+
-                           ": def class "+$name.text);
-        // record scope in AST for next pass
-        if ( $sup!=null ) $sup.scope = currentScope; 
-        ClassSymbol cs = new ClassSymbol($name.text,currentScope,null);
-        cs.def = $name;           // point from symbol table into AST
-        $name.symbol = cs;        // point from AST into symbol table
-        currentScope.define(cs);  // def class in current scope
-        currentScope = cs;        // set current scope to class scope
+    : 	^('class' name=IDENTIFIER ^(CLASS_PARAM .*) ^(SUPER type+=.*) ^(CLASS_BODY .*))
+        {
+            System.out.println("class: "+$name.text + (($type != null) ? " extends: " + $type.toString() : ""));
+            if ($type != null) {
+                for (int i = 0; i < $type.size(); i++) {
+                    ((JnuAST)$type.get(i)).scope = currentScope;
+                }
+            }
+
+            ClassSymbol cs = new ClassSymbol($name.text,currentScope,null);
+            cs.def = $name;
+            $name.symbol = cs;
+            currentScope.define(cs);
+            currentScope = cs;
+
         }
     ;
-// END: class
+
+enterClassRef
+    :   ^(CLASS_REF ^(QUALIFIED e+=IDENTIFIER+) .*)
+        {
+            System.out.println("class_ref: " + $e.toString());
+        }
+    ;
+            
 
 exitClass
     :   'class'
         {
-        System.out.println("members: "+currentScope);
-        currentScope = currentScope.getEnclosingScope();    // pop scope
+        // System.out.println("members: "+currentScope);
+        // currentScope = currentScope.getEnclosingScope();    // pop scope
         }
     ;
 
 enterMethod
-    :   ^(METHOD_DECL ID .*) // match method subtree with 0-or-more args
+    : 	^(METHOD_DECL ^(RETURN_TYPE type=.?) name=IDENTIFIER .*)
         {
-        System.out.println("line "+$ID.getLine()+": def method "+$ID.text);
-        // $type.scope = currentScope;
-        // MethodSymbol ms = new MethodSymbol($ID.text,null,currentScope);
-        // ms.def = $ID;            // track AST location of def's ID
-        // $ID.symbol = ms;         // track in AST
-        // currentScope.define(ms); // def method in globals
-        // currentScope = ms;       // set current scope to method scope
+            System.out.println("line "+$name.getLine()+": def method "+$name.text);
+            if ($type != null) {
+                $type.scope = currentScope;
+            }
+            MethodSymbol ms = new MethodSymbol($name.text,null,currentScope);
+            ms.def = $name;            // track AST location of def's ID
+            $name.symbol = ms;         // track in AST
+            currentScope.define(ms); // def method in globals
+            currentScope = ms;       // set current scope to method scope
         }
     ;
 exitMethod
@@ -105,14 +130,19 @@ atoms
 
 // START: var
 varDeclaration // global, parameter, or local variable
-    :   ^((FIELD_DECL|VAR_DECL|ARG_DECL) type=. ID .?)
+    :   ^((FIELD_DECL|VAR_DECL|ARG_DECL) type=. IDENTIFIER .?)
         {
-        System.out.println("line "+$ID.getLine()+": def "+$ID.text);
-        $type.scope = currentScope;
-        VariableSymbol vs = new VariableSymbol($ID.text,null);
-        vs.def = $ID;            // track AST location of def's ID
-        $ID.symbol = vs;         // track in AST
-        currentScope.define(vs);
+            System.out.println("line "+$IDENTIFIER.getLine()+": def arg_decl "+$IDENTIFIER.text + " (type: " + $type.toString() + ")");
+            // System.out.println("line "+$ID.getLine()+": def "+$ID.text);
+            // $type.scope = currentScope;
+            // VariableSymbol vs = new VariableSymbol($ID.text,null);
+            // vs.def = $ID;            // track AST location of def's ID
+            // $ID.symbol = vs;         // track in AST
+            // currentScope.define(vs);
+        }
+    |   ^((ARRAY_VAR|SCALAR_VAR) IDENTIFIER)
+        {
+            System.out.println("line "+$IDENTIFIER.getLine()+": def array "+$IDENTIFIER.text);
         }
     ;
 // END: field
