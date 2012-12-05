@@ -20,6 +20,7 @@
 (defvar regexp-completion-history nil)
 
 (global-set-key [(meta s) (return)] 'easy-regexp-display-abbrev)
+(global-set-key [(meta g) ?x] 'easy-regexp-display-abbrev)
 
 (defun easy-regexp-display-abbrev ()
   "Simplify writing the regexp. If we are looking back at, for

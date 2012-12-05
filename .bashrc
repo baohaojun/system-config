@@ -9,7 +9,7 @@ alias la='ls -A --show-control-chars'                              # all but . a
 alias l='ls -CFl --show-control-chars --block-size=1'                              #
 alias vi=vim
 export HISTSIZE=2000
-export HISTFILESIZE=100000
+export HISTFILESIZE=2000
 . ~/.bashrc-public
 
 if test `uname` = CYGWIN_NT-5.1 -o `uname` = CYGWIN_NT-6.1

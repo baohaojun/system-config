@@ -50,14 +50,12 @@ qualifiedName
 enterBlock
     :   BLOCK {
             currentScope = new LocalScope(currentScope);
-            System.out.println("Enter block");
-        } // push scope
+        }
     ;
 exitBlock
     :   BLOCK
         {
-        System.out.println("locals: "+currentScope);
-        currentScope = currentScope.getEnclosingScope();    // pop scope
+            currentScope = currentScope.getEnclosingScope();    // pop scope
         }
     ;
 
@@ -65,7 +63,6 @@ exitBlock
 enterClass
     : 	^('class' name=IDENTIFIER ^(CLASS_PARAM .*) ^(SUPER type+=.*) ^(CLASS_BODY .*))
         {
-            System.out.println("class: "+$name.text + (($type != null) ? " extends: " + $type.toString() : ""));
             if ($type != null) {
                 for (int i = 0; i < $type.size(); i++) {
                     ((JnuAST)$type.get(i)).scope = currentScope;
@@ -84,7 +81,6 @@ enterClass
 enterClassRef
     :   ^(CLASS_REF ^(QUALIFIED e+=IDENTIFIER+) .*)
         {
-            System.out.println("class_ref: " + $e.toString());
         }
     ;
             
@@ -92,15 +88,13 @@ enterClassRef
 exitClass
     :   'class'
         {
-        // System.out.println("members: "+currentScope);
-        // currentScope = currentScope.getEnclosingScope();    // pop scope
+            currentScope = currentScope.getEnclosingScope();    // pop scope
         }
     ;
 
 enterMethod
     : 	^(METHOD_DECL type=. name=IDENTIFIER .*)
         {
-            System.out.println("line "+$name.getLine()+": def method "+$name.text);
             $type.scope = currentScope;
             MethodSymbol ms = new MethodSymbol($name.text,null,currentScope);
             ms.def = $name;            // track AST location of def's ID
@@ -111,7 +105,6 @@ enterMethod
 
     |   ^(CONSTRUCTOR_DECL name=IDENTIFIER .*)
         {
-            System.out.println("line "+$name.getLine()+": def constructor "+$name.text);
             MethodSymbol ms = new MethodSymbol($name.text,null,currentScope);
             ms.def = $name;
             $name.symbol = ms;
@@ -122,8 +115,7 @@ enterMethod
 exitMethod
     :   METHOD_DECL
         {
-        System.out.println("args: "+currentScope);
-        currentScope = currentScope.getEnclosingScope();    // pop arg scope
+            currentScope = currentScope.getEnclosingScope();    // pop arg scope
         }
     ;
 
@@ -140,13 +132,9 @@ atoms
 varDeclaration // global, parameter, or local variable
     :   ^((FIELD_DECL|VAR_DECL|ARG_DECL) type=. id+=IDENTIFIER+)
         {
-
             $type.scope = currentScope;
-            System.out.println("line "+((JnuAST)$id.get(0)).getLine()+": def arg_decl "+$id.toString() + " (type: " + $type.toString() + ")");
-            // System.out.println("line "+$ID.getLine()+": def "+$ID.text);
 
             for (int i = 0; i < $id.size(); i++) {
-
                 VariableSymbol vs = new VariableSymbol(((JnuAST)$id.get(i)).getText(),null);
                 vs.def = ((JnuAST)$id.get(i));            // track AST location of def's ID
                 ((JnuAST)$id.get(i)).symbol = vs;         // track in AST
