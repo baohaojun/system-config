@@ -13,6 +13,16 @@ unless (@ARGV) {
     @ARGV = ("/dev/stdin");
 }
 
+sub print_line(\@) {
+    my ($line_ref) = @_;
+    return unless @$line_ref;
+    my $line = join('', @$line_ref, "\n");
+    $line =~ s/ +([^0-9a-zA-Z_])/$1/g;
+    $line =~ s/([^0-9a-zA-Z_]) +/$1/g;
+    print $line;
+    @$line_ref = ();
+}
+    
 for my $arg (@ARGV) {
     my $file;
     if ($file) {
@@ -60,15 +70,24 @@ for my $arg (@ARGV) {
 		    $state = $state_block_comment;
 		}
 	    } elsif ($c eq ' ' or $c eq "\t" or $c eq "\f" or $c eq "\n") {
-		$state = $state_blank;
+		if ($c eq "\n" and @line and $line[0] eq '#') {
+		    print_line @line;
+		} else {
+		    $state = $state_blank;
+		}
+	    } elsif ($c eq "\\") {
+		read $file, $unget, 1 or last read_loop;
+		if ($unget eq "\n") {
+		    undef $unget;
+		    push @line, " " if @line;
+		}
 	    } else {
+		if ($c eq '#') {
+		    print_line @line;
+		}
 		push @line, $c;
-		if ($c eq ";" or $c eq '{' or $c eq '}') {
-		    my $line = join('', @line, "\n");
-		    $line =~ s/ +([^0-9a-zA-Z_])/$1/g;
-		    $line =~ s/([^0-9a-zA-Z_]) +/$1/g;
-		    print $line;
-		    @line = ();
+		if ($line[0] ne "#" and ($c eq ";" or $c eq '{' or $c eq '}')) {
+		    print_line @line;
 		}
 	    }
 	} elsif ($state == $state_string) {
@@ -97,6 +116,9 @@ for my $arg (@ARGV) {
 	    } while (read $file, $c, 1);
 	} elsif ($state == $state_blank) {
 	    do {
+		if ($c eq "\n" and @line and $line[0] eq '#') {
+		    print_line @line;
+		}
 		unless ($c eq ' ' or $c eq "\t" or $c eq "\f" or $c eq "\n") {
 		    push @line, " " if @line;
 		    $unget = $c;
