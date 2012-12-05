@@ -286,7 +286,6 @@ grammar Jnu;
 
 options {
     backtrack=true;
-    memoize=true;
     output = AST;              // build trees
     ASTLabelType = JnuAST;
 }
@@ -300,18 +299,12 @@ tokens {
   VAR_DECL;
   FIELD_DECL;
   CALL;
-  ELIST;       // expression list
   EXPR; 	   // root of an expression
   EXTENDS;
   IMPORT_DECL;
   CLASS_REF;
-  BUILT_IN;
   QUALIFIED;
-  ARRAY_VAR;
-  SCALAR_VAR;
   CLASS_PARAM;
-  CLASS_BODY;
-  RETURN_TYPE;
 }
 
 /********************************************************************************************
@@ -396,7 +389,7 @@ normalClassDeclaration
         )?            
         classBody
         
-        -> ^('class' IDENTIFIER ^(CLASS_PARAM typeParameters?) ^(SUPER type*) ^(CLASS_BODY classBody))
+        -> ^('class' IDENTIFIER ^(CLASS_PARAM typeParameters?) ^(SUPER type*) ^(BLOCK classBody))
     ;
 
 
@@ -413,7 +406,7 @@ typeParameter
         ('extends' type ('&' type)*
         )?
 
-        -> ^('class' IDENTIFIER ^(CLASS_PARAM) ^(SUPER type*) ^(CLASS_BODY))
+        -> ^('class' IDENTIFIER ^(CLASS_PARAM) ^(SUPER type*) ^(BLOCK))
     ;
 
 
@@ -478,7 +471,7 @@ normalInterfaceDeclaration
         ('extends' type (',' type)*
         )?
         interfaceBody
-        -> ^('class' IDENTIFIER ^(CLASS_PARAM typeParameters?) ^(SUPER type*) ^(CLASS_BODY interfaceBody))
+        -> ^('class' IDENTIFIER ^(CLASS_PARAM typeParameters?) ^(SUPER type*) ^(BLOCK interfaceBody))
     ;
 
 classBody 
@@ -583,15 +576,13 @@ interfaceMethodDeclaration
     :   modifiers
         (typeParameters
         )?
-        (type
-        |'void'
-        )
+        type
         IDENTIFIER
         formalParameters
         ('[' ']'
         )*
         ('throws' qualifiedNameList
-        )? ';'
+        )? ';' -> ^(METHOD_DECL type IDENTIFIER typeParameters? formalParameters qualifiedNameList?)
     ;
 
 /**
@@ -603,7 +594,7 @@ interfaceFieldDeclaration
     :   modifiers type variableDeclarator
         (',' variableDeclarator
         )*
-        ';'
+        ';' -> ^(VAR_DECL type variableDeclarator+)
     ;
 
 
