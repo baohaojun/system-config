@@ -48,10 +48,10 @@ enterClass
 // END: class
 
 enterMethod
-    :   ^(METHOD_DECL type ID .*) // match method subtree with 0-or-more args
+    : 	^(METHOD_DECL type name=IDENTIFIER .*)//    :   ^(METHOD_DECL type ID .*) // match method subtree with 0-or-more args
         {
-        $ID.symbol.type = $type.tsym; // set return type of method
-        System.out.println("line "+$ID.getLine()+": set method type "+$ID.symbol);
+            $IDENTIFIER.symbol.type = $type.tsym; // set return type of method
+            System.out.println("line "+$IDENTIFIER.getLine()+": set method type "+$IDENTIFIER.symbol);
         }
     ;
 

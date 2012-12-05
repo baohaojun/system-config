@@ -98,17 +98,25 @@ exitClass
     ;
 
 enterMethod
-    : 	^(METHOD_DECL ^(RETURN_TYPE type=.?) name=IDENTIFIER .*)
+    : 	^(METHOD_DECL type=. name=IDENTIFIER .*)
         {
             System.out.println("line "+$name.getLine()+": def method "+$name.text);
-            if ($type != null) {
-                $type.scope = currentScope;
-            }
+            $type.scope = currentScope;
             MethodSymbol ms = new MethodSymbol($name.text,null,currentScope);
             ms.def = $name;            // track AST location of def's ID
             $name.symbol = ms;         // track in AST
             currentScope.define(ms); // def method in globals
             currentScope = ms;       // set current scope to method scope
+        }
+
+    |   ^(CONSTRUCTOR_DECL name=IDENTIFIER .*)
+        {
+            System.out.println("line "+$name.getLine()+": def constructor "+$name.text);
+            MethodSymbol ms = new MethodSymbol($name.text,null,currentScope);
+            ms.def = $name;
+            $name.symbol = ms;
+            currentScope.define(ms);
+            currentScope = ms;
         }
     ;
 exitMethod
@@ -130,19 +138,20 @@ atoms
 
 // START: var
 varDeclaration // global, parameter, or local variable
-    :   ^((FIELD_DECL|VAR_DECL|ARG_DECL) type=. IDENTIFIER .?)
+    :   ^((FIELD_DECL|VAR_DECL|ARG_DECL) type=. id+=IDENTIFIER+)
         {
-            System.out.println("line "+$IDENTIFIER.getLine()+": def arg_decl "+$IDENTIFIER.text + " (type: " + $type.toString() + ")");
+
+            $type.scope = currentScope;
+            System.out.println("line "+((JnuAST)$id.get(0)).getLine()+": def arg_decl "+$id.toString() + " (type: " + $type.toString() + ")");
             // System.out.println("line "+$ID.getLine()+": def "+$ID.text);
-            // $type.scope = currentScope;
-            // VariableSymbol vs = new VariableSymbol($ID.text,null);
-            // vs.def = $ID;            // track AST location of def's ID
-            // $ID.symbol = vs;         // track in AST
-            // currentScope.define(vs);
-        }
-    |   ^((ARRAY_VAR|SCALAR_VAR) IDENTIFIER)
-        {
-            System.out.println("line "+$IDENTIFIER.getLine()+": def array "+$IDENTIFIER.text);
+
+            for (int i = 0; i < $id.size(); i++) {
+
+                VariableSymbol vs = new VariableSymbol(((JnuAST)$id.get(i)).getText(),null);
+                vs.def = ((JnuAST)$id.get(i));            // track AST location of def's ID
+                ((JnuAST)$id.get(i)).symbol = vs;         // track in AST
+                currentScope.define(vs);
+            }
         }
     ;
 // END: field

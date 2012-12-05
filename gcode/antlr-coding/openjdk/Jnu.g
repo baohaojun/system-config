@@ -293,6 +293,7 @@ options {
 
 tokens {
   METHOD_DECL; // function definition
+  CONSTRUCTOR_DECL;
   ARG_DECL;    // parameter
   BLOCK;
   MEMBERS;     // class body
@@ -527,12 +528,12 @@ methodDeclaration
         )*
         '}'
         
-        -> ^(METHOD_DECL ^(RETURN_TYPE) IDENTIFIER typeParameters? formalParameters qualifiedNameList? ^(BLOCK blockStatement*))
+        -> ^(CONSTRUCTOR_DECL IDENTIFIER typeParameters? formalParameters qualifiedNameList? ^(BLOCK blockStatement*))
 
     |   modifiers
         (typeParameters
         )?
-        return_type
+        type
         IDENTIFIER
         formalParameters
         ('[' ']'
@@ -544,10 +545,8 @@ methodDeclaration
         |   ';' 
         )
 
-        -> ^(METHOD_DECL ^(RETURN_TYPE return_type) IDENTIFIER typeParameters? formalParameters qualifiedNameList? ^(BLOCK block))
+        -> ^(METHOD_DECL type IDENTIFIER typeParameters? formalParameters qualifiedNameList? ^(BLOCK block))
     ;
-
-return_type : type | 'void' ;
 
 fieldDeclaration 
     :   modifiers
@@ -562,13 +561,10 @@ fieldDeclaration
 
 variableDeclarator 
     :   IDENTIFIER
-        (
-        :   ('[' ']'
-            )+ -> ^(ARRAY_VAR IDENTIFIER)
-        |   -> ^(SCALAR_VAR IDENTIFIER)
-        )
+        ('[' ']'
+        )*
         ('=' variableInitializer
-        )? 
+        )? -> IDENTIFIER
     ;
 
 /**
@@ -640,6 +636,7 @@ primitiveType
     |   'long' 
     |   'float' 
     |   'double' 
+    |	'void'
     ;
 
 typeArguments 
@@ -850,7 +847,7 @@ localVariableDeclaration
     :   variableModifiers type
         variableDeclarator
         (',' variableDeclarator
-        )* -> ^(VAR_DECL type variableDeclarator*)
+        )* -> ^(VAR_DECL type variableDeclarator+)
     ;
 
 statement 
