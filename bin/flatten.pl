@@ -8,7 +8,7 @@ my $state_blank = 4;
 
 my $state = $state_normal;
 my $string_start;
-
+my $indent;
 unless (@ARGV) {
     @ARGV = ("/dev/stdin");
 }
@@ -19,7 +19,7 @@ sub print_line(\@) {
     my $line = join('', @$line_ref, "\n");
     $line =~ s/ +([^0-9a-zA-Z_])/$1/g;
     $line =~ s/([^0-9a-zA-Z_]) +/$1/g;
-    print $line;
+    print ' 'x ($indent * 4) . $line;
     @$line_ref = ();
 }
     
@@ -37,6 +37,7 @@ for my $arg (@ARGV) {
     my $unget;
     my @line = ();
 
+    $indent = 0;
   read_loop:
     while (1) {
 	my $c;
@@ -87,8 +88,13 @@ for my $arg (@ARGV) {
 		}
 		push @line, $c;
 		if ($line[0] ne "#" and ($c eq ";" or $c eq '{' or $c eq '}')) {
+		    if ($c eq '}') {
+			$indent--;
+		    }
 		    print_line @line;
-		}
+		    if ($c eq '{') {
+			$indent++;
+		    }		}
 	    }
 	} elsif ($state == $state_string) {
 	    do {

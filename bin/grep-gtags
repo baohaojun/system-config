@@ -35,8 +35,10 @@ my $fall_back = 0;
 my $do_dir;
 my $silent;
 my $do_component;
+my $start_file;
 GetOptions(
     "e=s" => \$lookup_needle,
+    "f=s" => \$start_file,
     "a=s" => \$arch,
     "d=s" => \$do_dir,
     "c!"  => \$do_component,
@@ -47,6 +49,10 @@ GetOptions(
     "b!"  => \$fall_back,
     "t=s" => sub {$type_re = qr($_[1])i},
     );
+
+if ($start_file and $start_file !~ m,^/,) {
+    chomp($start_file = qx(readlink -f $start_file));
+}
 
 if ($ignore_case) {
     $ignore_case = "-i";
@@ -72,7 +78,7 @@ if ($do_dir) {
     $db_dir = "$ENV{HOME}/tmp/for-code-reading$do_dir";
 }
 
-my $start_file = $ENV{GTAGS_START_FILE};
+$start_file = $ENV{GTAGS_START_FILE} unless $start_file;
 our $approx_dir = "ENV{HOME}/tmp/for-code-reading$ENV{GTAGS_START_FILE}";
 
 
@@ -251,7 +257,11 @@ sub do_cscope($$$) {
     my @updated_paths = keys %updated_paths; 
 
 
-    $start_file = substr($start_file, 1 + length($code_dir));
+    if (substr($start_file, 0, length($code_dir)) eq $code_dir) {
+	$start_file = substr($start_file, 1 + length($code_dir));
+    } else {
+	debug "$start_file not changed";
+    }
 
     if (not $imenu_mode) {
 	open(my $updates_handle, "-|", "echo @updated_paths |tr ' ' '\n'| gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")

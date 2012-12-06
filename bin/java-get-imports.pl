@@ -4,8 +4,13 @@ use strict;
 use String::ShellQuote;
 use Getopt::Long;
 my $code_dir = $ENV{PWD};
+my %files_package;
+my $do_hierarchy;
+my $verbose;
 GetOptions(
     "d=s" => \$code_dir,
+    "h!"  => \$do_hierarchy,
+    "v!"  => \$verbose,
     );
 
 open(my $debug, ">", glob("~/.logs/java-get-imports.log"))
@@ -14,11 +19,10 @@ sub debug(@) {
     print $debug "@_\n";
 }
 
-
-
 my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
 my $qualified_re = qr($id_re(?:\.$id_re)*\b);
 my $connect_re = qr((?: |(?:\[\])+));
+my %super_classes;
 
 
 
@@ -46,32 +50,52 @@ sub match_args($)
 }
 
 my $package;
-my %imports;
-my %wild_imports;
+my %import_qualifieds;
+my %wild_import_qualifieds;
 my %refs;
 my %defs;
-my %import_defs;
+my %import_simples;
+my %simple_qualified_map;
 
 sub define_it($)
 {
     $defs{$_[0]} = 1;
 }
 
+sub import_it($)
+{
+    my $q = $_[0];
+    my $s = $q;
+    $s =~ s/.*\.//;
+    $import_qualifieds{$q} = 1;
+    $import_simples{$s} = 1;
+    $simple_qualified_map{$s} = $q;
+}
+
+my $working_file;
+if (@ARGV != 1) {
+    die "Usage: $0 JAVA_FILE";
+}
+
+$working_file = $ARGV[0];
+chomp($working_file = qx(readlink -f $working_file));
+
 while (<>) {
     if (m/^package ($qualified_re);/) { #package
 	$package = $1;
     } elsif (m/^import (?:static )?($qualified_re);/) { #import
-	$imports{$1} = 1;
-	my $import = $1;
-	$import =~ s/.*\.//;
-	$import_defs{$import} = 1;
+	import_it($1);
     } elsif (m/^import (?:static )?($qualified_re)(?:\.\*);/) { #import
-	$wild_imports{$1} = 1;
+	$wild_import_qualifieds{$1} = 1;
     } elsif (m/(?:class|interface) ($id_re)(.*)\{/) { #class|interface
 	define_it($1);
+	my $class = $1;
 	my $ext = $2;
+	$super_classes{$class} = {} unless exists $super_classes{$class};
 	while ($ext =~ m/($qualified_re)/g) {
-	    $refs{$1} = 1 unless $keywords{$1};
+	    next if $keywords{$1};
+	    $refs{$1} = 1;
+	    $super_classes{$class}{$1} = 1;	    
 	}
     } elsif (m/new ($qualified_re)\((.*)\)\{/) { #anonymous class definition
 	$refs{$1} = 1;
@@ -118,7 +142,7 @@ sub get_default_packages($)
 
     while (<$pipe>) {
 	m#/([^/]+)\.(?:java|aidl):.*# or next;
-	define_it($1);
+	import_it("$package.$1");
     }
     close($pipe);
 }
@@ -151,24 +175,77 @@ sub get_wildcards($)
     }	
 }
 
+sub find_import_for($)
+{
+    my $def = $_[0];
+    return 0 unless $def;
+    open(my $pipe, "-|", "grep-gtags -e $def -d $code_dir -t 'class|interface' -s")
+	or die "can not open grep-gtags";
+    
+    while (<$pipe>) {
+	m/^(.*?):.*?<(.*)>/ or next;
+	
+	my ($file, $tag) = ($1, $2);
+	my $package = $files_package{$file};
+	unless ($package) {
+	    chomp($package = qx(java-get-package $code_dir/$file));
+	    $files_package{$file} = $package;
+	}
+	print "import $package.$tag\n";
+    }
+}
+
 get_default_packages($package);
 get_default_packages("java.lang");
-for my $wild (keys %wild_imports) {
+for my $wild (keys %wild_import_qualifieds) {
     get_wildcards($wild);
+}
+
+
+if ($do_hierarchy) {
+    my $all_defs = qx(grep-imenu -e '.*' -f $working_file);
+    my %q_super_classes;
+    for my $class (sort keys %super_classes) {
+	debug "handling $class";
+	while ($all_defs =~ m/(?:class|interface): <(.*?\b$class)>/g) {
+	    my $q_class = "$package.$1";
+	    if (keys $super_classes{$class}) {
+		for my $super (keys $super_classes{$class}) {
+		    my $prefix = $super;
+		    $prefix =~ s/\..*//;
+		    if ($simple_qualified_map{$prefix}) {
+			$q_super_classes{$q_class} = {} unless exists $q_super_classes{$q_class};
+			my $q_super = $simple_qualified_map{$prefix} . substr($super, length($prefix));
+			$q_super_classes{$q_class}{$q_super} = 1;
+		    }
+		}
+	    }
+	}
+    }
+
+    for my $q_class (sort keys %q_super_classes) {
+	print "$q_class\n";
+	for my $q_super (sort keys %{$q_super_classes{$q_class}}) {
+	    print "  => $q_super\n";
+	}
+	print "\n";
+    }
 }
 
 for my $ref (keys %refs) {
     my $ref_save = $ref;
     $ref =~ s/\..*//;
     unless ($keywords{$ref} or $defs{$ref}) {
-	if ($import_defs{$ref}) {
-	    $import_defs{$ref} ++;
+	if ($import_simples{$ref}) {
+	    $import_simples{$ref} ++;
 	} elsif ($ref =~ m/^[A-Z]/) {
-	    print "refed: $ref_save"
+	    find_import_for($ref_save) unless $do_hierarchy;
 	}
     }
 }
 
-for my $import (keys %import_defs) {
-    debug "import $import not used" if $import_defs{$import} == 1;
+if ($verbose) {
+    for my $import (keys %import_simples) {
+	debug "import $simple_qualified_map{$import} not used" if $import_simples{$import} == 1;
+    }
 }
