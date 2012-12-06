@@ -8,9 +8,20 @@ sub debug(@) {
     print $debug "@_\n";
 }
 
+use Getopt::Long;
+my $type = "class|interface";
+GetOptions(
+    "t=s" => \$type,
+    );
+
+
 my %files_package;
 for (@ARGV) {
-    my $output = qx(grep-gtags -e $_ -s -p "\.java|\.aidl");
+    my $qclass = my $class = $_;
+    if ($class =~ m/\./) {
+	$class =~ s/.*\.//;
+    }
+    my $output = qx(grep-gtags -e $class -t '$type' -s -p "\.java|\.aidl");
     debug "$output";
     while ($output =~ m/^(.*?):.*?: <(.*?)>/mg) {
 	my ($file, $tag) = ($1, $2);
@@ -19,6 +30,6 @@ for (@ARGV) {
 	    chomp ($package = qx(java-get-package $file));
 	    $files_package{$file} = $package;
 	}
-	print "$package.$tag\n";
+	print "$package.$tag\n" if "$package.$tag" =~ m/$qclass/;
     }
 }

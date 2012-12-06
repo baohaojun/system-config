@@ -49,7 +49,6 @@ GetOptions(
 my $imenu_mode = 0;
 if ($0 =~ m,grep-imenu$,) {
     $imenu_mode = 1;
-    $silent = 1;
 }
 
 if ($ignore_case) {
@@ -77,7 +76,7 @@ if ($do_dir) {
 }
 
 $start_file = $working_file || $ENV{GTAGS_START_FILE};
-die "start_file not set" unless $start_file;
+debug "start_file: $start_file";
 our $approx_dir = "ENV{HOME}/tmp/for-code-reading$ENV{GTAGS_START_FILE}";
 
 

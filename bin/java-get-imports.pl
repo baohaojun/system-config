@@ -13,17 +13,17 @@ use Getopt::Long;
 chomp(my $code_dir = qx(find-code-reading-dir));
 my %files_package;
 my $verbose;
+my $resolve;
 GetOptions(
     "d=s" => \$code_dir,
     "v!"  => \$verbose,
+    "r=s" => \$resolve,
     );
 
 my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
 my $qualified_re = qr($id_re(?:\.$id_re)*\b);
 my $connect_re = qr((?: |(?:\[\])+));
 my %super_classes;
-
-
 
 my @keywords = ("abstract", "assert", "boolean", "break", "byte",
 	      "case", "catch", "char", "class", "const", "continue", "default",
@@ -38,6 +38,13 @@ my @keywords = ("abstract", "assert", "boolean", "break", "byte",
 my $keywords = join('|', @keywords);
 my $keywords_re = qr($keywords);
 my %keywords;
+
+my @modifiers = ('public', 'protected', 'private', 'static',
+'abstract', 'final', 'native', 'synchronized', 'transient',
+'volatile', 'strictfp');
+
+my $modifiers = join('|', @modifiers);
+my $modifier_re = qr($modifiers);
 
 for my $key (@keywords) {
     $keywords{$key} = 1;
@@ -55,6 +62,16 @@ my %refs;
 my %defs;
 my %import_simples;
 my %simple_qualified_map;
+my %var_type_map;
+
+sub type_it($$)
+{
+    debug "type it: $_[0] $_[1]";
+    $defs{$_[0]} = 1;
+    $refs{$_[1]} = 1;
+    $var_type_map{$_[0]} = {} unless exists $var_type_map{$_[0]};
+    $var_type_map{$_[0]}{$_[1]} = 1;
+}
 
 sub define_it($)
 {
@@ -88,6 +105,7 @@ if (not $code_dir) {
 }
     
 while (<>) {
+    debug "got $_";
     if (m/^package ($qualified_re);/) { #package
 	$package = $1;
     } elsif (m/^import (?:static )?($qualified_re);/) { #import
@@ -108,23 +126,29 @@ while (<>) {
 	$refs{$1} = 1;
 	match_args($2);
     } elsif (m/($qualified_re)$connect_re($id_re)\((.*)\)\{/) { #method definition
-	define_it($2);
-	$refs{$1} = 1 unless $keywords{$1};
+	debug "got method: $1 $2";
+	type_it($2, $1);
 
 	my $params = $3;
-	$params =~ s/\b$keywords_re\b//g;
+	$params =~ s/$modifier_re //g;
 	while ($params =~ m/($qualified_re)$connect_re($id_re)/g) {
-	    define_it($2);
-	    $refs{$1} = 1;
+	    type_it($2, $1);
 	}
-    } elsif (m/($qualified_re)$connect_re($id_re)(,|=.*)?;/) { #var definition
-	define_it($2);
-	$refs{$1} = 1;
+    } elsif (m/($qualified_re)$connect_re($id_re)\)/) { #arguments
+	s/$modifier_re //g;
+	my $line = $_;
+	while ($line =~ m/($qualified_re)$connect_re($id_re)(?=,|\))/g) {
+	    debug "got $1 $2";
+	    type_it($2, $1);
+	}
+    } elsif (m/($qualified_re)$connect_re($id_re)(,|=.*|;)/) { #var definition
+	type_it($2, $1);
 	my $assign = $3;
 	while ($assign =~ m/($qualified_re)/g) {
 	    $refs{$1} = 1;
 	}
     } else {
+	debug "not matched: $_";
 	while (m/($qualified_re)=/g) {
 	    define_it($1);
 	}
@@ -203,12 +227,14 @@ sub find_import_for($)
 	push @imports, "$package.$tag";
     }
 
-    if (@imports == 1) {
-	print "import @imports\n";
-    } elsif (@imports) {
-	print "multi-import @imports\n";
-    } else {
-	print "can not import $def\n";
+    unless ($resolve) {
+	if (@imports == 1) {
+	    print "import @imports\n";
+	} elsif (@imports) {
+	    print "multi-import @imports\n";
+	} else {
+	    print "can not import $def\n";
+	}
     }
 }
 
@@ -234,5 +260,27 @@ for my $ref (keys %refs) {
 if ($verbose) {
     for my $import (keys %import_simples) {
 	debug "import $simple_qualified_map{$import} not used" if $import_simples{$import} == 1;
+    }
+}
+
+sub prefix($)
+{
+    my ($s) = @_;
+    $s =~ s/\..*//;
+    return $s;
+}
+
+if ($resolve) {
+    if ($simple_qualified_map{$resolve}) {
+	print $simple_qualified_map{$resolve};
+    } elsif ($var_type_map{$resolve}) {
+	for my $type (keys $var_type_map{$resolve}) {
+	    my $prefix = prefix($type);
+	    if ($simple_qualified_map{$prefix}) {
+		print $simple_qualified_map{$prefix} . substr($type, length($prefix)) . "\n";
+	    } else {
+		print "$type\n";
+	    }
+	}
     }
 }
