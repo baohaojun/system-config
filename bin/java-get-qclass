@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+
+use strict;
+die "Error: Usage $0 class" unless @ARGV;
+open(my $debug, ">", glob("~/.logs/java-get-qclass.log"))
+    or die "Can not open debug log file ~/.logs/java-get-qclass.log";
+sub debug(@) {
+    print $debug "@_\n";
+}
+
+my %files_package;
+for (@ARGV) {
+    my $output = qx(grep-gtags -e $_ -s -p "\.java|\.aidl");
+    debug "$output";
+    while ($output =~ m/^(.*?):.*?: <(.*?)>/mg) {
+	my ($file, $tag) = ($1, $2);
+	my $package = $files_package{$file};
+	unless ($package) {
+	    chomp ($package = qx(java-get-package $file));
+	    $files_package{$file} = $package;
+	}
+	print "$package.$tag\n";
+    }
+}

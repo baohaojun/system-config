@@ -1,23 +1,22 @@
 #!/usr/bin/perl
 
 use strict;
-use String::ShellQuote;
-use Getopt::Long;
-my $code_dir = $ENV{PWD};
-my %files_package;
-my $do_hierarchy;
-my $verbose;
-GetOptions(
-    "d=s" => \$code_dir,
-    "h!"  => \$do_hierarchy,
-    "v!"  => \$verbose,
-    );
 
 open(my $debug, ">", glob("~/.logs/java-get-imports.log"))
     or die "Can not open debug log file ~/.logs/java-get-imports.log";
 sub debug(@) {
     print $debug "@_\n";
 }
+
+use String::ShellQuote;
+use Getopt::Long;
+chomp(my $code_dir = qx(find-code-reading-dir));
+my %files_package;
+my $verbose;
+GetOptions(
+    "d=s" => \$code_dir,
+    "v!"  => \$verbose,
+    );
 
 my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
 my $qualified_re = qr($id_re(?:\.$id_re)*\b);
@@ -78,8 +77,16 @@ if (@ARGV != 1) {
 }
 
 $working_file = $ARGV[0];
-chomp($working_file = qx(readlink -f $working_file));
+chomp($working_file = qx(java-flatten-cache $working_file));
+@ARGV = ($working_file);
 
+if (not $code_dir) {
+    die "code dir not found!";
+} else {
+    debug "code dir set to $code_dir";
+    chdir $code_dir or die "can not chdir $code_dir";
+}
+    
 while (<>) {
     if (m/^package ($qualified_re);/) { #package
 	$package = $1;
@@ -179,9 +186,11 @@ sub find_import_for($)
 {
     my $def = $_[0];
     return 0 unless $def;
-    open(my $pipe, "-|", "grep-gtags -e $def -d $code_dir -t 'class|interface' -s")
+    return 0 if $def =~ m/\./;
+    open(my $pipe, "-|", "grep-gtags -e $def -d $code_dir -t 'class|interface' -s -p '\\.java|\\.aidl'")
 	or die "can not open grep-gtags";
     
+    my @imports;
     while (<$pipe>) {
 	m/^(.*?):.*?<(.*)>/ or next;
 	
@@ -191,7 +200,15 @@ sub find_import_for($)
 	    chomp($package = qx(java-get-package $code_dir/$file));
 	    $files_package{$file} = $package;
 	}
-	print "import $package.$tag\n";
+	push @imports, "$package.$tag";
+    }
+
+    if (@imports == 1) {
+	print "import @imports\n";
+    } elsif (@imports) {
+	print "multi-import @imports\n";
+    } else {
+	print "can not import $def\n";
     }
 }
 
@@ -202,36 +219,6 @@ for my $wild (keys %wild_import_qualifieds) {
 }
 
 
-if ($do_hierarchy) {
-    my $all_defs = qx(grep-imenu -e '.*' -f $working_file);
-    my %q_super_classes;
-    for my $class (sort keys %super_classes) {
-	debug "handling $class";
-	while ($all_defs =~ m/(?:class|interface): <(.*?\b$class)>/g) {
-	    my $q_class = "$package.$1";
-	    if (keys $super_classes{$class}) {
-		for my $super (keys $super_classes{$class}) {
-		    my $prefix = $super;
-		    $prefix =~ s/\..*//;
-		    if ($simple_qualified_map{$prefix}) {
-			$q_super_classes{$q_class} = {} unless exists $q_super_classes{$q_class};
-			my $q_super = $simple_qualified_map{$prefix} . substr($super, length($prefix));
-			$q_super_classes{$q_class}{$q_super} = 1;
-		    }
-		}
-	    }
-	}
-    }
-
-    for my $q_class (sort keys %q_super_classes) {
-	print "$q_class\n";
-	for my $q_super (sort keys %{$q_super_classes{$q_class}}) {
-	    print "  => $q_super\n";
-	}
-	print "\n";
-    }
-}
-
 for my $ref (keys %refs) {
     my $ref_save = $ref;
     $ref =~ s/\..*//;
@@ -239,7 +226,7 @@ for my $ref (keys %refs) {
 	if ($import_simples{$ref}) {
 	    $import_simples{$ref} ++;
 	} elsif ($ref =~ m/^[A-Z]/) {
-	    find_import_for($ref_save) unless $do_hierarchy;
+	    find_import_for($ref_save);
 	}
     }
 }

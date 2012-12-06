@@ -19,11 +19,6 @@ print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
 #gtags-cscope-grep regexp
 
 
-my $imenu_mode = 0;
-if ($0 =~ m,grep-imenu$,) {
-    $imenu_mode = 1;
-}
-
 my $lookup_needle = "hello_world";
 my $arch = ".";
 my $lookup_restrict_regexp;
@@ -36,9 +31,10 @@ my $do_dir;
 my $silent;
 my $do_component;
 my $start_file;
+my $working_file;
 GetOptions(
     "e=s" => \$lookup_needle,
-    "f=s" => \$start_file,
+    "f=s" => \$working_file,
     "a=s" => \$arch,
     "d=s" => \$do_dir,
     "c!"  => \$do_component,
@@ -50,8 +46,10 @@ GetOptions(
     "t=s" => sub {$type_re = qr($_[1])i},
     );
 
-if ($start_file and $start_file !~ m,^/,) {
-    chomp($start_file = qx(readlink -f $start_file));
+my $imenu_mode = 0;
+if ($0 =~ m,grep-imenu$,) {
+    $imenu_mode = 1;
+    $silent = 1;
 }
 
 if ($ignore_case) {
@@ -78,7 +76,8 @@ if ($do_dir) {
     $db_dir = "$ENV{HOME}/tmp/for-code-reading$do_dir";
 }
 
-$start_file = $ENV{GTAGS_START_FILE} unless $start_file;
+$start_file = $working_file || $ENV{GTAGS_START_FILE};
+die "start_file not set" unless $start_file;
 our $approx_dir = "ENV{HOME}/tmp/for-code-reading$ENV{GTAGS_START_FILE}";
 
 
@@ -142,8 +141,10 @@ read_line:
 	my $type = "definition";
 	if ($str =~ m/^(\S+):\t/) {
 	    $type = $1;
+	    debug "type is $type";
 	}
 	if (not -e "$path") {
+	    debug "ignore $path: not exist\n";
 	    next;
 	}
 	if ($arch ne "." and $path =~ m,(?:/|^)arch/, and $path !~ m,(?:/|^)arch/[^/]*$arch,) {
@@ -157,7 +158,7 @@ read_line:
 	}
 
 	if ($type_re and $type !~ m/$type_re/) {
-	    debug "ignore $path because type mismatch: $type !~ $type_re";
+	    debug "ignore $path:$line: $str because type mismatch: $type !~ $type_re";
 	    $filter_worked++;
 	    next;
 	}
@@ -175,6 +176,7 @@ read_line:
 	if ( # we should extract this into a .conf!!
 	     $str =~ m/(?:^|:\t)#undef|^variable.*:\s+EXPORT_SYMBOL/ or 
 	     $path =~ $path_inv) {
+	    debug "ignore because $path matches inverse pattern";
 	    next;
 	}
 
@@ -199,6 +201,7 @@ read_line:
 	    "str" => $str,
 	    "type", => $type,
 	};
+	debug "got matches: $path:$line: $str";
 	my $x = $path;
 	$x =~ s,.*/,,;
 	$matches{$_}{"dist"} = (
@@ -223,7 +226,7 @@ sub do_cscope($$$) {
     my $got_results = 0;
     my $code_dir = substr($db_dir, length("$ENV{HOME}/tmp/for-code-reading"));
     $code_dir =~ s,/+,/,g;
-    chdir ($code_dir) or die "Can not change to $code_dir";
+    chdir ($code_dir) or die "Can not change to $code_dir" unless $working_file;
 
     $ENV{GTAGSDBPATH} = $db_dir;
     $ENV{GTAGSROOT} = $code_dir;
