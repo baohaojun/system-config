@@ -1,2 +1,22 @@
 #!/bin/bash
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test -d hello_project; then
+    die "can not create the hello_project as template"
+fi
+
+android create project -n ${1:-Superuser} -t 8 -k com.bhj.boot -p hello_project -a Hello
+cp hello_project/*.properties . 
+cp hello_project/build.xml .
+cat <<EOF > ant.properties
+key.store=/home/bhj/my-release-key.keystore
+key.alias=bhjkeystore
+EOF
+rm hello_project/ -rf
+(get-authinfo localhost ant | perl -ne 'print "$_\n$_\n"') | ant release
 
