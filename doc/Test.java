@@ -2,6 +2,15 @@ import java.util.*;
 class Test {
     public static void main(String []args) {
 	int[] xx = {2};
+
+	char i = 0x8000;
+	while (i != 0 && i == (char) -i) {
+	    System.out.println("yes");
+	}
+	System.out.printf("%x\n", -i);
+
+
+	System.out.println("2 + 2 = " + 2+2);
 	System.out.println(xx instanceof int[]);
 	System.out.println("hello world");
 	Test x = new Test2();

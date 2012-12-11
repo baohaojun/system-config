@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.os.SystemProperties;
 import android.provider.Settings;
 
 public class AutoBootReceiver extends BroadcastReceiver {
