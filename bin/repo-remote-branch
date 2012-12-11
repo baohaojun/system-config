@@ -3,6 +3,8 @@
 branch=$(repo-branch)
 if test ${#branch} = 40; then
     echo $branch
+elif [[ $branch =~ /tags/ ]]; then
+    echo $branch
 else
     echo $(repo-remote)/$branch
 fi

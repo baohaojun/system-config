@@ -9,4 +9,4 @@ for x in $(seq 1 6); do
     echo su is not ready for $x, sleep...
     sleep 10
 done
-su -c 'logwrapper sh -x /sdcard/start-debian.sh'
+su -c 'logwrapper sh -x /sdcard/start-debian2.sh'
