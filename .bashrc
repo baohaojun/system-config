@@ -28,7 +28,9 @@ export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
 export USE_CCACHE=1
 if test -e ~/.bash-path; then
-    . ~/.bash-path
+    if test -z "$RECURSIVE_SHELL"; then
+        . ~/.bash-path
+    fi
 else
     if test -d ~/etc/path/$(uname)-$(uname -m); then
         export PATH=$(
