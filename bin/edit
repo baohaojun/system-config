@@ -26,7 +26,7 @@ if ($remote_ip) {
 
 my @emacsclient = ('emacsclient', '-n');
 
-if ($0 =~ m,/?edit-wait$,) {
+if ($0 =~ m,/?edit-wait$, or $0 =~ m,/?ew$,) {
   @emacsclient = ('emacsclient');
 }
 
