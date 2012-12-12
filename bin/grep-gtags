@@ -32,12 +32,14 @@ my $silent;
 my $do_component;
 my $start_file;
 my $working_file;
+my $wild_card;
 GetOptions(
     "e=s" => \$lookup_needle,
     "f=s" => \$working_file,
     "a=s" => \$arch,
     "d=s" => \$do_dir,
     "c!"  => \$do_component,
+    "w!"  => \$wild_card,
     "s!"  => \$silent,
     "p=s" => sub {$path_matcher = qr($_[1])i},
     "v=s" => sub {$path_matcher_inv = qr($_[1])i},
@@ -45,6 +47,11 @@ GetOptions(
     "b!"  => \$fall_back,
     "t=s" => sub {$type_re = qr($_[1])i},
     );
+
+
+if ($wild_card) {
+    $lookup_needle = ".*";
+}
 
 my $imenu_mode = 0;
 if ($0 =~ m,grep-imenu$,) {
@@ -291,7 +298,7 @@ sub do_cscope($$$) {
     }
 
     if (%matches and not $silent) {
-	printf "Found total %d%s definitions: Entering directory \`%s'\n", scalar keys %matches, $filter_worked ? "/$filter_worked" : "", $code_dir;
+	printf STDERR "Found total %d%s definitions: Entering directory \`%s'\n", scalar keys %matches, $filter_worked ? "/$filter_worked" : "", $code_dir;
     }
 
     for (sort {
