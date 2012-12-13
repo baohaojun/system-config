@@ -163,6 +163,12 @@ read_line:
 	    next;
 	}
 
+	if ($path_matcher_inv and $path =~ m/$path_matcher_inv/) {
+	    debug "ignore $path because of inverted path matcher matched";
+	    $filter_worked++;
+	    next;
+	}
+
 	if ($type_re and $type !~ m/$type_re/) {
 	    debug "ignore $path:$line: $str because type mismatch: $type !~ $type_re";
 	    $filter_worked++;
@@ -255,6 +261,7 @@ sub do_cscope($$$) {
 	print "Filter worked in $code_dir, and you got 0 matches! Will restart without filtering\n";
 	$filter_worked = 0;
 	$path_matcher = "";
+	$path_matcher_inv = "";
 	$type_re = "";
 	do_cscope(@_);
 	return 1;

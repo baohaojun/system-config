@@ -7,21 +7,26 @@ function die() {
 }
 
 type='.*?'
-TEMP=$(getopt -o t: --long type: -n $(basename $0) -- "$@")
+proto=false
+TEMP=$(getopt -o pt: --long prototype,type: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
+        -p|--prototype)
+            proto=true
+            shift
+            ;;
         -t|--type)
-        type=$2
-        shift 2
-        ;;
+            type=$2
+            shift 2
+            ;;
         --)
-        shift
-        break
-        ;;
+            shift
+            break
+            ;;
         *)
-        die "internal error"
-        ;;
+            die "internal error"
+            ;;
     esac
 done
 
@@ -32,6 +37,10 @@ for class in "$@"; do
     for qclass in $qclasses; do
         file=$(java-find-def.pl -e $qclass)
         tag_cache=$(java-tags-cache $file)
-        perl -ne "print \"\$1\n\" if m/$type: <$qclass.([^.>]*)>/" $tag_cache
+        if test $proto = true; then
+            perl -ne "print \"\$1\n\" if m/$type: <$qclass.[^.>]*> : (.*)/" $tag_cache
+        else
+            perl -ne "print \"\$1\n\" if m/$type: <$qclass.([^.>]*)>/" $tag_cache
+        fi
     done
 done | sort -u

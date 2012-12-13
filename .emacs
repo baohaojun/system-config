@@ -161,6 +161,31 @@
       (push-mark))
     (ctags-beginning-of-defun arg)))
 
+(defun current-regexp (re)
+  (save-excursion
+    (let (start end)
+      (while (not (looking-at re))
+	(backward-char))
+      (while (looking-at re)
+	(backward-char))
+      (forward-char)
+      (setq start (point))
+      (search-forward-regexp re)
+      (setq end (point))
+      (buffer-substring-no-properties start end))))
+    
+(defun java-resolve (id)
+  (interactive 
+   (list (or (and transient-mark-mode mark-active
+		  (/= (point) (mark))
+		  (buffer-substring-no-properties (point) (mark)))
+	     (current-regexp "[.a-z0-9]+"))))
+  (shell-command (format "java-get-imports.pl %s -r %s"
+			 (shell-quote-argument (buffer-file-name))
+			 (shell-quote-argument id))))
+
+(global-set-key (kbd "M-g j r") 'java-resolve)
+
 (defun bhj-c-end-of-defun (&optional arg)
   (interactive "^p")
   (progn

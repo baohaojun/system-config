@@ -11,9 +11,11 @@ sub debug(@) {
 use Getopt::Long;
 my $lookup_needle;
 my $code_dir = ".";
+my $verbose;
 GetOptions(
     "e=s" => \$lookup_needle,
     "d=s" => \$code_dir,
+    "v!"  => \$verbose,
     );
 
 die "Usage: $0 -e LOOKUP_NEEDLE -d CODE_DIR" unless $lookup_needle;
@@ -35,7 +37,12 @@ while (<$pipe>) {
 	$files_package{$file} = $package;
     }
     if ("$package.$tag" eq $lookup_needle_save) {
-	print "$file\n";
+	if ($verbose) {
+	    m/^(.*?):(\d+): (\S+): </;
+	    print "$3 $package.$tag at $1 line $2.\n";
+	} else {
+	    print "$file\n";
+	}
 	exit 0;
     } else {
 	debug "$package.$tag not eq to $lookup_needle_save"

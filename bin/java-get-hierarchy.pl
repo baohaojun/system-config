@@ -6,6 +6,9 @@ sub debug(@) {
     print $debug "@_\n";
 }
 
+chomp(my $code_dir = qx(find-code-reading-dir));
+chdir $code_dir or die "can not chdir $code_dir";
+
 my $recursive = 1;
 if ($ENV{DO_RECURSIVE_JAVA_HIERARCHY}) {
     $recursive = 0;
@@ -13,8 +16,10 @@ if ($ENV{DO_RECURSIVE_JAVA_HIERARCHY}) {
 $ENV{DO_RECURSIVE_JAVA_HIERARCHY} = 1;
 use Getopt::Long;
 my $method;
+my $verbose;
 GetOptions(
     "m=s" => \$method,
+    "v!"  => \$verbose,
     );
 
 if (@ARGV != 1) {
@@ -22,6 +27,9 @@ if (@ARGV != 1) {
 }
 
 my $q_class = $ARGV[0];
+if ($q_class !~ m/\./) {
+    chomp($q_class = qx(java-get-qclass $q_class));
+}
 chomp(my $working_file= qx(java-find-def.pl -e $q_class));
 my $working_file_dir = $working_file;
 $working_file_dir =~ s,(.*)/.*,$1,;
@@ -32,7 +40,7 @@ chomp(my $tags_cache = qx(java-tags-cache $working_file));
 my $class = $q_class;
 $class =~ s/.*\.//;
 
-my $def_line = qx(grep -P -e '(?:class|interface).*\\b$class\\b.*\\{' $flatten_cache);
+my $def_line = qx(grep -P -e '(?:class|interface).*\\b$class\\b.*\\{' $flatten_cache | grep -v '\\b$class\\b\\.');
 
 my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
 my $qualified_re = qr($id_re(?:\.$id_re)*\b);
@@ -181,17 +189,14 @@ sub print_hierarchy($$)
 {
     my ($q_class, $indent) = @_;
     my $method_indent;
-    if ($method) {
+    if ($method or $verbose) {
 	$method_indent = " " x ($indent * 3 + 3);
     }
 	
-    if (not $indent) {
-	print "$q_class\n";
-    } else {
-	print " " x ($indent * 3 - 3) . "=> " . "$q_class\n";
-    }
+    print " " x ($indent * 3 - 3) . "=> " . qx(java-find-def.pl -e $q_class -v);
 
     system("java-query-qmethod $q_class.$method|perl -npe 's/^/$method_indent/'") if $method;
+    system("java-get-members $q_class -p | perl -npe 's/^/$method_indent/'") if $verbose;
     if ($super_classes{$q_class}) {
 	for (sort keys $super_classes{$q_class}) {
 	    print_hierarchy($_, $indent + 1);
@@ -199,4 +204,8 @@ sub print_hierarchy($$)
     }
 }
 
-print_hierarchy($q_class, 0);
+if ($ENV{EMACS} eq 't') {
+    chomp(my $pwd = qx(pwd));
+    print "make: Entering directory \`$pwd'\n\n";
+}
+print_hierarchy($q_class, 1);
