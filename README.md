@@ -17,3 +17,32 @@ less than 2 seconds.
 
 For more details, visit [my github page](http://baohaojun.github.com/beagrep.html) (man page included).
 
+# How does it compare to [ag (AKA the silver searcher)](https://github.com/ggreer/the_silver_searcher)
+
+My laptop: Thinkpad T420; CPU: Intel(R) Core(TM) i5-2520M CPU @ 2.50GHz; Memory: 8G.
+
+    cd ~/src/android   
+    time ag readlink .
+
+The first time it took 3 minutes, the second time it took 8 seconds, very impressive!
+
+    time beagrep -e readlink
+
+The first time it took 4 seconds, the second time it took 0.8 seconds.
+
+# Pros and cons of beagrep
+
+## Pros
+
+* Very fast
+
+## Cons
+
+* You need build the search engine database beforehand (the first time
+  you do this will take a long while, but subsequent updating is
+  reasonably fast)
+
+* Works on whole words only: can not use `beagrep -e readli` to find
+  `readlink`, but hey, do you really need that? What about `beagrep -e r.*e.*a.*d.*l.*i.*n.*k.*`, which can also find `readlink` you know?
+
+
