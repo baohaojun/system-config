@@ -39,30 +39,7 @@
   (tool-bar-mode -1)
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
-  (set-frame-font 
-   (if (file-exists-p "~/.emacs-frame-font")
-       (save-excursion
-         (find-file "~/.emacs-frame-font")
-         (goto-char (point-min))
-         (let ((monaco-font (read (current-buffer))))
-           (kill-buffer (current-buffer))
-           monaco-font))
-     (concat "Monaco-10.5"
-	     (if (eq system-type 'windows-nt)
-		 ":antialias=none"
-	       ""))))
-  (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size 16))
-  (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size 16))
-
-
-  (set-fontset-font (frame-parameter nil 'font)
-		    'han (font-spec :family "Simsun" :size 15))
-  (set-fontset-font (frame-parameter nil 'font)
-		    'symbol (font-spec :family "Simsun" :size 15))
-  (set-fontset-font (frame-parameter nil 'font)
-		    'cjk-misc (font-spec :family "Simsun" :size 15))
-  (set-fontset-font (frame-parameter nil 'font)
-		    'bopomofo (font-spec :family "Simsun" :size 15)))
+  (load "bhj-fonts"))
 
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 (require 'weblogger)
@@ -723,6 +700,7 @@
  '(require-final-newline t)
  '(safe-local-variable-values (quote ((bhj-grep-dir . "~/src/android/") (bhj-grep-dir . ~/src/android/) (sh-indent-comment . t) (c-style . whitesmith) (major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
  '(save-place t nil (saveplace))
+ '(scalable-fonts-allowed t)
  '(senator-minor-mode-hook (quote (ignore)))
  '(session-initialize (quote (de-saveplace session places keys menus)) nil (session))
  '(session-use-package t nil (session))
@@ -765,7 +743,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(bold-italic ((t (:slant italic :weight bold :family "Consolas"))))
+ '(italic ((t (:slant italic :family "Consolas")))))
 
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
@@ -2321,17 +2300,18 @@ criteria can be provided via the optional match-string argument "
 ; Use fundamental mode when editing plantuml blocks with C-c '
 (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
 
-(require 'twittering-mode)
-(twittering-enable-unread-status-notifier)
-(setq-default twittering-icon-mode t)
-(setq twittering-use-ssl nil
-      twittering-oauth-use-ssl nil)
-(setq twittering-icon-mode 1)
-(setq twittering-enabled-services '(sina))
-(setq twittering-accounts '((sina (username "baohj_zj@hotmail.com")
-				  (auth oauth))))
+(when nil
+  (require 'twittering-mode)
+  (twittering-enable-unread-status-notifier)
+  (setq-default twittering-icon-mode t)
+  (setq twittering-use-ssl nil
+	twittering-oauth-use-ssl nil)
+  (setq twittering-icon-mode 1)
+  (setq twittering-enabled-services '(sina))
+  (setq twittering-accounts '((sina (username "baohj_zj@hotmail.com")
+				    (auth oauth))))
 
-(setq twittering-initial-timeline-spec-string `(":home@sina"))
+  (setq twittering-initial-timeline-spec-string `(":home@sina")))
 
 (setq gnus-posting-styles
       '(
@@ -2515,4 +2495,3 @@ using ctags-exuberant"
 (condition-case nil
     (server-start)
   (error (message "emacs server start failed")))
-

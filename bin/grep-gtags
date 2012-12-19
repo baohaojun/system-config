@@ -33,6 +33,7 @@ my $do_component;
 my $start_file;
 my $working_file;
 my $wild_card;
+my $only_start_file;
 GetOptions(
     "e=s" => \$lookup_needle,
     "f=s" => \$working_file,
@@ -41,13 +42,13 @@ GetOptions(
     "c!"  => \$do_component,
     "w!"  => \$wild_card,
     "s!"  => \$silent,
+    "o!"  => \$only_start_file,
     "p=s" => sub {$path_matcher = qr($_[1])i},
     "v=s" => sub {$path_matcher_inv = qr($_[1])i},
     "i!"  => \$ignore_case,
     "b!"  => \$fall_back,
     "t=s" => sub {$type_re = qr($_[1])i},
     );
-
 
 if ($wild_card) {
     $lookup_needle = ".*";
@@ -83,6 +84,13 @@ if ($do_dir) {
 }
 
 $start_file = $working_file || $ENV{GTAGS_START_FILE};
+
+if ($only_start_file and not $path_matcher) {
+    $path_matcher = $start_file;
+    $path_matcher =~ s,.*/,,;
+    $path_matcher = qr(\Q$path_matcher\E);
+}
+
 debug "start_file: $start_file";
 our $approx_dir = "ENV{HOME}/tmp/for-code-reading$ENV{GTAGS_START_FILE}";
 
