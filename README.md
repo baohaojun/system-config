@@ -24,11 +24,21 @@ My laptop: Thinkpad T420; CPU: Intel(R) Core(TM) i5-2520M CPU @ 2.50GHz; Memory:
     cd ~/src/android   
     time ag readlink .
 
-The first time it took 3 minutes, the second time it took 8 seconds, very impressive!
+The first time it took 3 minutes, the second time it took 8 seconds,
+very impressive! I think if I had learned about it earlier I probably
+wouldn't have started working on beagrep in the first place, because I
+would have thought it is quick enough already.
 
     time beagrep -e readlink
 
-The first time it took 4 seconds, the second time it took 0.8 seconds.
+The first time it took 10 seconds, the second time it took 0.8
+seconds. (So the 2G in 2 second slogan is a bit under it, and given
+that `ag` is so fast when cache is hot, I actually think I need change
+the slogan to be more precise:-)
+
+Also, an idea has occured to me natually, what if I replace the grep
+in beagrep with ag, will it squeeze another tenth of second out? The
+name will be beag, of course:-)
 
 # Pros and cons of beagrep
 
