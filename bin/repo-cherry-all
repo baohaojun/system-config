@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+TEMP=$(getopt -o f:t:r: --long from:to:remote: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -f|--from)
+            from=$2
+            shift 2
+            ;;
+        -t|--to)
+            to=$2
+            shift 2
+            ;;
+        -r|--remote)
+            remote=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+if test -z "$from" -o -z "$to" -o -z "$remote"; then
+    die "Error: Usage $(basename $0) -f FROM -t TO -r REMOTE"
+fi
+
+my-rfa '
+    git fetch '"$remote"' -v;
+    TOP=$ANDROID_TOP;
+    log=$TOP/out/diff/$(repo-path|perl -npe "s,/,.,g").log;
+    mkdir -p $(dirname $log);
+    git rev-list '"$remote/$from ^$remote/$to"' > $log 2>/dev/null;
+    if test $(stat -c %s $log) = 0; then
+        rm $log;
+    else
+        for y in $(cat $log|reverse); do
+            git log -1 --pretty=format:"%H %ae %s%n" $y;
+        done > $log.2;
+        mv $log.2 $log;
+    fi;
+    pwd
+'
