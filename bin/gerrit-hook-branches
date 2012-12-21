@@ -5,4 +5,12 @@
         cat .gerrit-hooks-branches
     fi
     git branch -a|grep -v -e '->'|grep /topic/|perl -npe 's,remotes/.*?/,,'
+    (
+        if test -d ~/.repoconfig/hook-branches; then
+            cd ~/.repoconfig/hook-branches;
+            for x in *; do
+                echo $x; 
+            done
+        fi
+    )
 ) | sort -u

@@ -158,7 +158,7 @@ cd_record()
 {
     local ret=$?
     if test $ret -ne 0; then
-        export PROMPT_RET="Ret: $ret "
+        export PROMPT_RET="Ret: $ret @ $(date +%H:%M:%S) "
     else
         export PROMPT_RET=
     fi

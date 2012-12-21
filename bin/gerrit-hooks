@@ -22,6 +22,9 @@ function do_review()
         export REPO_BRANCH=$branch
         git fetch $(repo-remote) $branch || break
         if git-is-ancestor $head FETCH_HEAD; then
+            if ! git diff --quiet $head FETCH_HEAD; then
+                die "remote branch $branch is note the same as the master ($head)"
+            fi
             continue
         fi
 
