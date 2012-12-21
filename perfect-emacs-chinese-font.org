@@ -58,3 +58,15 @@ org-mode里的中英文混排、尤其是在表格中，如果不选等宽（指
 [[./perfect-emacs-chinese-font.png]]
 
 配置脚本见 [[http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/bhj-fonts.el][github]] 。
+
+另外，这个设置在Windows上也可以用，但是好像不是很可靠（我见到它有时候不
+起作用，不明白怎么回事），并且在我的Win7系统上必须把 =微软雅黑= 给加到
+=face-font-rescale-alist= 里去（可以用 =C-u C-x == 来看当前汉字是用什么字体显示的，从而决定应该在这个变量里加什么。另一个有用的函数是  =describe-fontset= ）：
+
+#+begin_src emacs-lisp
+(setq face-font-rescale-alist '(("微软雅黑" . 1.2) ("Microsoft Yahei" . 1.2) ("WenQuanYi Zen Hei" . 1.2)))
+#+end_src
+
+见图：
+
+[[./perfect-emacs-chinese-font-win7.png]]

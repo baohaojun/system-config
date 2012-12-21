@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="狠狠地折腾了一把Emacs中文字体"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-19 16:42:15 CST"/>
+<meta name="generated" content="2012-12-21 10:50:15 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -208,6 +208,24 @@ org-mode里的中英文混排、尤其是在表格中，如果不选等宽（指
 </p>
 <p>
 配置脚本见 <a href="http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/bhj-fonts.el">github</a> 。
+</p>
+<p>
+另外，这个设置在Windows上也可以用，但是好像不是很可靠（我见到它有时候不
+起作用，不明白怎么回事），并且在我的Win7系统上必须把 <code>微软雅黑</code> 给加到
+<code>face-font-rescale-alist</code> 里去（可以用 <code>C-u C-x =</code> 来看当前汉字是用什么字体显示的，从而决定应该在这个变量里加什么。另一个有用的函数是  <code>describe-fontset</code> ）：
+</p>
+
+
+
+<pre class="src src-emacs-lisp">(setq face-font-rescale-alist '((<span class="org-string">"&#24494;&#36719;&#38597;&#40657;"</span> . 1.2) (<span class="org-string">"Microsoft Yahei"</span> . 1.2) (<span class="org-string">"WenQuanYi Zen Hei"</span> . 1.2)))
+</pre>
+
+
+<p>
+见图：
+</p>
+<p>
+<img src="./perfect-emacs-chinese-font-win7.png"  alt="./perfect-emacs-chinese-font-win7.png" />
 </p></div>
 </div>
 </div>
