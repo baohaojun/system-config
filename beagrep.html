@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="beagrep, grep 2G source code in 2 seconds"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-30 10:55:04 CST"/>
+<meta name="generated" content="2012-12-24T22:15+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -43,6 +43,30 @@
         }
     </script>
 <script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
  {
@@ -87,6 +111,7 @@
 <ul>
 <li><a href="#sec-2-1-1">2.1.1 Using .deb under debian/ubuntu</a></li>
 <li><a href="#sec-2-1-2">2.1.2 Compile by yourself</a></li>
+<li><a href="#sec-2-1-3">2.1.3 Build .deb by yourself</a></li>
 </ul>
 </li>
 <li><a href="#sec-2-2">2.2 Windows install</a>
@@ -185,12 +210,12 @@ outdated).
 </div>
 
 <div id="outline-container-2-1-1" class="outline-4">
-<h4 id="sec-2-1-1"><span class="section-number-4">2.1.1</span> Using .deb under debian/ubuntu</h4>
+<h4 id="sec-2-1-1"><a name="using.deb" id="using.deb"></a><span class="section-number-4">2.1.1</span> Using .deb under debian/ubuntu</h4>
 <div class="outline-text-4" id="text-2-1-1">
 
 
 <p>
-I have provided 4 .deb package files on github, one for debian
+I have provided several .deb package files on github, one for debian
 testing, 3 for ubuntu lucid(10.04), oneiric(11.10) and
 precise(12.04). They are all for amd64. If you happen to be using one
 of these, you can download them <a href="https://github.com/baohaojun/beagrep/downloads">here</a>. Here's how to install it using
@@ -232,6 +257,58 @@ apt-get install $(<span class="org-sh-quoted-exec">cat</span> debian/control | p
 <span class="org-comment-delimiter"># </span><span class="org-comment">do the build</span>
 (<span class="org-builtin">set</span> -e; autoreconf -i; ./configure; make -j4; sudo make install; <span class="org-builtin">echo</span> OK)
 </pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-1-3" class="outline-4">
+<h4 id="sec-2-1-3"><span class="section-number-4">2.1.3</span> Build .deb by yourself</h4>
+<div class="outline-text-4" id="text-2-1-3">
+
+
+<p>
+Before someone volunteer to make beagrep into debian/ubuntu
+distribution, you might also find a need to build .deb by yourself
+(for e.g., to help your colleagues use beagrep easily without needing
+to compile it themselves).
+</p>
+<p>
+Here's how I do it:
+</p>
+<ol>
+<li>Make sure you can compile beagrep manually.
+
+</li>
+<li>Make a tar.gz of beagrep (note that the version number is necessary
+   for dpkg):
+
+<pre class="example">
+tar czfv ~/tmp/beagrep_0.4.0.orig.tar.gz beagrep --exclude-vcs
+</pre>
+
+
+</li>
+<li>Untar it and build the .deb package:
+
+
+
+
+<pre class="example">cd ~/tmp
+tar zxfv beagrep_0.4.0.orig.tar.gz
+cd beagrep
+dpkg-buildpackage
+</pre>
+
+
+<p>
+   The .deb file is generated in the <code>~/tmp</code> directory.
+</p>
+</li>
+<li>Refer to <a href="#using.deb">#using.deb</a> for how to install.
+</li>
+</ol>
 
 
 </div>

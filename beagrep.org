@@ -30,8 +30,9 @@ outdated).
 ** Linux install
 
 *** Using .deb under debian/ubuntu
+# <<using.deb>>
 
-I have provided 4 .deb package files on github, one for debian
+I have provided several .deb package files on github, one for debian
 testing, 3 for ubuntu lucid(10.04), oneiric(11.10) and
 precise(12.04). They are all for amd64. If you happen to be using one
 of these, you can download them [[https://github.com/baohaojun/beagrep/downloads][here]]. Here's how to install it using
@@ -60,6 +61,35 @@ apt-get install $(cat debian/control | perl -ne 'print if m/Build-Depends/..m/St
 # do the build
 (set -e; autoreconf -i; ./configure; make -j4; sudo make install; echo OK)
 #+end_src
+
+*** Build .deb by yourself
+
+Before someone volunteer to make beagrep into debian/ubuntu
+distribution, you might also find a need to build .deb by yourself
+(for e.g., to help your colleagues use beagrep easily without needing
+to compile it themselves).
+
+Here's how I do it:
+
+1. Make sure you can compile beagrep manually.
+
+2. Make a tar.gz of beagrep (note that the version number is necessary
+   for dpkg):
+
+   : tar czfv ~/tmp/beagrep_0.4.0.orig.tar.gz beagrep --exclude-vcs
+
+3. Untar it and build the .deb package:
+
+   #+BEGIN_EXAMPLE
+   cd ~/tmp
+   tar zxfv beagrep_0.4.0.orig.tar.gz
+   cd beagrep
+   dpkg-buildpackage
+   #+END_EXAMPLE
+
+   The .deb file is generated in the =~/tmp= directory.
+
+4. Refer to [[#using.deb]] for how to install.
 
 ** Windows install
 
