@@ -71,10 +71,11 @@ to compile it themselves).
 
 Here's how I do it:
 
-1. Make sure you can compile beagrep manually.
+1. Make sure you can compile beagrep manually by referring to the
+   previous section.
 
-2. Make a tar.gz of beagrep (note that the version number is necessary
-   for dpkg):
+2. Make a tar.gz of beagrep (note that the filename must be exact, it
+   is required by dpkg):
 
    : tar czfv ~/tmp/beagrep_0.4.0.orig.tar.gz beagrep --exclude-vcs
 

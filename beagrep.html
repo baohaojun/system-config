@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="beagrep, grep 2G source code in 2 seconds"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-24T22:15+0800"/>
+<meta name="generated" content="2012-12-24T22:23+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -278,11 +278,12 @@ to compile it themselves).
 Here's how I do it:
 </p>
 <ol>
-<li>Make sure you can compile beagrep manually.
+<li>Make sure you can compile beagrep manually by referring to the
+   previous section.
 
 </li>
-<li>Make a tar.gz of beagrep (note that the version number is necessary
-   for dpkg):
+<li>Make a tar.gz of beagrep (note that the filename must be exact, it
+   is required by dpkg):
 
 <pre class="example">
 tar czfv ~/tmp/beagrep_0.4.0.orig.tar.gz beagrep --exclude-vcs
