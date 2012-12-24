@@ -1,7 +1,7 @@
 (require 'gnus-cite)
 (setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
 (setq
- user-full-name "Haojun Bao"
+ user-full-name "Haojun Bao" ; fixme
  nnml-directory "~/private/mail/"
  message-default-charset 'utf-8
  gnus-signature-limit 500
@@ -9,23 +9,22 @@
  )
 
 ;; this puts the messages in several groups according to regexp
-(add-hook 'gnus-article-display-hook
+(add-hook 'gnus-article-mode-hook
           '(lambda ()
              (gnus-article-de-quoted-unreadable)
              (gnus-article-emphasize)
              (gnus-article-hide-boring-headers)
              (gnus-article-hide-headers-if-wanted)
-             (gnus-article-hide-pgp)
              (gnus-article-highlight)
              (gnus-article-highlight-citation)
              ))
 
 
 (setq message-send-mail-function 'smtpmail-send-it
-      user-mail-address "hjbao@marvell.com"
+      user-mail-address "hjbao@marvell.com" ; fixme
       smtpmail-default-smtp-server "localhost"
       smtpmail-smtp-server "localhost"
-      smtpmail-smtp-service 2025) ;set this port in davmail
+      smtpmail-smtp-service 2025) ; fixme, set this port for davmail
 
 (setq gnus-default-charset 'chinese-iso-8bit
       gnus-group-name-charset-group-alist '((".*" . chinese-iso-8bit))
@@ -38,20 +37,10 @@
         '(unknown-8bit x-unknown iso-8859-1)))
 
 (setq gnus-group-line-format "%m%M%L%5N/%-5R %25G: %D\n"
-      gnus-topic-line-format "%i%n %A (%G) %v\n"
       gnus-summary-line-format ":%U%R%B%s%-80=  %-20,20f|%4L |\n")
 
 (setq gnus-visible-headers
       "^\\(From:\\|To:\\|Cc:\\|Subject:\\|Date:\\|Followup-To:\\|X-Newsreader:\\|User-Agent:\\|X-Mailer:\\)")
-
-(if window-system
-    (setq gnus-sum-thread-tree-root ">>"
-          gnus-sum-thread-tree-single-indent " >"
-          gnus-sum-thread-tree-leaf-with-other "+-> "
-          gnus-sum-thread-tree-indent " "
-          gnus-sum-thread-tree-vertical "|"
-          gnus-sum-thread-tree-single-leaf "`-> "
-          gnus-sum-thread-tree-false-root "~>"))
 
 (add-to-list 'gnus-newsgroup-variables 'mm-coding-system-priorities)
 
@@ -65,10 +54,8 @@
           "sent-mails")))) 
 
 (setq gnus-select-method
-      `(nnmaildir "Gmail"
-		  (directory ,(if (eq system-type 'windows-nt)
-				 "~/../Maildir"
-			       "~/Maildir"))
+      '(nnmaildir "Gmail"
+		  (directory "~/Maildir")
 		  (directory-files nnheader-directory-files-safe) 
 		  (get-new-mail nil)))
 
@@ -80,7 +67,7 @@
 	   server)))
     ad-do-it))
 
-(setq smtpmail-auth-credentials 
+(setq smtpmail-auth-credentials ; fixme
       '(("localhost"
 	 2025
 	 "hjbao@marvell.com"

@@ -15,22 +15,9 @@ tokens
             END_EXAMPLE;
             BEGIN_SRC;
             END_SRC;
-            STAR = '*';
-            PLUS = '+';
-            MINUS = '-';
-            EQ = '=';
         }
 
 @members {
-    public boolean notNewlineP() {
-        if (input.LT(1) == null) {
-            return true;
-        }
-
-        int type = input.LT(1).getType();
-        System.out.println("NL? " + input.LT(1));
-        return ! (type == NL || type == DOUBLE_NL);
-    }
     public boolean noSpace() {
         if (input.LT(1) == null) {
             return true;
@@ -43,14 +30,46 @@ tokens
 
 @lexer::members {
   protected boolean bol = true;
+  boolean in_example = false;
   protected boolean assertIsKeyword = true;
+  
+  void debug(String s) {
+      System.out.println(s + " at " + getLine() + ":" + getCharPositionInLine());
+  }
 
+  void debug(int do_it, String s) {
+      if (do_it != 0) {
+          System.out.println(s + " at " + getLine() + ":" + getCharPositionInLine());
+      }
+  }
   boolean looking_backat_white_space() {
       return true;
   }
 
+  boolean inExample(String w) {
+      System.out.println("checking for inExample in " + w);
+      return in_example && getCharPositionInLine() == 0;
+  }
   boolean looking_at_white_space() {
       return true;
+  }
+
+  public String getErrorMessage(RecognitionException e,
+                                String[] tokenNames)
+  {
+      List stack = getRuleInvocationStack(e, this.getClass().getName());
+      String msg = null;
+      if ( e instanceof NoViableAltException ) {
+          NoViableAltException nvae = (NoViableAltException)e;
+          msg = " no viable alt; token="+e.token+
+              " (decision="+nvae.decisionNumber+
+              " state "+nvae.stateNumber+")"+
+              " decision=<<"+nvae.grammarDecisionDescription+">>";
+      }
+      else {
+          msg = super.getErrorMessage(e, tokenNames);
+      }
+      return stack+" "+msg;
   }
 }
 
@@ -61,18 +80,12 @@ orgFile : block* ;
 block :
         header
     |   exampleParagraph
-    |   codeParagraph
     |   normalParagraph
     |   NL
-    |   DOUBLE_NL
-
     ;
-header : {input.LT(1).getCharPositionInLine() == 0}? STAR+ notNL+ (NL|DOUBLE_NL) {System.out.println("got a header " + $text);};
+header : HEADER_STAR notNL+ NL {System.out.println("got a header " + $text + " end of header");};
 
-exampleParagraph : BEGIN_EXAMPLE normalParagraph END_EXAMPLE ;
-
-codeParagraph : BEGIN_SRC WORD normalParagraph END_SRC ;
-
+exampleParagraph : BEG_EXAMPLE .* END_EXAMPLE {System.out.println("matched exampleParagraph: " + $text);} ;
 
 normalParagraph : (lineText NL)+ ;
 
@@ -81,27 +94,34 @@ lineText : textItem+;
 textItem : normalText;
 
 
-notNL : ~(NL|DOUBLE_NL) ;
+notNL : ~NL ;
 
 normalText : notNL {System.out.println("matched normal text: " + $text);} ;
 
-WORD : ('a'..'z'|'A'..'Z')+ ;
+BEG_BLOCK : '#+begin_' WORDF ;
+END_BLOCK : '#+end_' WORDF ;
 
-BEGIN_EXAMPLE : '#+begin_example' ;
+fragment
+WORDF : ('a'..'z' | 'A'..'Z' | '_')+ ;
 
-END_EXAMPLE : '#+end_example' ;
+WS :   ( ' ' | '\t' | '\r' | '\f' )+ {$channel = HIDDEN;} ;
 
-BEGIN_SRC : '#+begin_src' ;
-END_SRC : '#+end_src' ;
-
-DOUBLE_NL : '\n' ( (' ' | '\f' | '\r' | '\t')* '\n' )+ ;
-NL : '\n' ;
-
-WS :   ( ' ' | '\t' | '\r' )+ {$channel = HIDDEN;} ;
+fragment
+WSF : ' ' | '\t' | '\f' | '\r';
 
 
 /* start code-generator
-   cat << EOF | perl -npe "s#: '(.)'#: {looking_backat_white_space()}? '\$1' ~('\$1' | ' ' | '\\\\t' | '\\\\r' | '\\\\n') .* ~(' ' | '\\\\t' | '\\\\r' | '\\\\n') '\$1'+ {looking_at_white_space()}? {System.out.println(\"matched inline: \" + \\\$text);};#"
+# BOLD_INLINE : '*' ~('*' | AWSF) .* (~AWSF '*' AWSF {debug("matched * :" + $text);} | '\n' ) ;
+   cat << EOF | perl -npe "s#(.*?)\s*: '(.)'#
+                             \$1 : '\$2' ~('\$2' | AWSF) .* 
+(
+    ~AWSF '\$2' (
+                 WSF { emit(new CommonToken(\$1, \\\$text)); debug(\"matched code \$1 :\" + \\\$text); }
+                |   NL  { emit(new CommonToken(\$1, \\\$text)); emit(new CommonToken(NL)); }
+                )
+
+    | NL { emit(new CommonToken(NWS, \\\$text)); emit(new CommonToken(NL)); }
+) ;#"
 BOLD_INLINE : '*'
 UNDERLINED_INLINE : '_'
 CODE_INLINE : '='
@@ -111,14 +131,83 @@ ITALIC_INLINE : '/'
 EOF
    end code-generator */
 // start generated code
-BOLD_INLINE : {looking_backat_white_space()}? '*' ~('*' | ' ' | '\t' | '\r' | '\n') .* ~(' ' | '\t' | '\r' | '\n') '*'+ {looking_at_white_space()}? {System.out.println("matched inline: " + $text);};
-UNDERLINED_INLINE : {looking_backat_white_space()}? '_' ~('_' | ' ' | '\t' | '\r' | '\n') .* ~(' ' | '\t' | '\r' | '\n') '_'+ {looking_at_white_space()}? {System.out.println("matched inline: " + $text);};
-CODE_INLINE : {looking_backat_white_space()}? '=' ~('=' | ' ' | '\t' | '\r' | '\n') .* ~(' ' | '\t' | '\r' | '\n') '='+ {looking_at_white_space()}? {System.out.println("matched inline: " + $text);};
-VERBATIM_INLINE : {looking_backat_white_space()}? '~' ~('~' | ' ' | '\t' | '\r' | '\n') .* ~(' ' | '\t' | '\r' | '\n') '~'+ {looking_at_white_space()}? {System.out.println("matched inline: " + $text);};
-STRIKE_INLINE : {looking_backat_white_space()}? '+' ~('+' | ' ' | '\t' | '\r' | '\n') .* ~(' ' | '\t' | '\r' | '\n') '+'+ {looking_at_white_space()}? {System.out.println("matched inline: " + $text);};
-ITALIC_INLINE : {looking_backat_white_space()}? '/' ~('/' | ' ' | '\t' | '\r' | '\n') .* ~(' ' | '\t' | '\r' | '\n') '/'+ {looking_at_white_space()}? {System.out.println("matched inline: " + $text);};
+
+BOLD_INLINE : '*' ~('*' | AWSF) .* 
+        (
+            ~AWSF '*' (
+                WSF { emit(new CommonToken(BOLD_INLINE, $text)); debug("matched code BOLD_INLINE :" + $text); }
+            |   NL  { emit(new CommonToken(BOLD_INLINE, $text)); emit(new CommonToken(NL)); }
+            )
+
+        | NL { emit(new CommonToken(NWS, $text)); emit(new CommonToken(NL)); }
+        ) ;
+
+UNDERLINED_INLINE : '_' ~('_' | AWSF) .* 
+        (
+            ~AWSF '_' (
+                WSF { emit(new CommonToken(UNDERLINED_INLINE, $text)); debug("matched code UNDERLINED_INLINE :" + $text); }
+            |   NL  { emit(new CommonToken(UNDERLINED_INLINE, $text)); emit(new CommonToken(NL)); }
+            )
+
+        | NL { emit(new CommonToken(NWS, $text)); emit(new CommonToken(NL)); }
+        ) ;
+
+CODE_INLINE : '=' ~('=' | AWSF) .* 
+        (
+            ~AWSF '=' (
+                WSF { emit(new CommonToken(CODE_INLINE, $text)); debug("matched code CODE_INLINE :" + $text); }
+            |   NL  { emit(new CommonToken(CODE_INLINE, $text)); emit(new CommonToken(NL)); }
+            )
+
+        | NL { emit(new CommonToken(NWS, $text)); emit(new CommonToken(NL)); }
+        ) ;
+
+VERBATIM_INLINE : '~' ~('~' | AWSF) .* 
+        (
+            ~AWSF '~' (
+                WSF { emit(new CommonToken(VERBATIM_INLINE, $text)); debug("matched code VERBATIM_INLINE :" + $text); }
+            |   NL  { emit(new CommonToken(VERBATIM_INLINE, $text)); emit(new CommonToken(NL)); }
+            )
+
+        | NL { emit(new CommonToken(NWS, $text)); emit(new CommonToken(NL)); }
+        ) ;
+
+STRIKE_INLINE : '+' ~('+' | AWSF) .* 
+    (
+        ~AWSF '+' (
+            WSF { emit(new CommonToken(STRIKE_INLINE, $text)); debug("matched code STRIKE_INLINE :" + $text); }
+    |   NL  { emit(new CommonToken(STRIKE_INLINE, $text)); emit(new CommonToken(NL)); }
+    )
+
+| NL { emit(new CommonToken(NWS, $text)); emit(new CommonToken(NL)); }
+    ) ;
+
+ITALIC_INLINE : '/' ~('/' | AWSF) .* 
+    (
+        ~AWSF '/' (
+            WSF { emit(new CommonToken(ITALIC_INLINE, $text)); debug("matched code ITALIC_INLINE :" + $text); }
+    |   NL  { emit(new CommonToken(ITALIC_INLINE, $text)); emit(new CommonToken(NL)); }
+    )
+
+| NL { emit(new CommonToken(NWS, $text)); emit(new CommonToken(NL)); }
+    ) ;   
 
 // end generated code
 
-LINK_URL : '[[' ~('['|']')* ']]' {System.out.println("matched link url: " + $text);} ;
-LINK_URL_DESC : '[[' ~('['|']')* '][' ~('['|']')* ']]' {System.out.println("matched link desc: " + $text);} ;
+LINK_URL : '[[' ~('['|']')* ']]' ;
+LINK_URL_DESC : '[[' ~('['|']')* '][' ~('['|']')* ']]' ;
+fragment
+AWSF : WSF | NL ;
+
+fragment
+NL : '\n' ;
+LE : '\n' ;
+
+HEADER_STAR : s='*' '*'* WSF ;
+OL_START : ('0' .. '9')+ '.' WSF ;
+UL_START : ('-' | '+' | '*') WSF ;
+COL_START : ':' WSF ;
+SHARP_SETTING : '#+' WORDF ':' WSF ;
+
+WORD_NWS : WORDF (~ AWSF)* ;
+NWS : (~ AWSF)+ {debug("mateched nws " + $text);} ;
