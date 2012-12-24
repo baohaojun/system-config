@@ -9,11 +9,12 @@
 		   (expand-file-name "~/.emacs_d/org-confluence")
 		   (expand-file-name "~/.emacs_d/org-jira")
 		   (expand-file-name "~/.emacs_d/mo-git-blame")
-		   (expand-file-name "~/.emacs_d/lisp/ext"))
+		   (expand-file-name "~/.emacs_d/lisp/ext")
+		   (expand-file-name "~/src/org-mode/lisp")
+		   (expand-file-name "~/src/org-mode/contrib/lisp"))
 	     load-path))
 (package-initialize)
 
-(require 'org-confluence)
 (require 'mmm-mode)
 (setq stack-trace-on-error t)
 
@@ -2491,7 +2492,7 @@ using ctags-exuberant"
 (add-hook 'grep-mode-hook
 	  (lambda ()
 	    (setq compilation-directory-matcher (default-value 'compilation-directory-matcher))))
-  
+(require 'org-md)
 (condition-case nil
     (server-start)
   (error (message "emacs server start failed")))

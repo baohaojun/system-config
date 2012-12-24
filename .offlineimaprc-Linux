@@ -39,7 +39,7 @@ localfolders = ~/Maildir
 [Repository Remote-Gmail]
 type = Gmail
 remoteuser = baohaojun@gmail.com
-remotepasseval = getcred("gmail", "baohaojun@gmail.com", 993)
+remotepasseval = getcred("smtp.gmail.com", "baohaojun@gmail.com", 465)
 nametrans = lambda foldername: "gmail." + foldername.replace(" ", "_")
 maxconnections = 6
 folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in ('inbox',)])

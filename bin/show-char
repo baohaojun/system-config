@@ -1,0 +1,3 @@
+#!/bin/bash
+
+perl -e "print STDOUT pack('N', $1);"|iconv -f UNICODEBIG -t utf-8
