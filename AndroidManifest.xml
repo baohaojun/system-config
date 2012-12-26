@@ -12,7 +12,8 @@
         android:label="@string/app_name" >
         <activity
             android:label="@string/app_name"
-            android:name=".BTAndroidWebViewSelectionActivity" >
+            android:name=".BTAndroidWebViewSelectionActivity"
+	    android:screenOrientation="landscape" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
 

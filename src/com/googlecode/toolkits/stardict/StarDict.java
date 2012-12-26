@@ -36,6 +36,8 @@ import java.io.RandomAccessFile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.text.Normalizer;
+import java.util.Formatter;
 
 public class StarDict {
 
@@ -60,52 +62,32 @@ public class StarDict {
 	    ((0XFF & buffer[offset+3]) << 0);
     }	    
 	
-    /**/
     RandomAccessFile index;
     RandomAccessFile dict;
+    RandomAccessFile ii; // index of index
+    int mTotalEntries;
+    int mDebug = 0;
 
-    HashMap<String, ArrayList<Pair<Integer, Integer>>> entries_map = new HashMap<String, ArrayList<Pair<Integer, Integer>>>();    
-  
-    /**
-     * 
-     * @param dictname
-     */
     void die(String s) {
 	System.out.println(s);
 	System.exit(-1);
+    }
+
+    private void debug(String format, Object... args) {
+	if (mDebug != 0) {
+	    new Formatter(System.err).format(format, args);
+	}
     }
 
     public StarDict(String dictname) {
 	try {
 	    int length = (int) new File(dictname+".idx").length();
 
+	    this.ii = new RandomAccessFile(dictname+".ii", "r");
 	    this.index = new RandomAccessFile(dictname+".idx", "r");
 	    this.dict = new RandomAccessFile(dictname+".dz", "r");
 
-	    byte[] buffer = new byte[length];
-	    index.readFully(buffer, 0, length);
-
-	    int start = 0;
-	    for (int l = 0; l < length; l++) {
-		if (buffer[l] == 0) {
-		    String s = new String(buffer, start, l - start, "UTF8");
-		    int n = buffer[l + 1];
-		    ArrayList<Pair<Integer, Integer>> start_ends = new ArrayList<Pair<Integer, Integer>>(n);
-		    for (int e = 0; e < n; e++) {
-			int b1 = l + 2 + e * 8;
-			int b2 = l + 2 + e * 8 + 4;
-
-			int e_start = packI(buffer, b1);
-			int e_end = packI(buffer, b2);
-
-			start_ends.add(new Pair(e_start, e_end));
-		    }
-		    l++;
-		    l += 8 * n;
-		    start = l + 1;
-		    entries_map.put(s, start_ends);
-		}
-	    }		
+	    mTotalEntries = (int) (new File(dictname+".ii").length()/4);
 	}
 	catch(FileNotFoundException e) {
 	    e.printStackTrace();
@@ -118,11 +100,116 @@ public class StarDict {
     /**
      * 
      * @param word
-     * @return the explanation of the word
+     * @return the explanation(s) of the word
      */
+    private int getWordIdx(String word) {
+
+	try {
+	    return binarySearchHelper(getNormalWord(word), 0, mTotalEntries);
+	} catch (IOException e) {
+	    e.printStackTrace();
+	    return 0;
+	}
+    }
+
+    private int binarySearchHelper(String word, int min, int maxP1) throws IOException{
+	if (min + 1 >= maxP1) {
+	    return min;
+	}
+
+	int mid = (min + maxP1) / 2;
+	String midWord = getWord(mid);
+	String midWordNormal = getNormalWord(midWord);
+	debug("?: word is %s, midWord is %s, midWordNormal is %s, mid is %s\n", word, midWord, midWordNormal, mid);
+
+	int compRes = word.compareToIgnoreCase(getNormalWord(midWord));
+	if (compRes == 0) {
+	    debug("ok: word is %s, midWord is %s, midWordNormal is %s, mid is %s\n", word, midWord, midWordNormal, mid);
+	    return mid;
+	} else if ( compRes <= 0) {
+	    return binarySearchHelper(word, min, mid - 1);
+	} else {
+	    return binarySearchHelper(word, mid + 1, maxP1);
+	}
+	
+    }
+
+    private String getNormalWord(String word) {
+	StringBuilder b = new StringBuilder();
+
+	for (char c : Normalizer.normalize(word, Normalizer.Form.NFKD).toCharArray()) {
+	    if (c < 128) {
+		b.append(c);
+	    }
+	}
+	return b.toString();
+    }
+
+    private String getWord(int idx) throws IOException {
+	if (idx < 0 || idx >= mTotalEntries) {
+	    return "";
+	}
+
+	int wordStart = 0;
+	if (idx != 0) {
+	    wordStart = getEntryEndPos(idx - 1) + 1;
+	}
+
+	int wordEndPlus1 = getByte0Pos(idx);
+	if (wordEndPlus1 <= wordStart) {
+	    return "";
+	}
+
+	byte[] buffer = new byte[wordEndPlus1 - wordStart];
+	index.seek(wordStart);
+	index.read(buffer);
+	
+	return new String(buffer, "UTF8");
+    }
+    
+    private int getByte0Pos(int idx) throws IOException {
+	ii.seek(idx * 4);
+	int ret = ii.readInt();
+	debug("byte0 found at %x for index %x\n", ret, idx);
+	return ret - 1;
+    }
+	
+    private int getEntryEndPos(int idx) throws IOException {
+	int pos0 = getByte0Pos(idx);
+	index.seek(pos0 + 1);
+	int nDefs = index.readUnsignedByte();
+	int ret = pos0 + 1 + nDefs * 8;
+	debug("getEntryEndPos: %x for %x\n", ret, idx);
+	return ret;
+    }
+
+    private ArrayList<Pair<Integer, Integer>> getStartEnds(int idx) {
+	ArrayList<Pair<Integer, Integer>> start_ends = new ArrayList<Pair<Integer, Integer>>();
+	
+	try {
+	    int pos0 = getByte0Pos(idx);
+	    index.seek(pos0 + 1);
+	
+	    int nDefs = index.readUnsignedByte();
+
+	    for (int i = 0; i < nDefs; i++) {
+		int start = index.readInt();
+		int end = index.readInt();
+
+		start_ends.add(new Pair(start, end));
+	    }
+	} catch (IOException e) {
+	    e.printStackTrace();
+	    return null;
+	}
+	return start_ends;
+    }
+
     public ArrayList<String> getExplanation(String word) {
 	
-	ArrayList<Pair<Integer, Integer>> start_ends = entries_map.get(word);
+	// search the ii for the word, should be a binary search
+	
+	ArrayList<Pair<Integer, Integer>> start_ends = getStartEnds(getWordIdx(word));
 
 	if (start_ends != null) {
 	    ArrayList<String> ret = new ArrayList<String>();
@@ -149,7 +236,12 @@ public class StarDict {
   
     public static void main(String[] args) {
 	StarDict dict = new StarDict("/sdcard/ahd/ahd");
-	dict.getExplanation("hello");
+	dict.mDebug = 1;
+	for (String a : args) {
+	    for (String s : dict.getExplanation(a)) {
+		System.out.println(s);
+	    }
+	}
     }
 }
 
