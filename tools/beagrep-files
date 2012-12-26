@@ -30,8 +30,10 @@ shift
 additional_tokens=$(echo "$@")
 
 tokens=`beagrep-get-tokens "$tokens_str"`
-if test $FIND_FILE_ONLY; then
+if test "$FIND_FILE_ONLY"; then
     tokens=$(echo -n " $tokens" | perl -npe 's/\s+/ filename:/g; s/(^ *| filename:$)//g')
+    mkdir -p ~/.logs
+    echo $tokens > ~/.logs/$(basename $0).log
 fi
 
 tokens="$tokens $additional_tokens"
