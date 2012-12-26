@@ -1,4 +1,13 @@
 #!/bin/bash
 
+set -e
 cd $(dirname $(lookup_file build.xml))
-ant-expect-keystore "$@"
+if test $# = 0; then
+    ant-expect-keystore release
+    ant-expect-keystore installr 2>&1 | tee ~/.logs/ant-install.log
+    android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
+elif test "$1" = start; then
+    android-start-apk $(grep -o 'Installing.*onto' ~/.logs/ant-install.log | pn 2)
+else
+    ant-expect-keystore "$@"
+fi

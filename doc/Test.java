@@ -1,8 +1,11 @@
-package com.bhj;
 import java.util.*;
 class Test {
     public static void main(String []args) {
 	System.out.println("hello of Test");
+	char[] s = "hello of Test".toCharArray();
+	for (char c : s) {
+	    System.out.printf("hello %c\n", c);
+	}
     }
     void hello(Test x, Object[] args) {
 	System.out.println(args instanceof String[]);

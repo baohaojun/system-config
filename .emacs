@@ -2487,6 +2487,60 @@ using ctags-exuberant"
 	  (lambda ()
 	    (setq compilation-directory-matcher (default-value 'compilation-directory-matcher))))
 (require 'org-md)
+
+(defun bhj-find-missing-file ()
+  (interactive)
+  (let (missing-file-name)
+    (save-excursion
+      (goto-char (point-min))
+      (search-forward-regexp "(default \\(.*\\))")
+      (setq missing-file-name (match-string 1)))
+
+    (setq missing-file-name (shell-command-to-string
+			     (format "beagrep -e %s -f 2>&1|perl -ne 's/:\\d+:.*// and print'" missing-file-name)))
+    (setq missing-file-name (delete-if-empty (split-string missing-file-name "\n")))
+    (when missing-file-name
+      (if (nth 1 missing-file-name)
+	  (setq missing-file-name
+		(completing-read "Which file? " missing-file-name))
+	(setq missing-file-name (car missing-file-name)))
+      	(insert missing-file-name))))
+
+(global-set-key [(shift return)] 'bhj-find-missing-file)
+
+(defun delete-if-empty (l)
+  (delete-if
+   (lambda (s) (string-equal s ""))
+   l))
+
+(defun bhj-java-import ()
+  (interactive)
+  (save-excursion
+    (let ((old-buffer (current-buffer))
+	  import-list)
+      (with-temp-buffer
+	(shell-command (format "java-get-imports.pl %s -v" (buffer-file-name old-buffer)) (current-buffer))
+	(goto-char (point-min))
+	(while (search-forward-regexp "^import" nil t)
+	  (if (looking-at "-multi")
+	      (setq import-list (cons
+				 (format "import %s;\n" 
+					 (completing-read "Import which? "
+							  (cdr
+							   (delete-if-empty
+							    (split-string (current-line-string) "\\s +")))
+							  nil
+							  t))
+				 import-list))
+	    (setq import-list (cons (format "%s;\n" (current-line-string)) import-list)))))
+      (goto-char (point-max))
+      (search-backward-regexp "^import\\s +")
+      (forward-line)
+      (beginning-of-line)
+      (while import-list
+	(insert (car import-list))
+	(setq import-list (cdr import-list))))))
+      
 (condition-case nil
     (server-start)
   (error (message "emacs server start failed")))

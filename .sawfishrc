@@ -80,6 +80,7 @@
  '(0 1 2 3 4 5 6 7 8 9))
 
 (bind-keys global-keymap "Super-k" (lambda () (system "emacsclient -n ~/doc/work.txt&")))
+(bind-keys global-keymap "Super-Insert" (lambda () (system "send-key $(getclip)&")))
 (bind-keys global-keymap "Super-Control-n" (lambda () (system "daily-notes&")))
 (bind-keys global-keymap "Super-Control-o" (lambda () (system "emacsclient -n ~/doc/notes.org&")))
 

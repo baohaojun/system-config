@@ -26,18 +26,21 @@ my $connect_re = qr((?: |(?:\[\])+));
 my %super_classes;
 
 my @keywords = ("abstract", "assert", "boolean", "break", "byte",
-	      "case", "catch", "char", "class", "const", "continue", "default",
-	      "double", "else", "enum", "extends", "false", "final", "finally",
-	      "float", "for", "goto", "implements", "import", "instanceof", "int",
-	      "interface", "long", "native", "new", "null", "package", "private",
-	      "protected", "public", "return", "short", "static", "strictfp",
-	      "super", "switch", "synchronized", "this", "throw", "throws",
-	      "transient", "true", "try", "void", "volatile", "while"
-    );
+	      "case", "catch", "char", "class", "const", "continue",
+	      "default", "double", "else", "enum", "extends", "false",
+	      "final", "finally", "float", "for", "goto", "if",
+	      "implements", "import", "instanceof", "int",
+	      "interface", "long", "native", "new", "null", "package",
+	      "private", "protected", "public", "return", "short",
+	      "static", "strictfp", "super", "switch", "synchronized",
+	      "this", "throw", "throws", "transient", "true", "try",
+	      "void", "volatile", "while" );
 
 my $keywords = join('|', @keywords);
 my $keywords_re = qr($keywords);
 my %keywords;
+
+map {$keywords{$_} = 1} @keywords;
 
 my @modifiers = ('public', 'protected', 'private', 'static',
 'abstract', 'final', 'native', 'synchronized', 'transient',
@@ -45,10 +48,6 @@ my @modifiers = ('public', 'protected', 'private', 'static',
 
 my $modifiers = join('|', @modifiers);
 my $modifier_re = qr($modifiers);
-
-for my $key (@keywords) {
-    $keywords{$key} = 1;
-}
 
 sub match_args($) 
 {
@@ -64,6 +63,21 @@ my %import_simples;
 my %simple_qualified_map;
 my %var_type_map;
 
+sub is_defined($)
+{
+    return $defs{$_[0]};
+}
+
+sub is_keyword($)
+{
+    return $keywords{$_[0]};
+}
+
+sub is_keyword_or_defined($)
+{
+    return (is_keyword($_[0]) or is_defined($_[0]));
+}
+
 sub type_it($$)
 {
     debug "type it: $_[0] $_[1]";
@@ -75,12 +89,14 @@ sub type_it($$)
 
 sub define_it($)
 {
+    debug "define_it $_[0]";
     $defs{$_[0]} = 1;
 }
 
 sub import_it($)
 {
     my $q = $_[0];
+    debug "import_it: $q";
     my $s = $q;
     $s =~ s/.*\.//;
     $import_qualifieds{$q} = 1;
@@ -209,14 +225,24 @@ sub get_wildcards($)
 sub find_import_for($)
 {
     my $def = $_[0];
+    if (length($def) == 1) {
+	print STDERR "$def: generics type parameter?\n";
+	return 0;	    
+    }
     return 0 unless $def;
-    return 0 if $def =~ m/\./;
+    if ($def =~ m/\./) {
+	our %import_quoted_map;
+	$def =~ s/\..*//;
+	return 0 if exists $import_quoted_map{$def};
+	$import_quoted_map{$def} = 1;
+    }
+    debug "grep-gtags -e $def -d $code_dir -t 'class|interface' -s -p '\\.java|\\.aidl'";
     open(my $pipe, "-|", "grep-gtags -e $def -d $code_dir -t 'class|interface' -s -p '\\.java|\\.aidl'")
 	or die "can not open grep-gtags";
     
     my @imports;
     while (<$pipe>) {
-	m/^(.*?):.*?<(.*)>/ or next;
+	m/^(.*?):.*?<(.*?)>/ or next;
 	
 	my ($file, $tag) = ($1, $2);
 	my $package = $files_package{$file};
@@ -231,7 +257,7 @@ sub find_import_for($)
 	if (@imports == 1) {
 	    print "import @imports\n";
 	} elsif (@imports) {
-	    print "multi-import @imports\n";
+	    print "import-multi @imports\n";
 	} else {
 	    print "can not import $def\n";
 	}
@@ -248,10 +274,12 @@ for my $wild (keys %wild_import_qualifieds) {
 for my $ref (keys %refs) {
     my $ref_save = $ref;
     $ref =~ s/\..*//;
-    unless ($keywords{$ref} or $defs{$ref}) {
+    unless (is_keyword_or_defined($ref)) {
+	debug "need import: $ref";
 	if ($import_simples{$ref}) {
 	    $import_simples{$ref} ++;
 	} elsif ($ref =~ m/^[A-Z]/) {
+	    debug "find_import_for $ref_save\n";
 	    find_import_for($ref_save);
 	}
     }
