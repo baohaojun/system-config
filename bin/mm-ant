@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd $(dirname $(lookup_file build.xml))
+ant-expect-keystore "$@"

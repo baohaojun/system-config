@@ -1,7 +1,8 @@
+package com.bhj;
 import java.util.*;
 class Test {
     public static void main(String []args) {
-	
+	System.out.println("hello of Test");
     }
     void hello(Test x, Object[] args) {
 	System.out.println(args instanceof String[]);
