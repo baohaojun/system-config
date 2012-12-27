@@ -1,13 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+	      android:layout_width="match_parent"
+	      android:layout_height="match_parent"
+	      android:orientation="vertical" >
 
-    <view 
-        class="com.brandontate.androidwebviewselection.BTWebView"
-	    android:layout_width="match_parent" 
-	    android:layout_height="match_parent" 
-	    android:id="@+id/webView"/>
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal" >
+    
+    <EditText android:id="@+id/enter_dict_entry"
+              android:layout_height="wrap_content"
+              android:layout_width="0dip"
+              android:layout_weight="1.0" />
+
+    <Button android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Look up"
+	    android:id="@+id/look_up_button" />
+    
+    <Button android:layout_height="wrap_content"
+	    android:layout_width="wrap_content"
+	    android:text="Defined with..."
+	    android:id="@+id/defined_with_button" />
+    
+    <Button android:layout_height="wrap_content"
+	    android:layout_width="wrap_content"
+	    android:text="Matching..."
+	    android:id="@+id/matching_button" />
+
+  </LinearLayout>
+
+  <view 
+      class="com.brandontate.androidwebviewselection.BTWebView"
+      android:layout_width="match_parent" 
+      android:layout_height="match_parent" 
+      android:id="@+id/webView"/>
 
 </LinearLayout>
