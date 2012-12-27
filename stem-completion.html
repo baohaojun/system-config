@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>提干式id补齐和re补齐</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="提干式id补齐和re补齐"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-12-27T16:42+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">提干式id补齐和re补齐</h1>
+
+<p>最早在 <a href="http://www.newsmth.net/bbstcon.php?board=Emacs&amp;gid=88913">水木Emacs版的这个贴子</a> 里讨论了这种补齐，一开始只是id补齐：
+</p>
+<blockquote>
+
+<p>刚刚写了一段补齐的elisp程序，目的是想要比自带的dabbrev补齐少敲几下键盘。
+</p>
+<p>
+在用dabbrev补齐的时候，它会按照前缀是不是匹配来补齐，这样做有时候不能省
+按键次数。举个例子，如果你有好几个变量都是以相同的前缀开头，比如从
+<code>variable_0</code> 到 <code>variable_10</code> （当然，只是举个相同前缀的例子，实际情况
+应该不会以0到10来结束），那么补齐的时候会按照某种顺序一个一个的试。相同
+前缀越长，你在补齐之前需要打上去的字数也越多；相同前缀的名字越多，你需
+要敲补齐键选择的次数也越多。
+</p>
+<p>
+也就是说关键字母并不一定都是在前缀里，你应该可以自己选择关键字母去补齐。
+</p>
+<p>
+参考ecomplete里的代码，我写的这个补齐只要打两个关键字母v和0，它就会把所有包含v和0
+的单词给列出来让你选，这样补齐之前就可以只打两个字符，补齐之后也只要做两
+次选择了。
+</p>
+</blockquote>
+
+
+<p>
+很快 <a href="http://www.newsmth.net/bbscon.php?bid=573&amp;id=88915">wuhaochi同学</a> 建议应该做一个基于正则表达式的任意字符串（而不是仅限
+于identifier）的补齐，我很高兴的实现了。
+</p>
+<p>
+其实类似的人机接口在firefox的地址栏里也可以见到，输入几个字，在任意位置
+匹配这些字的历史url就会被过滤出来让你挑选（也就是补齐）。
+</p>
+<p>
+见图（只要打3个字母，就允许我补齐相当长的字串，所以经常能省打很多字）：
+</p>
+<p>
+<img src="./re-completion.png"  alt="./re-completion.png" /> 
+</p>
+<p>
+使用这种补齐方式的优点是（与eclipse等IDE中的java上下文智能补齐相比）：
+</p>
+<ol>
+<li>适用于任何编程语言。
+
+</li>
+<li>便宜。
+
+</li>
+<li>效率。
+</li>
+</ol>
+
+
+<p>
+当然，缺点也很明显：
+</p>
+<ol>
+<li>只能补齐当前buffer中已经出现过了的字或字串（这个已经做了改进，所有可
+   见的buffer都会参与匹配，如果没找到的话，还会继续进入
+   <code>(buffer-list)</code> 中不可见的部分去查找）。
+
+</li>
+<li>由于1）中提到的改进，以及本身实现的头脑简单性，有可能会进入类死循环，
+   需要按 <code>C-g</code> 退出。
+
+</li>
+<li>补齐函数名之后，不能很轻易的看见该函数的参数列表是乍定义的。
+</li>
+</ol>
+
+
+<p>
+具体实现见 <a href="http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/electric-complete.el">github代码</a> 。
+</p></div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>

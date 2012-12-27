@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>在Emacs下用java编程（Android相关）</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="在Emacs下用java编程（Android相关）"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-12-27T16:42+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">在Emacs下用java编程（Android相关）</h1>
+
+<p>之前曾经在水木的Emacs版里提到我在用emacs-eclim（vim-eclim的一个衍生应用，从Emacs/Vim中集成Eclipse的一些功能的插件）。
+</p>
+<p>
+后来发现这个Eclim（其实是Eclipse）在打开很大的项目（整个android）的时候，
+系统变得很慢，于是果断放弃，转而用ctags-exuberant和Emacs lisp做一些简单的
+java编程工具。
+</p>
+<p>
+目前已经实现的功能有：
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 java-get-hierarchy</a></li>
+<li><a href="#sec-2">2 java-get-import</a></li>
+<li><a href="#sec-3">3 java-resolve</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> java-get-hierarchy</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+在eclim底下的截图做不出来了，下面给大家看一下我用自己的脚本做出来的效果吧。
+</p>
+<p>
+<img src="./java-get-hierarchy.png"  alt="./java-get-hierarchy.png" />
+</p>
+<p>
+与eclim的java-get-hierarchy相比，优点有二：
+</p>
+<ol>
+<li>用上了compilation-mode，从而可以实现跳转
+
+</li>
+<li>可以看到某个指定的函数是继承于哪个父类/interface（比如图中的onKeyUp函数）。
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> java-get-import</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+这一点功能基本上与Eclim的是一样的，parse一个.java文件，把里面没有
+import过的class都给import进来。feature有：
+</p>
+<ol>
+<li>能正确处理java.lang.*和当前package下的classes，这些类是不需要import的。
+
+</li>
+<li>当用ctags-exuberant查到某个class在多个package中都有定义的时候，会在
+   emacs-lisp中调用completing-read要求用户选一个。
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> java-resolve</h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+做这个最初的目的是想做上下文补齐，后来发现太难了，补齐还是用我自己的 <a href="./stem-completion.html">提干式id补齐和re补齐</a> 吧。
+</p></div>
+</div>
+</div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>
