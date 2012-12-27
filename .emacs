@@ -163,6 +163,7 @@
 			 (shell-quote-argument id))))
 
 (global-set-key (kbd "M-g j r") 'java-resolve)
+(global-set-key (kbd "M-g j h") 'java-get-hierarchy)
 
 (defun bhj-c-end-of-defun (&optional arg)
   (interactive "^p")
@@ -271,7 +272,7 @@
 	 :url "http://baohaojun.wordpress.com/xmlrpc.php"
 	 :username "baohaojun")))
 
-(define-key js-mode-map [(meta .)] 'gtags-grep)
+(define-key js-mode-map [(meta .)] 'grep-gtags)
 (define-key global-map [(meta control \,)] 'cscope-pop-mark)
 (define-key global-map [(meta control .)] 'cscope-pop-mark-back)
 
@@ -425,24 +426,40 @@
 
 (defun grep-imenu ()
   (interactive)
-  (let ((grep-gtags-history grep-imenu-history))
-    (gtags-grep 'grep-imenu-history "grep-imenu -i -e pat")))
+  (let ((grep-gtags-history grep-imenu-history)
+	(grep-buffer-name "*grep-imenu*"))
+    (grep-gtags 'grep-imenu-history "grep-imenu -i -e pat")))
 
-(defun gtags-grep (&optional history-var def-grep-command)
+(defun set-gtags-start-file ()
+  (let ((file (my-buffer-file-name (current-buffer))))
+    (if (file-remote-p file)
+	(let ((process-environment tramp-remote-process-environment))
+	  (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
+	  (setq tramp-remote-process-environment process-environment))
+      (setenv "GTAGS_START_FILE" file))))
+
+(defun grep-gtags (&optional history-var def-grep-command)
   (interactive)
   (let ((grep-history grep-gtags-history)
 	(no-grep-quote t)
+	(compilation-buffer-name-function (lambda (_ign) (if (boundp 'grep-buffer-name)
+							     grep-buffer-name
+							   "*grep-gtags*")))
 	(my-grep-command (or def-grep-command "grep-gtags -e pat"))
 	(current-prefix-arg 4))
     (nodup-ring-insert cscope-marker-ring (point-marker))
-    (let ((file (my-buffer-file-name (current-buffer))))
-      (if (file-remote-p file)
-	  (let ((process-environment tramp-remote-process-environment))
-	    (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
-	    (setq tramp-remote-process-environment process-environment))
-	(setenv "GTAGS_START_FILE" file)))
+    (set-gtags-start-file)
     (call-interactively 'grep-bhj-dir)
     (set (or history-var 'grep-gtags-history) grep-history)))
+
+(defun java-get-hierarchy ()
+  (interactive)
+  (set-gtags-start-file)
+  (let ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
+	(method-name (get-the-tag-around-me 'tag-name-from-tag-line 0))
+	(compilation-buffer-name-function (lambda (_ign) "*java-get-hierarchy*")))
+    (compile (format "java-get-hierarchy.pl %s -m %s" class-name method-name))))
+    
 
 (defun grep-tag-default-path ()
   (or (and transient-mark-mode mark-active
@@ -474,6 +491,7 @@
   (interactive)
   (let ((grep-history grep-find-file-history)
 	(my-grep-command "beagrep -f -e pat")
+	(compilation-buffer-name-function (lambda (_ign) "*grep-find-file*"))
 	(current-prefix-arg 4))
     (flet ((grep-tag-default () (grep-tag-default-path)))
       (nodup-ring-insert cscope-marker-ring (point-marker))
@@ -1186,6 +1204,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive)
   (let ((grep-history grep-func-call-history)
 	(my-grep-command "grep-func-call -e pat")
+	(compilation-buffer-name-function (lambda (_ign) "*grep-func-call*"))
 	(current-prefix-arg 4))
     (nodup-ring-insert cscope-marker-ring (point-marker))
     (let ((file (my-buffer-file-name (current-buffer)))
@@ -1265,7 +1284,44 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (defun ctags-beginning-of-defun (&optional arg)
   (interactive "^p")
   (goto-line 
-   (save-excursion
+   (get-the-tag-around-me 'code-line-number-from-tag-line arg)))
+
+(defun tag-name-from-tag-line (line)
+  (goto-line line)
+  (car (split-string (current-line-string))))
+
+(defun completing-read-one? (prompt collection &rest args)
+  (if (= (length collection) 1)
+      (car collection)
+    (apply 'completing-read prompt collection args)))
+
+(defun class-name-from-tag-line (line)
+  (goto-line line)
+  (let ((limit (line-end-position))
+	classes)
+    (goto-char (point-min))    
+    (while (search-forward-regexp "class\\|interface" limit t)
+      (let* ((line (current-line-string))
+	     (fields (split-string line))
+	     (name (car fields))
+	     (type (cadr fields)))
+	(cond
+	 ((or (string-equal type "class")
+	      (string-equal type "interface"))
+	  (setq classes (cons line classes))))))
+    (car (split-string (completing-read-one? "Which class/interface to hierarchy? " (delete-dups (nreverse classes)) nil t)))))
+
+(defun android-get-help ()
+  (interactive)
+  (shell-command (format "%s %s" "android-get-help" (my-buffer-file-name-local))))
+
+(defun get-the-tag-around-me (get-attr-func &optional arg)
+  (interactive)
+  "GET-ATTR-FUNC is a function to specify what attribute of the tag to return,
+for e.g., the line number the tag is on, or the name of the tag.
+
+ARG means found the (ARG - 1)th tag to find."
+  (save-excursion
      (let (deactivate-mark) ;;see the help of save-excursion
        (tag-this-file (get-buffer-create "*ctags-beginning-of-defun*"))
        (let ((old-buffer (current-buffer))
@@ -1293,7 +1349,12 @@ Starting from DIRECTORY, look upwards for a cscope database."
                (setq mid (/ (+ min max) 2)
                      mid-code-line (code-line-number-from-tag-line mid)
                      mid+1-codeline (code-line-number-from-tag-line (1+ mid))))
-             (code-line-number-from-tag-line (- mid -1 (or arg 1))))))))))
+             (funcall get-attr-func (- mid -1 
+				       (if (and (numberp arg)
+						(= arg 0)
+						(not (= (code-line-number-from-tag-line (1+ mid)) old-code-line)))
+					   1
+					 (or arg 1))))))))))  
                     
                                      
 (global-set-key [(control x) (w)] 'where-are-we)
@@ -1685,8 +1746,8 @@ Starting from DIRECTORY, look upwards for a cscope database."
       (or (buffer-file-name buf)
           ""))))
 
-(defun my-buffer-file-name-local (buf)
-  (let ((name (my-buffer-file-name buf)))
+(defun my-buffer-file-name-local (&optional buf)
+  (let ((name (my-buffer-file-name (or buf (current-buffer)))))
     (or (file-remote-p name 'localname)
         name)))
 
@@ -1784,7 +1845,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (global-set-key (kbd "s-h") help-map)
 (global-set-key (kbd "C-{") 'beginning-of-buffer)
 (global-set-key (kbd "C-}") 'end-of-buffer)
-(global-set-key (kbd "M-.") 'gtags-grep)
+(global-set-key (kbd "M-.") 'grep-gtags)
 (global-set-key (kbd "M-g f") 'grep-func-call)
 (global-set-key (kbd "M-s e") 'bhj-occur-make-errors)
 (global-set-key (kbd "M-s x") 'compilation-minor-mode)

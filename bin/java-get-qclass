@@ -21,7 +21,15 @@ for (@ARGV) {
     if ($class =~ m/\./) {
 	$class =~ s/.*\.//;
     }
-    my $output = qx(grep-gtags -e $class -t '$type' -s -p "\.java|\.aidl");
+    
+    my $output;
+
+    if ($ENV{GTAGS_START_FILE}) {
+	my $file = $ENV{GTAGS_START_FILE};
+	$output = qx(grep-imenu -e $class -t '$type' -s -p "\.java|\.aidl" -f $file);
+    } else {
+	$output = qx(grep-gtags -e $class -t '$type' -s -p "\.java|\.aidl");
+    }
     debug "$output";
     while ($output =~ m/^(.*?):.*?: <(.*?)>/mg) {
 	my ($file, $tag) = ($1, $2);
