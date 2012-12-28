@@ -225,11 +225,16 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 	Region region = new Region();
 	region.setEmpty();
 	this.lastSelectedRegion = region;
-
-	lookUpWord("eclair");
     }
 
+    String mCurrentWord;
     void lookUpWord(String word) {
+	Log.e("bhj", String.format("lookUpWord %s\n", word));
+	if (mCurrentWord != null && mCurrentWord.equals(word)) {
+	    Log.e("bhj", String.format("no need to load %s, mCurrentWord is %s\n", word, mCurrentWord));
+	    return;
+	}
+	mCurrentWord = word;
 	ArrayList<String> defs = mDict.getExplanation(word);
 	if (defs == null) {
 	    return;
@@ -247,6 +252,7 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 
 	if (mActivity != null) {
 	    mActivity.setNearByWords(nearByWords);
+	    mActivity.onNewWordLoaded(word);
 	}
     }
 
