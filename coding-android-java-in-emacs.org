@@ -3,12 +3,14 @@
 之前曾经在水木的Emacs版里提到我在用emacs-eclim（vim-eclim的一个衍生应用，从Emacs/Vim中集成Eclipse的一些功能的插件）。
 
 后来发现这个Eclim（其实是Eclipse）在打开很大的项目（整个android）的时候，
-系统变得很慢，于是果断放弃，转而用ctags-exuberant和Emacs lisp做一些简单的
-java编程工具。
+系统变得很慢，于是果断放弃，转而用ctags-exuberant、一堆perl脚本再加上
+Emacs lisp做一些简单的java编程工具。
 
-目前已经实现的功能有：
+* 目前已经实现的功能
 
-* java-get-hierarchy
+** java-get-hierarchy
+
+把某个指定的类的继承关系图给画出来。
 
 在eclim底下的截图做不出来了，下面给大家看一下我用自己的脚本做出来的效果吧。
 
@@ -20,7 +22,7 @@ java编程工具。
 
 2. 可以看到某个指定的函数是继承于哪个父类/interface（比如图中的onKeyUp函数）。
 
-* java-get-import
+** java-get-import
 
 这一点功能基本上与Eclim的是一样的，parse一个.java文件，把里面没有
 import过的class都给import进来。feature有：
@@ -30,6 +32,23 @@ import过的class都给import进来。feature有：
 2. 当用ctags-exuberant查到某个class在多个package中都有定义的时候，会在
    emacs-lisp中调用completing-read要求用户选一个。
 
-* java-resolve
+** java-resolve
 
 做这个最初的目的是想做上下文补齐，后来发现太难了，补齐还是用我自己的 [[./stem-completion.org][提干式id补齐和re补齐]] 吧。
+
+* 使用方法
+
+这套工具和我的个人配置环境整合在一起，需要先配一下，参考 [[./my-config-cn.org][这里]] 。
+
+配置完成后，到你的android目录下执行 =for-code-reading= （会花大约一小时，
+主要是 [[./beagrep.org][mkbeagrepidx]] 会花很长时间），然后执行 =java-get-hierarchy.pl
+android.view.View= ，应该能看到这样的输出：
+
+#+BEGIN_EXAMPLE
+=> class android.view.View at frameworks/base/core/java/android/view/View.java line 659.
+   => interface android.graphics.drawable.Drawable.Callback at frameworks/base/graphics/java/android/graphics/drawable/Drawable.java line 261.
+   => interface android.graphics.drawable.Drawable.Callback2 at frameworks/base/graphics/java/android/graphics/drawable/Drawable.java line 302.
+      => interface android.graphics.drawable.Drawable.Callback at frameworks/base/graphics/java/android/graphics/drawable/Drawable.java line 261.
+   => interface android.view.KeyEvent.Callback at frameworks/base/core/java/android/view/KeyEvent.java line 1282.
+   => interface android.view.accessibility.AccessibilityEventSource at frameworks/base/core/java/android/view/accessibility/AccessibilityEventSource.java line 29.
+#+END_EXAMPLE
