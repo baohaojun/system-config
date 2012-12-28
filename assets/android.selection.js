@@ -41,7 +41,7 @@ android.selection.clearSelection = function(){
 	   	var sel = window.getSelection();
 	   	sel.removeAllRanges();
 	}catch(err){
-		window.TextSelection.jsError(err);
+		window.TextSelection.jsError(err + " : in clearSelection");
 	}	
 };
 
@@ -76,7 +76,7 @@ android.selection.longTouch = function() {
 	   	
 	 }
 	 catch(err){
-	 	window.TextSelection.jsError(err);
+	 	window.TextSelection.jsError(err + " : in longTouch");
 	 }
    	
 };
@@ -104,7 +104,7 @@ android.selection.selectionChanged = function(){
 		var startRange = document.createRange();
     	startRange.setStart(range.startContainer, range.startOffset);
     	startRange.insertNode(selectionStart[0]);
-		
+
 		var endRange = document.createRange();
     	endRange.setStart(range.endContainer, range.endOffset);
     	endRange.insertNode(selectionEnd[0]);
@@ -143,10 +143,10 @@ android.selection.selectionChanged = function(){
 	   	window.TextSelection.setContentWidth(document.body.clientWidth);
 	   	
 	   	// Tell the interface that the selection changed
-	   	window.TextSelection.selectionChanged(rangyRange, text, handleBounds, menuBounds);
+	    window.TextSelection.selectionChanged(rangyRange, text, handleBounds, menuBounds);
 	}
 	catch(err){
-		window.TextSelection.jsError(err);
+		window.TextSelection.jsError(err + " : in selectionChanged");
 	}
 };
 
@@ -191,7 +191,7 @@ android.selection.saveSelectionStart = function(){
 		
 		android.selection.selectionStartRange = saveRange;
 	}catch(err){
-		window.TextSelection.jsError(err);
+		window.TextSelection.jsError(err + " : in saveSelectionStart");
 	}
 
 };
@@ -209,7 +209,7 @@ android.selection.saveSelectionEnd = function(){
 		
 		android.selection.selectionEndRange = saveRange;
 	}catch(err){
-		window.TextSelection.jsError(err);
+		window.TextSelection.jsError(err + " : in saveSelectionEnd");
 	}
 	
 };
@@ -226,7 +226,7 @@ android.selection.setStartPos = function(x, y){
 		
 		android.selection.selectBetweenHandles();
 	}catch(err){
-		window.TextSelection.jsError(err);
+		window.TextSelection.jsError(err + " : in setStartPos");
 	}
 
 };
@@ -242,7 +242,7 @@ android.selection.setEndPos = function(x, y){
 		android.selection.selectBetweenHandles();
 	
 	}catch(err){
-		window.TextSelection.jsError(err);
+		window.TextSelection.jsError(err + " : in setEndPos");
 	}
 
 };
@@ -286,7 +286,7 @@ android.selection.selectBetweenHandles = function(){
 		android.selection.selectionChanged();
    	}
    	catch(err){
-   		window.TextSelection.jsError(err);
+   		window.TextSelection.jsError(err + " : in selectBetweenHandles");
    	}
 };
 

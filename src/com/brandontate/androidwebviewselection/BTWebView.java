@@ -32,6 +32,7 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import com.googlecode.toolkits.stardict.StarDict;
 import java.util.ArrayList;
+import android.widget.ListView;
 
 public class BTWebView extends WebView implements TextSelectionJavascriptInterfaceListener,
 						  OnTouchListener, OnLongClickListener, OnDismissListener, DragListener{
@@ -95,7 +96,11 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
     /** Last touched selection handle. */
     private int mLastTouchedSelectionHandle = -1;
 
+    private BTAndroidWebViewSelectionActivity mActivity;
 
+    void setActivity(BTAndroidWebViewSelectionActivity activity) {
+	mActivity = activity;
+    }
 
     public BTWebView(Context context) {
 	super(context);
@@ -237,9 +242,13 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 	html = html + html_tail;
 
 	this.loadDataWithBaseURL("file:///sdcard/ahd/JPG/", html, null, "UTF8", null);
-    }
 	
+	ArrayList<String> nearByWords = mDict.getNearByWords(word);
 
+	if (mActivity != null) {
+	    mActivity.setNearByWords(nearByWords);
+	}
+    }
 
     //*****************************************************
     //*
@@ -648,7 +657,9 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 
 	} catch (JSONException e) {
 	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    Log.e("bhj", " JSONException", e);
+	} catch (Exception e) {
+	    Log.e("bhj", " Exception", e);
 	}
 
 

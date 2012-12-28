@@ -38,21 +38,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.text.Normalizer;
 import java.util.Formatter;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.CacheLoader;
+import java.util.concurrent.ExecutionException;
 
 public class StarDict {
-
-    static class IndexEntry {
-	public String mName;
-	public ArrayList<Pair<Integer, Integer>> start_ends;
-
-	public IndexEntry(String name) {
-	    mName = name;
-	}
-
-	public void add(int start, int end) {
-	    start_ends.add(new Pair(start, end));
-	}
-    }
 
     static int packI(byte[] buffer, int offset) {
 	return 
@@ -67,6 +58,21 @@ public class StarDict {
     RandomAccessFile ii; // index of index
     int mTotalEntries;
     int mDebug = 0;
+    LoadingCache<String, Integer> mWordIdxCache = CacheBuilder.newBuilder().maximumSize(10000).build(new CacheLoader<String, Integer>() {
+	    public Integer load(String word) {
+		return getWordIdxInternal(word);
+	    }
+	});
+
+    LoadingCache<Integer, String> mIdxWordCache = CacheBuilder.newBuilder().maximumSize(10000).build(new CacheLoader<Integer, String>() {
+	    public String load(Integer idx) {
+		try {
+		    return getWordInternal(idx);
+		} catch (IOException e) {
+		    return "";
+		}
+	    }
+	});
 
     void die(String s) {
 	System.out.println(s);
@@ -97,12 +103,15 @@ public class StarDict {
 	}
     }
   
-    /**
-     * 
-     * @param word
-     * @return the explanation(s) of the word
-     */
     private int getWordIdx(String word) {
+	try {
+	    return mWordIdxCache.get(word);
+	} catch (ExecutionException e) {
+	    e.printStackTrace();
+	    return 0;
+	}
+    }
+    private int getWordIdxInternal(String word) {
 
 	try {
 	    return binarySearchHelper(getNormalWord(word), 0, mTotalEntries);
@@ -114,20 +123,21 @@ public class StarDict {
 
     private int binarySearchHelper(String word, int min, int maxP1) throws IOException{
 	if (min + 1 >= maxP1) {
+	    debug("nok, return %d\n", min);
 	    return min;
 	}
 
 	int mid = (min + maxP1) / 2;
 	String midWord = getWord(mid);
 	String midWordNormal = getNormalWord(midWord);
-	debug("?: word is %s, midWord is %s, midWordNormal is %s, mid is %s\n", word, midWord, midWordNormal, mid);
+	debug("?: word is %s, midWord is %s, mid is %d, min is %d, max is %d\n", word, midWord, mid, min, maxP1);
 
 	int compRes = word.compareToIgnoreCase(getNormalWord(midWord));
 	if (compRes == 0) {
 	    debug("ok: word is %s, midWord is %s, midWordNormal is %s, mid is %s\n", word, midWord, midWordNormal, mid);
 	    return mid;
 	} else if ( compRes <= 0) {
-	    return binarySearchHelper(word, min, mid - 1);
+	    return binarySearchHelper(word, min, mid);
 	} else {
 	    return binarySearchHelper(word, mid + 1, maxP1);
 	}
@@ -145,7 +155,15 @@ public class StarDict {
 	return b.toString();
     }
 
-    private String getWord(int idx) throws IOException {
+    private String getWord(int idx) {
+	try {
+	    return mIdxWordCache.get(idx);
+	} catch (ExecutionException e) {
+	    return "";
+	}
+    }
+
+    private String getWordInternal(int idx) throws IOException {
 	if (idx < 0 || idx >= mTotalEntries) {
 	    return "";
 	}
@@ -209,7 +227,13 @@ public class StarDict {
 	
 	// search the ii for the word, should be a binary search
 	
-	ArrayList<Pair<Integer, Integer>> start_ends = getStartEnds(getWordIdx(word));
+	ArrayList<Pair<Integer, Integer>> start_ends = null;
+
+	try {
+	    start_ends = getStartEnds(mWordIdxCache.get(word));
+	} catch (ExecutionException e) {
+	    return null;
+	}
 
 	if (start_ends != null) {
 	    ArrayList<String> ret = new ArrayList<String>();
@@ -233,7 +257,28 @@ public class StarDict {
 	}
 	return null;
     }
-  
+    
+    public ArrayList<String> getNearByWords(String word) {
+	int idx = -1;
+	ArrayList<String> ret = new ArrayList<String>();
+	try {
+	    idx = mWordIdxCache.get(word);
+	} catch (ExecutionException e) {
+	    e.printStackTrace();
+	    return ret;
+	}
+
+
+	for (int i = idx - 5; i <= idx + 5; i++) {
+	    if (i < 0 || i >= mTotalEntries) {
+		continue;
+	    }
+	    
+	    ret.add(getWord(i));
+	}
+	return ret;
+	    
+    }
     public static void main(String[] args) {
 	StarDict dict = new StarDict("/sdcard/ahd/ahd");
 	dict.mDebug = 1;

@@ -31,10 +31,20 @@
 
   </LinearLayout>
 
-  <view 
-      class="com.brandontate.androidwebviewselection.BTWebView"
-      android:layout_width="match_parent" 
-      android:layout_height="match_parent" 
-      android:id="@+id/webView"/>
-
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="horizontal" >
+    
+    <ListView android:id="@+id/nearby_dict_entries"
+              android:layout_height="match_parent"
+              android:layout_width="0dip"
+	      android:layout_weight="0.2" />
+    <view 
+	class="com.brandontate.androidwebviewselection.BTWebView"
+	android:layout_width="0dip"
+	android:layout_weight="0.8"
+	android:layout_height="match_parent" 
+	android:id="@+id/webView"/>
+  </LinearLayout>
 </LinearLayout>
