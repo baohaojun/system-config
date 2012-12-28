@@ -43,7 +43,8 @@ for (glob "$dir/*") {
   for (glob "$mb/cur/*") {
     my $file = $_;
 
-    if (not /(.*)\/cur\/(.*?)$sep_char.*2,(.*)$/) {
+    if (not /(.*)\/cur\/(.*?)$sep_char.{0}2,(.*)$/) {
+	warn "$_ not match maildir file\n";	
 	next;
     }
 
@@ -56,8 +57,12 @@ for (glob "$dir/*") {
       if ($flags =~ /F/) {
         mkdir "$path/.nnmaildir/marks/tick";
         my $dst = "$path/.nnmaildir/marks/tick/$message";
-        symlink "$file","$dst"
-          and print "Added mail in $mb to nnmaildir ticks\n";
+
+	if (! -e "$dst") {
+	    symlink "$file","$dst"
+		and print "Added mail in $mb to nnmaildir ticks\n"
+		or warn "symlink $file $dst failed\n";
+	}
       } else {
         # my $dst = "$path/.nnmaildir/marks/tick/$message";
         # unlink "$dst"
@@ -68,8 +73,11 @@ for (glob "$dir/*") {
       if ($flags =~ /S/) {
         mkdir "$path/.nnmaildir/marks/read";
         my $dst = "$path/.nnmaildir/marks/read/$message";
-        symlink "$file","$dst"
-          and print "Added mail in $mb to nnmaildir seen\n";
+	if (! -e $dst) {
+	    symlink "$file","$dst"
+		and print "Added mail in $mb to nnmaildir seen\n" 
+		or warn "symlink $file $dst failed\n";
+	}
       } else {
         my $dst = "$path/.nnmaildir/marks/read/$message";
         unlink "$dst"

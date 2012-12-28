@@ -157,7 +157,7 @@ while (<>) {
 	    debug "got $1 $2";
 	    type_it($2, $1);
 	}
-    } elsif (m/($qualified_re)$connect_re($id_re)(,|=.*|;)/) { #var definition
+    } elsif (m/($qualified_re)(?:$connect_re|<$id_re>)($id_re)(,|=.*|;)/) { #var definition
 	type_it($2, $1);
 	my $assign = $3;
 	while ($assign =~ m/($qualified_re)/g) {
@@ -254,12 +254,24 @@ sub find_import_for($)
     }
 
     unless ($resolve) {
+	our %printed_imports;
+	my $deleted = 0;
+	
+	for (0..@imports) {
+	    if ($printed_imports{$imports[$_]}) {
+		delete $imports[$_];
+		$deleted = 1;
+	    } else {
+		$printed_imports{$imports[$_]} = 1;
+	    }
+	}
+	
 	if (@imports == 1) {
 	    print "import @imports\n";
 	} elsif (@imports) {
 	    print "import-multi @imports\n";
 	} else {
-	    print "can not import $def\n";
+	    print "can not import $def\n" unless $deleted;
 	}
     }
 }

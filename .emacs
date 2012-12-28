@@ -139,7 +139,7 @@
       (push-mark))
     (ctags-beginning-of-defun arg)))
 
-(defun current-regexp (re)
+(defun current-regexp (re &optional func)
   (save-excursion
     (let (start end)
       (while (not (looking-at re))
@@ -150,7 +150,7 @@
       (setq start (point))
       (search-forward-regexp re)
       (setq end (point))
-      (buffer-substring-no-properties start end))))
+      (funcall (or func 'buffer-substring-no-properties) start end))))
     
 (defun java-resolve (id)
   (interactive 
@@ -161,6 +161,40 @@
   (shell-command (format "java-get-imports.pl %s -r %s"
 			 (shell-quote-argument (buffer-file-name))
 			 (shell-quote-argument id))))
+
+(defun java-complete-method (id)
+  (interactive
+   (list (or (and transient-mark-mode mark-active
+		  (/= (point) (mark))
+		  (buffer-substring-no-properties (point) (mark)))
+	     (current-regexp "[.a-z0-9_]+"))))
+
+  (let (method (remove ""))
+    (save-excursion
+      (let* ((resolve (shell-command-to-string (format "java-get-imports.pl %s -r %s|tr -d '\\n'"
+						       (shell-quote-argument (buffer-file-name))
+						       (shell-quote-argument id))))
+	     (comp (split-string resolve "\\."))
+	     (comp-last (car (last comp)))
+	     (class (cond
+		     ((string= comp-last "")
+		      (setq remove ".")
+		      (mapconcat 'identity (butlast comp) "."))
+		     ((let ((case-fold-search nil))
+			      (string-match "^[a-z]" comp-last))
+		      (setq remove (concat "." comp-last))
+		      (mapconcat 'identity (butlast comp) "."))
+		     (t resolve)))
+	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '{'" class)))
+	     (methods (split-string hierarchy "\n")))
+	(setq method (completing-read "Which function to override? " methods nil t))))
+    (goto-char (current-regexp "[.a-z0-9_]+" (lambda (start end) end)))
+    (when (not (string-equal remove ""))
+      (delete-region (- (point) (length "hello")) (point)))
+    (insert ".")
+    (insert (replace-regexp-in-string ".*\\s \\(.*(.*)\\){" "\\1" method))))
+      
+    
 
 (global-set-key (kbd "M-g j r") 'java-resolve)
 (global-set-key (kbd "M-g j h") 'java-get-hierarchy)
@@ -463,7 +497,18 @@
 		     (if current-prefix-arg
 			 "-v"
 		       (concat "-m " method-name))))))
-    
+
+(defun java-get-override ()
+  (interactive)
+  (set-gtags-start-file)
+  (let (method)
+    (save-excursion
+      (let* ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
+	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '{'" class-name)))
+	     (methods (split-string hierarchy "\n")))
+	(setq method (completing-read "Which function to override? " methods nil t))))
+    (insert "@Override\n")
+    (insert (replace-regexp-in-string  "\\(,\\|)\\)" "\\1 " method))))
 
 (defun grep-tag-default-path ()
   (or (and transient-mark-mode mark-active
