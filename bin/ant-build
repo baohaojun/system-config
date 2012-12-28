@@ -18,5 +18,5 @@ key.store=/home/bhj/my-release-key.keystore
 key.alias=bhjkeystore
 EOF
 rm hello_project/ -rf
-(get-authinfo localhost ant | perl -ne 'print "$_\n$_\n"') | ant release
+mm-ant release
 

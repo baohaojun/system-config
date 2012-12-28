@@ -155,7 +155,11 @@ while ($supers =~ m/($qualified_re)/g) {
     } elsif (-e "libcore/luni/src/main/java/java/lang/$prefix.java") {
 	$q_super = "java.lang.$prefix" . substr($class, length($prefix));
     } else {
-	warn "super $class not resolved";
+	if ($class =~ m/^[a-z].*\./) {
+	    $q_super = $class;
+	} else {
+	    warn "super $class not resolved";
+	}
     }
 
     if ($q_super) {

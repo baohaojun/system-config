@@ -5,3 +5,14 @@
 ** 把妈和芠芠先搬过去
 *** 衣、食、住、行
 *** 
+
+* How to add a .jar file to an apk ant project?
+
+Simply put the .jar (or a symlink of it) into the ~libs~ folder of the
+ant project.
+
+There is no special requirement of this .jar file, for e.g., I just
+~apt-get install libguava-java~ and symlinked
+~/usr/share/java/guava.jar~ and it worked.
+
+

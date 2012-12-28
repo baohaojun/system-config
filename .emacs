@@ -458,7 +458,11 @@
   (let ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
 	(method-name (get-the-tag-around-me 'tag-name-from-tag-line 0))
 	(compilation-buffer-name-function (lambda (_ign) "*java-get-hierarchy*")))
-    (compile (format "java-get-hierarchy.pl %s -m %s" class-name method-name))))
+    (compile (format "java-get-hierarchy.pl %s %s" 
+		     class-name 
+		     (if current-prefix-arg
+			 "-v"
+		       (concat "-m " method-name))))))
     
 
 (defun grep-tag-default-path ()
@@ -1291,7 +1295,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (car (split-string (current-line-string))))
 
 (defun completing-read-one? (prompt collection &rest args)
-  (if (= (length collection) 1)
+  (if (= (length (delete-dups collection)) 1)
       (car collection)
     (apply 'completing-read prompt collection args)))
 
@@ -2586,12 +2590,12 @@ using ctags-exuberant"
 	  (if (looking-at "-multi")
 	      (setq import-list (cons
 				 (format "import %s;\n" 
-					 (completing-read "Import which? "
-							  (cdr
-							   (delete-if-empty
-							    (split-string (current-line-string) "\\s +")))
-							  nil
-							  t))
+					 (completing-read-one? "Import which? "
+							       (cdr
+								(delete-if-empty
+								 (split-string (current-line-string) "\\s +")))
+							       nil
+							       t))
 				 import-list))
 	    (setq import-list (cons (format "%s;\n" (current-line-string)) import-list)))))
       (goto-char (point-max))

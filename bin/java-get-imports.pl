@@ -147,7 +147,7 @@ while (<>) {
 
 	my $params = $3;
 	$params =~ s/$modifier_re //g;
-	while ($params =~ m/($qualified_re)$connect_re($id_re)/g) {
+	while ($params =~ m/($qualified_re)(?:$connect_re|<$id_re>)($id_re)/g) {
 	    type_it($2, $1);
 	}
     } elsif (m/($qualified_re)$connect_re($id_re)\)/) { #arguments

@@ -147,3 +147,7 @@ vendor/marvell/carrier/BackupRestore/src/com/marvell/bkrs/sms/pdu/SmsPduBackup.j
 Grep finished (matches found) at Wed Dec 12 17:31:00
 
 #+end_example
+
+* Everytime you change apk resource, you must do a clean build
+
+  So that all .java files are recompiled, or else something weird will happen. This is a lesson learned in developping crossdict.

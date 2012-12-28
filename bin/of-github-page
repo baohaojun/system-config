@@ -1,3 +1,8 @@
 #!/bin/bash
 
-of http://baohaojun.github.com/${1/%.org/.html}
+x=http://baohaojun.github.com/${1/%.org/.html}
+echo "$x"|putclip
+
+if test $(basename $0) != github-pagep; then
+    of "$x"
+fi

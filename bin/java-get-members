@@ -32,6 +32,7 @@ done
 
 
 for class in "$@"; do
+    export GTAGS_START_FILE= 
     qclasses=$(java-get-qclass $class)
 
     for qclass in $qclasses; do

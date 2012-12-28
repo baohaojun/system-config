@@ -195,8 +195,8 @@ read_line:
 
 	if ( # we should extract this into a .conf!!
 	     $str =~ m/(?:^|:\t)#undef|^variable.*:\s+EXPORT_SYMBOL/ or 
-	     $path =~ $path_inv) {
-	    debug "ignore because $path matches inverse pattern";
+	     $path_inv and $path =~ $path_inv) {
+	    debug "ignore because $path matches reverse pattern ($path_inv)";
 	    next;
 	}
 
