@@ -15,6 +15,7 @@ sub get_normal_words($)
     return $word;
 }
 
+open(my $dz, "<", "ahd.dz") or die "Can not open dz";
 open(my $f, "<", "ahd.idx"); 
 my @c;
 my %word_normal_lc_map;
@@ -31,7 +32,26 @@ while(read $f, my $c, 1) {
 	read $f, my $pos_info, ord($c)*8;
 	
 	my @start_ends = unpack('N' x (ord($c) * 2), $pos_info);
-	$start_end_map{$word} = \@start_ends;
+
+
+	my @defs;
+	for (0..(@start_ends / 2 - 1)) {
+	    my $start = $start_ends[2 * $_];
+	    my $end = $start_ends[2 * $_ + 1];
+	    my $def;
+	    seek($dz, $start, 0) or die "Can not seek dz";
+	    if (read($dz, $def, $end - $start) != $end - $start) {
+		die "can not read dz";
+	    }
+	    push @defs, [$def, $start, $end];
+	}
+	@defs = sort { $$a[0] cmp $$b[0] } @defs;
+	
+	@start_ends = ();
+	for (@defs) {
+	    push @start_ends, ($$_[1], $$_[2]);
+	}
+	$start_end_map{$word} = \@start_ends;	    
     }
 }
 
