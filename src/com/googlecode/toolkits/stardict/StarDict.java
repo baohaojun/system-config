@@ -114,16 +114,30 @@ public class StarDict {
     private int getWordIdxInternal(String word) {
 
 	try {
-	    return binarySearchHelper(getNormalWord(word), 0, mTotalEntries);
+	    return binarySearchHelper(getNormalWord(word), word, 0, mTotalEntries);
 	} catch (IOException e) {
 	    e.printStackTrace();
 	    return 0;
 	}
     }
 
-    private int binarySearchHelper(String word, int min, int maxP1) throws IOException{
+    private int tryToFindExactMatch(String normalWord, String word, int mid) {
+	do {
+	    mid--;
+	} while (normalWord.compareToIgnoreCase(getNormalWord(getWord(mid))) == 0);
+
+	do {
+	    mid++;
+	    if (word.compareTo(getWord(mid)) == 0) {
+		return mid;
+	    }
+	} while (normalWord.compareToIgnoreCase(getNormalWord(getWord(mid))) == 0);
+	
+	return mid - 1;
+    }
+
+    private int binarySearchHelper(String normalWord, String word, int min, int maxP1) throws IOException{
 	if (min + 1 >= maxP1) {
-	    debug("nok, return %d\n", min);
 	    return min;
 	}
 
@@ -131,15 +145,18 @@ public class StarDict {
 	String midWord = getWord(mid);
 	String midWordNormal = getNormalWord(midWord);
 	debug("?: word is %s, midWord is %s, mid is %d, min is %d, max is %d\n", word, midWord, mid, min, maxP1);
-
-	int compRes = word.compareToIgnoreCase(getNormalWord(midWord));
+	int compRes = normalWord.compareToIgnoreCase(midWordNormal);
 	if (compRes == 0) {
-	    debug("ok: word is %s, midWord is %s, midWordNormal is %s, mid is %s\n", word, midWord, midWordNormal, mid);
-	    return mid;
+	    if (word.compareTo(midWord) == 0) {
+		debug("ok: word is %s, midWord is %s, midWordNormal is %s, mid is %s\n", word, midWord, midWordNormal, mid);
+		return mid;
+	    } else {
+		return tryToFindExactMatch(normalWord, word, mid);
+	    }
 	} else if ( compRes <= 0) {
-	    return binarySearchHelper(word, min, mid);
+	    return binarySearchHelper(normalWord, word, min, mid);
 	} else {
-	    return binarySearchHelper(word, mid + 1, maxP1);
+	    return binarySearchHelper(normalWord, word, mid + 1, maxP1);
 	}
 	
     }
@@ -188,7 +205,6 @@ public class StarDict {
     private int getByte0Pos(int idx) throws IOException {
 	ii.seek(idx * 4);
 	int ret = ii.readInt();
-	debug("byte0 found at %x for index %x\n", ret, idx);
 	return ret - 1;
     }
 	
@@ -197,7 +213,6 @@ public class StarDict {
 	index.seek(pos0 + 1);
 	int nDefs = index.readUnsignedByte();
 	int ret = pos0 + 1 + nDefs * 8;
-	debug("getEntryEndPos: %x for %x\n", ret, idx);
 	return ret;
     }
 

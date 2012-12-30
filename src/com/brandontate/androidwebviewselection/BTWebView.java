@@ -242,7 +242,7 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 	
 	String html = html_head;
 	for (String def : defs) {
-	    html = html + def + "<hr>";
+	    html = html + def;
 	}
 	html = html + html_tail;
 
@@ -550,7 +550,11 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 					int actionId) {
 		    // TODO Auto-generated method stub
 		    if (actionId == 1) {
-			lookUpWord(selectedText);
+			mActivity.runOnUiThread(new Runnable() {
+				public void run() {
+				    lookUpWord(selectedText);
+				}
+			    });
 		    }
 		    else if (actionId == 2) {
 			// Do Button 2 stuff
