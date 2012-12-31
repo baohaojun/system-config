@@ -85,6 +85,10 @@ public class StarDict {
 	}
     }
 
+    public int getTotalNumOfEntries() {
+	return mTotalEntries;
+    }
+
     public StarDict(String dictname) {
 	try {
 	    int length = (int) new File(dictname+".idx").length();
@@ -103,7 +107,7 @@ public class StarDict {
 	}
     }
   
-    private int getWordIdx(String word) {
+    public int getWordIdx(String word) {
 	try {
 	    return mWordIdxCache.get(word);
 	} catch (ExecutionException e) {
@@ -172,7 +176,7 @@ public class StarDict {
 	return b.toString();
     }
 
-    private String getWord(int idx) {
+    public String getWord(int idx) {
 	try {
 	    return mIdxWordCache.get(idx);
 	} catch (ExecutionException e) {

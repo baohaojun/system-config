@@ -44,7 +44,6 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
     protected	Context	ctx;
 
     /** The context menu. */
-    private StarDict mDict = new StarDict("/sdcard/ahd/ahd");
     private final String html_head = "<html> <head> <link rel='stylesheet' href='dict.css' type='text/css'> <script src='jquery.js'></script> <script src='rangy-core.js'></script> <script src='rangy-serializer.js'></script> <script src='android.selection.js'></script> </head> <body>";
     private final String html_tail = "</body></html>";
     private QuickAction mContextMenu;
@@ -100,6 +99,11 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 
     void setActivity(BTAndroidWebViewSelectionActivity activity) {
 	mActivity = activity;
+    }
+
+    private StarDict mDict;
+    void setDict(StarDict dict) {
+	mDict = dict;
     }
 
     public BTWebView(Context context) {
@@ -251,7 +255,6 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 	ArrayList<String> nearByWords = mDict.getNearByWords(word);
 
 	if (mActivity != null) {
-	    mActivity.setNearByWords(nearByWords);
 	    mActivity.onNewWordLoaded(word);
 	}
     }

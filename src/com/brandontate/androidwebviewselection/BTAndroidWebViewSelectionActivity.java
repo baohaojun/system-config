@@ -17,17 +17,19 @@ import android.widget.TextView;
 import android.view.KeyEvent;
 import android.content.DialogInterface;
 import android.app.AlertDialog;
+import com.googlecode.toolkits.stardict.StarDict;
 
 public class BTAndroidWebViewSelectionActivity extends Activity {
     /** Called when the activity is first created. */
     private EditText mEdit; 
-    private ListView mListView;
+    private SlowListView mListView;
 
     private Button mLookUpButton;
     private Button mDefinedButton;
     private Button mMatchingButton;
     private BTWebView mWebView;
-    private ArrayAdapter mArrayAdapter;
+
+    private StarDict mDict = new StarDict("/sdcard/ahd/ahd");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,23 +41,18 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 
         setContentView(R.layout.main);
 
-        mListView = (ListView) findViewById(R.id.nearby_dict_entries);
-	mArrayAdapter = new ArrayAdapter<String>(this, R.layout.simple_list_item_1);
-        mListView.setAdapter(mArrayAdapter);
+        mListView = (SlowListView) findViewById(R.id.nearby_dict_entries);
+        mListView.createAndSetAdapter(this, mDict);
 	mEdit = (EditText) findViewById(R.id.enter_dict_entry);
 
 	mLookUpButton = (Button) findViewById(R.id.look_up_button);
 	mLookUpButton.setOnClickListener(mLookUpListner);
 	mWebView = (BTWebView) findViewById(R.id.webView);
 	mWebView.setActivity(this);
+	mWebView.setDict(mDict);
 	mWebView.lookUpWord("eclair");
 
 	mListView.setOnItemClickListener(mItemClickListener);
-    }
-
-    public void setNearByWords(ArrayList<String> nearByWords) {
-	mArrayAdapter.clear();
-	mArrayAdapter.addAll(nearByWords);
     }
 
     AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
@@ -70,8 +67,8 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
     private int mHistoryTail = 0;
     String mCurrentWord;
     public void onNewWordLoaded(String word) {
-	Log.e("bhj", String.format("onNewWordLoaded %s\n", word));
 	mCurrentWord = word;
+	mListView.scrollToWord(word);
 	if (mPoping) {
 	    return;
 	}
@@ -142,5 +139,4 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 		mWebView.lookUpWord(mEdit.getText().toString());
 	    }
 	};
-
 }
