@@ -43,7 +43,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
 import java.util.concurrent.ExecutionException;
 
-public class StarDict {
+public class StarDict implements StarDictInterface {
 
     static int packI(byte[] buffer, int offset) {
 	return 
@@ -85,6 +85,7 @@ public class StarDict {
 	}
     }
 
+    @Override
     public int getTotalNumOfEntries() {
 	return mTotalEntries;
     }
@@ -107,6 +108,7 @@ public class StarDict {
 	}
     }
   
+    @Override
     public int getWordIdx(String word) {
 	try {
 	    return mWordIdxCache.get(word);
@@ -176,6 +178,7 @@ public class StarDict {
 	return b.toString();
     }
 
+    @Override
     public String getWord(int idx) {
 	try {
 	    return mIdxWordCache.get(idx);
@@ -276,30 +279,9 @@ public class StarDict {
 	}
 	return null;
     }
-    
-    public ArrayList<String> getNearByWords(String word) {
-	int idx = -1;
-	ArrayList<String> ret = new ArrayList<String>();
-	try {
-	    idx = mWordIdxCache.get(word);
-	} catch (ExecutionException e) {
-	    e.printStackTrace();
-	    return ret;
-	}
 
-
-	for (int i = idx - 5; i <= idx + 5; i++) {
-	    if (i < 0 || i >= mTotalEntries) {
-		continue;
-	    }
-	    
-	    ret.add(getWord(i));
-	}
-	return ret;
-	    
-    }
     public static void main(String[] args) {
-	StarDict dict = new StarDict("/sdcard/ahd/ahd");
+	StarDict dict = new StarDict("/sdcard/ahd/words");
 	dict.mDebug = 1;
 	for (String a : args) {
 	    for (String s : dict.getExplanation(a)) {

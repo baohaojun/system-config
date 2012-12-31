@@ -13,6 +13,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.view.View;
 import com.googlecode.toolkits.stardict.StarDict;
 import android.util.AttributeSet;
+import com.googlecode.toolkits.stardict.StarDictInterface;
 
 public class SlowListView extends ListView implements ListView.OnScrollListener {
 
@@ -49,7 +50,7 @@ public class SlowListView extends ListView implements ListView.OnScrollListener 
          * @see android.widget.ListAdapter#getCount()
          */
         public int getCount() {
-            return mDict.getTotalNumOfEntries();
+            return mActiveDict.getTotalNumOfEntries();
         }
 
         /**
@@ -89,7 +90,7 @@ public class SlowListView extends ListView implements ListView.OnScrollListener 
             }
 
             if (!mBusy) {
-                text.setText(mDict.getWord(position));
+                text.setText(mActiveDict.getWord(position));
                 // Null tag means the view has the correct data
                 text.setTag(null);
             } else {
@@ -103,7 +104,11 @@ public class SlowListView extends ListView implements ListView.OnScrollListener 
     }
     
     public void scrollToWord(String word) {
-	int idx = mDict.getWordIdx(word);
+	if (mActiveDict != mTheDict) {
+	    return;
+	}
+
+	int idx = mActiveDict.getWordIdx(word);
 	int first = getFirstVisiblePosition();
 	int count = getChildCount();
 
@@ -118,8 +123,8 @@ public class SlowListView extends ListView implements ListView.OnScrollListener 
 	}
     }
 
-    public void createAndSetAdapter(Context context, StarDict dict) {
-	mDict = dict;
+    public void createAndSetAdapter(Context context, StarDictInterface dict) {
+	mActiveDict = mTheDict = dict;
         setAdapter(new SlowAdapter(context));
         setOnScrollListener(this);
 	setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -130,7 +135,27 @@ public class SlowListView extends ListView implements ListView.OnScrollListener 
             int totalItemCount) {
     }
     
-    private StarDict mDict;
+    private StarDictInterface mTheDict;
+    private StarDictInterface mActiveDict;
+    
+    /**
+     * Change the active dictionary the list is using.
+     * 
+     * @return true if the dictionary is changed, false if not
+     * changed.
+     */
+    public boolean setActiveDict(StarDictInterface dict) {
+	boolean ret = false;
+
+	if (mActiveDict != dict) {
+	    ret = true;
+	    mActiveDict = dict;
+	    requestLayout();
+	    setSelection(0);
+	}
+	return ret;
+    }
+
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         switch (scrollState) {
         case OnScrollListener.SCROLL_STATE_IDLE:
@@ -141,7 +166,7 @@ public class SlowListView extends ListView implements ListView.OnScrollListener 
             for (int i=0; i<count; i++) {
                 TextView t = (TextView)view.getChildAt(i);
                 if (t.getTag() != null) {
-                    t.setText(mDict.getWord(first + i));
+                    t.setText(mActiveDict.getWord(first + i));
                     t.setTag(null);
                 }
             }

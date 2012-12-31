@@ -252,8 +252,6 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 
 	this.loadDataWithBaseURL("file:///sdcard/ahd/JPG/", html, null, "UTF8", null);
 	
-	ArrayList<String> nearByWords = mDict.getNearByWords(word);
-
 	if (mActivity != null) {
 	    mActivity.onNewWordLoaded(word);
 	}

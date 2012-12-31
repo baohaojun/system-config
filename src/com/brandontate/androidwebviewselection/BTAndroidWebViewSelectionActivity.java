@@ -18,6 +18,7 @@ import android.view.KeyEvent;
 import android.content.DialogInterface;
 import android.app.AlertDialog;
 import com.googlecode.toolkits.stardict.StarDict;
+import com.googlecode.toolkits.stardict.StringArrayDict;
 
 public class BTAndroidWebViewSelectionActivity extends Activity {
     /** Called when the activity is first created. */
@@ -30,6 +31,7 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
     private BTWebView mWebView;
 
     private StarDict mDict = new StarDict("/sdcard/ahd/ahd");
+    private StarDict mUsageDict = new StarDict("/sdcard/ahd/usage");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,12 +47,17 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
         mListView.createAndSetAdapter(this, mDict);
 	mEdit = (EditText) findViewById(R.id.enter_dict_entry);
 
-	mLookUpButton = (Button) findViewById(R.id.look_up_button);
-	mLookUpButton.setOnClickListener(mLookUpListner);
+
 	mWebView = (BTWebView) findViewById(R.id.webView);
 	mWebView.setActivity(this);
 	mWebView.setDict(mDict);
 	mWebView.lookUpWord("eclair");
+
+	mLookUpButton = (Button) findViewById(R.id.look_up_button);
+	mLookUpButton.setOnClickListener(mLookUpListener);
+
+	mDefinedButton = (Button) findViewById(R.id.defined_with_button);
+	mDefinedButton.setOnClickListener(mDefinedListener);
 
 	mListView.setOnItemClickListener(mItemClickListener);
     }
@@ -134,9 +141,29 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 	}
     }	
 	
-    View.OnClickListener mLookUpListner = new OnClickListener() {
+    View.OnClickListener mLookUpListener = new OnClickListener() {
 	    public void onClick(View v) {
+		boolean changed = mListView.setActiveDict(mDict);
 		mWebView.lookUpWord(mEdit.getText().toString());
+		if (changed) {
+		    onNewWordLoaded(mCurrentWord);
+		}
+	    }
+	};
+
+    View.OnClickListener mDefinedListener = new OnClickListener() {
+	    public void onClick(View v) {
+		String word = mEdit.getText().toString();
+		ArrayList<String> defs = mUsageDict.getExplanation(word);
+		if (defs == null || defs.isEmpty()) {
+		    return;
+		}
+		String words = defs.get(0);
+		String[] splits = words.split(":");
+		if (splits.length > 0) {
+		    mListView.setActiveDict(new StringArrayDict(splits));
+		    mWebView.lookUpWord(splits[0]);
+		}
 	    }
 	};
 }
