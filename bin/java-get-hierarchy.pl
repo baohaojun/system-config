@@ -1,10 +1,5 @@
 #!/usr/bin/perl
 use strict;
-open(my $debug, ">", glob("~/.logs/java-get-hierarchy.log"))
-    or die "Can not open debug log file ~/.logs/java-get-hierarchy.log";
-sub debug(@) {
-    print $debug "@_\n";
-}
 
 chomp(my $code_dir = qx(find-code-reading-dir));
 chdir $code_dir or die "can not chdir $code_dir";
@@ -12,7 +7,16 @@ chdir $code_dir or die "can not chdir $code_dir";
 my $recursive = 1;
 if ($ENV{DO_RECURSIVE_JAVA_HIERARCHY}) {
     $recursive = 0;
+} else {
+    unlink glob("~/.logs/java-get-hierarchy.log")
 }
+
+open(my $debug, ">>", glob("~/.logs/java-get-hierarchy.log"))
+    or die "Can not open debug log file ~/.logs/java-get-hierarchy.log";
+sub debug(@) {
+    print $debug "@_\n";
+}
+
 $ENV{DO_RECURSIVE_JAVA_HIERARCHY} = 1;
 use Getopt::Long;
 my $method;
@@ -29,13 +33,21 @@ if (@ARGV != 1) {
 my $q_class = $ARGV[0];
 if ($q_class !~ m/\./) {
     chomp($q_class = qx(java-get-qclass $q_class));
+    debug "q_class for $ARGV[0] is $q_class";
+    if ($q_class =~ m/\n/) {
+	warn "$$ARGV[0] has multi q_class:\n$q_class\n";
+    }
 }
+
+debug "q_class is $q_class";
 chomp(my $working_file= qx(java-find-def.pl -e $q_class));
 my $working_file_dir = $working_file;
 $working_file_dir =~ s,(.*)/.*,$1,;
 
 chomp(my $flatten_cache = qx(java-flatten-cache $working_file));
+debug "flatten_cache is $flatten_cache";
 chomp(my $tags_cache = qx(java-tags-cache $working_file));
+debug "tags_cache is $tags_cache";
 
 my $class = $q_class;
 $class =~ s/.*\.//;
@@ -64,8 +76,15 @@ for my $key (@keywords) {
 }
 
 my $supers = ' ';
-while ($def_line =~ m/(?:class|interface).*\b$class\b(?:<.*?>)?(.*)\{/g) {
-    $supers = "$supers $1";
+if ($def_line =~ m/(class|interface).*\b$class\b(?:<.*?>)?(.*)\{/) {
+    $supers = "$supers $2";
+
+    if ($1 eq "class") {
+	my $super = $2;
+	if ($super !~ m/\bextends\b/ and $class ne "Object") {
+	    $supers = "$supers java.lang.Object";
+	}
+    }    
 }
 
 my $imports = qx(grep "^import " $flatten_cache);
@@ -83,46 +102,11 @@ sub map_it($)
     $defined_class{$q} = 1;
 }
 
-sub get_default_packages($)
-{
-    my $package = $_[0];
-    return unless $package;
-    open(my $pipe, "-|", "grep-gtags -e $package -t package -s -c")
-	or die "can not open grep-gtags";
-
-    while (<$pipe>) {
-	m#/([^/]+)\.(?:java|aidl):.*# or next;
-	map_it("$package.$1");
-    }
-    close($pipe);
-}
-
-sub get_wildcards($)
-{ 
-    my $import = $_[0];
-    return 0 unless $import;
-    chomp(my $file = qx(java-find-def.pl -e $import));
-    -e $file or warn "$import definition not found";
-
-    my $import_save = $import;
-    $import =~ s/.*\.//;
-    open(my $pipe, "-|", "global-ctags '$import..*' $file")
-	or die "can not open global-ctags";
-    while (<$pipe>) {
-	my ($def) = split;
-	$def =~ s/.*\.$import\.//;
-	map_it("$import_save.$def");
-    }
-    close $pipe;
-}
-
 sub import_it($)
 {
     my $q = $_[0];
     if ($q =~ m/\*$/) {
 	$q =~ s/\.\*$//;
-	#get_default_packages($q);
-	#get_wildcards($q);
     } else {
 	map_it($q);
     }
@@ -133,9 +117,6 @@ while ($tags =~ m/(?:class|interface): <(.*?)>/g) {
     map_it($1);
 }
 
-
-#get_default_packages($package);
-#get_default_packages("java.lang");
 my %super_classes;
 my %done_classes;
 
@@ -196,10 +177,17 @@ sub print_hierarchy($$)
     if ($method or $verbose) {
 	$method_indent = " " x ($indent * 3 + 3);
     }
-	
-    print " " x ($indent * 3 - 3) . "=> " . qx(java-find-def.pl -e $q_class -v);
+ 
+    my $java_find_def = qx(java-find-def.pl -e $q_class -v);
+    print " " x ($indent * 3 - 3) . "=> " . $java_find_def;
 
-    system("java-query-qmethod $q_class.$method|perl -npe 's/^/$method_indent/'") if $method;
+    if ($method) {
+	my $q_class2 = (split(" ", $java_find_def))[1];
+	if ($q_class2) {
+	    $q_class = $q_class2;
+	}
+	system("java-query-qmethod $q_class.$method|perl -npe 's/^/$method_indent/'");
+    }
     system("java-get-members $q_class -p | perl -npe 's/^/$method_indent/'") if $verbose;
     if ($super_classes{$q_class}) {
 	for (sort keys $super_classes{$q_class}) {

@@ -131,8 +131,6 @@ for (sort { $words_freq{$a} <=> $words_freq{$b} } keys %words_freq) {
 close($file_freq);
 
 open (my $dz_usage, ">", "usage.dz") or die "can not open word defines file for writing";
-
-
 open (my $idx_usage, ">", "usage.idx") or die "can not open word usage idx for writing";
 open (my $ii_usage, ">", "usage.ii") or die "can not open word usage idx for writing";
 

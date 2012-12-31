@@ -31,3 +31,6 @@
 [submodule "gcode/android/su-binary"]
 	path = gcode/android/su-binary
 	url = https://github.com/baohaojun/su-binary.git
+[submodule ".emacs_d/yasnippet-snippets"]
+	path = .emacs_d/yasnippet-snippets
+	url = https://github.com/baohaojun/yasnippet-snippets.git

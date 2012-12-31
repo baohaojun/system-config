@@ -27,6 +27,9 @@ open(my $pipe, "-|", "grep-gtags -e $lookup_needle -d $code_dir -t 'class|interf
     or die "can not open global-ctags";
 
 my %files_package;
+my $print_done;
+my $backup_for_nfound;
+my $backup_for_nfound_v;
 while (<$pipe>) {
     m/^(.*?):.*?<(.*?)>/ or next;
     debug "Got $_";
@@ -37,6 +40,7 @@ while (<$pipe>) {
 	$files_package{$file} = $package;
     }
     if ("$package.$tag" eq $lookup_needle_save) {
+	$print_done = 1;
 	if ($verbose) {
 	    m/^(.*?):(\d+): (\S+): </;
 	    print "$3 $package.$tag at $1 line $2.\n";
@@ -45,10 +49,23 @@ while (<$pipe>) {
 	}
 	exit 0;
     } else {
-	debug "$package.$tag not eq to $lookup_needle_save"
+	debug "$package.$tag not eq to $lookup_needle_save";
+
+	if (not $backup_for_nfound) {
+	    $backup_for_nfound = "$file\n";
+	    if ($verbose) {
+		m/^(.*?):(\d+): (\S+): </;
+		$backup_for_nfound_v = "$3 $package.$tag (backup for $lookup_needle_save) at $1 line $2.\n";
+	    }
+	}
     }
 }
 
+if ($verbose) {
+    print $backup_for_nfound_v;
+} else {
+    print $backup_for_nfound;
+}
 exit 1;
 
 

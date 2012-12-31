@@ -1,6 +1,14 @@
 import java.util.*;
-class Test {
+class Test implements TestInterface {
+    interface TestInterface {
+	void interfaceFunc();
+    }
+
+    void interfaceFunc() {
+	System.out.println("interfaceFunc");
+    }
     public static void main(String []args) {
+	new Test2().interfaceFunc();
 	System.out.println("hello of Test");
 	char[] s = "hello of Test".toCharArray();
 	for (char c : s) {

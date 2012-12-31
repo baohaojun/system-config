@@ -27,7 +27,10 @@ sub get_normal_words($)
 
 my $ii;
 my $last_entry_end = 0;
-open(my $ahd_words, ">", "ahd.words") or die "Can not open words";
+
+open (my $dz_words, ">", "words.dz") or die "can not open word defines file for writing";
+open (my $idx_words, ">", "words.idx") or die "can not open word words idx for writing";
+open (my $ii_words, ">", "words.ii") or die "can not open word words idx for writing";
 
 while (read($ii_file, $ii, 4) == 4) {
     my ($off_n_entries) = unpack("N", $ii);
@@ -40,7 +43,16 @@ while (read($ii_file, $ii, 4) == 4) {
 	die "read idx file not ok";
     }
 
-    print $ahd_words "$word\n";
+    my $words_start = tell($dz_words);
+    print $dz_words "$word\n";
+    my $words_end = tell($dz_words);
+
+    print $idx_words "$word";
+
+    print $idx_words pack("CC", 0, 1);
+    print $ii_words pack("N", tell($idx_words) - 1);
+    print $idx_words pack("NN", $words_start, $words_end);
+
     my $n_entries;
     seek($idx_file, $off_n_entries, 0) or die "can not seek $idx_file";
     if (read($idx_file, $n_entries, 1) != 1) {
@@ -64,4 +76,7 @@ while (read($ii_file, $ii, 4) == 4) {
     $last_entry_end = tell($idx_file);
 }
 
-close $ahd_words;
+close($dz_words);
+close($idx_words);
+close($ii_words);
+

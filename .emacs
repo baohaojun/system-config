@@ -504,7 +504,7 @@
   (let (method)
     (save-excursion
       (let* ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
-	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '{'" class-name)))
+	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class-name)))
 	     (methods (split-string hierarchy "\n")))
 	(setq method (completing-read "Which function to override? " methods nil t))))
     (insert "@Override\n")
@@ -798,7 +798,7 @@
  '(x-select-enable-clipboard t)
  '(yas/also-auto-indent-first-line t)
  '(yas/prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
- '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets")) nil (yasnippet))
+ '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets" "~/.emacs_d/yasnippet-snippets")) nil (yasnippet))
  '(yas/trigger-key "M-TAB"))
 
 ; '(url-proxy-services (quote (("http" . "127.0.0.1:18080") ("no_proxy" . "^[^.]*$\\|sina.com"))))
@@ -2632,17 +2632,21 @@ using ctags-exuberant"
 	(shell-command (format "java-get-imports.pl %s -v" (buffer-file-name old-buffer)) (current-buffer))
 	(goto-char (point-min))
 	(while (search-forward-regexp "^import" nil t)
-	  (if (looking-at "-multi")
-	      (setq import-list (cons
-				 (format "import %s;\n" 
-					 (completing-read-one? "Import which? "
-							       (cdr
-								(delete-if-empty
-								 (split-string (current-line-string) "\\s +")))
-							       nil
-							       t))
-				 import-list))
-	    (setq import-list (cons (format "%s;\n" (current-line-string)) import-list)))))
+	  (save-excursion
+	    (if (looking-at "-multi")
+
+		(setq import-list (cons
+				   (format "import %s;\n" 
+					   (completing-read-one? "Import which? "
+								 (cdr
+								  (delete-if-empty
+								   (split-string (current-line-string) "\\s +")))
+								 nil
+								 t))
+				   import-list))
+	      (setq import-list (cons (format "%s;\n" (current-line-string)) import-list))))
+	  (forward-line) 
+	  (beginning-of-line)))
       (goto-char (point-max))
       (search-backward-regexp "^import\\s +")
       (forward-line)
