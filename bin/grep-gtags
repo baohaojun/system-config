@@ -3,6 +3,10 @@
 use Getopt::Long;
 use strict;
 use String::ShellQuote;
+use String::Approx 'adistr';
+
+use IPC::Open2;
+
 
 my $debug;
 open($debug, ">", glob("~/.logs/grep-gtags.log")) or
@@ -233,6 +237,7 @@ read_line:
 	
     }
 }
+
 sub do_cscope($$$) {
     $filter_worked = 0;
     debug "do_cscope @_";
@@ -275,7 +280,6 @@ sub do_cscope($$$) {
 	return 1;
     }
 
-    use String::Approx 'adistr';
     our $approx_dir;
 
     my @updated_paths = keys %updated_paths; 
@@ -288,11 +292,23 @@ sub do_cscope($$$) {
     }
 
     if (not $imenu_mode) {
-	open(my $updates_handle, "-|", "echo @updated_paths |tr ' ' '\n'| gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
-	    or die "Can not query update on gtags";
 
-	@updated_paths = map {chomp; s,^\./,,; $_} <$updates_handle>;
-	close($updates_handle);
+
+        my $child_pid = open2(my $child_out, my $child_in, "cat > ~/1.txt; #gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
+        or die "Can not query update on gtags"; 
+
+	if (fork() == 0) {
+	    for (@updated_paths) {
+		print $child_in "$_\n";
+	    }
+	    close($child_in);
+	    exit 0;
+	}
+
+        close $child_in;
+	@updated_paths = map {chomp; s,^\./,,; $_} <$child_out>;
+        close $child_out;
+        waitpid($child_pid, 0);
     }
 
     push @updated_paths, $start_file if -e $start_file and not $updated_paths{$start_file};
@@ -346,6 +362,7 @@ sub do_cscope($$$) {
 	    system("ctags-show-definition $code_dir/$file $line $lookup_needle");
 	}        
     }
+
     return $got_results;
 }
 
@@ -374,4 +391,5 @@ for (@gtags_fallback_dir) {
   debug "Not found in current dir; search in $dir";
   do_cscope($dir, $lookup_needle, $lookup_restrict_regexp) and last;
 }
+
 
