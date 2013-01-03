@@ -185,12 +185,12 @@
 		      (setq remove (concat "." comp-last))
 		      (mapconcat 'identity (butlast comp) "."))
 		     (t resolve)))
-	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '{'" class)))
+	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class)))
 	     (methods (split-string hierarchy "\n")))
 	(setq method (completing-read "Which function to override? " methods nil t))))
     (goto-char (current-regexp "[.a-z0-9_]+" (lambda (start end) end)))
     (when (not (string-equal remove ""))
-      (delete-region (- (point) (length "hello")) (point)))
+      (delete-region (- (point) (length remove)) (point)))
     (insert ".")
     (insert (replace-regexp-in-string ".*\\s \\(.*(.*)\\){" "\\1" method))))
       
@@ -490,7 +490,10 @@
   (interactive)
   (set-gtags-start-file)
   (let ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
-	(method-name (get-the-tag-around-me 'tag-name-from-tag-line 0))
+	(method-name (or (and transient-mark-mode mark-active
+			      (/= (point) (mark))
+			      (buffer-substring-no-properties (point) (mark)))
+			 (get-the-tag-around-me 'tag-name-from-tag-line 0)))
 	(compilation-buffer-name-function (lambda (_ign) "*java-get-hierarchy*")))
     (compile (format "java-get-hierarchy.pl %s %s" 
 		     class-name 
@@ -2648,7 +2651,8 @@ using ctags-exuberant"
 	  (forward-line) 
 	  (beginning-of-line)))
       (goto-char (point-max))
-      (search-backward-regexp "^import\\s +")
+      (or (search-backward-regexp "^import\\s +" nil t)
+	  (search-backward-regexp "^package\\s +" nil t))
       (forward-line)
       (beginning-of-line)
       (while import-list
