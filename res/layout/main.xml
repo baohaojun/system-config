@@ -21,13 +21,18 @@
     
     <Button android:layout_height="wrap_content"
 	    android:layout_width="wrap_content"
-	    android:text="Defined with..."
+	    android:text="Defined with"
 	    android:id="@+id/defined_with_button" />
     
     <Button android:layout_height="wrap_content"
 	    android:layout_width="wrap_content"
-	    android:text="Matching..."
+	    android:text="Matching"
 	    android:id="@+id/matching_button" />
+
+    <Button android:layout_height="wrap_content"
+	    android:layout_width="wrap_content"
+	    android:text="Lists..."
+	    android:id="@+id/lists_button" />
 
   </LinearLayout>
 

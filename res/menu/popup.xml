@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2010 The Android Open Source Project
+<!-- Copyright (C) 2010 Google Inc.
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,15 +13,13 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textSize="15sp"
-    android:gravity="center_vertical"
-    android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-    android:paddingRight="?android:attr/listPreferredItemPaddingRight"
-    android:background="?android:attr/activatedBackgroundIndicator"
-    android:minHeight="25sp"
-/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/dict_menu"
+          android:title="Whole dictionary" />
+    <item android:id="@+id/defining_menu"
+          android:title="Defined by" />
+    <item android:id="@+id/matching_menu"
+          android:title="Matching" />
+    <item android:id="@+id/freq_menu"
+	  android:title="Frequency" />
+</menu>
