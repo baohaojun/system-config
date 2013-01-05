@@ -104,9 +104,6 @@ public class SlowListView extends ListView implements ListView.OnScrollListener 
     }
     
     public void scrollToWord(String word) {
-	if (mActiveDict != mTheDict) {
-	    return;
-	}
 
 	int idx = mActiveDict.getWordIdx(word);
 	int first = getFirstVisiblePosition();

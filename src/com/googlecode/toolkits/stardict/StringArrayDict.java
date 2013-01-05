@@ -22,7 +22,7 @@ public class StringArrayDict implements StarDictInterface {
 
     @Override
     public String getWord(int idx) {
-	if (idx >= 0 && idx < mEntries.length) {
+	if (idx >= 0 && idx < mEntries.length && mEntries[idx] != null) {
 	    return mEntries[idx];
 	} else {
 	    return "";

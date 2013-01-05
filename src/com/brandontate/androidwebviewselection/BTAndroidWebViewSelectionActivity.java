@@ -28,6 +28,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import android.widget.PopupMenu;
 import com.googlecode.toolkits.stardict.FreqDict;
+import com.googlecode.toolkits.stardict.StarDictInterface;
+import com.googlecode.toolkits.stardict.MatcherDict;
+import android.view.Menu;
+import java.util.HashMap;
 
 public class BTAndroidWebViewSelectionActivity extends Activity {
     /** Called when the activity is first created. */
@@ -44,19 +48,47 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
     private StarDict mUsageDict = new StarDict("/sdcard/ahd/usage");
     private FreqDict mFreqDict = new FreqDict("/sdcard/ahd/frequency");
 
+    private StarDictInterface mActiveDict = mDict;
+    private StarDictInterface mDefinedWithDict;
+    private StarDictInterface mMatchingDict;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 	if (savedInstanceState != null) {
 	    mCurrentWord = savedInstanceState.getString("mCurrentWord", "");
+	    mCurrentDefiner = savedInstanceState.getString("mCurrentDefiner", "");
+	    mCurrentDefinee = savedInstanceState.getString("mCurrentDefinee", "");
+	    mCurrentMatcher = savedInstanceState.getString("mCurrentMatcher", "");
+	    mCurrentMatchee = savedInstanceState.getString("mCurrentMatchee", "");
+	    mCurrentFreqWord = savedInstanceState.getString("mCurrentFreqWord", "");
 	} else {
 	    try {
 		InputStreamReader reader = new InputStreamReader(openFileInput("saved_word.txt"), "UTF8");
-		char[] buffer = new char[128];
+		char[] buffer = new char[1024];
 		int n = reader.read(buffer);
 		if (n >= 0) {
-		    mCurrentWord = new String(buffer, 0, n);
+		    String str = new String(buffer, 0, n);
+		    String[] strArr = str.split("\n");
+
+		    switch (strArr.length) { // fall through all cases
+		    case 6:
+			mCurrentFreqWord = strArr[5];
+		    case 5:
+			mCurrentMatchee = strArr[4];
+		    case 4:
+			mCurrentMatcher = strArr[3];
+		    case 3:
+			mCurrentDefinee = strArr[2];
+		    case 2:
+			mCurrentDefiner = strArr[1];
+		    case 1:
+			mCurrentWord = strArr[0];
+		    default:
+			;
+		    }
 		}
 	    } catch (Exception e) {
 		Log.e("bhj", "read mCurrentWord failed", e);
@@ -84,6 +116,9 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 	mDefinedButton = (Button) findViewById(R.id.defined_with_button);
 	mDefinedButton.setOnClickListener(mDefinedListener);
 
+	mMatchingButton = (Button) findViewById(R.id.matching_button);
+	mMatchingButton.setOnClickListener(mMatchingListerner);
+
 	mListButton = (Button) findViewById(R.id.lists_button);
 	mListButton.setOnClickListener(mListListener);
 
@@ -105,8 +140,22 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
     String mCurrentWord = "";
     public void onNewWordLoaded(String word) {
 	mCurrentWord = word;
+
+	if (mActiveDict == mFreqDict) {
+	    mCurrentFreqWord = word;
+	} else if (mActiveDict == mDefinedWithDict) {
+	    mCurrentDefinee = word;
+	} else if (mActiveDict == mMatchingDict) {
+	    mCurrentMatchee = word;
+	}
+
+	mEdit.setText(word);
 	mListView.scrollToWord(word);
 	if (mPoping) {
+	    return;
+	}
+
+	if (lastWord().compareTo(word) == 0) {
 	    return;
 	}
 	mWordHistory[mHistoryHead] = word;
@@ -114,6 +163,18 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 	if (mHistoryHead == mHistoryTail) {
 	    mHistoryTail = (mHistoryTail + 1) % mWordHistory.length;
 	}
+    }
+
+    private String lastWord() {
+	
+	int idx = mHistoryHead - 1;
+	if (idx < 0) {
+	    idx += mWordHistory.length;
+	}
+	if (mWordHistory[idx] != null) {
+	    return mWordHistory[idx];
+	}
+	return "";
     }
 
     boolean mPoping;
@@ -155,6 +216,11 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
 	super.onSaveInstanceState(outState);
 	outState.putString("mCurrentWord", mCurrentWord);
+	outState.putString("mCurrentDefiner", mCurrentDefiner);
+	outState.putString("mCurrentDefinee", mCurrentDefinee);
+	outState.putString("mCurrentMatcher", mCurrentMatcher);
+	outState.putString("mCurrentMatchee", mCurrentMatchee);
+	outState.putString("mCurrentFreqWord", mCurrentFreqWord);
     }
 
     @Override
@@ -183,6 +249,16 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 			    try {
 				OutputStreamWriter file = new OutputStreamWriter(openFileOutput("saved_word.txt", Context.MODE_PRIVATE), "UTF8");
 				file.write(mCurrentWord);
+				file.write("\n");
+				file.write(mCurrentDefiner);
+				file.write("\n");
+				file.write(mCurrentDefinee);
+				file.write("\n");
+				file.write(mCurrentMatcher);
+				file.write("\n");
+				file.write(mCurrentMatchee);
+				file.write("\n");
+				file.write(mCurrentFreqWord);
 				file.close();
 			    } catch (Exception e) {
 				Log.e("bhj", "save mCurrentWord failed", e);
@@ -196,52 +272,142 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 	}
 	return false;
     }	
-	
+
+    public void lookUpWord(String word) {
+	mActiveDict = mDict;
+	boolean changed = mListView.setActiveDict(mDict);
+	mWebView.lookUpWord(word);
+	if (changed) {
+	    onNewWordLoaded(mCurrentWord);
+	}
+
+    }
     View.OnClickListener mLookUpListener = new OnClickListener() {
 	    public void onClick(View v) {
-		boolean changed = mListView.setActiveDict(mDict);
-		mWebView.lookUpWord(mEdit.getText().toString());
-		if (changed) {
-		    onNewWordLoaded(mCurrentWord);
-		}
+		String word = mEdit.getText().toString();
+		lookUpWord(word);
 	    }
 	};
 
     String mCurrentDefiner = "";
+    String mCurrentDefinee = "";
     String mCurrentMatcher = "";
-    String mCurrentFreqWord = "";
+    String mCurrentMatchee = "";
+    String mCurrentFreqWord = "a";
+
+    public void lookUpDefiner(String word) {
+	mCurrentDefiner = word;
+	ArrayList<String> defs = mUsageDict.getExplanation(word);
+	if (defs == null || defs.isEmpty()) {
+	    return;
+	}
+	int idx = mUsageDict.getWordIdx(word);
+	if (word.compareToIgnoreCase(mUsageDict.getWord(idx)) != 0) {
+	    new AlertDialog.Builder(BTAndroidWebViewSelectionActivity.this)
+		.setTitle("Not a definer!")
+		.setMessage(String.format("%s is not a defining word, this maybe because it is too common", word))
+		.setPositiveButton("OK", null)
+		.create().show();
+	    return;
+	}
+	String words = defs.get(0);
+	String[] splits = words.split(":");
+	if (splits.length > 0) {
+	    mActiveDict = mDefinedWithDict = new StringArrayDict(splits);
+	    mListView.setActiveDict(mDefinedWithDict);
+	    mWebView.lookUpWord(splits[0]);
+	}
+    }
+
+    public void lookUpMatching(String word) {
+	mCurrentMatcher = word;
+	MatcherDict.useWordsFile("/sdcard/ahd/words");
+	mActiveDict = mMatchingDict = new MatcherDict(word);
+	mListView.setActiveDict(mActiveDict);
+	mWebView.lookUpWord(mActiveDict.getWord(0));
+    }
 
     View.OnClickListener mDefinedListener = new OnClickListener() {
 	    public void onClick(View v) {
 		String word = mEdit.getText().toString();
-		ArrayList<String> defs = mUsageDict.getExplanation(word);
-		if (defs == null || defs.isEmpty()) {
-		    return;
-		}
-		String words = defs.get(0);
-		String[] splits = words.split(":");
-		if (splits.length > 0) {
-		    mListView.setActiveDict(new StringArrayDict(splits));
-		    mWebView.lookUpWord(splits[0]);
-		}
+		lookUpDefiner(word);
 	    }
 	};
 
+    View.OnClickListener mMatchingListerner = new OnClickListener() {
+	    public void onClick(View v) {
+		String word = mEdit.getText().toString();
+		lookUpMatching(word);
+	    }
+	};
+
+    PopupMenu.OnMenuItemClickListener mMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
+	    public boolean onMenuItemClick(MenuItem item) {
+		if (item.getItemId() == R.id.freq_menu) {
+		    mActiveDict = mFreqDict;
+		    mListView.setActiveDict(mActiveDict);
+		    Log.e("bhj", String.format("mCurrentFreqWord is %s\n", mCurrentFreqWord));
+		    mWebView.lookUpWord(mCurrentFreqWord);
+		} else if (item.getItemId() == R.id.defining_menu) {
+		    if (mDefinedWithDict == null) {
+			lookUpDefiner(mCurrentDefiner);
+		    } else {
+			mActiveDict = mDefinedWithDict;
+			mListView.setActiveDict(mActiveDict);
+			mWebView.lookUpWord(mCurrentDefinee);
+		    }
+		} else if (item.getItemId() == R.id.matching_menu) {
+		    if (mMatchingDict == null) {
+			lookUpMatching(mCurrentMatcher);
+		    } else {
+			mActiveDict = mMatchingDict;
+			mListView.setActiveDict(mActiveDict);
+			mWebView.lookUpWord(mCurrentMatchee);
+		    }
+		} else if (item.getItemId() == R.id.history_menu) {
+		    mActiveDict = mDict;
+		    mListView.setActiveDict(new StringArrayDict(stringReduce(mWordHistory)));
+		    mWebView.lookUpWord(mWordHistory[0]);
+		}
+		return true;
+	    }
+	};
     View.OnClickListener mListListener = new OnClickListener() {
 	    public void onClick(View button) {
 		PopupMenu popup = new PopupMenu(BTAndroidWebViewSelectionActivity.this, button);
 		popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
 
-		popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-			public boolean onMenuItemClick(MenuItem item) {
-			    if (item.getItemId() == R.id.freq_menu) {
-				mListView.setActiveDict(mFreqDict);
-			    }
-			    return true;
-			}
-		    });
+		popup.setOnMenuItemClickListener(mMenuItemClickListener);
 
+		Menu menu = popup.getMenu();
+		
+		if (mCurrentMatcher != null) {
+		    menu.findItem(R.id.matching_menu).setTitle(String.format("Matching %s", mCurrentMatcher));
+		}
+
+		if (mCurrentDefiner != null) {
+		    menu.findItem(R.id.defining_menu).setTitle(String.format("Defined by %s", mCurrentDefiner));
+		}
+
+		if (mCurrentFreqWord != null) {
+		    menu.findItem(R.id.freq_menu).setTitle(String.format("Frequency of %s", mCurrentFreqWord));
+		}
 		popup.show();
 	    }
 	};
+
+    static String[] stringReduce(String[] strArr) {
+	HashMap<String, Integer> set = new HashMap<String, Integer>();
+	ArrayList<String> list = new ArrayList<String>();
+
+	for (String s : strArr) {
+	    if (s != null && set.containsKey(s)) {
+		continue;
+	    }
+
+	    set.put(s, 1);
+	    list.add(s);
+	}
+	return list.toArray(new String[0]);
+    }
 }

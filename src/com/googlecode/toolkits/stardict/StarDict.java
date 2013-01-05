@@ -42,6 +42,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
 import java.util.concurrent.ExecutionException;
+import android.util.Log;
 
 public class StarDict implements StarDictInterface {
 
@@ -90,10 +91,12 @@ public class StarDict implements StarDictInterface {
 	return mTotalEntries;
     }
 
+    private boolean mHtmlize = false;
     public StarDict(String dictname) {
 	try {
-	    int length = (int) new File(dictname+".idx").length();
-
+	    if (new File(dictname + ".htmlize").exists()) {
+		mHtmlize = true;
+	    }
 	    this.ii = new RandomAccessFile(dictname+".ii", "r");
 	    this.index = new RandomAccessFile(dictname+".idx", "r");
 	    this.dict = new RandomAccessFile(dictname+".dz", "r");
@@ -130,7 +133,7 @@ public class StarDict implements StarDictInterface {
     private int tryToFindExactMatch(String normalWord, String word, int mid) {
 	do {
 	    mid--;
-	} while (normalWord.compareToIgnoreCase(getNormalWord(getWord(mid))) == 0);
+	} while (mid >= 0 && normalWord.compareToIgnoreCase(getNormalWord(getWord(mid))) == 0);
 
 	do {
 	    mid++;
@@ -188,6 +191,7 @@ public class StarDict implements StarDictInterface {
     }
 
     private String getWordInternal(int idx) throws IOException {
+	Log.e("bhj", String.format("got word for %d\n", idx));
 	if (idx < 0 || idx >= mTotalEntries) {
 	    return "";
 	}
@@ -268,8 +272,12 @@ public class StarDict implements StarDictInterface {
 		try {
 		    dict.seek(start);
 		    dict.readFully(buffer, 0, buffer.length);
-		    ret.add(new String(buffer, "UTF8"));
+		    String add = new String(buffer, "UTF8");
 		    
+		    if (mHtmlize) {
+			add = String.format("<pre>%s</pre><hr>", add);
+		    }
+		    ret.add(add);		    
 		} catch (Exception e) {
 		    System.out.printf("start for %s is %d, stop is %d\n", word, start, end);
 		    e.printStackTrace();

@@ -22,4 +22,6 @@
           android:title="Matching" />
     <item android:id="@+id/freq_menu"
 	  android:title="Frequency" />
+    <item android:id="@+id/history_menu"
+	  android:title="History" />
 </menu>

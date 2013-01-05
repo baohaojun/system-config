@@ -233,13 +233,15 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 
     String mCurrentWord;
     void lookUpWord(String word) {
-	Log.e("bhj", String.format("lookUpWord %s\n", word));
+	Log.e("bhj", String.format("lookUpWord '%s'\n", word));
 	if (mCurrentWord != null && mCurrentWord.equals(word)) {
 	    Log.e("bhj", String.format("no need to load %s, mCurrentWord is %s\n", word, mCurrentWord));
+	    mActivity.onNewWordLoaded(word);
 	    return;
 	}
 	mCurrentWord = word;
 	ArrayList<String> defs = mDict.getExplanation(word);
+	Log.e("bhj", String.format("got explanation\n"));
 	if (defs == null) {
 	    return;
 	}
@@ -252,9 +254,7 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 
 	this.loadDataWithBaseURL("file:///sdcard/ahd/JPG/", html, null, "UTF8", null);
 	
-	if (mActivity != null) {
-	    mActivity.onNewWordLoaded(word);
-	}
+	mActivity.onNewWordLoaded(word);
     }
 
     //*****************************************************
@@ -549,21 +549,26 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 		@Override
 		public void onItemClick(QuickAction source, int pos,
 					int actionId) {
-		    // TODO Auto-generated method stub
 		    if (actionId == 1) {
 			mActivity.runOnUiThread(new Runnable() {
 				public void run() {
-				    lookUpWord(selectedText);
+				    mActivity.lookUpWord(selectedText);
 				}
 			    });
 		    }
 		    else if (actionId == 2) {
-			// Do Button 2 stuff
-			Log.i(TAG, "Hit Button 2");
+			mActivity.runOnUiThread(new Runnable() {
+				public void run() {
+				    mActivity.lookUpDefiner(selectedText);
+				}
+			    });
 		    }
 		    else if (actionId == 3) {
-			// Do Button 3 stuff
-			Log.i(TAG, "Hit Button 3");
+			mActivity.runOnUiThread(new Runnable() {
+				public void run() {
+				    mActivity.lookUpMatching(selectedText);
+				}
+			    });
 		    }
 		    contextMenuVisible = false;
 		    endSelectionMode();
