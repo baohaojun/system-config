@@ -169,7 +169,8 @@ read_line:
 	    debug "ignore $path because arch not matches";
 	    next;
 	}
-	if ($path_matcher and $path !~ m/$path_matcher/) {
+	    
+	if (not $updating and $path_matcher and $path !~ m/$path_matcher/) {
 	    debug "ignore $path because of path matcher miss";
 	    $filter_worked++;
 	    next;
@@ -294,7 +295,7 @@ sub do_cscope($$$) {
     if (not $imenu_mode) {
 
 
-        my $child_pid = open2(my $child_out, my $child_in, "cat > ~/1.txt; #gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
+        my $child_pid = open2(my $child_out, my $child_in, "gtags --gtagslabel=plugin-example -u -f - $db_dir_quoted")
         or die "Can not query update on gtags"; 
 
 	if (fork() == 0) {
@@ -311,7 +312,12 @@ sub do_cscope($$$) {
         waitpid($child_pid, 0);
     }
 
-    push @updated_paths, $start_file if -e $start_file and not $updated_paths{$start_file};
+    if (-e $start_file and not $updated_paths{$start_file}) {
+	push @updated_paths, $start_file;
+	debug "pushed start file into updated_paths";
+    } else {
+	debug "no need to push start file into updated_paths"
+    }
     if (@updated_paths) {
 	debug "These files need update: @updated_paths\n";
 	foreach my $path(@updated_paths) {

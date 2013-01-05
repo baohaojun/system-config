@@ -37,6 +37,7 @@ while (read($ii_file, $ii, 4) == 4) {
     if (read($idx_file, $word, $this_entry_name_end - $last_entry_end) != $this_entry_name_end - $last_entry_end) {
 	die "read idx file not ok";
     }
+    debug "word is $word";
 
     my $n_entries;
     seek($idx_file, $off_n_entries, 0) or die "can not seek $idx_file";
@@ -63,8 +64,12 @@ while (read($ii_file, $ii, 4) == 4) {
 	
 	my $def;
 	seek($dz_file, $start, 0) or die "can not seek dz file";
+	
+	if ($end-$start < 0) {
+	    die "read dz file not ok: def: $def, start: $start, end: $end";
+	}
 	if (read($dz_file, $def, $end-$start) != $end - $start) {
-	    die "read dz file not ok";
+	    die "read dz file not ok: def: $def, start: $start, end: $end";
 	}
 
 	$def =~ s/<.*?>/ /g;

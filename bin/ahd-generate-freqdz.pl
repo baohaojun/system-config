@@ -3,7 +3,7 @@
 use strict;
 use String::ShellQuote;
 
-open(my $freq, "<", "freq.dz") or die "can not open freq.dz";
+open(my $freq, "<", "ahd.freq") or die "can not open freq.dz";
 
 my $ascii_re = "^[\000-\177]+\$";
 $ascii_re = qr($ascii_re);

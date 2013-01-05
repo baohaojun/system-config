@@ -32,7 +32,7 @@ GetOptions('-g' => \$from_gnus,
            '-d=s' => \$dir);
 
 if (! ($from_gnus ^ $from_maildir)) {
-  die "Usage: sync_nnmaildir -g [-f]\n   or: sync_nnmaildir -m [-v -f]\n";
+  die "Usage: sync_nnmaildir -g (from gnus) [-f]\n   or: sync_nnmaildir -m (from maildir) [-v -f]\n";
 }
 
 for (glob "$dir/*") {
@@ -60,7 +60,7 @@ for (glob "$dir/*") {
 
 	if (! -e "$dst") {
 	    symlink "$file","$dst"
-		and print "Added mail in $mb to nnmaildir ticks\n"
+		and print "Added mail in $mb to gnus ticks\n"
 		or warn "symlink $file $dst failed\n";
 	}
       } else {
@@ -75,7 +75,7 @@ for (glob "$dir/*") {
         my $dst = "$path/.nnmaildir/marks/read/$message";
 	if (! -e $dst) {
 	    symlink "$file","$dst"
-		and print "Added mail in $mb to nnmaildir seen\n" 
+		and print "Added mail in $mb to gnus seen\n" 
 		or warn "symlink $file $dst failed\n";
 	}
       } else {

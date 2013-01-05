@@ -2603,15 +2603,25 @@ using ctags-exuberant"
 
 (defun bhj-find-missing-file ()
   (interactive)
-  (let (missing-file-name)
+  (let (missing-file-name missing-file-name-save)
     (save-excursion
       (goto-char (point-min))
       (search-forward-regexp "(default \\(.*\\))")
-      (setq missing-file-name (match-string 1)))
+      (setq missing-file-name (match-string 1))
+      (setq missing-file-name-save missing-file-name))
 
     (setq missing-file-name (shell-command-to-string
 			     (format "beagrep -e %s -f 2>&1|perl -ne 's/:\\d+:.*// and print'" missing-file-name)))
     (setq missing-file-name (delete-if-empty (split-string missing-file-name "\n")))
+    (unless missing-file-name
+      (setq missing-file-name
+	    (mapcar (lambda (b) (buffer-file-name b))
+		    (delete-if-not 
+		     (lambda (b)
+		       (let ((name (file-name-nondirectory (or (buffer-file-name b) ""))))
+			 (string= name missing-file-name-save)))
+		     (buffer-list)))))
+      
     (when missing-file-name
       (if (nth 1 missing-file-name)
 	  (setq missing-file-name

@@ -157,7 +157,7 @@ while (<>) {
 	    debug "got $1 $2";
 	    type_it($2, $1);
 	}
-    } elsif (m/($qualified_re)(?:$connect_re|<$id_re>)($id_re)(,|=.*|;)/) { #var definition
+    } elsif (m/($qualified_re)(?:$connect_re|<$id_re(?:,$id_re)*>)($id_re)(,|=.*|;)/) { #var definition
 	type_it($2, $1);
 	my $assign = $3;
 	while ($assign =~ m/($qualified_re)/g) {

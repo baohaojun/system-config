@@ -1,0 +1,31 @@
+#!/bin/bash
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test "$#" != 1; then
+    die "usage gcide word";
+fi
+
+echo "$1";
+
+dir=/sdcard/gcide/dict
+
+r=$(random 80)
+
+(
+#   flock 9
+    word=$1
+    if [[ "$1" =~ / ]]; then
+        set -- "$(echo "$1"|perl -npe 's!/!%!g')"
+    fi
+    (
+        echo define gcide \""$word"\" | /usr/local/bin/dicod --config /home/bhj/.gcider/dicod.conf -i --stderr  > $dir/$r/"$1" 2>/dev/null
+        if ! grep -q -i "^250 command complete" $dir/$r/"$1"; then
+            mv $dir/$r/"$1" $dir/failed/
+        fi
+    )&
+
+) 9>$dir/lock.$r
