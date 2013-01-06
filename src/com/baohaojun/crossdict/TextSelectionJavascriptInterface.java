@@ -1,4 +1,4 @@
-package com.brandontate.androidwebviewselection;
+package com.baohaojun.crossdict;
 
 import android.content.Context;
 import android.util.Log;

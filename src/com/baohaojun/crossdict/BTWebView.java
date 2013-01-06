@@ -1,4 +1,4 @@
-package com.brandontate.androidwebviewselection;
+package com.baohaojun.crossdict;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,9 +95,9 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
     /** Last touched selection handle. */
     private int mLastTouchedSelectionHandle = -1;
 
-    private BTAndroidWebViewSelectionActivity mActivity;
+    private CrossDictActivity mActivity;
 
-    void setActivity(BTAndroidWebViewSelectionActivity activity) {
+    void setActivity(CrossDictActivity activity) {
 	mActivity = activity;
     }
 

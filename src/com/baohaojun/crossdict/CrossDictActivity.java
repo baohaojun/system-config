@@ -1,4 +1,4 @@
-package com.brandontate.androidwebviewselection;
+package com.baohaojun.crossdict;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -33,7 +33,7 @@ import com.googlecode.toolkits.stardict.MatcherDict;
 import android.view.Menu;
 import java.util.HashMap;
 
-public class BTAndroidWebViewSelectionActivity extends Activity {
+public class CrossDictActivity extends Activity {
     /** Called when the activity is first created. */
     private EditText mEdit; 
     private SlowListView mListView;
@@ -122,7 +122,7 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 	mListButton = (Button) findViewById(R.id.lists_button);
 	mListButton.setOnClickListener(mListListener);
 
-	mListView.createAndSetAdapter(BTAndroidWebViewSelectionActivity.this, mDict);
+	mListView.createAndSetAdapter(CrossDictActivity.this, mDict);
 	mWebView.lookUpWord(mCurrentWord);
 	mListView.setOnItemClickListener(mItemClickListener);
     }
@@ -241,7 +241,7 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 	    return true;
 	}
 	if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    new AlertDialog.Builder(BTAndroidWebViewSelectionActivity.this)
+	    new AlertDialog.Builder(CrossDictActivity.this)
 		.setTitle("Exit?")
 		.setMessage("Please confirm that you want to exit.")
 		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -263,7 +263,7 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 			    } catch (Exception e) {
 				Log.e("bhj", "save mCurrentWord failed", e);
 			    }
-			    BTAndroidWebViewSelectionActivity.this.finish();
+			    CrossDictActivity.this.finish();
 			}
 		    })
 		.setNegativeButton("Cancel", null)
@@ -303,7 +303,7 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 	}
 	int idx = mUsageDict.getWordIdx(word);
 	if (word.compareToIgnoreCase(mUsageDict.getWord(idx)) != 0) {
-	    new AlertDialog.Builder(BTAndroidWebViewSelectionActivity.this)
+	    new AlertDialog.Builder(CrossDictActivity.this)
 		.setTitle("Not a definer!")
 		.setMessage(String.format("%s is not a defining word, this maybe because it is too common", word))
 		.setPositiveButton("OK", null)
@@ -374,7 +374,7 @@ public class BTAndroidWebViewSelectionActivity extends Activity {
 	};
     View.OnClickListener mListListener = new OnClickListener() {
 	    public void onClick(View button) {
-		PopupMenu popup = new PopupMenu(BTAndroidWebViewSelectionActivity.this, button);
+		PopupMenu popup = new PopupMenu(CrossDictActivity.this, button);
 		popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
 
 		popup.setOnMenuItemClickListener(mMenuItemClickListener);

@@ -1,4 +1,4 @@
-package com.brandontate.androidwebviewselection;
+package com.baohaojun.crossdict;
 
 public interface TextSelectionJavascriptInterfaceListener {
 

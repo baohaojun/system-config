@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.brandontate.androidwebviewselection.R;
+import com.baohaojun.crossdict.R;
 
 /**
  * QuickAction dialog, shows action list as icon and text like the one in Gallery3D app. Currently supports vertical 

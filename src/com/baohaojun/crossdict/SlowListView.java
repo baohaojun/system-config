@@ -1,4 +1,4 @@
-package com.brandontate.androidwebviewselection;
+package com.baohaojun.crossdict;
 import android.app.Activity;
 import android.widget.BaseAdapter;
 import android.os.Bundle;
