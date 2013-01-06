@@ -131,7 +131,7 @@ public class MatcherDict implements StarDictInterface {
 
     public static void main(String[] args) {
 	mDebug = true;
-	useWordsFile("/sdcard/ahd/words");
+	useWordsFile("words");
 	MatcherDict dict = new MatcherDict("hello");
 	for (String word : dict.mMatchees) {
 	    System.out.println("hello word: " + word);

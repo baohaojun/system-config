@@ -97,6 +97,13 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 
     private CrossDictActivity mActivity;
 
+    private String mBaseUrl = "file:///";
+
+    public void setBaseUrlWithDir(String dir) {
+	mBaseUrl = "file://" + dir + "/";
+	Log.e("bhj", String.format("mBaseUrl is set to %s\n", mBaseUrl));
+    }
+
     void setActivity(CrossDictActivity activity) {
 	mActivity = activity;
     }
@@ -252,7 +259,7 @@ public class BTWebView extends WebView implements TextSelectionJavascriptInterfa
 	}
 	html = html + html_tail;
 
-	this.loadDataWithBaseURL("file:///sdcard/ahd/JPG/", html, null, "UTF8", null);
+	this.loadDataWithBaseURL(mBaseUrl, html, null, "UTF8", null);
 	
 	mActivity.onNewWordLoaded(word);
     }

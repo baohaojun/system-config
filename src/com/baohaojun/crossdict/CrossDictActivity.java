@@ -32,6 +32,11 @@ import com.googlecode.toolkits.stardict.StarDictInterface;
 import com.googlecode.toolkits.stardict.MatcherDict;
 import android.view.Menu;
 import java.util.HashMap;
+import android.os.Environment;
+import android.content.res.AssetManager;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class CrossDictActivity extends Activity {
     /** Called when the activity is first created. */
@@ -44,14 +49,45 @@ public class CrossDictActivity extends Activity {
     private Button mListButton;
     private BTWebView mWebView;
 
-    private StarDict mDict = new StarDict("/sdcard/ahd/ahd");
-    private StarDict mUsageDict = new StarDict("/sdcard/ahd/usage");
-    private FreqDict mFreqDict = new FreqDict("/sdcard/ahd/frequency");
+    private StarDict mDict;
+    private StarDict mUsageDict;
+    private FreqDict mFreqDict;
 
     private StarDictInterface mActiveDict = mDict;
     private StarDictInterface mDefinedWithDict;
     private StarDictInterface mMatchingDict;
 
+    private File mWorkingDir;
+
+    private static final String[] dictFileBaseNames = {"ahd", "frequency", "usage", "words"};
+    private static final String[] dictFileExtNames = {".dz", ".idx", ".ii"};
+    private static ArrayList<String> mDictFiles = new ArrayList<String>();
+
+    static {
+	for (String base : dictFileBaseNames) {
+	    for (String ext : dictFileExtNames) {
+		mDictFiles.add(base + ext);
+	    }
+	}
+	
+	String[] moreFiles = {"android.selection.js", "jquery.js", "rangy-core.js", "rangy-serializer.js", "dict.css"};
+	for (String file : moreFiles) {
+	    mDictFiles.add(file);
+	}
+    }
+
+    private String checkDictFiles() {
+	if (!mWorkingDir.exists()) {
+	    return mWorkingDir.toString();
+	}
+
+	for (String file : mDictFiles) {
+	    if (! new File(mWorkingDir, file).exists()) {
+		return file;
+	    }
+	}
+	return null;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,6 +134,50 @@ public class CrossDictActivity extends Activity {
 	requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 			     WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	
+	mWorkingDir = Environment.getExternalStoragePublicDirectory("crossdict");
+
+	if (checkDictFiles() != null) {
+	    try {
+		mWorkingDir.mkdirs();
+		AssetManager am = getAssets();
+
+		byte[] buf = new byte[4096];
+		for (String fileName : mDictFiles) {
+		    InputStream input = am.open(fileName);
+		    OutputStream out = new FileOutputStream(new File(mWorkingDir, fileName));
+		    while (true) {
+			int n = input.read(buf);
+			if (n <= 0) {
+			    break;
+			}
+			out.write(buf, 0, n);
+		    }
+		    out.close();
+		    input.close();
+		}
+	    } catch (Exception e) {
+		Log.e("bhj", String.format("Error creating files\n"), e);
+	    } finally {
+		if (checkDictFiles() != null) {
+		    new AlertDialog.Builder(CrossDictActivity.this)
+			.setTitle("Error!")
+			.setMessage(String.format("Failed to create dictionary file '%s', will now exit.", checkDictFiles()))
+			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+				    CrossDictActivity.this.finish();
+				}
+			    })
+			.create().show();
+		    return;
+		}
+	    }
+	}
+
+	mDict = new StarDict(new File(mWorkingDir, "ahd").toString());
+	mUsageDict = new StarDict(new File(mWorkingDir, "usage").toString());
+	mFreqDict = new FreqDict(new File(mWorkingDir, "frequency").toString());
+
 
         setContentView(R.layout.main);
 
@@ -107,6 +187,7 @@ public class CrossDictActivity extends Activity {
 
 	mWebView = (BTWebView) findViewById(R.id.webView);
 	mWebView.setActivity(this);
+	mWebView.setBaseUrlWithDir(mWorkingDir.toString());
 	mWebView.setDict(mDict);
 
 
@@ -185,7 +266,6 @@ public class CrossDictActivity extends Activity {
      */
     boolean popHistory() {
 	if (mHistoryTail == mHistoryHead) {
-	    Log.e("bhj", String.format("mHistoryTail == mHistoryHead = %d\n", mHistoryHead));
 	    return false;
 	}
 
@@ -196,7 +276,6 @@ public class CrossDictActivity extends Activity {
 
 	if (mWordHistory[mHistoryHead] != null) {
 	    if (mCurrentWord != null && ! mCurrentWord.equals(mWordHistory[mHistoryHead])) {
-		Log.e("bhj", String.format("poping, mCurrentWord is %s, head is %s\n", mCurrentWord, mWordHistory[mHistoryHead]));
 		mPoping = true;
 		mWebView.lookUpWord(mWordHistory[mHistoryHead]);
 		mPoping = false;
@@ -208,7 +287,6 @@ public class CrossDictActivity extends Activity {
 		return popHistory();
 	    }
 	}
-	Log.e("bhj", String.format("head is null: head = %d, tail = %d\n", mHistoryHead, mHistoryTail));
 	return false;
     }
 
@@ -321,7 +399,7 @@ public class CrossDictActivity extends Activity {
 
     public void lookUpMatching(String word) {
 	mCurrentMatcher = word;
-	MatcherDict.useWordsFile("/sdcard/ahd/words");
+	MatcherDict.useWordsFile(new File(mWorkingDir, "words").toString());
 	mActiveDict = mMatchingDict = new MatcherDict(word);
 	mListView.setActiveDict(mActiveDict);
 	mWebView.lookUpWord(mActiveDict.getWord(0));
@@ -346,7 +424,6 @@ public class CrossDictActivity extends Activity {
 		if (item.getItemId() == R.id.freq_menu) {
 		    mActiveDict = mFreqDict;
 		    mListView.setActiveDict(mActiveDict);
-		    Log.e("bhj", String.format("mCurrentFreqWord is %s\n", mCurrentFreqWord));
 		    mWebView.lookUpWord(mCurrentFreqWord);
 		} else if (item.getItemId() == R.id.defining_menu) {
 		    if (mDefinedWithDict == null) {

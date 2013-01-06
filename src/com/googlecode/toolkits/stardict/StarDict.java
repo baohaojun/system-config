@@ -191,7 +191,6 @@ public class StarDict implements StarDictInterface {
     }
 
     private String getWordInternal(int idx) throws IOException {
-	Log.e("bhj", String.format("got word for %d\n", idx));
 	if (idx < 0 || idx >= mTotalEntries) {
 	    return "";
 	}
@@ -289,7 +288,7 @@ public class StarDict implements StarDictInterface {
     }
 
     public static void main(String[] args) {
-	StarDict dict = new StarDict("/sdcard/ahd/words");
+	StarDict dict = new StarDict("words");
 	dict.mDebug = 1;
 	for (String a : args) {
 	    for (String s : dict.getExplanation(a)) {
