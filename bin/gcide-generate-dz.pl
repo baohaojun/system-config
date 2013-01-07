@@ -12,8 +12,12 @@ sub debug(@) {
 open(my $idx_file, "<", "/usr/share/dictd/gcide.index") or
     die "can not open gcide";
 
-
-open(my $lst_file, "-|", "find dict/* -type f") or
+my $which = '*';
+if (@ARGV == 1) {
+    ($which) = @ARGV;
+}
+    
+open(my $lst_file, "-|", "find dict/$which -type f") or
     die "can not open words.lst";
 
 
@@ -31,7 +35,6 @@ sub get_normal_words($)
 	$word = shell_quote($word);
 	chomp($word = qx(AsciiDammit.py $word));
     }
-    $word =~ s/'//g;
     return $word;
 }
 

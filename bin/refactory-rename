@@ -12,13 +12,21 @@ function debug() {
 
 IFS=$'\n'
 
+function get-files-r() {
+    find . -name '.git' -prune -o -type f -print | perl -npe 's#^\./##';
+}
+
+function get-files-this-dir() {
+    find . -maxdepth 1 -name '.git' -prune -o -print | perl -npe 's#^\./##' | grep -v -P -e '^\.$';
+}
+
 git status -s . | grep -v -P -e '^M ' | grep -P -e '^.\S' && die "git not clean:
 $(git status . )"
 
 test $# = 0 && die "must provide at least 2 args"
 tmpf=/tmp/$(basename $0).$$
 perlhash=$tmpf.hash
-git ls-tree --name-only -r HEAD > $tmpf
+get-files-r > $tmpf
 echo shit > $tmpf.tmp
 cat $tmpf |
 xargs -d \\n grep -l -i -I -e "$1" |
@@ -62,7 +70,7 @@ function rename-files() {
     (
 	cd "$dir";
 	debug doing $(pwd)
-	for x in $(git ls-tree --name-only HEAD); do
+	for x in $(get-files-this-dir); do
 	    if test -d "$x"; then
 		test -L "$x" || rename-files "$x" "$@"
 	    fi
