@@ -20,9 +20,7 @@
 - 用imagemagick的convert把生成的pdf转成jpg：
 
   #+begin_example
-  convert  -verbose -colorspace RGB      \
-    -interlace none -density 300 -resize \
-    33.3% share.pdf share.jpg
+  convert  -verbose -colorspace RGB -interlace none -density 300 -resize 33.3% share.pdf share.jpg
   #+end_example
   
   这里用-density 300做3倍的采样，再用-resize 33.3%做1/3的缩小，最后出来
