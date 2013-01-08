@@ -37,18 +37,13 @@ if test -z "$from" -o -z "$to" -o -z "$remote"; then
 fi
 
 my-rfa '
-    git fetch '"$remote"' -v;
+    git fetch '"$remote"' >/dev/null 2>&1;
     TOP=$ANDROID_TOP;
-    log=$TOP/out/diff/$(repo-path|perl -npe "s,/,.,g").log;
+    log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
     mkdir -p $(dirname $log);
-    git rev-list '"$remote/$from ^$remote/$to"' > $log 2>/dev/null;
+    git-change-id-ffable '"$remote/$from $remote/$to"' > $log 2>/dev/null;
     if test $(stat -c %s $log) = 0; then
         rm $log;
-    else
-        for y in $(cat $log|reverse); do
-            git log -1 --pretty=format:"%H %ae %s%n" $y;
-        done > $log.2;
-        mv $log.2 $log;
     fi;
     pwd
 '

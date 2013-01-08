@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# == 0; then
+    die "please specify whose changes you want to cherry pick"
+fi
+
+shell=false
+TEMP=$(getopt -o s --long shell -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -s|--shell)
+            shell=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+for x in $(rgrep -l -e "$1" out/diff); do
+    x=$(readlink -f $x)
+    dir=$(echo $x|perl -npe 's!.*/!!; s/.log$//; s!%!/!g')
+    (
+        cd $dir
+        if test $shell = true; then
+            start-recursive-shell 'shell for cherry'
+            exit
+        fi
+        target_branch=$(grep -o 'not found in .*' $x|pn 4|head -n 1)
+        if test -z "$target_branch"; then
+            echo target branch is not found in $x'!'
+            start-recursive-shell "No target branch"
+        else
+            git co $target_branch -b $(basename $target_branch)
+            for y in $(grep -e "$1" $x | pn 3); do
+                git cherry-pick $y || start-recursive-shell "cherry failed: $y"
+            done
+        fi            
+    )
+done
