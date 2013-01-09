@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Doing Android Java Programming in Emacs</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Doing Android Java Programming in Emacs"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-01-09T16:11+0800"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Doing Android Java Programming in Emacs</h1>
+
+<p>I used to use <a href="https://github.com/senny/emacs-eclim">Eclim</a> as the Emacs Java programming aid. But soon I find
+out eclipse scales very badly if I put the whole Android project into
+it &ndash; it will take lots of minutes to start, strace showing it
+scanning all the .repo/.git/out directories for source code files.
+</p>
+<p>
+So I switched to grow my own scripts to do the job. Here I will
+describe to you what I have achieved, and more importantly, what
+remain to be done (it's an embarrassingly long list).
+</p>
+<p>
+You can watch a (soundless) video of me demoing this tool on <a href="https://www.youtube.com/watch?v=rqBPEEjoVX0">youtube</a>,
+but sadly, I cannot view it myself after I upload it (because I'm
+behind the Great Kungfu Wall). So if you find problems of this video
+(as I can't verify it myself), please view it on <a href="https://www.youtube.com/watch?v=rqBPEEjoVX0">youku</a>. (The first one
+who find the youtube video is OK, please leave a comment below it, so
+that I know it. I can read comments/upload, but not watch. Thanks!)
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Features already implemented</a>
+<ul>
+<li><a href="#sec-1-1">1.1 java-get-import</a></li>
+<li><a href="#sec-1-2">1.2 java-get-hierarchy</a></li>
+<li><a href="#sec-1-3">1.3 java-resolve</a></li>
+<li><a href="#sec-1-4">1.4 java-complete-method</a></li>
+<li><a href="#sec-1-5">1.5 java-get-override</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2 Usage</a>
+<ul>
+<li><a href="#sec-2-1">2.1 Set up my configuration</a></li>
+<li><a href="#sec-2-2">2.2 Test the system</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 FIXME</a>
+<ul>
+<li><a href="#sec-3-1">3.1 Overall problems</a></li>
+<li><a href="#sec-3-2">3.2 Problems of individual commands</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4 Misc information</a>
+<ul>
+<li><a href="#sec-4-1">4.1 Heavy use of other FLOSS projects</a></li>
+<li><a href="#sec-4-2">4.2 Skeleton and regexp rewrite completion</a></li>
+<li><a href="#sec-4-3">4.3 What about JDEE or other Emacs Java plugins?</a></li>
+<li><a href="#sec-4-4">4.4 What parser did I use for parsing the java file</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Features already implemented</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>  
+  Using the features of Eclim as a reference, I have implemented the
+  following which I find most useful (and most fun).
+</p>
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> java-get-import</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+<p>
+Given a java file, I will parse it and find all the classes/interfaces
+missing, and add the corresponding <code>import</code> statement at the start of
+the java source file.
+</p>
+<ol>
+<li>The java.lang.* and classes under the current package are
+   recognized so, and not bothered.
+
+</li>
+<li>When the supporting script (described below) find more than one
+   class in the whole project with the same name, the elisp command
+   <code>completing-read</code> will be used to trivially prompt you to choose
+   one, as you can see in the video or the screenshot below:
+
+<p>
+   <img src="./emacs-java-import.png"  alt="./emacs-java-import.png" />
+</p>
+<p>
+   Note that I am using anything.el (now renamed as <a href="http://www.emacswiki.org/Anything">helm</a>) to make
+   <code>completing-read</code> even more friendly.
+</p></li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> java-get-hierarchy</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+<p>
+I can use this command to draw the inheritance tree of a class I am
+interested in.
+</p>
+<p>
+Compared to what was provided by Eclim, mine will provide these very
+useful pieces of information:
+</p>
+<ol>
+<li>Where are all the classes/interfaces in the inheritance tree
+   defined.
+
+<p>
+   This information is provided in a <code>compilation-mode</code> buffer, so
+   that you can easily jump over.
+</p>
+</li>
+<li>Where is the current method defined in all the classes/interfaces
+   of the inheritance tree.
+
+</li>
+<li>The java.lang.Object will be shown for the class which as no
+   <code>extends</code> clause in its declaration.
+
+</li>
+<li>If required (with an option flag for the underlying perl script),
+   list all the methods/fields of all the classes/interfaces in the
+   tree (see usage below, see FIXMEs below).
+</li>
+</ol>
+
+
+<p>
+You can see it in the video, or the below screenshot, note how the
+onCreate method has been show below each of the classes who defines
+it.
+</p>
+<p>
+<img src="./emacs-java-hierarchy.png"  alt="./emacs-java-hierarchy.png" />
+</p>
+<p>
+Here is another one showing a similar class and the onKeyUp method.
+</p>
+<p>
+<img src="./java-get-hierarchy.png"  alt="./java-get-hierarchy.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> java-resolve</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+<p>
+This method seem to be not very useful, but it is depended upon by the
+next very useful command.
+</p>
+<p>
+To put it simply, put the <code>point</code> behind <code>xx.</code> below and invoke this
+command, and it will tell you its type is <code>java.util.ArrayList</code> or
+simply <code>ArrayList</code>, depending on whether you have imported
+<code>ArrayList</code>.
+</p>
+
+
+
+<pre class="example">ArrayList&lt;String&gt; xx;
+xx.  &lt;= put point here and M-x java-resolve
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> java-complete-method</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+<p>
+As said above, if you put <code>point</code> after <code>xx.</code> and invoke
+<code>java-complete-method</code>, it will let you <code>completing-read</code> choose from
+all the methods of ArrayList (and its superclass and interfaces's).
+</p>
+<p>
+It works by reusing java-resolve on <code>xx</code> and find its type
+<code>ArrayList</code>, then java-get-hierarchy on <code>ArrayList</code> to list all its
+methods.
+</p>
+<p>
+See the video or the below screenshot:
+</p>
+<p>
+<img src="./java-complete-method.png"  alt="./java-complete-method.png" />
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> java-get-override</h3>
+<div class="outline-text-3" id="text-1-5">
+
+
+<p>
+You may need to redefine a method of a parent class/interface, this
+elisp command can come to help. You can <code>completing-read</code> choose which
+method to override. See the video or the screenshot:
+</p>
+<p>
+<img src="./java-get-override.png"  alt="./java-get-override.png" />
+</p>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Usage</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+This system is part of my personal configuration system, I have not
+found time to exact them into a separate project yet.
+</p>
+<p>
+It is all in <a href="https://github.com/baohaojun/windows-config">this github project</a>(and its git submodules). You can
+start from the <a href="http://github.com/baohaojun/windows-config/raw/master/.emacs">.emacs</a> and find the scripts under <a href="http://github.com/baohaojun/windows-config/tree/master/bin">bin</a>.
+</p>
+<p>
+If you are willing to try my whole configuration, you must use a
+recent Debian or Ubuntu distribution, and can do it in following
+steps.
+</p>
+<p>
+ <b>Warning</b>: before you start, I highly suggest you create and use a
+test account (<code>sudo useradd</code>) because your existing <code>.emacs/.bashrc</code>
+etc. will be moved to <code>.emacs.bak/.bashrc.bak</code> and maybe get lost.
+</p>
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Set up my configuration</h3>
+<div class="outline-text-3" id="text-2-1">
+
+
+
+
+
+<pre class="src src-sh"><span class="org-builtin">cd</span> ~
+git clone --recursive http://github.com/baohaojun/windows-config
+~/windows-config/bin/after-co-ln-s.sh
+~/windows-config/bin/linux/after-check-out.sh
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Test the system</h3>
+<div class="outline-text-3" id="text-2-2">
+
+
+
+
+
+<pre class="src src-sh"><span class="org-builtin">cd</span> ~/windows-config/gcode/java-test
+for-code-reading
+java-get-hierarchy.pl Child -m Child
+</pre>
+
+
+<p>
+You should see output like the following:
+</p>
+
+
+
+<pre class="example">=&gt; class com.human.Child at com/human/Child.java line 2.
+   =&gt; interface com.human.Mother at com/human/Mother.java line 2.
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> FIXME</h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+This system is far from complete. Even this FIXME list is not
+complete, as I can only list those that I am aware of.
+</p>
+<p>
+Please note that some issues are not meant to be fixed, because fixing
+them will turn this tool into exactly the same thing as Eclipse and
+get too slow:-)
+</p>
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Overall problems</h3>
+<div class="outline-text-3" id="text-3-1">
+
+<ul>
+<li>Not a separate project.
+
+<p>
+  This will give other people a very difficult choice to use my scripts.
+</p>
+</li>
+<li>only works with android
+
+<p>
+  Because all the class/method/field information is extracted from the
+  java source file using ctags-exuberant, and not from some .jar files
+  in the CLASSPATH, the whole java system source code must be present
+  for this system to work.
+</p>
+<p>
+  Android is the only system I know that satisfies this high-demanding
+  condition. Maybe I will work on this someday when I need write a
+  non-Android project.
+</p>
+</li>
+<li>Some commands are too slow (several seconds to complete a method)
+
+<p>
+  I think I should someday add additional caching for better
+  performance.
+</p></li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Problems of individual commands</h3>
+<div class="outline-text-3" id="text-3-2">
+
+
+<ul>
+<li>java-get-import
+
+<p>
+  It should not offer to import the android resouce class android.R,
+  because an APK project will generate its own R.java in the same
+  package.
+</p>
+<p>
+  And it does not handle generic types very well.
+</p>
+</li>
+<li>java-resolve
+
+<p>
+  It parse <code>String[] strArr</code> as java.lang.String, not as Array.
+</p>
+</li>
+<li>java-get-hierarchy
+
+<p>
+  When asked to list all methods/fields, it will literally list
+  everything, even private ones.
+</p>
+</li>
+<li>java-get-override
+
+<ol>
+<li>Should support batch overriding for e.g., all the methods of an
+     interface.
+
+</li>
+<li>Methods already defined should be filtered out and not offer to
+     be overridden again.
+</li>
+</ol>
+
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Misc information</h2>
+<div class="outline-text-2" id="text-4">
+
+
+
+</div>
+
+<div id="outline-container-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> Heavy use of other FLOSS projects</h3>
+<div class="outline-text-3" id="text-4-1">
+
+<p><a href="http://ctags.sourceforge.net/">ctags-exuberant</a> and <a href="http://www.gnu.org/software/global/">global</a> are heavily used.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> Skeleton and regexp rewrite completion</h3>
+<div class="outline-text-3" id="text-4-2">
+
+
+<p>
+In that video, you will see me type a <b>skeleten</b> and get it completed,
+this idea is very much like anything.el or (as I think) icicle, ido,
+etc. You may also find the Firefox browser's URL completion similar to
+this idea.
+</p>
+<p>
+The usual Emacs completion require matching at the head, for e.g., if
+you want to complete this identifier, <code>savedInstanceState</code>, you must
+type in the beginning part of it <code>sav</code>, or <code>saved</code>, and press <code>M-/</code> to
+hippie-expand it. This can be sometimes a bit inconvenient. 
+</p>
+<p>
+With my completion, I can start typing anything that is in the
+identifier, such as <code>state</code> or <code>sainst</code>, or <code>vedstst</code>, as long as the
+characters are in the same order as the original word. Here the
+skeleton <code>vedstst</code> will be rewritten as a regexp by using <code>(mapconcat 'string "vedstst" ".*")</code> as <code>v.*e.*d.*s.*t.*s.*t</code>, which matches and
+completes to the target <code>savedInstanceState</code>.
+</p>
+<p>
+When there are multiple matches, hippie-expand (by default) will
+rotate the completions one-by-one, and I have never found out how to
+rotate backwards if I rotated one past the right choice. Undo?
+</p>
+<p>
+With my completion, all the choices are listed in the rough order how
+far they are found from the <code>point</code> (I think hippie-expand will try
+all matches after the <code>point</code>, then all those before the <code>point</code>; mine
+will interleave them), and you can scroll up and down the list (just
+like anything.el's <code>completing-read</code>).
+</p>
+<p>
+This tool is so convenient that I don't find some of my java-coding
+scrits's bugs so urgent to fix.
+</p>
+<p>
+You can see in the video or the below screenshot:
+<img src="./regexp-completion.png"  alt="./regexp-completion.png" />
+</p>
+<p>
+You can find the elisp source in <a href="http://github.com/baohaojun/windows-config/raw/master/.emacs_d/lisp/electric-complete.el">electric-complete.el</a>.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> What about JDEE or other Emacs Java plugins?</h3>
+<div class="outline-text-3" id="text-4-3">
+
+
+<p>
+I have not tried them. Not a big fan of ecb/cedet etc. because these
+tools are not friendly when using them with TRAMP.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-4" class="outline-3">
+<h3 id="sec-4-4"><span class="section-number-3">4.4</span> What parser did I use for parsing the java file</h3>
+<div class="outline-text-3" id="text-4-4">
+
+
+<p>
+I tried ANTLR, but found it too heavy and too slow.
+</p>
+<p>
+But while trying ANTLR, I learned how Java is a very regular language
+compared to C and C++, since it has no preprocessor. So I devised a
+simple script to turn a Java source file into its truely most regular
+form (hopefully still a 95% valid java program):
+</p>
+<ol>
+<li>Get rid of all comment, all whitespace that won't affect sematic
+   when removed, and all string/character literals (replacing them all
+   with empty string literal <code>("")</code>.
+
+<p>
+   An white space between 2 words such as <code>public</code> and <code>int</code> is
+   non-removable, but a space character after the <code>&gt;</code> in
+   <code>ArrayList&lt;String&gt;</code> can be safely removed (I think).
+</p>
+</li>
+<li>Insert a newline after these 3 characters <code>(;{})</code>.
+
+</li>
+<li>Indent it properly if you want it to be more beautiful to the eyes.
+</li>
+</ol>
+
+
+<p>
+An example follows. Given this wildly irregular piece of Java code,
+notice how difficult it will be to figure out that the prototype of
+<code>getWordIdx</code> is <code>@Override public int getWordIdx(String word){</code> (maybe
+without the <code>@Override</code> and the <code>{</code>), or even to tell that there is a
+method named <code>getWordIdx</code>:
+</p>
+
+
+
+<pre class="src src-java"><span class="org-keyword">class</span> <span class="org-type">test</span> 
+<span class="org-keyword">implements</span>
+    <span class="org-type">stintf</span> {
+
+<span class="org-comment-delimiter">/*</span>
+<span class="org-comment">watch how the following very irregular method will be formatted</span>
+<span class="org-comment">beautifully</span>
+
+<span class="org-comment">*/</span>
+
+    <span class="org-c-annotation">@Override</span>
+    <span class="org-keyword">public</span>
+        <span class="org-type">int</span>
+        <span class="org-function-name">getWordIdx</span>(<span class="org-type">String</span>
+ <span class="org-variable-name">word</span>) 
+    {
+ArrayList&lt;String&gt; xx;
+<span class="org-keyword">if</span> (word == <span class="org-string">"hello world"</span>) {
+        <span class="org-keyword">return</span>
+            0;
+    }
+    }
+}
+</pre>
+
+
+<p>
+You can use <a href="http://github.com/baohaojun/windows-config/raw/master/bin/flatten.pl">flatten.pl</a> to filter it into the following highly regexp
+matchable piece of Java, and you can easily extract the whole
+prototype of the <code>getWordIdx</code> method, or the class declaration line
+for <code>test</code>:
+</p>
+
+
+
+<pre class="src src-java"><span class="org-keyword">class</span> <span class="org-type">test</span> <span class="org-keyword">implements</span> <span class="org-type">stintf</span>{
+    <span class="org-c-annotation">@Override</span> <span class="org-keyword">public</span> <span class="org-type">int</span> <span class="org-function-name">getWordIdx</span>(<span class="org-type">String</span> <span class="org-variable-name">word</span>){
+        ArrayList&lt;String&gt;xx;
+        <span class="org-keyword">if</span>(word==<span class="org-string">""</span>){
+            <span class="org-keyword">return</span> 0;
+        }
+    }
+}
+</pre>
+
+
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>
