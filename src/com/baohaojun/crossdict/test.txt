@@ -1,0 +1,68 @@
+// -*- mode: java -*-
+
+// * arbitrary string completion using computed regexp (for e.g.,
+// "packcr;" => "p.*?a.*?c.*?k.*?c.*?r.*?;") in this buffer and other
+// buffers
+
+packcro;
+
+// * identifier completion using the above method, identifiers only
+// ("sttf" => (insert (mapconcat 'string "sttf" ".*")) )
+
+class test implements stintf {
+
+// * perl script to flatten the java source code (so that syntax
+// * parsing become basically unnecessary)
+
+/*
+by evaluating the following elisp code
+
+(shell-command-on-region (point-min) (point-max) "flatten.pl" nil t)
+
+watch how the following very irregular method will be formatted
+beautifully
+
+*/
+    
+    @Override
+    public
+	int
+	getWordIdx(String word) 
+    {
+	return
+	    0;
+    }	
+    
+
+// * The meat (Remember, worse is better!):
+
+// ** java-get-import (watch how it allow us to choose which class to import)
+    ArrayList<String> xx;
+
+// ** java-resolve (watch out the echo area, the type of xx will be
+// ** shown (only works after ArrayList is imported).
+    xx;
+
+// ** java-get-hierarchy.pl (is a bit slow, see how the context
+// ** function's top defining class/interface is also resloved)
+
+    @Override
+    public String getWord(int idx) 
+    {
+	return "";
+    }
+    
+// ** java-get-overide (is a bit slow, really should improve it using caching)
+ 
+// ** java-complete-method (also slow, may need some editing before
+// ** using the method)
+
+
+    // That's all, thanks for watching folks! Happy hacking! Worse is
+    // better! For text description of this setup, please refer to
+    // http://baohaojun.github.com/coding-android-java-in-emacs-en.html
+       
+}
+
+
+
