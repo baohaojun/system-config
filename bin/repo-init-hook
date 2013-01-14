@@ -10,7 +10,7 @@ else
 fi
 
 if test ! -e local_manifests/local_manifist.xml; then
-    cat <<EOF |grep -v tcmd > local_manifests/local_manifist.xml
+    cat <<EOF > local_manifests/local_manifist.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
 

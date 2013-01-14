@@ -701,3 +701,13 @@ mmc_cid_show: 这个函数用ctags不能查到，因为它是在一个宏里被�
             "(<scope>!=null?<scope>.getText():null)"
         lexerRuleLabelPropertyRef_int(scope,attr) ::=
     =>      "(<scope>!=null?Integer.valueOf(<scope>.getText()):0)"
+
+****************
+这个nnmaildir--prepare是干什么的？
+
+    /usr/share/emacs/24.2/lisp/gnus/nnmaildir.el.gz:730:       (setq group (nnmaildir--prepare nil gname)
+        (defun nnmaildir--scan (gname scan-msgs groups method srv-dir srv-ls)
+          (catch 'return
+            (let ((36h-ago (- (car (current-time)) 2))
+              ...
+    =>        (setq group (nnmaildir--prepare nil gname)

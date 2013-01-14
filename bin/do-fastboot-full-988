@@ -148,7 +148,7 @@ time (
     do-partition bootloader "$(get-image-path OSLO)"
     do-partition ramdisk "$(get-image-path RAMD)"
     do-partition kernel "$(get-image-path ZIMG)"
-    do-partition radio "$(concat-file 0 ARBI 7M GRBI)"
+    do-partition radio "$(concat-file 0 ARBI 8M GRBI 10M ARB2 18M GRB2)"
     do-partition recovery "$(concat-file 0 OSLR 1M ZIMR 5M RAMR)"
 
 
@@ -171,7 +171,11 @@ time (
     fi
     
     if test -e "$ntim_bin" -a "$(stat -c %s "$ntim_bin")" != 0; then
-        do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery 1M DTim.CP)
+        if test -e DTim.CP; then
+            do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery 1M DTim.CP)
+        else
+            do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
+        fi
         do-partition OBM $(concat-file 0 TIMH 128K OBMI)
     fi
 

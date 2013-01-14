@@ -5,13 +5,15 @@
 (keyboard-translate ?\C-h ?\C-x)
 
 (setq load-path
-      (nconc (list (expand-file-name "~/.emacs_d/lisp")
-		   (expand-file-name "~/.emacs_d/org-confluence")
-		   (expand-file-name "~/.emacs_d/org-jira")
-		   (expand-file-name "~/.emacs_d/mo-git-blame")
-		   (expand-file-name "~/.emacs_d/lisp/ext")
-		   (expand-file-name "~/src/org-mode/lisp")
-		   (expand-file-name "~/src/org-mode/contrib/lisp"))
+      (nconc (list 
+	      "/usr/share/emacs/site-lisp/gnus"
+	      (expand-file-name "~/.emacs_d/lisp")
+	      (expand-file-name "~/.emacs_d/org-confluence")
+	      (expand-file-name "~/.emacs_d/org-jira")
+	      (expand-file-name "~/.emacs_d/mo-git-blame")
+	      (expand-file-name "~/.emacs_d/lisp/ext")
+	      (expand-file-name "~/src/org-mode/lisp")
+	      (expand-file-name "~/src/org-mode/contrib/lisp"))
 	     load-path))
 (package-initialize)
 
@@ -187,7 +189,7 @@
 		     (t resolve)))
 	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class)))
 	     (methods (split-string hierarchy "\n")))
-	(setq method (completing-read "Which function to override? " methods nil t))))
+	(setq method (completing-read "Which method to call? " methods nil t))))
     (goto-char (current-regexp "[.a-z0-9_]+" (lambda (start end) end)))
     (when (not (string-equal remove ""))
       (delete-region (- (point) (length remove)) (point)))
@@ -509,7 +511,7 @@
       (let* ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
 	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class-name)))
 	     (methods (split-string hierarchy "\n")))
-	(setq method (completing-read "Which function to override? " methods nil t))))
+	(setq method (completing-read "Which method to override? " methods nil t))))
     (insert "@Override\n")
     (insert (replace-regexp-in-string  "\\(,\\|)\\)" "\\1 " method))))
 
@@ -2636,6 +2638,8 @@ using ctags-exuberant"
    (lambda (s) (string-equal s ""))
    l))
 
+(defun ca-with-comment (str)
+  (format "%s%s%s" comment-start str comment-end))
 (defun bhj-java-import ()
   (interactive)
   (save-excursion

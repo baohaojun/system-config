@@ -1,12 +1,18 @@
-* TODO emacs-orgmode mailing list.
+* DONE emacs-orgmode mailing list.
+  CLOSED: [2013-01-14 Mon 10:01]
+  - CLOSING NOTE [2013-01-14 Mon 10:01]
 
-* TODO 搬家
+* DONE 搬家
+  CLOSED: [2013-01-14 Mon 10:01]
+  - CLOSING NOTE [2013-01-14 Mon 10:01]
 
 ** 把妈和芠芠先搬过去
 *** 衣、食、住、行
 *** 
 
-* How to add a .jar file to an apk ant project?
+* DONE How to add a .jar file to an apk ant project?
+  CLOSED: [2013-01-14 Mon 10:01]
+  - CLOSING NOTE [2013-01-14 Mon 10:01]
 
 Simply put the .jar (or a symlink of it) into the ~libs~ folder of the
 ant project.
