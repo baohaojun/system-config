@@ -50,6 +50,10 @@ time (
         exit -1
     }
 
+    is_full=0
+    if [[ $(basename $0) =~ do-fastboot-full ]]; then
+        is_full=1
+    fi
     if [[ $(basename $0) =~ do-fastboot-full ]]; then
         if test ! -e $1; then
 	    die "blf file '$1' not exist! Usage: $(basename $0) XXX.blf PARTS"
@@ -148,15 +152,25 @@ time (
     do-partition bootloader "$(get-image-path OSLO)"
     do-partition ramdisk "$(get-image-path RAMD)"
     do-partition kernel "$(get-image-path ZIMG)"
-    do-partition radio "$(concat-file 0 ARBI 8M GRBI 10M ARB2 18M GRB2)"
-    do-partition recovery "$(concat-file 0 OSLR 1M ZIMR 5M RAMR)"
+    if should-do-it radio; then
+        do-partition radio "$(concat-file 0 ARBI 8M GRBI 10M ARB2 18M GRB2)"
+    fi
+
+    if should-do-it recovery; then
+        do-partition recovery "$(concat-file 0 OSLR 1M ZIMR 5M RAMR)"
+    fi
 
 
     do-partition system "$(get-image-path SYSY)"
     do-partition userdata "$(get-image-path USRY)"
-    do-partition pmce $(concat-file 0 PMCE 1M LOGO) || true
-    if test "$do_factory" = true; then
-        do-partition factory "$(get-image-path FACT)"
+    if should-do-it pmce; then
+        do-partition pmce $(concat-file 0 PMCE 1M LOGO) || true
+    fi
+
+    if should-do-it factory; then
+        if test "$do_factory" = true; then
+            do-partition factory "$(get-image-path FACT)"
+        fi
     fi
 
 
@@ -170,18 +184,22 @@ time (
         fi
     fi
     
-    if test -e "$ntim_bin" -a "$(stat -c %s "$ntim_bin")" != 0; then
+    if test -e "$ntim_bin" -a "$(stat -c %s "$ntim_bin")" != 0 && should-do-it DTIM; then
         if test -e DTim.CP; then
             do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery 1M DTim.CP)
         else
             do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
         fi
-        do-partition OBM $(concat-file 0 TIMH 128K OBMI)
+        if should-do-it factory; then
+            do-partition OBM $(concat-file 0 TIMH 128K OBMI)
+        fi
     fi
 
-    fastboot erase misc
-    fastboot erase cache
-    fastboot erase NVM
+    if test $is_full = 1; then
+        fastboot erase misc
+        fastboot erase cache
+        fastboot erase NVM
+    fi
 
     if [[ $(basename $0) =~ do-fastboot-full ]] && test "$ERASE_ALL" = true; then
         fastboot erase MEP2
