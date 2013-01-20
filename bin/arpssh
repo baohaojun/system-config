@@ -5,7 +5,14 @@ function die() {
 }
 
 set -e
-iface=eth0
+
+for card in eth0 wlan0; do
+    if get-card-ip $card >/dev/null 2>&1; then
+        iface=$card
+        break
+    fi
+done
+
 test "$1" || die "Usage: $(basename $0) arp_host"
 TEMP=$(getopt -o i: --long iface -n $(basename $0) -- "$@")
 eval set -- "$TEMP"

@@ -1,0 +1,21 @@
+#!/bin/bash
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# -lt 2; then
+    die "Error: Usage $(basename $0) port command args..."
+fi
+
+port=$1
+shift
+
+if test ! -e  ~/.proxychains/proxychains.conf; then
+    mkdir -p ~/.proxychains
+    cp /etc/proxychains.conf ~/.proxychains/proxychains.conf
+fi
+
+perl -npe 's/(^socks5\s+127.0.0.1\s+).*/$1 '$port'/' -i ~/.proxychains/proxychains.conf
+proxychains "$@";

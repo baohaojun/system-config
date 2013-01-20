@@ -1,0 +1,68 @@
+#!/bin/bash
+
+cd ~/weekly || exit
+if test .weeklyrc; then
+    . .weeklyrc
+fi
+if echo "${1:-Fri}" |grep fri -iqv; then
+    yes-or-no "Warning: you are not doing weekly for a Friday, continue?" || exit;
+fi
+
+year_page=$(date +%Y -d "${1:-today}")
+week_page=$(date +%Y.%m.%d -d "Last Mon")-$(date +%Y.%m.%d -d "${1:-Fri}")
+
+congfu --space '~hjbao' -- -a getSource --title $week_page |perl -ne 'print unless(1..1)' > $week_page
+congfu --space '~hjbao' -- -a storePage --title $week_page --file $week_page --parent $year_page
+
+tool_page=$(congfu --space '~hjbao' -- -a getPageList --title $week_page --children | grep tool -i)
+test -z "$tool_page" && tool_page=Tool_$(date +%Y%m%d -d "${1:-Fri}")
+congfu --space '~hjbao' -- -a getSource --title $tool_page |perl -ne 'print unless(1..1)' > $tool_page
+congfu --space '~hjbao' -- -a storePage --title $tool_page --file $tool_page --parent $week_page
+
+bhj_page=bhj_$(date +%Y.%m.%d -d "${1:-Fri}")
+set -x
+do_overwrite=false
+if test -e $bhj_page; then
+    yes-or-no "overwrite existing $bhj_page?" && do_overwrite=true
+fi
+
+{ test $do_overwrite = true || ! test -e $bhj_page; }  && (
+    cat <<EOF
+{color:#ff0000}{*}Red Flag{*}{color}
+
+N/A
+
+{color:#ffcc00}{*}Yellow Flag{*}{color}
+
+N/A
+
+{color:#008000}{*}Green Flag{*}{color}
+{code:none}
+EOF
+    emacs-nt -Q --batch --eval "$(bash do-weekly.help $bhj_page.1)" >/dev/null 2>&1 
+    cat $bhj_page.1
+    rm $bhj_page.1
+    cat <<EOF
+{code}
+
+*Plan for next week*
+
+{code:none}
+EOF
+    emacs-nt -Q --batch --eval "$(bash do-weekly.todo $bhj_page.1)" >/dev/null 2>&1
+    cat $bhj_page.1
+    rm $bhj_page.1
+    cat <<EOF
+{code}
+EOF
+) > $bhj_page
+
+if tty >/dev/null 2>&1 ; then
+    edit-wait $bhj_page
+fi
+
+log=~/.logs/do-weekly.log
+congfu --space '~hjbao' -- -a storePage --title $bhj_page --file $bhj_page --parent $tool_page --encoding UTF-8 2>&1|tee $log
+
+id=$(cat $log|grep 'Page has id:'|perl -npe 's/.*Page has id: //')
+of http://$CONFLUENCE_SERV/pages/viewpage.action?pageId=$id

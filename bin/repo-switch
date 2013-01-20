@@ -13,8 +13,9 @@ test -d manifests
 cp -av $(readlink -f manifest.xml) manifest.xml.old || true
 rm manifest.xml || true
 
-if test -e local_manifest.xml; then
-    mv local_manifest.xml local_manifest.xml.2
+mkdir -p local_manifests/
+if test -e local_manifests/local_manifist.xml; then
+    mv local_manifests/local_manifist.xml local_manifests/local_manifist.xml.2
 fi
 
 cd manifests
@@ -29,8 +30,8 @@ if test -x repo-init-hook; then
     ./repo-init-hook
 fi
 
-if test -e local_manifest.xml.2; then
-    mv -v local_manifest.xml.2 local_manifest.xml
+if test -e local_manifests/local_manifist.xml.2; then
+    mv -v local_manifests/local_manifist.xml.2 local_manifests/local_manifist.xml
 fi
 
 (

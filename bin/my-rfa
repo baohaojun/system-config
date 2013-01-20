@@ -52,8 +52,8 @@ if test "${#dirs[@]}" = 0; then
 	$(
             (
                 xmlstarlet sel -B -t -m //project -v @path -n $(lookup_file .repo/manifest.xml)
-                if test -e "$(lookup_file .repo/local_manifest.xml 2>/dev/null)"; then
-                    xmlstarlet sel -B -t -m //project -v @path -n $(lookup_file .repo/local_manifest.xml)
+                if test -e "$(lookup_file .repo/local_manifests/local_manifist.xml 2>/dev/null)"; then
+                    xmlstarlet sel -B -t -m //project -v @path -n $(lookup_file .repo/local_manifests/local_manifist.xml)
                 fi
             ) | sort -u
         )

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if test -e ~/external/antlrworks-1.4.3.jar; then
+    exec java -cp ~/external/antlrworks-1.4.3.jar org.antlr.Tool "$@";
+else
+    exec /usr/bin/antlr3 "$@";
+fi
+

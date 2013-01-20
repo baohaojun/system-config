@@ -1,0 +1,75 @@
+#!/bin/bash
+
+set -e
+
+if test "$DEBUG"; then
+    set -x
+fi
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+function do_review()
+{
+    export GERRIT_HOST=bibler; git fetch $(repo-remote)
+    rev=${1-HEAD}
+    head=$(git rev-parse $rev)
+    
+    for branch in $(gerrit-hook-branches); do
+        git reset --hard $head
+        export REPO_BRANCH=$branch
+        git fetch $(repo-remote) $branch || break
+        if git-is-ancestor $head FETCH_HEAD; then
+            if ! git diff --quiet $head FETCH_HEAD; then
+                die "remote branch $branch is note the same as the master ($head)"
+            fi
+            continue
+        fi
+
+        from=FETCH_HEAD
+        if git-is-ancestor FETCH_HEAD $head; then
+            git checkout FETCH_HEAD
+            from=$head
+        fi
+
+        if ! git merge $from --no-ff -m "merge for $(repo-remote)/$branch"; then
+            git reset --hard $head
+            echo merge from $(repo-remote)/$branch has failed
+            break
+        fi
+        if ! git push $(repo-review-url) HEAD:refs/for/$branch; then
+            git reset --hard $head
+            echo push to $(repo-remote)/$branch has failed
+            break
+        fi
+        gerrit-do-review || true
+        git fetch $(repo-remote) $branch || break
+        if test $(git rev-parse HEAD) != $(git rev-parse FETCH_HEAD); then
+            echo weird thing has happened for $branch
+            if git-is-ancestor $head HEAD; then
+                echo but seems our change has be merged anyway
+                gerrit review "$(git rev-parse HEAD)" --abandon --message "Do not commit because changes are already merged"
+            fi
+        else
+            echo successfully merged everything
+        fi
+
+        if ! git diff --quiet $head FETCH_HEAD; then
+            git reset --hard $head
+            die "remote branch $branch ($(git rev-parse FETCH_HEAD)) is not same as the master ($head)"
+        fi
+        
+    done || true
+    git reset --hard $head
+}
+
+if test "$1" = do-review; then
+    shift
+
+    do_review "$@"
+    exit
+fi
+
+    

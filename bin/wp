@@ -61,7 +61,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
 
     function up()
     {
-        printf %q "$FILE"
+        printf %q "$FILE" | perl -npe 's#^$ENV{HOME}(/|$)#~$1#'
     }
 
     function mp() #mail path

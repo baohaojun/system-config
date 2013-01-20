@@ -5,4 +5,4 @@ mkdir -p ~/shots
 now=shots/"$now"
 scrot -s ~/"$now".png
 of ~/"$now".png
-up ~/"$now".png
+up ~/"$now".png | putclip

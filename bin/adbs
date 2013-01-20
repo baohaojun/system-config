@@ -1,0 +1,15 @@
+#!/usr/bin/expect -f
+
+spawn adb shell
+expect "#" {
+       send "export PATH=/system/bin:/system/xbin\n"
+} "\\$" {
+  send "export PATH=/system/bin:/system/xbin\n"
+  send "su\n"
+}
+
+send "#mount -t ext4 /dev/block/platform/sdhci-pxav3.2/by-name/cache /cache; echo --wipe_data > /cache/recovery/command; umount /cache\n"
+send "#mount -o remount /system\n"
+
+interact {
+}

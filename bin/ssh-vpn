@@ -4,7 +4,10 @@ set fl [open "|get-authinfo fixnet bhj"]
 set password [read $fl]
 close $fl
 
-spawn ssh -C2qN -D 18080 fixnet
+set fixnet [if [string eq "" [lindex $argv 0]] {concat fixnet} else {concat [lindex $argv 0]}]
+set port [if [string eq "" [lindex $argv 1]] {concat 18080} else {concat [lindex $argv 1]}]
+
+spawn ssh -C2qN -D $port $fixnet
 expect -timeout 150 password {
     puts "send password\n";
     send "$password\n"

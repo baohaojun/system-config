@@ -11,8 +11,8 @@ if test -e $OUT_DIR -a "$(readlink -m $OUT_DIR)" != "$(readlink -m $OUT_DIR_LONG
     OUT_DIR=$OUT_DIR.$x
 fi
 export OUT_DIR=$OUT_DIR
-relative-link "$OUT_DIR_LONG" "$OUT_DIR"
+# relative-link "$OUT_DIR_LONG" "$OUT_DIR"
 rm -rf out target_out_symlink
 ln -s "$OUT_DIR_LONG" out
-ln -s "$OUT_DIR_LONG"/target/product/$TARGET_PRODUCT target_out_symlink
+# ln -s "$OUT_DIR_LONG"/target/product/$TARGET_PRODUCT target_out_symlink
 export OUT_DIR=out

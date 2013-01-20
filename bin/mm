@@ -13,7 +13,7 @@ time (
     cd - 
 
     cd "$(dirname $(lookup_file Android.mk))"
-    ONE_SHOT_MAKEFILE=$(readlink -f Android.mk)
+    ONE_SHOT_MAKEFILE=$PWD/Android.mk
     export ONE_SHOT_MAKEFILE=${ONE_SHOT_MAKEFILE:1+${#top_dir}}
 
     cd $top_dir

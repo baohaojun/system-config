@@ -26,7 +26,7 @@ if ($remote_ip) {
 
 my @emacsclient = ('emacsclient', '-n');
 
-if ($0 =~ m,/?edit-wait$,) {
+if ($0 =~ m,/?edit-wait$, or $0 =~ m,/?ew$,) {
   @emacsclient = ('emacsclient');
 }
 
@@ -57,11 +57,12 @@ sub edit_1($)
 
     if (-e $file) {
 
-	my $file_q = shell_quote($file);
+	my $file_q = $file = shell_quote($file);
 	chomp($file_q = qx(lookup_file -e -- $file));
 	if (not $file_q) {
 	    chomp ($file_q = qx(lookup_file -- $file));
 	}
+	debug "file_q is $file_q";
 	return (@emacsclient, get_emacs_file_name($file_q));
 
     } else {
@@ -79,7 +80,7 @@ sub edit_1($)
 	chomp($file);
       }
 
-      my $file_q = shell_quote($file);
+      my $file_q = $file = shell_quote($file);
       chomp($file_q = qx(lookup_file -e -- $file|head -n 1));
       if (not $file_q or not -e $file_q) {
 	  chomp($file_q = qx(lookup_file -- $file|head -n 1));

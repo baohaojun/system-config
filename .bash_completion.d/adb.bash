@@ -66,7 +66,7 @@ _adb() {
             COMPREPLY=( $(compgen -W "$OPTIONS $COMMAND" -- "$cur") )
             ;;
         OPT_SERIAL_ARG)
-            local devices=$(command adb devices '2>' /dev/null | grep -v "List of devices" | awk '{ print $1 }')
+            local devices=$(command adb devices 2> /dev/null | grep -v "List of devices" | awk '{ print $1 }')
             COMPREPLY=( $(compgen -W "${devices}" -- ${cur}) )
             ;;
         COMMAND)
