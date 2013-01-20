@@ -1,23 +1,6 @@
 #!/bin/bash
 
 cd ~/doc/galaxy-nexus-root/
-TEMP=$(getopt -o l --long links -n $(basename $0) -- "$@")
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
-        -l|--links)
-        do_links=true
-        shift
-        ;;
-        --)
-        shift
-        break
-        ;;
-        *)
-        die "internal error"
-        ;;
-    esac
-done
 
 adb shell su -c 'mount -o remount /system'
 
@@ -31,9 +14,7 @@ for x in $(find ./system -type f); do
     fi
 done
 
-if test "$do_links" = true; then
-    for x in $(find ./system -type l); do
-        adb shell su -c "ln -s $(readlink $x) ${x#.}"
-    done
-fi
+for x in $(find ./system -type l); do
+    adb shell su -c "ln -s $(readlink $x) ${x#.}"
+done
 for x in $(find ./sdcard -type f); do adb push $x ${x#.}; done

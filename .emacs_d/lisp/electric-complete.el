@@ -20,7 +20,6 @@
 (defvar regexp-completion-history nil)
 
 (global-set-key [(meta s) (return)] 'easy-regexp-display-abbrev)
-(global-set-key [(meta g) ?x] 'easy-regexp-display-abbrev)
 
 (defun easy-regexp-display-abbrev ()
   "Simplify writing the regexp. If we are looking back at, for
@@ -236,19 +235,7 @@ we will get the pattern \"naoehu[)+{\"
 			  (mapcar (lambda (w)
 				    (window-buffer w))
 				  (window-list))))
-	  strlist))
-      (if strlist
-	  strlist
-	(let* ((buf-old (current-buffer)))
-	  (save-excursion
-	    (mapcar (lambda (buf)
-		      (with-current-buffer buf ;;next let's recursive call
-			(unless strlist
-			  (setq strlist (append (regexp-get-matches re t) strlist)))))
-		    (delete buf-old
-			    (buffer-list)))
-	    strlist))
-	))))
+	  strlist)))))
 
 (defun skeleton-get-matches-order (skeleton &optional no-recur)
   "Get all the words that contains every character of the
@@ -289,14 +276,4 @@ words closer to the (point) appear first"
 			  (mapcar (lambda (w)
 				    (window-buffer w))
 				  (window-list))))
-	  strlist))
-      (if (and strlist (cdr strlist))
-	  strlist
-	(let* ((buf-old (current-buffer)))
-	  (save-excursion
-	    (mapcar (lambda (buf)
-		      (with-current-buffer buf ;;next let's recursive call
-			(unless (and strlist (cdr strlist))
-			  (setq strlist (delete-dups (append (skeleton-get-matches-order skeleton t) strlist))))))
-		    (delete buf-old (buffer-list)))
-	    strlist))))))
+	  strlist)))))

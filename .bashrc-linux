@@ -12,6 +12,8 @@ if test -e ~/.bashrc-linux-$USER; then
     . ~/.bashrc-linux-$USER
 fi
 
+export PERL5LIB=~/external/perl5lib/:$PERL5LIB
+
 # % cpan
 # cpan> o conf makepl_arg INSTALL_BASE=/home/bhj/external/perl5lib/ # or use LIB=xxx on centos!!
 # cpan> o conf commit

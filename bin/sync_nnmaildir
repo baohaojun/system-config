@@ -32,11 +32,7 @@ GetOptions('-g' => \$from_gnus,
            '-d=s' => \$dir);
 
 if (! ($from_gnus ^ $from_maildir)) {
-  die "Usage: sync_nnmaildir -g (from gnus) [-f]\n   or: sync_nnmaildir -m (from maildir) [-v -f]\n";
-}
-
-sub debug(@) {
-    print STDERR "@_\n";
+  die "Usage: sync_nnmaildir -g [-f]\n   or: sync_nnmaildir -m [-v -f]\n";
 }
 
 for (glob "$dir/*") {
@@ -47,31 +43,21 @@ for (glob "$dir/*") {
   for (glob "$mb/cur/*") {
     my $file = $_;
 
-    if (not m!(.*?)/cur/(.*?)(?:$sep_char)\b2,(.*)$!) {
-	warn "$_ not match maildir file\n";	
+    if (not /(.*)\/cur\/(.*?)$sep_char.*2,(.*)$/) {
 	next;
     }
 
     my $path = $1;
     my $message = $2;
     my $flags = $3;
-    
-    if ($message =~ m/:/) {
-	system("bhj-notify sync_nnmaildir interesting double separator");
-	die "interesting: $_\n";
-    }
 
     if ($from_maildir) {
       # Sync ticked flags
       if ($flags =~ /F/) {
         mkdir "$path/.nnmaildir/marks/tick";
         my $dst = "$path/.nnmaildir/marks/tick/$message";
-
-	if (! -e "$dst") {
-	    symlink "$file","$dst"
-		and print "Added mail in $mb to gnus ticks\n"
-		or warn "symlink $file $dst failed\n";
-	}
+        symlink "$file","$dst"
+          and print "Added mail in $mb to nnmaildir ticks\n";
       } else {
         # my $dst = "$path/.nnmaildir/marks/tick/$message";
         # unlink "$dst"
@@ -80,14 +66,10 @@ for (glob "$dir/*") {
 
       # Sync read flags
       if ($flags =~ /S/) {
-	  #debug "read: $message";
-	  mkdir "$path/.nnmaildir/marks/read";
+        mkdir "$path/.nnmaildir/marks/read";
         my $dst = "$path/.nnmaildir/marks/read/$message";
-	if (! -e $dst) {
-	    symlink "$file","$dst"
-		and print "Added mail in $mb to gnus seen\n" 
-		or warn "symlink $file $dst failed\n";
-	}
+        symlink "$file","$dst"
+          and print "Added mail in $mb to nnmaildir seen\n";
       } else {
         my $dst = "$path/.nnmaildir/marks/read/$message";
         unlink "$dst"

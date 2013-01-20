@@ -16,7 +16,7 @@ alias cd='cd -P'
 alias vi=vim
 export EDITOR=vim
 export HISTSIZE=2000
-export HISTFILESIZE=2000
+export HISTFILESIZE=100000
 
 export VC_BUILD_CONFIG=release
 . ~/.bashrc-public

@@ -16,9 +16,4 @@ if test "$BPE_ON_APSE"; then
     host=bibler
 fi
 
-if test "$1" = clone; then
-    shift
-    git clone $host:$@
-else
-    ssh $host gerrit "$@"
-fi
+ssh $host gerrit "$@"

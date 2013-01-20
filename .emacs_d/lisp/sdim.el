@@ -245,7 +245,6 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
           (mapc (lambda (str)
                   (when (eq i cand-index)
                     (put-text-property 0 (length str) 'face '(:background "green2") str))
-		  (put-text-property 0 (length str) 'face '(:height .8) str)
                   (setq i (1+ i)
                         prefix (string (+ ?0 (% i 10)) ?.)
                         sdim-cands-str (concat sdim-cands-str 

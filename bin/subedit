@@ -71,6 +71,6 @@ while (<>) {
 	$tag2 = $a * $tag2 + $b;
 	printf "%s --> %s\n", map {timetag_sec_to_human $_} ($tag1, $tag2);
     } else {
-	print "$_\n";
+	print;
     }
 }

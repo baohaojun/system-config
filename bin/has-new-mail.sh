@@ -84,7 +84,6 @@ function got-mail() {
         echo checking $x
         ls $x|perl -npe 's/.*'"$maildir_sep"'//'|grep -v S && 
         {
-            echo has got mail in $x
             got-mail true
         }
     done

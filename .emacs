@@ -5,18 +5,15 @@
 (keyboard-translate ?\C-h ?\C-x)
 
 (setq load-path
-      (nconc (list 
-	      "/usr/share/emacs/site-lisp/gnus"
-	      (expand-file-name "~/.emacs_d/lisp")
-	      (expand-file-name "~/.emacs_d/org-confluence")
-	      (expand-file-name "~/.emacs_d/org-jira")
-	      (expand-file-name "~/.emacs_d/mo-git-blame")
-	      (expand-file-name "~/.emacs_d/lisp/ext")
-	      (expand-file-name "~/src/org-mode/lisp")
-	      (expand-file-name "~/src/org-mode/contrib/lisp"))
+      (nconc (list (expand-file-name "~/.emacs_d/lisp")
+		   (expand-file-name "~/.emacs_d/org-confluence")
+		   (expand-file-name "~/.emacs_d/org-jira")
+		   (expand-file-name "~/.emacs_d/mo-git-blame")
+		   (expand-file-name "~/.emacs_d/lisp/ext"))
 	     load-path))
 (package-initialize)
 
+(require 'org-confluence)
 (require 'mmm-mode)
 (setq stack-trace-on-error t)
 
@@ -42,7 +39,30 @@
   (tool-bar-mode -1)
   (menu-bar-mode -1)
   (scroll-bar-mode -1)
-  (load "bhj-fonts"))
+  (set-frame-font 
+   (if (file-exists-p "~/.emacs-frame-font")
+       (save-excursion
+         (find-file "~/.emacs-frame-font")
+         (goto-char (point-min))
+         (let ((monaco-font (read (current-buffer))))
+           (kill-buffer (current-buffer))
+           monaco-font))
+     (concat "Monaco-10.5"
+	     (if (eq system-type 'windows-nt)
+		 ":antialias=none"
+	       ""))))
+  (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size 16))
+  (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size 16))
+
+
+  (set-fontset-font (frame-parameter nil 'font)
+		    'han (font-spec :family "Simsun" :size 15))
+  (set-fontset-font (frame-parameter nil 'font)
+		    'symbol (font-spec :family "Simsun" :size 15))
+  (set-fontset-font (frame-parameter nil 'font)
+		    'cjk-misc (font-spec :family "Simsun" :size 15))
+  (set-fontset-font (frame-parameter nil 'font)
+		    'bopomofo (font-spec :family "Simsun" :size 15)))
 
 (add-to-list 'load-path "~/.emacs_d/weblogger")
 (require 'weblogger)
@@ -140,66 +160,6 @@
     (unless mark-active
       (push-mark))
     (ctags-beginning-of-defun arg)))
-
-(defun current-regexp (re &optional func)
-  (save-excursion
-    (let (start end)
-      (while (not (looking-at re))
-	(backward-char))
-      (while (looking-at re)
-	(backward-char))
-      (forward-char)
-      (setq start (point))
-      (search-forward-regexp re)
-      (setq end (point))
-      (funcall (or func 'buffer-substring-no-properties) start end))))
-    
-(defun java-resolve (id)
-  (interactive 
-   (list (or (and transient-mark-mode mark-active
-		  (/= (point) (mark))
-		  (buffer-substring-no-properties (point) (mark)))
-	     (current-regexp "[.a-z0-9]+"))))
-  (shell-command (format "java-get-imports.pl %s -r %s"
-			 (shell-quote-argument (buffer-file-name))
-			 (shell-quote-argument id))))
-
-(defun java-complete-method (id)
-  (interactive
-   (list (or (and transient-mark-mode mark-active
-		  (/= (point) (mark))
-		  (buffer-substring-no-properties (point) (mark)))
-	     (current-regexp "[.a-z0-9_]+"))))
-
-  (let (method (remove ""))
-    (save-excursion
-      (let* ((resolve (shell-command-to-string (format "java-get-imports.pl %s -r %s|tr -d '\\n'"
-						       (shell-quote-argument (buffer-file-name))
-						       (shell-quote-argument id))))
-	     (comp (split-string resolve "\\."))
-	     (comp-last (car (last comp)))
-	     (class (cond
-		     ((string= comp-last "")
-		      (setq remove ".")
-		      (mapconcat 'identity (butlast comp) "."))
-		     ((let ((case-fold-search nil))
-			      (string-match "^[a-z]" comp-last))
-		      (setq remove (concat "." comp-last))
-		      (mapconcat 'identity (butlast comp) "."))
-		     (t resolve)))
-	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class)))
-	     (methods (split-string hierarchy "\n")))
-	(setq method (completing-read "Which method to call? " methods nil t))))
-    (goto-char (current-regexp "[.a-z0-9_]+" (lambda (start end) end)))
-    (when (not (string-equal remove ""))
-      (delete-region (- (point) (length remove)) (point)))
-    (insert ".")
-    (insert (replace-regexp-in-string ".*\\s \\(.*(.*)\\){" "\\1" method))))
-      
-    
-
-(global-set-key (kbd "M-g j r") 'java-resolve)
-(global-set-key (kbd "M-g j h") 'java-get-hierarchy)
 
 (defun bhj-c-end-of-defun (&optional arg)
   (interactive "^p")
@@ -308,7 +268,7 @@
 	 :url "http://baohaojun.wordpress.com/xmlrpc.php"
 	 :username "baohaojun")))
 
-(define-key js-mode-map [(meta .)] 'grep-gtags)
+(define-key js-mode-map [(meta .)] 'gtags-grep)
 (define-key global-map [(meta control \,)] 'cscope-pop-mark)
 (define-key global-map [(meta control .)] 'cscope-pop-mark-back)
 
@@ -462,58 +422,24 @@
 
 (defun grep-imenu ()
   (interactive)
-  (let ((grep-gtags-history grep-imenu-history)
-	(grep-buffer-name "*grep-imenu*"))
-    (grep-gtags 'grep-imenu-history "grep-imenu -i -e pat")))
+  (let ((grep-gtags-history grep-imenu-history))
+    (gtags-grep 'grep-imenu-history "grep-imenu -i -e pat")))
 
-(defun set-gtags-start-file ()
-  (let ((file (my-buffer-file-name (current-buffer))))
-    (if (file-remote-p file)
-	(let ((process-environment tramp-remote-process-environment))
-	  (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
-	  (setq tramp-remote-process-environment process-environment))
-      (setenv "GTAGS_START_FILE" file))))
-
-(defun grep-gtags (&optional history-var def-grep-command)
+(defun gtags-grep (&optional history-var def-grep-command)
   (interactive)
   (let ((grep-history grep-gtags-history)
 	(no-grep-quote t)
-	(compilation-buffer-name-function (lambda (_ign) (if (boundp 'grep-buffer-name)
-							     grep-buffer-name
-							   "*grep-gtags*")))
 	(my-grep-command (or def-grep-command "grep-gtags -e pat"))
 	(current-prefix-arg 4))
     (nodup-ring-insert cscope-marker-ring (point-marker))
-    (set-gtags-start-file)
+    (let ((file (my-buffer-file-name (current-buffer))))
+      (if (file-remote-p file)
+	  (let ((process-environment tramp-remote-process-environment))
+	    (setenv "GTAGS_START_FILE" (file-remote-p file 'localname))
+	    (setq tramp-remote-process-environment process-environment))
+	(setenv "GTAGS_START_FILE" file)))
     (call-interactively 'grep-bhj-dir)
     (set (or history-var 'grep-gtags-history) grep-history)))
-
-(defun java-get-hierarchy ()
-  (interactive)
-  (set-gtags-start-file)
-  (let ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
-	(method-name (or (and transient-mark-mode mark-active
-			      (/= (point) (mark))
-			      (buffer-substring-no-properties (point) (mark)))
-			 (get-the-tag-around-me 'tag-name-from-tag-line 0)))
-	(compilation-buffer-name-function (lambda (_ign) "*java-get-hierarchy*")))
-    (compile (format "java-get-hierarchy.pl %s %s" 
-		     class-name 
-		     (if current-prefix-arg
-			 "-v"
-		       (concat "-m " method-name))))))
-
-(defun java-get-override ()
-  (interactive)
-  (set-gtags-start-file)
-  (let (method)
-    (save-excursion
-      (let* ((class-name (get-the-tag-around-me 'class-name-from-tag-line 0))
-	     (hierarchy (shell-command-to-string (format "java-get-hierarchy.pl %s -v|grep '('|perl -npe 's/^\\s+//'|sort -u" class-name)))
-	     (methods (split-string hierarchy "\n")))
-	(setq method (completing-read "Which method to override? " methods nil t))))
-    (insert "@Override\n")
-    (insert (replace-regexp-in-string  "\\(,\\|)\\)" "\\1 " method))))
 
 (defun grep-tag-default-path ()
   (or (and transient-mark-mode mark-active
@@ -545,7 +471,6 @@
   (interactive)
   (let ((grep-history grep-find-file-history)
 	(my-grep-command "beagrep -f -e pat")
-	(compilation-buffer-name-function (lambda (_ign) "*grep-find-file*"))
 	(current-prefix-arg 4))
     (flet ((grep-tag-default () (grep-tag-default-path)))
       (nodup-ring-insert cscope-marker-ring (point-marker))
@@ -773,7 +698,6 @@
  '(require-final-newline t)
  '(safe-local-variable-values (quote ((bhj-grep-dir . "~/src/android/") (bhj-grep-dir . ~/src/android/) (sh-indent-comment . t) (c-style . whitesmith) (major-mode . sh-mode) (py-indent-offset . 4) (sh-indentation . 2) (c-font-lock-extra-types "FILE" "bool" "language" "linebuffer" "fdesc" "node" "regexp") (TeX-master . t) (indent-tab-mode . t))))
  '(save-place t nil (saveplace))
- '(scalable-fonts-allowed t)
  '(senator-minor-mode-hook (quote (ignore)))
  '(session-initialize (quote (de-saveplace session places keys menus)) nil (session))
  '(session-use-package t nil (session))
@@ -803,7 +727,7 @@
  '(x-select-enable-clipboard t)
  '(yas/also-auto-indent-first-line t)
  '(yas/prompt-functions (quote (yas/ido-prompt yas/no-prompt)))
- '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets" "~/.emacs_d/yasnippet-snippets")) nil (yasnippet))
+ '(yas/root-directory (quote ("~/.emacs_d/yasnippet/snippets" "/usr/share/emacs/site-lisp/yasnippet/snippets")) nil (yasnippet))
  '(yas/trigger-key "M-TAB"))
 
 ; '(url-proxy-services (quote (("http" . "127.0.0.1:18080") ("no_proxy" . "^[^.]*$\\|sina.com"))))
@@ -816,8 +740,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(bold-italic ((t (:slant italic :weight bold :family "Consolas"))))
- '(italic ((t (:slant italic :family "Consolas")))))
+ )
 
 (set-keyboard-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
@@ -1258,7 +1181,6 @@ Starting from DIRECTORY, look upwards for a cscope database."
   (interactive)
   (let ((grep-history grep-func-call-history)
 	(my-grep-command "grep-func-call -e pat")
-	(compilation-buffer-name-function (lambda (_ign) "*grep-func-call*"))
 	(current-prefix-arg 4))
     (nodup-ring-insert cscope-marker-ring (point-marker))
     (let ((file (my-buffer-file-name (current-buffer)))
@@ -1338,44 +1260,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (defun ctags-beginning-of-defun (&optional arg)
   (interactive "^p")
   (goto-line 
-   (get-the-tag-around-me 'code-line-number-from-tag-line arg)))
-
-(defun tag-name-from-tag-line (line)
-  (goto-line line)
-  (car (split-string (current-line-string))))
-
-(defun completing-read-one? (prompt collection &rest args)
-  (if (= (length (delete-dups collection)) 1)
-      (car collection)
-    (apply 'completing-read prompt collection args)))
-
-(defun class-name-from-tag-line (line)
-  (goto-line line)
-  (let ((limit (line-end-position))
-	classes)
-    (goto-char (point-min))    
-    (while (search-forward-regexp "class\\|interface" limit t)
-      (let* ((line (current-line-string))
-	     (fields (split-string line))
-	     (name (car fields))
-	     (type (cadr fields)))
-	(cond
-	 ((or (string-equal type "class")
-	      (string-equal type "interface"))
-	  (setq classes (cons line classes))))))
-    (car (split-string (completing-read-one? "Which class/interface to hierarchy? " (delete-dups (nreverse classes)) nil t)))))
-
-(defun android-get-help ()
-  (interactive)
-  (shell-command (format "%s %s" "android-get-help" (my-buffer-file-name-local))))
-
-(defun get-the-tag-around-me (get-attr-func &optional arg)
-  (interactive)
-  "GET-ATTR-FUNC is a function to specify what attribute of the tag to return,
-for e.g., the line number the tag is on, or the name of the tag.
-
-ARG means found the (ARG - 1)th tag to find."
-  (save-excursion
+   (save-excursion
      (let (deactivate-mark) ;;see the help of save-excursion
        (tag-this-file (get-buffer-create "*ctags-beginning-of-defun*"))
        (let ((old-buffer (current-buffer))
@@ -1403,12 +1288,7 @@ ARG means found the (ARG - 1)th tag to find."
                (setq mid (/ (+ min max) 2)
                      mid-code-line (code-line-number-from-tag-line mid)
                      mid+1-codeline (code-line-number-from-tag-line (1+ mid))))
-             (funcall get-attr-func (- mid -1 
-				       (if (and (numberp arg)
-						(= arg 0)
-						(not (= (code-line-number-from-tag-line (1+ mid)) old-code-line)))
-					   1
-					 (or arg 1))))))))))  
+             (code-line-number-from-tag-line (- mid -1 (or arg 1))))))))))
                     
                                      
 (global-set-key [(control x) (w)] 'where-are-we)
@@ -1800,8 +1680,8 @@ ARG means found the (ARG - 1)th tag to find."
       (or (buffer-file-name buf)
           ""))))
 
-(defun my-buffer-file-name-local (&optional buf)
-  (let ((name (my-buffer-file-name (or buf (current-buffer)))))
+(defun my-buffer-file-name-local (buf)
+  (let ((name (my-buffer-file-name buf)))
     (or (file-remote-p name 'localname)
         name)))
 
@@ -1885,6 +1765,7 @@ ARG means found the (ARG - 1)th tag to find."
   (let ((default-directory "/"))
     (shell-command (concat "kmail-view " (shell-quote-argument nnmaildir-article-file-name)))))
 
+(setq w3m-fill-column 100)
 (require 'guess-offset)
 (setq org-agenda-files `("~/doc/daily" ,(if (eq system-type 'windows-nt)
 					    "~/../.org-jira"
@@ -1899,7 +1780,7 @@ ARG means found the (ARG - 1)th tag to find."
 (global-set-key (kbd "s-h") help-map)
 (global-set-key (kbd "C-{") 'beginning-of-buffer)
 (global-set-key (kbd "C-}") 'end-of-buffer)
-(global-set-key (kbd "M-.") 'grep-gtags)
+(global-set-key (kbd "M-.") 'gtags-grep)
 (global-set-key (kbd "M-g f") 'grep-func-call)
 (global-set-key (kbd "M-s e") 'bhj-occur-make-errors)
 (global-set-key (kbd "M-s x") 'compilation-minor-mode)
@@ -2415,18 +2296,17 @@ criteria can be provided via the optional match-string argument "
 ; Use fundamental mode when editing plantuml blocks with C-c '
 (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
 
-(when nil
-  (require 'twittering-mode)
-  (twittering-enable-unread-status-notifier)
-  (setq-default twittering-icon-mode t)
-  (setq twittering-use-ssl nil
-	twittering-oauth-use-ssl nil)
-  (setq twittering-icon-mode 1)
-  (setq twittering-enabled-services '(sina))
-  (setq twittering-accounts '((sina (username "baohj_zj@hotmail.com")
-				    (auth oauth))))
+(require 'twittering-mode)
+(twittering-enable-unread-status-notifier)
+(setq-default twittering-icon-mode t)
+(setq twittering-use-ssl nil
+      twittering-oauth-use-ssl nil)
+(setq twittering-icon-mode 1)
+(setq twittering-enabled-services '(sina))
+(setq twittering-accounts '((sina (username "baohj_zj@hotmail.com")
+				  (auth oauth))))
 
-  (setq twittering-initial-timeline-spec-string `(":home@sina")))
+(setq twittering-initial-timeline-spec-string `(":home@sina"))
 
 (setq gnus-posting-styles
       '(
@@ -2530,6 +2410,11 @@ we are not interested in those lines that do."
 (autoload 'mo-git-blame-file "mo-git-blame" nil t)
 (autoload 'mo-git-blame-current "mo-git-blame" nil t)
 
+(add-to-list 'load-path (expand-file-name "~/.emacs_d/emacs-eclim/"))
+;; only add the vendor path when you want to use the libraries provided with emacs-eclim
+(add-to-list 'load-path (expand-file-name "~/.emacs_d/emacs-eclim/vendor"))
+(require 'eclim)
+
 (setq eclim-auto-save t)
 
 (defadvice hack-dir-local-variables
@@ -2601,78 +2486,8 @@ using ctags-exuberant"
 (add-hook 'grep-mode-hook
 	  (lambda ()
 	    (setq compilation-directory-matcher (default-value 'compilation-directory-matcher))))
-(require 'org-md)
-
-(defun bhj-find-missing-file ()
-  (interactive)
-  (let (missing-file-name missing-file-name-save)
-    (save-excursion
-      (goto-char (point-min))
-      (search-forward-regexp "(default \\(.*\\))")
-      (setq missing-file-name (match-string 1))
-      (setq missing-file-name-save missing-file-name))
-
-    (setq missing-file-name (shell-command-to-string
-			     (format "beagrep -e %s -f 2>&1|perl -ne 's/:\\d+:.*// and print'" missing-file-name)))
-    (setq missing-file-name (delete-if-empty (split-string missing-file-name "\n")))
-    (unless missing-file-name
-      (setq missing-file-name
-	    (mapcar (lambda (b) (buffer-file-name b))
-		    (delete-if-not 
-		     (lambda (b)
-		       (let ((name (file-name-nondirectory (or (buffer-file-name b) ""))))
-			 (string= name missing-file-name-save)))
-		     (buffer-list)))))
-      
-    (when missing-file-name
-      (if (nth 1 missing-file-name)
-	  (setq missing-file-name
-		(completing-read "Which file? " missing-file-name))
-	(setq missing-file-name (car missing-file-name)))
-      	(insert missing-file-name))))
-
-(global-set-key [(shift return)] 'bhj-find-missing-file)
-
-(defun delete-if-empty (l)
-  (delete-if
-   (lambda (s) (string-equal s ""))
-   l))
-
-(defun ca-with-comment (str)
-  (format "%s%s%s" comment-start str comment-end))
-(defun bhj-java-import ()
-  (interactive)
-  (save-excursion
-    (let ((old-buffer (current-buffer))
-	  import-list)
-      (with-temp-buffer
-	(shell-command (format "java-get-imports.pl %s -v" (buffer-file-name old-buffer)) (current-buffer))
-	(goto-char (point-min))
-	(while (search-forward-regexp "^import" nil t)
-	  (save-excursion
-	    (if (looking-at "-multi")
-
-		(setq import-list (cons
-				   (format "import %s;\n" 
-					   (completing-read-one? "Import which? "
-								 (cdr
-								  (delete-if-empty
-								   (split-string (current-line-string) "\\s +")))
-								 nil
-								 t))
-				   import-list))
-	      (setq import-list (cons (format "%s;\n" (current-line-string)) import-list))))
-	  (forward-line) 
-	  (beginning-of-line)))
-      (goto-char (point-max))
-      (or (search-backward-regexp "^import\\s +" nil t)
-	  (search-backward-regexp "^package\\s +" nil t))
-      (forward-line)
-      (beginning-of-line)
-      (while import-list
-	(insert (car import-list))
-	(setq import-list (cdr import-list))))))
-      
+  
 (condition-case nil
     (server-start)
   (error (message "emacs server start failed")))
+

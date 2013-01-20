@@ -75,7 +75,7 @@ function fedit()
 	line=:$(echo "$1"|perl -npe 's/.*:(\d+):?$/$1/')
 	set -- "$(echo "$1"|perl -npe 's/:(\d+):?$//')"
     fi
-    dirs=( $(find . -iname "*$1*" | grep -v '.class$') )
+    dirs=( $(find . -iname "*$1*") )
     if test ${#dirs[@]} = 0; then
         echo 'Error: no such file or directory'
         return 1

@@ -1,2 +1,0 @@
-#!/bin/bash
-ifconfig "$1" | perl -ne 'print $1 if m/inet addr:(\S*)\s/'|grep .

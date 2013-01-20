@@ -9,7 +9,7 @@ alias la='ls -A --show-control-chars'                              # all but . a
 alias l='ls -CFl --show-control-chars --block-size=1'                              #
 alias vi=vim
 export HISTSIZE=2000
-export HISTFILESIZE=2000
+export HISTFILESIZE=100000
 . ~/.bashrc-public
 
 if test `uname` = CYGWIN_NT-5.1 -o `uname` = CYGWIN_NT-6.1
@@ -28,9 +28,7 @@ export DISPLAY=${DISPLAY:-:0} #if it is already set...
 export USER=`whoami`
 export USE_CCACHE=1
 if test -e ~/.bash-path; then
-    if test -z "$RECURSIVE_SHELL"; then
-        . ~/.bash-path
-    fi
+    . ~/.bash-path
 else
     if test -d ~/etc/path/$(uname)-$(uname -m); then
         export PATH=$(
@@ -51,11 +49,3 @@ fi
 DEBEMAIL="baohaojun@gmail.com"
 DEBFULLNAME="Bao Haojun"
 export DEBEMAIL DEBFULLNAME
-
-if test "$USER" = bhj; then
-    export PERL_LOCAL_LIB_ROOT="/home/bhj/perl5";
-    export PERL_MB_OPT="--install_base /home/bhj/perl5";
-    export PERL_MM_OPT="INSTALL_BASE=/home/bhj/perl5";
-    export PERL5LIB="/home/bhj/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:/home/bhj/perl5/lib/perl5:$PERL5LIB";
-    export PATH="/home/bhj/perl5/bin:$PATH";
-fi

@@ -13,8 +13,4 @@ if test -z "$TARGET_PRODUCT"; then
 fi
 cd - >/dev/null
 
-if test $# = 0; then
-    start-recursive-shell android-env
-else
-    "$@"
-fi
+"$@"

@@ -50,9 +50,9 @@ fi
 if test -z "$GERRIT_HOST"; then
     (
         cd $(lookup_file .git/..);
-        if test -e .gerrit-hooks-branches; then
+        if test -e .gerrit-hooks; then
             echo running the hooks
-            gerrit-hooks do-review $rev
+            bash .gerrit-hooks do-review $rev
         fi
     )
 fi

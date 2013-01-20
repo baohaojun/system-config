@@ -9,14 +9,10 @@ vote=10000
 YEAR=$year
 RATE=10
 VOTE=100000000
-TEMP=$(getopt -o hy:r:v:Y:R:V: --long year:rate:vote:YEAR:RATE:VOTE: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o y:r:v:Y:R:V: --long year:rate:vote:YEAR:RATE:VOTE: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
-        -h)
-            grep ^TEMP $0
-            exit 0
-            ;;
         -y|--year)
             year=$2
             shift 2

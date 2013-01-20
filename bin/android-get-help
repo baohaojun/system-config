@@ -1,5 +1,0 @@
-#!/bin/bash
-
-url=file://$HOME/bin/linux/ext/android-sdk-linux_86/docs/reference/$(java-get-package $1 | perl -npe 's#\.#/#g')/$(basename $1|perl -npe 's/\.java$/.html/')
-emacsclient -e '(w3m-goto-url "'$url'")' >/dev/null 2>&1 &
-

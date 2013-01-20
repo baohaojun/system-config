@@ -5,12 +5,7 @@
 	  android:versionName="1.0" >
 
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-  <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
-  <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
-
-  <uses-sdk android:minSdkVersion="17"
-	    android:targetSdkVersion="17">
-  </uses-sdk>
+  <uses-sdk android:minSdkVersion="15" />
 
   <application
       android:icon="@drawable/ic_launcher"

@@ -20,28 +20,22 @@ my $grep_all = 0;
 my $no_comment = 0;
 my @argv_for_grep_all = @ARGV;
 my $path_matcher = "";
-my $path_matcher_inv = "";
 my @beagrep_path_arg;
 my $reverse_matcher;
 
 GetOptions(
     "s!" => \$silent,
     "i!" => \$ignore_case,
-    "a!" => sub { $grep_all = !$grep_all},
+    "a!" => \$grep_all,
     "m!" => \$members,
     "e=s" => \$target,
     "p=s" => \$path_matcher,
-    "r=s" => \$reverse_matcher,
-    "v=s" => \$path_matcher_inv,
+    "v=s" => \$reverse_matcher,
     "nc!" => \$no_comment,
     );
 
 if ($path_matcher) {
     @beagrep_path_arg = ("-p", $path_matcher);
-}
-
-if ($path_matcher_inv) {
-    @beagrep_path_arg = (@beagrep_path_arg, "-v", $path_matcher_inv);
 }
 
 if ($reverse_matcher) {

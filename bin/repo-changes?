@@ -65,8 +65,6 @@ branch=$2
 path=$3
 if test ${#branch} = 40; then
     remote_rev=$branch
-elif [[ $branch =~ /tags/ ]]; then
-    remote_rev=$(git rev-parse $branch)
 else
     remote_rev=$(git rev-parse $remote/$branch)
 fi
@@ -113,12 +111,8 @@ if test "$DO_GIT_ST_ONLY" != true -a "$head_rev" != "$rev"; then
     fi
 
     if test $need_bail = true; then
-        if [[ $branch =~ /tags/ ]]; then
-            git fetch $remote $branch >/dev/null 2>&1
-        else
-            git fetch $remote refs/heads/$branch >/dev/null 2>&1 
-        fi
-        fetch_rev=$(git rev-parse FETCH_HEAD^0)
+        git fetch $remote refs/heads/$branch >/dev/null 2>&1 
+        fetch_rev=$(git rev-parse FETCH_HEAD)
 
         if test "$head_rev" = "$fetch_rev"; then
             need_bail=false

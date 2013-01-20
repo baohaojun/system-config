@@ -16,6 +16,9 @@
 [submodule ".emacs_d/emacs-eclim"]
 	path = .emacs_d/emacs-eclim
 	url = https://github.com/baohaojun/emacs-eclim.git
+[submodule ".emacs_d/org-confluence"]
+	path = .emacs_d/org-confluence
+	url = https://github.com/hgschmie/org-confluence.git
 [submodule "gcode/guilt"]
 	path = gcode/guilt
 	url = https://github.com/baohaojun/guilt.git
@@ -25,12 +28,3 @@
 [submodule "gcode/ctags-exuberant"]
 	path = gcode/ctags-exuberant
 	url = https://github.com/baohaojun/ctags-exuberant.git
-[submodule "gcode/android/Superuser"]
-	path = gcode/android/Superuser
-	url = https://github.com/baohaojun/Superuser.git
-[submodule "gcode/android/su-binary"]
-	path = gcode/android/su-binary
-	url = https://github.com/baohaojun/su-binary.git
-[submodule ".emacs_d/yasnippet-snippets"]
-	path = .emacs_d/yasnippet-snippets
-	url = https://github.com/baohaojun/yasnippet-snippets.git

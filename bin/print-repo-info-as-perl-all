@@ -11,7 +11,7 @@ echo '$android_path = $0;'
 echo '$android_path =~ s,/.repo/repo_info.pl,,;'
 
 if test $# = 0; then
-    set -- manifest.xml local_manifests/local_manifist.xml
+    set -- manifest.xml local_manifest.xml
 fi
 
 xmlstarlet sel -B -t -m //remote \

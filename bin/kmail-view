@@ -1,12 +1,2 @@
 #!/bin/bash
-
-if test $# = 1; then
-    if test ! -e "$1"; then
-        bhj-notify "kmail-view" "$1 not exist!"
-        echo "$1" >> ~/.logs/kmail-view.log
-        x=$(echo "$1" | perl -npe 's/:.*//')
-        x=$(echo "$x"*)
-        set -- "$x"
-    fi
-fi
 kmail --view "$@" >/dev/null 2>&1 &
