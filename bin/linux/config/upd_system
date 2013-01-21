@@ -6,10 +6,6 @@
 
 #先把一些常用的软件装上，包括编译Android需要用到的软件。
 
-#make sure postfix is installed first, so that exim4 don't show up.
-
-sudo apt-get install -y postfix
-
 #all the other packages
 
 sudo apt-get update
@@ -18,11 +14,6 @@ sudo apt-get dist-upgrade -y
 ~/bin/linux/config/install-pkgs
 sudo update-command-not-found
 sudo apt-get build-dep -y sawfish librep rep-gtk ibus-table
-
-#把一些软件默认的版本换掉
-sudo update-alternatives --set emacs /usr/bin/emacs23 || true
-sudo update-alternatives --set emacsclient /usr/bin/emacsclient.emacs23 || true
-sudo update-alternatives --set etags /usr/bin/etags.emacs23 || true
 
 #我们用的桌面系统是gnome，但是窗口管理器要换一个，gnome自带的是metacity，我们要用sawfish
 gconftool-2 -s /desktop/gnome/applications/window_manager/default --type string /usr/bin/sawfish
@@ -34,11 +25,8 @@ mkdir -p ~/.fonts
 cp ~/doc/monaco-linux.ttf ~/.fonts
 fc-cache -v
 
-#设置gmail邮件
-
 if test "$USER" = bhj; then
     set +e
-    . config_email
     sudo apt-get install texlive-full 
     crontab ~/.crontab.bhj
 fi

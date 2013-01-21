@@ -1,8 +1,0 @@
-#!/bin/bash
-function config_email()
-{
-    sudo cp ~/etc/default/ /etc/ -rv
-    sudo cp ~/etc/stunnel/ /etc/ -rv
-}
-
-config_email
