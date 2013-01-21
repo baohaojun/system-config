@@ -7,7 +7,7 @@ touch ~/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
 mkdir ~/tmp -p
 cd ~/windows-config/
-mkdir -p ~/external/bin/$(uname|perl -npe 's/_.*//')
+mkdir -p ~/external/bin/$(uname|perl -npe 's/_.*//')/ext
 mkdir -p ~/tmp/notification-manager
 mkdir -p ~/external/etc/at
 echo ~/external/etc/at >> ~/.where
