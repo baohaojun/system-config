@@ -51,6 +51,11 @@ if test -e ~/.gitconfig.$USER; then
 fi
 
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
+if test -e ~/.macbook-air; then
+    ln -sf ~/windows-config/etc/.Xmodmap-macbook-air ~/
+else
+    ln -sf ~/windows-config/etc/.Xmodmap ~/
+fi
 sudo ln -sf ~/etc/rc.local /etc
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
 echo OK

@@ -2,10 +2,16 @@
 test $(uname) = Linux || exit
 (
     dumpkeys | head -1
-    echo keycode 56 = Control
+
+    if test -e ~/.macbook-air; then
+        echo keycode 125 = Control
+        echo keycode 126 = Control
+    else
+        echo keycode 56 = Control
+        echo keycode 100 = Control
+        echo keycode 97 = Alt
+    fi
     echo keycode 29 = Alt
-    echo keycode 100 = Control
-    echo keycode 97 = Alt
     echo keycode 1 = CtrlL_Lock
     echo keycode 58 = Escape
 ) | sudo loadkeys
