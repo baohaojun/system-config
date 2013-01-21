@@ -84,9 +84,10 @@ for (glob "$dir/*") {
 	  mkdir "$path/.nnmaildir/marks/read";
         my $dst = "$path/.nnmaildir/marks/read/$message";
 	if (! -e $dst) {
+	    unlink $dst;
 	    symlink "$file","$dst"
 		and print "Added mail in $mb to gnus seen\n" 
-		or warn "symlink $file $dst failed\n";
+		or warn "Failed: symlink \"$file\", \"$dst\"\n";
 	}
       } else {
         my $dst = "$path/.nnmaildir/marks/read/$message";

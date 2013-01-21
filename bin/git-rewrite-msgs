@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -e
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) REV"
+fi
+list=$(git rev-list HEAD ^$1|reverse)
+
+git co $1
+git commit --amend
+
+for x in $list; do
+    git cherry-pick $x
+done

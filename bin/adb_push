@@ -1,12 +1,30 @@
 #!/usr/bin/env perl
 use String::ShellQuote;
-system("adb shell sync; echo adb shell mount -o remount rw /system; adb shell mount -o remount rw /system");
+use Getopt::Long;
+my $secure;
+GetOptions(
+    "s!" => \$secure,
+    );
+
+system("adb shell sync; echo adb shell mount -o remount,rw /system; adb shell mount -o remount,rw /system");
 $dest = pop( @ARGV);
 
 for (@ARGV) {
     $_ = shell_quote($_);
     chomp($file=qx/lookup_file $_/);
     system("adb",  "push", "$file", "$dest");
+    if ($secure) {
+	my $base_file = $file;
+	$base_file =~ s!.*/!!;
+	my $base_dest = $dest;
+	$base_dest =~ s!.*/!!;
+	
+	if ($base_file eq $base_dest) {
+	    system("adb", "shell", "chmod", "644", $dest);
+	} else {
+	    system("adb", "shell", "chmod", "644", "$dest/$base_file");
+	}
+    }
 }
 
-system("adb shell sync; echo adb shell mount -o remount ro /system; adb shell mount -o remount ro /system");
+system("adb shell sync; echo adb shell mount -o remount,ro /system; adb shell mount -o remount,ro /system");

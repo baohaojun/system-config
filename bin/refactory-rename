@@ -62,7 +62,19 @@ END {
 }
 ' -i
         
+function compute-new-string() {
+echo "$@"|perl -npe '
+BEGIN{
+    use Storable;
+    %rep_save = %{retrieve("'$perlhash'")};
+}
 
+for $key (keys %rep_save) {
+    my ($from, $to) = ($key, $rep_save{$key});
+    s/$from/$to/g;
+}
+'
+}
 
 function rename-files() {
     dir=$1
@@ -74,19 +86,20 @@ function rename-files() {
 	    if test -d "$x"; then
 		test -L "$x" || rename-files "$x" "$@"
 	    fi
-	    if echo "$x"|grep -q -i -e "$1"; then
+	    if echo "$x"|grep -q -i -e "$1" || readlink "$x" | grep -q -i -e "$1"; then
 		debug doing "$x"
-		git mv "$x" "$(echo "$x"|perl -npe '
-BEGIN{
-    use Storable;
-    %rep_save = %{retrieve("'$perlhash'")};
-}
+		y="$(compute-new-string "$x")"
 
-for $key (keys %rep_save) {
-    my ($from, $to) = ($key, $rep_save{$key});
-    s/$from/$to/g;
-}
-')"
+                if test -L "$x"; then
+                    new_link=$(compute-new-string "$(readlink "$x")")
+                    git rm "$x" --cached
+                    rm "$x"
+                    ln -s "$new_link" "$y"
+                    git add "$y"
+                else
+                    git mv "$x" "$y"
+                fi
+                    
 	    fi
 	done
     )

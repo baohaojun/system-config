@@ -23,7 +23,7 @@ function do_review()
         git fetch $(repo-remote) $branch || break
         if git-is-ancestor $head FETCH_HEAD; then
             if ! git diff --quiet $head FETCH_HEAD; then
-                die "remote branch $branch is note the same as the master ($head)"
+                die "remote branch $branch $(git rev-parse FETCH_HEAD) is not the same as the master ($head) $(echo; echo git diff --quiet $head FETCH_HEAD; git diff --name-status $head FETCH_HEAD)"
             fi
             continue
         fi
@@ -34,9 +34,18 @@ function do_review()
             from=$head
         fi
 
-        if ! git merge $from --no-ff -m "merge for $(repo-remote)/$branch"; then
+        if ! git merge $from --no-ff -m "$(echo merge for $(repo-remote)/$branch;
+                                           if test "$JIRA_ID"; then
+                                               echo
+                                               echo "Issue: $JIRA_ID"
+                                           elif git log -1 $head | grep -q -P -e "^\s+Issue: "; then
+                                               echo
+                                               git log -1 $head | grep -P -e "^\s+Issue: .*"|perl -npe 's/^\s+//';
+                                           fi
+                                          )"; then
             git reset --hard $head
             echo merge from $(repo-remote)/$branch has failed
+            exit 1
             break
         fi
         if ! git push $(repo-review-url) HEAD:refs/for/$branch; then
@@ -58,7 +67,8 @@ function do_review()
 
         if ! git diff --quiet $head FETCH_HEAD; then
             git reset --hard $head
-            die "remote branch $branch ($(git rev-parse FETCH_HEAD)) is not same as the master ($head)"
+            
+            die "remote branch $branch ($(git rev-parse FETCH_HEAD)) is not same as the master ($head): $(echo; echo git diff --quiet $head FETCH_HEAD; git diff --name-status $head FETCH_HEAD))"
         fi
         
     done || true

@@ -43,6 +43,7 @@ symlink-map ~/windows-config/ ~/
 if test -d ~/.config; then
     symlink-map ~/windows-config/.config.vc/ ~/.config
 fi
+mkdir -p ~/.local/share/applications
 symlink-map ~/windows-config/etc/local-app/ ~/.local/share/applications
 
 if test -e ~/.gitconfig.$USER; then

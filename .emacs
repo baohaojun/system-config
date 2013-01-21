@@ -1947,6 +1947,8 @@ ARG means found the (ARG - 1)th tag to find."
 	("From" . "chenli@marvell.com")
 	("From" . "linkedin.com")
 	("From" . "bear.eee168.com")
+	("To" . "linux-kernel@vger.kernel.org\\|public.gmane.org")
+	("Cc" . "linux-kernel@vger.kernel.org\\|public.gmane.org")
 	))
 (setq bbdb-notice-hook (quote (bbdb-auto-notes-hook)))
 

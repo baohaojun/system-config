@@ -22,9 +22,6 @@ congfu --space '~hjbao' -- -a storePage --title $tool_page --file $tool_page --p
 bhj_page=bhj_$(date +%Y.%m.%d -d "${1:-Fri}")
 set -x
 do_overwrite=false
-if test -e $bhj_page; then
-    yes-or-no "overwrite existing $bhj_page?" && do_overwrite=true
-fi
 
 { test $do_overwrite = true || ! test -e $bhj_page; }  && (
     cat <<EOF
@@ -57,9 +54,7 @@ EOF
 EOF
 ) > $bhj_page
 
-if tty >/dev/null 2>&1 ; then
-    edit-wait $bhj_page
-fi
+edit-wait $bhj_page
 
 log=~/.logs/do-weekly.log
 congfu --space '~hjbao' -- -a storePage --title $bhj_page --file $bhj_page --parent $tool_page --encoding UTF-8 2>&1|tee $log

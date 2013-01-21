@@ -19,7 +19,7 @@ fi
 
 
 
-for x in $(for y in ~/src/android "$@"; do readlink -f $y|uniq-even-non-ajacent); do 
+for x in $(for y in ~/src/android "$@"; do readlink -f $y; done|uniq-even-non-ajacent); do 
     cd $x || continue
     cd `lookup_file .repo/..` || continue
 

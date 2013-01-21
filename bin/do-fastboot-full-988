@@ -153,7 +153,12 @@ time (
     do-partition ramdisk "$(get-image-path RAMD)"
     do-partition kernel "$(get-image-path ZIMG)"
     if should-do-it radio; then
-        do-partition radio "$(concat-file 0 ARBI 8M GRBI 10M ARB2 18M GRB2)"
+        do-partition radio "$(concat-file 0 ARBI \
+                                          $(blf-calc-dist.sh ARBI GRBI) GRBI \
+                                          $(blf-calc-dist.sh ARBI ARB2) ARB2 \
+                                          $(blf-calc-dist.sh ARBI GRB2) GRB2)" ||
+        do-partition radio "$(concat-file 0 ARBI \
+                                          $(blf-calc-dist.sh ARBI GRBI)  GRBI)"
     fi
 
     if should-do-it recovery; then
@@ -167,6 +172,10 @@ time (
         do-partition pmce $(concat-file 0 PMCE 1M LOGO) || true
     fi
 
+    if test -e prdcfg.bin2; then
+        fastboot flash pmce prdcfg.bin2
+    fi
+
     if should-do-it factory; then
         if test "$do_factory" = true; then
             do-partition factory "$(get-image-path FACT)"
@@ -177,9 +186,10 @@ time (
     do-partition GPT "$(get-image-path PGPT)"
 
     ntim_bin=$(get-image-path TIMH)
+    rm -f "$ntim_bin" || true
 
     if test -e./software_downloader/Utilities/TimBuilder/TimBuilder.exe; then
-        if test ! -e "$ntim_bin" -o "$(stat -c %s "$ntim_bin")" == 0; then
+        if test ! -e "$ntim_bin" || test "$(stat -c %s "$ntim_bin")" = 0; then
             wine ./software_downloader/Utilities/TimBuilder/TimBuilder.exe -r "$(command wp $BLF)"
         fi
     fi
@@ -190,7 +200,7 @@ time (
         else
             do-partition DTIM $(concat-file 0 DTim.Primary 512K DTim.Recovery)
         fi
-        if should-do-it factory; then
+        if should-do-it OBM; then
             do-partition OBM $(concat-file 0 TIMH 128K OBMI)
         fi
     fi
@@ -201,7 +211,7 @@ time (
         fastboot erase NVM
     fi
 
-    if [[ $(basename $0) =~ do-fastboot-full ]] && test "$ERASE_ALL" = true; then
+    if [[ $(basename $0) =~ do-fastboot-full ]] && test "$ERASE_ALL" = true && yes-or-no-p -n "Erase all?"; then
         fastboot erase MEP2
         fastboot erase MRD
         fastboot erase MRD1
