@@ -52,9 +52,9 @@ fi
 
 ln -sf .offlineimaprc-$(uname|perl -npe 's/_.*//') ~/.offlineimaprc
 if test -e ~/.macbook-air; then
-    ln -sf ~/windows-config/etc/.Xmodmap-macbook-air ~/
+    ln -sf ~/windows-config/etc/.Xmodmap-macbook-air ~/.Xmodmap
 else
-    ln -sf ~/windows-config/etc/.Xmodmap ~/
+    ln -sf ~/windows-config/etc/.Xmodmap ~/.Xmodmap
 fi
 sudo ln -sf ~/etc/rc.local /etc
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
