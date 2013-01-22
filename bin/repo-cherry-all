@@ -6,7 +6,9 @@ function die() {
     exit -1
 }
 
-TEMP=$(getopt -o f:t:r: --long from:to:remote: -n $(basename $0) -- "$@")
+local_from=false
+local_to=false
+TEMP=$(getopt -o TFf:t:r: --long from:to:remote: -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
@@ -22,6 +24,14 @@ while true; do
             remote=$2
             shift 2
             ;;
+        -F)
+            local_from=true;
+            shift
+            ;;
+        -T)
+            local_to=true;
+            shift
+            ;;
         --)
             shift
             break
@@ -36,12 +46,23 @@ if test -z "$from" -o -z "$to" -o -z "$remote"; then
     die "Error: Usage $(basename $0) -f FROM -t TO -r REMOTE"
 fi
 
+if test $local_from = false; then
+    from=$remote/$from
+fi
+
+if test $local_to = false; then
+    to=$remote/$to
+fi
+
 my-rfa '
+    if test "$DEBUG" = true; then
+        set -x
+    fi
     git fetch '"$remote"' >/dev/null 2>&1;
     TOP=$ANDROID_TOP;
     log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
     mkdir -p $(dirname $log);
-    git-change-id-ffable '"$remote/$from $remote/$to"' > $log 2>/dev/null;
+    git-change-id-ffable '"$from $to"' > $log 2>/dev/null;
     if test $(stat -c %s $log) = 0; then
         rm $log;
     fi;

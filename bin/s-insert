@@ -1,0 +1,6 @@
+#!/bin/bash
+
+(
+    sleep 1
+    sawfish-client -e '(synthesize-event "S-Insert" (input-focus))'
+)&
