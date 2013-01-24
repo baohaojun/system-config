@@ -9,6 +9,8 @@
 
 (bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/screenshot&")))
 (bind-keys global-keymap "Super-DEL" (lambda () (system "gnome-screensaver-command -l&")))
+(bind-keys global-keymap "Super-XF86KbdBrightnessUp" (lambda () (system "switch-touchpad enable&")))
+(bind-keys global-keymap "Super-XF86KbdBrightnessDown" (lambda () (system "switch-touchpad enable&")))
 (bind-keys global-keymap "Super-Print" (lambda () (system "super-print.sh&")))
 (bind-keys window-keymap "Super-i" (lambda () (display-message (concat "Window class is: " (caddr (get-x-property (input-focus) (quote WM_CLASS)))))))
 (bind-keys global-keymap "Super-SPC" (lambda() 
@@ -37,32 +39,40 @@
                                   (write (stderr-file) "hello world\n")
                                   (wclass-or-lambda window)))
 
-                          (bhj-activate-window window)
-                          (throw 'wFound 'wFound)))
+		      (bhj-activate-window window)
+		      (throw 'wFound 'wFound)))
                   (stacking-order)))
           'wFound)
-      nil
+      t
     (if wcommand
-        (system (concat wcommand "&")))))
+	(system (concat wcommand "&")))
+    nil))
 
 (mapc
  (lambda (args)
    (let ((key (car args))
          (wclass (cadr args))
-         (wcommand (caddr args)))
+         (wcommand (caddr args))
+	 (found-command (cadddr args)))
      (bind-keys global-keymap key
                 (lambda ()
-                  (find-window-or-exec (eval wclass) wcommand)))))
+                  (find-window-or-exec (eval wclass) wcommand)
+		  (if found-command
+		      (system found-command))))))
  '(
-   ("Super-e" "emacs" "emacs.bhj")
+   ("Super-e" "emacs" "emacs.bhj" "switch-touchpad disable&")
    ("Super-r" "grun" "grun")
    ("Super-t" "konsole" "konsole -e ~/bin/myscr")
    ("Super-C-d" (lambda (w) (string-match "my-dict" (window-name w) 0 t)) "gnome-terminal -t my-dict -e ~/bin/linux/my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
+   ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")
    ("Super-x" "xcalc" "xcalc")
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/bin/myscr")
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")
    ))
+
+(bind-keys window-keymap "Button1-Click" 'raise-and-pass-through-click)
+
 
 (mapc 
  (lambda (arg)

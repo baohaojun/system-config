@@ -35,8 +35,9 @@ time (
     if test "$(get-mount-1)" = smbnetfs; then
         dir=/tmp/$(basename $0).$$/
         mkdir $dir
-        relative-link * $dir/        
+        relative-link * $dir/
         cd $dir/
+        rm -f ntim_emei.bin DTim.*
     fi
 
     part_table=$(fastboot oem part 2>&1)
@@ -170,6 +171,13 @@ time (
     do-partition userdata "$(get-image-path USRY)"
     if should-do-it pmce; then
         do-partition pmce $(concat-file 0 PMCE 1M LOGO) || true
+        if test -e prdcfg.more; then
+            (
+                dd bs=1 skip=4 if=$(get-image-path PMCE) | tr '\0' '\n'
+                cat prdcfg.more
+            ) | sort -u | ~/src/android/flashing/helpers/mkenvimg.py -s 0x40000 > prdcfg.bin2
+            fastboot flash pmce prdcfg.bin2
+        fi
     fi
 
     if test -e prdcfg.bin2; then

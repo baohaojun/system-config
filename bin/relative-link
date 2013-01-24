@@ -8,21 +8,26 @@ function die() {
 }
 
 no_clobber=false
-TEMP=$(getopt -o n --long no-clobber -n $(basename $0) -- "$@")
+ln_force=false
+TEMP=$(getopt -o fn --long no-clobber -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -n|--no-clobber)
-        no_clobber=true
-        shift
-        ;;
-        --)
-        shift
-        break
-        ;;
+            no_clobber=true
+            shift
+            ;;
+        -f)
+            ln_force=true
+            shift
+            ;;
+            --)
+            shift
+            break
+            ;;
         *)
-        die "internal error"
-        ;;
+            die "internal error"
+            ;;
     esac
 done
 target_file=''
@@ -69,8 +74,12 @@ for x in $(seq 1 $n_targets); do
 	target_file=$(basename "$source")
     fi
     if test -e "$target_dir"/"$target_file"; then
-        echo "$target_dir"/"$target_file" already exist\!
-        continue
+        if test $ln_force = true; then
+            echo "FORCE ->" "$target_dir"/"$target_file"
+        else
+            echo "$target_dir"/"$target_file" already exist\!
+            continue
+        fi
     fi
     rm -f "$target_dir"/"$target_file"
 

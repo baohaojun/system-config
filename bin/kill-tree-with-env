@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+if test $# != 1; then
+    die "Error: Usage $(basename $0) ENV"
+fi
+
+pids=($$)
+ppid=$$
+
+while true; do
+    ppid=$(ps -o ppid $ppid | perl -ne 's/\s+//g; print unless 1..1')
+    if test $ppid = 1; then
+        break;
+    fi
+    pids=($ppid ${pids[@]})
+done
+
+pids=$(echo ${pids[@]})
+setsid setsid bash -c '
+for pid in '"$pids"'; do
+    echo $pid
+    if test -r /proc/$pid/environ && cat /proc/$pid/environ | tr \\0 \\n | grep "^'$1'="; then
+        echo kill $pid
+    fi
+done
+'

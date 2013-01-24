@@ -1,6 +1,5 @@
 #!/bin/bash
 echo sawfish starting sub programs
-syndaemon -d
 
 if test -e ~/.fonts/symbol.ttf; then
     mv ~/.fonts/symbol.ttf ~/tmp/symbol.ttf.$$

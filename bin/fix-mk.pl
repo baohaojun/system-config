@@ -2,7 +2,16 @@
 use strict;
 my @lines;
 my $line;
-my $cross_compile_export = 'export CROSS_COMPILE:=$(CCACHE_COMMAND) $(KERNEL_TOOLCHAIN_PREFIX)';
+my $cross_compile_export = <<'EOF';
+ifneq ($(CCACHE_COMMAND),)
+export CROSS_COMPILE:=$(CCACHE_COMMAND) $(KERNEL_TOOLCHAIN_PREFIX)
+else
+export CROSS_COMPILE:=$(KERNEL_TOOLCHAIN_PREFIX)
+endif
+EOF
+
+    0; # fix the indentation
+
 while (<>) {
     s/^\s*\Qexport CROSS_COMPILE:=$(KERNEL_TOOLCHAIN_PREFIX)\E/$cross_compile_export/;
     if (m/make.*cross_compile.*=/i) {
