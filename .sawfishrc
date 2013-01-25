@@ -58,7 +58,8 @@
                 (lambda ()
                   (find-window-or-exec (eval wclass) wcommand)
 		  (if found-command
-		      (system found-command))))))
+		      (system found-command)
+		    (system "switch-touchpad disable&"))))))
  '(
    ("Super-e" "emacs" "emacs.bhj" "switch-touchpad disable&")
    ("Super-r" "grun" "grun")
@@ -91,6 +92,7 @@
 
 (bind-keys global-keymap "Super-k" (lambda () (system "emacsclient -n ~/doc/work.txt&")))
 (bind-keys global-keymap "Super-Insert" (lambda () (system "send-key $(getclip)&")))
+(bind-keys global-keymap "Super-S-RET" (lambda () (system "send-key $(getclip)&")))
 (bind-keys global-keymap "Super-RET" (lambda () (synthesize-event "S-Insert" (input-focus))))
 (bind-keys global-keymap "Super-BS" (lambda () (synthesize-event "Prior" (input-focus))))
 (bind-keys global-keymap "Super-SPC" (lambda () (synthesize-event "Next" (input-focus))))

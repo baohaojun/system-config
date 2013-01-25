@@ -1,1 +1,1 @@
-complete -c command edit e
+complete -c -f edit e

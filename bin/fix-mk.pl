@@ -16,6 +16,7 @@ while (<>) {
     s/^\s*\Qexport CROSS_COMPILE:=$(KERNEL_TOOLCHAIN_PREFIX)\E/$cross_compile_export/;
     if (m/make.*cross_compile.*=/i) {
 	s/ CROSS_COMPILE\s*:?=\s*\$(\(|\{)(CROSS_COMPILE|KERNEL_TOOLCHAIN_PREFIX)[^({})]*(\)|\})//;
+	s/ CROSS_COMPILE\s*:?=\s*\$\$CROSS_COMPILE//;
     }
     s/ -j\$\(MAKE_JOBS\)//;
     if ($line) {
