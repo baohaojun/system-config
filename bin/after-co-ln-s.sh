@@ -58,4 +58,5 @@ else
 fi
 sudo ln -sf ~/etc/rc.local /etc
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
+if test -l ~/.git; then rm -f ~/.git; fi
 echo OK
