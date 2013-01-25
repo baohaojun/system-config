@@ -33,6 +33,7 @@ if test -e ~/.bash-path; then
     fi
 else
     if test -d ~/etc/path/$(uname)-$(uname -m); then
+        rm -rf ~/external/etc/overide/
         export PATH=$(
             builtin cd ~/etc/path/$(uname)-$(uname -m);
             for x in $(for d in *; do echo $d; done|sort -n); do
