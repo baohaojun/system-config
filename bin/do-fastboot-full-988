@@ -58,8 +58,6 @@ time (
     if [[ $(basename $0) =~ do-fastboot-full ]]; then
         if test ! -e $1; then
 	    die "blf file '$1' not exist! Usage: $(basename $0) XXX.blf PARTS"
-        elif test $(basename $1) = $1 -a -e ~/src/android/boot/obm/TimBuilder; then
-            ~/src/android/boot/obm/TimBuilder -r $(pwd)/$1 || true
         fi
     else
         if test $# -lt 2; then

@@ -52,16 +52,12 @@
  (lambda (args)
    (let ((key (car args))
          (wclass (cadr args))
-         (wcommand (caddr args))
-	 (found-command (cadddr args)))
+         (wcommand (caddr args)))
      (bind-keys global-keymap key
                 (lambda ()
-                  (find-window-or-exec (eval wclass) wcommand)
-		  (if found-command
-		      (system found-command)
-		    (system "switch-touchpad disable&"))))))
+                  (find-window-or-exec (eval wclass) wcommand)))))
  '(
-   ("Super-e" "emacs" "emacs.bhj" "switch-touchpad disable&")
+   ("Super-e" "emacs" "emacs.bhj")
    ("Super-r" "grun" "grun")
    ("Super-t" "konsole" "konsole -e ~/bin/myscr")
    ("Super-C-d" (lambda (w) (string-match "my-dict" (window-name w) 0 t)) "gnome-terminal -t my-dict -e ~/bin/linux/my-dict")

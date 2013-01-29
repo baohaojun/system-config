@@ -47,6 +47,7 @@ plugin-example|Example of function layer plugin parser:\
 	:langmap=yacc\:.y:\
 	:langmap=asm\:.s.S:\
 	:langmap=java\:.java.aidl:\
+	:langmap=jar\:.jar:\
         :langmap=antlr\:.g:\
 	:langmap=c++\:.c++.cc.cpp.cxx.hxx.hpp.C.H.h:\
 	:langmap=php\:.php.php3.phtml:\
@@ -72,6 +73,7 @@ plugin-example|Example of function layer plugin parser:\
 	:gtags_parser=yacc\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=asm\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=java\:/usr/local/lib/gtags/exuberant-ctags.la:\
+	:gtags_parser=jar\:/usr/local/lib/gtags/gtags-antlr-java.la:\
 	:gtags_parser=antlr\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=c++\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=php\:/usr/local/lib/gtags/exuberant-ctags.la:\
