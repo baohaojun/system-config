@@ -12,6 +12,7 @@ my $qualified_re = qr($id_re(?:(?:\.|\$)$id_re)*\b);
 use IO::Handle;
 STDOUT->autoflush(1);
 
+my $line_number = 0;
 while (<>) {
     chomp(my $jar = $_);
     my $file_name = $jar;
@@ -28,24 +29,21 @@ while (<>) {
     while (<$javap_pipe>) {
 	chomp;
 	next if /^Compiled from.*/;
+	$line_number++;
 
 	if (m/(class|interface)\s+($qualified_re)/) {
 	    $class_name = $2;
 	    $class_name =~ s/\$/./g;
-	    $class_name =~ s/.*\.//;
-	    #print "$class_name $1 1         $file_name $_\n";
+	    print "$class_name $1 $line_number $file_name $_\n";
 	} elsif (m/($qualified_re)\s*\(/) {
 	    my $method_name = ($1 eq $class_name ? $1 : "$class_name.$1");
-	    #print "$method_name method 1 $file_name $_\n";
-	    $method_name =~ s/.*\.//;
-	    #print "$method_name method 1 $file_name $_\n";
+	    print "$method_name method $line_number $file_name $_\n";
 	} elsif (m/($qualified_re)\s*;/) {
 	    my $field_name = "$class_name.$1";
-	    #print "$field_name field 1 $file_name $_\n";
+	    print "$field_name field $line_number $file_name $_\n";
 	} else {
 	}
     }
-    system("ctags-exuberant -xu --extra=+q --c-kinds=+p ~/windows-config/gcode/crossdict/src/com/baohaojun/crossdict/CrossDictActivity.java|perl -npe s!/.*\.java!$file_name!");
     print "###terminator###" . "\n";
 }
 # java -cp ~/bin/linux/ext/`uname -m`/gtagsAntlrJavaParser.jar:$CLASSPATH gtagsAntlrJavaParser

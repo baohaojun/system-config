@@ -16,6 +16,12 @@
 --regex-androidpng=/android:id="@\+id\/([^"]*)"/\1/d,id/
 --regex-androidpng=/name[ \t]*=[ \t]*"([^"]*)"/\1/d,resource/
 
+--langdef=jar
+--langmap=jar:.jar
+--regex-jar=/^([a-z][a-zA-Z0-9_]*)/\1/d,rule/
+--regex-jar=/^([A-Z][a-zA-Z0-9_]*)/\1/d,token/
+
+
 --langdef=antlr
 --langmap=antlr:.g
 --regex-antlr=/^([a-z][a-zA-Z0-9_]*)/\1/d,rule/

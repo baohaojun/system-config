@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -e
+cd .repo/manifests
+echo $(git remote -v |pn 2|sort -u) --repo-url=bibler:shgit/repo 
