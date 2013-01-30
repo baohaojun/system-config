@@ -1,0 +1,15 @@
+#!/bin/bash
+. ~/.new-xauth 
+if test "$1" = disable -o "$1" = off || synclient | grep -P -e 'TouchpadOff\s*=\s*0$'; then
+    synclient TouchpadOff=2
+    # sawfish-client -e '(bind-keys window-keymap "Button1-Click" (lambda () (system "rebind-button1&")))'
+    exit
+fi
+
+
+if test "$1" = enable || synclient | grep -P -e 'TouchpadOff\s*=\s*2$'; then
+    synclient TouchpadOff=0
+    # rebind-button1
+    exit
+fi
+

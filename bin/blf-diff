@@ -1,0 +1,15 @@
+#!/bin/bash
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# != 2; then
+    die "Error: Usage $(basename $0) blf1 blf2"
+fi
+
+blf-to-human $1 > ${1/%.blf/.human} 2>&1
+blf-to-human $2 > ${2/%.blf/.human} 2>&1
+
+meld ${1/%.blf/.human} ${2/%.blf/.human}

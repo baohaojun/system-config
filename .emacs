@@ -243,6 +243,7 @@
 
 (setq auto-mode-alist (append '((".*/kernel.*\\.[ch]$" . linux-c-mode)
 				("logcat\\.log.*" . fundamental-mode)
+				(".*/Mlog/*" . fundamental-mode)
 				(".*\\.cpp$" . linux-c++-mode)
 				(".*\\.aidl$" . java-mode)
 				("Kbuild*" . makefile-gmake-mode)
@@ -597,7 +598,7 @@
 
 (defun bhj-occur-make-errors ()
   (interactive)
-  (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|syntax error\\|invalid argument\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]elapsed \\|error [0-9]\\|because of errors\\|[0-9] error\\b\\|error:\\|undefined reference to"))
+  (let ((bhj-occur-regexp "\\*\\*\\*.*stop\\|syntax error\\|invalid argument\\|no such \\|circular.*dropped\\|no rule to\\|failed\\|[0-9]elapsed \\|cannot find symbol\\|error [0-9]\\|because of errors\\|[0-9] error\\b\\|error:\\|undefined reference to"))
     (call-interactively 'bhj-occur)))
 
 
@@ -2614,23 +2615,27 @@ using ctags-exuberant"
       (setq missing-file-name (match-string 1))
       (setq missing-file-name-save missing-file-name))
 
-    (setq missing-file-name (shell-command-to-string
-			     (format "beagrep -e %s -f 2>&1|perl -ne 's/:\\d+:.*// and print'" missing-file-name)))
-    (setq missing-file-name (delete-if-empty (split-string missing-file-name "\n")))
+    (setq missing-file-name
+	  (mapcar (lambda (b) (buffer-file-name b))
+		  (delete-if-not 
+		   (lambda (b)
+		     (let ((name (file-name-nondirectory (or (buffer-file-name b) ""))))
+		       (string= name missing-file-name-save)))
+		   (buffer-list))))
     (unless missing-file-name
-      (setq missing-file-name
-	    (mapcar (lambda (b) (buffer-file-name b))
-		    (delete-if-not 
-		     (lambda (b)
-		       (let ((name (file-name-nondirectory (or (buffer-file-name b) ""))))
-			 (string= name missing-file-name-save)))
-		     (buffer-list)))))
+      (setq missing-file-name (shell-command-to-string
+			       (format "beagrep -e %s -f 2>&1|perl -ne 's/:\\d+:.*// and print'" missing-file-name-save)))
+      (setq missing-file-name (delete-if-empty (split-string missing-file-name "\n"))))
       
     (when missing-file-name
       (if (nth 1 missing-file-name)
 	  (setq missing-file-name
-		(completing-read "Which file? " missing-file-name))
+		(general-display-matches missing-file-name))
 	(setq missing-file-name (car missing-file-name)))
+      (when (and (not (file-remote-p missing-file-name))
+		 (file-remote-p default-directory))
+	(setq missing-file-name (concat (file-remote-p default-directory)
+					missing-file-name)))
       	(insert missing-file-name))))
 
 (global-set-key [(shift return)] 'bhj-find-missing-file)

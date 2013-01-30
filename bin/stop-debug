@@ -8,9 +8,12 @@ function die() {
 }
 
 if test $# = 0; then
-    for x in ~/.logs/start-debug.log/*; do
-        test -e "$x" && stop-debug $(basename $x)
+    for x in ~/bin/linux/ext/debug/*; do
+        if test -e "$x"; then
+            stop-debug $(basename $x)
+        fi
     done
+    rm ~/.logs/start-debug.log/* -rf
     exit
 fi
 

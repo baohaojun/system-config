@@ -1,10 +1,10 @@
 #!/bin/bash
 
-mkdir -p ~/external/bin/linux/ext/`uname -m` \
-    ~/external/bin/linux/ext/media-wiki-templates/ \
-    ~/external/bin/linux/ext/media-wiki-images \
-    ~/external/bin/linux/ext/media-wiki-thumb \
-    ~/external/bin/linux/ext/media-wiki-math
+mkdir -p ~/external/bin/Linux/ext/`uname -m` \
+    ~/external/bin/Linux/ext/media-wiki-templates/ \
+    ~/external/bin/Linux/ext/media-wiki-images \
+    ~/external/bin/Linux/ext/media-wiki-thumb \
+    ~/external/bin/Linux/ext/media-wiki-math
 
 function download_lisp() {
     mkdir -p ~/external/.emacs_d/lisp/ext/

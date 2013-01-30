@@ -128,6 +128,16 @@ sub is_qualified_by($$)
 }
 
 my $filter_worked = 0;
+
+sub is_binary($)
+{
+    if ($_[0] =~ m/\.jar$|\.dll$/i) {
+	return 1;
+    } else {
+	return 0;
+    }	
+}
+
 sub parse_xref($$)
 {
     my ($grep, $updating) = @_;
@@ -206,19 +216,24 @@ read_line:
 	}
 
 	$_ = "$path:$line:$def";
-	my $loc = "$path:$line";
-	$matches_path_line{$loc} = {} unless exists $matches_path_line{$loc};
-	
-	foreach my $elem (keys %{$matches_path_line{$loc}}) {
-	    debug "checking $elem against $def";
-	    if (is_qualified_by($def, $elem)) {
-		next read_line;
-	    } elsif (is_qualified_by($elem, $def)) {
-		delete $matches_path_line{$loc}{$elem};
-		delete $matches{"$path:$line:$elem"};
+
+	if (not is_binary($path)) {
+	    my $loc = "$path:$line";
+	    $matches_path_line{$loc} = {} unless exists $matches_path_line{$loc};
+	    
+	    foreach my $elem (keys %{$matches_path_line{$loc}}) {
+		debug "checking $elem against $def";
+		if (is_qualified_by($def, $elem)) {
+		    debug "$def is qualified by $elem";
+		    next read_line;
+		} elsif (is_qualified_by($elem, $def)) {
+		    debug "$elem is qualified by $def, should delete $elem";
+		    delete $matches_path_line{$loc}{$elem};
+		    delete $matches{"$path:$line:$elem"};
+		}
 	    }
+	    $matches_path_line{$loc}{$def} = 1;	
 	}
-	$matches_path_line{$loc}{$def} = 1;	
 	$matches{$_} = {
 	    "path" => $path,
 	    "def"  => $def,
@@ -264,7 +279,6 @@ sub do_cscope($$$) {
 	open($grep, "-|", "global -x $lookup_needle_quote $ignore_case");
     }
     our %matches;
-    our %matches_path_line;
     our %updated_paths;
 
     parse_xref($grep, 0);
@@ -313,7 +327,7 @@ sub do_cscope($$$) {
     }
 
     if (-e $start_file and not $updated_paths{$start_file}) {
-	push @updated_paths, $start_file;
+	push @updated_paths, $start_file unless $start_file =~ m/\.jar$|\.dll$/i;
 	debug "pushed start file into updated_paths";
     } else {
 	debug "no need to push start file into updated_paths"
@@ -364,7 +378,7 @@ sub do_cscope($$$) {
 	$str =~ s,:\t,: <$def> : ,;
 	print "$file:$line: $str\n";
 	$got_results = 1;
-	if (keys %matches < 5 and not $imenu_mode and not $silent) { # this will be nice!
+	if (keys %matches < 5 and not $imenu_mode and not $silent and not is_binary($file)) { # this will be nice!
 	    system("ctags-show-definition $code_dir/$file $line $lookup_needle");
 	}        
     }

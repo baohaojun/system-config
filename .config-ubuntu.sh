@@ -28,11 +28,11 @@ ln -sf ~/external ~/bin/linux/ext
 cd ~/bin/linux/ext
 lftp -c "mirror -c http://192.168.0.46/google"
 tar zxfv ./google/android-sdk_r06-linux_86.tgz
-mkdir -p ~/external/bin/linux/ext/android-sdk-linux_86/temp
-cd ~/external/bin/linux/ext/android-sdk-linux_86/temp
+mkdir -p ~/external/bin/Linux/ext/android-sdk-linux_86/temp
+cd ~/external/bin/Linux/ext/android-sdk-linux_86/temp
 ln ../../google/* . 
 . ~/.bashrc
-~/external/bin/linux/ext/android-sdk-linux_86/tools/android&
+~/external/bin/Linux/ext/android-sdk-linux_86/tools/android&
 ~/bin/linux/after-check-out.sh
 
 echo 'OK, your configuration has completed!'

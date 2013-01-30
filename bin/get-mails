@@ -1,8 +1,25 @@
 #!/bin/bash
 
-if test -e ~/.at-home; then
-    exec offlineimap
+if (
+    set -e
+    if test -e ~/.at-home; then
+        exec offlineimap
+    fi
+
+    offlineimap -a Marvell
+    tsocks offlineimap -a Gmail
+); then
+    fail=false
+else
+    fail=true
 fi
 
-offlineimap -a Marvell
-tsocks offlineimap -a Gmail
+if test $fail = true; then
+    hour=$(date +%H|perl -npe 's/^0*//')
+    minute=$(date +%M)
+    if ((hour % 3 == 0 && minute < 14)); then
+        false
+    fi
+fi
+exit 0;
+

@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
-set -- "$(printf %q "$1")" "$(printf %q "$2")"
+# set -- "$(printf %q "$1")" "$(printf %q "$2")"
+arg1="$(printf %q "$1")"
+arg2="$(printf %q "$2")"
+
 function die() {
     echo "$@"
     exit 1
@@ -29,12 +32,12 @@ perlhash=$tmpf.hash
 get-files-r > $tmpf
 echo shit > $tmpf.tmp
 cat $tmpf |
-xargs -d \\n grep -l -i -I -e "$1" |
+xargs -d \\n grep -P -l -i -I -e "$1" |
 xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && echo "$x"; done; echo '$tmpf.tmp true |
 xargs -d \\n perl -npe '
 BEGIN{
-    $from = "'"$1"'";
-    $to = "'"$2"'";
+    $from = "'"$arg1"'";
+    $to = "'"$arg2"'";
 }
 
 $rep_save{$from} = $to;
@@ -42,12 +45,12 @@ $rep_save{lc $from} = lc $to;
 $rep_save{uc $from} = uc $to;
 $rep_save{ucfirst lc $from} = ucfirst lc $to;
 
-while (m#('"$1"')#ig) {
-    if (defined $rep_save{$1}) {
+while (m#('"$arg1"')#ig) {
+    if (defined $rep_save{$arg1}) {
         next;
     } else {
-        system("echo please input your replacement for \"$1\" > /tmp/get-stdin.$$");
-        chomp($rep_save{$1} = qx(get-stdin /tmp/get-stdin.$$));
+        system("echo please input your replacement for \"$arg1\" > /tmp/get-stdin.$$");
+        chomp($rep_save{$arg1} = qx(get-stdin /tmp/get-stdin.$$));
     }
 }
 
@@ -86,7 +89,7 @@ function rename-files() {
 	    if test -d "$x"; then
 		test -L "$x" || rename-files "$x" "$@"
 	    fi
-	    if echo "$x"|grep -q -i -e "$1" || readlink "$x" | grep -q -i -e "$1"; then
+	    if echo "$x"|grep -P -q -i -e "$1" || readlink "$x" | grep -P -q -i -e "$1"; then
 		debug doing "$x"
 		y="$(compute-new-string "$x")"
 
