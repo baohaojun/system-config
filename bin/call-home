@@ -47,7 +47,7 @@ fi
 
 (
     flock -n 9 || { echo 'lock failed for r66 at '$(date); exit 0; }
-    if test -e ~/.at-home; then
+    if test -e ~/.at-home -a "$(ip-or-name r66)" != r66; then
         sudo ifconfig eth0:1 $(ip-or-name r66)
     fi
     while true; do

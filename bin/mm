@@ -28,7 +28,6 @@ time (
                 cd '$build_mount_p'
                 su '$(whoami)' -c "
                     . ~/.bashrc;
-                    . build/envsetup.sh
                     ONE_SHOT_MAKEFILE='$ONE_SHOT_MAKEFILE' make all_modules '"$(for x in "$@"; do printf %q\  "$x"; done)"'
                 "
             ' 2>&1|perl -npe "s,$build_mount_p,$top_dir,g"|tee ~/.logs/mm.log|

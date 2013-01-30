@@ -1,5 +1,5 @@
 #!/bin/bash
-function git()
+git()
 {
 
     (
@@ -19,12 +19,6 @@ print $_ . "\n";
 '
 	  exit
 	fi
-        if test "$1" = clean; then
-            if command git st -s | grep ??; then
-                echo Error: git not clean, will not clean it
-                exit 0
-            fi
-        fi
     
 	command git "$@"
     )

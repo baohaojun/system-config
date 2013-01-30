@@ -160,8 +160,7 @@ static void
 put_line(char *ctags_x, const struct parser_param *param)
 {
 	int lineno;
-	char *p, *tagname, *filename, *typename;
-	int typelen;
+	char *p, *tagname, *filename;
 
 	filename = strstr(ctags_x, param->file);
 	if (filename == NULL || filename == ctags_x)
@@ -188,17 +187,7 @@ put_line(char *ctags_x, const struct parser_param *param)
 		return;
 	while (p >= ctags_x && !isspace((unsigned char)*p))
 		p--;
-	if (p < ctags_x)
-		return;
-	typename = p + 1;
-	while (p >= ctags_x && isspace((unsigned char)*p))
-		*p-- = '\0';
-	if (p < ctags_x)
-		return;
-	while (p >= ctags_x && !isspace((unsigned char)*p))
-		p--;
 	tagname = p + 1;
-
 	p = filename + strlen(param->file);
 	if (*p != '\0') {
 		if (!isspace((unsigned char)*p))
@@ -207,52 +196,20 @@ put_line(char *ctags_x, const struct parser_param *param)
 		while (isspace((unsigned char)*p))
 			p++;
 	}
-
-	typelen = strlen(typename);
-
-	p -= typelen + 2;
-	memmove(p, typename, typelen);
-	p[typelen] = ':';
-	p[typelen + 1] = '\t';
-
-	param->put(PARSER_DEF, tagname, lineno, param->file, p, param->arg);
+	if (!strncmp(ctags_x, "def ", 4)) {
+		param->put(PARSER_DEF, tagname, lineno, filename, p, param->arg);
 	}
-
-static int handle_special_files(const struct parser_param *param, int filename_len, const char* ext, const char* fakeline)
-{
-	int extlen = strlen(ext);
-	if (filename_len > extlen && ! strcmp(param->file + filename_len - extlen, ext)) {
-		char filename[1024];
-		char* p = param->file + filename_len - extlen;
-		while (p > param->file && *--p != '/')
-			;
-		p++;
-		strncpy(filename, p, sizeof filename);
-		filename[param->file + filename_len - p - extlen] = '\0';
-		param->put(PARSER_DEF, filename, 1, param->file, fakeline, param->arg);
-		return 1;
-	}
-	return 0;
 }
 
 void
 parser(const struct parser_param *param)
 {
 	char *ctags_x;
-	int filename_len;
 
 	assert(param->size >= sizeof(*param));
 
 	if (op == NULL)
 		start_ctags(param);
-
-	filename_len = strlen(param->file);
-
-	handle_special_files(param, filename_len, ".xml", "xml:\t***");
-	if (handle_special_files(param, filename_len, ".9.png", "9png:\t***") ||
-	    handle_special_files(param, filename_len, ".png", "png:\t***")) {
-		return;
-	}		
 
 	/* Write path of input file to pipe. */
 	fputs(param->file, op);

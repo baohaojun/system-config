@@ -9,10 +9,6 @@ if test $# != 1; then
     die "Error: Usage $(basename $0) file, not $@"
 fi
 
-if echo "$1"|grep -q -P -e '\.jar$|\.dll$'; then
-    exit 0;
-fi
-
 set -e
 file=$1
 cache=$HOME/tmp/code-reading-flatten$PWD/$file
@@ -23,7 +19,7 @@ if test ! -e $cache -o $cache -ot $file -o ! -e $def -o $def -ot $file; then
     mv $cache.bak $cache
     (
         cd $HOME/tmp/code-reading-flatten$PWD
-        package=$(java-get-package $file|perl -npe 's/\.$//');
+        package=$(java-get-package $file);
         grep-imenu -e '.*' -f $file -s | perl -npe 's/: <(.*?)>/: <'$package.'$1>/ unless m/package: <'$package'>/'
     ) > $def.bak
     mv $def.bak $def

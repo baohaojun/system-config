@@ -22,11 +22,7 @@ sub print_line(\@) {
     print ' 'x ($indent * 4) . $line;
     @$line_ref = ();
 }
-
-if (not @ARGV) {
-    @ARGV = ("/dev/stdin");
-}
-
+    
 for my $arg (@ARGV) {
     my $file;
     if ($file) {

@@ -13,5 +13,4 @@
             done
         fi
     )
-    cd $(lookup_file .repo/../build) && repo-branch
 ) | sort -u

@@ -1,11 +1,7 @@
 * TODO 为什么set_param会调到vcpath里，而set_mic_mute会调到hifipath里？
 
-* DONE 开始看audio元器件的spec。
-  CLOSED: [2013-01-30 Wed 11:07]
-  - CLOSING NOTE [2013-01-30 Wed 11:07]
-** DONE 在marvell代码里搜 MICPGA1_IN_SEL 能看到audio path是怎么处理的。
-   CLOSED: [2013-01-30 Wed 11:07]
-   - CLOSING NOTE [2013-01-30 Wed 11:07]
+* TODO 开始看audio元器件的spec。
+** TODO 在marvell代码里搜 MICPGA1_IN_SEL 能看到audio path是怎么处理的。
 
 
 【 在 chunhui (纯灰) 的大作中提到: 】

@@ -1,102 +1,10 @@
 #!/bin/bash
 set -e
 
-repo_init_url=
-repo_init_branch=
-repo_init_manifest=
-repo_url=
-
-TEMP=$(getopt -o u:b:m:r: -n $(basename $0) -- "$@")
-eval set -- "$TEMP"
-while true; do
-    case "$1" in
-        -u)
-            repo_init_url=$2
-            shift 2
-            ;;
-        -b)
-            repo_init_branch=$2
-            shift 2
-            ;;
-        -m)
-            repo_init_manifest=$2
-            shift 2
-            ;;
-        -r)
-            repo_url=$2
-            shift 2
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            die "internal error"
-            ;;
-    esac
-done
-
-
 repodir=$(lookup_file -e .repo)
 if test -z "$repodir"; then
     repo init "$@"
     exit
-fi
-
-repodir=$(lookup_file -e .repo)
-if test -e "$repodir"/repo-switch && grep '^export' -q "$repodir"/repo-switch; then
-    . "$repodir"/repo-switch
-
-    old_repo_init_url=
-    old_repo_init_branch=
-    old_repo_init_manifest=
-    old_repo_url=
-
-    TEMP=$(getopt -o u:b:m:r: -n $(basename $0) -- "${repo_init_args[@]}")
-    eval set -- "$TEMP"
-    while true; do
-        case "$1" in
-            -u)
-                old_repo_init_url=$2
-                shift 2
-                ;;
-            -b)
-                old_repo_init_branch=$2
-                shift 2
-                ;;
-            -m)
-                old_repo_init_manifest=$2
-                shift 2
-                ;;
-            -r)
-                old_repo_url=$2
-                shift 2
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                die "internal error"
-                ;;
-        esac
-    done
-fi
-
-if test -z "$repo_init_url"; then
-    repo_init_url=${old_repo_init_url:-bibler:shgit/manifest}
-fi
-
-if test -z "$repo_init_branch"; then
-    repo_init_branch=${old_repo_init_branch:-master}
-fi
-
-if test -z "$repo_init_manifest"; then
-    repo_init_manifest=${old_repo_init_manifest:-default.xml}
-fi
-
-if test -z "$repo_url"; then
-    repo_url=${old_repo_url:-https://gerrit.googlesource.com/git-repo}
 fi
 
 cd "$repodir"
@@ -114,7 +22,7 @@ cd manifests
 git co HEAD^
 for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
 
-(set -x; repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url "$@")
+repo init "$@"
 
 cd ..
 
@@ -127,11 +35,10 @@ if test -e local_manifests/local_manifist.xml.2; then
 fi
 
 (
-    printf 'export repo_init_args=('
-    for x in -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest -r $repo_url -- "$@"; do 
+    printf 'repo-switch'
+    for x in "$@"; do 
         printf ' %q' "$x";
     done
-    printf ')'
 ) > repo-switch
 
 if ! diff -q manifest.xml manifest.xml.old; then

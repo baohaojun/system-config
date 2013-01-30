@@ -17,8 +17,6 @@ sub debug(@) {
     print $debug "@_\n";
 }
 
-debug "@ARGV";
-
 $ENV{DO_RECURSIVE_JAVA_HIERARCHY} = 1;
 use Getopt::Long;
 my $method;
@@ -43,7 +41,6 @@ if ($q_class !~ m/\./) {
 
 debug "q_class is $q_class";
 chomp(my $working_file= qx(java-find-def.pl -e $q_class));
-debug "working_file is $working_file";
 my $working_file_dir = $working_file;
 $working_file_dir =~ s,(.*)/.*,$1,;
 
@@ -55,20 +52,7 @@ debug "tags_cache is $tags_cache";
 my $class = $q_class;
 $class =~ s/.*\.//;
 
-my $def_line;
-
-if ($flatten_cache) {
-    $def_line = qx(grep -P -e '(?:class|interface).*\\b$class\\b.*\\{' $flatten_cache | grep -v '\\b$class\\b\\.');
-} else {
-    $def_line = qx(grep-gtags -e '$class' -t 'class|interface' -s |
-    perl -ne 'if (m/(?:class|interface) $q_class(?!\\\$)/) {
-                  s/.*?> ://;
-                  s/,/ /g;
-                  print;
-              }'|
-    flatten.pl);
-}
-debug "def_line is $def_line";
+my $def_line = qx(grep -P -e '(?:class|interface).*\\b$class\\b.*\\{' $flatten_cache | grep -v '\\b$class\\b\\.');
 
 my $id_re = qr(\b[a-zA-Z_][a-zA-Z0-9_]*\b);
 my $qualified_re = qr($id_re(?:\.$id_re)*\b);
@@ -97,17 +81,15 @@ if ($def_line =~ m/(class|interface).*\b$class\b(?:<.*?>)?(.*)\{/) {
 
     if ($1 eq "class") {
 	my $super = $2;
-	if ($super !~ m/\bextends\b/ and $class ne "Object" and $class ne "java.lang.Object") {
+	if ($super !~ m/\bextends\b/ and $class ne "Object") {
 	    $supers = "$supers java.lang.Object";
 	}
-    }
-    debug "supers: $supers";
+    }    
 }
 
-my $imports = qx(grep "^import " $flatten_cache < /dev/null);
-chomp(my $package = qx(head -n 1 $flatten_cache < /dev/null));
+my $imports = qx(grep "^import " $flatten_cache);
+chomp(my $package = qx(head -n 1 $flatten_cache));
 $package =~ s/.* |;//g;
-debug "package is $package from $flatten_cache";
 
 my %defined_class;
 my %simple_qualified_map;
@@ -130,7 +112,7 @@ sub import_it($)
     }
 }
 map {$_ and not $keywords{$_} and import_it($_)} split(/\s|;/, $imports);
-my $tags = qx(cat $tags_cache /dev/null);
+my $tags = qx(cat $tags_cache);
 while ($tags =~ m/(?:class|interface): <(.*?)>/g) {
     map_it($1);
 }
@@ -157,12 +139,11 @@ while ($supers =~ m/($qualified_re)/g) {
 	if ($class =~ m/^[a-z].*\./) {
 	    $q_super = $class;
 	} else {
-	    warn "super $class not resolved" if length($class) > 1;
+	    warn "super $class not resolved";
 	}
     }
 
     if ($q_super) {
-	debug "q_super is $q_super";
 	$super_classes{$q_class}{$q_super} = 1;
 	$done_classes{$q_super} = 0 unless $done_classes{$q_super};
     }
@@ -180,7 +161,6 @@ while (1) {
 	    $done = 0;
 	    $done_classes{$q_super} = 1;
 	    my $supers = qx($0 $q_super);
-	    debug "supers is $supers";
 	    for (split(' ', $supers)) {
 		$super_classes{$q_super}{$_} = 1;
 		$done_classes{$_} = 0 unless $done_classes{$_};
@@ -193,7 +173,6 @@ while (1) {
 sub print_hierarchy($$)
 {
     my ($q_class, $indent) = @_;
-    debug "print_hierarchy $q_class $indent";
     my $method_indent;
     if ($method or $verbose) {
 	$method_indent = " " x ($indent * 3 + 3);

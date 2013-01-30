@@ -11,7 +11,7 @@ fi
 cd "$repo_dir";
 test -d manifests
 if test -e repo-switch; then
-    repo-switch
+    bash ./repo-switch </dev/null
 fi
 cd - 
 repo sync "$@"

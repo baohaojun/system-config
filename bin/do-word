@@ -1,9 +1,0 @@
-#!/bin/bash
-
-(
-    echo "$@"
-    if test -e ~/doc/words; then
-        cat ~/doc/words
-    fi
-) | uniq-even-non-ajacent > ~/doc/words.2
-mv ~/doc/words.2 ~/doc/words

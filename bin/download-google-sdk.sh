@@ -5,9 +5,9 @@ function wget() {
     command wget -4 -t 2 "$@"
 }
 
-mkdir ~/external/bin/Linux/ext/android-sdk-linux_86/google -p
-test -e ~/external/bin/Linux/ext/android-sdk-linux_86/google/do.not.download && exit 0
-cd ~/external/bin/Linux/ext/android-sdk-linux_86/google
+mkdir ~/external/bin/linux/ext/android-sdk-linux_86/google -p
+test -e ~/external/bin/linux/ext/android-sdk-linux_86/google/do.not.download && exit 0
+cd ~/external/bin/linux/ext/android-sdk-linux_86/google
 
 x=16
 while true; do

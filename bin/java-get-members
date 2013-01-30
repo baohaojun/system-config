@@ -39,9 +39,9 @@ for class in "$@"; do
         file=$(java-find-def.pl -e $qclass)
         tag_cache=$(java-tags-cache $file)
         if test $proto = true; then
-            perl -ne "print \"\$1\n\" if m/$type: <$qclass.[^.>]*> : (.*)/" $tag_cache /dev/null
+            perl -ne "print \"\$1\n\" if m/$type: <$qclass.[^.>]*> : (.*)/" $tag_cache
         else
-            perl -ne "print \"\$1\n\" if m/$type: <$qclass.([^.>]*)>/" $tag_cache /dev/null
+            perl -ne "print \"\$1\n\" if m/$type: <$qclass.([^.>]*)>/" $tag_cache
         fi
     done
 done | sort -u

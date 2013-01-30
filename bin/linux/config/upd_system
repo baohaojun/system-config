@@ -8,8 +8,6 @@
 
 #all the other packages
 
-sudo perl -npe 's/^deb\s+\b/deb [arch=amd64,i386] /' -i /etc/apt/sources.list
-sudo bash -c '(echo amd64; echo i386) > /var/lib/dpkg/arch'
 sudo apt-get update
 sudo apt-get dist-upgrade -y
 

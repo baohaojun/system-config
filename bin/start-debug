@@ -14,7 +14,7 @@ fi
 
 cmd=$(which $1)
 if test "$cmd" = "$(readlink -f ~/bin/linux/ext/debug/$1)"; then
-    die "already set up debugging for $1"z..
+    die "already set up debugging for $1"
 fi
 
 cat <<EOF > ~/bin/linux/ext/debug/$1
@@ -29,10 +29,6 @@ mkdir -p ~/.logs/start-debug.log/
     done
     echo
 ) >> ~/.logs/start-debug.log/$1
-$cmd "\$@" > ~/.logs/start-debug.log/$1.out 2> ~/.logs/start-debug.log/$1.err
-cat ~/.logs/start-debug.log/$1.out
-cat ~/.logs/start-debug.log/$1.err 1>&2
-
-(echo out; cat ~/.logs/start-debug.log/$1.out; echo err:; cat ~/.logs/start-debug.log/$1.err) >>  ~/.logs/start-debug.log/$1
+exec $cmd "\$@"
 EOF
 chmod +x ~/bin/linux/ext/debug/$1

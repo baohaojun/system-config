@@ -6,7 +6,7 @@ if test "$RUNNING_IN_CRON" = true; then
     (
         set -e
         cd ~/src/android
-        if test -e .do-update -a ! -e .do-not-update; then
+        if test -e .do-update; then
             repo-sync -n -j4
         fi
     )
@@ -27,10 +27,6 @@ for x in $(for y in ~/src/android "$@"; do readlink -f $y; done|uniq-even-non-aj
         set -e
         flock 9
         test -d .repo
-
-        if test -e .do-not-update; then
-            exit 0;
-        fi
 
         if test ! -e .do-update; then
             exit 0
