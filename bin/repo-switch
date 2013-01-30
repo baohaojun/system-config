@@ -114,7 +114,7 @@ cd manifests
 git co HEAD^
 for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
 
-repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url "$@"
+(set -x; repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url "$@")
 
 cd ..
 

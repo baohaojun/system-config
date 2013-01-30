@@ -11,7 +11,7 @@ fi
 cd "$repo_dir";
 test -d manifests
 if test -e repo-switch; then
-    bash -c '. ./repo-switch; repo-switch "${repo_init_args[@]}"' </dev/null
+    repo-switch
 fi
 cd - 
 repo sync "$@"
