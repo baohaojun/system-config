@@ -1,0 +1,11 @@
+#!/bin/bash
+
+adb shell screencap /sdcard/screen.png
+
+now=`now|perl -npe 's/:/./g'`
+mkdir -p ~/shots
+now=shots/"$now"
+adb pull /sdcard/screen.png "$now".png
+of ~/"$now".png
+up ~/"$now".png | putclip
+
