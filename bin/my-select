@@ -13,8 +13,43 @@ function my_select()
     done
 
     read -p "#?" NUM
-    if [[ x"$NUM" = x || ! "$NUM" =~ ^[1-9][0-9]*$ ]] || (( "$NUM" > $# )); then
+    if [[ x"$NUM" = x ]] || (( "$NUM" > $# )); then
         NUM=1
+    elif [[ ! "$NUM" =~ ^[1-9][0-9]*$ ]]; then
+        matches=()
+        reverse=0
+        if [[ "$NUM" =~ ^! ]]; then
+            reverse=1
+            NUM=${NUM:1}
+        fi
+        for arg in "$@"; do
+            match=true
+            for entry in $NUM; do
+                if  [[ $reverse = 0 && ! "$arg" =~ $entry || $reverse = 1 && "$arg" =~ $entry ]]; then
+                    match=false
+                    break
+                fi
+            done
+            if test $match = true; then
+                matches=("${matches[@]}" "$arg")
+            fi
+        done
+        ans=$(command my-select "${matches[@]}")
+        if [[ "$ans" =~ ^[1-9][0-9]*$ ]] && (( ans <= "${#matches[@]}" )); then
+            ans=${matches[ans-1]}
+            
+            num=1
+            for x in "$@"; do
+                if test "$x" = "$ans"; then
+                    echo $num
+                    exit 0;
+                fi
+                ((num++))
+            done
+        fi
+
+        
+                
     fi
     echo $NUM
 }

@@ -46,11 +46,11 @@ $rep_save{uc $from} = uc $to;
 $rep_save{ucfirst lc $from} = ucfirst lc $to;
 
 while (m#('"$arg1"')#ig) {
-    if (defined $rep_save{$arg1}) {
+    if (defined $rep_save{$1}) {
         next;
     } else {
-        system("echo please input your replacement for \"$arg1\" > /tmp/get-stdin.$$");
-        chomp($rep_save{$arg1} = qx(get-stdin /tmp/get-stdin.$$));
+        system("echo please input your replacement for \"$1\" > /tmp/get-stdin.$$");
+        chomp($rep_save{$1} = qx(get-stdin /tmp/get-stdin.$$));
     }
 }
 

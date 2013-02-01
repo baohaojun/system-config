@@ -6,8 +6,9 @@ repo_init_branch=
 repo_init_manifest=
 repo_url=
 
-TEMP=$(getopt -o u:b:m:r: -n $(basename $0) -- "$@")
+TEMP=$(getopt -o u:b:m:r:ip -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
+interactive=0
 while true; do
     case "$1" in
         -u)
@@ -26,6 +27,14 @@ while true; do
             repo_url=$2
             shift 2
             ;;
+        -i)
+            interactive=1
+            shift
+            ;;
+        -p)
+            cat $(lookup_file .repo/repo-switch)
+            exit 0
+            ;;
         --)
             shift
             break
@@ -39,8 +48,11 @@ done
 
 repodir=$(lookup_file -e .repo)
 if test -z "$repodir"; then
-    repo init "$@"
-    exit
+    (set -x; repo init -u ${repo_init_url:-bibler:shgit/manifest}\
+        -m ${repo_init_manifest:-default.xml}\
+        -b ${repo_init_branch:-master}\
+        --repo-url=${repo_url:-https://gerrit.googlesource.com/git-repo}\
+        "$@")
 fi
 
 repodir=$(lookup_file -e .repo)
@@ -84,16 +96,43 @@ if test -e "$repodir"/repo-switch && grep '^export' -q "$repodir"/repo-switch; t
 fi
 
 if test -z "$repo_init_url"; then
-    repo_init_url=${old_repo_init_url:-bibler:shgit/manifest}
+    if test $interactive = 1; then
+        echo The repo init url to use:
+        repo_init_url=$(select-output-line bash -c "echo $old_repo_init_url; cat ~/.repoconfig/repo_init_urls 2>/dev/null")
+    else
+        repo_init_url=${old_repo_init_url:-bibler:shgit/manifest}
+    fi
 fi
 
 if test -z "$repo_init_branch"; then
-    repo_init_branch=${old_repo_init_branch:-master}
+    if test $interactive = 1; then
+        echo The repo init branch to use:
+        repo_init_branch=$(select-output-line bash -c "echo $old_repo_init_branch; (cd $(lookup_file .repo/manifests) && git branch -a | pn 1 | perl -npe 's!remotes/.*?/!!' | sort -u)")
+    else
+        repo_init_branch=${old_repo_init_branch:-master}
+    fi
 fi
 
-if test -z "$repo_init_manifest"; then
-    repo_init_manifest=${old_repo_init_manifest:-default.xml}
+if test -z "$repo_init_manifest" || ! [[ "$repo_init_manifest" =~ \.xml$ ]]; then
+    if test $interactive = 1 || ! [[ "$repo_init_manifest" =~ \.xml$ ]]; then
+        echo The repo manifest to use:
+        if test -n "$repo_init_manifest"; then
+            manifest_pattern="(m!$repo_init_manifest! and not m!manifest_backup/!)"
+        else
+            manifest_pattern="m/./";
+        fi
+        repo_init_manifest=$(select-output-line bash -c "echo $old_repo_init_manifest;
+                                                         (cd $(lookup_file .repo/manifests) && 
+                                                          find . -name '*.xml' | 
+                                                          perl -npe 's!^\./!!' | 
+                                                          perl -ne 'print if $manifest_pattern')")
+    else
+        repo_init_manifest=${old_repo_init_manifest:-default.xml}
+    fi
 fi
+
+(echo $repo_init_url; cat ~/.repoconfig/repo_init_urls 2>/dev/null) | uniq-even-non-ajacent > ~/.repoconfig/repo_init_urls.bak
+mv ~/.repoconfig/repo_init_urls.bak ~/.repoconfig/repo_init_urls
 
 if test -z "$repo_url"; then
     repo_url=${old_repo_url:-https://gerrit.googlesource.com/git-repo}
@@ -114,7 +153,14 @@ cd manifests
 git co HEAD^
 for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
 
-(set -x; repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url "$@")
+(
+    set -x;
+    (
+        cd $(lookup_file .repo/repo)
+        git config remote.origin.url $repo_url
+    )
+    repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url "$@"
+)
 
 cd ..
 
@@ -138,4 +184,25 @@ if ! diff -q manifest.xml manifest.xml.old; then
     touch .need_rebuild
 fi
 
+cd $(lookup_file .repo/repo)
+(
+
+    if grep -P -e '\Qnodes.append(self._ParseManifestXml(local_file, self.repodir))\E' manifest_xml.py; then
+    patch -p1 <<EOF
+diff --git a/manifest_xml.py b/manifest_xml.py
+index 0664eff..46c91f4 100644
+--- a/manifest_xml.py
++++ b/manifest_xml.py
+@@ -346,7 +346,7 @@ class XmlManifest(object):
+         for local_file in sorted(os.listdir(local_dir)):
+           if local_file.endswith('.xml'):
+             try:
+-              nodes.append(self._ParseManifestXml(local_file, self.repodir))
++              nodes.append(self._ParseManifestXml(os.path.join(self.repodir, LOCAL_MANIFESTS_DIR_NAME, local_file), self.repodir))
+             except ManifestParseError as e:
+               print('%s' % str(e), file=sys.stderr)
+       except OSError:
+EOF
+fi
+) || true
 echo ok.

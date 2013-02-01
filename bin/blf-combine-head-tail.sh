@@ -40,7 +40,6 @@ tf=/tmp/$(basename $0).$$
 (set +x; echo "$head"; echo "$tail") | human-to-blf | perl -npe 's/^Number_of_Images\s*=\s*\d+$/Number_of_Images = '$tailn'/' 2>/dev/null| tee $tf 
 
 if test $in_place = true; then
-    mv $tf "$tailf"
-else 
-    rm $tf
+    cat $tf > "$tailf"
 fi
+rm $tf

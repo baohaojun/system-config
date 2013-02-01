@@ -5,8 +5,10 @@ set -e
 mkdir -p ~/today/transient/flashing/
 cd ~/today/transient/flashing/
 
-set -- android/pxa978T/$1_pxa978T-ics/pxa978ariel_def/
+# ~/smb/sh-fs04/autobuild/android/pxa988/2013-01-31_pxa988-jb4.2_pxa1088_bringup/.
+# ~/smb/sh-fs04/autobuild/android/pxa988/2013-01-31_pxa988-jb4.2_pxa1088_bringup/pxa1088dkb_def/.
+set -- android/pxa988/$1_pxa988-jb4.2_pxa1088_bringup/pxa1088dkb_def/
 
 cat ~/.smbpass | ssh shgit bash -c 'cat /dev/stdin | smbclient //sh-fs04/autobuild -D '$1' -A /dev/stdin -TcXr flashing.tar "*System.map" "*.tgz" "*vmlinux"; rm ~/android -rf; tar xfv flashing.tar;'
 
-rsync -av --exclude='*.tgz' --exclude=vmlinux --exclude=System.map shgit:$1/* .
+rsync -av --exclude='*.tgz' --exclude='*.zip' --exclude=vmlinux --exclude=System.map shgit:$1/* .

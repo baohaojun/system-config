@@ -12,7 +12,8 @@ expect -timeout 150 password {
     puts "send password\n";
     send "$password\n"
 } timeout {
-  puts "timed out\n"
+    puts "timed out\n";
+    exp_continue;
 }
 
 puts [wait]

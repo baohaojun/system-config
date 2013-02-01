@@ -196,7 +196,14 @@ time (
 
     if test -e./software_downloader/Utilities/TimBuilder/TimBuilder.exe; then
         if test ! -e "$ntim_bin" || test "$(stat -c %s "$ntim_bin")" = 0; then
-            wine ./software_downloader/Utilities/TimBuilder/TimBuilder.exe -r "$(command wp $BLF)"
+            (
+                set -x
+                set -e
+                cp ./software_downloader/Utilities/TimBuilder/TimBuilder ~/tmp/
+                chmod +x ~/tmp/TimBuilder
+                ~/tmp/TimBuilder -r "$(absp $BLF)" 
+                echo 'ok!'
+            ) || wine ./software_downloader/Utilities/TimBuilder/TimBuilder.exe -r "$(command wp $BLF)"
         fi
     fi
     
