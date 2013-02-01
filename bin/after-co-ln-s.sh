@@ -28,7 +28,7 @@ function symlink-map() {
     do
 	if test -e "$2"/$x -a "$(readlink -f "$2"/$x)" != "$(readlink -f "$1"/$x)"; 
 	then
-            echo "Error: "$2"/$x already exist and it's not softlink to "$1"/$x"
+            echo "Warning: "$2"/$x already exist and it's not softlink to "$1"/$x"
             mv "$2"/$x "$2"/$x.bak
             ln -s "$1"/$x "$2"/
 	elif ! test -e "$2"/$x;

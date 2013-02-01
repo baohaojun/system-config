@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Adobe Reader 9
 MimeType=application/pdf;application/vnd.fdf;application/vnd.adobe.pdx;application/vnd.adobe.xdp+xml;application/vnd.adobe.xfdf;
-Exec=/home/bhj/bin/linux/ext//Adobe/Reader9/bin/acroread 
+Exec=/home/bhj/external/bin/Linux/ext/Adobe/Reader9/bin/acroread 
 Type=Application
 GenericName=PDF Viewer
 Terminal=false
