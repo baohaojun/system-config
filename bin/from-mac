@@ -20,6 +20,6 @@ case $(uname) in
 	echo $head$mac-$host-$uname
 	;;
     *)
-	echo refs/heads/from-mac/`ifconfig|grep HWaddr|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`-$(uname)
+	echo refs/heads/from-mac/`ifconfig|grep HWaddr|grep -v usb|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`-$(uname)
 	;;
 esac
