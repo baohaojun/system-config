@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>在阅读源代码时删掉所有非必要文件的方法</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="在阅读源代码时删掉所有非必要文件的方法"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-02-02 23:17:21 CST"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">在阅读源代码时删掉所有非必要文件的方法</h1>
+
+<p>在阅读kernel、uboot等项目的源代码的时候，会发现有很大的噪音来自于一些不
+相干的CPU的代码。比如我司的pxa1088，其uboot真正build时用到的文件只有不
+到400个，但整个uboot里共有多少文件呢？6000多个！
+</p>
+<p>
+怎么想个办法把所有不相干的文件都去掉呢？
+</p>
+<p>
+我有个主意：
+</p>
+<ol>
+<li>把所有源代码文件都touch一下：
+
+
+
+
+<pre class="example">git ls-tree HEAD -r |pn 4|xargs touch
+</pre>
+
+
+</li>
+<li>弄出一个标记文件， <code>touch mark</code>
+
+</li>
+<li>做个full build
+
+</li>
+<li>把所有比 <code>mark</code> 新的文件都选出来，这里的新不是改动，而是访问，也就是
+   在 <code>mark</code> 被创建之后被第3步的full build访问到过的文件。所以用
+   <code>find</code> 命令的话可以这样做： <code>find . -anewer mark</code> 
+
+</li>
+<li>反选访问时间比 <code>mark</code> 旧的文件，这些是full build时没有用到的文件，可
+   以安全地把它们删除。
+
+</li>
+<li>删完之后再做一遍full build，验证一下没有删掉不该删的文件导致build失
+   败。
+</li>
+</ol>
+
+
+<p>
+但是很可惜，这个主意没法在uboot里用。在第4步的时候，你会发现所有源代码
+文件都被访问过了。这是怎么回事儿呢？
+</p>
+<p>
+用strace可以告诉我们答案。一边在做full build的时候用strace查看所有系统
+调用，加上 <code>-f</code> 参数表示跟踪所有fork出来的子进程的系统调用: 
+</p>
+
+
+
+<pre class="example">(cd $(lookup_file .repo/..);
+ . build/envsetup.sh;
+ cd boot; 
+ BUILD_UBOOT_OBM=true; 
+ set -x;
+ . ../.buildenv.sh;
+ cd uboot;
+ strace -f time make -j8 helan_ff_config;
+ strace -f time make -j8) 2&gt;&amp;1 | tee ~/1.txt
+</pre>
+
+
+
+<p>
+另一边用 <code>watch</code> 命令监测某个不相干的文件什么时候其 <code>atime</code> 发生了变化：
+</p>
+
+
+
+<pre class="example">watch -n 1 stat drivers/mmc/arm_pl180_mmci.c
+</pre>
+
+
+<p>
+当发现其atime发生变化之后再去看 <code>~/1.txt</code> 里是哪个进程在搞鬼，然后从文
+件头开始查这个进程是怎样被exec的。
+</p>
+
+
+
+<pre class="example">$ grep drivers/mmc/arm_pl180_mmci.c ~/1.txt
+[pid   684] lstat("drivers/mmc/arm_pl180_mmci.c", {st_mode=S_IFREG|0644, st_size=11286, ...}) = 0
+[pid   684] open("drivers/mmc/arm_pl180_mmci.c", O_RDONLY) = 6
+[pid   694] lstat("drivers/mmc/arm_pl180_mmci.c", {st_mode=S_IFREG|0644, st_size=11286, ...}) = 0
+
+$ grep ' 684]' ~/1.txt|head -n 5
+[pid   684] close(10)                   = 0
+[pid   684] execve("/usr/bin/git", ["git", "update-index", "--refresh", "--unmerged"], [/* 78 vars */]) = 0
+[pid   684] brk(0)                      = 0x25b6000
+[pid   684] access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+[pid   684] mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x2b5c68ec2000
+</pre>
+
+
+<p>
+最后发现是一个 <code>git update-index ...</code> 的命令调用。直接在uboot目录下
+<code>rgrep update-index</code> 发现是一个setlocalversion脚本，它会产生类似
+<code>-02978-ge39e5db</code> 这样的输出。
+</p>
+<p>
+把这个脚本修正之后，就可以达到我的目的了，你体会一下:-)
+</p></div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>
