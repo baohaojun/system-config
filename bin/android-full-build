@@ -52,10 +52,6 @@ done
 cd $top_dir || exit
 . build/envsetup.sh >/dev/null 2>&1
 
-if test $# -gt 1; then
-    die "Usage: $(basename "$0") [lunch-combo]"
-fi
-
 if test $# = 0 -a ! -e buildspec.mk; then
     die "lunch combo must be specified because a previous buildspec.mk is not found"
 fi
@@ -125,7 +121,11 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                     . .buildenv.sh.x
                 fi
                 . ./build/envsetup.sh
-                if test -z \"$NO_PARALLEL_BUILD\" -a -z \"\$NO_PARALLEL_BUILD\"; then
+                (cd boot/uboot; git add .; git clean -xfd) || true
+
+                if test $# != 0; then
+                    make -j$jobs -l $jobs -k $@;
+                elif test -z \"$NO_PARALLEL_BUILD\" -a -z \"\$NO_PARALLEL_BUILD\"; then
                     make -j$jobs -l $jobs -k droid telephony uboot obm \$AFBV
                 else
                     lunch $TARGET_PRODUCT-$TARGET_BUILD_VARIANT

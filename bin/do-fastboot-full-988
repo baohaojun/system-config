@@ -51,10 +51,6 @@ time (
         exit -1
     }
 
-    is_full=0
-    if [[ $(basename $0) =~ do-fastboot-full ]]; then
-        is_full=1
-    fi
     if [[ $(basename $0) =~ do-fastboot-full ]]; then
         if test ! -e $1; then
 	    die "blf file '$1' not exist! Usage: $(basename $0) XXX.blf PARTS"
@@ -218,11 +214,10 @@ time (
         fi
     fi
 
-    if test $is_full = 1; then
-        fastboot erase misc
-        fastboot erase cache
-        fastboot erase NVM
-    fi
+    fastboot erase misc
+    do-partition cache cache-504M.img || true
+    do-partition NVM NVM-16M.img || true
+
 
     if [[ $(basename $0) =~ do-fastboot-full ]] && test "$ERASE_ALL" = true && yes-or-no-p -n "Erase all?"; then
         fastboot erase MEP2
