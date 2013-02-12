@@ -1,1 +1,1 @@
-../assets/rangy-serializer.js
+../assets.small/rangy-serializer.js

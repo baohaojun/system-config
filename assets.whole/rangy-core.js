@@ -1,1 +1,1 @@
-../assets/rangy-core.js
+../assets.small/rangy-core.js

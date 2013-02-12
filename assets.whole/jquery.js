@@ -1,1 +1,1 @@
-../assets/jquery.js
+../assets.small/jquery.js

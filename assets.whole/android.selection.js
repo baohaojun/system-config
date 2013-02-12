@@ -1,1 +1,1 @@
-../assets/android.selection.js
+../assets.small/android.selection.js
