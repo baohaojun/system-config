@@ -1,4 +1,0 @@
-* TODO fix the edict for 'all but'
-* DONE fix the easy-regexp-display-abbrev for ""
-  CLOSED: [2012-09-14 Fri 10:49]
-  - CLOSING NOTE [2012-09-14 Fri 10:49]

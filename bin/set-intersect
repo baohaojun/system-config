@@ -1,0 +1,29 @@
+#!/bin/bash
+
+declare -a the_set
+function is-in-set()
+{
+    for x in "${the_set[@]}"; do 
+        if test "$1" = "$x"; then
+            return 0;
+        fi
+    done
+    return 1;
+}
+
+test_set=$1
+shift
+the_set=("$@")
+
+empty=true
+for x in $test_set; do
+    if is-in-set "$x"; then
+        echo $x
+        empty=false
+    fi
+done
+
+if test $empty = true; then
+    exit 1
+fi
+exit 0;

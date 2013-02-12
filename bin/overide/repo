@@ -1,0 +1,101 @@
+#!/bin/bash
+
+trueone_rc=~/external/etc/overide/.$(basename $0).trueone
+if test -e $trueone_rc; then
+    . $trueone_rc
+else
+    mkdir -p $(dirname $trueone_rc)
+    the_prog=$(type -a $(basename $0)|grep "$(basename $0) is /"|grep -v /debug/|perl -ne 'print if 2..2'|pn 3)
+    echo the_prog=$the_prog > $trueone_rc
+fi
+export the_prog
+
+
+
+if test $# -gt 1 -a "$1" = sync; then
+   shift
+
+###begin help
+# Usage: repo sync [<project>...]
+
+# Options:
+#   -h, --help            show this help message and exit
+#   -f, --force-broken    continue sync even if a project fails to sync
+#   -l, --local-only      only update working tree, don't fetch
+#   -n, --network-only    fetch only, don't update working tree
+#   -d, --detach          detach projects back to manifest revision
+#   -c, --current-branch  fetch only current branch from server
+#   -q, --quiet           be more quiet
+#   -j JOBS, --jobs=JOBS  projects to fetch simultaneously (default 4)
+#   -m NAME.xml, --manifest-name=NAME.xml
+#                         temporary manifest to use for this sync
+#   --no-clone-bundle     disable use of /clone.bundle on HTTP/HTTPS
+#   -u MANIFEST_SERVER_USERNAME, --manifest-server-username=MANIFEST_SERVER_USERNAME
+#                         username to authenticate with the manifest server
+#   -p MANIFEST_SERVER_PASSWORD, --manifest-server-password=MANIFEST_SERVER_PASSWORD
+#                         password to authenticate with the manifest server
+#   --fetch-submodules    fetch submodules from server
+#   -s, --smart-sync      smart sync using manifest from a known good build
+#   -t SMART_TAG, --smart-tag=SMART_TAG
+#                         smart sync using manifest from a known tag
+
+#   repo Version options:
+#     --no-repo-verify    do not verify repo source code
+###end help
+   options=()
+   saved_args=(sync "$@")
+   TEMP=$(getopt -o hflndcqj:m:u:p:st: --long \
+       jobs:manifest-name:manifest-server-username:manifest-server-password:fetch-submodules,smart-sync,smart-tag:no-repo-verify \
+       -n $(basename $0)\ sync -- "$@")
+   eval set -- "$TEMP"
+   while true; do
+       case "$1" in
+           -h)
+               cat $0 | perl -ne 'print if m/###begin help/..m/###end help/'
+               exit 0;
+               ;;
+           -f|-l|-n|-d|-c|-q|-s|--no-repo-verify|--fetch-submodules|--smart-sync)
+               options=("${options[@]}" $1)
+               shift
+               ;;
+           -j|-m|-u|-p|-t|--jobs|--manifest-name|--manifest-server-username|--manifest-server-password|--smart-tag)
+               options=("${options[@]}" "$1" "$2")
+               shift 2
+               ;;               
+           --)
+               shift
+               break
+               ;;
+           *)
+               cat $0 | perl -ne 'print if m/###begin help/..m/###end help/'
+               exit 1
+               ;;
+       esac
+   done
+
+   if set-is-subset "$(echo "${options[@]}")" -d -l -n && test $# = 1; then
+       echo "Doing the hacked version of repo sync" 1>&2
+       if set-is-subset -d "${options[@]}"; then
+           true # -d, --detach          detach projects back to manifest revision
+       else
+           git fetch $(repo-remote)
+       fi
+       if set-is-subset -n "${options[@]}"; then
+           exit 0 # -n, --network-only    fetch only, don't update working tree
+       fi
+
+       git co $(repo-remote-branch)
+       exit 0
+   fi
+
+   echo "Warning: some dirs may get deleted by your 'repo ${saved_args[@]}' command." 1>&2
+   if yes-or-no-p "Continue?"; then
+       set -- "${saved_args[@]}"
+   else
+       exit -1
+   fi
+fi
+
+$the_prog "$@"
+
+

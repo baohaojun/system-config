@@ -1,9 +1,0 @@
-* Kernel代码阅读笔记
-
-- max\_pfn :: max page frame number
-
-- max\_low\_pfn :: 最大的low memory的page frame number
-
-- low memory :: kernel可以直接映射的memory
-
-- high memory :: kernel不能直接映射的memory，必须动态的切换。为什么会这样，需要拿支笔来好好画一下。

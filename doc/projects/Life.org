@@ -1,0 +1,147 @@
+#+LAST_MOBILE_CHANGE: 2013-02-08 20:38:20
+* TODO Shave
+  SCHEDULED: <2013-02-09 Sat .+2d/4d>
+  - CLOSING NOTE [2013-02-07 Thu 22:17]
+  :PROPERTIES:
+  :STYLE:    habits
+  :LAST_REPEAT: [2013-02-07 Thu 22:17]
+  :ID:       ee6ffd53-396e-46ab-a543-09326526da1c
+  :END:
+* DONE [#A] 回老家
+  CLOSED: [2013-02-08 Fri 20:38] SCHEDULED: <2013-02-06>
+  :PROPERTIES:
+  :ID:       430a5c5d-d194-476d-9c4b-e3b3d6cd0d50
+  :END:
+
+[2013-02-05 Tue 19:37]
+** DONE 证件，钱包，手机，耳机
+   CLOSED: [2013-02-07 Thu 22:24]
+[2013-02-05 Tue 19:16]
+
+[2013-02-05 Tue 22:31]
+** DONE 文文的被子
+   CLOSED: [2013-02-08 Fri 20:30]
+   :PROPERTIES:
+   :ID:       926e3196-56a2-4e08-83a4-3897ccb4796e
+   :END:
+[2013-02-05 Tue 19:17]
+
+** DONE 出租车
+   CLOSED: [2013-02-07 Thu 22:24]
+
+** DONE 电脑，充电器，pad，数据线，电池
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       13f0507b-fda3-4a07-9bc1-95dc32b09ad9
+   :END:
+[2013-02-05 Tue 19:31]
+** DONE 衣服，内裤，袜子，
+   CLOSED: [2013-02-07 Thu 22:24]
+[2013-02-05 Tue 22:54]
+*** TODO 洗漱用品
+    :PROPERTIES:
+    :ID:       622e4bde-0669-49ca-8be6-e5f141a511dd
+    :END:
+[2013-02-05 Tue 22:55]
+** DONE 文文的吃的
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       f47a3cbe-eceb-4237-8f5d-5b3b951e129f
+   :END:
+[2013-02-05 Tue 19:29]
+
+*** DONE 碗，勺
+    CLOSED: [2013-02-08 Fri 20:38]
+    :PROPERTIES:
+    :ID:       c5f0a8d0-37e3-446a-828a-a2dbf8626233
+    :END:
+
+*** DONE 消毒锅
+    CLOSED: [2013-02-07 Thu 22:24]
+    - CLOSING NOTE [2013-02-07 Thu 22:24]
+*** DONE 吸水杯
+    CLOSED: [2013-02-08 Fri 20:38]
+    :PROPERTIES:
+    :ID:       1fc622d5-61f4-4d9c-9282-4a94e0be390f
+    :END:
+
+*** DONE 奶瓶
+    CLOSED: [2013-02-08 Fri 20:38]
+:PROPERTIES:
+   :ID:       b3548b42-3716-4964-8e31-5bbb6da94726
+   :END:
+
+[2013-02-08 Fri 20:35]
+*** DONE 量奶粉盒
+    CLOSED: [2013-02-08 Fri 20:38]
+    :PROPERTIES:
+    :ID:       7bd52cd2-6281-4309-b46a-1d599ca48060
+    :END:
+** DONE 水杯，开水
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       69ef7693-eb00-49b3-b9bd-199dc62b6685
+   :END:
+
+** DONE 关水，关电，关煤气
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       f922e5f3-ab81-4954-a942-b7c292fa3bf6
+   :END:
+[2013-02-05 Tue 21:39]
+
+*** DONE 冰箱不能关，光猫也别关
+    CLOSED: [2013-02-08 Fri 20:38]
+:PROPERTIES:
+    :ID:       2fb5a6bb-d2c8-4829-a9f7-eaf03536d65a
+    :END:
+[2013-02-05 Tue 22:49]
+
+[2013-02-08 Fri 20:36]
+** DONE 闹钟叫早
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       0d5fb92e-02f1-49a2-90d0-1dda9f1dd457
+   :END:
+** DONE 钥匙
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       ea303eaf-5a3a-4006-ace0-ccc58099da23
+   :END:
+** DONE 驾照
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       58d4c169-3e07-445e-8239-cb5c2242fa65
+   :END:
+
+** DONE 游泳衣
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       028a426c-a64f-4995-a4c7-e951cc475646
+   :END:
+** DONE 晒衣服
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       de686651-30c8-4a41-b606-771633b4d37a
+   :END:
+** DONE 文文的鞋
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       2b06badc-120f-4372-b1c0-82dc4c10fb72
+   :END:
+** DONE 文文的衣服
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       35a3ed3d-76cc-4620-92f0-03999a23e2a6
+   :END:
+
+** DONE 剃须刀，充电器
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       a9ca81a4-5d1f-4b26-8b6d-10d6094f9598
+   :END:
+** DONE 卷纸
+   CLOSED: [2013-02-08 Fri 20:38]
+   :PROPERTIES:
+   :ID:       30e4fa67-04a7-46dd-9b4c-903de95ce5bf
+   :END:

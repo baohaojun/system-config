@@ -5,28 +5,28 @@ if test -e $trueone_rc; then
     . $trueone_rc
 else
     mkdir -p $(dirname $trueone_rc)
-    the_adb=$(type -a adb|grep 'adb is /'|grep -v /debug/|perl -ne 'print if 2..2'|pn 3)
-    echo the_adb=$the_adb > $trueone_rc
+    the_prog=$(type -a adb|grep 'adb is /'|grep -v /debug/|perl -ne 'print if 2..2'|pn 3)
+    echo the_prog=$the_prog > $trueone_rc
 fi
-export the_adb
+export the_prog
 
 function die() {
     echo Error: "$@"
     exit -1
 }
 
-if test -z "$the_adb"; then
+if test -z "$the_prog"; then
     die "Error, the adb is not found"
 fi
     
 function adb() {
     if test "$1" = -w; then
-        $the_adb wait-for-device
+        $the_prog wait-for-device
         shift
     fi
     if test "$1" = -s; then
         echo "$2" > ~/.adbd
-    elif test "$1" != devices -a $(setsid $the_adb start-server >/dev/null 2>&1 ; $the_adb devices | grep .| wc -l) -gt 2; then
+    elif test "$1" != devices -a $(setsid $the_prog start-server >/dev/null 2>&1 ; $the_prog devices | grep .| wc -l) -gt 2; then
         export ANDROID_SERIAL=$(cat ~/.adbd)
     fi
 
@@ -34,12 +34,12 @@ function adb() {
         shift
         gdbserver "$@"
     elif test "$#" = 3 -a "$1" = shell -a "$2" = restart; then
-        $the_adb shell stop $3; 
-        exec $the_adb shell start $3;
+        $the_prog shell stop $3; 
+        exec $the_prog shell start $3;
     elif test $# -gt 1 -a "$1" = shell; then
-        exec $the_adb "$@" | tr -d '\r'
+        exec $the_prog "$@" | tr -d '\r'
     else
-        exec $the_adb "$@"
+        exec $the_prog "$@"
     fi
 }
 
@@ -71,10 +71,10 @@ function gdbserver() {
     fi
     if test "$process"; then
         pid=$(select-output-line bash -c 'adb shell ps |grep -P -e "\Q'$process'\E"'|pn 2)
-        exec $the_adb shell gdbserver --attach :$port $pid
+        exec $the_prog shell gdbserver --attach :$port $pid
         return 0;
     fi
-    $the_adb forward tcp:$port tcp:$port || true
-    exec $the_adb shell gdbserver :$port "$@"
+    $the_prog forward tcp:$port tcp:$port || true
+    exec $the_prog shell gdbserver :$port "$@"
 }
 adb "$@"

@@ -1,7 +1,0 @@
-* DONE wifi calibration and battery calibration for factory production.
-  CLOSED: [2012-10-29 Mon 18:49]
-  - CLOSING NOTE [2012-10-29 Mon 18:49]
-
-* DONE grep-func-call-all -e "UnixTransport": this will show a bug.
-  CLOSED: [2012-10-29 Mon 18:50]
-  - CLOSING NOTE [2012-10-29 Mon 18:50]

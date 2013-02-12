@@ -20,9 +20,14 @@ print $_ . "\n";
 	  exit
 	fi
         if test "$1" = clean; then
-            if command git st -s | grep ??; then
-                echo Error: git not clean, will not clean it
-                exit 0
+            if command git st -s | grep '??'; then
+                echo Warning: git not clean, will not clean it
+                if yes-or-no-p -n "Continue?"; then
+                    true;
+                else
+                    echo Please use: command git clean -xfd
+                    exit -1
+                fi
             fi
         fi
     

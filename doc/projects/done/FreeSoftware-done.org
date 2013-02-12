@@ -1,43 +1,45 @@
-* DONE email silu about the additional files needed by flashing tool.
-  CLOSED: [2011-11-16 Wed 12:47]
-  - CLOSING NOTE [2011-11-16 Wed 12:47]
-
-* DONE clean up code/files
-  CLOSED: [2011-11-17 Thu 11:21]
-  - CLOSING NOTE [2011-11-17 Thu 11:21]
-
-* DONE change company names etc.
-  CLOSED: [2011-11-17 Thu 11:21]
-  - CLOSING NOTE [2011-11-17 Thu 11:21]
-* DONE find out why my laptop Fn key long press will kill window
-  CLOSED: [2011-11-16 Wed 16:10]
-  - CLOSING NOTE [2011-11-16 Wed 16:10]
-* CANCELED install leafnode						 :pe:
-  CLOSED: [2012-01-12 Thu 17:28]
-  - CLOSING NOTE [2012-01-12 Thu 17:28]
-* DONE fireworks driver
-  CLOSED: [2011-11-30 Wed 12:34]
-  - CLOSING NOTE [2011-11-30 Wed 12:34]
-* DONE rename fireworks to marslash?
-  CLOSED: [2011-11-28 Mon 14:36]
-  - CLOSING NOTE [2011-11-28 Mon 14:36] \\
-    renamed it to MarsBurner
 * DONE work on beagrep for windows
   CLOSED: [2011-11-28 Mon 14:36]
   - CLOSING NOTE [2011-11-28 Mon 14:37] \\
     beagrep has been ported onto Windows now.
 
-* CANCELED fireworks 能否处理reliable data
-  CLOSED: [2012-01-12 Thu 17:28]
-  - CLOSING NOTE [2012-01-12 Thu 17:28]
+
+* DONE MarsBurner: fix occasional build error because of perl exec error
+  CLOSED: [2011-12-12 Mon 13:08]
+  - CLOSING NOTE [2011-12-12 Mon 13:08]
+
+1. 写了个do-rebase.sh，注意需要把cygwin安装目录下所有文件chown为你自己的。
+2. 让date execution protection被disable掉，这个用bcdedit set nx AlwaysOff。
+* DONE do ps.pl, it supports all the win32_process options
+  CLOSED: [2011-12-19 Mon 14:48]
+  - CLOSING NOTE [2011-12-19 Mon 14:48]
+  - CLOSING NOTE [2011-12-12 Mon 19:49]
+ 
+
+
+* DONE 把CapsLock换成Alt键？还是Escape键？
+  CLOSED: [2011-12-19 Mon 14:48]
+  - CLOSING NOTE [2011-12-19 Mon 14:48]
+  - CLOSING NOTE [2011-12-13 Tue 10:16]
+  http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html#ss1.4
+  http://msdn.microsoft.com/en-us/windows/hardware/gg463447
+  
+
+* DONE 修改bbdb，只对发送的邮件做database collection
+  CLOSED: [2012-01-12 Thu 10:55]
+  - CLOSING NOTE [2012-01-12 Thu 10:55]
+* DONE 集成jira和org-mode
+  CLOSED: [2011-12-28 Wed 10:56]
+  - CLOSING NOTE [2011-12-28 Wed 10:56]
+
+* DONE send email using different smtp server according to reciepients
+  CLOSED: [2012-01-12 Thu 10:54]
+  - CLOSING NOTE [2012-01-12 Thu 10:54] \\
+    Finished
 * DONE write refactory-rename, can rename filename and variable name intelligently, like FooBar => HooRay. 
   CLOSED: [2011-11-29 Tue 10:19]
   - CLOSING NOTE [2011-11-29 Tue 10:19] \\
     finished
-
-* DONE upload the PC tool project onto company git repository.
-  CLOSED: [2012-01-12 Thu 10:57]
-  - CLOSING NOTE [2012-01-12 Thu 10:57]
 * DONE write a org page for refactory-rename, send mail to team
   CLOSED: [2011-12-05 Mon 15:47]
   - CLOSING NOTE [2011-12-05 Mon 15:47]
@@ -190,85 +192,29 @@ rename-files . "$@" #递归调用开始的地方是当前目录 “.”。
     
     The main reason for it is we want to make sure there are no reference
     to 3rd parties's name in our code.
-* DONE change icon for MarsBurner, include the program icon and the status icons.
-  CLOSED: [2011-11-30 Wed 12:33]
-  - CLOSING NOTE [2011-11-30 Wed 12:33]
-* DONE write document of pc tool dev
-  CLOSED: [2012-10-29 Mon 18:48]
-  - CLOSING NOTE [2012-10-29 Mon 18:48] \\
-    Canceled
-* DONE write a document for git process
-  CLOSED: [2012-10-29 Mon 18:48]
-  - CLOSING NOTE [2012-10-29 Mon 18:48] \\
-    Canceled
 
-my way of pushing things, reviewing code, update comments
-
-* DONE support jasmine flashing
-  CLOSED: [2011-12-07 Wed 13:12]
-  - CLOSING NOTE [2011-12-07 Wed 13:12] \\
-    Verified with Li Hui, flashing OK.
-* DONE support dkb flashing
-  CLOSED: [2012-01-12 Thu 10:57]
-  - CLOSING NOTE [2012-01-12 Thu 10:57]
-* DONE read literate programming, 6 pages, by Jon Bentley and Don Knuth
-  CLOSED: [2011-11-30 Wed 12:35]
-  - CLOSING NOTE [2011-11-30 Wed 12:35]
 * DONE firemacs: pressing SPC to goto the next page does not work reliably, use separate keybinding.
   CLOSED: [2011-11-30 Wed 10:53]
   - CLOSING NOTE [2011-11-30 Wed 10:53]
-* CANCELED check the display of MarsBurner progress bar
-  CLOSED: [2011-12-12 Mon 13:09]
-  - CLOSING NOTE [2011-12-12 Mon 13:09]
-    
-    no longer relevant because we changed to mfc/html for UI dialog.
-* DONE update MarsBurner UI, remove the setting radio buttons
-  CLOSED: [2011-12-05 Mon 11:37]
-  - CLOSING NOTE [2011-12-05 Mon 11:37]
+* DONE read literate programming, 6 pages, by Jon Bentley and Don Knuth
+  CLOSED: [2011-11-30 Wed 12:35]
+  - CLOSING NOTE [2011-11-30 Wed 12:35]
 * DONE Google并解决visual studion build无法打开文件的问题。
   CLOSED: [2011-11-30 Wed 13:54]
   - CLOSING NOTE [2011-11-30 Wed 13:55] \\
     http://social.msdn.microsoft.com/Forums/da-DK/vcgeneral/thread/fcdde3bc-43a1-4ab6-b0b5-9525fe4e84c8
-* DONE MarsBurner: remve the logic of the radio buttons
-  CLOSED: [2011-12-05 Mon 09:28]
-  - CLOSING NOTE [2011-12-05 Mon 09:28] \\
-    done
-* DONE MarsBurner: remove the logic of the factory install
-  CLOSED: [2011-12-05 Mon 11:37]
-  - CLOSING NOTE [2011-12-05 Mon 11:37]
-* CANCELED MarsBurner: pop up a warning when OBM is detected in the blf filename.
-  CLOSED: [2011-12-05 Mon 16:00]
-* DONE MarsBurner: 在Windows 7下必须用Administrator运行。
-  CLOSED: [2011-12-05 Mon 09:29]
-  - CLOSING NOTE [2011-12-05 Mon 09:30] \\
-    Root cause found. It is because flasher.dll is creating temp files
-    under install folder, which is write protected.
-  需要修改release模式，不采取安装方式，而是用.zip包的方式。
-* DONE investigate the vpn sharing problem
-  CLOSED: [2011-12-05 Mon 09:32]
-  - CLOSING NOTE [2011-12-05 Mon 09:32]
-* TODO 搞定org-mode的习惯						 :pe:
+
 * DONE 搞定org-mode里的 cancel
   CLOSED: [2011-12-05 Mon 15:59]
+
 * DONE 搞定自动生成weekly report
   CLOSED: [2011-12-05 Mon 19:51]
   - CLOSING NOTE [2011-12-05 Mon 19:51]
-* windows update
+* DONE windows update
+  CLOSED: [2013-02-05 Tue 16:44]
+  - CLOSING NOTE [2013-02-05 Tue 16:44]
 
 the downloaded files are kept at C:\Windows\SoftwareDistribution\Download
-* DONE MarsBurner: convert UI to better design
-  CLOSED: [2012-01-12 Thu 10:56]
-  - CLOSING NOTE [2012-01-12 Thu 10:56]
-** DONE study MFC dialog using HTML for presentation.
-   CLOSED: [2011-12-08 Thu 08:40]
-   - CLOSING NOTE [2011-12-08 Thu 08:40]
-
-     This technique should be used when you want to some complex UI
-     with MFC, because the traditional MFC UI is too inflexible.
-** DONE implement progress bar in HTML
-
-   CLOSED: [2011-12-08 Thu 08:47]
-   - CLOSING NOTE [2011-12-08 Thu 08:47]
 * DONE Marvell: help silu to set up vpn sharing
   CLOSED: [2011-12-08 Thu 17:00]
   - CLOSING NOTE [2011-12-08 Thu 17:00]
@@ -279,100 +225,199 @@ not working if bridging through wan.
 
 Spent 2 hours on this.
 
-* TODO track how much time I spent on each task.			 :pe:
-* DONE MarsBurner: fix occasional build error because of perl exec error
-  CLOSED: [2011-12-12 Mon 13:08]
-  - CLOSING NOTE [2011-12-12 Mon 13:08]
 
-1. 写了个do-rebase.sh，注意需要把cygwin安装目录下所有文件chown为你自己的。
-2. 让date execution protection被disable掉，这个用bcdedit set nx AlwaysOff。
-* DONE 搞定宝宝的生育津贴盖章 						 :pe:
-  CLOSED: [2011-12-12 Mon 13:05]
-  - CLOSING NOTE [2011-12-12 Mon 13:05]
-  - CLOSING NOTE [2011-12-09 Fri 15:37]
-* DONE fix release file copying: do it with a little bit of intelligence.
-  CLOSED: [2011-12-09 Fri 15:37]
-  - CLOSING NOTE [2011-12-09 Fri 15:08]
-* DONE do ps.pl, it supports all the win32_process options.		 :pe:
-  CLOSED: [2011-12-19 Mon 14:48]
-  - CLOSING NOTE [2011-12-19 Mon 14:48]
-  - CLOSING NOTE [2011-12-12 Mon 19:49]
- 
-* DONE MarsBurner: mail qianqi about her dll problems: 四个问题：
-  CLOSED: [2011-12-13 Tue 09:56]
-  - CLOSING NOTE [2011-12-13 Tue 09:56]
-  - memory leak
-  - write into same folder as program, will cause permission issue under Win7.
-  - can we please do not write temp files into the .blf folder? those folders maybe exist in share-folder  
-  - will cause computer unable to shutdown after pull off usb cable when writing.
 
-  
-* DONE 把CapsLock换成Alt键？还是Escape键？				 :pe:
-  CLOSED: [2011-12-19 Mon 14:48]
-  - CLOSING NOTE [2011-12-19 Mon 14:48]
-  - CLOSING NOTE [2011-12-13 Tue 10:16]
-  http://www.win.tue.nl/~aeb/linux/kbd/scancodes-1.html#ss1.4
-  http://msdn.microsoft.com/en-us/windows/hardware/gg463447
 
-* DONE MarsBurner: 搞定程序图标
-  CLOSED: [2012-01-12 Thu 10:56]
-  - CLOSING NOTE [2012-01-12 Thu 10:56]
-* DONE MarsBurner: 还是有内存泄露问题，让Qianqi查一下。
-  CLOSED: [2012-01-12 Thu 10:56]
-  - CLOSING NOTE [2012-01-12 Thu 10:56]
-* DONE MarsBurner: 继续优化界面
-  CLOSED: [2011-12-21 Wed 15:35]
-  - CLOSING NOTE [2011-12-21 Wed 15:35]
-** DONE 把fileLoc input变更长
-   CLOSED: [2011-12-21 Wed 15:35]
-   - CLOSING NOTE [2011-12-21 Wed 15:35]
-** DONE 把Model一列拿掉
-   CLOSED: [2011-12-21 Wed 15:35]
-   - CLOSING NOTE [2011-12-21 Wed 15:35]
-* DONE MarsBurner: finish new UI from ZhangQin
-  CLOSED: [2011-12-16 Fri 14:08]
-  - CLOSING NOTE [2011-12-16 Fri 14:08]
-* DONE 烧写policy: 默认不erase all，不动reliable data/nvm，工厂空phone的情况下会把默认blf进行修改（代码自动处理，非手工），会erase all，用模板初始化RD。
-  CLOSED: [2012-01-12 Thu 10:55]
-  - CLOSING NOTE [2012-01-12 Thu 10:55]
-** DONE 修改.blf
-   CLOSED: [2012-01-12 Thu 10:55]
-   - CLOSING NOTE [2012-01-12 Thu 10:55]
-** DONE 修改marsburner
-   CLOSED: [2012-01-12 Thu 10:56]
-   - CLOSING NOTE [2012-01-12 Thu 10:56]
 
-* DONE 集成jira和org-mode						 :pe:
-  CLOSED: [2011-12-28 Wed 10:56]
-  - CLOSING NOTE [2011-12-28 Wed 10:56]
-* DONE 修改bbdb，只对发送的邮件做database collection。			 :pe:
-  CLOSED: [2012-01-12 Thu 10:55]
-  - CLOSING NOTE [2012-01-12 Thu 10:55]
-* CANCELED 看3gpp 23.038，关于sms					 :pe:
-3gpp 27.007, 里面有更多的at command命令。
-* TODO learn to use artist-mode						 :pe:
 
-#+BEGIN_DITAA  asciiExample.png -o -r
 
-       +----------+ edit +----------+   input +----------+ compile +----------+
-       | refined  |<-----+ h,cpp    +-------->+ compiler,+-------->+Executable|
-       |   h,cpp  |      |          |         | linker   |         |   File   |
-       +----------+      +----+-----+         +----------+         +----------+
-                              | input
-                              v
-                         +----------+
-                         | doxygen  |
-                         |          |
-                         +----+-----+
-                              | process
-                              v
-                         +----------+
-                         | Doxgen   |
-                         | Document |
-                         +----------+
 
-#+END_DITAA
-* DONE send email using different smtp server according to reciepients	 :pe:
-  CLOSED: [2012-01-12 Thu 10:54]
-  - CLOSING NOTE [2012-01-12 Thu 10:54] \\
-    Finished
+
+* DONE 回复jira2.el/jira.el merge邮件
+  CLOSED: [2012-01-05 Thu 22:43]
+  - CLOSING NOTE [2012-01-05 Thu 22:43]
+Agreed. I have not looked into org-mode source code yet, so do not know
+about contrib/lisp/org-jira.el, but I think it is the same one on
+emacswiki, which has been abandoned by its author. So, it will be
+trivial to merge its functionality.
+
+You are also right that jira2.el and jira.el can be merged,
+theoretically. The jira2.el, as a library, is a superset of jira.el in
+terms of functionality, since jira2.el uses soap, while jira.el uses
+xml-rpc; and soap is better supported by jira than xml-rpc.
+
+The difficulty lies in that jira.el is also a major mode (in addition to
+providing the library for the major mode). To make sure backward
+compatible will require some effort. Jira2.el, OTOH, has stopped to be a
+major mode, and only provided library for (the new) org-jira.el.
+
+Anyway, I will try to update jira.el and contact the original author to
+see if he agrees.
+* DONE 把linux console下的键盘大写键与escape键互换一下
+  CLOSED: [2012-02-09 Thu 12:26]
+* Things done on 2012-01-30
+  :PROPERTIES:
+  :ID:       o2b:b2810d62-fceb-450f-8958-d60f88668372
+  :POST_DATE: [2012-01-31 Tue 10:34]
+  :POSTID:   55
+  :END:
+
+** Work on org-jira, fixed priority required when creating issue
+
+** Work on Network Manager under sawfish
+
+- Will not allow delete network profile, while under gnome, a auth
+  dialog popup asking for root password, and can go on to delete/add
+  network profile.
+
+- This is fixed by starting policykit after diff with gnome session
+  processes. More may need be fixed.
+
+- Started gnome-keyring-daemen in ~/.xprofile. GDM3 will source this
+  file.
+
+- Will not be able to save after you edit a profile, must delete and
+  then add and get it right when adding. It is different if you run
+  nm-applet as root; in that case it can be saved.
+
+** Work on RNDIS XP driver, turns out only need a .inf file.
+* 2012-01-31
+  :PROPERTIES:
+  :ID:       o2b:006652de-5004-4e2f-9415-f93cf4deff2a
+  :POST_DATE: [2012-01-31 Tue 22:28]
+  :POSTID:   59
+  :END:
+
+- Work on git-push-mac and git-pull-mac, should not use meaningless
+  commit message dubbed "mf".
+
+** DONE 把firefox bookmark做成可搜索的？				 :pe:
+   CLOSED: [2012-02-01 Wed 12:49]
+   - CLOSING NOTE [2012-02-01 Wed 12:49]
+
+** DONE fix gnome-open							 :pe:
+   CLOSED: [2012-02-08 Wed 20:27]
+   - CLOSING NOTE [2012-02-08 Wed 20:27] \\
+     gnome-open will always open nautilus with the target file selected.
+     
+     rm ~/.local
+     
+     It is great that I can use this as oc -- open containing folder.
+** DONE fix sdim while C-s searching					 :pe:
+   CLOSED: [2012-01-31 Tue 22:01]
+   - CLOSING NOTE [2012-01-31 Tue 22:01]
+
+** DONE fix emacs url-proxy-services error on home PC			 :pe:
+   CLOSED: [2012-01-31 Tue 22:27]
+   - CLOSING NOTE [2012-01-31 Tue 22:27] \\
+     Must not use localhost:8580 as the proxy; must use 127.0.0.1; IPV6 is
+     involved to mess up
+* DONE work on notification manager.
+  CLOSED: [2012-02-09 Thu 00:08]
+  - CLOSING NOTE [2012-02-09 Thu 00:08]
+** notify window position need fixing.
+*** see how to dump window infomation
+*** see how to use sawfish to adjust window pos.
+
+* DONE study gerrit command line tool.
+  CLOSED: [2012-03-15 Thu 10:21]
+  - CLOSING NOTE [2012-03-15 Thu 10:21]
+** DONE write a integration tool for it.
+   CLOSED: [2012-03-15 Thu 10:21]
+   - CLOSING NOTE [2012-03-15 Thu 10:21]
+
+* DONE do marvell training
+  CLOSED: [2012-03-15 Thu 10:09]
+  - CLOSING NOTE [2012-03-15 Thu 10:09]
+
+* DONE how to config static usb0 ip address
+  CLOSED: [2012-03-15 Thu 10:09]
+  - CLOSING NOTE [2012-03-15 Thu 10:09]
+put the following into /etc/network/interfaces:
+#+begin_example
+auto usb0
+allow-hotplug usb0
+iface usb0 inet static
+	address 192.168.42.1
+	netmask 255.255.255.0
+	network 192.168.42.0
+#+end_example
+* DONE samba guest share
+  CLOSED: [2012-03-15 Thu 10:22]
+  - CLOSING NOTE [2012-03-15 Thu 10:22]
+
+security = share
+
+[Guest Share]
+        comment = Guest access share
+        path = /home/bhj/share
+        browseable = yes
+        read only = yes
+        guest ok = yes
+
+
+* DONE setxkbmap -variant dvp
+  CLOSED: [2013-02-07 Thu 22:14]
+  - CLOSING NOTE [2013-02-07 Thu 22:14]
+  The above will set the keyboard layout to dvorak programmer.
+
+* DONE How to convert pdf for reading on kindle touch
+  CLOSED: [2012-09-14 Fri 10:47]
+  - CLOSING NOTE [2012-09-14 Fri 10:47]
+
+- get rid of the margin
+
+  #+begin_example
+  pdfnup --no-landscape --nup 1x1 --papersize '{210mm,297mm}' --trim '18.5mm 18.5mm 18.5mm 25.5mm' 1.pdf
+  #+end_example
+
+
+- split it to top and bottom halfs (so that we can read in landscape on kindle touch)
+
+  #+begin_example
+  pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 143mm 0 0' --suffix top 1-nup.pdf 
+  pdfnup --no-landscape --nup 1x1 --papersize '{210mm,154mm}' --trim '0 0 0 143mm' --suffix bot 1-nup.pdf 
+  #+end_example
+
+- join the top and bot page by page
+
+  #+begin_example
+  for x in $(seq 1 530); do pdfjoin 1-nup-top.pdf $x 1-nup-bot.pdf $x; done
+  #+end_example
+
+- join all the pages
+
+  #+begin_example
+  for x in $(seq 1 528); do echo 1-nup-bot-$x-joined.pdf; done|xargs pdfjoin
+  #+end_example
+
+- rotate the page
+
+  #+begin_example
+  pdf90 /home/bhj/today/1-nup-bot-528-joined-joined.pdf
+  #+end_example
+* DONE 看一下uboot的串口怎么从usb出。
+  CLOSED: [2012-09-14 Fri 10:48]
+  - CLOSING NOTE [2012-09-14 Fri 10:48]
+
+* DONE offline wikipedia version from mediawiki
+  CLOSED: [2012-09-14 Fri 10:49]
+  - CLOSING NOTE [2012-09-14 Fri 10:49]
+my offline wikipedia source code seems to be copied from 
+
+git clone https://gerrit.wikimedia.org/r/p/mediawiki/core.git 
+
+git co 8e777b538aae62c6ed022ba79049c4e05ee744e0
+* DONE How to add a .jar file to an apk ant project?
+  CLOSED: [2013-01-14 Mon 10:01]
+  - CLOSING NOTE [2013-01-14 Mon 10:01]
+
+Simply put the .jar (or a symlink of it) into the ~libs~ folder of the
+ant project.
+
+There is no special requirement of this .jar file, for e.g., I just
+~apt-get install libguava-java~ and symlinked
+~/usr/share/java/guava.jar~ and it worked.
+
+
+

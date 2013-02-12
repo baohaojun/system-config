@@ -38,6 +38,8 @@
   (cygwin-mount-activate)
   (require 'w32-symlinks))
 
+(setq org-mobile-directory "~/MobileOrg")
+
 (when window-system
   (tool-bar-mode -1)
   (menu-bar-mode -1)
@@ -732,7 +734,6 @@
  '(mmm-submode-decoration-level 2)
  '(nnmail-expiry-wait (quote never))
  '(normal-erase-is-backspace nil)
- '(org-agenda-files (quote ("/home/bhj/doc/daily/2011.org" "/home/bhj/doc/daily/2012-01.org")))
  '(org-export-html-coding-system (quote utf-8))
  '(org-export-html-postamble (lambda nil (buffer-file-name)))
  '(org-export-html-style-extra "<link rel=\"stylesheet\" href=\"css/default.css\" type=\"text/css\">
@@ -1887,9 +1888,7 @@ ARG means found the (ARG - 1)th tag to find."
     (shell-command (concat "kmail-view " (shell-quote-argument nnmaildir-article-file-name)))))
 
 (require 'guess-offset)
-(setq org-agenda-files `("~/doc/daily" ,(if (eq system-type 'windows-nt)
-					    "~/../.org-jira"
-					  "~/.org-jira")))
+(setq org-agenda-files `("~/doc/projects" "~/.org-jira"))
 (add-hook 'org-mode-hook (lambda () (org-jira-mode t)))
 (setq org-log-done 'note)
 (global-set-key "\C-cl" 'org-store-link)
@@ -2302,7 +2301,7 @@ Completion behaviour can be controlled with `bbdb-completion-type'."
                      type=\"text/css\"/>")
 
 	("org"
-         :base-directory "~/windows-config/org/"
+         :base-directory "~/doc/projects"
          :publishing-directory "~/public_html"
          :section-numbers nil
          :table-of-contents nil)))

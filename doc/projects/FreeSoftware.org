@@ -1,0 +1,30 @@
+* TODO learn to use artist-mode
+  :PROPERTIES:
+  :ID:       68a3eb18-d856-4085-85eb-231d72f8b37e
+  :END:
+
+#+BEGIN_DITAA  asciiExample.png -o -r
+
+       +----------+ edit +----------+   input +----------+ compile +----------+
+       | refined  |<-----+ h,cpp    +-------->+ compiler,+-------->+Executable|
+       |   h,cpp  |      |          |         | linker   |         |   File   |
+       +----------+      +----+-----+         +----------+         +----------+
+                              | input
+                              v
+                         +----------+
+                         | doxygen  |
+                         |          |
+                         +----+-----+
+                              | process
+                              v
+                         +----------+
+                         | Doxgen   |
+                         | Document |
+                         +----------+
+
+#+END_DITAA
+* TODO Finish cross dict and pubblish it
+** TODO add a donate button
+*** TODO get the donate urls for both chinese and english
+*** TODO write something for the donation
+** TODO get 

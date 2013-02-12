@@ -1,3 +1,0 @@
-* DONE 看一下uboot的串口怎么从usb出。
-  CLOSED: [2012-09-14 Fri 10:48]
-  - CLOSING NOTE [2012-09-14 Fri 10:48]
