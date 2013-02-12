@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>wasted</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="wasted"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-02-12 23:21:28 CST"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">wasted</h1>
+
+<p>这里会记录我在哪些事情上浪费过时间，记下来争取下回如果需要再配置一番的话不需要再
+浪费一次。
+</p>
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 eclipse在debian底下表用系统自带的</a></li>
+<li><a href="#sec-2">2 装eclim的时候eclipse home要选自己下载的eclipse的目录</a></li>
+<li><a href="#sec-3">3 vs2008必须装sp1才能避免此错误：</a></li>
+<li><a href="#sec-4">4 /etc/resolv.conf dns被改掉</a></li>
+<li><a href="#sec-5">5 改xp与win7的双启动修复利器：ntbootautofix。dual boot。</a></li>
+<li><a href="#sec-6">6 ~/.fonts下放一个windows下拷过来的symbol.ttf字体文件会导致evince打开pdf文件一些特殊字符显示异常</a></li>
+<li><a href="#sec-7">7 C precedence table</a></li>
+<li><a href="#sec-8">8 Emacs grep-mode can not find file under tramp remote editting:</a></li>
+<li><a href="#sec-9">9 Everytime you change apk resource, you must do a clean build</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> eclipse在debian底下表用系统自带的</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+用这个版本装不了android的adt插件，并且也可能装不了eclim。直接从eclipse的网站上去下载一个安装包回来比较靠谱。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 装eclim的时候eclipse home要选自己下载的eclipse的目录</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+并且不要点user local目录，例如~/.eclipse/org.eclipse.platform<sub>3</sub>.7.0<sub>155965261</sub>/，
+这个是系统自带的eclipse版本才用的，点上这个之后反而装不上eclim了。
+</p></div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> vs2008必须装sp1才能避免此错误：</h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+.\stdafx.cpp : fatal error C1902: Program database manager mismatch; please check your installation
+</p>
+<p>
+泪奔，装sp1是解决不了这个问题的。这个错误只会在用ssh登录上去运行
+vccompile的时候才会发生。并且是那种用了id<sub>rsa不需要输入密码的情况下。</sub>
+</p>
+<p>
+这种情况下登录上去后看系统的环境变量USERNAME是system，而如果把client端
+的id<sub>rsa移走，要求输入密码之后登录上去的话，看环境变量USERNAME就是我的</sub>
+用户名bhj。所以这是一个cygwin的bug，最后的uid取决于登录时是否输入了密码。
+</p>
+<p>
+所以真正的解决方法是让sshd服务用bhj帐号去启动，这样不管我怎么登录上去的，最后的权
+限都是我的用户帐号bhj，而不是变成系统的system帐号。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> /etc/resolv.conf dns被改掉</h2>
+<div class="outline-text-2" id="text-4">
+
+
+<p>
+  /etc/network/interfaces里最好把eth0都去掉，因为它会导致dhclient跑起来，从而让
+  dns的设置过一段时间就被强行改掉
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> 改xp与win7的双启动修复利器：ntbootautofix。dual boot。</h2>
+<div class="outline-text-2" id="text-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> ~/.fonts下放一个windows下拷过来的symbol.ttf字体文件会导致evince打开pdf文件一些特殊字符显示异常</h2>
+<div class="outline-text-2" id="text-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> C precedence table</h2>
+<div class="outline-text-2" id="text-7">
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<tr><th scope="col"><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/></th>
+<th scope="col">NOTE: See also the general page on C Programming.<br/>The follow is the order of precedence, from highest to lowest, for the C programming<br/>language:<br/>+---------------------------------------------------------+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>+---------------------------------------------------------+<br/>Unary operator:<br/>+-----------------------+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>+-----------------------+<br/>Binary operator :<br/>+---------------------------------+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>+---------------------------------+</th></tr>
+</table>
+
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> Emacs grep-mode can not find file under tramp remote editting:</h2>
+<div class="outline-text-2" id="text-8">
+
+
+<p>
+Suppose your remote grep turn out these result, and you press <code>M-g n</code>
+to try to jump to the first match, it tells you the file is not
+found. If you just press enter when it ask which file to visit
+instead, the error message says: 
+</p>
+
+
+
+<pre class="example">read-file-name: anything-read-file-name: file `/scp:bhj@10.21.131.31:/home/bhj/src/jb-988-bpe.bak2/frameworks/base/telephony/java/android/telephony/gsm/SmsMessage.java' is not matched
+</pre>
+
+
+<p>
+The bug turns to be because there is a local /home/bhj/src/jb-988-bpe,
+which is a symbolic link to /home/bhj/src/jb-988-bpe.bak2. So it seems
+this local symlink can subtly change the remote grep-mode target
+directory.
+</p>
+
+
+
+<pre class="example">-*- mode: grep; default-directory: "/scp:bhj@10.21.131.31:/home/bhj/src/jb-988-bpe/frameworks/base/telephony/java/android/telephony/gsm/" -*-
+Grep started at Wed Dec 12 17:30:57
+
+grep-gtags -e "getSubmitPdu" -p java
+gtags: invalid option -- 'u'
+Usage: gtags [-ciIOqvw][-d tag-file][-f file][dbpath]
+Found total 13 definitions: Entering directory `/home/bhj/src/jb-988-bpe'
+frameworks/base/telephony/java/android/telephony/gsm/SmsMessage.java:245: public static SubmitPdu getSubmitPdu(String scAddress,
+frameworks/base/telephony/java/android/telephony/gsm/SmsMessage.java:273: public static SubmitPdu getSubmitPdu(String scAddress,
+frameworks/base/telephony/java/android/telephony/gsm/SmsMessage.java:303: public static SubmitPdu getSubmitPdu(String scAddress,
+frameworks/base/telephony/java/android/telephony/SmsMessage.java:397: public static SubmitPdu getSubmitPdu(String scAddress,
+frameworks/base/telephony/java/android/telephony/SmsMessage.java:426: public static SubmitPdu getSubmitPdu(String scAddress,
+frameworks/base/telephony/java/com/android/internal/telephony/gsm/SmsMessage.java:212: public static SubmitPdu getSubmitPdu(String scAddress,
+frameworks/base/telephony/java/com/android/internal/telephony/gsm/SmsMessage.java:233: public static SubmitPdu getSubmitPdu(String scAddress,
+frameworks/base/telephony/java/com/android/internal/telephony/gsm/SmsMessage.java:376: public static SubmitPdu getSubmitPdu(String scAddress,
+frameworks/base/telephony/java/com/android/internal/telephony/gsm/SmsMessage.java:395: public static SubmitPdu getSubmitPdu(String scAddress,
+frameworks/base/telephony/java/com/android/internal/telephony/cdma/SmsMessage.java:296: public static SubmitPdu getSubmitPdu(String scAddr, String destAddr, String message,
+frameworks/base/telephony/java/com/android/internal/telephony/cdma/SmsMessage.java:326: public static SubmitPdu getSubmitPdu(String scAddr, String destAddr, int destPort,
+frameworks/base/telephony/java/com/android/internal/telephony/cdma/SmsMessage.java:363: public static SubmitPdu getSubmitPdu(String destAddr, UserData userData,
+vendor/marvell/carrier/BackupRestore/src/com/marvell/bkrs/sms/pdu/SmsPduBackup.java:318: private SubmitPdu getSubmitPdu(String scAddress, String destinationAddress, String message, byte[] header, int encoding, int languageTable, int languageShiftTable, long date) {
+
+Grep finished (matches found) at Wed Dec 12 17:31:00
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> Everytime you change apk resource, you must do a clean build</h2>
+<div class="outline-text-2" id="text-9">
+
+
+<p>
+  So that all .java files are recompiled, or else something weird will happen. This is a lesson learned in developping crossdict.
+</p></div>
+</div>
+</div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>

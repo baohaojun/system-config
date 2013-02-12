@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Using CLI and GUI Together Seemlessly</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Using CLI and GUI Together Seemlessly"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2011-09-30"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Using CLI and GUI Together Seemlessly</h1>
+
+<p>Some people love CLI like heaven, hate GUI like hell, and vice verser
+for some other people.
+</p>
+<p>
+Me? I used to belong to the first group, but now I have learned to
+another level. Why not stop the love and hate and make them work
+together?
+</p>
+<p>
+For e.g., now I often start from the CLI, and end in the GUI. If I
+want to open a file for uploading in GUI browser, I start from the CLI
+shell, because navigating directories and searching for files is so
+much easier in CLI shell than clicking all the way down the directory
+hierarchy in GUI FindFile dialog. Then I, while still in CLI shell,
+put the file path into clipboard with xclip (for Linux) or putclip
+(for Cygwin), switch back to the browser FindFile dialog, and paste
+it.
+</p>
+<p>
+Similarly, when I want to locate a file in FileManager like Explorer
+for e.g., I start from the shell with this bash function:
+</p>
+
+
+<pre class="example">function oc()
+{
+    cygstart `which explorer.exe` /n,/select,\""`cygpath -alw \"$1\"`"\"
+}
+</pre>
+
+
+<p>
+When I want to locate a registry entry in regedit.exe, I use another
+command I wrote in python and pywin32, and made a short name of in
+bash:
+</p><pre class="example">
+alias or=regopen.py #open registry
+</pre>
+
+
+<p>
+When I want open a file with its associated opener, like Word for
+.doc, Excel for .xls, I use cygstart in Cygwin, and gnome-open in
+Linux:
+</p>
+
+
+<pre class="example">if test `uname` = CYGWIN_NT-5.1 -o `uname` = CYGWIN_NT-6.1
+then
+    function of()
+    {
+        if test -e "$1"; then
+            cygstart "$@"
+            return
+        fi
+    
+        if which "$1" &gt;/dev/null 2&gt;&amp;1; then
+            if [[ "$1" == of ]]; then
+                local file=`which cygstart`
+            else
+                local file="`which \"$1\"`"
+            fi
+            shift
+            cygstart "$file" "$@"
+        else
+            cygstart "$@"
+        fi
+    }
+else
+    alias of=gnome-open
+fi
+</pre>
+
+<p>
+This way, I can use the same .bashrc under both Linux and Windows
+(think, Cygwin), and the same (well, not completely) <code>of</code> command to
+<b>Open File</b>.
+</p>
+<p>
+(So this is not just about CLI/GUI together, but also about using
+Linux/Windows (again, think Cygwin) in the maximally possible same
+way).
+</p></div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>

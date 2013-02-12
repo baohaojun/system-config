@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Introducing beagrep, the beast like grep</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Introducing beagrep, the beast like grep"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2011-09-29"/>
+<meta name="author" content="Bao Haojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Introducing beagrep, the beast like grep</h1>
+
+
+<p>  
+  I just found out about the beagle project couple of months ago, I'm
+  totally excited by it. It's the missing brick that I longed for to
+  write a `grep on steroid' which I can use as a source code reading
+  tool.
+</p>
+<p>
+  Yeah, right, I was using grep to read souce code, often times
+  finding cscope insufficient (because some files are not source code,
+  and even cscope's fuzzy syntax parser can not parse them). On the
+  other hand, with large projects, such as Linux Kernel, or the even
+  larger Android system, grepping can be very slow on the whole
+  project. I once searched for <code>readlink</code> in android source tree, it
+  took me &gt;30 minutes!
+</p>
+<p>
+  With beagrep (beagle combined with grep), I can grep it for less than 2 seconds!
+</p>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Why is it possible</a></li>
+<li><a href="#sec-2">2 How is it done</a></li>
+<li><a href="#sec-3">3 Modifications to beagle</a></li>
+<li><a href="#sec-4">4 Usage</a></li>
+<li><a href="#sec-5">5 Where to find everything</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Why is it possible</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+When you grep for reading source code's sake, you often don't need
+complex regexp power: when you search <code>readlink</code>, you <code>grep readlink</code>,
+not <code>grep r.*e.*a.*d.*l.*i.*n.*k</code>, that just does not make any sense!
+</p>
+<p>
+IOW, you 99.9% times search only for <i>whole words</i> like <code>readlink</code>,
+which is a kind of simple regexp, and unlike complex regexps (such as
+<code>r.*e.*a.*d.*l.*i.*n.*k</code>), is something search engines can deal with
+perfectly.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> How is it done</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<p>
+It is really a very simple idea, when you want to grep a target
+repexp, do the following:
+</p>
+<ol>
+<li>Break the target regexp into <i>whole words</i>, for e.g., <code>grep -e some.*fun.*stuff</code> 
+     should be broken into "some fun stuff".
+
+</li>
+<li>Query beagle with the whole words, beagle answers with which
+     files in the repository contais these words. These files are the
+     possibe matching files.
+
+</li>
+<li>Grep the target regexp in those possible files (which often is
+     only a very small part of the whole repository, thus grep can
+     finish in a blink of the eyes).
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Modifications to beagle</h2>
+<div class="outline-text-2" id="text-3">
+
+
+<p>
+  Here's the details of how I changed beagle to satisfy my need
+  (warning: boring stuff ahead):
+</p>
+<ol>
+<li>Change all beagle built in filters to FilterText. This is
+       because I don't want those keywords filtered by those
+       SourceCode filters. This way, I can beagle-query `extends
+       CFunny' to see which classes are inheriting from `CFunny' in
+       Java (The default Java filter will remoke <code>extends</code> since it is
+       too common and uninteresting in java source files).
+
+</li>
+<li>Remove some restricts. For e.g., only the first 100000 tokens
+       in a file would be indexed, which is undesirable for my
+       purpose. Also, I enlarged the memory threshold by 10 times,
+       since I found it causing problems with some large xml files.
+
+</li>
+<li>Remove more restricts. Basically, I unremoved anything the
+       NoiseFilter will remove. Also, another filter will remove
+       common English words, I unremoved those as well.
+
+</li>
+<li>Added support for indexing Chinese characters (This is because
+       I'm a Chinese).
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Usage</h2>
+<div class="outline-text-2" id="text-4">
+
+
+<p>
+  Here's how I use it:
+</p>
+<ol>
+<li>Build a static index at the top level dir of the souce code:
+
+
+
+
+<pre class="example">mkbeagleidx
+</pre>
+
+</li>
+</ol>
+
+
+
+<ol>
+<li>Use beagrep in any directory in the source tree:
+
+
+
+
+<pre class="example">~/bin/beagrep -e "ENGLISH_STOP_WORDS" 
+</pre>
+
+
+<p>
+       The output is like the following:
+</p>
+
+
+
+<pre class="example">beagle query argument `ENGLISH STOP WORDS'
+/src/beagle/beagled/LuceneCommon.cs:1206: ...ENGLISH_STOP_WORDS...
+...
+...
+</pre>
+
+
+<p>   
+       Note: <code>ENGLISH_STOP_WORDS</code> is broken into 3 words before beagle
+       is queried.
+</p></li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Where to find everything</h2>
+<div class="outline-text-2" id="text-5">
+
+
+<p>
+  I have put the source code at <a href="http://github.com/baohaojun/windows-config/tree/master/">github</a>.
+</p>
+<p>
+  If you checkout the source code, you can find the beagrep and
+  its helper scripts under <a href="http://github.com/baohaojun/windows-config/tree/master/bin/">windows-config/bin</a>.
+</p>
+<p>
+  The beagle source code I modified is under <a href="http://github.com/baohaojun/windows-config/tree/master/gcode/beagle/">windows-config/gcode/beagle</a>.
+</p>
+<p>
+  The c# program which breakes <code>ENGLISH_STOP_WORDS</code> to <code>ENGLISH STOP   WORDS</code> is under <a href="http://github.com/baohaojun/windows-config/tree/master/gcode/BeagleTokenizer/">windows-config/gcode/BeagleTokenizer</a>.
+</p>
+<p>
+  The simplest way to set things up is to run
+</p><pre class="example">
+~/windows-config/bin/after-co-ln-s.sh
+</pre>
+
+<p>  and then
+</p><pre class="example">
+~/windows-config/bin/linux/after-check-out.sh
+</pre>
+
+
+<p>
+  For more details, please RTFS using beagrep!
+</p></div>
+</div>
+</div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+#+POSTID: 44
+#+DATE: [2011-09-29 Thu 15:58]
+#+TITLE: Switched to USA Pragrammer Dvorak Keyboard
+
+After reading [[http://xahlee.org/index.html][xahlee]]'s articles on keyboards, I recently made 2 big
+changes (and many other small changes because of the 2 big ones) to
+the way I type. I switched from QWERTY to UPD (USA Programmer Dvorak),
+and I switched my Control keys and Alt keys.
+
+And how does it feel? Well, at first it was like pain in the ass. But
+then it seems to get better and better.
+
+And to make it even better, I bought a Microsoft Ergonomics 4000
+keyboard for use at work!
+
+Here's some hacking around this switch.
+
+** Switching Chinese and English at the same time
+
+As a Chinese, I also need to type Chinese using an Input Method, such
+as Wubi. Now, I want myself to use the same UDP keyboard layout when
+using IME, because it would be crazy if I switch back to QWERTY when
+typing Chinese and stick to UDP when typing English...
+
+But switching to UDP for my IME is even more painful. Because I am
+using Wubi, instead of PinYin, and the secret about Wubi is you use
+your muscle to memorize the encoding, so basically I just re-learned
+Wubi. 
+
+** Some changes to Emacs
+
+Xahlee considered Progammers Dvorak no better than Simple Dvorak (he
+tried UDP and then gave up), but I chose it anyway and have no plan to
+change again. I kinda feel its not that a bigger differenc now that
+both are Dvorak...
+
+But Progammers Dvorak does give me some edge, considering the fact
+that I also switched Controls and Alts (which is also one of the
+advices by Xahlee).
+
+This made a lot trouble with C-x and M-x. In the mean time, C-x got
+separated with many of the combination keys that used to be typed with
+the same hand as itself: C-x C-s, C-x C-f, etc.
+
+Finally I found my solution (after searching Dvorak on EmacsWiki and
+some inspiration): 
+
+1. Switch C-h and C-x using keyboard-translate.
+
+2. Stop using M- prefix altogether, use C-[ (the same effect as ESC)
+   instead. Now Progammers Dvorak seem a much better choice than Simle
+   Dvorak, because C-[ is very easy to type.
+
+I tried to add more hacks, but finally stopped to reduce the
+confusion, and because the above 2 is about enough.
+
+** Using Progammers Dvorak under Windows.
+
+Not that I use Windows a lot nowadays, but I do use it once in a
+little while, and I don't want to be a fool when at it. So I need to
+find a way to use Progammers Dvorak under Windows. 
+
+Windows already provide a Simple Dvorak keyboad layout, and Programms
+Dvorak also available on the net. But they are both incompitable with
+IME. 
+
+I found on the net people has used autohotkey to provide Simple
+Dvorak, which does can be used at the same time with IME.
+
+So I just wrote my Programms Dvorak version of autohotkey script. You
+can get it [[http://github.com/baohaojun/windows-config/raw/master/doc/dvorak.ahk][here]]. This ahk script was generated from 3 bash scripts,
+which you can find [[http://github.com/baohaojun/windows-config/raw/master/doc/dvorak.ahk.in][here]], [[http://github.com/baohaojun/windows-config/raw/master/bin/gen-dvorak-programmer.sh][here]] and [[http://github.com/baohaojun/windows-config/raw/master/bin/gen-dvorak-programmer-shift3.sh][here]].
