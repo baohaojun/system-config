@@ -5941,7 +5941,10 @@ this variable specifies. The unit is second.")
           (twittering-remove-redundant-queries twittering-internal-url-queue))
     (if (null twittering-internal-url-queue)
         (setq twittering-url-request-resolving-p nil)
-      (let* ((url (car twittering-internal-url-queue))
+      (let* ((url (or (find-if       ; Get Sina Weibo emotions with low priority
+                       (lambda (i) (not (string-match (regexp-opt '("img.t.sinajs.cn")) i)))
+                       twittering-internal-url-queue)
+                      (car twittering-internal-url-queue)))
              (request (twittering-make-http-request-from-uri "GET" nil url))
              (additional-info `((uri . ,url))))
         (twittering-send-http-request
