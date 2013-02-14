@@ -1,6 +1,9 @@
 xwl's fork
 ----------
 
+* Dependency
+  * oauth2.el: Can be installed with GNU ELPA.
+  
 * Quick start:
   http://www.cnblogs.com/william9/archive/2011/04/17/william9.html
 
