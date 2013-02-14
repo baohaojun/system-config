@@ -4345,7 +4345,8 @@ following symbols;
                  (replace-regexp-in-string
                   "[.[:blank:]]+$" "" quoted-text))
 
-                (string-match "\\(转发微博\\|轉發微博\\).?" text))
+                (some (lambda (i) (string= text i))
+                      '("转发微博" "转发微博。" "轉發微博" "轉發微博。")))
             quoted-text
           (format "『%s』\n\n    %s" quoted-text text))))
      (t
@@ -5941,8 +5942,8 @@ this variable specifies. The unit is second.")
           (twittering-remove-redundant-queries twittering-internal-url-queue))
     (if (null twittering-internal-url-queue)
         (setq twittering-url-request-resolving-p nil)
-      (let* ((url (or (find-if       ; Get Sina Weibo emotions with low priority
-                       (lambda (i) (not (string-match (regexp-opt '("img.t.sinajs.cn")) i)))
+      (let* ((url (or (find-if-not   ; Get Sina Weibo emotions with low priority
+                       (lambda (i) (string-match (regexp-opt '("img.t.sinajs.cn")) i))
                        twittering-internal-url-queue)
                       (car twittering-internal-url-queue)))
              (request (twittering-make-http-request-from-uri "GET" nil url))
