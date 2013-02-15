@@ -27,4 +27,11 @@
 ** TODO add a donate button
 *** TODO get the donate urls for both chinese and english
 *** TODO write something for the donation
-** TODO get 
+** TODO publish it or google developer console
+
+* TODO Learn ios programming
+** TODO Start using the Mac system with my macbook air
+** TODO Hack the keyboard into my preferred configuration
+** TODO Intsall the Emacs GUI version onto the Mac
+** TODO Get git running on it
+** TODO Intsall other GNU software.
