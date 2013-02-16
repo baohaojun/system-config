@@ -28,7 +28,7 @@ windows-config的子目录下呢？别急，听我慢慢道来:-)
 
 #+begin_src sh
 ~/windows-config/bin/after-co-ln-s.sh
-~/windows-config/bin/linux/after-check-out.sh
+~/windows-config/bin/Linux/after-check-out.sh
 #+end_src
 
 其中第一条就是要把相应的该放在 ~$HOME~ 下的文件/目录通过symlink给放出来，
@@ -38,7 +38,7 @@ windows-config的子目录下呢？别急，听我慢慢道来:-)
 其中.deb包的安装有点意思，可以跟大家说说：
 
 - 用文件系统作数据库。我每次发现自己希望默认该装什么包，我就以该包的名
-  字在某配置目录（ ~/home/bhj/bin/linux/config/pkgs/~ ）下生成一个文件。
+  字在某配置目录（ ~/home/bhj/bin/Linux/config/pkgs/~ ）下生成一个文件。
   参见ESR的[[http://www.catb.org/esr/writings/taoup/][The Art of Unix Programming]]。
 
   我会把所有文件都作为参数传给 ~apt-get intstall~ 。

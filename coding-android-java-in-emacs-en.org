@@ -136,7 +136,7 @@ etc. will be moved to =.emacs.bak/.bashrc.bak= and maybe get lost.
 cd ~
 git clone --recursive http://github.com/baohaojun/windows-config
 ~/windows-config/bin/after-co-ln-s.sh
-~/windows-config/bin/linux/after-check-out.sh
+~/windows-config/bin/Linux/after-check-out.sh
 #+END_SRC
 
 ** Test the system

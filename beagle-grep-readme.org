@@ -113,6 +113,6 @@ repexp, do the following:
   The simplest way to set things up is to run
   : ~/windows-config/bin/after-co-ln-s.sh
   and then
-  : ~/windows-config/bin/linux/after-check-out.sh
+  : ~/windows-config/bin/Linux/after-check-out.sh
 
   For more details, please RTFS using beagrep!
