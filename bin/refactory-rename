@@ -33,7 +33,7 @@ get-files-r > $tmpf
 echo shit > $tmpf.tmp
 cat $tmpf |
 xargs -d \\n grep -P -l -i -I -e "$1" |
-xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && echo "$x"; done; echo '$tmpf.tmp true |
+xargs -d \\n bash -c 'for x in "$@"; do test -f "$x" -a ! -L "$x" && echo "$x is a match" 1>&2 && echo "$x"; done; echo '$tmpf.tmp true |
 xargs -d \\n perl -npe '
 BEGIN{
     $from = "'"$arg1"'";
@@ -41,9 +41,9 @@ BEGIN{
 }
 
 $rep_save{$from} = $to;
-$rep_save{lc $from} = lc $to;
-$rep_save{uc $from} = uc $to;
-$rep_save{ucfirst lc $from} = ucfirst lc $to;
+$rep_save{lc $from} = lc $to unless (lc $from eq $from);
+$rep_save{uc $from} = uc $to unless (uc $from eq $from);
+$rep_save{ucfirst lc $from} = ucfirst lc $to unless (ucfirst $from eq $from);
 
 while (m#('"$arg1"')#ig) {
     if (defined $rep_save{$1}) {

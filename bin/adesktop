@@ -1,7 +1,7 @@
 #! /bin/bash
 (
-mkdir -p ~/bin/linux/ext/android-screen
-cd ~/bin/linux/ext/android-screen
+mkdir -p ~/bin/Linux/ext/android-screen
+cd ~/bin/Linux/ext/android-screen
 for x in androidscreencast.jar androidscreencast.jnlp ddmlib.jar; do
     echo http://androidscreencast.googlecode.com/svn/trunk/AndroidScreencast/dist/$x
 done |xargs wget -N

@@ -13,7 +13,7 @@ sudo bash -c '(echo amd64; echo i386) > /var/lib/dpkg/arch'
 sudo apt-get update
 sudo apt-get dist-upgrade -y
 
-~/bin/linux/config/install-pkgs
+~/bin/Linux/config/install-pkgs
 sudo update-command-not-found
 sudo apt-get build-dep -y sawfish librep rep-gtk ibus-table
 

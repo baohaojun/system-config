@@ -46,4 +46,4 @@ while (<>) {
     }
     print "###terminator###" . "\n";
 }
-# java -cp ~/bin/linux/ext/`uname -m`/gtagsAntlrJavaParser.jar:$CLASSPATH gtagsAntlrJavaParser
+# java -cp ~/bin/Linux/ext/`uname -m`/gtagsAntlrJavaParser.jar:$CLASSPATH gtagsAntlrJavaParser

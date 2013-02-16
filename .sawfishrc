@@ -60,7 +60,7 @@
    ("Super-e" "emacs" "emacs.bhj")
    ("Super-r" "grun" "grun")
    ("Super-t" "konsole" "konsole -e ~/bin/myscr")
-   ("Super-C-d" (lambda (w) (string-match "my-dict" (window-name w) 0 t)) "gnome-terminal -t my-dict -e ~/bin/linux/my-dict")
+   ("Super-C-d" (lambda (w) (string-match "my-dict" (window-name w) 0 t)) "gnome-terminal -t my-dict -e ~/bin/Linux/my-dict")
    ("Meta-Scroll_Lock" "hello world no such thing" "lock-screen")
    ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")
    ("Super-x" "xcalc" "xcalc")

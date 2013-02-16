@@ -1,4 +1,4 @@
 #!/bin/bash
 
 unset TZ; 
-wine ~/bin/linux/ext/QQ/Bin/QQ.exe >/dev/null 2>&1 &
+wine ~/bin/Linux/ext/QQ/Bin/QQ.exe >/dev/null 2>&1 &

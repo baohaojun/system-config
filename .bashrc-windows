@@ -14,7 +14,7 @@ function SetPath()
         /cygdrive/c/PROGRA~1/Java/JDK16~1.0_1/bin #"/cygdrive/c/Program Files/Java/jdk1.6.0_13/bin/"
         ~/bin
         ~/bin/windows
-        ~/bin/linux
+        ~/bin/Linux
         /usr/local/bin
 	/usr/local/sbin
         /usr/X11R6/bin

@@ -1,5 +1,5 @@
 #!/bin/bash
-# http://github.com/baohaojun/windows-config/raw/master/bin/linux/
+# http://github.com/baohaojun/windows-config/raw/master/bin/Linux/
 . ~/.bashrc-public-bash
 
 set -e

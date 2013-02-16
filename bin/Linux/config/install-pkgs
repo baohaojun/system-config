@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-packages_dir=${PACKAGES_DIR:-~/bin/linux/config/pkgs/}
+packages_dir=${PACKAGES_DIR:-~/bin/Linux/config/pkgs/}
 packages=$(find "$packages_dir" -maxdepth 1 -type f|perl -npe 's,.*/,,')
 if test -d "$packages_dir/$USER"; then
     packages="$packages $(find "$packages_dir/$USER" -maxdepth 1 -type f|perl -npe 's,.*/,,')"
@@ -14,4 +14,4 @@ while ! sudo apt-get install "$@" -y $packages; do
     echo installing: $packages
 done
 
-~/bin/linux/config/install-missing-pkgs "$@"
+~/bin/Linux/config/install-missing-pkgs "$@"

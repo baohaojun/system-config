@@ -2511,7 +2511,7 @@ we are not interested in those lines that do."
 	   (buffer-substring-no-properties
 	    (point)
 	    (1- (line-end-position))))
-	  (doc-prefix "file:///home/bhj/bin/linux/ext/android-sdk-linux_86/docs/reference")
+	  (doc-prefix "file:///home/bhj/bin/Linux/ext/android-sdk-linux_86/docs/reference")
 	  (html-name (replace-regexp-in-string 
 		      ".java$" ".html" 
 		      (replace-regexp-in-string

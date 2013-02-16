@@ -119,7 +119,7 @@ cd ~
 git clone git://github.com/baohaojun/windows-config.git
 ~/windows-config/bin/after-co-ln-s.sh
 . ~/.bash_profile
-~/bin/linux/after-check-out.sh
+~/bin/Linux/after-check-out.sh
 
 *** 使用方法
 

@@ -3,7 +3,7 @@ sudo apt-get install aptitude
 export LANG=C
 export LC_ALL=C
 
-packages_dir=${PACKAGES_DIR:-~/bin/linux/config/pkgs/}
+packages_dir=${PACKAGES_DIR:-~/bin/Linux/config/pkgs/}
 packages=$(find "$packages_dir" -type f|perl -npe 's,.*/,,')
 err_packages=""
 

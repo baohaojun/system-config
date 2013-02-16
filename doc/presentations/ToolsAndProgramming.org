@@ -188,7 +188,7 @@ cd ~
 git clone --recursive \
     git://github.com/baohaojun/windows-config.git
 ~/windows-config/bin/after-co-ln-s.sh
-~/windows-config/bin/linux/after-check-out.sh
+~/windows-config/bin/Linux/after-check-out.sh
 #+end_example
 
 or, to save network bandwidth:
@@ -200,5 +200,5 @@ or, to save network bandwidth:
 cd ~
 tar zxfv windows-config.tgz
 ~/windows-config/bin/after-co-ln-s.sh
-~/windows-config/bin/linux/after-check-out.sh
+~/windows-config/bin/Linux/after-check-out.sh
 #+end_example

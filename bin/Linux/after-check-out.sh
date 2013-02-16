@@ -16,11 +16,11 @@ sudo usermod -a -G fuse $USER
 
 sudo perl -npe 's/ main$/ main contrib non-free/' -i /etc/apt/sources.list
 
-. ~/bin/linux/download-external.sh
+. ~/bin/Linux/download-external.sh
 download_external >/dev/null 2>&1 &
 
 set -e
-export PATH=~/bin/linux/config:$PATH
+export PATH=~/bin/Linux/config:$PATH
 
 #update the system
 upd_system
