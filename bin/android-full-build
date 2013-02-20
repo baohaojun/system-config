@@ -124,7 +124,7 @@ test -e buildspec.mk || { echo no buildspec.mk, will exit now; exit; }
                 (cd boot/uboot; git add .; git clean -xfd) || true
 
                 if test $# != 0; then
-                    make -j$jobs -l $jobs -k $@;
+                    make -j$jobs -l $jobs -k $*
                 elif test -z \"$NO_PARALLEL_BUILD\" -a -z \"\$NO_PARALLEL_BUILD\"; then
                     make -j$jobs -l $jobs -k droid telephony uboot obm \$AFBV
                 else
