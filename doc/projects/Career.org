@@ -2,3 +2,46 @@
   :PROPERTIES:
   :ID:       f397bae3-3cba-4e75-9acf-4a319f9ac93a
   :END:
+* TODO understand uboot source code
+
+首先，用 [[http://baohaojun.github.com/remove-unneeded-files-for-code-reading.html][我这篇blog]] 里写的办法把不相干的board文件都删掉。
+
+uboot的初始化是从这个文件开始的： =~/src/android/boot/uboot/arch/arm/cpu/armv7/start.S= ，
+
+很快就会转到 =board_init_f= ，有个初始化函数数组，里面的每个函数会挨个被调用：
+
+#+BEGIN_SRC c
+init_fnc_t *init_sequence[] = {
+#if defined(CONFIG_ARCH_CPU_INIT)
+	arch_cpu_init,		/* basic arch cpu dependent setup */
+#endif
+#if defined(CONFIG_BOARD_EARLY_INIT_F)
+	board_early_init_f,
+#endif
+	timer_init,		/* initialize timer */
+#ifdef CONFIG_FSL_ESDHC
+	get_clocks,
+#endif
+	env_init,		/* initialize environment */
+	init_baudrate,		/* initialze baudrate settings */
+	serial_init,		/* serial communications setup */
+	console_init_f,		/* stage 1 init of console */
+	display_banner,		/* say that we are here */
+#if defined(CONFIG_DISPLAY_CPUINFO)
+	print_cpuinfo,		/* display cpu info (and speed) */
+#endif
+#if defined(CONFIG_DISPLAY_BOARDINFO)
+	checkboard,		/* display board info */
+#endif
+#if defined(CONFIG_HARD_I2C) || defined(CONFIG_SOFT_I2C)
+	init_func_i2c,
+#endif
+	dram_init,		/* configure available RAM banks */
+	NULL,
+}
+#+END_SRC
+
+这个 =board_init_f= 函数之后会跳转回来start.S里的 =relocate_code= 汇编
+函数，而最后会调用 =board_init_r= 函数。
+* TODO understand how emmc works (both in uboot and in kernel)
+* TODO Find out how to disable the diag log and other logs

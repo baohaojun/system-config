@@ -32,6 +32,20 @@
 * TODO Learn ios programming
 ** TODO Start using the Mac system with my macbook air
 ** TODO Hack the keyboard into my preferred configuration
-** TODO Intsall the Emacs GUI version onto the Mac
-** TODO Get git running on it
-** TODO Intsall other GNU software.
+** DONE Intsall the Emacs GUI version onto the Mac
+   CLOSED: [2013-02-21 Thu 15:45]
+** DONE Get git running on it
+   CLOSED: [2013-02-21 Thu 15:45]
+** DONE Intsall other GNU software.
+   CLOSED: [2013-02-21 Thu 15:45]
+*** DONE Must install Xcode first to install most macports packages.
+    CLOSED: [2013-02-21 Thu 15:47]
+
+Emacs is an exception, it does not require Xcode to be installed.
+
+*** DONE Found the firefox extension DownloadThemAll
+    CLOSED: [2013-02-21 Thu 15:48]
+It can be used to download Xcode using multithread download.
+
+
+* TODO Write a simple doc on SDIM

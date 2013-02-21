@@ -14,8 +14,8 @@ android create project -n ${1:-Superuser} -t 8 -k com.bhj.boot -p hello_project 
 cp hello_project/*.properties . 
 cp hello_project/build.xml .
 cat <<EOF > ant.properties
-key.store=/home/bhj/my-release-key.keystore
-key.alias=bhjkeystore
+key.store=/home/bhj/.keystore/bhj.keystore
+key.alias=bhj.key.alias
 EOF
 rm hello_project/ -rf
 mm-ant release
