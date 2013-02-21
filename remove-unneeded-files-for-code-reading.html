@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="在阅读源代码时删掉所有非必要文件的方法"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-02-02 23:17:21 CST"/>
+<meta name="generated" content="2013-02-21 11:11:46 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -179,7 +179,30 @@ $ grep ' 684]' ~/1.txt|head -n 5
 </p>
 <p>
 把这个脚本修正之后，就可以达到我的目的了，你体会一下:-)
-</p></div>
+</p>
+<p>
+<b>后记</b> 文件的atime有时候不知为何不会发生变化。我曾经看见一个文件，不管
+我怎么cat它，它的atime一直不变。而它所在的文件系统变没有使用noatime选项
+来mount。修正的办法就是把它touch一下，stat可以发现其a/m/c三个时间戳都是
+一样的，再cat一下，用stat就会发现其atime发生了变化。所以前面指出的第一
+步是必须的。有人能告诉我为什么会这样吗？
+</p>
+<p>
+<b>后记2</b> 把所有atime没发生变化（没变得比标记文件mark新）的命令我现在想到
+最简洁的是这样的：
+</p>
+
+
+
+<pre class="example">find . -type f \( -anewer mark -prune -o -print \)
+</pre>
+
+
+<p>
+当然，如果你想把这些文件删掉的话需要注意把.git底下的文件给过滤出去： <code>|grep -v \\.git</code> 。
+</p>
+
+</div>
 
 <div id="postamble">
     <hr/>
