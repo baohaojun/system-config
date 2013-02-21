@@ -82,8 +82,8 @@ $ grep ' 684]' ~/1.txt|head -n 5
 一样的，再cat一下，用stat就会发现其atime发生了变化。所以前面指出的第一
 步是必须的。有人能告诉我为什么会这样吗？
 
-*后记2* 把所有atime没发生变化（没变得比标记文件mark新）的命令我现在想到
-最简洁的是这样的：
+*后记2* 把所有atime没发生变化（没变得比标记文件mark新）的文件列出来的命
+令我现在想到最简洁的是这样的：
 
 #+BEGIN_EXAMPLE
 find . -type f \( -anewer mark -prune -o -print \)
