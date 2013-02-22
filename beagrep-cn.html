@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="beagrep，两秒钟grep两个G的代码"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-30 10:55:03 CST"/>
+<meta name="generated" content="2013-02-22 17:55:48 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -552,7 +552,7 @@ beagrep是一个非常实用主义的软件，它之所以有用，是基于以�
 
 
 <pre class="example">$beagrep-files 'JsonToValue hello world '
-Beagrep index found at /home/bhj/tmp/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
+Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
 /home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc
 /dev/null
 </pre>
@@ -567,7 +567,7 @@ Beagrep index found at /home/bhj/tmp/for-code-reading//home/bhj/src/gingerbread-
 <pre class="example">beagrep -e "JsonToValue(\"\\\\\"hello world\\\\\"\","
 pat is: 'JsonToValue("\\"hello world\\"",'.
 beagrep query argument `JsonToValue hello world '
-Beagrep index found at /home/bhj/tmp/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
+Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
 /home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc:168:  root.reset(JSONReader().JsonToValue("\"hello world\"", false, false));
 Unmatched ( in regex; marked by &lt;-- HERE in m/JsonToValue( &lt;-- HERE ""hello world"",/ at /home/bhj/bin/beagrep line 98.
 </pre>

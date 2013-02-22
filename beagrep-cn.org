@@ -222,7 +222,7 @@ beagrep是一个非常实用主义的软件，它之所以有用，是基于以�
 
 #+begin_example
 $beagrep-files 'JsonToValue hello world '
-Beagrep index found at /home/bhj/tmp/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
+Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
 /home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc
 /dev/null
 #+end_example
@@ -233,7 +233,7 @@ Beagrep index found at /home/bhj/tmp/for-code-reading//home/bhj/src/gingerbread-
 beagrep -e "JsonToValue(\"\\\\\"hello world\\\\\"\","
 pat is: 'JsonToValue("\\"hello world\\"",'.
 beagrep query argument `JsonToValue hello world '
-Beagrep index found at /home/bhj/tmp/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
+Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
 /home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc:168:  root.reset(JSONReader().JsonToValue("\"hello world\"", false, false));
 Unmatched ( in regex; marked by <-- HERE in m/JsonToValue( <-- HERE ""hello world"",/ at /home/bhj/bin/beagrep line 98.
 #+end_example

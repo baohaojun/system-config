@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="beagrep, grep 2G source code in 2 seconds"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-24T22:23+0800"/>
+<meta name="generated" content="2013-02-22 17:55:51 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -43,30 +43,6 @@
         }
     </script>
 <script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012  Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
 <!--/*--><![CDATA[/*><!--*/
  function CodeHighlightOn(elem, id)
  {
@@ -679,7 +655,7 @@ Only 1 file contained all 3 words:
 
 
 <pre class="example">$beagrep-files 'JsonToValue hello world '
-Beagrep index found at /home/bhj/tmp/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
+Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
 /home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc
 /dev/null
 </pre>
@@ -694,7 +670,7 @@ So, you can imagine how quick it is to run <code>grep</code> on the set of files
 <pre class="example">beagrep -e "JsonToValue(\"\\\\\"hello world\\\\\"\","
 pat is: 'JsonToValue("\\"hello world\\"",'.
 beagrep query argument `JsonToValue hello world '
-Beagrep index found at /home/bhj/tmp/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
+Beagrep index found at /home/bhj/.cache/for-code-reading//home/bhj/src/gingerbread-tegra/.beagrep
 /home/bhj/src/gingerbread-tegra/external/chromium/base/json/json_reader_unittest.cc:168:  root.reset(JSONReader().JsonToValue("\"hello world\"", false, false));
 Unmatched ( in regex; marked by &lt;-- HERE in m/JsonToValue( &lt;-- HERE ""hello world"",/ at /home/bhj/bin/beagrep line 98.
 </pre>
