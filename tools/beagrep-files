@@ -1,5 +1,5 @@
 #!/bin/bash
-start_dir=~/tmp/for-code-reading/"$(readlink -f "$PWD")"
+start_dir=~/.cache/for-code-reading/"$(readlink -f "$PWD")"
 # echo Starting at $start_dir 1>&2
 while test ! -d "$start_dir"/.beagrep -a "$start_dir" != /
 do

@@ -11,6 +11,7 @@ my $pathdeny = '^$';
 chomp(my $pwd =qx/readlink -f `pwd`/);
 my $pwd_pat='no such componet';
 my $list_beagrep;
+my $short_format = 0;
 
 my $ignore_case;
 my $find_file_only = 0;
@@ -41,6 +42,7 @@ GetOptions(
     "i!" => \$ignore_case,
     "f!" => \$find_file_only,
     "l!" => \$list_beagrep,
+    "s!" => \$short_format,
     );
 
 if ($ignore_case) {
@@ -92,6 +94,12 @@ debug "beagrep query argument `[01;31m"
 
 my $beagrep_files = qx/beagrep-files $pat $additional_tokens/;
 my @beagrep_files = split(/\n/, $beagrep_files);
+
+if ($short_format) {
+    my $start = length($pwd) + 1;
+    map {$_ = substr($_, $start)} @beagrep_files;
+    printf "Using short format, Entering directory \`%s'\n", $pwd;
+}
 
 if ($list_beagrep) {
   for (@beagrep_files) {

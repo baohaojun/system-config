@@ -5,7 +5,7 @@ export TMPDIR=~/tmp
 mkdir -p $TMPDIR
 
 cd -P . 
-outDir=~/tmp/for-code-reading/"`pwd`"
+outDir=~/.cache/for-code-reading/"`pwd`"
 srcDir=`pwd`
 relativeSrcDir=.
 while test "$outDir" != "" -a ! -d "$outDir"/.beagrep; do
@@ -16,9 +16,9 @@ if test "$outDir" = "`readlink -f ~`"; then
     outDir=""
 fi
 
-if test "$outDir" != "" -a "$outDir" != ~/tmp/for-code-reading/"`pwd`";
+if test "$outDir" != "" -a "$outDir" != ~/.cache/for-code-reading/"`pwd`";
 then
-    higherSrcDir=${outDir#~/tmp/for-code-reading/}
+    higherSrcDir=${outDir#~/.cache/for-code-reading/}
 
     if tty >/dev/null && test "$IN_EMACS" != true
     then
@@ -28,14 +28,14 @@ then
     fi
 
     if test "$ans" = n -o "$ans" = N; then
-        outDir=~/tmp/for-code-reading/"`pwd`"
+        outDir=~/.cache/for-code-reading/"`pwd`"
     else
         DoUpDir=true
         relativeSrcDir=${srcDir/#$higherSrcDir/.}
         cd $higherSrcDir
     fi
 else 
-    outDir=~/tmp/for-code-reading/"`pwd`"
+    outDir=~/.cache/for-code-reading/"`pwd`"
 fi
 
 function mkcscope_files() {
