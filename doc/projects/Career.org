@@ -43,5 +43,37 @@ init_fnc_t *init_sequence[] = {
 
 这个 =board_init_f= 函数之后会跳转回来start.S里的 =relocate_code= 汇编
 函数，而最后会调用 =board_init_r= 函数。
+** TODO use memory test in uboot
 * TODO understand how emmc works (both in uboot and in kernel)
 * TODO Find out how to disable the diag log and other logs
+
+* TODO Weekly Report
+  SCHEDULED: <2013-03-01 Fri ++1w>
+  - CLOSING NOTE [2013-02-22 Fri 15:41] \\
+    * Mon
+    
+    Annual leave on Monday
+    
+    * Tue
+    
+    Work on uboot, obm and product configuration for 986/1088W, compiled
+    OK. Can not verify because the phone always enter SWD mode.
+    
+    * Wed
+    
+    Continue to work on uboot, obm and product configuration for
+    986/1088W. Informed by Liao Cheng that the phone will boot normally
+    after cooling for a while with battery removed. Verified my work is OK.
+    
+    * Thu
+    
+    Work on uboot source code. Wrote an knowledge sharing article about
+    how to remove unnecessary files for code reading's purpose.
+    
+    * Fri
+    
+    Continue to study uboot source code. Try ways to do memory test on Uboot.
+  :PROPERTIES:
+  :LAST_REPEAT: [2013-02-22 Fri 15:41]
+  :END:
+
