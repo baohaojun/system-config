@@ -8,7 +8,7 @@ my $pat = '';
 my $pathpat = '.';
 my $additional_tokens = '';
 my $pathdeny = '^$';
-chomp(my $pwd =qx/pwd/);
+chomp(my $pwd =qx/readlink -f `pwd`/);
 my $pwd_pat='no such componet';
 my $list_beagrep;
 
