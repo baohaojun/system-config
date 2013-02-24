@@ -1,1 +1,6 @@
-googleemacs.sh
+#!/bin/bash
+
+host=$(basename $0 | perl -npe 's/.*-//')
+url='http://www.'$host'.com/search?q='"`echo \"$@\"|perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf(\"%%%02x\", ord($1))#seg; s# #+#g'`" 
+echo "$url"|tee /dev/tty|putclip
+firefox "$url"&
