@@ -1,5 +1,7 @@
 #+title: My Page on Github
 
+(For Chinese version of this page, click [[file:index-cn.org][这里]]).
+
 * About Me
 
 I am a software engineer. I write some open source code, mainly to
