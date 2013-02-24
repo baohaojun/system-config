@@ -1,0 +1,60 @@
+#+title: 我在Github上的个人博客
+
+* 关于我
+
+我是一个软件工程师。我写了一些自由软件代码，一开始只是想解决自己的一些
+问题，但慢慢也希望这些软件对别人也有点用处。
+
+我使用的键盘布局是DVP -- Programmer Dvorak，英文、中文均使用此键盘格局。
+在Emacs/Linux/Windows下使用的中文输入法都是我自己开发的SDIM输入法。这样
+你应该了解我有多特立独行了吧？
+
+我在水木的账号是flonk，平时常逛 [[http://www.newsmth.net/bbsbfind.php?q%3D1&board%3DEmacs&title%3D&title2%3D&title3%3D&userid%3Dflonk&dt%3D2222][Emacs]] 版。另一个用新闻组发表贴子的话用
+的账号是 [[http://www.newsmth.net/bbsbfind.php?q=1&board=Emacs&title=&title2=&title3=&userid=baohaojun.&dt=2222][baohaojun.]] 。
+
+* 我的自由软件项目
+
+- [[file:beagrep-cn.org][beagrep]]
+  
+  Beagrep在两G代码中grep只需不到一秒钟。它源自[[http://en.wikipedia.org/wiki/Beagle_(software)][beagle]]，一个桌面搜索引擎，
+  我对其进行了修改，以便能精确地进行搜索，从而可以用它来大大加快grep的
+  速度，这对阅读源代码非常有用，特别是如Android那样巨大的开源项目的源代
+  码。
+
+  Beagrep同时支持Linux版和Windows版。
+
+- [[file:org-jira.org][org-jira]]
+
+  用Emacs的org-mode来管理Jira，一个很受欢迎的bug tracking/task
+  management系统。
+
+  
+
+- SDIM
+
+  SDIM，中文名字影舞笔，是我开发的五笔输入法，目前全世界只有我自己一个
+  用户（就像我写的大部分其他软件一样）。它可以在3个平台下运行，
+  Linux/Windows/Emacs，这样我在3个平台下的键盘输入习惯可以最大程度的保
+  持一致： =C-g= 表示取消中文输入， =C-\= 表示输入法切换。
+
+
+- rename-refactory
+
+  一个代码重构工具，用bash脚本实现，我用它来实现我认为最重要的一种重构：
+  重命名。
+
+  * 与git相结合
+
+  * 处理文件内容中的重命名、文件名字的重命名、（递归）目录名字的重命名，
+    symlink目标路径的重命名。
+
+- [[file:coding-android-java-in-emacs.org][aJoe]]
+
+  在Emacs下进行Android Java编程。
+
+- 其他
+  
+  还有很多其他的小软件、小脚本。我把它们都放到一个github项目里进行管理。
+  详情见 [[file:my-config-cn.org][我的配置环境]] 。
+
+

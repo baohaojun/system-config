@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>我在Github上的个人博客</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="我在Github上的个人博客"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-02-25 00:29:34 CST"/>
+<meta name="author" content="baohaojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">我在Github上的个人博客</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 关于我</a></li>
+<li><a href="#sec-2">2 我的自由软件项目</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 关于我</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+我是一个软件工程师。我写了一些自由软件代码，一开始只是想解决自己的一些
+问题，但慢慢也希望这些软件对别人也有点用处。
+</p>
+<p>
+我使用的键盘布局是DVP &ndash; Programmer Dvorak，英文、中文均使用此键盘格局。
+在Emacs/Linux/Windows下使用的中文输入法都是我自己开发的SDIM输入法。这样
+你应该了解我有多特立独行了吧？
+</p>
+<p>
+我在水木的账号是flonk，平时常逛 <a href="http://www.newsmth.net/bbsbfind.php?q=1&amp;board=Emacs&amp;title=&amp;title2=&amp;title3=&amp;userid=flonk&amp;dt=2222">Emacs</a> 版。另一个用新闻组发表贴子的话用
+的账号是 <a href="http://www.newsmth.net/bbsbfind.php?q=1&amp;board=Emacs&amp;title=&amp;title2=&amp;title3=&amp;userid=baohaojun.&amp;dt=2222">baohaojun.</a> 。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 我的自由软件项目</h2>
+<div class="outline-text-2" id="text-2">
+
+
+<ul>
+<li><a href="beagrep-cn.html">beagrep</a>
+
+<p>  
+  Beagrep在两G代码中grep只需不到一秒钟。它源自<a href="http://en.wikipedia.org/wiki/Beagle_(software)">beagle</a>，一个桌面搜索引擎，
+  我对其进行了修改，以便能精确地进行搜索，从而可以用它来大大加快grep的
+  速度，这对阅读源代码非常有用，特别是如Android那样巨大的开源项目的源代
+  码。
+</p>
+<p>
+  Beagrep同时支持Linux版和Windows版。
+</p>
+</li>
+<li><a href="org-jira.html">org-jira</a>
+
+<p>
+  用Emacs的org-mode来管理Jira，一个很受欢迎的bug tracking/task
+  management系统。
+</p></li>
+</ul>
+
+
+
+
+<ul>
+<li>SDIM
+
+<p>
+  SDIM，中文名字影舞笔，是我开发的五笔输入法，目前全世界只有我自己一个
+  用户（就像我写的大部分其他软件一样）。它可以在3个平台下运行，
+  Linux/Windows/Emacs，这样我在3个平台下的键盘输入习惯可以最大程度的保
+  持一致： <code>C-g</code> 表示取消中文输入， <code>C-\</code> 表示输入法切换。
+</p></li>
+</ul>
+
+
+
+<ul>
+<li>rename-refactory
+
+<p>
+  一个代码重构工具，用bash脚本实现，我用它来实现我认为最重要的一种重构：
+  重命名。
+</p>
+<ul>
+<li>与git相结合
+
+</li>
+<li>处理文件内容中的重命名、文件名字的重命名、（递归）目录名字的重命名，
+    symlink目标路径的重命名。
+
+</li>
+</ul>
+
+</li>
+<li><a href="coding-android-java-in-emacs.html">aJoe</a>
+
+<p>
+  在Emacs下进行Android Java编程。
+</p>
+</li>
+<li>其他
+
+<p>  
+  还有很多其他的小软件、小脚本。我把它们都放到一个github项目里进行管理。
+  详情见 <a href="my-config-cn.html">我的配置环境</a> 。
+</p></li>
+</ul>
+
+
+
+</div>
+</div>
+</div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>
