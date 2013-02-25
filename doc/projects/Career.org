@@ -77,3 +77,8 @@ init_fnc_t *init_sequence[] = {
   :LAST_REPEAT: [2013-02-22 Fri 15:41]
   :END:
 
+* TODO Marvell Specs
+** TODO Location of all specs
+
+- smb://10.21.130.223/Public/Products/988/Extranet/988
+
