@@ -2,6 +2,11 @@
   :PROPERTIES:
   :ID:       f397bae3-3cba-4e75-9acf-4a319f9ac93a
   :END:
+
+* TODO do Merge for beta2 rc3
+
+* TODO Study the mars settings code
+
 * TODO understand uboot source code
 
 首先，用 [[http://baohaojun.github.com/remove-unneeded-files-for-code-reading.html][我这篇blog]] 里写的办法把不相干的board文件都删掉。
@@ -45,6 +50,9 @@ init_fnc_t *init_sequence[] = {
 函数，而最后会调用 =board_init_r= 函数。
 ** TODO use memory test in uboot
 * TODO understand how emmc works (both in uboot and in kernel)
+* TODO understand how lcd works (both in uboot and in kernel)
+** TODO uboot lcd
+* TODO understand clock both in uboot and in kernel
 * TODO Find out how to disable the diag log and other logs
 
 * TODO Weekly Report
