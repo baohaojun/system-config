@@ -3,8 +3,6 @@
   :ID:       f397bae3-3cba-4e75-9acf-4a319f9ac93a
   :END:
 
-* TODO do Merge for beta2 rc3
-
 * TODO Study the mars settings code
 
 * TODO understand uboot source code
@@ -87,6 +85,15 @@ init_fnc_t *init_sequence[] = {
 
 * TODO Marvell Specs
 ** TODO Location of all specs
+*** TODO How to find the register number for any controllers
 
 - smb://10.21.130.223/Public/Products/988/Extranet/988
 
+* TODO Merge for beta2 rc3
+** DONE Merge uboot for 986/988/1088
+   CLOSED: [2013-02-28 Thu 11:21]
+   - CLOSING NOTE [2013-02-28 Thu 11:21] \\
+     * Finished all 3 cpu's uboot merge,
+     * Product build script update, 
+     * Test build,
+     * Verification of the test build,

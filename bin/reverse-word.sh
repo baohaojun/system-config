@@ -7,8 +7,8 @@ while (not $done) {
     map {
         if (length $_) {
             $done = 0;
-            print substr($_, 0, 1);
-            $_ = substr($_, 1);
+            print substr($_, -1);
+            $_ = substr($_, 0, -1);
         }
     } @ARGV;
 }' "$@" )
