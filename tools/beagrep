@@ -9,7 +9,7 @@ my $pathpat = '.';
 my $additional_tokens = '';
 my $pathdeny = '^$';
 chomp(my $pwd =qx/readlink -f `pwd`/);
-my $pwd_pat='no such componet';
+my $pwd_opt;
 my $list_beagrep;
 my $short_format = 0;
 
@@ -38,7 +38,7 @@ GetOptions(
     "perl=s" => \$grep_use_perl_regexp,
     "grep=s" => \$grep_add_opts,
     "v=s" => \$pathdeny,
-    "d=s" => \$pwd_pat,
+    "d=s" => \$pwd_opt,
     "i!" => \$ignore_case,
     "f!" => \$find_file_only,
     "l!" => \$list_beagrep,
@@ -59,7 +59,9 @@ if ($grep_use_perl_regexp) {
 
 
 die 'no regexp specified' unless $pat;
-$pwd =~ s!($pwd_pat.*?)/.*!$1!; 
+if ($pwd_opt) {
+    $pwd = $pwd_opt;
+}
 chdir $pwd or die "$pwd: $!";
 
 my $pat_implicit_path = $pat;
