@@ -22,7 +22,7 @@ type: boolean
 -
 name: XPrefix
 case: Option
-keyx: C-x
+keyx: C-h
 body: 
 desc: is the prefix key
 type: 
@@ -85,7 +85,7 @@ type:
 -
 name: AllTabs
 case: Common
-keyx: C-xb
+keyx: C-hb
 body: this._sfun.allTabs();
 desc: tabs overview with filter
 type: 
@@ -407,35 +407,35 @@ type:
 -
 name: JumpURLBar
 case: Common
-keyx: C-xl
+keyx: C-hl
 body: var urlbar = document.getElementById('urlbar'); if (urlbar) { urlbar.select(); urlbar.focus(); }
 desc: moves to the URL bar
 type: 
 -
 name: JumpSearchBar
 case: Common
-keyx: C-xg
+keyx: C-hg
 body: var searchbar = document.getElementById('searchbar'); if (searchbar) { searchbar.select(); searchbar.focus(); }
 desc: moves to the search bar
 type: 
 -
 name: FocusBody
 case: Common
-keyx: C-x.
+keyx: C-h.
 body: this._sfun.focusBody();
 desc: moves to the body
 type: 
 -
 name: JumpInput
 case: Common
-keyx: C-xt
+keyx: C-ht
 body: this._sfun.moveFocus(e, 0);
 desc: moves to the first input
 type: 
 -
 name: JumpSubmit
 case: Common
-keyx: C-xs
+keyx: C-hs
 body: this._sfun.moveButton(e, 0);
 desc: moves to the first button
 type: 
@@ -456,14 +456,14 @@ type:
 -
 name: CloseTab
 case: Common
-keyx: C-xk
+keyx: C-hk
 body: if (typeof(BrowserCloseTabOrWindow) == 'function') { BrowserCloseTabOrWindow(); }
 desc: closes the tab
 type: 
 -
 name: OpenFile
 case: Common
-keyx: C-xC-f
+keyx: C-hC-f
 body: if (typeof(BrowserOpenFileWindow) == 'function') { BrowserOpenFileWindow(); }
 desc: opens a file
 type: 
@@ -526,21 +526,21 @@ type:
 -
 name: WebSearch
 case: Common
-keyx: C-xC-e
+keyx: C-hC-e
 body: this._sfun.webSearch(e);
 desc: web search
 type: 
 -
 name: MapSearch
 case: Common
-keyx: C-xC-a
+keyx: C-hC-a
 body: this._sfun.mapSearch(e);
 desc: map search
 type: 
 -
 name: SavePage
 case: Common
-keyx: C-xC-s
+keyx: C-hC-s
 body: this._sfun.pageSave(e);
 desc: save page
 type: 
@@ -561,7 +561,7 @@ type:
 -
 name: SelectAll
 case: Common
-keyx: C-xh
+keyx: C-hh
 body: goDoCommand('cmd_selectAll')
 desc: selects all
 type: 

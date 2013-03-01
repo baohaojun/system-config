@@ -75,8 +75,8 @@ if test $# -gt 1 -a "$1" = sync; then
 
    if set-is-subset "$(echo "${options[@]}")" -d -l -n && test $# = 1; then
        echo "Doing the hacked version of repo sync" 1>&2
-       if set-is-subset -l "${options[@]}"; then
-           true # -l, --local-only      only update working tree, don't fetch
+       if set-is-subset -d "${options[@]}"; then
+           true # -d, --detach          detach projects back to manifest revision
        else
            git fetch $(repo-remote)
        fi

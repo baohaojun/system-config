@@ -49,4 +49,3 @@ It can be used to download Xcode using multithread download.
 
 
 * TODO Write a simple doc on SDIM
-* TODO Refine my github page as a true blog, which supports commenting.
