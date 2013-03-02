@@ -46,20 +46,6 @@ fi
 ) 9>~/.logs/$(basename $0).lock-fix-net  2>&1 &
 
 (
-    flock -n 9 || { echo 'lock failed for r66 at '$(date); exit 0; }
-    if test -e ~/.at-home -a "$(ip-or-name r66)" != r66; then
-        sudo ifconfig eth0:1 $(ip-or-name r66)
-    fi
-    while true; do
-        ssh -2qN -D 48080 $(if ifconfig|grep -q $(ip-or-name r66); then true; else echo -R 18080:localhost:18080; fi) r66
-        x=30
-        y=$(random 30)
-        ((x = x + y))
-        sleep $x
-    done
-) 9>~/.logs/$(basename $0).lock-r66  2>&1 &
-
-(
     flock -n 9 || { echo 'lock failed for vpn at '$(date); exit 0; }
     if test -e ~/.at-home -o -e ~/.no-vpn; then
         exit 0
