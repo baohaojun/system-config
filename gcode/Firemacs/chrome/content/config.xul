@@ -58,7 +58,7 @@
             <description value="use Meta as 'M-'" />
           </row>
           <row>
-            <textbox id="XPrefix" value="C-x" />
+            <textbox id="XPrefix" value="C-h" />
             <description value="is the prefix key" />
           </row>
           <row>
@@ -308,7 +308,7 @@
         </columns>
         <rows>
           <row>
-            <textbox id="AllTabs" value="C-xb" />
+            <textbox id="AllTabs" value="C-hb" />
             <description value="tabs overview with filter" />
           </row>
           <row>
@@ -332,23 +332,23 @@
             <description value="resets the mark" />
           </row>
           <row>
-            <textbox id="JumpURLBar" value="C-xl" />
+            <textbox id="JumpURLBar" value="C-hl" />
             <description value="moves to the URL bar" />
           </row>
           <row>
-            <textbox id="JumpSearchBar" value="C-xg" />
+            <textbox id="JumpSearchBar" value="C-hg" />
             <description value="moves to the search bar" />
           </row>
           <row>
-            <textbox id="FocusBody" value="C-x." />
+            <textbox id="FocusBody" value="C-h." />
             <description value="moves to the body" />
           </row>
           <row>
-            <textbox id="JumpInput" value="C-xt" />
+            <textbox id="JumpInput" value="C-ht" />
             <description value="moves to the first input" />
           </row>
           <row>
-            <textbox id="JumpSubmit" value="C-xs" />
+            <textbox id="JumpSubmit" value="C-hs" />
             <description value="moves to the first button" />
           </row>
           <row>
@@ -368,11 +368,11 @@
         </columns>
         <rows>
           <row>
-            <textbox id="CloseTab" value="C-xk" />
+            <textbox id="CloseTab" value="C-hk" />
             <description value="closes the tab" />
           </row>
           <row>
-            <textbox id="OpenFile" value="C-xC-f" />
+            <textbox id="OpenFile" value="C-hC-f" />
             <description value="opens a file" />
           </row>
           <row>
@@ -408,15 +408,15 @@
             <description value="copy title and url" />
           </row>
           <row>
-            <textbox id="WebSearch" value="C-xC-e" />
+            <textbox id="WebSearch" value="C-hC-e" />
             <description value="web search" />
           </row>
           <row>
-            <textbox id="MapSearch" value="C-xC-a" />
+            <textbox id="MapSearch" value="C-hC-a" />
             <description value="map search" />
           </row>
           <row>
-            <textbox id="SavePage" value="C-xC-s" />
+            <textbox id="SavePage" value="C-hC-s" />
             <description value="save page" />
           </row>
         </rows>
@@ -428,7 +428,7 @@
         </columns>
         <rows>
           <row>
-            <textbox id="SelectAll" value="C-xh" />
+            <textbox id="SelectAll" value="C-hh" />
             <description value="selects all" />
           </row>
         </rows>
