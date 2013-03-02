@@ -2,7 +2,7 @@
 
 perl -ne 'print unless m,tcmd|generic/flashing|android-vnc-server,' manifest.xml > manifest.xml.new
 if test -e linux-arm-only; then
-    perl -ne 'print unless m!/darwin\b|/mips/!' -i manifest.xml.new
+    perl -ne 'print unless m!/prebuilt\b|/darwin\b|/mips/!' -i manifest.xml.new
 fi
 if ! diff -q manifest.xml.new manifest.xml.old; then
     rm manifest.xml -f

@@ -113,6 +113,10 @@ if test -z "$repo_init_branch"; then
     fi
 fi
 
+if ! tty >/dev/null 2>&1; then
+    repo_init_manifest=${old_repo_init_manifest:-default.xml}
+fi
+
 if test -z "$repo_init_manifest" || ! [[ "$repo_init_manifest" =~ \.xml$ ]]; then
     if test $interactive = 1 || ! [[ "$repo_init_manifest" =~ \.xml$ ]]; then
         echo The repo manifest to use:

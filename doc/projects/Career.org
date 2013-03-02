@@ -89,7 +89,9 @@ init_fnc_t *init_sequence[] = {
 
 - smb://10.21.130.223/Public/Products/988/Extranet/988
 
-* TODO Merge for beta2 rc3
+* DONE Merge for beta2 rc3
+  CLOSED: [2013-03-01 Fri 16:11]
+  - CLOSING NOTE [2013-03-01 Fri 16:11]
 ** DONE Merge uboot for 986/988/1088
    CLOSED: [2013-02-28 Thu 11:21]
    - CLOSING NOTE [2013-02-28 Thu 11:21] \\
