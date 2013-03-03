@@ -24,4 +24,6 @@
 	  android:title="Frequency" />
     <item android:id="@+id/history_menu"
 	  android:title="History" />
+    <item android:id="@+id/donate_menu"
+	  android:title="Donate" />
 </menu>

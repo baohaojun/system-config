@@ -37,6 +37,11 @@ import android.content.res.AssetManager;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import android.net.Uri;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 
 public class CrossDictActivity extends Activity {
     /** Called when the activity is first created. */
@@ -63,6 +68,8 @@ public class CrossDictActivity extends Activity {
     private static final String[] dictFileExtNames = {".dz", ".idx", ".ii"};
     private static ArrayList<String> mDictFiles = new ArrayList<String>();
 
+    private static final int DIALOG_COPY_FILES = 0;
+
     static {
 	for (String base : dictFileBaseNames) {
 	    for (String ext : dictFileExtNames) {
@@ -87,6 +94,86 @@ public class CrossDictActivity extends Activity {
 	    }
 	}
 	return null;
+    }
+
+
+    Dialog mCopyFileDialog;
+    private class LookupTask extends AsyncTask<String, String, String> {
+	
+	@Override
+        protected void onPreExecute() {
+	    CrossDictActivity.this.runOnUiThread(new Runnable() {
+		    public void run() {
+			CrossDictActivity.this.showDialog(DIALOG_COPY_FILES);
+		    }
+		});	    
+	}
+        /**
+         * Perform the background query using {@link ExtendedWikiHelper}, which
+         * may return an error message as the result.
+         */
+        @Override
+        protected String doInBackground(String... args) {
+	    try {
+		mWorkingDir.mkdirs();
+		AssetManager am = getAssets();
+
+		byte[] buf = new byte[4096];
+		for (String fileName : mDictFiles) {
+		    InputStream input = am.open(fileName);
+		    OutputStream out = new FileOutputStream(new File(mWorkingDir, fileName));
+		    while (true) {
+			int n = input.read(buf);
+			if (n <= 0) {
+			    break;
+			}
+			out.write(buf, 0, n);
+		    }
+		    out.close();
+		    input.close();
+		}
+	    } catch (Exception e) {
+		Log.e("bhj", String.format("Error creating files\n"), e);
+	    } finally {
+		if (checkDictFiles() != null) {
+		    new AlertDialog.Builder(CrossDictActivity.this)
+			.setTitle("Error!")
+			.setMessage(String.format("Failed to create dictionary file '%s', will now exit.", checkDictFiles()))
+			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+				    CrossDictActivity.this.finish();
+				}
+			    })
+			.create().show();
+		    return "";
+		}
+	    }
+
+	    if (mCopyFileDialog != null) {
+		mCopyFileDialog.cancel();
+		CrossDictActivity.this.runOnUiThread(new Runnable() {
+			public void run() {
+			    continueLoading();
+			}
+		    });
+	    }
+            return "";
+        }
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG_COPY_FILES: {
+                ProgressDialog dialog = new ProgressDialog(this);
+                dialog.setMessage("Please wait while creating dictionary files...");
+                dialog.setIndeterminate(true);
+                dialog.setCancelable(false);
+		mCopyFileDialog = dialog;
+                return dialog;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -135,60 +222,14 @@ public class CrossDictActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
 			     WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	
-	mWorkingDir = Environment.getExternalStoragePublicDirectory("crossdict");
-
-	if (checkDictFiles() != null) {
-	    try {
-		mWorkingDir.mkdirs();
-		AssetManager am = getAssets();
-
-		byte[] buf = new byte[4096];
-		for (String fileName : mDictFiles) {
-		    InputStream input = am.open(fileName);
-		    OutputStream out = new FileOutputStream(new File(mWorkingDir, fileName));
-		    while (true) {
-			int n = input.read(buf);
-			if (n <= 0) {
-			    break;
-			}
-			out.write(buf, 0, n);
-		    }
-		    out.close();
-		    input.close();
-		}
-	    } catch (Exception e) {
-		Log.e("bhj", String.format("Error creating files\n"), e);
-	    } finally {
-		if (checkDictFiles() != null) {
-		    new AlertDialog.Builder(CrossDictActivity.this)
-			.setTitle("Error!")
-			.setMessage(String.format("Failed to create dictionary file '%s', will now exit.", checkDictFiles()))
-			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-				    CrossDictActivity.this.finish();
-				}
-			    })
-			.create().show();
-		    return;
-		}
-	    }
-	}
-
-	mDict = new StarDict(new File(mWorkingDir, "ahd").toString());
-	mUsageDict = new StarDict(new File(mWorkingDir, "usage").toString());
-	mFreqDict = new FreqDict(new File(mWorkingDir, "frequency").toString());
-
+	mWorkingDir = Environment.getExternalStoragePublicDirectory("crossdict/ahd");
 
         setContentView(R.layout.main);
-
         mListView = (SlowListView) findViewById(R.id.nearby_dict_entries);
 	mEdit = (EditText) findViewById(R.id.enter_dict_entry);
-
-
 	mWebView = (BTWebView) findViewById(R.id.webView);
+
 	mWebView.setActivity(this);
-	mWebView.setBaseUrlWithDir(mWorkingDir.toString());
-	mWebView.setDict(mDict);
 
 
 	mLookUpButton = (Button) findViewById(R.id.look_up_button);
@@ -203,9 +244,28 @@ public class CrossDictActivity extends Activity {
 	mListButton = (Button) findViewById(R.id.lists_button);
 	mListButton.setOnClickListener(mListListener);
 
+	mListView.setOnItemClickListener(mItemClickListener);
+
+
+	if (checkDictFiles() != null) {
+	    new LookupTask().execute("");
+	} else {
+	    continueLoading();
+	}
+    }
+
+    void continueLoading() {
+	mDict = new StarDict(new File(mWorkingDir, "ahd").toString());
+	mUsageDict = new StarDict(new File(mWorkingDir, "usage").toString());
+	mFreqDict = new FreqDict(new File(mWorkingDir, "frequency").toString());
+
+	mWebView.setBaseUrlWithDir(mWorkingDir.toString());
+	mWebView.setDict(mDict);
+
 	mListView.createAndSetAdapter(CrossDictActivity.this, mDict);
 	mWebView.lookUpWord(mCurrentWord);
-	mListView.setOnItemClickListener(mItemClickListener);
+
+
     }
 
     AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
@@ -445,6 +505,11 @@ public class CrossDictActivity extends Activity {
 		    mActiveDict = mDict;
 		    mListView.setActiveDict(new StringArrayDict(stringReduce(mWordHistory)));
 		    mWebView.lookUpWord(mWordHistory[0]);
+		} else if (item.getItemId() == R.id.donate_menu) {
+		    String url = "http://baohaojun.github.com/donate";
+		    Intent i = new Intent(Intent.ACTION_VIEW);
+		    i.setData(Uri.parse(url));
+		    startActivity(i);
 		}
 		return true;
 	    }
