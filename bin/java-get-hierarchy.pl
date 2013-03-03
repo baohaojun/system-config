@@ -43,7 +43,10 @@ if ($q_class !~ m/\./) {
 
 debug "q_class is $q_class";
 chomp(my $working_file= qx(java-find-def.pl -e $q_class));
-debug "working_file is $working_file";
+debug "working_file is $working_file for $q_class";
+if (not $working_file) {
+    die "No working file for $q_class";
+}
 my $working_file_dir = $working_file;
 $working_file_dir =~ s,(.*)/.*,$1,;
 
