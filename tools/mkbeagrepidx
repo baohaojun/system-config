@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # gtags will call sort, which will use a lot of space for large projects.
-export TMPDIR=~/tmp
+export TMPDIR=~/.cache
 mkdir -p $TMPDIR
 
 cd -P . 
