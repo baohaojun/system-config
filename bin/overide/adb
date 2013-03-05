@@ -27,7 +27,6 @@ function adb() {
 
     if test "$1" = -r; then
         $the_prog root || true
-        $the_prog wait-for-device
         shift
     fi
 

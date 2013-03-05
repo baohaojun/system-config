@@ -30,12 +30,13 @@ mkdir -p ~/.logs/start-debug.log/
     done
     echo
 ) >> ~/.logs/start-debug.log/$1
-$cmd "\$@" > ~/.logs/start-debug.log/$1.out 2> ~/.logs/start-debug.log/$1.err
+$cmd "\$@" > ~/.logs/start-debug.log/$1.\$\$.out 2> ~/.logs/start-debug.log/$1.\$\$.err
 res=\$?
-cat ~/.logs/start-debug.log/$1.out
-cat ~/.logs/start-debug.log/$1.err 1>&2
+cat ~/.logs/start-debug.log/$1.\$\$.out
+cat ~/.logs/start-debug.log/$1.\$\$.err 1>&2
 
-(echo out; cat ~/.logs/start-debug.log/$1.out; echo err:; cat ~/.logs/start-debug.log/$1.err) >>  ~/.logs/start-debug.log/$1
+(echo out; cat ~/.logs/start-debug.log/$1.\$\$.out; echo err:; cat ~/.logs/start-debug.log/$1.\$\$.err) >>  ~/.logs/start-debug.log/$1
+rm $1.\$\$.out $1.\$\$.err
 exit \$res
 EOF
 chmod +x ~/bin/Linux/ext/debug/$1

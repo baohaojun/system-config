@@ -50,7 +50,6 @@ init_fnc_t *init_sequence[] = {
 * TODO understand how emmc works (both in uboot and in kernel)
 * TODO understand how lcd works (both in uboot and in kernel)
 ** TODO uboot lcd
-** TODO tune uboot logo code for CU.
 * TODO understand clock both in uboot and in kernel
 * TODO Find out how to disable the diag log and other logs
 
