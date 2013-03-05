@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="在阅读源代码时删掉所有非必要文件的方法"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-02-21 11:26:49 CST"/>
+<meta name="generated" content="2013-03-05 13:27:50 CST"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -202,7 +202,20 @@ $ grep ' 684]' ~/1.txt|head -n 5
 当然，如果你想把这些文件删掉的话需要注意把.git底下的文件给过滤出去： <code>|grep -v \\.git</code> 。
 </p>
 
-</div>
+<p>
+<b>后记3</b> kernel代码也可以用这个方法删除非build必须的文件。但它的
+setlocalversion脚本是在scripts下（uboot里有很多东西是直接从kernel里“偷”来
+的）。从原理上说应该其他软件也都能用这个方法删掉那些“noise for code
+reading”的文件，但效果根据项目不同而异吧，不可能有kernel/uboot那么夸张
+了。
+</p>
+<p>
+<b>后记4</b> 针对uboot和kernel我分别写了两个脚本，一步完成这里面的所有操作，
+但一如既往地，你想要用这两个脚本的话，需要自己改改。
+</p>
+<p>
+分别在 <a href="http://github.com/baohaojun/windows-config/raw/master/bin/rm-non-build-files-uboot">for uboot</a> 和 <a href="http://github.com/baohaojun/windows-config/raw/master/bin/rm-non-build-files-kernel">for kernel</a> 。
+</p></div>
 
 <div id="postamble">
     <hr/>
