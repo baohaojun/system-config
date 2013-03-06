@@ -1,10 +1,10 @@
 #+LAST_MOBILE_CHANGE: 2013-02-08 20:38:20
 * TODO Shave
-  SCHEDULED: <2013-03-03 Sun .+2d/4d>
+  SCHEDULED: <2013-03-06 Wed .+2d/4d>
   - CLOSING NOTE [2013-02-07 Thu 22:17]
   :PROPERTIES:
   :STYLE:    habits
-  :LAST_REPEAT: [2013-03-01 Fri 16:11]
+  :LAST_REPEAT: [2013-03-04 Mon 11:34]
   :ID:       ee6ffd53-396e-46ab-a543-09326526da1c
   :END:
 * DONE [#A] 回老家
@@ -38,7 +38,8 @@
 ** DONE 衣服，内裤，袜子，
    CLOSED: [2013-02-07 Thu 22:24]
 [2013-02-05 Tue 22:54]
-*** TODO 洗漱用品
+*** DONE 洗漱用品
+    CLOSED: [2013-03-04 Mon 11:34]
     :PROPERTIES:
     :ID:       622e4bde-0669-49ca-8be6-e5f141a511dd
     :END:
@@ -146,4 +147,5 @@
    :ID:       30e4fa67-04a7-46dd-9b4c-903de95ce5bf
    :END:
 
-* TODO 修改密码
+* DONE 修改密码
+  CLOSED: [2013-03-04 Mon 11:34]

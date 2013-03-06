@@ -15,7 +15,7 @@ for branch in $(
     cat .repo/update-android-branches 2>/dev/null
 ); do 
     repo-switch -u https://android.googlesource.com/platform/manifest -b $branch -m default.xml
-    repo sync -j1
+    repo sync
 done
 
 #vendor/nvidia and hardware/tegra, we can do nothing, their git is maintained by us.

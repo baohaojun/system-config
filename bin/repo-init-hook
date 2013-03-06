@@ -22,7 +22,7 @@ if test ! -e local_manifests/local_manifist.xml; then
            review="http://bible/gerrit/" />
 
   <remote  name="bpe-bhj"
-           fetch="bibler:android/"
+           fetch="bibler:shgit/"
            review="http://bible/gerrit/" />
 
   <remote  name="bpe-shgit"
@@ -30,7 +30,7 @@ if test ! -e local_manifests/local_manifist.xml; then
            review="http://bible/gerrit/" />
 
   <project path="vendor/marvell/generic/tcmd" name="vendor/marvell/generic/tcmd" revision="master" remote="apse" />
-  <project path="flashing" name="platform/vendor/marvell/generic/flashing" revision="tk-master" remote="bpe-bhj" />
+  <project path="flashing" name="vendor/marvell/generic/flashing" revision="tk-master" remote="bpe-bhj" />
   <project path="vendor/marvell/external/android-vnc-server" name="vendor/marvell/external/android-vnc-server" remote="bpe-shgit" revision="pxa98xff-jb-dsds" />
 </manifest>
 EOF
