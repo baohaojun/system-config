@@ -1,10 +1,10 @@
-#+LAST_MOBILE_CHANGE: 2013-02-08 20:38:20
+#+LAST_MOBILE_CHANGE: 2013-03-07 11:11:48
 * TODO Shave
-  SCHEDULED: <2013-03-06 Wed .+2d/4d>
+  SCHEDULED: <2013-03-09 Sat .+2d/4d>
   - CLOSING NOTE [2013-02-07 Thu 22:17]
   :PROPERTIES:
   :STYLE:    habits
-  :LAST_REPEAT: [2013-03-04 Mon 11:34]
+  :LAST_REPEAT: [2013-03-07 Thu 11:00]
   :ID:       ee6ffd53-396e-46ab-a543-09326526da1c
   :END:
 * DONE [#A] 回老家
@@ -149,3 +149,66 @@
 
 * DONE 修改密码
   CLOSED: [2013-03-04 Mon 11:34]
+
+* DONE 年初一
+  CLOSED: [2013-03-07 Thu 12:11]
+  :PROPERTIES:
+  :ID:       d447aa6e-b9a8-4455-b430-69711f1c8632
+  :END:
+[2013-02-09 Sat 18:48]
+
+** DONE ipad1，拜年礼物，小姨
+   CLOSED: [2013-03-07 Thu 12:11]
+   :PROPERTIES:
+   :ID:       3453bc0e-9961-4666-aa20-f7447e3adce3
+   :END:
+
+* TODO 睡觉前
+  :PROPERTIES:
+  :ID:       727b55d3-7d59-49c9-b00d-1f03f4d65f74
+  :END:
+
+** TODO 烧水
+   :PROPERTIES:
+   :ID:       38d06845-e369-442b-92b0-dabe0c27b651
+   :END:
+
+** TODO 文文喝水
+   :PROPERTIES:
+   :ID:       16558736-3191-4c89-9734-9038d51212d0
+   :END:
+
+* DONE 妈回北京
+  CLOSED: [2013-03-07 Thu 12:12]
+  :PROPERTIES:
+  :ID:       9013fa27-0471-47d7-90b1-2d60c633a88b
+  :END:
+
+** DONE 瓜刨
+   CLOSED: [2013-03-07 Thu 12:12]
+   :PROPERTIES:
+   :ID:       76a603e0-2b5d-4a2b-a7d6-408a34a0bf0d
+   :END:
+
+** DONE 蜂王浆
+   CLOSED: [2013-03-07 Thu 12:12]
+   :PROPERTIES:
+   :ID:       1b08e235-b742-468c-bdd0-7c4c3d39b7aa
+   :END:
+
+* DONE [#A] 签约
+  CLOSED: [2013-03-07 Thu 12:12] DEADLINE: <2013-03-06 12:30>
+  :PROPERTIES:
+  :ID:       0a268e38-89e7-461c-8c23-5ba6fea4e880
+  :END:
+
+* TODO 网速
+  :PROPERTIES:
+  :ID:       7bd1799a-a234-46e4-b76c-c5ec773472fa
+  :END:
+
+* TODO 下班回家
+SCHEDULED: <2013-03-07 18:20-18:30>
+  :PROPERTIES:
+  :ID:       54f01f56-5286-4626-8a11-0d3242f2066b
+  :END:
