@@ -2194,7 +2194,7 @@ The alist consists of pairs of field-name and field-value, such as
          (status-line (car lines))
          (header-lines (cdr lines)))
     (when (string-match
-           "^\\(HTTP/1\.[01]\\) \\([0-9][0-9][0-9]\\) \\(.*\\)$"
+           "^\\(HTTP/1\.[01]\\) \\([0-9][0-9][0-9]\\)"
            status-line)
       (append `((status-line . ,status-line)
                 (http-version . ,(match-string 1 status-line))
