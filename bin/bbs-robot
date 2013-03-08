@@ -1,0 +1,79 @@
+#!/usr/bin/expect -f 
+
+# this script will log into bbs automatically, maybe even post an
+# article to a specified board.
+
+
+set host "newsmth.net"
+set dport "22"
+set user "flonk"
+set mode "-1"
+set board "";
+
+
+for {set i 0} {$i < [llength $argv]} {incr i} {
+    if {[string eq [lindex $argv $i] "-u"]} {
+	incr i;
+	set user [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-h"]} {
+	incr i;
+	set host [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-m"]} {
+	incr i;
+	set mode [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-b"]} {
+	incr i;
+	set board [lindex $argv $i];
+    }
+}
+
+set fh [open "|get-authinfo $host $user"]
+set password [read $fh]
+close $fh
+
+if [string eq "" $mode] {
+    spawn gblang ssh $user@$host
+} else {
+    spawn gblang ssh $mode $user@$host
+}
+
+expect -timeout 150 password {
+    puts "send password\n";
+    send "$password\n"
+} timeout {
+    puts "timed out\n";
+    exp_continue;
+}
+
+set timeout 5
+
+expect {
+    -re "按.*RETURN.*继续|上次连线时间|按任意键继续|近期热点" {
+	send "\r\n";
+	exp_continue;
+    }
+    "主选单" {
+	if {! [string eq "" $board]} {
+	    send "s\r\n";
+	    expect {
+		"请输入讨论区" {
+		    send "$board\r\n"
+		}
+	    }
+	}		
+    }
+    timeout {
+	puts "timed out\n"; puts "timed out\n"; puts "timed out\n";    puts "timed out\n";    puts "timed out\n";
+    }
+}
+
+if [string eq "" $mode] {
+    puts [wait]
+} else {
+    interact
+}
+exit
+
+# Local Variables: #
+# mode: tcl #
+# End: #
