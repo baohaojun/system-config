@@ -8,13 +8,17 @@ set host "newsmth.net"
 set dport "22"
 set user "flonk"
 set mode "-1"
-set board "";
+set board ""
+set password ""
 
 
 for {set i 0} {$i < [llength $argv]} {incr i} {
     if {[string eq [lindex $argv $i] "-u"]} {
 	incr i;
 	set user [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-p"]} {
+	incr i;
+	set password [lindex $argv $i];
     } elseif {[string eq [lindex $argv $i] "-h"]} {
 	incr i;
 	set host [lindex $argv $i];
@@ -27,14 +31,16 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
     }
 }
 
-set fh [open "|get-authinfo $host $user"]
-set password [read $fh]
-close $fh
+if [string eq "" $password] {
+    set fh [open "|get-authinfo $host $user"]
+    set password [read $fh]
+    close $fh
+}
 
 if [string eq "" $mode] {
-    spawn gblang ssh $user@$host
+    spawn gbk-exec ssh $user@$host
 } else {
-    spawn gblang ssh $mode $user@$host
+    spawn gbk-exec ssh $mode $user@$host
 }
 
 expect -timeout 150 password {
@@ -48,7 +54,7 @@ expect -timeout 150 password {
 set timeout 5
 
 expect {
-    -re "按.*RETURN.*继续|上次连线时间|按任意键继续|近期热点" {
+    -re "按.*RETURN.*继续|上次连线时间|按任意键继续|近期热点|如何处理以上" {
 	send "\r\n";
 	exp_continue;
     }
@@ -70,7 +76,48 @@ expect {
 if [string eq "" $mode] {
     puts [wait]
 } else {
-    interact
+    # start code-generator "^\\s *#"
+    # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+    # end code-generator
+    # start generated code
+    set CTRLA \001
+    set CTRLB \002
+    set CTRLC \003
+    set CTRLD \004
+    set CTRLE \005
+    set CTRLF \006
+    set CTRLG \007
+    set CTRLH \010
+    set CTRLI \011
+    set CTRLJ \012
+    set CTRLK \013
+    set CTRLL \014
+    set CTRLM \015
+    set CTRLN \016
+    set CTRLO \017
+    set CTRLP \020
+    set CTRLQ \021
+    set CTRLR \022
+    set CTRLS \023
+    set CTRLT \024
+    set CTRLU \025
+    set CTRLV \026
+    set CTRLW \027
+    set CTRLX \030
+    set CTRLY \031
+    set CTRLZ \032
+
+    # end generated code
+    set ESC   \033
+    set UP    \033\[A
+    set DOWN  \033\[B
+
+    interact {
+	-reset $CTRLZ {exec kill -STOP [pid]}
+	$CTRLP {send $UP}
+	$CTRLN {send $DOWN}
+	$CTRLK {send $CTRLY}
+    }	
 }
 exit
 

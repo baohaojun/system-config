@@ -3,7 +3,7 @@
   SCHEDULED: <2013-03-09 Sat .+2d/4d>
   - CLOSING NOTE [2013-02-07 Thu 22:17]
   :PROPERTIES:
-  :STYLE:    habits
+  :STYLE:    habit
   :LAST_REPEAT: [2013-03-07 Thu 11:00]
   :ID:       ee6ffd53-396e-46ab-a543-09326526da1c
   :END:
@@ -208,7 +208,9 @@
   :END:
 
 * TODO 下班回家
-SCHEDULED: <2013-03-07 18:20-18:30>
+  SCHEDULED: <2013-03-11 Mon 18:20-18:30 +1d>
   :PROPERTIES:
   :ID:       54f01f56-5286-4626-8a11-0d3242f2066b
+  :STYLE:    habit
+  :LAST_REPEAT: [2013-03-08 Fri 20:25]
   :END:
