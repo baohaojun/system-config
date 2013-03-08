@@ -56,6 +56,23 @@ I am working on these features:
     
     Or else the App will be too large and difficult to install/upgrade.
 
+# It is done in a geeky way
+
+I used Emacs and no Eclipse for developping this App. In fact, it is
+my first big Java project. I haven't wrote any big Java projects
+before because I am a huge Emacs fan and can't bear the thought of
+switching to Eclipse for Java/Android development.
+
+Then I tried [emacs-eclim](https://github.com/senny/emacs-eclim). It was great, but can't fill my appetite
+because I wanted to put the whole Android source into a single
+project &ndash; this brought the backend Eclipse to crawling.
+
+But anyway, emacs-eclim has inspired me to work on my own Emacs/Java
+solution based on [gtags](http://www.gnu.org/software/global/) and [exuberant ctags](http://ctags.sourceforge.net/).
+
+It's not finished and not ready for public use yet, but you can take
+a look of it at [here](http://baohaojun.github.com/coding-android-java-in-emacs-en.html) (video link included).
+
 # Please support
 
 If you used and liked CrossDict and want to support my work on it,
