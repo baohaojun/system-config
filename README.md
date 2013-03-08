@@ -1,41 +1,62 @@
-<p> 
-	I've Seen a lot of people trying to get user selections with a context menu working in Android web views.
-The problem lies in Android's use of an intermediate text view that it places between the user
-and the web view on selection.  So the javascript in the page doesn't know what's selected. 
-</p>
 
-<p> This solution uses a javascript interface to pass touches to the page and effectively cut Android's native 
-selection out of the equation.  This has been tested from 2.2 to 4.0.3. </p>
+# It is free
 
-<p> The example uses an html page in the assets folder with the javascript methods included.  The BTWebView class implements 
-the interface methods necessary to draw the selection layer with the handles and show the context menu. Any content you wish to use 
-this with will need the following javascript imports.
+This is an Android dictionary App. You can visit [Google Play](https://play.google.com/store/apps/details?id=com.baohaojun.crossdict) to
+install it, or if your Android phone can't use Google Play, then you
+can download it from [Sina Vdisk](http://vdisk.weibo.com/s/skNbH) (need sign up).
 
-<pre>
-    &lt;script src='jquery.js'&gt;&lt;/script&gt;
-	&lt;script src='rangy-core.js'&gt;&lt;/script&gt;
-	&lt;script src='rangy-serializer.js'&gt;&lt;/script&gt;
-	&lt;script src='android.selection.js'&gt;&lt;/script&gt;
-</pre>
-</p>
+It is free software.
 
-<p>
-	This solution employs a few libraries that deserve recognition.
-	
-	<ol>
-		<li>
-			The <a href="http://code.google.com/p/rangy/">rangy</a> javascript library by Tim Down.
-		</li>
-		<li>
-			A wonderful <a href="http://blahti.wordpress.com/2011/01/17/moving-views-part-2/">drag and drop</a> library by Bill Lahti.
-			<br /> <em>*Note: The version of this library included in this project has been slightly modified.</em>
-		</li>
-		<li>
-			The <a href="http://www.londatiga.net/it/how-to-create-quickaction-dialog-in-android/">Quick Action</a> library by Lorensius Londa.
-			<br /> <em>*Note: The version of this library included in this project has been slightly modified.</em>
-		</li>
-	</ol>
-	
-</p>
+The dictionary data that comes with this App is extracted from [GCIDE](ftp://ftp.gnu.org/gnu/gcide/),
+which is a GNU project and therefor also free. I have fixed some bugs
+in the [dico](http://puszcza.gnu.org.ua/software/dico/) project and used it to extract the dictionary data, and
+[here](https://github.com/baohaojun/dico) it is my changes.
 
-<p> This project is freely available for use. </p>
+But you can switch the dictionary data if you have access to another
+one. For example, the American Heritage Dictionary's data can be used,
+if it can be changed to CrossDict's data format.
+
+# It is geeky
+
+I have made some features that I think every dictionary should have, for e.g., 
+
+-   Search the definitions
+    
+    For instance, you can search which words has used the word "hello"
+    in their definition. This is why it is named CrossDict.
+
+-   Search with regexp
+    
+    For instance, you can search with "let$" and found out all those
+    small things which ends with "let". This is very useful as it allow
+    you check words with similar postfix/prefix/root.
+
+-   Context menu
+    
+    While in the dictionary, you can long press on a word, and a pop-up
+    menu will show, which allows you to check the various things about
+    this word. Thank [this project on github](https://github.com/btate/BTAndroidWebViewSelection) for this feature, and if
+    you haven't noticed, the CrossDict project is a [fork](https://github.com/btate/BTAndroidWebViewSelection/network) of that one.
+
+# It will be geekier
+
+I am working on these features:
+
+-   Support more devices
+    
+    Currently only Android 4.0 or above is supported.
+
+-   Support word capture/history better
+    
+    Using the social sharing feature that is built in Android, another
+    App (such as fbreader) can "share" a word with CrossDict, which is
+    of course meant to look that word up or capture it for later study.
+
+-   Separate the dictionary data with the App
+    
+    Or else the App will be too large and difficult to install/upgrade.
+
+# Please support
+
+If you used and liked CrossDict and want to support my work on it,
+please click [here](http://baohaojun.github.com/donate.html) to donate.
