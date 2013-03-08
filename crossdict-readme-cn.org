@@ -1,0 +1,77 @@
+#+title: CrossDict: 交叉索引字典
+
+* CrossDict是自由软件
+
+这是一款Android上的字典软件，你可以在 [[https://play.google.com/store/apps/details?id=com.baohaojun.crossdict][Google Play]] 上安装，或者如果你的
+手机不支持Google Play的话，你可以上 [[http://vdisk.weibo.com/s/skNbH][新浪微盘]] 下载这个APK。
+
+这是一款自由软件。
+
+它的字典数据来自于 [[ftp://ftp.gnu.org/gnu/gcide/][GCIDE]] ，一个GNU项目，所以也是自由的。我修正了 [[http://puszcza.gnu.org.ua/software/dico/][dico]]
+的一些bug，并用它来从GCIDE里抽取出我需要的字典数据（以HTML格式呈现）。
+我对dico的改动在[[https://github.com/baohaojun/dico][这个github项目里]]。
+
+但是它也支持切换字典数据，比如American Heritage Dictionary的字典数据。
+当然你需要把它改成CrossDict的数据格式。我以后会写一个脚本，争取可以从
+StarDict的字典数据生成CrossDict需要的格式。
+
+* CrossDict很酷
+
+我开发了一些我认为所有字典软件都应该有的功能：
+
+ * 搜索定义中的引用
+
+   比如，你可以搜哪些单词在它们的词条解释中使用了“Hello”这个单词。这也
+   是此软件的名字的由来。这个功能对我们理解一个单词如何使用、造句很有帮
+   助。
+
+ * 正则表达式搜索
+   
+   比如，你可以用“let$”去搜出所有的以 =let= 结尾的小东西（-let作为词根
+   表示一件事物的比较小的体现，比如booklet--小册子）。这对我们通过字根
+   学习掌握更多单词很有帮助。
+
+ * 上下文菜单
+
+   在这个字典软件中，你长按字条解释中的任意一个单词，都会弹出一个菜单，
+   允许你搜索该单词的解释、引用、匹配。这个功能的实现要感谢 [[https://github.com/btate/BTAndroidWebViewSelection][这个github项目]] 。事实上你可能注意到了我的CrossDict是此项目的一个 [[https://github.com/btate/BTAndroidWebViewSelection/network][fork]] 。
+
+* CrossDict会变得更酷
+
+目前我正继续开发这些features:
+
+ * 支持更多的设备
+
+   目前只支持 Android 4.0 或更高版本。
+
+ * 支持单词截取、生词列表
+
+   Android里内置社交分享功能可以为我的CrossDict所用，比如我目前在用
+   fbreader看英文原版的指环王，它支持选定一个单词然后分享给别的软件，如
+   果我能让CrossDict接收这样的分享，查生词岂不是变得简单到不能再简单？
+
+ * 把字典数据与App分开
+
+   目前的状态App自带字典数据，这样能让大家装上就可以用，但是对App升级是
+   很不利的，字典数据如果不升级的话不应该需要下载那么大的Apk包。
+
+* CrossDict的开发过程很酷
+
+  我用的是Emacs而不是Eclipse来开发这款Apk。事实上，这是我的第一个认真的
+  Java程序。以前一直没写过比较大的Java程序，原因是我是一个Emacs死忠用户，
+  切换到Eclipse去做Java/Android开发的想法简直让我抓狂。
+
+  后来我试着用了 [[https://github.com/senny/emacs-eclim][emacs-eclim]] 。这个软件很不错，开发普通的Java/Android程
+  序足够用了。但它不能满足我的胃口。我希望能把整个Android源码放到一个
+  Eclim项目中进行开发--结果后台的Eclipse就开始爬了。
+
+  但是不管怎么说，我很感谢 emacs-eclim 给了我灵感，我开始用 [[http://www.gnu.org/software/global/][gtags]] 和
+  [[http://ctags.sourceforge.net/][exuberant ctags]] 自己搞了一套Emacs/Android的开发环境。
+
+  这套开发环境还没有完成到可以让大家很方便的用的程度（有人会觉得遗憾
+  吗？:-)），但是你可以在 [[http://baohaojun.github.com/coding-android-java-in-emacs-en.html][这里]] 看一下简介（英文版，内有使用视频链接）。
+
+* 请支持
+
+如果你喜欢CrossDict、想支持我的工作的话，请点 [[http://baohaojun.github.com/donate.html][这里]] 了解给我捐款的方法。
+非常感谢！
