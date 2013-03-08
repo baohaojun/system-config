@@ -117,6 +117,40 @@ if [string eq "" $mode] {
 	$CTRLP {send $UP}
 	$CTRLN {send $DOWN}
 	$CTRLK {send $CTRLY}
+
+	# start code-generator "^\\s *#"
+	# perl -e 'for $x ("A".."Z") { print "\$CTRLQ\$CTRL$x {send \$CTRL$x}\n"}'
+	# end code-generator
+	# start generated code
+	$CTRLQ$CTRLA {send $CTRLA}
+	$CTRLQ$CTRLB {send $CTRLB}
+	$CTRLQ$CTRLC {send $CTRLC}
+	$CTRLQ$CTRLD {send $CTRLD}
+	$CTRLQ$CTRLE {send $CTRLE}
+	$CTRLQ$CTRLF {send $CTRLF}
+	$CTRLQ$CTRLG {send $CTRLG}
+	$CTRLQ$CTRLH {send $CTRLH}
+	$CTRLQ$CTRLI {send $CTRLI}
+	$CTRLQ$CTRLJ {send $CTRLJ}
+	$CTRLQ$CTRLK {send $CTRLK}
+	$CTRLQ$CTRLL {send $CTRLL}
+	$CTRLQ$CTRLM {send $CTRLM}
+	$CTRLQ$CTRLN {send $CTRLN}
+	$CTRLQ$CTRLO {send $CTRLO}
+	$CTRLQ$CTRLP {send $CTRLP}
+	$CTRLQ$CTRLQ {send $CTRLQ}
+	$CTRLQ$CTRLR {send $CTRLR}
+	$CTRLQ$CTRLS {send $CTRLS}
+	$CTRLQ$CTRLT {send $CTRLT}
+	$CTRLQ$CTRLU {send $CTRLU}
+	$CTRLQ$CTRLV {send $CTRLV}
+	$CTRLQ$CTRLW {send $CTRLW}
+	$CTRLQ$CTRLX {send $CTRLX}
+	$CTRLQ$CTRLY {send $CTRLY}
+	$CTRLQ$CTRLZ {send $CTRLZ}
+
+	# end generated code
+
     }	
 }
 exit
