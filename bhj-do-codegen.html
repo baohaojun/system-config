@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>给任意语言插上宏定义的翅膀</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="给任意语言插上宏定义的翅膀"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-03-09 23:15:31 CST"/>
+<meta name="author" content="baohaojun"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<link rel="stylesheet" href="css/default.css" type="text/css">
+ <link rel="shortcut icon" href="/poison.png" type="image/png" />
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var BYB = {};
+    </script>
+    <script type="text/javascript">
+        BYB.includeScript = function(file,callback){
+            var _doc = document.getElementsByTagName('head')[0];
+            var js = document.createElement('script');
+            js.setAttribute('type', 'text/javascript');
+            js.setAttribute('src', file);
+            _doc.appendChild(js);
+
+            if (!/*@cc_on!@*/0) { //if not IE
+                //Firefox2、Firefox3、Safari3.1+、Opera9.6+ support js.onload
+                js.onload = function () {
+                    callback();
+                }
+            } else {
+                //IE6、IE7 support js.onreadystatechange
+                js.onreadystatechange = function () {
+                    if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                        callback();
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">给任意语言插上宏定义的翅膀</h1>
+
+<p>宏，<a href="#en.wikipedia.org-wiki-Macro_-computer_science">英文wikipedia</a>，<a href="http://zh.wikipedia.org/wiki/宏">中文wikipedia</a>。
+</p>
+<p>
+关于宏有多邪恶，我想用一个简单的问题来描述：echo hello world，这是shell脚本，还是C语言程序？
+</p>
+<p>
+如果是二选一的话，我想大多数人会认为这是shell脚本，而不可能是C语言。很
+可惜，答错，这可以是C语言。你需要把宏加入到你的考虑之中。
+</p>
+<p>
+实际上，C/C++语言是两种语言的叠加，首先是它的预处理器（preprocessor）处
+理的宏定义语言，然后是编译器编译的C语言。
+</p>
+<p>
+想明白了这点之后，我对阅读源代码有了一个全新的看法：永远不要希望有一个
+源代码阅读工具能帮你找到任意一个C/C++函数、变量等的定义位置。宏定义的存
+在，会让一切这样的努力化为泡影。
+</p>
+<p>
+把echo hello world弄成一段合法的C语言程序的命令是这样的（我正在考虑为此
+申请专利）：
+</p>
+
+
+
+<pre class="example">echo echo hello world &gt; 1.c
+gcc -D echo='int main() {printf("hello world?\n");}' -D hello= -D world= 1.c
+./a.out
+</pre>
+
+
+<p>
+你会看见最后打出来的是 <code>hello world?</code> 。
+</p>
+<p>
+然而这决不是我们对宏因噎废食的理由。宏的存在是有它的道理的，对于那些没
+有内置宏的编程语言，我们不应该歧视它们，而是帮助它们解决这个问题。
+</p>
+<p>
+我想出来的这个代码生成机制，就能很大程度上给那些没有宏的语言，插上宏的
+翅膀。
+</p>
+<p>
+以我的 <a href="http://github.com/baohaojun/windows-config/raw/master/bin/bbs-robot">bbs-robot</a> 脚本为例，首先，在tcl模式下，我有一个名为codegen的
+yasnippet，把它展开之后的结果是这样的：
+</p>
+
+
+
+<pre class="example"># start code-generator "^\\s *#"
+
+# end code-generator
+# start generated code
+
+# end generated code
+</pre>
+
+
+<p>
+然后我会把我的伪宏加进去，变成这样：
+</p>
+
+
+
+<pre class="example"># start code-generator "^\\s *#"
+# perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+# end code-generator
+# start generated code
+
+# end generated code
+</pre>
+
+
+<p>
+接下来，我运行一下下面的这个emacs-lisp命令（我给它绑定到 <b>M-s g</b> 了，s
+g代表source generation），一长串的定义就会自动生成到指定的位置，最后变
+成：
+</p>
+
+
+
+<pre class="src src-tcl"><span class="org-comment-delimiter"># </span><span class="org-comment">start code-generator "^\\s *#"</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">end code-generator</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">start generated code</span>
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLA</span> \001
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLB</span> \002
+...
+<span class="org-builtin">set</span> <span class="org-variable-name">CTRLZ</span> \032
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">end generated code</span>
+
+</pre>
+
+
+<p>
+最后解释一下这个emacs-lisp命令。最关键的是code-transform，它在上面的例
+子中是 "<code>^\\s *#</code>" ，这是一个正则表达式，其作用是把
+</p>
+
+
+
+<pre class="example"># perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+</pre>
+
+
+<p>
+这段注释变成可以执行的代码：把前面的#字符给去掉。
+</p>
+<p>
+最后还会把代码给缩进。
+</p>
+<p>
+请问这样做有什么好处？有什么坏处？你感受一下:-)
+</p>
+
+
+
+<pre class="src src-emacs-lisp">(<span class="org-keyword">defun</span> <span class="org-function-name">bhj-do-code-generation</span> ()
+  (interactive)
+  (<span class="org-keyword">let</span> (start-of-code end-of-code code-text start-of-text end-of-text code-transform)
+    (search-backward <span class="org-string">"start code-generator"</span>)
+    (forward-char (length <span class="org-string">"start code-generator"</span>))
+    (<span class="org-keyword">if</span> (looking-at <span class="org-string">"\\s *</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">(</span></span><span class="org-string">\"</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">|</span></span><span class="org-string">(</span><span class="org-string"><span class="org-regexp-grouping-backslash">\\</span></span><span class="org-string"><span class="org-regexp-grouping-construct">)</span></span><span class="org-string">"</span>)
+        (setq code-transform 
+             (read
+              (buffer-substring-no-properties (point) (line-end-position)))))
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-code (point))
+    (search-forward <span class="org-string">"end code-generator"</span>)
+    (previous-line)
+    (move-end-of-line nil)
+    (setq end-of-code (point))
+    (setq code-text (buffer-substring-no-properties start-of-code end-of-code))
+    (<span class="org-keyword">cond</span>
+     ((stringp code-transform)
+      (setq code-text (replace-regexp-in-string code-transform <span class="org-string">""</span> code-text)))
+     ((consp code-transform)
+      (setq code-text (replace-regexp-in-string (car code-transform) (cadr code-transform) code-text))))
+
+    (search-forward <span class="org-string">"start generated code"</span>)
+    (next-line)
+    (move-beginning-of-line nil)
+    (setq start-of-text (point))
+    (search-forward <span class="org-string">"end generated code"</span>)
+    (previous-line)
+    (move-end-of-line nil)
+    (setq end-of-text (point))
+    (shell-command-on-region start-of-text end-of-text code-text nil t)
+    (indent-region (min (point) (mark))
+                   (max (point) (mark)))))
+</pre>
+
+</div>
+
+<div id="postamble">
+    <hr/>
+    <div style="float:left;width:160px;">
+    <iframe width="100%" height="75" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=0&noborder=0&isWeibo=0&isFans=0&uid=1611427581&verifier=936f3b91&dpc=1"></iframe>
+    </div>
+    <div id="jiathis_style_32x32" style="float:left;margin-left:20px;margin-top:35px;">
+        <a class="jiathis_button_tsina"></a>
+        <a class="jiathis_button_douban"></a>
+        <a class="jiathis_button_tqq"></a>
+        <a class="jiathis_button_renren"></a>
+        <a class="jiathis_button_douban9dian"></a>
+        <!--<a class="jiathis_button_readitlater"></a>-->
+        <!--<a class="jiathis_button_instapaper"></a>-->
+        <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+        <!--<a class="jiathis_counter_style"></a>-->
+    </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        BYB.includeScript('http://v2.jiathis.com/code/jia.js',function(){})
+    });
+</script>
+
+
+</div>
+</body>
+</html>
