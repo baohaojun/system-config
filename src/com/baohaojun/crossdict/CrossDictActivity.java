@@ -254,6 +254,17 @@ public class CrossDictActivity extends Activity {
 	}
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+	String subject = intent
+	    .getStringExtra("android.intent.extra.SUBJECT");
+	String text = intent.getStringExtra("android.intent.extra.TEXT");
+
+	if (text != null) {
+	    mWebView.lookUpWord(text);
+	}	
+    }
+
     void continueLoading() {
 	mDict = new StarDict(new File(mWorkingDir, "ahd").toString());
 	mUsageDict = new StarDict(new File(mWorkingDir, "usage").toString());
@@ -263,9 +274,17 @@ public class CrossDictActivity extends Activity {
 	mWebView.setDict(mDict);
 
 	mListView.createAndSetAdapter(CrossDictActivity.this, mDict);
-	mWebView.lookUpWord(mCurrentWord);
 
+	Intent intent = getIntent();
+	String subject = intent
+	    .getStringExtra("android.intent.extra.SUBJECT");
+	String text = intent.getStringExtra("android.intent.extra.TEXT");
 
+	if (text != null) {
+	    mWebView.lookUpWord(text);
+	} else {
+	    mWebView.lookUpWord(mCurrentWord);
+	}
     }
 
     AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
