@@ -11,8 +11,9 @@ if test -d hello_project; then
 fi
 
 android create project -n ${1:-Superuser} -t $(select-output-line bash -c  "android list targets|grep '^id:'"|pn 2) -k com.bhj.boot -p hello_project -a Hello
-cp hello_project/*.properties . 
-cp hello_project/build.xml .
+cp -i hello_project/*.properties . 
+
+cp -i hello_project/build.xml .
 cat <<EOF > ant.properties
 key.store=/home/bhj/.keystore/bhj.keystore
 key.alias=bhj.key.alias
