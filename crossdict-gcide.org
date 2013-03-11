@@ -1,0 +1,8 @@
+#+title: How to extract GCIDE dictionary data for CrossDict
+
+The dictionary data that comes with CrossDict is extracted from [[ftp://ftp.gnu.org/gnu/gcide/][GCIDE]],
+which is a GNU project and therefor also free. I have fixed some bugs
+in the [[http://puszcza.gnu.org.ua/software/dico/][dico]] project and used it to extract the dictionary data, and
+[[https://github.com/baohaojun/dico][here]] it is my changes.
+
+
