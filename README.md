@@ -3,7 +3,10 @@
 
 This is an Android dictionary App. You can visit [Google Play](https://play.google.com/store/apps/details?id=com.baohaojun.crossdict) to
 install it, or if your Android phone can't use Google Play, then you
-can download it from [Sina Vdisk](http://vdisk.weibo.com/s/skNbH) (need sign up).
+can download it from [Sina Vdisk](http://vdisk.weibo.com/s/skNbH) (need sign up). Since CrossDict 2.0,
+the software is distributed separately with the dictionary data, which
+is another APK which can also be installed from [Google Play](https://play.google.com/store/apps/details?id=com.baohaojun.crossdictgcide), or
+downloaded from [Sina Vdisk](http://vdisk.weibo.com/s/thlHF).
 
 It is free software.
 
@@ -38,13 +41,7 @@ I have made some features that I think every dictionary should have, for e.g.,
     this word. Thank [this project on github](https://github.com/btate/BTAndroidWebViewSelection) for this feature, and if
     you haven't noticed, the CrossDict project is a [fork](https://github.com/btate/BTAndroidWebViewSelection/network) of that one.
 
-# It will be geekier
-
-I am working on these features:
-
--   Support more devices
-    
-    Currently only Android 4.0 or above is supported.
+# It is geeky 2.0
 
 -   Support word capture/history better
     
@@ -55,6 +52,16 @@ I am working on these features:
 -   Separate the dictionary data with the App
     
     Or else the App will be too large and difficult to install/upgrade.
+
+The above are implemented in CrossDict 2.0 version.
+
+# It will be geekier
+
+I am working on these features:
+
+-   Support more devices
+    
+    Currently only Android 4.0 or above is supported.
 
 # It is done in a geeky way
 
