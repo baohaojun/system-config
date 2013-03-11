@@ -3,7 +3,10 @@
 * CrossDict是自由软件
 
 这是一款Android上的字典软件，你可以在 [[https://play.google.com/store/apps/details?id=com.baohaojun.crossdict][Google Play]] 上安装，或者如果你的
-手机不支持Google Play的话，你可以上 [[http://vdisk.weibo.com/s/skNbH][新浪微盘]] 下载这个APK。
+手机不支持Google Play的话，你可以上 [[http://vdisk.weibo.com/s/skNbH][新浪微盘]] 下载这个APK。从2.0版本开始，
+CrossDict的字典数据与它是分开发布的，你运行CrossDict时如果还没有安装字
+典数据的话，它会告诉你从哪里安装该字典数据（也是一个Android APK，但运行
+一次后即可卸载）。
 
 这是一款自由软件。
 
@@ -15,7 +18,7 @@
 当然你需要把它改成CrossDict的数据格式。我以后会写一个脚本，争取可以从
 StarDict的字典数据生成CrossDict需要的格式。
 
-* CrossDict很酷
+* CrossDict 1.0很酷
 
 我开发了一些我认为所有字典软件都应该有的功能：
 
@@ -36,14 +39,7 @@ StarDict的字典数据生成CrossDict需要的格式。
    在这个字典软件中，你长按字条解释中的任意一个单词，都会弹出一个菜单，
    允许你搜索该单词的解释、引用、匹配。这个功能的实现要感谢 [[https://github.com/btate/BTAndroidWebViewSelection][这个github项目]] 。事实上你可能注意到了我的CrossDict是此项目的一个 [[https://github.com/btate/BTAndroidWebViewSelection/network][fork]] 。
 
-* CrossDict会变得更酷
-
-目前我正继续开发这些features:
-
- * 支持更多的设备
-
-   目前只支持 Android 4.0 或更高版本。
-
+* CrossDict 2.0更酷
  * 支持单词截取、生词列表
 
    Android里内置社交分享功能可以为我的CrossDict所用，比如我目前在用
@@ -54,6 +50,17 @@ StarDict的字典数据生成CrossDict需要的格式。
 
    目前的状态App自带字典数据，这样能让大家装上就可以用，但是对App升级是
    很不利的，字典数据如果不升级的话不应该需要下载那么大的Apk包。
+
+以上，在2.0里已经实现。
+
+* CrossDict还会继续变酷
+
+目前我正继续开发这些features:
+
+ * 支持更多的设备
+
+   目前只支持 Android 4.0 或更高版本。
+
 
 * CrossDict的开发过程很酷
 
