@@ -1,1 +1,0 @@
-../assets.small/android.selection.js
