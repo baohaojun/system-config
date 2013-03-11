@@ -68,8 +68,6 @@ public class CrossDictActivity extends Activity {
     private static final String[] dictFileExtNames = {".dz", ".idx", ".ii"};
     private static ArrayList<String> mDictFiles = new ArrayList<String>();
 
-    private static final int DIALOG_COPY_FILES = 0;
-
     static {
 	for (String base : dictFileBaseNames) {
 	    for (String ext : dictFileExtNames) {
@@ -94,86 +92,6 @@ public class CrossDictActivity extends Activity {
 	    }
 	}
 	return null;
-    }
-
-
-    Dialog mCopyFileDialog;
-    private class LookupTask extends AsyncTask<String, String, String> {
-	
-	@Override
-        protected void onPreExecute() {
-	    CrossDictActivity.this.runOnUiThread(new Runnable() {
-		    public void run() {
-			CrossDictActivity.this.showDialog(DIALOG_COPY_FILES);
-		    }
-		});	    
-	}
-        /**
-         * Perform the background query using {@link ExtendedWikiHelper}, which
-         * may return an error message as the result.
-         */
-        @Override
-        protected String doInBackground(String... args) {
-	    try {
-		mWorkingDir.mkdirs();
-		AssetManager am = getAssets();
-
-		byte[] buf = new byte[4096];
-		for (String fileName : mDictFiles) {
-		    InputStream input = am.open(fileName);
-		    OutputStream out = new FileOutputStream(new File(mWorkingDir, fileName));
-		    while (true) {
-			int n = input.read(buf);
-			if (n <= 0) {
-			    break;
-			}
-			out.write(buf, 0, n);
-		    }
-		    out.close();
-		    input.close();
-		}
-	    } catch (Exception e) {
-		Log.e("bhj", String.format("Error creating files\n"), e);
-	    } finally {
-		if (checkDictFiles() != null) {
-		    new AlertDialog.Builder(CrossDictActivity.this)
-			.setTitle("Error!")
-			.setMessage(String.format("Failed to create dictionary file '%s', will now exit.", checkDictFiles()))
-			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-				    CrossDictActivity.this.finish();
-				}
-			    })
-			.create().show();
-		    return "";
-		}
-	    }
-
-	    if (mCopyFileDialog != null) {
-		mCopyFileDialog.cancel();
-		CrossDictActivity.this.runOnUiThread(new Runnable() {
-			public void run() {
-			    continueLoading();
-			}
-		    });
-	    }
-            return "";
-        }
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG_COPY_FILES: {
-                ProgressDialog dialog = new ProgressDialog(this);
-                dialog.setMessage("Please wait while creating dictionary files...");
-                dialog.setIndeterminate(true);
-                dialog.setCancelable(false);
-		mCopyFileDialog = dialog;
-                return dialog;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -248,7 +166,31 @@ public class CrossDictActivity extends Activity {
 
 
 	if (checkDictFiles() != null) {
-	    new LookupTask().execute("");
+	    new AlertDialog.Builder(CrossDictActivity.this)
+		.setTitle("Dictionary data not found...")
+		.setMessage("Please download and install CrossDictGcide " + 
+			    "from Google Play by clicking the 'OK' button.\n\n" + 
+			    "Or you can click the 'Help' button for more infomation.")
+		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+
+			    String url = "https://play.google.com/store/apps/details?id=com.baohaojun.crossdictgcide";
+			    Intent i = new Intent(Intent.ACTION_VIEW);
+			    i.setData(Uri.parse(url));
+			    startActivity(i);
+			    CrossDictActivity.this.finish();
+			}
+		    })
+		.setNegativeButton("Help", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+			    String url = "http://baohaojun.github.com/crossdict-gcide-help.html";
+			    Intent i = new Intent(Intent.ACTION_VIEW);
+			    i.setData(Uri.parse(url));
+			    startActivity(i);
+			    CrossDictActivity.this.finish();
+			}
+		    })
+		.create().show();
 	} else {
 	    continueLoading();
 	}
@@ -256,13 +198,34 @@ public class CrossDictActivity extends Activity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+
+	onLookUpRequest(intent);
+    }
+
+    private boolean onLookUpRequest(Intent intent) {
 	String subject = intent
 	    .getStringExtra("android.intent.extra.SUBJECT");
 	String text = intent.getStringExtra("android.intent.extra.TEXT");
-
+	
 	if (text != null) {
 	    mWebView.lookUpWord(text);
-	}	
+
+	    try {
+		OutputStreamWriter out = 
+		    new OutputStreamWriter(
+                        new FileOutputStream(
+                            new File(mWorkingDir, "new-words.txt"), 
+			    true));
+	    
+		out.write(text + "\n");
+		out.close();
+	    } catch (Exception e) {
+		Log.e("bhj", " save new word failed", e);
+	    }
+	    
+	    return true;
+	}
+	return false;
     }
 
     void continueLoading() {
@@ -276,13 +239,8 @@ public class CrossDictActivity extends Activity {
 	mListView.createAndSetAdapter(CrossDictActivity.this, mDict);
 
 	Intent intent = getIntent();
-	String subject = intent
-	    .getStringExtra("android.intent.extra.SUBJECT");
-	String text = intent.getStringExtra("android.intent.extra.TEXT");
 
-	if (text != null) {
-	    mWebView.lookUpWord(text);
-	} else {
+	if (!onLookUpRequest(intent)) {
 	    mWebView.lookUpWord(mCurrentWord);
 	}
     }
@@ -381,6 +339,28 @@ public class CrossDictActivity extends Activity {
     }
 
     @Override
+    protected void onPause() {
+	super.onPause();
+	try {
+	    OutputStreamWriter file = new OutputStreamWriter(openFileOutput("saved_word.txt", Context.MODE_PRIVATE), "UTF8");
+	    file.write(mCurrentWord);
+	    file.write("\n");
+	    file.write(mCurrentDefiner);
+	    file.write("\n");
+	    file.write(mCurrentDefinee);
+	    file.write("\n");
+	    file.write(mCurrentMatcher);
+	    file.write("\n");
+	    file.write(mCurrentMatchee);
+	    file.write("\n");
+	    file.write(mCurrentFreqWord);
+	    file.close();
+	} catch (Exception e) {
+	    Log.e("bhj", "save mCurrentWord failed", e);
+	}	
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 	if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
 	    if (popHistory()) {
@@ -390,44 +370,15 @@ public class CrossDictActivity extends Activity {
 		return true;
 	    }
 	}
-	return false;
+	return super.onKeyDown(keyCode, event);
     }
+
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
 	if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
 	    return true;
 	}
-	if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    new AlertDialog.Builder(CrossDictActivity.this)
-		.setTitle("Exit?")
-		.setMessage("Please confirm that you want to exit.")
-		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-			    try {
-				OutputStreamWriter file = new OutputStreamWriter(openFileOutput("saved_word.txt", Context.MODE_PRIVATE), "UTF8");
-				file.write(mCurrentWord);
-				file.write("\n");
-				file.write(mCurrentDefiner);
-				file.write("\n");
-				file.write(mCurrentDefinee);
-				file.write("\n");
-				file.write(mCurrentMatcher);
-				file.write("\n");
-				file.write(mCurrentMatchee);
-				file.write("\n");
-				file.write(mCurrentFreqWord);
-				file.close();
-			    } catch (Exception e) {
-				Log.e("bhj", "save mCurrentWord failed", e);
-			    }
-			    CrossDictActivity.this.finish();
-			}
-		    })
-		.setNegativeButton("Cancel", null)
-		.create().show();
-	    return true;
-	}
-	return false;
+	return super.onKeyUp(keyCode, event);
     }	
 
     public void lookUpWord(String word) {
