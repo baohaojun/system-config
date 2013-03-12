@@ -32,7 +32,7 @@ time (
     flock 9
     echo done locking
 
-    if test "$(get-mount-1)" = smbnetfs; then
+    if test "$(get-mount-1 $1)" = smbnetfs; then
         dir=/tmp/$(basename $0).$$/
         mkdir $dir
         relative-link * $dir/

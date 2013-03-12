@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if test -d "$1"; then
+    cd $(lookup_file $1)
+    repo-branch
+    exit
+fi
+
 if test "$REPO_BRANCH"; then
     echo "$REPO_BRANCH"
     exit

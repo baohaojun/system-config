@@ -2,7 +2,7 @@
 for x in ~/.mozilla/firefox/*/ ~/Library/"Application Support"/Firefox/Profiles/*/; do 
     test -d "$x" || continue
     dir="$x"/"extensions/{e98b7313-167d-48c6-89be-bc514d6de8d9}"
-    rm -rf "$dir"
+    rm -rf "$dir" "$dir".xpi
     mkdir -p "$dir"
     case $(uname) in
 	CYGWIN*)

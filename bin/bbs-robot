@@ -1,0 +1,160 @@
+#!/usr/bin/expect -f 
+
+# this script will log into bbs automatically, maybe even post an
+# article to a specified board.
+
+
+set host "newsmth.net"
+set dport "22"
+set user "flonk"
+set mode "-1"
+set board ""
+set password ""
+
+
+for {set i 0} {$i < [llength $argv]} {incr i} {
+    if {[string eq [lindex $argv $i] "-u"]} {
+	incr i;
+	set user [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-p"]} {
+	incr i;
+	set password [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-h"]} {
+	incr i;
+	set host [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-m"]} {
+	incr i;
+	set mode [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-b"]} {
+	incr i;
+	set board [lindex $argv $i];
+    }
+}
+
+if [string eq "" $password] {
+    set fh [open "|get-authinfo $host $user"]
+    set password [read $fh]
+    close $fh
+}
+
+if [string eq "" $mode] {
+    spawn gbk-exec ssh $user@$host
+} else {
+    spawn gbk-exec ssh $mode $user@$host
+}
+
+expect -timeout 150 password {
+    puts "send password\n";
+    send "$password\n"
+} timeout {
+    puts "timed out\n";
+    exp_continue;
+}
+
+set timeout 5
+
+expect {
+    -re "按.*RETURN.*继续|上次连线时间|按任意键继续|近期热点|如何处理以上" {
+	send "\r\n";
+	exp_continue;
+    }
+    "主选单" {
+	if {! [string eq "" $board]} {
+	    send "s\r\n";
+	    expect {
+		"请输入讨论区" {
+		    send "$board\r\n"
+		}
+	    }
+	}		
+    }
+    timeout {
+	puts "timed out\n"; puts "timed out\n"; puts "timed out\n";    puts "timed out\n";    puts "timed out\n";
+    }
+}
+
+if [string eq "" $mode] {
+    puts [wait]
+} else {
+    # start code-generator "^\\s *#"
+    # perl -e 'for $x ("A".."Z") { $o = ord($x) - ord("A") + 1; printf "set CTRL$x \\%03o\n", $o }'
+    # end code-generator
+    # start generated code
+    set CTRLA \001
+    set CTRLB \002
+    set CTRLC \003
+    set CTRLD \004
+    set CTRLE \005
+    set CTRLF \006
+    set CTRLG \007
+    set CTRLH \010
+    set CTRLI \011
+    set CTRLJ \012
+    set CTRLK \013
+    set CTRLL \014
+    set CTRLM \015
+    set CTRLN \016
+    set CTRLO \017
+    set CTRLP \020
+    set CTRLQ \021
+    set CTRLR \022
+    set CTRLS \023
+    set CTRLT \024
+    set CTRLU \025
+    set CTRLV \026
+    set CTRLW \027
+    set CTRLX \030
+    set CTRLY \031
+    set CTRLZ \032
+
+    # end generated code
+    set ESC   \033
+    set UP    \033\[A
+    set DOWN  \033\[B
+
+    interact {
+	-reset $CTRLZ {exec kill -STOP [pid]}
+	$CTRLP {send $UP}
+	$CTRLN {send $DOWN}
+	$CTRLK {send $CTRLY}
+
+	# start code-generator "^\\s *#"
+	# perl -e 'for $x ("A".."Z") { print "\$CTRLQ\$CTRL$x {send \$CTRL$x}\n"}'
+	# end code-generator
+	# start generated code
+	$CTRLQ$CTRLA {send $CTRLA}
+	$CTRLQ$CTRLB {send $CTRLB}
+	$CTRLQ$CTRLC {send $CTRLC}
+	$CTRLQ$CTRLD {send $CTRLD}
+	$CTRLQ$CTRLE {send $CTRLE}
+	$CTRLQ$CTRLF {send $CTRLF}
+	$CTRLQ$CTRLG {send $CTRLG}
+	$CTRLQ$CTRLH {send $CTRLH}
+	$CTRLQ$CTRLI {send $CTRLI}
+	$CTRLQ$CTRLJ {send $CTRLJ}
+	$CTRLQ$CTRLK {send $CTRLK}
+	$CTRLQ$CTRLL {send $CTRLL}
+	$CTRLQ$CTRLM {send $CTRLM}
+	$CTRLQ$CTRLN {send $CTRLN}
+	$CTRLQ$CTRLO {send $CTRLO}
+	$CTRLQ$CTRLP {send $CTRLP}
+	$CTRLQ$CTRLQ {send $CTRLQ}
+	$CTRLQ$CTRLR {send $CTRLR}
+	$CTRLQ$CTRLS {send $CTRLS}
+	$CTRLQ$CTRLT {send $CTRLT}
+	$CTRLQ$CTRLU {send $CTRLU}
+	$CTRLQ$CTRLV {send $CTRLV}
+	$CTRLQ$CTRLW {send $CTRLW}
+	$CTRLQ$CTRLX {send $CTRLX}
+	$CTRLQ$CTRLY {send $CTRLY}
+	$CTRLQ$CTRLZ {send $CTRLZ}
+
+	# end generated code
+
+    }	
+}
+exit
+
+# Local Variables: #
+# mode: tcl #
+# End: #

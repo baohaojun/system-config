@@ -75,8 +75,8 @@ if test $# -gt 1 -a "$1" = sync; then
 
    if set-is-subset "$(echo "${options[@]}")" -d -l -n && test $# = 1; then
        echo "Doing the hacked version of repo sync" 1>&2
-       if set-is-subset -d "${options[@]}"; then
-           true # -d, --detach          detach projects back to manifest revision
+       if set-is-subset -l "${options[@]}"; then
+           true # -l, --local-only      only update working tree, don't fetch
        else
            git fetch $(repo-remote)
        fi
@@ -89,7 +89,7 @@ if test $# -gt 1 -a "$1" = sync; then
    fi
 
    echo "Warning: some dirs may get deleted by your 'repo ${saved_args[@]}' command." 1>&2
-   if yes-or-no-p "Continue?"; then
+   if ! tty >/dev/null 2>&1 || yes-or-no-p "Continue?"; then
        set -- "${saved_args[@]}"
    else
        exit -1

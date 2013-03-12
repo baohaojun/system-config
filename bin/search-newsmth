@@ -35,6 +35,6 @@ for b in "${board[@]}"; do
             b=KernelTech
             ;;
     esac
-    of "http://www.newsmth.net/bbsbfind.php?q=1&board=$b&title=&title2=&title3=&userid=$author&dt=2222"
+    of "http://www.newsmth.net/bbsbfind.php?q=1&board=$b&title=&title2=&title3=&userid=$author&dt=22222"
 done
 

@@ -5,20 +5,23 @@ function wget() {
     command wget -4 -t 2 "$@"
 }
 
-mkdir ~/external/bin/Linux/ext/android-sdk-linux_86/google -p
-test -e ~/external/bin/Linux/ext/android-sdk-linux_86/google/do.not.download && exit 0
-cd ~/external/bin/Linux/ext/android-sdk-linux_86/google
+mkdir ~/external/bin/Linux/ext/android-sdk-linux/google -p
+test -e ~/external/bin/Linux/ext/android-sdk-linux/google/do.not.download && exit 0
+cd ~/external/bin/Linux/ext/android-sdk-linux/google
 
-x=16
+x=$(if test -e sdk.ver; then cat sdk.ver; else echo 21; fi)
 while true; do
     wget -N http://dl.google.com/android/android-sdk_r$x-linux.tgz || break
-    wget -N http://dl.google.com/android/installer_r$x-windows.exe || break
-    wget -N http://dl.google.com/android/android-sdk_r$x-macosx.zip || break
+    if tty >/dev/null 2>&1; then
+        wget -N http://dl.google.com/android/installer_r$x-windows.exe || break
+        wget -N http://dl.google.com/android/android-sdk_r$x-macosx.zip || break
+    fi
     ((x++))
 done&
 
 (
-    x=6
+    x=$(if test -e ndk.ver; then cat ndk.ver; else echo 8; fi)
+    ((x++))
     while true; do
 	wget -N http://dl.google.com/android/ndk/android-ndk-r$x-linux-x86.tar.bz2 || break
 	wget -N http://dl.google.com/android/ndk/android-ndk-r$x-darwin-x86.tar.bz2
@@ -29,6 +32,9 @@ done&
     ((x--))
     for r in f e d c b; do
 	wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-linux-x86.tar.bz2 || continue
+        if tty >/dev/null 2>&1; then
+            break;
+        fi
 	wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-darwin-x86.tar.bz2 || continue
 	if wget -N http://dl.google.com/android/ndk/android-ndk-r$x$r-windows.zip; then break; fi
     done

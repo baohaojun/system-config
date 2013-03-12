@@ -9,5 +9,12 @@ for x in ~/Maildir/*/cur ~/Maildir/*/new; do
     )
 done
 
-offlineimap
-offlineimap -a BigGmail
+
+if  yes-or-no-p "use proxy?"; then
+    tsocks=tsocks
+else
+    tsocks=
+fi
+$tsocks offlineimap -a Gmail
+$tsocks offlineimap -a BigGmail
+offlineimap -a Marvell

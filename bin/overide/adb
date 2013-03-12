@@ -24,8 +24,15 @@ function adb() {
         $the_prog wait-for-device
         shift
     fi
+
+    if test "$1" = -r; then
+        $the_prog root || true
+        $the_prog wait-for-device
+        shift
+    fi
+
     if test "$1" = -s; then
-        echo "$2" > ~/.adbd
+        echo "$(select-output-line adb devices|pn 1)" > ~/.adbd
     elif test "$1" != devices -a $(setsid $the_prog start-server >/dev/null 2>&1 ; $the_prog devices | grep .| wc -l) -gt 2; then
         export ANDROID_SERIAL=$(cat ~/.adbd)
     fi

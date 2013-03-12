@@ -1,1 +1,10 @@
-googleemacs.sh
+#!/bin/bash
+
+host=$(basename $0 | perl -npe 's/.*-//')
+domain=com/search?q=
+if [[ $host =~ wikipedia ]]; then
+    domain=org/w/index.php?search=
+fi
+url='http://'$host.$domain''"`echo \"$@\"|perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf(\"%%%02x\", ord($1))#seg; s# #+#g'`" 
+echo "$url"|tee /dev/tty|putclip
+firefox "$url"&

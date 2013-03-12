@@ -1,0 +1,7 @@
+#!/bin/bash
+
+file=$(select-output-line bash -c 'cd ~/doc/projects; ls *.org')
+
+if test -e ~/doc/projects/$file; then
+   e ~/doc/projects/$file;
+fi	

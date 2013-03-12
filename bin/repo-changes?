@@ -138,6 +138,7 @@ fi
 #{%/sh%}
 ' 2>&1 10>~/.logs/repo-changes.lock | (
     cd $(lookup_file .repo/..);
+    mkdir -p $(readlink -m out)
     log=./out/repo-changes.log"$(echo -n $*)"
     lognow="$log-$(now)"
     tee "$lognow" 2>/dev/null

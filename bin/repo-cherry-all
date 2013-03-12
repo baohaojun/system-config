@@ -58,7 +58,6 @@ my-rfa '
     if test "$DEBUG" = true; then
         set -x
     fi
-    git fetch '"$remote"' >/dev/null 2>&1;
     TOP=$ANDROID_TOP;
     log=$TOP/out/diff/$(repo-path|perl -npe "s,/,%,g").log;
     mkdir -p $(dirname $log);

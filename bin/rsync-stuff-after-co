@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+if test $# != 1; then
+    die "Error: Usage $(basename $0) HOST"
+fi
+
+for x in .ssh .smb smbookmarks .netrc .authinfo .keystore /var/myca jira-users .confhttp .confkeys .confserv .confuser weekly; do
+    rsync -av $1:$x ~/
+done
+
+sudo mv ~/myca /var

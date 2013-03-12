@@ -1,13 +1,37 @@
-#!/usr/bin/expect -f
+#!/usr/bin/expect -f 
 
-set fl [open "|get-authinfo fixnet bhj"]
-set password [read $fl]
-close $fl
 
-set fixnet [if [string eq "" [lindex $argv 0]] {concat fixnet} else {concat [lindex $argv 0]}]
-set port [if [string eq "" [lindex $argv 1]] {concat 18080} else {concat [lindex $argv 1]}]
+set host "fixnet"
+set dport "18080"
+set user "bhjbhj"
+set mode ""
 
-spawn ssh -C2qN -D $port $fixnet
+
+
+for {set i 0} {$i < [llength $argv]} {incr i} {
+    if {[string eq [lindex $argv $i] "-u"]} {
+	incr i;
+	set user [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-h"]} {
+	incr i;
+	set host [lindex $argv $i];
+    } elseif {[string eq [lindex $argv $i] "-m"]} {
+	incr i;
+	set mode [lindex $argv $i];
+    }    
+}
+
+puts "host is $host; user is $user\n";
+set fh [open "|get-authinfo $host $user"]
+set password [read $fh]
+close $fh
+
+if [string eq "" $mode] {
+    spawn ssh -C2qN -D $dport $user@$host
+} else {
+    spawn ssh $mode $user@$host
+}
+
 expect -timeout 150 password {
     puts "send password\n";
     send "$password\n"
@@ -16,7 +40,11 @@ expect -timeout 150 password {
     exp_continue;
 }
 
-puts [wait]
+if [string eq "" $mode] {
+    puts [wait]
+} else {
+    interact
+}
 exit
 
 # Local Variables: #
