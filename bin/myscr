@@ -1,6 +1,9 @@
 #!/bin/bash 
 cd 
 source ~/.bash_profile
+if test -x /opt/local/bin/bash; then
+    export SHELL=/opt/local/bin/bash;
+fi
 #. /etc/bash_completion
 session_name=${1:-first}
 
