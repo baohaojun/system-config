@@ -7,7 +7,7 @@ cd "$(dirname "$(lookup_file .git)")"
 
 git config remote.origin.url | grep -q baohaojun || exit 0 # this is not my github, do not try to push it.
 
-if git submodule foreach 'bash -c "git-push-mac || echo hello $(pwd) failed&"' | tee /dev/stderr | grep "^hello.*failed$";
+if yes-or-no-p "push all submodules?" && git submodule foreach 'bash -c "git-push-mac || echo hello $(pwd) failed&"' | tee /dev/stderr | grep "^hello.*failed$";
 then
     exit -1
 else
