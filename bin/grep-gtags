@@ -82,9 +82,9 @@ if ($imenu_mode and not $lookup_needle) {
 my $start_dir = $ENV{PWD};
 debug "started grep in $start_dir\n";
 
-my $db_dir = "$ENV{HOME}/.cache/for-code-reading$start_dir";
+my $db_dir = "$ENV{HOME}/tmp/for-code-reading$start_dir";
 if ($do_dir) {
-    $db_dir = "$ENV{HOME}/.cache/for-code-reading$do_dir";
+    $db_dir = "$ENV{HOME}/tmp/for-code-reading$do_dir";
 }
 
 $start_file = $working_file || $ENV{GTAGS_START_FILE};
@@ -96,7 +96,7 @@ if ($only_start_file and not $path_matcher) {
 }
 
 debug "start_file: $start_file";
-our $approx_dir = "ENV{HOME}/.cache/for-code-reading$ENV{GTAGS_START_FILE}";
+our $approx_dir = "ENV{HOME}/tmp/for-code-reading$ENV{GTAGS_START_FILE}";
 
 
 while ( not -f "$db_dir/GTAGS" and not "$db_dir" eq "/") {
@@ -265,7 +265,7 @@ sub do_cscope($$$) {
     my $lookup_needle_quote = shell_quote($lookup_needle);
     my $db_dir_quoted = shell_quote($db_dir);
     my $got_results = 0;
-    my $code_dir = substr($db_dir, length("$ENV{HOME}/.cache/for-code-reading"));
+    my $code_dir = substr($db_dir, length("$ENV{HOME}/tmp/for-code-reading"));
     $code_dir =~ s,/+,/,g;
     chdir ($code_dir) or die "Can not change to $code_dir" unless $working_file;
 
@@ -403,7 +403,7 @@ unless (@gtags_fallback_dir) {
 for (@gtags_fallback_dir) {
   my $dir = $_;
   my $code_dir = $dir;
-  $code_dir =~ s,.*?.cache/for-code-reading,,;
+  $code_dir =~ s,.*?tmp/for-code-reading,,;
   unless (-e $dir and -e $code_dir) {
       debug "file not found: $dir or $code_dir";
       next;

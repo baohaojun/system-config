@@ -6,6 +6,9 @@ git fetch https://github.com/mirrors/linux
 
 cd ~/src/android-mirror/
 
+repo-switch -u bibler:shgit/manifest -b tknevo-ics --repo-url=bibler:tools/repo 
+repo sync
+
 for branch in $(
     cd .repo/manifests >/dev/null 2>&1 
     git branch -a | grep -P -e '/android-\d' | sort -n | tail -n 1 | perl -npe 's,.*/,,'
@@ -14,7 +17,7 @@ for branch in $(
     fi
     cat .repo/update-android-branches 2>/dev/null
 ); do 
-    repo-switch -u https://android.googlesource.com/platform/manifest -b $branch -m default.xml
+    repo-switch -u https://android.googlesource.com/platform/manifest -b $branch
     repo sync -j1
 done
 

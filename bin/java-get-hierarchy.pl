@@ -43,10 +43,7 @@ if ($q_class !~ m/\./) {
 
 debug "q_class is $q_class";
 chomp(my $working_file= qx(java-find-def.pl -e $q_class));
-debug "working_file is $working_file for $q_class";
-if (not $working_file) {
-    die "No working file for $q_class";
-}
+debug "working_file is $working_file";
 my $working_file_dir = $working_file;
 $working_file_dir =~ s,(.*)/.*,$1,;
 
@@ -95,7 +92,7 @@ for my $key (@keywords) {
 }
 
 my $supers = ' ';
-if ($def_line =~ m/(class|interface).+?\b$class\b(?:<.*?>)?(.*)\{/) {
+if ($def_line =~ m/(class|interface).*\b$class\b(?:<.*?>)?(.*)\{/) {
     $supers = "$supers $2";
 
     if ($1 eq "class") {
@@ -144,9 +141,6 @@ my %done_classes;
 $super_classes{$q_class} = {};
 $done_classes{$q_class} = 1;
 
-# avoid infinite loop in below
-$supers =~ s/<.*?>//g; # public class Preference implements Comparable<Preference>, OnDependencyChangeListener { 
-
 while ($supers =~ m/($qualified_re)/g) {
     next if $keywords{$1};
     my $class = $1;
@@ -181,7 +175,7 @@ unless ($recursive) {
 
 while (1) {
     my $done = 1;
-    for my $q_super (sort keys %done_classes) {
+    for my $q_super (keys %done_classes) {
 	unless ($done_classes{$q_super}) {
 	    $done = 0;
 	    $done_classes{$q_super} = 1;

@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 use strict;
-
-
 my $got_pass=0;
 open(my $auth, "<", glob("~/.authinfo")) or die "No .authinfo in your HOME";
 while (<$auth>) {
@@ -16,6 +14,6 @@ while (<$auth>) {
     }
 }
 
-if (not $got_pass and system("is-tty-io") == 0) {
+unless ($got_pass) {
   system("bash -c 'read -p \"Password: \" -s pass; echo \$pass'");
 }

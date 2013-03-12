@@ -7,6 +7,10 @@
 (setq load-path
       (nconc (list 
 	      "/usr/share/emacs/site-lisp/gnus"
+	      "/opt/local/share/emacs/site-lisp/gnus"
+	      (expand-file-name "~/src/gnus")
+	      (expand-file-name "~/src/bbdb/lisp")
+	      (expand-file-name (concat "~/.emacs_d/" (symbol-name system-type)))
 	      (expand-file-name "~/.emacs_d/lisp")
 	      (expand-file-name "~/.emacs_d/org-confluence")
 	      (expand-file-name "~/.emacs_d/org-jira")
@@ -15,6 +19,9 @@
 	      (expand-file-name "~/src/org-mode/lisp")
 	      (expand-file-name "~/src/org-mode/contrib/lisp"))
 	     load-path))
+(require 'package)
+(add-to-list 'package-archives
+	     '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
 (require 'mmm-mode)
@@ -1099,7 +1106,7 @@
          (add-hook 'fill-nobreak-predicate 'markdown-nobreak-p)
          (set-buffer-modified-p nil))))
 
-;; becase we are putting our database under ~/.cache/for-code-reading/, 
+;; becase we are putting our database under ~/tmp/for-code-reading/, 
 ;; we need to redefine this function:
 (defun cscope-search-directory-hierarchy (directory)
   "Look for a cscope database in the directory hierarchy.
@@ -1115,7 +1122,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
     (catch 'done
       (if (file-regular-p saved-directory)
 	  (throw 'done saved-directory))
-      (setq directory (concat (getenv "HOME") "/.cache/for-code-reading/" (cscope-canonicalize-directory directory))
+      (setq directory (concat (getenv "HOME") "/tmp/for-code-reading/" (cscope-canonicalize-directory directory))
 	    this-directory directory)
       (while this-directory
 	(when (or (file-exists-p (concat remote-prefix this-directory cscope-database-file))
@@ -1124,7 +1131,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
             (setq database-dir (substring
                                 this-directory 
                                 (length
-                                 (concat (getenv "HOME") "/.cache/for-code-reading/"))))
+                                 (concat (getenv "HOME") "/tmp/for-code-reading/"))))
             (throw 'done (concat "" database-dir))))
 	(when (string-match "^\\(/\\|[A-Za-z]:[\\/]\\)$" this-directory)
             (throw 'done (concat "" (expand-file-name "~/.gtags-dir/"))))

@@ -1,9 +1,6 @@
 #!/bin/bash
 
 perl -ne 'print unless m,tcmd|generic/flashing|android-vnc-server,' manifest.xml > manifest.xml.new
-if test -e linux-arm-only; then
-    perl -ne 'print unless m!/prebuilt\b|/darwin\b|/mips/!' -i manifest.xml.new
-fi
 if ! diff -q manifest.xml.new manifest.xml.old; then
     rm manifest.xml -f
     cp manifest.xml.new manifest.xml -av
@@ -22,7 +19,7 @@ if test ! -e local_manifests/local_manifist.xml; then
            review="http://bible/gerrit/" />
 
   <remote  name="bpe-bhj"
-           fetch="bibler:shgit/"
+           fetch="bibler:android/"
            review="http://bible/gerrit/" />
 
   <remote  name="bpe-shgit"
@@ -30,7 +27,7 @@ if test ! -e local_manifests/local_manifist.xml; then
            review="http://bible/gerrit/" />
 
   <project path="vendor/marvell/generic/tcmd" name="vendor/marvell/generic/tcmd" revision="master" remote="apse" />
-  <project path="flashing" name="vendor/marvell/generic/flashing" revision="tk-master" remote="bpe-bhj" />
+  <project path="flashing" name="platform/vendor/marvell/generic/flashing" revision="tk-master" remote="bpe-bhj" />
   <project path="vendor/marvell/external/android-vnc-server" name="vendor/marvell/external/android-vnc-server" remote="bpe-shgit" revision="pxa98xff-jb-dsds" />
 </manifest>
 EOF

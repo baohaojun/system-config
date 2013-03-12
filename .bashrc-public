@@ -31,15 +31,15 @@ cd_beagrep()
 {
     if test $# = 1; then
 	dir=$(readlink -f "$1")
-	cd ~/.cache/for-code-reading/chm/"$dir"
+	cd ~/tmp/for-code-reading/chm/"$dir"
 	return
     fi
 
-    if [[ "$PWD" =~ .cache/for-code-reading ]]; then
+    if [[ "$PWD" =~ tmp/for-code-reading ]]; then
         builtin cd "${PWD#*for-code-reading}"
         return
     fi
-    dest=~/.cache/for-code-reading/`pwd`
+    dest=~/tmp/for-code-reading/`pwd`
     while test ! -d "$dest"/.beagrep -a ! -e "$dest"/GPATH -a "$dest" != / -a "$dest" != ""; do
         dest=${dest%/*};
     done

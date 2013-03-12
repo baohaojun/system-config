@@ -1,4 +1,3 @@
-#+LAST_MOBILE_CHANGE: 2013-03-07 11:00:08
 * TODO learn to use artist-mode
   :PROPERTIES:
   :ID:       68a3eb18-d856-4085-85eb-231d72f8b37e
@@ -24,95 +23,15 @@
                          +----------+
 
 #+END_DITAA
-* DONE Finish cross dict and publish it
-  CLOSED: [2013-03-07 Thu 12:14]
-  - CLOSING NOTE [2013-03-07 Thu 12:14] \\
-    It has been published on last Saturday.
-  :PROPERTIES:
-  :ID:       b7d65e8f-b552-4282-9cc4-54ef6c3d4a22
-  :END:
-** TODO crossdict version 1.2
-*** DONE remove the copy files code
-    CLOSED: [2013-03-11 Mon 15:23]
-*** DONE when files not found, direct user to the play.google.com page or my github page.
-    CLOSED: [2013-03-11 Mon 15:23]
-*** TODO Write the github page for explaining that.
-*** TODO Remove the accept capability of the dict data apk.
-*** DONE write the new words into a file on sdcard
-    CLOSED: [2013-03-11 Mon 15:22]
-*** DONE Remove the exit comfirm button
-    CLOSED: [2013-03-11 Mon 14:58]
-    - CLOSING NOTE [2013-03-11 Mon 14:58] \\
-      Note that must call super.onKeyUp or super.onKeyDown if you have
-      overriden these methods, simply returning false won't do it.
-*** DONE remove the asset files
-    CLOSED: [2013-03-11 Mon 14:09]
-
-** DONE add a donate button
-   CLOSED: [2013-03-07 Thu 13:33]
-   :PROPERTIES:
-   :ID:       029e84c0-8f49-449e-85a8-7a891aa1bd4f
-   :END:
-*** DONE get the donate urls for both chinese and english
-    CLOSED: [2013-03-07 Thu 13:33]
-    :PROPERTIES:
-    :ID:       24528067-4ff2-4e0a-95f9-1530e1146f9c
-    :END:
-*** DONE write something for the donation
-    CLOSED: [2013-03-11 Mon 10:17]
-    :PROPERTIES:
-    :ID:       6a44bade-db51-4558-9047-45cc51329c12
-    :END:
-** DONE publish it or google developer console
-   CLOSED: [2013-03-11 Mon 10:17]
-   :PROPERTIES:
-   :ID:       4f9bf176-9ed2-4cc0-8e66-17b313199a53
-   :END:
+* TODO Finish cross dict and pubblish it
+** TODO add a donate button
+*** TODO get the donate urls for both chinese and english
+*** TODO write something for the donation
+** TODO publish it or google developer console
 
 * TODO Learn ios programming
-  :PROPERTIES:
-  :ID:       1353b0c1-35eb-41eb-8444-99727018d53c
-  :END:
 ** TODO Start using the Mac system with my macbook air
-   :PROPERTIES:
-   :ID:       c0213b81-512d-4984-81c5-eb43d2787447
-   :END:
 ** TODO Hack the keyboard into my preferred configuration
-   :PROPERTIES:
-   :ID:       d5b3410f-bfe7-43e8-8935-970a08c8d7b4
-   :END:
-** DONE Intsall the Emacs GUI version onto the Mac
-   CLOSED: [2013-02-21 Thu 15:45]
-** DONE Get git running on it
-   CLOSED: [2013-02-21 Thu 15:45]
-** DONE Intsall other GNU software.
-   CLOSED: [2013-02-21 Thu 15:45]
-*** DONE Must install Xcode first to install most macports packages.
-    CLOSED: [2013-02-21 Thu 15:47]
-
-Emacs is an exception, it does not require Xcode to be installed.
-
-*** DONE Found the firefox extension DownloadThemAll
-    CLOSED: [2013-02-21 Thu 15:48]
-It can be used to download Xcode using multithread download.
-
-
-* TODO Write a simple doc on SDIM
-  :PROPERTIES:
-  :ID:       a78fc1d6-1b7e-4cde-aedf-8e05395a6824
-  :END:
-* TODO Refine my github page as a true blog, which supports commenting.
-  :PROPERTIES:
-  :ID:       866dbc94-3521-43f3-85e5-323ce9d8c969
-  :END:
-
-* DONE 字典的分享取词
-  CLOSED: [2013-03-11 Mon 10:18]
-  :PROPERTIES:
-  :ID:       f06bfcb8-9b3a-4e7b-9361-1374d4144167
-  :END:
-* DONE 阅读fbreader的代码
-  CLOSED: [2013-03-11 Mon 10:18]
-  :PROPERTIES:
-  :ID:       75f18fbc-39e4-4de5-9fc4-aa75321284ac
-  :END:
+** TODO Intsall the Emacs GUI version onto the Mac
+** TODO Get git running on it
+** TODO Intsall other GNU software.

@@ -176,7 +176,7 @@ cd_record()
    return $ret
 }
 
-start-recursive-shell()
+start_recursive_shell()
 {
     (
         export RECURSIVE_SHELL='[01;32mRecursive[01;31m:[01;32m'"$@"'[01;34m '
@@ -184,7 +184,8 @@ start-recursive-shell()
     )
 }
 
-export -f start-recursive-shell
+export -f start_recursive_shell
+alias start-recursive-shell=start_recursive_shell
 
 if test -e /usr/bin/python3; then
     has_python3=true

@@ -32,12 +32,15 @@ if test -e ~/.bash-path; then
         . ~/.bash-path
     fi
 else
+    if test -x /opt/local/libexec/gnubin/readlink; then
+	export PATH=/opt/local/libexec/gnubin:$PATH
+    fi
     if test -d ~/etc/path/$(uname)-$(uname -m); then
         rm -rf ~/external/etc/overide/
         export PATH=$(
             builtin cd ~/etc/path/$(uname)-$(uname -m);
             for x in $(for d in *; do echo $d; done|sort -n); do
-                readlink -m $x; 
+                readlink -m -- $x; 
             done|tr '\n' ':'
         )
     fi
@@ -54,9 +57,12 @@ DEBFULLNAME="Bao Haojun"
 export DEBEMAIL DEBFULLNAME
 
 if test "$USER" = bhj; then
-    export PERL_LOCAL_LIB_ROOT="/home/bhj/perl5";
-    export PERL_MB_OPT="--install_base /home/bhj/perl5";
-    export PERL_MM_OPT="INSTALL_BASE=/home/bhj/perl5";
-    export PERL5LIB="/home/bhj/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:/home/bhj/perl5/lib/perl5:$PERL5LIB";
-    export PATH="/home/bhj/perl5/bin:$PATH";
+    export PERL_LOCAL_LIB_ROOT="$HOME/perl5";
+    export PERL_MB_OPT="--install_base $HOME/perl5";
+    export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5";
+    export PERL5LIB="$HOME/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:$HOME/perl5/lib/perl5:$PERL5LIB";
+    export PATH="$HOME/perl5/bin:$PATH";
 fi
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8

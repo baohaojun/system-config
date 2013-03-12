@@ -1,14 +1,4 @@
 #!/bin/bash
-
-if test $# = 0; then
-    set -- .
-fi
-
-set -- "$(readlink -f -- "$1")"
-if test -f "$1"; then
-    set -- "$(dirname "$1")"
-fi
-
 export MP=$(get-mount-point "$1")
 
 mount | perl -a -ne 'print $F[0] if $F[2] eq $ENV{"MP"}'

@@ -1,6 +1,0 @@
-#!/bin/bash
-function curl() {
-    command curl --socks5-hostname localhost:18080 "$@"
-}
-
-export -f curl

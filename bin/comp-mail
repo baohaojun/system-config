@@ -81,4 +81,4 @@ if (m/^dn: /) { # restart
 ' "${disps[@]}"
 }
 
-ldapsearch -x -ZZ  -LLL -b "DC=marvell,DC=com"  -h sh4-dc01.marvell.com -D "marvell\hjbao" -w $(get-authinfo sh4-dc01) "$query" | get-display
+ldapsearch -x -ZZ  -LLL -b "DC=marvell,DC=com"  -h sh4-dc01 -D "marvell\hjbao" -w $(get-authinfo sh4-dc01) "$query" | get-display

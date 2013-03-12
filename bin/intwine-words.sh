@@ -1,5 +1,4 @@
 #!/bin/bash
-out=$(
 perl -e '
 $done = 0; 
 while (not $done) {
@@ -11,11 +10,5 @@ while (not $done) {
             $_ = substr($_, 1);
         }
     } @ARGV;
-}' "$@" )
-
-
-echo "$out"
-if is-tty-io; then
-    echo "$out" | putclip >/dev/null 2>&1
-fi
+}' "$@" | putclip >/dev/null 2>&1
      

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+dns_ip=$(host bhj-is-a-geek.oicp.net|grep 'has address'|head -n 1|pn 4)
+hosts_ip=$(ip-or-name bhj-is-a-geek.oicp.net)
+if test "$dns_ip" -a "$dns_ip" != 0.0.0.0 -a "$dns_ip" != "$hosts_ip"; then
+    sudo update-host-ip bhj-is-a-geek.oicp.net "$dns_ip"
+fi

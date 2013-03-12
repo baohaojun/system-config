@@ -2,15 +2,16 @@
 set -e
 touch ~/.authinfo
 chmod og-r ~/.authinfo
-mkdir ~/.logs -p
+mkdir -p ~/.logs 
 touch ~/.where.bak
 rm -f ~/tmp >/dev/null 2>&1 || true
-mkdir ~/tmp -p
+mkdir -p ~/tmp
 cd ~/windows-config/
 mkdir -p ~/external/bin/$(uname|perl -npe 's/_.*//')/ext
 mkdir -p ~/tmp/notification-manager
 mkdir -p ~/external/etc/at
 echo ~/external/etc/at >> ~/.where
+export PATH=/opt/local/libexec/gnubin:$PATH
 
 function die() {
     echo "$@"
@@ -58,5 +59,5 @@ else
 fi
 sudo ln -sf ~/etc/rc.local /etc
 mkdir -p ~/bin/$(uname|perl -npe 's/_.*//')/ext/`uname -m`/
-if test -l ~/.git; then rm -f ~/.git; fi
+if test -L ~/.git; then rm -f ~/.git; fi
 echo OK
