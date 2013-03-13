@@ -8,7 +8,7 @@ if( WITH_GROWL_BACKEND )
                         growl.cpp
 			)
 
-                automoc4_add_library(growl MODULE  ${GROWL__SRC} )
+                add_library(growl MODULE  ${GROWL__SRC} )
                 target_link_libraries(growl snorecore ${QT_QTCORE_LIBRARY} ${CRYPTOPP_LIBRARIES} ${Boost_SYSTEM_LIBRARY} ${Boost_THREAD_LIBRARY})
 
                 if(MINGW)

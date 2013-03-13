@@ -26,7 +26,7 @@ set ( SnoreNotify_HDR ${SnoreNotify_HDR}
         version.h
         )
 
-automoc4_add_library( snorecore  SHARED ${SnoreNotify_SRCS})
+add_library( snorecore  SHARED ${SnoreNotify_SRCS})
 set_target_properties( snorecore PROPERTIES OUTPUT_NAME "snore" DEFINE_SYMBOL "SNORECORE_DLL" )
 target_link_libraries ( snorecore ${QT_QTCORE_LIBRARY}  ${QT_QTGUI_LIBRARY}  )
 

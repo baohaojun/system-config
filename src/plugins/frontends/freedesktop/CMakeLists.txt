@@ -8,7 +8,7 @@ if(QT_QTDBUS_FOUND AND WITH_FREEDESKTOP_FRONTEND)
 
     qt4_add_dbus_adaptor( FREEDESKTOP_NOTIFICATION_FRONTEND_SRC org.freedesktop.Notifications.xml freedesktopnotificationfrontend.h FreedesktopFrontend)
 
-    automoc4_add_library(freedesktop MODULE  ${FREEDESKTOP_NOTIFICATION_FRONTEND_SRC} )
+    add_library(freedesktop MODULE  ${FREEDESKTOP_NOTIFICATION_FRONTEND_SRC} )
     target_link_libraries(freedesktop snorecore ${QT_QTDBUS_LIBRARY} ${QT_QTGUI_LIBRARY} )
 
     if(KDE4_FOUND)

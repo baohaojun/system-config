@@ -10,7 +10,7 @@ else(WIN32)
   set(WIN32_SPECIFIC)
 endif(WIN32)
 
-automoc4_add_executable( snorenotify ${WIN32_SPECIFIC}  main.cpp snorenotify.cpp trayicon.cpp ${SNORENOTIFY_DEPS})
+add_executable( snorenotify ${WIN32_SPECIFIC}  main.cpp snorenotify.cpp trayicon.cpp ${SNORENOTIFY_DEPS})
 
 target_link_libraries( snorenotify snorecore ${QT_QTGUI_LIBRARY} )
 

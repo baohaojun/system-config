@@ -1,5 +1,4 @@
 find_package( Qt4 REQUIRED )
-find_package( Automoc4 REQUIRED)
 
 include_directories( ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
                     ${QT_QTNETWORK_INCLUDE_DIR})

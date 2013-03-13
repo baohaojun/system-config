@@ -1,12 +1,24 @@
 #ifndef SNORE_EXPORT_H
 #define SNORE_EXPORT_H
-#include <QtGlobal>
 
+
+#if defined(HAVE_KDE) 
+#include <kdemacros.h>
+#ifdef SNORECORE_DLL
+# define SNORE_EXPORT KDE_EXPORT
+#else
+# define SNORE_EXPORT KDE_IMPORT
+#endif
+#else 
+#include <QtGlobal>
 #ifdef SNORECORE_DLL
 # define SNORE_EXPORT Q_DECL_EXPORT
 #else
 # define SNORE_EXPORT Q_DECL_IMPORT
 #endif
+#endif
+
+
 
 #ifndef SNORE_DEPRECATED
 # ifdef Q_CC_GNU

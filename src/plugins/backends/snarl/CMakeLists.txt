@@ -5,7 +5,7 @@ if(WIN32)
         SnarlInterface.cpp
         snarl.cpp
         )
-    automoc4_add_library(snarl MODULE ${SNARL_SRC} )
+    add_library(snarl MODULE ${SNARL_SRC} )
     target_link_libraries(snarl snorecore ${QT_QTCORE_LIBRARY} )
 
     install(TARGETS snarl ${SNORE_BACKEND_INSTALL_PATH})
