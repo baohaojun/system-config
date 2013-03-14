@@ -129,7 +129,10 @@ It can be used to download Xcode using multithread download.
   - CLOSING NOTE [2013-03-13 Wed 12:32] \\
     type 'i'
 
-* TODO Why is the caps lock mapped Esc key so slow as sometimes will come after the next key I typed?
+* DONE Why is the caps lock mapped Esc key so slow as sometimes will come after the next key I typed?
+  CLOSED: [2013-03-14 Thu 19:15]
+  - CLOSING NOTE [2013-03-14 Thu 19:15] \\
+    Must change is system keyboard setting the Caps Lock behavior to No Action.
 * TODO How to lock Mac
 * TODO How to start programs at Mac login
 * TODO How to use flock on Mac
