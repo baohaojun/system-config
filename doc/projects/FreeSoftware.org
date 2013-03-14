@@ -133,3 +133,5 @@ It can be used to download Xcode using multithread download.
 * TODO How to lock Mac
 * TODO How to start programs at Mac login
 * TODO How to use flock on Mac
+* TODO Mac command line notify
+* TODO Mac work on keyremap and keyhack
