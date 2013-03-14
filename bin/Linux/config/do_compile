@@ -41,11 +41,6 @@ function compile_gtags() {
     make
     sudo make install
     git clean -xfd
-
-    cd ~/gcode/java-gtags-parser/
-    make
-    make clean
-    git clean -xfd
 }
 
 
