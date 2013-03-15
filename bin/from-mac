@@ -1,25 +1,7 @@
 #!/bin/bash
 set -e
 head=refs/heads/from-mac/
-case $(uname) in
-    CYGWIN*)
-	mac=$(ifconfig /all | tr -d '\r' | perl -ne 'if (m/eth\d+:\s*$/) 
-{
-    while (<>) {
-        if (m/Physical Address.*:\s*(.*)/) {
-            print lc($1);
-            exit;
-        }
-    }
-}')
-	host=$(hostname)
-	uname=$(uname|perl -npe 's/_.*//')
-	test -n "$mac"
-	test -n "$host"
-	test -n "$uname"
-	echo $head$mac-$host-$uname
-	;;
-    *)
-	echo refs/heads/from-mac/`ifconfig|grep HWaddr|grep -v usb|head -n 1|perl -npe 's/.*HWaddr //; s/:/-/g; s/\s//g;'`-`hostname`-$(uname)
-	;;
-esac
+mac=$(get-mac)
+host=$(hostname)
+uname=$(uname|perl -npe 's/_.*//')
+echo $head$mac-$host-$uname

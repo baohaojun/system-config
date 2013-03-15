@@ -7,6 +7,10 @@
 (setq load-path
       (nconc (list 
 	      "/usr/share/emacs/site-lisp/gnus"
+	      "/opt/local/share/emacs/site-lisp/gnus"
+	      (expand-file-name "~/src/gnus")
+	      (expand-file-name "~/src/bbdb/lisp")
+	      (expand-file-name (concat "~/.emacs_d/" (symbol-name system-type)))
 	      (expand-file-name "~/.emacs_d/lisp")
 	      (expand-file-name "~/.emacs_d/org-confluence")
 	      (expand-file-name "~/.emacs_d/org-jira")
@@ -15,6 +19,9 @@
 	      (expand-file-name "~/src/org-mode/lisp")
 	      (expand-file-name "~/src/org-mode/contrib/lisp"))
 	     load-path))
+(require 'package)
+(add-to-list 'package-archives
+	     '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
 (require 'mmm-mode)
@@ -2501,6 +2508,7 @@ we are not interested in those lines that do."
   (w3m-goto-url (format "http://r66:34567/dict/%s" word)))
 
 (define-key esc-map [(meta d)] 'bhj-do-dictionry)
+(define-key term-mode-map [(control ?\\)] 'toggle-input-method)
 
 (defun bhj-open-android-doc-on-java-buffer ()
   (interactive)

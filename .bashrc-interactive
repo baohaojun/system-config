@@ -1,7 +1,11 @@
 #!/bin/bash
 
-if test "$EMACS" != t -a -e /etc/bash_completion; then
-    . /etc/bash_completion
+if test "$EMACS" != t; then
+    if test -e /etc/bash_completion; then
+        . /etc/bash_completion
+    elif test -e /opt/local/etc/bash_completion; then
+        . /opt/local/etc/bash_completion
+    fi
 fi
 
 for x in ~/.bash_completion.d/*; do 

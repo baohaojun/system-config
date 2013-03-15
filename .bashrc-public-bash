@@ -170,13 +170,13 @@ cd_record()
 
    (
        if test "$LC_ALL" != C -a "$has_python3"; then
-	   flock -x ~/.where.lock -c where; 
+	   where; 
        fi&
    )
    return $ret
 }
 
-start-recursive-shell()
+start_recursive_shell()
 {
     (
         export RECURSIVE_SHELL='[01;32mRecursive[01;31m:[01;32m'"$@"'[01;34m '
@@ -184,16 +184,17 @@ start-recursive-shell()
     )
 }
 
-export -f start-recursive-shell
+export -f start_recursive_shell
+alias start-recursive-shell=start_recursive_shell
 
-if test -e /usr/bin/python3; then
+if which -s python3; then
     has_python3=true
 else
     has_python3=
 fi
 
 export PROMPT_COMMAND="cd_record"
-if test -e /usr/bin/python3; then
+if test -n "$has_python3"; then
     alias cd=cd_bhj
 fi
 alias cow='cp --reflink=always -a'

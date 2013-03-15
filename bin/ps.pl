@@ -6,7 +6,7 @@ if test $(basename $0) = ps.pl0; then
     export MATCH_PROG_ONLY=true
 fi
 
-ps -eo pid,ppid,etime,cmd | perl -ne '
+ps -eo pid,ppid,etime,command | perl -ne '
 BEGIN{
     $found = 0;
     @args=split(/\s+/, $ENV{"ARGS"});
