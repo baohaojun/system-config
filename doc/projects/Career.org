@@ -1,8 +1,8 @@
-* TODO do marvell stock options.
-  :PROPERTIES:
-  :ID:       f397bae3-3cba-4e75-9acf-4a319f9ac93a
-  :END:
-
+* TODO Work on uboot/obm to support multi products with 1 image
+** TODO merge changes from smt branch
+*** TODO do it for 988.
+*** TODO where to put the function declaration?
+** TODO verify that it works
 * TODO Study the mars settings code
   :PROPERTIES:
   :ID:       0988370f-98f1-4adf-9926-d5fbbdd3b241
@@ -140,3 +140,7 @@ init_fnc_t *init_sequence[] = {
      * Product build script update, 
      * Test build,
      * Verification of the test build,
+* TODO do marvell stock options.
+  :PROPERTIES:
+  :ID:       f397bae3-3cba-4e75-9acf-4a319f9ac93a
+  :END:

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: logf
+# key: logfcs
+# --
+Console.WriteLine("hello `(file-name-nondirectory (buffer-file-name))`:`(line-number-at-pos)`");
