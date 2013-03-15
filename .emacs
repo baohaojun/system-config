@@ -7,10 +7,6 @@
 (setq load-path
       (nconc (list 
 	      "/usr/share/emacs/site-lisp/gnus"
-	      "/opt/local/share/emacs/site-lisp/gnus"
-	      (expand-file-name "~/src/gnus")
-	      (expand-file-name "~/src/bbdb/lisp")
-	      (expand-file-name (concat "~/.emacs_d/" (symbol-name system-type)))
 	      (expand-file-name "~/.emacs_d/lisp")
 	      (expand-file-name "~/.emacs_d/org-confluence")
 	      (expand-file-name "~/.emacs_d/org-jira")
@@ -19,9 +15,6 @@
 	      (expand-file-name "~/src/org-mode/lisp")
 	      (expand-file-name "~/src/org-mode/contrib/lisp"))
 	     load-path))
-(require 'package)
-(add-to-list 'package-archives
-	     '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
 (require 'mmm-mode)
@@ -2473,8 +2466,7 @@ criteria can be provided via the optional match-string argument "
 
 (global-set-key [(meta shift ?d)] 'insert-today)
 
-(unless (or (eq system-type 'windows-nt)
-	    (eq system-type 'darwin))
+(unless (eq system-type 'windows-nt)
   (require 'xclip)
   (turn-on-xclip)
   (load-file "~/.emacs_d/lisp/my-erc-config.el"))

@@ -1,4 +1,5 @@
 vbell off
+shell /bin/bash
 bindkey -m \033[4~ stuff G
 bindkey -m \033[1~ stuff g
 ignorecase on

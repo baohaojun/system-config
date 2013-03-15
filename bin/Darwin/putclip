@@ -1,8 +1,0 @@
-#!/bin/bash
-if test $# != 0; then
-    exec <<EOF
-$@
-EOF
-fi
-
-rm-last-nl | pbcopy

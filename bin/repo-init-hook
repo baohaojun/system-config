@@ -12,7 +12,8 @@ else
     cp manifest.xml.old manifest.xml -av
 fi
 
-cat <<EOF > local_manifests/local_manifist.xml.2
+if test ! -e local_manifests/local_manifist.xml; then
+    cat <<EOF > local_manifests/local_manifist.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
 
@@ -33,7 +34,4 @@ cat <<EOF > local_manifests/local_manifist.xml.2
   <project path="vendor/marvell/external/android-vnc-server" name="vendor/marvell/external/android-vnc-server" remote="bpe-shgit" revision="pxa98xff-jb-dsds" />
 </manifest>
 EOF
-
-if test ! -e local_manifests/local_manifist.xml || ! diff local_manifests/local_manifist.xml local_manifests/local_manifist.xml.2; then
-    mv local_manifests/local_manifist.xml.2 local_manifests/local_manifist.xml
 fi

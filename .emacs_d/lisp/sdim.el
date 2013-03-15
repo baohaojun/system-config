@@ -229,9 +229,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
                 prefix-arg nil))
 
       (while (> repeat 0)
-	(if (eq major-mode 'term-mode)
-	    (term-send-raw-string sdim-commit-str)
-	  (insert sdim-commit-str))
+        (insert sdim-commit-str)
         (setq repeat (1- repeat)))
       (if auto-fill-function
           (apply normal-auto-fill-function ())))
@@ -297,10 +295,7 @@ Entry to this mode calls the value of `sdim-minor-mode-hook'."
 		 ; events, the buffer is already modified by us using
 		 ; insert directly.
         (unless unwind-indicator
-          (message "sdim translation failed")
-	  (unless (process-live-p sdim-ime-connection)
-	    (setq sdim-ime-connection nil)
-	    (kill-buffer "*ime-server*")))
+          (message "sdim translation failed"))
         (sdim-delete-overlays)
         (set-buffer-modified-p sdim-modified-p)
         ;; Run this hook only when the current input method doesn't
