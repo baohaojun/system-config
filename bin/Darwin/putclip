@@ -5,4 +5,4 @@ $@
 EOF
 fi
 
-rm-last-nl | pbcopy
+pbcopy

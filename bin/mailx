@@ -78,13 +78,8 @@ fi
 
 test -z "${body[0]}" && body=("=")
 
-the_mailx=/usrbin/mailx
-if test -e /opt/local/bin/mailx; then
-    the_mailx=/opt/local/bin/mailx;
-fi
-
 (
-    printf "$the_mailx -S smtp=localhost:2025 -S smtp-auth-user=hjbao@marvell.com -S smtp-auth-password=%q " "$(get-authinfo localhost hjbao@marvell.com)"
+    printf "/usr/bin/mailx -S smtp=localhost:2025 -S smtp-auth-user=hjbao@marvell.com -S smtp-auth-password=%q " "$(get-authinfo localhost hjbao@marvell.com)"
     for y in attach cc bcc subject to; do
 	eval '
         if test ${#'$y'[@]} != 0; then

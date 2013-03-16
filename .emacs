@@ -2473,8 +2473,7 @@ criteria can be provided via the optional match-string argument "
 
 (global-set-key [(meta shift ?d)] 'insert-today)
 
-(unless (or (eq system-type 'windows-nt)
-	    (eq system-type 'darwin))
+(unless (eq system-type 'windows-nt)
   (require 'xclip)
   (turn-on-xclip)
   (load-file "~/.emacs_d/lisp/my-erc-config.el"))
@@ -2509,6 +2508,7 @@ we are not interested in those lines that do."
   (w3m-goto-url (format "http://r66:34567/dict/%s" word)))
 
 (define-key esc-map [(meta d)] 'bhj-do-dictionry)
+(define-key term-mode-map [(control ?\\)] 'toggle-input-method)
 
 (defun bhj-open-android-doc-on-java-buffer ()
   (interactive)

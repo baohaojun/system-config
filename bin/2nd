@@ -1,8 +1,0 @@
-#!/bin/bash
-prog=$1
-prog=$(type -a $1 | grep 'is /'|perl -ne 'print if (2..2)'|pn 3)
-shift
-
-if test "$prog"; then
-   exec $prog "$@"
-fi
