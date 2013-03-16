@@ -1,1 +1,0 @@
-/usr/share/libtool/libltdl/lt__dirent.c

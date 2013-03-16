@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 if (@ARGV != 1 and @ARGV != 2) {
@@ -41,10 +41,10 @@ while (<$rcfile>) {
 	$lang_map{$lang} = [] unless exists $lang_map{$lang};
 
 	while ($pat =~ m/\((.*?)\)/g) {
-	    push $lang_map{$lang}, $1;
+	    push @{$lang_map{$lang}}, $1;
 	}
 	$pat =~ s/\(.*?\)//g;
-	push $lang_map{$lang}, (map {'*.' . $_} (grep {$_} split(/\./, $pat)));
+	push @{$lang_map{$lang}}, (map {'*.' . $_} (grep {$_} split(/\./, $pat)));
 	$,=' ';
 	debug "map for $lang is @{$lang_map{$lang}}";
     }

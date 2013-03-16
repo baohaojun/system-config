@@ -1,4 +1,38 @@
 #+LAST_MOBILE_CHANGE: 2013-03-07 11:00:08
+* TODO CrossDict
+
+** TODO Post some screenshots onto EnglishWorld board
+* TODO Learn ios programming
+  :PROPERTIES:
+  :ID:       1353b0c1-35eb-41eb-8444-99727018d53c
+  :END:
+** TODO Start using the Mac system with my macbook air
+   :PROPERTIES:
+   :ID:       c0213b81-512d-4984-81c5-eb43d2787447
+   :END:
+** TODO Hack the keyboard into my preferred configuration
+   :PROPERTIES:
+   :ID:       d5b3410f-bfe7-43e8-8935-970a08c8d7b4
+   :END:
+** DONE Intsall the Emacs GUI version onto the Mac
+   CLOSED: [2013-02-21 Thu 15:45]
+** DONE Get git running on it
+   CLOSED: [2013-02-21 Thu 15:45]
+** DONE Intsall other GNU software.
+   CLOSED: [2013-02-21 Thu 15:45]
+*** DONE Must install Xcode first to install most macports packages.
+    CLOSED: [2013-02-21 Thu 15:47]
+
+Emacs is an exception, it does not require Xcode to be installed.
+
+*** DONE Found the firefox extension DownloadThemAll
+    CLOSED: [2013-02-21 Thu 15:48]
+It can be used to download Xcode using multithread download.
+
+
+* DONE Fix yasnippet on Mac
+  CLOSED: [2013-03-13 Wed 10:58]
+
 * TODO learn to use artist-mode
   :PROPERTIES:
   :ID:       68a3eb18-d856-4085-85eb-231d72f8b37e
@@ -69,32 +103,6 @@
    :ID:       4f9bf176-9ed2-4cc0-8e66-17b313199a53
    :END:
 
-* TODO Learn ios programming
-  :PROPERTIES:
-  :ID:       1353b0c1-35eb-41eb-8444-99727018d53c
-  :END:
-** TODO Start using the Mac system with my macbook air
-   :PROPERTIES:
-   :ID:       c0213b81-512d-4984-81c5-eb43d2787447
-   :END:
-** TODO Hack the keyboard into my preferred configuration
-   :PROPERTIES:
-   :ID:       d5b3410f-bfe7-43e8-8935-970a08c8d7b4
-   :END:
-** DONE Intsall the Emacs GUI version onto the Mac
-   CLOSED: [2013-02-21 Thu 15:45]
-** DONE Get git running on it
-   CLOSED: [2013-02-21 Thu 15:45]
-** DONE Intsall other GNU software.
-   CLOSED: [2013-02-21 Thu 15:45]
-*** DONE Must install Xcode first to install most macports packages.
-    CLOSED: [2013-02-21 Thu 15:47]
-
-Emacs is an exception, it does not require Xcode to be installed.
-
-*** DONE Found the firefox extension DownloadThemAll
-    CLOSED: [2013-02-21 Thu 15:48]
-It can be used to download Xcode using multithread download.
 
 
 * TODO Write a simple doc on SDIM
@@ -116,3 +124,17 @@ It can be used to download Xcode using multithread download.
   :PROPERTIES:
   :ID:       75f18fbc-39e4-4de5-9fc4-aa75321284ac
   :END:
+* DONE How to step into a funcall in edebug (org-jira, obm/uboot)
+  CLOSED: [2013-03-13 Wed 12:32]
+  - CLOSING NOTE [2013-03-13 Wed 12:32] \\
+    type 'i'
+
+* DONE Why is the caps lock mapped Esc key so slow as sometimes will come after the next key I typed?
+  CLOSED: [2013-03-14 Thu 19:15]
+  - CLOSING NOTE [2013-03-14 Thu 19:15] \\
+    Must change is system keyboard setting the Caps Lock behavior to No Action.
+* TODO How to lock Mac
+* TODO How to start programs at Mac login
+* TODO How to use flock on Mac
+* TODO Mac command line notify
+* TODO Mac work on keyremap and keyhack

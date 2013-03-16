@@ -19,11 +19,12 @@ remoteuser = hjbao@marvell.com
 remotepasseval = getcred("localhost", "hjbao@marvell.com", 1143)
 nametrans = lambda foldername: "mrvl." + foldername.replace(" ", "_")
 maxconnections = 6
-folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in ('inbox', 'sent')])
+folderfilter = lambda foldername: any([x.lower() in foldername.lower() and 'gmail' not in x for x in ('inbox', 'sent')])
 
 [Repository Local-Mrvl]
 type = Maildir
 localfolders = ~/Maildir
+folderfilter = lambda foldername: 'mrvl.' in foldername
 
 [Account Gmail]
 localrepository = Local-Gmail
@@ -35,6 +36,7 @@ postsynchook = ~/bin/sync_nnmaildir -m
 [Repository Local-Gmail]
 type = Maildir
 localfolders = ~/Maildir
+folderfilter = lambda foldername: 'gmail.' in foldername
 
 [Repository Remote-Gmail]
 type = Gmail
@@ -54,6 +56,7 @@ postsynchook = ~/bin/sync_nnmaildir -m
 [Repository Local-BigGmail]
 type = Maildir
 localfolders = ~/Maildir
+folderfilter = lambda foldername: 'gmail.' in foldername
 
 [Repository Remote-BigGmail]
 type = Gmail

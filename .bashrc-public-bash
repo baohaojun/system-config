@@ -187,7 +187,7 @@ start_recursive_shell()
 export -f start_recursive_shell
 alias start-recursive-shell=start_recursive_shell
 
-if which -s python3; then
+if which python3 >/dev/null 2>&1; then
     has_python3=true
 else
     has_python3=
