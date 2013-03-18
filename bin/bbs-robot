@@ -111,12 +111,29 @@ if [string eq "" $mode] {
     set ESC   \033
     set UP    \033\[A
     set DOWN  \033\[B
+    set LEFT  \033\[D
+    set RIGHT \033\[C
+    set NEXT  \033\[6~
+    set PREV  \033\[5~
+    set HOME  \033\[1~
+    set END   \033\[4~
+    set ESCv  \033v
+    set ESClt \033<
+    set ESCgt \033>
 
     interact {
 	-reset $CTRLZ {exec kill -STOP [pid]}
 	$CTRLP {send $UP}
 	$CTRLN {send $DOWN}
 	$CTRLK {send $CTRLY}
+	$CTRLV {send $NEXT}
+	$ESCv  {send $PREV}
+	$CTRLS {send /}
+	$CTRLR {send ?}
+	$CTRLF {send $RIGHT}
+	$CTRLB {send $LEFT}
+	$ESClt {send $HOME}
+	$ESCgt {send $END}
 
 	# start code-generator "^\\s *#"
 	# perl -e 'for $x ("A".."Z") { print "\$CTRLQ\$CTRL$x {send \$CTRL$x}\n"}'
@@ -150,7 +167,7 @@ if [string eq "" $mode] {
 	$CTRLQ$CTRLZ {send $CTRLZ}
 
 	# end generated code
-
+	$CTRLQ$ESC   {send $ESC}
     }	
 }
 exit

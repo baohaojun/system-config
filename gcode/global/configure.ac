@@ -240,22 +240,13 @@ AC_SUBST(DEFAULTLANGMAP_QUOTED)
 AC_CONFIG_FILES([Makefile
 	gtags.conf
 	libutil/langmap.h
-	htags/global.cgi.tmpl
-	htags/completion.cgi.tmpl
 	libutil/Makefile
 	gtags/Makefile
-	htags/Makefile
 	libdb/Makefile
 	global/Makefile
-	gozilla/Makefile
-	gtags-cscope/Makefile
-	globash/Makefile
-	htags-refkit/Makefile
 	libglibc/Makefile
 	doc/Makefile
 	icons/Makefile
-	jquery/Makefile
-	jquery/images/Makefile
 	libparser/Makefile
 	plugin-example/Makefile
 	libltdl/Makefile
