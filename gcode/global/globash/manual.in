@@ -1,0 +1,63 @@
+#
+# Copyright (c) 2001, 2002, 2004, 2006, 2009, 2010
+#	Tama Communications Corporation
+#
+# This file is part of GNU GLOBAL.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# This file is converted to the following files:
+#	o command source file(for usage and help).
+#	o man format reference manual.
+#	o texinfo format reference manual.
+#
+@HEADER	GLOBASH,1,May 2010,GNU Project
+@NAME	globash - a special shell for GLOBAL using GNU bash.
+@SYNOPSIS
+	@name{blobash}
+@DESCRIPTION
+	@name{Globash} is a special shell for GLOBAL using GNU bash.
+	You can use a lot of function to ease reading source code
+	like tag stack, tag mark and cookie.
+	At first, you should make tag files using @name{gtags} and
+	invoke this command in the project.
+	Please refer to the help (type 'ghelp'<ENTER>) about a detailed usage.
+@FILES
+	@begin_itemize
+	@item{@file{GTAGS}}
+		Tag file for object definitions.
+	@item{@file{GRTAGS}}
+		Tag file for object references.
+	@item{@file{GPATH}}
+		Tag file for path of source files.
+	@item{@file{~/.globashrc}}
+		The personal initialization file, executed for globash.
+	@end_itemize
+@ENVIRONMENT
+	The following environment variables affect the execution of @name{globash}:
+	@begin_itemize
+	@item{@var{EDITOR}}
+		The editor used by the show command.
+	@end_itemize
+@SEE ALSO
+	@xref{gtags,1},
+	@xref{htags,1},
+	@xref{less,1}.
+
+        GNU GLOBAL source code tag system@br
+        (http://www.gnu.org/software/global/).
+@AUTHOR
+	Shigio YAMAGUCHI.
+@HISTORY
+	The @name{global} command appeared in GLOBAL-4.1(2001).

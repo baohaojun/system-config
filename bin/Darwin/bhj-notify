@@ -1,0 +1,24 @@
+#!/bin/bash
+label=$1
+shift
+
+content=
+if test $# != 0; then
+content=$(
+    echo At $(date):; 
+    echo "$@"|perl -ne '
+BEGIN{
+    use HTML::Entities;
+    use Encode;
+} 
+chomp;
+$_ = decode_utf8($_);
+print encode_entities($_) . "\n"
+')
+fi
+
+if test "$content"; then
+    terminal-notifier -title "$lable" -group "$lable" -message "$content"
+else
+    terminal-notifier -remove "$lable"
+fi

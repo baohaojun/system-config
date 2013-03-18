@@ -10,6 +10,6 @@ $escape =~ s/-/%2D/g;
 
 print ("https://mail.google.com/mail/?hl=zh-CN&shva=1#search/" . $escape);
 
-system("firefox", "https://mail.google.com/mail/?hl=zh-CN&shva=1#search/" . $escape);
+system("of", "https://mail.google.com/mail/?hl=zh-CN&shva=1#search/" . $escape);
 
 print "\nfor help: run this: googleemacs.sh gmail Using advanced search\n"

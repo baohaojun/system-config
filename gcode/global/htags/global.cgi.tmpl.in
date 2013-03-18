@@ -1,0 +1,211 @@
+#! @PERL@
+#------------------------------------------------------------------
+# YOU ARE COMING TO THE DESTINATION ALMOST. PLEASE DO A LITTLE EFFORT.
+#
+# How to setup search form of htags
+# =================================
+#
+# You should start HTTP server so that this script is executed as a CGI script.
+# Setup procedure for it depends on the HTTP server which you are using.
+# If you are using Apache, 'HTML/.htaccess' might be helpful for you.
+#
+#------------------------------------------------------------------
+#
+# Copyright (c) 1997, 2004, 2006, 2008, 2010 Tama Communications Corporation
+#
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+sub header {
+	"Content-type: text/html\n\n" .
+	"@page_begin@\n@body_begin@\n";
+}
+sub tailer {
+	"@body_end@\n@page_end@\n";
+}
+sub title {
+	"@title_begin@" . $_[0] . "@title_end@\n";
+}
+sub error {
+	"@error_begin@Error@error_end@\n";
+}
+sub message {
+	"@message_begin@" . $_[0] . "@message_end@\n";
+}
+@pairs = split (/&/, $ENV{'QUERY_STRING'});
+foreach $p (@pairs) {
+	($name, $value) = split(/=/, $p);
+	$value =~ tr/+/ /;
+	$value =~ s/%([\dA-Fa-f][\dA-Fa-f])/pack("C", hex($1))/eg;
+	$form{$name} = $value;
+}
+$basedir = "..";
+if ($form{'id'}) {
+	$url = $ENV{'HTTP_REFERER'};
+	if (!$url) {
+		print header();
+		print error();
+		print message("Your browser doesn't send HTTP_REFERER. Please use another one.");
+		print tailer();
+		exit 0;
+	}
+	$basedir = $url;
+	$basedir =~ s!/[^\/]+$!!;		# remove file name.
+	$basedir =~ s!/defines$!!;
+	$basedir =~ s!/S$!!;
+	$basedir =~ s!/$!!;
+}
+sub error_and_exit {
+	print header();
+	print error();
+	print message($_[0] . "<a href='$basedir/mains.@normal_suffix@'>[return]</a>");
+	print tailer();
+	exit 0;
+}
+if (! -x '@globalpath@') {
+	error_and_exit("Server side command not found.");
+}
+if ($form{'pattern'} eq '') {
+	error_and_exit("Pattern not specified.");
+}
+$pattern = $form{'pattern'};
+$flag = '';
+$words = 'definitions';
+if ($form{'type'} eq 'reference') {
+	$flag = 'r';
+	$words = 'references';
+} elsif ($form{'type'} eq 'symbol') {
+	$flag = 's';
+	$words = 'symbols';
+} elsif ($form{'type'} eq 'path') {
+	$flag = 'P';
+	$words = 'paths';
+} elsif ($form{'type'} eq 'grep') {
+	$flag = 'g';
+	$words = 'patterns';
+} elsif ($form{'type'} eq 'idutils') {
+	$flag = 'I';
+	$words = 'patterns';
+}
+$iflag = '';
+if ($form{'icase'}) {
+	$iflag = 'i';
+}
+$oflag = '';
+if ($form{'other'} && ($flag eq 'g' || $flag eq 'P')) {
+	$oflag = 'o';
+}
+if ($form{'id'}) {
+	$sitekeys = "@LOCALSTATEDIR@/gtags/sitekeys/" . $form{'id'};
+	if (-f $sitekeys && open(KEY, $sitekeys)) {
+		$distpath = <KEY>;
+		chop($distpath);
+		close(KEY);
+	} else {
+		error_and_exit("Couldn't open unique key file(1).");
+	}
+	chdir("$distpath/cgi-bin");
+	if ($?) {
+		error_and_exit("Couldn't find tag directory in secure mode.");
+	}
+}
+$html = (-s "../compress") ? 'ghtml' : 'html';
+if (-f "../GTAGSROOT" && open(GTAGSROOT, "../GTAGSROOT")) {
+	$gtagsroot = <GTAGSROOT>;
+	chop($gtagsroot);
+	close(GTAGSROOT);
+} else {
+	$gtagsroot = "../..";
+}
+chdir($gtagsroot);
+if ($?) {
+	error_and_exit("GTAGSROOT directory not found.");
+}
+#
+# Sanity check
+# GTAGS and GPATH is indispensable file.
+#
+$missed = '';
+if (! -f 'GTAGS') {
+	$missed = 'GTAGS';
+} elsif (! -f 'GPATH') {
+	$missed = 'GPATH';
+} elsif ($flag eq 'r' && ! -f 'GRTAGS') {
+	$missed = 'GRTAGS';
+} elsif ($flag eq 'I' && ! -f 'ID') {
+	$missed = 'ID';
+}
+if ($missed) {
+	error_and_exit("Tag file ($missed) not found.");
+}
+#
+# fork and exec global(1) to avoid command substitutions in $pattern.
+# The --result=ctags-xid print the file id of the path at the head
+# of each line.
+#
+$flags = $flag . $iflag . $oflag;
+if ($flags eq '') {
+	open(PIPE, "-|") || exec '@globalpath@', '--result=ctags-xid', '-e', $pattern;
+} else {
+	open(PIPE, "-|") || exec '@globalpath@', '--result=ctags-xid', '-'.$flags, '-e', $pattern;
+}
+if ($?) {	
+	error_and_exit("Cannot execute global.");
+}
+local(%ctab) = ('&', '&amp;', '<', '&lt;', '>', '&gt;');
+$pattern =~ s/([&<>])/$ctab{$1}/ge;
+local($tag, $lno, $filename);
+if ($line1 = <PIPE>) {
+	push(@line, $line1);
+	if ($line2 = <PIPE>) {
+		push(@line, $line2);
+	}
+}
+sub input {
+	$line = (@line > 0) ? shift @line : <PIPE>;
+	return $line;
+}
+if (@line == 0) {
+	# not found
+	print header();
+	print title($pattern);
+	print message("Pattern not found. <a href='$basedir/mains.@normal_suffix@'>[return]</a>");
+	print tailer();
+	exit 0;
+} elsif (@line == 1) {
+	# direct jump
+	($fid, $tag, $lno, $filename) = split(/[ \t]+/, shift @line);
+	print "Location: $basedir/S/$fid.$html#L$lno\n\n";
+	exit 0;
+}
+print header();
+print "<h1 class='title'>" . $pattern . "</h1>\n";
+print "Following $words are matched to above pattern.@hr@\n";
+#
+# Input format:
+#
+# fid tag   lno filename
+# ---------------------------------------------
+# 100 main  32 ./main.c main(argc, argv)
+#
+print "@verbatim_begin@\n";
+$count = 0;
+while ($_ = input()) {
+	chop;
+	$count++;
+	($fid, $tag, $lno, $filename) = split;
+	s/^[0-9]+[ \t]+//;
+	s/([&<>])/$ctab{$1}/ge;
+	s!(^[^ \t]+)!<a href='$basedir/S/$fid.$html#L$lno'>$1<\/a>!;
+	print "<span class='curline'>$_</span>\n";
+}
+print "@verbatim_end@\n";
+close(PIPE);
+print "@hr@$count objects located.\n";
+print tailer();
+exit 0;

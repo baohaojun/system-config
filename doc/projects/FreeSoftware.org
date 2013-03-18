@@ -138,3 +138,6 @@ It can be used to download Xcode using multithread download.
 * TODO How to use flock on Mac
 * TODO Mac command line notify
 * TODO Mac work on keyremap and keyhack
+* TODO Announce beagrep for Mac
+* TODO dvp on Mac
+* TODO fix luit on Mac

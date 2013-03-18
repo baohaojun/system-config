@@ -1,0 +1,86 @@
+#!/bin/sh
+#
+# globash - a special shell for GLOBAL using GNU bash.
+#
+# Copyright (c) 2010 Tama Communications Corporation
+#
+# This file is part of GNU GLOBAL.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+### Working directory
+#
+# The HOME_ETC environment variable is used by home-etc facility
+# in PLD Linux/GNU. GloBash obey this method if the variable defined.
+#
+case $1 in
+-x)	set -x;;
+esac
+if [ -n "$HOME_ETC" ]; then
+        GHOME="$HOME_ETC/.globash"
+else
+        GHOME="$HOME/.globash"
+fi
+prompt="Do you create '$GHOME'? ([y]/n)"
+if [ ! -d "$GHOME" ]; then
+	echo -n "GloBash needs a working directory. $prompt"
+	while read ans; do
+		case $ans in
+		YES|Yes|yes|Y|y|"")
+			echo -n "Creating..."
+			if mkdir "$GHOME"; then
+				echo "Done."
+				break
+			else
+				echo "cannot make '$GHOME' directory."
+				exit 1
+			fi
+			;;
+		NO|No|no|N|n)
+			echo "Bye ..."
+			exit 1;;
+		esac
+		echo -n "$prompt"
+	done
+	echo
+	echo "___________________________________________"
+	echo "|      |  |  |     |  _  |     |     |  |  |"
+	echo "|  |___|  |  |  |  |    _|  |  |  ---|  |  |    A special shell for GLOBAL"
+	echo "|  |   |  |  |  |  |     |     |     |     |"
+	echo "|  ~~  |   ~~|     |  ~  |  |  |---  |  |  |          using GNU bash"
+	echo "___________________________________________|"
+	echo
+	echo "Copyright (c) 2001, 2002, 2004, 2006, 2009, 2010"
+	echo "Tama Communications Corporation"
+	echo
+	echo "Welcome to GloBash!"
+	echo
+fi
+prompt="Do you create tag files in the current directory? ([y]/n)"
+if [ "`global -p 2>/dev/null`" = "" ]; then
+	echo -n "GTAGS not found. $prompt"
+	while read ans; do
+		case $ans in
+		Y|y|"")	echo -n "Creating..."
+			gtags
+			echo "Done."
+			break;;
+		N|n)	echo "Please make tag files using gtags(1) before starting this command. Bye."
+			exit 1;;
+		esac
+		echo -n "$prompt"
+	done
+	echo
+fi
+exec bash --rcfile "@DATADIR@/globash.rc"

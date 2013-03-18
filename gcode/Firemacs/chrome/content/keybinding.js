@@ -314,7 +314,7 @@ Firemacs.CmdKey.Common = {
     ScrollPageUp: 'M-v',
     ScrollPageDown: 'C-v',
     ResetMark: 'C-g',
-    JumpURLBar: 'C-hl',
+    JumpURLBar: 'C-l',
     JumpSearchBar: 'C-hg',
     FocusBody: 'C-h.',
     JumpInput: 'C-ht',

@@ -1,9 +1,14 @@
-* TODO Work on uboot/obm to support multi products with 1 image
-** TODO merge changes from smt branch
-*** TODO do it for 988.
-*** TODO where to put the function declaration?
+* DONE Work on uboot/obm to support multi products with 1 image
+  CLOSED: [2013-03-18 Mon 10:39]
+** DONE merge changes from smt branch
+   CLOSED: [2013-03-18 Mon 10:39]
+*** DONE do it for 988.
+    CLOSED: [2013-03-18 Mon 10:39]
+*** DONE where to put the function declaration?
+    CLOSED: [2013-03-18 Mon 10:39]
 ** TODO verify that it works
-* TODO Study the mars settings code
+* DONE Study the mars settings code
+  CLOSED: [2013-03-18 Mon 10:39]
   :PROPERTIES:
   :ID:       0988370f-98f1-4adf-9926-d5fbbdd3b241
   :END:
@@ -85,7 +90,10 @@ init_fnc_t *init_sequence[] = {
   :END:
 
 * TODO Weekly Report
-  SCHEDULED: <2013-03-01 Fri ++1w>
+  SCHEDULED: <2013-03-22 Fri ++1w>
+  - CLOSING NOTE [2013-03-18 Mon 10:41] \\
+    * Fix 1*88 headset
+     * Fix 1*88 CP local database
   - CLOSING NOTE [2013-02-22 Fri 15:41] \\
     * Mon
     
@@ -111,8 +119,9 @@ init_fnc_t *init_sequence[] = {
     
     Continue to study uboot source code. Try ways to do memory test on Uboot.
   :PROPERTIES:
-  :LAST_REPEAT: [2013-02-22 Fri 15:41]
+  :LAST_REPEAT: [2013-03-18 Mon 10:41]
   :ID:       ea7dedbd-ae4d-4be7-b00c-46ed1d09451b
+  :STYLE:    habit
   :END:
 
 * TODO Marvell Specs
@@ -144,3 +153,6 @@ init_fnc_t *init_sequence[] = {
   :PROPERTIES:
   :ID:       f397bae3-3cba-4e75-9acf-4a319f9ac93a
   :END:
+* TODO Fix headset for 1*88
+* TODO Local database for 1*88
+* TODO refactor uboot source code

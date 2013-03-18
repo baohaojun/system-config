@@ -1,0 +1,16 @@
+.deps
+Makefile
+Makefile.in
+asm.c
+c.c
+const.h
+const.pl
+cpp.c
+global.cgi.tmpl
+htags
+htags.1
+htags.pl
+java.c
+php.c
+.libs
+completion.cgi.tmpl

@@ -1,0 +1,43 @@
+@c This file is generated automatically by convert.pl from globash/manual.in.
+@unnumberedsubsec NAME
+globash - a special shell for GLOBAL using GNU bash.
+@unnumberedsubsec SYNOPSIS
+@noindent
+@quotation
+blobash@*
+@end quotation
+@unnumberedsubsec DESCRIPTION
+Globash is a special shell for GLOBAL using GNU bash.
+You can use a lot of function to ease reading source code
+like tag stack, tag mark and cookie.
+At first, you should make tag files using gtags and
+invoke this command in the project.
+Please refer to the help (type 'ghelp'<ENTER>) about a detailed usage.
+@unnumberedsubsec FILES
+@table @asis
+@item @file{GTAGS}
+Tag file for object definitions.
+@item @file{GRTAGS}
+Tag file for object references.
+@item @file{GPATH}
+Tag file for path of source files.
+@item @file{~/.globashrc}
+The personal initialization file, executed for globash.
+@end table
+@unnumberedsubsec ENVIRONMENT
+The following environment variables affect the execution of globash:
+@table @asis
+@item @var{EDITOR}
+The editor used by the show command.
+@end table
+@unnumberedsubsec SEE ALSO
+gtags(1),
+htags(1),
+less(1).
+
+GNU GLOBAL source code tag system@*
+(http://www.gnu.org/software/global/).
+@unnumberedsubsec AUTHOR
+Shigio YAMAGUCHI.
+@unnumberedsubsec HISTORY
+The global command appeared in GLOBAL-4.1(2001).

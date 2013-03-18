@@ -1,0 +1,891 @@
+#
+# GloBash --- Global facility for Bash
+#
+# Copyright (c) 2001, 2002, 2004, 2006, 2009, 2010
+#	Tama Communications Corporation
+#
+# This file is part of GNU GLOBAL.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# GLOBAL home page is at: http://www.gnu.org/software/global/
+# Author: Tama Communications Corporation
+  version=0.5
+# Usage:
+# $ bash --rcfile <this file>
+#	or
+# $ source <this file>
+#
+# [/usr/src/sys] ghelp<RET>
+#
+### Working directory
+#
+# The HOME_ETC environment variable is used by home-etc facility
+# in PLD Linux/GNU. Globash obey this method if the variable defined.
+#
+if [ -n "$HOME_ETC" ]; then
+        GHOME="$HOME_ETC/.globash"
+else
+        GHOME="$HOME/.globash"
+fi
+#
+# Less-370 or later can treat GLOBAL as tag system if environment variable
+# LESSGLOBALTAGS is set.
+#
+export LESSGLOBALTAGS=global
+#
+# Initialize
+#
+prompt="Do you create '$GHOME'? ([y]/n)"
+if [ ! -d "$GHOME" ]; then
+	echo -n "GloBash needs a working directory. $prompt"
+	while read ans; do
+		case $ans in
+		YES|Yes|yes|Y|y|"")
+			echo -n "Creating..."
+			if mkdir "$GHOME"; then
+				echo "Done."
+				break
+			else
+				echo " ERROR: Cannot make '$GHOME' directory."
+				exit 1
+			fi
+			;;
+		NO|No|no|N|n)
+			echo "Bye ..."
+			exit 1;;
+		esac
+		echo -n "$prompt"
+	done
+	echo
+	echo "___________________________________________"
+	echo "|      |  |  |     |  _  |     |     |  |  |"
+	echo "|  |___|  |  |  |  |    _|  |  |  ---|  |  |    A special shell for GLOBAL"
+	echo "|  |   |  |  |  |  |     |     |     |     |"
+	echo "|  ~~  |   ~~|     |  ~  |  |  |---  |  |  |          using GNU bash"
+	echo "___________________________________________|"
+	echo
+	echo "Welcome to Globash!"
+	echo
+fi
+#
+# Temporary file definitions:
+#
+# When exiting shell, temporary files are removed.
+# We should be careful not to remove other files.
+#
+declare -r XREF="$GHOME/xref-$$"		# global's output
+declare -r STACK="$GHOME/stack-$$"		# stack for tags command
+declare -r MARKER="$GHOME/marker-$$"		# marker
+declare -r TMP1="$GHOME/tmp1-$$"		# temporary file
+__gtags_clean() {
+	rm -f "$XREF" "$STACK" "$MARKER" "$TMP1"
+}
+builtin trap 'status=$?; __gtags_clean; exit $status' 0
+cp /dev/null "$XREF"
+cp /dev/null "$STACK"
+cp /dev/null "$MARKER"
+cp /dev/null "$TMP1"
+__gtags_stack=()			# tag stack
+__gtags_lasttag=			# last tag
+__gtags_lastcom=			# last command
+__gtags_current=			# current tag number
+
+__gtags_prev_file=
+__gtags_prev_root=
+
+### Cookie management
+declare -r COOKIE="$GHOME/cookie"	# cookie in file
+#cp /dev/null "$COOKIE" # Cookie file is used over sessions. Don't clean.
+__gtags_cookie=()			# cookie in memory
+
+### Utilities
+# true: is number, false: is not number
+__gtags_is_num() {
+	echo $1 | grep '^[-]*[0-9][0-9]*$' >/dev/null
+}
+__gtags_encode() {
+        echo $1 | sed -e 's/%//g' -e 's/ /%20/g' -e 's//%25/g'
+}
+__gtags_decode() {
+        echo $1 | sed -e 's/%25//g' -e 's/%20/ /g' -e 's//%/g'
+}
+###########################################################################
+# Tag stack manager
+###########################################################################
+__gtags_init_stack()
+{
+	cp /dev/null "$XREF"
+	cp /dev/null "$STACK"
+	__gtags_stack=()			# tag stack
+	__gtags_lasttag=
+	__gtags_lastcom=
+	__gtags_current=
+	__gtags_prev_file=
+}
+__gtags_resume()
+{
+	local IFS='|'
+	if [ "$1" != "" ]; then
+		set $1
+		__gtags_lastcom="$1"
+		__gtags_lasttag="$2"
+		__gtags_current="$3"
+	fi
+}
+__gtags_push_stack()
+{
+	local IFS=''
+	local file=`cat "$XREF" | sed -n "${__gtags_current}p" | cat - "$STACK"`
+	echo $file > $STACK
+	__gtags_stack=( "${__gtags_lastcom}|${__gtags_lasttag}|${__gtags_current}" "${__gtags_stack[@]}" )
+	return 0
+}
+__gtags_pop_stack()
+{
+	local size=${#__gtags_stack[@]}
+	local count=$1
+
+	if (( $size == 0 )) && [ "$__gtags_lastcom" != "" ]; then
+		if (( $count > 1 )); then
+			return 1
+		fi
+		__gtags_init_stack
+		return 0;
+	fi
+	if (( $size == 0 )); then
+		return 1
+	fi
+	if (( size + 1 - count < 0 )); then
+		return 1
+	fi
+	if (( size + 1 - count == 0 )); then
+		__gtags_init_stack
+		return 0
+	fi
+	(( pop = count - 1 ))
+	__gtags_resume "${__gtags_stack[$pop]}"
+	__gtags_stack=( ${__gtags_stack[@]:$count} )
+	if [ -s "$STACK" ]; then
+		(( size -= count ))
+		if (( size > 0 )); then
+			local IFS=''
+			local file=`tail -$size "$STACK"`
+			echo $file > "$STACK"
+		elif (( size == 0 )); then
+			cp /dev/null "$STACK"
+		fi
+	fi
+	return 0
+}
+dump()
+{
+	echo "*** Current"
+	echo "__gtags_lasttag	= $__gtags_lasttag"
+	echo "__gtags_lastcom	= $__gtags_lastcom"
+	echo "__gtags_current	= $__gtags_current"
+	echo "*** Stack (size = ${#__gtags_stack[@]}) "
+	local __gtags_lastcom __gtags_lasttag __gtags_current
+	for (( i=0; i < ${#__gtags_stack[@]}; i++ )); do
+		__gtags_resume "${__gtags_stack[i]}"
+		echo "$i	__gtags_lastcom=$__gtags_lastcom, __gtags_lasttag=$__gtags_lasttag, __gtags_current=$__gtags_current"
+	done
+}
+###########################################################################
+# Directory manager
+###########################################################################
+### Customized cd
+__gtags_pwd() {
+	# always use /bin/pwd to ignore symbolic links.
+	/bin/pwd
+}
+__gtags_prompt() {
+	local ps
+	local cwd=`__gtags_pwd`
+	local dbpath=`global -p 2>/dev/null`
+	local root=`global -pr 2>/dev/null`
+	local ps
+
+	if [ "$root" ] && echo $cwd | grep "^$root" >/dev/null; then
+		local path=`echo $cwd | sed "s!^$root!!"`
+		ps="[$root]$path"
+	elif [ "$root" ]; then
+		ps="[$root]!$cwd"
+	else
+		ps=$cwd
+	fi
+	# We cannot keep context (except for cookies) across projects.
+	if [ "$__gtags_prev_root" ] && [ "$__gtags_prev_root" != "$root" ]; then
+		msg="You are going to get out of the current project."
+		yesno="Tag stack and marker will be removed. Sure? ([y]/n) "
+		echo $msg
+		echo -n $yesno
+		while read ans; do
+			case $ans in
+			""|Y|y)
+				break;;
+			N|n)
+				builtin cd -
+				return;;
+			*)	echo $msg
+				echo -n $yesno;;
+			esac
+		done
+		__gtags_init_stack
+		cp /dev/null "$MARKER"
+	fi
+	PS1="$ps "
+	if [ "$root" != "" ] && [ "$cwd" != "" ] && [ "$dbpath" != "" ]; then
+		__gtags_filter="gtags --encode-path=' ' --path=relative '$root' '$cwd' '$dbpath'"
+		__gtags_prev_root=$root
+	fi
+}
+__gtags_parse() {
+       while case $1 in
+                -*)     true;;
+                *)      false;;
+                esac
+        do
+                __gtags_optionargs="$option $1"
+                shift
+        done
+	__gtags_fistarg="$*"
+}
+cd() {
+	__gtags_parse $*
+	case $__gtags_fistarg in
+	'')	dir=`global -pr 2>/dev/null`;;
+	*)	dir="$__gtags_fistarg";;
+	esac
+	case $__gtags_optionargs in
+	'')	builtin cd "$dir";;
+	*)	builtin cd $__gtags_optionargs "$dir";;
+	esac
+	__gtags_prompt
+}
+pushd() {
+	__gtags_parse $*
+	case $__gtags_fistarg in
+	'')	dir=`global -pr 2>/dev/null`;;
+	*)	dir="$__gtags_fistarg";;
+	esac
+	case $__gtags_optionargs in
+	'')	builtin pushd "$dir";;
+	*)	builtin pushd $__gtags_optionargs "$dir";;
+	esac
+	__gtags_prompt
+}
+popd() {
+	builtin popd $*
+	__gtags_prompt
+}
+###########################################################################
+# Cookie manager
+###########################################################################
+__gtags_load_cookie()
+{
+	if [ -s "$COOKIE" ]; then
+		__gtags_cookie=( $(cat "$COOKIE") )
+	else
+		__gtags_cookie=()
+	fi
+}
+__gtags_save_cookie()
+{
+	for dir in ${__gtags_cookie[@]}; do
+		echo $dir
+	done > "$COOKIE"
+}
+__gtags_add_cookie()
+{
+	__gtags_load_cookie
+	for a in ${__gtags_cookie[@]}; do
+		if [ "$a" = "$1" ]; then
+			return 1
+		fi
+	done
+	__gtags_cookie=( `__gtags_encode "$1"` ${__gtags_cookie[@]} )
+	__gtags_save_cookie
+}
+__gtags_select_cookie() {
+	local selection
+
+	if [ ! -s "$COOKIE" ]; then
+		echo "Cookie not found."
+		return 1
+	fi
+	select selection in `cat "$COOKIE"`; do
+		if [ "$selection" ]; then
+			break
+		else
+			echo "Invalid selection."
+			return 1
+		fi
+	done
+	cd `__gtags_decode "$selection"`
+	return 0
+}
+__gtags_warp_cookie() {
+	__gtags_load_cookie
+	local size=${#__gtags_cookie[@]}
+	local n
+
+	if __gtags_is_num $1; then
+		if [ $1 -gt 0 -a $1 -le $size ]; then
+			n=$1
+		else
+			echo "Out of range."
+			return 1
+		fi
+	else
+		case $1 in
+		first|f)
+			n=1;;
+		last|l)
+			n=$size;;
+		'')	n=1;;
+		*)	echo "Such cookie not found."
+			return 1
+			;;
+		esac
+	fi
+	(( --n ))
+	cd `__gtags_decode "${__gtags_cookie[$n]}"`
+	return 0
+}
+cookie() {
+	case $1 in
+	-list|-lis|-li|-l)
+		if [ -s "$COOKIE" ]; then
+			cat -n "$COOKIE"
+		fi;;
+	-edit|-edi|-ed|-e)
+		${EDITOR-vi} "$COOKIE"
+		case `cat "$COOKIE"` in
+		'')	cp /dev/null "$COOKIE";;
+		esac
+		;;
+	-menu|-men|-me|-m)
+		__gtags_select_cookie;;
+	-warp|-war|-wa|-w)
+		__gtags_warp_cookie $2;;
+	"")	# Drop cookie.
+		__gtags_add_cookie "`__gtags_pwd`";;
+	*)	# Jump to the place where you dropped cookie.
+		__gtags_warp_cookie $1;;
+	esac
+}
+warp() {
+	__gtags_warp_cookie $1
+}
+###########################################################################
+# Tag marker
+###########################################################################
+__gtags_edit_marked_file()
+{
+	if [ -s "$MARKER" ] && __gtags_is_num $1; then
+		com="cat '$MARKER' | $__gtags_filter | sed -n '${1}p'"
+		line=$( eval $com )
+		if [ "$line" != "" ]; then
+			set $line
+			${EDITOR-vi} +$2 "`__gtags_decode $3`"
+		fi
+	fi
+	return 0
+}
+__gtags_add_maker()
+{
+	if [ "$__gtags_current" = "" ]; then
+		echo "No current tag."
+		return 1
+	fi
+	if [ -s "$XREF" ]; then
+		cat "$XREF" | sed -n "${__gtags_current}p" >> "$MARKER"
+	fi
+	return 0
+}
+mark()
+{
+	case $1 in
+	-list|-lis|-li|-l)
+		if [ -s "$MARKER" ]; then
+			com="cat '$MARKER' | $__gtags_filter | cat -n"
+			eval $com
+		fi
+		;;
+	-edit|-edi|-ed|-e)
+		${EDITOR-vi} "$MARKER";;
+	"")
+		__gtags_add_maker;;
+	*)
+		__gtags_edit_marked_file $1;;
+	esac
+}
+###########################################################################
+# Completion manager
+###########################################################################
+__gtags_completion()
+{
+	local cur Pflag sflag xflag
+
+	cur=${COMP_WORDS[COMP_CWORD]}
+	Pflag=0
+	sflag=0
+	case $1 in
+	P)	Pflag=1;;
+	s)	sflag=1;;
+	global)
+		for (( i=0; i < ${#COMP_WORDS[@]}; i++ )); do
+			case ${COMP_WORDS[i]} in
+			--path)		Pflag=1;;
+			--symbol)	sflag=1;;
+			--*)		;;
+			-*P*)		Pflag=1;;
+			-*s*)		sflag=1;;
+			esac
+		done
+		;;
+	esac
+	COMPREPLY=()
+	if [ $Pflag = 1 ]; then
+		COMPREPLY=(`global -Pon $cur 2>/dev/null | sed "s!./!!"`)
+	elif [ $sflag = 1 ]; then
+		COMPREPLY=(`global -cs $cur 2>/dev/null`)
+	else
+		COMPREPLY=(`global -c $cur 2>/dev/null`)
+	fi
+	return 0
+}
+complete -F __gtags_completion global
+complete -F __gtags_completion x
+complete -F __gtags_completion r
+complete -F __gtags_completion s
+complete -F __gtags_completion P
+###########################################################################
+# Main
+###########################################################################
+__gtags_gen_xref()
+{
+	#
+	# Globash doesn't refer GTAGSLIBPATH environment variable.
+	#
+	local GTAGSLIBPATH=
+	if [ "$1" != "" ]; then
+		__gtags_lastcom="$1"
+		if [ "$2" != "" ]; then
+			__gtags_lasttag="$2"
+		fi
+		if [ "$__gtags_lasttag" != "" ]; then
+			com="global --encode-path=' ' --nofilter=path -x$__gtags_lastcom '$__gtags_lasttag' >'$XREF'"
+			eval $com
+			__gtags_count=`wc -l < "$XREF" | sed 's/ //g'`
+		else
+			echo "tag not specified."
+			return 1
+		fi
+	elif [ "$__gtags_count" = "" ]; then
+		__gtags_count=1
+	fi
+}
+__gtags_list_xref()
+{
+	if [ ! -s "$XREF" ]; then
+		return 1
+	fi
+	com="cat '$XREF' | $__gtags_filter | cat -n | sed '${__gtags_current}s/^ />/'"
+	if (( __gtags_count > LINES - 1 )); then
+		local pager=${PAGER-more}
+
+		case $pager in
+		'')	pager=more;;
+		less*)	pager="$pager +$__gtags_current";;
+		esac
+		com="$com | $pager"
+	fi
+	eval $com
+	return 0
+}
+__gtags_locate_tag() {
+	local GTAGSLIBPATH=
+	local command less tag
+	command=$1
+	case $command in
+	x|r|s|g|I|P)	;;
+	*)	echo "Unknown command '$command'."
+		return 1;;
+	esac
+	shift
+	if [ "$1" = "-l" ]; then
+		less=1
+		shift
+	fi
+	tag="$1"
+	if [ "$tag" = "" ]; then
+		if [ "$__gtags_lasttag" = "" ]; then
+			echo "tag not specified."
+			return 1
+		fi
+		tag="$__gtags_lasttag"
+	fi
+	if [ "$less" = "1" ]; then
+		global -x$command "$tag" | less -T-
+	else
+		global --encode-path=' ' --nofilter=path -x$command "$tag" >"$TMP1"
+		local count=`wc -l < "$TMP1" | sed 's/ //g'`
+		if (( $count > 0 )); then
+			if [ -s "$XREF" ]; then
+				__gtags_push_stack
+			fi
+			mv "$TMP1" "$XREF"
+			__gtags_lastcom="$command"
+			__gtags_lasttag="$tag"
+			__gtags_count=$count
+			__gtags_current=1
+			__gtags_list_xref
+		fi
+	fi
+}
+x() { __gtags_locate_tag x $*; }
+r() { __gtags_locate_tag r $*; }
+s() { __gtags_locate_tag s $*; }
+g() { __gtags_locate_tag g $*; }
+I() { __gtags_locate_tag I $*; }
+P() { __gtags_locate_tag P $*; }
+f() {
+	local less absolute
+
+	if [ "$1" = "-l" ]; then
+		less=1
+		shift
+	fi
+	if [ "$1" = "" ]; then
+		if [ "$__gtags_prev_file" = "" ]; then
+			echo "file not specified."
+			return 1
+		fi
+		absolute="$__gtags_prev_file"
+	else
+		absolute="`__gtags_pwd`/$1"
+	fi
+	if [ ! -f "$absolute" ]; then
+		echo "file not found."
+		return 1
+	fi
+	if [ "$less" = "1" ]; then
+		global -xf "$absolute" | less -T-
+	else
+		global --encode-path=' ' --nofilter=path -f "$absolute" >"$TMP1"
+		local count=`wc -l < "$TMP1" | sed 's/ //g'`
+		if (( $count > 0 )); then
+			if [ -s "$XREF" ]; then
+				__gtags_push_stack
+			fi
+			mv "$TMP1" "$XREF"
+			__gtags_lastcom=f
+			__gtags_prev_file="$absolute"
+			__gtags_lasttag="$absolute"
+			__gtags_count=$count
+			__gtags_current=1
+			__gtags_list_xref
+		fi
+	fi
+}
+list() {
+	__gtags_list_xref
+}
+tags() {
+	if [ "$__gtags_current" != '' ]; then
+		local IFS=''
+		file=`sed -n "${__gtags_current}p" < "$XREF"; cat "$STACK"`
+		com="echo '$file' | $__gtags_filter | cat -n | sed '1s/^ />/'"
+		eval $com
+	fi
+}
+pop()
+{
+	local count
+	if __gtags_is_num $1 && [ $1 -gt 0 ]; then
+		count=$1
+	else
+		count=1
+	fi
+	if __gtags_pop_stack $count; then
+		if [ "$__gtags_current" != '' ]; then
+			__gtags_gen_xref $__gtags_lastcom "$__gtags_lasttag"
+			__gtags_list_xref
+		fi
+	elif (( ${#__gtags_stack[@]} == 0 && $count == 1 )); then
+		echo "The tags stack is empty."
+		return 1
+	else
+		echo "Too many pop count."
+		return 1
+	fi
+	return 0
+}
+__gtags_view_tag() {
+	if [ ! -s "$XREF" ]; then
+		echo "Tag entry not found in this group."
+		return 1
+	fi
+	if __gtags_is_num $1; then
+		if (( $1 >= 1 && $1 <= __gtags_count )); then
+			__gtags_current=$1
+		elif (( $1 < 0 )); then
+			(( __gtags_current = $__gtags_count + 1 ))
+			(( __gtags_current += $1 ))
+			if (( __gtags_current < 1 )); then
+				__gtags_current=1
+			fi
+		else
+			echo "Tag entry not found in this group."
+			return 1
+		fi
+	else
+		case $1 in
+		first)	__gtags_current=1;;
+		last)	__gtags_current=$__gtags_count;;
+		next)
+			if (( __gtags_current == __gtags_count )); then
+				echo "Already at the last tag of this group."
+				return 1
+			fi
+			if __gtags_is_num $2; then
+				(( __gtags_current += $2 ))
+			else
+				(( __gtags_current += 1 ))
+			fi
+			if (( __gtags_current > __gtags_count )); then
+				__gtags_current=$__gtags_count
+			fi
+			;;
+		prev)
+			if (( __gtags_current == 1 )); then
+				echo "Already at the first tag of this group."
+				return 1
+			fi
+			if __gtags_is_num $2; then
+				(( __gtags_current -= $2 ))
+			else
+				(( __gtags_current -= 1 ))
+			fi
+			if (( __gtags_current < 1 )); then
+				__gtags_current=1
+			fi
+			;;
+		'')	;;
+		*)
+			echo "Please type 'ghelp'."
+			return 1
+			;;
+		esac
+	fi
+	# 'show -n 1' doesn't invoke any editor.
+	if [ "${EDITOR}" = "noedit" ]; then
+		return 0
+	fi
+	local com="sed -n '${__gtags_current}p' '$XREF' | $__gtags_filter"
+	local line=$( eval $com )
+	set $line
+	${EDITOR-vi} +$2 "`__gtags_decode $3`"
+	return 0
+}
+first()	{
+	case $1 in
+	-*)	show $1 first;;
+	*)	show first;;
+	esac
+}
+last()	{
+	case $1 in
+	-*)	show $1 last;;
+	*)	show last;;
+	esac
+}
+next()	{
+	case $1 in
+	-*)	show $1 next $2;;
+	*)	show next $2;;
+	esac
+}
+prev()	{
+	case $1 in
+	-*)	show $1 prev $2;;
+	*)	show prev $2;;
+	esac
+}
+show()	{
+	case $1 in
+	-*)
+		case $1 in
+		-v|-vi)		local EDITOR=vi; shift;;
+		-l|-less)	local EDITOR=less; shift;;
+		-e|-emacs)	local EDITOR='emacsclient --no-wait'; shift;;
+		-m|-vim)	local EDITOR='vim --remote'; shift;;
+		-g|-gozilla)	local EDITOR=gozilla; shift;;
+		-n|-noedit)	local EDITOR=noedit; shift;;
+		*)		echo "invalid option $1."
+				return 1;;
+		esac
+		;;
+	esac
+	case $1 in
+	next|prev)
+		__gtags_view_tag $1 $2;;
+	*)	__gtags_view_tag $1;;
+	esac
+}
+use()	{
+	case $1 in
+	-*)
+		case $1 in
+		-v|-vi)		export EDITOR=vi;;
+		-l|-less)	export EDITOR=less;;
+		-e|-emacs)	export EDITOR='emacsclient --no-wait';;
+		-m|-vim)	export EDITOR='vim --remote';;
+		-g|-gozilla)	export EDITOR=gozilla;;
+		-n|-noedit)	export EDITOR=noedit;;
+		*)		echo "invalid option $1."
+				return 1;;
+		esac
+		;;
+	'')	unset EDITOR;;
+	esac
+}
+###########################################################################
+# Help
+###########################################################################
+ghelp() {
+	echo
+	echo "GloBash --- A special shell for GLOBAL using GNU bash."
+	echo
+	echo "Copyright (c) 2001, 2002, 2004, 2006, 2010 Tama Communications Corporation"
+	echo "GLOBAL WWW: http://www.gnu.org/software/global/"
+	echo
+	echo "GloBash is nothing other than Bash with special commands for GLOBAL."
+	echo "When you want to end the session, please type 'exit <ENTER>'."
+	echo
+	echo "Prompt:"
+	echo
+	echo "[/usr/src/sys]/kern _"
+	echo "means \"/usr/src/sys/kern\" is current directory and"
+	echo "\"/usr/src/sys\" is GTAGSROOT."
+	echo
+	echo "[/usr/src/sys]!/tmp _"
+	echo "means environment variable GTAGSROOT is set to \"/usr/src/sys\""
+	echo "and \"/tmp\" is current directory."
+	echo
+	echo "Commands:"
+	echo
+	echo " - Tag search command:"
+	echo "  (-l: use less(1) instead of tag stack.)"
+	echo "	x [option][pattern] - locate function definitions."
+	echo "	r [option][pattern] - locate function references."
+	echo "	s [option][pattern] - locate other symbols."
+	echo "	g [option][pattern] - locate pattern using grep(1)."
+	echo "	P [option][pattern] - locate file include pattern."
+	echo "	I [option][pattern] - locate pattern using idutils(1)."
+	echo "	f [option][file]    - locate function definitions in a file."
+	echo "	(By default, the previous value is used for pattern and file.)"
+	echo "	list		- print tag list."
+	echo "	tags		- print tag stack."
+	echo
+	echo "	* The x, r and s command doesn't refer to GTAGSLIBPATH."
+	echo "	  Use global -x, -r or -s, instead."
+	echo
+	echo " - Tag selection command:"
+	echo "	You can specify a editor statically by EDITOR environment"
+	echo "	variable or temporarily by option."
+	echo "	(-l: less, -v: vi, -e: emacs, -g:gozilla, -n: no editor)"
+	echo "	show [-l|-v|-e|-m|-g|-n][<no>|first|last]"
+	echo "			- view specified (default=current) tag."
+	echo "	use [-l|-v|-e|-m|-g|-n]"
+	echo "			- select specified viewer (default=unselect)."
+	echo "	first [-l|-v|-e|-g|-n]"
+	echo "			- view the first tag."
+	echo "	last  [-l|-v|-e|-g|-n]"
+	echo "			- view the last tag."
+	echo "	next  [-l|-v|-e|-g|-n][<no>]"
+	echo "			- view nth (default=1) next tag."
+	echo "	prev  [-l|-v|-e|-g|-n][<no>]"
+	echo "			- view nth (default=1) previous tag."
+	echo
+	echo " - Tag marker command:"
+	echo "	You can move to the marked tag even if there is no stack."
+	echo "	mark		- mark current tag."
+	echo "	mark -l		- print marker list."
+	echo "	mark -e		- edit marker list."
+	echo "	mark <no>	- edit marked file."
+	echo
+	echo " - Cookie command:"
+	echo "	Once you drop cookie, you can warp to the place at any time."
+	echo "	cookie		- drop cookie."
+	echo "	cookie -l	- print cookie list."
+	echo "	cookie -e	- edit cookie list."
+	echo "	cookie <no>	- warp to the specified cookie."
+	echo "	warp [<no>]	- warp to the specified (default=1) cookie."
+	echo
+	echo " - Other commands:"
+	echo "	ghelp		- you are seeing now."
+	echo
+	echo " - Standard aliases:"
+	echo "	<n> (n=1-999)	- show <n>"
+	echo "	..		- cd .."
+	echo "	..<n> (n=1-5)	- cd .. (* <n> times)"
+	echo "	l,t,n,p,.,c,m	- list,tags,next,prev,show,cookie,mark"
+	echo "	'\C-t'		- pop"
+	echo
+	echo "For the details, read the script." 
+}
+#
+# Make Globash prompt.
+#
+__gtags_prompt
+#
+# Run private command script.
+#
+gtags_aliases=1
+if [ -n "$HOME_ETC" ]; then
+	home=$HOME_ETC
+else
+	home=$HOME
+fi
+if [ -f $home/.globashrc ]; then
+	source $home/.globashrc
+fi
+#
+# Aliases
+#
+if [ "$gtags_aliases" = "1" ]; then
+	n=1
+	while (( n < 1000 )); do
+		alias $n="show $n"
+		(( n++ ))
+	done
+	alias ..='cd ..'
+	alias ..1='cd ..'
+	alias ..2='cd ../..'
+	alias ..3='cd ../../..'
+	alias ..4='cd ../../../..'
+	alias ..5='cd ../../../../..'
+	alias l=list
+	alias t=tags
+	alias n=next
+	alias p=prev
+	alias .=show
+	alias c=cookie
+	alias m=mark
+	bind '"\C-t": "pop\n"'
+fi
+echo "Globash started. When you need help, please type 'ghelp <ENTER>'."
