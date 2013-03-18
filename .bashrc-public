@@ -79,7 +79,10 @@ if tty -s; then
     stty -ixon -ixoff >/dev/null 2>&1
 fi
 
-. ~/.bashrc-public-bash
+if test "$BASH"; then
+    . ~/.bashrc-public-bash
+fi
+
 
 scd()
 {
