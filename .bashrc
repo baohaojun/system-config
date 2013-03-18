@@ -46,6 +46,10 @@ else
     fi
     export PATH=$(echo -n $PATH|perl -npe 's,/+:,:,g'|tr ':' '\n'|uniq-even-non-ajacent |tr '\n' ':')
     printf 'export PATH=%q' "$PATH" > ~/.bash-path
+    cat <<EOF > ~/.emacs-path.el
+(setq exec-path '(
+    $(for x in $(echo $PATH|tr : '\n'); do echo \"$x\"; done)))
+EOF
 fi
 if test "$TERM" = dumb; then
     . ~/.bashrc-in-emacs

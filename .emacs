@@ -4,6 +4,9 @@
 (keyboard-translate ?\C-x ?\C-h)
 (keyboard-translate ?\C-h ?\C-x)
 
+(when (file-exists-p (expand-file-name "~/.emacs-path.el"))
+  (load-file (expand-file-name "~/.emacs-path.el")))
+
 (setq load-path
       (nconc (list 
 	      "/usr/share/emacs/site-lisp/gnus"
