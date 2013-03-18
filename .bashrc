@@ -48,7 +48,8 @@ else
     printf 'export PATH=%q' "$PATH" > ~/.bash-path
     cat <<EOF > ~/.emacs-path.el
 (setq exec-path '(
-    $(for x in $(echo $PATH|tr : '\n'); do echo \"$x\"; done)))
+$(for x in $(echo $PATH|tr : '\n'); do echo "    "\"$x\"; done)))
+(setenv "PATH" "$PATH")
 EOF
 fi
 if test "$TERM" = dumb; then
