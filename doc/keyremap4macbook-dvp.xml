@@ -1,6 +1,21 @@
 <?xml version="1.0"?>
 <root>
   <item>
+    <name>[Terminal] Control+/ to C-_ and Control+' to C-M-_</name>
+    <identifier>bhj.emacsmode_controlSlashTerminal</identifier>
+    <only>TERMINAL</only>
+    <autogen>__KeyToKey__ KeyCode::BRACKET_LEFT, VK_CONTROL, KeyCode::MINUS, ModifierFlag::CONTROL_L | ModifierFlag::SHIFT_L</autogen>
+  </item>
+
+  <item>
+    <name>sawfish</name>
+    <identifier>bhj.sawfish</identifier>
+    <autogen>__KeyToKey__ KeyCode::SEMICOLON, VK_COMMAND|ModifierFlag::NONE, KeyCode::S, ModifierFlag::COMMAND_L | ModifierFlag::OPTION_L</autogen>
+    <autogen>__KeyToKey__ KeyCode::SEMICOLON, VK_COMMAND|ModifierFlag::OPTION_L, KeyCode::S, ModifierFlag::COMMAND_L</autogen>
+    <autogen>__KeyToKey__ KeyCode::DELETE, VK_COMMAND|ModifierFlag::NONE, KeyCode::PAGEUP </autogen>
+    <autogen>__KeyToKey__ KeyCode::SPACE, VK_COMMAND|ModifierFlag::NONE, KeyCode::PAGEDOWN </autogen> </item>
+
+<item>
     <name>dvp</name>
     <identifier>remap.dvp</identifier>
 

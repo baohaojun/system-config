@@ -156,3 +156,4 @@ init_fnc_t *init_sequence[] = {
 * TODO Fix headset for 1*88
 * TODO Local database for 1*88
 * TODO refactor uboot source code
+* TODO Work on tickets of xiaolin

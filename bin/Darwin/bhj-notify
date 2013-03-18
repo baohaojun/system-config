@@ -18,7 +18,7 @@ print encode_entities($_) . "\n"
 fi
 
 if test "$content"; then
-    terminal-notifier -title "$lable" -group "$lable" -message "$content"
+    terminal-notifier -title "$label" -group "$label" -message "$content"
 else
-    terminal-notifier -remove "$lable"
+    terminal-notifier -remove "$label"
 fi
