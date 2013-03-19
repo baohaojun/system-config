@@ -2375,8 +2375,9 @@ criteria can be provided via the optional match-string argument "
     (move-end-of-line nil)
     (setq end-of-text (point))
     (shell-command-on-region start-of-text end-of-text code-text nil t)
-    (indent-region (min (point) (mark))
-		   (max (point) (mark)))))
+    (unless (eq major-mode 'fundamental-mode)
+      (indent-region (min (point) (mark))
+		     (max (point) (mark))))))
 
 (require 'org-jira)
 (condition-case nil

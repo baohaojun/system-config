@@ -13,6 +13,10 @@ unless (@ARGV) {
     @ARGV = ("/dev/stdin");
 }
 
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
 sub print_line(\@) {
     my ($line_ref) = @_;
     return unless @$line_ref;
@@ -114,6 +118,7 @@ for my $arg (@ARGV) {
 	    } while (read $file, $c, 1);
 	} elsif ($state == $state_block_comment) {
 	    do {
+		undef $unget;
 		if ($c eq "*") {
 		    read $file, $unget, 1 or last read_loop;
 		    if ($unget eq '/') {
@@ -123,7 +128,7 @@ for my $arg (@ARGV) {
 			next read_loop;
 		    }
 		}
-	    } while (read $file, $c, 1);
+	    } while (($c = $unget) or (read $file, $c, 1));
 	} elsif ($state == $state_blank) {
 	    do {
 		if ($c eq "\n" and @line and $line[0] eq '#') {
