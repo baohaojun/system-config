@@ -26,10 +26,10 @@ def where_pushd():
             dir_history.discard(x)
 
     dir_history.add('')
-    fil_ = open(os.environ['HOME'] + '/.where.w', 'w')
+    fil_ = open(os.environ['HOME'] + ('/.where.%d' % os.getpid()), 'w')
     fil_.write('\n'.join(dir_history))
     fil_.close();
-    os.system("mv ~/.where.w ~/.where");
+    os.system("mv ~/.where.%d ~/.where" % os.getpid());
 
 def where_ask(argv):
     dir_history = open(os.environ['HOME'] + '/.where').read().split('\n');

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+. ~/.bashrc
+run-parts ~/etc/$(uname)/start-on-login >> ~/.xsession-errors

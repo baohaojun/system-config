@@ -135,7 +135,11 @@ It can be used to download Xcode using multithread download.
     Must change is system keyboard setting the Caps Lock behavior to No Action.
 * TODO How to lock Mac
 * TODO How to start programs at Mac login
-* TODO How to use flock on Mac
+* DONE How to use flock on Mac
+  CLOSED: [2013-03-18 Mon 17:15]
+  - CLOSING NOTE [2013-03-18 Mon 17:15] \\
+    gcc -D HAVE_MEMPCPY -D HAVE_USLEEP -D PACKAGE_STRING='"flock"' -I ../include/ flock.c ../lib/strutils.c
+
 * TODO Mac command line notify
 * TODO Mac work on keyremap and keyhack
 * TODO Announce beagrep for Mac

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+. ~/.bashrc
+set -e
+
+function die() {
+    echo Error: "$@"
+    exit -1
+}
+
+if test $# == 0; then
+    die "Error: Usage $(basename $0) dirs..."
+fi
+
+for dir in "$@"; do
+    for file in "$dir"/*; do
+        (
+            if test -x "$file"; then
+                "$(readlink -f "$file")"
+            fi&
+        )
+    done
+done
+    

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if test -f ~/.offlineimaprc; then
+    (
+        flock -n 5 || { echo "lock failed for Imap4Monitor.py, exit"; exit; }
+        while true; 
+        do 
+            python ~/bin/windows/Imap4Monitor/Imap4Monitor.py;
+            sleep 2; 
+        done
+    ) 5< ~/bin/windows/Imap4Monitor/Imap4Monitor.py </dev/null&
+fi

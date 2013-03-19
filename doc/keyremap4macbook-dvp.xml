@@ -13,6 +13,7 @@
     <autogen>__KeyToKey__ KeyCode::SEMICOLON, VK_COMMAND|ModifierFlag::NONE, KeyCode::S, ModifierFlag::COMMAND_L | ModifierFlag::OPTION_L</autogen>
     <autogen>__KeyToKey__ KeyCode::SEMICOLON, VK_COMMAND|ModifierFlag::OPTION_L, KeyCode::S, ModifierFlag::COMMAND_L</autogen>
     <autogen>__KeyToKey__ KeyCode::DELETE, VK_COMMAND|ModifierFlag::NONE, KeyCode::PAGEUP </autogen>
+    <autogen>__KeyToKey__ KeyCode::DELETE, VK_CONTROL|ModifierFlag::NONE, KeyCode::DELETE, ModifierFlag::OPTION_L </autogen>
     <autogen>__KeyToKey__ KeyCode::SPACE, VK_COMMAND|ModifierFlag::NONE, KeyCode::PAGEDOWN </autogen> 
   </item>
 

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec python3 ~/gcode/scim-cs/ime-py/ime-server.py
