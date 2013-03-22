@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+android_top=~/src/android
+(dd bs=1 skip=4 if=$1 | tr '\0' '\n'; echo uartlog=enable) | $android_top/flashing/helpers/mkenvimg.py -s 0x40000 > /tmp/prdcfg.$$
+
+fastboot flash pmce /tmp/prdcfg.$$
+rm /tmp/prdcfg.$$

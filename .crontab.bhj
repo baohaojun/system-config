@@ -2,4 +2,4 @@
 0       22 * * * . ~/.bash-path; ~/bin/bhj-cron-runner daily 10h
 0       *  * * * . ~/.bash-path; ~/bin/bhj-cron-runner hourly 1h
 0       23 * * 4 . ~/.bash-path; ~/bin/bhj-cron-runner weekly 10h
-
+0       20 * * 5 . ~/.bash-path; ~/bin/bhj-cron-runner friday 10h
