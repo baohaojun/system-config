@@ -32,10 +32,12 @@ time (
     flock 9
     echo done locking
 
-    if test "$(get-mount-1 $1)" = smbnetfs; then
+    if test "$(get-mount-1 $1)" = smbnetfs || (test -e system.img && test "$(get-mount-1 system.img)" = smbnetfs); then
+        echo doing it over share folder\!
+        sleep .5
         dir=/tmp/$(basename $0).$$/
         mkdir $dir
-        relative-link * $dir/
+        ln -s $(pwd)/* $dir/
         cd $dir/
         rm -f ntim_emei.bin DTim.*
     fi

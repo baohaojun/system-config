@@ -34,8 +34,13 @@ fi
         set -x;
     fi
     flock -n 9 || { echo 'lock failed for fixnet at '$(date); exit 0; }
+    host=fixnet
+    user=bhjbhj
+    if test -e ~/.ssh-vpn; then
+        . ~/.ssh-vpn
+    fi
     while true; do
-        if ssh-vpn 2>&1 | grep -q SIGKILL; then
+        if ssh-vpn -- -h $host -u $user 2>&1 | grep -q SIGKILL; then
             continue
         fi
 	x=30

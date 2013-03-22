@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for blf in *.blf; do
+    for x in $(blf-to-human $blf|awk -F: '{print $12}'|grep -P -e '^\s*Path\s*$' -v); do test -e $x || (echo $blf: $x is missing); done 
+done

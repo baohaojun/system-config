@@ -12,4 +12,4 @@ fi
 blf-to-human $1 > ${1/%.blf/.human} 2>&1
 blf-to-human $2 > ${2/%.blf/.human} 2>&1
 
-meld ${1/%.blf/.human} ${2/%.blf/.human}
+meld ${1/%.blf/.human} ${2/%.blf/.human} || diff ${1/%.blf/.human} ${2/%.blf/.human}

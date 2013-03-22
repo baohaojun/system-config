@@ -1,14 +1,13 @@
 ;; sawfish user customization -- do not edit by hand!
-;; sawfish version 1.5.3, written Thu Mar 21 23:37:28 2013
+;; sawfish version 1.5.3, written Tue Jan 22 13:41:29 2013
 
-(custom-set-keymap (quote window-keymap) (quote (keymap (raise-and-pass-through-click . "Button1-Click") (delete-window-safely . "Super-XF86LaunchB") (maximize-window-vertically-toggle . "Super-C-F1") (maximize-window-vertically-toggle . "Super-C-XF86MonBrightnessDown") (maximize-window-toggle . "Super-XF86MonBrightnessDown") (iconify-window . "Super-z") (cycle-class-bhj . "Super-`") (move-window-interactively . "W-Button1-Move") (popup-window-menu . "W-Button2-Click") (raise-lower-window . "W-Button3-Click") (lower-window-depth . "Super--") (maximize-window-toggle . "Super-F1") (raise-window-depth . "Super-+"))))
-(custom-set-typed-variable (quote default-frame-style) (quote Crux) (quote frame-style))
-(custom-set-typed-variable (quote Crux:button-theme) (quote macos-x) (quote (choice (default "Default") (platinum "Mac OS Platinum") (macos-x "Mac OS X") (windows "MS Windows") (next "NeXTSTEP") (complete "Complete") (complete-inverse "Complete (Inverse)"))))
-(custom-set-typed-variable (quote Crux:show-window-icons) (quote t) (quote boolean))
-(custom-set-typed-variable (quote Crux:normal-color) (quote ()) (quote (optional color)))
+(custom-set-keymap (quote window-keymap) (quote (keymap (raise-and-pass-through-click . "Button1-Click") (delete-window-safely . "Super-XF86LaunchB") (maximize-window-vertically-toggle . "Super-C-F1") (maximize-window-vertically-toggle . "Super-C-XF86MonBrightnessDown") (maximize-window-toggle . "Super-XF86MonBrightnessDown") (maximize-window-toggle . "Super-`") (iconify-window . "Super-z") (cycle-class-bhj . "Super-c") (move-window-interactively . "W-Button1-Move") (popup-window-menu . "W-Button2-Click") (raise-lower-window . "W-Button3-Click") (lower-window-depth . "Super--") (maximize-window-toggle . "Super-F1") (raise-window-depth . "Super-+"))))
 (custom-set-keymap (quote global-keymap) (quote (keymap (cycle-mg-window . "Super-m") (cycle-fm-window . "Super-w") (cycle-br-window . "Super-n") (cycle-im-window . "Super-q") ((run-shell-command "/usr/bin/xclip -o |/usr/bin/xclip -i -selection clipboard") . "Super-v") ((run-shell-command "/usr/bin/xclip -o -selection clipboard|/usr/bin/xclip -i") . "Super-C-v") (iswitch-window . "Super-s") (cycle-windows . "Super-TAB") (cycle-dc-window . "Super-a"))))
+(custom-set-typed-variable (quote default-frame-style) (quote Crux) (quote frame-style))
 (custom-set-typed-variable (quote match-window-profile) (quote ((((WM_CLASS . "^Acroread-en/acroread-en$")) (window-icon . "/usr/share/icons/hicolor/48x48/apps/AdobeReader8.png")) (((WM_NAME . "^Firefox$")) (avoid . #t) (ignore-program-position . #t) (place-mode . none) (frame-type . none)) (((WM_CLASS . "^01pidgin/01pidgin$")) (window-icon . "/usr/share/icons/hicolor/48x48/apps/pidgin.png")))) (quote match-window) (quote sawfish.wm.ext.match-window))
 (custom-set-typed-variable (quote wm-modifier-value) (quote (super)) (quote modifier-list))
 (custom-set-typed-variable (quote uglicon-ignore-hints) (quote t) (quote boolean))
+(custom-set-typed-variable (quote Crux:show-window-icons) (quote t) (quote boolean))
+(custom-set-typed-variable (quote Crux:button-theme) (quote windows) (quote (choice (default "Default") (platinum "Mac OS Platinum") (macos-x "Mac OS X") (windows "MS Windows") (next "NeXTSTEP"))))
 (custom-set-keymap (quote title-keymap) (quote (keymap (move-window-interactively . "Button1-Move") (maximize-window-toggle . "Button1-Off2") (resize-window-interactively . "Button2-Move") (raise-lower-window . "Button3-Off"))))
 (custom-set-keymap (quote root-window-keymap) (quote (keymap (popup-root-menu . "Button2-Click"))))

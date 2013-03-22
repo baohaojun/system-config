@@ -94,7 +94,11 @@ init_fnc_t *init_sequence[] = {
   SCHEDULED: <2013-03-22 Fri ++1w>
   - CLOSING NOTE [2013-03-18 Mon 10:41] \\
     * Fix 1*88 headset
-     * Fix 1*88 CP local database
+    * Fix 1*88 CP local database
+    * Merge uboot to new beta2 release
+    * Add 400M blf files for 1*88
+    * Test 400M blf files for 1*88
+    * Fix bugs in the 400M blf files for 1088
   - CLOSING NOTE [2013-02-22 Fri 15:41] \\
     * Mon
     

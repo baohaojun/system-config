@@ -13,5 +13,5 @@ remote_path=${remote#*:}
 remote=${remote%%:*}
 
 remote=$(ip-or-name $remote)
-/usr/bin/sshfs $user@$remote:$remote_path "$@"
+2nd sshfs $user@$remote:$remote_path "$@"
 
