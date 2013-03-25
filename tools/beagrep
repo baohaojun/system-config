@@ -8,7 +8,7 @@ my $pat = '';
 my $pathpat = '.';
 my $additional_tokens = '';
 my $pathdeny = '^$';
-chomp(my $pwd =qx/readlink -f `pwd`/);
+chomp(my $pwd =qx/readlink -f "`pwd`"/);
 my $pwd_opt;
 my $list_beagrep;
 my $short_format = 0;
