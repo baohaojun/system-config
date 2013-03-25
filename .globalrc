@@ -67,7 +67,7 @@ plugin-example|Example of function layer plugin parser:\
 	:langmap=make\:(*.am)([mM]akefile*)(Kbuild*).mk.make:\
 	:langmap=vim\:.vim:\
 	:langmap=javascript\:.js:\
-	:langmap=matlab\:.m:\
+	:langmap=ObjectiveC\:.m.mm:\
 	:langmap=sh\:(.bashrc*).sh:\
 	:gtags_parser=c\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=yacc\:/usr/local/lib/gtags/exuberant-ctags.la:\
@@ -93,7 +93,7 @@ plugin-example|Example of function layer plugin parser:\
 	:gtags_parser=vim\:/usr/local/lib/gtags/exuberant-ctags.la:\
         :gtags_parser=javascript\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=make\:/usr/local/lib/gtags/exuberant-ctags.la:\
-	:gtags_parser=matlab\:/usr/local/lib/gtags/exuberant-ctags.la:\
+	:gtags_parser=ObjectiveC\:/usr/local/lib/gtags/exuberant-ctags.la:\
 	:gtags_parser=sh\:/usr/local/lib/gtags/exuberant-ctags.la:
 #---------------------------------------------------------------------
 # Configuration for htags(1)

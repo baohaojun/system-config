@@ -86,6 +86,7 @@ fi
 
 scd()
 {
+    local IFS=$'\n'
     if test $# = 1; then
         if pwd|grep -q -e "$1"; then
             scd "$1" ''

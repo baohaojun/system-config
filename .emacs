@@ -258,6 +258,7 @@
 				(".*/Mlog/*" . fundamental-mode)
 				(".*\\.cpp$" . linux-c++-mode)
 				(".*\\.aidl$" . java-mode)
+				(".*\\.mm?$" . objc-mode)
 				("Kbuild*" . makefile-gmake-mode)
 				("makefile*" . makefile-gmake-mode))
 				  auto-mode-alist))
@@ -1238,6 +1239,7 @@ Starting from DIRECTORY, look upwards for a cscope database."
 (defconst emacs-mode-ctags-lang-map
   '(("emacs-lisp" . "lisp")
     ("c" . "c++")
+    ("objc" . "ObjectiveC")
     ("makefile-gmake" . "make")
     ("csharp" . "C#")))
 

@@ -145,3 +145,10 @@ It can be used to download Xcode using multithread download.
 * TODO Announce beagrep for Mac
 * TODO dvp on Mac
 * TODO fix luit on Mac
+* TODO open(1) in Mac
+
+=open -a /Applications/Emacs.app/= will open Emacs or bring the
+already Emacs.app to foreground if it is already running.
+
+=open -a /Applications/Firefox.app/ .= will open the current dir in
+firefox.

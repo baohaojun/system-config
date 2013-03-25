@@ -30,12 +30,11 @@ function got-mail() {
 }
 
 (
-    if ! flock -n 9; then
-        echo "Can not lock the offlineimap lock"
-        exit 2
-    fi
+
     result=~/.logs/mail-check-result
     need_recheck=false
+
+
     if ! test -e $result; then
         need_recheck=true
     elif is-tty-io; then
@@ -49,9 +48,14 @@ function got-mail() {
 	        continue
             fi
             if test $x -nt $result; then
-                echo "newer: $x > $result"
+                echo "$x is newer than $result"
+
+                if ! flock -n 9; then
+                    echo "Can not lock the offlineimap lock"
+                else
+                    sync_nnmaildir -g
+                fi
 	        need_recheck=true;
-                sync_nnmaildir -g
 	        break
             fi
         done

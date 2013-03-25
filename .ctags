@@ -4,7 +4,7 @@
 
 --langdef=javaprop
 --langmap=javaprop:(ExternalMessages.properties)
---regex-javaprop=/^(.*?)=/\1/d,definition/
+--regex-javaprop=/^([^=]*)=/\1/d,definition/
 
 --langdef=androidxml
 --langmap=androidxml:.xml
