@@ -115,6 +115,8 @@ for my $arg (@ARGV) {
 		} elsif ($unget eq '*') {
 		    undef $unget;
 		    $state = $state_block_comment;
+		} else {
+		    push @line, $c;
 		}
 	    } elsif ($c eq ' ' or $c eq "\t" or $c eq "\f" or $c eq "\n") {
 		if ($c eq "\n" and @line and ($line[0] eq '#' or $line[0] eq '@')) {
@@ -127,6 +129,8 @@ for my $arg (@ARGV) {
 		if ($unget eq "\n") {
 		    undef $unget;
 		    push @line, " " if @line;
+		} else {
+		    push @line, $c;
 		}
 	    } else {
 		if ($c eq '#') {
