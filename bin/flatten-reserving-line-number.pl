@@ -14,7 +14,29 @@ unless (@ARGV) {
 }
 
 sub debug(@) {
-    print STDERR "@_\n";
+    #print STDOUT "@_\n";
+    #print STDERR "@_\n";
+}
+
+my $src_line_number = 1;
+my $dst_line_number = 1;
+my $prev_line;
+my $curr_line = "";
+my $last_char = "";
+sub my_read_char($\$) 
+{
+    my ($file, $c) = @_;
+    my $res = read $file, $$c, 1;
+    $last_char = $$c;
+    
+    if ($$c eq "\n") {
+	$src_line_number++;
+	$prev_line = $curr_line;
+	$curr_line = "";
+    } else {
+	$curr_line .= $$c;
+    }
+    return $res;
 }
 
 sub print_line(\@) {
@@ -23,7 +45,23 @@ sub print_line(\@) {
     my $line = join('', @$line_ref, "\n");
     $line =~ s/ +([^0-9a-zA-Z_])/$1/g;
     $line =~ s/([^0-9a-zA-Z_]) +/$1/g;
+    debug "src_line_number is $src_line_number; dst_line_number is $dst_line_number";
+
+    my $last_brace = 0;
+    if ($curr_line =~ m/^\s*\{$/) {
+	$last_brace = 1;
+    }
+    
+    while($src_line_number - $dst_line_number > ($last_brace or $last_char eq "\n")) {
+	print "\n";
+	$dst_line_number++;
+    }
     print ' 'x ($indent * 4) . $line;
+    $dst_line_number++;
+    if ($last_brace) {
+	print "\n";
+	$dst_line_number++;
+    }
     @$line_ref = ();
 }
 
@@ -53,7 +91,7 @@ for my $arg (@ARGV) {
 	    $c = $unget;
 	    undef $unget;
 	} else {
-	    read $file, $c, 1 or last;
+	    my_read_char $file, $c or last;
 	    next if ($c eq '\r');
 	}
 
@@ -65,7 +103,7 @@ for my $arg (@ARGV) {
 		$state = $state_string;
 		$string_start = "'";
 	    } elsif ($c eq '/') {
-		read $file, $unget, 1 or last;
+		my_read_char $file, $unget or last;
 		if ($unget eq '/') {
 		    undef $unget;
 		    do {
@@ -73,7 +111,7 @@ for my $arg (@ARGV) {
 			    push @line, " " if @line;
 			    next read_loop;
 			}
-		    } while (read $file, $c, 1);
+		    } while (my_read_char $file, $c);
 		} elsif ($unget eq '*') {
 		    undef $unget;
 		    $state = $state_block_comment;
@@ -85,7 +123,7 @@ for my $arg (@ARGV) {
 		    $state = $state_blank;
 		}
 	    } elsif ($c eq "\\") {
-		read $file, $unget, 1 or last read_loop;
+		my_read_char $file, $unget or last read_loop;
 		if ($unget eq "\n") {
 		    undef $unget;
 		    push @line, " " if @line;
@@ -115,12 +153,12 @@ for my $arg (@ARGV) {
 		    $state = $state_normal;
 		    next read_loop;
 		}
-	    } while (read $file, $c, 1);
+	    } while (my_read_char $file, $c);
 	} elsif ($state == $state_block_comment) {
 	    do {
 		undef $unget;
 		if ($c eq "*") {
-		    read $file, $unget, 1 or last read_loop;
+		    my_read_char $file, $unget or last read_loop;
 		    if ($unget eq '/') {
 			undef $unget;
 			push @line, " " if @line;
@@ -128,7 +166,7 @@ for my $arg (@ARGV) {
 			next read_loop;
 		    }
 		}
-	    } while (($c = $unget) or (read $file, $c, 1));
+	    } while (($c = $unget) or (my_read_char $file, $c));
 	} elsif ($state == $state_blank) {
 	    do {
 		if ($c eq "\n" and @line and $line[0] eq '#') {
@@ -140,7 +178,7 @@ for my $arg (@ARGV) {
 		    $state = $state_normal;
 		    next read_loop;
 		}
-	    } while (read $file, $c, 1);
+	    } while (my_read_char $file, $c);
 	}
     }
 }
