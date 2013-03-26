@@ -37,7 +37,7 @@ if test "$FIND_FILE_ONLY"; then
 fi
 
 tokens="$tokens $additional_tokens"
-for x in "$beagrep_dir" `cat $beagrep_dir/../.beagrep-brothers 2>/dev/null`
+for x in "$beagrep_dir" $(cat "$beagrep_dir"/../.beagrep-brothers 2>/dev/null)
 do 
     beagrep-static-query \
         --add-static-backend "$(wlp "$x")" \
