@@ -1,0 +1,21 @@
+#!/usr/bin/env perl
+
+use strict;
+
+my $l1 = 1;
+
+my $cut_head = 0;
+while (<>) {
+    if ($l1 == 1) {
+	m/^(\s*)/;
+	$cut_head = length $1;
+	$l1 = 0;
+    }
+
+    $_ = substr($_, $cut_head);
+    chomp;
+    s/([\\"])/\\$1/g;
+    printf '"%s\n"' . "\n", $_;
+}
+    
+

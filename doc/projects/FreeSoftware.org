@@ -152,3 +152,4 @@ already Emacs.app to foreground if it is already running.
 
 =open -a /Applications/Firefox.app/ .= will open the current dir in
 firefox.
+* TODO write a doc：翅膀变硬了

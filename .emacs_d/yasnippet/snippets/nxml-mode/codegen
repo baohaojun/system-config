@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: codegen
+# key: codegen
+# --
+      <!-- # start code-generator
+           $0
+	   # end code-generator -->
+      <!-- # start generated code -->
+
+      <!-- # end generated code -->
