@@ -1,6 +1,8 @@
 #!/usr/bin/env perl
 
 use strict;
+use String::ShellQuote;
+
 if (@ARGV != 1 and @ARGV != 2) {
     die "Error: Usage: $0 SOURCE_FILE [GLABALRC]"
 }
@@ -16,7 +18,7 @@ unless (-e $globalrc) {
 }
 
 my $source_file = $ARGV[0];
-my $source_path = $source_file;
+my $source_path = shell_quote($source_file);
 $source_file =~ s,.*/,,;
 $source_file =~ s,\.gz$,,;
 

@@ -13,12 +13,12 @@ if test "$1" != "$(basename $1)"; then
 fi
 
 cmd=$(which $1)
-if test "$cmd" = "$(readlink -f ~/bin/Linux/ext/debug/$1)"; then
+if test "$cmd" = "$(readlink -f ~/bin/$(uname)/ext/debug/$1)"; then
     die "already set up debugging for $1"z..
 fi
 
-mkdir -p ~/bin/Linux/ext/debug
-cat <<EOF > ~/bin/Linux/ext/debug/$1
+mkdir -p ~/bin/$(uname)/ext/debug
+/bin/cat <<EOF > ~/bin/$(uname)/ext/debug/$1
 #!/bin/bash
 mkdir -p ~/.logs/start-debug.log/
 
@@ -32,11 +32,15 @@ mkdir -p ~/.logs/start-debug.log/
 ) >> ~/.logs/start-debug.log/$1
 $cmd "\$@" > ~/.logs/start-debug.log/$1.\$\$.out 2> ~/.logs/start-debug.log/$1.\$\$.err
 res=\$?
-cat ~/.logs/start-debug.log/$1.\$\$.out
-cat ~/.logs/start-debug.log/$1.\$\$.err 1>&2
+/bin/cat ~/.logs/start-debug.log/$1.\$\$.out
+/bin/cat ~/.logs/start-debug.log/$1.\$\$.err 1>&2
 
-(echo out; cat ~/.logs/start-debug.log/$1.\$\$.out; echo err:; cat ~/.logs/start-debug.log/$1.\$\$.err) >>  ~/.logs/start-debug.log/$1
+(
+    echo out; /bin/cat ~/.logs/start-debug.log/$1.\$\$.out; 
+    echo err:; /bin/cat ~/.logs/start-debug.log/$1.\$\$.err
+    echo tree:; show-ps-tree \$\$
+) >>  ~/.logs/start-debug.log/$1
 rm $1.\$\$.out $1.\$\$.err
 exit \$res
 EOF
-chmod +x ~/bin/Linux/ext/debug/$1
+chmod +x ~/bin/$(uname)/ext/debug/$1

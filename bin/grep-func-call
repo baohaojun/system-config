@@ -68,12 +68,14 @@ if ($grep_all) {
 }
 
 my $is_gz = 0;
-my $command = "ctags-exuberant --c-kinds=+p --language-force=$ENV{GTAGS_LANG_FORCE} -xu $ENV{GTAGS_START_FILE}";
+my $start_file = shell_quote($ENV{GTAGS_START_FILE});
+
+my $command = "ctags-exuberant --c-kinds=+p --language-force=$ENV{GTAGS_LANG_FORCE} -xu $start_file";
 
 if ($ENV{GTAGS_START_FILE} =~ m/\.gz$/) {
     debug "file is a gzip file";
     $is_gz = 1;
-    $command = "zcat $ENV{GTAGS_START_FILE} | ctags-stdin --c-kinds=+p --language-force=$ENV{GTAGS_LANG_FORCE} -xu";
+    $command = "zcat $start_file | ctags-stdin --c-kinds=+p --language-force=$ENV{GTAGS_LANG_FORCE} -xu";
 }
 
 
@@ -86,7 +88,7 @@ open(my $env, ">", glob("~/.logs/grep-func-call.env"))
     or die "Error: open env save file failed";
 
 print $env "export GTAGS_LANG_FORCE=$ENV{GTAGS_LANG_FORCE}\n";
-print $env "export GTAGS_START_FILE=$ENV{GTAGS_START_FILE}\n";
+print $env "export GTAGS_START_FILE=$start_file\n";
 
 my %def_line_map;
 my %type_line_map;
@@ -125,7 +127,7 @@ my $file;
 if (not $is_gz) {
     open($file, "<", $ENV{GTAGS_START_FILE}) or die "Error: open source file";
 } else {
-    open($file, "-|", "zcat $ENV{GTAGS_START_FILE}") or die "Error: open source file";
+    open($file, "-|", "zcat $start_file") or die "Error: open source file";
 }
 
 print $debug "def_lines are @def_lines\n";

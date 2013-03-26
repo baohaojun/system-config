@@ -1,0 +1,32 @@
+#!/usr/bin/env perl
+
+use strict;
+
+my @ps = split /\n/, qx(ps.pl . 2>/dev/null);
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+
+my %ppid_map;
+my %command_map;
+
+for my $p (@ps) {
+    $p =~ m/(\d+)\s+(\d+)\s+(\S+)\s+(.*)/ or next;
+    my ($pid, $ppid, $time, $command) = ($1, $2, $3, $4);
+
+    $ppid_map{$pid} = $ppid;
+    $command_map{$pid} = $command;
+}
+
+my $start_p = $ARGV[0];
+
+while ($start_p) {
+    printf "%d %d %s\n", $start_p, $ppid_map{$start_p}, $command_map{$start_p};
+    $start_p = $ppid_map{$start_p};
+}
+    
+
+    
+
