@@ -1,0 +1,39 @@
+#!/usr/bin/perl
+
+use strict;
+
+open my $file1, $ARGV[0];
+open my $file2, $ARGV[1];
+
+my @lines1 = <$file1>;
+my @lines2 = <$file2>;
+
+my %lines1;
+my %lines2;
+
+sub debug(@) {
+    print STDERR "@_\n";
+}
+
+for my $line (@lines1) {
+    $lines1{$line} = 1;
+}
+
+for my $line (@lines2) {
+    $lines2{$line} = 1;
+}
+
+for my $line (@lines1) {
+    unless ($lines2{$line}) {
+	print "$ARGV[0]: $line";
+    }
+}
+
+
+for my $line (@lines2) {
+    unless ($lines1{$line}) {
+	print "$ARGV[1]: $line";
+    }
+}
+
+   
