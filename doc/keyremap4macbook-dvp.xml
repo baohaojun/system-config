@@ -19,11 +19,19 @@ EOF
            gen SEMICOLON S
            gen J H
 	   gen O R
+	   gen K T
+	   gen D E
+	   gen L N
+	   gen U G
 	   # end code-generator -->
       <!-- # start generated code -->
       <autogen>__KeyToKey__ KeyCode::SEMICOLON, VK_COMMAND | ModifierFlag::NONE, KeyCode::S, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
       <autogen>__KeyToKey__ KeyCode::J, VK_COMMAND | ModifierFlag::NONE, KeyCode::H, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
       <autogen>__KeyToKey__ KeyCode::O, VK_COMMAND | ModifierFlag::NONE, KeyCode::R, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
+      <autogen>__KeyToKey__ KeyCode::K, VK_COMMAND | ModifierFlag::NONE, KeyCode::T, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
+      <autogen>__KeyToKey__ KeyCode::D, VK_COMMAND | ModifierFlag::NONE, KeyCode::E, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
+      <autogen>__KeyToKey__ KeyCode::L, VK_COMMAND | ModifierFlag::NONE, KeyCode::N, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
+      <autogen>__KeyToKey__ KeyCode::U, VK_COMMAND | ModifierFlag::NONE, KeyCode::G, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
 
       <!-- # end generated code -->
     </item>
@@ -44,6 +52,24 @@ EOF
   <item>
     <name>sawfish</name>
     <identifier>bhj.sawfish</identifier>
+    <!-- # start code-generator
+	   function gen() {
+               from=$1
+               to=$2
+               cat <<EOF
+         <autogen>__KeyToKey__ KeyCode::$1, VK_COMMAND|ModifierFlag::NONE, KeyCode::$2, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L</autogen>
+EOF
+           }
+	   gen K T
+	   gen L N
+	   gen D E
+	 # end code-generator -->
+    <!-- # start generated code -->
+    <autogen>__KeyToKey__ KeyCode::K, VK_COMMAND|ModifierFlag::NONE, KeyCode::T, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L</autogen>
+    <autogen>__KeyToKey__ KeyCode::L, VK_COMMAND|ModifierFlag::NONE, KeyCode::N, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L</autogen>
+    <autogen>__KeyToKey__ KeyCode::D, VK_COMMAND|ModifierFlag::NONE, KeyCode::E, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L</autogen>
+
+    <!-- # end generated code -->
     <autogen>__KeyToKey__ KeyCode::SEMICOLON, VK_COMMAND|ModifierFlag::NONE, KeyCode::S, ModifierFlag::COMMAND_L | ModifierFlag::OPTION_L</autogen>
     <autogen>__KeyToKey__ KeyCode::O, VK_COMMAND|ModifierFlag::NONE, KeyCode::S, ModifierFlag::COMMAND_L | ModifierFlag::OPTION_L</autogen>
     <autogen>__KeyToKey__ KeyCode::DELETE, VK_COMMAND|ModifierFlag::NONE, KeyCode::PAGEUP </autogen>

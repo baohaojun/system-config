@@ -1,0 +1,3 @@
+t command open -a /Applications/Utilities/Terminal.app/
+n command open -a /Applications/Firefox.app/
+e command open -a /Applications/Emacs.app/

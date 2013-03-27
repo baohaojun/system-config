@@ -12,7 +12,11 @@ while (<>) {
 	$l1 = 0;
     }
 
-    $_ = substr($_, $cut_head);
+    if (substr($_, 0, $cut_head) =~ /^\s+$/) {
+	$_ = substr($_, $cut_head);
+    } else {
+	$_ =~ s/^\s+//;
+    }
     chomp;
     s/([\\"])/\\$1/g;
     printf '"%s\n"' . "\n", $_;
