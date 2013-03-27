@@ -3,7 +3,8 @@ function git()
 {
 
     (
-	if test "$(readlink -f .)" = "$(readlink -f ~)" -a "$1" != clone
+	if test "$(readlink -f .)" = "$(readlink -f ~)" -a "$1" != clone || 
+            test "$(readlink -f .)" = "$(readlink -f ~/windows-config/)"
 	then
             cd ~/windows-config/;
             if test "$1" = st; then
