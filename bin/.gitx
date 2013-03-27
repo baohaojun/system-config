@@ -3,9 +3,42 @@ function git()
 {
 
     (
-	if test "`readlink -f .`" = "`readlink -f ~`" -a "$1" != clone
+	if test "$(readlink -f .)" = "$(readlink -f ~)" -a "$1" != clone
 	then
             cd ~/windows-config/;
+            if test "$1" = st; then
+                for x in ~/src/github/*/; do
+                    if test -d $x; then
+                        (
+                            cd $x
+                            
+                            y=$(git st -s)
+                            if test "$y"; then
+                                echo $x not clean 1>&2 
+                                git st -s
+                                echo ---------------- 1>&2 
+                            fi
+                            y=$(git diff --name-status origin/master)
+                            if test "$y"; then
+                                echo $x not clean 1>&2 
+                                git diff --name-status origin/master
+                                echo ---------------- 1>&2 
+                            fi
+                        )
+                    fi
+                done
+            fi
+
+            if test "$1" = submodule -a "$2" = foreach -a $# = 3; then
+                for x in ~/src/github/*/; do
+                    if test -d $x; then
+                        (
+                            cd $x
+                            $3
+                        )
+                    fi
+                done
+            fi
 	fi
 
 	if test "$1" = st -a "$2" = -S; then

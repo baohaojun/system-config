@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+. .gitx
 test $(pwd) = $HOME && cd ~/windows-config/
 cd "$(dirname "$(lookup_file .git)")"
 signal=~/.git-need-push
