@@ -23,6 +23,7 @@ EOF
 	   gen D E
 	   gen L N
 	   gen U G
+	   gen M M
 	   # end code-generator -->
       <!-- # start generated code -->
       <autogen>__KeyToKey__ KeyCode::SEMICOLON, VK_COMMAND | ModifierFlag::NONE, KeyCode::S, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
@@ -32,6 +33,7 @@ EOF
       <autogen>__KeyToKey__ KeyCode::D, VK_COMMAND | ModifierFlag::NONE, KeyCode::E, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
       <autogen>__KeyToKey__ KeyCode::L, VK_COMMAND | ModifierFlag::NONE, KeyCode::N, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
       <autogen>__KeyToKey__ KeyCode::U, VK_COMMAND | ModifierFlag::NONE, KeyCode::G, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
+      <autogen>__KeyToKey__ KeyCode::M, VK_COMMAND | ModifierFlag::NONE, KeyCode::M, ModifierFlag::COMMAND_L, KeyCode::VK_CONFIG_FORCE_OFF_notsave_emacsmode_ex_commandH_core</autogen>
 
       <!-- # end generated code -->
     </item>
@@ -62,11 +64,13 @@ EOF
            }
 	   gen K T
 	   gen L N
+	   gen M M
 	   gen D E
 	 # end code-generator -->
     <!-- # start generated code -->
     <autogen>__KeyToKey__ KeyCode::K, VK_COMMAND|ModifierFlag::NONE, KeyCode::T, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L</autogen>
     <autogen>__KeyToKey__ KeyCode::L, VK_COMMAND|ModifierFlag::NONE, KeyCode::N, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L</autogen>
+    <autogen>__KeyToKey__ KeyCode::M, VK_COMMAND|ModifierFlag::NONE, KeyCode::M, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L</autogen>
     <autogen>__KeyToKey__ KeyCode::D, VK_COMMAND|ModifierFlag::NONE, KeyCode::E, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L</autogen>
 
     <!-- # end generated code -->

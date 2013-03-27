@@ -1,22 +1,50 @@
 #!/bin/bash
-export ARGS=$@
 export MY_PID=$$
-echo "  PID  PPID     ELAPSED CMD" 1>&2
 if test $(basename $0) = ps.pl0; then
     export MATCH_PROG_ONLY=true
 fi
 
-ps -eo pid,ppid,etime,command | perl -ne '
+opts=
+TEMP=$(getopt -o o: --long opts: -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -o|--opts)
+            opts=$2,
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+export ARGS=$@
+MORE_OPTS_VARS=
+if test "$opts"; then
+    export MORE_OPTS_VARS=$(echo "$opts" | perl -npe 's/(^|,(?!$))/$1\$VAR_/g')
+fi
+ps -eo pid,ppid,etime,${opts}command | perl -ne '
 BEGIN{
     $found = 0;
-    @args=split(/\s+/, $ENV{"ARGS"});
+    @args=split(" ", $ENV{"ARGS"});
+    print "args is @args\n";
     $my_pid = $ENV{"MY_PID"};
 }
 $to_match = $line = $_;
 $match = 1;
 
-($pid, $ppid, $elapsed, $prog) = split(/\s+/, $line);
-if ($ENV{MATCH_PROG_ONLY} eq "true") {
+if ($. == 1) {
+    print STDERR $_;
+    next;
+}
+
+($pid, $ppid, $elapsed,'"$MORE_OPTS_VARS"'$prog) = split(" ", $line);
+if ($ENV{MATCH_PROG_ONLY} eq "true")  {
     $to_match = $prog;
 }
 next if ($pid == $my_pid or $ppid == $my_pid);
