@@ -32,7 +32,6 @@ ps -eo pid,ppid,etime,${opts}command | perl -ne '
 BEGIN{
     $found = 0;
     @args=split(" ", $ENV{"ARGS"});
-    print "args is @args\n";
     $my_pid = $ENV{"MY_PID"};
 }
 $to_match = $line = $_;
