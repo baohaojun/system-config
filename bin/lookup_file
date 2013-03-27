@@ -1,12 +1,17 @@
 #!/bin/bash
 
 exact=false
-TEMP=$(getopt -o e --long exact -n $(basename $0) -- "$@")
+readlink=false
+TEMP=$(getopt -o er --long exact,readlink -n $(basename $0) -- "$@")
 eval set -- "$TEMP"
 while true; do
     case "$1" in
         -e|--exact)
             exact=true
+            shift
+            ;;
+        -r|--readlink)
+            readlink=true
             shift
             ;;
         --)
@@ -51,17 +56,29 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
     done
 
     if test "${file:0:1}" = /; then
-	echo "$file"
+        if test -e "$file" -a $readlink = true; then
+            readlink -f "$file"
+        else
+	    echo "$file"
+        fi
     else
 	if test -e "$PWD"/"$file"; then
-	    echo "$PWD"/"$file"
+            if test $readlink = true; then
+                readlink -f "$file"
+            else
+	        echo "$PWD"/"$file"
+            fi
 	else
 	    echo "$file"
 	fi
     fi
 ) || (
     if test "$exact" = true; then
-        which "$1" 2>/dev/null || true
+        if test $readlink = true; then
+            readlink -f "$(which "$1")"
+        else
+            which "$1"
+        fi 2>/dev/null || true
         exit 0
     else
         false
