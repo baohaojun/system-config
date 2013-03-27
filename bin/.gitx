@@ -35,7 +35,7 @@ function git()
                     if test -d $x; then
                         (
                             cd $x
-                            $3
+                            bash -c "$3"
                         )
                     fi
                 done
