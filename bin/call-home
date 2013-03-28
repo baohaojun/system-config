@@ -40,7 +40,8 @@ fi
         . ~/.ssh-vpn
     fi
     while true; do
-        if ssh-vpn -- -h $host -u $user 2>&1 | grep -q SIGKILL; then
+        res=$(ssh-vpn -- -h $host -u $user 2>&1)
+        if test $? = 137 || echo "$res" | grep -q SIGKILL; then
             continue
         fi
 	x=30

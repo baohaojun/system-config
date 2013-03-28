@@ -1,0 +1,47 @@
+#!/bin/bash
+
+redo=false
+edit=false
+TEMP=$(getopt -o re --long redo,edit -n $(basename $0) -- "$@")
+eval set -- "$TEMP"
+while true; do
+    case "$1" in
+        -r|--redo)
+            redo=true
+            shift
+            ;;
+        -e|--edit)
+            edit=true
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            die "internal error"
+            ;;
+    esac
+done
+
+outdir=~/.logs/$(basename $0).out/
+mkdir -p $outdir
+outfile=$outdir/$1.html
+if test $redo = false -a -e "$outfile"; then
+    if test $edit = true; then
+        edit "$outfile"
+    else
+        of "$outfile"
+    fi
+    exit 0
+fi
+exec > "$outfile"
+
+for doc in $(set -x; beagrep -i -e "title=\"$1\"" -d ~/Library/Developer/Shared/Documentation/DocSets --grep -l|perl -npe 's/:.*//'); do
+    text=${doc#*DocSets/}
+    echo "<a href='$doc'>$text</a><p/>"
+done
+
+of "$outfile" >/dev/null 2>&1 
+
+    

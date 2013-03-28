@@ -153,3 +153,4 @@ already Emacs.app to foreground if it is already running.
 =open -a /Applications/Firefox.app/ .= will open the current dir in
 firefox.
 * TODO write a doc：翅膀变硬了
+* Bash下的if || &&是没有优先级的，怀疑的时候就用括号给括起来。

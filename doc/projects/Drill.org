@@ -84,3 +84,12 @@
 * [[woollen][从The Lord of the Rings中引用]]
 * [[wraith.’][从The Lord of the Rings中引用]]
 * [[yammering][从The Lord of the Rings中引用]]
+
+* TODO 控制自己每周只更新一次系统
+  SCHEDULED: <2013-04-05 Fri ++1w>
+  :PROPERTIES:
+  :STYLE:    habit
+  :LAST_REPEAT: [2013-03-28 Thu 09:35]
+  :END:
+
+
