@@ -6,5 +6,14 @@ if [[ $host =~ wikipedia ]]; then
     domain=org/w/index.php?search=
 fi
 url='http://'$host.$domain''"`echo \"$@\"|perl -npe 'chomp; s#([^_0-9a-zA-Z ])#sprintf(\"%%%02x\", ord($1))#seg; s# #+#g'`" 
-echo "$url"|tee /dev/tty|putclip
-of "$url"&
+
+set -x
+
+if test "$EMACS" = t; then
+    of "$url"
+else
+    of "$url"&
+    echo "$url"|tee /dev/tty|putclip
+fi
+
+

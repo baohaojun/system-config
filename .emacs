@@ -2682,6 +2682,16 @@ using ctags-exuberant"
 	(setq import-list (cdr import-list))))))
 
 (setq ring-bell-function (lambda ()))
+
+(defun source-code-help()
+  (interactive)
+  (let ((word (current-word)))
+    (async-shell-command 
+     (if current-prefix-arg
+	 (format "search-google %s" (shell-quote-argument word))
+       (format "source-code-help %s %s" major-mode word)))))
+
+(global-set-key [(meta s) ?h ?h] 'source-code-help)
       
 (condition-case nil
     (server-start)

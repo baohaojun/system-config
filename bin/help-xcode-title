@@ -32,12 +32,15 @@ if test $redo = false -a -e "$outfile"; then
         edit "$outfile"
     else
         of "$outfile"
+        if test "$EMACS" = t; then
+            edit "$outfile"
+        fi
     fi
     exit 0
 fi
 exec > "$outfile"
 
-for doc in $(set -x; beagrep -i -e "title=\"$1\"" -d ~/Library/Developer/Shared/Documentation/DocSets --grep -l|perl -npe 's/:.*//'); do
+for doc in $(set -x; beagrep -i -e "title=\"$1(\"|:)" -d ~/Library/Developer/Shared/Documentation/DocSets --grep '-P -l'|perl -npe 's/:.*//'); do
     text=${doc#*DocSets/}
     echo "<a href='$doc'>$text</a><p/>"
 done
