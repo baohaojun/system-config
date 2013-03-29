@@ -119,6 +119,8 @@ function mkbeagrepidx() {
         ADDITIONAL_OPTIONS=("$@")
     elif test "$BEAGREP_IGNORE_DIR_PATTERNS"; then
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "$BEAGREP_IGNORE_DIR_PATTERNS")
+    elif test -e "$(lookup_file .beagrep-ignore)"; then
+        ADDITIONAL_OPTIONS=(--deny-directory-pattern "*/.git,$(cat $(lookup_file .beagrep-ignore))")
     else
         ADDITIONAL_OPTIONS=(--deny-directory-pattern "$PWD/out,*/.repo,*/.git")
     fi
