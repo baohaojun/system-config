@@ -46,17 +46,19 @@
     (if wcommand
 	(system (concat wcommand "&")))
     nil))
+(setq s-h-keymap (make-keymap))
+(bind-keys global-keymap "Super-h" s-h-keymap)
 
 (mapc
  (lambda (args)
    (let ((key (car args))
          (wclass (cadr args))
          (wcommand (caddr args)))
-     (bind-keys global-keymap key
+     (bind-keys s-h-keymap key
                 (lambda ()
                   (find-window-or-exec (eval wclass) wcommand)))))
  '(
-   ("Super-e" "emacs" "emacs.bhj")
+   ("Super-m" "emacs" "emacs.bhj")
    ("Super-r" "grun" "grun")
    ("Super-t" "konsole" "konsole -e ~/bin/myscr")
    ("Super-C-d" (lambda (w) (string-match "my-dict" (window-name w) 0 t)) "gnome-terminal -t my-dict -e ~/bin/Linux/my-dict")
@@ -64,8 +66,9 @@
    ("Super-XF86AudioRaiseVolume" "hello world no such thing" "lock-screen")
    ("Super-x" "xcalc" "xcalc")
    ("XF86Switch_VT_12" "konsole" "konsole -e ~/bin/myscr")
-   ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")
-   ))
+   ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")))
+
+(bind-keys s-h-keymap "Super-h" (lambda () (synthesize-event "Super-h" (input-focus))))
 
 (bind-keys window-keymap "Button1-Click" 'raise-and-pass-through-click)
 
@@ -87,7 +90,8 @@
 
 (setq super-key-window-remap
   '(("v" . ((t . "S-Insert")))
-    ("c" . ((Emacs . "M-w")))
+    ("c" . ((Emacs . "M-w")
+	    (Konsole . "C-S-c")))
     ("w" . ((Firefox . ("C-h" "k"))))))
   
 (mapc
@@ -106,10 +110,8 @@
 		    (synthesize-event map-to fw))))))
  '("t" "w" "n" "c" "v"))
 
-(let* ((key "v")
-       (class (window-class (car (window-order))))
-       (map-to (or (assoc (intern class) (assoc key super-key-window-remap)) (concat "C-" key))))
-  (display-message (format nil "map-to is %s, " map-to)))
+
+
 
 (bind-keys global-keymap "Super-Insert" (lambda () (system "send-key $(getclip)&")))
 (bind-keys global-keymap "Super-S-RET" (lambda () (system "send-key $(getclip)&")))

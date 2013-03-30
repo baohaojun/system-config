@@ -13,7 +13,7 @@ if test $# = 0; then
             stop-debug $(basename $x)
         fi
     done
-    rm ~/.logs/start-debug.log/* -rf
+    /bin/rm ~/.logs/start-debug.log/* -rf
     exit
 fi
 
@@ -25,5 +25,5 @@ if ! grep -q 'start-debug' ~/bin/$(uname)/ext/debug/$(basename $1); then
     die "stop debug can only act on commands created by start-debug"
 fi
 
-rm ~/bin/$(uname)/ext/debug/$(basename $1)
-rm ~/.logs/start-debug.log/$(basename $1) -rf
+/bin/rm ~/bin/$(uname)/ext/debug/$(basename $1)
+/bin/rm ~/.logs/start-debug.log/$(basename $1) -rf

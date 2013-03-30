@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=Sawfish
+Name[el]=Πριονόψαρο (Sawfish)
+
+Type=Application
+Exec=bash -c 'sawfish&'
+TryExec=sawfish
+
+Terminal=false
+NoDisplay=true
+
+X-GNOME-WMName=Sawfish
+X-GNOME-Autostart-Phase=WindowManager
+X-GNOME-Provides=windowmanager
+X-GNOME-Autostart-Notify=true

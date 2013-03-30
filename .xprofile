@@ -2,5 +2,5 @@
 if ps -o cmd $$ | grep 'sawfish'; then
     gnome-keyring-daemon > ~/.config/.gnome-keyring.$$
     . ~/.config/.gnome-keyring.$$
-    rm ~/.config/.gnome-keyring.$$
+    /bin/rm ~/.config/.gnome-keyring.$$
 fi

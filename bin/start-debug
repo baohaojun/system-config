@@ -40,7 +40,7 @@ res=\$?
     echo err:; /bin/cat ~/.logs/start-debug.log/$1.\$\$.err
     echo tree:; show-ps-tree \$\$
 ) >>  ~/.logs/start-debug.log/$1
-rm $1.\$\$.out $1.\$\$.err
+/bin/rm $1.\$\$.out $1.\$\$.err
 exit \$res
 EOF
 chmod +x ~/bin/$(uname)/ext/debug/$1
