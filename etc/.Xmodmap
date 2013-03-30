@@ -20,3 +20,4 @@ keysym Escape = Caps_Lock
 keysym Caps_Lock = Escape
 add Lock = Caps_Lock
 
+pointer = 1 2 3 5 4 6 7 8 9 10
