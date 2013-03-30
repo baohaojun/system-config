@@ -5,7 +5,7 @@
 (bind-keys global-keymap "Super-s" 'iswitch-window)
 
 (defun bhj-window-class (window)
-  (caddr (get-x-property window 'WM_CLASS)))
+  (window-class window))
 
 (bind-keys global-keymap "Super-C-i" (lambda () (system "~/bin/screenshot&")))
 (bind-keys global-keymap "Super-DEL" (lambda () (system "gnome-screensaver-command -l&")))
@@ -59,6 +59,7 @@
                   (find-window-or-exec (eval wclass) wcommand)))))
  '(
    ("Super-m" "emacs" "emacs.bhj")
+   ("Super-n" "firefox" "firefox")
    ("Super-r" "grun" "grun")
    ("Super-t" "konsole" "konsole -e ~/bin/myscr")
    ("Super-C-d" (lambda (w) (string-match "my-dict" (window-name w) 0 t)) "gnome-terminal -t my-dict -e ~/bin/Linux/my-dict")
@@ -92,7 +93,8 @@
   '(("v" . ((t . "S-Insert")))
     ("c" . ((Emacs . "M-w")
 	    (Konsole . "C-S-c")))
-    ("w" . ((Firefox . ("C-h" "k"))))))
+    ("w" . ((Firefox . ("C-h" "k"))))
+    ("l" . ((Firefox . ("C-h" "l"))))))
   
 (mapc
  (lambda (key)
@@ -108,7 +110,7 @@
 			      (synthesize-event map-1 fw))
 			    map-to)
 		    (synthesize-event map-to fw))))))
- '("t" "w" "n" "c" "v"))
+ '("t" "w" "n" "c" "v" "l"))
 
 
 
