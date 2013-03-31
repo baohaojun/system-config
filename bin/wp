@@ -36,7 +36,7 @@ if test "$(basename -- "$BASH_SOURCE")" = "$(basename -- "$0")"; then # we are b
     
     function gitp()
     {
-        relative-path "$FILE" $(readlink -f $(lookup_file .git))/
+        relative-path "$FILE" $(readlink -f $(dirname "$(lookup_file .git)"))/
     }
 
     function absp()
