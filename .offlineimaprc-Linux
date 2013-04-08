@@ -30,8 +30,6 @@ folderfilter = lambda foldername: 'mrvl.' in foldername
 localrepository = Local-Gmail
 remoterepository = Remote-Gmail
 maxsize = 500000
-presynchook = ~/bin/sync_nnmaildir -g
-postsynchook = ~/bin/sync_nnmaildir -m
 
 [Repository Local-Gmail]
 type = Maildir
@@ -50,8 +48,6 @@ folderfilter = lambda foldername: any([x.lower() in foldername.lower() for x in 
 [Account BigGmail]
 localrepository = Local-BigGmail
 remoterepository = Remote-BigGmail
-presynchook = ~/bin/sync_nnmaildir -g
-postsynchook = ~/bin/sync_nnmaildir -m
 
 [Repository Local-BigGmail]
 type = Maildir
