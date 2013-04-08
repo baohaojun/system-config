@@ -1,3 +1,3 @@
 #!/bin/bash
 
-switch-touchpad off
+switch-touchpad on

@@ -8,7 +8,22 @@ fi
 
 
 if test "$1" = enable || synclient | grep -P -e 'TouchpadOff\s*=\s*2$'; then
+    synclient FingerHigh=80
     synclient TouchpadOff=0
+    synclient PalmDetect=1
+    synclient RTCornerButton=0
+    synclient RBCornerButton=0
+    synclient LTCornerButton=0
+    synclient LBCornerButton=0
+
+    synclient TapButton1=1
+    synclient TapButton2=3
+    synclient TapButton3=2
+    synclient TapAndDragGesture=1
+
+    synclient VertTwoFingerScroll=1
+    synclient HorizTwoFingerScroll=1
+
     # rebind-button1
     exit
 fi
