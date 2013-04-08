@@ -39,7 +39,7 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 
 (setq face-font-rescale-alist '(("Microsoft Yahei" . 1.2) ("WenQuanYi Zen Hei" . 1.2)))
 (qiang-set-font
- '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New") 10.5
+ '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New") 14
  '("Microsoft Yahei" "文泉驿等宽微米黑" "黑体" "新宋体" "宋体"))
 
 
