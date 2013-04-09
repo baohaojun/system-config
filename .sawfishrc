@@ -73,6 +73,7 @@
 (bind-keys global-keymap "C-S-DEL" (lambda () (system "lock-screen&")))
 
 (bind-keys s-h-keymap "Super-h" (lambda () (synthesize-event "Super-h" (input-focus))))
+(bind-keys global-keymap "Super-\\" (lambda () (synthesize-event "C-|" (input-focus))))
 (bind-keys s-h-keymap "Super-s" 'iswitch-window)
 
 (bind-keys window-keymap "Button1-Click" 'raise-and-pass-through-click)
@@ -100,7 +101,8 @@
     ("w" . ((Firefox . ("C-h" "k"))))
     ("l" . ((Firefox . ("C-h" "C-l"))))
     ("r" . ((Firefox . ("C-h" "C-r"))))
-    ("s" . ((Firefox . ("C-h" "C-s"))))))
+    ("s" . ((Firefox . ("C-h" "C-s"))))
+    ("d" . ((Firefox . ("C-h" "C-d"))))))
   
 (mapc
  (lambda (key)
@@ -116,7 +118,7 @@
 			      (synthesize-event map-1 fw))
 			    map-to)
 		    (synthesize-event map-to fw))))))
- '("t" "w" "n" "c" "v" "l" "r" "s"))
+ '("t" "w" "n" "c" "v" "l" "r" "s" "d"))
 
 
 
@@ -130,7 +132,7 @@
 (bind-keys global-keymap "Super-Control-o" (lambda () (system "emacsclient -n ~/doc/notes.org&")))
 
 
-(bind-keys global-keymap "Super-d"
+(bind-keys s-h-keymap "Super-d"
            (lambda ()
              (if (not (showing-desktop-p))
                  (show-desktop)

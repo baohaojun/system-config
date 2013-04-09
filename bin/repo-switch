@@ -48,7 +48,7 @@ done
 
 repodir=$(lookup_file -e .repo)
 if test -z "$repodir"; then
-    (set -x; repo init -u ${repo_init_url:-bibler:shgit/manifest}\
+    (set -x; repo init -p auto -u ${repo_init_url:-bibler:shgit/manifest}\
         -m ${repo_init_manifest:-default.xml}\
         -b ${repo_init_branch:-master}\
         --repo-url=${repo_url:-https://gerrit.googlesource.com/git-repo}\
@@ -163,7 +163,7 @@ for x in `git branch|grep -v '^\*'`; do git branch -D $x; done
         cd $(lookup_file .repo/repo)
         git config remote.origin.url $repo_url
     )
-    repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url "$@"
+    repo init -u $repo_init_url -b $repo_init_branch -m $repo_init_manifest --repo-url=$repo_url -p auto "$@"
 )
 
 cd ..
