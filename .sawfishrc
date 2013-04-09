@@ -70,6 +70,7 @@
    ("Shift-ESC" "konsole" "konsole --hide-menubar -e ~/bin/myscr")))
 
 (bind-keys global-keymap "C-S-XF86PowerOff" (lambda () (system "lock-screen&")))
+(bind-keys global-keymap "C-S-DEL" (lambda () (system "lock-screen&")))
 
 (bind-keys s-h-keymap "Super-h" (lambda () (synthesize-event "Super-h" (input-focus))))
 (bind-keys s-h-keymap "Super-s" 'iswitch-window)

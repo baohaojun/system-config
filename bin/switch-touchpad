@@ -1,13 +1,13 @@
 #!/bin/bash
 . ~/.new-xauth 
-if test "$1" = disable -o "$1" = off || synclient | grep -P -e 'TouchpadOff\s*=\s*0$'; then
+if test "$1" = disable -o "$1" = off; then
     synclient TouchpadOff=2
     # sawfish-client -e '(bind-keys window-keymap "Button1-Click" (lambda () (system "rebind-button1&")))'
     exit
 fi
 
 
-if test "$1" = enable || synclient | grep -P -e 'TouchpadOff\s*=\s*2$'; then
+if test "$1" = enable -o "$1" = on; then
     synclient FingerHigh=80
     synclient TouchpadOff=0
     synclient PalmDetect=1
