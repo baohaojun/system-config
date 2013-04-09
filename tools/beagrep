@@ -18,6 +18,7 @@ my $find_file_only = 0;
 my $file_default_line = 1;
 my $file_tag = "";
 my $grep_use_perl_regexp;
+my $replace_with;
 
 open(my $log, ">>", glob("~/.beagrep.log")) or die "Error openning log";
 print $log "$0 @ARGV in " . $ENV{PWD} . "\n";
@@ -43,7 +44,16 @@ GetOptions(
     "f!" => \$find_file_only,
     "l!" => \$list_beagrep,
     "s!" => \$short_format,
+    "rewrite=s" => \$replace_with,
     );
+
+if ($replace_with) {
+    my $char_1 = substr($replace_with, 0, 1);
+    my @parts = split($char_1, $replace_with);
+    my $re = $parts[1];
+    my $with = $parts[2];
+    $pat =~ s/$re/$with/;
+}
 
 if ($ignore_case) {
   $ignore_case = '-i';
@@ -98,6 +108,16 @@ my $beagrep_files = qx/beagrep-files $pat $additional_tokens/;
 my @beagrep_files = split(/\n/, $beagrep_files);
 
 if ($short_format) {
+    my $pwd_save = $pwd;
+    my $db_dir = glob("~/.cache/for-code-reading/$pwd");
+    while (! -d "$db_dir/.beagrep") {
+	$pwd =~ s!(.*)/.*!$1!;
+	if (not $pwd or $pwd eq "/") {
+	    die "Can not find beagrep data for $pwd_save";
+	}
+	$db_dir = glob("~/.cache/for-code-reading/$pwd");
+    }
+    chdir $pwd;
     my $start = length($pwd) + 1;
     map {$_ = substr($_, $start)} @beagrep_files;
     printf "Using short format, Entering directory \`%s'\n", $pwd;
