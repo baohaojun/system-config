@@ -8,7 +8,7 @@ my $pat = '';
 my $pathpat = '.';
 my $additional_tokens = '';
 my $pathdeny = '^$';
-chomp(my $pwd =qx/readlink -f "`pwd`"/);
+chomp(my $pwd = qx/readlink -f "`pwd`"/);
 my $pwd_opt;
 my $list_beagrep;
 my $short_format = 0;
@@ -109,15 +109,17 @@ my @beagrep_files = split(/\n/, $beagrep_files);
 
 if ($short_format) {
     my $pwd_save = $pwd;
-    my $db_dir = glob("~/.cache/for-code-reading/$pwd");
+    my $db_dir = glob("~/.cache/for-code-reading") . "/$pwd";
     while (! -d "$db_dir/.beagrep") {
+	debug "no beagrep db at $db_dir";
 	$pwd =~ s!(.*)/.*!$1!;
 	if (not $pwd or $pwd eq "/") {
 	    die "Can not find beagrep data for $pwd_save";
 	}
-	$db_dir = glob("~/.cache/for-code-reading/$pwd");
+	$db_dir = glob("~/.cache/for-code-reading") . "/$pwd";
     }
     chdir $pwd;
+    chomp($pwd = qx/readlink -f "`pwd`"/);
     my $start = length($pwd) + 1;
     map {$_ = substr($_, $start)} @beagrep_files;
     printf "Using short format, Entering directory \`%s'\n", $pwd;
