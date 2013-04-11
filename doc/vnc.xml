@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+
+  <remote  name="apse"
+           fetch="shgit.marvell.com:/git/android"
+           review="http://bible/gerrit/" />
+
+  <remote  name="bpe-bhj"
+           fetch="bibler:shgit/"
+           review="http://bible/gerrit/" />
+
+  <remote  name="bpe-shgit"
+           fetch="bibler:shgit/"
+           review="http://bible/gerrit/" />
+  <remove-project name="vendor/marvell/external/android-vnc-server" />
+  <project path="vendor/marvell/external/android-vnc-server" name="vendor/marvell/external/android-vnc-server" remote="bpe-shgit" revision="pxa98xff-jb-dsds" />
+</manifest>

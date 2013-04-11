@@ -7,12 +7,21 @@ function my_select()
         echo 1
         return
     fi
-    for x in "$@"; do 
-        echo $y\) "$x" >/dev/tty;
-        ((y++))
-    done
 
-    read -p "#?" NUM
+    if test -z "$ORIGINAL_MATCHER"; then
+        for x in "$@"; do 
+            echo $y\) "$x" >/dev/tty;
+            ((y++))
+        done
+    fi
+
+    if test "$ORIGINAL_MATCHER"; then
+        NUM=$ORIGINAL_MATCHER
+        export ORIGINAL_MATCHER=
+    else
+        read -p "#?" NUM
+    fi
+
     if [[ x"$NUM" = x ]] || ( [[ "$NUM" =~ ^[1-9][0-9]*$ ]] &&  (( "$NUM" > $# )) ); then
         NUM=1
     elif [[ ! "$NUM" =~ ^[1-9][0-9]*$ ]]; then
@@ -25,7 +34,7 @@ function my_select()
         for arg in "$@"; do
             match=true
             for entry in $NUM; do
-                if (test $reverse = 0 && ! echo "$arg" | grep -P -q -i -e "\Q$entry\E") || (test $reverse = 1 && echo "$arg" |grep -P -i -q -e "\Q$entry\E"); 
+                if (test $reverse = 0 && ! echo "$arg" | grep -P -q -i -e "$entry") || (test $reverse = 1 && echo "$arg" |grep -P -i -q -e "$entry"); 
                 then
                     match=false
                     break
