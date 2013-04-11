@@ -17,10 +17,10 @@ if git status -s | grep -q .; then
     exit 0
 fi
 
-if git diff --quiet HEAD && git branch --contains HEAD -a |grep -q from-mac; then
+if git diff --quiet HEAD && git branch --contains HEAD -a |grep -q remotes; then
     echo HEAD already containd in a remote branch, no need to push $(pwd)
 else
-    echo no remote from-mac branch contains HEAD, need push $(pwd)
+    echo no remote branch contains HEAD, need push $(pwd)
     touch $signal
     exit 0
 fi
