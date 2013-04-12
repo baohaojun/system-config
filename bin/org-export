@@ -39,7 +39,7 @@ print if $start;
 ) > $tf.org
 
 (cd $(dirname $tf.org)
-	emacs-nt -Q --batch \
+	emacs-nt -q --batch \
 	    --eval "$(org-export.help $(basename $tf.org))"
 )
 
