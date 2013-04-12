@@ -109,15 +109,15 @@ for line in ini_file:
 
 #+BEGIN_SRC objc
     PyRun_SimpleString(
-		       "import ini\n" // 1
-		       "import os\n" // 2
-		       "ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n" // 3
-		       "ini_file = open(ini_path)\n" // 4
-		       "keycodes = {\n" // 5
-		       "    \"kvk_ansi_a\" : 0x00,\n" // 6
-		       "    \"kvk_ansi_s\" : 0x01,\n" // 7
+                       "import ini\n" // 1
+                       "import os\n" // 2
+                       "ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n" // 3
+                       "ini_file = open(ini_path)\n" // 4
+                       "keycodes = {\n" // 5
+                       "    \"kvk_ansi_a\" : 0x00,\n" // 6
+                       "    \"kvk_ansi_s\" : 0x01,\n" // 7
                        ...
-		       "    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n" // 81
+                       "    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n" // 81
                        ...
                        );
 #+END_SRC
@@ -140,12 +140,12 @@ for line in ini_file:
 #+BEGIN_SRC objc
 
     PyRun_SimpleString(
-		       /* start code-generator 
-			  expand <<EOF | here-doc-to-cstr | append-line-number //
-			  import ini
-			  import os
-			  ini_path = os.path.join(os.path.expanduser("~"), ".mac-hotkey.rc")
-			  ini_file = open(ini_path)
+                       /* start code-generator 
+                          expand <<EOF | here-doc-to-cstr | append-line-number //
+                          import ini
+                          import os
+                          ini_path = os.path.join(os.path.expanduser("~"), ".mac-hotkey.rc")
+                          ini_file = open(ini_path)
                           keycodes = {
 $(perl -ne 'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {
                 m/(\S+)\s*=\s*(\S+)/;
@@ -155,52 +155,52 @@ $(perl -ne 'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h)
                           }
 
-			  keymasks = {
+                          keymasks = {
                               "shift"   : 1 << 17,
                               "control" : 1 << 18,
-			      "alt"     : 1 << 19,
+                              "alt"     : 1 << 19,
                               "command" : 1 << 20,
                           }
-			  import re
-			  for line in ini_file:
-			      m = re.match(r"(\S+)\s+(\S+)\s+(.*)", line)
-			      mod = keymasks["shift"]
-			      for mask in m.group(2).split("|"):
-			          mod |= keymasks[mask]
+                          import re
+                          for line in ini_file:
+                              m = re.match(r"(\S+)\s+(\S+)\s+(.*)", line)
+                              mod = keymasks["shift"]
+                              for mask in m.group(2).split("|"):
+                                  mod |= keymasks[mask]
                               ini.Parse(keycodes["kvk_ansi_" + m.group(1)], mod, m.group(3))
 EOF
-			  end code-generator */
-		       // start generated code
-		       "import ini\n" // 1
-		       "import os\n" // 2
-		       "ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n" // 3
-		       "ini_file = open(ini_path)\n" // 4
-		       "keycodes = {\n" // 5
-		       "    \"kvk_ansi_a\" : 0x00,\n" // 6
-		       "    \"kvk_ansi_s\" : 0x01,\n" // 7
-		       "    \"kvk_ansi_d\" : 0x02,\n" // 8
+                          end code-generator */
+                       // start generated code
+                       "import ini\n" // 1
+                       "import os\n" // 2
+                       "ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n" // 3
+                       "ini_file = open(ini_path)\n" // 4
+                       "keycodes = {\n" // 5
+                       "    \"kvk_ansi_a\" : 0x00,\n" // 6
+                       "    \"kvk_ansi_s\" : 0x01,\n" // 7
+                       "    \"kvk_ansi_d\" : 0x02,\n" // 8
                        ...
-		       "    \"kvk_ansi_keypad7\" : 0x59,\n" // 68
-		       "    \"kvk_ansi_keypad8\" : 0x5B,\n" // 69
-		       "    \"kvk_ansi_keypad9\" : 0x5C\n" // 70
-		       "}\n" // 71
-		       "\n" // 72
-		       "keymasks = {\n" // 73
-		       "    \"shift\"   : 1 << 17,\n" // 74
-		       "    \"control\" : 1 << 18,\n" // 75
-		       "    \"alt\"     : 1 << 19,\n" // 76
-		       "    \"command\" : 1 << 20,\n" // 77
-		       "}\n" // 78
-		       "import re\n" // 79
-		       "for line in ini_file:\n" // 80
-		       "    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n" // 81
-		       "    mod = keymasks[\"shift\"]\n" // 82
-		       "    for mask in m.group(2).split(\"|\"):\n" // 83
-		       "        mod |= keymasks[mask]\n" // 84
-		       "    ini.Parse(keycodes[\"kvk_ansi_\" + m.group(1)], mod, m.group(3))\n" // 85
+                       "    \"kvk_ansi_keypad7\" : 0x59,\n" // 68
+                       "    \"kvk_ansi_keypad8\" : 0x5B,\n" // 69
+                       "    \"kvk_ansi_keypad9\" : 0x5C\n" // 70
+                       "}\n" // 71
+                       "\n" // 72
+                       "keymasks = {\n" // 73
+                       "    \"shift\"   : 1 << 17,\n" // 74
+                       "    \"control\" : 1 << 18,\n" // 75
+                       "    \"alt\"     : 1 << 19,\n" // 76
+                       "    \"command\" : 1 << 20,\n" // 77
+                       "}\n" // 78
+                       "import re\n" // 79
+                       "for line in ini_file:\n" // 80
+                       "    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n" // 81
+                       "    mod = keymasks[\"shift\"]\n" // 82
+                       "    for mask in m.group(2).split(\"|\"):\n" // 83
+                       "        mod |= keymasks[mask]\n" // 84
+                       "    ini.Parse(keycodes[\"kvk_ansi_\" + m.group(1)], mod, m.group(3))\n" // 85
 
-		       // end generated code
-		       )
+                       // end generated code
+                       )
 
 #+END_SRC
 
@@ -226,15 +226,15 @@ EOF
    my $cut_head = 0;
    while (<>) {
        if ($l1 == 1) {
-   	m/^(\s*)/;
-   	$cut_head = length $1;
-   	$l1 = 0;
+           m/^(\s*)/;
+           $cut_head = length $1;
+           $l1 = 0;
        }
    
        if (substr($_, 0, $cut_head) =~ /^\s+$/) {
-   	$_ = substr($_, $cut_head);
+           $_ = substr($_, $cut_head);
        } else {
-   	$_ =~ s/^\s+//;
+           $_ =~ s/^\s+//;
        }
        chomp;
        s/([\\"])/\\$1/g;
@@ -256,9 +256,9 @@ EOF
    while (<STDIN>) {
        chomp;
        if (@ARGV) {
-   	printf "%s %s %d\n", $_, join(" ", @ARGV), $.;
+           printf "%s %s %d\n", $_, join(" ", @ARGV), $.;
        } else {
-   	printf "%s %d\n", $_, $.;
+           printf "%s %d\n", $_, $.;
        }
    }
    #+END_SRC

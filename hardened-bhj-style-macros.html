@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="翅膀硬了"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-12T13:45+0800"/>
+<meta name="generated" content="2013-04-12T13:52+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -425,15 +425,15 @@ m command open -a /Applications/Emacs.app/
 <span class="org-type">my</span> $<span class="org-variable-name">cut_head</span> = 0;
 <span class="org-keyword">while</span> (&lt;&gt;) {
     <span class="org-keyword">if</span> ($<span class="org-variable-name">l1</span> == 1) {
-     m<span class="org-string">/^(\s*)/</span>;
-     $<span class="org-variable-name">cut_head</span> = length $<span class="org-variable-name">1</span>;
-     $<span class="org-variable-name">l1</span> = 0;
+        m<span class="org-string">/^(\s*)/</span>;
+        $<span class="org-variable-name">cut_head</span> = length $<span class="org-variable-name">1</span>;
+        $<span class="org-variable-name">l1</span> = 0;
     }
 
     <span class="org-keyword">if</span> (substr($<span class="org-variable-name">_</span>, 0, $<span class="org-variable-name">cut_head</span>) =~ <span class="org-string">/^\s+$/</span>) {
-     $<span class="org-variable-name">_</span> = substr($<span class="org-variable-name">_</span>, $<span class="org-variable-name">cut_head</span>);
+        $<span class="org-variable-name">_</span> = substr($<span class="org-variable-name">_</span>, $<span class="org-variable-name">cut_head</span>);
     } <span class="org-keyword">else</span> {
-     $<span class="org-variable-name">_</span> =~ s<span class="org-string">/^\s+//</span>;
+        $<span class="org-variable-name">_</span> =~ s<span class="org-string">/^\s+//</span>;
     }
     chomp;
     s<span class="org-string">/([\\"])/\\$1/</span>g;
@@ -461,9 +461,9 @@ m command open -a /Applications/Emacs.app/
 <span class="org-keyword">while</span> (&lt;<span class="org-constant">STDIN</span>&gt;) {
     chomp;
     <span class="org-keyword">if</span> (@<span class="org-underline"><span class="org-variable-name">ARGV</span></span>) {
-     printf <span class="org-string">"%s %s %d\n"</span>, $<span class="org-variable-name">_</span>, join(<span class="org-string">" "</span>, @<span class="org-underline"><span class="org-variable-name">ARGV</span></span>), $.;
+        printf <span class="org-string">"%s %s %d\n"</span>, $<span class="org-variable-name">_</span>, join(<span class="org-string">" "</span>, @<span class="org-underline"><span class="org-variable-name">ARGV</span></span>), $.;
     } <span class="org-keyword">else</span> {
-     printf <span class="org-string">"%s %d\n"</span>, $<span class="org-variable-name">_</span>, $.;
+        printf <span class="org-string">"%s %d\n"</span>, $<span class="org-variable-name">_</span>, $.;
     }
 }
 </pre>
