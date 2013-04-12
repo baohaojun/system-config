@@ -1,0 +1,290 @@
+#+title: 翅膀硬了
+
+这是 [[bhj-do-codegen.org][给任意语言插上宏定义的翅膀]] 的续篇，这里你会看到此技巧的更“硬朗”的
+使用，所以这个题目（本来我想把前两个字也去掉，想想还是适可而止吧:-）。
+
+话说我最近开始用Mac OS了，一开始各种不适应。我有三个最基本的诉求，DVP的
+键盘布局、SDIM的中文输入法、Sawfish的系统快捷键，一个也不能少，可是却一
+个也没有！
+
+没有枪，没有炮，我们自己造！
+
+结果我现在应该已经是中国输入法第一人了吧，我的SDIM输入法，可以运行在四
+个平台上：Windows、Emacs、Linux、Mac OS。当然了，用户也只有我自己一个，
+哈哈哈！
+
+在搞定上述3个基本诉求的过程中，我无一例外的用上了军哥包·宏之奥义，下面
+就结合系统快捷键的开发，跟大家说说我对此奥义的新体悟吧！
+
+* 在Objc里使用嵌入式Python
+
+要开发Mac OS下的系统快捷键程序，当然要学一点Objc了。这个其实不难学，教
+材耐心点看，很容易上手的；难的是要学多少才够用呢，我希望刚刚够用就好，
+而不是花太多时间，学会了一时半会儿用不上的，最后又忘了，那就浪费了。其
+次就是要尽量抛开Xcode，而是使用Emacs开发Objc的程序。
+
+所以稍微学了一点之后，就开始在网上搜系统快捷键的例子框架程序，很快在
+[[https://github.com/davedelong/DDHotKey][github]] 上找到一个，接下来就是开始自己的定制。
+
+要灵活定制一个C/C++/Objc等偏底层语言写的编译运行的程序，最正统的做法莫
+过于用tcl/python/guile(scheme)/ruby等高级的、可嵌入的脚本语言了。我决定
+用python，因为这个语言我以前用过（虽然嵌入式python没用过，但随便找个例
+子依葫芦画瓢就可以了，重点还是框架之上的逻辑）。
+
+我决定用最简单的 =PyRun_SimpleString= ，配合宏之奥义，给我什么神器IDE都
+不换！
+
+真正要用到的定制逻辑是下面这段简单的代码：
+
+#+BEGIN_SRC python
+import ini
+import os
+ini_path = os.path.join(os.path.expanduser("~"), ".mac-hotkey.rc")
+ini_file = open(ini_path)
+keycodes = {
+    "kvk_ansi_a" : 0x00,
+    "kvk_ansi_b" : 0x01,
+    ...
+}
+
+keymasks = {
+    "shift"   : 1 << 17,
+    "control" : 1 << 18,
+    "alt"     : 1 << 19,
+    "command" : 1 << 20,
+}
+import re
+for line in ini_file:
+    m = re.match(r"(\S+)\s+(\S+)\s+(.*)", line)
+    mod = keymasks["shift"]
+    for mask in m.group(2).split("|"):
+        mod |= keymasks[mask]
+    ini.Parse(keycodes["kvk_ansi_" + m.group(1)], mod, m.group(3))
+#+END_SRC
+
+在此对上面这段稍做解释（整个文件在 [[https://github.com/baohaojun/DDHotKey/raw/master/DDHotKeyAppDelegate.m][github]] 上）。
+
+1. ~ini~ 是用Objc写的一个python module，它只提供一个 =Parse()= 函数，但
+   其实真正的 ~Parse~ 工作是python脚本做的， ~ini~ 模块的 ~Parse()~ 只
+   是记录下结果（这个名字没有起好:-)）。
+
+2. 设置脚本 =~/.mac-hotkey.rc= 的格式为：
+
+   #+BEGIN_EXAMPLE
+   t command open -a /Applications/Utilities/Terminal.app/
+   n command open -a /Applications/Firefox.app/
+   m command open -a /Applications/Emacs.app/
+   #+END_EXAMPLE
+   
+   第一个域是主键名，第二个域是modifier键名，之后的是要运行的程序。见代
+   码中的 =(\S+)\s+(\S+)\s+(.*)= 这个正则表达式。
+
+   所以第一行的意思是，当我按下 =command + t= 键时，给我切换到
+   Terminal 程序。 =open= 是 Mac OS 自己提供的命令，它有一个很好的特性
+   是如果当前没有相应的Terminal/Emacs程序在运行，则把该程序启动起来；如
+   果该程序已经在运行，则把它调到前台来。
+
+   当然了，我在python代码里已经硬编码了一个shift的modifier，所以你大可
+   不必皱眉，我不至于傻到把 =command + t= 这个 Mac OS 自带的新开一个
+   tab页的App常用热键给重定义了；我重定义的是相对不常用的
+   =command + shift + t= 。
+
+   （但是 [[http://github.com/baohaojun/windows-config/raw/master/doc/keyremap4macbook-dvp.xml][这个keyremap4mac的private.xml]] 文件会告诉你最终的完整的版本，
+   我把 =[(command h）(command t)]= 给重新定义到 =command + shift + t=
+   了，并且这个 =command h= 的定义类似于 Emacs 下的 =Ctrl q= 、 bash 下
+   的 =Ctrl v= 、C字符串里的反斜杠（请问这是什么design pattern？），如
+   果我想向应用发一个 =command h= 键，我需按两次 =command h= 。在这
+   个.xml文件里你还可以看到我是怎么实现DVP的键盘布局的，以及宏奥义的又
+   一使用场景。DVP的作者提供的Mac OS下的解决方案好像跟Firemacs有点兼容
+   性问题，这个需要确认；但我弃用它最关键的理由是，它无法像其在Windows
+   上的解决方案一样，轻松帮我解决中文输入法的DVP键盘布局问题）。
+
+* 问题来了
+
+** 小蝌蚪的野望
+
+上面那段代码看起来很简单嘛，你想必也是这样认为的吧！可是一旦要把它用
+=PyRun_SimpleString= 嵌入进去的话，我就傻眼了，要用到好多小蝌蚪一样的双
+引号和反斜杠！你看到的代码将是这样的：
+
+#+BEGIN_SRC objc
+    PyRun_SimpleString(
+		       "import ini\n" // 1
+		       "import os\n" // 2
+		       "ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n" // 3
+		       "ini_file = open(ini_path)\n" // 4
+		       "keycodes = {\n" // 5
+		       "    \"kvk_ansi_a\" : 0x00,\n" // 6
+		       "    \"kvk_ansi_s\" : 0x01,\n" // 7
+                       ...
+		       "    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n" // 81
+                       ...
+                       );
+#+END_SRC
+
+怪不得后来在网上看到人说不推荐用 =PyRun_SimpleString= 呢！不解决这个双
+引号和反斜杠问题的话，它真的只能沦为一个玩具而已罢了吧？难道有人会愿意
+挨个挨个的去敲这些小蝌蚪，并保证它们的正确性？这也太变态了，绝对是得不
+偿失啊！
+
+** 小蝌蚪？侠客行？挪威的森林！
+
+看到上面代码里的行号了吧？当你的宏展开代码报告出错、你迷失在了挪威的森
+林里的时候，你能用这些行号找到方向。你总不至于期望自己聪明到代码一把过
+从而达到“progasm”吧？
+
+* 呛，宏之奥义，出鞘！
+
+所以实际上我的代码是这样写的：
+
+#+BEGIN_SRC objc
+
+    PyRun_SimpleString(
+		       /* start code-generator 
+			  expand <<EOF | here-doc-to-cstr | append-line-number //
+			  import ini
+			  import os
+			  ini_path = os.path.join(os.path.expanduser("~"), ".mac-hotkey.rc")
+			  ini_file = open(ini_path)
+                          keycodes = {
+$(perl -ne 'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {
+                m/(\S+)\s*=\s*(\S+)/;
+                printf 
+"                              \"%s\" : $2\n", lc $1;
+            }' \
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h)
+                          }
+
+			  keymasks = {
+                              "shift"   : 1 << 17,
+                              "control" : 1 << 18,
+			      "alt"     : 1 << 19,
+                              "command" : 1 << 20,
+                          }
+			  import re
+			  for line in ini_file:
+			      m = re.match(r"(\S+)\s+(\S+)\s+(.*)", line)
+			      mod = keymasks["shift"]
+			      for mask in m.group(2).split("|"):
+			          mod |= keymasks[mask]
+                              ini.Parse(keycodes["kvk_ansi_" + m.group(1)], mod, m.group(3))
+EOF
+			  end code-generator */
+		       // start generated code
+		       "import ini\n" // 1
+		       "import os\n" // 2
+		       "ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n" // 3
+		       "ini_file = open(ini_path)\n" // 4
+		       "keycodes = {\n" // 5
+		       "    \"kvk_ansi_a\" : 0x00,\n" // 6
+		       "    \"kvk_ansi_s\" : 0x01,\n" // 7
+		       "    \"kvk_ansi_d\" : 0x02,\n" // 8
+                       ...
+		       "    \"kvk_ansi_keypad7\" : 0x59,\n" // 68
+		       "    \"kvk_ansi_keypad8\" : 0x5B,\n" // 69
+		       "    \"kvk_ansi_keypad9\" : 0x5C\n" // 70
+		       "}\n" // 71
+		       "\n" // 72
+		       "keymasks = {\n" // 73
+		       "    \"shift\"   : 1 << 17,\n" // 74
+		       "    \"control\" : 1 << 18,\n" // 75
+		       "    \"alt\"     : 1 << 19,\n" // 76
+		       "    \"command\" : 1 << 20,\n" // 77
+		       "}\n" // 78
+		       "import re\n" // 79
+		       "for line in ini_file:\n" // 80
+		       "    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n" // 81
+		       "    mod = keymasks[\"shift\"]\n" // 82
+		       "    for mask in m.group(2).split(\"|\"):\n" // 83
+		       "        mod |= keymasks[mask]\n" // 84
+		       "    ini.Parse(keycodes[\"kvk_ansi_\" + m.group(1)], mod, m.group(3))\n" // 85
+
+		       // end generated code
+		       )
+
+#+END_SRC
+
+这里稍微解释一下几个关键点。
+
+** =expand <<EOF | here-doc-to-cstr | append-line-number //=
+
+1. =expand= 把所有tab制表符替换成空格，我们要生成的是python代码，对缩进
+   要求最严格的了，最好别在这个事情上开玩笑。
+
+2. =here-doc-to-cstr=
+   
+   一个很简单的perl程序，负责制造小蝌蚪、回车、缩进（根据第一行文本的缩
+   进量进行之后的缩进处理）。
+   
+   #+BEGIN_SRC perl
+   #!/usr/bin/env perl
+   
+   use strict;
+   
+   my $l1 = 1;
+   
+   my $cut_head = 0;
+   while (<>) {
+       if ($l1 == 1) {
+   	m/^(\s*)/;
+   	$cut_head = length $1;
+   	$l1 = 0;
+       }
+   
+       if (substr($_, 0, $cut_head) =~ /^\s+$/) {
+   	$_ = substr($_, $cut_head);
+       } else {
+   	$_ =~ s/^\s+//;
+       }
+       chomp;
+       s/([\\"])/\\$1/g;
+       printf '"%s\n"' . "\n", $_;
+   }
+   #+END_SRC
+
+3. =append-line-number //=
+   
+   我在xcode下debug这些代码的时候，会在log里看到python报错，所以我马上
+   意识到应该给生成的代码加上行号， =//= 参数表示这些行号应该写成Objc的
+   注释里。
+
+   这也是一个很简单的perl程序：
+
+   #+BEGIN_SRC perl
+   #!/usr/bin/env perl
+   
+   while (<STDIN>) {
+       chomp;
+       if (@ARGV) {
+   	printf "%s %s %d\n", $_, join(" ", @ARGV), $.;
+       } else {
+   	printf "%s %d\n", $_, $.;
+       }
+   }
+   #+END_SRC
+   
+   
+** perl层的盗梦空间
+
+#+BEGIN_SRC sh
+$(perl -ne 'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {
+                m/(\S+)\s*=\s*(\S+)/;
+                printf 
+"                              \"%s\" : $2\n", lc $1;
+            }' \
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h)
+#+END_SRC
+
+最后，要对每个主按键都生成一个keycodes dict项，这个工作我们嵌入到perl层
+去实现，也就是上面的这段代码。这种感觉是不是有点像盗梦空间？还是说像那
+首叫“洋葱”的歌？一层一层一层...
+
+* 结论
+
+在一个自己相对还不是很熟的领域（Objc编程）里，把自己熟悉的技能用到极致，
+从而快速、轻松的解决问题。
+
+还是说你愿意把自己以前熟悉的全部抛弃，再把Objc学到足够熟，然后纯用它来
+解决问题？
+
+我已经做出了选择，你感受一下:-)
