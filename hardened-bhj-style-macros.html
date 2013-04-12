@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="翅膀硬了"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-04-12T13:52+0800"/>
+<meta name="generated" content="2013-04-12T13:56+0800"/>
 <meta name="author" content="Bao Haojun"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -325,68 +325,68 @@ m command open -a /Applications/Emacs.app/
 
 
 
-<pre class="src src-objc">    PyRun_SimpleString(
-                       <span class="org-comment-delimiter">/* </span><span class="org-comment">start code-generator </span>
-<span class="org-comment">                          expand &lt;&lt;EOF | here-doc-to-cstr | append-line-number //</span>
-<span class="org-comment">                          import ini</span>
-<span class="org-comment">                          import os</span>
-<span class="org-comment">                          ini_path = os.path.join(os.path.expanduser("~"), ".mac-hotkey.rc")</span>
-<span class="org-comment">                          ini_file = open(ini_path)</span>
-<span class="org-comment">                          keycodes = {</span>
+<pre class="src src-objc">PyRun_SimpleString(
+                   <span class="org-comment-delimiter">/* </span><span class="org-comment">start code-generator </span>
+<span class="org-comment">                      expand &lt;&lt;EOF | here-doc-to-cstr | append-line-number //</span>
+<span class="org-comment">                      import ini</span>
+<span class="org-comment">                      import os</span>
+<span class="org-comment">                      ini_path = os.path.join(os.path.expanduser("~"), ".mac-hotkey.rc")</span>
+<span class="org-comment">                      ini_file = open(ini_path)</span>
+<span class="org-comment">                      keycodes = {</span>
 <span class="org-comment">$(perl -ne 'if (m/kVK_ANSI_A\s+=/..m/kVK_ANSI_Keypad9\s+=/) {</span>
-<span class="org-comment">                m/(\S+)\s*=\s*(\S+)/;</span>
-<span class="org-comment">                printf </span>
-<span class="org-comment">"                              \"%s\" : $2\n", lc $1;</span>
-<span class="org-comment">            }' \</span>
+<span class="org-comment">            m/(\S+)\s*=\s*(\S+)/;</span>
+<span class="org-comment">            printf </span>
+<span class="org-comment">"                          \"%s\" : $2\n", lc $1;</span>
+<span class="org-comment">        }' \</span>
 <span class="org-comment">/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/Events.h)</span>
-<span class="org-comment">                          }</span>
+<span class="org-comment">                      }</span>
 
-<span class="org-comment">                          keymasks = {</span>
-<span class="org-comment">                              "shift"   : 1 &lt;&lt; 17,</span>
-<span class="org-comment">                              "control" : 1 &lt;&lt; 18,</span>
-<span class="org-comment">                              "alt"     : 1 &lt;&lt; 19,</span>
-<span class="org-comment">                              "command" : 1 &lt;&lt; 20,</span>
-<span class="org-comment">                          }</span>
-<span class="org-comment">                          import re</span>
-<span class="org-comment">                          for line in ini_file:</span>
-<span class="org-comment">                              m = re.match(r"(\S+)\s+(\S+)\s+(.*)", line)</span>
-<span class="org-comment">                              mod = keymasks["shift"]</span>
-<span class="org-comment">                              for mask in m.group(2).split("|"):</span>
-<span class="org-comment">                                  mod |= keymasks[mask]</span>
-<span class="org-comment">                              ini.Parse(keycodes["kvk_ansi_" + m.group(1)], mod, m.group(3))</span>
+<span class="org-comment">                      keymasks = {</span>
+<span class="org-comment">                          "shift"   : 1 &lt;&lt; 17,</span>
+<span class="org-comment">                          "control" : 1 &lt;&lt; 18,</span>
+<span class="org-comment">                          "alt"     : 1 &lt;&lt; 19,</span>
+<span class="org-comment">                          "command" : 1 &lt;&lt; 20,</span>
+<span class="org-comment">                      }</span>
+<span class="org-comment">                      import re</span>
+<span class="org-comment">                      for line in ini_file:</span>
+<span class="org-comment">                          m = re.match(r"(\S+)\s+(\S+)\s+(.*)", line)</span>
+<span class="org-comment">                          mod = keymasks["shift"]</span>
+<span class="org-comment">                          for mask in m.group(2).split("|"):</span>
+<span class="org-comment">                              mod |= keymasks[mask]</span>
+<span class="org-comment">                          ini.Parse(keycodes["kvk_ansi_" + m.group(1)], mod, m.group(3))</span>
 <span class="org-comment">EOF</span>
-<span class="org-comment">                          end code-generator */</span>
-                       <span class="org-comment-delimiter">// </span><span class="org-comment">start generated code</span>
-                       <span class="org-string">"import ini\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">1</span>
-                       <span class="org-string">"import os\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">2</span>
-                       <span class="org-string">"ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">3</span>
-                       <span class="org-string">"ini_file = open(ini_path)\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">4</span>
-                       <span class="org-string">"keycodes = {\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">5</span>
-                       <span class="org-string">"    \"kvk_ansi_a\" : 0x00,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">6</span>
-                       <span class="org-string">"    \"kvk_ansi_s\" : 0x01,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">7</span>
-                       <span class="org-string">"    \"kvk_ansi_d\" : 0x02,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">8</span>
-                       ...
-                       <span class="org-string">"    \"kvk_ansi_keypad7\" : 0x59,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">68</span>
-                       <span class="org-string">"    \"kvk_ansi_keypad8\" : 0x5B,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">69</span>
-                       <span class="org-string">"    \"kvk_ansi_keypad9\" : 0x5C\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">70</span>
-                       <span class="org-string">"}\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">71</span>
-                       <span class="org-string">"\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">72</span>
-                       <span class="org-string">"keymasks = {\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">73</span>
-                       <span class="org-string">"    \"shift\"   : 1 &lt;&lt; 17,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">74</span>
-                       <span class="org-string">"    \"control\" : 1 &lt;&lt; 18,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">75</span>
-                       <span class="org-string">"    \"alt\"     : 1 &lt;&lt; 19,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">76</span>
-                       <span class="org-string">"    \"command\" : 1 &lt;&lt; 20,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">77</span>
-                       <span class="org-string">"}\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">78</span>
-                       <span class="org-string">"import re\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">79</span>
-                       <span class="org-string">"for line in ini_file:\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">80</span>
-                       <span class="org-string">"    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">81</span>
-                       <span class="org-string">"    mod = keymasks[\"shift\"]\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">82</span>
-                       <span class="org-string">"    for mask in m.group(2).split(\"|\"):\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">83</span>
-                       <span class="org-string">"        mod |= keymasks[mask]\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">84</span>
-                       <span class="org-string">"    ini.Parse(keycodes[\"kvk_ansi_\" + m.group(1)], mod, m.group(3))\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">85</span>
+<span class="org-comment">                      end code-generator */</span>
+                   <span class="org-comment-delimiter">// </span><span class="org-comment">start generated code</span>
+                   <span class="org-string">"import ini\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">1</span>
+                   <span class="org-string">"import os\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">2</span>
+                   <span class="org-string">"ini_path = os.path.join(os.path.expanduser(\"~\"), \".mac-hotkey.rc\")\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">3</span>
+                   <span class="org-string">"ini_file = open(ini_path)\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">4</span>
+                   <span class="org-string">"keycodes = {\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">5</span>
+                   <span class="org-string">"    \"kvk_ansi_a\" : 0x00,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">6</span>
+                   <span class="org-string">"    \"kvk_ansi_s\" : 0x01,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">7</span>
+                   <span class="org-string">"    \"kvk_ansi_d\" : 0x02,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">8</span>
+                   ...
+                   <span class="org-string">"    \"kvk_ansi_keypad7\" : 0x59,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">68</span>
+                   <span class="org-string">"    \"kvk_ansi_keypad8\" : 0x5B,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">69</span>
+                   <span class="org-string">"    \"kvk_ansi_keypad9\" : 0x5C\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">70</span>
+                   <span class="org-string">"}\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">71</span>
+                   <span class="org-string">"\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">72</span>
+                   <span class="org-string">"keymasks = {\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">73</span>
+                   <span class="org-string">"    \"shift\"   : 1 &lt;&lt; 17,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">74</span>
+                   <span class="org-string">"    \"control\" : 1 &lt;&lt; 18,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">75</span>
+                   <span class="org-string">"    \"alt\"     : 1 &lt;&lt; 19,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">76</span>
+                   <span class="org-string">"    \"command\" : 1 &lt;&lt; 20,\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">77</span>
+                   <span class="org-string">"}\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">78</span>
+                   <span class="org-string">"import re\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">79</span>
+                   <span class="org-string">"for line in ini_file:\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">80</span>
+                   <span class="org-string">"    m = re.match(r\"(\\S+)\\s+(\\S+)\\s+(.*)\", line)\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">81</span>
+                   <span class="org-string">"    mod = keymasks[\"shift\"]\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">82</span>
+                   <span class="org-string">"    for mask in m.group(2).split(\"|\"):\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">83</span>
+                   <span class="org-string">"        mod |= keymasks[mask]\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">84</span>
+                   <span class="org-string">"    ini.Parse(keycodes[\"kvk_ansi_\" + m.group(1)], mod, m.group(3))\n"</span> <span class="org-comment-delimiter">// </span><span class="org-comment">85</span>
 
-                       <span class="org-comment-delimiter">// </span><span class="org-comment">end generated code</span>
-                       )
+                   <span class="org-comment-delimiter">// </span><span class="org-comment">end generated code</span>
+                   )
 
 </pre>
 
