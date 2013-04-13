@@ -22,7 +22,14 @@ time (
     mkdir -p $build_mount_p
     test "$(find $build_mount_p -maxdepth 1 | wc -l)" = 1
     echo "make: Entering directory \`$(pwd)'"
-    time sudo env KERNEL_CONFIG=$KERNEL_CONFIG unshare -m -- bash -c '
+    function sudo() {
+        if test "$KERNEL_CONFIG"; then
+            command sudo env KERNEL_CONFIG=$KERNEL_CONFIG PATH=$PATH "$@"
+        else
+            command sudo env PATH=$PATH "$@"
+        fi
+    }
+    time sudo unshare -m -- bash -c '
                 set -ex
                 mount $(pwd) '$build_mount_p' -o bind;
                 cd '$build_mount_p'

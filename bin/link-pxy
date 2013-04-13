@@ -1,0 +1,16 @@
+#!/bin/bash
+
+auto=auto
+pxy=proxy
+autopxy=$auto$pxy
+
+for x in ~/.mozilla/firefox/*/ ~/Library/"Application Support"/Firefox/Profiles/*/; do 
+    test -d "$x" || continue
+    dir="$x"/"extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+    
+    rm -rf "$dir" "$dir".xpi "$(dirname "$dir")"/$autopxy@$autopxy.org.xpi
+    (
+        cd ~/gcode/autoproxy/
+        zip -r "$(dirname "$dir")"/$autopxy@$autopxy.org.xpi *
+    )
+done
