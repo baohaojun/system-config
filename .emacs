@@ -921,7 +921,7 @@
 
 (add-hook 'message-send-hook 'bhj-set-reply)
 
-(require 'electric-complete)
+(require 'skeleton-complete)
 
 (require 'xcscope)
 
