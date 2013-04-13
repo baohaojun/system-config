@@ -33,7 +33,11 @@ function find() {
 
 # builtin cd -P . >/dev/null 2>&1
 
+wildcard=false
 test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
+if echo "$file" | grep -q -e '\*'; then
+    wildcard=true
+fi
 
 (
     while true; do
@@ -48,6 +52,15 @@ test ! -e "$file" -a "${file:0:7}" = "file://" && file=${file:7}
 	fi
 
 	test -e "$file" && break
+
+        if test $wildcard = true && test -e $file; then
+            if test $readlink = true; then
+                readlink -f $file
+            else
+                echo "$PWD"/$file
+            fi
+            exit 0
+        fi
 
 	if test "$PWD" = /; then
 	    exit -1
