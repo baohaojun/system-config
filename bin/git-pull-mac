@@ -6,17 +6,16 @@ cd "$(dirname "$(lookup_file .git)")"
 
 git-clean-mac-branches-local
 git config remote.origin.url $(git config remote.origin.url | perl -npe 's,^git://,https://,')
-git fetch origin >/dev/null 2>&1 
+git fetch origin refs/heads/*:refs/heads/* >/dev/null 2>&1 
 for x in $(git branch -a |grep 'remotes.*from-mac'; echo remotes/origin/master); do
     remote=$(echo $x|awk -F/ '{print $2}')
     branch=$(echo $x|perl -npe 's/.*?from-mac/from-mac/')
-    git fetch $remote $branch >/dev/null 2>&1 
-    if git branch --contains FETCH_HEAD |grep -q '^\*'; then
+    if git branch --contains $x |grep -q '^\*'; then
 	echo no need to merge $branch, it is already '*contained*' in HEAD
 	continue;
     else
 	current=$(git log -1|head -n 1|pn 2)
-	git merge FETCH_HEAD >/dev/null 2>&1 || {
+	git merge $x >/dev/null 2>&1 || {
 	    echo $remote/$branch merge failed
 	    exit -1
 	}
