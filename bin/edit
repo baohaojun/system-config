@@ -2,6 +2,7 @@
 use String::ShellQuote;
 use strict;
 
+system("switch-touchpad off >/dev/null 2>&1 &");
 open (my $log_, ">", glob("~/.logs/edit.log")) or die "Can not open log file";
 print $log_ "@ARGV\n";
 sub debug(@) {

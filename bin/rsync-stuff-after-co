@@ -2,23 +2,12 @@
 
 set -e
 
-if test $# -le 1; then
+if test $# != 1; then
     die "Error: Usage $(basename $0) HOST"
 fi
-host=$1
-shift
 
-for x in $(
-    if test $# != 0; 
-    then 
-        echo "$@"; 
-    else
-        echo .ssh .smbpass .edictrc .smb smbookmarks .netrc .authinfo .keystore /var/myca jira-users .confhttp .confkeys .confserv .confuser weekly
-    fi
-); do
-    rsync -av $host:$x ~/
+for x in .ssh .smbpass .edictrc .smb smbookmarks .netrc .authinfo .keystore /var/myca jira-users .confhttp .confkeys .confserv .confuser weekly; do
+    rsync -av $1:$x ~/
 done
 
-if test -d ~/myca; then
-    sudo mv ~/myca /var
-fi
+sudo mv ~/myca /var

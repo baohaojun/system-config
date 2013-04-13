@@ -1,4 +1,4 @@
-(provide 'skeleton-complete)
+(provide 'electric-complete)
 (require 'ecomplete)
 (global-set-key [(meta g)(return)] 'skeleton-display-abbrev)
 

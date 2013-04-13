@@ -1,10 +1,6 @@
 #!/bin/bash
 
-if test -e no-local-manifest; then
-    cat manifest.xml > manifest.xml.new
-else
-    perl -ne 'print unless m,tcmd|generic/flashing|android-vnc-server,' manifest.xml > manifest.xml.new
-fi
+perl -ne 'print unless m,tcmd|generic/flashing|android-vnc-server,' manifest.xml > manifest.xml.new
 if test -e linux-arm-only; then
     perl -ne 'print unless m!/prebuilt\b|/darwin\b|/mips/!' -i manifest.xml.new
 fi
@@ -16,8 +12,7 @@ else
     cp manifest.xml.old manifest.xml -av
 fi
 
-if test ! -e no-local-manifest; then
-    cat <<EOF > local_manifests/local_manifist.xml.2
+cat <<EOF > local_manifests/local_manifist.xml.2
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
 
@@ -39,7 +34,6 @@ if test ! -e no-local-manifest; then
 </manifest>
 EOF
 
-    if test ! -e local_manifests/local_manifist.xml || ! diff local_manifests/local_manifist.xml local_manifests/local_manifist.xml.2; then
-        mv local_manifests/local_manifist.xml.2 local_manifests/local_manifist.xml
-    fi
+if test ! -e local_manifests/local_manifist.xml || ! diff local_manifests/local_manifist.xml local_manifests/local_manifist.xml.2; then
+    mv local_manifests/local_manifist.xml.2 local_manifests/local_manifist.xml
 fi
